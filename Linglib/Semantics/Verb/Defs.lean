@@ -5,7 +5,7 @@ import Linglib.Semantics.Presupposition.Basic
 import Linglib.Features.Aktionsart
 import Linglib.Features.Attitudes
 import Linglib.Features.Causation
-import Linglib.Semantics.ArgumentStructure.LevinClass
+import Linglib.Semantics.Verb.Class
 import Linglib.Semantics.NaturalLogic
 import Linglib.Semantics.Aspect.ChangeOfState
 import Linglib.Semantics.Causation.Implicative
@@ -13,7 +13,7 @@ import Linglib.Semantics.ArgumentStructure.Linking
 import Linglib.Semantics.Causation.Psych
 import Linglib.Semantics.Aspect.DegreeAchievement
 import Linglib.Semantics.Aspect.Incremental
-import Linglib.Semantics.ArgumentStructure.LevinClassProfiles
+import Linglib.Semantics.ArgumentStructure.RoleList
 import Linglib.Semantics.Verb.Root.Basic
 import Linglib.Semantics.Verb.Root.Profile
 

@@ -1,6 +1,6 @@
 import Linglib.Semantics.ArgumentStructure.Projection
 import Linglib.Semantics.ArgumentStructure.Linking
-import Linglib.Semantics.ArgumentStructure.LevinClassProfiles
+import Linglib.Semantics.ArgumentStructure.RoleList
 import Linglib.Data.ProtoRoles.Dowty1991
 import Linglib.Fragments.English.Predicates.Verbal
 
@@ -9,7 +9,7 @@ import Linglib.Fragments.English.Predicates.Verbal
 
 Study file connecting the proto-role theory
 (`Semantics/ArgumentStructure/EntailmentProfile.lean` and the Levin-class
-template map, `Semantics/ArgumentStructure/LevinClassProfiles.lean`) to argument
+role-list map, `Semantics/Verb/Class.lean`) to argument
 selection phenomena. The paper's explicit per-argument entailment
 attributions are typed data rows in `Data/ProtoRoles/Dowty1991.json`
 (generated module `Data.ProtoRoles.Dowty1991`), checked against the class
@@ -281,7 +281,7 @@ theorem run_both_agree :
 -- ════════════════════════════════════════════════════
 
 /-! These theorems verify that the English Fragment verb entries store
-    exactly the Levin-class template profiles of `LevinClassProfiles.lean` —
+    exactly the Levin-class role-list profiles of `RoleList.lean` —
     the stored fields are derivable from the class map (`sweep_instr` is the
     deliberate instrument-sense override). -/
 

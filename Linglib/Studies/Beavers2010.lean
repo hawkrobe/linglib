@@ -1,7 +1,7 @@
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Semantics.ArgumentStructure.Affectedness
 import Linglib.Semantics.ArgumentStructure.Projection
-import Linglib.Semantics.ArgumentStructure.LevinClassProfiles
+import Linglib.Semantics.ArgumentStructure.RoleList
 import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
 import Linglib.Data.Examples.Levin1993
 
@@ -35,7 +35,6 @@ derived corollary `MAP_subset` / `MapHolds.oblique_le`, via the substrate's
 
 namespace Beavers2010
 
-open ArgumentStructure
 open ArgumentStructure
 open ArgumentStructure.Affectedness (AffectednessDegree profileToDegree)
 open ArgumentStructure (DiathesisAlternation)
@@ -466,29 +465,29 @@ theorem grimm_beavers_monotone_canonical :
   ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
--- § 11. ArgTemplate → ParticipantType Bridge
+-- § 11. RoleList → ParticipantType Bridge
 -- ════════════════════════════════════════════════════
 
-/-! Cross-framework bridge from Levin/RHL `ArgTemplate` (event-template
+/-! Cross-framework bridge from Levin/RHL `RoleList` (event-template
     decomposition) to Grimm's `ParticipantType` (privative agentivity lattice) and
     Beavers' affectedness degree. Each canonical template is verified to
     project into the predicted positions in both systems, and the consistency
     of affectedness ↔ persistence is checked. -/
 
 
-/-- Project an ArgTemplate's subject profile to a ParticipantType. -/
-def _root_.ArgumentStructure.ArgTemplate.subjectGrimm
-    (t : ArgTemplate) : ParticipantType :=
+/-- Project an RoleList's subject profile to a ParticipantType. -/
+def _root_.ArgumentStructure.RoleList.subjectGrimm
+    (t : RoleList) : ParticipantType :=
   ParticipantType.fromSubjectProfile t.subjectProfile
 
-/-- Project an ArgTemplate's object profile (if any) to a ParticipantType. -/
-def _root_.ArgumentStructure.ArgTemplate.objectGrimm
-    (t : ArgTemplate) : Option ParticipantType :=
+/-- Project an RoleList's object profile (if any) to a ParticipantType. -/
+def _root_.ArgumentStructure.RoleList.objectGrimm
+    (t : RoleList) : Option ParticipantType :=
   t.objectProfile.map ParticipantType.fromObjectProfile
 
-/-- Project an ArgTemplate's object to its affectedness degree. -/
-def _root_.ArgumentStructure.ArgTemplate.objectAffectedness
-    (t : ArgTemplate) : Option AffectednessDegree :=
+/-- Project an RoleList's object to its affectedness degree. -/
+def _root_.ArgumentStructure.RoleList.objectAffectedness
+    (t : RoleList) : Option AffectednessDegree :=
   t.objectProfile.map profileToDegree
 
 -- ── Per-template ParticipantType verification ──

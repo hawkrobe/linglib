@@ -40,7 +40,7 @@ Texas at Austin.
 - `reflexive_is_bieventive` → `IntransitivizationType` (central claim)
 - `eat_is_causativeResult` → `LevinClass.rootEntailments` (root typology)
 - `eat_licenses_accomplishment` → `RootLicensesTemplate` (ArgDerivation)
-- `eat_argTemplate_is_consumption` → `LevinClass.argTemplate` (LevinClassProfiles)
+- `eat_roleList_is_consumption` → `LevinClass.roleList` (`Semantics/Verb/Class.lean`)
 - `accomplishment_has_variant` → `Template.intransitiveVariant`
 - `anticausative_no_theta` / `middle_no_theta` → `Voice.Head` (Minimalist syntax)
 -/
@@ -269,9 +269,9 @@ theorem eat_licenses_accomplishment :
 theorem eat_primary_accomplishment :
     primaryTemplate (LevinClass.rootEntailments .eat) = some .accomplishment := rfl
 
-/-- eat's ArgTemplate is `consumption` (agent + incremental theme). -/
-theorem eat_argTemplate_is_consumption :
-    LevinClass.argTemplate .eat =
+/-- eat's RoleList is `consumption` (agent + incremental theme). -/
+theorem eat_roleList_is_consumption :
+    LevinClass.roleList .eat =
     some ArgumentStructure.consumption := rfl
 
 /-- The accomplishment template has an intransitive variant (achievement).
@@ -280,7 +280,7 @@ theorem eat_argTemplate_is_consumption :
 theorem accomplishment_has_variant :
     Template.intransitiveVariant .accomplishment = some .achievement := rfl
 
-/-- causativeResult roots derive 3 ArgTemplates (state, achievement,
+/-- causativeResult roots derive 3 RoleLists (state, achievement,
     accomplishment). The template infrastructure predicts alternation;
     the blocking is root-level, not template-level. -/
 theorem eat_root_alternation_possible :

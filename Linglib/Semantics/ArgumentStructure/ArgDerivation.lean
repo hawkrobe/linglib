@@ -1,5 +1,6 @@
 import Linglib.Semantics.ArgumentStructure.EventStructure
-import Linglib.Semantics.ArgumentStructure.LevinClassProfiles
+import Linglib.Semantics.ArgumentStructure.LevinTheory
+import Linglib.Semantics.ArgumentStructure.RoleList
 
 /-!
 # Argument Structure Derivation Pipeline
@@ -10,7 +11,7 @@ import Linglib.Semantics.ArgumentStructure.LevinClassProfiles
 The derivational chain from root content to argument structure, made
 explicit as composed functions:
 
-    Root.Kinds → Template → ArgTemplate → ThetaRole
+    Root.Kinds → Template → RoleList → ThetaRole
 
 Each step exists in the literature: [beavers-koontz-garboden-2020]
 define root entailments; [rappaport-hovav-levin-1998] define event
@@ -152,13 +153,13 @@ theorem fullSpec_alternation_count :
     (licensedTemplates fullSpec).length = 4 := by decide
 
 -- ════════════════════════════════════════════════════
--- § 2. Template → ArgTemplate
+-- § 2. Template → RoleList
 -- ════════════════════════════════════════════════════
 
-/-- Default ArgTemplate from an event structure template.
+/-- Default RoleList from an event structure template.
 
     Wraps `Template.subjectProfile`/`Template.objectProfile` into
-    an `ArgTemplate`. This is the TEMPLATE-LEVEL prediction, before
+    an `RoleList`. This is the TEMPLATE-LEVEL prediction, before
     any class-level refinement.
 
     Known divergences from class-level named templates:
@@ -169,7 +170,7 @@ theorem fullSpec_alternation_count :
       are incremental themes)
     - State template has no object; perception verbs add one at the
       class level -/
-def templateArgTemplate (t : Template) : ArgTemplate where
+def templateRoleList (t : Template) : RoleList where
   subjectProfile := t.subjectProfile
   objectProfile := t.objectProfile
 
@@ -235,25 +236,25 @@ theorem primary_licensed_canonical :
 -- ════════════════════════════════════════════════════
 
 /-- The full derivational pipeline: root entailments → primary
-    template → template-level ArgTemplate. -/
-def derivePrimary (re : Root.Kinds) : Option ArgTemplate :=
-  (primaryTemplate re).map templateArgTemplate
+    template → template-level RoleList. -/
+def derivePrimary (re : Root.Kinds) : Option RoleList :=
+  (primaryTemplate re).map templateRoleList
 
-/-- All ArgTemplates derivable from a root (one per licensed template).
+/-- All RoleLists derivable from a root (one per licensed template).
     Multiple entries represent alternation possibilities:
     e.g., a causativeResult root derives both an accomplishment
-    ArgTemplate (transitive) and a state ArgTemplate (bare stative). -/
-def deriveAll (re : Root.Kinds) : List ArgTemplate :=
-  (licensedTemplates re).map templateArgTemplate
+    RoleList (transitive) and a state RoleList (bare stative). -/
+def deriveAll (re : Root.Kinds) : List RoleList :=
+  (licensedTemplates re).map templateRoleList
 
 -- § 4a. Pipeline produces non-trivial results
 
-/-- causativeResult roots derive 3 ArgTemplates (state, achievement,
+/-- causativeResult roots derive 3 RoleLists (state, achievement,
     accomplishment variants). -/
 theorem causativeResult_derives_three :
     (deriveAll causativeResult).length = 3 := by decide
 
-/-- fullSpec roots derive 4 ArgTemplates (all templates). -/
+/-- fullSpec roots derive 4 RoleLists (all templates). -/
 theorem fullSpec_derives_four :
     (deriveAll fullSpec).length = 4 := by decide
 
@@ -292,11 +293,11 @@ def activityObjectProfile (mc : MeaningComponents) : Option EntailmentProfile :=
     For other templates, the template's own profiles are used directly.
 
     Returns `none` for roots with no structural entailments (minimal). -/
-def deriveEnriched (re : Root.Kinds) (mc : MeaningComponents) : Option ArgTemplate :=
+def deriveEnriched (re : Root.Kinds) (mc : MeaningComponents) : Option RoleList :=
   match primaryTemplate re with
   | none => none
   | some t =>
-    let base := templateArgTemplate t
+    let base := templateRoleList t
     match t with
     | .activity =>
       if mc.contact then
@@ -331,43 +332,43 @@ theorem break_enriched_matches :
 theorem cut_enriched_matches :
     deriveEnriched fullSpec .cut = some resultChange := rfl
 
--- § 5b. Enriched derivation vs hand-specified LevinClass.argTemplate
+-- § 5b. Enriched derivation vs hand-specified LevinClass.roleList
 
 /-- For hit-class, the enriched derivation matches the hand-specified
-    argTemplate exactly — no override needed. -/
+    roleList exactly — no override needed. -/
 theorem hit_enriched_matches_class :
     deriveEnriched
       (LevinClass.rootEntailments .hit)
       (LevinClass.meaningComponents .hit) =
-    LevinClass.argTemplate .hit := rfl
+    LevinClass.roleList .hit := rfl
 
 /-- For break-class, same exact match. -/
 theorem break_enriched_matches_class :
     deriveEnriched
       (LevinClass.rootEntailments .break_)
       (LevinClass.meaningComponents .break_) =
-    LevinClass.argTemplate .break_ := rfl
+    LevinClass.roleList .break_ := rfl
 
 /-- For cut-class, same exact match. -/
 theorem cut_enriched_matches_class :
     deriveEnriched
       (LevinClass.rootEntailments .cut)
       (LevinClass.meaningComponents .cut) =
-    LevinClass.argTemplate .cut := rfl
+    LevinClass.roleList .cut := rfl
 
 /-- For mannerOfMotion, same exact match. -/
 theorem mannerOfMotion_enriched_matches_class :
     deriveEnriched
       (LevinClass.rootEntailments .mannerOfMotion)
       (LevinClass.meaningComponents .mannerOfMotion) =
-    LevinClass.argTemplate .mannerOfMotion := rfl
+    LevinClass.roleList .mannerOfMotion := rfl
 
 -- ════════════════════════════════════════════════════
--- § 6. Consistency: Pipeline vs Shortcut (toArgTemplate)
+-- § 6. Consistency: Pipeline vs Shortcut (toRoleList)
 -- ════════════════════════════════════════════════════
 
-/-! The `toArgTemplate` shortcut (§7 of LevinClassProfiles) maps
-root entailments directly to named ArgTemplates. The pipeline goes
+/-! The `toRoleList` shortcut (§7 of LevinClassProfiles) maps
+root entailments directly to named RoleLists. The pipeline goes
 through an intermediate Template step.
 
 After fixing the template defaults (activity subject C=false,
@@ -391,18 +392,18 @@ affected (CoS+CA). -/
     Both give the accomplishment subject = full agent (V+S+C+M+IE). -/
 theorem causativeResult_subject_agrees :
     (derivePrimary causativeResult).map (·.subjectProfile) =
-    (toArgTemplate causativeResult).map (·.subjectProfile) := rfl
+    (toRoleList causativeResult).map (·.subjectProfile) := rfl
 
 /-- fullSpec: pipeline and shortcut AGREE on subject profile. -/
 theorem fullSpec_subject_agrees :
     (derivePrimary fullSpec).map (·.subjectProfile) =
-    (toArgTemplate fullSpec).map (·.subjectProfile) := rfl
+    (toRoleList fullSpec).map (·.subjectProfile) := rfl
 
 /-- propertyConcept: pipeline and shortcut AGREE on subject profile
     (both S+IE). -/
 theorem propertyConcept_subject_agrees :
     (derivePrimary propertyConcept).map (·.subjectProfile) =
-    (toArgTemplate propertyConcept).map (·.subjectProfile) := rfl
+    (toRoleList propertyConcept).map (·.subjectProfile) := rfl
 
 /-- pureManner: pipeline and shortcut AGREE on subject profile.
     Both give V+S+M+IE (no causation): the activity template does not
@@ -410,7 +411,7 @@ theorem propertyConcept_subject_agrees :
     selfMotion verbs like run and jog. -/
 theorem pureManner_subject_agrees :
     (derivePrimary pureManner).map (·.subjectProfile) =
-    (toArgTemplate pureManner).map (·.subjectProfile) := rfl
+    (toRoleList pureManner).map (·.subjectProfile) := rfl
 
 /-- pureResult: pipeline and shortcut DISAGREE on subject.
     Pipeline: achievement subject = M+IE+CoS (moves, changes).
@@ -418,7 +419,7 @@ theorem pureManner_subject_agrees :
     Different theoretical emphases on what characterizes unaccusatives. -/
 theorem pureResult_subject_diverges :
     (derivePrimary pureResult).map (·.subjectProfile) ≠
-    (toArgTemplate pureResult).map (·.subjectProfile) := by decide
+    (toRoleList pureResult).map (·.subjectProfile) := by decide
 
 /-- causativeResult: pipeline and shortcut AGREE on object profile.
     Both give CoS+CA (change of state, causally affected). The
@@ -426,13 +427,13 @@ theorem pureResult_subject_diverges :
     not all caused-change objects measure the event. -/
 theorem causativeResult_object_agrees :
     (derivePrimary causativeResult).bind (·.objectProfile) =
-    (toArgTemplate causativeResult).bind (·.objectProfile) := rfl
+    (toRoleList causativeResult).bind (·.objectProfile) := rfl
 
 -- ════════════════════════════════════════════════════
--- § 6. Consistency: Pipeline vs LevinClass.argTemplate
+-- § 6. Consistency: Pipeline vs LevinClass.roleList
 -- ════════════════════════════════════════════════════
 
-/-! The LevinClass.argTemplate mapping hand-specifies ArgTemplates
+/-! The LevinClass.roleList mapping hand-specifies RoleLists
 for each class. The pipeline derives them from root entailments
 through a template intermediate. Where do they agree? -/
 
@@ -440,12 +441,12 @@ through a template intermediate. Where do they agree? -/
     hand-specified subject. Both are full agent (V+S+C+M+IE). -/
 theorem break_subject_pipeline_matches :
     (derivePrimary (LevinClass.rootEntailments .break_)).map (·.subjectProfile) =
-    (LevinClass.argTemplate .break_).map (·.subjectProfile) := rfl
+    (LevinClass.roleList .break_).map (·.subjectProfile) := rfl
 
 /-- For cut-class, same agreement on subject. -/
 theorem cut_subject_pipeline_matches :
     (derivePrimary (LevinClass.rootEntailments .cut)).map (·.subjectProfile) =
-    (LevinClass.argTemplate .cut).map (·.subjectProfile) := rfl
+    (LevinClass.roleList .cut).map (·.subjectProfile) := rfl
 
 /-- Pipeline's primary template for break matches the
     event-structure-predicted template. The two independent
@@ -474,16 +475,16 @@ theorem mannerOfMotion_template_derivations_agree :
     it's a class-level semantic property. -/
 theorem amuse_subject_override :
     (derivePrimary (LevinClass.rootEntailments .amuse)).map (·.subjectProfile) ≠
-    (LevinClass.argTemplate .amuse).map (·.subjectProfile) := by decide
+    (LevinClass.roleList .amuse).map (·.subjectProfile) := by decide
 
 /-- Build-class: pipeline and hand-specified agree on subject
     (both full agent), but diverge on object (creation object
     has dependent existence). -/
 theorem build_subject_agrees_object_diverges :
     (derivePrimary (LevinClass.rootEntailments .build)).map (·.subjectProfile) =
-    (LevinClass.argTemplate .build).map (·.subjectProfile) ∧
+    (LevinClass.roleList .build).map (·.subjectProfile) ∧
     (derivePrimary (LevinClass.rootEntailments .build)).bind (·.objectProfile) ≠
-    (LevinClass.argTemplate .build).bind (·.objectProfile) := ⟨rfl, by decide⟩
+    (LevinClass.roleList .build).bind (·.objectProfile) := ⟨rfl, by decide⟩
 
 -- ════════════════════════════════════════════════════
 -- § 7. Root Typology Predictions
@@ -551,7 +552,7 @@ theorem pc_result_stative_difference :
 
 1. **Template determines structural positions**: CAUSE introduces an
    external argument; BECOME introduces an internal argument.
-   The template-level `templateArgTemplate` gives DEFAULT profiles.
+   The template-level `templateRoleList` gives DEFAULT profiles.
 
 2. **Root contributes additional participants**: for activity verbs,
    the root's meaning components (contact, motion) determine whether
@@ -563,14 +564,14 @@ theorem pc_result_stative_difference :
    information not in root entailments or meaning components.
 
 The enriched pipeline covers hit, break, cut, mannerOfMotion classes
-exactly — `deriveEnriched` matches `LevinClass.argTemplate` with no
+exactly — `deriveEnriched` matches `LevinClass.roleList` with no
 override needed. Only amuse, build/create, eat/devour, perception,
 directedMotion, and minimal-rootEntailments classes need overrides.
 
 The full derivational chain:
 
     Root entailments → Template → Template profiles → Root enrichment → Class override
-    (Root.Kinds)  (primary)  (templateArg)     (deriveEnriched)   (LevinClass.argTemplate)
+    (Root.Kinds)  (primary)  (templateArg)     (deriveEnriched)   (LevinClass.roleList)
 -/
 
 end ArgumentStructure.ArgDerivation

@@ -3,7 +3,7 @@ import Linglib.Semantics.Modality.HistoricalAlternatives
 import Linglib.Features.Aktionsart
 import Linglib.Features.Attitudes
 import Linglib.Features.Causation
-import Linglib.Semantics.ArgumentStructure.LevinClass
+import Linglib.Semantics.Verb.Class
 import Linglib.Semantics.ArgumentStructure.MeaningComponents
 import Linglib.Semantics.Modality.ModalTypes
 
