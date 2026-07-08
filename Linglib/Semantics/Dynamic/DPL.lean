@@ -1,5 +1,5 @@
-import Linglib.Semantics.Dynamic.Core.Update
-import Linglib.Semantics.Dynamic.Core.DynamicTy2
+import Linglib.Semantics.Dynamic.Possibility
+import Linglib.Semantics.Dynamic.Ty2
 
 /-!
 # Dynamic Predicate Logic
@@ -343,7 +343,7 @@ theorem forall_isTest {E : Type*} (x : Nat) (φ : DPLRel E) (g h : Nat → E)
 DPL embeds directly into Dynamic Ty2 with `S = Assignment E = Nat → E`.
 DPL assignments ARE Dynamic Ty2 assignments; DPL relations ARE Update meanings.
 The cylindric algebra bridges (`closure(∃) = cylindrify`, `closure(=) = diagonal`)
-live in `Core/Logic/CylindricAlgebra/DynamicSemantics.lean`.
+live in `Studies/GroenendijkStokhof1991.lean` (DPL) and `Studies/Muskens1996.lean` (CDRT).
 -/
 
 /-- DPL dref: projection function for variable n. -/

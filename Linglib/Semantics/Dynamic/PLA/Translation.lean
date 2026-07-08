@@ -1,4 +1,4 @@
-import Linglib.Semantics.Dynamic.Core.Update
+import Linglib.Semantics.Dynamic.Possibility
 import Linglib.Core.Logic.Assignment
 
 /-!

@@ -1,5 +1,5 @@
 import Mathlib.Data.PFun
-import Linglib.Semantics.Dynamic.Connectives.CCP
+import Linglib.Semantics.Dynamic.ContextChange
 import Linglib.Semantics.Presupposition.Context
 
 /-!

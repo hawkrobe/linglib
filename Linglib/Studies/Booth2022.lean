@@ -30,7 +30,7 @@ combine both.
 - `Question.declarative` is exactly Booth's `↓{·}` (Def 11 with a
   singleton input); `Question.info` is exactly `info(·)` (Def 12);
   `Question.alt` is exactly `alt` (Def 13).
-- `IsBilateral` (`Core/Logic/Bilateral/Defs.lean`) supplies the
+- `IsBilateral` (`Core/Logic/Bilateral.lean`) supplies the
   bilateral-substrate predicate. The `BilatInqProp` instance is
   `rfl`-trivial — bilateral negation is bundled-record swap. This is
   the sixth consumer of the `IsBilateral` substrate (BSML, QBSML, BUS,

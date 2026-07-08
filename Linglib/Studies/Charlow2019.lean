@@ -1,6 +1,6 @@
 import Linglib.Semantics.Dynamic.DPL
 import Linglib.Semantics.Dynamic.ContextChange
-import Linglib.Semantics.Dynamic.Effects.HasFiberedLookup
+import Linglib.Semantics.Dynamic.HasFiberedLookup
 import Linglib.Core.Logic.CylindricAlgebra
 
 /-!

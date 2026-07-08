@@ -1,6 +1,6 @@
 import Linglib.Semantics.Dynamic.DiscourseRef
 import Linglib.Semantics.Dynamic.Update
-import Linglib.Semantics.Dynamic.Effects.HasFiberedLookup
+import Linglib.Semantics.Dynamic.HasFiberedLookup
 import Mathlib.Data.Set.Basic
 
 /-!
