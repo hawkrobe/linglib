@@ -1,5 +1,5 @@
 import Linglib.Core.Logic.CylindricAlgebra
-import Linglib.Semantics.Dynamic.CDRT.Basic
+import Linglib.Semantics.Dynamic.CDRT
 import Linglib.Semantics.Dynamic.Ty2
 
 /-!
