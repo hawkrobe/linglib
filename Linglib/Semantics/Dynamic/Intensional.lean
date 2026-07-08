@@ -1,6 +1,6 @@
 import Linglib.Semantics.Dynamic.DiscourseRef
 import Linglib.Semantics.Dynamic.Update
-import Linglib.Semantics.Dynamic.HasFiberedLookup
+import Linglib.Semantics.Dynamic.Accessibility
 import Mathlib.Data.Set.Basic
 
 /-!
@@ -660,53 +660,5 @@ instance instHasPropDrefs_ICDRT :
   pLookup i p := i.prop p
   pVarUp p i j := propVarUp p i j
   pVarUp_other _ _ _ q := λ ⟨hq, _⟩ hne => hq q hne
-
-/-- The generic `Dynamic.Context.localEntailment` agrees definitionally
-with the concrete `localEntailment` on ICDRT. -/
-theorem localEntailment_eq_context (φ : PVar) (v : IVar)
-    (i : ICDRTAssignment W E) :
-    Semantics.Dynamic.Context.localEntailment (W := W) φ v i ↔
-      localEntailment φ v i := Iff.rfl
-
-/-- The generic `Dynamic.Context.veridicalIndiv` agrees definitionally
-with the concrete `veridicalIndiv` on ICDRT. -/
-theorem veridicalIndiv_eq_context (φ_DC : PVar) (v : IVar)
-    (i : ICDRTAssignment W E) :
-    Semantics.Dynamic.Context.veridicalIndiv (W := W) φ_DC v i ↔
-      veridicalIndiv φ_DC v i := Iff.rfl
-
-/-- The generic `Dynamic.Context.subsetReq` agrees definitionally with
-the concrete `subsetReq` on ICDRT. -/
-theorem subsetReq_eq_context (a b : PVar) (i : ICDRTAssignment W E) :
-    Semantics.Dynamic.Context.subsetReq (W := W) a b i ↔
-      subsetReq a b i := Iff.rfl
-
-/-- The generic `Dynamic.Context.decCondition` agrees definitionally
-with the concrete `decCondition` on ICDRT. -/
-theorem decCondition_eq_context (φ_DC φ : PVar) (i : ICDRTAssignment W E) :
-    Semantics.Dynamic.Context.decCondition (W := W) φ_DC φ i ↔
-      decCondition φ_DC φ i := Iff.rfl
-
-/-- Hofmann's `relVarUp` agrees with the generic
-`Dynamic.Context.relVarUp` (modulo set-extensionality on the
-biconditional). The cross-field operation is a *definition* over the
-basic typeclass operations, not a separate axiom. -/
-theorem relVarUp_eq_context (φ : PVar) (v : IVar)
-    (i j : ICDRTAssignment W E) :
-    relVarUp φ v i j ↔
-    Semantics.Dynamic.Context.relVarUp
-      (Ctx := ICDRTAssignment W E) (E := E) φ v i j := by
-  refine ⟨λ ⟨hiv, hbi⟩ => ⟨hiv, ?_⟩, λ ⟨hiv, heq⟩ => ⟨hiv, ?_⟩⟩
-  · ext w
-    show w ∈ j.prop φ ↔
-      Semantics.Dynamic.Context.HasFiberedLookup.iLookup j v w ≠ Entity.star
-    exact hbi w
-  · intro w
-    show w ∈ j.prop φ ↔ j.indiv v w ≠ Entity.star
-    have h₁ : j.prop φ =
-        Semantics.Dynamic.Context.HasPropDrefs.pLookup
-          (Ctx := ICDRTAssignment W E) j φ := rfl
-    rw [h₁, heq]; rfl
-
 
 end Semantics.Dynamic.Core
