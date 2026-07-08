@@ -1,5 +1,5 @@
-import Linglib.Semantics.Dynamic.Connectives.CCP
-import Linglib.Semantics.Dynamic.Core.DynamicTy2
+import Linglib.Semantics.Dynamic.ContextChange
+import Linglib.Semantics.Dynamic.Ty2
 
 /-!
 # Compositional DRT — states, drefs, and boxes
@@ -10,7 +10,7 @@ CDRT instantiates Dynamic Ty2 at the concrete state type
 *register* (discourse referent, his type `se`) is a map *from* states —
 here the projection `dref n` — not the state itself. Boxes (type `s(st)`)
 are `DProp E := Update (State E)`: the relational algebra of
-`Connectives/Defs.lean` specialized to CDRT states, so the connectives
+`Update.lean` specialized to CDRT states, so the connectives
 *are* `dseq`/`test`/`dneg`/`dimpl`/`ddisj` by definition rather than
 re-stipulation. Only `DProp.new` (ℕ-indexed random assignment) is a
 CDRT-specific primitive: the abstract `AssignmentStructure` cannot be

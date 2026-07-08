@@ -1,6 +1,6 @@
 import Linglib.Semantics.Dynamic.PLA.Basic
-import Linglib.Semantics.Dynamic.Core.DynamicTy2
-import Linglib.Semantics.Dynamic.Core.Translation
+import Linglib.Semantics.Dynamic.Ty2
+import Linglib.Semantics.Dynamic.PLA.Translation
 
 /-!
 # PLA Semantics

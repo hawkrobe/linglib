@@ -1,7 +1,7 @@
 import Linglib.Studies.KeshetAbney2024.Bridges
 import Linglib.Studies.KeshetAbney2024.Connectives
 import Linglib.Studies.KeshetAbney2024.Felicity
-import Linglib.Semantics.Dynamic.Connectives.Defs
+import Linglib.Semantics.Dynamic.Update
 import Linglib.Core.Logic.Assignment
 import Linglib.Data.Examples.Heim1982
 import Linglib.Data.Examples.ElliottSudo2025
@@ -53,7 +53,7 @@ finite models.
 (`Core.Assignment`), generic over `E`: `randomAssignAt n` (DPL `[x_n]`), `existsAt n φ`
 (DPL `∃x_n.φ`, CDRT `[u_n]; φ`), `forallAt n φ` (DPL `∀x_n.φ`), `closeAt φ` (DPL `◇φ`).
 `existsAt n` is `dseq` after `randomAssignAt n`; `forallAt n` is `¬∃¬` via `test`/`dneg`.
-The abstract `AssignmentStructure` (`Dynamic/Core/DynamicTy2.lean`) takes drefs `S → E`,
+The abstract `AssignmentStructure` (`Dynamic/Ty2.lean`) takes drefs `S → E`,
 but only projection drefs `fun g => g n` make sense for concrete `Assignment E`.
 
 The DPL comparison below (`dpl_dne_fails_anaphora`) consumes these; they stay in
@@ -1088,7 +1088,7 @@ anaphora.
 The following theorems make this architectural difference explicit.
 
 **Substrate names**: DPL relations are `Update (Assignment E)` from
-`Semantics/Dynamic/Connectives/`. The DPL operator aliases are
+`Semantics/Dynamic/`. The DPL operator aliases are
 substrate operations: `DPLRel.neg φ` is `test (dneg φ)`,
 `DPLRel.exists_ x φ` is `existsAt x φ`. -/
 

@@ -1,5 +1,5 @@
-import Linglib.Semantics.Dynamic.Connectives.CCP
-import Linglib.Semantics.Dynamic.Connectives.PartialCCP
+import Linglib.Semantics.Dynamic.ContextChange
+import Linglib.Semantics.Dynamic.PartialTransformer
 
 /-!
 # Update Semantics

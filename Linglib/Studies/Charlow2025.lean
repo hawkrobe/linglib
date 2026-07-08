@@ -1,4 +1,4 @@
-import Linglib.Semantics.Dynamic.DPL.Basic
+import Linglib.Semantics.Dynamic.DPL
 import Linglib.Core.Logic.Bilateral.Defs
 
 /-!
@@ -37,7 +37,7 @@ formalizes the partition of dynamic-anaphora frameworks into
 Charlow 2025 strengthens the state-threading side: any two lifts that
 satisfy Emb/Inv/Neg over the same substrate δ are isomorphic on the image
 of `liftInterp`. This subsumes the prose "three incompatible DNE solutions"
-table in `Semantics/Dynamic/Connectives/Defs.lean §49-78` for the
+table in `Semantics/Dynamic/Update.lean §49-78` for the
 state-threading row — bilateral and ICDRT-bilateral are not incompatible
 choices, they are isomorphic presentations once the substrate is fixed.
 TTR remains genuinely outside the lift framework (its classical metalanguage

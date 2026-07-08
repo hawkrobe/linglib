@@ -1,4 +1,6 @@
-import Linglib.Semantics.Dynamic.Core.DynamicTy2
+import Linglib.Core.Logic.CylindricAlgebra
+import Linglib.Semantics.Dynamic.CDRT.Basic
+import Linglib.Semantics.Dynamic.Ty2
 
 /-!
 # Muskens (1996): Combining Montague Semantics and Discourse Representation
@@ -286,5 +288,38 @@ def isProper (D : Update S) : Prop :=
 theorem proper_wp_uniform (D : Update S) (h : isProper D) :
     ∀ i₁ i₂, wp D (λ _ => True) i₁ ↔ wp D (λ _ => True) i₂ := by
   simp only [wp_true_eq_closure]; exact h
+
+/-! ### Cylindric-algebra bridges
+
+CDRT's dref introduction and dref equality are cylindric-algebra
+operations under `closure` ([henkin-monk-tarski-1971]) — the CDRT face of
+the correspondence whose DPL face lives in
+`Studies/GroenendijkStokhof1991.lean`. -/
+
+section CylindricAlgebra
+
+open Core.CylindricAlgebra
+open Semantics.Dynamic.CDRT
+
+/-- Discourse referent introduction under closure = cylindrification.
+
+`closure(new n ;; φ) = cₙ(closure(φ))`: introducing dref `n`
+then continuing with `φ` equals cylindrifying `φ` at `n`. -/
+theorem cdrt_new_seq_eq_cylindrify {E : Type*} (n : Nat) (φ : DProp E) :
+    closure (DProp.new n ;; φ) =
+    cylindrify n (closure φ) := by
+  ext g; simp only [closure, DProp.seq, dseq, Relation.Comp, DProp.new, cylindrify]
+  constructor
+  · rintro ⟨o, k, ⟨e, rfl⟩, hφ⟩
+    exact ⟨e, o, by convert hφ using 2; simp [Function.update_apply]⟩
+  · rintro ⟨e, o, hφ⟩
+    exact ⟨o, _, ⟨e, rfl⟩, by convert hφ using 2; simp [Function.update_apply]⟩
+
+/-- CDRT equality condition on drefs = diagonal element. -/
+theorem cdrt_eq_dref_eq_diagonal {E : Type*} (i j : Nat) :
+    eq' (dref i : Dref (State E) E) (dref j) = @diagonal E i j := by
+  ext g; simp only [eq', dref, diagonal]
+
+end CylindricAlgebra
 
 end Muskens1996

@@ -1,5 +1,5 @@
-import Linglib.Semantics.Dynamic.Effects.Bilateral
-import Linglib.Semantics.Dynamic.DPL.Basic
+import Linglib.Semantics.Dynamic.Bilateral.Defs
+import Linglib.Semantics.Dynamic.DPL
 import Linglib.Data.Examples.ElliottSudo2025
 
 /-!
