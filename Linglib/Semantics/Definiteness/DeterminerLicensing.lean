@@ -1,4 +1,4 @@
-import Linglib.Syntax.Determiner.Basic
+import Linglib.Syntax.Category.Determiner.Basic
 import Linglib.Semantics.Definiteness.Description
 
 /-!

@@ -16,7 +16,7 @@ This file is therefore word-class-**neutral**: the [haspelmath-1997] feature dim
 coverage, ontology, morphological basis) and the `Indefinite` *capability* (`[Indefinite α]`) that
 exposes them over any carrier. The capability is the indefinite analogue of mathlib's
 `MonoidHomClass`-over-`MonoidHom`: a carrier-class-specific indefinite object (`IndefinitePronoun`
-in `Syntax/Pronoun/Indefinite.lean`; a future `IndefiniteDeterminer` over `Semantics.Definiteness`'s
+in `Syntax/Category/Pronoun/Indefinite.lean`; a future `IndefiniteDeterminer` over `Semantics.Definiteness`'s
 `Determiner`) supplies one `instance : Indefinite That`, and generic code reads the series data via
 `[Indefinite α]`.
 
@@ -237,7 +237,7 @@ end Indefinite
     contiguous region of the implicational map it covers — over any word-class representation.
 
     Word-class-neutral by design (`Indefinite` ≠ pronoun): the sole current carrier is
-    `Indefinite.IndefinitePronoun` (`Syntax/Pronoun/Indefinite.lean`), but an indefinite determiner
+    `Indefinite.IndefinitePronoun` (`Syntax/Category/Pronoun/Indefinite.lean`), but an indefinite determiner
     (over `Semantics.Definiteness`'s `Determiner`) or pro-adverb supplies its own `instance : Indefinite That`
     and is then read by the same generic `[Indefinite α]` code. This is the indefinite analogue of
     mathlib's `MonoidHomClass`-over-`MonoidHom`/`RingHom`. -/

@@ -8,7 +8,7 @@ forms (*i* proximal / *ũ* distal). AA is Fin-based and freely embeddable.
 
 -/
 
-import Linglib.Syntax.Pronoun.Basic
+import Linglib.Syntax.Category.Pronoun.Basic
 
 namespace Magahi.Pronouns
 

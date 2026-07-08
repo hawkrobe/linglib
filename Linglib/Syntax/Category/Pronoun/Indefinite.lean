@@ -1,15 +1,15 @@
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Fintype.Basic
 import Linglib.Features.Indefinite
-import Linglib.Syntax.Pronoun.Basic
-import Linglib.Syntax.Pronoun.Capabilities
+import Linglib.Syntax.Category.Pronoun.Basic
+import Linglib.Syntax.Category.Pronoun.Capabilities
 
 /-!
 # Indefinite pronouns — the pronominal carrier of the indefinite series
 [haspelmath-1997]
 
 The **pronoun** member of the cross-categorial indefinite series: `IndefinitePronoun` `extends`
-the general `Pronoun` (`Syntax/Pronoun/Basic.lean`) and carries the [haspelmath-1997] series data
+the general `Pronoun` (`Syntax/Category/Pronoun/Basic.lean`) and carries the [haspelmath-1997] series data
 (via `Features/Indefinite.lean`). A form like *someone* is one such object, instantiated in a
 Fragment, that flows through the Pronoun API like any other pronoun.
 

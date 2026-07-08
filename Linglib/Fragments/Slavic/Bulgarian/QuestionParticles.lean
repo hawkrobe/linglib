@@ -1,4 +1,4 @@
-import Linglib.Syntax.Particle.Basic
+import Linglib.Syntax.Category.Particle.Basic
 
 /-!
 # Bulgarian Question Particles

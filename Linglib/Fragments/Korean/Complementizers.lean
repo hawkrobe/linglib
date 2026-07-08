@@ -1,5 +1,5 @@
 import Linglib.Semantics.Verb.Basic
-import Linglib.Syntax.Complementizer.Basic
+import Linglib.Syntax.Category.Complementizer.Basic
 
 /-!
 # Korean Complementizers and Clause-Embedding Verbs

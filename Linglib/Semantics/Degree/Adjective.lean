@@ -4,13 +4,13 @@ import Linglib.Features.ScalarDimension
 import Linglib.Features.Antonymy
 import Linglib.Features.Valence
 import Linglib.Semantics.Degree.Discrete
-import Linglib.Syntax.Adjective.Basic
+import Linglib.Syntax.Category.Adjective.Basic
 
 /-!
 # Gradable adjectives
 
 Adjective-specific degree semantics, layered on the syntactic `Adjective`
-(`Syntax/Adjective`): the `GradableAdjective` lexeme with its derived Kennedy
+(`Syntax/Category/Adjective`): the `GradableAdjective` lexeme with its derived Kennedy
 classification, the two-threshold model for contrary antonyms, multidimensional
 binding ([sassoon-2013]), and the bridge from a concrete `Degree` scale to the
 abstract `PolarMeasure`.
@@ -263,7 +263,7 @@ inductive SpatialConfigType where
   | surfaceOrient   -- flat: orientation relative to reference surface
   deriving DecidableEq, Repr
 
-/-- A **gradable adjective**: the syntactic `Adjective` (`Syntax/Adjective`) refined
+/-- A **gradable adjective**: the syntactic `Adjective` (`Syntax/Category/Adjective`) refined
     with the degree-**semantic** layer that becomes relevant in this module — the
     Kennedy `standardOverride`, and the lexical-semantic facets `antonymRelation`,
     resultative `spatialConfigType` ([levin-2026]), and `evaluativeValence`

@@ -1,5 +1,5 @@
-import Linglib.Syntax.Pronoun.Basic
-import Linglib.Syntax.Pronoun.Capabilities
+import Linglib.Syntax.Category.Pronoun.Basic
+import Linglib.Syntax.Category.Pronoun.Capabilities
 import Linglib.Features.Person.Decomposition
 import Linglib.Fragments.Romance.Clitics
 

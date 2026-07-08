@@ -5,7 +5,7 @@ import Mathlib.Tactic.DeriveFintype
 [hagege-2010] [dryer-2013] [svenonius-2010]
 
 The P-head word class — a **function-marking relator** — as a theory-neutral
-object, sibling to `Syntax/Pronoun` in the closed-class function-word family.
+object, sibling to `Syntax/Category/Pronoun` in the closed-class function-word family.
 The base encodes only the cross-framework criteria that *define* the category;
 every framework (Minimalist cartography, HPSG, CCG, Dependency Grammar,
 cognitive grammar) and every semantic theory (Pantcheva direction, Zwarts path

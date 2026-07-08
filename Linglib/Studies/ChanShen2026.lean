@@ -1,7 +1,7 @@
 import Linglib.Fragments.Singlish.Questions
 import Linglib.Fragments.Mandarin.Questions
 import Linglib.Syntax.Minimalist.Features
-import Linglib.Syntax.ExpressiveModifier
+import Linglib.Syntax.Category.ExpressiveModifier
 import Linglib.Syntax.Minimalist.LeftPeriphery
 import Linglib.Studies.SprouseEtAl2012
 import Linglib.Studies.Ross1967

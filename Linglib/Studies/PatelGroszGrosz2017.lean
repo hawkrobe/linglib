@@ -1,5 +1,5 @@
-import Linglib.Syntax.Pronoun.Basic
-import Linglib.Syntax.Determiner.Basic
+import Linglib.Syntax.Category.Pronoun.Basic
+import Linglib.Syntax.Category.Determiner.Basic
 import Linglib.Fragments.German.Definiteness
 import Linglib.Studies.Schwarz2009
 import Linglib.Semantics.Presupposition.PhiFeatures
@@ -20,7 +20,7 @@ German DEMs. So here *der/die/das* are **strong-article `PersonalPronoun`s**, no
 separate demonstrative type. The genuinely deictic objects are a different matter: the
 `Description.demonstrative` denotation, and the deictic demonstrative *pronoun*
 `DemonstrativePronoun` (German *dieser*, English *this*), which carries a `Features.Deixis.Feature`
-— *der* does **not**, so it is no `Demonstrative` (`Syntax/Pronoun/Demonstrative.lean`). PER/DEM
+— *der* does **not**, so it is no `Demonstrative` (`Syntax/Category/Pronoun/Demonstrative.lean`). PER/DEM
 (article strength) is thus orthogonal to demonstrativehood (deixis). The PER/DEM distribution then
 follows from **structural economy**
 (*Minimize DP!*): PER, being less structured, is the default; DEM is licensed only

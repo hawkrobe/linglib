@@ -1,4 +1,4 @@
-import Linglib.Syntax.Pronoun.Basic
+import Linglib.Syntax.Category.Pronoun.Basic
 
 /-! # San Juan Atitán Mam Pronouns
 

@@ -1,4 +1,4 @@
-import Linglib.Syntax.Pronoun.IndefiniteParadigm
+import Linglib.Syntax.Category.Pronoun.IndefiniteParadigm
 
 /-!
 # Degano & Aloni 2025: 7-type team-semantic typology of indefinites

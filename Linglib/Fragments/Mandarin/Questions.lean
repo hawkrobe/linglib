@@ -1,5 +1,5 @@
 import Linglib.Syntax.Question
-import Linglib.Syntax.ExpressiveModifier
+import Linglib.Syntax.Category.ExpressiveModifier
 
 /-!
 # Mandarin Wh-Question Formation

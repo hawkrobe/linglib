@@ -1,4 +1,4 @@
-import Linglib.Syntax.Particle.Capabilities
+import Linglib.Syntax.Category.Particle.Capabilities
 import Linglib.Fragments.Slavic.Czech.Particles
 import Linglib.Semantics.Negation.CzechNegation
 import Linglib.Studies.StankovaSimik2025

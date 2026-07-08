@@ -7,7 +7,7 @@ import Linglib.Core.Order.Comparison
 import Linglib.Semantics.Exhaustification.Chain
 import Linglib.Semantics.Degree.Predicate
 import Linglib.Semantics.Quantification.Quantifier
-import Linglib.Syntax.Numeral.Basic
+import Linglib.Syntax.Category.Numeral.Basic
 import Mathlib.Order.Interval.Set.Basic
 
 /-!

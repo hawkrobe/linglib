@@ -12,7 +12,7 @@ person analogue of `HasNumber` (`Features/Number/Capabilities.lean`).
 is the agreement-checking relation. Carriers that store UD realization
 (`UD.MorphFeatures`) lift through `Person.fromUD`; carriers that store a
 (UD person, clusivity) pair recover the quadripartition cell
-(`Syntax/Pronoun/Capabilities.lean`).
+(`Syntax/Category/Pronoun/Capabilities.lean`).
 -/
 
 set_option autoImplicit false

@@ -9,7 +9,7 @@ freely embeddable.
 
 -/
 
-import Linglib.Syntax.Pronoun.Basic
+import Linglib.Syntax.Category.Pronoun.Basic
 
 namespace Hindi.Pronouns
 

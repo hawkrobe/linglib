@@ -1,6 +1,6 @@
 import Linglib.Features.Definiteness
 import Linglib.Features.Deixis
-import Linglib.Syntax.Determiner.Basic
+import Linglib.Syntax.Category.Determiner.Basic
 import Linglib.Semantics.Definiteness.Maximality
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Semantics.Kinds.NominalMappingParameter

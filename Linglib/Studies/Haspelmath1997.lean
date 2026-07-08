@@ -3,7 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Syntax.Pronoun.IndefiniteParadigm
+import Linglib.Syntax.Category.Pronoun.IndefiniteParadigm
 import Linglib.Data.WALS.Features.F46A
 import Linglib.Fragments.English.Indefinites
 import Linglib.Fragments.German.Indefinites
@@ -75,7 +75,7 @@ one (English, German, Russian). `Studies/Chierchia2006.lean` consumes the
 `english`/`italian`/`german`/`mandarin` paradigms. Latin is absent from
 F46A's 326-language sample; German and Kannada have SK/SU/NS gaps, so no
 syncretism witnesses. Substrate: `Features/Indefinite.lean` (map,
-morphological bases) and `Syntax/Pronoun/IndefiniteParadigm.lean`
+morphological bases) and `Syntax/Category/Pronoun/IndefiniteParadigm.lean`
 (paradigms, WALS converters, the decidable contiguity / coverage /
 disjointness predicates).
 -/

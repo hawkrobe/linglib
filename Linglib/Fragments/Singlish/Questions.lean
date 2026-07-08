@@ -1,6 +1,6 @@
 import Linglib.Syntax.Question
 import Linglib.Studies.ShenHuang2026
-import Linglib.Syntax.ExpressiveModifier
+import Linglib.Syntax.Category.ExpressiveModifier
 
 /-!
 # Singlish Question Formation Strategies

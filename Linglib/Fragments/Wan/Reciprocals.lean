@@ -1,4 +1,4 @@
-import Linglib.Syntax.Pronoun.Basic
+import Linglib.Syntax.Category.Pronoun.Basic
 import Linglib.Features.Logophoricity
 
 /-!

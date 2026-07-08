@@ -8,7 +8,7 @@ import Linglib.Features.WordOrder
 
 Framework-agnostic enum for storing per-language adposition order
 (WALS Ch 85). The adposition-order facet of the bare-root `Adposition`
-namespace (sibling of `Syntax/Adposition/Basic.lean`'s PP structure);
+namespace (sibling of `Syntax/Category/Adposition/Basic.lean`'s PP structure);
 both `Fragments/` (per-language profiles) and `Studies/` (cross-linguistic
 generalisations) import it.
 

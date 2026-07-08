@@ -9,7 +9,7 @@ import Linglib.Syntax.Minimalist.Agree.Cyclic
 import Linglib.Syntax.Minimalist.Phi.Recursion
 import Linglib.Syntax.Minimalist.Phi.Lattice
 import Linglib.Studies.Corbett2000
-import Linglib.Syntax.Pronoun.Basic
+import Linglib.Syntax.Category.Pronoun.Basic
 import Linglib.Fragments.Tamil.Pronouns
 
 /-!

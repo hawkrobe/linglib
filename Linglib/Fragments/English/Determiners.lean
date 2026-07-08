@@ -1,5 +1,5 @@
 import Linglib.Data.UD.Basic
-import Linglib.Syntax.Determiner.Basic
+import Linglib.Syntax.Category.Determiner.Basic
 import Linglib.Semantics.Quantification.Quantifier
 import Linglib.Semantics.Quantification.Lexicon
 
@@ -9,7 +9,7 @@ import Linglib.Semantics.Quantification.Lexicon
 
 English-specific determiner lexicon. Each entry is *marked* like a `Pronoun`
 (a decidable record carrying only the morphosyntax synonyms diverge on) and
-typed by the standard determiner taxonomy in `Syntax/Determiner/Basic.lean`:
+typed by the standard determiner taxonomy in `Syntax/Category/Determiner/Basic.lean`:
 
 - the genuinely quantificational words (every, some, no, most, few, half, all,
   each, many, both, neither) are `Syntax.Determiner.Quantifier`;

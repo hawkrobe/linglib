@@ -8,7 +8,7 @@ import Linglib.Features.Number.Basic
 
 The typeclass mixin for carriers that bear grammatical number — the number
 axis of the capability tower over lexical carriers (cf. `Proform`/`Bound`/
-`Clusive` in `Syntax/Pronoun/Capabilities.lean`). A consumer (agreement
+`Clusive` in `Syntax/Category/Pronoun/Capabilities.lean`). A consumer (agreement
 checker, resolution, semantics) requires `[HasNumber α]` and works over any
 representation: a UD feature bundle, a `Word`, a `Pronoun`, an agreement
 paradigm cell.
@@ -19,7 +19,7 @@ is a wildcard for agreement, not a default singular.
 
 Instances live with their carriers (mathlib-style): `UD.MorphFeatures` here
 (its type is below this file); `Word` in `Morphology/Word.lean`; `Pronoun`/
-`PersonalPronoun` in `Syntax/Pronoun/Capabilities.lean`; paradigm `Cell` in
+`PersonalPronoun` in `Syntax/Category/Pronoun/Capabilities.lean`; paradigm `Cell` in
 `Syntax/Agreement/Paradigm.lean`.
 
 Named `HasNumber`, not `Numbered`: the bare name is taken by the carrier

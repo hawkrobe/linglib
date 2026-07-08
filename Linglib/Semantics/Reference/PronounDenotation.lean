@@ -1,4 +1,4 @@
-import Linglib.Syntax.Pronoun.Basic
+import Linglib.Syntax.Category.Pronoun.Basic
 import Linglib.Semantics.Reference.Nominal
 import Linglib.Semantics.Presupposition.PhiFeatures
 import Linglib.Semantics.Intensional.Variables

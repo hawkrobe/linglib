@@ -1,5 +1,5 @@
 import Linglib.Data.UD.Basic
-import Linglib.Syntax.Determiner.Basic
+import Linglib.Syntax.Category.Determiner.Basic
 import Linglib.Fragments.English.Determiners
 
 /-! # Japanese Quantifier Fragment

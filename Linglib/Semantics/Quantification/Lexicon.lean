@@ -9,7 +9,7 @@ Theory-level descriptive enums for the typological classification of
 quantifiers/determiners, shared across language fragments and the studies
 that consume the textbook-consensus B&C Table II metadata. The lexical
 *entry* record is gone: a quantifier's lexical marking is now
-`Syntax.Determiner.Quantifier` (`Syntax/Determiner/Basic.lean`); these
+`Syntax.Determiner.Quantifier` (`Syntax/Category/Determiner/Basic.lean`); these
 enums survive only as the typological *labels* that record metadata
 (force, monotonicity, weak/strong strength) reads off, and as the
 parameter type of the GQT `gqtMeaning` operator.

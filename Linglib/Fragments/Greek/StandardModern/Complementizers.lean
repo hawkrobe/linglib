@@ -1,5 +1,5 @@
 import Linglib.Semantics.Verb.Basic
-import Linglib.Syntax.Complementizer.Basic
+import Linglib.Syntax.Category.Complementizer.Basic
 
 /-!
 # Modern Greek Complementizers [christidis-1982] [roussou-2010]

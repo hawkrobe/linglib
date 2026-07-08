@@ -122,7 +122,7 @@ An answer particle assigns a value to the question's [±Pol] variable
 and is lexically restricted to antecedent contexts of certain
 polarities. Reversal-hood is derived, not stored. Answer particles are
 pro-sentential — deliberately outside the host-associated
-`Syntax/Particle` core. -/
+`Syntax/Category/Particle` core. -/
 
 /-- An answer particle: assigns a polarity, responds to antecedent
 contexts of the recorded polarities. -/

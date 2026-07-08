@@ -1,6 +1,6 @@
 import Linglib.Data.WALS.Features.F46A
 import Linglib.Features.Indefinite
-import Linglib.Syntax.Pronoun.Indefinite
+import Linglib.Syntax.Category.Pronoun.Indefinite
 
 /-!
 # Indefinite-pronoun typology — cross-linguistic generalizations
@@ -9,7 +9,7 @@ import Linglib.Syntax.Pronoun.Indefinite
 Typological generalizations *over* indefinite pronouns. The lexical object itself —
 `IndefinitePronoun` and its [haspelmath-1997] feature taxonomy (`HaspelmathFunction`,
 `OntologicalCategory`, `MorphologicalBasis`) — is an *object*, and lives in the pronoun layer at
-`Syntax/Pronoun/Indefinite.lean`; this file imports it and adds the cross-linguistic apparatus a
+`Syntax/Category/Pronoun/Indefinite.lean`; this file imports it and adds the cross-linguistic apparatus a
 typological reference grammar records: a language's full paradigm, the WALS F46A bridge, and the
 SK/SU/NS syncretism typology.
 

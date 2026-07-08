@@ -1,4 +1,4 @@
-import Linglib.Syntax.Particle.Basic
+import Linglib.Syntax.Category.Particle.Basic
 
 /-!
 # Hindi-Urdu Interrogative Particles

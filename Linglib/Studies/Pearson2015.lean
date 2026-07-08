@@ -1,7 +1,7 @@
 import Linglib.Semantics.Intensional.Rigidity
 import Linglib.Semantics.Reference.Acquaintance
 import Linglib.Features.Logophoricity
-import Linglib.Syntax.Pronoun.Logophoric
+import Linglib.Syntax.Category.Pronoun.Logophoric
 
 /-!
 # Pearson (2015): The interpretation of the logophoric pronoun in Ewe
@@ -10,7 +10,7 @@ import Linglib.Syntax.Pronoun.Logophoric
 
 [pearson-2015] (*Nat Lang Semantics* 23(2)) gives the definitive modern semantics of the
 Ewe logophoric pronoun *yè* — the carrier `ye : LogophoricPronoun`
-(`Syntax/Pronoun/Logophoric.lean`, `requiredRole = .self`). The traditional Heim & von
+(`Syntax/Category/Pronoun/Logophoric.lean`, `requiredRole = .self`). The traditional Heim & von
 Stechow view (after [chierchia-1990]) is that *yè* bears an `[log]` feature that must be
 bound by the **individual abstractor** an attitude verb introduces in the embedded left
 periphery — so *yè* obligatorily occurs under an attitude predicate and takes the **attitude
