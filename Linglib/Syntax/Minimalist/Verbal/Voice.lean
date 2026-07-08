@@ -1,6 +1,7 @@
 import Linglib.Syntax.Minimalist.Agree.Basic
 import Linglib.Syntax.Minimalist.Verbal.Decomposition
 import Linglib.Semantics.ArgumentStructure.Linking
+import Linglib.Syntax.Voice.Alternation
 
 /-!
 # Voice Head Flavors
@@ -74,6 +75,22 @@ inductive VoiceFlavor where
   | reflexive    -- [+θ, +D]: agent binds the internal argument (Romance se)
   | experiencer  -- [+θ, +D]: introduces an experiencer external argument (psych causatives)
   deriving DecidableEq, Repr
+
+/-- The coding-frame operation each Voice flavor realizes, projecting the
+    Minimalist head onto [creissels-2025]'s valency alternations
+    (`Syntax/Voice/Alternation.lean`): passive Voice denucleativizes A,
+    antipassive denucleativizes P, reflexive/causer/impersonal map to
+    their typological counterparts. `none` for flavors that leave the
+    coding frame intact (agentive, experiencer) or whose effect is not a
+    valency operation (expletive middle). -/
+def VoiceFlavor.alternation : VoiceFlavor → Option _root_.Voice.ValencyAlternation
+  | .causer      => some _root_.Voice.causativization
+  | .nonThematic => some _root_.Voice.decausativization
+  | .impersonal  => some _root_.Voice.iPassivization
+  | .passive     => some _root_.Voice.passivization
+  | .antipassive => some _root_.Voice.antipassivization
+  | .reflexive   => some _root_.Voice.reflexivization
+  | .agentive | .expletive | .experiencer => none
 
 /-- The default phasehood for each Voice flavor under the
     Collins-2005 / Chomsky-2001 baseline: agentive, causer, reflexive,

@@ -1,6 +1,6 @@
 import Linglib.Fragments.Mayan.Yukatek.VerbClasses
 import Linglib.Semantics.Lexical.EventStructure
-import Linglib.Syntax.ArgumentStructure.Alternation
+import Linglib.Syntax.Voice.Alternation
 
 /-!
 # Bohnemeyer 2004: Split intransitivity, linking, and lexical representation
@@ -363,12 +363,12 @@ theorem inactive_split_by_causation :
 /-! ### Bridge to detransitivization
 
 The three Yukatek detransitivizations are instances of the cross-linguistic
-valency-alternation typology (`Syntax/ArgumentStructure/Alternation.lean`).
+valency-alternation typology (`Syntax/Voice/Alternation.lean`).
 That substrate keeps passive and anticausative distinct by the fate of the
 initial A — passive *denucleativizes* it (retained in participant structure as
 a possible oblique agent), anticausative *suppresses* it (removed entirely). -/
 
-open Syntax.ArgumentStructure.Alternation
+open Voice
   (ValencyAlternation antipassivization decausativization passivization)
 
 /-- Detransitivization type in Yukatek, from rules (28)–(30).

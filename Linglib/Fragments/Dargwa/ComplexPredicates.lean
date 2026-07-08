@@ -1,4 +1,4 @@
-import Linglib.Syntax.ArgumentStructure.Alternation
+import Linglib.Syntax.Voice.Alternation
 import Linglib.Semantics.Verb.Root.Template
 
 /-!
@@ -214,8 +214,8 @@ theorem tr_causative_elat_causee :
 
     This maps to [creissels-2025]'s `antipassivization`: A is
     maintained (becomes S), P is denucleativized. -/
-def antipassive : Syntax.ArgumentStructure.Alternation.ValencyAlternation :=
-  Syntax.ArgumentStructure.Alternation.antipassivization
+def antipassive : Voice.ValencyAlternation :=
+  Voice.antipassivization
 
 /-- Dargwa P-lability: many transitive verbs can be used intransitively
     without morphological marking ([sumbatova-2021] §4.7.3, ex. 87).
@@ -225,14 +225,14 @@ def antipassive : Syntax.ArgumentStructure.Alternation.ValencyAlternation :=
 
     Maps to [creissels-2025]'s `P_ambitransitivity`: uncoded
     decausativization where S = initial P. -/
-def pLability : Syntax.ArgumentStructure.Alternation.AmbitransitivityType :=
+def pLability : Voice.AmbitransitivityType :=
   .P_ambitransitivity
 
 /-- Dargwa causative (-aq) applied to intransitive bases maps to
     Creissels' causativization: S is maintained as P, a new A (causer)
     is introduced. -/
-def causativeAlternation : Syntax.ArgumentStructure.Alternation.ValencyAlternation :=
-  Syntax.ArgumentStructure.Alternation.causativization
+def causativeAlternation : Voice.ValencyAlternation :=
+  Voice.causativization
 
 /-- The antipassive is valency-decreasing (P is denucleativized). -/
 theorem antipassive_decreases :

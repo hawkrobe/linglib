@@ -2785,7 +2785,6 @@ import Linglib.Syntax.Agreement.Controller
 import Linglib.Syntax.Agreement.Paradigm
 import Linglib.Syntax.Anaphora.Basic
 import Linglib.Syntax.Anaphora.Diagnostic
-import Linglib.Syntax.ArgumentStructure.Alternation
 import Linglib.Syntax.AuxiliaryVerbs
 import Linglib.Syntax.Binding.Basic
 import Linglib.Syntax.Binding.Semantics
@@ -2936,6 +2935,7 @@ import Linglib.Syntax.RelativeClause.WALS
 import Linglib.Syntax.SynGraph
 import Linglib.Syntax.Tree.Basic
 import Linglib.Syntax.Tree.Cat
+import Linglib.Syntax.Voice.Alternation
 import Linglib.Syntax.Voice.Basic
 import Linglib.Syntax.Voice.Middle
 import Linglib.Syntax.WordGrammar.Inheritance.Basic

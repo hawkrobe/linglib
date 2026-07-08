@@ -1,7 +1,7 @@
 import Linglib.Semantics.Causation.Morphological
 import Linglib.Semantics.Lexical.EventStructure
 import Linglib.Fragments.Spanish.Predicates
-import Linglib.Syntax.ArgumentStructure.Alternation
+import Linglib.Syntax.Voice.Alternation
 
 -- ============================================================================
 -- § 0: Monotonicity Hypothesis Substrate
@@ -156,7 +156,7 @@ open Causation.Morphological
 open Semantics.Lexical.EventStructure
 open KoontzGarboden2009.Monotonicity
 open Minimalist (VerbHead)
-open Syntax.ArgumentStructure.Alternation
+open Voice
 
 -- ════════════════════════════════════════════════════
 -- § 1. The Reflexivization Operator (§2.2)

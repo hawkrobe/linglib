@@ -3,7 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Syntax.ArgumentStructure.Alternation
+import Linglib.Syntax.Voice.Alternation
 
 /-!
 # Reciprocal constructions: morphosyntactic typology
@@ -18,7 +18,7 @@ The exponence primitive is the marker (`Marker`): form, strategy, and polysemy
 readings. The WALS Ch 106 value is computed from a language's marker inventory
 (`ofInventory`), `isNominal` projects from the coding site, and the default
 valency effect derives from the coding-frame operation a strategy realizes
-(`Syntax.ArgumentStructure.Alternation.reciprocalization`).
+(`Voice.reciprocalization`).
 
 ## Main definitions
 
@@ -102,7 +102,7 @@ def Strategy.codingSite : Strategy → CodingSite
 def Strategy.isNominal (s : Strategy) : Bool :=
   s.codingSite == .argument
 
-open Syntax.ArgumentStructure.Alternation in
+open Voice in
 /-- The coding-frame operation a strategy realizes: grammatical verb-marking
 strategies apply [creissels-2025]'s denucleativizing `reciprocalization`. -/
 def Strategy.alternation : Strategy → Option ValencyAlternation
