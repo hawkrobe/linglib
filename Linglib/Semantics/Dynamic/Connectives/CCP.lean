@@ -565,17 +565,17 @@ theorem subset_subsistsIn {s s' : InfoState W E} (h : s ⊆ s') : s ⪯ s' := by
   intro p hp
   exact ⟨p, h hp, rfl, λ _ _ => rfl⟩
 
-/-- State s supports proposition φ iff φ holds at all worlds in s. -/
-def supports (s : InfoState W E) (φ : W → Bool) : Prop :=
-  ∀ p ∈ s, φ p.world
+/-- State s supports proposition φ iff φ holds at all worlds in s:
+`supportOf` at the world-evaluation satisfaction relation. -/
+def supports (s : InfoState W E) (φ : W → Prop) : Prop :=
+  supportOf (λ p ψ => ψ p.world) s φ
 
 scoped notation:50 s " ⊫ " φ => InfoState.supports s φ
 
 /-- Support is preserved by subset. -/
 theorem supports_mono {s s' : InfoState W E} (h : s ⊆ s')
-    (φ : W → Bool) (hsupp : s' ⊫ φ) : s ⊫ φ := by
-  intro p hp
-  exact hsupp p (h hp)
+    (φ : W → Prop) (hsupp : s' ⊫ φ) : s ⊫ φ :=
+  support_mono _ s' s φ h hsupp
 
 end InfoState
 
