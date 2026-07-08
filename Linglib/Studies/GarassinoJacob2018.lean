@@ -1,7 +1,7 @@
 import Linglib.Semantics.Polarity.Marking
 import Linglib.Fragments.Italian.PolarityMarking
 import Linglib.Fragments.Spanish.PolarityMarking
-import Linglib.Fragments.French.PolarityMarking
+import Linglib.Fragments.Romance.French.PolarityMarking
 
 /-!
 # Garassino & Jacob (2018) [garassino-jacob-2018]

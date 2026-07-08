@@ -4,7 +4,7 @@ import Linglib.Studies.Coon2019
 import Linglib.Fragments.Chuj.ModalIndefinites
 import Linglib.Fragments.Spanish.ModalIndefinites
 import Linglib.Fragments.German.ModalIndefinites
-import Linglib.Fragments.French.ModalIndefinites
+import Linglib.Fragments.Romance.French.ModalIndefinites
 import Linglib.Fragments.Italian.ModalIndefinites
 
 /-!

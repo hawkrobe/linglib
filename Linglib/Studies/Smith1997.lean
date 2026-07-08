@@ -3,7 +3,7 @@ import Linglib.Semantics.Aspect.Basic
 import Linglib.Semantics.Aspect.Composition
 import Linglib.Features.Aktionsart
 import Linglib.Fragments.English.TenseAspect
-import Linglib.Fragments.French.TenseAspect
+import Linglib.Fragments.Romance.French.TenseAspect
 import Linglib.Fragments.Mandarin.TenseAspect
 import Linglib.Features.MassCount
 
