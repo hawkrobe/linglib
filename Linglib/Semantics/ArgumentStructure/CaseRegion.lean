@@ -1,4 +1,5 @@
-import Linglib.Semantics.ArgumentStructure.Agentivity.Defs
+import Linglib.Semantics.ArgumentStructure.ParticipantType
+import Mathlib.Order.Interval.Set.OrdConnected
 import Linglib.Features.Case.Basic
 
 /-!
@@ -7,12 +8,13 @@ import Linglib.Features.Case.Basic
 [grimm-2011] §4's central claim: a core case marker corresponds to a
 **connected region** of the agentivity lattice, spreading outwards from the
 maximal agent and maximal patient nodes (Figs. 6–7). This file assigns each
-`ParticipantType` its case region (`ParticipantType.toCaseRegion`), maps regions to
-morphological cases under accusative and ergative alignment, and sharpens
-the connectedness claim: each core region is an order **interval** anchored
-at its pole (`toCaseRegion_eq_nomErg_iff` etc.), with order-convexity a
-corollary. The dative region unifies recipients, experiencers, and second
-arguments of two-place communication/service verbs (§5.1, Fig. 7).
+`ParticipantType` its case region (`ParticipantType.toCaseRegion`), maps
+regions to morphological cases under accusative and ergative alignment, and
+sharpens the connectedness claim: each core region is an order **interval**
+anchored at its pole (`toCaseRegion_eq_nomErg_iff` etc.), so connectedness
+is mathlib's `Set.OrdConnected`, inherited from `Set.Ici`/`Set.Icc`. The
+dative region unifies recipients, experiencers, and second arguments of
+two-place communication/service verbs (§5.1, Fig. 7).
 -/
 
 namespace ArgumentStructure
@@ -115,47 +117,63 @@ theorem ParticipantType.toCaseRegion_eq_dative_iff (n : ParticipantType) :
       n ≤ ⟨.mk true true false true, .quPersBeginning⟩ := by
   revert n; decide
 
-/-- A predicate on a partial order is **order-convex** if it is closed
-    under intervals: whenever `P a` and `P b` and `a ≤ x ≤ b`, also `P x`.
-    This is the standard order-theoretic capture of "connected region" in
-    a finite lattice. -/
-def IsOrderConvex {α : Type*} [LE α] (P : α → Prop) : Prop :=
-  ∀ ⦃a b x : α⦄, P a → P b → a ≤ x → x ≤ b → P x
+/-! ### Connectedness
 
-/-- Connectedness of NOM/ERG, from the interval form. -/
-theorem nomErg_orderConvex :
-    IsOrderConvex (fun n : ParticipantType => n.toCaseRegion = .nomErg) := by
-  intro a b x ha hb hax hxb
-  rw [ParticipantType.toCaseRegion_eq_nomErg_iff] at ha ⊢
-  exact ha.trans hax
+With the interval characterizations, the regions are literally `Set.Ici` /
+`Set.Icc`, so connectedness is mathlib's `Set.OrdConnected`. -/
+
+/-- The NOM/ERG region as a set: the up-set of the minimal instigator. -/
+theorem setOf_nomErg_eq_Ici :
+    {n : ParticipantType | n.toCaseRegion = .nomErg}
+      = Set.Ici minimalInstigator :=
+  Set.ext ParticipantType.toCaseRegion_eq_nomErg_iff
+
+/-- The ACC/ABS region as a set: the interval from the maximal patient to
+    the contact-verb patient. -/
+theorem setOf_accAbs_eq_Icc :
+    {n : ParticipantType | n.toCaseRegion = .accAbs}
+      = Set.Icc maximalPatient TransitivityRank.contact.patientType :=
+  Set.ext ParticipantType.toCaseRegion_eq_accAbs_iff
+
+/-- The dative region as a set: the interval above `sentientNonInstigator`. -/
+theorem setOf_dative_eq_Icc :
+    {n : ParticipantType | n.toCaseRegion = .dative}
+      = Set.Icc sentientNonInstigator
+          ⟨.mk true true false true, .quPersBeginning⟩ :=
+  Set.ext ParticipantType.toCaseRegion_eq_dative_iff
+
+/-- Connectedness of NOM/ERG (Grimm's abstract), from the interval form. -/
+theorem ordConnected_nomErg :
+    {n : ParticipantType | n.toCaseRegion = .nomErg}.OrdConnected := by
+  rw [setOf_nomErg_eq_Ici]; exact Set.ordConnected_Ici
 
 /-- Connectedness of ACC/ABS, from the interval form. -/
-theorem accAbs_orderConvex :
-    IsOrderConvex (fun n : ParticipantType => n.toCaseRegion = .accAbs) := by
-  intro a b x ha hb hax hxb
-  rw [ParticipantType.toCaseRegion_eq_accAbs_iff] at ha hb ⊢
-  exact ⟨ha.1.trans hax, hxb.trans hb.2⟩
+theorem ordConnected_accAbs :
+    {n : ParticipantType | n.toCaseRegion = .accAbs}.OrdConnected := by
+  rw [setOf_accAbs_eq_Icc]; exact Set.ordConnected_Icc
 
 /-- Connectedness of the dative, from the interval form. -/
-theorem dative_orderConvex :
-    IsOrderConvex (fun n : ParticipantType => n.toCaseRegion = .dative) := by
-  intro a b x ha hb hax hxb
-  rw [ParticipantType.toCaseRegion_eq_dative_iff] at ha hb ⊢
-  exact ⟨ha.1.trans hax, hxb.trans hb.2⟩
+theorem ordConnected_dative :
+    {n : ParticipantType | n.toCaseRegion = .dative}.OrdConnected := by
+  rw [setOf_dative_eq_Icc]; exact Set.ordConnected_Icc
 
-/-- Counterexample showing `oblique` is NOT order-convex. With
+/-- Counterexample showing `oblique` is NOT connected. With
     `a = ⟨{motion}, .quPersBeginning⟩` and `b = ⟨{motion, sentience, instigation},
     .quPersBeginning⟩`, both oblique, the in-between node
     `⟨{motion, sentience}, .quPersBeginning⟩` is dative. This is consistent with
-    Grimm (p.533): oblique is the residual region between maximal agent and
-    maximal patient, not a positively-characterised connected case. -/
-theorem oblique_not_orderConvex :
-    ¬ IsOrderConvex (fun n : ParticipantType => n.toCaseRegion = .oblique) := by
+    Grimm (p.532–533): oblique is the residual region between maximal agent
+    and maximal patient, not a positively-characterised connected case. -/
+theorem not_ordConnected_oblique :
+    ¬ {n : ParticipantType | n.toCaseRegion = .oblique}.OrdConnected := by
   intro h
-  have habs := h (a := ⟨.mk false false false true, .quPersBeginning⟩)
-                 (b := ⟨.mk false true true true, .quPersBeginning⟩)
-                 (x := ⟨.mk false true false true, .quPersBeginning⟩)
-                 (by decide) (by decide) (by decide) (by decide)
+  have habs := h.out
+    (x := ⟨.mk false false false true, .quPersBeginning⟩)
+    (by simp only [Set.mem_setOf_eq]; decide)
+    (y := ⟨.mk false true true true, .quPersBeginning⟩)
+    (by simp only [Set.mem_setOf_eq]; decide)
+    (show (⟨.mk false true false true, .quPersBeginning⟩ : ParticipantType)
+        ∈ Set.Icc _ _ from ⟨by decide, by decide⟩)
+  simp only [Set.mem_setOf_eq] at habs
   exact absurd habs (by decide)
 
 end ArgumentStructure

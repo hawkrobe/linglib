@@ -1,4 +1,4 @@
-import Linglib.Semantics.ArgumentStructure.EntailmentProfile
+import Linglib.Semantics.ArgumentStructure.Projection
 import Linglib.Semantics.ArgumentStructure.Linking
 import Linglib.Semantics.Lexical.LevinTheory
 

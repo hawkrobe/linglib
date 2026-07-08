@@ -1,5 +1,5 @@
-import Linglib.Semantics.ArgumentStructure.Agentivity.CaseRegions
-import Linglib.Semantics.ArgumentStructure.EntailmentProfile
+import Linglib.Semantics.ArgumentStructure.CaseRegion
+import Linglib.Semantics.ArgumentStructure.Projection
 import Linglib.Semantics.Lexical.LevinClassProfiles
 import Linglib.Studies.Aissen2003
 import Linglib.Studies.Dowty1991
@@ -8,7 +8,7 @@ import Linglib.Studies.Dowty1991
 # Semantics of Case ([grimm-2011])
 
 Study file for [grimm-2011]: canonical verbs mapped through the agentivity
-lattice (`Semantics/ArgumentStructure/Agentivity/`) to case regions, a
+lattice (`Semantics/ArgumentStructure/`) to case regions, a
 lattice-derived account of differential object marking checked against the
 [aissen-2003] DOM profiles, and the paper's engagement with [dowty-1991]'s
 Argument Selection Principle. The DOM substrate reconstructs the
