@@ -22,13 +22,13 @@ open Pronoun Reciprocal
 
 /-- друг друга *drug druga* — bipartite reciprocal 'other other-ACC'
     ([nordlinger-2023] ex. 9). -/
-def drugDruga : ReciprocalMarker :=
+def drugDruga : Marker :=
   { form := "drug druga", script := some "друг друга"
   , strategy := .bipartiteNP }
 
 /-- -ся *-sja* — verbal postfix, reflexive-identical reciprocal uses
     ([nordlinger-2023] ex. 31). -/
-def sja : ReciprocalMarker :=
+def sja : Marker :=
   { form := "-sja", script := some "-ся", strategy := .verbalAffix
   , readings := [.reciprocal, .reflexive] }
 
@@ -42,6 +42,6 @@ theorem recip_distinct_from_reflexive :
     drugDruga.form ≠ sebja.form := by decide
 
 /-- Marker inventory, primary strategy first. -/
-def markers : List ReciprocalMarker := [drugDruga, sja]
+def markers : List Marker := [drugDruga, sja]
 
 end Russian.Reciprocals

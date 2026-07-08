@@ -24,12 +24,12 @@ namespace German.Reciprocals
 open Reciprocal
 
 /-- einander — dedicated reciprocal pronoun. -/
-def einander : ReciprocalMarker :=
+def einander : Marker :=
   { form := "einander", strategy := .recipPronoun }
 
 /-- sich — reflexive pronoun in reciprocal use ([siloni-2012] fn. 13
     treats *sich*-reciprocals as syntactic reciprocal verbs). -/
-def sich : ReciprocalMarker :=
+def sich : Marker :=
   { form := "sich", strategy := .recipPronoun
   , readings := [.reciprocal, .reflexive] }
 
@@ -39,6 +39,6 @@ theorem einander_distinct_from_sich :
 
 /-- Marker inventory: dedicated *einander* plus reflexive-identical
     *sich* — jointly the WALS "mixed" configuration. -/
-def markers : List ReciprocalMarker := [einander, sich]
+def markers : List Marker := [einander, sich]
 
 end German.Reciprocals

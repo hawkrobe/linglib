@@ -51,11 +51,11 @@ open Reciprocal
 /-- The V-lái-V-qù compound as a reciprocal marker (form derived from
     `daLaiDaQu`). The adverbial *hùxiāng* is outside the strategy
     vocabulary ([evans-2008]'s adverbial strategy). -/
-def compound : ReciprocalMarker :=
+def compound : Marker :=
   { form := daLaiDaQu.toForm, script := daLaiDaQu.script
   , strategy := .compoundVerb }
 
 /-- Marker inventory. -/
-def markers : List ReciprocalMarker := [compound]
+def markers : List Marker := [compound]
 
 end Mandarin.Reciprocals

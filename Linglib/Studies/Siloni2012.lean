@@ -30,7 +30,7 @@ embedding.
 
 ## Connections
 
-- `RecipFormation` from `Syntax/Reciprocal.lean` — extended with nine
+- `Formation` from `Syntax/Reciprocal.lean` — extended with nine
   predicted properties and per-language verification
 - `EntailmentProfile` — used to define θ-role bundling
 - `Verb.StratifiesOver` (`Semantics/Verb/Distributivity.lean`) — the same
@@ -63,7 +63,7 @@ inductive RecipClass where
   | syntacticVerb
   deriving DecidableEq, Repr
 
-def toRecipClass : RecipFormation → RecipClass
+def toRecipClass : Formation → RecipClass
   | .lexical  => .lexicalVerb
   | .syntactic => .syntacticVerb
 
@@ -130,7 +130,7 @@ structure PropertyCluster where
     drifted, derive event nominals, head idioms, license discontinuity.
     Cannot form ECM reciprocals or retain accusative on dative targets.
     Property (ix) calls the substrate classifier
-    `RecipFormation.allowsDiscontinuous`, so the two agree by
+    `Formation.allowsDiscontinuous`, so the two agree by
     construction. -/
 def lexicalProperties : PropertyCluster :=
   { singularEvent                := true
@@ -141,7 +141,7 @@ def lexicalProperties : PropertyCluster :=
   , retainsAccOnDativeSuppression := false
   , eventNominals                := true
   , phrasalIdioms                := true
-  , discontinuous                := RecipFormation.lexical.allowsDiscontinuous }
+  , discontinuous                := Formation.lexical.allowsDiscontinuous }
 
 /-- Predicted cluster for syntactically-formed reciprocal verbs.
     Productive, allow ECM and sub-events, can retain accusative on
@@ -156,13 +156,13 @@ def syntacticProperties : PropertyCluster :=
   , retainsAccOnDativeSuppression := true
   , eventNominals                := false
   , phrasalIdioms                := false
-  , discontinuous                := RecipFormation.syntactic.allowsDiscontinuous }
+  , discontinuous                := Formation.syntactic.allowsDiscontinuous }
 
 /-- Derive the predicted property cluster from formation locus.
     Cross-paper verification against [nordlinger-2023]'s `RecipProfile`
     classifications lives in `Studies/Nordlinger2023.lean` (the newer
     paper checks consistency with the older). -/
-def predictedProperties : RecipFormation → PropertyCluster
+def predictedProperties : Formation → PropertyCluster
   | .lexical  => lexicalProperties
   | .syntactic => syntacticProperties
 
@@ -194,13 +194,13 @@ theorem properties_complementary :
     `Verb.StratifiesOver`: *meet* has `¬ meet.StratifiesOver M agentRole`
     — it does not distribute over atomic agents, because the event is
     necessarily collective/atomic. -/
-def isSymmetricVerb (f : RecipFormation) : Prop := f = .lexical
+def isSymmetricVerb (f : Formation) : Prop := f = .lexical
 
 instance : DecidablePred isSymmetricVerb :=
   fun f => inferInstanceAs (Decidable (f = .lexical))
 
 theorem symmetric_iff_singular :
-    ∀ f : RecipFormation,
+    ∀ f : Formation,
       isSymmetricVerb f ↔ (predictedProperties f).singularEvent = true := by
   intro f; cases f <;> simp [isSymmetricVerb, predictedProperties,
     lexicalProperties, syntacticProperties]
@@ -277,7 +277,7 @@ theorem I_reading_iff_periphrastic :
 structure LangRecipVerb where
   language : String
   iso : String
-  formation : RecipFormation
+  formation : Formation
   deriving DecidableEq, Repr
 
 -- Class (ii): lexical reciprocal verbs (symmetric).
@@ -341,14 +341,14 @@ theorem syntactic_not_symmetric :
 
 /-- Step 1: Both reciprocal verb types give the subject two θ-roles
     (lexical via bundling §4.1, syntactic via parasitic assignment §4.2). -/
-theorem recip_verb_dual_role (f : RecipFormation) :
+theorem recip_verb_dual_role (f : Formation) :
     (toRecipClass f).subjectRoleCount = 2 := by
   cases f <;> rfl
 
 /-- Step 2: Singular-event verbs lack the sub-event reading (§2.2–2.3).
     Bridges `PropertyCluster.singularEvent` to
     `RecipClass.allowsSubEventReading`. -/
-theorem singular_event_no_subevents (f : RecipFormation)
+theorem singular_event_no_subevents (f : Formation)
     (h : (predictedProperties f).singularEvent = true) :
     (toRecipClass f).allowsSubEventReading = false := by
   cases f
@@ -389,7 +389,7 @@ theorem syntactic_no_I_reading :
   decide
 
 /-- Both paths converge: neither verb type allows the "I" reading. -/
-theorem no_I_reading_either_formation (f : RecipFormation) :
+theorem no_I_reading_either_formation (f : Formation) :
     (toRecipClass f).allowsIReading = false := by
   cases f
   · exact lexical_no_I_reading
