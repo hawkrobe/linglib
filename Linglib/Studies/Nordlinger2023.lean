@@ -1,4 +1,4 @@
-import Linglib.Syntax.ArgumentStructure.Reciprocal
+import Linglib.Syntax.Reciprocal
 import Linglib.Studies.Siloni2012
 import Linglib.Data.WALS.Features.F106A
 import Linglib.Fragments.English.Pronouns
@@ -10,27 +10,25 @@ import Linglib.Fragments.Swahili.Reciprocals
 
 Reciprocal constructions: a typological-formal review.
 
-This file formalizes the apparatus from Nordlinger's 2023 review article
-on reciprocal constructions. The review summarizes earlier classificatory
-work (König & Kokutani 2006, Maslova 2008, Evans 2008, Nedjalkov 2007a,
-Siloni 2008/2012, Dalrymple et al. 1998, Evans et al. 2011) and adds
-empirical predictions about strategy/valency correlations and Siloni's
-discontinuity asymmetry.
+Formalizes the apparatus of [nordlinger-2023]'s review of reciprocal
+constructions, which summarizes earlier classificatory work
+([konig-kokutani-2006], [maslova-2008], [evans-2008], [nedjalkov-2007a],
+[siloni-2008], [siloni-2012], [dalrymple-et-al-1998], [evans-et-al-2011b])
+and organizes the empirical picture around strategy/valency correlations
+(§3.2) and Siloni's discontinuity asymmetry (§3.3).
 
-The underlying primitives (`RecipStrategy`, `RecipValency`, `RecipFormation`,
-`ReciprocalType`) live in `Linglib/Typology/ArgumentStructure.lean` because
-they are anchored on the earlier sources Nordlinger reviews — keeping them
-in the substrate layer preserves chronological dependency for older study
-files (notably `Studies/Siloni2012.lean`, which would otherwise need to
-import a 2023 paper).
+The underlying primitives (`RecipStrategy`, `RecipValency`,
+`RecipFormation`, `ReciprocalType`) live in `Syntax/Reciprocal.lean`,
+anchored on the earlier sources the review synthesizes — which preserves
+chronological dependency for `Studies/Siloni2012.lean`.
 
 ## Contents
 
 - `RecipProfile` per-language extended reciprocal profiles (12 languages)
 - Strategy-valency correlation theorems (§3.2)
-- Siloni's discontinuity prediction (§3.3)
+- Siloni's discontinuity prediction checked against attested judgments (§3.3)
 - WALS Ch 106 grounding for `RecipProfile` (via `lookupISO`)
-- `ReciprocityType` Dalrymple-et-al/Evans-et-al semantic 6-way classification (§4)
+- `ReciprocityType` semantic 6-way classification (§4)
 - `RecipMarkerPolysemy` extended readings (§4.2)
 - Fragment grounding for English reciprocals
 -/
@@ -39,269 +37,276 @@ namespace Nordlinger2023
 
 open Reciprocal
 
--- ============================================================================
--- Reciprocal Profiles ([nordlinger-2023])
--- ============================================================================
+/-! ### Reciprocal profiles -/
 
 /-- Extended reciprocal profile for a single language.
 
-    Captures the morphosyntactic strategy, valency effect, and
-    discontinuity licensing from [nordlinger-2023]'s review,
-    going beyond the WALS 4-way reflexive-reciprocal classification. -/
+    Captures the morphosyntactic strategy, valency effect, formation
+    locus, and attested discontinuity judgments from [nordlinger-2023]'s
+    review, going beyond the WALS 4-way reflexive-reciprocal
+    classification. -/
 structure RecipProfile where
   language : String
   iso : String
-  /-- Primary reciprocal strategy (Evans 2008 typology) -/
+  /-- Primary reciprocal strategy ([nordlinger-2023] §3.1 inventory) -/
   primaryStrategy : RecipStrategy
-  /-- Secondary strategy, if the language uses more than one -/
+  /-- Secondary strategy, if the language uses a second, different one -/
   secondaryStrategy : Option RecipStrategy := none
   /-- Valency effect of the primary strategy -/
   valency : RecipValency
-  /-- Formation locus of verb-marked reciprocals (Siloni 2012) -/
+  /-- Formation locus of verb-marked reciprocals ([siloni-2012]) -/
   formation : Option RecipFormation := none
+  /-- Attested availability of the discontinuous reciprocal construction
+      ([nordlinger-2023] §3.3 judgments), independent of `formation` so
+      Siloni's prediction can be checked rather than stipulated -/
+  discontinuousAttested : Option Bool := none
   /-- Reciprocal-reflexive relationship (WALS Ch 106) -/
   reflexiveRelation : ReciprocalType
   deriving Repr, DecidableEq
 
 -- Language data: 12 reciprocal profiles from [nordlinger-2023]
 
-/-- English: bipartite NP "each other" (bivalent, distinct from reflexive).
-    Also has lexical reciprocals ("quarrel", "meet") as secondary strategy.
-    [nordlinger-2023] ex. 1b, 7, 24; ex. 44 (all 6 reciprocity types). -/
-def rp_english : RecipProfile :=
+/-- English: bipartite NP *each other* (bivalent, distinct from reflexive;
+    [nordlinger-2023] ex. 1b). Lexical reciprocals (*quarrel*, *meet*,
+    ex. 7) are a secondary strategy; per [siloni-2012] these are
+    lexicon-formed, but *kiss*/*hug* resist the discontinuous
+    construction (fn. 32), so no formation-level discontinuity value is
+    recorded. Expresses all six reciprocity types (ex. 44). -/
+def rpEnglish : RecipProfile :=
   { language := "English", iso := "eng"
   , primaryStrategy := .bipartiteNP
   , secondaryStrategy := some .lexical
   , valency := .bivalent
   , reflexiveRelation := .distinctFromReflexive }
 
-/-- Russian: reciprocal pronoun "drug druga" (bivalent, distinct) plus
-    reflexive-identical verbal postfix "-sja"/"-s'" (monovalent, identical).
-    Unlike French "se" (a separable clitic), Russian "-sja" is a bound
-    suffix — classified as `.verbalAffix` per Evans (2008).
-    [nordlinger-2023] ex. 9, 31. -/
-def rp_russian : RecipProfile :=
+/-- Russian: bipartite NP *drug druga* 'other other-ACC'
+    ([nordlinger-2023] ex. 9, grouped with English *each other* as the
+    bipartite strategy) plus reflexive-identical verbal postfix *-sja*
+    (monovalent; ex. 31). Unlike French *se* (a separable clitic),
+    *-sja* is a bound suffix, so the secondary strategy is `verbalAffix`. -/
+def rpRussian : RecipProfile :=
   { language := "Russian", iso := "rus"
-  , primaryStrategy := .recipPronoun
+  , primaryStrategy := .bipartiteNP
   , secondaryStrategy := some .verbalAffix
   , valency := .bivalent
   , reflexiveRelation := .mixed }
 
-/-- Swahili: verbal affix "-ana" (monovalent, distinct from reflexive "-ji-").
-    Can form discontinuous reciprocals with comitative "na"
-    (Hurst 2012; [nordlinger-2023] ex. 12, 37, 40).
-    Lexically formed per Siloni's analysis. The morphological rule is
-    formalized in `Swahili.Reciprocals.reciprocalAffix`. -/
-def rp_swahili : RecipProfile :=
+/-- Swahili: verbal affix *-an-* (monovalent, distinct from reflexive
+    *-ji-*; [nordlinger-2023] ex. 12). Forms discontinuous reciprocals
+    with comitative *na* (ex. 37 from [hurst-2012], ex. 40 from
+    [dimitriadis-2004]), hence lexicon-formed under Siloni's typology as
+    presented in §3.3 ([siloni-2012] itself does not discuss Swahili).
+    The morphological rule is `Swahili.Reciprocals.reciprocalAffix`. -/
+def rpSwahili : RecipProfile :=
   { language := "Swahili", iso := "swh"
   , primaryStrategy := .verbalAffix
   , valency := .monovalent
   , formation := some .lexical
+  , discontinuousAttested := some true
   , reflexiveRelation := .distinctFromReflexive }
 
-/-- Hungarian: verbal affix "-oz-" (monovalent, distinct).
-    Can form discontinuous reciprocals with comitative "-val"/"-vel"
-    (Dimitriadis 2008; [nordlinger-2023] ex. 19, 30, 38).
-    Lexically formed per Siloni's analysis. -/
-def rp_hungarian : RecipProfile :=
+/-- Hungarian: verbal affix *-óz-* (monovalent; [nordlinger-2023]
+    ex. 19, 30, citing [siloni-2008]). Lexicon-formed per [siloni-2012]'s
+    own classification; forms discontinuous reciprocals with comitative
+    *-val* (ex. 38, from [dimitriadis-2008]). -/
+def rpHungarian : RecipProfile :=
   { language := "Hungarian", iso := "hun"
   , primaryStrategy := .verbalAffix
   , valency := .monovalent
   , formation := some .lexical
+  , discontinuousAttested := some true
   , reflexiveRelation := .distinctFromReflexive }
 
-/-- French: reflexive clitic "se" (monovalent, identical to reflexive) plus
-    distinct "l'un l'autre" (bivalent, bipartite NP).
-    "se" reciprocals are syntactically formed per Siloni (2008) and
-    CANNOT form discontinuous reciprocals ([nordlinger-2023] ex. 39).
-    [nordlinger-2023] ex. 28, 35, 39, 47.
-    "se" is a clitic, not an affix — [nordlinger-2023] p. 83:
-    "the clitics *se* in French and Czech." -/
-def rp_french : RecipProfile :=
+/-- French: reciprocal clitic *se* (monovalent, reflexive-identical;
+    [nordlinger-2023] ex. 28, 47) plus distinct bipartite *l'un l'autre*.
+    The review argues (after [siloni-2008], [siloni-2012]) that *se* is
+    not a reciprocal object: embedded *se*-reciprocals lack the "I"
+    reading (ex. 35). Syntax-formed, and discontinuous reciprocals are
+    ungrammatical (ex. 39). -/
+def rpFrench : RecipProfile :=
   { language := "French", iso := "fra"
   , primaryStrategy := .recipClitic
   , secondaryStrategy := some .bipartiteNP
   , valency := .monovalent
   , formation := some .syntactic
+  , discontinuousAttested := some false
   , reflexiveRelation := .mixed }
 
-/-- Greek (Modern): nonactive voice morphology (monovalent, identical to
-    reflexive in form) plus distinct constructions.
-    CAN form discontinuous reciprocals with "me" (= 'with'):
-    "O Giannis filithike me ti Maria" ([nordlinger-2023] ex. 27b, 36).
-    Lexically formed per Siloni's analysis. -/
-def rp_greek : RecipProfile :=
+/-- Greek (Modern): nonactive voice morphology (monovalent, reflexive-
+    identical in form) plus distinct constructions. Forms discontinuous
+    reciprocals with *me* 'with': "O Giannis filithike me ti Maria"
+    ([nordlinger-2023] ex. 27b, 36, from [dimitriadis-2008]) — hence
+    lexicon-formed under Siloni's typology as presented in §3.3
+    ([siloni-2012] itself does not discuss Greek). -/
+def rpGreek : RecipProfile :=
   { language := "Modern Greek", iso := "ell"
   , primaryStrategy := .verbalAffix
   , valency := .monovalent
   , formation := some .lexical
+  , discontinuousAttested := some true
   , reflexiveRelation := .mixed }
 
-/-- German: reflexive pronoun "sich" (bivalent — fills object position,
-    identical to reflexive) plus distinct reciprocal pronoun "einander"
-    (bivalent, single-word pronoun). Both strategies preserve transitivity
-    because the reciprocal form occupies the object slot.
-    [nordlinger-2023] via WALS Ch 106. -/
-def rp_german : RecipProfile :=
+/-- German: dedicated reciprocal pronoun *einander* alongside reflexive
+    *sich* in reciprocal use — the WALS "mixed" configuration. Both
+    fill the object slot, preserving bivalent syntax. The enum has no
+    case for reflexive-pronouns-used-reciprocally, so only the dedicated
+    pronoun strategy is recorded. [siloni-2012] fn. 13 suggests German
+    *sich*-reciprocals are syntactic reciprocal verbs; the review does
+    not take this up, so no formation value is recorded. -/
+def rpGerman : RecipProfile :=
   { language := "German", iso := "deu"
   , primaryStrategy := .recipPronoun
-  , secondaryStrategy := some .recipPronoun
   , valency := .bivalent
   , reflexiveRelation := .mixed }
 
-/-- Mandarin: compound verb strategy "dǎ-lái-dǎ-qù"
-    (beat-come-beat-go = 'beat each other'). Distinct from reflexive.
-    [nordlinger-2023] ex. 13 (citing König & Kokutani 2006). -/
-def rp_mandarin : RecipProfile :=
+/-- Mandarin: compound verb strategy *dǎ-lái-dǎ-qù*
+    (beat-come-beat-go = 'beat each other'), single subject NP.
+    Distinct from reflexive. [nordlinger-2023] ex. 13 (citing
+    [konig-kokutani-2006]); [evans-2008] treats verb compounding as a
+    multiclausal strategy. -/
+def rpMandarin : RecipProfile :=
   { language := "Mandarin", iso := "cmn"
   , primaryStrategy := .compoundVerb
   , valency := .monovalent
   , reflexiveRelation := .distinctFromReflexive }
 
-/-- Wambaya: reciprocal clitic "-ngg-" (RR morpheme in auxiliary).
-    Identical to reflexive.
-    [nordlinger-2023] ex. 11 (citing Nordlinger 1998, p. 142). -/
-def rp_wambaya : RecipProfile :=
+/-- Wambaya: reciprocal clitic *-ngg-* (RR morpheme in the auxiliary),
+    identical to reflexive. [nordlinger-2023] ex. 11 (citing
+    [nordlinger-1998], p. 142).
+    -- UNVERIFIED: coded bivalent following the file's original claim
+    that the RR clause retains transitive structure; ex. 11 glosses the
+    subject as NOM, so this needs checking against [nordlinger-1998] or
+    [evans-et-al-2007]. -/
+def rpWambaya : RecipProfile :=
   { language := "Wambaya", iso := "wmb"
   , primaryStrategy := .recipClitic
   , valency := .bivalent
   , reflexiveRelation := .identicalToReflexive }
 
-/-- Icelandic: bipartite NP "hvor...annad" with independent case inflection
-    on each part. Bivalent — retains full transitivity.
-    [nordlinger-2023] ex. 17 (citing Hurst & Nordlinger 2021). -/
-def rp_icelandic : RecipProfile :=
+/-- Icelandic: bipartite NP *hvort annað*, each part independently
+    inflected for case (*annað* takes the argument-position case,
+    *hvort* agrees with the antecedent). Bivalent — the accusative on
+    *annað* shows the clause remains transitive.
+    [nordlinger-2023] ex. 17 (citing [hurst-nordlinger-2021]). -/
+def rpIcelandic : RecipProfile :=
   { language := "Icelandic", iso := "isl"
   , primaryStrategy := .bipartiteNP
   , valency := .bivalent
   , reflexiveRelation := .distinctFromReflexive }
 
-/-- Chicheŵa: verbal affix "-an-" (monovalent).
-    [nordlinger-2023] ex. 20 (citing Dalrymple et al. 1994). -/
-def rp_chichewa : RecipProfile :=
+/-- Chicheŵa: verbal affix *-an-* (monovalent).
+    [nordlinger-2023] ex. 20 (citing [dalrymple-et-al-1994]). -/
+def rpChichewa : RecipProfile :=
   { language := "Chicheŵa", iso := "nya"
   , primaryStrategy := .verbalAffix
   , valency := .monovalent
   , reflexiveRelation := .distinctFromReflexive }
 
-/-- Czech: reflexive clitic "se" (monovalent, identical to reflexive).
-    Syntactically formed per Siloni — cannot form discontinuous reciprocals.
-    [nordlinger-2023] ex. 29; Siloni (2008).
-    "se" is a clitic — [nordlinger-2023] p. 83. -/
-def rp_czech : RecipProfile :=
+/-- Czech: reciprocal clitic *se* (monovalent, reflexive-identical;
+    [nordlinger-2023] ex. 29, citing [siloni-2008]), alongside the
+    periphrastic *jeden druhého* 'each other' attested in
+    [siloni-2012]'s Czech examples — so under WALS Ch 106 criteria the
+    reflexive relation is `mixed` (WALS itself has no Czech row).
+    Syntax-formed; discontinuous reciprocals are unavailable
+    ([nordlinger-2023] p. 86, with French). -/
+def rpCzech : RecipProfile :=
   { language := "Czech", iso := "ces"
   , primaryStrategy := .recipClitic
   , valency := .monovalent
   , formation := some .syntactic
-  , reflexiveRelation := .identicalToReflexive }
+  , discontinuousAttested := some false
+  , reflexiveRelation := .mixed }
 
 def allRecipProfiles : List RecipProfile :=
-  [ rp_english, rp_russian, rp_swahili, rp_hungarian, rp_french
-  , rp_greek, rp_german, rp_mandarin, rp_wambaya, rp_icelandic
-  , rp_chichewa, rp_czech ]
+  [ rpEnglish, rpRussian, rpSwahili, rpHungarian, rpFrench
+  , rpGreek, rpGerman, rpMandarin, rpWambaya, rpIcelandic
+  , rpChichewa, rpCzech ]
 
--- ============================================================================
--- Reciprocal Strategy-Valency Correlation ([nordlinger-2023], §3.2)
--- ============================================================================
+/-! ### Strategy-valency correlation (§3.2) -/
 
-/-- [nordlinger-2023] (§3.2): NP/argument strategies tend to
-    preserve valency (bivalent), while verb-marking strategies tend to
-    reduce valency (monovalent). Nedjalkov (2007a) links this to the
-    morphosyntactic type: morphological markers "reduce the valency of
-    the underlying verb by deleting the direct or indirect object."
+/-- [nordlinger-2023] §3.2: NP/argument strategies tend to preserve
+    valency (bivalent), while verb-marking strategies tend to reduce it.
+    [nedjalkov-2007a] (p. 21) links this to the morphosyntactic type:
+    morphological markers "reduce the valency of the underlying verb by
+    deleting the direct or indirect object."
 
-    In our sample: all nominal-strategy profiles are bivalent. -/
+    In this sample: all nominal-strategy profiles are bivalent. The
+    correlation is a tendency — outside the sample, Tonga combines
+    verbal marking with two argument NPs ([maslova-2008]) and Malagasy
+    verb-marked reciprocals stay bivalent at f-structure ([hurst-2012]). -/
 theorem nominal_strategy_bivalent :
     (allRecipProfiles.filter fun p => p.primaryStrategy.isNominal).all
-      fun p => p.valency == .bivalent := by native_decide
+      fun p => p.valency == .bivalent := by decide
 
-/-- Verbal affixes (Swahili "-ana", Hungarian "-oz-", Greek nonactive,
-    Chicheŵa "-an-") are uniformly monovalent in our sample. -/
+/-- Verbal affixes (Swahili *-an-*, Hungarian *-óz-*, Greek nonactive,
+    Chicheŵa *-an-*) are uniformly monovalent in this sample. -/
 theorem verbal_affix_monovalent :
     (allRecipProfiles.filter fun p => p.primaryStrategy == .verbalAffix).all
-      fun p => p.valency == .monovalent := by native_decide
+      fun p => p.valency == .monovalent := by decide
 
 /-- Converse of `nominal_strategy_bivalent`: monovalent reciprocal
-    strategies are never nominal (NP/argument). This captures Nedjalkov
-    (2007a, p. 21): morphological reciprocal markers "reduce the valency
-    of the underlying verb." [nordlinger-2023] §3.2. -/
+    strategies are never nominal (NP/argument) in this sample
+    ([nedjalkov-2007a], p. 21; [nordlinger-2023] §3.2). -/
 theorem monovalent_implies_verbal :
     (allRecipProfiles.filter fun p => p.valency == .monovalent).all
-      fun p => !p.primaryStrategy.isNominal := by native_decide
+      fun p => !p.primaryStrategy.isNominal := by decide
 
-/-- Clitics (French/Czech "se") are also monovalent — the clitic
-    absorbs the object argument. Wambaya "-ngg-" is the exception:
-    bivalent despite being a clitic (ergative case preserves transitivity).
-    [nordlinger-2023] §3.2; Evans et al. (2007). -/
-theorem clitic_mostly_monovalent :
-    let clitics := allRecipProfiles.filter fun p => p.primaryStrategy == .recipClitic
-    -- 2 of 3 clitics are monovalent (French, Czech); Wambaya is bivalent
-    (clitics.filter fun p => p.valency == .monovalent).length = 2 ∧
-    (clitics.filter fun p => p.valency == .bivalent).length = 1 := by native_decide
+/-! ### Siloni's discontinuity prediction (§3.3) -/
 
--- ============================================================================
--- Siloni's Discontinuity Prediction ([nordlinger-2023], §3.3)
--- ============================================================================
+/-- [siloni-2008]/[siloni-2012] predict: discontinuous reciprocals
+    (subject + comitative *with*-phrase) are possible only when the
+    reciprocal verb is lexically formed.
 
-/-- Siloni (2008, 2012) predicts: discontinuous reciprocals (subject +
-    comitative "with"-phrase) are possible only when the reciprocal verb
-    is lexically formed, not syntactically formed.
-
-    Lexically formed: Greek, Swahili, Hungarian — CAN be discontinuous.
-    Syntactically formed: French, Czech — CANNOT be discontinuous.
-
-    This is verified in our sample: every profile with a formation locus
-    matches Siloni's prediction. -/
+    Checked against independently recorded judgments: every profile
+    carrying both a formation locus and an attested discontinuity
+    judgment ([nordlinger-2023] ex. 36–40) satisfies the prediction —
+    Greek, Swahili, Hungarian (lexical, attested) vs French, Czech
+    (syntactic, ungrammatical). -/
 theorem siloni_discontinuity_prediction :
-    (allRecipProfiles.filter fun p => p.formation.isSome).all fun p =>
-      match p.formation with
-      | some f => f.allowsDiscontinuous ==
-          -- Lexically formed: Greek, Swahili, Hungarian = CAN
-          -- Syntactically formed: French, Czech = CANNOT
-          (p.iso == "ell" || p.iso == "swh" || p.iso == "hun")
-      | none => true := by native_decide
+    allRecipProfiles.all fun p =>
+      match p.formation, p.discontinuousAttested with
+      | some f, some d => f.allowsDiscontinuous == d
+      | _, _ => true := by decide
 
-/-- Profile count verification. -/
-theorem recip_profile_count : allRecipProfiles.length = 12 := by native_decide
-
--- ============================================================================
--- WALS Grounding for Reciprocal Profiles
--- ============================================================================
+/-! ### WALS grounding -/
 
 /-- Reciprocal profiles agree with WALS Ch 106 data where available.
     Lookups use ISO 639-3 codes via `Datapoint.lookupISO`, so the join
     between profile and WALS row is structural (no string-coincidence). -/
-theorem rp_english_wals :
-    (Data.WALS.F106A.lookupISO rp_english.iso).map (fromWALS106A ·.value) =
-      some rp_english.reflexiveRelation := by native_decide
-theorem rp_russian_wals :
-    (Data.WALS.F106A.lookupISO rp_russian.iso).map (fromWALS106A ·.value) =
-      some rp_russian.reflexiveRelation := by native_decide
-theorem rp_swahili_wals :
-    (Data.WALS.F106A.lookupISO rp_swahili.iso).map (fromWALS106A ·.value) =
-      some rp_swahili.reflexiveRelation := by native_decide
-theorem rp_greek_wals :
-    (Data.WALS.F106A.lookupISO rp_greek.iso).map (fromWALS106A ·.value) =
-      some rp_greek.reflexiveRelation := by native_decide
-theorem rp_german_wals :
-    (Data.WALS.F106A.lookupISO rp_german.iso).map (fromWALS106A ·.value) =
-      some rp_german.reflexiveRelation := by native_decide
-theorem rp_mandarin_wals :
-    (Data.WALS.F106A.lookupISO rp_mandarin.iso).map (fromWALS106A ·.value) =
-      some rp_mandarin.reflexiveRelation := by native_decide
-theorem rp_wambaya_wals :
-    (Data.WALS.F106A.lookupISO rp_wambaya.iso).map (fromWALS106A ·.value) =
-      some rp_wambaya.reflexiveRelation := by native_decide
+theorem rpEnglish_wals :
+    (Data.WALS.F106A.lookupISO rpEnglish.iso).map (ofWALS106A ·.value) =
+      some rpEnglish.reflexiveRelation := by decide
+theorem rpRussian_wals :
+    (Data.WALS.F106A.lookupISO rpRussian.iso).map (ofWALS106A ·.value) =
+      some rpRussian.reflexiveRelation := by decide
+theorem rpSwahili_wals :
+    (Data.WALS.F106A.lookupISO rpSwahili.iso).map (ofWALS106A ·.value) =
+      some rpSwahili.reflexiveRelation := by decide
+theorem rpFrench_wals :
+    (Data.WALS.F106A.lookupISO rpFrench.iso).map (ofWALS106A ·.value) =
+      some rpFrench.reflexiveRelation := by decide
+theorem rpGreek_wals :
+    (Data.WALS.F106A.lookupISO rpGreek.iso).map (ofWALS106A ·.value) =
+      some rpGreek.reflexiveRelation := by decide
+theorem rpGerman_wals :
+    (Data.WALS.F106A.lookupISO rpGerman.iso).map (ofWALS106A ·.value) =
+      some rpGerman.reflexiveRelation := by decide
+theorem rpMandarin_wals :
+    (Data.WALS.F106A.lookupISO rpMandarin.iso).map (ofWALS106A ·.value) =
+      some rpMandarin.reflexiveRelation := by decide
+theorem rpWambaya_wals :
+    (Data.WALS.F106A.lookupISO rpWambaya.iso).map (ofWALS106A ·.value) =
+      some rpWambaya.reflexiveRelation := by decide
 
--- ============================================================================
--- Semantic Reciprocity Types ([nordlinger-2023], §4)
--- ============================================================================
+/-! ### Semantic reciprocity types (§4) -/
 
 /-- Semantic type of reciprocal relation.
 
-    [nordlinger-2023] (§4) summarizes the semantic typology from
-    Dalrymple et al. (1998) and Evans et al. (2011), distinguishing six
-    types of mutual relation that reciprocal constructions can encode:
+    [nordlinger-2023] §4 presents the semantic typology of
+    [evans-et-al-2011b], who take as their starting point the symmetric
+    relations identified by [dalrymple-et-al-1998] and distinguish six
+    types of mutual relation ([nordlinger-2023] ex. 44,
+    [evans-et-al-2011b] p. 8):
 
     - `strong`: every participant reciprocates with every other
       ("The members of this family love one another.")
@@ -350,127 +355,98 @@ def ReciprocityType.symmetric : ReciprocityType → Bool
   | .melee    => true
   | .ring     => false
 
--- ============================================================================
--- Reciprocity Type Properties ([nordlinger-2023], §4)
--- ============================================================================
-
-/-- Strong, pairwise, and radial are the three symmetric AND
-    participant-exhaustive reciprocity types. Among these, only
-    strong is also pair-exhaustive (every possible pair reciprocates). -/
-theorem exhaustive_symmetric_types :
-    ReciprocityType.strong.exhaustive = true ∧
-    ReciprocityType.strong.symmetric = true ∧
-    ReciprocityType.pairwise.exhaustive = true ∧
-    ReciprocityType.pairwise.symmetric = true ∧
-    ReciprocityType.radial.exhaustive = true ∧
-    ReciprocityType.radial.symmetric = true := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
-
-/-- Chain and ring are non-symmetric (directional) — they model
-    sequential actions where A acts on B but B does not act on A.
-    The difference: ring links the last element back to the first,
-    chain does not. -/
-theorem directional_types :
-    ReciprocityType.chain.symmetric = false ∧
-    ReciprocityType.ring.symmetric = false ∧
-    ReciprocityType.chain.exhaustive = true ∧
-    ReciprocityType.ring.exhaustive = true := ⟨rfl, rfl, rfl, rfl⟩
-
-/-- Melee is the only non-exhaustive type — some group members
-    may not participate at all. -/
-theorem melee_unique_nonexhaustive :
-    ReciprocityType.melee.exhaustive = false ∧
-    ReciprocityType.melee.symmetric = true := ⟨rfl, rfl⟩
-
-/-- English "each other" can express all six reciprocity types
-    (Evans et al. 2011b, p. 8; [nordlinger-2023] ex. 44).
-    This is an empirical observation about English, not a structural
-    property — some languages restrict which types their reciprocal
-    construction can express. -/
+/-- The six reciprocity types English *each other* can express
+    ([evans-et-al-2011b], p. 8; [nordlinger-2023] ex. 44). -/
 def englishReciprocityTypes : List ReciprocityType :=
   [.strong, .pairwise, .chain, .radial, .melee, .ring]
 
+/-- English *each other* expresses every reciprocity type — an empirical
+    observation about English, not a structural property; some languages
+    restrict which types their reciprocal construction can express. -/
 theorem english_expresses_all_types :
-    englishReciprocityTypes.length = 6 := rfl
+    ∀ t : ReciprocityType, t ∈ englishReciprocityTypes := by
+  intro t; cases t <;> decide
 
--- ============================================================================
--- Swahili Reciprocal Cross-Reference ([nordlinger-2023], §3)
--- ============================================================================
+/-! ### Swahili fragment cross-reference (§3) -/
 
-/-- The Swahili reciprocal suffix "-an-" ([nordlinger-2023] ex. 40,
-    citing Dimitriadis 2004) is formalized as a `MorphRule` in
+/-- The Swahili reciprocal suffix *-an-* ([nordlinger-2023] ex. 40,
+    citing [dimitriadis-2004]) is formalized as a `MorphRule` in
     `Swahili.Reciprocals.reciprocalAffix`. The rule realizes
-    valence reduction (transitive → intransitive), matching `rp_swahili`'s
+    valence reduction (transitive → intransitive), matching `rpSwahili`'s
     `verbalAffix` strategy + `monovalent` valency. -/
-theorem rp_swahili_grounded_in_fragment :
-    rp_swahili.primaryStrategy = .verbalAffix ∧
-    rp_swahili.valency = .monovalent ∧
+theorem rpSwahili_grounded_in_fragment :
+    rpSwahili.primaryStrategy = .verbalAffix ∧
+    rpSwahili.valency = .monovalent ∧
     Swahili.Reciprocals.reciprocalAffix.category = .valence :=
   ⟨rfl, rfl, rfl⟩
 
--- ============================================================================
--- Reciprocal Marker Polysemy ([nordlinger-2023], §4.2)
--- ============================================================================
+/-! ### Reciprocal marker polysemy (§4.2) -/
 
-/-- Extended readings of reciprocal markers beyond core reciprocal meaning.
-
-    [nordlinger-2023] (§4.2) notes that reciprocal markers are often
-    polysemous, expressing related but non-reciprocal meanings. These
-    extended uses include collective, sociative, and iterative readings,
-    in addition to the reflexive overlap captured by WALS Ch 106. -/
+/-- Extended readings of reciprocal markers beyond core reciprocal
+    meaning. [nordlinger-2023] §4.2: reciprocal markers are commonly
+    polysemous with reflexive (34% of the WALS sample,
+    [maslova-nedjalkov-2013]), collective/sociative, and iterative
+    meanings. -/
 inductive RecipMarkerPolysemy where
-  | reciprocal   -- core mutual action reading
-  | reflexive    -- same-participant reading (overlap with reflexives)
-  | collective   -- joint action, no mutual entailment ("they gathered")
-  | sociative    -- joint/associative action ("they walked together")
-  | iterative    -- repeated action ("they kept hitting")
+  /-- Core mutual action reading. -/
+  | reciprocal
+  /-- Same-participant reading (overlap with reflexives). -/
+  | reflexive
+  /-- Joint action without mutual entailment. -/
+  | collective
+  /-- Joint/associative action ('together'). -/
+  | sociative
+  /-- Repeated action ('again and again'). -/
+  | iterative
   deriving DecidableEq, Repr
 
-/-- Polysemy pattern: which extended readings a language's reciprocal
+/-- Polysemy pattern: which readings a language's reciprocal
     marker(s) can express. -/
 structure RecipPolysemyPattern where
   language : String
   readings : List RecipMarkerPolysemy
   deriving Repr
 
-/-- Russian "drug druga": reciprocal only (no collective/sociative). -/
-def polysemy_russian : RecipPolysemyPattern :=
-  { language := "Russian", readings := [.reciprocal] }
+/-- French *se*: reciprocal + reflexive — "Pierre et Jean se sont
+    habillés" is ambiguous between 'dressed themselves' and 'dressed
+    each other' ([nordlinger-2023] ex. 47, citing [siloni-2012]). -/
+def polysemyFrench : RecipPolysemyPattern :=
+  { language := "French", readings := [.reciprocal, .reflexive] }
 
-/-- French "se": reciprocal + reflexive + collective.
-    "Les enfants se sont rassemblés" (collective, no mutual action). -/
-def polysemy_french : RecipPolysemyPattern :=
-  { language := "French", readings := [.reciprocal, .reflexive, .collective] }
+/-- Yakut *-üs*: reciprocal + collective/sociative — *ölör-üs* 'kill
+    each other' or 'kill somebody together' ([nordlinger-2023] ex. 49,
+    citing Nedjalkov 2007b). -/
+def polysemyYakut : RecipPolysemyPattern :=
+  { language := "Yakut", readings := [.reciprocal, .collective, .sociative] }
 
-/-- Wambaya "-ngg-" (RR): reciprocal + reflexive (identical forms). -/
-def polysemy_wambaya : RecipPolysemyPattern :=
+/-- East Futunan *fe-...-'aki*: reciprocal + iterative — *fe-tapa-'aki*
+    'sparkle again and again' ([nordlinger-2023] ex. 50, citing
+    Nedjalkov 2007b). -/
+def polysemyEastFutunan : RecipPolysemyPattern :=
+  { language := "East Futunan", readings := [.reciprocal, .iterative] }
+
+/-- Wambaya *-ngg-* (RR): reciprocal + reflexive (identical forms,
+    [nordlinger-1998]). -/
+def polysemyWambaya : RecipPolysemyPattern :=
   { language := "Wambaya", readings := [.reciprocal, .reflexive] }
 
-/-- Languages with reciprocal-reflexive identity show reflexive polysemy. -/
-theorem reflexive_polysemy_tracks_wals :
-    polysemy_wambaya.readings.any (· == .reflexive) = true ∧
-    rp_wambaya.reflexiveRelation = .identicalToReflexive := ⟨rfl, rfl⟩
-
--- ============================================================================
--- Fragment Connection: English Reciprocal-Reflexive Distinction
--- ============================================================================
+/-! ### Fragment connection: English reciprocal-reflexive distinction -/
 
 open English.Pronouns in
 
 /-- The English `RecipProfile` is grounded in the Fragment: English has
     reciprocal pronouns that are categorically different from reflexive
-    pronouns, and the profile records "each other" as a bipartite NP
+    pronouns, and the profile records *each other* as a bipartite NP
     strategy. The WALS substrate anchor for the reflexive-reciprocal
-    distinction lives at `rp_english_wals`. -/
+    distinction is `rpEnglish_wals`. -/
 theorem english_profile_grounded :
-    rp_english.primaryStrategy = .bipartiteNP ∧
-    rp_english.valency = .bivalent ∧
+    rpEnglish.primaryStrategy = .bipartiteNP ∧
+    rpEnglish.valency = .bivalent ∧
     Binding.bindingClassOf eachOther.toWord = some .reciprocal ∧
     Binding.bindingClassOf eachOther.toWord ≠ some .reflexive := by
   refine ⟨rfl, rfl, ?_, ?_⟩ <;> decide
 
--- ============================================================================
--- Cross-Paper Verification: Nordlinger 2023 vs Siloni 2012
--- ============================================================================
+/-! ### Cross-paper verification: Nordlinger 2023 vs Siloni 2012 -/
 
 section SiloniAgreement
 open Siloni2012
@@ -480,26 +456,14 @@ open Siloni2012
     discussed in both. The newer paper checks consistency with the older
     (chronological dependency). -/
 theorem hungarian_agrees_with_siloni :
-    rp_hungarian.formation = some hungarian.formation := by native_decide
+    rpHungarian.formation = some hungarian.formation := rfl
 
 theorem french_agrees_with_siloni :
-    rp_french.formation = some french.formation := by native_decide
+    rpFrench.formation = some french.formation := rfl
 
 theorem czech_agrees_with_siloni :
-    rp_czech.formation = some czech.formation := by native_decide
+    rpCzech.formation = some czech.formation := rfl
 
 end SiloniAgreement
-
-/-- Swahili is classified as lexical here (per Nordlinger 2023's review).
-    Siloni (2012) does not discuss Swahili directly, but the prediction
-    is consistent: Swahili has verb-marked reciprocals (-ana) that
-    license discontinuous constructions — a lexical property. -/
-theorem swahili_consistent_with_siloni :
-    rp_swahili.formation = some RecipFormation.lexical := by native_decide
-
-/-- Greek is classified as lexical here. Consistent with Siloni:
-    Greek allows discontinuous reciprocals with *me*. -/
-theorem greek_consistent_with_siloni :
-    rp_greek.formation = some RecipFormation.lexical := by native_decide
 
 end Nordlinger2023
