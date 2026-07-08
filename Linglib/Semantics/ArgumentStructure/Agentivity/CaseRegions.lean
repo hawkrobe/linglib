@@ -32,8 +32,8 @@ inductive CaseRegion where
       persistence (beginning). Marks objects. -/
   | accAbs
   /-- Dative: the region around sentience + qualitative persistence
-      (beginning). Marks recipients, experiencers, benefactives
-      (§5.1, Fig. 7). -/
+      (beginning). Marks recipients, experiencers, and second arguments
+      of two-place communication/service verbs (§5.1, Fig. 7). -/
   | dative
   /-- Oblique: the middle region between core cases. -/
   | oblique
@@ -169,6 +169,32 @@ theorem oblique_not_orderConvex :
                  (x := ⟨⟨false, true, false, true⟩, .quPersBeginning⟩)
                  (by decide) (by decide) (by decide) (by decide)
   exact absurd habs (by decide)
+
+/-! ### Named participants (§3–§4, Figs. 4–6) -/
+
+/-- The maximal agent sits in the NOM/ERG region — core case markers spread
+    outwards from it (Fig. 6). -/
+theorem maximalAgent_toCaseRegion : maximalAgent.toCaseRegion = .nomErg := by decide
+
+/-- The maximal patient sits in the ACC/ABS region (Fig. 6). -/
+theorem maximalPatient_toCaseRegion : maximalPatient.toCaseRegion = .accAbs := by decide
+
+/-- The effector agent of break/kill (Fig. 5, Ia/IIa) sits in NOM/ERG. -/
+theorem effectorAgent_toCaseRegion : effectorAgent.toCaseRegion = .nomErg := by decide
+
+/-- The destroyed patient of Class I verbs (Fig. 5, Ip) sits in ACC/ABS. -/
+theorem resultativeEffective_patient_toCaseRegion :
+    (TransitivityRank.resultativeEffective.patientNode).toCaseRegion = .accAbs := by decide
+
+/-- The affected-but-persisting patient of Class II verbs (Fig. 5, IIp) sits
+    in ACC/ABS. -/
+theorem contact_patient_toCaseRegion :
+    (TransitivityRank.contact.patientNode).toCaseRegion = .accAbs := by decide
+
+/-- The possibly-nonexistent patient of Class III pursuit verbs (Fig. 5, IIIp)
+    falls outside the core object region. -/
+theorem pursuit_patient_toCaseRegion :
+    (TransitivityRank.pursuit.patientNode).toCaseRegion = .oblique := by decide
 
 /-! ### Dative polysemy (§5.1) -/
 

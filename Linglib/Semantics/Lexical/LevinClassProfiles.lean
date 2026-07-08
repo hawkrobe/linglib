@@ -503,4 +503,38 @@ theorem derived_subjects_wellformed :
   · show unaccusativeCoS.subjectProfile.WellFormedInternal; decide
   · show perception.subjectProfile.WellFormedInternal; decide
 
+-- ════════════════════════════════════════════════════
+-- § 9. Grimm persistence placements
+-- ════════════════════════════════════════════════════
+
+section GrimmPlacements
+
+open ArgumentStructure.AgentivityLattice
+
+/-! [grimm-2011]'s persistence bridge (`PersistenceLevel.fromPatientProfile`)
+evaluated on the class-level object profiles — the canonical placements
+consumed by `Studies/Grimm2011.lean` and `Studies/Beavers2010.lean`. -/
+
+/-- Contact objects (kick, hit): no entailed change → total persistence.
+    Follows [beavers-2011] eq. (60c) on surface contact; [grimm-2011]'s own
+    Fig. 5 instead places contact objects at `quPersBeginning`. -/
+theorem contactObject_persistence :
+    PersistenceLevel.fromPatientProfile contactObject = .totalPersistence := rfl
+
+/-- Created objects (build, invent): come into existence → `exPersEnd`. -/
+theorem creationObject_persistence :
+    PersistenceLevel.fromPatientProfile creationObject = .exPersEnd := rfl
+
+/-- Consumed objects (eat, devour): cease to exist → `exPersBeginning`. -/
+theorem consumptionObject_persistence :
+    PersistenceLevel.fromPatientProfile consumptionObject = .exPersBeginning := rfl
+
+/-- Disappearance-class subjects (die, vanish), read as patients: cease to
+    exist → `exPersBeginning`. -/
+theorem disappearance_subject_persistence :
+    PersistenceLevel.fromPatientProfile disappearance.subjectProfile
+      = .exPersBeginning := rfl
+
+end GrimmPlacements
+
 end Features.LevinClassProfiles

@@ -1,5 +1,4 @@
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
-import Linglib.Semantics.ArgumentStructure.Agentivity.CaseRegions
 import Linglib.Semantics.ArgumentStructure.Linking
 import Linglib.Semantics.Lexical.LevinClassProfiles
 import Linglib.Data.ProtoRoles.Dowty1991
@@ -354,76 +353,7 @@ theorem run_prediction_matches_fragment :
     English.Predicates.Verbal.run.unaccusative := by decide
 
 -- ════════════════════════════════════════════════════
--- § 8. Cross-Theory: [grimm-2011] Lattice Predictions
--- ════════════════════════════════════════════════════
-
-/-! [grimm-2011]'s agentivity lattice reformulates Dowty's proto-roles
-    with lattice structure and connects them to case assignment. Here we
-    verify that Grimm's lattice predictions are consistent with the ASP
-    predictions above, and that it also resolves the arrive anomaly. -/
-
-open ArgumentStructure.AgentivityLattice
-
-/-- Grimm's lattice handles the arrive anomaly: arrive's subject has
-    motion but not instigation → not in the NOM/ERG region. Consistent
-    with the priority-based ASP and Table 1, but not flat counting. -/
-theorem arrive_grimm_not_nom :
-    (GrimmNode.fromSubjectProfile directedMotion.subjectProfile).toCaseRegion ≠ .nomErg := by
-  decide
-
-/-- Full cross-theory convergence on arrive: Table 1, modern ASP, and
-    [grimm-2011]'s lattice all predict unaccusative/non-agent.
-    Only flat counting diverges. -/
-theorem arrive_cross_theory :
-    table1 directedMotion.subjectProfile.volition directedMotion.subjectProfile.changeOfState
-      = .unaccusative ∧
-    PredictsUnaccusative directedMotion.subjectProfile ∧
-    flatPredictsUnaccusative directedMotion.subjectProfile = false ∧
-    (GrimmNode.fromSubjectProfile directedMotion.subjectProfile).toCaseRegion ≠ .nomErg ∧
-    arrive.unaccusative = true :=
-  ⟨by decide, by decide, by decide, by decide, rfl⟩
-
-/-- Kick: ASP outranking and [grimm-2011]'s subject region converge —
-    subject → NOM in an accusative system. The object, under the corrected
-    surface-contact profile (no entailed change; [dowty-1991] never
-    discusses *kick*), falls in Grimm's oblique region (INST), outside
-    canonical ACC — see `Grimm2011.kick_object_persistence` for the
-    Grimm-vs-Beavers divergence on contact-verb objects. -/
-theorem kick_asp_grimm_consistent :
-    OutranksForSubject mannerContact.subjectProfile contactObject ∧
-    (GrimmNode.fromSubjectProfile mannerContact.subjectProfile).toCaseRegion.toAccusativeCase
-      = .nom ∧
-    (GrimmNode.fromObjectProfile contactObject).toCaseRegion.toAccusativeCase
-      = .inst :=
-  ⟨by decide, by decide, by decide⟩
-
-/-- Die: ASP, flat counting, and [grimm-2011] all agree on unaccusative.
-    Grimm's lattice maps the sole argument to ACC/ABS (patient region). -/
-theorem die_asp_grimm_consistent :
-    PredictsUnaccusative disappearance.subjectProfile ∧
-    flatPredictsUnaccusative disappearance.subjectProfile = true ∧
-    (GrimmNode.fromObjectProfile disappearance.subjectProfile).toCaseRegion = .accAbs :=
-  ⟨by decide, by decide, by decide⟩
-
-/-- Kiss on [grimm-2011]'s Fig. 1 lattice: the object's agentivity node
-    {motion} sits strictly below the subject's {volition, motion} — the §1
-    asymmetry restated as strict lattice dominance. -/
-theorem kiss_subject_dominates :
-    AgentivityNode.fromEntailmentProfile kissObjectProfile <
-    AgentivityNode.fromEntailmentProfile kissSubjectProfile := by decide
-
-/-- Corollary: the flat-count direction follows from lattice dominance via
-    `featureCount_monotone` and `pAgentScore_decomposition` — Dowty's
-    counting comparison (`kiss_asymmetry_is_volition`) is demoted to a
-    consequence of Grimm's order. -/
-theorem kiss_flat_count_from_lattice :
-    kissObjectProfile.pAgentScore ≤ kissSubjectProfile.pAgentScore := by
-  rw [pAgentScore_decomposition, pAgentScore_decomposition]
-  exact Nat.add_le_add
-    (AgentivityNode.featureCount_monotone kiss_subject_dominates.le) le_rfl
-
--- ════════════════════════════════════════════════════
--- § 9. Dowty's Explicit Attributions vs the Class Templates
+-- § 8. Dowty's Explicit Attributions vs the Class Templates
 -- ════════════════════════════════════════════════════
 
 /-! The paper's explicit per-argument attributions (generated rows in
@@ -446,7 +376,7 @@ def matchesProfile (d : ProtoRoleDatum) (p : EntailmentProfile) : Bool :=
   d.stationary.all (· == p.stationary) &&
   d.dependentExistence.all (· == p.dependentExistence)
 
--- § 9a. Positive checks: the templates encode Dowty's attributions
+-- § 8a. Positive checks: the templates encode Dowty's attributions
 
 /-- The (35) primary transitive verbs: each stated subject attribution
     (V+S+C+M, no P-Patient, p. 577) holds of the accomplishment template
@@ -482,7 +412,7 @@ theorem exemplars_match_templates :
     (desire.objectProfile.map (matchesProfile Rows.seekObject)) = some true := by
   decide
 
--- § 9b. The psych-state / desire split ([dowty-1991] (38) vs (29e))
+-- § 8b. The psych-state / desire split ([dowty-1991] (38) vs (29e))
 
 /-- The split of the former single state-subject profile is Dowty's own:
     admire-class experiencers are sentience-entailed ((38): *like*), so
@@ -516,7 +446,7 @@ theorem inchoative_experiencer_matches :
     OutranksForSubject stimProfile expInchoativeProfile := by
   refine ⟨by decide, by decide⟩
 
--- § 9c. The buy/sell tie (§3.2, §8.3)
+-- § 8c. The buy/sell tie (§3.2, §8.3)
 
 /-- §3.2: buyer and seller are both attributed volition and nothing
     distinguishes them ("nor are they different in any proto-role
@@ -532,7 +462,7 @@ theorem buy_sell_tie :
       possessionTransfer.subjectProfile := by
   refine ⟨by decide, by decide, by decide, by decide, by decide⟩
 
--- § 9d. Divergences the templates do not encode
+-- § 8d. Divergences the templates do not encode
 
 /-- Build-object stationary divergence: "all of 28" (pp. 572–573) includes
     (28d) stationary, but the `creation` template object (CoS+IT+CA+DE)

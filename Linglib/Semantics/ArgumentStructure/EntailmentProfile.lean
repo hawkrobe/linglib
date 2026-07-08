@@ -299,6 +299,16 @@ namespace AgentivityLattice
 def AgentivityNode.fromEntailmentProfile (p : EntailmentProfile) : AgentivityNode :=
   ⟨p.volition, p.sentience, p.causation, p.movement⟩
 
+/-- Two profiles project to the same agentivity node iff they agree on the four
+lattice features: the projection drops independent existence and all five
+Proto-Patient entailments ([grimm-2011] §2.1 recasts them on the persistence
+axis). -/
+theorem AgentivityNode.fromEntailmentProfile_eq_iff (p q : EntailmentProfile) :
+    AgentivityNode.fromEntailmentProfile p = AgentivityNode.fromEntailmentProfile q ↔
+      p.volition = q.volition ∧ p.sentience = q.sentience ∧
+      p.causation = q.causation ∧ p.movement = q.movement := by
+  simp [AgentivityNode.fromEntailmentProfile, AgentivityNode.mk.injEq]
+
 /-- Map Dowty's P-Patient entailments to Grimm's persistence level.
 
     This is an approximate mapping — Grimm's system is genuinely different
