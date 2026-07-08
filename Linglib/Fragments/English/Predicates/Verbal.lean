@@ -25,7 +25,7 @@ open Semantics.Lexical
 open Features.DegreeAchievement (DegreeAchievementScale)
 open Core.Order (Boundedness)
 open Semantics.Aspect.Incremental (VerbIncClass)
-open ArgumentStructure.EntailmentProfile
+open ArgumentStructure
 open Features.LevinClassProfiles
 
 -- ════════════════════════════════════════════════════

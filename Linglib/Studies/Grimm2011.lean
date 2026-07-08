@@ -39,9 +39,7 @@ referential-property treatment the paper attributes to [grimm-2005].
 
 namespace Grimm2011
 
-open ArgumentStructure.AgentivityLattice
-open ArgumentStructure (EntailmentProfile)
-open ArgumentStructure.EntailmentProfile
+open ArgumentStructure
 open Features.LevinClassProfiles
 open Features.Prominence
 open Aissen2003

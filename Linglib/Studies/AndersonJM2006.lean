@@ -61,7 +61,7 @@ two-feature simplification).
 namespace AndersonJM2006
 
 open ArgumentStructure.Linking (LinkingTheory ArgPosition)
-open ArgumentStructure.EntailmentProfile
+open ArgumentStructure
 open English.Predicates.Verbal
 
 -- ============================================================================
@@ -223,8 +223,8 @@ theorem Case.acc_abs_same_relation :
 
 namespace AndersonJM2006
 
+open ArgumentStructure
 open ArgumentStructure.Linking (LinkingTheory ArgPosition)
-open ArgumentStructure.EntailmentProfile
 open English.Predicates.Verbal
 
 -- ============================================================================

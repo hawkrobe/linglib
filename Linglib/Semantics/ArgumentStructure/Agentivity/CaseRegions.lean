@@ -15,7 +15,7 @@ corollary. The dative region unifies recipients, experiencers, and second
 arguments of two-place communication/service verbs (§5.1, Fig. 7).
 -/
 
-namespace ArgumentStructure.AgentivityLattice
+namespace ArgumentStructure
 
 /-! ### Case regions (§4, Figs. 6–7) -/
 
@@ -198,4 +198,4 @@ theorem pursuit_patient_toCaseRegion :
 theorem sentientNonInstigator_in_dative :
     sentientNonInstigatorNode.toCaseRegion = .dative := rfl
 
-end ArgumentStructure.AgentivityLattice
+end ArgumentStructure

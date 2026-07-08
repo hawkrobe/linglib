@@ -233,8 +233,7 @@ def reflexivizationYieldsAnticausative : CauserSpec → Bool
     would carry more structure than K-G's underspecification account
     predicts. -/
 
-open ArgumentStructure (EntailmentProfile)
-open ArgumentStructure.EntailmentProfile
+open ArgumentStructure
 
 /-- Derive `CauserSpec` from a proto-role entailment profile.
     Volition is the discriminating feature:
