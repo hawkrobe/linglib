@@ -1,4 +1,5 @@
 import Linglib.Data.UD.Basic
+import Linglib.Syntax.Reciprocal
 import Linglib.Morphology.Word
 
 /-!
@@ -26,7 +27,16 @@ namespace Wambaya.Reciprocals
 def rrMorpheme : Word :=
   { form :="-ngg-", cat := .PART, features := {}}
 
-/-- The same morpheme serves both reciprocal and reflexive functions. -/
-def isIdenticalToReflexive : Bool := true
+open Reciprocal in
+/-- The RR clitic as a typological marker: it serves both reciprocal and
+    reflexive functions (WALS "identical to reflexive" follows by
+    `Reciprocal.ofInventory`; form derived from `rrMorpheme`). -/
+def rr : Marker :=
+  { form := rrMorpheme.form, strategy := .recipClitic
+  , readings := [.reciprocal, .reflexive] }
+
+open Reciprocal in
+/-- Marker inventory. -/
+def markers : List Marker := [rr]
 
 end Wambaya.Reciprocals

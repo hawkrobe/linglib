@@ -1,5 +1,6 @@
 import Linglib.Data.UD.Basic
 import Linglib.Morphology.Word
+import Linglib.Syntax.Reciprocal
 
 /-!
 # Mandarin Reciprocal Fragment
@@ -44,5 +45,17 @@ def ziji : Word :=
 /-- Compound reciprocal form is distinct from reflexive. -/
 theorem recip_distinct_from_reflexive :
     daLaiDaQu.toForm ≠ ziji.form := by decide
+
+open Reciprocal
+
+/-- The V-lái-V-qù compound as a reciprocal marker (form derived from
+    `daLaiDaQu`). The adverbial *hùxiāng* is outside the strategy
+    vocabulary ([evans-2008]'s adverbial strategy). -/
+def compound : Marker :=
+  { form := daLaiDaQu.toForm, script := daLaiDaQu.script
+  , strategy := .compoundVerb }
+
+/-- Marker inventory. -/
+def markers : List Marker := [compound]
 
 end Mandarin.Reciprocals

@@ -236,4 +236,301 @@ theorem weakReciprocity_imp_cumulative
     obtain ⟨x, hx, hRxy, _⟩ := hWR.2 y hy
     exact ⟨x, hx, hRxy⟩
 
+/-! ### Configurational typology
+
+The event-configuration typology of [evans-et-al-2011b] and
+[majid-et-al-2011]: six shapes of mutual relation (strong, pairwise,
+chain, radial, melee, ring) used in the video-stimulus elicitation
+studies. Each is rendered as an exact-extension condition on `(R, X)` —
+the relation coincides with the named configuration — so symmetry and
+participant-exhaustiveness are theorems rather than stipulations, and
+the shapes plug into the entailment lattice above: pairwise strengthens
+to `PartitionedStrongReciprocity`, ring yields `OneWayWeakReciprocity`,
+chain and radial yield `InclusiveAlternativeOrdering`, and melee is
+definitionally the failure of `InclusiveAlternativeOrdering` (some
+activity, but not everyone participates). The strong configuration is
+`StrongReciprocity` itself. -/
+
+/-- `y` immediately follows `x` in `l`. -/
+def Consecutive (l : List A) (x y : A) : Prop := (x, y) ∈ l.zip l.tail
+
+private lemma consecutive_cons {a : A} {l : List A} {x y : A}
+    (h : Consecutive l x y) : Consecutive (a :: l) x y := by
+  cases l with
+  | nil => simp [Consecutive] at h
+  | cons b t => exact List.mem_cons_of_mem _ h
+
+private lemma consecutive_mem {l : List A} {x y : A} (h : Consecutive l x y) :
+    x ∈ l ∧ y ∈ l :=
+  ⟨(List.of_mem_zip h).1, List.mem_of_mem_tail (List.of_mem_zip h).2⟩
+
+private lemma consecutive_ne {l : List A} (hnd : l.Nodup) {x y : A}
+    (h : Consecutive l x y) : x ≠ y := by
+  induction l with
+  | nil => simp [Consecutive] at h
+  | cons a t ih =>
+    cases t with
+    | nil => simp [Consecutive] at h
+    | cons b t' =>
+      have h' : (x, y) = (a, b) ∨ Consecutive (b :: t') x y := by
+        simpa [Consecutive] using h
+      rcases h' with heq | h'
+      · obtain ⟨rfl, rfl⟩ := Prod.mk.inj heq
+        intro hab
+        apply (List.nodup_cons.mp hnd).1
+        rw [hab]
+        exact List.mem_cons_self ..
+      · exact ih (List.nodup_cons.mp hnd).2 h'
+
+private lemma consecutive_asymm {l : List A} (hnd : l.Nodup) {x y : A}
+    (hxy : Consecutive l x y) : ¬ Consecutive l y x := by
+  induction l with
+  | nil => simp [Consecutive] at hxy
+  | cons a t ih =>
+    cases t with
+    | nil => simp [Consecutive] at hxy
+    | cons b t' =>
+      intro hyx
+      have hxy' : (x, y) = (a, b) ∨ Consecutive (b :: t') x y := by
+        simpa [Consecutive] using hxy
+      have hyx' : (y, x) = (a, b) ∨ Consecutive (b :: t') y x := by
+        simpa [Consecutive] using hyx
+      rcases hxy' with heq | hxy'
+      · obtain ⟨rfl, rfl⟩ := Prod.mk.inj heq
+        rcases hyx' with heq' | hyx'
+        · obtain ⟨h1, -⟩ := Prod.mk.inj heq'
+          apply (List.nodup_cons.mp hnd).1
+          rw [← h1]
+          exact List.mem_cons_self ..
+        · exact (List.nodup_cons.mp hnd).1 (consecutive_mem hyx').2
+      · rcases hyx' with heq' | hyx'
+        · obtain ⟨rfl, rfl⟩ := Prod.mk.inj heq'
+          exact (List.nodup_cons.mp hnd).1 (consecutive_mem hxy').2
+        · exact ih (List.nodup_cons.mp hnd).2 hxy' hyx'
+
+private lemma getLast?_mem : ∀ {l : List A} {x : A}, l.getLast? = some x → x ∈ l
+  | [], _, h => by simp at h
+  | [a], x, h => by
+    obtain rfl : a = x := by simpa using h
+    simp
+  | _ :: b :: t, x, h => by
+    rw [List.getLast?_cons_cons] at h
+    exact List.mem_cons_of_mem _ (getLast?_mem h)
+
+private lemma mem_consecutive_or_getLast {l : List A} {x : A} (hx : x ∈ l) :
+    (∃ y, Consecutive l x y) ∨ l.getLast? = some x := by
+  induction l with
+  | nil => cases hx
+  | cons a t ih =>
+    cases t with
+    | nil =>
+      right
+      obtain rfl := List.mem_singleton.mp hx
+      simp
+    | cons b t' =>
+      rcases List.mem_cons.mp hx with rfl | hx'
+      · exact Or.inl ⟨b, by simp [Consecutive]⟩
+      · rcases ih hx' with ⟨y, hy⟩ | hlast
+        · exact Or.inl ⟨y, consecutive_cons hy⟩
+        · right; rw [List.getLast?_cons_cons]; exact hlast
+
+private lemma getLast?_consecutive : ∀ {l : List A}, 2 ≤ l.length →
+    ∀ {x : A}, l.getLast? = some x → ∃ y, Consecutive l y x
+  | [], hlen, _, _ => by simp at hlen
+  | [_], hlen, _, _ => by simp at hlen
+  | [a, b], _, x, hx => by
+    obtain rfl : b = x := by simpa using hx
+    exact ⟨a, by simp [Consecutive]⟩
+  | a :: b :: c :: t, _, x, hx => by
+    rw [List.getLast?_cons_cons] at hx
+    obtain ⟨y, hy⟩ :=
+      getLast?_consecutive (by simp only [List.length_cons]; omega) hx
+    exact ⟨y, consecutive_cons hy⟩
+
+/-- `R` is symmetric within `X`: every realized pair is mutual. -/
+def PairSymmetricOn (R : A → A → Prop) (X : Finset A) : Prop :=
+  ∀ x ∈ X, ∀ y ∈ X, R x y → R y x
+
+/-- **Pairwise configuration** ([majid-et-al-2011]): the participants
+    split into two-member cells, and `R` holds exactly within cells
+    ("The people at the dinner party were married to one another"). -/
+def PairwiseConfig (R : A → A → Prop) (X : Finset A) : Prop :=
+  ∃ P : Finset (Finset A),
+    (∀ c ∈ P, c.card = 2 ∧ c ⊆ X) ∧
+    (∀ a ∈ X, ∃ c ∈ P, a ∈ c) ∧
+    (∀ x y, R x y ↔ ∃ c ∈ P, x ∈ c ∧ y ∈ c ∧ x ≠ y)
+
+/-- **Chain configuration** ([majid-et-al-2011]): the participants form
+    a line and `R` holds exactly between adjacent members, directed
+    ("The graduating students followed one another up onto the stage"). -/
+def ChainConfig (R : A → A → Prop) (X : Finset A) : Prop :=
+  ∃ l : List A, l.Nodup ∧ (∀ z, z ∈ l ↔ z ∈ X) ∧ 2 ≤ l.length ∧
+    ∀ x y, R x y ↔ Consecutive l x y
+
+/-- **Ring configuration** ([majid-et-al-2011]): a chain whose last
+    member acts on the first ("The children chased each other round in
+    a ring"). -/
+def RingConfig (R : A → A → Prop) (X : Finset A) : Prop :=
+  ∃ l : List A, l.Nodup ∧ (∀ z, z ∈ l ↔ z ∈ X) ∧ 3 ≤ l.length ∧
+    ∀ x y, R x y ↔
+      (Consecutive l x y ∨ (l.getLast? = some x ∧ l.head? = some y))
+
+/-- **Radial configuration** ([majid-et-al-2011]): one central
+    participant acts (asymmetrically) on each of the others ("The
+    teacher and her pupils intimidated one another"). -/
+def RadialConfig (R : A → A → Prop) (X : Finset A) : Prop :=
+  ∃ c ∈ X, 2 ≤ X.card ∧ ∀ x y, R x y ↔ (x = c ∧ y ∈ X ∧ y ≠ c)
+
+/-- **Melee configuration** ([majid-et-al-2011]): multiple asymmetrical
+    interactions without full saturation ("The drunks in the pub were
+    punching one another") — some activity, but participation fails to
+    be exhaustive, i.e. even `InclusiveAlternativeOrdering` (the weakest
+    scheme in the lattice above) fails. -/
+def MeleeConfig (R : A → A → Prop) (X : Finset A) : Prop :=
+  (∃ x ∈ X, ∃ y ∈ X, x ≠ y ∧ R x y) ∧ ¬ InclusiveAlternativeOrdering R X
+
+/-! #### Symmetry theorems -/
+
+/-- Strong reciprocity is symmetric on its plurality. -/
+theorem StrongReciprocity.pairSymmetricOn {R : A → A → Prop} {X : Finset A}
+    (h : StrongReciprocity R X) : PairSymmetricOn R X := by
+  intro x hx y hy hR
+  by_cases hxy : x = y
+  · exact hxy ▸ hR
+  · exact h y hy x hx hxy
+
+/-- The pairwise configuration is symmetric: partners are mutual. -/
+theorem PairwiseConfig.pairSymmetricOn {R : A → A → Prop} {X : Finset A}
+    (h : PairwiseConfig R X) : PairSymmetricOn R X := by
+  obtain ⟨P, -, -, hiff⟩ := h
+  intro x _ y _ hR
+  obtain ⟨c, hc, hxc, hyc, hne⟩ := (hiff x y).mp hR
+  exact (hiff y x).mpr ⟨c, hc, hyc, hxc, hne.symm⟩
+
+/-- The chain configuration is not symmetric: followers are not
+    followed back ([majid-et-al-2011]'s directed line). -/
+theorem ChainConfig.not_pairSymmetricOn {R : A → A → Prop} {X : Finset A}
+    (h : ChainConfig R X) : ¬ PairSymmetricOn R X := by
+  obtain ⟨l, hnd, hmem, hlen, hiff⟩ := h
+  obtain - | ⟨a, - | ⟨b, t⟩⟩ := l
+  · simp at hlen
+  · simp at hlen
+  · intro hsym
+    have hcons : Consecutive (a :: b :: t) a b := by simp [Consecutive]
+    have haX : a ∈ X := (hmem a).mp (consecutive_mem hcons).1
+    have hbX : b ∈ X := (hmem b).mp (consecutive_mem hcons).2
+    exact consecutive_asymm hnd hcons
+      ((hiff b a).mp (hsym a haX b hbX ((hiff a b).mpr hcons)))
+
+/-- The ring configuration is not symmetric (for genuine rings of three
+    or more): the cycle is directed. -/
+theorem RingConfig.not_pairSymmetricOn {R : A → A → Prop} {X : Finset A}
+    (h : RingConfig R X) : ¬ PairSymmetricOn R X := by
+  obtain ⟨l, hnd, hmem, hlen, hiff⟩ := h
+  obtain - | ⟨a, - | ⟨b, - | ⟨c, t⟩⟩⟩ := l
+  · simp at hlen
+  · simp at hlen
+  · simp at hlen
+  · intro hsym
+    have hcons : Consecutive (a :: b :: c :: t) a b := by simp [Consecutive]
+    have haX : a ∈ X := (hmem a).mp (consecutive_mem hcons).1
+    have hbX : b ∈ X := (hmem b).mp (consecutive_mem hcons).2
+    rcases (hiff b a).mp
+        (hsym a haX b hbX ((hiff a b).mpr (Or.inl hcons))) with hba | ⟨hlast, -⟩
+    · exact consecutive_asymm hnd hcons hba
+    · rw [List.getLast?_cons_cons, List.getLast?_cons_cons] at hlast
+      exact (List.nodup_cons.mp (List.nodup_cons.mp hnd).2).1
+        (getLast?_mem hlast)
+
+/-- The radial configuration is not symmetric: the center acts on the
+    periphery, never conversely ([majid-et-al-2011]). -/
+theorem RadialConfig.not_pairSymmetricOn [DecidableEq A]
+    {R : A → A → Prop} {X : Finset A}
+    (h : RadialConfig R X) : ¬ PairSymmetricOn R X := by
+  obtain ⟨c, hc, hcard, hiff⟩ := h
+  obtain ⟨y, hy, hyc⟩ := X.exists_mem_ne hcard c
+  intro hsym
+  exact hyc ((hiff y c).mp
+    (hsym c hc y hy ((hiff c y).mpr ⟨rfl, hy, hyc⟩))).1
+
+/-! #### Exhaustiveness theorems
+
+Participant-exhaustiveness is `InclusiveAlternativeOrdering` — the
+weakest scheme in the lattice. Every configuration except melee entails
+it (the strong configuration via `strong_imp_inclusiveAlternative`);
+melee denies it by definition. -/
+
+/-- Everyone at a pairwise event has a partner. -/
+theorem PairwiseConfig.inclusiveAlternativeOrdering [DecidableEq A]
+    {R : A → A → Prop} {X : Finset A}
+    (h : PairwiseConfig R X) : InclusiveAlternativeOrdering R X := by
+  obtain ⟨P, hcells, hcover, hiff⟩ := h
+  intro x hx
+  obtain ⟨c, hc, hxc⟩ := hcover x hx
+  have h2 : c.card = 2 := (hcells c hc).1
+  obtain ⟨y, hyc, hyx⟩ := c.exists_mem_ne (by omega) x
+  exact ⟨y, (hcells c hc).2 hyc, hyx.symm,
+    Or.inl ((hiff x y).mpr ⟨c, hc, hxc, hyc, hyx.symm⟩)⟩
+
+/-- Everyone in a chain follows or is followed. -/
+theorem ChainConfig.inclusiveAlternativeOrdering
+    {R : A → A → Prop} {X : Finset A}
+    (h : ChainConfig R X) : InclusiveAlternativeOrdering R X := by
+  obtain ⟨l, hnd, hmem, hlen, hiff⟩ := h
+  intro x hx
+  rcases mem_consecutive_or_getLast ((hmem x).mpr hx) with ⟨y, hy⟩ | hlast
+  · exact ⟨y, (hmem y).mp (consecutive_mem hy).2,
+      consecutive_ne hnd hy, Or.inl ((hiff x y).mpr hy)⟩
+  · obtain ⟨y, hy⟩ := getLast?_consecutive hlen hlast
+    exact ⟨y, (hmem y).mp (consecutive_mem hy).1,
+      (consecutive_ne hnd hy).symm, Or.inr ((hiff y x).mpr hy)⟩
+
+/-- Everyone in a ring chases someone: the ring configuration yields
+    `OneWayWeakReciprocity` (which a chain does not — its last member
+    acts on nobody). -/
+theorem RingConfig.oneWayWeak {R : A → A → Prop} {X : Finset A}
+    (h : RingConfig R X) : OneWayWeakReciprocity R X := by
+  obtain ⟨l, hnd, hmem, hlen, hiff⟩ := h
+  intro x hx
+  rcases mem_consecutive_or_getLast ((hmem x).mpr hx) with ⟨y, hy⟩ | hlast
+  · exact ⟨y, (hmem y).mp (consecutive_mem hy).2,
+      (hiff x y).mpr (Or.inl hy), consecutive_ne hnd hy⟩
+  · obtain - | ⟨a, t⟩ := l
+    · simp at hlen
+    · refine ⟨a, (hmem a).mp (List.mem_cons_self ..),
+        (hiff x a).mpr (Or.inr ⟨hlast, rfl⟩), fun hxa => ?_⟩
+      obtain - | ⟨b, t'⟩ := t
+      · simp at hlen
+      · rw [hxa, List.getLast?_cons_cons] at hlast
+        exact (List.nodup_cons.mp hnd).1 (getLast?_mem hlast)
+
+/-- The ring configuration participates everyone. -/
+theorem RingConfig.inclusiveAlternativeOrdering
+    {R : A → A → Prop} {X : Finset A}
+    (h : RingConfig R X) : InclusiveAlternativeOrdering R X :=
+  oneWay_imp_inclusiveAlternative R X h.oneWayWeak
+
+/-- Radial events participate everyone: the center acts on each
+    peripheral member. -/
+theorem RadialConfig.inclusiveAlternativeOrdering [DecidableEq A]
+    {R : A → A → Prop} {X : Finset A}
+    (h : RadialConfig R X) : InclusiveAlternativeOrdering R X := by
+  obtain ⟨c, hc, hcard, hiff⟩ := h
+  intro x hx
+  by_cases hxc : x = c
+  · subst hxc
+    obtain ⟨y, hy, hyx⟩ := X.exists_mem_ne hcard x
+    exact ⟨y, hy, hyx.symm, Or.inl ((hiff x y).mpr ⟨rfl, hy, hyx⟩)⟩
+  · exact ⟨c, hc, hxc, Or.inr ((hiff c x).mpr ⟨rfl, hx, hxc⟩)⟩
+
+/-! #### Lattice connections -/
+
+/-- The pairwise configuration realizes Partitioned Strong Reciprocity:
+    the pairing is the partition witness. -/
+theorem PairwiseConfig.partitionedStrong {R : A → A → Prop} {X : Finset A}
+    (h : PairwiseConfig R X) : PartitionedStrongReciprocity R X := by
+  obtain ⟨P, hcells, hcover, hiff⟩ := h
+  exact ⟨P, fun Y hY => (hcells Y hY).2, hcover,
+    fun Y hY x hx y hy hne => (hiff x y).mpr ⟨Y, hY, hx, hy, hne.symm⟩⟩
+
 end Semantics.Plurality.Reciprocal

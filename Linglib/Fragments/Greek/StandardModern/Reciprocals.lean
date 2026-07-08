@@ -1,4 +1,5 @@
 import Linglib.Morphology.MorphRule
+import Linglib.Syntax.Reciprocal
 
 /-!
 # Modern Greek Reciprocal Fragment
@@ -36,5 +37,24 @@ def nonactiveVoiceSuffix : MorphRule Bool :=
 /-- The Greek nonactive suffix is a voice operation (not valence). -/
 theorem nonactive_is_voice :
     nonactiveVoiceSuffix.category = .voice := rfl
+
+open Reciprocal
+
+/-- The nonactive suffix as a reciprocal marker — citation allomorph of
+    the paradigm realized by `nonactiveVoiceSuffix` (stem + *-ome*),
+    which also serves reflexive, passive, and middle voice
+    ([nordlinger-2023] ex. 27). The marker records the exponent's form;
+    the morphological rule itself is the fragment's `MorphRule`. -/
+def nonactive : Marker :=
+  { form := "-ome", strategy := .verbalAffix
+  , readings := [.reciprocal, .reflexive] }
+
+/-- o enas ton allon — distinct periphrastic reciprocal, whose existence
+    underlies the WALS "mixed" classification ([maslova-nedjalkov-2013]). -/
+def oEnasTonAllon : Marker :=
+  { form := "o enas ton allon", strategy := .bipartiteNP }
+
+/-- Marker inventory, primary strategy first. -/
+def markers : List Marker := [nonactive, oEnasTonAllon]
 
 end Greek.StandardModern.Reciprocals

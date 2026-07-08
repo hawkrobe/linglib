@@ -1,4 +1,5 @@
 import Linglib.Syntax.Pronoun.Basic
+import Linglib.Syntax.Reciprocal
 
 /-!
 # German Reciprocal Fragment
@@ -20,18 +21,24 @@ between reflexive and reciprocal uses.
 
 namespace German.Reciprocals
 
-open Pronoun
-
-/-- sich — reflexive/reciprocal pronoun (3rd person). -/
-def sich : PersonalPronoun :=
-  { form := "sich", person := some .third }
+open Reciprocal
 
 /-- einander — dedicated reciprocal pronoun. -/
-def einander : PersonalPronoun :=
-  { form := "einander", person := some .third, number := some .plural }
+def einander : Marker :=
+  { form := "einander", strategy := .recipPronoun }
+
+/-- sich — reflexive pronoun in reciprocal use ([siloni-2012] fn. 13
+    treats *sich*-reciprocals as syntactic reciprocal verbs). -/
+def sich : Marker :=
+  { form := "sich", strategy := .recipPronoun
+  , readings := [.reciprocal, .reflexive] }
 
 /-- The dedicated reciprocal form is distinct from the reflexive. -/
 theorem einander_distinct_from_sich :
     einander.form ≠ sich.form := by decide
+
+/-- Marker inventory: dedicated *einander* plus reflexive-identical
+    *sich* — jointly the WALS "mixed" configuration. -/
+def markers : List Marker := [einander, sich]
 
 end German.Reciprocals
