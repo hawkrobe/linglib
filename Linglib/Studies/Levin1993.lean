@@ -37,7 +37,7 @@ alternations.
 namespace Levin1993
 
 open Data.Examples
-open Semantics.Lexical
+open ArgumentStructure
 open English.Predicates.Verbal
 
 -- ════════════════════════════════════════════════════

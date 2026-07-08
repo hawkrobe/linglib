@@ -1,5 +1,5 @@
 import Linglib.Semantics.Causation.Morphological
-import Linglib.Semantics.Lexical.EventStructure
+import Linglib.Semantics.ArgumentStructure.EventStructure
 import Linglib.Semantics.ArgumentStructure.ArgDerivation
 import Linglib.Syntax.Minimalist.Verbal.Voice
 
@@ -48,10 +48,10 @@ Texas at Austin.
 namespace Krejci2012
 
 open Verb
-open Semantics.Lexical
+open ArgumentStructure
 open Root.Kinds
 open Causation.Morphological
-open Semantics.Lexical.EventStructure
+open ArgumentStructure.EventStructure
 open ArgumentStructure.ArgDerivation
 
 -- ════════════════════════════════════════════════════
@@ -272,7 +272,7 @@ theorem eat_primary_accomplishment :
 /-- eat's ArgTemplate is `consumption` (agent + incremental theme). -/
 theorem eat_argTemplate_is_consumption :
     LevinClass.argTemplate .eat =
-    some Features.LevinClassProfiles.consumption := rfl
+    some ArgumentStructure.consumption := rfl
 
 /-- The accomplishment template has an intransitive variant (achievement).
     This is the template-level possibility that eat/dress *could* alternate

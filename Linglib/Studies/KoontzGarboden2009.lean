@@ -1,5 +1,5 @@
 import Linglib.Semantics.Causation.Morphological
-import Linglib.Semantics.Lexical.EventStructure
+import Linglib.Semantics.ArgumentStructure.EventStructure
 import Linglib.Fragments.Spanish.Predicates
 import Linglib.Syntax.Voice.Alternation
 
@@ -153,7 +153,7 @@ namespace KoontzGarboden2009
 
 open Spanish.Predicates
 open Causation.Morphological
-open Semantics.Lexical.EventStructure
+open ArgumentStructure.EventStructure
 open KoontzGarboden2009.Monotonicity
 open Minimalist (VerbHead)
 open Voice

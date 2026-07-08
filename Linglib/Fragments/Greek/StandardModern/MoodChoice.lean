@@ -21,7 +21,7 @@ both *na* and *oti* (IND/SBJV). Causatives take *na* (SBJV).
 
 namespace Greek.StandardModern.MoodChoice
 
-open Semantics.Lexical
+open ArgumentStructure
 
 /-- *thélo* (θέλω) 'want' — robustly subjunctive-selecting via *na*.
     [grano-2024], (5): *na* (SBJV) required, *oti* (IND) rejected.

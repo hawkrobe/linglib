@@ -1,8 +1,8 @@
 import Linglib.Features.Aktionsart
 import Linglib.Features.Attitudes
 import Linglib.Features.Causation
-import Linglib.Semantics.Lexical.LevinClass
-import Linglib.Semantics.Lexical.MeaningComponents
+import Linglib.Semantics.ArgumentStructure.LevinClass
+import Linglib.Semantics.ArgumentStructure.MeaningComponents
 import Linglib.Semantics.Causation.CCSelection
 import Linglib.Semantics.Causation.Sufficiency
 import Linglib.Semantics.Causation.Necessity
@@ -89,7 +89,7 @@ end Features.Causative
 
 namespace Causation.Interpretation
 
-open Semantics.Lexical
+open ArgumentStructure
 open Features
 
 /-- `make` and `force` are distinguished by coercion despite sharing truth conditions. -/

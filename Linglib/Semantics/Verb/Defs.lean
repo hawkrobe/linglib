@@ -5,7 +5,7 @@ import Linglib.Semantics.Presupposition.Basic
 import Linglib.Features.Aktionsart
 import Linglib.Features.Attitudes
 import Linglib.Features.Causation
-import Linglib.Semantics.Lexical.LevinClass
+import Linglib.Semantics.ArgumentStructure.LevinClass
 import Linglib.Semantics.NaturalLogic
 import Linglib.Semantics.Aspect.ChangeOfState
 import Linglib.Semantics.Causation.Implicative
@@ -13,7 +13,7 @@ import Linglib.Semantics.ArgumentStructure.Linking
 import Linglib.Semantics.Causation.Psych
 import Linglib.Semantics.Aspect.DegreeAchievement
 import Linglib.Semantics.Aspect.Incremental
-import Linglib.Semantics.Lexical.LevinClassProfiles
+import Linglib.Semantics.ArgumentStructure.LevinClassProfiles
 import Linglib.Semantics.Verb.Root.Basic
 import Linglib.Semantics.Verb.Root.Profile
 
@@ -50,14 +50,14 @@ primitive fields in `Semantics/Verb/Basic.lean`, not stipulated as an enum.
 
 open Semantics.Presupposition
 open Features
-open Semantics.Lexical
+open ArgumentStructure
 open Features.ChangeOfState
 open NaturalLogic (EntailmentSig)
 open Causation.Psych (CausalSource)
 open ArgumentStructure (EntailmentProfile)
 open Features.DegreeAchievement (DegreeAchievementScale)
 open Semantics.Aspect.Incremental (VerbIncClass)
-open Features.LevinClassProfiles
+open ArgumentStructure
 
 /-! ### Selectional and inflectional enums -/
 

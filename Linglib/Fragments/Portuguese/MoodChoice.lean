@@ -19,7 +19,7 @@ Portuguese 'want' robustly takes SBJV; 'hope' allows both IND and SBJV;
 
 namespace Portuguese.MoodChoice
 
-open Semantics.Lexical
+open ArgumentStructure
 
 /-- *querer* 'want' — robustly subjunctive-selecting.
     [grano-2024], (3a): SBJV required. -/

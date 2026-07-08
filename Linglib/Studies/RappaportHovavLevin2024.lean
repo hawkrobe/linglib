@@ -1,7 +1,7 @@
-import Linglib.Semantics.Lexical.EventStructure
+import Linglib.Semantics.ArgumentStructure.EventStructure
 import Linglib.Semantics.ArgumentStructure.Projection
-import Linglib.Semantics.Lexical.LevinClass
-import Linglib.Semantics.Lexical.LevinClassProfiles
+import Linglib.Semantics.ArgumentStructure.LevinClass
+import Linglib.Semantics.ArgumentStructure.LevinClassProfiles
 
 /-!
 # Variable Agentivity: Polysemy or Underspecification?
@@ -62,7 +62,7 @@ of two mechanisms, not one.
 
 ## Implementation notes
 
-This file does *not* add a fifth case to `Semantics.Lexical.EventStructure.Template`.
+This file does *not* add a fifth case to `ArgumentStructure.EventStructure.Template`.
 RHL 2024's contribution is an enrichment of the *internal structure* of
 the activity template for one manner subclass — two grammatically relevant
 predicates instead of one — and a per-frame choice of which predicate
@@ -87,9 +87,9 @@ verbs ([levin-krejci-2019]), and *drown*.
 
 namespace RappaportHovavLevin2024
 
-open Semantics.Lexical.EventStructure
+open ArgumentStructure.EventStructure
 open ArgumentStructure
-open Semantics.Lexical
+open ArgumentStructure
 
 /-! ### Force-dynamic primitives -/
 
@@ -513,7 +513,7 @@ instance (v : WipingVerb) : Decidable v.HasSpecializedSense := by
 /-! ### Bridge to existing substrate
 
 The wiping-verbs class corresponds to [levin-1993] class 10.4,
-encoded as `LevinClass.wipe` in `Linglib/Semantics/Lexical/LevinClass.lean`.
+encoded as `LevinClass.wipe` in `Linglib/Semantics/ArgumentStructure/LevinClass.lean`.
 Verbs in this class share the basic-*sweep* event structure. -/
 
 /-- [levin-1993] 10.4 — the wiping-verbs Levin class. -/
@@ -529,7 +529,7 @@ def WipingVerb.levinClass : WipingVerb → LevinClass := fun _ => wipingLevinCla
 
 section AgentivityBridge
 
-open Features.LevinClassProfiles
+open ArgumentStructure
 
 /-- The two *sweep* senses pair with the two Levin 10.4 subclass templates:
     basic-*sweep* (moving entity unsaturated) with the manner subclass, whose

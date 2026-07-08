@@ -1,5 +1,5 @@
-import Linglib.Semantics.Lexical.EventStructure
-import Linglib.Semantics.Lexical.LevinClassProfiles
+import Linglib.Semantics.ArgumentStructure.EventStructure
+import Linglib.Semantics.ArgumentStructure.LevinClassProfiles
 
 /-!
 # Argument Structure Derivation Pipeline
@@ -48,9 +48,9 @@ adds information beyond what root entailments + template predict:
 namespace ArgumentStructure.ArgDerivation
 
 open Verb
-open Semantics.Lexical
-open Semantics.Lexical.EventStructure (Template)
-open Features.LevinClassProfiles
+open ArgumentStructure
+open ArgumentStructure.EventStructure (Template)
+open ArgumentStructure
 open _root_.ArgumentStructure (EntailmentProfile)
 open _root_.ArgumentStructure
 open Root.Kinds
@@ -302,7 +302,7 @@ def deriveEnriched (re : Root.Kinds) (mc : MeaningComponents) : Option ArgTempla
       if mc.contact then
         -- Transitive activity: subject gets C from causal interaction
         some { subjectProfile := ArgumentStructure.accomplishmentSubjectProfile,
-               objectProfile := some Features.LevinClassProfiles.contactObject }
+               objectProfile := some ArgumentStructure.contactObject }
       else
         some base
     | _ => some base

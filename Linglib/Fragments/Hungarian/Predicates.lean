@@ -31,7 +31,7 @@ clause-type analysis lives in `Studies.Egressy2026`.
 
 namespace Hungarian.Predicates
 
-open Semantics.Lexical
+open ArgumentStructure
 
 /-- Hungarian verb entry: extends `Verb` with the definite/indefinite
     conjugation paradigm. Conjugation fields default to `""` (unspecified)

@@ -1,3 +1,8 @@
+# Linglib
+-/
+/-
+A Lean 4 library for formal linguistics, covering semantics, pragmatics,
+and their interfaces. See README.md for documentation links.
 import Linglib.Core.Algebra.ConnesKreimer.Shuffle
 import Linglib.Core.Algebra.ConnesKreimer.ShuffleBialgebra
 import Linglib.Core.Algebra.Free
@@ -44,6 +49,7 @@ import Linglib.Core.Algebra.RootedTree.PreLie.Insertion
 import Linglib.Core.Algebra.RootedTree.PreLie.InsertionAddHost
 import Linglib.Core.Algebra.RootedTree.PreLie.InsertionCompose
 import Linglib.Core.Algebra.RootedTree.PreLie.InsertionNodeDecomp
+import Linglib.Core.Algebra.RootedTree.PreLie.InsertionNonplanar
 import Linglib.Core.Algebra.RootedTree.PreLie.OudomGuinBridge
 import Linglib.Core.Algebra.RootedTree.PreLie.OudomGuinBridgePairing
 import Linglib.Core.Algebra.RootedTree.PreLie.Path
@@ -57,16 +63,13 @@ import Linglib.Core.CategoryTheory.Monoidal.LabeledTuple
 import Linglib.Core.Combinatorics.Antimatroid
 import Linglib.Core.Combinatorics.RootedTree.Aut
 import Linglib.Core.Combinatorics.RootedTree.ContractUnary
-import Linglib.Core.Data.RoseTree.DecEq
-import Linglib.Core.Data.RoseTree.Nonplanar
-import Linglib.Core.Algebra.RootedTree.PreLie.InsertionNonplanar
-import Linglib.Core.Computability.Lens
 import Linglib.Core.Computability.ContextFreeGrammar.Closure
 import Linglib.Core.Computability.ContextFreeGrammar.InterRegular
 import Linglib.Core.Computability.ContextFreeGrammar.Map
 import Linglib.Core.Computability.ContextFreeGrammar.Pumping
 import Linglib.Core.Computability.ContextFreeGrammar.Tree
 import Linglib.Core.Computability.ContextFreeGrammar.Weighted
+import Linglib.Core.Computability.Lens
 import Linglib.Core.Computability.NonContextFree.AmBnCmDn
 import Linglib.Core.Computability.NonContextFree.AnBnCn
 import Linglib.Core.Computability.NonContextFree.AnBnCnDn
@@ -108,11 +111,11 @@ import Linglib.Core.Computability.Variety.Langs
 import Linglib.Core.Data.Fin.Tuple.Basic
 import Linglib.Core.Data.List.Bookend
 import Linglib.Core.Data.List.Chain
-import Linglib.Core.Data.List.Perm
 import Linglib.Core.Data.List.Destutter
 import Linglib.Core.Data.List.DropRight
 import Linglib.Core.Data.List.Factors
 import Linglib.Core.Data.List.Fold
+import Linglib.Core.Data.List.Perm
 import Linglib.Core.Data.List.Sublist
 import Linglib.Core.Data.List.TakeDrop
 import Linglib.Core.Data.Multiset.Antidiagonal
@@ -120,14 +123,19 @@ import Linglib.Core.Data.Multiset.Powerset
 import Linglib.Core.Data.Multiset.Rel
 import Linglib.Core.Data.RoseTree.Basic
 import Linglib.Core.Data.RoseTree.Count
-import Linglib.Core.Data.RoseTree.Perm
+import Linglib.Core.Data.RoseTree.DecEq
 import Linglib.Core.Data.RoseTree.Get
 import Linglib.Core.Data.RoseTree.Leaves
+import Linglib.Core.Data.RoseTree.Nonplanar
+import Linglib.Core.Data.RoseTree.Perm
 import Linglib.Core.Data.RoseTree.Traversable
 import Linglib.Core.Data.Setoid.Basic
 import Linglib.Core.InformationTheory.KullbackLeibler.Basic
 import Linglib.Core.InformationTheory.KullbackLeibler.Cond
 import Linglib.Core.InformationTheory.MutualInformation
+import Linglib.Core.Learning.Luce
+import Linglib.Core.Learning.RescorlaWagner
+import Linglib.Core.Learning.WidrowHoff
 import Linglib.Core.LinearAlgebra.SymmetricAlgebra.Derivation
 import Linglib.Core.LinearAlgebra.SymmetricPower.Lift
 import Linglib.Core.LinearAlgebra.SymmetricPower.ToSymmetricAlgebra
@@ -260,9 +268,6 @@ import Linglib.Core.Order.UpperLower.Closure
 import Linglib.Core.Probability.BayesianUpdate
 import Linglib.Core.Probability.Choice.ChoiceApproximations
 import Linglib.Core.Probability.Choice.GumbelLuce
-import Linglib.Core.Learning.Luce
-import Linglib.Core.Learning.RescorlaWagner
-import Linglib.Core.Learning.WidrowHoff
 import Linglib.Core.Probability.Choice.RankOrderings
 import Linglib.Core.Probability.Choice.RationalAction
 import Linglib.Core.Probability.Choice.SemiorderRanking
@@ -375,6 +380,7 @@ import Linglib.Data.Examples.Schema
 import Linglib.Data.Examples.Schlenker2004
 import Linglib.Data.Examples.Sharvit2003
 import Linglib.Data.Examples.SolstadBott2024
+import Linglib.Data.Examples.Stankova2026
 import Linglib.Data.Examples.Steedman2000
 import Linglib.Data.Examples.Storment2026
 import Linglib.Data.Examples.TesslerFranke2019
@@ -384,9 +390,11 @@ import Linglib.Data.Examples.TieuEtAl2020
 import Linglib.Data.Examples.TonhauserBeaverDegen2018
 import Linglib.Data.Examples.TurkHirsch2026
 import Linglib.Data.Examples.VanDerSandtMaier2003
+import Linglib.Data.Examples.VonFintel1999
 import Linglib.Data.Examples.VonFintelGillies2010
 import Linglib.Data.Examples.VonFintelGillies2021
 import Linglib.Data.Examples.VonFintelIatridou2005
+import Linglib.Data.Examples.Wellwood2015
 import Linglib.Data.Examples.Westergaard2009
 import Linglib.Data.Examples.Wurmbrand2014
 import Linglib.Data.Generalizations.HomogeneityGap
@@ -686,10 +694,10 @@ import Linglib.Features.Polarity
 import Linglib.Features.Possession
 import Linglib.Features.Prominence
 import Linglib.Features.PropertyDomain
-import Linglib.Features.ScalarDimension
 import Linglib.Features.Prosody
 import Linglib.Features.QParticleLayer
 import Linglib.Features.Register
+import Linglib.Features.ScalarDimension
 import Linglib.Features.ScopeTypes
 import Linglib.Features.Slot
 import Linglib.Features.Subjectivity
@@ -1466,9 +1474,9 @@ import Linglib.Processing.Expectation.LanguageModel
 import Linglib.Processing.Expectation.PrefixProbability
 import Linglib.Processing.Lexical.Discriminative.Coding
 import Linglib.Processing.Lexical.Discriminative.Defs
-import Linglib.Processing.Lexical.Discriminative.Regression
 import Linglib.Processing.Lexical.Discriminative.Measures
 import Linglib.Processing.Lexical.Discriminative.Normed
+import Linglib.Processing.Lexical.Discriminative.Regression
 import Linglib.Processing.Lexical.Discriminative.Training
 import Linglib.Processing.Memory.Channel
 import Linglib.Processing.Memory.InformationalFusion
@@ -1493,8 +1501,14 @@ import Linglib.Semantics.ArgumentStructure.ArgDerivation
 import Linglib.Semantics.ArgumentStructure.ArgumentIntroduction
 import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
 import Linglib.Semantics.ArgumentStructure.CaseRegion
+import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
+import Linglib.Semantics.ArgumentStructure.EventStructure
+import Linglib.Semantics.ArgumentStructure.LevinClass
+import Linglib.Semantics.ArgumentStructure.LevinClassProfiles
+import Linglib.Semantics.ArgumentStructure.LevinTheory
 import Linglib.Semantics.ArgumentStructure.Linking
+import Linglib.Semantics.ArgumentStructure.MeaningComponents
 import Linglib.Semantics.ArgumentStructure.ParticipantType
 import Linglib.Semantics.ArgumentStructure.PersistenceLevel
 import Linglib.Semantics.ArgumentStructure.Projection
@@ -1518,6 +1532,7 @@ import Linglib.Semantics.Attitudes.BuilderProperties
 import Linglib.Semantics.Attitudes.CDistributivity
 import Linglib.Semantics.Attitudes.ClauseDenotation.Content
 import Linglib.Semantics.Attitudes.ClauseDenotation.Situation
+import Linglib.Semantics.Attitudes.ClauseEmbedding
 import Linglib.Semantics.Attitudes.CondoravdiLauer
 import Linglib.Semantics.Attitudes.Confidence
 import Linglib.Semantics.Attitudes.ContentIndividual
@@ -1603,31 +1618,24 @@ import Linglib.Semantics.Definiteness.DeterminerDenotation
 import Linglib.Semantics.Definiteness.DeterminerLicensing
 import Linglib.Semantics.Definiteness.Interpret
 import Linglib.Semantics.Definiteness.Maximality
-import Linglib.Semantics.Degree.Discrete
-import Linglib.Semantics.Degree.Quantifier
-import Linglib.Semantics.Degree.Basic
-import Linglib.Semantics.Degree.Defs
-import Linglib.Semantics.Degree.MeasurePhrase
-import Linglib.Semantics.Degree.Measure.Polar
+import Linglib.Semantics.Degree.Adjective
 import Linglib.Semantics.Degree.Aggregation
 import Linglib.Semantics.Degree.Antonymy
-import Linglib.Semantics.Degree.Adjective
-import Linglib.Semantics.Modification.Adjective
-import Linglib.Semantics.Attitudes.ClauseEmbedding
+import Linglib.Semantics.Degree.Basic
 import Linglib.Semantics.Degree.Defs
 import Linglib.Semantics.Degree.Delineation
-import Linglib.Features.ScalarDimension
-import Linglib.Semantics.Degree.Noun
+import Linglib.Semantics.Degree.Discrete
+import Linglib.Semantics.Degree.Granularity
 import Linglib.Semantics.Degree.Hom
 import Linglib.Semantics.Degree.Intensification
-import Linglib.Studies.DinisJacinto2026
-import Linglib.Semantics.Degree.Granularity
-import Linglib.Studies.Bale2008
-import Linglib.Studies.Buring2007
-import Linglib.Semantics.Degree.Measure.Temporal
 import Linglib.Semantics.Degree.Measure.Basic
 import Linglib.Semantics.Degree.Measure.Dimensioned
+import Linglib.Semantics.Degree.Measure.Polar
+import Linglib.Semantics.Degree.Measure.Temporal
+import Linglib.Semantics.Degree.MeasurePhrase
+import Linglib.Semantics.Degree.Noun
 import Linglib.Semantics.Degree.Predicate
+import Linglib.Semantics.Degree.Quantifier
 import Linglib.Semantics.Dynamic.Accessibility
 import Linglib.Semantics.Dynamic.Bilateral
 import Linglib.Semantics.Dynamic.CDRT
@@ -1713,22 +1721,8 @@ import Linglib.Semantics.Kinds.MeaningPreservation
 import Linglib.Semantics.Kinds.NominalMappingParameter
 import Linglib.Semantics.Kinds.SortedOntology
 import Linglib.Semantics.Kinds.Subkinds
-import Linglib.Semantics.Lexical.DiathesisAlternation
-import Linglib.Semantics.Lexical.EventStructure
-import Linglib.Semantics.Lexical.LevinClass
-import Linglib.Semantics.Lexical.LevinClassProfiles
-import Linglib.Semantics.Lexical.LevinTheory
-import Linglib.Semantics.Lexical.MeaningComponents
-import Linglib.Semantics.Lexical.VerbSmuggling
 import Linglib.Semantics.Mereology
 import Linglib.Semantics.Modality.ActualityEntailments
-import Linglib.Semantics.Mood.Defs
-import Linglib.Semantics.Mood.Dynamic
-import Linglib.Semantics.Mood.Eventuality
-import Linglib.Semantics.Mood.Situation
-import Linglib.Semantics.Mood.SpeechEvent
-import Linglib.Semantics.Mood.State
-import Linglib.Semantics.Mood.Verbal
 import Linglib.Semantics.Modality.BranchingTime
 import Linglib.Semantics.Modality.Directive
 import Linglib.Semantics.Modality.EpistemicLogic
@@ -1754,8 +1748,16 @@ import Linglib.Semantics.Modality.Temporal
 import Linglib.Semantics.Modality.TemporalAxes
 import Linglib.Semantics.Modality.TemporalConstraint
 import Linglib.Semantics.Modality.Typology
+import Linglib.Semantics.Modification.Adjective
 import Linglib.Semantics.Modification.Basic
 import Linglib.Semantics.Modification.RelativeClause
+import Linglib.Semantics.Mood.Defs
+import Linglib.Semantics.Mood.Dynamic
+import Linglib.Semantics.Mood.Eventuality
+import Linglib.Semantics.Mood.Situation
+import Linglib.Semantics.Mood.SpeechEvent
+import Linglib.Semantics.Mood.State
+import Linglib.Semantics.Mood.Verbal
 import Linglib.Semantics.NaturalLogic
 import Linglib.Semantics.Negation.CzechNegation
 import Linglib.Semantics.Negation.Defs
@@ -1916,6 +1918,7 @@ import Linglib.Semantics.Verb.Root.Signature
 import Linglib.Semantics.Verb.Root.Template
 import Linglib.Semantics.Verb.Root.Typology
 import Linglib.Semantics.Verb.RootContent
+import Linglib.Semantics.Verb.Smuggling
 import Linglib.Studies.AbneyKeshet2025
 import Linglib.Studies.Abusch1997
 import Linglib.Studies.AckemaNeeleman2018
@@ -1985,6 +1988,7 @@ import Linglib.Studies.BakayEtAl2026
 import Linglib.Studies.Baker1985
 import Linglib.Studies.Baker2015
 import Linglib.Studies.BakerVinokurova2010
+import Linglib.Studies.Bale2008
 import Linglib.Studies.BaleEtAl2025
 import Linglib.Studies.BaleKhanjian2014
 import Linglib.Studies.BaleSchwarz2022
@@ -2134,6 +2138,7 @@ import Linglib.Studies.Corbett1991
 import Linglib.Studies.Corbett2000
 import Linglib.Studies.Creissels2025
 import Linglib.Studies.CremersWilcoxSpector2023
+import Linglib.Studies.Cresswell1976
 import Linglib.Studies.Cruse1973
 import Linglib.Studies.Cumming2026
 import Linglib.Studies.Cummins2015
@@ -2158,7 +2163,6 @@ import Linglib.Studies.DegenTonhauser2021
 import Linglib.Studies.DegenTonhauser2022
 import Linglib.Studies.Dekier2021
 import Linglib.Studies.Dekker2012
-import Linglib.Studies.Cresswell1976
 import Linglib.Studies.DelPinal2015
 import Linglib.Studies.DelPinalBassiSauerland2024
 import Linglib.Studies.DelPrete2013
@@ -2168,6 +2172,7 @@ import Linglib.Studies.Denic2023
 import Linglib.Studies.DenicEtAl2021
 import Linglib.Studies.Deo2025
 import Linglib.Studies.DeoThomas2025
+import Linglib.Studies.DinisJacinto2026
 import Linglib.Studies.Dixon1994
 import Linglib.Studies.Dolatian2020
 import Linglib.Studies.DongEtAl2026PMF
@@ -2311,7 +2316,6 @@ import Linglib.Studies.HeKaiserIskarous2025
 import Linglib.Studies.Heim1982.Basic
 import Linglib.Studies.Heim1982.FileChangeSemantics
 import Linglib.Studies.Heim1983
-import Linglib.Studies.HeitmeierChuangBaayen2026
 import Linglib.Studies.Heim1992Desire
 import Linglib.Studies.Heim1992Projection
 import Linglib.Studies.Heim1994
@@ -2320,6 +2324,7 @@ import Linglib.Studies.HeimComments1994
 import Linglib.Studies.HeimKratzer1998
 import Linglib.Studies.HeimLasnikMay1991
 import Linglib.Studies.Heine1997
+import Linglib.Studies.HeitmeierChuangBaayen2026
 import Linglib.Studies.HerbstrittFranke2019
 import Linglib.Studies.Hewett2026
 import Linglib.Studies.Hintikka1962
@@ -2674,11 +2679,11 @@ import Linglib.Studies.Spector2025
 import Linglib.Studies.SpinosoDiPiano2025PMF
 import Linglib.Studies.Spohn1988
 import Linglib.Studies.SprouseEtAl2012
-import Linglib.Studies.Stankova2026
-import Linglib.Studies.StankovaSimik2025
 import Linglib.Studies.Stalnaker1975
 import Linglib.Studies.Stalnaker1981
+import Linglib.Studies.Stankova2026
 import Linglib.Studies.StankovaSimik2024.Data
+import Linglib.Studies.StankovaSimik2025
 import Linglib.Studies.StapsRooryck2024
 import Linglib.Studies.Stassen1985
 import Linglib.Studies.Stassen2000
@@ -2943,15 +2948,3 @@ import Linglib.Syntax.WordGrammar.Inheritance.Default
 import Linglib.Syntax.WordGrammar.Inheritance.Order
 import Linglib.Syntax.WordGrammar.LexicalRules
 import Linglib.Syntax.WordGrammar.Network
-import Linglib.Data.Examples.VonFintel1999
-import Linglib.Data.Examples.Stankova2026
-import Linglib.Data.Examples.Wellwood2015
-/-
-# Linglib
-
-A Lean 4 library for formal linguistics, covering semantics, pragmatics,
-and their interfaces. See README.md for documentation links.
--/
-
-
-

@@ -14,7 +14,7 @@ event is not entailed to have actually occurred.
 
 namespace Korean.Predicates
 
-open Semantics.Lexical
+open ArgumentStructure
 open Features (Causative)
 
 /-- Korean verb entry: extends Verb with Korean inflectional paradigm. -/

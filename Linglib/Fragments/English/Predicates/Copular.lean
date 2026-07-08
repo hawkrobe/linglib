@@ -16,7 +16,7 @@ that need a uniform `Verb` interface.
 namespace English.Predicates.Copular
 
 open Semantics.Attitudes (ClauseEmbeddingAdj)
-open Semantics.Lexical
+open ArgumentStructure
 
 /-- "annoyed (that p)" — emotive factive clause-embedding adjective.
     [degen-tonhauser-2021], [degen-tonhauser-2022]: canonically factive.
@@ -52,7 +52,7 @@ end English.Predicates.Copular
 -- § English copular realization
 -- ════════════════════════════════════════════════════
 
-open Semantics.Lexical in
+open ArgumentStructure in
 /-- Construct a `Verb` for an English copular predicate.
     The copula contributes "be"; the adjective contributes the semantics.
     This is English-specific — other languages realize clause-embedding

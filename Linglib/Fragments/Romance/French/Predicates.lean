@@ -16,10 +16,10 @@ despite being separate words.
 
 namespace French.Predicates
 
-open Semantics.Lexical
+open ArgumentStructure
 open Features (Causative)
 open ArgumentStructure
-open Features.LevinClassProfiles (experiencerProfile)
+open ArgumentStructure (experiencerProfile)
 
 /-- French verb entry: extends Verb with French inflectional paradigm. -/
 structure FrenchVerbEntry extends Verb where
@@ -195,7 +195,7 @@ def protoTransObjectProfile : EntailmentProfile where
   dependentExistence := false
 
 /-- Experiencer subject: S+IE (2 P-Ag).
-    [dowty-1991]'s experiencer — `Features.LevinClassProfiles.experiencerProfile`,
+    [dowty-1991]'s experiencer — `ArgumentStructure.experiencerProfile`,
     the perception/psych-state class subject. Used for *aimer*, *adorer*,
     *respecter*. -/
 abbrev experiencerSubjectProfile := experiencerProfile

@@ -1,7 +1,7 @@
 import Linglib.Data.Examples.Storment2026
 import Linglib.Data.Examples.LevinRappaportHovav1995
 import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Semantics.Lexical.VerbSmuggling
+import Linglib.Semantics.Verb.Smuggling
 import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Syntax.Minimalist.Movement.Smuggling
 import Linglib.Syntax.Minimalist.Movement.InverseVoice
@@ -39,7 +39,7 @@ diagnostics).
 
 namespace Storment2026
 
-open Semantics.Lexical
+open ArgumentStructure
 open English.Predicates.Verbal
 open Data.Examples
 open ArgumentStructure.AuxiliarySelection (TransitivityClass canonicalSelection)
@@ -97,7 +97,7 @@ theorem kick_transitive : deriveTransitivityClass kick.toVerb = .transitive := r
 
 /-! ## §4. Voice bridge
 
-`Verb.voiceFor` (defined in `Semantics/Lexical/VerbSmuggling.lean`)
+`Verb.voiceFor` (defined in `Semantics/Verb/Smuggling.lean`)
 maps unaccusative→non-thematic Voice and
 unergative→agentive Voice. Per [storment-2026]'s §4.3, the Voice
 head is the smuggling projection (not the external-argument introducer
@@ -137,7 +137,7 @@ theorem speak_levinClass : speak.levinClass = some .mannerOfSpeaking := rfl
 
 /-! ## §8. Smuggling derivation of QI
 
-`Verb.derivedQI` (defined in `Semantics/Lexical/VerbSmuggling.lean`)
+`Verb.derivedQI` (defined in `Semantics/Verb/Smuggling.lean`)
 derives QI licensing from two independently
 motivated properties: (1) Voice is non-phase (= unaccusative);
 (2) verb has a complement (the quote).

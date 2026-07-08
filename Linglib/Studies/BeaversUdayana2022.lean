@@ -1,6 +1,6 @@
 import Linglib.Fragments.Indonesian.VoiceSystem
 import Linglib.Studies.Beavers2010
-import Linglib.Semantics.Lexical.DiathesisAlternation
+import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
 import Linglib.Syntax.Voice.Middle
 import Linglib.Semantics.ArgumentStructure.VoiceSemantics
 
@@ -87,7 +87,7 @@ languages, but language-specific argument realization strategies
 
 namespace BeaversUdayana2022
 
-open Semantics.Lexical
+open ArgumentStructure
 open Indonesian.VoiceSystem
 open Minimalist.Voice (Params Flavor ExternalArgSemantics)
 open Beavers2010
@@ -402,7 +402,7 @@ theorem men_incompatible_with_di :
     least some degree of affectedness" (§2.1) — i.e. affectedness degree
     ≥ nonquantized on [beavers-2010]'s hierarchy. [levin-1993]'s middle
     diagnostic (`MeaningComponents.predictedAlternation`,
-    `Semantics/Lexical/DiathesisAlternation.lean`) draws the same verb-class
+    `Semantics/ArgumentStructure/DiathesisAlternation.lean`) draws the same verb-class
     line via `changeOfState`. -/
 def LicensesDispositionalMiddle (d : AffectednessDegree) : Prop :=
   AffectednessDegree.nonquantized ≤ d

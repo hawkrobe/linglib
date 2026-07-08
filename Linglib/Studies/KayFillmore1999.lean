@@ -467,7 +467,7 @@ theorem wxdy_presup_requires_cg {W : Type*}
 /-! ### Aspect bridge (Semantics.Montague/Verb/Aspect.lean + Diagnostics) -/
 
 open Features
-open Semantics.Lexical
+open ArgumentStructure
 open Features
 
 /-- WXDY's *doing* selects for activities and accomplishments — predicates

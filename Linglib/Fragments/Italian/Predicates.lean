@@ -25,7 +25,7 @@ which determines the rational attitude reading.
 
 namespace Italian.Predicates
 
-open Semantics.Lexical
+open ArgumentStructure
 open Minimalist (ComplementSize)
 open Semantics.Attitudes.RationalAttitude (Reading readingFromSize)
 

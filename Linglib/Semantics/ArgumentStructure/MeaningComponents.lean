@@ -1,5 +1,5 @@
 /-!
-# Semantics.Lexical.MeaningComponents
+# ArgumentStructure.MeaningComponents
 [levin-1993] [beavers-koontz-garboden-2020]
 
 Binary meaning-component features that define [levin-1993] verb classes
@@ -56,7 +56,7 @@ with other lexical-semantic frameworks worth formalizing as siblings:
   decomposition.
 -/
 
-namespace Semantics.Lexical
+namespace ArgumentStructure
 
 /-- Binary meaning components that define [levin-1993] verb classes.
 
@@ -128,4 +128,4 @@ theorem fuse_comm (a b : MeaningComponents) : a.fuse b = b.fuse a := by
 
 end MeaningComponents
 
-end Semantics.Lexical
+end ArgumentStructure

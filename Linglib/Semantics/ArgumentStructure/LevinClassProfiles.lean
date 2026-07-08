@@ -1,6 +1,6 @@
 import Linglib.Semantics.ArgumentStructure.Projection
 import Linglib.Semantics.ArgumentStructure.Linking
-import Linglib.Semantics.Lexical.LevinTheory
+import Linglib.Semantics.ArgumentStructure.LevinTheory
 
 /-!
 # Levin Class → Entailment Profile Mapping
@@ -28,10 +28,7 @@ Individual verbs can override class-level profiles via explicit
 `subjectEntailments`/`objectEntailments` on `Verb`.
 -/
 
-namespace Features.LevinClassProfiles
-
-open Semantics.Lexical
-open ArgumentStructure
+namespace ArgumentStructure
 
 -- ════════════════════════════════════════════════════
 -- § 1. Argument Structure Templates
@@ -224,11 +221,9 @@ def disappearance : ArgTemplate where
 -- § 3. LevinClass → ArgTemplate
 -- ════════════════════════════════════════════════════
 
-end Features.LevinClassProfiles
+end ArgumentStructure
 
-namespace Semantics.Lexical
-open Features.LevinClassProfiles
-open _root_.ArgumentStructure
+namespace ArgumentStructure
 
 /-- Map a Levin class to its argument structure template.
     Returns `none` for classes whose profiles haven't been determined yet. -/
@@ -274,7 +269,7 @@ def LevinClass.argTemplate : LevinClass → Option ArgTemplate
   -- entries override with `wipeInstrument` per verb)
   | .wipe                     => some wipeManner
   -- § 48.2: Disappearance
-  | .disappearance            => some Features.LevinClassProfiles.disappearance
+  | .disappearance            => some ArgumentStructure.disappearance
   -- Not yet classified
   | _                         => none
 
@@ -290,11 +285,9 @@ def LevinClass.subjectProfile (c : LevinClass) : Option EntailmentProfile :=
 def LevinClass.objectProfile (c : LevinClass) : Option EntailmentProfile :=
   c.argTemplate.bind (·.objectProfile)
 
-end Semantics.Lexical
+end ArgumentStructure
 
-namespace Features.LevinClassProfiles
-open Semantics.Lexical
-open ArgumentStructure
+namespace ArgumentStructure
 open Verb
 open Verb.Root.Kinds
 
@@ -465,7 +458,7 @@ theorem class_templates_override_derivation :
     (toArgTemplate (LevinClass.rootEntailments .disappearance)
         = some unaccusativeCoS ∧
       LevinClass.argTemplate .disappearance
-        = some Features.LevinClassProfiles.disappearance) ∧
+        = some ArgumentStructure.disappearance) ∧
     (toArgTemplate (LevinClass.rootEntailments .getObtain) = none ∧
       LevinClass.argTemplate .getObtain = some possessionTransfer) := by
   refine ⟨⟨rfl, rfl⟩, ⟨rfl, rfl⟩, ⟨rfl, rfl⟩, ⟨rfl, rfl⟩, rfl, rfl⟩
@@ -507,7 +500,6 @@ theorem derived_subjects_wellformed :
 
 section GrimmPlacements
 
-open ArgumentStructure
 
 
 /-! [grimm-2011]'s persistence bridge (`PersistenceLevel.fromPatientProfile`)
@@ -536,4 +528,4 @@ theorem disappearance_subject_persistence :
 
 end GrimmPlacements
 
-end Features.LevinClassProfiles
+end ArgumentStructure

@@ -45,8 +45,8 @@ import Linglib.Semantics.Causation.SEM.Counterfactual
 import Linglib.Features.Aktionsart
 import Linglib.Features.Attitudes
 import Linglib.Features.Causation
-import Linglib.Semantics.Lexical.LevinClass
-import Linglib.Semantics.Lexical.MeaningComponents
+import Linglib.Semantics.ArgumentStructure.LevinClass
+import Linglib.Semantics.ArgumentStructure.MeaningComponents
 
 namespace Semantics.Attitudes.Doxastic
 

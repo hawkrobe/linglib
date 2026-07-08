@@ -1,6 +1,6 @@
 import Linglib.Semantics.ArgumentStructure.Projection
 import Linglib.Semantics.ArgumentStructure.Linking
-import Linglib.Semantics.Lexical.LevinClassProfiles
+import Linglib.Semantics.ArgumentStructure.LevinClassProfiles
 import Linglib.Data.ProtoRoles.Dowty1991
 import Linglib.Fragments.English.Predicates.Verbal
 
@@ -9,7 +9,7 @@ import Linglib.Fragments.English.Predicates.Verbal
 
 Study file connecting the proto-role theory
 (`Semantics/ArgumentStructure/EntailmentProfile.lean` and the Levin-class
-template map, `Semantics/Lexical/LevinClassProfiles.lean`) to argument
+template map, `Semantics/ArgumentStructure/LevinClassProfiles.lean`) to argument
 selection phenomena. The paper's explicit per-argument entailment
 attributions are typed data rows in `Data/ProtoRoles/Dowty1991.json`
 (generated module `Data.ProtoRoles.Dowty1991`), checked against the class
@@ -36,9 +36,9 @@ succeed and where they diverge from the modern approach.
 
 namespace Dowty1991
 
-open Semantics.Lexical
 open ArgumentStructure
-open Features.LevinClassProfiles
+open ArgumentStructure
+open ArgumentStructure
 open English.Predicates.Verbal
 
 -- ════════════════════════════════════════════════════
