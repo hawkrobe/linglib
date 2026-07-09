@@ -2208,6 +2208,7 @@ import Linglib.Studies.Filip2012
 import Linglib.Studies.FillmoreKayOConnor1988
 import Linglib.Studies.Fine1975
 import Linglib.Studies.Fitting1994
+import Linglib.Studies.Fitting2021
 import Linglib.Studies.Flemming2021
 import Linglib.Studies.Fortuny2024
 import Linglib.Studies.Fox2007
