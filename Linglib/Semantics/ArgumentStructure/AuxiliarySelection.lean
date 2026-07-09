@@ -16,7 +16,7 @@ unaccusatives → *be* (Italian *è arrivato*, French *est arrivé*),
 unergatives/transitives → *have* (Italian *ha mangiato*). English has collapsed
 the split (all verbs take *have*). Graduated from the dissolved `Typology/`
 drawer; the orthogonal AVC inflection typology split off to
-`Syntax/AuxiliaryVerbs.lean`.
+`Syntax/Category/Auxiliary/Constructions.lean`.
 
 ## Main definitions
 

@@ -1,10 +1,11 @@
 import Linglib.Semantics.Modality.ModalTypes
+import Linglib.Syntax.Category.Auxiliary.Basic
 
 /-!
 # German Modal Verb Fragment
 
-Lexical entries for German modal verbs, following the pattern of English
-`AuxEntry` from `English.FunctionWords`.
+Lexical entries for German modal verbs; like English `AuxEntry`, they
+instance the `Auxiliary` word-class category.
 
 German has six core modals, each with fixed force and contextually variable
 flavor. All modal meanings are Cartesian products (force × flavors), so
@@ -35,6 +36,12 @@ structure GermanModalEntry where
   /-- Modal meaning as force-flavor pairs -/
   modalMeaning : List ForceFlavor
   deriving Repr, BEq
+
+/-- Every German modal projects to a UD `AUX` word (cited by its
+infinitive). -/
+instance : Auxiliary GermanModalEntry where
+  toWord m := { form := m.form, cat := .AUX }
+  cat_aux _ := rfl
 
 private abbrev cp := ForceFlavor.cartesianProduct
 

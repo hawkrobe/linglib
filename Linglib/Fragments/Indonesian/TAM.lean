@@ -3,6 +3,8 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
+import Linglib.Features.Register
+import Linglib.Syntax.Category.Auxiliary.Basic
 
 /-!
 # Indonesian temporal markers
@@ -41,14 +43,6 @@ inductive TemporalMeaning where
   | farPast
   deriving DecidableEq, Repr
 
-/-- Register restriction on a temporal marker ([sneddon-1996] §2.144). -/
-inductive Register where
-  /-- All registers, informal speech to the most formal styles. -/
-  | general
-  /-- Almost entirely confined to writing and very formal speech. -/
-  | formalWriting
-  deriving DecidableEq, Repr
-
 /-- A temporal marker ([sneddon-1996] §2.142): a word within the predicate
 indicating that the action has occurred, is occurring, or is yet to occur.
 Traditional studies call these 'aspect markers', grouping *akan* with the
@@ -56,7 +50,10 @@ modals. -/
 structure TemporalMarker where
   form : String
   meaning : TemporalMeaning
-  register : Register
+  /-- `.formal` for *telah*, "almost entirely confined to writing and very
+      formal speech"; `.neutral` for the rest, which [sneddon-1996] leaves
+      unrestricted (§2.144). -/
+  register : Features.Register.Level
   /-- `some b`: §§2.143–51 states or illustrates that the marker does
       (`true`) or does not (`false`) occur with non-verbal predicates;
       `none`: not addressed there. -/
@@ -66,50 +63,63 @@ structure TemporalMarker where
 /-- *sudah*: action occurred or state achieved; with state verbs, inception
 and/or continuation (*Dia sudah tidur* 'He has gone to bed/is asleep'); with
 non-verbal predicates ≈ 'already' (*Dia sudah tinggi/guru*) (§2.143). -/
-def sudah : TemporalMarker := ⟨"sudah", .occurred, .general, some true⟩
+def sudah : TemporalMarker := ⟨"sudah", .occurred, .neutral, some true⟩
 
 /-- *telah*: same meaning as *sudah*, differing only in register (§2.144). -/
-def telah : TemporalMarker := ⟨"telah", .occurred, .formalWriting, none⟩
+def telah : TemporalMarker := ⟨"telah", .occurred, .formal, none⟩
 
 /-- *sedang*: action in progress, 'in the process of' (§2.145). -/
-def sedang : TemporalMarker := ⟨"sedang", .inProgress, .general, none⟩
+def sedang : TemporalMarker := ⟨"sedang", .inProgress, .neutral, none⟩
 
 /-- *lagi*: replaces *sedang*; less frequent and not used by all speakers
 (§2.146). -/
-def lagi : TemporalMarker := ⟨"lagi", .inProgress, .general, none⟩
+def lagi : TemporalMarker := ⟨"lagi", .inProgress, .neutral, none⟩
 
 /-- *tengah*: replaces *sedang*; less frequent and not used by all speakers
 (§2.146). -/
-def tengah : TemporalMarker := ⟨"tengah", .inProgress, .general, none⟩
+def tengah : TemporalMarker := ⟨"tengah", .inProgress, .neutral, none⟩
 
 /-- *masih*: action still occurring; with non-verbal predicates 'still'
 (*Dia masih muda/pegawai*) (§2.147). -/
-def masih : TemporalMarker := ⟨"masih", .stillOccurring, .general, some true⟩
+def masih : TemporalMarker := ⟨"masih", .stillOccurring, .neutral, some true⟩
 
 /-- *akan*: future event or state (*Tugasnya akan berat* 'His task will be
 heavy') (§2.148). -/
-def akan : TemporalMarker := ⟨"akan", .future, .general, some true⟩
+def akan : TemporalMarker := ⟨"akan", .future, .neutral, some true⟩
 
 /-- *bakal*: future a considerable time ahead only; verbal predicates only
 (within a noun phrase it means 'prospective': *bakal presiden*). Colloquial
 *bakalan* is similar but cannot occur in a noun phrase (§2.149). -/
-def bakal : TemporalMarker := ⟨"bakal", .distantFuture, .general, some false⟩
+def bakal : TemporalMarker := ⟨"bakal", .distantFuture, .neutral, some false⟩
 
 /-- *baru*: action just occurred or state just reached (*Umurnya baru empat
 tahun* 'She's just four years old'); often followed by *saja* for emphasis
 (§2.150). -/
-def baru : TemporalMarker := ⟨"baru", .justOccurred, .general, some true⟩
+def baru : TemporalMarker := ⟨"baru", .justOccurred, .neutral, some true⟩
 
 /-- *pernah*: action in the far past, never of recent events; 'ever', but
 unlike English *ever* not restricted to negative and interrogative contexts;
 also 'once' (§2.151). *belum pernah* is the negative of *sudah pernah* and
 differs from *tidak pernah* 'never (habitually)' (§2.157). -/
-def pernah : TemporalMarker := ⟨"pernah", .farPast, .general, none⟩
+def pernah : TemporalMarker := ⟨"pernah", .farPast, .neutral, none⟩
 
 /-- The temporal markers of [sneddon-1996] §§2.143–51, in order of
 presentation. -/
 def temporalMarkers : List TemporalMarker :=
   [sudah, telah, sedang, lagi, tengah, masih, akan, bakal, baru, pernah]
+
+/-- The temporal markers tagged `AUX` in UD Indonesian-GSD: *sudah*, *telah*,
+*sedang*, *akan* — exactly [arka-2013]'s I-position auxiliaries among the
+temporal markers. Checked against the treebank's full train/dev/test splits:
+the other six markers never tag `AUX` (*masih*, *pernah*, *lagi* tag `ADV`;
+*baru* mostly `ADJ` 'new'; *tengah* `NOUN`/`PROPN` 'middle'; *bakal*
+marginal). GSD also tags Arka's fifth auxiliary *mau* (and *ingin*) `AUX`,
+siding with [arka-2013] against [sneddon-1996]'s full-verb treatment. -/
+def auxMarkers : List TemporalMarker := [sudah, telah, sedang, akan]
+
+instance : Auxiliary {m : TemporalMarker // m ∈ auxMarkers} where
+  toWord m := { form := m.val.form, cat := .AUX }
+  cat_aux _ := rfl
 
 /-- *telah* has the same meaning as *sudah*; the difference between the two
 is in register (§2.144). -/

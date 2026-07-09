@@ -2786,7 +2786,6 @@ import Linglib.Syntax.Agreement.Controller
 import Linglib.Syntax.Agreement.Paradigm
 import Linglib.Syntax.Anaphora.Basic
 import Linglib.Syntax.Anaphora.Diagnostic
-import Linglib.Syntax.AuxiliaryVerbs
 import Linglib.Syntax.Binding.Basic
 import Linglib.Syntax.Binding.Semantics
 import Linglib.Syntax.Binding.SpecificityCondition
@@ -2810,6 +2809,8 @@ import Linglib.Syntax.Category.Adjective.Basic
 import Linglib.Syntax.Category.Adposition.Basic
 import Linglib.Syntax.Category.Adposition.Order
 import Linglib.Syntax.Category.Adposition.Spatial
+import Linglib.Syntax.Category.Auxiliary.Basic
+import Linglib.Syntax.Category.Auxiliary.Constructions
 import Linglib.Syntax.Category.Complementizer.Basic
 import Linglib.Syntax.Category.Determiner.Basic
 import Linglib.Syntax.Category.ExpressiveModifier
