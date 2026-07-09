@@ -303,10 +303,47 @@ theorem feature_decomposition_cells :
     afRank (.pn .third .Plur) = 1 ∧ afRank (.pn .third .Sing) = 0 := by
   decide
 
-/-! ### Verification: AF paradigm ([preminger-2014] table (22)) -/
+/-! ### The AF paradigm data ([preminger-2014] §3.2, table (22)) -/
+
+/-- An AF agreement datum: subject φ, object φ, and the observed single
+    agreement marker — `none` for person-restriction violations, where
+    AF is impossible and the plain full-agreement transitive surfaces
+    instead (his (27)). -/
+structure AFAgreementDatum where
+  subject : Cell
+  object : Cell
+  marker : Option String
+  deriving Repr
+
+/-- The empirical AF agreement paradigm: the 11 unordered cells of
+    table (22) (§3.2), oriented subject-first — the table pools
+    subject/object φ as unordered sets `{φ₁, φ₂}` (its note a);
+    order-invariance is the theorem `afMarker_comm`, not extra data —
+    plus one person-restriction gap ((25): at most one core argument
+    may be 1st/2nd person). -/
+def afParadigm : List AFAgreementDatum :=
+  [ -- rows 1–3: both 3rd person, number determines the marker
+    ⟨.pn .third .Sing, .pn .third .Sing, some "∅"⟩         -- default: 3SG×3SG → ∅
+  , ⟨.pn .third .Plur, .pn .third .Sing, some "e-"⟩        -- [+plural] outranks default
+  , ⟨.pn .third .Plur, .pn .third .Plur, some "e-"⟩        -- [+plural] both → 3PL
+    -- rows 4–7: one [+participant] argument with 3SG
+  , ⟨.pn .first .Sing, .pn .third .Sing, some "in-"⟩       -- 1SG [+participant]
+  , ⟨.pn .second .Sing, .pn .third .Sing, some "at-"⟩      -- 2SG [+participant]
+  , ⟨.pn .first .Plur, .pn .third .Sing, some "oj-"⟩       -- 1PL [+participant]
+  , ⟨.pn .second .Plur, .pn .third .Sing, some "ix-"⟩      -- 2PL [+participant]
+    -- rows 8–11: [+participant] outranks [+plural]
+  , ⟨.pn .first .Sing, .pn .third .Plur, some "in-"⟩       -- 1SG participant > 3PL plural
+  , ⟨.pn .second .Sing, .pn .third .Plur, some "at-"⟩      -- 2SG participant > 3PL plural
+  , ⟨.pn .first .Plur, .pn .third .Plur, some "oj-"⟩       -- 1PL participant > 3PL plural
+  , ⟨.pn .second .Plur, .pn .third .Plur, some "ix-"⟩      -- 2PL participant > 3PL plural
+    -- person restriction ((25)): *two [+participant] arguments
+  , ⟨.pn .first .Sing, .pn .second .Sing, none⟩
+  ]
+
+/-! ### Verification: AF paradigm -/
 
 /-- The full AF paradigm (table (22)) is correctly predicted: each
-    empirical datum in the fragment's `afParadigm` matches `afMarker`. -/
+    empirical datum in `afParadigm` matches `afMarker`. -/
 theorem af_paradigm_correct :
     ∀ d ∈ afParadigm, afMarker d.subject d.object = d.marker := by
   decide

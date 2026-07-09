@@ -241,7 +241,8 @@ theorem anticausative_ron_compatible :
 theorem kaqchikel_perfective_bridge :
     Kaqchikel.ArgPosition.case .A = .erg ∧
     Kaqchikel.ArgPosition.case .P = .abs ∧
-    Kaqchikel.ArgPosition.case .S = .abs := ⟨rfl, rfl, rfl⟩
+    Kaqchikel.ArgPosition.case .S = .abs :=
+  ⟨Kaqchikel.A_case, Kaqchikel.P_case, Kaqchikel.S_case⟩
 
 /-- Chol's perfective alignment matches the same ergative pattern. -/
 theorem chol_perfective_bridge :

@@ -669,7 +669,8 @@ theorem kaqArg_role_mapping :
     pattern together (ABS). This parallels Just's A/P split. -/
 theorem erg_abs_matches_AP :
     ArgPosition.case .A ≠ ArgPosition.case .P ∧
-    ArgPosition.case .P = ArgPosition.case .S := ⟨by decide, rfl⟩
+    ArgPosition.case .P = ArgPosition.case .S :=
+  Kaqchikel.erg_abs_alignment
 
 -- ============================================================================
 -- § 20: Cross-Framework — Person Dominance
