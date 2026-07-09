@@ -381,6 +381,14 @@ theorem mayan_tada (lang : Mayan) :
       absPositionOf lang = ABSPosition.high := by
   cases lang <;> decide
 
+/-- The analytical high/low-ABS classification matches the morphological
+    verb template: a language is HIGH-ABS iff Set B precedes the root in
+    `Mayan.template` — the observable ground of the absolutive
+    parameter. -/
+theorem absPosition_matches_template (lang : Mayan) :
+    absPositionOf lang = Mayan.templateABSPosition lang := by
+  cases lang <;> rfl
+
 /-- Q'anjob'al's extraction data is consistent with the prediction:
     agent extraction is marked (requires AF morphology in regular
     transitives). The substantive claim lives at `extractionProfile`'s
