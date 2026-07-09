@@ -1,3 +1,4 @@
+import Linglib.Morphology.Realization
 import Linglib.Syntax.Extraction
 import Linglib.Syntax.Voice.Basic
 
@@ -28,6 +29,8 @@ the Philippine sense; it is a structural consequence of how probing
 and Case assignment interact with predicate fronting.
 
 -/
+
+open Extraction (ExtractionTarget ExtractionMarkingStrategy)
 
 namespace TobaBatak
 
@@ -132,19 +135,30 @@ def extractionData : List ExtractionDatum :=
   , avAdjunctExtraction, ovAdjunctExtraction ]
 
 -- ============================================================================
--- § 5: Extraction Profile
+-- § 5: Extraction Marking
 -- ============================================================================
 
-/-- Toba Batak extraction strategy: structural restriction (pivot-only).
+namespace Extraction
 
-    Language: "Toba Batak". Notes: Only the pivot (= surface subject) can be
-    extracted; voice alternation (AV/OV) determines which thematic role
-    occupies the pivot, but the extractable structural position is always
-    subject. Restriction derived from predicate fronting + nominal licensing:
-    non-pivot DPs in Spec,CP lack a Case licensor ([erlewine-2018], §4). -/
-def tbExtractionStrategy : Extraction.ExtractionMarkingStrategy := .voiceAlternation
-def tbExtractionMarkedPositions : List Extraction.ExtractionTarget := [.subject]
-def tbExtractionDistinguishesPosition : Bool := true
+/-- Reflex hosts for Toba Batak extraction marking. -/
+inductive Site where
+  | verb
+  deriving DecidableEq, Repr
+
+/-- Only the pivot (= surface subject) can be extracted; the AV vs OV
+    voice alternation on the verb determines which thematic role
+    occupies the pivot, so subject extraction is marked by the verb's
+    voice form. The restriction derives from predicate fronting +
+    nominal licensing: non-pivot DPs in Spec,CP lack a Case licensor
+    ([erlewine-2018], §4). -/
+def realize : ExtractionTarget → List (Morphology.Reflex Site)
+  | .subject => [.morpheme .verb]
+  | _ => []
+
+/-- WALS-style label: voice alternation marks extraction. -/
+def strategy : ExtractionMarkingStrategy := .voiceAlternation
+
+end Extraction
 
 -- ============================================================================
 -- § 6: Voice System

@@ -1,3 +1,4 @@
+import Linglib.Morphology.Realization
 import Linglib.Syntax.Extraction
 import Linglib.Data.UD.Basic
 
@@ -34,13 +35,16 @@ successive-cyclic movement path (Table 4, §6.2).
   extracts.
 * `Mam.MovementReflex` with `.islandSensitive`: island sensitivity
   derived from movement being phase-bounded rather than stipulated.
-* `Mam.mamExtractionStrategy`: the oblique-marking extraction profile.
+* `Mam.Extraction.realize`: the AF- and =(y)a'-based extraction marking,
+  with `Mam.Extraction.strategy` as the WALS-style label.
 
 ## Implementation notes
 
 All data is from [elkins-torrence-brown-2026], "Wh-movement paths and
 oblique extraction in Mam (Mayan)", cited by section/example number.
 -/
+
+open Extraction (ExtractionTarget ExtractionMarkingStrategy Marked)
 
 namespace Mam
 
@@ -315,19 +319,42 @@ theorem eqya_island_sensitive_derived :
 theorem passive_oblique_cooccurrence :
     passiveOblExtraction.judgment = .licensed := rfl
 
-/-! ### Extraction profile -/
+/-! ### Extraction marking -/
 
-/-- Mam's extraction profile: a dedicated morpheme (=(y)a') marking oblique
-    extraction only — absent for subject (AF) and object extraction,
-    conditioned by clause size, exempting temporal obliques (§8.1),
-    island-sensitive (§7.1). -/
-def mamExtractionStrategy : Extraction.ExtractionMarkingStrategy := .dedicatedMorpheme
-def mamExtractionMarkedPositions : List Extraction.ExtractionTarget := [.oblique]
-def mamExtractionDistinguishesPosition : Bool := true
+namespace Extraction
 
-theorem mam_marks_oblique :
-    Extraction.Marks mamExtractionMarkedPositions .oblique := by decide
-theorem mam_no_mark_subject :
-    ¬ Extraction.Marks mamExtractionMarkedPositions .subject := by decide
+/-- Reflex hosts for SJA Mam extraction marking: the verb (AF suffixes)
+    and the Voice/Dir head hosting =(y)a'. -/
+inductive Site where
+  | verb
+  | voiceHead
+  deriving DecidableEq, Repr
+
+/-- SJA Mam marks two extraction cells. Subject (A) extraction switches
+    the verb to AF ([scott-2023] §2.5.4.1 ex. 169, §2.7.1), combining
+    the antipassive suffix *-(a)n* with the AF-specific *-ta*
+    (`b'yo-n-ta` 'hit-AP-AF') — morphologically distinct from K'iche''s
+    bare antipassive *-n* ([mondloch-2017] Lesson 22); the SSAL-repair
+    analysis lives in `Studies/Erlewine2016.lean`, and rival accounts
+    are not encoded here. Oblique extraction places =(y)a' on the
+    Voice/Dir head — conditioned by clause size, exempting temporal
+    obliques (§8.1), island-sensitive (§7.1). Core-object extraction is
+    unmarked. -/
+def realize : ExtractionTarget → List (Morphology.Reflex Site)
+  | .subject => [.morpheme .verb]
+  | .oblique => [.morpheme .voiceHead]
+  | _ => []
+
+/-- WALS-style label: dedicated morphemes mark extraction. -/
+def strategy : ExtractionMarkingStrategy := .dedicatedMorpheme
+
+theorem marks_oblique : Marked realize .oblique := by decide
+
+/-- =(y)a' tracks obliques, not subjects: no voice-head reflex under
+    subject extraction (subject marking is verb-hosted AF instead). -/
+theorem eqya_not_on_subject :
+    Morphology.Reflex.morpheme Site.voiceHead ∉ realize .subject := by decide
+
+end Extraction
 
 end Mam

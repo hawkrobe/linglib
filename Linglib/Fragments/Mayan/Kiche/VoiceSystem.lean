@@ -35,7 +35,7 @@ before clusters) or completed *x-*. The passive demotes the agent to an
 oblique introduced by *rumaal/kumaal* 'by'. An instrumental voice exists
 but is not covered here. Agent-Focus Antipassive is the strategy for
 subject extraction ([mondloch-2017] Lesson 22; [mendes-ranero-2021] §2),
-so `subjectExtraction.wiLicensed = false` in `ExtractionMorphology.lean` —
+so `subjectExtraction.wiLicensed = false` in `Extraction.lean` —
 the extracted agent takes AF morphology, not *wi*. The word-order profile
 lives in `WordOrder.lean`; the transitive/intransitive/passive
 conjugation contrast [mondloch-2017] draws (Lesson 9) is paper-specific

@@ -1,3 +1,5 @@
+import Linglib.Morphology.Realization
+
 /-!
 # Extraction Morphology
 [elkins-torrence-brown-2026] [erlewine-2018] [erlewine-2016]
@@ -121,25 +123,33 @@ inductive Extractee where
   | adjunct : Extractee
   deriving DecidableEq, Repr
 
-/-! ### Extraction-profile queries
+/-! ### Extraction marking as morphological reflexes
 
-The `ExtractionProfile` bundle is retired: a language exposes its extraction
-data as bare `def`s (`…Strategy : ExtractionMarkingStrategy`,
-`…MarkedPositions : List ExtractionTarget`, `…DistinguishesPosition : Bool`),
-and these queries operate on the marked-positions list / strategy. -/
+A language's extraction marking is the overt morphosyntactic *response* to
+extraction from each target position, as `Morphology.Reflex` lists — the
+movement itself is not a reflex ([branan-erlewine-2023]). Per-language data
+are a nested `Lang.Extraction` namespace with a host type `Site` and
 
-/-- Does a marked-positions list mark extraction from a given target? -/
-def Marks (markedPositions : List ExtractionTarget) (t : ExtractionTarget) : Prop :=
-  t ∈ markedPositions
+    realize : ExtractionTarget → List (Morphology.Reflex Site)
 
-instance (mp : List ExtractionTarget) (t : ExtractionTarget) : Decidable (Marks mp t) :=
-  inferInstanceAs (Decidable (_ ∈ _))
+(`Site := Empty` for languages that mark nothing). Languages with several
+markers place them at their cells — K'iche' AF at `.subject` and *wi* at
+`.oblique` are different cells of one function, not competing profiles.
+Marker-specific claims are reflex-membership statements. A coarse
+`strategy : ExtractionMarkingStrategy` label may accompany the data as
+WALS-style typology. Per-language `Lang.Extraction` namespaces must not
+redeclare root `Extraction` leaf names, so unqualified references keep
+resolving. -/
 
-/-- Does an extraction-marking strategy use any overt marking? -/
-def HasOvertMarking (strategy : ExtractionMarkingStrategy) : Prop :=
-  strategy ≠ .unmarked
+/-- Does the language overtly mark extraction from a given target? -/
+def Marked {C : Type*} (realize : ExtractionTarget → List (Morphology.Reflex C))
+    (t : ExtractionTarget) : Prop :=
+  realize t ≠ []
 
-instance (s : ExtractionMarkingStrategy) : Decidable (HasOvertMarking s) :=
-  inferInstanceAs (Decidable (_ ≠ _))
+instance {C : Type*} (realize : ExtractionTarget → List (Morphology.Reflex C))
+    (t : ExtractionTarget) : Decidable (Marked realize t) :=
+  match h : realize t with
+  | []     => isFalse fun hne => hne h
+  | _ :: _ => isTrue (by simp [Marked, h])
 
 end Extraction

@@ -1,4 +1,5 @@
 import Linglib.Fragments.Mayan.Tseltalan
+import Linglib.Morphology.Realization
 import Linglib.Syntax.Extraction
 
 /-!
@@ -15,7 +16,7 @@ Agreement morphology for Zinacantec Tsotsil (Tseltalan, Mayan)
   prefixal-or-suffixal Set B.
 * `Tsotsil.setAExponent`, `Tsotsil.setBExponent`: Zinacantec Tsotsil
   exponent tables ([polian-2013]).
-* `Tsotsil.extractionStrategy`: unmarked extraction (no Agent Focus).
+* `Tsotsil.Extraction.realize`: unmarked extraction (no Agent Focus).
 
 ## Implementation notes
 
@@ -32,6 +33,8 @@ across Tseltalan (`Mayan.Tseltalan`).
 Tseltalan languages are uniformly **ergative-absolutive** with no
 aspect-conditioned split (in contrast with Cholan; per [polian-2013]).
 -/
+
+open Extraction (ExtractionTarget ExtractionMarkingStrategy)
 
 namespace Tsotsil
 
@@ -98,13 +101,18 @@ def setBExponent : ExponentTable :=
     pan-Mayan: see Mam exception via `MayanLang.isStandard`. -/
 theorem p3sg_abs_null : setBExponent.realize (.pn .third .Sing) = some "-∅" := rfl
 
-/-! ### Extraction profile -/
+/-! ### Extraction marking -/
 
-/-- Tsotsil requires no Agent Focus morphology for A-extraction
-    (`extractionStrategy = .unmarked`), consistent with Tsotsil being
-    LOW-ABS. -/
-def extractionStrategy : Extraction.ExtractionMarkingStrategy := .unmarked
-def extractionMarkedPositions : List Extraction.ExtractionTarget := []
-def extractionDistinguishesPosition : Bool := false
+namespace Extraction
+
+/-- No Agent Focus morphology is required for A-extraction, consistent
+    with Tsotsil being LOW-ABS. -/
+def realize : ExtractionTarget → List (Morphology.Reflex Empty) :=
+  fun _ => []
+
+/-- WALS-style label: extraction is unmarked. -/
+def strategy : ExtractionMarkingStrategy := .unmarked
+
+end Extraction
 
 end Tsotsil

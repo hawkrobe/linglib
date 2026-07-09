@@ -1,4 +1,5 @@
 import Linglib.Fragments.Mayan.Tseltalan
+import Linglib.Morphology.Realization
 import Linglib.Syntax.Extraction
 
 /-!
@@ -17,7 +18,7 @@ syntactic properties relevant to possessor extraction ([aissen-polian-2025];
   consistently suffixal Set B.
 * `Tseltal.setAExponent`, `Tseltal.setBExponent`: Oxchuc Tseltal exponent
   tables ([polian-2013]).
-* `Tseltal.extractionStrategy`: unmarked extraction (no Agent Focus).
+* `Tseltal.Extraction.realize`: unmarked extraction (no Agent Focus).
 
 ## Implementation notes
 
@@ -34,6 +35,8 @@ Tseltalan languages are uniformly **ergative-absolutive** with no
 aspect-conditioned split (in contrast with Cholan; per [polian-2013]): Set A
 indicates A, Set B indicates S and P alike.
 -/
+
+open Extraction (ExtractionTarget ExtractionMarkingStrategy)
 
 namespace Tseltal
 
@@ -101,13 +104,18 @@ theorem p3sg_abs_null : setBExponent.realize (.pn .third .Sing) = some "-∅" :=
     prefixal-or-suffixal); the marker set assignment is identical. -/
 theorem setB_is_suffixal : setBLinearity = .suffixal := rfl
 
-/-! ### Extraction profile -/
+/-! ### Extraction marking -/
 
-/-- Tseltal's extraction data: no Agent Focus morphology required for
-    A-extraction (`extractionStrategy = .unmarked`), consistent with
-    Tseltal being LOW-ABS. -/
-def extractionStrategy : Extraction.ExtractionMarkingStrategy := .unmarked
-def extractionMarkedPositions : List Extraction.ExtractionTarget := []
-def extractionDistinguishesPosition : Bool := false
+namespace Extraction
+
+/-- No Agent Focus morphology is required for A-extraction, consistent
+    with Tseltal being LOW-ABS. -/
+def realize : ExtractionTarget → List (Morphology.Reflex Empty) :=
+  fun _ => []
+
+/-- WALS-style label: extraction is unmarked. -/
+def strategy : ExtractionMarkingStrategy := .unmarked
+
+end Extraction
 
 end Tseltal
