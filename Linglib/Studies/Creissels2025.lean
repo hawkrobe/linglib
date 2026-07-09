@@ -34,8 +34,7 @@ namespace Creissels2025
 
 open Voice
 open Causation.Morphological
-  (IntransitivizationType CausativeComplexity CausativeConstruction
-   CausativizabilityData)
+  (IntransitivizationType CausativeComplexity CausativeConstruction)
 open Voice (VoiceSystemSymmetry VoiceEntry PivotTarget)
 
 /-! ### Bridge: Decausativization ↔ IntransitivizationType -/

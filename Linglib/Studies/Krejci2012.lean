@@ -1,48 +1,51 @@
 import Linglib.Semantics.Causation.Morphological
 import Linglib.Semantics.ArgumentStructure.EventStructure
 import Linglib.Semantics.ArgumentStructure.ArgDerivation
-import Linglib.Syntax.Minimalist.Verbal.Voice
 
 /-!
-# [krejci-2012] — Lexical Reflexivity and the Ingestive/Middle Class
+# [krejci-2012] — Causativization as Antireflexivization
 
-Krejci, Bonnie. 2012. *The Event Structural Properties of the Transitive
-Alternation: A Cross-Linguistic Study*. Master's Report, University of
-Texas at Austin.
+Krejci, Bonnie. 2012. *Causativization as Antireflexivization: A Study of
+Middle and Ingestive Verbs*. Master's Report, University of Texas at Austin.
 
 ## Core claims
 
-1. **Lexically reflexive verbs** (eat, wash, dress, learn) have bieventive,
-   causative event structure in their *simple* forms:
-   `[[ACT(x)] CAUSE [BECOME ⟨STATE⟩ (x, y)]]` with causer = causee.
-   All four bieventivity diagnostics confirm this (§4.3–4.4).
+1. **Middles** (wash, dress; agent acts on their own body, [kemmer-1994]) and
+   **ingestives** (eat, drink; agent directs a consumed substance at themselves,
+   with *learn* proposed as a metaphorical ingestive, a class label from
+   [nedyalkov-silnitsky-1973]) are **lexically reflexive**: their simple forms
+   have bieventive causative event structure with coidentified causer and
+   causee — her (37), e.g.
+   `eat = [[ACT⟨manipulate food⟩(x)] CAUSE [BECOME ⟨potentially digest⟩(x, y)]]`.
 
-2. Two subtypes: **middles** (wash, dress) where the agent acts on their
-   own body, and **ingestives** (eat, drink) where the agent acts on a
-   consumed substance directed at themselves. Both are lexically reflexive.
-   `learn` is proposed as a "metaphorical ingestive" (§4.2.4).
+2. **Antireflexivization** (§4.2, (96)–(97)): the lexical causative splits the
+   coidentified argument into two participants (eat→feed, learn→teach; wash and
+   dress reuse the same form transitively). *Feed* ≠ *make eat*: with *eat* the
+   eater must agentively manipulate food; with *feed* that entailment shifts to
+   the feeder; with *make eat* it stays on the eater (§4.2.1).
 
-3. Four diagnostics — *again* ambiguity, *re-* prefixation, *almost*
-   ambiguity, and negation over CAUSE — all detect bieventive structure
-   in the simple forms of these verbs. All diagnostic data is for English.
+3. **Five diagnostics** detect CAUSE in the English simple forms: the three
+   [dowty-1979] complexity tests — *again* ambiguity, *re-* prefixation, and
+   *almost* ambiguity (§4.3) — plus negation over CAUSE (§4.4) and *by itself*
+   (§4.5, after [chierchia-2004]). All five come out positive for all four
+   verbs, with hedges: some speakers reject the restitutive reading of *John
+   washed again* (her fn. 8), and the negation evidence is offered as
+   "tentative", with *I didn't eat any pie* marked "?" ((106a)).
 
-4. **Antireflexivization**: the lexical causatives of these verbs
-   (eat→feed, learn→teach) are derived by splitting the coidentified
-   causer-causee argument into two distinct participants (§4.2).
+4. The **causativizability hierarchy** — unaccusatives > middles/ingestives >
+   unergatives > simple transitives — is implicational, and none of the 32
+   surveyed languages skips a tier; twelve are tabulated in Table 2.8
+   (`krejciLanguages`). The dedicated middles/ingestives tier is the report's
+   typological contribution. (Her second, morphological evidence base — Marathi
+   *-aw* causativization, her Section 5 — is not formalized here.)
 
-5. The **causativizability hierarchy** — unaccusatives > middles/ingestives
-   > unergatives > simple transitives — is validated across 12 languages
-   (Table 2.8). This data is formalized in
-   `MorphologicalCausation.krejciLanguages`.
+## Main declarations
 
-## Bridges
-
-- `reflexive_is_bieventive` → `IntransitivizationType` (central claim)
-- `eat_is_causativeResult` → `LevinClass.rootEntailments` (root typology)
-- `eat_licenses_accomplishment` → `RootLicensesTemplate` (ArgDerivation)
-- `eat_roleList_is_consumption` → `LevinClass.roleList` (`Semantics/Verb/Class.lean`)
-- `accomplishment_has_variant` → `Template.intransitiveVariant`
-- `anticausative_no_theta` / `middle_no_theta` → `Voice.Head` (Minimalist syntax)
+- `LexReflexiveVerb`, `allVerbs` — the four English verbs with their observed
+  diagnostic profiles and `IntransitivizationType` analysis
+- `reflexivePrediction`, `observed_matches_reflexive_analysis` — the reflexive
+  analysis predicts every diagnostic positive, matching the observations
+- `krejciLanguages`, `hierarchy_holds` — Table 2.8 and its implicational check
 -/
 
 namespace Krejci2012
@@ -54,216 +57,180 @@ open Causation.Morphological
 open ArgumentStructure.EventStructure
 open ArgumentStructure.ArgDerivation
 
--- ════════════════════════════════════════════════════
--- § 1. Lexically Reflexive Verb Data
--- ════════════════════════════════════════════════════
+/-! ### Lexically reflexive verbs -/
 
-/-- Subtype of lexically reflexive verb (§4.1–4.2). -/
+/-- Subtype of lexically reflexive verb.
+    Middles: agent acts on their own body ([kemmer-1994]: one internally
+    complex participant; her §4.1). Ingestives: agent causes a substance to
+    enter themselves, including "metaphorical ingesting"
+    ([nedyalkov-silnitsky-1973], her Table 2.5) such as *learn*. -/
 inductive LexReflexiveSubtype where
-  /-- Middles: agent acts on own body (wash, dress).
-      [kemmer-1994]: one internally complex participant. -/
   | middle
-  /-- Ingestives: agent causes substance to enter self (eat, drink).
-      Includes "metaphorical ingestives" (learn). -/
   | ingestive
   deriving DecidableEq, Repr
 
-/-- A lexically reflexive verb: a verb whose simple form has bieventive
-    causative event structure with coidentified causer and causee.
+/-- Observed outcomes of the five CAUSE diagnostics for one verb's simple
+    form (§4.3–4.5). Each field is a recorded English judgment, cited to the
+    report's examples at the verb entries below. -/
+structure DiagnosticProfile where
+  /-- Postverbal *again* has restitutive + repetitive readings
+      ([dowty-1979]; (70)–(73)). -/
+  again : Bool
+  /-- *re-* prefixation yields a restitutive reading ((76)–(82)). -/
+  rePrefix : Bool
+  /-- *almost* scopes over action vs. result sub-event ((85)–(88)). -/
+  almost : Bool
+  /-- The simple form can be logically negated while the causative variant is
+      asserted, NPI-controlled against metalinguistic negation
+      (§4.4, (106)–(109); after [koontz-garboden-2009]). -/
+  negationOverCause : Bool
+  /-- *by itself* "without outside help" is licensed
+      (§4.5, (114); after [chierchia-2004]). -/
+  byItself : Bool
+  deriving DecidableEq, Repr
 
-    The four bieventivity diagnostics (§4.3–4.4) test for complex
-    internal structure — the presence of distinct sub-events connected
-    by CAUSE that scopal modifiers can target independently:
-
-    - **again**: restitutive (result state restored) + repetitive (whole event repeated)
-    - **re-**: restitutive reading with *re-* prefix
-    - **almost**: scope over action sub-event vs. result sub-event
-    - **negation over CAUSE**: deny simple form while asserting causative variant -/
+/-- A lexically reflexive verb: bieventive causative event structure with
+    coidentified causer and causee in the simple form, per her (37). -/
 structure LexReflexiveVerb where
   gloss : String
   subtype : LexReflexiveSubtype
-  /-- Lexical causative counterpart (antireflexivized form).
-      `none` when the verb uses the same form transitively (wash, dress). -/
+  /-- Suppletive lexical causative (antireflexivized form), `none` when the
+      same form serves transitively (wash, dress). -/
   lexicalCausative : Option String
-  /-- Does postverbal *again* produce restitutive + repetitive readings? -/
-  againAmbiguity : Bool
-  /-- Does *re-* prefixation produce a restitutive reading? -/
-  rePrefixation : Bool
-  /-- Does *almost* produce scope ambiguity over sub-events? -/
-  almostAmbiguity : Bool
-  /-- Can the simple form be negated while asserting the causative variant? -/
-  negationOverCause : Bool
-  deriving Repr, BEq
+  /-- [krejci-2012]'s analysis of the simple form: the causer position is
+      retained, coidentified with the causee. -/
+  intransType : IntransitivizationType
+  /-- Observed diagnostic outcomes for the simple form. -/
+  observed : DiagnosticProfile
+  deriving DecidableEq, Repr
 
--- ════════════════════════════════════════════════════
--- § 2. English Diagnostic Data (§4.2–4.4)
--- ════════════════════════════════════════════════════
+/-- *eat*: ingestive.
+    `[[ACT⟨manipulate food⟩(x)] CAUSE [BECOME ⟨potentially digest⟩(x, y)]]`
+    ((37a)); lexical causative *feed* (§4.2.1). -/
+def eat : LexReflexiveVerb where
+  gloss := "eat"
+  subtype := .ingestive
+  lexicalCausative := some "feed"
+  intransType := .reflexive
+  observed :=
+    { again := true              -- (70) "Your guy ate the coin again..."
+      rePrefix := true           -- (76)–(77) attested "re-eat all the coins"
+      almost := true             -- (85) "John almost ate the pie"
+      negationOverCause := true  -- (92)/(106) "I didn't eat pie; you fed pie to me!"
+      byItself := true }         -- (114a) "The girl ate her food all by herself"
 
-/-! All diagnostic data is from English. [krejci-2012] tests four
-    verbs — eat, wash, dress, learn — each representing a subtype of the
-    lexically reflexive class. All four pass all four diagnostics. -/
+/-- *wash*: middle.
+    `[[ACT⟨manipulate water⟩(x)] CAUSE [BECOME ⟨washed⟩(x)]]` ((37b));
+    the transitive is the same form, antireflexivized (§4.2.2). -/
+def wash : LexReflexiveVerb where
+  gloss := "wash"
+  subtype := .middle
+  lexicalCausative := none
+  intransType := .reflexive
+  observed :=
+    { again := true              -- (71) "John washed again..." (fn. 8: variation)
+      rePrefix := true           -- (78)–(79) attested "rewash"
+      almost := true             -- (86) "John almost washed"
+      negationOverCause := true  -- (107) "I didn't wash; you washed me!"
+      byItself := true }         -- (114b) "The girl washed all by herself"
 
-/-- *eat*: ingestive. `[[ACT⟨manipulate food⟩(x)] CAUSE [BECOME ⟨potentially digest⟩ (x, y)]]`.
-    Lexical causative: *feed* (§4.2.1). -/
-def eat : LexReflexiveVerb :=
-  { gloss := "eat"
-    subtype := .ingestive
-    lexicalCausative := some "feed"
-    againAmbiguity := true       -- (70) "Your guy ate the coin again..."
-    rePrefixation := true         -- (76–77) "re-eat" attested, restitutive available
-    almostAmbiguity := true       -- (85) "John almost ate the pie"
-    negationOverCause := true }   -- (92) "I didn't eat pie; you fed pie to me!"
-
-/-- *wash*: middle. `[[ACT⟨manipulate water⟩(x)] CAUSE [BECOME ⟨washed⟩ (x)]]`.
-    Transitive *wash (someone)* is the antireflexivized form (§4.2.2). -/
-def wash : LexReflexiveVerb :=
-  { gloss := "wash"
-    subtype := .middle
-    lexicalCausative := none  -- same form used transitively
-    againAmbiguity := true       -- (71) "John washed again..."
-    rePrefixation := true         -- (78–79) "re-wash" attested
-    almostAmbiguity := true       -- (86) "John almost washed"
-    negationOverCause := true }   -- §4.4: parallel to eat
-
-/-- *dress*: middle. `[[ACT⟨manipulate clothes⟩(x)] CAUSE [BECOME ⟨dressed⟩ (x)]]`.
-    Transitive *dress (someone)* is the antireflexivized form (§4.2.3). -/
-def dress : LexReflexiveVerb :=
-  { gloss := "dress"
-    subtype := .middle
-    lexicalCausative := none  -- same form used transitively
-    againAmbiguity := true       -- (72) "John dressed again..."
-    rePrefixation := true         -- (80–81) "re-dress" attested
-    almostAmbiguity := true       -- (87) "John almost dressed"
-    negationOverCause := true }   -- §4.4: parallel to eat
+/-- *dress*: middle.
+    `[[ACT⟨manipulate clothes⟩(x)] CAUSE [BECOME ⟨dressed⟩(x)]]` ((37c));
+    the transitive is the same form, antireflexivized (§4.2.3). -/
+def dress : LexReflexiveVerb where
+  gloss := "dress"
+  subtype := .middle
+  lexicalCausative := none
+  intransType := .reflexive
+  observed :=
+    { again := true              -- (72) "John dressed again..."
+      rePrefix := true           -- (80)–(81) attested "re-dressed"
+      almost := true             -- (87) "John almost dressed"
+      negationOverCause := true  -- (108) "I didn't dress; you dressed me!"
+      byItself := true }         -- (114c) "The girl dressed all by herself"
 
 /-- *learn*: proposed metaphorical ingestive.
-    `[[ACT(x)] CAUSE [BECOME ⟨know⟩ (x, y)]]`.
-    Lexical causative: *teach* (§4.2.4). -/
-def learn : LexReflexiveVerb :=
-  { gloss := "learn"
-    subtype := .ingestive
-    lexicalCausative := some "teach"
-    againAmbiguity := true       -- (73) "John learned English again..."
-    rePrefixation := true         -- (82) "John re-learned English..."
-    almostAmbiguity := true       -- (88) "John almost learned French"
-    negationOverCause := true }   -- §4.4: parallel to eat
+    `[[ACT(x)] CAUSE [BECOME ⟨know⟩(x, y)]]` ((37d));
+    lexical causative *teach* (§4.2.4). -/
+def learn : LexReflexiveVerb where
+  gloss := "learn"
+  subtype := .ingestive
+  lexicalCausative := some "teach"
+  intransType := .reflexive
+  observed :=
+    { again := true              -- (73) "John learned English again..."
+      rePrefix := true           -- (82) "John re-learned English..."
+      almost := true             -- (88) "John almost learned French"
+      negationOverCause := true  -- (109) "I didn't learn French; you taught French to me!"
+      byItself := true }         -- (114d) "The girl learned to walk all by herself"
 
 def allVerbs : List LexReflexiveVerb :=
   [eat, wash, dress, learn]
 
--- ════════════════════════════════════════════════════
--- § 3. Per-Datum Verification
--- ════════════════════════════════════════════════════
+/-! ### Observed diagnostics match the reflexive analysis -/
 
-/-- All four verbs pass the *again* ambiguity diagnostic. -/
-theorem all_again : allVerbs.all (·.againAmbiguity) = true := by decide
+/-- What the reflexive analysis predicts: bieventive structure supplies the
+    result state the three [dowty-1979] tests scope over, and the retained
+    (coidentified) causer supplies CAUSE for negation and *by itself*. Cells
+    are derived from the substrate's `IntransitivizationType.reflexive` facts,
+    not stipulated. -/
+def reflexivePrediction : DiagnosticProfile where
+  again := IntransitivizationType.reflexive.isBieventive
+  rePrefix := IntransitivizationType.reflexive.isBieventive
+  almost := IntransitivizationType.reflexive.isBieventive
+  negationOverCause := IntransitivizationType.reflexive.isBieventive
+  byItself := IntransitivizationType.reflexive.licensesBySelf
 
-/-- All four verbs pass the *re-* prefixation diagnostic. -/
-theorem all_re : allVerbs.all (·.rePrefixation) = true := by decide
+/-- The report's empirical core: all four verbs are analyzed as reflexive
+    intransitivizers, and their observed diagnostic profiles are exactly what
+    that analysis predicts. A single `false` observation would falsify the
+    `.reflexive` typing. -/
+theorem observed_matches_reflexive_analysis :
+    ∀ v ∈ allVerbs,
+      v.intransType = .reflexive ∧ v.observed = reflexivePrediction := by
+  decide
 
-/-- All four verbs pass the *almost* ambiguity diagnostic. -/
-theorem all_almost : allVerbs.all (·.almostAmbiguity) = true := by decide
+/-- Antireflexivization is suppletive exactly for the ingestives (eat→feed,
+    learn→teach); the middles reuse the same form transitively (§4.2). -/
+theorem suppletive_iff_ingestive :
+    ∀ v ∈ allVerbs,
+      v.lexicalCausative.isSome = true ↔ v.subtype = .ingestive := by
+  decide
 
-/-- All four verbs pass the negation-over-CAUSE diagnostic. -/
-theorem all_negation : allVerbs.all (·.negationOverCause) = true := by decide
+/-! ### Root entailments and templates
 
-/-- All four diagnostics pass for every verb in the dataset:
-    the simple forms of eat, wash, dress, and learn are bieventive. -/
-theorem all_bieventive :
-    allVerbs.all (λ v =>
-      v.againAmbiguity && v.rePrefixation &&
-      v.almostAmbiguity && v.negationOverCause) = true := by decide
+Her (37) puts CAUSE in the simple forms of *eat* and *dress*; the substrate's
+[beavers-koontz-garboden-2020]-style root classification agrees in carrying
+`cause`: both roots are `causativeResult` ({state, result, cause}). The point
+of contact is the *presence* of CAUSE, not its source — for [krejci-2012] the
+causer is the coidentified agent itself, and she argues explicitly against
+deriving the causative by adding an external causer ((93) vs. (96)–(97)).
+`learn`'s root is still the substrate's conservative `minimal` placeholder, so
+the bridge is stated for *eat* and *dress* only.
 
-/-- Middles and ingestives are both represented. -/
-theorem both_subtypes :
-    allVerbs.any (·.subtype == .middle) = true ∧
-    allVerbs.any (·.subtype == .ingestive) = true := ⟨rfl, rfl⟩
+The accomplishment template licenses an intransitive (achievement) variant,
+yet *"The food ate" / *"The clothes dressed" are out: on [krejci-2012]'s
+account the alternation slot is already occupied — the simple form *is* the
+reflexive variant, and the causative is derived from it by antireflexivization
+rather than by adding CAUSE to an inchoative core. -/
 
--- ════════════════════════════════════════════════════
--- § 4. Antireflexivization (§4.2)
--- ════════════════════════════════════════════════════
-
-/-! [krejci-2012]'s central operation: the lexical causative of a
-    lexically reflexive verb is derived by **antireflexivization** —
-    splitting the coidentified causer-causee into two distinct
-    participants.
-
-    Reflexive form (eat):
-      `[[ACT⟨manipulate food⟩(x)] CAUSE [BECOME ⟨potentially digest⟩ (x, y)]]`
-      — one participant (x) is both causer and causee.
-
-    Antireflexive form (feed):
-      `[[ACT⟨manipulate food⟩(x)] CAUSE [BECOME ⟨potentially digest⟩ (y, z)]]`
-      — causer (x) and causee (y) are distinct participants.
-
-    Key evidence (§4.2.1): with *eat*, the eater must agentively
-    manipulate food; with *feed*, this entailment shifts to the feeder.
-    With *make eat* (syntactic causative), the eater retains the
-    manipulation entailment. This shows *feed* ≠ *make eat*: the lexical
-    and syntactic causatives have different event structures. -/
-
-/-- An antireflexive pair: a lexically reflexive verb and its
-    suppletive lexical causative. Only verbs with a distinct lexical
-    causative form have such pairs (eat→feed, learn→teach).
-    Middles (wash, dress) use the same form transitively — the
-    antireflexivization is structural, not morphological. -/
-structure AntireflexivePair where
-  reflexive : String
-  causative : String
-  deriving Repr, BEq
-
-def eatFeed : AntireflexivePair := ⟨"eat", "feed"⟩
-def learnTeach : AntireflexivePair := ⟨"learn", "teach"⟩
-
-/-- The suppletive pairs are derivable from the verb data. -/
-theorem eat_causative : eat.lexicalCausative = some "feed" := rfl
-theorem learn_causative : learn.lexicalCausative = some "teach" := rfl
-
-/-- Middles use the same form transitively (no suppletive pair). -/
-theorem wash_same_form : wash.lexicalCausative = none := rfl
-theorem dress_same_form : dress.lexicalCausative = none := rfl
-
--- ════════════════════════════════════════════════════
--- § 5. Bridge to Root Dimensions
--- ════════════════════════════════════════════════════
-
-/-! [krejci-2012]'s claim that eat and dress have causative event
-    structure aligns with their `Root.Kinds` classification:
-    both are `causativeResult` ({state, result, cause}), meaning the
-    root itself entails external causation. -/
-
-/-- eat roots are causativeResult: the root entails caused consumption. -/
+/-- eat roots carry caused-consumption entailments. -/
 theorem eat_is_causativeResult :
     LevinClass.rootEntailments .eat = causativeResult := rfl
 
-/-- dress roots are causativeResult: the root entails caused dressed state. -/
+/-- dress roots carry caused dressed-state entailments. -/
 theorem dress_is_causativeResult :
     LevinClass.rootEntailments .dress = causativeResult := rfl
 
-/-- causativeResult roots carry the `cause` kind — consistent with
-    [krejci-2012]'s analysis that these verbs have CAUSE in their
-    simple forms. -/
+/-- causativeResult roots carry the `cause` kind — CAUSE is in the simple
+    form, as her (37) requires. -/
 theorem causativeResult_entails_cause :
     LexKind.cause ∈ causativeResult := by decide
 
--- ════════════════════════════════════════════════════
--- § 6. Bridge to ArgDerivation
--- ════════════════════════════════════════════════════
-
-/-! The root→template pipeline predicts that eat and dress roots
-    license the accomplishment template (since they entail causation).
-    The accomplishment template in turn has an intransitive variant
-    (achievement). But eat/dress do NOT undergo the standard
-    causative/inchoative alternation (*"The food ate", *"The clothes
-    dressed") — the root's obligatory agentive entailments block it.
-
-    Instead, the causativization operation is antireflexivization:
-    splitting a coidentified participant, not adding a new external
-    cause. -/
-
 /-- eat roots license the accomplishment template. -/
 theorem eat_licenses_accomplishment :
-    RootLicensesTemplate (LevinClass.rootEntailments .eat) .accomplishment := by decide
+    RootLicensesTemplate (LevinClass.rootEntailments .eat) .accomplishment := by
+  decide
 
 /-- eat's primary template is accomplishment. -/
 theorem eat_primary_accomplishment :
@@ -271,112 +238,80 @@ theorem eat_primary_accomplishment :
 
 /-- eat's RoleList is `consumption` (agent + incremental theme). -/
 theorem eat_roleList_is_consumption :
-    LevinClass.roleList .eat =
-    some ArgumentStructure.consumption := rfl
+    LevinClass.roleList .eat = some consumption := rfl
 
-/-- The accomplishment template has an intransitive variant (achievement).
-    This is the template-level possibility that eat/dress *could* alternate
-    — but root semantics blocks it. -/
+/-- The accomplishment template has an intransitive variant (achievement). -/
 theorem accomplishment_has_variant :
     Template.intransitiveVariant .accomplishment = some .achievement := rfl
 
-/-- causativeResult roots derive 3 RoleLists (state, achievement,
-    accomplishment). The template infrastructure predicts alternation;
-    the blocking is root-level, not template-level. -/
-theorem eat_root_alternation_possible :
-    (licensedTemplates (LevinClass.rootEntailments .eat)).length = 3 := by decide
+/-- The intransitive variant retains the result state (instance of
+    `intransitive_has_resultState`). -/
+theorem alternation_preserves_result : Template.HasResultState .achievement :=
+  intransitive_has_resultState .accomplishment .achievement rfl
 
--- ════════════════════════════════════════════════════
--- § 7. Bridge to Event Structure
--- ════════════════════════════════════════════════════
+/-- The intransitive variant loses CAUSE on the deletion analysis (instance of
+    `intransitive_no_cause`). -/
+theorem alternation_loses_cause : ¬ Template.HasCause .achievement :=
+  intransitive_no_cause .accomplishment .achievement rfl
 
-/-- The intransitive variant retains the result state
-    (the BECOME sub-event persists). -/
-theorem alternation_preserves_result :
-    Template.HasResultState .achievement := by decide
+/-! ### Causativizability hierarchy (Table 2.8)
 
-/-- The intransitive variant loses CAUSE. -/
-theorem alternation_loses_cause :
-    ¬ Template.HasCause .achievement := by decide
+unaccusatives > middles/ingestives > unergatives > simple transitives.
+Implicational: a causative morpheme that reaches a lower tier reaches every
+higher one, and none of the 32 surveyed languages skips a tier. Twelve are
+tabulated in Table 2.8, three per type: Type 1 (unaccusatives only) Slave,
+Mapudungun, Classical Nahuatl; Type 2 (+ middles/ingestives) Cora, Marathi,
+Amharic; Type 3 (+ unergatives) Ahtna, Tariana, Malayalam; Type 4 (+ simple
+transitives) Basque, Dulong/Rawang, Koyukon. The dedicated middles/ingestives
+tier between unaccusatives and unergatives is the report's typological
+contribution. Malayalam is grouped with Type 3 although its morpheme reaches
+transitives with an instrumental-case causee (her fn. 6). -/
 
--- ════════════════════════════════════════════════════
--- § 8. Bridge to IntransitivizationType
--- ════════════════════════════════════════════════════
+/-- Which verb classes one language's morphological causative applies to
+    (one row of Table 2.8). -/
+structure CausativizabilityData where
+  language : String
+  morpheme : String
+  unaccusative : Bool
+  middlesIngestive : Bool := false
+  unergative : Bool := false
+  simpleTransitive : Bool := false
+  deriving DecidableEq, Repr
 
-/-! [krejci-2012]'s central theoretical claim: lexically reflexive
-    verbs have *reflexive* intransitivization (coidentification of causer
-    and causee), not *anticausative* intransitivization (removal of the
-    external cause). This is what makes their simple forms bieventive —
-    the causer position is retained, filled by the same participant as
-    the causee.
+/-- The hierarchy is implicational: each level implies all higher levels.
+    simpleTransitive → unergative → middlesIngestive → unaccusative. -/
+def CausativizabilityData.respectsHierarchy (d : CausativizabilityData) : Bool :=
+  (!d.simpleTransitive || d.unergative) &&
+  (!d.unergative || d.middlesIngestive) &&
+  (!d.middlesIngestive || d.unaccusative)
 
-    The connection: all four verb-level diagnostics (§4.3–4.5) detect
-    bieventive structure, and `IntransitivizationType.reflexive` is the
-    type-level characterization of exactly that structure. -/
+/-- Table 2.8: twelve languages, ordered from narrowest to broadest
+    causative scope. -/
+def krejciLanguages : List CausativizabilityData :=
+  [ { language := "Slave",            morpheme := "-h-",    unaccusative := true }
+  , { language := "Mapudungun",       morpheme := "-ɨm",    unaccusative := true }
+  , { language := "Classical Nahuatl", morpheme := "-tia",  unaccusative := true }
+  , { language := "Cora",             morpheme := "-te",    unaccusative := true
+    , middlesIngestive := true }
+  , { language := "Marathi",          morpheme := "-aw",    unaccusative := true
+    , middlesIngestive := true }
+  , { language := "Amharic",          morpheme := "a-",     unaccusative := true
+    , middlesIngestive := true }
+  , { language := "Ahtna",            morpheme := "-ɬ-",    unaccusative := true
+    , middlesIngestive := true, unergative := true }
+  , { language := "Tariana",          morpheme := "-i-ta",  unaccusative := true
+    , middlesIngestive := true, unergative := true }
+  , { language := "Malayalam",        morpheme := "-icc",   unaccusative := true
+    , middlesIngestive := true, unergative := true }
+  , { language := "Basque",           morpheme := "-arazi", unaccusative := true
+    , middlesIngestive := true, unergative := true, simpleTransitive := true }
+  , { language := "Dulong/Rawang",    morpheme := "shv-",   unaccusative := true
+    , middlesIngestive := true, unergative := true, simpleTransitive := true }
+  , { language := "Koyukon",          morpheme := "-ɬ-",    unaccusative := true
+    , middlesIngestive := true, unergative := true, simpleTransitive := true }
+  ]
 
-/-- Reflexive intransitivization is bieventive — matching what the
-    four verb-level diagnostics detect. -/
-theorem reflexive_is_bieventive :
-    IntransitivizationType.isBieventive .reflexive = true := rfl
-
-/-- Anticausative intransitivization is monoeventive — the diagnostics
-    would NOT detect bieventive structure for true anticausatives. -/
-theorem anticausative_is_monoeventive :
-    IntransitivizationType.isBieventive .anticausative = false := rfl
-
-/-- Reflexive intransitivization involves coidentification of causer
-    and causee — the structural basis of lexical reflexivity. -/
-theorem reflexive_has_coidentification :
-    IntransitivizationType.hasCoidentification .reflexive = true := rfl
-
-/-- Reflexive intransitives license "by itself" (§4.5, (114a–d)),
-    because a causer position exists (even if coidentified). -/
-theorem reflexive_licenses_bySelf :
-    IntransitivizationType.licensesBySelf .reflexive = true := rfl
-
-/-- True anticausatives do NOT license "by itself" — no causer
-    position to negate with "without outside help". -/
-theorem anticausative_blocks_bySelf :
-    IntransitivizationType.licensesBySelf .anticausative = false := rfl
-
--- ════════════════════════════════════════════════════
--- § 9. Bridge to Minimalist Voice
--- ════════════════════════════════════════════════════
-
-/-! [krejci-2012]'s reflexive/anticausative distinction maps onto
-    the Voice typology in Minimalism: reflexive intransitives correspond
-    to middle Voice (bieventive, coidentification), and true
-    anticausatives correspond to anticausative Voice (monoeventive,
-    cause removed). Both lack an external argument in Spec,VoiceP. -/
-
-/-- Anticausative Voice does not assign a θ-role (no external argument). -/
-theorem anticausative_no_theta :
-    ¬ Minimalist.Voice.anticausative.AssignsTheta := by decide
-
-/-- Middle Voice does not assign a θ-role. -/
-theorem middle_no_theta :
-    ¬ Minimalist.Voice.middle.AssignsTheta := by decide
-
--- ════════════════════════════════════════════════════
--- § 10. Cross-Linguistic Causativizability
--- ════════════════════════════════════════════════════
-
-/-! [krejci-2012] Table 2.8 validates the causativizability
-    hierarchy across 12 languages. This data is formalized in
-    `MorphologicalCausation.krejciLanguages` and verified by
-    `MorphologicalCausation.krejci_hierarchy_holds`.
-
-    The hierarchy is implicational:
-    unaccusatives > middles/ingestives > unergatives > simple transitives
-
-    The key contribution is establishing middles/ingestives as a
-    distinct tier: Type 1 languages (Slave, Mapudungun, Classical
-    Nahuatl) causativize only unaccusatives; Type 2 (Cora, Marathi,
-    Amharic) add middles/ingestives; Type 3 (Ahtna, Tariana, Malayalam)
-    add unergatives; Type 4 (Basque, Dulong/Rawang, Koyukon) add simple
-    transitives. No language skips tiers. -/
-
-/-- The causativizability hierarchy holds for all 12 languages. -/
+/-- All twelve Table 2.8 languages respect the implicational hierarchy. -/
 theorem hierarchy_holds :
     krejciLanguages.all (·.respectsHierarchy) = true := by decide
 
