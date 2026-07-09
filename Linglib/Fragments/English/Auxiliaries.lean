@@ -1,4 +1,5 @@
 import Linglib.Data.UD.Basic
+import Linglib.Syntax.Category.Auxiliary.Basic
 import Linglib.Features.Number.Capabilities
 import Linglib.Features.Person.Capabilities
 import Linglib.Features.Person.Decomposition
@@ -102,6 +103,13 @@ structure AuxEntry where
 instance : HasNumber AuxEntry := ⟨fun a => a.number.bind Number.fromUD⟩
 
 instance : HasPerson AuxEntry := ⟨fun a => a.person.map Person.fromUD⟩
+
+/-- Every `AuxEntry` projects to a UD `AUX` word, carrying its agreement
+features. -/
+instance : Auxiliary AuxEntry where
+  toWord a := { form := a.form, cat := .AUX
+              , features := { person := a.person, number := a.number } }
+  cat_aux _ := rfl
 
 -- Modals (no agreement). Modal meanings follow [kratzer-1981], [palmer-2001].
 -- Each uses cartesianProduct with singleton force (fixed force, variable flavor).
