@@ -1058,6 +1058,7 @@ import Linglib.Fragments.Mayan.Chol.ClassifierSystem
 import Linglib.Fragments.Mayan.Chol.Classifiers
 import Linglib.Fragments.Mayan.Kaqchikel.AgentFocus
 import Linglib.Fragments.Mayan.Kaqchikel.Agreement
+import Linglib.Fragments.Mayan.Kaqchikel.Focus
 import Linglib.Fragments.Mayan.Kiche.Adposition
 import Linglib.Fragments.Mayan.Kiche.Agreement
 import Linglib.Fragments.Mayan.Kiche.ExtractionMorphology
