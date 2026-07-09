@@ -405,4 +405,36 @@ def caseAt : Mayan → UD.Aspect → Features.Prominence.ArgumentRole → Case
   | .Mam,       asp, r => caseMam asp r
   | .Kiche,     asp, r => caseKiche asp r
 
+/-! ### Verb templates -/
+
+/-- A position class in the Mayan verbal complex, in the traditional
+    Mayanist categories (so Set A and Set B stay distinct — a cut
+    `Morphology.MorphCategory` cannot draw). -/
+inductive VerbSlot where
+  | aspect
+  | setB
+  | setA
+  | root
+  | status
+  deriving DecidableEq, Repr
+
+/-- The verbal-complex template, stem-inclusive and left-to-right, in
+    canonical transitive citation form. Per-language morpheme orders as
+    documented in each fragment ([preminger-2014] (12) for the K'ichean
+    shape, [vazquez-alvarez-2011] §3.4 for Chol, [polian-2017] for
+    Tseltalan and the Mam status-suffix loss); Tsotsil's prefixal Set B
+    subset is recorded at `Tsotsil.setBLinearity`. -/
+def template : Mayan → List VerbSlot
+  | .Kaqchikel | .Kiche | .Qanjobal => [.aspect, .setB, .setA, .root, .status]
+  | .Mam => [.aspect, .setB, .setA, .root]
+  | .Chol => [.aspect, .setA, .root, .status, .setB]
+  | .Tseltal | .Tsotsil => [.aspect, .setA, .root, .setB]
+
+/-- The absolutive-position classifier derived from the template: HIGH
+    iff Set B precedes the root. `absPosition_matches_template` in
+    `Studies/CoonMateoPedroPreminger2014.lean` checks it against the
+    fragments' analytical `absPosition` values. -/
+def templateABSPosition (l : Mayan) : ABSPosition :=
+  if .setB ∈ (template l).takeWhile (· ≠ .root) then .high else .low
+
 end Mayan
