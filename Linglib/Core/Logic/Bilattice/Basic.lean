@@ -45,6 +45,22 @@ def conf (compl : S → S) (x : Evidential S) : Evidential S :=
 @[reducible] def Consistent [Preorder S] (compl : S → S) (x : Evidential S) : Prop :=
   x ≤ₖ conf compl x
 
+/-- The classical fragment: `x = −x`, the fixed points of conflation
+([fitting-1994]; [schoter-1996]'s `CLAS`). -/
+@[reducible] def IsClassical (compl : S → S) (x : Evidential S) : Prop :=
+  x = conf compl x
+
+/-- Over an order-reversing involution `compl`, consistency reduces to a single
+inequality: the evidence-against is below the complement of the evidence-for
+([schoter-1996]'s `CONS = {⟨a, b⟩ | a ≤ b′}`). -/
+theorem consistent_iff_con_le [Preorder S] {compl : S → S} (hanti : Antitone compl)
+    (hinv : Function.Involutive compl) {x : Evidential S} :
+    Consistent compl x ↔ x.con ≤ compl x.pro := by
+  refine ⟨And.right, fun h => ⟨?_, h⟩⟩
+  have h' := hanti h
+  rw [hinv x.pro] at h'
+  exact h'
+
 end Evidential
 
 /-- [belnap-1977]'s four-valued bilattice `FOUR = Bool ⊙ Bool`, `(for, against)`
@@ -66,8 +82,15 @@ def I : FOUR := .mk true true
 @[reducible] def conf (x : FOUR) : FOUR := Evidential.conf (! ·) x
 /-- The consistent (non-glut) fragment of `FOUR` — equivalently `x ≠ I`. -/
 @[reducible] def Consistent (x : FOUR) : Prop := Evidential.Consistent (! ·) x
+/-- The classical fragment of `FOUR` — equivalently `{F, T}`. -/
+@[reducible] def IsClassical (x : FOUR) : Prop := Evidential.IsClassical (! ·) x
 
 @[simp] theorem consistent_iff (x : FOUR) : Consistent x ↔ x ≠ I := by
+  obtain ⟨a, b⟩ := x; cases a <;> cases b <;> decide
+
+/-- The classical fragment of `FOUR` is `{F, T}` ([fitting-1994];
+[schoter-1996]). -/
+@[simp] theorem isClassical_iff (x : FOUR) : IsClassical x ↔ x = F ∨ x = T := by
   obtain ⟨a, b⟩ := x; cases a <;> cases b <;> decide
 
 end FOUR

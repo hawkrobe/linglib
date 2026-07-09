@@ -1,4 +1,5 @@
 import Linglib.Core.Logic.Bilattice.Interlaced
+import Mathlib.Data.Fintype.Prod
 
 /-!
 # The Ginsberg–Fitting product bilattice
@@ -98,6 +99,8 @@ instance [Preorder L] [Preorder R] [DecidableLE L] [DecidableLE R] :
   inferInstanceAs (DecidableLE (L × Rᵒᵈ))
 instance [DecidableEq L] [DecidableEq R] : DecidableEq (L ⊙ R) :=
   inferInstanceAs (DecidableEq (L × Rᵒᵈ))
+instance [Fintype L] [Fintype R] : Fintype (L ⊙ R) :=
+  inferInstanceAs (Fintype (L × Rᵒᵈ))
 
 /-- The truth order in plain coordinates: more for, less against
 ([avron-1996] Def 2.4(ii)). -/
