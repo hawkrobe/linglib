@@ -6,7 +6,7 @@ import Linglib.Fragments.Mayan.Qanjobal.Agreement
 import Linglib.Fragments.Mayan.Qanjobal.AgentFocus
 import Linglib.Fragments.Mayan.Chol.Agreement
 import Linglib.Fragments.Mayan.Kaqchikel.Agreement
-import Linglib.Fragments.Mayan.Kaqchikel.AgentFocus
+import Linglib.Fragments.Mayan.Kaqchikel.Focus
 import Linglib.Fragments.Mayan.Tseltal.Agreement
 import Linglib.Fragments.Mayan.Tsotsil.Agreement
 import Linglib.Fragments.Mayan.Mam.Agreement
@@ -782,8 +782,8 @@ theorem coreCase_bridge_subject (locus : CaseLocus) :
 -- § 17: Kaqchikel Voice / ClauseSpine
 -- ============================================================================
 
-/-! Theory-laden Voice/ClauseSpine apparatus for Kaqchikel, formerly in
-    `Fragments/Mayan/Kaqchikel/AgentFocus.lean`. Voice-flavor analysis is
+/-! Theory-laden Voice/ClauseSpine apparatus for Kaqchikel, graduated out
+    of the Kaqchikel fragment. Voice-flavor analysis is
     the [coon-mateo-pedro-preminger-2014] side of the same author
     cluster's Mayan work ([preminger-2014]'s Ch 4 covers the agreement
     side; CMP 2014 covers the case/Voice side). The Q'anjob'al-vs-Kaqchikel

@@ -1,4 +1,4 @@
-import Linglib.Fragments.Mayan.Kaqchikel.AgentFocus
+import Linglib.Fragments.Mayan.Kaqchikel.Focus
 import Linglib.Syntax.Minimalist.Position
 import Linglib.Phonology.Constraints.Defs
 import Linglib.Phonology.OptimalityTheory.Tableau
@@ -14,7 +14,7 @@ constraints: **XRef-Participant** ≫ **Spec-to-Spec Anti-Locality
 (SSAL)** ≫ **XRef** (cross-referencing). The core two-candidate
 competition is decided by the SSAL ≫ XRef sub-ranking; top-ranked
 XRef-Participant produces the participant exception below. The
-fragment in `Fragments/Mayan/Kaqchikel/AgentFocus.lean` carries the
+fragment in `Fragments/Mayan/Kaqchikel/Focus.lean` carries the
 typology-neutral extraction profile; this study file adds the
 theory-laden OT machinery and verifies the paper's results.
 

@@ -1054,7 +1054,6 @@ import Linglib.Fragments.MauritianCreole.Definiteness
 import Linglib.Fragments.Mayan.Chol.Agreement
 import Linglib.Fragments.Mayan.Chol.ClassifierSystem
 import Linglib.Fragments.Mayan.Chol.Classifiers
-import Linglib.Fragments.Mayan.Kaqchikel.AgentFocus
 import Linglib.Fragments.Mayan.Kaqchikel.Agreement
 import Linglib.Fragments.Mayan.Kaqchikel.Focus
 import Linglib.Fragments.Mayan.Kiche.Adposition
