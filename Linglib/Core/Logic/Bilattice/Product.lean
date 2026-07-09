@@ -38,6 +38,13 @@ term names an older single-factor lineage, so this file keeps Avron's name.
 * `Product.neg` — Ginsberg negation on the diagonal `L ⊙ L`
 -/
 
+/-- Componentwise product of order isomorphisms. `[UPSTREAM]` candidate:
+mathlib has `Equiv.prodCongr` but no order-iso version. -/
+def OrderIso.prodCongr {α β γ δ : Type*} [Preorder α] [Preorder β] [Preorder γ]
+    [Preorder δ] (e₁ : α ≃o β) (e₂ : γ ≃o δ) : α × γ ≃o β × δ where
+  toEquiv := e₁.toEquiv.prodCongr e₂.toEquiv
+  map_rel_iff' := and_congr e₁.map_rel_iff e₂.map_rel_iff
+
 namespace Bilattice
 
 /-- The Ginsberg–Fitting product `L ⊙ R` ([avron-1996] Def 2.4): pairs of
@@ -64,6 +71,9 @@ def con (x : L ⊙ R) : R := OrderDual.ofDual x.2
 @[simp] theorem pro_mk (a : L) (b : R) : pro (mk a b) = a := rfl
 @[simp] theorem con_mk (a : L) (b : R) : con (mk a b) = b := rfl
 @[simp] theorem mk_pro_con (x : L ⊙ R) : mk x.pro x.con = x := rfl
+
+@[ext] theorem ext {x y : L ⊙ R} (h₁ : x.pro = y.pro) (h₂ : x.con = y.con) : x = y :=
+  Prod.ext h₁ (congrArg OrderDual.toDual h₂)
 
 /-! ### The truth order
 
@@ -166,6 +176,8 @@ On the diagonal `L ⊙ L`, Ginsberg's negation swaps the coordinates: an
 involution reversing the truth order and preserving the knowledge order
 ([ginsberg-1988]; [avron-1996] Thm 2.5(2)). -/
 
+section Negation
+
 /-- Ginsberg negation on `L ⊙ L`: swap evidence for/against. -/
 def neg (x : L ⊙ L) : L ⊙ L := mk x.con x.pro
 
@@ -179,6 +191,56 @@ theorem neg_le_neg {x y : L ⊙ L} (h : x ≤ y) : neg y ≤ neg x := ⟨h.2, h.
 
 /-- Negation preserves the knowledge order ([avron-1996] Def 2.3(iii)). -/
 theorem neg_kLE_neg {x y : L ⊙ L} (h : x ≤ₖ y) : neg x ≤ₖ neg y := ⟨h.2, h.1⟩
+
+/-- **Ginsberg's swap is a negation on the diagonal** ([avron-1996] Thm 2.5(2)). -/
+instance : Negation (L ⊙ L) where
+  neg := neg
+  neg_neg := neg_neg
+  neg_le_neg := neg_le_neg
+  neg_kLE_neg := neg_kLE_neg
+
+end Negation
+
+/-! ### Recovering the factors
+
+The abstract decomposition applied to a product recovers its factors: the
+knowledge ideals below the truth bounds are order-isomorphic to `L` and `R`
+(`iicKTopIso`/`iicKBotIso`), so `Bilattice.decompose` closes the representation
+loop, `Know (L ⊙ R) ≃o L × R` (`decomposeProdIso`) — the concrete half of
+[avron-1996] Thm 4.3's uniqueness clause. -/
+
+section FactorRecovery
+
+variable [PartialOrder L] [PartialOrder R] [BoundedOrder L] [BoundedOrder R]
+
+/-- The knowledge ideal below the truth top is the evidence-for factor,
+`L_{L ⊙ R} ≃o L`. -/
+def iicKTopIso : Set.Iic (toKnow (⊤ : L ⊙ R)) ≃o L where
+  toFun x := (ofKnow x.1).pro
+  invFun a := ⟨toKnow (mk a ⊥), ⟨le_top, le_rfl⟩⟩
+  left_inv x := Subtype.ext (ext rfl
+    (le_bot_iff.mp (show (ofKnow x.1).con ≤ ⊥ from x.2.2)).symm)
+  right_inv _ := rfl
+  map_rel_iff' {x _} := ⟨fun h => ⟨h, (le_bot_iff.mp x.2.2).le.trans bot_le⟩, And.left⟩
+
+/-- The knowledge ideal below the truth bottom is the evidence-against factor,
+`R_{L ⊙ R} ≃o R`. -/
+def iicKBotIso : Set.Iic (toKnow (⊥ : L ⊙ R)) ≃o R where
+  toFun x := (ofKnow x.1).con
+  invFun b := ⟨toKnow (mk ⊥ b), ⟨le_rfl, le_top⟩⟩
+  left_inv x := Subtype.ext (ext
+    (le_bot_iff.mp (show (ofKnow x.1).pro ≤ ⊥ from x.2.1)).symm rfl)
+  right_inv _ := rfl
+  map_rel_iff' {x _} := ⟨fun h => ⟨(le_bot_iff.mp x.2.1).le.trans bot_le, h⟩, And.right⟩
+
+end FactorRecovery
+
+/-- **The representation loop closed**: `Bilattice.decompose` applied to a
+product recovers the factors, `Know (L ⊙ R) ≃o L × R` — the concrete half of
+[avron-1996] Thm 4.3's uniqueness clause. -/
+def decomposeProdIso [Lattice L] [Lattice R] [BoundedOrder L] [BoundedOrder R] :
+    Know (L ⊙ R) ≃o L × R :=
+  decompose.trans (iicKTopIso.prodCongr iicKBotIso)
 
 end Product
 

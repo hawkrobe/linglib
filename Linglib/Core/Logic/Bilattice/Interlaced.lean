@@ -43,11 +43,18 @@ product of two lattices is interlaced — is `Core.Logic.Bilattice.Product`.
 * `Bilattice.decompose` — Thm 4.3: `Know B ≃o Iic t × Iic f`
 * `Bilattice.le_iff_kInf_top_kInf_bot` — Thm 4.3, truth side: `x ≤ y` iff the
   `t`-components grow and the `f`-components shrink in the knowledge order
+* `Bilattice.Negation` — negation mixin ([avron-1996] Def 2.3), with the
+  derived bounds/De Morgan/knowledge-homomorphism equations
+* `Bilattice.negIicIso`, `neg_kInf_top` — Prop 4.7: with a negation the two
+  ideals are isomorphic (`λ x, ∼x : L_B ≃o R_B`) and the decomposition is a
+  diagonal product
 
 ## TODO
 
-The negation transport `λ x, ∼x : L_B ≅ R_B` ([avron-1996] Prop 4.7) and the
-uniqueness of the factors up to isomorphism (ibid. Thm 4.3).
+Package [avron-1996] Prop 4.7's full equivalence `⟨B, ∼⟩ ≅ L_B ⊙ L_B` (its two
+proof steps are `negIicIso` and `neg_kInf_top`); abstract uniqueness of the
+factors up to isomorphism (ibid. Thm 4.3; the concrete half for products is
+`Bilattice.Product.decomposeProdIso`).
 -/
 
 universe u
@@ -153,6 +160,110 @@ class Interlaced (B : Type u) [Lattice B] [Lattice (Know B)] : Prop where
   kInf_tmono : ∀ {x y : B}, x ≤ y → ∀ z, (x ⊗ z) ≤ (y ⊗ z)
   /-- knowledge join `⊕` is `≤_t`-monotone -/
   kSup_tmono : ∀ {x y : B}, x ≤ y → ∀ z, (x ⊕ z) ≤ (y ⊕ z)
+
+/-! ### Negation
+
+A **negation** on a bilattice ([avron-1996] Def 2.3) is an involution reversing
+the truth order and preserving the knowledge order. The note following Def 2.3
+derives the equations used below: negation exchanges the truth bounds
+(`∼t = f`), anti-commutes with the truth lattice operations (De Morgan), and is
+an automorphism of the knowledge lattice. -/
+
+section Negation
+
+section Defs
+
+variable [Preorder B] [Preorder (Know B)]
+
+/-- A **negation** ([avron-1996] Def 2.3): an involution (i) that reverses the
+truth order (ii) and preserves the knowledge order (iii). -/
+class Negation (B : Type u) [Preorder B] [Preorder (Know B)] : Type u where
+  /-- The negation operation `∼`. -/
+  neg : B → B
+  /-- Negation is an involution ([avron-1996] Def 2.3(i)). -/
+  neg_neg : ∀ a : B, neg (neg a) = a
+  /-- Negation reverses the truth order ([avron-1996] Def 2.3(ii)). -/
+  neg_le_neg : ∀ {a b : B}, a ≤ b → neg b ≤ neg a
+  /-- Negation preserves the knowledge order ([avron-1996] Def 2.3(iii)). -/
+  neg_kLE_neg : ∀ {a b : B}, a ≤ₖ b → neg a ≤ₖ neg b
+
+export Negation (neg neg_neg neg_le_neg neg_kLE_neg)
+
+attribute [simp] Negation.neg_neg
+
+variable [Negation B]
+
+theorem neg_le_neg_iff {a b : B} : neg b ≤ neg a ↔ a ≤ b :=
+  ⟨fun h => by simpa only [neg_neg] using neg_le_neg h, neg_le_neg⟩
+
+theorem neg_kLE_neg_iff {a b : B} : neg a ≤ₖ neg b ↔ a ≤ₖ b :=
+  ⟨fun h => by simpa only [neg_neg] using neg_kLE_neg h, neg_kLE_neg⟩
+
+/-- Negation as an antitone automorphism of the truth order, `B ≃o Bᵒᵈ`. -/
+def Negation.dualIso : B ≃o Bᵒᵈ where
+  toFun a := OrderDual.toDual (neg a)
+  invFun a := neg (OrderDual.ofDual a)
+  left_inv := neg_neg
+  right_inv _ := congrArg OrderDual.toDual (neg_neg _)
+  map_rel_iff' := neg_le_neg_iff
+
+/-- Negation as an automorphism of the knowledge order. -/
+def Negation.knowIso : Know B ≃o Know B where
+  toFun X := toKnow (neg (ofKnow X))
+  invFun X := toKnow (neg (ofKnow X))
+  left_inv _ := congrArg toKnow (neg_neg _)
+  right_inv _ := congrArg toKnow (neg_neg _)
+  map_rel_iff' := neg_kLE_neg_iff
+
+end Defs
+
+section Bounds
+
+variable [PartialOrder B] [Preorder (Know B)] [BoundedOrder B] [Negation B]
+
+/-- Negation exchanges the truth bounds, `∼t = f` (note following
+[avron-1996] Def 2.3). -/
+@[simp] theorem neg_top : neg (⊤ : B) = ⊥ :=
+  le_antisymm (by simpa only [neg_neg] using neg_le_neg (le_top : neg (⊥ : B) ≤ ⊤)) bot_le
+
+/-- Negation exchanges the truth bounds, `∼f = t` (note following
+[avron-1996] Def 2.3). -/
+@[simp] theorem neg_bot : neg (⊥ : B) = ⊤ :=
+  le_antisymm le_top (by simpa only [neg_neg] using neg_le_neg (bot_le : (⊥ : B) ≤ neg ⊤))
+
+end Bounds
+
+section DeMorgan
+
+variable [Lattice B] [Preorder (Know B)] [Negation B]
+
+/-- De Morgan: `∼(a ∧ b) = ∼a ∨ ∼b` (note following [avron-1996] Def 2.3). -/
+theorem neg_inf (a b : B) : neg (a ⊓ b) = neg a ⊔ neg b :=
+  OrderDual.toDual.injective (Negation.dualIso.map_inf a b)
+
+/-- De Morgan: `∼(a ∨ b) = ∼a ∧ ∼b` (note following [avron-1996] Def 2.3). -/
+theorem neg_sup (a b : B) : neg (a ⊔ b) = neg a ⊓ neg b :=
+  OrderDual.toDual.injective (Negation.dualIso.map_sup a b)
+
+end DeMorgan
+
+section KnowHom
+
+variable [Preorder B] [Lattice (Know B)] [Negation B]
+
+/-- Negation is a homomorphism of the knowledge meet, `∼(a ⊗ b) = ∼a ⊗ ∼b`
+(note following [avron-1996] Def 2.3). -/
+theorem neg_kInf (a b : B) : neg (a ⊗ b) = neg a ⊗ neg b :=
+  toKnow.injective (Negation.knowIso.map_inf (toKnow a) (toKnow b))
+
+/-- Negation is a homomorphism of the knowledge join, `∼(a ⊕ b) = ∼a ⊕ ∼b`
+(note following [avron-1996] Def 2.3). -/
+theorem neg_kSup (a b : B) : (neg (a ⊕ b) : B) = neg a ⊕ neg b :=
+  toKnow.injective (Negation.knowIso.map_sup (toKnow a) (toKnow b))
+
+end KnowHom
+
+end Negation
 
 /-! ### Representation (Avron Thm 4.3, interlaced case)
 
@@ -429,6 +540,35 @@ theorem le_iff_kInf_top_kInf_bot {x y : B} :
       _ ≤ ((y ⊗ ⊥) ⊕ (y ⊗ ⊤) : B) := Interlaced.kSup_tmono e₂ _
       _ = ((y ⊗ ⊤) ⊕ (y ⊗ ⊥) : B) := kSup_comm _ _
       _ = y := decomp_kSup y
+
+/-! #### Negation and the decomposition (Avron Prop 4.7)
+
+With a negation, the two decomposition factors are isomorphic and the
+decomposition is a *diagonal* product: [avron-1996] Prop 4.7 exhibits
+`⟨B, ∼⟩ ≅ L_B ⊙ L_B` with Ginsberg's swap negation, via `x ↦ (x ⊗ t, x ⊗ f)`
+followed by `(x, y) ↦ (x, ∼y)`. Formalized here: the ideal isomorphism
+`λ x, ∼x : L_B ≃o R_B` (`negIicIso`) and the transport equation
+`∼x ⊗ t = ∼(x ⊗ f)` (`neg_kInf_top`) — the two steps of Avron's proof. -/
+
+omit [Interlaced B] [BoundedOrder (Know B)] in
+/-- [avron-1996] Prop 4.7, key step: negation is an isomorphism between the
+knowledge ideals `L_B = Iic t` and `R_B = Iic f`. -/
+def negIicIso [Negation B] : Set.Iic kT ≃o Set.Iic kF where
+  toFun x := ⟨toKnow (neg (ofKnow x.1)), by
+    simpa only [Set.mem_Iic, kLE_def, toKnow_ofKnow, neg_top] using
+      neg_kLE_neg (show ofKnow x.1 ≤ₖ (⊤ : B) from x.2)⟩
+  invFun y := ⟨toKnow (neg (ofKnow y.1)), by
+    simpa only [Set.mem_Iic, kLE_def, toKnow_ofKnow, neg_bot] using
+      neg_kLE_neg (show ofKnow y.1 ≤ₖ (⊥ : B) from y.2)⟩
+  left_inv x := Subtype.ext (congrArg toKnow (neg_neg _))
+  right_inv y := Subtype.ext (congrArg toKnow (neg_neg _))
+  map_rel_iff' := neg_kLE_neg_iff
+
+omit [Interlaced B] [BoundedOrder (Know B)] in
+/-- [avron-1996] Prop 4.7, transport step (the map `(x, y) ↦ (x, ∼y)`):
+negation exchanges the two decomposition components, `∼x ⊗ t = ∼(x ⊗ f)`. -/
+theorem neg_kInf_top [Negation B] (x : B) : (neg x ⊗ ⊤ : B) = neg (x ⊗ ⊥) := by
+  rw [neg_kInf, neg_bot]
 
 end Representation
 
