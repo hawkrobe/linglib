@@ -3,61 +3,48 @@ import Linglib.Syntax.Extraction
 import Linglib.Semantics.Focus.Realization
 
 /-!
-# Kaqchikel Focus and Agent Focus Fragment [erlewine-2016]
+# Kaqchikel Focus and Agent Focus Fragment
 
-Theory-neutral typological data for focus marking and Agent Focus (AF)
-in Kaqchikel (K'ichean, Mayan), from the Patzún variety described by
-[erlewine-2016]: the extraction-marking profile and the realization of
-the focus construction. The verb-form distinction AF alternates on is
-the pan-Mayan `Mayan.VerbForm` (`Fragments/Mayan/Params.lean`); the AF
-agreement paradigm is in `Agreement.lean`.
-
-The theory-laden apparatus that interprets this data lives in study
-files per the project Fragment-discipline rule (CLAUDE.md):
-- OT competing-derivations + SSAL/XRef/XRef-Participant constraints,
-  rankings, and the cross-Mayan ranking typology →
-  `Studies/Erlewine2016.lean`
-- Minimalist Voice/ClauseSpine for Kaqchikel →
-  `Studies/CoonMateoPedroPreminger2014.lean`
-
-## The AF Paradigm
-
-| Extracted arg      | Verb form            | Agreement     |
-|--------------------|----------------------|---------------|
-| None (declarative) | Transitive           | Set A + Set B |
-| Patient/Abs        | Transitive           | Set A + Set B |
-| Agent/Erg (local)  | AF (*-ö* or *-n*)    | Set B only    |
-| Agent/Erg (long)   | embedded AF, matrix transitive | per verb |
+Theory-neutral data for focus marking and Agent Focus (AF) in Kaqchikel
+(K'ichean, Mayan), from the Patzún variety described by [erlewine-2016]:
+the extraction-marking profile and the realization of the focus
+construction.
 
 AF marks the transitive verb whose subject has been Ā-extracted to its
-immediately preverbal position: patient extraction never triggers it;
-long-distance subject extraction triggers it on the *embedded* verb
-only (the matrix verb, whose own subject has not moved, stays
-transitive); and intervening preverbal material obviates it. Two
-qualifications from the same source: the single AF agreement slot is
-drawn from the Set B paradigm and targets the salience-higher argument
-(see `Agreement.lean`), and when *both* arguments are 1st/2nd person
-the full-agreement transitive appears even under subject extraction.
-Intransitive verbs never undergo AF, so the marked "subject" below is
-the transitive subject (A, not S) — the syntactic-ergativity pattern.
+immediately preverbal position — the suffix *-ö* or *-n*, with no Set A
+slot. Patient extraction never triggers it, long-distance subject
+extraction triggers it on the embedded verb only, intervening preverbal
+material obviates it, and when both arguments are 1st/2nd person the
+full-agreement transitive appears even under subject extraction.
+Intransitive verbs never undergo AF, so the marked "subject" is A, not
+S. In the focus construction a focused argument fronts to the preverbal
+position marked by the particle *ja*, with AF as the additional
+verb-hosted reflex of A-focus.
 
-## The focus construction
+## Main declarations
 
-A focused argument fronts to immediately preverbal position, marked by
-the particle *ja*; a focused transitive subject additionally switches
-the verb to AF. Realization uses the shared
-`Semantics.Focus.Realization` vocabulary: multi-channel marking as a
-reflex list — displacement, the *ja* particle, and (conditionally) the
-verb-hosted AF reflex. Focus fronting is one of four constructions
-targeting the same preverbal position (wh-questions, relative clauses,
-focus, argument existentials; [erlewine-2016] §2.2); the others differ
-only in the fronted phrase's own marking (wh-word, relative *ri*,
-existential *k'o*), sharing the verb-hosted AF conditioning encoded
-here. Preverbal subject-initial word orders are topicalization, not
-focus — no *ja*, no AF ([erlewine-2016] §4.4). Whether Kaqchikel also
-has unmarked in-situ information focus is outside this fragment's
-data, so no `EveryFocusPerceptible` claim for the language is made
-here.
+* `Kaqchikel.extractionStrategy`, `Kaqchikel.extractionMarkedPositions`,
+  `Kaqchikel.extractionDistinguishesPosition`: the extraction profile.
+* `Kaqchikel.focusRealize`: focus realization by focused argument
+  position, as a `Semantics.Focus.Realization` reflex list.
+* `Kaqchikel.af_reflex_iff`: the verb-hosted AF reflex appears exactly
+  under transitive-subject (A) focus.
+* `Kaqchikel.marked_subject_is_A_not_S`: the A-focus vs S-focus split
+  that `Extraction.ExtractionTarget` cannot draw.
+
+## Implementation notes
+
+The verb form AF alternates on is the pan-Mayan `Mayan.VerbForm`
+(`Fragments/Mayan/Params.lean`); the AF agreement paradigm is in
+`Agreement.lean`; the interpreting OT and Voice analyses live in
+`Studies/Erlewine2016.lean` and
+`Studies/CoonMateoPedroPreminger2014.lean`. Focus fronting is one of
+four constructions targeting the same preverbal position
+([erlewine-2016] §2.2); the others differ only in the fronted phrase's
+own marking and are not separately encoded. Preverbal subject-initial
+orders are topicalization, not focus (no *ja*, no AF). Whether
+Kaqchikel has unmarked in-situ information focus is outside the
+source's data, so no `EveryFocusPerceptible` claim is made.
 -/
 
 namespace Kaqchikel
