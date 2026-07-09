@@ -364,6 +364,19 @@ def VerbForm.hasSetA : VerbForm → Bool
   | .transitive => true
   | .agentFocus => false
 
+/-- Whether the form bears a dedicated AF suffix. The exponent is
+    per-language (Kaqchikel *-ö* or *-n* [erlewine-2016], Q'anjob'al *-on*
+    [coon-mateo-pedro-preminger-2014]); its presence tracks the form. -/
+def VerbForm.hasAFSuffix : VerbForm → Bool
+  | .transitive => false
+  | .agentFocus => true
+
+/-- Agreement slots on the verbal complex, derived from the paradigm
+    inventory: Set B is always present; Set A only where the form bears it
+    (transitive: 2, AF: 1). -/
+def VerbForm.agreementSlots (f : VerbForm) : Nat :=
+  1 + if f.hasSetA then 1 else 0
+
 -- ============================================================================
 -- § 7: Exponent Tables
 -- ============================================================================

@@ -203,19 +203,13 @@ def afParadigm : List AFAgreementDatum :=
   , ⟨.pn .second .Sing, .pn .first .Sing, none⟩            -- *two [+participant] args
   ]
 
--- ============================================================================
--- § 6: Agreement Slot Count
--- ============================================================================
-
-/-- Number of agreement slots for each verb form.
-    Transitive: two slots (Set A + Set B).
-    AF: one slot (single omnivorous marker from the ABS paradigm). -/
-def VerbForm.agreementSlots : VerbForm → Nat
-  | .transitive => 2
-  | .agentFocus => 1
+-- The per-form agreement slot count (transitive 2, AF 1) is the pan-Mayan
+-- `Mayan.VerbForm.agreementSlots`, derived from `hasSetA` in
+-- `Fragments/Mayan/Params.lean`; the AF slot's single marker is drawn from
+-- the ABS paradigm (`afParadigm` above).
 
 -- ============================================================================
--- § 7: Verification Theorems — Argument Positions
+-- § 6: Verification Theorems — Argument Positions
 -- ============================================================================
 
 /-- Agent gets ERG (from Voice). -/
@@ -247,29 +241,7 @@ theorem all_positions_agreed (p : ArgPosition) (_ : p ∈ kaqArgPositions) :
   cases p <;> trivial
 
 -- ============================================================================
--- § 8: Verification Theorems — Verb Form Connection
--- ============================================================================
-
-/-- AF has a single agreement slot (one marker from the ABS paradigm). -/
-theorem af_single_slot : VerbForm.agentFocus.agreementSlots = 1 := rfl
-
-/-- Transitive has dual agreement slots (Set A + Set B). -/
-theorem trans_dual_slots : VerbForm.transitive.agreementSlots = 2 := rfl
-
-/-- AF loses ergative (Set A) agreement: the single AF marker is drawn
-    from the absolutive paradigm, not the ergative. Cross-references
-    `VerbForm.hasSetA` from AgentFocus.lean. -/
-theorem af_no_ergative :
-    VerbForm.agentFocus.hasSetA = false ∧
-    VerbForm.agentFocus.agreementSlots = 1 := ⟨rfl, rfl⟩
-
-/-- Transitive retains ergative (Set A) agreement. -/
-theorem trans_has_ergative :
-    VerbForm.transitive.hasSetA = true ∧
-    VerbForm.transitive.agreementSlots = 2 := ⟨rfl, rfl⟩
-
--- ============================================================================
--- § 9: Case Inventory Validation ([blake-1994])
+-- § 7: Case Inventory Validation ([blake-1994])
 -- ============================================================================
 
 /-- Kaqchikel case inventory, derived from argument position case values. -/
