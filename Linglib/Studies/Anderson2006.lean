@@ -1,4 +1,4 @@
-import Linglib.Syntax.AuxiliaryVerbs
+import Linglib.Syntax.Category.Auxiliary.Constructions
 import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
 import Linglib.Morphology.MorphRule
 import Linglib.Fragments.English.Auxiliaries

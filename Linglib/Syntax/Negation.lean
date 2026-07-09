@@ -5,7 +5,7 @@ import Linglib.Data.WALS.Features.F114A
 import Linglib.Data.WALS.Features.F115A
 import Linglib.Data.WALS.Features.F143A
 import Linglib.Data.WALS.Features.F144A
-import Linglib.Syntax.AuxiliaryVerbs
+import Linglib.Syntax.Category.Auxiliary.Constructions
 import Linglib.Morphology.Grammaticalization
 
 /-!
