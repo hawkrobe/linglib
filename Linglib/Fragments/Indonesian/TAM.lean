@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Features.Register
+import Linglib.Syntax.Category.Auxiliary.Basic
 
 /-!
 # Indonesian temporal markers
@@ -106,6 +107,17 @@ def pernah : TemporalMarker := ⟨"pernah", .farPast, .neutral, none⟩
 presentation. -/
 def temporalMarkers : List TemporalMarker :=
   [sudah, telah, sedang, lagi, tengah, masih, akan, bakal, baru, pernah]
+
+/-- The temporal markers independently verified as UD `AUX` (the
+UD Indonesian-GSD lemma statistics document *sudah*, *telah*, *sedang*,
+*akan* — exactly [arka-2013]'s I-position auxiliaries among the temporal
+markers). The remaining markers are not documented either way by the
+treebank's summary and stay out of the `Auxiliary` instance. -/
+def auxMarkers : List TemporalMarker := [sudah, telah, sedang, akan]
+
+instance : Auxiliary {m : TemporalMarker // m ∈ auxMarkers} where
+  toWord m := { form := m.val.form, cat := .AUX }
+  cat_aux _ := rfl
 
 /-- *telah* has the same meaning as *sudah*; the difference between the two
 is in register (§2.144). -/
