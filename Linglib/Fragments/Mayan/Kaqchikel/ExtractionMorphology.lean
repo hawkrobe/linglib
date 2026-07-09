@@ -13,12 +13,6 @@ when both arguments are 1st/2nd person the full-agreement transitive
 appears even under subject extraction. Intransitive verbs never undergo
 AF, so the marked "subject" is A, not S.
 
-Despite the traditional Mayanist name, AF is not a focus construction:
-its four triggers are wh-questions, relative clauses, focus fronting,
-and argument existentials ([erlewine-2016] §2.2). The realization of
-the focus construction, with AF as its verb-hosted reflex under
-A-focus, is in `Focus.lean`.
-
 ## Main declarations
 
 * `Kaqchikel.extractionStrategy`, `Kaqchikel.extractionMarkedPositions`,
@@ -28,8 +22,9 @@ A-focus, is in `Focus.lean`.
 
 The verb form AF alternates on is the pan-Mayan `Mayan.VerbForm`
 (`Fragments/Mayan/Params.lean`); the AF agreement paradigm is in
-`Agreement.lean`; the interpreting OT and Voice analyses live in
-`Studies/Erlewine2016.lean` and
+`Agreement.lean`; the focus construction's realization, with AF as its
+verb-hosted reflex, is in `Focus.lean`; the interpreting OT and Voice
+analyses live in `Studies/Erlewine2016.lean` and
 `Studies/CoonMateoPedroPreminger2014.lean`.
 -/
 
