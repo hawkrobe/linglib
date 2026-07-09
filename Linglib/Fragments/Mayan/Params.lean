@@ -301,8 +301,8 @@ inductive VerbForm where
   deriving DecidableEq, Repr
 
 /-- Whether the form bears Set A agreement (ergative cross-reference).
-    Canonical transitive: yes. AF: no (the agent loses Set A under
-    [coon-mateo-pedro-preminger-2014]'s analysis). -/
+    Canonical transitive: yes; AF forms "are morphologically intransitive
+    and bear only a Set B (absolutive) affix" ([polian-2017] p. 222). -/
 def VerbForm.hasSetA : VerbForm → Bool
   | .transitive => true
   | .agentFocus => false
@@ -334,9 +334,10 @@ abbrev ExponentTable := Agreement.Paradigm String
     proto-Mayan), but not strictly pan-Mayan — SJA Mam's default Set B
     `tz'=` surfaces in the 3sg slot per [scott-2023] §3.3.2, so
     `mayan_p3sg_abs_null` quantifies only over `isStandard = true`. The
-    predicate is notation-agnostic: `"-∅"` (suffixal Set B: Cholan,
-    Q'anjob'alan, Tseltal, Tsotsil), `"∅"` (prefixal Set B: Kaqchikel and
-    other K'ichean HIGH-ABS), and `"∅-"` all encode "no overt 3sg
+    predicate is notation-agnostic: `"-∅"` (suffix-notated Set B: Cholan,
+    Q'anjob'alan, Tseltal, and Tsotsil — whose system also has a prefixal
+    subset, see `Tsotsil.setBLinearity`), `"∅"` (prefixal Set B: Kaqchikel
+    and other K'ichean HIGH-ABS), and `"∅-"` all encode "no overt 3sg
     exponent". The disjunction form is kernel-decidable, unlike a
     `String.replace` normalization. -/
 def ExponentTable.IsThirdSgZero (e : ExponentTable) : Prop :=

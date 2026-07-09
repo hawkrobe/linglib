@@ -26,9 +26,11 @@ Focus fronting is one of four AF triggers ([erlewine-2016] §2.2); the
 others (wh-questions, relative clauses, argument existentials) differ
 only in the fronted phrase's own marking and are not separately
 encoded. Preverbal subject-initial orders are topicalization, not
-focus (no *ja*, no AF). Whether Kaqchikel has unmarked in-situ
-information focus is outside the source's data, so no
-`EveryFocusPerceptible` claim is made.
+focus (no *ja*, no AF). Across Mayan, information focus stays in situ
+and unmarked except for the transitive subject, which in AF-languages
+must front and trigger AF ([aissen-2017]); Kaqchikel-specific in-situ
+data are not in the sources here, so `focusRealize` covers the fronted
+construction only and no `EveryFocusPerceptible` claim is made.
 -/
 
 namespace Kaqchikel
