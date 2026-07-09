@@ -930,7 +930,7 @@ import Linglib.Fragments.Indonesian.Morph
 import Linglib.Fragments.Indonesian.Morphophonology
 import Linglib.Fragments.Indonesian.Plurals
 import Linglib.Fragments.Indonesian.Predicates
-import Linglib.Fragments.Indonesian.TenseAspect
+import Linglib.Fragments.Indonesian.TAM
 import Linglib.Fragments.Indonesian.VoiceSystem
 import Linglib.Fragments.Indonesian.WordOrder
 import Linglib.Fragments.Irish.Adposition
@@ -1974,6 +1974,7 @@ import Linglib.Studies.Angelopoulos2026
 import Linglib.Studies.Anscombe1964
 import Linglib.Studies.Anttila1997
 import Linglib.Studies.Ariel2001
+import Linglib.Studies.Arka2013
 import Linglib.Studies.Arnold2026
 import Linglib.Studies.ArnoldEtAl2000
 import Linglib.Studies.ArregiPietraszko2021
