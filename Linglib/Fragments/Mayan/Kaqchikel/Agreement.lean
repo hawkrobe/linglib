@@ -5,24 +5,16 @@ import Linglib.Fragments.Mayan.Params
 /-!
 # Kaqchikel Agreement Fragment
 
-Theory-neutral typological metadata for Kaqchikel (K'ichean, Mayan)
-agreement morphology, from [preminger-2014] (whose Kichean data ground
-the book's argument): paradigm exponents, person-number cells, and
-argument positions.
+Typological metadata for Kaqchikel (K'ichean, Mayan) agreement
+morphology, following [preminger-2014]: paradigm exponents,
+person-number cells, and argument positions.
 
-Kaqchikel cross-references both transitive arguments: Set A (ERG)
-prefixes on Voice/v index the transitive agent, and Set B (ABS)
-pre-stem markers on Infl/T index the absolutive argument (transitive
-patient or intransitive S). Morpheme order is aspect–ABS–ERG–stem
-([preminger-2014] (12)): Set B precedes Set A. This contrasts with San
-Juan Atitán Mam, where Infl's φ-probe is blocked in transitives and the
-patient goes unagreed ([scott-2023]; see `Mam/Agreement.lean`) — the
-non-differential/differential contrast pair consumed by
-`Studies/Aissen2003Agreement.lean`. In AF constructions the two
-agreement slots collapse to a single marker drawn from the Set B
-paradigm; the empirical AF agreement table ([preminger-2014] §3.2,
-table (22)) and the two-probe choice rule that predicts it live in
-`Studies/Preminger2014.lean`.
+Kaqchikel cross-references both transitive arguments. Set A (ERG)
+prefixes index the transitive agent; Set B (ABS) pre-stem markers
+index the absolutive argument (transitive patient or intransitive S);
+morpheme order is aspect–ABS–ERG–stem, so Set B precedes Set A
+([preminger-2014] (12)). In Agent Focus constructions the two slots
+collapse to a single marker drawn from the Set B paradigm.
 
 ## Main declarations
 
@@ -39,7 +31,13 @@ table (22)) and the two-probe choice rule that predicts it live in
 
 Hosting Set A on Voice/v and Set B on Infl/T follows the standard
 high-abs analysis (consistent with [preminger-2014] and
-[coon-mateo-pedro-preminger-2014]). The non-perfective `accCase`
+[coon-mateo-pedro-preminger-2014]). Kaqchikel indexes every core
+argument, in contrast with San Juan Atitán Mam, where Infl's φ-probe
+is blocked in transitives and the patient goes unagreed ([scott-2023];
+see `Mam/Agreement.lean`) — the non-differential/differential pair
+consumed by `Studies/Aissen2003Agreement.lean`. The AF agreement table
+([preminger-2014] §3.2, table (22)) and the choice rule that predicts
+it live in `Studies/Preminger2014.lean`. The non-perfective `accCase`
 records [imanishi-2014]'s analysis of the progressive *ajin*
 construction — an analysis, not consensus typology; the derivation
 lives with `Mayan.accCaseKaqchikel` in `Fragments/Mayan/Params.lean`.
