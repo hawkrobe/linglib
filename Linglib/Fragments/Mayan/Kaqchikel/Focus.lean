@@ -12,9 +12,13 @@ construction.
 
 AF marks the transitive verb whose subject has been Ā-extracted to its
 immediately preverbal position — the suffix *-ö* or *-n*, with no Set A
-slot. Patient extraction never triggers it, long-distance subject
-extraction triggers it on the embedded verb only, intervening preverbal
-material obviates it, and when both arguments are 1st/2nd person the
+slot. Despite the traditional Mayanist name, AF is not itself a focus
+construction: it is extraction morphology, and focus fronting is one of
+its four triggers alongside wh-questions, relative clauses, and
+argument existentials. Patient extraction never triggers it,
+long-distance subject extraction triggers it on the embedded verb only,
+intervening preverbal material obviates it, and when both arguments
+are 1st/2nd person the
 full-agreement transitive appears even under subject extraction.
 Intransitive verbs never undergo AF, so the marked "subject" is A, not
 S. In the focus construction a focused argument fronts to the preverbal
@@ -38,10 +42,10 @@ The verb form AF alternates on is the pan-Mayan `Mayan.VerbForm`
 (`Fragments/Mayan/Params.lean`); the AF agreement paradigm is in
 `Agreement.lean`; the interpreting OT and Voice analyses live in
 `Studies/Erlewine2016.lean` and
-`Studies/CoonMateoPedroPreminger2014.lean`. Focus fronting is one of
-four constructions targeting the same preverbal position
-([erlewine-2016] §2.2); the others differ only in the fronted phrase's
-own marking and are not separately encoded. Preverbal subject-initial
+`Studies/CoonMateoPedroPreminger2014.lean`. The three non-focus AF
+triggers ([erlewine-2016] §2.2) differ from focus fronting only in the
+fronted phrase's own marking and are not separately encoded. Preverbal
+subject-initial
 orders are topicalization, not focus (no *ja*, no AF). Whether
 Kaqchikel has unmarked in-situ information focus is outside the
 source's data, so no `EveryFocusPerceptible` claim is made.
