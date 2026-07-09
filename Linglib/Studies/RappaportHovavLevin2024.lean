@@ -1,7 +1,7 @@
 import Linglib.Semantics.ArgumentStructure.EventStructure
 import Linglib.Semantics.ArgumentStructure.Projection
-import Linglib.Semantics.ArgumentStructure.LevinClass
-import Linglib.Semantics.ArgumentStructure.LevinClassProfiles
+import Linglib.Semantics.Verb.Class
+import Linglib.Semantics.ArgumentStructure.RoleList
 
 /-!
 # Variable Agentivity: Polysemy or Underspecification?
@@ -66,7 +66,7 @@ This file does *not* add a fifth case to `ArgumentStructure.EventStructure.Templ
 RHL 2024's contribution is an enrichment of the *internal structure* of
 the activity template for one manner subclass — two grammatically relevant
 predicates instead of one — and a per-frame choice of which predicate
-determines argument realization. The current `Template.motionContact`
+determines argument realization. The current `RoleList.motionContact`
 case in `Features/EventStructure.lean` is a misformalization of the
 2024 paper and is queued for removal.
 

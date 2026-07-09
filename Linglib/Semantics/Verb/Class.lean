@@ -1,9 +1,10 @@
 import Linglib.Semantics.ArgumentStructure.MeaningComponents
+import Linglib.Semantics.ArgumentStructure.RoleList
 import Linglib.Semantics.Spatial.Path
 
 /-!
-# ArgumentStructure.LevinClass
-[levin-1993]
+# Verb classes: the [levin-1993] taxonomy
+[levin-1993] [levin-rappaport-hovav-2005]
 
 The 49-class verb taxonomy from [levin-1993] Part II, with
 per-class meaning-component profiles, unaccusativity prediction, and
@@ -11,11 +12,11 @@ verb-of-creation flag.
 
 ## Provenance
 
-Moved from `Core/Lexical/VerbClass.lean` in the cleanup that dissolved
-`Core/Lexical/`. Lives at `Semantics/Lexical/` (sibling of
-`LevinTheory.lean` for root-entailment derivation, `LevinClassProfiles.lean`
-for argument templates, `MeaningComponents.lean` for the diagnostic
-features) — Levin's framework, not consensus substrate.
+Lives at `Semantics/Verb/Class.lean` as the verb word-class's
+classification API — `Verb` entries carry a `levinClass` field and derive
+their default argument profiles through `LevinClass.roleList`. Root
+derivations live in `ArgumentStructure/LevinTheory.lean`, the diagnostic
+features in `ArgumentStructure/MeaningComponents.lean`.
 
 ## Framework commitment
 
@@ -23,13 +24,13 @@ features) — Levin's framework, not consensus substrate.
 English verb classification, but they are **not** the only such taxonomy.
 Sibling theory-named slots are intentionally unfilled in this restructure:
 
-- `Semantics/Lexical/VerbNet.lean` — Kipper-Schuler 2005
+- `Semantics/Verb/VerbNet.lean` — Kipper-Schuler 2005
   formally extends Levin to ~270 classes with thematic role hierarchies
-- `Semantics/Lexical/FrameNet.lean` — Fillmore/Baker/Sato semantic
+- `Semantics/Verb/FrameNet.lean` — Fillmore/Baker/Sato semantic
   frames as an alternative to alternation-based classification
-- `Semantics/Lexical/PropBank.lean` — Palmer/Gildea/Kingsbury 2005
+- `Semantics/Verb/PropBank.lean` — Palmer/Gildea/Kingsbury 2005
   verb-specific argument frames
-- `Semantics/Lexical/Faulhaber2011.lean` — *Verb Valency Patterns*
+- `Studies/Faulhaber2011.lean` — *Verb Valency Patterns*
   empirical critique of meaning-based predictions about alternation
   participation; the principal disconfirming reference
 
@@ -441,5 +442,85 @@ def pathSpec : LevinClass → Option Semantics.Spatial.Path.PathShape
   | _ => none                  -- non-motion verbs
 
 end LevinClass
+
+/-! ### Class → template map
+
+The argument-structure template each class realizes
+(`ArgumentStructure.Template`); `none` for classes whose profiles haven't
+been determined yet. Consumed by `Verb.Basic` to derive a verb entry's
+default argument profiles from its `levinClass` field. -/
+
+/-- Map a Levin class to its argument structure template.
+    Returns `none` for classes whose profiles haven't been determined yet. -/
+def LevinClass.roleList : LevinClass → Option RoleList
+  -- § 18: Contact by Impact — manner verbs, no CoS entailment
+  | .hit | .swat              => some mannerContact
+  -- § 20: Contact: Touch — like hit but lighter force
+  | .touch                    => some mannerContact
+  -- § 21: Cutting — manner + result (CoS entailed)
+  | .cut | .carve             => some resultChange
+  -- § 44: Destroy
+  | .destroy                  => some resultChange
+  -- § 42: Killing
+  | .murder | .poison         => some resultChange
+  -- § 45: Change of State (causative/inchoative alternation)
+  | .break_ | .bend | .cooking
+  | .otherCoS | .entitySpecificCoS
+  | .calibratableCoS          => some resultChange
+  -- § 26: Creation and Transformation
+  | .build | .create | .knead => some creation
+  | .grow                     => some creation
+  -- § 25: Image Creation
+  | .imageCreation            => some creation
+  -- § 39: Ingesting
+  | .eat | .devour            => some consumption
+  -- § 51.3: Manner of Motion
+  | .mannerOfMotion           => some selfMotion
+  -- § 51.6: Chase
+  | .chase                    => some selfMotion
+  -- § 51.1: Inherently Directed Motion
+  | .inherentlyDirectedMotion => some directedMotion
+  -- § 30: Perception
+  | .see | .sight             => some perception
+  -- § 31.1: Amuse-class psych verbs (stimulus subject)
+  | .amuse                    => some psychCausal
+  -- § 31.2: Admire-class psych verbs (experiencer subject)
+  | .admire                   => some psychState
+  -- § 32.1: Want verbs (desire states)
+  | .want                     => some desire
+  -- § 13.1 / § 13.5: Change of possession (give / obtain)
+  | .give | .getObtain        => some possessionTransfer
+  -- § 10.4: Wipe verbs (manner-subclass default; instrument-sense
+  -- entries override with `wipeInstrument` per verb)
+  | .wipe                     => some wipeManner
+  -- § 48.2: Disappearance
+  | .disappearance            => some ArgumentStructure.disappearance
+  -- Not yet classified
+  | _                         => none
+
+-- ════════════════════════════════════════════════════
+-- § 4. Convenience accessors
+-- ════════════════════════════════════════════════════
+
+/-- Subject entailment profile for a Levin class. -/
+def LevinClass.subjectProfile (c : LevinClass) : Option EntailmentProfile :=
+  c.roleList.map (·.subjectProfile)
+
+/-- Object entailment profile for a Levin class. -/
+def LevinClass.objectProfile (c : LevinClass) : Option EntailmentProfile :=
+  c.roleList.bind (·.objectProfile)
+
+/-- **The stored linking is never ASP-reversed** ([dowty-1991] via
+    [levin-rappaport-hovav-2005] ch. 2): in no class does the object
+    outrank the subject under the Argument Selection Principle. Where
+    dominance is strict the ASP derives the stored linking; at the psych
+    doublets (*like*/*please*: `Dowty1991.psychStative_alternation`)
+    neither argument outranks, and the class's linking is a lexical
+    choice the role list underdetermines. -/
+theorem roleList_not_asp_reversed {c : LevinClass} {r : RoleList}
+    {o : EntailmentProfile} (hr : c.roleList = some r)
+    (ho : r.objectProfile = some o) :
+    ¬ OutranksForSubject o r.subjectProfile := by
+  cases c <;> cases hr <;> cases ho <;> decide
 
 end ArgumentStructure

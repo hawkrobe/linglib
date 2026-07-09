@@ -1,4 +1,4 @@
-import Linglib.Semantics.ArgumentStructure.LevinClass
+import Linglib.Semantics.Verb.Class
 import Linglib.Semantics.ArgumentStructure.MeaningComponents
 
 /-!
@@ -14,7 +14,7 @@ participation interacts with `MeaningComponents.fuse`.
 
 Moved from `Core/Lexical/DiathesisAlternation.lean` in the cleanup that
 dissolved `Core/Lexical/`. Sibling of `LevinClass.lean`, `MeaningComponents.lean`,
-`LevinTheory.lean`, `LevinClassProfiles.lean` — all paper-anchored on
+`LevinTheory.lean`, `RoleList.lean` — all paper-anchored on
 [levin-1993] and not theory-neutral substrate.
 
 ## Selection caveat
