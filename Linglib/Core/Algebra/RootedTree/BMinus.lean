@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 import Linglib.Core.Algebra.RootedTree.GrossmanLarsonPairing
 import Linglib.Core.Algebra.RootedTree.Coproduct.PruningNonplanar
 import Linglib.Core.Algebra.RootedTree.PreLie.InsertionNodeDecomp
-import Linglib.Core.Algebra.ConnesKreimer.Shuffle
+import Linglib.Core.Data.Multiset.Antidiagonal
 import Mathlib.Tactic.Ring
 
 set_option autoImplicit false

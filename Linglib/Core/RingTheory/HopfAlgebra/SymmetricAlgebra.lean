@@ -11,7 +11,7 @@ import Mathlib.RingTheory.HopfAlgebra.TensorProduct
 
 When `R` is a commutative ring, `SymmetricAlgebra R M` carries a Hopf
 algebra structure extending the bialgebra structure from
-`Linglib/Core/RingTheory/Bialgebra/SymmetricAlgebra.lean`. The
+`Mathlib.RingTheory.Bialgebra.SymmetricAlgebra`. The
 **antipode** is the algebra homomorphism
 
     `S(ι x) = −ι x`   for `x : M`,
