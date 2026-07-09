@@ -1,3 +1,4 @@
+import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
 import Linglib.Data.Examples.Levin1993
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Studies.Dowty1991
