@@ -269,12 +269,11 @@ def impreciseReadingAvailable (n : Nat) : Prop :=
 instance (n : Nat) : Decidable (impreciseReadingAvailable n) :=
   inferInstanceAs (Decidable (inferPrecisionMode n = .approximate))
 
-/-- Any multiple of 10 carries an imprecise reading (general; derived from the
-    roundness keystone). -/
+/-- Any multiple of 10 carries an imprecise reading — the substrate lemma
+    `inferPrecisionMode_eq_approximate_of_ten_dvd` under this file's naming. -/
 theorem div10_enables_imprecision (n : ℕ) (h10 : 10 ∣ n) :
-    impreciseReadingAvailable n := by
-  unfold impreciseReadingAvailable inferPrecisionMode
-  exact if_pos (Semantics.Numerals.Roundness.score_ge_two_of_div10 n h10)
+    impreciseReadingAvailable n :=
+  inferPrecisionMode_eq_approximate_of_ten_dvd h10
 
 /-- Roundness gates the persona effect: the round numeral supports imprecision,
     the displayed value does not. -/
