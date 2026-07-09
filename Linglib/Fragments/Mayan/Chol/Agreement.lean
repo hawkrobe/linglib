@@ -1,4 +1,5 @@
 import Linglib.Features.Case.Basic
+import Linglib.Morphology.Realization
 import Linglib.Syntax.Extraction
 import Linglib.Fragments.Mayan.Params
 
@@ -20,8 +21,8 @@ intransitive subjects in non-perfective. The formal-syntactic analyses of
 * `Chol.absPosition`: LOW-ABS morpheme placement.
 * `Chol.setAExponent`, `Chol.setBExponent`: the Set A (ERG/GEN) and Set B
   (ABS) exponent tables ([vazquez-alvarez-2011] Table 10).
-* `Chol.extractionStrategy`, `Chol.absObjectInNonFinite`,
-  `Chol.absIntranSInNonFinite`: the (unmarked) extraction profile and
+* `Chol.Extraction.realize`, `Chol.absObjectInNonFinite`,
+  `Chol.absIntranSInNonFinite`: the (unmarked) extraction marking and
   non-finite absolutive availability.
 
 ## Implementation notes
@@ -101,6 +102,8 @@ the agentive split. Future refinement: split into `intranSAgentive` /
 `intranSPatientive` / `intranSFluid`.
 -/
 
+open Extraction (ExtractionTarget ExtractionMarkingStrategy)
+
 namespace Chol
 
 open Mayan (ExponentTable)
@@ -126,19 +129,24 @@ abbrev ArgPosition.accCase : ArgPosition → Case := Mayan.accCaseChol
     the morpheme order ASP-ERG-ROOT-(DERIV)-SUFFIX-ABS. -/
 def absPosition : Mayan.ABSPosition := .low
 
-/-! ### Extraction data -/
+/-! ### Extraction marking -/
 
-/-- Chol requires **no Agent Focus morphology** for any extraction
-    (`extractionStrategy = .unmarked`) — unlike Q'anjob'al, the diagnostic
-    for "lacking syntactic ergativity" in the
-    [coon-mateo-pedro-preminger-2014] sense. Every argument extracts freely,
-    so the marked-positions list is empty; the resulting ambiguity when both
-    arguments are 3rd person follows from the absent AF marking:
+namespace Extraction
+
+/-- Chol requires **no Agent Focus morphology** for any extraction —
+    unlike Q'anjob'al, the diagnostic for "lacking syntactic ergativity"
+    in the [coon-mateo-pedro-preminger-2014] sense. Every argument
+    extracts freely; the resulting ambiguity when both arguments are
+    3rd person follows from the absent AF marking:
     `Maxki₁ tyi y-il-ä (___₁) jiñi wiñik (___₁)?`
     'Who saw the man?' / 'Who did the man see?' -/
-def extractionStrategy : Extraction.ExtractionMarkingStrategy := .unmarked
-def extractionMarkedPositions : List Extraction.ExtractionTarget := []
-def extractionDistinguishesPosition : Bool := false
+def realize : ExtractionTarget → List (Morphology.Reflex Empty) :=
+  fun _ => []
+
+/-- WALS-style label: extraction is unmarked. -/
+def strategy : ExtractionMarkingStrategy := .unmarked
+
+end Extraction
 
 /-! ### Non-finite absolutive availability -/
 

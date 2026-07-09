@@ -30,6 +30,8 @@ analyses live in `Studies/Erlewine2016.lean` and
 `Studies/CoonMateoPedroPreminger2014.lean`.
 -/
 
+open Extraction (ExtractionTarget ExtractionMarkingStrategy)
+
 namespace Kaqchikel
 
 namespace Extraction
@@ -42,12 +44,12 @@ inductive Site where
 /-- Transitive-subject extraction switches the verb to AF (the suffix
     *-ö* or *-n*, with Set A suppressed, [erlewine-2016]); nothing else
     is marked. -/
-def realize : _root_.Extraction.ExtractionTarget → List (Morphology.Reflex Site)
+def realize : ExtractionTarget → List (Morphology.Reflex Site)
   | .subject => [.morpheme .verb]
   | _ => []
 
 /-- WALS-style label: a dedicated morpheme marks extraction. -/
-def strategy : _root_.Extraction.ExtractionMarkingStrategy := .dedicatedMorpheme
+def strategy : ExtractionMarkingStrategy := .dedicatedMorpheme
 
 end Extraction
 

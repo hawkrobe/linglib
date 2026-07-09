@@ -1,4 +1,4 @@
-import Linglib.Fragments.Mayan.Kaqchikel.ExtractionMorphology
+import Linglib.Fragments.Mayan.Kaqchikel.Extraction
 import Linglib.Syntax.Minimalist.Position
 import Linglib.Phonology.Constraints.Defs
 import Linglib.Phonology.OptimalityTheory.Tableau
@@ -14,7 +14,7 @@ constraints: **XRef-Participant** ≫ **Spec-to-Spec Anti-Locality
 (SSAL)** ≫ **XRef** (cross-referencing). The core two-candidate
 competition is decided by the SSAL ≫ XRef sub-ranking; top-ranked
 XRef-Participant produces the participant exception below. The
-fragment in `Fragments/Mayan/Kaqchikel/ExtractionMorphology.lean` carries the
+fragment in `Fragments/Mayan/Kaqchikel/Extraction.lean` carries the
 typology-neutral extraction profile; this study file adds the
 theory-laden OT machinery and verifies the paper's results.
 
@@ -369,8 +369,8 @@ theorem shared_phase_problem :
     transitive-subject extraction. -/
 theorem both_have_extraction_asymmetries :
     Qanjobal.absPosition = .high ∧ Kaqchikel.absPosition = .high ∧
-    Extraction.Marks Qanjobal.extractionMarkedPositions .subject ∧
-    Extraction.Marks Kaqchikel.extractionMarkedPositions .subject :=
+    Extraction.Marked Qanjobal.Extraction.realize .subject ∧
+    Extraction.Marked Kaqchikel.Extraction.realize .subject :=
   ⟨rfl, rfl, by decide, by decide⟩
 
 /-- Kaqchikel AF loses Set A agreement (the agent never enters Spec,TP).
@@ -388,6 +388,6 @@ theorem both_af_lose_setA :
     restriction ([erlewine-2018]). Same underlying problem
     (anti-locality), different marking. -/
 theorem strategy_is_af :
-    extractionStrategy = .dedicatedMorpheme := rfl
+    Extraction.strategy = .dedicatedMorpheme := rfl
 
 end Erlewine2016

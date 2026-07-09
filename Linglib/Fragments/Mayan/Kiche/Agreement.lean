@@ -30,7 +30,6 @@ inverted alignment.
 * `Kiche.independentPronoun`: the free personal pronouns.
 * `Kiche.setAExponent`, `Kiche.setBExponent`: canonical φ-cell exponent
   tables for cross-Mayan consumption.
-* `Kiche.extractionStrategy`: the Agent-Focus extraction profile.
 
 ## Implementation notes
 
@@ -42,9 +41,8 @@ forms (laal SG, alaq PL) are syntactically postverbal and pattern
 outside the prefix paradigm. K'iche' is HIGH-ABS (Set B pre-stem on
 Infl), and its case wiring reuses `Mayan.ergCaseKiche` (from
 `Alignment.ergative`); the canonical φ-cell exponent tables key on
-`Agreement.Cell` for cross-Mayan consumption. Agent-Focus Antipassive
-marks A-extraction with the voice marker *-n*, shared with the
-Absolutive Antipassive ([mondloch-2017] Lesson 22).
+`Agreement.Cell` for cross-Mayan consumption. Extraction marking (AF
+and *wi*) lives in `Kiche/Extraction.lean`.
 -/
 
 
@@ -355,16 +353,5 @@ def setBExponent : ExponentTable :=
     Mayan branches per [kaufman-norman-1984] Table 8. **Not**
     pan-Mayan: see Mam exception via `MayanLang.isStandard`. -/
 theorem p3sg_abs_null : setBExponent.realize (.pn .third .Sing) = some "∅" := rfl
-
-/-- K'iche' extraction profile: Agent-Focus Antipassive marks A-extraction
-    ([mondloch-2017] Lesson 22; also Lessons 30, 33 for radical transitives
-    and perfect aspect). The voice marker *-n* is shared with the
-    Absolutive Antipassive (Lesson 21); the two differ syntactically — both
-    arguments overt under AF, object suppressed under the antipassive — not
-    morphologically. HIGH-ABS K'ichean, structurally analogous to
-    Kaqchikel. -/
-def extractionStrategy : Extraction.ExtractionMarkingStrategy := .dedicatedMorpheme
-def extractionMarkedPositions : List Extraction.ExtractionTarget := [.subject]
-def extractionDistinguishesPosition : Bool := true
 
 end Kiche

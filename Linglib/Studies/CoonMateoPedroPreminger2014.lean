@@ -3,14 +3,16 @@ import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Syntax.Minimalist.Phase.Basic
 import Linglib.Syntax.Minimalist.ExtendedProjection.ClauseSpine
 import Linglib.Fragments.Mayan.Qanjobal.Agreement
-import Linglib.Fragments.Mayan.Qanjobal.AgentFocus
+import Linglib.Fragments.Mayan.Qanjobal.Extraction
 import Linglib.Fragments.Mayan.Chol.Agreement
 import Linglib.Fragments.Mayan.Kaqchikel.Agreement
-import Linglib.Fragments.Mayan.Kaqchikel.ExtractionMorphology
+import Linglib.Fragments.Mayan.Kaqchikel.Extraction
 import Linglib.Fragments.Mayan.Tseltal.Agreement
 import Linglib.Fragments.Mayan.Tsotsil.Agreement
 import Linglib.Fragments.Mayan.Mam.Agreement
+import Linglib.Fragments.Mayan.Mam.Extraction
 import Linglib.Fragments.Mayan.Kiche.Agreement
+import Linglib.Fragments.Mayan.Kiche.Extraction
 
 /-!
 # Coon, Mateo Pedro & Preminger (2014) [coon-mateo-pedro-preminger-2014]
@@ -384,12 +386,12 @@ theorem mayan_tada (lang : MayanLang) :
     transitives). The substantive claim lives at `extractionProfile`'s
     `markedPositions := [.subject]` field. -/
 theorem qanjobal_extraction_consistent :
-    Extraction.Marks Qanjobal.extractionMarkedPositions .subject := by decide
+    Extraction.Marked Qanjobal.Extraction.realize .subject := by decide
 
 /-- Chol's extraction data is consistent: no Agent Focus morphology
     required (every argument extracts freely under the absent strategy). -/
 theorem chol_extraction_consistent :
-    Chol.extractionStrategy = .unmarked := rfl
+    Chol.Extraction.strategy = .unmarked := rfl
 
 /-- Q'anjob'al's AF form carries the intransitive status suffix, matching
     the prediction that AF Voice is non-phasal (intransitive v⁰). -/
@@ -459,7 +461,7 @@ structure MayanExtractionDatum where
 def tadasTable : List MayanExtractionDatum :=
   -- HIGH-ABS, +extraction asymmetries
   [ ⟨"Q'anjob'al",  Qanjobal.absPosition,
-      decide (Extraction.Marks Qanjobal.extractionMarkedPositions .subject)⟩
+      decide (Extraction.Marked Qanjobal.Extraction.realize .subject)⟩
   , ⟨"Akatek",      .high, true⟩
   , ⟨"Popti'",      .high, true⟩
   , ⟨"Chuj",        .high, true⟩
@@ -468,14 +470,14 @@ def tadasTable : List MayanExtractionDatum :=
   , ⟨"Poqomchi'",   .high, true⟩
   , ⟨"Poqomam",     .high, true⟩
   , ⟨"K'ichee'",    Kiche.absPosition,
-      decide (Extraction.Marks Kiche.extractionMarkedPositions .subject)⟩
+      decide (Extraction.Marked Kiche.Extraction.realize .subject)⟩
   , ⟨"Kaqchikel",   Kaqchikel.absPosition,
-      decide (Extraction.Marks Kaqchikel.extractionMarkedPositions .subject)⟩
+      decide (Extraction.Marked Kaqchikel.Extraction.realize .subject)⟩
   , ⟨"Tz'utujil",   .high, true⟩
   , ⟨"Sakapultek",  .high, true⟩
   , ⟨"Sipakapense", .high, true⟩
   , ⟨"Mam",         Mam.absPosition,
-      decide (Extraction.Marks Mam.extractionMarkedPositions .subject)⟩
+      decide (Extraction.Marked Mam.Extraction.realize .subject)⟩
   , ⟨"Awakatek",    .high, true⟩
   -- LOW-ABS, +extraction asymmetries (outliers)
   , ⟨"Yucatec",     .low,  true⟩
@@ -485,12 +487,12 @@ def tadasTable : List MayanExtractionDatum :=
   , ⟨"Mopan",       .low,  false⟩
   , ⟨"Itzaj",       .low,  false⟩
   , ⟨"Chol",        Chol.absPosition,
-      decide (Extraction.Marks Chol.extractionMarkedPositions .subject)⟩
+      decide (Extraction.Marked Chol.Extraction.realize .subject)⟩
   , ⟨"Chontal",     .low,  false⟩
   , ⟨"Tseltal",     Tseltal.absPosition,
-      decide (Extraction.Marks Tseltal.extractionMarkedPositions .subject)⟩
+      decide (Extraction.Marked Tseltal.Extraction.realize .subject)⟩
   , ⟨"Tsotsil",     Tsotsil.absPosition,
-      decide (Extraction.Marks Tsotsil.extractionMarkedPositions .subject)⟩
+      decide (Extraction.Marked Tsotsil.Extraction.realize .subject)⟩
   , ⟨"Tojol-ab'al", .low,  false⟩ ]
 
 /-- All HIGH-ABS languages in the sample exhibit extraction asymmetries. -/

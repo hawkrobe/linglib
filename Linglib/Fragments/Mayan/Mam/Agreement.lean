@@ -34,8 +34,8 @@ as a more formal variant ([scott-2023] ch. 3, ex. 156).
   selection among the shared `PersonalPronoun` entries.
 * `Mam.caseInventory`: the {ERG, ACC, ABS} inventory, validated against
   [blake-1994]'s hierarchy.
-* `Mam.absPosition`, `Mam.extractionStrategy`: HIGH-ABS morpheme
-  placement and the AF-based extraction profile.
+* `Mam.absPosition`: HIGH-ABS morpheme placement (extraction marking
+  lives in `Mam/Extraction.lean`).
 
 ## Implementation notes
 
@@ -296,19 +296,6 @@ def setALinearity : MarkerLinearity := .prefixal
 /-- Set B linearity: prefixal (HIGH-ABS Mam morphology; pre-stem on Infl,
     per [scott-2023] §2.5.1). -/
 def setBLinearity : MarkerLinearity := .prefixal
-
-/-- Mam's extraction strategy, marked `dedicatedMorpheme` for the
-    cross-Mayan typology (parallel to Q'anjob'al, Kaqchikel, K'iche').
-    AF is productive in SJA Mam ([scott-2023] §2.5.4.1 ex. 169, §2.7.1)
-    and combines the antipassive suffix *-(a)n* with an AF-specific
-    suffix *-ta* (`b'yo-n-ta` 'hit-AP-AF'), morphologically distinct from
-    K'iche''s bare antipassive *-n* ([mondloch-2017] Lesson 22). The
-    SSAL-repair analysis (Erlewine-line) lives in `Studies/Erlewine2016.lean`;
-    rival accounts (Coon-Mateo Pedro-Preminger absolutive licensing,
-    Coon-Keine Feature Gluttony) are not encoded in the enum. -/
-def extractionStrategy : Extraction.ExtractionMarkingStrategy := .dedicatedMorpheme
-def extractionMarkedPositions : List Extraction.ExtractionTarget := [.subject]
-def extractionDistinguishesPosition : Bool := true
 
 /-! ### Marker verification -/
 

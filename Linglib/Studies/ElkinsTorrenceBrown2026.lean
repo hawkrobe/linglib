@@ -1,6 +1,6 @@
-import Linglib.Fragments.Mayan.Mam.ExtractionMorphology
+import Linglib.Fragments.Mayan.Mam.Extraction
 import Linglib.Fragments.Mayan.Mam.VoiceSystem
-import Linglib.Fragments.Mayan.Kiche.ExtractionMorphology
+import Linglib.Fragments.Mayan.Kiche.Extraction
 import Linglib.Syntax.Minimalist.ExtendedProjection.ClauseSpine
 import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Syntax.Minimalist.Agree.Basic
@@ -66,8 +66,8 @@ open Mam Kiche
 
 /-- Both Mam and K'ichean use dedicated morphemes for oblique extraction. -/
 theorem both_mark_oblique :
-    mamExtractionStrategy = .dedicatedMorpheme ∧
-    kicheanExtractionStrategy = .dedicatedMorpheme := ⟨rfl, rfl⟩
+    Mam.Extraction.strategy = .dedicatedMorpheme ∧
+    Kiche.Extraction.strategy = .dedicatedMorpheme := ⟨rfl, rfl⟩
 
 /-- Both exempt temporal obliques from extraction marking. -/
 theorem both_exempt_temporal :

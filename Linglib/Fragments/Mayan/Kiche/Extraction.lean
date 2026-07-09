@@ -1,3 +1,4 @@
+import Linglib.Morphology.Realization
 import Linglib.Syntax.Extraction
 
 /-!
@@ -20,7 +21,8 @@ with the lower copy of the moved adjunct (bearing [APPL]) substituted by
   extraction data across embedded CP vs AspP.
 * `Kiche.fronting_particle_generalization`: matrix *wi* is contingent on
   an overt embedded complementizer.
-* `Kiche.kicheanExtractionStrategy`: the extraction profile.
+* `Kiche.Extraction.realize`: the AF- and *wi*-based extraction marking,
+  with `Kiche.Extraction.strategy` as the WALS-style label.
 
 ## Implementation notes
 
@@ -34,6 +36,8 @@ Particle Generalization ([mendes-ranero-2021] definition (5), first
 observed by Can Pixabaj 2015) is stated and checked at
 `fronting_particle_generalization`.
 -/
+
+open Extraction (ExtractionTarget ExtractionMarkingStrategy Marked)
 
 namespace Kiche
 
@@ -206,16 +210,32 @@ theorem fronting_particle_generalization :
     ldData.all (λ d => d.embeddedType.hasComp == d.wiOnMatrix) = true := by
   decide
 
-/-! ### Extraction profile -/
+/-! ### Extraction marking -/
 
-/-- K'ichean extraction profile: *wi* marks oblique extraction via copy
-    spellout at the foot of the Ā-chain, distinguishing obliques from core
-    arguments ([mendes-ranero-2021]). -/
-def kicheanExtractionStrategy : Extraction.ExtractionMarkingStrategy := .dedicatedMorpheme
-def kicheanExtractionMarkedPositions : List Extraction.ExtractionTarget := [.oblique]
-def kicheanExtractionDistinguishesPosition : Bool := true
+namespace Extraction
 
-theorem kichean_marks_oblique :
-    Extraction.Marks kicheanExtractionMarkedPositions .oblique := by decide
+/-- Reflex hosts for K'iche' extraction marking. -/
+inductive Site where
+  | verb
+  deriving DecidableEq, Repr
+
+/-- K'iche' marks two extraction cells on the verb: subject extraction
+    switches it to AF (the voice marker *-n*, [mondloch-2017] Lesson 22;
+    Lessons 30, 33 for radical transitives and perfect aspect; shared
+    with the Absolutive Antipassive of Lesson 21, from which AF differs
+    syntactically, not morphologically), and oblique extraction adds
+    *wi* via copy spellout at the foot of the Ā-chain
+    ([mendes-ranero-2021]). Core-object extraction is unmarked. -/
+def realize : ExtractionTarget → List (Morphology.Reflex Site)
+  | .subject => [.morpheme .verb]
+  | .oblique => [.morpheme .verb]
+  | _ => []
+
+/-- WALS-style label: dedicated morphemes mark extraction. -/
+def strategy : ExtractionMarkingStrategy := .dedicatedMorpheme
+
+theorem marks_oblique : Marked realize .oblique := by decide
+
+end Extraction
 
 end Kiche

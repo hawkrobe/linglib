@@ -466,15 +466,18 @@ This section bridges the derivational analysis to that data.
     for the extraction restriction. -/
 theorem vp_raising_drives_extraction :
     tobaBatak_wo.eppStrategy = .vpRaising ∧
-    TobaBatak.tbExtractionStrategy = .voiceAlternation :=
+    TobaBatak.Extraction.strategy = .voiceAlternation :=
   ⟨rfl, rfl⟩
 
-/-- The extraction profile marks only the subject position as extractable.
+/-- Only the subject position is extraction-marked (by the voice form).
     This is exactly the position that VP-raising strands outside the
     fronted predicate: the pivot in Spec,TP (or Spec,FP in the full
     analysis). -/
 theorem only_subject_extractable :
-    TobaBatak.tbExtractionMarkedPositions = [.subject] := rfl
+    Extraction.Marked TobaBatak.Extraction.realize .subject ∧
+    ¬ Extraction.Marked TobaBatak.Extraction.realize .directObject ∧
+    ¬ Extraction.Marked TobaBatak.Extraction.realize .oblique := by
+  refine ⟨?_, ?_, ?_⟩ <;> decide
 
 /-- The voice system is two-way (AV/OV), determining which thematic
     role occupies the extractable pivot position. -/

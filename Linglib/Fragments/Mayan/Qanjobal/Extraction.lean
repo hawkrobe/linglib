@@ -1,4 +1,5 @@
 import Linglib.Fragments.Mayan.Qanjobal.Agreement
+import Linglib.Morphology.Realization
 import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Syntax.Extraction
 import Linglib.Fragments.Mayan.Params
@@ -27,7 +28,8 @@ with a verb bearing the AF suffix *-on*, the intransitive status suffix
   identical to Agent Focus.
 * `Qanjobal.PersonRestriction` with `.requiresAF`, `.requiresCrazyAP`:
   the 3rd-person restriction on Agent Focus.
-* `Qanjobal.extractionStrategy`: the AF-based extraction profile.
+* `Qanjobal.Extraction.realize`: the AF-based extraction marking, with
+  `Qanjobal.Extraction.strategy` as the WALS-style label.
 
 ## Implementation notes
 
@@ -46,6 +48,8 @@ mechanism. Tables and examples cite [coon-mateo-pedro-preminger-2014]
 tables (13) and (14).
 -/
 
+open Extraction (ExtractionTarget ExtractionMarkingStrategy)
+
 namespace Qanjobal
 
 open Minimalist
@@ -62,10 +66,8 @@ def StatusSuffix.form : StatusSuffix → String
   | .itv => "-i"
   | .tv  => "-V'"
 
--- The local `inductive ExtractionTarget` (intranS/patient/agent) was
--- redundant with `extractionMarkedPositions`: the substantive
--- claim "A-extraction is banned without AF" is now expressed as
--- `Extraction.Marks extractionMarkedPositions .subject` (subject = .agent's
+-- The substantive claim "A-extraction is banned without AF" is expressed
+-- as `Extraction.Marked Extraction.realize .subject` (subject = .agent's
 -- default position per `Extraction.ArgumentRole.defaultPosition`).
 
 /-! ### Agent Focus construction -/
@@ -190,12 +192,25 @@ theorem crazy_ap_all_persons :
     PersonRestriction.second.requiresCrazyAP = true ∧
     PersonRestriction.third.requiresCrazyAP = true := ⟨rfl, rfl, rfl⟩
 
-/-! ### Extraction profile -/
+/-! ### Extraction marking -/
 
-/-- Q'anjob'al's extraction data: dedicated AF morphology (*-on*) marks
-    3rd person agent (subject) extraction ([coon-mateo-pedro-preminger-2014]). -/
-def extractionStrategy : Extraction.ExtractionMarkingStrategy := .dedicatedMorpheme
-def extractionMarkedPositions : List Extraction.ExtractionTarget := [.subject]
-def extractionDistinguishesPosition : Bool := true
+namespace Extraction
+
+/-- Reflex hosts for Q'anjob'al extraction marking. -/
+inductive Site where
+  | verb
+  deriving DecidableEq, Repr
+
+/-- 3rd-person agent (subject) extraction switches the verb to AF (the
+    suffix *-on*, [coon-mateo-pedro-preminger-2014]); nothing else is
+    marked. -/
+def realize : ExtractionTarget → List (Morphology.Reflex Site)
+  | .subject => [.morpheme .verb]
+  | _ => []
+
+/-- WALS-style label: a dedicated morpheme marks extraction. -/
+def strategy : ExtractionMarkingStrategy := .dedicatedMorpheme
+
+end Extraction
 
 end Qanjobal

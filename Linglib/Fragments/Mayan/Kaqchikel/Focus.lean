@@ -8,7 +8,7 @@ Realization data for the Kaqchikel focus construction, from the Patzún
 variety described by [erlewine-2016]: a focused argument fronts to
 immediately preverbal position marked by the particle *ja*, and a
 focused transitive subject (A) additionally switches the verb to Agent
-Focus (`ExtractionMorphology.lean`) — the ergative split, since S
+Focus (`Extraction.lean`) — the ergative split, since S
 fronts like A but intransitive verbs have no AF form.
 
 ## Main declarations
@@ -67,9 +67,8 @@ theorem af_reflex_iff (p : ArgPosition) :
 
 /-- The ergative split in focus marking: A-focus switches the verb to AF
     while S-focus does not, although `Extraction.ExtractionTarget` maps
-    both to `.subject` — the extraction profile's
-    `extractionMarkedPositions = [.subject]`
-    (`ExtractionMorphology.lean`) means transitive subjects. -/
+    both to `.subject` — the verb reflex of `Extraction.realize .subject`
+    (`Extraction.lean`) marks transitive subjects only. -/
 theorem marked_subject_is_A_not_S :
     Reflex.morpheme FocusSite.verb ∈ (focusRealize .A).reflexes ∧
     Reflex.morpheme FocusSite.verb ∉ (focusRealize .S).reflexes := by decide
