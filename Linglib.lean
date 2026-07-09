@@ -2638,6 +2638,7 @@ import Linglib.Studies.Schlenker2009
 import Linglib.Studies.SchlenkerEtAl2026
 import Linglib.Studies.SchlotterbeckWang2023
 import Linglib.Studies.Schoter1996
+import Linglib.Studies.Schoter1996Thesis
 import Linglib.Studies.Schwab2022
 import Linglib.Studies.Schwarz2009
 import Linglib.Studies.Schwarzer2026

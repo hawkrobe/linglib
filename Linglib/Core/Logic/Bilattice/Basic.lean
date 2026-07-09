@@ -61,6 +61,37 @@ theorem consistent_iff_con_le [Preorder S] {compl : S → S} (hanti : Antitone c
   rw [hinv x.pro] at h'
   exact h'
 
+section Guard
+
+variable [SemilatticeInf S]
+
+/-- Fitting's guard connective `φ : ψ` ([schoter-1996] Def 4): the value of the
+second coordinate, attenuated by the positive evidence for the first. -/
+def guard (x y : Evidential S) : Evidential S := .mk (x.pro ⊓ y.pro) (x.pro ⊓ y.con)
+
+/-- The guard is monotone in the knowledge order (in both arguments), as
+[schoter-1996] Def 4 notes — though it is not a lattice-theoretic connective. -/
+theorem guard_kLE_guard {x x' y y' : Evidential S} (hx : x ≤ₖ x') (hy : y ≤ₖ y') :
+    guard x y ≤ₖ guard x' y' :=
+  ⟨inf_le_inf hx.1 hy.1, inf_le_inf hx.1 hy.2⟩
+
+variable [BoundedOrder S]
+
+/-- If the guard's first coordinate is at least true on `≤ₖ`, the guard is its
+second coordinate ([schoter-1996] Def 4). -/
+theorem guard_of_top_kLE {x : Evidential S} (h : (⊤ : Evidential S) ≤ₖ x)
+    (y : Evidential S) : guard x y = y := by
+  have hp : x.pro = ⊤ := le_antisymm le_top h.1
+  simp [guard, hp]
+
+/-- With no positive evidence for the first coordinate, the guard is `U`
+([schoter-1996] Def 4). -/
+theorem guard_of_pro_bot {x : Evidential S} (h : x.pro = ⊥) (y : Evidential S) :
+    guard x y = .mk ⊥ ⊥ := by
+  simp [guard, h]
+
+end Guard
+
 end Evidential
 
 /-- [belnap-1977]'s four-valued bilattice `FOUR = Bool ⊙ Bool`, `(for, against)`
