@@ -69,7 +69,7 @@ private theorem insertionMultiset_singleton_host_singleton
     `(G₁, pg'.1, pg'.2) ↔ (pg.1, G₂, pg.2 - G₂)` where `G₂ = G₁`,
     `pg.1 = pg'.1`, `pg.2 = G₁ + pg'.2`.
 
-    Reduces to `Multiset.powerset_powerset_pair_swap` (Shuffle.lean) after
+    Reduces to `Multiset.powerset_powerset_pair_swap` after
     converting both `antidiagonal` factors to `powerset.map` form via
     `antidiagonal_eq_map_powerset` and identifying the inner bind as `f`
     applied to the implicit third-part `G - G₁ - S`.

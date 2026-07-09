@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 import Linglib.Core.Algebra.RootedTree.GrossmanLarson
 import Linglib.Core.Algebra.RootedTree.PreLie.InsertionAddHost
 import Linglib.Core.Algebra.RootedTree.PreLie.InsertionCompose
-import Linglib.Core.Algebra.ConnesKreimer.Shuffle
+import Linglib.Core.Data.Multiset.Antidiagonal
 
 set_option autoImplicit false
 
@@ -50,9 +50,9 @@ namespace GrossmanLarson
 
 variable {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
 
-/-! ### §1: Prop 2.7.iii — `∘` distributes over disjoint union via shuffle Δ
+/-! ### §1: Prop 2.7.iii — `∘` distributes over disjoint union via partition sums
 
-The shuffle coproduct decomposition on each forest argument C is realized
+The coproduct decomposition on each forest argument C is realized
 explicitly as the sum over `C.powerset` of the partition `(C₁, C - C₁)`.
 
 The proof of Prop 2.7.iii at the GL/CK level reduces to a combinatorial
@@ -719,14 +719,14 @@ theorem insertion_mul_distrib (A B C : Forest (Nonplanar α)) :
     -- Goal: of' a * S_B + (s.map of').sum * S_B = (of' a + (s.map of').sum) * S_B
     rw [add_mul]
 
-/-! ### §3: Cocommutativity of the shuffle sum
+/-! ### §3: Cocommutativity of the partition sum
 
 The sum-over-`powerset` is symmetric under the partition swap
 `(C₁, C - C₁) ↔ (C - C₁, C₁)`, since `Multiset.powerset` is closed under
 complement. This is the "cocommutativity of Δ" component of Lemma 2.10.
 -/
 
-/-- **Cocommutativity of shuffle Δ**: a sum over `C.powerset` is invariant
+/-- **Cocommutativity of the partition sum**: a sum over `C.powerset` is invariant
     under the partition swap.
 
     Specifically: `Σ_{C₁ ⊆ C} f(C₁, C - C₁) = Σ_{C₁ ⊆ C} f(C - C₁, C₁)`
