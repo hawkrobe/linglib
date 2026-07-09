@@ -35,8 +35,8 @@ syntactic ergativity while LOW-ABS languages do not.
 * `Mayan.ExponentTable`, `Mayan.ExponentTable.IsThirdSgZero`: agreement
   paradigms over φ-cells and the null-3sg predicate.
 * `Mayan.MarkerLinearity`: prefixal / suffixal / either marker linearity.
-* `Mayan.MayanLang`, `Mayan.MayanLang.isStandard`, `Mayan.caseAt`: the
-  language registry and the case-assignment dispatcher.
+* `Mayan`, `Mayan.isStandard`, `Mayan.caseAt`: the language registry
+  and the case-assignment dispatcher.
 
 ## Implementation notes
 
@@ -47,6 +47,14 @@ assign accusative, with "absolutive" a cover term either way
 ([legate-2008]). Both types assign ergative uniformly (via transitive
 v⁰) and nominative to intransitive subjects (via Infl⁰).
 -/
+
+/-- The Mayan languages with consolidated Fragment files. Yukatek has
+    substrate work pending and is not yet in the registry; it'll be
+    added once `caseYukatek` and the consolidated Agreement.lean shape
+    are in place. -/
+inductive Mayan where
+  | Chol | Qanjobal | Kaqchikel | Tseltal | Tsotsil | Mam | Kiche
+  deriving DecidableEq, Repr
 
 namespace Mayan
 
@@ -365,17 +373,9 @@ inductive MarkerLinearity where
 
 /-! ### Language registry and case dispatcher -/
 
-/-- The Mayan languages with consolidated Fragment files. Yukatek has
-    substrate work pending and is not yet in the registry; it'll be
-    added once `caseYukatek` and the consolidated Agreement.lean shape
-    are in place. -/
-inductive MayanLang where
-  | Chol | Qanjobal | Kaqchikel | Tseltal | Tsotsil | Mam | Kiche
-  deriving DecidableEq, Repr
-
 /-- All registered Mayan languages, useful for cross-Mayan typology
-    theorems quantified by `∀ lang ∈ MayanLang.all`. -/
-def MayanLang.all : List MayanLang :=
+    theorems quantified by `∀ lang ∈ Mayan.all`. -/
+def all : List Mayan :=
   [.Chol, .Qanjobal, .Kaqchikel, .Tseltal, .Tsotsil, .Mam, .Kiche]
 
 /-- The Mayan languages with the standard ergative-absolutive base
@@ -388,15 +388,15 @@ def MayanLang.all : List MayanLang :=
     ergative-with-neutral-objects is contested (cf. England 1983b vs Scott
     2023; Zavala 2017 §4 calls Ch'orti' the only tripartite Mayan); the
     substrate adopts Scott's analysis, recorded in `Mam/Agreement.lean`. -/
-def MayanLang.isStandard : MayanLang → Bool
+def isStandard : Mayan → Bool
   | .Mam => false
   | _    => true
 
 /-- Aspect-driven case assignment dispatched by language. Routes to the
     existing per-branch `case*` substrate functions; the dispatcher is
     the consolidation point that lets cross-Mayan theorems quantify
-    over `MayanLang` rather than enumerate per-language `rfl` facts. -/
-def caseAt : MayanLang → UD.Aspect → Features.Prominence.ArgumentRole → Case
+    over `Mayan` rather than enumerate per-language `rfl` facts. -/
+def caseAt : Mayan → UD.Aspect → Features.Prominence.ArgumentRole → Case
   | .Chol,      asp, r => caseChol asp r
   | .Qanjobal,  asp, r => caseQanjobalan asp r
   | .Kaqchikel, asp, r => caseKaqchikel asp r
