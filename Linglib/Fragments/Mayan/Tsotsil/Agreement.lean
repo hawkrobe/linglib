@@ -98,7 +98,7 @@ def setBExponent : ExponentTable :=
 
 /-- 3rd person absolutive is null — invariant across the standard
     Mayan branches per [kaufman-norman-1984] Table 8. **Not**
-    pan-Mayan: see Mam exception via `MayanLang.isStandard`. -/
+    pan-Mayan: see Mam exception via `Mayan.isStandard`. -/
 theorem p3sg_abs_null : setBExponent.realize (.pn .third .Sing) = some "-∅" := rfl
 
 /-! ### Extraction marking -/

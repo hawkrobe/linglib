@@ -35,8 +35,8 @@ syntactic ergativity while LOW-ABS languages do not.
 * `Mayan.ExponentTable`, `Mayan.ExponentTable.IsThirdSgZero`: agreement
   paradigms over φ-cells and the null-3sg predicate.
 * `Mayan.MarkerLinearity`: prefixal / suffixal / either marker linearity.
-* `Mayan.MayanLang`, `Mayan.MayanLang.isStandard`, `Mayan.caseAt`: the
-  language registry and the case-assignment dispatcher.
+* `Mayan`, `Mayan.isStandard`, `Mayan.caseAt`: the language registry
+  and the case-assignment dispatcher.
 
 ## Implementation notes
 
@@ -47,6 +47,11 @@ assign accusative, with "absolutive" a cover term either way
 ([legate-2008]). Both types assign ergative uniformly (via transitive
 v⁰) and nominative to intransitive subjects (via Infl⁰).
 -/
+
+/-- The Mayan languages with consolidated Fragment files. -/
+inductive Mayan where
+  | Chol | Qanjobal | Kaqchikel | Tseltal | Tsotsil | Mam | Kiche | Yukatek
+  deriving DecidableEq, Repr
 
 namespace Mayan
 
@@ -277,6 +282,24 @@ def caseTseltalan : UD.Aspect → Features.Prominence.ArgumentRole → Case
 abbrev ergCaseTseltalan : Features.Prominence.ArgumentRole → Case :=
   caseTseltalan .Perf
 
+/-- Yucatecan aspect/status-driven case assignment ([hofling-2017] p. 692:
+    Set A marks transitive subjects and incompletive intransitive
+    subjects; Set B marks transitive objects and completive intransitive
+    subjects): ergative in the completive (perfective),
+    extended-ergative in the incompletive aspects. -/
+def caseYukatek : UD.Aspect → Features.Prominence.ArgumentRole → Case
+  | .Perf, r => Alignment.ergative.assignCase r
+  | .Imp, r | .Prog, r | .Prosp, r | .Hab, r | .Iter, r =>
+    Alignment.extendedErgative.assignCase r
+
+/-- Yucatec completive ergative-absolutive case. -/
+abbrev ergCaseYukatek : Features.Prominence.ArgumentRole → Case :=
+  caseYukatek .Perf
+
+/-- Yucatec incompletive extended-ergative case. -/
+abbrev accCaseYukatek : Features.Prominence.ArgumentRole → Case :=
+  caseYukatek .Imp
+
 /-! ### Person-number paradigm
 
 The pan-Mayan person/number agreement paradigm is keyed by the canonical
@@ -366,18 +389,10 @@ inductive MarkerLinearity where
 
 /-! ### Language registry and case dispatcher -/
 
-/-- The Mayan languages with consolidated Fragment files. Yukatek has
-    substrate work pending and is not yet in the registry; it'll be
-    added once `caseYukatek` and the consolidated Agreement.lean shape
-    are in place. -/
-inductive MayanLang where
-  | Chol | Qanjobal | Kaqchikel | Tseltal | Tsotsil | Mam | Kiche
-  deriving DecidableEq, Repr
-
 /-- All registered Mayan languages, useful for cross-Mayan typology
-    theorems quantified by `∀ lang ∈ MayanLang.all`. -/
-def MayanLang.all : List MayanLang :=
-  [.Chol, .Qanjobal, .Kaqchikel, .Tseltal, .Tsotsil, .Mam, .Kiche]
+    theorems quantified by `∀ lang ∈ Mayan.all`. -/
+def all : List Mayan :=
+  [.Chol, .Qanjobal, .Kaqchikel, .Tseltal, .Tsotsil, .Mam, .Kiche, .Yukatek]
 
 /-- The Mayan languages with the standard ergative-absolutive base
     (perfective ergative; Set B 3sg null per K&N reconstruction). Mam is
@@ -389,15 +404,15 @@ def MayanLang.all : List MayanLang :=
     ergative-with-neutral-objects is contested (cf. England 1983b vs Scott
     2023; Zavala 2017 §4 calls Ch'orti' the only tripartite Mayan); the
     substrate adopts Scott's analysis, recorded in `Mam/Agreement.lean`. -/
-def MayanLang.isStandard : MayanLang → Bool
+def isStandard : Mayan → Bool
   | .Mam => false
   | _    => true
 
 /-- Aspect-driven case assignment dispatched by language. Routes to the
     existing per-branch `case*` substrate functions; the dispatcher is
     the consolidation point that lets cross-Mayan theorems quantify
-    over `MayanLang` rather than enumerate per-language `rfl` facts. -/
-def caseAt : MayanLang → UD.Aspect → Features.Prominence.ArgumentRole → Case
+    over `Mayan` rather than enumerate per-language `rfl` facts. -/
+def caseAt : Mayan → UD.Aspect → Features.Prominence.ArgumentRole → Case
   | .Chol,      asp, r => caseChol asp r
   | .Qanjobal,  asp, r => caseQanjobalan asp r
   | .Kaqchikel, asp, r => caseKaqchikel asp r
@@ -405,5 +420,38 @@ def caseAt : MayanLang → UD.Aspect → Features.Prominence.ArgumentRole → Ca
   | .Tsotsil,   asp, r => caseTseltalan asp r
   | .Mam,       asp, r => caseMam asp r
   | .Kiche,     asp, r => caseKiche asp r
+  | .Yukatek,   asp, r => caseYukatek asp r
+
+/-! ### Verb templates -/
+
+/-- A position class in the Mayan verbal complex, in the traditional
+    Mayanist categories (so Set A and Set B stay distinct — a cut
+    `Morphology.MorphCategory` cannot draw). -/
+inductive VerbSlot where
+  | aspect
+  | setB
+  | setA
+  | root
+  | status
+  deriving DecidableEq, Repr
+
+/-- The verbal-complex template, stem-inclusive and left-to-right, in
+    canonical transitive citation form. Per-language morpheme orders as
+    documented in each fragment ([preminger-2014] (12) for the K'ichean
+    shape, [vazquez-alvarez-2011] §3.4 for Chol, [polian-2017] for
+    Tseltalan and the Mam status-suffix loss); Tsotsil's prefixal Set B
+    subset is recorded at `Tsotsil.setBLinearity`. -/
+def template : Mayan → List VerbSlot
+  | .Kaqchikel | .Kiche | .Qanjobal => [.aspect, .setB, .setA, .root, .status]
+  | .Mam => [.aspect, .setB, .setA, .root]
+  | .Chol | .Yukatek => [.aspect, .setA, .root, .status, .setB]
+  | .Tseltal | .Tsotsil => [.aspect, .setA, .root, .setB]
+
+/-- The absolutive-position classifier derived from the template: HIGH
+    iff Set B precedes the root. `absPosition_matches_template` in
+    `Studies/CoonMateoPedroPreminger2014.lean` checks it against the
+    fragments' analytical `absPosition` values. -/
+def templateABSPosition (l : Mayan) : ABSPosition :=
+  if .setB ∈ (template l).takeWhile (· ≠ .root) then .high else .low
 
 end Mayan
