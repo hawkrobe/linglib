@@ -9,7 +9,9 @@ import Mathlib.Order.Interval.Set.Basic
 
 An *interlaced bilattice* ([avron-1996] Def 2.1) is one carrier with two bounded
 lattice orders — a **truth** order `≤_t` and a **knowledge** order `≤_k` — such
-that all four lattice operations are monotone with respect to *both* orders.
+that all four lattice operations are monotone with respect to *both* orders. The
+interlacing condition is due to [fitting-1990]; [avron-1996], cited throughout
+for statement locations, develops its structure theory.
 
 To carry two lattice structures on one carrier without an instance clash, we use
 the `OrderDual`-style trick: the truth lattice is the carrier's own
@@ -18,13 +20,17 @@ synonym `Know B` (a distinct type head, so `[Lattice (Know B)]` is a separate
 instance). The truth meet/join are `⊓`/`⊔`; the knowledge meet/join (consensus
 `⊗`, gullibility `⊕`) are written through the synonym.
 
-This file sets up the synonym, the interlacing mixin, and proves the **general
-representation theorem** ([avron-1996] Thm 4.3): every interlaced bilattice is the
-twist product of the knowledge-order principal ideals of its truth bounds. Unlike
-`Core.Logic.Bilattice.Representation` (which handles the distributive special case
-via whole-lattice distributivity), this holds for *any* interlaced bilattice — the
-key identities (Cor 3.5, Cor 3.8) are derived from interlacing alone, by
-truth-antisymmetry and a fiber lemma rather than Avron's interval argument.
+This file sets up the synonym, the interlacing mixin, and proves the
+**representation theorem** ([avron-1996] Thm 4.3) for any interlaced bilattice:
+the knowledge lattice decomposes as the Ginsberg–Fitting product of the
+knowledge-order principal ideals of the truth bounds (`decompose`), and the
+truth order is recovered from the decomposition (`le_iff_kInf_top_kInf_bot`).
+Unlike `Core.Logic.Bilattice.Representation` (which handles the distributive
+special case via whole-lattice distributivity), the key identities (Cor 3.5,
+Cor 3.8) are derived from interlacing alone, by truth-antisymmetry and a fiber
+lemma rather than Avron's interval argument. The constructive converse — the
+product of two lattices is interlaced — is `Core.Logic.Bilattice.Product`.
+`[UPSTREAM]` candidate (mathlib has no bilattices).
 
 ## Main definitions / results
 
@@ -35,6 +41,13 @@ truth-antisymmetry and a fiber lemma rather than Avron's interval argument.
 * `Bilattice.inf_kT_sup_inf_kF` — Cor 3.8: `X = (X ⊗ t) ⊕ (X ⊗ f)`
 * `Bilattice.isCompl_truthBounds` — Cor 3.5: `t`, `f` are knowledge-complementary
 * `Bilattice.decompose` — Thm 4.3: `Know B ≃o Iic t × Iic f`
+* `Bilattice.le_iff_kInf_top_kInf_bot` — Thm 4.3, truth side: `x ≤ y` iff the
+  `t`-components grow and the `f`-components shrink in the knowledge order
+
+## TODO
+
+The negation transport `λ x, ∼x : L_B ≅ R_B` ([avron-1996] Prop 4.7) and the
+uniqueness of the factors up to isomorphism (ibid. Thm 4.3).
 -/
 
 universe u
@@ -111,6 +124,9 @@ theorem kLE_def {x y : B} : x ≤ₖ y ↔ toKnow x ≤ toKnow y := Iff.rfl
 @[refl] theorem kLE_refl (x : B) : x ≤ₖ x := le_rfl
 theorem kLE_trans {x y z : B} (h₁ : x ≤ₖ y) (h₂ : y ≤ₖ z) : x ≤ₖ z := le_trans h₁ h₂
 
+instance [DecidableLE (Know B)] : DecidableRel (kLE (B := B)) :=
+  fun x y => inferInstanceAs (Decidable (toKnow x ≤ toKnow y))
+
 end KLE
 
 section KLEAntisymm
@@ -140,9 +156,9 @@ class Interlaced (B : Type u) [Lattice B] [Lattice (Know B)] : Prop where
 
 /-! ### Representation (Avron Thm 4.3, interlaced case)
 
-The converse of the twist product: every interlaced bilattice is isomorphic to
-the twist product `(Iic t) ⊙ (Iic f)` of the knowledge-order principal ideals of
-its truth bounds `t = ⊤`, `f = ⊥`. Proved here at the knowledge lattice via the
+The converse of `Core.Logic.Bilattice.Product`: every interlaced bilattice is
+isomorphic to the product `(Iic t) ⊙ (Iic f)` of the knowledge-order principal
+ideals of its truth bounds `t = ⊤`, `f = ⊥`. Proved here at the knowledge lattice via the
 decomposition `X ↦ (X ⊓ t, X ⊓ f)`, inverse `(a, b) ↦ a ⊔ b` ([avron-1996] Thm
 4.3). The two helper lemmas are [avron-1996]'s Cor 3.5 and Cor 3.8, derived from
 interlacing (Prop 3.2 → 3.6 → 3.7 → 3.8). -/
@@ -360,6 +376,59 @@ def decompose : Know B ≃o (Set.Iic kT × Set.Iic kF) where
         _ = Y := inf_kT_sup_inf_kF Y
     · intro h
       exact ⟨inf_le_inf_right kT h, inf_le_inf_right kF h⟩
+
+/-! #### The truth side of Thm 4.3
+
+`decompose` is a knowledge-order isomorphism; the theorem below recovers the
+*truth* order from the same components: `x ≤ y` iff the `t`-components grow and
+the `f`-components shrink in the knowledge order — the product's twisted truth
+order on the factors (cf. `Bilattice.Product.mk_le_mk`). -/
+
+omit [BoundedOrder (Know B)] in
+/-- Converse of `kLE_of_tle_of_kLE_top`: below the truth top, the knowledge
+order refines into the truth order. By knowledge-antisymmetry on `u ⊔ v`. -/
+private theorem tle_of_kLE_of_kLE_top {u v : B} (huv : u ≤ₖ v) (hv : v ≤ₖ ⊤) :
+    u ≤ v := by
+  have h₁ : (u ⊔ v : B) ≤ₖ v := by
+    simpa only [sup_idem] using Interlaced.sup_kmono huv v
+  have h₂ : v ≤ₖ (u ⊔ v : B) := by
+    simpa only [top_inf_eq, inf_eq_left.mpr (le_sup_right : v ≤ u ⊔ v)] using
+      Interlaced.inf_kmono hv (u ⊔ v)
+  exact le_sup_left.trans_eq (kLE_antisymm h₁ h₂)
+
+omit [BoundedOrder (Know B)] in
+/-- Dual: below the truth bottom, the knowledge order refines into the *reverse*
+truth order. -/
+private theorem tge_of_kLE_of_kLE_bot {u v : B} (huv : u ≤ₖ v) (hv : v ≤ₖ ⊥) :
+    v ≤ u := by
+  have h₁ : (u ⊓ v : B) ≤ₖ v := by
+    simpa only [inf_idem] using Interlaced.inf_kmono huv v
+  have h₂ : v ≤ₖ (u ⊓ v : B) := by
+    simpa only [bot_sup_eq, sup_eq_left.mpr (inf_le_right : u ⊓ v ≤ v)] using
+      Interlaced.sup_kmono hv (u ⊓ v)
+  exact (kLE_antisymm h₁ h₂).symm.trans_le inf_le_left
+
+omit [BoundedOrder (Know B)] in
+/-- [avron-1996] Thm 4.3, truth side: the truth order is recovered from the
+knowledge-order decomposition — `x ≤ y` iff the `t`-components grow and the
+`f`-components shrink in the knowledge order. -/
+theorem le_iff_kInf_top_kInf_bot {x y : B} :
+    x ≤ y ↔ (x ⊗ ⊤ : B) ≤ₖ (y ⊗ ⊤ : B) ∧ (y ⊗ ⊥ : B) ≤ₖ (x ⊗ ⊥ : B) := by
+  have mem : ∀ (z c : B), (z ⊗ c : B) ≤ₖ c := fun z c => by
+    rw [kLE_def, toKnow_kInf]; exact inf_le_right
+  constructor
+  · intro h
+    exact ⟨kLE_of_tle_of_kLE_top (mem x ⊤) (Interlaced.kInf_tmono h ⊤),
+           kLE_of_tge_of_kLE_bot (mem y ⊥) (Interlaced.kInf_tmono h ⊥)⟩
+  · rintro ⟨h₁, h₂⟩
+    have e₁ : (x ⊗ ⊤ : B) ≤ (y ⊗ ⊤ : B) := tle_of_kLE_of_kLE_top h₁ (mem y ⊤)
+    have e₂ : (x ⊗ ⊥ : B) ≤ (y ⊗ ⊥ : B) := tge_of_kLE_of_kLE_bot h₂ (mem x ⊥)
+    calc x = ((x ⊗ ⊤) ⊕ (x ⊗ ⊥) : B) := (decomp_kSup x).symm
+      _ ≤ ((y ⊗ ⊤) ⊕ (x ⊗ ⊥) : B) := Interlaced.kSup_tmono e₁ _
+      _ = ((x ⊗ ⊥) ⊕ (y ⊗ ⊤) : B) := kSup_comm _ _
+      _ ≤ ((y ⊗ ⊥) ⊕ (y ⊗ ⊤) : B) := Interlaced.kSup_tmono e₂ _
+      _ = ((y ⊗ ⊤) ⊕ (y ⊗ ⊥) : B) := kSup_comm _ _
+      _ = y := decomp_kSup y
 
 end Representation
 
