@@ -1,8 +1,5 @@
 import Linglib.Syntax.Case.Alignment
 import Linglib.Fragments.Mayan.Params
-import Linglib.Fragments.Mayan.Kaqchikel.Agreement
-import Linglib.Fragments.Mayan.Chol.Agreement
-import Linglib.Fragments.Mayan.Qanjobal.Agreement
 
 /-!
 # Imanishi 2014 — Default Ergative [imanishi-2014]

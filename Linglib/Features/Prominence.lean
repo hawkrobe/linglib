@@ -280,6 +280,11 @@ inductive ArgumentRole where
   | T
   deriving DecidableEq, Repr
 
+/-- The monotransitive core roles: A, P, and S (omits the ditransitive
+    scaffolding roles R/T). The domain over which alignment partitions
+    and per-language case/agreement coverage theorems quantify. -/
+def ArgumentRole.core : List ArgumentRole := [.A, .P, .S]
+
 /-- Role rank: A > P for monotransitives,
     R > T for ditransitives. S is in between. Higher rank = higher
     default prominence expectation. -/

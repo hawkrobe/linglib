@@ -67,6 +67,10 @@ def assignCase : ArgumentRole → Case
   | .S | .P => .abs
   | .R | .T => .abs
 
+theorem assignCase_A : assignCase .A = .erg := rfl
+theorem assignCase_P : assignCase .P = .abs := rfl
+theorem assignCase_S : assignCase .S = .abs := rfl
+
 end ergative
 
 namespace nominativeAccusative
@@ -113,6 +117,10 @@ def assignCase : ArgumentRole → Case
   | .P => .acc
   | .S => .abs
   | .R | .T => .acc
+
+theorem assignCase_A : assignCase .A = .erg := rfl
+theorem assignCase_P : assignCase .P = .acc := rfl
+theorem assignCase_S : assignCase .S = .abs := rfl
 
 end tripartite
 
@@ -186,6 +194,16 @@ theorem tripartite_distinguishes_all :
     tripartite.assignCase .A ≠ tripartite.assignCase .S ∧
     tripartite.assignCase .P ≠ tripartite.assignCase .S := by
   refine ⟨?_, ?_, ?_⟩ <;> decide
+
+/-- Ergative distinguishes A and groups P with S — the defining property of
+    ergative alignment (the partition `{S,P}|{A}` of `assignCase_partitions`).
+    Kept, like `tripartite_distinguishes_all`, as the re-export target for
+    per-language alignment facts (`Kaqchikel.erg_abs_alignment`,
+    `Kiche.erg_abs_pattern`). -/
+theorem ergative_distinguishes_A :
+    ergative.assignCase .A ≠ ergative.assignCase .P ∧
+    ergative.assignCase .P = ergative.assignCase .S :=
+  ⟨by decide, rfl⟩
 
 /-- The core-role signature `(S≈A, S≈P, A≈P)` of an alignment — a faithful code
     for its partition of {S, A, P}: transitivity makes the three pairwise

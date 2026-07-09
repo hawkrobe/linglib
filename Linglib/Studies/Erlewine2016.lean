@@ -1,22 +1,24 @@
-import Linglib.Fragments.Mayan.Kaqchikel.AgentFocus
+import Linglib.Fragments.Mayan.Kaqchikel.ExtractionMorphology
 import Linglib.Syntax.Minimalist.Position
 import Linglib.Phonology.Constraints.Defs
 import Linglib.Phonology.OptimalityTheory.Tableau
+import Linglib.Studies.CoonMateoPedroPreminger2014
 
 /-!
 # Erlewine 2016: Anti-Locality and Optimality in Kaqchikel Agent Focus
 [erlewine-2016] [erlewine-2018]
 
-[erlewine-2016] analyzes Kaqchikel Agent Focus as the optimal
-output of an OT competition between two derivations, ranked by
-**Spec-to-Spec Anti-Locality (SSAL)** ≫ **XRef** (cross-referencing).
-The fragment in `Fragments/Mayan/Kaqchikel/AgentFocus.lean` carries
-typology-neutral data (verb-form types, extraction patterns, the
-empirical AF profile); this study file adds the theory-laden OT
-machinery (competing derivations, constraints, ranking) and verifies
-[erlewine-2016]'s results.
+[erlewine-2016] analyzes Kaqchikel Agent Focus as the optimal output
+of a competition between derivations, ranked by three violable
+constraints: **XRef-Participant** ≫ **Spec-to-Spec Anti-Locality
+(SSAL)** ≫ **XRef** (cross-referencing). The core two-candidate
+competition is decided by the SSAL ≫ XRef sub-ranking; top-ranked
+XRef-Participant produces the participant exception below. The
+fragment in `Fragments/Mayan/Kaqchikel/ExtractionMorphology.lean` carries the
+typology-neutral extraction profile; this study file adds the
+theory-laden OT machinery and verifies the paper's results.
 
-## The Derivation ([erlewine-2016] §§3, 5)
+## The Derivation ([erlewine-2016] §§4–5)
 
 ### Why the transitive derivation crashes
 
@@ -35,15 +37,18 @@ so no SSAL violation occurs. But the agent never enters Spec,TP, so
 the A-probe cannot establish Set A (ergative) agreement — violating
 the lower-ranked XRef constraint.
 
-The OT evaluation selects AF because SSAL ≫ XRef: avoiding the
-too-local movement outranks maintaining cross-referencing agreement.
+The evaluation selects AF because SSAL ≫ XRef: avoiding the too-local
+movement outranks maintaining cross-referencing agreement.
 
 ### Key insight: locality, not extraction per se
 
-AF is triggered by the *locality of movement*, not simply by agent
-extraction. Long-distance agent extraction does NOT trigger AF:
-successive-cyclic movement through intermediate Spec,CP avoids the
-too-local Spec,TP → Spec,CP step.
+AF is triggered by the *locality of movement*, not by agent extraction
+per se. Two signatures ([erlewine-2016] §§2.2, 3): intervening
+preverbal material lengthens the subject's movement and obviates AF —
+the full-agreement transitive resurfaces and AF becomes ungrammatical;
+and long-distance subject extraction places AF on the *embedded* verb,
+whose subject makes the too-local first step, while the matrix verb,
+whose own subject has not moved, must stay transitive.
 
 ### Connection to Position.lean
 
@@ -59,10 +64,10 @@ analysis.
 ### Connection to Constraint
 
 The OT tableau uses the lexicographic comparison from
-`Phonology/Constraint/OT/Basic.lean`. The key result `af_is_optimal` shows
-that AF beats the transitive under strict ranking — and
-`satisfaction_ordering_incomparable` shows this requires OT's
-lexicographic comparison, not satisfaction ordering's subset
+`Phonology/OptimalityTheory/Tableau.lean`. The key result
+`af_is_optimal` shows that AF beats the transitive under strict
+ranking — and `satisfaction_ordering_incomparable` shows this requires
+OT's lexicographic comparison, not satisfaction ordering's subset
 inclusion.
 
 ## Anti-agreement
@@ -83,17 +88,15 @@ strategies differ: Toba Batak restricts extraction to the pivot
 position (structural restriction), while Kaqchikel repairs the
 derivation via AF (alternation strategy). Both use
 `specToSpecAntiLocality` from Position.lean.
-
 -/
 
 namespace Erlewine2016
 
-open Kaqchikel Minimalist
+open Kaqchikel Minimalist Minimalist.Voice
+open Mayan (VerbForm)
 open Constraints OptimalityTheory
 
--- ============================================================================
--- § 1: Competing Derivations
--- ============================================================================
+/-! ### Competing derivations -/
 
 /-- A candidate derivation for clause-local transitive agent extraction.
     The OT competition evaluates these: which structure best satisfies
@@ -133,32 +136,45 @@ def AFCandidate.violatesXRef : AFCandidate → Bool
   | .transitiveExtraction => false
   | .agentFocusExtraction => true
 
--- ============================================================================
--- § 2: OT Constraint Ranking — SSAL ≫ XRef
--- ============================================================================
+/-! ### The constraints and rankings -/
 
-/-- Spec-to-Spec Anti-Locality (highest-ranked): movement from Spec,XP
-    to Spec,YP is banned when YP immediately dominates XP. -/
+/-- Spec-to-Spec Anti-Locality: movement from Spec,XP to Spec,YP is
+    banned when YP immediately dominates XP. Outranks XRef; outranked
+    only by XRef-Participant. -/
 def ssalConstraint : Constraint AFCandidate :=
   fun c => if c.violatesAntiLocality then 1 else 0
 
-/-- XRef (cross-referencing, lower-ranked): every argument DP must be
+/-- XRef (cross-referencing, lowest-ranked): every argument DP must be
     cross-referenced by a pronominal morpheme on the verb (Set A for
     ergative, Set B for absolutive). -/
 def xrefConstraint : Constraint AFCandidate :=
   fun c => if c.violatesXRef then 1 else 0
 
-/-- The ranked constraint list for Kaqchikel AF: SSAL ≫ XRef. -/
+/-- XRef-Participant (top-ranked): every 1st/2nd-person argument must be
+    cross-referenced. Parameterized by whether both arguments are
+    participants: the AF candidate's single Set B slot can cross-reference
+    only one of them, so AF incurs a violation exactly then; the
+    full-agreement transitive never does. -/
+def xrefPConstraint (bothParticipants : Bool) : Constraint AFCandidate
+  | .agentFocusExtraction => if bothParticipants then 1 else 0
+  | .transitiveExtraction => 0
+
+/-- The core two-constraint competition for Kaqchikel AF: SSAL ≫ XRef.
+    Decides the outcome whenever XRef-Participant is inactive (at most
+    one participant argument) — see `fullRanking`. -/
 def afRanking : List (Constraint AFCandidate) :=
   [ssalConstraint, xrefConstraint]
+
+/-- The full Kaqchikel ranking ([erlewine-2016]'s (83)):
+    XRef-Participant ≫ SSAL ≫ XRef. -/
+def fullRanking (bothParticipants : Bool) : List (Constraint AFCandidate) :=
+  [xrefPConstraint bothParticipants, ssalConstraint, xrefConstraint]
 
 /-- The two candidates in the OT competition. -/
 def afCandidates : List AFCandidate :=
   [.transitiveExtraction, .agentFocusExtraction]
 
--- ============================================================================
--- § 3: Anti-Locality Grounds the Transitive Crash
--- ============================================================================
+/-! ### Anti-locality grounds the transitive crash -/
 
 /-- The transitive candidate violates SSAL. The agent, having moved to
     Spec,TP via the A-probe, cannot continue to Spec,CP because CP
@@ -180,9 +196,7 @@ theorem candidates_differ :
     xrefConstraint .transitiveExtraction ≠
       xrefConstraint .agentFocusExtraction := by decide
 
--- ============================================================================
--- § 4: OT Evaluation Selects AF
--- ============================================================================
+/-! ### The evaluation selects AF -/
 
 /-- AF is the unique optimal candidate. SSAL ≫ XRef means the derivation
     that avoids anti-locality wins, even though it loses Set A agreement.
@@ -190,18 +204,16 @@ theorem candidates_differ :
 theorem af_is_optimal :
     (Tableau.ofRanking afCandidates afRanking).optimal =
       {AFCandidate.agentFocusExtraction} := by
-  native_decide
+  decide
 
-/-- The winning candidate surfaces with AF morphology: *-Vn* suffix,
-    no Set A (ergative) agreement. -/
+/-- The winning candidate surfaces with AF morphology: the AF suffix
+    (*-ö* or *-n*), no Set A (ergative) agreement. -/
 theorem af_morphology :
     AFCandidate.agentFocusExtraction.verbForm = .agentFocus ∧
     VerbForm.agentFocus.hasSetA = false ∧
     VerbForm.agentFocus.hasAFSuffix = true := ⟨rfl, rfl, rfl⟩
 
--- ============================================================================
--- § 5: Lexicographic vs Satisfaction Ordering
--- ============================================================================
+/-! ### Lexicographic vs satisfaction ordering -/
 
 /-- Under componentwise ≤ (satisfaction ordering), neither candidate
     dominates: the transitive satisfies XRef but violates SSAL, while AF
@@ -226,9 +238,7 @@ theorem transitive_worse_on_ssal :
     ssalConstraint .transitiveExtraction >
       ssalConstraint .agentFocusExtraction := by decide
 
--- ============================================================================
--- § 6: Anti-Locality Predicate Grounding
--- ============================================================================
+/-! ### Anti-locality predicate grounding -/
 
 /-- The transitive candidate's violation profile reflects
     `specToSpecAntiLocality` from Position.lean. The SSAL constraint
@@ -250,45 +260,133 @@ theorem antilocality_drives_af :
       {AFCandidate.agentFocusExtraction} :=
   ⟨rfl, af_is_optimal⟩
 
--- ============================================================================
--- § 7: Extraction Asymmetry
--- ============================================================================
+/-! ### SSAL-inactive contexts: where AF does not appear
 
-/-- Patient extraction does NOT trigger AF: the patient starts in
-    complement position (Comp,VP), not Spec,vP. It does not pass through
-    Spec,TP on its way to Spec,CP, so no SSAL violation arises. -/
-theorem patient_no_af :
-    patientExtractionTrans.verbForm = .transitive := rfl
+Wherever the extractee's movement is not too short, SSAL assigns no
+violations and XRef alone decides — the full-agreement transitive wins
+and AF is ungrammatical. Three empirical cells share this violation
+profile ([erlewine-2016] §§2.2, 3.1): patient extraction (the patient
+starts in Comp,VP and never passes through Spec,TP), subject
+extraction across intervening preverbal material (adverb obviation),
+and the matrix clause of a long-distance extraction (the matrix
+subject has not moved). Long-distance subject extraction is the two
+halves side by side: the *embedded* clause is exactly the
+`af_is_optimal` competition — the subject's first step, embedded
+Spec,TP → Spec,CP, would be too short — so AF appears on the embedded
+verb, while the matrix verb sits in an SSAL-inactive context and must
+stay transitive. -/
 
-/-- AF is asymmetric: only clause-local agent extraction triggers it
-    (because only the agent occupies Spec,vP → Spec,TP, creating the
-    too-local Spec,TP → Spec,CP step). Patient extraction uses the
-    normal transitive form. This asymmetry is the morphological
-    signature of syntactic ergativity in Kaqchikel. -/
-theorem extraction_asymmetry :
-    agentExtractionAF.verbForm = .agentFocus ∧
-    patientExtractionTrans.verbForm = .transitive := ⟨rfl, rfl⟩
+/-- SSAL in a context where no candidate's movement is too short:
+    vacuously satisfied by both candidates. -/
+def ssalInactive : Constraint AFCandidate := fun _ => 0
 
--- ============================================================================
--- § 8: Locality Sensitivity
--- ============================================================================
+/-- Without an anti-locality violation at stake, the full-agreement
+    transitive is the unique winner — AF is ungrammatical wherever the
+    subject's movement is not too short. Derives the extraction asymmetry
+    (patient extraction never triggers AF), adverb obviation, and the
+    transitive matrix verb under long-distance extraction. -/
+theorem transitive_optimal_when_ssal_inactive :
+    (Tableau.ofRanking afCandidates [ssalInactive, xrefConstraint]).optimal =
+      {AFCandidate.transitiveExtraction} := by
+  decide
 
-/-- AF is locality-sensitive: long-distance agent extraction does NOT
-    trigger AF. When the agent extracts from an embedded clause,
-    successive-cyclic movement avoids the too-local Spec,TP → Spec,CP
-    step. This is the paper's deepest empirical claim: AF is about the
-    *locality of movement*, not about agent extraction per se. -/
-theorem locality_sensitivity :
-    agentExtractionAF.verbForm = .agentFocus ∧
-    longDistanceAgentExtraction.verbForm = .transitive := ⟨rfl, rfl⟩
+/-! ### The participant exception (XRef-Participant) -/
 
--- ============================================================================
--- § 9: Extraction Strategy
--- ============================================================================
+/-- With at most one participant argument, XRef-Participant is inactive
+    and the full ranking agrees with the core competition: AF wins. -/
+theorem af_optimal_full_ranking :
+    (Tableau.ofRanking afCandidates (fullRanking false)).optimal =
+      {AFCandidate.agentFocusExtraction} := by
+  decide
 
-/-- Kaqchikel uses agent focus alternation, not structural restriction
-    (Toba Batak) or dedicated morpheme (Mam). Different repair strategy,
-    same underlying problem (anti-locality). -/
+/-- When both arguments are 1st/2nd person, top-ranked XRef-Participant
+    reverses the outcome: the full-agreement transitive appears even
+    under subject extraction, because AF's single Set B slot would leave
+    a participant argument un-cross-referenced ([erlewine-2016] §5.2). -/
+theorem participant_exception :
+    (Tableau.ofRanking afCandidates (fullRanking true)).optimal =
+      {AFCandidate.transitiveExtraction} := by
+  decide
+
+/-! ### Reranking and the typology of Mayan AF
+
+[erlewine-2016] §6.1 (his (84)): rerankings of the same three
+constraints predict three attested language types. Kaqchikel and
+Popti' instantiate XRef-Participant ≫ SSAL ≫ XRef (AF with the
+participant exception; in Popti' the exception surfaces whenever the
+extracted subject is a participant, since Popti's Set B strictly
+targets the object). Akatek ranks SSAL above both cross-referencing
+constraints: AF regardless of the arguments' φ-features. Languages
+ranking XRef ≫ SSAL lack AF altogether — transitive subjects extract
+with the full-agreement transitive, e.g. Ch'ol (his (93)–(94)):
+grammatical extraction, not a gap. The two-candidate competition here
+collapses his AF candidates (which differ in Set B target) into one. -/
+
+/-- Akatek (SSAL ≫ {XRef-Participant, XRef}): AF wins regardless of the
+    arguments' φ-features — no participant exception. -/
+theorem akatek_af_regardless_of_participants (b : Bool) :
+    (Tableau.ofRanking afCandidates
+      [ssalConstraint, xrefPConstraint b, xrefConstraint]).optimal =
+      {AFCandidate.agentFocusExtraction} := by
+  cases b <;> decide
+
+/-- A no-AF language (XRef ≫ SSAL): the full-agreement transitive wins,
+    so transitive subjects extract without AF and without ill-formedness,
+    at the cost of a low-ranked anti-locality violation — Ch'ol's
+    pattern. -/
+theorem no_af_language_transitive_wins :
+    (Tableau.ofRanking afCandidates [xrefConstraint, ssalConstraint]).optimal =
+      {AFCandidate.transitiveExtraction} := by
+  decide
+
+/-! ### Contrast with Q'anjob'al ([coon-mateo-pedro-preminger-2014])
+
+Different Mayan languages circumvent syntactic ergativity through
+different mechanisms. Q'anjob'al's AF Voice assigns case to the
+object, freeing the phase-edge escape hatch
+([coon-mateo-pedro-preminger-2014]); Kaqchikel's AF avoids the
+too-local Spec,TP → Spec,CP step at the cost of Set A agreement
+([erlewine-2016], for whom the case-based account is the principal
+foil). Both share the underlying problem — agentive Voice is a phase
+head trapping the subject — and the same surface effect, loss of
+Set A. -/
+
+open CoonMateoPedroPreminger2014 in
+/-- Q'anjob'al AF Voice checks case; Kaqchikel's regular Voice does NOT.
+    This is the core parametric difference: Q'anjob'al's AF is a
+    case-assigning repair, while Kaqchikel's AF is a locality repair. -/
+theorem af_mechanism_contrast :
+    voiceAF.checksCase = true ∧
+    kaqVoice.checksCase = false := ⟨rfl, rfl⟩
+
+open CoonMateoPedroPreminger2014 in
+/-- Both languages share the underlying problem: agentive Voice is a
+    phase head, creating a locality boundary that traps the subject. -/
+theorem shared_phase_problem :
+    agentive.IsPhasal ∧ kaqVoice.IsPhasal := by decide
+
+/-- Both Q'anjob'al and Kaqchikel are HIGH-ABS languages that mark
+    transitive-subject extraction. -/
+theorem both_have_extraction_asymmetries :
+    Qanjobal.absPosition = .high ∧ Kaqchikel.absPosition = .high ∧
+    Extraction.Marks Qanjobal.extractionMarkedPositions .subject ∧
+    Extraction.Marks Kaqchikel.extractionMarkedPositions .subject :=
+  ⟨rfl, rfl, by decide, by decide⟩
+
+/-- Kaqchikel AF loses Set A agreement (the agent never enters Spec,TP).
+    Q'anjob'al AF also loses Set A agreement.
+    Same surface morphological effect, different underlying mechanism. -/
+theorem both_af_lose_setA :
+    Qanjobal.agentFocusForm.hasSetA = false ∧
+    VerbForm.agentFocus.hasSetA = false := ⟨rfl, rfl⟩
+
+/-! ### Extraction strategy -/
+
+/-- Kaqchikel marks transitive-subject extraction with dedicated AF
+    morphology (*-ö* or *-n*) — the same surface strategy-type as Mam's
+    extraction marker, in contrast to Toba Batak's structural pivot
+    restriction ([erlewine-2018]). Same underlying problem
+    (anti-locality), different marking. -/
 theorem strategy_is_af :
     extractionStrategy = .dedicatedMorpheme := rfl
 

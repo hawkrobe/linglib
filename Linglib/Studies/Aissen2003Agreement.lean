@@ -628,7 +628,8 @@ theorem personLevel_rank_matches_probe_rank :
 
 /-- Kaqchikel indexes all three argument positions (agent, patient, intranS).
     This makes it non-differential: no prominence condition gates indexing. -/
-theorem kaqchikel_indexes_all (p : ArgPosition) (h : p ∈ kaqArgPositions) :
+theorem kaqchikel_indexes_all (p : ArgPosition)
+    (h : p ∈ Features.Prominence.ArgumentRole.core) :
     ArgPosition.IsPhiAgreed p :=
   Kaqchikel.all_positions_agreed p h
 
@@ -669,7 +670,8 @@ theorem kaqArg_role_mapping :
     pattern together (ABS). This parallels Just's A/P split. -/
 theorem erg_abs_matches_AP :
     ArgPosition.case .A ≠ ArgPosition.case .P ∧
-    ArgPosition.case .P = ArgPosition.case .S := ⟨by decide, rfl⟩
+    ArgPosition.case .P = ArgPosition.case .S :=
+  Kaqchikel.erg_abs_alignment
 
 -- ============================================================================
 -- § 20: Cross-Framework — Person Dominance

@@ -40,7 +40,7 @@ inductive ExtractionMarkingStrategy where
   | voiceAlternation
   /-- A dedicated morpheme appears on the verbal complex when extraction
       occurs. E.g., Mam =(y)a' on Voice0/Dir0, K'iche' *wi*, Kaqchikel
-      AF *-Vn*, Irish complementizer *aL*. -/
+      AF *-ö* or *-n*, Irish complementizer *aL*. -/
   | dedicatedMorpheme
   /-- Agreement morphology on the verb tracks the extracted position.
       E.g., Chamorro wh-agreement. -/

@@ -6,7 +6,7 @@ import Linglib.Fragments.Mayan.Qanjobal.Agreement
 import Linglib.Fragments.Mayan.Qanjobal.AgentFocus
 import Linglib.Fragments.Mayan.Chol.Agreement
 import Linglib.Fragments.Mayan.Kaqchikel.Agreement
-import Linglib.Fragments.Mayan.Kaqchikel.AgentFocus
+import Linglib.Fragments.Mayan.Kaqchikel.ExtractionMorphology
 import Linglib.Fragments.Mayan.Tseltal.Agreement
 import Linglib.Fragments.Mayan.Tsotsil.Agreement
 import Linglib.Fragments.Mayan.Mam.Agreement
@@ -782,15 +782,14 @@ theorem coreCase_bridge_subject (locus : CaseLocus) :
 -- § 17: Kaqchikel Voice / ClauseSpine
 -- ============================================================================
 
-/-! Theory-laden Voice/ClauseSpine apparatus for Kaqchikel, formerly in
-    `Fragments/Mayan/Kaqchikel/AgentFocus.lean`. Lives here because this
-    is the file that uses it (§18 cross-language bridge), and because
-    Voice-flavor analysis is the [coon-mateo-pedro-preminger-2014]
-    side of the same author cluster's Mayan work
-    ([preminger-2014]'s Ch 4 covers the agreement side; CMP 2014
-    covers the case/Voice side). The fragment data
-    (`VerbForm.agentFocus.hasSetA`, `kaqAFType`, etc.) stays
-    typology-neutral. -/
+/-! Theory-laden Voice/ClauseSpine apparatus for Kaqchikel, graduated out
+    of the Kaqchikel fragment. Voice-flavor analysis is
+    the [coon-mateo-pedro-preminger-2014] side of the same author
+    cluster's Mayan work ([preminger-2014]'s Ch 4 covers the agreement
+    side; CMP 2014 covers the case/Voice side). The Q'anjob'al-vs-Kaqchikel
+    mechanism comparison consuming these heads lives in
+    `Studies/Erlewine2016.lean` — the chronologically later paper, for
+    which the case-based account is the principal foil. -/
 
 /-- Both the transitive and AF derivations project the same clausal spine
     (CP > TP > vP > VP). The difference is in the v head: transitive v
@@ -809,48 +808,9 @@ def kaqVoice : Head :=
 
 /-- Kaqchikel clause projects Voice. -/
 theorem kaq_has_voice : kaqClauseSpine.projects .Voice = true := by
-  native_decide
+  decide
 
 /-- Kaqchikel Voice is agentive. -/
 theorem kaq_voice_is_agentive : kaqVoice.flavor = .agentive := rfl
-
--- ============================================================================
--- § 18: Cross-Language AF Bridge (Q'anjob'al vs Kaqchikel)
--- ============================================================================
-
-/-! Different Mayan languages circumvent syntactic ergativity through
-different mechanisms ([coon-mateo-pedro-preminger-2014] §4.2, §5).
-Q'anjob'al uses case assignment: Voice_AF assigns case to the object,
-freeing the escape hatch. Kaqchikel uses an anti-locality repair: AF
-structure avoids the too-local Spec,TP → Spec,CP movement step (SSAL),
-at the cost of losing Set A agreement ([erlewine-2016]). -/
-
-/-- Q'anjob'al AF Voice checks case; Kaqchikel's regular Voice does NOT.
-    This is the core parametric difference: Q'anjob'al's AF is a
-    case-assigning repair, while Kaqchikel's AF is a locality repair. -/
-theorem af_mechanism_contrast :
-    voiceAF.checksCase = true ∧
-    kaqVoice.checksCase = false := ⟨rfl, rfl⟩
-
-/-- Both languages share the underlying problem: agentive Voice is a
-    phase head, creating a locality boundary that traps the subject. -/
-theorem shared_phase_problem :
-    agentive.IsPhasal ∧ kaqVoice.IsPhasal := by decide
-
-/-- Both Q'anjob'al and Kaqchikel are HIGH-ABS languages with extraction
-    asymmetries: agent extraction is blocked without AF in both. -/
-theorem both_have_extraction_asymmetries :
-    Qanjobal.absPosition = .high ∧
-    Extraction.Marks Qanjobal.extractionMarkedPositions .subject ∧
-    Kaqchikel.kaqAFType = .afLanguage := by
-  refine ⟨rfl, ?_, rfl⟩
-  decide
-
-/-- Kaqchikel AF loses Set A agreement (the agent never enters Spec,TP).
-    Q'anjob'al AF also loses Set A agreement.
-    Same surface morphological effect, different underlying mechanism. -/
-theorem both_af_lose_setA :
-    Qanjobal.agentFocusForm.hasSetA = false ∧
-    Kaqchikel.VerbForm.agentFocus.hasSetA = false := ⟨rfl, rfl⟩
 
 end CoonMateoPedroPreminger2014

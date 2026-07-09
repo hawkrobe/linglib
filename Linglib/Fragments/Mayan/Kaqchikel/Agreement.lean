@@ -1,117 +1,90 @@
-import Linglib.Fragments.Mayan.Kaqchikel.AgentFocus
 import Linglib.Features.Case.Basic
 import Linglib.Features.Prominence
 import Linglib.Fragments.Mayan.Params
 
 /-!
-# Kaqchikel Agreement Fragment [preminger-2014]
+# Kaqchikel Agreement Fragment
 
 Theory-neutral typological metadata for Kaqchikel (K'ichean, Mayan)
-agreement morphology: paradigm exponents, person-number cells, argument
-positions, and the empirical AF agreement table.
+agreement morphology, from [preminger-2014] (whose Kichean data ground
+the book's argument): paradigm exponents, person-number cells, and
+argument positions.
 
-The theory-laden apparatus that interprets this data — DM Vocabulary
-insertion (`setAVocab`/`setBVocab`), Phi.Geometry feature
-decomposition (`IsParticipant`), and the two-probe choice rule
-(`afRank`, `afMarker`) — lives in
-`Studies/Preminger2014.lean`. Per the project
-Fragment-discipline rule (CLAUDE.md), fragments hold only consensus
-typological metadata; paper-specific apparatus is consumed in study
-files via projections.
+Kaqchikel cross-references both transitive arguments: Set A (ERG)
+prefixes on Voice/v index the transitive agent, and Set B (ABS)
+pre-stem markers on Infl/T index the absolutive argument (transitive
+patient or intransitive S). Morpheme order is aspect–ABS–ERG–stem
+([preminger-2014] (12)): Set B precedes Set A. This contrasts with San
+Juan Atitán Mam, where Infl's φ-probe is blocked in transitives and the
+patient goes unagreed ([scott-2023]; see `Mam/Agreement.lean`) — the
+non-differential/differential contrast pair consumed by
+`Studies/Aissen2003Agreement.lean`. In AF constructions the two
+agreement slots collapse to a single marker drawn from the Set B
+paradigm; the empirical AF agreement table ([preminger-2014] §3.2,
+table (22)) and the two-probe choice rule that predicts it live in
+`Studies/Preminger2014.lean`.
 
-## The System
+## Main declarations
 
-Kaqchikel has two agreement paradigms on the verb:
-- **Set A** (ERG): prefixes on Voice/v cross-referencing the transitive agent
-- **Set B** (ABS): preverbal markers on Infl/T cross-referencing the
-  absolutive argument (transitive patient or intransitive S)
+* `Kaqchikel.setAExponent`, `Kaqchikel.setBExponent`: the Set A (ERG)
+  and Set B (ABS) exponent tables ([preminger-2014] table (29)).
+* `Kaqchikel.absPosition`: HIGH-ABS morpheme placement.
+* `Kaqchikel.ArgPosition` with `.case`, `.accCase`, `.IsPhiAgreed`:
+  argument positions, their case wiring, and the (non-differential)
+  φ-agreement status of each position.
+* `Kaqchikel.caseInventory`: the {ERG, ABS} case inventory, validated
+  against [blake-1994]'s hierarchy.
 
-Morpheme order on the verb (276): `aspect - ABS - ERG - stem`.
-Set B (ABS) precedes Set A (ERG).
+## Implementation notes
 
-| Position | Case | Agreement |
-|----------|------|-----------|
-| A (transitive agent)   | ERG | Set A |
-| P (transitive patient) | ABS | Set B |
-| S (intransitive subj)  | ABS | Set B |
-
-Unlike Mam, where Infl's φ-probe is blocked in transitives and the
-patient goes unagreed, Kaqchikel cross-references *both* transitive
-arguments ([preminger-2014] Ch. 3 vs. [scott-2023] for Mam).
-
-## Agent Focus Agreement ([preminger-2014] §3.3, table 22)
-
-In AF constructions (clause-local agent extraction), the normal two-slot
-agreement collapses to a **single marker** drawn from the absolutive
-(Set B) paradigm. The empirical pattern: AF agreement is **commutative**
-(⟨1SG subj, 3SG obj⟩ = ⟨3SG subj, 1SG obj⟩ → *in-*) and a person
-restriction blocks combinations of two 1st/2nd-person arguments.
-
-The empirical paradigm data sits here as `afParadigm`. The choice rule
-that predicts it is theory-laden — see
-`Studies/Preminger2014.lean` for the two-probe
-relativized-probing derivation (after [bejar-rezac-2003], applied
-to Kichean per [preminger-2014] §4.4). Earlier analyses
-([stiebels-2006] and others) framed the same surface pattern as
-a salience hierarchy `[+participant] > [+plural] > default`, an account
-[preminger-2014] Ch. 7 explicitly argues against; the fragment
-deliberately avoids picking sides on that question.
-
+Hosting Set A on Voice/v and Set B on Infl/T follows the standard
+high-abs analysis (consistent with [preminger-2014] and
+[coon-mateo-pedro-preminger-2014]). The non-perfective `accCase`
+records [imanishi-2014]'s analysis of the progressive *ajin*
+construction — an analysis, not consensus typology; the derivation
+lives with `Mayan.accCaseKaqchikel` in `Fragments/Mayan/Params.lean`.
+Person-number cells come from the canonical `Agreement.Cell`
+(`Syntax/Agreement/Paradigm.lean`).
 -/
 
 namespace Kaqchikel
 
 open Mayan (ExponentTable)
 open Agreement
+open Features.Prominence (ArgumentRole)
 
--- ============================================================================
--- § 1: Person-Number Inventory
--- ============================================================================
-
--- Person-number combinations for Kaqchikel agreement paradigms come from
--- the canonical φ-cell `Agreement.Cell` (six cells: three persons × two
--- numbers). Projections `.toPerson`, `.isPlural`, and the inventory
--- `Agreement.Cell.pnCells` live in `Syntax/Agreement/Paradigm.lean`.
-
--- ============================================================================
--- § 1b: ABS Position (LOW-ABS / HIGH-ABS)
--- ============================================================================
+/-! ### ABS position (HIGH-ABS) -/
 
 /-- Kaqchikel's absolutive morphemes appear in HIGH position (between
-    aspect marker and the verb stem, pre-stem). Morpheme order:
-    ASP-ABS-ERG-Stem (per `## The System` table above). -/
+    the aspect marker and the verb stem): aspect–ABS–ERG–stem
+    ([preminger-2014] (12)). -/
 def absPosition : Mayan.ABSPosition := .high
 
--- ============================================================================
--- § 2: Set A (ERG) Vocabulary
--- ============================================================================
+/-! ### Set A (ERG) exponents -/
 
 /-- Set A (ERG) markers: prefixes on Voice/v cross-referencing the
     transitive agent ([preminger-2014] Ch. 3, table (29)).
     Parenthesized segments are dropped in certain phonological
-    contexts; the grapheme *j* represents a voiceless velar fricative. -/
+    contexts. -/
 def setAExponent : ExponentTable :=
   [(.pn .first .Sing, "n/w-"), (.pn .second .Sing, "a(w)-"), (.pn .third .Sing, "r(u)/u-"),
    (.pn .first .Plur, "q(a)-"), (.pn .second .Plur, "i(w)-"), (.pn .third .Plur, "k(i)-")]
 
--- ============================================================================
--- § 3: Set B (ABS) Vocabulary
--- ============================================================================
+/-! ### Set B (ABS) exponents -/
 
-/-- Set B (ABS) markers: preverbal markers on Infl/T cross-referencing
-    the absolutive argument. The 3SG form (∅) is
-    also the Elsewhere entry — the default when no more specific entry
-    matches, as in the failure case of obligatory agreement (Ch. 5).
-    Citation forms: 1SG and 2SG are *i(n)-* and *a(t)-*, whose
-    parenthesized segments drop in certain phonological contexts
-    (e.g., 1SG surfaces as *i-* in *x-i-tz'et-ö*). -/
+/-- Set B (ABS) markers: pre-stem markers on Infl/T cross-referencing
+    the absolutive argument ([preminger-2014] table (29)). The 3SG form
+    (∅) is also the Elsewhere entry — the default when no more specific
+    entry matches, as in the failure case of obligatory agreement
+    (Ch. 5). Citation forms: 1SG and 2SG are *i(n)-* and *a(t)-*, whose
+    parenthesized segments drop in certain phonological contexts (e.g.,
+    1SG surfaces as *i-* in *x-i-tz'et-ö*); the grapheme *j* (as in
+    *oj-*) is a voiceless velar fricative. -/
 def setBExponent : ExponentTable :=
   [(.pn .first .Sing, "in-"), (.pn .second .Sing, "at-"), (.pn .third .Sing, "∅"),
    (.pn .first .Plur, "oj-"), (.pn .second .Plur, "ix-"), (.pn .third .Plur, "e-")]
 
--- ============================================================================
--- § 4: Argument Positions (alias to canonical SAP type)
--- ============================================================================
+/-! ### Argument positions -/
 
 /-- Argument positions in a Kaqchikel clause. Aliased to the canonical
     `Features.Prominence.ArgumentRole` (S/A/P/R/T) so cross-Mayan and
@@ -120,33 +93,26 @@ def setBExponent : ExponentTable :=
     patient), `.S` (intransitive subject) directly. -/
 abbrev ArgPosition := Features.Prominence.ArgumentRole
 
-/-- Perfective (ergative) case assignment for Kaqchikel. Definitionally
-    equal to `Mayan.ergCaseKaqchikel`, which derives from
-    `Alignment.ergative.assignCase` in
-    `Syntax/Case/Alignment.lean` — A → ERG, S/P → ABS. -/
+/-- Perfective (ergative) case assignment for Kaqchikel — definitionally
+    `Mayan.ergCaseKaqchikel`, derived from `Alignment.ergative.assignCase`
+    in `Syntax/Case/Alignment.lean`: A → ERG, S/P → ABS. -/
 abbrev ArgPosition.case : ArgPosition → Case :=
   Mayan.ergCaseKaqchikel
 
-/-- Non-perfective (PROG `ajin`) case assignment for Kaqchikel.
-    Definitionally equal to `Mayan.accCaseKaqchikel`, derived
-    from `Alignment.invertedErgative.assignCase`. The
-    construction-specific inverted pattern (S/A → ABS, P → ERG/GEN)
-    documented by [imanishi-2014] §3.3.1 and [imanishi-2020].
-    Per [imanishi-2014]: the Unaccusative Requirement on
-    Nominalization passivizes the embedded clause; the object becomes
-    the only Case-less DP and receives ERG/GEN from D as phase head;
-    the subject is base-generated in matrix Spec-PredP (with `ajin`)
-    and gets ABS from matrix Infl. -/
+/-- Non-perfective (PROG *ajin*) case assignment — definitionally
+    `Mayan.accCaseKaqchikel`: [imanishi-2014]'s inverted pattern
+    (S/A → ABS, P → ERG/GEN); see `Fragments/Mayan/Params.lean` for the
+    derivation and [imanishi-2020] for the parameterization. -/
 abbrev ArgPosition.accCase : ArgPosition → Case :=
   Mayan.accCaseKaqchikel
 
 /-- Does this position participate in φ-Agree?
     In Kaqchikel, ALL core argument positions trigger agreement:
     agent via Set A on Voice/v, patient and intranS via Set B on
-    Infl/T. This contrasts with Mam, where the patient is NOT
-    agreed with (Infl's probe is blocked by VoiceP; [scott-2023]).
-    Ditransitive R/T default to participating (Kaqchikel ditransitive
-    agreement not modeled in this fragment). -/
+    Infl/T. This contrasts with San Juan Atitán Mam, where the patient
+    is NOT agreed with (Infl's probe is blocked by VoiceP;
+    [scott-2023]). Ditransitive R/T default to participating
+    (Kaqchikel ditransitive agreement not modeled in this fragment). -/
 def ArgPosition.IsPhiAgreed : ArgPosition → Prop
   | .A | .P | .S | .R | .T => True
 
@@ -154,134 +120,49 @@ instance : DecidablePred ArgPosition.IsPhiAgreed := fun p =>
   match p with
   | .A | .P | .S | .R | .T => isTrue trivial
 
-/-- The three monotransitive argument positions (omits ditransitive R/T). -/
-def kaqArgPositions : List ArgPosition := [.A, .P, .S]
+/-! ### Verification: argument positions
 
--- ============================================================================
--- § 5: AF Agreement Paradigm Data ([preminger-2014] table 22)
--- ============================================================================
-
-/-- An AF agreement datum: subject φ, object φ, and the resulting
-    single agreement marker (or `none` for person-restriction
-    violations). -/
-structure AFAgreementDatum where
-  subject : Cell
-  object : Cell
-  marker : Option String
-  deriving Repr
-
-/-- The empirical AF agreement paradigm ([preminger-2014] table (22)).
-    Each row records the observed agreement marker for a given
-    subject-object combination in clause-local agent extraction.
-
-    The first 11 rows reproduce the paper's table exactly. Rows 12–15
-    demonstrate commutativity (§3.2, fn. a): the table uses set notation
-    {φ₁, φ₂}, so swapping subj/obj yields the same marker. Rows 16–17
-    test person restriction violations ((25)). -/
-def afParadigm : List AFAgreementDatum :=
-  [ -- Table (22), rows 1–3: both 3rd person, number determines marker
-    ⟨.pn .third .Sing, .pn .third .Sing, some "∅"⟩         -- default: 3SG×3SG → ∅
-  , ⟨.pn .third .Plur, .pn .third .Sing, some "e-"⟩        -- [+plural] outranks default
-  , ⟨.pn .third .Plur, .pn .third .Plur, some "e-"⟩        -- [+plural] both → 3PL
-    -- Table (22), rows 4–7: one [+participant] argument with 3SG
-  , ⟨.pn .first .Sing, .pn .third .Sing, some "in-"⟩       -- 1SG [+participant]
-  , ⟨.pn .second .Sing, .pn .third .Sing, some "at-"⟩      -- 2SG [+participant]
-  , ⟨.pn .first .Plur, .pn .third .Sing, some "oj-"⟩       -- 1PL [+participant]
-  , ⟨.pn .second .Plur, .pn .third .Sing, some "ix-"⟩      -- 2PL [+participant]
-    -- Table (22), rows 8–11: [+participant] outranks [+plural]
-  , ⟨.pn .first .Sing, .pn .third .Plur, some "in-"⟩       -- 1SG participant > 3PL plural
-  , ⟨.pn .second .Sing, .pn .third .Plur, some "at-"⟩      -- 2SG participant > 3PL plural
-  , ⟨.pn .first .Plur, .pn .third .Plur, some "oj-"⟩       -- 1PL participant > 3PL plural
-  , ⟨.pn .second .Plur, .pn .third .Plur, some "ix-"⟩      -- 2PL participant > 3PL plural
-    -- Commutativity (§3.2, fn. a): swapping subj/obj → same marker
-  , ⟨.pn .third .Sing, .pn .third .Plur, some "e-"⟩        -- = {3PL, 3SG} swapped
-  , ⟨.pn .third .Sing, .pn .first .Sing, some "in-"⟩       -- = {1SG, 3SG} swapped
-  , ⟨.pn .third .Sing, .pn .second .Sing, some "at-"⟩      -- = {2SG, 3SG} swapped
-  , ⟨.pn .third .Plur, .pn .second .Sing, some "at-"⟩      -- = {2SG, 3PL} swapped
-    -- Person restriction violations (25)
-  , ⟨.pn .first .Sing, .pn .second .Sing, none⟩            -- *two [+participant] args
-  , ⟨.pn .second .Sing, .pn .first .Sing, none⟩            -- *two [+participant] args
-  ]
-
--- ============================================================================
--- § 6: Agreement Slot Count
--- ============================================================================
-
-/-- Number of agreement slots for each verb form.
-    Transitive: two slots (Set A + Set B).
-    AF: one slot (single omnivorous marker from the ABS paradigm). -/
-def VerbForm.agreementSlots : VerbForm → Nat
-  | .transitive => 2
-  | .agentFocus => 1
-
--- ============================================================================
--- § 7: Verification Theorems — Argument Positions
--- ============================================================================
+The per-position case facts are the ergative-alignment facts
+(`Alignment.ergative`) — Kaqchikel's perfective case function is
+`Alignment.ergative.assignCase` by definition, so each theorem below is
+a re-export of the substrate lemma, and the family-level statement
+(every standard Mayan language shares them) is
+`CoonMateoPedroPreminger2014.mayan_perfective_ergative`. -/
 
 /-- Agent gets ERG (from Voice). -/
-theorem A_case : ArgPosition.case .A = .erg := rfl
+theorem A_case : ArgPosition.case .A = .erg := Alignment.ergative.assignCase_A
 
 /-- Patient gets ABS (from Infl). -/
-theorem P_case : ArgPosition.case .P = .abs := rfl
+theorem P_case : ArgPosition.case .P = .abs := Alignment.ergative.assignCase_P
 
 /-- Intransitive S gets ABS (from Infl). -/
-theorem S_case : ArgPosition.case .S = .abs := rfl
+theorem S_case : ArgPosition.case .S = .abs := Alignment.ergative.assignCase_S
 
 /-- Ergative-absolutive alignment: the agent is distinguished (ERG)
     while patient and intranS share a case value (ABS). -/
 theorem erg_abs_alignment :
     ArgPosition.case .A ≠ ArgPosition.case .P ∧
     ArgPosition.case .P = ArgPosition.case .S :=
-  ⟨by decide, rfl⟩
+  Alignment.ergative_distinguishes_A
 
-/-- Accusative alignment in non-perfective: S/A pattern together (ABS),
-    O is distinct (GEN). Mirror image of Chol/Q'anjob'al. -/
-theorem acc_alignment :
-    ArgPosition.accCase .A = ArgPosition.accCase .S ∧
-    ArgPosition.accCase .A ≠ ArgPosition.accCase .P :=
-  ⟨rfl, by decide⟩
-
-/-- All three argument positions trigger φ-agreement. -/
-theorem all_positions_agreed (p : ArgPosition) (_ : p ∈ kaqArgPositions) :
+/-- All core argument positions trigger φ-agreement. -/
+theorem all_positions_agreed (p : ArgPosition) (_ : p ∈ ArgumentRole.core) :
     ArgPosition.IsPhiAgreed p := by
   cases p <;> trivial
 
--- ============================================================================
--- § 8: Verification Theorems — Verb Form Connection
--- ============================================================================
+/-! ### Case inventory ([blake-1994]) -/
 
-/-- AF has a single agreement slot (one marker from the ABS paradigm). -/
-theorem af_single_slot : VerbForm.agentFocus.agreementSlots = 1 := rfl
-
-/-- Transitive has dual agreement slots (Set A + Set B). -/
-theorem trans_dual_slots : VerbForm.transitive.agreementSlots = 2 := rfl
-
-/-- AF loses ergative (Set A) agreement: the single AF marker is drawn
-    from the absolutive paradigm, not the ergative. Cross-references
-    `VerbForm.hasSetA` from AgentFocus.lean. -/
-theorem af_no_ergative :
-    VerbForm.agentFocus.hasSetA = false ∧
-    VerbForm.agentFocus.agreementSlots = 1 := ⟨rfl, rfl⟩
-
-/-- Transitive retains ergative (Set A) agreement. -/
-theorem trans_has_ergative :
-    VerbForm.transitive.hasSetA = true ∧
-    VerbForm.transitive.agreementSlots = 2 := ⟨rfl, rfl⟩
-
--- ============================================================================
--- § 9: Case Inventory Validation ([blake-1994])
--- ============================================================================
-
-/-- Kaqchikel case inventory, derived from argument position case values. -/
-def caseInventory : Finset Case := {.erg, .abs}
+/-- The Kaqchikel case inventory, derived from the core argument
+    positions' case values: {ERG, ABS}. -/
+def caseInventory : Finset Case := (ArgumentRole.core.map ArgPosition.case).toFinset
 
 /-- The inventory covers all argument positions: every position's case
     is in the inventory. -/
 theorem inventory_covers_positions :
-    ∀ p ∈ kaqArgPositions, p.case ∈ caseInventory := by decide
+    ∀ p ∈ ArgumentRole.core, ArgPosition.case p ∈ caseInventory := by decide
 
 -- Kaqchikel's {ERG, ABS} inventory is valid per Blake's case hierarchy
--- (both are core cases at rank 6, trivially no gaps).
+-- (both are core cases at the top `hierarchyRank`, trivially no gaps).
 example : Case.IsValidInventory caseInventory := by decide
 
 end Kaqchikel
