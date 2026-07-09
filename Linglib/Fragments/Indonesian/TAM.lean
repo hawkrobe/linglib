@@ -108,11 +108,13 @@ presentation. -/
 def temporalMarkers : List TemporalMarker :=
   [sudah, telah, sedang, lagi, tengah, masih, akan, bakal, baru, pernah]
 
-/-- The temporal markers independently verified as UD `AUX` (the
-UD Indonesian-GSD lemma statistics document *sudah*, *telah*, *sedang*,
-*akan* — exactly [arka-2013]'s I-position auxiliaries among the temporal
-markers). The remaining markers are not documented either way by the
-treebank's summary and stay out of the `Auxiliary` instance. -/
+/-- The temporal markers tagged `AUX` in UD Indonesian-GSD: *sudah*, *telah*,
+*sedang*, *akan* — exactly [arka-2013]'s I-position auxiliaries among the
+temporal markers. Checked against the treebank's full train/dev/test splits:
+the other six markers never tag `AUX` (*masih*, *pernah*, *lagi* tag `ADV`;
+*baru* mostly `ADJ` 'new'; *tengah* `NOUN`/`PROPN` 'middle'; *bakal*
+marginal). GSD also tags Arka's fifth auxiliary *mau* (and *ingin*) `AUX`,
+siding with [arka-2013] against [sneddon-1996]'s full-verb treatment. -/
 def auxMarkers : List TemporalMarker := [sudah, telah, sedang, akan]
 
 instance : Auxiliary {m : TemporalMarker // m ∈ auxMarkers} where
