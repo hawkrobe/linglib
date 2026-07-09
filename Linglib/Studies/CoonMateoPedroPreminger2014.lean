@@ -58,7 +58,7 @@ supporting its role as a case-assigner.
 namespace CoonMateoPedroPreminger2014
 
 open Minimalist Minimalist.Voice
-open Mayan (ABSPosition CaseLocus toCaseLocus MayanLang)
+open Mayan (ABSPosition CaseLocus toCaseLocus)
 
 -- § 1 uses `CaseLocus` and `toCaseLocus` from `Mayan.Params`.
 
@@ -359,7 +359,7 @@ theorem fragments_ground_tada :
 /-- Absolutive structural position (HIGH-ABS / LOW-ABS) indexed by Mayan
     language, routed to the per-language Fragment value. The substantive
     parameter for Tada's Generalization. -/
-def absPositionOf : MayanLang → ABSPosition
+def absPositionOf : Mayan → ABSPosition
   | .Chol      => Chol.absPosition
   | .Qanjobal  => Qanjobal.absPosition
   | .Kaqchikel => Kaqchikel.absPosition
@@ -370,13 +370,13 @@ def absPositionOf : MayanLang → ABSPosition
 
 /-- **Tada's Generalization, parameterized form**: a Mayan language
     exhibits syntactic ergativity (the analytical predicate from §4)
-    **iff** it is HIGH-ABS. Quantified over `Mayan.MayanLang`
+    **iff** it is HIGH-ABS. Quantified over `Mayan`
     via the Fragment-routed `absPositionOf` dispatcher.
 
     Replaces the per-language enumeration in `fragments_ground_tada`
-    with a single quantified theorem that scales as the `MayanLang`
+    with a single quantified theorem that scales as the `Mayan`
     registry grows. -/
-theorem mayan_tada (lang : MayanLang) :
+theorem mayan_tada (lang : Mayan) :
     hasSyntacticErgativity (toCaseLocus (absPositionOf lang)) = true ↔
       absPositionOf lang = ABSPosition.high := by
   cases lang <;> decide
@@ -608,12 +608,12 @@ theorem attested_cells :
     base assigns case canonically ergatively (A → ERG, S/P → ABS) in the
     perfective. The `isStandard` hypothesis scopes around San Juan Atitán
     Mam, whose perfective is morphologically tripartite (see
-    `Mayan.MayanLang.isStandard` and `Studies/Scott2023.lean`). -/
+    `Mayan.isStandard` and `Studies/Scott2023.lean`). -/
 theorem mayan_perfective_ergative
-    (lang : MayanLang) (h : lang.isStandard = true)
+    (lang : Mayan) (h : lang.isStandard = true)
     (r : Features.Prominence.ArgumentRole) :
     Mayan.caseAt lang .Perf r = Alignment.ergative.assignCase r := by
-  cases lang <;> first | rfl | (simp [Mayan.MayanLang.isStandard] at h)
+  cases lang <;> first | rfl | (simp [Mayan.isStandard] at h)
 
 -- ============================================================================
 -- § 12: Person-Conditioned AF (bridge)
