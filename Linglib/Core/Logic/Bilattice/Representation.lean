@@ -4,29 +4,31 @@ import Mathlib.Order.Disjoint
 
 /-!
 # Representation of distributive bilattices
-[avron-1996] [arieli-avron-1996]
+[avron-1996]
 
-Constructive direction (`Core.Logic.TwistProduct`): the twist product `L ⊙ R` is
-an interlaced bilattice. This file proves the **converse / representation theorem**
-for the *distributive* case (Ginsberg–Fitting; [avron-1996] Thm 4.3 generalizes it
-to all interlaced bilattices).
+Constructive direction (`Core.Logic.Bilattice.Product`): the Ginsberg–Fitting
+product `L ⊙ R` is an interlaced bilattice. This file proves the **converse /
+representation theorem** for the *distributive* case ([avron-1996] Thm 4.3
+generalizes its knowledge-order conclusion to all interlaced bilattices — see
+`Core.Logic.Bilattice.Interlaced`).
 
 Presented *knowledge-first*: a distributive bilattice is a bounded distributive
 lattice `B` — the **knowledge** lattice `(≤_k, ⊗ = ⊓, ⊕ = ⊔, ⊥, ⊤)` — together
 with the two **truth bounds** `t, f`, which are *complementary* (`IsCompl t f`:
 `t ⊗ f = ⊥`, `t ⊕ f = ⊤`). The truth order is recovered from the decomposition.
 
-The representation: `B` decomposes as the twist product `(Iic t) ⊙ (Iic f)` of
+The representation: `B` decomposes as the product `(Iic t) ⊙ (Iic f)` of
 the two principal ideals, via `x ↦ (x ⊗ t, x ⊗ f)` with inverse `(a, b) ↦ a ⊕ b`
 ([avron-1996] Cor 3.8(1), Thm 4.3). The factors `Iic t = {x | ⊥ ≤_t x}` and
 `Iic f = {x | x ≤_t ⊥}` are [avron-1996]'s `L_B`, `R_B`.
 
 ## Main results
 
-* `Bilattice.decompose` — the knowledge-order isomorphism `B ≃o Iic t × Iic f`
-* `Bilattice.tLE` / `tLE_iff_decompose` — the recovered truth order is the twist
-  order on the factors (first factor up, second factor down): the bilattice
-  representation (cf. `Core.Logic.TwistProduct.tLE`)
+* `Bilattice.decomposeOfIsCompl` — the knowledge-order isomorphism
+  `B ≃o Iic t × Iic f` (the general interlaced version is `Bilattice.decompose`)
+* `Bilattice.tLE` / `tLE_iff_decomposeOfIsCompl` — the recovered truth order is
+  the twisted order on the factors (first factor up, second factor down): the
+  bilattice representation (cf. `Bilattice.Product.mk_le_mk`)
 -/
 
 variable {B : Type*}
@@ -40,7 +42,7 @@ variable [DistribLattice B] [BoundedOrder B] {t f : B}
 /-- The knowledge-order decomposition of a distributive bilattice: `x ↦ (x ⊓ t,
 x ⊓ f)` is an order isomorphism `B ≃o Iic t × Iic f` ([avron-1996] Thm 4.3,
 distributive case), with inverse `(a, b) ↦ a ⊔ b`. -/
-def decompose (h : IsCompl t f) : B ≃o (Set.Iic t × Set.Iic f) where
+def decomposeOfIsCompl (h : IsCompl t f) : B ≃o (Set.Iic t × Set.Iic f) where
   toFun x := (⟨x ⊓ t, inf_le_right⟩, ⟨x ⊓ f, inf_le_right⟩)
   invFun p := p.1.1 ⊔ p.2.1
   left_inv x := by
@@ -68,11 +70,11 @@ def decompose (h : IsCompl t f) : B ≃o (Set.Iic t × Set.Iic f) where
     · intro hxy
       exact ⟨inf_le_inf_right t hxy, inf_le_inf_right f hxy⟩
 
-theorem decompose_apply (h : IsCompl t f) (x : B) :
-    decompose h x = (⟨x ⊓ t, inf_le_right⟩, ⟨x ⊓ f, inf_le_right⟩) := rfl
+theorem decomposeOfIsCompl_apply (h : IsCompl t f) (x : B) :
+    decomposeOfIsCompl h x = (⟨x ⊓ t, inf_le_right⟩, ⟨x ⊓ f, inf_le_right⟩) := rfl
 
-theorem decompose_symm_apply (h : IsCompl t f) (p : Set.Iic t × Set.Iic f) :
-    (decompose h).symm p = p.1.1 ⊔ p.2.1 := rfl
+theorem decomposeOfIsCompl_symm_apply (h : IsCompl t f) (p : Set.Iic t × Set.Iic f) :
+    (decomposeOfIsCompl h).symm p = p.1.1 ⊔ p.2.1 := rfl
 
 end Decompose
 
@@ -85,12 +87,13 @@ has less evidence-for-truth (`⊓ t`) and more evidence-for-falsity (`⊓ f`)
 ([avron-1996] Def 2.4(ii)). -/
 def tLE (x y : B) : Prop := x ⊓ t ≤ y ⊓ t ∧ y ⊓ f ≤ x ⊓ f
 
-/-- The recovered truth order *is* the twist order on the decomposition factors
-(`Iic t` up, `Iic f` down): this exhibits `B` as the twist product
+/-- The recovered truth order *is* the twisted order on the decomposition
+factors (`Iic t` up, `Iic f` down): this exhibits `B` as the product
 `(Iic t) ⊙ (Iic f)`, i.e. the bilattice representation. -/
-theorem tLE_iff_decompose {t f : B} (h : IsCompl t f) (x y : B) :
+theorem tLE_iff_decomposeOfIsCompl {t f : B} (h : IsCompl t f) (x y : B) :
     tLE t f x y ↔
-      (decompose h x).1 ≤ (decompose h y).1 ∧ (decompose h y).2 ≤ (decompose h x).2 :=
+      (decomposeOfIsCompl h x).1 ≤ (decomposeOfIsCompl h y).1 ∧
+        (decomposeOfIsCompl h y).2 ≤ (decomposeOfIsCompl h x).2 :=
   Iff.rfl
 
 end Truth

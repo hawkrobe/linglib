@@ -148,8 +148,8 @@ import Linglib.Core.Logic.Bilateral.Classical
 import Linglib.Core.Logic.Bilateral.Defs
 import Linglib.Core.Logic.Bilattice.Basic
 import Linglib.Core.Logic.Bilattice.Interlaced
+import Linglib.Core.Logic.Bilattice.Product
 import Linglib.Core.Logic.Bilattice.Representation
-import Linglib.Core.Logic.Bilattice.TwistProduct
 import Linglib.Core.Logic.Consequence
 import Linglib.Core.Logic.CylindricAlgebra
 import Linglib.Core.Logic.Duality
