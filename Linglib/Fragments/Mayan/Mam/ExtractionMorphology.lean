@@ -2,63 +2,62 @@ import Linglib.Syntax.Extraction
 import Linglib.Data.UD.Basic
 
 /-!
-# Mam Extraction Morphology Fragment [elkins-torrence-brown-2026]
+# Mam Extraction Morphology Fragment
 
-Theory-neutral data on extraction morphology in San Juan Ostuncalco (SJO) Mam,
-a Mayan language spoken in the Western Highlands of Guatemala.
+Theory-neutral data on extraction morphology in San Juan Ostuncalco
+(SJO) Mam (Mayan, Western Highlands of Guatemala), following
+[elkins-torrence-brown-2026]. When an oblique undergoes Ā-movement
+(wh-movement, focus fronting, relativization), the optional enclitic
+=(y)a' may appear on the verbal complex — on Voice⁰ or Dir⁰
+(directional auxiliary). Its distribution is conditioned by clause size
+(licensed only where Voice⁰ projects; impossible in VP-sized infinitival
+complements, [elkins-torrence-brown-2026] §6) and by extraction target
+(oblique extraction only — subject extraction triggers Agent Focus *-a*,
+object extraction triggers neither, §3.1; temporal 'when' obliques also
+do not trigger it, §8.1).
 
-## The Phenomenon
+The central finding is multiple spellout: in long-distance extraction
+through full CPs and aspectless clauses, =(y)a' can appear on both the
+matrix and embedded predicates — one per Voice/Dir head along the
+successive-cyclic movement path (Table 4, §6.2).
 
-When an oblique argument undergoes Ā-movement (wh-movement, focus fronting,
-relativization) in Mam, the **optional** enclitic =(y)a' may appear on the
-verbal complex — specifically on Voice⁰ or Dir⁰ (directional auxiliary).
-Its distribution is conditioned by two factors:
+## Main declarations
 
-1. **Clause size**: =(y)a' is licensed only in clauses that project Voice⁰.
-   In infinitival complements (VP-sized, lacking Voice), =(y)a' is impossible
-   even when an oblique has extracted (Elkins et al. §6).
+* `Mam.MamClauseType` with `.projectsVoice`: the three clause sizes
+  (full CP, aspectless, infinitival) and whether each projects Voice.
+* `Mam.MamExtractionDatum`, `Mam.monoData`: monoclausal extraction data
+  points and their pooled list.
+* `Mam.MamLongDistanceDatum`, `Mam.ldData`: long-distance data tracking
+  =(y)a' on the matrix and embedded predicates independently (Table 4).
+* `Mam.eqya_iff_voice_and_oblique`: the core generalization — =(y)a' is
+  licensed iff the clause projects Voice and a non-temporal oblique
+  extracts.
+* `Mam.MovementReflex` with `.islandSensitive`: island sensitivity
+  derived from movement being phase-bounded rather than stipulated.
+* `Mam.mamExtractionStrategy`: the oblique-marking extraction profile.
 
-2. **Extraction target**: =(y)a' marks specifically *oblique* extraction.
-   Subject extraction triggers Agent Focus (*-a*), not =(y)a'. Object
-   extraction triggers neither (§3.1). Temporal obliques ('when') also do
-   not trigger =(y)a' (§8.1).
+## Implementation notes
 
-## Key Empirical Finding: Multiple Spellout
-
-In long-distance extraction through full CPs and aspectless clauses, =(y)a'
-can appear on BOTH the matrix and embedded predicates — one per Voice/Dir
-head along the successive-cyclic movement path (Table 4, §6.2).
-
-## Data Sources
-
-All data from [elkins-torrence-brown-2026], "Wh-movement paths and oblique
-extraction in Mam (Mayan)". Examples cited by section/example number.
-
+All data is from [elkins-torrence-brown-2026], "Wh-movement paths and
+oblique extraction in Mam (Mayan)", cited by section/example number.
 -/
 
 namespace Mam
 
--- ============================================================================
--- § 1: Clause Types
--- ============================================================================
+/-! ### Clause types -/
 
-/-- The three clause sizes relevant for =(y)a' distribution in Mam.
-    These correspond to different structural sizes of the verbal domain
-    ([elkins-torrence-brown-2026] §6.1, following [coon-2019] and [elkins-torrence-brown-2026]):
-
-    - `fullCP`: Full finite clause with aspect — projects Voice
-    - `aspectless`: VoiceP-sized complement (no aspect) — projects Voice
-    - `infinitival`: VP-sized complement — does NOT project Voice -/
+/-- The three clause sizes relevant for =(y)a' distribution — different
+    structural sizes of the verbal domain ([elkins-torrence-brown-2026]
+    §6.1, following [coon-2019]). -/
 inductive MamClauseType where
-  /-- Full finite clause with aspect marking. Projects the full verbal
-      spine including Voice. =(y)a' licensed on oblique extraction. -/
+  /-- Full finite clause with aspect; projects Voice, so =(y)a' is
+      licensed on oblique extraction. -/
   | fullCP
-  /-- VoiceP-sized complement: lacks aspect but projects Voice.
-      =(y)a' licensed on oblique extraction (Elkins et al. §6.1,
-      following [elkins-torrence-brown-2026]). -/
+  /-- VoiceP-sized complement: no aspect but projects Voice, so =(y)a'
+      is licensed ([elkins-torrence-brown-2026] §6.1). -/
   | aspectless
-  /-- VP-sized infinitival complement: no Voice projected.
-      =(y)a' impossible — no Voice⁰ to host [oblique] (Elkins et al. §6.1). -/
+  /-- VP-sized infinitival complement: no Voice projected, so =(y)a' is
+      impossible — no Voice⁰ to host [oblique] ([elkins-torrence-brown-2026] §6.1). -/
   | infinitival
   deriving DecidableEq, Repr
 
@@ -68,15 +67,11 @@ def MamClauseType.projectsVoice : MamClauseType → Bool
   | .aspectless => true
   | .infinitival => false
 
--- ============================================================================
--- § 2: Extraction Judgments
--- ============================================================================
+/-! ### Extraction judgments -/
 
-/-- Judgment on the status of =(y)a' in a given configuration.
-    Note: =(y)a' is an **optional** enclitic.
-    `licensed` means =(y)a' may grammatically appear; `blocked` means it may
-    not. The optionality of =(y)a' when licensed is orthogonal to its
-    distributional constraints. -/
+/-- Status of =(y)a' in a configuration — `licensed` (may grammatically
+    appear; it is an optional enclitic) or `blocked`; optionality when
+    licensed is orthogonal to the distributional constraints. -/
 inductive MamExtractionJudgment where
   /-- =(y)a' is licensed (may appear) in this configuration -/
   | licensed
@@ -84,9 +79,7 @@ inductive MamExtractionJudgment where
   | blocked
   deriving DecidableEq, Repr
 
--- ============================================================================
--- § 3: Monoclausal Data
--- ============================================================================
+/-! ### Monoclausal data -/
 
 /-- A monoclausal extraction data point: a clause type, what is extracted,
     and whether =(y)a' is licensed. -/
@@ -99,13 +92,11 @@ structure MamExtractionDatum where
   clauseType : MamClauseType
   /-- Is an oblique being extracted? -/
   obliqueExtracted : Bool
-  /-- Is the extracted oblique temporal ('when')?
-      Temporal obliques do not trigger =(y)a' even when they are
-      genuinely oblique and genuinely extracted (§8.1, ex. 56).
-      This is currently **unexplained** — the paper notes it as an
-      open question: "we leave an account of this for future work"
-      (§8.1). We encode the exemption honestly rather than hiding it
-      by setting `obliqueExtracted := false` for temporals. -/
+  /-- Is the extracted oblique temporal ('when')? Temporal obliques do not
+      trigger =(y)a' though genuinely oblique and extracted (§8.1, ex. 56)
+      — encoded honestly rather than as `obliqueExtracted := false`. The
+      paper leaves this unexplained: "we leave an account of this for
+      future work" (§8.1). -/
   isTemporal : Bool := false
   /-- Judgment on =(y)a' -/
   judgment : MamExtractionJudgment
@@ -151,15 +142,10 @@ def passiveOblExtraction : MamExtractionDatum :=
   , obliqueExtracted := true
   , judgment := .licensed }
 
-/-- Temporal oblique extraction: =(y)a' BLOCKED.
-    "When" (*b'iix taq*) does not trigger =(y)a', unlike spatial and
-    other obliques. Elkins et al. §8.1, ex. (56).
-
-    Note: temporal obliques ARE obliques and ARE extracted — we encode
-    this honestly with `obliqueExtracted := true, isTemporal := true`
-    rather than pretending they're not obliques. The exemption is
-    unexplained; the paper notes: "we leave an account of this for
-    future work" (§8.1). -/
+/-- Temporal oblique extraction: =(y)a' BLOCKED. "When" (*b'iix taq*) does
+    not trigger =(y)a', unlike spatial and other obliques (§8.1, ex. (56));
+    encoded honestly as `obliqueExtracted := true, isTemporal := true`.
+    Unexplained: "we leave an account of this for future work" (§8.1). -/
 def temporalOblExtraction : MamExtractionDatum :=
   { label := "Temporal oblique wh-extraction (no MVMT)"
   , reference := "§8.1, ex. (56)"
@@ -176,9 +162,7 @@ def monoData : List MamExtractionDatum :=
   , passiveOblExtraction
   , temporalOblExtraction ]
 
--- ============================================================================
--- § 4: Long-Distance (Biclausal) Data — Table 4
--- ============================================================================
+/-! ### Long-distance data (Table 4) -/
 
 /-- A long-distance extraction data point: tracks =(y)a' status on both
     the matrix and embedded predicates independently. This captures the
@@ -237,9 +221,7 @@ def ldEmbeddedQuestion : MamLongDistanceDatum :=
 def ldData : List MamLongDistanceDatum :=
   [ ldFullCP, ldAspectless, ldInfinitival, ldEmbeddedQuestion ]
 
--- ============================================================================
--- § 5: Per-Datum Verification (Monoclausal)
--- ============================================================================
+/-! ### Per-datum verification -/
 
 theorem trans_obl_licensed : transOblExtraction.judgment = .licensed := rfl
 theorem trans_subj_blocked : transSubjExtraction.judgment = .blocked := rfl
@@ -247,9 +229,7 @@ theorem trans_obj_blocked : transObjExtraction.judgment = .blocked := rfl
 theorem passive_obl_licensed : passiveOblExtraction.judgment = .licensed := rfl
 theorem temporal_obl_blocked : temporalOblExtraction.judgment = .blocked := rfl
 
--- ============================================================================
--- § 6: Generalizations
--- ============================================================================
+/-! ### Generalizations -/
 
 /-- Core generalization (monoclausal): =(y)a' is licensed iff the clause
     projects Voice AND a non-temporal oblique is extracted.
@@ -287,31 +267,20 @@ theorem temporal_is_oblique_but_exempt :
     temporalOblExtraction.isTemporal = true ∧
     temporalOblExtraction.judgment = .blocked := ⟨rfl, rfl, rfl⟩
 
--- ============================================================================
--- § 7: Island Sensitivity — Derived from Movement Analysis
--- ============================================================================
+/-! ### Island sensitivity -/
 
-/-- A morphological reflex of syntactic Ā-movement inherits movement's
-    locality properties. Since Ā-movement is phase-bounded (Phase
-    Impenetrability Condition; Phase.lean), any morpheme that requires
-    movement through a probe's specifier is island-sensitive.
-
-    This replaces a stipulated `Bool` with a derivation from two
-    independent properties:
-    1. The morpheme requires Ā-movement (established by the Agree analysis)
-    2. Movement is phase-bounded (from PIC)
-
-    References:
-    - [chomsky-2000] on PIC
-    - [elkins-torrence-brown-2026] §7.1 on =(y)a' island sensitivity -/
+/-- A morphological reflex of Ā-movement inherits movement's locality:
+    since Ā-movement is phase-bounded (Phase Impenetrability Condition,
+    `Phase.lean`), any morpheme requiring movement through a probe's
+    specifier is island-sensitive. Deriving island sensitivity from these
+    two properties replaces a stipulated `Bool` ([chomsky-2000] on PIC;
+    [elkins-torrence-brown-2026] §7.1). -/
 structure MovementReflex where
-  /-- The morpheme is a spellout of features valued via Agree with
-      a constituent that has undergone Ā-movement through the probe's
-      specifier. Established by the Agree analysis in §5. -/
+  /-- Spellout of features valued via Agree with an Ā-moved constituent
+      (Agree analysis, §5). -/
   requiresMovement : Bool
-  /-- Movement is bounded by phases (PIC; Phase.lean).
-      Islands are configurations where the phase edge is unavailable,
-      blocking successive-cyclic movement. -/
+  /-- Movement is phase-bounded (PIC, `Phase.lean`); islands are
+      configurations where the phase edge is unavailable. -/
   movementPhaseBounded : Bool
   deriving DecidableEq, Repr
 
@@ -336,33 +305,22 @@ def eqyaIslandSensitive : Bool := eqyaMovementReflex.islandSensitive
 theorem eqya_island_sensitive_derived :
     eqyaMovementReflex.islandSensitive = true := rfl
 
--- ============================================================================
--- § 8: Against Agent Focus (§7.2)
--- ============================================================================
+/-! ### Against Agent Focus -/
 
-/-- =(y)a' co-occurs with passive voice morphology (*-njtz*).
-    This is encoded as empirical data: `passiveOblExtraction.judgment =.licensed`.
-    The co-occurrence is *derivable* from Voice.Head field independence:
-    passive *-njtz* is conditioned by Voice.Flavor, while =(y)a' is
-    conditioned by features ([+oblique]). These are independent fields
-    in Voice.Head, so changing the flavor does not affect the features.
-    See `MinimalismOblExtraction.eqya_not_agent_focus` for the structural
-    derivation.
-    Elkins et al. §7.2, ex. (53)–(54). -/
+/-- =(y)a' co-occurs with passive morphology *-njtz* ([elkins-torrence-brown-2026]
+    §7.2, ex. (53)–(54)): passive is conditioned by `Voice.Flavor` and
+    =(y)a' by [+oblique] features — independent fields in `Voice.Head`, so
+    the flavor does not affect the features (structural derivation in
+    `MinimalismOblExtraction.eqya_not_agent_focus`). -/
 theorem passive_oblique_cooccurrence :
     passiveOblExtraction.judgment = .licensed := rfl
 
--- ============================================================================
--- § 9: Extraction Profile
--- ============================================================================
+/-! ### Extraction profile -/
 
-/-- Mam extraction strategy: dedicated morpheme strategy, marks oblique only.
-    Excludes temporal obliques (§8.1).
-
-    Language: "Mam (SJO)". Notes: Optional enclitic =(y)a' on Voice⁰/Dir⁰
-    marks oblique extraction; absent for subject (AF) and object extraction;
-    conditioned by clause size (requires Voice projection); temporal obliques
-    exempt (§8.1); island-sensitive (§7.1). -/
+/-- Mam's extraction profile: a dedicated morpheme (=(y)a') marking oblique
+    extraction only — absent for subject (AF) and object extraction,
+    conditioned by clause size, exempting temporal obliques (§8.1),
+    island-sensitive (§7.1). -/
 def mamExtractionStrategy : Extraction.ExtractionMarkingStrategy := .dedicatedMorpheme
 def mamExtractionMarkedPositions : List Extraction.ExtractionTarget := [.oblique]
 def mamExtractionDistinguishesPosition : Bool := true

@@ -1,43 +1,43 @@
 import Linglib.Syntax.Extraction
 
 /-!
-# K'iche' Extraction Morphology Fragment
-[mendes-ranero-2021] [elkins-torrence-brown-2026] [mondloch-2017]
+# K'iche' Extraction Morphology
 
 Theory-neutral data on the extraction particle *wi* (the "fronting
-particle") in K'iche' and Kaqchikel (K'ichean Mayan).
-
-## The Phenomenon
-
+particle") in K'iche' and Kaqchikel (K'ichean Mayan), following
+[mendes-ranero-2021], [elkins-torrence-brown-2026], and [mondloch-2017].
 When a low adjunct (locative, instrumental, comitative, indirect object)
-undergoes Ā-extraction in K'ichean languages, the particle *wi* appears
-as a verbal enclitic. M&R analyze *wi* as the result of Chain Reduction
-via Substitution: the lower copy of the moved adjunct (bearing [APPL])
-is substituted by *wi* rather than being deleted.
+undergoes Ā-extraction, *wi* appears as a verbal enclitic;
+[mendes-ranero-2021] analyze it as Chain Reduction via Substitution,
+with the lower copy of the moved adjunct (bearing [APPL]) substituted by
+*wi* rather than deleted.
 
-## Key Properties
+## Main declarations
 
-1. **Trigger**: Low adjuncts only — those introduced in Spec,ApplP
-   (instrumentals, locatives, comitatives, indirect objects).
-   Temporal and reason adjuncts do NOT trigger *wi*.
-2. **Obligatoriness**: Obligatory in K'iche', optional in Patzún
-   Kaqchikel, absent in some Kaqchikel dialects (e.g. Tecpán).
-3. **Fronting Particle Generalization** (definition 5 of M&R, first
-   observed by Can Pixabaj 2015): In long-distance extraction from a
-   single embedded clause, the presence of *wi* in the matrix clause
-   is contingent on the presence of an overt complementizer in the
-   embedded clause. Embedded CPs yield *wi* on both predicates;
-   embedded AspPs yield *wi* only on the embedded predicate.
-4. **Not a pronoun, applicative head, movement trigger, or AF morpheme**
-   (M&R §4 rejects all four alternative analyses).
+* `Kiche.KicheExtractionDatum`, `Kiche.allData`: the *wi*-distribution
+  data points.
+* `Kiche.KicheLongDistanceDatum`, `Kiche.ldData`: long-distance
+  extraction data across embedded CP vs AspP.
+* `Kiche.fronting_particle_generalization`: matrix *wi* is contingent on
+  an overt embedded complementizer.
+* `Kiche.kicheanExtractionStrategy`: the extraction profile.
 
+## Implementation notes
+
+*wi* triggers only on low adjuncts introduced in Spec,ApplP
+(instrumentals, locatives, comitatives, indirect objects); temporal and
+reason adjuncts do not trigger it. It is obligatory in K'iche', optional
+in Patzún Kaqchikel, and absent in some Kaqchikel dialects (e.g.
+Tecpán). [mendes-ranero-2021] §4 argues *wi* is not a pronoun,
+applicative head, movement trigger, or AF morpheme. The Fronting
+Particle Generalization ([mendes-ranero-2021] definition (5), first
+observed by Can Pixabaj 2015) is stated and checked at
+`fronting_particle_generalization`.
 -/
 
 namespace Kiche
 
--- ============================================================================
--- § 1: Extracted Argument Types
--- ============================================================================
+/-! ### Extracted argument types -/
 
 /-- Types of extracted arguments relevant for *wi* distribution. -/
 inductive ExtractedArgType where
@@ -54,9 +54,7 @@ def ExtractedArgType.isOblique : ExtractedArgType → Bool
   | .obliqueSpatial | .obliqueTemporal | .obliqueReason | .obliqueInstrumental => true
   | .subject | .object => false
 
--- ============================================================================
--- § 2: *wi* Distribution Data
--- ============================================================================
+/-! ### *wi* distribution data -/
 
 /-- A K'iche' extraction data point: what is extracted and whether *wi*
     appears after the verb. -/
@@ -67,8 +65,7 @@ structure KicheExtractionDatum where
   wiLicensed : Bool
   deriving Repr
 
-/-- Spatial oblique extraction: *wi* licensed.
-    "Where did you go yesterday?" — *wi* appears at extraction site.
+/-- Spatial oblique extraction ("Where did you go yesterday?"): *wi* licensed.
     [mondloch-2017] Lesson 14; [mendes-ranero-2021] §2, ex. (9a). -/
 def spatialOblExtraction : KicheExtractionDatum :=
   { label := "Spatial oblique extraction (wi)"
@@ -76,18 +73,16 @@ def spatialOblExtraction : KicheExtractionDatum :=
   , extractedType := .obliqueSpatial
   , wiLicensed := true }
 
-/-- Instrumental oblique extraction: *wi* licensed.
-    "With what did they eat their food?" — *wi* at extraction site.
-    [mendes-ranero-2021] §2, ex. (9b). -/
+/-- Instrumental oblique extraction ("With what did they eat their food?"):
+    *wi* licensed. [mendes-ranero-2021] §2, ex. (9b). -/
 def instrumentalOblExtraction : KicheExtractionDatum :=
   { label := "Instrumental oblique extraction (wi)"
   , reference := "Mendes & Ranero 2021, §2, ex. (9b)"
   , extractedType := .obliqueInstrumental
   , wiLicensed := true }
 
-/-- Temporal oblique extraction: *wi* NOT licensed.
-    "When did you eat beans?" — no *wi*. Parallel to Mam: temporal
-    obliques are exempt in both language groups.
+/-- Temporal oblique extraction ("When did you eat beans?"): *wi* NOT
+    licensed — parallel to Mam, where temporal obliques are also exempt.
     [mendes-ranero-2021] §2, ex. (12c). -/
 def temporalOblExtraction : KicheExtractionDatum :=
   { label := "Temporal oblique extraction (no wi)"
@@ -95,27 +90,24 @@ def temporalOblExtraction : KicheExtractionDatum :=
   , extractedType := .obliqueTemporal
   , wiLicensed := false }
 
-/-- Reason oblique extraction: *wi* NOT licensed.
-    "Why did Juan work?" — no *wi*. KEY CONTRAST with Mam: SJO
-    =(y)a' IS licensed with reason extraction.
-    [mendes-ranero-2021] §2 (adapted from Elkins et al. Table 3). -/
+/-- Reason oblique extraction ("Why did Juan work?"): *wi* NOT licensed —
+    key contrast with Mam, where SJO =(y)a' IS licensed with reason
+    extraction. [mendes-ranero-2021] §2 (adapted from Elkins et al. Table 3). -/
 def reasonOblExtraction : KicheExtractionDatum :=
   { label := "Reason oblique extraction (no wi)"
   , reference := "Mendes & Ranero 2021, §2; Elkins et al. Table 3"
   , extractedType := .obliqueReason
   , wiLicensed := false }
 
-/-- Subject extraction: *wi* NOT licensed (Agent Focus instead).
-    "Who bought it?" — AF morphology *-Vk* instead of *wi*.
-    [mendes-ranero-2021] §2, item (6c). -/
+/-- Subject extraction ("Who bought it?"): *wi* NOT licensed — Agent Focus
+    morphology *-Vk* appears instead. [mendes-ranero-2021] §2, item (6c). -/
 def subjectExtraction : KicheExtractionDatum :=
   { label := "Subject extraction (AF, no wi)"
   , reference := "Mendes & Ranero 2021, §2, item (6c)"
   , extractedType := .subject
   , wiLicensed := false }
 
-/-- Object extraction: *wi* NOT licensed.
-    "What did you buy?" — no *wi*.
+/-- Object extraction ("What did you buy?"): *wi* NOT licensed.
     [elkins-torrence-brown-2026]. -/
 def objectExtraction : KicheExtractionDatum :=
   { label := "Object extraction (no wi)"
@@ -132,15 +124,12 @@ def allData : List KicheExtractionDatum :=
   , subjectExtraction
   , objectExtraction ]
 
--- ============================================================================
--- § 3: Generalizations
--- ============================================================================
+/-! ### Generalizations -/
 
 /-- Among the formalized data points, *wi* is licensed exactly for
-    spatial and instrumental obliques. The full set of *wi*-triggering
-    obliques includes comitatives and indirect objects as well
-    ([mendes-ranero-2021] §2; [elkins-torrence-brown-2026]
-    Table 3), but those are not yet formalized here. -/
+    spatial and instrumental obliques; the full trigger set also includes
+    comitatives and indirect objects ([mendes-ranero-2021] §2;
+    [elkins-torrence-brown-2026] Table 3), not yet formalized here. -/
 theorem wi_subset_of_obliques :
     allData.all (λ d =>
       d.wiLicensed == (d.extractedType == .obliqueSpatial ||
@@ -156,15 +145,11 @@ theorem wi_not_core_args :
     nor =(y)a' (Mam) appears with temporal oblique extraction. -/
 theorem temporal_exempt : temporalOblExtraction.wiLicensed = false := rfl
 
--- ============================================================================
--- § 4: Embedded Clause Types and the Fronting Particle Generalization
---      ([mendes-ranero-2021], definition (5); Can Pixabaj 2015)
--- ============================================================================
+/-! ### Embedded clause types and the Fronting Particle Generalization -/
 
-/-- Embedded clause types relevant for long-distance *wi* distribution.
-    The crucial distinction is whether the embedded clause has an overt
-    complementizer (= CP) or not (= AspP, a structurally reduced clause).
-    [mendes-ranero-2021] §2, exx. (17)–(20), (34)–(37). -/
+/-- Embedded clause types for long-distance *wi* distribution: whether the
+    embedded clause has an overt complementizer (CP) or not (a structurally
+    reduced AspP). [mendes-ranero-2021] §2, exx. (17)–(20), (34)–(37). -/
 inductive KicheEmbeddedClauseType where
   /-- Full CP with overt complementizer *chi*. -/
   | cp
@@ -208,36 +193,24 @@ def ldFromAspP : KicheLongDistanceDatum :=
 
 def ldData : List KicheLongDistanceDatum := [ldFromCP, ldFromAspP]
 
-/-- **The Fronting Particle Generalization** ([mendes-ranero-2021],
-    definition (5); first discussed by Can Pixabaj 2015):
-
-    In long-distance A'-extraction of low adjuncts from a single
-    embedded clause, the presence of *wi* in the matrix clause is
-    contingent on the presence of an overt complementizer in the
-    embedded clause.
-
-    Structural explanation (M&R §3): C⁰ is a phase head, so when the
-    embedded clause is a CP, the extracted adjunct must stop over in
-    the embedded Spec,CP. Chain Reduction via Substitution applies to
-    this intermediate copy, yielding *wi* on the matrix predicate. When
-    the embedded clause is an AspP (no C⁰, no phase boundary), the
-    adjunct moves directly to the matrix Spec,CP — no intermediate copy,
-    no matrix *wi*. -/
+/-- The Fronting Particle Generalization ([mendes-ranero-2021] definition
+    (5); first discussed by Can Pixabaj 2015): in long-distance
+    Ā-extraction of a low adjunct from a single embedded clause, matrix
+    *wi* is contingent on an overt complementizer in the embedded clause.
+    Structurally ([mendes-ranero-2021] §3), C⁰ is a phase head — an
+    embedded CP forces a stopover in embedded Spec,CP whose intermediate
+    copy undergoes Chain Reduction via Substitution (matrix *wi*), while an
+    embedded AspP has no phase boundary and the adjunct moves directly to
+    matrix Spec,CP (no matrix *wi*). -/
 theorem fronting_particle_generalization :
     ldData.all (λ d => d.embeddedType.hasComp == d.wiOnMatrix) = true := by
   decide
 
--- ============================================================================
--- § 5: Extraction Profile
--- ============================================================================
+/-! ### Extraction profile -/
 
-/-- K'ichean extraction profile (language "K'ichean (K'iche', Kaqchikel,
-    Tz'utujil)"): *wi* marks oblique extraction via copy spellout at the
-    foot of the Ā-chain. Notes: Fronting particle wi (Chain Reduction via
-    Substitution); triggered by low adjuncts (spatial, instrumental, etc.);
-    temporal and reason exempt; obligatory in K'iche', optional in Patzún
-    Kaqchikel; FPG: matrix wi contingent on overt complementizer in
-    embedded clause. -/
+/-- K'ichean extraction profile: *wi* marks oblique extraction via copy
+    spellout at the foot of the Ā-chain, distinguishing obliques from core
+    arguments ([mendes-ranero-2021]). -/
 def kicheanExtractionStrategy : Extraction.ExtractionMarkingStrategy := .dedicatedMorpheme
 def kicheanExtractionMarkedPositions : List Extraction.ExtractionTarget := [.oblique]
 def kicheanExtractionDistinguishesPosition : Bool := true

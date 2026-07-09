@@ -6,77 +6,51 @@ import Linglib.Fragments.Mayan.Params
 import Linglib.Syntax.Extraction
 
 /-!
-# K'iche' Agreement Fragment [mondloch-2017]
+# K'iche' Agreement Fragment
 
 Theory-neutral typological metadata for K'iche' (K'ichean Mayan)
-agreement morphology, following [mondloch-2017] Lessons 4, 7–8,
-9, 15. K'iche' is uniformly ergative-absolutive (Set B = ABS, Set A
-= ERG); unlike its sister Kaqchikel it has no construction-specific
+agreement morphology, following [mondloch-2017] Lessons 4, 7–8, 9, 15.
+K'iche' has ergative-absolutive alignment realized through two verbal
+agreement paradigms: Set B (absolutive) cross-references intransitive S
+and transitive P and appears between the aspect marker and the root;
+Set A (ergative) cross-references transitive A, appears between the
+object marker and the root, and is identical to the possessive prefixes.
+Unlike its sister Kaqchikel, K'iche' has no construction-specific
 inverted alignment.
 
-## The System
+## Main declarations
 
-K'iche' has an **ergative-absolutive** alignment system realized through
-two agreement paradigms on the verb:
+* `Kiche.PhiFeatures`: person/number/formality bundles, with `HasPerson`
+  and `HasNumber` instances and the informal shorthand `Kiche.phi`.
+* `Kiche.setBMarker`, `Kiche.setAPreC`, `Kiche.setAPreV`: the Set B
+  (absolutive) and Set A (ergative, pre-consonantal / pre-vocalic)
+  exponents.
+* `Kiche.ArgPosition.agreementSet`, `Kiche.ArgPosition.case`: the
+  agreement set and case each argument position triggers.
+* `Kiche.independentPronoun`: the free personal pronouns.
+* `Kiche.setAExponent`, `Kiche.setBExponent`: canonical φ-cell exponent
+  tables for cross-Mayan consumption.
+* `Kiche.extractionStrategy`: the Agent-Focus extraction profile.
 
-- **Set B** (ABS): absolutive markers that cross-reference the sole
-  argument of intransitives (S) and the object of transitives (P).
-  These appear between the aspect marker and the verb root.
-- **Set A** (ERG): ergative markers that cross-reference the subject
-  of transitives (A). These appear between the object marker and the
-  root. Set A markers are identical to the possessive pronouns used
-  before consonant-initial nouns (Lesson 7).
+## Implementation notes
 
-## Paradigms
-
-### Set B (Absolutive) — Lesson 9
-
-| Person | Singular | Plural |
-|--------|----------|--------|
-| 1      | in-      | oj-    |
-| 2      | at-      | ix-    |
-| 3      | Ø-       | ee-    |
-| 2.FORM | la (postverbal) | alaq (postverbal) |
-
-### Set A (Ergative, preconsonantal) — Lessons 7, 15
-
-| Person | Singular | Plural |
-|--------|----------|--------|
-| 1      | nu‑ / in‑  | qa-    |
-| 2      | a-       | i-     |
-| 3      | u-       | ki-    |
-| 2.FORM | la (postverbal) | alaq (postverbal) |
-
-### Set A (Ergative, prevocalic) — Lesson 8
-
-| Person | Singular | Plural |
-|--------|----------|--------|
-| 1      | w-       | q-     |
-| 2      | aw-      | iw-    |
-| 3      | r-       | k-     |
-| 2.FORM | la (postverbal) | alaq (postverbal) |
-
-## Alignment
-
-The alignment is ergative-absolutive: Set B groups S and P together
-(both trigger the same paradigm), while A triggers a distinct paradigm
-(Set A). This contrasts with Mam, which shows morphologically
-**tripartite** alignment (S, A, and P each trigger distinct patterns;
-[scott-2023]).
-
-## Formal address
-
-K'iche' has two levels of formality for 2nd person: informal and
-formal. The formal forms (laal SG, alaq PL) are syntactically
-postverbal and do not participate in the prefix paradigm.
+The alignment is ergative-absolutive: Set B groups S and P (both trigger
+the same paradigm) while A triggers Set A. This contrasts with Mam,
+which is morphologically tripartite (S, A, P each distinct;
+[scott-2023]). K'iche' has two 2nd-person formality levels; the formal
+forms (laal SG, alaq PL) are syntactically postverbal and pattern
+outside the prefix paradigm. K'iche' is HIGH-ABS (Set B pre-stem on
+Infl), and its case wiring reuses `Mayan.ergCaseKiche` (from
+`Alignment.ergative`); the canonical φ-cell exponent tables key on
+`Agreement.Cell` for cross-Mayan consumption. Agent-Focus Antipassive
+marks A-extraction with the voice marker *-n*, shared with the
+Absolutive Antipassive ([mondloch-2017] Lesson 22).
 -/
 
 
 namespace Kiche
 
--- ============================================================================
--- § 1: Person/Number/Formality Features
--- ============================================================================
+/-! ### Person, number, and formality features -/
 
 /-- Formality level for 2nd person. K'iche'-specific: the formal
     forms (laal SG, alaq PL) are postverbal and pattern outside the
@@ -103,9 +77,7 @@ instance : HasPerson PhiFeatures := ⟨fun φ => some φ.person⟩
 abbrev phi (p : Person) (n : Number) : PhiFeatures :=
   ⟨p, n, .informal⟩
 
--- ============================================================================
--- § 2: Set B (Absolutive) Markers — Lesson 9
--- ============================================================================
+/-! ### Set B (absolutive) markers -/
 
 /-- Set B (absolutive) agreement markers.
     These are verbal prefixes (or postverbal particles for formal forms)
@@ -128,9 +100,7 @@ def setBMarker : PhiFeatures → String
   | ⟨.third,  _, .informal⟩   => "ee-"
   | ⟨_, _, .formal⟩            => "Ø"
 
--- ============================================================================
--- § 3: Set A (Ergative) Markers — Lessons 7, 15
--- ============================================================================
+/-! ### Set A (ergative) markers -/
 
 /-- Set A (ergative) markers before consonant-initial roots.
     These cross-reference A (transitive subject) and are identical to
@@ -170,9 +140,7 @@ def setAPreV : PhiFeatures → String
   | ⟨.third,  _, .informal⟩   => "k-"
   | ⟨_, _, .formal⟩            => "Ø"
 
--- ============================================================================
--- § 4: Morphological Positions (Prop-valued)
--- ============================================================================
+/-! ### Morphological positions -/
 
 /-- Is a Set B marker a prefix (appearing before the root) or a
     postverbal particle? Formal forms are postverbal; all others
@@ -189,9 +157,7 @@ def SetAIsPrefix (φ : PhiFeatures) : Prop := φ.formality = .informal
 instance (φ : PhiFeatures) : Decidable (SetAIsPrefix φ) :=
   inferInstanceAs (Decidable (φ.formality = .informal))
 
--- ============================================================================
--- § 5: Argument Positions and Alignment (substrate-anchored)
--- ============================================================================
+/-! ### Argument positions and alignment -/
 
 /-- Argument positions in a K'iche' clause. Aliased to the canonical
     `Features.Prominence.ArgumentRole` (S/A/P/R/T) so cross-Mayan and
@@ -222,9 +188,7 @@ def ArgPosition.agreementSet : ArgPosition → AgreementSet
 abbrev ArgPosition.case : ArgPosition → Case :=
   Mayan.ergCaseKiche
 
--- ============================================================================
--- § 6: Alignment Theorems
--- ============================================================================
+/-! ### Alignment theorems -/
 
 /-- K'iche' groups S and P together (both trigger Set B):
     ergative-absolutive alignment. -/
@@ -247,9 +211,7 @@ theorem erg_abs_pattern :
 theorem kiche_not_tripartite :
     ArgPosition.case .S = ArgPosition.case .P := rfl
 
--- ============================================================================
--- § 7: Set B Per-Cell Verification
--- ============================================================================
+/-! ### Set B per-cell verification -/
 
 /-- 1SG absolutive: in- -/
 theorem setB_1sg : setBMarker (phi .first .singular) = "in-" := rfl
@@ -268,9 +230,7 @@ theorem setB_2sg_form : setBMarker ⟨.second, .singular, .formal⟩ = "la" := r
 /-- 2PL.FORM: alaq (postverbal) -/
 theorem setB_2pl_form : setBMarker ⟨.second, .plural, .formal⟩ = "alaq" := rfl
 
--- ============================================================================
--- § 8: Set A Per-Cell Verification
--- ============================================================================
+/-! ### Set A per-cell verification -/
 
 /-- 1SG ergative (preC): nu‑ or in‑ -/
 theorem setA_1sg : setAPreC (phi .first .singular) = "nu-/in-" := rfl
@@ -292,9 +252,7 @@ theorem setA_preV_2sg : setAPreV (phi .second .singular) = "aw-" := rfl
 /-- 3SG ergative (preV): r- -/
 theorem setA_preV_3sg : setAPreV (phi .third .singular) = "r-" := rfl
 
--- ============================================================================
--- § 9: Set A / Set B Identity (Possessives = Set A)
--- ============================================================================
+/-! ### Possessives equal Set A -/
 
 /-- Set A markers are identical to possessive pronouns: the transitive
     subject markers (Lesson 15) are the same forms as the possessive
@@ -309,9 +267,7 @@ theorem possessives_equal_setA :
     setAPreC (phi .third .plural) = "ki-" :=
   ⟨rfl, rfl, rfl, rfl⟩
 
--- ============================================================================
--- § 10: Formal Markers Are Postverbal
--- ============================================================================
+/-! ### Formal markers are postverbal -/
 
 /-- All informal Set B markers are prefixes. -/
 theorem setB_informal_prefix :
@@ -329,9 +285,7 @@ theorem setB_formal_postverbal :
     ¬ SetBIsPrefix ⟨.second, .plural, .formal⟩ :=
   ⟨by decide, by decide⟩
 
--- ============================================================================
--- § 11: Independent Pronouns — Lesson 4
--- ============================================================================
+/-! ### Independent pronouns -/
 
 /-- Independent (free) personal pronouns. These are used in nonverbal
     sentences and as emphatic/contrastive pronouns in verbal sentences.
@@ -363,9 +317,7 @@ theorem pronoun_setB_correspondence :
     independentPronoun (phi .second .plural) = "ix"  :=
   ⟨rfl, rfl, rfl, rfl⟩
 
--- ============================================================================
--- § 12: Cross-Mayan Canonical Wrappers
--- ============================================================================
+/-! ### Cross-Mayan canonical wrappers -/
 
 open Mayan (MarkerLinearity ExponentTable)
 open Agreement
@@ -373,7 +325,7 @@ open Agreement
 /-- K'iche' is HIGH-ABS: Set B markers appear pre-stem on Infl. -/
 def absPosition : Mayan.ABSPosition := .high
 
-/-- Set A linearity: prefixal (per Mondloch Lessons 7-8). -/
+/-- Set A linearity: prefixal ([mondloch-2017] Lessons 7–8). -/
 def setALinearity : MarkerLinearity := .prefixal
 
 /-- Set B linearity: prefixal (HIGH-ABS K'ichean morphology). -/
@@ -404,15 +356,13 @@ def setBExponent : ExponentTable :=
     pan-Mayan: see Mam exception via `MayanLang.isStandard`. -/
 theorem p3sg_abs_null : setBExponent.realize (.pn .third .Sing) = some "∅" := rfl
 
-/-- K'iche''s extraction profile (language "K'iche'"): Agent-Focus
-    Antipassive is productive ([mondloch-2017] Lesson 22, with parallel
-    coverage at Lessons 30 + 33 for radical TV and perfect aspect). The
-    voice marker is *-n* (shared morphologically with the Absolutive
-    Antipassive of Lesson 21; the AF vs absolutive-antipassive alternation
-    is *syntactic* — both arguments overt for AF, object suppressed for
-    absolutive antipassive — not morphological). HIGH-ABS K'ichean,
-    structurally analogous to Kaqchikel. Notes: AF (-n) for A-extraction;
-    HIGH-ABS K'ichean (Mondloch 2017 Lesson 22). -/
+/-- K'iche' extraction profile: Agent-Focus Antipassive marks A-extraction
+    ([mondloch-2017] Lesson 22; also Lessons 30, 33 for radical transitives
+    and perfect aspect). The voice marker *-n* is shared with the
+    Absolutive Antipassive (Lesson 21); the two differ syntactically — both
+    arguments overt under AF, object suppressed under the antipassive — not
+    morphologically. HIGH-ABS K'ichean, structurally analogous to
+    Kaqchikel. -/
 def extractionStrategy : Extraction.ExtractionMarkingStrategy := .dedicatedMorpheme
 def extractionMarkedPositions : List Extraction.ExtractionTarget := [.subject]
 def extractionDistinguishesPosition : Bool := true

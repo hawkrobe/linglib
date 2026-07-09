@@ -5,65 +5,52 @@ import Linglib.Fragments.Mayan.Params
 
 /-!
 # Q'anjob'al Agent Focus and Extraction Fragment
-[coon-mateo-pedro-preminger-2014]
 
-Morphological data on Q'anjob'al (Q'anjob'alan, Mayan) related to
-extraction asymmetries, Agent Focus, and the Crazy Antipassive.
+Morphological data on Q'anjob'al (Q'anjob'alan, Mayan) extraction
+asymmetries, Agent Focus, and the Crazy Antipassive, following
+[coon-mateo-pedro-preminger-2014]. Q'anjob'al shows an extraction
+asymmetry: the intransitive subject (S) and transitive object (P)
+extract freely, but the transitive subject (A) cannot be extracted
+without Agent Focus. Agent Focus replaces the regular transitive form
+with a verb bearing the AF suffix *-on*, the intransitive status suffix
+*-i* (not transitive *-V'*), and no Set A agreement — used for
+*wh*-questions, focus, and relativization targeting the agent.
 
-## Person Morphology (table (13))
+## Main declarations
 
-Q'anjob'al has two agreement paradigms head-marked on the predicate:
-- **Set A (ERG)**: prefixes with pre-consonantal and pre-vocalic allomorphs
-- **Set B (ABS)**: suffixes; 3rd person is null (∅)
+* `Qanjobal.StatusSuffix` with `.form`: the ITV and TV status suffixes.
+* `Qanjobal.VerbMorphology` with `regularTransitive`, `agentFocusForm`:
+  the AF-suffix, status-suffix, and Set A properties of a verb form.
+* `Qanjobal.VerbMorphology.toMayanVerbForm`: projection to the pan-Mayan
+  `Mayan.VerbForm` for cross-Mayan typology.
+* `Qanjobal.crazyAntipassiveForm`: the Crazy Antipassive, morphologically
+  identical to Agent Focus.
+* `Qanjobal.PersonRestriction` with `.requiresAF`, `.requiresCrazyAP`:
+  the 3rd-person restriction on Agent Focus.
+* `Qanjobal.extractionStrategy`: the AF-based extraction profile.
 
-## Status Suffixes (table (14))
+## Implementation notes
 
-The verb stem's final suffix encodes transitivity:
-- Intransitive: *-i* (ITV)
-- Transitive: *-V'* (TV)
-
-These surface only phrase-finally; non-final forms omit them.
-
-## Morpheme Order (HIGH-ABS)
-
-Template: ASP - ABS - ERG - ROOT - (DERIV) - SUFFIX
-
-Absolutive immediately follows the aspect marker (pre-stem position),
-confirming Q'anjob'al as a HIGH-ABS language.
-
-## Extraction Asymmetries
-
-- S (intransitive subject): extracts freely
-- P (transitive object): extracts freely
-- A (transitive subject): **banned** without Agent Focus
-
-## Agent Focus
-
-AF suffix *-on* attaches to the verb stem. The verb carries the
-intransitive status suffix *-i* (not transitive *-V'*). Absolutive
-agreement co-indexes the notional object (not the subject). Used
-for *wh*-questions, focus, and relativization targeting the agent.
-
-## Crazy Antipassive
-
-The same *-on* morpheme appears in non-finite embedded transitives:
-`Chi uj [hin y-il-on-i] ix Malin` 'Maria can see me.'
-Analyzed as the same case-assigning mechanism in environments where
-Infl⁰ is absent.
+Q'anjob'al head-marks two agreement paradigms on the predicate: Set A
+(ERG) prefixes with pre-consonantal and pre-vocalic allomorphs, and Set
+B (ABS) suffixes with null 3rd person (∅); the tables live in
+`Qanjobal/Agreement.lean`. The verb stem's final suffix encodes
+transitivity (intransitive ITV *-i*, transitive TV *-V'*) and surfaces
+only phrase-finally. Morpheme order is ASP-ABS-ERG-ROOT-(DERIV)-SUFFIX,
+with the absolutive immediately after the aspect marker (pre-stem),
+confirming Q'anjob'al as HIGH-ABS. In Agent Focus, absolutive agreement
+co-indexes the notional object rather than the subject. The Crazy
+Antipassive reuses the same *-on* morpheme in non-finite embedded
+transitives (where Infl⁰ is absent), analyzed as the same case-assigning
+mechanism. Tables and examples cite [coon-mateo-pedro-preminger-2014]
+tables (13) and (14).
 -/
 
 namespace Qanjobal
 
 open Minimalist
 
--- Person-number paradigm (keyed by the canonical φ-cell `Agreement.Cell`)
--- and Set A / Set B exponent tables (`setAExponent`, `setAExponentPreC`,
--- `setAExponentPreV`, `setBExponent`) live in Qanjobal/Agreement.lean —
--- agreement morphology is general, not AF-specific.
-
--- ============================================================================
--- § 1: Status Suffixes
--- ============================================================================
+/-! ### Status suffixes -/
 
 /-- Verb status suffixes encode transitivity. Surface only phrase-finally. -/
 inductive StatusSuffix where
@@ -81,9 +68,7 @@ def StatusSuffix.form : StatusSuffix → String
 -- `Extraction.Marks extractionMarkedPositions .subject` (subject = .agent's
 -- default position per `Extraction.ArgumentRole.defaultPosition`).
 
--- ============================================================================
--- § 2: Agent Focus Construction
--- ============================================================================
+/-! ### Agent Focus construction -/
 
 /-- Morphological properties of a Q'anjob'al verb form. -/
 structure VerbMorphology where
@@ -129,10 +114,9 @@ theorem af_permits_extraction :
     agentFocusForm.permitsAgentExtraction = true ∧
     regularTransitive.permitsAgentExtraction = false := ⟨rfl, rfl⟩
 
-/-- Project Q'anjob'al's `VerbMorphology` (which carries the
-    Q'anjob'al-specific `statusSuffix` field) down to the pan-Mayan
-    `Mayan.VerbForm` for cross-Mayan typology theorems. The
-    `hasAFSuffix` flag is the discriminator: AF morphology = AF form. -/
+/-- Project `VerbMorphology` down to the pan-Mayan `Mayan.VerbForm` for
+    cross-Mayan typology; the `hasAFSuffix` flag discriminates AF form
+    from transitive. -/
 def VerbMorphology.toMayanVerbForm (v : VerbMorphology) : Mayan.VerbForm :=
   if v.hasAFSuffix then .agentFocus else .transitive
 
@@ -150,9 +134,7 @@ theorem hasSetA_consistent_with_projection :
     regularTransitive.toMayanVerbForm.hasSetA = regularTransitive.hasSetA :=
   ⟨rfl, rfl⟩
 
--- ============================================================================
--- § 3: Crazy Antipassive
--- ============================================================================
+/-! ### Crazy Antipassive -/
 
 /-- The Crazy Antipassive uses the same *-on* morpheme as AF, but in
     non-finite embedded transitives rather than extraction contexts. Both
@@ -169,9 +151,7 @@ def crazyAntipassiveForm : VerbMorphology :=
 theorem crazy_ap_is_af_form :
     crazyAntipassiveForm = agentFocusForm := rfl
 
--- ============================================================================
--- § 4: Person Restriction on AF
--- ============================================================================
+/-! ### Person restriction on Agent Focus -/
 
 /-- In Q'anjob'al, AF is restricted to clauses with **3rd person** agents.
     1st and 2nd person agents use the regular transitive form even when
@@ -210,9 +190,7 @@ theorem crazy_ap_all_persons :
     PersonRestriction.second.requiresCrazyAP = true ∧
     PersonRestriction.third.requiresCrazyAP = true := ⟨rfl, rfl, rfl⟩
 
--- ============================================================================
--- § 5: Extraction Profile
--- ============================================================================
+/-! ### Extraction profile -/
 
 /-- Q'anjob'al's extraction data: dedicated AF morphology (*-on*) marks
     3rd person agent (subject) extraction ([coon-mateo-pedro-preminger-2014]). -/

@@ -3,14 +3,23 @@ import Linglib.Features.Prominence
 
 /-!
 # Shared Tseltalan Infrastructure
-[aissen-polian-2025] [polian-2013]
 
-Descriptive types shared across the Tseltalan subgroup (Tsotsil, Tseltal).
-Both languages share agreement paradigm assignment and grammatical function
-classification. They differ in agreement exponents and Set B marker
-position (Tsotsil: prefixal/suffixal; Tseltal: consistently suffixal).
+Descriptive types shared across the Tseltalan subgroup, Tsotsil and Tseltal
+([aissen-polian-2025]; [polian-2013]). Both languages share agreement
+paradigm assignment and grammatical-function classification; they differ in
+agreement exponents and Set B marker position (Tsotsil prefixal or suffixal,
+Tseltal consistently suffixal).
 
-## Agreement System (Table 1 of [aissen-polian-2025])
+## Main declarations
+
+* `Mayan.Tseltalan.GramFunction` with `.markerSet` and `.toArgumentRole?`:
+  the shared Split-S grammatical functions, their Set A / Set B assignment,
+  and projection to the canonical `ArgumentRole`.
+* `Mayan.Tseltalan.absPosition`: the subgroup-level LOW-ABS constant.
+
+## Implementation notes
+
+Agreement system ([aissen-polian-2025] Table 1):
 
 | Form   | Function | Tseltal  | Tsotsil          |
 |--------|----------|----------|------------------|
@@ -22,24 +31,11 @@ namespace Mayan.Tseltalan
 
 open Mayan (MarkerSet)
 
--- ============================================================================
--- § 1: Grammatical Functions
--- ============================================================================
+/-! ### Grammatical functions -/
 
-/-- Grammatical functions in Tseltalan, determining which agreement
-    marker set cross-references each argument.
-
-    These are traditional Mayanist descriptive categories
-    (footnote 9 of [aissen-polian-2025]).
-
-    | Function                           | Marker Set |
-    |------------------------------------|------------|
-    | A (transitive subject)             | Set A      |
-    | S_A (agentive intransitive subject)| Set B      |
-    | S_O (patientive intransitive subj) | Set B      |
-    | O (transitive/ditransitive object) | Set B      |
-    | G (applied argument)               | Set B      |
-    | Possessor (genitive)               | Set A      | -/
+/-- Grammatical functions in Tseltalan — traditional Mayanist descriptive
+    categories (footnote 9 of [aissen-polian-2025]) — determining which
+    agreement marker set cross-references each argument. -/
 inductive GramFunction where
   | A    -- transitive subject (agent)
   | S_A  -- intransitive subject (agentive)
@@ -49,9 +45,9 @@ inductive GramFunction where
   | psr  -- possessor (genitive)
   deriving DecidableEq, Repr
 
-/-- The marker set that cross-references each grammatical function.
-    Set A = ergative/genitive; Set B = absolutive.
-    Shared across Tseltalan ([aissen-polian-2025], [polian-2013]). -/
+/-- The marker set cross-referencing each grammatical function (Set A =
+    ergative/genitive, Set B = absolutive); shared across Tseltalan
+    ([aissen-polian-2025], [polian-2013]). -/
 def GramFunction.markerSet : GramFunction → MarkerSet
   | .A   => .setA
   | .S_A => .setB
@@ -60,9 +56,7 @@ def GramFunction.markerSet : GramFunction → MarkerSet
   | .G   => .setB
   | .psr => .setA
 
--- ============================================================================
--- § 2: Shared Theorems
--- ============================================================================
+/-! ### Shared theorems -/
 
 /-- Ergative-genitive homophony: Set A cross-references both transitive
     agents and possessors. A pan-Mayan pattern. -/
@@ -76,40 +70,25 @@ theorem abs_uniform :
     GramFunction.O.markerSet = .setB ∧
     GramFunction.G.markerSet = .setB := ⟨rfl, rfl, rfl, rfl⟩
 
--- ============================================================================
--- § 3: Absolutive Position (LOW-ABS)
--- ============================================================================
+/-! ### Absolutive position (LOW-ABS) -/
 
-/-- Tseltalan absolutive morphemes appear in low (post-stem) position.
-    Both Tsotsil and Tseltal share this LOW-ABS classification — see
-    `Tsotsil.absPosition` and `Tseltal.absPosition`
-    for the per-language definitions, which are definitionally equal to this
-    subgroup-level constant. The LOW-ABS classification refers to the
-    structural position of the licensing head, not the linear position
-    of every Set B exponent (which varies by language and context).
+/-- Tseltalan absolutive morphemes appear in low (post-stem) position; both
+    Tsotsil and Tseltal inherit this LOW-ABS constant. LOW-ABS refers to the
+    structural position of the licensing head, not the linear position of
+    every Set B exponent (which varies by language and context).
     [aissen-polian-2025] p. 97; [polian-2013]. -/
 def absPosition : Mayan.ABSPosition := .low
 
--- ============================================================================
--- § 4: Projection to Canonical ArgumentRole
--- ============================================================================
+/-! ### Projection to canonical ArgumentRole -/
 
-/-- Project the Tseltalan-specific Split-S grammatical function down to
-    the canonical pan-linguistic `ArgumentRole` (S/A/P/R/T) used across
-    linglib. The projection is **partial** (`Option`-valued):
-
-    - `.A → .A`, `.O → .P`, `.G → .R`: verbal arguments map cleanly.
-    - `.S_A`, `.S_O → .S`: agentivity distinction is collapsed (lossy
-      but expected for cross-Mayan typology theorems that don't track
-      Split-S granularity).
-    - `.psr → none`: possessors are DP-internal, with no `ArgumentRole`
-      analog. Cross-Mayan typology theorems quantify over verbal
-      arguments only.
-
-    Tseltal/Tsotsil consumers of cross-Mayan theorems use this projection
-    to feed Tseltalan agreement data into the canonical inventory; the
-    Aissen-Polian possessor-extraction analysis continues to use
-    `GramFunction` directly for its DP-internal claims. -/
+/-- Project the Tseltalan Split-S grammatical function to the canonical
+    `ArgumentRole` (S/A/P/R/T). Partial (`Option`-valued): `.A → .A`,
+    `.O → .P`, `.G → .R` map cleanly; `.S_A`, `.S_O → .S` collapses the
+    agentivity distinction (lossy but expected for cross-Mayan theorems that
+    don't track Split-S); `.psr → none`, since possessors are DP-internal
+    with no `ArgumentRole` analog. Cross-Mayan consumers use this projection;
+    the Aissen-Polian possessor-extraction analysis uses `GramFunction`
+    directly for its DP-internal claims. -/
 def GramFunction.toArgumentRole? : GramFunction → Option Features.Prominence.ArgumentRole
   | .A   => some .A
   | .S_A => some .S
