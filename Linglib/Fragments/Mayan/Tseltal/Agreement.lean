@@ -86,8 +86,8 @@ def setBLinearity : MarkerLinearity := .suffixal
 /-- Set A (ERG/GEN) exponents for Oxchuc Tseltal ([polian-2013]): prefixes
     on the verb or possessed noun, shown as `pre-C/pre-V` allomorph pairs. -/
 def setAExponent : ExponentTable :=
-  [(.pn .first .Sing, "k-/j-"), (.pn .second .Sing, "a-/aw-"), (.pn .third .Sing, "s-/y-"),
-   (.pn .first .Plur, "k-/j-"), (.pn .second .Plur, "a-/aw-"), (.pn .third .Plur, "s-/y-")]
+  [(.pn .first .Sing, "j-/k-"), (.pn .second .Sing, "a-/aw-"), (.pn .third .Sing, "s-/y-"),
+   (.pn .first .Plur, "j-/k-"), (.pn .second .Plur, "a-/aw-"), (.pn .third .Plur, "s-/y-")]
 
 /-- Set B (ABS) exponents for Oxchuc Tseltal ([polian-2013]): suffixes on
     the verb stem; 3rd person singular is null (`-∅`). -/
