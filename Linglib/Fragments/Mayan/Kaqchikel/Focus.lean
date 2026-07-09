@@ -1,5 +1,5 @@
 import Linglib.Fragments.Mayan.Kaqchikel.Agreement
-import Linglib.Semantics.Focus.Realization
+import Linglib.Morphology.Realization
 
 /-!
 # Kaqchikel Focus Fragment
@@ -14,7 +14,7 @@ fronts like A but intransitive verbs have no AF form.
 ## Main declarations
 
 * `Kaqchikel.focusRealize`: focus realization by focused argument
-  position, as a `Semantics.Focus.Realization` reflex list.
+  position, as a `Morphology.Realization` reflex list.
 * `Kaqchikel.af_reflex_iff`: the verb-hosted AF reflex appears exactly
   under transitive-subject (A) focus.
 * `Kaqchikel.marked_subject_is_A_not_S`: the A-focus vs S-focus split
@@ -33,7 +33,7 @@ information focus is outside the source's data, so no
 
 namespace Kaqchikel
 
-open Semantics.Focus
+open Morphology
 
 /-! ### Sites -/
 

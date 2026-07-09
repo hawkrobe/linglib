@@ -2,7 +2,7 @@ import Linglib.Fragments.Hausa.Focus
 import Linglib.Fragments.Hausa.TAM
 import Linglib.Core.Logic.FactorsThroughOn
 import Linglib.Semantics.Focus.Control
-import Linglib.Semantics.Focus.Realization
+import Linglib.Morphology.Realization
 import Linglib.Data.Examples.HartmannZimmermann2007
 
 /-!
@@ -58,7 +58,7 @@ situ" — only the categorical no-determination claim is a theorem.
 namespace HartmannZimmermann2007
 
 open Hausa
-open Semantics.Focus
+open Semantics.Focus Morphology
 
 /-! ## What is focused (§2.2.2) -/
 
@@ -297,7 +297,7 @@ theorem exSitu_subject_subjunctive_no_reflex :
     ¬ exSitu_subject_subjunctive.HasMorphosyntacticReflex := by decide
 
 /-- The overt reflexes of a focus utterance in the shared
-`Semantics.Focus.Realization` vocabulary: non-vacuous fronting,
+`Morphology.Realization` vocabulary: non-vacuous fronting,
 Relative-form morphology, and the stabilizer. -/
 def FocusUtterance.reflexes (u : FocusUtterance) : List (Reflex Focused) :=
   (if u.focused = .nonSubject ∧ u.cfg.strategy = .exSitu
@@ -320,7 +320,7 @@ theorem hasMorphosyntacticReflex_iff (u : FocusUtterance) :
 receives an overt reflex — the same `EveryFocusPerceptible` shape
 Tangale refutes in `HartmannZimmermann2004.lean`. -/
 theorem hausa_refutes_perceptibility :
-    ¬ Semantics.Focus.EveryFocusPerceptible
+    ¬ Morphology.EveryFocusPerceptible
         (fun u : {u : FocusUtterance // u.IsHausaLicensed} =>
           Realization.mk u.1.focused u.1.reflexes) :=
   fun h => absurd

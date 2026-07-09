@@ -1328,6 +1328,7 @@ import Linglib.Morphology.Nanosyntax.Basic
 import Linglib.Morphology.Nanosyntax.TreeSpellout
 import Linglib.Morphology.Number
 import Linglib.Morphology.Paradigm
+import Linglib.Morphology.Realization
 import Linglib.Morphology.RootFamily
 import Linglib.Morphology.RootTypology
 import Linglib.Morphology.TenseAspect
@@ -1695,7 +1696,6 @@ import Linglib.Semantics.Focus.Control
 import Linglib.Semantics.Focus.ExtractionClash
 import Linglib.Semantics.Focus.Interpretation
 import Linglib.Semantics.Focus.Particles
-import Linglib.Semantics.Focus.Realization
 import Linglib.Semantics.Focus.Unalternatives
 import Linglib.Semantics.Genericity.Basic
 import Linglib.Semantics.Genericity.Dynamic
