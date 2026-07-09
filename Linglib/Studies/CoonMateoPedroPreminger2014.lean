@@ -6,7 +6,7 @@ import Linglib.Fragments.Mayan.Qanjobal.Agreement
 import Linglib.Fragments.Mayan.Qanjobal.AgentFocus
 import Linglib.Fragments.Mayan.Chol.Agreement
 import Linglib.Fragments.Mayan.Kaqchikel.Agreement
-import Linglib.Fragments.Mayan.Kaqchikel.Focus
+import Linglib.Fragments.Mayan.Kaqchikel.ExtractionMorphology
 import Linglib.Fragments.Mayan.Tseltal.Agreement
 import Linglib.Fragments.Mayan.Tsotsil.Agreement
 import Linglib.Fragments.Mayan.Mam.Agreement
