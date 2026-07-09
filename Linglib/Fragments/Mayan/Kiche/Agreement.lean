@@ -233,12 +233,12 @@ theorem ergative_absolutive_alignment :
     ArgPosition.agreementSet .A ≠ ArgPosition.agreementSet .P :=
   ⟨rfl, by decide⟩
 
-/-- S and P receive the same case (ABS); A receives ERG. -/
+/-- A receives ERG while P and S share a case (ABS) — the ergative
+    partition, re-exported from `Alignment.ergative_distinguishes_A`. -/
 theorem erg_abs_pattern :
-    ArgPosition.case .S = ArgPosition.case .P ∧
-    ArgPosition.case .A ≠ ArgPosition.case .S := by
-  refine ⟨rfl, ?_⟩
-  decide
+    ArgPosition.case .A ≠ ArgPosition.case .P ∧
+    ArgPosition.case .P = ArgPosition.case .S :=
+  Alignment.ergative_distinguishes_A
 
 /-- K'iche' alignment contrast with Mam: K'iche' is ergative-absolutive
     (S = P ≠ A), while Mam is tripartite (S ≠ A ≠ P, all three

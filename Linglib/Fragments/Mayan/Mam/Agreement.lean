@@ -78,6 +78,7 @@ namespace Mam
 
 open Mayan (MarkerLinearity ExponentTable)
 open Agreement
+open Features.Prominence (ArgumentRole)
 
 -- ============================================================================
 -- § 1: Person-Number Inventory
@@ -186,21 +187,23 @@ def ArgPosition.CanBeReduced (pos : ArgPosition) : Prop :=
 instance : DecidablePred ArgPosition.CanBeReduced := fun pos => by
   unfold ArgPosition.CanBeReduced; exact inferInstance
 
-/-- The three monotransitive argument positions. -/
-def mamArgPositions : List ArgPosition := [.A, .P, .S]
-
 -- ============================================================================
 -- § 4: Per-Position Verification
 -- ============================================================================
 
+-- The per-position case facts are the tripartite-alignment facts
+-- (`Alignment.tripartite`) — SJA Mam's case function is
+-- `Alignment.tripartite.assignCase` by definition, so each theorem below
+-- is a re-export of the substrate lemma.
+
 /-- Agent gets ERG (inherent, from Voice). -/
-theorem A_case : ArgPosition.case .A = .erg := rfl
+theorem A_case : ArgPosition.case .A = .erg := Alignment.tripartite.assignCase_A
 
 /-- Patient gets ACC (structural, from Voice). -/
-theorem P_case : ArgPosition.case .P = .acc := rfl
+theorem P_case : ArgPosition.case .P = .acc := Alignment.tripartite.assignCase_P
 
 /-- Intransitive S gets ABS (structural, from Infl). -/
-theorem S_case : ArgPosition.case .S = .abs := rfl
+theorem S_case : ArgPosition.case .S = .abs := Alignment.tripartite.assignCase_S
 
 /-- Three distinct underlying cases — morphologically tripartite.
     Inherits from `Alignment.tripartite_distinguishes_all` via the
@@ -222,12 +225,13 @@ theorem reduction_eligible_iff_phi_agreed (pos : ArgPosition) :
 -- § 5: Case Inventory Validation ([blake-1994])
 -- ============================================================================
 
-/-- Mam case inventory, derived from argument position case values. -/
-def caseInventory : Finset Case := {.erg, .acc, .abs}
+/-- The SJA Mam case inventory, derived from the core argument
+    positions' case values: {ERG, ACC, ABS}. -/
+def caseInventory : Finset Case := (ArgumentRole.core.map ArgPosition.case).toFinset
 
 /-- The inventory covers all argument positions. -/
 theorem inventory_covers_positions :
-    ∀ p ∈ mamArgPositions, p.case ∈ caseInventory := by decide
+    ∀ p ∈ ArgumentRole.core, ArgPosition.case p ∈ caseInventory := by decide
 
 -- Mam's {ERG, ACC, ABS} inventory is valid per Blake's case hierarchy
 -- (all are core cases at rank 6, trivially no gaps).
