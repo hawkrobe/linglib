@@ -5,17 +5,23 @@ import Linglib.Fragments.Mayan.Yukatek.Roots
 /-!
 # Yukatek Maya Derivational Operator Inventory
 
-[lucy-1994] [bohnemeyer-2004]
-[beavers-koontz-garboden-2020]
-
 The four derivational suffixes that determine Yukatek root salience
-classes ([lucy-1994]). The first three are transitivisers, used
-diagnostically to identify a root's salience profile; the fourth
-(`-tal`, allomorph `-lah`) is the positional inchoative that carves out a separate
-class of stative roots.
+classes ([lucy-1994]). The first three (`=t`, `=∅`, `=s`) are
+transitivisers, used diagnostically to identify a root's salience profile;
+the fourth (`-tal`, allomorph `-lah`) is the positional inchoative that
+carves out a separate class of stative roots.
 
-[lucy-1994] characterises the diagnostic by which of `=t`, `=∅`,
-or `=s` is required to form a transitive stem from an underived root:
+## Main declarations
+
+* `Yukatek.Operators.affectiveT`, `zeroDeriv`, `causativeS`,
+  `positionalTal`: the four derivational operators.
+* `Yukatek.Operators.inventory`: [lucy-1994]'s diagnostic transitiviser
+  inventory.
+
+## Implementation notes
+
+[lucy-1994] characterises the diagnostic by which of `=t`, `=∅`, or `=s`
+is required to form a transitive stem from an underived root:
 
 | Required suffix | Lucy's class           | Lexical content of root                                    |
 |-----------------|------------------------|------------------------------------------------------------|
@@ -23,13 +29,15 @@ or `=s` is required to form a transitive stem from an underived root:
 | `=∅` (root)     | agent-patient salient  | lexically transitive ("require two arguments")            |
 | `=s` (CAUS)     | patient-salient        | spontaneous state change; one (patient) argument salient   |
 
-The structural conditions are over (B&K-G kind signature × Coon
-arity): zero derivation tracks root transitivity
-(`Root.Arity.selectsTheme`); the two intransitive transitivisers split
-by signature (manner vs result). Each condition is the corresponding
-named predicate of `Roots/SalienceClass.lean` applied to the root's
-signature and the fragment's `arity` assignment, so operator
-applicability matches predicted salience by construction.
+The structural conditions range over B&K-G kind signature × Coon arity
+([beavers-koontz-garboden-2020]): zero derivation tracks root transitivity
+(`Root.Arity.selectsTheme`); the two intransitive transitivisers split by
+signature (manner vs result). Each condition is the corresponding named
+predicate of `Roots/SalienceClass.lean` applied to the root's signature and
+the fragment's `arity` assignment, so operator applicability matches
+predicted salience by construction. The salience classes these suffixes
+diagnose interface with [bohnemeyer-2004]'s Yukatek stem classes
+(`VerbClasses.lean`).
 -/
 
 namespace Yukatek.Operators
