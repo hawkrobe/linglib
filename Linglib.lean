@@ -1075,6 +1075,7 @@ import Linglib.Fragments.Mayan.Tseltal.Possession
 import Linglib.Fragments.Mayan.Tseltalan
 import Linglib.Fragments.Mayan.Tsotsil.Agreement
 import Linglib.Fragments.Mayan.Tsotsil.Possession
+import Linglib.Fragments.Mayan.Yukatek.Agreement
 import Linglib.Fragments.Mayan.Yukatek.Operators
 import Linglib.Fragments.Mayan.Yukatek.Roots
 import Linglib.Fragments.Mayan.Yukatek.VerbClasses

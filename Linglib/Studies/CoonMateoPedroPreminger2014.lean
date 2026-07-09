@@ -13,6 +13,7 @@ import Linglib.Fragments.Mayan.Mam.Agreement
 import Linglib.Fragments.Mayan.Mam.Extraction
 import Linglib.Fragments.Mayan.Kiche.Agreement
 import Linglib.Fragments.Mayan.Kiche.Extraction
+import Linglib.Fragments.Mayan.Yukatek.Agreement
 
 /-!
 # Coon, Mateo Pedro & Preminger (2014) [coon-mateo-pedro-preminger-2014]
@@ -367,6 +368,7 @@ def absPositionOf : Mayan → ABSPosition
   | .Tsotsil   => Tsotsil.absPosition
   | .Mam       => Mam.absPosition
   | .Kiche     => Kiche.absPosition
+  | .Yukatek   => Yukatek.absPosition
 
 /-- **Tada's Generalization, parameterized form**: a Mayan language
     exhibits syntactic ergativity (the analytical predicate from §4)
