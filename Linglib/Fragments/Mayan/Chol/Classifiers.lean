@@ -2,27 +2,32 @@ import Linglib.Features.NounCategorization.Basic
 
 /-!
 # Ch'ol Numeral Classifier Lexicon
-[little-moroney-royer-2022] [bale-coon-2014] [arcos-lopez-2009]
 
 Typed classifier entries for Ch'ol (Cholan, Mayan), a classifier-for-numeral
-language. Classifiers in Ch'ol are bound morphemes suffixed to the numeral
-stem and are obligatory with all Mayan-based numerals (1–6 and vigesimal
-system). Spanish-borrowed numerals (7+) already encode a measure function
-and do not take classifiers.
+language ([little-moroney-royer-2022]; [bale-coon-2014]). Classifiers in
+Ch'ol are bound morphemes suffixed to the numeral stem, obligatory with all
+Mayan-based numerals (1–6 and the vigesimal system); Spanish-borrowed
+numerals (7+) already encode a measure function and take no classifier.
 
-## Classifier selection
+## Main declarations
+
+* `Chol.Classifiers.pej`, `kojty`, `tyikil`, `kej`, `tsijty`, `bujch`: the
+  classifier entries ([little-moroney-royer-2022] Table 4).
+* `Chol.Classifiers.allClassifiers`, `defaultClassifier`: the inventory and
+  its generic default (*-p'ej*).
+
+## Implementation notes
 
 Ch'ol classifiers are largely derived from positional and transitive verb
-roots ([arcos-lopez-2009]; [bale-et-al-2019]). The position or
-shape of the noun is relevant: the same noun can be counted with different
-classifiers depending on its configuration (e.g., one long tree vs. one
-fallen tree). [arcos-lopez-2009] identifies at least 180 classifiers.
-
-## CLF-for-NUM semantics
+roots ([arcos-lopez-2009]; [bale-et-al-2019]); the position or shape of the
+noun is relevant, so the same noun can be counted with different classifiers
+depending on its configuration (e.g. one long tree vs. one fallen tree).
+[arcos-lopez-2009] identifies at least 180 classifiers.
 
 In the CLF-for-NUM analysis ([little-moroney-royer-2022] §4;
-[bale-coon-2014]), each classifier denotes a measure function μ
-that the numeral requires as its first argument:
+[bale-coon-2014]), each classifier denotes a measure function μ that the
+numeral requires as its first argument:
+
   ⟦ux⟧ = λm λP λx. [P(x) ∧ m(x) = 3]
   ⟦-kojty⟧ = μ_# (atom-counting measure for animals)
 -/
@@ -31,9 +36,7 @@ namespace Chol.Classifiers
 
 open NounCategorization (ClassifierEntry SemanticParameter ShapeDimension)
 
--- ============================================================================
--- Numeral classifiers (Table 4 of [little-moroney-royer-2022])
--- ============================================================================
+/-! ### Numeral classifiers ([little-moroney-royer-2022] Table 4) -/
 
 /-- -p'ej — inanimate/generic default classifier. Semantically bleached
     for inanimates; also the base of vigesimal classifiers (-k'al for 20,
@@ -68,18 +71,14 @@ def bujch : ClassifierEntry :=
   { form := "-bujch", gloss := "seated/propped"
   , semantics := [.arrangement] }
 
--- ============================================================================
--- Inventory
--- ============================================================================
+/-! ### Inventory -/
 
 def allClassifiers : List ClassifierEntry :=
   [pej, kojty, tyikil, kej, tsijty, bujch]
 
 def defaultClassifier : ClassifierEntry := pej
 
--- ============================================================================
--- Verification
--- ============================================================================
+/-! ### Verification -/
 
 /-- The default classifier is marked as default. -/
 theorem default_is_default : defaultClassifier.isDefault = true := rfl

@@ -7,14 +7,30 @@ import Linglib.Syntax.Case.Alignment
 /-!
 # Yukatek Maya Verb Classes and Status System
 
-[bohnemeyer-2004] [lucy-1994]
-
 Yukatek Maya has a typologically rare split-intransitive pattern of
-argument marking controlled by overt aspect-mood marking. The system
-comprises five verb stem classes distinguished by their status
-inflection patterns (allomorphy of aspect-mood suffixes).
+argument marking controlled by overt aspect-mood marking
+([bohnemeyer-2004]; [lucy-1994]). The system comprises five verb stem
+classes distinguished by status inflection patterns (allomorphy of
+aspect-mood suffixes) and four status categories encoding viewpoint aspect
+and modal assertiveness. The split in argument marking tracks the aspectual
+value: perfective status marks S like U (ergative), imperfective status
+marks S like A (accusative).
 
-## Verb Stem Classes
+## Main declarations
+
+* `Yukatek.VerbStemClass`: the five stem classes, with `eventType`,
+  `isIntransitive`, `toTemplate` (R&H templates), and `toSalienceClass`
+  ([lucy-1994]'s 4-way cut).
+* `Yukatek.StatusCategory`: the four status categories, with
+  `viewpointAspect` and `isAssertive`.
+* `Yukatek.sArgumentMarker`: which marker set cross-references the
+  intransitive subject, given the status category.
+* `Yukatek.yukatekSplit`: the aspect-conditioned split as an
+  `Alignment.SplitErgativity`, shared with Hindi and Georgian.
+
+## Implementation notes
+
+Verb stem classes ([bohnemeyer-2004] Table 3; [lucy-1994]):
 
 | Class | Event type | Examples |
 |-------|-----------|----------|
@@ -24,8 +40,6 @@ inflection patterns (allomorphy of aspect-mood suffixes).
 | positional | state change (spatial config.) | sit, stand, hang, be round |
 | transitive active | transitive | hit, chip, eat |
 
-## Status Categories
-
 Status marking encodes both viewpoint aspect and modal assertiveness
 ([bohnemeyer-2004] Table 2):
 
@@ -33,10 +47,6 @@ Status marking encodes both viewpoint aspect and modal assertiveness
 - **subjunctive**: +perfective, −assertive → ergative (S = U)
 - **incompletive**: −perfective, +assertive → accusative (S = A)
 - **imperative**: directive mood
-
-The split in argument marking is associated with the aspectual value:
-perfective status → S marked like U (ergative); imperfective status →
-S marked like A (accusative).
 -/
 
 namespace Yukatek
@@ -46,9 +56,7 @@ open Semantics.Aspect (ViewpointAspectB)
 open ArgumentStructure.EventStructure (EventType InternalExternalCause)
 open Mayan (MarkerSet)
 
--- ════════════════════════════════════════════════════
--- § 1. Verb Stem Classes
--- ════════════════════════════════════════════════════
+/-! ### Verb stem classes -/
 
 /-- The five verb stem classes of Yukatek Maya, distinguished by
     status inflection patterns ([bohnemeyer-2004] Table 3;
@@ -61,13 +69,11 @@ inductive VerbStemClass where
   | transitiveActive -- transitive roots: hit, chip, eat
   deriving DecidableEq, Repr
 
-/-- Event type encoded by each verb stem class.
-    Active stems encode processes; all others encode state changes.
-
-    [bohnemeyer-2004] §5: degree achievement verbs regularly appear
-    in the inactive and inchoative classes despite being atelic. Their
-    event structure encodes state change — the process/state-change
-    distinction, not telicity, motivates class membership. -/
+/-- Event type per verb stem class: active stems encode processes, all
+    others state changes. Per [bohnemeyer-2004] §5, atelic degree
+    achievements still fall in the inactive and inchoative classes — class
+    membership tracks the process vs state-change distinction, not
+    telicity. -/
 def VerbStemClass.eventType : VerbStemClass → EventType
   | .active => .process
   | .inactive => .stateChange
@@ -80,9 +86,7 @@ def VerbStemClass.isIntransitive : VerbStemClass → Bool
   | .transitiveActive => false
   | _ => true
 
--- ════════════════════════════════════════════════════
--- § 2. Status Categories
--- ════════════════════════════════════════════════════
+/-! ### Status categories -/
 
 /-- The four status categories of Yukatek Maya, encoding viewpoint
     aspect and modal assertiveness ([bohnemeyer-2004] Table 2). -/
@@ -93,9 +97,7 @@ inductive StatusCategory where
   | imperative    -- directive mood
   deriving DecidableEq, Repr
 
-/-- Aspectual value of a status category.
-    Completive and subjunctive are perfective; incompletive is
-    imperfective. Imperative has no clear aspectual value. -/
+/-- Aspectual value of a status category (the imperative has none). -/
 def StatusCategory.viewpointAspect : StatusCategory → Option ViewpointAspectB
   | .completive => some .perfective
   | .subjunctive => some .perfective
@@ -108,17 +110,13 @@ def StatusCategory.isAssertive : StatusCategory → Bool
   | .incompletive => true
   | _ => false
 
--- ════════════════════════════════════════════════════
--- § 3. Argument Marking Pattern
--- ════════════════════════════════════════════════════
+/-! ### Argument marking pattern -/
 
 /-- Which marker set cross-references the sole argument (S) of an
-    intransitive verb, given the status category.
-
-    [bohnemeyer-2004] Table 2:
-    - Perfective status (completive/subjunctive): S = U → set-B (ergative)
-    - Imperfective status (incompletive): S = A → set-A (accusative)
-    - Imperative: not discussed in the split analysis (Table 2 omits it) -/
+    intransitive verb, given the status category ([bohnemeyer-2004]
+    Table 2). Perfective status gives set-B (ergative, S = U), imperfective
+    set-A (accusative, S = A); the imperative is omitted from Table 2's
+    split analysis. -/
 def sArgumentMarker : StatusCategory → Option MarkerSet
   | .completive => some .setB    -- ergative: S patterns with U
   | .subjunctive => some .setB   -- ergative: S patterns with U
@@ -133,12 +131,10 @@ theorem perfective_ergative :
 theorem imperfective_accusative :
     sArgumentMarker .incompletive = some .setA := rfl
 
--- ════════════════════════════════════════════════════
--- § 4. Representative Verb Entries
--- ════════════════════════════════════════════════════
+/-! ### Representative verb entries -/
 
-/-- A Yukatek verb entry for the split intransitivity analysis.
-    Records stem class and causation type of the intransitive base. -/
+/-- A Yukatek verb entry for the split-intransitivity analysis: stem class
+    and causation type of the intransitive base. -/
 structure YukatekVerb where
   gloss : String
   stemClass : VerbStemClass
@@ -199,20 +195,15 @@ def tsuuk : YukatekVerb := ⟨"rot", .inactive, .external⟩
 -- Transitive active
 def haats : YukatekVerb := ⟨"hit", .transitiveActive, .internal⟩
 
--- ════════════════════════════════════════════════════
--- § 5. Bridge to Event Structure Templates
--- ════════════════════════════════════════════════════
+/-! ### Event-structure templates -/
 
 open ArgumentStructure.EventStructure (Template)
 
-/-- Map Yukatek verb stem classes to R&H event structure templates.
-    This connects the language-specific classification to the
-    theory-level decomposition in `EventStructure.lean`.
-
-    - Active → activity [x ACT]
-    - Inactive/inchoative → achievement [BECOME [x ⟨STATE⟩]]
-    - Positional → achievement (externally-caused spatial config.)
-    - Transitive active → accomplishment [[x ACT] CAUSE [BECOME [y ⟨STATE⟩]]] -/
+/-- Yukatek verb stem classes to R&H event-structure templates
+    (`EventStructure.lean`): active → activity [x ACT], inactive and
+    inchoative → achievement [BECOME [x ⟨STATE⟩]], positional → achievement
+    (externally-caused spatial config.), transitive active →
+    accomplishment [[x ACT] CAUSE [BECOME [y ⟨STATE⟩]]]. -/
 def VerbStemClass.toTemplate : VerbStemClass → Template
   | .active => .activity
   | .inactive => .achievement
@@ -226,9 +217,7 @@ theorem eventType_consistent (c : VerbStemClass) :
     c.eventType = c.toTemplate.eventType := by
   cases c <;> rfl
 
--- ════════════════════════════════════════════════════
--- § 5.5. Bridge to [lucy-1994] Salience Classes
--- ════════════════════════════════════════════════════
+/-! ### Salience classes ([lucy-1994]) -/
 
 /-- Map [bohnemeyer-2004]'s 5-way Yukatek stem classification to
     [lucy-1994]'s 4-way salience cut. The 5-way is a refinement:
@@ -292,17 +281,13 @@ theorem toSalienceClass_fiber_agentPatient (s : VerbStemClass) :
     s.toSalienceClass = .agentPatient ↔ s = .transitiveActive := by
   cases s <;> simp [VerbStemClass.toSalienceClass]
 
--- ════════════════════════════════════════════════════
--- § 6. Split-Ergative System
--- ════════════════════════════════════════════════════
+/-! ### Split-ergative system -/
 
-/-- Yukatek split-ergative system, parameterized by status category.
-    Perfective status (completive/subjunctive) triggers ergative alignment;
-    imperfective status (incompletive) triggers accusative alignment.
-    Imperative is treated as ergative (completive-like default).
-
-    This instantiates the same `Alignment.SplitErgativity` type used by Hindi
-    and Georgian, enabling cross-linguistic comparison. -/
+/-- Yukatek split-ergative system, parameterized by status category:
+    perfective status (completive/subjunctive) triggers ergative alignment,
+    imperfective (incompletive) accusative; the imperative defaults to
+    ergative. Instantiates the same `Alignment.SplitErgativity` used by
+    Hindi and Georgian. -/
 def yukatekSplit : Alignment.SplitErgativity StatusCategory :=
   { ergCondition := λ s => match s.viewpointAspect with
       | some .perfective => true

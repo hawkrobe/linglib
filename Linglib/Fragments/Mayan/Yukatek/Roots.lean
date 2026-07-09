@@ -4,17 +4,25 @@ import Linglib.Semantics.Verb.Root.Arity
 /-!
 # Yukatek Maya Roots as B&K-G Entailment Sets
 
-[lucy-1994] [beavers-koontz-garboden-2020]
+A representative cross-section of Yukatek roots drawn from [lucy-1994]
+ex. (1), (2), (4), and (7), encoded as [beavers-koontz-garboden-2020]-style
+entailment sets. The selection covers all four salience profiles
+[lucy-1994] identifies in Yukatek: agent-salient, agent-patient salient,
+patient-salient, and positional.
 
-A representative cross-section of Yukatek roots, drawn from the lists
-in [lucy-1994] ex. (1), (2), (4), and (7), and encoded as
-[beavers-koontz-garboden-2020]-style entailment sets.
+## Main declarations
 
-The selection covers all four salience profiles that [lucy-1994]
-identifies in Yukatek (agent-salient, agent-patient salient,
-patient-salient, positional). The roots feed into the operator
-inventory in `Operators.lean` and the orbit-derivation in
-`Studies/Lucy1994.lean`.
+* the root defs (`siit`, `kuc`, `kiim`, `cin`, …): Yukatek roots grouped
+  by salience class, each a set of B&K-G kind atoms.
+* `Yukatek.Roots.arity`: Coon arity — the root transitives (`=∅` class)
+  select a theme; every other sampled root is intransitive.
+* `Yukatek.Roots.agentSalientRoots`, `agentPatientSalientRoots`,
+  `patientSalientRoots`, `motionRoots`, `positionalRoots`: the class lists.
+
+## Implementation notes
+
+The roots feed the operator inventory in `Operators.lean` and the
+orbit-derivation in `Studies/Lucy1994.lean`.
 
 | Source          | Root      | gloss              | profile              | Lucy class            |
 |-----------------|-----------|--------------------|----------------------|------------------------|
@@ -30,43 +38,37 @@ inventory in `Operators.lean` and the orbit-derivation in
 | ex. (7)         | `cin`       | "bend"             | state                | positional             |
 | (Yukatek lex.)  | `kul`       | "sit"              | state                | positional             |
 
-The patient-salient list also includes `'ah` "wake", `wen` "sleep",
-`siih` "be born", `tú'ub'` "be forgotten", `k'a'ah` "remember",
-`čú'un` "begin", `č'en` "stop, cease", `hó'op'` "begin", `hé'el` "rest",
-`p'át` "remain"; the agent-salient list includes `mìis` "sweep",
-`ć'eh` "shout", `paak` "weed". For the motion-roots non-class
-argument we add a small representative subset: `máan` "pass", `tàal`
-"come", `b'in` "go", `nàak` "ascend", `lìik'` "rise". These are all
-encoded with `becomesState` atoms (no `.motion` atom; see
-`motion_roots_not_separate_class` for why "motion" is *not* a B&K-G
-feature in Lucy's analysis).
+Beyond the tabulated core, the patient-salient list also includes `'ah`
+"wake", `wen` "sleep", `siih` "be born", `tú'ub'` "be forgotten",
+`k'a'ah` "remember", `čú'un` "begin", `č'en` "stop, cease", `hó'op'`
+"begin", `hé'el` "rest", `p'át` "remain"; the agent-salient list includes
+`mìis` "sweep", `ć'eh` "shout", `paak` "weed". A small representative
+subset of motion roots is added: `máan` "pass", `tàal` "come", `b'in`
+"go", `nàak` "ascend", `lìik'` "rise". All are encoded with `becomesState`
+atoms (no `.motion` atom; see `motion_roots_not_separate_class` for why
+"motion" is not a B&K-G feature in Lucy's analysis).
 
-**Important orthographic note.** Yukatek `háan` "stop/cease/heal" and
-`hàan` "eat" differ in vowel tone (high vs. low). They are distinct
-roots with distinct lexical content. We disambiguate by suffixing the
-gloss: `haanCease` here is the patient-salient cessation root;
-`Yukatek.haanEat` (in `VerbClasses.lean`) is the
-inactive-class but internally-caused "eat" verb that
-[bohnemeyer-2004] ex. (9) takes as the key applicative exception.
+Yukatek `háan` "stop/cease/heal" and `hàan` "eat" differ in vowel tone
+(high vs. low): distinct roots with distinct lexical content, disambiguated
+by suffixing the gloss. `haanCease` here is the patient-salient cessation
+root; `Yukatek.haanEat` (in `VerbClasses.lean`) is the inactive-class but
+internally-caused "eat" verb that [bohnemeyer-2004] ex. (9) takes as the
+key applicative exception.
 
-The transcription uses ASCII glosses (no IPA diacritics) for ease of
-identifier use; original orthography is preserved in docstrings.
+The transcription uses ASCII glosses (no IPA diacritics) for identifier
+ease; original orthography is preserved in docstrings.
 -/
 
 namespace Yukatek.Roots
 
 open Verb
 
--- ════════════════════════════════════════════════════
--- § 1. Agent-Salient Roots (manner only, take `=t`)
--- ════════════════════════════════════════════════════
+/-! ### Agent-salient roots (manner only, take `=t`) -/
 
-/-- síit' "jump" — manner-of-action activity ([lucy-1994] ex. 1a).
-    Underived intransitive; takes affective `=t` to transitivise.
-    No `.motion` atom: per [lucy-1994], motion is *not* a B&K-G
-    feature in Yukatek (cf. `motion_roots_not_separate_class`); jumping
-    qualifies as a manner-of-action irrespective of whether it
-    incidentally involves displacement. -/
+/-- síit' "jump" — manner-of-action activity, underived intransitive
+    ([lucy-1994] ex. 1a). No `.motion` atom: jumping is manner-of-action
+    regardless of incidental displacement (cf.
+    `motion_roots_not_separate_class`). -/
 def siit : Root := ⟨"siit'", {.hasManner "jumping"}, none, {}⟩
 
 /-- ¢'iib "write" — manner-of-action activity ([lucy-1994] p. 628). -/
@@ -105,15 +107,12 @@ def kuc : Root := ⟨"kuc", {.hasManner "carrying"}, none, {}⟩
 def pis : Root := ⟨"pis", {.hasManner "measuring"}, none, {}⟩
 
 /-- lo'š "punch" — manner-of-action, lexically transitive
-    ([lucy-1994] p. 629). Surface-contact manner without entailed
-    result, like B&K-G's *hit*-type. No `.contact` atom: contact is
-    implicit in the manner of striking rather than a B&K-G feature in
-    Lucy's typology. -/
+    ([lucy-1994] p. 629). Surface-contact manner without entailed result,
+    like B&K-G's *hit*-type; no `.contact` atom (contact is implicit in
+    the manner of striking, not a B&K-G feature in Lucy's typology). -/
 def los : Root := ⟨"los", {.hasManner "striking"}, none, {}⟩
 
--- ════════════════════════════════════════════════════
--- § 3. Patient-Salient Roots (result only, take `=s`)
--- ════════════════════════════════════════════════════
+/-! ### Patient-salient roots (result only, take `=s`) -/
 
 /-- kíim "die" — spontaneous state change ([lucy-1994] ex. 1c, 2). -/
 def kiim : Root := ⟨"kiim", {.becomesState "dead"}, none, {}⟩
@@ -125,11 +124,9 @@ def kiim : Root := ⟨"kiim", {.becomesState "dead"}, none, {}⟩
     and [bohnemeyer-2004] ex. (9). -/
 def haanCease : Root := ⟨"háan", {.becomesState "stopped"}, none, {}⟩
 
-/-- lúub' "fall" ([lucy-1994] ex. 4, Table 4). A "motion verb" by
-    any reasonable cross-linguistic notional taxonomy, but patterns
-    morphologically with other patient-salient change-of-state roots
-    in Yukatek. No `.motion` atom: motion is the *issue*, not a
-    feature — see `motion_roots_not_separate_class`. -/
+/-- lúub' "fall" ([lucy-1994] ex. 4, Table 4). Notionally a motion verb,
+    but patterns morphologically with the patient-salient change-of-state
+    roots; no `.motion` atom (see `motion_roots_not_separate_class`). -/
 def luub : Root := ⟨"luub'", {.becomesState "fallen"}, none, {}⟩
 
 /-- 'ok "enter, intrude" ([lucy-1994] ex. 4, Table 4). Another
@@ -194,9 +191,7 @@ def naak : Root := ⟨"nàak", {.becomesState "ascended"}, none, {}⟩
 /-- lìik' "rise" ([lucy-1994] Table 4). -/
 def liik : Root := ⟨"lìik'", {.becomesState "risen"}, none, {}⟩
 
--- ════════════════════════════════════════════════════
--- § 4. Positional Roots (state only, take `-tal`)
--- ════════════════════════════════════════════════════
+/-! ### Positional roots (state only, take `-tal`) -/
 
 /-- čin "bow, bend down, bend over" ([lucy-1994] ex. 5, 7).
     Positional root; takes `-tal` (or `-lah`) for the inchoative stem. -/
@@ -339,9 +334,7 @@ theorem cin_closed_signature :
 theorem kul_closed_signature :
     kul.closedKinds = {.state} := by decide
 
--- ════════════════════════════════════════════════════
--- § 7. Class Lists
--- ════════════════════════════════════════════════════
+/-! ### Class lists -/
 
 /-- The agent-salient roots in this fragment: roots with manner only,
     expected to take affective `=t`. -/

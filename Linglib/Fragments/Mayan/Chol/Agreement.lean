@@ -3,16 +3,30 @@ import Linglib.Syntax.Extraction
 import Linglib.Fragments.Mayan.Params
 
 /-!
-# Chol Agreement and Case Fragment [coon-2013] [imanishi-2020]
+# Chol Agreement and Case Fragment
 
 Agreement morphology and case assignment for Chol (Cholan, Mayan), a
 **low absolutive** language with aspect-based split alignment. Per
-[vazquez-alvarez-2011] §1.9.4, Chol is "an ergative
-language" in which "the ergative pattern is split in all non-perfective
-aspects, resulting in nominative-accusative alignment" — Set A indicates
-both transitive and intransitive subjects in non-perfective.
+[vazquez-alvarez-2011] §1.9.4, Chol is "an ergative language" in which
+"the ergative pattern is split in all non-perfective aspects, resulting in
+nominative-accusative alignment" — Set A indicates both transitive and
+intransitive subjects in non-perfective. The formal-syntactic analyses of
+[coon-2013] and [imanishi-2020] reanalyse this surface pattern.
 
-## Descriptive vs analytical framing of the non-perfective pattern
+## Main declarations
+
+* `Chol.ArgPosition` with `.case`, `.accCase`: argument positions and
+  their perfective (ergative) and non-perfective (extended-ergative) case.
+* `Chol.absPosition`: LOW-ABS morpheme placement.
+* `Chol.setAExponent`, `Chol.setBExponent`: the Set A (ERG/GEN) and Set B
+  (ABS) exponent tables ([vazquez-alvarez-2011] Table 10).
+* `Chol.extractionStrategy`, `Chol.absObjectInNonFinite`,
+  `Chol.absIntranSInNonFinite`: the (unmarked) extraction profile and
+  non-finite absolutive availability.
+
+## Implementation notes
+
+### Descriptive vs analytical framing of the non-perfective pattern
 
 The descriptive grammar ([vazquez-alvarez-2011]) characterizes the
 non-perfective alignment as **nominative-accusative**: Set A as a
@@ -37,7 +51,7 @@ a descriptive-grammar implementation would return `.nom`. The label
 "extended ergative" is Coon's coinage, generalizing one subtype of
 [dixon-1994]'s split-ergative-on-TAM-lines pattern.
 
-## Morpheme order and word-class status
+### Morpheme order and word-class status
 
 Per [vazquez-alvarez-2011] §3.4: in Chol "the aspect
 markers are auxiliaries" — `tyi` (perfective) and `mi` (imperfective)
@@ -53,28 +67,28 @@ Schematic order: `[Aux] [ERG-modifier*-ROOT-DERIV-STATUS-ABS]`, with
 the bracketed verbal complex as a single phonological unit. Contrasts
 with Kaqchikel's `[Aux] [ABS-ERG-Stem]` (high-ABS).
 
-## The Two Agreement Paradigms (Set A / Set B)
+### The two agreement paradigms (Set A / Set B)
 
 - **Set A** (ergative in perfective; nominative-or-genitive in
   non-perfective; possessive on nominals): prefixes
 - **Set B** (absolutive in perfective; accusative in non-perfective):
   suffixes
 
-## Case Licensing (analytical, per [coon-2013])
+### Case licensing (analytical, per [coon-2013])
 
 - **ERG**: inherent from transitive *v*
 - **ABS** (transitive): structural from Voice (low absolutive)
 - **ABS** (intransitive): structural from Infl
 - **GEN** (non-perfective S/A): from D under nominalization
 
-## Accusative Side (Non-Perfective)
+### Accusative side (non-perfective)
 
 In non-perfective aspect, the aspectual predicate *choñkol* embeds a
 nominalized clause. The RON does NOT hold: the external argument may be
 generated inside the nominalized clause. Result (Coon analysis):
 S/A = GEN (from D), O = ABS (from Voice).
 
-## What this fragment doesn't model
+### What this fragment doesn't model
 
 Per [vazquez-alvarez-2011] §1.9.4, Chol exhibits all
 four Dixon alignment types: ergative-absolutive, nominative-accusative, **Split-S**
@@ -92,83 +106,57 @@ namespace Chol
 open Mayan (ExponentTable)
 open Agreement
 
--- ============================================================================
--- § 1: Argument Positions (alias to canonical SAP type)
--- ============================================================================
+/-! ### Argument positions -/
 
-/-- Argument positions in a Chol clause. Aliased to the canonical
-    `Features.Prominence.ArgumentRole` (S/A/P/R/T) so cross-Mayan and
-    cross-framework code shares one inventory. Use the canonical
-    constructor names `.A` / `.P` / `.S` directly. -/
+/-- Argument positions in a Chol clause, aliased to the canonical
+    `Features.Prominence.ArgumentRole` (S/A/P/R/T). -/
 abbrev ArgPosition := Features.Prominence.ArgumentRole
 
-/-- Perfective case assignment for Chol. Definitionally equal to
-    `Mayan.ergCaseChol`, which derives from
-    `Alignment.ergative.assignCase` in
-    `Syntax/Case/Alignment.lean` — the foundation makes the
-    pattern (A → ERG, S/P → ABS) explicit; the per-language wrapper
-    preserves dot-notation `position.case` for consumers, uniform
-    with the other Mayan fragments. -/
+/-- Perfective (ergative) case assignment: `Mayan.ergCaseChol`
+    (A → ERG, S/P → ABS). -/
 abbrev ArgPosition.case : ArgPosition → Case := Mayan.ergCaseChol
 
-/-- Non-perfective case assignment for Chol. Definitionally equal to
-    `Mayan.accCaseChol`, derived from
-    `Alignment.extendedErgative.assignCase`. The "extended ergative"
-    pattern (S/A → GEN, P → ABS) is shared with Q'anjob'al — both
-    fragments call into the same `caseExtErg` substrate. -/
+/-- Non-perfective (extended-ergative) case assignment: `Mayan.accCaseChol`
+    (S/A → GEN, P → ABS), shared with Q'anjob'al. -/
 abbrev ArgPosition.accCase : ArgPosition → Case := Mayan.accCaseChol
 
--- ============================================================================
--- § 2: Absolutive Position (LOW-ABS)
--- ============================================================================
+/-! ### Absolutive position (LOW-ABS) -/
 
-/-- Chol's absolutive morphemes appear in low position (at the end of
-    the verb stem, post-stem). Observable from morpheme order:
-    ASP-ERG-ROOT-(DERIV)-SUFFIX-ABS. -/
+/-- Chol's absolutive morphemes appear in low (post-stem) position, from
+    the morpheme order ASP-ERG-ROOT-(DERIV)-SUFFIX-ABS. -/
 def absPosition : Mayan.ABSPosition := .low
 
--- ============================================================================
--- § 3: Extraction Data
--- ============================================================================
+/-! ### Extraction data -/
 
-/-- Chol's extraction data: no special morphology for any extraction
-    (`extractionStrategy = .unmarked`). Unlike Q'anjob'al, Chol requires
-    **no Agent Focus morphology** for A-extraction (the diagnostic for
-    "lacking syntactic ergativity" in the [coon-mateo-pedro-preminger-2014]
-    sense). Per-position extractability follows trivially (every argument
-    extracts freely), so the marked-positions list is empty — the contrast
-    with Q'anjob'al lives at the strategy.
-
-    The resulting ambiguity (when both arguments are 3rd person) is a
-    natural consequence of the absence of AF marking:
+/-- Chol requires **no Agent Focus morphology** for any extraction
+    (`extractionStrategy = .unmarked`) — unlike Q'anjob'al, the diagnostic
+    for "lacking syntactic ergativity" in the
+    [coon-mateo-pedro-preminger-2014] sense. Every argument extracts freely,
+    so the marked-positions list is empty; the resulting ambiguity when both
+    arguments are 3rd person follows from the absent AF marking:
     `Maxki₁ tyi y-il-ä (___₁) jiñi wiñik (___₁)?`
     'Who saw the man?' / 'Who did the man see?' -/
 def extractionStrategy : Extraction.ExtractionMarkingStrategy := .unmarked
 def extractionMarkedPositions : List Extraction.ExtractionTarget := []
 def extractionDistinguishesPosition : Bool := false
 
--- ============================================================================
--- § 4: Non-Finite Absolutive Availability
--- ============================================================================
+/-! ### Non-finite absolutive availability -/
 
-/-- In Chol non-finite embedded clauses (aspectless), absolutive objects
-    ARE available. This follows from Chol being LOW-ABS: v⁰ assigns case
-    to the object without needing Infl⁰.
+/-- In Chol non-finite (aspectless) embedded clauses, absolutive objects
+    are available — Chol is LOW-ABS, so v⁰ licenses the object without Infl⁰.
 
     `Mejl [i-k'el-oñ]` 'She can see me.' (ABS object ✓)
     `Choñkol [k-mek'-ety]` 'I am hugging you.' (ABS object ✓) -/
 def absObjectInNonFinite : Bool := true
 
-/-- Absolutive intransitive subjects are NOT available in Chol non-finite
-    clauses: they must be marked with the ergative/possessive prefix instead.
+/-- Absolutive intransitive subjects are not available in Chol non-finite
+    clauses — they take the ergative/possessive prefix instead.
 
     `Choñkol [k-ts'äm-el]` 'I am bathing.' (ERG prefix, not ABS)
     `*Choñkol [ts'äm-i-yoñ]` intended: 'I am bathing.' (ABS ✗) -/
 def absIntranSInNonFinite : Bool := false
 
--- ============================================================================
--- § 5: Person-Number Paradigm (Tables 9-10 of [vazquez-alvarez-2011])
--- ============================================================================
+/-! ### Person-number paradigm ([vazquez-alvarez-2011] Tables 9-10) -/
 
 /-- Set A (ergative/possessive/genitive) markers: pre-consonantal allomorphs
     ([vazquez-alvarez-2011] Table 10, p. 83). Note the morphophonemic

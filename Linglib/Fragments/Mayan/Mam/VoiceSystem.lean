@@ -1,46 +1,42 @@
 import Linglib.Syntax.Voice.Basic
 
 /-!
-# Mam Voice System Profile (theory-neutral)
+# Mam Voice System Profile
 
-Theory-neutral typological profile of the Mam voice system.
+Theory-neutral typological profile of the Mam voice system: a voice
+inventory any framework can consume via the `Voice.*` queries. Unlike
+Toba Batak's symmetrical pivot system, Mam is three-way asymmetrical —
+agentive voice is basic (a phase head, overt agent), while passive and
+antipassive are derived (non-phase, implicit agent); the antipassive
+demotes the object to oblique and the subject takes ABS ([scott-2023]).
+Voice does not determine the pivot for extraction; instead it carries
+[uOblique], which conditions the extraction morphology =(y)a'.
+
+## Main declarations
+
+* `Mam.VoiceSystem.voices`: the agentive, passive, and antipassive
+  voice entries.
+* `Mam.VoiceSystem.symmetry`: the asymmetrical classification.
+
+## Implementation notes
 
 The Minimalist `Voice.Head`, `ClauseSpine`, and `MamDirHead` apparatus
-that previously lived in this file (=(y)a' analysis, antipassive)
-moved to:
-
-- `Studies/ElkinsTorrenceBrown2026.lean` — primary
-  anchor for the Minimalist treatment of =(y)a' / oblique extraction
-  ([elkins-torrence-brown-2026]); also houses the antipassive
-  Voice apparatus from [scott-2023] §2.5.4.1.
-- Cross-Studies consumer:
-  `Studies/Scott2023.lean` imports the Minimalist
-  Mam Voice from ETB2026 to compare φ-Agree and oblique-Agree pipelines.
-
-This Fragment file retains only `VoiceSystem.voices` / `VoiceSystem.symmetry` —
-a theory-neutral voice inventory any framework can consume via the
-`Voice.*` queries.
-
-**Variety note**: SJO Mam (San Juan Ostuncalco, [elkins-torrence-brown-2026])
-and SJA Mam (San Juan Atitán, [scott-2023]) are distinct varieties.
-The voice system profile abstracts over the variety distinction.
+(=(y)a' analysis, antipassive) that previously lived here now lives in
+`Studies/ElkinsTorrenceBrown2026.lean` — the primary anchor for the
+Minimalist treatment of =(y)a' / oblique extraction
+([elkins-torrence-brown-2026]), which also houses the antipassive Voice
+apparatus from [scott-2023] §2.5.4.1; `Studies/Scott2023.lean` imports
+that Mam Voice to compare φ-Agree and oblique-Agree pipelines. SJO Mam
+(San Juan Ostuncalco, [elkins-torrence-brown-2026]) and SJA Mam (San
+Juan Atitán, [scott-2023]) are distinct varieties; this profile
+abstracts over the distinction.
 -/
 
 namespace Mam
 
 namespace VoiceSystem
 
-/-! ### Mam voice system: three-way asymmetrical (agentive / passive / antipassive)
-
-Unlike Toba Batak's symmetrical pivot system, Mam's agentive voice
-is the basic form (phase head, overt agent) and passive/antipassive
-are derived (non-phase, implicit agent). Voice does not determine
-pivot for extraction — instead, Voice carries [uOblique] which
-conditions extraction morphology (=(y)a').
-
-Agentive is basic (phase head); passive/antipassive are derived.
-Antipassive demotes object to oblique, subject gets ABS ([scott-2023]).
-Voice data from SJA ([scott-2023]) and SJO ([elkins-torrence-brown-2026]). -/
+/-! ### Voice inventory -/
 
 /-- The voices of Mam: agentive (basic), passive, antipassive. -/
 def voices : List Voice.VoiceEntry :=

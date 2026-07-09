@@ -6,72 +6,62 @@ import Linglib.Syntax.Agreement.Paradigm
 import Linglib.Syntax.Extraction
 
 /-!
-# Mam Agreement Fragment [scott-2023]
-[deal-2024] [woolford-1997] [blake-1994]
+# Mam Agreement Fragment
 
-Agreement morphology and pronoun realization data for **San Juan Atitán
-Mam (SJA Mam)**, the dialect analyzed in [scott-2023]. Per Scott's
-Chapter 3 (titled "Object licensing and agreement: SJA Mam is a
-**tripartite high-abs language**"), SJA Mam exhibits morphologically
-tripartite agreement alignment: S, A, and O each trigger distinct
-marking patterns on the verb.
+Agreement morphology and pronoun realization data for San Juan Atitán
+Mam (SJA Mam, Mayan), following [scott-2023]. SJA Mam has morphologically
+tripartite agreement alignment — S, A, and O each trigger distinct
+verbal marking (Scott's ch. 3, "Object licensing and agreement: SJA Mam
+is a tripartite high-abs language") — realized through two paradigms:
+Set A (ERG) prefixes on Voice cross-referencing the transitive agent,
+and Set B (ABS) preverbal markers on Infl cross-referencing the
+absolutive (intransitive S). Transitive objects are cross-referenced by
+neither set: they co-occur with default Set B (tz'=) and require full
+overt pronouns, though some speakers accept agreeing Set B for objects
+as a more formal variant ([scott-2023] ch. 3, ex. 156).
 
-## Dialect-specificity and the analytical contrast
+## Main declarations
 
-This fragment encodes Scott's analysis of SJA Mam specifically. Other
-Mam dialects (notably Ixtahuacán Mam, the variety described in England
-1983b and used by [zavala-maldonado-2017] §4-5) have been
-characterized as **ergative with a neutral pattern in aspectless
-dependent clauses** — NOT tripartite. Per Zavala 2017 §4 (p. 237),
-"Ch'orti' is the only Mayan language that exhibits three sets of
-pronominal markers" — making Ch'orti' the canonical tripartite Mayan
-language under that framing.
+* `Mam.setAExponent`, `Mam.setBExponent`: the Set A (ERG) and Set B
+  (ABS) exponent tables ([scott-2023] Tables 2.8, 3.5).
+* `Mam.ArgPosition` with `.case`, `.IsPhiAgreed`, `.CanBeReduced`:
+  argument positions, their tripartite case values, φ-agreement status,
+  and reduction eligibility.
+* `Mam.PhiDimension` with `.Copied`, `agreedDimensions`,
+  `baseDimensions`, `encliticDimensions`: the φ-feature redundancy
+  calculus behind pronoun reduction.
+* `Mam.realizedPronoun`: pronoun realization by argument position, as a
+  selection among the shared `PersonalPronoun` entries.
+* `Mam.caseInventory`: the {ERG, ACC, ABS} inventory, validated against
+  [blake-1994]'s hierarchy.
+* `Mam.absPosition`, `Mam.extractionStrategy`: HIGH-ABS morpheme
+  placement and the AF-based extraction profile.
 
-Scott's tripartite analysis of SJA Mam is an **analytical contribution**
-that uses a high-abs / Voice Licensing / Ergative Extraction Constraint
-framework (her ch. 3 §3.4) to argue for tripartite case (ERG, ACC, ABS)
-even though Mam lacks independent DP case morphology. Per Scott §1.2.4
-(Mam dialect variation, p. 11) and Table 1.2 (Mam dialect groups,
-citing Simon 2019), Mam dialects vary substantially; the SJA Mam
-analysis may not extend directly to Ixtahuacán Mam.
+## Implementation notes
 
-## The System
+This fragment encodes Scott's tripartite analysis of SJA Mam
+specifically — an analytical contribution using a high-abs / Voice
+Licensing / Ergative Extraction Constraint framework ([scott-2023] ch. 3
+§3.4) to argue for tripartite case (ERG, ACC, ABS) even though Mam lacks
+independent DP case morphology; case is visible only through agreement.
+Other Mam dialects (notably Ixtahuacán Mam, described in England 1983b
+and used by [zavala-maldonado-2017] §4-5) are characterized as ergative
+with a neutral pattern in aspectless dependent clauses — not tripartite;
+per [zavala-maldonado-2017] §4 (p. 237), "Ch'orti' is the only Mayan
+language that exhibits three sets of pronominal markers", the canonical
+tripartite Mayan language under that framing. Per [scott-2023] §1.2.4
+and Table 1.2 (citing Simon 2019), Mam dialects vary substantially, so
+the SJA analysis may not extend to Ixtahuacán Mam.
 
-Mam has two agreement paradigms on the verb:
-- **Set A** (ERG): prefixes on Voice cross-referencing the transitive agent
-- **Set B** (ABS): preverbal markers on Infl cross-referencing the absolutive
-  argument (intransitive S). In transitives, Infl's φ-probe is blocked by
-  transitive VoiceP and default Set B (∅/tz'=)
-  appears instead.
-
-In the default construction, transitive *objects* are not cross-referenced
-by either set — they co-occur with default Set B (tz'=) and require
-full overt pronouns. However, some speakers accept agreeing Set B
-for objects as a more formal variant ([scott-2023], ch. 3, ex. 156).
-
-## Case Licensing (per Scott's analysis)
-
-Case is NOT assigned via dependent case. Instead:
-- **ERG**: inherent case from Voice
-- **ACC**: structural case from Voice (object licensing; low-abs syntax)
-- **ABS**: structural case from Infl (high-abs morphology; for intransitive S)
-
-This gives a tripartite underlying Case system (ERG, ACC, ABS) despite
-Mam having no independent case morphology on DPs — case is visible only
-through agreement patterns. This tripartite analysis is dialect-specific
-to SJA Mam per Scott; alternative analyses (for other Mam dialects or
-under different theoretical frameworks) characterize Mam as ergative
-with neutral patterns in dependent clauses (England 1983b;
-[zavala-maldonado-2017] §4-5).
-
-## Argument Positions
-
-| Position | Case | Agreement | Pronoun |
-|----------|------|-----------|---------|
-| A (transitive agent) | ERG (from Voice) | Set A | reduced/null |
-| S (intransitive subj) | ABS (from Infl) | Set B | reduced/null |
-| P (transitive patient) | ACC (from Voice) | default Set B | **overt** |
-
+Case is not dependent case ([scott-2023]; cf. [woolford-1997],
+[deal-2024]): ERG is inherent case from Voice, ACC structural case from
+Voice (object licensing, low-abs syntax), ABS structural case from Infl
+(high-abs morphology, for intransitive S). In transitives, Infl's φ-probe
+is blocked by transitive VoiceP and default Set B (∅/tz'=) surfaces.
+Person-number cells are the canonical φ-cells `Agreement.Cell`
+(`Syntax/Agreement/Paradigm.lean`), built with `Agreement.Cell.pn` (the
+six-cell inventory `Agreement.Cell.pnCells`); per-cell pronoun feature
+values live in `Mam.ScottFeatures` (`Fragments/Mayan/Mam/Pronouns.lean`).
 -/
 
 namespace Mam
@@ -80,82 +70,50 @@ open Mayan (MarkerLinearity ExponentTable)
 open Agreement
 open Features.Prominence (ArgumentRole)
 
--- ============================================================================
--- § 1: Person-Number Inventory
--- ============================================================================
+/-! ### Agreement marker paradigms -/
 
--- Person-number values are the canonical φ-cells `Agreement.Cell`
--- (six relevant cells: three persons × two numbers). Build them with
--- `Agreement.Cell.pn` (e.g. `.pn .first .Sing`); the six-cell inventory
--- is `Agreement.Cell.pnCells`.
-
--- ============================================================================
--- § 2: Agreement Marker Paradigms (theory-neutral)
--- ============================================================================
-
-/-- Set A (ERG) markers per cell: prefixes/proclitics on the verb that
-    cross-reference the transitive agent ([scott-2023], Table 2.8).
-    All six cells have distinct exponents (with t- syncretism for 2sg/3sg
-    and ky- syncretism for 2pl/3pl). -/
+/-- Set A (ERG) markers cross-referencing the transitive agent
+    ([scott-2023] Table 2.8); t- is syncretic for 2/3SG, ky- for 2/3PL. -/
 def setAExponent : ExponentTable :=
   [(.pn .first .Sing, "n-/w-"), (.pn .second .Sing, "t-"), (.pn .third .Sing, "t-"),
    (.pn .first .Plur, "q-"), (.pn .second .Plur, "ky-"), (.pn .third .Plur, "ky-")]
 
-/-- Set B (ABS) markers per cell ([scott-2023], Table 3.5).
-    The 2/3SG form tz'= is the **default** — it appears both for real
-    agreement with a 2/3SG intransitive S and for default Set B in
-    transitives when Infl's probe is blocked by VoiceP.
-
-    Per Scott's DM analysis, 2sg and 3sg are NOT specific entries; they
-    surface via the Elsewhere fallback. The total function below
-    returns "tz'=" for both, but downstream Vocabulary construction
-    should treat them as derived from the Elsewhere entry. See
-    `setBSpecificCells` for the cells that have actual specific
-    Vocabulary Items in the DM analysis. -/
+/-- Set B (ABS) markers ([scott-2023] Table 3.5). The 2/3SG form tz'= is
+    the Elsewhere default: it realizes both real 2/3SG intransitive-S
+    agreement and default Set B in transitives when Infl's probe is
+    blocked by VoiceP. Per Scott's DM analysis 2SG and 3SG are not
+    specific Vocabulary Items but surface via Elsewhere fallback (see
+    `setBSpecificCells`). -/
 def setBExponent : ExponentTable :=
   [(.pn .first .Sing, "chin"), (.pn .second .Sing, "tz'="), (.pn .third .Sing, "tz'="),
    (.pn .first .Plur, "qo"), (.pn .second .Plur, "chi"), (.pn .third .Plur, "chi")]
 
-/-- The four Set B cells that have specific Vocabulary Items (per
-    Scott's DM analysis). 2sg and 3sg are NOT included — they fall
-    through to the Elsewhere entry. -/
+/-- The four Set B cells with specific Vocabulary Items ([scott-2023]);
+    2SG and 3SG fall through to the Elsewhere entry. -/
 def setBSpecificCells : List Cell :=
   [.pn .first .Sing, .pn .first .Plur, .pn .second .Plur, .pn .third .Plur]
 
-/-- The default (Elsewhere) Set B marker. Surfaces in transitives when
-    Infl's probe is blocked, and also for 2/3SG intransitive S. -/
+/-- The Elsewhere Set B marker, surfacing in transitives when Infl's
+    probe is blocked and for 2/3SG intransitive S. -/
 def defaultSetB : String := "tz'="
 
--- ============================================================================
--- § 2: Argument Positions and Agreement Status (substrate-anchored)
--- ============================================================================
+/-! ### Argument positions and agreement status -/
 
-/-- Argument positions in a Mam clause ([scott-2023] ch. 3).
-    Aliased to the canonical `Features.Prominence.ArgumentRole`
-    (S/A/P/R/T) so cross-Mayan and cross-framework code shares one
-    inventory. Use the canonical constructor names `.A` / `.P` / `.S`
-    directly. -/
+/-- Argument positions, aliased to the canonical
+    `Features.Prominence.ArgumentRole` (S/A/P/R/T) ([scott-2023] ch. 3). -/
 abbrev ArgPosition := Features.Prominence.ArgumentRole
 
-/-- The case each argument position receives. Definitionally equal to
-    `Mayan.ergCaseMam`, which derives from
-    `Alignment.tripartite.assignCase` in
-    `Syntax/Case/Alignment.lean`: A → ERG (inherent from Voice),
-    P → ACC (structural from Voice), S → ABS (structural from Infl).
-    The three distinct cases are tripartite alignment per Scott's
-    analysis (ch. 3 §3.4). -/
+/-- Tripartite case assignment: `Mayan.ergCaseMam` (A → ERG inherent
+    from Voice, P → ACC structural from Voice, S → ABS structural from
+    Infl; [scott-2023] ch. 3 §3.4). -/
 abbrev ArgPosition.case : ArgPosition → Case :=
   Mayan.ergCaseMam
 
-/-- Does this argument position participate in φ-Agree?
-
-    Agent: Voice probes for φ, finds agent in Spec,VoiceP → Set A
-    Intransitive S: Infl probes for φ, finds S → Set B
-    Patient: Infl's φ-probe has a disjunctive satisfaction condition
-    [SAT: φ or Voice_TR]. In transitives, the
-    probe encounters transitive Voice and stops — no φ-features are
-    copied, and default Set B (the Elsewhere form) surfaces.
-    Ditransitive R/T default to participating (not modeled). -/
+/-- Whether a position triggers φ-Agree. A is probed by Voice (→ Set A),
+    S by Infl (→ Set B); the transitive patient is not, because Infl's
+    φ-probe has a disjunctive satisfaction condition [SAT: φ or Voice_TR]
+    and stops at transitive Voice before copying features, so default Set
+    B surfaces. R/T default to participating (not modeled). -/
 def ArgPosition.IsPhiAgreed : ArgPosition → Prop
   | .A => True   -- φ-Agreed by Voice → Set A
   | .P => False  -- NOT φ-Agreed: Infl probe blocked by Voice_TR
@@ -164,32 +122,25 @@ def ArgPosition.IsPhiAgreed : ArgPosition → Prop
 instance : DecidablePred ArgPosition.IsPhiAgreed := fun p => by
   cases p <;> unfold ArgPosition.IsPhiAgreed <;> infer_instance
 
--- ============================================================================
--- § 3: Pronoun Realization
--- ============================================================================
+/-! ### Pronoun reduction eligibility -/
 
-/-- Can a pronoun in this argument position undergo reduction?
-
-    Scott's analysis (ch. 4, §4.4.3): first person pronouns in
-    agreed-with positions are reduced via an impoverishment rule that
-    deletes [±singular] in the context of [+author]^F (where F marks
-    that the feature has been agreed with). This bleeds insertion of
-    the pronominal base morphemes *qin* ([+author,+singular]) and *qo*
-    ([+author,-singular]), leaving only the disagreement enclitic =i.
-
-    Non-first person pronouns are NOT reduced — their subj/poss forms
-    are identical to their independent forms (Table 4.25, p. 200).
-    Whether actual reduction occurs depends on person (see
-    `realizedPronoun`), but only agreed-with positions are eligible. -/
+/-- Whether a pronoun here is eligible for reduction (≡ φ-agreement).
+    Under Scott's analysis (ch. 4 §4.4.3), agreed-with first-person
+    pronouns undergo an impoverishment rule deleting [±singular] in the
+    context of [+author]^F (F = agreed-with), bleeding the base morphemes
+    *qin* [+author,+sg] and *qo* [+author,−sg] and leaving only the
+    disagreement enclitic =i; non-first-person pronouns are not reduced,
+    their subject/possessor forms matching the independent ones
+    ([scott-2023] Table 4.25, p. 200). Only agreed-with positions are
+    eligible; whether reduction actually applies depends on person (see
+    `realizedPronoun`). -/
 def ArgPosition.CanBeReduced (pos : ArgPosition) : Prop :=
   pos.IsPhiAgreed
 
 instance : DecidablePred ArgPosition.CanBeReduced := fun pos => by
   unfold ArgPosition.CanBeReduced; exact inferInstance
 
--- ============================================================================
--- § 4: Per-Position Verification
--- ============================================================================
+/-! ### Per-position verification -/
 
 -- The per-position case facts are the tripartite-alignment facts
 -- (`Alignment.tripartite`) — SJA Mam's case function is
@@ -205,28 +156,23 @@ theorem P_case : ArgPosition.case .P = .acc := Alignment.tripartite.assignCase_P
 /-- Intransitive S gets ABS (structural, from Infl). -/
 theorem S_case : ArgPosition.case .S = .abs := Alignment.tripartite.assignCase_S
 
-/-- Three distinct underlying cases — morphologically tripartite.
-    Inherits from `Alignment.tripartite_distinguishes_all` via the
-    substrate connection. -/
+/-- Three distinct underlying cases (morphologically tripartite),
+    inherited from `Alignment.tripartite_distinguishes_all`. -/
 theorem tripartite_alignment :
     ArgPosition.case .A ≠ ArgPosition.case .P ∧
     ArgPosition.case .A ≠ ArgPosition.case .S ∧
     ArgPosition.case .P ≠ ArgPosition.case .S :=
   Alignment.tripartite_distinguishes_all
 
-/-- Reduction eligibility ≡ φ-agreement: an argument position is
-    eligible for pronoun reduction iff it triggers agreement on the
-    verb. By `CanBeReduced := IsPhiAgreed`, this is reflexivity. -/
+/-- Reduction eligibility coincides with φ-agreement — reflexivity,
+    since `CanBeReduced := IsPhiAgreed`. -/
 theorem reduction_eligible_iff_phi_agreed (pos : ArgPosition) :
     pos.CanBeReduced ↔ pos.IsPhiAgreed :=
   Iff.rfl
 
--- ============================================================================
--- § 5: Case Inventory Validation ([blake-1994])
--- ============================================================================
+/-! ### Case inventory ([blake-1994]) -/
 
-/-- The SJA Mam case inventory, derived from the core argument
-    positions' case values: {ERG, ACC, ABS}. -/
+/-- The case inventory realized by the core positions: {ERG, ACC, ABS}. -/
 def caseInventory : Finset Case := (ArgumentRole.core.map ArgPosition.case).toFinset
 
 /-- The inventory covers all argument positions. -/
@@ -237,25 +183,22 @@ theorem inventory_covers_positions :
 -- (all are core cases at rank 6, trivially no gaps).
 example : Case.IsValidInventory caseInventory := by decide
 
--- ============================================================================
--- § 6: Pronoun Internal Structure ([scott-2023], ch. 4)
--- ============================================================================
+/-! ### Pronoun internal structure ([scott-2023] ch. 4) -/
 
-/-- φ-dimensions of the SJA Mam pronominal system ([scott-2023] Table 4.4,
-    adopting [harbour-2016]'s bivalent features): [±author], [±participant],
-    [±singular]. Per-cell *values* live in `Mam.ScottFeatures`
-    (`Fragments/Mayan/Mam/Pronouns.lean`, where the disagreement
-    distribution of the =i enclitic is verified); this enum names the
-    *dimensions*, for the redundancy calculus below. -/
+/-- The three φ-dimensions of the SJA Mam pronominal system ([scott-2023]
+    Table 4.4, after [harbour-2016]'s bivalent features): [±author],
+    [±participant], [±singular]. This enum names the dimensions for the
+    redundancy calculus below; per-cell values live in `Mam.ScottFeatures`
+    (`Fragments/Mayan/Mam/Pronouns.lean`). -/
 inductive PhiDimension where
   | author
   | participant
   | singular
   deriving DecidableEq, Repr
 
-/-- Dimensions referenced by Set A/Set B agreement vocabulary items: only
-    [±author] and [±singular] (Tables 4.7-4.8) — agreement never copies
-    [±participant]. -/
+/-- Dimensions referenced by Set A and Set B agreement Vocabulary Items —
+    [±author] and [±singular] only ([scott-2023] Tables 4.7-4.8);
+    agreement never copies [±participant]. -/
 def agreedDimensions : List PhiDimension := [.author, .singular]
 
 /-- Dimensions realized by the pronominal base morphemes *qin*
@@ -272,25 +215,25 @@ def PhiDimension.Copied (d : PhiDimension) : Prop := d ∈ agreedDimensions
 instance : DecidablePred PhiDimension.Copied := fun d => by
   unfold PhiDimension.Copied; infer_instance
 
-/-- The pronominal base is fully redundant under agreement: every dimension
-    it realizes is copied — the configuration in which impoverishment bleeds
-    base insertion (§4.4). -/
+/-- The pronominal base is fully redundant under agreement — every
+    dimension it realizes is copied, the configuration in which
+    impoverishment bleeds base insertion ([scott-2023] §4.4). -/
 theorem base_is_redundant : ∀ d ∈ baseDimensions, d.Copied := by decide
 
 /-- The =i enclitic is not fully redundant: [±participant] is never copied
     by agreement — so the enclitic survives reduction. -/
 theorem enclitic_survives : ¬ (∀ d ∈ encliticDimensions, d.Copied) := by decide
 
-/-- Pronoun realization by argument position ([scott-2023], her (3)/(8):
-    nominative alignment of reduction). φ-agreed positions (A, S — and
-    possessors) take the subject/possessor series; the unagreed object
-    position takes the independent series. The impoverishment rule
-    (ex. 84/94) `[±singular] → ∅ / [+author]^F` targets [+author] features
-    bearing the agreed-with diacritic F, bleeding insertion of the bases
-    *qin*/*qo* — so agreed-with first person surfaces as bare *=i*
-    (or ∅ for 1PL.INCL), while everything else keeps its independent
-    form. Realization is *selection among the API's `PersonalPronoun`
-    entries*, not a separate form classification. -/
+/-- Pronoun realization by argument position — the nominative alignment
+    of reduction ([scott-2023] (3)/(8)). φ-agreed positions (A, S, and
+    possessors) take the subject/possessor series, the unagreed object
+    the independent series. The impoverishment rule
+    `[±singular] → ∅ / [+author]^F` (ex. 84/94) targets [+author] under
+    the agreed-with diacritic F, bleeding the bases *qin*/*qo*, so
+    agreed-with first person surfaces as bare *=i* (∅ for 1PL.INCL) while
+    everything else keeps its independent form. Realization selects among
+    the shared `PersonalPronoun` entries, not a separate form
+    classification. -/
 def realizedPronoun (pos : ArgPosition) (c : PronCell) : Option PersonalPronoun :=
   if pos.IsPhiAgreed then subjPoss c else independent c
 
@@ -335,13 +278,11 @@ theorem patient_takes_independent (c : PronCell) :
     realizedPronoun .P c = independent c := by
   cases c <;> decide
 
--- ============================================================================
--- § 7: Mayan Absolutive Parameter
--- ============================================================================
+/-! ### Mayan absolutive parameter -/
 
-/-- Mam is HIGH-ABS: Set B (absolutive) markers appear pre-stem on Infl,
-    immediately following the aspect marker. Morpheme template:
-    ASP-**ABS**-ERG-ROOT-SUFFIX ([scott-2023], §2.5.1). -/
+/-- HIGH-ABS: Set B (absolutive) markers sit pre-stem on Infl, right
+    after the aspect marker — template ASP-**ABS**-ERG-ROOT-SUFFIX
+    ([scott-2023] §2.5.1). -/
 def absPosition : Mayan.ABSPosition := .high
 
 /-- HIGH-ABS yields ABS=NOM case locus: Infl assigns case to the
@@ -356,31 +297,20 @@ def setALinearity : MarkerLinearity := .prefixal
     per [scott-2023] §2.5.1). -/
 def setBLinearity : MarkerLinearity := .prefixal
 
-/-- Mam's extraction strategy: AF morphology is productive in SJA Mam
-    ([scott-2023] §2.5.4.1 ex. 169 + §2.7.1 syntactic ergativity).
-    The construction combines the antipassive suffix *-(a)n* with the
-    AF-specific suffix *-ta* (e.g., `b'yo-n-ta` 'hit-AP-AF'), making
-    SJA Mam's AF morphologically distinct from K'iche''s (which uses
-    bare antipassive *-n* in AF contexts per [mondloch-2017]
-    Lesson 22 — no extra AF morpheme).
-
-    For the cross-Mayan typology, we mark the strategy as
-    `dedicatedMorpheme` (the descriptive surface category) to parallel
-    Q'anjob'al/Kaqchikel/K'iche'. The analytical claim that AF is an
-    SSAL repair (Erlewine-line) lives in
-    `Studies/Erlewine2016.lean`; rival accounts
-    (Coon-Mateo Pedro-Preminger absolutive licensing, Coon-Keine
-    Feature Gluttony) are not encoded in the typology enum.
-
-    Language: "Mam (SJA)". Notes: AF (-(a)n + -ta) for A-extraction;
-    HIGH-ABS tripartite Mam (Scott 2023 §2.5.4.1). -/
+/-- Mam's extraction strategy, marked `dedicatedMorpheme` for the
+    cross-Mayan typology (parallel to Q'anjob'al, Kaqchikel, K'iche').
+    AF is productive in SJA Mam ([scott-2023] §2.5.4.1 ex. 169, §2.7.1)
+    and combines the antipassive suffix *-(a)n* with an AF-specific
+    suffix *-ta* (`b'yo-n-ta` 'hit-AP-AF'), morphologically distinct from
+    K'iche''s bare antipassive *-n* ([mondloch-2017] Lesson 22). The
+    SSAL-repair analysis (Erlewine-line) lives in `Studies/Erlewine2016.lean`;
+    rival accounts (Coon-Mateo Pedro-Preminger absolutive licensing,
+    Coon-Keine Feature Gluttony) are not encoded in the enum. -/
 def extractionStrategy : Extraction.ExtractionMarkingStrategy := .dedicatedMorpheme
 def extractionMarkedPositions : List Extraction.ExtractionTarget := [.subject]
 def extractionDistinguishesPosition : Bool := true
 
--- ============================================================================
--- § 8: Theory-Neutral Marker Verification
--- ============================================================================
+/-! ### Marker verification -/
 
 /-- Set A 1SG marker. -/
 theorem setA_1sg : setAExponent.realize (.pn .first .Sing) = some "n-/w-" := rfl
@@ -394,12 +324,11 @@ theorem setB_1sg : setBExponent.realize (.pn .first .Sing) = some "chin" := rfl
 /-- Set B 3SG marker is the default "tz'=". -/
 theorem setB_3sg : setBExponent.realize (.pn .third .Sing) = some defaultSetB := rfl
 
-/-- A controller's φ-features index the agreement paradigm directly: a 1sg agent
-    selects its first-person-singular ergative prefix. The Set A table
-    (`setAExponent`) is keyed by canonical φ-cells, so a pronoun's `Word.agrCell`
-    drives agreement realization in one shared feature space ([corbett-1998];
-    [scott-2023] Ch. 2). The realizational account (impoverishment /
-    Elsewhere; [scott-2023] Ch. 4) is theory and stays in the study. -/
+/-- A controller's φ-features index the agreement paradigm directly: the
+    Set A table is keyed by canonical φ-cells, so a pronoun's
+    `Word.agrCell` drives realization in one shared feature space
+    ([corbett-1998]; [scott-2023] Ch. 2). The realizational account
+    (impoverishment, Elsewhere; [scott-2023] Ch. 4) stays in the study. -/
 theorem erg_1sg_from_phi :
     setAExponent.realizeFor
       { form :="", cat := .PRON, features := { person := some .first, number := some .Sing }} = some "n-/w-" := by

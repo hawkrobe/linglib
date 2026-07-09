@@ -1,44 +1,53 @@
 import Linglib.Syntax.Category.Pronoun.Basic
 
-/-! # San Juan Atitán Mam Pronouns
+/-!
+# San Juan Atitán Mam Pronouns
 
-Pronoun lexicon for San Juan Atitán Mam (SJA Mam, Mayan), from [scott-2023]
-ch. 4. Scott's central claim is that the reduced subject/possessor forms are
-**true pronouns** in argument position — not agreement markers (contra her own
-Scott 2020 analysis) and not a special clitic series (she explicitly prefers an
-impoverishment derivation over "positing a unique series of 'clitic' pronouns",
-p. 162, citing the Agree-affects-pronouns family: Cardinaletti & Starke, Nevins,
-Kramer, Stegovec, Yuan). The entries therefore live here as `PersonalPronoun`
-values flowing through the shared Pronoun API.
+Pronoun lexicon for San Juan Atitán Mam (SJA Mam, Mayan), from
+[scott-2023] ch. 4, as `PersonalPronoun` values flowing through the
+shared Pronoun API. Scott's central claim is that the reduced
+subject/possessor forms are true pronouns in argument position — not
+agreement markers (contra her own Scott 2020) and not a special clitic
+series — so the entries live here rather than in an agreement paradigm.
 
-Two series (her Table 4.1 / 4.9, p. 160 / 185):
+Two series (Table 4.1 / 4.9, p. 160 / 185): the independent forms
+*qini* (= *qin+=i*), *qoy* (= *qo'+=y*), *qo*, *=i*, *qi* (= *q+=i*),
+3SG ∅, *qa*, and the reduced subject/possessor forms, where first-person
+cells lose their base morphemes (*qin* [+author,+sg], *qo* [+author,−sg],
+Table 4.10) via an impoverishment rule conditioned on agreement (§4.4)
+while 2nd/3rd cells match the independent series. The disagreement
+enclitic *=i* (gloss DISAGR; [noyer-1992], [harbour-2016]; §4.3.3)
+realizes disagreeing [±author]/[±participant] values.
 
-* **Independent** ("most morphosyntactically rich", her fn. 2 — the 2SG
-  "independent" form is the enclitic *=i* itself): *qini* (= *qin+=i*),
-  *qoy* (= *qo'+=y*), *qo*, *=i*, *qi* (= *q+=i*), 3SG ∅, *qa*.
-* **Subject/possessor** (reduced): first-person cells lose their base
-  morphemes (*qin* [+author,+sg], *qo* [+author,−sg], Table 4.10) via an
-  impoverishment rule conditioned on agreement (§4.4); 2nd/3rd cells are
-  identical to the independent series.
+## Main declarations
 
-The disagreement enclitic *=i* (gloss DISAGR; [noyer-1992], [harbour-2016];
-her §4.3.3) realizes *disagreeing* values of [±author]/[±participant] —
-`enclitic_iff_disagrees` verifies the XOR distribution across the paradigm.
-`reduction_iff_author` verifies that the two series differ exactly at
-[+author] cells.
+* `Mam.iDisagr`, `Mam.qini`, `Mam.qoy`, `Mam.qo`, `Mam.qi`, `Mam.qa`:
+  the pronoun lexical entries.
+* `Mam.PronCell` with `.person`, `.number`, `.toPerson`, `.features`,
+  `.Disagrees`: the paradigm cells and their φ-feature values.
+* `Mam.independent`, `Mam.subjPoss`: the independent and reduced series
+  by cell.
+* `Mam.enclitic_iff_disagrees`, `Mam.reduction_iff_author`,
+  `Mam.reduced_residue`: the enclitic-distribution and reduction
+  generalizations, verified across the paradigm.
 
-Feature values follow her Table 4.4 (p. 183). NB the convention:
-Harbour's [±participant] "functions more like a [+/−hearer] or
-[+/−addressee] feature" (p. 182), so 1EXCL is [−participant] — this
-deliberately diverges from `Person.Features`, whose `wellFormed`
-invariant (author → participant) encodes the speech-act-participant
-convention; hence the fragment-local `ScottFeatures`.
+## Implementation notes
 
+Feature values follow Table 4.4 (p. 183). Harbour's [±participant]
+"functions more like a [+/−hearer] or [+/−addressee] feature" (p. 182),
+so 1EXCL is [−participant] — this deliberately diverges from
+`Person.Features`, whose `wellFormed` invariant (author → participant)
+encodes the speech-act-participant convention; hence the fragment-local
+`ScottFeatures`. Scott prefers the impoverishment derivation over
+"positing a unique series of 'clitic' pronouns" (p. 162), citing the
+Agree-affects-pronouns family (Cardinaletti & Starke, Nevins, Kramer,
+Stegovec, Yuan). The independent series is "most morphosyntactically
+rich" (fn. 2), the 2SG independent form being the enclitic *=i* itself.
 Wordhood: *=i* is a morphological enclitic with promiscuous attachment
-(nouns, verbs, pronouns, other clitics; allomorphs <i>/<y>, =ni after [m]);
-whether *qi*/*qa* are words or enclitics is left open by Scott (p. 163, her
-p. 39) — none of this is a Cardinaletti–Starke deficiency classification,
-so `strength` is left unset throughout.
+(nouns, verbs, pronouns, other clitics; allomorphs <i>/<y>, =ni after
+[m]); whether *qi*/*qa* are words or enclitics Scott leaves open
+(p. 163, her p. 39). None of this is a Cardinaletti–Starke deficiency
+classification, so `strength` is left unset throughout.
 -/
 
 set_option autoImplicit false
@@ -48,9 +57,9 @@ namespace Mam
 /-! ### Lexical entries -/
 
 /-- *=i* — the disagreement enclitic pronoun (DISAGR): realizes disagreeing
-    [±author]/[±participant] values, hence φ-underspecified (it serves 1SG,
-    1PL.EXCL, 2SG, and — with the plural piece *q* — 2PL; Table 4.11).
-    Doubles as the 2SG "independent" form (her fn. 2). -/
+    [±author]/[±participant] values, so φ-underspecified — it serves 1SG,
+    1PL.EXCL, 2SG, and (with the plural piece *q*) 2PL, and doubles as the
+    2SG "independent" form (Table 4.11, fn. 2). -/
 def iDisagr : PersonalPronoun :=
   { form := "=i", person := none, number := none }
 
