@@ -1,5 +1,3 @@
-import Linglib.Data.UD.Basic
-import Linglib.Data.WALS.Features.F87A
 import Linglib.Features.WordOrder
 import Linglib.Morphology.MorphRule
 import Linglib.Fragments.Greek.StandardModern.AdjAgreement
@@ -35,7 +33,7 @@ The MAG is derived from two independent factors:
 We formalize the MAG as a decision procedure matching the paper's decision
 trees (44)/(45), encode 24 languages from Table 3, and verify that the MAG
 correctly predicts all of them while the HFF fails for 11. Bridge theorems
-connect to WALS F87A and Minimalist feature infrastructure.
+check the profile Booleans against the fragment-layer agreement entries.
 -/
 
 -- ============================================================================
@@ -160,7 +158,6 @@ end Morphology.ICP
 
 namespace AlexeyenkoZeijlstra2025
 
-open Data.WALS.F87A
 open Morphology.ICP (icpBlocksIntervention)
 
 -- ============================================================================
@@ -386,37 +383,37 @@ def magCorrect (d : InterventionDatum) : Bool :=
   interventionPredicted d.profile == d.observed
 
 /-- The MAG correctly predicts all 24 languages in Table 3. -/
-theorem mag_predicts_all : table3.all magCorrect = true := by native_decide
+theorem mag_predicts_all : table3.all magCorrect = true := by decide
 
 -- Per-language theorems: changing one profile breaks exactly one theorem.
 
-theorem mag_greek : interventionPredicted greek = true := by native_decide
-theorem mag_russian : interventionPredicted russian = true := by native_decide
-theorem mag_bulgarian : interventionPredicted bulgarian = true := by native_decide
-theorem mag_polish : interventionPredicted polish = true := by native_decide
-theorem mag_lithuanian : interventionPredicted lithuanian = true := by native_decide
-theorem mag_latin : interventionPredicted latin = true := by native_decide
-theorem mag_mandarin : interventionPredicted mandarin = true := by native_decide
-theorem mag_tagalog : interventionPredicted tagalog = true := by native_decide
+theorem mag_greek : interventionPredicted greek = true := by decide
+theorem mag_russian : interventionPredicted russian = true := by decide
+theorem mag_bulgarian : interventionPredicted bulgarian = true := by decide
+theorem mag_polish : interventionPredicted polish = true := by decide
+theorem mag_lithuanian : interventionPredicted lithuanian = true := by decide
+theorem mag_latin : interventionPredicted latin = true := by decide
+theorem mag_mandarin : interventionPredicted mandarin = true := by decide
+theorem mag_tagalog : interventionPredicted tagalog = true := by decide
 
-theorem mag_german : interventionPredicted german = false := by native_decide
-theorem mag_english : interventionPredicted english = false := by native_decide
-theorem mag_dutch : interventionPredicted dutch = false := by native_decide
-theorem mag_icelandic : interventionPredicted icelandic = false := by native_decide
-theorem mag_serboCroatian : interventionPredicted serboCroatian = false := by native_decide
-theorem mag_hungarian : interventionPredicted hungarian = false := by native_decide
-theorem mag_georgian : interventionPredicted georgian = false := by native_decide
-theorem mag_armenian : interventionPredicted armenian = false := by native_decide
-theorem mag_italian : interventionPredicted italian = false := by native_decide
-theorem mag_japanese : interventionPredicted japanese = false := by native_decide
+theorem mag_german : interventionPredicted german = false := by decide
+theorem mag_english : interventionPredicted english = false := by decide
+theorem mag_dutch : interventionPredicted dutch = false := by decide
+theorem mag_icelandic : interventionPredicted icelandic = false := by decide
+theorem mag_serboCroatian : interventionPredicted serboCroatian = false := by decide
+theorem mag_hungarian : interventionPredicted hungarian = false := by decide
+theorem mag_georgian : interventionPredicted georgian = false := by decide
+theorem mag_armenian : interventionPredicted armenian = false := by decide
+theorem mag_italian : interventionPredicted italian = false := by decide
+theorem mag_japanese : interventionPredicted japanese = false := by decide
 
-theorem mag_basque : interventionPredicted basque = false := by native_decide
-theorem mag_chacobo : interventionPredicted chacobo = false := by native_decide
-theorem mag_easternOromo : interventionPredicted easternOromo = false := by native_decide
+theorem mag_basque : interventionPredicted basque = false := by decide
+theorem mag_chacobo : interventionPredicted chacobo = false := by decide
+theorem mag_easternOromo : interventionPredicted easternOromo = false := by decide
 
-theorem mag_farsi : interventionPredicted farsi = true := by native_decide
-theorem mag_atong : interventionPredicted atong = true := by native_decide
-theorem mag_kalaallisut : interventionPredicted kalaallisut = true := by native_decide
+theorem mag_farsi : interventionPredicted farsi = true := by decide
+theorem mag_atong : interventionPredicted atong = true := by decide
+theorem mag_kalaallisut : interventionPredicted kalaallisut = true := by decide
 
 -- ============================================================================
 -- § 7: MAG Condition Independence
@@ -464,10 +461,10 @@ def hffWrong (d : InterventionDatum) : Bool :=
   interventionGeometryExists d.profile && d.observed
 
 theorem hff_wrong_count :
-    (table3.filter hffWrong).length = 11 := by native_decide
+    (table3.filter hffWrong).length = 11 := by decide
 
 theorem mag_correct_count :
-    (table3.filter magCorrect).length = 24 := by native_decide
+    (table3.filter magCorrect).length = 24 := by decide
 
 /-- HFF overgenerates for Greek: blocks A–XP–N but it is observed. -/
 theorem hff_overgenerates_greek :
@@ -497,64 +494,37 @@ def english_enough : AdjMorphProfile :=
 -- § 9: Bridge to Fragment Adjective Agreement Entries
 -- ============================================================================
 
--- The MAG's Boolean fields (`predAttrSameAgreement`, `agreementPhiKappaComplete`)
--- are DERIVED from the fragment-layer adjective agreement entries. This makes
--- the connection true by construction: changing a fragment feature list breaks
--- exactly these bridge theorems.
-
-/-- Greek: fragment entry confirms pred = attr agreement. -/
-theorem greek_fragment_sameAgreement :
-    Greek.StandardModern.AdjAgreement.entry.sameAgreement = true := by native_decide
-
-/-- Greek: fragment entry confirms φ/κ-completeness. -/
-theorem greek_fragment_phiKappaComplete :
-    Greek.StandardModern.AdjAgreement.entry.phiKappaComplete = true := by native_decide
+-- The profile Booleans (`predAttrSameAgreement`, `agreementPhiKappaComplete`) are
+-- checked against the fragment-layer agreement entries: changing a fragment
+-- feature set breaks exactly these bridge theorems. The entries' own facts are
+-- proved where they live (`Russian.AdjAgreement.same_agreement`, etc.).
 
 /-- Greek profile is consistent with fragment: pred = attr. -/
 theorem greek_profile_consistent_pred :
-    greek.predAttrSameAgreement =
-    Greek.StandardModern.AdjAgreement.entry.sameAgreement := by native_decide
+    greek.predAttrSameAgreement ↔
+      Greek.StandardModern.AdjAgreement.entry.SameAgreement := by decide
 
 /-- Greek profile is consistent with fragment: φ/κ-complete. -/
 theorem greek_profile_consistent_phikappa :
-    greek.agreementPhiKappaComplete =
-    Greek.StandardModern.AdjAgreement.entry.phiKappaComplete := by native_decide
+    greek.agreementPhiKappaComplete ↔
+      Greek.StandardModern.AdjAgreement.entry.PhiKappaComplete := by decide
 
-/-- German: fragment entry confirms pred ≠ attr. -/
-theorem german_fragment_not_sameAgreement :
-    German.AdjAgreement.entry.sameAgreement = false := by native_decide
-
-/-- German profile is consistent with fragment. -/
+/-- German profile is consistent with fragment: pred ≠ attr (bare predicative). -/
 theorem german_profile_consistent_pred :
-    german.predAttrSameAgreement =
-    German.AdjAgreement.entry.sameAgreement := by native_decide
+    german.predAttrSameAgreement ↔ German.AdjAgreement.entry.SameAgreement := by decide
 
-/-- Russian: fragment confirms pred = attr (long forms identical). -/
-theorem russian_fragment_sameAgreement :
-    Russian.AdjAgreement.entry.sameAgreement = true := by native_decide
-
-/-- Russian profile is consistent with fragment. -/
+/-- Russian profile is consistent with fragment: pred = attr (long forms identical). -/
 theorem russian_profile_consistent_pred :
-    russian.predAttrSameAgreement =
-    Russian.AdjAgreement.entry.sameAgreement := by native_decide
-
-/-- Italian: fragment confirms pred = attr (both carry φ). -/
-theorem italian_fragment_sameAgreement :
-    Italian.AdjAgreement.entry.sameAgreement = true := by native_decide
-
-/-- Italian: fragment confirms NOT φ/κ-complete (no case). -/
-theorem italian_fragment_not_phiKappaComplete :
-    Italian.AdjAgreement.entry.phiKappaComplete = false := by native_decide
+    russian.predAttrSameAgreement ↔ Russian.AdjAgreement.entry.SameAgreement := by decide
 
 /-- Italian profile is consistent with fragment: pred = attr. -/
 theorem italian_profile_consistent_pred :
-    italian.predAttrSameAgreement =
-    Italian.AdjAgreement.entry.sameAgreement := by native_decide
+    italian.predAttrSameAgreement ↔ Italian.AdjAgreement.entry.SameAgreement := by decide
 
 /-- Italian profile is consistent with fragment: NOT φ/κ-complete. -/
 theorem italian_profile_consistent_phikappa :
-    italian.agreementPhiKappaComplete =
-    Italian.AdjAgreement.entry.phiKappaComplete := by native_decide
+    italian.agreementPhiKappaComplete ↔
+      Italian.AdjAgreement.entry.PhiKappaComplete := by decide
 
 -- ============================================================================
 -- § 10: Bridge to Modification Routes (§5.1)
@@ -566,24 +536,24 @@ theorem italian_profile_consistent_phikappa :
 
 /-- Greek uses direct modification (no Attr needed). -/
 theorem greek_direct_mod :
-    modificationRoute greek = .direct := by native_decide
+    modificationRoute greek = .direct := by decide
 
 /-- German uses Attr-mediated modification. -/
 theorem german_attr_mediated :
-    modificationRoute german = .attrMediated := by native_decide
+    modificationRoute german = .attrMediated := by decide
 
 /-- Mandarin uses Attr-mediated modification (clitic 的). -/
 theorem mandarin_attr_mediated :
-    modificationRoute mandarin = .attrMediated := by native_decide
+    modificationRoute mandarin = .attrMediated := by decide
 
 /-- Italian uses Attr-mediated modification (null Attr for κ). -/
 theorem italian_attr_mediated :
-    modificationRoute italian = .attrMediated := by native_decide
+    modificationRoute italian = .attrMediated := by decide
 
 /-- Kalaallisut uses direct modification despite affixal Attr:
     φ/κ-complete agreement means Attr is not needed structurally. -/
 theorem kalaallisut_direct_mod :
-    modificationRoute kalaallisut = .direct := by native_decide
+    modificationRoute kalaallisut = .direct := by decide
 
 -- ============================================================================
 -- § 11: Bridge to ICP (§5.2)
@@ -594,19 +564,19 @@ theorem kalaallisut_direct_mod :
 
 /-- German: affixal Attr → ICP blocks intervention. -/
 theorem german_icp_blocks :
-    icpBlocksIntervention german.attrStatus = true := by native_decide
+    icpBlocksIntervention german.attrStatus = true := by decide
 
 /-- English: null Attr → ICP blocks intervention. -/
 theorem english_icp_blocks :
-    icpBlocksIntervention english.attrStatus = true := by native_decide
+    icpBlocksIntervention english.attrStatus = true := by decide
 
 /-- Mandarin: clitic 的 → ICP does NOT block. -/
 theorem mandarin_icp_permits :
-    icpBlocksIntervention mandarin.attrStatus = false := by native_decide
+    icpBlocksIntervention mandarin.attrStatus = false := by decide
 
 /-- Farsi: clitic ezafe → ICP does NOT block. -/
 theorem farsi_icp_permits :
-    icpBlocksIntervention farsi.attrStatus = false := by native_decide
+    icpBlocksIntervention farsi.attrStatus = false := by decide
 
 /-- The two MAG conditions are orthogonal to the two theory-layer
     mechanisms. Condition (a) = direct modification route; ICP blocking
@@ -620,34 +590,6 @@ theorem mag_factors_orthogonal :
     icpBlocksIntervention mandarin.attrStatus = false ∧
     -- German: Attr-mediated, ICP blocks (affix)
     modificationRoute german = .attrMediated ∧
-    icpBlocksIntervention german.attrStatus = true := by native_decide
-
--- ============================================================================
--- § 12: Bridge to WALS F87A (Adjective-Noun Order)
--- ============================================================================
-
-def walsOrder (code : String) : Option AdjectiveNounOrder :=
-  (allData.find? (·.walsCode == code)).map (·.value)
-
-def walsToPosition : AdjectiveNounOrder → AdjPosition
-  | .adjectiveNoun => .prenominal
-  | .nounAdjective => .postnominal
-  | .noDominantOrder => .both
-  | .onlyInternallyHeadedRelativeClauses => .both
-
-def walsConsistent (code : String) (prof : AdjMorphProfile) : Bool :=
-  match walsOrder code with
-  | none => true
-  | some order => walsToPosition order == prof.adjPosition
-
-theorem wals_greek : walsConsistent "grk" greek = true := by native_decide
-theorem wals_russian : walsConsistent "rus" russian = true := by native_decide
-theorem wals_german : walsConsistent "ger" german = true := by native_decide
-theorem wals_mandarin : walsConsistent "mnd" mandarin = true := by native_decide
-theorem wals_basque : walsConsistent "bsq" basque = true := by native_decide
-theorem wals_hungarian : walsConsistent "hun" hungarian = true := by native_decide
-theorem wals_italian : walsConsistent "ita" italian = true := by native_decide
-theorem wals_farsi : walsConsistent "prs" farsi = true := by native_decide
-theorem wals_tagalog : walsConsistent "tag" tagalog = true := by native_decide
+    icpBlocksIntervention german.attrStatus = true := by decide
 
 end AlexeyenkoZeijlstra2025

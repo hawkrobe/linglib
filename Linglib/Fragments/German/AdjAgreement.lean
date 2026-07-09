@@ -1,4 +1,5 @@
 import Linglib.Syntax.Agreement.AdjAgreement
+import Linglib.Fragments.German.Case
 
 /-!
 # German Adjective Agreement
@@ -7,36 +8,30 @@ import Linglib.Syntax.Agreement.AdjAgreement
 German predicative adjectives are bare (uninflected): *Er ist stolz*
 'He is proud.' Attributive adjectives carry strong/weak/mixed agreement
 endings inflected for gender, number, and case: *stolzer Vater* 'proud
-father' (38), (60).
-
-Because predicative and attributive forms differ, `predAttrSameAgreement`
-is false, and the MAG correctly predicts that German obeys the HFF.
-The attributivizer is affixal (the agreement ending itself is the
-spellout of Attr), so the ICP forces adjacency.
+father' (38), (60). Because the predicative form realizes no agreement,
+pred ≠ attr, and German obeys the HFF.
 -/
 
 namespace German.AdjAgreement
 
 open Agreement
 
-/-- German predicative adjectives carry NO agreement features (bare). -/
-def predFeatures : List AgrFeature := []
+/-- Attributive φ-features: number and gender. -/
+private def phiFeatures : Finset AgrFeature :=
+  { .number .singular, .number .plural
+  , .gender .masculine, .gender .feminine, .gender .neuter }
 
-/-- German attributive adjectives carry φ + κ (strong endings). -/
-def attrFeatures : List AgrFeature :=
-  [ .number .plural, .number .singular
-  , .gender 0, .gender 1, .gender 2
-  , .kappa .nom, .kappa .acc, .kappa .dat, .kappa .gen ]
+/-- Attributive κ-features, derived from the 4-case `German.Case.caseInventory`. -/
+private def kappaFeatures : Finset AgrFeature :=
+  German.Case.caseInventory.image .kappa
 
-/-- All φ/κ-features available in the German DP. -/
-def dpFeatures : List AgrFeature := attrFeatures
-
+/-- German entry: bare predicative forms, fully inflected attributive forms. -/
 def entry : AdjAgreementEntry where
-  predFeatures := predFeatures
-  attrFeatures := attrFeatures
-  dpFeatures   := dpFeatures
+  predFeatures := ∅
+  attrFeatures := phiFeatures ∪ kappaFeatures
+  dpFeatures   := phiFeatures ∪ kappaFeatures
 
-/-- German pred ≠ attr: predicative is bare. -/
-theorem not_same_agreement : entry.sameAgreement = false := by decide
+/-- German pred ≠ attr: predicative adjectives are bare. -/
+theorem not_same_agreement : ¬ entry.SameAgreement := by decide
 
 end German.AdjAgreement

@@ -6,13 +6,9 @@ import Linglib.Syntax.Agreement.AdjAgreement
 
 Italian adjectives are inflected for gender and number (φ-features) in
 both predicative and attributive use, but NOT for case (κ-features).
-The agreement forms are identical across positions (36).
-
-Under the MAG, Italian fails condition (a) because φ/κ-completeness
-requires case marking: `agreementPhiKappaComplete = false`. Since the
-Attr head is null and affixal (carrying κ-features), the ICP forces
-adjacency. Italian prenominal adjectives therefore obey the HFF. The
-analysis is given in (72).
+The agreement forms are identical across positions (36). Because the
+DP carries case even when adjectives never realize it (fn 17), Italian
+adjectives are not φ/κ-complete, and Italian obeys the HFF (72).
 -/
 
 namespace Italian.AdjAgreement
@@ -20,24 +16,22 @@ namespace Italian.AdjAgreement
 open Agreement
 
 /-- Italian adjective φ-features: number and gender only. -/
-def phiFeatures : List AgrFeature :=
-  [ .number .plural, .number .singular
-  , .gender 0, .gender 1 ]
+private def phiFeatures : Finset AgrFeature :=
+  { .number .singular, .number .plural
+  , .gender .masculine, .gender .feminine }
 
-/-- Italian DP features include κ (case is always a DP feature per fn 17,
-    even when not morphologically realized on adjectives). -/
-def dpFeatures : List AgrFeature :=
-  phiFeatures ++ [.kappa .nom, .kappa .acc]
-
+/-- Italian entry: identical pred and attr φ-features; the DP additionally
+    carries κ (case is always a DP feature per fn 17, even when not
+    morphologically realized on adjectives). -/
 def entry : AdjAgreementEntry where
   predFeatures := phiFeatures
   attrFeatures := phiFeatures
-  dpFeatures   := dpFeatures
+  dpFeatures   := phiFeatures ∪ {.kappa .nom, .kappa .acc}
 
 /-- Italian pred = attr (both carry φ). -/
-theorem same_agreement : entry.sameAgreement = true := by decide
+theorem same_agreement : entry.SameAgreement := rfl
 
 /-- Italian is NOT φ/κ-complete: adjectives lack case. -/
-theorem not_phi_kappa_complete : entry.phiKappaComplete = false := by decide
+theorem not_phi_kappa_complete : ¬ entry.PhiKappaComplete := by decide
 
 end Italian.AdjAgreement
