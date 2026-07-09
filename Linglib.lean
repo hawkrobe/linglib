@@ -3,7 +3,6 @@
 /-
 A Lean 4 library for formal linguistics, covering semantics, pragmatics,
 and their interfaces. See README.md for documentation links.
-import Linglib.Core.Algebra.Free
 import Linglib.Core.Algebra.FreeMonoid.Destutter
 import Linglib.Core.Algebra.Group.Aperiodic
 import Linglib.Core.Algebra.Group.Idempotent
@@ -38,7 +37,6 @@ import Linglib.Core.Algebra.RootedTree.GrossmanLarsonPairing
 import Linglib.Core.Algebra.RootedTree.GrossmanLarsonSplit
 import Linglib.Core.Algebra.RootedTree.HopfAlgebraNonplanar
 import Linglib.Core.Algebra.RootedTree.InsertionLieDuality
-import Linglib.Core.Algebra.RootedTree.PreLie.BMinusSL
 import Linglib.Core.Algebra.RootedTree.PreLie.Basic
 import Linglib.Core.Algebra.RootedTree.PreLie.Graft
 import Linglib.Core.Algebra.RootedTree.PreLie.Insert

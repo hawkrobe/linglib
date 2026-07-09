@@ -401,8 +401,8 @@ theorem oudomGuinCirc_mul_ι (A B : SymmetricAlgebra R L) (X : L) :
     Proven by induction on `m`; base case uses `one_circ`, step uses Prop 2.7 (iii)
     + `comul_ι` + `circ_one_right` + `circ_ι_ι`.
 
-    Made public (originally `private`) for use in BMinusSL's `psiA_L_circByT_total_eq`
-    proof — provides the Leibniz expansion of `(∏ ι(a i)) ○ ι X`. -/
+    Provides the Leibniz expansion of `(∏ ι(a i)) ○ ι X`; consumed downstream by
+    `OudomGuinBridge`. -/
 theorem oudomGuinCirc_algHomL_tprod_ι (X : L) :
     ∀ (m : ℕ) (a : Fin m → L),
       oudomGuinCirc (R := R)
