@@ -1,7 +1,7 @@
 import Linglib.Features.Aktionsart
 import Linglib.Features.Attitudes
 import Linglib.Features.Causation
-import Linglib.Semantics.ArgumentStructure.LevinClass
+import Linglib.Semantics.Verb.Class
 import Linglib.Semantics.ArgumentStructure.MeaningComponents
 import Linglib.Semantics.Verb.Root.Signature
 import Linglib.Semantics.ArgumentStructure.EventStructure
@@ -340,7 +340,7 @@ theorem root_cause_accounted_for (c : LevinClass) :
     c.causationSource = .rootNonDetachable := by
   cases c <;> decide
 
-/-- `.stateChange` resultKind implies Template-level result-state. -/
+/-- `.stateChange` resultKind implies RoleList-level result-state. -/
 theorem resultKind_stateChange_imp_template_resultState (c : LevinClass) :
     c.resultKind = .stateChange → c.eventTemplate.HasResultState := by
   cases c <;> decide
@@ -365,5 +365,157 @@ theorem structuralMC_diverges_from_meaningComponents :
       (Verb.Root.Kinds.structuralMC c.rootEntailments).changeOfState = true ∧
       c.meaningComponents.changeOfState = false :=
   ⟨.give, by decide⟩
+
+-- ════════════════════════════════════════════════════
+-- § 7. Root.Kinds → RoleList (the missing derivation)
+-- ════════════════════════════════════════════════════
+
+/-! Root kind signatures determine argument templates — the derivational
+direction in the argument-realization tradition ([beavers-koontz-garboden-2020]
+roots, [rappaport-hovav-levin-1998] event-template linking). The chain runs:
+
+    Root.Kinds → RoleList → RoleList → ThetaRole labels
+
+`toRoleList` formalizes the default derivation. It
+captures the majority pattern: causative roots produce agent subjects
+and affected objects; manner-only roots produce agent subjects without
+causation; result-only roots produce unaccusative subjects; state-only
+roots produce experiencer subjects.
+
+Two classes of systematic overrides exist:
+- **Psych-causal verbs** (amuse): `causativeResult` roots where the
+  subject is a non-volitional stimulus, not a volitional agent.
+  Override: `psychCausal` template.
+- **Creation verbs** (build): `causativeResult` roots where the object
+  has dependent existence and incremental theme structure.
+  Override: `creation` template.
+
+These overrides are documented and verified below. -/
+
+/-- Derive a default RoleList from a root kind signature.
+
+    The derivation follows B&KG's event structure decomposition:
+
+    - `cause`: subject is external causer → full agent (V+S+C+M+IE),
+      object undergoes change → CoS+CA
+    - `result` without `cause`: internally caused change → unaccusative,
+      sole argument is patient (CoS+CA)
+    - `manner` without `cause`/`result`: activity → agent without
+      causation (V+S+M+IE), no affected object
+    - `state` only: stative → experiencer subject (S+IE)
+    - no entailments: no default derivation
+
+    For `cause+manner` (fullSpec) vs `cause` without `manner`
+    (causativeResult): both produce the same default RoleList.
+    The manner flag restricts HOW the cause proceeds (cutting vs.
+    breaking), not WHETHER there's an agent. -/
+def toRoleList (re : Root.Kinds) : Option RoleList :=
+  if .cause ∈ re then
+    some resultChange
+  else if .result ∈ re then
+    some unaccusativeCoS
+  else if .manner ∈ re then
+    some selfMotion
+  else if .state ∈ re then
+    some perception
+  else
+    none
+
+-- ════════════════════════════════════════════════════
+-- § 8. Consistency: rootEntailments vs roleList
+-- ════════════════════════════════════════════════════
+
+/-! For each LevinClass with both `rootEntailments` and `roleList`
+defined, we verify that the derived RoleList either MATCHES the
+hand-specified one or is a documented override. -/
+
+-- § 8a. The table is not the naive derivation
+
+/-- `roleList` is not merely `toRoleList ∘ rootEntailments`: it diverges
+    for the documented overrides (creation, psych-causal). *Build* witnesses
+    this — its `causativeResult` root derives `resultChange`, but the class
+    template is `creation` (incremental-theme object). A table that always
+    matched the derivation would be redundant with it; this divergence is why
+    `roleList` exists as a separate label, and §8b documents the overrides. -/
+theorem roleList_diverges_from_derivation :
+    ∃ c : LevinClass,
+      LevinClass.roleList c ≠ toRoleList (LevinClass.rootEntailments c) :=
+  ⟨.build, by decide⟩
+
+-- § 8b. Documented overrides (derivation gives a default that the
+--        class specializes)
+
+/-- Build-class: causativeResult derives `resultChange`, but build
+    verbs have a CREATION object (CoS+IT+CA+DE) — the object comes
+    into existence. Dependent existence and incremental theme are
+    additional entailments not captured by root structural features. -/
+theorem build_override_creation :
+    toRoleList (LevinClass.rootEntailments .build) = some resultChange ∧
+    LevinClass.roleList .build = some creation := ⟨rfl, rfl⟩
+
+/-- Amuse-class: causativeResult derives `resultChange` (agent subject),
+    but psych-causal verbs have a STIMULUS subject (C+IE, no volition)
+    and EXPERIENCER object (S+IE). The nature of causation (volitional
+    vs. stimulus) isn't encoded in root entailments. -/
+theorem amuse_override_psychCausal :
+    toRoleList (LevinClass.rootEntailments .amuse) = some resultChange ∧
+    LevinClass.roleList .amuse = some psychCausal := ⟨rfl, rfl⟩
+
+/-- Eat/devour: default from rootEntailments is not defined (minimal),
+    but class-level roleList specifies `consumption`. -/
+theorem eat_has_class_template :
+    LevinClass.roleList .eat = some consumption := rfl
+
+/-- The remaining documented overrides, in one place. Root kind signatures
+    are too coarse for these classes: manner roots don't distinguish the
+    wipe class's underspecified-volition subject from full-agent self-motion;
+    state roots don't distinguish sentience-entailed psych states (admire)
+    from bare desire states (want); and result roots don't see the
+    disappearance class's dependent existence. -/
+theorem class_templates_override_derivation :
+    (toRoleList (LevinClass.rootEntailments .wipe) = some selfMotion ∧
+      LevinClass.roleList .wipe = some wipeManner) ∧
+    (toRoleList (LevinClass.rootEntailments .admire) = some perception ∧
+      LevinClass.roleList .admire = some psychState) ∧
+    (toRoleList (LevinClass.rootEntailments .want) = some perception ∧
+      LevinClass.roleList .want = some desire) ∧
+    (toRoleList (LevinClass.rootEntailments .disappearance)
+        = some unaccusativeCoS ∧
+      LevinClass.roleList .disappearance
+        = some ArgumentStructure.disappearance) ∧
+    (toRoleList (LevinClass.rootEntailments .getObtain) = none ∧
+      LevinClass.roleList .getObtain = some possessionTransfer) := by
+  refine ⟨⟨rfl, rfl⟩, ⟨rfl, rfl⟩, ⟨rfl, rfl⟩, ⟨rfl, rfl⟩, rfl, rfl⟩
+
+-- § 8c. Subject agreement: even for overrides, the subject profile's
+--        core agentivity features agree
+
+/-- Build-class subject matches the derivation's subject
+    (both are full agent V+S+C+M+IE). The override affects only
+    the object, not the subject. -/
+theorem build_subject_agrees :
+    resultChange.subjectProfile = creation.subjectProfile := rfl
+
+-- § 8d. The derivation produces well-formed Templates
+
+/-- All canonical root signatures derive well-formed internal constraints
+    (volition → sentience holds for derived subject profiles). The
+    `Option.elim False` form simultaneously checks that `toRoleList`
+    succeeds on each input and that the resulting template's subject
+    profile is well-formed. -/
+theorem derived_subjects_wellformed :
+    (toRoleList causativeResult).elim False
+      (WellFormedInternal ·.subjectProfile) ∧
+    (toRoleList pureManner).elim False
+      (WellFormedInternal ·.subjectProfile) ∧
+    (toRoleList pureResult).elim False
+      (WellFormedInternal ·.subjectProfile) ∧
+    (toRoleList propertyConcept).elim False
+      (WellFormedInternal ·.subjectProfile) := by
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · show WellFormedInternal resultChange.subjectProfile; decide
+  · show WellFormedInternal selfMotion.subjectProfile; decide
+  · show WellFormedInternal unaccusativeCoS.subjectProfile; decide
+  · show WellFormedInternal perception.subjectProfile; decide
 
 end ArgumentStructure

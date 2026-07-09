@@ -1,7 +1,7 @@
 import Linglib.Semantics.ArgumentStructure.EventStructure
 import Linglib.Semantics.Aspect.ChangeOfState
 import Linglib.Semantics.ArgumentStructure.LevinTheory
-import Linglib.Semantics.ArgumentStructure.LevinClassProfiles
+import Linglib.Semantics.ArgumentStructure.RoleList
 import Linglib.Semantics.Verb.Root.Template
 import Linglib.Semantics.Verb.Root.Arity
 import Linglib.Semantics.Verb.Root.Profile

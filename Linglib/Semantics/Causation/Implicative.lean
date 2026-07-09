@@ -1,7 +1,7 @@
 import Linglib.Features.Aktionsart
 import Linglib.Features.Attitudes
 import Linglib.Features.Causation
-import Linglib.Semantics.ArgumentStructure.LevinClass
+import Linglib.Semantics.Verb.Class
 import Linglib.Semantics.ArgumentStructure.MeaningComponents
 import Linglib.Semantics.Causation.SEM.Counterfactual
 

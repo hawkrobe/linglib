@@ -1,6 +1,6 @@
 import Linglib.Semantics.ArgumentStructure.CaseRegion
 import Linglib.Semantics.ArgumentStructure.Projection
-import Linglib.Semantics.ArgumentStructure.LevinClassProfiles
+import Linglib.Semantics.ArgumentStructure.RoleList
 import Linglib.Studies.Aissen2003
 import Linglib.Studies.Dowty1991
 

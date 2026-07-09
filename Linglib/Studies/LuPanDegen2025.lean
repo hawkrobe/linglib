@@ -12,7 +12,7 @@ import Linglib.Studies.Sag2010
 import Linglib.Features.Aktionsart
 import Linglib.Features.Attitudes
 import Linglib.Features.Causation
-import Linglib.Semantics.ArgumentStructure.LevinClass
+import Linglib.Semantics.Verb.Class
 import Linglib.Semantics.ArgumentStructure.MeaningComponents
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Data.Examples.LuPanDegen2025

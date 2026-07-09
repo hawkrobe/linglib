@@ -10,7 +10,7 @@ operator for componentwise composition.
 
 Moved from `Core/Lexical/VerbClass.lean` in the cleanup that dissolved
 `Core/Lexical/`. Lives at `Semantics/Lexical/` (sibling of
-`LevinTheory.lean`, `LevinClassProfiles.lean`, `LevinClass.lean`,
+`LevinTheory.lean`, `RoleList.lean`, `Semantics/Verb/Class.lean`,
 `DiathesisAlternation.lean`) because it encodes Levin's specific
 diagnostic apparatus (CoS / contact / motion / causation as the 4
 canonical features) — paper-anchored framework content, not consensus
