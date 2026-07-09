@@ -1,3 +1,4 @@
+import Linglib.Morphology.Realization
 import Linglib.Syntax.Extraction
 
 /-!
@@ -15,8 +16,9 @@ AF, so the marked "subject" is A, not S.
 
 ## Main declarations
 
-* `Kaqchikel.extractionStrategy`, `Kaqchikel.extractionMarkedPositions`,
-  `Kaqchikel.extractionDistinguishesPosition`: the extraction profile.
+* `Kaqchikel.Extraction.realize`: the overt reflexes of extraction from
+  each target position, with `Kaqchikel.Extraction.strategy` as the
+  WALS-style label.
 
 ## Implementation notes
 
@@ -30,11 +32,23 @@ analyses live in `Studies/Erlewine2016.lean` and
 
 namespace Kaqchikel
 
-/-- Kaqchikel marks transitive-subject extraction with dedicated AF
-    morphology: the suffix *-ö* or *-n*, with Set A suppressed
-    ([erlewine-2016]). -/
-def extractionStrategy : Extraction.ExtractionMarkingStrategy := .dedicatedMorpheme
-def extractionMarkedPositions : List Extraction.ExtractionTarget := [.subject]
-def extractionDistinguishesPosition : Bool := true
+namespace Extraction
+
+/-- Reflex hosts for Kaqchikel extraction marking. -/
+inductive Site where
+  | verb
+  deriving DecidableEq, Repr
+
+/-- Transitive-subject extraction switches the verb to AF (the suffix
+    *-ö* or *-n*, with Set A suppressed, [erlewine-2016]); nothing else
+    is marked. -/
+def realize : _root_.Extraction.ExtractionTarget → List (Morphology.Reflex Site)
+  | .subject => [.morpheme .verb]
+  | _ => []
+
+/-- WALS-style label: a dedicated morpheme marks extraction. -/
+def strategy : _root_.Extraction.ExtractionMarkingStrategy := .dedicatedMorpheme
+
+end Extraction
 
 end Kaqchikel
