@@ -51,6 +51,13 @@ def Has2_5ness (n : ℕ) : Prop :=
 instance (n : ℕ) : Decidable (Has2_5ness n) :=
   inferInstanceAs (Decidable (∃ b < 11, 1 ≤ b ∧ ∃ m < 10, 1 ≤ m ∧ 2 * n = m * 5 * 10 ^ b))
 
+/-- Any k-ness forces divisibility by 10: the witness exponent is at least 1. -/
+theorem HasKness.ten_dvd {n k : ℕ} (h : HasKness n k) : 10 ∣ n := by
+  obtain ⟨b, -, hb, m, -, -, rfl⟩ := h
+  obtain ⟨b', rfl⟩ := Nat.exists_eq_add_of_le hb
+  exact ⟨m * k * 10 ^ b', by simp [Nat.pow_add, Nat.pow_one, Nat.mul_comm,
+    Nat.mul_assoc, Nat.mul_left_comm]⟩
+
 /-! ### Roundness score
 
 The six graded roundness properties of [sigurd-1988] and
@@ -145,6 +152,12 @@ example : contextualRoundnessScore 120 12 = 4 := by decide
 example : roundnessInContext 48 12 = 2 := by decide
 example : roundnessInContext 48 10 = 0 := by decide
 example : roundnessInContext 100 10 = 6 := by decide
+
+/-- The roundness score never exceeds `maxRoundnessScore`: each of the six
+properties contributes at most 1. -/
+theorem roundnessScore_le_max (n : ℕ) : roundnessScore n ≤ maxRoundnessScore := by
+  unfold roundnessScore maxRoundnessScore
+  split_ifs <;> omega
 
 /-- Multiples of 10 have roundness score ≥ 2 (multiple-of-5 and
 multiple-of-10 both hold). The keystone for downstream sorry-free proofs. -/

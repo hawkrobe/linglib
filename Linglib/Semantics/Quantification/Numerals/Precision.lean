@@ -82,6 +82,13 @@ def haloWidth (n : Nat) : ℚ :=
 def inferPrecisionMode (n : Nat) : PrecisionMode :=
   if Roundness.roundnessScore n ≥ 2 then .approximate else .exact
 
+/-- Every multiple of 10 is inferred `.approximate`: its roundness score is at
+least 2 (`Roundness.score_ge_two_of_div10`). -/
+theorem inferPrecisionMode_eq_approximate_of_ten_dvd {n : ℕ} (h : 10 ∣ n) :
+    inferPrecisionMode n = .approximate := by
+  unfold inferPrecisionMode
+  exact if_pos (Roundness.score_ge_two_of_div10 n h)
+
 /-- `PrecisionMode` is the two-point instance of the QUD-layer
 `PrecisionProjection` family: `f_e` is `PrecisionProjection.exact`; `f_a`
 at grain `g` rounds within the width-`g` grain (the lower representative
