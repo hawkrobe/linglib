@@ -22,9 +22,9 @@ the Bool-view (`sameAnswer`), and the `ProductQUD` projections.
 
 ## Place in the Question API
 
-`QUD M` lives inside `Core/Question/` (rather than a parallel
-`Core/QUD/` directory) as the construction-side API for partition-shaped
-questions. The inquisitive `Question W` (`Core/Question/Basic.lean`) is
+`QUD M` lives inside `Semantics/Questions/` (rather than a parallel
+top-level QUD directory) as the construction-side API for partition-shaped
+questions. The inquisitive `Question W` (`Semantics/Questions/Basic.lean`) is
 the consumer-side type with the richer lattice and answerhood structure;
 `Question.fromSetoid` (`Semantics/Questions/Partition/Basic.lean`) is the
 canonical bridge from a `Setoid` (or `QUD`) into an inquisitive

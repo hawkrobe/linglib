@@ -252,7 +252,7 @@ is reflexive (`questionEntails_refl`) and transitive
     direction is now `Core.DecisionTheory.questionUtility_split_ge` (a finer
     partition has `EUV ≥` the coarser one, for every decision problem). The
     remaining gap to the full `questionEntails`-level *iff* is (i) a
-    `Question W → Finset (Finset W)` partition-cell bridge via `HasAltList`, and
+    `Question W → Finset (Finset W)` finite-alternatives partition-cell adapter, and
     (ii) the [blackwell-1953] converse
     `ProbabilityTheory.isGarblingOf_of_blackwellDominates`. -/
 theorem decisionRelevance_preserved_under_cover
@@ -277,7 +277,7 @@ of [blackwell-1953]". We state it over [groenendijk-stokhof-1984] partition cell
 with a proper prior.
 
 (The lift to the type-level `Question.questionEntails`/`Question W` is the remaining
-mechanical step: a `HasAltList Q → Finset (Finset W)` adapter via `Set.Finite.toFinset`,
+mechanical step: an `alt Q → Finset (Finset W)` adapter via `Set.Finite.toFinset`,
 discharging `questionEntails` against this cell refinement.) -/
 
 /-- **[van-rooy-2003] §4.1 Fact, the `⟹` ("only if") direction** (p. 743): a finer question

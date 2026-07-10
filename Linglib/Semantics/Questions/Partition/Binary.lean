@@ -17,7 +17,7 @@ P-preserving coarsening of a given partition:
   Universality property: any q'-refinement that preserves P also refines
   this construction.
 
-Used by `Core/Question/Partition/Negativity.lean` for Merin's epistemic
+Used by `Semantics/Questions/Partition/Negativity.lean` for Merin's epistemic
 characterization of negative attributes.
 -/
 

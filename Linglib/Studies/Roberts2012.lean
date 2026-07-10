@@ -40,11 +40,12 @@ q_ai (H beans?) q_aii (H tofu?) q_bi (R beans?) q_bii (R tofu?)
 
 ## Representation
 
-This file uses `Question` (Set-based, with `Prop` + `Decidable` Roberts QUD
-predicates from `Core/Question/Relevance.lean`). Non-polar issues are built via
-`Question.ofList` and `⊓`; entailment for these uses the `HasAltList` infrastructure
-from `Core/Question/Hamblin.lean`. Set-based partitions live in
-`Core/Question/Partition.lean` (`Question.IsPartition`, backed by
+This file uses `Question` (Set-based, with the `Prop` Roberts QUD predicates
+from `Semantics/Questions/Relevance.lean`, reduced to decidable `Set`
+inclusions via the `_polar_iff` lemmas). Non-polar issues are built via
+`Question.ofList` and `⊓`; entailment for these goes through the lattice
+route (`questionEntails_of_le'`). Set-based partitions live in
+`Semantics/Questions/Partition/` (`Question.IsPartition`, backed by
 `Setoid.IsPartition`).
 -/
 

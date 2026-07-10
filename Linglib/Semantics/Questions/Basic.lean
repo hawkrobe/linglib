@@ -38,8 +38,8 @@ derivatives (`compl_eq`, `proj`, `nonInfo`, the division law), and the
 LEM-fails witness.
 
 For Hamblin constructions (`polar`, `which`), see
-`Core/Question/Hamblin.lean`. For partial-answerhood and Roberts
-QUD-relevance predicates, see `Core/Question/Relevance.lean`. For
+`Semantics/Questions/Hamblin.lean`. For partial-answerhood and Roberts
+QUD-relevance predicates, see `Semantics/Questions/Relevance.lean`. For
 the `Setoid → Question` embedding (used by `State`), see
 `Semantics/Questions/Partition/Basic.lean`.
 

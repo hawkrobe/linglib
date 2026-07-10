@@ -38,9 +38,9 @@ Given a state `σ : Set W` and a question `Q : Question W`:
   weak / intermediate / strong / relativized exhaustivity ladder
   ([heim-1994], [george-2011], [xiang-2022]).
 
-- **partiallyResolves**: re-export of `Question.Relevance.partiallyAnswers`
-  ([roberts-2012] Def. 3a). σ settles at least one alternative either
-  positively (`σ ⊆ p`) or negatively (`σ ⊆ pᶜ`).
+- **`Question.partiallyAnswers`** (`Relevance.lean`, [roberts-2012] (3a)):
+  σ settles at least one alternative either positively (`σ ⊆ p`) or
+  negatively (`σ ⊆ pᶜ`); bridged below by `resolves_imp_partiallyAnswers`.
 
 - **CompletelyResolves**: σ entails every alternative —
   `∀ p ∈ alt Q, σ ⊆ p`. The over-strong "intersection" reading; mostly
