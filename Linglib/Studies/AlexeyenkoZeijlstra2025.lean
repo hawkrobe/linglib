@@ -1,9 +1,12 @@
 import Linglib.Features.WordOrder
+import Linglib.Features.Number.Basic
+import Linglib.Features.Gender.Basic
+import Linglib.Features.Case.Basic
 import Linglib.Morphology.MorphRule
-import Linglib.Fragments.Greek.StandardModern.AdjAgreement
-import Linglib.Fragments.German.AdjAgreement
-import Linglib.Fragments.Slavic.Russian.AdjAgreement
-import Linglib.Fragments.Italian.AdjAgreement
+import Linglib.Fragments.Slavic.Russian.Agreement
+import Linglib.Fragments.Slavic.Russian.Case
+import Linglib.Fragments.German.Case
+import Linglib.Fragments.Greek.Case
 
 /-!
 # Linearization of Complex Modifiers: (Dis)obeying the Head-Final Filter
@@ -32,8 +35,9 @@ The MAG is derived from two independent factors:
 
 We formalize the MAG as a decision procedure matching the paper's decision
 trees (44)/(45), encode 24 languages from Table 3, and verify that the MAG
-correctly predicts all of them while the HFF fails for 11. Bridge theorems
-check the profile Booleans against the fragment-layer agreement entries.
+correctly predicts all of them while the HFF fails for 11. Per-language
+concord data (case inventories imported from `Fragments/*/Case.lean`) is
+checked against the Table 3 profile Booleans.
 -/
 
 -- ============================================================================
@@ -61,9 +65,9 @@ open Morphology (MorphStatus)
 /-! ## The Attr head and modification routes ([alexeyenko-zeijlstra-2025] §5)
 
 Formerly `Syntax/Minimalist/Modification.lean` — relocated here as this paper's own
-analysis (it had a single consumer, this study). The theory-neutral substrate it used
-(`MAGFeatureType`/`AdjAgreementEntry`) is now `Syntax/Agreement/AdjAgreement.lean`,
-imported theory-neutrally by the `Fragments/*/AdjAgreement` files. -/
+analysis (it had a single consumer, this study). Its agreement-entry substrate was
+likewise dissolved into § 9 below (`Concord`), which projects onto the shared
+covariance fact layer (`Agreement.CovarianceProfile`). -/
 
 /-- Morphophonological status of the attributivizer (Attr head, §5.2). Determines
     whether Attr imposes linear adjacency with the adjective. -/
@@ -491,40 +495,143 @@ def english_enough : AdjMorphProfile :=
   ⟨.prenominal, .headInitial, false, false, .null⟩
 
 -- ============================================================================
--- § 9: Bridge to Fragment Adjective Agreement Entries
+-- § 9: Adjectival concord and MAG (34a)
 -- ============================================================================
 
--- The profile Booleans (`predAttrSameAgreement`, `agreementPhiKappaComplete`) are
--- checked against the fragment-layer agreement entries: changing a fragment
--- feature set breaks exactly these bridge theorems. The entries' own facts are
--- proved where they live (`Russian.AdjAgreement.same_agreement`, etc.).
+/-- The nominal features an adjectival form is specified for — MAG (34a)'s
+    φ/κ-features — one `Finset` per dimension. Including case (κ) takes a side
+    in a live debate: canonical typology confines agreement features to
+    person/number/gender, with case assigned to the NP by government
+    ([corbett-1998]; [corbett-2006]'s canonical-agreement hedges; the stance of
+    `Syntax/Agreement/Paradigm`), while the nominal-concord literature treats
+    case concord on adjectives as the same feature-sharing phenomenon.
+    [alexeyenko-zeijlstra-2025] side with the latter: fn 17 has case "always
+    present as a feature on DPs", and their percolation analysis carries κ
+    through the extended nominal projection. -/
+structure Concord where
+  numbers : Finset Number := ∅
+  genders : Finset Gender := ∅
+  cases   : Finset Case := ∅
+  deriving DecidableEq
 
-/-- Greek profile is consistent with fragment: pred = attr. -/
-theorem greek_profile_consistent_pred :
-    greek.predAttrSameAgreement ↔
-      Greek.StandardModern.AdjAgreement.entry.SameAgreement := by decide
+/-- Pointwise inclusion of concord specifications. -/
+instance : LE Concord where
+  le a b := a.numbers ⊆ b.numbers ∧ a.genders ⊆ b.genders ∧ a.cases ⊆ b.cases
 
-/-- Greek profile is consistent with fragment: φ/κ-complete. -/
-theorem greek_profile_consistent_phikappa :
-    greek.agreementPhiKappaComplete ↔
-      Greek.StandardModern.AdjAgreement.entry.PhiKappaComplete := by decide
+instance : DecidableLE Concord := fun _ _ => inferInstanceAs (Decidable (_ ∧ _))
 
-/-- German profile is consistent with fragment: pred ≠ attr (bare predicative). -/
-theorem german_profile_consistent_pred :
-    german.predAttrSameAgreement ↔ German.AdjAgreement.entry.SameAgreement := by decide
+/-- A language's adjectival concord data: what predicative and attributive
+    forms are specified for, and what the DP carries. -/
+structure AdjConcord where
+  pred : Concord
+  attr : Concord
+  dp   : Concord
 
-/-- Russian profile is consistent with fragment: pred = attr (long forms identical). -/
+namespace AdjConcord
+
+variable (c : AdjConcord)
+
+/-- MAG (34a) clause 1: the agreement marker is also present on the
+    predicative form. -/
+def SameAgreement : Prop := c.pred = c.attr
+
+/-- MAG (34a) clause 2: the attributive marker is specified for all
+    features available in the DP. -/
+def PhiKappaComplete : Prop := c.dp ≤ c.attr
+
+instance : Decidable c.SameAgreement := inferInstanceAs (Decidable (_ = _))
+
+instance : Decidable c.PhiKappaComplete := inferInstanceAs (Decidable (_ ≤ _))
+
+end AdjConcord
+
+private def russianLongForm : Concord :=
+  { numbers := {.singular, .plural}
+  , genders := {.masculine, .feminine, .neuter}
+  , cases   := Russian.Case.caseInventory }
+
+/-- Russian long forms: number, gender, and the full 6-case inventory
+    (`Russian.Case.caseInventory`), identical in pred and attr use and covering
+    the DP ((39), Table 4). Short forms (full φ, no κ) are predicative-only and
+    so never bear on (34a). -/
+def russianConcord : AdjConcord := ⟨russianLongForm, russianLongForm, russianLongForm⟩
+
+private def greekForm : Concord :=
+  { numbers := {.singular, .plural}
+  , genders := {.masculine, .feminine, .neuter}
+  , cases   := Greek.Case.caseInventory }
+
+/-- Greek adjectives: fully inflected for gender, number, and case in both
+    uses (37); 3-case inventory `Greek.Case.caseInventory`. -/
+def greekConcord : AdjConcord := ⟨greekForm, greekForm, greekForm⟩
+
+private def germanAttrForm : Concord :=
+  { numbers := {.singular, .plural}
+  , genders := {.masculine, .feminine, .neuter}
+  , cases   := German.Case.caseInventory }
+
+/-- German: predicative adjectives are bare (*Er ist stolz* 'He is proud');
+    attributive forms carry gender/number/case endings ((38), (60)), with the
+    4-case `German.Case.caseInventory`. -/
+def germanConcord : AdjConcord := ⟨{}, germanAttrForm, germanAttrForm⟩
+
+private def italianForm : Concord :=
+  { numbers := {.singular, .plural}
+  , genders := {.masculine, .feminine} }
+
+/-- Italian adjectives: gender and number in both uses, never case (36); the
+    DP carries κ regardless (fn 17). -/
+def italianConcord : AdjConcord :=
+  ⟨italianForm, italianForm, { italianForm with cases := {.nom, .acc} }⟩
+
+-- Table 3's profile Booleans are checked against the concord data: changing
+-- a concord feature set breaks exactly these theorems.
+
+/-- Russian: long forms identical in pred and attr use. -/
 theorem russian_profile_consistent_pred :
-    russian.predAttrSameAgreement ↔ Russian.AdjAgreement.entry.SameAgreement := by decide
+    russian.predAttrSameAgreement ↔ russianConcord.SameAgreement := by decide
 
-/-- Italian profile is consistent with fragment: pred = attr. -/
+/-- Russian: long forms cover the DP's φ/κ-features. -/
+theorem russian_profile_consistent_phikappa :
+    russian.agreementPhiKappaComplete ↔ russianConcord.PhiKappaComplete := by decide
+
+/-- Greek: pred = attr. -/
+theorem greek_profile_consistent_pred :
+    greek.predAttrSameAgreement ↔ greekConcord.SameAgreement := by decide
+
+/-- Greek: φ/κ-complete. -/
+theorem greek_profile_consistent_phikappa :
+    greek.agreementPhiKappaComplete ↔ greekConcord.PhiKappaComplete := by decide
+
+/-- German: pred ≠ attr (bare predicative). -/
+theorem german_profile_consistent_pred :
+    german.predAttrSameAgreement ↔ germanConcord.SameAgreement := by decide
+
+/-- German: attributive forms do cover the DP (completeness is not what
+    blocks German — clause 1 is). -/
+theorem german_profile_consistent_phikappa :
+    german.agreementPhiKappaComplete ↔ germanConcord.PhiKappaComplete := by decide
+
+/-- Italian: pred = attr. -/
 theorem italian_profile_consistent_pred :
-    italian.predAttrSameAgreement ↔ Italian.AdjAgreement.entry.SameAgreement := by decide
+    italian.predAttrSameAgreement ↔ italianConcord.SameAgreement := by decide
 
-/-- Italian profile is consistent with fragment: NOT φ/κ-complete. -/
+/-- Italian: NOT φ/κ-complete (no case on adjectives). -/
 theorem italian_profile_consistent_phikappa :
-    italian.agreementPhiKappaComplete ↔
-      Italian.AdjAgreement.entry.PhiKappaComplete := by decide
+    italian.agreementPhiKappaComplete ↔ italianConcord.PhiKappaComplete := by decide
+
+/-- The dimensions a concord specification is nonempty in — its projection
+    into the covariance fact layer (`Agreement.Dimension`). -/
+def Concord.dims (c : Concord) : Finset Agreement.Dimension :=
+  (if c.numbers = ∅ then ∅ else {.number}) ∪
+  (if c.genders = ∅ then ∅ else {.gender}) ∪
+  (if c.cases = ∅ then ∅ else {.case})
+
+/-- The study's value-level Russian specs project onto exactly the fragment's
+    attributive covariance profile — the paper's φ/κ cut and the fact layer
+    agree on which dimensions Russian long forms covary in. -/
+theorem russian_concord_dims_consistent :
+    russianConcord.attr.dims = Russian.Agreement.covariance .attributive := by decide
 
 -- ============================================================================
 -- § 10: Bridge to Modification Routes (§5.1)
