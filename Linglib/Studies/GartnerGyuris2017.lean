@@ -1,4 +1,4 @@
-import Linglib.Semantics.Questions.Bias.Defs
+import Linglib.Semantics.Questions.Bias
 import Linglib.Studies.Stankova2026
 
 /-!

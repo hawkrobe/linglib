@@ -1,4 +1,4 @@
-import Linglib.Semantics.Questions.Bias.Defs
+import Linglib.Semantics.Questions.Bias
 import Linglib.Features.Polarity
 import Linglib.Features.QParticleLayer
 import Linglib.Fragments.Swedish.QuestionParticles
@@ -85,7 +85,7 @@ with low negation). Supports fronted-negation + *väl* marking NRQs.
 
 ## Related Work
 
-- `Semantics/Questions/Bias/Defs.lean` — the form and bias vocabulary. The
+- `Semantics/Questions/Bias.lean` — the form and bias vocabulary. The
   bridge maps Sudo's bias values to Romero's coarser three-valued scheme.
 - `Studies/RomeroHan2004.lean::Verum` — detailed
   VERUM semantics with modal frames.

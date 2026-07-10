@@ -1,5 +1,5 @@
 import Linglib.Core.Categorical.PartitionCat
-import Linglib.Semantics.Questions.DecisionTheory
+import Linglib.Core.Probability.Decision.Basic
 
 /-!
 # Partition-Decision Adjunction

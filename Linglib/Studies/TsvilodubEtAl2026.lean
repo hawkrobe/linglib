@@ -1,5 +1,5 @@
 import Linglib.Pragmatics.RSA.Canonical
-import Linglib.Semantics.Questions.DecisionTheory
+import Linglib.Core.Probability.Decision.Basic
 import Linglib.Studies.DongEtAl2026PMF
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Analysis.SpecialFunctions.Log.Basic

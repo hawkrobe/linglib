@@ -1,7 +1,7 @@
 import Linglib.Features.QParticleLayer
 import Linglib.Fragments.German.Particles
 import Linglib.Fragments.Mandarin.QuestionParticles
-import Linglib.Semantics.Questions.Bias.Defs
+import Linglib.Semantics.Questions.Bias
 
 /-!
 # Theiler (2021): *Denn* as a Highlighting-Sensitive Particle

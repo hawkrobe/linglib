@@ -1,5 +1,5 @@
 import Linglib.Features.QParticleLayer
-import Linglib.Semantics.Questions.Bias.Defs
+import Linglib.Semantics.Questions.Bias
 import Linglib.Fragments.Slavic.Russian.QuestionParticles
 import Linglib.Fragments.Slavic.Bulgarian.QuestionParticles
 import Linglib.Fragments.Slavic.Ukrainian.QuestionParticles

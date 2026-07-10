@@ -274,6 +274,7 @@ import Linglib.Core.Probability.Confirmation
 import Linglib.Core.Probability.Constructions
 import Linglib.Core.Probability.CoupledEvaluation
 import Linglib.Core.Probability.DataProcessing
+import Linglib.Core.Probability.Decision.Basic
 import Linglib.Core.Probability.Decision.Blackwell
 import Linglib.Core.Probability.Decision.ExperimentDesign
 import Linglib.Core.Probability.DirichletMultinomial
@@ -1824,8 +1825,7 @@ import Linglib.Semantics.Quantification.Syllogistic.Square
 import Linglib.Semantics.Quantification.Syllogistic.Trees
 import Linglib.Semantics.Quantification.UnifiedUniversal
 import Linglib.Semantics.Questions.Basic
-import Linglib.Semantics.Questions.Bias.Defs
-import Linglib.Semantics.Questions.DecisionTheory
+import Linglib.Semantics.Questions.Bias
 import Linglib.Semantics.Questions.Entailment
 import Linglib.Semantics.Questions.Exhaustivity
 import Linglib.Semantics.Questions.Hamblin

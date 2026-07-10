@@ -1,5 +1,5 @@
 import Linglib.Semantics.Questions.Basic
-import Linglib.Semantics.Questions.DecisionTheory
+import Linglib.Core.Probability.Decision.Basic
 import Linglib.Semantics.Questions.Entailment
 
 /-!
@@ -16,7 +16,7 @@ optimal action in the questioner's decision problem.
 ## Substrate identification
 
 The decision-theoretic machinery — `EU`, `UV`, `VSI`, `DecisionProblem`
-— is already in `Semantics/Questions/DecisionTheory.lean`. Van Rooy's
+— is already in `Core/Probability/Decision/Basic.lean`. Van Rooy's
 notation maps to the substrate as:
 
 | [van-rooy-2003]                             | substrate                                  |
