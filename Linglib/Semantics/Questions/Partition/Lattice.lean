@@ -2,7 +2,7 @@ import Linglib.Semantics.Questions.Partition.QUD
 
 /-!
 # Partition Refinement Lattice
-[groenendijk-stokhof-1984] [merin-1999]
+[groenendijk-stokhof-1984] [merin-1999-notspeak]
 
 Refinement and coarsening order on partitions (`QUD`):
 
@@ -39,7 +39,7 @@ scoped infix:50 " ⊑ " => QUD.refines
 /-- Q coarsens Q' iff Q' refines Q (dual of refinement).
 
 Coarsening merges cells: where Q' distinguishes elements, Q may not.
-[merin-1999] defines negative attributes in terms of coarsening:
+[merin-1999-notspeak] defines negative attributes in terms of coarsening:
 negation is the linguistic device that produces coarsenings on the fly. -/
 def coarsens (q q' : QUD M) : Prop := q' ⊑ q
 
