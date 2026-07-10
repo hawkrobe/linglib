@@ -100,15 +100,16 @@ structure ConnesKreimer (R : Type*) [CommSemiring R] (T : Type*) where
 namespace ConnesKreimer
 
 variable {R : Type*} [CommSemiring R] {T : Type*} {S S₁ S₂ : Type*}
+  {p q : ConnesKreimer R T}
 
 theorem toFinsupp_injective :
     Function.Injective (toFinsupp : ConnesKreimer R T → AddMonoidAlgebra R (Forest T)) :=
   fun ⟨_⟩ ⟨_⟩ h => congrArg ofFinsupp h
 
-@[simp] theorem toFinsupp_inj {p q : ConnesKreimer R T} :
-    p.toFinsupp = q.toFinsupp ↔ p = q := toFinsupp_injective.eq_iff
+@[simp] theorem toFinsupp_inj : p.toFinsupp = q.toFinsupp ↔ p = q :=
+  toFinsupp_injective.eq_iff
 
-@[ext] theorem ext {p q : ConnesKreimer R T} (h : p.toFinsupp = q.toFinsupp) : p = q :=
+@[ext] theorem ext (h : p.toFinsupp = q.toFinsupp) : p = q :=
   toFinsupp_injective h
 
 @[simp] theorem ofFinsupp_toFinsupp (p : ConnesKreimer R T) : ⟨p.toFinsupp⟩ = p := rfl
@@ -346,7 +347,7 @@ theorem coeff_of' (F G : Forest T) [Decidable (F = G)] :
     (of' (R := R) F).coeff G = if F = G then 1 else 0 := coeff_single F G 1
 
 /-- Elements agreeing coefficientwise are equal. -/
-theorem ext_coeff {p q : ConnesKreimer R T} (h : ∀ F, p.coeff F = q.coeff F) : p = q :=
+theorem ext_coeff (h : ∀ F, p.coeff F = q.coeff F) : p = q :=
   ext (Finsupp.ext h)
 
 /-- `coeff` bundled as a linear functional (`Polynomial.lcoeff` analogue). -/
