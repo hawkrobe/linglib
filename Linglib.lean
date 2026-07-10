@@ -2609,6 +2609,7 @@ import Linglib.Studies.RoseWalker2004
 import Linglib.Studies.Ross1967
 import Linglib.Studies.RotterLiu2025
 import Linglib.Studies.Rouillard2026
+import Linglib.Studies.Roussou2010
 import Linglib.Studies.Rubinstein2014
 import Linglib.Studies.Rudin2025
 import Linglib.Studies.Rudin2025LI
