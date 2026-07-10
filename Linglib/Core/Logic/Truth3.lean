@@ -17,10 +17,12 @@ import Linglib.Core.Order.Flat
 `Truth3` is the three-element bounded chain `false < indet < true` used across linglib's
 trivalent semantics: homogeneity gaps in plural predication ([kriz-2016],
 [kriz-spector-2021]), supervaluationist indeterminacy in conditionals
-([ramotowska-marty-romoli-santorio-2025]), and presupposition failure. Strong Kleene
-conjunction and disjunction are the chain's `⊓`/`⊔`; the rival connective families of the
-presupposition-projection literature — Weak (Bochvar), Middle (Peters), and Belnap
-conditional assertion — are defined here beside them.
+([ramotowska-marty-romoli-santorio-2025]), and presupposition failure. The carrier is the
+bilattice literature's THREE ([fitting-1994]), the consistent fragment of Belnap's FOUR;
+the name is logic-neutral because the type hosts rival connective families. Strong Kleene
+conjunction and disjunction are the chain's `⊓`/`⊔`; the Weak (Bochvar), Middle (Peters),
+and Belnap conditional-assertion families of the presupposition-projection literature are
+defined here beside them.
 
 ## Main definitions
 
