@@ -14,13 +14,17 @@ import Linglib.Core.Order.Flat
 /-!
 # Three-valued truth
 
-`Truth3` is the three-element bounded chain `false < indet < true` used across linglib's
-trivalent semantics: homogeneity gaps in plural predication ([kriz-2016],
-[kriz-spector-2021]), supervaluationist indeterminacy in conditionals
-([ramotowska-marty-romoli-santorio-2025]), and presupposition failure. Strong Kleene
-conjunction and disjunction are the chain's `⊓`/`⊔`; the rival connective families of the
-presupposition-projection literature — Weak (Bochvar), Middle (Peters), and Belnap
-conditional assertion — are defined here beside them.
+`Truth3` is the three-element bounded chain `false < indet < true`: the value space of
+strong Kleene logic ([kleene-1952]), the bilattice literature's THREE ([fitting-1994]),
+and the consistent fragment of Belnap's FOUR. Strong Kleene conjunction and disjunction
+are the chain's `⊓`/`⊔`; the carrier is logic-neutral, hosting the rival trivalent
+connective families — Weak Kleene ([bochvar-1937]), Middle Kleene ([peters-1979]), Belnap
+conditional assertion ([belnap-1970]) — and the partiality operators ∂ and 𝒜 of
+[beaver-krahmer-2001].
+
+`[UPSTREAM]` candidate, as a unit with `Core.Order.Flat` (its only non-mathlib import):
+mathlib has neither a three-valued truth carrier nor a De Morgan/Kleene lattice class,
+for which `Truth3` is the canonical finite instance.
 
 ## Main definitions
 
@@ -59,48 +63,36 @@ inductive Truth3 where
   | true
   | false
   | indet
-  deriving Repr, DecidableEq, Inhabited
+  deriving Repr, DecidableEq, Inhabited, Fintype
 
 namespace Truth3
 
 /-! ### The truth order -/
 
-/-- Chain order: `false < indet < true`. Prop-valued (not Bool-wrapped) so
-the `Decidable` instance reduces under `rfl` and `decide`. -/
-protected def le : Truth3 → Truth3 → Prop
-  | .false, _      => True
-  | .indet, .false => False
-  | .indet, _      => True
-  | .true,  .true  => True
-  | _,      _      => False
+/-- The less-than-or-equal relation on truth values: `false < indet < true`. -/
+protected inductive LE : Truth3 → Truth3 → Prop
+  | of_false (a) : Truth3.LE .false a
+  | indet : Truth3.LE .indet .indet
+  | of_true (a) : Truth3.LE a .true
 
-instance : LE Truth3 := ⟨Truth3.le⟩
+instance : LE Truth3 := ⟨Truth3.LE⟩
 
-/-- Term-mode `Decidable` instance — reduces eagerly under `rfl`/`decide`,
-enabling clean kernel-level computation through the chain order. -/
-instance instDecLE (a b : Truth3) : Decidable (a ≤ b) :=
-  match a, b with
-  | .false, _      => isTrue trivial
-  | .indet, .false => isFalse not_false
-  | .indet, .indet => isTrue trivial
-  | .indet, .true  => isTrue trivial
-  | .true,  .false => isFalse not_false
-  | .true,  .indet => isFalse not_false
-  | .true,  .true  => isTrue trivial
+instance instDecidableLE : DecidableLE Truth3 := λ a b => by
+  cases a <;> cases b <;>
+    first | exact isTrue (by constructor) | exact isFalse (by rintro ⟨_⟩)
 
 instance : LinearOrder Truth3 where
-  le_refl a := by cases a <;> trivial
-  le_trans a b c hab hbc := by cases a <;> cases b <;> cases c <;> trivial
-  le_antisymm a b hab hba := by cases a <;> cases b <;> first | rfl | trivial
-  le_total a b := by
-    cases a <;> cases b <;> first | exact Or.inl trivial | exact Or.inr trivial
-  toDecidableLE := inferInstance
+  le_refl a := by cases a <;> constructor
+  le_trans := by decide
+  le_antisymm := by decide
+  le_total := by decide
+  toDecidableLE := instDecidableLE
 
 instance : BoundedOrder Truth3 where
   top := .true
+  le_top a := by exact .of_true a
   bot := .false
-  le_top a := by cases a <;> trivial
-  bot_le a := by cases a <;> trivial
+  bot_le a := by exact .of_false a
 
 /-! ### Strong Kleene negation
 
@@ -238,9 +230,9 @@ theorem xor_indet_right (a : Truth3) : xor a .indet = .indet := by
 theorem xor_ofBool (a b : Bool) : xor (ofBool a) (ofBool b) = ofBool (a ^^ b) := by
   cases a <;> cases b <;> rfl
 
-/-- XOR is undefined iff at least one operand is — the semantic core of
-[wang-davidson-2026]'s prediction that exclusive disjunction does not filter
-presuppositions, in contrast with `⊔` (`.true ⊔ .indet = .true`). -/
+/-- XOR is undefined iff at least one operand is — so exclusive disjunction never
+filters undefinedness, in contrast with `⊔` (`.true ⊔ .indet = .true`)
+([wang-davidson-2026]). -/
 theorem xor_indet_iff (a b : Truth3) :
     xor a b = .indet ↔ a = .indet ∨ b = .indet := by
   cases a <;> cases b <;> simp [xor]
