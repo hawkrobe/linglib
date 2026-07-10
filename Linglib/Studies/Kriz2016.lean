@@ -45,7 +45,7 @@ Smith didn't) arise from the interaction of two independent components:
 
 The semantic effect of `all` is to remove the extension gap, making positive
 and negative extensions complementary. This prevents non-maximal readings
-because the pragmatic mechanism (Sufficient Truth + Addressing) has no gap
+because the pragmatic mechanism (Sufficient Trivalent + Addressing) has no gap
 to exploit.
 
 ## §4.4 caveat — homogeneity is NOT a presupposition
@@ -97,7 +97,6 @@ Adding "all" blocks non-maximal use entirely.
 
 namespace Kriz2016
 
-open Trivalent (Truth3)
 open Semantics.Plurality
 open Semantics.Plurality.Distributivity
 open Semantics.Plurality.Trivalent
@@ -146,7 +145,7 @@ theorem all_not_homogeneous (P : Atom → W → Prop) [∀ a w, Decidable (P a w
 omit [DecidableEq Atom] in
 /-- A bare plural is homogeneous whenever a gap-world exists: the existence
 of a world where some-but-not-all atoms satisfy P makes the sentence
-homogeneous, enabling non-maximal readings via Sufficient Truth. -/
+homogeneous, enabling non-maximal readings via Sufficient Trivalent. -/
 theorem bare_plural_homogeneous (P : Atom → W → Prop) [∀ a w, Decidable (P a w)] (x : Finset Atom)
     (w : W) (hGap : barePluralTV P x w = .indet) :
     isHomogeneous (barePluralTV P x) := by
@@ -190,11 +189,11 @@ theorem removeGap_plural_true_iff (P : Atom → W → Prop) [∀ a w, Decidable 
     removeGap (fun w => pluralTruthValue P x w) w = .true ↔
     allSatisfy P x w := by
   rw [← pluralTruthValue_eq_true_iff]
-  show Truth3.metaAssert (pluralTruthValue P x w) = .true ↔
+  show Trivalent.metaAssert (pluralTruthValue P x w) = .true ↔
        pluralTruthValue P x w = .true
   generalize pluralTruthValue P x w = t
   cases t <;>
-    simp only [Truth3.metaAssert_true, Truth3.metaAssert_false, Truth3.metaAssert_indet,
+    simp only [Trivalent.metaAssert_true, Trivalent.metaAssert_false, Trivalent.metaAssert_indet,
       iff_self, reduceCtorEq]
 
 /-- `bivalentPred` of an `all`-sentence is true iff `allSatisfy` holds.
@@ -407,7 +406,7 @@ def coarseQ : QUD ProfWorld := QUD.ofDecEq receptionGrade
 Each world is its own cell. -/
 def fineQ : QUD ProfWorld := QUD.ofDecEq id
 
--- Truth values at each world
+-- Trivalent values at each world
 
 theorem bare_allSmiled :
     barePluralTV smiled profs .allSmiled = .true := by decide
@@ -635,7 +634,7 @@ omit [DecidableEq Atom] in
 theorem homogeneity_gap_is_indefiniteness (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
     (x : Finset Atom) (hne : x.Nonempty) (w : W)
     (hgap : barePluralTV P x w = .indet) :
-    superTrue (fun a => P a w) ⟨x, hne⟩ = Truth3.indet := by
+    superTrue (fun a => P a w) ⟨x, hne⟩ = Trivalent.indet := by
   rw [← barePluralTV_eq_superTrue P x hne w]; exact hgap
 
 omit [DecidableEq Atom] in
@@ -821,11 +820,11 @@ candidate spec-point instantiation.
 However, `Cohen1999` uses the word "homogeneity"
 for a *different* equation: presupposition failure when conditional probabilities
 diverge across partitions of the domain. Cohen's homogeneity returns
-"undefined" via *presupposition failure*; Križ's returns `Truth3.indet` via
+"undefined" via *presupposition failure*; Križ's returns `Trivalent.indet` via
 *supervaluation gap on subkinds*.
 
 A formal `kriz_vs_cohen_generic_homogeneity` divergence theorem would require
-lifting Cohen's presupposition-style machinery into the `Truth3` framework —
+lifting Cohen's presupposition-style machinery into the `Trivalent` framework —
 not done here. The substrate docstring's claim that "the framework extends to
 generics" should be read with this caveat: it extends to a Križ-style
 treatment of generics, which is NOT what `Cohen1999` formalizes. -/

@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Truth3
+import Linglib.Core.Logic.Trivalent
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Studies.Heim1992Projection
 
@@ -37,7 +37,7 @@ plus attitude-verb examples (Part II).
 * `evalI` — evaluation `(·)^ž` (eq. 20)
 * `forallP` / `existsP` — presuppositional quantifiers (eq. 27)
 * `believe` — doxastic attitude verb (eq. 28)
-* Bridges to `Truth3`, `Prop3`, `PartialProp`
+* Bridges to `Trivalent`, `Prop3`, `PartialProp`
 
 ## Part II — Empirical predictions (Grove §3, §4.2)
 
@@ -76,7 +76,7 @@ set_option autoImplicit false
 
 namespace Grove2022
 
-open Trivalent (Truth3 Prop3)
+open Trivalent (Prop3)
 open Semantics.Presupposition (PartialProp)
 
 /-! ## Part I — Apparatus -/
@@ -255,59 +255,59 @@ end AttitudeVerbs
 
 /-! ### §6 Bridges to existing linglib types
 
-`Option Bool`, `Truth3`, and `PartialProp W` are three representations of
+`Option Bool`, `Trivalent`, and `PartialProp W` are three representations of
 possibly-undefined truth values. These conversions connect Grove's
 formalisation to the rest of the presupposition infrastructure. -/
 
 section Bridges
 
-/-- Convert `Option Bool` to `Truth3`. -/
-def toTruth3 : Option Bool → Truth3
+/-- Convert `Option Bool` to `Trivalent`. -/
+def toTruth : Option Bool → Trivalent
   | some true => .true
   | some false => .false
   | none => .indet
 
-/-- Convert `Truth3` to `Option Bool`. -/
-def ofTruth3 : Truth3 → Option Bool
+/-- Convert `Trivalent` to `Option Bool`. -/
+def ofTruth : Trivalent → Option Bool
   | .true => some true
   | .false => some false
   | .indet => none
 
-theorem roundtrip_truth3 (v : Truth3) : toTruth3 (ofTruth3 v) = v := by
+theorem roundtrip_truth3 (v : Trivalent) : toTruth (ofTruth v) = v := by
   cases v <;> rfl
 
-theorem roundtrip_option (v : Option Bool) : ofTruth3 (toTruth3 v) = v := by
+theorem roundtrip_option (v : Option Bool) : ofTruth (toTruth v) = v := by
   cases v with
   | none => rfl
   | some b => cases b <;> rfl
 
-/-- Middle Kleene implication on `Truth3`. -/
-def impMK : Truth3 → Truth3 → Truth3
+/-- Middle Kleene implication on `Trivalent`. -/
+def impMK : Trivalent → Trivalent → Trivalent
   | .indet, _ => .indet
   | .false, _ => .true
   | .true, ψ => ψ
 
-/-- `materialCond` corresponds to middle Kleene implication on `Truth3`. -/
+/-- `materialCond` corresponds to middle Kleene implication on `Trivalent`. -/
 theorem materialCond_eq_truth3 (p q : Option Bool) :
-    toTruth3 (materialCond p q) = impMK (toTruth3 p) (toTruth3 q) := by
+    toTruth (materialCond p q) = impMK (toTruth p) (toTruth q) := by
   cases p with
   | none => rfl
   | some b => cases b <;> cases q with
     | none => rfl
     | some c => cases c <;> rfl
 
-/-- `meetWK` corresponds to `Truth3.meetWeak`. -/
+/-- `meetWK` corresponds to `Trivalent.meetWeak`. -/
 theorem meetWK_eq_truth3 (p q : Option Bool) :
-    toTruth3 (meetWK p q) = Truth3.meetWeak (toTruth3 p) (toTruth3 q) := by
+    toTruth (meetWK p q) = Trivalent.meetWeak (toTruth p) (toTruth q) := by
   cases p with
   | none => cases q with | none => rfl | some c => cases c <;> rfl
   | some b => cases b <;> cases q with
     | none => rfl
     | some c => cases c <;> rfl
 
-/-- `joinWK` corresponds to `Truth3.joinWeak`. -/
+/-- `joinWK` corresponds to `Trivalent.joinWeak`. -/
 theorem joinWK_eq_truth3 (p q : Option Bool) :
-    toTruth3 (joinWK p q) = Truth3.joinWeak (toTruth3 p) (toTruth3 q) := by
+    toTruth (joinWK p q) = Trivalent.joinWeak (toTruth p) (toTruth q) := by
   cases p with
   | none => cases q with | none => rfl | some c => cases c <;> rfl
   | some b => cases b <;> cases q with
@@ -317,7 +317,7 @@ theorem joinWK_eq_truth3 (p q : Option Bool) :
 /-- Convert `Iₚ W Bool` to `Prop3 W` (world-indexed three-valued
 proposition). -/
 def toProp3 {W : Type} (φ : Iₚ W Bool) : Prop3 W :=
-  λ w => toTruth3 (φ w)
+  λ w => toTruth (φ w)
 
 /-- Convert `Iₚ W Bool` to `PartialProp W`. The presupposition field is
 `isSome` (defined?), and the assertion is the Bool value (defaulting

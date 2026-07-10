@@ -1,5 +1,5 @@
 import Linglib.Semantics.Presupposition.Basic
-import Linglib.Core.Logic.Truth3
+import Linglib.Core.Logic.Trivalent
 import Linglib.Semantics.Dynamic.UpdateSemantics.Basic
 import Linglib.Studies.Geurts2005
 import Linglib.Studies.Karttunen1973
@@ -48,7 +48,7 @@ definition with disjunction-update survival.
 
 ## Connective inventory used
 
-- `⊔` on `Truth3` (Strong Kleene): never false (`strong_kleene_never_false`)
+- `⊔` on `Trivalent` (Strong Kleene): never false (`strong_kleene_never_false`)
 - `PartialProp.or` (classical): never defined (`classical_never_defined`)
 - `PartialProp.orPositive` (symmetric, positive-antecedent filtering of
   [kalomoiros-schwarz-2021]): wrong presupposition
@@ -76,7 +76,7 @@ definition with disjunction-update survival.
 
 namespace Yagi2025
 
-open Trivalent
+open Trivalent (isDefined metaAssert Prop3)
 open Semantics.Presupposition
 
 /-! ## World type
@@ -336,7 +336,7 @@ theorem truthSet_exhausted :
             by simp [Geurts2005.fromPartialProp], ?_⟩
     exact ⟨trivial, rfl⟩
 
-/-- Truth-set uninformativity via Geurts (the *consequence* of Yagi §2.4,
+/-- Trivalent-set uninformativity via Geurts (the *consequence* of Yagi §2.4,
 not Schlenker's actual local-context derivation): the disjunction is true
 throughout the stipulated `truthSet`. Discharged via the substrate's
 `exhaustivity_implies_uninformative`. A faithful Schlenker formalisation
@@ -387,7 +387,7 @@ only presupposes `¬𝒜ψ_q → p` per Yagi (11), not `p ∨ q`. -/
 theorem metaAssert_always_defined : ∀ w, (metaAssertDisj w).isDefined := by
   intro w; cases w <;>
     simp [metaAssertDisj, PartialProp.eval, kingOpensParl, presConductsCeremony,
-      hasKing, hasPresident, Truth3.isDefined]
+      hasKing, hasPresident, Trivalent.isDefined]
 
 /-- The meta-assertion disjunction is bivalent — no gap, no presupposition
 via the standard gap mechanism. -/

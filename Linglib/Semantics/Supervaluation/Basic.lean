@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Truth3
+import Linglib.Core.Logic.Trivalent
 import Linglib.Core.Logic.Duality
 import Mathlib.Data.Finset.Basic
 
@@ -36,7 +36,6 @@ simplified complete-point-only representation.
 
 namespace Semantics.Supervaluation
 
-open Trivalent (Truth3)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Specification Spaces
@@ -75,14 +74,14 @@ def SpecSpace.singleton {Spec : Type*} [DecidableEq Spec] (s : Spec) : SpecSpace
 
 /-- Supervaluation operator. Maps a Prop-valued predicate over
     specifications to a three-valued truth value:
-    - `Truth3.true` if the predicate holds at ALL admissible specifications
-    - `Truth3.false` if the predicate fails at ALL admissible specifications
-    - `Truth3.indet` otherwise (the borderline case) -/
+    - `Trivalent.true` if the predicate holds at ALL admissible specifications
+    - `Trivalent.false` if the predicate fails at ALL admissible specifications
+    - `Trivalent.indet` otherwise (the borderline case) -/
 def superTrue {Spec : Type*} (eval : Spec → Prop) [DecidablePred eval]
-    (S : SpecSpace Spec) : Truth3 :=
-  if ∀ s ∈ S.admissible, eval s then Truth3.true
-  else if ∀ s ∈ S.admissible, ¬ eval s then Truth3.false
-  else Truth3.indet
+    (S : SpecSpace Spec) : Trivalent :=
+  if ∀ s ∈ S.admissible, eval s then Trivalent.true
+  else if ∀ s ∈ S.admissible, ¬ eval s then Trivalent.false
+  else Trivalent.indet
 
 /-- The D (definitely) operator. DA is true iff A is true at ALL
     admissible specifications — i.e., A is super-true. In modal logic
@@ -112,7 +111,7 @@ instance indefinite.instDecidable {Spec : Type*} (eval : Spec → Prop)
 /-- Super-truth ↔ universally true across the space. -/
 theorem superTrue_true_iff {Spec : Type*} (eval : Spec → Prop) [DecidablePred eval]
     (S : SpecSpace Spec) :
-    superTrue eval S = Truth3.true ↔ ∀ s ∈ S.admissible, eval s := by
+    superTrue eval S = Trivalent.true ↔ ∀ s ∈ S.admissible, eval s := by
   unfold superTrue
   refine ⟨fun h => ?_, fun h => if_pos h⟩
   by_cases hall : ∀ s ∈ S.admissible, eval s
@@ -123,7 +122,7 @@ theorem superTrue_true_iff {Spec : Type*} (eval : Spec → Prop) [DecidablePred 
 /-- Super-falsity ↔ universally false across the space. -/
 theorem superTrue_false_iff {Spec : Type*} (eval : Spec → Prop) [DecidablePred eval]
     (S : SpecSpace Spec) :
-    superTrue eval S = Truth3.false ↔ ∀ s ∈ S.admissible, ¬ eval s := by
+    superTrue eval S = Trivalent.false ↔ ∀ s ∈ S.admissible, ¬ eval s := by
   unfold superTrue
   refine ⟨fun h => ?_, fun haf => ?_⟩
   · have hnt : ¬(∀ s ∈ S.admissible, eval s) := by
@@ -140,7 +139,7 @@ theorem superTrue_false_iff {Spec : Type*} (eval : Spec → Prop) [DecidablePred
 /-- Indefiniteness ↔ witnesses on both sides. -/
 theorem superTrue_indet_iff {Spec : Type*} (eval : Spec → Prop) [DecidablePred eval]
     (S : SpecSpace Spec) :
-    superTrue eval S = Truth3.indet ↔
+    superTrue eval S = Trivalent.indet ↔
       (∃ s ∈ S.admissible, eval s) ∧ (∃ s ∈ S.admissible, ¬ eval s) := by
   unfold superTrue
   refine ⟨fun h => ?_, fun ⟨⟨st, hst, hvt⟩, ⟨sf, hsf, hvf⟩⟩ => ?_⟩
@@ -196,7 +195,7 @@ theorem superTrue_eq_dist {Spec : Type*} (eval : Spec → Prop) [DecidablePred e
 /-- D = super-truth projected to its `Prop` characterization. -/
 theorem definitely_iff_superTrue {Spec : Type*} (eval : Spec → Prop) [DecidablePred eval]
     (S : SpecSpace Spec) :
-    definitely eval S ↔ superTrue eval S = Truth3.true := by
+    definitely eval S ↔ superTrue eval S = Trivalent.true := by
   rw [superTrue_true_iff]; rfl
 
 -- ════════════════════════════════════════════════════
@@ -207,14 +206,14 @@ theorem definitely_iff_superTrue {Spec : Type*} (eval : Spec → Prop) [Decidabl
     precisification, hence true on ALL. Classical tautologies survive. -/
 theorem excludedMiddle_superTrue {Spec : Type*} (eval : Spec → Prop) [DecidablePred eval]
     (S : SpecSpace Spec) :
-    superTrue (fun s => eval s ∨ ¬ eval s) S = Truth3.true :=
+    superTrue (fun s => eval s ∨ ¬ eval s) S = Trivalent.true :=
   (superTrue_true_iff _ S).mpr (fun s _ => Decidable.em _)
 
 /-- **Non-contradiction is super-false.** P ∧ ¬P is false on every
     precisification, hence false on ALL. -/
 theorem nonContradiction_superFalse {Spec : Type*} (eval : Spec → Prop) [DecidablePred eval]
     (S : SpecSpace Spec) :
-    superTrue (fun s => eval s ∧ ¬ eval s) S = Truth3.false :=
+    superTrue (fun s => eval s ∧ ¬ eval s) S = Trivalent.false :=
   (superTrue_false_iff _ S).mpr (fun _ _ ⟨h, hn⟩ => hn h)
 
 /-- **Complementary predicates.** If P and Q never hold simultaneously at
@@ -225,7 +224,7 @@ theorem nonContradiction_superFalse {Spec : Type*} (eval : Spec → Prop) [Decid
 theorem complementary_superFalse {Spec : Type*}
     (P Q : Spec → Prop) [DecidablePred P] [DecidablePred Q]
     (S : SpecSpace Spec) (hcomp : ∀ s ∈ S.admissible, ¬ (P s ∧ Q s)) :
-    superTrue (fun s => P s ∧ Q s) S = Truth3.false :=
+    superTrue (fun s => P s ∧ Q s) S = Trivalent.false :=
   (superTrue_false_iff _ S).mpr hcomp
 
 /-- **Conjunction with self.** P ∧ P has the same super-truth value as P.
@@ -251,7 +250,7 @@ theorem conjunction_self {Spec : Type*} (eval : Spec → Prop) [DecidablePred ev
 theorem classical_implies_superValid {Spec : Type*}
     (eval : Spec → Prop) [DecidablePred eval]
     (htaut : ∀ s, eval s) (S : SpecSpace Spec) :
-    superTrue eval S = Truth3.true :=
+    superTrue eval S = Trivalent.true :=
   (superTrue_true_iff eval S).mpr (fun s _ => htaut s)
 
 /-- Converse: super-valid → classical tautology. The key step: each
@@ -259,7 +258,7 @@ theorem classical_implies_superValid {Spec : Type*}
     super-true in the singleton `{s}`, then `eval s` holds. -/
 theorem superValid_implies_classical {Spec : Type*} [DecidableEq Spec]
     (eval : Spec → Prop) [DecidablePred eval]
-    (hvalid : ∀ S : SpecSpace Spec, superTrue eval S = Truth3.true) :
+    (hvalid : ∀ S : SpecSpace Spec, superTrue eval S = Trivalent.true) :
     ∀ s, eval s := by
   intro s
   exact (superTrue_true_iff eval (.singleton s)).mp (hvalid _) s
@@ -270,7 +269,7 @@ theorem superValid_implies_classical {Spec : Type*} [DecidableEq Spec]
     truth but not to logic. -/
 theorem superValid_iff_classical {Spec : Type*} [DecidableEq Spec]
     (eval : Spec → Prop) [DecidablePred eval] :
-    (∀ S : SpecSpace Spec, superTrue eval S = Truth3.true) ↔ (∀ s, eval s) :=
+    (∀ S : SpecSpace Spec, superTrue eval S = Trivalent.true) ↔ (∀ s, eval s) :=
   ⟨superValid_implies_classical eval, fun h S => classical_implies_superValid eval h S⟩
 
 -- ════════════════════════════════════════════════════
@@ -281,8 +280,8 @@ theorem superValid_iff_classical {Spec : Type*} [DecidableEq Spec]
     across all specification spaces. -/
 def superConsequence {Spec : Type*}
     (evalA evalB : Spec → Prop) [DecidablePred evalA] [DecidablePred evalB] : Prop :=
-  ∀ S : SpecSpace Spec, superTrue evalA S = Truth3.true →
-    superTrue evalB S = Truth3.true
+  ∀ S : SpecSpace Spec, superTrue evalA S = Trivalent.true →
+    superTrue evalB S = Trivalent.true
 
 /-- Forward: classical consequence → super-consequence. -/
 theorem classical_implies_superConsequence {Spec : Type*}
@@ -298,7 +297,7 @@ theorem superConsequence_implies_classical {Spec : Type*} [DecidableEq Spec]
     (h : superConsequence evalA evalB) :
     ∀ s, evalA s → evalB s := by
   intro s hAs
-  have hA : superTrue evalA (.singleton s) = Truth3.true :=
+  have hA : superTrue evalA (.singleton s) = Trivalent.true :=
     (superTrue_true_iff evalA _).mpr
       (fun s' hs' => by have := Finset.mem_singleton.mp hs'; subst this; exact hAs)
   exact (superTrue_true_iff evalB _).mp (h _ hA) s (Finset.mem_singleton.mpr rfl)
@@ -324,16 +323,16 @@ theorem superConsequence_iff_classical {Spec : Type*} [DecidableEq Spec]
 /-- Restricting the specification space preserves super-truth. -/
 theorem stability_superTrue {Spec : Type*} (eval : Spec → Prop) [DecidablePred eval]
     (S T : SpecSpace Spec) (hsub : T.admissible ⊆ S.admissible)
-    (hst : superTrue eval S = Truth3.true) :
-    superTrue eval T = Truth3.true :=
+    (hst : superTrue eval S = Trivalent.true) :
+    superTrue eval T = Trivalent.true :=
   (superTrue_true_iff eval T).mpr
     (fun s hs => (superTrue_true_iff eval S).mp hst s (hsub hs))
 
 /-- Restricting the specification space preserves super-falsity. -/
 theorem stability_superFalse {Spec : Type*} (eval : Spec → Prop) [DecidablePred eval]
     (S T : SpecSpace Spec) (hsub : T.admissible ⊆ S.admissible)
-    (hsf : superTrue eval S = Truth3.false) :
-    superTrue eval T = Truth3.false :=
+    (hsf : superTrue eval S = Trivalent.false) :
+    superTrue eval T = Trivalent.false :=
   (superTrue_false_iff eval T).mpr
     (fun s hs => (superTrue_false_iff eval S).mp hsf s (hsub hs))
 
@@ -341,11 +340,11 @@ theorem stability_superFalse {Spec : Type*} (eval : Spec → Prop) [DecidablePre
     If A is definite (true or false) in S, it stays definite in T ⊆ S. -/
 theorem stability_definite {Spec : Type*} (eval : Spec → Prop) [DecidablePred eval]
     (S T : SpecSpace Spec) (hsub : T.admissible ⊆ S.admissible)
-    (hdef : superTrue eval S ≠ Truth3.indet) :
-    superTrue eval T ≠ Truth3.indet := by
+    (hdef : superTrue eval S ≠ Trivalent.indet) :
+    superTrue eval T ≠ Trivalent.indet := by
   match hs : superTrue eval S with
-  | .true => rw [stability_superTrue eval S T hsub hs]; exact Truth3.noConfusion
-  | .false => rw [stability_superFalse eval S T hsub hs]; exact Truth3.noConfusion
+  | .true => rw [stability_superTrue eval S T hsub hs]; exact Trivalent.noConfusion
+  | .false => rw [stability_superFalse eval S T hsub hs]; exact Trivalent.noConfusion
   | .indet => exact absurd hs hdef
 
 /-- **Stability as antitonicity**: super-truth is preserved under
@@ -354,24 +353,24 @@ theorem stability_definite {Spec : Type*} (eval : Spec → Prop) [DecidablePred 
     `T.admissible ⊆ S.admissible`) preserves super-truth.
 
     This is Mathlib's `Antitone` applied to `superTrue eval` with
-    the codomain ordered by `Truth3.true ≤ · ≤ Truth3.true` (super-truth
+    the codomain ordered by `Trivalent.true ≤ · ≤ Trivalent.true` (super-truth
     entails super-truth). The theorem says: if `superTrue eval S = .true`
     and `S ≤ T` (T is more precise), then `superTrue eval T = .true`.
 
-    The full antitonicity on `Truth3`'s lattice ordering does NOT hold
+    The full antitonicity on `Trivalent`'s lattice ordering does NOT hold
     (restriction can turn `indet` into `true`), but this weaker
     preservation-of-definiteness property is what matters for Fine. -/
 theorem stability_antitone_superTrue {Spec : Type*} (eval : Spec → Prop) [DecidablePred eval]
     {S T : SpecSpace Spec} (hle : S ≤ T)
-    (h : superTrue eval S = Truth3.true) :
-    superTrue eval T = Truth3.true :=
+    (h : superTrue eval S = Trivalent.true) :
+    superTrue eval T = Trivalent.true :=
   stability_superTrue eval S T hle h
 
 /-- Dual: super-falsity is also preserved under the information ordering. -/
 theorem stability_antitone_superFalse {Spec : Type*} (eval : Spec → Prop) [DecidablePred eval]
     {S T : SpecSpace Spec} (hle : S ≤ T)
-    (h : superTrue eval S = Truth3.false) :
-    superTrue eval T = Truth3.false :=
+    (h : superTrue eval S = Trivalent.false) :
+    superTrue eval T = Trivalent.false :=
   stability_superFalse eval S T hle h
 
 -- ════════════════════════════════════════════════════
@@ -389,7 +388,7 @@ theorem stability_antitone_superFalse {Spec : Type*} (eval : Spec → Prop) [Dec
     (the disjunction holds) or D is true and A holds at all points. -/
 theorem D_implies_A {Spec : Type*} (eval : Spec → Prop) [DecidablePred eval]
     (S : SpecSpace Spec) :
-    superTrue (fun s => ¬ definitely eval S ∨ eval s) S = Truth3.true := by
+    superTrue (fun s => ¬ definitely eval S ∨ eval s) S = Trivalent.true := by
   apply (superTrue_true_iff _ S).mpr
   intro s hs
   by_cases hd : definitely eval S
@@ -402,7 +401,7 @@ theorem D_implies_A {Spec : Type*} (eval : Spec → Prop) [DecidablePred eval]
     So `A → DA` is false at `true`, hence not super-true. -/
 theorem A_not_implies_DA :
     ∃ (eval : Bool → Prop) (_ : DecidablePred eval) (S : SpecSpace Bool),
-      superTrue (fun s => ¬ eval s ∨ definitely eval S) S ≠ Truth3.true := by
+      superTrue (fun s => ¬ eval s ∨ definitely eval S) S ≠ Trivalent.true := by
   refine ⟨fun b => b = true, inferInstance,
           ⟨{true, false}, ⟨true, by simp⟩⟩, ?_⟩
   intro h
@@ -418,8 +417,8 @@ theorem A_not_implies_DA :
     but A → DA is not a logical truth. -/
 theorem DA_consequence_of_A {Spec : Type*} (eval : Spec → Prop) [DecidablePred eval] :
     ∀ S : SpecSpace Spec,
-      superTrue eval S = Truth3.true →
-      superTrue (fun _ => definitely eval S) S = Truth3.true := by
+      superTrue eval S = Trivalent.true →
+      superTrue (fun _ => definitely eval S) S = Trivalent.true := by
   intro S hA
   apply (superTrue_true_iff _ S).mpr
   intro _ _
@@ -435,7 +434,7 @@ theorem DA_consequence_of_A {Spec : Type*} (eval : Spec → Prop) [DecidablePred
     evaluation. -/
 theorem fidelity {Spec : Type*} [DecidableEq Spec]
     (eval : Spec → Prop) [DecidablePred eval] (s : Spec) :
-    superTrue eval (.singleton s) ≠ Truth3.indet := by
+    superTrue eval (.singleton s) ≠ Trivalent.indet := by
   intro h
   have hi := (superTrue_indet_iff eval (.singleton s)).mp h
   obtain ⟨⟨st, hst, hvt⟩, ⟨sf, hsf, hvf⟩⟩ := hi

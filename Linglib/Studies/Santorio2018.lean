@@ -1,6 +1,6 @@
 import Mathlib.Data.List.Sublists
 import Linglib.Semantics.Conditionals.Counterfactual
-import Linglib.Core.Logic.Truth3
+import Linglib.Core.Logic.Trivalent
 import Linglib.Core.Logic.Duality
 import Linglib.Semantics.Truthmaker.Inexact
 import Linglib.Semantics.Truthmaker.Basic
@@ -49,7 +49,7 @@ predicate.
    declines the trivalent collapse: "To switch to a Križ-style
    framework, we would need to divorce homogeneity from the
    distributivity operator and move to a trivalent semantics." We
-   render DIST_π via `Trivalent.Truth3` / `distList` because it is
+   render DIST_π via `Trivalent.Trivalent` / `distList` because it is
    ergonomic and faithful on the all/none/mixed verdicts; the
    divergence is in how the homogeneity failure is *typed* (gap vs.
    presupposition failure).
@@ -126,7 +126,7 @@ follow-up.
 
 namespace Santorio2018
 
-open Trivalent (Truth3 distList)
+open Trivalent (distList)
 open Core.Order (SimilarityOrdering)
 open Semantics.Conditionals.Counterfactual (universalCounterfactual)
 
@@ -176,7 +176,7 @@ def altConditionalResults (sim : SimilarityOrdering W)
     over per-alternative conditional results (faithfulness note 1). -/
 def homogeneityEval (sim : SimilarityOrdering W)
     (alts : List (DecAlt W)) (C : W → Prop) [DecidablePred C]
-    (w : W) : Truth3 :=
+    (w : W) : Trivalent :=
   distList (altConditionalResults sim alts C w) (· = true)
 
 /-- **SDA reading** (Simplification of Disjunctive Antecedents):
@@ -483,7 +483,7 @@ private def spainAlts : List (DecAlt McKayVanInwagen1977.SpainWorld) :=
 
 /-- [santorio-2018]'s homogeneity verdict on the
     [mckay-vaninwagen-1977] Spain scenario: `.indet` (mixed
-    results across the two alternatives), demonstrating the `Truth3`
+    results across the two alternatives), demonstrating the `Trivalent`
     middle column. -/
 theorem spain_homogeneity_gap :
     homogeneityEval McKayVanInwagen1977.spainSim

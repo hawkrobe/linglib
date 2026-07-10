@@ -42,7 +42,6 @@ that can be cited (in the contrastive direction) by the
 
 namespace Semantics.Conditionals.Counterfactual
 
-open Trivalent (Truth3)
 
 /-- Under the implicature approach with all-true individual results,
     "every" is predicted true — the OPPOSITE of the observed data
@@ -55,7 +54,7 @@ open Trivalent (Truth3)
     conjunctive projection over mixed (not uniformly true) individual
     results. -/
 theorem implicature_wrong_for_every :
-    projectTruthValues .conjunctive [Truth3.true, Truth3.true] = .true := by
+    projectTruthValues .conjunctive [Trivalent.true, Trivalent.true] = .true := by
   decide
 
 /-- Implicature predicts "not-every" = FALSE (since not-every(all-true)
@@ -64,7 +63,7 @@ theorem implicature_wrong_for_every :
     `implicature_wrong_for_every`. -/
 theorem implicature_wrong_for_notEvery :
     projectTruthValues .disjunctive
-      ([Truth3.true, Truth3.true].map Truth3.neg) = .false := by
+      ([Trivalent.true, Trivalent.true].map Trivalent.neg) = .false := by
   decide
 
 end Semantics.Conditionals.Counterfactual

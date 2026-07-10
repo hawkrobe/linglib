@@ -72,7 +72,6 @@ set_option autoImplicit false
 namespace Belnap1970
 
 open Semantics.Presupposition (PartialProp)
-open Trivalent (Truth3)
 open Aristotelian (Square SquareRelations)
 open Quantification
 open Semantics.Montague (ToyEntity)

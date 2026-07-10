@@ -33,7 +33,6 @@ namespace Stalnaker1981
 
 open Core.Order (SimilarityOrdering)
 open Semantics.Conditionals.Counterfactual
-open Trivalent (Truth3)
 
 -- ════════════════════════════════════════════════════
 -- § 1. The Bizet–Verdi Example: Indeterminacy from Ties

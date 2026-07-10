@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Truth3
+import Linglib.Core.Logic.Trivalent
 import Linglib.Features.Polarity
 import Linglib.Data.Examples.Schema
 import Linglib.Data.Examples.KrizChemla2015
@@ -26,7 +26,7 @@ polarity × scenario grid. The `Predict` signatures differ (`Polarity` vs
 
 * `GapScenario` — ALL / NONE / GAP scenario triad.
 * `GapPredict` — signature a rival account must implement:
-  `Polarity → GapScenario → Truth3`.
+  `Polarity → GapScenario → Trivalent`.
 * `GapDatum` — typed empirical datum lifted from `LinguisticExample`
   rows by `fromExample` (paperFeatures keys `polarity`, `condition`,
   `gap_detected`; rows with an `embedding` key other than `unembedded`
@@ -41,7 +41,6 @@ paper's study file, not here.
 
 namespace Generalizations.HomogeneityGap
 
-open Trivalent (Truth3)
 open Data.Examples (LinguisticExample SourceRef)
 open Features (Polarity)
 
@@ -64,7 +63,7 @@ Prediction signature for accounts of the unembedded homogeneity gap:
 given the sentence polarity and the scenario, the trivalent value the
 account assigns.
 -/
-abbrev GapPredict := Polarity → GapScenario → Truth3
+abbrev GapPredict := Polarity → GapScenario → Trivalent
 
 /--
 Empirical datum lifted from a paper-anchored `LinguisticExample`:
@@ -74,7 +73,7 @@ this `(polarity, scenario)` cell.
 structure GapDatum where
   polarity : Polarity
   scenario : GapScenario
-  observed : Truth3
+  observed : Trivalent
   source   : SourceRef
   deriving Repr, DecidableEq
 
@@ -98,7 +97,7 @@ Observed trivalent value for a baseline cell, determined by polarity:
 a positive sentence is true in ALL and false in NONE; a negative one
 the reverse.
 -/
-def baselineTruth (p : Polarity) (s : GapScenario) : Truth3 :=
+def baselineTruth (p : Polarity) (s : GapScenario) : Trivalent :=
   match p, s with
   | .positive, .all => .true
   | .negative, .all => .false
@@ -114,7 +113,7 @@ neither key are not pool cells — they carry study-local refinements
 (removers, borderline-response items, issue-relativized judgments) and
 are excluded rather than assigned a fabricated value.
 -/
-def gapTruth (features : List (String × String)) : Option Truth3 :=
+def gapTruth (features : List (String × String)) : Option Trivalent :=
   if (features.lookup "gap_detected").getD "false" == "true" then
     some .indet
   else match features.lookup "classical_value" with

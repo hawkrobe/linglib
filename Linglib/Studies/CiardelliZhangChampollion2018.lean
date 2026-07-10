@@ -39,7 +39,7 @@ counterfactuals; the discriminating contrast (Tables 7–8, p. 607):
    Hamming-distance similarity ordering at the actual world `uu`, all
    three closest-worlds operators in linglib —
    `universalCounterfactual` (Lewis/Stalnaker), `selectionalCounterfactual`
-   (Stalnaker + supervaluation, returns `Truth3.true`), and
+   (Stalnaker + supervaluation, returns `Trivalent.true`), and
    `homogeneityCounterfactual` (von Fintel/Križ, returns `assertion =
    some true` with satisfied presupposition) — all predict `¬(A ∧ B) >
    OFF` true. This is the empirically falsified prediction (~20% true,
@@ -98,7 +98,6 @@ open Core.Order (SimilarityOrdering)
 open Semantics.Conditionals.Counterfactual
   (universalCounterfactual selectionalCounterfactual homogeneityCounterfactual
    PresupStatus PresupResult)
-open Trivalent (Truth3)
 
 /-! ## The switches scenario -/
 

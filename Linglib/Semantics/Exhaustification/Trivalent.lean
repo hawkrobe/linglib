@@ -1,5 +1,5 @@
 import Linglib.Semantics.Exhaustification.InnocentExclusion
-import Linglib.Core.Logic.Truth3
+import Linglib.Core.Logic.Trivalent
 import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -40,12 +40,12 @@ consistent with Type B (EXH¹).
 This file is generic infrastructure, not a paper replication.
 The IE computation reuses `Exhaustification.innocent.excluded`
 (mathlib-canonical Finset version). The trivalent layer wraps the
-bivalent IE result with `Truth3` semantics.
+bivalent IE result with `_root_.Trivalent` semantics.
 -/
 
 namespace Exhaustification.Trivalent
 
-open _root_.Trivalent (Truth3 Prop3)
+open _root_.Trivalent (Prop3)
 open Exhaustification (innocent predToFinset altsFromPreds)
 
 
@@ -61,9 +61,9 @@ open Exhaustification (innocent predToFinset altsFromPreds)
     entailment, consistency, and maximality are all defined bivalently.
     The trivalent layer applies only *after* IE is computed.
 
-    Pointwise lift of `Truth3.toBoolOrFalse`. -/
-def classicalPart {W : Type} (p : W → Truth3) : W → Bool :=
-  Truth3.toBoolOrFalse ∘ p
+    Pointwise lift of `_root_.Trivalent.toBoolOrFalse`. -/
+def classicalPart {W : Type} (p : W → _root_.Trivalent) : W → Bool :=
+  _root_.Trivalent.toBoolOrFalse ∘ p
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -81,8 +81,8 @@ def classicalPart {W : Type} (p : W → Truth3) : W → Bool :=
 
     Type B in [wang-davidson-2026]: predicts no effect of
     exclusivity on presupposition filtering. -/
-def exh1 {W : Type} [Fintype W] [DecidableEq W] (alts : List (W → Truth3))
-    (p : W → Truth3) : W → Truth3 :=
+def exh1 {W : Type} [Fintype W] [DecidableEq W] (alts : List (W → _root_.Trivalent))
+    (p : W → _root_.Trivalent) : W → _root_.Trivalent :=
   let φF := predToFinset (classicalPart p)
   let altSet := altsFromPreds (alts.map classicalPart)
   let excluded := innocent.excluded altSet φF
@@ -114,8 +114,8 @@ def exh1 {W : Type} [Fintype W] [DecidableEq W] (alts : List (W → Truth3))
 
     Type A in [wang-davidson-2026]: predicts that increasing
     exclusivity reduces presupposition filtering. -/
-def exh2 {W : Type} [Fintype W] [DecidableEq W] (alts : List (W → Truth3))
-    (p : W → Truth3) : W → Truth3 :=
+def exh2 {W : Type} [Fintype W] [DecidableEq W] (alts : List (W → _root_.Trivalent))
+    (p : W → _root_.Trivalent) : W → _root_.Trivalent :=
   let φF := predToFinset (classicalPart p)
   let altSet := altsFromPreds (alts.map classicalPart)
   let excluded := innocent.excluded altSet φF
@@ -143,13 +143,13 @@ def exh2 {W : Type} [Fintype W] [DecidableEq W] (alts : List (W → Truth3))
 /-- EXH¹ preserves the presupposition of the prejacent:
     if φ(w) = #, then EXH¹(φ)(w) = #. -/
 theorem exh1_preserves_presup {W : Type} [Fintype W] [DecidableEq W]
-    (alts : List (W → Truth3)) (p : W → Truth3) (w : W)
+    (alts : List (W → _root_.Trivalent)) (p : W → _root_.Trivalent) (w : W)
     (h : p w = .indet) : exh1 alts p w = .indet := by
   unfold exh1; simp only [h]
 
 /-- EXH² also preserves the prejacent's presupposition. -/
 theorem exh2_preserves_presup {W : Type} [Fintype W] [DecidableEq W]
-    (alts : List (W → Truth3)) (p : W → Truth3) (w : W)
+    (alts : List (W → _root_.Trivalent)) (p : W → _root_.Trivalent) (w : W)
     (h : p w = .indet) : exh2 alts p w = .indet := by
   unfold exh2; split <;> simp_all
 

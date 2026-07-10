@@ -382,12 +382,11 @@ def experiment2PluralDefiniteResults : List PluralDefiniteDatum :=
 open Semantics.Conditionals.Counterfactual
   (embeddedSelectional noSelectional notEverySelectional QStrength
    all_four_quantifiers_mixed)
-open Trivalent (Truth3)
 
 /-- Bridge: map study quantifiers to formal selectional predictions.
     Each quantifier maps to the corresponding projection operation
     from the theory layer (`Counterfactual.lean`). -/
-def Quantifier.selectionalResult (q : Quantifier) (results : List Truth3) : Truth3 :=
+def Quantifier.selectionalResult (q : Quantifier) (results : List Trivalent) : Trivalent :=
   match q with
   | .every    => embeddedSelectional .strong results
   | .some     => embeddedSelectional .weak results
@@ -403,7 +402,7 @@ study file's simple strength-based classification. The classification is
 not stipulated — it is derived from the formal theory by construction. -/
 theorem selectional_prediction_grounded (q : Quantifier) (bs : List Bool)
     (h_some_true : bs.any id) (h_some_false : bs.any (!·)) :
-    (q.selectionalResult (bs.map Truth3.ofBool) == .true) = selectionalPredictedHigh q := by
+    (q.selectionalResult (bs.map Trivalent.ofBool) == .true) = selectionalPredictedHigh q := by
   obtain ⟨h1, h2, h3, h4⟩ := all_four_quantifiers_mixed bs h_some_true h_some_false
   cases q <;>
     simp only [Quantifier.selectionalResult, selectionalPredictedHigh,
@@ -443,7 +442,7 @@ applied to two different inputs:
     must resort to QUD × polarity to distinguish conditions. -/
 theorem homogeneity_erases_strength (n : Nat) (hn : n > 0) :
     ∀ proj : ProjectionType,
-    embeddedSelectional proj (List.replicate n Truth3.indet) = .indet := by
+    embeddedSelectional proj (List.replicate n Trivalent.indet) = .indet := by
   intro proj
   unfold embeddedSelectional
   rw [projectTruthValues_eq_aggregate]
@@ -457,8 +456,8 @@ theorem homogeneity_erases_strength (n : Nat) (hn : n > 0) :
     theorem to `Duality.aggregate_map_ofBool_mixed`. -/
 theorem selectional_strength_effect (bs : List Bool)
     (h_some_true : bs.any id) (h_some_false : bs.any (!·)) :
-    embeddedSelectional .weak (bs.map Truth3.ofBool) = .true ∧
-    embeddedSelectional .strong (bs.map Truth3.ofBool) = .false := by
+    embeddedSelectional .weak (bs.map Trivalent.ofBool) = .true ∧
+    embeddedSelectional .strong (bs.map Trivalent.ofBool) = .false := by
   unfold embeddedSelectional QStrength.toProjection
   constructor <;> rw [projectTruthValues_eq_aggregate]
   · exact (aggregate_map_ofBool_mixed bs h_some_true h_some_false).1
@@ -471,7 +470,7 @@ theorem selectional_strength_effect (bs : List Bool)
     judgments (no "undefined"), matching the experimental pattern of
     extreme slider values (< 4 or > 82). -/
 theorem selectional_always_determinate (proj : ProjectionType) (bs : List Bool) :
-    embeddedSelectional proj (bs.map Truth3.ofBool) ≠ .indet := by
+    embeddedSelectional proj (bs.map Trivalent.ofBool) ≠ .indet := by
   unfold embeddedSelectional
   rw [projectTruthValues_eq_aggregate]
   exact aggregate_map_ofBool_ne_indet proj bs
@@ -517,13 +516,13 @@ gets a foothold.
     returns `.indet`. Strength, polarity, and QUD are all invisible at
     the semantic level — the quantifier cannot see past the gap. -/
 theorem pd_all_quantifiers_gap (n : Nat) (hn : n > 0) (d : ProjectionType) :
-    aggregate d (List.replicate n Truth3.indet) = .indet :=
+    aggregate d (List.replicate n Trivalent.indet) = .indet :=
   aggregate_replicate_indet d n hn
 
 /-- **Counterfactuals are GLOBAL**: in mixed scenarios, every quantifier
     returns a determinate value. There is no gap for pragmatics to exploit. -/
 theorem cf_all_quantifiers_determinate (d : ProjectionType) (bs : List Bool) :
-    aggregate d (bs.map Truth3.ofBool) ≠ .indet :=
+    aggregate d (bs.map Trivalent.ofBool) ≠ .indet :=
   aggregate_map_ofBool_ne_indet d bs
 
 /-- **The dissociation**: for the same mixed input (n individuals, some
@@ -541,9 +540,9 @@ theorem scope_determines_qud_sensitivity (n : Nat) (hn : n > 0)
     (h_some_true : bs.any id) (h_some_false : bs.any (!·))
     (d : ProjectionType) :
     -- PDs: gap (pragmatic resolution needed, QUD-sensitive)
-    aggregate d (List.replicate n Truth3.indet) = .indet ∧
+    aggregate d (List.replicate n Trivalent.indet) = .indet ∧
     -- CFs: determinate (no pragmatic resolution, QUD-insensitive)
-    aggregate d (bs.map Truth3.ofBool) ≠ .indet :=
+    aggregate d (bs.map Trivalent.ofBool) ≠ .indet :=
   ⟨aggregate_replicate_indet d n hn, aggregate_map_ofBool_ne_indet d bs⟩
 
 -- ════════════════════════════════════════════════════════════════

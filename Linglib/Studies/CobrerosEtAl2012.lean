@@ -63,7 +63,6 @@ previous embedding inside `Semantics/Supervaluation/TCS.lean`.
 namespace CobrerosEtAl2012
 
 open Semantics.Supervaluation.TCS
-open Trivalent (Truth3)
 open Semantics.Supervaluation (SpecSpace superTrue)
 
 -- ════════════════════════════════════════════════════
@@ -251,7 +250,7 @@ theorem d_no_tolerant_contradiction :
 
     On the same tolerance neighborhood `{d | b ~ d}`:
     - **TCS** says `tall(b) ∧ ¬ tall(b)` is **tolerantly true**
-    - **Fine 1975 supervaluation** says it is **super-FALSE** (= `Truth3.false`)
+    - **Fine 1975 supervaluation** says it is **super-FALSE** (= `Trivalent.false`)
 
     The frameworks disagree on the *formal-validity-side* verdict.
     Caveat (per the file docstring): the paper's headline contrast on
@@ -264,7 +263,7 @@ theorem tcs_supervaluation_disagree_concrete :
       (.conj (.atom (.pred .tall .b)) (.neg (.atom (.pred .tall .b)))) ∧
     superTrue (λ e => soritesModel.interp .tall e && !soritesModel.interp .tall e)
       (toleranceSpace soritesModel .tall .b)
-      = Truth3.false :=
+      = Trivalent.false :=
   tcs_vs_supervaluation_borderline_contradiction
     soritesModel .tall .b b_is_borderline
 

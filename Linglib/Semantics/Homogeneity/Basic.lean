@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Truth3
+import Linglib.Core.Logic.Trivalent
 import Linglib.Semantics.Questions.Partition.QUD
 import Linglib.Semantics.Supervaluation.Basic
 
@@ -11,7 +11,7 @@ The framework is anchored on [kriz-2015] (Križ's dissertation); the
 published [kriz-2016] is the first detailed application to plural
 definites and `all`. Both rely on Fine's supervaluation ([fine-1975])
 and Beaver-Krahmer's assertion operator ([beaver-krahmer-2001], encoded
-here as `Truth3.metaAssert`).
+here as `Trivalent.metaAssert`).
 
 ## Layered structure
 
@@ -37,7 +37,7 @@ The shared structure is supervaluation over specification points.
 - §1 **Trivalent Sentence Denotations**: `SentenceTV`, `posExt`/`negExt`/`gapExt`,
    `isHomogeneous`, `isBivalent`.
 - §2 **Supervaluation as Homogeneity Source**: `supervaluationTV` via `SpecSpace`.
-- §3 **Homogeneity Removal**: `removeGap = Truth3.metaAssert ∘ ·` lifted pointwise;
+- §3 **Homogeneity Removal**: `removeGap = Trivalent.metaAssert ∘ ·` lifted pointwise;
    preserves the positive extension while collapsing the gap into the negative.
 - §4 **Pragmatic Usability**: `sufficientlyTrue`, `addressesIssue`, `usable`.
 - §5 **Communicated Content**: `communicatedContent` + `bivalentPred` bridge.
@@ -53,7 +53,6 @@ The shared structure is supervaluation over specification points.
 
 namespace Semantics.Homogeneity
 
-open Trivalent (Truth3)
 open Semantics.Supervaluation (SpecSpace superTrue superTrue_true_iff superTrue_false_iff
   superTrue_indet_iff fidelity)
 
@@ -65,7 +64,7 @@ variable {W : Type*}
 
 /-- A trivalent sentence denotation: maps worlds to truth values.
     This is the general type for any sentence that may exhibit homogeneity. -/
-abbrev SentenceTV (W : Type*) := W → Truth3
+abbrev SentenceTV (W : Type*) := W → Trivalent
 
 /-- Positive extension: worlds where the sentence is true. -/
 def posExt (S : SentenceTV W) : Set W := {w | S w = .true}
@@ -177,13 +176,13 @@ theorem supervaluationTV_gap_iff {Spec W : Type*} (eval : W → Spec → Prop)
     Semantically, removal collapses the gap into the negative extension:
     gap-worlds become false-worlds, preserving the positive extension. The
     pointwise operator is exactly the assertion operator 𝒜 of
-    [beaver-krahmer-2001], available as `Truth3.metaAssert`. -/
+    [beaver-krahmer-2001], available as `Trivalent.metaAssert`. -/
 
 /-- Remove homogeneity: collapse gap into negative extension.
-    Defined as `Truth3.metaAssert` lifted pointwise — see `Truth3.lean`
+    Defined as `Trivalent.metaAssert` lifted pointwise — see `Trivalent.lean`
     for the underlying assertion operator. -/
 def removeGap (S : SentenceTV W) : SentenceTV W :=
-  λ w => Truth3.metaAssert (S w)
+  λ w => Trivalent.metaAssert (S w)
 
 /-- Removal produces a bivalent sentence. -/
 theorem removeGap_bivalent (S : SentenceTV W) :
@@ -216,7 +215,7 @@ theorem removeGap_not_homogeneous (S : SentenceTV W) :
 /-! The pragmatic mechanism that derives non-maximal readings from
     the homogeneity gap. Two independent principles interact:
 
-    1. **Sufficient Truth**: weakens Quality to "true enough for current purposes"
+    1. **Sufficient Trivalent**: weakens Quality to "true enough for current purposes"
     2. **Addressing an Question**: restricts which sentences can be used for which
        issues, based on alignment between truth-value boundaries and issue cells
 
@@ -224,7 +223,7 @@ theorem removeGap_not_homogeneous (S : SentenceTV W) :
     (i) a literally-true world is in the same issue cell, and (ii) no cell
     straddles the true/false boundary. -/
 
-/-- Sufficient Truth: S is "true enough" at world w relative to issue I
+/-- Sufficient Trivalent: S is "true enough" at world w relative to issue I
     iff there is a world w' that is I-equivalent to w where S is literally true.
 
     This weakens the standard maxim of quality: a speaker need not assert
@@ -252,7 +251,7 @@ def usable (q : QUD W) (S : SentenceTV W) (w : W) : Prop :=
   S w ≠ .false ∧ sufficientlyTrue q S w ∧ addressesIssue q S
 
 /-- For bivalent sentences, usability reduces to literal truth + addressing.
-    Sufficient Truth adds nothing because there are no gap-worlds. -/
+    Sufficient Trivalent adds nothing because there are no gap-worlds. -/
 theorem bivalent_usable_iff_true (q : QUD W) (S : SentenceTV W)
     (hbiv : isBivalent S) (w : W) :
     usable q S w ↔ S w = .true ∧ addressesIssue q S := by
@@ -487,7 +486,7 @@ instance (a b : Finset Atom) : Decidable (overlaps a b) :=
     of the universe of discourse). For distributive predicates, singletons
     suffice; for collective predicates, larger groups are needed. -/
 def generalisedTV (P : Finset Atom → Prop) [DecidablePred P]
-    (domain : Finset (Finset Atom)) (a : Finset Atom) : Truth3 :=
+    (domain : Finset (Finset Atom)) (a : Finset Atom) : Trivalent :=
   if P a then .true
   else if ∃ b ∈ domain, overlaps a b ∧ P b then .indet
   else .false

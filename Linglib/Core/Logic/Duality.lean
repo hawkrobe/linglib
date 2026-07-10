@@ -1,17 +1,17 @@
-import Linglib.Core.Logic.Truth3
+import Linglib.Core.Logic.Trivalent
 import Mathlib.Data.Finset.Lattice.Fold
 
 /-!
-# Aggregation of `Truth3` Lists by Projection Type
+# Aggregation of `Trivalent` Lists by Projection Type
 [barwise-cooper-1981]
 
 Universal vs existential aggregation as the `⊓`/`⊔` projections of the
 ∃ ⊣ Δ ⊣ ∀ adjunction, parameterized by `ProjectionType` (declared in
-`Truth3.lean`).
+`Trivalent.lean`).
 
-## § 1. Truth3 Aggregation
+## § 1. Trivalent Aggregation
 
-- `aggregate (d : ProjectionType) : List Truth3 → Truth3` — fold by
+- `aggregate (d : ProjectionType) : List Trivalent → Trivalent` — fold by
   projection type. Conjunctive: `⊓`-fold from `⊤`. Disjunctive: `⊔`-fold
   from `⊥`.
 
@@ -27,28 +27,28 @@ namespace Trivalent
 /-- Aggregate a list according to projection type.
     Conjunctive (∀-like): `⊓`-fold from `⊤`.
     Disjunctive (∃-like): `⊔`-fold from `⊥`. -/
-def aggregate (d : ProjectionType) (l : List Truth3) : Truth3 :=
+def aggregate (d : ProjectionType) (l : List Trivalent) : Trivalent :=
   match d with
   | .disjunctive => l.foldl (· ⊔ ·) ⊥
   | .conjunctive => l.foldl (· ⊓ ·) ⊤
 
 /-- Existential (disjunctive) aggregation: true if ANY true. -/
-def existsAny (l : List Truth3) : Truth3 := aggregate .disjunctive l
+def existsAny (l : List Trivalent) : Trivalent := aggregate .disjunctive l
 
 /-- Universal (conjunctive) aggregation: true only if ALL true. -/
-def forallAll (l : List Truth3) : Truth3 := aggregate .conjunctive l
+def forallAll (l : List Trivalent) : Trivalent := aggregate .conjunctive l
 
-theorem foldl_sup_of_true (l : List Truth3) : l.foldl (· ⊔ ·) Truth3.true = .true := by
+theorem foldl_sup_of_true (l : List Trivalent) : l.foldl (· ⊔ ·) Trivalent.true = .true := by
   induction l with
   | nil => rfl
-  | cons hd tl ih => simp only [List.foldl_cons, Truth3.true_sup, ih]
+  | cons hd tl ih => simp only [List.foldl_cons, Trivalent.true_sup, ih]
 
-theorem foldl_inf_of_false (l : List Truth3) : l.foldl (· ⊓ ·) Truth3.false = .false := by
+theorem foldl_inf_of_false (l : List Trivalent) : l.foldl (· ⊓ ·) Trivalent.false = .false := by
   induction l with
   | nil => rfl
-  | cons hd tl ih => simp only [List.foldl_cons, Truth3.false_inf, ih]
+  | cons hd tl ih => simp only [List.foldl_cons, Trivalent.false_inf, ih]
 
-theorem foldl_sup_mem_true (l : List Truth3) (acc : Truth3) (h : Truth3.true ∈ l) :
+theorem foldl_sup_mem_true (l : List Trivalent) (acc : Trivalent) (h : Trivalent.true ∈ l) :
     l.foldl (· ⊔ ·) acc = .true := by
   induction l generalizing acc with
   | nil => simp at h
@@ -58,11 +58,11 @@ theorem foldl_sup_mem_true (l : List Truth3) (acc : Truth3) (h : Truth3.true ∈
     cases h with
     | inl heq =>
       subst heq
-      simp only [Truth3.sup_true, foldl_sup_of_true]
+      simp only [Trivalent.sup_true, foldl_sup_of_true]
     | inr hmem =>
       exact ih (acc ⊔ hd) hmem
 
-theorem foldl_inf_mem_false (l : List Truth3) (acc : Truth3) (h : Truth3.false ∈ l) :
+theorem foldl_inf_mem_false (l : List Trivalent) (acc : Trivalent) (h : Trivalent.false ∈ l) :
     l.foldl (· ⊓ ·) acc = .false := by
   induction l generalizing acc with
   | nil => simp at h
@@ -72,11 +72,11 @@ theorem foldl_inf_mem_false (l : List Truth3) (acc : Truth3) (h : Truth3.false �
     cases h with
     | inl heq =>
       subst heq
-      simp only [Truth3.inf_false, foldl_inf_of_false]
+      simp only [Trivalent.inf_false, foldl_inf_of_false]
     | inr hmem =>
       exact ih (acc ⊓ hd) hmem
 
-theorem existential_robust (l : List Truth3) (h : l.any (· == .true)) :
+theorem existential_robust (l : List Trivalent) (h : l.any (· == .true)) :
     existsAny l = .true := by
   simp only [existsAny, aggregate, List.any_eq_true] at *
   obtain ⟨x, hx_mem, hx_eq⟩ := h
@@ -85,7 +85,7 @@ theorem existential_robust (l : List Truth3) (h : l.any (· == .true)) :
   | false => exact absurd hx_eq (by decide)
   | indet => exact absurd hx_eq (by decide)
 
-theorem universal_fragile (l : List Truth3) (h : l.any (· == .false)) :
+theorem universal_fragile (l : List Trivalent) (h : l.any (· == .false)) :
     forallAll l = .false := by
   simp only [forallAll, aggregate, List.any_eq_true] at *
   obtain ⟨x, hx_mem, hx_eq⟩ := h
@@ -94,20 +94,20 @@ theorem universal_fragile (l : List Truth3) (h : l.any (· == .false)) :
   | true => exact absurd hx_eq (by decide)
   | indet => exact absurd hx_eq (by decide)
 
-def const {α : Type*} (t : Truth3) : α → Truth3 := λ _ => t
+def const {α : Type*} (t : Trivalent) : α → Trivalent := λ _ => t
 
-def exists' {α : Type*} (P : α → Truth3) (l : List α) : Truth3 :=
+def exists' {α : Type*} (P : α → Trivalent) (l : List α) : Trivalent :=
   existsAny (l.map P)
 
-def forall' {α : Type*} (P : α → Truth3) (l : List α) : Truth3 :=
+def forall' {α : Type*} (P : α → Trivalent) (l : List α) : Trivalent :=
   forallAll (l.map P)
 
 -- ════════════════════════════════════════════════════
--- § 1.5  Aggregation Pushforward through Truth3.ofBool
+-- § 1.5  Aggregation Pushforward through Trivalent.ofBool
 -- ════════════════════════════════════════════════════
 
 /-! The aggregation operators defined in § 1 are `List.foldl` over the
-    `Truth3` lattice. Their behavior is determined by two algebraic
+    `Trivalent` lattice. Their behavior is determined by two algebraic
     facts:
 
     1. **Idempotency** (`sup_idem`, `inf_idem`): every element of a
@@ -116,8 +116,8 @@ def forall' {α : Type*} (P : α → Truth3) (l : List α) : Truth3 :=
        .indet` gets absorbed by `.indet` after the first step (identity
        element transition).
 
-    2. **Lattice homomorphism** (`Truth3.ofBoolHom`): `ofBool` embeds
-       `Bool` into the `{⊥, ⊤}` sublattice of `Truth3`, preserving both
+    2. **Lattice homomorphism** (`Trivalent.ofBoolHom`): `ofBool` embeds
+       `Bool` into the `{⊥, ⊤}` sublattice of `Trivalent`, preserving both
        `⊔` and `⊓`. Folding lattice operations over `bs.map ofBool`
        reduces to folding the corresponding Boolean operations
        (`||`/`&&`) over `bs` — which is always definite, so the
@@ -142,7 +142,7 @@ private theorem foldl_idem_const {α : Type*} (f : α → α → α) (a : α)
     the algebraic reason "local-scope" trivalent semantics erases
     quantifier strength. -/
 theorem aggregate_replicate_indet (d : ProjectionType) (n : Nat) (hn : n > 0) :
-    aggregate d (List.replicate n Truth3.indet) = .indet := by
+    aggregate d (List.replicate n Trivalent.indet) = .indet := by
   cases n with
   | zero => omega
   | succ k =>
@@ -150,39 +150,39 @@ theorem aggregate_replicate_indet (d : ProjectionType) (n : Nat) (hn : n > 0) :
     cases d with
     | conjunctive =>
       -- ⊤ ⊓ .indet = .indet, then inf_idem
-      change (List.replicate k Truth3.indet).foldl (· ⊓ ·) Truth3.indet = Truth3.indet
-      exact foldl_idem_const (· ⊓ ·) Truth3.indet (inf_idem _) k
+      change (List.replicate k Trivalent.indet).foldl (· ⊓ ·) Trivalent.indet = Trivalent.indet
+      exact foldl_idem_const (· ⊓ ·) Trivalent.indet (inf_idem _) k
     | disjunctive =>
       -- ⊥ ⊔ .indet = .indet, then sup_idem
-      change (List.replicate k Truth3.indet).foldl (· ⊔ ·) Truth3.indet = Truth3.indet
-      exact foldl_idem_const (· ⊔ ·) Truth3.indet (sup_idem _) k
+      change (List.replicate k Trivalent.indet).foldl (· ⊔ ·) Trivalent.indet = Trivalent.indet
+      exact foldl_idem_const (· ⊔ ·) Trivalent.indet (sup_idem _) k
 
-/-- Sup-fold with `Truth3.ofBool` accumulator commutes with `||`-fold
+/-- Sup-fold with `Trivalent.ofBool` accumulator commutes with `||`-fold
     via the lattice-homomorphism property of `ofBool`. -/
 private theorem foldl_sup_ofBool_acc (bs : List Bool) (acc : Bool) :
-    (bs.map Truth3.ofBool).foldl (· ⊔ ·) (Truth3.ofBool acc) =
-    Truth3.ofBool (bs.foldl (· || ·) acc) := by
+    (bs.map Trivalent.ofBool).foldl (· ⊔ ·) (Trivalent.ofBool acc) =
+    Trivalent.ofBool (bs.foldl (· || ·) acc) := by
   induction bs generalizing acc with
   | nil => rfl
   | cons b bs ih =>
-    simp only [List.map_cons, List.foldl_cons, Truth3.ofBool_sup]
+    simp only [List.map_cons, List.foldl_cons, Trivalent.ofBool_sup]
     exact ih (acc || b)
 
-/-- Inf-fold with `Truth3.ofBool` accumulator commutes with `&&`-fold. -/
+/-- Inf-fold with `Trivalent.ofBool` accumulator commutes with `&&`-fold. -/
 private theorem foldl_inf_ofBool_acc (bs : List Bool) (acc : Bool) :
-    (bs.map Truth3.ofBool).foldl (· ⊓ ·) (Truth3.ofBool acc) =
-    Truth3.ofBool (bs.foldl (· && ·) acc) := by
+    (bs.map Trivalent.ofBool).foldl (· ⊓ ·) (Trivalent.ofBool acc) =
+    Trivalent.ofBool (bs.foldl (· && ·) acc) := by
   induction bs generalizing acc with
   | nil => rfl
   | cons b bs ih =>
-    simp only [List.map_cons, List.foldl_cons, Truth3.ofBool_inf]
+    simp only [List.map_cons, List.foldl_cons, Trivalent.ofBool_inf]
     exact ih (acc && b)
 
 /-- `List.foldl (· || ·) false = List.any id`. -/
 private theorem foldl_or_false_eq_any (bs : List Bool) :
-    bs.foldl (· || ·) false = bs.any id := by
+    bs.foldl (· || ·) Bool.false = bs.any id := by
   suffices ∀ acc, bs.foldl (· || ·) acc = (acc || bs.any id) from by
-    simp only [this false, Bool.false_or]
+    simp only [this Bool.false, Bool.false_or]
   intro acc
   induction bs generalizing acc with
   | nil => simp only [List.foldl_nil, List.any_nil, Bool.or_false]
@@ -191,45 +191,45 @@ private theorem foldl_or_false_eq_any (bs : List Bool) :
 
 /-- `List.foldl (· && ·) true = List.all id`. -/
 private theorem foldl_and_true_eq_all (bs : List Bool) :
-    bs.foldl (· && ·) true = bs.all id := by
+    bs.foldl (· && ·) Bool.true = bs.all id := by
   suffices ∀ acc, bs.foldl (· && ·) acc = (acc && bs.all id) from by
-    simp only [this true, Bool.true_and]
+    simp only [this Bool.true, Bool.true_and]
   intro acc
   induction bs generalizing acc with
   | nil => simp only [List.foldl_nil, List.all_nil, Bool.and_true]
   | cons b bs ih =>
     simp only [List.foldl_cons, List.all_cons, id, ih (acc && b), Bool.and_assoc]
 
-/-- Existential aggregation through `Truth3.ofBool` reduces to Boolean
+/-- Existential aggregation through `Trivalent.ofBool` reduces to Boolean
     disjunction. Witness of the lattice-homomorphism property of
-    `Truth3.ofBoolHom` propagating through fold. -/
+    `Trivalent.ofBoolHom` propagating through fold. -/
 theorem aggregate_existential_map_ofBool (bs : List Bool) :
-    aggregate .disjunctive (bs.map Truth3.ofBool) = Truth3.ofBool (bs.any id) := by
-  show (bs.map Truth3.ofBool).foldl (· ⊔ ·) ⊥ = Truth3.ofBool (bs.any id)
-  have h : (⊥ : Truth3) = Truth3.ofBool false := rfl
+    aggregate .disjunctive (bs.map Trivalent.ofBool) = Trivalent.ofBool (bs.any id) := by
+  show (bs.map Trivalent.ofBool).foldl (· ⊔ ·) ⊥ = Trivalent.ofBool (bs.any id)
+  have h : (⊥ : Trivalent) = Trivalent.ofBool Bool.false := rfl
   rw [h, foldl_sup_ofBool_acc, foldl_or_false_eq_any]
 
-/-- Universal aggregation through `Truth3.ofBool` reduces to Boolean
+/-- Universal aggregation through `Trivalent.ofBool` reduces to Boolean
     conjunction. -/
 theorem aggregate_universal_map_ofBool (bs : List Bool) :
-    aggregate .conjunctive (bs.map Truth3.ofBool) = Truth3.ofBool (bs.all id) := by
-  show (bs.map Truth3.ofBool).foldl (· ⊓ ·) ⊤ = Truth3.ofBool (bs.all id)
-  have h : (⊤ : Truth3) = Truth3.ofBool true := rfl
+    aggregate .conjunctive (bs.map Trivalent.ofBool) = Trivalent.ofBool (bs.all id) := by
+  show (bs.map Trivalent.ofBool).foldl (· ⊓ ·) ⊤ = Trivalent.ofBool (bs.all id)
+  have h : (⊤ : Trivalent) = Trivalent.ofBool Bool.true := rfl
   rw [h, foldl_inf_ofBool_acc, foldl_and_true_eq_all]
 
-/-- Aggregation through `Truth3.ofBool` never produces `.indet` —
+/-- Aggregation through `Trivalent.ofBool` never produces `.indet` —
     Boolean inputs leave the gap-free sublattice `{⊥, ⊤}` invariant.
     The algebraic basis for "global-scope" trivalent semantics where
     the quantifier sees only Boolean values. -/
 theorem aggregate_map_ofBool_ne_indet (d : ProjectionType) (bs : List Bool) :
-    aggregate d (bs.map Truth3.ofBool) ≠ .indet := by
+    aggregate d (bs.map Trivalent.ofBool) ≠ .indet := by
   cases d with
   | disjunctive =>
     rw [aggregate_existential_map_ofBool]
-    cases bs.any id <;> exact Truth3.noConfusion
+    cases bs.any id <;> exact Trivalent.noConfusion
   | conjunctive =>
     rw [aggregate_universal_map_ofBool]
-    cases bs.all id <;> exact Truth3.noConfusion
+    cases bs.all id <;> exact Trivalent.noConfusion
 
 /-- Mixed Boolean inputs (some true, some false) split the duality
     types: existential aggregation gives `.true`, universal gives
@@ -238,12 +238,12 @@ theorem aggregate_map_ofBool_ne_indet (d : ProjectionType) (bs : List Bool) :
     quantifier-strength contrast on mixed scenarios. -/
 theorem aggregate_map_ofBool_mixed (bs : List Bool)
     (h_some_true : bs.any id) (h_some_false : bs.any (!·)) :
-    aggregate .disjunctive (bs.map Truth3.ofBool) = .true ∧
-    aggregate .conjunctive   (bs.map Truth3.ofBool) = .false := by
+    aggregate .disjunctive (bs.map Trivalent.ofBool) = .true ∧
+    aggregate .conjunctive   (bs.map Trivalent.ofBool) = .false := by
   refine ⟨?_, ?_⟩
-  · rw [aggregate_existential_map_ofBool, show bs.any id = true from h_some_true]; rfl
+  · rw [aggregate_existential_map_ofBool, show bs.any id = Bool.true from h_some_true]; rfl
   · rw [aggregate_universal_map_ofBool]
-    have h_not_all : bs.all id = false := by
+    have h_not_all : bs.all id = Bool.false := by
       rw [Bool.eq_false_iff]
       intro h_all
       obtain ⟨x, hx_mem, hx_eq⟩ := List.any_eq_true.mp h_some_false
@@ -284,8 +284,8 @@ theorem aggregate_map_ofBool_mixed (bs : List Bool)
     on `∅`), `.false` if `P` fails at every element of nonempty `s`,
     `.indet` (mixed) otherwise. The supervaluation's universal/existential
     decision pair `(∀, ∃)` is the kernel; the if-chain classifies it into
-    `Truth3`. -/
-def dist {α : Type*} (s : Finset α) (P : α → Prop) [DecidablePred P] : Truth3 :=
+    `Trivalent`. -/
+def dist {α : Type*} (s : Finset α) (P : α → Prop) [DecidablePred P] : Trivalent :=
   if ∀ a ∈ s, P a then .true
   else if ∃ a ∈ s, P a then .indet
   else .false
@@ -294,7 +294,7 @@ def dist {α : Type*} (s : Finset α) (P : α → Prop) [DecidablePred P] : Trut
     no `[DecidableEq α]` required. Same trichotomy: `.true` on (vacuously
     or genuinely) all-`P`, `.false` on nonempty-but-no-`P`, `.indet` mixed.
     Agrees with `dist l.toFinset P` when `[DecidableEq α]` is available. -/
-def distList {α : Type*} (l : List α) (P : α → Prop) [DecidablePred P] : Truth3 :=
+def distList {α : Type*} (l : List α) (P : α → Prop) [DecidablePred P] : Trivalent :=
   if ∀ a ∈ l, P a then .true
   else if ∃ a ∈ l, P a then .indet
   else .false
@@ -401,7 +401,7 @@ theorem dist_eq_indet_iff {α : Type*} (s : Finset α) (P : α → Prop) [Decida
 -- § 2. Prop-valued Quantifier Projection
 -- ════════════════════════════════════════════════════
 
-/-! The `Truth3` aggregation above (§ 1) is the decidable/three-valued
+/-! The `Trivalent` aggregation above (§ 1) is the decidable/three-valued
     version of quantifier projection. The classical `Prop`-valued
     counterparts are just `∃` and `∀` from Lean core — the left and
     right adjoints to the diagonal in the adjunction ∃ ⊣ Δ ⊣ ∀.

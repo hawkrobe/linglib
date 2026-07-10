@@ -13,7 +13,7 @@ the common reduct of `OrthocomplementedLattice` (which adds the complementation 
 `DeMorganAlgebra` (which adds distributivity instead). The De Morgan laws are proved once
 here, from involution and antitonicity alone. A `KleeneLattice` is a De Morgan algebra
 satisfying the Kleene law `a ⊓ aᶜ ≤ b ⊔ bᶜ`: every `BooleanAlgebra` qualifies (the law
-degenerates through `⊥`), and the three-element chain `Trivalent.Truth3` is the canonical
+degenerates through `⊥`), and the three-element chain `Trivalent` is the canonical
 non-Boolean example.
 
 Mathlib has no De Morgan/Kleene *lattice* class (its `KleeneAlgebra` is the

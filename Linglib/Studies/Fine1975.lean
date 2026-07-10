@@ -4,7 +4,7 @@ import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Fintype.Basic
 
 /-!
-# Fine (1975): Vagueness, Truth and Logic [fine-1975]
+# Fine (1975): Vagueness, Trivalent and Logic [fine-1975]
 [kamp-1975]
 
 Supervaluationism applied to gradable predicates: a vague sentence is
@@ -23,7 +23,7 @@ gradable adjectives, and proves results specific to degree semantics:
 - § 2: Comparative entailment (monotonicity of positive predicate)
 - § 3: Sorites resolution
 - § 4: External penumbral connections (pink/red — multi-predicate)
-- § 5: Bridge — `inGapRegion` ↔ `Truth3.indet`
+- § 5: Bridge — `inGapRegion` ↔ `Trivalent.indet`
 - § 6: Higher-order D operator
 
 ## Connection to Kamp (1975)
@@ -43,7 +43,6 @@ is the existential dual of supervaluation. See
 
 namespace Fine1975
 
-open Trivalent (Truth3)
 open Degree (Degree Threshold Degree.toNat Threshold.toNat)
 open Degree (ThresholdPair inGapRegion)
 open Semantics.Supervaluation (SpecSpace superTrue definitely indefinite)
@@ -60,7 +59,7 @@ def mkSpec {max : Nat} (S : Finset (Threshold max)) (hne : S.Nonempty) :
 /-- Supervaluation of a degree predicate: fix a degree, vary the threshold. -/
 def superTrueAt {max : Nat} (meaning : Degree max → Threshold max → Prop)
     [∀ d θ, Decidable (meaning d θ)] (d : Degree max)
-    (S : SpecSpace (Threshold max)) : Truth3 :=
+    (S : SpecSpace (Threshold max)) : Trivalent :=
   superTrue (meaning d) S
 
 -- ════════════════════════════════════════════════════
@@ -75,8 +74,8 @@ def superTrueAt {max : Nat} (meaning : Degree max → Threshold max → Prop)
 theorem comparative_entailment {max : Nat}
     (d₁ d₂ : Degree max) (S : SpecSpace (Threshold max))
     (hgt : d₂.toNat < d₁.toNat)
-    (hd₂ : superTrueAt (fun d θ => d.toNat > θ.toNat) d₂ S = Truth3.true) :
-    superTrueAt (fun d θ => d.toNat > θ.toNat) d₁ S = Truth3.true := by
+    (hd₂ : superTrueAt (fun d θ => d.toNat > θ.toNat) d₂ S = Trivalent.true) :
+    superTrueAt (fun d θ => d.toNat > θ.toNat) d₁ S = Trivalent.true := by
   unfold superTrueAt at *
   rw [Semantics.Supervaluation.superTrue_true_iff] at hd₂ ⊢
   intro θ hθ
@@ -143,25 +142,25 @@ theorem pink_red_complementary {max : Nat} (d : Degree max) (θ : Threshold max)
     logic, `indet ∧ indet = indet`; supervaluation gives `false`. -/
 theorem pink_and_red_superFalse {max : Nat} (d : Degree max)
     (S : SpecSpace (Threshold max)) :
-    superTrue (fun θ => isPink d θ ∧ isRed d θ) S = Truth3.false :=
+    superTrue (fun θ => isPink d θ ∧ isRed d θ) S = Trivalent.false :=
   (Semantics.Supervaluation.superTrue_false_iff _ S).mpr
     (fun θ _ => pink_red_complementary d θ)
 
 /-- Both "pink" and "red" can individually be indefinite (borderline). -/
 theorem pink_indefinite_example :
     superTrue (isPink (max := 10) ⟨5, by omega⟩)
-      ⟨{⟨3, by omega⟩, ⟨7, by omega⟩}, ⟨⟨3, by omega⟩, by simp⟩⟩ = Truth3.indet := by
+      ⟨{⟨3, by omega⟩, ⟨7, by omega⟩}, ⟨⟨3, by omega⟩, by simp⟩⟩ = Trivalent.indet := by
   decide
 
 -- ════════════════════════════════════════════════════
--- § 5. Bridge: Gap Region ↔ Truth3.indet
+-- § 5. Bridge: Gap Region ↔ Trivalent.indet
 -- ════════════════════════════════════════════════════
 
 /-! The `inGapRegion` function in `Adjective.Theory` computes whether a
     degree falls between two thresholds (the "borderline" zone for contrary
     antonyms). A `ThresholdPair` with `neg ≤ pos` is a two-element
     specification space, and the gap region is exactly the set of degrees
-    that receive `Truth3.indet` under supervaluation. -/
+    that receive `Trivalent.indet` under supervaluation. -/
 
 /-- The specification space induced by a threshold pair. -/
 def specOfPair {max : Nat} (tp : ThresholdPair max) : SpecSpace (Threshold max) :=

@@ -3,7 +3,7 @@ import Mathlib.Order.Monotone.Defs
 import Mathlib.Order.Sublattice
 import Mathlib.Order.BooleanAlgebra.Basic
 import Linglib.Semantics.NaturalLogic
-import Linglib.Core.Logic.Truth3
+import Linglib.Core.Logic.Trivalent
 
 /-!
 # Generalized Quantifier Definitions
