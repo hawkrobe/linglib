@@ -364,12 +364,9 @@ def lift (f : Multiplicative (Forest T) →* A) :
 
 /-- Algebra homs off `ConnesKreimer` agree if they agree on `of'`. -/
 theorem algHom_ext {φ ψ : ConnesKreimer R T →ₐ[R] A}
-    (h : ∀ F : Forest T, φ (of' F) = ψ (of' F)) : φ = ψ := by
-  have key : φ.comp toFinsuppAlgEquiv.symm.toAlgHom
-      = ψ.comp toFinsuppAlgEquiv.symm.toAlgHom :=
-    AddMonoidAlgebra.algHom_ext fun F => h F
-  ext p
-  simpa using DFunLike.congr_fun key p.toFinsupp
+    (h : ∀ F : Forest T, φ (of' F) = ψ (of' F)) : φ = ψ :=
+  (AlgHom.cancel_right (f := toFinsuppAlgEquiv.symm.toAlgHom)
+    toFinsuppAlgEquiv.symm.surjective).mp (AddMonoidAlgebra.algHom_ext fun F => h F)
 
 end Lift
 
@@ -382,11 +379,9 @@ def ofFinsuppAddHom :
 
 /-- Additive homs off `ConnesKreimer` agree if they agree on `single`. -/
 theorem addHom_ext {M : Type*} [AddZeroClass M] {f g : ConnesKreimer R T →+ M}
-    (h : ∀ (F : Forest T) (r : R), f (single F r) = g (single F r)) : f = g := by
-  have key : f.comp ofFinsuppAddHom = g.comp ofFinsuppAddHom :=
-    Finsupp.addHom_ext h
-  ext p
-  exact DFunLike.congr_fun key p.toFinsupp
+    (h : ∀ (F : Forest T) (r : R), f (single F r) = g (single F r)) : f = g :=
+  (AddMonoidHom.cancel_right (f := ofFinsuppAddHom) fun p => ⟨p.toFinsupp, rfl⟩).mp
+    (Finsupp.addHom_ext h)
 
 section LinearApi
 variable {M : Type*} [AddCommMonoid M] [Module R M]
