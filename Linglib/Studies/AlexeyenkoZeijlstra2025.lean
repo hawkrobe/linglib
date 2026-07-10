@@ -498,9 +498,15 @@ def english_enough : AdjMorphProfile :=
 -- ============================================================================
 
 /-- The nominal features an adjectival form is specified for — MAG (34a)'s
-    φ/κ-features — one `Finset` per dimension. The paper's specifications
-    include case (κ) alongside φ, whereas the [corbett-1998]-anchored
-    `Syntax/Agreement/Paradigm` treats case as government, not agreement. -/
+    φ/κ-features — one `Finset` per dimension. Including case (κ) takes a side
+    in a live debate: canonical typology confines agreement features to
+    person/number/gender, with case assigned to the NP by government
+    ([corbett-1998]; [corbett-2006]'s canonical-agreement hedges; the stance of
+    `Syntax/Agreement/Paradigm`), while the nominal-concord literature treats
+    case concord on adjectives as the same feature-sharing phenomenon.
+    [alexeyenko-zeijlstra-2025] side with the latter: fn 17 has case "always
+    present as a feature on DPs", and their percolation analysis carries κ
+    through the extended nominal projection. -/
 structure Concord where
   numbers : Finset Number := ∅
   genders : Finset Gender := ∅
