@@ -15,18 +15,18 @@ namespace Italian.AdjAgreement
 
 open Agreement
 
-/-- Italian adjective φ-features: number and gender only. -/
-private def phiFeatures : Finset AgrFeature :=
-  { .number .singular, .number .plural
-  , .gender .masculine, .gender .feminine }
+/-- The adjectival paradigm: number and gender only — no case. -/
+private def adjForm : FeatureSpec where
+  numbers := {.singular, .plural}
+  genders := {.masculine, .feminine}
 
-/-- Italian entry: identical pred and attr φ-features; the DP additionally
-    carries κ (case is always a DP feature per fn 17, even when not
-    morphologically realized on adjectives). -/
+/-- Italian entry: identical pred and attr φ-specifications; the DP
+    additionally carries κ (case is always a DP feature per fn 17, even
+    when not morphologically realized on adjectives). -/
 def entry : AdjAgreementEntry where
-  predFeatures := phiFeatures
-  attrFeatures := phiFeatures
-  dpFeatures   := phiFeatures ∪ {.kappa .nom, .kappa .acc}
+  predFeatures := adjForm
+  attrFeatures := adjForm
+  dpFeatures   := { adjForm with cases := {.nom, .acc} }
 
 /-- Italian pred = attr (both carry φ). -/
 theorem same_agreement : entry.SameAgreement := rfl
