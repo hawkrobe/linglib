@@ -127,7 +127,7 @@ is addressed in that Studies file's §8-§9.
 
 namespace Semantics.Supervaluation.TCS
 
-open Core.Duality (Truth3)
+open Trivalent (Truth3)
 open Core.Logic.Modal
   (AccessRel IsKTBFrame IsSerial box diamond box_T Logic)
 open Core.Logic.Consequence (MixedConsequence SatImplies IsSelfDual

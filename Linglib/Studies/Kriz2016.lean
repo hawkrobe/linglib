@@ -97,7 +97,7 @@ Adding "all" blocks non-maximal use entirely.
 
 namespace Kriz2016
 
-open Core.Duality (Truth3)
+open Trivalent (Truth3)
 open Semantics.Plurality
 open Semantics.Plurality.Distributivity
 open Semantics.Plurality.Trivalent
@@ -602,7 +602,7 @@ theorem model_matches_gap_row :
 
     - [fine-1975]: varying the *threshold* for vague predicates
     - [kriz-2016]: varying the *atom* for plural predicates
-    - `dist` in `Core.Duality`: a third implementation of the same pattern
+    - `dist` in `Trivalent`: a third implementation of the same pattern
       over `List Bool`
     - `selectional_eq_dist` in `Counterfactual.lean`: closest worlds
     - [haug-dalrymple-2020] §5 (paper eq 109): varying the

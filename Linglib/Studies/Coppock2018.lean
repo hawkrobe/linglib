@@ -73,7 +73,7 @@ via the paper's translation: radically counterstance-contingent = strongly discr
 
 namespace Coppock2018
 
-open Core.Duality (Truth3 Prop3)
+open Trivalent (Truth3 Prop3)
 open Core.Logic.Modal (AccessRel box)
 open Semantics.Presupposition (PartialProp)
 

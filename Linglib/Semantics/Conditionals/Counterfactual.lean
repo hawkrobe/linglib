@@ -43,7 +43,7 @@ namespace Semantics.Conditionals.Counterfactual
 open Intensional (WorldTimeIndex)
 
 open Semantics.Conditionals
-open Core.Duality (Truth3 ProjectionType dist)
+open Trivalent (Truth3 ProjectionType dist)
 
 
 open Core.Order (SimilarityOrdering)
@@ -97,7 +97,7 @@ This predicts:
   some students' closest study-worlds have passing, others don't
 -/
 
--- Three-valued truth from Core.Duality.Truth3
+-- Three-valued truth from Trivalent.Truth3
 
 /--
 Selectional counterfactual semantics (Stalnaker + supervaluation).
@@ -113,7 +113,7 @@ def selectionalCounterfactual {W : Type*} [DecidableEq W] [Fintype W]
     ¬ B w' then .false
   else .indet
 
-/-- **`selectionalCounterfactual` IS Fine super-truth** (`Core.Duality.dist`)
+/-- **`selectionalCounterfactual` IS Fine super-truth** (`Trivalent.dist`)
     on the Finset of closest worlds with the consequent as Boolean predicate.
 
     Bridge documenting the equivalence — keeps the bespoke 3-way if-chain
@@ -124,8 +124,8 @@ theorem selectionalCounterfactual_eq_dist {W : Type*} [DecidableEq W] [Fintype W
     (sim : SimilarityOrdering W) (A B : W → Prop)
     [DecidablePred A] [DecidablePred B] (w : W) :
     selectionalCounterfactual sim A B w =
-    Core.Duality.dist (sim.closestWorlds w (Finset.univ.filter A)) B := by
-  unfold selectionalCounterfactual Core.Duality.dist
+    Trivalent.dist (sim.closestWorlds w (Finset.univ.filter A)) B := by
+  unfold selectionalCounterfactual Trivalent.dist
   set s := sim.closestWorlds w (Finset.univ.filter A)
   by_cases h_all : ∀ w' ∈ s, B w'
   · rw [if_pos h_all, if_pos h_all]
@@ -306,7 +306,7 @@ theorem selectional_as_supervaluation {W : Type*} [DecidableEq W] [Fintype W]
 /-!
 ## Connection to Aggregation Pushforward
 
-`projectTruthValues` delegates directly to `Core.Duality.aggregate`, so
+`projectTruthValues` delegates directly to `Trivalent.aggregate`, so
 `embeddedSelectional_determinate` and `strength_determines_pattern` (in
 `QuantifierEmbedding.lean`) are thin wrappers around
 `Duality.aggregate_map_ofBool_ne_indet` and `Duality.aggregate_map_ofBool_mixed`
@@ -322,9 +322,9 @@ is invisible.
     the global aggregation pattern: mixed Bool inputs split duality types. -/
 theorem selectional_is_global_architecture (bs : List Bool)
     (h_some_true : bs.any id) (h_some_false : bs.any (!·)) :
-    Core.Duality.aggregate .disjunctive (bs.map Truth3.ofBool) = .true ∧
-    Core.Duality.aggregate .conjunctive (bs.map Truth3.ofBool) = .false :=
-  Core.Duality.aggregate_map_ofBool_mixed bs h_some_true h_some_false
+    Trivalent.aggregate .disjunctive (bs.map Truth3.ofBool) = .true ∧
+    Trivalent.aggregate .conjunctive (bs.map Truth3.ofBool) = .false :=
+  Trivalent.aggregate_map_ofBool_mixed bs h_some_true h_some_false
 
 -- ════════════════════════════════════════════════════
 -- Might Counterfactuals: Lewis vs Stalnaker

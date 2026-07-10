@@ -70,7 +70,7 @@ namespace HaugDalrymple2020
 open Semantics.Reference.Reciprocals
 open Semantics.Dynamic.PPCDRT
 open Core
-open Core.Duality
+open Trivalent
 open Semantics.Plurality.Cumulativity
 
 -- ════════════════════════════════════════════════════════════════

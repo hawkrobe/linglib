@@ -69,7 +69,7 @@ semantics), and extends it to explain the neg-raising asymmetry between
 
 namespace AghaJeretic2022
 
-open Core.Duality (Truth3)
+open Trivalent (Truth3)
 open Generalizations.HomogeneityGap (GapDatum GapScenario GapPredict fromExample)
 open Semantics.Homogeneity (negRaising_iff_subsingleton)
 
@@ -82,7 +82,7 @@ open Semantics.Homogeneity (negRaising_iff_subsingleton)
 *should* gets trivalent semantics via plural predication over worlds, while
 *must* remains bivalent (standard ∀ quantification).
 
-We model the modal domain as a `List World` and use `Core.Duality.Truth3`
+We model the modal domain as a `List World` and use `Trivalent.Truth3`
 for the three-valued output. -/
 
 variable {World : Type}
@@ -100,7 +100,7 @@ def mustEval (domain : List World) (p : World → Bool) : Truth3 :=
 
     Body uses an explicit 4-way if-chain to support `split`-based proofs
     in this file. The bridge theorem `shouldEval_eq_distList` (below)
-    formalizes the equivalence with `Core.Duality.distList` for nonempty
+    formalizes the equivalence with `Trivalent.distList` for nonempty
     domains. Refactoring the body to call `distList` directly requires
     rewriting ~3 dense proof scripts; tracked as future work. -/
 def shouldEval (domain : List World) (p : World → Bool) : Truth3 :=
@@ -736,7 +736,7 @@ theorem five_parallels : sharedProperties.length = 5 := rfl
 /-! ## Local vs Global Aggregation
 
 The should/must contrast is an instance of the local/global aggregation
-distinction in `Core.Duality`. When modal sentences are embedded under
+distinction in `Trivalent`. When modal sentences are embedded under
 quantifiers ("Every student should/must pass"):
 
 - **should** (local): each individual's modal domain is mixed → `.indet`.
@@ -747,7 +747,7 @@ quantifiers ("Every student should/must pass"):
   The quantifier sees Bools. By `aggregate_map_ofBool_mixed`, mixed
   inputs yield `.true` for ∃ and `.false` for ∀ — the strength effect. -/
 
-open Core.Duality (ProjectionType aggregate
+open Trivalent (ProjectionType aggregate
   aggregate_replicate_indet aggregate_map_ofBool_mixed aggregate_map_ofBool_ne_indet)
 
 /-- `shouldEval` for a mixed nonempty domain produces `.indet`. -/
@@ -789,7 +789,7 @@ theorem must_always_determinate (d : ProjectionType) (bs : List Bool) :
 
 The paper's central formal claim is that weak necessity IS plural predication.
 We prove this by showing `shouldEval` equals `dist` (the distributive operator
-for plural predication from `Core.Duality`) applied to the evaluation of each
+for plural predication from `Trivalent`) applied to the evaluation of each
 world in the domain.
 
 `dist results` returns:
@@ -799,12 +799,12 @@ world in the domain.
 
 This is exactly what `shouldEval` computes, with `results = domain.map p`. -/
 
-open Core.Duality (distList)
+open Trivalent (distList)
 
 /-- **shouldEval = DIST over worlds.**
 
     `shouldEval D p = distList D p` for nonempty D — the canonical
-    `Core.Duality.distList` (Fine super-truth specialized to a List
+    `Trivalent.distList` (Fine super-truth specialized to a List
     domain with a Boolean predicate) IS what weak necessity computes.
 
     This is the formal proof that weak necessity IS plural predication:

@@ -63,7 +63,7 @@ previous embedding inside `Semantics/Supervaluation/TCS.lean`.
 namespace CobrerosEtAl2012
 
 open Semantics.Supervaluation.TCS
-open Core.Duality (Truth3)
+open Trivalent (Truth3)
 open Semantics.Supervaluation (SpecSpace superTrue)
 
 -- ════════════════════════════════════════════════════

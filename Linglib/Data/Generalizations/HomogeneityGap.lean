@@ -41,7 +41,7 @@ paper's study file, not here.
 
 namespace Generalizations.HomogeneityGap
 
-open Core.Duality (Truth3)
+open Trivalent (Truth3)
 open Data.Examples (LinguisticExample SourceRef)
 open Features (Polarity)
 

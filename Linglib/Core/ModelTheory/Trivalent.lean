@@ -34,7 +34,6 @@ notation); consequence follows linglib's list-based `MixedConsequence` rather th
 
 namespace Trivalent
 
-open Core.Duality (Truth3)
 open Core.Logic.Consequence (MixedConsequence)
 
 /-- Propositional formulas over an atom type

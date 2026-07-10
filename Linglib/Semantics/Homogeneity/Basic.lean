@@ -53,7 +53,7 @@ The shared structure is supervaluation over specification points.
 
 namespace Semantics.Homogeneity
 
-open Core.Duality (Truth3)
+open Trivalent (Truth3)
 open Semantics.Supervaluation (SpecSpace superTrue superTrue_true_iff superTrue_false_iff
   superTrue_indet_iff fidelity)
 

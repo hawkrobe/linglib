@@ -26,7 +26,7 @@ made kernel-checked in `malamud_strictly_weaker_when_mixed`.
 
 ## Main declarations
 
-* `pluralTruthValue` — trivalent K&S denotation via `Core.Duality.dist`.
+* `pluralTruthValue` — trivalent K&S denotation via `Trivalent.dist`.
 * `inGap`, `homogeneity_gap_symmetric`, `pluralTruthValue_neg` — the
   homogeneity theorem.
 * `candidateProp`, `fullCandidateSet`, `candidateSet` — the (cover-cell)
@@ -67,7 +67,7 @@ The bivalent bridge to [kriz-2016]'s `addressesIssue` is proved in
 
 namespace Semantics.Plurality.Trivalent
 
-open Core.Duality (Truth3)
+open _root_.Trivalent (Truth3)
 open Semantics.Homogeneity (isStronglyRelevantProp stronglyRelevantSet
   exact_all_relevant)
 open Semantics.Plurality
@@ -90,26 +90,26 @@ supervaluation framing (each atom as a specification point) is
 documented by `Semantics.Supervaluation.superTrue_eq_dist`. -/
 @[reducible] def pluralTruthValue (P : Atom → W → Prop)
     [∀ a w, Decidable (P a w)] (x : Finset Atom) (w : W) : Truth3 :=
-  Core.Duality.dist x (fun a => P a w)
+  Trivalent.dist x (fun a => P a w)
 
 @[simp]
 theorem pluralTruthValue_eq_true_iff (P : Atom → W → Prop)
     [∀ a w, Decidable (P a w)] (x : Finset Atom) (w : W) :
     pluralTruthValue P x w = .true ↔ allSatisfy P x w :=
-  Core.Duality.dist_eq_true_iff x _
+  Trivalent.dist_eq_true_iff x _
 
 @[simp]
 theorem pluralTruthValue_eq_false_iff (P : Atom → W → Prop)
     [∀ a w, Decidable (P a w)] (x : Finset Atom) (w : W) :
     pluralTruthValue P x w = .false ↔ x.Nonempty ∧ noneSatisfy P x w :=
-  Core.Duality.dist_eq_false_iff x _
+  Trivalent.dist_eq_false_iff x _
 
 @[simp]
 theorem pluralTruthValue_eq_gap_iff (P : Atom → W → Prop)
     [∀ a w, Decidable (P a w)] (x : Finset Atom) (w : W) :
     pluralTruthValue P x w = .indet ↔
     (∃ a ∈ x, P a w) ∧ (∃ a ∈ x, ¬ P a w) :=
-  Core.Duality.dist_eq_indet_iff x _
+  Trivalent.dist_eq_indet_iff x _
 
 theorem allSatisfy_imp_noneSatisfy_neg (P : Atom → W → Prop)
     [∀ a w, Decidable (P a w)] (x : Finset Atom) (w : W) :

@@ -889,7 +889,7 @@ theorem kriz_bare_kids_onlyKelly_gap :
 /-- Križ's Strong-Kleene negation of a gap is also a gap. So the negation
     "the kids didn't laugh" at `onlyKelly` is `.indet` under Križ. -/
 theorem kriz_neg_bare_kids_onlyKelly_gap :
-    Core.Duality.Truth3.neg
+    Trivalent.Truth3.neg
       (Kriz2016.barePluralTV laughed theKids
         .onlyKelly) = .indet := by
   rw [kriz_bare_kids_onlyKelly_gap]; decide
@@ -915,7 +915,7 @@ theorem barlev_neg_someLaughed_onlyKelly_false :
     formal disagreement that §11 §`positive_negative_asymmetry` describes
     in prose. -/
 theorem kriz_vs_barlev_negative_nonmax :
-    Core.Duality.Truth3.neg
+    Trivalent.Truth3.neg
       (Kriz2016.barePluralTV laughed theKids
         .onlyKelly) = .indet ∧
     ¬ ¬ someLaughed .onlyKelly :=

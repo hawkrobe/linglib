@@ -32,7 +32,7 @@ route to natural-language entailment, implicature, and presupposition is
   of `FOUR`'s truth meet/join
 -/
 
-open Core.Duality (Truth3)
+open Trivalent (Truth3)
 open Bilattice
 open Bilattice.FOUR (U T F Consistent)
 

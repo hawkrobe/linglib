@@ -45,7 +45,7 @@ bivalent IE result with `Truth3` semantics.
 
 namespace Exhaustification.Trivalent
 
-open Core.Duality (Truth3 Prop3)
+open _root_.Trivalent (Truth3 Prop3)
 open Exhaustification (innocent predToFinset altsFromPreds)
 
 

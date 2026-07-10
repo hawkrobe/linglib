@@ -36,7 +36,7 @@ not yet present in linglib and are left as future work.
 
 namespace CarianiGoldstein2020
 
-open Core.Duality (Truth3)
+open Trivalent (Truth3)
 open Core.Order (SimilarityOrdering)
 open Santorio2018 (DecAlt homogeneityEval)
 

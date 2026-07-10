@@ -70,7 +70,7 @@ idiom in logic-heavy files such as `Mathlib/Order/Filter/Basic.lean`.
 
 namespace Semantics.Presupposition
 
-open Core.Duality
+open Trivalent
 
 /-- A presupposed value: a value that is only defined when its
 presupposition holds.

@@ -67,7 +67,7 @@ partially addressed by the `QuantifierProjection` type in
 namespace Beaver2001
 
 open Semantics.Presupposition
-open Core.Duality
+open Trivalent
 open CommonGround
 
 variable {W : Type*}

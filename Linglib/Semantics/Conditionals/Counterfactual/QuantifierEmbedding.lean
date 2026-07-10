@@ -60,7 +60,7 @@ in [ramotowska-marty-romoli-santorio-2025].
 
 namespace Semantics.Conditionals.Counterfactual
 
-open Core.Duality (Truth3 ProjectionType)
+open Trivalent (Truth3 ProjectionType)
 
 /-- Quantifier strength IS projection type. Strong quantifiers (every,
     no) use conjunctive projection; weak quantifiers (some, not-every)
@@ -80,27 +80,27 @@ For a list of three-valued results:
 - Conjunctive projection: TRUE iff all TRUE, FALSE iff any FALSE
 - Disjunctive projection: TRUE iff any TRUE, FALSE iff all FALSE
 
-Implementation delegates to `Core.Duality.aggregate`, which computes
+Implementation delegates to `Trivalent.aggregate`, which computes
 the meet (⋀) or join (⋁) in the Truth3 lattice via foldl. -/
 def projectTruthValues (proj : ProjectionType) (results : List Truth3) : Truth3 :=
-  Core.Duality.aggregate proj results
+  Trivalent.aggregate proj results
 
 /-- Conjunctive projection is fragile: one false element yields false. -/
 theorem conjunctive_fragile (results : List Truth3)
     (h : results.any (· == .false)) :
     projectTruthValues .conjunctive results ≠ .true := by
-  show Core.Duality.forallAll results ≠ .true
-  rw [Core.Duality.universal_fragile results h]; exact Truth3.noConfusion
+  show Trivalent.forallAll results ≠ .true
+  rw [Trivalent.universal_fragile results h]; exact Truth3.noConfusion
 
 /-- Disjunctive projection is robust: one true element yields true. -/
 theorem disjunctive_robust (results : List Truth3)
     (h : results.any (· == .true)) :
     projectTruthValues .disjunctive results = .true :=
-  Core.Duality.existential_robust results h
+  Trivalent.existential_robust results h
 
 /-- `projectTruthValues` and `aggregate` are the same operation. -/
 theorem projectTruthValues_eq_aggregate (proj : ProjectionType) (l : List Truth3) :
-    projectTruthValues proj l = Core.Duality.aggregate proj l := rfl
+    projectTruthValues proj l = Trivalent.aggregate proj l := rfl
 
 /-! ### The four embedded-quantifier operators -/
 
@@ -132,7 +132,7 @@ world, individual results are Bool (true/false), not Truth3. -/
     all determinate (Bool), the projected result is always determinate. -/
 theorem embeddedSelectional_determinate (s : QStrength) (bs : List Bool) :
     embeddedSelectional s (bs.map Truth3.ofBool) ≠ .indet :=
-  Core.Duality.aggregate_map_ofBool_ne_indet s bs
+  Trivalent.aggregate_map_ofBool_ne_indet s bs
 
 /-- **Strength determines pattern**: under selectional semantics with
     mixed Bool individual results (some true, some false):
@@ -143,7 +143,7 @@ theorem strength_determines_pattern (bs : List Bool)
     (h_some_false : bs.any (!·)) :
     embeddedSelectional .strong (bs.map Truth3.ofBool) = .false ∧
     embeddedSelectional .weak (bs.map Truth3.ofBool) = .true :=
-  let ⟨h_exist, h_univ⟩ := Core.Duality.aggregate_map_ofBool_mixed bs h_some_true h_some_false
+  let ⟨h_exist, h_univ⟩ := Trivalent.aggregate_map_ofBool_mixed bs h_some_true h_some_false
   ⟨h_univ, h_exist⟩
 
 private theorem map_neg_map_ofBool (bs : List Bool) :
@@ -217,7 +217,7 @@ theorem universal_all_false (n : Nat) (hn : n > 0) :
     projectTruthValues .conjunctive (List.replicate n Truth3.false) = .false ∧
     projectTruthValues .disjunctive (List.replicate n Truth3.false) = .false := by
   refine ⟨?_, ?_⟩
-  · exact Core.Duality.foldl_inf_mem_false _ ⊤ (List.mem_replicate.mpr ⟨by omega, rfl⟩)
+  · exact Trivalent.foldl_inf_mem_false _ ⊤ (List.mem_replicate.mpr ⟨by omega, rfl⟩)
   · show (List.replicate n (⊥ : Truth3)).foldl (· ⊔ ·) ⊥ = ⊥
     have : ∀ k, (List.replicate k (⊥ : Truth3)).foldl (· ⊔ ·) ⊥ = ⊥ := by
       intro k; induction k with

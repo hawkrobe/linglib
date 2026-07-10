@@ -36,7 +36,7 @@ simplified complete-point-only representation.
 
 namespace Semantics.Supervaluation
 
-open Core.Duality (Truth3)
+open Trivalent (Truth3)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Specification Spaces
@@ -162,10 +162,10 @@ theorem superTrue_indet_iff {Spec : Type*} (eval : Spec → Prop) [DecidablePred
     have hnf : ¬(∀ s ∈ S.admissible, ¬ eval s) := fun h => h st hst hvt
     rw [if_neg hnt, if_neg hnf]
 
-/-- **`superTrue` is `Core.Duality.dist` on the admissible Finset.**
+/-- **`superTrue` is `Trivalent.dist` on the admissible Finset.**
 
     The bridge between Fine 1975 supervaluation (this file) and the
-    canonical trivalent classifier (`Core.Duality.dist` in
+    canonical trivalent classifier (`Trivalent.dist` in
     `Linglib/Core/Logic/Duality.lean`). Both are van Fraassen 1966's
     supervaluation construction; `dist` is the more general form
     parameterized over an arbitrary `Finset α + (α → Prop)`, while
@@ -177,8 +177,8 @@ theorem superTrue_indet_iff {Spec : Type*} (eval : Spec → Prop) [DecidablePred
     construction so the empty case never arises here. -/
 theorem superTrue_eq_dist {Spec : Type*} (eval : Spec → Prop) [DecidablePred eval]
     (S : SpecSpace Spec) :
-    superTrue eval S = Core.Duality.dist S.admissible eval := by
-  unfold superTrue Core.Duality.dist
+    superTrue eval S = Trivalent.dist S.admissible eval := by
+  unfold superTrue Trivalent.dist
   by_cases h_all : ∀ a ∈ S.admissible, eval a
   · rw [if_pos h_all, if_pos h_all]
   · rw [if_neg h_all, if_neg h_all]

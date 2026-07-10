@@ -53,7 +53,7 @@ undefined if classically true but `g(x)` is not a witness.
 namespace Spector2025
 
 open Core
-open Core.Duality
+open Trivalent
 
 universe u
 

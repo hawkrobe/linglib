@@ -42,7 +42,7 @@ that can be cited (in the contrastive direction) by the
 
 namespace Semantics.Conditionals.Counterfactual
 
-open Core.Duality (Truth3)
+open Trivalent (Truth3)
 
 /-- Under the implicature approach with all-true individual results,
     "every" is predicted true — the OPPOSITE of the observed data

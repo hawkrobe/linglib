@@ -247,7 +247,7 @@ inductive DoubleMono where
     This is the monotonicity-theoretic explanation of why quantifier
     STRENGTH (not polarity) determines truth-value judgments for
     counterfactuals and other trivalent phenomena. -/
-def DoubleMono.toProjectionType : DoubleMono → Core.Duality.ProjectionType
+def DoubleMono.toProjectionType : DoubleMono → Trivalent.ProjectionType
   | .downUp | .downDown => .conjunctive
   | .upUp   | .upDown   => .disjunctive
 

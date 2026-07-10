@@ -98,7 +98,7 @@ open Core.Order (SimilarityOrdering)
 open Semantics.Conditionals.Counterfactual
   (universalCounterfactual selectionalCounterfactual homogeneityCounterfactual
    PresupStatus PresupResult)
-open Core.Duality (Truth3)
+open Trivalent (Truth3)
 
 /-! ## The switches scenario -/
 

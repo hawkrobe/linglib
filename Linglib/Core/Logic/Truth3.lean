@@ -9,6 +9,7 @@ import Mathlib.Order.BoundedOrder.Basic
 import Mathlib.Order.Hom.BoundedLattice
 import Mathlib.Order.MinMax
 import Mathlib.Data.Sign.Defs
+import Linglib.Core.Order.DeMorganAlgebra
 import Linglib.Core.Order.Flat
 
 /-!
@@ -22,9 +23,10 @@ connective families — Weak Kleene ([bochvar-1937]), Middle Kleene ([peters-197
 conditional assertion ([belnap-1970]) — and the partiality operators ∂ and 𝒜 of
 [beaver-krahmer-2001].
 
-`[UPSTREAM]` candidate, as a unit with `Core.Order.Flat` (its only non-mathlib import):
-mathlib has neither a three-valued truth carrier nor a De Morgan/Kleene lattice class,
-for which `Truth3` is the canonical finite instance.
+The upstreamable algebra is the `KleeneLattice` class (`Core/Order/DeMorganAlgebra.lean`),
+of which `Truth3` is the canonical non-Boolean instance. The dedicated carrier with
+truth-named constructors is this library's ergonomic choice, which is why it lives under
+the `Trivalent` namespace rather than at root.
 
 ## Main definitions
 
@@ -32,7 +34,8 @@ for which `Truth3` is the canonical finite instance.
   `BoundedOrder`; `Prop3 W` — trivalent propositions `W → Truth3`.
 - `Truth3.neg` — Strong Kleene negation: involutive (`neg_neg`), antitone
   (`neg_antitone`), De Morgan (`neg_inf`/`neg_sup`), satisfying the Kleene law
-  (`inf_neg_le_sup_neg`).
+  (`inf_neg_le_sup_neg`) — so `Truth3` is a `KleeneLattice`, the canonical non-Boolean
+  instance (`inf_compl_indet_ne_bot`).
 - `Truth3.meetWeak`/`joinWeak`, `meetMiddle`/`joinMiddle`, `meetBelnap`/`joinBelnap`,
   `xor` — the rival connective families.
 - `Truth3.presuppose`, `Truth3.metaAssert` — the ∂ and 𝒜 operators of
@@ -53,7 +56,7 @@ for which `Truth3` is the canonical finite instance.
 [cobreros-etal-2012] [wang-davidson-2026]
 -/
 
-namespace Core.Duality
+namespace Trivalent
 
 /-- Three-valued truth: the 3-element bounded chain `false < indet < true`.
 Strong Kleene logic ([kleene-1952]) corresponds to the order-derived operations:
@@ -124,12 +127,27 @@ theorem neg_antitone : Antitone neg := λ a b h => by
 @[simp] theorem neg_sup (a b : Truth3) : neg (a ⊔ b) = neg a ⊓ neg b :=
   neg_antitone.map_max
 
-/-- The Kleene law `a ⊓ ¬a ≤ b ⊔ ¬b`: with distributivity, involutivity, and the De
-Morgan laws, `Truth3` is the three-element Kleene algebra — the canonical example.
-Mathlib has no De Morgan/Kleene *lattice* class (its `KleeneAlgebra` is the
-star-semiring); `Truth3` would be the textbook instance of one. -/
+/-- The Kleene law `a ⊓ ¬a ≤ b ⊔ ¬b`. -/
 theorem inf_neg_le_sup_neg (a b : Truth3) : a ⊓ neg a ≤ b ⊔ neg b := by
   cases a <;> cases b <;> decide
+
+instance : Compl Truth3 := ⟨neg⟩
+
+/-- `Truth3` is the canonical non-Boolean `KleeneLattice`: a distributive chain with
+`neg` as the involutive antitone complement, failing complementation
+(`inf_compl_indet_ne_bot`). The `ᶜ` instance gives access to the class API
+(`Core/Order/DeMorganAlgebra.lean`); `neg` remains the simp-normal form. -/
+instance : KleeneLattice Truth3 where
+  __ := (inferInstance : DistribLattice Truth3)
+  __ := (inferInstance : BoundedOrder Truth3)
+  compl := neg
+  compl_compl := neg_neg
+  compl_antitone := λ h => neg_antitone h
+  inf_compl_le_sup_compl := inf_neg_le_sup_neg
+
+/-- `Truth3` is not complemented — `indet` witnesses the gap between Kleene and Boolean
+(so `Truth3` is no `OrthocomplementedLattice` either). -/
+theorem inf_compl_indet_ne_bot : Truth3.indet ⊓ Truth3.indetᶜ ≠ ⊥ := by decide
 
 /-! ### Constructor-literal simp lemmas
 
@@ -621,4 +639,4 @@ def metaAssert (p : Prop3 W) : Prop3 W := λ w => Truth3.metaAssert (p w)
 
 end Prop3
 
-end Core.Duality
+end Trivalent

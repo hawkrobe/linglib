@@ -49,7 +49,7 @@ predicate.
    declines the trivalent collapse: "To switch to a Križ-style
    framework, we would need to divorce homogeneity from the
    distributivity operator and move to a trivalent semantics." We
-   render DIST_π via `Core.Duality.Truth3` / `distList` because it is
+   render DIST_π via `Trivalent.Truth3` / `distList` because it is
    ergonomic and faithful on the all/none/mixed verdicts; the
    divergence is in how the homogeneity failure is *typed* (gap vs.
    presupposition failure).
@@ -126,7 +126,7 @@ follow-up.
 
 namespace Santorio2018
 
-open Core.Duality (Truth3 distList)
+open Trivalent (Truth3 distList)
 open Core.Order (SimilarityOrdering)
 open Semantics.Conditionals.Counterfactual (universalCounterfactual)
 
@@ -233,7 +233,7 @@ def disjunctiveCounterfactual (sim : SimilarityOrdering W)
 theorem sda_iff_homogeneity_true (sim : SimilarityOrdering W)
     (alts : List (DecAlt W)) (C : W → Prop) [DecidablePred C] (w : W) :
     sdaEval sim alts C w ↔ homogeneityEval sim alts C w = .true := by
-  unfold sdaEval homogeneityEval Core.Duality.distList
+  unfold sdaEval homogeneityEval Trivalent.distList
   generalize altConditionalResults sim alts C w = rs
   refine ⟨fun h => ?_, fun h => ?_⟩
   · have hall : ∀ b ∈ rs, b = true := by

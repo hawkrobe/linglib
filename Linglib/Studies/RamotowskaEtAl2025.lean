@@ -382,7 +382,7 @@ def experiment2PluralDefiniteResults : List PluralDefiniteDatum :=
 open Semantics.Conditionals.Counterfactual
   (embeddedSelectional noSelectional notEverySelectional QStrength
    all_four_quantifiers_mixed)
-open Core.Duality (Truth3)
+open Trivalent (Truth3)
 
 /-- Bridge: map study quantifiers to formal selectional predictions.
     Each quantifier maps to the corresponding projection operation
@@ -414,7 +414,7 @@ theorem selectional_prediction_grounded (q : Quantifier) (bs : List Bool)
 -- Architectural Explanation: Local vs Global Trivalence
 -- ════════════════════════════════════════════════════════════════
 
-open Core.Duality (aggregate ProjectionType
+open Trivalent (aggregate ProjectionType
   aggregate_replicate_indet aggregate_map_ofBool_mixed aggregate_map_ofBool_ne_indet)
 open Semantics.Conditionals.Counterfactual (projectTruthValues_eq_aggregate)
 
@@ -423,7 +423,7 @@ open Semantics.Conditionals.Counterfactual (projectTruthValues_eq_aggregate)
 
 The paper's deepest insight (§2.2): whether gaps arise LOCALLY (before
 the quantifier) or GLOBALLY (after the quantifier) determines whether
-quantifier strength matters. The algebra is `Core.Duality.aggregate`
+quantifier strength matters. The algebra is `Trivalent.aggregate`
 applied to two different inputs:
 
 - **Homogeneity** uses local scope: each individual's counterfactual
@@ -533,7 +533,7 @@ theorem cf_all_quantifiers_determinate (d : ProjectionType) (bs : List Bool) :
     on the QUD partition. CFs have no gap to resolve.
 
     This is a direct corollary of the local/global aggregation
-    decomposition in `Core.Duality`: local scope produces gaps that pass
+    decomposition in `Trivalent`: local scope produces gaps that pass
     through quantifiers; global scope produces Bools that quantifiers
     can distinguish. -/
 theorem scope_determines_qud_sensitivity (n : Nat) (hn : n > 0)
@@ -553,7 +553,7 @@ theorem scope_determines_qud_sensitivity (n : Nat) (hn : n > 0)
 /-!
 ## Related Phenomena
 
-1. **Local vs Global Aggregation** (`Core.Duality.aggregate_*`):
+1. **Local vs Global Aggregation** (`Trivalent.aggregate_*`):
    The paper's deepest architectural insight is formalized as two
    facts about `aggregate`. `homogeneity_erases_strength` derives that
    local gaps make strength invisible; `selectional_strength_effect`

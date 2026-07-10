@@ -22,7 +22,7 @@ from Lean core. De Morgan duality uses `not_forall`/`not_exists` from
 Mathlib.
 -/
 
-namespace Core.Duality
+namespace Trivalent
 
 /-- Aggregate a list according to projection type.
     Conjunctive (∀-like): `⊓`-fold from `⊤`.
@@ -430,4 +430,4 @@ theorem dist_eq_indet_iff {α : Type*} (s : Finset α) (P : α → Prop) [Decida
     characterization, sequential update with pruning).
 -/
 
-end Core.Duality
+end Trivalent

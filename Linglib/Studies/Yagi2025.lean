@@ -76,7 +76,7 @@ definition with disjunction-update survival.
 
 namespace Yagi2025
 
-open Core.Duality
+open Trivalent
 open Semantics.Presupposition
 
 /-! ## World type

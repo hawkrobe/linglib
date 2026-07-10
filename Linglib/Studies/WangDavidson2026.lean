@@ -68,7 +68,7 @@ Type B (EXH¹).
 
 namespace WangDavidson2026
 
-open Core.Duality (Truth3 Prop3)
+open Trivalent (Truth3 Prop3)
 open Semantics.Presupposition (PartialProp)
 open Exhaustification (innocent predToFinset altsFromPreds)
 open Exhaustification.Trivalent

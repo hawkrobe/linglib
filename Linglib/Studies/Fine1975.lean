@@ -43,7 +43,7 @@ is the existential dual of supervaluation. See
 
 namespace Fine1975
 
-open Core.Duality (Truth3)
+open Trivalent (Truth3)
 open Degree (Degree Threshold Degree.toNat Threshold.toNat)
 open Degree (ThresholdPair inGapRegion)
 open Semantics.Supervaluation (SpecSpace superTrue definitely indefinite)

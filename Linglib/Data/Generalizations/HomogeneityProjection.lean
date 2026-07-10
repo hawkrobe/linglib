@@ -74,7 +74,7 @@ mapping would be wrong for at least one consumer.
 
 namespace Generalizations.HomogeneityProjection
 
-open Core.Duality (Truth3)
+open Trivalent (Truth3)
 open Data.Examples (LinguisticExample SourceRef)
 
 /-! ### Substrate -/

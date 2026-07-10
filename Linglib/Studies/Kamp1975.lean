@@ -102,7 +102,7 @@ end Bridge
     `meet indet indet = indet`. This preserves `φ ∧ φ ≡ φ` but fails
     to make contradictions false. Supervaluationism resolves both. -/
 
-open Core.Duality (Truth3)
+open Trivalent (Truth3)
 
 /-- **Kamp's dilemma**: no truth-functional binary operator can
     simultaneously be idempotent (`F(x,x) = x`) and make borderline

@@ -54,7 +54,7 @@ open Exhaustification.FreeChoice (Ctx existsInDomain
 open Ladusaw1979 (licensingStrength)
 open Semantics.Supervaluation (SpecSpace superTrue superTrue_true_iff
   superTrue_indet_iff)
-open Core.Duality (Truth3)
+open Trivalent (Truth3)
 
 /-! ### The strengthening condition
 

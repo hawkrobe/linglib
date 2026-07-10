@@ -76,7 +76,7 @@ set_option autoImplicit false
 
 namespace Grove2022
 
-open Core.Duality (Truth3 Prop3)
+open Trivalent (Truth3 Prop3)
 open Semantics.Presupposition (PartialProp)
 
 /-! ## Part I — Apparatus -/
