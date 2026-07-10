@@ -1,6 +1,6 @@
 import Linglib.Core.Probability.Choice.RationalAction
 import Linglib.Core.Probability.SoftmaxTheory
-import Linglib.Semantics.Questions.DecisionTheory
+import Linglib.Core.Probability.Decision.Basic
 import Linglib.Core.Probability.SoftmaxLimits
 import Mathlib.Data.Rat.Cast.Defs
 

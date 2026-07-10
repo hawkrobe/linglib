@@ -9,7 +9,7 @@ import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
 
 /-!
-# Core Decision Theory
+# Decision problems and the value of information
 [van-rooy-2003] [blackwell-1953]
 
 Theory-neutral decision-theoretic infrastructure: decision problems, expected

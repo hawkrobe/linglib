@@ -2,7 +2,7 @@ import Linglib.Data.UD.Basic
 import Linglib.Fragments.Mandarin.QuestionParticles
 import Linglib.Semantics.Modality.Kernel
 import Linglib.Features.QParticleLayer
-import Linglib.Semantics.Questions.Bias.Defs
+import Linglib.Semantics.Questions.Bias
 import Linglib.Semantics.Questions.Singleton
 
 /-!

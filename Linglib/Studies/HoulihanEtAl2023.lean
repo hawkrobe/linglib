@@ -1,7 +1,7 @@
 import Linglib.Pragmatics.Emotion
 import Linglib.Pragmatics.BToM
 import Linglib.Pragmatics.GameTheory
-import Linglib.Semantics.Questions.DecisionTheory
+import Linglib.Core.Probability.Decision.Basic
 import Linglib.Pragmatics.RSA.CombinedUtility
 import Linglib.Semantics.Modification.Adjective
 

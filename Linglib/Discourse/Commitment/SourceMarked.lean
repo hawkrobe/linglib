@@ -1,7 +1,7 @@
 import Linglib.Discourse.CommonGround
 import Linglib.Discourse.SpeechAct
 import Linglib.Discourse.Commitment.Basic
-import Linglib.Semantics.Questions.Bias.Defs
+import Linglib.Semantics.Questions.Bias
 
 /-!
 # [gunlogson-2004]: Source-Marked Commitments

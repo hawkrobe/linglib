@@ -1,6 +1,6 @@
 import Linglib.Semantics.Questions.Partition.Lattice
 import Linglib.Semantics.Questions.Partition.Cells
-import Linglib.Semantics.Questions.DecisionTheory
+import Linglib.Core.Probability.Decision.Basic
 import Mathlib.Data.Setoid.Partition
 import Mathlib.Data.Set.Card
 import Mathlib.Tactic.FieldSimp
