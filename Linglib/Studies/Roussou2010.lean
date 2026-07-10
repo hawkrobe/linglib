@@ -1,4 +1,9 @@
 import Linglib.Fragments.Greek.StandardModern.Complementizers
+import Linglib.Semantics.Questions.Hamblin
+import Linglib.Semantics.Polarity.Licensing
+import Linglib.Semantics.Presupposition.Basic
+import Linglib.Semantics.Composition.Tree
+import Linglib.Studies.Chierchia1984
 
 /-!
 # Roussou 2010: Selecting complementizers
@@ -7,43 +12,60 @@ import Linglib.Fragments.Greek.StandardModern.Complementizers
 Modern Greek complementizers in their dual capacity of being selected
 and of selecting. *oti*, *pu*, and *an* are nominal elements merging
 OUTSIDE the embedded clause (under N, as the matrix verb's internal
-argument), distinguished by the propositional quantification they
-contribute: *pu* is definite — it binds a single proposition and
-locates it to a reference point, whence factivity ([christidis-1986]);
-*oti* is a plain indefinite ranging over a set of propositions; *an*
-is a polarity indefinite requiring a binder. *na* instead merges
-INSIDE the lower C domain as a deictic/locative nominal that re-opens
-the EPP position, so a na-clause denotes a predicate rather than a
-proposition — whence control mediation (*kséro* + *na* 'know how',
-ex. 25) and the impossibility of *oti/an/pu* over a na-complement.
+argument); *na* merges INSIDE the lower C domain and re-opens the EPP
+position. The paper's informal semantic glosses are formalized here on
+their classical anchors, each denotation carrying its distribution:
 
-Selection is thus not one-to-one (ex. 1–3): the same predicate takes
-different clause types under different conditions — *kséro* takes
-*an* only under matrix negation/question, epistemic *pistévo* takes
-*na* only with present-tense matrix inflection (ex. 23), and focus
-licenses otherwise unselected *pu* (ex. 22). Factivity with *oti* is
-verb-derived, weak, and deniable (ex. 15–16, 19), so *pu* → factive
-holds only one way.
+- *pu* is definite ([christidis-1986]; the factive-definite lineage of
+  [kiparsky-kiparsky-1970]): `puClause` presupposes the proposition it
+  locates, so factivity IS the definite's existence presupposition —
+  projecting through negation (ex. 15b) where the presupposition-free
+  `otiClause` is freely deniable (ex. 16).
+- *an* denotes the Hamblin polar set {p, ¬p} (the paper adopts
+  [adger-quer-2001]'s (6b), after [hamblin-1973b]): `anClause` is the
+  inquisitive polar question — informationally inert, so some operator
+  must close the open set. That polarity requirement is `anItem`, an
+  NPI over the propositional domain whose licensing routes through the
+  substrate's [zwarts-1998] / [van-rooy-2003-npi] table: matrix
+  negation (ex. 11), question — supplied lexically by rogatives
+  (ex. 10) or structurally (ex. 2c) — and incorporated-negation
+  predicates ('doubt', 'forget', ex. 14). True/False predicates
+  ([adger-quer-2001]; *ipothéto* 'assume', ex. 7) are veridical
+  embedders: no row of the table corresponds to them, and none could —
+  that absence is the account's rendering of their blocking effect.
+- *na*-clauses denote properties, [chierchia-1984]'s control-complement
+  layer, despite finite morphology (MG lacks infinitives): control
+  (ex. 25–26) is the matrix argument saturating the open slot, and the
+  outside mergers cannot embed a na-clause because they consume
+  propositions — a type-level application failure.
+
+Selection is thus not one-to-one (ex. 1–3): epistemic *pistévo* takes
+*na* only with present-tense matrix inflection (ex. 23) and focus
+licenses otherwise unselected *pu* (ex. 22) — both left as prose.
 
 ## Main declarations
 
-- `PropQuant`, `MergeSite`, `CProfile`, `profile` — the nominal
-  typology of the four clause-typers (§3–4)
-- `factive_iff_definite` — the fragment's lexical `factive` flag
-  coincides with definite propositional quantification
-- `CTP`, `CTP.licensesAn` — *an* as polarity item: bound locally by a
-  rogative or negation-incorporating predicate, non-locally by a
-  matrix operator, and never under a True/False predicate
-  ([adger-quer-2001], ex. 7)
-- `na_reopens_epp` — the merge-site split deriving the propositional
-  vs predicate complement divide
+- `PropQuant`, `MergeSite`, `CProfile`, `profile` — the lexical
+  specification table (§3–4)
+- `otiClause`, `puClause`, `anClause` — the three denotations;
+  `puClause_factive`, `pu_projects_through_negation`,
+  `puClause_strongEntails_oti`, `anClause_not_informative`
+- `anItem` — *an* as `Polarity.Item`; `anItem_licensed` routes its
+  distribution through `LicensingContext.licenses`
+- `naLayer`, `na_layer_diverges_from_coding`, `comp_over_na_type_clash`
+  — the property-layer analysis of *na*
+- `factive_iff_definite` — the fragment's `factive` flag coincides
+  with definite propositional quantification
 -/
 
 namespace Roussou2010
 
 open Greek.StandardModern.Complementizers
+open Semantics.Presupposition
+open Semantics.Composition.Tree
+open Semantics.Composition.TypeShifting
 
-/-! ### The nominal typology (§3–4) -/
+/-! ### The lexical specification (§3–4) -/
 
 /-- Propositional quantification contributed by an outside-merging
 complementizer: definite (binds a single proposition, locating it to a
@@ -91,92 +113,107 @@ theorem factive_iff_definite :
       (c.factive = some true ↔ (profile c).bind (·.quant) = some .definite) := by
   decide
 
-/-! ### The polarity complementizer *an* (§2) -/
+/-! ### The denotations -/
 
-/-- The lexical properties of a clause-taking predicate that §2's
-licensing generalization turns on: an inherent interrogative operator
-(*anarotjéme* 'wonder', ex. 1b, 10), incorporated negation
-(*amfivállo* 'doubt', *ksexnó* 'forget', ex. 14), or True/False-hood —
-the subject's commitment to the truth or falsity of the complement
-([adger-quer-2001]; *ipothéto* 'assume', *ipostirízo* 'claim',
-ex. 7). -/
-structure CTP where
-  rogative : Bool := false
-  incorpNeg : Bool := false
-  tf : Bool := false
-  deriving DecidableEq, Repr
+variable {W : Type*}
 
-/-- §2's generalization: *an*, a polarity indefinite, is bound either
-locally by the predicate's own operator (rogative or incorporated
-negation) or non-locally by a matrix propositional operator
-(negation/question, ex. 11) — unless the predicate is True/False,
-whose commitment leaves no open set of propositions to bind. -/
-def CTP.licensesAn (p : CTP) (matrixOp : Bool) : Prop :=
-  ¬p.tf ∧ (p.rogative ∨ p.incorpNeg ∨ matrixOp)
+/-- The oti-clause: a plain indefinite over propositions —
+presupposition-free assertion of its content. Any factive flavor is
+verb-derived and deniable (ex. 15–16). -/
+def otiClause (p : Set W) : PartialProp W :=
+  { presup := fun _ => True, assertion := (· ∈ p) }
 
-instance (p : CTP) (matrixOp : Bool) : Decidable (p.licensesAn matrixOp) := by
-  unfold CTP.licensesAn; infer_instance
+/-- The pu-clause: a definite over propositions ([christidis-1986];
+[kiparsky-kiparsky-1970]'s factive-definite) — it presupposes the
+proposition it locates to the reference point. -/
+def puClause (p : Set W) : PartialProp W :=
+  { presup := (· ∈ p), assertion := (· ∈ p) }
 
-/-- *kséro* 'know': no operator of its own (ex. 1a: *oti*/**an*). -/
-def kseroCTP : CTP := {}
+/-- The an-clause: the Hamblin polar set {p, ¬p} (the paper's (6b),
+after [adger-quer-2001] and [hamblin-1973b]), as the inquisitive polar
+question. -/
+def anClause (p : Set W) : Question W := Question.polar p
 
-/-- *anarotjéme* 'wonder': inherently interrogative (ex. 1b). -/
-def anarotjemeCTP : CTP := { rogative := true }
+/-- Factivity IS the definite's existence presupposition: the
+pu-clause is defined at a world exactly when its content holds
+there. -/
+theorem puClause_factive (p : Set W) (w : W) :
+    (puClause p).defined w ↔ w ∈ p := Iff.rfl
 
-/-- *amfivállo* 'doubt': incorporated negation (ex. 14). -/
-def amfivaloCTP : CTP := { incorpNeg := true }
+/-- ex. 15b: the definite's presupposition projects through internal
+negation — denying a pu-clause still commits to its content — while
+the oti-clause stays defined everywhere, so denial carries no factive
+residue (ex. 16). -/
+theorem pu_projects_through_negation (p : Set W) (w : W) :
+    ((PartialProp.neg (puClause p)).defined w ↔ w ∈ p) ∧
+      (PartialProp.neg (otiClause p)).defined w := by
+  constructor
+  · exact Iff.rfl
+  · exact trivial
 
-/-- *ipothéto* 'assume': True/False predicate (ex. 7). -/
-def ipothetoCTP : CTP := { tf := true }
+/-- ex. 17 (*thimáme oti/pu*): the pu-reading strong-entails the
+oti-reading — Terrell's strong vs weak presupposition as
+`strongEntails`. -/
+theorem puClause_strongEntails_oti (p : Set W) :
+    (puClause p).strongEntails (otiClause p) :=
+  fun _ _ ha => ⟨trivial, ha⟩
 
-/-- Local licensing (ex. 1b, 10, 14): rogatives and
-negation-incorporators take *an* with no matrix operator present. -/
-theorem an_licensed_locally :
-    anarotjemeCTP.licensesAn false ∧ amfivaloCTP.licensesAn false := by
+/-- The an-clause is informationally inert: it asserts nothing, only
+raising the {p, ¬p} issue. The polarity requirement is the demand that
+some operator close this open set. -/
+theorem anClause_not_informative (p : Set W) :
+    ¬ (anClause p).isInformative :=
+  Question.not_isInformative_polar p
+
+/-! ### *an* as a polarity item (§2) -/
+
+/-- *an* as an NPI over the propositional domain: weak licensor
+requirement, with the paper's binder inventory mapped onto the
+substrate's licensing rows — matrix negation (ex. 11), question,
+whether supplied lexically by a rogative (ex. 10) or structurally
+(ex. 2c), and incorporated-negation predicates (*amfivállo* 'doubt',
+*ksexnó* 'forget', ex. 14). True/False predicates (ex. 7) are
+veridical embedders: no licensing row corresponds to them, which is
+the account's rendering of their blocking effect. -/
+def anItem : Semantics.Polarity.Item where
+  form := "an"
+  baseForce := .existential
+  licensor := some .weak
+  licensingContexts := [.negation, .question, .doubtVerb]
+
+/-- *an*'s polarity is a bona fide licensor requirement. -/
+theorem anItem_isNPI : anItem.isNPI := by decide
+
+/-- Each context of the inventory in fact licenses *an* under the
+substrate's keystone ([zwarts-1998] strength on the signature rows,
+[van-rooy-2003-npi] entropy on questions). -/
+theorem anItem_licensed :
+    ∀ c ∈ anItem.licensingContexts, c.licenses anItem := by
   decide
 
-/-- The unselected embedded question (ex. 2b, 11, 34): plain *kséro*
-licenses *an* only under a matrix operator. -/
-theorem an_unselected_needs_operator :
-    ¬ kseroCTP.licensesAn false ∧ kseroCTP.licensesAn true := by
-  decide
+/-! ### *na* and the property layer (§3.2, §4) -/
 
-/-- True/False predicates never license *an* (ex. 7b): the commitment
-they express is incompatible with the unbound propositional set,
-matrix operator or not. -/
-theorem tf_never_licenses_an :
-    ∀ matrixOp, ¬ ipothetoCTP.licensesAn matrixOp := by
-  decide
+/-- *na* re-opens the EPP position, so the na-clause denotes a
+property — [chierchia-1984]'s control-complement layer — despite
+finite morphology. -/
+def naLayer : ComplSemLayer := .property
 
-/-! ### *na* merges inside (§3.2, §4) -/
+/-- MG detaches the property layer from nonfinite coding: the
+coding-based mapping sends finite clauses to the propositional layer
+(`Chierchia1984.complSemLayer`), but the finite na-clause is a
+property. Control (ex. 25–26) is the matrix argument saturating the
+open slot. -/
+theorem na_layer_diverges_from_coding :
+    naLayer = .property ∧
+    Chierchia1984.complSemLayer .finiteClause = some .proposition := by
+  exact ⟨rfl, rfl⟩
 
-/-- The variable a clause makes available to its embedder: a closed
-proposition, or — once *na* has re-opened the EPP position — a
-predicate (§4; *na* as a deictic/locative nominal satisfying the EPP
-word-internally, ex. 27–29). -/
-inductive ClauseVar where
-  | propositional
-  | predicate
-  deriving DecidableEq, Repr
-
-/-- The variable provided by a clause headed by the given element:
-inside-mergers re-open the proposition; outside-mergers leave it
-closed. -/
-def providedVar (c : Complementizer) : ClauseVar :=
-  if (profile c).map (·.site) = some .inside then .predicate
-  else .propositional
-
-/-- The merge-site split cashed out (p. 597): the three outside
-mergers each require a propositional variable (their `quant`), while a
-na-clause supplies a predicate — deriving *[oti/an/pu [na …]] in
-complement position. Relative *pu* + *na* (ex. 31) escapes because
-relative *pu* binds an individual variable instead; control follows
-the same split, *na* mediating the binding of the re-opened subject
-position by a matrix argument under restructuring predicates
-(ex. 25–26). -/
-theorem na_reopens_epp :
-    providedVar na = .predicate ∧
-    ∀ c ∈ [oti, pu, an], ((profile c).bind (·.quant)).isSome := by
-  decide
+/-- The merge-site split cashed out at type level (p. 597): an outside
+merger consumes a proposition (`.t`), while the na-clause — its EPP
+re-opened — is a property, `.fn .e .t`; application is undefined
+whatever the merger returns. Relative *pu* + *na* (ex. 31) escapes
+because relative *pu* binds an individual variable instead. -/
+theorem comp_over_na_type_clash (b : Intensional.Ty) :
+    canApply (.fn .t b) (.fn .e .t) = none := rfl
 
 end Roussou2010
