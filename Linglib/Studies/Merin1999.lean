@@ -40,7 +40,7 @@ result motivating binary partitions in epistemic kinetics (§8, cited by
 Merin, not proved there).
 -/
 
-namespace Merin1999Notspeak
+namespace Merin1999
 
 open QUD Core.DecisionTheory
 
@@ -275,4 +275,4 @@ theorem partitionEU_coarsening_regroup [Fintype M] [DecidableEq M]
   exact Finset.sum_congr rfl (fun c _ =>
     (cellProb_mul_conditionalEU dp c a hprior).symm)
 
-end Merin1999Notspeak
+end Merin1999
