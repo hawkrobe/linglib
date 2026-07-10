@@ -688,19 +688,16 @@ theorem deadjectival_ideophone_verb :
 
 open Pragmatics.Expressives
 
-/-- Derived ideophonic verbs exhibit all canonical expressive
+/-- Derived ideophonic verbs exhibit all six canonical expressive
     properties: independent, nondisplaceable, perspective-dependent,
-    descriptively ineffable, immediate, repeatable, no perspective
-    shift, no discourse antecedent required. -/
+    descriptively ineffable, immediate, repeatable. -/
 def ideophoneVerbProperties : SecondaryMeaningProperties :=
   { independent := true
     nondisplaceable := true
     perspectiveDependent := true
     descriptivelyIneffable := true
     immediate := true
-    repeatable := true
-    allowsPerspectiveShift := false
-    requiresDiscourseAntecedent := false }
+    repeatable := true }
 
 /-- Derived ideophonic verbs share the canonical expressive property
     profile. Definitionally `rfl` because both records instantiate

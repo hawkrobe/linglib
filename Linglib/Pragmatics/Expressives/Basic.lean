@@ -7,20 +7,18 @@ import Linglib.Semantics.Presupposition.Basic
 Following [potts-2005], a `TwoDimProp` splits a meaning into two independent predicates over
 worlds: **at-issue** content (truth-conditional, composes normally) and **conventional
 implicature** content (use-conditional, projecting to the root). CIs project through the
-truth-functional connectives and are blocked only by pure quotation ([kirk-giannini-2024];
-see `pureQuote`).
+truth-functional connectives and are blocked only by direct quotation ([potts-2007]; see
+`pureQuote`, and `Semantics.Quotation.Mixed` for [kirk-giannini-2024]'s mixed quotation).
 
 The at-issue tier carries the Heyting algebra of `W → Prop` (`ᶜ`/`⊓`/`⊔`/`⇨`); the CI tier
-always takes the meet `⊓` — CIs conjoin through every connective rather than tracking the
-at-issue operation — and `ciStrongerThan` is the strict order `<` on that tier. `ciLift`
-([wang-2025]) bridges `Semantics.Presupposition.PartialProp` into this type.
+always takes the meet `⊓`. `TwoDimProp.ofPartialProp` bridges
+`Semantics.Presupposition.PartialProp` into this type.
 
 ## Main definitions
 
 * `TwoDimProp` — a two-dimensional meaning (at-issue and CI predicates over worlds).
 * `neg`, `and`, `or`, `imp` — the connectives (at-issue Heyting op, CI meet).
-* `SecondaryMeaningProperties` — the [potts-2007] expressive diagnostics, plus two fields
-  distinguishing outlook markers ([kubota-2026]).
+* `SecondaryMeaningProperties` — the six [potts-2007] expressive diagnostics.
 
 ## References
 
@@ -47,26 +45,15 @@ variable {W : Type*}
 /-- Combine at-issue content with CI content. -/
 @[simps] def withCI (p c : W → Prop) : TwoDimProp W := ⟨p, c⟩
 
-/-- Pure quotation strips CI content to `⊤`, preserving only at-issue content: a quoted
-expressive does not project ([kirk-giannini-2024]). E.g. in "He said 'that bastard Jones
-left'" the expressive 'bastard' is frozen inside the quotation and not attributed to the
-speaker. -/
+/-- Pure quotation strips CI content to `⊤`, preserving only at-issue content: expressives
+are nondisplaceable *outside of direct quotation* ([potts-2007]), so in "He said 'that
+bastard Jones left'" the expressive is frozen inside the quotation and not attributed to
+the speaker. [kirk-giannini-2024]'s *mixed* quotation (used and mentioned at once) is the
+refinement in `Semantics.Quotation.Mixed`. -/
 @[simps] def pureQuote (p : TwoDimProp W) : TwoDimProp W := ⟨p.atIssue, ⊤⟩
 
-/--
-**Pure quotation is information-losing.**
-
-Two propositions with identical at-issue content but different CI dimensions
-produce identical results under `pureQuote`. This is the substantive
-non-trivial fact about the operator: the original CI is unrecoverable from the
-result. Constructive witness: `λ _ => True` and `λ _ => False` for the CI
-dimension, with at-issue trivial — `pureQuote` collapses both to the same
-`{ atIssue := True, ci := True }`.
-
-This theorem is what `quotation_blocks_ci_projection` should be, instead of
-the vacuous `:= trivial`. After `pureQuote`, no CI information remains; any
-downstream peripheral content must be re-introduced (by `applyMQ`'s `R`).
--/
+/-- Pure quotation is information-losing: two meanings with identical at-issue content but
+different CI collapse to the same `pureQuote`, so the original CI is unrecoverable. -/
 theorem pureQuote_loses_ci_info :
     ∃ (p₁ p₂ : TwoDimProp Unit), p₁.ci ≠ p₂.ci ∧ pureQuote p₁ = pureQuote p₂ := by
   refine ⟨⟨λ _ => True, λ _ => True⟩, ⟨λ _ => True, λ _ => False⟩, ?_, rfl⟩
@@ -76,8 +63,10 @@ theorem pureQuote_loses_ci_info :
 
 Both dimensions are `W → Prop`, so each connective is built from that type's order
 structure: the **at-issue** tier carries the full Heyting algebra (`ᶜ`, `⊓`, `⊔`, `⇨`), while
-the **CI** tier always takes the meet `⊓` — CIs project by conjunction through every
-connective rather than tracking the at-issue operation. -/
+the **CI** tier always takes the meet `⊓`. In [potts-2005]'s logic CIs do not compose via
+connectives at all — they are split off and collected at the root, interpreted conjunctively;
+the per-connective meet flattens that root collection into a compositional rule (the
+projection predictions coincide). -/
 
 /--
 Negation: negates at-issue content; CI projects unchanged.
@@ -89,7 +78,7 @@ Negation: negates at-issue content; CI projects unchanged.
 This distinguishes CIs from presuppositions.
 -/
 def neg (p : TwoDimProp W) : TwoDimProp W :=
-  { p with atIssue := p.atIssueᶜ }  -- at-issue complemented; CI projects unchanged
+  { p with atIssue := p.atIssueᶜ }
 
 /-- Negation flips the at-issue dimension. -/
 @[simp] theorem neg_atIssue (p : TwoDimProp W) (w : W) :
@@ -167,13 +156,8 @@ end TwoDimProp
 
 variable {W : Type*}
 
-/--
-Properties of secondary (non-at-issue) meaning expressions.
-
-Extends [potts-2007]'s six expressive diagnostics with two additional
-properties needed to distinguish outlook markers ([kubota-2026]) from
-pure expressives and pure presuppositions.
--/
+/-- The six expressive diagnostics of [potts-2007]: a yes/no fingerprint a class of
+secondary-meaning items either matches or fails. -/
 structure SecondaryMeaningProperties where
   /-- CI contributes to a dimension separate from at-issue content -/
   independent : Bool
@@ -187,120 +171,38 @@ structure SecondaryMeaningProperties where
   immediate : Bool
   /-- Repetition strengthens rather than creating redundancy -/
   repeatable : Bool
-  /-- Allows perspective shift to a non-speaker attitude holder under embedding -/
-  allowsPerspectiveShift : Bool
-  /-- Requires a salient issue/counterstance in prior discourse -/
-  requiresDiscourseAntecedent : Bool
   deriving Repr, DecidableEq
 
-/--
-Expressives satisfy all six [potts-2007] properties and do NOT typically
-allow perspective shift or require discourse antecedents.
--/
+/-- Expressives satisfy all six [potts-2007] diagnostics ("damn damn damn" strengthens).
+Speaker orientation is the default, not an absolute: [potts-2007] adopts a shiftable
+contextual judge, and [harris-potts-2009] document non-speaker-oriented readings even
+unembedded. -/
 def expressiveProperties : SecondaryMeaningProperties :=
   { independent := true
   , nondisplaceable := true
   , perspectiveDependent := true
   , descriptivelyIneffable := true
   , immediate := true
-  , repeatable := true       -- "damn damn damn" strengthens
-  , allowsPerspectiveShift := false
-  , requiresDiscourseAntecedent := false }
+  , repeatable := true }
 
-/--
-Appositives share most expressive properties but are not repeatable
-and ARE descriptively paraphrasable ("Laura, a doctor" → "Laura is a doctor").
--/
+/-- Appositives (supplements) share independence and perspective dependence with expressives
+but fail the expressive-specific diagnostics ([potts-2007]): their content is ordinary
+propositional material — displaceable ("Ed, then a first-year resident, ..."), paraphrasable
+("Laura, a doctor" ↔ "Laura is a doctor"), not performative-like, not repeatable. -/
 def appositiveProperties : SecondaryMeaningProperties :=
   { independent := true
-  , nondisplaceable := true
+  , nondisplaceable := false
   , perspectiveDependent := true
-  , descriptivelyIneffable := false  -- "Laura, a doctor" ↔ "Laura is a doctor"
-  , immediate := true
-  , repeatable := false              -- "John, a doctor, a doctor" is odd
-  , allowsPerspectiveShift := false
-  , requiresDiscourseAntecedent := false }
+  , descriptivelyIneffable := false
+  , immediate := false
+  , repeatable := false }
 
-/--
-CI informativeness ordering: `φ` has a stronger CI than `ψ` when `φ`'s CI strictly entails
-`ψ`'s — i.e. `φ.ci < ψ.ci` in the pointwise entailment order that `W → Prop` inherits from
-`Prop`. Concretely, `φ.ci` implies `ψ.ci` at every world, but some world satisfies `ψ.ci`
-and not `φ.ci`.
-
-Example:
-- "That bastard John" is CI-stronger than "John"
-- "That fucking bastard John" is CI-stronger than "That bastard John"
--/
-def ciStrongerThan (φ ψ : TwoDimProp W) : Prop := φ.ci < ψ.ci
-
-/-- CI equivalence: same CI content. -/
-def ciEquiv (φ ψ : TwoDimProp W) : Prop := φ.ci = ψ.ci
-
-/-- CI-stronger-than is irreflexive (the strict entailment order on `W → Prop`). -/
-theorem ciStrongerThan_irrefl (φ : TwoDimProp W) : ¬ ciStrongerThan φ φ := lt_irrefl _
-
-/-- CI-stronger-than is transitive. -/
-theorem ciStrongerThan_trans {φ ψ χ : TwoDimProp W}
-    (h1 : ciStrongerThan φ ψ) (h2 : ciStrongerThan ψ χ) : ciStrongerThan φ χ := lt_trans h1 h2
-
-/-- CI-stronger-than is asymmetric. -/
-theorem ciStrongerThan_asymm {φ ψ : TwoDimProp W}
-    (h : ciStrongerThan φ ψ) : ¬ ciStrongerThan ψ φ := lt_asymm h
-
-/-!
-## CI Lift: Presupposition → Two-Dimensional Meaning ([wang-2025])
-
-[wang-2025] analyze de re presupposition by bifurcating a [gutzmann-2015]
-presuppositional meaning into two dimensions using [potts-2005]'s CI type system:
-
-- **At-issue**: the assertion component (identity function on the propositional content)
-- **CI**: the presupposition (projects to root, evaluated against CommonGround)
-
-This derives de re readings: when a presuppositional expression appears under
-an attitude verb, the presupposition can be evaluated against the common ground
-(CommonGround) rather than the attitude holder's beliefs, because it projects as CI content.
-
-### Bridge: PartialProp ↔ TwoDimProp
-
-This provides a new cross-module connection between:
-- `Semantics.Presupposition.PartialProp` (presupposition + assertion)
-- `Pragmatics.Expressives.TwoDimProp` (at-issue + CI)
-
--/
-
-/-- CI lift: type-shift a presupposition/assertion pair into a two-dimensional meaning — the
-presupposition becomes (universally projecting) CI content, the assertion becomes at-issue
-content. The ⟦CI⟧ operator of [wang-2025]. -/
-@[simps] def ciLift (presup assertion : W → Prop) : TwoDimProp W := ⟨assertion, presup⟩
-
-/--
-De re reading: when CommonGround entails the presupposition, the CI dimension is satisfied
-at all CommonGround worlds. This means the presupposition is resolved against the CommonGround
-regardless of what is embedded under an attitude verb.
--/
-theorem deRe_from_ciLift (presup : W → Prop)
-    (assertion : W → Prop)
-    (cg : W → Prop)
-    (h : ∀ w, cg w → presup w) :
-    ∀ w, cg w → (ciLift presup assertion).ci w :=
-  h
-
-/--
-CI lift composes with negation: negating a CI-lifted meaning negates the
-at-issue content but preserves the presupposition (as CI).
-
-This matches both Potts' CI projection and standard presupposition projection
-through negation.
--/
-theorem ciLift_neg_preserves_presup (presup assertion : W → Prop) :
-    (TwoDimProp.neg (ciLift presup assertion)).ci = presup := rfl
-
-/--
-Round-trip: CI lift then extract components recovers the original predicates.
--/
-theorem ciLift_roundtrip (presup assertion : W → Prop) :
-    (ciLift presup assertion).ci = presup ∧
-    (ciLift presup assertion).atIssue = assertion :=
-  ⟨rfl, rfl⟩
+/-- A presupposition/assertion pair as a two-dimensional meaning: the presupposition becomes
+(universally projecting) CI content, the assertion at-issue content — [wang-2025]'s de re
+analysis. Deliberately discards presupposition *filtering*: a CI-tier presupposition projects
+through `and`/`imp` where a real presupposition would be filtered by its local context, which
+is the point — the de re presupposition is evaluated against the common ground instead. -/
+@[simps] def TwoDimProp.ofPartialProp (p : Semantics.Presupposition.PartialProp W) :
+    TwoDimProp W := ⟨p.assertion, p.presup⟩
 
 end Pragmatics.Expressives

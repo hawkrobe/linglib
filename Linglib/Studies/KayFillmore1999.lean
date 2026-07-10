@@ -349,9 +349,7 @@ def wxdyCIProperties : SecondaryMeaningProperties :=
   , perspectiveDependent := true
   , descriptivelyIneffable := true
   , immediate := true
-  , repeatable := false
-  , allowsPerspectiveShift := false
-  , requiresDiscourseAntecedent := false }
+  , repeatable := false }
 
 /-- CI projects through negation: the unexpectedness meaning
 survives under negation. Delegates to `TwoDimProp.ci_projects_through_neg`. -/
