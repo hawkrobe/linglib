@@ -6,20 +6,23 @@ Authors: Robert Hawkins
 import Mathlib.Order.BooleanAlgebra.Basic
 
 /-!
-# De Morgan algebras and Kleene lattices
+# De Morgan algebras and Kleene algebras
 
 `LatticeWithInvolution` is a bounded lattice with an involutive antitone complement `ᶜ` —
 the common reduct of `OrthocomplementedLattice` (which adds the complementation laws) and
 `DeMorganAlgebra` (which adds distributivity instead). The De Morgan laws are proved once
-here, from involution and antitonicity alone. A `KleeneLattice` is a De Morgan algebra
-satisfying the Kleene law `a ⊓ aᶜ ≤ b ⊔ bᶜ`: every `BooleanAlgebra` qualifies (the law
-degenerates through `⊥`), and the three-element chain `Trivalent` is the canonical
-non-Boolean example.
+here, from involution and antitonicity alone. An `Order.KleeneAlgebra` is a De Morgan
+algebra satisfying the Kleene law `a ⊓ aᶜ ≤ b ⊔ bᶜ`: every `BooleanAlgebra` qualifies
+(the law degenerates through `⊥`), and the three-element chain `Trivalent` is the
+canonical non-Boolean example. These are the involution branch between mathlib's
+`DistribLattice` and `BooleanAlgebra`, beside the existing pseudocomplement branch
+(`HeytingAlgebra`).
 
-Mathlib has no De Morgan/Kleene *lattice* class (its `KleeneAlgebra` is the
-star-semiring); `[UPSTREAM]` candidate for `Mathlib/Order/DeMorganAlgebra.lean`. The
-`Lattice`/`Algebra` suffix split tracks the literature (Kalman's Kleene lattices) and
-avoids the star-semiring collision, on the `Order.Ideal` vs ring `Ideal` precedent.
+Naming follows the literature exactly ("De Morgan algebra", "Kleene algebra" — the
+lattice notion, not the regular-expression star-semiring that holds mathlib's root
+`KleeneAlgebra`), disambiguated by namespace on the `Order.Frame` precedent. De Morgan
+algebras are here bounded, as in Balbes-Dwinger (the nLab entry defines the unbounded
+variant). `[UPSTREAM]` candidate for `Mathlib/Order/DeMorganAlgebra.lean`.
 
 ## Main definitions
 
@@ -27,7 +30,7 @@ avoids the star-semiring collision, on the `Order.Ideal` vs ring `Ideal` precede
   (`compl_sup`/`compl_inf`), `compl_bot`/`compl_top`, and the injectivity/order lemmas
   are derived here.
 * `DeMorganAlgebra` — a distributive `LatticeWithInvolution`.
-* `KleeneLattice` — a `DeMorganAlgebra` with the Kleene law
+* `Order.KleeneAlgebra` — a `DeMorganAlgebra` with the Kleene law
   (`inf_compl_le_sup_compl`); every `BooleanAlgebra` is an instance.
 -/
 
@@ -95,17 +98,17 @@ end LatticeWithInvolution
 complement. Unlike `BooleanAlgebra`, complementation may fail (`a ⊓ aᶜ ≠ ⊥`). -/
 class DeMorganAlgebra (α : Type*) extends DistribLattice α, LatticeWithInvolution α
 
-/-- A Kleene lattice: a De Morgan algebra satisfying the Kleene law. Named against
-mathlib's star-semiring `KleeneAlgebra`; this is Kalman's lattice notion, the variety of
-strong Kleene logic. -/
-class KleeneLattice (α : Type*) extends DeMorganAlgebra α where
+/-- A Kleene algebra (the lattice notion, Kalman's variety of strong Kleene logic — not
+the regular-expression star-semiring at root `KleeneAlgebra`): a De Morgan algebra
+satisfying the Kleene law. -/
+class Order.KleeneAlgebra (α : Type*) extends DeMorganAlgebra α where
   /-- The Kleene law: contradictions lie below excluded middles. -/
   inf_compl_le_sup_compl (a b : α) : a ⊓ aᶜ ≤ b ⊔ bᶜ
 
-/-- Every Boolean algebra is a Kleene lattice: the Kleene law degenerates through `⊥`.
+/-- Every Boolean algebra is a Kleene algebra: the Kleene law degenerates through `⊥`.
 Low priority so Boolean API is preferred where applicable. -/
-instance (priority := 100) BooleanAlgebra.toKleeneLattice {α : Type*} [BooleanAlgebra α] :
-    KleeneLattice α where
+instance (priority := 100) BooleanAlgebra.toOrderKleeneAlgebra {α : Type*}
+    [BooleanAlgebra α] : Order.KleeneAlgebra α where
   compl_compl := compl_compl
   compl_antitone := fun h => compl_le_compl h
   inf_compl_le_sup_compl a _ := (BooleanAlgebra.inf_compl_le_bot a).trans _root_.bot_le

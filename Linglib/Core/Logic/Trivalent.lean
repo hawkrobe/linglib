@@ -23,7 +23,7 @@ connective families — Weak Kleene ([bochvar-1937]), Middle Kleene ([peters-197
 conditional assertion ([belnap-1970]) — and the partiality operators ∂ and 𝒜 of
 [beaver-krahmer-2001].
 
-The upstreamable algebra is the `KleeneLattice` class (`Core/Order/DeMorganAlgebra.lean`),
+The upstreamable algebra is the `Order.KleeneAlgebra` class (`Core/Order/DeMorganAlgebra.lean`),
 of which `Trivalent` is the canonical non-Boolean instance. The dedicated carrier with
 truth-named constructors is this library's ergonomic choice; the name follows the
 `Boolean` precedent — an adjective nominalized as its truth-value type — with the
@@ -36,8 +36,8 @@ truth-named constructors is this library's ergonomic choice; the name follows th
   `BoundedOrder`; `Prop3 W` — trivalent propositions `W → Trivalent`.
 - `Trivalent.neg` — Strong Kleene negation: involutive (`neg_neg`), antitone
   (`neg_antitone`), De Morgan (`neg_inf`/`neg_sup`), satisfying the Kleene law
-  (`inf_neg_le_sup_neg`) — so `Trivalent` is a `KleeneLattice`, the canonical non-Boolean
-  instance (`inf_compl_indet_ne_bot`).
+  (`inf_neg_le_sup_neg`) — so `Trivalent` is an `Order.KleeneAlgebra`, the canonical
+  non-Boolean instance (`inf_compl_indet_ne_bot`).
 - `Trivalent.meetWeak`/`joinWeak`, `meetMiddle`/`joinMiddle`, `meetBelnap`/`joinBelnap`,
   `xor` — the rival connective families.
 - `Trivalent.presuppose`, `Trivalent.metaAssert` — the ∂ and 𝒜 operators of
@@ -133,11 +133,11 @@ theorem inf_neg_le_sup_neg (a b : Trivalent) : a ⊓ neg a ≤ b ⊔ neg b := by
 
 instance : Compl Trivalent := ⟨neg⟩
 
-/-- `Trivalent` is the canonical non-Boolean `KleeneLattice`: a distributive chain with
-`neg` as the involutive antitone complement, failing complementation
-(`inf_compl_indet_ne_bot`). The `ᶜ` instance gives access to the class API
-(`Core/Order/DeMorganAlgebra.lean`); `neg` remains the simp-normal form. -/
-instance : KleeneLattice Trivalent where
+/-- `Trivalent` is the canonical non-Boolean Kleene algebra (`Order.KleeneAlgebra`): a
+distributive chain with `neg` as the involutive antitone complement, failing
+complementation (`inf_compl_indet_ne_bot`). The `ᶜ` instance gives access to the class
+API (`Core/Order/DeMorganAlgebra.lean`); `neg` remains the simp-normal form. -/
+instance : Order.KleeneAlgebra Trivalent where
   __ := (inferInstance : DistribLattice Trivalent)
   __ := (inferInstance : BoundedOrder Trivalent)
   compl := neg
