@@ -1,4 +1,4 @@
-import Linglib.Syntax.Agreement.Covariance
+import Linglib.Syntax.Agreement.Profile
 import Linglib.Fragments.Slavic.Russian.Agreement
 
 /-!
@@ -18,7 +18,7 @@ covariance is conceded ("both do indeed stand in the same form").
 
 We encode §2.4's classification (`imposedDims`) and derive §2's three
 (`agreementFeatures`), then check the partition against the Russian
-covariance profile instantiated by the chapter's examples (1)-(5). The
+agreement profile instantiated by the chapter's examples (1)-(5). The
 mechanism question remains open in the current literature; the rival reading
 of the same facts is `Studies/AlexeyenkoZeijlstra2025.lean`, which carries
 case through the nominal projection alongside φ.
@@ -54,19 +54,19 @@ theorem indisputable_three :
     covariance fact and the agreement classification come apart exactly
     here. -/
 theorem russian_attr_case_covariant_but_imposed :
-    .case ∈ Russian.Agreement.covariance .attributive ∧
+    .case ∈ Russian.Agreement.profile .attributive ∧
     .case ∈ imposedDims := by decide
 
 /-- What Russian attributive adjectives AGREE in on the chapter's
     classification — the covariance profile restricted to agreement
     features: gender and number ((1)-(4)). -/
 theorem russian_attr_agreement :
-    Russian.Agreement.covariance .attributive ∩ agreementFeatures =
+    Russian.Agreement.profile .attributive ∩ agreementFeatures =
       {.number, .gender} := by decide
 
 /-- §1: pronouns are agreement targets in the wider sense — the Russian
     personal pronoun covaries (in gender and number) with its antecedent. -/
 theorem pronoun_target_covaries :
-    Russian.Agreement.covariance .personalPronoun ≠ ∅ := by decide
+    Russian.Agreement.profile .personalPronoun ≠ ∅ := by decide
 
 end Corbett1998
