@@ -12,7 +12,8 @@ set_option autoImplicit false
 # Connes-Kreimer Hopf algebra carrier on n-ary rooted trees
 
 The **Connes-Kreimer Hopf algebra** on a tree type `T`
-([foissy-introduction-hopf-algebras-trees] §1.2) is the formal `R`-linear
+([connes-kreimer-1998]; [foissy-introduction-hopf-algebras-trees] §1.2) is
+the formal `R`-linear
 span of forests (multisets of trees), with product = forest disjoint union
 and coproduct = sum over admissible cuts (defined in `Coproduct/Pruning.lean`
 for Δ^ρ, `Coproduct/Trace.lean` for Δ^c). This file provides the **carrier
@@ -98,7 +99,7 @@ structure ConnesKreimer (R : Type*) [CommSemiring R] (T : Type*) where
 
 namespace ConnesKreimer
 
-variable {R : Type*} [CommSemiring R] {T : Type*}
+variable {R : Type*} [CommSemiring R] {T : Type*} {S S₁ S₂ : Type*}
 
 theorem toFinsupp_injective :
     Function.Injective (toFinsupp : ConnesKreimer R T → AddMonoidAlgebra R (Forest T)) :=
@@ -123,8 +124,7 @@ instance : Add (ConnesKreimer R T) :=
   ⟨fun p q => ⟨p.toFinsupp + q.toFinsupp⟩⟩
 instance : Mul (ConnesKreimer R T) :=
   ⟨fun p q => ⟨p.toFinsupp * q.toFinsupp⟩⟩
-instance smulZeroClass {S : Type*}
-    [SMulZeroClass S (AddMonoidAlgebra R (Forest T))] :
+instance smulZeroClass [SMulZeroClass S (AddMonoidAlgebra R (Forest T))] :
     SMulZeroClass S (ConnesKreimer R T) where
   smul s p := ⟨s • p.toFinsupp⟩
   smul_zero s := ext (smul_zero s)
@@ -138,8 +138,8 @@ instance : Pow (ConnesKreimer R T) ℕ := ⟨fun p n => ⟨p.toFinsupp ^ n⟩⟩
     (p + q).toFinsupp = p.toFinsupp + q.toFinsupp := rfl
 @[simp] theorem toFinsupp_mul (p q : ConnesKreimer R T) :
     (p * q).toFinsupp = p.toFinsupp * q.toFinsupp := rfl
-@[simp] theorem toFinsupp_smul {S : Type*}
-    [SMulZeroClass S (AddMonoidAlgebra R (Forest T))] (s : S) (p : ConnesKreimer R T) :
+@[simp] theorem toFinsupp_smul [SMulZeroClass S (AddMonoidAlgebra R (Forest T))]
+    (s : S) (p : ConnesKreimer R T) :
     (s • p).toFinsupp = s • p.toFinsupp := rfl
 @[simp] theorem toFinsupp_pow (p : ConnesKreimer R T) (n : ℕ) :
     (p ^ n).toFinsupp = p.toFinsupp ^ n := rfl
@@ -157,12 +157,11 @@ instance instCommSemiring : CommSemiring (ConnesKreimer R T) :=
 synthesis step away from the underlying carrier lets nested-tensor goals
 (`CK ⊗ (CK ⊗ CK)`) resolve without deep pending chains. -/
 
-instance distribSMul {S : Type*}
-    [DistribSMul S (AddMonoidAlgebra R (Forest T))] :
+instance distribSMul [DistribSMul S (AddMonoidAlgebra R (Forest T))] :
     DistribSMul S (ConnesKreimer R T) where
   smul_add s p q := ext (smul_add s p.toFinsupp q.toFinsupp)
 
-instance distribMulAction {S : Type*} [Monoid S]
+instance distribMulAction [Monoid S]
     [DistribMulAction S (AddMonoidAlgebra R (Forest T))] :
     DistribMulAction S (ConnesKreimer R T) where
   one_smul p := ext (one_smul S p.toFinsupp)
@@ -170,20 +169,20 @@ instance distribMulAction {S : Type*} [Monoid S]
   smul_zero s := ext (smul_zero s)
   smul_add s p q := ext (smul_add s p.toFinsupp q.toFinsupp)
 
-instance instModule {S : Type*} [Semiring S]
+instance instModule [Semiring S]
     [Module S (AddMonoidAlgebra R (Forest T))] :
     Module S (ConnesKreimer R T) where
   add_smul s t p := ext (add_smul s t p.toFinsupp)
   zero_smul p := ext (zero_smul S p.toFinsupp)
 
-instance smulCommClass {S₁ S₂ : Type*}
+instance smulCommClass
     [SMulZeroClass S₁ (AddMonoidAlgebra R (Forest T))]
     [SMulZeroClass S₂ (AddMonoidAlgebra R (Forest T))]
     [SMulCommClass S₁ S₂ (AddMonoidAlgebra R (Forest T))] :
     SMulCommClass S₁ S₂ (ConnesKreimer R T) :=
   ⟨fun s t p => ext (smul_comm s t p.toFinsupp)⟩
 
-instance isScalarTower {S₁ S₂ : Type*} [SMul S₁ S₂]
+instance isScalarTower [SMul S₁ S₂]
     [SMulZeroClass S₁ (AddMonoidAlgebra R (Forest T))]
     [SMulZeroClass S₂ (AddMonoidAlgebra R (Forest T))]
     [IsScalarTower S₁ S₂ (AddMonoidAlgebra R (Forest T))] :
@@ -331,7 +330,7 @@ theorem coeff_def (p : ConnesKreimer R T) (F : Forest T) :
     (p + q).coeff F = p.coeff F + q.coeff F :=
   Finsupp.add_apply p.toFinsupp q.toFinsupp F
 
-@[simp] theorem coeff_smul {S : Type*} [SMulZeroClass S R] (s : S)
+@[simp] theorem coeff_smul [SMulZeroClass S R] (s : S)
     (p : ConnesKreimer R T) (F : Forest T) :
     (s • p).coeff F = s • p.coeff F :=
   Finsupp.smul_apply s p.toFinsupp F
