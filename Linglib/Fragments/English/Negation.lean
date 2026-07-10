@@ -112,16 +112,4 @@ theorem symmetric_no_dosupport :
     (allExamples.filter (·.symmetric)).all (fun e => !e.doSupport) = true := by
   decide
 
-/-- English negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
-def negationProfile : Syntax.Negation.NegationProfile :=
-  { language := "English"
-  , iso := "eng"
-  , morphemeType := .particle
-  , symmetry := .both
-  , asymmetrySubtype := .otherCategories
-  , negIndefinite := some .mixed
-  , negMarkers := ["not"]
-  , negIsHead := none
-  , enAttested := none }
-
 end English.Negation

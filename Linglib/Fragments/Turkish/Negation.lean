@@ -5,8 +5,8 @@ import Linglib.Syntax.Negation
 [miestamo-2005] [haspelmath-2013] [dryer-haspelmath-2013]
 
 Turkish expresses standard negation with the verbal suffix *-mA-*
-(/-ma-/ or /-me-/ depending on vowel harmony). The suffix is inserted
-between the verb stem and the TAM suffix.
+(*-ma-* ~ *-me-* by vowel harmony). The suffix is inserted between the
+verb stem and the TAM suffix.
 
 ## SymAsy: Symmetric and Asymmetric
 
@@ -23,7 +23,10 @@ But the **aorist** is asymmetric (A/Cat): the affirmative aorist marker
 | **Aorist** | *gel-ir* | *gel-me-z* | **No** |
 
 The aorist asymmetry is a paradigmatic change: a different morphological
-marker appears, not just insertion of the negative morpheme.
+marker appears, not just insertion of the negative morpheme. It is
+sharpest outside 3sg: the negative aorist drops the marker entirely in
+1sg *gelmem* and 1pl *gelmeyiz*, retaining *-z* only in the second and
+third persons.
 -/
 
 namespace Turkish.Negation
@@ -41,7 +44,10 @@ def negSuffix : NegMarkerEntry :=
   , morphemeType := .affix
   , position := .morphological }
 
-/-- The Turkish negation system: a single verbal affix.
+/-- Turkish standard (verbal) negation: a single verbal affix.
+    Nonverbal predication negates with copular *değil* and the
+    existential with suppletive *yok* (for *var*), both outside
+    standard negation in [miestamo-2005]'s sense.
     The Fragment-side joint consumed by `Studies/Dryer2013Negation.lean`. -/
 def negationSystem : NegationSystem :=
   NegationSystem.ofISO "tur" [negSuffix]
@@ -55,7 +61,7 @@ structure NegParadigmEntry where
   glossNeg : String
   /-- Is this construction symmetric (neg = aff + neg marker, no other change)? -/
   symmetric : Bool
-  deriving Repr, BEq, Inhabited
+  deriving Repr
 
 /-- Paradigm for *gelmek* 'come' (3sg forms). -/
 def gelParadigm : List NegParadigmEntry :=
@@ -81,30 +87,9 @@ def gelParadigm : List NegParadigmEntry :=
     , symmetric := false }
   ]
 
-/-! ## Verification -/
-
-theorem gel_paradigm_size : gelParadigm.length = 5 := by decide
-
-/-- Most constructions are symmetric. -/
-theorem mostly_symmetric :
-    (gelParadigm.filter (·.symmetric)).length = 4 := by decide
-
-/-- The aorist is the only asymmetric construction. -/
+/-- The aorist is the only asymmetric construction in the paradigm. -/
 theorem aorist_asymmetric :
-    (gelParadigm.filter (fun e => !e.symmetric)).length = 1 ∧
-    (gelParadigm.filter (fun e => !e.symmetric)).head!.formLabel = "aorist" := by
-  exact ⟨by decide, rfl⟩
-
-/-- Turkish negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
-def negationProfile : Syntax.Negation.NegationProfile :=
-  { language := "Turkish"
-  , iso := "tur"
-  , morphemeType := .affix
-  , symmetry := .both
-  , asymmetrySubtype := .otherCategories
-  , negIndefinite := some .cooccur
-  , negMarkers := ["-mA-"]
-  , negIsHead := none
-  , enAttested := none }
+    (gelParadigm.filter (fun e => !e.symmetric)).map (·.formLabel)
+      = ["aorist"] := rfl
 
 end Turkish.Negation

@@ -74,16 +74,4 @@ theorem copula_as_finite :
     allExamples.all (·.copulaFinite) = true := by
   decide
 
-/-- Hixkaryana negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
-def negationProfile : Syntax.Negation.NegationProfile :=
-  { language := "Hixkaryana"
-  , iso := "hix"
-  , morphemeType := .affix
-  , symmetry := .asymmetric
-  , asymmetrySubtype := .finiteness
-  , negIndefinite := Option.none
-  , negMarkers := ["-hira"]
-  , negIsHead := none
-  , enAttested := none }
-
 end Hixkaryana.Negation

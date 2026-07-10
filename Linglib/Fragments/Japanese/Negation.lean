@@ -130,16 +130,4 @@ theorem tense_moves_to_suffix :
     japaneseNegDistribution.negativeOnSuffix.contains .tense = true := by
   decide
 
-/-- Japanese negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
-def negationProfile : Syntax.Negation.NegationProfile :=
-  { language := "Japanese"
-  , iso := "jpn"
-  , morphemeType := .affix
-  , symmetry := .asymmetric
-  , asymmetrySubtype := .finAndCat
-  , negIndefinite := some .cooccur
-  , negMarkers := ["-nai", "-nakat-"]
-  , negIsHead := none
-  , enAttested := none }
-
 end Japanese.Negation

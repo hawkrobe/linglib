@@ -102,16 +102,4 @@ def allExamples : List NegExample :=
 /-- All five tenses are available under negation (no paradigmatic gaps). -/
 theorem all_tenses_available : allExamples.length = 5 := by decide
 
-/-- German negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
-def negationProfile : Syntax.Negation.NegationProfile :=
-  { language := "German"
-  , iso := "deu"
-  , morphemeType := .particle
-  , symmetry := .symmetric
-  , asymmetrySubtype := .nonAssignable
-  , negIndefinite := some .preclude
-  , negMarkers := ["nicht"]
-  , negIsHead := none
-  , enAttested := none }
-
 end German.Negation

@@ -131,16 +131,4 @@ theorem connegative_negates : connegativeRule.semEffect true = false := rfl
 theorem neg_aux_respects_bybee :
     MorphCategory.RelevanceLT .negation (.agreement .subj) := by decide
 
-/-- Finnish negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
-def negationProfile : Syntax.Negation.NegationProfile :=
-  { language := "Finnish"
-  , iso := "fin"
-  , morphemeType := .auxVerb
-  , symmetry := .asymmetric
-  , asymmetrySubtype := .finiteness
-  , negIndefinite := some .cooccur
-  , negMarkers := ["e-"]
-  , negIsHead := none
-  , enAttested := none }
-
 end Finnish.Negation

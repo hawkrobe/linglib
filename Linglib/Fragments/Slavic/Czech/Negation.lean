@@ -123,16 +123,4 @@ def allConcordExamples : List NegConcordExample := [nikdo, nic, nikdy]
 
 theorem all_examples_count : allExamples.length = 4 := by decide
 
-/-- Czech negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
-def negationProfile : Syntax.Negation.NegationProfile :=
-  { language := "Czech"
-  , iso := "ces"
-  , morphemeType := .affix
-  , symmetry := .symmetric
-  , asymmetrySubtype := .nonAssignable
-  , negIndefinite := some .cooccur
-  , negMarkers := ["ne-"]
-  , negIsHead := none
-  , enAttested := none }
-
 end Czech.Negation

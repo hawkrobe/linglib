@@ -177,16 +177,4 @@ theorem high_entrenchment_uses_ne_alone :
     *ne...pas*, but without the reinforcer. -/
 theorem en_marker_is_ne_clitic : enMarker = neClitic := rfl
 
-/-- French negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
-def negationProfile : Syntax.Negation.NegationProfile :=
-  { language := "French"
-  , iso := "fra"
-  , morphemeType := .particle
-  , symmetry := .symmetric
-  , asymmetrySubtype := .nonAssignable
-  , negIndefinite := some .mixed
-  , negMarkers := ["ne", "pas"]
-  , negIsHead := some true
-  , enAttested := some true }
-
 end French.Negation

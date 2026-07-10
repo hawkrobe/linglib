@@ -5,28 +5,21 @@ import Linglib.Syntax.Negation
 
 The MSA standard-negation inventory — four preverbal particles (*laa*, *lam*,
 *lan*, *maa*) plus the inflecting copular verb *lays-a* 'to not be' — typed
-against `Syntax.Negation` and bundled into a `NegationSystem` and a
-`NegationProfile`.
+against `Syntax.Negation` and bundled into a `NegationSystem`.
 
 ## Main definitions
 
 * `negMarkers` — the five sentential negators.
 * `negationSystem` — markers plus WALS Ch 112A/143A/144A datapoints (`ofISO "arb"`).
-* `negationProfile` — the WALS Ch 112–115 typology coding.
 
 ## Implementation notes
 
 *lam* / *lan* condition a mood shift (jussive / subjunctive) on an otherwise
 finite verb, and *lays-a* supplies a finite copula where the affirmative is
-verbless — read here as Miestamo's A/Fin, extending it from a verb *losing*
-finiteness to a clause *gaining* it. So MSA negation is WALS Ch 113 `.both`
-(symmetric *laa* / *maa* plus asymmetric *lam* / *lan* / *lays-a*) with the
-Ch 114 `.finAndCat` subtype.
-
-MSA (`arb`) is absent from [miestamo-2005] and from WALS Ch 113A/114A
-(which carry only Egyptian `arz`), so `symmetry` and `asymmetrySubtype` are a
-project-internal extrapolation, not Miestamo's own coding; the position fields
-(Ch 143A/144A) are WALS-pulled by `NegationSystem.ofISO`.
+verbless. MSA (`arb`) is absent from [miestamo-2005] and from WALS
+Ch 113A/114A (which carry only Egyptian `arz`), so no symmetric/asymmetric
+coding is recorded here; the position fields (Ch 143A/144A) are WALS-pulled
+by `NegationSystem.ofISO`.
 
 ## References
 
@@ -71,18 +64,5 @@ def negMarkers : List NegMarkerEntry :=
     pulled from `Data.WALS` by ISO code `arb`). -/
 def negationSystem : NegationSystem :=
   NegationSystem.ofISO "arb" negMarkers
-
-/-- Modern Standard Arabic negation profile (WALS Ch 112-115 + Greco/JinKoenig
-    fields); see the module docstring for the `.both` / `.finAndCat` rationale. -/
-def negationProfile : NegationProfile :=
-  { language := "Arabic (Modern Standard)"
-  , iso := "arb"
-  , morphemeType := .particle
-  , symmetry := .both
-  , asymmetrySubtype := .finAndCat
-  , negIndefinite := none
-  , negMarkers := negMarkers.map (·.form)
-  , negIsHead := none
-  , enAttested := none }
 
 end Arabic.ModernStandard.Negation
