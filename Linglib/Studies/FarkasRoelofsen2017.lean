@@ -72,7 +72,7 @@ to give a uniform account of the six sentence types in (3)–(8):
 - Full inquisitive-semantic compositional machinery of §4.2 (how
   clause-type markers combine with sentence radicals at the type level).
   The proposition-as-set-of-alternatives apparatus is available in
-  `Core/Question/`; this study uses bare `Set W` for content because
+  `Semantics/Questions/`; this study uses bare `Set W` for content because
   the paper-anchored felicity claims do not require alternative-set
   arithmetic.
 - Sections 6–7 of the paper (extensions: alternative-question marking,

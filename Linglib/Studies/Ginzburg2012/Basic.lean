@@ -674,7 +674,7 @@ as *partitions* of worlds (Hamblin/Groenendijk-Stokhof style); KOS
 treats QUD entries as `InfoStruc`s carrying the question + FECs.
 
 Structural agreement: the push/pop semantics agree. We use the partition
-substrate from `Core/Question/Partition/QUD.lean` to demonstrate. -/
+substrate from `Semantics/Questions/Partition/QUD.lean` to demonstrate. -/
 
 /-- Both Roberts QUD-stack semantics and KOS InfoStruc-stack semantics
 push and pop in the same way: the topmost question is the most recent. -/

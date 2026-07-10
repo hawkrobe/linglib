@@ -7,18 +7,16 @@ import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Algebra.Order.GroupWithZero.Finset
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
-import Linglib.Semantics.Questions.Relevance
 
 /-!
 # Core Decision Theory
 [van-rooy-2003] [blackwell-1953]
 
 Theory-neutral decision-theoretic infrastructure: decision problems, expected
-utility, maximin, and mention-some/mention-all classification.
-
-Promoted from `Semantics.Questions.DecisionTheory` so that any module
-(RSA, causal decision theory, explanation models) can use decision problems
-without pulling in question-semantic types.
+utility, maximin, and mention-some/mention-all classification. No
+question-semantic imports: any module (RSA, causal decision theory,
+explanation models) can use decision problems without pulling in the
+`Question` cone.
 
 ## Design: Fintype + Finset
 

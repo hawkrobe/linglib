@@ -23,7 +23,7 @@ combine both.
 
 ## Substrate alignment
 
-- `Question W` (`Core/Question/Basic.lean`) supplies subset-closed
+- `Question W` (`Semantics/Questions/Basic.lean`) supplies subset-closed
   families of states with `∅`-membership — Booth Definition 10's `P°`
   constraint becomes a `Question`. `BilatInqProp` is then paired
   `Questions` plus a no-substantive-overlap field.

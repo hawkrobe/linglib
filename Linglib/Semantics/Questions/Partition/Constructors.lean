@@ -20,7 +20,7 @@ This induces a **partition** of logical space.
 ## Architecture
 
 `GSQuestion` is an abbreviation for `QUD`. All partition lattice operations
-(refinement, coarsening, cells) are defined in `Core/Question/Partition/`
+(refinement, coarsening, cells) are defined in `Semantics/Questions/Partition/`
 and apply to any equivalence-relation partition, not just question
 denotations.
 
