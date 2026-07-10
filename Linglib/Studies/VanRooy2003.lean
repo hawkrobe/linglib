@@ -4,7 +4,7 @@ import Linglib.Semantics.Questions.Entailment
 
 /-!
 # [van-rooy-2003]: Questioning to Resolve Decision Problems
-[groenendijk-stokhof-1984] [karttunen-1977] [ginzburg-1995] [merin-1999]
+[groenendijk-stokhof-1984] [karttunen-1977] [ginzburg-1995] [merin-1999-relevance]
 [blackwell-1953]
 
 Single-paper formalisation of [van-rooy-2003], "Questioning to

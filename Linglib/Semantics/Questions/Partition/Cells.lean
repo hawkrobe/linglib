@@ -6,7 +6,7 @@ import Mathlib.Data.List.Perm.Subperm
 
 /-!
 # Partition Cells
-[groenendijk-stokhof-1984] [merin-1999-notspeak]
+[groenendijk-stokhof-1984] [merin-1999]
 
 Concrete cell enumeration for partitions (`QUD`) over finite domains:
 

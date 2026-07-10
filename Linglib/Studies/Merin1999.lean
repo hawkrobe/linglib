@@ -7,9 +7,9 @@ import Mathlib.Tactic.FieldSimp
 
 /-!
 # Merin (1999) — Why *Not* Speak Notspeak
-[merin-1999-notspeak]
+[merin-1999]
 
-[merin-1999-notspeak] "Negative Attributes, Partitions, and Rational
+[merin-1999] "Negative Attributes, Partitions, and Rational
 Decisions" gives a decision-theoretic rationale for attribute spaces
 being partitions and a purely epistemic, syntax-independent
 characterization of negative attributes as proper coarsenings.
@@ -46,7 +46,7 @@ open QUD Core.DecisionTheory
 
 /-! ### FACT 1: complement families -/
 
-/-- FACT 1 ([merin-1999-notspeak] p. 261): for a partition `F` of a
+/-- FACT 1 ([merin-1999] p. 261): for a partition `F` of a
 nonempty type, the complements of its cells form a partition iff `F`
 has exactly two cells. -/
 theorem compl_isPartition_iff {W : Type*} [Nonempty W] {F : Set (Set W)}
@@ -119,7 +119,7 @@ theorem compl_isPartition_iff {W : Type*} [Nonempty W] {F : Set (Set W)}
 
 /-! ### FACT 3: complement probabilities -/
 
-/-- FACT 3 ([merin-1999-notspeak] p. 261): under a proper prior, the
+/-- FACT 3 ([merin-1999] p. 261): under a proper prior, the
 probabilities of the complements of a partition's cells sum to `n − 1`,
 `n` the number of cells. -/
 theorem sum_compl_prob {W : Type*} [Fintype W] [DecidableEq W]
@@ -142,7 +142,7 @@ theorem sum_compl_prob {W : Type*} [Fintype W] [DecidableEq W]
   rw [Finset.sum_congr rfl hsplit, Finset.sum_sub_distrib, hpart,
     Finset.sum_const, nsmul_eq_mul, mul_one]
 
-/-- Merin's FACT 2 ([merin-1999-notspeak] p. 261), summed form: the
+/-- Merin's FACT 2 ([merin-1999] p. 261), summed form: the
 complement probabilities form a probability distribution (sum to `1`)
 iff the partition is binary. -/
 theorem sum_compl_prob_eq_one_iff {W : Type*} [Fintype W] [DecidableEq W]
@@ -163,7 +163,7 @@ theorem sum_compl_prob_eq_one_iff {W : Type*} [Fintype W] [DecidableEq W]
 
 /-- Binary partition from a Boolean predicate: two elements are
 equivalent iff the predicate agrees on both. Negation-induced
-repartitioning yields exactly these ([merin-1999-notspeak] §8). -/
+repartitioning yields exactly these ([merin-1999] §8). -/
 abbrev binaryPartition {M : Type*} (p : M → Bool) : QUD M := ofProject p
 
 /-- Complement predicates induce the same binary partition: a
@@ -175,12 +175,12 @@ theorem complement_same_partition {M : Type*} (p : M → Bool) (w v : M) :
   cases p w <;> cases p v <;> rfl
 
 /-- Q properly coarsens Q' over a finite domain: Q coarsens Q' with
-strictly fewer cells ([merin-1999-notspeak] p. 262 definition). -/
+strictly fewer cells ([merin-1999] p. 262 definition). -/
 def IsProperCoarsening {M : Type*} [DecidableEq M]
     (q q' : QUD M) (elements : List M) : Prop :=
   q.coarsens q' ∧ q.numCells elements < q'.numCells elements
 
-/-- FACT 4 ([merin-1999-notspeak] p. 263): `{P, ¬P}` is the *coarsest*
+/-- FACT 4 ([merin-1999] p. 263): `{P, ¬P}` is the *coarsest*
 `P`-preserving coarsening. Any partition whose cells respect `P` — in
 particular any `P`-preserving coarsening of a given partition — is
 refined by the binary partition of `P`. -/
@@ -192,7 +192,7 @@ theorem binaryPartition_coarsens {M : Type*} (q : QUD M) (p : M → Bool)
   exact h w v hq
 
 /-- `R` is a **negative attribute** with respect to `q`
-([merin-1999-notspeak] p. 263): the complement of `R` is a cell of `q`,
+([merin-1999] p. 263): the complement of `R` is a cell of `q`,
 and the two-cell partition `{R, ¬R}` properly coarsens `q`. Negativity
 is epistemic (partition-kinetic), not morphological. -/
 def IsNegativeAttribute {M : Type*} [DecidableEq M] (R : M → Bool)
@@ -246,7 +246,7 @@ theorem eu_eq_partitionEU [Fintype M] [DecidableEq M]
     (cellProb_mul_conditionalEU dp cell a hprior).symm)
 
 /-- Partition-relative EU is partition-independent: any two partitions
-compute the unconditional EU. [merin-1999-notspeak] p. 264 is the
+compute the unconditional EU. [merin-1999] p. 264 is the
 coarsening instance; the paper's FACT 5 — that non-coarsening
 re-coverings *fail* term-by-term re-usability — is not formalized. -/
 theorem partitionEU_congr [Fintype M] [DecidableEq M]
@@ -255,7 +255,7 @@ theorem partitionEU_congr [Fintype M] [DecidableEq M]
     partitionEU dp q a = partitionEU dp q' a :=
   (eu_eq_partitionEU dp a q hprior).symm.trans (eu_eq_partitionEU dp a q' hprior)
 
-/-- EU compositionality under coarsening ([merin-1999-notspeak] p. 264):
+/-- EU compositionality under coarsening ([merin-1999] p. 264):
 each coarse cell's term is the sum of the terms of the fine cells it
 groups, so a coarsening re-uses the finer partition's computations. -/
 theorem partitionEU_coarsening_regroup [Fintype M] [DecidableEq M]

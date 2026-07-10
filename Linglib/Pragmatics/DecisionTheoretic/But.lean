@@ -1,8 +1,8 @@
 import Linglib.Pragmatics.DecisionTheoretic.Basic
 
 /-!
-# Decision-Theoretic Semantics: "But" ([merin-1999] §4)
-[merin-1999]
+# Decision-Theoretic Semantics: "But" ([merin-1999-relevance] §4)
+[merin-1999-relevance]
 
 Merin's DTS account of adversative conjunction. The felicity of "A but B"
 requires that A and B have opposite relevance signs, and that the conjunction

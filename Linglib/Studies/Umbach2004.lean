@@ -41,13 +41,13 @@ three levels at which "contrast" appears:
 - Confirm+deny condition on "but" (§3.1)
 - Exclusion variety taxonomy connecting *only*-phrases ↔ CONTRAST
   and contrastive focus ↔ CORRECTION (§2.3, §3.2)
-- Bridge: comparison with [merin-1999] DTS account of "but"
+- Bridge: comparison with [merin-1999-relevance] DTS account of "but"
 
 ## Connection to existing formalization
 
 - Focus alternatives & FIP: `Semantics.Focus.Interpretation` ([rooth-1992])
 - QUD / implicit questions: `Question`, `Question.isPartialAnswer` ([roberts-2012])
-- DTS "but": `DTS.But` ([merin-1999])
+- DTS "but": `DTS.But` ([merin-1999-relevance])
 - Coherence relations: `Discourse.Coherence` ([kehler-2002])
 -/
 
@@ -446,12 +446,12 @@ theorem correction_excludes_first :
   · simp [wentParis]
 
 -- ═══════════════════════════════════════════════════════════════════════
--- §7  Bridge: Umbach vs Merin ([merin-1999])
+-- §7  Bridge: Umbach vs Merin ([merin-1999-relevance])
 -- ═══════════════════════════════════════════════════════════════════════
 
 /-! Two accounts of "but" are now formalized in linglib:
 
-1. **[merin-1999]** (in `DTS.But`): "A but B" is felicitous
+1. **[merin-1999-relevance]** (in `DTS.But`): "A but B" is felicitous
    iff A is positively relevant and B is negatively relevant to an issue H,
    with B "winning" (A∧B negatively relevant). This yields unexpectedness
    as the core meaning: P(B|A) < P(B).
@@ -487,7 +487,7 @@ only on their truth-conditional content, not on what is focused.
 Umbach's account directly predicts that shifting focus in the second
 conjunct changes the contrast (§3.1, ex. 16a vs 16b).
 
-[merin-1999] Theorem 8 (CIP + contrariness → unexpectedness) is in
+[merin-1999-relevance] Theorem 8 (CIP + contrariness → unexpectedness) is in
 `DTS.But.cip_contrariness_implies_unexpectedness`.
 -/
 

@@ -4,7 +4,7 @@ import Mathlib.Data.Fintype.Basic
 
 /-!
 # Merin–Van Rooy Bridge
-[merin-1999] [van-rooy-2003]
+[merin-1999-relevance] [van-rooy-2003]
 
 Formal connection between Merin's Decision-Theoretic Semantics (DTS) and
 Van Rooy's decision-theoretic question framework.
