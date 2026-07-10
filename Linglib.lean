@@ -196,9 +196,9 @@ import Linglib.Core.Logic.Team.Definability
 import Linglib.Core.Logic.Temporal.Basic
 import Linglib.Core.Logic.Temporal.Defs
 import Linglib.Core.Logic.Temporal.Soundness
-import Linglib.Core.Logic.ThreeValuedLogic
 import Linglib.Core.Logic.Truth3
 import Linglib.Core.Logic.TweetyNixon
+import Linglib.Core.ModelTheory.Trivalent
 import Linglib.Core.Optimization.Decoder
 import Linglib.Core.Optimization.Dequantization.LogSumExp.Basic
 import Linglib.Core.Optimization.Dequantization.LogSumExp.Limit
