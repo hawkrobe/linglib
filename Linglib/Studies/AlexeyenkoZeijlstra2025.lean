@@ -67,7 +67,7 @@ open Morphology (MorphStatus)
 Formerly `Syntax/Minimalist/Modification.lean` — relocated here as this paper's own
 analysis (it had a single consumer, this study). Its agreement-entry substrate was
 likewise dissolved into § 9 below (`Concord`), which projects onto the shared
-covariance fact layer (`Agreement.CovarianceProfile`). -/
+agreement-profile fact layer (`Agreement.Profile`). -/
 
 /-- Morphophonological status of the attributivizer (Attr head, §5.2). Determines
     whether Attr imposes linear adjacency with the adjective. -/
@@ -621,17 +621,17 @@ theorem italian_profile_consistent_phikappa :
     italian.agreementPhiKappaComplete ↔ italianConcord.PhiKappaComplete := by decide
 
 /-- The dimensions a concord specification is nonempty in — its projection
-    into the covariance fact layer (`Agreement.Dimension`). -/
+    into the agreement-profile fact layer (`Agreement.Dimension`). -/
 def Concord.dims (c : Concord) : Finset Agreement.Dimension :=
   (if c.numbers = ∅ then ∅ else {.number}) ∪
   (if c.genders = ∅ then ∅ else {.gender}) ∪
   (if c.cases = ∅ then ∅ else {.case})
 
 /-- The study's value-level Russian specs project onto exactly the fragment's
-    attributive covariance profile — the paper's φ/κ cut and the fact layer
+    attributive agreement profile — the paper's φ/κ cut and the fact layer
     agree on which dimensions Russian long forms covary in. -/
 theorem russian_concord_dims_consistent :
-    russianConcord.attr.dims = Russian.Agreement.covariance .attributive := by decide
+    russianConcord.attr.dims = Russian.Agreement.profile .attributive := by decide
 
 -- ============================================================================
 -- § 10: Bridge to Modification Routes (§5.1)
