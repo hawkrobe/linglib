@@ -105,6 +105,7 @@ import Linglib.Core.Computability.TransitionMonoid
 import Linglib.Core.Computability.Variety.Correspondence
 import Linglib.Core.Computability.Variety.Langs
 import Linglib.Core.Data.Fin.Tuple.Basic
+import Linglib.Core.Data.Fintype.Sets
 import Linglib.Core.Data.List.Bookend
 import Linglib.Core.Data.List.Chain
 import Linglib.Core.Data.List.Destutter
@@ -1827,6 +1828,7 @@ import Linglib.Semantics.Questions.Basic
 import Linglib.Semantics.Questions.Bias.Basic
 import Linglib.Semantics.Questions.Bias.Defs
 import Linglib.Semantics.Questions.DecisionTheory
+import Linglib.Semantics.Questions.Entailment
 import Linglib.Semantics.Questions.Exhaustivity
 import Linglib.Semantics.Questions.Flatness
 import Linglib.Semantics.Questions.Granularity
@@ -1841,7 +1843,6 @@ import Linglib.Semantics.Questions.Partition.QUD
 import Linglib.Semantics.Questions.PartitionDT
 import Linglib.Semantics.Questions.PrecisionProjection
 import Linglib.Semantics.Questions.Probabilistic
-import Linglib.Semantics.Questions.Relevance
 import Linglib.Semantics.Questions.Resolution
 import Linglib.Semantics.Questions.Singleton
 import Linglib.Semantics.Questions.Support

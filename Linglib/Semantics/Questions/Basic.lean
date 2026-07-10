@@ -38,9 +38,10 @@ derivatives (`compl_eq`, `proj`, `nonInfo`, the division law), and the
 LEM-fails witness.
 
 For Hamblin constructions (`polar`, `which`), see
-`Semantics/Questions/Hamblin.lean`. For partial-answerhood and Roberts
-QUD-relevance predicates, see `Semantics/Questions/Relevance.lean`. For
-the `Setoid → Question` embedding (used by `State`), see
+`Semantics/Questions/Hamblin.lean`. For answerhood predicates, see
+`Semantics/Questions/Resolution.lean`; for question entailment,
+`Semantics/Questions/Entailment.lean`. For the `Setoid → Question`
+embedding (used by `State`), see
 `Semantics/Questions/Partition/Basic.lean`.
 
 ## Mathlib alignment

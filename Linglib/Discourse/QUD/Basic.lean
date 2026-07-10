@@ -1,6 +1,7 @@
 import Linglib.Semantics.Questions.Basic
 import Linglib.Semantics.Questions.Hamblin
-import Linglib.Semantics.Questions.Relevance
+import Linglib.Semantics.Questions.Entailment
+import Linglib.Semantics.Questions.Resolution
 
 /-!
 # Questions under discussion: stack and strategy
@@ -8,9 +9,20 @@ import Linglib.Semantics.Questions.Relevance
 
 The inquiry coordinate of the conversational scoreboard: the stack of
 accepted-but-unanswered questions (head is the immediate QUD;
-subquestions push, answers pop) and the rose-tree strategy of inquiry
+subquestions push, answers pop), the rose-tree strategy of inquiry
 decomposing a question into subquestions whose joint resolution answers
-the parent.
+the parent, and relevance of a move to the inquiry (`moveRelevant`,
+`moveRelevantToStrategy`).
+
+## Fidelity notes
+
+`moveRelevant` is existential answerhood relevance: the partial-answer
+clause of [roberts-2012]'s Relevance (15), weaker than her strategy
+clause for interrogative moves. It is the proxy
+[ippolito-kiss-williams-2025] use for their relevance assumption (iii),
+consumed by the discourse *only* definedness condition in their (16).
+That the `subquestions` argument really lists subquestions of the QUD is
+the caller's obligation.
 -/
 
 namespace Discourse
@@ -79,13 +91,55 @@ def isComplete : Strategy W → Prop
   | .leaf _ => True
   | .branch q children =>
     let combined := (children.map (·.question)).foldl (· ⊓ ·) ⊤
-    Question.questionEntails combined q
+    combined.Entails q
 
 end Strategy
 
+variable {W : Type*}
+
+/-- A move is relevant if one of its alternatives partially answers the
+QUD or one of the subquestions. -/
+def moveRelevant (den qud : Question W) (subquestions : List (Question W)) : Prop :=
+  ∃ a ∈ Question.alt den,
+    Question.partiallyAnswers qud a ∨
+      ∃ q ∈ subquestions, Question.partiallyAnswers q a
+
 /-- A discourse move is relevant to a strategy if some alternative of
     `den` partially answers some question in the strategy. -/
-def moveRelevantToStrategy {W : Type*} (den : Question W) (strat : Strategy W) : Prop :=
+def moveRelevantToStrategy (den : Question W) (strat : Strategy W) : Prop :=
   ∃ a ∈ Question.alt den, ∃ q ∈ strat.allQuestions, Question.partiallyAnswers q a
+
+/-- A move is relevant if one of its alternatives partially answers the
+QUD directly, with no subquestions. -/
+theorem moveRelevant_of_partiallyAnswers
+    {den qud : Question W} {a : Set W} (ha : a ∈ Question.alt den)
+    (h : Question.partiallyAnswers qud a) :
+    moveRelevant den qud [] :=
+  ⟨a, ha, Or.inl h⟩
+
+/-- Strategy relevance is `moveRelevant` against the root question and
+the descendant questions. -/
+theorem moveRelevantToStrategy_iff_moveRelevant
+    (den : Question W) (strat : Strategy W) :
+    moveRelevantToStrategy den strat ↔
+      moveRelevant den strat.question
+        (strat.substrategies.flatMap Strategy.allQuestions) := by
+  cases strat <;>
+    simp [moveRelevantToStrategy, moveRelevant, Strategy.allQuestions,
+      Strategy.question, Strategy.substrategies]
+
+/-- Polar reduction of `moveRelevant` to partial answerhood of `p` and
+`pᶜ`. -/
+theorem moveRelevant_polar_iff {p : Set W} {qud : Question W}
+    {subquestions : List (Question W)}
+    (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
+    moveRelevant (Question.polar p) qud subquestions ↔
+      (Question.partiallyAnswers qud p ∨
+        ∃ Q ∈ subquestions, Question.partiallyAnswers Q p) ∨
+      (Question.partiallyAnswers qud pᶜ ∨
+        ∃ Q ∈ subquestions, Question.partiallyAnswers Q pᶜ) := by
+  simp only [moveRelevant, Question.alt_polar_of_nontrivial hne hnu,
+    Set.mem_insert_iff, Set.mem_singleton_iff, exists_eq_or_imp,
+    exists_eq_left]
 
 end Discourse

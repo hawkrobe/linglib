@@ -40,9 +40,9 @@ canonical one).
 
 ## Specialisations
 
-* `Relevance.lean` — `Question.partiallyAnswers` and
-  `Question.moveRelevant` (Roberts QUD-relevance) over `Question W`.
-  Specific notions, not a typeclass.
+* `Question.partiallyAnswers` (`Resolution.lean`) and
+  `Discourse.moveRelevant` (`Discourse/QUD/Basic.lean`) — Roberts
+  QUD-relevance over `Question W`. Specific notions, not a typeclass.
 * `Semantics.Questions.Resolution` — `Resolves`, `MentionSome`,
   `MentionAll` over `Set W → Question W`. Each is a candidate `Support`
   instance for the inquisitive substrate.

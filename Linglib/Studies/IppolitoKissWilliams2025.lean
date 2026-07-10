@@ -1,5 +1,6 @@
 import Linglib.Semantics.Questions.Probabilistic
-import Linglib.Semantics.Questions.Relevance
+import Linglib.Semantics.Questions.Resolution
+import Linglib.Discourse.QUD.Basic
 import Linglib.Studies.IppolitoKissWilliams2022
 import Linglib.Data.Examples.Schema
 import Linglib.Core.Probability.Finite
@@ -106,6 +107,7 @@ answer whose existence the definedness condition requires.
 namespace IppolitoKissWilliams2025
 
 open Question Semantics.Questions.Probabilistic
+open Discourse (moveRelevant moveRelevant_polar_iff)
 open IppolitoKissWilliams2022
 
 /-! ### Discourse context -/
