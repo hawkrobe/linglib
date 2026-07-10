@@ -1,4 +1,5 @@
 import Mathlib.Data.Fintype.Prod
+import Mathlib.Order.BooleanSubalgebra
 import Linglib.Core.Logic.Truth3
 import Linglib.Semantics.Presupposition.Basic
 
@@ -32,9 +33,10 @@ via the paper's translation: radically counterstance-contingent = strongly discr
 
 * `Objective`, `objective_iff_fiberInvariant`, `objective_iff_preimage_image` —
   set-of-outlooks propositions (§3.1): objective = union of refinement classes =
-  fiber-invariant = saturated under the refinement map; `objectiveOrderIso` realizes the
-  paper's note that the objective propositions are (order-)isomorphic to the sets of worlds.
-  The classification predicates carry `Decidable` instances for finite models.
+  fiber-invariant = saturated under the refinement map. `objectiveSubalgebra` bundles the
+  objective propositions as a `BooleanSubalgebra` of the powerset of `Ω`, and
+  `objectiveOrderIso` realizes the paper's note that it is isomorphic to the powerset of
+  the worlds. The classification predicates carry `Decidable` instances for finite models.
 * `Objective3`, `Discretionary3`, `StronglyDiscretionary3` — the revised three-valued
   classification, plus the information-state-relativized `ObjectiveIn`/`DiscretionaryIn`/
   `StronglyDiscretionaryIn`.
@@ -109,27 +111,25 @@ theorem objective_iff_preimage_image (O : Set Ω) :
   rintro o ⟨o', ho', heq⟩
   exact ((objective_iff_fiberInvariant ρ O).mp h o' o heq).mp ho'
 
-/-- Objective propositions are closed under complement. -/
-theorem Objective.compl {O : Set Ω} (h : Objective ρ O) : Objective ρ Oᶜ :=
-  let ⟨V, hV⟩ := h; ⟨Vᶜ, by simp [hV]⟩
+/-- The objective propositions form a Boolean subalgebra of the powerset of `Ω`: preimage
+commutes with the Boolean operations, so closure under `⊔`/`⊓`/`ᶜ` is inherited from the
+powerset of `W` wholesale. -/
+def objectiveSubalgebra : BooleanSubalgebra (Set Ω) where
+  carrier := {O | Objective ρ O}
+  supClosed' := λ _ ⟨V₁, hV₁⟩ _ ⟨V₂, hV₂⟩ => ⟨V₁ ∪ V₂, by simp [hV₁, hV₂]⟩
+  infClosed' := λ _ ⟨V₁, hV₁⟩ _ ⟨V₂, hV₂⟩ => ⟨V₁ ∩ V₂, by simp [hV₁, hV₂]⟩
+  compl_mem' := λ ⟨V, hV⟩ => ⟨Vᶜ, by simp [hV]⟩
+  bot_mem' := ⟨∅, by simp⟩
 
-/-- Objective propositions are closed under intersection. -/
-theorem Objective.inter {O₁ O₂ : Set Ω} (h₁ : Objective ρ O₁) (h₂ : Objective ρ O₂) :
-    Objective ρ (O₁ ∩ O₂) :=
-  let ⟨V₁, hV₁⟩ := h₁; let ⟨V₂, hV₂⟩ := h₂; ⟨V₁ ∩ V₂, by simp [hV₁, hV₂]⟩
-
-/-- Objective propositions are closed under union — with `Objective.compl` and
-`Objective.inter`, the objective propositions form a subalgebra of the powerset of `Ω`. -/
-theorem Objective.union {O₁ O₂ : Set Ω} (h₁ : Objective ρ O₁) (h₂ : Objective ρ O₂) :
-    Objective ρ (O₁ ∪ O₂) :=
-  let ⟨V₁, hV₁⟩ := h₁; let ⟨V₂, hV₂⟩ := h₂; ⟨V₁ ∪ V₂, by simp [hV₁, hV₂]⟩
+@[simp] theorem mem_objectiveSubalgebra {O : Set Ω} :
+    O ∈ objectiveSubalgebra ρ ↔ Objective ρ O := Iff.rfl
 
 /-- When every world is refined by some outlook — [coppock-2018]'s `∝` pairs each world with
-an *inhabited* refinement class — the objective propositions are order-isomorphic to the
-sets of worlds: the powerset algebra of `W` sits inside the powerset of `Ω` as the objective
-subalgebra. -/
+an *inhabited* refinement class — the objective subalgebra is order-isomorphic to the
+powerset of the worlds (and an order iso between Boolean algebras preserves the whole
+Boolean structure). -/
 def objectiveOrderIso (hρ : Function.Surjective ρ) :
-    Set W ≃o {O : Set Ω // Objective ρ O} where
+    Set W ≃o objectiveSubalgebra ρ where
   toFun V := ⟨ρ ⁻¹' V, V, rfl⟩
   invFun O := ρ '' O.1
   left_inv V := Set.image_preimage_eq V hρ
