@@ -144,7 +144,7 @@ theorem eB_compl (a : B) : eB aᶜ = (eB a)ᶜ := by
 theorem eB_sup (a a' : B) : eB (a ⊔ a') = eB a ⊔ eB a' := by
   rw [show a ⊔ a' = (aᶜ ⊓ a'ᶜ)ᶜ by rw [_root_.compl_inf, compl_compl, compl_compl],
       eB_compl, eB_inf, eB_compl, eB_compl,
-      OrthocomplementedLattice.compl_inf, OrthocomplementedLattice.compl_compl,
-      OrthocomplementedLattice.compl_compl]
+      LatticeWithInvolution.compl_inf, LatticeWithInvolution.compl_compl,
+      LatticeWithInvolution.compl_compl]
 
 end Orthologic

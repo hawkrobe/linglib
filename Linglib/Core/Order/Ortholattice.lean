@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Mathlib.Order.BooleanAlgebra.Basic
 import Mathlib.Order.CompleteLattice.Basic
 import Mathlib.Order.Disjoint
@@ -31,7 +36,7 @@ The canonical examples are:
 ## Main results
 
 * De Morgan laws (`compl_sup`, `compl_inf`), `compl_injective`, `compl_surjective`,
-  `compl_le_compl_iff_le` — inherited from `LatticeWithInvolution` and re-exported.
+  `compl_le_compl_iff_le` — inherited from `LatticeWithInvolution` (use those names).
 * `instBooleanOrtho`: every `BooleanAlgebra` is an `OrthocomplementedLattice`
   (low priority so Boolean instances aren't obscured).
 * `instComplementedLattice`: every ortholattice is `ComplementedLattice`
@@ -75,11 +80,7 @@ class OrthocomplementedLattice (α : Type*) extends LatticeWithInvolution α whe
 namespace OrthocomplementedLattice
 
 /- The involutive-antitone consequences (De Morgan, injectivity, `le_compl_comm`, …) are
-inherited from the shared base `LatticeWithInvolution`; re-exported here so consumers can
-keep the `OrthocomplementedLattice.*` names. -/
-export LatticeWithInvolution (compl_compl compl_antitone compl_le_compl_iff_le
-  compl_injective compl_surjective compl_eq_iff_eq_compl le_compl_comm
-  compl_sup compl_inf compl_bot compl_top)
+inherited from the shared base: use the `LatticeWithInvolution.*` names. -/
 
 variable {α : Type*} [OrthocomplementedLattice α] {a b : α}
 
@@ -112,7 +113,7 @@ end OrthocomplementedLattice
 instance (priority := 100) instBooleanOrtho {α : Type*} [BooleanAlgebra α] :
     OrthocomplementedLattice α where
   compl_compl := _root_.compl_compl
-  compl_antitone := fun h => _root_.compl_le_compl h
+  compl_le_compl := fun h => _root_.compl_le_compl h
   inf_compl_le_bot := BooleanAlgebra.inf_compl_le_bot
   top_le_sup_compl := BooleanAlgebra.top_le_sup_compl
 

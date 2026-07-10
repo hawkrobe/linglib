@@ -24,6 +24,10 @@ lattice notion, not the regular-expression star-semiring that holds mathlib's ro
 algebras are here bounded, as in Balbes-Dwinger (the nLab entry defines the unbounded
 variant). `[UPSTREAM]` candidate for `Mathlib/Order/DeMorganAlgebra.lean`.
 
+TODO: a `Basic.lean` companion with the `OrderDual`/`Prod`/`Pi` instances and the
+`OrderIso α αᵒᵈ` bundling of the involution, mirroring mathlib's `Defs`/`Basic` split
+for `BooleanAlgebra`.
+
 ## Main definitions
 
 * `LatticeWithInvolution` — bounded lattice + involutive antitone `ᶜ`; De Morgan
@@ -41,18 +45,23 @@ class LatticeWithInvolution (α : Type*) extends Lattice α, BoundedOrder α, Co
   /-- Complement is involutive: `aᶜᶜ = a`. -/
   compl_compl (a : α) : aᶜᶜ = a
   /-- Complement is order-reversing. -/
-  compl_antitone {a b : α} : a ≤ b → bᶜ ≤ aᶜ
+  compl_le_compl {a b : α} : a ≤ b → bᶜ ≤ aᶜ
 
 namespace LatticeWithInvolution
 
 variable {α : Type*} [LatticeWithInvolution α] {a b : α}
 
-theorem compl_le_compl_iff_le : aᶜ ≤ bᶜ ↔ b ≤ a :=
-  ⟨fun h => compl_compl b ▸ compl_compl a ▸ compl_antitone h, fun h => compl_antitone h⟩
+/-- The complement is antitone (bundled form of the `compl_le_compl` field). -/
+theorem compl_anti : Antitone (compl : α → α) := fun _ _ h => compl_le_compl h
+
+@[simp] theorem compl_le_compl_iff_le : aᶜ ≤ bᶜ ↔ b ≤ a :=
+  ⟨fun h => compl_compl b ▸ compl_compl a ▸ compl_le_compl h, fun h => compl_le_compl h⟩
 
 theorem compl_injective : Function.Injective (compl : α → α) := fun _ _ h => by
   have := congrArg compl h
   rwa [compl_compl, compl_compl] at this
+
+@[simp] theorem compl_inj_iff : aᶜ = bᶜ ↔ a = b := compl_injective.eq_iff
 
 theorem compl_surjective : Function.Surjective (compl : α → α) :=
   fun a => ⟨aᶜ, compl_compl a⟩
@@ -62,33 +71,33 @@ theorem compl_eq_iff_eq_compl : aᶜ = b ↔ a = bᶜ :=
 
 /-- Orthogonality is symmetric: `a ≤ bᶜ ↔ b ≤ aᶜ`. -/
 theorem le_compl_comm : a ≤ bᶜ ↔ b ≤ aᶜ :=
-  ⟨fun h => compl_compl b ▸ compl_antitone h, fun h => compl_compl a ▸ compl_antitone h⟩
+  ⟨fun h => compl_compl b ▸ compl_le_compl h, fun h => compl_compl a ▸ compl_le_compl h⟩
 
 /-- De Morgan: complement of a join is the meet of complements — from involution and
 antitonicity alone; no distributivity or complementation is used. -/
-theorem compl_sup (a b : α) : (a ⊔ b)ᶜ = aᶜ ⊓ bᶜ := by
+@[simp] theorem compl_sup (a b : α) : (a ⊔ b)ᶜ = aᶜ ⊓ bᶜ := by
   apply le_antisymm
-  · exact le_inf (compl_antitone le_sup_left) (compl_antitone le_sup_right)
+  · exact le_inf (compl_le_compl le_sup_left) (compl_le_compl le_sup_right)
   · have ha : a ≤ (aᶜ ⊓ bᶜ)ᶜ := by
-      have h : aᶜᶜ ≤ (aᶜ ⊓ bᶜ)ᶜ := compl_antitone inf_le_left
+      have h : aᶜᶜ ≤ (aᶜ ⊓ bᶜ)ᶜ := compl_le_compl inf_le_left
       rwa [compl_compl] at h
     have hb : b ≤ (aᶜ ⊓ bᶜ)ᶜ := by
-      have h : bᶜᶜ ≤ (aᶜ ⊓ bᶜ)ᶜ := compl_antitone inf_le_right
+      have h : bᶜᶜ ≤ (aᶜ ⊓ bᶜ)ᶜ := compl_le_compl inf_le_right
       rwa [compl_compl] at h
-    have h := compl_antitone (sup_le ha hb)
+    have h := compl_le_compl (sup_le ha hb)
     rwa [compl_compl] at h
 
 /-- De Morgan: complement of a meet is the join of complements. -/
-theorem compl_inf (a b : α) : (a ⊓ b)ᶜ = aᶜ ⊔ bᶜ := by
+@[simp] theorem compl_inf (a b : α) : (a ⊓ b)ᶜ = aᶜ ⊔ bᶜ := by
   have h := compl_sup aᶜ bᶜ
   rw [compl_compl, compl_compl] at h
   rw [← h, compl_compl]
 
 @[simp] theorem compl_bot : (⊥ : α)ᶜ = ⊤ :=
-  le_antisymm le_top (compl_compl (⊤ : α) ▸ compl_antitone bot_le)
+  le_antisymm le_top (compl_compl (⊤ : α) ▸ compl_le_compl bot_le)
 
 @[simp] theorem compl_top : (⊤ : α)ᶜ = ⊥ := by
-  have h : (⊤ : α)ᶜ ≤ ⊥ᶜᶜ := compl_antitone le_top
+  have h : (⊤ : α)ᶜ ≤ ⊥ᶜᶜ := compl_le_compl le_top
   rw [compl_compl] at h
   exact le_antisymm h bot_le
 
@@ -110,5 +119,5 @@ Low priority so Boolean API is preferred where applicable. -/
 instance (priority := 100) BooleanAlgebra.toOrderKleeneAlgebra {α : Type*}
     [BooleanAlgebra α] : Order.KleeneAlgebra α where
   compl_compl := compl_compl
-  compl_antitone := fun h => compl_le_compl h
+  compl_le_compl := fun h => compl_le_compl h
   inf_compl_le_sup_compl a _ := (BooleanAlgebra.inf_compl_le_bot a).trans _root_.bot_le

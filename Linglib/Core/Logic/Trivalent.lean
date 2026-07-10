@@ -142,7 +142,7 @@ instance : Order.KleeneAlgebra Trivalent where
   __ := (inferInstance : BoundedOrder Trivalent)
   compl := neg
   compl_compl := neg_neg
-  compl_antitone := λ h => neg_antitone h
+  compl_le_compl := λ h => neg_antitone h
   inf_compl_le_sup_compl := inf_neg_le_sup_neg
 
 /-- `Trivalent` is not complemented — `indet` witnesses the gap between Kleene and Boolean

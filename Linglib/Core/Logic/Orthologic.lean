@@ -108,12 +108,12 @@ theorem sound {φ ψ : Formula Var} (h : φ ⊢ ψ) (v : Var → L) :
   | refl φ => exact le_refl _
   | and_le_left φ ψ => exact inf_le_left
   | and_le_right φ ψ => exact inf_le_right
-  | le_negNeg φ => exact (OrthocomplementedLattice.compl_compl _).ge
-  | negNeg_le φ => exact (OrthocomplementedLattice.compl_compl _).le
+  | le_negNeg φ => exact (LatticeWithInvolution.compl_compl _).ge
+  | negNeg_le φ => exact (LatticeWithInvolution.compl_compl _).le
   | contradiction φ ψ => exact (OrthocomplementedLattice.inf_compl_eq_bot _).le.trans bot_le
   | trans _ _ ih₁ ih₂ => exact ih₁.trans ih₂
   | le_and _ _ ih₁ ih₂ => exact le_inf ih₁ ih₂
-  | neg_le_neg _ ih => exact OrthocomplementedLattice.compl_antitone ih
+  | neg_le_neg _ ih => exact LatticeWithInvolution.compl_le_compl ih
 
 /-! ### Provability lemmas for the lattice structure
 
@@ -210,7 +210,7 @@ instance : BoundedOrder (LindenbaumTarski Var) where
 instance : OrthocomplementedLattice (LindenbaumTarski Var) where
   compl_compl a := Quotient.inductionOn a fun x =>
     Quotient.sound ⟨Derivable.negNeg_le x, Derivable.le_negNeg x⟩
-  compl_antitone {a b} := Quotient.inductionOn₂ a b
+  compl_le_compl {a b} := Quotient.inductionOn₂ a b
     (fun _ _ h => mk_le_mk.mpr (Derivable.neg_le_neg (mk_le_mk.mp h)))
   inf_compl_le_bot a := Quotient.inductionOn a fun x => mk_le_mk.mpr (Formula.and_compl_le_bot x)
   top_le_sup_compl a := Quotient.inductionOn a fun x => mk_le_mk.mpr (Formula.top_le_or_compl x)
