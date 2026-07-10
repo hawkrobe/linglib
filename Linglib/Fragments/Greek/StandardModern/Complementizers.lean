@@ -5,7 +5,7 @@ import Linglib.Syntax.Category.Complementizer.Basic
 # Modern Greek Complementizers [christidis-1982] [roussou-2010]
 [roussou-2019] [angelopoulos-2026]
 
-The three Modern Greek complementizers, as root `Complementizer`
+The four Modern Greek complementizers, as root `Complementizer`
 entries, and the matrix verbs that select them (with the attitude and
 stativity metadata [angelopoulos-2026]'s data turns on).
 
@@ -40,6 +40,16 @@ def pu : Complementizer where
   clauseForm := some .declarative
   factive := some true
 
+/-- *an* — interrogative complementizer 'if' ([roussou-2010]); types
+    embedded polar questions over indicative-inflected clauses, both
+    selected (*anarotjéme* 'wonder') and, under matrix negation or
+    question, unselected (*dhen kséro an* 'I don't know if'). -/
+def an : Complementizer where
+  form := "an"
+  position := some .detached
+  noonanType := some .indicative
+  clauseForm := some .embeddedQuestion
+
 /-- *na* — subjunctive ([grano-2024]); the *na*-selecting mood-choice
     verbs are in `MoodChoice.lean`. Whether *na* heads C or a Mood
     projection is debated; the schema is head-agnostic, and
@@ -50,7 +60,7 @@ def na : Complementizer where
   noonanType := some .subjunctive
 
 /-- The complementizer inventory. -/
-def complementizers : List Complementizer := [oti, pu, na]
+def complementizers : List Complementizer := [oti, pu, an, na]
 
 /-! ### Matrix verbs selecting *oti*
 
@@ -143,17 +153,20 @@ Eventive with *oti*, stative with *pu* ([angelopoulos-2026] ex. 19,
 polysemy rides on sense-tagged entry pairs (`SenseTag.stative`, the
 `suivreStat` pattern) rather than frame-keyed `Verb.readings` rows. -/
 
-/-- *thimáme* (θυμάμαι) 'remember' — eventive direct-perception sense,
-    the one available with *oti* ([angelopoulos-2026] ex. 22); the
-    stative recollection sense is `thimameStat`. -/
+/-- *thimáme* (θυμάμαι) 'remember' — eventive attitude sense ('recall,
+    infer that'), the one available with *oti* ([angelopoulos-2026]
+    ex. 22, fn. 16); the stative direct-perception recollection sense
+    is `thimameStat`. -/
 def thimame : Verb where
   form := "thimáme"
   frames := [Frame.finiteClause]
   attitude := some (.doxastic .veridical)
   vendlerClass := some .achievement
 
-/-- *thimáme* — stative recollection sense, the one available with
-    *pu* ([angelopoulos-2026] ex. 22, fn. 16). -/
+/-- *thimáme* — stative direct-perception recollection sense
+    ('remember him reading'), the one available with *pu*
+    ([angelopoulos-2026] fn. 16; [roussou-2010] ex. 17's strong
+    presupposition). -/
 def thimameStat : Verb where
   form := "thimáme"
   frames := [Frame.finiteClause]

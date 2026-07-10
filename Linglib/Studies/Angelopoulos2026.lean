@@ -1,4 +1,5 @@
 import Linglib.Studies.Bondarenko2022
+import Linglib.Studies.Roussou2010
 import Linglib.Fragments.Greek.StandardModern.Complementizers
 import Linglib.Data.Examples.Angelopoulos2026
 
@@ -15,7 +16,8 @@ a novel stativity restriction on complement *pu*-clauses (§2.3).
 The analysis reverses selection (§3.1): *oti* and *pu* bear an
 uninterpretable [n]-feature checked by a light noun merged in their
 specifier (partly adopting Arsenijević 2009; the paper is neutral on
-the categorial status of *oti* and *pu*, fn. 3). The noun must
+the categorial status of *oti* and *pu* — Cs in [roussou-1994], Ds in
+[roussou-2010] — fn. 3). The noun must
 incorporate into a lexical verbal head — possible from complement
 position, impossible from Spec,vP (nearest head T) or under P — which
 derives the argument asymmetry and the P-ban (§3.1 ex. 27–32). The
@@ -211,6 +213,16 @@ theorem clauseSort_matches_diagnostics :
     clauseSort pu = some .situation ∧
     NominalSort.occurrenceCompatible .situation :=
   ⟨by decide, trivial, by decide, trivial⟩
+
+/-- fn. 17's rebuttal of a reviewer's oti ~ pu allomorphy alternative,
+cross-checked against the rival lexical typology: both this account
+and [roussou-2010]'s hold the two lexically distinct — content vs
+situation sort here, indefinite vs definite propositional
+quantification there (`Roussou2010.profile`). -/
+theorem oti_pu_lexically_distinct :
+    clauseSort oti ≠ clauseSort pu ∧
+    Roussou2010.profile oti ≠ Roussou2010.profile pu := by
+  decide
 
 /-! ### Against the transparent syntax–semantics mapping (§7.3) -/
 
