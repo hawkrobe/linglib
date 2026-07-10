@@ -825,7 +825,6 @@ import Linglib.Fragments.Georgian.Morph
 import Linglib.Fragments.Georgian.Phonology
 import Linglib.Fragments.Georgian.PolarityItems
 import Linglib.Fragments.Georgian.Possession
-import Linglib.Fragments.German.AdjAgreement
 import Linglib.Fragments.German.BarePluralWordOrder
 import Linglib.Fragments.German.Case
 import Linglib.Fragments.German.ClauseTypes
@@ -859,7 +858,6 @@ import Linglib.Fragments.Gorum.AuxiliaryVerbs
 import Linglib.Fragments.Greek.Case
 import Linglib.Fragments.Greek.Grevena.Possession
 import Linglib.Fragments.Greek.Smyrna.Possession
-import Linglib.Fragments.Greek.StandardModern.AdjAgreement
 import Linglib.Fragments.Greek.StandardModern.Complementizers
 import Linglib.Fragments.Greek.StandardModern.Modals
 import Linglib.Fragments.Greek.StandardModern.MoodChoice
@@ -933,7 +931,6 @@ import Linglib.Fragments.Irish.Adposition
 import Linglib.Fragments.Irish.Coordination
 import Linglib.Fragments.Irish.Possession
 import Linglib.Fragments.Irish.WordOrder
-import Linglib.Fragments.Italian.AdjAgreement
 import Linglib.Fragments.Italian.Binominals
 import Linglib.Fragments.Italian.ClassifierSystem
 import Linglib.Fragments.Italian.Determiners
@@ -1156,7 +1153,6 @@ import Linglib.Fragments.Slavic.Params
 import Linglib.Fragments.Slavic.Polish.Case
 import Linglib.Fragments.Slavic.Polish.QuestionParticles
 import Linglib.Fragments.Slavic.Polish.VerbalPrefixes
-import Linglib.Fragments.Slavic.Russian.AdjAgreement
 import Linglib.Fragments.Slavic.Russian.Adposition
 import Linglib.Fragments.Slavic.Russian.Case
 import Linglib.Fragments.Slavic.Russian.Comparison
@@ -2781,7 +2777,6 @@ import Linglib.Studies.Zimmermann2026
 import Linglib.Studies.Zuraw2010
 import Linglib.Studies.ZurawHayes2017
 import Linglib.Studies.ZwickyPullum1983
-import Linglib.Syntax.Agreement.AdjAgreement
 import Linglib.Syntax.Agreement.Basic
 import Linglib.Syntax.Agreement.Controller
 import Linglib.Syntax.Agreement.Paradigm
