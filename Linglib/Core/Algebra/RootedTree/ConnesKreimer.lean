@@ -47,30 +47,14 @@ carrier. Realized specializations:
 ## Implementation notes
 
 `ConnesKreimer R T` wraps `AddMonoidAlgebra R (Forest T)` as a one-field
-structure rather than a `def`-synonym, for the same reason mathlib's
-`Polynomial R` wraps `AddMonoidAlgebra R ℕ`:
+structure (mathlib's `Polynomial` pattern): the bare carrier already carries
+the group-like `AddMonoidAlgebra.instBialgebra`, and a `def`-synonym leaks
+parent instance paths (an `SMul ℤ` diamond). Consumers speak the
+wrapper-native API rather than applying `AddMonoidAlgebra`/`Finsupp` lemmas
+to `ConnesKreimer` values; `toFinsuppAlgEquiv` is the bridge for wholesale
+transport.
 
-* the admissible-cut `Bialgebra` cannot live on the bare carrier —
-  mathlib's group-like `AddMonoidAlgebra.instBialgebra` already occupies it;
-* a `def`-synonym's forwarded instances leave the parent type's instance
-  paths reachable, yielding an `SMul ℤ` diamond (two routes:
-  `Algebra ℤ → Module ℤ → SMul ℤ` vs `AddCommGroup → SubNegMonoid → zsmul`).
-
-All operations are defined on the `toFinsupp` field and the instance stack
-is built by injective transport from a **single** bottom instance
-(`instCommSemiring`; a separate `AddCommMonoid` bottom would itself be a
-parallel path). The `CommRing`/`AddCommGroup` instance is a safe **global**
-instance — its `zsmul` is the pulled-back structural operation and no
-alternative path exists.
-
-Consumers should speak the wrapper-native API — `of'`, `ofTree`, `single`,
-`coeff`, `lift`, `algHom_ext`, `addHom_ext`, `counit`, and the
-`toFinsupp_*` pushforward lemmas — rather than applying
-`AddMonoidAlgebra`/`Finsupp` lemmas to `ConnesKreimer` values directly;
-`toFinsuppAlgEquiv` is the bridge for wholesale transport.
-
-`[UPSTREAM]` candidate; the upstream home would sit alongside
-`Mathlib.RingTheory.HopfAlgebra`.
+`[UPSTREAM]` candidate.
 -/
 
 noncomputable section
