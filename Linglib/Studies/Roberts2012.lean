@@ -54,6 +54,9 @@ namespace Roberts2012
 open Question
 open Discourse (QUDStack Strategy moveRelevantToStrategy)
 
+-- `decide` on `Set`-subset goals from the `_polar_iff` reductions.
+attribute [local instance] Set.decidableSubsetOfFintype
+
 -- ════════════════════════════════════════════════════
 -- § D₀ World Space
 -- ════════════════════════════════════════════════════
