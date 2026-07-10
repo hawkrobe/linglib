@@ -1,5 +1,8 @@
 import Mathlib.Data.Fintype.Prod
+import Mathlib.Data.Setoid.Basic
 import Mathlib.Order.BooleanSubalgebra
+import Mathlib.Order.Hom.CompleteLattice
+import Linglib.Core.Logic.Modal.Defs
 import Linglib.Core.Logic.Truth3
 import Linglib.Semantics.Presupposition.Basic
 
@@ -40,8 +43,8 @@ via the paper's translation: radically counterstance-contingent = strongly discr
 * `Objective3`, `Discretionary3`, `StronglyDiscretionary3` — the revised three-valued
   classification, plus the information-state-relativized `ObjectiveIn`/`DiscretionaryIn`/
   `StronglyDiscretionaryIn`.
-* `Accepts`, `Rejects`, `DisagreeAt`, `Opinionated` — doxastic states as sets of outlooks
-  with accessibility `R : Ω → Set Ω`.
+* `Accepts`, `Rejects`, `DisagreeAt`, `Opinionated` — doxastic accessibility as a binary
+  relation on outlooks (§5's `R_a`), acceptance as the Kripke box (`Core.Logic.Modal.box`).
 * `AtFault` — the norm of accuracy: asserting what is objectively false at the context world.
 * `think`, `tycka` — the attitude verbs as `PartialProp`s: same assertion (doxastic
   acceptance), differing only in *tycka*'s strong-discretionariness presupposition.
@@ -71,6 +74,7 @@ via the paper's translation: radically counterstance-contingent = strongly discr
 namespace Coppock2018
 
 open Core.Duality (Truth3 Prop3)
+open Core.Logic.Modal (AccessRel box)
 open Semantics.Presupposition (PartialProp)
 
 variable {W Ω : Type*}
@@ -111,18 +115,22 @@ theorem objective_iff_preimage_image (O : Set Ω) :
   rintro o ⟨o', ho', heq⟩
   exact ((objective_iff_fiberInvariant ρ O).mp h o' o heq).mp ho'
 
-/-- The objective propositions form a Boolean subalgebra of the powerset of `Ω`: preimage
-commutes with the Boolean operations, so closure under `⊔`/`⊓`/`ᶜ` is inherited from the
-powerset of `W` wholesale. -/
-def objectiveSubalgebra : BooleanSubalgebra (Set Ω) where
-  carrier := {O | Objective ρ O}
-  supClosed' := λ _ ⟨V₁, hV₁⟩ _ ⟨V₂, hV₂⟩ => ⟨V₁ ∪ V₂, by simp [hV₁, hV₂]⟩
-  infClosed' := λ _ ⟨V₁, hV₁⟩ _ ⟨V₂, hV₂⟩ => ⟨V₁ ∩ V₂, by simp [hV₁, hV₂]⟩
-  compl_mem' := λ ⟨V, hV⟩ => ⟨Vᶜ, by simp [hV]⟩
-  bot_mem' := ⟨∅, by simp⟩
+/-- Only the kernel of the refinement map matters: objectivity is constancy on the classes
+of `Setoid.ker ρ`. (The worlds beyond the fibers are inert — `W` could be replaced by
+`Quotient (Setoid.ker ρ)` without loss.) -/
+theorem objective_iff_ker_invariant (O : Set Ω) :
+    Objective ρ O ↔ ∀ o o', Setoid.ker ρ o o' → (o ∈ O ↔ o' ∈ O) :=
+  objective_iff_fiberInvariant ρ O
+
+/-- The objective propositions form a Boolean subalgebra of the powerset of `Ω`: the image
+of the powerset of `W` under `Set.preimage ρ` bundled as a bounded-lattice homomorphism, so
+closure under `⊔`/`⊓`/`ᶜ` is inherited wholesale rather than proved operation-by-operation. -/
+def objectiveSubalgebra : BooleanSubalgebra (Set Ω) :=
+  .map (CompleteLatticeHom.setPreimage ρ).toBoundedLatticeHom ⊤
 
 @[simp] theorem mem_objectiveSubalgebra {O : Set Ω} :
-    O ∈ objectiveSubalgebra ρ ↔ Objective ρ O := Iff.rfl
+    O ∈ objectiveSubalgebra ρ ↔ Objective ρ O := by
+  simp [objectiveSubalgebra, Objective, eq_comm]
 
 /-- When every world is refined by some outlook — [coppock-2018]'s `∝` pairs each world with
 an *inhabited* refinement class — the objective subalgebra is order-isomorphic to the
@@ -130,10 +138,11 @@ powerset of the worlds (and an order iso between Boolean algebras preserves the 
 Boolean structure). -/
 def objectiveOrderIso (hρ : Function.Surjective ρ) :
     Set W ≃o objectiveSubalgebra ρ where
-  toFun V := ⟨ρ ⁻¹' V, V, rfl⟩
+  toFun V := ⟨ρ ⁻¹' V, (mem_objectiveSubalgebra ρ).mpr ⟨V, rfl⟩⟩
   invFun O := ρ '' O.1
   left_inv V := Set.image_preimage_eq V hρ
-  right_inv O := Subtype.ext ((objective_iff_preimage_image ρ O.1).mp O.2)
+  right_inv O := Subtype.ext
+    ((objective_iff_preimage_image ρ O.1).mp ((mem_objectiveSubalgebra ρ).mp O.2))
   map_rel_iff' {V₁ V₂} :=
     Set.preimage_subset_preimage_iff (by rw [hρ.range_eq]; exact Set.subset_univ V₁)
 
@@ -258,41 +267,41 @@ theorem stronglyDiscretionary3_never_atFault {p : Prop3 Ω}
 
 /-! ### Doxastic states, acceptance, and disagreement (§3.3)
 
-A doxastic state is a set of outlooks; `R o` is the set of outlooks doxastically accessible
-at `o` (doxastic states vary from outlook to outlook, since whether an agent holds a belief
-is itself settled by outlooks). To *accept* a proposition is for it to hold throughout one's
-accessible outlooks; to *reject* it is for it to fail throughout. -/
+An agent's accessibility is a binary relation on outlooks ([coppock-2018] §5's `R_a`); the
+doxastic state at `o` is the set of outlooks it reaches (states vary from outlook to
+outlook, since whether an agent holds a belief is itself settled by outlooks). To *accept*
+a proposition is for it to hold throughout one's accessible outlooks — the Kripke box
+(`Core.Logic.Modal.box`) over outlooks with the proposition's truth as valuation. -/
 
 /-- An agent with accessibility `R` **accepts** `p` at `o`: `p` holds at every accessible
 outlook. -/
-def Accepts (R : Ω → Set Ω) (p : Prop3 Ω) (o : Ω) : Prop := ∀ o' ∈ R o, p o' = .true
+def Accepts (R : AccessRel Ω) (p : Prop3 Ω) : Ω → Prop := box R (p · = .true)
 
 /-- An agent with accessibility `R` **rejects** `p` at `o`: `p` fails at every accessible
 outlook. Rejection is stronger than non-acceptance. -/
-def Rejects (R : Ω → Set Ω) (p : Prop3 Ω) (o : Ω) : Prop := ∀ o' ∈ R o, p o' = .false
+def Rejects (R : AccessRel Ω) (p : Prop3 Ω) : Ω → Prop := box R (p · = .false)
 
 /-- Two agents **disagree** about `p` at `o` when one accepts it and the other rejects it. -/
-def DisagreeAt (R₁ R₂ : Ω → Set Ω) (p : Prop3 Ω) (o : Ω) : Prop :=
+def DisagreeAt (R₁ R₂ : AccessRel Ω) (p : Prop3 Ω) (o : Ω) : Prop :=
     Accepts R₁ p o ∧ Rejects R₂ p o
 
 /-- An agent is **opinionated** about `p` at `o` when they accept or reject it; lack of
 opinionatedness — both live possibilities — is the state *tycka*-reports deny without
 contradiction ([coppock-2018] (38)). -/
-def Opinionated (R : Ω → Set Ω) (p : Prop3 Ω) (o : Ω) : Prop :=
+def Opinionated (R : AccessRel Ω) (p : Prop3 Ω) (o : Ω) : Prop :=
     Accepts R p o ∨ Rejects R p o
 
 section Decidability
 
-variable [Fintype Ω] (R : Ω → Set Ω) [∀ o o', Decidable (o' ∈ R o)] (p : Prop3 Ω) (o : Ω)
+variable [Fintype Ω] (R : AccessRel Ω) [DecidableRel R] (p : Prop3 Ω) (o : Ω)
 
 instance : Decidable (Accepts R p o) :=
-  inferInstanceAs (Decidable (∀ o' ∈ R o, p o' = .true))
+  inferInstanceAs (Decidable (∀ o', R o o' → p o' = .true))
 
 instance : Decidable (Rejects R p o) :=
-  inferInstanceAs (Decidable (∀ o' ∈ R o, p o' = .false))
+  inferInstanceAs (Decidable (∀ o', R o o' → p o' = .false))
 
-instance (R₂ : Ω → Set Ω) [∀ o o', Decidable (o' ∈ R₂ o)] :
-    Decidable (DisagreeAt R R₂ p o) :=
+instance (R₂ : AccessRel Ω) [DecidableRel R₂] : Decidable (DisagreeAt R R₂ p o) :=
   inferInstanceAs (Decidable (Accepts R p o ∧ Rejects R₂ p o))
 
 instance : Decidable (Opinionated R p o) :=
@@ -337,13 +346,14 @@ non-linguist world. -/
 example : ¬ StronglyDiscretionary3 chiliWorld sexyLinguist := by decide
 
 /-- John's doxastic state: only tasty-outlooks accessible. -/
-abbrev johnR : ChiliOutlook → Set ChiliOutlook := λ _ => {o | o.1 = true}
+abbrev johnR : AccessRel ChiliOutlook := λ _ o' => o'.1 = true
 
 /-- Mary's doxastic state: only non-tasty-outlooks accessible. -/
-abbrev maryR : ChiliOutlook → Set ChiliOutlook := λ _ => {o | o.1 = false}
+abbrev maryR : AccessRel ChiliOutlook := λ _ o' => o'.1 = false
 
-/-- An unopinionated agent: both possibilities for tastiness accessible. -/
-abbrev openR : ChiliOutlook → Set ChiliOutlook := λ _ => Set.univ
+/-- An unopinionated agent: every outlook accessible (`Core.Logic.Modal.universalR`,
+inlined for decidability). -/
+abbrev openR : AccessRel ChiliOutlook := λ _ _ => True
 
 /-- **The chili dialogue is a genuine disagreement**: at every outlook, John accepts *tasty*
 and Mary rejects it. -/
@@ -376,29 +386,29 @@ partiality); the presupposition is outlook-independent because discretionariness
 property of `p` against `C`. -/
 
 /-- *think*: bare doxastic acceptance, no presupposition. -/
-def think (R : Ω → Set Ω) (p : Prop3 Ω) : PartialProp Ω :=
+def think (R : AccessRel Ω) (p : Prop3 Ω) : PartialProp Ω :=
   ⟨λ _ => True, Accepts R p⟩
 
 /-- *tycka* 'think[opinion]': doxastic acceptance, presupposing that the complement is
 strongly discretionary relative to the information state `C`. -/
-def tycka (R : Ω → Set Ω) (p : Prop3 Ω) : PartialProp Ω :=
+def tycka (R : AccessRel Ω) (p : Prop3 Ω) : PartialProp Ω :=
   ⟨λ _ => StronglyDiscretionaryIn ρ C p, Accepts R p⟩
 
 /-- *think* and *tycka* assert the same thing — the verbs differ only in *tycka*'s
 discretionariness presupposition. -/
-theorem think_tycka_same_assertion (R : Ω → Set Ω) (p : Prop3 Ω) :
+theorem think_tycka_same_assertion (R : AccessRel Ω) (p : Prop3 Ω) :
     (think R p).assertion = (tycka ρ C R p).assertion := rfl
 
 /-- *tycka*'s subjectivity requirement projects through negation (via `PartialProp.neg`):
 *"#I don't think[opinion] it's Tuesday"* is as bad as the unnegated version. -/
-theorem tycka_presup_survives_neg (R : Ω → Set Ω) (p : Prop3 Ω) :
+theorem tycka_presup_survives_neg (R : AccessRel Ω) (p : Prop3 Ω) :
     (PartialProp.neg (tycka ρ C R p)).presup = (tycka ρ C R p).presup := rfl
 
 /-- An objective complement is presupposition failure for *tycka*, given that the state
 leaves some world's refinements open in a way `p` actually cuts — the
 *"#I think[opinion] it's Tuesday / that she's a doctor"* effect. -/
 theorem tycka_undefined_of_objectiveIn {p : Prop3 Ω} (hobj : ObjectiveIn ρ C p)
-    {w : W} (hw : (ρ ⁻¹' {w} ∩ C).Nonempty) (R : Ω → Set Ω) (o : Ω) :
+    {w : W} (hw : (ρ ⁻¹' {w} ∩ C).Nonempty) (R : AccessRel Ω) (o : Ω) :
     ¬ (tycka ρ C R p).presup o :=
   λ h =>
     let ⟨o₁, ho₁, o₂, ho₂, hw₁, hw₂, ht, hf⟩ := h w hw

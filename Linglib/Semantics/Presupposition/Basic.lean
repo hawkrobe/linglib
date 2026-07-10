@@ -1,5 +1,6 @@
 import Linglib.Core.Logic.Truth3
 import Mathlib.Data.Finset.Basic
+import Mathlib.Data.Part
 
 /-!
 # Partial Propositions
@@ -89,6 +90,22 @@ variable {W : Type*} {α : Type*}
 
 /-- A presupposed value is defined at w iff its presupposition holds. -/
 def defined (w : W) (pv : PartialValue W α) : Prop := pv.presup w
+
+/-- The mathlib rendering: pointwise, a presupposed value is a `Part`-valued function, the
+presupposition as domain. `PartialValue` is the *total-representative* presentation — the
+record carries a value everywhere (no proof-carrying `Part.get`); `toPart` forgets the
+values outside the presupposition. -/
+def toPart (pv : PartialValue W α) : W → Part α := λ w => ⟨pv.presup w, λ _ => pv.value w⟩
+
+open Classical in
+/-- Every `Part`-valued function has a total representative: `toPart` is surjective, so the
+two presentations differ only by the (linguistically inert) values outside the
+presupposition. -/
+theorem toPart_surjective [Inhabited α] :
+    Function.Surjective (toPart : PartialValue W α → W → Part α) := λ f =>
+  ⟨⟨λ w => (f w).Dom, λ w => if h : (f w).Dom then (f w).get h else default⟩, by
+    funext w
+    exact Part.ext' Iff.rfl (λ h₁ _ => dif_pos h₁)⟩
 
 end PartialValue
 
