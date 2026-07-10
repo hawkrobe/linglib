@@ -2123,6 +2123,7 @@ import Linglib.Studies.Cooper2023.Basic
 import Linglib.Studies.Cooper2023.Ch6
 import Linglib.Studies.Cooper2023.Ch7
 import Linglib.Studies.Cooper2023.Ch8
+import Linglib.Studies.Coppock2018
 import Linglib.Studies.CoppockBeaver2015
 import Linglib.Studies.Corbett1991
 import Linglib.Studies.Corbett1998
