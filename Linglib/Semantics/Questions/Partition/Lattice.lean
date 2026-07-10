@@ -43,6 +43,16 @@ Coarsening merges cells: where Q' distinguishes elements, Q may not.
 negation is the linguistic device that produces coarsenings on the fly. -/
 def coarsens (q q' : QUD M) : Prop := q' ⊑ q
 
+/-- Refinement is the `Setoid` order on the underlying equivalence
+relations: the Bool layer and the `Setoid` layer agree. -/
+theorem refines_iff_toSetoid_le {q q' : QUD M} :
+    q ⊑ q' ↔ q.toSetoid ≤ q'.toSetoid := by
+  constructor
+  · intro h x y hxy
+    exact (sameAnswer_eq_true_iff q' x y).mp (h x y (sameAnswer_of_r hxy))
+  · intro h w v hwv
+    exact sameAnswer_of_r (h ((sameAnswer_eq_true_iff q w v).mp hwv))
+
 /-- Refinement is reflexive. -/
 theorem refines_refl (q : QUD M) : q ⊑ q := λ _ _ h => h
 

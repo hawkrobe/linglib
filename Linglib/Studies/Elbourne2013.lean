@@ -3,7 +3,6 @@ import Linglib.Features.Definiteness
 import Linglib.Semantics.Definiteness.Maximality
 import Linglib.Semantics.Intensional.Rigidity
 import Linglib.Semantics.Questions.Partition.QUD
-import Linglib.Semantics.Questions.PrecisionProjection
 import Linglib.Discourse.QUD.Basic
 import Linglib.Semantics.Definiteness.Basic
 import Linglib.Semantics.Reference.Donnellan

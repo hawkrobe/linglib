@@ -4,7 +4,6 @@ import Linglib.Pragmatics.BToM
 import Linglib.Pragmatics.RSA.Canonical
 import Linglib.Discourse.CommonGround
 import Linglib.Semantics.Questions.Partition.QUD
-import Linglib.Semantics.Questions.PrecisionProjection
 import Linglib.Discourse.QUD.Basic
 import Linglib.Features.Subjectivity
 

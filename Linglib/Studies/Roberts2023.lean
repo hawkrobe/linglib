@@ -11,7 +11,6 @@ import Mathlib.Data.Fin.Basic
 import Mathlib.Data.List.Sort
 import Linglib.Discourse.Commitment.Basic
 import Linglib.Semantics.Questions.Partition.QUD
-import Linglib.Semantics.Questions.PrecisionProjection
 import Linglib.Semantics.Mood.State
 
 /-!

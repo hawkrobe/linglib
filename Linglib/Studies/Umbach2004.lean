@@ -1,7 +1,6 @@
 import Linglib.Features.InformationStructure
 import Linglib.Discourse.Coherence
 import Linglib.Semantics.Questions.Partition.QUD
-import Linglib.Semantics.Questions.PrecisionProjection
 import Linglib.Semantics.Questions.Resolution
 import Linglib.Semantics.Questions.Partition.Basic
 import Linglib.Discourse.QUD.Basic
