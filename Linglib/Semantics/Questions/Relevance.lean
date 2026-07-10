@@ -68,8 +68,8 @@ def questionEntails (P Q : Question W) : Prop :=
 def isSubquestion (q parent : Question W) : Prop :=
   questionEntails parent q
 
-/-- A move is relevant to the QUD if some alternative partially answers
-it or one of the subquestions. -/
+/-- A move is relevant if one of its alternatives partially answers the
+QUD or one of the subquestions. -/
 def moveRelevant (den qud : Question W) (subquestions : List (Question W)) : Prop :=
   ∃ a ∈ alt den,
     partiallyAnswers qud a ∨ ∃ q ∈ subquestions, partiallyAnswers q a
@@ -133,8 +133,8 @@ theorem isSubquestion_trans
     isSubquestion P R :=
   questionEntails_trans hQR hPQ
 
-/-- A move one of whose alternatives partially answers the QUD is
-relevant. -/
+/-- A move is relevant if one of its alternatives partially answers the
+QUD directly, with no subquestions. -/
 theorem moveRelevant_of_partiallyAnswers
     {den qud : Question W} {a : Set W} (ha : a ∈ alt den)
     (h : partiallyAnswers qud a) :
