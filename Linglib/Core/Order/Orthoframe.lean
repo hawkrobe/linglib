@@ -88,7 +88,7 @@ theorem extent_bot_eq_empty [Std.Irrefl r] : (⊥ : Concept S S r).extent = ∅ 
 instance instOrthocomplementedLattice [Std.Symm r] [Std.Irrefl r] :
     OrthocomplementedLattice (Concept S S r) where
   compl_compl c := Concept.ext <| by simp [Order.upperPolar_eq_lowerPolar]
-  compl_antitone {c d} h := by
+  compl_le_compl {c d} h := by
     show d.intent ⊆ c.intent
     rw [← c.upperPolar_extent, ← d.upperPolar_extent]; exact upperPolar_anti r h
   inf_compl_le_bot c := fun x hx => absurd (rel_extent_intent hx.1 hx.2) (Std.Irrefl.irrefl x)

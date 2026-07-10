@@ -3,7 +3,7 @@ import Mathlib.Data.Setoid.Basic
 import Mathlib.Order.BooleanSubalgebra
 import Mathlib.Order.Hom.CompleteLattice
 import Linglib.Core.Logic.Modal.Defs
-import Linglib.Core.Logic.Truth3
+import Linglib.Core.Logic.Trivalent
 import Linglib.Semantics.Presupposition.Basic
 
 /-!
@@ -14,8 +14,8 @@ import Linglib.Semantics.Presupposition.Basic
 that settle matters of opinion as well as fact — **replace** possible worlds as circumstances
 of evaluation, rather than supplementing them with a judge as in world-judge relativism
 ([lasersohn-2005]). A proposition is a function from outlooks to three truth values
-(`Prop3 Ω`, with [coppock-2018]'s Weak Kleene connectives available as `Truth3.meetWeak`/
-`Truth3.joinWeak`/`Truth3.neg`); it is *objective* when its truth value never splits within
+(`Prop3 Ω`, with [coppock-2018]'s Weak Kleene connectives available as `Trivalent.meetWeak`/
+`Trivalent.joinWeak`/`Trivalent.neg`); it is *objective* when its truth value never splits within
 a world's refinement class, *discretionary* when it does, and *strongly discretionary* when
 it splits within every world's class. Faultless disagreement ([kolbel-2003]) then falls out:
 two agents can accept and reject the same strongly discretionary proposition at one outlook
@@ -73,7 +73,7 @@ via the paper's translation: radically counterstance-contingent = strongly discr
 
 namespace Coppock2018
 
-open Core.Duality (Truth3 Prop3)
+open Trivalent (Prop3)
 open Core.Logic.Modal (AccessRel box)
 open Semantics.Presupposition (PartialProp)
 

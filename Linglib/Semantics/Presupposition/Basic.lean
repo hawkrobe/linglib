@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Truth3
+import Linglib.Core.Logic.Trivalent
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Part
 
@@ -22,7 +22,7 @@ points. References: [heim-1983], [schlenker-2009], [von-fintel-1999],
   filtering / Karttunen (`andFilter`, `impFilter`, `orFilter`), K&P
   symmetric disjunction (`orKPSymmetric`), positive-antecedent
   disjunction (`orPositive`, a documented rival), Strong Kleene
-  (`andStrong`, `orStrong` — the `Truth3` lattice meet/join), and Belnap
+  (`andStrong`, `orStrong` — the `Trivalent` lattice meet/join), and Belnap
   conditional assertion (`andBelnap`, `orBelnap`; the
   flexible-accommodation `andFlex`/`orFlex` are definitionally the same
   operators). Classical `and`/`or` are simultaneously Weak Kleene; the
@@ -50,9 +50,9 @@ points. References: [heim-1983], [schlenker-2009], [von-fintel-1999],
 (dynamic world-assignment pairs).
 
 The choice of connective system (how gaps behave under ∧/∨) is orthogonal
-to the representation type — see `Truth3.GapPolicy`. Connectives are
+to the representation type — see `Trivalent.GapPolicy`. Connectives are
 paired with `eval_*` bridge theorems mapping each to the corresponding
-`Truth3` operator on the evaluation.
+`Trivalent` operator on the evaluation.
 
 `open Classical` is in scope at the namespace level because most
 theorems case-split on `Prop`-valued fields. Mathlib uses the same
@@ -63,14 +63,14 @@ idiom in logic-heavy files such as `Mathlib/Order/Filter/Basic.lean`.
 * `PartialProp W = PartialValue W Prop` unification: `PartialValue` already generalizes
   `PartialProp` at the type level; unifying would let the connective zoo lift
   to arbitrary at-issue carriers.
-* `evalLift : (Truth3 → Truth3 → Truth3) → (PartialProp W → PartialProp W → PartialProp W)`
+* `evalLift : (Trivalent → Trivalent → Trivalent) → (PartialProp W → PartialProp W → PartialProp W)`
   would collapse `xor`, `andBelnap`, `orBelnap` into
   one definition each, with one bridge theorem instead of eight.
 -/
 
 namespace Semantics.Presupposition
 
-open Core.Duality
+open Trivalent (Prop3)
 
 /-- A presupposed value: a value that is only defined when its
 presupposition holds.
@@ -257,7 +257,7 @@ def imp (p q : PartialProp W) : PartialProp W where
 
 /-- Exclusive disjunction: both presuppositions must hold (no filtering).
 
-    Under Strong Kleene, `Truth3.xor` propagates undefinedness
+    Under Strong Kleene, `Trivalent.xor` propagates undefinedness
     unconditionally (`xor_indet_iff`), so exclusive disjunction never
     filters presupposition failure from either disjunct.
     [wang-davidson-2026] -/
@@ -337,7 +337,7 @@ def orKPSymmetric (p q : PartialProp W) : PartialProp W where
 
 /-- Strong Kleene disjunction ([kleene-1952]): defined iff both disjuncts
     are defined or either is defined-and-true (`T ∨ # = T`, `F ∨ # = #`).
-    This is the `Truth3` lattice join — see `eval_orStrong`. -/
+    This is the `Trivalent` lattice join — see `eval_orStrong`. -/
 def orStrong (p q : PartialProp W) : PartialProp W where
   presup := fun w => (p.presup w ∧ q.presup w) ∨
     (p.presup w ∧ p.assertion w) ∨ (q.presup w ∧ q.assertion w)
@@ -346,7 +346,7 @@ def orStrong (p q : PartialProp W) : PartialProp W where
 
 /-- Strong Kleene conjunction: defined iff both conjuncts are defined or
     either is defined-and-false (`F ∧ # = F`, `T ∧ # = #`). This is the
-    `Truth3` lattice meet — see `eval_andStrong`. -/
+    `Trivalent` lattice meet — see `eval_andStrong`. -/
 def andStrong (p q : PartialProp W) : PartialProp W where
   presup := fun w => (p.presup w ∧ q.presup w) ∨
     (p.presup w ∧ ¬p.assertion w) ∨ (q.presup w ∧ ¬q.assertion w)
@@ -567,18 +567,18 @@ theorem impFilter_presup_eq_andFilter_presup (p q : PartialProp W) :
 @[simp] theorem eval_isDefined (p : PartialProp W) (w : W) :
     (p.eval w).isDefined ↔ p.presup w := by
   by_cases hp : p.presup w <;> by_cases ha : p.assertion w <;>
-    simp [eval, hp, ha, Truth3.isDefined]
+    simp [eval, hp, ha, Trivalent.isDefined]
 
 /-- Negation evaluation. -/
 theorem eval_neg (p : PartialProp W) (w : W) :
-    (neg p).eval w = Truth3.neg (p.eval w) := by
+    (neg p).eval w = Trivalent.neg (p.eval w) := by
   simp only [eval, neg]
   by_cases hp : p.presup w
   · simp only [if_pos hp]
     by_cases ha : p.assertion w
-    · simp [if_pos ha, if_neg (not_not.mpr ha), Truth3.neg]
-    · simp [if_neg ha, if_pos ha, Truth3.neg]
-  · simp [if_neg hp, Truth3.neg]
+    · simp [if_pos ha, if_neg (not_not.mpr ha), Trivalent.neg]
+    · simp [if_neg ha, if_pos ha, Trivalent.neg]
+  · simp [if_neg hp, Trivalent.neg]
 
 /-- Classical conjunction evaluation (both defined). -/
 theorem eval_and (p q : PartialProp W) (w : W)
@@ -609,7 +609,7 @@ theorem eval_impFilter_antecedent_true (p q : PartialProp W) (w : W)
   · have hass : ¬(impFilter p q).assertion w := fun h => hqa (h ha)
     simp only [eval, if_pos hpresup, if_neg hass, if_neg hqa]
 
-/-- `orStrong` evaluates to the `Truth3` lattice join pointwise: Strong
+/-- `orStrong` evaluates to the `Trivalent` lattice join pointwise: Strong
     Kleene disjunction is ⊔ in the `false < indet < true` order,
     unconditionally. -/
 theorem eval_orStrong (p q : PartialProp W) (w : W) :
@@ -618,7 +618,7 @@ theorem eval_orStrong (p q : PartialProp W) (w : W) :
     by_cases ha : p.assertion w <;> by_cases hb : q.assertion w <;>
     simp [eval, orStrong, hp, hq, ha, hb] <;> decide
 
-/-- `andStrong` evaluates to the `Truth3` lattice meet pointwise,
+/-- `andStrong` evaluates to the `Trivalent` lattice meet pointwise,
     unconditionally. -/
 theorem eval_andStrong (p q : PartialProp W) (w : W) :
     (andStrong p q).eval w = p.eval w ⊓ q.eval w := by
@@ -628,30 +628,30 @@ theorem eval_andStrong (p q : PartialProp W) (w : W) :
 
 /-- **Karttunen filtering conjunction is Peters' middle Kleene**
     ([peters-1979]): `andFilter` evaluates to the asymmetric
-    `Truth3.meetMiddle` on both dimensions, unconditionally. -/
+    `Trivalent.meetMiddle` on both dimensions, unconditionally. -/
 theorem eval_andFilter (p q : PartialProp W) (w : W) :
-    (andFilter p q).eval w = Truth3.meetMiddle (p.eval w) (q.eval w) := by
+    (andFilter p q).eval w = Trivalent.meetMiddle (p.eval w) (q.eval w) := by
   by_cases hp : p.presup w <;> by_cases hq : q.presup w <;>
     by_cases ha : p.assertion w <;> by_cases hb : q.assertion w <;>
-    simp [eval, andFilter, Truth3.meetMiddle, hp, hq, ha, hb] <;> decide
+    simp [eval, andFilter, Trivalent.meetMiddle, hp, hq, ha, hb] <;> decide
 
 /-- **Karttunen filtering disjunction is Peters' middle Kleene**
     ([peters-1979]): `orFilter` evaluates to the asymmetric
-    `Truth3.joinMiddle` on both dimensions, unconditionally. -/
+    `Trivalent.joinMiddle` on both dimensions, unconditionally. -/
 theorem eval_orFilter (p q : PartialProp W) (w : W) :
-    (orFilter p q).eval w = Truth3.joinMiddle (p.eval w) (q.eval w) := by
+    (orFilter p q).eval w = Trivalent.joinMiddle (p.eval w) (q.eval w) := by
   by_cases hp : p.presup w <;> by_cases hq : q.presup w <;>
     by_cases ha : p.assertion w <;> by_cases hb : q.assertion w <;>
-    simp [eval, orFilter, Truth3.joinMiddle, hp, hq, ha, hb] <;> decide
+    simp [eval, orFilter, Trivalent.joinMiddle, hp, hq, ha, hb] <;> decide
 
-/-- Exclusive disjunction evaluation matches `Truth3.xor` when both defined. -/
+/-- Exclusive disjunction evaluation matches `Trivalent.xor` when both defined. -/
 theorem eval_xor (p q : PartialProp W) (w : W)
     (hp : p.presup w) (hq : q.presup w) :
-    (xor p q).eval w = Truth3.xor (p.eval w) (q.eval w) := by
+    (xor p q).eval w = Trivalent.xor (p.eval w) (q.eval w) := by
   have hpq : p.presup w ∧ q.presup w := ⟨hp, hq⟩
   simp only [eval, xor, if_pos hp, if_pos hq, if_pos hpq]
   by_cases ha : p.assertion w <;> by_cases hb : q.assertion w <;>
-    simp [ha, hb, Truth3.xor]
+    simp [ha, hb, Trivalent.xor]
 
 /-- Exclusive disjunction never filters: when either presupposition fails,
     the result is undefined. [wang-davidson-2026] -/
@@ -711,27 +711,27 @@ theorem andFlex_presup_weaker (p q : PartialProp W) (w : W)
 
 /-! ### Eval: Weak Kleene / Belnap -/
 
-/-- `or` evaluates to `Truth3.joinWeak` pointwise (classical disjunction
+/-- `or` evaluates to `Trivalent.joinWeak` pointwise (classical disjunction
     is Weak Kleene). -/
 theorem eval_or (p q : PartialProp W) (w : W) :
-    (or p q).eval w = Truth3.joinWeak (p.eval w) (q.eval w) := by
-  simp only [eval, or, Truth3.joinWeak]
+    (or p q).eval w = Trivalent.joinWeak (p.eval w) (q.eval w) := by
+  simp only [eval, or, Trivalent.joinWeak]
   by_cases hp : p.presup w <;> by_cases hq : q.presup w <;> simp [hp, hq] <;>
     by_cases ha : p.assertion w <;> by_cases hb : q.assertion w <;>
     simp [ha, hb]
 
-/-- Belnap conjunction evaluates to `Truth3.meetBelnap` pointwise. -/
+/-- Belnap conjunction evaluates to `Trivalent.meetBelnap` pointwise. -/
 theorem eval_andBelnap (p q : PartialProp W) (w : W) :
-    (andBelnap p q).eval w = Truth3.meetBelnap (p.eval w) (q.eval w) := by
-  simp only [eval, andBelnap, Truth3.meetBelnap]
+    (andBelnap p q).eval w = Trivalent.meetBelnap (p.eval w) (q.eval w) := by
+  simp only [eval, andBelnap, Trivalent.meetBelnap]
   by_cases hp : p.presup w <;> by_cases hq : q.presup w <;> simp [hp, hq] <;>
     by_cases ha : p.assertion w <;> by_cases hb : q.assertion w <;>
     simp [ha, hb]
 
-/-- Belnap disjunction evaluates to `Truth3.joinBelnap` pointwise. -/
+/-- Belnap disjunction evaluates to `Trivalent.joinBelnap` pointwise. -/
 theorem eval_orBelnap (p q : PartialProp W) (w : W) :
-    (orBelnap p q).eval w = Truth3.joinBelnap (p.eval w) (q.eval w) := by
-  simp only [eval, orBelnap, Truth3.joinBelnap]
+    (orBelnap p q).eval w = Trivalent.joinBelnap (p.eval w) (q.eval w) := by
+  simp only [eval, orBelnap, Trivalent.joinBelnap]
   by_cases hp : p.presup w <;> by_cases hq : q.presup w <;> simp [hp, hq] <;>
     by_cases ha : p.assertion w <;> by_cases hb : q.assertion w <;>
     simp [ha, hb]

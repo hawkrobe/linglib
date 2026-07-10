@@ -99,7 +99,7 @@ L&G's probabilistic resolution of the sorites and characterisation of
 borderline cases are *one* of several formalised positions in linglib:
 
 * `Studies/Fine1975.lean` — supervaluation,
-  borderline mapped to `Truth3.indet`, sorites resolved by super-falsity
+  borderline mapped to `Trivalent.indet`, sorites resolved by super-falsity
   of the inductive premise.
 * `Linglib/Semantics/Supervaluation/TCS.lean` —
   Cobreros-Égré-Ripley-van-Rooij Tolerant/Strict/Classical, sorites
@@ -189,7 +189,7 @@ is intermediate exactly when the threshold posterior straddles the
 height being judged.
 
 **Cross-framework note**: this characterisation is contested.
-Supervaluation (`Fine1975.lean`) maps borderline to `Truth3.indet`;
+Supervaluation (`Fine1975.lean`) maps borderline to `Trivalent.indet`;
 epistemicism denies the very framing (borderline cases have determinate
 Boolean truth values we don't know); TCS predicts borderline
 contradictions are tolerantly *true*, with empirical support from

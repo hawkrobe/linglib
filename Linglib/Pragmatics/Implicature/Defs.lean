@@ -25,7 +25,7 @@ The ontology of "what an implicature is" is contested in the literature:
   change in degrees of belief, not a discrete proposition. Instantiated
   by `S := ℝ≥0` or similar graded type.
 - **Trivalent** accounts (presupposition-bearing, partial) instantiate
-  with `S := Truth3`.
+  with `S := Truth`.
 
 Parameterizing rather than committing lets each mechanism use its
 native output type. The categorical Gricean diagnostics
@@ -158,7 +158,7 @@ A pragmatic inference, parameterized by:
 - **`W`** — the world type
 - **`S`** — the strength type (default `Prop` for the discrete /
   Gricean / grammaticalist ontology; instantiate with `ℝ≥0` for
-  graded / RSA-style; with `Truth3` for trivalent)
+  graded / RSA-style; with `Truth` for trivalent)
 
 Every value carries:
 - `kind`      — taxonomic classification

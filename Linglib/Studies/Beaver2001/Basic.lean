@@ -1,5 +1,5 @@
 import Linglib.Semantics.Presupposition.Context
-import Linglib.Core.Logic.Truth3
+import Linglib.Core.Logic.Trivalent
 import Linglib.Semantics.Presupposition.Accommodation
 import Linglib.Semantics.Presupposition.LocalContext
 import Linglib.Studies.Beaver2001.ABLE
@@ -67,7 +67,7 @@ partially addressed by the `QuantifierProjection` type in
 namespace Beaver2001
 
 open Semantics.Presupposition
-open Core.Duality
+open Trivalent (joinMiddle)
 open CommonGround
 
 variable {W : Type*}
@@ -97,7 +97,7 @@ This uniformity is empirically too strong: "if p then q" presupposes
 
 /-- SK disjunction is symmetric for presupposition projection.
     [beaver-2001] Ch. 2: the correct empirical prediction. -/
-theorem sk_disjunction_symmetric (a b : Truth3) :
+theorem sk_disjunction_symmetric (a b : Trivalent) :
     a ⊔ b = b ⊔ a := by
   cases a <;> cases b <;> rfl
 
@@ -105,8 +105,8 @@ theorem sk_disjunction_symmetric (a b : Truth3) :
     [beaver-2001] Ch. 2: MK captures left-to-right processing
     but overpredicts asymmetry for disjunction. -/
 theorem mk_disjunction_asymmetric :
-    ∃ a b : Truth3, Truth3.joinMiddle a b ≠ Truth3.joinMiddle b a :=
-  ⟨.true, .indet, by simp [Truth3.joinMiddle]⟩
+    ∃ a b : Trivalent, Trivalent.joinMiddle a b ≠ Trivalent.joinMiddle b a :=
+  ⟨.true, .indet, by simp [Trivalent.joinMiddle]⟩
 
 /-- Fact 2.1, negation: SK negation preserves presupposition.
     The presupposition of ¬φ is exactly π(φ). Re-export of

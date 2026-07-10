@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Truth3
+import Linglib.Core.Logic.Trivalent
 import Linglib.Data.Examples.Schema
 import Linglib.Data.Examples.KrizChemla2015
 
@@ -21,7 +21,7 @@ generalisation predates any one formal account, justifying a theory-neutral
   (TRUE / FALSE / GAP / GAP? / GAP??).
 * `ProjectionPredict` — the shared signature any account of homogeneity
   projection must satisfy; given an `(operator, scenario)` pair, predict a
-  trivalent `Truth3` value.
+  trivalent `Trivalent` value.
 * `ProjectionDatum` — typed empirical datum; lifted from the raw
   `LinguisticExample` rows by `fromExample`.
 * `Examples` (generator-managed) — pooled stimulus rows from each paper
@@ -74,7 +74,6 @@ mapping would be wrong for at least one consumer.
 
 namespace Generalizations.HomogeneityProjection
 
-open Core.Duality (Truth3)
 open Data.Examples (LinguisticExample SourceRef)
 
 /-! ### Substrate -/
@@ -110,9 +109,9 @@ inductive GapScenario where
 /--
 Theoretical-prediction signature any account of homogeneity projection
 must satisfy: given an embedder label and a scenario, predict the
-trivalent `Truth3` value the account commits to.
+trivalent `Trivalent` value the account commits to.
 -/
-abbrev ProjectionPredict := EmbeddingOperator → GapScenario → Truth3
+abbrev ProjectionPredict := EmbeddingOperator → GapScenario → Trivalent
 
 /--
 Empirical datum derived from a paper-anchored `LinguisticExample`.
@@ -122,7 +121,7 @@ Empirical datum derived from a paper-anchored `LinguisticExample`.
 structure ProjectionDatum where
   operator : EmbeddingOperator
   scenario : GapScenario
-  observed : Truth3
+  observed : Trivalent
   source   : SourceRef
   deriving Repr, DecidableEq
 
@@ -152,7 +151,7 @@ def parseScenario : String → Option GapScenario
   | _       => none
 
 /--
-Compute the observed `Truth3` value for a `(scenario, gapDetected)` cell.
+Compute the observed `Trivalent` value for a `(scenario, gapDetected)` cell.
 
 Baseline conditions are unambiguous: `TRUE → .true`, `FALSE → .false`.
 For gap-bearing scenarios, gap detection means the empirical distribution
@@ -160,7 +159,7 @@ peaks on the trivalent middle (`.indet`); a non-detection on a
 gap-bearing scenario means an alternative reading (typically an at-least
 reading for non-monotonic embedders) rendered the sentence non-gappy.
 -/
-def observedTruth (scenario : GapScenario) (gapDetected : Bool) : Truth3 :=
+def observedTruth (scenario : GapScenario) (gapDetected : Bool) : Trivalent :=
   match scenario, gapDetected with
   | .trueScenario,  _    => .true
   | .falseScenario, _    => .false

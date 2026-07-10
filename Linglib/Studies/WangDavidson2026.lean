@@ -1,6 +1,6 @@
 import Linglib.Semantics.Exhaustification.InnocentExclusion
 import Linglib.Semantics.Exhaustification.Trivalent
-import Linglib.Core.Logic.Truth3
+import Linglib.Core.Logic.Trivalent
 import Linglib.Semantics.Presupposition.Basic
 import Mathlib.Tactic.DeriveFintype
 
@@ -35,9 +35,9 @@ These divide into two classes:
   (EXH¹ + any projection)
 
 The core mechanism: under Strong Kleene, inclusive disjunction
-(`⊔` on `Truth3`) can return `.true` even when one disjunct is
+(`⊔` on `Trivalent`) can return `.true` even when one disjunct is
 undefined — so a true first disjunct "filters" the second's
-presupposition failure. Exclusive disjunction (`Truth3.xor`)
+presupposition failure. Exclusive disjunction (`Trivalent.xor`)
 cannot: it returns `.indet` whenever either input is `.indet`.
 
 ### Feed-forward assumption (§5)
@@ -68,7 +68,7 @@ Type B (EXH¹).
 
 namespace WangDavidson2026
 
-open Core.Duality (Truth3 Prop3)
+open Trivalent (Prop3)
 open Semantics.Presupposition (PartialProp)
 open Exhaustification (innocent predToFinset altsFromPreds)
 open Exhaustification.Trivalent
@@ -86,17 +86,17 @@ undefined disjunct when the other is true. Exclusive cannot.
 
 This single fact drives the Type A prediction for bivalent EXH + SK:
 since `bivalent_exh_yields_xor` shows Exh strengthens ∨ to ⊻,
-and `Truth3.xor_indet_iff` shows ⊻ propagates undefinedness
+and `Trivalent.xor_indet_iff` shows ⊻ propagates undefinedness
 unconditionally, exhaustification eliminates filtering.
 -/
 
 /-- Inclusive disjunction allows filtering: a true first disjunct
     absorbs the second's presupposition failure. -/
-theorem sk_inclusive_filters : (Truth3.true ⊔ Truth3.indet) = .true := rfl
+theorem sk_inclusive_filters : (Trivalent.true ⊔ Trivalent.indet) = .true := rfl
 
 /-- Exclusive disjunction does not filter: even when one disjunct
     is true, an undefined partner makes the result undefined. -/
-theorem sk_exclusive_no_filter : Truth3.xor .true .indet = .indet := rfl
+theorem sk_exclusive_no_filter : Trivalent.xor .true .indet = .indet := rfl
 
 /-- The filtering contrast is symmetric: both `join` and `xor` are
     commutative, so the direction doesn't matter for SK.
@@ -105,7 +105,7 @@ theorem sk_exclusive_no_filter : Truth3.xor .true .indet = .indet := rfl
     projection" — filtering is equally (un)available in both
     directions. -/
 theorem sk_filtering_symmetric :
-    (Truth3.indet ⊔ Truth3.true) = .true ∧ Truth3.xor .indet .true = .indet :=
+    (Trivalent.indet ⊔ Trivalent.true) = .true ∧ Trivalent.xor .indet .true = .indet :=
   ⟨rfl, rfl⟩
 
 
@@ -120,10 +120,10 @@ theorem sk_filtering_symmetric :
 filters presupposition failure from either disjunct. This mirrors
 the SK XOR truth table (Figure 2 in the paper).
 
-Note: SK *inclusive* filtering (`.true ⊔ .indet = .true` on `Truth3`)
+Note: SK *inclusive* filtering (`.true ⊔ .indet = .true` on `Trivalent`)
 is an emergent property of the SK truth table, not a `PartialProp`
 connective. The contrast is between `⊔` (filters) and
-`Truth3.xor` (does not filter), verified in §1 above.
+`Trivalent.xor` (does not filter), verified in §1 above.
 -/
 
 section PartialPropBridge
@@ -209,8 +209,8 @@ theorem exh2_always_typeA (proj : ProjectionTheory) :
 
 The bridge from bivalent EXH to the SK prediction:
 1. `bivalent_exh_yields_xor`: Exh(Alt)(p∨q) = p ⊕ q
-2. The exclusive truth conditions, when lifted to Truth3 via SK,
-   yield `Truth3.xor` — which propagates `#` unconditionally
+2. The exclusive truth conditions, when lifted to Trivalent via SK,
+   yield `Trivalent.xor` — which propagates `#` unconditionally
 3. Therefore: bivalent EXH + SK → no filtering (Type A prediction)
 
 This chain depends on the **feed-forward assumption** (§5):
@@ -244,9 +244,9 @@ theorem bivalent_exh_yields_xor :
 /-- The classical exclusive disjunction (Bool XOR) agrees with
     Strong Kleene XOR on defined inputs. -/
 theorem bool_xor_lifts_to_sk (a b : Bool) :
-    Truth3.xor (Truth3.ofBool a) (Truth3.ofBool b) =
-    Truth3.ofBool (a ^^ b) :=
-  Truth3.xor_ofBool a b
+    Trivalent.xor (Trivalent.ofBool a) (Trivalent.ofBool b) =
+    Trivalent.ofBool (a ^^ b) :=
+  Trivalent.xor_ofBool a b
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -270,12 +270,12 @@ inductive BathWorld where
   deriving Repr, DecidableEq, Fintype
 
 /-- p: always defined (no presupposition). -/
-def pT3 : BathWorld → Truth3
+def pT3 : BathWorld → Trivalent
   | .pOnly => .true
   | _ => .false
 
 /-- q: presupposes ¬p (defined only when p is false). -/
-def qT3 : BathWorld → Truth3
+def qT3 : BathWorld → Trivalent
   | .pOnly => .indet  -- presupposition failure
   | .qOnly => .true
   | .neither => .false
@@ -289,13 +289,13 @@ theorem inclusive_allows_filtering :
 /-- Exclusive disjunction does NOT allow filtering:
     at `pOnly`, `xor` returns undefined because q's value is unknown. -/
 theorem exclusive_no_filtering :
-    Truth3.xor (pT3 .pOnly) (qT3 .pOnly) = .indet := by rfl
+    Trivalent.xor (pT3 .pOnly) (qT3 .pOnly) = .indet := by rfl
 
 /-- Inclusive disjunction as Prop3 (Strong Kleene). -/
-def inclDisj : BathWorld → Truth3 := fun w => pT3 w ⊔ qT3 w
+def inclDisj : BathWorld → Trivalent := fun w => pT3 w ⊔ qT3 w
 
 /-- Exclusive disjunction as Prop3 (Strong Kleene). -/
-def exclDisj : BathWorld → Truth3 := fun w => Truth3.xor (pT3 w) (qT3 w)
+def exclDisj : BathWorld → Trivalent := fun w => Trivalent.xor (pT3 w) (qT3 w)
 
 /-- Inclusive disjunction is defined at pOnly (filtering). -/
 theorem incl_defined_at_pOnly : inclDisj .pOnly = .true := by rfl
@@ -306,7 +306,7 @@ theorem excl_undef_at_pOnly : exclDisj .pOnly = .indet := by rfl
 /-- Alternative set for the bathroom disjunction: {p∨q, p, q, p∧q}.
     The conjunction alternative `p ∧ q` is the only IE alternative
     (by [fox-2007]). -/
-def bathAlts : List (BathWorld → Truth3) :=
+def bathAlts : List (BathWorld → Trivalent) :=
   [ inclDisj, pT3, qT3
   , fun w => pT3 w ⊓ qT3 w ]
 
@@ -421,14 +421,14 @@ theorem null_result_challenges_typeA :
     truth conditions → SK propagates undefinedness → Type A predicted →
     experiment finds no effect → challenges bivalent EXH + SK.
 
-    This links `bivalent_exh_yields_xor`, `Truth3.xor_indet_iff`,
+    This links `bivalent_exh_yields_xor`, `Trivalent.xor_indet_iff`,
     the Type A classification, and the null experimental result. -/
 theorem end_to_end_bivalent_sk_challenged :
     -- (1) Bivalent EXH yields exclusive disjunction
     (innocent.exh disjAltsF pOrQF
       = predToFinset (fun w => pOrQ w && !pAndQ w)) ∧
     -- (2) SK XOR propagates undefinedness
-    (Truth3.xor .true .indet = .indet) ∧
+    (Trivalent.xor .true .indet = .indet) ∧
     -- (3) This combination is classified Type A
     (classify .bivalent .strongKleene = .typeA) ∧
     -- (4) The experiment finds no effect (challenging Type A)

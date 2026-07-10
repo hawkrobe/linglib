@@ -1,5 +1,5 @@
 import Linglib.Semantics.Supervaluation.Basic
-import Linglib.Core.Logic.Truth3
+import Linglib.Core.Logic.Trivalent
 import Linglib.Core.Logic.Consequence
 import Linglib.Core.ModelTheory.Trivalent
 import Linglib.Core.Logic.Modal.Basic
@@ -127,7 +127,6 @@ is addressed in that Studies file's §8-§9.
 
 namespace Semantics.Supervaluation.TCS
 
-open Core.Duality (Truth3)
 open Core.Logic.Modal
   (AccessRel IsKTBFrame IsSerial box diamond box_T Logic)
 open Core.Logic.Consequence (MixedConsequence SatImplies IsSelfDual
@@ -359,7 +358,7 @@ def toleranceSpace (M : TModel D Pred) (P : Pred) (a : D)
 theorem StrictAt.iff_superTrue (M : TModel D Pred) (P : Pred) (a : D)
     [DecidablePred (M.sim P a)] :
     StrictAt M P a ↔
-      superTrue (M.interp P) (toleranceSpace M P a) = Truth3.true := by
+      superTrue (M.interp P) (toleranceSpace M P a) = Trivalent.true := by
   rw [superTrue_true_iff]
   refine ⟨λ h d hd => h d (Finset.mem_filter.mp hd).2,
           λ h d hd => h d (Finset.mem_filter.mpr ⟨Finset.mem_univ d, hd⟩)⟩
@@ -368,7 +367,7 @@ theorem StrictAt.iff_superTrue (M : TModel D Pred) (P : Pred) (a : D)
 theorem TolerantAt.not_iff_superFalse (M : TModel D Pred) (P : Pred) (a : D)
     [DecidablePred (M.sim P a)] :
     ¬ TolerantAt M P a ↔
-      superTrue (M.interp P) (toleranceSpace M P a) = Truth3.false := by
+      superTrue (M.interp P) (toleranceSpace M P a) = Trivalent.false := by
   rw [superTrue_false_iff]
   refine ⟨?_, ?_⟩
   · intro h d hd hpd
@@ -385,7 +384,7 @@ theorem TolerantAt.not_iff_superFalse (M : TModel D Pred) (P : Pred) (a : D)
 theorem IsBorderline.iff_superTrue_indet (M : TModel D Pred) (P : Pred) (a : D)
     [DecidablePred (M.sim P a)] :
     IsBorderline M P a ↔
-      superTrue (M.interp P) (toleranceSpace M P a) = Truth3.indet := by
+      superTrue (M.interp P) (toleranceSpace M P a) = Trivalent.indet := by
   rw [IsBorderline.iff_both_witnesses, superTrue_indet_iff]
   refine ⟨?_, ?_⟩
   · rintro ⟨⟨d, hsd, hpd⟩, ⟨e, hse, hne⟩⟩
@@ -775,51 +774,51 @@ attribute [local instance] Classical.propDecidable
 noncomputable def toMV (M : TModel D Pred) : Trivalent.Model (TCSAtom Pred D) := λ α =>
   match α with
   | .pred P a =>
-    if StrictAt M P a then Truth3.true
-    else if TolerantAt M P a then Truth3.indet
-    else Truth3.false
-  | .sim P a b => if M.sim P a b then Truth3.true else Truth3.false
+    if StrictAt M P a then Trivalent.true
+    else if TolerantAt M P a then Trivalent.indet
+    else Trivalent.false
+  | .sim P a b => if M.sim P a b then Trivalent.true else Trivalent.false
 
 theorem toMV_pred_true_iff (M : TModel D Pred) (P : Pred) (a : D) :
-    toMV M (.pred P a) = Truth3.true ↔ StrictAt M P a := by
+    toMV M (.pred P a) = Trivalent.true ↔ StrictAt M P a := by
   unfold toMV
   by_cases hs : StrictAt M P a
   · simp [hs]
   · simp only [if_neg hs]
     refine ⟨λ h => absurd ?_ hs, λ h => absurd h hs⟩
     by_cases ht : TolerantAt M P a
-    · rw [if_pos ht] at h; exact Truth3.noConfusion h
-    · rw [if_neg ht] at h; exact Truth3.noConfusion h
+    · rw [if_pos ht] at h; exact Trivalent.noConfusion h
+    · rw [if_neg ht] at h; exact Trivalent.noConfusion h
 
 theorem toMV_pred_false_iff (M : TModel D Pred) (P : Pred) (a : D) :
-    toMV M (.pred P a) = Truth3.false ↔ ¬ TolerantAt M P a := by
+    toMV M (.pred P a) = Trivalent.false ↔ ¬ TolerantAt M P a := by
   unfold toMV
   by_cases hs : StrictAt M P a
   · simp only [if_pos hs]
-    exact ⟨λ h => Truth3.noConfusion h,
+    exact ⟨λ h => Trivalent.noConfusion h,
            λ h => absurd (StrictAt.imp_tolerant M P a hs) h⟩
   · simp only [if_neg hs]
     by_cases ht : TolerantAt M P a
     · simp only [if_pos ht]
-      exact ⟨λ h => Truth3.noConfusion h, λ h => absurd ht h⟩
+      exact ⟨λ h => Trivalent.noConfusion h, λ h => absurd ht h⟩
     · simp only [if_neg ht]
       refine Iff.intro (λ _ => ht) (λ _ => ?_)
       trivial
 
 theorem toMV_sim_true_iff (M : TModel D Pred) (P : Pred) (a b : D) :
-    toMV M (.sim P a b) = Truth3.true ↔ M.sim P a b := by
+    toMV M (.sim P a b) = Trivalent.true ↔ M.sim P a b := by
   unfold toMV
   by_cases h : M.sim P a b
   · simp [h]
   · simp only [if_neg h]
-    exact ⟨λ heq => Truth3.noConfusion heq, λ hh => absurd hh h⟩
+    exact ⟨λ heq => Trivalent.noConfusion heq, λ hh => absurd hh h⟩
 
 theorem toMV_sim_false_iff (M : TModel D Pred) (P : Pred) (a b : D) :
-    toMV M (.sim P a b) = Truth3.false ↔ ¬ M.sim P a b := by
+    toMV M (.sim P a b) = Trivalent.false ↔ ¬ M.sim P a b := by
   unfold toMV
   by_cases h : M.sim P a b
   · simp only [if_pos h]
-    exact ⟨λ heq => Truth3.noConfusion heq, λ hn => absurd h hn⟩
+    exact ⟨λ heq => Trivalent.noConfusion heq, λ hn => absurd h hn⟩
   · simp [h]
 
 /-- **Lemma 4** (p. 361, formula-level): for every T-model `M` and TCS
@@ -840,7 +839,7 @@ theorem tcs_lp_k3_correspondence (M : TModel D Pred) (φ : TCSFormula Pred D) :
     | pred P a =>
       refine ⟨?_, ?_⟩
       · -- tolerant ↔ LP-designated
-        simp only [Sat.atom_tolerant_pred, Trivalent.Formula.Realize, Truth3.designated_lp_iff, Trivalent.Formula.eval]
+        simp only [Sat.atom_tolerant_pred, Trivalent.Formula.Realize, Trivalent.designated_lp_iff, Trivalent.Formula.eval]
         constructor
         · intro h heq
           have := (toMV_pred_false_iff M P a).mp heq
@@ -849,32 +848,32 @@ theorem tcs_lp_k3_correspondence (M : TModel D Pred) (φ : TCSFormula Pred D) :
           by_contra hnot
           exact h ((toMV_pred_false_iff M P a).mpr hnot)
       · -- strict ↔ K3-designated
-        simp only [Sat.atom_strict_pred, Trivalent.Formula.Realize, Truth3.designated_k3_iff, Trivalent.Formula.eval]
+        simp only [Sat.atom_strict_pred, Trivalent.Formula.Realize, Trivalent.designated_k3_iff, Trivalent.Formula.eval]
         exact (toMV_pred_true_iff M P a).symm
     | sim P a b =>
       refine ⟨?_, ?_⟩
       · -- For sim atoms: Sat M m (sim) = M.sim P a b regardless of m.
         -- LP-sat: Trivalent.Formula.eval = sim ? .true : .false; LP-designated iff true iff sim.
-        simp only [Sat.atom_sim, Trivalent.Formula.Realize, Truth3.designated_lp_iff, Trivalent.Formula.eval, toMV]
+        simp only [Sat.atom_sim, Trivalent.Formula.Realize, Trivalent.designated_lp_iff, Trivalent.Formula.eval, toMV]
         by_cases hsim : M.sim P a b
         · simp only [if_pos hsim]
-          exact ⟨λ _ h => Truth3.noConfusion h, λ _ => hsim⟩
+          exact ⟨λ _ h => Trivalent.noConfusion h, λ _ => hsim⟩
         · simp only [if_neg hsim]
           exact ⟨λ h => absurd h hsim, λ h => absurd rfl h⟩
-      · simp only [Sat.atom_sim, Trivalent.Formula.Realize, Truth3.designated_k3_iff, Trivalent.Formula.eval, toMV]
+      · simp only [Sat.atom_sim, Trivalent.Formula.Realize, Trivalent.designated_k3_iff, Trivalent.Formula.eval, toMV]
         by_cases hsim : M.sim P a b
         · simp only [if_pos hsim]
           refine Iff.intro (λ _ => ?_) (λ _ => hsim)
           trivial
         · simp only [if_neg hsim]
-          exact ⟨λ h => absurd h hsim, λ h => Truth3.noConfusion h⟩
+          exact ⟨λ h => absurd h hsim, λ h => Trivalent.noConfusion h⟩
   | neg ψ ih =>
     obtain ⟨iht, ihs⟩ := ih
     refine ⟨?_, ?_⟩
     · -- tolerant (¬ψ) ↔ LP-designated of neg
-      simp only [Sat.neg_eq, SatMode.dual, Trivalent.Formula.realize_neg, Truth3.Designation.dual_lp, Truth3.Designation.dual_k3]
+      simp only [Sat.neg_eq, SatMode.dual, Trivalent.Formula.realize_neg, Trivalent.Designation.dual_lp, Trivalent.Designation.dual_k3]
       exact not_congr ihs
-    · simp only [Sat.neg_eq, SatMode.dual, Trivalent.Formula.realize_neg, Truth3.Designation.dual_lp, Truth3.Designation.dual_k3]
+    · simp only [Sat.neg_eq, SatMode.dual, Trivalent.Formula.realize_neg, Trivalent.Designation.dual_lp, Trivalent.Designation.dual_k3]
       exact not_congr iht
   | conj ψ χ ihψ ihχ =>
     obtain ⟨ihtψ, ihsψ⟩ := ihψ
@@ -1020,7 +1019,7 @@ theorem tcs_vs_supervaluation_borderline_contradiction
     (hb : IsBorderline M P a) :
     Sat M .tolerant (.conj (.atom (.pred P a)) (.neg (.atom (.pred P a)))) ∧
     superTrue (fun d => M.interp P d ∧ ¬ M.interp P d) (toleranceSpace M P a)
-      = Truth3.false := by
+      = Trivalent.false := by
   refine ⟨?_, nonContradiction_superFalse _ _⟩
   -- TCS side: tolerant(P) ∧ tolerant(¬P)
   -- tolerant(¬P) = ¬strict(P), which holds because borderline.

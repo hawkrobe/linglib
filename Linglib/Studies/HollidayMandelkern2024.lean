@@ -223,7 +223,7 @@ def pRightReg : pathFrame.Regular := pathFrame.regOf pRight regular_right
 def pMidReg : pathFrame.Regular := pathFrame.regOf pMid regular_mid
 
 section TypeclassLevel
-open OrthocomplementedLattice
+open OrthocomplementedLattice LatticeWithInvolution
 
 /-- Double negation on `pLeftReg` from the typeclass: `(pLeftReg)ᶜᶜ = pLeftReg`.
     Replaces the pointwise `doubleNeg_left` proof — abstract typeclass result,

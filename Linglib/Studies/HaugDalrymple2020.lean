@@ -5,7 +5,7 @@ import Linglib.Semantics.Dynamic.PPCDRT.Cumulativity
 import Linglib.Semantics.Plurality.Cumulativity
 import Linglib.Semantics.Homogeneity.Basic
 import Linglib.Semantics.Supervaluation.Basic
-import Linglib.Core.Logic.Truth3
+import Linglib.Core.Logic.Trivalent
 
 /-!
 # Haug & Dalrymple (2020) [haug-dalrymple-2020]
@@ -32,7 +32,7 @@ the PPCDRT substrate (`Semantics/Dynamic/PPCDRT/`):
 | §4.4    | Multiple reciprocals                   | Two-reciprocal witness     |
 | §4.5    | Subgroup readings (forks, gravity)     | Weak-vs-strong contrast    |
 | §4.6    | Collective antecedents                 | Distinctness neutralization |
-| §5      | Quantified antecedents + truth-value gap | `Truth3` via `removeGap` |
+| §5      | Quantified antecedents + truth-value gap | `Trivalent` via `removeGap` |
 | §6      | Maximize Anaphora as a principle       | `R_u` + `maximizeAnaphora` |
 | §6.2    | Multi-reciprocal pairwise prediction   | `R_u` over two reciprocals |
 | §6.3    | MA interacting with scope              | Tracy/Matty/Chris case     |
@@ -49,7 +49,7 @@ the §5.2 empirical-fit table; the §7 typological excursus.
 - [champollion-bumford-henderson-2019] for the §5 supervaluationist
   truth-value-gap analysis — realised via
   `Semantics/Homogeneity/Basic.lean`'s `removeGap` /
-  `Truth3.metaAssert`.
+  `Trivalent.metaAssert`.
 - [kriz-2015] for the homogeneity background; same substrate.
 - [langendoen-1978] for the reciprocity-as-cumulativity link —
   realised via `PPCDRT/Cumulativity.lean`'s
@@ -70,7 +70,7 @@ namespace HaugDalrymple2020
 open Semantics.Reference.Reciprocals
 open Semantics.Dynamic.PPCDRT
 open Core
-open Core.Duality
+open Trivalent (dist metaAssert)
 open Semantics.Plurality.Cumulativity
 
 -- ════════════════════════════════════════════════════════════════
@@ -475,7 +475,7 @@ theorem collective_groupIdentity_no_distinct :
       exact ⟨assign3 .matty .matty .matty, .inr (.inr rfl), assign3_u₁ ..⟩
 
 -- ════════════════════════════════════════════════════════════════
--- § 9: §5 Quantified Antecedents + Truth-Value Gap
+-- § 9: §5 Quantified Antecedents + Trivalent-Value Gap
 -- (paper eq 99, 109; [champollion-bumford-henderson-2019]; [kriz-2015])
 -- ════════════════════════════════════════════════════════════════
 
@@ -487,15 +487,15 @@ theorem collective_groupIdentity_no_distinct :
     [champollion-bumford-henderson-2019], following [kriz-2015],
     for the supervaluationist machinery.
 
-    Here we encode the truth-value gap directly via `Truth3`, exploiting
+    Here we encode the truth-value gap directly via `Trivalent`, exploiting
     the existing `Semantics/Homogeneity/Basic.lean` substrate
-    (`removeGap`, `Truth3.metaAssert`). -/
+    (`removeGap`, `Trivalent.metaAssert`). -/
 
 /-- The truth value of a quantified-antecedent reciprocal sentence,
     given its truth on the maximal-set reading and on the reference-set
     reading. Paper eq 109. -/
 def quantifiedReciprocalTV (maximalSetReading refSetReading : Prop)
-    [Decidable maximalSetReading] [Decidable refSetReading] : Truth3 :=
+    [Decidable maximalSetReading] [Decidable refSetReading] : Trivalent :=
   if maximalSetReading ∧ refSetReading then .true
   else if ¬ maximalSetReading ∧ ¬ refSetReading then .false
   else .indet

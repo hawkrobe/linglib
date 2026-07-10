@@ -1,5 +1,5 @@
 import Linglib.Core.Logic.Duality
-import Linglib.Core.Logic.Truth3
+import Linglib.Core.Logic.Trivalent
 import Linglib.Semantics.Homogeneity.Basic
 import Linglib.Semantics.Plurality.Basic
 import Linglib.Semantics.Plurality.Cover
@@ -26,7 +26,7 @@ made kernel-checked in `malamud_strictly_weaker_when_mixed`.
 
 ## Main declarations
 
-* `pluralTruthValue` — trivalent K&S denotation via `Core.Duality.dist`.
+* `pluralTruthValue` — trivalent K&S denotation via `Trivalent.dist`.
 * `inGap`, `homogeneity_gap_symmetric`, `pluralTruthValue_neg` — the
   homogeneity theorem.
 * `candidateProp`, `fullCandidateSet`, `candidateSet` — the (cover-cell)
@@ -67,7 +67,6 @@ The bivalent bridge to [kriz-2016]'s `addressesIssue` is proved in
 
 namespace Semantics.Plurality.Trivalent
 
-open Core.Duality (Truth3)
 open Semantics.Homogeneity (isStronglyRelevantProp stronglyRelevantSet
   exact_all_relevant)
 open Semantics.Plurality
@@ -89,27 +88,27 @@ fails at every atom, gap otherwise. The [van-fraassen-1966]
 supervaluation framing (each atom as a specification point) is
 documented by `Semantics.Supervaluation.superTrue_eq_dist`. -/
 @[reducible] def pluralTruthValue (P : Atom → W → Prop)
-    [∀ a w, Decidable (P a w)] (x : Finset Atom) (w : W) : Truth3 :=
-  Core.Duality.dist x (fun a => P a w)
+    [∀ a w, Decidable (P a w)] (x : Finset Atom) (w : W) : _root_.Trivalent :=
+  Trivalent.dist x (fun a => P a w)
 
 @[simp]
 theorem pluralTruthValue_eq_true_iff (P : Atom → W → Prop)
     [∀ a w, Decidable (P a w)] (x : Finset Atom) (w : W) :
     pluralTruthValue P x w = .true ↔ allSatisfy P x w :=
-  Core.Duality.dist_eq_true_iff x _
+  Trivalent.dist_eq_true_iff x _
 
 @[simp]
 theorem pluralTruthValue_eq_false_iff (P : Atom → W → Prop)
     [∀ a w, Decidable (P a w)] (x : Finset Atom) (w : W) :
     pluralTruthValue P x w = .false ↔ x.Nonempty ∧ noneSatisfy P x w :=
-  Core.Duality.dist_eq_false_iff x _
+  Trivalent.dist_eq_false_iff x _
 
 @[simp]
 theorem pluralTruthValue_eq_gap_iff (P : Atom → W → Prop)
     [∀ a w, Decidable (P a w)] (x : Finset Atom) (w : W) :
     pluralTruthValue P x w = .indet ↔
     (∃ a ∈ x, P a w) ∧ (∃ a ∈ x, ¬ P a w) :=
-  Core.Duality.dist_eq_indet_iff x _
+  Trivalent.dist_eq_indet_iff x _
 
 theorem allSatisfy_imp_noneSatisfy_neg (P : Atom → W → Prop)
     [∀ a w, Decidable (P a w)] (x : Finset Atom) (w : W) :
@@ -203,7 +202,7 @@ def candidateSet (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
     (tol : Tolerance Atom) (x : Finset Atom) : Set (W → Prop) :=
   { p | ∃ z ∈ x.powerset, z.Nonempty ∧ tol.rel z x ∧ p = candidateProp P z }
 
-/-! ### Truth-on-all-readings trichotomy -/
+/-! ### _root_.Trivalent-on-all-readings trichotomy -/
 
 /-- All candidates in the set hold at `w`. -/
 def trueOnAll (candidates : Set (W → Prop)) (w : W) : Prop :=
@@ -242,7 +241,7 @@ theorem fullCandidateSet_eq_candidateSet_trivial (P : Atom → W → Prop)
 theorem identity_tolerant_iff_eq (x z : Finset Atom) :
     Tolerance.identity.rel z x ↔ z = x := Iff.rfl
 
-/-! ### Truth-on-all ↔ trivalent semantics
+/-! ### _root_.Trivalent-on-all ↔ trivalent semantics
 
 Three correspondence lemmas connecting `trueOnAll` / `falseOnAll` /
 `gapOnCandidates` over the (cover-cell) candidate set to the trivalent
@@ -410,7 +409,7 @@ empirically critical in non-monotonic contexts and was K&S's headline
 departure from Malamud; the divergence theorem below makes the prose claim
 kernel-checked. -/
 
-/-- Truth-on-all trichotomy: a candidate set is true-on-all, false-on-all,
+/-- _root_.Trivalent-on-all trichotomy: a candidate set is true-on-all, false-on-all,
     or mixed (gap). Classical disjunction over decidable cases. -/
 theorem candidateConjunction_trichotomy (candidates : Set (W → Prop)) (w : W)
     [Decidable (trueOnAll candidates w)]

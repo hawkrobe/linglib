@@ -4,7 +4,7 @@ import Linglib.Semantics.Conditionals.WillConditional
 import Linglib.Semantics.Modality.Selectional
 import Linglib.Semantics.Supervaluation.Basic
 import Linglib.Semantics.Conditionals.SelectionFunction
-import Linglib.Core.Logic.Truth3
+import Linglib.Core.Logic.Trivalent
 import Linglib.Core.Logic.Duality
 
 /-!
@@ -43,7 +43,7 @@ namespace Semantics.Conditionals.Counterfactual
 open Intensional (WorldTimeIndex)
 
 open Semantics.Conditionals
-open Core.Duality (Truth3 ProjectionType dist)
+open Trivalent (ProjectionType dist)
 
 
 open Core.Order (SimilarityOrdering)
@@ -97,7 +97,7 @@ This predicts:
   some students' closest study-worlds have passing, others don't
 -/
 
--- Three-valued truth from Core.Duality.Truth3
+-- Three-valued truth from Trivalent.Trivalent
 
 /--
 Selectional counterfactual semantics (Stalnaker + supervaluation).
@@ -106,14 +106,14 @@ Returns a three-valued truth value based on agreement across selection functions
 -/
 def selectionalCounterfactual {W : Type*} [DecidableEq W] [Fintype W]
     (sim : SimilarityOrdering W) (A B : W → Prop)
-    [DecidablePred A] [DecidablePred B] (w : W) : Truth3 :=
+    [DecidablePred A] [DecidablePred B] (w : W) : Trivalent :=
   if ∀ w' ∈ sim.closestWorlds w (Finset.univ.filter A),
     B w' then .true
   else if ∀ w' ∈ sim.closestWorlds w (Finset.univ.filter A),
     ¬ B w' then .false
   else .indet
 
-/-- **`selectionalCounterfactual` IS Fine super-truth** (`Core.Duality.dist`)
+/-- **`selectionalCounterfactual` IS Fine super-truth** (`Trivalent.dist`)
     on the Finset of closest worlds with the consequent as Boolean predicate.
 
     Bridge documenting the equivalence — keeps the bespoke 3-way if-chain
@@ -124,8 +124,8 @@ theorem selectionalCounterfactual_eq_dist {W : Type*} [DecidableEq W] [Fintype W
     (sim : SimilarityOrdering W) (A B : W → Prop)
     [DecidablePred A] [DecidablePred B] (w : W) :
     selectionalCounterfactual sim A B w =
-    Core.Duality.dist (sim.closestWorlds w (Finset.univ.filter A)) B := by
-  unfold selectionalCounterfactual Core.Duality.dist
+    Trivalent.dist (sim.closestWorlds w (Finset.univ.filter A)) B := by
+  unfold selectionalCounterfactual Trivalent.dist
   set s := sim.closestWorlds w (Finset.univ.filter A)
   by_cases h_all : ∀ w' ∈ s, B w'
   · rw [if_pos h_all, if_pos h_all]
@@ -306,7 +306,7 @@ theorem selectional_as_supervaluation {W : Type*} [DecidableEq W] [Fintype W]
 /-!
 ## Connection to Aggregation Pushforward
 
-`projectTruthValues` delegates directly to `Core.Duality.aggregate`, so
+`projectTruthValues` delegates directly to `Trivalent.aggregate`, so
 `embeddedSelectional_determinate` and `strength_determines_pattern` (in
 `QuantifierEmbedding.lean`) are thin wrappers around
 `Duality.aggregate_map_ofBool_ne_indet` and `Duality.aggregate_map_ofBool_mixed`
@@ -322,9 +322,9 @@ is invisible.
     the global aggregation pattern: mixed Bool inputs split duality types. -/
 theorem selectional_is_global_architecture (bs : List Bool)
     (h_some_true : bs.any id) (h_some_false : bs.any (!·)) :
-    Core.Duality.aggregate .disjunctive (bs.map Truth3.ofBool) = .true ∧
-    Core.Duality.aggregate .conjunctive (bs.map Truth3.ofBool) = .false :=
-  Core.Duality.aggregate_map_ofBool_mixed bs h_some_true h_some_false
+    Trivalent.aggregate .disjunctive (bs.map Trivalent.ofBool) = .true ∧
+    Trivalent.aggregate .conjunctive (bs.map Trivalent.ofBool) = .false :=
+  Trivalent.aggregate_map_ofBool_mixed bs h_some_true h_some_false
 
 -- ════════════════════════════════════════════════════
 -- Might Counterfactuals: Lewis vs Stalnaker
@@ -540,8 +540,8 @@ The supervaluation variant (`selectionalCounterfactual` above) generalises
 this to handle ties: each "legitimate" selection function corresponds to a
 choice point, and we supervaluate over them. The bridge below shows that
 when the supervaluation's closest-worlds set is the singleton chosen by a
-selection function, the supervaluation analysis (`Truth3`) reduces to the
-single-function analysis (`Bool`) under `Truth3.ofBool`. -/
+selection function, the supervaluation analysis (`Trivalent`) reduces to the
+single-function analysis (`Bool`) under `Trivalent.ofBool`. -/
 
 /-- **Stalnaker's single-selection-function counterfactual** [stalnaker-1968].
     `A □→ B` is true at `w` iff `B` holds at `s(w, ‖A‖)`. The counterfactual
@@ -561,9 +561,9 @@ instance stalnakerCounterfactual_decidable {W : Type*} (s : Semantics.Conditiona
 /-- **Bridge: Stalnaker = supervaluation when closest is a singleton.**
 
     When the supervaluation's closest-worlds set is the singleton
-    `{s.sel w ‖A‖}`, the supervaluation analysis (`Truth3`) reduces
+    `{s.sel w ‖A‖}`, the supervaluation analysis (`Trivalent`) reduces
     to the single-selection-function analysis (`Bool`) under
-    `Truth3.ofBool`. The supervaluation gap arises only with ties; once
+    `Trivalent.ofBool`. The supervaluation gap arises only with ties; once
     ties are resolved by the selection function, both analyses coincide. -/
 theorem stalnaker_eq_selectional_singleton {W : Type*} [DecidableEq W] [Fintype W]
     (s : Semantics.Conditionals.SelectionFunction W) (sim : SimilarityOrdering W)
@@ -571,7 +571,7 @@ theorem stalnaker_eq_selectional_singleton {W : Type*} [DecidableEq W] [Fintype 
     (h_singleton : sim.closestWorlds w (Finset.univ.filter A)
                    = {s.sel w {w' | A w'}}) :
     selectionalCounterfactual sim A B w =
-    Truth3.ofBool (decide (stalnakerCounterfactual s A B w)) := by
+    Trivalent.ofBool (decide (stalnakerCounterfactual s A B w)) := by
   unfold selectionalCounterfactual stalnakerCounterfactual
     Semantics.Conditionals.selectionConditional
   rw [h_singleton]
@@ -580,14 +580,14 @@ theorem stalnaker_eq_selectional_singleton {W : Type*} [DecidableEq W] [Fintype 
     have h1 : (∀ w' ∈ ({s.sel w {w' | A w'}} : Finset W), B w') := by
       intro w' hw'; rw [Finset.mem_singleton] at hw'; rw [hw']; exact hB
     rw [if_pos h1]
-    simp only [hB, decide_true, Truth3.ofBool]
+    simp only [hB, decide_true, Trivalent.ofBool]
   · -- Both sides equal .false
     have h1 : ¬ (∀ w' ∈ ({s.sel w {w' | A w'}} : Finset W), B w') := by
       intro h; exact hB (h _ (Finset.mem_singleton.mpr rfl))
     have h2 : (∀ w' ∈ ({s.sel w {w' | A w'}} : Finset W), ¬ B w') := by
       intro w' hw'; rw [Finset.mem_singleton] at hw'; rw [hw']; exact hB
     rw [if_neg h1, if_pos h2]
-    simp only [hB, decide_false, Truth3.ofBool]
+    simp only [hB, decide_false, Trivalent.ofBool]
 
 /-! ## Bridge: Stalnaker counterfactual = will-conditional over the universe
 
@@ -644,18 +644,18 @@ theorem stalnakerCounterfactual_eq_wouldConditional_universe
       s A B Set.univ w :=
   stalnakerCounterfactual_eq_willConditional_universe s A B w
 
-/-- **Truth3 ↔ would-conditional bridge** [cariani-santorio-2018]
+/-- **Trivalent ↔ would-conditional bridge** [cariani-santorio-2018]
     §5.3.1 + §5.3.2: composing `stalnaker_eq_selectional_singleton`
-    (Truth3 ↔ Bool stalnakerCounterfactual under singleton-closest) with
+    (Trivalent ↔ Bool stalnakerCounterfactual under singleton-closest) with
     `stalnakerCounterfactual_eq_wouldConditional_universe` (Bool ↔ Prop
     would-conditional under universe parameter) gives a direct bridge
     from the supervaluation-valued `selectionalCounterfactual` to the
     Prop-valued *would*-conditional of `WillConditional`.
 
-    Under the same `h_singleton` hypothesis that resolves the Truth3
+    Under the same `h_singleton` hypothesis that resolves the Trivalent
     gap (the closest-worlds set is exactly Stalnaker's selected world),
     the supervaluation analysis lands at `.true` iff the would-conditional
-    holds. The two layers — Truth3 supervaluation over `Finset` and Prop
+    holds. The two layers — Trivalent supervaluation over `Finset` and Prop
     selection-function over `Set` — collapse to the same content. -/
 theorem selectional_eq_wouldConditional_singleton_universe
     {W : Type*} [DecidableEq W] [Fintype W]
@@ -669,8 +669,8 @@ theorem selectional_eq_wouldConditional_singleton_universe
   rw [stalnaker_eq_selectional_singleton s sim A B w h_singleton]
   rw [← stalnakerCounterfactual_eq_wouldConditional_universe s A B w]
   by_cases h : stalnakerCounterfactual s A B w
-  · simp [decide_eq_true h, Truth3.ofBool, h]
-  · simp [decide_eq_false h, Truth3.ofBool, h]
+  · simp [decide_eq_true h, Trivalent.ofBool, h]
+  · simp [decide_eq_false h, Trivalent.ofBool, h]
 
 /-- A Stalnakerian selection function on `Fin 3` that prefers `1`
     whenever Centering does not force the centre. Used to witness the

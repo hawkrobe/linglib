@@ -3,7 +3,7 @@ import Mathlib.Order.Monotone.Defs
 import Mathlib.Order.Sublattice
 import Mathlib.Order.BooleanAlgebra.Basic
 import Linglib.Semantics.NaturalLogic
-import Linglib.Core.Logic.Truth3
+import Linglib.Core.Logic.Trivalent
 
 /-!
 # Generalized Quantifier Definitions
@@ -247,7 +247,7 @@ inductive DoubleMono where
     This is the monotonicity-theoretic explanation of why quantifier
     STRENGTH (not polarity) determines truth-value judgments for
     counterfactuals and other trivalent phenomena. -/
-def DoubleMono.toProjectionType : DoubleMono → Core.Duality.ProjectionType
+def DoubleMono.toProjectionType : DoubleMono → Trivalent.ProjectionType
   | .downUp | .downDown => .conjunctive
   | .upUp   | .upDown   => .disjunctive
 

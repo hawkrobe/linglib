@@ -112,7 +112,7 @@ theorem groupIdentityCond_iff_bidir_coverCond (uAnaph uAnt : Nat)
 
 /-- Reciprocity (`∂(∪u = ∪u') ∧ ∂(u ≠ u')`): group identity plus
     per-state distinctness. The presupposition wrappers are realized
-    semantically when consumers project to `Truth3`. -/
+    semantically when consumers project to `Truth`. -/
 def reciprocityCond (uAnaph uAnt : Nat) : PPDRSCond E := λ S Δ =>
   groupIdentityCond uAnaph uAnt S Δ ∧
   ∀ s ∈ S, ∀ d_a d_b, s uAnaph = some d_a → s uAnt = some d_b → d_a ≠ d_b

@@ -36,7 +36,6 @@ showing they agree on the bivalent fragment.
 
 namespace KrizSpector2021
 
-open Core.Duality (Truth3)
 open Semantics.Plurality
 open Semantics.Plurality.Distributivity
 open Semantics.Plurality.Trivalent

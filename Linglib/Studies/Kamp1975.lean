@@ -1,5 +1,5 @@
 import Linglib.Semantics.Modification.Adjective
-import Linglib.Core.Logic.Truth3
+import Linglib.Core.Logic.Trivalent
 import Mathlib.Data.Set.Basic
 
 /-!
@@ -98,11 +98,10 @@ end Bridge
     inputs are identical. This is wrong: `φ ∧ φ` should have the same
     value as `φ`.
 
-    Strong Kleene logic (`⊓` on `Truth3`) makes the symmetric choice:
+    Strong Kleene logic (`⊓` on `Trivalent`) makes the symmetric choice:
     `meet indet indet = indet`. This preserves `φ ∧ φ ≡ φ` but fails
     to make contradictions false. Supervaluationism resolves both. -/
 
-open Core.Duality (Truth3)
 
 /-- **Kamp's dilemma**: no truth-functional binary operator can
     simultaneously be idempotent (`F(x,x) = x`) and make borderline
@@ -113,11 +112,11 @@ open Core.Duality (Truth3)
     contradiction requirement demands `F(½,½) = 0`. This is what
     motivates the move to supervaluation. -/
 theorem kleene_dilemma :
-    ¬∃ (meet : Truth3 → Truth3 → Truth3),
+    ¬∃ (meet : Trivalent → Trivalent → Trivalent),
       (∀ x, meet x x = x) ∧
-      (meet .indet (Truth3.neg .indet) = .false) := by
+      (meet .indet (Trivalent.neg .indet) = .false) := by
   intro ⟨meet, hidem, hcontra⟩
-  have : Truth3.neg .indet = .indet := rfl
+  have : Trivalent.neg .indet = .indet := rfl
   rw [this] at hcontra
   have := hidem .indet
   rw [hcontra] at this

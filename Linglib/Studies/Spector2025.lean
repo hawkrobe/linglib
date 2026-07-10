@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Truth3
+import Linglib.Core.Logic.Trivalent
 import Linglib.Core.Logic.Assignment
 
 /-!
@@ -53,7 +53,7 @@ undefined if classically true but `g(x)` is not a witness.
 namespace Spector2025
 
 open Core
-open Core.Duality
+open Trivalent (ofBool isDefined meetMiddle joinMiddle)
 
 universe u
 
@@ -72,20 +72,20 @@ abbrev Interp (W : Type*) (D : Type u) := W → D → Bool
     - `0` if `g(x) ≠ #` and `g(x) ∉ I(P,w)`
     - `#` if `g(x) = #` -/
 def evalPred (I : Interp W D) (g : PartialAssign D) (x : Nat)
-    (w : W) : Truth3 :=
+    (w : W) : Trivalent :=
   match g x with
-  | some d => Truth3.ofBool (I w d)
+  | some d => Trivalent.ofBool (I w d)
   | none => .indet
 
-/-- The `U(x)` predicate as a Truth3 value.
+/-- The `U(x)` predicate as a Trivalent value.
     Always bivalent: `true` if valued, `false` if not. -/
-def valuedT3 (g : PartialAssign D) (x : Nat) : Truth3 :=
-  Truth3.ofBool (g.valued x)
+def valuedT3 (g : PartialAssign D) (x : Nat) : Trivalent :=
+  Trivalent.ofBool (g.valued x)
 
 /-- `U(x)` is never undefined. -/
 theorem valuedT3_defined (g : PartialAssign D) (x : Nat) :
     (valuedT3 g x).isDefined := by
-  simp [valuedT3, PartialAssign.valued, Truth3.isDefined]
+  simp [valuedT3, PartialAssign.valued, Trivalent.isDefined]
   cases g x <;> trivial
 
 /-- When `g` values `x`, evaluating a predicate at `x` is bivalent. -/
@@ -95,7 +95,7 @@ theorem evalPred_valued (I : Interp W D) (g : PartialAssign D) (x : Nat) (w : W)
   simp [evalPred, PartialAssign.valued] at *
   cases hg : g x with
   | none => simp [hg] at h
-  | some d => simp [Truth3.ofBool, Truth3.isDefined]; cases I w d <;> trivial
+  | some d => simp [Trivalent.ofBool, Trivalent.isDefined]; cases I w d <;> trivial
 
 /-- When `g` does not value `x`, evaluating a predicate at `x` is undefined. -/
 theorem evalPred_unvalued (I : Interp W D) (g : PartialAssign D) (x : Nat) (w : W)
@@ -107,7 +107,7 @@ theorem evalPred_unvalued (I : Interp W D) (g : PartialAssign D) (x : Nat) (w : 
   | some _ => simp [hg] at h
 
 -- ════════════════════════════════════════════════════════════════
--- Truth at a World
+-- Trivalent at a World
 -- §2.1, definition (6)
 -- ════════════════════════════════════════════════════════════════
 
@@ -118,7 +118,7 @@ theorem evalPred_unvalued (I : Interp W D) (g : PartialAssign D) (x : Nat) (w : 
     if and only if there is an assignment function g such that
     ⟦φ⟧^{w,g} = 1." This bridges trivalent assignment-level
     semantics to world-level truth conditions. -/
-def trueAtWorld (φ : W → PartialAssign D → Truth3) (w : W) : Prop :=
+def trueAtWorld (φ : W → PartialAssign D → Trivalent) (w : W) : Prop :=
   ∃ g : PartialAssign D, φ w g = .true
 
 -- ════════════════════════════════════════════════════════════════
@@ -152,16 +152,16 @@ def nullCtx : Ctx W D := λ _ _ => True
     §2.2.1: "if a sentence S is accepted as true in context C, then the
     resulting context is simply C intersected with the set of
     world-assignment pairs where S is true." -/
-def stalnakerUpdate (C : Ctx W D) (S : W → PartialAssign D → Truth3) :
+def stalnakerUpdate (C : Ctx W D) (S : W → PartialAssign D → Trivalent) :
     Ctx W D :=
   λ w g => C w g ∧ S w g = .true
 
 /-- Two trivalent sentences agree throughout a context. -/
-def agreeIn (C : Ctx W D) (S1 S2 : W → PartialAssign D → Truth3) : Prop :=
+def agreeIn (C : Ctx W D) (S1 S2 : W → PartialAssign D → Trivalent) : Prop :=
   ∀ w g, C w g → S1 w g = S2 w g
 
 /-- A trivalent sentence over world-assignment pairs. -/
-abbrev Sent (W : Type*) (D : Type u) := W → PartialAssign D → Truth3
+abbrev Sent (W : Type*) (D : Type u) := W → PartialAssign D → Trivalent
 
 /-- A sentence frame: a sentence with a hole for a sub-sentence. -/
 abbrev Frame (W : Type*) (D : Type u) := Sent W D → Sent W D
@@ -183,7 +183,7 @@ abbrev Frame (W : Type*) (D : Type u) := Sent W D → Sent W D
 def transparent (C : Ctx W D) (frame : Frame W D)
     (presup : Sent W D) : Prop :=
   ∀ φ : Sent W D,
-    agreeIn C (frame (λ w g => Truth3.meetMiddle (presup w g) (φ w g)))
+    agreeIn C (frame (λ w g => Trivalent.meetMiddle (presup w g) (φ w g)))
               (frame φ)
 
 /-- Transparency holds trivially when the presupposition is always true
@@ -196,7 +196,7 @@ theorem transparent_of_presup_true (C : Ctx W D) (frame : Frame W D)
     transparent C frame presup := by
   intro φ w g hC
   exact hframe _ _
-    (λ w' g' hC' => by simp [Truth3.meetMiddle_true_left, hpresup w' g' hC']) w g hC
+    (λ w' g' hC' => by simp [Trivalent.meetMiddle_true_left, hpresup w' g' hC']) w g hC
 
 /-- The Novelty Condition: an existential quantifier introducing
     variable x can only occur once in a discourse.
@@ -220,7 +220,7 @@ def noveltyCondition (usedVars : List Nat) (newVar : Nat) : Prop :=
 §6.3 observes that the Transparency proofs are
 parametric in the assignment type — the same Middle Kleene reasoning
 works for individual assignments `g` and plural assignments `G`.
-We factor this out: the proofs below are stated over abstract Truth3
+We factor this out: the proofs below are stated over abstract Trivalent
 values, independent of assignment representation.
 -/
 
@@ -232,23 +232,23 @@ values, independent of assignment representation.
     - `E = false`: `meetMiddle false _ = false` (left zero)
     - `E = #`: `meetMiddle # _ = #` (left absorbs)
     - `E = true`: witness gives `presup = true`, so `meetMiddle true φ = φ` -/
-theorem conj_transparency_parametric : ∀ (E presup φ : Truth3),
+theorem conj_transparency_parametric : ∀ (E presup φ : Trivalent),
     (E = .true → presup = .true) →
-    Truth3.meetMiddle E (Truth3.meetMiddle presup φ) =
-    Truth3.meetMiddle E φ
-  | .true, _, φ, hw => by rw [hw rfl, Truth3.meetMiddle_true_left, Truth3.meetMiddle_true_left]
-  | .false, _, _, _ => by simp [Truth3.meetMiddle]
+    Trivalent.meetMiddle E (Trivalent.meetMiddle presup φ) =
+    Trivalent.meetMiddle E φ
+  | .true, _, φ, hw => by rw [hw rfl, Trivalent.meetMiddle_true_left, Trivalent.meetMiddle_true_left]
+  | .false, _, _, _ => by simp [Trivalent.meetMiddle]
   | .indet, _, _, _ => rfl
 
 /-- Parametric bathroom Transparency: `joinMiddle negE (meetMiddle presup φ) =
     joinMiddle negE φ` whenever `negE = false → presup = true`. -/
-theorem disj_transparency_parametric : ∀ (negE presup φ : Truth3),
+theorem disj_transparency_parametric : ∀ (negE presup φ : Trivalent),
     (negE = .false → presup = .true) →
-    Truth3.joinMiddle negE (Truth3.meetMiddle presup φ) =
-    Truth3.joinMiddle negE φ
-  | .true, _, _, _ => by simp [Truth3.joinMiddle]
+    Trivalent.joinMiddle negE (Trivalent.meetMiddle presup φ) =
+    Trivalent.joinMiddle negE φ
+  | .true, _, _, _ => by simp [Trivalent.joinMiddle]
   | .indet, _, _, _ => rfl
-  | .false, _, φ, hw => by rw [hw rfl, Truth3.meetMiddle_true_left]
+  | .false, _, φ, hw => by rw [hw rfl, Trivalent.meetMiddle_true_left]
 
 -- ════════════════════════════════════════════════════════════════
 -- §3.2: Anaphora in Conjunctive Sentences
@@ -284,12 +284,12 @@ The frame is `F(ψ) = ∃xT(x) ∧ ψ`, and the presupposition is `U(x)`.
 
     Derived from `conj_transparency_parametric`. -/
 theorem forward_conj_transparency
-    (E presup : W → PartialAssign D → Truth3)
+    (E presup : W → PartialAssign D → Trivalent)
     (hwitness : ∀ w g, E w g = .true → presup w g = .true)
     (C : Ctx W D) :
     ∀ (φ : Sent W D) (w : W) (g : PartialAssign D), C w g →
-      Truth3.meetMiddle (E w g) (Truth3.meetMiddle (presup w g) (φ w g)) =
-      Truth3.meetMiddle (E w g) (φ w g) :=
+      Trivalent.meetMiddle (E w g) (Trivalent.meetMiddle (presup w g) (φ w g)) =
+      Trivalent.meetMiddle (E w g) (φ w g) :=
   fun φ w g _ => conj_transparency_parametric (E w g) (presup w g) (φ w g) (hwitness w g)
 
 /-- Reverse conjunction Transparency FAILS: `P(x̲) ∧ ∃xT(x)` does NOT
@@ -301,16 +301,16 @@ theorem forward_conj_transparency
     and `meetMiddle false # = false`). The key asymmetry of Middle Kleene:
     `meetMiddle false # = false` but `meetMiddle # _ = #`. -/
 theorem reverse_conj_transparency_fails :
-    ∃ (W : Type) (D : Type) (E presup φ : W → PartialAssign D → Truth3)
+    ∃ (W : Type) (D : Type) (E presup φ : W → PartialAssign D → Trivalent)
       (w : W) (g : PartialAssign D),
-      Truth3.meetMiddle (Truth3.meetMiddle (presup w g) (φ w g)) (E w g) ≠
-      Truth3.meetMiddle (φ w g) (E w g) := by
+      Trivalent.meetMiddle (Trivalent.meetMiddle (presup w g) (φ w g)) (E w g) ≠
+      Trivalent.meetMiddle (φ w g) (E w g) := by
   -- presup = U(x) = false (unvalued), φ = P(x) = # (unvalued), E = ∃xT(x) = true
   -- LHS: meetMiddle (meetMiddle false #) true = meetMiddle false true = false
   -- RHS: meetMiddle # true = #
   refine ⟨Unit, Unit, λ _ _ => .true, λ _ _ => .false, λ _ _ => .indet,
           (), λ _ => none, ?_⟩
-  simp [Truth3.meetMiddle]
+  simp [Trivalent.meetMiddle]
 
 end Conjunction
 
@@ -346,12 +346,12 @@ is `U(x)`.
     witness condition) means `g` values `x`, making `U(x)` redundant.
     Derived from `disj_transparency_parametric`. -/
 theorem bathroom_transparency
-    (negE presup : W → PartialAssign D → Truth3)
+    (negE presup : W → PartialAssign D → Trivalent)
     (hwitness : ∀ w g, negE w g = .false → presup w g = .true)
     (C : Ctx W D) :
     ∀ (φ : Sent W D) (w : W) (g : PartialAssign D), C w g →
-      Truth3.joinMiddle (negE w g) (Truth3.meetMiddle (presup w g) (φ w g)) =
-      Truth3.joinMiddle (negE w g) (φ w g) :=
+      Trivalent.joinMiddle (negE w g) (Trivalent.meetMiddle (presup w g) (φ w g)) =
+      Trivalent.joinMiddle (negE w g) (φ w g) :=
   fun φ w g _ => disj_transparency_parametric (negE w g) (presup w g) (φ w g) (hwitness w g)
 
 /-- Reverse bathroom Transparency FAILS: `H(x̲) ∨ ¬∃xB(x)` does NOT
@@ -363,21 +363,21 @@ theorem bathroom_transparency
     `U(x) = false`, so `meetMiddle false # = false`, and
     `joinMiddle false (¬∃xB(x))` can be `true` — a difference. -/
 theorem reverse_bathroom_transparency_fails :
-    ∃ (W : Type) (D : Type) (negE presup φ : W → PartialAssign D → Truth3)
+    ∃ (W : Type) (D : Type) (negE presup φ : W → PartialAssign D → Trivalent)
       (w : W) (g : PartialAssign D),
-      Truth3.joinMiddle (Truth3.meetMiddle (presup w g) (φ w g)) (negE w g) ≠
-      Truth3.joinMiddle (φ w g) (negE w g) := by
+      Trivalent.joinMiddle (Trivalent.meetMiddle (presup w g) (φ w g)) (negE w g) ≠
+      Trivalent.joinMiddle (φ w g) (negE w g) := by
   -- presup = false (U(x) unvalued), φ = # (P(x) unvalued), negE = true
   -- LHS: joinMiddle (meetMiddle false #) true = joinMiddle false true = true
   -- RHS: joinMiddle # true = #
   refine ⟨Unit, Unit, λ _ _ => .true, λ _ _ => .false, λ _ _ => .indet,
           (), λ _ => none, ?_⟩
-  simp [Truth3.joinMiddle, Truth3.meetMiddle]
+  simp [Trivalent.joinMiddle, Trivalent.meetMiddle]
 
 end Bathroom
 
 -- ════════════════════════════════════════════════════════════════
--- §2.1: Semantic Adequacy — Bathroom Truth Conditions
+-- §2.1: Semantic Adequacy — Bathroom Trivalent Conditions
 -- ════════════════════════════════════════════════════════════════
 
 section BathroomTruthConditions
@@ -424,14 +424,14 @@ variable {D : Type} {W : Type}
     - `F(x)`: `evalPred F g 0 w` (true/false/`#` depending on `g(0)`)
     - Overall: `joinMiddle (neg (∃xB(x))) (F(x))` -/
 def bathroomSent (B F : Interp W D) (dom : List D)
-    (w : W) (g : PartialAssign D) : Truth3 :=
-  let existsB : Truth3 :=
+    (w : W) (g : PartialAssign D) : Trivalent :=
+  let existsB : Trivalent :=
     if evalPred B g 0 w = .true then .true
     else if dom.all (λ d => B w d == false) then .false
     else .indet
-  let negExistsB := Truth3.neg existsB
+  let negExistsB := Trivalent.neg existsB
   let fx := evalPred F g 0 w
-  Truth3.joinMiddle negExistsB fx
+  Trivalent.joinMiddle negExistsB fx
 
 /-- Classical truth of `¬∃xB(x) ∨ ∃x(B(x) ∧ F(x))`: either no element
     satisfies `B`, or some element satisfies both `B` and `F`. -/
@@ -460,14 +460,14 @@ theorem bathroom_classical_to_trivalent (B F : Interp W D) (dom : List D) (w : W
     have hne : ¬(evalPred B PartialAssign.empty 0 w = .true) := by
       simp only [evalPred, PartialAssign.empty]; decide
     rw [if_neg hne, if_pos hnoB]
-    simp [Truth3.neg, Truth3.joinMiddle]
+    simp [Trivalent.neg, Trivalent.joinMiddle]
   · -- Case 2: witness d with B(d) and F(d). Set g(0) = some d.
     refine ⟨λ _ => some d, ?_⟩
     simp only [bathroomSent]
     have heval : evalPred B (λ _ => some d) 0 w = .true := by
-      simp only [evalPred, Truth3.ofBool, hBd]
+      simp only [evalPred, Trivalent.ofBool, hBd]
     rw [if_pos heval]
-    simp [evalPred, Truth3.ofBool, hFd, Truth3.neg, Truth3.joinMiddle]
+    simp [evalPred, Trivalent.ofBool, hFd, Trivalent.neg, Trivalent.joinMiddle]
 
 /-- **Direction 2**: If the trivalent bathroom sentence is true at `w`,
     then the classical disjunction holds.
@@ -502,7 +502,7 @@ theorem bathroom_trivalent_to_classical (B F : Interp W D) (dom : List D) (w : W
       rw [if_neg hne2] at hg
       -- hg : joinMiddle (neg .indet) _ = .true, i.e. joinMiddle .indet _ = .true
       -- but joinMiddle .indet _ = .indet, contradiction
-      simp only [Truth3.neg, Truth3.joinMiddle] at hg
+      simp only [Trivalent.neg, Trivalent.joinMiddle] at hg
       exact absurd hg (by decide)
     · -- existsB = .false, negExistsB = .true → classical left disjunct
       exact Or.inl hall
@@ -511,24 +511,24 @@ theorem bathroom_trivalent_to_classical (B F : Interp W D) (dom : List D) (w : W
     | false =>
       -- evalPred B g 0 w = .false ≠ .true
       have hne : ¬(evalPred B g 0 w = .true) := by
-        simp only [evalPred, hg0, Truth3.ofBool, hBd]; decide
+        simp only [evalPred, hg0, Trivalent.ofBool, hBd]; decide
       rw [if_neg hne] at hg
       cases hall : List.all dom (fun d => B w d == false)
       · have hne2 : ¬((List.all dom fun d => B w d == false) = true) := by
           rw [hall]; decide
         rw [if_neg hne2] at hg
-        simp only [Truth3.neg, Truth3.joinMiddle] at hg
+        simp only [Trivalent.neg, Trivalent.joinMiddle] at hg
         exact absurd hg (by decide)
       · exact Or.inl hall
     | true =>
       -- evalPred B g 0 w = .true: g(0) witnesses B
       have heval : evalPred B g 0 w = .true := by
-        simp only [evalPred, hg0, Truth3.ofBool, hBd]
+        simp only [evalPred, hg0, Trivalent.ofBool, hBd]
       rw [if_pos heval] at hg
       -- existsB = .true, negExistsB = .false, joinMiddle .false fx = fx
-      simp only [Truth3.neg, Truth3.joinMiddle] at hg
+      simp only [Trivalent.neg, Trivalent.joinMiddle] at hg
       -- hg says evalPred F g 0 w = .true
-      simp only [evalPred, hg0, Truth3.ofBool] at hg
+      simp only [evalPred, hg0, Trivalent.ofBool] at hg
       cases hFd : F w d
       · simp only [hFd] at hg; exact absurd hg (by decide)
       · exact Or.inr ⟨d, hdom d, hBd, hFd⟩
@@ -563,13 +563,13 @@ end BathroomTruthConditions
 
     The identity frame `F(ψ) = ψ` represents a bare sentence. -/
 theorem bare_pronoun_fails_null :
-    ∃ (W : Type) (D : Type) (presup φ : W → PartialAssign D → Truth3)
+    ∃ (W : Type) (D : Type) (presup φ : W → PartialAssign D → Trivalent)
       (w : W) (g : PartialAssign D),
       True  -- null context membership
-      ∧ Truth3.meetMiddle (presup w g) (φ w g) ≠ φ w g := by
+      ∧ Trivalent.meetMiddle (presup w g) (φ w g) ≠ φ w g := by
   refine ⟨Unit, Unit, λ _ _ => .false, λ _ _ => .true,
           (), λ _ => none, trivial, ?_⟩
-  simp [Truth3.meetMiddle]
+  simp [Trivalent.meetMiddle]
 
 /-! ### Empirical coverage from §3
 
@@ -639,7 +639,7 @@ variable {D : Type*} {W : Type*}
 open Classical
 
 /-- Plural sentence: evaluated relative to a world and a plural assignment. -/
-abbrev PSent (W : Type*) (D : Type*) := W → PluralAssign D → Truth3
+abbrev PSent (W : Type*) (D : Type*) := W → PluralAssign D → Trivalent
 
 /-- Alias for `PluralAssign.singularAt` — `G` assigns `x` uniquely to `d`.
     §6.2: `|G(x)| = 1` with `G(x) = d`. -/
@@ -652,16 +652,16 @@ abbrev singularAt (G : PluralAssign D) (x : Nat) (d : D) : Prop :=
     - `0` if `|G(x)| = 1` and `G(x) ∉ I(P,w)`
     - `#` if `|G(x)| ≠ 1` -/
 noncomputable def evalPredPlural (I : Interp W D) (G : PluralAssign D)
-    (x : Nat) (w : W) : Truth3 :=
+    (x : Nat) (w : W) : Trivalent :=
   if h : ∃ d, singularAt G x d then
-    Truth3.ofBool (I w (Classical.choose h))
+    Trivalent.ofBool (I w (Classical.choose h))
   else .indet
 
-/-- The `atomic(x)` predicate as a Truth3 value.
+/-- The `atomic(x)` predicate as a Trivalent value.
     §6.3: `⟦atomic(x)⟧^{w,G} = 1` if `|G(x)| = 1`,
     `0` otherwise. Always bivalent (never `#`). Replaces `U(x)` from
     the simplified system. -/
-noncomputable def atomicT3 (G : PluralAssign D) (x : Nat) : Truth3 :=
+noncomputable def atomicT3 (G : PluralAssign D) (x : Nat) : Trivalent :=
   if G.singular x then .true else .false
 
 /-- `atomic(x)` is always defined (bivalent). -/
@@ -669,8 +669,8 @@ theorem atomicT3_defined (G : PluralAssign D) (x : Nat) :
     (atomicT3 G x).isDefined := by
   unfold atomicT3
   by_cases h : G.singular x
-  · simp [h, Truth3.isDefined]
-  · simp [h, Truth3.isDefined]
+  · simp [h, Trivalent.isDefined]
+  · simp [h, Trivalent.isDefined]
 
 /-- Plural existential quantifier with witness condition.
     §6.2:
@@ -678,7 +678,7 @@ theorem atomicT3_defined (G : PluralAssign D) (x : Nat) :
     - `0` if for every atomic `a ∈ D`, `G_{x=a} ≠ ∅` and `⟦φ⟧^{w,G_{x=a}} = 0`
     - `#` otherwise -/
 noncomputable def existsPlural (x : Nat) (φ : PSent W D) (dom : Set D)
-    (w : W) (G : PluralAssign D) : Truth3 :=
+    (w : W) (G : PluralAssign D) : Trivalent :=
   if φ w G = .true then .true
   else if (∀ a ∈ dom, (G.restrict x a).IsNonempty) ∧
           (∀ a ∈ dom, φ w (G.restrict x a) = .false) then .false
@@ -690,7 +690,7 @@ noncomputable def existsPlural (x : Nat) (φ : PSent W D) (dom : Set D)
     - `0` if the coverage condition holds and some `a` gives `⟦φ⟧^{w,G_{x=a}} = 0`
     - `#` otherwise -/
 noncomputable def forallPlural (x : Nat) (φ : PSent W D) (dom : Set D)
-    (w : W) (G : PluralAssign D) : Truth3 :=
+    (w : W) (G : PluralAssign D) : Trivalent :=
   if (∀ a ∈ dom, (G.restrict x a).IsNonempty) ∧
      (∀ a ∈ dom, φ w (G.restrict x a) = .true) then .true
   else if (∀ a ∈ dom, (G.restrict x a).IsNonempty) ∧
@@ -710,21 +710,21 @@ variable {D : Type*} {W : Type*}
 /-- Forward conjunction Transparency in the plural system, derived from
     the parametric version. -/
 theorem plural_forward_conj_transparency
-    (E presup : W → PluralAssign D → Truth3)
+    (E presup : W → PluralAssign D → Trivalent)
     (hwitness : ∀ w G, E w G = .true → presup w G = .true) :
-    ∀ (φ : W → PluralAssign D → Truth3) (w : W) (G : PluralAssign D),
-      Truth3.meetMiddle (E w G) (Truth3.meetMiddle (presup w G) (φ w G)) =
-      Truth3.meetMiddle (E w G) (φ w G) :=
+    ∀ (φ : W → PluralAssign D → Trivalent) (w : W) (G : PluralAssign D),
+      Trivalent.meetMiddle (E w G) (Trivalent.meetMiddle (presup w G) (φ w G)) =
+      Trivalent.meetMiddle (E w G) (φ w G) :=
   fun φ w G => conj_transparency_parametric (E w G) (presup w G) (φ w G) (hwitness w G)
 
 /-- Bathroom Transparency in the plural system, derived from
     the parametric version. -/
 theorem plural_bathroom_transparency
-    (negE presup : W → PluralAssign D → Truth3)
+    (negE presup : W → PluralAssign D → Trivalent)
     (hwitness : ∀ w G, negE w G = .false → presup w G = .true) :
-    ∀ (φ : W → PluralAssign D → Truth3) (w : W) (G : PluralAssign D),
-      Truth3.joinMiddle (negE w G) (Truth3.meetMiddle (presup w G) (φ w G)) =
-      Truth3.joinMiddle (negE w G) (φ w G) :=
+    ∀ (φ : W → PluralAssign D → Trivalent) (w : W) (G : PluralAssign D),
+      Trivalent.joinMiddle (negE w G) (Trivalent.meetMiddle (presup w G) (φ w G)) =
+      Trivalent.joinMiddle (negE w G) (φ w G) :=
   fun φ w G => disj_transparency_parametric (negE w G) (presup w G) (φ w G) (hwitness w G)
 
 end PluralTransparency
@@ -755,15 +755,15 @@ antecedent of a singular pronoun.
     is false (since `atomic(x)` is false when `|G(x)| > 1`) while
     the second is true. -/
 theorem universal_doesnt_license_anaphora :
-    ∃ (D : Type) (presup φ : PluralAssign D → Truth3)
+    ∃ (D : Type) (presup φ : PluralAssign D → Trivalent)
       (G : PluralAssign D),
       -- presup = atomic(x) = false (two values for x)
       -- φ = tautology = true
-      Truth3.meetMiddle (presup G) (φ G) ≠ φ G := by
+      Trivalent.meetMiddle (presup G) (φ G) ≠ φ G := by
   -- D = Bool, G has two assignments: one mapping x to true, one to false
   -- So |G(x)| = 2, atomic(x) = false
   refine ⟨Bool, λ _ => .false, λ _ => .true, ⟨λ _ => True⟩, ?_⟩
-  simp [Truth3.meetMiddle]
+  simp [Trivalent.meetMiddle]
 
 end UniversalAnaphora
 
@@ -839,7 +839,7 @@ theorem covariation_fails_individual :
 end Covariation
 
 -- ════════════════════════════════════════════════════════════════
--- §7: Weak and Strong Truth
+-- §7: Weak and Strong Trivalent
 -- ════════════════════════════════════════════════════════════════
 
 section WeakStrongTruth
@@ -851,10 +851,10 @@ variable {D : Type*} {W : Type*}
 
 §7: Two modes of interpretation for donkey sentences:
 
-- **Weak Truth**: `S` is weakly true at `w` if ∃G such that `S` is true
+- **Weak Trivalent**: `S` is weakly true at `w` if ∃G such that `S` is true
   at `(w,G)`. Generates *existential* (weak) readings.
 
-- **Strong Truth**: `S` is strongly true at `w` if ∃G true at `(w,G)`
+- **Strong Trivalent**: `S` is strongly true at `w` if ∃G true at `(w,G)`
   AND no `G'` makes `S` false at `(w,G')`. Generates *universal* (strong)
   readings. Similar to [elliott-2023]'s strengthened reading and
   [champollion-bumford-henderson-2019]'s homogeneity approach.
@@ -898,7 +898,7 @@ file.
 end WeakStrongTruth
 
 -- ════════════════════════════════════════════════════════════════
--- §7: The Strong Truth Operator O
+-- §7: The Strong Trivalent Operator O
 -- ════════════════════════════════════════════════════════════════
 
 section StrongTruthOperator
@@ -908,26 +908,26 @@ variable {D : Type*} {W : Type*}
 open Classical
 
 /-!
-### The Strong Truth Operator
+### The Strong Trivalent Operator
 
-§7 (55): The operator `O` internalizes Strong Truth
+§7 (55): The operator `O` internalizes Strong Trivalent
 as an embeddable operator in the object language:
 
     ⟦O(S)⟧^{w,G} = 1 if ⟦S⟧^{w,G} = 1 and ¬∃G'. ⟦S⟧^{w,G'} = 0
     ⟦O(S)⟧^{w,G} = 0 if ⟦S⟧^{w,G} = 0 and ¬∃G'. ⟦S⟧^{w,G'} = 1
     ⟦O(S)⟧^{w,G} = # otherwise
 
-This allows Strong Truth to be applied at specific syntactic positions
+This allows Strong Trivalent to be applied at specific syntactic positions
 rather than globally. Key properties:
 - If S₁ ≡ S₂ (logically equivalent), then O(S₁) ≡ O(S₂)
 - O can *violate* Transparency when embedded, which is desirable:
   `∃xS(x) ∧ O(H(x̲))` is correctly predicted to be infelicitous
 -/
 
-/-- The Strong Truth Operator O.
+/-- The Strong Trivalent Operator O.
     §7 (55). -/
 noncomputable def strongTruthOp (φ : PSent W D)
-    (w : W) (G : PluralAssign D) : Truth3 :=
+    (w : W) (G : PluralAssign D) : Trivalent :=
   if φ w G = .true ∧ ¬∃ G', φ w G' = .false then .true
   else if φ w G = .false ∧ ¬∃ G', φ w G' = .true then .false
   else .indet
@@ -951,7 +951,7 @@ theorem strongTruthOp_true_implies (φ : PSent W D) (w : W)
   · split at h <;> simp_all
 
 /-- Strong truth at w ↔ weak truth of O(S) at w.
-    Embedding O at matrix level recovers the Strong Truth interpretation. -/
+    Embedding O at matrix level recovers the Strong Trivalent interpretation. -/
 theorem strongTruthOp_weakTruth_iff_strongTruth (φ : PSent W D) (w : W) :
     weakTruthP (strongTruthOp φ) w ↔ strongTruthP φ w := by
   constructor
@@ -1017,7 +1017,7 @@ grep-able anchors.
   Spector's Tables 4–5 use 7 individuals; a 4-individual `decide`-checked
   variant would suffice.
 
-- **§7 Strong Truth examples (47), (54).** The operator `O` is defined
+- **§7 Strong Trivalent examples (47), (54).** The operator `O` is defined
   and proved equivalence-preserving (`strongTruthOp_preserves_equiv`,
   `strongTruthOp_weakTruth_iff_strongTruth`); the central motivating
   examples (`Either it's not the case that Sue has a credit card and bought

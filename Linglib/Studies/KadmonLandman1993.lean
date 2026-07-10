@@ -54,7 +54,6 @@ open Exhaustification.FreeChoice (Ctx existsInDomain
 open Ladusaw1979 (licensingStrength)
 open Semantics.Supervaluation (SpecSpace superTrue superTrue_true_iff
   superTrue_indet_iff)
-open Core.Duality (Truth3)
 
 /-! ### The strengthening condition
 
@@ -503,7 +502,7 @@ traditional GEN operator's hidden normalcy parameter
 (`Semantics/Genericity/Generics.lean`) is, on this view, a choice of
 precisification; exception tolerance is the freedom to choose another. -/
 
-/-- Truth under one precisification: every entity in the induced domain
+/-- Trivalent under one precisification: every entity in the induced domain
 satisfies the scope. -/
 def genericTrue {Property Entity : Type*} (apply : Property → Set Entity)
     (scope : Entity → Prop) (v : Set Property) : Prop :=
@@ -585,7 +584,7 @@ theorem genericSuperTrue_iff_superTrue {Property Entity : Type*}
     (scope : Entity → Prop) [DecidablePred (genericTrue apply scope)]
     (V : Finset (Set Property)) (hV : ↑V = X.precisifications) :
     genericSuperTrue X apply scope ↔
-      superTrue (genericTrue apply scope) (X.toSpecSpace V hV) = Truth3.true := by
+      superTrue (genericTrue apply scope) (X.toSpecSpace V hV) = Trivalent.true := by
   rw [superTrue_true_iff]
   exact ⟨λ h v hv => h v (VagueRestriction.mem_toSpecSpace.mp hv),
          λ h v hv => h v (VagueRestriction.mem_toSpecSpace.mpr hv)⟩
@@ -599,7 +598,7 @@ theorem genericSubTrue_not_superTrue_iff_indet {Property Entity : Type*}
     (scope : Entity → Prop) [DecidablePred (genericTrue apply scope)]
     (V : Finset (Set Property)) (hV : ↑V = X.precisifications) :
     genericSubTrue X apply scope ∧ ¬genericSuperTrue X apply scope ↔
-      superTrue (genericTrue apply scope) (X.toSpecSpace V hV) = Truth3.indet := by
+      superTrue (genericTrue apply scope) (X.toSpecSpace V hV) = Trivalent.indet := by
   rw [superTrue_indet_iff]
   constructor
   · rintro ⟨⟨v, hv, hvt⟩, hns⟩

@@ -36,7 +36,6 @@ not yet present in linglib and are left as future work.
 
 namespace CarianiGoldstein2020
 
-open Core.Duality (Truth3)
 open Core.Order (SimilarityOrdering)
 open Santorio2018 (DecAlt homogeneityEval)
 
@@ -51,12 +50,12 @@ open Santorio2018 (DecAlt homogeneityEval)
     fail, undefined otherwise. -/
 def cgConditional {W : Type*} [DecidableEq W] [Fintype W]
     (sim : SimilarityOrdering W) (alts : List (DecAlt W))
-    (C : W → Prop) [DecidablePred C] (w : W) : Truth3 :=
+    (C : W → Prop) [DecidablePred C] (w : W) : Trivalent :=
   homogeneityEval sim alts C w
 
 
 -- ════════════════════════════════════════════════════
--- § 2. Truth-conditional coincidence with Santorio
+-- § 2. Trivalent-conditional coincidence with Santorio
 -- ════════════════════════════════════════════════════
 
 /-- **C&G ↔ Santorio coincidence.** [cariani-goldstein-2020]'s

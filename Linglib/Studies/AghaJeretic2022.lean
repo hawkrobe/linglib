@@ -1,5 +1,5 @@
 import Linglib.Core.Logic.Duality
-import Linglib.Core.Logic.Truth3
+import Linglib.Core.Logic.Trivalent
 import Linglib.Data.Examples.AghaJeretic2022
 import Linglib.Data.Generalizations.HomogeneityGap
 import Linglib.Semantics.Modality.Directive
@@ -69,7 +69,6 @@ semantics), and extends it to explain the neg-raising asymmetry between
 
 namespace AghaJeretic2022
 
-open Core.Duality (Truth3)
 open Generalizations.HomogeneityGap (GapDatum GapScenario GapPredict fromExample)
 open Semantics.Homogeneity (negRaising_iff_subsingleton)
 
@@ -82,7 +81,7 @@ open Semantics.Homogeneity (negRaising_iff_subsingleton)
 *should* gets trivalent semantics via plural predication over worlds, while
 *must* remains bivalent (standard ∀ quantification).
 
-We model the modal domain as a `List World` and use `Core.Duality.Truth3`
+We model the modal domain as a `List World` and use `Trivalent.Trivalent`
 for the three-valued output. -/
 
 variable {World : Type}
@@ -90,8 +89,8 @@ variable {World : Type}
 /-- Strong necessity: standard ∀ quantification over the modal domain.
     Bivalent — always true or false, never indeterminate.
     `must_D := λp. ∀w ∈ D. p(w)` -/
-def mustEval (domain : List World) (p : World → Bool) : Truth3 :=
-  Truth3.ofBool (domain.all p)
+def mustEval (domain : List World) (p : World → Bool) : Trivalent :=
+  Trivalent.ofBool (domain.all p)
 
 /-- Weak necessity: trivalent plural predication over the modal domain.
     Returns tt if all worlds satisfy p, ff if none do, unk otherwise.
@@ -100,14 +99,14 @@ def mustEval (domain : List World) (p : World → Bool) : Truth3 :=
 
     Body uses an explicit 4-way if-chain to support `split`-based proofs
     in this file. The bridge theorem `shouldEval_eq_distList` (below)
-    formalizes the equivalence with `Core.Duality.distList` for nonempty
+    formalizes the equivalence with `Trivalent.distList` for nonempty
     domains. Refactoring the body to call `distList` directly requires
     rewriting ~3 dense proof scripts; tracked as future work. -/
-def shouldEval (domain : List World) (p : World → Bool) : Truth3 :=
-  if domain.isEmpty then Truth3.false
-  else if domain.all p then Truth3.true
-  else if domain.all (fun w => !p w) then Truth3.false
-  else Truth3.indet
+def shouldEval (domain : List World) (p : World → Bool) : Trivalent :=
+  if domain.isEmpty then Trivalent.false
+  else if domain.all p then Trivalent.true
+  else if domain.all (fun w => !p w) then Trivalent.false
+  else Trivalent.indet
 
 -- ============================================================================
 -- §2. Core Properties of the Trivalent Semantics
@@ -117,33 +116,33 @@ def shouldEval (domain : List World) (p : World → Bool) : Truth3 :=
 
 /-- `must` never returns the indeterminate value. -/
 theorem must_bivalent (domain : List World) (p : World → Bool) :
-    mustEval domain p = Truth3.true ∨ mustEval domain p = Truth3.false := by
-  unfold mustEval Truth3.ofBool
+    mustEval domain p = Trivalent.true ∨ mustEval domain p = Trivalent.false := by
+  unfold mustEval Trivalent.ofBool
   cases domain.all p <;> simp
 
 /-! ### should is homogeneous: it can return ★ -/
 
 /-- In a mixed domain, `should` returns ★ (indeterminate). -/
 theorem should_mixed :
-    shouldEval [true, false] id = Truth3.indet := by native_decide
+    shouldEval [true, false] id = Trivalent.indet := by native_decide
 
 /-- In a uniform-true domain, `should` returns tt. -/
 theorem should_all_true :
-    shouldEval [true, true, true] id = Truth3.true := by native_decide
+    shouldEval [true, true, true] id = Trivalent.true := by native_decide
 
 /-- In a uniform-false domain, `should` returns ff. -/
 theorem should_all_false :
-    shouldEval [false, false] id = Truth3.false := by native_decide
+    shouldEval [false, false] id = Trivalent.false := by native_decide
 
 /-- `must` returns ff in the mixed case (no gap). -/
 theorem must_mixed :
-    mustEval [true, false] id = Truth3.false := by native_decide
+    mustEval [true, false] id = Trivalent.false := by native_decide
 
 /-- When positive, `should` and `must` agree. -/
 theorem should_must_agree_positive (domain : List World) (p : World → Bool)
     (h : domain.all p = true) (hne : domain.isEmpty = false) :
     shouldEval domain p = mustEval domain p := by
-  simp [shouldEval, mustEval, Truth3.ofBool, h, hne]
+  simp [shouldEval, mustEval, Trivalent.ofBool, h, hne]
 
 -- ============================================================================
 -- §3. Negation Symmetry (the formal core of homogeneity)
@@ -180,8 +179,8 @@ private theorem list_all_neg_false_of_pos {α : Type} {l : List α} {p : α → 
 /-- If `shouldEval D p = tt`, then `shouldEval D (¬p) = ff`.
     No overlap between positive and negative extensions of the plurality. -/
 theorem shouldEval_tt_neg_ff (domain : List World) (p : World → Bool)
-    (h : shouldEval domain p = Truth3.true) :
-    shouldEval domain (fun w => !(p w)) = Truth3.false := by
+    (h : shouldEval domain p = Trivalent.true) :
+    shouldEval domain (fun w => !(p w)) = Trivalent.false := by
   unfold shouldEval at h ⊢
   split at h
   · exact absurd h (by decide)
@@ -196,8 +195,8 @@ theorem shouldEval_tt_neg_ff (domain : List World) (p : World → Bool)
 /-- If `shouldEval D p = ff` (non-empty D), then `shouldEval D (¬p) = tt`.
     Symmetric: universal denial of p means universal affirmation of ¬p. -/
 theorem shouldEval_ff_neg_tt (domain : List World) (p : World → Bool)
-    (h : shouldEval domain p = Truth3.false) (hne : domain.isEmpty = false) :
-    shouldEval domain (fun w => !(p w)) = Truth3.true := by
+    (h : shouldEval domain p = Trivalent.false) (hne : domain.isEmpty = false) :
+    shouldEval domain (fun w => !(p w)) = Trivalent.true := by
   unfold shouldEval at h ⊢
   split at h
   · rename_i he; exact absurd he (by simp [hne])
@@ -212,8 +211,8 @@ theorem shouldEval_ff_neg_tt (domain : List World) (p : World → Bool)
 /-- If `shouldEval D p = unk`, then `shouldEval D (¬p) = unk`.
     The gap is symmetric under negation — the core homogeneity property. -/
 theorem shouldEval_unk_symmetric (domain : List World) (p : World → Bool)
-    (h : shouldEval domain p = Truth3.indet) :
-    shouldEval domain (fun w => !(p w)) = Truth3.indet := by
+    (h : shouldEval domain p = Trivalent.indet) :
+    shouldEval domain (fun w => !(p w)) = Trivalent.indet := by
   unfold shouldEval at h ⊢
   split at h
   · exact absurd h (by decide)
@@ -326,11 +325,11 @@ theorem necessarily_removes_homogeneity :
 
 /-- `shouldEval` with homogeneity removal (= explicit quantifier insertion)
     reduces to `mustEval` — the gap disappears. -/
-def shouldWithRemoval (domain : List World) (p : World → Bool) : Truth3 :=
+def shouldWithRemoval (domain : List World) (p : World → Bool) : Trivalent :=
   mustEval domain p
 
 theorem removal_eliminates_gap :
-    shouldWithRemoval [true, false] id = Truth3.false := by native_decide
+    shouldWithRemoval [true, false] id = Trivalent.false := by native_decide
 
 -- ============================================================================
 -- §6. Exception Tolerance (§3.3)
@@ -446,7 +445,7 @@ theorem existential_multiple_minimal_witnesses :
 
 /-- X applied to must yields the domain itself (= should's denotation).
     The resulting plurality is then subject to plural predication semantics. -/
-def applyX (domain : List World) (p : World → Bool) : Truth3 :=
+def applyX (domain : List World) (p : World → Bool) : Trivalent :=
   shouldEval domain p
 
 /-- X(must) = should. -/
@@ -559,7 +558,7 @@ abbrev BridgeWorld := Fin 4
 
 /-- `Directive.weakNecessity` is bivalent: as a Prop, it is classically
     true or false — never indeterminate. This contrasts with `shouldEval`,
-    which can return `Truth3.indet`. -/
+    which can return `Trivalent.indet`. -/
 theorem directive_bivalent
     (f : ModalBase BridgeWorld)
     (g g' : OrderingSource BridgeWorld)
@@ -572,11 +571,11 @@ end DirectiveBridge
 
 /-- `shouldEval` CAN return unk — the gap that domain restriction misses. -/
 theorem shouldEval_can_gap :
-    ∃ (D : List Bool) (p : Bool → Bool), shouldEval D p = Truth3.indet :=
+    ∃ (D : List Bool) (p : Bool → Bool), shouldEval D p = Trivalent.indet :=
   ⟨[true, false], id, by native_decide⟩
 
 /-- Domain restriction as a `GapPredict`: *should* = ∀ over the refined
-    domain, with negation as Strong Kleene `Truth3.neg`. Bivalent on every
+    domain, with negation as Strong Kleene `Trivalent.neg`. Bivalent on every
     cell. -/
 def domainRestrictionPredict : GapPredict := fun pol s =>
   match pol with
@@ -736,7 +735,7 @@ theorem five_parallels : sharedProperties.length = 5 := rfl
 /-! ## Local vs Global Aggregation
 
 The should/must contrast is an instance of the local/global aggregation
-distinction in `Core.Duality`. When modal sentences are embedded under
+distinction in `Trivalent`. When modal sentences are embedded under
 quantifiers ("Every student should/must pass"):
 
 - **should** (local): each individual's modal domain is mixed → `.indet`.
@@ -747,7 +746,7 @@ quantifiers ("Every student should/must pass"):
   The quantifier sees Bools. By `aggregate_map_ofBool_mixed`, mixed
   inputs yield `.true` for ∃ and `.false` for ∀ — the strength effect. -/
 
-open Core.Duality (ProjectionType aggregate
+open Trivalent (ProjectionType aggregate
   aggregate_replicate_indet aggregate_map_ofBool_mixed aggregate_map_ofBool_ne_indet)
 
 /-- `shouldEval` for a mixed nonempty domain produces `.indet`. -/
@@ -762,7 +761,7 @@ theorem shouldEval_indet (domain : List World) (p : World → Bool)
     have mixed modal domains, all produce `.indet`. Any quantifier
     aggregating these gaps returns `.indet` — strength is invisible. -/
 theorem should_erases_strength (n : Nat) (hn : n > 0) (d : ProjectionType) :
-    aggregate d (List.replicate n Truth3.indet) = .indet :=
+    aggregate d (List.replicate n Trivalent.indet) = .indet :=
   aggregate_replicate_indet d n hn
 
 /-- **must produces the strength effect under embedding**: when n
@@ -771,14 +770,14 @@ theorem should_erases_strength (n : Nat) (hn : n > 0) (d : ProjectionType) :
     weak quantifiers. -/
 theorem must_strength_effect (bs : List Bool)
     (h_some_true : bs.any id) (h_some_false : bs.any (!·)) :
-    aggregate .disjunctive (bs.map Truth3.ofBool) = .true ∧
-    aggregate .conjunctive (bs.map Truth3.ofBool) = .false :=
+    aggregate .disjunctive (bs.map Trivalent.ofBool) = .true ∧
+    aggregate .conjunctive (bs.map Trivalent.ofBool) = .false :=
   aggregate_map_ofBool_mixed bs h_some_true h_some_false
 
 /-- **must is always determinate under embedding**: aggregation over
     `ofBool` values never produces a gap, regardless of duality type. -/
 theorem must_always_determinate (d : ProjectionType) (bs : List Bool) :
-    aggregate d (bs.map Truth3.ofBool) ≠ .indet :=
+    aggregate d (bs.map Trivalent.ofBool) ≠ .indet :=
   aggregate_map_ofBool_ne_indet d bs
 
 -- ============================================================================
@@ -789,7 +788,7 @@ theorem must_always_determinate (d : ProjectionType) (bs : List Bool) :
 
 The paper's central formal claim is that weak necessity IS plural predication.
 We prove this by showing `shouldEval` equals `dist` (the distributive operator
-for plural predication from `Core.Duality`) applied to the evaluation of each
+for plural predication from `Trivalent`) applied to the evaluation of each
 world in the domain.
 
 `dist results` returns:
@@ -799,12 +798,12 @@ world in the domain.
 
 This is exactly what `shouldEval` computes, with `results = domain.map p`. -/
 
-open Core.Duality (distList)
+open Trivalent (distList)
 
 /-- **shouldEval = DIST over worlds.**
 
     `shouldEval D p = distList D p` for nonempty D — the canonical
-    `Core.Duality.distList` (Fine super-truth specialized to a List
+    `Trivalent.distList` (Fine super-truth specialized to a List
     domain with a Boolean predicate) IS what weak necessity computes.
 
     This is the formal proof that weak necessity IS plural predication:
@@ -858,13 +857,13 @@ theorem shouldEval_eq_distList (domain : List World) (p : World → Bool)
 
 /-- `mustEval` is `ofBool ∘ List.all`, confirming must stays bivalent. -/
 theorem mustEval_eq_ofBool (domain : List World) (p : World → Bool) :
-    mustEval domain p = Truth3.ofBool (domain.all p) := rfl
+    mustEval domain p = Trivalent.ofBool (domain.all p) := rfl
 
 -- ============================================================================
--- §17. Sufficient Truth and Exception Tolerance (Appendix 1, def 44–46)
+-- §17. Sufficient Trivalent and Exception Tolerance (Appendix 1, def 44–46)
 -- ============================================================================
 
-/-! ## Sufficient Truth ([kriz-2016], A&J Appendix 1)
+/-! ## Sufficient Trivalent ([kriz-2016], A&J Appendix 1)
 
 Formalizes the mechanism by which indeterminate (★) sentences are rescued
 to "true enough" relative to an Question (= QUD). A sentence S is
@@ -880,10 +879,10 @@ satisfying world — they are "irrelevant" to the QUD.
 of I contains both worlds where S is true and worlds where S is false.
 In other words, S must not split any Question cell. -/
 
-/-- Sufficient Truth (Križ 2016, A&J def 44).
+/-- Sufficient Trivalent (Križ 2016, A&J def 44).
     S is true enough at w w.r.t. issue I iff (i) S is not false at w,
     and (ii) some I-equivalent world makes S true. -/
-def sufficientTruth {W : Type} (S : W → Truth3) (sameCell : W → W → Bool)
+def sufficientTruth {W : Type} (S : W → Trivalent) (sameCell : W → W → Bool)
     (w : W) (worlds : List W) : Bool :=
   S w != .false &&
   worlds.any (fun u => sameCell w u && (S u == .true))
@@ -902,9 +901,9 @@ theorem sufficient_truth_rescues_gap :
     -- w0: all exercises done (S true), w1: most done, still passes (S gap)
     -- QUD1: "how to get a perfect grade?" — w0 ≡ w1 (same answer)
     sufficientTruth
-      (fun w => if w == (0 : Fin 3) then Truth3.true
-                else if w == 1 then Truth3.indet
-                else Truth3.false)
+      (fun w => if w == (0 : Fin 3) then Trivalent.true
+                else if w == 1 then Trivalent.indet
+                else Trivalent.false)
       (fun w u => w != 2 && u != 2)  -- QUD1: w0 ≡ w1, w2 alone
       1  -- evaluate at the gap world
       [0, 1, 2]
@@ -913,9 +912,9 @@ theorem sufficient_truth_rescues_gap :
 theorem strict_qud_blocks_rescue :
     -- QUD2: "minimal requirements?" — every world in its own cell
     sufficientTruth
-      (fun w => if w == (0 : Fin 3) then Truth3.true
-                else if w == 1 then Truth3.indet
-                else Truth3.false)
+      (fun w => if w == (0 : Fin 3) then Trivalent.true
+                else if w == 1 then Trivalent.indet
+                else Trivalent.false)
       (fun w u => w == u)  -- QUD2: exact (identity)
       1  -- evaluate at the gap world
       [0, 1, 2]
@@ -1079,7 +1078,7 @@ theorem bivalent_iff_negRaising {W : Type*} (A : Set W) :
     `bivalent_iff_negRaising` the neg-raising inference fails there too — the
     homogeneity gap and the neg-raising failure are the same condition. -/
 theorem gap_witness_not_subsingleton :
-    shouldEval [true, false] id = Truth3.indet ∧
+    shouldEval [true, false] id = Trivalent.indet ∧
     ¬ ({true, false} : Set Bool).Subsingleton := by
   refine ⟨by decide, fun h => ?_⟩
   have : (true : Bool) = false :=
