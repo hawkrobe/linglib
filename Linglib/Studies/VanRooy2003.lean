@@ -1,6 +1,6 @@
 import Linglib.Semantics.Questions.Basic
 import Linglib.Semantics.Questions.DecisionTheory
-import Linglib.Semantics.Questions.Relevance
+import Linglib.Semantics.Questions.Entailment
 
 /-!
 # [van-rooy-2003]: Questioning to Resolve Decision Problems
@@ -28,7 +28,7 @@ notation maps to the substrate as:
 | `UV(C) = UV(L C, c later) − UV(C now)` (p. 735)  | `Core.DecisionTheory.utilityValue`         |
 | `UV*(C) = VSI(C)` ≥ 0 (p. 735)                   | `Core.DecisionTheory.valueSampleInfo`      |
 | `EUV(Q) = ∑_q P(q) · UV(q)` (p. 742)             | `Core.DecisionTheory.questionUtility`      |
-| `Q ⊑ Q'`  (every Q-alt ⊆ some Q'-alt) (p. 741)   | `Question.questionEntails`                 |
+| `Q ⊑ Q'`  (every Q-alt ⊆ some Q'-alt) (p. 741)   | `Question.Entails`                 |
 | `C resolves DP` (p. 736)                         | `Core.DecisionTheory.IsResolved`           |
 
 ## What this file proves
@@ -76,7 +76,7 @@ preservation theorem were consolidated here from the former
 `Semantics/Questions/DecisionTheoretic.lean` (a single-paper
 formalisation that did not meet the theory-layer ≥2-Studies admission
 bar). The reusable substrate it relied on stays one layer down:
-`Question.questionEntails`/`CoversAltsOf` in `Relevance.lean`, the
+`Question.Entails` in `Entailment.lean` (`CoversAltsOf` is local below), the
 `Core.DecisionTheory` value vocabulary in `DecisionTheory.lean`.
 -/
 
@@ -224,13 +224,20 @@ be an element of Q' such that the former entails the latter, i.e.,
 
     Q ⊑ Q' iff ∀q ∈ Q : ∃q' ∈ Q' : q ⊆ q'."
 
-This is exactly `Question.questionEntails Q Q'`. We do not introduce a
-paper-vocabulary alias — consumers should write `questionEntails Q Q'`
+This is exactly `Question.Q.Entails Q'`. We do not introduce a
+paper-vocabulary alias — consumers should write `Q.Entails Q'`
 (or use `≤` on `Question W`'s lattice instance) directly. The relation
-is reflexive (`questionEntails_refl`) and transitive
-(`questionEntails_trans`). -/
+is reflexive (`Entails.refl`) and transitive
+(`Entails.trans`). -/
 
 /-! ### §4.1 Decision-relevance preservation -/
+
+/-- Every nonempty alternative of `Q'` contains a nonempty alternative
+    of `Q`: the dual of `Question.Entails`, in the form the preservation
+    theorem below requires. The nonemptiness bars `⊥`-style vacuous
+    covering, matching `IsDecisionRelevant`'s substantive witnesses. -/
+def CoversAltsOf (Q Q' : Question W) : Prop :=
+  ∀ q ∈ alt Q', q.Nonempty → ∃ p ∈ alt Q, p.Nonempty ∧ p ⊆ q
 
 /-- **Qualitative monotonicity of decision-relevance** (substrate
     corollary in the spirit of [van-rooy-2003]'s §4.1 relevance
@@ -239,19 +246,19 @@ is reflexive (`questionEntails_refl`) and transitive
 
     This is **not** van Rooy's §4.1 Blackwell theorem itself. That
     theorem (p. 743, "a special case of [blackwell-1953]") is the
-    quantitative *iff* `questionEntails Q Q' ↔ ∀ dp, EUV(Q) ≥ EUV(Q')`
+    quantitative *iff* `Q.Entails Q' ↔ ∀ dp, EUV(Q) ≥ EUV(Q')`
     over the expected utility value `EUV` (= substrate `questionUtility`,
     with `EUV = EVSI` available as `euv_eq_evsi`). The result here is a
     one-directional, prior-free Prop transfer over the *dual* condition
     `CoversAltsOf`: on a general inquisitive (non-partition) `Question W`,
-    `questionEntails` (P-alts ⊆ Q-alts) does not transfer the qualitative
+    `Entails` (P-alts ⊆ Q-alts) does not transfer the qualitative
     witness, but its dual does. On partition questions the two coincide,
     recovering [van-rooy-2003]'s partition-based argument.
 
     For the *quantitative* §4.1 Fact (p. 743), the EUV-monotonicity ("only if")
     direction is now `Core.DecisionTheory.questionUtility_split_ge` (a finer
     partition has `EUV ≥` the coarser one, for every decision problem). The
-    remaining gap to the full `questionEntails`-level *iff* is (i) a
+    remaining gap to the full `Entails`-level *iff* is (i) a
     `Question W → Finset (Finset W)` finite-alternatives partition-cell adapter, and
     (ii) the [blackwell-1953] converse
     `ProbabilityTheory.isGarblingOf_of_blackwellDominates`. -/
@@ -276,9 +283,9 @@ of [blackwell-1953]". We state it over [groenendijk-stokhof-1984] partition cell
 `∀ f ∈ fine, ∃ c ∈ coarse, f ⊆ c`, and the value side ranges over every decision problem
 with a proper prior.
 
-(The lift to the type-level `Question.questionEntails`/`Question W` is the remaining
+(The lift to the type-level `Question.Entails`/`Question W` is the remaining
 mechanical step: an `alt Q → Finset (Finset W)` adapter via `Set.Finite.toFinset`,
-discharging `questionEntails` against this cell refinement.) -/
+discharging `Entails` against this cell refinement.) -/
 
 /-- **[van-rooy-2003] §4.1 Fact, the `⟹` ("only if") direction** (p. 743): a finer question
 is weakly better than a coarser one for *every* decision problem (the data-processing

@@ -1,6 +1,5 @@
 import Linglib.Semantics.Questions.Basic
 import Linglib.Semantics.Questions.Hamblin
-import Linglib.Semantics.Questions.Relevance
 
 /-!
 # Resolution — answerhood predicates on `Question`
@@ -38,14 +37,20 @@ Given a state `σ : Set W` and a question `Q : Question W`:
   weak / intermediate / strong / relativized exhaustivity ladder
   ([heim-1994], [george-2011], [xiang-2022]).
 
-- **`Question.partiallyAnswers`** (`Relevance.lean`, [roberts-2012] (3a)):
-  σ settles at least one alternative either positively (`σ ⊆ p`) or
-  negatively (`σ ⊆ pᶜ`); bridged below by `resolves_imp_partiallyAnswers`.
+- **`Question.partiallyAnswers`** ([roberts-2012] (3a), its non-contextual
+  core — the paper relativizes entailment to the common ground): σ settles
+  at least one alternative either positively (`σ ⊆ p`) or negatively
+  (`σ ⊆ pᶜ`); `∅` vacuously answers everything, as there. Bridged by
+  `resolves_imp_partiallyAnswers`.
 
 - **CompletelyResolves**: σ entails every alternative —
   `∀ p ∈ alt Q, σ ⊆ p`. The over-strong "intersection" reading; mostly
   vacuous for nontrivial questions. Included for completeness and as a
   comparison point with `MentionAll`.
+
+The four form the quantifier × polarity square of answerhood: `Resolves`
+(∃, positive), `partiallyAnswers` (∃, either), `CompletelyResolves`
+(∀, positive), `MentionAll` (∀, either).
 
 ## Why this file
 
@@ -58,6 +63,25 @@ mention-some data lives in `Data.Examples.GroenendijkStokhof1984`
 `Exhaustivity.lean` (Karttunen / Dayal / Xiang / Fox) specializes
 these substrate predicates rather than defining parallel ones.
 -/
+
+namespace Question
+
+variable {W : Type*}
+
+/-- `σ` partially answers `P` if it settles some alternative positively
+(`σ ⊆ p`) or negatively (`σ ⊆ pᶜ`). -/
+def partiallyAnswers (P : Question W) (σ : Set W) : Prop :=
+  ∃ p ∈ alt P, σ ⊆ p ∨ σ ⊆ pᶜ
+
+theorem partiallyAnswers_polar_iff {p σ : Set W}
+    (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
+    partiallyAnswers (polar p) σ ↔ σ ⊆ p ∨ σ ⊆ pᶜ := by
+  simp only [partiallyAnswers, alt_polar_of_nontrivial hne hnu,
+    Set.mem_insert_iff, Set.mem_singleton_iff, exists_eq_or_imp,
+    exists_eq_left, compl_compl]
+  tauto
+
+end Question
 
 namespace Semantics.Questions.Resolution
 

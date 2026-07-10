@@ -1,5 +1,7 @@
 import Linglib.Semantics.Questions.Hamblin
-import Linglib.Semantics.Questions.Relevance
+import Linglib.Semantics.Questions.Entailment
+import Linglib.Semantics.Questions.Resolution
+import Linglib.Core.Data.Fintype.Sets
 import Linglib.Discourse.QUD.Basic
 import Linglib.Semantics.Focus.Interpretation
 import Mathlib.Data.Fintype.Basic
@@ -40,11 +42,12 @@ q_ai (H beans?) q_aii (H tofu?) q_bi (R beans?) q_bii (R tofu?)
 
 ## Representation
 
-This file uses `Question` (Set-based, with the `Prop` Roberts QUD predicates
-from `Semantics/Questions/Relevance.lean`, reduced to decidable `Set`
-inclusions via the `_polar_iff` lemmas). Non-polar issues are built via
+This file uses `Question` (Set-based, with `Question.Entails` from
+`Entailment.lean`, `Question.partiallyAnswers` from `Resolution.lean`, and
+`Discourse.moveRelevant`, all reduced to decidable `Set` inclusions via
+the `_polar_iff` lemmas). Non-polar issues are built via
 `Question.ofList` and `⊓`; entailment for these goes through the lattice
-route (`questionEntails_of_le'`). Set-based partitions live in
+route (`entails_of_le'`). Set-based partitions live in
 `Semantics/Questions/Partition/` (`Question.IsPartition`, backed by
 `Setoid.IsPartition`).
 -/
@@ -52,7 +55,7 @@ route (`questionEntails_of_le'`). Set-based partitions live in
 namespace Roberts2012
 
 open Question
-open Discourse (QUDStack Strategy moveRelevantToStrategy)
+open Discourse (QUDStack Strategy moveRelevant moveRelevantToStrategy)
 
 -- `decide` on `Set`-subset goals from the `_polar_iff` reductions.
 attribute [local instance] Set.decidableSubsetOfFintype
@@ -311,35 +314,35 @@ private theorem singleton_w_zero_in_alt_q1 :
 -- § Question Entailment ([roberts-2012] Def. 8)
 -- ════════════════════════════════════════════════════
 
--- Polar→polar entailment decides via `questionEntails_polar_polar_iff`.
+-- Polar→polar entailment decides via `entails_polar_polar_iff`.
 
 /-- `q_ai` entails itself (sanity check). -/
-theorem qai_entails_qai : questionEntails q_ai q_ai :=
-  questionEntails_refl _
+theorem qai_entails_qai : q_ai.Entails q_ai :=
+  Entails.refl _
 
 /-- `q_ai` does NOT entail `q_bi`: knowing whether Hannah ate beans tells
     you nothing about whether Roger ate beans (orthogonal polar questions). -/
-theorem qai_not_entails_qbi : ¬ questionEntails q_ai q_bi := by
-  rw [questionEntails_polar_polar_iff hb_ne_empty hb_ne_univ
+theorem qai_not_entails_qbi : ¬ q_ai.Entails q_bi := by
+  rw [entails_polar_polar_iff hb_ne_empty hb_ne_univ
         rb_ne_empty rb_ne_univ]
   decide
 
 -- Wh→polar entailments now decide via `ofList_le_polar_of_classified`
 -- (each cell of the wh-partition lies in `p` or `pᶜ` of the polar
--- question) composed with `questionEntails_of_le'` (lattice → Roberts).
+-- question) composed with `entails_of_le'` (lattice → Roberts).
 -- The Big-Question entailments use `inf_le_left`/`inf_le_right`.
 
 /-- The Big Question entails "What did Hannah eat?" -/
-theorem q1_entails_qa : questionEntails q_1 q_a :=
-  questionEntails_of_le' inf_le_left
+theorem q1_entails_qa : q_1.Entails q_a :=
+  entails_of_le' inf_le_left
 
 /-- The Big Question entails "What did Roger eat?" -/
-theorem q1_entails_qb : questionEntails q_1 q_b :=
-  questionEntails_of_le' inf_le_right
+theorem q1_entails_qb : q_1.Entails q_b :=
+  entails_of_le' inf_le_right
 
 /-- "What did Hannah eat?" entails "Did Hannah eat the beans?" -/
-theorem qa_entails_qai : questionEntails q_a q_ai := by
-  apply questionEntails_of_le'
+theorem qa_entails_qai : q_a.Entails q_ai := by
+  apply entails_of_le'
   apply ofList_le_polar_of_classified
   intro c hc
   simp only [List.mem_cons, List.not_mem_nil, or_false] at hc
@@ -350,8 +353,8 @@ theorem qa_entails_qai : questionEntails q_a q_ai := by
   · exact Or.inr (fun w hw hwhb => Bool.false_ne_true (hw.1.symm.trans hwhb))
 
 /-- "What did Hannah eat?" entails "Did Hannah eat the tofu?" -/
-theorem qa_entails_qaii : questionEntails q_a q_aii := by
-  apply questionEntails_of_le'
+theorem qa_entails_qaii : q_a.Entails q_aii := by
+  apply entails_of_le'
   apply ofList_le_polar_of_classified
   intro c hc
   simp only [List.mem_cons, List.not_mem_nil, or_false] at hc
@@ -362,8 +365,8 @@ theorem qa_entails_qaii : questionEntails q_a q_aii := by
   · exact Or.inr (fun w hw hwht => Bool.false_ne_true (hw.2.symm.trans hwht))
 
 /-- "What did Roger eat?" entails "Did Roger eat the beans?" -/
-theorem qb_entails_qbi : questionEntails q_b q_bi := by
-  apply questionEntails_of_le'
+theorem qb_entails_qbi : q_b.Entails q_bi := by
+  apply entails_of_le'
   apply ofList_le_polar_of_classified
   intro c hc
   simp only [List.mem_cons, List.not_mem_nil, or_false] at hc
@@ -374,8 +377,8 @@ theorem qb_entails_qbi : questionEntails q_b q_bi := by
   · exact Or.inr (fun w hw hwrb => Bool.false_ne_true (hw.1.symm.trans hwrb))
 
 /-- "What did Roger eat?" entails "Did Roger eat the tofu?" -/
-theorem qb_entails_qbii : questionEntails q_b q_bii := by
-  apply questionEntails_of_le'
+theorem qb_entails_qbii : q_b.Entails q_bii := by
+  apply entails_of_le'
   apply ofList_le_polar_of_classified
   intro c hc
   simp only [List.mem_cons, List.not_mem_nil, or_false] at hc
@@ -391,7 +394,7 @@ theorem qb_entails_qbii : questionEntails q_b q_bii := by
     contains worlds with all four (rb, rt) combinations; no single q_b cell
     contains them all, so no `alt q_1` (which lies in some q_b cell) can
     extend `qa_c1`. -/
-theorem qa_not_entails_q1 : ¬ questionEntails q_a q_1 := by
+theorem qa_not_entails_q1 : ¬ q_a.Entails q_1 := by
   intro h
   obtain ⟨q, hq, hsub⟩ := h qa_c1 qa_c1_in_alt
   -- q ∈ alt q_1 = alt (q_a ⊓ q_b); extract membership in q_b.props
@@ -415,7 +418,7 @@ theorem qa_not_entails_q1 : ¬ questionEntails q_a q_1 := by
 /-- q_ai does NOT entail q_a. The witness `hannahBeans ∈ alt q_ai` contains
     worlds with both `ht = true` and `ht = false`; no q_a cell (each fixing
     `ht`) can extend `hannahBeans`. -/
-theorem qai_not_entails_qa : ¬ questionEntails q_ai q_a := by
+theorem qai_not_entails_qa : ¬ q_ai.Entails q_a := by
   intro h
   have halt : hannahBeans ∈ alt q_ai := by
     rw [show q_ai = Question.polar hannahBeans from rfl,
@@ -443,10 +446,10 @@ theorem qai_not_entails_qa : ¬ questionEntails q_ai q_a := by
 -- ════════════════════════════════════════════════════
 
 /-- q_a is a subquestion of q_1. -/
-theorem qa_sub_q1 : isSubquestion q_a q_1 := q1_entails_qa
+theorem qa_sub_q1 : q_a.IsSubquestion q_1 := q1_entails_qa
 
 /-- q_b is a subquestion of q_1. -/
-theorem qb_sub_q1 : isSubquestion q_b q_1 := q1_entails_qb
+theorem qb_sub_q1 : q_b.IsSubquestion q_1 := q1_entails_qb
 
 -- ════════════════════════════════════════════════════
 -- § Strategy of Inquiry ([roberts-2012] Def. 12)
@@ -468,11 +471,11 @@ theorem strat_1_count : strat_1.allQuestions.length = 7 := by
 
 /-- The root of the strategy is complete: answering "What did Hannah eat?"
     and "What did Roger eat?" answers "What did everyone eat?" Reduces
-    by `top_inf_eq` to `questionEntails (q_a ⊓ q_b) q_1` = reflexivity. -/
+    by `top_inf_eq` to `Entails (q_a ⊓ q_b) q_1` = reflexivity. -/
 theorem strat_1_root_complete : strat_1.isComplete := by
-  show questionEntails ((⊤ ⊓ q_a) ⊓ q_b) q_1
+  show Entails ((⊤ ⊓ q_a) ⊓ q_b) q_1
   rw [top_inf_eq]
-  exact questionEntails_refl _
+  exact Entails.refl _
 
 /-- The q_a sub-strategy is complete: pursuing both polar subquestions
     `q_ai` and `q_aii` resolves the wh-question `q_a` they jointly
@@ -480,9 +483,9 @@ theorem strat_1_root_complete : strat_1.isComplete := by
     four corners (Hannah's beans × tofu) are exactly the cells of `q_a`. -/
 theorem strat_1_qa_complete :
     (Strategy.branch q_a [.leaf q_ai, .leaf q_aii] : Strategy D0World).isComplete := by
-  show questionEntails ((⊤ ⊓ q_ai) ⊓ q_aii) q_a
+  show Entails ((⊤ ⊓ q_ai) ⊓ q_aii) q_a
   rw [top_inf_eq]
-  apply questionEntails_of_le'
+  apply entails_of_le'
   show Question.polar hannahBeans ⊓ Question.polar hannahTofu ≤ q_a
   apply Question.polar_inf_polar_le_ofList_of_corners
   · exact ⟨{w | w.hb = true ∧ w.ht = true}, by simp, fun _ hw => hw⟩
@@ -506,9 +509,9 @@ theorem strat_1_qa_complete :
     for Roger). -/
 theorem strat_1_qb_complete :
     (Strategy.branch q_b [.leaf q_bi, .leaf q_bii] : Strategy D0World).isComplete := by
-  show questionEntails ((⊤ ⊓ q_bi) ⊓ q_bii) q_b
+  show Entails ((⊤ ⊓ q_bi) ⊓ q_bii) q_b
   rw [top_inf_eq]
-  apply questionEntails_of_le'
+  apply entails_of_le'
   show Question.polar rogerBeans ⊓ Question.polar rogerTofu ≤ q_b
   apply Question.polar_inf_polar_le_ofList_of_corners
   · exact ⟨{w | w.rb = true ∧ w.rt = true}, by simp, fun _ hw => hw⟩
