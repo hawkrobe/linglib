@@ -27,7 +27,7 @@ here. This file owns the paper-specific bundling — `Sentence`,
 derivations of §5.2, and the worked house-buying example of §7.
 
 A previous "Part II: Bayesian-to-DTS bridge" was removed in 0.230.502:
-[merin-1999] is not cited in the paper's reference list, and
+[merin-1999-relevance] is not cited in the paper's reference list, and
 the §6 *only*-vs-*but* discussion grounds itself in
 [anscombre-ducrot-1977] and IKW 2022's notion of semantic equality
 of *but*'s arguments — not in decision-theoretic semantics. The bridge

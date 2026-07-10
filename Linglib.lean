@@ -1834,13 +1834,10 @@ import Linglib.Semantics.Questions.Flatness
 import Linglib.Semantics.Questions.Granularity
 import Linglib.Semantics.Questions.Hamblin
 import Linglib.Semantics.Questions.Partition.Basic
-import Linglib.Semantics.Questions.Partition.Binary
 import Linglib.Semantics.Questions.Partition.Cells
 import Linglib.Semantics.Questions.Partition.Constructors
 import Linglib.Semantics.Questions.Partition.Lattice
-import Linglib.Semantics.Questions.Partition.Negativity
 import Linglib.Semantics.Questions.Partition.QUD
-import Linglib.Semantics.Questions.PartitionDT
 import Linglib.Semantics.Questions.PrecisionProjection
 import Linglib.Semantics.Questions.Probabilistic
 import Linglib.Semantics.Questions.Resolution
@@ -2510,6 +2507,7 @@ import Linglib.Studies.MeinhardtEtAl2024
 import Linglib.Studies.Mendes2025
 import Linglib.Studies.Merchant2013
 import Linglib.Studies.MerchantPrince2022
+import Linglib.Studies.Merin1999
 import Linglib.Studies.MeyerFeiman2021
 import Linglib.Studies.Middleton2026
 import Linglib.Studies.Miestamo2005

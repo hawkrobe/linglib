@@ -4,8 +4,8 @@ import Linglib.Semantics.Presupposition.Basic
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
 /-!
-# Decision-Theoretic Semantics: "Also" ([merin-1999] §5.2–5.4)
-[merin-1999]
+# Decision-Theoretic Semantics: "Also" ([merin-1999-relevance] §5.2–5.4)
+[merin-1999-relevance]
 
 Merin's DTS account of additive particles. Presupposition is modeled as
 *i-irrelevance*: a presupposed proposition is one that doesn't change any

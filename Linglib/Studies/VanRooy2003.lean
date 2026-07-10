@@ -4,7 +4,7 @@ import Linglib.Semantics.Questions.Entailment
 
 /-!
 # [van-rooy-2003]: Questioning to Resolve Decision Problems
-[groenendijk-stokhof-1984] [karttunen-1977] [ginzburg-1995] [merin-1999]
+[groenendijk-stokhof-1984] [karttunen-1977] [ginzburg-1995] [merin-1999-relevance]
 [blackwell-1953]
 
 Single-paper formalisation of [van-rooy-2003], "Questioning to
@@ -356,11 +356,13 @@ theorem blackwell_euv_fact [Fintype W] [DecidableEq W] [DecidableEq A]
   refine ⟨fun href dp acts hprior =>
     blackwell_euv_fact_forward hcoarse_disj hfine_disj hfine_cover href dp acts hprior, ?_⟩
   -- ⟸ : EUV-dominance across all decision problems forces refinement.
-  -- The finite [blackwell-1953] converse at the partition-cell level
-  -- (`ProbabilityTheory.isGarblingOf_of_blackwellDominates`), the deep direction.
-  -- TODO: instantiate the Blackwell converse with the deterministic (partition-cell)
-  -- experiments of `fine`/`coarse`; when refinement fails, the separating decision problem
-  -- reverses the EUV ordering.
+  -- TODO: two routes. (i) Elementary witness: if refinement fails, some fine cell
+  -- holds worlds w, v lying in distinct coarse cells; the two-action identification
+  -- DP (uniform prior on {w, v}, utility 1 for naming w's vs v's coarse cell)
+  -- values coarse strictly above fine, contradicting dominance.
+  -- (ii) Via the finite [blackwell-1953] converse
+  -- `ProbabilityTheory.isGarblingOf_of_blackwellDominates`, instantiated with the
+  -- deterministic partition-cell experiments of `fine`/`coarse`.
   sorry
 
 end VanRooy2003

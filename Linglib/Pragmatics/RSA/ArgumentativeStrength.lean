@@ -4,9 +4,9 @@ import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
 /-!
 # Argumentative Strength for Quantity Expressions
-[cummins-franke-2021] [merin-1999] [macuch-silva-etal-2024]
+[cummins-franke-2021] [merin-1999-relevance] [macuch-silva-etal-2024]
 
-[merin-1999]'s log-likelihood ratio measure of argumentative strength, as applied
+[merin-1999-relevance]'s log-likelihood ratio measure of argumentative strength, as applied
 to numerical quantity expressions in [cummins-franke-2021] and quantifier choice
 in Macuch [macuch-silva-etal-2024].
 
@@ -37,7 +37,7 @@ open RSA.CombinedUtility
 
 
 -- ============================================================
--- Section 1: Core Definitions ([merin-1999], [cummins-franke-2021] §3)
+-- Section 1: Core Definitions ([merin-1999-relevance], [cummins-franke-2021] §3)
 -- ============================================================
 
 /-- An argumentative goal partitions worlds into G (goal-supporting) vs ¬G. -/

@@ -3,8 +3,8 @@ import Linglib.Pragmatics.DecisionTheoretic.But
 import Linglib.Semantics.Focus.Particles
 
 /-!
-# Decision-Theoretic Semantics: "Even" ([merin-1999] §5)
-[francescotti-1995] [kay-1990] [merin-1999]
+# Decision-Theoretic Semantics: "Even" ([merin-1999-relevance] §5)
+[francescotti-1995] [kay-1990] [merin-1999-relevance]
 
 Merin's DTS account of the scalar particle "even". The felicity of
 "A CONJ even(B)" requires B to be *more* relevant than A, resolving the
@@ -90,7 +90,7 @@ end Predictions
     more surprising. This connects Merin's relevance ordering to the
     traditional EVEN presupposition framework in `Semantics.Focus.Particles`.
 
-    [merin-1999] subsumes [francescotti-1995]'s "surprise" and
+    [merin-1999-relevance] subsumes [francescotti-1995]'s "surprise" and
     [kay-1990]'s "informativeness" as special cases of signed relevance.
 
     Note: `LikelihoodOrder` operates on `World → Bool` functions (the
