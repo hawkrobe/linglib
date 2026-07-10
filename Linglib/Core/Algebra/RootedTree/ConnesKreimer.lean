@@ -12,7 +12,8 @@ set_option autoImplicit false
 # Connes-Kreimer Hopf algebra carrier on n-ary rooted trees
 
 The **Connes-Kreimer Hopf algebra** on a tree type `T`
-([foissy-introduction-hopf-algebras-trees] §1.2) is the formal `R`-linear
+([connes-kreimer-1998]; [foissy-introduction-hopf-algebras-trees] §1.2) is
+the formal `R`-linear
 span of forests (multisets of trees), with product = forest disjoint union
 and coproduct = sum over admissible cuts (defined in `Coproduct/Pruning.lean`
 for Δ^ρ, `Coproduct/Trace.lean` for Δ^c). This file provides the **carrier
@@ -46,30 +47,14 @@ carrier. Realized specializations:
 ## Implementation notes
 
 `ConnesKreimer R T` wraps `AddMonoidAlgebra R (Forest T)` as a one-field
-structure rather than a `def`-synonym, for the same reason mathlib's
-`Polynomial R` wraps `AddMonoidAlgebra R ℕ`:
+structure (mathlib's `Polynomial` pattern): the bare carrier already carries
+the group-like `AddMonoidAlgebra.instBialgebra`, and a `def`-synonym leaks
+parent instance paths (an `SMul ℤ` diamond). Consumers speak the
+wrapper-native API rather than applying `AddMonoidAlgebra`/`Finsupp` lemmas
+to `ConnesKreimer` values; `toFinsuppAlgEquiv` is the bridge for wholesale
+transport.
 
-* the admissible-cut `Bialgebra` cannot live on the bare carrier —
-  mathlib's group-like `AddMonoidAlgebra.instBialgebra` already occupies it;
-* a `def`-synonym's forwarded instances leave the parent type's instance
-  paths reachable, yielding an `SMul ℤ` diamond (two routes:
-  `Algebra ℤ → Module ℤ → SMul ℤ` vs `AddCommGroup → SubNegMonoid → zsmul`).
-
-All operations are defined on the `toFinsupp` field and the instance stack
-is built by injective transport from a **single** bottom instance
-(`instCommSemiring`; a separate `AddCommMonoid` bottom would itself be a
-parallel path). The `CommRing`/`AddCommGroup` instance is a safe **global**
-instance — its `zsmul` is the pulled-back structural operation and no
-alternative path exists.
-
-Consumers should speak the wrapper-native API — `of'`, `ofTree`, `single`,
-`coeff`, `lift`, `algHom_ext`, `addHom_ext`, `counit`, and the
-`toFinsupp_*` pushforward lemmas — rather than applying
-`AddMonoidAlgebra`/`Finsupp` lemmas to `ConnesKreimer` values directly;
-`toFinsuppAlgEquiv` is the bridge for wholesale transport.
-
-`[UPSTREAM]` candidate; the upstream home would sit alongside
-`Mathlib.RingTheory.HopfAlgebra`.
+`[UPSTREAM]` candidate.
 -/
 
 noncomputable section
@@ -98,16 +83,17 @@ structure ConnesKreimer (R : Type*) [CommSemiring R] (T : Type*) where
 
 namespace ConnesKreimer
 
-variable {R : Type*} [CommSemiring R] {T : Type*}
+variable {R : Type*} [CommSemiring R] {T : Type*} {S S₁ S₂ : Type*}
+  {p q : ConnesKreimer R T}
 
 theorem toFinsupp_injective :
     Function.Injective (toFinsupp : ConnesKreimer R T → AddMonoidAlgebra R (Forest T)) :=
   fun ⟨_⟩ ⟨_⟩ h => congrArg ofFinsupp h
 
-@[simp] theorem toFinsupp_inj {p q : ConnesKreimer R T} :
-    p.toFinsupp = q.toFinsupp ↔ p = q := toFinsupp_injective.eq_iff
+@[simp] theorem toFinsupp_inj : p.toFinsupp = q.toFinsupp ↔ p = q :=
+  toFinsupp_injective.eq_iff
 
-@[ext] theorem ext {p q : ConnesKreimer R T} (h : p.toFinsupp = q.toFinsupp) : p = q :=
+@[ext] theorem ext (h : p.toFinsupp = q.toFinsupp) : p = q :=
   toFinsupp_injective h
 
 @[simp] theorem ofFinsupp_toFinsupp (p : ConnesKreimer R T) : ⟨p.toFinsupp⟩ = p := rfl
@@ -123,8 +109,7 @@ instance : Add (ConnesKreimer R T) :=
   ⟨fun p q => ⟨p.toFinsupp + q.toFinsupp⟩⟩
 instance : Mul (ConnesKreimer R T) :=
   ⟨fun p q => ⟨p.toFinsupp * q.toFinsupp⟩⟩
-instance smulZeroClass {S : Type*}
-    [SMulZeroClass S (AddMonoidAlgebra R (Forest T))] :
+instance smulZeroClass [SMulZeroClass S (AddMonoidAlgebra R (Forest T))] :
     SMulZeroClass S (ConnesKreimer R T) where
   smul s p := ⟨s • p.toFinsupp⟩
   smul_zero s := ext (smul_zero s)
@@ -138,8 +123,8 @@ instance : Pow (ConnesKreimer R T) ℕ := ⟨fun p n => ⟨p.toFinsupp ^ n⟩⟩
     (p + q).toFinsupp = p.toFinsupp + q.toFinsupp := rfl
 @[simp] theorem toFinsupp_mul (p q : ConnesKreimer R T) :
     (p * q).toFinsupp = p.toFinsupp * q.toFinsupp := rfl
-@[simp] theorem toFinsupp_smul {S : Type*}
-    [SMulZeroClass S (AddMonoidAlgebra R (Forest T))] (s : S) (p : ConnesKreimer R T) :
+@[simp] theorem toFinsupp_smul [SMulZeroClass S (AddMonoidAlgebra R (Forest T))]
+    (s : S) (p : ConnesKreimer R T) :
     (s • p).toFinsupp = s • p.toFinsupp := rfl
 @[simp] theorem toFinsupp_pow (p : ConnesKreimer R T) (n : ℕ) :
     (p ^ n).toFinsupp = p.toFinsupp ^ n := rfl
@@ -157,12 +142,11 @@ instance instCommSemiring : CommSemiring (ConnesKreimer R T) :=
 synthesis step away from the underlying carrier lets nested-tensor goals
 (`CK ⊗ (CK ⊗ CK)`) resolve without deep pending chains. -/
 
-instance distribSMul {S : Type*}
-    [DistribSMul S (AddMonoidAlgebra R (Forest T))] :
+instance distribSMul [DistribSMul S (AddMonoidAlgebra R (Forest T))] :
     DistribSMul S (ConnesKreimer R T) where
   smul_add s p q := ext (smul_add s p.toFinsupp q.toFinsupp)
 
-instance distribMulAction {S : Type*} [Monoid S]
+instance distribMulAction [Monoid S]
     [DistribMulAction S (AddMonoidAlgebra R (Forest T))] :
     DistribMulAction S (ConnesKreimer R T) where
   one_smul p := ext (one_smul S p.toFinsupp)
@@ -170,20 +154,20 @@ instance distribMulAction {S : Type*} [Monoid S]
   smul_zero s := ext (smul_zero s)
   smul_add s p q := ext (smul_add s p.toFinsupp q.toFinsupp)
 
-instance instModule {S : Type*} [Semiring S]
+instance instModule [Semiring S]
     [Module S (AddMonoidAlgebra R (Forest T))] :
     Module S (ConnesKreimer R T) where
   add_smul s t p := ext (add_smul s t p.toFinsupp)
   zero_smul p := ext (zero_smul S p.toFinsupp)
 
-instance smulCommClass {S₁ S₂ : Type*}
+instance smulCommClass
     [SMulZeroClass S₁ (AddMonoidAlgebra R (Forest T))]
     [SMulZeroClass S₂ (AddMonoidAlgebra R (Forest T))]
     [SMulCommClass S₁ S₂ (AddMonoidAlgebra R (Forest T))] :
     SMulCommClass S₁ S₂ (ConnesKreimer R T) :=
   ⟨fun s t p => ext (smul_comm s t p.toFinsupp)⟩
 
-instance isScalarTower {S₁ S₂ : Type*} [SMul S₁ S₂]
+instance isScalarTower [SMul S₁ S₂]
     [SMulZeroClass S₁ (AddMonoidAlgebra R (Forest T))]
     [SMulZeroClass S₂ (AddMonoidAlgebra R (Forest T))]
     [IsScalarTower S₁ S₂ (AddMonoidAlgebra R (Forest T))] :
@@ -331,7 +315,7 @@ theorem coeff_def (p : ConnesKreimer R T) (F : Forest T) :
     (p + q).coeff F = p.coeff F + q.coeff F :=
   Finsupp.add_apply p.toFinsupp q.toFinsupp F
 
-@[simp] theorem coeff_smul {S : Type*} [SMulZeroClass S R] (s : S)
+@[simp] theorem coeff_smul [SMulZeroClass S R] (s : S)
     (p : ConnesKreimer R T) (F : Forest T) :
     (s • p).coeff F = s • p.coeff F :=
   Finsupp.smul_apply s p.toFinsupp F
@@ -347,7 +331,7 @@ theorem coeff_of' (F G : Forest T) [Decidable (F = G)] :
     (of' (R := R) F).coeff G = if F = G then 1 else 0 := coeff_single F G 1
 
 /-- Elements agreeing coefficientwise are equal. -/
-theorem ext_coeff {p q : ConnesKreimer R T} (h : ∀ F, p.coeff F = q.coeff F) : p = q :=
+theorem ext_coeff (h : ∀ F, p.coeff F = q.coeff F) : p = q :=
   ext (Finsupp.ext h)
 
 /-- `coeff` bundled as a linear functional (`Polynomial.lcoeff` analogue). -/
@@ -380,12 +364,9 @@ def lift (f : Multiplicative (Forest T) →* A) :
 
 /-- Algebra homs off `ConnesKreimer` agree if they agree on `of'`. -/
 theorem algHom_ext {φ ψ : ConnesKreimer R T →ₐ[R] A}
-    (h : ∀ F : Forest T, φ (of' F) = ψ (of' F)) : φ = ψ := by
-  have key : φ.comp toFinsuppAlgEquiv.symm.toAlgHom
-      = ψ.comp toFinsuppAlgEquiv.symm.toAlgHom :=
-    AddMonoidAlgebra.algHom_ext fun F => h F
-  ext p
-  simpa using DFunLike.congr_fun key p.toFinsupp
+    (h : ∀ F : Forest T, φ (of' F) = ψ (of' F)) : φ = ψ :=
+  (AlgHom.cancel_right (f := toFinsuppAlgEquiv.symm.toAlgHom)
+    toFinsuppAlgEquiv.symm.surjective).mp (AddMonoidAlgebra.algHom_ext fun F => h F)
 
 end Lift
 
@@ -398,11 +379,9 @@ def ofFinsuppAddHom :
 
 /-- Additive homs off `ConnesKreimer` agree if they agree on `single`. -/
 theorem addHom_ext {M : Type*} [AddZeroClass M] {f g : ConnesKreimer R T →+ M}
-    (h : ∀ (F : Forest T) (r : R), f (single F r) = g (single F r)) : f = g := by
-  have key : f.comp ofFinsuppAddHom = g.comp ofFinsuppAddHom :=
-    Finsupp.addHom_ext h
-  ext p
-  exact DFunLike.congr_fun key p.toFinsupp
+    (h : ∀ (F : Forest T) (r : R), f (single F r) = g (single F r)) : f = g :=
+  (AddMonoidHom.cancel_right (f := ofFinsuppAddHom) fun p => ⟨p.toFinsupp, rfl⟩).mp
+    (Finsupp.addHom_ext h)
 
 section LinearApi
 variable {M : Type*} [AddCommMonoid M] [Module R M]
