@@ -1,4 +1,5 @@
 import Mathlib.Data.Fintype.Prod
+import Mathlib.Order.BooleanSubalgebra
 import Linglib.Core.Logic.Truth3
 import Linglib.Semantics.Presupposition.Basic
 
@@ -30,8 +31,12 @@ via the paper's translation: radically counterstance-contingent = strongly discr
 
 ## Main definitions
 
-* `Objective`, `objective_iff_fiberInvariant` — set-of-outlooks propositions (§3.1):
-  objective = union of refinement classes = fiber-invariant.
+* `Objective`, `objective_iff_fiberInvariant`, `objective_iff_preimage_image` —
+  set-of-outlooks propositions (§3.1): objective = union of refinement classes =
+  fiber-invariant = saturated under the refinement map. `objectiveSubalgebra` bundles the
+  objective propositions as a `BooleanSubalgebra` of the powerset of `Ω`, and
+  `objectiveOrderIso` realizes the paper's note that it is isomorphic to the powerset of
+  the worlds. The classification predicates carry `Decidable` instances for finite models.
 * `Objective3`, `Discretionary3`, `StronglyDiscretionary3` — the revised three-valued
   classification, plus the information-state-relativized `ObjectiveIn`/`DiscretionaryIn`/
   `StronglyDiscretionaryIn`.
@@ -98,21 +103,39 @@ theorem objective_iff_fiberInvariant (O : Set Ω) :
     rintro o ⟨o', ho', heq⟩
     exact (h o' o heq).mp ho'
 
-/-- Objective propositions are closed under complement. -/
-theorem Objective.compl {O : Set Ω} (h : Objective ρ O) : Objective ρ Oᶜ :=
-  let ⟨V, hV⟩ := h; ⟨Vᶜ, by simp [hV]⟩
+/-- Objectivity is *saturation* under the refinement map: `O` already contains every outlook
+that shares a world with one of its members. -/
+theorem objective_iff_preimage_image (O : Set Ω) :
+    Objective ρ O ↔ ρ ⁻¹' (ρ '' O) = O := by
+  refine ⟨λ h => Set.Subset.antisymm ?_ (Set.subset_preimage_image ρ O), λ h => ⟨ρ '' O, h.symm⟩⟩
+  rintro o ⟨o', ho', heq⟩
+  exact ((objective_iff_fiberInvariant ρ O).mp h o' o heq).mp ho'
 
-/-- Objective propositions are closed under intersection. -/
-theorem Objective.inter {O₁ O₂ : Set Ω} (h₁ : Objective ρ O₁) (h₂ : Objective ρ O₂) :
-    Objective ρ (O₁ ∩ O₂) :=
-  let ⟨V₁, hV₁⟩ := h₁; let ⟨V₂, hV₂⟩ := h₂; ⟨V₁ ∩ V₂, by simp [hV₁, hV₂]⟩
+/-- The objective propositions form a Boolean subalgebra of the powerset of `Ω`: preimage
+commutes with the Boolean operations, so closure under `⊔`/`⊓`/`ᶜ` is inherited from the
+powerset of `W` wholesale. -/
+def objectiveSubalgebra : BooleanSubalgebra (Set Ω) where
+  carrier := {O | Objective ρ O}
+  supClosed' := λ _ ⟨V₁, hV₁⟩ _ ⟨V₂, hV₂⟩ => ⟨V₁ ∪ V₂, by simp [hV₁, hV₂]⟩
+  infClosed' := λ _ ⟨V₁, hV₁⟩ _ ⟨V₂, hV₂⟩ => ⟨V₁ ∩ V₂, by simp [hV₁, hV₂]⟩
+  compl_mem' := λ ⟨V, hV⟩ => ⟨Vᶜ, by simp [hV]⟩
+  bot_mem' := ⟨∅, by simp⟩
 
-/-- Objective propositions are closed under union — with `Objective.compl` and
-`Objective.inter`, the objective propositions form a subalgebra of the powerset of `Ω`,
-isomorphic to the powerset of the (refined) worlds. -/
-theorem Objective.union {O₁ O₂ : Set Ω} (h₁ : Objective ρ O₁) (h₂ : Objective ρ O₂) :
-    Objective ρ (O₁ ∪ O₂) :=
-  let ⟨V₁, hV₁⟩ := h₁; let ⟨V₂, hV₂⟩ := h₂; ⟨V₁ ∪ V₂, by simp [hV₁, hV₂]⟩
+@[simp] theorem mem_objectiveSubalgebra {O : Set Ω} :
+    O ∈ objectiveSubalgebra ρ ↔ Objective ρ O := Iff.rfl
+
+/-- When every world is refined by some outlook — [coppock-2018]'s `∝` pairs each world with
+an *inhabited* refinement class — the objective subalgebra is order-isomorphic to the
+powerset of the worlds (and an order iso between Boolean algebras preserves the whole
+Boolean structure). -/
+def objectiveOrderIso (hρ : Function.Surjective ρ) :
+    Set W ≃o objectiveSubalgebra ρ where
+  toFun V := ⟨ρ ⁻¹' V, V, rfl⟩
+  invFun O := ρ '' O.1
+  left_inv V := Set.image_preimage_eq V hρ
+  right_inv O := Subtype.ext ((objective_iff_preimage_image ρ O.1).mp O.2)
+  map_rel_iff' {V₁ V₂} :=
+    Set.preimage_subset_preimage_iff (by rw [hρ.range_eq]; exact Set.subset_univ V₁)
 
 /-! ### The revised three-valued classification (§3.5)
 
@@ -145,6 +168,32 @@ theorem discretionary3_iff_not_objective3 (p : Prop3 Ω) :
   unfold Discretionary3 Objective3
   push Not
   rfl
+
+section Decidability
+
+/-! The classification predicates are finitely checkable, so they carry `Decidable`
+instances (delegating to the definitional quantifier forms) — model verifications below are
+bare `decide`s. -/
+
+variable [Fintype Ω] [DecidableEq W] (p : Prop3 Ω)
+
+instance (w : W) : Decidable (ObjectivelyTrueAt ρ p w) :=
+  inferInstanceAs (Decidable (∀ o, ρ o = w → p o = .true))
+
+instance (w : W) : Decidable (ObjectivelyFalseAt ρ p w) :=
+  inferInstanceAs (Decidable (∀ o, ρ o = w → p o = .false))
+
+instance : Decidable (Objective3 ρ p) :=
+  inferInstanceAs (Decidable (∀ o o', ρ o = ρ o' → p o = .true → p o' ≠ .false))
+
+instance : Decidable (Discretionary3 ρ p) :=
+  inferInstanceAs (Decidable (∃ o o', ρ o = ρ o' ∧ p o = .true ∧ p o' = .false))
+
+instance [Fintype W] : Decidable (StronglyDiscretionary3 ρ p) :=
+  inferInstanceAs
+    (Decidable (∀ w, ∃ o o', ρ o = w ∧ ρ o' = w ∧ p o = .true ∧ p o' = .false))
+
+end Decidability
 
 /-- Strong discretionariness entails discretionariness whenever some world exists. -/
 theorem StronglyDiscretionary3.discretionary3 {p : Prop3 Ω} [Nonempty W]
@@ -196,6 +245,9 @@ disagreement; genuine contradiction is supplied by the propositions being comple
 false at `w`. -/
 def AtFault (p : Prop3 Ω) (w : W) : Prop := ObjectivelyFalseAt ρ p w
 
+instance [Fintype Ω] [DecidableEq W] (p : Prop3 Ω) (w : W) : Decidable (AtFault ρ p w) :=
+  inferInstanceAs (Decidable (ObjectivelyFalseAt ρ p w))
+
 /-- A strongly discretionary proposition never puts its asserter at fault: every world has
 a refinement where it is true. -/
 theorem stronglyDiscretionary3_never_atFault {p : Prop3 Ω}
@@ -229,6 +281,25 @@ contradiction ([coppock-2018] (38)). -/
 def Opinionated (R : Ω → Set Ω) (p : Prop3 Ω) (o : Ω) : Prop :=
     Accepts R p o ∨ Rejects R p o
 
+section Decidability
+
+variable [Fintype Ω] (R : Ω → Set Ω) [∀ o o', Decidable (o' ∈ R o)] (p : Prop3 Ω) (o : Ω)
+
+instance : Decidable (Accepts R p o) :=
+  inferInstanceAs (Decidable (∀ o' ∈ R o, p o' = .true))
+
+instance : Decidable (Rejects R p o) :=
+  inferInstanceAs (Decidable (∀ o' ∈ R o, p o' = .false))
+
+instance (R₂ : Ω → Set Ω) [∀ o o', Decidable (o' ∈ R₂ o)] :
+    Decidable (DisagreeAt R R₂ p o) :=
+  inferInstanceAs (Decidable (Accepts R p o ∧ Rejects R₂ p o))
+
+instance : Decidable (Opinionated R p o) :=
+  inferInstanceAs (Decidable (Accepts R p o ∨ Rejects R p o))
+
+end Decidability
+
 /-! ### The chili dialogue: faultless disagreement in a four-outlook model
 
 Four outlooks `(tasty?, opera?) : Bool × Bool` refine two worlds according to the objective
@@ -255,54 +326,45 @@ def opera : Prop3 ChiliOutlook := λ o => .ofBool o.2
 hold, reading the objective coordinate as *John is a linguist* ([coppock-2018] (10)). -/
 def sexyLinguist : Prop3 ChiliOutlook := λ o => .ofBool (o.1 && o.2)
 
-example : StronglyDiscretionary3 chiliWorld tasty := by
-  unfold StronglyDiscretionary3; decide
-example : Objective3 chiliWorld opera := by unfold Objective3; decide
+example : StronglyDiscretionary3 chiliWorld tasty := by decide
+example : Objective3 chiliWorld opera := by decide
 
 /-- The hybrid is discretionary (it cuts the linguist-world's refinements) … -/
-example : Discretionary3 chiliWorld sexyLinguist := by unfold Discretionary3; decide
+example : Discretionary3 chiliWorld sexyLinguist := by decide
 
 /-- … but not strongly discretionary: it is uniformly false among refinements of the
 non-linguist world. -/
-example : ¬ StronglyDiscretionary3 chiliWorld sexyLinguist := by
-  unfold StronglyDiscretionary3; decide
+example : ¬ StronglyDiscretionary3 chiliWorld sexyLinguist := by decide
 
 /-- John's doxastic state: only tasty-outlooks accessible. -/
-def johnR : ChiliOutlook → Set ChiliOutlook := λ _ => {o | o.1 = true}
+abbrev johnR : ChiliOutlook → Set ChiliOutlook := λ _ => {o | o.1 = true}
 
 /-- Mary's doxastic state: only non-tasty-outlooks accessible. -/
-def maryR : ChiliOutlook → Set ChiliOutlook := λ _ => {o | o.1 = false}
+abbrev maryR : ChiliOutlook → Set ChiliOutlook := λ _ => {o | o.1 = false}
 
 /-- An unopinionated agent: both possibilities for tastiness accessible. -/
-def openR : ChiliOutlook → Set ChiliOutlook := λ _ => Set.univ
+abbrev openR : ChiliOutlook → Set ChiliOutlook := λ _ => Set.univ
 
-/-- **The chili dialogue is a genuine disagreement**: at any outlook, John accepts *tasty*
+/-- **The chili dialogue is a genuine disagreement**: at every outlook, John accepts *tasty*
 and Mary rejects it. -/
-theorem chili_disagreement (o : ChiliOutlook) : DisagreeAt johnR maryR tasty o :=
-  ⟨λ o' ho' => by simp only [johnR, Set.mem_setOf_eq] at ho'; simp [tasty, Truth3.ofBool, ho'],
-   λ o' ho' => by simp only [maryR, Set.mem_setOf_eq] at ho'; simp [tasty, Truth3.ofBool, ho']⟩
+theorem chili_disagreement : ∀ o, DisagreeAt johnR maryR tasty o := by decide
 
 /-- **… and it is faultless**: no world makes *tasty* objectively false, so neither party
 violates the norm of accuracy. -/
 theorem tasty_never_atFault (w : Bool) : ¬ AtFault chiliWorld tasty w :=
-  stronglyDiscretionary3_never_atFault chiliWorld
-    (by unfold StronglyDiscretionary3; decide) w
+  stronglyDiscretionary3_never_atFault chiliWorld (by decide) w
 
 /-- **The doctor-dialogue contrast**: objective propositions do incur fault — asserting
 *I am an opera singer* at the non-singer world violates the norm of accuracy. -/
-example : AtFault chiliWorld opera false := by unfold AtFault ObjectivelyFalseAt; decide
+example : AtFault chiliWorld opera false := by decide
 
 /-- The hybrid incurs fault at the non-linguist world ([coppock-2018] on (10)). -/
-example : AtFault chiliWorld sexyLinguist false := by
-  unfold AtFault ObjectivelyFalseAt; decide
+example : AtFault chiliWorld sexyLinguist false := by decide
 
 /-- Lack of opinionatedness is representable: the open-minded agent neither accepts nor
 rejects *tasty* — the consistency of [coppock-2018] (38), which totally-opinionated-judge
 frameworks wrongly rule out. -/
-theorem open_agent_unopinionated (o : ChiliOutlook) : ¬ Opinionated openR tasty o := by
-  rintro (h | h)
-  · simpa [tasty, Truth3.ofBool] using h (false, o.2) trivial
-  · simpa [tasty, Truth3.ofBool] using h (true, o.2) trivial
+theorem open_agent_unopinionated : ∀ o, ¬ Opinionated openR tasty o := by decide
 
 /-! ### Subjective attitude verbs (§3.5, §5)
 
