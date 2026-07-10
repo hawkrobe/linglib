@@ -1420,7 +1420,6 @@ import Linglib.Pragmatics.DecisionTheoretic.ScalarImplicature
 import Linglib.Pragmatics.Efficiency
 import Linglib.Pragmatics.Emotion
 import Linglib.Pragmatics.Expressives.Basic
-import Linglib.Pragmatics.Expressives.Outlook
 import Linglib.Pragmatics.GameTheory
 import Linglib.Pragmatics.GriceanMaxims
 import Linglib.Pragmatics.IBR.Basic

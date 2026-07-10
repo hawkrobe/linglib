@@ -193,7 +193,7 @@ of the speaker-K operator. The Prop-valued canonical version lives in
 `fun a b => R a b = true` to bridge. -/
 abbrev BAccessRel (W : Type*) := W → W → Bool
 open Semantics.Presupposition.TriggerTypology (AltStructure Obligatoriness)
-open Pragmatics.Expressives (ciLift)
+open Pragmatics.Expressives (TwoDimProp)
 
 /--
 [wang-2025] pragmatic constraint ranking: IC ≫ FP ≫ MP.
@@ -412,19 +412,13 @@ theorem IC_violation_always_blocks (input : WangInput W) (hIC : input.ic = false
 -- Section 6: Bridge to CI Bifurcation (De Re Presupposition)
 -- ============================================================================
 
-/--
-When CommonGround entails the presupposition, the CI-lifted form yields a
-felicitous two-dimensional meaning where the CI content (presupposition)
-is satisfied at all CommonGround worlds.
-
-This connects the constraint-based analysis to the CI bifurcation approach
-for de re presupposition.
--/
-theorem ciLift_felicitous_when_fp_holds (presup assertion : W → Prop)
+/-- When CommonGround entails the presupposition, the CI-routed form
+(`TwoDimProp.ofPartialProp`) has its CI content satisfied at all CommonGround
+worlds — the de re configuration: the presupposition is resolved against the
+common ground regardless of the embedding attitude. -/
+theorem ofPartialProp_felicitous_when_fp_holds (presup assertion : W → Prop)
     (cg : W → Prop) (hfp : ∀ w, cg w → presup w) :
-    ∀ w, cg w → (ciLift presup assertion).ci w := by
-  intro w hw
-  exact hfp w hw
+    ∀ w, cg w → (TwoDimProp.ofPartialProp ⟨presup, assertion⟩).ci w := hfp
 
 
 end Wang2025

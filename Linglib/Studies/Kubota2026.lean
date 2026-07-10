@@ -1,4 +1,5 @@
-import Linglib.Pragmatics.Expressives.Outlook
+import Linglib.Semantics.Intensional.Rigidity
+import Linglib.Studies.HarrisPotts2009
 import Linglib.Semantics.Modality.ModalTypes
 import Linglib.Fragments.Japanese.Particles
 import Linglib.Data.Examples.Kubota2026
@@ -10,22 +11,24 @@ import Linglib.Data.Examples.Kubota2026
 [kubota-2026]'s analysis of Japanese *outlook markers* (*nanka*, *dōse*, *semete*, *koso*,
 *mushiro*, …): discourse-sensitive adverbs and focus particles with a two-layered secondary
 meaning — a presuppositional counterstance requirement plus an expressive-like evaluative
-stance — built on [coppock-2018]'s outlook-based semantics. An outlook marker denotes an
-`Outlook`: an outlook-indexed two-dimensional meaning carrying a counterstance presupposition
-and an outlook-relative evaluation. The perspective index is the orientation variable of
-[harris-potts-2009]; the secondary-meaning diagnostics ([potts-2007] (27)) follow the
-projection typology of [tonhauser-beaver-roberts-simons-2013].
+stance ([kubota-2026] §3). The term *outlook* is [coppock-2018]'s, whose outlooks replace
+worlds as circumstances of evaluation for **at-issue** discretionary content; the term
+*counterstance* originates with [kennedy-willer-2016]; the two-layered object is the
+chapter's, and rendering its stance layer as a [potts-2005]-style CI tier is this
+formalisation's bridge onto `TwoDimProp`. The chapter itself classifies that layer as
+CI-*like* while arguing it fails [potts-2007]'s independence and nondisplaceability: under
+attitudes it shifts to the holder like a locally accommodated presupposition ([heim-1992]),
+not by semantic binding of an index. The secondary-meaning diagnostics ([potts-2007] (27))
+follow the projection typology of [tonhauser-beaver-roberts-simons-2013].
 
-The handbook chapter [kubota-2026] is descriptive and defers the formal analysis to its
-companion [kubota-ido-2025]; the apparatus formalised here (the `Outlook` denotation, the
-perspective-shift result) is theirs. The discourse dynamics they invoke — the
-[farkas-bruce-2010] Table model and a [heim-1992] local-satisfaction account of perspective
-shift — are *not* modelled here: `saltDenotation` is a minimal `Outlook` with
-`prejacent`/`counterstance` stubbed, and counterstance salience is read off the
-discourse-context features of the data rows, not derived from a Table update. Deriving
-felicity from the denotation against a real Table state is the natural follow-up. The rival
-framing is [gutzmann-2015]'s use-conditional treatment of counterstance particles (e.g.
-German *doch*), where the second layer is use-conditional rather than presuppositional.
+The handbook chapter is descriptive and defers the formal analysis to its companion
+[kubota-ido-2025], where the two layers are *derived* from a counterstance-marker discourse
+function over a [farkas-bruce-2010] Table rather than stipulated; the two-field denotation
+here is the chapter-level picture, and deriving it from a Table update is the natural
+follow-up. `saltDenotation` is a minimal `Outlook` with `prejacent`/`counterstance` stubbed,
+and counterstance salience is read off the discourse-context features of the data rows. The
+rival framing is [gutzmann-2015]'s use-conditional treatment of counterstance particles
+(e.g. German *doch*), where the second layer is use-conditional rather than presuppositional.
 
 The lexical inventory is theory-neutral and lives in `Fragments/Japanese/Particles.lean`
 (`Japanese.OutlookMarkers`); the judgment data ((10), (37)-(46)) in
@@ -34,15 +37,20 @@ classification, the modal selectional restrictions, and the dual-layer denotatio
 
 ## Main definitions
 
+* `Outlook` — the two-layered denotation: prejacent, counterstance presupposition, and an
+  outlook-indexed stance layer (an `Intension` into CI content).
 * `StanceType` — the four evaluative stances ([kubota-2026] (1)-(2)).
 * `Marker` — the per-particle classification (form + stance + modal compatibility).
 * `saltDenotation` — the `Outlook` denotation of a *nanka*/*dōse*-marked clause ((42)).
 
 ## Main results
 
-* `saltDenotation_not_rigid` — perspective shift, **derived**: the CI tracks the outlook, so
-  unlike a pure expressive (`Outlook.ofTwoDimProp`, which is `IsRigid`) it shifts to the
-  attitude holder under embedding ((42)).
+* `saltDenotation_not_rigid` — perspective shift, **derived**: the stance layer tracks the
+  outlook (`Intension.IsRigid` fails), so it shifts to the attitude holder under embedding
+  ((42)), unlike a pure expressive (`Outlook.ofTwoDimProp`, rigid by construction).
+* `ciItem_resolve_eq_toTwoDimProp`, `ciItem_shifts_iff_not_rigid` — the outlook index
+  generalizes [harris-potts-2009]'s orientation variable: a `CIItem` embeds as an `Outlook`
+  with trivial counterstance, and the two shift diagnostics coincide.
 * `outlookMarker_shifts_unlike_expressive`, `outlookMarker_patterns_with_hardPresup` — the
   diagnostic profile places outlook markers between pure expressives and presupposition
   triggers ([potts-2007] (27)): they perspective-shift unlike expressives, yet pattern with
@@ -56,13 +64,15 @@ classification, the modal selectional restrictions, and the dual-layer denotatio
 
 ## References
 
-[kubota-2026] [kubota-ido-2025] [coppock-2018] [farkas-bruce-2010] [potts-2007]
-[harris-potts-2009] [tonhauser-beaver-roberts-simons-2013] [heim-1992] [gutzmann-2015]
+[kubota-2026] [kubota-ido-2025] [coppock-2018] [kennedy-willer-2016] [farkas-bruce-2010]
+[potts-2005] [potts-2007] [harris-potts-2009] [tonhauser-beaver-roberts-simons-2013]
+[heim-1992] [gutzmann-2015]
 -/
 
 namespace Kubota2026
 
-open Pragmatics.Expressives (Outlook TwoDimProp SecondaryMeaningProperties expressiveProperties)
+open Pragmatics.Expressives (TwoDimProp SecondaryMeaningProperties expressiveProperties)
+open Intensional (Intension)
 open Semantics.Modality (ModalFlavor)
 open Japanese.OutlookMarkers (OutlookMarkerForm)
 open Data.Examples (LinguisticExample)
@@ -211,12 +221,69 @@ theorem modal_row_acceptable_iff_compat :
       (row.judgment = .acceptable ↔ predictedCompat row = some true) := by
   decide
 
-/-! ### Outlook denotation and perspective shift
+/-! ### Outlook denotation
 
-An outlook marker denotes an `Outlook` ([coppock-2018]): a counterstance presupposition plus
-an outlook-relative evaluation. Perspective shift ([kubota-2026] (42)) is then *derived* — the
-CI tracks the outlook, so under an attitude verb (which supplies the holder's outlook) it
-shifts to the holder, unlike a pure expressive. -/
+The two-layered denotation of [kubota-2026] §3: an at-issue prejacent, a presupposed salient
+counterstance, and a stance layer indexed by an outlook `O`. Perspective shift ((42)) is
+*derived*: the stance layer is an `Intension O (W → Prop)`, and shiftability is exactly the
+failure of `Intension.IsRigid` — a pure expressive is the constant (rigid) family, so it
+cannot shift. -/
+
+/-- An outlook-indexed two-layered meaning ([kubota-2026] §3): at-issue content is shared
+across outlooks (only the stance layer shifts), so the prejacent is stored once and the
+stance layer is a function of the outlook. -/
+structure Outlook (W O : Type*) where
+  /-- At-issue content (the *prejacent*), outlook-independent. -/
+  prejacent : W → Prop
+  /-- Presupposed salient counterstance ([kubota-2026] (37)-(39)). -/
+  counterstance : W → Prop
+  /-- Evaluative stance layer, relative to an outlook. -/
+  evaluation : Intension O (W → Prop)
+
+namespace Outlook
+
+variable {W O : Type*}
+
+/-- Presuppositional projection: the counterstance is the presupposition, the prejacent the
+assertion. Outlook-independent. -/
+@[simps] def toPartialProp (m : Outlook W O) : PartialProp W := ⟨m.counterstance, m.prejacent⟩
+
+/-- Two-dimensional projection at an outlook `o`: an ordinary `TwoDimProp` recovered by
+fixing the perspective. -/
+@[simps] def toTwoDimProp (m : Outlook W O) (o : O) : TwoDimProp W := ⟨m.prejacent, m.evaluation o⟩
+
+/-- The counterstance (presupposition) projects through negation — via `PartialProp.neg`. -/
+theorem counterstance_projects_through_neg (m : Outlook W O) :
+    (PartialProp.neg m.toPartialProp).presup = m.counterstance := rfl
+
+/-- The stance layer projects through negation at a fixed outlook — via `TwoDimProp.neg`. -/
+theorem ci_projects_through_neg (m : Outlook W O) (o : O) :
+    (TwoDimProp.neg (m.toTwoDimProp o)).ci = m.evaluation o := rfl
+
+/-- An outlook is **rigid** when its stance layer ignores the outlook — `Intension.IsRigid`
+applied to `evaluation`. Perspective shift is exactly the failure of this. -/
+def IsRigid (m : Outlook W O) : Prop := Intension.IsRigid m.evaluation
+
+/-- A `TwoDimProp` (a pure expressive — a single, speaker-rigid CI) as the constant outlook
+family — `Intension.rigid` on the CI tier, with the trivial counterstance. -/
+def ofTwoDimProp (t : TwoDimProp W) : Outlook W O where
+  prejacent := t.atIssue
+  counterstance := fun _ => True
+  evaluation := Intension.rigid t.ci
+
+@[simp] theorem ofTwoDimProp_toTwoDimProp (t : TwoDimProp W) (o : O) :
+    (ofTwoDimProp t).toTwoDimProp o = t := rfl
+
+/-- Every embedded `TwoDimProp` is rigid by construction (`Intension.rigid_isRigid`) — on
+[potts-2005]'s speaker-orientation idealization, a pure expressive does not shift;
+[harris-potts-2009] document pragmatic non-speaker orientation even unembedded, so rigidity
+models the idealization, not an absolute. -/
+theorem ofTwoDimProp_isRigid (t : TwoDimProp W) : (ofTwoDimProp (O := O) t).IsRigid :=
+  Intension.rigid_isRigid t.ci
+
+end Outlook
+
+/-! ### Perspective shift, derived -/
 
 /-- [kubota-2026] (42) (`Examples.ex42_perspective_shift`): "My advisor thought I wouldn't
 get into SALT (*nanka*/*dōse*)." `O := Bool` (advisor's pessimistic outlook vs. speaker's
@@ -229,12 +296,13 @@ def saltDenotation : Outlook Unit Bool where
   counterstance := fun _ => True
   evaluation := fun pessimistic _ => pessimistic = true
 
-/-- **Perspective shift, derived** ([kubota-2026] (42)): the marker's CI is not rigid — it
-differs across outlooks, so an attitude verb shifts it to the holder. Routed through the
-substrate's `Outlook.not_isRigid_of_evaluation_ne`; this is the structural fact mirrored by
-the `allowsPerspectiveShift` diagnostic (see `outlookMarker_shifts_unlike_expressive`). -/
+/-- **Perspective shift, derived** ([kubota-2026] (42)): the marker's stance layer is not
+rigid — it differs across outlooks, so under embedding it shifts to the holder (a
+local-accommodation pattern, [heim-1992]). Routed through `Intension.varying_not_rigid`;
+this is the structural fact mirrored by the `allowsPerspectiveShift` diagnostic (see
+`outlookMarker_shifts_unlike_expressive`). -/
 theorem saltDenotation_not_rigid : ¬ saltDenotation.IsRigid :=
-  Outlook.not_isRigid_of_evaluation_ne (o₁ := true) (o₂ := false) fun h => by
+  Intension.varying_not_rigid saltDenotation.evaluation true false fun h => by
     simpa [saltDenotation] using congrFun h ()
 
 /-- Contrast: a pure expressive (`Outlook.ofTwoDimProp`) is rigid — it cannot perspective
@@ -243,6 +311,34 @@ shift. The difference between this and `saltDenotation_not_rigid` *is* the
 theorem expressive_rigid (t : TwoDimProp Unit) :
     (Outlook.ofTwoDimProp (O := Bool) t).IsRigid :=
   Outlook.ofTwoDimProp_isRigid t
+
+/-! ### Bridge to [harris-potts-2009]'s orientation variable
+
+The outlook index generalizes the orientation variable of [harris-potts-2009]
+(`HarrisPotts2009.CIItem`): a `CIItem` is an `Outlook` over `O := Orientation Person` with
+trivial counterstance, resolution coincides with the two-dimensional projection, and the two
+accounts' shift diagnostics agree — a non-speaker-oriented reading exists exactly when the
+embedded outlook is not rigid. -/
+
+/-- A [harris-potts-2009] CI item as an `Outlook` over orientations: same at-issue content
+and orientation-indexed CI, trivial counterstance. -/
+def _root_.HarrisPotts2009.CIItem.toOutlook {Person W : Type}
+    (item : HarrisPotts2009.CIItem Person W) :
+    Outlook W (HarrisPotts2009.Orientation Person) :=
+  ⟨item.atIssue, fun _ => True, item.ciFor⟩
+
+/-- Orientation resolution is the two-dimensional projection of the embedded outlook. -/
+theorem ciItem_resolve_eq_toTwoDimProp {Person W : Type}
+    (item : HarrisPotts2009.CIItem Person W) (o : HarrisPotts2009.Orientation Person) :
+    item.resolve o = item.toOutlook.toTwoDimProp o := rfl
+
+/-- The two shift diagnostics agree: some pair of orientations resolves to different
+two-dimensional meanings iff the embedded outlook is not rigid. -/
+theorem ciItem_shifts_iff_not_rigid {Person W : Type}
+    (item : HarrisPotts2009.CIItem Person W) :
+    (∃ o₁ o₂, item.resolve o₁ ≠ item.resolve o₂) ↔ ¬ item.toOutlook.IsRigid := by
+  simp [HarrisPotts2009.CIItem.resolve, HarrisPotts2009.CIItem.toOutlook, Outlook.IsRigid,
+    Intensional.Intension.IsRigid, TwoDimProp.mk.injEq, not_forall]
 
 /-- The counterstance projects through negation (via `PartialProp.neg`), and the CI tier
 projects at each outlook (via `TwoDimProp.neg`) — the dual presupposition/CI projection. -/
@@ -253,15 +349,27 @@ theorem saltDenotation_projects (o : Bool) :
 
 /-! ### Diagnostic fingerprint ([potts-2007] (27))
 
-The theory-neutral diagnostic profile [kubota-2026] argues outlook markers exhibit. The
-`allowsPerspectiveShift` field is the editorial counterpart of the structural
-`saltDenotation_not_rigid` above; the discrimination theorems below pin which diagnostics
-separate the profile from a pure expressive and from a presupposition trigger. -/
+The [potts-2007] six-diagnostic fingerprint (`SecondaryMeaningProperties`), extended by the
+two contrasts [kubota-2026] §3 turns on. Both extensions reify the chapter's prose
+observations, not entries in [potts-2007]'s table; the `allowsPerspectiveShift` field is the
+editorial counterpart of the structural `saltDenotation_not_rigid` above. -/
+
+/-- [kubota-2026]'s diagnostic profile: [potts-2007]'s six diagnostics plus the two contrasts
+distinguishing outlook markers from pure expressives and pure presupposition triggers. -/
+structure OutlookDiagnostics extends SecondaryMeaningProperties where
+  /-- Readily receives a shifted (attitude-holder) reading under embedding ([kubota-2026]
+  (42)) — a local-accommodation pattern ([heim-1992]). `false` records "not readily", not
+  "never": [harris-potts-2009] document pragmatic non-speaker orientation even for
+  unembedded expressives. -/
+  allowsPerspectiveShift : Bool
+  /-- Requires a salient issue/counterstance in prior discourse ([kubota-2026] (37)-(39)). -/
+  requiresDiscourseAntecedent : Bool
+  deriving Repr, DecidableEq
 
 /-- Diagnostic profile of outlook markers ([kubota-2026] §3): shares descriptive ineffability
 and immediacy with expressives, but lacks independence and nondisplaceability and allows
 perspective shift (the structural counterpart is `saltDenotation_not_rigid`). -/
-def outlookMarkerProfile : SecondaryMeaningProperties where
+def outlookMarkerProfile : OutlookDiagnostics where
   independent := false
   nondisplaceable := false
   perspectiveDependent := true
@@ -271,11 +379,19 @@ def outlookMarkerProfile : SecondaryMeaningProperties where
   allowsPerspectiveShift := true
   requiresDiscourseAntecedent := true
 
+/-- A pure expressive's profile: the six [potts-2007] diagnostics from the substrate's
+`expressiveProperties`, not readily shifted under embedding and needing no discourse
+antecedent ([kubota-2026]'s contrast class). -/
+def expressiveDiagnostics : OutlookDiagnostics :=
+  { toSecondaryMeaningProperties := expressiveProperties
+  , allowsPerspectiveShift := false
+  , requiresDiscourseAntecedent := false }
+
 /-- Diagnostic profile of an anaphoric/additive presupposition trigger (*mata* 'again'), for
 contrast ([kubota-2026]'s comparison class). It shares `allowsPerspectiveShift` with outlook
 markers — but for a different reason: an ordinary presupposition shifts by local satisfaction
-in the attitude holder's alternatives ([heim-1992]), not by CI non-rigidity. -/
-def hardPresupProfile : SecondaryMeaningProperties where
+in the attitude holder's alternatives ([heim-1992]), not by stance-layer non-rigidity. -/
+def hardPresupProfile : OutlookDiagnostics where
   independent := false
   nondisplaceable := false
   perspectiveDependent := false
@@ -290,7 +406,7 @@ def hardPresupProfile : SecondaryMeaningProperties where
 [potts-2007]). -/
 theorem outlookMarker_shifts_unlike_expressive :
     outlookMarkerProfile.allowsPerspectiveShift
-      ≠ expressiveProperties.allowsPerspectiveShift := by decide
+      ≠ expressiveDiagnostics.allowsPerspectiveShift := by decide
 
 /-- Outlook markers pattern *with* (anaphoric) presupposition triggers on displaceability and
 discourse-antecedent need ([kubota-2026]): the two added diagnostics do not separate them. -/
