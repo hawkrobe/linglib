@@ -5,7 +5,7 @@ import Linglib.Core.Order.Satisfaction
 import Linglib.Core.Order.SimilarityOrdering
 import Linglib.Semantics.Questions.Hamblin
 import Linglib.Semantics.Questions.Partition.Basic
-import Linglib.Semantics.Questions.DecisionTheory
+import Linglib.Core.Probability.Decision.Basic
 import Mathlib.Order.Basic
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fintype.Basic

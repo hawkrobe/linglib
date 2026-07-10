@@ -1,4 +1,4 @@
-import Linglib.Semantics.Questions.DecisionTheory
+import Linglib.Core.Probability.Decision.Basic
 import Linglib.Pragmatics.DecisionTheoretic.Basic
 import Mathlib.Data.Fintype.Basic
 

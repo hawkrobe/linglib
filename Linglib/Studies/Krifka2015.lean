@@ -3,7 +3,7 @@ import Linglib.Discourse.Gameboard.Defs
 import Linglib.Discourse.Gameboard.Basic
 import Linglib.Discourse.Commitment.Table
 import Linglib.Features.Acceptability
-import Linglib.Semantics.Questions.Bias.Defs
+import Linglib.Semantics.Questions.Bias
 
 /-!
 # Bias in Commitment Space Semantics

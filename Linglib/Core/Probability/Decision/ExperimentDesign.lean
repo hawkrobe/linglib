@@ -1,5 +1,5 @@
 import Linglib.Core.Probability.Choice.RationalAction
-import Linglib.Semantics.Questions.DecisionTheory
+import Linglib.Core.Probability.Decision.Basic
 import Linglib.Core.Probability.BayesianUpdate
 import Mathlib.Analysis.Convex.Jensen
 
