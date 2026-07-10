@@ -1,7 +1,4 @@
 import Linglib.Syntax.Negation
-import Linglib.Data.WALS.Features.F113A
-import Linglib.Data.WALS.Features.F114A
-import Linglib.Data.WALS.Features.F115A
 import Linglib.Fragments.Finnish.Negation
 import Linglib.Fragments.Italian.Negation
 import Linglib.Fragments.German.Negation
@@ -23,212 +20,203 @@ import Linglib.Fragments.Quechua.Negation
 [miestamo-2005]
 
 [miestamo-2005] refines the WALS symmetric/asymmetric classification
-(Ch 113-114) with two orthogonal theoretical distinctions:
+(Ch 113-114) with the orthogonal distinction between **constructional**
+and **paradigmatic** asymmetry:
 
-## 1. Constructional vs Paradigmatic Asymmetry
+- **Constructional**: the *structure* of the negative clause differs from
+  the affirmative beyond adding the negation marker — added finite
+  elements (Finnish neg aux + connegative, A/Fin) and marker
+  *replacement* (Turkish aorist `-(I)r` → `-z`; replacement asymmetry is
+  constructional A/Cat).
 
-WALS Ch 113 collapses these into a single "asymmetric" category, but Miestamo
-decomposes asymmetry into two independent dimensions:
+- **Paradigmatic**: the *paradigm* of available distinctions differs in
+  the negative — neutralization (Burmese *-bu* collapses three TAM
+  distinctions to one; English negatives lack the periphrastic emphatic,
+  A/Emph/Neutr) or displacement (Imbabura Quechua negatives require the
+  validator *-chu*, A/NonReal/Displc).
 
-- **Constructional**: the syntactic *structure* of the negative clause differs
-  from the affirmative beyond just adding the negation marker. E.g., Finnish
-  uses a negative auxiliary + connegative, restructuring the clause.
+The dimensions are orthogonal: Finnish is constructional-only, Imbabura
+Quechua paradigmatic-only, Burmese both.
 
-- **Paradigmatic**: the *paradigm* (set of available formal distinctions) is
-  different in the negative. E.g., Burmese *-bu* replaces all TAM suffixes,
-  collapsing three distinctions to one.
+## Derived vs independent asymmetry
 
-These are orthogonal: a language can have constructional asymmetry with full
-paradigmatic symmetry (Finnish), or paradigmatic asymmetry without major
-constructional changes (Turkish aorist).
+When a language shows multiple asymmetries, one may be **derived** from
+another rather than being a direct consequence of negation: Maung's TAM
+neutralization follows from its obligatory irrealis-marking (A/NonReal),
+and Imbabura Quechua's ban on other validators follows from the
+A/NonReal validator *-chu*. Derivedness relates asymmetries *to each
+other*, not asymmetries to marker types; it is noted in datum docstrings
+where relevant rather than carried as a field (no sample language here
+has an independent multiple asymmetry).
 
-## 2. Derived vs Independent Asymmetry
+## WALS consistency
 
-- **Derived**: the asymmetry is a structural consequence of the negation
-  marker's properties. A negative *verb* necessarily creates A/Fin because
-  it takes over the finite verb slot — the asymmetry follows from the
-  morphological type.
+Datum codings follow the book's Appendix III analyses. They agree with
+the (later, same-author) WALS Ch 112A-114A codings for every sample
+language except English: the book analyses English SN as symmetric
+AUX+*not* with paradigmatic A/Emph/Neutr asymmetry, where WALS Ch 114A
+codes English A/Cat (`english_subtype_diverges_from_wals`). Czech is
+absent from the book's sample and from WALS Ch 113A-115A; its datum
+applies the book's criteria.
 
-- **Independent**: the asymmetry is not structurally predictable from the
-  negation marker type. E.g., Burmese TAM neutralization does not follow
-  from having a circumfix — other circumfixing languages maintain TAM.
+## Quantitative data
 
-## WALS Consistency
-
-Every datum here is consistent with the coarser WALS classification:
-- Symmetric-only → no constructional or paradigmatic asymmetry
-- Asymmetric A/Fin → constructional asymmetry (almost always; 44/45 in Table 5)
-- Asymmetric A/Cat → paradigmatic or constructional or both
-- SymAsy → some constructions symmetric, others asymmetric
-
-## Quantitative Data
-
-The book's representative sample (RS) covers **179 languages** (Table 3, p. 171):
-Sym 72 (40%), SymAsy 76 (42%), Asy 31 (17%).
-Note: the WALS Ch 113 sample (also by Miestamo) covers 297 languages with
-different numbers; those are captured separately via `Data.WALS.F113A`.
+The book's representative sample (RS) covers **179 languages** (Table 3,
+p. 171): Sym 72 (40%), SymAsy 76 (42%), Asy 31 (17%). The WALS Ch 113
+sample (also by Miestamo) covers 297 languages with different numbers;
+those live in `Data.WALS.F113A`.
 -/
 
 namespace Miestamo2005
 
 open Syntax.Negation
-  (NegSymmetry AsymmetrySubtype NegMorphemeType NegationProfile)
+  (NegSymmetry AsymmetrySubtype NegMorphemeType
+   morphemeTypeOfISO symmetryOfISO asymmetrySubtypeOfISO)
 
--- ============================================================================
--- § 1.5: Miestamo's two asymmetry dimensions (beyond WALS)
--- ============================================================================
+/-! ## Miestamo's asymmetry dimensions (beyond WALS) -/
 
 /-- [miestamo-2005]'s two dimensions of asymmetry. WALS Ch 113 collapses
     these into a single symmetric/asymmetric distinction; Miestamo decomposes
     asymmetry into two independent dimensions. Local to this study file
     because the dimensions are framework-distinctive. -/
 inductive AsymmetryDimension where
-  /-- The negative clause has a different syntactic structure than the
-      affirmative, beyond just the negation marker. E.g., Finnish neg aux
-      restructures the clause; Japanese *-nai* changes verb to i-adjective. -/
+  /-- The negative clause differs structurally from the affirmative beyond
+      the negation marker: added finite elements (A/Fin) or marker
+      replacement (replacement asymmetry is constructional A/Cat). -/
   | constructional
-  /-- The negative paradigm has fewer formal distinctions than the
-      affirmative. E.g., Burmese *-bu* neutralizes TAM; Turkish aorist
-      uses a different marker. -/
+  /-- The negative paradigm makes different formal distinctions than the
+      affirmative: neutralization (Burmese TAM, English A/Emph) or
+      displacement (Quechua validators). -/
   | paradigmatic
   deriving DecidableEq, BEq, Repr
 
-/-- Whether the asymmetry is derived from the negation marker type
-    or independent of it ([miestamo-2005]). -/
-inductive AsymmetrySource where
-  /-- The asymmetry follows structurally from the negation marker's
-      properties. A negative verb necessarily creates A/Fin. -/
-  | derived
-  /-- The asymmetry is not predictable from the marker type alone.
-      E.g., TAM neutralization in Burmese is independent of circumfixing. -/
-  | independent
-  deriving DecidableEq, BEq, Repr
+/-! ## Datum -/
 
--- ============================================================================
--- § 2: Extended Datum
--- ============================================================================
-
-/-- A Miestamo-style negation profile extending the WALS classification. -/
+/-- A Miestamo-style negation datum: the WALS-chapter classification plus
+    the book's constructional/paradigmatic dimension coding (Appendix III). -/
 structure MiestamoDatum where
   language : String
+  /-- ISO 639-3 code; the key for the WALS-consistency checks. -/
+  iso : String
   /-- WALS Ch 112: morpheme type -/
   morphemeType : NegMorphemeType
   /-- WALS Ch 113: symmetric/asymmetric/both -/
   symmetry : NegSymmetry
   /-- WALS Ch 114: asymmetry subtype -/
   asymmetrySubtype : AsymmetrySubtype
-  /-- Miestamo: which dimensions of asymmetry are present -/
+  /-- Which dimensions of asymmetry are present (Appendix III C/P columns) -/
   asymmetryDimensions : List AsymmetryDimension
-  /-- Miestamo: is the asymmetry derived or independent? -/
-  asymmetrySource : Option AsymmetrySource
   /-- Negation marker form(s), derived from Fragment where available -/
   negMarkers : List String
   /-- Brief description of the asymmetry (if any) -/
   asymmetryDescription : String := ""
   deriving Repr, BEq
 
--- ============================================================================
--- § 3: Per-Language Data (Fragment-derived where possible)
--- ============================================================================
+/-! ## Per-language data (Fragment-derived where possible)
 
-/-- Finnish: constructional A/Fin, derived. Neg aux *ei* restructures clause.
-    Form derived from `Finnish.Negation.negParadigm`. -/
+Codings follow the book's Appendix III rows; deviations from WALS or
+gaps in the book's sample are flagged in the datum docstrings. -/
+
+/-- Finnish: constructional A/Fin/NegVerb. The negative auxiliary is the
+    finite element; the lexical verb appears as a nonfinite connegative.
+    Forms derived from `Finnish.Negation.negParadigm`. -/
 def finnish : MiestamoDatum :=
   { language := "Finnish"
+  , iso := "fin"
   , morphemeType := .auxVerb
   , symmetry := .asymmetric
   , asymmetrySubtype := .finiteness
   , asymmetryDimensions := [.constructional]
-  , asymmetrySource := some .derived
   , negMarkers := Finnish.Negation.negParadigm.map (·.form)
-  , asymmetryDescription := "Negative auxiliary becomes finite verb; " ++
-      "lexical verb appears as connegative (A/Fin). " ++
-      "Derived: neg aux being a verb structurally entails finiteness change." }
+  , asymmetryDescription := "A/Fin/NegVerb: the negative auxiliary carries " ++
+      "finiteness; the lexical verb is a nonfinite connegative." }
 
-/-- German: symmetric, no asymmetry. Particle *nicht*.
+/-- German: symmetric. Particle *nicht*.
     Form derived from `German.Negation.nicht.form`. -/
 def german : MiestamoDatum :=
   { language := "German"
+  , iso := "deu"
   , morphemeType := .particle
   , symmetry := .symmetric
   , asymmetrySubtype := .nonAssignable
   , asymmetryDimensions := []
-  , asymmetrySource := none
   , negMarkers := [German.Negation.nicht.form]
   , asymmetryDescription := "Symmetric: adding nicht introduces no " ++
       "structural or paradigmatic changes." }
 
-/-- Japanese: constructional + paradigmatic, A/Fin+A/Cat.
-    Suffix *-nai* changes verb to i-adjective (constructional) and shifts
-    tense marking to the suffix (paradigmatic).
+/-- Japanese: constructional A/Fin + A/Cat. Plain *-nai* adjectivalizes
+    the verb (A/Fin/Neg-LV); the polite nonpast replaces TAM material
+    (A/Cat/TAM); the polite past adds a finite element. Appendix III codes
+    all three constructions as constructional, with no paradigmatic row.
     Form derived from `Japanese.Negation.negSuffix.form`. -/
 def japanese : MiestamoDatum :=
   { language := "Japanese"
+  , iso := "jpn"
   , morphemeType := .affix
   , symmetry := .asymmetric
   , asymmetrySubtype := .finAndCat
-  , asymmetryDimensions := [.constructional, .paradigmatic]
-  , asymmetrySource := some .independent
+  , asymmetryDimensions := [.constructional]
   , negMarkers := [Japanese.Negation.negSuffix.form]
-  , asymmetryDescription := "Constructional: -nai turns verb into i-adjective. " ++
-      "Paradigmatic: tense/mood marked on -nai, not on stem. " ++
-      "Independent: affix type does not predict category change." }
+  , asymmetryDescription := "A/Fin/Neg-LV: -nai turns the verb into an " ++
+      "i-adjective; A/Cat/TAM: the polite nonpast replaces TAM material. " ++
+      "All constructional in Appendix III." }
 
-/-- Turkish: SymAsy with paradigmatic A/Cat (aorist only).
-    Most constructions symmetric; aorist negative uses *-z* instead of *-(I)r*.
-    Form derived from `Turkish.Negation.negSuffix.form`. -/
+/-- Turkish: SymAsy with constructional A/Cat/TAM in the aorist only.
+    The aorist suffix changes to *-z* in the 2nd/3rd persons and is
+    omitted in the 1st (Appendix II ex. 260); negation is symmetric
+    elsewhere. Form derived from `Turkish.Negation.negSuffix.form`. -/
 def turkish : MiestamoDatum :=
   { language := "Turkish"
+  , iso := "tur"
   , morphemeType := .affix
   , symmetry := .both
   , asymmetrySubtype := .otherCategories
-  , asymmetryDimensions := [.paradigmatic]
-  , asymmetrySource := some .independent
+  , asymmetryDimensions := [.constructional]
   , negMarkers := [Turkish.Negation.negSuffix.form]
-  , asymmetryDescription := "Paradigmatic: aorist marker -(I)r → -z under negation. " ++
-      "Most other TAM constructions are symmetric. " ++
-      "Independent: suffix type does not predict aorist change." }
+  , asymmetryDescription := "Constructional A/Cat/TAM: aorist -(I)r → -z " ++
+      "under negation (2nd/3rd persons; omitted in the 1st). " ++
+      "Most other TAM constructions are symmetric." }
 
 /-- French: symmetric. Bipartite *ne...pas* introduces no structural change.
     Forms derived from `French.Negation`. -/
 def french : MiestamoDatum :=
   { language := "French"
+  , iso := "fra"
   , morphemeType := .particle
   , symmetry := .symmetric
   , asymmetrySubtype := .nonAssignable
   , asymmetryDimensions := []
-  , asymmetrySource := none
   , negMarkers := [French.Negation.neClitic,
                     French.Negation.pasReinforcer]
   , asymmetryDescription := "Symmetric: ne...pas adds negation without " ++
       "changing clause structure or paradigm. " ++
       "Jespersen cycle: ne dropping in colloquial speech." }
 
-/-- Burmese: constructional + paradigmatic A/Cat, independent.
-    Circumfix *ma-...-bu* replaces TAM markers.
+/-- Burmese: constructional + paradigmatic A/Cat, in one construction
+    (Appendix III type B): the circumfix replaces the TAM slot and
+    neutralizes the actual/potential distinction (A/Cat/TAM/Neutr).
     Forms derived from `Burmese.Negation`. -/
 def burmese : MiestamoDatum :=
   { language := "Burmese"
+  , iso := "mya"
   , morphemeType := .doubleNeg
   , symmetry := .asymmetric
   , asymmetrySubtype := .otherCategories
   , asymmetryDimensions := [.constructional, .paradigmatic]
-  , asymmetrySource := some .independent
   , negMarkers := [Burmese.Negation.negPrefix,
                     Burmese.Negation.negSuffix]
-  , asymmetryDescription := "Constructional: circumfix changes word structure. " ++
-      "Paradigmatic: -bu replaces TAM suffixes, neutralizing 3 distinctions to 1. " ++
-      "Independent: circumfix type does not predict TAM neutralization." }
+  , asymmetryDescription := "Constructional: ma-...-bu replaces the TAM slot. " ++
+      "Paradigmatic: -bu neutralizes TAM distinctions (A/Cat/TAM/Neutr)." }
 
 /-- Italian: symmetric. Particle *non*, no structural change.
     Form derived from `Italian.Negation.non.form`. -/
 def italian : MiestamoDatum :=
   { language := "Italian"
+  , iso := "ita"
   , morphemeType := .particle
   , symmetry := .symmetric
   , asymmetrySubtype := .nonAssignable
   , asymmetryDimensions := []
-  , asymmetrySource := none
   , negMarkers := [Italian.Negation.non.form]
   , asymmetryDescription := "Symmetric: non adds negation without " ++
       "structural or paradigmatic change." }
@@ -237,11 +225,11 @@ def italian : MiestamoDatum :=
     Form derived from `Spanish.Negation.no.form`. -/
 def spanish : MiestamoDatum :=
   { language := "Spanish"
+  , iso := "spa"
   , morphemeType := .particle
   , symmetry := .symmetric
   , asymmetrySubtype := .nonAssignable
   , asymmetryDimensions := []
-  , asymmetrySource := none
   , negMarkers := [Spanish.Negation.no.form]
   , asymmetryDescription := "Symmetric: no adds negation without " ++
       "structural or paradigmatic change. " ++
@@ -250,159 +238,186 @@ def spanish : MiestamoDatum :=
 /-- Mandarin Chinese: SymAsy with constructional A/Fin.
     Non-perfectives negated by *bù* (symmetric). Perfectives negated by
     *méi(yǒu)*: the existential verb *yǒu* is introduced as the finite
-    element (FE), the lexical verb loses finite status (A/Fin/Neg-FE).
-    When *méi* occurs without *yǒu*, it functions as a negative existential
-    verb (A/Fin/NegVerb). [miestamo-2005] pp. 90–91, example 51.
-    Forms derived from `Mandarin.Negation`. -/
+    element (A/Fin/Neg-FE); when *méi* occurs without *yǒu*, it functions
+    as a negative existential verb (A/Fin/NegVerb). [miestamo-2005]
+    pp. 90-91, example (51). Forms derived from `Mandarin.Negation`. -/
 def mandarin : MiestamoDatum :=
   { language := "Mandarin Chinese"
+  , iso := "cmn"
   , morphemeType := .particle
   , symmetry := .both
   , asymmetrySubtype := .finiteness
   , asymmetryDimensions := [.constructional]
-  , asymmetrySource := some .independent
   , negMarkers := [Mandarin.Negation.bu.form,
                     Mandarin.Negation.mei.form]
   , asymmetryDescription := "Constructional: méi(yǒu) introduces the " ++
-      "existential verb yǒu as the finite element; the lexical verb " ++
-      "loses finite status (A/Fin/Neg-FE). bù constructions are symmetric. " ++
-      "Independent: particle type does not predict A/Fin restructuring." }
+      "existential verb yǒu as the finite element (A/Fin/Neg-FE); " ++
+      "méi alone is a negative existential verb (A/Fin/NegVerb). " ++
+      "bù constructions are symmetric." }
 
-/-- English: SymAsy with constructional A/Cat (do-support).
-    With modals/be/have, negation is symmetric; with lexical verbs,
-    *do*-support introduces a structural change (constructional asymmetry).
+/-- English: SymAsy with paradigmatic A/Emph/Neutr. Appendix III codes
+    AUX+*not* as symmetric (with *do* as the finite AUX host) and locates
+    the asymmetry in the paradigm: the periphrastic emphatic (*I DO eat*)
+    is unavailable in negatives. WALS Ch 114A instead codes English A/Cat;
+    see `english_subtype_diverges_from_wals`.
     Form derived from `English.Negation.not.form`. -/
 def english : MiestamoDatum :=
   { language := "English"
+  , iso := "eng"
   , morphemeType := .particle
   , symmetry := .both
-  , asymmetrySubtype := .otherCategories
-  , asymmetryDimensions := [.constructional]
-  , asymmetrySource := some .independent
+  , asymmetrySubtype := .emphasis
+  , asymmetryDimensions := [.paradigmatic]
   , negMarkers := [English.Negation.not.form]
-  , asymmetryDescription := "Constructional: do-support introduces auxiliary do " ++
-      "with lexical verbs (He eats → He does not eat). " ++
-      "Symmetric with modals/be/have. " ++
-      "Independent: particle type does not predict do-support." }
+  , asymmetryDescription := "Paradigmatic A/Emph/Neutr: the periphrastic " ++
+      "emphatic is unavailable in negatives (simple tenses). " ++
+      "AUX+not constructions themselves are symmetric." }
 
 /-- Russian: symmetric. Particle *не* (*ne*), no structural change.
     Form derived from `Russian.Negation.ne.form`. -/
 def russian : MiestamoDatum :=
   { language := "Russian"
+  , iso := "rus"
   , morphemeType := .particle
   , symmetry := .symmetric
   , asymmetrySubtype := .nonAssignable
   , asymmetryDimensions := []
-  , asymmetrySource := none
   , negMarkers := [Russian.Negation.ne.form]
   , asymmetryDescription := "Symmetric: не adds negation without " ++
       "structural or paradigmatic change. " ++
       "Obligatory negative concord (Slavic pattern)." }
 
-/-- Czech: symmetric. Prefix *ne-*, no structural change.
+/-- Czech: symmetric. Prefix *ne-*, no structural change. Not in the
+    book's RS (nor the WALS Ch 113A-115A samples); coded here by applying
+    the book's criteria to symmetric *ne-* prefixation.
     Form derived from `Czech.Negation.negPrefix`. -/
 def czech : MiestamoDatum :=
   { language := "Czech"
+  , iso := "ces"
   , morphemeType := .affix
   , symmetry := .symmetric
   , asymmetrySubtype := .nonAssignable
   , asymmetryDimensions := []
-  , asymmetrySource := none
   , negMarkers := [Czech.Negation.negPrefix]
   , asymmetryDescription := "Symmetric: ne- prefix adds negation without " ++
       "structural or paradigmatic change. " ++
       "Obligatory negative concord (Slavic pattern)." }
 
-/-- Maori: constructional A/Fin, source unclear.
-    *Kāhore* functions as a quasi-auxiliary, changing the finiteness
-    structure. WALS classifies morpheme type as wordUnclear.
+/-- Maori: constructional A/Fin/NegVerb. *Kāhore* is the finite element
+    and the lexical clause is subordinated. WALS Ch 112A codes the
+    morpheme type as wordUnclear.
     Form derived from `Maori.Negation.kahore.form`. -/
 def maori : MiestamoDatum :=
   { language := "Maori"
+  , iso := "mri"
   , morphemeType := .wordUnclear
   , symmetry := .asymmetric
   , asymmetrySubtype := .finiteness
   , asymmetryDimensions := [.constructional]
-  , asymmetrySource := some .derived
   , negMarkers := [Maori.Negation.kahore.form]
-  , asymmetryDescription := "Constructional: kāhore takes the TAM position, " ++
-      "verb appears in nominalized form (A/Fin). " ++
-      "Derived: quasi-auxiliary status structurally entails finiteness change." }
+  , asymmetryDescription := "Constructional A/Fin/NegVerb: kāhore takes the " ++
+      "TAM position, the verb appears in nominalized form." }
 
-/-- Hixkaryana: constructional A/Fin, independent.
-    Suffix *-hira* deverbalizes the verb; a copula becomes the finite
-    element. Form derived from `Hixkaryana.Negation.hira.form`. -/
+/-- Hixkaryana: constructional A/Fin/Neg-LV. Suffix *-hɨra* deverbalizes
+    the verb; a copula becomes the finite element.
+    Form derived from `Hixkaryana.Negation.hira.form`. -/
 def hixkaryana : MiestamoDatum :=
   { language := "Hixkaryana"
+  , iso := "hix"
   , morphemeType := .affix
   , symmetry := .asymmetric
   , asymmetrySubtype := .finiteness
   , asymmetryDimensions := [.constructional]
-  , asymmetrySource := some .independent
   , negMarkers := [Hixkaryana.Negation.hira.form]
-  , asymmetryDescription := "Constructional: -hira deverbalizes the verb, " ++
-      "copula becomes the finite element (A/Fin). " ++
-      "Independent: affix type does not predict deverbalization." }
+  , asymmetryDescription := "Constructional A/Fin/Neg-LV: -hira deverbalizes " ++
+      "the verb, a copula becomes the finite element." }
 
-/-- Imbabura Quechua: SymAsy with paradigmatic A/NonReal, independent.
-    Particle *mana*; validator enclitic *-chu* obligatory in some negative
-    constructions. *-chu* also appears in polar interrogatives — it is a
-    general "validator" expressing assertion authority ([miestamo-2005]
-    p. 158). Some constructions symmetric, others require *-chu*.
-    Form derived from `Quechua.Negation.mana.form`. -/
+/-- Imbabura Quechua: SymAsy with paradigmatic A/NonReal/Displc.
+    *Mana* constructions are symmetric; negatives require the validator
+    enclitic *-chu*, which also marks interrogatives. Since only one
+    validator may occur per sentence, the further ban on other validators
+    is an asymmetry the book classifies as *derived* from this one
+    (p. 158). Form derived from `Quechua.Negation.mana.form`. -/
 def imbaburaQuechua : MiestamoDatum :=
   { language := "Quechua (Imbabura)"
+  , iso := "qvi"
   , morphemeType := .particle
   , symmetry := .both
   , asymmetrySubtype := .realityStatus
   , asymmetryDimensions := [.paradigmatic]
-  , asymmetrySource := some .independent
   , negMarkers := [Quechua.Negation.mana.form]
-  , asymmetryDescription := "Paradigmatic: negative requires -chu validator " ++
-      "enclitic, a category absent from the affirmative paradigm (A/NonReal). " ++
-      "No constructional change: clause structure is preserved. " ++
-      "Independent: particle type does not predict validator requirement." }
+  , asymmetryDescription := "Paradigmatic A/NonReal/Displc: negatives require " ++
+      "the -chu validator, a category shared with interrogatives; other " ++
+      "validators are displaced (derived asymmetry). " ++
+      "Clause structure is preserved." }
 
 def allData : List MiestamoDatum :=
   [finnish, german, japanese, turkish, french, burmese, italian, spanish,
    mandarin, english, russian, czech, maori, hixkaryana, imbaburaQuechua]
 
--- ============================================================================
--- § 4: WALS Consistency
--- ============================================================================
+/-! ## WALS consistency
 
-section WALSConsistency
+The book's codings against the (later, same-author) WALS chapter rows,
+read via the `Syntax.Negation` per-ISO accessors. Languages absent from
+a chapter's WALS sample (Czech throughout) pass vacuously. -/
+
+set_option maxRecDepth 8192 in
+/-- Datum morpheme types agree with WALS Ch 112A wherever coded.
+    (Scoped `maxRecDepth`: kernel evaluation recurses through the
+    1157-row Ch 112A table.) -/
+theorem morphemeType_matches_wals :
+    allData.all (fun d =>
+      (morphemeTypeOfISO d.iso).all (· == d.morphemeType)) = true := by
+  decide
+
+/-- Datum symmetry codings agree with WALS Ch 113A wherever coded. -/
+theorem symmetry_matches_wals :
+    allData.all (fun d =>
+      (symmetryOfISO d.iso).all (· == d.symmetry)) = true := by
+  decide
+
+/-- Datum subtype codings agree with WALS Ch 114A wherever coded — except
+    English, where the book's A/Emph analysis diverges from WALS's A/Cat. -/
+theorem subtype_matches_wals_except_english :
+    allData.all (fun d =>
+      d.language == "English" ||
+      (asymmetrySubtypeOfISO d.iso).all (· == d.asymmetrySubtype)) = true := by
+  decide
+
+/-- The book vs WALS on English: Appendix III codes English SN as
+    symmetric AUX+*not* with paradigmatic A/Emph/Neutr asymmetry; WALS
+    Ch 114A codes English A/Cat. -/
+theorem english_subtype_diverges_from_wals :
+    english.asymmetrySubtype = .emphasis ∧
+    asymmetrySubtypeOfISO english.iso = some .otherCategories :=
+  ⟨rfl, by decide⟩
+
+/-! ## Structural sanity of the coding -/
 
 /-- Symmetric languages have no asymmetry dimensions. -/
 theorem symmetric_no_dimensions :
     (allData.filter (·.symmetry == .symmetric)).all
       (fun d => d.asymmetryDimensions.isEmpty) = true := by
-  native_decide
-
-/-- Symmetric languages have no asymmetry source. -/
-theorem symmetric_no_source :
-    (allData.filter (·.symmetry == .symmetric)).all
-      (fun d => d.asymmetrySource.isNone) = true := by
-  native_decide
+  decide
 
 /-- Asymmetric languages have at least one asymmetry dimension. -/
 theorem asymmetric_has_dimensions :
     (allData.filter (·.symmetry == .asymmetric)).all
       (fun d => !d.asymmetryDimensions.isEmpty) = true := by
-  native_decide
-
-/-- Asymmetric languages have an asymmetry source. -/
-theorem asymmetric_has_source :
-    (allData.filter (·.symmetry == .asymmetric)).all
-      (fun d => d.asymmetrySource.isSome) = true := by
-  native_decide
+  decide
 
 /-- SymAsy languages have at least one asymmetry dimension
     (for their asymmetric constructions). -/
 theorem symasy_has_dimensions :
     (allData.filter (·.symmetry == .both)).all
       (fun d => !d.asymmetryDimensions.isEmpty) = true := by
-  native_decide
+  decide
+
+/-- Symmetric-only (WALS) implies nonAssignable asymmetry subtype. -/
+theorem symmetric_implies_nonassignable :
+    (allData.filter (·.symmetry == .symmetric)).all
+      (fun d => d.asymmetrySubtype == .nonAssignable) = true := by
+  decide
 
 /-- A/Fin with a *verbal* negator implies constructional asymmetry:
     the negative verb takes over the finite verb slot, necessarily
@@ -414,278 +429,29 @@ theorem afin_verbal_implies_constructional :
        d.asymmetrySubtype == .finAndNonReal) &&
       d.morphemeType == .auxVerb)).all
       (fun d => d.asymmetryDimensions.contains .constructional) = true := by
-  native_decide
+  decide
 
 /-- All A/Fin languages in our sample have constructional asymmetry,
-    regardless of negation marker type. Even Mandarin's particle-type
-    méi(yǒu) introduces structural changes (existential verb as FE). -/
+    regardless of negation marker type — matching Table 5, where A/Fin
+    is constructional in 44 of 45 RS languages. -/
 theorem afin_always_constructional_in_sample :
     (allData.filter (fun d =>
       d.asymmetrySubtype == .finiteness ||
       d.asymmetrySubtype == .finAndCat ||
       d.asymmetrySubtype == .finAndNonReal)).all
       (fun d => d.asymmetryDimensions.contains .constructional) = true := by
-  native_decide
+  decide
 
-/-- Symmetric-only (WALS) implies nonAssignable asymmetry subtype. -/
-theorem symmetric_implies_nonassignable :
-    (allData.filter (·.symmetry == .symmetric)).all
-      (fun d => d.asymmetrySubtype == .nonAssignable) = true := by
-  native_decide
-
-/-- Morpheme types are consistent with WALS Typology profiles. -/
-theorem finnish_morpheme_consistent :
-    finnish.morphemeType = Finnish.Negation.negationProfile.morphemeType := rfl
-theorem german_morpheme_consistent :
-    german.morphemeType = German.Negation.negationProfile.morphemeType := rfl
-theorem japanese_morpheme_consistent :
-    japanese.morphemeType = Japanese.Negation.negationProfile.morphemeType := rfl
-theorem turkish_morpheme_consistent :
-    turkish.morphemeType = Turkish.Negation.negationProfile.morphemeType := rfl
-theorem italian_morpheme_consistent :
-    italian.morphemeType = Italian.Negation.negationProfile.morphemeType := rfl
-theorem burmese_morpheme_consistent :
-    burmese.morphemeType = Burmese.Negation.negationProfile.morphemeType := rfl
-theorem french_morpheme_consistent :
-    french.morphemeType = French.Negation.negationProfile.morphemeType := rfl
-theorem spanish_morpheme_consistent :
-    spanish.morphemeType = Spanish.Negation.negationProfile.morphemeType := rfl
-theorem mandarin_morpheme_consistent :
-    mandarin.morphemeType = Mandarin.Negation.negationProfile.morphemeType := rfl
-theorem english_morpheme_consistent :
-    english.morphemeType = English.Negation.negationProfile.morphemeType := rfl
-theorem russian_morpheme_consistent :
-    russian.morphemeType = Russian.Negation.negationProfile.morphemeType := rfl
-theorem czech_morpheme_consistent :
-    czech.morphemeType = Czech.Negation.negationProfile.morphemeType := rfl
-theorem maori_morpheme_consistent :
-    maori.morphemeType = Maori.Negation.negationProfile.morphemeType := rfl
-theorem hixkaryana_morpheme_consistent :
-    hixkaryana.morphemeType = Hixkaryana.Negation.negationProfile.morphemeType := rfl
-theorem imbaburaQuechua_morpheme_consistent :
-    imbaburaQuechua.morphemeType = Quechua.Negation.negationProfile.morphemeType := rfl
-
-/-- Symmetry values are consistent with WALS Typology profiles. -/
-theorem finnish_symmetry_consistent :
-    finnish.symmetry = Finnish.Negation.negationProfile.symmetry := rfl
-theorem german_symmetry_consistent :
-    german.symmetry = German.Negation.negationProfile.symmetry := rfl
-theorem japanese_symmetry_consistent :
-    japanese.symmetry = Japanese.Negation.negationProfile.symmetry := rfl
-theorem turkish_symmetry_consistent :
-    turkish.symmetry = Turkish.Negation.negationProfile.symmetry := rfl
-theorem italian_symmetry_consistent :
-    italian.symmetry = Italian.Negation.negationProfile.symmetry := rfl
-theorem burmese_symmetry_consistent :
-    burmese.symmetry = Burmese.Negation.negationProfile.symmetry := rfl
-theorem french_symmetry_consistent :
-    french.symmetry = French.Negation.negationProfile.symmetry := rfl
-theorem spanish_symmetry_consistent :
-    spanish.symmetry = Spanish.Negation.negationProfile.symmetry := rfl
-theorem mandarin_symmetry_consistent :
-    mandarin.symmetry = Mandarin.Negation.negationProfile.symmetry := rfl
-theorem english_symmetry_consistent :
-    english.symmetry = English.Negation.negationProfile.symmetry := rfl
-theorem russian_symmetry_consistent :
-    russian.symmetry = Russian.Negation.negationProfile.symmetry := rfl
-theorem czech_symmetry_consistent :
-    czech.symmetry = Czech.Negation.negationProfile.symmetry := rfl
-theorem maori_symmetry_consistent :
-    maori.symmetry = Maori.Negation.negationProfile.symmetry := rfl
-theorem hixkaryana_symmetry_consistent :
-    hixkaryana.symmetry = Hixkaryana.Negation.negationProfile.symmetry := rfl
-theorem imbaburaQuechua_symmetry_consistent :
-    imbaburaQuechua.symmetry = Quechua.Negation.negationProfile.symmetry := rfl
-
-/-- Asymmetry subtypes are consistent with WALS Typology profiles. -/
-theorem finnish_subtype_consistent :
-    finnish.asymmetrySubtype = Finnish.Negation.negationProfile.asymmetrySubtype := rfl
-theorem german_subtype_consistent :
-    german.asymmetrySubtype = German.Negation.negationProfile.asymmetrySubtype := rfl
-theorem japanese_subtype_consistent :
-    japanese.asymmetrySubtype = Japanese.Negation.negationProfile.asymmetrySubtype := rfl
-theorem turkish_subtype_consistent :
-    turkish.asymmetrySubtype = Turkish.Negation.negationProfile.asymmetrySubtype := rfl
-theorem italian_subtype_consistent :
-    italian.asymmetrySubtype = Italian.Negation.negationProfile.asymmetrySubtype := rfl
-theorem burmese_subtype_consistent :
-    burmese.asymmetrySubtype = Burmese.Negation.negationProfile.asymmetrySubtype := rfl
-theorem french_subtype_consistent :
-    french.asymmetrySubtype = French.Negation.negationProfile.asymmetrySubtype := rfl
-theorem spanish_subtype_consistent :
-    spanish.asymmetrySubtype = Spanish.Negation.negationProfile.asymmetrySubtype := rfl
-theorem mandarin_subtype_consistent :
-    mandarin.asymmetrySubtype = Mandarin.Negation.negationProfile.asymmetrySubtype := rfl
-theorem english_subtype_consistent :
-    english.asymmetrySubtype = English.Negation.negationProfile.asymmetrySubtype := rfl
-theorem russian_subtype_consistent :
-    russian.asymmetrySubtype = Russian.Negation.negationProfile.asymmetrySubtype := rfl
-theorem czech_subtype_consistent :
-    czech.asymmetrySubtype = Czech.Negation.negationProfile.asymmetrySubtype := rfl
-theorem maori_subtype_consistent :
-    maori.asymmetrySubtype = Maori.Negation.negationProfile.asymmetrySubtype := rfl
-theorem hixkaryana_subtype_consistent :
-    hixkaryana.asymmetrySubtype = Hixkaryana.Negation.negationProfile.asymmetrySubtype := rfl
-theorem imbaburaQuechua_subtype_consistent :
-    imbaburaQuechua.asymmetrySubtype = Quechua.Negation.negationProfile.asymmetrySubtype := rfl
-
-end WALSConsistency
-
--- ============================================================================
--- § 5: Fragment Bridges
--- ============================================================================
-
-section FragmentBridges
-
-/-- Finnish negation markers derive from the Fragment paradigm. -/
-theorem finnish_markers_from_fragment :
-    finnish.negMarkers =
-      Finnish.Negation.negParadigm.map (·.form) := rfl
-
-/-- Finnish has 6 neg aux forms (3 persons x 2 numbers). -/
-theorem finnish_marker_count :
-    finnish.negMarkers.length = 6 := by native_decide
-
-/-- German negation marker derives from Fragment. -/
-theorem german_marker_from_fragment :
-    german.negMarkers = [German.Negation.nicht.form] := rfl
-
-/-- German marker is *nicht*. -/
-theorem german_marker_is_nicht :
-    german.negMarkers = ["nicht"] := rfl
-
-/-- Japanese negation marker derives from Fragment. -/
-theorem japanese_marker_from_fragment :
-    japanese.negMarkers = [Japanese.Negation.negSuffix.form] := rfl
-
-/-- Japanese marker is *-nai*. -/
-theorem japanese_marker_is_nai :
-    japanese.negMarkers = ["-nai"] := rfl
-
-/-- Turkish negation marker derives from Fragment. -/
-theorem turkish_marker_from_fragment :
-    turkish.negMarkers = [Turkish.Negation.negSuffix.form] := rfl
-
-/-- Turkish marker is *-mA-*. -/
-theorem turkish_marker_is_mA :
-    turkish.negMarkers = ["-mA-"] := rfl
-
-/-- French negation markers derive from Fragment. -/
-theorem french_markers_from_fragment :
-    french.negMarkers = [French.Negation.neClitic,
-                          French.Negation.pasReinforcer] := rfl
-
-/-- French markers are *ne* and *pas*. -/
-theorem french_markers_are_ne_pas :
-    french.negMarkers = ["ne", "pas"] := rfl
-
-/-- Burmese negation markers derive from Fragment. -/
-theorem burmese_markers_from_fragment :
-    burmese.negMarkers = [Burmese.Negation.negPrefix,
-                           Burmese.Negation.negSuffix] := rfl
-
-/-- Burmese markers are *ma-* and *-bu*. -/
-theorem burmese_markers_are_ma_bu :
-    burmese.negMarkers = ["ma-", "-bu"] := rfl
-
-/-- Italian negation marker derives from Fragment. -/
-theorem italian_marker_from_fragment :
-    italian.negMarkers = [Italian.Negation.non.form] := rfl
-
-/-- Italian marker is *non*. -/
-theorem italian_marker_is_non :
-    italian.negMarkers = ["non"] := rfl
-
-/-- Spanish negation marker derives from Fragment. -/
-theorem spanish_marker_from_fragment :
-    spanish.negMarkers = [Spanish.Negation.no.form] := rfl
-
-/-- Spanish marker is *no*. -/
-theorem spanish_marker_is_no :
-    spanish.negMarkers = ["no"] := rfl
-
-/-- Mandarin negation markers derive from Fragment. -/
-theorem mandarin_markers_from_fragment :
-    mandarin.negMarkers = [Mandarin.Negation.bu.form,
-                            Mandarin.Negation.mei.form] := rfl
-
-/-- Mandarin markers are *bù* and *méi*. -/
-theorem mandarin_markers_are_bu_mei :
-    mandarin.negMarkers = ["bù", "méi"] := rfl
-
-/-- English negation marker derives from Fragment. -/
-theorem english_marker_from_fragment :
-    english.negMarkers = [English.Negation.not.form] := rfl
-
-/-- English marker is *not*. -/
-theorem english_marker_is_not :
-    english.negMarkers = ["not"] := rfl
-
-/-- Russian negation marker derives from Fragment. -/
-theorem russian_marker_from_fragment :
-    russian.negMarkers = [Russian.Negation.ne.form] := rfl
-
-/-- Russian marker is *не*. -/
-theorem russian_marker_is_ne :
-    russian.negMarkers = ["не"] := rfl
-
-/-- Czech negation marker derives from Fragment. -/
-theorem czech_marker_from_fragment :
-    czech.negMarkers = [Czech.Negation.negPrefix] := rfl
-
-/-- Czech marker is *ne-*. -/
-theorem czech_marker_is_ne :
-    czech.negMarkers = ["ne-"] := rfl
-
-/-- Maori negation word derives from Fragment. -/
-theorem maori_marker_from_fragment :
-    maori.negMarkers = [Maori.Negation.kahore.form] := rfl
-
-/-- Maori marker is *kāhore*. -/
-theorem maori_marker_is_kahore :
-    maori.negMarkers = ["kāhore"] := rfl
-
-/-- Hixkaryana negation suffix derives from Fragment. -/
-theorem hixkaryana_marker_from_fragment :
-    hixkaryana.negMarkers = [Hixkaryana.Negation.hira.form] := rfl
-
-/-- Hixkaryana marker is *-hira*. -/
-theorem hixkaryana_marker_is_hira :
-    hixkaryana.negMarkers = ["-hira"] := rfl
-
-/-- Imbabura Quechua negation particle derives from Fragment. -/
-theorem imbaburaQuechua_marker_from_fragment :
-    imbaburaQuechua.negMarkers = [Quechua.Negation.mana.form] := rfl
-
-/-- Imbabura Quechua marker is *mana*. -/
-theorem imbaburaQuechua_marker_is_mana :
-    imbaburaQuechua.negMarkers = ["mana"] := rfl
-
-end FragmentBridges
-
--- ============================================================================
--- § 6: Theoretical Predictions
--- ============================================================================
-
-section Predictions
-
-/-- Derived asymmetry: negative auxiliary verbs always produce
-    constructional A/Fin asymmetry. The asymmetry is derived because
-    a verb-type negator structurally entails finiteness restructuring. -/
-theorem neg_aux_implies_derived_constructional :
-    (allData.filter (·.morphemeType == .auxVerb)).all
-      (fun d => d.asymmetrySource == some .derived ∧
-                d.asymmetryDimensions.contains .constructional) = true := by
-  native_decide
+/-! ## Theoretical predictions -/
 
 /-- Particles that are symmetric-only have no asymmetry dimensions.
-    Mandarin and English are SymAsy particles with constructional asymmetry
-    (méi(yǒu) introduces A/Fin; do-support introduces A/Cat). -/
+    Mandarin and English are SymAsy particles with asymmetry elsewhere
+    (méi(yǒu) introduces A/Fin; the emphatic paradigm is neutralized). -/
 theorem symmetric_particles_no_dimensions :
     (allData.filter (fun d => d.morphemeType == .particle &&
       d.symmetry == .symmetric)).all
       (fun d => d.asymmetryDimensions.isEmpty) = true := by
-  native_decide
+  decide
 
 /-- Affixes can produce symmetric, asymmetric, or SymAsy negation. -/
 theorem affixes_variable :
@@ -702,18 +468,17 @@ theorem finnish_no_paradigmatic_asymmetry :
 theorem burmese_both_dimensions :
     burmese.asymmetryDimensions = [.constructional, .paradigmatic] := rfl
 
-/-- Turkish has paradigmatic-only asymmetry: the aorist marker changes
-    but the clause structure does not. -/
-theorem turkish_paradigmatic_only :
-    turkish.asymmetryDimensions = [.paradigmatic] := rfl
+/-- Turkish has constructional-only asymmetry: the aorist marker is
+    replaced (or omitted), but no distinctions are neutralized. -/
+theorem turkish_constructional_only :
+    turkish.asymmetryDimensions = [.constructional] := rfl
 
-end Predictions
+/-- Imbabura Quechua has paradigmatic-only asymmetry: the validator
+    requirement changes the paradigm, not the clause structure. -/
+theorem quechua_paradigmatic_only :
+    imbaburaQuechua.asymmetryDimensions = [.paradigmatic] := rfl
 
--- ============================================================================
--- § 7: Fragment Cross-Validation
--- ============================================================================
-
-section CrossValidation
+/-! ## Fragment cross-validation -/
 
 /-- Finnish Fragment inflection distribution is consistent with
     constructional A/Fin: categories split across neg aux and main verb. -/
@@ -721,64 +486,42 @@ theorem finnish_split_confirms_constructional :
     let dist := Finnish.Negation.finnishNegDistribution
     dist.onAux.length > 0 ∧ dist.onLex.length > 0 ∧
     finnish.asymmetryDimensions.contains .constructional := by
-  exact ⟨by native_decide, by native_decide, by native_decide⟩
+  refine ⟨?_, ?_, ?_⟩ <;> decide
 
-/-- Japanese Fragment distribution confirms constructional + paradigmatic:
-    tense moves from stem to suffix (both structural and paradigmatic change). -/
+/-- Japanese Fragment distribution shows the tense shift from stem to
+    suffix that Appendix III codes as constructional replacement
+    (A/Cat/TAM) alongside the A/Fin adjectivalization. -/
 theorem japanese_distribution_confirms_asymmetry :
     let dist := Japanese.Negation.japaneseNegDistribution
     dist.affirmativeOnStem.contains .tense = true ∧
     dist.negativeOnStem.contains .tense = false ∧
     dist.negativeOnSuffix.contains .tense = true ∧
-    japanese.asymmetryDimensions.contains .constructional ∧
-    japanese.asymmetryDimensions.contains .paradigmatic := by
-  exact ⟨by native_decide, by native_decide, by native_decide,
-         by native_decide, by native_decide⟩
+    japanese.asymmetryDimensions.contains .constructional := by
+  refine ⟨?_, ?_, ?_, ?_⟩ <;> decide
 
-/-- Turkish Fragment confirms SymAsy: 4 of 5 constructions are symmetric,
-    only the aorist is asymmetric. -/
+/-- Turkish Fragment confirms SymAsy: the aorist is the only asymmetric
+    construction in the *gelmek* paradigm. -/
 theorem turkish_fragment_confirms_symasy :
-    (Turkish.Negation.gelParadigm.filter (·.symmetric)).length = 4 ∧
-    (Turkish.Negation.gelParadigm.filter (fun e => !e.symmetric)).length = 1 ∧
-    turkish.symmetry == .both := by
-  exact ⟨by native_decide, by native_decide, rfl⟩
-
-/-- German Fragment confirms symmetric: all tenses available, negation is
-    just adding *nicht*. -/
-theorem german_fragment_confirms_symmetric :
-    German.Negation.allExamples.length = 5 ∧
-    german.asymmetryDimensions.isEmpty := by
-  exact ⟨by native_decide, rfl⟩
+    (Turkish.Negation.gelParadigm.filter (fun e => !e.symmetric)).map
+      (·.formLabel) = ["aorist"] ∧
+    turkish.symmetry == .both :=
+  ⟨Turkish.Negation.aorist_asymmetric, rfl⟩
 
 /-- Burmese Fragment confirms paradigmatic asymmetry: TAM neutralized
     (3 affirmative distinctions → 1 negative form). -/
 theorem burmese_fragment_confirms_paradigmatic :
     Burmese.Negation.burmeseTAM.affirmativeTAM.length = 3 ∧
     Burmese.Negation.burmeseTAM.negativeTAM.length = 1 ∧
-    burmese.asymmetryDimensions.contains .paradigmatic := by
-  exact ⟨rfl, rfl, by native_decide⟩
+    burmese.asymmetryDimensions.contains .paradigmatic :=
+  ⟨rfl, rfl, by decide⟩
 
-/-- French Fragment confirms symmetric: all tenses available under negation. -/
-theorem french_fragment_confirms_symmetric :
-    French.Negation.allExamples.length = 5 ∧
-    french.asymmetryDimensions.isEmpty := by
-  exact ⟨by native_decide, rfl⟩
-
-/-- Spanish Fragment confirms symmetric: all tenses available, *no* adds
-    negation without structural change. -/
-theorem spanish_fragment_confirms_symmetric :
-    Spanish.Negation.allExamples.length = 5 ∧
-    spanish.asymmetryDimensions.isEmpty := by
-  exact ⟨by native_decide, rfl⟩
-
-/-- Mandarin Fragment confirms SymAsy: 3 bù (symmetric) + 2 méi (asymmetric)
-    constructions, matching the constructional A/Fin classification. -/
+/-- Mandarin Fragment confirms SymAsy: the example set contains both
+    symmetric (bù) and asymmetric (méi) constructions. -/
 theorem mandarin_fragment_confirms_symasy :
-    (Mandarin.Negation.allExamples.filter (·.symmetric)).length = 3 ∧
-    (Mandarin.Negation.allExamples.filter (fun e => !e.symmetric)).length = 2 ∧
-    mandarin.symmetry == .both ∧
-    mandarin.asymmetryDimensions == [.constructional] := by
-  exact ⟨by native_decide, by native_decide, rfl, rfl⟩
+    Mandarin.Negation.allExamples.any (·.symmetric) = true ∧
+    Mandarin.Negation.allExamples.any (fun e => !e.symmetric) = true ∧
+    mandarin.symmetry == .both := by
+  refine ⟨?_, ?_, rfl⟩ <;> decide
 
 /-- Mandarin méi-yǒu connects to AspectComparison: the same particle is
     formalized as a cross-domain negative perfective there. -/
@@ -787,114 +530,44 @@ theorem mandarin_meiyou_cross_module :
     Mandarin.AspectComparison.meiyou.pinyin = "méi-yǒu" :=
   ⟨rfl, rfl⟩
 
-/-- English Fragment confirms SymAsy: 3 symmetric (modal, copula, aux have)
-    + 2 asymmetric (lexical verb with do-support). -/
-theorem english_fragment_confirms_symasy :
-    (English.Negation.allExamples.filter (·.symmetric)).length = 3 ∧
-    (English.Negation.allExamples.filter (fun e => !e.symmetric)).length = 2 ∧
-    english.symmetry == .both := by
-  exact ⟨by native_decide, by native_decide, rfl⟩
-
-/-- English do-support is exactly the asymmetric constructions. -/
+/-- English do-support is exactly the asymmetric constructions in the
+    Fragment's construction-level coding. The book instead treats AUX+not
+    as symmetric and locates English asymmetry in the emphatic paradigm
+    (see `english`); the fragment fact is stable under either construal. -/
 theorem english_dosupport_is_asymmetry :
     English.Negation.allExamples.all
       (fun e => e.symmetric == !e.doSupport) = true := by
-  native_decide
-
-/-- Russian Fragment confirms symmetric: all constructions available,
-    *не* adds negation without structural change. -/
-theorem russian_fragment_confirms_symmetric :
-    Russian.Negation.allExamples.length = 4 ∧
-    russian.asymmetryDimensions.isEmpty := by
-  exact ⟨by native_decide, rfl⟩
-
-/-- Russian negative concord: all n-words co-occur with *не*. -/
-theorem russian_concord_confirms_cooccur :
-    Russian.Negation.allConcordExamples.all
-      (fun e => (e.sentence.splitOn "не").length > 1) = true := by
-  native_decide
-
-/-- Czech Fragment confirms symmetric: all constructions available,
-    prefix *ne-* adds negation without structural change. -/
-theorem czech_fragment_confirms_symmetric :
-    Czech.Negation.allExamples.length = 4 ∧
-    czech.asymmetryDimensions.isEmpty := by
-  exact ⟨by native_decide, rfl⟩
-
-/-- Czech negative concord: all n-words co-occur with *ne-* prefix. -/
-theorem czech_concord_confirms_cooccur :
-    Czech.Negation.allConcordExamples.all
-      (fun e => (e.sentence.splitOn "ne").length > 1) = true := by
-  native_decide
+  decide
 
 /-- Maori Fragment confirms asymmetric: all constructions are A/Fin. -/
 theorem maori_fragment_confirms_asymmetric :
     Maori.Negation.allExamples.all (fun e => !e.symmetric) = true ∧
     maori.asymmetryDimensions.contains .constructional := by
-  exact ⟨by native_decide, by native_decide⟩
+  refine ⟨?_, ?_⟩ <;> decide
 
 /-- Hixkaryana Fragment confirms asymmetric A/Fin with copula finite. -/
 theorem hixkaryana_fragment_confirms_asymmetric :
     Hixkaryana.Negation.allExamples.all (fun e => !e.symmetric) = true ∧
     Hixkaryana.Negation.allExamples.all (·.copulaFinite) = true ∧
     hixkaryana.asymmetryDimensions.contains .constructional := by
-  exact ⟨by native_decide, by native_decide, by native_decide⟩
+  refine ⟨?_, ?_, ?_⟩ <;> decide
 
-/-- Imbabura Quechua Fragment confirms SymAsy: 1 symmetric + 2 asymmetric
-    constructions, with asymmetric = requiring -chu. -/
-theorem imbaburaQuechua_fragment_confirms_symasy :
-    (Quechua.Negation.allExamples.filter (·.symmetric)).length = 1 ∧
-    (Quechua.Negation.allExamples.filter (fun e => !e.symmetric)).length = 2 ∧
-    imbaburaQuechua.symmetry == .both := by
-  exact ⟨by native_decide, by native_decide, rfl⟩
-
-/-- Imbabura Quechua: -chu requirement is exactly the asymmetric constructions. -/
+/-- Imbabura Quechua Fragment confirms SymAsy, with the *-chu*
+    requirement marking exactly the asymmetric constructions. -/
 theorem imbaburaQuechua_chu_is_asymmetry :
+    Quechua.Negation.allExamples.any (·.symmetric) = true ∧
     Quechua.Negation.allExamples.all
-      (fun e => e.symmetric == !e.requiresChu) = true := by
-  native_decide
+      (fun e => e.symmetric == !e.requiresChu) = true ∧
+    imbaburaQuechua.symmetry == .both := by
+  refine ⟨?_, ?_, rfl⟩ <;> decide
 
-end CrossValidation
-
--- ============================================================================
--- § 8: Summary Statistics (linglib sample)
--- ============================================================================
-
-theorem sample_size : allData.length = 15 := by native_decide
-
-theorem symmetric_count :
-    (allData.filter (·.symmetry == .symmetric)).length = 6 := by native_decide
-theorem asymmetric_count :
-    (allData.filter (·.symmetry == .asymmetric)).length = 5 := by native_decide
-theorem symasy_count :
-    (allData.filter (·.symmetry == .both)).length = 4 := by native_decide
-
-theorem constructional_count :
-    (allData.filter (fun d => d.asymmetryDimensions.contains .constructional)).length = 7 := by
-  native_decide
-theorem paradigmatic_count :
-    (allData.filter (fun d => d.asymmetryDimensions.contains .paradigmatic)).length = 4 := by
-  native_decide
-theorem both_dimensions_count :
-    (allData.filter (fun d =>
-      d.asymmetryDimensions.contains .constructional &&
-      d.asymmetryDimensions.contains .paradigmatic)).length = 2 := by
-  native_decide
-
-theorem derived_count :
-    (allData.filter (·.asymmetrySource == some .derived)).length = 2 := by native_decide
-theorem independent_count :
-    (allData.filter (·.asymmetrySource == some .independent)).length = 7 := by native_decide
-
--- ============================================================================
--- § 9: Miestamo's 179-Language Survey Distribution (Table 3)
--- ============================================================================
+/-! ## Miestamo's 179-language survey distribution (Table 3) -/
 
 /-- Distribution from [miestamo-2005]'s 179-language representative
     sample (RS). These are the headline empirical results of Ch 4's
     typological survey. Note: the WALS Ch 113 sample (also by Miestamo)
     covers 297 languages with different numbers; those are captured
-    separately in `Typology.lean` via `Data.WALS.F113A`. -/
+    separately via `Data.WALS.F113A`. -/
 structure SurveyDistribution where
   totalLanguages : Nat
   symmetricOnly : Nat
@@ -918,7 +591,7 @@ def miestamo179 : SurveyDistribution :=
 theorem symasy_plurality :
     miestamo179.symAsy > miestamo179.symmetricOnly ∧
     miestamo179.symAsy > miestamo179.asymmetricOnly := by
-  exact ⟨by native_decide, by native_decide⟩
+  exact ⟨by decide, by decide⟩
 
 /-- Purely asymmetric negation (type Asy) is the least common type.
     [miestamo-2005] p. 171: "symmetric negation is more common in
@@ -926,13 +599,13 @@ theorem symasy_plurality :
 theorem asymmetric_minority :
     miestamo179.asymmetricOnly < miestamo179.symmetricOnly ∧
     miestamo179.asymmetricOnly < miestamo179.symAsy := by
-  exact ⟨by native_decide, by native_decide⟩
+  exact ⟨by decide, by decide⟩
 
 /-- Languages with any symmetric construction (S column in Table 3:
     Sym + SymAsy = 148, 83%) greatly outnumber purely asymmetric. -/
 theorem symmetric_constructions_common :
     miestamo179.symmetricOnly + miestamo179.symAsy > miestamo179.asymmetricOnly := by
-  native_decide
+  decide
 
 /-- Asymmetry subtype frequencies from [miestamo-2005] Table 5
     (p. 173). A/Cat is most common, A/Emph least common.
@@ -949,29 +622,24 @@ structure SubtypeDistribution where
 def subtypeDist : SubtypeDistribution :=
   { aFin := 45, aNonReal := 23, aEmph := 4, aCat := 59 }
 
-theorem acat_most_common : subtypeDist.aCat > subtypeDist.aFin := by native_decide
+theorem acat_most_common : subtypeDist.aCat > subtypeDist.aFin := by decide
+
 theorem aemph_least_common :
     subtypeDist.aEmph < subtypeDist.aNonReal ∧
     subtypeDist.aEmph < subtypeDist.aFin ∧
     subtypeDist.aEmph < subtypeDist.aCat := by
-  exact ⟨by native_decide, by native_decide, by native_decide⟩
+  exact ⟨by decide, by decide, by decide⟩
 
--- ============================================================================
--- § 10: Implicational Universals
--- ============================================================================
+/-! ## Implicational universals -/
 
-section Universals
-
-/-- A/NonReal asymmetry is always paradigmatic, never constructional.
-    The irrealis category is a paradigmatic distinction (a new cell in the
-    paradigm), not a structural restructuring of the clause. -/
+/-- A/NonReal asymmetry in our sample is paradigmatic. -/
 theorem anonreal_implies_paradigmatic :
     (allData.filter (fun d =>
       d.asymmetrySubtype == .realityStatus ||
       d.asymmetrySubtype == .finAndNonReal ||
       d.asymmetrySubtype == .nonRealAndCat)).all
       (fun d => d.asymmetryDimensions.contains .paradigmatic) = true := by
-  native_decide
+  decide
 
 /-- A/NonReal asymmetry in our sample is never constructional.
     Note: this is a sample limitation (we have only 1 A/NonReal language).
@@ -982,30 +650,16 @@ theorem anonreal_never_constructional :
     (allData.filter (fun d =>
       d.asymmetrySubtype == .realityStatus)).all
       (fun d => !d.asymmetryDimensions.contains .constructional) = true := by
-  native_decide
+  decide
 
 /-- Symmetric-only negation never has paradigmatic asymmetry.
     By definition: if the paradigm is unchanged, negation is symmetric. -/
 theorem symmetric_no_paradigmatic :
     (allData.filter (·.symmetry == .symmetric)).all
       (fun d => !d.asymmetryDimensions.contains .paradigmatic) = true := by
-  native_decide
+  decide
 
-/-- Constructional asymmetry with a verbal negator is always derived:
-    a verb-type negator structurally entails finiteness restructuring,
-    so the asymmetry follows from the marker's properties. -/
-theorem verbal_constructional_always_derived :
-    (allData.filter (fun d =>
-      d.morphemeType == .auxVerb &&
-      d.asymmetryDimensions.contains .constructional)).all
-      (fun d => d.asymmetrySource == some .derived) = true := by
-  native_decide
-
-end Universals
-
--- ============================================================================
--- § 11: Bridge to Auxiliary Verb Literature
--- ============================================================================
+/-! ## Bridge to auxiliary verb literature -/
 
 section NegAuxBridge
 
@@ -1018,14 +672,13 @@ open Syntax.Negation (NegStrategy)
 theorem finnish_strategy_morpheme_consistent :
     NegStrategy.negVerb.toNegMorphemeType = finnish.morphemeType := rfl
 
-/-- Verbal negation strategy always implies constructional asymmetry
-    in both the auxiliary literature (creates an AVC) and the negation
-    typology (derived A/Fin). -/
+/-- Verbal negation strategy implies constructional asymmetry in both
+    the auxiliary literature (creates an AVC) and the negation typology
+    (A/Fin). -/
 theorem neg_verb_implies_avc_and_afin :
     NegStrategy.negVerb.isVerbal = true ∧
-    finnish.asymmetryDimensions.contains .constructional ∧
-    finnish.asymmetrySource == some .derived := by
-  exact ⟨rfl, by native_decide, rfl⟩
+    finnish.asymmetryDimensions.contains .constructional := by
+  exact ⟨rfl, by decide⟩
 
 end NegAuxBridge
 

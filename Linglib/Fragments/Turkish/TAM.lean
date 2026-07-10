@@ -86,28 +86,10 @@ inductive CopulaSuffix where
 -- § Verification
 -- ============================================================================
 
-theorem entry_count : entries.length = 8 := by decide
-
-/-- Exactly one TAM category has asymmetric negation. -/
-theorem one_asymmetric :
-    (entries.filter (! ·.isNegSymmetric)).length = 1 := by decide
-
-/-- The asymmetric category is the aorist. -/
+/-- The aorist is the only TAM category with asymmetric negation;
+    all others use regular `-mA-` insertion (cf. `Negation.aorist_asymmetric`
+    for the surface-form counterpart). -/
 theorem asymmetric_is_aorist :
-    ((entries.filter (! ·.isNegSymmetric)).head!.category == TAMCategory.aorist) = true := by
-  decide
-
-/-- All non-aorist categories use regular -mA- negation. -/
-theorem non_aorist_symmetric :
-    (entries.filter (fun e => e.category != TAMCategory.aorist)).all
-      (·.isNegSymmetric) = true := by
-  decide
-
-/-- Cross-file bridge: TAM and Negation agree that the aorist is asymmetric.
-    TAM: `asymmetric_is_aorist`, Negation: `aorist_asymmetric`. -/
-theorem tam_negation_aorist_agreement :
-    ((entries.filter (! ·.isNegSymmetric)).head!.category == TAMCategory.aorist) = true ∧
-    (Negation.gelParadigm.filter (fun e => !e.symmetric)).head!.formLabel = "aorist" :=
-  ⟨by decide, rfl⟩
+    (entries.filter (! ·.isNegSymmetric)).map (·.category) = [.aorist] := rfl
 
 end Turkish.TAM

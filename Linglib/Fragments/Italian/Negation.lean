@@ -96,16 +96,4 @@ def enTriggerNegators : List ENTriggerNegator :=
 theorem en_negator_is_standard :
     enTriggerNegators.all (·.enNegatorForm == non.form) = true := by decide
 
-/-- Italian negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
-def negationProfile : Syntax.Negation.NegationProfile :=
-  { language := "Italian"
-  , iso := "ita"
-  , morphemeType := .particle
-  , symmetry := .symmetric
-  , asymmetrySubtype := .nonAssignable
-  , negIndefinite := some .mixed
-  , negMarkers := ["non"]
-  , negIsHead := some true
-  , enAttested := some true }
-
 end Italian.Negation

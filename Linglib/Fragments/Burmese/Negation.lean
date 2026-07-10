@@ -109,16 +109,4 @@ theorem affirmative_forms_distinct :
     affForms.length = 3 ∧ affForms.eraseDups.length = 3 := by
   exact ⟨rfl, by decide⟩
 
-/-- Burmese negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
-def negationProfile : Syntax.Negation.NegationProfile :=
-  { language := "Burmese"
-  , iso := "mya"
-  , morphemeType := .doubleNeg
-  , symmetry := .asymmetric
-  , asymmetrySubtype := .otherCategories
-  , negIndefinite := Option.none
-  , negMarkers := ["ma-", "-bu"]
-  , negIsHead := none
-  , enAttested := none }
-
 end Burmese.Negation

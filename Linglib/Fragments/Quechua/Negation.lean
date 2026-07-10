@@ -100,16 +100,4 @@ theorem asymmetric_iff_chu :
     allExamples.all (fun e => e.symmetric == !e.requiresChu) = true := by
   decide
 
-/-- Quechua (Imbabura) negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
-def negationProfile : Syntax.Negation.NegationProfile :=
-  { language := "Quechua (Imbabura)"
-  , iso := "qvi"
-  , morphemeType := .particle
-  , symmetry := .both
-  , asymmetrySubtype := .realityStatus
-  , negIndefinite := some .cooccur
-  , negMarkers := ["mana"]
-  , negIsHead := none
-  , enAttested := none }
-
 end Quechua.Negation

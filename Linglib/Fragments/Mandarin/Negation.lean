@@ -219,16 +219,4 @@ theorem regret_uses_deontic_neg :
       e.triggerClass == "REGRET" || e.triggerClass == "COMPLAIN")).all
       (·.enNegatorForm == "bùgāi") = true := by decide
 
-/-- Mandarin Chinese negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
-def negationProfile : Syntax.Negation.NegationProfile :=
-  { language := "Mandarin Chinese"
-  , iso := "cmn"
-  , morphemeType := .particle
-  , symmetry := .both
-  , asymmetrySubtype := .finiteness
-  , negIndefinite := some .cooccur
-  , negMarkers := ["bu", "mei"]
-  , negIsHead := none
-  , enAttested := none }
-
 end Mandarin.Negation

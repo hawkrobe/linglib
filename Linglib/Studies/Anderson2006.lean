@@ -562,14 +562,13 @@ motivated criteria but, for the strategies linglib's
 Miestamo's `.toNegMorphemeType = .auxVerb`.
 
 Composition with [miestamo-2005]'s
-`verbal_constructional_always_derived` (in
+`afin_verbal_implies_constructional` (in
 `Linglib/Studies/Miestamo2005.lean`) then
 yields: any `NegStrategy` Anderson places at the auxiliary cline
-stage, in any Miestamo datum showing constructional asymmetry,
-has its asymmetry classified as `.derived` rather than
-`.independent` — a falsifiable empirical prediction whose chain
+stage, in any Miestamo A/Fin datum, shows constructional
+asymmetry — a falsifiable empirical prediction whose chain
 runs Anderson's cline → Miestamo's morpheme type → Miestamo's
-asymmetry source.
+asymmetry dimension.
 
 The earlier `anderson_miestamo_agree_on_neg_morphology` theorem
 in this slot (0.230.573) was a stapled conjunction of three

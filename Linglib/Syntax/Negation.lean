@@ -19,8 +19,7 @@ asymmetric status, asymmetry subtype, and negative-indefinite strategy.
 Mirrors the `Linglib/Features/Possession.lean` (Possession), `Question.lean`
 (Question), and `Case.lean` (Case) substrate-extension pattern: the
 substrate carries (a) per-paradigm-entry schema (`NegMarkerEntry`,
-`NegationSystem`), (b) the WALS-bundled per-language `NegationProfile`,
-(c) WALS converters and sample-counting helpers.
+`NegationSystem`), (b) WALS converters and per-ISO accessors.
 
 ## What lives here
 
@@ -44,21 +43,18 @@ substrate carries (a) per-paradigm-entry schema (`NegMarkerEntry`,
   ([anderson-2006], [heine-1993]), with bridges to Anderson's AVC
   patterns (`expectedInflPattern`), Heine's grammaticalization cline
   (`toGramStage`), and WALS Ch 112 (`toNegMorphemeType`).
-- `NegationProfile` — sibling per-language schema bundling Ch 112-115 +
-  Greco's `negIsHead` + JinKoenig's `enAttested`. Each Fragment exposes
-  `def negationProfile : NegationProfile` alongside `def negationSystem`:
-  the marker-side joint is independent from the typology-feature joint.
-- `ofWALS112A`/`fromWALS113A`/`114A`/`115A`/`143A` converters.
-- `countByMorphemeType`/`countBySymmetry` sample-counting helpers (consumed by
-  `Studies/Dryer2013Negation.lean`).
+- `ofWALS112A`/`fromWALS113A`/`114A`/`115A`/`143A` converters, and the
+  per-ISO accessors `morphemeTypeOfISO`/`symmetryOfISO`/
+  `asymmetrySubtypeOfISO`/`negIndefiniteOfISO` (study-consumed; `none`
+  when the language is not in the chapter's WALS sample).
 
 ## Theory-laden caveats
 
 `NegSymmetry` and `AsymmetrySubtype` are **WALS Ch 113/114** values
 ([dryer-haspelmath-2013]). [miestamo-2005]'s richer
-two-dimension framework (constructional vs paradigmatic asymmetry,
-derived vs independent source) lives in `Studies/Miestamo2005.lean`
-because it goes beyond what WALS encodes.
+two-dimension framework (constructional vs paradigmatic asymmetry)
+lives in `Studies/Miestamo2005.lean` because it goes beyond what
+WALS encodes.
 
 ## Out of scope
 
@@ -197,7 +193,7 @@ inductive NegMorphemePosition where
 /-- One language's standard sentential negation marker. -/
 structure NegMarkerEntry where
   /-- Surface form. For affixal negation this is an abstract citation form
-      (e.g., Turkish `-mE-` for the harmony-conditioned `-ma-` / `-me-`
+      (e.g., Turkish `-mA-` for the harmony-conditioned `-ma-` ~ `-me-`
       alternants). For tonal/morphological negation use `position :=
       .morphological` and document the realization in the `def` docstring. -/
   form : String
@@ -220,6 +216,9 @@ structure NegMarkerEntry where
     F112A/F143A/F144A take one value per language regardless of how many
     markers the language has. -/
 structure NegationSystem where
+  /-- ISO 639-3 code; populated by `NegationSystem.ofISO` and the key
+      for the per-ISO WALS accessors below. -/
+  iso : String := ""
   /-- Standard negation marker(s). Order is editorial; Fragment files
       should put the unmarked / default-context marker first. -/
   markers : List NegMarkerEntry
@@ -235,42 +234,6 @@ structure NegationSystem where
   wals144A :
     Option Data.WALS.F144A.PositionOfNegativeWordWithRespectToSubjectObjectAndVerb
     := none
-  deriving Repr
-
-/-! ### NegationProfile (Fragment typology-feature joint) -/
-
-/-- A language's negation profile across WALS Chapters 112-115, plus
-    fields from [greco-2020] (`negIsHead`) and [jin-koenig-2021]
-    (`enAttested`).
-
-    Sibling Fragment-side joint to `NegationSystem`: every
-    `Fragments/{Lang}/Negation.lean` exposes `def negationProfile :
-    NegationProfile`. The two joints are independent because the data
-    partition is real: `negationSystem.markers` is consumed by lexical
-    code; `negationProfile` is consumed by typology studies. -/
-structure NegationProfile where
-  /-- Language name. -/
-  language : String
-  /-- ISO 639-3 code. -/
-  iso : String := ""
-  /-- Ch 112: how standard negation is expressed. -/
-  morphemeType : NegMorphemeType
-  /-- Ch 113: symmetric, asymmetric, or both. -/
-  symmetry : NegSymmetry
-  /-- Ch 114: asymmetry subtype (`nonAssignable` if symmetric only). -/
-  asymmetrySubtype : AsymmetrySubtype
-  /-- Ch 115: strategy for negative indefinites, if attested. -/
-  negIndefinite : Option NegIndefiniteStrategy := none
-  /-- Illustrative negative marker form(s). -/
-  negMarkers : List String := []
-  /-- Is the negation marker a syntactic head (X°) rather than a phrase (XP)?
-      Relevant for [greco-2020]: only head-status markers can merge in
-      CP to produce surprise negation. -/
-  negIsHead : Option Bool := none
-  /-- Is expletive negation attested in this language?
-      [jin-koenig-2021] (722-language survey: EN in 74 languages)
-      and [rett-2026]. -/
-  enAttested : Option Bool := none
   deriving Repr
 
 /-! ### Expletive negation triggers -/
@@ -355,39 +318,30 @@ def fromWALS143A : Data.WALS.F143A.NegVerbOrder → NegVerbPosition
     pulling F112A / F143A / F144A values from the `Data.WALS` data. -/
 def NegationSystem.ofISO (iso : String) (markers : List NegMarkerEntry) :
     NegationSystem :=
-  { markers
+  { iso
+  , markers
   , wals112A := (Data.WALS.F112A.lookupISO iso).map (·.value)
   , wals143A := (Data.WALS.F143A.lookupISO iso).map (·.value)
   , wals144A := (Data.WALS.F144A.lookupISO iso).map (·.value)
   }
 
-/-! ### NegationProfile helpers (Fragment-consumed) -/
+/-! ### Per-ISO WALS accessors (study-consumed) -/
 
-/-- Does a language use a given morpheme type? -/
-def NegationProfile.hasMorphemeType (p : NegationProfile)
-    (t : NegMorphemeType) : Bool :=
-  p.morphemeType == t
+/-- WALS Ch 112A value for a language, as `NegMorphemeType`. -/
+def morphemeTypeOfISO (iso : String) : Option NegMorphemeType :=
+  (Data.WALS.F112A.lookupISO iso).map (ofWALS112A ·.value)
 
-/-- Does a language have symmetric negation (either symmetric only or both)? -/
-def NegationProfile.hasSymmetric (p : NegationProfile) : Bool :=
-  p.symmetry == .symmetric || p.symmetry == .both
+/-- WALS Ch 113A value for a language, as `NegSymmetry`. -/
+def symmetryOfISO (iso : String) : Option NegSymmetry :=
+  (Data.WALS.F113A.lookupISO iso).map (fromWALS113A ·.value)
 
-/-- Does a language have asymmetric negation (either asymmetric only or both)? -/
-def NegationProfile.hasAsymmetric (p : NegationProfile) : Bool :=
-  p.symmetry == .asymmetric || p.symmetry == .both
+/-- WALS Ch 114A value for a language, as `AsymmetrySubtype`. -/
+def asymmetrySubtypeOfISO (iso : String) : Option AsymmetrySubtype :=
+  (Data.WALS.F114A.lookupISO iso).map (fromWALS114A ·.value)
 
-/-- Does a language show negative concord? -/
-def NegationProfile.hasNegConcord (p : NegationProfile) : Bool :=
-  p.negIndefinite == some .cooccur
-
-/-- Count of languages in a sample with a given morpheme type. -/
-def countByMorphemeType (langs : List NegationProfile)
-    (t : NegMorphemeType) : Nat :=
-  (langs.filter (·.hasMorphemeType t)).length
-
-/-- Count of languages in a sample with a given symmetry type. -/
-def countBySymmetry (langs : List NegationProfile) (s : NegSymmetry) : Nat :=
-  (langs.filter (·.symmetry == s)).length
+/-- WALS Ch 115A value for a language, as `NegIndefiniteStrategy`. -/
+def negIndefiniteOfISO (iso : String) : Option NegIndefiniteStrategy :=
+  (Data.WALS.F115A.lookupISO iso).map (fromWALS115A ·.value)
 
 /-! ### Negation strategy and the AVC bridge
 [anderson-2006] [heine-1993] [miestamo-2005]
@@ -407,7 +361,7 @@ open Grammaticalization (GramStage)
 inductive NegStrategy where
   /-- Negative auxiliary verb that inflects (Finnish *ei*, Komi *oz*). -/
   | negVerb
-  /-- Bound negative morpheme (e.g., Turkish *-mE-*). -/
+  /-- Bound negative morpheme (e.g., Turkish *-mA-*). -/
   | negAffix
   /-- Free negative particle (English *not*, Italian *non*). -/
   | negParticle

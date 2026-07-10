@@ -33,8 +33,7 @@ open Features.NegativeConcord (NWordStatus)
 
 /-- Whether the negative-indefinite system shows negative concord
     ([van-der-auwera-van-alsenoy-2016]): WALS 115A `cooccur` (concord) and `mixed`
-    (position-dependent) do; `preclude` (double negation) and `negExistential` do not.
-    Broader than `NegationProfile.hasNegConcord`, which tests `cooccur` only. -/
+    (position-dependent) do; `preclude` (double negation) and `negExistential` do not. -/
 def hasNegativeConcord : NegIndefiniteStrategy → Bool
   | .cooccur | .mixed => true
   | .preclude | .negExistential => false

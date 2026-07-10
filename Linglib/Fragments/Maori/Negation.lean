@@ -86,16 +86,4 @@ theorem all_asymmetric :
     allExamples.all (fun e => !e.symmetric) = true := by
   decide
 
-/-- Maori negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
-def negationProfile : Syntax.Negation.NegationProfile :=
-  { language := "Maori"
-  , iso := "mri"
-  , morphemeType := .wordUnclear
-  , symmetry := .asymmetric
-  , asymmetrySubtype := .finiteness
-  , negIndefinite := Option.none
-  , negMarkers := ["kaahore"]
-  , negIsHead := none
-  , enAttested := none }
-
 end Maori.Negation

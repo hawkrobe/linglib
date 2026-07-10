@@ -119,16 +119,4 @@ def postverbalNada : NegConcordExample :=
 /-- All five tenses are available under negation (no paradigmatic gaps). -/
 theorem all_tenses_available : allExamples.length = 5 := by decide
 
-/-- Spanish negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
-def negationProfile : Syntax.Negation.NegationProfile :=
-  { language := "Spanish"
-  , iso := "spa"
-  , morphemeType := .particle
-  , symmetry := .symmetric
-  , asymmetrySubtype := .nonAssignable
-  , negIndefinite := some .mixed
-  , negMarkers := ["no"]
-  , negIsHead := some false
-  , enAttested := some true }
-
 end Spanish.Negation

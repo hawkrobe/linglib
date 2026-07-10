@@ -3,10 +3,6 @@ import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Semantics.Negation.Expletive
 import Linglib.Semantics.Negation.CzechNegation
 import Linglib.Semantics.Negation.Defs
-import Linglib.Syntax.Negation
-import Linglib.Fragments.Italian.Negation
-import Linglib.Fragments.Spanish.Negation
-import Linglib.Fragments.Romance.French.Negation
 import Linglib.Semantics.Polarity.Item
 import Mathlib.Data.Fintype.Basic
 
@@ -53,7 +49,7 @@ the representation [CP ... [X° non] ... [FocP [TP ...] Foc° ...]]:
 - `Semantics.Negation` — framework-agnostic EN types (ENType, ENStrength, PolarityLicensing)
 - `Minimalist.NegScope` — merge position, scope, classification chain (defined below)
 - `ENEnvironment` (below) — the eleven Italian EN environments of Tables 1–2
-- `Syntax.Negation.NegationProfile.negIsHead` — head status
+- `SnegAttestation` (below) — per-language head status, Greco's own classification
 - `Minimalist.fValue` / `isCPArea` — f-value classification
 - `Italian.Negation.enTriggerNegators` — the consensus EN trigger inventory
   ([jin-koenig-2021]); Greco's construction-level classification is finer-grained
@@ -318,14 +314,6 @@ namespace Greco2020
 open Minimalist (Cat fValue isCPArea)
 open Minimalist.NegScope (NegMergePosition)
 open Semantics.Negation (ENStrength PolarityLicensing PolarityClass weakENProfile strongENProfile)
-open Syntax.Negation (NegationProfile)
-
-/-- Italian negation profile (re-exported from Fragments for local use). -/
-private abbrev italian : NegationProfile := Italian.Negation.negationProfile
-/-- Spanish negation profile (re-exported from Fragments for local use). -/
-private abbrev spanish : NegationProfile := Spanish.Negation.negationProfile
-/-- French negation profile (re-exported from Fragments for local use). -/
-private abbrev french : NegationProfile := French.Negation.negationProfile
 
 /-! ### Tables 1–2: the eleven Italian EN environments
 
@@ -418,48 +406,38 @@ def spanishSnegConditions : SnegConditions :=
 theorem spanish_no_snegs :
     spanishSnegConditions.yieldsSnegs = false := by decide
 
-/-! ### Cross-linguistic predictions — connect to NegationProfile -/
+/-! ### Cross-linguistic predictions -/
 
-/-- Sneg attestation datum: links a language's negation profile to
-    whether surprise negation is attested. -/
+/-- Sneg attestation datum: [greco-2020]'s head-status classification of a
+    language's negative marker, paired with whether surprise negation is
+    attested. -/
 structure SnegAttestation where
   language : String
   attested : Bool
-  negIsHead : Option Bool
+  negIsHead : Bool
   deriving DecidableEq, Repr
 
+/-- Italian *non* is X° (clitic); Snegs attested. -/
 def italianSnegs : SnegAttestation :=
-  { language := "Italian", attested := true, negIsHead := italian.negIsHead }
+  { language := "Italian", attested := true, negIsHead := true }
 
+/-- Spanish *no* is XP (can be focused and coordinated); no Snegs. -/
 def spanishSnegs : SnegAttestation :=
-  { language := "Spanish", attested := false, negIsHead := spanish.negIsHead }
+  { language := "Spanish", attested := false, negIsHead := false }
 
+/-- Brazilian Portuguese *não* is X°; Snegs attested. -/
 def brazilianPortugueseSnegs : SnegAttestation :=
   { language := "Brazilian Portuguese", attested := true
-  , negIsHead := some true }
+  , negIsHead := true }
 
 def allSnegAttestations : List SnegAttestation :=
   [italianSnegs, spanishSnegs, brazilianPortugueseSnegs]
 
-/-- Greco's prediction: Snegs are attested only when negIsHead = true. -/
+/-- Greco's prediction: Snegs are attested only when the negative marker is
+    a head. (Head status is necessary, not sufficient — French *ne* is X°
+    yet lacks Snegs because factor (iii) fails; see `frenchSnegConditions`.) -/
 theorem sneg_requires_head :
-    allSnegAttestations.all (λ s =>
-      if s.attested then s.negIsHead == some true else true) = true := by decide
-
-/-- Converse: head-status neg predicts Sneg availability (in our sample). -/
-theorem head_predicts_snegs :
-    allSnegAttestations.all (λ s =>
-      if s.negIsHead == some false then !s.attested else true) = true := by decide
-
-/-- The Italian Sneg attestation derives its head status from the
-    NegationProfile, not by stipulation. -/
-theorem italian_snegs_from_profile :
-    italianSnegs.negIsHead = italian.negIsHead := rfl
-
-/-- The Spanish Sneg attestation derives its head status from the
-    NegationProfile. -/
-theorem spanish_snegs_from_profile :
-    spanishSnegs.negIsHead = spanish.negIsHead := rfl
+    allSnegAttestations.all (λ s => !s.attested || s.negIsHead) = true := by decide
 
 /-! ### Phase theory connection -/
 
