@@ -226,7 +226,8 @@ import Linglib.Core.Order.ComparativeProbability.Entailments
 import Linglib.Core.Order.ComparativeProbability.Patterns
 import Linglib.Core.Order.ComparativeProbability.Representability
 import Linglib.Core.Order.ComparativeProbability.Systems
-import Linglib.Core.Order.DeMorganAlgebra
+import Linglib.Core.Order.DeMorganAlgebra.Defs
+import Linglib.Core.Order.DeMorganAlgebra.Basic
 import Linglib.Core.Order.ComparativeScale
 import Linglib.Core.Order.Comparison
 import Linglib.Core.Order.Flat

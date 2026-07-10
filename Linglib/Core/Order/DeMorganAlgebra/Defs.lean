@@ -22,11 +22,8 @@ Naming follows the literature exactly ("De Morgan algebra", "Kleene algebra" —
 lattice notion, not the regular-expression star-semiring that holds mathlib's root
 `KleeneAlgebra`), disambiguated by namespace on the `Order.Frame` precedent. De Morgan
 algebras are here bounded, as in Balbes-Dwinger (the nLab entry defines the unbounded
-variant). `[UPSTREAM]` candidate for `Mathlib/Order/DeMorganAlgebra.lean`.
-
-TODO: a `Basic.lean` companion with the `OrderDual`/`Prod`/`Pi` instances and the
-`OrderIso α αᵒᵈ` bundling of the involution, mirroring mathlib's `Defs`/`Basic` split
-for `BooleanAlgebra`.
+variant). `[UPSTREAM]` candidate for `Mathlib/Order/DeMorganAlgebra/`; the `OrderDual`/`Prod`/`Pi`
+instances and the `OrderIso α αᵒᵈ` bundling live in `DeMorganAlgebra/Basic.lean`.
 
 ## Main definitions
 

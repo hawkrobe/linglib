@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 import Mathlib.Order.BooleanAlgebra.Basic
 import Mathlib.Order.CompleteLattice.Basic
 import Mathlib.Order.Disjoint
-import Linglib.Core.Order.DeMorganAlgebra
+import Linglib.Core.Order.DeMorganAlgebra.Defs
 
 /-!
 # Orthocomplemented Lattices
@@ -30,7 +30,7 @@ The canonical examples are:
 ## Main definitions
 
 * `OrthocomplementedLattice α` — typeclass extending `LatticeWithInvolution α`
-  (the shared involutive-antitone-`ᶜ` base, `Core/Order/DeMorganAlgebra.lean`)
+  (the shared involutive-antitone-`ᶜ` base, `Core/Order/DeMorganAlgebra/Defs.lean`)
   with non-contradiction and excluded middle.
 
 ## Main results

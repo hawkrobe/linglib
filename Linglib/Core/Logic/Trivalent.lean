@@ -9,7 +9,7 @@ import Mathlib.Order.BoundedOrder.Basic
 import Mathlib.Order.Hom.BoundedLattice
 import Mathlib.Order.MinMax
 import Mathlib.Data.Sign.Defs
-import Linglib.Core.Order.DeMorganAlgebra
+import Linglib.Core.Order.DeMorganAlgebra.Defs
 import Linglib.Core.Order.Flat
 
 /-!
@@ -23,7 +23,7 @@ connective families — Weak Kleene ([bochvar-1937]), Middle Kleene ([peters-197
 conditional assertion ([belnap-1970]) — and the partiality operators ∂ and 𝒜 of
 [beaver-krahmer-2001].
 
-The upstreamable algebra is the `Order.KleeneAlgebra` class (`Core/Order/DeMorganAlgebra.lean`),
+The upstreamable algebra is the `Order.KleeneAlgebra` class (`Core/Order/DeMorganAlgebra/Defs.lean`),
 of which `Trivalent` is the canonical non-Boolean instance. The dedicated carrier with
 truth-named constructors is this library's ergonomic choice; the name follows the
 `Boolean` precedent — an adjective nominalized as its truth-value type — with the
@@ -136,7 +136,7 @@ instance : Compl Trivalent := ⟨neg⟩
 /-- `Trivalent` is the canonical non-Boolean Kleene algebra (`Order.KleeneAlgebra`): a
 distributive chain with `neg` as the involutive antitone complement, failing
 complementation (`inf_compl_indet_ne_bot`). The `ᶜ` instance gives access to the class
-API (`Core/Order/DeMorganAlgebra.lean`); `neg` remains the simp-normal form. -/
+API (`Core/Order/DeMorganAlgebra/Defs.lean`); `neg` remains the simp-normal form. -/
 instance : Order.KleeneAlgebra Trivalent where
   __ := (inferInstance : DistribLattice Trivalent)
   __ := (inferInstance : BoundedOrder Trivalent)
