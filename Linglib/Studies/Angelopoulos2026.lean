@@ -36,13 +36,17 @@ yields either composition mode.
 ## Main declarations
 
 - `bearsN` — the §3.1 [n]-feature datum over the fragment entries
+- `otiOnlyVerbs`, `puOnlyVerbs`, `dualVerbs`, `factivity_anti_aligned` —
+  the attested selection classes (§1–§2.3) and the emotive/cognitive
+  factivity split they carry
 - `NounHost`, `ClausePosition`, `licensedIn` — the incorporation
   mechanism and the derived argument-position asymmetry
 - `selectsClause`, `pu_requires_stative` — the §4.1 stativity locus
 - `clauseSort` — *oti* = content, *pu* = situation, consuming
   `Bondarenko2022.NominalSort` (§3.2 ex. 33–34)
 - `bareOtiAttested`, `transparency_conflates_axes` — the §7.3
-  counterclaim against `Bondarenko2022.transparentSSMapping`
+  counterclaim against `Bondarenko2022.transparentSSMapping`, stated
+  over `Bondarenko2022.CompositionPath`
 
 Typed paradigm sentences (ex. 1, 31–34) live in `Angelopoulos2026.Examples`,
 generated from `Data/Examples/Angelopoulos2026.json`.
@@ -51,7 +55,7 @@ generated from `Data/Examples/Angelopoulos2026.json`.
 namespace Angelopoulos2026
 
 open Greek.StandardModern.Complementizers
-open Bondarenko2022 (NominalSort)
+open Bondarenko2022 (NominalSort CompositionPath)
 
 /-! ### Reversed selection: the [n]-feature (§3.1) -/
 
@@ -64,6 +68,38 @@ def bearsN (c : Complementizer) : Prop := c = oti ∨ c = pu
 
 instance : DecidablePred bearsN := fun c => by
   unfold bearsN; infer_instance
+
+/-! ### The attested selection classes (§1–§2.3) -/
+
+/-- Matrix verbs attested with *oti* only (ex. 1a, 3–4, 21): saying,
+belief, knowledge. Study-local lists: the analysis derives selection
+from light-noun incorporation and aspectual-head selection (§3.1,
+§4.1), so no verb-level feature records it. -/
+def otiOnlyVerbs : List Verb :=
+  [leo, pistevo, ksero, katalaveno, sinidhitopio, eksigo]
+
+/-- Matrix verbs attested with *pu* only (ex. 1b, 13–14, 20): the
+emotive factives. -/
+def puOnlyVerbs : List Verb := [metaniono, areso, xerome]
+
+/-- Verbs attested with both (ex. 19, 22–23), as (eventive *oti*-sense,
+stative *pu*-sense) pairs of sense-tagged fragment entries. -/
+def dualVerbs : List (Verb × Verb) :=
+  [(thimame, thimameStat), (thimono, thimonoStat)]
+
+/-- The emotive/cognitive factivity split: verb-level and C-level
+factivity are anti-aligned on the sample. The complement-presupposing
+verbs (`Verb.factivePresup`: *kséro*, *katalavéno*, *sinidhitopió*)
+select *oti*, which records no lexical factive presupposition, while
+the *pu*-only emotive factives all escape `factivePresup` (preferential
+rather than veridical-doxastic attitude) yet select lexically factive
+*pu*. Complement factivity thus has two independent sources — verb and
+complementizer — which the Greek data tease apart. -/
+theorem factivity_anti_aligned :
+    oti.factive = none ∧ pu.factive = some true ∧
+    (∀ v ∈ [ksero, katalaveno, sinidhitopio], v.factivePresup = true) ∧
+    (∀ v ∈ puOnlyVerbs, v.factivePresup = false) := by
+  decide
 
 /-! ### Incorporation licensing and the argument asymmetry (§3.1) -/
 
@@ -142,9 +178,16 @@ theorem pu_requires_stative (h : AspectualHead)
   · exact absurd (show pu = oti from hp) (by decide)
 
 /-- The verb-level reflex over the fragment sample: the *pu*-only
-matrix verbs (ex. 1b, 13–14, 20) are all stative. -/
+matrix verbs are all stative. -/
 theorem pu_only_verbs_stative :
-    ∀ v ∈ [metaniono, areso, xerome], v.vendlerClass = some .state := by
+    ∀ v ∈ puOnlyVerbs, v.vendlerClass = some .state := by
+  decide
+
+/-- The dual verbs realize the same restriction sense-internally:
+stative *pu*-sense, non-stative *oti*-sense (ex. 19, 22–23). -/
+theorem dual_verbs_stative_with_pu :
+    ∀ p ∈ dualVerbs, p.2.vendlerClass = some .state ∧
+      p.1.vendlerClass ≠ some .state := by
   decide
 
 /-! ### Content vs situation (§3.2) -/
@@ -178,27 +221,23 @@ inductive SynPosition where
   | adjunct
   deriving DecidableEq, Repr
 
-/-- Composition mode — the other axis. -/
-inductive CompMode where
-  | pm
-  | fa
-  deriving DecidableEq, Repr
-
-/-- The paper's claim for bare *oti*-clauses (§2 diagnostics + §7.3):
-complement position composing via PM is attested (the explanans
-reading); FA requires the nominalizing D (§7.3 ex. 57), so bare
-clauses never compose via FA from either position. -/
-def bareOtiAttested : SynPosition → CompMode → Prop
-  | .complement, .pm => True
-  | .complement, .fa => False
-  | .adjunct,    .pm => True
-  | .adjunct,    .fa => False
+/-- The paper's claim for bare *oti*-clauses (§2 diagnostics + §7.3),
+on the composition axis of [bondarenko-2022]'s `CompositionPath` (PM
+with the verb's situation argument = `viaSituation`, FA into a DP slot
+= `viaDPArgument`): complement position composing via PM is attested
+(the explanans reading); FA requires the nominalizing D (§7.3 ex. 57),
+so bare clauses never compose via FA from either position. -/
+def bareOtiAttested : SynPosition → CompositionPath → Prop
+  | .complement, .viaSituation  => True
+  | .complement, .viaDPArgument => False
+  | .adjunct,    .viaSituation  => True
+  | .adjunct,    .viaDPArgument => False
 
 /-- [bondarenko-2022]'s transparent mapping restated on the split
 axes: a bare clause composing via PM must be a syntactic adjunct
 (the composition path is reflected in syntax). -/
-def transparentBare : SynPosition → CompMode → Prop
-  | .adjunct, .pm => True
+def transparentBare : SynPosition → CompositionPath → Prop
+  | .adjunct, .viaSituation => True
   | _, _ => False
 
 /-- The §7.3 divergence: bare *oti*-clauses occupy complement position
@@ -209,8 +248,8 @@ layer and Faure's case-less-DP treatment, §3.1) and are internal
 ARGUMENTS (clitic doubling, passivization, derived subjects,
 §2.1–2.2). [bondarenko-2022] can deny either premise. -/
 theorem diverges_from_transparent_mapping :
-    bareOtiAttested .complement .pm ∧
-    ¬ transparentBare .complement .pm :=
+    bareOtiAttested .complement .viaSituation ∧
+    ¬ transparentBare .complement .viaSituation :=
   ⟨trivial, fun h => h⟩
 
 /-- Against `Bondarenko2022.transparentSSMapping` directly: Bondarenko
@@ -221,7 +260,7 @@ argumenthood for bare clauses WITHOUT FA — the identification of the
 two axes is what fails. -/
 theorem transparency_conflates_axes :
     ¬ Bondarenko2022.transparentSSMapping .bareArgument ∧
-    bareOtiAttested .complement .pm :=
+    bareOtiAttested .complement .viaSituation :=
   ⟨Bondarenko2022.bare_argument_predicted_impossible, trivial⟩
 
 end Angelopoulos2026
