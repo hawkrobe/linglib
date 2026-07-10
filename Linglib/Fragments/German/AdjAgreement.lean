@@ -16,20 +16,14 @@ namespace German.AdjAgreement
 
 open Agreement
 
-/-- Attributive φ-features: number and gender. -/
-private def phiFeatures : Finset AgrFeature :=
-  { .number .singular, .number .plural
-  , .gender .masculine, .gender .feminine, .gender .neuter }
-
-/-- Attributive κ-features, derived from the 4-case `German.Case.caseInventory`. -/
-private def kappaFeatures : Finset AgrFeature :=
-  German.Case.caseInventory.image .kappa
+/-- The attributive paradigm: number, gender, and the 4-case inventory. -/
+private def attrForm : FeatureSpec where
+  numbers := {.singular, .plural}
+  genders := {.masculine, .feminine, .neuter}
+  cases   := German.Case.caseInventory
 
 /-- German entry: bare predicative forms, fully inflected attributive forms. -/
-def entry : AdjAgreementEntry where
-  predFeatures := ∅
-  attrFeatures := phiFeatures ∪ kappaFeatures
-  dpFeatures   := phiFeatures ∪ kappaFeatures
+def entry : AdjAgreementEntry := ⟨{}, attrForm, attrForm⟩
 
 /-- German pred ≠ attr: predicative adjectives are bare. -/
 theorem not_same_agreement : ¬ entry.SameAgreement := by decide

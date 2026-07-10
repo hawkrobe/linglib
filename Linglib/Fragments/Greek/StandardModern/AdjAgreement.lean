@@ -16,27 +16,20 @@ namespace Greek.StandardModern.AdjAgreement
 
 open Agreement
 
-/-- φ-features realized on Greek adjectives: number and gender. -/
-private def phiFeatures : Finset AgrFeature :=
-  { .number .singular, .number .plural
-  , .gender .masculine, .gender .feminine, .gender .neuter }
+/-- The adjectival paradigm: number, gender, and the 3-case inventory. -/
+private def adjForm : FeatureSpec where
+  numbers := {.singular, .plural}
+  genders := {.masculine, .feminine, .neuter}
+  cases   := Greek.Case.caseInventory
 
-/-- κ-features realized on Greek adjectives, derived from the 3-case
-    `Greek.Case.caseInventory`. -/
-private def kappaFeatures : Finset AgrFeature :=
-  Greek.Case.caseInventory.image .kappa
-
-/-- Greek adjective agreement entry: identical pred and attr features,
+/-- Greek adjective agreement entry: identical pred and attr specifications,
     covering all DP features. -/
-def entry : AdjAgreementEntry where
-  predFeatures := phiFeatures ∪ kappaFeatures
-  attrFeatures := phiFeatures ∪ kappaFeatures
-  dpFeatures   := phiFeatures ∪ kappaFeatures
+def entry : AdjAgreementEntry := ⟨adjForm, adjForm, adjForm⟩
 
 /-- Greek pred = attr agreement. -/
 theorem same_agreement : entry.SameAgreement := rfl
 
 /-- Greek adjectives cover all DP φ/κ-features. -/
-theorem phi_kappa_complete : entry.PhiKappaComplete := Finset.Subset.refl _
+theorem phi_kappa_complete : entry.PhiKappaComplete := by decide
 
 end Greek.StandardModern.AdjAgreement
