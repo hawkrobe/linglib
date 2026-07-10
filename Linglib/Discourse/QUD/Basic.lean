@@ -101,19 +101,19 @@ variable {W : Type*}
 QUD or one of the subquestions. -/
 def moveRelevant (den qud : Question W) (subquestions : List (Question W)) : Prop :=
   ∃ a ∈ Question.alt den,
-    Question.partiallyAnswers qud a ∨
-      ∃ q ∈ subquestions, Question.partiallyAnswers q a
+    Question.PartiallyAnswers a qud ∨
+      ∃ q ∈ subquestions, Question.PartiallyAnswers a q
 
 /-- A discourse move is relevant to a strategy if some alternative of
     `den` partially answers some question in the strategy. -/
 def moveRelevantToStrategy (den : Question W) (strat : Strategy W) : Prop :=
-  ∃ a ∈ Question.alt den, ∃ q ∈ strat.allQuestions, Question.partiallyAnswers q a
+  ∃ a ∈ Question.alt den, ∃ q ∈ strat.allQuestions, Question.PartiallyAnswers a q
 
 /-- A move is relevant if one of its alternatives partially answers the
 QUD directly, with no subquestions. -/
 theorem moveRelevant_of_partiallyAnswers
     {den qud : Question W} {a : Set W} (ha : a ∈ Question.alt den)
-    (h : Question.partiallyAnswers qud a) :
+    (h : Question.PartiallyAnswers a qud) :
     moveRelevant den qud [] :=
   ⟨a, ha, Or.inl h⟩
 
@@ -134,10 +134,10 @@ theorem moveRelevant_polar_iff {p : Set W} {qud : Question W}
     {subquestions : List (Question W)}
     (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
     moveRelevant (Question.polar p) qud subquestions ↔
-      (Question.partiallyAnswers qud p ∨
-        ∃ Q ∈ subquestions, Question.partiallyAnswers Q p) ∨
-      (Question.partiallyAnswers qud pᶜ ∨
-        ∃ Q ∈ subquestions, Question.partiallyAnswers Q pᶜ) := by
+      (Question.PartiallyAnswers p qud ∨
+        ∃ Q ∈ subquestions, Question.PartiallyAnswers p Q) ∨
+      (Question.PartiallyAnswers pᶜ qud ∨
+        ∃ Q ∈ subquestions, Question.PartiallyAnswers pᶜ Q) := by
   simp only [moveRelevant, Question.alt_polar_of_nontrivial hne hnu,
     Set.mem_insert_iff, Set.mem_singleton_iff, exists_eq_or_imp,
     exists_eq_left]

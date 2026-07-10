@@ -21,7 +21,7 @@ meaning postulate (§2.4 fn 11) for `know` is exactly
 `Exhaustivity.weakAnswer Q w` — the conjunction (intersection) of
 all true alternatives.
 
-The substrate joints (`alt_polar_iff`, `Resolves_polar_iff`,
+The substrate joints (`alt_polar_iff`, `resolves_polar_iff`,
 `trueAlternatives_polar_iff_of_nontrivial`, `weakAnswer_polar_of_pos`,
 `weakAnswer_polar_of_neg`) live in `Question.Hamblin`,
 `Resolution.lean`, and `Exhaustivity.lean`. This file uses them to
@@ -55,7 +55,7 @@ substrate is in place.
 
 namespace Karttunen1977
 
-open Question Semantics.Questions.Resolution
+open Question
 open Semantics.Questions.Exhaustivity
 
 variable {W : Type*}

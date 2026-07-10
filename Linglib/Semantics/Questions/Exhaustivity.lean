@@ -47,7 +47,6 @@ universe u
 variable {W : Type u}
 
 open Question
-open Semantics.Questions.Resolution
 
 /-! ### Weak exhaustivity (Heim 1994 / Karttunen 1977) -/
 

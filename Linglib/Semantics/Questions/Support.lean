@@ -40,12 +40,12 @@ canonical one).
 
 ## Specialisations
 
-* `Question.partiallyAnswers` (`Resolution.lean`) and
+* `Question.PartiallyAnswers` (`Resolution.lean`) and
   `Discourse.moveRelevant` (`Discourse/QUD/Basic.lean`) — Roberts
   QUD-relevance over `Question W`. Specific notions, not a typeclass.
-* `Semantics.Questions.Resolution` — `Resolves`, `MentionSome`,
-  `MentionAll` over `Set W → Question W`. Each is a candidate `Support`
-  instance for the inquisitive substrate.
+* `Question.Resolves` / `Question.MentionAll` (`Resolution.lean`) over
+  `Set W → Question W`. Each is a candidate `Support` instance for the
+  inquisitive substrate.
 * `Studies/IppolitoKissWilliams2022.lean` — IKW
   evidential SUPPORT (introduced in [ippolito-kiss-williams-2022],
   reused by [ippolito-kiss-williams-2025]): doxastic +

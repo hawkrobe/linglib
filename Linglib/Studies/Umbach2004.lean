@@ -359,7 +359,7 @@ def roomYesDishesNo : Set CDWorld := {x | roomDishesEquiv x .roomOnly}
     the confirm+deny pattern corresponds to one cell of the implicit
     conjunctive question. -/
 theorem confirm_deny_is_partial_answer :
-    Question.partiallyAnswers roomDishesQUD roomYesDishesNo :=
+    Question.PartiallyAnswers roomYesDishesNo roomDishesQUD :=
   ⟨roomYesDishesNo,
    Question.class_mem_alt_fromSetoid roomDishesEquiv
      (Setoid.mem_classes roomDishesEquiv .roomOnly),

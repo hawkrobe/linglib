@@ -60,7 +60,7 @@ holds (`IsExhaustivelyResolvable`).
 
 namespace Dayal2016
 
-open Question Semantics.Questions.Resolution
+open Question
 open Semantics.Questions.Exhaustivity
 
 variable {W : Type*}
