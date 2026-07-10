@@ -48,7 +48,7 @@ definition with disjunction-update survival.
 
 ## Connective inventory used
 
-- `Truth3.join` (Strong Kleene): never false (`strong_kleene_never_false`)
+- `⊔` on `Truth3` (Strong Kleene): never false (`strong_kleene_never_false`)
 - `PartialProp.or` (classical): never defined (`classical_never_defined`)
 - `PartialProp.orPositive` (symmetric, positive-antecedent filtering of
   [kalomoiros-schwarz-2021]): wrong presupposition

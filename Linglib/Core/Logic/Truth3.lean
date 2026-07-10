@@ -1,41 +1,60 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Mathlib.Order.Basic
 import Mathlib.Order.Lattice
 import Mathlib.Order.BoundedOrder.Basic
 import Mathlib.Order.Hom.BoundedLattice
+import Mathlib.Order.MinMax
+import Mathlib.Data.Sign.Defs
 import Linglib.Core.Order.Flat
 
 /-!
-# Three-Valued Truth
-[kleene-1952]
+# Three-valued truth
 
-Three-valued truth type for trivalent semantics across linglib.
-Used for:
-- **Plural predication**: homogeneity gaps (all satisfy → true, none → false,
-  some but not all → gap). [kriz-2016], [kriz-spector-2021]
-- **Conditionals**: indeterminacy under supervaluation when selection functions
-  disagree. [ramotowska-marty-romoli-santorio-2025]
-- **Presupposition**: undefined when presupposition fails.
-- **Duality**: existential vs universal aggregation over three-valued lists.
+`Truth3` is the three-element bounded chain `false < indet < true` used across linglib's
+trivalent semantics: homogeneity gaps in plural predication ([kriz-2016],
+[kriz-spector-2021]), supervaluationist indeterminacy in conditionals
+([ramotowska-marty-romoli-santorio-2025]), and presupposition failure. Strong Kleene
+conjunction and disjunction are the chain's `⊓`/`⊔`; the rival connective families of the
+presupposition-projection literature — Weak (Bochvar), Middle (Peters), and Belnap
+conditional assertion — are defined here beside them.
 
 ## Main definitions
 
-- `Truth3`: three-valued truth (`.true`, `.false`, `.indet`)
-- `Truth3.neg`, `join`, `meet`: Strong Kleene connectives
-- Lattice instances: `false < indet < true`
-- `Truth3.equivFlatBool`: carrier iso `Truth3 ≃ Flat Bool`; the flat order is the
-  *knowledge* order, distinct from the truth order (the Kleene bilattice)
-- `Truth3.toFlat_meet_mono_left` etc.: `Truth3` (truth order) and `Flat Bool`
-  (knowledge order) form the Kleene *bilattice*; strong Kleene `meet`/`join` are
-  interlaced (knowledge-monotone), and weak Kleene is not
-  (`Truth3.meetWeak_not_truthMono`)
+- `Truth3` — three-valued truth (`.true`, `.false`, `.indet`), a `LinearOrder` and
+  `BoundedOrder`; `Prop3 W` — trivalent propositions `W → Truth3`.
+- `Truth3.neg` — Strong Kleene negation: involutive (`neg_neg`), antitone
+  (`neg_antitone`), De Morgan (`neg_inf`/`neg_sup`), satisfying the Kleene law
+  (`inf_neg_le_sup_neg`).
+- `Truth3.meetWeak`/`joinWeak`, `meetMiddle`/`joinMiddle`, `meetBelnap`/`joinBelnap`,
+  `xor` — the rival connective families.
+- `Truth3.presuppose`, `Truth3.metaAssert` — the ∂ and 𝒜 operators of
+  [beaver-krahmer-2001].
+- `Truth3.ofBool`, `Truth3.ofBoolHom` — `Bool` embeds as a bounded lattice homomorphism.
+
+## Main results
+
+- `Truth3.orderIsoSignType` — the truth order's mathlib carrier is `SignType`
+  (`-1 < 0 < 1`), the iso commuting with negation; `Truth3.equivFlatBool` — the same
+  carrier under the *knowledge* order is `Flat Bool`. Together: the Kleene bilattice.
+- `Truth3.toFlat_inf_mono_left` etc. — Strong Kleene `⊓`/`⊔` are interlaced
+  (knowledge-monotone); Weak Kleene is not (`Truth3.meetWeak_not_truthMono`).
+
+## References
+
+[kleene-1952] [bochvar-1937] [belnap-1970] [peters-1979] [beaver-krahmer-2001]
+[wang-davidson-2026]
 -/
 
 namespace Core.Duality
 
 /-- Three-valued truth: the 3-element bounded chain `false < indet < true`.
-    Strong Kleene logic ([kleene-1952]) corresponds to the order-derived
-    operations: `meet` = `min` = `⊓`, `join` = `max` = `⊔`, `neg` is the
-    order-reversing involution. -/
+Strong Kleene logic ([kleene-1952]) corresponds to the order-derived operations:
+conjunction is `⊓` (= `min`), disjunction `⊔` (= `max`), and `neg` the
+order-reversing involution. -/
 inductive Truth3 where
   | true
   | false
@@ -44,8 +63,10 @@ inductive Truth3 where
 
 namespace Truth3
 
+/-! ### The truth order -/
+
 /-- Chain order: `false < indet < true`. Prop-valued (not Bool-wrapped) so
-    the `Decidable` instance reduces under `rfl` and `decide`. -/
+the `Decidable` instance reduces under `rfl` and `decide`. -/
 protected def le : Truth3 → Truth3 → Prop
   | .false, _      => True
   | .indet, .false => False
@@ -56,7 +77,7 @@ protected def le : Truth3 → Truth3 → Prop
 instance : LE Truth3 := ⟨Truth3.le⟩
 
 /-- Term-mode `Decidable` instance — reduces eagerly under `rfl`/`decide`,
-    enabling clean kernel-level computation through the chain order. -/
+enabling clean kernel-level computation through the chain order. -/
 instance instDecLE (a b : Truth3) : Decidable (a ≤ b) :=
   match a, b with
   | .false, _      => isTrue trivial
@@ -81,21 +102,13 @@ instance : BoundedOrder Truth3 where
   le_top a := by cases a <;> trivial
   bot_le a := by cases a <;> trivial
 
-/-! ## Strong Kleene operations
+/-! ### Strong Kleene negation
 
-Strong Kleene meet/join on a chain ARE `min`/`max`. The bespoke `meet`/`join`
-names are kept as `@[reducible] def`s so 91 downstream call sites continue
-to work, but the canonical mathlib operations (`⊓`/`⊔`/`min`/`max`) are
-preferred. -/
+Strong Kleene meet/join on a chain ARE `min`/`max` = `⊓`/`⊔`; use the mathlib
+operations directly. Negation is the remaining primitive. -/
 
-/-- Strong Kleene meet (= `min` on the chain `false < indet < true`). -/
-@[reducible] def meet : Truth3 → Truth3 → Truth3 := min
-
-/-- Strong Kleene join (= `max` on the chain `false < indet < true`). -/
-@[reducible] def join : Truth3 → Truth3 → Truth3 := max
-
-/-- Strong Kleene negation: order-reversing involution.
-    `false ↔ true`, `indet` fixed. -/
+/-- Strong Kleene negation: the order-reversing involution swapping `false` and
+`true`, fixing `indet`. -/
 def neg : Truth3 → Truth3
   | .true  => .false
   | .indet => .indet
@@ -107,78 +120,73 @@ def neg : Truth3 → Truth3
 
 theorem neg_involutive : Function.Involutive (neg : Truth3 → Truth3) := neg_neg
 
-/-! ## Mathlib-derived simp lemmas
+/-- Strong Kleene negation is antitone (order-reversing). -/
+theorem neg_antitone : Antitone neg := λ a b h => by
+  revert h; cases a <;> cases b <;> decide
 
-These are inherited from `BoundedOrder` + `Lattice` + `LinearOrder` and
-re-exposed under the bespoke `meet`/`join` names for downstream search. -/
+/-- De Morgan: negation swaps meet and join — from antitonicity alone. -/
+@[simp] theorem neg_inf (a b : Truth3) : neg (a ⊓ b) = neg a ⊔ neg b :=
+  neg_antitone.map_min
+
+/-- De Morgan: negation swaps join and meet. -/
+@[simp] theorem neg_sup (a b : Truth3) : neg (a ⊔ b) = neg a ⊓ neg b :=
+  neg_antitone.map_max
+
+/-- The Kleene law `a ⊓ ¬a ≤ b ⊔ ¬b`: with distributivity, involutivity, and the De
+Morgan laws, `Truth3` is the three-element Kleene algebra — the canonical example.
+Mathlib has no De Morgan/Kleene *lattice* class (its `KleeneAlgebra` is the
+star-semiring); `Truth3` would be the textbook instance of one. -/
+theorem inf_neg_le_sup_neg (a b : Truth3) : a ⊓ neg a ≤ b ⊔ neg b := by
+  cases a <;> cases b <;> decide
+
+/-! ### Constructor-literal simp lemmas
+
+Inherited from `BoundedOrder` + `Lattice` + `LinearOrder`, restated with the
+constructor literals (`⊤ = .true`, `⊥ = .false`) that goals actually mention. -/
 
 @[simp] theorem sup_true (a : Truth3) : a ⊔ .true = .true := sup_top_eq a
 @[simp] theorem true_sup (a : Truth3) : Truth3.true ⊔ a = .true := top_sup_eq a
 @[simp] theorem inf_false (a : Truth3) : a ⊓ .false = .false := inf_bot_eq a
 @[simp] theorem false_inf (a : Truth3) : Truth3.false ⊓ a = .false := bot_inf_eq a
 
--- Conversion from Bool
+/-- `indet` propagates through `⊓` unless dominated by `false`. -/
+theorem indet_inf (a : Truth3) (h : a ≠ .false) : .indet ⊓ a = .indet := by
+  cases a <;> first | rfl | exact absurd rfl h
 
-/-- Convert Bool to Truth3. -/
+/-- `indet` propagates through `⊔` unless dominated by `true`. -/
+theorem indet_sup (a : Truth3) (h : a ≠ .true) : .indet ⊔ a = .indet := by
+  cases a <;> first | rfl | exact absurd rfl h
+
+/-! ### Conversion from Bool -/
+
+/-- The two-valued fragment: `Bool.true ↦ .true`, `Bool.false ↦ .false`. -/
 def ofBool : Bool → Truth3
   | Bool.true => .true
   | Bool.false => .false
 
-/-- Check if defined (not indet). -/
+instance : Coe Bool Truth3 := ⟨ofBool⟩
+
+/-- A value is defined when it is not `indet`. -/
 def isDefined : Truth3 → Prop
   | .true => True
   | .false => True
   | .indet => False
 
-instance : DecidablePred isDefined := fun v => by
+instance : DecidablePred isDefined := λ v => by
   cases v <;> unfold isDefined <;> infer_instance
 
-/-- Convert to Bool if defined, else default to false. -/
+/-- Project to `Bool`, sending `indet` to `false`. -/
 def toBoolOrFalse : Truth3 → Bool
   | .true => Bool.true
   | .false => Bool.false
   | .indet => Bool.false
 
--- ════════════════════════════════════════════════════════════════
--- Strong Kleene theorems (legacy aliases of mathlib lattice lemmas)
--- ════════════════════════════════════════════════════════════════
-
-/-- Conjunction is commutative. (= `min_comm`) -/
-theorem meet_comm (a b : Truth3) : meet a b = meet b a := min_comm a b
-
-/-- Disjunction is commutative. (= `max_comm`) -/
-theorem join_comm (a b : Truth3) : join a b = join b a := max_comm a b
-
-/-- false is absorbing for conjunction. -/
-theorem meet_false_left (a : Truth3) : meet .false a = .false := bot_inf_eq a
-theorem meet_false_right (a : Truth3) : meet a .false = .false := inf_bot_eq a
-
-/-- true is absorbing for disjunction. -/
-theorem join_true_left (a : Truth3) : join .true a = .true := top_sup_eq a
-theorem join_true_right (a : Truth3) : join a .true = .true := sup_top_eq a
-
-/-- true is identity for conjunction. -/
-theorem meet_true_left (a : Truth3) : meet .true a = a := top_inf_eq a
-theorem meet_true_right (a : Truth3) : meet a .true = a := inf_top_eq a
-
-/-- false is identity for disjunction. -/
-theorem join_false_left (a : Truth3) : join .false a = a := bot_sup_eq a
-theorem join_false_right (a : Truth3) : join a .false = a := sup_bot_eq a
-
-/-- indet propagates in conjunction (when not dominated by false). -/
-theorem meet_indet_left (a : Truth3) (h : a ≠ .false) : meet .indet a = .indet := by
-  cases a <;> first | rfl | exact absurd rfl h
-
-/-- indet propagates in disjunction (when not dominated by true). -/
-theorem join_indet_left (a : Truth3) (h : a ≠ .true) : join .indet a = .indet := by
-  cases a <;> first | rfl | exact absurd rfl h
-
-/-- `Truth3.ofBool` preserves `⊓`/`&&` (canonical typeclass form). -/
+/-- `Truth3.ofBool` preserves `⊓`/`&&`. -/
 @[simp] theorem ofBool_inf (a b : Bool) :
     Truth3.ofBool a ⊓ Truth3.ofBool b = Truth3.ofBool (a && b) := by
   cases a <;> cases b <;> decide
 
-/-- `Truth3.ofBool` preserves `⊔`/`||` (canonical typeclass form). -/
+/-- `Truth3.ofBool` preserves `⊔`/`||`. -/
 @[simp] theorem ofBool_sup (a b : Bool) :
     Truth3.ofBool a ⊔ Truth3.ofBool b = Truth3.ofBool (a || b) := by
   cases a <;> cases b <;> decide
@@ -187,14 +195,8 @@ theorem join_indet_left (a : Truth3) (h : a ≠ .true) : join .indet a = .indet 
 theorem neg_ofBool (a : Bool) : neg (ofBool a) = ofBool (!a) := by
   cases a <;> rfl
 
-/-- `Truth3.ofBool` is a bounded lattice homomorphism from `Bool` into the
-    `{⊥, ⊤}` sublattice of `Truth3`. The four homomorphism conditions
-    follow from `ofBool_sup`, `ofBool_inf`, and the fact that
-    `ofBool false = ⊥` and `ofBool true = ⊤` definitionally.
-
-    Registering this instance lets downstream consumers (e.g.,
-    `Core.Duality.aggregate_*_map_ofBool`) appeal to the general
-    `LatticeHom` API rather than to bespoke case-split lemmas. -/
+/-- `Truth3.ofBool` as a bounded lattice homomorphism, onto the `{⊥, ⊤}` sublattice
+of `Truth3` — so consumers can appeal to the general `LatticeHom` API. -/
 def ofBoolHom : BoundedLatticeHom Bool Truth3 where
   toFun := ofBool
   map_sup' a b := (ofBool_sup a b).symm
@@ -202,29 +204,12 @@ def ofBoolHom : BoundedLatticeHom Bool Truth3 where
   map_top' := rfl
   map_bot' := rfl
 
-/-- Conjunction is associative. (= `min_assoc`) -/
-theorem meet_assoc (a b c : Truth3) : meet (meet a b) c = meet a (meet b c) :=
-  min_assoc a b c
+/-! ### Exclusive disjunction -/
 
-/-- Disjunction is associative. (= `max_assoc`) -/
-theorem join_assoc (a b c : Truth3) : join (join a b) c = join a (join b c) :=
-  max_assoc a b c
-
--- ════════════════════════════════════════════════════════════════
--- Exclusive Disjunction (XOR)
--- ════════════════════════════════════════════════════════════════
-
-/-- Strong Kleene exclusive disjunction.
-
-    True when exactly one operand is true; false when both or neither;
-    undefined when either operand is undefined.
-
-    Unlike inclusive disjunction (`join`), XOR cannot "see past" an
-    undefined operand: `join .true .indet = .true` (the true operand
-    settles the result), but `xor .true .indet = .indet` (we need to
-    know the other's value to determine XOR).
-
-    [wang-davidson-2026] Figure 2. -/
+/-- Strong Kleene exclusive disjunction: true when exactly one operand is true,
+undefined when either operand is. Unlike `⊔`, XOR cannot "see past" an undefined
+operand — `.true ⊔ .indet = .true`, but `xor .true .indet = .indet`
+([wang-davidson-2026], Figure 2). -/
 def xor : Truth3 → Truth3 → Truth3
   | .true, .false => .true
   | .false, .true => .true
@@ -237,8 +222,8 @@ theorem xor_comm (a b : Truth3) : xor a b = xor b a := by
   cases a <;> cases b <;> rfl
 
 /-- XOR decomposes as (a ∨ b) ∧ ¬(a ∧ b) under Strong Kleene. -/
-theorem xor_eq_join_meet_neg (a b : Truth3) :
-    xor a b = meet (join a b) (neg (meet a b)) := by
+theorem xor_eq_sup_inf_neg (a b : Truth3) :
+    xor a b = (a ⊔ b) ⊓ neg (a ⊓ b) := by
   cases a <;> cases b <;> rfl
 
 /-- XOR propagates indet unconditionally from the left. -/
@@ -253,30 +238,44 @@ theorem xor_indet_right (a : Truth3) : xor a .indet = .indet := by
 theorem xor_ofBool (a b : Bool) : xor (ofBool a) (ofBool b) = ofBool (a ^^ b) := by
   cases a <;> cases b <;> rfl
 
-/-- **Uniform projection under XOR**: XOR returns undefined iff at
-    least one operand is undefined. This is the semantic core of
-    [wang-davidson-2026]'s prediction: exclusive disjunction
-    does not filter presuppositions.
-
-    Contrast with inclusive disjunction (`join`), where
-    `join .true .indet = .true` — a true first disjunct "filters"
-    the second's presupposition failure. -/
+/-- XOR is undefined iff at least one operand is — the semantic core of
+[wang-davidson-2026]'s prediction that exclusive disjunction does not filter
+presuppositions, in contrast with `⊔` (`.true ⊔ .indet = .true`). -/
 theorem xor_indet_iff (a b : Truth3) :
     xor a b = .indet ↔ a = .indet ∨ b = .indet := by
   cases a <;> cases b <;> simp [xor]
 
--- ════════════════════════════════════════════════════════════════
--- Weak Kleene Connectives + Meta-Assertion
--- ════════════════════════════════════════════════════════════════
+/-! ### The truth order as `SignType`
 
--- Weak Kleene "internal" connectives originate with [bochvar-1937]
--- (Russian original; English translation by Bergmann 1981); subsequently
--- discussed by [kleene-1952]. The "indet propagates" / "nonsense"
--- semantics matches Bochvar's three-valued treatment of paradox-prone
--- statements. The `metaAssert` operator is Beaver-Krahmer's 𝒜
--- (assertion operator) — see [beaver-krahmer-2001] §2 — which
--- collapses any trivalent value to bivalent by treating `.indet` as
--- false.
+Mathlib's carrier for a three-element chain with an involutive order-reversing
+negation fixing the midpoint is `SignType` (`-1 < 0 < 1`). -/
+
+/-- The truth-order carrier iso: `false ↔ -1`, `indet ↔ 0`, `true ↔ 1`, with Kleene
+negation corresponding to `SignType` negation (`orderIsoSignType_neg`). The
+knowledge-order counterpart is `equivFlatBool`. -/
+def orderIsoSignType : Truth3 ≃o SignType where
+  toFun := λ | .false => .neg | .indet => .zero | .true => .pos
+  invFun := λ | .neg => .false | .zero => .indet | .pos => .true
+  left_inv a := by cases a <;> rfl
+  right_inv s := by cases s <;> rfl
+  map_rel_iff' {a b} := by cases a <;> cases b <;> decide
+
+@[simp] theorem orderIsoSignType_neg (a : Truth3) :
+    orderIsoSignType (neg a) = -orderIsoSignType a := by cases a <;> rfl
+
+/-- `SignType` multiplication transports to the Strong Kleene *biconditional*, so
+`Truth3.xor` is its negation. -/
+theorem orderIsoSignType_xor (a b : Truth3) :
+    orderIsoSignType (xor a b) = -(orderIsoSignType a * orderIsoSignType b) := by
+  cases a <;> cases b <;> rfl
+
+/-! ### Weak Kleene and the Beaver-Krahmer operators
+
+The Weak Kleene "internal" connectives originate with [bochvar-1937] (Russian
+original; English translation by Bergmann 1981) and are discussed by [kleene-1952]:
+`indet` propagates unconditionally, matching Bochvar's "nonsense" reading of
+paradox-prone statements. `metaAssert` and `presuppose` are the 𝒜 and ∂ operators
+of [beaver-krahmer-2001] §2. -/
 
 /-- Weak Kleene disjunction: indet is absorbing (both operands must be defined). -/
 def joinWeak : Truth3 → Truth3 → Truth3
@@ -294,29 +293,22 @@ def meetWeak : Truth3 → Truth3 → Truth3
   | .false, .false => .false
   | _, _ => .indet
 
-/-- Meta-assertion operator: the **𝒜 (assertion) operator** of
-    [beaver-krahmer-2001] §2. Maps `.indet` to `.false`, making
-    any trivalent value bivalent by treating undefinedness as falsity.
-    Used for "transplication" / closing trivalent contexts to Bool. -/
-def metaAssert : Truth3 → Truth3
-  | .true => .true
-  | .false => .false
-  | .indet => .false
-
--- ════════════════════════════════════════════════════════════════
--- @[simp] truth table for `metaAssert` (Strong Kleene `join` is the
--- lattice `⊔`, already covered by `sup_true`/`true_sup` above).
--- ════════════════════════════════════════════════════════════════
-
-@[simp] theorem metaAssert_true : metaAssert .true = .true := rfl
-@[simp] theorem metaAssert_false : metaAssert .false = .false := rfl
-@[simp] theorem metaAssert_indet : metaAssert .indet = .false := rfl
-
 theorem joinWeak_comm (a b : Truth3) : joinWeak a b = joinWeak b a := by
   cases a <;> cases b <;> rfl
 
 theorem meetWeak_comm (a b : Truth3) : meetWeak a b = meetWeak b a := by
   cases a <;> cases b <;> rfl
+
+/-- Meta-assertion: the 𝒜 (assertion) operator of [beaver-krahmer-2001] §2, closing
+a trivalent value to bivalent by treating undefinedness as falsity. -/
+def metaAssert : Truth3 → Truth3
+  | .true => .true
+  | .false => .false
+  | .indet => .false
+
+@[simp] theorem metaAssert_true : metaAssert .true = .true := rfl
+@[simp] theorem metaAssert_false : metaAssert .false = .false := rfl
+@[simp] theorem metaAssert_indet : metaAssert .indet = .false := rfl
 
 /-- Meta-assertion always produces a defined value. -/
 theorem metaAssert_defined (v : Truth3) : (metaAssert v).isDefined := by
@@ -330,63 +322,59 @@ theorem metaAssert_idempotent (v : Truth3) : metaAssert (metaAssert v) = metaAss
 theorem metaAssert_of_defined (v : Truth3) (h : v.isDefined) : metaAssert v = v := by
   cases v with | true => rfl | false => rfl | indet => exact absurd h id
 
--- ════════════════════════════════════════════════════════════════
--- Middle Kleene Connectives
--- [peters-1979] [beaver-krahmer-2001] [spector-2025]
--- ════════════════════════════════════════════════════════════════
+/-- Presupposition: the ∂ operator of [beaver-krahmer-2001] §2, the companion of
+`metaAssert` — asserts a true value, undefined otherwise (`T ↦ T`, `F ↦ #`, `# ↦ #`). -/
+def presuppose : Truth3 → Truth3
+  | .true => .true
+  | _ => .indet
 
-/-- Middle Kleene conjunction: left-undefined absorbs; left-defined
-    follows Strong Kleene. **Asymmetric**: `false ∧ # = false` but
-    `# ∧ false = #`.
+@[simp] theorem presuppose_true : presuppose .true = .true := rfl
+@[simp] theorem presuppose_false : presuppose .false = .indet := rfl
+@[simp] theorem presuppose_indet : presuppose .indet = .indet := rfl
 
-    This captures left-to-right evaluation for conjunction
-    ([peters-1979], [beaver-krahmer-2001], [spector-2025]):
-    if the first conjunct is undefined, the result is undefined regardless
-    of the second. If the first conjunct is defined, Strong Kleene applies.
+/-- Meta-asserting a presupposed value falsifies undefinedness: `𝒜 ∘ ∂` sends
+exactly `.true` to `.true`. -/
+theorem metaAssert_presuppose (v : Truth3) :
+    metaAssert (presuppose v) = if v = .true then .true else .false := by
+  cases v <;> rfl
 
-    | meetMiddle | true  | false | indet |
-    |------------|-------|-------|-------|
-    | true       | true  | false | indet |
-    | false      | false | false | false |
-    | indet      | indet | indet | indet | -/
+/-! ### Middle Kleene
+
+The asymmetric left-to-right connectives of [peters-1979], the trivalent face of
+Karttunen filtering ([beaver-krahmer-2001], [spector-2025]): an undefined first
+operand absorbs; a defined one proceeds by Strong Kleene. -/
+
+/-- Middle Kleene conjunction: left-undefined absorbs, left-defined proceeds by
+Strong Kleene. Asymmetric — `meetMiddle .false .indet = .false` but
+`meetMiddle .indet .false = .indet` ([peters-1979]). -/
 def meetMiddle : Truth3 → Truth3 → Truth3
   | .indet, _ => .indet
-  | a, b => meet a b
+  | a, b => a ⊓ b
 
-/-- Middle Kleene disjunction: left-undefined absorbs; left-defined
-    follows Strong Kleene. **Asymmetric**: `true ∨ # = true` but
-    `# ∨ true = #`.
-
-    This captures left-to-right presupposition filtering
-    ([peters-1979]): if the first disjunct is defined, its
-    truth value can settle the result even when the second is
-    undefined. But if the first is undefined, the whole disjunction
-    is undefined regardless of the second.
-
-    | joinMiddle | true  | false | indet |
-    |------------|-------|-------|-------|
-    | true       | true  | true  | true  |
-    | false      | true  | false | indet |
-    | indet      | indet | indet | indet | -/
+/-- Middle Kleene disjunction: left-undefined absorbs, left-defined proceeds by
+Strong Kleene — a defined first disjunct can settle the result even when the second
+is undefined, the left-to-right filtering pattern ([peters-1979]). -/
 def joinMiddle : Truth3 → Truth3 → Truth3
   | .indet, _ => .indet
-  | a, b => join a b
+  | a, b => a ⊔ b
 
-/-- Middle Kleene conjunction is NOT commutative.
-    `meetMiddle false indet = false` but `meetMiddle indet false = indet`. -/
-theorem meetMiddle_not_comm : ¬ ∀ a b : Truth3, meetMiddle a b = meetMiddle b a := by
-  intro h; have := h .false .indet; simp [meetMiddle, meet] at this
+/-- Middle Kleene conjunction is not commutative. -/
+theorem meetMiddle_not_comm : ¬ ∀ a b : Truth3, meetMiddle a b = meetMiddle b a :=
+  λ h => absurd (h .false .indet) (by decide)
 
-/-- When the left operand is defined, Middle Kleene conjunction
-    equals Strong Kleene conjunction. -/
-theorem meetMiddle_eq_meet_of_left_defined (a b : Truth3) (h : a.isDefined) :
-    meetMiddle a b = meet a b := by
+/-- Middle Kleene disjunction is not commutative. -/
+theorem joinMiddle_not_comm : ¬ ∀ a b : Truth3, joinMiddle a b = joinMiddle b a :=
+  λ h => absurd (h .true .indet) (by decide)
+
+/-- When the left operand is defined, Middle Kleene conjunction equals Strong Kleene. -/
+theorem meetMiddle_eq_inf_of_left_defined (a b : Truth3) (h : a.isDefined) :
+    meetMiddle a b = a ⊓ b := by
   cases a with | true => rfl | false => rfl | indet => exact absurd h id
 
-/-- Middle Kleene disjunction is NOT commutative.
-    `joinMiddle true indet = true` but `joinMiddle indet true = indet`. -/
-theorem joinMiddle_not_comm : ¬ ∀ a b : Truth3, joinMiddle a b = joinMiddle b a := by
-  intro h; have := h .true .indet; simp [joinMiddle, join] at this
+/-- When the left operand is defined, Middle Kleene disjunction equals Strong Kleene. -/
+theorem joinMiddle_eq_sup_of_left_defined (a b : Truth3) (h : a.isDefined) :
+    joinMiddle a b = a ⊔ b := by
+  cases a with | true => rfl | false => rfl | indet => exact absurd h id
 
 /-- Left-undefined absorbs Middle Kleene conjunction. -/
 theorem meetMiddle_indet_left (a : Truth3) : meetMiddle .indet a = .indet := rfl
@@ -394,21 +382,15 @@ theorem meetMiddle_indet_left (a : Truth3) : meetMiddle .indet a = .indet := rfl
 /-- Left-undefined absorbs Middle Kleene disjunction. -/
 theorem joinMiddle_indet_left (a : Truth3) : joinMiddle .indet a = .indet := rfl
 
-/-- `true` is left identity for Middle Kleene conjunction:
-    `true ∧ ψ = ψ`. When the first conjunct is true, the result
-    is just the second conjunct. -/
+/-- `true` is a left identity for Middle Kleene conjunction. -/
 theorem meetMiddle_true_left (a : Truth3) : meetMiddle .true a = a := by cases a <;> rfl
 
-/-- `false` is left zero for Middle Kleene conjunction:
-    `false ∧ ψ = false` for all `ψ`. This is the key asymmetry vs
-    Weak Kleene: `meetMiddle false indet = false` (defined operand
-    absorbs via Strong Kleene) whereas `meetWeak false indet = indet`. -/
+/-- `false` is a left zero for Middle Kleene conjunction — the key asymmetry against
+Weak Kleene, where `meetWeak .false .indet = .indet`. -/
 theorem meetMiddle_false_left (a : Truth3) : meetMiddle .false a = .false := by
   cases a <;> rfl
 
-/-- `false` is left identity for Middle Kleene disjunction:
-    `false ∨ ψ = ψ`. When the first disjunct is false, the result
-    is just the second disjunct. -/
+/-- `false` is a left identity for Middle Kleene disjunction. -/
 theorem joinMiddle_false_left (a : Truth3) : joinMiddle .false a = a := by cases a <;> rfl
 
 /-- Middle Kleene conjunction agrees with Bool on defined inputs. -/
@@ -421,52 +403,31 @@ theorem joinMiddle_ofBool (a b : Bool) :
     joinMiddle (ofBool a) (ofBool b) = ofBool (a || b) := by
   cases a <;> cases b <;> rfl
 
-/-- When the left operand is defined, Middle Kleene disjunction
-    equals Strong Kleene disjunction. -/
-theorem joinMiddle_eq_join_of_left_defined (a b : Truth3) (h : a.isDefined) :
-    joinMiddle a b = join a b := by
-  cases a with | true => rfl | false => rfl | indet => exact absurd h id
+/-! ### Belnap conditional assertion
 
--- ════════════════════════════════════════════════════════════════
--- Belnap Conditional Assertion Connectives
--- [belnap-1970]
--- ════════════════════════════════════════════════════════════════
+[belnap-1970]'s connectives skip undefined operands: a compound is assertive iff at
+least one operand is, and asserts the combination of the assertive operands only —
+`indet` is the identity element. Contrast Strong Kleene (indet propagates unless
+dominated) and Weak Kleene (indet always propagates). -/
 
-/-- Belnap conjunction: undefined operands are skipped.
-
-    If one operand is undefined, the result equals the other.
-    If both are undefined, the result is undefined.
-    This models [belnap-1970]'s (8): conjunction is assertive iff
-    at least one conjunct is assertive; what it asserts = conjunction
-    of assertive conjuncts only. `indet` is the identity element.
-
-    | meetBelnap | true  | false | indet |
-    |------------|-------|-------|-------|
-    | true       | true  | false | true  |
-    | false      | false | false | false |
-    | indet      | true  | false | indet |
-
-    Contrast: Strong Kleene `meet` (indet propagates unless dominated),
-    Weak Kleene `meetWeak` (indet always propagates). -/
+/-- Belnap conjunction: undefined operands are skipped; `indet` is the identity
+([belnap-1970], (8)). -/
 def meetBelnap : Truth3 → Truth3 → Truth3
   | .indet, b => b
   | a, .indet => a
-  | a, b => meet a b
+  | a, b => a ⊓ b
 
-/-- Belnap disjunction: undefined operands are skipped.
-
-    Models [belnap-1970]'s (9): disjunction is assertive iff at
-    least one disjunct is assertive; what it asserts = disjunction of
-    assertive disjuncts only. `indet` is the identity element. -/
+/-- Belnap disjunction: undefined operands are skipped; `indet` is the identity
+([belnap-1970], (9)). -/
 def joinBelnap : Truth3 → Truth3 → Truth3
   | .indet, b => b
   | a, .indet => a
-  | a, b => join a b
+  | a, b => a ⊔ b
 
-/-- `indet` is left identity for Belnap conjunction. -/
+/-- `indet` is a left identity for Belnap conjunction. -/
 theorem meetBelnap_indet_left (a : Truth3) : meetBelnap .indet a = a := rfl
 
-/-- `indet` is right identity for Belnap conjunction. -/
+/-- `indet` is a right identity for Belnap conjunction. -/
 theorem meetBelnap_indet_right (a : Truth3) : meetBelnap a .indet = a := by
   cases a <;> rfl
 
@@ -474,10 +435,10 @@ theorem meetBelnap_indet_right (a : Truth3) : meetBelnap a .indet = a := by
 theorem meetBelnap_comm (a b : Truth3) : meetBelnap a b = meetBelnap b a := by
   cases a <;> cases b <;> rfl
 
-/-- `indet` is left identity for Belnap disjunction. -/
+/-- `indet` is a left identity for Belnap disjunction. -/
 theorem joinBelnap_indet_left (a : Truth3) : joinBelnap .indet a = a := rfl
 
-/-- `indet` is right identity for Belnap disjunction. -/
+/-- `indet` is a right identity for Belnap disjunction. -/
 theorem joinBelnap_indet_right (a : Truth3) : joinBelnap a .indet = a := by
   cases a <;> rfl
 
@@ -495,17 +456,25 @@ theorem joinBelnap_ofBool (a b : Bool) :
     joinBelnap (ofBool a) (ofBool b) = ofBool (a || b) := by
   cases a <;> cases b <;> rfl
 
--- ════════════════════════════════════════════════════════════════
--- The knowledge order: Truth3 as the flat domain `Flat Bool`
--- [kleene-1952]
--- ════════════════════════════════════════════════════════════════
+/-! ### The knowledge order: `Flat Bool` and the Kleene bilattice
+
+`Truth3`'s native order is the *truth* order `false < indet < true`; `Flat Bool`
+(`equivFlatBool`) carries the *knowledge* order `⊥ ⊑ true`, `⊥ ⊑ false`. Two orders
+on one carrier is a *bilattice*. Strong Kleene `∧`/`∨` are the truth-order lattice
+operations `⊓`/`⊔`; what makes them canonical is **interlacing** — they are monotone
+for the knowledge order as well ([kleene-1952]'s regularity condition), while Weak
+Kleene is not (`meetWeak_not_truthMono`).
+
+`Flat Bool`'s `SemilatticeInf` meet `⊓` is the *consensus* `⊗`; its partial join
+(`PartialUnify`) is the *gullibility* `⊕`, partial because three values lack the `⊤`
+("both") of a full four-valued bilattice — so `Truth3` is the *consistent fragment*
+of that bilattice. -/
 
 section KnowledgeOrder
 
 /-- The carrier bijection `Truth3 ≃ Flat Bool`: `indet ↔ ⊥`, `true ↔ some true`,
-`false ↔ some false`. `Flat Bool` carries the *information/knowledge* order
-(`⊥` below both committed values), distinct from `Truth3`'s *truth* order
-(`false < indet < true`) — the two orders of the Kleene bilattice. -/
+`false ↔ some false`. `Flat Bool` carries the knowledge order, distinct from the
+truth order — the two orders of the Kleene bilattice. -/
 def toFlat : Truth3 → Flat Bool
   | .indet => none
   | .true => some Bool.true
@@ -524,86 +493,65 @@ def equivFlatBool : Truth3 ≃ Flat Bool where
   left_inv a := by cases a <;> rfl
   right_inv x := by cases x with | none => rfl | some b => cases b <;> rfl
 
-/-- **The Kleene bilattice.** The truth order and the knowledge order genuinely
-differ: in the truth order `false ≤ indet`, but in the knowledge order the
-committed value `false` is not below the uncommitted `indet = ⊥`. -/
+/-- The truth order and the knowledge order genuinely differ: in the truth order
+`false ≤ indet`, but in the knowledge order the committed value `false` is not below
+the uncommitted `indet = ⊥`. -/
 theorem truthOrder_ne_knowledgeOrder :
     Truth3.false ≤ Truth3.indet ∧ ¬ toFlat .false ≤ toFlat .indet := by decide
 
-/-! ### Interlacing: the Kleene bilattice
-
-`Truth3`'s native order is the *truth* order `false < indet < true`; `Flat Bool`
-(`equivFlatBool`) carries the *knowledge* order `⊥ ⊑ true`, `⊥ ⊑ false`. Two
-orders on one carrier is a *bilattice*. Strong Kleene `∧`/`∨` are the *truth*-
-order lattice operations (`meet := min`, `join := max`); what makes them
-canonical is **interlacing** — they are monotone for the *knowledge* order as
-well ([kleene-1952]'s regularity condition). Weak Kleene is *not* interlaced
-(`meetWeak_not_truthMono`), so it is not a bilattice operation.
-
-`Flat Bool`'s `SemilatticeInf` meet `⊓` is the *consensus* `⊗`; its partial join
-(`PartialUnify`) is the *gullibility* `⊕`, partial because three values lack the
-`⊤` ("both") of a full four-valued bilattice — so `Truth3` is the *consistent
-fragment* of that bilattice. -/
-
-/-- Strong Kleene negation is regular (knowledge-monotone); being unary, it is
-in fact the *unique* monotone extension of Boolean `not`. -/
+/-- Strong Kleene negation is regular (knowledge-monotone); being unary, it is in
+fact the unique monotone extension of Boolean `not`. -/
 theorem toFlat_neg_mono {a b : Truth3} (h : toFlat a ≤ toFlat b) :
     toFlat (neg a) ≤ toFlat (neg b) := by
   cases a <;> cases b <;> revert h <;> decide
 
 /-- Strong Kleene conjunction is regular (knowledge-monotone in each argument). -/
-theorem toFlat_meet_mono_left {a a' : Truth3} (b : Truth3)
-    (h : toFlat a ≤ toFlat a') : toFlat (meet a b) ≤ toFlat (meet a' b) := by
+theorem toFlat_inf_mono_left {a a' : Truth3} (b : Truth3)
+    (h : toFlat a ≤ toFlat a') : toFlat (a ⊓ b) ≤ toFlat (a' ⊓ b) := by
   cases a <;> cases a' <;> cases b <;> revert h <;> decide
 
 /-- Strong Kleene disjunction is regular (knowledge-monotone in each argument). -/
-theorem toFlat_join_mono_left {a a' : Truth3} (b : Truth3)
-    (h : toFlat a ≤ toFlat a') : toFlat (join a b) ≤ toFlat (join a' b) := by
+theorem toFlat_sup_mono_left {a a' : Truth3} (b : Truth3)
+    (h : toFlat a ≤ toFlat a') : toFlat (a ⊔ b) ≤ toFlat (a' ⊔ b) := by
   cases a <;> cases a' <;> cases b <;> revert h <;> decide
 
-/-- Weak Kleene conjunction is **not** interlaced — it fails monotonicity in the
-*truth* order (`indet ≤ true`, yet `meetWeak indet false = indet ≰ false =
-meetWeak true false`). So, unlike strong Kleene `meet`, it is not a bilattice
-operation. -/
+/-- Weak Kleene conjunction is not interlaced — it fails truth-order monotonicity
+(`indet ≤ true`, yet `meetWeak .indet .false = .indet ≰ .false`), so unlike Strong
+Kleene `⊓` it is not a bilattice operation. -/
 theorem meetWeak_not_truthMono :
     ¬ ∀ a a' b : Truth3, a ≤ a' → meetWeak a b ≤ meetWeak a' b :=
-  fun h => absurd (h .indet .true .false (by decide)) (by decide)
+  λ h => absurd (h .indet .true .false (by decide)) (by decide)
 
-/-- Weak Kleene disjunction is likewise not interlaced (fails truth-order
-monotonicity). -/
+/-- Weak Kleene disjunction is likewise not interlaced. -/
 theorem joinWeak_not_truthMono :
     ¬ ∀ a a' b : Truth3, a ≤ a' → joinWeak a b ≤ joinWeak a' b :=
-  fun h => absurd (h .false .indet .true (by decide)) (by decide)
+  λ h => absurd (h .false .indet .true (by decide)) (by decide)
 
 end KnowledgeOrder
 
 end Truth3
 
-/-- How truth values aggregate through an operator.
-    Conjunctive (universal-like): all must succeed.
-    Disjunctive (existential-like): one must succeed. -/
+/-! ### Trivalent propositions -/
+
+/-- How truth values aggregate through an operator: conjunctive (universal-like, all
+must succeed) or disjunctive (existential-like, one must succeed). -/
 inductive ProjectionType where
   | conjunctive
   | disjunctive
   deriving Repr, DecidableEq
 
-/-- Three-valued propositions: functions from worlds to Truth3. -/
+/-- Three-valued propositions: functions from worlds to `Truth3`. -/
 abbrev Prop3 (W : Type*) := W → Truth3
 
 namespace Prop3
 
 variable {W : Type*}
 
-/-! `Prop3 W := W → Truth3` is a `Pi` type. The `Lattice (W → Truth3)`
-    instance auto-derives from `Pi.instLattice` once `Truth3` has
-    `Lattice` (via `LinearOrder`), so `(p ⊔ q) w = p w ⊔ q w` and
-    `(p ⊓ q) w = p w ⊓ q w` come for free from mathlib's `Pi.sup_apply`
-    / `Pi.inf_apply`. Use `· ⊔ ·` / `· ⊓ ·` directly instead of bespoke
-    `Prop3.or`/`Prop3.and` wrappers.
-
-    The only Truth3-specific operation that needs a pointwise lift here
-    is `metaAssert` (Beaver-Krahmer 𝒜) — there's no `Pi`-equivalent of
-    a unary type-collapsing operator. -/
+/-! `Prop3 W := W → Truth3` is a `Pi` type: `Lattice (W → Truth3)` auto-derives from
+`Pi.instLattice`, so `(p ⊔ q) w = p w ⊔ q w` and `(p ⊓ q) w = p w ⊓ q w` come for
+free from `Pi.sup_apply`/`Pi.inf_apply` — use `⊔`/`⊓` directly rather than bespoke
+wrappers. The only Truth3-specific operation needing a pointwise lift is
+`metaAssert`: there is no `Pi` analogue of a unary collapsing operator. -/
 
 /-- Pointwise meta-assertion (Beaver-Krahmer 𝒜 operator). -/
 def metaAssert (p : Prop3 W) : Prop3 W := λ w => Truth3.metaAssert (p w)
