@@ -6,29 +6,16 @@ Authors: Robert Hawkins
 import Mathlib.Algebra.MonoidAlgebra.Basic
 import Mathlib.LinearAlgebra.Finsupp.VectorSpace
 
-set_option autoImplicit false
-
 /-!
 # Connes-Kreimer Hopf algebra carrier on n-ary rooted trees
 
 The **Connes-Kreimer Hopf algebra** on a tree type `T`
 ([connes-kreimer-1998]; [foissy-introduction-hopf-algebras-trees] §1.2) is
-the formal `R`-linear
-span of forests (multisets of trees), with product = forest disjoint union
-and coproduct = sum over admissible cuts (defined in `Coproduct/Pruning.lean`
-for Δ^ρ, `Coproduct/Trace.lean` for Δ^c). This file provides the **carrier
-and counit** generic over `T` — nothing here pattern-matches on the tree
-carrier. Realized specializations:
-
-* `T = RoseTree α` — planar n-ary rooted trees
-  (`Core/Data/RoseTree/Basic.lean`); the sibling coproduct files
-  instantiate here.
-* `T = RootedTree.Nonplanar α` (`Quotient RoseTree.isSetoid`) — nonplanar
-  rooted trees; the `Bialgebra`/`HopfAlgebra` instances live on this
-  specialization (`Coproduct/PruningDuality.lean`,
-  `HopfAlgebraNonplanar.lean`), and at `α = SOLabel` it carries the Merge
-  workspace algebra of `Syntax/Minimalist/Workspace/Basic.lean`
-  ([marcolli-chomsky-berwick-2025] §1.2).
+the formal `R`-linear span of forests (multisets of trees), with product =
+forest disjoint union and coproduct = sum over admissible cuts. This file
+provides the carrier, its algebra structure, and the counit, generic over
+`T`; the coproducts and the `Bialgebra`/`HopfAlgebra` instances are in the
+sibling `Coproduct/` files and `HopfAlgebraNonplanar.lean`.
 
 ## Main declarations
 
