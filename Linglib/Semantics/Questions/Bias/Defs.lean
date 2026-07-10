@@ -10,8 +10,8 @@ bias (the speaker's prior epistemic lean) and contextual evidence bias
 
 This file carries only the directional enums and the form/bias compatibility
 tables, so that Fragment lexical entries can record which bias a particle
-*requires* without importing the modal machinery (VERUM/FALSUM, □_ev) that
-lives in `Semantics.Questions.Bias.Basic`.
+*requires* without importing modal machinery; VERUM semantics with modal
+frames lives study-side (`Studies/RomeroHan2004.lean`).
 
 ## Main definitions
 

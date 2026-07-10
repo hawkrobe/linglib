@@ -4,7 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Semantics.Quantification.Numerals.Roundness
-import Linglib.Semantics.Questions.PrecisionProjection
 import Linglib.Core.Algebra.Order.ToIntervalMod
 
 /-!
@@ -89,20 +88,11 @@ theorem inferPrecisionMode_eq_approximate_of_ten_dvd {n : ℕ} (h : 10 ∣ n) :
   unfold inferPrecisionMode
   exact if_pos (Roundness.score_ge_two_of_div10 n h)
 
-/-- `PrecisionMode` is the two-point instance of the QUD-layer
-`PrecisionProjection` family: `f_e` is `PrecisionProjection.exact`; `f_a`
-at grain `g` rounds within the width-`g` grain (the lower representative
-on the ℕ scale — [kao-etal-2014-hyperbole]'s `Round` picks the nearest;
-same partition, different canonical representative). -/
-def PrecisionMode.projection (g : ℕ) : PrecisionMode → PrecisionProjection ℕ
-  | .exact => .exact
-  | .approximate => .roundTo g
-
-#guard inferPrecisionMode 100 = .approximate  -- score 6 ≥ 2
-#guard inferPrecisionMode 50 = .approximate   -- score 5 ≥ 2
-#guard inferPrecisionMode 110 = .approximate  -- score 2 ≥ 2
-#guard inferPrecisionMode 7 = .exact          -- score 0 < 2
-#guard inferPrecisionMode 99 = .exact         -- score 0 < 2
-#guard inferPrecisionMode 15 = .exact         -- score 1 < 2 (see caveat above)
+example : inferPrecisionMode 100 = .approximate := by decide  -- score 6 ≥ 2
+example : inferPrecisionMode 50 = .approximate := by decide   -- score 5 ≥ 2
+example : inferPrecisionMode 110 = .approximate := by decide  -- score 2 ≥ 2
+example : inferPrecisionMode 7 = .exact := by decide          -- score 0 < 2
+example : inferPrecisionMode 99 = .exact := by decide         -- score 0 < 2
+example : inferPrecisionMode 15 = .exact := by decide  -- score 1 < 2 (see caveat above)
 
 end Semantics.Numerals.Precision

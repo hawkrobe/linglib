@@ -1,6 +1,8 @@
 import Mathlib.Data.Setoid.Partition
 import Linglib.Semantics.Questions.Hamblin
+import Linglib.Semantics.Questions.Entailment
 import Linglib.Semantics.Questions.Partition.QUD
+import Linglib.Semantics.Questions.Partition.Lattice
 
 /-!
 # Partition questions
@@ -108,6 +110,22 @@ theorem fromSetoid_le_iff (r₁ r₂ : Setoid W) :
 theorem fromSetoid_mono {r₁ r₂ : Setoid W} (h : r₁ ≤ r₂) :
     fromSetoid r₁ ≤ fromSetoid r₂ :=
   (fromSetoid_le_iff r₁ r₂).mpr h
+
+/-- Under finiteness, question entailment between partition issues is
+the `Setoid` refinement order: the `Question`-level and `Setoid`-level
+encodings of refinement coincide. -/
+theorem fromSetoid_entails_iff [Finite W] (r₁ r₂ : Setoid W) :
+    (fromSetoid r₁).Entails (fromSetoid r₂) ↔ r₁ ≤ r₂ := by
+  rw [entails_iff_le (Set.toFinite _) (Set.toFinite _), fromSetoid_le_iff]
+
+/-- `QUD` refinement is question entailment of the induced partition
+issues: the Bool-layer `⊑` agrees with the `Question`-layer entailment
+order. -/
+theorem _root_.QUD.refines_iff_fromSetoid_entails {M : Type*} [Finite M]
+    (q q' : QUD M) :
+    QUD.refines q q' ↔
+      (fromSetoid q.toSetoid).Entails (fromSetoid q'.toSetoid) := by
+  rw [QUD.refines_iff_toSetoid_le, fromSetoid_entails_iff]
 
 /-- Every alternative of `fromSetoid r` is the empty state or a cell of
 `r` (the empty case only when `W` is empty). -/

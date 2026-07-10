@@ -85,8 +85,7 @@ with low negation). Supports fronted-negation + *väl* marking NRQs.
 
 ## Related Work
 
-- `Semantics/Questions/Bias/Basic.lean` — Romero's PQ bias
-  framework (VERUM, FALSUM, OriginalBias, ContextualEvidence). The
+- `Semantics/Questions/Bias/Defs.lean` — the form and bias vocabulary. The
   bridge maps Sudo's bias values to Romero's coarser three-valued scheme.
 - `Studies/RomeroHan2004.lean::Verum` — detailed
   VERUM semantics with modal frames.

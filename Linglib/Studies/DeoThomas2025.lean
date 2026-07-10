@@ -26,14 +26,22 @@ alternatives, explaining why it substitutes in only 2 of the 9 flavors.
 -/
 
 import Linglib.Semantics.Questions.Partition.QUD
-import Linglib.Semantics.Questions.PrecisionProjection
 import Linglib.Semantics.Questions.Basic
-import Linglib.Semantics.Questions.Granularity
 import Linglib.Semantics.Questions.Partition.Basic
 import Linglib.Semantics.Degree.Granularity
 import Linglib.Semantics.Degree.Defs
 import Linglib.Data.Examples.DeoThomas2025
 import Linglib.Studies.ThomasDeo2020
+
+/-- The width relation between issues ([deo-thomas-2025] (32)): same
+informational content, no `Q`-alternative properly inside a
+`P`-alternative, and some `P`-alternative properly inside a
+`Q`-alternative — `P` makes finer distinctions. Not comparable to
+question entailment ([deo-thomas-2025] fn. 20). -/
+def Question.widerThan {W : Type*} (P Q : Question W) : Prop :=
+  P.info = Q.info ∧
+  (∀ p₂ ∈ Question.alt Q, ∀ p₁ ∈ Question.alt P, ¬ (p₂ ⊂ p₁)) ∧
+  (∃ p₁ ∈ Question.alt P, ∃ p₂ ∈ Question.alt Q, p₁ ⊂ p₂)
 
 namespace DeoThomas2025
 
