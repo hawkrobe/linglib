@@ -98,7 +98,7 @@ end Bridge
     inputs are identical. This is wrong: `φ ∧ φ` should have the same
     value as `φ`.
 
-    Strong Kleene logic (`Truth3.meet`) makes the symmetric choice:
+    Strong Kleene logic (`⊓` on `Truth3`) makes the symmetric choice:
     `meet indet indet = indet`. This preserves `φ ∧ φ ≡ φ` but fails
     to make contradictions false. Supervaluationism resolves both. -/
 

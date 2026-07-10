@@ -35,7 +35,7 @@ These divide into two classes:
   (EXH¹ + any projection)
 
 The core mechanism: under Strong Kleene, inclusive disjunction
-(`Truth3.join`) can return `.true` even when one disjunct is
+(`⊔` on `Truth3`) can return `.true` even when one disjunct is
 undefined — so a true first disjunct "filters" the second's
 presupposition failure. Exclusive disjunction (`Truth3.xor`)
 cannot: it returns `.indet` whenever either input is `.indet`.
@@ -120,9 +120,9 @@ theorem sk_filtering_symmetric :
 filters presupposition failure from either disjunct. This mirrors
 the SK XOR truth table (Figure 2 in the paper).
 
-Note: SK *inclusive* filtering (`Truth3.join .true .indet = .true`)
+Note: SK *inclusive* filtering (`.true ⊔ .indet = .true` on `Truth3`)
 is an emergent property of the SK truth table, not a `PartialProp`
-connective. The contrast is between `Truth3.join` (filters) and
+connective. The contrast is between `⊔` (filters) and
 `Truth3.xor` (does not filter), verified in §1 above.
 -/
 
