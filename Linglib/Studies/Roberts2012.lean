@@ -20,7 +20,7 @@ formal theory of pragmatics" (Semantics & Pragmatics 5(6): 1–69).
 2. **Strategy of inquiry** — recursive question decomposition (`Strategy`):
    answering all subquestions answers the parent.
 3. **Negative partial answerhood** — a proposition partially answers a question
-   by ruling out an alternative, not just confirming one (`partiallyAnswers`).
+   by ruling out an alternative, not just confirming one (`PartiallyAnswers`).
 4. **Q-A congruence** — the focus alternatives of an answer equal the QUD
    alternatives (grounded by the Rooth–Hamblin type identity).
 
@@ -43,7 +43,7 @@ q_ai (H beans?) q_aii (H tofu?) q_bi (R beans?) q_bii (R tofu?)
 ## Representation
 
 This file uses `Question` (Set-based, with `Question.Entails` from
-`Entailment.lean`, `Question.partiallyAnswers` from `Resolution.lean`, and
+`Entailment.lean`, `Question.PartiallyAnswers` from `Resolution.lean`, and
 `Discourse.moveRelevant`, all reduced to decidable `Set` inclusions via
 the `_polar_iff` lemmas). Non-polar issues are built via
 `Question.ofList` and `⊓`; entailment for these goes through the lattice
@@ -563,14 +563,14 @@ theorem stack_3_qud : stack_3.immediateQUD = some q_a := rfl
 /-- "Hannah didn't eat beans" (`hannahBeansᶜ`) negatively partially answers
     "Did Hannah eat beans?" — it rules out the `hannahBeans` alternative. -/
 theorem neg_hb_partially_answers_qai :
-    partiallyAnswers q_ai (hannahBeansᶜ : Set D0World) := by
+    PartiallyAnswers (hannahBeansᶜ : Set D0World) q_ai := by
   rw [partiallyAnswers_polar_iff hb_ne_empty hb_ne_univ]
   decide
 
 /-- "Hannah didn't eat beans" also partially answers "What did Hannah eat?" —
     it rules out the `qa_c1` (Hannah-beans-only) alternative. -/
 theorem neg_hb_partially_answers_qa :
-    partiallyAnswers q_a (hannahBeansᶜ : Set D0World) := by
+    PartiallyAnswers (hannahBeansᶜ : Set D0World) q_a := by
   refine ⟨qa_c1, qa_c1_in_alt, Or.inr ?_⟩
   intro w hw hw'
   exact hw hw'.1
@@ -581,14 +581,14 @@ theorem neg_hb_partially_answers_qa :
 
 /-- "Hannah ate beans" positively partially answers q_ai. -/
 theorem hb_partially_answers_qai :
-    partiallyAnswers q_ai hannahBeans := by
+    PartiallyAnswers hannahBeans q_ai := by
   rw [partiallyAnswers_polar_iff hb_ne_empty hb_ne_univ]
   decide
 
 /-- "Hannah ate beans" partially answers the Big Question — it rules out
     the `{w_zero}` (all-false) alternative. -/
 theorem hb_partially_answers_q1 :
-    partiallyAnswers q_1 hannahBeans := by
+    PartiallyAnswers hannahBeans q_1 := by
   refine ⟨{w_zero}, singleton_w_zero_in_alt_q1, Or.inr ?_⟩
   intro w hw hw'
   rw [Set.mem_singleton_iff] at hw'

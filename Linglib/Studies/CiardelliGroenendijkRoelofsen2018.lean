@@ -109,7 +109,7 @@ namespace CiardelliGroenendijkRoelofsen2018
 universe u
 variable {W : Type u}
 
-open Question Semantics.Questions.Resolution
+open Question
 
 /-! ### §2.4.1 Truth and support
 

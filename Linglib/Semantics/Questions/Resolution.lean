@@ -6,10 +6,11 @@ import Linglib.Semantics.Questions.Hamblin
 [ciardelli-groenendijk-roelofsen-2018] [theiler-etal-2018] [roberts-2012] [groenendijk-stokhof-1984]
 
 Canonical Prop-valued answerhood predicates over the inquisitive
-substrate (`Question W`). One topical home for the "what does it
-mean for a state σ to answer a question Q?" question, with definitions
-chosen to match modern (CGR 2018) formal-semantics consensus rather
-than the historical Hamblin/Karttunen/G&S conventions.
+substrate (`Question W`), all in the `Question` namespace with the state
+argument first. One topical home for the "what does it mean for a state
+σ to answer a question Q?" question, with definitions chosen to match
+modern (CGR 2018) formal-semantics consensus rather than the historical
+Hamblin/Karttunen/G&S conventions.
 
 ## The notions formalised
 
@@ -37,11 +38,11 @@ Given a state `σ : Set W` and a question `Q : Question W`:
   weak / intermediate / strong / relativized exhaustivity ladder
   ([heim-1994], [george-2011], [xiang-2022]).
 
-- **`Question.partiallyAnswers`** ([roberts-2012] (3a), its non-contextual
-  core — the paper relativizes entailment to the common ground): σ settles
-  at least one alternative either positively (`σ ⊆ p`) or negatively
+- **PartiallyAnswers** ([roberts-2012] (3a), its non-contextual core —
+  the paper relativizes entailment to the common ground): σ settles at
+  least one alternative either positively (`σ ⊆ p`) or negatively
   (`σ ⊆ pᶜ`); `∅` vacuously answers everything, as there. Bridged by
-  `resolves_imp_partiallyAnswers`.
+  `Resolves.partiallyAnswers`.
 
 - **CompletelyResolves**: σ entails every alternative —
   `∀ p ∈ alt Q, σ ⊆ p`. The over-strong "intersection" reading; mostly
@@ -49,7 +50,7 @@ Given a state `σ : Set W` and a question `Q : Question W`:
   comparison point with `MentionAll`.
 
 The four form the quantifier × polarity square of answerhood: `Resolves`
-(∃, positive), `partiallyAnswers` (∃, either), `CompletelyResolves`
+(∃, positive), `PartiallyAnswers` (∃, either), `CompletelyResolves`
 (∀, positive), `MentionAll` (∀, either).
 
 ## Why this file
@@ -68,110 +69,74 @@ namespace Question
 
 variable {W : Type*}
 
-/-- `σ` partially answers `P` if it settles some alternative positively
-(`σ ⊆ p`) or negatively (`σ ⊆ pᶜ`). -/
-def partiallyAnswers (P : Question W) (σ : Set W) : Prop :=
-  ∃ p ∈ alt P, σ ⊆ p ∨ σ ⊆ pᶜ
-
-theorem partiallyAnswers_polar_iff {p σ : Set W}
-    (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
-    partiallyAnswers (polar p) σ ↔ σ ⊆ p ∨ σ ⊆ pᶜ := by
-  simp only [partiallyAnswers, alt_polar_of_nontrivial hne hnu,
-    Set.mem_insert_iff, Set.mem_singleton_iff, exists_eq_or_imp,
-    exists_eq_left, compl_compl]
-  tauto
-
-end Question
-
-namespace Semantics.Questions.Resolution
-
-universe u
-variable {W : Type u}
-
-open Question
-
-/-- `σ` **resolves** `Q`: settles at least one alternative.
-    The standard inquisitive resolution relation
-    ([ciardelli-groenendijk-roelofsen-2018]). The
-    [groenendijk-stokhof-1984] Ch. VI §5 "mention-some" notion is
-    this same predicate; the literature's `MentionSome` is just
-    `Resolves` applied to a singleton-witness. -/
+/-- `σ` resolves `Q` if it settles at least one alternative. The standard
+inquisitive resolution relation ([ciardelli-groenendijk-roelofsen-2018]);
+the [groenendijk-stokhof-1984] "mention-some" notion is this same
+predicate. -/
 def Resolves (σ : Set W) (Q : Question W) : Prop :=
   ∃ p ∈ alt Q, σ ⊆ p
 
-/-- **Mention-all** answer: σ decides every alternative.
-    For each alternative `p`, σ either entails `p` (`σ ⊆ p`) or rules
-    `p` out (`σ ⊆ pᶜ`). On partition questions this is equivalent to σ
-    being contained in a single cell. -/
+/-- `σ` partially answers `Q` if it settles some alternative positively
+(`σ ⊆ p`) or negatively (`σ ⊆ pᶜ`). -/
+def PartiallyAnswers (σ : Set W) (Q : Question W) : Prop :=
+  ∃ p ∈ alt Q, σ ⊆ p ∨ σ ⊆ pᶜ
+
+/-- `σ` mention-all answers `Q` if it decides every alternative, either
+entailing it or ruling it out. -/
 def MentionAll (σ : Set W) (Q : Question W) : Prop :=
   ∀ p ∈ alt Q, σ ⊆ p ∨ σ ⊆ pᶜ
 
-/-- **Completely resolves**: σ entails every alternative simultaneously.
-    `∀ p ∈ alt Q, σ ⊆ p`, equivalent to `σ ⊆ ⋂ alt Q`. Vacuous for
-    questions whose alternatives have empty intersection (most
-    interesting questions). Included to make the contrast with
-    `MentionAll` explicit. -/
+/-- `σ` completely resolves `Q` if it entails every alternative
+simultaneously; vacuous for questions with disjoint alternatives. -/
 def CompletelyResolves (σ : Set W) (Q : Question W) : Prop :=
   ∀ p ∈ alt Q, σ ⊆ p
 
+variable {σ : Set W} {Q : Question W}
+
 /-! ### Basic relationships -/
 
-/-- Resolving implies partially answering the question (the positive
-    disjunct of `Question.partiallyAnswers` fires). -/
-theorem resolves_imp_partiallyAnswers
-    (σ : Set W) (Q : Question W) :
-    Resolves σ Q → Question.partiallyAnswers Q σ := by
-  rintro ⟨p, hp, hsub⟩
-  exact ⟨p, hp, Or.inl hsub⟩
+/-- Resolving implies partially answering: the positive disjunct fires. -/
+theorem Resolves.partiallyAnswers (h : Resolves σ Q) :
+    PartiallyAnswers σ Q :=
+  let ⟨p, hp, hsub⟩ := h
+  ⟨p, hp, Or.inl hsub⟩
 
-/-- Completely resolving implies mention-all (the positive disjunct fires
-    at every alternative). -/
-theorem completelyResolves_imp_mentionAll
-    (σ : Set W) (Q : Question W) :
-    CompletelyResolves σ Q → MentionAll σ Q :=
-  fun h p hp => Or.inl (h p hp)
+/-- Completely resolving implies mention-all: the positive disjunct fires
+at every alternative. -/
+theorem CompletelyResolves.mentionAll (h : CompletelyResolves σ Q) :
+    MentionAll σ Q :=
+  fun p hp => Or.inl (h p hp)
 
 /-! ### Bridge to `Question.Support`
 
 `Resolves σ Q` (alt-witnessed) and `Support.supports σ Q := σ ∈ Q.props`
 (CGR support, downward-closed) are two views on the same intuitive
-notion. The CGR side is the foundational definition (a state supports
-the issue iff it is a resolving proposition); `Resolves` is the
+notion. The CGR side is the foundational definition; `Resolves` is the
 alt-witnessed corollary, equivalent under finiteness of `Q.props`. -/
 
-/-- `Resolves` (alt-witness) implies `Support.supports` (CGR
-    membership): an alt is a resolving proposition, so any state below
-    an alt is a resolving proposition by `downward_closed`. -/
-theorem resolves_imp_supports (σ : Set W) (Q : Question W) :
-    Resolves σ Q → Question.Support.supports σ Q := by
-  rintro ⟨p, hp, hsub⟩
-  exact Q.downward_closed p (Question.alt_subset_props _ hp) σ hsub
+/-- An alt witness is a resolving proposition, so any state below it is
+one by downward closure. -/
+theorem Resolves.supports (h : Resolves σ Q) : Support.supports σ Q :=
+  let ⟨p, hp, hsub⟩ := h
+  Q.downward_closed p (alt_subset_props _ hp) σ hsub
 
-/-- Under finiteness of `Q.props`, `Support.supports` (CGR membership)
-    yields an alt witness via `Question.exists_alt_above` — recovering
-    `Resolves`. The two notions are equivalent when alternatives form
-    a finite antichain (the typical empirical case). -/
-theorem supports_imp_resolves (σ : Set W) (Q : Question W)
-    (hFin : Q.props.Finite) :
-    Question.Support.supports σ Q → Resolves σ Q := by
-  intro hσ
-  exact Question.exists_alt_above Q hFin hσ
+/-- Under finiteness of `Q.props`, CGR support yields an alt witness via
+`exists_alt_above`. -/
+theorem resolves_of_supports (hFin : Q.props.Finite)
+    (h : Support.supports σ Q) : Resolves σ Q :=
+  exists_alt_above Q hFin h
 
-/-- Equivalence of `Resolves` and `Support.supports` under finiteness. -/
-theorem resolves_iff_supports (σ : Set W) (Q : Question W)
-    (hFin : Q.props.Finite) :
-    Resolves σ Q ↔ Question.Support.supports σ Q :=
-  ⟨resolves_imp_supports σ Q, supports_imp_resolves σ Q hFin⟩
+/-- `Resolves` and `Support.supports` coincide under finiteness. -/
+theorem resolves_iff_supports (hFin : Q.props.Finite) :
+    Resolves σ Q ↔ Support.supports σ Q :=
+  ⟨Resolves.supports, resolves_of_supports hFin⟩
 
-/-! ### Per-constructor characterizations
+/-! ### Polar reduction
 
-Iff lemmas for the inquisitive constructors `polar` and `which`. These
-are the joints that consumer-side study files build on. -/
+Iff lemmas reducing the square on nontrivial `polar p` to plain `Set`
+inclusions — the joints consumer-side study files build on. -/
 
-/-- `Resolves σ (polar p)`: σ entails `p` or σ entails `pᶜ`. (For
-    nontrivial polar; the trivial cases collapse to ⊤.) -/
-theorem Resolves_polar_iff_of_nontrivial {p : Set W} (σ : Set W)
-    (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
+theorem resolves_polar_iff {p : Set W} (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
     Resolves σ (polar p) ↔ σ ⊆ p ∨ σ ⊆ pᶜ := by
   unfold Resolves
   constructor
@@ -183,8 +148,15 @@ theorem Resolves_polar_iff_of_nontrivial {p : Set W} (σ : Set W)
     · exact ⟨p, (mem_alt_polar_of_nontrivial hne hnu p).mpr (Or.inl rfl), h⟩
     · exact ⟨pᶜ, (mem_alt_polar_of_nontrivial hne hnu pᶜ).mpr (Or.inr rfl), h⟩
 
-/-- `MentionAll σ (polar p)`: σ decides `p`. (For nontrivial polar.) -/
-theorem MentionAll_polar_iff_of_nontrivial {p : Set W} (σ : Set W)
+theorem partiallyAnswers_polar_iff {p : Set W}
+    (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
+    PartiallyAnswers σ (polar p) ↔ σ ⊆ p ∨ σ ⊆ pᶜ := by
+  simp only [PartiallyAnswers, alt_polar_of_nontrivial hne hnu,
+    Set.mem_insert_iff, Set.mem_singleton_iff, exists_eq_or_imp,
+    exists_eq_left, compl_compl]
+  tauto
+
+theorem mentionAll_polar_iff {p : Set W}
     (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
     MentionAll σ (polar p) ↔ σ ⊆ p ∨ σ ⊆ pᶜ := by
   unfold MentionAll
@@ -200,28 +172,21 @@ theorem MentionAll_polar_iff_of_nontrivial {p : Set W} (σ : Set W)
       · right; rw [compl_compl]; exact h
       · left; exact h
 
-/-! ### Decidability for polar questions
+/-! ### Decidability for polar questions -/
 
-Under standard finiteness + decidability hypotheses, the substrate
-predicates `Resolves`, `MentionAll`, `CompletelyResolves` for a
-nontrivial `polar p` question are all decidable. These reduce to
-"`σ ⊆ p ∨ σ ⊆ pᶜ`" via the per-constructor characterizations above. -/
-
-/-- `Resolves σ (polar p)` is decidable when `σ ⊆ p` and `σ ⊆ pᶜ` are
-    decidable and `p`'s nontriviality is given. -/
+/-- `Resolves σ (polar p)` is decidable when the two inclusions are. -/
 def Resolves.decidable_polar {p σ : Set W}
     (hne : p ≠ ∅) (hnu : p ≠ Set.univ)
     [Decidable (σ ⊆ p)] [Decidable (σ ⊆ pᶜ)] :
     Decidable (Resolves σ (polar p)) :=
-  decidable_of_iff _ (Resolves_polar_iff_of_nontrivial σ hne hnu).symm
+  decidable_of_iff _ (resolves_polar_iff hne hnu).symm
 
-/-- `MentionAll σ (polar p)` is decidable under the same hypotheses as
-    `Resolves`. The two are equivalent on polar questions: deciding
-    `p` is the only requirement. -/
+/-- `MentionAll σ (polar p)` is decidable under the same hypotheses:
+on polar questions it coincides with `Resolves`. -/
 def MentionAll.decidable_polar {p σ : Set W}
     (hne : p ≠ ∅) (hnu : p ≠ Set.univ)
     [Decidable (σ ⊆ p)] [Decidable (σ ⊆ pᶜ)] :
     Decidable (MentionAll σ (polar p)) :=
-  decidable_of_iff _ (MentionAll_polar_iff_of_nontrivial σ hne hnu).symm
+  decidable_of_iff _ (mentionAll_polar_iff hne hnu).symm
 
-end Semantics.Questions.Resolution
+end Question
