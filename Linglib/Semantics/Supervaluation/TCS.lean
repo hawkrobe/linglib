@@ -1,7 +1,7 @@
 import Linglib.Semantics.Supervaluation.Basic
 import Linglib.Core.Logic.Truth3
 import Linglib.Core.Logic.Consequence
-import Linglib.Core.Logic.ThreeValuedLogic
+import Linglib.Core.ModelTheory.Trivalent
 import Linglib.Core.Logic.Modal.Basic
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Fintype.Basic
@@ -130,9 +130,6 @@ namespace Semantics.Supervaluation.TCS
 open Core.Duality (Truth3)
 open Core.Logic.Modal
   (AccessRel IsKTBFrame IsSerial box diamond box_T Logic)
-open Core.Logic.ThreeValuedLogic (PropFormula MVModel mvEval lpSat k3Sat
-  isLPDesignated isK3Designated lpSat_neg_iff k3Sat_neg_iff
-  lpSat_conj k3Sat_conj)
 open Core.Logic.Consequence (MixedConsequence SatImplies IsSelfDual
   premise_monotone conclusion_monotone mixed_monotone)
 open Semantics.Supervaluation (SpecSpace superTrue
@@ -217,10 +214,9 @@ inductive TCSAtom (Pred D : Type*) where
   | sim : Pred → D → D → TCSAtom Pred D
 
 /-- TCS formulas: propositional combinations (¬, ∧) of TCS atoms.
-    Reuses the canonical `PropFormula` from `Core.Logic.ThreeValuedLogic`
-    rather than introducing a duplicate inductive — `mvEval` and the
-    `lpSat`/`k3Sat` lemmas in that file apply directly. -/
-abbrev TCSFormula (Pred D : Type*) := PropFormula (TCSAtom Pred D)
+    Reuses the canonical `Trivalent.Formula` rather than introducing a duplicate
+    inductive — `Trivalent.Formula.eval` and the `Trivalent.Formula.Realize` lemmas apply directly. -/
+abbrev TCSFormula (Pred D : Type*) := Trivalent.Formula (TCSAtom Pred D)
 
 -- ════════════════════════════════════════════════════
 -- § 3. Atomic Satisfaction (Definition 9 atomic clauses, p. 353)
@@ -776,7 +772,7 @@ attribute [local instance] Classical.propDecidable
     decidable in general (only when `D` is finite and `sim` is decidable).
     The local `Classical.propDecidable` instance makes the `if-then-else`
     well-typed; every theorem about `toMV` remains constructive. -/
-noncomputable def toMV (M : TModel D Pred) : MVModel (TCSAtom Pred D) := λ α =>
+noncomputable def toMV (M : TModel D Pred) : Trivalent.Model (TCSAtom Pred D) := λ α =>
   match α with
   | .pred P a =>
     if StrictAt M P a then Truth3.true
@@ -829,22 +825,22 @@ theorem toMV_sim_false_iff (M : TModel D Pred) (P : Pred) (a b : D) :
 /-- **Lemma 4** (p. 361, formula-level): for every T-model `M` and TCS
     formula `φ`,
 
-    - `M ⊨ᵗ φ ↔ mvEval (toMV M) φ` is LP-designated (non-false)
-    - `M ⊨ˢ φ ↔ mvEval (toMV M) φ` is K3-designated (= true)
+    - `M ⊨ᵗ φ ↔ Trivalent.Formula.eval (toMV M) φ` is LP-designated (non-false)
+    - `M ⊨ˢ φ ↔ Trivalent.Formula.eval (toMV M) φ` is K3-designated (= true)
 
     The two halves are proved by mutual induction. The negation case
     uses `lpSat_neg_iff`/`k3Sat_neg_iff` from the substrate; the
     conjunction case uses `lpSat_conj`/`k3Sat_conj`. -/
 theorem tcs_lp_k3_correspondence (M : TModel D Pred) (φ : TCSFormula Pred D) :
-    (Sat M .tolerant φ ↔ lpSat (toMV M) φ) ∧
-    (Sat M .strict φ ↔ k3Sat (toMV M) φ) := by
+    (Sat M .tolerant φ ↔ Trivalent.Formula.Realize (toMV M) .lp φ) ∧
+    (Sat M .strict φ ↔ Trivalent.Formula.Realize (toMV M) .k3 φ) := by
   induction φ with
   | atom α =>
     cases α with
     | pred P a =>
       refine ⟨?_, ?_⟩
       · -- tolerant ↔ LP-designated
-        simp only [Sat.atom_tolerant_pred, lpSat, isLPDesignated, mvEval]
+        simp only [Sat.atom_tolerant_pred, Trivalent.Formula.Realize, Truth3.designated_lp_iff, Trivalent.Formula.eval]
         constructor
         · intro h heq
           have := (toMV_pred_false_iff M P a).mp heq
@@ -853,19 +849,19 @@ theorem tcs_lp_k3_correspondence (M : TModel D Pred) (φ : TCSFormula Pred D) :
           by_contra hnot
           exact h ((toMV_pred_false_iff M P a).mpr hnot)
       · -- strict ↔ K3-designated
-        simp only [Sat.atom_strict_pred, k3Sat, isK3Designated, mvEval]
+        simp only [Sat.atom_strict_pred, Trivalent.Formula.Realize, Truth3.designated_k3_iff, Trivalent.Formula.eval]
         exact (toMV_pred_true_iff M P a).symm
     | sim P a b =>
       refine ⟨?_, ?_⟩
       · -- For sim atoms: Sat M m (sim) = M.sim P a b regardless of m.
-        -- LP-sat: mvEval = sim ? .true : .false; LP-designated iff true iff sim.
-        simp only [Sat.atom_sim, lpSat, isLPDesignated, mvEval, toMV]
+        -- LP-sat: Trivalent.Formula.eval = sim ? .true : .false; LP-designated iff true iff sim.
+        simp only [Sat.atom_sim, Trivalent.Formula.Realize, Truth3.designated_lp_iff, Trivalent.Formula.eval, toMV]
         by_cases hsim : M.sim P a b
         · simp only [if_pos hsim]
           exact ⟨λ _ h => Truth3.noConfusion h, λ _ => hsim⟩
         · simp only [if_neg hsim]
           exact ⟨λ h => absurd h hsim, λ h => absurd rfl h⟩
-      · simp only [Sat.atom_sim, k3Sat, isK3Designated, mvEval, toMV]
+      · simp only [Sat.atom_sim, Trivalent.Formula.Realize, Truth3.designated_k3_iff, Trivalent.Formula.eval, toMV]
         by_cases hsim : M.sim P a b
         · simp only [if_pos hsim]
           refine Iff.intro (λ _ => ?_) (λ _ => hsim)
@@ -876,29 +872,29 @@ theorem tcs_lp_k3_correspondence (M : TModel D Pred) (φ : TCSFormula Pred D) :
     obtain ⟨iht, ihs⟩ := ih
     refine ⟨?_, ?_⟩
     · -- tolerant (¬ψ) ↔ LP-designated of neg
-      simp only [Sat.neg_eq, SatMode.dual, lpSat_neg_iff]
+      simp only [Sat.neg_eq, SatMode.dual, Trivalent.Formula.realize_neg, Truth3.Designation.dual_lp, Truth3.Designation.dual_k3]
       exact not_congr ihs
-    · simp only [Sat.neg_eq, SatMode.dual, k3Sat_neg_iff]
+    · simp only [Sat.neg_eq, SatMode.dual, Trivalent.Formula.realize_neg, Truth3.Designation.dual_lp, Truth3.Designation.dual_k3]
       exact not_congr iht
   | conj ψ χ ihψ ihχ =>
     obtain ⟨ihtψ, ihsψ⟩ := ihψ
     obtain ⟨ihtχ, ihsχ⟩ := ihχ
     refine ⟨?_, ?_⟩
-    · simp only [Sat.conj_eq, lpSat_conj]
+    · simp only [Sat.conj_eq, Trivalent.Formula.realize_conj]
       exact and_congr ihtψ ihtχ
-    · simp only [Sat.conj_eq, k3Sat_conj]
+    · simp only [Sat.conj_eq, Trivalent.Formula.realize_conj]
       exact and_congr ihsψ ihsχ
 
 /-- **Lemma 4, t-direction**: tolerant satisfaction = LP-satisfaction
     via `toMV`. -/
-theorem tolerant_iff_lpSat (M : TModel D Pred) (φ : TCSFormula Pred D) :
-    Sat M .tolerant φ ↔ lpSat (toMV M) φ :=
+theorem tolerant_iff_lp (M : TModel D Pred) (φ : TCSFormula Pred D) :
+    Sat M .tolerant φ ↔ Trivalent.Formula.Realize (toMV M) .lp φ :=
   (tcs_lp_k3_correspondence M φ).1
 
 /-- **Lemma 4, s-direction**: strict satisfaction = K3-satisfaction
     via `toMV`. -/
-theorem strict_iff_k3Sat (M : TModel D Pred) (φ : TCSFormula Pred D) :
-    Sat M .strict φ ↔ k3Sat (toMV M) φ :=
+theorem strict_iff_k3 (M : TModel D Pred) (φ : TCSFormula Pred D) :
+    Sat M .strict φ ↔ Trivalent.Formula.Realize (toMV M) .k3 φ :=
   (tcs_lp_k3_correspondence M φ).2
 
 /-- **Theorem 3** (paper p. 362, consequence-level): on the restricted
@@ -910,27 +906,27 @@ theorem tcs_lp_consequence_correspondence
     (Γ : List (TCSFormula Pred D)) (φ : TCSFormula Pred D) :
     tcsConsequence .tolerant .tolerant Γ φ ↔
       ∀ M : TModel D Pred,
-        (∀ γ ∈ Γ, lpSat (toMV M) γ) → lpSat (toMV M) φ := by
+        (∀ γ ∈ Γ, Trivalent.Formula.Realize (toMV M) .lp γ) → Trivalent.Formula.Realize (toMV M) .lp φ := by
   refine ⟨?_, ?_⟩
   · intro h M hprem
-    rw [← tolerant_iff_lpSat]
-    exact h M (λ γ hγ => (tolerant_iff_lpSat M γ).mpr (hprem γ hγ))
+    rw [← tolerant_iff_lp]
+    exact h M (λ γ hγ => (tolerant_iff_lp M γ).mpr (hprem γ hγ))
   · intro h M hprem
-    rw [tolerant_iff_lpSat]
-    exact h M (λ γ hγ => (tolerant_iff_lpSat M γ).mp (hprem γ hγ))
+    rw [tolerant_iff_lp]
+    exact h M (λ γ hγ => (tolerant_iff_lp M γ).mp (hprem γ hγ))
 
 theorem tcs_k3_consequence_correspondence
     (Γ : List (TCSFormula Pred D)) (φ : TCSFormula Pred D) :
     tcsConsequence .strict .strict Γ φ ↔
       ∀ M : TModel D Pred,
-        (∀ γ ∈ Γ, k3Sat (toMV M) γ) → k3Sat (toMV M) φ := by
+        (∀ γ ∈ Γ, Trivalent.Formula.Realize (toMV M) .k3 γ) → Trivalent.Formula.Realize (toMV M) .k3 φ := by
   refine ⟨?_, ?_⟩
   · intro h M hprem
-    rw [← strict_iff_k3Sat]
-    exact h M (λ γ hγ => (strict_iff_k3Sat M γ).mpr (hprem γ hγ))
+    rw [← strict_iff_k3]
+    exact h M (λ γ hγ => (strict_iff_k3 M γ).mpr (hprem γ hγ))
   · intro h M hprem
-    rw [strict_iff_k3Sat]
-    exact h M (λ γ hγ => (strict_iff_k3Sat M γ).mp (hprem γ hγ))
+    rw [strict_iff_k3]
+    exact h M (λ γ hγ => (strict_iff_k3 M γ).mp (hprem γ hγ))
 
 end LpK3
 

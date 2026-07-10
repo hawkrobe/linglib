@@ -50,7 +50,7 @@ for which `Truth3` is the canonical finite instance.
 ## References
 
 [kleene-1952] [bochvar-1937] [belnap-1970] [peters-1979] [beaver-krahmer-2001]
-[wang-davidson-2026]
+[cobreros-etal-2012] [wang-davidson-2026]
 -/
 
 namespace Core.Duality
@@ -149,6 +149,69 @@ theorem indet_inf (a : Truth3) (h : a ≠ .false) : .indet ⊓ a = .indet := by
 theorem indet_sup (a : Truth3) (h : a ≠ .true) : .indet ⊔ a = .indet := by
   cases a <;> first | rfl | exact absurd rfl h
 
+/-! ### Designated values
+
+Matrix semantics fixes an upward-closed set of *designated* values; on a chain every such
+set is principal, so a designation standard is just a threshold. K3 (strong Kleene)
+designates `{.true}` and preserves truth; LP (Priest's Logic of Paradox) designates
+`{.indet, .true}` and preserves non-falsity ([cobreros-etal-2012]). Same algebra, dual
+logics — and every designation law is an order law. -/
+
+/-- A designation standard, identified by its least designated value (`threshold`). -/
+inductive Designation where
+  | k3
+  | lp
+  deriving Repr, DecidableEq, Inhabited, Fintype
+
+/-- The threshold (least designated value) of a standard. -/
+def Designation.threshold : Designation → Truth3
+  | .k3 => .true
+  | .lp => .indet
+
+/-- The K3/LP duality as an involution on standards. -/
+def Designation.dual : Designation → Designation
+  | .k3 => .lp
+  | .lp => .k3
+
+@[simp] theorem Designation.dual_dual (d : Designation) : d.dual.dual = d := by
+  cases d <;> rfl
+
+@[simp] theorem Designation.dual_k3 : Designation.k3.dual = .lp := rfl
+@[simp] theorem Designation.dual_lp : Designation.lp.dual = .k3 := rfl
+
+/-- `v` is designated at `d` iff it clears the threshold — the designated set is the
+principal filter above `d.threshold`. -/
+def designated (d : Designation) (v : Truth3) : Prop := d.threshold ≤ v
+
+instance (d : Designation) (v : Truth3) : Decidable (designated d v) :=
+  inferInstanceAs (Decidable (_ ≤ _))
+
+/-- K3-designation is truth. -/
+@[simp] theorem designated_k3_iff (v : Truth3) : designated .k3 v ↔ v = .true := by
+  cases v <;> decide
+
+/-- LP-designation is non-falsity. -/
+@[simp] theorem designated_lp_iff (v : Truth3) : designated .lp v ↔ v ≠ .false := by
+  cases v <;> decide
+
+/-- K3/LP duality via negation: negation swaps the standards (the antitone involution
+`neg` fixes `indet`, exchanging the two principal filters' complements). -/
+theorem designated_neg_iff (d : Designation) (v : Truth3) :
+    designated d.dual (neg v) ↔ ¬ designated d v := by
+  cases d <;> cases v <;> decide
+
+/-- Designation distributes over `⊓`: the designated set is a filter (`le_inf_iff`). -/
+theorem designated_inf (d : Designation) (v w : Truth3) :
+    designated d (v ⊓ w) ↔ designated d v ∧ designated d w := le_inf_iff
+
+/-- Designation distributes over `⊔`: thresholds are prime on a chain (`le_sup_iff`). -/
+theorem designated_sup (d : Designation) (v w : Truth3) :
+    designated d (v ⊔ w) ↔ designated d v ∨ designated d w := le_sup_iff
+
+/-- K3 is the stronger standard: its threshold dominates LP's. -/
+theorem designated_lp_of_k3 {v : Truth3} (h : designated .k3 v) : designated .lp v :=
+  le_trans (by decide) h
+
 /-! ### Conversion from Bool -/
 
 /-- The two-valued fragment: `Bool.true ↦ .true`, `Bool.false ↦ .false`. -/
@@ -186,6 +249,11 @@ def toBoolOrFalse : Truth3 → Bool
 /-- Negation agrees with Bool. -/
 theorem neg_ofBool (a : Bool) : neg (ofBool a) = ofBool (!a) := by
   cases a <;> rfl
+
+/-- The designation standards agree on the two-valued fragment. -/
+theorem designated_ofBool (d : Designation) (b : Bool) :
+    designated d (ofBool b) ↔ b = Bool.true := by
+  cases d <;> cases b <;> decide
 
 /-- `Truth3.ofBool` as a bounded lattice homomorphism, onto the `{⊥, ⊤}` sublattice
 of `Truth3` — so consumers can appeal to the general `LatticeHom` API. -/
