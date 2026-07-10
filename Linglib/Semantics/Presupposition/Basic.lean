@@ -30,10 +30,15 @@ points. References: [heim-1983], [schlenker-2009], [von-fintel-1999],
   `eval_andFilter`/`eval_orFilter`).
 * `belnapLift` — unifier showing Belnap = flexible accommodation for any
   binary `Prop` operator with an identity.
+* `eval` — evaluation into `Prop3 W`, with the simp-normal interface
+  `eval_eq_true_iff`/`eval_eq_false_iff`/`eval_eq_indet_iff`;
+  `eval_surjective`/`eval_eq_eval_iff` make precise that `PartialProp` is the
+  total-representative presentation of `Prop3` (values outside the
+  presupposition are inert).
 * `strawsonEntails`, `strongEntails` — entailment relations: the
-  canonical [von-fintel-1999] form (presup-as-premise) and the
-  stronger variant that additionally requires `q`'s presupposition to
-  project from `p`'s satisfaction.
+  canonical [von-fintel-1999] form (presup-as-premise; not transitive,
+  `strawsonEntails_not_trans`) and the stronger variant that additionally
+  requires `q`'s presupposition to project from `p`'s satisfaction.
 * `liveness`, `genuineness` — [yagi-2025] disjunction-update conditions.
 * `presupOfReferent` — definite-description combinator (single source of
   truth for singular definite denotations).
@@ -193,6 +198,21 @@ noncomputable def eval (p : PartialProp W) : Prop3 W := fun w =>
   if p.presup w then
     if p.assertion w then .true else .false
   else .indet
+
+/-! The simp-normal interface to `eval`: consumers reason through the three value
+characterizations rather than the classical `if`-nest. -/
+
+@[simp] theorem eval_eq_true_iff (p : PartialProp W) (w : W) :
+    p.eval w = .true ↔ p.presup w ∧ p.assertion w := by
+  by_cases hp : p.presup w <;> by_cases ha : p.assertion w <;> simp [eval, hp, ha]
+
+@[simp] theorem eval_eq_false_iff (p : PartialProp W) (w : W) :
+    p.eval w = .false ↔ p.presup w ∧ ¬p.assertion w := by
+  by_cases hp : p.presup w <;> by_cases ha : p.assertion w <;> simp [eval, hp, ha]
+
+@[simp] theorem eval_eq_indet_iff (p : PartialProp W) (w : W) :
+    p.eval w = .indet ↔ ¬p.presup w := by
+  by_cases hp : p.presup w <;> by_cases ha : p.assertion w <;> simp [eval, hp, ha]
 
 /-! ### Classical connectives -/
 
@@ -400,10 +420,20 @@ noncomputable def belnapLift (f : Prop → Prop → Prop) (unit : Prop)
 /-- Strawson entailment ([von-fintel-1999]): `p` entails `q` at every
     world where both presuppositions hold. The conclusion `q`'s
     presupposition is a *premise* added to the entailment, not something
-    the entailment delivers. Matches `Semantics.Dynamic.Bilateral.BUS`'s
-    `strawsonEntails` (canonical Strawson). -/
+    the entailment delivers. The same notion on bilateral-update
+    denotations is `ElliottSudo2025.strawsonEntails`. -/
 def strawsonEntails (p q : PartialProp W) : Prop :=
   ∀ w, p.presup w → q.presup w → p.assertion w → q.assertion w
+
+/-- Strawson entailment is **not** transitive — an undefined middle term discharges both
+    premises vacuously, the well-known failure of [von-fintel-1999]'s notion — so
+    `strawsonEntails` supports no `Preorder` instance. -/
+theorem strawsonEntails_not_trans :
+    ¬ ∀ p q r : PartialProp Unit,
+        strawsonEntails p q → strawsonEntails q r → strawsonEntails p r :=
+  λ h =>
+    (h top undefined bot (λ _ _ hq _ => hq.elim) (λ _ hq _ _ => hq.elim))
+      () trivial trivial trivial
 
 /-- Strong (Strawson-projecting) entailment: at every world where `p` is
     defined and true, `q` is *both* defined and true. Stronger than
@@ -536,13 +566,8 @@ theorem impFilter_presup_eq_andFilter_presup (p q : PartialProp W) :
 /-- Evaluation is defined iff presupposition holds. -/
 @[simp] theorem eval_isDefined (p : PartialProp W) (w : W) :
     (p.eval w).isDefined ↔ p.presup w := by
-  simp only [eval]
-  by_cases hp : p.presup w
-  · simp only [if_pos hp]
-    by_cases ha : p.assertion w
-    · simp only [if_pos ha]; exact iff_of_true trivial hp
-    · simp only [if_neg ha]; exact iff_of_true trivial hp
-  · simp only [if_neg hp]; exact iff_of_false (by decide) hp
+  by_cases hp : p.presup w <;> by_cases ha : p.assertion w <;>
+    simp [eval, hp, ha, Truth3.isDefined]
 
 /-- Negation evaluation. -/
 theorem eval_neg (p : PartialProp W) (w : W) :
@@ -626,7 +651,7 @@ theorem eval_xor (p q : PartialProp W) (w : W)
   have hpq : p.presup w ∧ q.presup w := ⟨hp, hq⟩
   simp only [eval, xor, if_pos hp, if_pos hq, if_pos hpq]
   by_cases ha : p.assertion w <;> by_cases hb : q.assertion w <;>
-    simp [ha, hb, Truth3.xor, not_not]
+    simp [ha, hb, Truth3.xor]
 
 /-- Exclusive disjunction never filters: when either presupposition fails,
     the result is undefined. [wang-davidson-2026] -/
@@ -693,7 +718,7 @@ theorem eval_or (p q : PartialProp W) (w : W) :
   simp only [eval, or, Truth3.joinWeak]
   by_cases hp : p.presup w <;> by_cases hq : q.presup w <;> simp [hp, hq] <;>
     by_cases ha : p.assertion w <;> by_cases hb : q.assertion w <;>
-    simp [ha, hb, Truth3.ofBool]
+    simp [ha, hb]
 
 /-- Belnap conjunction evaluates to `Truth3.meetBelnap` pointwise. -/
 theorem eval_andBelnap (p q : PartialProp W) (w : W) :
@@ -701,7 +726,7 @@ theorem eval_andBelnap (p q : PartialProp W) (w : W) :
   simp only [eval, andBelnap, Truth3.meetBelnap]
   by_cases hp : p.presup w <;> by_cases hq : q.presup w <;> simp [hp, hq] <;>
     by_cases ha : p.assertion w <;> by_cases hb : q.assertion w <;>
-    simp [ha, hb, Truth3.ofBool]
+    simp [ha, hb]
 
 /-- Belnap disjunction evaluates to `Truth3.joinBelnap` pointwise. -/
 theorem eval_orBelnap (p q : PartialProp W) (w : W) :
@@ -709,7 +734,7 @@ theorem eval_orBelnap (p q : PartialProp W) (w : W) :
   simp only [eval, orBelnap, Truth3.joinBelnap]
   by_cases hp : p.presup w <;> by_cases hq : q.presup w <;> simp [hp, hq] <;>
     by_cases ha : p.assertion w <;> by_cases hb : q.assertion w <;>
-    simp [ha, hb, Truth3.ofBool]
+    simp [ha, hb]
 
 /-! ### Belnap lift: unification -/
 
@@ -796,6 +821,40 @@ theorem eval_ofProp3 (p : Prop3 W) : (ofProp3 p).eval = p := by
     · rw [if_neg h2]; symm
       exact match p w, h1, h2 with | .false, _, _ => rfl
   · rw [if_neg h1]; symm; exact not_not.mp h1
+
+/-- `eval` is surjective — every three-valued proposition has a total representative,
+    `ofProp3` being a section. -/
+theorem eval_surjective : Function.Surjective (eval : PartialProp W → Prop3 W) :=
+  λ p => ⟨ofProp3 p, eval_ofProp3 p⟩
+
+/-- `eval` identifies exactly agreement on definedness and, where defined, on assertion:
+    `PartialProp` is the *total-representative* presentation of `Prop3 W`, carrying
+    (linguistically inert) assertion values outside the presupposition that `eval`
+    forgets — so `ofProp3 ∘ eval` is not the identity, only `eval ∘ ofProp3` is
+    (`eval_ofProp3`). -/
+theorem eval_eq_eval_iff (p q : PartialProp W) :
+    p.eval = q.eval ↔
+      ∀ w, (p.presup w ↔ q.presup w) ∧ (p.presup w → (p.assertion w ↔ q.assertion w)) := by
+  constructor
+  · intro h w
+    have hw : p.eval w = q.eval w := congrFun h w
+    have hpq : p.presup w ↔ q.presup w := by
+      rw [← eval_isDefined p w, ← eval_isDefined q w, hw]
+    refine ⟨hpq, λ hp => ⟨λ ha => ?_, λ ha => ?_⟩⟩
+    · exact ((eval_eq_true_iff q w).mp
+        (hw.symm.trans ((eval_eq_true_iff p w).mpr ⟨hp, ha⟩))).2
+    · exact ((eval_eq_true_iff p w).mp
+        (hw.trans ((eval_eq_true_iff q w).mpr ⟨hpq.mp hp, ha⟩))).2
+  · intro h
+    funext w
+    obtain ⟨hpq, himp⟩ := h w
+    by_cases hp : p.presup w
+    · by_cases ha : p.assertion w
+      · simp [eval, hp, ha, hpq.mp hp, (himp hp).mp ha]
+      · have hqa : ¬q.assertion w := λ hqa => ha ((himp hp).mpr hqa)
+        simp [eval, hp, ha, hpq.mp hp, hqa]
+    · have hq : ¬q.presup w := λ hq => hp (hpq.mpr hq)
+      simp [eval, hp, hq]
 
 /-! ### Genuineness theorems -/
 
