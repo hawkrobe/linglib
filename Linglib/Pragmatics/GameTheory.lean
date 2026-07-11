@@ -30,7 +30,7 @@ expected-utility maximization over those weighted base features.
 Signaling games ([franke-2011], [lewis-1969]) extend this to
 games where actions = utterances and payoffs depend on communicated
 information. The current module covers non-communicative games; signaling
-games are in `Pragmatics/SignalingGames.lean`.
+games are in `Pragmatics/SignalingGame/Basic.lean`.
 -/
 
 set_option autoImplicit false

@@ -1460,7 +1460,7 @@ import Linglib.Pragmatics.RelevanceTheory.Comprehension
 import Linglib.Pragmatics.RelevanceTheory.Nonliteral
 import Linglib.Pragmatics.RelevanceTheory.Ostension
 import Linglib.Pragmatics.RelevanceTheory.Relevance
-import Linglib.Pragmatics.SignalingGames
+import Linglib.Pragmatics.SignalingGame.Basic
 import Linglib.Pragmatics.SocialMeaning.EckertMontague
 import Linglib.Pragmatics.SocialMeaning.IndexicalField
 import Linglib.Pragmatics.SocialMeaning.PropertySpace
