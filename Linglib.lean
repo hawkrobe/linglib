@@ -2355,6 +2355,7 @@ import Linglib.Studies.Israel2001
 import Linglib.Studies.ItoMester2009
 import Linglib.Studies.Izvorski1997
 import Linglib.Studies.Jaeger2007
+import Linglib.Studies.Jaeger2014
 import Linglib.Studies.JansenPollmann2001
 import Linglib.Studies.Jardine2016
 import Linglib.Studies.Jardine2016Tone
