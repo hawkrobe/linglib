@@ -1,7 +1,7 @@
 import Mathlib.Data.Finset.Max
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
-import Linglib.Pragmatics.IBR.Basic
+import Linglib.Studies.Franke2011.IBR
 import Linglib.Semantics.Exhaustification.Operators.Basic
 
 /-!
@@ -31,20 +31,22 @@ Franke writes `ExhMM` (minimal models) for the operator linglib names `exhMW`
 (minimal worlds, the project-canonical name).
 -/
 
-namespace RSA.IBR
+namespace Franke2011
 
 open Exhaustification
 
-variable (G : InterpGame)
+variable {T M : Type*} [Fintype T] [Fintype M] [DecidableEq M]
+  (G : InterpGame T M)
 
 /-! ### Scalar games -/
 
 /-- A scalar game has truth sets that are totally ordered by inclusion — the
     Horn-scale structure under which [franke-2011]'s Fact 1 (`R₁(mS) ⊆ ExhMM(S)`,
     §10) sharpens to an equality. Without it, "dominated" messages (never optimal
-    at any state) fall back to L0, breaking the exhMW characterization. -/
+    at any state) fall back to the literal listener, breaking the exhMW
+    characterization. -/
 def isScalarGame : Prop :=
-  ∀ m₁ m₂ : G.Message, G.trueStates m₁ ⊆ G.trueStates m₂ ∨ G.trueStates m₂ ⊆ G.trueStates m₁
+  ∀ m₁ m₂ : M, G.trueStates m₁ ⊆ G.trueStates m₂ ∨ G.trueStates m₂ ⊆ G.trueStates m₁
 
 variable (hScalar : isScalarGame G)
 
@@ -56,7 +58,7 @@ include hScalar in
     ∃ m₂ ∈ trueMessages(s₂) \ trueMessages(s₁), then trueStates(m₁) and
     trueStates(m₂) are incomparable (s₁ distinguishes them one way, s₂ the
     other), contradicting isScalarGame. -/
-theorem scalar_trueMessages_total (s₁ s₂ : G.State) :
+theorem scalar_trueMessages_total (s₁ s₂ : T) :
     G.trueMessages s₁ ⊆ G.trueMessages s₂ ∨ G.trueMessages s₂ ⊆ G.trueMessages s₁ := by
   by_contra h
   push Not at h
@@ -78,9 +80,9 @@ theorem scalar_trueMessages_total (s₁ s₂ : G.State) :
 include hScalar in
 /-- In a scalar game, at an m-true state with fewest true messages, every
     message true there is weaker than m: its truth set contains trueStates(m). -/
-theorem scalar_minimal_messages_weaker (m : G.Message) (s₀ : G.State)
-    (hmin : ∀ t, G.meaning m t = true → (G.trueMessages s₀).card ≤ (G.trueMessages t).card)
-    (m' : G.Message) (hm' : G.meaning m' s₀ = true) :
+theorem scalar_minimal_messages_weaker (m : M) (s₀ : T)
+    (hmin : ∀ t, G.meaning m t → (G.trueMessages s₀).card ≤ (G.trueMessages t).card)
+    (m' : M) (hm' : G.meaning m' s₀) :
     G.trueStates m ⊆ G.trueStates m' := by
   intro t ht
   simp only [InterpGame.mem_trueStates] at ht ⊢
@@ -95,18 +97,18 @@ theorem scalar_minimal_messages_weaker (m : G.Message) (s₀ : G.State)
 
 /-! ### Alternative-set bridge -/
 
-/-- Convert interpretation game to alternative set for exhaustification.
-    Converts Bool meaning to Set by using equality with true. -/
-def toAlternatives : Set (Set G.State) :=
-  { λ s => G.meaning m s = true | m : G.Message }
+/-- Convert interpretation game to alternative set for exhaustification. -/
+def toAlternatives : Set (Set T) :=
+  { λ s => G.meaning m s | m : M }
 
-/-- The prejacent proposition for a message (Bool → Prop conversion) -/
-def prejacent (m : G.Message) : Set G.State :=
-  λ s => G.meaning m s = true
+/-- The prejacent proposition for a message. -/
+def prejacent (m : M) : Set T :=
+  λ s => G.meaning m s
 
+omit [Fintype T] [DecidableEq M] in
 /-- Strict subset of trueMessages implies <_ALT under `toAlternatives G`. -/
 theorem trueMessages_ssubset_implies_ltALT
-    (s' s : G.State) (hss : G.trueMessages s' ⊂ G.trueMessages s) :
+    (s' s : T) (hss : G.trueMessages s' ⊂ G.trueMessages s) :
     ltALT (toAlternatives G) s' s := by
   constructor
   · intro a ha_mem ha_s'
@@ -119,13 +121,14 @@ theorem trueMessages_ssubset_implies_ltALT
     have hsub : G.trueMessages s ⊆ G.trueMessages s' := by
       intro m' hm'
       simp only [InterpGame.mem_trueMessages] at hm' ⊢
-      have h : (λ x => G.meaning m' x = true) s := hm'
-      have halt := hle (λ x => G.meaning m' x = true) ⟨m', rfl⟩ h
+      have h : (λ x => G.meaning m' x) s := hm'
+      have halt := hle (λ x => G.meaning m' x) ⟨m', rfl⟩ h
       exact halt
     exact hss.2 hsub
 
+omit [Fintype T] [DecidableEq M] in
 /-- Key lemma: s' <_ALT s implies trueMessages s' ⊂ trueMessages s. -/
-theorem ltALT_implies_trueMessages_ssubset (s' s : G.State)
+theorem ltALT_implies_trueMessages_ssubset (s' s : T)
     (hlt : ltALT (toAlternatives G) s' s) :
     G.trueMessages s' ⊂ G.trueMessages s := by
   have hle : leALT (toAlternatives G) s' s := hlt.1
@@ -134,7 +137,7 @@ theorem ltALT_implies_trueMessages_ssubset (s' s : G.State)
   constructor
   · intro m' hm'
     simp only [InterpGame.mem_trueMessages] at hm' ⊢
-    have halt : (λ x => G.meaning m' x = true) s' → (λ x => G.meaning m' x = true) s := by
+    have halt : (λ x => G.meaning m' x) s' → (λ x => G.meaning m' x) s := by
       apply hle
       simp only [toAlternatives, Set.mem_setOf_eq]
       exact ⟨m', rfl⟩
@@ -162,12 +165,13 @@ theorem ltALT_implies_trueMessages_ssubset (s' s : G.State)
 
     The left equivalence is rational choice (proved via `ibrN_opt_singleton`).
     The right equivalence is pure order theory (no probabilities). -/
-def strongestAt (m : G.Message) (s : G.State) : Prop :=
-  G.meaning m s = true ∧
-  ∀ m', G.meaning m' s = true → G.trueStates m ⊆ G.trueStates m'
+def strongestAt (m : M) (s : T) : Prop :=
+  G.meaning m s ∧
+  ∀ m', G.meaning m' s → G.trueStates m ⊆ G.trueStates m'
 
+omit [DecidableEq M] in
 /-- Forward: strongestAt → exhMW. Pure order theory, no probabilities. -/
-theorem strongestAt_implies_exhMW (m : G.Message) (s : G.State)
+theorem strongestAt_implies_exhMW (m : M) (s : T)
     (h : strongestAt G m s) :
     exhMW (toAlternatives G) (prejacent G m) s := by
   constructor
@@ -184,13 +188,13 @@ include hScalar in
 
     exhMW-minimality → card-minimality (via scalar totality) →
     strongest (via `scalar_minimal_messages_weaker`). -/
-theorem exhMW_implies_strongestAt (m : G.Message) (s : G.State)
+theorem exhMW_implies_strongestAt (m : M) (s : T)
     (h : exhMW (toAlternatives G) (prejacent G m) s) :
     strongestAt G m s := by
   have hTrue := h.1
   have hMin := h.2
   -- Step 1: exhMW-minimal → card-minimal
-  have hCardMin : ∀ t, G.meaning m t = true →
+  have hCardMin : ∀ t, G.meaning m t →
       (G.trueMessages s).card ≤ (G.trueMessages t).card := by
     intro t ht
     by_contra hlt
@@ -209,21 +213,21 @@ theorem exhMW_implies_strongestAt (m : G.Message) (s : G.State)
 include hScalar in
 /-- For scalar games, strongestAt ↔ exhMW. The purely set-theoretic core
     of the IBR = exhMW theorem. No probabilities, no EG monotonicity. -/
-theorem strongestAt_iff_exhMW (m : G.Message) (s : G.State) :
+theorem strongestAt_iff_exhMW (m : M) (s : T) :
     strongestAt G m s ↔ exhMW (toAlternatives G) (prejacent G m) s :=
   ⟨strongestAt_implies_exhMW G m s, exhMW_implies_strongestAt G hScalar m s⟩
 
 /-! ### IBR positivity at scalar games -/
 
 variable (hPriorPos : ∀ t, G.prior t > 0)
-  (hFlatPrior : ∀ t₁ t₂ : G.State, G.prior t₁ = G.prior t₂)
+  (hFlatPrior : ∀ t₁ t₂ : T, G.prior t₁ = G.prior t₂)
   (hDistinct : Function.Injective G.trueStates)
 
 include hScalar in
 /-- In a scalar game, every message with a nonempty truth set has a "level"
     state: a state in trueStates(m) at which m is a strongest true message. -/
-private theorem scalar_level_nonempty (m : G.Message) (hNE : (G.trueStates m).Nonempty) :
-    ∃ s ∈ G.trueStates m, ∀ m' : G.Message, G.meaning m' s = true →
+private theorem scalar_level_nonempty (m : M) (hNE : (G.trueStates m).Nonempty) :
+    ∃ s ∈ G.trueStates m, ∀ m' : M, G.meaning m' s →
       G.trueStates m ⊆ G.trueStates m' := by
   have ⟨s, hs_in, hs_min⟩ := Finset.exists_min_image (G.trueStates m)
     (fun s => (G.trueMessages s).card) hNE
@@ -245,27 +249,26 @@ private theorem scalar_level_nonempty (m : G.Message) (hNE : (G.trueStates m).No
       have hm'_in_s : m' ∈ G.trueMessages s := G.mem_trueMessages.mpr hm'
       exact G.mem_trueMessages.mp (hsub_st hm'_in_s)
 
-/-- L0 response value for a true message. -/
-private theorem L0_respond_true (m : G.Message) (s : G.State)
-    (hm : G.meaning m s = true) :
-    (L0 G).respond m s = 1 / ((G.trueStates m).card : ℚ) := by
-  simp only [L0, HearerStrategy.literal]
-  split_ifs with h
-  · exact absurd h (Finset.card_ne_zero.mpr ⟨s, G.mem_trueStates.mpr hm⟩)
-  · rfl
+omit [Fintype M] [DecidableEq M] in
+/-- Literal-listener value for a true message. -/
+private theorem literal_respond_true (m : M) (s : T)
+    (hm : G.meaning m s) :
+    G.literal m s = 1 / ((G.trueStates m).card : ℚ) := by
+  simp only [InterpGame.literal, if_pos hm, one_div]
 
+omit [DecidableEq M] in
 include hScalar hDistinct in
 /-- At any state with a true message there is a strongest true message,
     strictly strongest among distinct true messages. -/
-private theorem exists_strongest (s : G.State) (hNE : (G.trueMessages s).Nonempty) :
-    ∃ m₀ ∈ G.trueMessages s, G.meaning m₀ s = true ∧
-      (∀ m', G.meaning m' s = true → G.trueStates m₀ ⊆ G.trueStates m') ∧
-      (∀ m', G.meaning m' s = true → m' ≠ m₀ →
+private theorem exists_strongest (s : T) (hNE : (G.trueMessages s).Nonempty) :
+    ∃ m₀ ∈ G.trueMessages s, G.meaning m₀ s ∧
+      (∀ m', G.meaning m' s → G.trueStates m₀ ⊆ G.trueStates m') ∧
+      (∀ m', G.meaning m' s → m' ≠ m₀ →
         G.trueStates m₀ ⊂ G.trueStates m') := by
   obtain ⟨m₀, hm₀_in, hm₀_min⟩ := Finset.exists_min_image (G.trueMessages s)
     (fun m => (G.trueStates m).card) hNE
   have hm₀_in := G.mem_trueMessages.mp hm₀_in
-  have hm₀_str : ∀ m', G.meaning m' s = true → G.trueStates m₀ ⊆ G.trueStates m' := by
+  have hm₀_str : ∀ m', G.meaning m' s → G.trueStates m₀ ⊆ G.trueStates m' := by
     intro m' hm'
     cases hScalar m₀ m' with
     | inl h => exact h
@@ -277,6 +280,7 @@ private theorem exists_strongest (s : G.State) (hNE : (G.trueMessages s).Nonempt
   exact lt_of_le_of_ne (hm₀_str m' hm')
     (fun heq => hne (hDistinct heq).symm)
 
+omit [Fintype M] [DecidableEq M] in
 include hPriorPos hFlatPrior in
 /-- Under flat priors, if the speaker is deterministic for message m
     (S(t,m) ∈ {0,1} with at least one S=1), hearerBR gives H(m,s) > 0
@@ -287,23 +291,23 @@ include hPriorPos hFlatPrior in
     because the priors cancel. So the argmax hearer picks exactly the
     states where the speaker sends m. -/
 private theorem hearerBR_deterministic_flat
-    (S : SpeakerStrategy G) (m : G.Message) (s : G.State)
-    (t₀ : G.State) (ht₀ : S.choose t₀ m = 1)
-    (hS_le : ∀ t, S.choose t m ≤ 1) :
-    (hearerBR G S).respond m s > 0 ↔ S.choose s m = 1 := by
+    (S : T → M → ℚ) (m : M) (s : T)
+    (t₀ : T) (ht₀ : S t₀ m = 1)
+    (hS_le : ∀ t, S t m ≤ 1) :
+    hearerBR G S m s > 0 ↔ S s m = 1 := by
   set p := G.prior s
-  set w := fun t => S.choose t m * G.prior t
+  set w := fun t => S t m * G.prior t
   -- maxW = p: since S ≤ 1 and flat priors, w(t) ≤ p for all t, with equality at t₀.
   have hmaxW : Finset.univ.fold max 0 w = p := le_antisymm
     (by rcases Finset.fold_max_attained Finset.univ w 0 with h0 | ⟨t, _, hft⟩
         · linarith [hPriorPos s]
         · calc _ = w t := hft
-            _ = S.choose t m * G.prior t := rfl
+            _ = S t m * G.prior t := rfl
             _ ≤ 1 * G.prior t :=
                 mul_le_mul_of_nonneg_right (hS_le t) (le_of_lt (hPriorPos t))
             _ = p := by rw [one_mul, hFlatPrior t s])
     (by calc p = 1 * G.prior t₀ := by rw [one_mul, hFlatPrior t₀ s]
-        _ = S.choose t₀ m * G.prior t₀ := by rw [ht₀]
+        _ = S t₀ m * G.prior t₀ := by rw [ht₀]
         _ ≤ _ := (Finset.le_fold_max _).mpr (Or.inr ⟨t₀, Finset.mem_univ _, le_refl _⟩))
   simp only [hearerBR]
   rw [if_neg (by linarith [hPriorPos s] : Finset.univ.fold max 0 w ≠ 0)]
@@ -312,13 +316,13 @@ private theorem hearerBR_deterministic_flat
     intro hPos
     split_ifs at hPos with hwm
     · -- w(s) = maxW = p, so S(s,m) * p = p
-      have h1 : S.choose s m * G.prior s = G.prior s := by linarith
-      have h2 : (S.choose s m - 1) * G.prior s = 0 := by linarith
+      have h1 : S s m * G.prior s = G.prior s := by linarith
+      have h2 : (S s m - 1) * G.prior s = 0 := by linarith
       linarith [(mul_eq_zero.mp h2).resolve_right (ne_of_gt (hPriorPos s))]
     · exact absurd hPos (lt_irrefl 0)
   · -- Backward: S(s,m) = 1 → H > 0
     intro hS1
-    have hws : S.choose s m * G.prior s = Finset.univ.fold max 0 w := by
+    have hws : S s m * G.prior s = Finset.univ.fold max 0 w := by
       rw [hS1, one_mul, hmaxW]
     rw [if_pos hws]
     exact div_pos one_pos (Nat.cast_pos.mpr (Finset.card_pos.mpr
@@ -328,50 +332,50 @@ include hScalar hPriorPos hFlatPrior hDistinct
 
 /-- In a scalar game with distinct truth sets, for all n ≥ 0, the speaker's
     optimal messages at `ibrN G n` are the unique strongest message at each
-    state. By induction on n (base = L0, step = hearerBR preserves). -/
+    state. By induction on n (base = literal, step = hearerBR preserves). -/
 private theorem ibrN_opt_singleton (n : ℕ) :
-    ∀ (s : G.State), (G.trueMessages s).Nonempty →
-    ∃ m₀ : G.Message, SpeakerStrategy.optimalMessages G (ibrN G n) s = {m₀} ∧
-      G.meaning m₀ s = true ∧
-      (∀ m', G.meaning m' s = true → G.trueStates m₀ ⊆ G.trueStates m') := by
+    ∀ (s : T), (G.trueMessages s).Nonempty →
+    ∃ m₀ : M, optimalMessages G (ibrN G n) s = {m₀} ∧
+      G.meaning m₀ s ∧
+      (∀ m', G.meaning m' s → G.trueStates m₀ ⊆ G.trueStates m') := by
   induction n with
   | zero =>
     intro s hNE
     obtain ⟨m₀, hm₀_mem, hm₀_in, hm₀_str, hm₀_sstr⟩ :=
       exists_strongest G hScalar hDistinct s hNE
-    -- L0(m) ≤ L0(m₀) for all m; strict for m ≠ m₀
-    have hL0_le : ∀ m ∈ G.trueMessages s, (L0 G).respond m s ≤ (L0 G).respond m₀ s := by
+    -- literal(m) ≤ literal(m₀) for all m; strict for m ≠ m₀
+    have hL0_le : ∀ m ∈ G.trueMessages s, G.literal m s ≤ G.literal m₀ s := by
       intro m hm_mem
       have hm_mem := G.mem_trueMessages.mp hm_mem
-      rw [L0_respond_true G m s hm_mem, L0_respond_true G m₀ s hm₀_in]
+      rw [literal_respond_true G m s hm_mem, literal_respond_true G m₀ s hm₀_in]
       exact div_le_div_of_nonneg_left zero_le_one
         (by exact_mod_cast Finset.card_pos.mpr ⟨s, G.mem_trueStates.mpr hm₀_in⟩)
         (by exact_mod_cast Finset.card_le_card (hm₀_str m hm_mem))
     have hL0_strict : ∀ m ∈ G.trueMessages s, m ≠ m₀ →
-        (L0 G).respond m s < (L0 G).respond m₀ s := by
+        G.literal m s < G.literal m₀ s := by
       intro m hm_mem hne
       have hm_mem := G.mem_trueMessages.mp hm_mem
-      rw [L0_respond_true G m s hm_mem, L0_respond_true G m₀ s hm₀_in]
+      rw [literal_respond_true G m s hm_mem, literal_respond_true G m₀ s hm₀_in]
       exact div_lt_div_of_pos_left one_pos
         (by exact_mod_cast Finset.card_pos.mpr ⟨s, G.mem_trueStates.mpr hm₀_in⟩)
         (by exact_mod_cast Finset.card_lt_card (hm₀_sstr m hm_mem hne))
-    -- maxUtility = L0(m₀, s)
-    have hMaxUtil : SpeakerStrategy.maxUtility G (ibrN G 0) s = (L0 G).respond m₀ s := by
+    -- maxUtility = literal(m₀, s)
+    have hMaxUtil : maxUtility G (ibrN G 0) s = G.literal m₀ s := by
       simp only [ibrN]; apply le_antisymm
-      · rcases Finset.fold_max_attained (G.trueMessages s) (fun m => (L0 G).respond m s) 0
+      · rcases Finset.fold_max_attained (G.trueMessages s) (fun m => G.literal m s) 0
             with h0 | ⟨m', hm', hfm'⟩
-        · simp only [SpeakerStrategy.maxUtility, h0]
-          rw [L0_respond_true G m₀ s hm₀_in]
+        · simp only [maxUtility, h0]
+          rw [literal_respond_true G m₀ s hm₀_in]
           exact div_nonneg zero_le_one (Nat.cast_nonneg _)
-        · simp only [SpeakerStrategy.maxUtility, hfm']; exact hL0_le m' hm'
-      · exact SpeakerStrategy.utility_le_maxUtility G (ibrN G 0) s m₀ hm₀_mem
-    have hopt : SpeakerStrategy.optimalMessages G (ibrN G 0) s = {m₀} := by
+        · simp only [maxUtility, hfm']; exact hL0_le m' hm'
+      · exact utility_le_maxUtility G (ibrN G 0) s m₀ hm₀_mem
+    have hopt : optimalMessages G (ibrN G 0) s = {m₀} := by
       ext m'; simp only [Finset.mem_singleton]; constructor
       · intro hm'_opt; by_contra hne
-        have hm'_mem := SpeakerStrategy.optimalMessages_subset_trueMessages G (ibrN G 0) s hm'_opt
-        have hL0_eq : (ibrN G 0).respond m' s = (L0 G).respond m' s := rfl
+        have hm'_mem := optimalMessages_subset_trueMessages G (ibrN G 0) s hm'_opt
+        have hL0_eq : ibrN G 0 m' s = G.literal m' s := rfl
         linarith [hL0_strict m' hm'_mem hne,
-          SpeakerStrategy.optimalMessages_utility G (ibrN G 0) s m' hm'_opt]
+          optimalMessages_utility G (ibrN G 0) s m' hm'_opt]
       · intro heq; subst heq
         exact Finset.mem_filter.mpr ⟨hm₀_mem, hMaxUtil.symm⟩
     exact ⟨m₀, hopt, hm₀_in, hm₀_str⟩
@@ -381,78 +385,77 @@ private theorem ibrN_opt_singleton (n : ℕ) :
       exists_strongest G hScalar hDistinct s hNE
     -- By IH: at any state t, opt = {strongest at t}
     -- So bestResponse(t, m) = 1 if m strongest at t, 0 otherwise
-    set S := SpeakerStrategy.bestResponse G (ibrN G n) with hS_def
+    set S := bestResponse G (ibrN G n) with hS_def
     set p := G.prior s with hp_def
-    have hbr_eq : ∀ (t : G.State) (m : G.Message),
+    have hbr_eq : ∀ (t : T) (m : M),
         (G.trueMessages t).Nonempty →
-        G.meaning m t = true →
-        (∀ m', G.meaning m' t = true → G.trueStates m ⊆ G.trueStates m') →
-        S.choose t m = 1 := by
+        G.meaning m t →
+        (∀ m', G.meaning m' t → G.trueStates m ⊆ G.trueStates m') →
+        S t m = 1 := by
       intro t m htNE hmt hmstr
       obtain ⟨m₁, hopt₁, _, hstr₁⟩ := ih t htNE
       have hm_eq : m = m₁ := hDistinct
-        (Finset.Subset.antisymm (hmstr m₁ (SpeakerStrategy.optimalMessages_meaning G
+        (Finset.Subset.antisymm (hmstr m₁ (optimalMessages_meaning G
           (ibrN G n) t m₁ (hopt₁ ▸ Finset.mem_singleton_self m₁))) (hstr₁ m hmt))
       subst hm_eq
-      rw [hS_def, SpeakerStrategy.bestResponse_val, if_pos (hopt₁ ▸ Finset.mem_singleton_self m),
+      rw [hS_def, bestResponse_val, if_pos (hopt₁ ▸ Finset.mem_singleton_self m),
         hopt₁, Finset.card_singleton]; norm_num
-    have hbr_zero : ∀ (t : G.State) (m : G.Message),
+    have hbr_zero : ∀ (t : T) (m : M),
         (G.trueMessages t).Nonempty →
-        G.meaning m t = true →
-        (∃ m₁, G.meaning m₁ t = true ∧ G.trueStates m₁ ⊂ G.trueStates m) →
-        S.choose t m = 0 := by
+        G.meaning m t →
+        (∃ m₁, G.meaning m₁ t ∧ G.trueStates m₁ ⊂ G.trueStates m) →
+        S t m = 0 := by
       intro t m htNE hmt ⟨m₁, hm₁t, hss⟩
       obtain ⟨m_s, hopt_s, _, hstr_s⟩ := ih t htNE
       have : m ≠ m_s := by
         intro heq; subst heq
         exact absurd (hstr_s m₁ hm₁t) hss.2
-      rw [hS_def, SpeakerStrategy.bestResponse_val, if_neg]
+      rw [hS_def, bestResponse_val, if_neg]
       rw [hopt_s]; exact mt Finset.mem_singleton.mp this
     -- Helper: hearerBR_deterministic_flat gives H(m',s) > 0 ↔ S(s,m') = 1
-    -- for any m' with a level state (eq. 131)
+    -- for any m' with a level state (eq. (131))
     have hBR_iff : ∀ m', (G.trueMessages s).Nonempty →
-        (∃ t₁, S.choose t₁ m' = 1) →
-        ((ibrN G (n + 1)).respond m' s > 0 ↔ S.choose s m' = 1) := by
+        (∃ t₁, S t₁ m' = 1) →
+        (ibrN G (n + 1) m' s > 0 ↔ S s m' = 1) := by
       intro m' _ ⟨t₁, ht₁⟩
       exact hearerBR_deterministic_flat G hPriorPos hFlatPrior S m' s t₁ ht₁
-        (fun t => SpeakerStrategy.bestResponse_le_one G (ibrN G n) t m')
+        (fun t => bestResponse_le_one G (ibrN G n) t m')
     -- H(m', s) = 0 for non-strongest m' at s
-    have hH_zero : ∀ m', G.meaning m' s = true → m' ≠ m₀ →
-        (ibrN G (n + 1)).respond m' s = 0 := by
+    have hH_zero : ∀ m', G.meaning m' s → m' ≠ m₀ →
+        ibrN G (n + 1) m' s = 0 := by
       intro m' hm's hne
       obtain ⟨t₀, ht₀_in, ht₀_str⟩ := scalar_level_nonempty G hScalar m'
         ⟨s, G.mem_trueStates.mpr hm's⟩
       have ht₀_in := G.mem_trueStates.mp ht₀_in
-      have ht₀_br : S.choose t₀ m' = 1 :=
+      have ht₀_br : S t₀ m' = 1 :=
         hbr_eq t₀ m' ⟨m', G.mem_trueMessages.mpr ht₀_in⟩ ht₀_in ht₀_str
-      have hs_br : S.choose s m' = 0 :=
+      have hs_br : S s m' = 0 :=
         hbr_zero s m' hNE hm's ⟨m₀, hm₀_in, hm₀_sstr m' hm's hne⟩
       have hNotPos := mt (hBR_iff m' hNE ⟨t₀, ht₀_br⟩).mp (by linarith)
-      have hnn : (ibrN G (n + 1)).respond m' s ≥ 0 := hearerBR_respond_nonneg G S m' s
+      have hnn : ibrN G (n + 1) m' s ≥ 0 := hearerBR_respond_nonneg G S m' s
       linarith
     -- H(m₀, s) > 0
-    have hH_pos : (ibrN G (n + 1)).respond m₀ s > 0 :=
+    have hH_pos : ibrN G (n + 1) m₀ s > 0 :=
       (hBR_iff m₀ hNE ⟨s, hbr_eq s m₀ hNE hm₀_in hm₀_str⟩).mpr
         (hbr_eq s m₀ hNE hm₀_in hm₀_str)
     -- maxUtility = H(m₀, s) > 0
-    have hMaxUtil : SpeakerStrategy.maxUtility G (ibrN G (n + 1)) s =
-        (ibrN G (n + 1)).respond m₀ s := by
+    have hMaxUtil : maxUtility G (ibrN G (n + 1)) s = ibrN G (n + 1) m₀ s := by
       apply le_antisymm
       · rcases Finset.fold_max_attained (G.trueMessages s)
-            (fun m => (ibrN G (n + 1)).respond m s) 0 with h0 | ⟨m', hm', hfm'⟩
-        · simp only [SpeakerStrategy.maxUtility, h0]; exact le_of_lt hH_pos
-        · simp only [SpeakerStrategy.maxUtility, hfm']
+            (fun m => ibrN G (n + 1) m s) 0 with h0 | ⟨m', hm', hfm'⟩
+        · simp only [maxUtility, h0]; exact le_of_lt hH_pos
+        · simp only [maxUtility, hfm']
           have hm' := G.mem_trueMessages.mp hm'
           by_cases heq : m' = m₀
           · subst heq; exact le_refl _
           · rw [hH_zero m' hm' heq]; exact le_of_lt hH_pos
-      · exact SpeakerStrategy.utility_le_maxUtility G (ibrN G (n + 1)) s m₀ hm₀_mem
-    have hopt : SpeakerStrategy.optimalMessages G (ibrN G (n + 1)) s = {m₀} := by
+      · exact utility_le_maxUtility G (ibrN G (n + 1)) s m₀ hm₀_mem
+    have hopt : optimalMessages G (ibrN G (n + 1)) s = {m₀} := by
       ext m'; simp only [Finset.mem_singleton]; constructor
       · intro hm'_opt; by_contra hne
-        have hm'_true := SpeakerStrategy.optimalMessages_meaning G (ibrN G (n + 1)) s m' hm'_opt
+        have hm'_true := optimalMessages_meaning G (ibrN G (n + 1)) s m' hm'_opt
         linarith [hH_zero m' hm'_true hne,
-          SpeakerStrategy.optimalMessages_utility G (ibrN G (n + 1)) s m' hm'_opt]
+          optimalMessages_utility G (ibrN G (n + 1)) s m' hm'_opt]
       · intro heq; subst heq
         exact Finset.mem_filter.mpr ⟨hm₀_mem, hMaxUtil.symm⟩
     exact ⟨m₀, hopt, hm₀_in, hm₀_str⟩
@@ -461,20 +464,20 @@ private theorem ibrN_opt_singleton (n : ℕ) :
     truth sets, `H(m, s) > 0` iff `m` is the strongest message at `s`
     (smallest truth set among messages true at `s`). -/
 private theorem ibrN_respond_pos_iff_strongest
-    (k : ℕ) (m : G.Message) (s : G.State) (hs : G.meaning m s = true) :
-    (ibrN G (k + 1)).respond m s > 0 ↔
-      (∀ m', G.meaning m' s = true → G.trueStates m ⊆ G.trueStates m') := by
-  set S := SpeakerStrategy.bestResponse G (ibrN G k)
+    (k : ℕ) (m : M) (s : T) (hs : G.meaning m s) :
+    ibrN G (k + 1) m s > 0 ↔
+      (∀ m', G.meaning m' s → G.trueStates m ⊆ G.trueStates m') := by
+  set S := bestResponse G (ibrN G k) with hS_def
   have hNE : (G.trueMessages s).Nonempty := ⟨m, G.mem_trueMessages.mpr hs⟩
   -- From ibrN_opt_singleton: opt(s) = {m₀} where m₀ is the strongest at s
   obtain ⟨m₀, hopt₀, hm₀_true, hm₀_str⟩ :=
     ibrN_opt_singleton G hScalar hPriorPos hFlatPrior hDistinct k s hNE
   -- S(s, m₀) = 1, S(s, m') = 0 for m' ≠ m₀
-  have hbr_m₀ : S.choose s m₀ = 1 := by
-    rw [SpeakerStrategy.bestResponse_val, if_pos (hopt₀ ▸ Finset.mem_singleton_self m₀),
+  have hbr_m₀ : S s m₀ = 1 := by
+    rw [hS_def, bestResponse_val, if_pos (hopt₀ ▸ Finset.mem_singleton_self m₀),
       hopt₀, Finset.card_singleton]; norm_num
-  have hbr_ne : ∀ m', m' ≠ m₀ → S.choose s m' = 0 := fun m' hne => by
-    rw [SpeakerStrategy.bestResponse_val, if_neg (hopt₀ ▸ mt Finset.mem_singleton.mp hne)]
+  have hbr_ne : ∀ m', m' ≠ m₀ → S s m' = 0 := fun m' hne => by
+    rw [hS_def, bestResponse_val, if_neg (hopt₀ ▸ mt Finset.mem_singleton.mp hne)]
   -- Find level state t₀ where m is strongest → S(t₀, m) = 1
   obtain ⟨t₀, ht₀_in, ht₀_str⟩ := scalar_level_nonempty G hScalar m
     ⟨s, G.mem_trueStates.mpr hs⟩
@@ -482,23 +485,23 @@ private theorem ibrN_respond_pos_iff_strongest
   obtain ⟨m_t₀, hopt_t₀, _, hstr_t₀⟩ := ibrN_opt_singleton G hScalar hPriorPos hFlatPrior
     hDistinct k t₀ ⟨m, G.mem_trueMessages.mpr ht₀_in⟩
   have hm_eq : m = m_t₀ := hDistinct
-    (Finset.Subset.antisymm (ht₀_str m_t₀ (SpeakerStrategy.optimalMessages_meaning G
+    (Finset.Subset.antisymm (ht₀_str m_t₀ (optimalMessages_meaning G
       (ibrN G k) t₀ m_t₀ (hopt_t₀ ▸ Finset.mem_singleton_self m_t₀))) (hstr_t₀ m ht₀_in))
   subst hm_eq
-  have hbr_t₀ : S.choose t₀ m = 1 := by
-    rw [SpeakerStrategy.bestResponse_val, if_pos (hopt_t₀ ▸ Finset.mem_singleton_self m),
+  have hbr_t₀ : S t₀ m = 1 := by
+    rw [hS_def, bestResponse_val, if_pos (hopt_t₀ ▸ Finset.mem_singleton_self m),
       hopt_t₀, Finset.card_singleton]; norm_num
   -- Apply eq. (131): H > 0 ↔ S = 1 ↔ m = m₀ ↔ m strongest
   have hBR := hearerBR_deterministic_flat G hPriorPos hFlatPrior S m s t₀ hbr_t₀
-    (fun t => SpeakerStrategy.bestResponse_le_one G (ibrN G k) t m)
+    (fun t => bestResponse_le_one G (ibrN G k) t m)
   constructor
   · intro hPos
     have hS1 := hBR.mp hPos
     -- S(s,m) = 1 means m ∈ opt(s) = {m₀}, so m = m₀
     have : m = m₀ := by
-      have hpos : S.choose s m > 0 := by linarith
+      have hpos : S s m > 0 := by linarith
       exact Finset.mem_singleton.mp
-        (hopt₀ ▸ ((SpeakerStrategy.bestResponse_pos_iff G (ibrN G k) s m).mp hpos).1)
+        (hopt₀ ▸ ((bestResponse_pos_iff G (ibrN G k) s m).mp hpos).1)
     exact this ▸ hm₀_str
   · intro hStr
     have hm_eq : m = m₀ := hDistinct
@@ -512,21 +515,21 @@ private theorem ibrN_respond_pos_iff_strongest
     Thin wrapper around `ibrN_respond_pos_iff_strongest` that handles the
     case where m is false at s (both sides are false) and packages the
     result as the `strongestAt` predicate. -/
-private theorem ibrN_pos_iff_strongestAt (k : ℕ) (m : G.Message) (s : G.State) :
-    (ibrN G (k + 1)).respond m s > 0 ↔ strongestAt G m s := by
+private theorem ibrN_pos_iff_strongestAt (k : ℕ) (m : M) (s : T) :
+    ibrN G (k + 1) m s > 0 ↔ strongestAt G m s := by
   constructor
   · intro hPos
     -- m must be true at s (false messages get H = 0)
-    have hTrue : G.meaning m s = true := by
+    have hTrue : G.meaning m s := by
       by_contra hf
-      have hFalse : G.meaning m s = false := Bool.eq_false_iff.mpr hf
-      simp only [ibrN, ibrStep, speakerUpdate, hearerBR] at hPos
-      have hSz := SpeakerStrategy.bestResponse_false_zero G (ibrN G k) s m hFalse
+      simp only [ibrN, ibrStep, hearerBR] at hPos
+      have hSz := bestResponse_false_zero G (ibrN G k) s m hf
       simp only [hSz, zero_mul] at hPos
       split_ifs at hPos with hmW hwm
-      · simp only [L0, HearerStrategy.literal, hFalse] at hPos; simp at hPos
+      · simp only [InterpGame.literal, if_neg hf] at hPos
+        exact absurd hPos (lt_irrefl 0)
       · exact hmW hwm.symm
-      · simp at hPos
+      · exact absurd hPos (lt_irrefl 0)
     exact ⟨hTrue, (ibrN_respond_pos_iff_strongest G hScalar hPriorPos hFlatPrior
       hDistinct k m s hTrue).mp hPos⟩
   · intro ⟨hTrue, hStr⟩
@@ -554,9 +557,9 @@ the IBR iteration; the claim is false for arbitrary hearer strategies.
 Two structural hypotheses:
 - `isScalarGame`: truth sets are totally ordered by inclusion (nested)
 - `hDistinct`: no two messages have identical truth sets -/
-theorem ibr_equals_exhMW (H : HearerStrategy G)
-    (hIBR : ∃ k, H = ibrN G (k + 1)) (m : G.Message) :
-    (∀ s, H.respond m s > 0 ↔ exhMW (toAlternatives G) (prejacent G m) s) := by
+theorem ibr_equals_exhMW (H : M → T → ℚ)
+    (hIBR : ∃ k, H = ibrN G (k + 1)) (m : M) :
+    (∀ s, H m s > 0 ↔ exhMW (toAlternatives G) (prejacent G m) s) := by
   obtain ⟨k, hH⟩ := hIBR; subst hH
   intro s
   exact (ibrN_pos_iff_strongestAt G hScalar hPriorPos hFlatPrior hDistinct k m s).trans
@@ -570,11 +573,11 @@ theorem ibr_equals_exhMW (H : HearerStrategy G)
     The stabilization claim is derived here; [franke-2011] states Fact 1 for
     the level-1 receiver only. -/
 theorem ibr_converges_to_exhMW :
-    ∀ (m : G.Message) (s : G.State),
-      (ibrN G 1).respond m s > 0 ↔
+    ∀ (m : M) (s : T),
+      ibrN G 1 m s > 0 ↔
         exhMW (toAlternatives G) (prejacent G m) s := by
   intro m s
   exact (ibrN_pos_iff_strongestAt G hScalar hPriorPos hFlatPrior hDistinct 0 m s).trans
     (strongestAt_iff_exhMW G hScalar m s)
 
-end RSA.IBR
+end Franke2011

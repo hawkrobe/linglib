@@ -39,7 +39,7 @@ wrapper needed.
 
 The categorical-vs-graded relationship between Sauerland and RSA (RSA as
 the α → ∞ limit of Sauerland exclusion) is the subject of
-`IBR/RSABridge.lean` (`rsa_speaker_to_ibr`); this file provides only the
+`Studies/Franke2011/RSABridge.lean` (`rsa_speaker_to_ibr`); this file provides only the
 categorical side.
 -/
 

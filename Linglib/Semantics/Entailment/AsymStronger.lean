@@ -22,13 +22,10 @@ right home for a polymorphic primitive. This file is.
 
 ## What this does NOT subsume
 
-- **`RSA.IBR.strongestAt`** (`Pragmatics/IBR/ScalarGames.lean`) —
+- **`Franke2011.strongestAt`** (`Studies/Franke2011/ScalarGames.lean`) —
   expresses "m is the strongest true message at s" as a unary predicate
-  on messages, not the binary asymmetric-entailment relation. The two
-  are linked (m strongest ↔ ∀ m', ¬ asymStrongerOn univ (G.meaning m') (G.meaning m)
-  ∨ m' false at s) but the proofs in `ScalarGames.lean` are 200+ lines
-  built around the unary form. Rewriting them on top of this primitive
-  is a separate refactor.
+  on messages, not the binary asymmetric-entailment relation; its proofs
+  are built around the unary form.
 
 - **`Magri2014.innerExcludable`** (`Studies/Magri2014.lean`) —
   combines (a) a hand-wired `entails : Role → Role → Bool` on a

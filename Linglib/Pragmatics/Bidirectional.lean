@@ -70,7 +70,7 @@ speaker/hearer optimization. They differ in the optimization criterion:
 
 The relationship: RSA α→∞ approximates IBR, and IBR fixed points
 correspond to weak-BiOT super-optimal pairs for scalar games
-(see `IBR/ScalarGames.lean`).
+(see `Studies/Franke2011/ScalarGames.lean`).
 -/
 
 set_option autoImplicit false
