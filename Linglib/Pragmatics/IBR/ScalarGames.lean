@@ -1,3 +1,6 @@
+import Mathlib.Data.Finset.Max
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum
 import Linglib.Pragmatics.IBR.Basic
 import Linglib.Semantics.Exhaustification.Operators.Basic
 
@@ -14,29 +17,38 @@ The proof chains through `strongestAt` as a bridge predicate:
 
 The left equivalence is proved by induction on the IBR sequence
 (`ibrN_pos_iff_strongestAt`). The right equivalence is pure order theory
-with no probabilities (`strongestAt_iff_exhMW`).
-
-This bypasses the general convergence machinery in `Convergence.lean`
-(~680 lines of EG monotonicity) entirely for scalar games.
+with no probabilities (`strongestAt_iff_exhMW`). This bypasses the general
+convergence machinery in `Convergence.lean` entirely for scalar games.
 
 Key results:
-- `ibr_equals_exhMW`: IBR FP support = exhMW ([franke-2011] Proposition 4)
+- `ibr_equals_exhMW`: at every IBR level ≥ 1, the listener's support for a
+  message is its exhMW interpretation — the scalar case where [franke-2011]'s
+  Fact 1 (§10, `R₁(mS) ⊆ ExhMM(S)`) sharpens to an equality
 - `ibr_converges_to_exhMW`: IBR stabilizes at level 1 for scalar games
+  (a derived strengthening; the paper states Fact 1 for R₁ only)
+
+Franke writes `ExhMM` (minimal models) for the operator linglib names `exhMW`
+(minimal worlds, the project-canonical name).
 -/
 
 namespace RSA.IBR
 
 open Exhaustification
 
--- SECTION 1: Scalar Game Definition
+variable (G : InterpGame)
 
-/-- A scalar game has truth sets that are totally ordered by inclusion.
-    This is the structural condition required for Franke's Proposition 4
-    (IBR FP = exhMW). Without it, "dominated" messages (never optimal at
-    any state) fall back to L0, breaking the exhMW characterization. -/
-def isScalarGame (G : InterpGame) : Prop :=
+/-! ### Scalar games -/
+
+/-- A scalar game has truth sets that are totally ordered by inclusion — the
+    Horn-scale structure under which [franke-2011]'s Fact 1 (`R₁(mS) ⊆ ExhMM(S)`,
+    §10) sharpens to an equality. Without it, "dominated" messages (never optimal
+    at any state) fall back to L0, breaking the exhMW characterization. -/
+def isScalarGame : Prop :=
   ∀ m₁ m₂ : G.Message, G.trueStates m₁ ⊆ G.trueStates m₂ ∨ G.trueStates m₂ ⊆ G.trueStates m₁
 
+variable (hScalar : isScalarGame G)
+
+include hScalar in
 /-- In a scalar game, trueMessages are totally ordered: for any two states,
     one's true messages are a subset of the other's.
 
@@ -44,11 +56,10 @@ def isScalarGame (G : InterpGame) : Prop :=
     ∃ m₂ ∈ trueMessages(s₂) \ trueMessages(s₁), then trueStates(m₁) and
     trueStates(m₂) are incomparable (s₁ distinguishes them one way, s₂ the
     other), contradicting isScalarGame. -/
-theorem scalar_trueMessages_total (G : InterpGame) (hScalar : isScalarGame G)
-    (s₁ s₂ : G.State) :
+theorem scalar_trueMessages_total (s₁ s₂ : G.State) :
     G.trueMessages s₁ ⊆ G.trueMessages s₂ ∨ G.trueMessages s₂ ⊆ G.trueMessages s₁ := by
   by_contra h
-  push_neg at h
+  push Not at h
   simp only [Finset.subset_iff, not_forall] at h
   obtain ⟨⟨m₁, hm₁_in, hm₁_out⟩, ⟨m₂, hm₂_in, hm₂_out⟩⟩ := h
   simp only [InterpGame.mem_trueMessages] at *
@@ -64,15 +75,10 @@ theorem scalar_trueMessages_total (G : InterpGame) (hScalar : isScalarGame G)
     simp only [InterpGame.mem_trueStates] at h2
     exact absurd h2 hm₁_out
 
-/-- In a scalar game, at the m-true state s₀ with fewest true messages,
-    every message true at s₀ has trueStates ⊇ trueStates(m).
-
-    Proof: If ∃ m₁ ∈ trueMessages(s₁) \ trueMessages(s₂) and
-    ∃ m₂ ∈ trueMessages(s₂) \ trueMessages(s₁), then trueStates(m₁) and
-    trueStates(m₂) are incomparable, contradicting isScalarGame. -/
-theorem scalar_minimal_messages_weaker (G : InterpGame) (hScalar : isScalarGame G)
-    (m : G.Message) (s₀ : G.State)
-    (hs₀ : G.meaning m s₀ = true)
+include hScalar in
+/-- In a scalar game, at an m-true state with fewest true messages, every
+    message true there is weaker than m: its truth set contains trueStates(m). -/
+theorem scalar_minimal_messages_weaker (m : G.Message) (s₀ : G.State)
     (hmin : ∀ t, G.meaning m t = true → (G.trueMessages s₀).card ≤ (G.trueMessages t).card)
     (m' : G.Message) (hm' : G.meaning m' s₀ = true) :
     G.trueStates m ⊆ G.trueStates m' := by
@@ -87,21 +93,19 @@ theorem scalar_minimal_messages_weaker (G : InterpGame) (hScalar : isScalarGame 
     have heq : G.trueMessages t = G.trueMessages s₀ := Finset.eq_of_subset_of_card_le hsub hcard
     exact G.mem_trueMessages.mp (heq ▸ G.mem_trueMessages.mpr hm')
 
--- SECTION 2: Alternative Set Bridge
+/-! ### Alternative-set bridge -/
 
 /-- Convert interpretation game to alternative set for exhaustification.
     Converts Bool meaning to Set by using equality with true. -/
-def toAlternatives (G : InterpGame) : Set (Set G.State) :=
+def toAlternatives : Set (Set G.State) :=
   { λ s => G.meaning m s = true | m : G.Message }
 
 /-- The prejacent proposition for a message (Bool → Prop conversion) -/
-def prejacent (G : InterpGame) (m : G.Message) : Set G.State :=
+def prejacent (m : G.Message) : Set G.State :=
   λ s => G.meaning m s = true
 
--- SECTION 3: ALT ordering bridges
-
 /-- Strict subset of trueMessages implies <_ALT under `toAlternatives G`. -/
-theorem trueMessages_ssubset_implies_ltALT (G : InterpGame)
+theorem trueMessages_ssubset_implies_ltALT
     (s' s : G.State) (hss : G.trueMessages s' ⊂ G.trueMessages s) :
     ltALT (toAlternatives G) s' s := by
   constructor
@@ -121,7 +125,7 @@ theorem trueMessages_ssubset_implies_ltALT (G : InterpGame)
     exact hss.2 hsub
 
 /-- Key lemma: s' <_ALT s implies trueMessages s' ⊂ trueMessages s. -/
-theorem ltALT_implies_trueMessages_ssubset (G : InterpGame) (s' s : G.State)
+theorem ltALT_implies_trueMessages_ssubset (s' s : G.State)
     (hlt : ltALT (toAlternatives G) s' s) :
     G.trueMessages s' ⊂ G.trueMessages s := by
   have hle : leALT (toAlternatives G) s' s := hlt.1
@@ -144,7 +148,7 @@ theorem ltALT_implies_trueMessages_ssubset (G : InterpGame) (s' s : G.State)
     have hm'_in : m' ∈ G.trueMessages s := G.mem_trueMessages.mpr ha_s
     exact G.mem_trueMessages.mp (heq ▸ hm'_in)
 
--- SECTION 4: The strongestAt Bridge
+/-! ### The strongestAt bridge -/
 
 /-- `strongestAt G m s` — "m is the strongest true message at s":
     m is true at s, and trueStates(m) is contained in trueStates(m')
@@ -158,13 +162,12 @@ theorem ltALT_implies_trueMessages_ssubset (G : InterpGame) (s' s : G.State)
 
     The left equivalence is rational choice (proved via `ibrN_opt_singleton`).
     The right equivalence is pure order theory (no probabilities). -/
-def strongestAt (G : InterpGame) (m : G.Message) (s : G.State) : Prop :=
+def strongestAt (m : G.Message) (s : G.State) : Prop :=
   G.meaning m s = true ∧
   ∀ m', G.meaning m' s = true → G.trueStates m ⊆ G.trueStates m'
 
 /-- Forward: strongestAt → exhMW. Pure order theory, no probabilities. -/
-theorem strongestAt_implies_exhMW (G : InterpGame)
-    (m : G.Message) (s : G.State)
+theorem strongestAt_implies_exhMW (m : G.Message) (s : G.State)
     (h : strongestAt G m s) :
     exhMW (toAlternatives G) (prejacent G m) s := by
   constructor
@@ -176,12 +179,12 @@ theorem strongestAt_implies_exhMW (G : InterpGame)
     simp only [InterpGame.mem_trueMessages] at hm' ⊢
     exact G.mem_trueStates.mp (h.2 m' hm' (G.mem_trueStates.mpr hs'_true))
 
+include hScalar in
 /-- Backward: exhMW → strongestAt (requires scalar game).
 
     exhMW-minimality → card-minimality (via scalar totality) →
     strongest (via `scalar_minimal_messages_weaker`). -/
-theorem exhMW_implies_strongestAt (G : InterpGame) (hScalar : isScalarGame G)
-    (m : G.Message) (s : G.State)
+theorem exhMW_implies_strongestAt (m : G.Message) (s : G.State)
     (h : exhMW (toAlternatives G) (prejacent G m) s) :
     strongestAt G m s := by
   have hTrue := h.1
@@ -191,7 +194,7 @@ theorem exhMW_implies_strongestAt (G : InterpGame) (hScalar : isScalarGame G)
       (G.trueMessages s).card ≤ (G.trueMessages t).card := by
     intro t ht
     by_contra hlt
-    push_neg at hlt
+    push Not at hlt
     cases scalar_trueMessages_total G hScalar t s with
     | inl hsub =>
       have hss : G.trueMessages t ⊂ G.trueMessages s :=
@@ -201,23 +204,25 @@ theorem exhMW_implies_strongestAt (G : InterpGame) (hScalar : isScalarGame G)
       exact absurd (Finset.card_le_card hsub) (by omega)
   -- Step 2: card-minimal → strongest
   exact ⟨hTrue, fun m' hm' =>
-    scalar_minimal_messages_weaker G hScalar m s hTrue hCardMin m' hm'⟩
+    scalar_minimal_messages_weaker G hScalar m s hCardMin m' hm'⟩
 
+include hScalar in
 /-- For scalar games, strongestAt ↔ exhMW. The purely set-theoretic core
     of the IBR = exhMW theorem. No probabilities, no EG monotonicity. -/
-theorem strongestAt_iff_exhMW (G : InterpGame) (hScalar : isScalarGame G)
-    (m : G.Message) (s : G.State) :
+theorem strongestAt_iff_exhMW (m : G.Message) (s : G.State) :
     strongestAt G m s ↔ exhMW (toAlternatives G) (prejacent G m) s :=
   ⟨strongestAt_implies_exhMW G m s, exhMW_implies_strongestAt G hScalar m s⟩
 
--- SECTION 5: IBR Fixed Point = Strongest Message (Scalar Games)
+/-! ### IBR positivity at scalar games -/
 
-/-- In a scalar game with distinct truth sets, every message m has a nonempty
-    set of "level" states: states in trueStates(m) but not in any strictly
-    smaller truth set. At these states, m is the strongest true message. -/
-private theorem scalar_level_nonempty (G : InterpGame) (hScalar : isScalarGame G)
-    (hDistinct : ∀ m₁ m₂ : G.Message, G.trueStates m₁ = G.trueStates m₂ → m₁ = m₂)
-    (m : G.Message) (hNE : (G.trueStates m).Nonempty) :
+variable (hPriorPos : ∀ t, G.prior t > 0)
+  (hFlatPrior : ∀ t₁ t₂ : G.State, G.prior t₁ = G.prior t₂)
+  (hDistinct : Function.Injective G.trueStates)
+
+include hScalar in
+/-- In a scalar game, every message with a nonempty truth set has a "level"
+    state: a state in trueStates(m) at which m is a strongest true message. -/
+private theorem scalar_level_nonempty (m : G.Message) (hNE : (G.trueStates m).Nonempty) :
     ∃ s ∈ G.trueStates m, ∀ m' : G.Message, G.meaning m' s = true →
       G.trueStates m ⊆ G.trueStates m' := by
   have ⟨s, hs_in, hs_min⟩ := Finset.exists_min_image (G.trueStates m)
@@ -241,7 +246,7 @@ private theorem scalar_level_nonempty (G : InterpGame) (hScalar : isScalarGame G
       exact G.mem_trueMessages.mp (hsub_st hm'_in_s)
 
 /-- L0 response value for a true message. -/
-private theorem L0_respond_true (G : InterpGame) (m : G.Message) (s : G.State)
+private theorem L0_respond_true (m : G.Message) (s : G.State)
     (hm : G.meaning m s = true) :
     (L0 G).respond m s = 1 / ((G.trueStates m).card : ℚ) := by
   simp only [L0, HearerStrategy.literal]
@@ -249,31 +254,30 @@ private theorem L0_respond_true (G : InterpGame) (m : G.Message) (s : G.State)
   · exact absurd h (Finset.card_ne_zero.mpr ⟨s, G.mem_trueStates.mpr hm⟩)
   · rfl
 
-/-- Helper: fold max is attained at the initial value or at some element. -/
-private theorem fold_max_attained {α : Type*} [DecidableEq α]
-    (s : Finset α) (f : α → ℚ) (b : ℚ) :
-    s.fold max b f = b ∨ ∃ x ∈ s, s.fold max b f = f x := by
-  induction s using Finset.induction_on with
-  | empty => left; simp [Finset.fold_empty]
-  | @insert a s' hna ih =>
-    rw [Finset.fold_insert hna]
-    cases ih with
-    | inl hb =>
-      rw [hb]
-      by_cases h : f a ≤ b
-      · left; exact max_eq_right h
-      · right
-        push_neg at h
-        exact ⟨a, Finset.mem_insert_self a s', max_eq_left (le_of_lt h)⟩
-    | inr hex =>
-      obtain ⟨x, hx, hfx⟩ := hex
-      rw [hfx]
-      by_cases h : f a ≤ f x
-      · right; exact ⟨x, Finset.mem_insert_of_mem hx, max_eq_right h⟩
-      · right
-        push_neg at h
-        exact ⟨a, Finset.mem_insert_self a s', max_eq_left (le_of_lt h)⟩
+include hScalar hDistinct in
+/-- At any state with a true message there is a strongest true message,
+    strictly strongest among distinct true messages. -/
+private theorem exists_strongest (s : G.State) (hNE : (G.trueMessages s).Nonempty) :
+    ∃ m₀ ∈ G.trueMessages s, G.meaning m₀ s = true ∧
+      (∀ m', G.meaning m' s = true → G.trueStates m₀ ⊆ G.trueStates m') ∧
+      (∀ m', G.meaning m' s = true → m' ≠ m₀ →
+        G.trueStates m₀ ⊂ G.trueStates m') := by
+  obtain ⟨m₀, hm₀_in, hm₀_min⟩ := Finset.exists_min_image (G.trueMessages s)
+    (fun m => (G.trueStates m).card) hNE
+  have hm₀_in := G.mem_trueMessages.mp hm₀_in
+  have hm₀_str : ∀ m', G.meaning m' s = true → G.trueStates m₀ ⊆ G.trueStates m' := by
+    intro m' hm'
+    cases hScalar m₀ m' with
+    | inl h => exact h
+    | inr h =>
+      exact Finset.eq_of_subset_of_card_le h
+        (hm₀_min m' (G.mem_trueMessages.mpr hm')) ▸ Finset.Subset.refl _
+  refine ⟨m₀, G.mem_trueMessages.mpr hm₀_in, hm₀_in, hm₀_str, ?_⟩
+  intro m' hm' hne
+  exact lt_of_le_of_ne (hm₀_str m' hm')
+    (fun heq => hne (hDistinct heq).symm)
 
+include hPriorPos hFlatPrior in
 /-- Under flat priors, if the speaker is deterministic for message m
     (S(t,m) ∈ {0,1} with at least one S=1), hearerBR gives H(m,s) > 0
     iff S(s,m) = 1.
@@ -282,10 +286,8 @@ private theorem fold_max_attained {α : Type*} [DecidableEq α]
     posterior comparison μ(t₁|m) > μ(t₂|m) reduces to S(t₁,m) > S(t₂,m)
     because the priors cancel. So the argmax hearer picks exactly the
     states where the speaker sends m. -/
-private theorem hearerBR_deterministic_flat (G : InterpGame)
+private theorem hearerBR_deterministic_flat
     (S : SpeakerStrategy G) (m : G.Message) (s : G.State)
-    (hPriorPos : ∀ t, G.prior t > 0)
-    (hFlatPrior : ∀ t₁ t₂ : G.State, G.prior t₁ = G.prior t₂)
     (t₀ : G.State) (ht₀ : S.choose t₀ m = 1)
     (hS_le : ∀ t, S.choose t m ≤ 1) :
     (hearerBR G S).respond m s > 0 ↔ S.choose s m = 1 := by
@@ -293,7 +295,7 @@ private theorem hearerBR_deterministic_flat (G : InterpGame)
   set w := fun t => S.choose t m * G.prior t
   -- maxW = p: since S ≤ 1 and flat priors, w(t) ≤ p for all t, with equality at t₀.
   have hmaxW : Finset.univ.fold max 0 w = p := le_antisymm
-    (by rcases fold_max_attained Finset.univ w 0 with h0 | ⟨t, _, hft⟩
+    (by rcases Finset.fold_max_attained Finset.univ w 0 with h0 | ⟨t, _, hft⟩
         · linarith [hPriorPos s]
         · calc _ = w t := hft
             _ = S.choose t m * G.prior t := rfl
@@ -322,44 +324,21 @@ private theorem hearerBR_deterministic_flat (G : InterpGame)
     exact div_pos one_pos (Nat.cast_pos.mpr (Finset.card_pos.mpr
       ⟨s, Finset.mem_filter.mpr ⟨Finset.mem_univ _, hws⟩⟩))
 
+include hScalar hPriorPos hFlatPrior hDistinct
+
 /-- In a scalar game with distinct truth sets, for all n ≥ 0, the speaker's
     optimal messages at `ibrN G n` are the unique strongest message at each
     state. By induction on n (base = L0, step = hearerBR preserves). -/
-private theorem ibrN_opt_singleton (G : InterpGame)
-    (hPriorPos : ∀ t, G.prior t > 0)
-    (hFlatPrior : ∀ t₁ t₂ : G.State, G.prior t₁ = G.prior t₂)
-    (hScalar : isScalarGame G)
-    (hDistinct : ∀ m₁ m₂ : G.Message, G.trueStates m₁ = G.trueStates m₂ → m₁ = m₂)
-    (n : ℕ) :
+private theorem ibrN_opt_singleton (n : ℕ) :
     ∀ (s : G.State), (G.trueMessages s).Nonempty →
     ∃ m₀ : G.Message, SpeakerStrategy.optimalMessages G (ibrN G n) s = {m₀} ∧
       G.meaning m₀ s = true ∧
       (∀ m', G.meaning m' s = true → G.trueStates m₀ ⊆ G.trueStates m') := by
-  -- Helper: find the strongest message at any state
-  have find_strongest : ∀ (s : G.State), (G.trueMessages s).Nonempty →
-      ∃ m₀ ∈ G.trueMessages s, G.meaning m₀ s = true ∧
-        (∀ m', G.meaning m' s = true → G.trueStates m₀ ⊆ G.trueStates m') ∧
-        (∀ m', G.meaning m' s = true → m' ≠ m₀ →
-          G.trueStates m₀ ⊂ G.trueStates m') := by
-    intro s hNE
-    obtain ⟨m₀, hm₀_in, hm₀_min⟩ := Finset.exists_min_image (G.trueMessages s)
-      (fun m => (G.trueStates m).card) hNE
-    have hm₀_in := G.mem_trueMessages.mp hm₀_in
-    have hm₀_str : ∀ m', G.meaning m' s = true → G.trueStates m₀ ⊆ G.trueStates m' := by
-      intro m' hm'
-      cases hScalar m₀ m' with
-      | inl h => exact h
-      | inr h =>
-        exact Finset.eq_of_subset_of_card_le h
-          (hm₀_min m' (G.mem_trueMessages.mpr hm')) ▸ Finset.Subset.refl _
-    refine ⟨m₀, G.mem_trueMessages.mpr hm₀_in, hm₀_in, hm₀_str, ?_⟩
-    intro m' hm' hne
-    exact lt_of_le_of_ne (hm₀_str m' hm')
-      (fun heq => hne (hDistinct m₀ m' heq).symm)
   induction n with
   | zero =>
     intro s hNE
-    obtain ⟨m₀, hm₀_mem, hm₀_in, hm₀_str, hm₀_sstr⟩ := find_strongest s hNE
+    obtain ⟨m₀, hm₀_mem, hm₀_in, hm₀_str, hm₀_sstr⟩ :=
+      exists_strongest G hScalar hDistinct s hNE
     -- L0(m) ≤ L0(m₀) for all m; strict for m ≠ m₀
     have hL0_le : ∀ m ∈ G.trueMessages s, (L0 G).respond m s ≤ (L0 G).respond m₀ s := by
       intro m hm_mem
@@ -379,7 +358,7 @@ private theorem ibrN_opt_singleton (G : InterpGame)
     -- maxUtility = L0(m₀, s)
     have hMaxUtil : SpeakerStrategy.maxUtility G (ibrN G 0) s = (L0 G).respond m₀ s := by
       simp only [ibrN]; apply le_antisymm
-      · rcases fold_max_attained (G.trueMessages s) (fun m => (L0 G).respond m s) 0
+      · rcases Finset.fold_max_attained (G.trueMessages s) (fun m => (L0 G).respond m s) 0
             with h0 | ⟨m', hm', hfm'⟩
         · simp only [SpeakerStrategy.maxUtility, h0]
           rw [L0_respond_true G m₀ s hm₀_in]
@@ -398,7 +377,8 @@ private theorem ibrN_opt_singleton (G : InterpGame)
     exact ⟨m₀, hopt, hm₀_in, hm₀_str⟩
   | succ n ih =>
     intro s hNE
-    obtain ⟨m₀, hm₀_mem, hm₀_in, hm₀_str, hm₀_sstr⟩ := find_strongest s hNE
+    obtain ⟨m₀, hm₀_mem, hm₀_in, hm₀_str, hm₀_sstr⟩ :=
+      exists_strongest G hScalar hDistinct s hNE
     -- By IH: at any state t, opt = {strongest at t}
     -- So bestResponse(t, m) = 1 if m strongest at t, 0 otherwise
     set S := SpeakerStrategy.bestResponse G (ibrN G n) with hS_def
@@ -410,7 +390,7 @@ private theorem ibrN_opt_singleton (G : InterpGame)
         S.choose t m = 1 := by
       intro t m htNE hmt hmstr
       obtain ⟨m₁, hopt₁, _, hstr₁⟩ := ih t htNE
-      have hm_eq : m = m₁ := hDistinct m m₁
+      have hm_eq : m = m₁ := hDistinct
         (Finset.Subset.antisymm (hmstr m₁ (SpeakerStrategy.optimalMessages_meaning G
           (ibrN G n) t m₁ (hopt₁ ▸ Finset.mem_singleton_self m₁))) (hstr₁ m hmt))
       subst hm_eq
@@ -434,13 +414,13 @@ private theorem ibrN_opt_singleton (G : InterpGame)
         (∃ t₁, S.choose t₁ m' = 1) →
         ((ibrN G (n + 1)).respond m' s > 0 ↔ S.choose s m' = 1) := by
       intro m' _ ⟨t₁, ht₁⟩
-      exact hearerBR_deterministic_flat G S m' s hPriorPos hFlatPrior t₁ ht₁
+      exact hearerBR_deterministic_flat G hPriorPos hFlatPrior S m' s t₁ ht₁
         (fun t => SpeakerStrategy.bestResponse_le_one G (ibrN G n) t m')
     -- H(m', s) = 0 for non-strongest m' at s
     have hH_zero : ∀ m', G.meaning m' s = true → m' ≠ m₀ →
         (ibrN G (n + 1)).respond m' s = 0 := by
       intro m' hm's hne
-      obtain ⟨t₀, ht₀_in, ht₀_str⟩ := scalar_level_nonempty G hScalar hDistinct m'
+      obtain ⟨t₀, ht₀_in, ht₀_str⟩ := scalar_level_nonempty G hScalar m'
         ⟨s, G.mem_trueStates.mpr hm's⟩
       have ht₀_in := G.mem_trueStates.mp ht₀_in
       have ht₀_br : S.choose t₀ m' = 1 :=
@@ -458,7 +438,7 @@ private theorem ibrN_opt_singleton (G : InterpGame)
     have hMaxUtil : SpeakerStrategy.maxUtility G (ibrN G (n + 1)) s =
         (ibrN G (n + 1)).respond m₀ s := by
       apply le_antisymm
-      · rcases fold_max_attained (G.trueMessages s)
+      · rcases Finset.fold_max_attained (G.trueMessages s)
             (fun m => (ibrN G (n + 1)).respond m s) 0 with h0 | ⟨m', hm', hfm'⟩
         · simp only [SpeakerStrategy.maxUtility, h0]; exact le_of_lt hH_pos
         · simp only [SpeakerStrategy.maxUtility, hfm']
@@ -480,11 +460,7 @@ private theorem ibrN_opt_singleton (G : InterpGame)
 /-- At `ibrN G (k+1)` for a scalar game with flat positive priors and distinct
     truth sets, `H(m, s) > 0` iff `m` is the strongest message at `s`
     (smallest truth set among messages true at `s`). -/
-private theorem ibrN_respond_pos_iff_strongest (G : InterpGame)
-    (hPriorPos : ∀ t, G.prior t > 0)
-    (hFlatPrior : ∀ t₁ t₂ : G.State, G.prior t₁ = G.prior t₂)
-    (hScalar : isScalarGame G)
-    (hDistinct : ∀ m₁ m₂ : G.Message, G.trueStates m₁ = G.trueStates m₂ → m₁ = m₂)
+private theorem ibrN_respond_pos_iff_strongest
     (k : ℕ) (m : G.Message) (s : G.State) (hs : G.meaning m s = true) :
     (ibrN G (k + 1)).respond m s > 0 ↔
       (∀ m', G.meaning m' s = true → G.trueStates m ⊆ G.trueStates m') := by
@@ -492,7 +468,7 @@ private theorem ibrN_respond_pos_iff_strongest (G : InterpGame)
   have hNE : (G.trueMessages s).Nonempty := ⟨m, G.mem_trueMessages.mpr hs⟩
   -- From ibrN_opt_singleton: opt(s) = {m₀} where m₀ is the strongest at s
   obtain ⟨m₀, hopt₀, hm₀_true, hm₀_str⟩ :=
-    ibrN_opt_singleton G hPriorPos hFlatPrior hScalar hDistinct k s hNE
+    ibrN_opt_singleton G hScalar hPriorPos hFlatPrior hDistinct k s hNE
   -- S(s, m₀) = 1, S(s, m') = 0 for m' ≠ m₀
   have hbr_m₀ : S.choose s m₀ = 1 := by
     rw [SpeakerStrategy.bestResponse_val, if_pos (hopt₀ ▸ Finset.mem_singleton_self m₀),
@@ -500,20 +476,20 @@ private theorem ibrN_respond_pos_iff_strongest (G : InterpGame)
   have hbr_ne : ∀ m', m' ≠ m₀ → S.choose s m' = 0 := fun m' hne => by
     rw [SpeakerStrategy.bestResponse_val, if_neg (hopt₀ ▸ mt Finset.mem_singleton.mp hne)]
   -- Find level state t₀ where m is strongest → S(t₀, m) = 1
-  obtain ⟨t₀, ht₀_in, ht₀_str⟩ := scalar_level_nonempty G hScalar hDistinct m
+  obtain ⟨t₀, ht₀_in, ht₀_str⟩ := scalar_level_nonempty G hScalar m
     ⟨s, G.mem_trueStates.mpr hs⟩
   have ht₀_in := G.mem_trueStates.mp ht₀_in
-  obtain ⟨m_t₀, hopt_t₀, _, hstr_t₀⟩ := ibrN_opt_singleton G hPriorPos hFlatPrior
-    hScalar hDistinct k t₀ ⟨m, G.mem_trueMessages.mpr ht₀_in⟩
-  have hm_eq : m = m_t₀ := hDistinct m m_t₀
+  obtain ⟨m_t₀, hopt_t₀, _, hstr_t₀⟩ := ibrN_opt_singleton G hScalar hPriorPos hFlatPrior
+    hDistinct k t₀ ⟨m, G.mem_trueMessages.mpr ht₀_in⟩
+  have hm_eq : m = m_t₀ := hDistinct
     (Finset.Subset.antisymm (ht₀_str m_t₀ (SpeakerStrategy.optimalMessages_meaning G
       (ibrN G k) t₀ m_t₀ (hopt_t₀ ▸ Finset.mem_singleton_self m_t₀))) (hstr_t₀ m ht₀_in))
   subst hm_eq
   have hbr_t₀ : S.choose t₀ m = 1 := by
     rw [SpeakerStrategy.bestResponse_val, if_pos (hopt_t₀ ▸ Finset.mem_singleton_self m),
       hopt_t₀, Finset.card_singleton]; norm_num
-  -- Apply eq. 131: H > 0 ↔ S = 1 ↔ m = m₀ ↔ m strongest
-  have hBR := hearerBR_deterministic_flat G S m s hPriorPos hFlatPrior t₀ hbr_t₀
+  -- Apply eq. (131): H > 0 ↔ S = 1 ↔ m = m₀ ↔ m strongest
+  have hBR := hearerBR_deterministic_flat G hPriorPos hFlatPrior S m s t₀ hbr_t₀
     (fun t => SpeakerStrategy.bestResponse_le_one G (ibrN G k) t m)
   constructor
   · intro hPos
@@ -525,23 +501,18 @@ private theorem ibrN_respond_pos_iff_strongest (G : InterpGame)
         (hopt₀ ▸ ((SpeakerStrategy.bestResponse_pos_iff G (ibrN G k) s m).mp hpos).1)
     exact this ▸ hm₀_str
   · intro hStr
-    have hm_eq : m = m₀ := hDistinct m m₀
+    have hm_eq : m = m₀ := hDistinct
       (Finset.Subset.antisymm (hStr m₀ hm₀_true) (hm₀_str m hs))
     exact hBR.mpr (hm_eq ▸ hbr_m₀)
 
--- SECTION 5: Main Theorems
+/-! ### Main theorems -/
 
 /-- At `ibrN G (k+1)`, `H(m, s) > 0` iff `strongestAt G m s`.
 
     Thin wrapper around `ibrN_respond_pos_iff_strongest` that handles the
     case where m is false at s (both sides are false) and packages the
     result as the `strongestAt` predicate. -/
-private theorem ibrN_pos_iff_strongestAt (G : InterpGame)
-    (hPriorPos : ∀ t, G.prior t > 0)
-    (hFlatPrior : ∀ t₁ t₂ : G.State, G.prior t₁ = G.prior t₂)
-    (hScalar : isScalarGame G)
-    (hDistinct : ∀ m₁ m₂ : G.Message, G.trueStates m₁ = G.trueStates m₂ → m₁ = m₂)
-    (k : ℕ) (m : G.Message) (s : G.State) :
+private theorem ibrN_pos_iff_strongestAt (k : ℕ) (m : G.Message) (s : G.State) :
     (ibrN G (k + 1)).respond m s > 0 ↔ strongestAt G m s := by
   constructor
   · intro hPos
@@ -556,108 +527,54 @@ private theorem ibrN_pos_iff_strongestAt (G : InterpGame)
       · simp only [L0, HearerStrategy.literal, hFalse] at hPos; simp at hPos
       · exact hmW hwm.symm
       · simp at hPos
-    exact ⟨hTrue, (ibrN_respond_pos_iff_strongest G hPriorPos hFlatPrior hScalar
+    exact ⟨hTrue, (ibrN_respond_pos_iff_strongest G hScalar hPriorPos hFlatPrior
       hDistinct k m s hTrue).mp hPos⟩
   · intro ⟨hTrue, hStr⟩
-    exact (ibrN_respond_pos_iff_strongest G hPriorPos hFlatPrior hScalar
+    exact (ibrN_respond_pos_iff_strongest G hScalar hPriorPos hFlatPrior
       hDistinct k m s hTrue).mpr hStr
 
-/-- IBR = exhMW (Main theorem — [franke-2011], Section 9.3)
+/-- **IBR = exhMW for scalar games** ([franke-2011] Fact 1, §10, sharpened).
 
 At any IBR level k+1 of a **scalar** interpretation game, the listener's
 positive-probability states for message m are exactly the exhMW-minimal states.
+
+Franke's Fact 1 states containment (`R₁(mS) ⊆ ExhMM(S)`) for the level-1
+receiver, with equality under a "homogeneity" condition. For scalar games the
+nested truth sets deliver equality at every level ≥ 1, which is what is proved
+here — a per-level statement, not a fixed-point theorem.
 
 The proof chains through `strongestAt` as a bridge:
 
     ibrN > 0  ↔  strongestAt  ↔  exhMW
     (rational choice)        (order theory)
 
-The left equivalence (`ibrN_pos_iff_strongestAt`) is proved by induction on
-the IBR sequence. The right equivalence (`strongestAt_iff_exhMW`) is pure
-order theory with no probabilities.
-
-**Restriction**: Requires `hIBR : ∃ k, H = ibrN G (k + 1)`, i.e., H is from
-the IBR iteration. The claim is false for arbitrary FPs of scalar games.
+**Restriction**: requires `hIBR : ∃ k, H = ibrN G (k + 1)`, i.e. H arises from
+the IBR iteration; the claim is false for arbitrary hearer strategies.
 
 Two structural hypotheses:
 - `isScalarGame`: truth sets are totally ordered by inclusion (nested)
 - `hDistinct`: no two messages have identical truth sets -/
-theorem ibr_equals_exhMW (G : InterpGame) (H : HearerStrategy G)
-    (_hFP : isIBRFixedPoint G H)
-    (hPriorPos : ∀ t, G.prior t > 0)
-    (hFlatPrior : ∀ t₁ t₂ : G.State, G.prior t₁ = G.prior t₂)
-    (hScalar : isScalarGame G)
-    (hDistinct : ∀ m₁ m₂ : G.Message, G.trueStates m₁ = G.trueStates m₂ → m₁ = m₂)
-    (hIBR : ∃ k, H = ibrN G (k + 1))
-    (m : G.Message) :
+theorem ibr_equals_exhMW (H : HearerStrategy G)
+    (hIBR : ∃ k, H = ibrN G (k + 1)) (m : G.Message) :
     (∀ s, H.respond m s > 0 ↔ exhMW (toAlternatives G) (prejacent G m) s) := by
   obtain ⟨k, hH⟩ := hIBR; subst hH
   intro s
-  exact (ibrN_pos_iff_strongestAt G hPriorPos hFlatPrior hScalar hDistinct k m s).trans
+  exact (ibrN_pos_iff_strongestAt G hScalar hPriorPos hFlatPrior hDistinct k m s).trans
     (strongestAt_iff_exhMW G hScalar m s)
 
-/-- For scalar games, IBR stabilizes at level 1. No EG monotonicity needed.
+/-- For scalar games, IBR stabilizes at level 1: `ibrN G 1` already assigns
+    positive probability exactly to the exhMW-minimal states, bypassing the
+    general convergence machinery (`ibr_reaches_fixed_point` in
+    `Convergence.lean`).
 
-    The IBR sequence for scalar games reaches its correct behavior at level 1:
-    `ibrN G 1` already assigns positive probability exactly to exhMW-minimal
-    states. This bypasses the general convergence machinery
-    (`ibr_reaches_fixed_point`, ~350 lines of EG arithmetic) entirely. -/
-theorem ibr_converges_to_exhMW (G : InterpGame)
-    (hPriorPos : ∀ s, G.prior s > 0)
-    (hFlatPrior : ∀ t₁ t₂ : G.State, G.prior t₁ = G.prior t₂)
-    (hScalar : isScalarGame G)
-    (hDistinct : ∀ m₁ m₂ : G.Message, G.trueStates m₁ = G.trueStates m₂ → m₁ = m₂) :
+    The stabilization claim is derived here; [franke-2011] states Fact 1 for
+    the level-1 receiver only. -/
+theorem ibr_converges_to_exhMW :
     ∀ (m : G.Message) (s : G.State),
       (ibrN G 1).respond m s > 0 ↔
         exhMW (toAlternatives G) (prejacent G m) s := by
   intro m s
-  exact (ibrN_pos_iff_strongestAt G hPriorPos hFlatPrior hScalar hDistinct 0 m s).trans
+  exact (ibrN_pos_iff_strongestAt G hScalar hPriorPos hFlatPrior hDistinct 0 m s).trans
     (strongestAt_iff_exhMW G hScalar m s)
-
--- SECTION 6: Level-Uniform Generalization
-
-/-- Level of a message: the states where m is the strongest true message.
-
-    In a scalar game, these form an equivalence class of the truth-pattern
-    partition. IBR reasoning assigns positive probability to (m, s) iff
-    s is in the level of m. -/
-def messageLevel (G : InterpGame) (m : G.Message) : Finset G.State :=
-  Finset.univ.filter (λ s => G.meaning m s = true ∧
-    ∀ m', G.meaning m' s = true → G.trueStates m ⊆ G.trueStates m')
-
-/-- The prior is **level-uniform** if it is constant within each message's level.
-
-    This is the minimal condition for IBR = exhMW. Flat priors (∀ t₁ t₂, P(t₁) = P(t₂))
-    trivially satisfy this, but level-uniformity is strictly weaker. -/
-def levelUniformPrior (G : InterpGame) : Prop :=
-  ∀ (m : G.Message) (s₁ s₂ : G.State),
-    s₁ ∈ messageLevel G m → s₂ ∈ messageLevel G m →
-    G.prior s₁ = G.prior s₂
-
-/-- An **equivalence class game** has states that are truth-pattern equivalence
-    classes: each message level is a singleton set. In such games,
-    `levelUniformPrior` holds for ANY positive prior (there's only one state
-    per level, so the uniformity condition is vacuous).
-
-    [franke-2011]'s Theorem 1 shows that for equivalence class games,
-    heavy = light systems — the prior doesn't affect the interpretation. -/
-def isEquivalenceClassGame (G : InterpGame) : Prop :=
-  ∀ (m : G.Message), (messageLevel G m).Nonempty →
-    (messageLevel G m).card = 1
-
-/-- Flat priors are level-uniform. -/
-theorem flat_prior_is_levelUniform (G : InterpGame)
-    (hFlat : ∀ t₁ t₂ : G.State, G.prior t₁ = G.prior t₂) :
-    levelUniformPrior G :=
-  fun _ _ _ _ _ => hFlat _ _
-
-/-- Equivalence class games have level-uniform priors for any prior. -/
-theorem eqclass_levelUniform (G : InterpGame) (hEq : isEquivalenceClassGame G) :
-    levelUniformPrior G := by
-  intro m s₁ s₂ hs₁ hs₂
-  obtain ⟨a, ha⟩ := Finset.card_eq_one.mp (hEq m ⟨s₁, hs₁⟩)
-  have h₁ : s₁ = a := Finset.mem_singleton.mp (ha ▸ hs₁)
-  have h₂ : s₂ = a := Finset.mem_singleton.mp (ha ▸ hs₂)
-  rw [h₁, h₂]
 
 end RSA.IBR

@@ -1,9 +1,13 @@
+import Mathlib.Algebra.BigOperators.Ring.Finset
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Ring
 import Linglib.Pragmatics.IBR.Basic
 
 /-!
 # IBR Convergence
 
-General convergence proof for Iterated Best Response ([franke-2011] Appendix B.1).
+General convergence proof for Iterated Best Response ([franke-2011] Appendix B.4).
 
 Expected gain (EG) is monotone non-decreasing along the IBR sequence (Lemma 3),
 and the strategy space is finite (pigeonhole), so IBR must reach a fixed point
@@ -16,37 +20,12 @@ general (non-scalar) interpretation games.
 
 namespace RSA.IBR
 
-/-- Helper: fold max is attained at the initial value or at some element. -/
-private theorem fold_max_attained {α : Type*} [DecidableEq α]
-    (s : Finset α) (f : α → ℚ) (b : ℚ) :
-    s.fold max b f = b ∨ ∃ x ∈ s, s.fold max b f = f x := by
-  induction s using Finset.induction_on with
-  | empty => left; simp [Finset.fold_empty]
-  | @insert a s' hna ih =>
-    rw [Finset.fold_insert hna]
-    cases ih with
-    | inl hb =>
-      rw [hb]
-      by_cases h : f a ≤ b
-      · left; exact max_eq_right h
-      · right
-        push_neg at h
-        exact ⟨a, Finset.mem_insert_self a s', max_eq_left (le_of_lt h)⟩
-    | inr hex =>
-      obtain ⟨x, hx, hfx⟩ := hex
-      rw [hfx]
-      by_cases h : f a ≤ f x
-      · right; exact ⟨x, Finset.mem_insert_of_mem hx, max_eq_right h⟩
-      · right
-        push_neg at h
-        exact ⟨a, Finset.mem_insert_self a s', max_eq_left (le_of_lt h)⟩
-
 /-- If no element attains the fold max, then fold max = init. -/
 private theorem fold_max_eq_init_of_no_attainer {α : Type*} [DecidableEq α]
     (s : Finset α) (f : α → ℚ) (b : ℚ)
     (h : ∀ x ∈ s, f x ≠ s.fold max b f) :
     s.fold max b f = b := by
-  cases fold_max_attained s f b with
+  cases Finset.fold_max_attained s f b with
   | inl hb => exact hb
   | inr hex =>
     obtain ⟨x, hx, hfx⟩ := hex
@@ -92,9 +71,9 @@ private theorem bestResponse_inner_ge_maxU (G : InterpGame) (H : HearerStrategy 
   by_cases hk0 : k = 0
   · have : maxU = 0 := by
       have hge : maxU ≥ 0 := SpeakerStrategy.maxUtility_nonneg G H s
-      by_contra hne; push_neg at hne
+      by_contra hne; push Not at hne
       have hpos : maxU > 0 := lt_of_le_of_ne hge (Ne.symm hne)
-      cases fold_max_attained (G.trueMessages s) (fun m' => H.respond m' s) 0 with
+      cases Finset.fold_max_attained (G.trueMessages s) (fun m' => H.respond m' s) 0 with
       | inl h0 =>
         have : maxU = 0 := h0; linarith
       | inr hex =>
@@ -226,9 +205,9 @@ private theorem hearerBR_inner_ge_max (G : InterpGame) (S : SpeakerStrategy G) (
     linarith [Finset.sum_nonneg (fun t (_ : t ∈ Finset.univ) =>
       mul_nonneg (hw_nonneg t) (hearerBR_respond_nonneg G S m t))]
   · -- maxW > 0
-    push_neg at hmaxW0
+    push Not at hmaxW0
     -- fold_max_attained: maxW = 0 or maxW = w(t₀) for some t₀
-    have h_attained := fold_max_attained Finset.univ w 0
+    have h_attained := Finset.fold_max_attained Finset.univ w 0
     have ⟨t₀, ht₀_mem, ht₀_val⟩ : ∃ t₀ ∈ Finset.univ, w t₀ = maxW := by
       rcases h_attained with hinit | hex
       · linarith -- maxW = 0, contradicts hmaxW0
@@ -323,7 +302,6 @@ private theorem eg_hearerBR_improvement (G : InterpGame)
     (from per_message_bound) and Σ_t w(t)·hearerBR(m,t) ≥ maxW (argmax achieves). -/
 theorem eg_ibr_monotone (G : InterpGame)
     (hPriorNonneg : ∀ s, G.prior s ≥ 0)
-    (hPriorSum : Finset.univ.sum G.prior = 1)
     (n : ℕ) :
     expectedGain G (speakerUpdate G (ibrN G n)) (ibrN G n) ≤
     expectedGain G (speakerUpdate G (ibrN G (n + 1))) (ibrN G (n + 1)) := by
@@ -441,7 +419,7 @@ private theorem inner_eq_maxU_respond_eq' (G : InterpGame)
     linarith [hSTruth m (by cases h : G.meaning m t <;> simp_all)]
   have hle : H.respond m t ≤ maxU :=
     SpeakerStrategy.utility_le_maxUtility G H t m (G.mem_trueMessages.mpr hTrue)
-  by_contra hne; push_neg at hne
+  by_contra hne; push Not at hne
   have hlt : H.respond m t < maxU := lt_of_le_of_ne hle hne
   linarith [show Finset.univ.sum (λ m' => S.choose t m' * H.respond m' t) < maxU from
     calc Finset.univ.sum (λ m' => S.choose t m' * H.respond m' t)
@@ -471,7 +449,8 @@ private theorem eg_eq_opt_containment' (G : InterpGame)
     (m : G.Message) (hSm : S_old.choose t m > 0) :
     m ∈ SpeakerStrategy.optimalMessages G H t := by
   have hInner := eg_eq_inner_eq' G S_old H hPriorNonneg hSNonneg hSSum hSTruth hEG t hPt
-  have hResp := inner_eq_maxU_respond_eq' G S_old H t m (hSNonneg t) (hSSum t) (hSTruth t) hInner hSm
+  have hResp := inner_eq_maxU_respond_eq' G S_old H t m (hSNonneg t) (hSSum t) (hSTruth t)
+    hInner hSm
   simp only [SpeakerStrategy.optimalMessages, Finset.mem_filter, InterpGame.trueMessages,
     Finset.mem_univ, true_and]
   exact ⟨by by_contra hF; linarith [hSTruth t m (by cases h : G.meaning m t <;> simp_all)], hResp⟩
@@ -631,8 +610,7 @@ private theorem ibr_sequence_repeats (G : InterpGame) :
     which is a fixed point. -/
 theorem ibr_reaches_fixed_point (G : InterpGame)
     (hPriorNonneg : ∀ s, G.prior s ≥ 0)
-    (hPriorPos : ∀ s, G.prior s > 0)
-    (hPriorSum : Finset.univ.sum G.prior = 1) :
+    (hPriorPos : ∀ s, G.prior s > 0) :
     ∃ n : ℕ, isIBRFixedPoint G (ibrN G n) := by
   obtain ⟨n₁, n₂, hlt, heq⟩ := ibr_sequence_repeats G
   set p := n₂ - n₁
@@ -641,7 +619,7 @@ theorem ibr_reaches_fixed_point (G : InterpGame)
     rwa [Nat.add_sub_cancel' (le_of_lt hlt)]
   -- EG is monotone along the IBR sequence
   set eg := fun n => expectedGain G (speakerUpdate G (ibrN G n)) (ibrN G n)
-  have hEGmono : ∀ k, eg k ≤ eg (k + 1) := eg_ibr_monotone G hPriorNonneg hPriorSum
+  have hEGmono : ∀ k, eg k ≤ eg (k + 1) := eg_ibr_monotone G hPriorNonneg
   have hEGcycle : eg n₁ = eg (n₁ + p) := by
     simp only [eg]; rw [hperiod]
   -- optimalMessages containment at each step of the cycle

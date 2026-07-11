@@ -1,24 +1,25 @@
-/-
-[franke-2011]. Quantity implicatures, exhaustive interpretation, and
-rational conversation. S&P 4(1):1-82.
-
-IBR (iterated best response) converges to exhaustive interpretation (exhMW).
-
-General IBR theory (InterpGame, strategies, convergence) is in
-`Pragmatics/IBR/`. This file contains paper-specific results:
-- Facts 1, 3, 4 connecting IBR to the exhaustification literature
-- Alternative counting (eq. 107) and the R₁ characterization
-- Concrete examples (scalar implicature, free choice disjunction)
--/
-
+import Mathlib.Tactic.DeriveFintype
 import Linglib.Pragmatics.IBR.Basic
 import Linglib.Pragmatics.IBR.ScalarGames
+
+/-!
+# Franke 2011: Quantity implicatures and rational conversation
+
+[franke-2011], S&P 4(1): IBR (iterated best response) converges to exhaustive
+interpretation (exhMW; the paper writes ExhMM).
+
+General IBR theory (`InterpGame`, strategies, convergence) is in
+`Pragmatics/IBR/`. This file contains paper-specific results:
+- Facts 1, 3, 4 connecting IBR to the exhaustification literature
+- Alternative counting (eq. (107)) and the R₁ characterization
+- Concrete examples (scalar implicature, free choice disjunction)
+-/
 
 namespace RSA.IBR
 
 open Exhaustification
 
--- SECTION 1: Alternative Counting (Franke eq. 107)
+/-! ### Alternative counting ([franke-2011] eq. (107)) -/
 
 /-- Number of alternatives (messages) true at state s.
     This is |R⁻¹₀(s)| in Franke's notation. -/
@@ -31,7 +32,7 @@ def isMinimalByAltCount (G : InterpGame) (m : G.Message) (s : G.State) : Prop :=
   G.meaning m s = true ∧
   ∀ s', G.meaning m s' = true → alternativeCount G s ≤ alternativeCount G s'
 
--- SECTION 2: Fact 1 — R₁ ⊆ ExhMW (Franke Section 10)
+/-! ### Fact 1: R₁ ⊆ ExhMW ([franke-2011] §10) -/
 
 /-- **Franke Fact 1 (containment direction)**: Level-1 receiver interpretation
     is contained in minimal-models exhaustification.
@@ -59,7 +60,7 @@ theorem r1_subset_exhMW (G : InterpGame) (m : G.Message) (s : G.State)
     have hmin := h.2 s' hs'_true
     omega
 
--- SECTION 3: Conditions for the Converse (ExhMW ⊆ R₁)
+/-! ### Conditions for the converse (ExhMW ⊆ R₁) -/
 
 /-- The alternative ordering is **total** on m-worlds if for any two states
 where m is true, one's true alternatives are a subset of the other's. -/
@@ -92,13 +93,15 @@ theorem exhMW_subset_r1_under_totality (G : InterpGame) (m : G.Message) (s : G.S
 
 /-- **R₁ = ExhMW under totality**: Full equivalence when alternatives form a chain.
 
-This is the precise condition under which Franke's Fact 1 becomes an equality. -/
+Totality is *a* sufficient condition for [franke-2011]'s Fact 1 to become an
+equality; the paper's own sufficient condition is "homogeneity" of the
+alternative set. -/
 theorem r1_eq_exhMW_under_totality (G : InterpGame) (m : G.Message) (s : G.State)
     (hTotal : altOrderingTotalOnMessage G m) :
     isMinimalByAltCount G m s ↔ exhMW (toAlternatives G) (prejacent G m) s :=
   ⟨r1_subset_exhMW G m s, exhMW_subset_r1_under_totality G m s hTotal⟩
 
--- SECTION 4: Fact 3 — ExhMW ⊆ ExhIE (Franke Appendix A)
+/-! ### Fact 3: ExhMW ⊆ ExhIE ([franke-2011] Appendix A) -/
 
 /-- **Franke Fact 3 (Appendix A)**: ExhMW(S, Alt) ⊆ ExhIE(S, Alt)
 
@@ -108,17 +111,16 @@ theorem fact3_exhMW_subset_exhIE (G : InterpGame) (m : G.Message) :
     exhMW (toAlternatives G) (prejacent G m) ⊆ exhIE (toAlternatives G) (prejacent G m) :=
   exhMW_entails_exhIE (toAlternatives G) (prejacent G m)
 
--- SECTION 5: Fact 4 — ExhMW = ExhIE under closure (Franke Appendix A)
+/-! ### Fact 4: ExhMW = ExhIE under closure ([franke-2011] Appendix A) -/
 
 /-- **Franke Fact 4 (Appendix A)**: ExhMW = ExhIE when Alt is closed under ∧.
 
-    This is proved as `exhMW_eq_exhIE_of_closedUnderConj` in Exhaustification/Operators/Basic.lean. -/
+    This is proved as `exhMW_eq_exhIE_of_closedUnderConj` in
+    Exhaustification/Operators/Basic.lean. -/
 theorem fact4_exhMW_eq_exhIE_closed (G : InterpGame) (m : G.Message)
     (hClosed : closedUnderConj (toAlternatives G)) :
     exhMW (toAlternatives G) (prejacent G m) = exhIE (toAlternatives G) (prejacent G m) :=
   exhMW_eq_exhIE_of_closedUnderConj (toAlternatives G) (prejacent G m) hClosed
-
--- SECTION 6: Examples
 
 /-!
 ## Scalar Implicature Example (Franke Section 3.1)
@@ -157,10 +159,13 @@ def scalarGame : InterpGame where
     | .all, .someNotAll => false
   prior := λ _ => 1 / 2  -- Uniform prior
 
-#guard (L0 scalarGame).respond .some_ .someNotAll == 1/2
-#guard (L0 scalarGame).respond .some_ .all == 1/2
-#guard (L0 scalarGame).respond .all .all == 1
-#guard (L0 scalarGame).respond .all .someNotAll == 0
+example : (L0 scalarGame).respond .some_ .someNotAll = 1/2 := rfl
+example : (L0 scalarGame).respond .some_ .all = 1/2 := rfl
+example : (L0 scalarGame).respond .all .all = 1 := by
+  have h : (scalarGame.trueStates .all).card = 1 := by decide
+  simp [L0, HearerStrategy.literal, h]
+  decide
+example : (L0 scalarGame).respond .all .someNotAll = 0 := rfl
 
 /-- The scalar implicature game IS a scalar game: truth sets are nested. -/
 theorem scalarGame_is_scalar : isScalarGame scalarGame := by
@@ -168,13 +173,8 @@ theorem scalarGame_is_scalar : isScalarGame scalarGame := by
     simp only [scalarGame, InterpGame.trueStates] <;> decide
 
 /-- The scalar implicature game has distinct truth sets. -/
-theorem scalarGame_distinct :
-    ∀ m₁ m₂ : scalarGame.Message, scalarGame.trueStates m₁ = scalarGame.trueStates m₂ → m₁ = m₂ := by
+theorem scalarGame_distinct : Function.Injective scalarGame.trueStates := by
   intro m₁ m₂; cases m₁ <;> cases m₂ <;> simp [scalarGame, InterpGame.trueStates] <;> decide
-
-/-- The scalar game is an equivalence class game: each message level is a singleton. -/
-theorem scalarGame_is_eqclass : isEquivalenceClassGame scalarGame := by
-  intro m hNE; cases m <;> native_decide
 
 /-- strongestAt verification: "some" is strongest at someNotAll. -/
 example : strongestAt scalarGame .some_ .someNotAll := by
@@ -249,8 +249,11 @@ def freeChoiceGame : InterpGame where
   prior := λ _ => 1 / 4  -- Uniform prior
 
 -- L0: ◇(A∨B) true everywhere → uniform over all 4 states
-#guard (L0 freeChoiceGame).respond .mayAorB .either == 1/4
--- L2: ◇(A∨B) → "either" (free choice inference emerges from IBR)
+example : (L0 freeChoiceGame).respond .mayAorB .either = 1/4 := rfl
+-- Level-2 hearer: ◇(A∨B) → "either" (free choice inference emerges from IBR).
+-- `#guard` (compiler evaluation) rather than `decide`: `hearerBR` branches on
+-- ℚ-equality propositions, and ℚ normalization runs `Nat.gcd` (well-founded
+-- recursion), which kernel reduction cannot unfold.
 #guard (ibrN freeChoiceGame 2).respond .mayAorB .either > 0
 #guard (ibrN freeChoiceGame 2).respond .mayAorB .onlyA == 0
 

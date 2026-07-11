@@ -1,8 +1,8 @@
-import Mathlib.Data.Set.Basic
-import Mathlib.Data.Finset.Basic
-import Mathlib.Data.Rat.Defs
+import Mathlib.Algebra.Order.Field.Basic
+import Mathlib.Algebra.Order.Field.Rat
+import Mathlib.Data.Finset.Fold
+import Mathlib.Data.Fintype.BigOperators
 import Mathlib.Data.Fintype.Pigeonhole
-import Linglib.Core.Probability.Choice.RationalAction
 
 /-!
 # Iterated Best Response: Core Definitions
@@ -14,9 +14,36 @@ literal listener (L₀), best response operators, IBR iteration (`ibrN`),
 fixed points, and expected gain (`expectedGain`).
 -/
 
+/-- A `Finset.fold max` is attained either at the initial value or at some element.
+    [UPSTREAM] candidate: general order lemma, no IBR content. -/
+theorem Finset.fold_max_attained {α β : Type*} [DecidableEq α] [LinearOrder β]
+    (s : Finset α) (f : α → β) (b : β) :
+    s.fold max b f = b ∨ ∃ x ∈ s, s.fold max b f = f x := by
+  induction s using Finset.induction_on with
+  | empty => left; simp [Finset.fold_empty]
+  | @insert a s' hna ih =>
+    rw [Finset.fold_insert hna]
+    cases ih with
+    | inl hb =>
+      rw [hb]
+      by_cases h : f a ≤ b
+      · left; exact max_eq_right h
+      · right
+        push Not at h
+        exact ⟨a, Finset.mem_insert_self a s', max_eq_left (le_of_lt h)⟩
+    | inr hex =>
+      obtain ⟨x, hx, hfx⟩ := hex
+      rw [hfx]
+      by_cases h : f a ≤ f x
+      · right; exact ⟨x, Finset.mem_insert_of_mem hx, max_eq_right h⟩
+      · right
+        push Not at h
+        exact ⟨a, Finset.mem_insert_self a s', max_eq_left (le_of_lt h)⟩
+
 namespace RSA.IBR
 
-/-- Interpretation game (Franke §6): states are equivalence classes over alternative truth patterns. -/
+/-- Interpretation game ([franke-2011] §6): states are equivalence classes over
+    alternative truth patterns. -/
 structure InterpGame where
   /-- Type of states (equivalence classes of worlds) -/
   State : Type
@@ -102,9 +129,9 @@ def maxUtility (G : InterpGame) (H : HearerStrategy G) (s : G.State) : ℚ :=
 
 /-- Optimal messages at state s: true messages achieving max utility.
 
-    This is the set-level best response (Franke eq. 76): the speaker at state t
-    uses messages in R_k^{-1}(t) that minimize |R_k(m)|, which corresponds to
-    maximizing H(m|t) in the probabilistic rendering.
+    This is the set-level best response ([franke-2011] eq. (76)): the speaker at
+    state t uses messages in R_k^{-1}(t) that minimize |R_k(m)|, which corresponds
+    to maximizing H(m|t) in the probabilistic rendering.
 
     All probability-level reasoning should go through this set. -/
 def optimalMessages (G : InterpGame) (H : HearerStrategy G) (s : G.State) : Finset G.Message :=
@@ -133,7 +160,8 @@ theorem utility_le_maxUtility (G : InterpGame) (H : HearerStrategy G)
     H.respond m s ≤ maxUtility G H s :=
   (Finset.le_fold_max _).mpr (Or.inr ⟨m, hm, le_refl _⟩)
 
-/-- Best response speaker: uniform distribution over optimal messages (eq. 76). -/
+/-- Best response speaker: uniform distribution over optimal messages
+    ([franke-2011] eq. (76)). -/
 def bestResponse (G : InterpGame) (H : HearerStrategy G) : SpeakerStrategy G where
   choose := λ s m =>
     if m ∈ optimalMessages G H s then
@@ -157,8 +185,8 @@ theorem bestResponse_nonneg (G : InterpGame) (H : HearerStrategy G) (s : G.State
   split_ifs <;> first | exact le_refl 0 | exact one_div_nonneg.mpr (Nat.cast_nonneg _)
 
 /-- Best response speaker gives zero probability to false messages. -/
-theorem bestResponse_false_zero (G : InterpGame) (H : HearerStrategy G) (s : G.State) (m : G.Message)
-    (hFalse : G.meaning m s = false) :
+theorem bestResponse_false_zero (G : InterpGame) (H : HearerStrategy G) (s : G.State)
+    (m : G.Message) (hFalse : G.meaning m s = false) :
     (bestResponse G H).choose s m = 0 := by
   rw [bestResponse_val, if_neg]
   intro hmem
@@ -207,7 +235,9 @@ theorem bestResponse_le_one (G : InterpGame) (H : HearerStrategy G)
 end SpeakerStrategy
 
 
-/-- L₀: Literal listener (Franke Def. 22) -/
+/-- L₀: literal listener — the level-0 receiver R₀ of [franke-2011] eq. (73), in
+    its Bayesian heavy-system rendering (Appendix B.1): uniform over the states
+    where the message is true. -/
 def L0 (G : InterpGame) : HearerStrategy G :=
   HearerStrategy.literal G
 
@@ -219,12 +249,14 @@ Uniform over optimal messages. -/
 def speakerUpdate (G : InterpGame) (H : HearerStrategy G) : SpeakerStrategy G :=
   SpeakerStrategy.bestResponse G H
 
-/-- Hearer best response: argmax of posterior probability (Franke eq. 77/120).
+/-- Hearer best response: argmax of posterior probability ([franke-2011]
+    eq. (120); under flat priors it reduces to the light-system argmin form,
+    eq. (77)).
 
     The hearer observes m, forms posterior μ(t|m) ∝ S(t,m) · P(t), and picks
     the state(s) with maximum posterior probability. Uniform over ties.
     For surprise messages (∀ t, S(t,m) · P(t) = 0), falls back to literal
-    interpretation per the TCP assumption. -/
+    interpretation per the tcp assumption. -/
 def hearerBR (G : InterpGame) (S : SpeakerStrategy G) : HearerStrategy G where
   respond := λ m t =>
     let w : G.State → ℚ := λ s => S.choose s m * G.prior s
@@ -253,7 +285,13 @@ theorem hearerBR_respond_nonneg (G : InterpGame) (S : SpeakerStrategy G)
 def ibrStep (G : InterpGame) (H : HearerStrategy G) : HearerStrategy G :=
   hearerBR G (speakerUpdate G H)
 
-/-- IBR reasoning for n iterations starting from L₀ -/
+/-- IBR reasoning for n iterations starting from L₀.
+
+    Indexing note: `ibrStep` composes a speaker best response with a hearer best
+    response, so `ibrN` tracks the *even* receiver subsequence R₀, R₂, R₄, … of
+    [franke-2011] — `ibrN G 1` is the paper's R₂, not R₁. For the scalar games of
+    `ScalarGames.lean` all receiver levels ≥ 1 coincide, so the distinction is
+    immaterial there. -/
 def ibrN (G : InterpGame) (n : ℕ) : HearerStrategy G :=
   match n with
   | 0 => L0 G
@@ -289,7 +327,8 @@ def pragmaticSupport (G : InterpGame) (H : HearerStrategy G) (m : G.Message) :
   H.support m
 
 /-- EG(S, R) = Σ_t Pr(t) × Σ_m S(t,m) × R(m,t): expected communication success. -/
-noncomputable def expectedGain (G : InterpGame) (S : SpeakerStrategy G) (H : HearerStrategy G) : ℚ :=
+noncomputable def expectedGain (G : InterpGame) (S : SpeakerStrategy G)
+    (H : HearerStrategy G) : ℚ :=
   Finset.univ.sum λ t =>
     G.prior t * Finset.univ.sum λ m =>
       S.choose t m * H.respond m t
