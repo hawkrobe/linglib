@@ -118,17 +118,12 @@ end Equilibrium
 the on-path posterior is a point mass on the actual type: separating
 strategies transmit full information. -/
 theorem posterior_of_injective [Fintype T] [DecidableEq T] [DecidableEq M] (σ : T → M)
-    (hσ : Function.Injective σ) (hprior : ∀ t, 0 < g.prior t) (t t' : T) :
-    g.posterior σ (σ t) t' = if t' = t then 1 else 0 := by
-  have hfilter : Finset.univ.filter (σ · = σ t) = {t} := by
-    ext x
-    simp [hσ.eq_iff]
-  rw [posterior, hfilter]
-  simp only [Finset.sum_singleton]
-  rw [if_neg (ne_of_gt (hprior t))]
+    (hσ : Function.Injective σ) (hprior : ∀ t, 0 < g.prior t) (t : T) :
+    g.posterior σ (σ t) = Pi.single t 1 := by
+  ext t'
   rcases eq_or_ne t' t with rfl | hne
-  · rw [if_pos rfl, if_pos rfl, div_self (ne_of_gt (hprior t'))]
-  · rw [if_neg (fun h => hne (hσ h)), if_neg hne]
+  · simp [posterior, hσ.eq_iff, Finset.filter_eq', (hprior t').ne', div_self]
+  · simp [posterior, hσ.eq_iff, Finset.filter_eq', (hprior t).ne', hne]
 
 /-! ## Conventional vs speaker's meaning
 
