@@ -262,9 +262,11 @@ import Linglib.Core.Order.SimilarityOrdering
 import Linglib.Core.Order.StrictBounds
 import Linglib.Core.Order.TotalPreorder
 import Linglib.Core.Order.Tree
+import Linglib.Core.Order.Argmax
 import Linglib.Core.Order.TreePath
 import Linglib.Core.Order.UpperLower.Closure
 import Linglib.Core.Probability.BayesianUpdate
+import Linglib.Core.Probability.Choice.Argmax
 import Linglib.Core.Probability.Choice.ChoiceApproximations
 import Linglib.Core.Probability.Choice.GumbelLuce
 import Linglib.Core.Probability.Choice.RankOrderings
