@@ -5,14 +5,15 @@ import Linglib.Core.Order.Argmax
 /-!
 # Signaling games
 
-The shared carrier for game-theoretic pragmatics: a sender who privately
-knows her type `t : T` chooses a message `m : M`; a receiver observes `m`
-and chooses an action `a : A`; utilities depend on all three (the message
-argument carries signalling costs). Lewisian conventions ([lewis-1969]),
-credible communication ([van-rooy-2003]), and iterated-best-response
-pragmatics ([franke-2011]) are all analyses of this carrier; interpretation
-games arise as the specialization `A = T` with matching utility
-(conditions C1/C2 of [franke-2011]'s Theorem 1).
+The shared carrier for game-theoretic pragmatics ([benz-stevens-2018] is
+the field review): a sender who privately knows her type `t : T` chooses a
+message `m : M`; a receiver observes `m` and chooses an action `a : A`;
+utilities depend on all three (the message argument carries signalling
+costs). Lewisian conventions ([lewis-1969]), games of partial information,
+optimal-answer models, and iterated-best-response pragmatics
+([franke-2011]) are all analyses of this carrier; interpretation games
+arise as the specialization `A = T` with matching utility (conditions
+C1/C2 of [franke-2011]'s Theorem 1).
 
 Pure strategies are plain functions (`σ : T → M`, `ρ : M → A`); mixed
 strategies are Kleisli arrows into `PMF` and live with the consumers that
@@ -126,11 +127,10 @@ theorem posterior_of_injective [Fintype T] [DecidableEq T] [DecidableEq M] (σ :
 
 /-! ## Conventional vs speaker's meaning
 
-The Gricean contrast in signaling terms ([lewis-1969], [van-rooy-2003]):
-*conventional* meaning is an exogenous interpretation function; the
-*speaker's* meaning of `σ t` is the cell of the partition that the sender
-strategy induces on types; what the receiver can infer is their
-intersection. -/
+The Gricean contrast in signaling terms ([lewis-1969]): *conventional*
+meaning is an exogenous interpretation function; the *speaker's* meaning of
+`σ t` is the cell of the partition that the sender strategy induces on
+types; what the receiver can infer is their intersection. -/
 
 /-- Conventional meaning: an exogenous interpretation function from
 messages to propositions over types. -/
