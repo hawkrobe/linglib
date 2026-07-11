@@ -1,4 +1,4 @@
-import Mathlib.Algebra.Order.Field.Rat
+import Mathlib.Data.Real.Basic
 import Mathlib.Data.Fintype.BigOperators
 import Mathlib.Data.Fintype.Pigeonhole
 import Mathlib.Data.Fintype.Powerset
@@ -31,9 +31,6 @@ Main formalized results:
   every ICR stage lies inside the recurrence sets, so the recurrence sets
   themselves witness rationalizability.
 
-Deviation: utilities are ℚ-valued (the paper uses ℝ) per the project's
-exact-arithmetic convention; nothing in the model depends on completeness.
-
 The comparison with [franke-2011]'s IBR model (the paper's §6: Franke's
 games are the type-matching specialization, and the models differ exactly
 in belief selection — uniform via the Principle of Insufficient Reason
@@ -42,6 +39,8 @@ examples (§5) and Rabin-style message credibility.
 -/
 
 namespace Jaeger2014
+
+noncomputable section
 
 /-! ### Beliefs
 
@@ -52,27 +51,27 @@ including versions supported on a given strategy set — Jäger's `Δ(M)` and
 variable {M : Type*}
 
 /-- A probability distribution on a finite type: Jäger's `Δ(M)`. -/
-def IsDist [Fintype M] (q : M → ℚ) : Prop :=
+def IsDist [Fintype M] (q : M → ℝ) : Prop :=
   (∀ x, 0 ≤ q x) ∧ ∑ x, q x = 1
 
 /-- A full-support probability distribution: Jäger's `int(Δ(M))`. -/
-def IsFullDist [Fintype M] (q : M → ℚ) : Prop :=
+def IsFullDist [Fintype M] (q : M → ℝ) : Prop :=
   (∀ x, 0 < q x) ∧ ∑ x, q x = 1
 
 /-- A distribution supported inside `P`: Jäger's `Δ(P)` for `P ⊆ M`. -/
-def IsDistOn [Fintype M] (P : Set M) (q : M → ℚ) : Prop :=
+def IsDistOn [Fintype M] (P : Set M) (q : M → ℝ) : Prop :=
   (∀ x, 0 ≤ q x) ∧ (∀ x ∉ P, q x = 0) ∧ ∑ x, q x = 1
 
 /-- A distribution with support exactly `P`: Jäger's `int(Δ(P)))` for
 `P ⊆ M` — positive on `P`, zero off it. -/
-def IsFullDistOn [Fintype M] (P : Set M) (q : M → ℚ) : Prop :=
+def IsFullDistOn [Fintype M] (P : Set M) (q : M → ℝ) : Prop :=
   (∀ x ∈ P, 0 < q x) ∧ (∀ x ∉ P, q x = 0) ∧ ∑ x, q x = 1
 
-theorem IsFullDist.isDist [Fintype M] {q : M → ℚ} (h : IsFullDist q) : IsDist q :=
+theorem IsFullDist.isDist [Fintype M] {q : M → ℝ} (h : IsFullDist q) : IsDist q :=
   ⟨fun x => (h.1 x).le, h.2⟩
 
 /-- A full-support-on-`P` distribution is supported inside any superset. -/
-theorem IsFullDistOn.isDistOn [Fintype M] {P P' : Set M} {q : M → ℚ}
+theorem IsFullDistOn.isDistOn [Fintype M] {P P' : Set M} {q : M → ℝ}
     (h : IsFullDistOn P q) (hPP' : P ⊆ P') : IsDistOn P' q :=
   ⟨fun x => (em (x ∈ P)).elim (fun hx => (h.1 x hx).le) (fun hx => (h.2.1 x hx).ge),
    fun x hx => h.2.1 x (fun hxP => hx (hPP' hxP)), h.2.2⟩
@@ -86,7 +85,7 @@ positive prior over worlds; an exogenous interpretation function
 (`uS c w f a = vS c w a - cost f`). -/
 structure SemanticGame (C W F A : Type*) [Fintype W] where
   /-- The receiver's prior probability over worlds (`p*`). -/
-  prior : W → ℚ
+  prior : W → ℝ
   /-- All worlds have positive prior probability. -/
   prior_pos : ∀ w, 0 < prior w
   /-- The prior is a probability distribution. -/
@@ -94,11 +93,11 @@ structure SemanticGame (C W F A : Type*) [Fintype W] where
   /-- The interpretation function `⟦·⟧`: is signal `f` true at world `w`? -/
   meaning : F → W → Prop
   /-- Context/outcome utilities of the sender. -/
-  vS : C → W → A → ℚ
+  vS : C → W → A → ℝ
   /-- Signalling costs. -/
-  cost : F → ℚ
+  cost : F → ℝ
   /-- The receiver's utility function. -/
-  uR : C → W → A → ℚ
+  uR : C → W → A → ℝ
   [meaningDecidable : ∀ f, DecidablePred (meaning f)]
 
 attribute [instance] SemanticGame.meaningDecidable
@@ -110,7 +109,7 @@ variable {C W F A : Type*} [Fintype C] [Fintype W] [Fintype F] [Fintype A]
   (g : SemanticGame C W F A)
 
 /-- The sender's utility function: outcome utility minus signalling cost. -/
-def uS (c : C) (w : W) (f : F) (a : A) : ℚ :=
+def uS (c : C) (w : W) (f : F) (a : A) : ℝ :=
   g.vS c w a - g.cost f
 
 /-- The extension of a signal: the worlds at which it is true. -/
@@ -120,7 +119,7 @@ def extension (f : F) : Finset W :=
 /-- Def. 1: the receiver-optimal actions in context `c` when the belief `p`
 is updated with the proposition `φ` — the argmax of `p`-expected receiver
 utility over `φ`. -/
-def optimalActions (c : C) (φ : Finset W) (p : W → ℚ) : Finset A :=
+def optimalActions (c : C) (φ : Finset W) (p : W → ℝ) : Finset A :=
   Finset.univ.argmax (fun a => ∑ w ∈ φ, p w * g.uR c w a)
 
 /-! ### Best responses and cautious responses
@@ -134,14 +133,14 @@ full-support belief. -/
 /-- Def. 2 (receiver): `r'` is a best response to the belief `(σ, q)` iff
 in every own-context `c` it maximizes expected utility against the sender
 strategy distribution `σ`, context distribution `q`, and the prior. -/
-def receiverBR (σ : (C → W → F) → ℚ) (q : C → ℚ) : Set (C → F → A) :=
+def receiverBR (σ : (C → W → F) → ℝ) (q : C → ℝ) : Set (C → F → A) :=
   {r' | ∀ c, r' ∈ Finset.univ.argmax (fun r : C → F → A =>
     ∑ s, σ s * ∑ c', q c' * ∑ w, g.prior w * g.uR c w (r c (s c' w)))}
 
 /-- Def. 2 (sender): `s'` is a best response to the belief `(ρ, q)` iff at
 every context/world pair it maximizes expected utility against the
 receiver strategy distribution `ρ` and context distribution `q`. -/
-def senderBR (ρ : (C → F → A) → ℚ) (q : C → ℚ) : Set (C → W → F) :=
+def senderBR (ρ : (C → F → A) → ℝ) (q : C → ℝ) : Set (C → W → F) :=
   {s' | ∀ c w, s' ∈ Finset.univ.argmax (fun s : C → W → F =>
     ∑ r, ρ r * ∑ c', q c' * g.uS c w (s c w) (r c' (s c w)))}
 
@@ -292,5 +291,7 @@ theorem prs_rationalizable {s : C → W → F} {r : C → F → A}
       hq.isDist, hBR⟩
 
 end SemanticGame
+
+end
 
 end Jaeger2014
