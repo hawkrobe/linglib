@@ -1,4 +1,7 @@
+import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Data.Finset.Max
+import Mathlib.Data.Fintype.Pi
 
 /-!
 # The argmax set of a function on a finset
@@ -55,6 +58,33 @@ theorem argmax_comp_strictMono {g : β → γ} (hg : StrictMono g) :
 theorem argmax_const (c : β) : s.argmax (fun _ => c) = s := by
   ext a
   simp
+
+/-- Membership in an argmax over `univ`, through a surjection: `a` maximizes
+`φ ∘ e` iff `e a` maximizes `φ`. Collapses argmax over a function space to
+argmax over values when the objective factors through evaluation. -/
+theorem mem_argmax_comp_surjective {α' : Type*} [Fintype α] [Fintype α']
+    {e : α → α'} (he : Function.Surjective e) (φ : α' → β) {a : α} :
+    a ∈ Finset.univ.argmax (φ ∘ e) ↔ e a ∈ Finset.univ.argmax φ := by
+  simp only [mem_argmax, Finset.mem_univ, true_and, Function.comp_apply]
+  exact ⟨fun h b => (he b).elim fun a' hb => hb ▸ h a',
+    fun h a' => h (e a')⟩
+
+/-- Membership in the argmax of a coordinatewise sum over a finite pi type:
+`g` maximizes `∑ i, φ i (g i)` iff every coordinate maximizes its own
+summand. The additive-separability workhorse for best responses in games. -/
+theorem mem_argmax_pi_sum {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {Y : ι → Type*} [∀ i, Fintype (Y i)] {K : Type*} [AddCommMonoid K]
+    [LinearOrder K] [IsOrderedCancelAddMonoid K]
+    (φ : ∀ i, Y i → K) {g : ∀ i, Y i} :
+    g ∈ Finset.univ.argmax (fun g' : (∀ i, Y i) => ∑ i, φ i (g' i)) ↔
+      ∀ i, g i ∈ Finset.univ.argmax (φ i) := by
+  simp only [mem_argmax, Finset.mem_univ, true_and, true_implies]
+  refine ⟨fun h i b => ?_, fun h g' => Finset.sum_le_sum fun i _ => h i (g' i)⟩
+  have key := h (Function.update g i b)
+  simp only [Function.apply_update (fun k y => φ k y)] at key
+  rw [Finset.sum_update_of_mem (Finset.mem_univ i), ← Finset.erase_eq,
+    ← Finset.add_sum_erase _ (fun k => φ k (g k)) (Finset.mem_univ i)] at key
+  exact le_of_add_le_add_right key
 
 /-- A `Finset.fold max` is attained either at the initial value or at some
 element. [UPSTREAM] candidate alongside `argmax`. -/
