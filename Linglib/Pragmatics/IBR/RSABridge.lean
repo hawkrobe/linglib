@@ -45,19 +45,20 @@ noncomputable def rsaS1Real (G : InterpGame) (α : ℝ) (s : G.State) : G.Messag
     if G.meaning m s then Real.log (G.informativity m : ℝ) else falseMessageScore G
   softmax (α • score)
 
-/-- **The Limit Theorem** ([franke-2011], formalized):
+/-- **Softmax → argmax limit.** As α → ∞, RSA S1 probability concentrates on
+the uniquely most informative true message — exactly the argmax choice of
+[franke-2011]'s IBR speaker.
 
-As α → ∞, RSA S1 probability concentrates on the uniquely most
-informative true message — which is exactly the IBR-optimal message.
-
-This follows from `Softmax.tendsto_softmax_infty_at_max`: softmax
-converges to 1 at the unique maximum as α → ∞. -/
+This bridge is the formalizer's, not a result of [franke-2011]: RSA postdates
+the paper ([frank-goodman-2012]). It follows from
+`Softmax.tendsto_softmax_infty_at_max`: softmax converges to 1 at the unique
+maximum as α → ∞. -/
 theorem rsa_speaker_to_ibr (G : InterpGame) [Nonempty G.Message] (s : G.State) (m : G.Message)
     (hTrue : G.meaning m s = true)
-    (hUnique : ∀ m', m' ≠ m → G.meaning m' s = true → G.informativity m > G.informativity m')
-    (hInfPos : 0 < G.informativity m) :
+    (hUnique : ∀ m', m' ≠ m → G.meaning m' s = true → G.informativity m > G.informativity m') :
     Filter.Tendsto (λ α => rsaS1Real G α s m) Filter.atTop (nhds 1) := by
-  let score := λ m' => if G.meaning m' s then Real.log (G.informativity m' : ℝ) else falseMessageScore G
+  let score := λ m' =>
+    if G.meaning m' s then Real.log (G.informativity m' : ℝ) else falseMessageScore G
   have hmax : ∀ m', m' ≠ m → score m' < score m := by
     intro m' hne
     simp only [score, hTrue, ↓reduceIte]
