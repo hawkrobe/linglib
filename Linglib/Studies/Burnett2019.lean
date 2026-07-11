@@ -1,6 +1,6 @@
 import Linglib.Pragmatics.RSA.Canonical
 import Linglib.Pragmatics.SocialMeaning.EckertMontague
-import Linglib.Pragmatics.IBR.Basic
+import Linglib.Pragmatics.SignalingGame.Interpretation
 import Linglib.Pragmatics.SocialMeaning.IndexicalField
 import Linglib.Studies.Eckert2008
 import Linglib.Studies.Labov2012
@@ -1007,19 +1007,17 @@ theorem smg_matches_labov_direction :
 
 /-! Burnett's Social Meaning Game (SMG): a signalling game in which a
 speaker's variant choice conveys social information about their persona.
-The SMG reuses [franke-2011]'s IBR machinery — the naive listener,
-strategic speaker, and uncovering listener are all instances of IBR
-reasoning applied to a social-meaning interpretation game.
+The SMG is an interpretation game in [franke-2011]'s sense — the naive
+listener, strategic speaker, and uncovering listener are level-k agents
+over a social-meaning interpretation game.
 
-The key design choice: `toInterpGame` converts any SMG into Franke's
-`InterpGame`, so SMG agents reuse the existing IBR iteration machinery.
-The grounding theorem `naiveListener_eq_L0` verifies that this reuse
-is semantically correct: the SMG L₀ definition produces the same
-results as running Franke's L₀ on the converted game. -/
+The key design choice: `toInterpGame` converts any SMG into an
+`InterpGame` on the shared signaling-game carrier, so SMG agents reuse
+the substrate's machinery. The grounding theorem `naiveListener_eq_literal`
+verifies that the SMG L₀ definition IS the carrier's literal listener on
+the converted game. -/
 
 section smgDefs
-
-open RSA.IBR
 
 /-- A Social Meaning Game (Burnett Def. 4.1): a signalling game where
     variant choice conveys social information.
@@ -1044,33 +1042,28 @@ structure SocialMeaningGame (P V : Type)
   /-- Social evaluation: how much persona `t` values variant `v`. -/
   socialEval : P → V → ℚ
 
-/-- Convert a Social Meaning Game to Franke's interpretation game.
-
-    This is the key architectural bridge: SMG analysis reuses the
-    existing IBR machinery from [franke-2011] rather than reimplementing
-    iterated best response.
+/-- Convert a Social Meaning Game to an interpretation game
+([franke-2011]) on the shared signaling-game carrier.
 
     The mapping:
-    - States = Personae (what the listener tries to infer)
+    - Types = Personae (what the listener tries to infer)
     - Messages = Variants (what the speaker chooses)
     - meaning = SMG meaning (EM field compatibility)
     - prior = SMG prior over personae -/
 def SocialMeaningGame.toInterpGame {P V : Type}
     [Fintype P] [Fintype V]
     [DecidableEq P] [DecidableEq V]
-    (smg : SocialMeaningGame P V) : InterpGame :=
-  { State := P
-    Message := V
-    meaning := smg.meaning
-    prior := smg.prior }
+    (smg : SocialMeaningGame P V) : InterpGame P V where
+  meaning := fun v p => smg.meaning v p = true
+  prior := smg.prior
 
 /-- The naive listener (Burnett Def. 4.2): L₀(t | v) = 1/|⟦v⟧| if
     ⟦v⟧(t), 0 otherwise.
 
     This is Franke's literal L₀ — uniform over compatible types, NOT
     Bayesian conditioning on the prior. The prior is passed through to
-    `toInterpGame` but Franke's `HearerStrategy.literal` ignores it,
-    distributing probability uniformly over `trueStates`.
+    `toInterpGame` but `InterpGame.literal` ignores it, distributing
+    probability uniformly over `trueStates`.
 
     The Bayesian L₀ (L₀(t | v) ∝ Pr(t) · ⟦v⟧(t)) is what Burnett's
     RSA model uses (eq. 11). That prior-weighted version lives in the
@@ -1080,15 +1073,15 @@ def naiveListener {P V : Type}
     [DecidableEq P] [DecidableEq V]
     (smg : SocialMeaningGame P V)
     (v : V) (t : P) : ℚ :=
-  (L0 smg.toInterpGame).respond v t
+  smg.toInterpGame.literal v t
 
-/-- **Grounding theorem**: The SMG naive listener IS Franke's L₀
-    applied to the converted game. True by construction. -/
-theorem naiveListener_eq_L0 {P V : Type}
+/-- **Grounding theorem**: The SMG naive listener IS the carrier's literal
+    listener applied to the converted game. True by construction. -/
+theorem naiveListener_eq_literal {P V : Type}
     [Fintype P] [Fintype V]
     [DecidableEq P] [DecidableEq V]
     (smg : SocialMeaningGame P V) :
-    naiveListener smg = fun v t => (L0 smg.toInterpGame).respond v t := rfl
+    naiveListener smg = fun v t => smg.toInterpGame.literal v t := rfl
 
 /-- The strategic speaker (simplified): S₁(v | t) ∝ μ(t, v) · ⟦v⟧(t).
 
