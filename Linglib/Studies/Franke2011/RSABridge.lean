@@ -1,4 +1,4 @@
-import Linglib.Pragmatics.IBR.Basic
+import Linglib.Studies.Franke2011.IBR
 import Linglib.Core.Probability.SoftmaxLimits
 
 /-!
@@ -24,14 +24,22 @@ in the high-rationality limit. Probabilistic mechanisms (like
 informativeness-based pruning) are the only way out.
 -/
 
-namespace RSA.IBR
+namespace Franke2011
 
 open Core
 
-/-- Floor score for false messages. Uses -log(|State|) - 1, which is always
+variable {T M : Type*} [Fintype T] (G : InterpGame T M)
+
+/-- Informativity of a message: reciprocal of its true-state count (0 for
+    contradictory messages). -/
+def informativity (m : M) : ℚ :=
+  let n := (G.trueStates m).card
+  if n = 0 then 0 else 1 / n
+
+/-- Floor score for false messages. Uses -log(|T|) - 1, which is always
     below the minimum possible log-informativity for any true message. -/
-noncomputable def falseMessageScore (G : InterpGame) : ℝ :=
-  - Real.log (Fintype.card G.State : ℝ) - 1
+noncomputable def falseMessageScore : ℝ :=
+  - Real.log (Fintype.card T : ℝ) - 1
 
 /-- RSA S1 probability (real version for limit theorems).
 
@@ -40,9 +48,9 @@ RSA S1 is exactly softmax over log-informativity scores:
               = inf(m)^α / Σ inf(m')^α
               = softmax(log ∘ inf, α)(m)
 -/
-noncomputable def rsaS1Real (G : InterpGame) (α : ℝ) (s : G.State) : G.Message → ℝ :=
+noncomputable def rsaS1Real [Fintype M] (α : ℝ) (s : T) : M → ℝ :=
   let score := λ m =>
-    if G.meaning m s then Real.log (G.informativity m : ℝ) else falseMessageScore G
+    if G.meaning m s then Real.log (informativity G m : ℝ) else falseMessageScore (T := T)
   softmax (α • score)
 
 /-- **Softmax → argmax limit.** As α → ∞, RSA S1 probability concentrates on
@@ -53,18 +61,18 @@ This bridge is the formalizer's, not a result of [franke-2011]: RSA postdates
 the paper ([frank-goodman-2012]). It follows from
 `Softmax.tendsto_softmax_infty_at_max`: softmax converges to 1 at the unique
 maximum as α → ∞. -/
-theorem rsa_speaker_to_ibr (G : InterpGame) [Nonempty G.Message] (s : G.State) (m : G.Message)
-    (hTrue : G.meaning m s = true)
-    (hUnique : ∀ m', m' ≠ m → G.meaning m' s = true → G.informativity m > G.informativity m') :
+theorem rsa_speaker_to_ibr [Fintype M] [DecidableEq M] [Nonempty M] (s : T) (m : M)
+    (hTrue : G.meaning m s)
+    (hUnique : ∀ m', m' ≠ m → G.meaning m' s → informativity G m > informativity G m') :
     Filter.Tendsto (λ α => rsaS1Real G α s m) Filter.atTop (nhds 1) := by
   let score := λ m' =>
-    if G.meaning m' s then Real.log (G.informativity m' : ℝ) else falseMessageScore G
+    if G.meaning m' s then Real.log (informativity G m' : ℝ) else falseMessageScore (T := T)
   have hmax : ∀ m', m' ≠ m → score m' < score m := by
     intro m' hne
     simp only [score, hTrue, ↓reduceIte]
     split_ifs with hm'
-    · have hm'_pos : 0 < G.informativity m' := by
-        simp only [InterpGame.informativity]
+    · have hm'_pos : 0 < informativity G m' := by
+        simp only [informativity]
         split_ifs with hcard
         · exfalso
           have hempty : G.trueStates m' = ∅ := Finset.card_eq_zero.mp hcard
@@ -73,19 +81,20 @@ theorem rsa_speaker_to_ibr (G : InterpGame) [Nonempty G.Message] (s : G.State) (
         · exact one_div_pos.mpr (Nat.cast_pos.mpr (Nat.pos_of_ne_zero hcard))
       exact Real.log_lt_log (Rat.cast_pos.mpr hm'_pos) (Rat.cast_lt.mpr (hUnique m' hne hm'))
     · simp only [falseMessageScore]
-      haveI : Nonempty G.State := ⟨s⟩
-      have hcard_pos : 0 < Fintype.card G.State := Fintype.card_pos
+      haveI : Nonempty T := ⟨s⟩
+      have hcard_pos : 0 < Fintype.card T := Fintype.card_pos
       have hs_in_true : s ∈ G.trueStates m := G.mem_trueStates.mpr hTrue
       have htrue_card_pos : 0 < (G.trueStates m).card :=
         Finset.card_pos.mpr ⟨s, hs_in_true⟩
-      have htrue_card_le : (G.trueStates m).card ≤ Fintype.card G.State :=
+      have htrue_card_le : (G.trueStates m).card ≤ Fintype.card T :=
         Finset.card_le_card (Finset.subset_univ _)
-      have hinf_eq : G.informativity m = 1 / (G.trueStates m).card := by
-        simp only [InterpGame.informativity]
+      have hinf_eq : informativity G m = 1 / (G.trueStates m).card := by
+        simp only [informativity]
         split_ifs with hcard
         · exact absurd hcard (Nat.pos_iff_ne_zero.mp htrue_card_pos)
         · rfl
-      have hlog_eq : Real.log (G.informativity m : ℝ) = -Real.log ((G.trueStates m).card : ℝ) := by
+      have hlog_eq : Real.log (informativity G m : ℝ) =
+          -Real.log ((G.trueStates m).card : ℝ) := by
         rw [hinf_eq]
         simp only [Rat.cast_div, Rat.cast_one, Rat.cast_natCast]
         rw [Real.log_div (by norm_num : (1 : ℝ) ≠ 0)
@@ -93,9 +102,9 @@ theorem rsa_speaker_to_ibr (G : InterpGame) [Nonempty G.Message] (s : G.State) (
             Real.log_one]
         ring
       rw [hlog_eq]
-      have hlog_le : Real.log ((G.trueStates m).card : ℝ) ≤ Real.log (Fintype.card G.State : ℝ) :=
+      have hlog_le : Real.log ((G.trueStates m).card : ℝ) ≤ Real.log (Fintype.card T : ℝ) :=
         Real.log_le_log (Nat.cast_pos.mpr htrue_card_pos) (Nat.cast_le.mpr htrue_card_le)
       linarith
   exact Softmax.tendsto_softmax_infty_at_max score m hmax
 
-end RSA.IBR
+end Franke2011

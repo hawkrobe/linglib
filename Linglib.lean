@@ -1426,10 +1426,6 @@ import Linglib.Pragmatics.Emotion
 import Linglib.Pragmatics.Expressives.Basic
 import Linglib.Pragmatics.GameTheory
 import Linglib.Pragmatics.GriceanMaxims
-import Linglib.Pragmatics.IBR.Basic
-import Linglib.Pragmatics.IBR.Convergence
-import Linglib.Pragmatics.IBR.RSABridge
-import Linglib.Pragmatics.IBR.ScalarGames
 import Linglib.Pragmatics.Implicature.Basic
 import Linglib.Pragmatics.Implicature.Competence
 import Linglib.Pragmatics.Implicature.Defs
@@ -2218,7 +2214,11 @@ import Linglib.Studies.FoxSpector2018
 import Linglib.Studies.Francescotti1995
 import Linglib.Studies.FrancikClark1985
 import Linglib.Studies.FrankGoodman2012
-import Linglib.Studies.Franke2011
+import Linglib.Studies.Franke2011.Basic
+import Linglib.Studies.Franke2011.Convergence
+import Linglib.Studies.Franke2011.IBR
+import Linglib.Studies.Franke2011.RSABridge
+import Linglib.Studies.Franke2011.ScalarGames
 import Linglib.Studies.FrankeBergen2020
 import Linglib.Studies.FrischPierrehumbertBroe2004
 import Linglib.Studies.Funakoshi2016

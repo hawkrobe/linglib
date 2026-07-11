@@ -56,4 +56,29 @@ theorem argmax_const (c : β) : s.argmax (fun _ => c) = s := by
   ext a
   simp
 
+/-- A `Finset.fold max` is attained either at the initial value or at some
+element. [UPSTREAM] candidate alongside `argmax`. -/
+theorem fold_max_attained (s : Finset α) (f : α → β) (b : β) :
+    s.fold max b f = b ∨ ∃ x ∈ s, s.fold max b f = f x := by
+  induction s using Finset.cons_induction with
+  | empty => left; simp [Finset.fold_empty]
+  | cons a s' hna ih =>
+    rw [Finset.fold_cons]
+    cases ih with
+    | inl hb =>
+      rw [hb]
+      by_cases h : f a ≤ b
+      · left; exact max_eq_right h
+      · right
+        push Not at h
+        exact ⟨a, Finset.mem_cons_self a s', max_eq_left (le_of_lt h)⟩
+    | inr hex =>
+      obtain ⟨x, hx, hfx⟩ := hex
+      rw [hfx]
+      by_cases h : f a ≤ f x
+      · right; exact ⟨x, Finset.mem_cons_of_mem hx, max_eq_right h⟩
+      · right
+        push Not at h
+        exact ⟨a, Finset.mem_cons_self a s', max_eq_left (le_of_lt h)⟩
+
 end Finset

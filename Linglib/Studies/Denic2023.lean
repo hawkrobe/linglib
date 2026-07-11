@@ -298,7 +298,7 @@ they stand in the same entailment relations to them, and will thus
 necessarily be predicted to have the same implicatures."
 
 Since [franke-2011]'s IBR converges to exhMW for scalar games
-(`ibr_equals_exhMW` in `ScalarGames.lean`), IBR inherits the same
+(`ibr_equals_exhMW` in `Studies/Franke2011/ScalarGames.lean`), IBR inherits the same
 inability to distinguish ALL-20-OR from ALL-2-OR. -/
 theorem entailment_invariant_across_domain_size :
     -- ALT-or → distributive for ALL-20-OR (correct) AND ALL-2-OR (wrong)
