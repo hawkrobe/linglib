@@ -3,6 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
+import Mathlib.CategoryTheory.ObjectProperty.FullSubcategory
 import Mathlib.Combinatorics.SimpleGraph.Sum
 import Mathlib.Logic.Relation
 import Linglib.Core.Combinatorics.MixedGraph
@@ -42,9 +43,14 @@ strictness belongs to the tiered normal form, not to the foundation.
   (Axiom 4 — stated, deliberately not imposed, as in `AR.lean`), `IsPlanar`
   (Axiom 5, the No-Crossing Constraint in its general path form), `IsOCPClean`
   (Axiom 6).
-* `MixedGraph.Iso`: label- and relation-preserving equivalence;
-  `Iso.edgesIso`/`Iso.arcsIso` project to the stock `SimpleGraph.Iso`/`RelIso`.
+* `MixedGraph.Hom` / `MixedGraph.Iso`: label- and relation-preserving maps and
+  equivalences; faces project to the stock `SimpleGraph.Hom`/`Iso` and
+  `RelHom`/`RelIso`.
 * `MixedGraph.concat t`: tier-bridging concatenation on the vertex sum.
+* `MixedGraphCat S`: **the category of labeled mixed graphs** (vertex type
+  bundled with a graph); `Representation t` is **the category of autosegmental
+  representations** — the full subcategory of the structural axiom class
+  (Axioms 1–3), the category autosegmental phonology actually works in.
 
 ## Main results
 
@@ -116,6 +122,40 @@ def IsOCPClean (m : ι) : Prop :=
   ∀ ⦃v w⦄, G.arcs.Adj v w → G.tier t v = m → G.label v ≠ G.label w
 
 end Axioms
+
+/-! ### Morphisms -/
+
+/-- A label- and relation-preserving map of labeled mixed graphs. -/
+@[ext]
+structure Hom (G₁ : MixedGraph V₁ S) (G₂ : MixedGraph V₂ S) where
+  /-- The vertex map. -/
+  toFun : V₁ → V₂
+  /-- Association edges are preserved. -/
+  edge_map : ∀ ⦃v w⦄, G₁.edges.Adj v w → G₂.edges.Adj (toFun v) (toFun w)
+  /-- Precedence arcs are preserved. -/
+  arc_map : ∀ ⦃v w⦄, G₁.arcs.Adj v w → G₂.arcs.Adj (toFun v) (toFun w)
+  /-- Labels are preserved. -/
+  label_comp : ∀ v, G₂.label (toFun v) = G₁.label v
+
+/-- The edge face of a morphism, a stock graph homomorphism. -/
+def Hom.edgesHom {G₁ : MixedGraph V₁ S} {G₂ : MixedGraph V₂ S} (f : Hom G₁ G₂) :
+    G₁.edges →g G₂.edges :=
+  ⟨f.toFun, fun h => f.edge_map h⟩
+
+/-- The arc face of a morphism, a stock relation homomorphism. -/
+def Hom.arcsHom {G₁ : MixedGraph V₁ S} {G₂ : MixedGraph V₂ S} (f : Hom G₁ G₂) :
+    G₁.arcs.Adj →r G₂.arcs.Adj :=
+  ⟨f.toFun, fun h => f.arc_map h⟩
+
+/-- The identity morphism. -/
+def Hom.id (G : MixedGraph V S) : Hom G G :=
+  ⟨_root_.id, fun _ _ h => h, fun _ _ h => h, fun _ => rfl⟩
+
+/-- Composition of morphisms. -/
+def Hom.comp {G₁ : MixedGraph V₁ S} {G₂ : MixedGraph V₂ S} {G₃ : MixedGraph V₃ S}
+    (f : Hom G₁ G₂) (g : Hom G₂ G₃) : Hom G₁ G₃ :=
+  ⟨g.toFun ∘ f.toFun, fun _ _ h => g.edge_map (f.edge_map h),
+    fun _ _ h => g.arc_map (f.arc_map h), fun v => (g.label_comp _).trans (f.label_comp v)⟩
 
 /-! ### Isomorphism -/
 
@@ -262,5 +302,44 @@ def empty_concat_iso (G : MixedGraph V S) : Iso (concat t (empty S) G) G where
 end Concat
 
 end MixedGraph
+
+/-! ### The category of labeled mixed graphs -/
+
+open CategoryTheory
+
+universe u v
+
+/-- An object of the category of labeled mixed graphs over `S`: a vertex type
+    bundled with a labeled mixed graph on it. -/
+structure MixedGraphCat (S : Type v) : Type (max (u + 1) v) where
+  /-- The vertex type. -/
+  V : Type u
+  /-- The labeled mixed graph. -/
+  graph : MixedGraph V S
+
+namespace MixedGraphCat
+
+instance : Category (MixedGraphCat S) where
+  Hom X Y := MixedGraph.Hom X.graph Y.graph
+  id X := MixedGraph.Hom.id X.graph
+  comp f g := f.comp g
+  id_comp _ := MixedGraph.Hom.ext rfl
+  comp_id _ := MixedGraph.Hom.ext rfl
+  assoc _ _ _ := MixedGraph.Hom.ext rfl
+
+end MixedGraphCat
+
+/-! ### The category of autosegmental representations -/
+
+variable (t : S → ι)
+
+/-- The structural axiom class ([jardine-2016-diss] §4.2, Axioms 1–3) as an
+    object property of the graph category. -/
+def isRepresentation : ObjectProperty (MixedGraphCat S) := fun X =>
+  X.graph.IsTierOrdered t ∧ X.graph.NoInternalAssoc
+
+/-- The category of autosegmental representations over a tier assignment: the
+    full subcategory of labeled mixed graphs satisfying the structural axioms. -/
+abbrev Representation := (isRepresentation t).FullSubcategory
 
 end Autosegmental
