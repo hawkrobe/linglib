@@ -300,4 +300,49 @@ theorem Representation.tierWord_tensor (i : ι) :
 
 end TierWordTensor
 
+/-! ### Tier content of realizations -/
+
+section RealizeTierWord
+open scoped MonoidalCategory
+
+variable {S : Type*} {ι : Type*} {τ : ι → Type*}
+variable (g₀ : S → Representation (Sigma.fst : ((i : ι) × τ i) → ι))
+
+instance realize.instFinite [∀ s, Finite (g₀ s).obj.V] (w : List S) :
+    Finite (realize g₀ w).obj.V := by
+  induction w with
+  | nil => exact inferInstanceAs (Finite PEmpty)
+  | cons a w ih => exact inferInstanceAs (Finite ((g₀ a).obj.V ⊕ (realize g₀ w).obj.V))
+
+instance : Finite ((𝟙_ (Representation (Sigma.fst : ((i : ι) × τ i) → ι))).obj.V) :=
+  inferInstanceAs (Finite PEmpty)
+
+theorem Representation.tierWord_unit (i : ι) :
+    (𝟙_ (Representation (Sigma.fst : ((i : ι) × τ i) → ι))).tierWord i = [] := by
+  haveI : IsEmpty ((𝟙_ (Representation (Sigma.fst : ((i : ι) × τ i) → ι))).fiber i) :=
+    ⟨fun v => v.val.elim⟩
+  rw [Representation.tierWord_eq_ofFn (n := 0) ⟨Equiv.equivOfIsEmpty _ _, fun {a} => a.elim0⟩]
+  exact List.ofFn_zero
+
+/-- **Tier content is compositional**: the tier word of a realized string is the
+    concatenation of its symbols' tier words — [jardine-2019]'s tier projection
+    of `g`, and the bridge that places link-free ASL conditions per tier. -/
+theorem Representation.tierWord_realize [∀ s, Finite (g₀ s).obj.V] (i : ι) (w : List S) :
+    (realize g₀ w).tierWord i = (w.map fun s => (g₀ s).tierWord i).flatten := by
+  induction w with
+  | nil => exact Representation.tierWord_unit i
+  | cons a w ih =>
+    calc (realize g₀ (a :: w)).tierWord i
+        = (g₀ a ⊗ realize g₀ w).tierWord i := rfl
+      _ = (g₀ a).tierWord i ++ (realize g₀ w).tierWord i := Representation.tierWord_tensor i
+      _ = ((a :: w).map fun s => (g₀ s).tierWord i).flatten := by rw [ih]; rfl
+
+/-- The tier-`i` projection of a realization, as a free-monoid homomorphism:
+    each symbol contributes its primitive's tier word. -/
+noncomputable def tierProj [∀ s, Finite (g₀ s).obj.V] (i : ι) :
+    FreeMonoid S →* FreeMonoid (τ i) :=
+  FreeMonoid.lift fun s => FreeMonoid.ofList ((g₀ s).tierWord i)
+
+end RealizeTierWord
+
 end Autosegmental
