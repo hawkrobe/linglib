@@ -507,18 +507,6 @@ open MonoidalCategory
 
 variable {t}
 
-/-- The tensor unit: the empty representation. -/
-def unit : Representation t :=
-  ⟨MixedGraphCat.empty S, MixedGraphCat.empty_isTierOrdered t,
-    MixedGraphCat.empty_noInternalAssoc⟩
-
-/-- The tensor: morpheme concatenation, staying in the axiom class by
-    `isTierOrdered_concat`/`noInternalAssoc_concat`. -/
-def tensor (X Y : Representation t) : Representation t :=
-  ⟨MixedGraphCat.concat t X.obj Y.obj,
-    MixedGraphCat.isTierOrdered_concat t X.property.1 Y.property.1,
-    MixedGraphCat.noInternalAssoc_concat t X.property.2 Y.property.2⟩
-
 /-- Under the structural axioms the tier map properly colors the association
     graph: same-tier vertices are precedence-related (Axioms 1–2) and associated
     vertices never are (Axiom 3), so associated vertices lie on distinct tiers.
@@ -545,30 +533,22 @@ theorem hom_ext {X Y : Representation t} {f g : X ⟶ Y}
     (h : ∀ v, f.hom.toFun v = g.hom.toFun v) : f = g :=
   InducedCategory.hom_ext (MixedGraphCat.Hom.ext (funext h))
 
-/-- The tensor on morphisms, as a representation morphism. -/
-def tensorHomAux {X₁ Y₁ X₂ Y₂ : Representation t} (f : X₁ ⟶ Y₁) (g : X₂ ⟶ Y₂) :
-    tensor X₁ X₂ ⟶ tensor Y₁ Y₂ :=
-  InducedCategory.homMk (MixedGraphCat.Hom.concatMap (X₁ := X₁.obj) (Y₁ := Y₁.obj)
-    (X₂ := X₂.obj) (Y₂ := Y₂.obj) t f.hom g.hom)
-
-/-- Left whiskering, as a representation morphism. -/
-def whiskerLeftAux (X : Representation t) {Y₁ Y₂ : Representation t} (f : Y₁ ⟶ Y₂) :
-    tensor X Y₁ ⟶ tensor X Y₂ :=
-  InducedCategory.homMk (MixedGraphCat.Hom.concatMap (X₁ := X.obj) (Y₁ := X.obj)
-    (X₂ := Y₁.obj) (Y₂ := Y₂.obj) t (MixedGraphCat.Hom.id X.obj) f.hom)
-
-/-- Right whiskering, as a representation morphism. -/
-def whiskerRightAux {X₁ X₂ : Representation t} (f : X₁ ⟶ X₂) (Y : Representation t) :
-    tensor X₁ Y ⟶ tensor X₂ Y :=
-  InducedCategory.homMk (MixedGraphCat.Hom.concatMap (X₁ := X₁.obj) (Y₁ := X₂.obj)
-    (X₂ := Y.obj) (Y₂ := Y.obj) t f.hom (MixedGraphCat.Hom.id Y.obj))
-
+/-- Monoidal structure: morpheme concatenation as tensor, the empty
+    representation as unit; the axiom class is closed under both by
+    `isTierOrdered_concat`/`noInternalAssoc_concat`. -/
 @[simps] instance instMonoidalStruct : MonoidalCategoryStruct (Representation t) where
-  tensorObj := tensor
-  tensorUnit := unit
-  tensorHom := tensorHomAux
-  whiskerLeft := whiskerLeftAux
-  whiskerRight := whiskerRightAux
+  tensorObj X Y :=
+    ⟨MixedGraphCat.concat t X.obj Y.obj,
+      MixedGraphCat.isTierOrdered_concat t X.property.1 Y.property.1,
+      MixedGraphCat.noInternalAssoc_concat t X.property.2 Y.property.2⟩
+  tensorUnit :=
+    ⟨MixedGraphCat.empty S, MixedGraphCat.empty_isTierOrdered t,
+      MixedGraphCat.empty_noInternalAssoc⟩
+  tensorHom f g := InducedCategory.homMk (MixedGraphCat.Hom.concatMap t f.hom g.hom)
+  whiskerLeft X _ _ f :=
+    InducedCategory.homMk (MixedGraphCat.Hom.concatMap t (MixedGraphCat.Hom.id X.obj) f.hom)
+  whiskerRight f Y :=
+    InducedCategory.homMk (MixedGraphCat.Hom.concatMap t f.hom (MixedGraphCat.Hom.id Y.obj))
   associator X Y Z := mkIso (MixedGraphCat.concatAssocIso t X.obj Y.obj Z.obj)
   leftUnitor X := mkIso (MixedGraphCat.emptyConcatIso t X.obj)
   rightUnitor X := mkIso (MixedGraphCat.concatEmptyIso t X.obj)
