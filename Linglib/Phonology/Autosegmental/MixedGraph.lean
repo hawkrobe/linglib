@@ -61,8 +61,6 @@ out of the raw graphs relative to it.
 
 namespace Autosegmental
 
-universe u v
-
 variable {V S ι : Type*}
 
 /-! ### The §4.2 axioms -/
@@ -72,15 +70,19 @@ variable (G : MixedGraph V)
 
 /-- Axioms 1–2 ([jardine-2016-diss] §4.2), relative to a vertex coloring `c`
     (the tier partition): the arcs are tier-internal and a fiberwise
-    `IsStrictTotalOrder`, stated as flat conjuncts. This is [jardine-2019]'s
-    reading that `A` represents *the order* on each string; the arcs coincide with
-    their path closure (`IsTierOrdered.precPath_iff`), so no closure operator
-    appears in the axioms. -/
-def IsTierOrdered (c : V → ι) : Prop :=
-  (∀ ⦃v w⦄, G.arcs.Adj v w → c v = c w) ∧
-    (∀ ⦃v w⦄, v ≠ w → c v = c w → G.arcs.Adj v w ∨ G.arcs.Adj w v) ∧
-    (∀ v, ¬ G.arcs.Adj v v) ∧
-    ∀ ⦃u v w⦄, G.arcs.Adj u v → G.arcs.Adj v w → G.arcs.Adj u w
+    `IsStrictTotalOrder`. This is [jardine-2019]'s reading that `A` represents
+    *the order* on each string; the arcs coincide with their path closure
+    (`IsTierOrdered.precPath_iff`), so no closure operator appears in the
+    axioms. -/
+structure IsTierOrdered (c : V → ι) : Prop where
+  /-- Arcs never leave a tier. -/
+  tier_eq : ∀ ⦃v w⦄, G.arcs.Adj v w → c v = c w
+  /-- Distinct same-tier vertices are arc-comparable. -/
+  total : ∀ ⦃v w⦄, v ≠ w → c v = c w → G.arcs.Adj v w ∨ G.arcs.Adj w v
+  /-- No vertex precedes itself. -/
+  irrefl : ∀ v, ¬ G.arcs.Adj v v
+  /-- Arcs compose. -/
+  trans : ∀ ⦃u v w⦄, G.arcs.Adj u v → G.arcs.Adj v w → G.arcs.Adj u w
 
 /-- Axiom 3: association never links precedence-path-related (tier-internal)
     vertices. Tier-free — stated on arcs alone, as in the dissertation. -/
@@ -113,30 +115,29 @@ theorem IsTierOrdered.precPath_iff {G : MixedGraph V} {c : V → ι}
   · intro hp
     induction hp with
     | single hb => exact hb
-    | tail _ hb ih => exact h.2.2.2 ih hb
+    | tail _ hb ih => exact h.trans ih hb
   · exact .single
 
-/-- The named form of the flat axioms: on each tier the arcs are a strict total
-    order (`LinearOrder`'s own pattern — flat fields, derived class). Feeds
-    `linearOrderOfSTO` for sorting the fibers. -/
+/-- The classed form of the axioms: on each tier the arcs are a strict total
+    order. Feeds `linearOrderOfSTO` for sorting the fibers. -/
 theorem IsTierOrdered.isStrictTotalOrder {G : MixedGraph V} {c : V → ι}
     (h : IsTierOrdered G c) (i : ι) :
     IsStrictTotalOrder {v // c v = i} (fun a b => G.arcs.Adj a b) where
   trichotomous a b hab hba := by
     by_contra hne
-    rcases h.2.1 (fun hv => hne (Subtype.ext hv)) (a.2.trans b.2.symm) with hp | hp
+    rcases h.total (fun hv => hne (Subtype.ext hv)) (a.2.trans b.2.symm) with hp | hp
     exacts [hab hp, hba hp]
-  irrefl a := h.2.2.1 a
-  trans _ _ _ hab hbc := h.2.2.2 hab hbc
+  irrefl a := h.irrefl a
+  trans _ _ _ hab hbc := h.trans hab hbc
 
 /-! ### The category of labeled mixed graphs -/
 
 /-- An object of the category of labeled mixed graphs over `S`: a vertex type
     with a mixed graph `⟨V, E, A⟩` on it and a labeling `ℓ : V → S` — the
     literature's labeled mixed graph `⟨V, E, A, ℓ⟩` / [jardine-2019]'s `GR(Γ)`. -/
-structure MixedGraphCat (S : Type v) : Type (max (u + 1) v) where
+structure MixedGraphCat (S : Type*) where
   /-- The vertex type. -/
-  V : Type u
+  V : Type*
   /-- The mixed graph: undirected association edges and directed order arcs. -/
   graph : MixedGraph V
   /-- The labeling (`ℓ`). -/
@@ -225,7 +226,7 @@ def Iso.trans {X Y Z : MixedGraphCat S} (e : Iso X Y) (f : Iso Y Z) : Iso X Z wh
 /-! ### The empty graph -/
 
 /-- The empty labeled mixed graph, on the empty vertex type. -/
-def empty (S : Type v) : MixedGraphCat S := ⟨PEmpty, ⟨⊥, ⊥⟩, PEmpty.elim⟩
+def empty (S : Type*) : MixedGraphCat S := ⟨PEmpty, ⟨⊥, ⊥⟩, PEmpty.elim⟩
 
 theorem empty_isTierOrdered (t : S → ι) : IsTierOrdered (empty S).graph ((empty S).tier t) :=
   ⟨fun v => v.elim, fun v => v.elim, fun v => v.elim, fun v => v.elim⟩
@@ -336,25 +337,25 @@ theorem isTierOrdered_concat {X Y : MixedGraphCat S}
     IsTierOrdered (concat t X Y).graph ((concat t X Y).tier t) := by
   refine ⟨?_, ?_, ?_, ?_⟩
   · rintro (v | v) (w | w) h
-    exacts [h₁.1 h, h, h.elim, h₂.1 h]
+    exacts [h₁.tier_eq h, h, h.elim, h₂.tier_eq h]
   · rintro (v | v) (w | w) hne htier
-    · rcases h₁.2.1 (by rintro rfl; exact hne rfl) htier with hp | hp
+    · rcases h₁.total (by rintro rfl; exact hne rfl) htier with hp | hp
       exacts [Or.inl hp, Or.inr hp]
     · exact Or.inl htier
     · exact Or.inr htier.symm
-    · rcases h₂.2.1 (by rintro rfl; exact hne rfl) htier with hp | hp
+    · rcases h₂.total (by rintro rfl; exact hne rfl) htier with hp | hp
       exacts [Or.inl hp, Or.inr hp]
   · rintro (v | v) h
-    exacts [h₁.2.2.1 v h, h₂.2.2.1 v h]
+    exacts [h₁.irrefl v h, h₂.irrefl v h]
   · rintro (u | u) (v | v) (w | w) huv hvw
-    · exact h₁.2.2.2 huv hvw
-    · exact (h₁.1 huv).trans hvw
+    · exact h₁.trans huv hvw
+    · exact (h₁.tier_eq huv).trans hvw
     · exact (hvw : False).elim
-    · exact huv.trans (h₂.1 hvw)
+    · exact huv.trans (h₂.tier_eq hvw)
     · exact (huv : False).elim
     · exact (huv : False).elim
     · exact (hvw : False).elim
-    · exact h₂.2.2.2 huv hvw
+    · exact h₂.trans huv hvw
 
 /-- Concatenation preserves Axiom 3: the disjoint edge sum adds no cross
     edges. -/
@@ -471,7 +472,7 @@ def sumDesc {X Y T : MixedGraphCat S} (f : Hom X T) (g : Hom Y T) : Hom (sum X Y
 theorem not_isTierOrdered_sum (t : S → ι) {X Y : MixedGraphCat S}
     (v : X.V) (w : Y.V) (htier : X.tier t v = Y.tier t w) :
     ¬ IsTierOrdered (sum X Y).graph ((sum X Y).tier t) := fun h =>
-  (h.2.1 (v := .inl v) (w := .inr w) (by simp) htier).elim (fun hp => hp) fun hp => hp
+  (h.total (v := .inl v) (w := .inr w) (by simp) htier).elim (fun hp => hp) fun hp => hp
 
 /-! ### The category of labeled mixed graphs -/
 
@@ -578,7 +579,7 @@ def tensor (X Y : Representation t) : Representation t :=
     Goldsmith's bipartite two-tier geometry is the two-colorable case. -/
 def tierColoring (X : Representation t) : X.obj.graph.edges.Coloring ι :=
   SimpleGraph.Coloring.mk (X.obj.tier t) fun {_ _} hadj htier =>
-    (X.property.1.2.1 hadj.ne htier).elim (X.property.2 hadj) (X.property.2 hadj.symm)
+    (X.property.1.total hadj.ne htier).elim (X.property.2 hadj) (X.property.2 hadj.symm)
 
 /-- A representation's association graph is colorable by its tiers: tier arity
     bounds the chromatic number of the association pattern. -/
