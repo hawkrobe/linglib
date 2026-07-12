@@ -139,6 +139,8 @@ structure MixedGraphCat (S : Type*) where
 
 namespace MixedGraphCat
 
+variable {X Y Z : MixedGraphCat S}
+
 /-- The tier of a vertex under a tier assignment on the alphabet. -/
 def tier (t : S → ι) (X : MixedGraphCat S) : X.V → ι := t ∘ X.label
 
@@ -159,7 +161,7 @@ structure Hom (X Y : MixedGraphCat S) where
   label_comp : ∀ v, Y.label (toFun v) = X.label v
 
 /-- The edge face of a morphism, a stock graph homomorphism. -/
-def Hom.edgesHom {X Y : MixedGraphCat S} (f : Hom X Y) : X.graph.edges →g Y.graph.edges :=
+def Hom.edgesHom (f : Hom X Y) : X.graph.edges →g Y.graph.edges :=
   ⟨f.toFun, fun h => f.edge_map h⟩
 
 /-- The identity morphism. -/
@@ -167,7 +169,7 @@ def Hom.id (X : MixedGraphCat S) : Hom X X :=
   ⟨_root_.id, fun _ _ h => h, fun _ => rfl⟩
 
 /-- Composition of morphisms. -/
-def Hom.comp {X Y Z : MixedGraphCat S} (f : Hom X Y) (g : Hom Y Z) : Hom X Z :=
+def Hom.comp (f : Hom X Y) (g : Hom Y Z) : Hom X Z :=
   ⟨g.toFun ∘ f.toFun, fun _ _ h => g.edge_map (f.edge_map h),
     fun v => (g.label_comp _).trans (f.label_comp v)⟩
 
@@ -175,20 +177,23 @@ def Hom.comp {X Y Z : MixedGraphCat S} (f : Hom X Y) (g : Hom Y Z) : Hom X Z :=
 
 /-- A label- and relation-preserving equivalence of labeled mixed graphs. -/
 structure Iso (X Y : MixedGraphCat S) extends X.V ≃ Y.V where
+  /-- Association edges correspond. -/
   edges_iff : ∀ v w, Y.graph.edges.Adj (toEquiv v) (toEquiv w) ↔ X.graph.edges.Adj v w
+  /-- Order arcs correspond. -/
   arcs_iff : ∀ v w, Y.graph.arcs.Adj (toEquiv v) (toEquiv w) ↔ X.graph.arcs.Adj v w
+  /-- Labels are preserved. -/
   label_comp : ∀ v, Y.label (toEquiv v) = X.label v
 
 /-- The edge face of an isomorphism, as a stock `SimpleGraph.Iso`. -/
-def Iso.edgesIso {X Y : MixedGraphCat S} (e : Iso X Y) : X.graph.edges ≃g Y.graph.edges :=
-  ⟨e.toEquiv, fun {v w} => e.edges_iff v w⟩
+def Iso.edgesIso (e : Iso X Y) : X.graph.edges ≃g Y.graph.edges :=
+  ⟨e.toEquiv, e.edges_iff _ _⟩
 
 /-- The arc face of an isomorphism, as a stock `RelIso`. -/
-def Iso.arcsIso {X Y : MixedGraphCat S} (e : Iso X Y) : X.graph.arcs.Adj ≃r Y.graph.arcs.Adj :=
-  ⟨e.toEquiv, fun {v w} => e.arcs_iff v w⟩
+def Iso.arcsIso (e : Iso X Y) : X.graph.arcs.Adj ≃r Y.graph.arcs.Adj :=
+  ⟨e.toEquiv, e.arcs_iff _ _⟩
 
 /-- An isomorphism as a morphism. -/
-def Iso.toHom {X Y : MixedGraphCat S} (e : Iso X Y) : Hom X Y :=
+def Iso.toHom (e : Iso X Y) : Hom X Y :=
   ⟨e.toEquiv, fun _ _ h => (e.edges_iff _ _).mpr h, e.label_comp⟩
 
 /-- The identity isomorphism. -/
@@ -196,22 +201,14 @@ def Iso.refl (X : MixedGraphCat S) : Iso X X :=
   ⟨Equiv.refl X.V, fun _ _ => Iff.rfl, fun _ _ => Iff.rfl, fun _ => rfl⟩
 
 /-- Inverse isomorphism. -/
-def Iso.symm {X Y : MixedGraphCat S} (e : Iso X Y) : Iso Y X where
+def Iso.symm (e : Iso X Y) : Iso Y X where
   toEquiv := e.toEquiv.symm
-  edges_iff v w := by
-    conv_rhs => rw [show v = e.toEquiv (e.toEquiv.symm v) from (e.toEquiv.apply_symm_apply v).symm,
-      show w = e.toEquiv (e.toEquiv.symm w) from (e.toEquiv.apply_symm_apply w).symm]
-    exact (e.edges_iff _ _).symm
-  arcs_iff v w := by
-    conv_rhs => rw [show v = e.toEquiv (e.toEquiv.symm v) from (e.toEquiv.apply_symm_apply v).symm,
-      show w = e.toEquiv (e.toEquiv.symm w) from (e.toEquiv.apply_symm_apply w).symm]
-    exact (e.arcs_iff _ _).symm
-  label_comp v := by
-    conv_rhs => rw [show v = e.toEquiv (e.toEquiv.symm v) from (e.toEquiv.apply_symm_apply v).symm]
-    exact (e.label_comp _).symm
+  edges_iff v w := by simpa using (e.edges_iff (e.toEquiv.symm v) (e.toEquiv.symm w)).symm
+  arcs_iff v w := by simpa using (e.arcs_iff (e.toEquiv.symm v) (e.toEquiv.symm w)).symm
+  label_comp v := by simpa using (e.label_comp (e.toEquiv.symm v)).symm
 
 /-- Composition of isomorphisms. -/
-def Iso.trans {X Y Z : MixedGraphCat S} (e : Iso X Y) (f : Iso Y Z) : Iso X Z where
+def Iso.trans (e : Iso X Y) (f : Iso Y Z) : Iso X Z where
   toEquiv := e.toEquiv.trans f.toEquiv
   edges_iff v w := (f.edges_iff _ _).trans (e.edges_iff v w)
   arcs_iff v w := (f.arcs_iff _ _).trans (e.arcs_iff v w)
@@ -265,19 +262,17 @@ def concat (X Y : MixedGraphCat S) : MixedGraphCat S where
           | .inr _, .inl _ => False⟩ }
   label := Sum.elim X.label Y.label
 
-@[simp] theorem concat_label_inl (X Y : MixedGraphCat S) (v : X.V) :
-    (concat t X Y).label (.inl v) = X.label v := rfl
+@[simp] theorem concat_label_inl (v : X.V) : (concat t X Y).label (.inl v) = X.label v := rfl
 
-@[simp] theorem concat_label_inr (X Y : MixedGraphCat S) (v : Y.V) :
-    (concat t X Y).label (.inr v) = Y.label v := rfl
+@[simp] theorem concat_label_inr (v : Y.V) : (concat t X Y).label (.inr v) = Y.label v := rfl
 
-@[simp] theorem concat_edges (X Y : MixedGraphCat S) :
+@[simp] theorem concat_edges :
     (concat t X Y).graph.edges = X.graph.edges ⊕g Y.graph.edges := rfl
 
-@[simp] theorem concat_arcs_inl_inl {X Y : MixedGraphCat S} {v w : X.V} :
+@[simp] theorem concat_arcs_inl_inl {v w : X.V} :
     (concat t X Y).graph.arcs.Adj (.inl v) (.inl w) ↔ X.graph.arcs.Adj v w := Iff.rfl
 
-@[simp] theorem concat_arcs_inr_inr {X Y : MixedGraphCat S} {v w : Y.V} :
+@[simp] theorem concat_arcs_inr_inr {v w : Y.V} :
     (concat t X Y).graph.arcs.Adj (.inr v) (.inr w) ↔ Y.graph.arcs.Adj v w := Iff.rfl
 
 /-! ### Unit laws ([jardine-heinz-2015] Theorem 1) -/
@@ -326,7 +321,7 @@ def empty_concat_iso (X : MixedGraphCat S) : Iso (concat t (empty S) X) X where
 
 /-- Concatenation preserves Axioms 1–2; transitivity through the seam holds
     because arcs are tier-internal. -/
-theorem isTierOrdered_concat {X Y : MixedGraphCat S}
+theorem isTierOrdered_concat
     (h₁ : IsTierOrdered X.graph (X.tier t)) (h₂ : IsTierOrdered Y.graph (Y.tier t)) :
     IsTierOrdered (concat t X Y).graph ((concat t X Y).tier t) := by
   refine ⟨?_, ?_, ?_, ?_⟩
@@ -353,8 +348,7 @@ theorem isTierOrdered_concat {X Y : MixedGraphCat S}
 
 /-- Concatenation preserves Axiom 3: the disjoint edge sum adds no cross
     edges. -/
-theorem noInternalAssoc_concat {X Y : MixedGraphCat S}
-    (h₁ : NoInternalAssoc X.graph) (h₂ : NoInternalAssoc Y.graph) :
+theorem noInternalAssoc_concat (h₁ : NoInternalAssoc X.graph) (h₂ : NoInternalAssoc Y.graph) :
     NoInternalAssoc (concat t X Y).graph := by
   rintro (v | v) (w | w) hadj harc
   · exact h₁ hadj harc
@@ -367,8 +361,8 @@ theorem noInternalAssoc_concat {X Y : MixedGraphCat S}
     Association edges are blockwise, so a straddle needs both edges in one block —
     reducing to the factor's `IsPlanar` — or one per block, where the required
     return arc runs `inr → inl` and does not exist. -/
-theorem isPlanar_concat {X Y : MixedGraphCat S}
-    (h₁ : IsPlanar X.graph) (h₂ : IsPlanar Y.graph) : IsPlanar (concat t X Y).graph := by
+theorem isPlanar_concat (h₁ : IsPlanar X.graph) (h₂ : IsPlanar Y.graph) :
+    IsPlanar (concat t X Y).graph := by
   rintro (v | v) (v' | v') (w | w) (w' | w') hvv' hww' hvw hw'v'
   · exact h₁ hvv' hww' hvw hw'v'
   · exact absurd hww' (by simp)
@@ -443,11 +437,10 @@ def sum (X Y : MixedGraphCat S) : MixedGraphCat S where
           | _, _ => False⟩ }
   label := Sum.elim X.label Y.label
 
-@[simp] theorem sum_edges (X Y : MixedGraphCat S) :
-    (sum X Y).graph.edges = X.graph.edges ⊕g Y.graph.edges := rfl
+@[simp] theorem sum_edges : (sum X Y).graph.edges = X.graph.edges ⊕g Y.graph.edges := rfl
 
 /-- Copairing out of the bridge-free sum. -/
-def sumDesc {X Y T : MixedGraphCat S} (f : Hom X T) (g : Hom Y T) : Hom (sum X Y) T where
+def sumDesc (f : Hom X Z) (g : Hom Y Z) : Hom (sum X Y) Z where
   toFun := Sum.elim f.toFun g.toFun
   edge_map := by
     rintro (v | v) (w | w) h
@@ -463,8 +456,8 @@ def sumDesc {X Y T : MixedGraphCat S} (f : Hom X T) (g : Hom Y T) : Hom (sum X Y
 /-- **Axiom 2 forces the bridges**: the bridge-free sum of two graphs occupying a
     common tier is never tier-ordered — same-tier vertices from the two factors
     are precedence-unrelated across the seam. -/
-theorem not_isTierOrdered_sum (t : S → ι) {X Y : MixedGraphCat S}
-    (v : X.V) (w : Y.V) (htier : X.tier t v = Y.tier t w) :
+theorem not_isTierOrdered_sum (t : S → ι) (v : X.V) (w : Y.V)
+    (htier : X.tier t v = Y.tier t w) :
     ¬ IsTierOrdered (sum X Y).graph ((sum X Y).tier t) := fun h =>
   (h.total (v := .inl v) (w := .inr w) (by simp) htier).elim (fun hp => hp) fun hp => hp
 
@@ -497,7 +490,7 @@ def inr (X Y : MixedGraphCat S) : Y ⟶ sum X Y :=
   ⟨Sum.inr, fun _ _ h => h, fun _ => rfl⟩
 
 /-- Copairing out of the bridge-free sum. -/
-def desc {X Y T : MixedGraphCat S} (f : X ⟶ T) (g : Y ⟶ T) : sum X Y ⟶ T :=
+def desc (f : X ⟶ Z) (g : Y ⟶ Z) : sum X Y ⟶ Z :=
   sumDesc f g
 
 /-- The bridge-free sum is the categorical coproduct of the broad category
