@@ -9,6 +9,7 @@ import Mathlib.Data.Finset.Image
 import Mathlib.Data.Fintype.Pi
 import Linglib.Core.CategoryTheory.Monoidal.LabeledTuple
 import Linglib.Core.Data.Fin.Tuple.Basic
+import Linglib.Phonology.Autosegmental.MixedGraph
 import Linglib.Phonology.Autosegmental.NonCrossing
 
 /-!
@@ -396,5 +397,126 @@ instance : MonoidalCategory (MultiAR τ) :=
     (triangle := by intros; simp [eqToHom_trans])
 
 end MultiAR
+
+/-! ### Interpretation into the labeled mixed graph foundation
+
+The tiered presentation denotes a labeled mixed graph (`MixedGraph.lean`) by
+construction: vertices are per-tier positions, the alphabet is the
+tier-partitioned `Σ i, τ i` with tier assignment `Sigma.fst`, arcs are within-tier
+successors, and edges symmetrize the per-pair links. The structural §4.2 axioms
+hold as properties of the construction (`toMixedGraph_isTierOrdered`,
+`toMixedGraph_noInternalAssoc`), and the foundational path-form No-Crossing
+Constraint agrees with the per-pair `IsPlanar` exactly on orientation-normalized
+presentations (`toMixedGraph_isPlanar_iff`) — links between two tiers must be
+stored in one orientation bucket, since the path form also sees crossings between
+an `(i, j)` link and a `(j, i)` link, which the per-pair check cannot couple. -/
+
+namespace MultiGraph
+
+/-- The labeled mixed graph a tiered presentation denotes: per-tier positions as
+    vertices, within-tier successor arcs, symmetrized per-pair links as edges. -/
+def toMixedGraph (M : MultiGraph τ) :
+    MixedGraph ((i : Fin n) × Fin (M.tiers i).len) ((i : Fin n) × τ i) where
+  edges :=
+    { Adj := fun v w => v ≠ w ∧
+        (((v.2 : ℕ), (w.2 : ℕ)) ∈ M.links v.1 w.1 ∨ ((w.2 : ℕ), (v.2 : ℕ)) ∈ M.links w.1 v.1)
+      symm := ⟨fun _ _ h => ⟨h.1.symm, h.2.symm⟩⟩
+      loopless := ⟨fun _ h => h.1 rfl⟩ }
+  arcs := ⟨fun v w => v.1 = w.1 ∧ (v.2 : ℕ) + 1 = (w.2 : ℕ)⟩
+  label v := ⟨v.1, (M.tiers v.1).label v.2⟩
+
+variable {M : MultiGraph τ}
+
+@[simp] theorem toMixedGraph_tier (v : (i : Fin n) × Fin (M.tiers i).len) :
+    M.toMixedGraph.tier Sigma.fst v = v.1 := rfl
+
+/-- Precedence paths in the interpretation are exactly same-tier position order. -/
+theorem toMixedGraph_precPath {v w : (i : Fin n) × Fin (M.tiers i).len} :
+    M.toMixedGraph.PrecPath v w ↔ v.1 = w.1 ∧ (v.2 : ℕ) < (w.2 : ℕ) := by
+  constructor
+  · intro h
+    induction h with
+    | single h => obtain ⟨h1, h2⟩ := h; exact ⟨h1, by omega⟩
+    | tail _ h ih =>
+        obtain ⟨ih1, ih2⟩ := ih; obtain ⟨h1, h2⟩ := h
+        exact ⟨ih1.trans h1, by omega⟩
+  · obtain ⟨i, p⟩ := v
+    obtain ⟨j, q⟩ := w
+    rintro ⟨(rfl : i = j), hlt⟩
+    dsimp only at hlt
+    obtain ⟨d, hd⟩ : ∃ d, (p : ℕ) + d + 1 = (q : ℕ) := ⟨(q : ℕ) - (p : ℕ) - 1, by omega⟩
+    clear hlt
+    induction d generalizing q with
+    | zero => exact .single ⟨rfl, hd⟩
+    | succ d ih =>
+        have hm : (p : ℕ) + d + 1 < (M.tiers i).len := by have := q.isLt; omega
+        exact .tail (ih ⟨(p : ℕ) + d + 1, hm⟩ rfl) ⟨rfl, by omega⟩
+
+/-- Axioms 1–2 hold by construction: successor arcs are tier-internal chains. -/
+theorem toMixedGraph_isTierOrdered : M.toMixedGraph.IsTierOrdered Sigma.fst := by
+  refine ⟨fun v w h => h.1, fun v w hne htier => ?_, fun v h => ?_⟩
+  · obtain ⟨i, p⟩ := v
+    obtain ⟨j, q⟩ := w
+    obtain rfl : i = j := htier
+    rcases Nat.lt_trichotomy (p : ℕ) (q : ℕ) with h | h | h
+    · exact Or.inl (toMixedGraph_precPath.mpr ⟨rfl, h⟩)
+    · exact absurd (by simp [Fin.ext h]) hne
+    · exact Or.inr (toMixedGraph_precPath.mpr ⟨rfl, h⟩)
+  · rw [toMixedGraph_precPath] at h
+    omega
+
+/-- Axiom 3 holds by construction on diagonal-free presentations: edges land
+    across tier-pairs, paths stay within a tier. -/
+theorem toMixedGraph_noInternalAssoc (hdiag : ∀ i, M.links i i = ∅) :
+    M.toMixedGraph.NoInternalAssoc := by
+  rintro v w ⟨hne, hmem⟩ hpath
+  rw [toMixedGraph_precPath] at hpath
+  obtain ⟨i, p⟩ := v
+  obtain ⟨j, q⟩ := w
+  obtain rfl : i = j := hpath.1
+  rcases hmem with hm | hm <;> simp [hdiag i] at hm
+
+/-- The foundational path-form No-Crossing Constraint agrees with the per-pair
+    `IsPlanar` on in-bounds, orientation-normalized presentations (links between
+    two tiers stored in one orientation bucket — which also rules out diagonal
+    links). Without normalization the path form is strictly stronger: it couples
+    an `(i, j)` link with a `(j, i)` link between the same two tiers. -/
+theorem toMixedGraph_isPlanar_iff (hb : M.InBounds)
+    (hor : ∀ i j, M.links i j ≠ ∅ → M.links j i = ∅) :
+    M.toMixedGraph.IsPlanar ↔ M.IsPlanar := by
+  have hdiag : ∀ i, M.links i i = ∅ := fun i => by
+    by_contra h
+    exact h (hor i i h)
+  constructor
+  · intro h i j
+    rw [isNonCrossing_iff]
+    rintro ⟨a, b⟩ h₁ ⟨c, d⟩ h₂ hac
+    by_contra hbd
+    have hij : i ≠ j := by
+      rintro rfl
+      simp [hdiag i] at h₁
+    obtain ⟨ha, hb'⟩ := hb i j _ h₁
+    obtain ⟨hc, hd⟩ := hb i j _ h₂
+    exact h (v := ⟨i, ⟨a, ha⟩⟩) (v' := ⟨j, ⟨b, hb'⟩⟩) (w := ⟨i, ⟨c, hc⟩⟩) (w' := ⟨j, ⟨d, hd⟩⟩)
+      ⟨by simp [hij], Or.inl h₁⟩ ⟨by simp [hij], Or.inl h₂⟩
+      (toMixedGraph_precPath.mpr ⟨rfl, hac⟩)
+      (toMixedGraph_precPath.mpr ⟨rfl, not_le.mp hbd⟩)
+  · rintro h v v' w w' ⟨hne₁, hm₁⟩ ⟨hne₂, hm₂⟩ hp hp'
+    rw [toMixedGraph_precPath] at hp hp'
+    obtain ⟨i, a⟩ := v
+    obtain ⟨j, b⟩ := v'
+    obtain ⟨i', c⟩ := w
+    obtain ⟨j', d⟩ := w'
+    obtain rfl : i = i' := hp.1
+    obtain rfl : j = j' := hp'.1.symm
+    have hac : (a : ℕ) < (c : ℕ) := hp.2
+    have hdb : (d : ℕ) < (b : ℕ) := hp'.2
+    rcases hm₁ with hm₁ | hm₁ <;> rcases hm₂ with hm₂ | hm₂
+    · exact absurd (isNonCrossing_iff.mp (h i j) _ hm₁ _ hm₂ hac) (by omega)
+    · exact absurd hm₂ (by simp [hor i j (Finset.ne_empty_of_mem hm₁)])
+    · exact absurd hm₁ (by simp [hor i j (Finset.ne_empty_of_mem hm₂)])
+    · exact absurd (isNonCrossing_iff.mp (h j i) _ hm₂ _ hm₁ hdb) (by omega)
+
+end MultiGraph
 
 end Autosegmental
