@@ -694,6 +694,22 @@ instance [Finite X.obj.V] : Finite (X.collapse m).obj.V :=
       obtain ⟨rfl, h2⟩ := Sigma.mk.inj_iff.mp h
       exact congrArg _ (Fin.castLE_injective _ (eq_of_heq h2))
 
+/-- The collapsed fiber at `i` is enumerated by its position range. -/
+noncomputable def Representation.collapseFiberEnum [Finite X.obj.V] (i : ι) :
+    Fin ((X.collapsedWord m i).length) ≃o (X.collapse m).fiber i := by
+  refine StrictMono.orderIsoOfSurjective (fun p => ⟨⟨i, p⟩, rfl⟩) (fun p q h => ⟨rfl, h⟩)
+    fun v => ?_
+  obtain ⟨⟨j, q⟩, hp⟩ := v
+  obtain rfl : j = i := hp
+  exact ⟨q, rfl⟩
+
+/-- **The collapse does what it says**: its tier words are the collapsed
+    words — destuttered at `m` (`Function.update_self`), untouched elsewhere. -/
+@[simp] theorem Representation.tierWord_collapse [Finite X.obj.V] (i : ι) :
+    (X.collapse m).tierWord i = X.collapsedWord m i := by
+  rw [Representation.tierWord_eq_ofFn (X.collapseFiberEnum m i)]
+  exact List.ofFn_getElem
+
 end CoordinateCollapse
 
 end Autosegmental
