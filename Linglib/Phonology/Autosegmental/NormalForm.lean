@@ -203,6 +203,8 @@ def Representation.fiberTensorEquiv (i : ι) :
 
 variable [Finite X.obj.V] [Finite Y.obj.V]
 
+attribute [local instance] Fintype.ofFinite
+
 theorem Representation.tierLen_tensor (i : ι) :
     (X ⊗ Y).tierLen i = X.tierLen i + Y.tierLen i := by
   letI := Fintype.ofFinite ((X ⊗ Y).fiber i)
@@ -246,6 +248,53 @@ noncomputable def Representation.tensorEnum (i : ι) :
       rw [finSumFinEquiv_symm_apply_natAdd, finSumFinEquiv_symm_apply_natAdd]
       exact (monoEquivOfFin (Y.fiber i) (rfl : _ = Y.tierLen i)).strictMono
         (by simp only [Fin.lt_def, Fin.val_natAdd] at hpq ⊢; omega)
+
+theorem Representation.tensorEnum_apply_castAdd (i : ι) (p : Fin (X.tierLen i)) :
+    Representation.tensorEnum i (Fin.castAdd (Y.tierLen i) p) =
+      (Representation.fiberTensorEquiv i).symm
+        (.inl (monoEquivOfFin (X.fiber i) (rfl : _ = X.tierLen i) p)) := by
+  simp [Representation.tensorEnum, finSumFinEquiv_symm_apply_castAdd]
+
+theorem Representation.tensorEnum_apply_natAdd (i : ι) (p : Fin (Y.tierLen i)) :
+    Representation.tensorEnum i (Fin.natAdd (X.tierLen i) p) =
+      (Representation.fiberTensorEquiv (X := X) i).symm
+        (.inr (monoEquivOfFin (Y.fiber i) (rfl : _ = Y.tierLen i) p)) := by
+  simp [Representation.tensorEnum, finSumFinEquiv_symm_apply_natAdd]
+
+theorem Representation.fiberLabel_symm_inl {i : ι} (w : X.fiber i) :
+    Representation.fiberLabel ((Representation.fiberTensorEquiv (X := X) (Y := Y) i).symm
+      (.inl w)) = X.fiberLabel w := rfl
+
+theorem Representation.fiberLabel_symm_inr {i : ι} (w : Y.fiber i) :
+    Representation.fiberLabel ((Representation.fiberTensorEquiv (X := X) (Y := Y) i).symm
+      (.inr w)) = Y.fiberLabel w := rfl
+
+/-- Any monotone enumeration computes the tier word. -/
+theorem Representation.tierWord_eq_ofFn {Z : Representation (Sigma.fst : ((i : ι) × τ i) → ι)}
+    [Finite Z.obj.V] {i : ι} {n : ℕ} (e : Fin n ≃o Z.fiber i) :
+    Z.tierWord i = List.ofFn fun p => Z.fiberLabel (e p) := by
+  have hn : Z.tierLen i = n := by
+    simpa [Representation.tierLen] using (Fintype.card_congr e.toEquiv).symm
+  subst hn
+  rw [Subsingleton.elim e (monoEquivOfFin (Z.fiber i) rfl)]
+  rfl
+
+/-- **Concatenation appends tier content**: the tier word of a tensor is the
+    factors' tier words in sequence — the tuple presentation of
+    [jardine-heinz-2015]'s Definition 2, recovered as a theorem about normal
+    forms. -/
+theorem Representation.tierWord_tensor (i : ι) :
+    (X ⊗ Y).tierWord i = X.tierWord i ++ Y.tierWord i := by
+  rw [Representation.tierWord_eq_ofFn (Representation.tensorEnum i), List.ofFn_add]
+  congr 1
+  · rw [Representation.tierWord_eq_ofFn (monoEquivOfFin (X.fiber i) (rfl : _ = X.tierLen i))]
+    exact congrArg List.ofFn (funext fun p =>
+      (congrArg Representation.fiberLabel (Representation.tensorEnum_apply_castAdd i p)).trans
+        (Representation.fiberLabel_symm_inl _))
+  · rw [Representation.tierWord_eq_ofFn (monoEquivOfFin (Y.fiber i) (rfl : _ = Y.tierLen i))]
+    exact congrArg List.ofFn (funext fun p =>
+      (congrArg Representation.fiberLabel (Representation.tensorEnum_apply_natAdd i p)).trans
+        (Representation.fiberLabel_symm_inr _))
 
 end TierWordTensor
 
