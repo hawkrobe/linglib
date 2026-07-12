@@ -44,7 +44,7 @@ namespace Autosegmental
 
 open CategoryTheory
 
-variable {ι : Type*} [LinearOrder ι] {τ : ι → Type*}
+variable {ι : Type*} {τ : ι → Type*}
 
 section NormalForm
 open scoped Classical
