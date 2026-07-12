@@ -339,7 +339,11 @@ def isRepresentation : ObjectProperty (MixedGraphCat S) := fun X =>
   X.graph.IsTierOrdered t ∧ X.graph.NoInternalAssoc
 
 /-- The category of autosegmental representations over a tier assignment: the
-    full subcategory of labeled mixed graphs satisfying the structural axioms. -/
+    full subcategory of labeled mixed graphs satisfying the structural axioms.
+    These are the formal literature's **ARs** — [jardine-2019] and
+    [chandlee-jardine-2019] introduce "autosegmental representation" once and
+    use `AR` as the type-name throughout; this category takes that name once the
+    bipartite strict carrier currently called `AR` is dissolved into it. -/
 abbrev Representation := (isRepresentation t).FullSubcategory
 
 end Autosegmental
