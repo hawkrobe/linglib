@@ -419,7 +419,9 @@ an `(i, j)` link and a `(j, i)` link, which the per-pair check cannot couple. -/
 namespace MultiGraph
 
 /-- The labeled mixed graph a tiered presentation denotes: per-tier positions as
-    vertices, within-tier successor arcs, symmetrized per-pair links as edges. -/
+    vertices, the within-tier position order as arcs ([jardine-2019]'s reading —
+    `A` represents the order, matching `IsTierOrdered`'s path-closure), and
+    symmetrized per-pair links as edges. -/
 def toMixedGraph (M : MultiGraph τ) :
     MixedGraph ((i : ι) × Fin (M.tiers i).len) ((i : ι) × τ i) where
   edges :=
@@ -427,7 +429,7 @@ def toMixedGraph (M : MultiGraph τ) :
         (((v.2 : ℕ), (w.2 : ℕ)) ∈ M.links v.1 w.1 ∨ ((w.2 : ℕ), (v.2 : ℕ)) ∈ M.links w.1 v.1)
       symm := ⟨fun _ _ h => ⟨h.1.symm, h.2.symm⟩⟩
       loopless := ⟨fun _ h => h.1 rfl⟩ }
-  arcs := ⟨fun v w => v.1 = w.1 ∧ (v.2 : ℕ) + 1 = (w.2 : ℕ)⟩
+  arcs := ⟨fun v w => v.1 = w.1 ∧ (v.2 : ℕ) < (w.2 : ℕ)⟩
   label v := ⟨v.1, (M.tiers v.1).label v.2⟩
 
 variable {M : MultiGraph τ}
@@ -445,21 +447,14 @@ theorem toMixedGraph_precPath {v w : (i : ι) × Fin (M.tiers i).len} :
     | tail _ h ih =>
         obtain ⟨ih1, ih2⟩ := ih; obtain ⟨h1, h2⟩ := h
         exact ⟨ih1.trans h1, by omega⟩
-  · obtain ⟨i, p⟩ := v
-    obtain ⟨j, q⟩ := w
-    rintro ⟨(rfl : i = j), hlt⟩
-    dsimp only at hlt
-    obtain ⟨d, hd⟩ : ∃ d, (p : ℕ) + d + 1 = (q : ℕ) := ⟨(q : ℕ) - (p : ℕ) - 1, by omega⟩
-    clear hlt
-    induction d generalizing q with
-    | zero => exact .single ⟨rfl, hd⟩
-    | succ d ih =>
-        have hm : (p : ℕ) + d + 1 < (M.tiers i).len := by have := q.isLt; omega
-        exact .tail (ih ⟨(p : ℕ) + d + 1, hm⟩ rfl) ⟨rfl, by omega⟩
+  · rintro ⟨heq, hlt⟩
+    exact .single ⟨heq, hlt⟩
 
-/-- Axioms 1–2 hold by construction: successor arcs are tier-internal chains. -/
+/-- Axioms 1–2 hold by construction: the arcs are the tier-internal position
+    order, already path-closed. -/
 theorem toMixedGraph_isTierOrdered : M.toMixedGraph.IsTierOrdered Sigma.fst := by
-  refine ⟨fun v w h => h.1, fun v w hne htier => ?_, fun v h => ?_⟩
+  refine ⟨fun v w h => h.1, fun v w hne htier => ?_, fun v h => ?_,
+    fun v w h => toMixedGraph_precPath.mp h⟩
   · obtain ⟨i, p⟩ := v
     obtain ⟨j, q⟩ := w
     obtain rfl : i = j := htier

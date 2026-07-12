@@ -104,18 +104,29 @@ def PrecPath (G : MixedGraph V S) : V → V → Prop := Relation.TransGen G.arcs
 /-- The tier of a vertex under a tier assignment on the alphabet. -/
 def tier (t : S → ι) (G : MixedGraph V S) (v : V) : ι := t (G.label v)
 
+/-- Tier equality propagates along precedence paths once arcs are tier-internal. -/
+lemma precPath_tier {t : S → ι} {G : MixedGraph V S}
+    (harc : ∀ ⦃v w⦄, G.arcs.Adj v w → G.tier t v = G.tier t w) {v w : V}
+    (h : G.PrecPath v w) : G.tier t v = G.tier t w := by
+  induction h with
+  | single h => exact harc h
+  | tail _ h ih => exact ih.trans (harc h)
+
 /-! ### The §4.2 axioms -/
 
 section Axioms
 variable (t : S → ι) (G : MixedGraph V S)
 
 /-- Axioms 1–2 ([jardine-2016-diss] §4.2): precedence stays within a tier,
-    precedence paths totally order each tier class, and no path returns to its
-    origin. -/
+    precedence paths totally order each tier class, no path returns to its
+    origin, and the arcs are path-closed — [jardine-2019]'s reading that `A`
+    represents *the order* on each string, so per tier the arcs are exactly a
+    strict total order. Closure is what makes the tuple normal form arc-exact. -/
 def IsTierOrdered : Prop :=
   (∀ ⦃v w⦄, G.arcs.Adj v w → G.tier t v = G.tier t w) ∧
     (∀ ⦃v w⦄, v ≠ w → G.tier t v = G.tier t w → G.PrecPath v w ∨ G.PrecPath w v) ∧
-    ∀ v, ¬ G.PrecPath v v
+    (∀ v, ¬ G.PrecPath v v) ∧
+    ∀ ⦃v w⦄, G.PrecPath v w → G.arcs.Adj v w
 
 /-- Axiom 3: association never links precedence-path-related (tier-internal)
     vertices. Tier-free — stated on paths alone, as in the dissertation. -/
@@ -226,7 +237,7 @@ def Iso.trans {G₁ : MixedGraph V₁ S} {G₂ : MixedGraph V₂ S} {G₃ : Mixe
 def empty (S : Type*) : MixedGraph PEmpty S := ⟨⟨⊥, ⊥⟩, PEmpty.elim⟩
 
 theorem empty_isTierOrdered (t : S → ι) : (empty S).IsTierOrdered t :=
-  ⟨fun v => v.elim, fun v => v.elim, fun v => v.elim⟩
+  ⟨fun v => v.elim, fun v => v.elim, fun v => v.elim, fun v => v.elim⟩
 
 theorem empty_noInternalAssoc : (empty S).NoInternalAssoc := fun v => v.elim
 
@@ -383,13 +394,16 @@ private lemma precPath_inl_cases {G₁ : MixedGraph V₁ S} {G₂ : MixedGraph V
 
 /-! #### Axiom preservation ([jardine-heinz-2015] Theorem 4's structural half) -/
 
-/-- Concatenation preserves Axioms 1–2. -/
+/-- Concatenation preserves Axioms 1–2, including path-closure: a cross-seam
+    path forces tier equality, which is already a bridge arc. -/
 theorem isTierOrdered_concat {G₁ : MixedGraph V₁ S} {G₂ : MixedGraph V₂ S}
     (h₁ : G₁.IsTierOrdered t) (h₂ : G₂.IsTierOrdered t) :
     (concat t G₁ G₂).IsTierOrdered t := by
-  refine ⟨?_, ?_, ?_⟩
-  · rintro (v | v) (w | w) h
+  have hint : ∀ ⦃v w⦄, (concat t G₁ G₂).arcs.Adj v w →
+      (concat t G₁ G₂).tier t v = (concat t G₁ G₂).tier t w := by
+    rintro (v | v) (w | w) h
     exacts [h₁.1 h, h, h.elim, h₂.1 h]
+  refine ⟨hint, ?_, ?_, ?_⟩
   · rintro (v | v) (w | w) hne htier
     · rcases h₁.2.1 (by simpa using hne) htier with hp | hp
       · exact Or.inl ((concat_precPath_inl_inl t).mpr hp)
@@ -400,8 +414,13 @@ theorem isTierOrdered_concat {G₁ : MixedGraph V₁ S} {G₂ : MixedGraph V₂ 
       · exact Or.inl ((concat_precPath_inr_inr t).mpr hp)
       · exact Or.inr ((concat_precPath_inr_inr t).mpr hp)
   · rintro (v | v) h
-    · exact h₁.2.2 v ((concat_precPath_inl_inl t).mp h)
-    · exact h₂.2.2 v ((concat_precPath_inr_inr t).mp h)
+    · exact h₁.2.2.1 v ((concat_precPath_inl_inl t).mp h)
+    · exact h₂.2.2.1 v ((concat_precPath_inr_inr t).mp h)
+  · rintro (v | v) (w | w) h
+    · exact h₁.2.2.2 ((concat_precPath_inl_inl t).mp h)
+    · exact precPath_tier hint h
+    · exact absurd h (concat_not_precPath_inr_inl t)
+    · exact h₂.2.2.2 ((concat_precPath_inr_inr t).mp h)
 
 /-- Concatenation preserves Axiom 3: the disjoint edge sum adds no cross edges,
     and blockwise paths are factor paths. -/
