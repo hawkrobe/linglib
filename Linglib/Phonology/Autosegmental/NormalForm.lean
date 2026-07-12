@@ -360,7 +360,7 @@ theorem Representation.vertexEquiv_tensor_of_ge {i : ι} {r : Fin ((X ⊗ Y).tie
     (h : X.tierLength i ≤ (r : ℕ)) :
     (X ⊗ Y).vertexEquiv ⟨i, r⟩ = Sum.inr (Y.vertexEquiv ⟨i,
       ⟨(r : ℕ) - X.tierLength i, by
-        have h1 := r.isLt
+        have _h1 := r.isLt
         have h2 : (X ⊗ Y).tierLength i = X.tierLength i + Y.tierLength i :=
           Representation.tierLength_tensor i
         omega⟩⟩) := by
