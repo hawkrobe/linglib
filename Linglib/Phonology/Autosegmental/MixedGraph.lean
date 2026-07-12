@@ -62,8 +62,7 @@ namespace Autosegmental
 
 variable {V V₁ V₂ V₃ S ι : Type*}
 
-/-- A labeled mixed graph `⟨V, E, A, ℓ⟩` is a mixed graph with a vertex labeling;
-    the literature's edges are two-element sets, so `SimpleGraph` is exact. -/
+/-- A labeled mixed graph `⟨V, E, A, ℓ⟩` is a mixed graph with a vertex labeling. -/
 structure MixedGraph (V S : Type*) extends _root_.MixedGraph V where
   /-- The labeling (`ℓ`). -/
   label : V → S
