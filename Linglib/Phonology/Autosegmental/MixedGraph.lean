@@ -582,14 +582,14 @@ instance : MonoidalCategory (Representation t) :=
     (tensorHom_comp_tensorHom := fun _ _ _ _ => hom_ext (congrFun (Sum.map_comp_map _ _ _ _)))
     (associator_naturality := fun _ _ _ => hom_ext fun v => by
       repeat' rcases (v : _ ⊕ _) with v | v
-      all_goals first | rfl | exact v.elim)
+      all_goals rfl)
     (leftUnitor_naturality := fun _ => hom_ext fun v => by
       rcases (v : _ ⊕ _) with v | v <;> first | rfl | exact v.elim)
     (rightUnitor_naturality := fun _ => hom_ext fun v => by
       rcases (v : _ ⊕ _) with v | v <;> first | rfl | exact v.elim)
     (pentagon := fun _ _ _ _ => hom_ext fun v => by
       repeat' rcases (v : _ ⊕ _) with v | v
-      all_goals first | rfl | exact v.elim)
+      all_goals rfl)
     (triangle := fun _ _ => hom_ext fun v => by
       repeat' rcases (v : _ ⊕ _) with v | v
       all_goals first | rfl | exact v.elim)
