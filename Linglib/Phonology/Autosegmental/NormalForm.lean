@@ -3,6 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
+import Mathlib.Algebra.FreeMonoid.Basic
 import Mathlib.CategoryTheory.Monoidal.Skeleton
 import Mathlib.Data.Fintype.Sort
 import Linglib.Phonology.Autosegmental.MixedGraph
@@ -136,5 +137,38 @@ theorem Representation.toSkeleton_normalize [Finite X.obj.V] :
   Quotient.sound ⟨X.normalizeIso⟩
 
 end NormalForm
+
+/-! ### Realization of strings
+
+[jardine-2019]'s mapping `g`: each symbol denotes a representation primitive, a
+string denotes their concatenation. The monoid-homomorphism content lives on the
+skeleton, where concatenation is strictly associative. -/
+
+section Realize
+open scoped MonoidalCategory
+
+variable {S : Type*} {ι : Type*} {τ : ι → Type*}
+
+/-- Realize a string as a representation: the iterated tensor of its symbols'
+    primitives ([jardine-2019]'s `g`). -/
+noncomputable def realize (g₀ : S → Representation (Sigma.fst : ((i : ι) × τ i) → ι))
+    (w : List S) : Representation (Sigma.fst : ((i : ι) × τ i) → ι) :=
+  (w.map g₀).foldr (· ⊗ ·) (𝟙_ _)
+
+@[simp] theorem realize_nil (g₀ : S → Representation (Sigma.fst : ((i : ι) × τ i) → ι)) :
+    realize g₀ [] = 𝟙_ _ := rfl
+
+@[simp] theorem realize_cons (g₀ : S → Representation (Sigma.fst : ((i : ι) × τ i) → ι))
+    (a : S) (w : List S) : realize g₀ (a :: w) = g₀ a ⊗ realize g₀ w := rfl
+
+/-- The realization as a free-monoid homomorphism into the skeleton monoid —
+    the string→AR monoid hom, with associativity strict on iso classes
+    (`CategoryTheory.Monoidal.Skeleton`). -/
+noncomputable def realizeHom
+    (g₀ : S → Representation (Sigma.fst : ((i : ι) × τ i) → ι)) :
+    FreeMonoid S →* Skeleton (Representation (Sigma.fst : ((i : ι) × τ i) → ι)) :=
+  FreeMonoid.lift (toSkeleton ∘ g₀)
+
+end Realize
 
 end Autosegmental

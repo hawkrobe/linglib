@@ -551,10 +551,15 @@ theorem hom_ext {X Y : Representation t} {f g : X ⟶ Y}
     (h : ∀ v, f.hom.toFun v = g.hom.toFun v) : f = g :=
   InducedCategory.hom_ext (MixedGraphCat.Hom.ext (funext h))
 
+universe u₁ u₂ u₃
+
 /-- Monoidal structure: morpheme concatenation as tensor, the empty
     representation as unit; the axiom class is closed under both by
-    `isTierOrdered_concat`/`noInternalAssoc_concat`. -/
-@[simps] instance instMonoidalStruct : MonoidalCategoryStruct (Representation t) where
+    `isTierOrdered_concat`/`noInternalAssoc_concat`. Universes pinned so the
+    unit's vertex type shares the objects' universe — autobinding would split
+    the instance head into an unusable `max`. -/
+@[simps] instance instMonoidalStruct {S : Type u₁} {ι : Type u₂} {t : S → ι} :
+    MonoidalCategoryStruct (Representation.{u₁, u₂, u₃} t) where
   tensorObj X Y :=
     ⟨MixedGraphCat.concat t X.obj Y.obj,
       MixedGraphCat.isTierOrdered_concat t X.property.1 Y.property.1,
