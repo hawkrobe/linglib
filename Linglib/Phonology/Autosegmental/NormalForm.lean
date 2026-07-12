@@ -421,6 +421,15 @@ variable (F X : Representation (Sigma.fst : ((i : ι) × τ i) → ι))
 def Representation.link [Finite X.obj.V] (i j : ι) (p q : ℕ) : Prop :=
   ∃ (hp : p < X.tierLength i) (hq : q < X.tierLength j), X.linkRel i j ⟨p, hp⟩ ⟨q, hq⟩
 
+open scoped Classical in
+/-- The two-tier reading of tiers `i` over `j`: each tier-`j` position's label
+    with the tier-`i` labels linked to it, in ascending order — the phonetic
+    interpretation of a melody tier over its backbone. -/
+noncomputable def Representation.linearize [Finite X.obj.V] (i j : ι) :
+    List (τ j × List (τ i)) :=
+  (X.tierWord j).zipIdx.map fun bq =>
+    (bq.1, ((X.tierWord i).zipIdx.filter fun ap => X.link i j ap.2 bq.2).map (·.1))
+
 /-- `F` occurs in `X` at per-tier offsets `o`: each tier word of `F` is the
     window of `X`'s at `o i`, and `F`'s links transport shifted. -/
 def Representation.IsFactorAt [Finite F.obj.V] [Finite X.obj.V] (o : ι → ℕ) : Prop :=
