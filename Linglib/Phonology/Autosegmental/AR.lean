@@ -33,12 +33,12 @@ The arc, in three layers:
   WFC) is language-particular, so floating elements are well-formed.
 * `AR α β` — the **in-bounds** object (every association line falls within the tier
   lengths) and the base of the category; morphisms are label- and link-preserving
-  position maps. `concat` is morpheme concatenation ([jardine-heinz-2015] §5): the
-  empty graph is the unit (Theorem 1) and `concat` is associative (Theorem 3). The
-  paper calls it "a modification of [the] disjoint union"; its disjoint-union core —
-  before the OCP-merging step, modeled separately as `OCP.collapse` — is the
-  **categorical coproduct** (`HasBinaryCoproducts`), so the monoidal product is
-  cocartesian.
+  position maps. `concat` is morpheme concatenation ([jardine-heinz-2015] §5;
+  [yli-jyra-2015]'s ≤-extension of disjoint graphs): the empty graph is the unit
+  (Theorem 1) and `concat` is associative (Theorem 3). The paper calls it "a
+  modification of [the] disjoint union"; its disjoint-union core — before the
+  OCP-merging step, modeled separately as `OCP.collapse` — is the **categorical
+  coproduct** (`HasBinaryCoproducts`), so the monoidal product is cocartesian.
 * `WellFormedAR α β` — the full monoidal subcategory of planar ARs. The No-Crossing
   Constraint is **morpheme-modular** (`ncc_isMonoidal`, [jardine-heinz-2015]
   Theorem 4): planarity is stable under `⊗`. The OCP ([mccarthy-1986]) is **not**
@@ -443,7 +443,7 @@ def empty : AR α β where
 theorem toGraph_injective : Function.Injective (toGraph : AR α β → Graph α β) :=
   fun _ _ => ext_toGraph
 
-instance [DecidableEq α] [DecidableEq β] : DecidableEq (AR α β) := fun A B =>
+instance [DecidableEq α] [DecidableEq β] : DecidableEq (AR α β) := fun _ _ =>
   decidable_of_iff _ ⟨ext_toGraph, congrArg toGraph⟩
 
 /-- Objects form a `Monoid` under concatenation, with `empty` as unit

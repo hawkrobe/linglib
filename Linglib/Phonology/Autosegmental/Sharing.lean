@@ -18,7 +18,7 @@ specifications over geometric nodes). Feature geometry is an *extension of*
 autosegmental phonology ([clements-1985], [clements-hume-1995]): spreading is
 the association of one node to multiple anchors ([clements-1985]). So this
 `SharingRep` is a flattened, adjacency-indexed special case of the bipartite
-tier-association object `AR` (`Graph.lean` / `AR.lean`) — a single segment
+tier-association object `AR` (`AR.lean`) — a single segment
 backbone with a feature-agreement-consistency law, not two materialized tiers.
 A faithful re-grounding of feature spreading as `AR` association is future work;
 for now the two are kept as separate carriers. It builds on
