@@ -22,6 +22,13 @@ as `eqToIso`. ([goldsmith-1976], [jardine-heinz-2015])
 
 * `Graph.toMultiGraph`, `AR.toMultiAR` — the inclusion on objects.
 * `ι` — the inclusion functor; the `ι.Monoidal` instance makes it strong monoidal.
+
+## Main results
+
+* `ι` is fully faithful (`ι.Full`/`ι.Faithful` instances), and `ι_essImage_iff`
+  identifies its essential image as the `(0,1)`-supported multi-tier objects, so
+  `ι.toEssImage` is an equivalence: `AR α β` is the bipartite full subcategory of
+  `MultiAR (biTier α β)`, and multi-tier theorems transport rather than re-prove.
 -/
 
 namespace Autosegmental
@@ -127,6 +134,48 @@ def ι : AR α β ⥤ MultiAR (biTier α β) where
 
 @[simp] theorem ι_obj (A : AR α β) : ι.obj A = A.toMultiAR := rfl
 @[simp] theorem ι_map {A B : AR α β} (f : A ⟶ B) : ι.map f = f.toMultiAR := rfl
+
+/-! ### Fully faithful, and the essential image
+
+`ι` is fully faithful, so `AR α β` is equivalent to its essential image in
+`MultiAR (biTier α β)` — the multi-tier objects whose links are supported on the
+bipartite pair `(0, 1)`. Multi-tier theorems transport to the bipartite category
+along `ι.toEssImage` rather than being re-proved. -/
+
+instance : (ι (α := α) (β := β)).Faithful where
+  map_injective {A B} f g h :=
+    AR.Hom.ext (congrArg (MultiAR.Hom.fT · 0) h) (congrArg (MultiAR.Hom.fT · 1) h)
+
+instance : (ι (α := α) (β := β)).Full where
+  map_surjective {A B} g :=
+    ⟨{ fU := g.fT 0
+       fL := g.fT 1
+       links_preserve := fun {i j} hi hj h => g.links_preserve 0 1 hi hj h },
+     MultiAR.Hom.ext (funext fun i => by fin_cases i <;> rfl)⟩
+
+/-- The essential image of `ι` is exactly the multi-tier objects whose links are
+    supported on the bipartite pair `(0, 1)`. -/
+theorem ι_essImage_iff (M : MultiAR (biTier α β)) :
+    (ι (α := α) (β := β)).essImage M ↔ ∀ i j, ¬(i = 0 ∧ j = 1) → M.links i j = ∅ := by
+  constructor
+  · rintro ⟨A, ⟨e⟩⟩ i j hij
+    rw [Finset.eq_empty_iff_forall_notMem]
+    rintro ⟨p, q⟩ hp
+    obtain ⟨h1, h2⟩ := M.inBounds i j _ hp
+    simpa [AR.toMultiAR, Graph.toMultiGraph, hij] using e.inv.links_preserve i j h1 h2 hp
+  · intro h
+    refine ⟨⟨⟨M.tiers 0, M.tiers 1, M.links 0 1⟩, fun p hp => M.inBounds 0 1 p hp⟩,
+      ⟨eqToIso (MultiAR.ext_toMultiGraph (MultiGraph.ext (funext fun i => ?_)
+        (funext fun i => funext fun j => ?_)))⟩⟩
+    · fin_cases i <;> rfl
+    · by_cases hij : i = 0 ∧ j = 1
+      · obtain ⟨rfl, rfl⟩ := hij
+        simp [AR.toMultiAR, Graph.toMultiGraph]
+      · simp [AR.toMultiAR, Graph.toMultiGraph, hij, (h i j hij).symm]
+
+/-- `AR α β` is equivalent to the bipartite full subcategory of the multi-tier
+    category: `ι` corestricted to its essential image is an equivalence. -/
+instance : (ι (α := α) (β := β)).toEssImage.IsEquivalence := {}
 
 /-! ### Monoidal coherence on objects (lifting to in-bounds `MultiAR`) -/
 
