@@ -8,7 +8,7 @@ import Linglib.Phonology.Autosegmental.Embedding
 /-!
 # Phonological transformations as correspondence-graph relations
 
-[jardine-2016] (Ch. 7) models a phonological *process* not as a function but as a
+[jardine-2016-diss] (Ch. 7) models a phonological *process* not as a function but as a
 **relation** between input and output, presented by a set of **correspondence graphs**
 and carved out of GEN by **banned-subgraph constraints** (markedness + faithfulness) —
 which is what makes the relation *local*.
@@ -18,7 +18,7 @@ upper tier is the input string, the lower tier the output string, and the associ
 links are the input↔output **correspondence arcs**. (Precedence is carried by the tier
 order; Jardine's separate precedence/correspondence arc-labeling `ℓ_A` is here the
 structural split between tier-order and links.) The banned-subgraph grammar is
-`Graph.Free` ([jardine-2016] Ch. 5's `L^NL_G`).
+`Graph.Free` ([jardine-2016-diss] Ch. 5's `L^NL_G`).
 
 This is the *process* layer of the substrate's three-layer spec (objects `AR`,
 precedence-morphisms `PrecAR`, processes here). The autosegmental case — correspondence
@@ -35,7 +35,7 @@ arc-labelled-subgraph refinement he flags in Ch. 7 fn. 7; that is deferred.
 
 * `Correspondence.input`/`output` — the two strings a correspondence graph relates.
 * `Correspondence.rel` — `R(CG)`, the string relation of a set of correspondence graphs
-  ([jardine-2016] Def. 25).
+  ([jardine-2016-diss] Def. 25).
 * `Correspondence.specifiedBy` — `CG(φ)`, a process presented by a banned-subgraph grammar.
 * `Correspondence.IsLocal` — a relation presented by a finite banned-subgraph grammar.
 -/
@@ -51,7 +51,7 @@ def input (G : Graph S T) : List S := G.upper.toList
 /-- The **output** string of a correspondence graph: its lower tier. -/
 def output (G : Graph S T) : List T := G.lower.toList
 
-/-- **R(CG)** ([jardine-2016] Def. 25): the string relation realized by a set `CG` of
+/-- **R(CG)** ([jardine-2016-diss] Def. 25): the string relation realized by a set `CG` of
     correspondence graphs — the input/output pairs of its members. -/
 def rel (CG : Graph S T → Prop) (w : List S) (v : List T) : Prop :=
   ∃ G, CG G ∧ input G = w ∧ output G = v
@@ -71,7 +71,7 @@ instance [DecidableEq S] [DecidableEq T] (φ : List (Graph S T)) (G : Graph S T)
     Decidable (specifiedBy φ G) := inferInstanceAs (Decidable (G.Free φ))
 
 /-- A string relation is **local** when presented by a finite banned-subgraph grammar
-    over correspondence graphs — the locality of phonological processes [jardine-2016]. -/
+    over correspondence graphs — the locality of phonological processes [jardine-2016-diss]. -/
 def IsLocal (R : List S → List T → Prop) : Prop :=
   ∃ φ : List (Graph S T), R = rel (specifiedBy φ)
 
