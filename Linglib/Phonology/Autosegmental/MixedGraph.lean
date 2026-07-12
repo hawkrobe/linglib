@@ -53,6 +53,18 @@ out of the raw graphs relative to it.
 * `Representation.tierColoring`: the tier map properly colors the association
   graph, so tier arity bounds its chromatic number (`edges_colorable`).
 
+## Implementation notes
+
+`concat` bridges *every* same-tier pair, so its arcs are order-closed
+representatives: [jardine-2019]'s operative concatenation bridges one partial
+`(last, first)` pair per tier, and the two forms are interconvertible as Hasse
+diagram ↔ transitive closure on the finite per-tier strict orders. The complete
+bridge is total and functorial where `first`/`last` are partial and not
+hom-preserved, and its monoid laws are unconditional where the successor form's
+associativity requires string-graph tier classes ([jardine-heinz-2015]'s Lemma 1
+remark). The choice is not free elsewhere: subgraph-based notions such as
+`ASL.lean`'s forbidden factors are signature-sensitive ([jardine-2017-complexity]).
+
 ## TODO
 
 * The normal-form equivalence with the strict tuple presentation, with
@@ -226,21 +238,10 @@ theorem empty_noInternalAssoc : NoInternalAssoc (empty S).graph := fun v => v.el
 
 /-! ### Tier-bridging concatenation
 
-Per tier class, concatenation is the ordinal sum: blockwise arcs plus a bridging
-arc from every `X`-vertex of a class to every same-class `Y`-vertex.
-[jardine-2019] glosses `A` as representing *the order* on each string, but its
-operative concatenation bridges a single pair per tier — `(last X Γᵢ, first Y Γᵢ)`,
-with `first`/`last` partial — so its composites carry generator-style arcs. This
-axiom class instead takes the order-*closed* representative of that same
-precedence relation (interconvertible with the generator form via Hasse diagram ↔
-transitive closure on the finite per-tier strict orders); the complete same-class
-bridge is chosen because it is total and functorial where `first`/`last` are
-partial and not hom-preserved, and its monoid laws unconditional where the
-successor form's associativity is conditional on the tier classes being string
-graphs (the paper's Lemma 1 remark). On the definability relationship between the
-two signatures cf. [jardine-2017-complexity]; subgraph-based notions such as
-`ASL.lean`'s forbidden-factor grammars are signature-sensitive and do not transfer
-for free. -/
+Per tier class, concatenation is the ordinal sum: blockwise arcs plus a bridge
+from every `X`-vertex to every same-tier `Y`-vertex. On the choice of the
+complete bridge over [jardine-2019]'s partial `(last, first)` pair, see the
+implementation notes above. -/
 
 section Concat
 variable (t : S → ι)
@@ -254,8 +255,7 @@ def concat (X Y : MixedGraphCat S) : MixedGraphCat S where
   graph :=
     { edges := X.graph.edges ⊕g Y.graph.edges
       arcs :=
-        ⟨fun v w =>
-          match v, w with
+        ⟨fun
           | .inl v, .inl w => X.graph.arcs.Adj v w
           | .inr v, .inr w => Y.graph.arcs.Adj v w
           | .inl v, .inr w => X.tier t v = Y.tier t w
@@ -401,8 +401,7 @@ def sum (X Y : MixedGraphCat S) : MixedGraphCat S where
   graph :=
     { edges := X.graph.edges ⊕g Y.graph.edges
       arcs :=
-        ⟨fun v w =>
-          match v, w with
+        ⟨fun
           | .inl v, .inl w => X.graph.arcs.Adj v w
           | .inr v, .inr w => Y.graph.arcs.Adj v w
           | _, _ => False⟩ }
