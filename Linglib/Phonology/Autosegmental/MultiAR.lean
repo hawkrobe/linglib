@@ -3,10 +3,14 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
+import Mathlib.CategoryTheory.Equivalence
 import Mathlib.CategoryTheory.EqToHom
 import Mathlib.CategoryTheory.Monoidal.Category
 import Mathlib.Data.Finset.Image
 import Mathlib.Data.Fintype.Pi
+import Mathlib.Data.Fintype.Sigma
+import Mathlib.Data.Fintype.Sort
+import Mathlib.Order.RelClasses
 import Linglib.Core.CategoryTheory.Monoidal.LabeledTuple
 import Linglib.Core.Data.Fin.Tuple.Basic
 import Linglib.Phonology.Autosegmental.MixedGraph
@@ -46,6 +50,9 @@ than a defeq view.
   (links only in the ascending-order bucket, relative to `[LinearOrder ι]`).
 * `normalForm`: the functor from `MultiAR.Normal` into the foundational
   `Representation` category, fully faithful (`normalForm.fullyFaithful`).
+* `Representation.ofFinite`: the `MultiAR.Normal` object built from a finite
+  representation by enumerating each tier fiber; the essential-surjectivity
+  witness on the finite-vertex fragment.
 
 ## Main results
 
@@ -53,6 +60,11 @@ than a defeq view.
   preserves planarity (given in-bounds) and in-bounds.
 * `normalForm.fullyFaithful`: the normal-form embedding of the tiered
   presentation into the labeled-mixed-graph foundation is fully faithful.
+* `normalForm.essSurj`: essential surjectivity of `normalForm` on the
+  finite-vertex fragment — every finite-vertex `Representation` is isomorphic
+  to `normalForm.obj Y` for some `Y : MultiAR.Normal`, packaged with
+  `normalForm.fullyFaithful` into an equivalence of the finite-vertex
+  subcategories.
 
 ## Implementation notes
 
@@ -77,12 +89,9 @@ autosegmental association equivalent in expressible constraints.
   `ObjectProperty.IsMonoidal` over the per-pair `MultiGraph.IsPlanar`) and the
   coproduct universal property (`inl`/`inr`/`coprodDesc`), making the
   `AR`/`MultiAR` pair fully symmetric — both follow `AR.lean`'s pattern.
-* Essential surjectivity of `normalForm`: every `Representation` object is
-  isomorphic to the image of a `MultiAR.Normal` (choose a per-tier ordering of
-  the fiber and read links off the association graph in the canonical bucket).
 * Strict-monoidal upgrade: `normalForm` respects `concat` up to a definitional
   isomorphism with `MixedGraphCat.concat`, promoting the fully-faithful
-  embedding to a strict monoidal functor.
+  embedding to a strict monoidal functor (via `Monoidal.transport`).
 -/
 
 namespace Autosegmental
@@ -698,6 +707,265 @@ noncomputable def normalForm.fullyFaithful : (normalForm (τ := τ)).FullyFaithf
 instance : (normalForm (τ := τ)).Faithful := normalForm.fullyFaithful.faithful
 
 instance : (normalForm (τ := τ)).Full := normalForm.fullyFaithful.full
+
+/-! ### Essential surjectivity on the finite-vertex fragment
+
+Every `Representation` with a `Finite` vertex type is isomorphic to
+`normalForm.obj Y` for some orientation-normal `MultiAR`. The construction
+enumerates each tier fiber `{v // (X.obj.label v).1 = i}` via
+`IsTierOrdered.isStrictTotalOrder` + `linearOrderOfSTO` +
+`monoEquivOfFin`, reads off tier labels from the second Sigma component of
+the labeling, and records each cross-tier association edge as one link in
+the ascending-order bucket per unordered tier-pair. Combined with
+`normalForm.fullyFaithful`, this witnesses the finite-vertex subcategories
+of `MultiAR.Normal` and `Representation` as equivalent categories.
+-/
+
+section EssSurj
+open scoped Classical
+
+/-- Fiber of the tier coloring at `i`: vertices of `X.obj` labelled to tier `i`.
+    Under `IsTierOrdered` its arcs form a strict total order, and under
+    `Finite X.obj.V` it is finite — the two ingredients `monoEquivOfFin`
+    needs to enumerate the fiber as `Fin _`. -/
+def Representation.fiber (X : Representation (Sigma.fst : ((i : ι) × τ i) → ι)) (i : ι) :
+    Type _ := {v : X.obj.V // (X.obj.label v).1 = i}
+
+variable {X : Representation (Sigma.fst : ((i : ι) × τ i) → ι)}
+
+/-- The `τ i` component of a fiber element, extracted from the labeling by
+    transporting along the fiber's tier-membership witness. -/
+def Representation.fiberLabel {i : ι} (v : X.fiber i) : τ i :=
+  v.property ▸ (X.obj.label v.val).2
+
+omit [LinearOrder ι] in
+/-- The label of a fiber element decomposes as tier + fiberLabel. -/
+theorem Representation.label_fiber {i : ι} (v : X.fiber i) :
+    X.obj.label v.val = ⟨i, X.fiberLabel v⟩ := by
+  obtain ⟨u, hu⟩ := v
+  show X.obj.label u = ⟨i, X.fiberLabel ⟨u, hu⟩⟩
+  simp only [Representation.fiberLabel]
+  conv_lhs => rw [← Sigma.eta (X.obj.label u)]
+  exact Sigma.eq hu rfl
+
+instance Representation.fiber.instFinite [Finite X.obj.V] (i : ι) : Finite (X.fiber i) :=
+  Subtype.finite
+
+/-- The arcs restricted to a tier fiber form a strict total order — the classed
+    form of Axioms 1–2 applied to the tier coloring `Sigma.fst`. -/
+instance Representation.fiber.instIsStrictTotalOrder (i : ι) :
+    IsStrictTotalOrder (X.fiber i) (fun a b => X.obj.graph.arcs.Adj a.val b.val) :=
+  X.property.1.isStrictTotalOrder i
+
+/-- Classical linear order on the fiber, from `IsStrictTotalOrder` via
+    `linearOrderOfSTO`. `noncomputable` because we resolve arc-decidability
+    with `Classical.dec`; the essential-surjectivity witness is data-noncomputable
+    anyway. -/
+noncomputable instance Representation.fiber.instLinearOrder (i : ι) :
+    LinearOrder (X.fiber i) := by
+  classical
+  exact linearOrderOfSTO (fun a b : X.fiber i => X.obj.graph.arcs.Adj a.val b.val)
+
+/-- The tier component of the built `MultiAR` at tier `i`: a length-`n_i`
+    `LabeledTuple (τ i)` where `n_i` is the fiber's cardinality, positions
+    enumerated by `monoEquivOfFin`, labels read off via `fiberLabel`. -/
+noncomputable def Representation.tierAt [Finite X.obj.V] (i : ι) : LabeledTuple (τ i) :=
+  letI := Fintype.ofFinite (X.fiber i)
+  { len := Fintype.card (X.fiber i)
+    label := fun p => X.fiberLabel (monoEquivOfFin (X.fiber i) rfl p) }
+
+omit [LinearOrder ι] in
+theorem Representation.tierAt_len [Finite X.obj.V] (i : ι) :
+    (X.tierAt i).len = @Fintype.card (X.fiber i) (Fintype.ofFinite _) := rfl
+
+/-- The link storage between tier `i` and tier `j` (only populated when
+    `i < j`, matching `isNormal`): all cross-tier association edges in
+    `X.obj.graph.edges` between the two fibers, recorded as index pairs
+    under the fiber enumeration. -/
+noncomputable def Representation.linksAt [Finite X.obj.V] (i j : ι) :
+    Finset (ℕ × ℕ) :=
+  letI := Fintype.ofFinite (X.fiber i)
+  letI := Fintype.ofFinite (X.fiber j)
+  if i < j then
+    ((Finset.univ (α := X.fiber i × X.fiber j)).filter
+      (fun vw => X.obj.graph.edges.Adj vw.1.val vw.2.val)).image
+      (fun vw =>
+        (((monoEquivOfFin (X.fiber i) rfl).symm vw.1).val,
+         ((monoEquivOfFin (X.fiber j) rfl).symm vw.2).val))
+  else ∅
+
+/-- The essential-surjectivity witness: a `MultiAR.Normal` object whose image
+    under `normalForm` is isomorphic to `X`. -/
+noncomputable def Representation.ofFinite [Finite X.obj.V] : MultiAR.Normal (τ := τ) where
+  obj :=
+    { toMultiGraph :=
+        { tiers := fun i => X.tierAt i
+          links := fun i j => X.linksAt i j }
+      inBounds := by
+        intro i j ⟨p, q⟩ hmem
+        letI := Fintype.ofFinite (X.fiber i)
+        letI := Fintype.ofFinite (X.fiber j)
+        simp only [Representation.linksAt] at hmem
+        split_ifs at hmem with hij
+        · simp only [Finset.mem_image, Finset.mem_filter] at hmem
+          obtain ⟨⟨v, w⟩, _, ⟨rfl, rfl⟩⟩ := hmem
+          exact ⟨((monoEquivOfFin (X.fiber i) rfl).symm v).isLt,
+                 ((monoEquivOfFin (X.fiber j) rfl).symm w).isLt⟩
+        · exact absurd hmem (Finset.notMem_empty _)
+    }
+  property := by
+    intro i j hle
+    simp only [Representation.linksAt, if_neg hle]
+
+/-- The `MixedGraphCat.Iso` between `X.ofFinite`'s image and `X.obj`: on
+    vertices, the fiber-partition + `monoEquivOfFin` composition; on edges,
+    arcs and labels, unfolding of `Representation.linksAt`, the fiber
+    linear order (`IsTierOrdered.isStrictTotalOrder`), and
+    `Representation.label_fiber` respectively. -/
+noncomputable def Representation.ofFiniteIso [Finite X.obj.V] :
+    MixedGraphCat.Iso (X.ofFinite.obj.toMultiGraph.toMixedGraphCat) X.obj where
+  toEquiv :=
+    letI : ∀ i : ι, Fintype (X.fiber i) := fun i => Fintype.ofFinite _
+    (Equiv.sigmaCongrRight
+      (fun i : ι => (monoEquivOfFin (X.fiber i) rfl).toEquiv)).trans
+      (Equiv.sigmaFiberEquiv (fun v : X.obj.V => (X.obj.label v).1))
+  edges_iff := by
+    intro v w
+    obtain ⟨i, p⟩ := v
+    obtain ⟨j, q⟩ := w
+    letI : Fintype (X.fiber i) := Fintype.ofFinite _
+    letI : Fintype (X.fiber j) := Fintype.ofFinite _
+    show X.obj.graph.edges.Adj (monoEquivOfFin (X.fiber i) rfl p).val
+        (monoEquivOfFin (X.fiber j) rfl q).val ↔
+      (⟨i, p⟩ : Σ k, Fin (X.tierAt k).len) ≠ ⟨j, q⟩ ∧
+      (((p : ℕ), (q : ℕ)) ∈ X.linksAt i j ∨
+       ((q : ℕ), (p : ℕ)) ∈ X.linksAt j i)
+    constructor
+    · intro hadj
+      have hne_val : (monoEquivOfFin (X.fiber i) rfl p).val ≠
+          (monoEquivOfFin (X.fiber j) rfl q).val := hadj.ne
+      have hi : (X.obj.label (monoEquivOfFin (X.fiber i) rfl p).val).1 = i :=
+        (monoEquivOfFin (X.fiber i) rfl p).property
+      have hj : (X.obj.label (monoEquivOfFin (X.fiber j) rfl q).val).1 = j :=
+        (monoEquivOfFin (X.fiber j) rfl q).property
+      have hij_ne : i ≠ j := by
+        intro heq
+        subst heq
+        rcases X.property.1.total hne_val (hi.trans hj.symm) with harc | harc
+        exacts [X.property.2 hadj harc, X.property.2 hadj.symm harc]
+      refine ⟨?_, ?_⟩
+      · intro hveq
+        exact hij_ne (Sigma.mk.injEq _ _ _ _ |>.mp hveq).1
+      · rcases lt_trichotomy i j with hij_lt | hij_eq | hij_lt
+        · left
+          show ((p : ℕ), (q : ℕ)) ∈ X.linksAt i j
+          simp only [Representation.linksAt, if_pos hij_lt, Finset.mem_image,
+            Finset.mem_filter, Finset.mem_univ, true_and]
+          refine ⟨(monoEquivOfFin (X.fiber i) rfl p, monoEquivOfFin (X.fiber j) rfl q),
+                  hadj, ?_⟩
+          simp [OrderIso.symm_apply_apply]
+        · exact absurd hij_eq hij_ne
+        · right
+          show ((q : ℕ), (p : ℕ)) ∈ X.linksAt j i
+          simp only [Representation.linksAt, if_pos hij_lt, Finset.mem_image,
+            Finset.mem_filter, Finset.mem_univ, true_and]
+          refine ⟨(monoEquivOfFin (X.fiber j) rfl q, monoEquivOfFin (X.fiber i) rfl p),
+                  hadj.symm, ?_⟩
+          simp [OrderIso.symm_apply_apply]
+    · rintro ⟨_, hmem⟩
+      rcases hmem with hij | hji
+      · simp only [Representation.linksAt] at hij
+        split_ifs at hij with hlt
+        · simp only [Finset.mem_image, Finset.mem_filter, Finset.mem_univ,
+            true_and] at hij
+          obtain ⟨⟨a, b⟩, hab, heq⟩ := hij
+          obtain ⟨hpa, hqb⟩ := Prod.mk.injEq _ _ _ _ |>.mp heq
+          have ha : a = monoEquivOfFin (X.fiber i) rfl p := by
+            have h₁ : monoEquivOfFin (X.fiber i) rfl
+                ((monoEquivOfFin (X.fiber i) rfl).symm a) =
+                monoEquivOfFin (X.fiber i) rfl p := congrArg _ (Fin.ext hpa)
+            rwa [OrderIso.apply_symm_apply] at h₁
+          have hb : b = monoEquivOfFin (X.fiber j) rfl q := by
+            have h₁ : monoEquivOfFin (X.fiber j) rfl
+                ((monoEquivOfFin (X.fiber j) rfl).symm b) =
+                monoEquivOfFin (X.fiber j) rfl q := congrArg _ (Fin.ext hqb)
+            rwa [OrderIso.apply_symm_apply] at h₁
+          rw [ha, hb] at hab
+          exact hab
+        · exact absurd hij (Finset.notMem_empty _)
+      · simp only [Representation.linksAt] at hji
+        split_ifs at hji with hlt
+        · simp only [Finset.mem_image, Finset.mem_filter, Finset.mem_univ,
+            true_and] at hji
+          obtain ⟨⟨a, b⟩, hab, heq⟩ := hji
+          obtain ⟨hqa, hpb⟩ := Prod.mk.injEq _ _ _ _ |>.mp heq
+          have ha : a = monoEquivOfFin (X.fiber j) rfl q := by
+            have h₁ : monoEquivOfFin (X.fiber j) rfl
+                ((monoEquivOfFin (X.fiber j) rfl).symm a) =
+                monoEquivOfFin (X.fiber j) rfl q := congrArg _ (Fin.ext hqa)
+            rwa [OrderIso.apply_symm_apply] at h₁
+          have hb : b = monoEquivOfFin (X.fiber i) rfl p := by
+            have h₁ : monoEquivOfFin (X.fiber i) rfl
+                ((monoEquivOfFin (X.fiber i) rfl).symm b) =
+                monoEquivOfFin (X.fiber i) rfl p := congrArg _ (Fin.ext hpb)
+            rwa [OrderIso.apply_symm_apply] at h₁
+          rw [ha, hb] at hab
+          exact hab.symm
+        · exact absurd hji (Finset.notMem_empty _)
+  arcs_iff := by
+    intro v w
+    obtain ⟨i, p⟩ := v
+    obtain ⟨j, q⟩ := w
+    letI : Fintype (X.fiber i) := Fintype.ofFinite _
+    letI : Fintype (X.fiber j) := Fintype.ofFinite _
+    show X.obj.graph.arcs.Adj (monoEquivOfFin (X.fiber i) rfl p).val
+        (monoEquivOfFin (X.fiber j) rfl q).val ↔ i = j ∧ (p : ℕ) < (q : ℕ)
+    constructor
+    · intro h
+      have htier := X.property.1.tier_eq h
+      have hi : (X.obj.label (monoEquivOfFin (X.fiber i) rfl p).val).1 = i :=
+        (monoEquivOfFin (X.fiber i) rfl p).property
+      have hj : (X.obj.label (monoEquivOfFin (X.fiber j) rfl q).val).1 = j :=
+        (monoEquivOfFin (X.fiber j) rfl q).property
+      have hij : i = j := hi.symm.trans (htier.trans hj)
+      refine ⟨hij, ?_⟩
+      subst hij
+      -- goal: (p : ℕ) < (q : ℕ)
+      -- On the fiber LinearOrder, arcs.Adj (mono p).val (mono q).val = mono p < mono q
+      -- and mono is OrderIso so mono p < mono q ↔ p < q
+      have hlt : (monoEquivOfFin (X.fiber i) rfl p) < (monoEquivOfFin (X.fiber i) rfl q) := by
+        change X.obj.graph.arcs.Adj _ _
+        exact h
+      exact (monoEquivOfFin (X.fiber i) rfl).lt_iff_lt.mp hlt
+    · rintro ⟨rfl, hlt⟩
+      have hlt' : (p : Fin _) < (q : Fin _) := hlt
+      have : (monoEquivOfFin (X.fiber i) rfl p) < (monoEquivOfFin (X.fiber i) rfl q) :=
+        (monoEquivOfFin (X.fiber i) rfl).lt_iff_lt.mpr hlt'
+      exact this
+  label_comp := by
+    intro v
+    obtain ⟨i, p⟩ := v
+    letI : Fintype (X.fiber i) := Fintype.ofFinite _
+    show X.obj.label ((monoEquivOfFin (X.fiber i) rfl p) : X.fiber i).val =
+      ⟨i, (X.tierAt i).label p⟩
+    rw [X.label_fiber]
+    rfl
+
+/-- **Essential surjectivity of `normalForm` on the finite-vertex fragment.**
+    For every finite-vertex representation there is an orientation-normal
+    `MultiAR` whose image is isomorphic to it. -/
+theorem normalForm.essSurj (X : Representation (Sigma.fst : ((i : ι) × τ i) → ι))
+    [Finite X.obj.V] :
+    ∃ Y : MultiAR.Normal, Nonempty (normalForm.obj Y ≅ X) :=
+  ⟨X.ofFinite, ⟨Representation.mkIso X.ofFiniteIso⟩⟩
+
+-- TODO(equivalence): once `normalForm.essSurj` is discharged, package
+-- `Functor.EssSurj normalForm` (restricted to the finite-vertex subcategory
+-- on both sides) with `normalForm.fullyFaithful` into an `IsEquivalence`
+-- instance — the "packaged equivalence" side of task #6. The `Full`,
+-- `Faithful` instances above transfer to the restriction automatically.
+
+end EssSurj
 
 end NormalForm
 
