@@ -52,17 +52,6 @@ relative to it.
 * `Representation.tierColoring`: the tier map properly colors the association
   graph, so tier arity bounds its chromatic number (`edges_colorable`).
 
-## Implementation notes
-
-The graph components reuse `SimpleGraph` (edges are two-element sets, so
-association is symmetric and loopless) and `Digraph`, bundled in
-`Core/Combinatorics/MixedGraph.lean`; no cross-tier order is stored. Morphisms
-default to the broad precedence-forgetting class, where the coproduct and the
-OCP repair live.
-Subgraph-based notions (`ASL.lean`) are signature-sensitive and do not transfer
-to the order signature for free. Monoid laws hold up to `Iso`; strictness
-belongs to the tiered normal form (`MultiAR.lean`).
-
 ## TODO
 
 * The normal-form equivalence with the strict tuple presentation, with
@@ -73,7 +62,8 @@ namespace Autosegmental
 
 variable {V V₁ V₂ V₃ S ι : Type*}
 
-/-- A labeled mixed graph `⟨V, E, A, ℓ⟩`: a mixed graph with a vertex labeling. -/
+/-- A labeled mixed graph `⟨V, E, A, ℓ⟩` is a mixed graph with a vertex labeling;
+    the literature's edges are two-element sets, so `SimpleGraph` is exact. -/
 structure MixedGraph (V S : Type*) extends _root_.MixedGraph V where
   /-- The labeling (`ℓ`). -/
   label : V → S
