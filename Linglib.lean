@@ -1356,6 +1356,7 @@ import Linglib.Phonology.Autosegmental.Melody
 import Linglib.Phonology.Autosegmental.MixedGraph
 import Linglib.Phonology.Autosegmental.MultiAR
 import Linglib.Phonology.Autosegmental.NonCrossing
+import Linglib.Phonology.Autosegmental.NormalForm
 import Linglib.Phonology.Autosegmental.Realization
 import Linglib.Phonology.Autosegmental.Sharing
 import Linglib.Phonology.Constraints.Basic
