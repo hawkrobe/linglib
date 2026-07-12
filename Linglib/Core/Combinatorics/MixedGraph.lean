@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 import Mathlib.Combinatorics.Digraph.Basic
 import Mathlib.Combinatorics.SimpleGraph.Basic
+import Mathlib.Logic.Relation
 
 /-!
 # Mixed graphs
@@ -19,6 +20,7 @@ has both halves but no bundle. Candidate for
 * `MixedGraph V`: the bundle.
 * `SimpleGraph.toMixedGraph` / `Digraph.toMixedGraph`: the degenerate cases —
   a simple graph is a mixed graph with no arcs, a digraph one with no edges.
+* `MixedGraph.PrecPath`: the transitive closure of the arcs.
 -/
 
 /-- A mixed graph: undirected edges and directed arcs on one vertex type. -/
@@ -36,3 +38,6 @@ def SimpleGraph.toMixedGraph (G : SimpleGraph V) : MixedGraph V := ⟨G, ⊥⟩
 
 /-- A digraph is a mixed graph with no edges. -/
 def Digraph.toMixedGraph (D : Digraph V) : MixedGraph V := ⟨⊥, D⟩
+
+/-- The precedence-path relation: the transitive closure of the arcs. -/
+def MixedGraph.PrecPath (G : MixedGraph V) : V → V → Prop := Relation.TransGen G.arcs.Adj

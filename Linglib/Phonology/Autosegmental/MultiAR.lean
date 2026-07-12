@@ -405,16 +405,17 @@ end MultiAR
 
 /-! ### Interpretation into the labeled mixed graph foundation
 
-The tiered presentation denotes a labeled mixed graph (`MixedGraph.lean`) by
-construction: vertices are per-tier positions, the alphabet is the
-tier-partitioned `Σ i, τ i` with tier assignment `Sigma.fst`, arcs are within-tier
-successors, and edges symmetrize the per-pair links. The structural §4.2 axioms
-hold as properties of the construction (`toMixedGraph_isTierOrdered`,
-`toMixedGraph_noInternalAssoc`), and the foundational path-form No-Crossing
-Constraint agrees with the per-pair `IsPlanar` exactly on orientation-normalized
-presentations (`toMixedGraph_isPlanar_iff`) — links between two tiers must be
-stored in one orientation bucket, since the path form also sees crossings between
-an `(i, j)` link and a `(j, i)` link, which the per-pair check cannot couple. -/
+The tiered presentation denotes a labeled mixed graph (`MixedGraphCat`,
+`MixedGraph.lean`) by construction: vertices are per-tier positions, the alphabet
+is the tier-partitioned `Σ i, τ i` with tier assignment `Sigma.fst`, arcs are
+within-tier successors, and edges symmetrize the per-pair links. The structural
+§4.2 axioms hold as properties of the construction
+(`toMixedGraphCat_isTierOrdered`, `toMixedGraphCat_noInternalAssoc`), and the
+foundational path-form No-Crossing Constraint agrees with the per-pair `IsPlanar`
+exactly on orientation-normalized presentations (`toMixedGraphCat_isPlanar_iff`) —
+links between two tiers must be stored in one orientation bucket, since the path
+form also sees crossings between an `(i, j)` link and a `(j, i)` link, which the
+per-pair check cannot couple. -/
 
 namespace MultiGraph
 
@@ -422,24 +423,27 @@ namespace MultiGraph
     vertices, the within-tier position order as arcs ([jardine-2019]'s reading —
     `A` represents the order, matching `IsTierOrdered`'s path-closure), and
     symmetrized per-pair links as edges. -/
-def toMixedGraph (M : MultiGraph τ) :
-    MixedGraph ((i : ι) × Fin (M.tiers i).len) ((i : ι) × τ i) where
-  edges :=
-    { Adj := fun v w => v ≠ w ∧
-        (((v.2 : ℕ), (w.2 : ℕ)) ∈ M.links v.1 w.1 ∨ ((w.2 : ℕ), (v.2 : ℕ)) ∈ M.links w.1 v.1)
-      symm := ⟨fun _ _ h => ⟨h.1.symm, h.2.symm⟩⟩
-      loopless := ⟨fun _ h => h.1 rfl⟩ }
-  arcs := ⟨fun v w => v.1 = w.1 ∧ (v.2 : ℕ) < (w.2 : ℕ)⟩
+def toMixedGraphCat (M : MultiGraph τ) : MixedGraphCat ((i : ι) × τ i) where
+  V := (i : ι) × Fin (M.tiers i).len
+  graph :=
+    { edges :=
+        { Adj := fun v w => v ≠ w ∧
+            (((v.2 : ℕ), (w.2 : ℕ)) ∈ M.links v.1 w.1 ∨
+              ((w.2 : ℕ), (v.2 : ℕ)) ∈ M.links w.1 v.1)
+          symm := ⟨fun _ _ h => ⟨h.1.symm, h.2.symm⟩⟩
+          loopless := ⟨fun _ h => h.1 rfl⟩ }
+      arcs := ⟨fun v w => v.1 = w.1 ∧ (v.2 : ℕ) < (w.2 : ℕ)⟩ }
   label v := ⟨v.1, (M.tiers v.1).label v.2⟩
 
 variable {M : MultiGraph τ}
 
-@[simp] theorem toMixedGraph_tier (v : (i : ι) × Fin (M.tiers i).len) :
-    M.toMixedGraph.tier Sigma.fst v = v.1 := rfl
+@[simp] theorem toMixedGraphCat_tier (v : (i : ι) × Fin (M.tiers i).len) :
+    M.toMixedGraphCat.tier Sigma.fst v = v.1 := rfl
 
 /-- Axioms 1–2 hold by construction: the arcs are the tier-internal position
     order, already path-closed. -/
-theorem toMixedGraph_isTierOrdered : M.toMixedGraph.IsTierOrdered Sigma.fst := by
+theorem toMixedGraphCat_isTierOrdered :
+    IsTierOrdered M.toMixedGraphCat.graph (M.toMixedGraphCat.tier Sigma.fst) := by
   refine ⟨fun v w h => h.1, fun v w hne htier => ?_, fun v h => ?_,
     fun u v w huv hvw => ⟨huv.1.trans hvw.1, by obtain ⟨-, h1⟩ := huv; obtain ⟨-, h2⟩ := hvw; omega⟩⟩
   · obtain ⟨i, p⟩ := v
@@ -454,8 +458,8 @@ theorem toMixedGraph_isTierOrdered : M.toMixedGraph.IsTierOrdered Sigma.fst := b
 
 /-- Axiom 3 holds by construction on diagonal-free presentations: edges land
     across tier-pairs, paths stay within a tier. -/
-theorem toMixedGraph_noInternalAssoc (hdiag : ∀ i, M.links i i = ∅) :
-    M.toMixedGraph.NoInternalAssoc := by
+theorem toMixedGraphCat_noInternalAssoc (hdiag : ∀ i, M.links i i = ∅) :
+    NoInternalAssoc M.toMixedGraphCat.graph := by
   rintro v w ⟨hne, hmem⟩ harc
   obtain ⟨i, p⟩ := v
   obtain ⟨j, q⟩ := w
@@ -467,9 +471,9 @@ theorem toMixedGraph_noInternalAssoc (hdiag : ∀ i, M.links i i = ∅) :
     two tiers stored in one orientation bucket — which also rules out diagonal
     links). Without normalization the path form is strictly stronger: it couples
     an `(i, j)` link with a `(j, i)` link between the same two tiers. -/
-theorem toMixedGraph_isPlanar_iff (hb : M.InBounds)
+theorem toMixedGraphCat_isPlanar_iff (hb : M.InBounds)
     (hor : ∀ i j, M.links i j ≠ ∅ → M.links j i = ∅) :
-    M.toMixedGraph.IsPlanar ↔ M.IsPlanar := by
+    Autosegmental.IsPlanar M.toMixedGraphCat.graph ↔ M.IsPlanar := by
   have hdiag : ∀ i, M.links i i = ∅ := fun i => by
     by_contra h
     exact h (hor i i h)
