@@ -14,37 +14,45 @@ import Linglib.Phonology.Autosegmental.NonCrossing
 /-!
 # Multi-tier autosegmental graphs and their monoidal category
 
-`MultiGraph τ` is the autosegmental representation at **general tier arity**:
-`n` heterogeneously-typed ordered **tiers** (`tiers i : LabeledTuple (τ i)`, with
-`τ : Fin n → Type u`) plus, for every ordered tier-pair `(i, j)`, a `Finset (ℕ × ℕ)`
-of association **links** (`links i j`; empty ⇒ the pair does not associate). This
-renders [jardine-heinz-2015]'s labeled graphs over an `n`-block tier partition
-fiberwise, and is the home of [lionnet-2022]'s register-tier tone geometry
-(subtonal-feature tiers + a mora tier around a Tonal Root Node hub).
+An autosegmental representation at general tier arity has `n` heterogeneously-typed
+ordered tiers and, for every ordered tier-pair `(i, j)`, a finite set of association
+links. This renders [jardine-heinz-2015]'s labeled graphs over an `n`-block tier
+partition fiberwise, and is the home of [lionnet-2022]'s register-tier tone geometry
+(subtonal-feature tiers and a mora tier around a Tonal Root Node hub). This file
+builds the object, the category of in-bounds objects, and its concatenation monoidal
+structure, mirroring the bipartite `AR.lean` at arity `n`.
 
-`MultiAR τ` is the category of **in-bounds** multi-tier graphs: an object is a
-`MultiGraph τ` whose links are in bounds; a morphism is a family of per-tier
-label-preserving position maps (`fT i : LabeledTuple.Hom (A.tiers i) (B.tiers i)`)
-that preserves association lines. The monoidal product is morpheme concatenation
-(`MultiGraph.concat`, [jardine-heinz-2015]), built via
-`MonoidalCategory.ofTensorHom` exactly as the bipartite `AR α β`'s is — the
-dependent tiers add only a `funext i` to each coherence proof.
+The bipartite `Graph α β` / `AR α β` (`AR.lean`) is the `n = 2` case, kept
+first-class for its `extends`/anonymous-constructor ergonomics and independent
+universes; the two are related by `Inclusion.lean`'s monoidal functor `ι` rather
+than a defeq view.
 
-The classical **bipartite** `Graph α β` / `AR α β` (`AR.lean`) is the `n = 2`
-case. It stays a *separate first-class structure* (keeping `extends`/`.toGraph`/
-anonymous-constructor ergonomics and independent universes); the two are related
-by the **monoidal inclusion functor** rather than a defeq view — see
-`Inclusion.lean`. The planar full monoidal subcategory (Goldsmith's NCC,
-[goldsmith-1976]) would follow `AR.lean`'s `WellFormedAR` pattern via the
-per-pair `MultiGraph.IsPlanar`.
+## Main definitions
 
-## Design
+* `MultiGraph τ`: the raw object — tiers `tiers i : LabeledTuple (τ i)` for
+  `τ : Fin n → Type u`, links `links i j : Finset (ℕ × ℕ)` per ordered tier-pair.
+* `MultiGraph.IsPlanar` / `MultiGraph.InBounds`: the per-pair No-Crossing
+  Constraint and the bounds predicate, both decidable.
+* `MultiGraph.concat` / `MultiGraph.empty`: morpheme concatenation and its unit.
+* `MultiAR τ`: the in-bounds object; `MultiAR.Hom` is a family of per-tier
+  label-preserving position maps that preserves association lines.
+* `MonoidalCategory (MultiAR τ)`: tensor is `concat`, via
+  `MonoidalCategory.ofTensorHom` — the dependent tiers add only a `funext i` to
+  each of `AR`'s coherence proofs.
 
-* **Heterogeneous tiers** `τ : Fin n → Type u` — per-tier static typing, fiberwise.
-* **Links per ordered tier-pair** `(i j) → Finset (ℕ × ℕ)` — keeps `concat`'s shift
-  fiberwise; the associating topology is `{(i,j) | links i j ≠ ∅}`.
-* **Planarity stays binary, per pair** (`IsPlanar := ∀ i j, IsNonCrossing (links i j)`):
-  the existing `MonovaryOn`-based NCC reused pointwise — no N-ary planarity theory.
+## Main results
+
+* `MultiGraph.isPlanar_concat` / `MultiGraph.inBounds_concat`: concatenation
+  preserves planarity (given in-bounds) and in-bounds.
+
+## Implementation notes
+
+Links are stored per ordered tier-pair (empty set ⇒ the pair does not associate),
+keeping `concat`'s index shift fiberwise; the associating topology is
+`{(i, j) | links i j ≠ ∅}`. Planarity stays binary per pair — `NonCrossing.lean`'s
+`MonovaryOn`-based NCC applied pointwise, with no N-ary planarity theory. The
+planar full monoidal subcategory ([goldsmith-1976]'s NCC) would follow `AR.lean`'s
+`WellFormedAR` pattern via the per-pair `MultiGraph.IsPlanar`.
 -/
 
 namespace Autosegmental
@@ -53,8 +61,9 @@ open CategoryTheory MonoidalCategory
 
 universe u
 
-/-- A **multi-tier autosegmental graph**: `n` heterogeneously-typed ordered tiers
-    plus a `Finset (ℕ × ℕ)` of association links on each ordered tier-pair. -/
+/-- A multi-tier autosegmental representation is a family of `n` ordered labeled
+    tiers with a finite set of association lines (index pairs) on each ordered
+    tier-pair. -/
 @[ext]
 structure MultiGraph {n : ℕ} (τ : Fin n → Type u) where
   /-- The `n` heterogeneously-typed ordered tiers. -/
@@ -71,14 +80,14 @@ instance [∀ i, DecidableEq (τ i)] : DecidableEq (MultiGraph τ) := fun _ _ =>
 
 /-! ### Well-formedness predicates -/
 
-/-- **Planarity**: every tier-pair's link set is non-crossing — the binary
-    `MonovaryOn` NCC applied pointwise per pair (no N-ary generalization). -/
+/-- A multi-tier representation is planar if every tier-pair's link set
+    satisfies [goldsmith-1976]'s No-Crossing Constraint. -/
 def IsPlanar (G : MultiGraph τ) : Prop := ∀ i j, IsNonCrossing (G.links i j)
 
 instance (G : MultiGraph τ) : Decidable G.IsPlanar :=
   inferInstanceAs (Decidable (∀ _ _, _))
 
-/-- **In-bounds**: every link's endpoints fall within the respective tier lengths. -/
+/-- Every link's indices fall within the respective tier lengths. -/
 def InBounds (G : MultiGraph τ) : Prop :=
   ∀ i j, ∀ p ∈ G.links i j, p.1 < (G.tiers i).len ∧ p.2 < (G.tiers j).len
 
@@ -87,7 +96,7 @@ instance (G : MultiGraph τ) : Decidable G.InBounds :=
 
 /-! ### The empty graph -/
 
-/-- The empty multigraph: every tier empty, no links. -/
+/-- The empty multi-tier representation, with every tier empty and no links. -/
 def empty : MultiGraph τ where
   tiers _ := LabeledTuple.empty
   links _ _ := ∅
@@ -103,8 +112,8 @@ theorem inBounds_empty : (empty : MultiGraph τ).InBounds := by
 
 /-! ### Concatenation ([jardine-heinz-2015], fiberwise coproduct) -/
 
-/-- Concatenation: tier-wise `LabeledTuple.concat`, and per-pair link union with
-    `B`'s links shifted past `A`'s tier lengths on each coordinate. -/
+/-- Concatenation concatenates each tier and unions the link sets per pair,
+    shifting `B`'s indices past `A`'s tier lengths ([jardine-heinz-2015]). -/
 def concat (A B : MultiGraph τ) : MultiGraph τ where
   tiers i := (A.tiers i).concat (B.tiers i)
   links i j := A.links i j ∪ (B.links i j).image (shiftLink (A.tiers i).len (A.tiers j).len)
@@ -163,7 +172,8 @@ end MultiGraph
 
 variable {n : ℕ} {τ : Fin n → Type u}
 
-/-- An **in-bounds multi-tier autosegmental graph** — the base object. -/
+/-- A multi-tier autosegmental graph whose links are in bounds — the objects of
+    the multi-tier autosegmental category. -/
 structure MultiAR {n : ℕ} (τ : Fin n → Type u) extends MultiGraph τ where
   inBounds : toMultiGraph.InBounds
 
@@ -171,9 +181,9 @@ namespace MultiAR
 
 /-! ### Morphisms -/
 
-/-- A label- and link-preserving morphism: a family of `LabeledTuple.Hom`s, one per
-    tier, plus link preservation routing each link's endpoints through the maps for
-    its two tiers. -/
+/-- A morphism of in-bounds multi-tier graphs is a family of label-preserving
+    position maps (`LabeledTuple.Hom`s), one per tier, that preserves association
+    lines: each link's endpoints route through the maps for its two tiers. -/
 @[ext]
 structure Hom (A B : MultiAR τ) where
   /-- Per-tier vertex maps. -/
@@ -190,7 +200,7 @@ def id (A : MultiAR τ) : Hom A A where
   fT i := LabeledTuple.Hom.id (A.tiers i)
   links_preserve _ _ {_ _} _ _ h := h
 
-/-- Composition (per tier). -/
+/-- Composition of morphisms, tier-wise. -/
 def comp (f : Hom A B) (g : Hom B C) : Hom A C where
   fT i := (f.fT i).comp (g.fT i)
   links_preserve i j {p q} hp hq h := by
@@ -222,7 +232,7 @@ instance : Category (MultiAR τ) where
 
 /-! ### Concatenation: the tensor object -/
 
-/-- The monoidal product: tier-wise concatenation, preserving in-bounds. -/
+/-- Concatenation of in-bounds multi-tier graphs. -/
 def concat (A B : MultiAR τ) : MultiAR τ where
   toMultiGraph := A.toMultiGraph.concat B.toMultiGraph
   inBounds := MultiGraph.inBounds_concat A.inBounds B.inBounds
@@ -264,8 +274,9 @@ instance instMonoid : Monoid (MultiAR τ) where
 namespace Hom
 variable {A A' B B' : MultiAR τ}
 
-/-- `tensorHom`: per-tier `LabeledTuple.Hom.concatMap`. A link on `(i,j)` routes its
-    first endpoint through tier `i`'s map, its second through tier `j`'s map. -/
+/-- The concatenation bifunctor on morphisms (`f ⊗ g`), acting as
+    `LabeledTuple.Hom.concatMap` on each tier; a link on `(i, j)` routes its
+    endpoints through the maps for tiers `i` and `j`. -/
 def concatMap (f : Hom A A') (g : Hom B B') : Hom (A.concat B) (A'.concat B') where
   fT i := LabeledTuple.Hom.concatMap (f.fT i) (g.fT i)
   links_preserve i j {p q} hp hq h := by
@@ -305,7 +316,7 @@ end Hom
 
 /-! ### `eqToHom` algebra -/
 
-/-- The `i`-th tier map of an `eqToHom`, as a function: a length-cast `Fin.cast`. -/
+/-- The `i`-th tier map of an `eqToHom` is the length-cast `Fin.cast`. -/
 @[simp] theorem eqToHom_fT_toFun {A B : MultiAR τ} (h : A = B) (i : Fin n) :
     ((eqToHom h).fT i).toFun = Fin.cast (congrArg (fun X => (X.tiers i).len) h) := by
   cases h; rfl
