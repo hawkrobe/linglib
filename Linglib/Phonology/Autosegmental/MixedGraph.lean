@@ -578,36 +578,23 @@ def whiskerRightAux {X₁ X₂ : Representation t} (f : X₁ ⟶ X₂) (Y : Repr
     with every proof a componentwise `rfl` over the concrete sum maps. -/
 instance : MonoidalCategory (Representation t) :=
   MonoidalCategory.ofTensorHom
-    (id_tensorHom_id := fun _ _ => hom_ext fun v => by
-      rcases (v : _ ⊕ _) with v | v <;> rfl)
+    (id_tensorHom_id := fun _ _ => hom_ext (congrFun Sum.map_id_id))
     (id_tensorHom := fun _ _ _ _ => rfl)
     (tensorHom_id := fun _ _ => rfl)
-    (tensorHom_comp_tensorHom := fun _ _ _ _ => hom_ext fun v => by
-      rcases (v : _ ⊕ _) with v | v <;> rfl)
+    (tensorHom_comp_tensorHom := fun _ _ _ _ => hom_ext (congrFun (Sum.map_comp_map _ _ _ _)))
     (associator_naturality := fun _ _ _ => hom_ext fun v => by
-      rcases (v : _ ⊕ _) with v | v
-      · rcases (v : _ ⊕ _) with v | v <;> rfl
-      · rfl)
+      repeat' rcases (v : _ ⊕ _) with v | v
+      all_goals first | rfl | exact v.elim)
     (leftUnitor_naturality := fun _ => hom_ext fun v => by
-      rcases (v : _ ⊕ _) with v | v
-      · exact v.elim
-      · rfl)
+      rcases (v : _ ⊕ _) with v | v <;> first | rfl | exact v.elim)
     (rightUnitor_naturality := fun _ => hom_ext fun v => by
-      rcases (v : _ ⊕ _) with v | v
-      · rfl
-      · exact v.elim)
+      rcases (v : _ ⊕ _) with v | v <;> first | rfl | exact v.elim)
     (pentagon := fun _ _ _ _ => hom_ext fun v => by
-      rcases (v : _ ⊕ _) with v | v
-      · rcases (v : _ ⊕ _) with v | v
-        · rcases (v : _ ⊕ _) with v | v <;> rfl
-        · rfl
-      · rfl)
+      repeat' rcases (v : _ ⊕ _) with v | v
+      all_goals first | rfl | exact v.elim)
     (triangle := fun _ _ => hom_ext fun v => by
-      rcases (v : _ ⊕ _) with v | v
-      · rcases (v : _ ⊕ _) with v | v
-        · rfl
-        · exact v.elim
-      · rfl)
+      repeat' rcases (v : _ ⊕ _) with v | v
+      all_goals first | rfl | exact v.elim)
 
 end Representation
 
