@@ -29,17 +29,24 @@ associativity on the nose (`CategoryTheory.Monoidal.Skeleton`), and
 
 ## Main definitions
 
-* `Representation.fiber`, `Representation.vertexEquiv`: the tier fibers of a
-  finite representation and the canonical enumeration of its vertex type.
+* `Representation.fiber`, `Representation.fiberEnum`, `Representation.vertexEquiv`:
+  the tier fibers of a finite representation and their canonical enumerations.
+* `Representation.tierLength`, `Representation.tierWord`, `Representation.linkRel`:
+  the tuple reading — per-tier sizes, label words, and position-coordinate links.
 * `Representation.normalize`: the normal form, a `Representation` on the
   canonical vertex type.
+* `realize`, `realizeHom`, `tierProj`: [jardine-2019]'s `g` as iterated tensor,
+  as a free-monoid hom into the skeleton, and its per-tier projections.
 
 ## Main results
 
 * `Representation.normalizeIso`: `X.normalize ≅ X`.
-* `Representation.arcs_normalize`: on normal forms the arcs are the ascending
-  position order — the classification content, [jardine-heinz-2015]'s tiered
-  presentation recovered as a theorem.
+* `Representation.arcs_normalize`, `Representation.edges_normalize`: on normal
+  forms the arcs are the ascending position order and the edges are `linkRel` —
+  [jardine-heinz-2015]'s tiered presentation recovered as a theorem.
+* `Representation.tierWord_tensor`, `Representation.tierWord_realize`:
+  concatenation appends tier words; tier content of a realization is
+  compositional.
 * `Representation.toSkeleton_normalize`: normal forms represent their
   isomorphism class in the skeleton monoid.
 -/
