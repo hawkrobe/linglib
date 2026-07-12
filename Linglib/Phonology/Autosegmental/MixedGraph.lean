@@ -3,8 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
+import Mathlib.CategoryTheory.Limits.Shapes.BinaryProducts
+import Mathlib.CategoryTheory.Limits.Shapes.Terminal
 import Mathlib.CategoryTheory.Monoidal.Category
 import Mathlib.CategoryTheory.ObjectProperty.FullSubcategory
+import Mathlib.CategoryTheory.Widesubcategory
 import Mathlib.Combinatorics.SimpleGraph.Sum
 import Mathlib.Logic.Relation
 import Linglib.Core.Combinatorics.MixedGraph
@@ -48,10 +51,14 @@ strictness belongs to the tiered normal form, not to the foundation.
   (Axiom 6). Numbering follows the dissertation; [jardine-heinz-2015] numbers the
   NCC and OCP as its Axioms 4 and 5 and has no saturation axiom, which is why
   `AR.lean`'s citations differ.
-* `MixedGraph.Hom` / `MixedGraph.Iso`: label- and relation-preserving maps and
-  equivalences; faces project to the stock `SimpleGraph.Hom`/`Iso` and
-  `RelHom`/`RelIso`.
-* `MixedGraph.concat t`: tier-bridging concatenation on the vertex sum.
+* `MixedGraph.Hom`: label- and association-preserving maps — the broad morphism
+  class, deliberately precedence-forgetting; `precPreserving` is the wide
+  morphism class of full-structure (model-theoretic) homomorphisms, and
+  `MixedGraph.Iso` the full-structure equivalences, with faces projecting to the
+  stock `SimpleGraph.Hom`/`Iso` and `RelIso`.
+* `MixedGraph.concat t`: tier-bridging concatenation on the vertex sum;
+  `MixedGraph.sum` is the bridge-free blockwise sum, the categorical coproduct
+  of the broad category (`HasInitial`/`HasBinaryCoproducts` on `MixedGraphCat`).
 * `MixedGraphCat S`: **the category of labeled mixed graphs** (vertex type
   bundled with a graph); `Representation t` is **the category of autosegmental
   representations** — the full subcategory of the structural axiom class
@@ -61,6 +68,11 @@ strictness belongs to the tiered normal form, not to the foundation.
 
 * `concat_empty_iso` / `empty_concat_iso`: the unit laws up to `Iso`
   ([jardine-heinz-2015] Theorem 1).
+* `not_isTierOrdered_sum`: **Axiom 2 forces the bridges** — the bridge-free
+  coproduct leaves the axiom class whenever the factors share a tier, so
+  `concat`'s bridging arcs are the minimal repair keeping concatenation inside
+  `Representation`. The precise content of [jardine-heinz-2015]'s "modification
+  of the disjoint union".
 
 ## TODO
 
@@ -130,15 +142,17 @@ end Axioms
 
 /-! ### Morphisms -/
 
-/-- A label- and relation-preserving map of labeled mixed graphs. -/
+/-- A label- and association-preserving map of labeled mixed graphs. Precedence
+    is deliberately *not* required — reassociation analyses move material across
+    the order — so this is the broad morphism class where the coproduct and the
+    OCP repair live; the precedence-preserving maps form the wide morphism class
+    `precPreserving` (the legacy `AR.Hom` vs `PrecAR` split, at the foundation). -/
 @[ext]
 structure Hom (G₁ : MixedGraph V₁ S) (G₂ : MixedGraph V₂ S) where
   /-- The vertex map. -/
   toFun : V₁ → V₂
   /-- Association edges are preserved. -/
   edge_map : ∀ ⦃v w⦄, G₁.edges.Adj v w → G₂.edges.Adj (toFun v) (toFun w)
-  /-- Precedence arcs are preserved. -/
-  arc_map : ∀ ⦃v w⦄, G₁.arcs.Adj v w → G₂.arcs.Adj (toFun v) (toFun w)
   /-- Labels are preserved. -/
   label_comp : ∀ v, G₂.label (toFun v) = G₁.label v
 
@@ -147,20 +161,15 @@ def Hom.edgesHom {G₁ : MixedGraph V₁ S} {G₂ : MixedGraph V₂ S} (f : Hom 
     G₁.edges →g G₂.edges :=
   ⟨f.toFun, fun h => f.edge_map h⟩
 
-/-- The arc face of a morphism, a stock relation homomorphism. -/
-def Hom.arcsHom {G₁ : MixedGraph V₁ S} {G₂ : MixedGraph V₂ S} (f : Hom G₁ G₂) :
-    G₁.arcs.Adj →r G₂.arcs.Adj :=
-  ⟨f.toFun, fun h => f.arc_map h⟩
-
 /-- The identity morphism. -/
 def Hom.id (G : MixedGraph V S) : Hom G G :=
-  ⟨_root_.id, fun _ _ h => h, fun _ _ h => h, fun _ => rfl⟩
+  ⟨_root_.id, fun _ _ h => h, fun _ => rfl⟩
 
 /-- Composition of morphisms. -/
 def Hom.comp {G₁ : MixedGraph V₁ S} {G₂ : MixedGraph V₂ S} {G₃ : MixedGraph V₃ S}
     (f : Hom G₁ G₂) (g : Hom G₂ G₃) : Hom G₁ G₃ :=
   ⟨g.toFun ∘ f.toFun, fun _ _ h => g.edge_map (f.edge_map h),
-    fun _ _ h => g.arc_map (f.arc_map h), fun v => (g.label_comp _).trans (f.label_comp v)⟩
+    fun v => (g.label_comp _).trans (f.label_comp v)⟩
 
 /-! ### Isomorphism -/
 
@@ -182,8 +191,7 @@ def Iso.arcsIso {G₁ : MixedGraph V₁ S} {G₂ : MixedGraph V₂ S} (e : Iso G
 
 /-- An isomorphism as a morphism. -/
 def Iso.toHom {G₁ : MixedGraph V₁ S} {G₂ : MixedGraph V₂ S} (e : Iso G₁ G₂) : Hom G₁ G₂ :=
-  ⟨e.toEquiv, fun _ _ h => (e.edges_iff _ _).mpr h, fun _ _ h => (e.arcs_iff _ _).mpr h,
-    e.label_comp⟩
+  ⟨e.toEquiv, fun _ _ h => (e.edges_iff _ _).mpr h, e.label_comp⟩
 
 /-- The identity isomorphism. -/
 def Iso.refl (G : MixedGraph V S) : Iso G G :=
@@ -421,12 +429,6 @@ def Hom.sumMap {V₁' V₂' : Type*} {G₁ : MixedGraph V₁ S} {G₁' : MixedGr
     · exact absurd h (by simp)
     · exact absurd h (by simp)
     · exact g.edge_map h
-  arc_map := by
-    rintro (v | v) (w | w) h
-    · exact f.arc_map h
-    · exact (congrArg t (f.label_comp v)).trans (h.trans (congrArg t (g.label_comp w)).symm)
-    · exact h.elim
-    · exact g.arc_map h
   label_comp := by
     rintro (v | v)
     · exact f.label_comp v
@@ -447,6 +449,82 @@ def concat_assoc_iso (G₁ : MixedGraph V₁ S) (G₂ : MixedGraph V₂ S) (G₃
     rcases v with (a | b) | c <;> rfl
 
 end Concat
+
+/-! ### The bridge-free sum, and why the bridges exist
+
+The plain blockwise sum carries no bridging arcs. It is the categorical
+coproduct of the broad category (`MixedGraphCat`), but it does **not** stay in
+the axiom class: whenever both factors occupy a common tier, Axiom 2's totality
+fails across the seam (`not_isTierOrdered_sum`) — `concat`'s bridges are the
+minimal repair that keeps concatenation inside `Representation`. -/
+
+/-- The bridge-free blockwise sum. -/
+def sum (G₁ : MixedGraph V₁ S) (G₂ : MixedGraph V₂ S) : MixedGraph (V₁ ⊕ V₂) S where
+  edges := G₁.edges ⊕g G₂.edges
+  arcs :=
+    ⟨fun v w =>
+      match v, w with
+      | .inl v, .inl w => G₁.arcs.Adj v w
+      | .inr v, .inr w => G₂.arcs.Adj v w
+      | _, _ => False⟩
+  label := Sum.elim G₁.label G₂.label
+
+@[simp] theorem sum_edges (G₁ : MixedGraph V₁ S) (G₂ : MixedGraph V₂ S) :
+    (G₁.sum G₂).edges = G₁.edges ⊕g G₂.edges := rfl
+
+private lemma sum_precPath_inl {G₁ : MixedGraph V₁ S} {G₂ : MixedGraph V₂ S} {a : V₁}
+    {y : V₁ ⊕ V₂} (h : (G₁.sum G₂).PrecPath (.inl a) y) : ∃ a', y = .inl a' := by
+  induction h with
+  | @single y' h =>
+      cases y' with
+      | inl a' => exact ⟨a', rfl⟩
+      | inr b => exact (h : False).elim
+  | @tail y' y'' _ h ih =>
+      obtain ⟨a'', rfl⟩ := ih
+      cases y'' with
+      | inl a' => exact ⟨a', rfl⟩
+      | inr b => exact (h : False).elim
+
+private lemma sum_precPath_inr {G₁ : MixedGraph V₁ S} {G₂ : MixedGraph V₂ S} {b : V₂}
+    {y : V₁ ⊕ V₂} (h : (G₁.sum G₂).PrecPath (.inr b) y) : ∃ b', y = .inr b' := by
+  induction h with
+  | @single y' h =>
+      cases y' with
+      | inl a => exact (h : False).elim
+      | inr b' => exact ⟨b', rfl⟩
+  | @tail y' y'' _ h ih =>
+      obtain ⟨b'', rfl⟩ := ih
+      cases y'' with
+      | inl a => exact (h : False).elim
+      | inr b' => exact ⟨b', rfl⟩
+
+/-- Copairing out of the bridge-free sum. -/
+def sumDesc {G₁ : MixedGraph V₁ S} {G₂ : MixedGraph V₂ S} {H : MixedGraph V₃ S}
+    (f : Hom G₁ H) (g : Hom G₂ H) : Hom (G₁.sum G₂) H where
+  toFun := Sum.elim f.toFun g.toFun
+  edge_map := by
+    rintro (v | v) (w | w) h
+    · exact f.edge_map h
+    · exact absurd h (by simp)
+    · exact absurd h (by simp)
+    · exact g.edge_map h
+  label_comp := by
+    rintro (v | v)
+    · exact f.label_comp v
+    · exact g.label_comp v
+
+/-- **Axiom 2 forces the bridges**: the bridge-free sum of two graphs occupying a
+    common tier is never tier-ordered — same-tier vertices from the two factors
+    are precedence-unrelated across the seam. -/
+theorem not_isTierOrdered_sum (t : S → ι) {G₁ : MixedGraph V₁ S} {G₂ : MixedGraph V₂ S}
+    (v : V₁) (w : V₂) (htier : G₁.tier t v = G₂.tier t w) :
+    ¬ (G₁.sum G₂).IsTierOrdered t := by
+  intro h
+  rcases h.2.1 (v := .inl v) (w := .inr w) (by simp) htier with hp | hp
+  · obtain ⟨a', ha⟩ := sum_precPath_inl hp
+    exact absurd ha (by simp)
+  · obtain ⟨b', hb⟩ := sum_precPath_inr hp
+    exact absurd hb (by simp)
 
 end MixedGraph
 
@@ -474,7 +552,61 @@ instance : Category (MixedGraphCat S) where
   comp_id _ := MixedGraph.Hom.ext rfl
   assoc _ _ _ := MixedGraph.Hom.ext rfl
 
+open Limits
+
+/-- The empty graph object. -/
+def empty (S : Type v) : MixedGraphCat S := ⟨PEmpty, MixedGraph.empty S⟩
+
+instance (Y : MixedGraphCat S) : Subsingleton (empty S ⟶ Y) :=
+  ⟨fun _ _ => MixedGraph.Hom.ext (funext fun v => v.elim)⟩
+
+instance (Y : MixedGraphCat S) : Nonempty (empty S ⟶ Y) :=
+  ⟨⟨PEmpty.elim, fun v => v.elim, fun v => v.elim⟩⟩
+
+instance : HasInitial (MixedGraphCat S) := hasInitial_of_unique (empty S)
+
+/-- The bridge-free sum object. -/
+def sumObj (X Y : MixedGraphCat S) : MixedGraphCat S := ⟨X.V ⊕ Y.V, X.graph.sum Y.graph⟩
+
+/-- Left coprojection. -/
+def inl (X Y : MixedGraphCat S) : X ⟶ sumObj X Y :=
+  ⟨Sum.inl, fun _ _ h => h, fun _ => rfl⟩
+
+/-- Right coprojection. -/
+def inr (X Y : MixedGraphCat S) : Y ⟶ sumObj X Y :=
+  ⟨Sum.inr, fun _ _ h => h, fun _ => rfl⟩
+
+/-- Copairing out of the bridge-free sum. -/
+def desc {X Y T : MixedGraphCat S} (f : X ⟶ T) (g : Y ⟶ T) : sumObj X Y ⟶ T :=
+  MixedGraph.sumDesc (f : MixedGraph.Hom _ _) (g : MixedGraph.Hom _ _)
+
+/-- The bridge-free sum is the categorical coproduct of the broad category
+    (contrast `MixedGraph.not_isTierOrdered_sum`: it leaves the axiom class,
+    which is why `Representation`'s tensor is the bridged `concat` instead). -/
+instance (X Y : MixedGraphCat S) : HasBinaryCoproduct X Y :=
+  HasColimit.mk
+    { cocone := BinaryCofan.mk (inl X Y) (inr X Y)
+      isColimit := BinaryCofan.IsColimit.mk _ (fun f g => desc f g)
+        (fun f g => MixedGraph.Hom.ext rfl)
+        (fun f g => MixedGraph.Hom.ext rfl)
+        (fun f g m h₁ h₂ => MixedGraph.Hom.ext (funext fun v => by
+          rcases v with v | v
+          · exact congrArg (fun φ => MixedGraph.Hom.toFun φ v) h₁
+          · exact congrArg (fun φ => MixedGraph.Hom.toFun φ v) h₂)) }
+
+instance : HasBinaryCoproducts (MixedGraphCat S) := hasBinaryCoproducts_of_hasColimit_pair _
+
 end MixedGraphCat
+
+/-- Precedence preservation as a morphism property: the maps that also preserve
+    arcs — the model-theoretic full-structure homomorphisms, the foundation
+    counterpart of the legacy `PrecAR` wide subcategory. -/
+def precPreserving : MorphismProperty (MixedGraphCat S) := fun X Y f =>
+  ∀ ⦃v w⦄, X.graph.arcs.Adj v w → Y.graph.arcs.Adj (f.toFun v) (f.toFun w)
+
+instance : (precPreserving (S := S)).IsMultiplicative where
+  id_mem _ := fun _ _ h => h
+  comp_mem _ _ hf hg := fun _ _ h => hg (hf h)
 
 /-! ### The category of autosegmental representations -/
 
