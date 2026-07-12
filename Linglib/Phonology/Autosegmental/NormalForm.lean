@@ -127,6 +127,11 @@ noncomputable def Representation.linkRel [Finite X.obj.V] (i j : ι)
     (p : Fin (X.tierLength i)) (q : Fin (X.tierLength j)) : Prop :=
   X.obj.graph.edges.Adj (X.vertexEquiv ⟨i, p⟩) (X.vertexEquiv ⟨j, q⟩)
 
+theorem Representation.linkRel_def [Finite X.obj.V] {i j : ι} {p : Fin (X.tierLength i)}
+    {q : Fin (X.tierLength j)} :
+    X.linkRel i j p q ↔
+      X.obj.graph.edges.Adj (X.vertexEquiv ⟨i, p⟩) (X.vertexEquiv ⟨j, q⟩) := Iff.rfl
+
 /-- The normal form: `X` reindexed onto the canonical vertex type by pulling
     edges, arcs, and labels back along `vertexEquiv`. A `Representation` — the
     normal form is not a separate kind of object. -/
@@ -335,6 +340,42 @@ theorem Representation.tierWord_eq_ofFn {Z : Representation (Sigma.fst : ((i : �
       (congrArg Representation.fiberLabel (Representation.tensorEnum_apply_natAdd i p)).trans
         (Representation.fiberLabel_symm_inr _))
 
+theorem Representation.fiberEnum_tensor (i : ι) :
+    (X ⊗ Y).fiberEnum i =
+      (Fin.castOrderIso (Representation.tierLength_tensor i)).trans
+        (Representation.tensorEnum i) :=
+  Subsingleton.elim _ _
+
+theorem Representation.vertexEquiv_tensor_of_lt {i : ι} {r : Fin ((X ⊗ Y).tierLength i)}
+    (h : (r : ℕ) < X.tierLength i) :
+    (X ⊗ Y).vertexEquiv ⟨i, r⟩ = Sum.inl (X.vertexEquiv ⟨i, ⟨r, h⟩⟩) := by
+  show ((X ⊗ Y).fiberEnum i r).val = _
+  rw [Representation.fiberEnum_tensor, OrderIso.trans_apply,
+    show Fin.castOrderIso (Representation.tierLength_tensor (X := X) (Y := Y) i) r
+      = Fin.castAdd (Y.tierLength i) ⟨r, h⟩ from rfl,
+    Representation.tensorEnum_apply_castAdd]
+  rfl
+
+theorem Representation.vertexEquiv_tensor_of_ge {i : ι} {r : Fin ((X ⊗ Y).tierLength i)}
+    (h : X.tierLength i ≤ (r : ℕ)) :
+    (X ⊗ Y).vertexEquiv ⟨i, r⟩ = Sum.inr (Y.vertexEquiv ⟨i,
+      ⟨(r : ℕ) - X.tierLength i, by
+        have h1 := r.isLt
+        have h2 : (X ⊗ Y).tierLength i = X.tierLength i + Y.tierLength i :=
+          Representation.tierLength_tensor i
+        omega⟩⟩) := by
+  show ((X ⊗ Y).fiberEnum i r).val = _
+  rw [Representation.fiberEnum_tensor, OrderIso.trans_apply,
+    show Fin.castOrderIso (Representation.tierLength_tensor (X := X) (Y := Y) i) r
+      = Fin.natAdd (X.tierLength i) ⟨(r : ℕ) - X.tierLength i, by
+          have h1 := r.isLt
+          have h2 : (X ⊗ Y).tierLength i = X.tierLength i + Y.tierLength i :=
+            Representation.tierLength_tensor i
+          omega⟩ from
+      Fin.ext (by simpa using (Nat.add_sub_cancel' h).symm),
+    Representation.tensorEnum_apply_natAdd]
+  rfl
+
 end TierWordTensor
 
 /-! ### Tier content of realizations -/
@@ -447,6 +488,49 @@ def Representation.Free [Finite X.obj.V]
     (B : List {F : Representation (Sigma.fst : ((i : ι) × τ i) → ι) // Finite F.obj.V}) :
     Prop :=
   ∀ F ∈ B, haveI := F.property; ¬ F.val.FactorEmbeds X
+
+open scoped MonoidalCategory in
+/-- Tensor links are blockwise: within the left factor, or within the right
+    factor shifted by the left factor's tier lengths — no cross-factor links. -/
+theorem Representation.link_tensor {X Y : Representation (Sigma.fst : ((i : ι) × τ i) → ι)}
+    [Finite X.obj.V] [Finite Y.obj.V] (i j : ι) (p q : ℕ) :
+    (X ⊗ Y).link i j p q ↔
+      X.link i j p q ∨ X.tierLength i ≤ p ∧ X.tierLength j ≤ q ∧
+        Y.link i j (p - X.tierLength i) (q - X.tierLength j) := by
+  have h2i : (X ⊗ Y).tierLength i = X.tierLength i + Y.tierLength i :=
+    Representation.tierLength_tensor i
+  have h2j : (X ⊗ Y).tierLength j = X.tierLength j + Y.tierLength j :=
+    Representation.tierLength_tensor j
+  constructor
+  · rintro ⟨hp, hq, hl⟩
+    rw [Representation.linkRel_def] at hl
+    rcases lt_or_ge p (X.tierLength i) with hpi | hpi <;>
+      rcases lt_or_ge q (X.tierLength j) with hqj | hqj
+    · rw [Representation.vertexEquiv_tensor_of_lt (h := hpi),
+        Representation.vertexEquiv_tensor_of_lt (h := hqj)] at hl
+      exact Or.inl ⟨hpi, hqj, by simpa [Representation.linkRel_def] using hl⟩
+    · rw [Representation.vertexEquiv_tensor_of_lt (h := hpi),
+        Representation.vertexEquiv_tensor_of_ge (h := hqj)] at hl
+      simp at hl
+    · rw [Representation.vertexEquiv_tensor_of_ge (h := hpi),
+        Representation.vertexEquiv_tensor_of_lt (h := hqj)] at hl
+      simp at hl
+    · rw [Representation.vertexEquiv_tensor_of_ge (h := hpi),
+        Representation.vertexEquiv_tensor_of_ge (h := hqj)] at hl
+      exact Or.inr ⟨hpi, hqj, by omega, by omega,
+        by simpa [Representation.linkRel_def] using hl⟩
+  · rintro (⟨hp, hq, hl⟩ | ⟨hpi, hqj, hp', hq', hl⟩)
+    · rw [Representation.linkRel_def] at hl
+      refine ⟨by omega, by omega, ?_⟩
+      rw [Representation.linkRel_def, Representation.vertexEquiv_tensor_of_lt (h := hp),
+        Representation.vertexEquiv_tensor_of_lt (h := hq)]
+      simpa using hl
+    · rw [Representation.linkRel_def] at hl
+      refine ⟨by omega, by omega, ?_⟩
+      rw [Representation.linkRel_def,
+        Representation.vertexEquiv_tensor_of_ge (h := by omega),
+        Representation.vertexEquiv_tensor_of_ge (h := by omega)]
+      simpa using hl
 
 end Factors
 
