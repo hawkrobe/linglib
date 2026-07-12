@@ -73,7 +73,7 @@ variable (G : MixedGraph V)
     is Axiom 1 relative to it: the arcs are tier-internal and strictly totally
     order each fiber. This is [jardine-2019]'s reading that `A` represents *the
     order* on each string; the arcs coincide with their path closure
-    (`IsTierOrdered.precPath_iff`), so no closure operator appears in the
+    (`IsTierOrdered.precPath_eq`), so no closure operator appears in the
     axioms. -/
 structure IsTierOrdered (c : V → ι) : Prop where
   /-- Arcs never leave a tier. -/
@@ -107,26 +107,20 @@ def IsOCPClean (ℓ : V → S) (t : S → ι) (m : ι) : Prop :=
 
 end Axioms
 
+variable {G : MixedGraph V} {c : V → ι}
+
 /-- On the axiom class, precedence paths coincide with the arcs — the
     dissertation's `≺`. -/
-theorem IsTierOrdered.precPath_iff {G : MixedGraph V} {c : V → ι}
-    (h : IsTierOrdered G c) {v w : V} : G.PrecPath v w ↔ G.arcs.Adj v w := by
-  constructor
-  · intro hp
-    induction hp with
-    | single hb => exact hb
-    | tail _ hb ih => exact h.trans ih hb
-  · exact .single
+theorem IsTierOrdered.precPath_eq (h : IsTierOrdered G c) : G.PrecPath = G.arcs.Adj :=
+  haveI : IsTrans V G.arcs.Adj := ⟨h.trans⟩
+  Relation.transGen_eq_self
 
 /-- The classed form of the axioms: on each tier the arcs are a strict total
     order. Feeds `linearOrderOfSTO` for sorting the fibers. -/
-theorem IsTierOrdered.isStrictTotalOrder {G : MixedGraph V} {c : V → ι}
-    (h : IsTierOrdered G c) (i : ι) :
-    IsStrictTotalOrder {v // c v = i} (fun a b => G.arcs.Adj a b) where
-  trichotomous a b hab hba := by
-    by_contra hne
-    rcases h.total (fun hv => hne (Subtype.ext hv)) (a.2.trans b.2.symm) with hp | hp
-    exacts [hab hp, hba hp]
+theorem IsTierOrdered.isStrictTotalOrder (h : IsTierOrdered G c) (i : ι) :
+    IsStrictTotalOrder {v // c v = i} (G.arcs.Adj · ·) where
+  trichotomous a b hab hba :=
+    Subtype.ext <| of_not_not fun hne => (h.total hne (a.2.trans b.2.symm)).elim hab hba
   irrefl a := h.irrefl a
   trans _ _ _ hab hbc := h.trans hab hbc
 
