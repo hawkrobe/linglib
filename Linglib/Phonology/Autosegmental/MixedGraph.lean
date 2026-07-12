@@ -508,6 +508,20 @@ def tensor (X Y : Representation t) : Representation t :=
     MixedGraph.isTierOrdered_concat t X.property.1 Y.property.1,
     MixedGraph.noInternalAssoc_concat t X.property.2 Y.property.2⟩
 
+/-- Under the structural axioms the tier map properly colors the association
+    graph: same-tier vertices are precedence-related (Axioms 1–2) and associated
+    vertices never are (Axiom 3), so associated vertices lie on distinct tiers.
+    Goldsmith's bipartite two-tier geometry is the two-colorable case. -/
+def tierColoring (X : Representation t) : X.obj.graph.edges.Coloring ι :=
+  SimpleGraph.Coloring.mk (X.obj.graph.tier t) fun {_ _} hadj htier =>
+    (X.property.1.2.1 hadj.ne htier).elim (X.property.2 hadj) (X.property.2 hadj.symm)
+
+/-- A representation's association graph is colorable by its tiers: tier arity
+    bounds the chromatic number of the association pattern. -/
+theorem edges_colorable [Fintype ι] (X : Representation t) :
+    X.obj.graph.edges.Colorable (Fintype.card ι) :=
+  (tierColoring X).colorable
+
 /-- A graph isomorphism as an isomorphism of representations. -/
 def mkIso {X Y : Representation t} (e : MixedGraph.Iso X.obj.graph Y.obj.graph) : X ≅ Y :=
   InducedCategory.isoMk
