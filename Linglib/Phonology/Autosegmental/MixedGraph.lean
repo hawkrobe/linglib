@@ -7,7 +7,7 @@ import Mathlib.CategoryTheory.Limits.Shapes.BinaryProducts
 import Mathlib.CategoryTheory.Limits.Shapes.Terminal
 import Mathlib.CategoryTheory.Monoidal.Category
 import Mathlib.CategoryTheory.ObjectProperty.FullSubcategory
-import Mathlib.CategoryTheory.Widesubcategory
+import Mathlib.CategoryTheory.MorphismProperty.Composition
 import Mathlib.Combinatorics.SimpleGraph.Sum
 import Mathlib.Logic.Relation
 import Linglib.Core.Combinatorics.MixedGraph
@@ -226,10 +226,10 @@ def Iso.trans (e : Iso X Y) (f : Iso Y Z) : Iso X Z where
 /-- The empty labeled mixed graph, on the empty vertex type. -/
 def empty (S : Type*) : MixedGraphCat S := ⟨PEmpty, ⟨⊥, ⊥⟩, PEmpty.elim⟩
 
-theorem empty_isTierOrdered (t : S → ι) : IsTierOrdered (empty S).graph ((empty S).tier t) :=
+theorem isTierOrdered_empty (t : S → ι) : IsTierOrdered (empty S).graph ((empty S).tier t) :=
   ⟨fun v => v.elim, fun v => v.elim, fun v => v.elim, fun v => v.elim⟩
 
-theorem empty_noInternalAssoc : NoInternalAssoc (empty S).graph := fun v => v.elim
+theorem noInternalAssoc_empty : NoInternalAssoc (empty S).graph := fun v => v.elim
 
 /-! ### Tier-bridging concatenation
 
@@ -268,6 +268,12 @@ def concat (X Y : MixedGraphCat S) : MixedGraphCat S where
 
 @[simp] theorem concat_arcs_inr_inr {v w : Y.V} :
     (concat t X Y).graph.arcs.Adj (.inr v) (.inr w) ↔ Y.graph.arcs.Adj v w := Iff.rfl
+
+@[simp] theorem concat_arcs_inl_inr {v : X.V} {w : Y.V} :
+    (concat t X Y).graph.arcs.Adj (.inl v) (.inr w) ↔ X.tier t v = Y.tier t w := Iff.rfl
+
+@[simp] theorem not_concat_arcs_inr_inl {v : Y.V} {w : X.V} :
+    ¬ (concat t X Y).graph.arcs.Adj (.inr v) (.inl w) := fun h => h
 
 /-! ### Unit laws ([jardine-heinz-2015] Theorem 1) -/
 
@@ -402,6 +408,22 @@ def sum (X Y : MixedGraphCat S) : MixedGraphCat S where
 
 @[simp] theorem sum_edges : (sum X Y).graph.edges = X.graph.edges ⊕g Y.graph.edges := rfl
 
+@[simp] theorem sum_label_inl (v : X.V) : (sum X Y).label (.inl v) = X.label v := rfl
+
+@[simp] theorem sum_label_inr (v : Y.V) : (sum X Y).label (.inr v) = Y.label v := rfl
+
+@[simp] theorem sum_arcs_inl_inl {v w : X.V} :
+    (sum X Y).graph.arcs.Adj (.inl v) (.inl w) ↔ X.graph.arcs.Adj v w := Iff.rfl
+
+@[simp] theorem sum_arcs_inr_inr {v w : Y.V} :
+    (sum X Y).graph.arcs.Adj (.inr v) (.inr w) ↔ Y.graph.arcs.Adj v w := Iff.rfl
+
+@[simp] theorem not_sum_arcs_inl_inr {v : X.V} {w : Y.V} :
+    ¬ (sum X Y).graph.arcs.Adj (.inl v) (.inr w) := fun h => h
+
+@[simp] theorem not_sum_arcs_inr_inl {v : Y.V} {w : X.V} :
+    ¬ (sum X Y).graph.arcs.Adj (.inr v) (.inl w) := fun h => h
+
 /-- Copairing out of the bridge-free sum. -/
 def sumDesc (f : Hom X Z) (g : Hom Y Z) : Hom (sum X Y) Z where
   toFun := Sum.elim f.toFun g.toFun
@@ -417,10 +439,10 @@ def sumDesc (f : Hom X Z) (g : Hom Y Z) : Hom (sum X Y) Z where
     are precedence-unrelated across the seam. -/
 theorem not_isTierOrdered_sum (t : S → ι) (v : X.V) (w : Y.V)
     (htier : X.tier t v = Y.tier t w) :
-    ¬ IsTierOrdered (sum X Y).graph ((sum X Y).tier t) := fun h =>
-  (h.total (v := .inl v) (w := .inr w) (by simp) htier).elim (fun hp => hp) fun hp => hp
+    ¬ IsTierOrdered (sum X Y).graph ((sum X Y).tier t) := fun h => by
+  simpa using h.total (v := .inl v) (w := .inr w) Sum.inl_ne_inr htier
 
-/-! ### The category of labeled mixed graphs -/
+/-! ### Category structure, initial object, and coproducts -/
 
 open CategoryTheory Limits
 
@@ -448,17 +470,13 @@ def inl (X Y : MixedGraphCat S) : X ⟶ sum X Y :=
 def inr (X Y : MixedGraphCat S) : Y ⟶ sum X Y :=
   ⟨Sum.inr, fun _ _ h => h, fun _ => rfl⟩
 
-/-- Copairing out of the bridge-free sum. -/
-def desc (f : X ⟶ Z) (g : Y ⟶ Z) : sum X Y ⟶ Z :=
-  sumDesc f g
-
 /-- The bridge-free sum is the categorical coproduct of the broad category
     (contrast `not_isTierOrdered_sum`: it leaves the axiom class, which is why
     `Representation`'s tensor is the bridged `concat` instead). -/
 instance (X Y : MixedGraphCat S) : HasBinaryCoproduct X Y :=
   HasColimit.mk
     { cocone := BinaryCofan.mk (inl X Y) (inr X Y)
-      isColimit := BinaryCofan.IsColimit.mk _ (fun f g => desc f g)
+      isColimit := BinaryCofan.IsColimit.mk _ (fun f g => sumDesc f g)
         (fun f g => Hom.ext rfl)
         (fun f g => Hom.ext rfl)
         (fun f g m h₁ h₂ => Hom.ext (funext fun v => by
@@ -475,10 +493,10 @@ open CategoryTheory
 /-- Precedence preservation as a morphism property: the maps that also preserve
     arcs — the model-theoretic full-structure homomorphisms, the foundation
     counterpart of the legacy `PrecAR` wide subcategory. -/
-def precPreserving : MorphismProperty (MixedGraphCat S) := fun X Y f =>
+def MixedGraphCat.precPreserving : MorphismProperty (MixedGraphCat S) := fun X Y f =>
   ∀ ⦃v w⦄, X.graph.arcs.Adj v w → Y.graph.arcs.Adj (f.toFun v) (f.toFun w)
 
-instance : (precPreserving (S := S)).IsMultiplicative where
+instance : (MixedGraphCat.precPreserving (S := S)).IsMultiplicative where
   id_mem _ := fun _ _ h => h
   comp_mem _ _ hf hg := fun _ _ h => hg (hf h)
 
@@ -542,8 +560,8 @@ theorem hom_ext {X Y : Representation t} {f g : X ⟶ Y}
       MixedGraphCat.isTierOrdered_concat t X.property.1 Y.property.1,
       MixedGraphCat.noInternalAssoc_concat t X.property.2 Y.property.2⟩
   tensorUnit :=
-    ⟨MixedGraphCat.empty S, MixedGraphCat.empty_isTierOrdered t,
-      MixedGraphCat.empty_noInternalAssoc⟩
+    ⟨MixedGraphCat.empty S, MixedGraphCat.isTierOrdered_empty t,
+      MixedGraphCat.noInternalAssoc_empty⟩
   tensorHom f g := InducedCategory.homMk (MixedGraphCat.Hom.concatMap t f.hom g.hom)
   whiskerLeft X _ _ f :=
     InducedCategory.homMk (MixedGraphCat.Hom.concatMap t (MixedGraphCat.Hom.id X.obj) f.hom)
