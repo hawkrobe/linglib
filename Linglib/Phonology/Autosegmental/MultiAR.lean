@@ -42,11 +42,17 @@ than a defeq view.
 * `MonoidalCategory (MultiAR τ)`: tensor is `concat`, via
   `MonoidalCategory.ofTensorHom` — the dependent tiers add only a `funext i` to
   each of `AR`'s coherence proofs.
+* `isNormal` / `MultiAR.Normal`: the orientation-normal form full subcategory
+  (links only in the ascending-order bucket, relative to `[LinearOrder ι]`).
+* `normalForm`: the functor from `MultiAR.Normal` into the foundational
+  `Representation` category, fully faithful (`normalForm.fullyFaithful`).
 
 ## Main results
 
 * `MultiGraph.isPlanar_concat` / `MultiGraph.inBounds_concat`: concatenation
   preserves planarity (given in-bounds) and in-bounds.
+* `normalForm.fullyFaithful`: the normal-form embedding of the tiered
+  presentation into the labeled-mixed-graph foundation is fully faithful.
 
 ## Implementation notes
 
@@ -71,6 +77,12 @@ autosegmental association equivalent in expressible constraints.
   `ObjectProperty.IsMonoidal` over the per-pair `MultiGraph.IsPlanar`) and the
   coproduct universal property (`inl`/`inr`/`coprodDesc`), making the
   `AR`/`MultiAR` pair fully symmetric — both follow `AR.lean`'s pattern.
+* Essential surjectivity of `normalForm`: every `Representation` object is
+  isomorphic to the image of a `MultiAR.Normal` (choose a per-tier ordering of
+  the fiber and read links off the association graph in the canonical bucket).
+* Strict-monoidal upgrade: `normalForm` respects `concat` up to a definitional
+  isomorphism with `MixedGraphCat.concat`, promoting the fully-faithful
+  embedding to a strict monoidal functor.
 -/
 
 namespace Autosegmental
@@ -405,80 +417,65 @@ end MultiAR
 
 /-! ### Interpretation into the labeled mixed graph foundation
 
-The tiered presentation denotes a labeled mixed graph (`MixedGraph.lean`) by
-construction: vertices are per-tier positions, the alphabet is the
-tier-partitioned `Σ i, τ i` with tier assignment `Sigma.fst`, arcs are within-tier
-successors, and edges symmetrize the per-pair links. The structural §4.2 axioms
-hold as properties of the construction (`toMixedGraph_isTierOrdered`,
-`toMixedGraph_noInternalAssoc`), and the foundational path-form No-Crossing
-Constraint agrees with the per-pair `IsPlanar` exactly on orientation-normalized
-presentations (`toMixedGraph_isPlanar_iff`) — links between two tiers must be
-stored in one orientation bucket, since the path form also sees crossings between
-an `(i, j)` link and a `(j, i)` link, which the per-pair check cannot couple. -/
+The tiered presentation denotes a labeled mixed graph (`MixedGraphCat`,
+`MixedGraph.lean`) by construction: vertices are per-tier positions, the alphabet
+is the tier-partitioned `Σ i, τ i` with tier assignment `Sigma.fst`, arcs are
+within-tier successors, and edges symmetrize the per-pair links. The structural
+§4.2 axioms hold as properties of the construction
+(`toMixedGraphCat_isTierOrdered`, `toMixedGraphCat_noInternalAssoc`), and the
+foundational path-form No-Crossing Constraint agrees with the per-pair `IsPlanar`
+exactly on orientation-normalized presentations (`toMixedGraphCat_isPlanar_iff`) —
+links between two tiers must be stored in one orientation bucket, since the path
+form also sees crossings between an `(i, j)` link and a `(j, i)` link, which the
+per-pair check cannot couple. -/
 
 namespace MultiGraph
 
 /-- The labeled mixed graph a tiered presentation denotes: per-tier positions as
-    vertices, within-tier successor arcs, symmetrized per-pair links as edges. -/
-def toMixedGraph (M : MultiGraph τ) :
-    MixedGraph ((i : ι) × Fin (M.tiers i).len) ((i : ι) × τ i) where
-  edges :=
-    { Adj := fun v w => v ≠ w ∧
-        (((v.2 : ℕ), (w.2 : ℕ)) ∈ M.links v.1 w.1 ∨ ((w.2 : ℕ), (v.2 : ℕ)) ∈ M.links w.1 v.1)
-      symm := ⟨fun _ _ h => ⟨h.1.symm, h.2.symm⟩⟩
-      loopless := ⟨fun _ h => h.1 rfl⟩ }
-  arcs := ⟨fun v w => v.1 = w.1 ∧ (v.2 : ℕ) + 1 = (w.2 : ℕ)⟩
+    vertices, the within-tier position order as arcs ([jardine-2019]'s reading —
+    `A` represents the order, matching `IsTierOrdered`'s path-closure), and
+    symmetrized per-pair links as edges. -/
+def toMixedGraphCat (M : MultiGraph τ) : MixedGraphCat ((i : ι) × τ i) where
+  V := (i : ι) × Fin (M.tiers i).len
+  graph :=
+    { edges :=
+        { Adj := fun v w => v ≠ w ∧
+            (((v.2 : ℕ), (w.2 : ℕ)) ∈ M.links v.1 w.1 ∨
+              ((w.2 : ℕ), (v.2 : ℕ)) ∈ M.links w.1 v.1)
+          symm := ⟨fun _ _ h => ⟨h.1.symm, h.2.symm⟩⟩
+          loopless := ⟨fun _ h => h.1 rfl⟩ }
+      arcs := ⟨fun v w => v.1 = w.1 ∧ (v.2 : ℕ) < (w.2 : ℕ)⟩ }
   label v := ⟨v.1, (M.tiers v.1).label v.2⟩
 
 variable {M : MultiGraph τ}
 
-@[simp] theorem toMixedGraph_tier (v : (i : ι) × Fin (M.tiers i).len) :
-    M.toMixedGraph.tier Sigma.fst v = v.1 := rfl
+@[simp] theorem toMixedGraphCat_tier (v : (i : ι) × Fin (M.tiers i).len) :
+    M.toMixedGraphCat.tier Sigma.fst v = v.1 := rfl
 
-/-- Precedence paths in the interpretation are exactly same-tier position order. -/
-theorem toMixedGraph_precPath {v w : (i : ι) × Fin (M.tiers i).len} :
-    M.toMixedGraph.PrecPath v w ↔ v.1 = w.1 ∧ (v.2 : ℕ) < (w.2 : ℕ) := by
-  constructor
-  · intro h
-    induction h with
-    | single h => obtain ⟨h1, h2⟩ := h; exact ⟨h1, by omega⟩
-    | tail _ h ih =>
-        obtain ⟨ih1, ih2⟩ := ih; obtain ⟨h1, h2⟩ := h
-        exact ⟨ih1.trans h1, by omega⟩
-  · obtain ⟨i, p⟩ := v
-    obtain ⟨j, q⟩ := w
-    rintro ⟨(rfl : i = j), hlt⟩
-    dsimp only at hlt
-    obtain ⟨d, hd⟩ : ∃ d, (p : ℕ) + d + 1 = (q : ℕ) := ⟨(q : ℕ) - (p : ℕ) - 1, by omega⟩
-    clear hlt
-    induction d generalizing q with
-    | zero => exact .single ⟨rfl, hd⟩
-    | succ d ih =>
-        have hm : (p : ℕ) + d + 1 < (M.tiers i).len := by have := q.isLt; omega
-        exact .tail (ih ⟨(p : ℕ) + d + 1, hm⟩ rfl) ⟨rfl, by omega⟩
-
-/-- Axioms 1–2 hold by construction: successor arcs are tier-internal chains. -/
-theorem toMixedGraph_isTierOrdered : M.toMixedGraph.IsTierOrdered Sigma.fst := by
-  refine ⟨fun v w h => h.1, fun v w hne htier => ?_, fun v h => ?_⟩
+/-- Axioms 1–2 hold by construction: the arcs are the tier-internal position
+    order, already path-closed. -/
+theorem toMixedGraphCat_isTierOrdered :
+    IsTierOrdered M.toMixedGraphCat.graph (M.toMixedGraphCat.tier Sigma.fst) := by
+  refine ⟨fun v w h => h.1, fun v w hne htier => ?_, fun v h => ?_,
+    fun u v w huv hvw => ⟨huv.1.trans hvw.1, by obtain ⟨-, h1⟩ := huv; obtain ⟨-, h2⟩ := hvw; omega⟩⟩
   · obtain ⟨i, p⟩ := v
     obtain ⟨j, q⟩ := w
     obtain rfl : i = j := htier
     rcases Nat.lt_trichotomy (p : ℕ) (q : ℕ) with h | h | h
-    · exact Or.inl (toMixedGraph_precPath.mpr ⟨rfl, h⟩)
+    · exact Or.inl ⟨rfl, h⟩
     · exact absurd (by simp [Fin.ext h]) hne
-    · exact Or.inr (toMixedGraph_precPath.mpr ⟨rfl, h⟩)
-  · rw [toMixedGraph_precPath] at h
+    · exact Or.inr ⟨rfl, h⟩
+  · obtain ⟨-, h2⟩ := h
     omega
 
 /-- Axiom 3 holds by construction on diagonal-free presentations: edges land
     across tier-pairs, paths stay within a tier. -/
-theorem toMixedGraph_noInternalAssoc (hdiag : ∀ i, M.links i i = ∅) :
-    M.toMixedGraph.NoInternalAssoc := by
-  rintro v w ⟨hne, hmem⟩ hpath
-  rw [toMixedGraph_precPath] at hpath
+theorem toMixedGraphCat_noInternalAssoc (hdiag : ∀ i, M.links i i = ∅) :
+    NoInternalAssoc M.toMixedGraphCat.graph := by
+  rintro v w ⟨hne, hmem⟩ harc
   obtain ⟨i, p⟩ := v
   obtain ⟨j, q⟩ := w
-  obtain rfl : i = j := hpath.1
+  obtain rfl : i = j := harc.1
   rcases hmem with hm | hm <;> simp [hdiag i] at hm
 
 /-- The foundational path-form No-Crossing Constraint agrees with the per-pair
@@ -486,9 +483,9 @@ theorem toMixedGraph_noInternalAssoc (hdiag : ∀ i, M.links i i = ∅) :
     two tiers stored in one orientation bucket — which also rules out diagonal
     links). Without normalization the path form is strictly stronger: it couples
     an `(i, j)` link with a `(j, i)` link between the same two tiers. -/
-theorem toMixedGraph_isPlanar_iff (hb : M.InBounds)
+theorem toMixedGraphCat_isPlanar_iff (hb : M.InBounds)
     (hor : ∀ i j, M.links i j ≠ ∅ → M.links j i = ∅) :
-    M.toMixedGraph.IsPlanar ↔ M.IsPlanar := by
+    Autosegmental.IsPlanar M.toMixedGraphCat.graph ↔ M.IsPlanar := by
   have hdiag : ∀ i, M.links i i = ∅ := fun i => by
     by_contra h
     exact h (hor i i h)
@@ -504,18 +501,16 @@ theorem toMixedGraph_isPlanar_iff (hb : M.InBounds)
     obtain ⟨hc, hd⟩ := hb i j _ h₂
     exact h (v := ⟨i, ⟨a, ha⟩⟩) (v' := ⟨j, ⟨b, hb'⟩⟩) (w := ⟨i, ⟨c, hc⟩⟩) (w' := ⟨j, ⟨d, hd⟩⟩)
       ⟨by simp [hij], Or.inl h₁⟩ ⟨by simp [hij], Or.inl h₂⟩
-      (toMixedGraph_precPath.mpr ⟨rfl, hac⟩)
-      (toMixedGraph_precPath.mpr ⟨rfl, not_le.mp hbd⟩)
+      ⟨rfl, hac⟩ ⟨rfl, not_le.mp hbd⟩
   · rintro h v v' w w' ⟨hne₁, hm₁⟩ ⟨hne₂, hm₂⟩ hp hp'
-    rw [toMixedGraph_precPath] at hp hp'
     obtain ⟨i, a⟩ := v
     obtain ⟨j, b⟩ := v'
     obtain ⟨i', c⟩ := w
     obtain ⟨j', d⟩ := w'
-    obtain rfl : i = i' := hp.1
-    obtain rfl : j = j' := hp'.1.symm
-    have hac : (a : ℕ) < (c : ℕ) := hp.2
-    have hdb : (d : ℕ) < (b : ℕ) := hp'.2
+    obtain ⟨heq, hac⟩ := hp
+    obtain ⟨heq', hdb⟩ := hp'
+    obtain rfl : i = i' := heq
+    obtain rfl : j = j' := heq'.symm
     rcases hm₁ with hm₁ | hm₁ <;> rcases hm₂ with hm₂ | hm₂
     · exact absurd (isNonCrossing_iff.mp (h i j) _ hm₁ _ hm₂ hac) (by omega)
     · exact absurd hm₂ (by simp [hor i j (Finset.ne_empty_of_mem hm₁)])
@@ -523,5 +518,187 @@ theorem toMixedGraph_isPlanar_iff (hb : M.InBounds)
     · exact absurd (isNonCrossing_iff.mp (h j i) _ hm₂ _ hm₁ hdb) (by omega)
 
 end MultiGraph
+
+/-! ### The normal-form functor into the labeled-mixed-graph foundation
+
+Given a `LinearOrder` on the tier index, tiered presentations whose links live
+only in the ascending-order bucket per unordered tier-pair embed fully
+faithfully into the foundational representation category — this is the
+**normal form** for `MultiAR τ` relative to the ambient linear order. The
+order canonicalizes an orientation choice `MultiGraph.links` allows and
+`MultiGraph.toMixedGraphCat` symmetrizes away: without a normalization, two
+tiered graphs storing the same physical link in opposite `(i, j)` vs. `(j, i)`
+buckets would carry a foundational identity morphism between their images
+that no `MultiAR.Hom` (which is orientation-tracked in `links_preserve`)
+realizes. The ordering also subsumes diagonal-freeness — `¬ i < i` forces
+`links i i = ∅`, exactly the hypothesis `toMixedGraphCat_noInternalAssoc` needs.
+
+Essential surjectivity and the monoidal upgrade (a strict-monoidal embedding
+into `Representation` compatible with `MixedGraphCat.concat`) are follow-ups. -/
+
+section NormalForm
+
+variable [LinearOrder ι]
+
+/-- Orientation-normal form: link storage restricted to the ascending-order
+    tier-pair bucket. Includes diagonal-freeness as the `i = j` special case
+    (`¬ i < i`), matching `toMixedGraphCat_noInternalAssoc`'s hypothesis. -/
+def isNormal : ObjectProperty (MultiAR τ) := fun M => ∀ i j, ¬ i < j → M.links i j = ∅
+
+namespace MultiAR
+
+lemma lt_of_isNormal {M : MultiAR τ} (h : isNormal M) {i j : ι} {p q : ℕ}
+    (hmem : (p, q) ∈ M.links i j) : i < j := by
+  by_contra hle
+  exact Finset.notMem_empty _ (h i j hle ▸ hmem)
+
+lemma diag_empty_of_isNormal {M : MultiAR τ} (h : isNormal M) (i : ι) :
+    M.links i i = ∅ :=
+  h i i (lt_irrefl i)
+
+/-- The full subcategory of orientation-normalized in-bounds multi-tier graphs
+    — the domain of the normal-form functor into `Representation`. -/
+abbrev Normal : Type _ := (isNormal (τ := τ)).FullSubcategory
+
+end MultiAR
+
+namespace MultiAR
+
+/-- Forward direction: a per-tier `LabeledTuple.Hom` family gives a
+    foundational `MixedGraphCat.Hom` between the images. Source normality
+    disambiguates the edge bucket via `i < j`. -/
+def toMixedGraphCatHom {A B : MultiAR τ} (hn : isNormal A) (f : Hom A B) :
+    MixedGraphCat.Hom A.toMultiGraph.toMixedGraphCat B.toMultiGraph.toMixedGraphCat where
+  toFun v := ⟨v.1, (f.fT v.1).toFun v.2⟩
+  edge_map := by
+    rintro v w ⟨_, hmem⟩
+    have h1 : v.1 ≠ w.1 := by
+      rcases hmem with hij | hji
+      · exact ne_of_lt (lt_of_isNormal hn hij)
+      · exact (ne_of_lt (lt_of_isNormal hn hji)).symm
+    refine ⟨?_, ?_⟩
+    · intro heq
+      exact h1 (congrArg (fun (s : (k : ι) × Fin (B.tiers k).len) => s.1) heq)
+    · rcases hmem with hij | hji
+      · exact Or.inl (f.links_preserve v.1 w.1 v.2.isLt w.2.isLt hij)
+      · exact Or.inr (f.links_preserve w.1 v.1 w.2.isLt v.2.isLt hji)
+  label_comp v := congrArg (Sigma.mk v.1) (congrFun (f.fT v.1).label_comp v.2)
+
+omit [LinearOrder ι] in
+/-- The core existence lemma: label preservation forces `φ` on `⟨i, p⟩` to
+    stay in the `i`-tier, and its second component labels `(A.tiers i).label p`. -/
+private lemma ofMixedGraphCatHom_exists {A B : MultiAR τ}
+    (φ : MixedGraphCat.Hom A.toMultiGraph.toMixedGraphCat B.toMultiGraph.toMixedGraphCat)
+    (i : ι) (p : Fin (A.tiers i).len) :
+    ∃ q : Fin (B.tiers i).len, φ.toFun ⟨i, p⟩ = ⟨i, q⟩ ∧
+      (B.tiers i).label q = (A.tiers i).label p := by
+  have hlbl := φ.label_comp ⟨i, p⟩
+  generalize hv : φ.toFun ⟨i, p⟩ = v at hlbl ⊢
+  obtain ⟨j, q⟩ := v
+  have hj : j = i := congrArg (fun (s : (k : ι) × τ k) => s.1) hlbl
+  subst hj
+  exact ⟨q, rfl, eq_of_heq (Sigma.mk.inj_iff.mp hlbl).2⟩
+
+/-- The per-tier `LabeledTuple.Hom` reconstructed from a foundational morphism. -/
+private noncomputable def ofMixedGraphCatHom_fT {A B : MultiAR τ}
+    (φ : MixedGraphCat.Hom A.toMultiGraph.toMixedGraphCat B.toMultiGraph.toMixedGraphCat)
+    (i : ι) : LabeledTuple.Hom (A.tiers i) (B.tiers i) where
+  toFun p := (ofMixedGraphCatHom_exists φ i p).choose
+  label_comp := funext fun p => (ofMixedGraphCatHom_exists φ i p).choose_spec.2
+
+omit [LinearOrder ι] in
+private lemma ofMixedGraphCatHom_fT_spec {A B : MultiAR τ}
+    (φ : MixedGraphCat.Hom A.toMultiGraph.toMixedGraphCat B.toMultiGraph.toMixedGraphCat)
+    (i : ι) (p : Fin (A.tiers i).len) :
+    φ.toFun ⟨i, p⟩ = ⟨i, (ofMixedGraphCatHom_fT φ i).toFun p⟩ :=
+  (ofMixedGraphCatHom_exists φ i p).choose_spec.1
+
+/-- Backward direction as a `MultiAR.Hom`: both source and target normality —
+    source to build the edge witness at `i < j`, target to disambiguate the
+    image bucket by ruling out the `B.links j i` disjunct. -/
+noncomputable def ofMixedGraphCatHom {A B : MultiAR τ}
+    (hnA : isNormal A) (hnB : isNormal B)
+    (φ : MixedGraphCat.Hom A.toMultiGraph.toMixedGraphCat B.toMultiGraph.toMixedGraphCat) :
+    Hom A B where
+  fT := ofMixedGraphCatHom_fT φ
+  links_preserve i j p q hp hq hmem := by
+    have hij : i < j := lt_of_isNormal hnA hmem
+    have hne : (⟨i, ⟨p, hp⟩⟩ : (k : ι) × Fin (A.tiers k).len) ≠ ⟨j, ⟨q, hq⟩⟩ := by
+      intro heq
+      exact (ne_of_lt hij)
+        (congrArg (fun (s : (k : ι) × Fin (A.tiers k).len) => s.1) heq)
+    have hadj : A.toMultiGraph.toMixedGraphCat.graph.edges.Adj
+        ⟨i, ⟨p, hp⟩⟩ ⟨j, ⟨q, hq⟩⟩ := ⟨hne, Or.inl hmem⟩
+    have himg := φ.edge_map hadj
+    rw [ofMixedGraphCatHom_fT_spec φ i ⟨p, hp⟩,
+        ofMixedGraphCatHom_fT_spec φ j ⟨q, hq⟩] at himg
+    obtain ⟨_, hmem'⟩ := himg
+    rcases hmem' with hij' | hji'
+    · exact hij'
+    · exact absurd hji' (by simp [hnB j i (not_lt.mpr hij.le)])
+
+end MultiAR
+
+/-! ### The functor and its full faithfulness -/
+
+open CategoryTheory
+
+/-- The normal-form functor from `MultiAR.Normal` into the foundational
+    representation category. On objects it takes `X` to `X.toMixedGraphCat`
+    with the §4.2 axioms furnished by `toMixedGraphCat_isTierOrdered` and
+    `toMixedGraphCat_noInternalAssoc`; on morphisms it lifts a per-tier
+    `LabeledTuple.Hom` family through the Sigma vertex encoding. -/
+noncomputable def normalForm :
+    (isNormal (τ := τ)).FullSubcategory ⥤
+      Representation (Sigma.fst : ((i : ι) × τ i) → ι) where
+  obj X :=
+    ⟨X.obj.toMultiGraph.toMixedGraphCat,
+      MultiGraph.toMixedGraphCat_isTierOrdered,
+      MultiGraph.toMixedGraphCat_noInternalAssoc (MultiAR.diag_empty_of_isNormal X.property)⟩
+  map {X _} f := ObjectProperty.homMk (MultiAR.toMixedGraphCatHom X.property f.hom)
+  map_id X := by
+    apply ObjectProperty.hom_ext
+    apply MixedGraphCat.Hom.ext
+    funext v
+    rcases v with ⟨i, p⟩
+    rfl
+  map_comp {_ _ _} _ _ := by
+    apply ObjectProperty.hom_ext
+    apply MixedGraphCat.Hom.ext
+    funext v
+    rcases v with ⟨i, p⟩
+    rfl
+
+/-- `normalForm` is fully faithful: label preservation forces tier
+    preservation, so foundational morphisms between image graphs recover
+    per-tier `LabeledTuple.Hom` families, and orientation-normality forces
+    each preimage link to land in its own storage bucket. -/
+noncomputable def normalForm.fullyFaithful : (normalForm (τ := τ)).FullyFaithful where
+  preimage {X Y} φ :=
+    ObjectProperty.homMk (MultiAR.ofMixedGraphCatHom X.property Y.property φ.hom)
+  map_preimage {X Y} φ := by
+    apply ObjectProperty.hom_ext
+    apply MixedGraphCat.Hom.ext
+    funext v
+    rcases v with ⟨i, p⟩
+    exact (MultiAR.ofMixedGraphCatHom_fT_spec φ.hom i p).symm
+  preimage_map {X Y} f := by
+    apply ObjectProperty.hom_ext
+    show MultiAR.ofMixedGraphCatHom X.property Y.property _ = f.hom
+    apply MultiAR.Hom.ext
+    funext i
+    apply LabeledTuple.Hom.ext
+    funext p
+    have hspec := MultiAR.ofMixedGraphCatHom_fT_spec
+      (MultiAR.toMixedGraphCatHom X.property f.hom) i p
+    -- LHS is ⟨i, (f.hom.fT i).toFun p⟩ by rfl; second-components equal via HEq → Eq
+    have hheq := (Sigma.mk.inj_iff.mp hspec).2
+    exact (eq_of_heq hheq).symm
+
+instance : (normalForm (τ := τ)).Faithful := normalForm.fullyFaithful.faithful
+
+instance : (normalForm (τ := τ)).Full := normalForm.fullyFaithful.full
+
+end NormalForm
 
 end Autosegmental
