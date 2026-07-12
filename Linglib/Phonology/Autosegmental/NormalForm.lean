@@ -5,7 +5,10 @@ Authors: Robert Hawkins
 -/
 import Mathlib.Algebra.FreeMonoid.Basic
 import Mathlib.CategoryTheory.Monoidal.Skeleton
+import Mathlib.Data.Finite.Sum
 import Mathlib.Data.Fintype.Sort
+import Mathlib.Data.Fintype.Sum
+import Mathlib.Logic.Equiv.Fin.Basic
 import Linglib.Phonology.Autosegmental.MixedGraph
 
 /-!
@@ -170,5 +173,80 @@ noncomputable def realizeHom
   FreeMonoid.lift (toSkeleton ∘ g₀)
 
 end Realize
+
+/-! ### Tier words of tensors
+
+Concatenation appends tier content: within a tier, the bridge arc puts every
+left-factor vertex before every right-factor vertex, so the tensor's fiber is
+the lexicographic sum of the factors' fibers and its ascending enumeration is
+the two enumerations in sequence (`Subsingleton (Fin n ≃o ·)` — monotone
+enumerations are unique). -/
+
+section TierWordTensor
+open scoped MonoidalCategory
+
+variable {ι : Type*} {τ : ι → Type*}
+variable {X Y : Representation (Sigma.fst : ((i : ι) × τ i) → ι)}
+
+instance [Finite X.obj.V] [Finite Y.obj.V] : Finite ((X ⊗ Y).obj.V) :=
+  inferInstanceAs (Finite (X.obj.V ⊕ Y.obj.V))
+
+/-- A tensor's tier fiber splits as the sum of the factors' fibers. -/
+def Representation.fiberTensorEquiv (i : ι) :
+    (X ⊗ Y).fiber i ≃ X.fiber i ⊕ Y.fiber i where
+  toFun v := match v with
+    | ⟨.inl w, h⟩ => .inl ⟨w, h⟩
+    | ⟨.inr w, h⟩ => .inr ⟨w, h⟩
+  invFun := Sum.elim (fun w => ⟨.inl w.val, w.property⟩) (fun w => ⟨.inr w.val, w.property⟩)
+  left_inv := by rintro ⟨w | w, h⟩ <;> rfl
+  right_inv := by rintro (w | w) <;> rfl
+
+variable [Finite X.obj.V] [Finite Y.obj.V]
+
+theorem Representation.tierLen_tensor (i : ι) :
+    (X ⊗ Y).tierLen i = X.tierLen i + Y.tierLen i := by
+  letI := Fintype.ofFinite ((X ⊗ Y).fiber i)
+  letI := Fintype.ofFinite (X.fiber i)
+  letI := Fintype.ofFinite (Y.fiber i)
+  simp only [Representation.tierLen]
+  rw [Fintype.card_congr (Representation.fiberTensorEquiv i), Fintype.card_sum]
+
+open Representation in
+/-- The blockwise enumeration of a tensor's fiber: left factor first, then
+    right — monotone because the bridge arc orders the blocks. -/
+noncomputable def Representation.tensorEnum (i : ι) :
+    Fin (X.tierLen i + Y.tierLen i) ≃o (X ⊗ Y).fiber i := by
+  letI := Fintype.ofFinite (X.fiber i)
+  letI := Fintype.ofFinite (Y.fiber i)
+  refine StrictMono.orderIsoOfSurjective
+    (finSumFinEquiv.symm.trans
+      (((monoEquivOfFin (X.fiber i) (rfl : _ = X.tierLen i)).toEquiv.sumCongr
+        (monoEquivOfFin (Y.fiber i) (rfl : _ = Y.tierLen i)).toEquiv).trans
+        (fiberTensorEquiv i).symm))
+    ?_ (Equiv.surjective _)
+  intro p q hpq
+  simp only [Equiv.trans_apply]
+  induction p using Fin.addCases with
+  | left p₁ =>
+    rw [finSumFinEquiv_symm_apply_castAdd]
+    induction q using Fin.addCases with
+    | left q₁ =>
+      rw [finSumFinEquiv_symm_apply_castAdd]
+      exact (monoEquivOfFin (X.fiber i) (rfl : _ = X.tierLen i)).strictMono
+        (by simp only [Fin.lt_def, Fin.val_castAdd] at hpq ⊢; exact hpq)
+    | right q₂ =>
+      rw [finSumFinEquiv_symm_apply_natAdd]
+      exact (monoEquivOfFin (X.fiber i) (rfl : _ = X.tierLen i) p₁).property.trans
+        ((monoEquivOfFin (Y.fiber i) (rfl : _ = Y.tierLen i) q₂).property).symm
+  | right p₂ =>
+    induction q using Fin.addCases with
+    | left q₁ =>
+      exact absurd hpq (by simp only [Fin.lt_def, Fin.val_natAdd, Fin.val_castAdd]; omega)
+    | right q₂ =>
+      rw [finSumFinEquiv_symm_apply_natAdd, finSumFinEquiv_symm_apply_natAdd]
+      exact (monoEquivOfFin (Y.fiber i) (rfl : _ = Y.tierLen i)).strictMono
+        (by simp only [Fin.lt_def, Fin.val_natAdd] at hpq ⊢; omega)
+
+end TierWordTensor
 
 end Autosegmental
