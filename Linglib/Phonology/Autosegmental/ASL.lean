@@ -36,7 +36,7 @@ namespace Autosegmental
 variable {S : Type*} {α β : Type*}
 
 /-- A banned-subgraph grammar as an AR **object-property**: the ARs free of every
-    forbidden pattern in `B` ([jardine-2016] Ch. 5's `L^NL_G`, packaged for `AR`). -/
+    forbidden pattern in `B` ([jardine-2016-diss] Ch. 5's `L^NL_G`, packaged for `AR`). -/
 def isFreeOf (B : List (Graph α β)) (A : AR α β) : Prop := A.toGraph.Free B
 
 instance [DecidableEq α] [DecidableEq β] (B : List (Graph α β)) (A : AR α β) :
