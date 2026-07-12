@@ -437,43 +437,29 @@ variable {M : MultiGraph τ}
 @[simp] theorem toMixedGraph_tier (v : (i : ι) × Fin (M.tiers i).len) :
     M.toMixedGraph.tier Sigma.fst v = v.1 := rfl
 
-/-- Precedence paths in the interpretation are exactly same-tier position order. -/
-theorem toMixedGraph_precPath {v w : (i : ι) × Fin (M.tiers i).len} :
-    M.toMixedGraph.PrecPath v w ↔ v.1 = w.1 ∧ (v.2 : ℕ) < (w.2 : ℕ) := by
-  constructor
-  · intro h
-    induction h with
-    | single h => obtain ⟨h1, h2⟩ := h; exact ⟨h1, by omega⟩
-    | tail _ h ih =>
-        obtain ⟨ih1, ih2⟩ := ih; obtain ⟨h1, h2⟩ := h
-        exact ⟨ih1.trans h1, by omega⟩
-  · rintro ⟨heq, hlt⟩
-    exact .single ⟨heq, hlt⟩
-
 /-- Axioms 1–2 hold by construction: the arcs are the tier-internal position
     order, already path-closed. -/
 theorem toMixedGraph_isTierOrdered : M.toMixedGraph.IsTierOrdered Sigma.fst := by
   refine ⟨fun v w h => h.1, fun v w hne htier => ?_, fun v h => ?_,
-    fun v w h => toMixedGraph_precPath.mp h⟩
+    fun u v w huv hvw => ⟨huv.1.trans hvw.1, by obtain ⟨-, h1⟩ := huv; obtain ⟨-, h2⟩ := hvw; omega⟩⟩
   · obtain ⟨i, p⟩ := v
     obtain ⟨j, q⟩ := w
     obtain rfl : i = j := htier
     rcases Nat.lt_trichotomy (p : ℕ) (q : ℕ) with h | h | h
-    · exact Or.inl (toMixedGraph_precPath.mpr ⟨rfl, h⟩)
+    · exact Or.inl ⟨rfl, h⟩
     · exact absurd (by simp [Fin.ext h]) hne
-    · exact Or.inr (toMixedGraph_precPath.mpr ⟨rfl, h⟩)
-  · rw [toMixedGraph_precPath] at h
+    · exact Or.inr ⟨rfl, h⟩
+  · obtain ⟨-, h2⟩ := h
     omega
 
 /-- Axiom 3 holds by construction on diagonal-free presentations: edges land
     across tier-pairs, paths stay within a tier. -/
 theorem toMixedGraph_noInternalAssoc (hdiag : ∀ i, M.links i i = ∅) :
     M.toMixedGraph.NoInternalAssoc := by
-  rintro v w ⟨hne, hmem⟩ hpath
-  rw [toMixedGraph_precPath] at hpath
+  rintro v w ⟨hne, hmem⟩ harc
   obtain ⟨i, p⟩ := v
   obtain ⟨j, q⟩ := w
-  obtain rfl : i = j := hpath.1
+  obtain rfl : i = j := harc.1
   rcases hmem with hm | hm <;> simp [hdiag i] at hm
 
 /-- The foundational path-form No-Crossing Constraint agrees with the per-pair
@@ -499,18 +485,16 @@ theorem toMixedGraph_isPlanar_iff (hb : M.InBounds)
     obtain ⟨hc, hd⟩ := hb i j _ h₂
     exact h (v := ⟨i, ⟨a, ha⟩⟩) (v' := ⟨j, ⟨b, hb'⟩⟩) (w := ⟨i, ⟨c, hc⟩⟩) (w' := ⟨j, ⟨d, hd⟩⟩)
       ⟨by simp [hij], Or.inl h₁⟩ ⟨by simp [hij], Or.inl h₂⟩
-      (toMixedGraph_precPath.mpr ⟨rfl, hac⟩)
-      (toMixedGraph_precPath.mpr ⟨rfl, not_le.mp hbd⟩)
+      ⟨rfl, hac⟩ ⟨rfl, not_le.mp hbd⟩
   · rintro h v v' w w' ⟨hne₁, hm₁⟩ ⟨hne₂, hm₂⟩ hp hp'
-    rw [toMixedGraph_precPath] at hp hp'
     obtain ⟨i, a⟩ := v
     obtain ⟨j, b⟩ := v'
     obtain ⟨i', c⟩ := w
     obtain ⟨j', d⟩ := w'
-    obtain rfl : i = i' := hp.1
-    obtain rfl : j = j' := hp'.1.symm
-    have hac : (a : ℕ) < (c : ℕ) := hp.2
-    have hdb : (d : ℕ) < (b : ℕ) := hp'.2
+    obtain ⟨heq, hac⟩ := hp
+    obtain ⟨heq', hdb⟩ := hp'
+    obtain rfl : i = i' := heq
+    obtain rfl : j = j' := heq'.symm
     rcases hm₁ with hm₁ | hm₁ <;> rcases hm₂ with hm₂ | hm₂
     · exact absurd (isNonCrossing_iff.mp (h i j) _ hm₁ _ hm₂ hac) (by omega)
     · exact absurd hm₂ (by simp [hor i j (Finset.ne_empty_of_mem hm₁)])

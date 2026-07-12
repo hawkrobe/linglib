@@ -76,35 +76,25 @@ def PrecPath (G : MixedGraph V S) : V → V → Prop := Relation.TransGen G.arcs
 /-- The tier of a vertex under a tier assignment on the alphabet. -/
 def tier (t : S → ι) (G : MixedGraph V S) (v : V) : ι := t (G.label v)
 
-/-- Tier equality propagates along precedence paths once arcs are tier-internal;
-    stated as a lemma because use sites have destructured endpoints, on which
-    `induction` cannot fire. -/
-lemma precPath_tier {t : S → ι} {G : MixedGraph V S}
-    (harc : ∀ ⦃v w⦄, G.arcs.Adj v w → G.tier t v = G.tier t w) {v w : V}
-    (h : G.PrecPath v w) : G.tier t v = G.tier t w := by
-  induction h with
-  | single h => exact harc h
-  | tail _ h ih => exact ih.trans (harc h)
-
 /-! ### The §4.2 axioms -/
 
 section Axioms
 variable (t : S → ι) (G : MixedGraph V S)
 
-/-- Axioms 1–2 ([jardine-2016-diss] §4.2): precedence stays within a tier,
-    precedence paths totally order each tier class, no path returns to its
-    origin, and the arcs are path-closed — [jardine-2019]'s reading that `A`
-    represents *the order* on each string, so per tier the arcs are exactly a
-    strict total order. Closure is what makes the tuple normal form arc-exact. -/
+/-- Axioms 1–2 ([jardine-2016-diss] §4.2): per tier, the arcs are a strict
+    linear order — tier-internal, total, irreflexive, transitive. This is
+    [jardine-2019]'s reading that `A` represents *the order* on each string; the
+    arcs coincide with their path closure (`IsTierOrdered.precPath_iff`), so no
+    closure operator appears in the axioms. -/
 def IsTierOrdered : Prop :=
   (∀ ⦃v w⦄, G.arcs.Adj v w → G.tier t v = G.tier t w) ∧
-    (∀ ⦃v w⦄, v ≠ w → G.tier t v = G.tier t w → G.PrecPath v w ∨ G.PrecPath w v) ∧
-    (∀ v, ¬ G.PrecPath v v) ∧
-    ∀ ⦃v w⦄, G.PrecPath v w → G.arcs.Adj v w
+    (∀ ⦃v w⦄, v ≠ w → G.tier t v = G.tier t w → G.arcs.Adj v w ∨ G.arcs.Adj w v) ∧
+    (∀ v, ¬ G.arcs.Adj v v) ∧
+    ∀ ⦃u v w⦄, G.arcs.Adj u v → G.arcs.Adj v w → G.arcs.Adj u w
 
 /-- Axiom 3: association never links precedence-path-related (tier-internal)
     vertices. Tier-free — stated on paths alone, as in the dissertation. -/
-def NoInternalAssoc : Prop := ∀ ⦃v w⦄, G.edges.Adj v w → ¬ G.PrecPath v w
+def NoInternalAssoc : Prop := ∀ ⦃v w⦄, G.edges.Adj v w → ¬ G.arcs.Adj v w
 
 /-- Axiom 4 (full specification): every vertex participates in an association.
     [goldsmith-1976]'s original well-formedness condition; stated but deliberately
@@ -115,8 +105,8 @@ def IsSaturated : Prop := ∀ v, ∃ w, G.edges.Adj v w
     form: no two association edges whose endpoints straddle in opposite precedence
     order. -/
 def IsPlanar : Prop :=
-  ∀ ⦃v v' w w'⦄, G.edges.Adj v v' → G.edges.Adj w w' → G.PrecPath v w →
-    ¬ G.PrecPath w' v'
+  ∀ ⦃v v' w w'⦄, G.edges.Adj v v' → G.edges.Adj w w' → G.arcs.Adj v w →
+    ¬ G.arcs.Adj w' v'
 
 /-- Axiom 6, the OCP on melody tier `m`: precedence-adjacent vertices on `m` bear
     distinct labels. -/
@@ -124,6 +114,17 @@ def IsOCPClean (m : ι) : Prop :=
   ∀ ⦃v w⦄, G.arcs.Adj v w → G.tier t v = m → G.label v ≠ G.label w
 
 end Axioms
+
+/-- On the axiom class, precedence paths coincide with the arcs — the
+    dissertation's `≺`. -/
+theorem IsTierOrdered.precPath_iff {t : S → ι} {G : MixedGraph V S}
+    (h : G.IsTierOrdered t) {v w : V} : G.PrecPath v w ↔ G.arcs.Adj v w := by
+  constructor
+  · intro hp
+    induction hp with
+    | single hb => exact hb
+    | tail _ hb ih => exact h.2.2.2 ih hb
+  · exact .single
 
 /-! ### Morphisms -/
 
@@ -306,106 +307,45 @@ def empty_concat_iso (G : MixedGraph V S) : Iso (concat t (empty S) G) G where
     · exact v.elim
     · rfl
 
-/-! #### Precedence paths in a concatenation
-
-Paths never return from the second block to the first, so blockwise paths
-decompose into factor paths. -/
-
-private lemma precPath_inr_cases {G₁ : MixedGraph V₁ S} {G₂ : MixedGraph V₂ S} {b : V₂}
-    {y : V₁ ⊕ V₂} (h : (concat t G₁ G₂).PrecPath (.inr b) y) :
-    ∃ b', y = .inr b' ∧ G₂.PrecPath b b' := by
-  induction h with
-  | @single y' h =>
-      cases y' with
-      | inl a => exact (h : False).elim
-      | inr b' => exact ⟨b', rfl, .single (h : G₂.arcs.Adj b b')⟩
-  | @tail y' y'' _ h ih =>
-      obtain ⟨b'', rfl, hp⟩ := ih
-      cases y'' with
-      | inl a => exact (h : False).elim
-      | inr b' => exact ⟨b', rfl, hp.tail (h : G₂.arcs.Adj b'' b')⟩
-
-private lemma precPath_inl_cases {G₁ : MixedGraph V₁ S} {G₂ : MixedGraph V₂ S} {a : V₁}
-    {y : V₁ ⊕ V₂} (h : (concat t G₁ G₂).PrecPath (.inl a) y) :
-    (∃ a', y = .inl a' ∧ G₁.PrecPath a a') ∨ ∃ b, y = .inr b := by
-  induction h with
-  | @single y' h =>
-      cases y' with
-      | inl a' => exact Or.inl ⟨a', rfl, .single (h : G₁.arcs.Adj a a')⟩
-      | inr b => exact Or.inr ⟨b, rfl⟩
-  | @tail y' y'' _ h ih =>
-      rcases ih with ⟨a'', rfl, hp⟩ | ⟨b, rfl⟩
-      · cases y'' with
-        | inl a' => exact Or.inl ⟨a', rfl, hp.tail (h : G₁.arcs.Adj a'' a')⟩
-        | inr b => exact Or.inr ⟨b, rfl⟩
-      · cases y'' with
-        | inl a' => exact (h : False).elim
-        | inr b' => exact Or.inr ⟨b', rfl⟩
-
-@[simp] theorem concat_precPath_inl_inl {G₁ : MixedGraph V₁ S} {G₂ : MixedGraph V₂ S}
-    {a a' : V₁} : (concat t G₁ G₂).PrecPath (.inl a) (.inl a') ↔ G₁.PrecPath a a' := by
-  constructor
-  · intro h
-    rcases precPath_inl_cases t h with ⟨x, hx, hp⟩ | ⟨b, hb⟩
-    · cases hx; exact hp
-    · exact absurd hb (by simp)
-  · intro h
-    exact Relation.TransGen.lift Sum.inl (fun _ _ hab => hab) h
-
-@[simp] theorem concat_precPath_inr_inr {G₁ : MixedGraph V₁ S} {G₂ : MixedGraph V₂ S}
-    {b b' : V₂} : (concat t G₁ G₂).PrecPath (.inr b) (.inr b') ↔ G₂.PrecPath b b' := by
-  constructor
-  · intro h
-    obtain ⟨x, hx, hp⟩ := precPath_inr_cases t h
-    cases hx; exact hp
-  · intro h
-    exact Relation.TransGen.lift Sum.inr (fun _ _ hab => hab) h
-
-@[simp] theorem concat_not_precPath_inr_inl {G₁ : MixedGraph V₁ S} {G₂ : MixedGraph V₂ S}
-    {b : V₂} {a : V₁} : ¬ (concat t G₁ G₂).PrecPath (.inr b) (.inl a) := fun h => by
-  obtain ⟨_, hx, _⟩ := precPath_inr_cases t h
-  exact absurd hx (by simp)
-
 /-! #### Axiom preservation ([jardine-heinz-2015] Theorem 4's structural half) -/
 
-/-- Concatenation preserves Axioms 1–2, including path-closure: a cross-seam
-    path forces tier equality, which is already a bridge arc. -/
+/-- Concatenation preserves Axioms 1–2; transitivity through the seam holds
+    because arcs are tier-internal. -/
 theorem isTierOrdered_concat {G₁ : MixedGraph V₁ S} {G₂ : MixedGraph V₂ S}
     (h₁ : G₁.IsTierOrdered t) (h₂ : G₂.IsTierOrdered t) :
     (concat t G₁ G₂).IsTierOrdered t := by
-  have hint : ∀ ⦃v w⦄, (concat t G₁ G₂).arcs.Adj v w →
-      (concat t G₁ G₂).tier t v = (concat t G₁ G₂).tier t w := by
-    rintro (v | v) (w | w) h
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · rintro (v | v) (w | w) h
     exacts [h₁.1 h, h, h.elim, h₂.1 h]
-  refine ⟨hint, ?_, ?_, ?_⟩
   · rintro (v | v) (w | w) hne htier
     · rcases h₁.2.1 (by simpa using hne) htier with hp | hp
-      · exact Or.inl ((concat_precPath_inl_inl t).mpr hp)
-      · exact Or.inr ((concat_precPath_inl_inl t).mpr hp)
-    · exact Or.inl (.single htier)
-    · exact Or.inr (.single htier.symm)
+      exacts [Or.inl hp, Or.inr hp]
+    · exact Or.inl htier
+    · exact Or.inr htier.symm
     · rcases h₂.2.1 (by simpa using hne) htier with hp | hp
-      · exact Or.inl ((concat_precPath_inr_inr t).mpr hp)
-      · exact Or.inr ((concat_precPath_inr_inr t).mpr hp)
+      exacts [Or.inl hp, Or.inr hp]
   · rintro (v | v) h
-    · exact h₁.2.2.1 v ((concat_precPath_inl_inl t).mp h)
-    · exact h₂.2.2.1 v ((concat_precPath_inr_inr t).mp h)
-  · rintro (v | v) (w | w) h
-    · exact h₁.2.2.2 ((concat_precPath_inl_inl t).mp h)
-    · exact precPath_tier hint h
-    · exact absurd h (concat_not_precPath_inr_inl t)
-    · exact h₂.2.2.2 ((concat_precPath_inr_inr t).mp h)
+    exacts [h₁.2.2.1 v h, h₂.2.2.1 v h]
+  · rintro (u | u) (v | v) (w | w) huv hvw
+    · exact h₁.2.2.2 huv hvw
+    · exact (h₁.1 huv).trans hvw
+    · exact (hvw : False).elim
+    · exact huv.trans (h₂.1 hvw)
+    · exact (huv : False).elim
+    · exact (huv : False).elim
+    · exact (hvw : False).elim
+    · exact h₂.2.2.2 huv hvw
 
-/-- Concatenation preserves Axiom 3: the disjoint edge sum adds no cross edges,
-    and blockwise paths are factor paths. -/
+/-- Concatenation preserves Axiom 3: the disjoint edge sum adds no cross
+    edges. -/
 theorem noInternalAssoc_concat {G₁ : MixedGraph V₁ S} {G₂ : MixedGraph V₂ S}
     (h₁ : G₁.NoInternalAssoc) (h₂ : G₂.NoInternalAssoc) :
     (concat t G₁ G₂).NoInternalAssoc := by
-  rintro (v | v) (w | w) hadj hp
-  · exact h₁ hadj ((concat_precPath_inl_inl t).mp hp)
+  rintro (v | v) (w | w) hadj harc
+  · exact h₁ hadj harc
   · exact absurd hadj (by simp)
   · exact absurd hadj (by simp)
-  · exact h₂ hadj ((concat_precPath_inr_inr t).mp hp)
+  · exact h₂ hadj harc
 
 /-! #### Functoriality of concatenation -/
 
@@ -465,32 +405,6 @@ def sum (G₁ : MixedGraph V₁ S) (G₂ : MixedGraph V₂ S) : MixedGraph (V₁
 @[simp] theorem sum_edges (G₁ : MixedGraph V₁ S) (G₂ : MixedGraph V₂ S) :
     (G₁.sum G₂).edges = G₁.edges ⊕g G₂.edges := rfl
 
-private lemma sum_precPath_inl {G₁ : MixedGraph V₁ S} {G₂ : MixedGraph V₂ S} {a : V₁}
-    {y : V₁ ⊕ V₂} (h : (G₁.sum G₂).PrecPath (.inl a) y) : ∃ a', y = .inl a' := by
-  induction h with
-  | @single y' h =>
-      cases y' with
-      | inl a' => exact ⟨a', rfl⟩
-      | inr b => exact (h : False).elim
-  | @tail y' y'' _ h ih =>
-      obtain ⟨a'', rfl⟩ := ih
-      cases y'' with
-      | inl a' => exact ⟨a', rfl⟩
-      | inr b => exact (h : False).elim
-
-private lemma sum_precPath_inr {G₁ : MixedGraph V₁ S} {G₂ : MixedGraph V₂ S} {b : V₂}
-    {y : V₁ ⊕ V₂} (h : (G₁.sum G₂).PrecPath (.inr b) y) : ∃ b', y = .inr b' := by
-  induction h with
-  | @single y' h =>
-      cases y' with
-      | inl a => exact (h : False).elim
-      | inr b' => exact ⟨b', rfl⟩
-  | @tail y' y'' _ h ih =>
-      obtain ⟨b'', rfl⟩ := ih
-      cases y'' with
-      | inl a => exact (h : False).elim
-      | inr b' => exact ⟨b', rfl⟩
-
 /-- Copairing out of the bridge-free sum. -/
 def sumDesc {G₁ : MixedGraph V₁ S} {G₂ : MixedGraph V₂ S} {H : MixedGraph V₃ S}
     (f : Hom G₁ H) (g : Hom G₂ H) : Hom (G₁.sum G₂) H where
@@ -511,13 +425,8 @@ def sumDesc {G₁ : MixedGraph V₁ S} {G₂ : MixedGraph V₂ S} {H : MixedGrap
     are precedence-unrelated across the seam. -/
 theorem not_isTierOrdered_sum (t : S → ι) {G₁ : MixedGraph V₁ S} {G₂ : MixedGraph V₂ S}
     (v : V₁) (w : V₂) (htier : G₁.tier t v = G₂.tier t w) :
-    ¬ (G₁.sum G₂).IsTierOrdered t := by
-  intro h
-  rcases h.2.1 (v := .inl v) (w := .inr w) (by simp) htier with hp | hp
-  · obtain ⟨a', ha⟩ := sum_precPath_inl hp
-    exact absurd ha (by simp)
-  · obtain ⟨b', hb⟩ := sum_precPath_inr hp
-    exact absurd hb (by simp)
+    ¬ (G₁.sum G₂).IsTierOrdered t := fun h =>
+  (h.2.1 (v := .inl v) (w := .inr w) (by simp) htier).elim (fun hp => hp) fun hp => hp
 
 end MixedGraph
 
