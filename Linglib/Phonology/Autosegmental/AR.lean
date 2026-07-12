@@ -123,7 +123,8 @@ def empty : Graph α β := ⟨LabeledTuple.empty, LabeledTuple.empty, ∅⟩
 /-! ### Planarity (no-crossing) -/
 
 /-- A representation is planar if its link set satisfies [goldsmith-1976]'s
-    No-Crossing Constraint. -/
+    No-Crossing Constraint, which [sagey-1988] derives from
+    association-as-temporal-overlap. -/
 def IsPlanar : Prop := IsNonCrossing r.links
 
 /-! ### Link rewrites -/

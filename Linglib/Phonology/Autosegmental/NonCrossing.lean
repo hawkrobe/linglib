@@ -17,7 +17,8 @@ index coordinates monovary, which in a two-layer drawing is exactly the
 absence of crossing segments; equivalently (over linear tiers), the
 componentwise order is total on the link set, [yli-jyra-2015]'s edge-order
 axiom. This is the discrete-index
-[goldsmith-1976] / [sagey-1986] No-Crossing Constraint and the canonical
+[goldsmith-1976] / [sagey-1986] No-Crossing Constraint ([sagey-1988] derives
+it from association-as-temporal-overlap) and the canonical
 filter on autosegmental GEN.
 
 ## Main definitions

@@ -49,10 +49,16 @@ than a defeq view.
 
 Links are stored per ordered tier-pair (empty set ⇒ the pair does not associate),
 keeping `concat`'s index shift fiberwise; the associating topology is
-`{(i, j) | links i j ≠ ∅}`. Planarity stays binary per pair — `NonCrossing.lean`'s
-`MonovaryOn`-based NCC applied pointwise, with no N-ary planarity theory. The
-planar full monoidal subcategory ([goldsmith-1976]'s NCC) would follow `AR.lean`'s
-`WellFormedAR` pattern via the per-pair `MultiGraph.IsPlanar`.
+`{(i, j) | links i j ≠ ∅}`. Planarity is per ordered tier-pair — each pair its own
+autosegmental plane with crossing defined only within it, the multi-planar model of
+[mccarthy-1989]; a cross-plane constraint (two feature tiers non-crossing through a
+shared anchor tier) is deliberately inexpressible, declining the common-timeline
+tradition of [coleman-local-1991]. The rendering is expressively safe: [oakden-2020]
+proves hub-bundled and split-tier tone geometries inter-translatable, and
+[jardine-danis-iacoponi-2021] prove subsegmental (Q-theoretic) representation
+equivalent to plain binary association. The planar full monoidal subcategory
+([goldsmith-1976]'s NCC) would follow `AR.lean`'s `WellFormedAR` pattern via the
+per-pair `MultiGraph.IsPlanar`.
 -/
 
 namespace Autosegmental
