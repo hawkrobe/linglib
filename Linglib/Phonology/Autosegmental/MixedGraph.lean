@@ -80,13 +80,8 @@ variable {V S ι : Type*}
 section Axioms
 variable (G : MixedGraph V)
 
-/-- Axioms 1–2 ([jardine-2016-diss] §4.2). Axiom 2's tier partition enters as
-    the coloring `c` — data, not a proposition — and what remains propositional
-    is Axiom 1 relative to it: the arcs are tier-internal and strictly totally
-    order each fiber. This is [jardine-2019]'s reading that `A` represents *the
-    order* on each string; the arcs coincide with their path closure
-    (`IsTierOrdered.precPath_eq`), so no closure operator appears in the
-    axioms. -/
+/-- Axioms 1–2 ([jardine-2016-diss] §4.2): the arcs are tier-internal and
+    strictly totally order each fiber of the coloring `c`. -/
 structure IsTierOrdered (c : V → ι) : Prop where
   /-- Arcs never leave a tier. -/
   tier_eq : ∀ ⦃v w⦄, G.arcs.Adj v w → c v = c w
@@ -252,14 +247,13 @@ variable (t : S → ι)
     each same-tier `Y`-vertex. -/
 def concat (X Y : MixedGraphCat S) : MixedGraphCat S where
   V := X.V ⊕ Y.V
-  graph :=
-    { edges := X.graph.edges ⊕g Y.graph.edges
-      arcs :=
-        ⟨fun
-          | .inl v, .inl w => X.graph.arcs.Adj v w
-          | .inr v, .inr w => Y.graph.arcs.Adj v w
-          | .inl v, .inr w => X.tier t v = Y.tier t w
-          | .inr _, .inl _ => False⟩ }
+  graph.edges := X.graph.edges ⊕g Y.graph.edges
+  graph.arcs :=
+    ⟨fun
+      | .inl v, .inl w => X.graph.arcs.Adj v w
+      | .inr v, .inr w => Y.graph.arcs.Adj v w
+      | .inl v, .inr w => X.tier t v = Y.tier t w
+      | .inr _, .inl _ => False⟩
   label := Sum.elim X.label Y.label
 
 @[simp] theorem concat_label_inl (v : X.V) : (concat t X Y).label (.inl v) = X.label v := rfl
@@ -398,13 +392,12 @@ minimal repair that keeps concatenation inside `Representation`. -/
 /-- The bridge-free blockwise sum. -/
 def sum (X Y : MixedGraphCat S) : MixedGraphCat S where
   V := X.V ⊕ Y.V
-  graph :=
-    { edges := X.graph.edges ⊕g Y.graph.edges
-      arcs :=
-        ⟨fun
-          | .inl v, .inl w => X.graph.arcs.Adj v w
-          | .inr v, .inr w => Y.graph.arcs.Adj v w
-          | _, _ => False⟩ }
+  graph.edges := X.graph.edges ⊕g Y.graph.edges
+  graph.arcs :=
+    ⟨fun
+      | .inl v, .inl w => X.graph.arcs.Adj v w
+      | .inr v, .inr w => Y.graph.arcs.Adj v w
+      | _, _ => False⟩
   label := Sum.elim X.label Y.label
 
 @[simp] theorem sum_edges : (sum X Y).graph.edges = X.graph.edges ⊕g Y.graph.edges := rfl
@@ -547,6 +540,11 @@ def mkIso {X Y : Representation t} (e : MixedGraphCat.Iso X.obj Y.obj) : X ≅ Y
       MixedGraphCat.Hom.ext (funext fun v => e.toEquiv.symm_apply_apply v),
       MixedGraphCat.Hom.ext (funext fun v => e.toEquiv.apply_symm_apply v)⟩
 
+/-- Componentwise extensionality for representation morphisms. -/
+theorem hom_ext {X Y : Representation t} {f g : X ⟶ Y}
+    (h : ∀ v, f.hom.toFun v = g.hom.toFun v) : f = g :=
+  InducedCategory.hom_ext (MixedGraphCat.Hom.ext (funext h))
+
 /-- The tensor on morphisms, as a representation morphism. -/
 def tensorHomAux {X₁ Y₁ X₂ Y₂ : Representation t} (f : X₁ ⟶ Y₁) (g : X₂ ⟶ Y₂) :
     tensor X₁ X₂ ⟶ tensor Y₁ Y₂ :=
@@ -580,41 +578,36 @@ def whiskerRightAux {X₁ X₂ : Representation t} (f : X₁ ⟶ X₂) (Y : Repr
     with every proof a componentwise `rfl` over the concrete sum maps. -/
 instance : MonoidalCategory (Representation t) :=
   MonoidalCategory.ofTensorHom
-    (id_tensorHom_id := fun _ _ => InducedCategory.hom_ext
-      (MixedGraphCat.Hom.ext (funext fun v => by rcases (v : _ ⊕ _) with v | v <;> rfl)))
+    (id_tensorHom_id := fun _ _ => hom_ext fun v => by
+      rcases (v : _ ⊕ _) with v | v <;> rfl)
     (id_tensorHom := fun _ _ _ _ => rfl)
     (tensorHom_id := fun _ _ => rfl)
-    (tensorHom_comp_tensorHom := fun _ _ _ _ => InducedCategory.hom_ext
-      (MixedGraphCat.Hom.ext (funext fun v => by rcases (v : _ ⊕ _) with v | v <;> rfl)))
-    (associator_naturality := fun _ _ _ => InducedCategory.hom_ext
-      (MixedGraphCat.Hom.ext (funext fun v => by
-        rcases (v : _ ⊕ _) with v | v
+    (tensorHom_comp_tensorHom := fun _ _ _ _ => hom_ext fun v => by
+      rcases (v : _ ⊕ _) with v | v <;> rfl)
+    (associator_naturality := fun _ _ _ => hom_ext fun v => by
+      rcases (v : _ ⊕ _) with v | v
+      · rcases (v : _ ⊕ _) with v | v <;> rfl
+      · rfl)
+    (leftUnitor_naturality := fun _ => hom_ext fun v => by
+      rcases (v : _ ⊕ _) with v | v
+      · exact v.elim
+      · rfl)
+    (rightUnitor_naturality := fun _ => hom_ext fun v => by
+      rcases (v : _ ⊕ _) with v | v
+      · rfl
+      · exact v.elim)
+    (pentagon := fun _ _ _ _ => hom_ext fun v => by
+      rcases (v : _ ⊕ _) with v | v
+      · rcases (v : _ ⊕ _) with v | v
         · rcases (v : _ ⊕ _) with v | v <;> rfl
-        · rfl)))
-    (leftUnitor_naturality := fun _ => InducedCategory.hom_ext
-      (MixedGraphCat.Hom.ext (funext fun v => by
-        rcases (v : _ ⊕ _) with v | v
-        · exact v.elim
-        · rfl)))
-    (rightUnitor_naturality := fun _ => InducedCategory.hom_ext
-      (MixedGraphCat.Hom.ext (funext fun v => by
-        rcases (v : _ ⊕ _) with v | v
         · rfl
-        · exact v.elim)))
-    (pentagon := fun _ _ _ _ => InducedCategory.hom_ext
-      (MixedGraphCat.Hom.ext (funext fun v => by
-        rcases (v : _ ⊕ _) with v | v
-        · rcases (v : _ ⊕ _) with v | v
-          · rcases (v : _ ⊕ _) with v | v <;> rfl
-          · rfl
-        · rfl)))
-    (triangle := fun _ _ => InducedCategory.hom_ext
-      (MixedGraphCat.Hom.ext (funext fun v => by
-        rcases (v : _ ⊕ _) with v | v
-        · rcases (v : _ ⊕ _) with v | v
-          · rfl
-          · exact v.elim
-        · rfl)))
+      · rfl)
+    (triangle := fun _ _ => hom_ext fun v => by
+      rcases (v : _ ⊕ _) with v | v
+      · rcases (v : _ ⊕ _) with v | v
+        · rfl
+        · exact v.elim
+      · rfl)
 
 end Representation
 
