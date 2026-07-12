@@ -84,31 +84,40 @@ noncomputable instance Representation.fiber.instLinearOrder (i : ι) :
   exact linearOrderOfSTO (fun a b : X.fiber i => X.obj.graph.arcs.Adj a.val b.val)
 
 /-- The number of tier-`i` vertices. -/
-noncomputable def Representation.tierLen (X : Representation (Sigma.fst : ((i : ι) × τ i) → ι))
+noncomputable def Representation.tierLength (X : Representation (Sigma.fst : ((i : ι) × τ i) → ι))
     [Finite X.obj.V] (i : ι) : ℕ :=
   letI := Fintype.ofFinite (X.fiber i)
   Fintype.card (X.fiber i)
 
+/-- The canonical ascending enumeration of a tier fiber. -/
+noncomputable def Representation.fiberEnum [Finite X.obj.V] (i : ι) :
+    Fin (X.tierLength i) ≃o X.fiber i :=
+  letI := Fintype.ofFinite (X.fiber i)
+  monoEquivOfFin (X.fiber i) rfl
+
 /-- The canonical enumeration of a finite representation's vertex type: tier
     fibers in ascending precedence order, assembled over the tier index. -/
 noncomputable def Representation.vertexEquiv [Finite X.obj.V] :
-    ((i : ι) × Fin (X.tierLen i)) ≃ X.obj.V :=
+    ((i : ι) × Fin (X.tierLength i)) ≃ X.obj.V :=
   letI : ∀ i : ι, Fintype (X.fiber i) := fun _ => Fintype.ofFinite _
-  (Equiv.sigmaCongrRight
-    (fun i : ι => (monoEquivOfFin (X.fiber i) rfl).toEquiv)).trans
+  (Equiv.sigmaCongrRight (fun i : ι => (X.fiberEnum i).toEquiv)).trans
     (Equiv.sigmaFiberEquiv (fun v : X.obj.V => (X.obj.label v).1))
 
 /-- The tier-`i` label word: the fiber's labels read off in ascending precedence
     order — the tier content the normal form canonicalizes. -/
 noncomputable def Representation.tierWord [Finite X.obj.V] (i : ι) : List (τ i) :=
   letI := Fintype.ofFinite (X.fiber i)
-  List.ofFn fun p : Fin (X.tierLen i) => X.fiberLabel (monoEquivOfFin (X.fiber i) rfl p)
+  List.ofFn fun p : Fin (X.tierLength i) => X.fiberLabel (X.fiberEnum i p)
+
+@[simp] theorem Representation.length_tierWord [Finite X.obj.V] (i : ι) :
+    (X.tierWord i).length = X.tierLength i := by
+  simp [Representation.tierWord]
 
 /-- The link relation in position coordinates: tier-`i` position `p` associates
     to tier-`j` position `q`. With `tierWord`, the complete tuple reading of a
     finite representation. -/
 noncomputable def Representation.linkRel [Finite X.obj.V] (i j : ι)
-    (p : Fin (X.tierLen i)) (q : Fin (X.tierLen j)) : Prop :=
+    (p : Fin (X.tierLength i)) (q : Fin (X.tierLength j)) : Prop :=
   X.obj.graph.edges.Adj (X.vertexEquiv ⟨i, p⟩) (X.vertexEquiv ⟨j, q⟩)
 
 /-- The normal form: `X` reindexed onto the canonical vertex type by pulling
@@ -118,7 +127,7 @@ noncomputable def Representation.normalize
     (X : Representation (Sigma.fst : ((i : ι) × τ i) → ι)) [Finite X.obj.V] :
     Representation (Sigma.fst : ((i : ι) × τ i) → ι) where
   obj :=
-    { V := (i : ι) × Fin (X.tierLen i)
+    { V := (i : ι) × Fin (X.tierLength i)
       graph :=
         { edges := X.obj.graph.edges.comap X.vertexEquiv
           arcs := ⟨fun v w => X.obj.graph.arcs.Adj (X.vertexEquiv v) (X.vertexEquiv w)⟩ }
@@ -138,6 +147,20 @@ noncomputable def Representation.normalizeIso [Finite X.obj.V] : X.normalize ≅
       edges_iff := fun _ _ => Iff.rfl
       arcs_iff := fun _ _ => Iff.rfl
       label_comp := fun _ => rfl }
+
+/-- On normal forms the edges are exactly `linkRel` — with `arcs_normalize`,
+    the complete tuple reading of the normal form. -/
+theorem Representation.edges_normalize [Finite X.obj.V] (i j : ι)
+    (p : Fin (X.tierLength i)) (q : Fin (X.tierLength j)) :
+    (X.normalize).obj.graph.edges.Adj ⟨i, p⟩ ⟨j, q⟩ ↔ X.linkRel i j p q := Iff.rfl
+
+/-- On normal forms the arcs are the ascending position order — the
+    classification content: [jardine-heinz-2015]'s tiered presentation
+    recovered as a theorem. -/
+theorem Representation.arcs_normalize [Finite X.obj.V] (i : ι)
+    (p q : Fin (X.tierLength i)) :
+    (X.normalize).obj.graph.arcs.Adj ⟨i, p⟩ ⟨i, q⟩ ↔ p < q :=
+  (X.fiberEnum i).lt_iff_lt
 
 /-- Normal forms represent their isomorphism class: `normalize` is a section of
     the quotient onto the skeleton, where the monoid of iso classes carries
@@ -212,25 +235,25 @@ variable [Finite X.obj.V] [Finite Y.obj.V]
 
 attribute [local instance] Fintype.ofFinite
 
-theorem Representation.tierLen_tensor (i : ι) :
-    (X ⊗ Y).tierLen i = X.tierLen i + Y.tierLen i := by
+@[simp] theorem Representation.tierLength_tensor (i : ι) :
+    (X ⊗ Y).tierLength i = X.tierLength i + Y.tierLength i := by
   letI := Fintype.ofFinite ((X ⊗ Y).fiber i)
   letI := Fintype.ofFinite (X.fiber i)
   letI := Fintype.ofFinite (Y.fiber i)
-  simp only [Representation.tierLen]
+  simp only [Representation.tierLength]
   rw [Fintype.card_congr (Representation.fiberTensorEquiv i), Fintype.card_sum]
 
 open Representation in
 /-- The blockwise enumeration of a tensor's fiber: left factor first, then
     right — monotone because the bridge arc orders the blocks. -/
 noncomputable def Representation.tensorEnum (i : ι) :
-    Fin (X.tierLen i + Y.tierLen i) ≃o (X ⊗ Y).fiber i := by
+    Fin (X.tierLength i + Y.tierLength i) ≃o (X ⊗ Y).fiber i := by
   letI := Fintype.ofFinite (X.fiber i)
   letI := Fintype.ofFinite (Y.fiber i)
   refine StrictMono.orderIsoOfSurjective
     (finSumFinEquiv.symm.trans
-      (((monoEquivOfFin (X.fiber i) (rfl : _ = X.tierLen i)).toEquiv.sumCongr
-        (monoEquivOfFin (Y.fiber i) (rfl : _ = Y.tierLen i)).toEquiv).trans
+      (((X.fiberEnum i).toEquiv.sumCongr
+        (Y.fiberEnum i).toEquiv).trans
         (fiberTensorEquiv i).symm))
     ?_ (Equiv.surjective _)
   intro p q hpq
@@ -241,31 +264,31 @@ noncomputable def Representation.tensorEnum (i : ι) :
     induction q using Fin.addCases with
     | left q₁ =>
       rw [finSumFinEquiv_symm_apply_castAdd]
-      exact (monoEquivOfFin (X.fiber i) (rfl : _ = X.tierLen i)).strictMono
+      exact (X.fiberEnum i).strictMono
         (by simp only [Fin.lt_def, Fin.val_castAdd] at hpq ⊢; exact hpq)
     | right q₂ =>
       rw [finSumFinEquiv_symm_apply_natAdd]
-      exact (monoEquivOfFin (X.fiber i) (rfl : _ = X.tierLen i) p₁).property.trans
-        ((monoEquivOfFin (Y.fiber i) (rfl : _ = Y.tierLen i) q₂).property).symm
+      exact (X.fiberEnum i p₁).property.trans
+        ((Y.fiberEnum i q₂).property).symm
   | right p₂ =>
     induction q using Fin.addCases with
     | left q₁ =>
       exact absurd hpq (by simp only [Fin.lt_def, Fin.val_natAdd, Fin.val_castAdd]; omega)
     | right q₂ =>
       rw [finSumFinEquiv_symm_apply_natAdd, finSumFinEquiv_symm_apply_natAdd]
-      exact (monoEquivOfFin (Y.fiber i) (rfl : _ = Y.tierLen i)).strictMono
+      exact (Y.fiberEnum i).strictMono
         (by simp only [Fin.lt_def, Fin.val_natAdd] at hpq ⊢; omega)
 
-theorem Representation.tensorEnum_apply_castAdd (i : ι) (p : Fin (X.tierLen i)) :
-    Representation.tensorEnum i (Fin.castAdd (Y.tierLen i) p) =
+theorem Representation.tensorEnum_apply_castAdd (i : ι) (p : Fin (X.tierLength i)) :
+    Representation.tensorEnum i (Fin.castAdd (Y.tierLength i) p) =
       (Representation.fiberTensorEquiv i).symm
-        (.inl (monoEquivOfFin (X.fiber i) (rfl : _ = X.tierLen i) p)) := by
+        (.inl (X.fiberEnum i p)) := by
   simp [Representation.tensorEnum, finSumFinEquiv_symm_apply_castAdd]
 
-theorem Representation.tensorEnum_apply_natAdd (i : ι) (p : Fin (Y.tierLen i)) :
-    Representation.tensorEnum i (Fin.natAdd (X.tierLen i) p) =
+theorem Representation.tensorEnum_apply_natAdd (i : ι) (p : Fin (Y.tierLength i)) :
+    Representation.tensorEnum i (Fin.natAdd (X.tierLength i) p) =
       (Representation.fiberTensorEquiv (X := X) i).symm
-        (.inr (monoEquivOfFin (Y.fiber i) (rfl : _ = Y.tierLen i) p)) := by
+        (.inr (Y.fiberEnum i p)) := by
   simp [Representation.tensorEnum, finSumFinEquiv_symm_apply_natAdd]
 
 omit [Finite X.obj.V] [Finite Y.obj.V] in
@@ -282,25 +305,25 @@ theorem Representation.fiberLabel_symm_inr {i : ι} (w : Y.fiber i) :
 theorem Representation.tierWord_eq_ofFn {Z : Representation (Sigma.fst : ((i : ι) × τ i) → ι)}
     [Finite Z.obj.V] {i : ι} {n : ℕ} (e : Fin n ≃o Z.fiber i) :
     Z.tierWord i = List.ofFn fun p => Z.fiberLabel (e p) := by
-  have hn : Z.tierLen i = n := by
-    simpa [Representation.tierLen] using (Fintype.card_congr e.toEquiv).symm
+  have hn : Z.tierLength i = n := by
+    simpa [Representation.tierLength] using (Fintype.card_congr e.toEquiv).symm
   subst hn
-  rw [Subsingleton.elim e (monoEquivOfFin (Z.fiber i) rfl)]
+  rw [Subsingleton.elim e (Z.fiberEnum i)]
   rfl
 
 /-- **Concatenation appends tier content**: the tier word of a tensor is the
     factors' tier words in sequence — the tuple presentation of
     [jardine-heinz-2015]'s Definition 2, recovered as a theorem about normal
     forms. -/
-theorem Representation.tierWord_tensor (i : ι) :
+@[simp] theorem Representation.tierWord_tensor (i : ι) :
     (X ⊗ Y).tierWord i = X.tierWord i ++ Y.tierWord i := by
   rw [Representation.tierWord_eq_ofFn (Representation.tensorEnum i), List.ofFn_add]
   congr 1
-  · rw [Representation.tierWord_eq_ofFn (monoEquivOfFin (X.fiber i) (rfl : _ = X.tierLen i))]
+  · rw [Representation.tierWord_eq_ofFn (X.fiberEnum i)]
     exact congrArg List.ofFn (funext fun p =>
       (congrArg Representation.fiberLabel (Representation.tensorEnum_apply_castAdd i p)).trans
         (Representation.fiberLabel_symm_inl _))
-  · rw [Representation.tierWord_eq_ofFn (monoEquivOfFin (Y.fiber i) (rfl : _ = Y.tierLen i))]
+  · rw [Representation.tierWord_eq_ofFn (Y.fiberEnum i)]
     exact congrArg List.ofFn (funext fun p =>
       (congrArg Representation.fiberLabel (Representation.tensorEnum_apply_natAdd i p)).trans
         (Representation.fiberLabel_symm_inr _))
@@ -324,11 +347,11 @@ instance realize.instFinite [∀ s, Finite (g₀ s).obj.V] (w : List S) :
 instance : Finite ((𝟙_ (Representation (Sigma.fst : ((i : ι) × τ i) → ι))).obj.V) :=
   inferInstanceAs (Finite PEmpty)
 
-theorem Representation.tierWord_unit (i : ι) :
+@[simp] theorem Representation.tierWord_unit (i : ι) :
     (𝟙_ (Representation (Sigma.fst : ((i : ι) × τ i) → ι))).tierWord i = [] := by
   haveI : IsEmpty ((𝟙_ (Representation (Sigma.fst : ((i : ι) × τ i) → ι))).fiber i) :=
     ⟨fun v => v.val.elim⟩
-  rw [Representation.tierWord_eq_ofFn (n := 0) ⟨Equiv.equivOfIsEmpty _ _, fun {a} => a.elim0⟩]
+  rw [Representation.tierWord_eq_ofFn (OrderIso.ofIsEmpty (Fin 0) _)]
   exact List.ofFn_zero
 
 /-- **Tier content is compositional**: the tier word of a realized string is the
@@ -337,18 +360,40 @@ theorem Representation.tierWord_unit (i : ι) :
 theorem Representation.tierWord_realize [∀ s, Finite (g₀ s).obj.V] (i : ι) (w : List S) :
     (realize g₀ w).tierWord i = (w.map fun s => (g₀ s).tierWord i).flatten := by
   induction w with
-  | nil => exact Representation.tierWord_unit i
+  | nil => simp
   | cons a w ih =>
     calc (realize g₀ (a :: w)).tierWord i
         = (g₀ a ⊗ realize g₀ w).tierWord i := rfl
-      _ = (g₀ a).tierWord i ++ (realize g₀ w).tierWord i := Representation.tierWord_tensor i
-      _ = ((a :: w).map fun s => (g₀ s).tierWord i).flatten := by rw [ih]; rfl
+      _ = ((a :: w).map fun s => (g₀ s).tierWord i).flatten := by simp [ih]
 
 /-- The tier-`i` projection of a realization, as a free-monoid homomorphism:
     each symbol contributes its primitive's tier word. -/
 noncomputable def tierProj [∀ s, Finite (g₀ s).obj.V] (i : ι) :
     FreeMonoid S →* FreeMonoid (τ i) :=
   FreeMonoid.lift fun s => FreeMonoid.ofList ((g₀ s).tierWord i)
+
+/-- `realizeHom` packages `realize`: on a word it is the class of the realized
+    representation. -/
+theorem realizeHom_ofList [∀ s, Finite (g₀ s).obj.V] (w : List S) :
+    realizeHom g₀ (FreeMonoid.ofList w) = toSkeleton (realize g₀ w) := by
+  induction w with
+  | nil => rfl
+  | cons a w ih =>
+    rw [show FreeMonoid.ofList (a :: w) = FreeMonoid.of a * FreeMonoid.ofList w from rfl,
+      map_mul, ih, realize_cons]
+    exact (CategoryTheory.Skeleton.toSkeleton_tensorObj _ _).symm
+
+/-- `tierProj` packages `tierWord`: on a word it is the realized tier word. -/
+theorem tierProj_ofList [∀ s, Finite (g₀ s).obj.V] (i : ι) (w : List S) :
+    tierProj g₀ i (FreeMonoid.ofList w) = FreeMonoid.ofList ((realize g₀ w).tierWord i) := by
+  induction w with
+  | nil => simp [realize_nil]
+  | cons a w ih =>
+    rw [show FreeMonoid.ofList (a :: w) = FreeMonoid.of a * FreeMonoid.ofList w from rfl,
+      map_mul, ih]
+    calc FreeMonoid.ofList ((g₀ a).tierWord i) * FreeMonoid.ofList ((realize g₀ w).tierWord i)
+        = FreeMonoid.ofList ((g₀ a).tierWord i ++ (realize g₀ w).tierWord i) := rfl
+      _ = _ := by rw [← Representation.tierWord_tensor i]; rfl
 
 end RealizeTierWord
 
