@@ -45,8 +45,9 @@ out of the raw graphs relative to it.
 ## Main results
 
 * `concat_empty_iso`, `empty_concat_iso`, `concat_assoc_iso`,
-  `isTierOrdered_concat`, `noInternalAssoc_concat`: [jardine-heinz-2015]
-  Theorems 1, 3 and 4 up to `Iso`, unconditional in the order signature.
+  `isTierOrdered_concat`, `noInternalAssoc_concat`, `isPlanar_concat`:
+  [jardine-heinz-2015] Theorems 1, 3 and 4 up to `Iso`, unconditional in the
+  order signature; `isPlanar_concat` is [jardine-2019]'s NCC-preservation.
 * `not_isTierOrdered_sum`: the bridge-free coproduct leaves the axiom class
   whenever the factors share a tier — Axiom 2 forces `concat`'s bridges.
 * `Representation.tierColoring`: the tier map properly colors the association
@@ -234,18 +235,20 @@ theorem empty_noInternalAssoc : NoInternalAssoc (empty S).graph := fun v => v.el
 /-! ### Tier-bridging concatenation
 
 Per tier class, concatenation is the ordinal sum: blockwise arcs plus a bridging
-arc from every `X`-vertex of a class to every same-class `Y`-vertex. This is
-the signature of [jardine-2019]'s own formulation — arcs represent *the order* on
-each string, not its successor steps — under which [jardine-heinz-2015]
-Definition 2's last-to-first successor bridge becomes the complete same-class
-bridge: the two composites agree in precedence-closure, the relation the axioms
-and results here consume (on the definability relationship between the two
-signatures cf. [jardine-2017-complexity]; note that subgraph-based notions such
-as `ASL.lean`'s forbidden-factor grammars are signature-sensitive and do not
-transfer for free). The order form makes the bridge total (the paper's
-`first`/`last` are partial) and functorial, and its monoid laws unconditional
-where the successor form's associativity is conditional on the tier classes being
-string graphs (the paper's Lemma 1 remark). -/
+arc from every `X`-vertex of a class to every same-class `Y`-vertex.
+[jardine-2019] glosses `A` as representing *the order* on each string, but its
+operative concatenation bridges a single pair per tier — `(last X Γᵢ, first Y Γᵢ)`,
+with `first`/`last` partial — so its composites carry generator-style arcs. This
+axiom class instead takes the order-*closed* representative of that same
+precedence relation (interconvertible with the generator form via Hasse diagram ↔
+transitive closure on the finite per-tier strict orders); the complete same-class
+bridge is chosen because it is total and functorial where `first`/`last` are
+partial and not hom-preserved, and its monoid laws unconditional where the
+successor form's associativity is conditional on the tier classes being string
+graphs (the paper's Lemma 1 remark). On the definability relationship between the
+two signatures cf. [jardine-2017-complexity]; subgraph-based notions such as
+`ASL.lean`'s forbidden-factor grammars are signature-sensitive and do not transfer
+for free. -/
 
 section Concat
 variable (t : S → ι)
@@ -363,6 +366,31 @@ theorem noInternalAssoc_concat {X Y : MixedGraphCat S}
   · exact absurd hadj (by simp)
   · exact absurd hadj (by simp)
   · exact h₂ hadj harc
+
+/-- Concatenation preserves the No-Crossing Constraint ([jardine-2019]'s
+    headline [jardine-heinz-2015] result): plain factor planarity suffices.
+    Association edges are blockwise, so a straddle needs both edges in one block —
+    reducing to the factor's `IsPlanar` — or one per block, where the required
+    return arc runs `inr → inl` and does not exist. -/
+theorem isPlanar_concat {X Y : MixedGraphCat S}
+    (h₁ : IsPlanar X.graph) (h₂ : IsPlanar Y.graph) : IsPlanar (concat t X Y).graph := by
+  rintro (v | v) (v' | v') (w | w) (w' | w') hvv' hww' hvw hw'v'
+  · exact h₁ hvv' hww' hvw hw'v'
+  · exact absurd hww' (by simp)
+  · exact absurd hww' (by simp)
+  · exact (hw'v' : False).elim
+  · exact absurd hvv' (by simp)
+  · exact absurd hvv' (by simp)
+  · exact absurd hvv' (by simp)
+  · exact absurd hvv' (by simp)
+  · exact absurd hvv' (by simp)
+  · exact absurd hvv' (by simp)
+  · exact absurd hvv' (by simp)
+  · exact absurd hvv' (by simp)
+  · exact (hvw : False).elim
+  · exact absurd hww' (by simp)
+  · exact absurd hww' (by simp)
+  · exact h₂ hvv' hww' hvw hw'v'
 
 /-! #### Functoriality of concatenation -/
 
