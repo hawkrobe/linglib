@@ -44,7 +44,7 @@ out of the raw graphs relative to it.
 
 ## Main results
 
-* `concat_empty_iso`, `empty_concat_iso`, `concat_assoc_iso`,
+* `concatEmptyIso`, `emptyConcatIso`, `concatAssocIso`,
   `isTierOrdered_concat`, `noInternalAssoc_concat`, `isPlanar_concat`:
   [jardine-heinz-2015] Theorems 1, 3 and 4 up to `Iso`, unconditional in the
   order signature; `isPlanar_concat` is [jardine-2019]'s NCC-preservation.
@@ -278,44 +278,34 @@ def concat (X Y : MixedGraphCat S) : MixedGraphCat S where
 /-! ### Unit laws ([jardine-heinz-2015] Theorem 1) -/
 
 /-- Concatenation with the empty graph on the right, up to isomorphism. -/
-def concat_empty_iso (X : MixedGraphCat S) : Iso (concat t X (empty S)) X where
+def concatEmptyIso (X : MixedGraphCat S) : Iso (concat t X (empty S)) X where
   toEquiv := Equiv.sumEmpty X.V PEmpty
-  edges_iff v w := by
-    rcases v with v | v
-    · rcases w with w | w
-      · exact Iff.rfl
-      · exact w.elim
-    · exact v.elim
-  arcs_iff v w := by
-    rcases v with v | v
-    · rcases w with w | w
-      · exact Iff.rfl
-      · exact w.elim
-    · exact v.elim
-  label_comp v := by
-    rcases v with v | v
-    · rfl
-    · exact v.elim
+  edges_iff
+    | .inl _, .inl _ => Iff.rfl
+    | .inl _, .inr w => w.elim
+    | .inr v, _ => v.elim
+  arcs_iff
+    | .inl _, .inl _ => Iff.rfl
+    | .inl _, .inr w => w.elim
+    | .inr v, _ => v.elim
+  label_comp
+    | .inl _ => rfl
+    | .inr v => v.elim
 
 /-- Concatenation with the empty graph on the left, up to isomorphism. -/
-def empty_concat_iso (X : MixedGraphCat S) : Iso (concat t (empty S) X) X where
+def emptyConcatIso (X : MixedGraphCat S) : Iso (concat t (empty S) X) X where
   toEquiv := Equiv.emptySum PEmpty X.V
-  edges_iff v w := by
-    rcases v with v | v
-    · exact v.elim
-    · rcases w with w | w
-      · exact w.elim
-      · exact Iff.rfl
-  arcs_iff v w := by
-    rcases v with v | v
-    · exact v.elim
-    · rcases w with w | w
-      · exact w.elim
-      · exact Iff.rfl
-  label_comp v := by
-    rcases v with v | v
-    · exact v.elim
-    · rfl
+  edges_iff
+    | .inl v, _ => v.elim
+    | .inr _, .inl w => w.elim
+    | .inr _, .inr _ => Iff.rfl
+  arcs_iff
+    | .inl v, _ => v.elim
+    | .inr _, .inl w => w.elim
+    | .inr _, .inr _ => Iff.rfl
+  label_comp
+    | .inl v => v.elim
+    | .inr _ => rfl
 
 /-! #### Axiom preservation ([jardine-heinz-2015] Theorem 4's structural half) -/
 
@@ -336,25 +326,21 @@ theorem isTierOrdered_concat
       exacts [Or.inl hp, Or.inr hp]
   · rintro (v | v) h
     exacts [h₁.irrefl v h, h₂.irrefl v h]
-  · rintro (u | u) (v | v) (w | w) huv hvw
-    · exact h₁.trans huv hvw
-    · exact (h₁.tier_eq huv).trans hvw
-    · exact (hvw : False).elim
-    · exact huv.trans (h₂.tier_eq hvw)
-    · exact (huv : False).elim
-    · exact (huv : False).elim
-    · exact (hvw : False).elim
-    · exact h₂.trans huv hvw
+  · rintro (u | u) (v | v) (w | w) huv hvw <;>
+      first
+        | exact h₁.trans huv hvw
+        | exact h₂.trans huv hvw
+        | exact (h₁.tier_eq huv).trans hvw
+        | exact huv.trans (h₂.tier_eq hvw)
+        | exact (huv : False).elim
+        | exact (hvw : False).elim
 
 /-- Concatenation preserves Axiom 3: the disjoint edge sum adds no cross
     edges. -/
 theorem noInternalAssoc_concat (h₁ : NoInternalAssoc X.graph) (h₂ : NoInternalAssoc Y.graph) :
     NoInternalAssoc (concat t X Y).graph := by
   rintro (v | v) (w | w) hadj harc
-  · exact h₁ hadj harc
-  · exact absurd hadj (by simp)
-  · exact absurd hadj (by simp)
-  · exact h₂ hadj harc
+  exacts [h₁ hadj harc, absurd hadj (by simp), absurd hadj (by simp), h₂ hadj harc]
 
 /-- Concatenation preserves the No-Crossing Constraint ([jardine-2019]'s
     headline [jardine-heinz-2015] result): plain factor planarity suffices.
@@ -363,49 +349,34 @@ theorem noInternalAssoc_concat (h₁ : NoInternalAssoc X.graph) (h₂ : NoIntern
     return arc runs `inr → inl` and does not exist. -/
 theorem isPlanar_concat (h₁ : IsPlanar X.graph) (h₂ : IsPlanar Y.graph) :
     IsPlanar (concat t X Y).graph := by
-  rintro (v | v) (v' | v') (w | w) (w' | w') hvv' hww' hvw hw'v'
-  · exact h₁ hvv' hww' hvw hw'v'
-  · exact absurd hww' (by simp)
-  · exact absurd hww' (by simp)
-  · exact (hw'v' : False).elim
-  · exact absurd hvv' (by simp)
-  · exact absurd hvv' (by simp)
-  · exact absurd hvv' (by simp)
-  · exact absurd hvv' (by simp)
-  · exact absurd hvv' (by simp)
-  · exact absurd hvv' (by simp)
-  · exact absurd hvv' (by simp)
-  · exact absurd hvv' (by simp)
-  · exact (hvw : False).elim
-  · exact absurd hww' (by simp)
-  · exact absurd hww' (by simp)
-  · exact h₂ hvv' hww' hvw hw'v'
+  rintro (v | v) (v' | v') (w | w) (w' | w') hvv' hww' hvw hw'v' <;>
+    first
+      | exact h₁ hvv' hww' hvw hw'v'
+      | exact h₂ hvv' hww' hvw hw'v'
+      | exact (hvw : False).elim
+      | exact (hw'v' : False).elim
+      | simp_all
 
 /-! #### Functoriality of concatenation -/
 
 /-- Concatenation of morphisms is `Sum.map`: blockwise preservation from the
-    factors, and label preservation transports the bridge's tier equality. Domain and codomain
-    of each factor may have independent vertex types, as morphisms in `MixedGraphCat S` do. -/
-def Hom.sumMap {X₁ Y₁ X₂ Y₂ : MixedGraphCat S}
+    factors; label preservation transports the bridge's tier equality. -/
+def Hom.concatMap {X₁ Y₁ X₂ Y₂ : MixedGraphCat S}
     (f : Hom X₁ Y₁) (g : Hom X₂ Y₂) : Hom (concat t X₁ X₂) (concat t Y₁ Y₂) where
   toFun := Sum.map f.toFun g.toFun
   edge_map := by
     rintro (v | v) (w | w) h
-    · exact f.edge_map h
-    · exact absurd h (by simp)
-    · exact absurd h (by simp)
-    · exact g.edge_map h
+    exacts [f.edge_map h, absurd h (by simp), absurd h (by simp), g.edge_map h]
   label_comp := by
     rintro (v | v)
-    · exact f.label_comp v
-    · exact g.label_comp v
+    exacts [f.label_comp v, g.label_comp v]
 
 /-! #### Associativity up to isomorphism ([jardine-heinz-2015] Theorem 3) -/
 
 /-- Concatenation is associative up to isomorphism, over `Equiv.sumAssoc`; the
     edge face is the stock `SimpleGraph.Iso.sumAssoc`, and every arc case holds
     definitionally in the order signature. -/
-def concat_assoc_iso (X Y Z : MixedGraphCat S) :
+def concatAssocIso (X Y Z : MixedGraphCat S) :
     Iso (concat t (concat t X Y) Z) (concat t X (concat t Y Z)) where
   toEquiv := Equiv.sumAssoc X.V Y.V Z.V
   edges_iff v w := SimpleGraph.Iso.sumAssoc.map_rel_iff
@@ -444,14 +415,10 @@ def sumDesc (f : Hom X Z) (g : Hom Y Z) : Hom (sum X Y) Z where
   toFun := Sum.elim f.toFun g.toFun
   edge_map := by
     rintro (v | v) (w | w) h
-    · exact f.edge_map h
-    · exact absurd h (by simp)
-    · exact absurd h (by simp)
-    · exact g.edge_map h
+    exacts [f.edge_map h, absurd h (by simp), absurd h (by simp), g.edge_map h]
   label_comp := by
     rintro (v | v)
-    · exact f.label_comp v
-    · exact g.label_comp v
+    exacts [f.label_comp v, g.label_comp v]
 
 /-- **Axiom 2 forces the bridges**: the bridge-free sum of two graphs occupying a
     common tier is never tier-ordered — same-tier vertices from the two factors
@@ -584,19 +551,19 @@ def mkIso {X Y : Representation t} (e : MixedGraphCat.Iso X.obj Y.obj) : X ≅ Y
 /-- The tensor on morphisms, as a representation morphism. -/
 def tensorHomAux {X₁ Y₁ X₂ Y₂ : Representation t} (f : X₁ ⟶ Y₁) (g : X₂ ⟶ Y₂) :
     tensor X₁ X₂ ⟶ tensor Y₁ Y₂ :=
-  InducedCategory.homMk (MixedGraphCat.Hom.sumMap (X₁ := X₁.obj) (Y₁ := Y₁.obj)
+  InducedCategory.homMk (MixedGraphCat.Hom.concatMap (X₁ := X₁.obj) (Y₁ := Y₁.obj)
     (X₂ := X₂.obj) (Y₂ := Y₂.obj) t f.hom g.hom)
 
 /-- Left whiskering, as a representation morphism. -/
 def whiskerLeftAux (X : Representation t) {Y₁ Y₂ : Representation t} (f : Y₁ ⟶ Y₂) :
     tensor X Y₁ ⟶ tensor X Y₂ :=
-  InducedCategory.homMk (MixedGraphCat.Hom.sumMap (X₁ := X.obj) (Y₁ := X.obj)
+  InducedCategory.homMk (MixedGraphCat.Hom.concatMap (X₁ := X.obj) (Y₁ := X.obj)
     (X₂ := Y₁.obj) (Y₂ := Y₂.obj) t (MixedGraphCat.Hom.id X.obj) f.hom)
 
 /-- Right whiskering, as a representation morphism. -/
 def whiskerRightAux {X₁ X₂ : Representation t} (f : X₁ ⟶ X₂) (Y : Representation t) :
     tensor X₁ Y ⟶ tensor X₂ Y :=
-  InducedCategory.homMk (MixedGraphCat.Hom.sumMap (X₁ := X₁.obj) (Y₁ := X₂.obj)
+  InducedCategory.homMk (MixedGraphCat.Hom.concatMap (X₁ := X₁.obj) (Y₁ := X₂.obj)
     (X₂ := Y.obj) (Y₂ := Y.obj) t f.hom (MixedGraphCat.Hom.id Y.obj))
 
 @[simps] instance instMonoidalStruct : MonoidalCategoryStruct (Representation t) where
@@ -605,9 +572,9 @@ def whiskerRightAux {X₁ X₂ : Representation t} (f : X₁ ⟶ X₂) (Y : Repr
   tensorHom := tensorHomAux
   whiskerLeft := whiskerLeftAux
   whiskerRight := whiskerRightAux
-  associator X Y Z := mkIso (MixedGraphCat.concat_assoc_iso t X.obj Y.obj Z.obj)
-  leftUnitor X := mkIso (MixedGraphCat.empty_concat_iso t X.obj)
-  rightUnitor X := mkIso (MixedGraphCat.concat_empty_iso t X.obj)
+  associator X Y Z := mkIso (MixedGraphCat.concatAssocIso t X.obj Y.obj Z.obj)
+  leftUnitor X := mkIso (MixedGraphCat.emptyConcatIso t X.obj)
+  rightUnitor X := mkIso (MixedGraphCat.concatEmptyIso t X.obj)
 
 /-- The category of autosegmental representations is monoidal under morpheme
     concatenation — [jardine-heinz-2015] Theorems 1 and 3 packaged as coherence,
