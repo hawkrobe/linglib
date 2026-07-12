@@ -14,15 +14,17 @@ import Linglib.Phonology.Autosegmental.NonCrossing
 /-!
 # Multi-tier autosegmental graphs and their monoidal category
 
-An autosegmental representation at general tier arity has `n` heterogeneously-typed
-ordered tiers and, for every ordered tier-pair `(i, j)`, a finite set of association
-links. This renders [jardine-heinz-2015]'s labeled graphs over an `n`-block tier
-partition fiberwise, and is the home of [lionnet-2022]'s register-tier tone geometry
-(subtonal-feature tiers and a mora tier around a Tonal Root Node hub). This file
-builds the object, the category of in-bounds objects, and its concatenation monoidal
-structure, mirroring the bipartite `AR.lean` at arity `n`.
+An autosegmental representation at general tier arity has a family of
+heterogeneously-typed ordered tiers, indexed by an arbitrary type, and, for every
+ordered tier-pair `(i, j)`, a finite set of association links. This renders
+[jardine-heinz-2015]'s labeled graphs over a tier partition fiberwise — their
+finite `n`-block partition is the `ι = Fin n` case — and is the home of
+[lionnet-2022]'s register-tier tone geometry (subtonal-feature tiers and a mora
+tier around a Tonal Root Node hub). This file builds the object, the category of
+in-bounds objects, and its concatenation monoidal structure, mirroring the
+bipartite `AR.lean` at general arity.
 
-The bipartite `Graph α β` / `AR α β` (`AR.lean`) is the `n = 2` case, kept
+The bipartite `Graph α β` / `AR α β` (`AR.lean`) is the `ι = Fin 2` case, kept
 first-class for its `extends`/anonymous-constructor ergonomics and independent
 universes; the two are related by `Inclusion.lean`'s monoidal functor `ι` rather
 than a defeq view.
@@ -30,9 +32,9 @@ than a defeq view.
 ## Main definitions
 
 * `MultiGraph τ`: the raw object — tiers `tiers i : LabeledTuple (τ i)` for
-  `τ : Fin n → Type u`, links `links i j : Finset (ℕ × ℕ)` per ordered tier-pair.
+  `τ : ι → Type u`, links `links i j : Finset (ℕ × ℕ)` per ordered tier-pair.
 * `MultiGraph.IsPlanar` / `MultiGraph.InBounds`: the per-pair No-Crossing
-  Constraint and the bounds predicate, both decidable.
+  Constraint and the bounds predicate, decidable over a `Fintype` tier index.
 * `MultiGraph.concat` / `MultiGraph.empty`: morpheme concatenation and its unit.
 * `MultiAR τ`: the in-bounds object; `MultiAR.Hom` is a family of per-tier
   label-preserving position maps that preserves association lines.
@@ -49,7 +51,10 @@ than a defeq view.
 
 Links are stored per ordered tier-pair (empty set ⇒ the pair does not associate),
 keeping `concat`'s index shift fiberwise; the associating topology is
-`{(i, j) | links i j ≠ ∅}`. Planarity is per ordered tier-pair — each pair its own
+`{(i, j) | links i j ≠ ∅}`. The tier index is an arbitrary type — none of the
+concatenation or categorical theory uses its structure — with `Fintype ι` gating
+only the decidability instances; concrete geometries instantiate `ι = Fin n`.
+Planarity is per ordered tier-pair — each pair its own
 autosegmental plane with crossing defined only within it, the multi-planar model of
 [mccarthy-1989]; a cross-plane constraint (two feature tiers non-crossing through a
 shared anchor tier) is deliberately inexpressible, declining the common-timeline
@@ -73,21 +78,21 @@ open CategoryTheory MonoidalCategory
 
 universe u
 
-/-- A multi-tier autosegmental representation is a family of `n` ordered labeled
-    tiers with a finite set of association lines (index pairs) on each ordered
-    tier-pair. -/
+/-- A multi-tier autosegmental representation is an indexed family of ordered
+    labeled tiers with a finite set of association lines (index pairs) on each
+    ordered tier-pair. -/
 @[ext]
-structure MultiGraph {n : ℕ} (τ : Fin n → Type u) where
-  /-- The `n` heterogeneously-typed ordered tiers. -/
-  tiers : (i : Fin n) → LabeledTuple (τ i)
+structure MultiGraph {ι : Type*} (τ : ι → Type u) where
+  /-- The heterogeneously-typed ordered tiers. -/
+  tiers : (i : ι) → LabeledTuple (τ i)
   /-- Association links per ordered tier-pair; empty ⇒ the pair does not associate. -/
-  links : (i j : Fin n) → Finset (ℕ × ℕ)
+  links : (i j : ι) → Finset (ℕ × ℕ)
 
 namespace MultiGraph
 
-variable {n : ℕ} {τ : Fin n → Type u}
+variable {ι : Type*} {τ : ι → Type u}
 
-instance [∀ i, DecidableEq (τ i)] : DecidableEq (MultiGraph τ) := fun _ _ =>
+instance [Fintype ι] [∀ i, DecidableEq (τ i)] : DecidableEq (MultiGraph τ) := fun _ _ =>
   decidable_of_iff _ MultiGraph.ext_iff.symm
 
 /-! ### Well-formedness predicates -/
@@ -96,14 +101,14 @@ instance [∀ i, DecidableEq (τ i)] : DecidableEq (MultiGraph τ) := fun _ _ =>
     satisfies [goldsmith-1976]'s No-Crossing Constraint. -/
 def IsPlanar (G : MultiGraph τ) : Prop := ∀ i j, IsNonCrossing (G.links i j)
 
-instance (G : MultiGraph τ) : Decidable G.IsPlanar :=
+instance [Fintype ι] (G : MultiGraph τ) : Decidable G.IsPlanar :=
   inferInstanceAs (Decidable (∀ _ _, _))
 
 /-- Every link's indices fall within the respective tier lengths. -/
 def InBounds (G : MultiGraph τ) : Prop :=
   ∀ i j, ∀ p ∈ G.links i j, p.1 < (G.tiers i).len ∧ p.2 < (G.tiers j).len
 
-instance (G : MultiGraph τ) : Decidable G.InBounds :=
+instance [Fintype ι] (G : MultiGraph τ) : Decidable G.InBounds :=
   inferInstanceAs (Decidable (∀ _ _, _))
 
 /-! ### The empty graph -/
@@ -113,8 +118,8 @@ def empty : MultiGraph τ where
   tiers _ := LabeledTuple.empty
   links _ _ := ∅
 
-@[simp] theorem tiers_empty (i : Fin n) : (empty : MultiGraph τ).tiers i = LabeledTuple.empty := rfl
-@[simp] theorem links_empty (i j : Fin n) : (empty : MultiGraph τ).links i j = ∅ := rfl
+@[simp] theorem tiers_empty (i : ι) : (empty : MultiGraph τ).tiers i = LabeledTuple.empty := rfl
+@[simp] theorem links_empty (i j : ι) : (empty : MultiGraph τ).links i j = ∅ := rfl
 
 theorem isPlanar_empty : (empty : MultiGraph τ).IsPlanar := by simp [IsPlanar]
 
@@ -128,10 +133,10 @@ def concat (A B : MultiGraph τ) : MultiGraph τ where
   tiers i := (A.tiers i).concat (B.tiers i)
   links i j := A.links i j ∪ (B.links i j).image (shiftLink (A.tiers i).len (A.tiers j).len)
 
-@[simp] theorem tiers_concat (A B : MultiGraph τ) (i : Fin n) :
+@[simp] theorem tiers_concat (A B : MultiGraph τ) (i : ι) :
     (A.concat B).tiers i = (A.tiers i).concat (B.tiers i) := rfl
 
-@[simp] theorem links_concat (A B : MultiGraph τ) (i j : Fin n) :
+@[simp] theorem links_concat (A B : MultiGraph τ) (i j : ι) :
     (A.concat B).links i j =
       A.links i j ∪ (B.links i j).image (shiftLink (A.tiers i).len (A.tiers j).len) := rfl
 
@@ -179,11 +184,11 @@ end MultiGraph
 
 /-! ## The in-bounds object `MultiAR` and its monoidal category -/
 
-variable {n : ℕ} {τ : Fin n → Type u}
+variable {ι : Type*} {τ : ι → Type u}
 
 /-- A multi-tier autosegmental graph whose links are in bounds — the objects of
     the multi-tier autosegmental category. -/
-structure MultiAR {n : ℕ} (τ : Fin n → Type u) extends MultiGraph τ where
+structure MultiAR {ι : Type*} (τ : ι → Type u) extends MultiGraph τ where
   inBounds : toMultiGraph.InBounds
 
 namespace MultiAR
@@ -196,9 +201,9 @@ namespace MultiAR
 @[ext]
 structure Hom (A B : MultiAR τ) where
   /-- Per-tier vertex maps. -/
-  fT : (i : Fin n) → LabeledTuple.Hom (A.tiers i) (B.tiers i)
+  fT : (i : ι) → LabeledTuple.Hom (A.tiers i) (B.tiers i)
   /-- Association lines are preserved (per tier-pair). -/
-  links_preserve : ∀ (i j : Fin n) {p q : ℕ} (hp : p < (A.tiers i).len) (hq : q < (A.tiers j).len),
+  links_preserve : ∀ (i j : ι) {p q : ℕ} (hp : p < (A.tiers i).len) (hq : q < (A.tiers j).len),
     (p, q) ∈ A.links i j → (((fT i).toFun ⟨p, hp⟩ : ℕ), ((fT j).toFun ⟨q, hq⟩ : ℕ)) ∈ B.links i j
 
 namespace Hom
@@ -217,16 +222,16 @@ def comp (f : Hom A B) (g : Hom B C) : Hom A C where
       g.links_preserve i j ((f.fT i).toFun ⟨_, hp⟩).isLt ((f.fT j).toFun ⟨_, hq⟩).isLt
         (f.links_preserve i j hp hq h)
 
-@[simp] theorem id_fT (A : MultiAR τ) (i : Fin n) :
+@[simp] theorem id_fT (A : MultiAR τ) (i : ι) :
     (Hom.id A).fT i = LabeledTuple.Hom.id (A.tiers i) := rfl
-@[simp] theorem comp_fT (f : Hom A B) (g : Hom B C) (i : Fin n) :
+@[simp] theorem comp_fT (f : Hom A B) (g : Hom B C) (i : ι) :
     (f.comp g).fT i = (f.fT i).comp (g.fT i) := rfl
 
 /-- Morphisms agree if their per-tier maps agree on the underlying `ℕ` indices.
     This collapses the `Hom.ext → LabeledTuple.Hom.ext → funext → Fin.ext` ladder
     used throughout the coherence proofs. -/
 theorem ext_fin {f g : Hom A B}
-    (h : ∀ (i : Fin n) (x : Fin (A.tiers i).len),
+    (h : ∀ (i : ι) (x : Fin (A.tiers i).len),
       ((f.fT i).toFun x : ℕ) = ((g.fT i).toFun x : ℕ)) : f = g :=
   Hom.ext (funext fun i => LabeledTuple.Hom.ext (funext fun x => Fin.ext (h i x)))
 
@@ -242,9 +247,9 @@ instance : Category (MultiAR τ) where
   comp_id _ := by apply Hom.ext; funext i; rfl
   assoc _ _ _ := by apply Hom.ext; funext i; rfl
 
-@[simp] theorem id_fT' (A : MultiAR τ) (i : Fin n) :
+@[simp] theorem id_fT' (A : MultiAR τ) (i : ι) :
     (𝟙 A : Hom A A).fT i = 𝟙 (A.tiers i) := rfl
-@[simp] theorem comp_fT' {A B C : MultiAR τ} (f : A ⟶ B) (g : B ⟶ C) (i : Fin n) :
+@[simp] theorem comp_fT' {A B C : MultiAR τ} (f : A ⟶ B) (g : B ⟶ C) (i : ι) :
     (f ≫ g).fT i = (f.fT i).comp (g.fT i) := rfl
 
 /-! ### Concatenation: the tensor object -/
@@ -257,10 +262,10 @@ def concat (A B : MultiAR τ) : MultiAR τ where
 @[simp] theorem toMultiGraph_concat (A B : MultiAR τ) :
     (A.concat B).toMultiGraph = A.toMultiGraph.concat B.toMultiGraph := rfl
 
-@[simp] theorem tiers_concat (A B : MultiAR τ) (i : Fin n) :
+@[simp] theorem tiers_concat (A B : MultiAR τ) (i : ι) :
     (A.concat B).tiers i = (A.tiers i).concat (B.tiers i) := rfl
 
-theorem links_concat (A B : MultiAR τ) (i j : Fin n) :
+theorem links_concat (A B : MultiAR τ) (i j : ι) :
     (A.concat B).links i j =
       A.links i j ∪ (B.links i j).image
         (shiftLink (A.tiers i).len (A.tiers j).len) := rfl
@@ -282,7 +287,7 @@ theorem toMultiGraph_injective :
     Function.Injective (toMultiGraph : MultiAR τ → MultiGraph τ) :=
   fun _ _ => ext_toMultiGraph
 
-instance [∀ i, DecidableEq (τ i)] : DecidableEq (MultiAR τ) := fun _ _ =>
+instance [Fintype ι] [∀ i, DecidableEq (τ i)] : DecidableEq (MultiAR τ) := fun _ _ =>
   decidable_of_iff _ ⟨ext_toMultiGraph, congrArg toMultiGraph⟩
 
 instance instMonoid : Monoid (MultiAR τ) where
@@ -324,7 +329,7 @@ def concatMap (f : Hom A A') (g : Hom B B') : Hom (A.concat B) (A'.concat B') wh
       · rw [Fin.appendMap_val, dif_neg (show ¬ (b + (A.tiers j).len) < (A.tiers j).len by omega)]
         congr 2; apply Fin.ext; simp
 
-@[simp] theorem concatMap_fT (f : Hom A A') (g : Hom B B') (i : Fin n) :
+@[simp] theorem concatMap_fT (f : Hom A A') (g : Hom B B') (i : ι) :
     (concatMap f g).fT i = LabeledTuple.Hom.concatMap (f.fT i) (g.fT i) := rfl
 
 theorem concatMap_id (A B : MultiAR τ) :
@@ -344,7 +349,7 @@ end Hom
 /-! ### `eqToHom` algebra -/
 
 /-- The `i`-th tier map of an `eqToHom` is the length-cast `Fin.cast`. -/
-@[simp] theorem eqToHom_fT_toFun {A B : MultiAR τ} (h : A = B) (i : Fin n) :
+@[simp] theorem eqToHom_fT_toFun {A B : MultiAR τ} (h : A = B) (i : ι) :
     ((eqToHom h).fT i).toFun = Fin.cast (congrArg (fun X => (X.tiers i).len) h) := by
   cases h; rfl
 
