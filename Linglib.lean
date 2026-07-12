@@ -57,6 +57,7 @@ import Linglib.Core.Categorical.AgentCat
 import Linglib.Core.Categorical.PartitionCat
 import Linglib.Core.CategoryTheory.Monoidal.LabeledTuple
 import Linglib.Core.Combinatorics.Antimatroid
+import Linglib.Core.Combinatorics.MixedGraph
 import Linglib.Core.Combinatorics.RootedTree.Aut
 import Linglib.Core.Combinatorics.RootedTree.ContractUnary
 import Linglib.Core.Computability.ContextFreeGrammar.Closure
