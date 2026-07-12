@@ -68,7 +68,7 @@ variable {V S ι : Type*}
 /-! ### The §4.2 axioms -/
 
 section Axioms
-variable (G : _root_.MixedGraph V)
+variable (G : MixedGraph V)
 
 /-- Axioms 1–2 ([jardine-2016-diss] §4.2), relative to a vertex coloring `c`
     (the tier partition): the arcs are tier-internal and a fiberwise
@@ -107,7 +107,7 @@ end Axioms
 
 /-- On the axiom class, precedence paths coincide with the arcs — the
     dissertation's `≺`. -/
-theorem IsTierOrdered.precPath_iff {G : _root_.MixedGraph V} {c : V → ι}
+theorem IsTierOrdered.precPath_iff {G : MixedGraph V} {c : V → ι}
     (h : IsTierOrdered G c) {v w : V} : G.PrecPath v w ↔ G.arcs.Adj v w := by
   constructor
   · intro hp
@@ -119,7 +119,7 @@ theorem IsTierOrdered.precPath_iff {G : _root_.MixedGraph V} {c : V → ι}
 /-- The named form of the flat axioms: on each tier the arcs are a strict total
     order (`LinearOrder`'s own pattern — flat fields, derived class). Feeds
     `linearOrderOfSTO` for sorting the fibers. -/
-theorem IsTierOrdered.isStrictTotalOrder {G : _root_.MixedGraph V} {c : V → ι}
+theorem IsTierOrdered.isStrictTotalOrder {G : MixedGraph V} {c : V → ι}
     (h : IsTierOrdered G c) (i : ι) :
     IsStrictTotalOrder {v // c v = i} (fun a b => G.arcs.Adj a b) where
   trichotomous a b hab hba := by
@@ -138,7 +138,7 @@ structure MixedGraphCat (S : Type v) : Type (max (u + 1) v) where
   /-- The vertex type. -/
   V : Type u
   /-- The mixed graph: undirected association edges and directed order arcs. -/
-  graph : _root_.MixedGraph V
+  graph : MixedGraph V
   /-- The labeling (`ℓ`). -/
   label : V → S
 
