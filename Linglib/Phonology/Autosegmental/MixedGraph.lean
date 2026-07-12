@@ -15,13 +15,12 @@ import Linglib.Core.Combinatorics.MixedGraph
 /-!
 # Labeled mixed graphs
 
-A labeled mixed graph `⟨V, E, A, ℓ⟩` is the general autosegmental object
-([jardine-2019] §5; [jardine-heinz-2015] §2; [jardine-2016-diss] §4.1): a
-`MixedGraph` — association edges as a `SimpleGraph`, order arcs as a `Digraph` —
-with a vertex labeling, and no further structure. Tiers are not part of the
-object: a tier assignment `t : S → ι` induces the node partition, and the
-dissertation's §4.2 axioms carve the autosegmental representations out of the
-raw graphs relative to it.
+A labeled mixed graph `⟨V, E, A, ℓ⟩` has labeled vertices, undirected
+association edges, and directed order arcs — the autosegmental representation
+of [jardine-2019], with no further structure. Tiers are not part of the object:
+a tier assignment `t : S → ι` on the labels induces the tier partition, and
+well-formedness axioms carve the representations out of the raw graphs
+relative to it.
 
 ## Main definitions
 
@@ -55,8 +54,11 @@ raw graphs relative to it.
 
 ## Implementation notes
 
-The object stores no cross-tier order, and morphisms default to the broad
-precedence-forgetting class, where the coproduct and the OCP repair live.
+The graph components reuse `SimpleGraph` (edges are two-element sets, so
+association is symmetric and loopless) and `Digraph`, bundled in
+`Core/Combinatorics/MixedGraph.lean`; no cross-tier order is stored. Morphisms
+default to the broad precedence-forgetting class, where the coproduct and the
+OCP repair live.
 Subgraph-based notions (`ASL.lean`) are signature-sensitive and do not transfer
 to the order signature for free. Monoid laws hold up to `Iso`; strictness
 belongs to the tiered normal form (`MultiAR.lean`).
@@ -84,7 +86,9 @@ def PrecPath (G : MixedGraph V S) : V → V → Prop := Relation.TransGen G.arcs
 /-- The tier of a vertex under a tier assignment on the alphabet. -/
 def tier (t : S → ι) (G : MixedGraph V S) (v : V) : ι := t (G.label v)
 
-/-- Tier equality propagates along precedence paths once arcs are tier-internal. -/
+/-- Tier equality propagates along precedence paths once arcs are tier-internal;
+    stated as a lemma because use sites have destructured endpoints, on which
+    `induction` cannot fire. -/
 lemma precPath_tier {t : S → ι} {G : MixedGraph V S}
     (harc : ∀ ⦃v w⦄, G.arcs.Adj v w → G.tier t v = G.tier t w) {v w : V}
     (h : G.PrecPath v w) : G.tier t v = G.tier t w := by
