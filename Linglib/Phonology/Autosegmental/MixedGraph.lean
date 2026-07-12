@@ -80,8 +80,8 @@ def tier (t : S → ι) (G : MixedGraph V S) (v : V) : ι := t (G.label v)
 section Axioms
 variable (t : S → ι) (G : MixedGraph V S)
 
-/-- Axioms 1–2 ([jardine-2016-diss] §4.2): per tier, the arcs are a strict
-    linear order — tier-internal, total, irreflexive, transitive. This is
+/-- Axioms 1–2 ([jardine-2016-diss] §4.2): the arcs are tier-internal and a
+    fiberwise `IsStrictTotalOrder`, stated as flat conjuncts. This is
     [jardine-2019]'s reading that `A` represents *the order* on each string; the
     arcs coincide with their path closure (`IsTierOrdered.precPath_iff`), so no
     closure operator appears in the axioms. -/
