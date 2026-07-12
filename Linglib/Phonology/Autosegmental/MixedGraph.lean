@@ -68,10 +68,11 @@ variable {V S ι : Type*}
 section Axioms
 variable (G : MixedGraph V)
 
-/-- Axioms 1–2 ([jardine-2016-diss] §4.2), relative to a vertex coloring `c`
-    (the tier partition): the arcs are tier-internal and a fiberwise
-    `IsStrictTotalOrder`. This is [jardine-2019]'s reading that `A` represents
-    *the order* on each string; the arcs coincide with their path closure
+/-- Axioms 1–2 ([jardine-2016-diss] §4.2). Axiom 2's tier partition enters as
+    the coloring `c` — data, not a proposition — and what remains propositional
+    is Axiom 1 relative to it: the arcs are tier-internal and strictly totally
+    order each fiber. This is [jardine-2019]'s reading that `A` represents *the
+    order* on each string; the arcs coincide with their path closure
     (`IsTierOrdered.precPath_iff`), so no closure operator appears in the
     axioms. -/
 structure IsTierOrdered (c : V → ι) : Prop where
@@ -97,8 +98,7 @@ def IsSaturated : Prop := ∀ v, ∃ w, G.edges.Adj v w
     form: no two association edges whose endpoints straddle in opposite precedence
     order. -/
 def IsPlanar : Prop :=
-  ∀ ⦃v v' w w'⦄, G.edges.Adj v v' → G.edges.Adj w w' → G.arcs.Adj v w →
-    ¬ G.arcs.Adj w' v'
+  ∀ ⦃v v' w w'⦄, G.edges.Adj v v' → G.edges.Adj w w' → G.arcs.Adj v w → ¬ G.arcs.Adj w' v'
 
 /-- Axiom 6, the OCP on melody tier `m`: precedence-adjacent vertices on `m` bear
     distinct labels. Needs the labeling `ℓ` and its tier assignment `t`. -/
