@@ -11,10 +11,10 @@ import Linglib.Phonology.Autosegmental.AR
 # Autosegmental realization of strings
 
 The **realization** of a string maps each symbol to its autosegmental graph primitive
-and concatenates them ([jardine-2019]'s mapping `g`): `realize g₀ w = ∏ (w.map g₀)` in
+and concatenates them ([jardine-2019]'s mapping `g`): `AR.realize g₀ w = ∏ (w.map g₀)` in
 the concatenation monoid `Monoid (AR α β)`.
 
-This is a string→AR **monoid homomorphism** (`realize_append`), the exact analogue —
+This is a string→AR **monoid homomorphism** (`AR.realize_append`), the exact analogue —
 one categorical level up — of the string→tier-string projection
 `TierProjection.apply` (= `List.filterMap`, also concat-distributing): both are
 free-monoid homomorphisms built from a per-symbol map, used to define a subregular
@@ -30,24 +30,24 @@ variable {S : Type*} {α β : Type*}
 
 /-- **Realize** a string as an autosegmental representation: concatenate the graph
     primitives `g₀ a` of its symbols ([jardine-2019]'s `g`). -/
-def realize (g₀ : S → AR α β) (w : List S) : AR α β := (w.map g₀).prod
+def AR.realize (g₀ : S → AR α β) (w : List S) : AR α β := (w.map g₀).prod
 
-@[simp] theorem realize_nil (g₀ : S → AR α β) : realize g₀ [] = AR.empty := rfl
+@[simp] theorem AR.realize_nil (g₀ : S → AR α β) : AR.realize g₀ [] = AR.empty := rfl
 
-@[simp] theorem realize_cons (g₀ : S → AR α β) (a : S) (w : List S) :
-    realize g₀ (a :: w) = (g₀ a).concat (realize g₀ w) := rfl
+@[simp] theorem AR.realize_cons (g₀ : S → AR α β) (a : S) (w : List S) :
+    AR.realize g₀ (a :: w) = (g₀ a).concat (AR.realize g₀ w) := rfl
 
 /-- **The realization is a monoid homomorphism**: it distributes over concatenation —
     the string→AR analogue of `TierProjection.apply_append`. -/
-theorem realize_append (g₀ : S → AR α β) (xs ys : List S) :
-    realize g₀ (xs ++ ys) = (realize g₀ xs).concat (realize g₀ ys) := by
-  simp only [realize, List.map_append, List.prod_append]; rfl
+theorem AR.realize_append (g₀ : S → AR α β) (xs ys : List S) :
+    AR.realize g₀ (xs ++ ys) = (AR.realize g₀ xs).concat (AR.realize g₀ ys) := by
+  simp only [AR.realize, List.map_append, List.prod_append]; rfl
 
 /-! ### Tier projections
 
 The realization composed with a tier accessor is itself a free-monoid hom into that
 tier's free monoid: `upperProj g₀` sends a string to the concatenation of its symbols'
-upper tiers (the underlying list of `realize g₀ w`'s upper tier), and likewise
+upper tiers (the underlying list of `AR.realize g₀ w`'s upper tier), and likewise
 `lowerProj`. These factor the realization's tier content through `FreeMonoid` and are
 the bridge used to place link-free `ASL` sets in `SF` (`Studies.Jardine2019`): a
 per-tier factor constraint on the realization is the `comap` of a factor language along
@@ -70,35 +70,35 @@ def lowerProj (g₀ : S → AR α β) : FreeMonoid S →* FreeMonoid β :=
     lowerProj g₀ (FreeMonoid.of s) = FreeMonoid.ofList (g₀ s).lower.toList :=
   FreeMonoid.lift_eval_of _ _
 
-/-- The upper tier of a realization is its upper projection: `(realize g₀ w).upper`'s
+/-- The upper tier of a realization is its upper projection: `(AR.realize g₀ w).upper`'s
 underlying list is `upperProj g₀ w`. -/
 theorem realize_upper_toList (g₀ : S → AR α β) (w : List S) :
-    (realize g₀ w).upper.toList = upperProj g₀ (FreeMonoid.ofList w) := by
+    (AR.realize g₀ w).upper.toList = upperProj g₀ (FreeMonoid.ofList w) := by
   induction w with
-  | nil => rw [realize_nil, show FreeMonoid.ofList ([] : List S) = 1 from rfl, map_one]; rfl
+  | nil => rw [AR.realize_nil, show FreeMonoid.ofList ([] : List S) = 1 from rfl, map_one]; rfl
   | cons s w ih =>
-    rw [realize_cons, AR.upper_concat, LabeledTuple.toList_concat, ih, FreeMonoid.ofList_cons,
+    rw [AR.realize_cons, AR.upper_concat, LabeledTuple.toList_concat, ih, FreeMonoid.ofList_cons,
       map_mul, upperProj_of]
     rfl
 
 /-- The lower tier of a realization is its lower projection. -/
 theorem realize_lower_toList (g₀ : S → AR α β) (w : List S) :
-    (realize g₀ w).lower.toList = lowerProj g₀ (FreeMonoid.ofList w) := by
+    (AR.realize g₀ w).lower.toList = lowerProj g₀ (FreeMonoid.ofList w) := by
   induction w with
-  | nil => rw [realize_nil, show FreeMonoid.ofList ([] : List S) = 1 from rfl, map_one]; rfl
+  | nil => rw [AR.realize_nil, show FreeMonoid.ofList ([] : List S) = 1 from rfl, map_one]; rfl
   | cons s w ih =>
-    rw [realize_cons, AR.lower_concat, LabeledTuple.toList_concat, ih, FreeMonoid.ofList_cons,
+    rw [AR.realize_cons, AR.lower_concat, LabeledTuple.toList_concat, ih, FreeMonoid.ofList_cons,
       map_mul, lowerProj_of]
     rfl
 
 /-! ### Linearization: the association-state string of an AR
 
-The inverse direction of the bridge. Where `realize` builds an AR from a string,
+The inverse direction of the bridge. Where `AR.realize` builds an AR from a string,
 `linearize` reads the **association-state string** off an AR: per timing-tier position,
 its label together with the labels of the melody nodes linked to it, in tier order. This
 is the linearisation phonologists use implicitly when writing a tonal input as a string of
 TBU symbols — [jardine-2016] §4.4: each string symbol records one timing unit's
-associations, so transducer look-ahead is measured on the timing tier. Like `realize`, it
+associations, so transducer look-ahead is measured on the timing tier. Like `AR.realize`, it
 is a monoid homomorphism into `(List, ++)` (`AR.linearize_concat`), so the linearization
 of a realization is the concatenation of the per-symbol association profiles
 (`linearize_realize`). -/
@@ -249,9 +249,9 @@ theorem AR.linearize_concat (A B : AR α β) :
 /-- The linearization of a realization is the concatenation of the per-symbol
 association profiles ([jardine-2016] (40)). -/
 theorem linearize_realize (g₀ : S → AR α β) (w : List S) :
-    (realize g₀ w).linearize = w.flatMap fun a => (g₀ a).linearize := by
+    (AR.realize g₀ w).linearize = w.flatMap fun a => (g₀ a).linearize := by
   induction w with
   | nil => simp
-  | cons a w ih => rw [realize_cons, AR.linearize_concat, ih, List.flatMap_cons]
+  | cons a w ih => rw [AR.realize_cons, AR.linearize_concat, ih, List.flatMap_cons]
 
 end Autosegmental

@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Core.Algebra.FreeMonoid.Destutter
 import Linglib.Phonology.OCP
+import Linglib.Phonology.Autosegmental.NormalForm
 import Linglib.Phonology.Autosegmental.Realization
 
 /-!
@@ -22,7 +23,7 @@ supplies the missing merge as a post-processing retraction on the upper tier:
   `(k, j)` is repointed to `(ρ k, j)`, where `ρ` (`runIdx`) sends an upper position to
   the index of its run in the collapsed tier. The lower tier is untouched, so a merged
   node keeps *all* the morae its run was associated with (multiple association).
-* `realizeMerged := collapseAR ∘ realize` — the OCP-merging realization.
+* `realizeMerged := collapseAR ∘ AR.realize` — the OCP-merging realization.
 
 The upper-tier collapse is exactly `OCP.collapse` (= `List.destutter (· ≠ ·)`); the
 link pushforward is the `SimpleGraph.map`/`Quiver.Push` idiom
@@ -593,14 +594,106 @@ The algebraic form of the spreading/contour asymmetry ([jardine-heinz-2015] §7)
 
 variable {S : Type*}
 
-/-- **The OCP-merging realization** ([jardine-2019]): realize the string via the
+/-- **The OCP-merging realization** ([jardine-2019]): AR.realize the string via the
     bridge-only `concat`, then fuse adjacent identical upper nodes
-    (`collapseAR ∘ realize`). Unlike `realize`, `realizeMerged g₀ (Hⁿ)` is a single H
+    (`collapseAR ∘ AR.realize`). Unlike `AR.realize`, `realizeMerged g₀ (Hⁿ)` is a single H
     node multiply associated — the merge that renders unbounded tone plateauing a
     *local* AR pattern. -/
-def realizeMerged (g₀ : S → AR α β) (w : List S) : AR α β := collapseAR (realize g₀ w)
+def realizeMerged (g₀ : S → AR α β) (w : List S) : AR α β := collapseAR (AR.realize g₀ w)
 
 @[simp] theorem realizeMerged_def (g₀ : S → AR α β) (w : List S) :
-    realizeMerged g₀ w = collapseAR (realize g₀ w) := rfl
+    realizeMerged g₀ w = collapseAR (AR.realize g₀ w) := rfl
+
+/-! ### The collapse in coordinates
+
+The OCP merge on the graph foundation: destutter melody tier `m`'s word and
+repoint its links through `runIdx`. Like `normalize` the result is a
+`Representation` on a sigma-`Fin` carrier, but the merge is not a pullback —
+`runIdx` is monotone, not bijective — so the structural axioms are proved
+directly on the merged carrier. -/
+
+section CoordinateCollapse
+
+variable {ι : Type*} [DecidableEq ι] {τ : ι → Type*}
+variable (X : Representation (Sigma.fst : ((i : ι) × τ i) → ι))
+
+omit [DecidableEq ι] in
+/-- The label of a canonical vertex sits on its own tier. -/
+theorem Representation.label_vertexEquiv [Finite X.obj.V] (i : ι)
+    (p : Fin (X.tierLength i)) : (X.obj.label (X.vertexEquiv ⟨i, p⟩)).1 = i :=
+  (X.fiberEnum i p).property
+
+omit [DecidableEq ι] in
+/-- Links are symmetric in coordinates. -/
+theorem Representation.link_symm [Finite X.obj.V] {i j : ι} {p q : ℕ}
+    (h : X.link i j p q) : X.link j i q p := by
+  obtain ⟨hp, hq, hl⟩ := h
+  exact ⟨hq, hp, hl.symm⟩
+
+variable (m : ι) [DecidableEq (τ m)]
+
+/-- Tier words after collapsing melody tier `m`: destuttered at `m`, untouched
+    elsewhere. -/
+noncomputable def Representation.collapsedWord [Finite X.obj.V] : ∀ i, List (τ i) :=
+  Function.update (fun i => X.tierWord i) m (OCP.collapse (X.tierWord m))
+
+theorem Representation.collapsedWord_length_le [Finite X.obj.V] (i : ι) :
+    (X.collapsedWord m i).length ≤ X.tierLength i := by
+  rcases eq_or_ne i m with rfl | h
+  · simpa [Representation.collapsedWord] using OCP.collapse_length_le (X.tierWord i)
+  · simp [Representation.collapsedWord, Function.update_of_ne h]
+
+/-- Position repointing: `runIdx` on the melody tier, identity elsewhere. -/
+noncomputable def Representation.collapseIdx [Finite X.obj.V] (i : ι) (p : ℕ) : ℕ :=
+  if i = m then runIdx (X.tierWord m) p else p
+
+/-- **The OCP-merging collapse**: melody tier `m` destuttered, links repointed
+    through `runIdx`, other tiers untouched. -/
+noncomputable def Representation.collapse [Finite X.obj.V] :
+    Representation (Sigma.fst : ((i : ι) × τ i) → ι) where
+  obj :=
+    { V := (i : ι) × Fin (X.collapsedWord m i).length
+      graph :=
+        { edges :=
+            { Adj := fun v w => v ≠ w ∧ ∃ p q, X.link v.1 w.1 p q ∧
+                X.collapseIdx m v.1 p = v.2 ∧ X.collapseIdx m w.1 q = w.2
+              symm := ⟨fun v w h => ⟨h.1.symm, by
+                obtain ⟨p, q, hl, hp, hq⟩ := h.2
+                exact ⟨q, p, X.link_symm hl, hq, hp⟩⟩⟩
+              loopless := ⟨fun v h => h.1 rfl⟩ }
+          arcs := ⟨fun v w => v.1 = w.1 ∧ (v.2 : ℕ) < (w.2 : ℕ)⟩ }
+      label := fun v => ⟨v.1, (X.collapsedWord m v.1)[v.2]⟩ }
+  property := by
+    refine ⟨⟨fun v w h => h.1, fun v w hne htier => ?_, fun v h => lt_irrefl _ h.2,
+      fun u v w huv hvw => ⟨huv.1.trans hvw.1, huv.2.trans hvw.2⟩⟩, fun v w hadj harc => ?_⟩
+    · obtain ⟨i, p⟩ := v
+      obtain ⟨j, q⟩ := w
+      obtain rfl : i = j := htier
+      rcases Nat.lt_trichotomy (p : ℕ) (q : ℕ) with h | h | h
+      · exact Or.inl ⟨rfl, h⟩
+      · exact absurd (by rw [Fin.ext h]) hne
+      · exact Or.inr ⟨rfl, h⟩
+    · obtain ⟨hne, p, q, ⟨hp, hq, hl⟩, -, -⟩ := hadj
+      obtain ⟨i, pv⟩ := v
+      obtain ⟨j, qw⟩ := w
+      obtain rfl : i = j := harc.1
+      have hlab : X.obj.tier Sigma.fst (X.vertexEquiv ⟨i, ⟨p, hp⟩⟩)
+          = X.obj.tier Sigma.fst (X.vertexEquiv ⟨i, ⟨q, hq⟩⟩) := by
+        show (X.obj.label _).1 = (X.obj.label _).1
+        rw [X.label_vertexEquiv, X.label_vertexEquiv]
+      exact (X.property.1.total hl.ne hlab).elim (X.property.2 hl) (X.property.2 hl.symm)
+
+instance [Finite X.obj.V] : Finite (X.collapse m).obj.V :=
+  haveI : Finite ((i : ι) × Fin (X.tierLength i)) := Finite.of_equiv _ X.vertexEquiv.symm
+  Finite.of_injective
+    (fun v : (i : ι) × Fin (X.collapsedWord m i).length =>
+      (⟨v.1, v.2.castLE (X.collapsedWord_length_le m v.1)⟩ : (i : ι) × Fin (X.tierLength i)))
+    fun v w h => by
+      obtain ⟨i, p⟩ := v
+      obtain ⟨j, q⟩ := w
+      obtain ⟨rfl, h2⟩ := Sigma.mk.inj_iff.mp h
+      exact congrArg _ (Fin.castLE_injective _ (eq_of_heq h2))
+
+end CoordinateCollapse
 
 end Autosegmental

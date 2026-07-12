@@ -87,7 +87,7 @@ def toAR : TBU → AR _root_.Tone.TRN Unit
   | .O => .bare ()
 
 theorem linearize_realize_toAR (w : List TBU) :
-    (realize toAR w).linearize
+    (AR.realize toAR w).linearize
       = w.map fun a => ((), if a = .H then [_root_.Tone.TRN.H] else []) := by
   rw [linearize_realize]
   induction w with
@@ -95,25 +95,25 @@ theorem linearize_realize_toAR (w : List TBU) :
   | cons a w ih => rw [List.flatMap_cons, List.map_cons, ih]; cases a <;> simp [toAR]
 
 theorem upper_realize_toAR (v : List TBU) :
-    (realize toAR v).upper.toList = List.replicate (v.count .H) _root_.Tone.TRN.H := by
+    (AR.realize toAR v).upper.toList = List.replicate (v.count .H) _root_.Tone.TRN.H := by
   induction v with
   | nil => rfl
   | cons a v ih =>
-    rw [realize_cons, AR.upper_concat, LabeledTuple.toList_concat, ih]
+    rw [AR.realize_cons, AR.upper_concat, LabeledTuple.toList_concat, ih]
     cases a <;> simp [toAR, List.replicate_succ]
 
 /-- The lower tier of the realization is the bare timing tier. -/
 theorem lower_realize_toAR (v : List TBU) :
-    (realize toAR v).lower.toList = List.replicate v.length () := by
+    (AR.realize toAR v).lower.toList = List.replicate v.length () := by
   induction v with
   | nil => rfl
   | cons a v ih =>
-    rw [realize_cons, AR.lower_concat, LabeledTuple.toList_concat, ih]
+    rw [AR.realize_cons, AR.lower_concat, LabeledTuple.toList_concat, ih]
     cases a <;> simp [toAR, List.replicate_succ]
 
 /-- A timing node of the input representation is linked iff its TBU is H-toned. -/
 theorem isLinkedLower_realize_toAR {w : List TBU} {j : ℕ} :
-    (realize toAR w).toGraph.IsLinkedLower j ↔ w[j]? = some .H := by
+    (AR.realize toAR w).toGraph.IsLinkedLower j ↔ w[j]? = some .H := by
   rw [AR.isLinkedLower_iff_linearize, linearize_realize_toAR]
   cases hv : w[j]? with
   | none => simp [List.getElem?_map, hv]

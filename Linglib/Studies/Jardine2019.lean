@@ -22,7 +22,7 @@ banned-subgraph constraints over its realizations.
 Two realizations are checked, against the same forbidden tone melody `*HLH`:
 
 * `Autosegmental.realize` uses the project's *bridge-only* `concat` (the coproduct), so
-  an `H`-plateau `Hⁿ` stays `n` separate `H` nodes. Banning `*HLH` over `realize` then
+  an `H`-plateau `Hⁿ` stays `n` separate `H` nodes. Banning `*HLH` over `AR.realize` then
   catches only a *local* `H-L-H` (three adjacent tonal nodes) — `hlh_excluded`.
 * `Autosegmental.realizeMerged` (`Collapse.lean`) is [jardine-2019]'s OCP-*merging*
   `g_T`: `g_T(Hⁿ)` is a *single* `H` node multiply associated. Banning `*HLH` over
@@ -60,13 +60,13 @@ contains `F` form a star-free language: the intersection of two per-tier
 factor-occurrence constraints, each the inverse image (`comap`) of a star-free
 contains-factor language along a tier projection. -/
 theorem isStarFree_occur_of_links_empty (g₀ : S → AR α β) (F : Graph α β) (hF : F.links = ∅) :
-    Language.IsStarFree {w : List S | SubgraphEmbeds F (realize g₀ w).toGraph} := by
-  have hset : {w : List S | SubgraphEmbeds F (realize g₀ w).toGraph}
+    Language.IsStarFree {w : List S | SubgraphEmbeds F (AR.realize g₀ w).toGraph} := by
+  have hset : {w : List S | SubgraphEmbeds F (AR.realize g₀ w).toGraph}
       = {w : List S | F.upper.toList <:+: upperProj g₀ (FreeMonoid.ofList w)}
         ∩ {w : List S | F.lower.toList <:+: lowerProj g₀ (FreeMonoid.ofList w)} := by
     ext w
     simp only [Set.mem_setOf_eq, Set.mem_inter_iff]
-    rw [subgraphEmbeds_iff_infix_of_links_empty F (realize g₀ w).toGraph hF,
+    rw [subgraphEmbeds_iff_infix_of_links_empty F (AR.realize g₀ w).toGraph hF,
       realize_upper_toList, realize_lower_toList]
   rw [hset]
   exact ((Language.isStarFree_containsFactor F.upper.toList).comap (upperProj g₀)).inter
@@ -88,9 +88,9 @@ theorem ASL.isStarFree_of_links_empty (g₀ : S → AR α β) (B : List (Graph �
     have hFmem : F.links = ∅ := hB F (List.mem_cons_self ..)
     have ih' := ih (fun F' hF' => hB F' (List.mem_cons_of_mem _ hF'))
     have hset : ASL g₀ (F :: B') =
-        {w : List S | SubgraphEmbeds F (realize g₀ w).toGraph}ᶜ ∩ ASL g₀ B' := by
+        {w : List S | SubgraphEmbeds F (AR.realize g₀ w).toGraph}ᶜ ∩ ASL g₀ B' := by
       ext w
-      show (∀ G ∈ F :: B', ¬ SubgraphEmbeds G (realize g₀ w).toGraph) ↔ _
+      show (∀ G ∈ F :: B', ¬ SubgraphEmbeds G (AR.realize g₀ w).toGraph) ↔ _
       rw [List.forall_mem_cons]; exact Iff.rfl
     rw [hset]
     exact (isStarFree_occur_of_links_empty g₀ F hFmem).compl.inter ih'
@@ -153,7 +153,7 @@ def hlhTier : Graph ToneSym Mora :=
     AR.float ToneSym.H).toGraph
 
 /-- The merging variant of `ASL`: the same forbidden-subgraph preimage, taken along the
-    OCP-merging realization `realizeMerged` instead of the bridge-only `realize`. -/
+    OCP-merging realization `realizeMerged` instead of the bridge-only `AR.realize`. -/
 def ASL' (g₀ : ToneSym → AR ToneSym Mora) (B : List (Graph ToneSym Mora)) : Language ToneSym :=
   realizeMerged g₀ ⁻¹' { A | isFreeOf B A }
 
@@ -175,7 +175,7 @@ theorem hhh_merged_included : [ToneSym.H, .H, .H] ∈ ASL' gT [hlhTier] := by de
 theorem hlhTier_merged_excludes_plateau :
     [ToneSym.H, .H, .L, .L, .H, .H] ∉ ASL' gT [hlhTier] := by decide
 
-/-- The same string is **admitted** under the non-merging `realize`: with the plateaus
+/-- The same string is **admitted** under the non-merging `AR.realize`: with the plateaus
     kept apart, the tone tier reads `H-H-L-L-H-H`, which has no three *adjacent* `H-L-H`
     nodes. The contrast with `hlhTier_merged_excludes_plateau` is exactly the non-local
     expressivity OCP merging adds — the local `hlh_excluded` constraint cannot see it. -/

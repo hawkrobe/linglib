@@ -21,11 +21,11 @@ local base condition along a free-monoid homomorphism**.
 
 ```
   TSL  =  tierProject ⁻¹' (SL-language)        -- string→tier-string projection
-  ASL  =  realize g₀  ⁻¹' { A | isFreeOf B A } -- string→AR realization
+  ASL  =  AR.realize g₀  ⁻¹' { A | isFreeOf B A } -- string→AR realization
 ```
 
 `tierProject` (`Core/Computability/Subregular/Language/TierStrictlyLocal.lean`) and
-`realize` (`Realization.lean`) are
+`AR.realize` (`Realization.lean`) are
 both concat-distributing free-monoid homs; the difference is only the codomain — a
 tier string (discarding off-tier material) vs an AR (keeping the association lines).
 That extra structure is why [jardine-2019] finds `ASL` and `TSL` incomparable.
@@ -44,18 +44,18 @@ instance [DecidableEq α] [DecidableEq β] (B : List (Graph α β)) (A : AR α �
 
 /-- **The Autosegmental Strictly Local stringset** of a realization `g₀` and a forbidden
     grammar `B` ([jardine-2019]): the strings whose realization avoids `B`. The preimage
-    of the AR object-property `isFreeOf B` along `realize g₀` — the same shape as
+    of the AR object-property `isFreeOf B` along `AR.realize g₀` — the same shape as
     `TSL.lang = tierProject ⁻¹' (SL-language)`, with the AR realization in place of the
     tier projection. -/
 def ASL (g₀ : S → AR α β) (B : List (Graph α β)) : Language S :=
-  realize g₀ ⁻¹' { A | isFreeOf B A }
+  AR.realize g₀ ⁻¹' { A | isFreeOf B A }
 
 @[simp] theorem mem_ASL (g₀ : S → AR α β) (B : List (Graph α β)) (w : List S) :
-    w ∈ ASL g₀ B ↔ isFreeOf B (realize g₀ w) := Iff.rfl
+    w ∈ ASL g₀ B ↔ isFreeOf B (AR.realize g₀ w) := Iff.rfl
 
 instance [DecidableEq α] [DecidableEq β] (g₀ : S → AR α β) (B : List (Graph α β))
     (w : List S) : Decidable (w ∈ ASL g₀ B) :=
-  inferInstanceAs (Decidable (isFreeOf B (realize g₀ w)))
+  inferInstanceAs (Decidable (isFreeOf B (AR.realize g₀ w)))
 
 /-- A stringset is **autosegmental strictly local** when some realization and forbidden
     grammar present it ([jardine-2019]). -/

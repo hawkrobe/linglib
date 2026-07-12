@@ -214,7 +214,7 @@ def readTBU (s : Unit × List Tone.TRN) : TBU := if s.2.isEmpty then .O else .H
 /-- (37a): the TBU string is recoverable from the realized AR, so the complexity results
 transfer to the autosegmental analysis. -/
 theorem readTBU_linearize_realize (w : List TBU) :
-    ((realize toAR w).linearize).map readTBU = w := by
+    ((AR.realize toAR w).linearize).map readTBU = w := by
   rw [linearize_realize_toAR, List.map_map]
   conv_rhs => rw [← List.map_id w]
   exact List.map_congr_left fun a _ => by cases a <;> rfl
@@ -227,7 +227,7 @@ autosegment multiply linked to exactly the `plateau`, over an unchanged timing t
 
 theorem mem_links_realizeMerged_utp (p : ℕ × ℕ) :
     p ∈ (realizeMerged toAR (utp.map w)).links ↔ p.1 = 0 ∧ utp.Surfaces w p.2 := by
-  have hL : ∀ j, (realize toAR (utp.map w)).toGraph.IsLinkedLower j ↔ utp.Surfaces w j :=
+  have hL : ∀ j, (AR.realize toAR (utp.map w)).toGraph.IsLinkedLower j ↔ utp.Surfaces w j :=
     fun j => by rw [isLinkedLower_realize_toAR, utp.map_getElem?_H_iff]
   rw [realizeMerged_def,
     mem_links_collapseAR_of_upper_replicate (upper_realize_toAR (utp.map w)), hL]
@@ -243,7 +243,7 @@ theorem lower_realizeMerged_utp :
     (realizeMerged toAR (utp.map w)).lower.toList = List.replicate w.length () := by
   rw [realizeMerged_def, collapseAR_lower]
   have h := List.eq_replicate_of_mem
-    (l := (realize toAR (utp.map w)).lower.toList) (a := ()) fun _ _ => rfl
+    (l := (AR.realize toAR (utp.map w)).lower.toList) (a := ()) fun _ _ => rfl
   rwa [LabeledTuple.toList_length, ← AR.linearize_length, linearize_realize_toAR,
     List.length_map, Tone.Surfacing.map_length] at h
 
