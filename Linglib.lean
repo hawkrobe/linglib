@@ -1353,7 +1353,6 @@ import Linglib.Phonology.Autosegmental.Inclusion
 import Linglib.Phonology.Autosegmental.Junction
 import Linglib.Phonology.Autosegmental.Melody
 import Linglib.Phonology.Autosegmental.MultiAR
-import Linglib.Phonology.Autosegmental.MultiGraph
 import Linglib.Phonology.Autosegmental.NonCrossing
 import Linglib.Phonology.Autosegmental.Realization
 import Linglib.Phonology.Autosegmental.Sharing
