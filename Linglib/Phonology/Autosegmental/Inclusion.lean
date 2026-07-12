@@ -137,7 +137,7 @@ theorem toMultiAR_empty : (AR.empty : AR α β).toMultiAR = MultiAR.empty :=
 /-- Every tier of the included unit is empty (length 0). -/
 @[simp] theorem toMultiAR_empty_tiers_len (i : Fin 2) :
     ((AR.empty : AR α β).toMultiAR.tiers i).len = 0 := by
-  rw [show (AR.empty : AR α β).toMultiAR = MultiAR.empty from toMultiAR_empty]; rfl
+  rw [toMultiAR_empty]; rfl
 
 /-- The inclusion preserves the tensor (monoidal tensor object coherence). -/
 theorem toMultiAR_concat (A B : AR α β) :
@@ -159,9 +159,7 @@ theorem toMultiAR_concatMap {A A' B B' : AR α β} (f : AR.Hom A A') (g : AR.Hom
     (AR.Hom.concatMap f g).toMultiAR =
       eqToHom (toMultiAR_concat A B) ≫ MultiAR.Hom.concatMap f.toMultiAR g.toMultiAR
         ≫ eqToHom (toMultiAR_concat A' B').symm := by
-  apply MultiAR.Hom.ext; funext i
-  apply LabeledTuple.Hom.ext; funext x
-  apply Fin.ext
+  refine MultiAR.Hom.ext_fin fun i x => ?_
   fin_cases i <;>
     simp only [MultiAR.comp_fT', MultiAR.Hom.concatMap_fT, AR.Hom.toMultiFT,
       AR.Hom.toMultiAR, LabeledTuple.Hom.comp_toFun, LabeledTuple.Hom.concatMap_toFun,
@@ -174,7 +172,7 @@ def ι.coreMonoidal : (ι (α := α) (β := β)).CoreMonoidal where
   εIso := eqToIso toMultiAR_empty.symm
   μIso X Y := eqToIso (toMultiAR_concat X Y).symm
   μIso_hom_natural_left {X Y} f X' := by
-    apply MultiAR.Hom.ext; funext i; apply LabeledTuple.Hom.ext; funext x; apply Fin.ext
+    refine MultiAR.Hom.ext_fin fun i x => ?_
     fin_cases i <;>
       simp only [ι_obj, ι_map, eqToIso.hom, MonoidalCategoryStruct.whiskerRight,
         MultiAR.comp_fT', MultiAR.Hom.concatMap_fT, MultiAR.eqToHom_fT_toFun,
@@ -182,7 +180,7 @@ def ι.coreMonoidal : (ι (α := α) (β := β)).CoreMonoidal where
         LabeledTuple.Hom.concatMap_toFun, Function.comp_apply] <;>
       rfl
   μIso_hom_natural_right {X Y} X' f := by
-    apply MultiAR.Hom.ext; funext i; apply LabeledTuple.Hom.ext; funext x; apply Fin.ext
+    refine MultiAR.Hom.ext_fin fun i x => ?_
     fin_cases i <;>
       simp only [ι_obj, ι_map, eqToIso.hom, MonoidalCategoryStruct.whiskerLeft,
         MultiAR.comp_fT', MultiAR.Hom.concatMap_fT, MultiAR.eqToHom_fT_toFun,
@@ -190,7 +188,7 @@ def ι.coreMonoidal : (ι (α := α) (β := β)).CoreMonoidal where
         LabeledTuple.Hom.concatMap_toFun, Function.comp_apply] <;>
       rfl
   associativity X Y Z := by
-    apply MultiAR.Hom.ext; funext i; apply LabeledTuple.Hom.ext; funext x; apply Fin.ext
+    refine MultiAR.Hom.ext_fin fun i x => ?_
     fin_cases i <;>
       simp only [ι_obj, eqToIso.hom, MonoidalCategoryStruct.whiskerRight,
         MonoidalCategoryStruct.whiskerLeft, MonoidalCategoryStruct.associator,
@@ -198,10 +196,10 @@ def ι.coreMonoidal : (ι (α := α) (β := β)).CoreMonoidal where
         MultiAR.eqToHom_fT_toFun, eqToHom_map, MultiAR.Hom.id_fT, LabeledTuple.Hom.id_toFun,
         LabeledTuple.Hom.comp_toFun, LabeledTuple.Hom.concatMap_toFun, Function.comp_apply,
         Fin.val_cast, Fin.appendMap_val, id_eq,
-        toMultiAR_concat, MultiAR.concat_tiers, LabeledTuple.concat_len] <;>
+        toMultiAR_concat, MultiAR.tiers_concat, LabeledTuple.concat_len] <;>
       (split_ifs <;> omega)
   left_unitality X := by
-    apply MultiAR.Hom.ext; funext i; apply LabeledTuple.Hom.ext; funext x; apply Fin.ext
+    refine MultiAR.Hom.ext_fin fun i x => ?_
     fin_cases i <;>
       · simp only [ι_obj, eqToIso.hom, MonoidalCategoryStruct.leftUnitor,
           MonoidalCategoryStruct.whiskerRight, MonoidalCategoryStruct.tensorUnit,
@@ -212,11 +210,11 @@ def ι.coreMonoidal : (ι (α := α) (β := β)).CoreMonoidal where
           MultiAR.empty, MultiGraph.empty, LabeledTuple.empty_len, toMultiAR_empty_tiers_len]
         have hx := x.isLt
         simp only [MonoidalCategoryStruct.tensorObj, MonoidalCategoryStruct.tensorUnit,
-          MultiAR.concat_tiers, LabeledTuple.concat_len, MultiAR.empty, MultiGraph.empty,
+          MultiAR.tiers_concat, LabeledTuple.concat_len, MultiAR.empty, MultiGraph.empty,
           LabeledTuple.empty_len, Nat.zero_add] at hx
         split_ifs <;> omega
   right_unitality X := by
-    apply MultiAR.Hom.ext; funext i; apply LabeledTuple.Hom.ext; funext x; apply Fin.ext
+    refine MultiAR.Hom.ext_fin fun i x => ?_
     fin_cases i <;>
       · simp only [ι_obj, eqToIso.hom, MonoidalCategoryStruct.rightUnitor,
           MonoidalCategoryStruct.whiskerLeft, MonoidalCategoryStruct.tensorUnit,
@@ -227,7 +225,7 @@ def ι.coreMonoidal : (ι (α := α) (β := β)).CoreMonoidal where
           MultiAR.empty, MultiGraph.empty, LabeledTuple.empty_len]
         have hx := x.isLt
         simp only [MonoidalCategoryStruct.tensorObj, MonoidalCategoryStruct.tensorUnit,
-          MultiAR.concat_tiers, LabeledTuple.concat_len, MultiAR.empty, MultiGraph.empty,
+          MultiAR.tiers_concat, LabeledTuple.concat_len, MultiAR.empty, MultiGraph.empty,
           LabeledTuple.empty_len, Nat.add_zero] at hx
         split_ifs <;> omega
 

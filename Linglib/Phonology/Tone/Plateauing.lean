@@ -99,7 +99,7 @@ theorem upper_realize_toAR (v : List TBU) :
   induction v with
   | nil => rfl
   | cons a v ih =>
-    rw [realize_cons, AR.concat_upper, LabeledTuple.toList_concat, ih]
+    rw [realize_cons, AR.upper_concat, LabeledTuple.toList_concat, ih]
     cases a <;> simp [toAR, List.replicate_succ]
 
 /-- The lower tier of the realization is the bare timing tier. -/
@@ -108,7 +108,7 @@ theorem lower_realize_toAR (v : List TBU) :
   induction v with
   | nil => rfl
   | cons a v ih =>
-    rw [realize_cons, AR.concat_lower, LabeledTuple.toList_concat, ih]
+    rw [realize_cons, AR.lower_concat, LabeledTuple.toList_concat, ih]
     cases a <;> simp [toAR, List.replicate_succ]
 
 /-- A timing node of the input representation is linked iff its TBU is H-toned. -/

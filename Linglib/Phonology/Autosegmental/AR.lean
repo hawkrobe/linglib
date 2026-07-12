@@ -358,13 +358,13 @@ def concat (A B : AR α β) : AR α β where
   toGraph := A.toGraph.concat B.toGraph
   inBounds := Graph.inBounds_concat A.inBounds B.inBounds
 
-@[simp] theorem concat_toGraph (A B : AR α β) :
+@[simp] theorem toGraph_concat (A B : AR α β) :
     (A.concat B).toGraph = A.toGraph.concat B.toGraph := rfl
 
-@[simp] theorem concat_upper (A B : AR α β) :
+@[simp] theorem upper_concat (A B : AR α β) :
     (A.concat B).upper = A.upper.concat B.upper := rfl
 
-@[simp] theorem concat_lower (A B : AR α β) :
+@[simp] theorem lower_concat (A B : AR α β) :
     (A.concat B).lower = A.lower.concat B.lower := rfl
 
 theorem links_concat (A B : AR α β) :
@@ -415,7 +415,7 @@ theorem concatMap_id (A B : AR α β) :
     concatMap (Hom.id A) (Hom.id B) = Hom.id (A.concat B) := by
   apply Hom.ext <;>
     simp only [concatMap_fU, concatMap_fL, id_fU, id_fL, LabeledTuple.Hom.concatMap_id,
-      concat_upper, concat_lower]
+      upper_concat, lower_concat]
 
 /-- The concat bifunctor preserves composition (`tensor_comp`). -/
 theorem concatMap_comp {A A' A'' B B' B'' : AR α β}
@@ -435,6 +435,8 @@ end Hom
 def empty : AR α β where
   toGraph := Graph.empty
   inBounds := Graph.inBounds_empty
+
+@[simp] theorem toGraph_empty : (empty : AR α β).toGraph = Graph.empty := rfl
 
 /-- Two ARs are equal iff their underlying graphs are (`inBounds` by proof
     irrelevance). -/

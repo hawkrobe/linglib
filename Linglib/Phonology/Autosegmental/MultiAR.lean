@@ -54,11 +54,17 @@ autosegmental plane with crossing defined only within it, the multi-planar model
 [mccarthy-1989]; a cross-plane constraint (two feature tiers non-crossing through a
 shared anchor tier) is deliberately inexpressible, declining the common-timeline
 tradition of [coleman-local-1991]. The rendering is expressively safe: [oakden-2020]
-proves hub-bundled and split-tier tone geometries inter-translatable, and
-[jardine-danis-iacoponi-2021] prove subsegmental (Q-theoretic) representation
-equivalent to plain binary association. The planar full monoidal subcategory
-([goldsmith-1976]'s NCC) would follow `AR.lean`'s `WellFormedAR` pattern via the
-per-pair `MultiGraph.IsPlanar`.
+proves rival tonal geometries (Yip's and Bao's register structures) bi-interpretable,
+their arrangement differences notational rather than substantive, and
+[jardine-danis-iacoponi-2021] prove Q-theoretic subsegmental representation and
+autosegmental association equivalent in expressible constraints.
+
+## TODO
+
+* The planar full monoidal subcategory ([goldsmith-1976]'s NCC as an
+  `ObjectProperty.IsMonoidal` over the per-pair `MultiGraph.IsPlanar`) and the
+  coproduct universal property (`inl`/`inr`/`coprodDesc`), making the
+  `AR`/`MultiAR` pair fully symmetric — both follow `AR.lean`'s pattern.
 -/
 
 namespace Autosegmental
@@ -107,14 +113,12 @@ def empty : MultiGraph τ where
   tiers _ := LabeledTuple.empty
   links _ _ := ∅
 
-@[simp] theorem empty_tiers (i : Fin n) : (empty : MultiGraph τ).tiers i = LabeledTuple.empty := rfl
-@[simp] theorem empty_links (i j : Fin n) : (empty : MultiGraph τ).links i j = ∅ := rfl
+@[simp] theorem tiers_empty (i : Fin n) : (empty : MultiGraph τ).tiers i = LabeledTuple.empty := rfl
+@[simp] theorem links_empty (i j : Fin n) : (empty : MultiGraph τ).links i j = ∅ := rfl
 
-theorem isPlanar_empty : (empty : MultiGraph τ).IsPlanar := by
-  intro i j; simp [empty, isNonCrossing_empty]
+theorem isPlanar_empty : (empty : MultiGraph τ).IsPlanar := by simp [IsPlanar]
 
-theorem inBounds_empty : (empty : MultiGraph τ).InBounds := by
-  intro i j p hp; simp at hp
+theorem inBounds_empty : (empty : MultiGraph τ).InBounds := by simp [InBounds]
 
 /-! ### Concatenation ([jardine-heinz-2015], fiberwise coproduct) -/
 
@@ -124,10 +128,10 @@ def concat (A B : MultiGraph τ) : MultiGraph τ where
   tiers i := (A.tiers i).concat (B.tiers i)
   links i j := A.links i j ∪ (B.links i j).image (shiftLink (A.tiers i).len (A.tiers j).len)
 
-@[simp] theorem concat_tiers (A B : MultiGraph τ) (i : Fin n) :
+@[simp] theorem tiers_concat (A B : MultiGraph τ) (i : Fin n) :
     (A.concat B).tiers i = (A.tiers i).concat (B.tiers i) := rfl
 
-@[simp] theorem concat_links (A B : MultiGraph τ) (i j : Fin n) :
+@[simp] theorem links_concat (A B : MultiGraph τ) (i j : Fin n) :
     (A.concat B).links i j =
       A.links i j ∪ (B.links i j).image (shiftLink (A.tiers i).len (A.tiers j).len) := rfl
 
@@ -136,19 +140,19 @@ def concat (A B : MultiGraph τ) : MultiGraph τ where
 theorem empty_concat (A : MultiGraph τ) : empty.concat A = A := by
   refine MultiGraph.ext ?_ ?_
   · funext i; simpa using LabeledTuple.empty_concat (A.tiers i)
-  · funext i j; simp [concat_links, empty, shiftLink_zero]
+  · funext i j; simp [links_concat, empty, shiftLink_zero]
 
 theorem concat_empty (A : MultiGraph τ) : A.concat empty = A := by
   refine MultiGraph.ext ?_ ?_
   · funext i; simpa using LabeledTuple.concat_empty (A.tiers i)
-  · funext i j; simp [concat_links, empty]
+  · funext i j; simp [links_concat, empty]
 
 theorem concat_assoc (A B C : MultiGraph τ) :
     (A.concat B).concat C = A.concat (B.concat C) := by
   refine MultiGraph.ext ?_ ?_
-  · funext i; simp only [concat_tiers, LabeledTuple.concat_assoc]
+  · funext i; simp only [tiers_concat, LabeledTuple.concat_assoc]
   · funext i j
-    simp only [concat_links, concat_tiers, LabeledTuple.concat_len, Finset.image_union,
+    simp only [links_concat, tiers_concat, LabeledTuple.concat_len, Finset.image_union,
       Finset.image_image, shiftLink_comp]
     rw [Finset.union_assoc]
 
@@ -158,15 +162,14 @@ theorem concat_assoc (A B C : MultiGraph τ) :
 theorem isPlanar_concat {A B : MultiGraph τ} (hAib : A.InBounds)
     (hA : A.IsPlanar) (hB : B.IsPlanar) : (A.concat B).IsPlanar := by
   intro i j
-  have hAij := hA i j; have hBij := hB i j; have hAibij := hAib i j
-  grind [IsPlanar, IsNonCrossing, InBounds, MonovaryOn, concat_links, Finset.coe_union,
+  grind [IsPlanar, IsNonCrossing, InBounds, MonovaryOn, links_concat, Finset.coe_union,
     monovaryOn_union, isNonCrossing_image_shiftLink, shiftLink]
 
 /-- Concatenation preserves in-bounds. -/
 theorem inBounds_concat {A B : MultiGraph τ}
     (hA : A.InBounds) (hB : B.InBounds) : (A.concat B).InBounds := by
   intro i j p hp
-  simp only [concat_links, Finset.mem_union, Finset.mem_image, concat_tiers,
+  simp only [links_concat, Finset.mem_union, Finset.mem_image, tiers_concat,
     LabeledTuple.concat_len] at hp ⊢
   obtain hp | ⟨q, hq, rfl⟩ := hp
   · have := hA i j p hp; omega
@@ -210,14 +213,22 @@ def id (A : MultiAR τ) : Hom A A where
 def comp (f : Hom A B) (g : Hom B C) : Hom A C where
   fT i := (f.fT i).comp (g.fT i)
   links_preserve i j {p q} hp hq h := by
-    have hf := f.links_preserve i j hp hq h
-    have hg := g.links_preserve i j ((f.fT i).toFun ⟨_, hp⟩).isLt ((f.fT j).toFun ⟨_, hq⟩).isLt hf
-    simpa [LabeledTuple.Hom.comp] using hg
+    simpa [LabeledTuple.Hom.comp] using
+      g.links_preserve i j ((f.fT i).toFun ⟨_, hp⟩).isLt ((f.fT j).toFun ⟨_, hq⟩).isLt
+        (f.links_preserve i j hp hq h)
 
 @[simp] theorem id_fT (A : MultiAR τ) (i : Fin n) :
     (Hom.id A).fT i = LabeledTuple.Hom.id (A.tiers i) := rfl
 @[simp] theorem comp_fT (f : Hom A B) (g : Hom B C) (i : Fin n) :
     (f.comp g).fT i = (f.fT i).comp (g.fT i) := rfl
+
+/-- Morphisms agree if their per-tier maps agree on the underlying `ℕ` indices.
+    This collapses the `Hom.ext → LabeledTuple.Hom.ext → funext → Fin.ext` ladder
+    used throughout the coherence proofs. -/
+theorem ext_fin {f g : Hom A B}
+    (h : ∀ (i : Fin n) (x : Fin (A.tiers i).len),
+      ((f.fT i).toFun x : ℕ) = ((g.fT i).toFun x : ℕ)) : f = g :=
+  Hom.ext (funext fun i => LabeledTuple.Hom.ext (funext fun x => Fin.ext (h i x)))
 
 end Hom
 
@@ -243,13 +254,13 @@ def concat (A B : MultiAR τ) : MultiAR τ where
   toMultiGraph := A.toMultiGraph.concat B.toMultiGraph
   inBounds := MultiGraph.inBounds_concat A.inBounds B.inBounds
 
-@[simp] theorem concat_toMultiGraph (A B : MultiAR τ) :
+@[simp] theorem toMultiGraph_concat (A B : MultiAR τ) :
     (A.concat B).toMultiGraph = A.toMultiGraph.concat B.toMultiGraph := rfl
 
-@[simp] theorem concat_tiers (A B : MultiAR τ) (i : Fin n) :
+@[simp] theorem tiers_concat (A B : MultiAR τ) (i : Fin n) :
     (A.concat B).tiers i = (A.tiers i).concat (B.tiers i) := rfl
 
-@[simp] theorem concat_links (A B : MultiAR τ) (i j : Fin n) :
+theorem links_concat (A B : MultiAR τ) (i j : Fin n) :
     (A.concat B).links i j =
       A.links i j ∪ (B.links i j).image
         (shiftLink (A.tiers i).len (A.tiers j).len) := rfl
@@ -259,10 +270,20 @@ def empty : MultiAR τ where
   toMultiGraph := MultiGraph.empty
   inBounds := MultiGraph.inBounds_empty
 
+@[simp] theorem toMultiGraph_empty :
+    (empty : MultiAR τ).toMultiGraph = MultiGraph.empty := rfl
+
 /-- An in-bounds graph is determined by its underlying `MultiGraph`. -/
 @[ext] theorem ext_toMultiGraph {A B : MultiAR τ} (h : A.toMultiGraph = B.toMultiGraph) :
     A = B := by
-  cases A; cases B; simp only at h; subst h; rfl
+  cases A; cases B; cases h; rfl
+
+theorem toMultiGraph_injective :
+    Function.Injective (toMultiGraph : MultiAR τ → MultiGraph τ) :=
+  fun _ _ => ext_toMultiGraph
+
+instance [∀ i, DecidableEq (τ i)] : DecidableEq (MultiAR τ) := fun _ _ =>
+  decidable_of_iff _ ⟨ext_toMultiGraph, congrArg toMultiGraph⟩
 
 instance instMonoid : Monoid (MultiAR τ) where
   mul := concat
@@ -286,7 +307,7 @@ variable {A A' B B' : MultiAR τ}
 def concatMap (f : Hom A A') (g : Hom B B') : Hom (A.concat B) (A'.concat B') where
   fT i := LabeledTuple.Hom.concatMap (f.fT i) (g.fT i)
   links_preserve i j {p q} hp hq h := by
-    simp only [concat_links, Finset.mem_union, Finset.mem_image, shiftLink,
+    simp only [links_concat, Finset.mem_union, Finset.mem_image, shiftLink,
       Prod.exists, Prod.mk.injEq, LabeledTuple.Hom.concatMap_toFun] at h ⊢
     rcases h with hA | ⟨a, b, hab, hai, hbj⟩
     · obtain ⟨hpi, hqj⟩ := A.inBounds i j (p, q) hA
@@ -309,7 +330,7 @@ def concatMap (f : Hom A A') (g : Hom B B') : Hom (A.concat B) (A'.concat B') wh
 theorem concatMap_id (A B : MultiAR τ) :
     concatMap (Hom.id A) (Hom.id B) = Hom.id (A.concat B) := by
   apply Hom.ext; funext i
-  simp only [concatMap_fT, id_fT, LabeledTuple.Hom.concatMap_id, concat_tiers]
+  simp only [concatMap_fT, id_fT, LabeledTuple.Hom.concatMap_id, tiers_concat]
 
 theorem concatMap_comp {A A' A'' B B' B'' : MultiAR τ}
     (f : Hom A A') (f' : Hom A' A'') (g : Hom B B') (g' : Hom B' B'') :
@@ -347,6 +368,10 @@ end Hom
   leftUnitor X := eqToIso (one_mul X)
   rightUnitor X := eqToIso (mul_one X)
 
+/-- The monoidal product is the object-monoid multiplication (both are `concat`)
+    — the explicit bridge between the categorical `⊗` and the decategorified `*`. -/
+@[simp] theorem tensorObj_eq_mul (A B : MultiAR τ) : A ⊗ B = A * B := rfl
+
 instance : MonoidalCategory (MultiAR τ) :=
   MonoidalCategory.ofTensorHom
     (id_tensorHom_id := Hom.concatMap_id)
@@ -355,17 +380,17 @@ instance : MonoidalCategory (MultiAR τ) :=
     (tensorHom_comp_tensorHom := fun f₁ f₂ g₁ g₂ => Hom.concatMap_comp f₁ g₁ f₂ g₂)
     (associator_naturality := by
       intro X₁ X₂ X₃ Y₁ Y₂ Y₃ f₁ f₂ f₃
-      apply Hom.ext; funext i; apply LabeledTuple.Hom.ext; funext x; apply Fin.ext
+      refine Hom.ext_fin fun i x => ?_
       simp [Fin.appendMap_val, Nat.sub_sub]
       split_ifs <;> omega)
     (leftUnitor_naturality := by
       intro X Y f
-      apply Hom.ext; funext i; apply LabeledTuple.Hom.ext; funext x; apply Fin.ext
+      refine Hom.ext_fin fun i x => ?_
       simp [Fin.appendMap_val, empty, MultiGraph.empty]
       rfl)
     (rightUnitor_naturality := by
       intro X Y f
-      apply Hom.ext; funext i; apply LabeledTuple.Hom.ext; funext x; apply Fin.ext
+      refine Hom.ext_fin fun i x => ?_
       simp [Fin.appendMap_val, empty, MultiGraph.empty])
     (pentagon := by intros; simp [eqToHom_trans])
     (triangle := by intros; simp [eqToHom_trans])

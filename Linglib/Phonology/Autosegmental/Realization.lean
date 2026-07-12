@@ -77,7 +77,7 @@ theorem realize_upper_toList (g₀ : S → AR α β) (w : List S) :
   induction w with
   | nil => rw [realize_nil, show FreeMonoid.ofList ([] : List S) = 1 from rfl, map_one]; rfl
   | cons s w ih =>
-    rw [realize_cons, AR.concat_upper, LabeledTuple.toList_concat, ih, FreeMonoid.ofList_cons,
+    rw [realize_cons, AR.upper_concat, LabeledTuple.toList_concat, ih, FreeMonoid.ofList_cons,
       map_mul, upperProj_of]
     rfl
 
@@ -87,7 +87,7 @@ theorem realize_lower_toList (g₀ : S → AR α β) (w : List S) :
   induction w with
   | nil => rw [realize_nil, show FreeMonoid.ofList ([] : List S) = 1 from rfl, map_one]; rfl
   | cons s w ih =>
-    rw [realize_cons, AR.concat_lower, LabeledTuple.toList_concat, ih, FreeMonoid.ofList_cons,
+    rw [realize_cons, AR.lower_concat, LabeledTuple.toList_concat, ih, FreeMonoid.ofList_cons,
       map_mul, lowerProj_of]
     rfl
 
@@ -226,8 +226,8 @@ theorem AR.isLinkedLower_iff_linearize (A : AR α β) {j : ℕ} :
     exact ⟨i, of_decide_eq_true hif.2⟩
 
 @[simp] theorem AR.linearize_empty : (AR.empty : AR α β).linearize = [] := by
-  have h : (AR.empty : AR α β).lower.toList = [] :=
-    List.eq_nil_of_length_eq_zero (by simp [AR.empty, Graph.empty])
+  have h : (Graph.empty : Graph α β).lower.toList = [] :=
+    List.eq_nil_of_length_eq_zero (by simp [Graph.empty])
   simp [AR.linearize, h]
 
 /-- Linearization sends concatenation of ARs to concatenation of association-state
@@ -238,10 +238,10 @@ theorem AR.linearize_concat (A B : AR α β) :
   rw [AR.linearize_getElem?]
   rcases Nat.lt_or_ge j A.lower.len with hj | hj
   · rw [List.getElem?_append_left (by rw [AR.linearize_length]; exact hj),
-      AR.linearize_getElem?, AR.concat_lower, LabeledTuple.get?_concat_left hj,
-      AR.concat_toGraph, Graph.linkedLabels_concat_left A.inBounds hj]
+      AR.linearize_getElem?, AR.lower_concat, LabeledTuple.get?_concat_left hj,
+      AR.toGraph_concat, Graph.linkedLabels_concat_left A.inBounds hj]
   · rw [List.getElem?_append_right (by rw [AR.linearize_length]; exact hj),
-      AR.linearize_getElem?, AR.linearize_length, AR.concat_lower, AR.concat_toGraph,
+      AR.linearize_getElem?, AR.linearize_length, AR.lower_concat, AR.toGraph_concat,
       Graph.linkedLabels_concat_right A.inBounds hj,
       show j = A.lower.len + (j - A.lower.len) from by omega,
       LabeledTuple.get?_concat_right, Nat.add_sub_cancel_left]
