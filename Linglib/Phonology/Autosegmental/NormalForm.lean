@@ -104,6 +104,13 @@ noncomputable def Representation.tierWord [Finite X.obj.V] (i : ι) : List (τ i
   letI := Fintype.ofFinite (X.fiber i)
   List.ofFn fun p : Fin (X.tierLen i) => X.fiberLabel (monoEquivOfFin (X.fiber i) rfl p)
 
+/-- The link relation in position coordinates: tier-`i` position `p` associates
+    to tier-`j` position `q`. With `tierWord`, the complete tuple reading of a
+    finite representation. -/
+noncomputable def Representation.linkRel [Finite X.obj.V] (i j : ι)
+    (p : Fin (X.tierLen i)) (q : Fin (X.tierLen j)) : Prop :=
+  X.obj.graph.edges.Adj (X.vertexEquiv ⟨i, p⟩) (X.vertexEquiv ⟨j, q⟩)
+
 /-- The normal form: `X` reindexed onto the canonical vertex type by pulling
     edges, arcs, and labels back along `vertexEquiv`. A `Representation` — the
     normal form is not a separate kind of object. -/
