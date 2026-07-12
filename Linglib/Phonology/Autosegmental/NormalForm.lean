@@ -58,6 +58,11 @@ def Representation.fiber (X : Representation (Sigma.fst : ((i : ι) × τ i) →
 
 variable {X : Representation (Sigma.fst : ((i : ι) × τ i) → ι)}
 
+/-- The `τ i` component of a fiber element, extracted from the labeling by
+    transporting along the fiber's tier-membership witness. -/
+def Representation.fiberLabel {i : ι} (v : X.fiber i) : τ i :=
+  v.property ▸ (X.obj.label v.val).2
+
 instance Representation.fiber.instFinite [Finite X.obj.V] (i : ι) : Finite (X.fiber i) :=
   Subtype.finite
 
@@ -88,6 +93,12 @@ noncomputable def Representation.vertexEquiv [Finite X.obj.V] :
   (Equiv.sigmaCongrRight
     (fun i : ι => (monoEquivOfFin (X.fiber i) rfl).toEquiv)).trans
     (Equiv.sigmaFiberEquiv (fun v : X.obj.V => (X.obj.label v).1))
+
+/-- The tier-`i` label word: the fiber's labels read off in ascending precedence
+    order — the tier content the normal form canonicalizes. -/
+noncomputable def Representation.tierWord [Finite X.obj.V] (i : ι) : List (τ i) :=
+  letI := Fintype.ofFinite (X.fiber i)
+  List.ofFn fun p : Fin (X.tierLen i) => X.fiberLabel (monoEquivOfFin (X.fiber i) rfl p)
 
 /-- The normal form: `X` reindexed onto the canonical vertex type by pulling
     edges, arcs, and labels back along `vertexEquiv`. A `Representation` — the
