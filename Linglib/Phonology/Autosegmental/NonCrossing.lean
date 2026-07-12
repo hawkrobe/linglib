@@ -14,8 +14,11 @@ import Linglib.Core.Order.Monotone.Monovary
 A `Finset (ι × κ)` of links between two ordered tiers is **non-crossing**
 when `k₁ < k₂ → i₁ ≤ i₂` for any two links `(k₁, i₁)`, `(k₂, i₂)` — i.e. the
 index coordinates monovary, which in a two-layer drawing is exactly the
-absence of crossing segments. This is the discrete-index
-[goldsmith-1976] / [sagey-1986] No-Crossing Constraint and the canonical
+absence of crossing segments; equivalently (over linear tiers), the
+componentwise order is total on the link set, [yli-jyra-2015]'s edge-order
+axiom. This is the discrete-index
+[goldsmith-1976] / [sagey-1986] No-Crossing Constraint ([sagey-1988] derives
+it from association-as-temporal-overlap) and the canonical
 filter on autosegmental GEN.
 
 ## Main definitions

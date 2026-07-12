@@ -433,13 +433,13 @@ the decategorification square. -/
   simp [collapseAR, collapseGraph_upper, LabeledTuple.toList_ofList]
 
 /-- **Upper-tier projection** as a monoid hom `AR α β →* FreeMonoid α`: morpheme
-concatenation appends upper tiers (`AR.concat_upper`, `LabeledTuple.toList_concat`). The
+concatenation appends upper tiers (`AR.upper_concat`, `LabeledTuple.toList_concat`). The
 decategorification of an autosegmental representation to its melodic tier string. -/
 def upperHom : AR α β →* FreeMonoid α where
   toFun A := FreeMonoid.ofList A.upper.toList
   map_one' := rfl
   map_mul' A B := by
-    simp only [AR.mul_eq_concat, AR.concat_upper, LabeledTuple.toList_concat,
+    simp only [AR.mul_eq_concat, AR.upper_concat, LabeledTuple.toList_concat,
       FreeMonoid.ofList_append]
 
 omit [DecidableEq α] in
@@ -454,7 +454,7 @@ def upperHomClean : {A : AR α β // IsCleanAR A} →* {l : List α // IsClean l
   map_mul' A B := Subtype.ext <| by
     show (collapseAR (A.1.concat B.1)).upper.toList =
       List.destutterConcat A.1.upper.toList B.1.upper.toList
-    rw [upper_collapseAR, AR.concat_upper, LabeledTuple.toList_concat]
+    rw [upper_collapseAR, AR.upper_concat, LabeledTuple.toList_concat]
     rfl
 
 /-- **The decategorification square commutes.** Projecting to the upper tier intertwines the
@@ -576,7 +576,7 @@ def lowerHom : AR α β →* FreeMonoid β where
   toFun A := FreeMonoid.ofList A.lower.toList
   map_one' := rfl
   map_mul' A B := by
-    simp only [AR.mul_eq_concat, AR.concat_lower, LabeledTuple.toList_concat,
+    simp only [AR.mul_eq_concat, AR.lower_concat, LabeledTuple.toList_concat,
       FreeMonoid.ofList_append]
 
 omit [DecidableEq α] in

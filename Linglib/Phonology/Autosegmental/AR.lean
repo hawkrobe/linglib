@@ -33,12 +33,12 @@ The arc, in three layers:
   WFC) is language-particular, so floating elements are well-formed.
 * `AR α β` — the **in-bounds** object (every association line falls within the tier
   lengths) and the base of the category; morphisms are label- and link-preserving
-  position maps. `concat` is morpheme concatenation ([jardine-heinz-2015] §5): the
-  empty graph is the unit (Theorem 1) and `concat` is associative (Theorem 3). The
-  paper calls it "a modification of [the] disjoint union"; its disjoint-union core —
-  before the OCP-merging step, modeled separately as `OCP.collapse` — is the
-  **categorical coproduct** (`HasBinaryCoproducts`), so the monoidal product is
-  cocartesian.
+  position maps. `concat` is morpheme concatenation ([jardine-heinz-2015] §5;
+  [yli-jyra-2015]'s ≤-extension of disjoint graphs): the empty graph is the unit
+  (Theorem 1) and `concat` is associative (Theorem 3). The paper calls it "a
+  modification of [the] disjoint union"; its disjoint-union core — before the
+  OCP-merging step, modeled separately as `OCP.collapse` — is the **categorical
+  coproduct** (`HasBinaryCoproducts`), so the monoidal product is cocartesian.
 * `WellFormedAR α β` — the full monoidal subcategory of planar ARs. The No-Crossing
   Constraint is **morpheme-modular** (`ncc_isMonoidal`, [jardine-heinz-2015]
   Theorem 4): planarity is stable under `⊗`. The OCP ([mccarthy-1986]) is **not**
@@ -98,8 +98,8 @@ open scoped CategoryTheory
 
 /-! ## The autosegmental graph (the bipartite object) -/
 
-/-- A bipartite autosegmental representation: two ordered labeled tiers and a
-    finite set of association lines (index pairs) between them. -/
+/-- A bipartite autosegmental representation is a pair of ordered labeled tiers
+    with a finite set of association lines (index pairs) between them. -/
 @[ext]
 structure Graph (α β : Type*) where
   /-- The upper tier (e.g., tonal tier, melodic tier, root). -/
@@ -122,7 +122,9 @@ def empty : Graph α β := ⟨LabeledTuple.empty, LabeledTuple.empty, ∅⟩
 
 /-! ### Planarity (no-crossing) -/
 
-/-- **Planar** (no-crossing): the link set satisfies [goldsmith-1976]'s NCC. -/
+/-- A representation is planar if its link set satisfies [goldsmith-1976]'s
+    No-Crossing Constraint, which [sagey-1988] derives from
+    association-as-temporal-overlap. -/
 def IsPlanar : Prop := IsNonCrossing r.links
 
 /-! ### Link rewrites -/
@@ -213,8 +215,8 @@ theorem inBounds_empty : (empty : Graph α β).InBounds := by simp [InBounds, em
 
 variable (A B C : Graph α β)
 
-/-- [jardine-heinz-2015] concatenation: tier-concatenation plus
-    index-shifted link-set union. -/
+/-- Concatenation concatenates the tiers and unions the link sets, shifting
+    `B`'s indices past `A`'s tier lengths ([jardine-heinz-2015]). -/
 def concat : Graph α β where
   upper := A.upper.concat B.upper
   lower := A.lower.concat B.lower
@@ -277,9 +279,9 @@ open Graph CategoryTheory
 
 variable {α β : Type*}
 
-/-- The base object of the autosegmental category: an **in-bounds** autosegmental
-    graph (every association line falls within the tier lengths). Planarity is
-    *not* carried here — it is the constraint defining the subcategory `WellFormedAR`. -/
+/-- An autosegmental graph whose association lines all fall within the tier
+    lengths — the base object of the autosegmental category. Planarity is *not*
+    carried here; it is the constraint defining the subcategory `WellFormedAR`. -/
 structure AR (α β : Type*) extends Graph α β where
   inBounds : toGraph.InBounds
 
@@ -322,10 +324,9 @@ def comp (f : Hom A B) (g : Hom B C) : Hom A C where
 @[simp] theorem comp_fU (f : Hom A B) (g : Hom B C) : (f.comp g).fU = f.fU.comp g.fU := rfl
 @[simp] theorem comp_fL (f : Hom A B) (g : Hom B C) : (f.comp g).fL = f.fL.comp g.fL := rfl
 
-/-- Extensionality at the index level: morphisms agree if their tier maps agree on
-    the underlying `ℕ` indices. Collapses the
-    `Hom.ext → LabeledTuple.Hom.ext → funext → Fin.ext` ladder used throughout the
-    category/coherence proofs. -/
+/-- Morphisms agree if their tier maps agree on the underlying `ℕ` indices. This
+    collapses the `Hom.ext → LabeledTuple.Hom.ext → funext → Fin.ext` ladder used
+    throughout the category/coherence proofs. -/
 theorem ext_fin {f g : Hom A B} (hU : ∀ i, (f.fU.toFun i : ℕ) = g.fU.toFun i)
     (hL : ∀ j, (f.fL.toFun j : ℕ) = g.fL.toFun j) : f = g :=
   Hom.ext (LabeledTuple.Hom.ext (funext fun i => Fin.ext (hU i)))
@@ -352,19 +353,18 @@ instance : Category (AR α β) where
 
 /-! ### Concatenation: the tensor object -/
 
-/-- Morpheme concatenation ([jardine-heinz-2015]): the tier-concatenated,
-    index-shifted graph, in-bounds by `Graph.inBounds_concat`. -/
+/-- Concatenation of in-bounds graphs ([jardine-heinz-2015]). -/
 def concat (A B : AR α β) : AR α β where
   toGraph := A.toGraph.concat B.toGraph
   inBounds := Graph.inBounds_concat A.inBounds B.inBounds
 
-@[simp] theorem concat_toGraph (A B : AR α β) :
+@[simp] theorem toGraph_concat (A B : AR α β) :
     (A.concat B).toGraph = A.toGraph.concat B.toGraph := rfl
 
-@[simp] theorem concat_upper (A B : AR α β) :
+@[simp] theorem upper_concat (A B : AR α β) :
     (A.concat B).upper = A.upper.concat B.upper := rfl
 
-@[simp] theorem concat_lower (A B : AR α β) :
+@[simp] theorem lower_concat (A B : AR α β) :
     (A.concat B).lower = A.lower.concat B.lower := rfl
 
 theorem links_concat (A B : AR α β) :
@@ -380,8 +380,9 @@ B-block through `g` (shifted past `A'`) via `Fin.appendMap_val`. -/
 namespace Hom
 variable {A A' B B' : AR α β}
 
-/-- The concatenation bifunctor on morphisms (`f ⊗ g`): `f` on the A-block,
-    `g` (shifted) on the B-block. Tiers via `LabeledTuple.Hom.concatMap`. -/
+/-- The concatenation bifunctor on morphisms (`f ⊗ g`), acting as `f` on the
+    A-block and as `g` (shifted) on the B-block, via `LabeledTuple.Hom.concatMap`
+    on each tier. -/
 def concatMap (f : Hom A A') (g : Hom B B') : Hom (A.concat B) (A'.concat B') where
   fU := LabeledTuple.Hom.concatMap f.fU g.fU
   fL := LabeledTuple.Hom.concatMap f.fL g.fL
@@ -414,7 +415,7 @@ theorem concatMap_id (A B : AR α β) :
     concatMap (Hom.id A) (Hom.id B) = Hom.id (A.concat B) := by
   apply Hom.ext <;>
     simp only [concatMap_fU, concatMap_fL, id_fU, id_fL, LabeledTuple.Hom.concatMap_id,
-      concat_upper, concat_lower]
+      upper_concat, lower_concat]
 
 /-- The concat bifunctor preserves composition (`tensor_comp`). -/
 theorem concatMap_comp {A A' A'' B B' B'' : AR α β}
@@ -430,10 +431,12 @@ end Hom
 
 /-! ### Monoid structure on objects -/
 
-/-- The empty (unit) object: no tiers, no links. -/
+/-- The empty (unit) object, with no tiers and no links. -/
 def empty : AR α β where
   toGraph := Graph.empty
   inBounds := Graph.inBounds_empty
+
+@[simp] theorem toGraph_empty : (empty : AR α β).toGraph = Graph.empty := rfl
 
 /-- Two ARs are equal iff their underlying graphs are (`inBounds` by proof
     irrelevance). -/
@@ -443,7 +446,7 @@ def empty : AR α β where
 theorem toGraph_injective : Function.Injective (toGraph : AR α β → Graph α β) :=
   fun _ _ => ext_toGraph
 
-instance [DecidableEq α] [DecidableEq β] : DecidableEq (AR α β) := fun A B =>
+instance [DecidableEq α] [DecidableEq β] : DecidableEq (AR α β) := fun _ _ =>
   decidable_of_iff _ ⟨ext_toGraph, congrArg toGraph⟩
 
 /-- Objects form a `Monoid` under concatenation, with `empty` as unit
@@ -528,8 +531,8 @@ def coprodDesc {A B T : AR α β} (f : Hom A T) (g : Hom B T) : Hom (A.concat B)
 @[simp] theorem coprodDesc_fL {A B T : AR α β} (f : Hom A T) (g : Hom B T) :
     (coprodDesc f g).fL = LabeledTuple.coprodDesc f.fL g.fL := rfl
 
-/-- `concat` is the categorical coproduct: `inl`/`inr` are the coprojections and
-    `coprodDesc` the copairing — the disjoint-union universal property. -/
+/-- `concat` is the categorical coproduct — `inl`/`inr` are the coprojections
+    and `coprodDesc` the copairing of the disjoint-union universal property. -/
 instance (A B : AR α β) : HasBinaryCoproduct A B :=
   HasColimit.mk
     { cocone := BinaryCofan.mk (inl A B) (inr A B)
@@ -557,8 +560,8 @@ algebra (pentagon, triangle) or `Fin`-index arithmetic (naturalities).
 
 open CategoryTheory MonoidalCategory
 
-/-- The upper tier map of an `eqToHom`, as a function: the length-cast `Fin.cast`
-    (goes straight to the `len` level, avoiding a nested `LabeledTuple` `eqToHom`). -/
+/-- The upper tier map of an `eqToHom` is the length-cast `Fin.cast`, going
+    straight to the `len` level and avoiding a nested `LabeledTuple` `eqToHom`. -/
 @[simp] theorem eqToHom_fU_toFun {A B : AR α β} (h : A = B) :
     (eqToHom h).fU.toFun = Fin.cast (congrArg (fun X => X.upper.len) h) := by
   cases h; rfl
@@ -590,8 +593,8 @@ open CategoryTheory MonoidalCategory
   leftUnitor X := eqToIso (one_mul X)
   rightUnitor X := eqToIso (mul_one X)
 
-/-- The monoidal product **is** the object-monoid multiplication (both are `concat`): the
-    explicit bridge between the categorical `⊗` and the decategorified `*`. -/
+/-- The monoidal product is the object-monoid multiplication (both are `concat`)
+    — the explicit bridge between the categorical `⊗` and the decategorified `*`. -/
 @[simp] theorem tensorObj_eq_mul (A B : AR α β) : A ⊗ B = A * B := rfl
 
 instance : MonoidalCategory (AR α β) :=
@@ -670,7 +673,7 @@ instance [DecidableEq α] (A : AR α β) : Decidable (upperOCPClean A) :=
     smallest label/backbone pair admitting two equal upper elements. -/
 private def ocpWitness : AR Bool Unit := ⟨⟨.ofList [true], .empty, ∅⟩, by decide⟩
 
-/-- OCP-cleanness is **not** closed under the bare coproduct `⊗` (`concat`): concatenation
+/-- OCP-cleanness is **not** closed under the bare coproduct `⊗` (`concat`); concatenation
     can abut an identical autosegment pair at the morpheme boundary — a violation present in
     neither factor. Witnessed by two single-autosegment reps (`⟨[true], [], ∅⟩`) whose
     concatenation has upper tier `[true, true]`. This is why [jardine-heinz-2015] build the
@@ -688,11 +691,12 @@ theorem ocp_not_isMonoidal : ¬ (upperOCPClean (α := Bool) (β := Unit)).IsMono
   revert hc
   decide
 
-/-- The discriminating dichotomy ([jardine-heinz-2015] Theorems 4 vs 5): under the bare
-    coproduct `⊗` the NCC is preserved (closed, a monoidal *sub*-object) but the OCP is not
-    (boundary-spanning). The OCP is recovered only as a *quotient*, by the fusion merge that
-    `◦` builds in. The two halves cannot be interchanged — that is what makes the monoidal
-    product load-bearing rather than decorative. -/
+/-- Under the bare coproduct `⊗` the NCC is preserved (closed, a monoidal
+    *sub*-object) but the OCP is not (boundary-spanning) — the discriminating
+    dichotomy of [jardine-heinz-2015] (Theorems 4 vs 5). The OCP is recovered only
+    as a *quotient*, by the fusion merge that `◦` builds in. The two halves cannot
+    be interchanged — that is what makes the monoidal product load-bearing rather
+    than decorative. -/
 theorem ncc_modular_ocp_not :
     (isPlanar (α := Bool) (β := Unit)).IsMonoidal ∧
     ¬ (upperOCPClean (α := Bool) (β := Unit)).IsMonoidal :=
