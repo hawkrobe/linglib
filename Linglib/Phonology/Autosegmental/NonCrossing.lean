@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Finset.Image
 import Mathlib.Data.Finset.Insert
+import Mathlib.Data.Finset.Prod
 import Linglib.Core.Order.Monotone.Monovary
 
 /-!
@@ -109,6 +110,84 @@ theorem IsNonCrossing.image_monotone (hρ : Monotone ρ) (h : IsNonCrossing link
   rw [isNonCrossing_image]; grind [IsNonCrossing, MonovaryOn, Monotone.reflect_lt]
 
 end ImageMonotone
+
+/-! ### Relational composition through a shared tier
+
+Association relations compose through a shared middle tier — the `Finset`
+companion of `SetRel.comp`. Planarity is **not** closed under composition:
+fan-in followed by fan-out at a single middle position (an autosegment
+multiply-linked from above whose position multiply-links onward) composes to a
+crossing — see the counterexample below. It is closed when the middle tier does
+not fan through, in either direction: `IsNonCrossing.relComp_of_injOn_fst`
+(no fan-out) and `IsNonCrossing.relComp_of_injOn_snd` (no fan-in). -/
+
+section RelComp
+variable {μ ν : Type*} [DecidableEq ι] [DecidableEq κ] [DecidableEq μ]
+
+/-- Relational composition of link sets through a shared middle tier. -/
+def relComp (R : Finset (ι × κ)) (S : Finset (κ × μ)) : Finset (ι × μ) :=
+  ((R ×ˢ S).filter fun p => p.1.2 = p.2.1).image fun p => (p.1.1, p.2.2)
+
+@[simp] theorem mem_relComp {R : Finset (ι × κ)} {S : Finset (κ × μ)} {p : ι × μ} :
+    p ∈ relComp R S ↔ ∃ j, (p.1, j) ∈ R ∧ (j, p.2) ∈ S := by
+  simp only [relComp, Finset.mem_image, Finset.mem_filter, Finset.mem_product]
+  constructor
+  · rintro ⟨⟨⟨i, j⟩, ⟨j', k⟩⟩, ⟨⟨hR, hS⟩, hj⟩, rfl⟩
+    dsimp only at hj ⊢
+    exact ⟨j', hj ▸ hR, hS⟩
+  · rintro ⟨j, hR, hS⟩
+    exact ⟨((p.1, j), (j, p.2)), ⟨⟨hR, hS⟩, rfl⟩, rfl⟩
+
+theorem relComp_assoc [DecidableEq ν] (R : Finset (ι × κ)) (S : Finset (κ × μ))
+    (T : Finset (μ × ν)) : relComp (relComp R S) T = relComp R (relComp S T) := by
+  ext ⟨i, l⟩
+  simp only [mem_relComp]
+  grind
+
+variable [Preorder ι] [PartialOrder κ] [Preorder μ]
+  {R : Finset (ι × κ)} {S : Finset (κ × μ)}
+
+/-- Composition preserves non-crossing when the middle tier does not fan out:
+    `S` is functional on middle positions (`Set.InjOn Prod.fst`), so a middle tie
+    forces equal outputs. -/
+theorem IsNonCrossing.relComp_of_injOn_fst (hR : IsNonCrossing R) (hS : IsNonCrossing S)
+    (h : Set.InjOn Prod.fst (S : Set (κ × μ))) : IsNonCrossing (relComp R S) := by
+  rw [isNonCrossing_iff] at hR hS ⊢
+  rintro ⟨i₁, k₁⟩ h₁ ⟨i₂, k₂⟩ h₂ hlt
+  obtain ⟨j₁, hR₁, hS₁⟩ := mem_relComp.mp h₁
+  obtain ⟨j₂, hR₂, hS₂⟩ := mem_relComp.mp h₂
+  rcases (hR _ hR₁ _ hR₂ hlt).lt_or_eq with hj | hj
+  · exact hS _ hS₁ _ hS₂ hj
+  · have hkk : (j₁, k₁) = (j₂, k₂) :=
+      h (Finset.mem_coe.mpr hS₁) (Finset.mem_coe.mpr hS₂) hj
+    injection hkk with _ hk
+    exact le_of_eq hk
+
+/-- Composition preserves non-crossing when the middle tier does not fan in:
+    `R` is injective onto middle positions (`Set.InjOn Prod.snd`), so a middle tie
+    contradicts the strict order on inputs. -/
+theorem IsNonCrossing.relComp_of_injOn_snd (hR : IsNonCrossing R) (hS : IsNonCrossing S)
+    (h : Set.InjOn Prod.snd (R : Set (ι × κ))) : IsNonCrossing (relComp R S) := by
+  rw [isNonCrossing_iff] at hR hS ⊢
+  rintro ⟨i₁, k₁⟩ h₁ ⟨i₂, k₂⟩ h₂ hlt
+  obtain ⟨j₁, hR₁, hS₁⟩ := mem_relComp.mp h₁
+  obtain ⟨j₂, hR₂, hS₂⟩ := mem_relComp.mp h₂
+  rcases (hR _ hR₁ _ hR₂ hlt).lt_or_eq with hj | hj
+  · exact hS _ hS₁ _ hS₂ hj
+  · have hii : (i₁, j₁) = (i₂, j₂) :=
+      h (Finset.mem_coe.mpr hR₁) (Finset.mem_coe.mpr hR₂) hj
+    injection hii with hi _
+    exact absurd (hi ▸ hlt) (lt_irrefl _)
+
+/-- Planarity is **not** closed under bare relational composition: fan-in (upper
+    `0` and `1` both linked to middle `0`) followed by fan-out (middle `0` linked
+    onward to `0` and `1`) composes to the complete, crossing relation. -/
+example : IsNonCrossing ({(0, 0), (1, 0)} : Finset (ℕ × ℕ)) ∧
+    IsNonCrossing ({(0, 0), (0, 1)} : Finset (ℕ × ℕ)) ∧
+    ¬ IsNonCrossing (relComp ({(0, 0), (1, 0)} : Finset (ℕ × ℕ)) {(0, 0), (0, 1)}) := by
+  decide
+
+end RelComp
 
 /-! ### The crossing relation and the GEN filter -/
 
