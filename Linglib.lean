@@ -57,6 +57,7 @@ import Linglib.Core.Categorical.AgentCat
 import Linglib.Core.Categorical.PartitionCat
 import Linglib.Core.CategoryTheory.Monoidal.LabeledTuple
 import Linglib.Core.Combinatorics.Antimatroid
+import Linglib.Core.Combinatorics.MixedGraph
 import Linglib.Core.Combinatorics.RootedTree.Aut
 import Linglib.Core.Combinatorics.RootedTree.ContractUnary
 import Linglib.Core.Computability.ContextFreeGrammar.Closure
@@ -1352,6 +1353,7 @@ import Linglib.Phonology.Autosegmental.Hull
 import Linglib.Phonology.Autosegmental.Inclusion
 import Linglib.Phonology.Autosegmental.Junction
 import Linglib.Phonology.Autosegmental.Melody
+import Linglib.Phonology.Autosegmental.MixedGraph
 import Linglib.Phonology.Autosegmental.MultiAR
 import Linglib.Phonology.Autosegmental.NonCrossing
 import Linglib.Phonology.Autosegmental.Realization
