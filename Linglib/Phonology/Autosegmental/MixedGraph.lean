@@ -13,78 +13,58 @@ import Mathlib.Logic.Relation
 import Linglib.Core.Combinatorics.MixedGraph
 
 /-!
-# Labeled mixed graphs — the autosegmental foundation
+# Labeled mixed graphs
 
-A labeled mixed graph `⟨V, E, A, ℓ⟩` ([jardine-2019] §5; [jardine-heinz-2015] §2;
-[jardine-2016-diss] §4.1) is the literature's most general autosegmental object: a
-mixed graph (`Core/Combinatorics/MixedGraph.lean` — undirected association edges
-`E ⊆ [V]²`, here a `SimpleGraph` since the edges are two-element subsets, and
-directed arcs `A ⊆ V × V` "representing the order on each string", a `Digraph`)
-together with a total vertex labeling. The raw graphs are [jardine-2019]'s
-`GR(Γ)`, here the category `MixedGraphCat`. As pure relations
-over a vertex-type parameter it is a finite relational structure in the
-model-theoretic-phonology sense — the format in which notational-equivalence results
-are proved ([jardine-danis-iacoponi-2021], [oakden-2020]) — and stores no ambient
-cross-tier order, which is structure the object does not have.
-
-Tiers are not part of the object. A tier assignment `t : S → ι` on the alphabet
-induces the node partition, and [jardine-2016-diss] §4.2's well-formedness axioms
-carve the autosegmental representations out of the raw graphs relative to it.
-
-Concatenation is [jardine-heinz-2015] Definition 2 *minus its `R_ID` melody merge*
-(the OCP repair, modeled separately as `OCP.collapse`, matching `AR.lean`): on
-edges it is the stock disjoint sum `⊕g`; on arcs it is the blockwise sum plus, per
-tier class, bridging arcs from the first factor's precedence-maximal vertices to
-the second factor's precedence-minimal ones. The monoid laws hold up to
-structure-preserving equivalence (`MixedGraph.Iso`), not up to equality —
-strictness belongs to the tiered normal form, not to the foundation.
+A labeled mixed graph `⟨V, E, A, ℓ⟩` is the general autosegmental object
+([jardine-2019] §5; [jardine-heinz-2015] §2; [jardine-2016-diss] §4.1): a
+`MixedGraph` — association edges as a `SimpleGraph`, order arcs as a `Digraph` —
+with a vertex labeling, and no further structure. Tiers are not part of the
+object: a tier assignment `t : S → ι` induces the node partition, and the
+dissertation's §4.2 axioms carve the autosegmental representations out of the
+raw graphs relative to it.
 
 ## Main definitions
 
-* `Autosegmental.MixedGraph V S`: a `MixedGraph V` with a labeling `label : V → S`
-  (the owner-relative name: within this namespace, the labeled object, following
-  the dissertation's own usage). `PrecPath` is the transitive closure of the arcs.
-* The [jardine-2016-diss] §4.2 axioms, relative to a tier assignment where tiers
-  matter: `IsTierOrdered` (Axioms 1–2), `NoInternalAssoc` (Axiom 3), `IsSaturated`
-  (Axiom 4 — stated, deliberately not imposed, as in `AR.lean`), `IsPlanar`
-  (Axiom 5, the No-Crossing Constraint in its general path form), `IsOCPClean`
-  (Axiom 6). Numbering follows the dissertation; [jardine-heinz-2015] numbers the
-  NCC and OCP as its Axioms 4 and 5 and has no saturation axiom, which is why
-  `AR.lean`'s citations differ.
-* `MixedGraph.Hom`: label- and association-preserving maps — the broad morphism
-  class, deliberately precedence-forgetting; `precPreserving` is the wide
-  morphism class of full-structure (model-theoretic) homomorphisms, and
-  `MixedGraph.Iso` the full-structure equivalences, with faces projecting to the
-  stock `SimpleGraph.Hom`/`Iso` and `RelIso`.
-* `MixedGraph.concat t`: tier-bridging concatenation on the vertex sum;
-  `MixedGraph.sum` is the bridge-free blockwise sum, the categorical coproduct
-  of the broad category (`HasInitial`/`HasBinaryCoproducts` on `MixedGraphCat`).
-* `MixedGraphCat S`: **the category of labeled mixed graphs** (vertex type
-  bundled with a graph); `Representation t` is **the category of autosegmental
-  representations** — the full subcategory of the structural axiom class
-  (Axioms 1–3), the category autosegmental phonology actually works in.
+* `Autosegmental.MixedGraph V S`: the labeled mixed graph; `PrecPath` is the
+  transitive closure of its arcs.
+* `IsTierOrdered`, `NoInternalAssoc`, `IsSaturated`, `IsPlanar`, `IsOCPClean`:
+  the §4.2 axioms (1–2, 3, 4, 5, 6; [jardine-heinz-2015] numbers the NCC and OCP
+  as 4 and 5 and has no saturation axiom). Saturation is stated but not imposed,
+  as in `AR.lean`; tier-orderedness includes path-closure, [jardine-2019]'s
+  reading that `A` represents the order.
+* `MixedGraph.Hom`: label- and association-preserving maps; `precPreserving`
+  marks the full-structure homomorphisms, `MixedGraph.Iso` the full-structure
+  equivalences.
+* `MixedGraph.concat t`: concatenation — the vertex sum with a same-tier bridge,
+  [jardine-heinz-2015] Definition 2 in the order signature, minus its `R_ID`
+  merge (`OCP.collapse`); `MixedGraph.sum` is the bridge-free coproduct.
+* `MixedGraphCat S`: the category of labeled mixed graphs ([jardine-2019]'s
+  `GR(Γ)`), with `HasInitial` and `HasBinaryCoproducts`; `Representation t` is
+  the category of autosegmental representations — the full subcategory on
+  Axioms 1–3, monoidal under `concat`.
 
 ## Main results
 
-* `concat_empty_iso` / `empty_concat_iso`: the unit laws up to `Iso`
-  ([jardine-heinz-2015] Theorem 1).
-* `not_isTierOrdered_sum`: **Axiom 2 forces the bridges** — the bridge-free
-  coproduct leaves the axiom class whenever the factors share a tier, so
-  `concat`'s bridging arcs are the minimal repair keeping concatenation inside
-  `Representation`. The precise content of [jardine-heinz-2015]'s "modification
-  of the disjoint union".
+* `concat_empty_iso`, `empty_concat_iso`, `concat_assoc_iso`,
+  `isTierOrdered_concat`, `noInternalAssoc_concat`: [jardine-heinz-2015]
+  Theorems 1, 3 and 4 up to `Iso`, unconditional in the order signature.
+* `not_isTierOrdered_sum`: the bridge-free coproduct leaves the axiom class
+  whenever the factors share a tier — Axiom 2 forces `concat`'s bridges.
+* `Representation.tierColoring`: the tier map properly colors the association
+  graph, so tier arity bounds its chromatic number (`edges_colorable`).
+
+## Implementation notes
+
+The object stores no cross-tier order, and morphisms default to the broad
+precedence-forgetting class, where the coproduct and the OCP repair live.
+Subgraph-based notions (`ASL.lean`) are signature-sensitive and do not transfer
+to the order signature for free. Monoid laws hold up to `Iso`; strictness
+belongs to the tiered normal form (`MultiAR.lean`).
 
 ## TODO
 
-* Associativity up to `Iso` ([jardine-heinz-2015] Theorem 3; the edge component is
-  stock `SimpleGraph.Iso.sumAssoc`, the arc component is the bridge algebra —
-  conditional on the tier classes being precedence chains, per the paper's Lemma 1
-  remark).
-* Axiom preservation under `concat` ([jardine-heinz-2015] Theorem 4 and its
-  Axiom 1–3 analogues).
-* The normal-form equivalence: every graph satisfying Axioms 1–3 is isomorphic to
-  a tier-indexed family of `LabeledTuple`s with per-pair links — the strict tiered
-  presentation `MultiAR` builds on — with `IsPlanar` reducing to the per-pair NCC.
+* The normal-form equivalence with the strict tuple presentation, with
+  `IsPlanar` reducing to the per-pair NCC on normal forms.
 -/
 
 namespace Autosegmental
