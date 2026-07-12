@@ -404,4 +404,41 @@ theorem tierProj_ofList [∀ s, Finite (g₀ s).obj.V] (i : ι) (w : List S) :
 
 end RealizeTierWord
 
+/-! ### Factors and banned-subgraph grammars
+
+[jardine-2017]'s connected-subgraph embedding in position coordinates: a factor
+occurs at per-tier offsets when its tier words are windows of the host's and its
+links transport shifted. Banned-subgraph grammars ([jardine-2016-diss] Ch. 5)
+are lists of forbidden factors. -/
+
+section Factors
+
+variable {ι : Type*} {τ : ι → Type*}
+variable (F X : Representation (Sigma.fst : ((i : ι) × τ i) → ι))
+
+/-- Tier-`i` position `p` links to tier-`j` position `q`, in ℕ coordinates
+    (out-of-bounds positions link to nothing). -/
+def Representation.link [Finite X.obj.V] (i j : ι) (p q : ℕ) : Prop :=
+  ∃ (hp : p < X.tierLength i) (hq : q < X.tierLength j), X.linkRel i j ⟨p, hp⟩ ⟨q, hq⟩
+
+/-- `F` occurs in `X` at per-tier offsets `o`: each tier word of `F` is the
+    window of `X`'s at `o i`, and `F`'s links transport shifted. -/
+def Representation.IsFactorAt [Finite F.obj.V] [Finite X.obj.V] (o : ι → ℕ) : Prop :=
+  (∀ i p, p < F.tierLength i → (X.tierWord i)[p + o i]? = (F.tierWord i)[p]?) ∧
+    ∀ i j p q, F.link i j p q → X.link i j (p + o i) (q + o j)
+
+/-- `F` **subgraph-embeds** in `X` when some offsets place it as a factor
+    ([jardine-2017]'s connected-subgraph embedding). -/
+def Representation.FactorEmbeds [Finite F.obj.V] [Finite X.obj.V] : Prop :=
+  ∃ o : ι → ℕ, F.IsFactorAt X o
+
+/-- `X` avoids every forbidden factor of a banned-subgraph grammar
+    ([jardine-2016-diss] Ch. 5's `L^NL_G`). -/
+def Representation.Free [Finite X.obj.V]
+    (B : List {F : Representation (Sigma.fst : ((i : ι) × τ i) → ι) // Finite F.obj.V}) :
+    Prop :=
+  ∀ F ∈ B, haveI := F.property; ¬ F.val.FactorEmbeds X
+
+end Factors
+
 end Autosegmental
