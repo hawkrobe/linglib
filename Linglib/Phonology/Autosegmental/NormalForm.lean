@@ -261,10 +261,12 @@ theorem Representation.tensorEnum_apply_natAdd (i : ι) (p : Fin (Y.tierLen i)) 
         (.inr (monoEquivOfFin (Y.fiber i) (rfl : _ = Y.tierLen i) p)) := by
   simp [Representation.tensorEnum, finSumFinEquiv_symm_apply_natAdd]
 
+omit [Finite X.obj.V] [Finite Y.obj.V] in
 theorem Representation.fiberLabel_symm_inl {i : ι} (w : X.fiber i) :
     Representation.fiberLabel ((Representation.fiberTensorEquiv (X := X) (Y := Y) i).symm
       (.inl w)) = X.fiberLabel w := rfl
 
+omit [Finite X.obj.V] [Finite Y.obj.V] in
 theorem Representation.fiberLabel_symm_inr {i : ι} (w : Y.fiber i) :
     Representation.fiberLabel ((Representation.fiberTensorEquiv (X := X) (Y := Y) i).symm
       (.inr w)) = Y.fiberLabel w := rfl
