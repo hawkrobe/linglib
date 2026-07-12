@@ -45,7 +45,9 @@ strictness belongs to the tiered normal form, not to the foundation.
   matter: `IsTierOrdered` (Axioms 1–2), `NoInternalAssoc` (Axiom 3), `IsSaturated`
   (Axiom 4 — stated, deliberately not imposed, as in `AR.lean`), `IsPlanar`
   (Axiom 5, the No-Crossing Constraint in its general path form), `IsOCPClean`
-  (Axiom 6).
+  (Axiom 6). Numbering follows the dissertation; [jardine-heinz-2015] numbers the
+  NCC and OCP as its Axioms 4 and 5 and has no saturation axiom, which is why
+  `AR.lean`'s citations differ.
 * `MixedGraph.Hom` / `MixedGraph.Iso`: label- and relation-preserving maps and
   equivalences; faces project to the stock `SimpleGraph.Hom`/`Iso` and
   `RelHom`/`RelIso`.
@@ -227,8 +229,11 @@ arc from every `G₁`-vertex of a class to every same-class `G₂`-vertex. This 
 the signature of [jardine-2019]'s own formulation — arcs represent *the order* on
 each string, not its successor steps — under which [jardine-heinz-2015]
 Definition 2's last-to-first successor bridge becomes the complete same-class
-bridge (the two signatures are interdefinable over these structures,
-[jardine-2017-complexity]). The order form makes the bridge total (the paper's
+bridge: the two composites agree in precedence-closure, the relation the axioms
+and results here consume (on the definability relationship between the two
+signatures cf. [jardine-2017-complexity]; note that subgraph-based notions such
+as `ASL.lean`'s forbidden-factor grammars are signature-sensitive and do not
+transfer for free). The order form makes the bridge total (the paper's
 `first`/`last` are partial) and functorial, and its monoid laws unconditional
 where the successor form's associativity is conditional on the tier classes being
 string graphs (the paper's Lemma 1 remark). -/

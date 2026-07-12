@@ -11,7 +11,7 @@ import Linglib.Fragments.Laal.Prosody
 /-!
 # Lionnet (2022): The features and geometry of tone in Laal
 
-[lionnet-2022-laal]
+[lionnet-2022]
 
 Laal (isolate, southern Chad) has three contrastive tone heights H/M/L. Lionnet
 argues for a subtonal analysis à la [yip-1980]/[pulleyblank-1986] (two register

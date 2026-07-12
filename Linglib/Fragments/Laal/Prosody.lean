@@ -7,7 +7,7 @@ Authors: Robert Hawkins
 /-!
 # Laal prosodic fragment
 
-[lionnet-2022-laal]
+[lionnet-2022]
 
 Theory-neutral tone data for Laal (language isolate, southern Chad): the three
 contrastive tone heights H/M/L, the attested stem-level tone melodies (Table 2),
