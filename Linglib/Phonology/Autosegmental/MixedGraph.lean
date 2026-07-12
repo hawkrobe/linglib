@@ -125,6 +125,19 @@ theorem IsTierOrdered.precPath_iff {t : S → ι} {G : MixedGraph V S}
     | tail _ hb ih => exact h.2.2.2 ih hb
   · exact .single
 
+/-- The named form of the flat axioms: on each tier the arcs are a strict total
+    order (`LinearOrder`'s own pattern — flat fields, derived class). Feeds
+    `linearOrderOfSTO` for sorting the fibers. -/
+theorem IsTierOrdered.isStrictTotalOrder {t : S → ι} {G : MixedGraph V S}
+    (h : G.IsTierOrdered t) (i : ι) :
+    IsStrictTotalOrder {v // G.tier t v = i} (fun a b => G.arcs.Adj a b) where
+  trichotomous a b hab hba := by
+    by_contra hne
+    rcases h.2.1 (fun hv => hne (Subtype.ext hv)) (a.2.trans b.2.symm) with hp | hp
+    exacts [hab hp, hba hp]
+  irrefl a := h.2.2.1 a
+  trans _ _ _ hab hbc := h.2.2.2 hab hbc
+
 /-! ### Morphisms -/
 
 /-- A label- and association-preserving map of labeled mixed graphs. Precedence
