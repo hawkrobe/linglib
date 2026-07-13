@@ -6,7 +6,6 @@ Authors: Robert Hawkins
 import Mathlib.CategoryTheory.Monoidal.Category
 import Mathlib.CategoryTheory.ObjectProperty.FullSubcategory
 import Mathlib.CategoryTheory.Monoidal.Widesubcategory
-import Mathlib.Logic.Relation
 import Linglib.Phonology.Autosegmental.Graph
 
 /-!
@@ -61,15 +60,11 @@ section Axioms
 variable (E : SimpleGraph V) (A : Digraph V)
 
 /-- The arcs `A` are tier-internal and strictly totally order each fiber of `c` (Axioms 1–2). -/
-structure IsTierOrdered (c : V → ι) : Prop where
+structure IsTierOrdered (c : V → ι) : Prop extends IsStrictOrder V A.Adj where
   /-- Arcs never leave a tier. -/
   tier_eq : ∀ ⦃v w⦄, A.Adj v w → c v = c w
   /-- Distinct same-tier vertices are arc-comparable. -/
   total : ∀ ⦃v w⦄, v ≠ w → c v = c w → A.Adj v w ∨ A.Adj w v
-  /-- No vertex precedes itself. -/
-  irrefl : ∀ v, ¬ A.Adj v v
-  /-- Arcs compose. -/
-  trans : ∀ ⦃u v w⦄, A.Adj u v → A.Adj v w → A.Adj u w
 
 /-- No association edge links arc-related vertices (Axiom 3). -/
 def NoInternalAssoc : Prop := ∀ ⦃v w⦄, E.Adj v w → ¬ A.Adj v w
@@ -87,24 +82,6 @@ def IsOCPClean (ℓ : V → S) (t : S → ι) (m : ι) : Prop :=
 
 end Axioms
 
-variable {A : Digraph V} {c : V → ι}
-
-/-- On the axiom class, precedence paths — the transitive closure of the
-    arcs — coincide with the arcs: the dissertation's `≺`. -/
-theorem IsTierOrdered.transGen_eq (h : IsTierOrdered A c) :
-    Relation.TransGen A.Adj = A.Adj :=
-  haveI : IsTrans V A.Adj := ⟨h.trans⟩
-  Relation.transGen_eq_self
-
-/-- The classed form of the axioms: on each tier the arcs are a strict total
-    order. Feeds `linearOrderOfSTO` for sorting the fibers. -/
-theorem IsTierOrdered.isStrictTotalOrder (h : IsTierOrdered A c) (i : ι) :
-    IsStrictTotalOrder {v // c v = i} (A.Adj · ·) where
-  trichotomous a b hab hba :=
-    Subtype.ext <| of_not_not fun hne => (h.total hne (a.2.trans b.2.symm)).elim hab hba
-  irrefl a := h.irrefl a
-  trans _ _ _ hab hbc := h.trans hab hbc
-
 /-! ### Axiom preservation under the graph operations -/
 
 namespace Graph
@@ -112,53 +89,40 @@ namespace Graph
 variable {X Y : Graph S}
 
 theorem isTierOrdered_empty (t : S → ι) : IsTierOrdered (empty S).arcs ((empty S).tier t) :=
-  ⟨fun v => v.elim, fun v => v.elim, fun v => v.elim, fun v => v.elim⟩
+  { irrefl := (·.elim), trans := (·.elim), tier_eq := (·.elim), total := (·.elim) }
 
-theorem noInternalAssoc_empty : NoInternalAssoc (empty S).edges (empty S).arcs :=
-  fun v => v.elim
+theorem noInternalAssoc_empty : NoInternalAssoc (empty S).edges (empty S).arcs := (·.elim)
 
 section Concat
 variable (t : S → ι)
 
-/-- Concatenation preserves Axioms 1–2; transitivity through the seam holds
-    because arcs are tier-internal. -/
+/-- Concatenation preserves Axioms 1–2; seam transitivity holds because arcs are
+    tier-internal. -/
 theorem isTierOrdered_concat
     (h₁ : IsTierOrdered X.arcs (X.tier t)) (h₂ : IsTierOrdered Y.arcs (Y.tier t)) :
-    IsTierOrdered (concat t X Y).arcs ((concat t X Y).tier t) := by
-  refine ⟨?_, ?_, ?_, ?_⟩
-  · rintro (v | v) (w | w) h
-    exacts [h₁.tier_eq h, h, h.elim, h₂.tier_eq h]
-  · rintro (v | v) (w | w) hne htier
-    · rcases h₁.total (by rintro rfl; exact hne rfl) htier with hp | hp
-      exacts [Or.inl hp, Or.inr hp]
-    · exact Or.inl htier
-    · exact Or.inr htier.symm
-    · rcases h₂.total (by rintro rfl; exact hne rfl) htier with hp | hp
-      exacts [Or.inl hp, Or.inr hp]
-  · rintro (v | v) h
-    exacts [h₁.irrefl v h, h₂.irrefl v h]
-  · rintro (u | u) (v | v) (w | w) huv hvw <;>
-      first
-        | exact h₁.trans huv hvw
-        | exact h₂.trans huv hvw
-        | exact (h₁.tier_eq huv).trans hvw
-        | exact huv.trans (h₂.tier_eq hvw)
-        | exact (huv : False).elim
-        | exact (hvw : False).elim
+    IsTierOrdered (concat t X Y).arcs ((concat t X Y).tier t) where
+  tier_eq := by rintro (v | v) (w | w) h; exacts [h₁.tier_eq h, h, h.elim, h₂.tier_eq h]
+  total := by
+    rintro (v | v) (w | w) hne htier
+    exacts [h₁.total (Sum.inl_injective.ne_iff.mp hne) htier, Or.inl htier,
+      Or.inr htier.symm, h₂.total (Sum.inr_injective.ne_iff.mp hne) htier]
+  irrefl := by rintro (v | v) h; exacts [h₁.irrefl v h, h₂.irrefl v h]
+  trans := by
+    rintro (u | u) (v | v) (w | w) huv hvw
+    exacts [h₁.trans _ _ _ huv hvw, (h₁.tier_eq huv).trans hvw, (hvw : False).elim,
+      huv.trans (h₂.tier_eq hvw), (huv : False).elim, (huv : False).elim,
+      (hvw : False).elim, h₂.trans _ _ _ huv hvw]
 
-/-- Concatenation preserves Axiom 3: the disjoint edge sum adds no cross
-    edges. -/
+/-- Concatenation preserves Axiom 3: the disjoint edge sum adds no cross edges. -/
 theorem noInternalAssoc_concat (h₁ : NoInternalAssoc X.edges X.arcs)
     (h₂ : NoInternalAssoc Y.edges Y.arcs) :
     NoInternalAssoc (concat t X Y).edges (concat t X Y).arcs := by
   rintro (v | v) (w | w) hadj harc
   exacts [h₁ hadj harc, absurd hadj (by simp), absurd hadj (by simp), h₂ hadj harc]
 
-/-- Concatenation preserves the No-Crossing Constraint ([jardine-2019]'s
-    headline [jardine-heinz-2015] result): plain factor planarity suffices.
-    Association edges are blockwise, so a straddle needs both edges in one block —
-    reducing to the factor's `IsPlanar` — or one per block, where the required
-    return arc runs `inr → inl` and does not exist. -/
+/-- Concatenation preserves the No-Crossing Constraint ([jardine-2019]'s headline
+    [jardine-heinz-2015] result): factor planarity suffices — a straddle needs both
+    edges in one block, or a return arc `inr → inl` that does not exist. -/
 theorem isPlanar_concat (h₁ : IsPlanar X.edges X.arcs) (h₂ : IsPlanar Y.edges Y.arcs) :
     IsPlanar (concat t X Y).edges (concat t X Y).arcs := by
   rintro (v | v) (v' | v') (w | w) (w' | w') hvv' hww' hvw hw'v' <;>
@@ -197,7 +161,7 @@ abbrev AR (t : S → ι) :=
 
 namespace AR
 
-open MonoidalCategory
+open Graph MonoidalCategory
 
 variable {t : S → ι}
 
@@ -233,22 +197,20 @@ universe u₁ u₂ u₃
     representation as unit; the axiom class is closed under both by
     `isTierOrdered_concat`/`noInternalAssoc_concat`. Universes pinned so the
     unit's vertex type shares the objects' universe — autobinding would split
-    the instance head into an unusable `max`. -/
+    the instance head into an unusable `max`; `@[simps]` feeds the tensor
+    rewrites in `NormalForm.lean`. -/
 @[simps] instance instMonoidalStruct {S : Type u₁} {ι : Type u₂} {t : S → ι} :
     MonoidalCategoryStruct (AR.{u₁, u₂, u₃} t) where
   tensorObj X Y :=
-    ⟨Graph.concat t X.obj Y.obj,
-      Graph.isTierOrdered_concat t X.property.1 Y.property.1,
-      Graph.noInternalAssoc_concat t X.property.2 Y.property.2⟩
-  tensorUnit :=
-    ⟨Graph.empty S, Graph.isTierOrdered_empty t,
-      Graph.noInternalAssoc_empty⟩
-  tensorHom f g := InducedCategory.homMk (Graph.Hom.concatMap t f.hom g.hom)
-  whiskerLeft X _ _ f := InducedCategory.homMk (Graph.Hom.concatMap t (Graph.Hom.id X.obj) f.hom)
-  whiskerRight f Y := InducedCategory.homMk (Graph.Hom.concatMap t f.hom (Graph.Hom.id Y.obj))
-  associator X Y Z := mkIso (Graph.concatAssocIso t X.obj Y.obj Z.obj)
-  leftUnitor X := mkIso (Graph.emptyConcatIso t X.obj)
-  rightUnitor X := mkIso (Graph.concatEmptyIso t X.obj)
+    ⟨concat t X.obj Y.obj, isTierOrdered_concat t X.property.1 Y.property.1,
+      noInternalAssoc_concat t X.property.2 Y.property.2⟩
+  tensorUnit := ⟨empty S, isTierOrdered_empty t, noInternalAssoc_empty⟩
+  tensorHom f g := InducedCategory.homMk (Hom.concatMap t f.hom g.hom)
+  whiskerLeft X _ _ f := InducedCategory.homMk (Hom.concatMap t (Hom.id X.obj) f.hom)
+  whiskerRight f Y := InducedCategory.homMk (Hom.concatMap t f.hom (Hom.id Y.obj))
+  associator X Y Z := mkIso (concatAssocIso t X.obj Y.obj Z.obj)
+  leftUnitor X := mkIso (emptyConcatIso t X.obj)
+  rightUnitor X := mkIso (concatEmptyIso t X.obj)
 
 /-- The category of autosegmental representations is monoidal under morpheme
     concatenation — [jardine-heinz-2015] Theorems 1 and 3 packaged as coherence,

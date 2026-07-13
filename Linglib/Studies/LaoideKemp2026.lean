@@ -839,9 +839,7 @@ def delinkInitial {S ι : Type*} (t : S → ι) (i₀ : ι) (X : Graph S) : Grap
 /-- Delinking preserves the structural axioms: arcs are untouched and the
     edge set shrinks. -/
 def delinkInitialRep {S ι : Type*} {t : S → ι} (i₀ : ι) (X : AR t) : AR t :=
-  ⟨delinkInitial t i₀ X.obj,
-    ⟨X.property.1.tier_eq, X.property.1.total, X.property.1.irrefl, X.property.1.trans⟩,
-    fun _ _ hadj harc => X.property.2 hadj.1 harc⟩
+  ⟨delinkInitial t i₀ X.obj, X.property.1, fun _ _ hadj harc => X.property.2 hadj.1 harc⟩
 
 open CategoryTheory in
 /-- **Initial-position delinking is an endofunctor of the precedence-preserving
