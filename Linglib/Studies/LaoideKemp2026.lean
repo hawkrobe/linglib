@@ -5,8 +5,6 @@ Authors: Robert Hawkins
 -/
 import Linglib.Phonology.Autosegmental.Floating
 import Linglib.Phonology.Autosegmental.Junction
-import Linglib.Phonology.Autosegmental.AR
-import Linglib.Phonology.Autosegmental.Embedding
 
 /-!
 # Laoide-Kemp (2026): Irish preverbal *d'* as a floating segment
@@ -810,9 +808,8 @@ the full category `AR α β`: a label-preserving reindexing
 (a broad `MixedGraphCat.Hom`) can move a non-initial element into initial position, after
 which there is *no* morphism between the delinked images at all
 (`delinkInitial_not_functorial`). But over the precedence-preserving wide subcategory, the
-**precedence-preserving wide subcategory** (`Autosegmental/Embedding.lean`:
-order-embedding tier maps; `SubgraphEmbeds` translations are canonical
-instances), it lifts to a genuine endofunctor `delinkInitialFunctor`
+**precedence-preserving wide subcategory** (the foundation's
+`Representation.precPreserving`), it lifts to a genuine endofunctor `delinkInitialFunctor`
 (built from `delinkInitial_map` / `_id` / `_comp`; precedence-preservation
 discharges the reflects-initial-slot hypothesis via
 `precPreserving.reflects_zero`). This is the categorical content of the

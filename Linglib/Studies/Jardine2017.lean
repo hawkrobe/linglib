@@ -3,7 +3,6 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Phonology.Autosegmental.Embedding
 import Linglib.Phonology.Autosegmental.Junction
 
 /-!
@@ -69,7 +68,7 @@ to consecutive positions in G).
 
 namespace Jardine2017
 
-open Autosegmental Autosegmental.Graph
+open Autosegmental
 
 /-! ## §1 Label types
 

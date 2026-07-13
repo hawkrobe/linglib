@@ -152,7 +152,7 @@ theorem ocp_raised_merge_clean (tier : List TRN) :
 
 [lionnet-2022]'s geometry (ex. 52) is a hub-and-spoke around the **Tonal Root Node**:
 the `[±upper]` register tier, the `[±raised]` tier, and the mora (TBU) tier each
-associate to the TRN. On the general substrate `Autosegmental.MultiAR` this is a
+associate to the TRN. On the graph foundation this is a
 four-tier graph. Its point over the `TRN` *bundle* used above: each subtonal feature
 is a tier of its own, so it can be manipulated **independently of the whole TRN** —
 [lionnet-2022]'s *partial activity* (§5, e.g. `[−raised]` assimilation) — which a

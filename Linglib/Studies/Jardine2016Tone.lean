@@ -8,7 +8,6 @@ import Linglib.Core.Computability.Subregular.Function.SideDeterminacy
 import Linglib.Core.Computability.Subregular.Function.LetterSubsequential
 import Linglib.Core.Computability.Subregular.Function.Bimachine
 import Linglib.Core.Computability.Subregular.Function.Hierarchy
-import Linglib.Phonology.Autosegmental.Realization
 import Linglib.Phonology.Autosegmental.Collapse
 import Linglib.Phonology.Autosegmental.Junction
 import Linglib.Phonology.Tone.Basic
@@ -199,69 +198,12 @@ theorem utp_markup_decomposition :
 
 /-! ### The autosegmental grounding ((40), §4.4)
 
-The string representation is the linearisation of the autosegmental one: `toAR` is the
-paper's (40) translation, and by `Autosegmental.linearize_realize` the association-state
-string of the realized AR is the input string. So the TBU string is recoverable from the
-AR ((37a)) and string look-ahead is timing-tier look-ahead ((37b)). -/
+The string representation reads back from the autosegmental one; the
+grounding claims are stated on the graph foundation below. -/
 
 section AutosegmentalGrounding
 
 open Autosegmental
-
-/-- Read a timing unit's association state back as a TBU symbol. -/
-def readTBU (s : Unit × List Tone.TRN) : TBU := if s.2.isEmpty then .O else .H
-
-/-- (37a): the TBU string is recoverable from the realized AR, so the complexity results
-transfer to the autosegmental analysis. -/
-theorem readTBU_linearize_realize (w : List TBU) :
-    ((AR.realize toAR w).linearize).map readTBU = w := by
-  rw [linearize_realize_toAR, List.map_map]
-  conv_rhs => rw [← List.map_id w]
-  exact List.map_congr_left fun a _ => by cases a <;> rfl
-
-/-! #### The fused plateau ([hyman-katamba-2010] (7))
-
-The OCP-merging realization `Autosegmental.realizeMerged` fuses the plateau's run of H
-nodes into one, giving [hyman-katamba-2010]'s output representation (7): a single H
-autosegment multiply linked to exactly the `plateau`, over an unchanged timing tier. -/
-
-theorem mem_links_realizeMerged_utp (p : ℕ × ℕ) :
-    p ∈ (AR.realizeMerged toAR (utp.map w)).links ↔ p.1 = 0 ∧ utp.Surfaces w p.2 := by
-  have hL : ∀ j, (AR.realize toAR (utp.map w)).toGraph.IsLinkedLower j ↔ utp.Surfaces w j :=
-    fun j => by rw [isLinkedLower_realize_toAR, utp.map_getElem?_H_iff]
-  rw [realizeMerged_def,
-    mem_links_collapseAR_of_upper_replicate (upper_realize_toAR (utp.map w)), hL]
-
-/-- Multiple association ((7)): the merged realization links melody node `0` to exactly
-the `plateau`. Unconditional: a toneless word has an empty plateau and no lines. -/
-theorem links_realizeMerged_utp :
-    (AR.realizeMerged toAR (utp.map w)).links = {0} ×ˢ plateau w := by
-  ext ⟨k, j⟩; rw [mem_links_realizeMerged_utp]; simp [and_comm, eq_comm]
-
-/-- The timing tier survives the merge: one slot per input TBU. -/
-theorem lower_realizeMerged_utp :
-    (AR.realizeMerged toAR (utp.map w)).lower.toList = List.replicate w.length () := by
-  rw [realizeMerged_def, collapseAR_lower]
-  have h := List.eq_replicate_of_mem
-    (l := (AR.realize toAR (utp.map w)).lower.toList) (a := ()) fun _ _ => rfl
-  rwa [LabeledTuple.toList_length, ← AR.linearize_length, linearize_realize_toAR,
-    List.length_map, Tone.Surfacing.map_length] at h
-
-/-- The fused plateau ((7)): with at least one H, the merged melody tier is a single H
-autosegment. -/
-theorem upper_realizeMerged_utp (hw : .H ∈ w) :
-    (AR.realizeMerged toAR (utp.map w)).upper.toList = [Tone.TRN.H] := by
-  obtain ⟨m, hm⟩ : ∃ m, ((utp.map w).count .H) = m + 1 := by
-    obtain ⟨i, hi⟩ := List.mem_iff_getElem?.mp hw
-    have := List.count_pos_iff.mpr <| List.mem_iff_getElem?.mpr
-      ⟨i, utp.map_getElem?_H_iff.mpr (utp.surfaces_of_hi hi)⟩
-    exact ⟨(utp.map w).count .H - 1, by omega⟩
-  rw [realizeMerged_def, upper_collapseAR, upper_realize_toAR, hm, OCP.collapse_replicate]
-
-/-- (7) concretely: `HØØH` fuses to one H linked to all four TBUs. -/
-example :
-    (AR.realizeMerged toAR (utp.map [.H, .O, .O, .H])).links
-      = {(0, 0), (0, 1), (0, 2), (0, 3)} := by decide
 
 /-! #### The autosegmental grounding in coordinates
 
