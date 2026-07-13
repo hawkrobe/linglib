@@ -74,6 +74,15 @@ variable {X : Representation (Sigma.fst : ((i : ι) × τ i) → ι)}
 def Representation.fiberLabel {i : ι} (v : X.fiber i) : τ i :=
   v.property ▸ (X.obj.label v.val).2
 
+/-- The label of a fiber element decomposes as tier plus `fiberLabel`. -/
+theorem Representation.label_fiber {i : ι} (v : X.fiber i) :
+    X.obj.label v.val = ⟨i, X.fiberLabel v⟩ := by
+  obtain ⟨u, hu⟩ := v
+  show X.obj.label u = _
+  simp only [Representation.fiberLabel]
+  conv_lhs => rw [← Sigma.eta (X.obj.label u)]
+  exact Sigma.eq hu rfl
+
 instance Representation.fiber.instFinite [Finite X.obj.V] (i : ι) : Finite (X.fiber i) :=
   Subtype.finite
 
@@ -533,5 +542,87 @@ theorem Representation.link_tensor {X Y : Representation (Sigma.fst : ((i : ι) 
       simpa using hl
 
 end Factors
+
+/-! ### Classification: the readers determine the representation
+
+Two finite representations with the same tier words and the same links are
+isomorphic — `(tierWord, link)` is a complete invariant, [jardine-heinz-2015]'s
+tiered tuples as the classification of finite representations. -/
+
+section Classification
+open scoped MonoidalCategory
+
+variable {ι : Type*} {τ : ι → Type*}
+variable {X : Representation (Sigma.fst : ((i : ι) × τ i) → ι)}
+
+/-- The label of a canonical vertex sits on its own tier. -/
+theorem Representation.label_vertexEquiv [Finite X.obj.V] (i : ι)
+    (p : Fin (X.tierLength i)) : (X.obj.label (X.vertexEquiv ⟨i, p⟩)).1 = i :=
+  (X.fiberEnum i p).property
+
+theorem Representation.linkRel_iff_link [Finite X.obj.V] {i j : ι}
+    {p : Fin (X.tierLength i)} {q : Fin (X.tierLength j)} :
+    X.linkRel i j p q ↔ X.link i j (p : ℕ) (q : ℕ) :=
+  ⟨fun h => ⟨p.isLt, q.isLt, h⟩, fun ⟨_, _, h⟩ => by convert h⟩
+
+theorem Representation.tierWord_getElem [Finite X.obj.V] {i : ι}
+    (p : Fin (X.tierLength i)) :
+    (X.tierWord i)[(p : ℕ)]'(by simp) = X.fiberLabel (X.fiberEnum i p) := by
+  simp [Representation.tierWord]
+
+theorem Representation.label_normalize [Finite X.obj.V] {i : ι}
+    (p : Fin (X.tierLength i)) :
+    (X.normalize).obj.label ⟨i, p⟩ = ⟨i, X.fiberLabel (X.fiberEnum i p)⟩ :=
+  X.label_fiber (X.fiberEnum i p)
+
+theorem Representation.arcs_normalize_ne [Finite X.obj.V] {i j : ι} (h : i ≠ j)
+    (p : Fin (X.tierLength i)) (q : Fin (X.tierLength j)) :
+    ¬ (X.normalize).obj.graph.arcs.Adj ⟨i, p⟩ ⟨j, q⟩ := fun ha => by
+  have h2 := X.property.1.tier_eq ha
+  rw [show MixedGraphCat.tier Sigma.fst X.obj (X.vertexEquiv ⟨i, p⟩) = i from
+      X.label_vertexEquiv i p,
+    show MixedGraphCat.tier Sigma.fst X.obj (X.vertexEquiv ⟨j, q⟩) = j from
+      X.label_vertexEquiv j q] at h2
+  exact h h2
+
+/-- **Classification of finite representations**: equal tier words and equal
+    links give an isomorphism — the tuple reading is a complete invariant. -/
+noncomputable def Representation.isoOfReaderEq
+    {A B : Representation (Sigma.fst : ((i : ι) × τ i) → ι)}
+    [Finite A.obj.V] [Finite B.obj.V]
+    (hw : ∀ i, A.tierWord i = B.tierWord i)
+    (hl : ∀ i j p q, A.link i j p q ↔ B.link i j p q) : A ≅ B := by
+  have hlen : ∀ i, A.tierLength i = B.tierLength i := fun i => by
+    rw [← Representation.length_tierWord, hw, Representation.length_tierWord]
+  refine A.normalizeIso.symm ≪≫ Representation.mkIso ?_ ≪≫ B.normalizeIso
+  refine
+    { toEquiv := Equiv.sigmaCongrRight fun i => finCongr (hlen i)
+      edges_iff := fun v w => ?_
+      arcs_iff := fun v w => ?_
+      label_comp := fun v => ?_ }
+  · obtain ⟨i, p⟩ := v
+    obtain ⟨j, q⟩ := w
+    show B.normalize.obj.graph.edges.Adj ⟨i, Fin.cast (hlen i) p⟩ ⟨j, Fin.cast (hlen j) q⟩
+      ↔ A.normalize.obj.graph.edges.Adj ⟨i, p⟩ ⟨j, q⟩
+    rw [Representation.edges_normalize, Representation.edges_normalize,
+      Representation.linkRel_iff_link, Representation.linkRel_iff_link]
+    exact (hl i j p q).symm
+  · obtain ⟨i, p⟩ := v
+    obtain ⟨j, q⟩ := w
+    show B.normalize.obj.graph.arcs.Adj ⟨i, Fin.cast (hlen i) p⟩ ⟨j, Fin.cast (hlen j) q⟩
+      ↔ A.normalize.obj.graph.arcs.Adj ⟨i, p⟩ ⟨j, q⟩
+    rcases eq_or_ne i j with rfl | h
+    · rw [Representation.arcs_normalize, Representation.arcs_normalize]
+      exact (Fin.castOrderIso (hlen i)).lt_iff_lt
+    · exact iff_of_false (Representation.arcs_normalize_ne h _ _)
+        (Representation.arcs_normalize_ne h _ _)
+  · obtain ⟨i, p⟩ := v
+    show B.normalize.obj.label ⟨i, Fin.cast (hlen i) p⟩ = A.normalize.obj.label ⟨i, p⟩
+    rw [Representation.label_normalize, Representation.label_normalize]
+    congr 1
+    rw [← Representation.tierWord_getElem, ← Representation.tierWord_getElem]
+    simp only [hw, Fin.val_cast]
+
+end Classification
 
 end Autosegmental

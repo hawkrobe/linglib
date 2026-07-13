@@ -620,12 +620,6 @@ variable {ι : Type*} [DecidableEq ι] {τ : ι → Type*}
 variable (X : Representation (Sigma.fst : ((i : ι) × τ i) → ι))
 
 omit [DecidableEq ι] in
-/-- The label of a canonical vertex sits on its own tier. -/
-theorem Representation.label_vertexEquiv [Finite X.obj.V] (i : ι)
-    (p : Fin (X.tierLength i)) : (X.obj.label (X.vertexEquiv ⟨i, p⟩)).1 = i :=
-  (X.fiberEnum i p).property
-
-omit [DecidableEq ι] in
 /-- Links are symmetric in coordinates. -/
 theorem Representation.link_symm [Finite X.obj.V] {i j : ι} {p q : ℕ}
     (h : X.link i j p q) : X.link j i q p := by
