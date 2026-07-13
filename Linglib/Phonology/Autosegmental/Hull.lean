@@ -3,7 +3,6 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Phonology.Autosegmental.AR
 import Linglib.Phonology.Autosegmental.NormalForm
 
 /-!
@@ -31,71 +30,6 @@ representation, where the melody is a single node and the hull is planar.
 namespace Autosegmental
 
 variable {α β : Type*}
-
-namespace Graph
-
-/-- Close each upper node's association set to its interval hull on the lower tier. -/
-def hull (r : Graph α β) : Graph α β where
-  upper := r.upper
-  lower := r.lower
-  links := (Finset.range r.upper.len ×ˢ Finset.range r.lower.len).filter fun p =>
-    (∃ q ∈ r.links, q.1 = p.1 ∧ q.2 ≤ p.2) ∧ ∃ q ∈ r.links, q.1 = p.1 ∧ p.2 ≤ q.2
-
-@[simp] theorem hull_upper (r : Graph α β) : r.hull.upper = r.upper := rfl
-
-@[simp] theorem hull_lower (r : Graph α β) : r.hull.lower = r.lower := rfl
-
-/-- Hull membership, on an in-bounds graph: `j` lies between two of `k`'s links. -/
-theorem mem_links_hull {r : Graph α β} (hr : r.InBounds) {k j : ℕ} :
-    (k, j) ∈ r.hull.links
-      ↔ ∃ j₁ j₂, (k, j₁) ∈ r.links ∧ (k, j₂) ∈ r.links ∧ j₁ ≤ j ∧ j ≤ j₂ := by
-  simp only [hull, Finset.mem_filter, Finset.mem_product, Finset.mem_range]
-  constructor
-  · rintro ⟨-, ⟨⟨k₁, j₁⟩, h₁, rfl, hle₁⟩, ⟨k₂, j₂⟩, h₂, hk₂, hle₂⟩
-    subst hk₂
-    exact ⟨j₁, j₂, h₁, h₂, hle₁, hle₂⟩
-  · rintro ⟨j₁, j₂, h₁, h₂, hle₁, hle₂⟩
-    exact ⟨⟨(hr _ h₁).1, lt_of_le_of_lt hle₂ (hr _ h₂).2⟩,
-      ⟨(k, j₁), h₁, rfl, hle₁⟩, ⟨(k, j₂), h₂, rfl, hle₂⟩⟩
-
-/-- The hull stays in bounds. -/
-theorem InBounds.hull {r : Graph α β} (hr : r.InBounds) : r.hull.InBounds := fun p hp => by
-  simpa [Finset.mem_product] using (Finset.mem_filter.mp hp).1
-
-/-- Links flank themselves: the hull extends the link set. -/
-theorem links_subset_hull {r : Graph α β} (hr : r.InBounds) : r.links ⊆ r.hull.links :=
-  fun ⟨k, j⟩ hp => (mem_links_hull hr).mpr ⟨j, j, hp, hp, le_rfl, le_rfl⟩
-
-/-- Per-node convexity: the defining property of the hull. -/
-theorem hull_convex {r : Graph α β} (hr : r.InBounds) {k j₁ j j₂ : ℕ}
-    (h₁ : (k, j₁) ∈ r.hull.links) (h₂ : (k, j₂) ∈ r.hull.links) (hle₁ : j₁ ≤ j)
-    (hle₂ : j ≤ j₂) : (k, j) ∈ r.hull.links := by
-  obtain ⟨a₁, -, ha₁, -, hle₃, -⟩ := (mem_links_hull hr).mp h₁
-  obtain ⟨-, a₂, -, ha₂, -, hle₄⟩ := (mem_links_hull hr).mp h₂
-  exact (mem_links_hull hr).mpr ⟨a₁, a₂, ha₁, ha₂, by omega, by omega⟩
-
-end Graph
-
-/-- The hull on well-formed representations. -/
-def AR.hull (A : AR α β) : AR α β where
-  toGraph := A.toGraph.hull
-  inBounds := A.inBounds.hull
-
-@[simp] theorem AR.hull_upper (A : AR α β) : A.hull.upper = A.upper := rfl
-
-@[simp] theorem AR.hull_lower (A : AR α β) : A.hull.lower = A.lower := rfl
-
-/-- Hull membership on a well-formed representation: no side condition — the
-representation carries its own bounds. -/
-theorem AR.mem_links_hull {A : AR α β} {k j : ℕ} :
-    (k, j) ∈ A.hull.links
-      ↔ ∃ j₁ j₂, (k, j₁) ∈ A.links ∧ (k, j₂) ∈ A.links ∧ j₁ ≤ j ∧ j ≤ j₂ :=
-  Graph.mem_links_hull A.inBounds
-
-/-! ### The hull in coordinates
-
-The interval closure on the graph foundation: tier-`m` nodes' links close to
-their hulls on each other tier; links not involving `m` pass through. -/
 
 section CoordinateHull
 
