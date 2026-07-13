@@ -19,7 +19,7 @@ import Linglib.Phonology.Autosegmental.AR
 Every finite representation is isomorphic to its **normal form**: the same
 representation reindexed onto the canonical vertex type `(i : ι) × Fin nᵢ`,
 each tier fiber enumerated in ascending precedence order
-(`IsTierOrdered.isStrictTotalOrder` → `linearOrderOfSTO` → `monoEquivOfFin`).
+(the fiber `IsStrictTotalOrder` instance → `linearOrderOfSTO` → `monoEquivOfFin`).
 The normal form is a `AR` — not a separate carrier — and
 `normalizeIso` is definitional: `normalize` pulls the graph back along the
 enumeration equivalence.
@@ -137,8 +137,11 @@ instance AR.fiber.instFinite [Finite X.obj.V] (i : ι) : Finite (X.fiber i) :=
 /-- The arcs restricted to a tier fiber form a strict total order — the classed
     form of Axioms 1–2 applied to the tier coloring `Sigma.fst`. -/
 instance AR.fiber.instIsStrictTotalOrder (i : ι) :
-    IsStrictTotalOrder (X.fiber i) (fun a b => X.obj.arcs.Adj a.val b.val) :=
-  X.property.1.isStrictTotalOrder i
+    IsStrictTotalOrder (X.fiber i) (fun a b => X.obj.arcs.Adj a.val b.val) where
+  trichotomous a b hab hba := Subtype.ext <| of_not_not fun hne =>
+    (X.property.1.total hne (a.2.trans b.2.symm)).elim hab hba
+  irrefl a := X.property.1.irrefl a.1
+  trans _ _ _ hab hbc := X.property.1.trans _ _ _ hab hbc
 
 /-- Classical linear order on the fiber, from `IsStrictTotalOrder` via
     `linearOrderOfSTO`. -/
@@ -201,10 +204,11 @@ noncomputable def AR.normalize
       arcs := ⟨fun v w => X.obj.arcs.Adj (X.vertexEquiv v) (X.vertexEquiv w)⟩
       label := fun v => X.obj.label (X.vertexEquiv v) }
   property :=
-    ⟨⟨fun _ _ h => X.property.1.tier_eq h,
-      fun _ _ hne htier => X.property.1.total (fun hv => hne (X.vertexEquiv.injective hv)) htier,
-      fun _ h => X.property.1.irrefl _ h,
-      fun _ _ _ huv hvw => X.property.1.trans huv hvw⟩,
+    ⟨{ irrefl := fun _ h => X.property.1.irrefl _ h,
+       trans := fun _ _ _ huv hvw => X.property.1.trans _ _ _ huv hvw,
+       tier_eq := fun _ _ h => X.property.1.tier_eq h,
+       total := fun _ _ hne htier =>
+         X.property.1.total (fun hv => hne (X.vertexEquiv.injective hv)) htier },
      fun _ _ hadj harc => X.property.2 hadj harc⟩
 
 /-- The normal form is fully isomorphic to the original — definitionally,
@@ -814,8 +818,10 @@ def AR.ofData (ws : ∀ i, List (τ i)) (L : ι → ι → ℕ → ℕ → Prop)
       arcs := ⟨fun v w => v.1 = w.1 ∧ (v.2 : ℕ) < (w.2 : ℕ)⟩
       label := fun v => ⟨v.1, (ws v.1)[v.2]⟩ }
   property := by
-    refine ⟨⟨fun v w h => h.1, fun v w hne htier => ?_, fun v h => lt_irrefl _ h.2,
-      fun u v w huv hvw => ⟨huv.1.trans hvw.1, huv.2.trans hvw.2⟩⟩,
+    refine ⟨{ irrefl := fun v h => lt_irrefl _ h.2,
+              trans := fun u v w huv hvw => ⟨huv.1.trans hvw.1, huv.2.trans hvw.2⟩,
+              tier_eq := fun v w h => h.1,
+              total := fun v w hne htier => ?_ },
       fun v w hadj harc => hadj.1 harc.1⟩
     obtain ⟨i, p⟩ := v
     obtain ⟨j, q⟩ := w
