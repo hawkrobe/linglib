@@ -32,22 +32,24 @@ namespace Autosegmental
 variable {ι : Type*} {τ : ι → Type*}
 variable (F X : TieredAR ι τ)
 
+namespace AR
+
 /-- `F` occurs in `X` at per-tier offsets `o`: each tier word of `F` is the
     window of `X`'s at `o i`, and `F`'s links transport shifted. -/
-def AR.IsFactorAt [Finite F.obj.V] [Finite X.obj.V] (o : ι → ℕ) : Prop :=
+def IsFactorAt [Finite F.obj.V] [Finite X.obj.V] (o : ι → ℕ) : Prop :=
   (∀ i p, p < F.tierLength i → (X.tierWord i)[p + o i]? = (F.tierWord i)[p]?) ∧
     ∀ i j p q, F.link i j p q → X.link i j (p + o i) (q + o j)
 
 /-- `F` subgraph-embeds in `X` when some offsets place it as a factor
     ([jardine-2017]'s connected-subgraph embedding). -/
-def AR.FactorEmbeds [Finite F.obj.V] [Finite X.obj.V] : Prop :=
+def FactorEmbeds [Finite F.obj.V] [Finite X.obj.V] : Prop :=
   ∃ o : ι → ℕ, F.IsFactorAt X o
 
 /-- Offsets clamp to the host's tier lengths: `FactorEmbeds` is a bounded
     search. On tiers where the factor is nonempty the word-window condition
     already forces the bound; empty factor tiers accept any offset, so `min`
     clamps them harmlessly. -/
-theorem AR.factorEmbeds_iff_bounded
+theorem factorEmbeds_iff_bounded
     {F X : TieredAR ι τ}
     [Finite F.obj.V] [Finite X.obj.V] :
     F.FactorEmbeds X ↔
@@ -63,10 +65,10 @@ theorem AR.factorEmbeds_iff_bounded
       · exfalso
         have hnone : (X.tierWord i)[p + o i]? = none := by
           rw [List.getElem?_eq_none_iff]
-          simp only [AR.length_tierWord]
+          simp only [length_tierWord]
           omega
         have hsome : p < (F.tierWord i).length := by
-          simpa [AR.length_tierWord] using hp
+          simpa [length_tierWord] using hp
         rw [hnone, List.getElem?_eq_some_iff.mpr ⟨hsome, rfl⟩] at horig
         simp at horig
     · obtain ⟨hpb, hqb, -⟩ := id (hl i j p q h)
@@ -92,14 +94,14 @@ theorem AR.factorEmbeds_iff_bounded
 
 /-- `X` avoids every forbidden factor of a banned-subgraph grammar
     ([jardine-2016-diss] Ch. 5's `L^NL_G`). -/
-def AR.Free [Finite X.obj.V]
+def Free [Finite X.obj.V]
     (B : List {F : TieredAR ι τ // Finite F.obj.V}) :
     Prop :=
   ∀ F ∈ B, haveI := F.property; ¬ F.val.FactorEmbeds X
 
 /-- For a link-free factor, embedding reduces to independent per-tier infix
     occurrences ([jardine-2019]'s link-free fragment). -/
-theorem AR.factorEmbeds_iff_infix_of_link_free
+theorem factorEmbeds_iff_infix_of_link_free
     {F X : TieredAR ι τ}
     [Finite F.obj.V] [Finite X.obj.V]
     (hF : ∀ i j p q, ¬ F.link i j p q) :
@@ -109,18 +111,20 @@ theorem AR.factorEmbeds_iff_infix_of_link_free
     rw [List.isInfix_iff_exists_offset]
     rcases Nat.eq_zero_or_pos (F.tierWord i).length with hzero | hpos
     · exact ⟨0, Nat.zero_le _, fun p hp => absurd hp (by omega)⟩
-    · have h0 := hw i 0 (by simpa [AR.length_tierWord] using hpos)
+    · have h0 := hw i 0 (by simpa [length_tierWord] using hpos)
       refine ⟨o i, ?_, fun p hp => hw i p
-        (by simpa [AR.length_tierWord] using hp)⟩
+        (by simpa [length_tierWord] using hp)⟩
       rcases List.getElem?_eq_some_iff.mp
         (h0 ▸ (List.getElem?_eq_some_iff.mpr
-          ⟨by simpa [AR.length_tierWord] using hpos, rfl⟩ :
+          ⟨by simpa [length_tierWord] using hpos, rfl⟩ :
             (F.tierWord i)[0]? = some _)) with ⟨hb, -⟩
       omega
   · intro h
     choose o ho using fun i => (List.isInfix_iff_exists_offset _ _).mp (h i)
     refine ⟨o, fun i p hp => ?_, fun i j p q hl => absurd hl (hF i j p q)⟩
     obtain ⟨-, hoff⟩ := ho i
-    exact hoff p (by simpa [AR.length_tierWord] using hp)
+    exact hoff p (by simpa [length_tierWord] using hp)
+
+end AR
 
 end Autosegmental
