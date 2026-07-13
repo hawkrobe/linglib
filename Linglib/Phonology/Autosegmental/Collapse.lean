@@ -862,20 +862,21 @@ theorem Representation.link_collapse_tensor (i j : ι) (r s : ℕ) :
 /-- **The OCP congruence**: collapsing a concatenation is isomorphic to
     collapsing the concatenation of the collapses — [jardine-heinz-2015]'s
     melody-merge law, by the classification theorem. -/
-noncomputable def Representation.collapseTensorIso :
-    (X ⊗ Y).collapse m ≅ (X.collapse m ⊗ Y.collapse m).collapse m :=
-  Representation.isoOfReaderEq
+noncomputable def Representation.collapseTensorFullIso :
+    MixedGraphCat.Iso ((X ⊗ Y).collapse m).obj
+      ((X.collapse m ⊗ Y.collapse m).collapse m).obj :=
+  Representation.fullIsoOfReaderEq
     (fun i => by
       rw [Representation.tierWord_collapse, Representation.tierWord_collapse,
         Representation.collapsedWord_tensor])
     (fun i j r s => Representation.link_collapse_tensor X m i j r s)
 
 /-- The OCP congruence as an equality of isomorphism classes: `collapse`
-    descends to the skeleton monoid. -/
-theorem Representation.toSkeleton_collapse_tensor :
-    toSkeleton ((X ⊗ Y).collapse m)
-      = toSkeleton ((X.collapse m ⊗ Y.collapse m).collapse m) :=
-  Quotient.sound ⟨Representation.collapseTensorIso X m⟩
+    descends to the class monoid. -/
+theorem Representation.cls_collapse_tensor :
+    Representation.cls ((X ⊗ Y).collapse m)
+      = Representation.cls ((X.collapse m ⊗ Y.collapse m).collapse m) :=
+  Quotient.sound ⟨Representation.collapseTensorFullIso X m⟩
 
 end Congruence
 

@@ -4,7 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Mathlib.Algebra.FreeMonoid.Basic
-import Mathlib.CategoryTheory.Monoidal.Skeleton
 import Mathlib.Data.Finite.Sum
 import Mathlib.Data.Fintype.Sort
 import Mathlib.Data.Fintype.Sum
@@ -22,10 +21,10 @@ The normal form is a `Representation` — not a separate carrier — and
 `normalizeIso` is definitional: `normalize` pulls the graph back along the
 enumeration equivalence.
 
-Strictness lives where Mac Lane coherence puts it: on the skeleton. The monoid
-of isomorphism classes `Skeleton (Representation t)` carries concatenation with
-associativity on the nose (`CategoryTheory.Monoidal.Skeleton`), and
-`toSkeleton_normalize` says `normalize` chooses representatives.
+Strictness lives on isomorphism classes: `Representation.IsoClass` carries
+concatenation with associativity on the nose — full-structure classes, since
+broad categorical isomorphism forgets the arcs and is too coarse to preserve
+tier words. `cls_normalize` says `normalize` chooses representatives.
 
 ## Main definitions
 
@@ -36,7 +35,7 @@ associativity on the nose (`CategoryTheory.Monoidal.Skeleton`), and
 * `Representation.normalize`: the normal form, a `Representation` on the
   canonical vertex type.
 * `realize`, `realizeHom`, `tierProj`: [jardine-2019]'s `g` as iterated tensor,
-  as a free-monoid hom into the skeleton, and its per-tier projections.
+  as a free-monoid hom into the class monoid, and its per-tier projections.
 
 ## Main results
 
@@ -47,8 +46,8 @@ associativity on the nose (`CategoryTheory.Monoidal.Skeleton`), and
 * `Representation.tierWord_tensor`, `Representation.tierWord_realize`:
   concatenation appends tier words; tier content of a realization is
   compositional.
-* `Representation.toSkeleton_normalize`: normal forms represent their
-  isomorphism class in the skeleton monoid.
+* `Representation.IsoClass`, `Representation.cls_normalize`: the concatenation
+  monoid of isomorphism classes; normal forms represent their class.
 -/
 
 namespace Autosegmental
@@ -56,6 +55,55 @@ namespace Autosegmental
 open CategoryTheory
 
 variable {ι : Type*} {τ : ι → Type*}
+
+/-! ### The monoid of representations up to isomorphism
+
+Full-structure isomorphism classes of representations, with strictly
+associative concatenation — [jardine-heinz-2015] Theorems 1 and 3 packaged as a
+`Monoid`. Full isos, not the broad categorical `≅` (which forgets arcs), are
+the theory's identity criterion: they preserve tier orders, so the tuple
+readers descend to classes. -/
+
+section IsoClasses
+open scoped MonoidalCategory
+
+/-- Full-structure isomorphism as an equivalence of representations. -/
+def Representation.isoSetoid :
+    Setoid (Representation (Sigma.fst : ((i : ι) × τ i) → ι)) where
+  r A B := Nonempty (MixedGraphCat.Iso A.obj B.obj)
+  iseqv := ⟨fun _ => ⟨MixedGraphCat.Iso.refl _⟩, fun ⟨e⟩ => ⟨e.symm⟩,
+    fun ⟨e⟩ ⟨f⟩ => ⟨e.trans f⟩⟩
+
+/-- Isomorphism classes of representations — the carrier of the concatenation
+    monoid of ARs. -/
+def Representation.IsoClass (ι : Type*) (τ : ι → Type*) :=
+  Quotient (Representation.isoSetoid (ι := ι) (τ := τ))
+
+/-- The class of a representation. -/
+def Representation.cls (A : Representation (Sigma.fst : ((i : ι) × τ i) → ι)) :
+    Representation.IsoClass ι τ :=
+  Quotient.mk Representation.isoSetoid A
+
+instance : Monoid (Representation.IsoClass ι τ) where
+  mul := Quotient.map₂ (· ⊗ ·)
+    fun _ _ ⟨e₁⟩ _ _ ⟨e₂⟩ => ⟨MixedGraphCat.Iso.concatCongr _ e₁ e₂⟩
+  one := Representation.cls (𝟙_ _)
+  mul_assoc := by
+    rintro ⟨A⟩ ⟨B⟩ ⟨C⟩
+    exact Quotient.sound ⟨MixedGraphCat.concatAssocIso _ A.obj B.obj C.obj⟩
+  one_mul := by
+    rintro ⟨A⟩
+    exact Quotient.sound ⟨MixedGraphCat.emptyConcatIso _ A.obj⟩
+  mul_one := by
+    rintro ⟨A⟩
+    exact Quotient.sound ⟨MixedGraphCat.concatEmptyIso _ A.obj⟩
+
+/-- Concatenation of classes is the class of the tensor. -/
+theorem Representation.cls_tensor
+    (A B : Representation (Sigma.fst : ((i : ι) × τ i) → ι)) :
+    Representation.cls (A ⊗ B) = Representation.cls A * Representation.cls B := rfl
+
+end IsoClasses
 
 section NormalForm
 open scoped Classical
@@ -160,14 +208,18 @@ noncomputable def Representation.normalize
       fun _ _ _ huv hvw => X.property.1.trans huv hvw⟩,
      fun _ _ hadj harc => X.property.2 hadj harc⟩
 
-/-- The normal form is isomorphic to the original — definitionally, since
-    `normalize` is a pullback along `vertexEquiv`. -/
+/-- The normal form is fully isomorphic to the original — definitionally,
+    since `normalize` is a pullback along `vertexEquiv`. -/
+noncomputable def Representation.normalizeFullIso [Finite X.obj.V] :
+    MixedGraphCat.Iso (X.normalize).obj X.obj where
+  toEquiv := X.vertexEquiv
+  edges_iff _ _ := Iff.rfl
+  arcs_iff _ _ := Iff.rfl
+  label_comp _ := rfl
+
+/-- The normal form is isomorphic to the original. -/
 noncomputable def Representation.normalizeIso [Finite X.obj.V] : X.normalize ≅ X :=
-  Representation.mkIso
-    { toEquiv := X.vertexEquiv
-      edges_iff := fun _ _ => Iff.rfl
-      arcs_iff := fun _ _ => Iff.rfl
-      label_comp := fun _ => rfl }
+  Representation.mkIso X.normalizeFullIso
 
 /-- On normal forms the edges are exactly `linkRel` — with `arcs_normalize`,
     the complete tuple reading of the normal form. -/
@@ -183,12 +235,11 @@ theorem Representation.arcs_normalize [Finite X.obj.V] (i : ι)
     (X.normalize).obj.graph.arcs.Adj ⟨i, p⟩ ⟨i, q⟩ ↔ p < q :=
   (X.fiberEnum i).lt_iff_lt
 
-/-- Normal forms represent their isomorphism class: `normalize` is a section of
-    the quotient onto the skeleton, where the monoid of iso classes carries
-    strictly associative concatenation (`CategoryTheory.Monoidal.Skeleton`). -/
-theorem Representation.toSkeleton_normalize [Finite X.obj.V] :
-    toSkeleton (X.normalize) = toSkeleton X :=
-  Quotient.sound ⟨X.normalizeIso⟩
+/-- Normal forms represent their isomorphism class: `normalize` is a section
+    of the quotient onto `Representation.IsoClass`. -/
+theorem Representation.cls_normalize [Finite X.obj.V] :
+    Representation.cls (X.normalize) = Representation.cls X :=
+  Quotient.sound ⟨X.normalizeFullIso⟩
 
 end NormalForm
 
@@ -215,13 +266,13 @@ noncomputable def realize (g₀ : S → Representation (Sigma.fst : ((i : ι) ×
 @[simp] theorem realize_cons (g₀ : S → Representation (Sigma.fst : ((i : ι) × τ i) → ι))
     (a : S) (w : List S) : realize g₀ (a :: w) = g₀ a ⊗ realize g₀ w := rfl
 
-/-- The realization as a free-monoid homomorphism into the skeleton monoid —
-    the string→AR monoid hom, with associativity strict on iso classes
-    (`CategoryTheory.Monoidal.Skeleton`). -/
+/-- The realization as a free-monoid homomorphism into the monoid of
+    isomorphism classes — the string→AR monoid hom, with associativity strict
+    on classes. -/
 noncomputable def realizeHom
     (g₀ : S → Representation (Sigma.fst : ((i : ι) × τ i) → ι)) :
-    FreeMonoid S →* Skeleton (Representation (Sigma.fst : ((i : ι) × τ i) → ι)) :=
-  FreeMonoid.lift (toSkeleton ∘ g₀)
+    FreeMonoid S →* Representation.IsoClass ι τ :=
+  FreeMonoid.lift (Representation.cls ∘ g₀)
 
 end Realize
 
@@ -431,14 +482,14 @@ noncomputable def tierProj [∀ s, Finite (g₀ s).obj.V] (i : ι) :
 
 /-- `realizeHom` packages `realize`: on a word it is the class of the realized
     representation. -/
-theorem realizeHom_ofList [∀ s, Finite (g₀ s).obj.V] (w : List S) :
-    realizeHom g₀ (FreeMonoid.ofList w) = toSkeleton (realize g₀ w) := by
+theorem realizeHom_ofList (w : List S) :
+    realizeHom g₀ (FreeMonoid.ofList w) = Representation.cls (realize g₀ w) := by
   induction w with
   | nil => rfl
   | cons a w ih =>
     rw [show FreeMonoid.ofList (a :: w) = FreeMonoid.of a * FreeMonoid.ofList w from rfl,
-      map_mul, ih, realize_cons]
-    exact (CategoryTheory.Skeleton.toSkeleton_tensorObj _ _).symm
+      map_mul, ih, realize_cons, Representation.cls_tensor]
+    rfl
 
 /-- `tierProj` packages `tierWord`: on a word it is the realized tier word. -/
 theorem tierProj_ofList [∀ s, Finite (g₀ s).obj.V] (i : ι) (w : List S) :
@@ -585,16 +636,17 @@ theorem Representation.arcs_normalize_ne [Finite X.obj.V] {i j : ι} (h : i ≠ 
       X.label_vertexEquiv j q] at h2
   exact h h2
 
-/-- **Classification of finite representations**: equal tier words and equal
-    links give an isomorphism — the tuple reading is a complete invariant. -/
-noncomputable def Representation.isoOfReaderEq
+/-- The classification isomorphism, as a full-structure `MixedGraphCat.Iso` —
+    the form that descends to `Representation.IsoClass`. -/
+noncomputable def Representation.fullIsoOfReaderEq
     {A B : Representation (Sigma.fst : ((i : ι) × τ i) → ι)}
     [Finite A.obj.V] [Finite B.obj.V]
     (hw : ∀ i, A.tierWord i = B.tierWord i)
-    (hl : ∀ i j p q, A.link i j p q ↔ B.link i j p q) : A ≅ B := by
+    (hl : ∀ i j p q, A.link i j p q ↔ B.link i j p q) :
+    MixedGraphCat.Iso A.obj B.obj := by
   have hlen : ∀ i, A.tierLength i = B.tierLength i := fun i => by
     rw [← Representation.length_tierWord, hw, Representation.length_tierWord]
-  refine A.normalizeIso.symm ≪≫ Representation.mkIso ?_ ≪≫ B.normalizeIso
+  refine A.normalizeFullIso.symm.trans (MixedGraphCat.Iso.trans ?_ B.normalizeFullIso)
   refine
     { toEquiv := Equiv.sigmaCongrRight fun i => finCongr (hlen i)
       edges_iff := fun v w => ?_
@@ -622,6 +674,15 @@ noncomputable def Representation.isoOfReaderEq
     congr 1
     rw [← Representation.tierWord_getElem, ← Representation.tierWord_getElem]
     simp only [hw, Fin.val_cast]
+
+/-- **Classification of finite representations**: equal tier words and equal
+    links give an isomorphism — the tuple reading is a complete invariant. -/
+noncomputable def Representation.isoOfReaderEq
+    {A B : Representation (Sigma.fst : ((i : ι) × τ i) → ι)}
+    [Finite A.obj.V] [Finite B.obj.V]
+    (hw : ∀ i, A.tierWord i = B.tierWord i)
+    (hl : ∀ i j p q, A.link i j p q ↔ B.link i j p q) : A ≅ B :=
+  Representation.mkIso (Representation.fullIsoOfReaderEq hw hl)
 
 end Classification
 
