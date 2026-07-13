@@ -3,7 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Phonology.Autosegmental.AR
+import Linglib.Phonology.Autosegmental.Junction
 
 /-!
 # Tangale tone processes and the elision cascade
@@ -32,51 +32,54 @@ inductive Tone where
   | H | L
   deriving DecidableEq, Repr
 
-variable {β : Type*}
+open Autosegmental
 
-/-- High Tone Spread ([kidda-1985] (31)): the toneme at `i` — an H
-linked to TBU `j` at a morpheme or word boundary — spreads onto the
-following TBU. The structural description is carried by the
-application theorems. -/
-def hts (g : Graph Tone β) (i j : ℕ) : Graph Tone β := g.link i (j + 1)
+/-- High Tone Spread ([kidda-1985] (31)) on the link presentation: the toneme
+    at `i` — an H linked to TBU `j` at a morpheme or word boundary — spreads
+    onto the following TBU. -/
+def hts (L : Bool → Bool → ℕ → ℕ → Prop) (i j : ℕ) (b b' : Bool) (p q : ℕ) : Prop :=
+  L b b' p q ∨ b = true ∧ b' = false ∧ p = i ∧ q = j + 1
 
-/-- Left Line Delinking ([kidda-1985] (35a)): erase the original
-(left) line after the toneme has spread rightward. -/
-def lld (g : Graph Tone β) (i j : ℕ) : Graph Tone β := g.delink i j
+/-- Left Line Delinking ([kidda-1985] (35a)): erase the original (left) line
+    after the toneme has spread rightward. -/
+def lld (L : Bool → Bool → ℕ → ℕ → Prop) (i j : ℕ) (b b' : Bool) (p q : ℕ) : Prop :=
+  L b b' p q ∧ ¬ (b = true ∧ b' = false ∧ p = i ∧ q = j)
 
-/-- Spread creates the falling contour (§4.6): the docked TBU
-surfaces with H on top of whatever it already bore. -/
-theorem hts_surfacesWith_H {g : Graph Tone β} {i j : ℕ}
-    (hH : g.upper.get? i = some Tone.H) :
-    (hts g i j).SurfacesWith Tone.H (j + 1) :=
-  ⟨i, Finset.mem_insert_self _ _, hH⟩
+variable {ws : ∀ b, List (TwoTier Tone Unit b)} {L : Bool → Bool → ℕ → ℕ → Prop}
 
-/-- Spread followed by Left Line Delinking shifts the H one TBU
-rightward ((34)): the docked TBU keeps the new line and the source
-loses the original. -/
-theorem lld_hts_shift {g : Graph Tone β} {i j : ℕ}
-    (hH : g.upper.get? i = some Tone.H) :
-    (lld (hts g i j) i j).SurfacesWith Tone.H (j + 1) ∧
-    (i, j) ∉ (lld (hts g i j) i j).links := by
-  refine ⟨⟨i, ?_, hH⟩, by simp [lld, hts]⟩
-  simp [lld, hts]
+/-- Spread creates the falling contour (§4.6): the docked TBU surfaces with H
+    on top of whatever it already bore. -/
+theorem hts_surfacesWith_H {i j : ℕ} (hH : (ws true)[i]? = some Tone.H)
+    (hj : j + 1 < (ws false).length) :
+    (Representation.ofData ws (hts L i j)).surfacesWith Tone.H (j + 1) := by
+  rcases List.getElem?_eq_some_iff.mp hH with ⟨hi, -⟩
+  refine ⟨i, (Representation.link_ofData true false i (j + 1)).mpr
+    ⟨by decide, hi, hj, Or.inl (Or.inr ⟨rfl, rfl, rfl, rfl⟩)⟩, ?_⟩
+  rw [Representation.tierWord_ofData]
+  exact hH
 
-/-- Blocking is representationally visible: where the spread line is
-absent, applying HTS changes the graph. -/
-theorem hts_ne_self {g : Graph Tone β} {i j : ℕ}
-    (h : (i, j + 1) ∉ g.links) : hts g i j ≠ g :=
-  fun he => h (he ▸ Finset.mem_insert_self _ _)
-
-/-- 'Horse is good' ([kidda-1985] (29a) *tuužé koŋ*): H on the noun's
-final TBU, L on the predicate. -/
-def horseIsGood : Graph Tone Unit :=
-  ⟨.ofList [Tone.H, Tone.L], .ofList [(), (), ()], {(0, 1), (1, 2)}⟩
-
-/-- After HTS the predicate TBU bears both H and L — the falling
-contour of *tụụzẹ́ kôŋ*, realized as such pause-finally ((29a)). -/
-example :
-    (hts horseIsGood 0 1).SurfacesWith Tone.H 2 ∧
-    (hts horseIsGood 0 1).SurfacesWith Tone.L 2 := by decide
+/-- Spread followed by Left Line Delinking shifts the H one TBU rightward
+    ((34)): the docked TBU keeps the new line and the source loses the
+    original. -/
+theorem lld_hts_shift {i j : ℕ} (hH : (ws true)[i]? = some Tone.H)
+    (hj : j + 1 < (ws false).length) (hne : j + 1 ≠ j)
+    (hor : ∀ p q, ¬ L false true p q) :
+    (Representation.ofData ws (lld (hts L i j) i j)).surfacesWith Tone.H (j + 1) ∧
+      ¬ (Representation.ofData ws (lld (hts L i j) i j)).link true false i j := by
+  rcases List.getElem?_eq_some_iff.mp hH with ⟨hi, -⟩
+  constructor
+  · refine ⟨i, (Representation.link_ofData true false i (j + 1)).mpr
+      ⟨by decide, hi, hj, Or.inl ⟨Or.inr ⟨rfl, rfl, rfl, rfl⟩, ?_⟩⟩, ?_⟩
+    · rintro ⟨-, -, -, h⟩
+      exact hne h
+    · rw [Representation.tierWord_ofData]
+      exact hH
+  · rintro h
+    rcases (Representation.link_ofData true false i j).mp h with
+      ⟨-, -, -, ⟨-, hno⟩ | ⟨hraw | ⟨hfalse, -⟩, -⟩⟩
+    · exact hno ⟨rfl, rfl, rfl, rfl⟩
+    · exact hor _ _ hraw
+    · exact absurd hfalse (by decide)
 
 /-! ### The elision cascade (Ch. 2)
 
