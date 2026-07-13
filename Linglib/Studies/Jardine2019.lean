@@ -23,10 +23,10 @@ banned-subgraph constraints over its realizations.
 
 Two realizations are checked, against the same forbidden tone melody `*HLH`:
 
-* `Autosegmental.realize` uses the project's *bridge-only* `concat` (the coproduct), so
+* `Autosegmental.AR.realize` uses the project's *bridge-only* `concat` (the coproduct), so
   an `H`-plateau `Hⁿ` stays `n` separate `H` nodes. Banning `*HLH` over `AR.realize` then
   catches only a *local* `H-L-H` (three adjacent tonal nodes) — `hlh_excluded`.
-* `Autosegmental.realizeMerged` (`OCP.lean`) is [jardine-2019]'s OCP-*merging*
+* `Autosegmental.AR.realizeMerged` (`OCP.lean`) is [jardine-2019]'s OCP-*merging*
   `g_T`: `g_T(Hⁿ)` is a *single* `H` node multiply associated. Banning `*HLH` over
   `AR.realizeMerged` becomes genuinely **non-local** — it forbids `H⁺ L⁺ H⁺` for *any*
   plateau widths, because the plateaus collapse to single nodes before the melody is
@@ -64,20 +64,20 @@ variable {ι : Type*} [Finite ι] {τ : ι → Type*}
 /-- The Autosegmental Strictly Local stringset `ASL^g`: strings whose realization
     avoids every forbidden factor. It is the same construction as the tier-based
     strictly local sets — a preimage of a local condition along a free-monoid
-    homomorphism (`TSL = tierProject ⁻¹' SL`); the association structure `realize`
+    homomorphism (`TSL = tierProject ⁻¹' SL`); the association structure `AR.realize`
     keeps is why [jardine-2019] finds the two classes incomparable. -/
 def AR.ASL (g₀ : S → AR (Sigma.fst : ((i : ι) × τ i) → ι))
     [∀ s, Finite (g₀ s).obj.V]
     (B : List {F : AR (Sigma.fst : ((i : ι) × τ i) → ι) // Finite F.obj.V}) :
     Language S :=
-  { w | (realize g₀ w).Free B }
+  { w | (AR.realize g₀ w).Free B }
 
 omit [Finite ι] in
 @[simp] theorem AR.mem_ASL
     {g₀ : S → AR (Sigma.fst : ((i : ι) × τ i) → ι)}
     [∀ s, Finite (g₀ s).obj.V]
     {B : List {F : AR (Sigma.fst : ((i : ι) × τ i) → ι) // Finite F.obj.V}}
-    {w : List S} : w ∈ AR.ASL g₀ B ↔ (realize g₀ w).Free B := Iff.rfl
+    {w : List S} : w ∈ AR.ASL g₀ B ↔ (AR.realize g₀ w).Free B := Iff.rfl
 
 /-- For a single link-free forbidden factor, the strings whose realization
     contains it form a star-free language: the finite intersection of per-tier
@@ -88,17 +88,17 @@ theorem AR.isStarFree_occur_of_link_free
     [∀ s, Finite (g₀ s).obj.V]
     (F : AR (Sigma.fst : ((i : ι) × τ i) → ι)) [Finite F.obj.V]
     (hF : ∀ i j p q, ¬ F.link i j p q) :
-    Language.IsStarFree {w : List S | F.FactorEmbeds (Autosegmental.realize g₀ w)} := by
-  have hset : {w : List S | F.FactorEmbeds (Autosegmental.realize g₀ w)}
-      = ⋂ i, {w : List S | F.tierWord i <:+: tierProj g₀ i (FreeMonoid.ofList w)} := by
+    Language.IsStarFree {w : List S | F.FactorEmbeds (Autosegmental.AR.realize g₀ w)} := by
+  have hset : {w : List S | F.FactorEmbeds (Autosegmental.AR.realize g₀ w)}
+      = ⋂ i, {w : List S | F.tierWord i <:+: AR.tierProj g₀ i (FreeMonoid.ofList w)} := by
     ext w
-    haveI := Autosegmental.realize.instFinite g₀ w
+    haveI := Autosegmental.AR.realize.instFinite g₀ w
     simp only [Set.mem_setOf_eq, Set.mem_iInter,
-      AR.factorEmbeds_iff_infix_of_link_free hF, tierProj_ofList]
+      AR.factorEmbeds_iff_infix_of_link_free hF, AR.tierProj_ofList]
     exact Iff.rfl
   rw [hset]
   exact Language.IsStarFree.iInter fun i =>
-    (Language.isStarFree_containsFactor (F.tierWord i)).comap (tierProj g₀ i)
+    (Language.isStarFree_containsFactor (F.tierWord i)).comap (AR.tierProj g₀ i)
 
 /-- **Link-free autosegmental SL sets are star-free**, on the graph foundation:
     when no forbidden factor carries association lines, `AR.ASL` is
@@ -122,7 +122,7 @@ theorem AR.ASL.isStarFree_of_link_free
     have ih' := ih fun F' hF' => hB F' (List.mem_cons_of_mem _ hF')
     have hset : AR.ASL g₀ (F :: B') =
         {w : List S | haveI := F.property
-          F.val.FactorEmbeds (Autosegmental.realize g₀ w)}ᶜ ∩ AR.ASL g₀ B' := by
+          F.val.FactorEmbeds (Autosegmental.AR.realize g₀ w)}ᶜ ∩ AR.ASL g₀ B' := by
       ext w
       show (∀ G ∈ F :: B', _) ↔ _
       rw [List.forall_mem_cons]

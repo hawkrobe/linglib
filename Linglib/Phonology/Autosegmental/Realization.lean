@@ -20,7 +20,7 @@ arcs and is too coarse to preserve tier words.
 
 * `PrecAR`, `AR.cls`: representations with the classical precedence-preserving
   morphisms, and the monoid of their isomorphism classes.
-* `realize`, `tierProj`: the realization as iterated tensor, and its per-tier
+* `AR.realize`, `AR.tierProj`: the realization as iterated tensor, and its per-tier
   projections as free-monoid homomorphisms.
 
 ## Main results
@@ -79,15 +79,15 @@ variable {S : Type*}
 
 /-- Realize a string as a representation: the iterated tensor of its symbols'
     primitives ([jardine-2019]'s `g`). -/
-noncomputable def realize (g₀ : S → TieredAR ι τ)
+noncomputable def AR.realize (g₀ : S → TieredAR ι τ)
     (w : List S) : TieredAR ι τ :=
   (w.map g₀).foldr (· ⊗ ·) (𝟙_ _)
 
-@[simp] theorem realize_nil (g₀ : S → TieredAR ι τ) :
-    realize g₀ [] = 𝟙_ _ := rfl
+@[simp] theorem AR.realize_nil (g₀ : S → TieredAR ι τ) :
+    AR.realize g₀ [] = 𝟙_ _ := rfl
 
-@[simp] theorem realize_cons (g₀ : S → TieredAR ι τ)
-    (a : S) (w : List S) : realize g₀ (a :: w) = g₀ a ⊗ realize g₀ w := rfl
+@[simp] theorem AR.realize_cons (g₀ : S → TieredAR ι τ)
+    (a : S) (w : List S) : AR.realize g₀ (a :: w) = g₀ a ⊗ AR.realize g₀ w := rfl
 
 end Realize
 
@@ -99,38 +99,38 @@ open scoped MonoidalCategory
 variable {S : Type*}
 variable (g₀ : S → TieredAR ι τ)
 
-instance realize.instFinite [∀ s, Finite (g₀ s).obj.V] (w : List S) :
-    Finite (realize g₀ w).obj.V := by
+instance AR.realize.instFinite [∀ s, Finite (g₀ s).obj.V] (w : List S) :
+    Finite (AR.realize g₀ w).obj.V := by
   induction w with
   | nil => exact inferInstanceAs (Finite PEmpty)
-  | cons a w ih => exact inferInstanceAs (Finite ((g₀ a).obj.V ⊕ (realize g₀ w).obj.V))
+  | cons a w ih => exact inferInstanceAs (Finite ((g₀ a).obj.V ⊕ (AR.realize g₀ w).obj.V))
 
 /-- The tier word of a realized string is the concatenation of its symbols' tier words. -/
 theorem AR.tierWord_realize [∀ s, Finite (g₀ s).obj.V] (i : ι) (w : List S) :
-    (realize g₀ w).tierWord i = (w.map fun s => (g₀ s).tierWord i).flatten := by
+    (AR.realize g₀ w).tierWord i = (w.map fun s => (g₀ s).tierWord i).flatten := by
   induction w with
   | nil => simp
   | cons a w ih =>
-    calc (realize g₀ (a :: w)).tierWord i
-        = (g₀ a ⊗ realize g₀ w).tierWord i := rfl
+    calc (AR.realize g₀ (a :: w)).tierWord i
+        = (g₀ a ⊗ AR.realize g₀ w).tierWord i := rfl
       _ = ((a :: w).map fun s => (g₀ s).tierWord i).flatten := by simp [ih]
 
 /-- The tier-`i` projection of a realization, as a free-monoid homomorphism:
     each symbol contributes its primitive's tier word. -/
-noncomputable def tierProj [∀ s, Finite (g₀ s).obj.V] (i : ι) :
+noncomputable def AR.tierProj [∀ s, Finite (g₀ s).obj.V] (i : ι) :
     FreeMonoid S →* FreeMonoid (τ i) :=
   FreeMonoid.lift fun s => FreeMonoid.ofList ((g₀ s).tierWord i)
 
-/-- `tierProj` packages `tierWord`: on a word it is the realized tier word. -/
-theorem tierProj_ofList [∀ s, Finite (g₀ s).obj.V] (i : ι) (w : List S) :
-    tierProj g₀ i (FreeMonoid.ofList w) = FreeMonoid.ofList ((realize g₀ w).tierWord i) := by
+/-- `AR.tierProj` packages `tierWord`: on a word it is the realized tier word. -/
+theorem AR.tierProj_ofList [∀ s, Finite (g₀ s).obj.V] (i : ι) (w : List S) :
+    AR.tierProj g₀ i (FreeMonoid.ofList w) = FreeMonoid.ofList ((AR.realize g₀ w).tierWord i) := by
   induction w with
-  | nil => simp [realize_nil]
+  | nil => simp [AR.realize_nil]
   | cons a w ih =>
     rw [show FreeMonoid.ofList (a :: w) = FreeMonoid.of a * FreeMonoid.ofList w from rfl,
       map_mul, ih]
-    calc FreeMonoid.ofList ((g₀ a).tierWord i) * FreeMonoid.ofList ((realize g₀ w).tierWord i)
-        = FreeMonoid.ofList ((g₀ a).tierWord i ++ (realize g₀ w).tierWord i) := rfl
+    calc FreeMonoid.ofList ((g₀ a).tierWord i) * FreeMonoid.ofList ((AR.realize g₀ w).tierWord i)
+        = FreeMonoid.ofList ((g₀ a).tierWord i ++ (AR.realize g₀ w).tierWord i) := rfl
       _ = _ := by rw [← AR.tierWord_tensor i]; rfl
 
 end RealizeTierWord

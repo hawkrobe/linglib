@@ -13,7 +13,7 @@ import Linglib.Phonology.Autosegmental.Realization
 A merging tone realization ([jardine-2019]; the melody-merging naming function of
 [jardine-heinz-2015], Mende example) is **OCP-merging**: a tonal melody `Hⁿ` realizes as a
 *single* H node multiply associated to the `n` morae, not `n` separate H nodes. The
-project's `Autosegmental.realize` (`Realization.lean`) instead uses the bridge-only
+project's `Autosegmental.AR.realize` (`Realization.lean`) instead uses the bridge-only
 `concat` (the categorical coproduct), which keeps the `n` H nodes apart. This file
 supplies the missing merge as a post-processing retraction on the upper tier:
 
@@ -334,11 +334,11 @@ section RealizeMerged
 variable {S : Type*}
 
 /-- The OCP-merging realization at melody tier `m` — [jardine-2019]'s merging
-    `g_T`: realize, then merge the melody runs. -/
+    `g_T`: AR.realize, then merge the melody runs. -/
 noncomputable def realizeMerged (g₀ : S → TieredAR ι τ)
     [∀ s, Finite (g₀ s).obj.V] (w : List S) :
     TieredAR ι τ :=
-  (realize g₀ w).collapse m
+  (AR.realize g₀ w).collapse m
 
 end RealizeMerged
 

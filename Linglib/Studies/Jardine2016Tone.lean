@@ -213,13 +213,13 @@ fuses to one `H`, linked exactly to the surfacing slots. -/
 /-- (7) in coordinates: the merged output's links are the fused `H` node over
     the surfacing positions. -/
 theorem link_realizeMerged_map {w : List TBU} {k j : ℕ} :
-    ((Autosegmental.realize Tone.Plateauing.toRep (utp.map w)).collapse true).link
+    ((Autosegmental.AR.realize Tone.Plateauing.toRep (utp.map w)).collapse true).link
         true false k j ↔ k = 0 ∧ utp.Surfaces w j := by
   rw [Tone.Plateauing.link_realizeMerged, utp.map_getElem?_H_iff]
 
 /-- (7) concretely: `HØØH` fuses to one H linked to all four TBUs. -/
 example : ∀ j < 4,
-    ((Autosegmental.realize Tone.Plateauing.toRep
+    ((Autosegmental.AR.realize Tone.Plateauing.toRep
       (utp.map [.H, .O, .O, .H])).collapse true).link true false 0 j := by
   intro j hj
   rw [link_realizeMerged_map]
