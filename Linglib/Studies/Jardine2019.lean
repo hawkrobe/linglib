@@ -3,7 +3,8 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Phonology.Autosegmental.ASL
+import Mathlib.Computability.Language
+import Linglib.Phonology.Autosegmental.NormalForm
 import Linglib.Phonology.Autosegmental.OCP
 import Linglib.Phonology.Autosegmental.Junction
 import Linglib.Core.Computability.Subregular.Language.ContainsFactor
@@ -13,8 +14,8 @@ import Linglib.Core.Computability.Subregular.Language.ContainsFactor
 
 [jardine-2019] defines `ASL^g` — stringsets given by forbidden-subgraph grammars over
 autosegmental representations interpreted through a realization `g` — and places the
-tone class `ASL^{gT}` in the subregular hierarchy. This file instantiates the
-`Autosegmental.ASL` substrate with the tone realization `gT` and checks
+tone class `ASL^{gT}` in the subregular hierarchy. This file defines the class on
+the graph foundation, instantiates it with the tone realization `gT`, and checks
 banned-subgraph constraints over its realizations.
 
 ## Scope
@@ -24,7 +25,7 @@ Two realizations are checked, against the same forbidden tone melody `*HLH`:
 * `Autosegmental.realize` uses the project's *bridge-only* `concat` (the coproduct), so
   an `H`-plateau `Hⁿ` stays `n` separate `H` nodes. Banning `*HLH` over `AR.realize` then
   catches only a *local* `H-L-H` (three adjacent tonal nodes) — `hlh_excluded`.
-* `Autosegmental.realizeMerged` (`Collapse.lean`) is [jardine-2019]'s OCP-*merging*
+* `Autosegmental.realizeMerged` (`OCP.lean`) is [jardine-2019]'s OCP-*merging*
   `g_T`: `g_T(Hⁿ)` is a *single* `H` node multiply associated. Banning `*HLH` over
   `AR.realizeMerged` becomes genuinely **non-local** — it forbids `H⁺ L⁺ H⁺` for *any*
   plateau widths, because the plateaus collapse to single nodes before the melody is
@@ -34,7 +35,7 @@ Two realizations are checked, against the same forbidden tone melody `*HLH`:
 
 [jardine-2019] places the bridge-only class `ASL` strictly inside the star-free
 languages. We prove the **link-free fragment**: when no forbidden subgraph carries
-association lines, `ASL g₀ B` is star-free (`Autosegmental.ASL.isStarFree_of_links_empty`)
+association lines, `ASL g₀ B` is star-free (`AR.ASL.isStarFree_of_link_free`)
 — over any alphabet, no `[Finite S]` needed — because such a grammar is a Boolean
 combination of per-tier factor constraints, each the inverse image of a star-free
 contains-factor language ([schutzenberger-1965] [mcnaughton-papert-1971]) along a tier
@@ -58,6 +59,23 @@ variable {S : Type*}
 section Coordinate
 
 variable {ι : Type*} [Finite ι] {τ : ι → Type*}
+
+/-- The Autosegmental Strictly Local stringset `ASL^g`: strings whose realization
+    avoids every forbidden factor. It is the same construction as the tier-based
+    strictly local sets — a preimage of a local condition along a free-monoid
+    homomorphism (`TSL = tierProject ⁻¹' SL`); the association structure `realize`
+    keeps is why [jardine-2019] finds the two classes incomparable. -/
+def AR.ASL (g₀ : S → AR (Sigma.fst : ((i : ι) × τ i) → ι))
+    [∀ s, Finite (g₀ s).obj.V]
+    (B : List {F : AR (Sigma.fst : ((i : ι) × τ i) → ι) // Finite F.obj.V}) :
+    Language S :=
+  { w | (realize g₀ w).Free B }
+
+@[simp] theorem AR.mem_ASL
+    {g₀ : S → AR (Sigma.fst : ((i : ι) × τ i) → ι)}
+    [∀ s, Finite (g₀ s).obj.V]
+    {B : List {F : AR (Sigma.fst : ((i : ι) × τ i) → ι) // Finite F.obj.V}}
+    {w : List S} : w ∈ AR.ASL g₀ B ↔ (realize g₀ w).Free B := Iff.rfl
 
 /-- For a single link-free forbidden factor, the strings whose realization
     contains it form a star-free language: the finite intersection of per-tier
