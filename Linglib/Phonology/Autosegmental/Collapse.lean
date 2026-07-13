@@ -613,6 +613,8 @@ repoint its links through `runIdx`. Like `normalize` the result is a
 directly on the merged carrier. -/
 
 section CoordinateCollapse
+open CategoryTheory
+open scoped MonoidalCategory
 
 variable {ι : Type*} [DecidableEq ι] {τ : ι → Type*}
 variable (X : Representation (Sigma.fst : ((i : ι) × τ i) → ι))
@@ -709,6 +711,19 @@ noncomputable def Representation.collapseFiberEnum [Finite X.obj.V] (i : ι) :
     (X.collapse m).tierWord i = X.collapsedWord m i := by
   rw [Representation.tierWord_eq_ofFn (X.collapseFiberEnum m i)]
   exact List.ofFn_getElem
+
+/-- The word half of the OCP congruence: collapsing a tensor computes the same
+    tier words as collapsing the tensor of the collapsed factors —
+    `OCP.collapse_append` lifted through the readers. -/
+theorem Representation.collapsedWord_tensor
+    {Y : Representation (Sigma.fst : ((i : ι) × τ i) → ι)}
+    [Finite X.obj.V] [Finite Y.obj.V] (i : ι) :
+    (X ⊗ Y).collapsedWord m i = (X.collapse m ⊗ Y.collapse m).collapsedWord m i := by
+  rcases eq_or_ne i m with rfl | h
+  · simp only [Representation.collapsedWord, Function.update_self,
+      Representation.tierWord_tensor, Representation.tierWord_collapse]
+    exact OCP.collapse_append _ _
+  · simp [Representation.collapsedWord, Function.update_of_ne h]
 
 end CoordinateCollapse
 
