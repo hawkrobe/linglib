@@ -7,7 +7,7 @@ import Mathlib.Data.Finset.Max
 import Mathlib.Order.Interval.Finset.Nat
 import Linglib.Core.Data.List.TakeDrop
 import Linglib.Core.Computability.Subregular.Function.Bimachine
-import Linglib.Phonology.Autosegmental.Collapse
+import Linglib.Phonology.Autosegmental.OCP
 import Linglib.Phonology.Autosegmental.Junction
 import Linglib.Phonology.Autosegmental.Hull
 import Linglib.Phonology.Tone.Basic
@@ -82,11 +82,11 @@ open Autosegmental
 /-- `toAR` in coordinates: the two-tier representation of one association
     state (melody over `true`, timing over `false`). -/
 noncomputable def toRep (a : TBU) :
-    Autosegmental.Representation
+    Autosegmental.AR
       (Sigma.fst : ((b : Bool) × Autosegmental.TwoTier _root_.Tone.TRN Unit b) → Bool) :=
   match a with
-  | .H => Autosegmental.Representation.single _root_.Tone.TRN.H ()
-  | .O => Autosegmental.Representation.bare ()
+  | .H => Autosegmental.AR.single _root_.Tone.TRN.H ()
+  | .O => Autosegmental.AR.bare ()
 
 instance (a : TBU) : Finite (toRep a).obj.V := by
   cases a <;> exact inferInstanceAs (Finite ((_ : Bool) × Fin _))
@@ -97,7 +97,7 @@ instance : DecidableEq (Autosegmental.TwoTier _root_.Tone.TRN Unit true) :=
 /-- The output representation in coordinates: OCP-merge then hull, both at the
     melody tier. -/
 noncomputable def plateauRep (w : List TBU) :
-    Autosegmental.Representation
+    Autosegmental.AR
       (Sigma.fst : ((b : Bool) × Autosegmental.TwoTier _root_.Tone.TRN Unit b) → Bool) :=
   ((Autosegmental.realize toRep w).collapse true).hull true
 
@@ -113,21 +113,21 @@ theorem tierWord_realize_toRep_true (w : List TBU) :
     (Autosegmental.realize toRep w).tierWord true
       = List.replicate (w.count .H) _root_.Tone.TRN.H := by
   induction w with
-  | nil => simp [Autosegmental.Representation.tierWord_unit]
+  | nil => simp [Autosegmental.AR.tierWord_unit]
   | cons a w ih =>
     calc (Autosegmental.realize toRep (a :: w)).tierWord true
         = (toRep a ⊗ Autosegmental.realize toRep w).tierWord true := rfl
       _ = (toRep a).tierWord true ++ (Autosegmental.realize toRep w).tierWord true :=
-          Autosegmental.Representation.tierWord_tensor true
+          Autosegmental.AR.tierWord_tensor true
       _ = List.replicate ((a :: w).count .H) _root_.Tone.TRN.H := by
           rw [ih]
           cases a
           · rw [show (toRep TBU.H).tierWord true = [_root_.Tone.TRN.H] from
-              Autosegmental.Representation.tierWord_ofData true,
+              Autosegmental.AR.tierWord_ofData true,
               List.count_cons_self, List.replicate_succ]
             rfl
           · rw [show (toRep TBU.O).tierWord true = [] from
-              Autosegmental.Representation.tierWord_ofData true,
+              Autosegmental.AR.tierWord_ofData true,
               List.count_cons_of_ne (by decide)]
             rfl
 
@@ -135,20 +135,20 @@ theorem tierWord_realize_toRep_true (w : List TBU) :
 theorem tierWord_realize_toRep_false (w : List TBU) :
     (Autosegmental.realize toRep w).tierWord false = List.replicate w.length () := by
   induction w with
-  | nil => simp [Autosegmental.Representation.tierWord_unit]
+  | nil => simp [Autosegmental.AR.tierWord_unit]
   | cons a w ih =>
     calc (Autosegmental.realize toRep (a :: w)).tierWord false
         = (toRep a ⊗ Autosegmental.realize toRep w).tierWord false := rfl
       _ = (toRep a).tierWord false ++ (Autosegmental.realize toRep w).tierWord false :=
-          Autosegmental.Representation.tierWord_tensor false
+          Autosegmental.AR.tierWord_tensor false
       _ = List.replicate (a :: w).length () := by
           rw [ih, List.length_cons, List.replicate_succ]
           cases a
           · rw [show (toRep TBU.H).tierWord false = [()] from
-              Autosegmental.Representation.tierWord_ofData false]
+              Autosegmental.AR.tierWord_ofData false]
             rfl
           · rw [show (toRep TBU.O).tierWord false = [()] from
-              Autosegmental.Representation.tierWord_ofData false]
+              Autosegmental.AR.tierWord_ofData false]
             rfl
 
 /-- Links of a realized string: slot `j` links to melody node `p` exactly when
@@ -159,9 +159,9 @@ theorem link_realize_toRep (w : List TBU) (p j : ℕ) :
   induction w generalizing p j with
   | nil =>
     have h0 : (Autosegmental.realize toRep []).tierLength true = 0 := by
-      rw [← Autosegmental.Representation.length_tierWord,
+      rw [← Autosegmental.AR.length_tierWord,
         show (Autosegmental.realize toRep []).tierWord true = _ from
-          Autosegmental.Representation.tierWord_unit true, List.length_nil]
+          Autosegmental.AR.tierWord_unit true, List.length_nil]
     constructor
     · rintro ⟨hp, -, -⟩
       omega
@@ -171,21 +171,21 @@ theorem link_realize_toRep (w : List TBU) (p j : ℕ) :
     haveI := Autosegmental.realize.instFinite toRep w
     rw [show (Autosegmental.realize toRep (a :: w)).link true false p j
           = (toRep a ⊗ Autosegmental.realize toRep w).link true false p j from rfl,
-      Autosegmental.Representation.link_tensor (X := toRep a)
+      Autosegmental.AR.link_tensor (X := toRep a)
         (Y := Autosegmental.realize toRep w) true false p j]
     cases a
     · have hta : (toRep TBU.H).tierLength true = 1 := by
-        rw [← Autosegmental.Representation.length_tierWord,
+        rw [← Autosegmental.AR.length_tierWord,
           show (toRep TBU.H).tierWord true = [_root_.Tone.TRN.H] from
-            Autosegmental.Representation.tierWord_ofData true]
+            Autosegmental.AR.tierWord_ofData true]
         rfl
       have hfa : (toRep TBU.H).tierLength false = 1 := by
-        rw [← Autosegmental.Representation.length_tierWord,
+        rw [← Autosegmental.AR.length_tierWord,
           show (toRep TBU.H).tierWord false = [()] from
-            Autosegmental.Representation.tierWord_ofData false]
+            Autosegmental.AR.tierWord_ofData false]
         rfl
       have hj : (toRep TBU.H).link true false p j ↔ p = 0 ∧ j = 0 := by
-        refine (Autosegmental.Representation.link_junction
+        refine (Autosegmental.AR.link_junction
           [_root_.Tone.TRN.H] [()]).trans ?_
         constructor
         · rintro (⟨-, -, h1, h2⟩ | ⟨h, -⟩)
@@ -210,18 +210,18 @@ theorem link_realize_toRep (w : List TBU) (p j : ℕ) :
           rw [this]
           omega
     · have hta : (toRep TBU.O).tierLength true = 0 := by
-        rw [← Autosegmental.Representation.length_tierWord,
+        rw [← Autosegmental.AR.length_tierWord,
           show (toRep TBU.O).tierWord true = [] from
-            Autosegmental.Representation.tierWord_ofData true]
+            Autosegmental.AR.tierWord_ofData true]
         rfl
       have hfa : (toRep TBU.O).tierLength false = 1 := by
-        rw [← Autosegmental.Representation.length_tierWord,
+        rw [← Autosegmental.AR.length_tierWord,
           show (toRep TBU.O).tierWord false = [()] from
-            Autosegmental.Representation.tierWord_ofData false]
+            Autosegmental.AR.tierWord_ofData false]
         rfl
       have hj : ¬ (toRep TBU.O).link true false p j := by
         intro h
-        rcases (Autosegmental.Representation.link_junction
+        rcases (Autosegmental.AR.link_junction
           ([] : List _root_.Tone.TRN) [()]).mp h with ⟨-, -, h1, -⟩ | ⟨h1, -⟩
         · simp at h1
         · exact absurd h1 (by decide)
@@ -253,25 +253,25 @@ theorem link_realizeMerged (w : List TBU) (k j : ℕ) :
     ((Autosegmental.realize toRep w).collapse true).link true false k j ↔
       k = 0 ∧ w[j]? = some .H := by
   haveI := Autosegmental.realize.instFinite toRep w
-  rw [Autosegmental.Representation.link_collapse]
+  rw [Autosegmental.AR.link_collapse]
   constructor
   · rintro ⟨p, q, hl, hk, hjq⟩
     obtain ⟨hp, hq⟩ := (link_realize_toRep w p q).mp hl
     refine ⟨?_, ?_⟩
     · rw [← hk]
-      unfold Autosegmental.Representation.collapseIdx
+      unfold Autosegmental.AR.collapseIdx
       rw [if_pos rfl, tierWord_realize_toRep_true]
-      exact Autosegmental.runIdx_replicate _ _ _
+      exact OCP.runIdx_replicate _ _ _
     · rw [← hjq]
-      unfold Autosegmental.Representation.collapseIdx
+      unfold Autosegmental.AR.collapseIdx
       rw [if_neg (by decide)]
       exact hq
   · rintro ⟨rfl, hj⟩
     refine ⟨(w.take j).count .H, j, (link_realize_toRep w _ j).mpr ⟨rfl, hj⟩, ?_, ?_⟩
-    · unfold Autosegmental.Representation.collapseIdx
+    · unfold Autosegmental.AR.collapseIdx
       rw [if_pos rfl, tierWord_realize_toRep_true]
-      exact Autosegmental.runIdx_replicate _ _ _
-    · unfold Autosegmental.Representation.collapseIdx
+      exact OCP.runIdx_replicate _ _ _
+    · unfold Autosegmental.AR.collapseIdx
       rw [if_neg (by decide)]
 
 /-- **What surfaces is the representation**: slot `j` is H-linked in
@@ -283,8 +283,8 @@ theorem link_plateauRep (w : List TBU) (j : ℕ) :
   haveI := Autosegmental.realize.instFinite toRep w
   have hlen : ((Autosegmental.realize toRep w).collapse true).tierLength false
       = w.length := by
-    rw [← Autosegmental.Representation.length_tierWord,
-      Autosegmental.Representation.tierWord_collapse,
+    rw [← Autosegmental.AR.length_tierWord,
+      Autosegmental.AR.tierWord_collapse,
       show (Autosegmental.realize toRep w).collapsedWord true false
         = (Autosegmental.realize toRep w).tierWord false from
         Function.update_of_ne (by decide) _ _,
@@ -295,14 +295,14 @@ theorem link_plateauRep (w : List TBU) (j : ℕ) :
   · rintro ⟨k, hk⟩
     obtain ⟨-, hjb, -⟩ := id hk
     have hlenh : (plateauRep w).tierLength false = w.length := by
-      rw [← Autosegmental.Representation.length_tierWord,
+      rw [← Autosegmental.AR.length_tierWord,
         show (plateauRep w).tierWord false
           = ((Autosegmental.realize toRep w).collapse true).tierWord false from
-          Autosegmental.Representation.tierWord_hull true _ false,
-        Autosegmental.Representation.length_tierWord, hlen]
+          Autosegmental.AR.tierWord_hull true _ false,
+        Autosegmental.AR.length_tierWord, hlen]
     have hjw : j < w.length := hlenh ▸ hjb
     obtain ⟨q₁, q₂, h₁, h₂, hle₁, hle₂⟩ :=
-      (Autosegmental.Representation.link_hull_left true _ (by decide)
+      (Autosegmental.AR.link_hull_left true _ (by decide)
         (by omega : j < ((Autosegmental.realize toRep w).collapse true).tierLength false)).mp hk
     obtain ⟨-, hq₁⟩ := (link_realizeMerged w k q₁).mp h₁
     obtain ⟨-, hq₂⟩ := (link_realizeMerged w k q₂).mp h₂
@@ -313,7 +313,7 @@ theorem link_plateauRep (w : List TBU) (j : ℕ) :
       exact h
     have hl₁ := (link_realizeMerged w 0 q₁).mpr ⟨rfl, hq₁⟩
     have hl₂ := (link_realizeMerged w 0 q₂).mpr ⟨rfl, hq₂⟩
-    exact ⟨0, (Autosegmental.Representation.link_hull_left true _ (by decide)
+    exact ⟨0, (Autosegmental.AR.link_hull_left true _ (by decide)
       (by omega : j < ((Autosegmental.realize toRep w).collapse true).tierLength false)).mpr
       ⟨q₁, q₂, hl₁, hl₂, by omega, hq₂b⟩⟩
 

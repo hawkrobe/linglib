@@ -57,7 +57,7 @@ variable {α β : Type*} {a : α} {b : β} {as : List α} {bs : List β}
 
 /-! ### The junction in coordinates
 
-The complete association as a two-tier `Representation` (`Bool`-indexed:
+The complete association as a two-tier `AR` (`Bool`-indexed:
 `true` the melody tier, `false` the timing tier), built by `ofData`; the
 No-Crossing keystone in the foundational path form. -/
 
@@ -72,33 +72,33 @@ abbrev TwoTier (α β : Type u) : Bool → Type u := fun b => bif b then α else
 
 /-- Complete many-to-many association of a melody onto a slot sequence, in
     coordinates. -/
-def Representation.junction (as : List α) (bs : List β) :
-    Representation (Sigma.fst : ((b : Bool) × TwoTier α β b) → Bool) :=
-  Representation.ofData
+def AR.junction (as : List α) (bs : List β) :
+    AR (Sigma.fst : ((b : Bool) × TwoTier α β b) → Bool) :=
+  AR.ofData
     (fun b => match b with
       | true => (as : List (TwoTier α β true))
       | false => (bs : List (TwoTier α β false)))
     (fun i j p q => i = true ∧ j = false ∧ p < as.length ∧ q < bs.length)
 
 instance (as : List α) (bs : List β) :
-    Finite (Representation.junction as bs).obj.V :=
+    Finite (AR.junction as bs).obj.V :=
   inferInstanceAs (Finite ((_ : Bool) × Fin _))
 
-@[simp] theorem Representation.tierWord_junction_true (as : List α) (bs : List β) :
-    (Representation.junction as bs).tierWord true = as :=
-  Representation.tierWord_ofData true
+@[simp] theorem AR.tierWord_junction_true (as : List α) (bs : List β) :
+    (AR.junction as bs).tierWord true = as :=
+  AR.tierWord_ofData true
 
-@[simp] theorem Representation.tierWord_junction_false (as : List α) (bs : List β) :
-    (Representation.junction as bs).tierWord false = bs :=
-  Representation.tierWord_ofData false
+@[simp] theorem AR.tierWord_junction_false (as : List α) (bs : List β) :
+    (AR.junction as bs).tierWord false = bs :=
+  AR.tierWord_ofData false
 
 /-- Junction links are complete: every in-bounds melody–timing pair. -/
-theorem Representation.link_junction (as : List α) (bs : List β) {b b' : Bool}
-    {p q : ℕ} : (Representation.junction as bs).link b b' p q ↔
+theorem AR.link_junction (as : List α) (bs : List β) {b b' : Bool}
+    {p q : ℕ} : (AR.junction as bs).link b b' p q ↔
       b = true ∧ b' = false ∧ p < as.length ∧ q < bs.length ∨
         b = false ∧ b' = true ∧ p < bs.length ∧ q < as.length := by
-  unfold Representation.junction
-  rw [Representation.link_ofData]
+  unfold AR.junction
+  rw [AR.link_ofData]
   constructor
   · rintro ⟨hne, hp, hq, (⟨rfl, rfl, h1, h2⟩ | ⟨rfl, rfl, h1, h2⟩)⟩
     · exact Or.inl ⟨rfl, rfl, h1, h2⟩
@@ -112,8 +112,8 @@ theorem Representation.link_junction (as : List α) (bs : List β) {b b' : Bool}
 /-- **The No-Crossing Constraint selects the one-sided junctions**: a complete
     association is planar iff one side has at most one node — the one-to-many
     `spread`, many-to-one `contour`, and degenerate cases. -/
-theorem Representation.isPlanar_junction_iff (as : List α) (bs : List β) :
-    IsPlanar (Representation.junction as bs).obj.graph ↔
+theorem AR.isPlanar_junction_iff (as : List α) (bs : List β) :
+    IsPlanar (AR.junction as bs).obj.graph ↔
       as.length ≤ 1 ∨ bs.length ≤ 1 := by
   constructor
   · intro h
@@ -160,48 +160,48 @@ theorem Representation.isPlanar_junction_iff (as : List α) (bs : List β) :
 /-! #### The planar local configurations -/
 
 /-- One-to-one association. -/
-def Representation.single (a : α) (b : β) := Representation.junction [a] [b]
+def AR.single (a : α) (b : β) := AR.junction [a] [b]
 
 /-- A bare (unassociated) timing slot. -/
-def Representation.bare (b : β) := Representation.junction ([] : List α) [b]
+def AR.bare (b : β) := AR.junction ([] : List α) [b]
 
 /-- A floating autosegment ([leben-1973]). -/
-def Representation.float (a : α) := Representation.junction [a] ([] : List β)
+def AR.float (a : α) := AR.junction [a] ([] : List β)
 
 /-- Several melody nodes on one slot. -/
-def Representation.contour (as : List α) (b : β) := Representation.junction as [b]
+def AR.contour (as : List α) (b : β) := AR.junction as [b]
 
 /-- One melody node over several slots. -/
-def Representation.spread (a : α) (bs : List β) := Representation.junction [a] bs
+def AR.spread (a : α) (bs : List β) := AR.junction [a] bs
 
-theorem Representation.isPlanar_single (a : α) (b : β) :
-    IsPlanar (Representation.single a b).obj.graph :=
-  (Representation.isPlanar_junction_iff _ _).mpr (Or.inl (by simp))
+theorem AR.isPlanar_single (a : α) (b : β) :
+    IsPlanar (AR.single a b).obj.graph :=
+  (AR.isPlanar_junction_iff _ _).mpr (Or.inl (by simp))
 
-theorem Representation.isPlanar_bare (b : β) :
-    IsPlanar (Representation.bare (α := α) b).obj.graph :=
-  (Representation.isPlanar_junction_iff _ _).mpr (Or.inl (by simp))
+theorem AR.isPlanar_bare (b : β) :
+    IsPlanar (AR.bare (α := α) b).obj.graph :=
+  (AR.isPlanar_junction_iff _ _).mpr (Or.inl (by simp))
 
-theorem Representation.isPlanar_float (a : α) :
-    IsPlanar (Representation.float (β := β) a).obj.graph :=
-  (Representation.isPlanar_junction_iff _ _).mpr (Or.inl (by simp))
+theorem AR.isPlanar_float (a : α) :
+    IsPlanar (AR.float (β := β) a).obj.graph :=
+  (AR.isPlanar_junction_iff _ _).mpr (Or.inl (by simp))
 
-theorem Representation.isPlanar_contour (as : List α) (b : β) :
-    IsPlanar (Representation.contour as b).obj.graph :=
-  (Representation.isPlanar_junction_iff _ _).mpr (Or.inr (by simp))
+theorem AR.isPlanar_contour (as : List α) (b : β) :
+    IsPlanar (AR.contour as b).obj.graph :=
+  (AR.isPlanar_junction_iff _ _).mpr (Or.inr (by simp))
 
-theorem Representation.isPlanar_spread (a : α) (bs : List β) :
-    IsPlanar (Representation.spread a bs).obj.graph :=
-  (Representation.isPlanar_junction_iff _ _).mpr (Or.inl (by simp))
+theorem AR.isPlanar_spread (a : α) (bs : List β) :
+    IsPlanar (AR.spread a bs).obj.graph :=
+  (AR.isPlanar_junction_iff _ _).mpr (Or.inl (by simp))
 
 /-- Two-tier factor embedding is a search over two bounded offsets. -/
-theorem Representation.factorEmbeds_iff_two_tier
-    {F X : Representation (Sigma.fst : ((b : Bool) × TwoTier α β b) → Bool)}
+theorem AR.factorEmbeds_iff_two_tier
+    {F X : AR (Sigma.fst : ((b : Bool) × TwoTier α β b) → Bool)}
     [Finite F.obj.V] [Finite X.obj.V] :
     F.FactorEmbeds X ↔
       ∃ ot ≤ X.tierLength true, ∃ of ≤ X.tierLength false,
         F.IsFactorAt X (fun b => bif b then ot else of) := by
-  rw [Representation.factorEmbeds_iff_bounded]
+  rw [AR.factorEmbeds_iff_bounded]
   constructor
   · rintro ⟨o, hb, hfa⟩
     refine ⟨o true, hb true, o false, hb false, ?_⟩
@@ -236,26 +236,26 @@ instance {wsF wsX : ∀ b : Bool, List (TwoTier α β b)}
 /-- **The spec**: on `ofData`-presented two-tier forms, factor embedding is the
     data-level check — the bridge that turns banned-subgraph verdicts into
     kernel computations. -/
-theorem Representation.factorEmbeds_ofData_iff
+theorem AR.factorEmbeds_ofData_iff
     {wsF wsX : ∀ b : Bool, List (TwoTier α β b)}
     {LF LX : Bool → Bool → ℕ → ℕ → Prop} :
-    (Representation.ofData wsF LF).FactorEmbeds (Representation.ofData wsX LX) ↔
+    (AR.ofData wsF LF).FactorEmbeds (AR.ofData wsX LX) ↔
       dataEmbeds wsF wsX LF LX := by
-  rw [Representation.factorEmbeds_iff_two_tier]
-  simp only [Representation.tierLength_ofData]
+  rw [AR.factorEmbeds_iff_two_tier]
+  simp only [AR.tierLength_ofData]
   constructor
   · rintro ⟨ot, hot, of, hof, hw, hl⟩
     refine ⟨ot, hot, of, hof, ?_, ?_, ?_⟩
     · intro p hp
-      have := hw true p (by rw [Representation.tierLength_ofData]; exact hp)
-      rwa [Representation.tierWord_ofData, Representation.tierWord_ofData] at this
+      have := hw true p (by rw [AR.tierLength_ofData]; exact hp)
+      rwa [AR.tierWord_ofData, AR.tierWord_ofData] at this
     · intro p hp
-      have := hw false p (by rw [Representation.tierLength_ofData]; exact hp)
-      rwa [Representation.tierWord_ofData, Representation.tierWord_ofData] at this
+      have := hw false p (by rw [AR.tierLength_ofData]; exact hp)
+      rwa [AR.tierWord_ofData, AR.tierWord_ofData] at this
     · intro p hp q hq hpq
-      have hlk := hl true false p q ((Representation.link_ofData true false p q).mpr
+      have hlk := hl true false p q ((AR.link_ofData true false p q).mpr
         ⟨by decide, hp, hq, hpq⟩)
-      rcases (Representation.link_ofData true false (p + ot) (q + of)).mp hlk with
+      rcases (AR.link_ofData true false (p + ot) (q + of)).mp hlk with
         ⟨-, -, -, hres⟩
       exact hres
   · rintro ⟨ot, hot, of, hof, hwt, hwf, hlk⟩
@@ -271,38 +271,38 @@ theorem Representation.factorEmbeds_ofData_iff
       exact (List.getElem?_eq_some_iff.mp h1).1
     refine ⟨ot, hot, of, hof, ?_, ?_⟩
     · intro i p hp
-      rw [Representation.tierLength_ofData] at hp
+      rw [AR.tierLength_ofData] at hp
       cases i
-      · rw [show ((Representation.ofData wsX LX).tierWord false)
-            = wsX false from Representation.tierWord_ofData false,
-          show ((Representation.ofData wsF LF).tierWord false)
-            = wsF false from Representation.tierWord_ofData false]
+      · rw [show ((AR.ofData wsX LX).tierWord false)
+            = wsX false from AR.tierWord_ofData false,
+          show ((AR.ofData wsF LF).tierWord false)
+            = wsF false from AR.tierWord_ofData false]
         exact hwf p hp
-      · rw [show ((Representation.ofData wsX LX).tierWord true)
-            = wsX true from Representation.tierWord_ofData true,
-          show ((Representation.ofData wsF LF).tierWord true)
-            = wsF true from Representation.tierWord_ofData true]
+      · rw [show ((AR.ofData wsX LX).tierWord true)
+            = wsX true from AR.tierWord_ofData true,
+          show ((AR.ofData wsF LF).tierWord true)
+            = wsF true from AR.tierWord_ofData true]
         exact hwt p hp
     · intro i j p q hl
-      rcases (Representation.link_ofData i j p q).mp hl with ⟨hne, hp, hq, hor⟩
+      rcases (AR.link_ofData i j p q).mp hl with ⟨hne, hp, hq, hor⟩
       have hcases : i = true ∧ j = false ∨ i = false ∧ j = true := by
         cases i <;> cases j <;> simp_all
       rcases hcases with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
       · rcases hlk p hp q hq hor with hres | hres
-        · exact (Representation.link_ofData true false _ _).mpr
+        · exact (AR.link_ofData true false _ _).mpr
             ⟨by decide, hbt p hp, hbf q hq, Or.inl hres⟩
-        · exact (Representation.link_ofData true false _ _).mpr
+        · exact (AR.link_ofData true false _ _).mpr
             ⟨by decide, hbt p hp, hbf q hq, Or.inr hres⟩
       · rcases hlk q hq p hp hor.symm with hres | hres
-        · exact (Representation.link_ofData false true _ _).mpr
+        · exact (AR.link_ofData false true _ _).mpr
             ⟨by decide, hbf p hp, hbt q hq, Or.inr hres⟩
-        · exact (Representation.link_ofData false true _ _).mpr
+        · exact (AR.link_ofData false true _ _).mpr
             ⟨by decide, hbf p hp, hbt q hq, Or.inl hres⟩
 
 /-- A timing slot **surfaces with** melody label `a`: some `a`-labelled melody
     node links to it. -/
-def Representation.surfacesWith
-    (X : Representation (Sigma.fst : ((b : Bool) × TwoTier α β b) → Bool))
+def AR.surfacesWith
+    (X : AR (Sigma.fst : ((b : Bool) × TwoTier α β b) → Bool))
     [Finite X.obj.V] (a : α) (j : ℕ) : Prop :=
   ∃ k, X.link true false k j ∧ (X.tierWord true)[k]? = some a
 

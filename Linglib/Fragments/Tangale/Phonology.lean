@@ -51,11 +51,11 @@ variable {ws : ∀ b, List (TwoTier Tone Unit b)} {L : Bool → Bool → ℕ →
     on top of whatever it already bore. -/
 theorem hts_surfacesWith_H {i j : ℕ} (hH : (ws true)[i]? = some Tone.H)
     (hj : j + 1 < (ws false).length) :
-    (Representation.ofData ws (hts L i j)).surfacesWith Tone.H (j + 1) := by
+    (AR.ofData ws (hts L i j)).surfacesWith Tone.H (j + 1) := by
   rcases List.getElem?_eq_some_iff.mp hH with ⟨hi, -⟩
-  refine ⟨i, (Representation.link_ofData true false i (j + 1)).mpr
+  refine ⟨i, (AR.link_ofData true false i (j + 1)).mpr
     ⟨by decide, hi, hj, Or.inl (Or.inr ⟨rfl, rfl, rfl, rfl⟩)⟩, ?_⟩
-  rw [Representation.tierWord_ofData]
+  rw [AR.tierWord_ofData]
   exact hH
 
 /-- Spread followed by Left Line Delinking shifts the H one TBU rightward
@@ -64,18 +64,18 @@ theorem hts_surfacesWith_H {i j : ℕ} (hH : (ws true)[i]? = some Tone.H)
 theorem lld_hts_shift {i j : ℕ} (hH : (ws true)[i]? = some Tone.H)
     (hj : j + 1 < (ws false).length) (hne : j + 1 ≠ j)
     (hor : ∀ p q, ¬ L false true p q) :
-    (Representation.ofData ws (lld (hts L i j) i j)).surfacesWith Tone.H (j + 1) ∧
-      ¬ (Representation.ofData ws (lld (hts L i j) i j)).link true false i j := by
+    (AR.ofData ws (lld (hts L i j) i j)).surfacesWith Tone.H (j + 1) ∧
+      ¬ (AR.ofData ws (lld (hts L i j) i j)).link true false i j := by
   rcases List.getElem?_eq_some_iff.mp hH with ⟨hi, -⟩
   constructor
-  · refine ⟨i, (Representation.link_ofData true false i (j + 1)).mpr
+  · refine ⟨i, (AR.link_ofData true false i (j + 1)).mpr
       ⟨by decide, hi, hj, Or.inl ⟨Or.inr ⟨rfl, rfl, rfl, rfl⟩, ?_⟩⟩, ?_⟩
     · rintro ⟨-, -, -, h⟩
       exact hne h
-    · rw [Representation.tierWord_ofData]
+    · rw [AR.tierWord_ofData]
       exact hH
   · rintro h
-    rcases (Representation.link_ofData true false i j).mp h with
+    rcases (AR.link_ofData true false i j).mp h with
       ⟨-, -, -, ⟨-, hno⟩ | ⟨hraw | ⟨hfalse, -⟩, -⟩⟩
     · exact hno ⟨rfl, rfl, rfl, rfl⟩
     · exact hor _ _ hraw

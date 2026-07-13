@@ -48,7 +48,7 @@ variable {S T : Type*}
 /-! ### Correspondence on the graph foundation
 
 The same layer over two-tier representations: input over `true`, output over
-`false`, correspondence arcs the links, banned subgraphs `Representation.Free`. -/
+`false`, correspondence arcs the links, banned subgraphs `AR.Free`. -/
 
 section Coordinate
 
@@ -57,7 +57,7 @@ variable {S T : Type u}
 
 /-- A finite two-tier correspondence representation. -/
 abbrev Rep (S T : Type u) :=
-  {G : Representation.{u, 0, u} (Sigma.fst : ((b : Bool) × TwoTier S T b) → Bool) //
+  {G : AR.{u, 0, u} (Sigma.fst : ((b : Bool) × TwoTier S T b) → Bool) //
     Finite G.obj.V}
 
 /-- The **input** string: the `true`-tier word. -/
@@ -96,12 +96,12 @@ def IsLocalRep (R : List S → List T → Prop) : Prop :=
     two local constraint sets. -/
 theorem specifiedByRep_append (φ ψ : List (Rep S T)) (G : Rep S T) :
     specifiedByRep (φ ++ ψ) G ↔ specifiedByRep φ G ∧ specifiedByRep ψ G := by
-  unfold specifiedByRep Representation.Free
+  unfold specifiedByRep AR.Free
   rw [List.forall_mem_append]
 
 /-- The empty grammar specifies all of GEN. -/
 @[simp] theorem specifiedByRep_nil (G : Rep S T) : specifiedByRep [] G ↔ True := by
-  unfold specifiedByRep Representation.Free
+  unfold specifiedByRep AR.Free
   simp
 
 end Coordinate

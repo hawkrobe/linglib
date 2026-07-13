@@ -34,13 +34,13 @@ variable {α β : Type*}
 section CoordinateHull
 
 variable {ι : Type*} [Finite ι] {τ : ι → Type*}
-variable (m : ι) (X : Representation (Sigma.fst : ((i : ι) × τ i) → ι)) [Finite X.obj.V]
+variable (m : ι) (X : AR (Sigma.fst : ((i : ι) × τ i) → ι)) [Finite X.obj.V]
 
 /-- Close each tier-`m` node's association set to its interval hull on each
     other tier. -/
-noncomputable def Representation.hull :
-    Representation (Sigma.fst : ((i : ι) × τ i) → ι) :=
-  Representation.ofData (fun i => X.tierWord i)
+noncomputable def AR.hull :
+    AR (Sigma.fst : ((i : ι) × τ i) → ι) :=
+  AR.ofData (fun i => X.tierWord i)
     (fun i j p q =>
       (i = m ∧ ∃ q₁ q₂, X.link i j p q₁ ∧ X.link i j p q₂ ∧ q₁ ≤ q ∧ q ≤ q₂) ∨
         (i ≠ m ∧ j ≠ m ∧ X.link i j p q))
@@ -48,17 +48,17 @@ noncomputable def Representation.hull :
 instance : Finite (X.hull m).obj.V :=
   inferInstanceAs (Finite ((_ : ι) × Fin _))
 
-@[simp] theorem Representation.tierWord_hull (i : ι) :
+@[simp] theorem AR.tierWord_hull (i : ι) :
     (X.hull m).tierWord i = X.tierWord i :=
-  Representation.tierWord_ofData i
+  AR.tierWord_ofData i
 
 /-- Hull membership at the melody tier: `q` lies between two of `p`'s links. -/
-theorem Representation.link_hull_left {j : ι} (hj : m ≠ j) {p q : ℕ}
+theorem AR.link_hull_left {j : ι} (hj : m ≠ j) {p q : ℕ}
     (hq : q < X.tierLength j) :
     (X.hull m).link m j p q ↔
       ∃ q₁ q₂, X.link m j p q₁ ∧ X.link m j p q₂ ∧ q₁ ≤ q ∧ q ≤ q₂ := by
-  unfold Representation.hull
-  rw [Representation.link_ofData]
+  unfold AR.hull
+  rw [AR.link_ofData]
   constructor
   · rintro ⟨-, -, -, (⟨-, hfl⟩ | ⟨hne, -, -⟩) | (⟨rfl, -⟩ | ⟨-, hne, -⟩)⟩
     · exact hfl
@@ -69,13 +69,13 @@ theorem Representation.link_hull_left {j : ι} (hj : m ≠ j) {p q : ℕ}
     obtain ⟨hp, -, -⟩ := id h₁
     refine ⟨hj, ?_, ?_, Or.inl (Or.inl ⟨rfl, q₁, q₂, h₁, h₂, hle₁, hle₂⟩)⟩
     · simpa using hp
-    · simpa [Representation.length_tierWord] using hq
+    · simpa [AR.length_tierWord] using hq
 
 /-- Links not involving the melody tier pass through the hull unchanged. -/
-theorem Representation.link_hull_of_ne {i j : ι} (hi : i ≠ m) (hj : j ≠ m) (p q : ℕ) :
+theorem AR.link_hull_of_ne {i j : ι} (hi : i ≠ m) (hj : j ≠ m) (p q : ℕ) :
     (X.hull m).link i j p q ↔ X.link i j p q := by
-  unfold Representation.hull
-  rw [Representation.link_ofData]
+  unfold AR.hull
+  rw [AR.link_ofData]
   constructor
   · rintro ⟨-, -, -, (⟨rfl, -⟩ | ⟨-, -, hl⟩) | (⟨rfl, -⟩ | ⟨-, -, hl⟩)⟩
     · exact absurd rfl hi
@@ -90,7 +90,7 @@ theorem Representation.link_hull_of_ne {i j : ι} (hi : i ≠ m) (hj : j ≠ m) 
     exact X.not_link_self_tier i p q hl
 
 /-- Melody links flank themselves: the hull extends the link relation. -/
-theorem Representation.link_subset_hull {i j : ι} {p q : ℕ} (h : X.link i j p q) :
+theorem AR.link_subset_hull {i j : ι} {p q : ℕ} (h : X.link i j p q) :
     (X.hull m).link i j p q := by
   obtain ⟨hp, hq, -⟩ := id h
   rcases eq_or_ne m i with rfl | hi
@@ -103,13 +103,13 @@ theorem Representation.link_subset_hull {i j : ι} {p q : ℕ} (h : X.link i j p
     · exact (X.link_hull_of_ne m (Ne.symm hi) (Ne.symm hj) p q).mpr h
 
 /-- Per-node convexity at the melody tier: the defining property of the hull. -/
-theorem Representation.link_hull_convex {j : ι} (hj : m ≠ j) {p q₁ q q₂ : ℕ}
+theorem AR.link_hull_convex {j : ι} (hj : m ≠ j) {p q₁ q q₂ : ℕ}
     (hq : q < X.tierLength j)
     (h₁ : (X.hull m).link m j p q₁) (h₂ : (X.hull m).link m j p q₂)
     (hle₁ : q₁ ≤ q) (hle₂ : q ≤ q₂) : (X.hull m).link m j p q := by
   have hlen : (X.hull m).tierLength j = X.tierLength j := by
-    rw [← Representation.length_tierWord, Representation.tierWord_hull,
-      Representation.length_tierWord]
+    rw [← AR.length_tierWord, AR.tierWord_hull,
+      AR.length_tierWord]
   obtain ⟨-, hb₁, -⟩ := id h₁
   obtain ⟨-, hb₂, -⟩ := id h₂
   rw [hlen] at hb₁ hb₂
