@@ -276,6 +276,23 @@ instance (as : List α) (bs : List β) :
     (Representation.junction as bs).tierWord false = bs :=
   Representation.tierWord_ofData false
 
+/-- Junction links are complete: every in-bounds melody–timing pair. -/
+theorem Representation.link_junction (as : List α) (bs : List β) {b b' : Bool}
+    {p q : ℕ} : (Representation.junction as bs).link b b' p q ↔
+      b = true ∧ b' = false ∧ p < as.length ∧ q < bs.length ∨
+        b = false ∧ b' = true ∧ p < bs.length ∧ q < as.length := by
+  unfold Representation.junction
+  rw [Representation.link_ofData]
+  constructor
+  · rintro ⟨hne, hp, hq, (⟨rfl, rfl, h1, h2⟩ | ⟨rfl, rfl, h1, h2⟩)⟩
+    · exact Or.inl ⟨rfl, rfl, h1, h2⟩
+    · exact Or.inr ⟨rfl, rfl, by simpa using hp, by simpa using hq⟩
+  · rintro (⟨rfl, rfl, h1, h2⟩ | ⟨rfl, rfl, h1, h2⟩)
+    · exact ⟨by decide, by simpa using h1, by simpa using h2,
+        Or.inl ⟨rfl, rfl, h1, h2⟩⟩
+    · exact ⟨by decide, by simpa using h1, by simpa using h2,
+        Or.inr ⟨rfl, rfl, h2, h1⟩⟩
+
 /-- **The No-Crossing Constraint selects the one-sided junctions**: a complete
     association is planar iff one side has at most one node — the one-to-many
     `spread`, many-to-one `contour`, and degenerate cases. -/
