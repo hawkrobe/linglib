@@ -4,7 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Morphology.MorphWord
-import Linglib.Phonology.Autosegmental.AR
+import Linglib.Core.CategoryTheory.Monoidal.LabeledTuple
+import Linglib.Phonology.Autosegmental.NonCrossing
 import Linglib.Phonology.Autosegmental.NonCrossing
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Finset.Image
@@ -106,12 +107,16 @@ bookkeeping (`deletedTier`, `surfaceLinks` vs underlying `links`) is
 language-independent.
 -/
 
-/-- An autosegmental form: extends `Graph (TierSpec T) (SegSpec S)`
-    with OT-style surface bookkeeping. The inherited `Graph` is the
-    *underlying* representation; `deletedTier` and `surfaceLinks`
-    track the surface state separately. -/
-structure FloatingForm (S T : Type*)
-    extends Graph (TierSpec T) (SegSpec S) where
+/-- An autosegmental form: an underlying two-tier presentation (tones over
+    segments, with association links) plus OT-style surface bookkeeping —
+    `deletedTier` and `surfaceLinks` track the surface state separately. -/
+structure FloatingForm (S T : Type*) where
+  /-- The tonal tier (underlying). -/
+  upper : LabeledTuple (TierSpec T)
+  /-- The segmental backbone (underlying). -/
+  lower : LabeledTuple (SegSpec S)
+  /-- The underlying association links. -/
+  links : Finset Link
   /-- SURFACE deletion set on the upper tier (current state). -/
   deletedTier : Finset TierIdx
   /-- SURFACE association lines (current state). May differ from
@@ -132,11 +137,9 @@ variable {S T : Type*} [DecidableEq S] [DecidableEq T] (f : FloatingForm S T)
 
 /-! ### Surface graph (derived view) -/
 
-/-- The **surface graph**: same tiers as the underlying graph but with
-    `surfaceLinks` in place of `links`. Makes the underlying/surface
-    duality explicit — both states are `Graph`s sharing tier data. -/
-@[reducible] def surfaceGraph : Graph (TierSpec T) (SegSpec S) :=
-  { f.toGraph with links := f.surfaceLinks }
+/-- The **surface state is planar**: the surface links satisfy the
+    per-pair No-Crossing Constraint. -/
+abbrev SurfaceIsPlanar : Prop := IsNonCrossing f.surfaceLinks
 
 /-! ### Construction -/
 
@@ -195,6 +198,44 @@ abbrev IsInsertedLink (l : Link) : Prop := l ∈ f.surfaceLinks ∧ l ∉ f.link
 /-- An underlying link absent on the surface — deleted by GEN (`MAX` source). -/
 abbrev IsDeletedLink (l : Link) : Prop := l ∈ f.links ∧ l ∉ f.surfaceLinks
 
+/-- The lower-tier slot `i` is linked on the surface. -/
+abbrev SurfaceLinkedLower (i : SegIdx) : Prop := ∃ l ∈ f.surfaceLinks, l.snd = i
+
+/-- The presentation is in bounds: every link's endpoints index into the
+    tiers. -/
+def InBounds : Prop := ∀ p ∈ f.links, p.1 < f.upper.len ∧ p.2 < f.lower.len
+
+instance [DecidableEq S] [DecidableEq T] : Decidable f.InBounds :=
+  inferInstanceAs (Decidable (∀ _ ∈ _, _))
+
+/-! ### Input concatenation -/
+
+/-- Concatenation of underlying input states ([jardine-heinz-2015]): tier
+    juxtaposition with index-shifted links, surface mirroring underlying. -/
+def hconcat (g : FloatingForm S T) : FloatingForm S T :=
+  let ls := f.links ∪ g.links.image (shiftLink f.upper.len f.lower.len)
+  { upper := f.upper.concat g.upper
+    lower := f.lower.concat g.lower
+    links := ls
+    deletedTier := ∅
+    surfaceLinks := ls }
+
+@[simp] theorem hconcat_upper (g : FloatingForm S T) :
+    (f.hconcat g).upper = f.upper.concat g.upper := rfl
+
+@[simp] theorem hconcat_lower (g : FloatingForm S T) :
+    (f.hconcat g).lower = f.lower.concat g.lower := rfl
+
+@[simp] theorem hconcat_links (g : FloatingForm S T) :
+    (f.hconcat g).links = f.links ∪ g.links.image (shiftLink f.upper.len f.lower.len) := rfl
+
+@[simp] theorem hconcat_surfaceLinks (g : FloatingForm S T) :
+    (f.hconcat g).surfaceLinks
+      = f.links ∪ g.links.image (shiftLink f.upper.len f.lower.len) := rfl
+
+@[simp] theorem hconcat_deletedTier (g : FloatingForm S T) :
+    (f.hconcat g).deletedTier = ∅ := rfl
+
 /-! ### Atomic GEN operations -/
 
 /-- Delete the underlying upper-tier element at index `k`. Cascades to remove
@@ -244,8 +285,8 @@ def gen : Finset (FloatingForm S T) :=
     shrink the surface link set (`IsNonCrossing.subset`), and each inserted link
     passed the `¬ Crosses` filter (`IsNonCrossing.insert_of_not_indexCrosses`).
     So `gen` is closed on the structural well-formedness condition. -/
-theorem gen_preserves_isPlanar (h : f.surfaceGraph.IsPlanar) :
-    ∀ g ∈ f.gen, g.surfaceGraph.IsPlanar := by
+theorem gen_preserves_isPlanar (h : f.SurfaceIsPlanar) :
+    ∀ g ∈ f.gen, g.SurfaceIsPlanar := by
   have h' : IsNonCrossing f.surfaceLinks := h
   intro g hg
   show IsNonCrossing g.surfaceLinks
@@ -298,6 +339,14 @@ def countUpper (p : TierIdx → Prop) [DecidablePred p] : ℕ :=
 /-- Count lower-tier (backbone) positions satisfying decidable `p`. -/
 def countLower (p : SegIdx → Prop) [DecidablePred p] : ℕ :=
   (List.range f.lower.len).countP (λ i => decide (p i))
+
+/-- The empty input. -/
+def emptyInput : FloatingForm S T :=
+  { upper := .empty, lower := .empty, links := ∅, deletedTier := ∅, surfaceLinks := ∅ }
+
+/-- Left-to-right concatenation of a list of input states. -/
+def concatInputs (gs : List (FloatingForm S T)) : FloatingForm S T :=
+  gs.foldr hconcat emptyInput
 
 end FloatingForm
 

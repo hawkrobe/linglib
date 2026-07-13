@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Phonology.Autosegmental.Floating
+import Linglib.Phonology.Autosegmental.Junction
 import Linglib.Phonology.Autosegmental.AR
 import Linglib.Phonology.Autosegmental.Embedding
 
@@ -241,59 +242,33 @@ association lines by the prefix's tier lengths.
 
 /-- The historic-tense exponent: a floating `(d)` melodic segment,
     no skeleton, no associations ([laoide-kemp-2026] Fig. 1). -/
-def historicExponent : Graph (TierSpec Segment) (SegSpec CVKind) where
+def historicExponent : FloatingForm CVKind Segment where
   upper := .ofList [mel .dPrime mHist]
   lower := .empty
   links := ∅
+  deletedTier := ∅
+  surfaceLinks := ∅
 
 /-- The past-tense impersonal exponent: an empty CV unit (`[C, V]`
     skeleton), no melody, no associations ([laoide-kemp-2026] §6.2,
     Fig. 5). -/
-def impersonalExponent : Graph (TierSpec Segment) (SegSpec CVKind) where
+def impersonalExponent : FloatingForm CVKind Segment where
   upper := .empty
   lower := .ofList [slot .C mImpers, slot .V mImpers]
   links := ∅
-
-/-- Wrap a bare association graph as an input `FloatingForm` (surface
-    state = underlying state). -/
-private def ofGraph (g : Graph (TierSpec Segment) (SegSpec CVKind)) :
-    FloatingForm CVKind Segment :=
-  FloatingForm.mkInput g.lower.toList g.upper.toList g.links
-
-/-- Rebuilding a `LabeledTuple` from its underlying list is the identity (up to
-    the length-cast packaged in `LabeledTuple.ext`). The round-trip
-    `mkInput` performs on the tiers is therefore inert. -/
-private theorem ofList_toList {γ : Type*} (a : LabeledTuple γ) :
-    LabeledTuple.ofList a.toList = a := by
-  refine LabeledTuple.ext (by simp) ?_
-  funext i
-  simp only [LabeledTuple.ofList_label, LabeledTuple.toList, List.get_eq_getElem,
-    Function.comp_apply, List.getElem_ofFn]
-  congr 1
-
-/-- `ofGraph` preserves the underlying graph: the `.toList`/`.ofList` round-trip
-    on the tiers cancels (`ofList_toList`) and the links pass through unchanged. -/
-@[simp] private theorem ofGraph_toGraph (g : Graph (TierSpec Segment) (SegSpec CVKind)) :
-    (ofGraph g).toGraph = g := by
-  unfold ofGraph FloatingForm.mkInput
-  cases g with
-  | mk upper lower links =>
-    simp only [Graph.mk.injEq]
-    exact ⟨ofList_toList upper, ofList_toList lower, trivial⟩
-
-@[simp] private theorem ofGraph_surfaceLinks (g : Graph (TierSpec Segment) (SegSpec CVKind)) :
-    (ofGraph g).surfaceLinks = g.links := rfl
+  deletedTier := ∅
+  surfaceLinks := ∅
 
 /-- Prefix the historic-tense exponent onto a stem (Fig. 1): floating
     `(d)` becomes melody index 0; the stem's melody shifts right by one. -/
 def withHist (stem : FloatingForm CVKind Segment) : FloatingForm CVKind Segment :=
-  ofGraph (historicExponent.concat stem.toGraph)
+  historicExponent.hconcat stem
 
 /-- Prefix the empty-CV impersonal exponent onto a stem (Fig. 5): the
     stem's skeleton shifts right by two, so the left edge is an empty
     `C₀V₀` unit. -/
 def withImpers (stem : FloatingForm CVKind Segment) : FloatingForm CVKind Segment :=
-  ofGraph (impersonalExponent.concat stem.toGraph)
+  impersonalExponent.hconcat stem
 
 /-! ## §5 Lenition: the `{L}` deletion rule for *f*
 
@@ -357,8 +332,8 @@ instance (f : FloatingForm CVKind Segment) (j : Nat) : Decidable (isVSlot f j) :
     non-empty V-slot. The structural predicate at the heart of the
     paper's analysis ([laoide-kemp-2026] §4.1). -/
 def dDockable (f : FloatingForm CVKind Segment) : Prop :=
-  isCSlot f 0 ∧ ¬ f.surfaceGraph.IsLinkedLower 0 ∧
-    isVSlot f 1 ∧ f.surfaceGraph.IsLinkedLower 1
+  isCSlot f 0 ∧ ¬ f.SurfaceLinkedLower 0 ∧
+    isVSlot f 1 ∧ f.SurfaceLinkedLower 1
 
 instance (f : FloatingForm CVKind Segment) : Decidable (dDockable f) :=
   inferInstanceAs (Decidable (_ ∧ _ ∧ _ ∧ _))
@@ -464,26 +439,17 @@ dissolved). -/
     ([bermudez-otero-2012]'s strict modularity) — not a non-local
     insertion rule. -/
 theorem withHist_eq_concat (stem : FloatingForm CVKind Segment) :
-    (withHist stem).toGraph = historicExponent.concat stem.toGraph := by
-  rw [withHist, ofGraph_toGraph]
-
-/-- `historicExponent` is in-bounds: it has no links, so the condition
-    is vacuous. -/
-private theorem historicExponent_inBounds : historicExponent.InBounds := by decide
-
-/-- `historicExponent` is planar: `IsPlanar` reads only `.links`, which
-    is `∅` — the same content as `Graph.empty`. -/
-private theorem historicExponent_isPlanar : historicExponent.IsPlanar :=
-  Graph.isPlanar_empty (α := TierSpec Segment) (β := SegSpec CVKind)
+    withHist stem = historicExponent.hconcat stem := rfl
 
 /-- Composing the historic-tense morpheme preserves autosegmental
     well-formedness — a direct consequence of the No-Crossing
-    Constraint being morpheme-modular (`ncc_isMonoidal`). The
-    floating `(d)` is prefixed without ever creating a crossing
-    association line, for any planar stem. -/
+    Constraint being morpheme-modular. The floating `(d)` shifts the
+    stem's links monotonically, never creating a crossing line. -/
 theorem withHist_isPlanar (stem : FloatingForm CVKind Segment)
-    (hP : stem.toGraph.IsPlanar) : (withHist stem).toGraph.IsPlanar :=
-  Graph.isPlanar_concat historicExponent_inBounds historicExponent_isPlanar hP
+    (hP : IsNonCrossing stem.links) : IsNonCrossing (withHist stem).links := by
+  rw [withHist_eq_concat, FloatingForm.hconcat_links]
+  simp only [historicExponent, Finset.empty_union]
+  exact hP.image_monotone (ρ := (· + 1)) fun _ _ h => Nat.add_le_add_right h 1
 
 /-- A concrete suffix used to probe right-insensitivity. -/
 private def someSuffix : FloatingForm CVKind Segment :=
@@ -498,7 +464,7 @@ private def someSuffix : FloatingForm CVKind Segment :=
     *looks* boundary-spanning but is in fact morpheme-local. -/
 theorem dPrime_right_invariant :
     dPrimeSurfaces (withHist ól) ↔
-      dPrimeSurfaces (withHist (ofGraph (ól.toGraph.concat someSuffix.toGraph))) := by
+      dPrimeSurfaces (withHist ((ól.hconcat someSuffix))) := by
   decide
 
 /-! ### The general no-look-ahead theorem
@@ -515,11 +481,9 @@ alone — the formal content of strict modularity (no look-ahead). -/
     reduces to the stem having an underlying link to `j`: the floating
     `(d)` shifts melody indices only, never skeletal ones. -/
 private theorem isLinkedLower_withHist (X : FloatingForm CVKind Segment) (j : Nat) :
-    (withHist X).surfaceGraph.IsLinkedLower j ↔ ∃ a, (a, j) ∈ X.toGraph.links := by
-  have hlinks : (withHist X).surfaceGraph.links =
-      X.toGraph.links.image (shiftLink 1 0) := by
-    show (historicExponent.concat X.toGraph).links = _
-    rw [Graph.links_concat]
+    (withHist X).SurfaceLinkedLower j ↔ ∃ a, (a, j) ∈ X.links := by
+  have hlinks : (withHist X).surfaceLinks = X.links.image (shiftLink 1 0) := by
+    rw [withHist_eq_concat, FloatingForm.hconcat_surfaceLinks]
     simp [historicExponent]
   constructor
   · rintro ⟨p, hp, hpj⟩
@@ -532,7 +496,6 @@ private theorem isLinkedLower_withHist (X : FloatingForm CVKind Segment) (j : Na
       rw [h2]; exact hpj
     rw [← hqj]; exact hq
   · rintro ⟨a, ha⟩
-    show ∃ p ∈ (withHist X).surfaceGraph.links, p.snd = j
     refine ⟨(a + 1, j), ?_, rfl⟩
     rw [hlinks, Finset.mem_image]
     exact ⟨(a, j), ha, by simp [shiftLink]⟩
@@ -542,9 +505,9 @@ private theorem isLinkedLower_withHist (X : FloatingForm CVKind Segment) (j : Na
     `≥ stem.lower.len`, never reaching `j`. -/
 private theorem linked_concat_low (stem suffix : FloatingForm CVKind Segment) {j : Nat}
     (hj : j < stem.lower.len) :
-    (∃ a, (a, j) ∈ (stem.toGraph.concat suffix.toGraph).links) ↔
-      ∃ a, (a, j) ∈ stem.toGraph.links := by
-  rw [Graph.links_concat]
+    (∃ a, (a, j) ∈ (stem.hconcat suffix).links) ↔
+      ∃ a, (a, j) ∈ stem.links := by
+  rw [FloatingForm.hconcat_links]
   constructor
   · rintro ⟨a, ha⟩
     rw [Finset.mem_union] at ha
@@ -562,17 +525,15 @@ private theorem linked_concat_low (stem suffix : FloatingForm CVKind Segment) {j
 /-- The skeletal (lower) tier of a historic form is the stem's — the
     floating `(d)` contributes no skeletal slot. -/
 private theorem withHist_lower (Y : FloatingForm CVKind Segment) :
-    (withHist Y).lower = Y.toGraph.lower := by
-  rw [show (withHist Y).lower = (withHist Y).toGraph.lower from rfl, withHist_eq_concat,
-    Graph.lower_concat]
-  simp [historicExponent, LabeledTuple.empty_concat]
+    (withHist Y).lower = Y.lower := by
+  rw [withHist_eq_concat, FloatingForm.hconcat_lower]
+  exact LabeledTuple.empty_concat Y.lower
 
 /-- The melodic (upper) tier of a historic form is `(d)` concatenated with the
     stem's — used to compute upper-tier lengths in the locality proofs. -/
 private theorem withHist_upper (Y : FloatingForm CVKind Segment) :
-    (withHist Y).upper = historicExponent.upper.concat Y.toGraph.upper := by
-  rw [show (withHist Y).upper = (withHist Y).toGraph.upper from rfl, withHist_eq_concat,
-    Graph.upper_concat]
+    (withHist Y).upper = historicExponent.upper.concat Y.upper := by
+  rw [withHist_eq_concat, FloatingForm.hconcat_upper]
 
 /-- **The general no-look-ahead theorem.** For *any* suffix, the
     `(d)`-docking configuration of the historic-tense form is determined
@@ -585,20 +546,19 @@ private theorem withHist_upper (Y : FloatingForm CVKind Segment) :
     statement, on which it rests.) -/
 theorem dDockable_withHist_concat_right (stem suffix : FloatingForm CVKind Segment)
     (h2 : 2 ≤ stem.lower.len) :
-    dDockable (withHist (ofGraph (stem.toGraph.concat suffix.toGraph))) ↔
+    dDockable (withHist ((stem.hconcat suffix))) ↔
       dDockable (withHist stem) := by
   have hlow : ∀ j, j < stem.lower.len →
-      (withHist (ofGraph (stem.toGraph.concat suffix.toGraph))).lower.get? j =
+      (withHist ((stem.hconcat suffix))).lower.get? j =
         (withHist stem).lower.get? j := by
     intro j hj
-    rw [withHist_lower, withHist_lower, ofGraph_toGraph,
-      Graph.lower_concat, LabeledTuple.get?_concat_left hj]
+    rw [withHist_lower, withHist_lower, FloatingForm.hconcat_lower,
+      LabeledTuple.get?_concat_left hj]
   have hlink : ∀ j, j < stem.lower.len →
-      ((withHist (ofGraph (stem.toGraph.concat suffix.toGraph))).surfaceGraph.IsLinkedLower j ↔
-        (withHist stem).surfaceGraph.IsLinkedLower j) := by
+      ((withHist ((stem.hconcat suffix))).SurfaceLinkedLower j ↔
+        (withHist stem).SurfaceLinkedLower j) := by
     intro j hj
     rw [isLinkedLower_withHist, isLinkedLower_withHist]
-    show (∃ a, (a, j) ∈ (stem.toGraph.concat suffix.toGraph).links) ↔ _
     exact linked_concat_low stem suffix hj
   unfold dDockable isCSlot isVSlot
   rw [hlow 0 (by omega), hlow 1 (by omega), hlink 0 (by omega), hlink 1 (by omega)]
@@ -609,7 +569,7 @@ The configuration-level theorem above is pre-lenition. The full
 `dPrimeSurfaces` version additionally needs `{L}`-docking (`lenite`) to
 be left-local: `lenite` targets the consonant on skeletal slot 0, which
 is the stem's, and deletes the same melody index in both forms. This
-needs the stem **in-bounds** (`stem.toGraph.InBounds`): otherwise a stem
+needs the stem **in-bounds** (`stem.InBounds`): otherwise a stem
 link with an out-of-range melody index would sit outside `withHist
 stem`'s `initialConsonantIdx` search range but inside the longer suffixed
 range, and `lenite` could target different indices. -/
@@ -620,18 +580,18 @@ range, and `lenite` could target different indices. -/
     for `initialConsonantIdx` and after `deleteTierElem`. -/
 private theorem mem_surfaceLinks_concat (stem suffix : FloatingForm CVKind Segment)
     {k j : Nat} (hj : j < stem.lower.len) :
-    (k, j) ∈ (withHist (ofGraph (stem.toGraph.concat suffix.toGraph))).surfaceLinks ↔
+    (k, j) ∈ (withHist ((stem.hconcat suffix))).surfaceLinks ↔
       (k, j) ∈ (withHist stem).surfaceLinks := by
-  have hsB : (withHist (ofGraph (stem.toGraph.concat suffix.toGraph))).surfaceLinks =
-      (stem.toGraph.concat suffix.toGraph).links.image (shiftLink 1 0) := by
-    show (historicExponent.concat (stem.toGraph.concat suffix.toGraph)).links = _
-    rw [Graph.links_concat]; simp [historicExponent]
+  have hsB : (withHist ((stem.hconcat suffix))).surfaceLinks =
+      (stem.hconcat suffix).links.image (shiftLink 1 0) := by
+    rw [withHist_eq_concat, FloatingForm.hconcat_surfaceLinks]
+    simp [historicExponent]
   have hsA : (withHist stem).surfaceLinks =
-      stem.toGraph.links.image (shiftLink 1 0) := by
-    show (historicExponent.concat stem.toGraph).links = _
-    rw [Graph.links_concat]; simp [historicExponent]
-  rw [hsB, hsA, Graph.links_concat, Finset.image_union, Finset.mem_union]
-  have hfalse : (k, j) ∉ (suffix.toGraph.links.image
+      stem.links.image (shiftLink 1 0) := by
+    rw [withHist_eq_concat, FloatingForm.hconcat_surfaceLinks]
+    simp [historicExponent]
+  rw [hsB, hsA, FloatingForm.hconcat_links, Finset.image_union, Finset.mem_union]
+  have hfalse : (k, j) ∉ (suffix.links.image
       (shiftLink stem.upper.len stem.lower.len)).image (shiftLink 1 0) := by
     rw [Finset.image_image, Finset.mem_image]
     rintro ⟨⟨a, b⟩, _, he⟩
@@ -664,36 +624,37 @@ private theorem find?_range_stable {p : Nat → Bool} {m n : Nat} (hmn : m ≤ n
     by `InBounds`, the stem's slot-0 links sit inside its own melody
     range, so the longer suffixed search finds no extra match. -/
 private theorem initialConsonantIdx_concat (stem suffix : FloatingForm CVKind Segment)
-    (h2 : 2 ≤ stem.lower.len) (hib : stem.toGraph.InBounds) :
-    initialConsonantIdx (withHist (ofGraph (stem.toGraph.concat suffix.toGraph)))
+    (h2 : 2 ≤ stem.lower.len) (hib : stem.InBounds) :
+    initialConsonantIdx (withHist ((stem.hconcat suffix)))
       = initialConsonantIdx (withHist stem) := by
   have hpt : (fun k => decide ((k, 0) ∈
-        (withHist (ofGraph (stem.toGraph.concat suffix.toGraph))).surfaceLinks)) =
+        (withHist ((stem.hconcat suffix))).surfaceLinks)) =
       (fun k => decide ((k, 0) ∈ (withHist stem).surfaceLinks)) :=
     funext fun k => decide_eq_decide.mpr (mem_surfaceLinks_concat stem suffix (by omega))
-  have eA : (withHist stem).upper.len = stem.toGraph.upper.len + 1 := by
+  have eA : (withHist stem).upper.len = stem.upper.len + 1 := by
     rw [withHist_upper]; simp [historicExponent, Nat.add_comm]
   unfold initialConsonantIdx
   rw [hpt]
   apply find?_range_stable
   · show (withHist stem).upper.len ≤
-      (withHist (ofGraph (stem.toGraph.concat suffix.toGraph))).upper.len
-    have eB : (withHist (ofGraph (stem.toGraph.concat suffix.toGraph))).upper.len =
-        stem.toGraph.upper.len + suffix.toGraph.upper.len + 1 := by
-      rw [withHist_upper, ofGraph_toGraph, Graph.upper_concat]
+      (withHist ((stem.hconcat suffix))).upper.len
+    have eB : (withHist ((stem.hconcat suffix))).upper.len =
+        stem.upper.len + suffix.upper.len + 1 := by
+      rw [withHist_upper, FloatingForm.hconcat_upper]
       simp [historicExponent, LabeledTuple.concat_len]; omega
     omega
   · intro i hi
     simp only [decide_eq_false_iff_not]
     intro hmem
-    have hsA : (withHist stem).surfaceLinks = stem.toGraph.links.image (shiftLink 1 0) := by
-      show (historicExponent.concat stem.toGraph).links = _
-      rw [Graph.links_concat]; simp [historicExponent]
+    have hsA : (withHist stem).surfaceLinks = stem.links.image (shiftLink 1 0) := by
+      rw [withHist_eq_concat, FloatingForm.hconcat_surfaceLinks]
+      simp [historicExponent]
     rw [hsA, Finset.mem_image] at hmem
     obtain ⟨⟨a, b⟩, hab, he⟩ := hmem
     have hfst := congrArg Prod.fst he
     simp only [shiftLink_apply] at hfst
-    have hin := hib (a, b) hab
+    have hin1 : a < stem.upper.len := (hib (a, b) hab).1
+    rw [eA] at hi
     omega
 
 /-- The docking configuration is right-local even after `lenite` deletes
@@ -701,21 +662,21 @@ private theorem initialConsonantIdx_concat (stem suffix : FloatingForm CVKind Se
     leaves the lower tier, so the slot-0/1 agreement survives. -/
 private theorem dDockable_deleteTierElem_concat (stem suffix : FloatingForm CVKind Segment)
     (h2 : 2 ≤ stem.lower.len) (k : Nat) :
-    dDockable ((withHist (ofGraph (stem.toGraph.concat suffix.toGraph))).deleteTierElem k) ↔
+    dDockable ((withHist ((stem.hconcat suffix))).deleteTierElem k) ↔
       dDockable ((withHist stem).deleteTierElem k) := by
   have hlow : ∀ j, j < stem.lower.len →
-      ((withHist (ofGraph (stem.toGraph.concat suffix.toGraph))).deleteTierElem k).lower.get? j =
+      ((withHist ((stem.hconcat suffix))).deleteTierElem k).lower.get? j =
         ((withHist stem).deleteTierElem k).lower.get? j := by
     intro j hj
-    show (withHist (ofGraph (stem.toGraph.concat suffix.toGraph))).lower.get? j =
+    show (withHist ((stem.hconcat suffix))).lower.get? j =
       (withHist stem).lower.get? j
-    rw [withHist_lower, withHist_lower, ofGraph_toGraph,
-      Graph.lower_concat, LabeledTuple.get?_concat_left hj]
+    rw [withHist_lower, withHist_lower, FloatingForm.hconcat_lower,
+      LabeledTuple.get?_concat_left hj]
   have hlink : ∀ j, j < stem.lower.len →
-      (((withHist (ofGraph (stem.toGraph.concat suffix.toGraph))).deleteTierElem k).surfaceGraph.IsLinkedLower j ↔
-        ((withHist stem).deleteTierElem k).surfaceGraph.IsLinkedLower j) := by
+      (((withHist ((stem.hconcat suffix))).deleteTierElem k).SurfaceLinkedLower j ↔
+        ((withHist stem).deleteTierElem k).SurfaceLinkedLower j) := by
     intro j hj
-    show (∃ p ∈ (withHist (ofGraph (stem.toGraph.concat suffix.toGraph))).surfaceLinks.filter
+    show (∃ p ∈ (withHist ((stem.hconcat suffix))).surfaceLinks.filter
         (fun l => l.fst ≠ k), p.snd = j) ↔
       (∃ p ∈ (withHist stem).surfaceLinks.filter (fun l => l.fst ≠ k), p.snd = j)
     simp only [Finset.mem_filter]
@@ -740,18 +701,18 @@ private theorem dDockable_deleteTierElem_concat (stem suffix : FloatingForm CVKi
     the paper's central claim, in full: preverbal *d'* never looks
     rightward past the word it attaches to. -/
 theorem dPrimeSurfaces_withHist_concat_right (stem suffix : FloatingForm CVKind Segment)
-    (h2 : 2 ≤ stem.lower.len) (hib : stem.toGraph.InBounds) :
-    dPrimeSurfaces (withHist (ofGraph (stem.toGraph.concat suffix.toGraph))) ↔
+    (h2 : 2 ≤ stem.lower.len) (hib : stem.InBounds) :
+    dPrimeSurfaces (withHist ((stem.hconcat suffix))) ↔
       dPrimeSurfaces (withHist stem) := by
   have hk : ∀ k, initialConsonantIdx (withHist stem) = some k →
-      (withHist (ofGraph (stem.toGraph.concat suffix.toGraph))).upper.get? k =
+      (withHist ((stem.hconcat suffix))).upper.get? k =
         (withHist stem).upper.get? k := by
     intro k hoi
     have hk_lt : k < (withHist stem).upper.len :=
       List.mem_range.mp (List.mem_of_find?_eq_some hoi)
-    have hsplit : (withHist (ofGraph (stem.toGraph.concat suffix.toGraph))).upper =
-        (withHist stem).upper.concat suffix.toGraph.upper := by
-      rw [withHist_upper, ofGraph_toGraph, Graph.upper_concat, withHist_upper,
+    have hsplit : (withHist ((stem.hconcat suffix))).upper =
+        (withHist stem).upper.concat suffix.upper := by
+      rw [withHist_upper, FloatingForm.hconcat_upper, withHist_upper,
         LabeledTuple.concat_assoc]
     rw [hsplit, LabeledTuple.get?_concat_left hk_lt]
   unfold dPrimeSurfaces lenite
@@ -790,11 +751,16 @@ extensional content (no look-ahead) is fully captured by
 `dPrimeSurfaces_withHist_concat_right` above: for any suffix, whether
 `(d)` surfaces depends only on the stem's left edge. -/
 
-open CategoryTheory MonoidalCategory in
-/-- The historic-tense exponent as an object of the monoidal category
-    `WellFormedAR` (well-formed: no links, hence in-bounds and planar). -/
-def historicExponentAR : WellFormedAR (TierSpec Segment) (SegSpec CVKind) :=
-  WellFormedAR.mk ⟨historicExponent, historicExponent_inBounds⟩ historicExponent_isPlanar
+/-- The historic-tense exponent as an object of the monoidal category of
+    representations: one floating `(d)` melody node, no skeleton, no links. -/
+def historicExponentRep :
+    Representation (Sigma.fst :
+      ((b : Bool) × TwoTier (TierSpec Segment) (SegSpec CVKind) b) → Bool) :=
+  Representation.ofData
+    (fun b => match b with
+      | true => ([mel .dPrime mHist] : List (TwoTier (TierSpec Segment) (SegSpec CVKind) true))
+      | false => [])
+    ⊥
 
 open CategoryTheory MonoidalCategory in
 /-- **The historic morpheme is an endofunctor on `WellFormedAR`.** Prefixing `(d)`
@@ -802,17 +768,20 @@ open CategoryTheory MonoidalCategory in
     which exists only because `WellFormedAR` is a `MonoidalCategory`. Left- rather
     than right-tensoring encodes the morpheme's directionality as a
     preverbal particle. -/
-def withHistFunctor : WellFormedAR (TierSpec Segment) (SegSpec CVKind) ⥤
-    WellFormedAR (TierSpec Segment) (SegSpec CVKind) :=
-  tensorLeft historicExponentAR
+def withHistFunctor :
+    Representation (Sigma.fst :
+        ((b : Bool) × TwoTier (TierSpec Segment) (SegSpec CVKind) b) → Bool) ⥤
+    Representation (Sigma.fst :
+        ((b : Bool) × TwoTier (TierSpec Segment) (SegSpec CVKind) b) → Bool) :=
+  tensorLeft historicExponentRep
 
 open CategoryTheory MonoidalCategory in
-/-- The functor's action on objects *is* morpheme prefixing: it agrees
-    with `withHist` at the level of the underlying graph
-    (`withHist_eq_concat`). -/
-theorem withHistFunctor_obj_toGraph
-    (X : WellFormedAR (TierSpec Segment) (SegSpec CVKind)) :
-    (withHistFunctor.obj X).obj.toGraph = historicExponent.concat X.obj.toGraph := rfl
+/-- The functor's action on objects *is* morpheme prefixing: the tensor of
+    the exponent with the stem. -/
+theorem withHistFunctor_obj
+    (X : Representation (Sigma.fst :
+        ((b : Bool) × TwoTier (TierSpec Segment) (SegSpec CVKind) b) → Bool)) :
+    withHistFunctor.obj X = historicExponentRep ⊗ X := rfl
 
 open CategoryTheory MonoidalCategory in
 /-- **Associativity of prefixation is the associator.** This natural
@@ -821,10 +790,12 @@ open CategoryTheory MonoidalCategory in
     not exist unless the monoidal structure is *coherent* (pentagon +
     triangle). It is the concrete artifact that makes `WellFormedAR`'s coherence
     load-bearing rather than decorative. -/
-noncomputable def prefixAssoc (X : WellFormedAR (TierSpec Segment) (SegSpec CVKind)) :
-    tensorLeft (historicExponentAR ⊗ X) ≅
-      tensorLeft X ⋙ tensorLeft historicExponentAR :=
-  tensorLeftTensor historicExponentAR X
+noncomputable def prefixAssoc
+    (X : Representation (Sigma.fst :
+        ((b : Bool) × TwoTier (TierSpec Segment) (SegSpec CVKind) b) → Bool)) :
+    tensorLeft (historicExponentRep ⊗ X) ≅
+      tensorLeft X ⋙ tensorLeft historicExponentRep :=
+  tensorLeftTensor historicExponentRep X
 
 /-! ## §11.5 The morphism-functor frontier: why lenition is precedence-sensitive
 
