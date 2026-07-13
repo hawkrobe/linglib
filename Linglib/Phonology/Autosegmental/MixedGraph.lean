@@ -7,6 +7,7 @@ import Mathlib.CategoryTheory.Limits.Shapes.BinaryProducts
 import Mathlib.CategoryTheory.Limits.Shapes.Terminal
 import Mathlib.CategoryTheory.Monoidal.Category
 import Mathlib.CategoryTheory.ObjectProperty.FullSubcategory
+import Mathlib.CategoryTheory.Monoidal.Widesubcategory
 import Mathlib.CategoryTheory.MorphismProperty.Composition
 import Mathlib.Combinatorics.SimpleGraph.Sum
 import Mathlib.Logic.Relation
@@ -107,10 +108,13 @@ def IsSaturated : Prop := ∀ v, ∃ w, G.edges.Adj v w
 def IsPlanar : Prop :=
   ∀ ⦃v v' w w'⦄, G.edges.Adj v v' → G.edges.Adj w w' → G.arcs.Adj v w → ¬ G.arcs.Adj w' v'
 
-/-- Axiom 6, the OCP on melody tier `m`: precedence-adjacent vertices on `m` bear
-    distinct labels. Needs the labeling `ℓ` and its tier assignment `t`. -/
+/-- Axiom 6, the OCP on melody tier `m`: precedence-adjacent vertices on `m`
+    bear distinct labels. Adjacency is the covering relation of the arcs — in
+    the order-closed signature bare arcs relate all order-comparable pairs,
+    which would wrongly ban any repeated label anywhere on the tier. -/
 def IsOCPClean (ℓ : V → S) (t : S → ι) (m : ι) : Prop :=
-  ∀ ⦃v w⦄, G.arcs.Adj v w → t (ℓ v) = m → ℓ v ≠ ℓ w
+  ∀ ⦃v w⦄, G.arcs.Adj v w → (∀ u, ¬ (G.arcs.Adj v u ∧ G.arcs.Adj u w)) →
+    t (ℓ v) = m → ℓ v ≠ ℓ w
 
 end Axioms
 
@@ -371,6 +375,26 @@ def Hom.concatMap {X₁ Y₁ X₂ Y₂ : MixedGraphCat S}
     rintro (v | v)
     exacts [f.label_comp v, g.label_comp v]
 
+/-- Concatenation of isomorphisms: full-structure isos compose blockwise, the
+    bridge transported by label preservation. -/
+def Iso.concatCongr {X₁ Y₁ X₂ Y₂ : MixedGraphCat S} (e₁ : Iso X₁ Y₁) (e₂ : Iso X₂ Y₂) :
+    Iso (concat t X₁ X₂) (concat t Y₁ Y₂) where
+  toEquiv := e₁.toEquiv.sumCongr e₂.toEquiv
+  edges_iff v w := by
+    rcases v with v | v <;> rcases w with w | w
+    exacts [e₁.edges_iff v w, Iff.rfl, Iff.rfl, e₂.edges_iff v w]
+  arcs_iff v w := by
+    rcases v with v | v <;> rcases w with w | w
+    · exact e₁.arcs_iff v w
+    · show Y₁.tier t (e₁.toEquiv v) = Y₂.tier t (e₂.toEquiv w) ↔ X₁.tier t v = X₂.tier t w
+      rw [show Y₁.tier t (e₁.toEquiv v) = X₁.tier t v from congrArg t (e₁.label_comp v),
+        show Y₂.tier t (e₂.toEquiv w) = X₂.tier t w from congrArg t (e₂.label_comp w)]
+    · exact Iff.rfl
+    · exact e₂.arcs_iff v w
+  label_comp v := by
+    rcases v with v | v
+    exacts [e₁.label_comp v, e₂.label_comp v]
+
 /-! #### Associativity up to isomorphism ([jardine-heinz-2015] Theorem 3) -/
 
 /-- Concatenation is associative up to isomorphism, over `Equiv.sumAssoc`; the
@@ -500,6 +524,27 @@ instance : (MixedGraphCat.precPreserving (S := S)).IsMultiplicative where
   id_mem _ := fun _ _ h => h
   comp_mem _ _ hf hg := fun _ _ h => hg (hf h)
 
+/-- A full isomorphism's underlying morphism preserves precedence. -/
+theorem MixedGraphCat.Iso.toHom_precPreserving {X Y : MixedGraphCat S}
+    (e : MixedGraphCat.Iso X Y) : MixedGraphCat.precPreserving e.toHom :=
+  fun _ _ h => (e.arcs_iff _ _).mpr h
+
+/-- Concatenation of precedence-preserving morphisms preserves precedence:
+    blockwise from the factors, the bridge transported by labels. -/
+theorem MixedGraphCat.Hom.concatMap_precPreserving (t : S → ι)
+    {X₁ Y₁ X₂ Y₂ : MixedGraphCat S}
+    {f : MixedGraphCat.Hom X₁ Y₁} {g : MixedGraphCat.Hom X₂ Y₂}
+    (hf : MixedGraphCat.precPreserving f) (hg : MixedGraphCat.precPreserving g) :
+    MixedGraphCat.precPreserving (f.concatMap t g) := by
+  rintro (v | v) (w | w) h
+  · exact hf h
+  · show Y₁.tier t (f.toFun v) = Y₂.tier t (g.toFun w)
+    rw [show Y₁.tier t (f.toFun v) = X₁.tier t v from congrArg t (f.label_comp v),
+      show Y₂.tier t (g.toFun w) = X₂.tier t w from congrArg t (g.label_comp w)]
+    exact h
+  · exact h.elim
+  · exact hg h
+
 /-! ### The category of autosegmental representations -/
 
 variable (t : S → ι)
@@ -551,10 +596,15 @@ theorem hom_ext {X Y : Representation t} {f g : X ⟶ Y}
     (h : ∀ v, f.hom.toFun v = g.hom.toFun v) : f = g :=
   InducedCategory.hom_ext (MixedGraphCat.Hom.ext (funext h))
 
+universe u₁ u₂ u₃
+
 /-- Monoidal structure: morpheme concatenation as tensor, the empty
     representation as unit; the axiom class is closed under both by
-    `isTierOrdered_concat`/`noInternalAssoc_concat`. -/
-@[simps] instance instMonoidalStruct : MonoidalCategoryStruct (Representation t) where
+    `isTierOrdered_concat`/`noInternalAssoc_concat`. Universes pinned so the
+    unit's vertex type shares the objects' universe — autobinding would split
+    the instance head into an unusable `max`. -/
+@[simps] instance instMonoidalStruct {S : Type u₁} {ι : Type u₂} {t : S → ι} :
+    MonoidalCategoryStruct (Representation.{u₁, u₂, u₃} t) where
   tensorObj X Y :=
     ⟨MixedGraphCat.concat t X.obj Y.obj,
       MixedGraphCat.isTierOrdered_concat t X.property.1 Y.property.1,
@@ -593,6 +643,27 @@ instance : MonoidalCategory (Representation t) :=
     (triangle := fun _ _ => hom_ext fun v => by
       repeat' rcases (v : _ ⊕ _) with v | v
       all_goals first | rfl | exact v.elim)
+
+/-- Precedence preservation on representations: the classical morphisms of the
+    theory, as a monoidally-stable wide subcategory of the broad category. -/
+def precPreserving : MorphismProperty (Representation t) :=
+  fun _ _ f => MixedGraphCat.precPreserving f.hom
+
+instance : (precPreserving (t := t)).IsMonoidalStable where
+  id_mem _ := fun _ _ h => h
+  comp_mem _ _ hf hg := fun _ _ h => hg (hf h)
+  whiskerLeft _ _ _ _ hg :=
+    MixedGraphCat.Hom.concatMap_precPreserving t (fun _ _ h => h) hg
+  whiskerRight _ hf _ :=
+    MixedGraphCat.Hom.concatMap_precPreserving t hf (fun _ _ h => h)
+  associator_hom_mem A B C :=
+    (MixedGraphCat.concatAssocIso t A.obj B.obj C.obj).toHom_precPreserving
+  associator_inv_mem A B C :=
+    (MixedGraphCat.concatAssocIso t A.obj B.obj C.obj).symm.toHom_precPreserving
+  leftUnitor_hom_mem A := (MixedGraphCat.emptyConcatIso t A.obj).toHom_precPreserving
+  leftUnitor_inv_mem A := (MixedGraphCat.emptyConcatIso t A.obj).symm.toHom_precPreserving
+  rightUnitor_hom_mem A := (MixedGraphCat.concatEmptyIso t A.obj).toHom_precPreserving
+  rightUnitor_inv_mem A := (MixedGraphCat.concatEmptyIso t A.obj).symm.toHom_precPreserving
 
 end Representation
 

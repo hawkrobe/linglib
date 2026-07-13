@@ -214,7 +214,7 @@ def readTBU (s : Unit × List Tone.TRN) : TBU := if s.2.isEmpty then .O else .H
 /-- (37a): the TBU string is recoverable from the realized AR, so the complexity results
 transfer to the autosegmental analysis. -/
 theorem readTBU_linearize_realize (w : List TBU) :
-    ((realize toAR w).linearize).map readTBU = w := by
+    ((AR.realize toAR w).linearize).map readTBU = w := by
   rw [linearize_realize_toAR, List.map_map]
   conv_rhs => rw [← List.map_id w]
   exact List.map_congr_left fun a _ => by cases a <;> rfl
@@ -226,8 +226,8 @@ nodes into one, giving [hyman-katamba-2010]'s output representation (7): a singl
 autosegment multiply linked to exactly the `plateau`, over an unchanged timing tier. -/
 
 theorem mem_links_realizeMerged_utp (p : ℕ × ℕ) :
-    p ∈ (realizeMerged toAR (utp.map w)).links ↔ p.1 = 0 ∧ utp.Surfaces w p.2 := by
-  have hL : ∀ j, (realize toAR (utp.map w)).toGraph.IsLinkedLower j ↔ utp.Surfaces w j :=
+    p ∈ (AR.realizeMerged toAR (utp.map w)).links ↔ p.1 = 0 ∧ utp.Surfaces w p.2 := by
+  have hL : ∀ j, (AR.realize toAR (utp.map w)).toGraph.IsLinkedLower j ↔ utp.Surfaces w j :=
     fun j => by rw [isLinkedLower_realize_toAR, utp.map_getElem?_H_iff]
   rw [realizeMerged_def,
     mem_links_collapseAR_of_upper_replicate (upper_realize_toAR (utp.map w)), hL]
@@ -235,22 +235,22 @@ theorem mem_links_realizeMerged_utp (p : ℕ × ℕ) :
 /-- Multiple association ((7)): the merged realization links melody node `0` to exactly
 the `plateau`. Unconditional: a toneless word has an empty plateau and no lines. -/
 theorem links_realizeMerged_utp :
-    (realizeMerged toAR (utp.map w)).links = {0} ×ˢ plateau w := by
+    (AR.realizeMerged toAR (utp.map w)).links = {0} ×ˢ plateau w := by
   ext ⟨k, j⟩; rw [mem_links_realizeMerged_utp]; simp [and_comm, eq_comm]
 
 /-- The timing tier survives the merge: one slot per input TBU. -/
 theorem lower_realizeMerged_utp :
-    (realizeMerged toAR (utp.map w)).lower.toList = List.replicate w.length () := by
+    (AR.realizeMerged toAR (utp.map w)).lower.toList = List.replicate w.length () := by
   rw [realizeMerged_def, collapseAR_lower]
   have h := List.eq_replicate_of_mem
-    (l := (realize toAR (utp.map w)).lower.toList) (a := ()) fun _ _ => rfl
+    (l := (AR.realize toAR (utp.map w)).lower.toList) (a := ()) fun _ _ => rfl
   rwa [LabeledTuple.toList_length, ← AR.linearize_length, linearize_realize_toAR,
     List.length_map, Tone.Surfacing.map_length] at h
 
 /-- The fused plateau ((7)): with at least one H, the merged melody tier is a single H
 autosegment. -/
 theorem upper_realizeMerged_utp (hw : .H ∈ w) :
-    (realizeMerged toAR (utp.map w)).upper.toList = [Tone.TRN.H] := by
+    (AR.realizeMerged toAR (utp.map w)).upper.toList = [Tone.TRN.H] := by
   obtain ⟨m, hm⟩ : ∃ m, ((utp.map w).count .H) = m + 1 := by
     obtain ⟨i, hi⟩ := List.mem_iff_getElem?.mp hw
     have := List.count_pos_iff.mpr <| List.mem_iff_getElem?.mpr
@@ -260,8 +260,33 @@ theorem upper_realizeMerged_utp (hw : .H ∈ w) :
 
 /-- (7) concretely: `HØØH` fuses to one H linked to all four TBUs. -/
 example :
-    (realizeMerged toAR (utp.map [.H, .O, .O, .H])).links
+    (AR.realizeMerged toAR (utp.map [.H, .O, .O, .H])).links
       = {(0, 0), (0, 1), (0, 2), (0, 3)} := by decide
+
+/-! #### The autosegmental grounding in coordinates
+
+The same claims on the graph foundation: the output representation's melody
+fuses to one `H`, linked exactly to the surfacing slots. -/
+
+/-- (7) in coordinates: the merged output's links are the fused `H` node over
+    the surfacing positions. -/
+theorem link_realizeMerged_map {w : List TBU} {k j : ℕ} :
+    ((Autosegmental.realize Tone.Plateauing.toRep (utp.map w)).collapse true).link
+        true false k j ↔ k = 0 ∧ utp.Surfaces w j := by
+  rw [Tone.Plateauing.link_realizeMerged, utp.map_getElem?_H_iff]
+
+/-- (7) concretely: `HØØH` fuses to one H linked to all four TBUs. -/
+example : ∀ j < 4,
+    ((Autosegmental.realize Tone.Plateauing.toRep
+      (utp.map [.H, .O, .O, .H])).collapse true).link true false 0 j := by
+  intro j hj
+  rw [link_realizeMerged_map]
+  refine ⟨rfl, ?_⟩
+  match j, hj with
+  | 0, _ => decide
+  | 1, _ => decide
+  | 2, _ => decide
+  | 3, _ => decide
 
 end AutosegmentalGrounding
 

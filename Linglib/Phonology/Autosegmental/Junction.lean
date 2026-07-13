@@ -239,4 +239,145 @@ theorem isCleanAR_contour : IsCleanAR (contour as b) ↔ OCP.IsClean as :=
 
 end AR
 
+/-! ### The junction in coordinates
+
+The complete association as a two-tier `Representation` (`Bool`-indexed:
+`true` the melody tier, `false` the timing tier), built by `ofData`; the
+No-Crossing keystone in the foundational path form. -/
+
+section CoordinateJunction
+
+universe u
+variable {α β : Type u}
+
+/-- The two-tier alphabet: melody labels over `true`, timing labels over
+    `false`. -/
+abbrev TwoTier (α β : Type u) : Bool → Type u := fun b => bif b then α else β
+
+/-- Complete many-to-many association of a melody onto a slot sequence, in
+    coordinates. -/
+def Representation.junction (as : List α) (bs : List β) :
+    Representation (Sigma.fst : ((b : Bool) × TwoTier α β b) → Bool) :=
+  Representation.ofData
+    (fun b => match b with
+      | true => (as : List (TwoTier α β true))
+      | false => (bs : List (TwoTier α β false)))
+    (fun i j p q => i = true ∧ j = false ∧ p < as.length ∧ q < bs.length)
+
+instance (as : List α) (bs : List β) :
+    Finite (Representation.junction as bs).obj.V :=
+  inferInstanceAs (Finite ((_ : Bool) × Fin _))
+
+@[simp] theorem Representation.tierWord_junction_true (as : List α) (bs : List β) :
+    (Representation.junction as bs).tierWord true = as :=
+  Representation.tierWord_ofData true
+
+@[simp] theorem Representation.tierWord_junction_false (as : List α) (bs : List β) :
+    (Representation.junction as bs).tierWord false = bs :=
+  Representation.tierWord_ofData false
+
+/-- Junction links are complete: every in-bounds melody–timing pair. -/
+theorem Representation.link_junction (as : List α) (bs : List β) {b b' : Bool}
+    {p q : ℕ} : (Representation.junction as bs).link b b' p q ↔
+      b = true ∧ b' = false ∧ p < as.length ∧ q < bs.length ∨
+        b = false ∧ b' = true ∧ p < bs.length ∧ q < as.length := by
+  unfold Representation.junction
+  rw [Representation.link_ofData]
+  constructor
+  · rintro ⟨hne, hp, hq, (⟨rfl, rfl, h1, h2⟩ | ⟨rfl, rfl, h1, h2⟩)⟩
+    · exact Or.inl ⟨rfl, rfl, h1, h2⟩
+    · exact Or.inr ⟨rfl, rfl, by simpa using hp, by simpa using hq⟩
+  · rintro (⟨rfl, rfl, h1, h2⟩ | ⟨rfl, rfl, h1, h2⟩)
+    · exact ⟨by decide, by simpa using h1, by simpa using h2,
+        Or.inl ⟨rfl, rfl, h1, h2⟩⟩
+    · exact ⟨by decide, by simpa using h1, by simpa using h2,
+        Or.inr ⟨rfl, rfl, h2, h1⟩⟩
+
+/-- **The No-Crossing Constraint selects the one-sided junctions**: a complete
+    association is planar iff one side has at most one node — the one-to-many
+    `spread`, many-to-one `contour`, and degenerate cases. -/
+theorem Representation.isPlanar_junction_iff (as : List α) (bs : List β) :
+    IsPlanar (Representation.junction as bs).obj.graph ↔
+      as.length ≤ 1 ∨ bs.length ≤ 1 := by
+  constructor
+  · intro h
+    by_contra hc
+    rw [not_or] at hc
+    obtain ⟨ha, hb⟩ := hc
+    rw [Nat.not_le] at ha hb
+    exact h (v := ⟨true, ⟨0, show 0 < as.length by omega⟩⟩)
+      (v' := ⟨false, ⟨1, show 1 < bs.length by omega⟩⟩)
+      (w := ⟨true, ⟨1, show 1 < as.length by omega⟩⟩)
+      (w' := ⟨false, ⟨0, show 0 < bs.length by omega⟩⟩)
+      ⟨by simp, Or.inl ⟨rfl, rfl, show (0 : ℕ) < as.length by omega,
+        show (1 : ℕ) < bs.length by omega⟩⟩
+      ⟨by simp, Or.inl ⟨rfl, rfl, show (1 : ℕ) < as.length by omega,
+        show (0 : ℕ) < bs.length by omega⟩⟩
+      ⟨rfl, show (0 : ℕ) < 1 by omega⟩ ⟨rfl, show (0 : ℕ) < 1 by omega⟩
+  · rintro h ⟨bv, pv⟩ ⟨bv', pv'⟩ ⟨bw, pw⟩ ⟨bw', pw'⟩ hvv' hww' hvw hw'v'
+    obtain ⟨hbvw, hpvw⟩ := hvw
+    obtain ⟨hbw'v', hpw'v'⟩ := hw'v'
+    cases hbvw
+    cases hbw'v'
+    have hv' : bv' = !bv := by
+      rcases hvv' with ⟨hne, -⟩
+      cases bv <;> cases bv' <;> simp_all
+    subst hv'
+    rcases h with h | h <;> cases bv
+    · have h1 : (pv' : ℕ) < as.length := pv'.isLt
+      have h2 : (pw' : ℕ) < as.length := pw'.isLt
+      have h3 : (pw' : ℕ) < (pv' : ℕ) := hpw'v'
+      omega
+    · have h1 : (pv : ℕ) < as.length := pv.isLt
+      have h2 : (pw : ℕ) < as.length := pw.isLt
+      have h3 : (pv : ℕ) < (pw : ℕ) := hpvw
+      omega
+    · have h1 : (pv : ℕ) < bs.length := pv.isLt
+      have h2 : (pw : ℕ) < bs.length := pw.isLt
+      have h3 : (pv : ℕ) < (pw : ℕ) := hpvw
+      omega
+    · have h1 : (pv' : ℕ) < bs.length := pv'.isLt
+      have h2 : (pw' : ℕ) < bs.length := pw'.isLt
+      have h3 : (pw' : ℕ) < (pv' : ℕ) := hpw'v'
+      omega
+
+/-! #### The planar local configurations -/
+
+/-- One-to-one association. -/
+def Representation.single (a : α) (b : β) := Representation.junction [a] [b]
+
+/-- A bare (unassociated) timing slot. -/
+def Representation.bare (b : β) := Representation.junction ([] : List α) [b]
+
+/-- A floating autosegment ([leben-1973]). -/
+def Representation.float (a : α) := Representation.junction [a] ([] : List β)
+
+/-- Several melody nodes on one slot. -/
+def Representation.contour (as : List α) (b : β) := Representation.junction as [b]
+
+/-- One melody node over several slots. -/
+def Representation.spread (a : α) (bs : List β) := Representation.junction [a] bs
+
+theorem Representation.isPlanar_single (a : α) (b : β) :
+    IsPlanar (Representation.single a b).obj.graph :=
+  (Representation.isPlanar_junction_iff _ _).mpr (Or.inl (by simp))
+
+theorem Representation.isPlanar_bare (b : β) :
+    IsPlanar (Representation.bare (α := α) b).obj.graph :=
+  (Representation.isPlanar_junction_iff _ _).mpr (Or.inl (by simp))
+
+theorem Representation.isPlanar_float (a : α) :
+    IsPlanar (Representation.float (β := β) a).obj.graph :=
+  (Representation.isPlanar_junction_iff _ _).mpr (Or.inl (by simp))
+
+theorem Representation.isPlanar_contour (as : List α) (b : β) :
+    IsPlanar (Representation.contour as b).obj.graph :=
+  (Representation.isPlanar_junction_iff _ _).mpr (Or.inr (by simp))
+
+theorem Representation.isPlanar_spread (a : α) (bs : List β) :
+    IsPlanar (Representation.spread a bs).obj.graph :=
+  (Representation.isPlanar_junction_iff _ _).mpr (Or.inl (by simp))
+
+end CoordinateJunction
+
 end Autosegmental
