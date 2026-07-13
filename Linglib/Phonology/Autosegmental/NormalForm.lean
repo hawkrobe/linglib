@@ -589,6 +589,17 @@ theorem Representation.factorEmbeds_iff_bounded
   · rintro ⟨o, -, hfa⟩
     exact ⟨o, hfa⟩
 
+/-- Link conditions are supported on the factor's tier ranges. -/
+theorem Representation.forall_link_iff_bounded
+    {F : Representation (Sigma.fst : ((i : ι) × τ i) → ι)} [Finite F.obj.V]
+    {C : ι → ι → ℕ → ℕ → Prop} :
+    (∀ i j p q, F.link i j p q → C i j p q) ↔
+      ∀ i j, ∀ p < F.tierLength i, ∀ q < F.tierLength j,
+        F.link i j p q → C i j p q := by
+  refine ⟨fun h i j p _ q _ hl => h i j p q hl, fun h i j p q hl => ?_⟩
+  obtain ⟨hp, hq, -⟩ := id hl
+  exact h i j p hp q hq hl
+
 /-- `X` avoids every forbidden factor of a banned-subgraph grammar
     ([jardine-2016-diss] Ch. 5's `L^NL_G`). -/
 def Representation.Free [Finite X.obj.V]

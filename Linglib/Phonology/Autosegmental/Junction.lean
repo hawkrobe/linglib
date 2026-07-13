@@ -378,6 +378,23 @@ theorem Representation.isPlanar_spread (a : α) (bs : List β) :
     IsPlanar (Representation.spread a bs).obj.graph :=
   (Representation.isPlanar_junction_iff _ _).mpr (Or.inl (by simp))
 
+/-- Two-tier factor embedding is a search over two bounded offsets. -/
+theorem Representation.factorEmbeds_iff_two_tier
+    {F X : Representation (Sigma.fst : ((b : Bool) × TwoTier α β b) → Bool)}
+    [Finite F.obj.V] [Finite X.obj.V] :
+    F.FactorEmbeds X ↔
+      ∃ ot ≤ X.tierLength true, ∃ of ≤ X.tierLength false,
+        F.IsFactorAt X (fun b => bif b then ot else of) := by
+  rw [Representation.factorEmbeds_iff_bounded]
+  constructor
+  · rintro ⟨o, hb, hfa⟩
+    refine ⟨o true, hb true, o false, hb false, ?_⟩
+    have he : (fun b => bif b then o true else o false) = o :=
+      funext fun b => by cases b <;> rfl
+    rwa [he]
+  · rintro ⟨ot, hot, of, hof, hfa⟩
+    exact ⟨_, fun b => by cases b <;> simpa, hfa⟩
+
 /-- A timing slot **surfaces with** melody label `a`: some `a`-labelled melody
     node links to it. -/
 def Representation.surfacesWith
