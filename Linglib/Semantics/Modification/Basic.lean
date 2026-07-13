@@ -18,16 +18,16 @@ intersective adjectives, and manner adverbs all converge.
 
 * `Modifier` — a modifier of `τ` is an endofunction `τ → τ`.
 * `Modifier.intersective` — the intersective modifier built from a property `P`.
-* `Modifier.isIntersective` / `.isSubsective` / `.isPrivative` — the
-  [kamp-1975] modifier-meaning classification, as predicates on a modifier.
 
 ## Implementation notes
 
 `Modifier.intersective` is the canonical intersective-modification operation; the
-concrete reflexes reduce to it (`ArgumentStructure/LF.EventModifier.modify` over
-events calls it; the type-driven interpreter's Predicate Modification step is it at
-`e ⇒ t`). The adjective-specific classification in `Gradability/Classification`
-(over `AdjMeaning`) is the remaining copy to fold onto these forms (follow-up).
+concrete reflexes reduce to it (`ArgumentStructure`'s `modify` over events calls
+it; the type-driven interpreter's Predicate Modification step is it at `e ⇒ t`).
+The [kamp-1975] modifier-meaning classification (intersective / subsective /
+privative / extensional) lives at its intensional generality in
+`Modification/Adjective.lean`; `Studies/Kamp1975.lean` § 1 specializes it to a
+single world.
 -/
 
 /-- A modifier of `τ` is a function on the modificand's denotation
@@ -51,30 +51,5 @@ def intersective (P : α → Prop) : Modifier (α → Prop) :=
 /-- Head and modifier intersect symmetrically (conjunction is commutative). -/
 theorem intersective_comm (P Q : α → Prop) : intersective P Q = intersective Q P := by
   funext x; exact propext And.comm
-
-/-- A modifier is **intersective** if it is conjunction with some fixed property. -/
-def isIntersective (m : Modifier (α → Prop)) : Prop :=
-  ∃ P : α → Prop, ∀ Q, m Q = intersective P Q
-
-/-- A modifier is **subsective** if its output always entails the modificand
-    (`m Q ⊆ Q`): a skillful surgeon is a surgeon. -/
-def isSubsective (m : Modifier (α → Prop)) : Prop :=
-  ∀ Q x, m Q x → Q x
-
-/-- A modifier is **privative** if its output is disjoint from the modificand
-    (`m Q ∩ Q = ∅`): a fake gun is not a gun. -/
-def isPrivative (m : Modifier (α → Prop)) : Prop :=
-  ∀ Q x, m Q x → ¬ Q x
-
-theorem intersective_isIntersective (P : α → Prop) : isIntersective (intersective P) :=
-  ⟨P, fun _ => rfl⟩
-
-/-- Intersective ⟹ subsective ([kamp-1975]'s implication structure). -/
-theorem isSubsective_of_isIntersective {m : Modifier (α → Prop)}
-    (h : isIntersective m) : isSubsective m := by
-  obtain ⟨P, hP⟩ := h
-  intro Q x hx
-  rw [hP Q] at hx
-  exact hx.2
 
 end Modifier

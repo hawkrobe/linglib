@@ -14,7 +14,7 @@ eliminating syntactic categories in favor of semantic types
 
 ## Key result
 
-`Classification.lean` already defines `AdjMeaning W E = Property W E →
+`Modification/Adjective.lean` already defines `AdjMeaning W E = Property W E →
 Property W E`, which IS the ⟨et,et⟩ type. The Kamp hierarchy there
 (intersective, subsective, privative) classifies adjectives by meaning
 postulates *within* that type — not by assigning different types to
@@ -43,7 +43,7 @@ construction.
 
 namespace Elbourne2026
 
-open Degree.Classification
+open Modification
   (Property AdjMeaning isIntersective isSubsective)
 
 /-! ### ⟨et,et⟩ Adjective Denotations -/
@@ -121,7 +121,7 @@ theorem fa_eq_pm (Q N : Property I E) :
   funext t x; exact propext And.comm
 
 /-- PM always produces **intersective** results: the composition
-    `λN.λt.λx. A(t)(x) ∧ N(t)(x)` satisfies `Classification.isIntersective`
+    `λN.λt.λx. A(t)(x) ∧ N(t)(x)` satisfies `Modification.isIntersective`
     with witness `A`. This means PM is too restrictive even for merely
     subsective adjectives like `skillful` — not just non-subsective ones.
 
@@ -169,7 +169,7 @@ section HierarchyConnection
 variable {I E : Type*}
 
 /-- Intersective ⟨et,et⟩ adjectives satisfy
-    `Classification.isIntersective`. The witness is the underlying
+    `Modification.isIntersective`. The witness is the underlying
     property Q. -/
 theorem intersective_is_classified (Q : Property I E) :
     isIntersective (intersective Q) :=
@@ -247,8 +247,8 @@ theorem former_adj_holds :
   · exact id
 
 /-- `formerAdj` is not subsective — connecting directly to
-    `Classification.isSubsective`. This is a genuine `AdjMeaning`,
-    so it integrates with the full Classification hierarchy. -/
+    `Modification.isSubsective`. This is a genuine `AdjMeaning`,
+    so it integrates with the full classification hierarchy. -/
 theorem former_adj_not_subsective :
     ¬ isSubsective (formerAdj (E := E1) allT2 ltb2) := by
   intro h

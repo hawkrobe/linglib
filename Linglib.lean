@@ -1572,7 +1572,6 @@ import Linglib.Semantics.Classifier.Basic
 import Linglib.Semantics.Classifier.Composition
 import Linglib.Semantics.Classifier.Defs
 import Linglib.Semantics.Classifier.TypeN
-import Linglib.Semantics.Composition.Coercion
 import Linglib.Semantics.Composition.Combinator
 import Linglib.Semantics.Composition.Continuation
 import Linglib.Semantics.Composition.Coordination
@@ -1744,6 +1743,7 @@ import Linglib.Semantics.Modality.TemporalConstraint
 import Linglib.Semantics.Modality.Typology
 import Linglib.Semantics.Modification.Adjective
 import Linglib.Semantics.Modification.Basic
+import Linglib.Semantics.Modification.Coercion
 import Linglib.Semantics.Modification.RelativeClause
 import Linglib.Semantics.Mood.Defs
 import Linglib.Semantics.Mood.Dynamic
