@@ -618,14 +618,6 @@ open scoped MonoidalCategory
 
 variable {ι : Type*} [DecidableEq ι] {τ : ι → Type*}
 variable (X : Representation (Sigma.fst : ((i : ι) × τ i) → ι))
-
-omit [DecidableEq ι] in
-/-- Links are symmetric in coordinates. -/
-theorem Representation.link_symm [Finite X.obj.V] {i j : ι} {p q : ℕ}
-    (h : X.link i j p q) : X.link j i q p := by
-  obtain ⟨hp, hq, hl⟩ := h
-  exact ⟨hq, hp, hl.symm⟩
-
 variable (m : ι) [DecidableEq (τ m)]
 
 /-- Tier words after collapsing melody tier `m`: destuttered at `m`, untouched
@@ -718,19 +710,6 @@ theorem Representation.collapsedWord_tensor
       Representation.tierWord_tensor, Representation.tierWord_collapse]
     exact OCP.collapse_append _ _
   · simp [Representation.collapsedWord, Function.update_of_ne h]
-
-omit [DecidableEq ι] in
-/-- Same-tier vertices are never linked: they are arc-comparable (Axioms 1–2),
-    and association never follows arcs (Axiom 3). -/
-theorem Representation.not_link_self_tier [Finite X.obj.V] (i : ι) (p q : ℕ) :
-    ¬ X.link i i p q := by
-  rintro ⟨hp, hq, hl⟩
-  rw [Representation.linkRel_def] at hl
-  have hlab : X.obj.tier Sigma.fst (X.vertexEquiv ⟨i, ⟨p, hp⟩⟩)
-      = X.obj.tier Sigma.fst (X.vertexEquiv ⟨i, ⟨q, hq⟩⟩) := by
-    show (X.obj.label _).1 = (X.obj.label _).1
-    rw [Representation.label_vertexEquiv, Representation.label_vertexEquiv]
-  exact (X.property.1.total hl.ne hlab).elim (X.property.2 hl) (X.property.2 hl.symm)
 
 theorem Representation.fiberEnum_collapse [Finite X.obj.V] (i : ι) :
     (X.collapse m).fiberEnum i =

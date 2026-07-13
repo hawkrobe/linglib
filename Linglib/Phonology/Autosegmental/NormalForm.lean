@@ -635,8 +635,26 @@ theorem Representation.arcs_normalize_ne [Finite X.obj.V] {i j : ι} (h : i ≠ 
       X.label_vertexEquiv j q] at h2
   exact h h2
 
+/-- Links are symmetric in coordinates. -/
+theorem Representation.link_symm [Finite X.obj.V] {i j : ι} {p q : ℕ}
+    (h : X.link i j p q) : X.link j i q p := by
+  obtain ⟨hp, hq, hl⟩ := h
+  exact ⟨hq, hp, hl.symm⟩
+
+/-- Same-tier vertices are never linked: they are arc-comparable (Axioms 1–2),
+    and association never follows arcs (Axiom 3). -/
+theorem Representation.not_link_self_tier [Finite X.obj.V] (i : ι) (p q : ℕ) :
+    ¬ X.link i i p q := by
+  rintro ⟨hp, hq, hl⟩
+  rw [Representation.linkRel_def] at hl
+  have hlab : X.obj.tier Sigma.fst (X.vertexEquiv ⟨i, ⟨p, hp⟩⟩)
+      = X.obj.tier Sigma.fst (X.vertexEquiv ⟨i, ⟨q, hq⟩⟩) := by
+    show (X.obj.label _).1 = (X.obj.label _).1
+    rw [Representation.label_vertexEquiv, Representation.label_vertexEquiv]
+  exact (X.property.1.total hl.ne hlab).elim (X.property.2 hl) (X.property.2 hl.symm)
+
 /-- The classification isomorphism, as a full-structure `MixedGraphCat.Iso` —
-    the form that descends to `Representation.IsoClass`. -/
+    the form that descends to the class monoid. -/
 noncomputable def Representation.fullIsoOfReaderEq
     {A B : Representation (Sigma.fst : ((i : ι) × τ i) → ι)}
     [Finite A.obj.V] [Finite B.obj.V]
