@@ -95,6 +95,66 @@ theorem ASL.isStarFree_of_links_empty (g₀ : S → AR α β) (B : List (Graph �
     rw [hset]
     exact (isStarFree_occur_of_links_empty g₀ F hFmem).compl.inter ih'
 
+/-! #### The star-free placement in coordinates -/
+
+section Coordinate
+
+variable {ι : Type*} [Finite ι] {τ : ι → Type*}
+
+/-- For a single link-free forbidden factor, the strings whose realization
+    contains it form a star-free language: the finite intersection of per-tier
+    factor constraints, each the inverse image of a star-free contains-factor
+    language along a tier projection. -/
+theorem Representation.isStarFree_occur_of_link_free
+    (g₀ : S → Representation (Sigma.fst : ((i : ι) × τ i) → ι))
+    [∀ s, Finite (g₀ s).obj.V]
+    (F : Representation (Sigma.fst : ((i : ι) × τ i) → ι)) [Finite F.obj.V]
+    (hF : ∀ i j p q, ¬ F.link i j p q) :
+    Language.IsStarFree {w : List S | F.FactorEmbeds (Autosegmental.realize g₀ w)} := by
+  have hset : {w : List S | F.FactorEmbeds (Autosegmental.realize g₀ w)}
+      = ⋂ i, {w : List S | F.tierWord i <:+: tierProj g₀ i (FreeMonoid.ofList w)} := by
+    ext w
+    haveI := Autosegmental.realize.instFinite g₀ w
+    simp only [Set.mem_setOf_eq, Set.mem_iInter,
+      Representation.factorEmbeds_iff_infix_of_link_free hF, tierProj_ofList]
+    exact Iff.rfl
+  rw [hset]
+  exact Language.IsStarFree.iInter fun i =>
+    (Language.isStarFree_containsFactor (F.tierWord i)).comap (tierProj g₀ i)
+
+/-- **Link-free autosegmental SL sets are star-free**, on the graph foundation:
+    when no forbidden factor carries association lines, `Representation.ASL` is
+    a Boolean combination of per-tier factor constraints. -/
+theorem Representation.ASL.isStarFree_of_link_free
+    (g₀ : S → Representation (Sigma.fst : ((i : ι) × τ i) → ι))
+    [∀ s, Finite (g₀ s).obj.V]
+    (B : List {F : Representation (Sigma.fst : ((i : ι) × τ i) → ι) // Finite F.obj.V})
+    (hB : ∀ F ∈ B, haveI := F.property; ∀ i j p q, ¬ F.val.link i j p q) :
+    (Representation.ASL g₀ B).IsStarFree := by
+  induction B with
+  | nil =>
+    have : Representation.ASL g₀ ([] :
+        List {F : Representation (Sigma.fst : ((i : ι) × τ i) → ι) // Finite F.obj.V})
+        = Set.univ :=
+      Set.eq_univ_of_forall fun w F hF => absurd hF (List.not_mem_nil)
+    rw [this]
+    exact Language.isStarFree_univ
+  | cons F B' ih =>
+    have hFl := hB F (List.mem_cons_self ..)
+    have ih' := ih fun F' hF' => hB F' (List.mem_cons_of_mem _ hF')
+    have hset : Representation.ASL g₀ (F :: B') =
+        {w : List S | haveI := F.property
+          F.val.FactorEmbeds (Autosegmental.realize g₀ w)}ᶜ ∩ Representation.ASL g₀ B' := by
+      ext w
+      show (∀ G ∈ F :: B', _) ↔ _
+      rw [List.forall_mem_cons]
+      exact Iff.rfl
+    rw [hset]
+    haveI := F.property
+    exact (Representation.isStarFree_occur_of_link_free g₀ F.val hFl).compl.inter ih'
+
+end Coordinate
+
 end Autosegmental
 
 namespace Jardine2019
