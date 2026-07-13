@@ -111,7 +111,7 @@ theorem noInternalAssoc_concat (h₁ : NoInternalAssoc X.edges X.arcs)
     (h₂ : NoInternalAssoc Y.edges Y.arcs) :
     NoInternalAssoc (concat t X Y).edges (concat t X Y).arcs := by
   rintro (v | v) (w | w) hadj harc
-  exacts [h₁ hadj harc, absurd hadj (by simp), absurd hadj (by simp), h₂ hadj harc]
+  exacts [h₁ hadj harc, Bool.noConfusion hadj, Bool.noConfusion hadj, h₂ hadj harc]
 
 /-- The concatenation of planar graphs is planar; this is the headline result of [jardine-2019]. -/
 theorem isPlanar_concat (h₁ : IsPlanar X.edges X.arcs) (h₂ : IsPlanar Y.edges Y.arcs) :
