@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Core.Algebra.FreeMonoid.Destutter
 import Linglib.Phonology.OCP
-import Linglib.Phonology.Autosegmental.NormalForm
+import Linglib.Phonology.Autosegmental.Realization
 
 /-!
 # OCP-merging collapse of autosegmental representations

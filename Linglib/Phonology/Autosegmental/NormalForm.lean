@@ -3,14 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Algebra.FreeMonoid.Basic
-import Mathlib.CategoryTheory.Monoidal.Skeleton
 import Mathlib.Data.Finite.Sigma
 import Mathlib.Data.Finite.Sum
 import Mathlib.Data.Fintype.Sort
 import Mathlib.Data.Fintype.Sum
 import Mathlib.Logic.Equiv.Fin.Basic
-import Linglib.Core.Data.List.Factors
 import Linglib.Phonology.Autosegmental.AR
 
 /-!
@@ -20,38 +17,26 @@ Every finite representation is isomorphic to its **normal form**: the same
 representation reindexed onto the canonical vertex type `(i : ι) × Fin nᵢ`,
 each tier fiber enumerated in ascending precedence order
 (the fiber `IsStrictTotalOrder` instance → `linearOrderOfSTO` → `monoEquivOfFin`).
-The normal form is a `AR` — not a separate carrier — and
-`normalizeIso` is definitional: `normalize` pulls the graph back along the
-enumeration equivalence.
-
-Strictness lives on isomorphism classes of the precedence-preserving wide
-subcategory (`PrecAR`): full-structure classes, since broad
-categorical isomorphism forgets the arcs and is too coarse to preserve tier
-words. `cls_normalize` says `normalize` chooses representatives.
+The normal form is an `AR` — not a separate carrier — and `normalizeIso` is
+definitional: `normalize` pulls the graph back along the enumeration equivalence.
 
 ## Main definitions
 
-* `AR.fiber`, `AR.fiberEnum`, `AR.vertexEquiv`:
-  the tier fibers of a finite representation and their canonical enumerations.
-* `AR.tierLength`, `AR.tierWord`, `AR.linkRel`:
-  the tuple reading — per-tier sizes, label words, and position-coordinate links.
-* `AR.normalize`: the normal form, a `AR` on the
-  canonical vertex type.
-* `realize`, `realizeHom`, `tierProj`: [jardine-2019]'s `g` as iterated tensor,
-  as a free-monoid hom into the class monoid, and its per-tier projections.
+* `AR.fiber`, `AR.fiberEnum`, `AR.vertexEquiv`: the tier fibers of a finite
+  representation and their canonical enumerations.
+* `AR.tierLength`, `AR.tierWord`, `AR.linkRel`, `AR.link`: the tuple reading —
+  per-tier sizes, label words, and position-coordinate links.
+* `AR.normalize`: the normal form; `AR.ofData`: representations from tuple data.
 
 ## Main results
 
 * `AR.normalizeIso`: `X.normalize ≅ X`.
-* `AR.arcs_normalize`, `AR.edges_normalize`: on normal
-  forms the arcs are the ascending position order and the edges are `linkRel` —
-  [jardine-heinz-2015]'s tiered presentation recovered as a theorem.
-* `AR.tierWord_tensor`, `AR.tierWord_realize`:
-  concatenation appends tier words; tier content of a realization is
-  compositional.
-* `PrecAR`, `AR.cls_normalize`: the monoid of
-  isomorphism classes of the precedence-preserving category; normal forms
-  represent their class.
+* `AR.arcs_normalize`, `AR.edges_normalize`: on normal forms the arcs are the
+  ascending position order and the edges are `linkRel` — [jardine-heinz-2015]'s
+  tiered presentation recovered as a theorem.
+* `AR.tierWord_tensor`, `AR.link_tensor`: concatenation appends tier words and
+  shifts links blockwise.
+* `AR.isoOfReaderEq`: `(tierWord, link)` is a complete isomorphism invariant.
 -/
 
 namespace Autosegmental
@@ -59,51 +44,6 @@ namespace Autosegmental
 open CategoryTheory
 
 variable {ι : Type*} {τ : ι → Type*}
-
-/-! ### The monoid of representations up to isomorphism
-
-Isomorphism classes in the **precedence-preserving** wide subcategory — the
-theory's identity criterion. The broad categorical `≅` forgets arcs and is too
-coarse (it identifies tier orders); wide-subcategory isos are exactly the
-full-structure isomorphisms, so the tuple readers descend to classes. The
-monoid structure is stock: `precPreserving` is monoidally stable, so
-`WideSubcategory` inherits the monoidal category and `Monoidal.Skeleton` the
-strictly associative monoid. -/
-
-section IsoClasses
-open scoped MonoidalCategory
-
-/-- Representations with the classical precedence-preserving morphisms. -/
-abbrev PrecAR (ι : Type*) (τ : ι → Type*) :=
-  WideSubcategory (AR.precPreserving (t := (Sigma.fst : ((i : ι) × τ i) → ι)))
-
-/-- A full isomorphism is an isomorphism of the precedence-preserving
-    category: both directions preserve arcs. -/
-noncomputable def AR.fullIsoToWideIso
-    {A B : AR (Sigma.fst : ((i : ι) × τ i) → ι)}
-    (e : Graph.Iso A.obj B.obj) :
-    (⟨A⟩ : PrecAR ι τ) ≅ ⟨B⟩ where
-  hom := ⟨InducedCategory.homMk e.toHom, e.toHom_precPreserving⟩
-  inv := ⟨InducedCategory.homMk e.symm.toHom, e.symm.toHom_precPreserving⟩
-  hom_inv_id := InducedWideCategory.Hom.ext (InducedCategory.hom_ext
-    (Graph.Hom.ext (funext fun v => e.toEquiv.symm_apply_apply v)))
-  inv_hom_id := InducedWideCategory.Hom.ext (InducedCategory.hom_ext
-    (Graph.Hom.ext (funext fun v => e.toEquiv.apply_symm_apply v)))
-
-/-- The class of a representation: its isomorphism class in the skeleton of the
-    precedence-preserving category — the monoid of ARs. -/
-noncomputable def AR.cls
-    (A : AR (Sigma.fst : ((i : ι) × τ i) → ι)) :
-    Skeleton (PrecAR ι τ) :=
-  toSkeleton ⟨A⟩
-
-/-- Concatenation of classes is the class of the tensor. -/
-theorem AR.cls_tensor
-    (A B : AR (Sigma.fst : ((i : ι) × τ i) → ι)) :
-    AR.cls (A ⊗ B) = AR.cls A * AR.cls B :=
-  CategoryTheory.Skeleton.toSkeleton_tensorObj (⟨A⟩ : PrecAR ι τ) ⟨B⟩
-
-end IsoClasses
 
 section NormalForm
 open scoped Classical
@@ -238,46 +178,7 @@ theorem AR.arcs_normalize [Finite X.obj.V] (i : ι)
     (X.normalize).obj.arcs.Adj ⟨i, p⟩ ⟨i, q⟩ ↔ p < q :=
   (X.fiberEnum i).lt_iff_lt
 
-/-- Normal forms represent their isomorphism class: `normalize` is a section
-    of the quotient onto `AR.IsoClass`. -/
-theorem AR.cls_normalize [Finite X.obj.V] :
-    AR.cls (X.normalize) = AR.cls X :=
-  Quotient.sound ⟨AR.fullIsoToWideIso X.normalizeFullIso⟩
-
 end NormalForm
-
-/-! ### Realization of strings
-
-[jardine-2019]'s mapping `g`: each symbol denotes a representation primitive, a
-string denotes their concatenation. The monoid-homomorphism content lives on the
-skeleton, where concatenation is strictly associative. -/
-
-section Realize
-open scoped MonoidalCategory
-
-variable {S : Type*} {ι : Type*} {τ : ι → Type*}
-
-/-- Realize a string as a representation: the iterated tensor of its symbols'
-    primitives ([jardine-2019]'s `g`). -/
-noncomputable def realize (g₀ : S → AR (Sigma.fst : ((i : ι) × τ i) → ι))
-    (w : List S) : AR (Sigma.fst : ((i : ι) × τ i) → ι) :=
-  (w.map g₀).foldr (· ⊗ ·) (𝟙_ _)
-
-@[simp] theorem realize_nil (g₀ : S → AR (Sigma.fst : ((i : ι) × τ i) → ι)) :
-    realize g₀ [] = 𝟙_ _ := rfl
-
-@[simp] theorem realize_cons (g₀ : S → AR (Sigma.fst : ((i : ι) × τ i) → ι))
-    (a : S) (w : List S) : realize g₀ (a :: w) = g₀ a ⊗ realize g₀ w := rfl
-
-/-- The realization as a free-monoid homomorphism into the monoid of
-    isomorphism classes — the string→AR monoid hom, with associativity strict
-    on classes. -/
-noncomputable def realizeHom
-    (g₀ : S → AR (Sigma.fst : ((i : ι) × τ i) → ι)) :
-    FreeMonoid S →* Skeleton (PrecAR ι τ) :=
-  FreeMonoid.lift (AR.cls ∘ g₀)
-
-end Realize
 
 /-! ### Tier words of tensors
 
@@ -439,22 +340,6 @@ theorem AR.vertexEquiv_tensor_of_ge {i : ι} {r : Fin ((X ⊗ Y).tierLength i)}
     AR.tensorEnum_apply_natAdd]
   rfl
 
-end TierWordTensor
-
-/-! ### Tier content of realizations -/
-
-section RealizeTierWord
-open scoped MonoidalCategory
-
-variable {S : Type*} {ι : Type*} {τ : ι → Type*}
-variable (g₀ : S → AR (Sigma.fst : ((i : ι) × τ i) → ι))
-
-instance realize.instFinite [∀ s, Finite (g₀ s).obj.V] (w : List S) :
-    Finite (realize g₀ w).obj.V := by
-  induction w with
-  | nil => exact inferInstanceAs (Finite PEmpty)
-  | cons a w ih => exact inferInstanceAs (Finite ((g₀ a).obj.V ⊕ (realize g₀ w).obj.V))
-
 instance : Finite ((𝟙_ (AR (Sigma.fst : ((i : ι) × τ i) → ι))).obj.V) :=
   inferInstanceAs (Finite PEmpty)
 
@@ -465,60 +350,18 @@ instance : Finite ((𝟙_ (AR (Sigma.fst : ((i : ι) × τ i) → ι))).obj.V) :
   rw [AR.tierWord_eq_ofFn (OrderIso.ofIsEmpty (Fin 0) _)]
   exact List.ofFn_zero
 
-/-- **Tier content is compositional**: the tier word of a realized string is the
-    concatenation of its symbols' tier words — [jardine-2019]'s tier projection
-    of `g`, and the bridge that places link-free ASL conditions per tier. -/
-theorem AR.tierWord_realize [∀ s, Finite (g₀ s).obj.V] (i : ι) (w : List S) :
-    (realize g₀ w).tierWord i = (w.map fun s => (g₀ s).tierWord i).flatten := by
-  induction w with
-  | nil => simp
-  | cons a w ih =>
-    calc (realize g₀ (a :: w)).tierWord i
-        = (g₀ a ⊗ realize g₀ w).tierWord i := rfl
-      _ = ((a :: w).map fun s => (g₀ s).tierWord i).flatten := by simp [ih]
+end TierWordTensor
 
-/-- The tier-`i` projection of a realization, as a free-monoid homomorphism:
-    each symbol contributes its primitive's tier word. -/
-noncomputable def tierProj [∀ s, Finite (g₀ s).obj.V] (i : ι) :
-    FreeMonoid S →* FreeMonoid (τ i) :=
-  FreeMonoid.lift fun s => FreeMonoid.ofList ((g₀ s).tierWord i)
+/-! ### Readers in ℕ coordinates
 
-/-- `realizeHom` packages `realize`: on a word it is the class of the realized
-    representation. -/
-theorem realizeHom_ofList (w : List S) :
-    realizeHom g₀ (FreeMonoid.ofList w) = AR.cls (realize g₀ w) := by
-  induction w with
-  | nil => rfl
-  | cons a w ih =>
-    rw [show FreeMonoid.ofList (a :: w) = FreeMonoid.of a * FreeMonoid.ofList w from rfl,
-      map_mul, ih, realize_cons, AR.cls_tensor]
-    rfl
+`link` reads the link relation at plain ℕ positions (out-of-bounds positions
+link to nothing); `linearize` is the two-tier phonetic reading. `link_tensor`
+is the blockwise companion of `tierWord_tensor`. -/
 
-/-- `tierProj` packages `tierWord`: on a word it is the realized tier word. -/
-theorem tierProj_ofList [∀ s, Finite (g₀ s).obj.V] (i : ι) (w : List S) :
-    tierProj g₀ i (FreeMonoid.ofList w) = FreeMonoid.ofList ((realize g₀ w).tierWord i) := by
-  induction w with
-  | nil => simp [realize_nil]
-  | cons a w ih =>
-    rw [show FreeMonoid.ofList (a :: w) = FreeMonoid.of a * FreeMonoid.ofList w from rfl,
-      map_mul, ih]
-    calc FreeMonoid.ofList ((g₀ a).tierWord i) * FreeMonoid.ofList ((realize g₀ w).tierWord i)
-        = FreeMonoid.ofList ((g₀ a).tierWord i ++ (realize g₀ w).tierWord i) := rfl
-      _ = _ := by rw [← AR.tierWord_tensor i]; rfl
-
-end RealizeTierWord
-
-/-! ### Factors and banned-subgraph grammars
-
-[jardine-2017]'s connected-subgraph embedding in position coordinates: a factor
-occurs at per-tier offsets when its tier words are windows of the host's and its
-links transport shifted. Banned-subgraph grammars ([jardine-2016-diss] Ch. 5)
-are lists of forbidden factors. -/
-
-section Factors
+section LinkReader
 
 variable {ι : Type*} {τ : ι → Type*}
-variable (F X : AR (Sigma.fst : ((i : ι) × τ i) → ι))
+variable (X : AR (Sigma.fst : ((i : ι) × τ i) → ι))
 
 /-- Tier-`i` position `p` links to tier-`j` position `q`, in ℕ coordinates
     (out-of-bounds positions link to nothing). -/
@@ -534,64 +377,6 @@ noncomputable def AR.linearize [Finite X.obj.V] (i j : ι) :
   (X.tierWord j).zipIdx.map fun bq =>
     (bq.1, ((X.tierWord i).zipIdx.filter fun ap => X.link i j ap.2 bq.2).map (·.1))
 
-/-- `F` occurs in `X` at per-tier offsets `o`: each tier word of `F` is the
-    window of `X`'s at `o i`, and `F`'s links transport shifted. -/
-def AR.IsFactorAt [Finite F.obj.V] [Finite X.obj.V] (o : ι → ℕ) : Prop :=
-  (∀ i p, p < F.tierLength i → (X.tierWord i)[p + o i]? = (F.tierWord i)[p]?) ∧
-    ∀ i j p q, F.link i j p q → X.link i j (p + o i) (q + o j)
-
-/-- `F` **subgraph-embeds** in `X` when some offsets place it as a factor
-    ([jardine-2017]'s connected-subgraph embedding). -/
-def AR.FactorEmbeds [Finite F.obj.V] [Finite X.obj.V] : Prop :=
-  ∃ o : ι → ℕ, F.IsFactorAt X o
-
-/-- Offsets clamp to the host's tier lengths: `FactorEmbeds` is a bounded
-    search. On tiers where the factor is nonempty the word-window condition
-    already forces the bound; empty factor tiers accept any offset, so `min`
-    clamps them harmlessly. -/
-theorem AR.factorEmbeds_iff_bounded
-    {F X : AR (Sigma.fst : ((i : ι) × τ i) → ι)}
-    [Finite F.obj.V] [Finite X.obj.V] :
-    F.FactorEmbeds X ↔
-      ∃ o : ι → ℕ, (∀ i, o i ≤ X.tierLength i) ∧ F.IsFactorAt X o := by
-  constructor
-  · rintro ⟨o, hw, hl⟩
-    refine ⟨fun i => min (o i) (X.tierLength i), fun i => min_le_right _ _, fun i p hp => ?_,
-      fun i j p q h => ?_⟩
-    · have horig := hw i p hp
-      show (X.tierWord i)[p + min (o i) (X.tierLength i)]? = (F.tierWord i)[p]?
-      rcases le_or_gt (o i) (X.tierLength i) with hle | hgt
-      · rwa [Nat.min_eq_left hle]
-      · exfalso
-        have hnone : (X.tierWord i)[p + o i]? = none := by
-          rw [List.getElem?_eq_none_iff]
-          simp only [AR.length_tierWord]
-          omega
-        have hsome : p < (F.tierWord i).length := by
-          simpa [AR.length_tierWord] using hp
-        rw [hnone, List.getElem?_eq_some_iff.mpr ⟨hsome, rfl⟩] at horig
-        simp at horig
-    · obtain ⟨hpb, hqb, -⟩ := id (hl i j p q h)
-      have h' := hl i j p q h
-      have hoi : min (o i) (X.tierLength i) = o i := by
-        have := hw i p (by obtain ⟨hp', -, -⟩ := id h; omega)
-        rcases le_or_gt (o i) (X.tierLength i) with hle | hgt
-        · exact Nat.min_eq_left hle
-        · exfalso
-          obtain ⟨hpX, -, -⟩ := id h'
-          omega
-      have hoj : min (o j) (X.tierLength j) = o j := by
-        rcases le_or_gt (o j) (X.tierLength j) with hle | hgt
-        · exact Nat.min_eq_left hle
-        · exfalso
-          obtain ⟨-, hqX, -⟩ := id h'
-          omega
-      show X.link i j (p + min (o i) (X.tierLength i)) (q + min (o j) (X.tierLength j))
-      rw [hoi, hoj]
-      exact h'
-  · rintro ⟨o, -, hfa⟩
-    exact ⟨o, hfa⟩
-
 /-- Link conditions are supported on the factor's tier ranges. -/
 theorem AR.forall_link_iff_bounded
     {F : AR (Sigma.fst : ((i : ι) × τ i) → ι)} [Finite F.obj.V]
@@ -602,39 +387,6 @@ theorem AR.forall_link_iff_bounded
   refine ⟨fun h i j p _ q _ hl => h i j p q hl, fun h i j p q hl => ?_⟩
   obtain ⟨hp, hq, -⟩ := id hl
   exact h i j p hp q hq hl
-
-/-- `X` avoids every forbidden factor of a banned-subgraph grammar
-    ([jardine-2016-diss] Ch. 5's `L^NL_G`). -/
-def AR.Free [Finite X.obj.V]
-    (B : List {F : AR (Sigma.fst : ((i : ι) × τ i) → ι) // Finite F.obj.V}) :
-    Prop :=
-  ∀ F ∈ B, haveI := F.property; ¬ F.val.FactorEmbeds X
-
-/-- For a link-free factor, embedding reduces to independent per-tier infix
-    occurrences ([jardine-2019]'s link-free fragment). -/
-theorem AR.factorEmbeds_iff_infix_of_link_free
-    {F X : AR (Sigma.fst : ((i : ι) × τ i) → ι)}
-    [Finite F.obj.V] [Finite X.obj.V]
-    (hF : ∀ i j p q, ¬ F.link i j p q) :
-    F.FactorEmbeds X ↔ ∀ i, F.tierWord i <:+: X.tierWord i := by
-  constructor
-  · rintro ⟨o, hw, -⟩ i
-    rw [List.isInfix_iff_exists_offset]
-    rcases Nat.eq_zero_or_pos (F.tierWord i).length with hzero | hpos
-    · exact ⟨0, Nat.zero_le _, fun p hp => absurd hp (by omega)⟩
-    · have h0 := hw i 0 (by simpa [AR.length_tierWord] using hpos)
-      refine ⟨o i, ?_, fun p hp => hw i p
-        (by simpa [AR.length_tierWord] using hp)⟩
-      rcases List.getElem?_eq_some_iff.mp
-        (h0 ▸ (List.getElem?_eq_some_iff.mpr
-          ⟨by simpa [AR.length_tierWord] using hpos, rfl⟩ :
-            (F.tierWord i)[0]? = some _)) with ⟨hb, -⟩
-      omega
-  · intro h
-    choose o ho using fun i => (List.isInfix_iff_exists_offset _ _).mp (h i)
-    refine ⟨o, fun i p hp => ?_, fun i j p q hl => absurd hl (hF i j p q)⟩
-    obtain ⟨-, hoff⟩ := ho i
-    exact hoff p (by simpa [AR.length_tierWord] using hp)
 
 open scoped MonoidalCategory in
 /-- Tensor links are blockwise: within the left factor, or within the right
@@ -679,7 +431,7 @@ theorem AR.link_tensor {X Y : AR (Sigma.fst : ((i : ι) × τ i) → ι)}
         AR.vertexEquiv_tensor_of_ge (h := by omega)]
       simpa using hl
 
-end Factors
+end LinkReader
 
 /-! ### Classification: the readers determine the representation
 

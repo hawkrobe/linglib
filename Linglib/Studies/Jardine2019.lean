@@ -4,7 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Mathlib.Computability.Language
-import Linglib.Phonology.Autosegmental.NormalForm
+import Linglib.Phonology.Autosegmental.Factors
+import Linglib.Phonology.Autosegmental.Realization
 import Linglib.Phonology.Autosegmental.OCP
 import Linglib.Phonology.Autosegmental.Junction
 import Linglib.Core.Computability.Subregular.Language.ContainsFactor
