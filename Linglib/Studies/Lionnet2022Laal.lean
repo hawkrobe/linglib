@@ -184,15 +184,15 @@ def mForm : AR (Sigma.fst : ((i : Fin 4) × laalTier i) → Fin 4) :=
 instance : Fintype mForm.obj.V :=
   inferInstanceAs (Fintype ((_ : Fin 4) × Fin _))
 
-instance (v w : mForm.obj.V) : Decidable (mForm.obj.graph.edges.Adj v w) :=
+instance (v w : mForm.obj.V) : Decidable (mForm.obj.edges.Adj v w) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
-instance (v w : mForm.obj.V) : Decidable (mForm.obj.graph.arcs.Adj v w) :=
+instance (v w : mForm.obj.V) : Decidable (mForm.obj.arcs.Adj v w) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
 /-- The form is planar — each spoke's single association is non-crossing, in
     the foundational path form of the NCC. -/
-theorem mForm_planar : IsPlanar mForm.obj.graph := by
+theorem mForm_planar : IsPlanar mForm.obj.edges mForm.obj.arcs := by
   unfold IsPlanar
   decide
 

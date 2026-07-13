@@ -99,15 +99,14 @@ noncomputable def AR.collapse [Finite X.obj.V] :
     AR (Sigma.fst : ((i : ι) × τ i) → ι) where
   obj :=
     { V := (i : ι) × Fin (X.collapsedWord m i).length
-      graph :=
-        { edges :=
-            { Adj := fun v w => v ≠ w ∧ ∃ p q, X.link v.1 w.1 p q ∧
-                X.collapseIdx m v.1 p = v.2 ∧ X.collapseIdx m w.1 q = w.2
-              symm := ⟨fun v w h => ⟨h.1.symm, by
-                obtain ⟨p, q, hl, hp, hq⟩ := h.2
-                exact ⟨q, p, X.link_symm hl, hq, hp⟩⟩⟩
-              loopless := ⟨fun v h => h.1 rfl⟩ }
-          arcs := ⟨fun v w => v.1 = w.1 ∧ (v.2 : ℕ) < (w.2 : ℕ)⟩ }
+      edges :=
+        { Adj := fun v w => v ≠ w ∧ ∃ p q, X.link v.1 w.1 p q ∧
+            X.collapseIdx m v.1 p = v.2 ∧ X.collapseIdx m w.1 q = w.2
+          symm := ⟨fun v w h => ⟨h.1.symm, by
+            obtain ⟨p, q, hl, hp, hq⟩ := h.2
+            exact ⟨q, p, X.link_symm hl, hq, hp⟩⟩⟩
+          loopless := ⟨fun v h => h.1 rfl⟩ }
+      arcs := ⟨fun v w => v.1 = w.1 ∧ (v.2 : ℕ) < (w.2 : ℕ)⟩
       label := fun v => ⟨v.1, (X.collapsedWord m v.1)[v.2]⟩ }
   property := by
     refine ⟨⟨fun v w h => h.1, fun v w hne htier => ?_, fun v h => lt_irrefl _ h.2,
@@ -348,9 +347,9 @@ omit [DecidableEq ι] [DecidableEq (τ m)]
     its immediate successor. -/
 theorem AR.covering_normalize [Finite X.obj.V] {i : ι}
     {p q : Fin (X.tierLength i)} :
-    ((X.normalize).obj.graph.arcs.Adj ⟨i, p⟩ ⟨i, q⟩ ∧
-        ∀ u, ¬ ((X.normalize).obj.graph.arcs.Adj ⟨i, p⟩ u ∧
-          (X.normalize).obj.graph.arcs.Adj u ⟨i, q⟩)) ↔
+    ((X.normalize).obj.arcs.Adj ⟨i, p⟩ ⟨i, q⟩ ∧
+        ∀ u, ¬ ((X.normalize).obj.arcs.Adj ⟨i, p⟩ u ∧
+          (X.normalize).obj.arcs.Adj u ⟨i, q⟩)) ↔
       (q : ℕ) = p + 1 := by
   constructor
   · rintro ⟨hpq, hcov⟩
@@ -389,7 +388,7 @@ private theorem AR.label_normalize_succ [Finite X.obj.V]
     the coordinate OCP and [jardine-2016-diss]'s §4.2 axiom agree. -/
 theorem AR.isCleanAt_iff_isOCPClean [Finite X.obj.V] :
     X.IsCleanAt m ↔
-      IsOCPClean (X.normalize).obj.graph (X.normalize).obj.label Sigma.fst m := by
+      IsOCPClean (X.normalize).obj.arcs (X.normalize).obj.label Sigma.fst m := by
   constructor
   · rintro h ⟨i, p⟩ ⟨j, q⟩ hpq hcov htier heq
     rcases eq_or_ne i j with rfl | hij

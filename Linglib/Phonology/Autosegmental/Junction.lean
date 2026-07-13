@@ -113,7 +113,7 @@ theorem AR.link_junction (as : List α) (bs : List β) {b b' : Bool}
     association is planar iff one side has at most one node — the one-to-many
     `spread`, many-to-one `contour`, and degenerate cases. -/
 theorem AR.isPlanar_junction_iff (as : List α) (bs : List β) :
-    IsPlanar (AR.junction as bs).obj.graph ↔
+    IsPlanar (AR.junction as bs).obj.edges (AR.junction as bs).obj.arcs ↔
       as.length ≤ 1 ∨ bs.length ≤ 1 := by
   constructor
   · intro h
@@ -175,23 +175,23 @@ def AR.contour (as : List α) (b : β) := AR.junction as [b]
 def AR.spread (a : α) (bs : List β) := AR.junction [a] bs
 
 theorem AR.isPlanar_single (a : α) (b : β) :
-    IsPlanar (AR.single a b).obj.graph :=
+    IsPlanar (AR.single a b).obj.edges (AR.single a b).obj.arcs :=
   (AR.isPlanar_junction_iff _ _).mpr (Or.inl (by simp))
 
 theorem AR.isPlanar_bare (b : β) :
-    IsPlanar (AR.bare (α := α) b).obj.graph :=
+    IsPlanar (AR.bare (α := α) b).obj.edges (AR.bare (α := α) b).obj.arcs :=
   (AR.isPlanar_junction_iff _ _).mpr (Or.inl (by simp))
 
 theorem AR.isPlanar_float (a : α) :
-    IsPlanar (AR.float (β := β) a).obj.graph :=
+    IsPlanar (AR.float (β := β) a).obj.edges (AR.float (β := β) a).obj.arcs :=
   (AR.isPlanar_junction_iff _ _).mpr (Or.inl (by simp))
 
 theorem AR.isPlanar_contour (as : List α) (b : β) :
-    IsPlanar (AR.contour as b).obj.graph :=
+    IsPlanar (AR.contour as b).obj.edges (AR.contour as b).obj.arcs :=
   (AR.isPlanar_junction_iff _ _).mpr (Or.inr (by simp))
 
 theorem AR.isPlanar_spread (a : α) (bs : List β) :
-    IsPlanar (AR.spread a bs).obj.graph :=
+    IsPlanar (AR.spread a bs).obj.edges (AR.spread a bs).obj.arcs :=
   (AR.isPlanar_junction_iff _ _).mpr (Or.inl (by simp))
 
 /-- Two-tier factor embedding is a search over two bounded offsets. -/
