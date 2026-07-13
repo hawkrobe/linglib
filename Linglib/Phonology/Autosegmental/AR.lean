@@ -53,8 +53,6 @@ namespace Autosegmental
 
 variable {V S ι : Type*}
 
-/-! ### The §4.2 axioms -/
-
 section Axioms
 variable (E : SimpleGraph V) (A : Digraph V)
 
