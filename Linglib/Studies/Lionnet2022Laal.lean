@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Phonology.Tone.Basic
 import Linglib.Phonology.OCP
-import Linglib.Phonology.Autosegmental.MultiAR
+import Linglib.Phonology.Autosegmental.NormalForm
 import Linglib.Fragments.Laal.Prosody
 
 /-!
@@ -164,46 +164,68 @@ open Autosegmental
 /-- The four Laal tone tiers: `[±upper]` register, `[±raised]`, the TRN, the mora. -/
 abbrev laalTier : Fin 4 → Type := ![Option Bool, Option Bool, Unit, Unit]
 
-/-- A one-TRN M-toned form (`M = [−upper, +raised]`, [lionnet-2022] ex. 51): the
-    register `[−upper]` and `[+raised]` features and the single mora each associate to
-    the one TRN. -/
-def mForm : MultiAR laalTier where
-  tiers := Fin.cons (.ofList [some false]) (Fin.cons (.ofList [some true])
-    (Fin.cons (.ofList [()]) (Fin.cons (.ofList [()]) finZeroElim)))
-  links i j := match i, j with
-    | 0, 2 => {(0, 0)}    -- register ↔ TRN
-    | 1, 2 => {(0, 0)}    -- [raised] ↔ TRN
-    | 2, 3 => {(0, 0)}    -- TRN ↔ mora
-    | _, _ => ∅
-  inBounds := by decide
+/-- The tier words of a one-TRN M-toned form (`M = [−upper, +raised]`,
+    [lionnet-2022] ex. 51). -/
+def laalWords : ∀ i : Fin 4, List (laalTier i) :=
+  Fin.cons [some false] (Fin.cons [some true] (Fin.cons [()] (Fin.cons [()] finZeroElim)))
 
-/-- The form is planar — each spoke's single association is non-crossing (per-pair NCC). -/
-theorem mForm_planar : mForm.IsPlanar := by decide
+/-- The hub-and-spoke links (ex. 52): register, `[raised]`, and mora each
+    associate to the TRN. -/
+def laalSpokes (i j : Fin 4) (p q : ℕ) : Prop :=
+  ((i, j) = (0, 2) ∨ (i, j) = (1, 2) ∨ (i, j) = (2, 3)) ∧ p = 0 ∧ q = 0
 
-/-- The links of `delinkRaised`: the `[raised]`↔TRN pair `(1,2)` emptied. -/
-private def delinkedLinks (G : MultiAR laalTier) (i j : Fin 4) : Finset (ℕ × ℕ) :=
-  if (i, j) = (1, 2) then ∅ else G.links i j
+instance (i j : Fin 4) (p q : ℕ) : Decidable (laalSpokes i j p q) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
-/-- **Partial activity** (§5): delinking the `[−raised]` feature acts on the
-    `[raised]`↔TRN layer (tier-pair `(1,2)`) alone. -/
-def delinkRaised (G : MultiAR laalTier) : MultiAR laalTier where
-  toMultiGraph := { G.toMultiGraph with links := delinkedLinks G }
-  inBounds := by
-    intro i j p hp
-    simp only [delinkedLinks] at hp
-    split_ifs at hp with h
-    · exact absurd hp (by simp)
-    · exact G.inBounds i j p hp
+/-- The M-toned form on the graph foundation. -/
+def mForm : Representation (Sigma.fst : ((i : Fin 4) × laalTier i) → Fin 4) :=
+  Representation.ofData laalWords laalSpokes
+
+instance : Fintype mForm.obj.V :=
+  inferInstanceAs (Fintype ((i : Fin 4) × Fin _))
+
+instance (v w : mForm.obj.V) : Decidable (mForm.obj.graph.edges.Adj v w) :=
+  inferInstanceAs (Decidable (_ ∧ _))
+
+instance (v w : mForm.obj.V) : Decidable (mForm.obj.graph.arcs.Adj v w) :=
+  inferInstanceAs (Decidable (_ ∧ _))
+
+/-- The form is planar — each spoke's single association is non-crossing, in
+    the foundational path form of the NCC. -/
+theorem mForm_planar : IsPlanar mForm.obj.graph := by
+  unfold IsPlanar
+  decide
+
+/-- **Partial activity** (§5): delinking a feature acts on one tier-pair layer
+    alone — here `[raised]`↔TRN, the pair `(1, 2)`. -/
+def delink (L : Fin 4 → Fin 4 → ℕ → ℕ → Prop) (i₀ j₀ : Fin 4)
+    (i j : Fin 4) (p q : ℕ) : Prop :=
+  ¬ (i = i₀ ∧ j = j₀) ∧ L i j p q
+
+/-- The M form with the subtonal `[−raised]` feature delinked. -/
+def delinkRaised : Representation (Sigma.fst : ((i : Fin 4) × laalTier i) → Fin 4) :=
+  Representation.ofData laalWords (delink laalSpokes 1 2)
 
 /-- Delinking the subtonal `[−raised]` feature leaves the **whole-TRN** layer
-    (TRN↔mora, tier-pair `(2,3)`) untouched: partial activity is independent of full
-    activity — the structural content of [lionnet-2022]'s subtonal-feature autonomy,
-    impossible to state on a bundled `TRN`. -/
-theorem partial_indep_of_full (G : MultiAR laalTier) :
-    (delinkRaised G).links 2 3 = G.links 2 3 := by simp [delinkRaised, delinkedLinks]
+    (TRN↔mora, tier-pair `(2, 3)`) untouched: partial activity is independent
+    of full activity — the structural content of [lionnet-2022]'s
+    subtonal-feature autonomy, impossible to state on a bundled `TRN`. -/
+instance : Finite mForm.obj.V := inferInstanceAs (Finite ((i : Fin 4) × Fin _))
+
+instance : Finite delinkRaised.obj.V := inferInstanceAs (Finite ((i : Fin 4) × Fin _))
+
+theorem partial_indep_of_full (p q : ℕ) :
+    delinkRaised.link 2 3 p q ↔ mForm.link 2 3 p q := by
+  unfold delinkRaised mForm
+  rw [Representation.link_ofData, Representation.link_ofData]
+  simp [delink, laalSpokes]
 
 /-- And it does remove the `[raised]`↔TRN association. -/
-theorem delinkRaised_erases (G : MultiAR laalTier) :
-    (delinkRaised G).links 1 2 = ∅ := by simp [delinkRaised, delinkedLinks]
+theorem delinkRaised_erases (p q : ℕ) : ¬ delinkRaised.link 1 2 p q := by
+  unfold delinkRaised
+  rw [Representation.link_ofData]
+  rintro ⟨-, -, -, ⟨hne, -⟩ | ⟨-, h2, -⟩⟩
+  · exact hne ⟨rfl, rfl⟩
+  · rcases h2 with h2 | h2 | h2 <;> simp_all
 
 end Lionnet2022Laal
