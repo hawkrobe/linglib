@@ -613,10 +613,8 @@ universe u₁ u₂ u₃
     ⟨Graph.empty S, Graph.isTierOrdered_empty t,
       Graph.noInternalAssoc_empty⟩
   tensorHom f g := InducedCategory.homMk (Graph.Hom.concatMap t f.hom g.hom)
-  whiskerLeft X _ _ f :=
-    InducedCategory.homMk (Graph.Hom.concatMap t (Graph.Hom.id X.obj) f.hom)
-  whiskerRight f Y :=
-    InducedCategory.homMk (Graph.Hom.concatMap t f.hom (Graph.Hom.id Y.obj))
+  whiskerLeft X _ _ f := InducedCategory.homMk (Graph.Hom.concatMap t (Graph.Hom.id X.obj) f.hom)
+  whiskerRight f Y := InducedCategory.homMk (Graph.Hom.concatMap t f.hom (Graph.Hom.id Y.obj))
   associator X Y Z := mkIso (Graph.concatAssocIso t X.obj Y.obj Z.obj)
   leftUnitor X := mkIso (Graph.emptyConcatIso t X.obj)
   rightUnitor X := mkIso (Graph.concatEmptyIso t X.obj)
@@ -646,20 +644,15 @@ instance : MonoidalCategory (AR t) :=
 
 /-- Precedence preservation on representations: the classical morphisms of the
     theory, as a monoidally-stable wide subcategory of the broad category. -/
-def precPreserving : MorphismProperty (AR t) :=
-  fun _ _ f => Graph.precPreserving f.hom
+def precPreserving : MorphismProperty (AR t) := fun _ _ f => Graph.precPreserving f.hom
 
 instance : (precPreserving (t := t)).IsMonoidalStable where
   id_mem _ := fun _ _ h => h
   comp_mem _ _ hf hg := fun _ _ h => hg (hf h)
-  whiskerLeft _ _ _ _ hg :=
-    Graph.Hom.concatMap_precPreserving t (fun _ _ h => h) hg
-  whiskerRight _ hf _ :=
-    Graph.Hom.concatMap_precPreserving t hf (fun _ _ h => h)
-  associator_hom_mem A B C :=
-    (Graph.concatAssocIso t A.obj B.obj C.obj).toHom_precPreserving
-  associator_inv_mem A B C :=
-    (Graph.concatAssocIso t A.obj B.obj C.obj).symm.toHom_precPreserving
+  whiskerLeft _ _ _ _ hg := Graph.Hom.concatMap_precPreserving t (fun _ _ h => h) hg
+  whiskerRight _ hf _ := Graph.Hom.concatMap_precPreserving t hf (fun _ _ h => h)
+  associator_hom_mem A B C := (Graph.concatAssocIso t A.obj B.obj C.obj).toHom_precPreserving
+  associator_inv_mem A B C := (Graph.concatAssocIso t A.obj B.obj C.obj).symm.toHom_precPreserving
   leftUnitor_hom_mem A := (Graph.emptyConcatIso t A.obj).toHom_precPreserving
   leftUnitor_inv_mem A := (Graph.emptyConcatIso t A.obj).symm.toHom_precPreserving
   rightUnitor_hom_mem A := (Graph.concatEmptyIso t A.obj).toHom_precPreserving
