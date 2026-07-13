@@ -237,6 +237,8 @@ variable [DecidableEq α]
 theorem isCleanAR_contour : IsCleanAR (contour as b) ↔ OCP.IsClean as :=
   isCleanAR_junction
 
+end AR
+
 /-! ### The junction in coordinates
 
 The complete association as a two-tier `Representation` (`Bool`-indexed:
@@ -360,7 +362,5 @@ theorem Representation.isPlanar_spread (a : α) (bs : List β) :
   (Representation.isPlanar_junction_iff _ _).mpr (Or.inl (by simp))
 
 end CoordinateJunction
-
-end AR
 
 end Autosegmental

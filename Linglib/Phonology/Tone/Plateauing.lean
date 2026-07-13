@@ -86,6 +86,28 @@ def toAR : TBU → AR _root_.Tone.TRN Unit
   | .H => .single _root_.Tone.TRN.H ()
   | .O => .bare ()
 
+/-- `toAR` in coordinates: the two-tier representation of one association
+    state (melody over `true`, timing over `false`). -/
+noncomputable def toRep (a : TBU) :
+    Autosegmental.Representation
+      (Sigma.fst : ((b : Bool) × Autosegmental.TwoTier _root_.Tone.TRN Unit b) → Bool) :=
+  match a with
+  | .H => Autosegmental.Representation.single _root_.Tone.TRN.H ()
+  | .O => Autosegmental.Representation.bare ()
+
+instance (a : TBU) : Finite (toRep a).obj.V := by
+  cases a <;> exact inferInstanceAs (Finite ((_ : Bool) × Fin _))
+
+instance : DecidableEq (Autosegmental.TwoTier _root_.Tone.TRN Unit true) :=
+  inferInstanceAs (DecidableEq _root_.Tone.TRN)
+
+/-- The output representation in coordinates: OCP-merge then hull, both at the
+    melody tier. -/
+noncomputable def plateauRep (w : List TBU) :
+    Autosegmental.Representation
+      (Sigma.fst : ((b : Bool) × Autosegmental.TwoTier _root_.Tone.TRN Unit b) → Bool) :=
+  ((Autosegmental.realize toRep w).collapse true).hull true
+
 theorem linearize_realize_toAR (w : List TBU) :
     (AR.realize toAR w).linearize
       = w.map fun a => ((), if a = .H then [_root_.Tone.TRN.H] else []) := by
