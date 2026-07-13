@@ -30,97 +30,73 @@ are lists of forbidden factors.
 namespace Autosegmental
 
 variable {ι : Type*} {τ : ι → Type*}
-variable (F X : TieredAR ι τ)
+variable (F X : TieredAR ι τ) [Finite F.obj.V] [Finite X.obj.V]
 
-/-- `F` occurs in `X` at per-tier offsets `o`: each tier word of `F` is the
-    window of `X`'s at `o i`, and `F`'s links transport shifted. -/
-def AR.IsFactorAt [Finite F.obj.V] [Finite X.obj.V] (o : ι → ℕ) : Prop :=
-  (∀ i p, p < F.tierLength i → (X.tierWord i)[p + o i]? = (F.tierWord i)[p]?) ∧
-    ∀ i j p q, F.link i j p q → X.link i j (p + o i) (q + o j)
+namespace AR
+
+/-- `F` occurs in `X` at per-tier offsets `o`. -/
+structure IsFactorAt (o : ι → ℕ) : Prop where
+  /-- Each tier word of `F` is the window of `X`'s at the tier's offset. -/
+  window : ∀ i p, p < F.tierLength i → (X.tierWord i)[p + o i]? = (F.tierWord i)[p]?
+  /-- Links transport by the offsets. -/
+  link_map : ∀ i j p q, F.link i j p q → X.link i j (p + o i) (q + o j)
 
 /-- `F` subgraph-embeds in `X` when some offsets place it as a factor
     ([jardine-2017]'s connected-subgraph embedding). -/
-def AR.FactorEmbeds [Finite F.obj.V] [Finite X.obj.V] : Prop :=
-  ∃ o : ι → ℕ, F.IsFactorAt X o
-
-/-- Offsets clamp to the host's tier lengths: `FactorEmbeds` is a bounded
-    search. On tiers where the factor is nonempty the word-window condition
-    already forces the bound; empty factor tiers accept any offset, so `min`
-    clamps them harmlessly. -/
-theorem AR.factorEmbeds_iff_bounded
-    {F X : TieredAR ι τ}
-    [Finite F.obj.V] [Finite X.obj.V] :
-    F.FactorEmbeds X ↔
-      ∃ o : ι → ℕ, (∀ i, o i ≤ X.tierLength i) ∧ F.IsFactorAt X o := by
-  constructor
-  · rintro ⟨o, hw, hl⟩
-    refine ⟨fun i => min (o i) (X.tierLength i), fun i => min_le_right _ _, fun i p hp => ?_,
-      fun i j p q h => ?_⟩
-    · have horig := hw i p hp
-      show (X.tierWord i)[p + min (o i) (X.tierLength i)]? = (F.tierWord i)[p]?
-      rcases le_or_gt (o i) (X.tierLength i) with hle | hgt
-      · rwa [Nat.min_eq_left hle]
-      · exfalso
-        have hnone : (X.tierWord i)[p + o i]? = none := by
-          rw [List.getElem?_eq_none_iff]
-          simp only [AR.length_tierWord]
-          omega
-        have hsome : p < (F.tierWord i).length := by
-          simpa [AR.length_tierWord] using hp
-        rw [hnone, List.getElem?_eq_some_iff.mpr ⟨hsome, rfl⟩] at horig
-        simp at horig
-    · obtain ⟨hpb, hqb, -⟩ := id (hl i j p q h)
-      have h' := hl i j p q h
-      have hoi : min (o i) (X.tierLength i) = o i := by
-        have := hw i p (by obtain ⟨hp', -, -⟩ := id h; omega)
-        rcases le_or_gt (o i) (X.tierLength i) with hle | hgt
-        · exact Nat.min_eq_left hle
-        · exfalso
-          obtain ⟨hpX, -, -⟩ := id h'
-          omega
-      have hoj : min (o j) (X.tierLength j) = o j := by
-        rcases le_or_gt (o j) (X.tierLength j) with hle | hgt
-        · exact Nat.min_eq_left hle
-        · exfalso
-          obtain ⟨-, hqX, -⟩ := id h'
-          omega
-      show X.link i j (p + min (o i) (X.tierLength i)) (q + min (o j) (X.tierLength j))
-      rw [hoi, hoj]
-      exact h'
-  · rintro ⟨o, -, hfa⟩
-    exact ⟨o, hfa⟩
+def FactorEmbeds : Prop := ∃ o : ι → ℕ, F.IsFactorAt X o
 
 /-- `X` avoids every forbidden factor of a banned-subgraph grammar
     ([jardine-2016-diss] Ch. 5's `L^NL_G`). -/
-def AR.Free [Finite X.obj.V]
-    (B : List {F : TieredAR ι τ // Finite F.obj.V}) :
-    Prop :=
+def Free (B : List {F : TieredAR ι τ // Finite F.obj.V}) : Prop :=
   ∀ F ∈ B, haveI := F.property; ¬ F.val.FactorEmbeds X
+
+variable {F X} {o : ι → ℕ}
+
+/-- On a tier where the factor is nonempty, the window equations force the offset
+    in bounds. -/
+theorem IsFactorAt.offset_le (h : F.IsFactorAt X o) {i : ι} (hi : F.tierLength i ≠ 0) :
+    o i ≤ X.tierLength i := by
+  have hb : 0 < (F.tierWord i).length := by simpa using Nat.pos_of_ne_zero hi
+  have h0 := (h.window i 0 (Nat.pos_of_ne_zero hi)).trans
+    (List.getElem?_eq_some_iff.mpr ⟨hb, rfl⟩)
+  have := (List.getElem?_eq_some_iff.mp h0).1
+  simp only [length_tierWord] at this
+  omega
+
+/-- Offsets clamp to the host's tier lengths; the clamp only moves offsets on
+    tiers where the factor is empty. -/
+theorem IsFactorAt.clamp (h : F.IsFactorAt X o) :
+    F.IsFactorAt X fun i => min (o i) (X.tierLength i) where
+  window i p hp := by
+    show (X.tierWord i)[p + min (o i) (X.tierLength i)]? = (F.tierWord i)[p]?
+    rw [Nat.min_eq_left (h.offset_le (i := i) (by omega))]
+    exact h.window i p hp
+  link_map i j p q hl := by
+    obtain ⟨hpF, hqF, -⟩ := id hl
+    show X.link i j (p + min (o i) (X.tierLength i)) (q + min (o j) (X.tierLength j))
+    rw [Nat.min_eq_left (h.offset_le (i := i) (by omega)),
+      Nat.min_eq_left (h.offset_le (i := j) (by omega))]
+    exact h.link_map i j p q hl
+
+/-- `FactorEmbeds` is a bounded search over offsets. -/
+theorem factorEmbeds_iff_bounded :
+    F.FactorEmbeds X ↔
+      ∃ o : ι → ℕ, (∀ i, o i ≤ X.tierLength i) ∧ F.IsFactorAt X o :=
+  ⟨fun ⟨_, h⟩ => ⟨_, fun _ => min_le_right _ _, h.clamp⟩, fun ⟨o, _, h⟩ => ⟨o, h⟩⟩
 
 /-- For a link-free factor, embedding reduces to independent per-tier infix
     occurrences ([jardine-2019]'s link-free fragment). -/
-theorem AR.factorEmbeds_iff_infix_of_link_free
-    {F X : TieredAR ι τ}
-    [Finite F.obj.V] [Finite X.obj.V]
-    (hF : ∀ i j p q, ¬ F.link i j p q) :
+theorem factorEmbeds_iff_infix_of_link_free (hF : ∀ i j p q, ¬ F.link i j p q) :
     F.FactorEmbeds X ↔ ∀ i, F.tierWord i <:+: X.tierWord i := by
   constructor
   · rintro ⟨o, hw, -⟩ i
-    rw [List.isInfix_iff_exists_offset]
-    rcases Nat.eq_zero_or_pos (F.tierWord i).length with hzero | hpos
-    · exact ⟨0, Nat.zero_le _, fun p hp => absurd hp (by omega)⟩
-    · have h0 := hw i 0 (by simpa [AR.length_tierWord] using hpos)
-      refine ⟨o i, ?_, fun p hp => hw i p
-        (by simpa [AR.length_tierWord] using hp)⟩
-      rcases List.getElem?_eq_some_iff.mp
-        (h0 ▸ (List.getElem?_eq_some_iff.mpr
-          ⟨by simpa [AR.length_tierWord] using hpos, rfl⟩ :
-            (F.tierWord i)[0]? = some _)) with ⟨hb, -⟩
-      omega
+    exact (List.isInfix_iff_exists_offset _ _).mpr
+      ⟨o i, fun p hp => hw i p (by simpa using hp)⟩
   · intro h
     choose o ho using fun i => (List.isInfix_iff_exists_offset _ _).mp (h i)
-    refine ⟨o, fun i p hp => ?_, fun i j p q hl => absurd hl (hF i j p q)⟩
-    obtain ⟨-, hoff⟩ := ho i
-    exact hoff p (by simpa [AR.length_tierWord] using hp)
+    exact ⟨o, fun i p hp => ho i p (by simpa using hp),
+      fun i j p q hl => absurd hl (hF i j p q)⟩
+
+end AR
 
 end Autosegmental

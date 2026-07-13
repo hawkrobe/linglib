@@ -99,7 +99,7 @@ instance : DecidableEq (Autosegmental.TwoTier _root_.Tone.TRN Unit true) :=
 noncomputable def plateauRep (w : List TBU) :
     Autosegmental.AR
       (Sigma.fst : ((b : Bool) × Autosegmental.TwoTier _root_.Tone.TRN Unit b) → Bool) :=
-  ((Autosegmental.realize toRep w).collapse true).hull true
+  ((Autosegmental.AR.realize toRep w).collapse true).hull true
 
 instance (w : List TBU) : Finite (plateauRep w).obj.V :=
   inferInstanceAs (Finite ((_ : Bool) × Fin _))
@@ -110,14 +110,14 @@ open scoped MonoidalCategory
 
 /-- The melody word of a realized string: one `H` node per H-toned TBU. -/
 theorem tierWord_realize_toRep_true (w : List TBU) :
-    (Autosegmental.realize toRep w).tierWord true
+    (Autosegmental.AR.realize toRep w).tierWord true
       = List.replicate (w.count .H) _root_.Tone.TRN.H := by
   induction w with
   | nil => simp [Autosegmental.AR.tierWord_unit]
   | cons a w ih =>
-    calc (Autosegmental.realize toRep (a :: w)).tierWord true
-        = (toRep a ⊗ Autosegmental.realize toRep w).tierWord true := rfl
-      _ = (toRep a).tierWord true ++ (Autosegmental.realize toRep w).tierWord true :=
+    calc (Autosegmental.AR.realize toRep (a :: w)).tierWord true
+        = (toRep a ⊗ Autosegmental.AR.realize toRep w).tierWord true := rfl
+      _ = (toRep a).tierWord true ++ (Autosegmental.AR.realize toRep w).tierWord true :=
           Autosegmental.AR.tierWord_tensor true
       _ = List.replicate ((a :: w).count .H) _root_.Tone.TRN.H := by
           rw [ih]
@@ -133,13 +133,13 @@ theorem tierWord_realize_toRep_true (w : List TBU) :
 
 /-- The timing word of a realized string: one slot per TBU. -/
 theorem tierWord_realize_toRep_false (w : List TBU) :
-    (Autosegmental.realize toRep w).tierWord false = List.replicate w.length () := by
+    (Autosegmental.AR.realize toRep w).tierWord false = List.replicate w.length () := by
   induction w with
   | nil => simp [Autosegmental.AR.tierWord_unit]
   | cons a w ih =>
-    calc (Autosegmental.realize toRep (a :: w)).tierWord false
-        = (toRep a ⊗ Autosegmental.realize toRep w).tierWord false := rfl
-      _ = (toRep a).tierWord false ++ (Autosegmental.realize toRep w).tierWord false :=
+    calc (Autosegmental.AR.realize toRep (a :: w)).tierWord false
+        = (toRep a ⊗ Autosegmental.AR.realize toRep w).tierWord false := rfl
+      _ = (toRep a).tierWord false ++ (Autosegmental.AR.realize toRep w).tierWord false :=
           Autosegmental.AR.tierWord_tensor false
       _ = List.replicate (a :: w).length () := by
           rw [ih, List.length_cons, List.replicate_succ]
@@ -154,13 +154,13 @@ theorem tierWord_realize_toRep_false (w : List TBU) :
 /-- Links of a realized string: slot `j` links to melody node `p` exactly when
     TBU `j` is H-toned and `p` is its accumulated melody position. -/
 theorem link_realize_toRep (w : List TBU) (p j : ℕ) :
-    (Autosegmental.realize toRep w).link true false p j ↔
+    (Autosegmental.AR.realize toRep w).link true false p j ↔
       p = (w.take j).count .H ∧ w[j]? = some .H := by
   induction w generalizing p j with
   | nil =>
-    have h0 : (Autosegmental.realize toRep []).tierLength true = 0 := by
+    have h0 : (Autosegmental.AR.realize toRep []).tierLength true = 0 := by
       rw [← Autosegmental.AR.length_tierWord,
-        show (Autosegmental.realize toRep []).tierWord true = _ from
+        show (Autosegmental.AR.realize toRep []).tierWord true = _ from
           Autosegmental.AR.tierWord_unit true, List.length_nil]
     constructor
     · rintro ⟨hp, -, -⟩
@@ -168,11 +168,11 @@ theorem link_realize_toRep (w : List TBU) (p j : ℕ) :
     · rintro ⟨-, h⟩
       simp at h
   | cons a w ih =>
-    haveI := Autosegmental.realize.instFinite toRep w
-    rw [show (Autosegmental.realize toRep (a :: w)).link true false p j
-          = (toRep a ⊗ Autosegmental.realize toRep w).link true false p j from rfl,
+    haveI := Autosegmental.AR.realize.instFinite toRep w
+    rw [show (Autosegmental.AR.realize toRep (a :: w)).link true false p j
+          = (toRep a ⊗ Autosegmental.AR.realize toRep w).link true false p j from rfl,
       Autosegmental.AR.link_tensor (X := toRep a)
-        (Y := Autosegmental.realize toRep w) true false p j]
+        (Y := Autosegmental.AR.realize toRep w) true false p j]
     cases a
     · have hta : (toRep TBU.H).tierLength true = 1 := by
         rw [← Autosegmental.AR.length_tierWord,
@@ -250,9 +250,9 @@ theorem link_realize_toRep (w : List TBU) (p j : ℕ) :
 /-- Links of the OCP-merged realization: the single fused `H` node (index `0`)
     links exactly to the H-toned slots. -/
 theorem link_realizeMerged (w : List TBU) (k j : ℕ) :
-    ((Autosegmental.realize toRep w).collapse true).link true false k j ↔
+    ((Autosegmental.AR.realize toRep w).collapse true).link true false k j ↔
       k = 0 ∧ w[j]? = some .H := by
-  haveI := Autosegmental.realize.instFinite toRep w
+  haveI := Autosegmental.AR.realize.instFinite toRep w
   rw [Autosegmental.AR.link_collapse]
   constructor
   · rintro ⟨p, q, hl, hk, hjq⟩
@@ -280,13 +280,13 @@ theorem link_realizeMerged (w : List TBU) (k j : ℕ) :
 theorem link_plateauRep (w : List TBU) (j : ℕ) :
     (∃ k, (plateauRep w).link true false k j) ↔
       .H ∈ w.take (j + 1) ∧ .H ∈ w.drop j := by
-  haveI := Autosegmental.realize.instFinite toRep w
-  have hlen : ((Autosegmental.realize toRep w).collapse true).tierLength false
+  haveI := Autosegmental.AR.realize.instFinite toRep w
+  have hlen : ((Autosegmental.AR.realize toRep w).collapse true).tierLength false
       = w.length := by
     rw [← Autosegmental.AR.length_tierWord,
       Autosegmental.AR.tierWord_collapse,
-      show (Autosegmental.realize toRep w).collapsedWord true false
-        = (Autosegmental.realize toRep w).tierWord false from
+      show (Autosegmental.AR.realize toRep w).collapsedWord true false
+        = (Autosegmental.AR.realize toRep w).tierWord false from
         Function.update_of_ne (by decide) _ _,
       tierWord_realize_toRep_false]
     exact List.length_replicate
@@ -297,13 +297,13 @@ theorem link_plateauRep (w : List TBU) (j : ℕ) :
     have hlenh : (plateauRep w).tierLength false = w.length := by
       rw [← Autosegmental.AR.length_tierWord,
         show (plateauRep w).tierWord false
-          = ((Autosegmental.realize toRep w).collapse true).tierWord false from
+          = ((Autosegmental.AR.realize toRep w).collapse true).tierWord false from
           Autosegmental.AR.tierWord_hull true _ false,
         Autosegmental.AR.length_tierWord, hlen]
     have hjw : j < w.length := hlenh ▸ hjb
     obtain ⟨q₁, q₂, h₁, h₂, hle₁, hle₂⟩ :=
       (Autosegmental.AR.link_hull_left true _ (by decide)
-        (by omega : j < ((Autosegmental.realize toRep w).collapse true).tierLength false)).mp hk
+        (by omega : j < ((Autosegmental.AR.realize toRep w).collapse true).tierLength false)).mp hk
     obtain ⟨-, hq₁⟩ := (link_realizeMerged w k q₁).mp h₁
     obtain ⟨-, hq₂⟩ := (link_realizeMerged w k q₂).mp h₂
     exact ⟨⟨q₁, by omega, hq₁⟩, q₂, hle₂, hq₂⟩
@@ -314,7 +314,7 @@ theorem link_plateauRep (w : List TBU) (j : ℕ) :
     have hl₁ := (link_realizeMerged w 0 q₁).mpr ⟨rfl, hq₁⟩
     have hl₂ := (link_realizeMerged w 0 q₂).mpr ⟨rfl, hq₂⟩
     exact ⟨0, (Autosegmental.AR.link_hull_left true _ (by decide)
-      (by omega : j < ((Autosegmental.realize toRep w).collapse true).tierLength false)).mpr
+      (by omega : j < ((Autosegmental.AR.realize toRep w).collapse true).tierLength false)).mpr
       ⟨q₁, q₂, hl₁, hl₂, by omega, hq₂b⟩⟩
 
 end TierWords

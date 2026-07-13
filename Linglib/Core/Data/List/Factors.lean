@@ -36,17 +36,17 @@ lemma take_append_take (n : ℕ) (X Y : List α) :
   rw [take_append, take_append, take_take, min_eq_left (by omega)]
 
 /-- A list is an infix of another iff some shift aligns every position of `S` with
-`A` (`getElem?`-wise): `S <:+: A` exactly when there is an offset `δ ≤ A.length` with
-`A[i + δ]? = S[i]?` for every `i < S.length`. The positional companion of
-`mem_kFactors`. -/
+`A` (`getElem?`-wise): `S <:+: A` exactly when there is an offset `δ` with
+`A[i + δ]? = S[i]?` for every `i < S.length`. The equations force the offset in
+bounds when `S` is nonempty. The positional companion of `mem_kFactors`. -/
 theorem isInfix_iff_exists_offset (S A : List α) :
-    S <:+: A ↔ ∃ δ ≤ A.length, ∀ i < S.length, A[i + δ]? = S[i]? := by
+    S <:+: A ↔ ∃ δ, ∀ i < S.length, A[i + δ]? = S[i]? := by
   constructor
   · rintro ⟨s, t, rfl⟩
-    refine ⟨s.length, by simp, fun i hi => ?_⟩
+    refine ⟨s.length, fun i hi => ?_⟩
     rw [List.append_assoc, List.getElem?_append_right (by omega), Nat.add_sub_cancel,
       List.getElem?_append_left hi]
-  · rintro ⟨δ, hδ, hmatch⟩
+  · rintro ⟨δ, hmatch⟩
     rcases Nat.eq_zero_or_pos S.length with h0 | hpos
     · obtain rfl : S = [] := List.length_eq_zero_iff.mp h0
       exact List.nil_infix
