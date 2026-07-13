@@ -698,9 +698,9 @@ variable {ι : Type*} {τ : ι → Type*}
 
 /-- The representation presented by tier words `ws` and cross-tier links `L`
     (positions in ℕ coordinates; same-tier and out-of-bounds pairs are
-    ignored). Arcs are the ascending position order on each tier. -/
-def Representation.ofData (ws : ∀ i, List (τ i)) (L : ι → ι → ℕ → ℕ → Prop)
-    (hL : ∀ i p q, ¬ L i i p q) :
+    ignored, and same-tier links are excluded by construction). Arcs are the
+    ascending position order on each tier. -/
+def Representation.ofData (ws : ∀ i, List (τ i)) (L : ι → ι → ℕ → ℕ → Prop) :
     Representation (Sigma.fst : ((i : ι) × τ i) → ι) where
   obj :=
     { V := (i : ι) × Fin (ws i).length
@@ -725,14 +725,13 @@ def Representation.ofData (ws : ∀ i, List (τ i)) (L : ι → ι → ℕ → �
     · exact Or.inr ⟨rfl, h⟩
 
 variable [Finite ι] {ws : ∀ i, List (τ i)} {L : ι → ι → ℕ → ℕ → Prop}
-variable {hL : ∀ i p q, ¬ L i i p q}
 
-instance : Finite (Representation.ofData ws L hL).obj.V :=
+instance : Finite (Representation.ofData ws L).obj.V :=
   inferInstanceAs (Finite ((i : ι) × Fin (ws i).length))
 
 /-- The canonical carrier's fiber at `i` is its position range. -/
 noncomputable def Representation.ofDataFiberEnum (i : ι) :
-    Fin ((ws i).length) ≃o (Representation.ofData ws L hL).fiber i := by
+    Fin ((ws i).length) ≃o (Representation.ofData ws L).fiber i := by
   refine StrictMono.orderIsoOfSurjective (fun p => ⟨⟨i, p⟩, rfl⟩) (fun p q h => ⟨rfl, h⟩)
     fun v => ?_
   obtain ⟨⟨j, q⟩, hp⟩ := v
@@ -740,36 +739,35 @@ noncomputable def Representation.ofDataFiberEnum (i : ι) :
   exact ⟨q, rfl⟩
 
 theorem Representation.tierLength_ofData (i : ι) :
-    (Representation.ofData ws L hL).tierLength i = (ws i).length := by
+    (Representation.ofData ws L).tierLength i = (ws i).length := by
   rw [← Representation.length_tierWord,
     Representation.tierWord_eq_ofFn (Representation.ofDataFiberEnum i), List.length_ofFn]
 
 theorem Representation.fiberEnum_ofData (i : ι) :
-    (Representation.ofData ws L hL).fiberEnum i =
+    (Representation.ofData ws L).fiberEnum i =
       (Fin.castOrderIso (Representation.tierLength_ofData i)).trans
         (Representation.ofDataFiberEnum i) :=
   Subsingleton.elim _ _
 
 theorem Representation.vertexEquiv_ofData {i : ι}
-    (r : Fin ((Representation.ofData ws L hL).tierLength i)) :
-    (Representation.ofData ws L hL).vertexEquiv ⟨i, r⟩ =
+    (r : Fin ((Representation.ofData ws L).tierLength i)) :
+    (Representation.ofData ws L).vertexEquiv ⟨i, r⟩ =
       ⟨i, Fin.cast (Representation.tierLength_ofData i) r⟩ := by
-  show ((Representation.ofData ws L hL).fiberEnum i r).val = _
+  show ((Representation.ofData ws L).fiberEnum i r).val = _
   rw [Representation.fiberEnum_ofData]
   rfl
 
 /-- `ofData` reads back its words. -/
 @[simp] theorem Representation.tierWord_ofData (i : ι) :
-    (Representation.ofData ws L hL).tierWord i = ws i := by
+    (Representation.ofData ws L).tierWord i = ws i := by
   rw [Representation.tierWord_eq_ofFn (Representation.ofDataFiberEnum i)]
   exact List.ofFn_getElem
 
 /-- `ofData` reads back its links, symmetrized, on in-bounds cross-tier
     pairs. -/
 theorem Representation.link_ofData (i j : ι) (p q : ℕ) :
-    (Representation.ofData ws L hL).link i j p q ↔
-      i ≠ j ∧ ∃ (hp : p < (ws i).length) (hq : q < (ws j).length),
-        (L i j p q ∨ L j i q p) := by
+    (Representation.ofData ws L).link i j p q ↔
+      i ≠ j ∧ p < (ws i).length ∧ q < (ws j).length ∧ (L i j p q ∨ L j i q p) := by
   constructor
   · rintro ⟨hp, hq, hl⟩
     rw [Representation.linkRel_def, Representation.vertexEquiv_ofData,
@@ -779,9 +777,9 @@ theorem Representation.link_ofData (i j : ι) (p q : ℕ) :
     have hq' : q < (ws j).length := Representation.tierLength_ofData j ▸ hq
     exact ⟨hne, hp', hq', by simpa using hor⟩
   · rintro ⟨hij, hp, hq, hor⟩
-    have hp' : p < (Representation.ofData ws L hL).tierLength i := by
+    have hp' : p < (Representation.ofData ws L).tierLength i := by
       rw [← Representation.length_tierWord, Representation.tierWord_ofData]; exact hp
-    have hq' : q < (Representation.ofData ws L hL).tierLength j := by
+    have hq' : q < (Representation.ofData ws L).tierLength j := by
       rw [← Representation.length_tierWord, Representation.tierWord_ofData]; exact hq
     refine ⟨hp', hq', ?_⟩
     rw [Representation.linkRel_def, Representation.vertexEquiv_ofData,
