@@ -7,6 +7,7 @@ import Mathlib.CategoryTheory.Limits.Shapes.BinaryProducts
 import Mathlib.CategoryTheory.Limits.Shapes.Terminal
 import Mathlib.CategoryTheory.Monoidal.Category
 import Mathlib.CategoryTheory.ObjectProperty.FullSubcategory
+import Mathlib.CategoryTheory.Monoidal.Widesubcategory
 import Mathlib.CategoryTheory.MorphismProperty.Composition
 import Mathlib.Combinatorics.SimpleGraph.Sum
 import Mathlib.Logic.Relation
@@ -520,6 +521,27 @@ instance : (MixedGraphCat.precPreserving (S := S)).IsMultiplicative where
   id_mem _ := fun _ _ h => h
   comp_mem _ _ hf hg := fun _ _ h => hg (hf h)
 
+/-- A full isomorphism's underlying morphism preserves precedence. -/
+theorem MixedGraphCat.Iso.toHom_precPreserving {X Y : MixedGraphCat S}
+    (e : MixedGraphCat.Iso X Y) : MixedGraphCat.precPreserving e.toHom :=
+  fun _ _ h => (e.arcs_iff _ _).mpr h
+
+/-- Concatenation of precedence-preserving morphisms preserves precedence:
+    blockwise from the factors, the bridge transported by labels. -/
+theorem MixedGraphCat.Hom.concatMap_precPreserving (t : S → ι)
+    {X₁ Y₁ X₂ Y₂ : MixedGraphCat S}
+    {f : MixedGraphCat.Hom X₁ Y₁} {g : MixedGraphCat.Hom X₂ Y₂}
+    (hf : MixedGraphCat.precPreserving f) (hg : MixedGraphCat.precPreserving g) :
+    MixedGraphCat.precPreserving (f.concatMap t g) := by
+  rintro (v | v) (w | w) h
+  · exact hf h
+  · show Y₁.tier t (f.toFun v) = Y₂.tier t (g.toFun w)
+    rw [show Y₁.tier t (f.toFun v) = X₁.tier t v from congrArg t (f.label_comp v),
+      show Y₂.tier t (g.toFun w) = X₂.tier t w from congrArg t (g.label_comp w)]
+    exact h
+  · exact h.elim
+  · exact hg h
+
 /-! ### The category of autosegmental representations -/
 
 variable (t : S → ι)
@@ -618,6 +640,27 @@ instance : MonoidalCategory (Representation t) :=
     (triangle := fun _ _ => hom_ext fun v => by
       repeat' rcases (v : _ ⊕ _) with v | v
       all_goals first | rfl | exact v.elim)
+
+/-- Precedence preservation on representations: the classical morphisms of the
+    theory, as a monoidally-stable wide subcategory of the broad category. -/
+def precPreserving : MorphismProperty (Representation t) :=
+  fun _ _ f => MixedGraphCat.precPreserving f.hom
+
+instance : (precPreserving (t := t)).IsMonoidalStable where
+  id_mem _ := fun _ _ h => h
+  comp_mem _ _ hf hg := fun _ _ h => hg (hf h)
+  whiskerLeft X _ _ g hg :=
+    MixedGraphCat.Hom.concatMap_precPreserving t (fun _ _ h => h) hg
+  whiskerRight f hf Y :=
+    MixedGraphCat.Hom.concatMap_precPreserving t hf (fun _ _ h => h)
+  associator_hom_mem A B C :=
+    (MixedGraphCat.concatAssocIso t A.obj B.obj C.obj).toHom_precPreserving
+  associator_inv_mem A B C :=
+    (MixedGraphCat.concatAssocIso t A.obj B.obj C.obj).symm.toHom_precPreserving
+  leftUnitor_hom_mem A := (MixedGraphCat.emptyConcatIso t A.obj).toHom_precPreserving
+  leftUnitor_inv_mem A := (MixedGraphCat.emptyConcatIso t A.obj).symm.toHom_precPreserving
+  rightUnitor_hom_mem A := (MixedGraphCat.concatEmptyIso t A.obj).toHom_precPreserving
+  rightUnitor_inv_mem A := (MixedGraphCat.concatEmptyIso t A.obj).symm.toHom_precPreserving
 
 end Representation
 
