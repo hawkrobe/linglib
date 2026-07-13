@@ -108,22 +108,12 @@ theorem factorEmbeds_iff_infix_of_link_free
     F.FactorEmbeds X ↔ ∀ i, F.tierWord i <:+: X.tierWord i := by
   constructor
   · rintro ⟨o, hw, -⟩ i
-    rw [List.isInfix_iff_exists_offset]
-    rcases Nat.eq_zero_or_pos (F.tierWord i).length with hzero | hpos
-    · exact ⟨0, Nat.zero_le _, fun p hp => absurd hp (by omega)⟩
-    · have h0 := hw i 0 (by simpa [length_tierWord] using hpos)
-      refine ⟨o i, ?_, fun p hp => hw i p
-        (by simpa [length_tierWord] using hp)⟩
-      rcases List.getElem?_eq_some_iff.mp
-        (h0 ▸ (List.getElem?_eq_some_iff.mpr
-          ⟨by simpa [length_tierWord] using hpos, rfl⟩ :
-            (F.tierWord i)[0]? = some _)) with ⟨hb, -⟩
-      omega
+    exact (List.isInfix_iff_exists_offset _ _).mpr
+      ⟨o i, fun p hp => hw i p (by simpa using hp)⟩
   · intro h
     choose o ho using fun i => (List.isInfix_iff_exists_offset _ _).mp (h i)
-    refine ⟨o, fun i p hp => ?_, fun i j p q hl => absurd hl (hF i j p q)⟩
-    obtain ⟨-, hoff⟩ := ho i
-    exact hoff p (by simpa [length_tierWord] using hp)
+    exact ⟨o, fun i p hp => ho i p (by simpa using hp),
+      fun i j p q hl => absurd hl (hF i j p q)⟩
 
 end AR
 
