@@ -83,15 +83,12 @@ end Axioms
 
 namespace Graph
 
-variable {X Y : Graph S}
+variable {X Y : Graph S} (t : S → ι)
 
-theorem isTierOrdered_empty (t : S → ι) : IsTierOrdered (empty S).arcs ((empty S).tier t) :=
+theorem isTierOrdered_empty : IsTierOrdered (empty S).arcs ((empty S).tier t) :=
   { irrefl := (·.elim), trans := (·.elim), tier_eq := (·.elim), total := (·.elim) }
 
 theorem noInternalAssoc_empty : NoInternalAssoc (empty S).edges (empty S).arcs := (·.elim)
-
-section Concat
-variable (t : S → ι)
 
 /-- The concatenation of tier-ordered graphs is tier-ordered. -/
 theorem isTierOrdered_concat
@@ -127,11 +124,9 @@ theorem isPlanar_concat (h₁ : IsPlanar X.edges X.arcs) (h₂ : IsPlanar Y.edge
       | exact (hw'v' : False).elim
       | simp_all
 
-end Concat
-
 /-- The bridge-free sum of graphs sharing a tier is never tier-ordered, so Axiom 2
     forces the bridges in `concat`. -/
-theorem not_isTierOrdered_sum (t : S → ι) (v : X.V) (w : Y.V)
+theorem not_isTierOrdered_sum (v : X.V) (w : Y.V)
     (htier : X.tier t v = Y.tier t w) :
     ¬ IsTierOrdered (sum X Y).arcs ((sum X Y).tier t) := fun h => by
   simpa using h.total (v := .inl v) (w := .inr w) Sum.inl_ne_inr htier
