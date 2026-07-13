@@ -264,7 +264,7 @@ def Representation.junction (as : List α) (bs : List β) :
 
 instance (as : List α) (bs : List β) :
     Finite (Representation.junction as bs).obj.V :=
-  inferInstanceAs (Finite ((b : Bool) × Fin _))
+  inferInstanceAs (Finite ((_ : Bool) × Fin _))
 
 @[simp] theorem Representation.tierWord_junction_true (as : List α) (bs : List β) :
     (Representation.junction as bs).tierWord true = as :=
