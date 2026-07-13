@@ -786,6 +786,99 @@ theorem Representation.link_collapse [Finite X.obj.V] (i j : ι) (r s : ℕ) :
     subst hij
     exact X.not_link_self_tier i p q hpq
 
+theorem Representation.tierLength_collapse [Finite X.obj.V] (i : ι) :
+    (X.collapse m).tierLength i = (X.collapsedWord m i).length := by
+  rw [← Representation.length_tierWord, Representation.tierWord_collapse]
+
+section Congruence
+variable {Y : Representation (Sigma.fst : ((i : ι) × τ i) → ι)}
+variable [Finite X.obj.V] [Finite Y.obj.V]
+
+/-- Left-block positions commute with the collapse-collapse seam. -/
+theorem Representation.collapseIdx_left (i : ι) {p : ℕ} (hp : p < X.tierLength i) :
+    (X.collapse m ⊗ Y.collapse m).collapseIdx m i (X.collapseIdx m i p)
+      = (X ⊗ Y).collapseIdx m i p := by
+  unfold Representation.collapseIdx
+  split_ifs with h
+  · subst h
+    simp only [Representation.tierWord_tensor, Representation.tierWord_collapse,
+      Representation.collapsedWord, Function.update_self]
+    exact (runIdx_append_collapse_left (xs := X.tierWord i) (ys := Y.tierWord i)
+      (by simpa using hp)).symm
+  · rfl
+
+/-- Right-block positions commute with the collapse-collapse seam. -/
+theorem Representation.collapseIdx_right (i : ι) {p : ℕ} (hp : p < Y.tierLength i) :
+    (X.collapse m ⊗ Y.collapse m).collapseIdx m i
+        ((X.collapse m).tierLength i + Y.collapseIdx m i p)
+      = (X ⊗ Y).collapseIdx m i (X.tierLength i + p) := by
+  unfold Representation.collapseIdx
+  split_ifs with h
+  · subst h
+    simp only [Representation.tierWord_tensor, Representation.tierWord_collapse,
+      Representation.collapsedWord, Function.update_self,
+      ← Representation.length_tierWord]
+    exact (runIdx_append_collapse_right (xs := X.tierWord i) (ys := Y.tierWord i)
+      (by simpa using hp)).symm
+  · simp [Representation.tierLength_collapse, Representation.collapsedWord,
+      Function.update_of_ne h]
+
+/-- The link half of the OCP congruence, in ℕ coordinates. -/
+theorem Representation.link_collapse_tensor (i j : ι) (r s : ℕ) :
+    ((X ⊗ Y).collapse m).link i j r s ↔
+      ((X.collapse m ⊗ Y.collapse m).collapse m).link i j r s := by
+  rw [Representation.link_collapse, Representation.link_collapse]
+  constructor
+  · rintro ⟨p, q, hpq, hr, hs⟩
+    rcases (Representation.link_tensor i j p q).mp hpq with hX | ⟨hpi, hqj, hY⟩
+    · refine ⟨X.collapseIdx m i p, X.collapseIdx m j q,
+        (Representation.link_tensor i j _ _).mpr
+          (Or.inl ((X.link_collapse m i j _ _).mpr ⟨p, q, hX, rfl, rfl⟩)), ?_, ?_⟩
+      · rw [X.collapseIdx_left m i hX.1, hr]
+      · rw [X.collapseIdx_left m j hX.2.1, hs]
+    · refine ⟨(X.collapse m).tierLength i + Y.collapseIdx m i (p - X.tierLength i),
+        (X.collapse m).tierLength j + Y.collapseIdx m j (q - X.tierLength j),
+        (Representation.link_tensor i j _ _).mpr (Or.inr ⟨by omega, by omega, ?_⟩), ?_, ?_⟩
+      · rw [Nat.add_sub_cancel_left, Nat.add_sub_cancel_left]
+        exact (Y.link_collapse m i j _ _).mpr ⟨_, _, hY, rfl, rfl⟩
+      · rw [X.collapseIdx_right m i hY.1, Nat.add_sub_cancel' hpi, hr]
+      · rw [X.collapseIdx_right m j hY.2.1, Nat.add_sub_cancel' hqj, hs]
+  · rintro ⟨p', q', hpq', hr, hs⟩
+    rcases (Representation.link_tensor i j p' q').mp hpq' with hX | ⟨hpi', hqj', hY'⟩
+    · obtain ⟨p, q, hX₀, hcp, hcq⟩ := (X.link_collapse m i j p' q').mp hX
+      refine ⟨p, q, (Representation.link_tensor i j p q).mpr (Or.inl hX₀), ?_, ?_⟩
+      · rw [← X.collapseIdx_left m i hX₀.1, hcp, hr]
+      · rw [← X.collapseIdx_left m j hX₀.2.1, hcq, hs]
+    · obtain ⟨a, b, hY₀, hca, hcb⟩ :=
+        (Y.link_collapse m i j (p' - (X.collapse m).tierLength i)
+          (q' - (X.collapse m).tierLength j)).mp hY'
+      refine ⟨X.tierLength i + a, X.tierLength j + b,
+        (Representation.link_tensor i j _ _).mpr (Or.inr ⟨by omega, by omega, ?_⟩), ?_, ?_⟩
+      · rw [Nat.add_sub_cancel_left, Nat.add_sub_cancel_left]
+        exact hY₀
+      · rw [← X.collapseIdx_right m i hY₀.1, hca, Nat.add_sub_cancel' hpi', hr]
+      · rw [← X.collapseIdx_right m j hY₀.2.1, hcb, Nat.add_sub_cancel' hqj', hs]
+
+/-- **The OCP congruence**: collapsing a concatenation is isomorphic to
+    collapsing the concatenation of the collapses — [jardine-heinz-2015]'s
+    melody-merge law, by the classification theorem. -/
+noncomputable def Representation.collapseTensorIso :
+    (X ⊗ Y).collapse m ≅ (X.collapse m ⊗ Y.collapse m).collapse m :=
+  Representation.isoOfReaderEq
+    (fun i => by
+      rw [Representation.tierWord_collapse, Representation.tierWord_collapse,
+        Representation.collapsedWord_tensor])
+    (fun i j r s => Representation.link_collapse_tensor X m i j r s)
+
+/-- The OCP congruence as an equality of isomorphism classes: `collapse`
+    descends to the skeleton monoid. -/
+theorem Representation.toSkeleton_collapse_tensor :
+    toSkeleton ((X ⊗ Y).collapse m)
+      = toSkeleton ((X.collapse m ⊗ Y.collapse m).collapse m) :=
+  Quotient.sound ⟨Representation.collapseTensorIso X m⟩
+
+end Congruence
+
 end CoordinateCollapse
 
 end Autosegmental
