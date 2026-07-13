@@ -11,45 +11,42 @@ import Linglib.Phonology.Autosegmental.Graph
 /-!
 # Autosegmental representations: the §4.2 axioms and their category
 
-The well-formedness axioms of [jardine-2016-diss] §4.2 as predicates on
-exactly the components each axiom reads — the order arcs (`Digraph`), the
-association edges (`SimpleGraph`), and for the tier-relative axioms a vertex
-coloring `c : V → ι`; on a labeled mixed graph they are read at the tier
-coloring `X.tier t`. The class they carve out of `Graph S` is `AR t`, the
-category of autosegmental representations, monoidal under `Graph.concat`.
+The well-formedness axioms of [jardine-2016-diss] §4.2, each stated on exactly the
+components it reads (`Digraph` arcs, `SimpleGraph` edges, a coloring `c : V → ι`) and
+read on a labeled mixed graph at the tier coloring `X.tier t`. `AR t` is the full
+subcategory of `Graph S` they carve out, monoidal under `Graph.concat`.
 
 ## Main definitions
 
-* `IsTierOrdered`, `NoInternalAssoc`, `IsSaturated`, `IsPlanar`, `IsOCPClean`:
-  the §4.2 axioms (1–2, 3, 4, 5, 6; [jardine-heinz-2015] numbers the NCC and OCP
-  as 4 and 5 and has no saturation axiom). Saturation ([goldsmith-1976]'s
-  original well-formedness condition) is stated but not imposed; tier-orderedness
-  includes path-closure — the arcs are transitively closed, [jardine-2019]'s
-  reading that `A` represents the order; the OCP reads adjacency as the covering
-  relation of the arcs, since order-closed arcs relate all comparable pairs.
-  Axiom 6's word-level form is `AR.IsCleanAt`, bridged by
-  `AR.isCleanAt_iff_isOCPClean` (`OCP.lean`) through the shared hub
-  `OCP.IsClean`; connecting Axiom 5 to the coordinate `IsNonCrossing`
-  (`NonCrossing.lean`) is the TODO below.
-* `AR t`: the category of autosegmental representations — the full
-  subcategory of labeled mixed graphs on Axioms 1–3, monoidal under `concat`.
+* `IsTierOrdered`, `NoInternalAssoc`, `IsSaturated`, `IsPlanar`, `IsOCPClean`: the six
+  well-formedness axioms of [jardine-2016-diss] §4.2.
+* `AR t`: the category of autosegmental representations — the full subcategory on
+  Axioms 1–3, monoidal under `concat`.
 
 ## Main results
 
-* `isTierOrdered_concat`, `noInternalAssoc_concat`, `isPlanar_concat`:
-  concatenation preserves the axioms ([jardine-heinz-2015] Theorem 4's
-  structural half); `isPlanar_concat` is [jardine-2019]'s NCC-preservation.
-* `not_isTierOrdered_sum`: the bridge-free coproduct leaves the axiom class
-  whenever the factors share a tier — Axiom 2 forces `concat`'s bridges.
-* `AR.tierColoring`: the tier map properly colors the association
-  graph, so tier arity bounds its chromatic number (`edges_colorable`).
+* `isTierOrdered_concat`, `noInternalAssoc_concat`, `isPlanar_concat`: concatenation
+  preserves the axioms ([jardine-heinz-2015] Theorem 4's structural half).
+* `not_isTierOrdered_sum`: the bridge-free coproduct leaves the axiom class; Axiom 2
+  forces the bridges in `concat`.
+* `AR.tierColoring`: the tier map properly colors the association graph
+  (`edges_colorable`).
+
+## Implementation notes
+
+The axiom numbering follows the dissertation; [jardine-heinz-2015] numbers the NCC and
+OCP as 4 and 5 and has no saturation axiom. Saturation ([goldsmith-1976]'s original
+well-formedness condition) is stated but never imposed. The arcs are transitively
+closed ([jardine-2019]'s reading that `A` represents the order), so the OCP reads
+adjacency as the covering relation of the arcs. Axiom 6's word-level form is
+`AR.IsCleanAt` (`OCP.lean`, through the hub `OCP.IsClean`); relating Axiom 5 to the
+coordinate `IsNonCrossing` is the TODO.
 
 ## TODO
 
-* Package `AR.ofData` and `AR.isoOfReaderEq` (`NormalForm.lean`) as a
-  `CategoryTheory.Equivalence` between the strict tuple category and the
-  finite representations, and reduce `IsPlanar` on normal forms to the
-  per-pair `IsNonCrossing` of the link relation.
+* Package `AR.ofData` + `AR.isoOfReaderEq` (`NormalForm.lean`) as an equivalence with
+  the strict tuple category; reduce `IsPlanar` on normal forms to the per-pair
+  `IsNonCrossing` of the link relation.
 -/
 
 namespace Autosegmental
@@ -96,8 +93,7 @@ theorem noInternalAssoc_empty : NoInternalAssoc (empty S).edges (empty S).arcs :
 section Concat
 variable (t : S → ι)
 
-/-- Concatenation preserves Axioms 1–2; seam transitivity holds because arcs are
-    tier-internal. -/
+/-- The concatenation of tier-ordered graphs is tier-ordered. -/
 theorem isTierOrdered_concat
     (h₁ : IsTierOrdered X.arcs (X.tier t)) (h₂ : IsTierOrdered Y.arcs (Y.tier t)) :
     IsTierOrdered (concat t X Y).arcs ((concat t X Y).tier t) where
@@ -113,16 +109,14 @@ theorem isTierOrdered_concat
       huv.trans (h₂.tier_eq hvw), (huv : False).elim, (huv : False).elim,
       (hvw : False).elim, h₂.trans _ _ _ huv hvw]
 
-/-- Concatenation preserves Axiom 3: the disjoint edge sum adds no cross edges. -/
+/-- The concatenation of graphs with no internal association has no internal association. -/
 theorem noInternalAssoc_concat (h₁ : NoInternalAssoc X.edges X.arcs)
     (h₂ : NoInternalAssoc Y.edges Y.arcs) :
     NoInternalAssoc (concat t X Y).edges (concat t X Y).arcs := by
   rintro (v | v) (w | w) hadj harc
   exacts [h₁ hadj harc, absurd hadj (by simp), absurd hadj (by simp), h₂ hadj harc]
 
-/-- Concatenation preserves the No-Crossing Constraint ([jardine-2019]'s headline
-    [jardine-heinz-2015] result): factor planarity suffices — a straddle needs both
-    edges in one block, or a return arc `inr → inl` that does not exist. -/
+/-- The concatenation of planar graphs is planar; this is the headline result of [jardine-2019]. -/
 theorem isPlanar_concat (h₁ : IsPlanar X.edges X.arcs) (h₂ : IsPlanar Y.edges Y.arcs) :
     IsPlanar (concat t X Y).edges (concat t X Y).arcs := by
   rintro (v | v) (v' | v') (w | w) (w' | w') hvv' hww' hvw hw'v' <;>
@@ -135,9 +129,8 @@ theorem isPlanar_concat (h₁ : IsPlanar X.edges X.arcs) (h₂ : IsPlanar Y.edge
 
 end Concat
 
-/-- **Axiom 2 forces the bridges**: the bridge-free sum of two graphs occupying a
-    common tier is never tier-ordered — same-tier vertices from the two factors
-    are precedence-unrelated across the seam. -/
+/-- The bridge-free sum of graphs sharing a tier is never tier-ordered, so Axiom 2
+    forces the bridges in `concat`. -/
 theorem not_isTierOrdered_sum (t : S → ι) (v : X.V) (w : Y.V)
     (htier : X.tier t v = Y.tier t w) :
     ¬ IsTierOrdered (sum X Y).arcs ((sum X Y).tier t) := fun h => by
@@ -149,10 +142,9 @@ end Graph
 
 open CategoryTheory
 
-/-- The category of **autosegmental representations** over a tier assignment:
-    the full subcategory of labeled mixed graphs satisfying the structural
-    axioms ([jardine-2016-diss] §4.2, Axioms 1–3) — the formal literature's
-    ARs ([jardine-2019], [chandlee-jardine-2019]). -/
+/-- The category of autosegmental representations over a tier assignment, given by the
+    full subcategory on Axioms 1–3 of [jardine-2016-diss] §4.2. These are the formal
+    literature's ARs ([jardine-2019], [chandlee-jardine-2019]). -/
 abbrev AR (t : S → ι) :=
   ObjectProperty.FullSubcategory
     fun X : Graph S => IsTierOrdered X.arcs (X.tier t) ∧ NoInternalAssoc X.edges X.arcs
@@ -165,16 +157,13 @@ open Graph MonoidalCategory
 
 variable {t : S → ι}
 
-/-- Under the structural axioms the tier map properly colors the association
-    graph: same-tier vertices are precedence-related (Axioms 1–2) and associated
-    vertices never are (Axiom 3), so associated vertices lie on distinct tiers.
-    Goldsmith's bipartite two-tier geometry is the two-colorable case. -/
+/-- The tier map is a proper coloring of the association graph; Goldsmith's bipartite
+    two-tier geometry is the two-colorable case. -/
 def tierColoring (X : AR t) : X.obj.edges.Coloring ι :=
   SimpleGraph.Coloring.mk (X.obj.tier t) fun {_ _} hadj htier =>
     (X.property.1.total hadj.ne htier).elim (X.property.2 hadj) (X.property.2 hadj.symm)
 
-/-- A representation's association graph is colorable by its tiers: tier arity
-    bounds the chromatic number of the association pattern. -/
+/-- Tier arity bounds the chromatic number of the association pattern. -/
 theorem edges_colorable [Fintype ι] (X : AR t) :
     X.obj.edges.Colorable (Fintype.card ι) :=
   (tierColoring X).colorable
@@ -193,12 +182,9 @@ theorem hom_ext {X Y : AR t} {f g : X ⟶ Y}
 
 universe u₁ u₂ u₃
 
-/-- Monoidal structure: morpheme concatenation as tensor, the empty
-    representation as unit; the axiom class is closed under both by
-    `isTierOrdered_concat`/`noInternalAssoc_concat`. Universes pinned so the
-    unit's vertex type shares the objects' universe — autobinding would split
-    the instance head into an unusable `max`; `@[simps]` feeds the tensor
-    rewrites in `NormalForm.lean`. -/
+/-- The monoidal structure with morpheme concatenation as tensor and the empty
+    representation as unit. The universes are pinned because autobinding would split the
+    instance head into a `max`; `@[simps]` feeds the tensor rewrites in `NormalForm.lean`. -/
 @[simps] instance instMonoidalStruct {S : Type u₁} {ι : Type u₂} {t : S → ι} :
     MonoidalCategoryStruct (AR.{u₁, u₂, u₃} t) where
   tensorObj X Y :=
@@ -212,9 +198,8 @@ universe u₁ u₂ u₃
   leftUnitor X := mkIso (emptyConcatIso t X.obj)
   rightUnitor X := mkIso (concatEmptyIso t X.obj)
 
-/-- The category of autosegmental representations is monoidal under morpheme
-    concatenation — [jardine-heinz-2015] Theorems 1 and 3 packaged as coherence,
-    with every proof a componentwise `rfl` over the concrete sum maps. -/
+/-- The category of autosegmental representations is monoidal under concatenation; the
+    coherence laws are [jardine-heinz-2015] Theorems 1 and 3. -/
 instance : MonoidalCategory (AR t) :=
   MonoidalCategory.ofTensorHom
     (id_tensorHom_id := fun _ _ => hom_ext (congrFun Sum.map_id_id))
