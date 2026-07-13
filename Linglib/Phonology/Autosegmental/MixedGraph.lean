@@ -649,9 +649,9 @@ def precPreserving : MorphismProperty (Representation t) :=
 instance : (precPreserving (t := t)).IsMonoidalStable where
   id_mem _ := fun _ _ h => h
   comp_mem _ _ hf hg := fun _ _ h => hg (hf h)
-  whiskerLeft X _ _ g hg :=
+  whiskerLeft _ _ _ _ hg :=
     MixedGraphCat.Hom.concatMap_precPreserving t (fun _ _ h => h) hg
-  whiskerRight f hf Y :=
+  whiskerRight _ hf _ :=
     MixedGraphCat.Hom.concatMap_precPreserving t hf (fun _ _ h => h)
   associator_hom_mem A B C :=
     (MixedGraphCat.concatAssocIso t A.obj B.obj C.obj).toHom_precPreserving
