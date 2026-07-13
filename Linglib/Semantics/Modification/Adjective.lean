@@ -81,6 +81,12 @@ def isIntersective (adj : AdjMeaning W E) : Prop :=
 def isSubsective (adj : AdjMeaning W E) : Prop :=
   ∀ (N : Property W E) (w : W) (x : E), adj N w x → N w x
 
+/-- Subsectivity is the deflationary condition in the pointwise order:
+    `adj ≤ id`. -/
+theorem isSubsective_iff_le_id {adj : AdjMeaning W E} :
+    isSubsective adj ↔ adj ≤ id :=
+  Iff.rfl
+
 /-- An adjective is **privative** if its extension is always disjoint
     from the noun's extension ([kamp-1975]).
 

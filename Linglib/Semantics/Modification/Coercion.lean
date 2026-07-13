@@ -22,7 +22,10 @@ partial setting. Not to be confused with complement coercion
 ## Main definitions
 
 * `isNonVacuous P w d`: NVP at world `w` within local domain `d`.
-* `LicensedCoercion N adj w`: NVP-licensed widening of `N`.
+* `LicensedCoercion N adj w`: NVP-licensed widening of `N`. The `shift`
+  is a full intension even though licensing holds at the single context
+  world `w`: a non-extensional `adj` reads the shift's values at other
+  worlds.
 * `SubsectiveReanalysis adjClassical`: reanalysis as subsective-after-coercion.
 -/
 
@@ -35,27 +38,46 @@ variable {W E : Type*}
 def isNonVacuous (P : Property W E) (w : W) (d : E → Prop) : Prop :=
   (∃ x, d x ∧ P w x) ∧ (∃ x, d x ∧ ¬ P w x)
 
+/-- `isNonVacuous` is monotone in the local domain. -/
+theorem isNonVacuous.mono {P : Property W E} {w : W} {d d' : E → Prop}
+    (h : isNonVacuous P w d) (hdd' : d ≤ d') : isNonVacuous P w d' :=
+  ⟨h.1.imp fun x hx => ⟨hdd' x hx.1, hx.2⟩, h.2.imp fun x hx => ⟨hdd' x hx.1, hx.2⟩⟩
+
+/-- The NVP is self-dual: a predicate and its complement are non-vacuous
+    in the same local domains. -/
+theorem isNonVacuous_compl {P : Property W E} {w : W} {d : E → Prop} :
+    isNonVacuous (fun w x => ¬ P w x) w d ↔ isNonVacuous P w d := by
+  unfold isNonVacuous
+  simp only [not_not]
+  exact and_comm
+
 /-- A wider noun extension `shift ⊇ N` at `w` under which `adj shift`
     is non-vacuous in `shift`'s extension (the HPP local domain). -/
 structure LicensedCoercion (N : Property W E) (adj : AdjMeaning W E) (w : W) where
   shift : Property W E
-  le_shift : ∀ x, N w x → shift w x
+  le_shift : N w ≤ shift w
   satisfies_nvp : isNonVacuous (adj shift) w (shift w)
 
 /-- Reanalysis of `adjClassical` as subsective-after-coercion. The
     coercion is NVP-conditional — [partee-2010]'s coercion-as-last-resort:
-    `shift_inert` requires `nounShift N = N` whenever direct application
-    is already non-vacuous, so the structure does not coerce
-    gratuitously. -/
+    `shift_inert` forbids widening whenever direct application is already
+    non-vacuous (`nounShift_eq_self` derives the identity). -/
 structure SubsectiveReanalysis (adjClassical : AdjMeaning W E) where
   nounShift : Property W E → Property W E
   adjSubsective : AdjMeaning W E
-  le_nounShift : ∀ (N : Property W E) (w : W) (x : E), N w x → nounShift N w x
+  le_nounShift : ∀ N, N ≤ nounShift N
   is_subsective : isSubsective adjSubsective
   shift_inert : ∀ (N : Property W E) (w : W),
-    isNonVacuous (adjClassical N) w (N w) → nounShift N = N
+    isNonVacuous (adjClassical N) w (N w) → nounShift N ≤ N
 
 variable {adjClassical : AdjMeaning W E}
+
+/-- Where direct application is already non-vacuous, the shift is the
+    identity. -/
+theorem SubsectiveReanalysis.nounShift_eq_self (R : SubsectiveReanalysis adjClassical)
+    {N : Property W E} {w : W} (h : isNonVacuous (adjClassical N) w (N w)) :
+    R.nounShift N = N :=
+  le_antisymm (R.shift_inert N w h) (R.le_nounShift N)
 
 /-- A reanalysis licenses a coercion at every world where the shifted
     noun renders the reanalysed meaning non-vacuous — the positive
