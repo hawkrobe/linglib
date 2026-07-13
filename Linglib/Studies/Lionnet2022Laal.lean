@@ -182,7 +182,7 @@ def mForm : Representation (Sigma.fst : ((i : Fin 4) × laalTier i) → Fin 4) :
   Representation.ofData laalWords laalSpokes
 
 instance : Fintype mForm.obj.V :=
-  inferInstanceAs (Fintype ((i : Fin 4) × Fin _))
+  inferInstanceAs (Fintype ((_ : Fin 4) × Fin _))
 
 instance (v w : mForm.obj.V) : Decidable (mForm.obj.graph.edges.Adj v w) :=
   inferInstanceAs (Decidable (_ ∧ _))
@@ -210,9 +210,9 @@ def delinkRaised : Representation (Sigma.fst : ((i : Fin 4) × laalTier i) → F
     (TRN↔mora, tier-pair `(2, 3)`) untouched: partial activity is independent
     of full activity — the structural content of [lionnet-2022]'s
     subtonal-feature autonomy, impossible to state on a bundled `TRN`. -/
-instance : Finite mForm.obj.V := inferInstanceAs (Finite ((i : Fin 4) × Fin _))
+instance : Finite mForm.obj.V := inferInstanceAs (Finite ((_ : Fin 4) × Fin _))
 
-instance : Finite delinkRaised.obj.V := inferInstanceAs (Finite ((i : Fin 4) × Fin _))
+instance : Finite delinkRaised.obj.V := inferInstanceAs (Finite ((_ : Fin 4) × Fin _))
 
 theorem partial_indep_of_full (p q : ℕ) :
     delinkRaised.link 2 3 p q ↔ mForm.link 2 3 p q := by
