@@ -378,6 +378,111 @@ theorem Representation.isPlanar_spread (a : α) (bs : List β) :
     IsPlanar (Representation.spread a bs).obj.graph :=
   (Representation.isPlanar_junction_iff _ _).mpr (Or.inl (by simp))
 
+/-- Two-tier factor embedding is a search over two bounded offsets. -/
+theorem Representation.factorEmbeds_iff_two_tier
+    {F X : Representation (Sigma.fst : ((b : Bool) × TwoTier α β b) → Bool)}
+    [Finite F.obj.V] [Finite X.obj.V] :
+    F.FactorEmbeds X ↔
+      ∃ ot ≤ X.tierLength true, ∃ of ≤ X.tierLength false,
+        F.IsFactorAt X (fun b => bif b then ot else of) := by
+  rw [Representation.factorEmbeds_iff_bounded]
+  constructor
+  · rintro ⟨o, hb, hfa⟩
+    refine ⟨o true, hb true, o false, hb false, ?_⟩
+    have he : (fun b => bif b then o true else o false) = o :=
+      funext fun b => by cases b <;> rfl
+    rwa [he]
+  · rintro ⟨ot, hot, of, hof, hfa⟩
+    exact ⟨_, fun b => by cases b <;> simpa, hfa⟩
+
+/-- The data-level factor check: `wsF`/`LF` occurs in `wsX`/`LX` at some pair
+    of bounded offsets — list windows match and links transport shifted. The
+    decidable face of `FactorEmbeds` for `ofData`-presented forms. -/
+def dataEmbeds (wsF wsX : ∀ b : Bool, List (TwoTier α β b))
+    (LF LX : Bool → Bool → ℕ → ℕ → Prop) : Prop :=
+  ∃ ot ≤ (wsX true).length, ∃ of ≤ (wsX false).length,
+    (∀ p < (wsF true).length, (wsX true)[p + ot]? = (wsF true)[p]?) ∧
+    (∀ p < (wsF false).length, (wsX false)[p + of]? = (wsF false)[p]?) ∧
+    ∀ p < (wsF true).length, ∀ q < (wsF false).length,
+      (LF true false p q ∨ LF false true q p) →
+        (LX true false (p + ot) (q + of) ∨ LX false true (q + of) (p + ot))
+
+instance {wsF wsX : ∀ b : Bool, List (TwoTier α β b)}
+    {LF LX : Bool → Bool → ℕ → ℕ → Prop}
+    [DecidableEq α] [DecidableEq β]
+    [∀ i j p q, Decidable (LF i j p q)] [∀ i j p q, Decidable (LX i j p q)] :
+    Decidable (dataEmbeds wsF wsX LF LX) := by
+  unfold dataEmbeds
+  haveI : DecidableEq (TwoTier α β true) := inferInstanceAs (DecidableEq α)
+  haveI : DecidableEq (TwoTier α β false) := inferInstanceAs (DecidableEq β)
+  infer_instance
+
+/-- **The spec**: on `ofData`-presented two-tier forms, factor embedding is the
+    data-level check — the bridge that turns banned-subgraph verdicts into
+    kernel computations. -/
+theorem Representation.factorEmbeds_ofData_iff
+    {wsF wsX : ∀ b : Bool, List (TwoTier α β b)}
+    {LF LX : Bool → Bool → ℕ → ℕ → Prop} :
+    (Representation.ofData wsF LF).FactorEmbeds (Representation.ofData wsX LX) ↔
+      dataEmbeds wsF wsX LF LX := by
+  rw [Representation.factorEmbeds_iff_two_tier]
+  simp only [Representation.tierLength_ofData]
+  constructor
+  · rintro ⟨ot, hot, of, hof, hw, hl⟩
+    refine ⟨ot, hot, of, hof, ?_, ?_, ?_⟩
+    · intro p hp
+      have := hw true p (by rw [Representation.tierLength_ofData]; exact hp)
+      rwa [Representation.tierWord_ofData, Representation.tierWord_ofData] at this
+    · intro p hp
+      have := hw false p (by rw [Representation.tierLength_ofData]; exact hp)
+      rwa [Representation.tierWord_ofData, Representation.tierWord_ofData] at this
+    · intro p hp q hq hpq
+      have hlk := hl true false p q ((Representation.link_ofData true false p q).mpr
+        ⟨by decide, hp, hq, hpq⟩)
+      rcases (Representation.link_ofData true false (p + ot) (q + of)).mp hlk with
+        ⟨-, -, -, hres⟩
+      exact hres
+  · rintro ⟨ot, hot, of, hof, hwt, hwf, hlk⟩
+    have hbt : ∀ p, p < (wsF true).length → p + ot < (wsX true).length := by
+      intro p hp
+      have h1 : (wsX true)[p + ot]? = some ((wsF true)[p]'hp) :=
+        (hwt p hp).trans (List.getElem?_eq_getElem hp)
+      exact (List.getElem?_eq_some_iff.mp h1).1
+    have hbf : ∀ q, q < (wsF false).length → q + of < (wsX false).length := by
+      intro q hq
+      have h1 : (wsX false)[q + of]? = some ((wsF false)[q]'hq) :=
+        (hwf q hq).trans (List.getElem?_eq_getElem hq)
+      exact (List.getElem?_eq_some_iff.mp h1).1
+    refine ⟨ot, hot, of, hof, ?_, ?_⟩
+    · intro i p hp
+      rw [Representation.tierLength_ofData] at hp
+      cases i
+      · rw [show ((Representation.ofData wsX LX).tierWord false)
+            = wsX false from Representation.tierWord_ofData false,
+          show ((Representation.ofData wsF LF).tierWord false)
+            = wsF false from Representation.tierWord_ofData false]
+        exact hwf p hp
+      · rw [show ((Representation.ofData wsX LX).tierWord true)
+            = wsX true from Representation.tierWord_ofData true,
+          show ((Representation.ofData wsF LF).tierWord true)
+            = wsF true from Representation.tierWord_ofData true]
+        exact hwt p hp
+    · intro i j p q hl
+      rcases (Representation.link_ofData i j p q).mp hl with ⟨hne, hp, hq, hor⟩
+      have hcases : i = true ∧ j = false ∨ i = false ∧ j = true := by
+        cases i <;> cases j <;> simp_all
+      rcases hcases with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+      · rcases hlk p hp q hq hor with hres | hres
+        · exact (Representation.link_ofData true false _ _).mpr
+            ⟨by decide, hbt p hp, hbf q hq, Or.inl hres⟩
+        · exact (Representation.link_ofData true false _ _).mpr
+            ⟨by decide, hbt p hp, hbf q hq, Or.inr hres⟩
+      · rcases hlk q hq p hp hor.symm with hres | hres
+        · exact (Representation.link_ofData false true _ _).mpr
+            ⟨by decide, hbf p hp, hbt q hq, Or.inr hres⟩
+        · exact (Representation.link_ofData false true _ _).mpr
+            ⟨by decide, hbf p hp, hbt q hq, Or.inl hres⟩
+
 /-- A timing slot **surfaces with** melody label `a`: some `a`-labelled melody
     node links to it. -/
 def Representation.surfacesWith

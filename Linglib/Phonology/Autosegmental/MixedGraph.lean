@@ -545,6 +545,25 @@ theorem MixedGraphCat.Hom.concatMap_precPreserving (t : S → ι)
   · exact h.elim
   · exact hg h
 
+/-- A vertex with no arc-predecessor: the tier-initial position. -/
+def MixedGraphCat.NoPred (X : MixedGraphCat S) (v : X.V) : Prop :=
+  ∀ u, ¬ X.graph.arcs.Adj u v
+
+/-- Erase every association line incident to a tier-`i₀`-initial vertex — the
+    graph model of an initial-position delinking process (e.g. lenition
+    targeting the word-initial slot). Arcs and labels are untouched. -/
+def MixedGraphCat.delinkMin (t : S → ι) (i₀ : ι) (X : MixedGraphCat S) :
+    MixedGraphCat S where
+  V := X.V
+  graph :=
+    { edges :=
+        { Adj := fun v w => X.graph.edges.Adj v w ∧
+            ¬ (X.tier t v = i₀ ∧ X.NoPred v) ∧ ¬ (X.tier t w = i₀ ∧ X.NoPred w)
+          symm := ⟨fun _ _ h => ⟨h.1.symm, h.2.2, h.2.1⟩⟩
+          loopless := ⟨fun v h => X.graph.edges.loopless.irrefl v h.1⟩ }
+      arcs := X.graph.arcs }
+  label := X.label
+
 /-! ### The category of autosegmental representations -/
 
 variable (t : S → ι)
@@ -664,6 +683,50 @@ instance : (precPreserving (t := t)).IsMonoidalStable where
   leftUnitor_inv_mem A := (MixedGraphCat.emptyConcatIso t A.obj).symm.toHom_precPreserving
   rightUnitor_hom_mem A := (MixedGraphCat.concatEmptyIso t A.obj).toHom_precPreserving
   rightUnitor_inv_mem A := (MixedGraphCat.concatEmptyIso t A.obj).symm.toHom_precPreserving
+
+/-- Delinking preserves the structural axioms: arcs are untouched and the
+    edge set shrinks. -/
+def delinkMinRep (i₀ : ι) (X : Representation t) : Representation t :=
+  ⟨MixedGraphCat.delinkMin t i₀ X.obj,
+    ⟨X.property.1.tier_eq, X.property.1.total, X.property.1.irrefl, X.property.1.trans⟩,
+    fun _ _ hadj harc => X.property.2 hadj.1 harc⟩
+
+open CategoryTheory in
+/-- **Initial-position delinking is an endofunctor of the precedence-preserving
+    wide subcategory**: an arc-preserving morphism transports tier-initiality
+    for free (an arc into `v` maps to an arc into `f v`), so the delinked edge
+    conditions carry over. On the broad category the lift fails — a
+    label-preserving reindexing can move a non-initial vertex into initial
+    position (`Studies/LaoideKemp2026`'s counterexample). -/
+def delinkMinFunctor (i₀ : ι) :
+    WideSubcategory (Representation.precPreserving (t := t)) ⥤
+      WideSubcategory (Representation.precPreserving (t := t)) where
+  obj X := ⟨delinkMinRep i₀ X.obj⟩
+  map {X Y} f :=
+    ⟨InducedCategory.homMk
+      { toFun := f.hom.hom.toFun
+        edge_map := by
+          rintro v w ⟨hadj, hv, hw⟩
+          refine ⟨f.hom.hom.edge_map hadj, ?_, ?_⟩
+          · rintro ⟨htier, hmin⟩
+            refine hv ⟨?_, fun u hu => hmin (f.hom.hom.toFun u) (f.property hu)⟩
+            rw [show X.obj.obj.tier t v = Y.obj.obj.tier t (f.hom.hom.toFun v) from
+              (congrArg t (f.hom.hom.label_comp v)).symm]
+            exact htier
+          · rintro ⟨htier, hmin⟩
+            refine hw ⟨?_, fun u hu => hmin (f.hom.hom.toFun u) (f.property hu)⟩
+            rw [show X.obj.obj.tier t w = Y.obj.obj.tier t (f.hom.hom.toFun w) from
+              (congrArg t (f.hom.hom.label_comp w)).symm]
+            exact htier
+        label_comp := f.hom.hom.label_comp }, f.property⟩
+  map_id X := by
+    apply WideSubcategory.hom_ext
+    apply InducedCategory.hom_ext
+    rfl
+  map_comp f g := by
+    apply WideSubcategory.hom_ext
+    apply InducedCategory.hom_ext
+    rfl
 
 end Representation
 

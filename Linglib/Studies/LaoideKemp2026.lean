@@ -424,7 +424,7 @@ theorem laoideKemp_fig1_fig5 :
 /-! ## §10 Modularity: the analysis lives in the monoidal subcategory
 
 [laoide-kemp-2026]'s strict-modularity thesis, formalised against the
-monoidal-subcategory framework (`Autosegmental.WellFormedAR`).
+monoidal category of representations.
 Three theorems, one per modular commitment: the morpheme is *composed*
 by the monoidal product `⊗ = concat` (not inserted by a non-local
 rule); the composition *preserves well-formedness* because the
@@ -732,9 +732,9 @@ theorem dPrimeSurfaces_withHist_concat_right (stem suffix : FloatingForm CVKind 
 
 The deepest categorical content: morpheme *prefixation* is not merely a
 function on representations but an **endofunctor on the monoidal
-category** `WellFormedAR` — mathlib's `tensorLeft`. This consumes the full
-`MonoidalCategory (WellFormedAR α β)` instance (not merely the `concat`
-operation), and the **associativity of prefixation** is `WellFormedAR`'s
+category** of representations — mathlib's `tensorLeft`. This consumes the
+full `MonoidalCategory (Representation t)` instance (not merely the tensor
+operation), and the **associativity of prefixation** is the category's
 associator, exhibited by `tensorLeftTensor` — a natural isomorphism
 that does not exist without coherence (pentagon + triangle).
 
@@ -743,10 +743,10 @@ not right: the categorical encoding of the morpheme's **directionality**
 as a preverbal particle rather than a suffix.
 
 The remaining Layer-2 frontier — modelling *lenition* and *docking*
-themselves as functors `WellFormedAR ⥤ WellFormedAR` (acting on morphisms, not just
+themselves as endofunctors of the representation category (acting on morphisms, not just
 objects) — is left open. The conjecture is that they are functorial
 only over the precedence-preserving `Graph.SubgraphEmbeds`, not over
-all of `AR.Hom`; settling it either way is a genuine result. The
+all broad morphisms; `delinkMinFunctor` settles the lenition case. The
 extensional content (no look-ahead) is fully captured by
 `dPrimeSurfaces_withHist_concat_right` above: for any suffix, whether
 `(d)` surfaces depends only on the stem's left edge. -/
@@ -763,9 +763,9 @@ def historicExponentRep :
     ⊥
 
 open CategoryTheory MonoidalCategory in
-/-- **The historic morpheme is an endofunctor on `WellFormedAR`.** Prefixing `(d)`
+/-- **The historic morpheme is an endofunctor of the representation category.** Prefixing `(d)`
     is left-tensoring by `historicExponentAR` — mathlib's `tensorLeft`,
-    which exists only because `WellFormedAR` is a `MonoidalCategory`. Left- rather
+    which exists only because the category is monoidal. Left- rather
     than right-tensoring encodes the morpheme's directionality as a
     preverbal particle. -/
 def withHistFunctor :
@@ -786,9 +786,9 @@ theorem withHistFunctor_obj
 open CategoryTheory MonoidalCategory in
 /-- **Associativity of prefixation is the associator.** This natural
     isomorphism — prefixing the compound `(d) ⊗ X` equals prefixing `X`
-    then prefixing `(d)` — is built from `WellFormedAR`'s associator, so it does
+    then prefixing `(d)` — is built from the category's associator, so it does
     not exist unless the monoidal structure is *coherent* (pentagon +
-    triangle). It is the concrete artifact that makes `WellFormedAR`'s coherence
+    triangle). It is the concrete artifact that makes the monoidal coherence
     load-bearing rather than decorative. -/
 noncomputable def prefixAssoc
     (X : Representation (Sigma.fst :
@@ -807,9 +807,9 @@ association lines to the leftmost (word-initial) skeletal slot.
 
 The answer is a sharp dichotomy. `delinkInitial` is **not** a functor on
 the full category `AR α β`: a label-preserving reindexing
-(`AR.Hom`) can move a non-initial element into initial position, after
+(a broad `MixedGraphCat.Hom`) can move a non-initial element into initial position, after
 which there is *no* morphism between the delinked images at all
-(`delinkInitial_not_functorial`). But over `PrecAR`, the
+(`delinkInitial_not_functorial`). But over the precedence-preserving wide subcategory, the
 **precedence-preserving wide subcategory** (`Autosegmental/Embedding.lean`:
 order-embedding tier maps; `SubgraphEmbeds` translations are canonical
 instances), it lifts to a genuine endofunctor `delinkInitialFunctor`
@@ -820,110 +820,85 @@ linguistic fact that lenition targets the *word-initial* consonant: the
 process is functorial over exactly the maps that preserve precedence. -/
 
 section Frontier
-variable {α β : Type*}
 
-/-- The model of `{L}`-lenition: erase the association lines to the
-    leftmost (slot-0) skeletal position. Erasing links preserves
-    in-boundedness, so it is an endomap of `AR`. -/
-def delinkInitial (A : AR α β) : AR α β where
-  toGraph := { A.toGraph with links := A.links.filter (fun p => p.snd ≠ 0) }
-  inBounds p hp := A.inBounds p (Finset.mem_of_mem_filter p hp)
+open Autosegmental
 
-@[simp] theorem delinkInitial_links (A : AR α β) :
-    (delinkInitial A).links = A.links.filter (fun p => p.snd ≠ 0) := rfl
+/-- Lenition's structural model on the foundation: erase the association
+    lines at the word-initial (tier-initial) skeletal position —
+    `MixedGraphCat.delinkMin`. Its functoriality over precedence-preserving
+    morphisms is the substrate theorem `Autosegmental.delinkMinFunctor`;
+    here we exhibit the **negative half**: on the broad category the lift
+    fails, because a label-preserving reindexing can move a non-initial
+    slot into initial position. -/
+private abbrev negA :
+    Representation (Sigma.fst : ((b : Bool) × TwoTier Unit Bool b) → Bool) :=
+  Representation.ofData
+    (fun b => match b with
+      | true => ([()] : List (TwoTier Unit Bool true))
+      | false => [false, true])
+    (fun i j p q => i = true ∧ j = false ∧ p = 0 ∧ q = 1)
 
-/-- **`delinkInitial` is functorial over precedence-preserving morphisms.**
-    An `AR.Hom` that *reflects slot 0* (never maps a non-initial slot to
-    slot 0) lifts to a morphism between the delinked graphs, with the same
-    index maps. Precedence-preserving `SubgraphEmbeds` translations satisfy
-    the hypothesis: a translation sends slot `j` to `j + δ`, which is `0`
-    only when `j = 0`. -/
-def delinkInitial_map {A B : AR α β} (f : AR.Hom A B)
-    (hf : ∀ (j : Fin A.lower.len), (f.fL.toFun j : ℕ) = 0 → (j : ℕ) = 0) :
-    AR.Hom (delinkInitial A) (delinkInitial B) where
-  fU := f.fU
-  fL := f.fL
-  links_preserve {i j} hi hj h := by
-    rw [delinkInitial_links, Finset.mem_filter] at h ⊢
-    obtain ⟨hmem, hne⟩ := h
-    exact ⟨f.links_preserve hi hj hmem, fun h0 => hne (hf ⟨j, hj⟩ h0)⟩
+private abbrev negB :
+    Representation (Sigma.fst : ((b : Bool) × TwoTier Unit Bool b) → Bool) :=
+  Representation.ofData
+    (fun b => match b with
+      | true => ([()] : List (TwoTier Unit Bool true))
+      | false => [true, false])
+    (fun i j p q => i = true ∧ j = false ∧ p = 0 ∧ q = 0)
 
-/-- Functor law: `delinkInitial_map` preserves identities. -/
-theorem delinkInitial_map_id (A : AR α β) :
-    delinkInitial_map (AR.Hom.id A) (fun _ h => h) = AR.Hom.id (delinkInitial A) := by
-  apply AR.Hom.ext <;> rfl
+/-- The label-preserving swap of the two skeletal slots: a broad morphism
+    (it does not preserve precedence). -/
+private def negSwap : MixedGraphCat.Hom negA.obj negB.obj where
+  toFun v := match v with
+    | ⟨true, p⟩ => ⟨true, p⟩
+    | ⟨false, ⟨0, _⟩⟩ => ⟨false, ⟨1, by decide⟩⟩
+    | ⟨false, ⟨1, _⟩⟩ => ⟨false, ⟨0, by decide⟩⟩
+  edge_map := by
+    rintro ⟨bv, p⟩ ⟨bw, q⟩ ⟨hne, hor⟩
+    rcases hor with ⟨rfl, rfl, hp, hq⟩ | ⟨rfl, rfl, hp, hq⟩
+    · obtain rfl : p = ⟨0, by decide⟩ := Fin.ext hp
+      obtain rfl : q = ⟨1, by decide⟩ := Fin.ext hq
+      exact ⟨by decide, Or.inl ⟨rfl, rfl, rfl, rfl⟩⟩
+    · obtain rfl : q = ⟨0, by decide⟩ := Fin.ext hp
+      obtain rfl : p = ⟨1, by decide⟩ := Fin.ext hq
+      exact ⟨by decide, Or.inr ⟨rfl, rfl, rfl, rfl⟩⟩
+  label_comp := by
+    rintro ⟨bv, p⟩
+    cases bv
+    · match p with
+      | ⟨0, _⟩ => rfl
+      | ⟨1, _⟩ => rfl
+    · rfl
 
-/-- Functor law: `delinkInitial_map` preserves composition. -/
-theorem delinkInitial_map_comp {A B C : AR α β} (f : AR.Hom A B) (g : AR.Hom B C)
-    (hf : ∀ (j : Fin A.lower.len), (f.fL.toFun j : ℕ) = 0 → (j : ℕ) = 0)
-    (hg : ∀ (j : Fin B.lower.len), (g.fL.toFun j : ℕ) = 0 → (j : ℕ) = 0)
-    (hfg : ∀ (j : Fin A.lower.len), ((f.comp g).fL.toFun j : ℕ) = 0 → (j : ℕ) = 0) :
-    delinkInitial_map (f.comp g) hfg =
-      (delinkInitial_map f hf).comp (delinkInitial_map g hg) := by
-  apply AR.Hom.ext <;> rfl
-
-open CategoryTheory in
-/-- **`delinkInitial` is an endofunctor of the precedence-preserving subcategory
-    `PrecAR`** (`Autosegmental/Embedding.lean`). Lenition lifts to a morphism
-    exactly when the reindexing preserves precedence — `delinkInitial_not_functorial`
-    shows it fails on the full `AR`. The object endomap is `delinkInitial`, the
-    morphism action `delinkInitial_map`; precedence-preservation transports for free
-    because `delinkInitial_map` keeps the tier maps unchanged. This makes "lenition
-    respects linear adjacency" a typed theorem ([jardine-2017] Ch. 7's process-as-
-    graph-relation view, here in categorical form). -/
-def delinkInitialFunctor : PrecAR α β ⥤ PrecAR α β where
-  obj A := ⟨delinkInitial A.obj⟩
-  map {_ _} f := ⟨delinkInitial_map f.hom (precPreserving.reflects_zero f.property), f.property⟩
-  map_id A := by apply WideSubcategory.hom_ext; exact delinkInitial_map_id A.obj
-  map_comp f g := by
-    apply WideSubcategory.hom_ext
-    exact delinkInitial_map_comp f.hom g.hom
-      (precPreserving.reflects_zero f.property)
-      (precPreserving.reflects_zero g.property)
-      (precPreserving.reflects_zero (precPreserving.comp_mem _ _ f.property g.property))
+/-- **Delinking is not functorial on the broad category**: `negSwap` is a
+    morphism, yet the delinked images admit no morphism at all — the
+    surviving slot-1 link of `negA` lands on `negB`'s initial slot, which
+    delinking erased. The obstruction is precisely failure to preserve
+    precedence (`Autosegmental.delinkMinFunctor` lifts it otherwise). -/
+theorem delinkInitial_not_functorial :
+    IsEmpty (MixedGraphCat.Hom
+      (MixedGraphCat.delinkMin Sigma.fst false negA.obj)
+      (MixedGraphCat.delinkMin Sigma.fst false negB.obj)) := by
+  refine ⟨fun g => ?_⟩
+  let v1 : negA.obj.V := ⟨true, ⟨0, by decide⟩⟩
+  let w1 : negA.obj.V := ⟨false, ⟨1, by decide⟩⟩
+  have hsurv : (MixedGraphCat.delinkMin Sigma.fst false negA.obj).graph.edges.Adj v1 w1 := by
+    refine ⟨⟨by decide, Or.inl ⟨rfl, rfl, rfl, rfl⟩⟩, ?_, ?_⟩
+    · rintro ⟨h, -⟩
+      exact absurd h (by decide)
+    · rintro ⟨-, hmin⟩
+      exact hmin ⟨false, ⟨0, by decide⟩⟩ ⟨rfl, by decide⟩
+  have htw : (g.toFun w1).1 = false := congrArg Sigma.fst (g.label_comp w1)
+  obtain ⟨⟨-, hor⟩, hv, hw⟩ := g.edge_map hsurv
+  rcases hor with ⟨-, -, -, hq⟩ | ⟨ht, -, -, -⟩
+  · -- the image link lands on negB's initial slot: contradiction with delinking
+    refine hw ⟨htw, fun u hu => ?_⟩
+    have h2 : (u.2 : ℕ) < ((g.toFun w1).2 : ℕ) := hu.2
+    omega
+  · -- the symmetric orientation contradicts label preservation
+    exact absurd (htw.symm.trans ht) (by decide)
 
 end Frontier
-
-/-! ### The negative counterexample -/
-
-private def negA : AR ℕ ℕ := ⟨⟨.ofList [0], .ofList [0, 1], {(0, 1)}⟩, by decide⟩
-private def negB : AR ℕ ℕ := ⟨⟨.ofList [0], .ofList [1, 0], {(0, 0)}⟩, by decide⟩
-
-/-- A label-preserving reindexing that **swaps** the two skeletal slots,
-    moving the slot-1 element into initial position. A valid `AR.Hom`
-    that does *not* reflect slot 0 (`fL 1 = 0`). The `Fin`-indexed maps
-    need no canonical-shift bookkeeping. -/
-private def negSwap : AR.Hom negA negB where
-  fU := ⟨_root_.id, by decide⟩
-  fL := ⟨fun j => if (j : ℕ) = 0 then ⟨1, by decide⟩ else ⟨0, by decide⟩, by decide⟩
-  links_preserve := by
-    intro i j hi hj h
-    have hij : (i, j) = (0, 1) := by
-      have : (i, j) ∈ ({(0, 1)} : Finset (ℕ × ℕ)) := h
-      simpa using this
-    obtain ⟨rfl, rfl⟩ := Prod.mk.injEq .. ▸ hij
-    show ((0 : ℕ), (0 : ℕ)) ∈ negB.links
-    decide
-
-/-- **`delinkInitial` is not a functor on the full category.** `negSwap`
-    is a morphism `negA → negB`, yet after delinking there is *no* morphism
-    `delinkInitial negA → delinkInitial negB` at all: the surviving slot-1
-    link of `negA` has been moved onto slot 0 of `negB`, which delinking
-    erases, so link-preservation becomes impossible. A functor would have
-    to supply such a morphism; none exists. The positive
-    `delinkInitial_map` shows the obstruction is exactly the failure to
-    preserve precedence. -/
-theorem delinkInitial_not_functorial :
-    ∃ (A B : AR ℕ ℕ) (_ : AR.Hom A B),
-      IsEmpty (AR.Hom (delinkInitial A) (delinkInitial B)) :=
-  ⟨negA, negB, negSwap, ⟨fun g => by
-    have hp : ((0, 1) : ℕ × ℕ) ∈ (delinkInitial negA).links := by decide
-    have hi : (0 : ℕ) < (delinkInitial negA).upper.len := by decide
-    have hj : (1 : ℕ) < (delinkInitial negA).lower.len := by decide
-    have h := g.links_preserve hi hj hp
-    have hempty : (delinkInitial negB).links = ∅ := by decide
-    rw [hempty] at h
-    simp at h⟩⟩
 
 /-! ## §12 The strict-modularity payoff
 

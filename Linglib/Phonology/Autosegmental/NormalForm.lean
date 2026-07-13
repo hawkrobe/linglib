@@ -542,6 +542,64 @@ def Representation.IsFactorAt [Finite F.obj.V] [Finite X.obj.V] (o : ι → ℕ)
 def Representation.FactorEmbeds [Finite F.obj.V] [Finite X.obj.V] : Prop :=
   ∃ o : ι → ℕ, F.IsFactorAt X o
 
+/-- Offsets clamp to the host's tier lengths: `FactorEmbeds` is a bounded
+    search. On tiers where the factor is nonempty the word-window condition
+    already forces the bound; empty factor tiers accept any offset, so `min`
+    clamps them harmlessly. -/
+theorem Representation.factorEmbeds_iff_bounded
+    {F X : Representation (Sigma.fst : ((i : ι) × τ i) → ι)}
+    [Finite F.obj.V] [Finite X.obj.V] :
+    F.FactorEmbeds X ↔
+      ∃ o : ι → ℕ, (∀ i, o i ≤ X.tierLength i) ∧ F.IsFactorAt X o := by
+  constructor
+  · rintro ⟨o, hw, hl⟩
+    refine ⟨fun i => min (o i) (X.tierLength i), fun i => min_le_right _ _, fun i p hp => ?_,
+      fun i j p q h => ?_⟩
+    · have horig := hw i p hp
+      show (X.tierWord i)[p + min (o i) (X.tierLength i)]? = (F.tierWord i)[p]?
+      rcases le_or_gt (o i) (X.tierLength i) with hle | hgt
+      · rwa [Nat.min_eq_left hle]
+      · exfalso
+        have hnone : (X.tierWord i)[p + o i]? = none := by
+          rw [List.getElem?_eq_none_iff]
+          simp only [Representation.length_tierWord]
+          omega
+        have hsome : p < (F.tierWord i).length := by
+          simpa [Representation.length_tierWord] using hp
+        rw [hnone, List.getElem?_eq_some_iff.mpr ⟨hsome, rfl⟩] at horig
+        simp at horig
+    · obtain ⟨hpb, hqb, -⟩ := id (hl i j p q h)
+      have h' := hl i j p q h
+      have hoi : min (o i) (X.tierLength i) = o i := by
+        have := hw i p (by obtain ⟨hp', -, -⟩ := id h; omega)
+        rcases le_or_gt (o i) (X.tierLength i) with hle | hgt
+        · exact Nat.min_eq_left hle
+        · exfalso
+          obtain ⟨hpX, -, -⟩ := id h'
+          omega
+      have hoj : min (o j) (X.tierLength j) = o j := by
+        rcases le_or_gt (o j) (X.tierLength j) with hle | hgt
+        · exact Nat.min_eq_left hle
+        · exfalso
+          obtain ⟨-, hqX, -⟩ := id h'
+          omega
+      show X.link i j (p + min (o i) (X.tierLength i)) (q + min (o j) (X.tierLength j))
+      rw [hoi, hoj]
+      exact h'
+  · rintro ⟨o, -, hfa⟩
+    exact ⟨o, hfa⟩
+
+/-- Link conditions are supported on the factor's tier ranges. -/
+theorem Representation.forall_link_iff_bounded
+    {F : Representation (Sigma.fst : ((i : ι) × τ i) → ι)} [Finite F.obj.V]
+    {C : ι → ι → ℕ → ℕ → Prop} :
+    (∀ i j p q, F.link i j p q → C i j p q) ↔
+      ∀ i j, ∀ p < F.tierLength i, ∀ q < F.tierLength j,
+        F.link i j p q → C i j p q := by
+  refine ⟨fun h i j p _ q _ hl => h i j p q hl, fun h i j p q hl => ?_⟩
+  obtain ⟨hp, hq, -⟩ := id hl
+  exact h i j p hp q hq hl
+
 /-- `X` avoids every forbidden factor of a banned-subgraph grammar
     ([jardine-2016-diss] Ch. 5's `L^NL_G`). -/
 def Representation.Free [Finite X.obj.V]

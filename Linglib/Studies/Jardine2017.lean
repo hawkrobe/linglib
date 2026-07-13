@@ -99,157 +99,154 @@ inductive TBU
   | bdry
   deriving DecidableEq, Repr
 
-/-- An autosegmental representation in Jardine 2017's sense:
-    `Graph Tone TBU`. Upper tier is tones (with implicit precedence
-    by list order); lower tier is TBUs; links are association lines. -/
-abbrev AR := Graph Tone TBU
+/-- An autosegmental representation in Jardine 2017's sense, on the graph
+    foundation: tones over TBUs (with implicit precedence by position),
+    links as association lines. -/
+abbrev ARep := Autosegmental.Representation
+  (Sigma.fst : ((b : Bool) × Autosegmental.TwoTier Tone TBU b) → Bool)
+
+/-- Link presentations from finite pair lists (melody position, TBU position). -/
+def mkL (links : List (ℕ × ℕ)) (i j : Bool) (p q : ℕ) : Prop :=
+  i = true ∧ j = false ∧ (p, q) ∈ links
+
+instance (links : List (ℕ × ℕ)) (i j : Bool) (p q : ℕ) :
+    Decidable (mkL links i j p q) :=
+  inferInstanceAs (Decidable (_ ∧ _ ∧ _))
+
+/-- Build a representation from a tone melody, a TBU string, and links. -/
+abbrev mk (tones : List Tone) (tbus : List TBU) (links : List (ℕ × ℕ)) : ARep :=
+  Autosegmental.Representation.ofData
+    (fun b => match b with
+      | true => (tones : List (Autosegmental.TwoTier Tone TBU true))
+      | false => tbus)
+    (mkL links)
+
+open Autosegmental in
+/-- Non-embedding verdicts compute: the spec plus kernel evaluation. -/
+theorem mk_embeds_iff {tF tX : List Tone} {bF bX : List TBU}
+    {lF lX : List (ℕ × ℕ)} :
+    (mk tF bF lF).FactorEmbeds (mk tX bX lX) ↔
+      dataEmbeds
+        (fun b => match b with
+          | true => (tF : List (Autosegmental.TwoTier Tone TBU true))
+          | false => bF)
+        (fun b => match b with
+          | true => (tX : List (Autosegmental.TwoTier Tone TBU true))
+          | false => bX)
+        (mkL lF) (mkL lX) :=
+  Representation.factorEmbeds_ofData_iff
 
 /-! ## §2 Mende: right-edge multiple association
 [jardine-2017] §3.1, eq. (5)
 
 In Mende, tonal *plateaus* (a single tone associated to multiple
 syllables) and contour tones (multiple tones on one syllable) are
-restricted to the right word edge. The HLL melody surfacing on a
-trisyllabic word like `félàmà` 'junction' arises from L's right-edge
-spread to syllables 2 and 3.
--/
+restricted to the right word edge. -/
 
 namespace Mende
 
-/-- `mbû` 'owl' (1σ, HL contour). Both H and L associate to the
-    single syllable. Contour at the right edge — the only edge. -/
-def mbû : AR := (Autosegmental.AR.contour [Tone.H, Tone.L] TBU.σ).toGraph
+/-- `mbû` 'owl' (1σ, HL contour). -/
+abbrev mbû : ARep := mk [Tone.H, Tone.L] [TBU.σ] [(0, 0), (1, 0)]
 
 /-- `ngìlà` 'dog' (2σ, HL melody, one tone per syllable). -/
-def ngìlà : AR := (Autosegmental.AR.single Tone.H TBU.σ * Autosegmental.AR.single Tone.L TBU.σ).toGraph
+abbrev ngìlà : ARep := mk [Tone.H, Tone.L] [TBU.σ, TBU.σ] [(0, 0), (1, 1)]
 
-/-- `félàmà` 'junction' (3σ, HL melody with L-spread to right two
-    syllables: HLL surface). The diagnostic case for Mende: L
-    spreads at the *right* edge. -/
-def félàmà : AR :=
-  (Autosegmental.AR.single Tone.H TBU.σ * Autosegmental.AR.spread Tone.L [TBU.σ, TBU.σ]).toGraph
+/-- `félàmà` 'junction' (3σ, HL melody with L-spread to the right two
+    syllables: HLL surface). The diagnostic case for Mende. -/
+abbrev félàmà : ARep := mk [Tone.H, Tone.L] [TBU.σ, TBU.σ, TBU.σ] [(0, 0), (1, 1), (1, 2)]
 
-/-! ### §2.1 Forbidden subgraphs ([jardine-2017] eq. 21)
+/-- **(21a) non-final H spreading**: an H linked to two consecutive σs with an
+    L following on the tonal tier. -/
+abbrev forbidden_nonfinal_H : ARep := mk [Tone.H, Tone.L] [TBU.σ, TBU.σ] [(0, 0), (0, 1)]
 
-The Mende grammar is the conjunction of three forbidden subgraphs.
-Each subgraph captures one structural configuration that doesn't
-appear in any well-formed Mende AR.
--/
+/-- **(21b) non-final L spreading** (mirror). -/
+abbrev forbidden_nonfinal_L : ARep := mk [Tone.L, Tone.H] [TBU.σ, TBU.σ] [(0, 0), (0, 1)]
 
-/-- **(21a) non-final H spreading**: `¬ H→L : σ σ`. An H tone linked
-    to two consecutive σs, with an L tone following on the tonal
-    tier. The L's presence is what makes the H "non-final" — there's
-    another tone to its right. -/
-def forbidden_nonfinal_H : AR :=
-  (Autosegmental.AR.spread Tone.H [TBU.σ, TBU.σ] * Autosegmental.AR.float Tone.L).toGraph
+/-- **(21c) non-final contour**: an HL contour on a σ with another σ
+    following. -/
+abbrev forbidden_nonfinal_contour : ARep :=
+  mk [Tone.H, Tone.L] [TBU.σ, TBU.σ] [(0, 0), (1, 0)]
 
-/-- **(21b) non-final L spreading**: `¬ L→H : σ σ`. An L tone linked
-    to two consecutive σs, with an H tone following. -/
-def forbidden_nonfinal_L : AR :=
-  (Autosegmental.AR.spread Tone.L [TBU.σ, TBU.σ] * Autosegmental.AR.float Tone.H).toGraph
+/-! ### §2.2 Attested forms satisfy the Mende grammar ([jardine-2017] §5.1) -/
 
-/-- **(21c) non-final contour**: `¬ H L : σ→σ`. A contour (H and L
-    both linked to one σ), with another σ following on the TBU tier.
-    The trailing σ makes the contour-bearing σ "non-final". -/
-def forbidden_nonfinal_contour : AR :=
-  (Autosegmental.AR.contour [Tone.H, Tone.L] TBU.σ * Autosegmental.AR.bare TBU.σ).toGraph
+theorem mbû_no_nonfinal_H : ¬ forbidden_nonfinal_H.FactorEmbeds mbû := by
+  rw [mk_embeds_iff]; decide
 
-/-- The Mende grammar's forbidden block patterns ([jardine-2017] (21a–c)): a
-    form is well-formed iff it is `Graph.Free` of all three. -/
-def mendeForbidden : List AR :=
-  [forbidden_nonfinal_H, forbidden_nonfinal_L, forbidden_nonfinal_contour]
+theorem mbû_no_nonfinal_L : ¬ forbidden_nonfinal_L.FactorEmbeds mbû := by
+  rw [mk_embeds_iff]; decide
 
-/-! ### §2.2 Attested forms satisfy the Mende grammar
+theorem mbû_no_nonfinal_contour : ¬ forbidden_nonfinal_contour.FactorEmbeds mbû := by
+  rw [mk_embeds_iff]; decide
 
-Each attested form is well-formed under the Mende grammar iff it
-does not contain any forbidden subgraph. By `SubgraphEmbeds`, this
-is `decide`-checkable.
--/
+theorem ngìlà_no_nonfinal_H : ¬ forbidden_nonfinal_H.FactorEmbeds ngìlà := by
+  rw [mk_embeds_iff]; decide
 
-/-- `mbû` (HL contour on 1σ) — well-formed. -/
-theorem mbû_no_nonfinal_H : ¬ SubgraphEmbeds forbidden_nonfinal_H mbû := by decide
-theorem mbû_no_nonfinal_L : ¬ SubgraphEmbeds forbidden_nonfinal_L mbû := by decide
-theorem mbû_no_nonfinal_contour : ¬ SubgraphEmbeds forbidden_nonfinal_contour mbû := by decide
+theorem ngìlà_no_nonfinal_L : ¬ forbidden_nonfinal_L.FactorEmbeds ngìlà := by
+  rw [mk_embeds_iff]; decide
 
-/-- `ngìlà` (HL on 2σ, one tone per σ) — well-formed. -/
-theorem ngìlà_no_nonfinal_H : ¬ SubgraphEmbeds forbidden_nonfinal_H ngìlà := by decide
-theorem ngìlà_no_nonfinal_L : ¬ SubgraphEmbeds forbidden_nonfinal_L ngìlà := by decide
 theorem ngìlà_no_nonfinal_contour :
-    ¬ SubgraphEmbeds forbidden_nonfinal_contour ngìlà := by decide
+    ¬ forbidden_nonfinal_contour.FactorEmbeds ngìlà := by
+  rw [mk_embeds_iff]; decide
 
-/-- `félàmà` (HLL on 3σ via L-spread to final two σs) — the key
-    well-formedness check. L is multiply associated, but the spread
-    is to the *right edge*; no forbidden subgraph embeds. -/
-theorem félàmà_no_nonfinal_H : ¬ SubgraphEmbeds forbidden_nonfinal_H félàmà := by decide
-theorem félàmà_no_nonfinal_L : ¬ SubgraphEmbeds forbidden_nonfinal_L félàmà := by decide
+theorem félàmà_no_nonfinal_H : ¬ forbidden_nonfinal_H.FactorEmbeds félàmà := by
+  rw [mk_embeds_iff]; decide
+
+theorem félàmà_no_nonfinal_L : ¬ forbidden_nonfinal_L.FactorEmbeds félàmà := by
+  rw [mk_embeds_iff]; decide
+
 theorem félàmà_no_nonfinal_contour :
-    ¬ SubgraphEmbeds forbidden_nonfinal_contour félàmà := by decide
-
-/-- All three Mende attested forms satisfy the full Mende grammar: each is
-    `Graph.Free` of `mendeForbidden` (none of the three forbidden subgraphs
-    embeds into any of them). [jardine-2017] §5.1, the main empirical claim. -/
-theorem mende_grammar_admits_attested :
-    mbû.Free mendeForbidden ∧ ngìlà.Free mendeForbidden ∧ félàmà.Free mendeForbidden := by
-  decide
+    ¬ forbidden_nonfinal_contour.FactorEmbeds félàmà := by
+  rw [mk_embeds_iff]; decide
 
 end Mende
 
-/-! ## §3 Hausa: left-edge multiple association
-[jardine-2017] eq. (7), (22)
-
-Hausa is the *mirror* of Mende: multiple association occurs only at
-the left edge. `háantúnàa` 'noses' has HHL surface — the H spreads
-*leftward* to the first two syllables.
--/
+/-! ## §3 Hausa: left-edge multiple association ([jardine-2017] eq. (7), (22)) -/
 
 namespace Hausa
 
 /-- `fáadi` 'fall' (2σ, HL melody one-to-one). -/
-def fáadi : AR := (Autosegmental.AR.single Tone.H TBU.σ * Autosegmental.AR.single Tone.L TBU.σ).toGraph
+abbrev fáadi : ARep := mk [Tone.H, Tone.L] [TBU.σ, TBU.σ] [(0, 0), (1, 1)]
 
-/-- `háantúnàa` 'noses' (3σ, HHL — H spreads at the *left* edge to
-    the first two syllables). The Hausa diagnostic. -/
-def háantúnàa : AR :=
-  (Autosegmental.AR.spread Tone.H [TBU.σ, TBU.σ] * Autosegmental.AR.single Tone.L TBU.σ).toGraph
+/-- `háantúnàa` 'noses' (3σ, HHL — H spreads at the *left* edge). -/
+abbrev háantúnàa : ARep :=
+  mk [Tone.H, Tone.L] [TBU.σ, TBU.σ, TBU.σ] [(0, 0), (0, 1), (1, 2)]
 
-/-! ### §3.1 Forbidden subgraphs ([jardine-2017] eq. 22)
-
-Hausa's grammar is the mirror of Mende's: non-*initial* multiple
-association is forbidden. The first two subgraphs match an L
-preceding an H linked to two σs (non-initial H spreading) and
-mirror; the third forbids a non-initial contour.
--/
-
-/-- **(22a) non-initial H spreading**: `¬ L→H : σ σ`. An L on the
-    tonal tier followed by an H linked to two σs — the H is
-    non-initial (preceded by L). -/
-def forbidden_noninitial_H : AR :=
-  ((Autosegmental.AR.float Tone.L : Autosegmental.AR Tone TBU) * Autosegmental.AR.spread Tone.H [TBU.σ, TBU.σ]).toGraph
+/-- **(22a) non-initial H spreading**: an L preceding an H linked to two σs. -/
+abbrev forbidden_noninitial_H : ARep :=
+  mk [Tone.L, Tone.H] [TBU.σ, TBU.σ] [(1, 0), (1, 1)]
 
 /-- **(22b) non-initial L spreading** (mirror). -/
-def forbidden_noninitial_L : AR :=
-  ((Autosegmental.AR.float Tone.H : Autosegmental.AR Tone TBU) * Autosegmental.AR.spread Tone.L [TBU.σ, TBU.σ]).toGraph
+abbrev forbidden_noninitial_L : ARep :=
+  mk [Tone.H, Tone.L] [TBU.σ, TBU.σ] [(1, 0), (1, 1)]
 
-/-- **(22c) non-initial contour**: a σ preceded by another σ on
-    the TBU tier, with a contour H L linked to the second σ. -/
-def forbidden_noninitial_contour : AR :=
-  ((Autosegmental.AR.bare TBU.σ : Autosegmental.AR Tone TBU) * Autosegmental.AR.contour [Tone.H, Tone.L] TBU.σ).toGraph
+/-- **(22c) non-initial contour**: a σ preceded by another σ, bearing an HL
+    contour. -/
+abbrev forbidden_noninitial_contour : ARep :=
+  mk [Tone.H, Tone.L] [TBU.σ, TBU.σ] [(0, 1), (1, 1)]
 
 /-! ### §3.2 Attested Hausa forms satisfy the Hausa grammar -/
 
-theorem fáadi_no_noninitial_H :
-    ¬ SubgraphEmbeds forbidden_noninitial_H fáadi := by decide
-theorem fáadi_no_noninitial_L :
-    ¬ SubgraphEmbeds forbidden_noninitial_L fáadi := by decide
+theorem fáadi_no_noninitial_H : ¬ forbidden_noninitial_H.FactorEmbeds fáadi := by
+  rw [mk_embeds_iff]; decide
+
+theorem fáadi_no_noninitial_L : ¬ forbidden_noninitial_L.FactorEmbeds fáadi := by
+  rw [mk_embeds_iff]; decide
+
 theorem fáadi_no_noninitial_contour :
-    ¬ SubgraphEmbeds forbidden_noninitial_contour fáadi := by decide
+    ¬ forbidden_noninitial_contour.FactorEmbeds fáadi := by
+  rw [mk_embeds_iff]; decide
 
 theorem háantúnàa_no_noninitial_H :
-    ¬ SubgraphEmbeds forbidden_noninitial_H háantúnàa := by decide
+    ¬ forbidden_noninitial_H.FactorEmbeds háantúnàa := by
+  rw [mk_embeds_iff]; decide
+
 theorem háantúnàa_no_noninitial_L :
-    ¬ SubgraphEmbeds forbidden_noninitial_L háantúnàa := by decide
+    ¬ forbidden_noninitial_L.FactorEmbeds háantúnàa := by
+  rw [mk_embeds_iff]; decide
+
 theorem háantúnàa_no_noninitial_contour :
-    ¬ SubgraphEmbeds forbidden_noninitial_contour háantúnàa := by decide
+    ¬ forbidden_noninitial_contour.FactorEmbeds háantúnàa := by
+  rw [mk_embeds_iff]; decide
 
 end Hausa
 
@@ -272,12 +269,14 @@ prohibition applies.
     forbids: non-final H spreading. This makes Mende and Hausa
     mutually exclusive on their diagnostic forms. -/
 theorem hausa_haantunaa_violates_mende :
-    SubgraphEmbeds Mende.forbidden_nonfinal_H Hausa.háantúnàa := by decide
+    Mende.forbidden_nonfinal_H.FactorEmbeds Hausa.háantúnàa := by
+  rw [mk_embeds_iff]; decide
 
 /-- Symmetrically, Mende's `félàmà` (HLL = L-spread to last 2σ)
     contains Hausa's forbidden non-initial-L pattern. -/
 theorem mende_felama_violates_hausa :
-    SubgraphEmbeds Hausa.forbidden_noninitial_L Mende.félàmà := by decide
+    Hausa.forbidden_noninitial_L.FactorEmbeds Mende.félàmà := by
+  rw [mk_embeds_iff]; decide
 
 /-! ## §5 Future extensions
 
