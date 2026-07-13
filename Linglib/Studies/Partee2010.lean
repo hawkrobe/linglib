@@ -1,4 +1,4 @@
-import Linglib.Semantics.Modification.Adjective
+import Linglib.Semantics.Modification.Classification
 import Linglib.Semantics.Modification.Coercion
 import Linglib.Studies.Kamp1975
 import Linglib.Data.Examples.Schema
@@ -32,7 +32,7 @@ NP-splitting data from [nowak-2000] is the empirical wedge.
 
 namespace Partee2010
 
-open Modification
+open Modification Modifier
 
 variable {W E : Type*}
 
@@ -41,12 +41,12 @@ variable {W E : Type*}
 /-- Kamp-privative adjectives admit no NVP-licensed coercion. For any
     shift, NVP requires a positive witness `x` with `adj shift w x ∧
     shift w x`; privativity forces `adj shift w x → ¬ shift w x`. -/
-theorem isPrivative_no_LicensedCoercion {adj : AdjMeaning W E}
+theorem isPrivative_no_LicensedCoercion {adj : Modifier (Property W E)}
     (hp : isPrivative adj) (N : Property W E) (w : W) :
     IsEmpty (LicensedCoercion N adj w) :=
   ⟨fun lc => by
     obtain ⟨x, hshift, hadj⟩ := lc.satisfies_nvp.1
-    exact hp lc.shift w x hadj hshift⟩
+    exact isPrivative_iff.mp hp lc.shift w x hadj hshift⟩
 
 /-- Specialisation to `Kamp1975.fakeAdj`. -/
 theorem fakeAdj_no_LicensedCoercion (N : Property Kamp1975.W2 Kamp1975.E3)
@@ -68,7 +68,7 @@ def fakeReanalysis : SubsectiveReanalysis Kamp1975.fakeAdj where
   is_subsective _ _ _ h := h.1
   shift_inert N w hne := by
     obtain ⟨x, hN, hadj⟩ := hne.1
-    exact absurd hN (Kamp1975.fake_privative N w x hadj)
+    exact absurd hN (isPrivative_iff.mp Kamp1975.fake_privative N w x hadj)
 
 /-- A toy noun for the fur scenario: `a` is (real) fur. -/
 def furN : Property Kamp1975.W2 Kamp1975.E3 := fun _ x => x = .a

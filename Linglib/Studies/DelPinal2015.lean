@@ -1,4 +1,4 @@
-import Linglib.Semantics.Modification.Adjective
+import Linglib.Semantics.Modification.Classification
 import Linglib.Semantics.Modification.Coercion
 import Linglib.Studies.Kamp1975
 import Linglib.Studies.Partee2010
@@ -24,11 +24,11 @@ it with C-structure).
   eqs. 16, 11, 12); `fakeDelPinal`, `counterfeitDelPinal`: constructive
   witnesses. `artificialDC` is *not* a `DelPinalReanalysis` (it admits
   no look-like-N inference) — see `artificialDC_not_DelPinalReanalysis`.
-* `AdjMeaning.toDCAdjMeaning`: lift a classical `AdjMeaning` to a
+* `toDCAdjMeaning`: lift a classical modifier meaning to a
   `DCAdjMeaning` by inheriting noun qualia.
 * `DelPinalReanalysis.no_LicensedCoercion`: cross-framework divergence
   with [partee-2010] (any DC reanalysis projects to a Kamp-privative
-  `AdjMeaning`, hence admits no NVP-licensed coercion).
+  classical modifier meaning, hence admits no NVP-licensed coercion).
 * `Kamp1975_fakeAdj_lift_not_DelPinalReanalysis`: Kamp's classical typing
   of `fake` is genuinely impoverished — the lift to `DCAdjMeaning` fails
   to satisfy the look-like-N constraint that DC's `fake` enforces.
@@ -61,7 +61,7 @@ satisfies `extension_implies_formal`.
 
 namespace DelPinal2015
 
-open Modification
+open Modification Modifier
 
 /-- Property-valued rendering of the four [pustejovsky-1995] qualia
     roles (`Pustejovsky1995.QualeRole`); the Type-valued original is
@@ -166,37 +166,36 @@ theorem artificialDC_not_DelPinalReanalysis :
 
 /-! ### Cross-framework divergence with [partee-2010] -/
 
-/-- Classical-`AdjMeaning` projection of a DC operator under a
+/-- Classical modifier-meaning projection of a DC operator under a
     per-noun qualia assignment `Q`. -/
-def DelPinalReanalysis.toAdjMeaning (r : DelPinalReanalysis W E)
-    (Q : Property W E → Qualia W E) : AdjMeaning W E :=
+def DelPinalReanalysis.toModifier (r : DelPinalReanalysis W E)
+    (Q : Property W E → Qualia W E) : Modifier (Property W E) :=
   fun N w x => (r.operator ⟨N, Q N⟩).extension w x
 
-theorem DelPinalReanalysis.toAdjMeaning_isPrivative
+theorem DelPinalReanalysis.toModifier_isPrivative
     (r : DelPinalReanalysis W E) (Q : Property W E → Qualia W E) :
-    isPrivative (r.toAdjMeaning Q) :=
-  fun N w x h => r.extension_privative ⟨N, Q N⟩ w x h
+    isPrivative (r.toModifier Q) :=
+  isPrivative_iff.mpr fun N w x h => r.extension_privative ⟨N, Q N⟩ w x h
 
 /-- The classical projection of any DC reanalysis admits no
     `LicensedCoercion`. The two frameworks make incompatible type-level
     commitments about privatives. The comparison is extensional-only:
-    `toAdjMeaning` reads off E-structure, discarding the C-structure
+    `toModifier` reads off E-structure, discarding the C-structure
     where DC relocates the look-like-N content that Partee's coercion
     carries in the widened extension. -/
 theorem DelPinalReanalysis.no_LicensedCoercion
     (r : DelPinalReanalysis W E) (Q : Property W E → Qualia W E)
     (N : Property W E) (w : W) :
-    IsEmpty (LicensedCoercion N (r.toAdjMeaning Q) w) :=
+    IsEmpty (LicensedCoercion N (r.toModifier Q) w) :=
   Partee2010.isPrivative_no_LicensedCoercion
-    (r.toAdjMeaning_isPrivative Q) N w
+    (r.toModifier_isPrivative Q) N w
 
 /-! ### Classical lift; impoverishment of Kamp-typed `fake` -/
 
-/-- Lift a classical `AdjMeaning` to a `DCAdjMeaning` by computing the
-    extension via the classical adj and inheriting the input noun's
+/-- Lift a classical modifier meaning to a `DCAdjMeaning` by computing
+    the extension via the classical adj and inheriting the input noun's
     qualia (the C-structure passes through unchanged). -/
-def _root_.Modification.AdjMeaning.toDCAdjMeaning
-    (adj : AdjMeaning W E) : DCAdjMeaning W E :=
+def toDCAdjMeaning (adj : Modifier (Property W E)) : DCAdjMeaning W E :=
   fun N => { extension := adj N.extension, qualia := N.qualia }
 
 /-- `Kamp1975.fakeAdj` lifted to a `DCAdjMeaning` is *not* a
@@ -207,7 +206,7 @@ def _root_.Modification.AdjMeaning.toDCAdjMeaning
     Pinal's argument that the classical analysis is incomplete. -/
 theorem Kamp1975_fakeAdj_lift_not_DelPinalReanalysis :
     ¬ ∃ (r : DelPinalReanalysis Kamp1975.W2 Kamp1975.E3),
-      r.operator = Kamp1975.fakeAdj.toDCAdjMeaning := by
+      r.operator = toDCAdjMeaning Kamp1975.fakeAdj := by
   rintro ⟨r, hr⟩
   let N : NounMeaning Kamp1975.W2 Kamp1975.E3 :=
     { extension := fun _ _ => False
@@ -231,7 +230,7 @@ theorem Kamp1975_fakeAdj_lift_not_DelPinalReanalysis :
     objects for it. -/
 theorem Kamp1975_fakeAdj_RevisedClass_nonSubsective :
     RevisedClass.nonSubsective.satisfies Kamp1975.fakeAdj :=
-  privative_not_subsective Kamp1975.fake_privative
+  not_isSubsective_of_isPrivative Kamp1975.fake_privative
     ⟨fun _ _ => False, Kamp1975.W2.w₁, Kamp1975.E3.b, trivial, id⟩
 
 /-! ### Output-qualia witness theorems

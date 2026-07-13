@@ -1,4 +1,4 @@
-import Linglib.Semantics.Modification.Adjective
+import Linglib.Semantics.Modification.Classification
 
 /-!
 # Modification-time noun coercion (NVP + HPP)
@@ -53,7 +53,7 @@ theorem isNonVacuous_compl {P : Property W E} {w : W} {d : E → Prop} :
 
 /-- A wider noun extension `shift ⊇ N` at `w` under which `adj shift`
     is non-vacuous in `shift`'s extension (the HPP local domain). -/
-structure LicensedCoercion (N : Property W E) (adj : AdjMeaning W E) (w : W) where
+structure LicensedCoercion (N : Property W E) (adj : Modifier (Property W E)) (w : W) where
   shift : Property W E
   le_shift : N w ≤ shift w
   satisfies_nvp : isNonVacuous (adj shift) w (shift w)
@@ -62,15 +62,15 @@ structure LicensedCoercion (N : Property W E) (adj : AdjMeaning W E) (w : W) whe
     coercion is NVP-conditional — [partee-2010]'s coercion-as-last-resort:
     `shift_inert` forbids widening whenever direct application is already
     non-vacuous (`nounShift_eq_self` derives the identity). -/
-structure SubsectiveReanalysis (adjClassical : AdjMeaning W E) where
+structure SubsectiveReanalysis (adjClassical : Modifier (Property W E)) where
   nounShift : Property W E → Property W E
-  adjSubsective : AdjMeaning W E
+  adjSubsective : Modifier (Property W E)
   le_nounShift : ∀ N, N ≤ nounShift N
-  is_subsective : isSubsective adjSubsective
+  is_subsective : Modifier.isSubsective adjSubsective
   shift_inert : ∀ (N : Property W E) (w : W),
     isNonVacuous (adjClassical N) w (N w) → nounShift N ≤ N
 
-variable {adjClassical : AdjMeaning W E}
+variable {adjClassical : Modifier (Property W E)}
 
 /-- Where direct application is already non-vacuous, the shift is the
     identity. -/

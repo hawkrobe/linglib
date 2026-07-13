@@ -1,4 +1,4 @@
-import Linglib.Semantics.Modification.Adjective
+import Linglib.Semantics.Modification.Classification
 
 /-!
 # Elbourne (2026): Adjectives without syntactic categories
@@ -14,8 +14,8 @@ eliminating syntactic categories in favor of semantic types
 
 ## Key result
 
-`Modification/Adjective.lean` already defines `AdjMeaning W E = Property W E →
-Property W E`, which IS the ⟨et,et⟩ type. The Kamp hierarchy there
+`Modification/Classification.lean` already provides the carrier
+`Modifier (Property W E)`, which IS the ⟨et,et⟩ type. The Kamp hierarchy there
 (intersective, subsective, privative) classifies adjectives by meaning
 postulates *within* that type — not by assigning different types to
 different classes. The present file makes this explicit and adds
@@ -37,14 +37,14 @@ construction.
 3. FA-sufficiency: FA on ⟨et,et⟩ = PM on ⟨e,t⟩; PM limitation
 4. "Fido was cute" derivation
 5. Connection to Classification hierarchy
-6. Former: non-subsective `AdjMeaning` + PM failure + end-to-end chain
+6. Former: non-subsective modifier meaning + PM failure + end-to-end chain
 7. Compulsory E_R: attributive-only adjectives
 -/
 
 namespace Elbourne2026
 
-open Modification
-  (Property AdjMeaning isIntersective isSubsective)
+open Modification (Property isIntersective_iff)
+open Modifier (isIntersective isSubsective)
 
 /-! ### ⟨et,et⟩ Adjective Denotations -/
 
@@ -61,7 +61,7 @@ def trivialNoun : Property I E := fun _ _ => True
 
     [elbourne-2026] (24b)/(59):
     `/cute/ :: λf⟨e,it⟩.λx.λt. f(x)(t) & cute(x)(t)` -/
-def intersective (Q : Property I E) : AdjMeaning I E :=
+def intersective (Q : Property I E) : Modifier (Property I E) :=
   fun N t x => N t x ∧ Q t x
 
 /-- Applying an intersective adjective to the trivial noun recovers
@@ -86,7 +86,7 @@ variable {I E : Type*}
 
     [elbourne-2026] (8)/(27c):
     `BE :: λR⟨i,it⟩.λG⟨eit,eit⟩.λx.λt. ∃t'(R(t')(t) & G(λy.λt''.⊤)(x)(t'))` -/
-def copulaBE (R : I → I → Prop) (G : AdjMeaning I E)
+def copulaBE (R : I → I → Prop) (G : Modifier (Property I E))
     (x : E) (t : I) : Prop :=
   ∃ t', R t' t ∧ G trivialNoun t' x
 
@@ -121,7 +121,7 @@ theorem fa_eq_pm (Q N : Property I E) :
   funext t x; exact propext And.comm
 
 /-- PM always produces **intersective** results: the composition
-    `λN.λt.λx. A(t)(x) ∧ N(t)(x)` satisfies `Modification.isIntersective`
+    `λN.λt.λx. A(t)(x) ∧ N(t)(x)` satisfies `Modifier.isIntersective`
     with witness `A`. This means PM is too restrictive even for merely
     subsective adjectives like `skillful` — not just non-subsective ones.
 
@@ -131,7 +131,7 @@ theorem fa_eq_pm (Q N : Property I E) :
     merely subsective adjectives." -/
 theorem pm_always_intersective (A : Property I E) :
     isIntersective (fun N t x => A t x ∧ N t x) :=
-  ⟨A, fun _ _ _ => Iff.rfl⟩
+  ⟨A, fun _ => rfl⟩
 
 /-- Corollary: PM always yields subsective results (`A ∧ N` entails
     `N`). Follows from `pm_always_intersective` via the hierarchy
@@ -169,11 +169,11 @@ section HierarchyConnection
 variable {I E : Type*}
 
 /-- Intersective ⟨et,et⟩ adjectives satisfy
-    `Modification.isIntersective`. The witness is the underlying
+    `Modifier.isIntersective`. The witness is the underlying
     property Q. -/
 theorem intersective_is_classified (Q : Property I E) :
     isIntersective (intersective Q) :=
-  ⟨Q, fun _ _ _ => And.comm⟩
+  ⟨Q, fun N => by funext t x; exact propext And.comm⟩
 
 /-- Intersective ⟨et,et⟩ adjectives are subsective:
     `cute N` entails `N`. -/
@@ -227,7 +227,7 @@ private def judge : Property T2 E1
     [elbourne-2026] (44)/(60):
     `λf⟨e,it⟩.λx.λt. ∃t'(< (t')(t) & f(x)(t') & ¬f(x)(t))` -/
 def formerAdj {I E : Type*} (times : List I)
-    (ltb : I → I → Prop) : AdjMeaning I E :=
+    (ltb : I → I → Prop) : Modifier (Property I E) :=
   fun N t x => (∃ t' ∈ times, ltb t' t ∧ N t' x) ∧ ¬ N t x
 
 private def ltb2 : T2 → T2 → Prop
@@ -247,8 +247,8 @@ theorem former_adj_holds :
   · exact id
 
 /-- `formerAdj` is not subsective — connecting directly to
-    `Modification.isSubsective`. This is a genuine `AdjMeaning`,
-    so it integrates with the full classification hierarchy. -/
+    `Modifier.isSubsective`. This is a genuine intensional modifier
+    meaning, so it integrates with the full classification hierarchy. -/
 theorem former_adj_not_subsective :
     ¬ isSubsective (formerAdj (E := E1) allT2 ltb2) := by
   intro h

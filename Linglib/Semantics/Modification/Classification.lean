@@ -1,12 +1,21 @@
+import Linglib.Semantics.Modification.Basic
+import Mathlib.Order.PropInstances
 import Mathlib.Data.Set.Basic
 import Mathlib.Tactic.Common
 
 /-!
-# Adjective Classification Hierarchy
+# Modifier-Meaning Classification at the Intensional Carrier
 [kamp-1975] [kamp-partee-1995] [parsons-1970]
 
-The standard classification of adjective meanings as functions from
-properties to properties, constrained by meaning postulates.
+The standard classification of adnominal modifier meanings, constrained
+by meaning postulates. The order-theoretic classes
+(`Modifier.isIntersective` / `.isSubsective` / `.isPrivative`) live in
+`Modification/Basic.lean`; this file works at the intensional carrier
+`Modifier (Property W E)` — functions from properties to properties,
+type `⟨⟨s,⟨e,t⟩⟩, ⟨s,⟨e,t⟩⟩⟩` in Montague notation — adding the
+pointwise unfolding lemmas, the one genuinely intensional class
+(`isExtensional`), the implication structure, and [partee-2010]'s
+post-collapse `RevisedClass`.
 
 [parsons-1970] independently introduced the operator approach
 (modifiers as functions on predicates, not conjoinable predicates) and
@@ -34,12 +43,12 @@ Privative is incompatible with subsective (given non-empty extension).
 
 ## Design
 
-The hierarchy is defined over *intensional* adjective meanings
-(`Property W E → Property W E`) parameterized by a world type `W` and
-entity type `E`. This is the most general formulation, from which
-single-world (extensional) specializations follow — see
-`Studies/Kamp1975.lean` § 1 for the single-world specialization
-theorems.
+Single-world (extensional) specializations are the same order-theoretic
+classes at the carrier `E → Prop` — see `Studies/Kamp1975.lean` § 1 for
+the specialization theorems. Whether *adjectives* uniformly denote
+`Modifier (Property W E)` is itself a theoretical claim (see
+`Studies/Elbourne2026.lean`); the carrier is named for the denotation
+type, not the word class.
 
 [partee-2010] argues the privative class should be eliminated
 in favor of subsective + noun coercion; see `Partee2010.lean`. The
@@ -54,89 +63,85 @@ namespace Modification
     predicates over entities. -/
 abbrev Property (W E : Type*) := W → E → Prop
 
-/-- An adjective meaning: a function from noun properties to modified
-    noun-phrase properties (type `⟨⟨s,⟨e,t⟩⟩, ⟨s,⟨e,t⟩⟩⟩` in Montague
-    notation). -/
-abbrev AdjMeaning (W E : Type*) := Property W E → Property W E
-
-/-! ### Class Definitions -/
+/-! ### Pointwise forms of the order-theoretic classes -/
 
 section Hierarchy
 
-variable {W E : Type*}
+open Modifier
 
-/-- An adjective is **intersective** if its extension at each world is the
-    intersection of the noun's extension with some fixed property Q
-    ([kamp-1975]).
+variable {W E : Type*} {adj : Modifier (Property W E)}
+
+/-- Pointwise form of `Modifier.isIntersective` at the intensional
+    carrier: the extension at each world is the intersection of the
+    noun's extension with some fixed property Q ([kamp-1975]).
 
     Examples: "gray", "French", "carnivorous", "four-legged". -/
-def isIntersective (adj : AdjMeaning W E) : Prop :=
-  ∃ (Q : Property W E), ∀ (N : Property W E) (w : W) (x : E),
-    adj N w x ↔ (Q w x ∧ N w x)
+theorem isIntersective_iff :
+    isIntersective adj ↔
+      ∃ (Q : Property W E), ∀ (N : Property W E) (w : W) (x : E),
+        adj N w x ↔ (Q w x ∧ N w x) := by
+  refine ⟨fun ⟨Q, hQ⟩ => ⟨Q, fun N w x => by rw [hQ]; exact Iff.rfl⟩,
+          fun ⟨Q, hQ⟩ => ⟨Q, fun N => ?_⟩⟩
+  funext w x
+  exact propext (hQ N w x)
 
-/-- An adjective is **subsective** if its extension is always a subset
-    of the noun's extension ([kamp-1975]).
+/-- Pointwise form of `Modifier.isSubsective` at the intensional
+    carrier: the extension is always a subset of the noun's extension
+    ([kamp-1975]).
 
     Examples: "skillful", "good", "typical". -/
-def isSubsective (adj : AdjMeaning W E) : Prop :=
-  ∀ (N : Property W E) (w : W) (x : E), adj N w x → N w x
-
-/-- Subsectivity is the deflationary condition in the pointwise order:
-    `adj ≤ id`. -/
-theorem isSubsective_iff_le_id {adj : AdjMeaning W E} :
-    isSubsective adj ↔ adj ≤ id :=
+theorem isSubsective_iff :
+    isSubsective adj ↔
+      ∀ (N : Property W E) (w : W) (x : E), adj N w x → N w x :=
   Iff.rfl
 
-/-- An adjective is **privative** if its extension is always disjoint
-    from the noun's extension ([kamp-1975]).
+/-- Pointwise form of `Modifier.isPrivative` at the intensional carrier:
+    the extension is always disjoint from the noun's extension
+    ([kamp-1975]).
 
     Examples: "fake", "counterfeit".
     [partee-2010] argues this class should be eliminated. -/
-def isPrivative (adj : AdjMeaning W E) : Prop :=
-  ∀ (N : Property W E) (w : W) (x : E), adj N w x → ¬ N w x
+theorem isPrivative_iff :
+    isPrivative adj ↔
+      ∀ (N : Property W E) (w : W) (x : E), adj N w x → ¬ N w x := by
+  simp only [isPrivative, Pi.disjoint_iff, Prop.disjoint_iff, not_and]
 
-/-- An adjective is **extensional** if its extension in world w depends
-    only on the noun's extension in w, not on the noun's intension
-    ([kamp-1975]).
+/-- A modifier meaning is **extensional** if its extension in world w
+    depends only on the noun's extension in w, not on the noun's
+    intension ([kamp-1975]). The one class of the hierarchy that is
+    genuinely intensional — it has no order-theoretic form.
 
     "four-legged" and "gray" are extensional; "skillful" is not (being a
     skillful surgeon depends on what counts as a surgeon across contexts,
     not just who the surgeons are in this world). -/
-def isExtensional (adj : AdjMeaning W E) : Prop :=
+def isExtensional (adj : Modifier (Property W E)) : Prop :=
   ∀ (N₁ N₂ : Property W E) (w : W),
     (∀ x, N₁ w x ↔ N₂ w x) → ∀ x, adj N₁ w x ↔ adj N₂ w x
 
 /-! ### Implication Structure
 
-    Intersective → {extensional, subsective}.
+    Intersective → {extensional, subsective} (the second is
+    `Modifier.isIntersective.isSubsective`, at any carrier).
     Extensional and subsective are independent.
-    Privative is incompatible with subsective (given non-empty extension). -/
+    Privative is incompatible with subsective (given non-empty extension;
+    the order-theoretic core is `Modifier.isPrivative.eq_bot`). -/
 
-/-- Intersective adjectives are extensional: if `F(N)(w)(x) ↔ Q(w)(x) ∧ N(w)(x)`,
-    then the result in w depends only on N(w). -/
-theorem intersective_implies_extensional {adj : AdjMeaning W E}
-    (h : isIntersective adj) : isExtensional adj := by
-  obtain ⟨Q, hQ⟩ := h
+/-- Intersective modifier meanings are extensional: if
+    `F(N)(w)(x) ↔ Q(w)(x) ∧ N(w)(x)`, then the result in w depends only
+    on N(w). -/
+theorem isExtensional_of_isIntersective (h : isIntersective adj) :
+    isExtensional adj := by
+  obtain ⟨Q, hQ⟩ := isIntersective_iff.mp h
   intro N₁ N₂ w hext x
   simp only [hQ, hext]
 
-/-- Intersective adjectives are subsective: if
-    `F(N)(w)(x) ↔ Q(w)(x) ∧ N(w)(x)`, then `F(N)(w)(x) → N(w)(x)`. -/
-theorem intersective_implies_subsective {adj : AdjMeaning W E}
-    (h : isIntersective adj) : isSubsective adj := by
-  obtain ⟨Q, hQ⟩ := h
-  intro N w x hadj
-  exact ((hQ N w x).mp hadj).2
-
-/-- Privative adjectives are not subsective (when the adjective has
+/-- Privative modifier meanings are not subsective (when the modifier has
     non-empty extension for some noun). -/
-theorem privative_not_subsective {adj : AdjMeaning W E}
-    (hp : isPrivative adj)
-    (hne : ∃ N w x, adj N w x) :
-    ¬ isSubsective adj := by
-  intro ha
+theorem not_isSubsective_of_isPrivative (hp : isPrivative adj)
+    (hne : ∃ N w x, adj N w x) : ¬ isSubsective adj := by
+  intro hs
   obtain ⟨N, w, x, hadj⟩ := hne
-  exact hp N w x hadj (ha N w x hadj)
+  exact isPrivative_iff.mp hp N w x hadj (hs N w x hadj)
 
 end Hierarchy
 
@@ -147,17 +152,19 @@ end Hierarchy
 
 section Independence
 
+open Modifier
+
 /-- Witness: extensional but NOT subsective.
-    An adjective that ignores both the noun and intension entirely
+    A modifier that ignores both the noun and intension entirely
     (always returns True) is trivially extensional, but not subsective
     because it holds even when the noun does not. -/
 private inductive W1 | w
 private inductive E1 | a
 
-private def extNotSubAdj : AdjMeaning W1 E1 := fun _N _w _x => True
+private def extNotSubAdj : Modifier (Property W1 E1) := fun _N _w _x => True
 
 theorem extensional_not_implies_subsective :
-    ∃ (adj : AdjMeaning W1 E1), isExtensional adj ∧ ¬ isSubsective adj :=
+    ∃ (adj : Modifier (Property W1 E1)), isExtensional adj ∧ ¬ isSubsective adj :=
   ⟨extNotSubAdj,
    fun _ _ _ _ _ => Iff.rfl,
    fun h => (h (fun _ _ => False) .w .a trivial).elim⟩
@@ -169,13 +176,13 @@ theorem extensional_not_implies_subsective :
 private inductive W2' | w₁ | w₂
 private inductive E2 | a | b
 
-private def subNotExtAdj : AdjMeaning W2' E2 := fun N w x =>
+private def subNotExtAdj : Modifier (Property W2' E2) := fun N w x =>
   N w x ∧ match x with
     | .a => N .w₁ .a
     | _  => False
 
 theorem subsective_not_implies_extensional :
-    ∃ (adj : AdjMeaning W2' E2), isSubsective adj ∧ ¬ isExtensional adj :=
+    ∃ (adj : Modifier (Property W2' E2)), isSubsective adj ∧ ¬ isExtensional adj :=
   ⟨subNotExtAdj,
    fun _ _ _ h => h.1,
    fun hext => by
@@ -218,8 +225,8 @@ inductive RevisedClass where
 
 /-- Predicate-level interpretation of `RevisedClass`. Per the subset
     ordering, `intersective` and `subsective` are not disjoint: every
-    intersective adjective satisfies `isSubsective` (see
-    `intersective_implies_subsective`).
+    intersective modifier meaning satisfies `Modifier.isSubsective`
+    (`Modifier.isIntersective.isSubsective`).
 
     Caveat on `.nonSubsective`: the membership condition `¬ isSubsective
     adj` is necessary but coarse — it also holds of Kamp-privatives,
@@ -227,10 +234,10 @@ inductive RevisedClass where
     natural class. Read `.nonSubsective` as Partee's *intended* "modal"
     class (alleged, potential, putative); the bare predicate
     `¬ isSubsective` over-generates. -/
-def RevisedClass.satisfies : RevisedClass → AdjMeaning W E → Prop
-  | .intersective  => isIntersective
-  | .subsective    => isSubsective
-  | .nonSubsective => fun adj => ¬ isSubsective adj
+def RevisedClass.satisfies : RevisedClass → Modifier (Property W E) → Prop
+  | .intersective  => Modifier.isIntersective
+  | .subsective    => Modifier.isSubsective
+  | .nonSubsective => fun adj => ¬ Modifier.isSubsective adj
 
 end Revised
 

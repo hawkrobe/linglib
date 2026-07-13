@@ -3,7 +3,7 @@ import Linglib.Pragmatics.BToM
 import Linglib.Pragmatics.GameTheory
 import Linglib.Core.Probability.Decision.Basic
 import Linglib.Pragmatics.RSA.CombinedUtility
-import Linglib.Semantics.Modification.Adjective
+import Linglib.Semantics.Modification.Classification
 
 /-!
 # [houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023] — Emotion Prediction as
@@ -452,27 +452,27 @@ The threshold θ makes them gradable ([kennedy-2007]): "more generous"
 /-- "Generous" as an intersective adjective meaning:
 ⟦generous N⟧(p) = N(p) ∧ ω_AIA(p) > θ. -/
 def generousAdj (θ : ℚ) :
-    Modification.AdjMeaning Unit SocialValueProfile :=
+    Modifier (Modification.Property Unit SocialValueProfile) :=
   fun N _ p => p.ωAIA > θ ∧ N () p
 
 /-- "Fair-minded" as an intersective adjective meaning:
 ⟦fair-minded N⟧(p) = N(p) ∧ ω_DIA(p) > θ. -/
 def fairMindedAdj (θ : ℚ) :
-    Modification.AdjMeaning Unit SocialValueProfile :=
+    Modifier (Modification.Property Unit SocialValueProfile) :=
   fun N _ p => p.ωDIA > θ ∧ N () p
 
-open Modification in
+open Modifier in
 /-- Evaluative adjectives grounded in BToM-inferred preferences are
 intersective: ⟦generous N⟧ = ⟦N⟧ ∩ {x | ω_AIA(x) > θ}. -/
 theorem generous_is_intersective (θ : ℚ) :
     isIntersective (generousAdj θ) :=
-  ⟨fun _ p => p.ωAIA > θ, fun _ _ _ => Iff.rfl⟩
+  ⟨fun _ p => p.ωAIA > θ, fun _ => rfl⟩
 
-open Modification in
+open Modifier in
 /-- Fair-minded is intersective. -/
 theorem fairMinded_is_intersective (θ : ℚ) :
     isIntersective (fairMindedAdj θ) :=
-  ⟨fun _ p => p.ωDIA > θ, fun _ _ _ => Iff.rfl⟩
+  ⟨fun _ p => p.ωDIA > θ, fun _ => rfl⟩
 
 /-- Generous and selfish are contradictory at any threshold:
 generous requires ω_AIA > θ, selfish requires ω_AIA < θ. -/
