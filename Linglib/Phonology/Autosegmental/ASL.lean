@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Mathlib.Computability.Language
+import Linglib.Phonology.Autosegmental.NormalForm
 import Linglib.Phonology.Autosegmental.Realization
 import Linglib.Phonology.Autosegmental.Embedding
 
@@ -61,5 +62,29 @@ instance [DecidableEq α] [DecidableEq β] (g₀ : S → AR α β) (B : List (Gr
     grammar present it ([jardine-2019]). -/
 def IsASL (L : Language S) : Prop :=
   ∃ (α β : Type) (g₀ : S → AR α β) (B : List (Graph α β)), L = ASL g₀ B
+
+/-! ### ASL in coordinates -/
+
+section Coordinate
+
+variable {ι : Type*} [Finite ι] {τ : ι → Type*}
+
+/-- **The Autosegmental Strictly Local stringset** on the graph foundation:
+    strings whose realization avoids every forbidden factor — the preimage of
+    the banned-subgraph object property along `realize`, the same shape as
+    `TSL.lang = tierProject ⁻¹' (SL-language)`. -/
+def Representation.ASL (g₀ : S → Representation (Sigma.fst : ((i : ι) × τ i) → ι))
+    [∀ s, Finite (g₀ s).obj.V]
+    (B : List {F : Representation (Sigma.fst : ((i : ι) × τ i) → ι) // Finite F.obj.V}) :
+    Language S :=
+  { w | (realize g₀ w).Free B }
+
+@[simp] theorem Representation.mem_ASL
+    {g₀ : S → Representation (Sigma.fst : ((i : ι) × τ i) → ι)}
+    [∀ s, Finite (g₀ s).obj.V]
+    {B : List {F : Representation (Sigma.fst : ((i : ι) × τ i) → ι) // Finite F.obj.V}}
+    {w : List S} : w ∈ Representation.ASL g₀ B ↔ (realize g₀ w).Free B := Iff.rfl
+
+end Coordinate
 
 end Autosegmental
