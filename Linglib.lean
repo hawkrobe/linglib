@@ -1343,7 +1343,6 @@ import Linglib.Morphology.UsageBased.Network
 import Linglib.Morphology.Word
 import Linglib.Morphology.WugTest
 import Linglib.Phonology.Autosegmental.AR
-import Linglib.Phonology.Autosegmental.ASL
 import Linglib.Phonology.Autosegmental.Correspondence
 import Linglib.Phonology.Autosegmental.Floating
 import Linglib.Phonology.Autosegmental.Graph
