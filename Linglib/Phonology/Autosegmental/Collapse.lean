@@ -725,6 +725,73 @@ theorem Representation.collapsedWord_tensor
     exact OCP.collapse_append _ _
   · simp [Representation.collapsedWord, Function.update_of_ne h]
 
+omit [DecidableEq ι] in
+/-- Same-tier vertices are never linked: they are arc-comparable (Axioms 1–2),
+    and association never follows arcs (Axiom 3). -/
+theorem Representation.not_link_self_tier [Finite X.obj.V] (i : ι) (p q : ℕ) :
+    ¬ X.link i i p q := by
+  rintro ⟨hp, hq, hl⟩
+  rw [Representation.linkRel_def] at hl
+  have hlab : X.obj.tier Sigma.fst (X.vertexEquiv ⟨i, ⟨p, hp⟩⟩)
+      = X.obj.tier Sigma.fst (X.vertexEquiv ⟨i, ⟨q, hq⟩⟩) := by
+    show (X.obj.label _).1 = (X.obj.label _).1
+    rw [Representation.label_vertexEquiv, Representation.label_vertexEquiv]
+  exact (X.property.1.total hl.ne hlab).elim (X.property.2 hl) (X.property.2 hl.symm)
+
+theorem Representation.fiberEnum_collapse [Finite X.obj.V] (i : ι) :
+    (X.collapse m).fiberEnum i =
+      (Fin.castOrderIso (by rw [← Representation.length_tierWord,
+        Representation.tierWord_collapse])).trans (X.collapseFiberEnum m i) :=
+  Subsingleton.elim _ _
+
+theorem Representation.vertexEquiv_collapse [Finite X.obj.V] {i : ι}
+    (r : Fin ((X.collapse m).tierLength i)) :
+    (X.collapse m).vertexEquiv ⟨i, r⟩
+      = ⟨i, Fin.cast (by rw [← Representation.length_tierWord,
+          Representation.tierWord_collapse]) r⟩ := by
+  show ((X.collapse m).fiberEnum i r).val = _
+  rw [Representation.fiberEnum_collapse]
+  rfl
+
+/-- The collapse's links are the image of the original links under the
+    repointing — `edges_normalize`'s analogue for the merge. -/
+theorem Representation.link_collapse [Finite X.obj.V] (i j : ι) (r s : ℕ) :
+    (X.collapse m).link i j r s ↔
+      ∃ p q, X.link i j p q ∧ X.collapseIdx m i p = r ∧ X.collapseIdx m j q = s := by
+  constructor
+  · rintro ⟨hr, hs, hl⟩
+    rw [Representation.linkRel_def, Representation.vertexEquiv_collapse,
+      Representation.vertexEquiv_collapse] at hl
+    obtain ⟨-, p, q, hpq, hp, hq⟩ := hl
+    exact ⟨p, q, hpq, hp, hq⟩
+  · rintro ⟨p, q, hpq, hp, hq⟩
+    have hbr : r < (X.collapse m).tierLength i := by
+      rw [← Representation.length_tierWord, Representation.tierWord_collapse]
+      subst hp
+      unfold Representation.collapseIdx
+      split_ifs with h
+      · subst h
+        simpa [Representation.collapsedWord] using
+          runIdx_lt_collapse_length _ (by simpa using hpq.1)
+      · simpa [Representation.collapsedWord, Function.update_of_ne h] using hpq.1
+    have hbs : s < (X.collapse m).tierLength j := by
+      rw [← Representation.length_tierWord, Representation.tierWord_collapse]
+      subst hq
+      unfold Representation.collapseIdx
+      split_ifs with h
+      · subst h
+        simpa [Representation.collapsedWord] using
+          runIdx_lt_collapse_length _ (by simpa using hpq.2.1)
+      · simpa [Representation.collapsedWord, Function.update_of_ne h] using hpq.2.1
+    refine ⟨hbr, hbs, ?_⟩
+    rw [Representation.linkRel_def, Representation.vertexEquiv_collapse,
+      Representation.vertexEquiv_collapse]
+    refine ⟨?_, p, q, hpq, hp, hq⟩
+    intro heq
+    obtain ⟨hij, -⟩ := Sigma.mk.inj_iff.mp heq
+    subst hij
+    exact X.not_link_self_tier i p q hpq
+
 end CoordinateCollapse
 
 end Autosegmental
