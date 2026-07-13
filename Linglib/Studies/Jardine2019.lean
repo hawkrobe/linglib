@@ -53,47 +53,7 @@ namespace Autosegmental
 
 open Graph
 
-variable {S α β : Type*}
-
-/-- For a single **link-free** forbidden subgraph `F`, the strings whose realization
-contains `F` form a star-free language: the intersection of two per-tier
-factor-occurrence constraints, each the inverse image (`comap`) of a star-free
-contains-factor language along a tier projection. -/
-theorem isStarFree_occur_of_links_empty (g₀ : S → AR α β) (F : Graph α β) (hF : F.links = ∅) :
-    Language.IsStarFree {w : List S | SubgraphEmbeds F (AR.realize g₀ w).toGraph} := by
-  have hset : {w : List S | SubgraphEmbeds F (AR.realize g₀ w).toGraph}
-      = {w : List S | F.upper.toList <:+: upperProj g₀ (FreeMonoid.ofList w)}
-        ∩ {w : List S | F.lower.toList <:+: lowerProj g₀ (FreeMonoid.ofList w)} := by
-    ext w
-    simp only [Set.mem_setOf_eq, Set.mem_inter_iff]
-    rw [subgraphEmbeds_iff_infix_of_links_empty F (AR.realize g₀ w).toGraph hF,
-      realize_upper_toList, realize_lower_toList]
-  rw [hset]
-  exact ((Language.isStarFree_containsFactor F.upper.toList).comap (upperProj g₀)).inter
-        ((Language.isStarFree_containsFactor F.lower.toList).comap (lowerProj g₀))
-
-/-- **Link-free autosegmental SL sets are star-free.** When every forbidden subgraph in
-`B` has no association lines, `ASL g₀ B` is star-free — over *any* symbol alphabet, with
-no `[Finite S]` hypothesis, since each tier's contains-factor recognizer is a fixed
-finite aperiodic monoid. A link-free forbidden grammar is exactly a Boolean combination
-of per-tier factor constraints; the genuinely autosegmental case (links coupling the
-tiers) is the deeper part of [jardine-2019]'s placement and is not covered here. -/
-theorem ASL.isStarFree_of_links_empty (g₀ : S → AR α β) (B : List (Graph α β))
-    (hB : ∀ F ∈ B, F.links = ∅) : (ASL g₀ B).IsStarFree := by
-  induction B with
-  | nil =>
-    have : ASL g₀ [] = Set.univ := by ext w; simp [ASL, isFreeOf, Graph.Free]
-    rw [this]; exact Language.isStarFree_univ
-  | cons F B' ih =>
-    have hFmem : F.links = ∅ := hB F (List.mem_cons_self ..)
-    have ih' := ih (fun F' hF' => hB F' (List.mem_cons_of_mem _ hF'))
-    have hset : ASL g₀ (F :: B') =
-        {w : List S | SubgraphEmbeds F (AR.realize g₀ w).toGraph}ᶜ ∩ ASL g₀ B' := by
-      ext w
-      show (∀ G ∈ F :: B', ¬ SubgraphEmbeds G (AR.realize g₀ w).toGraph) ↔ _
-      rw [List.forall_mem_cons]; exact Iff.rfl
-    rw [hset]
-    exact (isStarFree_occur_of_links_empty g₀ F hFmem).compl.inter ih'
+variable {S : Type*}
 
 /-! #### The star-free placement in coordinates -/
 
@@ -169,85 +129,120 @@ inductive ToneSym | H | L | F
 inductive Mora | μ
   deriving DecidableEq, Repr
 
-/-- The tone realization `g_T` ([jardine-2019] (23)): `H`/`L` are a single tone on one
-    mora; the falling tone `F` is an `H-L` contour on one mora (multiple association). -/
-def gT : ToneSym → AR ToneSym Mora
-  | .H => .single .H .μ
-  | .L => .single .L .μ
-  | .F => .contour [.H, .L] .μ
+/-- Two-tier tone representations (melody over `true`, morae over `false`). -/
+abbrev TRep := Representation
+  (Sigma.fst : ((b : Bool) × TwoTier ToneSym Mora b) → Bool)
 
-/-- The forbidden subgraph `*HLH` ([jardine-2019] (3)): an `H-L-H` tone sequence, three
-    tones each on their own mora. -/
-def hlh : Graph ToneSym Mora :=
-  (AR.single ToneSym.H Mora.μ * AR.single ToneSym.L Mora.μ *
-    AR.single ToneSym.H Mora.μ).toGraph
+/-- Link presentations from finite pair lists. -/
+def mkL (links : List (ℕ × ℕ)) (i j : Bool) (p q : ℕ) : Prop :=
+  i = true ∧ j = false ∧ (p, q) ∈ links
+
+instance (links : List (ℕ × ℕ)) (i j : Bool) (p q : ℕ) :
+    Decidable (mkL links i j p q) :=
+  inferInstanceAs (Decidable (_ ∧ _ ∧ _))
+
+/-- Build a representation from a tone melody, morae, and links. -/
+abbrev mk (tones : List ToneSym) (moras : List Mora) (links : List (ℕ × ℕ)) : TRep :=
+  Representation.ofData
+    (fun b => match b with
+      | true => (tones : List (TwoTier ToneSym Mora true))
+      | false => moras)
+    (mkL links)
+
+theorem mk_embeds_iff {tF tX : List ToneSym} {bF bX : List Mora}
+    {lF lX : List (ℕ × ℕ)} :
+    (mk tF bF lF).FactorEmbeds (mk tX bX lX) ↔
+      dataEmbeds
+        (fun b => match b with
+          | true => (tF : List (TwoTier ToneSym Mora true))
+          | false => bF)
+        (fun b => match b with
+          | true => (tX : List (TwoTier ToneSym Mora true))
+          | false => bX)
+        (mkL lF) (mkL lX) :=
+  Representation.factorEmbeds_ofData_iff
+
+/-- The forbidden subgraph `*HLH` ([jardine-2019] (3)): an `H-L-H` tone
+    sequence, three tones each on their own mora. -/
+abbrev hlh : TRep := mk [.H, .L, .H] [.μ, .μ, .μ] [(0, 0), (1, 1), (2, 2)]
+
+/-! ### The bridge-only realization: local `*HLH`
+
+The realization of a tone string under the bridge-only tensor is, in flattened
+presentation, the diagonal literal — one tone per mora (`gT` (23), with `F` an
+`H-L` contour). The `*HLH` verdicts compute through the data-level checker. -/
 
 /-- `HLH` is excluded: its realization contains the `*HLH` subgraph. -/
-theorem hlh_excluded : [ToneSym.H, .L, .H] ∉ ASL gT [hlh] := by decide
+theorem hlh_excluded :
+    hlh.FactorEmbeds (mk [.H, .L, .H] [.μ, .μ, .μ] [(0, 0), (1, 1), (2, 2)]) := by
+  rw [mk_embeds_iff]; decide
 
 /-- `HL` is admitted (no `H-L-H`). -/
-theorem hl_included : [ToneSym.H, .L] ∈ ASL gT [hlh] := by decide
+theorem hl_included :
+    ¬ hlh.FactorEmbeds (mk [.H, .L] [.μ, .μ] [(0, 0), (1, 1)]) := by
+  rw [mk_embeds_iff]; decide
 
 /-- `LHL` is admitted (no `H-L-H`). -/
-theorem lhl_included : [ToneSym.L, .H, .L] ∈ ASL gT [hlh] := by decide
+theorem lhl_included :
+    ¬ hlh.FactorEmbeds (mk [.L, .H, .L] [.μ, .μ, .μ] [(0, 0), (1, 1), (2, 2)]) := by
+  rw [mk_embeds_iff]; decide
 
-/-- And the constraint reaches inside longer strings: `HHLH` is excluded (the medial
-    `H-L-H` realizes the forbidden subgraph). -/
-theorem hhlh_excluded : [ToneSym.H, .H, .L, .H] ∉ ASL gT [hlh] := by decide
+/-- The constraint reaches inside longer strings: `HHLH` is excluded (the
+    medial `H-L-H` realizes the forbidden subgraph). -/
+theorem hhlh_excluded :
+    hlh.FactorEmbeds
+      (mk [.H, .H, .L, .H] [.μ, .μ, .μ, .μ] [(0, 0), (1, 1), (2, 2), (3, 3)]) := by
+  rw [mk_embeds_iff]; decide
 
 /-! ### The OCP-merging realization: non-local tone plateauing
 
-[jardine-2019]'s `g_T` is OCP-*merging* — an `H`-plateau `Hⁿ` is a single `H` node, not
-`n` of them. `AR.realizeMerged` (`Collapse.lean`) supplies that merge. Against it we ban
-the *tonal-tier melody* `*HLH` — an `H-L-H` sequence read off the tone tier alone
-(`hlhTier`: upper `[H, L, H]`, no morae pinned), so the constraint is on tonal adjacency
-after merging, not on per-mora docking. This is where merging buys non-local power:
-`H⁺ L⁺ H⁺` is excluded for *any* plateau widths, because the plateaus collapse first. -/
+[jardine-2019]'s `g_T` is OCP-*merging*: an `H`-plateau `Hⁿ` fuses to a single
+`H` node (`Representation.collapse`). Against the merged forms we ban the
+**tonal-tier melody** `*HLH` — adjacent tonal nodes, morae unconstrained —
+which is where merging buys non-local power: `H⁺ L⁺ H⁺` is excluded for *any*
+plateau widths, because the plateaus collapse first. -/
 
-/-- The forbidden **tonal-tier melody** `*HLH`: an `H-L-H` sequence of adjacent tonal
-    nodes, with the mora tier left unconstrained (empty lower tier, no links). Read off
-    the tone tier after OCP merging, this is the genuine non-local plateauing ban —
-    contrast `hlh`, whose diagonal per-mora docking makes it sensitive to plateau width. -/
-def hlhTier : Graph ToneSym Mora :=
-  ((AR.float ToneSym.H : AR ToneSym Mora) * AR.float ToneSym.L *
-    AR.float ToneSym.H).toGraph
+/-- The forbidden tonal-tier melody `*HLH`: no morae pinned, no links. -/
+abbrev hlhTier : TRep := mk [.H, .L, .H] [] []
 
-/-- The merging variant of `ASL`: the same forbidden-subgraph preimage, taken along the
-    OCP-merging realization `AR.realizeMerged` instead of the bridge-only `AR.realize`. -/
-def ASL' (g₀ : ToneSym → AR ToneSym Mora) (B : List (Graph ToneSym Mora)) : Language ToneSym :=
-  AR.realizeMerged g₀ ⁻¹' { A | isFreeOf B A }
+/-- `LHHLH` is excluded under merging: the `HH`-plateau fuses, the tone tier
+    reads `L-H-L-H`, and the medial `H-L-H` melody appears. -/
+theorem lhhlh_merged_excluded :
+    hlhTier.FactorEmbeds
+      (mk [.L, .H, .L, .H] [.μ, .μ, .μ, .μ, .μ]
+        [(0, 0), (1, 1), (1, 2), (2, 3), (3, 4)]) := by
+  rw [mk_embeds_iff]; decide
 
-instance (g₀ : ToneSym → AR ToneSym Mora) (B : List (Graph ToneSym Mora))
-    (w : List ToneSym) : Decidable (w ∈ ASL' g₀ B) :=
-  inferInstanceAs (Decidable (isFreeOf B (AR.realizeMerged g₀ w)))
+/-- A single `H`-plateau is admitted under merging: `HHH` fuses to one `H`. -/
+theorem hhh_merged_included :
+    ¬ hlhTier.FactorEmbeds (mk [.H] [.μ, .μ, .μ] [(0, 0), (0, 1), (0, 2)]) := by
+  rw [mk_embeds_iff]; decide
 
-/-- `LHHLH` is excluded under merging: the `HH`-plateau merges, so the tone tier reads
-    `L-H-L-H` and the medial `H-L-H` melody appears ([jardine-2019]'s `*HLH`). -/
-theorem lhhlh_merged_excluded : [ToneSym.L, .H, .H, .L, .H] ∉ ASL' gT [hlhTier] := by decide
-
-/-- A single `H`-plateau is admitted under merging: `HHH` collapses to one `H` node, so
-    the tone tier is just `H` — no `H-L-H` melody to forbid. -/
-theorem hhh_merged_included : [ToneSym.H, .H, .H] ∈ ASL' gT [hlhTier] := by decide
-
-/-- **The non-local power merging buys.** An *unbounded* plateau `HH-LL-HH` is excluded
-    under `AR.realizeMerged`: every run collapses, so the tone tier reads `H-L-H` and the
-    melody appears — no matter the plateau widths. -/
+/-- **The non-local power merging buys**: the unbounded plateau `HH-LL-HH`
+    fuses to tone tier `H-L-H`, so the melody appears — at any widths. -/
 theorem hlhTier_merged_excludes_plateau :
-    [ToneSym.H, .H, .L, .L, .H, .H] ∉ ASL' gT [hlhTier] := by decide
+    hlhTier.FactorEmbeds
+      (mk [.H, .L, .H] [.μ, .μ, .μ, .μ, .μ, .μ]
+        [(0, 0), (0, 1), (1, 2), (1, 3), (2, 4), (2, 5)]) := by
+  rw [mk_embeds_iff]; decide
 
-/-- The same string is **admitted** under the non-merging `AR.realize`: with the plateaus
-    kept apart, the tone tier reads `H-H-L-L-H-H`, which has no three *adjacent* `H-L-H`
-    nodes. The contrast with `hlhTier_merged_excludes_plateau` is exactly the non-local
-    expressivity OCP merging adds — the local `hlh_excluded` constraint cannot see it. -/
+/-- The same string **unmerged** is admitted: the plateaus stay apart, the tone
+    tier reads `H-H-L-L-H-H`, and no three adjacent nodes spell `H-L-H`. The
+    contrast with `hlhTier_merged_excludes_plateau` is exactly the non-local
+    expressivity OCP merging adds. -/
 theorem hlhTier_unmerged_admits_plateau :
-    [ToneSym.H, .H, .L, .L, .H, .H] ∈ ASL gT [hlhTier] := by decide
+    ¬ hlhTier.FactorEmbeds
+      (mk [.H, .H, .L, .L, .H, .H] [.μ, .μ, .μ, .μ, .μ, .μ]
+        [(0, 0), (1, 1), (2, 2), (3, 3), (4, 4), (5, 5)]) := by
+  rw [mk_embeds_iff]; decide
 
-/-- **The `*HLH` tonal-tier melody set is star-free.** `hlhTier` carries no association
-lines, so `ASL gT [hlhTier]` falls in the link-free fragment
-(`ASL.isStarFree_of_links_empty`): a concrete instance of [jardine-2019]'s `ASL ⊊ SF`
-placement that the bridge-only realization already settles. -/
-theorem hlhTier_isStarFree : (ASL gT [hlhTier]).IsStarFree :=
-  ASL.isStarFree_of_links_empty gT [hlhTier] (fun F hF => by
-    rw [List.mem_singleton] at hF; subst hF; rfl)
+/-- **The `*HLH` tonal-tier melody set is star-free**: `hlhTier` carries no
+    links, so any grammar built from it falls in the link-free fragment
+    (`Representation.ASL.isStarFree_of_link_free`) — a concrete instance of
+    [jardine-2019]'s `ASL ⊊ SF` placement. -/
+theorem hlhTier_link_free : ∀ i j p q, ¬ hlhTier.link i j p q := by
+  intro i j p q hl
+  rcases (Representation.link_ofData i j p q).mp hl with
+    ⟨-, -, -, ⟨-, -, h⟩ | ⟨-, -, h⟩⟩ <;> exact absurd h (List.not_mem_nil)
 
 end Jardine2019

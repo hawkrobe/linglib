@@ -3,7 +3,6 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Phonology.Autosegmental.Embedding
 import Linglib.Phonology.Autosegmental.Junction
 
 /-!
@@ -45,46 +44,6 @@ namespace Autosegmental
 namespace Correspondence
 
 variable {S T : Type*}
-
-/-- The **input** string of a correspondence graph: its upper tier. -/
-def input (G : Graph S T) : List S := G.upper.toList
-
-/-- The **output** string of a correspondence graph: its lower tier. -/
-def output (G : Graph S T) : List T := G.lower.toList
-
-/-- **R(CG)** ([jardine-2016-diss] Def. 25): the string relation realized by a set `CG` of
-    correspondence graphs — the input/output pairs of its members. -/
-def rel (CG : Graph S T → Prop) (w : List S) (v : List T) : Prop :=
-  ∃ G, CG G ∧ input G = w ∧ output G = v
-
-/-- `R` is monotone: more correspondence graphs realize a larger relation. -/
-theorem rel_mono {CG CG' : Graph S T → Prop} (h : ∀ G, CG G → CG' G) {w v} :
-    rel CG w v → rel CG' w v := by
-  rintro ⟨G, hG, hi, ho⟩; exact ⟨G, h G hG, hi, ho⟩
-
-/-- A process **specified by banned subgraphs** `φ`: the correspondence graphs free of
-    every forbidden pattern (Jardine's `CG(φ)`; reuses `Graph.Free`, the `L^NL_G`
-    banned-subgraph grammar — markedness and faithfulness as forbidden correspondence
-    substructures). -/
-def specifiedBy (φ : List (Graph S T)) (G : Graph S T) : Prop := G.Free φ
-
-instance [DecidableEq S] [DecidableEq T] (φ : List (Graph S T)) (G : Graph S T) :
-    Decidable (specifiedBy φ G) := inferInstanceAs (Decidable (G.Free φ))
-
-/-- A string relation is **local** when presented by a finite banned-subgraph grammar
-    over correspondence graphs — the locality of phonological processes [jardine-2016-diss]. -/
-def IsLocal (R : List S → List T → Prop) : Prop :=
-  ∃ φ : List (Graph S T), R = rel (specifiedBy φ)
-
-/-- Banned-subgraph grammars **compose by union**: `CG(φ ++ ψ) = CG(φ) ∩ CG(ψ)` — the
-    `L^NL_G` conjunction of two local constraint sets. -/
-theorem specifiedBy_append (φ ψ : List (Graph S T)) (G : Graph S T) :
-    specifiedBy (φ ++ ψ) G ↔ specifiedBy φ G ∧ specifiedBy ψ G := by
-  simp only [specifiedBy, Graph.Free, List.forall_mem_append]
-
-/-- The empty grammar specifies all of GEN. -/
-@[simp] theorem specifiedBy_nil (G : Graph S T) : specifiedBy [] G ↔ True := by
-  simp [specifiedBy, Graph.Free]
 
 /-! ### Correspondence on the graph foundation
 
