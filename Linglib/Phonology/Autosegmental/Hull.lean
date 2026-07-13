@@ -34,12 +34,12 @@ variable {α β : Type*}
 section CoordinateHull
 
 variable {ι : Type*} [Finite ι] {τ : ι → Type*}
-variable (m : ι) (X : AR (Sigma.fst : ((i : ι) × τ i) → ι)) [Finite X.obj.V]
+variable (m : ι) (X : TieredAR ι τ) [Finite X.obj.V]
 
 /-- Close each tier-`m` node's association set to its interval hull on each
     other tier. -/
 noncomputable def AR.hull :
-    AR (Sigma.fst : ((i : ι) × τ i) → ι) :=
+    TieredAR ι τ :=
   AR.ofData (fun i => X.tierWord i)
     (fun i j p q =>
       (i = m ∧ ∃ q₁ q₂, X.link i j p q₁ ∧ X.link i j p q₂ ∧ q₁ ≤ q ∧ q ≤ q₂) ∨

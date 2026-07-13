@@ -46,25 +46,25 @@ abbrev PrecAR (ι : Type*) (τ : ι → Type*) :=
 
 /-- A full isomorphism is an isomorphism of the precedence-preserving category;
     both directions preserve arcs. -/
-noncomputable def AR.fullIsoToWideIso {A B : AR (Sigma.fst : ((i : ι) × τ i) → ι)}
+noncomputable def AR.fullIsoToWideIso {A B : TieredAR ι τ}
     (e : Graph.Iso A.obj B.obj) : (⟨A⟩ : PrecAR ι τ) ≅ ⟨B⟩ :=
   CategoryTheory.isoMk (AR.mkIso e) e.toHom_precPreserving e.symm.toHom_precPreserving
 
 /-- The class of a representation, its isomorphism class in the skeleton of the
     precedence-preserving category. -/
 noncomputable def AR.cls
-    (A : AR (Sigma.fst : ((i : ι) × τ i) → ι)) :
+    (A : TieredAR ι τ) :
     Skeleton (PrecAR ι τ) :=
   toSkeleton ⟨A⟩
 
 /-- Concatenation of classes is the class of the tensor. -/
 theorem AR.cls_tensor
-    (A B : AR (Sigma.fst : ((i : ι) × τ i) → ι)) :
+    (A B : TieredAR ι τ) :
     AR.cls (A ⊗ B) = AR.cls A * AR.cls B :=
   CategoryTheory.Skeleton.toSkeleton_tensorObj (⟨A⟩ : PrecAR ι τ) ⟨B⟩
 
 /-- Normal forms represent their class. -/
-theorem AR.cls_normalize {X : AR (Sigma.fst : ((i : ι) × τ i) → ι)}
+theorem AR.cls_normalize {X : TieredAR ι τ}
     [Finite X.obj.V] : AR.cls (X.normalize) = AR.cls X :=
   Quotient.sound ⟨AR.fullIsoToWideIso X.normalizeFullIso⟩
 
@@ -79,14 +79,14 @@ variable {S : Type*}
 
 /-- Realize a string as a representation: the iterated tensor of its symbols'
     primitives ([jardine-2019]'s `g`). -/
-noncomputable def realize (g₀ : S → AR (Sigma.fst : ((i : ι) × τ i) → ι))
-    (w : List S) : AR (Sigma.fst : ((i : ι) × τ i) → ι) :=
+noncomputable def realize (g₀ : S → TieredAR ι τ)
+    (w : List S) : TieredAR ι τ :=
   (w.map g₀).foldr (· ⊗ ·) (𝟙_ _)
 
-@[simp] theorem realize_nil (g₀ : S → AR (Sigma.fst : ((i : ι) × τ i) → ι)) :
+@[simp] theorem realize_nil (g₀ : S → TieredAR ι τ) :
     realize g₀ [] = 𝟙_ _ := rfl
 
-@[simp] theorem realize_cons (g₀ : S → AR (Sigma.fst : ((i : ι) × τ i) → ι))
+@[simp] theorem realize_cons (g₀ : S → TieredAR ι τ)
     (a : S) (w : List S) : realize g₀ (a :: w) = g₀ a ⊗ realize g₀ w := rfl
 
 end Realize
@@ -97,7 +97,7 @@ section RealizeTierWord
 open scoped MonoidalCategory
 
 variable {S : Type*}
-variable (g₀ : S → AR (Sigma.fst : ((i : ι) × τ i) → ι))
+variable (g₀ : S → TieredAR ι τ)
 
 instance realize.instFinite [∀ s, Finite (g₀ s).obj.V] (w : List S) :
     Finite (realize g₀ w).obj.V := by

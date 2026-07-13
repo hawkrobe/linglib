@@ -45,14 +45,18 @@ open CategoryTheory
 
 variable {ι : Type*} {τ : ι → Type*}
 
+/-- Representations over the sigma alphabet `(i : ι) × τ i` with its native tier
+    projection `Sigma.fst` — the coordinate carrier of the normal-form theory. -/
+abbrev TieredAR (ι : Type*) (τ : ι → Type*) := AR (Sigma.fst : ((i : ι) × τ i) → ι)
+
 section NormalForm
 open scoped Classical
 
 /-- The vertices of `X.obj` labelled to tier `i`. -/
-def AR.fiber (X : AR (Sigma.fst : ((i : ι) × τ i) → ι)) (i : ι) :
+def AR.fiber (X : TieredAR ι τ) (i : ι) :
     Type _ := {v : X.obj.V // (X.obj.label v).1 = i}
 
-variable {X : AR (Sigma.fst : ((i : ι) × τ i) → ι)}
+variable {X : TieredAR ι τ}
 
 /-- The `τ i` component of a fiber element, extracted from the labeling by
     transporting along the fiber's tier-membership witness. -/
@@ -87,7 +91,7 @@ noncomputable instance AR.fiber.instLinearOrder (i : ι) :
   exact linearOrderOfSTO (fun a b : X.fiber i => X.obj.arcs.Adj a.val b.val)
 
 /-- The number of tier-`i` vertices. -/
-noncomputable def AR.tierLength (X : AR (Sigma.fst : ((i : ι) × τ i) → ι))
+noncomputable def AR.tierLength (X : TieredAR ι τ)
     [Finite X.obj.V] (i : ι) : ℕ :=
   letI := Fintype.ofFinite (X.fiber i)
   Fintype.card (X.fiber i)
@@ -132,8 +136,8 @@ theorem AR.linkRel_def [Finite X.obj.V] {i j : ι} {p : Fin (X.tierLength i)}
     edges, arcs, and labels back along `vertexEquiv`. A `AR` — the
     normal form is not a separate kind of object. -/
 noncomputable def AR.normalize
-    (X : AR (Sigma.fst : ((i : ι) × τ i) → ι)) [Finite X.obj.V] :
-    AR (Sigma.fst : ((i : ι) × τ i) → ι) where
+    (X : TieredAR ι τ) [Finite X.obj.V] :
+    TieredAR ι τ where
   obj :=
     { V := (i : ι) × Fin (X.tierLength i)
       edges := X.obj.edges.comap X.vertexEquiv
@@ -184,7 +188,7 @@ section TierWordTensor
 open scoped MonoidalCategory
 
 variable {ι : Type*} {τ : ι → Type*}
-variable {X Y : AR (Sigma.fst : ((i : ι) × τ i) → ι)}
+variable {X Y : TieredAR ι τ}
 
 instance [Finite X.obj.V] [Finite Y.obj.V] : Finite ((X ⊗ Y).obj.V) :=
   inferInstanceAs (Finite (X.obj.V ⊕ Y.obj.V))
@@ -270,7 +274,7 @@ theorem AR.fiberLabel_symm_inr {i : ι} (w : Y.fiber i) :
       (.inr w)) = Y.fiberLabel w := rfl
 
 /-- Any monotone enumeration computes the tier word. -/
-theorem AR.tierWord_eq_ofFn {Z : AR (Sigma.fst : ((i : ι) × τ i) → ι)}
+theorem AR.tierWord_eq_ofFn {Z : TieredAR ι τ}
     [Finite Z.obj.V] {i : ι} {n : ℕ} (e : Fin n ≃o Z.fiber i) :
     Z.tierWord i = List.ofFn fun p => Z.fiberLabel (e p) := by
   have hn : Z.tierLength i = n := by
@@ -329,12 +333,12 @@ theorem AR.vertexEquiv_tensor_of_ge {i : ι} {r : Fin ((X ⊗ Y).tierLength i)}
     AR.tensorEnum_apply_natAdd]
   rfl
 
-instance : Finite ((𝟙_ (AR (Sigma.fst : ((i : ι) × τ i) → ι))).obj.V) :=
+instance : Finite ((𝟙_ (TieredAR ι τ)).obj.V) :=
   inferInstanceAs (Finite PEmpty)
 
 @[simp] theorem AR.tierWord_unit (i : ι) :
-    (𝟙_ (AR (Sigma.fst : ((i : ι) × τ i) → ι))).tierWord i = [] := by
-  haveI : IsEmpty ((𝟙_ (AR (Sigma.fst : ((i : ι) × τ i) → ι))).fiber i) :=
+    (𝟙_ (TieredAR ι τ)).tierWord i = [] := by
+  haveI : IsEmpty ((𝟙_ (TieredAR ι τ)).fiber i) :=
     ⟨fun v => v.val.elim⟩
   rw [AR.tierWord_eq_ofFn (OrderIso.ofIsEmpty (Fin 0) _)]
   exact List.ofFn_zero
@@ -350,7 +354,7 @@ is the blockwise companion of `tierWord_tensor`. -/
 section LinkReader
 
 variable {ι : Type*} {τ : ι → Type*}
-variable (X : AR (Sigma.fst : ((i : ι) × τ i) → ι))
+variable (X : TieredAR ι τ)
 
 /-- Tier-`i` position `p` links to tier-`j` position `q`, in ℕ coordinates
     (out-of-bounds positions link to nothing). -/
@@ -367,7 +371,7 @@ noncomputable def AR.linearize [Finite X.obj.V] (i j : ι) :
 
 /-- Link conditions are supported on the factor's tier ranges. -/
 theorem AR.forall_link_iff_bounded
-    {F : AR (Sigma.fst : ((i : ι) × τ i) → ι)} [Finite F.obj.V]
+    {F : TieredAR ι τ} [Finite F.obj.V]
     {C : ι → ι → ℕ → ℕ → Prop} :
     (∀ i j p q, F.link i j p q → C i j p q) ↔
       ∀ i j, ∀ p < F.tierLength i, ∀ q < F.tierLength j,
@@ -379,7 +383,7 @@ theorem AR.forall_link_iff_bounded
 open scoped MonoidalCategory in
 /-- Tensor links are blockwise: within the left factor, or within the right
     factor shifted by the left factor's tier lengths — no cross-factor links. -/
-theorem AR.link_tensor {X Y : AR (Sigma.fst : ((i : ι) × τ i) → ι)}
+theorem AR.link_tensor {X Y : TieredAR ι τ}
     [Finite X.obj.V] [Finite Y.obj.V] (i j : ι) (p q : ℕ) :
     (X ⊗ Y).link i j p q ↔
       X.link i j p q ∨ X.tierLength i ≤ p ∧ X.tierLength j ≤ q ∧
@@ -431,7 +435,7 @@ section Classification
 open scoped MonoidalCategory
 
 variable {ι : Type*} {τ : ι → Type*}
-variable {X : AR (Sigma.fst : ((i : ι) × τ i) → ι)}
+variable {X : TieredAR ι τ}
 
 /-- The label of a canonical vertex sits on its own tier. -/
 theorem AR.label_vertexEquiv [Finite X.obj.V] (i : ι)
@@ -482,7 +486,7 @@ theorem AR.not_link_self_tier [Finite X.obj.V] (i : ι) (p q : ℕ) :
 
 /-- The classification isomorphism as a full-structure `Graph.Iso`. -/
 noncomputable def AR.fullIsoOfReaderEq
-    {A B : AR (Sigma.fst : ((i : ι) × τ i) → ι)}
+    {A B : TieredAR ι τ}
     [Finite A.obj.V] [Finite B.obj.V]
     (hw : ∀ i, A.tierWord i = B.tierWord i)
     (hl : ∀ i j p q, A.link i j p q ↔ B.link i j p q) :
@@ -521,7 +525,7 @@ noncomputable def AR.fullIsoOfReaderEq
 /-- Finite representations with equal tier words and equal links are isomorphic;
     the tuple reading is a complete invariant. -/
 noncomputable def AR.isoOfReaderEq
-    {A B : AR (Sigma.fst : ((i : ι) × τ i) → ι)}
+    {A B : TieredAR ι τ}
     [Finite A.obj.V] [Finite B.obj.V]
     (hw : ∀ i, A.tierWord i = B.tierWord i)
     (hl : ∀ i j p q, A.link i j p q ↔ B.link i j p q) : A ≅ B :=
@@ -545,7 +549,7 @@ variable {ι : Type*} {τ : ι → Type*}
     ignored, and same-tier links are excluded by construction). Arcs are the
     ascending position order on each tier. -/
 def AR.ofData (ws : ∀ i, List (τ i)) (L : ι → ι → ℕ → ℕ → Prop) :
-    AR (Sigma.fst : ((i : ι) × τ i) → ι) where
+    TieredAR ι τ where
   obj :=
     { V := (i : ι) × Fin (ws i).length
       edges :=

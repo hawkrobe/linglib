@@ -75,7 +75,7 @@ open CategoryTheory
 open scoped MonoidalCategory
 
 variable {ι : Type*} [DecidableEq ι] {τ : ι → Type*}
-variable (X : AR (Sigma.fst : ((i : ι) × τ i) → ι))
+variable (X : TieredAR ι τ)
 variable (m : ι) [DecidableEq (τ m)]
 
 /-- Tier words after collapsing melody tier `m`: destuttered at `m`, untouched
@@ -96,7 +96,7 @@ noncomputable def AR.collapseIdx [Finite X.obj.V] (i : ι) (p : ℕ) : ℕ :=
 /-- **The OCP-merging collapse**: melody tier `m` destuttered, links repointed
     through `runIdx`, other tiers untouched. -/
 noncomputable def AR.collapse [Finite X.obj.V] :
-    AR (Sigma.fst : ((i : ι) × τ i) → ι) where
+    TieredAR ι τ where
   obj :=
     { V := (i : ι) × Fin (X.collapsedWord m i).length
       edges :=
@@ -162,7 +162,7 @@ noncomputable def AR.collapseFiberEnum [Finite X.obj.V] (i : ι) :
     tier words as collapsing the tensor of the collapsed factors —
     `OCP.collapse_append` lifted through the readers. -/
 theorem AR.collapsedWord_tensor
-    {Y : AR (Sigma.fst : ((i : ι) × τ i) → ι)}
+    {Y : TieredAR ι τ}
     [Finite X.obj.V] [Finite Y.obj.V] (i : ι) :
     (X ⊗ Y).collapsedWord m i = (X.collapse m ⊗ Y.collapse m).collapsedWord m i := by
   rcases eq_or_ne i m with rfl | h
@@ -230,7 +230,7 @@ theorem AR.tierLength_collapse [Finite X.obj.V] (i : ι) :
   rw [← AR.length_tierWord, AR.tierWord_collapse]
 
 section Congruence
-variable {Y : AR (Sigma.fst : ((i : ι) × τ i) → ι)}
+variable {Y : TieredAR ι τ}
 variable [Finite X.obj.V] [Finite Y.obj.V]
 
 /-- Left-block positions commute with the collapse-collapse seam. -/
@@ -335,9 +335,9 @@ variable {S : Type*}
 
 /-- The OCP-merging realization at melody tier `m` — [jardine-2019]'s merging
     `g_T`: realize, then merge the melody runs. -/
-noncomputable def realizeMerged (g₀ : S → AR (Sigma.fst : ((i : ι) × τ i) → ι))
+noncomputable def realizeMerged (g₀ : S → TieredAR ι τ)
     [∀ s, Finite (g₀ s).obj.V] (w : List S) :
-    AR (Sigma.fst : ((i : ι) × τ i) → ι) :=
+    TieredAR ι τ :=
   (realize g₀ w).collapse m
 
 end RealizeMerged
