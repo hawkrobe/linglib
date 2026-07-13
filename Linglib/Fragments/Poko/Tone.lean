@@ -74,7 +74,7 @@ def Syll.morpheme : Syll → Morpheme
 /-- Each stem's lexical melody ([mcpherson-lamont-2026] ex. 3): tones
     over the stem's single TBU, with the lexical pre-linking — the H of
     an `/M^H/` stem is the sole unlinked (floating) element. -/
-def Syll.melody (s : Syll) : Graph (TierSpec TRN) (SegSpec Syll) :=
+def Syll.melody (s : Syll) : FloatingForm Syll TRN :=
   match s with
   | .kak => .melody s.morpheme [.M, .H] [s] {(0, 0)}          -- /M^H/
   | .ri  => .melody s.morpheme [.M, .H] [s] {(0, 0)}          -- /M^H/
@@ -87,8 +87,8 @@ def Syll.melody (s : Syll) : Graph (TierSpec TRN) (SegSpec Syll) :=
 
 /-- The underlying form of a stem sequence: melodies concatenated
     left-to-right. -/
-def word (ss : List Syll) : Graph (TierSpec TRN) (SegSpec Syll) :=
-  .concatList (ss.map Syll.melody)
+def word (ss : List Syll) : FloatingForm Syll TRN :=
+  .concatInputs (ss.map Syll.melody)
 
 /-- Poko autosegmental forms: syllable backbone, `TRN` tone tier. -/
 abbrev Form := FloatingForm Syll TRN

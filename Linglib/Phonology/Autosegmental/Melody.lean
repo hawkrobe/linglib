@@ -34,17 +34,16 @@ namespace Autosegmental
 
 variable {S T : Type*}
 
-namespace Graph
+namespace FloatingForm
 
 variable (m : Morpheme) (tones : List T) (tbus : List S) (links : Finset Link)
 
 /-- One morpheme's underlying autosegmental contribution ([rolle-2018]
     §2.1 Def 1): `tones` over `tbus`, every element sponsored by `m`,
-    pre-linked by `links` in melody-local coordinates. -/
-def melody : Graph (TierSpec T) (SegSpec S) where
-  upper := .ofList (tones.map fun t => { value := t, morpheme := m })
-  lower := .ofList (tbus.map fun s => { seg := s, morpheme := m })
-  links := links
+    pre-linked by `links` in melody-local coordinates; an input state. -/
+def melody : FloatingForm S T :=
+  mkInput (tbus.map fun s => { seg := s, morpheme := m })
+    (tones.map fun t => { value := t, morpheme := m }) links
 
 @[simp] theorem melody_upper :
     (melody m tones tbus links).upper
@@ -68,17 +67,7 @@ theorem melody_lower_morpheme {j : ℕ} (hj : j < tbus.length) :
   rw [melody_lower, LabeledTuple.ofList_get?]
   simp [hj]
 
-end Graph
-
-/-- Package an underlying graph as a derivation input: nothing deleted,
-    surface links mirror the underlying links. -/
-def FloatingForm.ofGraph (g : Graph (TierSpec T) (SegSpec S)) : FloatingForm S T :=
-  { g with deletedTier := ∅, surfaceLinks := g.links }
-
-/-- `mkInput` is `ofGraph` of the corresponding raw graph. -/
-theorem FloatingForm.mkInput_eq_ofGraph (lower : List (SegSpec S))
-    (upper : List (TierSpec T)) (links : Finset Link) :
-    mkInput lower upper links = ofGraph ⟨.ofList upper, .ofList lower, links⟩ := rfl
+end FloatingForm
 
 /-- **Consistency of Exponence** ([zimmermann-2024] §4): GEN never alters
     morphemic affiliation — every one-step candidate carries its input's

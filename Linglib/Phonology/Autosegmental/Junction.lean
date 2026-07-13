@@ -378,6 +378,13 @@ theorem Representation.isPlanar_spread (a : α) (bs : List β) :
     IsPlanar (Representation.spread a bs).obj.graph :=
   (Representation.isPlanar_junction_iff _ _).mpr (Or.inl (by simp))
 
+/-- A timing slot **surfaces with** melody label `a`: some `a`-labelled melody
+    node links to it. -/
+def Representation.surfacesWith
+    (X : Representation (Sigma.fst : ((b : Bool) × TwoTier α β b) → Bool))
+    [Finite X.obj.V] (a : α) (j : ℕ) : Prop :=
+  ∃ k, X.link true false k j ∧ (X.tierWord true)[k]? = some a
+
 end CoordinateJunction
 
 end Autosegmental
