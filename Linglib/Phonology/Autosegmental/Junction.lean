@@ -322,6 +322,43 @@ theorem Representation.isPlanar_junction_iff (as : List α) (bs : List β) :
       have h3 : (pw' : ℕ) < (pv' : ℕ) := hpw'v'
       omega
 
+/-! #### The planar local configurations -/
+
+/-- One-to-one association. -/
+def Representation.single (a : α) (b : β) := Representation.junction [a] [b]
+
+/-- A bare (unassociated) timing slot. -/
+def Representation.bare (b : β) := Representation.junction ([] : List α) [b]
+
+/-- A floating autosegment ([leben-1973]). -/
+def Representation.float (a : α) := Representation.junction [a] ([] : List β)
+
+/-- Several melody nodes on one slot. -/
+def Representation.contour (as : List α) (b : β) := Representation.junction as [b]
+
+/-- One melody node over several slots. -/
+def Representation.spread (a : α) (bs : List β) := Representation.junction [a] bs
+
+theorem Representation.isPlanar_single (a : α) (b : β) :
+    IsPlanar (Representation.single a b).obj.graph :=
+  (Representation.isPlanar_junction_iff _ _).mpr (Or.inl (by simp))
+
+theorem Representation.isPlanar_bare (b : β) :
+    IsPlanar (Representation.bare (α := α) b).obj.graph :=
+  (Representation.isPlanar_junction_iff _ _).mpr (Or.inl (by simp))
+
+theorem Representation.isPlanar_float (a : α) :
+    IsPlanar (Representation.float (β := β) a).obj.graph :=
+  (Representation.isPlanar_junction_iff _ _).mpr (Or.inl (by simp))
+
+theorem Representation.isPlanar_contour (as : List α) (b : β) :
+    IsPlanar (Representation.contour as b).obj.graph :=
+  (Representation.isPlanar_junction_iff _ _).mpr (Or.inr (by simp))
+
+theorem Representation.isPlanar_spread (a : α) (bs : List β) :
+    IsPlanar (Representation.spread a bs).obj.graph :=
+  (Representation.isPlanar_junction_iff _ _).mpr (Or.inl (by simp))
+
 end CoordinateJunction
 
 end AR
