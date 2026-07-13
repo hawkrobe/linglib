@@ -41,10 +41,11 @@ abbrev PrecAR (ι : Type*) (τ : ι → Type*) :=
 
 namespace AR
 
-/-! ### The monoid of representations up to isomorphism -/
-
-section IsoClasses
 open scoped MonoidalCategory
+
+variable {S : Type*} (g₀ : S → TieredAR ι τ)
+
+/-! ### The monoid of representations up to isomorphism -/
 
 /-- A full isomorphism is an isomorphism of the precedence-preserving category;
     both directions preserve arcs. -/
@@ -54,52 +55,31 @@ noncomputable def fullIsoToWideIso {A B : TieredAR ι τ}
 
 /-- The class of a representation, its isomorphism class in the skeleton of the
     precedence-preserving category. -/
-noncomputable def cls
-    (A : TieredAR ι τ) :
-    Skeleton (PrecAR ι τ) :=
+noncomputable def cls (A : TieredAR ι τ) : Skeleton (PrecAR ι τ) :=
   toSkeleton ⟨A⟩
 
 /-- Concatenation of classes is the class of the tensor. -/
-theorem cls_tensor
-    (A B : TieredAR ι τ) :
-    cls (A ⊗ B) = cls A * cls B :=
+theorem cls_tensor (A B : TieredAR ι τ) : cls (A ⊗ B) = cls A * cls B :=
   CategoryTheory.Skeleton.toSkeleton_tensorObj (⟨A⟩ : PrecAR ι τ) ⟨B⟩
 
 /-- Normal forms represent their class. -/
-theorem cls_normalize {X : TieredAR ι τ}
-    [Finite X.obj.V] : cls (X.normalize) = cls X :=
+theorem cls_normalize {X : TieredAR ι τ} [Finite X.obj.V] :
+    cls (X.normalize) = cls X :=
   Quotient.sound ⟨fullIsoToWideIso X.normalizeFullIso⟩
-
-end IsoClasses
 
 /-! ### Realization of strings -/
 
-section Realize
-open scoped MonoidalCategory
-
-variable {S : Type*}
-
 /-- Realize a string as a representation: the iterated tensor of its symbols'
     primitives ([jardine-2019]'s `g`). -/
-noncomputable def realize (g₀ : S → TieredAR ι τ)
-    (w : List S) : TieredAR ι τ :=
+noncomputable def realize (w : List S) : TieredAR ι τ :=
   (w.map g₀).foldr (· ⊗ ·) (𝟙_ _)
 
-@[simp] theorem realize_nil (g₀ : S → TieredAR ι τ) :
-    realize g₀ [] = 𝟙_ _ := rfl
+@[simp] theorem realize_nil : realize g₀ [] = 𝟙_ _ := rfl
 
-@[simp] theorem realize_cons (g₀ : S → TieredAR ι τ)
-    (a : S) (w : List S) : realize g₀ (a :: w) = g₀ a ⊗ realize g₀ w := rfl
-
-end Realize
+@[simp] theorem realize_cons (a : S) (w : List S) :
+    realize g₀ (a :: w) = g₀ a ⊗ realize g₀ w := rfl
 
 /-! ### Tier content of realizations -/
-
-section RealizeTierWord
-open scoped MonoidalCategory
-
-variable {S : Type*}
-variable (g₀ : S → TieredAR ι τ)
 
 instance realize.instFinite [∀ s, Finite (g₀ s).obj.V] (w : List S) :
     Finite (realize g₀ w).obj.V := by
@@ -112,10 +92,7 @@ theorem tierWord_realize [∀ s, Finite (g₀ s).obj.V] (i : ι) (w : List S) :
     (realize g₀ w).tierWord i = (w.map fun s => (g₀ s).tierWord i).flatten := by
   induction w with
   | nil => simp
-  | cons a w ih =>
-    calc (realize g₀ (a :: w)).tierWord i
-        = (g₀ a ⊗ realize g₀ w).tierWord i := rfl
-      _ = ((a :: w).map fun s => (g₀ s).tierWord i).flatten := by simp [ih]
+  | cons a w ih => simp [ih]
 
 /-- The tier-`i` projection of a realization, as a free-monoid homomorphism:
     each symbol contributes its primitive's tier word. -/
@@ -123,19 +100,15 @@ noncomputable def tierProj [∀ s, Finite (g₀ s).obj.V] (i : ι) :
     FreeMonoid S →* FreeMonoid (τ i) :=
   FreeMonoid.lift fun s => FreeMonoid.ofList ((g₀ s).tierWord i)
 
+@[simp] theorem tierProj_of [∀ s, Finite (g₀ s).obj.V] (i : ι) (a : S) :
+    tierProj g₀ i (FreeMonoid.of a) = FreeMonoid.ofList ((g₀ a).tierWord i) := rfl
+
 /-- `tierProj` packages `tierWord`: on a word it is the realized tier word. -/
 theorem tierProj_ofList [∀ s, Finite (g₀ s).obj.V] (i : ι) (w : List S) :
     tierProj g₀ i (FreeMonoid.ofList w) = FreeMonoid.ofList ((realize g₀ w).tierWord i) := by
   induction w with
-  | nil => simp [realize_nil]
-  | cons a w ih =>
-    rw [show FreeMonoid.ofList (a :: w) = FreeMonoid.of a * FreeMonoid.ofList w from rfl,
-      map_mul, ih]
-    calc FreeMonoid.ofList ((g₀ a).tierWord i) * FreeMonoid.ofList ((realize g₀ w).tierWord i)
-        = FreeMonoid.ofList ((g₀ a).tierWord i ++ (realize g₀ w).tierWord i) := rfl
-      _ = _ := by rw [← tierWord_tensor i]; rfl
-
-end RealizeTierWord
+  | nil => simp
+  | cons a w ih => simp [FreeMonoid.ofList_cons, FreeMonoid.ofList_append, ih]
 
 end AR
 
