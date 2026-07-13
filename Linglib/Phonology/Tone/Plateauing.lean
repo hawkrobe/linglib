@@ -251,6 +251,33 @@ theorem link_realize_toRep (w : List TBU) (p j : ℕ) :
           rw [this]
           omega
 
+/-- Links of the OCP-merged realization: the single fused `H` node (index `0`)
+    links exactly to the H-toned slots. -/
+theorem link_realizeMerged (w : List TBU) (k j : ℕ) :
+    ((Autosegmental.realize toRep w).collapse true).link true false k j ↔
+      k = 0 ∧ w[j]? = some .H := by
+  haveI := Autosegmental.realize.instFinite toRep w
+  rw [Autosegmental.Representation.link_collapse]
+  constructor
+  · rintro ⟨p, q, hl, hk, hjq⟩
+    obtain ⟨hp, hq⟩ := (link_realize_toRep w p q).mp hl
+    refine ⟨?_, ?_⟩
+    · rw [← hk]
+      unfold Autosegmental.Representation.collapseIdx
+      rw [if_pos rfl, tierWord_realize_toRep_true]
+      exact Autosegmental.runIdx_replicate _ _ _
+    · rw [← hjq]
+      unfold Autosegmental.Representation.collapseIdx
+      rw [if_neg (by decide)]
+      exact hq
+  · rintro ⟨rfl, hj⟩
+    refine ⟨(w.take j).count .H, j, (link_realize_toRep w _ j).mpr ⟨rfl, hj⟩, ?_, ?_⟩
+    · unfold Autosegmental.Representation.collapseIdx
+      rw [if_pos rfl, tierWord_realize_toRep_true]
+      exact Autosegmental.runIdx_replicate _ _ _
+    · unfold Autosegmental.Representation.collapseIdx
+      rw [if_neg (by decide)]
+
 end TierWords
 
 theorem linearize_realize_toAR (w : List TBU) :
