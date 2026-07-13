@@ -14,14 +14,14 @@ distinguished "predicative" adjectives (analyzable as conjunction =
 intersective) from "non-predicative" (= non-intersective), and
 "standard" modifiers (A N → N = subsective) from "non-standard"
 (= non-subsective). [kamp-1975] refined these binary distinctions
-into the full four-class hierarchy below; the terminology follows Kamp.
+into the full four-class hierarchy below.
 
 ## Hierarchy
 
-1. **Intersective** (Kamp's "predicative", def. 4): `⟦A N⟧ = ⟦A⟧ ∩ ⟦N⟧`
-2. **Subsective** (Kamp's "affirmative", def. 6): `⟦A N⟧ ⊆ ⟦N⟧`
-3. **Privative** (def. 5): `⟦A N⟧ ∩ ⟦N⟧ = ∅`
-4. **Extensional** (def. 7): depends only on N's extension, not intension
+1. **Intersective**: `⟦A N⟧ = ⟦A⟧ ∩ ⟦N⟧`
+2. **Subsective**: `⟦A N⟧ ⊆ ⟦N⟧`
+3. **Privative**: `⟦A N⟧ ∩ ⟦N⟧ = ∅`
+4. **Extensional**: depends only on N's extension, not intension
 5. **Non-subsective** (modal): no entailment (alleged, potential)
 
 ## Implication Structure
@@ -38,17 +38,17 @@ The hierarchy is defined over *intensional* adjective meanings
 (`Property W E → Property W E`) parameterized by a world type `W` and
 entity type `E`. This is the most general formulation, from which
 single-world (extensional) specializations follow — see
-`Montague/Modification.lean` for the Montague-typed extensional versions
-and `Kamp1975.lean` § 1 for single-world specialization theorems.
+`Studies/Kamp1975.lean` § 1 for the single-world specialization
+theorems.
 
 [partee-2010] argues the privative class should be eliminated
 in favor of subsective + noun coercion; see `Partee2010.lean`. The
 post-collapse 3-class hierarchy is captured by `RevisedClass` below;
 the licensing mechanism (NVP + HPP) lives in
-`Semantics/Composition/Coercion.lean`.
+`Semantics/Modification/Coercion.lean`.
 -/
 
-namespace Degree.Classification
+namespace Modification
 
 /-- An intensional property: a function from worlds to characteristic
     predicates over entities. -/
@@ -66,8 +66,8 @@ section Hierarchy
 variable {W E : Type*}
 
 /-- An adjective is **intersective** if its extension at each world is the
-    intersection of the noun's extension with some fixed property Q.
-    [kamp-1975] definition (4) ("predicative").
+    intersection of the noun's extension with some fixed property Q
+    ([kamp-1975]).
 
     Examples: "gray", "French", "carnivorous", "four-legged". -/
 def isIntersective (adj : AdjMeaning W E) : Prop :=
@@ -75,16 +75,14 @@ def isIntersective (adj : AdjMeaning W E) : Prop :=
     adj N w x ↔ (Q w x ∧ N w x)
 
 /-- An adjective is **subsective** if its extension is always a subset
-    of the noun's extension.
-    [kamp-1975] definition (6) ("affirmative").
+    of the noun's extension ([kamp-1975]).
 
     Examples: "skillful", "good", "typical". -/
 def isSubsective (adj : AdjMeaning W E) : Prop :=
   ∀ (N : Property W E) (w : W) (x : E), adj N w x → N w x
 
 /-- An adjective is **privative** if its extension is always disjoint
-    from the noun's extension.
-    [kamp-1975] definition (5).
+    from the noun's extension ([kamp-1975]).
 
     Examples: "fake", "counterfeit".
     [partee-2010] argues this class should be eliminated. -/
@@ -92,8 +90,8 @@ def isPrivative (adj : AdjMeaning W E) : Prop :=
   ∀ (N : Property W E) (w : W) (x : E), adj N w x → ¬ N w x
 
 /-- An adjective is **extensional** if its extension in world w depends
-    only on the noun's extension in w, not on the noun's intension.
-    [kamp-1975] definition (7).
+    only on the noun's extension in w, not on the noun's intension
+    ([kamp-1975]).
 
     "four-legged" and "gray" are extensional; "skillful" is not (being a
     skillful surgeon depends on what counts as a surgeon across contexts,
@@ -195,7 +193,7 @@ noun coercion. Per [partee-2010] footnote 1, the hierarchy is
 subset-ordered (intersective ⊂ subsective ⊂ unrestricted), not linear;
 the enum picks the *narrowest fit* per adjective. The licensing
 mechanism (NVP + HPP) is in
-`Semantics/Composition/Coercion.lean`. -/
+`Semantics/Modification/Coercion.lean`. -/
 
 section Revised
 
@@ -230,4 +228,4 @@ def RevisedClass.satisfies : RevisedClass → AdjMeaning W E → Prop
 
 end Revised
 
-end Degree.Classification
+end Modification

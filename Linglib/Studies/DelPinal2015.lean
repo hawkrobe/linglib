@@ -1,5 +1,5 @@
 import Linglib.Semantics.Modification.Adjective
-import Linglib.Semantics.Composition.Coercion
+import Linglib.Semantics.Modification.Coercion
 import Linglib.Studies.Kamp1975
 import Linglib.Studies.Partee2010
 import Linglib.Data.Examples.Schema
@@ -61,10 +61,11 @@ satisfies `extension_implies_formal`.
 
 namespace DelPinal2015
 
-open Degree.Classification
-open Semantics.Composition.Coercion (LicensedCoercion)
+open Modification
 
-/-- Pustejovsky-style four-role qualia profile. -/
+/-- Property-valued rendering of the four [pustejovsky-1995] qualia
+    roles (`Pustejovsky1995.QualeRole`); the Type-valued original is
+    `Pustejovsky1995.Qualia` in `Studies/Pustejovsky1995.lean`. -/
 structure Qualia (W E : Type*) where
   constitutive : Property W E
   formal       : Property W E
@@ -178,7 +179,10 @@ theorem DelPinalReanalysis.toAdjMeaning_isPrivative
 
 /-- The classical projection of any DC reanalysis admits no
     `LicensedCoercion`. The two frameworks make incompatible type-level
-    commitments about privatives. -/
+    commitments about privatives. The comparison is extensional-only:
+    `toAdjMeaning` reads off E-structure, discarding the C-structure
+    where DC relocates the look-like-N content that Partee's coercion
+    carries in the widened extension. -/
 theorem DelPinalReanalysis.no_LicensedCoercion
     (r : DelPinalReanalysis W E) (Q : Property W E → Qualia W E)
     (N : Property W E) (w : W) :
@@ -191,7 +195,7 @@ theorem DelPinalReanalysis.no_LicensedCoercion
 /-- Lift a classical `AdjMeaning` to a `DCAdjMeaning` by computing the
     extension via the classical adj and inheriting the input noun's
     qualia (the C-structure passes through unchanged). -/
-def _root_.Degree.Classification.AdjMeaning.toDCAdjMeaning
+def _root_.Modification.AdjMeaning.toDCAdjMeaning
     (adj : AdjMeaning W E) : DCAdjMeaning W E :=
   fun N => { extension := adj N.extension, qualia := N.qualia }
 
