@@ -28,6 +28,10 @@ category of autosegmental representations, monoidal under `Graph.concat`.
   includes path-closure — the arcs are transitively closed, [jardine-2019]'s
   reading that `A` represents the order; the OCP reads adjacency as the covering
   relation of the arcs, since order-closed arcs relate all comparable pairs.
+  Axiom 6's word-level form is `AR.IsCleanAt`, bridged by
+  `AR.isCleanAt_iff_isOCPClean` (`OCP.lean`) through the shared hub
+  `OCP.IsClean`; connecting Axiom 5 to the coordinate `IsNonCrossing`
+  (`NonCrossing.lean`) is the TODO below.
 * `AR t`: the category of autosegmental representations — the full
   subcategory of labeled mixed graphs on Axioms 1–3, monoidal under `concat`.
 
