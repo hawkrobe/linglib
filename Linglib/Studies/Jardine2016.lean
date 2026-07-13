@@ -39,7 +39,7 @@ abbrev CRep := Rep Seg Seg
 /-- The faithfulness banned subgraph `*[pⁱ↔p]`: a `p` corresponding to a `p`.
     Forbidding it forces an intervocalic `p` to change. -/
 def noPP : CRep :=
-  ⟨Autosegmental.Representation.ofData
+  ⟨Autosegmental.AR.ofData
     (fun b => match b with
       | true => ([Seg.p] : List (Autosegmental.TwoTier Seg Seg true))
       | false => [Seg.p])
@@ -49,7 +49,7 @@ def noPP : CRep :=
 /-- The voicing correspondence `apa ↔ aba`: identity positions, the medial `p`
     corresponding to a `b`. -/
 def gVoice : CRep :=
-  ⟨Autosegmental.Representation.ofData
+  ⟨Autosegmental.AR.ofData
     (fun b => match b with
       | true => ([Seg.a, .p, .a] : List (Autosegmental.TwoTier Seg Seg true))
       | false => [Seg.a, .b, .a])
@@ -58,7 +58,7 @@ def gVoice : CRep :=
 
 /-- The faithful correspondence `apa ↔ apa`: the medial `p` stays `p`. -/
 def gFaithful : CRep :=
-  ⟨Autosegmental.Representation.ofData
+  ⟨Autosegmental.AR.ofData
     (fun b => match b with
       | true => ([Seg.a, .p, .a] : List (Autosegmental.TwoTier Seg Seg true))
       | false => [Seg.a, .p, .a])
@@ -79,7 +79,7 @@ instance : Finite (gFaithful : CRep).val.obj.V :=
 /-- `gVoice` reads input `apa`, output `aba`. -/
 theorem gVoice_io :
     gVoice.input = [Seg.a, .p, .a] ∧ gVoice.output = [Seg.a, .b, .a] :=
-  ⟨Representation.tierWord_ofData true, Representation.tierWord_ofData false⟩
+  ⟨AR.tierWord_ofData true, AR.tierWord_ofData false⟩
 
 /-- The faithful correspondence is **rejected** — it contains a `p↔p`,
     embedded at position 1 of both tiers. -/
@@ -87,25 +87,25 @@ theorem gFaithful_rejected : ¬ specifiedByRep [noPP] gFaithful := by
   intro h
   refine h noPP (List.mem_singleton.mpr rfl) ⟨fun _ => 1, ?_, ?_⟩
   · intro i p hp
-    have hp' : p < (Representation.ofData
+    have hp' : p < (AR.ofData
         (fun b => match b with
           | true => ([Seg.p] : List (Autosegmental.TwoTier Seg Seg true))
           | false => [Seg.p])
         (fun i j p q => i = true ∧ j = false ∧ p = 0 ∧ q = 0)).tierLength i := hp
-    rw [Representation.tierLength_ofData] at hp'
+    rw [AR.tierLength_ofData] at hp'
     have hp0 : p = 0 := by cases i <;> simpa using Nat.lt_one_iff.mp (by simpa using hp')
     subst hp0
     show ((gFaithful : CRep).val.tierWord i)[0 + 1]? = ((noPP : CRep).val.tierWord i)[0]?
     rw [show (gFaithful : CRep).val.tierWord i
-        = _ from Representation.tierWord_ofData i,
-      show (noPP : CRep).val.tierWord i = _ from Representation.tierWord_ofData i]
+        = _ from AR.tierWord_ofData i,
+      show (noPP : CRep).val.tierWord i = _ from AR.tierWord_ofData i]
     cases i <;> rfl
   · intro i j p q hl
-    rcases (Representation.link_ofData i j p q).mp hl with
+    rcases (AR.link_ofData i j p q).mp hl with
       ⟨-, -, -, ⟨rfl, rfl, rfl, rfl⟩ | ⟨rfl, rfl, rfl, rfl⟩⟩
-    · exact (Representation.link_ofData true false 1 1).mpr
+    · exact (AR.link_ofData true false 1 1).mpr
         ⟨by decide, by decide, by decide, Or.inl ⟨rfl, rfl, rfl⟩⟩
-    · exact (Representation.link_ofData false true 1 1).mpr
+    · exact (AR.link_ofData false true 1 1).mpr
         ⟨by decide, by decide, by decide, Or.inr ⟨rfl, rfl, rfl⟩⟩
 
 /-- The voicing correspondence is **admitted** by the `*[p↔p]` grammar: the
@@ -117,28 +117,28 @@ theorem gVoice_specified : specifiedByRep [noPP] gVoice := by
   rintro ⟨o, hw, hl⟩
   have hbt : (0 : ℕ) < (noPP : CRep).val.tierLength true := by
     rw [show (noPP : CRep).val.tierLength true
-      = _ from Representation.tierLength_ofData true]
+      = _ from AR.tierLength_ofData true]
     simp
   have hbf : (0 : ℕ) < (noPP : CRep).val.tierLength false := by
     rw [show (noPP : CRep).val.tierLength false
-      = _ from Representation.tierLength_ofData false]
+      = _ from AR.tierLength_ofData false]
     simp
   have hwt := hw true 0 hbt
   have hwf := hw false 0 hbf
   rw [show (gVoice : CRep).val.tierWord true
-      = _ from Representation.tierWord_ofData true,
+      = _ from AR.tierWord_ofData true,
     show (noPP : CRep).val.tierWord true
-      = _ from Representation.tierWord_ofData true] at hwt
+      = _ from AR.tierWord_ofData true] at hwt
   rw [show (gVoice : CRep).val.tierWord false
-      = _ from Representation.tierWord_ofData false,
+      = _ from AR.tierWord_ofData false,
     show (noPP : CRep).val.tierWord false
-      = _ from Representation.tierWord_ofData false] at hwf
-  have hlink := hl true false 0 0 ((Representation.link_ofData true false 0 0).mpr
+      = _ from AR.tierWord_ofData false] at hwf
+  have hlink := hl true false 0 0 ((AR.link_ofData true false 0 0).mpr
     ⟨by decide, by decide, by decide, Or.inl ⟨rfl, rfl, rfl, rfl⟩⟩)
-  rcases (Representation.link_ofData true false (0 + o true) (0 + o false)).mp hlink with
+  rcases (AR.link_ofData true false (0 + o true) (0 + o false)).mp hlink with
     ⟨-, hpb, hqb, ⟨-, -, hpq⟩ | ⟨h1, -⟩⟩
   · have h3' : o false < 3 := by
-      have := Representation.tierLength_ofData
+      have := AR.tierLength_ofData
         (ws := fun b => match b with
           | true => ([Seg.a, .p, .a] : List (Autosegmental.TwoTier Seg Seg true))
           | false => [Seg.a, .b, .a])

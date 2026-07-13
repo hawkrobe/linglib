@@ -178,8 +178,8 @@ instance (i j : Fin 4) (p q : ℕ) : Decidable (laalSpokes i j p q) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
 /-- The M-toned form on the graph foundation. -/
-def mForm : Representation (Sigma.fst : ((i : Fin 4) × laalTier i) → Fin 4) :=
-  Representation.ofData laalWords laalSpokes
+def mForm : AR (Sigma.fst : ((i : Fin 4) × laalTier i) → Fin 4) :=
+  AR.ofData laalWords laalSpokes
 
 instance : Fintype mForm.obj.V :=
   inferInstanceAs (Fintype ((_ : Fin 4) × Fin _))
@@ -203,8 +203,8 @@ def delink (L : Fin 4 → Fin 4 → ℕ → ℕ → Prop) (i₀ j₀ : Fin 4)
   ¬ (i = i₀ ∧ j = j₀) ∧ L i j p q
 
 /-- The M form with the subtonal `[−raised]` feature delinked. -/
-def delinkRaised : Representation (Sigma.fst : ((i : Fin 4) × laalTier i) → Fin 4) :=
-  Representation.ofData laalWords (delink laalSpokes 1 2)
+def delinkRaised : AR (Sigma.fst : ((i : Fin 4) × laalTier i) → Fin 4) :=
+  AR.ofData laalWords (delink laalSpokes 1 2)
 
 /-- Delinking the subtonal `[−raised]` feature leaves the **whole-TRN** layer
     (TRN↔mora, tier-pair `(2, 3)`) untouched: partial activity is independent
@@ -217,13 +217,13 @@ instance : Finite delinkRaised.obj.V := inferInstanceAs (Finite ((_ : Fin 4) × 
 theorem partial_indep_of_full (p q : ℕ) :
     delinkRaised.link 2 3 p q ↔ mForm.link 2 3 p q := by
   unfold delinkRaised mForm
-  rw [Representation.link_ofData, Representation.link_ofData]
+  rw [AR.link_ofData, AR.link_ofData]
   simp [delink, laalSpokes]
 
 /-- And it does remove the `[raised]`↔TRN association. -/
 theorem delinkRaised_erases (p q : ℕ) : ¬ delinkRaised.link 1 2 p q := by
   unfold delinkRaised
-  rw [Representation.link_ofData]
+  rw [AR.link_ofData]
   rintro ⟨-, -, -, ⟨hne, -⟩ | ⟨-, h2, -⟩⟩
   · exact hne ⟨rfl, rfl⟩
   · rcases h2 with h2 | h2 | h2 <;> simp_all

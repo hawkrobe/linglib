@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Phonology.Autosegmental.ASL
-import Linglib.Phonology.Autosegmental.Collapse
+import Linglib.Phonology.Autosegmental.OCP
 import Linglib.Phonology.Autosegmental.Junction
 import Linglib.Core.Computability.Subregular.Language.ContainsFactor
 
@@ -63,10 +63,10 @@ variable {ι : Type*} [Finite ι] {τ : ι → Type*}
     contains it form a star-free language: the finite intersection of per-tier
     factor constraints, each the inverse image of a star-free contains-factor
     language along a tier projection. -/
-theorem Representation.isStarFree_occur_of_link_free
-    (g₀ : S → Representation (Sigma.fst : ((i : ι) × τ i) → ι))
+theorem AR.isStarFree_occur_of_link_free
+    (g₀ : S → AR (Sigma.fst : ((i : ι) × τ i) → ι))
     [∀ s, Finite (g₀ s).obj.V]
-    (F : Representation (Sigma.fst : ((i : ι) × τ i) → ι)) [Finite F.obj.V]
+    (F : AR (Sigma.fst : ((i : ι) × τ i) → ι)) [Finite F.obj.V]
     (hF : ∀ i j p q, ¬ F.link i j p q) :
     Language.IsStarFree {w : List S | F.FactorEmbeds (Autosegmental.realize g₀ w)} := by
   have hset : {w : List S | F.FactorEmbeds (Autosegmental.realize g₀ w)}
@@ -74,25 +74,25 @@ theorem Representation.isStarFree_occur_of_link_free
     ext w
     haveI := Autosegmental.realize.instFinite g₀ w
     simp only [Set.mem_setOf_eq, Set.mem_iInter,
-      Representation.factorEmbeds_iff_infix_of_link_free hF, tierProj_ofList]
+      AR.factorEmbeds_iff_infix_of_link_free hF, tierProj_ofList]
     exact Iff.rfl
   rw [hset]
   exact Language.IsStarFree.iInter fun i =>
     (Language.isStarFree_containsFactor (F.tierWord i)).comap (tierProj g₀ i)
 
 /-- **Link-free autosegmental SL sets are star-free**, on the graph foundation:
-    when no forbidden factor carries association lines, `Representation.ASL` is
+    when no forbidden factor carries association lines, `AR.ASL` is
     a Boolean combination of per-tier factor constraints. -/
-theorem Representation.ASL.isStarFree_of_link_free
-    (g₀ : S → Representation (Sigma.fst : ((i : ι) × τ i) → ι))
+theorem AR.ASL.isStarFree_of_link_free
+    (g₀ : S → AR (Sigma.fst : ((i : ι) × τ i) → ι))
     [∀ s, Finite (g₀ s).obj.V]
-    (B : List {F : Representation (Sigma.fst : ((i : ι) × τ i) → ι) // Finite F.obj.V})
+    (B : List {F : AR (Sigma.fst : ((i : ι) × τ i) → ι) // Finite F.obj.V})
     (hB : ∀ F ∈ B, haveI := F.property; ∀ i j p q, ¬ F.val.link i j p q) :
-    (Representation.ASL g₀ B).IsStarFree := by
+    (AR.ASL g₀ B).IsStarFree := by
   induction B with
   | nil =>
-    have : Representation.ASL g₀ ([] :
-        List {F : Representation (Sigma.fst : ((i : ι) × τ i) → ι) // Finite F.obj.V})
+    have : AR.ASL g₀ ([] :
+        List {F : AR (Sigma.fst : ((i : ι) × τ i) → ι) // Finite F.obj.V})
         = Set.univ :=
       Set.eq_univ_of_forall fun w F hF => absurd hF (List.not_mem_nil)
     rw [this]
@@ -100,16 +100,16 @@ theorem Representation.ASL.isStarFree_of_link_free
   | cons F B' ih =>
     have hFl := hB F (List.mem_cons_self ..)
     have ih' := ih fun F' hF' => hB F' (List.mem_cons_of_mem _ hF')
-    have hset : Representation.ASL g₀ (F :: B') =
+    have hset : AR.ASL g₀ (F :: B') =
         {w : List S | haveI := F.property
-          F.val.FactorEmbeds (Autosegmental.realize g₀ w)}ᶜ ∩ Representation.ASL g₀ B' := by
+          F.val.FactorEmbeds (Autosegmental.realize g₀ w)}ᶜ ∩ AR.ASL g₀ B' := by
       ext w
       show (∀ G ∈ F :: B', _) ↔ _
       rw [List.forall_mem_cons]
       exact Iff.rfl
     rw [hset]
     haveI := F.property
-    exact (Representation.isStarFree_occur_of_link_free g₀ F.val hFl).compl.inter ih'
+    exact (AR.isStarFree_occur_of_link_free g₀ F.val hFl).compl.inter ih'
 
 end Coordinate
 
@@ -128,7 +128,7 @@ inductive Mora | μ
   deriving DecidableEq, Repr
 
 /-- Two-tier tone representations (melody over `true`, morae over `false`). -/
-abbrev TRep := Representation
+abbrev TRep := AR
   (Sigma.fst : ((b : Bool) × TwoTier ToneSym Mora b) → Bool)
 
 /-- Link presentations from finite pair lists. -/
@@ -141,7 +141,7 @@ instance (links : List (ℕ × ℕ)) (i j : Bool) (p q : ℕ) :
 
 /-- Build a representation from a tone melody, morae, and links. -/
 abbrev mk (tones : List ToneSym) (moras : List Mora) (links : List (ℕ × ℕ)) : TRep :=
-  Representation.ofData
+  AR.ofData
     (fun b => match b with
       | true => (tones : List (TwoTier ToneSym Mora true))
       | false => moras)
@@ -158,7 +158,7 @@ theorem mk_embeds_iff {tF tX : List ToneSym} {bF bX : List Mora}
           | true => (tX : List (TwoTier ToneSym Mora true))
           | false => bX)
         (mkL lF) (mkL lX) :=
-  Representation.factorEmbeds_ofData_iff
+  AR.factorEmbeds_ofData_iff
 
 /-- The forbidden subgraph `*HLH` ([jardine-2019] (3)): an `H-L-H` tone
     sequence, three tones each on their own mora. -/
@@ -195,7 +195,7 @@ theorem hhlh_excluded :
 /-! ### The OCP-merging realization: non-local tone plateauing
 
 [jardine-2019]'s `g_T` is OCP-*merging*: an `H`-plateau `Hⁿ` fuses to a single
-`H` node (`Representation.collapse`). Against the merged forms we ban the
+`H` node (`AR.collapse`). Against the merged forms we ban the
 **tonal-tier melody** `*HLH` — adjacent tonal nodes, morae unconstrained —
 which is where merging buys non-local power: `H⁺ L⁺ H⁺` is excluded for *any*
 plateau widths, because the plateaus collapse first. -/
@@ -236,11 +236,11 @@ theorem hlhTier_unmerged_admits_plateau :
 
 /-- **The `*HLH` tonal-tier melody set is star-free**: `hlhTier` carries no
     links, so any grammar built from it falls in the link-free fragment
-    (`Representation.ASL.isStarFree_of_link_free`) — a concrete instance of
+    (`AR.ASL.isStarFree_of_link_free`) — a concrete instance of
     [jardine-2019]'s `ASL ⊊ SF` placement. -/
 theorem hlhTier_link_free : ∀ i j p q, ¬ hlhTier.link i j p q := by
   intro i j p q hl
-  rcases (Representation.link_ofData i j p q).mp hl with
+  rcases (AR.link_ofData i j p q).mp hl with
     ⟨-, -, -, ⟨-, -, h⟩ | ⟨-, -, h⟩⟩ <;> exact absurd h (List.not_mem_nil)
 
 end Jardine2019

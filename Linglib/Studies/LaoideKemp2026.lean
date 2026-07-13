@@ -731,7 +731,7 @@ theorem dPrimeSurfaces_withHist_concat_right (stem suffix : FloatingForm CVKind 
 The deepest categorical content: morpheme *prefixation* is not merely a
 function on representations but an **endofunctor on the monoidal
 category** of representations — mathlib's `tensorLeft`. This consumes the
-full `MonoidalCategory (Representation t)` instance (not merely the tensor
+full `MonoidalCategory (AR t)` instance (not merely the tensor
 operation), and the **associativity of prefixation** is the category's
 associator, exhibited by `tensorLeftTensor` — a natural isomorphism
 that does not exist without coherence (pentagon + triangle).
@@ -752,9 +752,9 @@ extensional content (no look-ahead) is fully captured by
 /-- The historic-tense exponent as an object of the monoidal category of
     representations: one floating `(d)` melody node, no skeleton, no links. -/
 def historicExponentRep :
-    Representation (Sigma.fst :
+    AR (Sigma.fst :
       ((b : Bool) × TwoTier (TierSpec Segment) (SegSpec CVKind) b) → Bool) :=
-  Representation.ofData
+  AR.ofData
     (fun b => match b with
       | true => ([mel .dPrime mHist] : List (TwoTier (TierSpec Segment) (SegSpec CVKind) true))
       | false => [])
@@ -767,9 +767,9 @@ open CategoryTheory MonoidalCategory in
     than right-tensoring encodes the morpheme's directionality as a
     preverbal particle. -/
 def withHistFunctor :
-    Representation (Sigma.fst :
+    AR (Sigma.fst :
         ((b : Bool) × TwoTier (TierSpec Segment) (SegSpec CVKind) b) → Bool) ⥤
-    Representation (Sigma.fst :
+    AR (Sigma.fst :
         ((b : Bool) × TwoTier (TierSpec Segment) (SegSpec CVKind) b) → Bool) :=
   tensorLeft historicExponentRep
 
@@ -777,7 +777,7 @@ open CategoryTheory MonoidalCategory in
 /-- The functor's action on objects *is* morpheme prefixing: the tensor of
     the exponent with the stem. -/
 theorem withHistFunctor_obj
-    (X : Representation (Sigma.fst :
+    (X : AR (Sigma.fst :
         ((b : Bool) × TwoTier (TierSpec Segment) (SegSpec CVKind) b) → Bool)) :
     withHistFunctor.obj X = historicExponentRep ⊗ X := rfl
 
@@ -789,7 +789,7 @@ open CategoryTheory MonoidalCategory in
     triangle). It is the concrete artifact that makes the monoidal coherence
     load-bearing rather than decorative. -/
 noncomputable def prefixAssoc
-    (X : Representation (Sigma.fst :
+    (X : AR (Sigma.fst :
         ((b : Bool) × TwoTier (TierSpec Segment) (SegSpec CVKind) b) → Bool)) :
     tensorLeft (historicExponentRep ⊗ X) ≅
       tensorLeft X ⋙ tensorLeft historicExponentRep :=
@@ -805,11 +805,11 @@ association lines to the leftmost (word-initial) skeletal slot.
 
 The answer is a sharp dichotomy. `delinkInitial` is **not** a functor on
 the full category `AR α β`: a label-preserving reindexing
-(a broad `MixedGraphCat.Hom`) can move a non-initial element into initial position, after
+(a broad `Graph.Hom`) can move a non-initial element into initial position, after
 which there is *no* morphism between the delinked images at all
 (`delinkInitial_not_functorial`). But over the precedence-preserving wide subcategory, the
 **precedence-preserving wide subcategory** (the foundation's
-`Representation.precPreserving`), it lifts to a genuine endofunctor `delinkInitialFunctor`
+`AR.precPreserving`), it lifts to a genuine endofunctor `delinkInitialFunctor`
 (built from `delinkInitial_map` / `_id` / `_comp`; precedence-preservation
 discharges the reflects-initial-slot hypothesis via
 `precPreserving.reflects_zero`). This is the categorical content of the
@@ -822,22 +822,22 @@ open Autosegmental
 
 /-- Lenition's structural model on the foundation: erase the association
     lines at the word-initial (tier-initial) skeletal position —
-    `MixedGraphCat.delinkMin`. Its functoriality over precedence-preserving
+    `Graph.delinkMin`. Its functoriality over precedence-preserving
     morphisms is the substrate theorem `Autosegmental.delinkMinFunctor`;
     here we exhibit the **negative half**: on the broad category the lift
     fails, because a label-preserving reindexing can move a non-initial
     slot into initial position. -/
 private abbrev negA :
-    Representation (Sigma.fst : ((b : Bool) × TwoTier Unit Bool b) → Bool) :=
-  Representation.ofData
+    AR (Sigma.fst : ((b : Bool) × TwoTier Unit Bool b) → Bool) :=
+  AR.ofData
     (fun b => match b with
       | true => ([()] : List (TwoTier Unit Bool true))
       | false => [false, true])
     (fun i j p q => i = true ∧ j = false ∧ p = 0 ∧ q = 1)
 
 private abbrev negB :
-    Representation (Sigma.fst : ((b : Bool) × TwoTier Unit Bool b) → Bool) :=
-  Representation.ofData
+    AR (Sigma.fst : ((b : Bool) × TwoTier Unit Bool b) → Bool) :=
+  AR.ofData
     (fun b => match b with
       | true => ([()] : List (TwoTier Unit Bool true))
       | false => [true, false])
@@ -845,7 +845,7 @@ private abbrev negB :
 
 /-- The label-preserving swap of the two skeletal slots: a broad morphism
     (it does not preserve precedence). -/
-private def negSwap : MixedGraphCat.Hom negA.obj negB.obj where
+private def negSwap : Graph.Hom negA.obj negB.obj where
   toFun v := match v with
     | ⟨true, p⟩ => ⟨true, p⟩
     | ⟨false, ⟨0, _⟩⟩ => ⟨false, ⟨1, by decide⟩⟩
@@ -873,13 +873,13 @@ private def negSwap : MixedGraphCat.Hom negA.obj negB.obj where
     delinking erased. The obstruction is precisely failure to preserve
     precedence (`Autosegmental.delinkMinFunctor` lifts it otherwise). -/
 theorem delinkInitial_not_functorial :
-    IsEmpty (MixedGraphCat.Hom
-      (MixedGraphCat.delinkMin Sigma.fst false negA.obj)
-      (MixedGraphCat.delinkMin Sigma.fst false negB.obj)) := by
+    IsEmpty (Graph.Hom
+      (Graph.delinkMin Sigma.fst false negA.obj)
+      (Graph.delinkMin Sigma.fst false negB.obj)) := by
   refine ⟨fun g => ?_⟩
   let v1 : negA.obj.V := ⟨true, ⟨0, by decide⟩⟩
   let w1 : negA.obj.V := ⟨false, ⟨1, by decide⟩⟩
-  have hsurv : (MixedGraphCat.delinkMin Sigma.fst false negA.obj).graph.edges.Adj v1 w1 := by
+  have hsurv : (Graph.delinkMin Sigma.fst false negA.obj).graph.edges.Adj v1 w1 := by
     refine ⟨⟨by decide, Or.inl ⟨rfl, rfl, rfl, rfl⟩⟩, ?_, ?_⟩
     · rintro ⟨h, -⟩
       exact absurd h (by decide)

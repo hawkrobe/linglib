@@ -101,7 +101,7 @@ inductive TBU
 /-- An autosegmental representation in Jardine 2017's sense, on the graph
     foundation: tones over TBUs (with implicit precedence by position),
     links as association lines. -/
-abbrev ARep := Autosegmental.Representation
+abbrev ARep := Autosegmental.AR
   (Sigma.fst : ((b : Bool) × Autosegmental.TwoTier Tone TBU b) → Bool)
 
 /-- Link presentations from finite pair lists (melody position, TBU position). -/
@@ -114,7 +114,7 @@ instance (links : List (ℕ × ℕ)) (i j : Bool) (p q : ℕ) :
 
 /-- Build a representation from a tone melody, a TBU string, and links. -/
 abbrev mk (tones : List Tone) (tbus : List TBU) (links : List (ℕ × ℕ)) : ARep :=
-  Autosegmental.Representation.ofData
+  Autosegmental.AR.ofData
     (fun b => match b with
       | true => (tones : List (Autosegmental.TwoTier Tone TBU true))
       | false => tbus)
@@ -133,7 +133,7 @@ theorem mk_embeds_iff {tF tX : List Tone} {bF bX : List TBU}
           | true => (tX : List (Autosegmental.TwoTier Tone TBU true))
           | false => bX)
         (mkL lF) (mkL lX) :=
-  Representation.factorEmbeds_ofData_iff
+  AR.factorEmbeds_ofData_iff
 
 /-! ## §2 Mende: right-edge multiple association
 [jardine-2017] §3.1, eq. (5)

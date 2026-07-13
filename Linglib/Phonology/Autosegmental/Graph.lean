@@ -19,7 +19,7 @@ import Linglib.Core.Combinatorics.MixedGraph
 A labeled mixed graph `⟨V, E, A, ℓ⟩` has labeled vertices, undirected
 association edges, and directed order arcs — the autosegmental representation
 of [jardine-2019], with no further structure. The graph is a `MixedGraph` (Core)
-and the labeling a map `ℓ : V → S`; `MixedGraphCat S` bundles the two. Tiers are
+and the labeling a map `ℓ : V → S`; `Graph S` bundles the two. Tiers are
 not part of the object: a tier assignment `t : S → ι` on the labels induces a
 vertex coloring `X.tier t`, and well-formedness axioms carve the representations
 out of the raw graphs relative to it.
@@ -32,15 +32,15 @@ out of the raw graphs relative to it.
   tier-relative axioms, a vertex coloring `c : V → ι`. Saturation is stated but
   not imposed, as in `AR.lean`; tier-orderedness includes path-closure
   (`MixedGraph.PrecPath`), [jardine-2019]'s reading that `A` represents the order.
-* `MixedGraphCat S`: the labeled mixed graph ([jardine-2019]'s `GR(Γ)`) and the
+* `Graph S`: the labeled mixed graph ([jardine-2019]'s `GR(Γ)`) and the
   category thereof, with `HasInitial` and `HasBinaryCoproducts`;
-  `MixedGraphCat.Hom` are label- and association-preserving maps, `precPreserving`
-  marks the full-structure homomorphisms, `MixedGraphCat.Iso` the full-structure
+  `Graph.Hom` are label- and association-preserving maps, `precPreserving`
+  marks the full-structure homomorphisms, `Graph.Iso` the full-structure
   equivalences.
-* `MixedGraphCat.concat t`: concatenation — the vertex sum with a same-tier
+* `Graph.concat t`: concatenation — the vertex sum with a same-tier
   bridge, [jardine-heinz-2015] Definition 2 in the order signature, minus its
-  `R_ID` merge (`OCP.collapse`); `MixedGraphCat.sum` is the bridge-free coproduct.
-* `Representation t`: the category of autosegmental representations — the full
+  `R_ID` merge (`OCP.collapse`); `Graph.sum` is the bridge-free coproduct.
+* `AR t`: the category of autosegmental representations — the full
   subcategory of labeled mixed graphs on Axioms 1–3, monoidal under `concat`.
 
 ## Main results
@@ -51,7 +51,7 @@ out of the raw graphs relative to it.
   order signature; `isPlanar_concat` is [jardine-2019]'s NCC-preservation.
 * `not_isTierOrdered_sum`: the bridge-free coproduct leaves the axiom class
   whenever the factors share a tier — Axiom 2 forces `concat`'s bridges.
-* `Representation.tierColoring`: the tier map properly colors the association
+* `AR.tierColoring`: the tier map properly colors the association
   graph, so tier arity bounds its chromatic number (`edges_colorable`).
 
 ## Implementation notes
@@ -140,7 +140,7 @@ theorem IsTierOrdered.isStrictTotalOrder (h : IsTierOrdered G c) (i : ι) :
 /-- An object of the category of labeled mixed graphs over `S`: a vertex type
     with a mixed graph `⟨V, E, A⟩` on it and a labeling `ℓ : V → S` — the
     literature's labeled mixed graph `⟨V, E, A, ℓ⟩` / [jardine-2019]'s `GR(Γ)`. -/
-structure MixedGraphCat (S : Type*) where
+structure Graph (S : Type*) where
   /-- The vertex type. -/
   V : Type*
   /-- The mixed graph: undirected association edges and directed order arcs. -/
@@ -148,12 +148,12 @@ structure MixedGraphCat (S : Type*) where
   /-- The labeling (`ℓ`). -/
   label : V → S
 
-namespace MixedGraphCat
+namespace Graph
 
-variable {X Y Z : MixedGraphCat S}
+variable {X Y Z : Graph S}
 
 /-- The tier of a vertex under a tier assignment on the alphabet. -/
-def tier (t : S → ι) (X : MixedGraphCat S) : X.V → ι := t ∘ X.label
+def tier (t : S → ι) (X : Graph S) : X.V → ι := t ∘ X.label
 
 /-! ### Morphisms -/
 
@@ -163,7 +163,7 @@ def tier (t : S → ι) (X : MixedGraphCat S) : X.V → ι := t ∘ X.label
     OCP repair live; the precedence-preserving maps form the wide morphism class
     `precPreserving` (the legacy `AR.Hom` vs `PrecAR` split, at the foundation). -/
 @[ext]
-structure Hom (X Y : MixedGraphCat S) where
+structure Hom (X Y : Graph S) where
   /-- The vertex map. -/
   toFun : X.V → Y.V
   /-- Association edges are preserved. -/
@@ -176,7 +176,7 @@ def Hom.edgesHom (f : Hom X Y) : X.graph.edges →g Y.graph.edges :=
   ⟨f.toFun, fun h => f.edge_map h⟩
 
 /-- The identity morphism. -/
-def Hom.id (X : MixedGraphCat S) : Hom X X :=
+def Hom.id (X : Graph S) : Hom X X :=
   ⟨_root_.id, fun _ _ h => h, fun _ => rfl⟩
 
 /-- Composition of morphisms. -/
@@ -187,7 +187,7 @@ def Hom.comp (f : Hom X Y) (g : Hom Y Z) : Hom X Z :=
 /-! ### Isomorphism -/
 
 /-- A label- and relation-preserving equivalence of labeled mixed graphs. -/
-structure Iso (X Y : MixedGraphCat S) extends X.V ≃ Y.V where
+structure Iso (X Y : Graph S) extends X.V ≃ Y.V where
   /-- Association edges correspond. -/
   edges_iff : ∀ v w, Y.graph.edges.Adj (toEquiv v) (toEquiv w) ↔ X.graph.edges.Adj v w
   /-- Order arcs correspond. -/
@@ -208,7 +208,7 @@ def Iso.toHom (e : Iso X Y) : Hom X Y :=
   ⟨e.toEquiv, fun _ _ h => (e.edges_iff _ _).mpr h, e.label_comp⟩
 
 /-- The identity isomorphism. -/
-def Iso.refl (X : MixedGraphCat S) : Iso X X :=
+def Iso.refl (X : Graph S) : Iso X X :=
   ⟨Equiv.refl X.V, fun _ _ => Iff.rfl, fun _ _ => Iff.rfl, fun _ => rfl⟩
 
 /-- Inverse isomorphism. -/
@@ -228,7 +228,7 @@ def Iso.trans (e : Iso X Y) (f : Iso Y Z) : Iso X Z where
 /-! ### The empty graph -/
 
 /-- The empty labeled mixed graph, on the empty vertex type. -/
-def empty (S : Type*) : MixedGraphCat S := ⟨PEmpty, ⟨⊥, ⊥⟩, PEmpty.elim⟩
+def empty (S : Type*) : Graph S := ⟨PEmpty, ⟨⊥, ⊥⟩, PEmpty.elim⟩
 
 theorem isTierOrdered_empty (t : S → ι) : IsTierOrdered (empty S).graph ((empty S).tier t) :=
   ⟨fun v => v.elim, fun v => v.elim, fun v => v.elim, fun v => v.elim⟩
@@ -249,7 +249,7 @@ variable (t : S → ι)
     merge, in the precedence signature): stock disjoint sum on edges; on arcs the
     per-tier ordinal sum — blockwise arcs plus a bridge from each `X`-vertex to
     each same-tier `Y`-vertex. -/
-def concat (X Y : MixedGraphCat S) : MixedGraphCat S where
+def concat (X Y : Graph S) : Graph S where
   V := X.V ⊕ Y.V
   graph.edges := X.graph.edges ⊕g Y.graph.edges
   graph.arcs :=
@@ -282,7 +282,7 @@ def concat (X Y : MixedGraphCat S) : MixedGraphCat S where
 /-! ### Unit laws ([jardine-heinz-2015] Theorem 1) -/
 
 /-- Concatenation with the empty graph on the right, up to isomorphism. -/
-def concatEmptyIso (X : MixedGraphCat S) : Iso (concat t X (empty S)) X where
+def concatEmptyIso (X : Graph S) : Iso (concat t X (empty S)) X where
   toEquiv := Equiv.sumEmpty X.V PEmpty
   edges_iff
     | .inl _, .inl _ => Iff.rfl
@@ -297,7 +297,7 @@ def concatEmptyIso (X : MixedGraphCat S) : Iso (concat t X (empty S)) X where
     | .inr v => v.elim
 
 /-- Concatenation with the empty graph on the left, up to isomorphism. -/
-def emptyConcatIso (X : MixedGraphCat S) : Iso (concat t (empty S) X) X where
+def emptyConcatIso (X : Graph S) : Iso (concat t (empty S) X) X where
   toEquiv := Equiv.emptySum PEmpty X.V
   edges_iff
     | .inl v, _ => v.elim
@@ -365,7 +365,7 @@ theorem isPlanar_concat (h₁ : IsPlanar X.graph) (h₂ : IsPlanar Y.graph) :
 
 /-- Concatenation of morphisms is `Sum.map`: blockwise preservation from the
     factors; label preservation transports the bridge's tier equality. -/
-def Hom.concatMap {X₁ Y₁ X₂ Y₂ : MixedGraphCat S}
+def Hom.concatMap {X₁ Y₁ X₂ Y₂ : Graph S}
     (f : Hom X₁ Y₁) (g : Hom X₂ Y₂) : Hom (concat t X₁ X₂) (concat t Y₁ Y₂) where
   toFun := Sum.map f.toFun g.toFun
   edge_map := by
@@ -377,7 +377,7 @@ def Hom.concatMap {X₁ Y₁ X₂ Y₂ : MixedGraphCat S}
 
 /-- Concatenation of isomorphisms: full-structure isos compose blockwise, the
     bridge transported by label preservation. -/
-def Iso.concatCongr {X₁ Y₁ X₂ Y₂ : MixedGraphCat S} (e₁ : Iso X₁ Y₁) (e₂ : Iso X₂ Y₂) :
+def Iso.concatCongr {X₁ Y₁ X₂ Y₂ : Graph S} (e₁ : Iso X₁ Y₁) (e₂ : Iso X₂ Y₂) :
     Iso (concat t X₁ X₂) (concat t Y₁ Y₂) where
   toEquiv := e₁.toEquiv.sumCongr e₂.toEquiv
   edges_iff v w := by
@@ -400,7 +400,7 @@ def Iso.concatCongr {X₁ Y₁ X₂ Y₂ : MixedGraphCat S} (e₁ : Iso X₁ Y�
 /-- Concatenation is associative up to isomorphism, over `Equiv.sumAssoc`; the
     edge face is the stock `SimpleGraph.Iso.sumAssoc`, and every arc case holds
     definitionally in the order signature. -/
-def concatAssocIso (X Y Z : MixedGraphCat S) :
+def concatAssocIso (X Y Z : Graph S) :
     Iso (concat t (concat t X Y) Z) (concat t X (concat t Y Z)) where
   toEquiv := Equiv.sumAssoc X.V Y.V Z.V
   edges_iff v w := SimpleGraph.Iso.sumAssoc.map_rel_iff
@@ -414,13 +414,13 @@ end Concat
 /-! ### The bridge-free sum, and why the bridges exist
 
 The plain blockwise sum carries no bridging arcs. It is the categorical
-coproduct of the broad category (`MixedGraphCat`), but it does **not** stay in
+coproduct of the broad category (`Graph`), but it does **not** stay in
 the axiom class: whenever both factors occupy a common tier, Axiom 2's totality
 fails across the seam (`not_isTierOrdered_sum`) — `concat`'s bridges are the
-minimal repair that keeps concatenation inside `Representation`. -/
+minimal repair that keeps concatenation inside `AR`. -/
 
 /-- The bridge-free blockwise sum. -/
-def sum (X Y : MixedGraphCat S) : MixedGraphCat S where
+def sum (X Y : Graph S) : Graph S where
   V := X.V ⊕ Y.V
   graph.edges := X.graph.edges ⊕g Y.graph.edges
   graph.arcs :=
@@ -470,7 +470,7 @@ theorem not_isTierOrdered_sum (t : S → ι) (v : X.V) (w : Y.V)
 
 open CategoryTheory Limits
 
-instance : Category (MixedGraphCat S) where
+instance : Category (Graph S) where
   Hom X Y := Hom X Y
   id X := Hom.id X
   comp f g := f.comp g
@@ -478,26 +478,26 @@ instance : Category (MixedGraphCat S) where
   comp_id _ := Hom.ext rfl
   assoc _ _ _ := Hom.ext rfl
 
-instance (Y : MixedGraphCat S) : Subsingleton (empty S ⟶ Y) :=
+instance (Y : Graph S) : Subsingleton (empty S ⟶ Y) :=
   ⟨fun _ _ => Hom.ext (funext fun v => v.elim)⟩
 
-instance (Y : MixedGraphCat S) : Nonempty (empty S ⟶ Y) :=
+instance (Y : Graph S) : Nonempty (empty S ⟶ Y) :=
   ⟨⟨PEmpty.elim, fun v => v.elim, fun v => v.elim⟩⟩
 
-instance : HasInitial (MixedGraphCat S) := hasInitial_of_unique (empty S)
+instance : HasInitial (Graph S) := hasInitial_of_unique (empty S)
 
 /-- Left coprojection. -/
-def inl (X Y : MixedGraphCat S) : X ⟶ sum X Y :=
+def inl (X Y : Graph S) : X ⟶ sum X Y :=
   ⟨Sum.inl, fun _ _ h => h, fun _ => rfl⟩
 
 /-- Right coprojection. -/
-def inr (X Y : MixedGraphCat S) : Y ⟶ sum X Y :=
+def inr (X Y : Graph S) : Y ⟶ sum X Y :=
   ⟨Sum.inr, fun _ _ h => h, fun _ => rfl⟩
 
 /-- The bridge-free sum is the categorical coproduct of the broad category
     (contrast `not_isTierOrdered_sum`: it leaves the axiom class, which is why
-    `Representation`'s tensor is the bridged `concat` instead). -/
-instance (X Y : MixedGraphCat S) : HasBinaryCoproduct X Y :=
+    `AR`'s tensor is the bridged `concat` instead). -/
+instance (X Y : Graph S) : HasBinaryCoproduct X Y :=
   HasColimit.mk
     { cocone := BinaryCofan.mk (inl X Y) (inr X Y)
       isColimit := BinaryCofan.IsColimit.mk _ (fun f g => sumDesc f g)
@@ -508,34 +508,34 @@ instance (X Y : MixedGraphCat S) : HasBinaryCoproduct X Y :=
           · exact congrArg (fun φ => Hom.toFun φ v) h₁
           · exact congrArg (fun φ => Hom.toFun φ v) h₂)) }
 
-instance : HasBinaryCoproducts (MixedGraphCat S) := hasBinaryCoproducts_of_hasColimit_pair _
+instance : HasBinaryCoproducts (Graph S) := hasBinaryCoproducts_of_hasColimit_pair _
 
-end MixedGraphCat
+end Graph
 
 open CategoryTheory
 
 /-- Precedence preservation as a morphism property: the maps that also preserve
     arcs — the model-theoretic full-structure homomorphisms, the foundation
     counterpart of the legacy `PrecAR` wide subcategory. -/
-def MixedGraphCat.precPreserving : MorphismProperty (MixedGraphCat S) := fun X Y f =>
+def Graph.precPreserving : MorphismProperty (Graph S) := fun X Y f =>
   ∀ ⦃v w⦄, X.graph.arcs.Adj v w → Y.graph.arcs.Adj (f.toFun v) (f.toFun w)
 
-instance : (MixedGraphCat.precPreserving (S := S)).IsMultiplicative where
+instance : (Graph.precPreserving (S := S)).IsMultiplicative where
   id_mem _ := fun _ _ h => h
   comp_mem _ _ hf hg := fun _ _ h => hg (hf h)
 
 /-- A full isomorphism's underlying morphism preserves precedence. -/
-theorem MixedGraphCat.Iso.toHom_precPreserving {X Y : MixedGraphCat S}
-    (e : MixedGraphCat.Iso X Y) : MixedGraphCat.precPreserving e.toHom :=
+theorem Graph.Iso.toHom_precPreserving {X Y : Graph S}
+    (e : Graph.Iso X Y) : Graph.precPreserving e.toHom :=
   fun _ _ h => (e.arcs_iff _ _).mpr h
 
 /-- Concatenation of precedence-preserving morphisms preserves precedence:
     blockwise from the factors, the bridge transported by labels. -/
-theorem MixedGraphCat.Hom.concatMap_precPreserving (t : S → ι)
-    {X₁ Y₁ X₂ Y₂ : MixedGraphCat S}
-    {f : MixedGraphCat.Hom X₁ Y₁} {g : MixedGraphCat.Hom X₂ Y₂}
-    (hf : MixedGraphCat.precPreserving f) (hg : MixedGraphCat.precPreserving g) :
-    MixedGraphCat.precPreserving (f.concatMap t g) := by
+theorem Graph.Hom.concatMap_precPreserving (t : S → ι)
+    {X₁ Y₁ X₂ Y₂ : Graph S}
+    {f : Graph.Hom X₁ Y₁} {g : Graph.Hom X₂ Y₂}
+    (hf : Graph.precPreserving f) (hg : Graph.precPreserving g) :
+    Graph.precPreserving (f.concatMap t g) := by
   rintro (v | v) (w | w) h
   · exact hf h
   · show Y₁.tier t (f.toFun v) = Y₂.tier t (g.toFun w)
@@ -546,14 +546,14 @@ theorem MixedGraphCat.Hom.concatMap_precPreserving (t : S → ι)
   · exact hg h
 
 /-- A vertex with no arc-predecessor: the tier-initial position. -/
-def MixedGraphCat.NoPred (X : MixedGraphCat S) (v : X.V) : Prop :=
+def Graph.NoPred (X : Graph S) (v : X.V) : Prop :=
   ∀ u, ¬ X.graph.arcs.Adj u v
 
 /-- Erase every association line incident to a tier-`i₀`-initial vertex — the
     graph model of an initial-position delinking process (e.g. lenition
     targeting the word-initial slot). Arcs and labels are untouched. -/
-def MixedGraphCat.delinkMin (t : S → ι) (i₀ : ι) (X : MixedGraphCat S) :
-    MixedGraphCat S where
+def Graph.delinkMin (t : S → ι) (i₀ : ι) (X : Graph S) :
+    Graph S where
   V := X.V
   graph :=
     { edges :=
@@ -570,20 +570,18 @@ variable (t : S → ι)
 
 /-- The structural axiom class ([jardine-2016-diss] §4.2, Axioms 1–3) as an
     object property of the graph category. -/
-def isRepresentation : ObjectProperty (MixedGraphCat S) := fun X =>
+def isRepresentation : ObjectProperty (Graph S) := fun X =>
   IsTierOrdered X.graph (X.tier t) ∧ NoInternalAssoc X.graph
 
-/-- The category of autosegmental representations over a tier assignment: the
-    full subcategory of labeled mixed graphs satisfying the structural axioms.
-    These are the formal literature's **ARs** — [jardine-2019] and
-    [chandlee-jardine-2019] introduce "autosegmental representation" once and
-    use `AR` as the type-name throughout; this category takes that name once the
-    bipartite strict carrier currently called `AR` is dissolved into it. -/
-abbrev Representation := (isRepresentation t).FullSubcategory
+/-- The category of **autosegmental representations** over a tier assignment:
+    the full subcategory of labeled mixed graphs satisfying the structural
+    axioms — the formal literature's ARs ([jardine-2019],
+    [chandlee-jardine-2019]). -/
+abbrev AR := (isRepresentation t).FullSubcategory
 
 /-! ### The monoidal structure: morpheme concatenation -/
 
-namespace Representation
+namespace AR
 
 open MonoidalCategory
 
@@ -593,27 +591,27 @@ variable {t}
     graph: same-tier vertices are precedence-related (Axioms 1–2) and associated
     vertices never are (Axiom 3), so associated vertices lie on distinct tiers.
     Goldsmith's bipartite two-tier geometry is the two-colorable case. -/
-def tierColoring (X : Representation t) : X.obj.graph.edges.Coloring ι :=
+def tierColoring (X : AR t) : X.obj.graph.edges.Coloring ι :=
   SimpleGraph.Coloring.mk (X.obj.tier t) fun {_ _} hadj htier =>
     (X.property.1.total hadj.ne htier).elim (X.property.2 hadj) (X.property.2 hadj.symm)
 
 /-- A representation's association graph is colorable by its tiers: tier arity
     bounds the chromatic number of the association pattern. -/
-theorem edges_colorable [Fintype ι] (X : Representation t) :
+theorem edges_colorable [Fintype ι] (X : AR t) :
     X.obj.graph.edges.Colorable (Fintype.card ι) :=
   (tierColoring X).colorable
 
 /-- A graph isomorphism as an isomorphism of representations. -/
-def mkIso {X Y : Representation t} (e : MixedGraphCat.Iso X.obj Y.obj) : X ≅ Y :=
+def mkIso {X Y : AR t} (e : Graph.Iso X.obj Y.obj) : X ≅ Y :=
   InducedCategory.isoMk
     ⟨e.toHom, e.symm.toHom,
-      MixedGraphCat.Hom.ext (funext fun v => e.toEquiv.symm_apply_apply v),
-      MixedGraphCat.Hom.ext (funext fun v => e.toEquiv.apply_symm_apply v)⟩
+      Graph.Hom.ext (funext fun v => e.toEquiv.symm_apply_apply v),
+      Graph.Hom.ext (funext fun v => e.toEquiv.apply_symm_apply v)⟩
 
 /-- Componentwise extensionality for representation morphisms. -/
-theorem hom_ext {X Y : Representation t} {f g : X ⟶ Y}
+theorem hom_ext {X Y : AR t} {f g : X ⟶ Y}
     (h : ∀ v, f.hom.toFun v = g.hom.toFun v) : f = g :=
-  InducedCategory.hom_ext (MixedGraphCat.Hom.ext (funext h))
+  InducedCategory.hom_ext (Graph.Hom.ext (funext h))
 
 universe u₁ u₂ u₃
 
@@ -623,27 +621,27 @@ universe u₁ u₂ u₃
     unit's vertex type shares the objects' universe — autobinding would split
     the instance head into an unusable `max`. -/
 @[simps] instance instMonoidalStruct {S : Type u₁} {ι : Type u₂} {t : S → ι} :
-    MonoidalCategoryStruct (Representation.{u₁, u₂, u₃} t) where
+    MonoidalCategoryStruct (AR.{u₁, u₂, u₃} t) where
   tensorObj X Y :=
-    ⟨MixedGraphCat.concat t X.obj Y.obj,
-      MixedGraphCat.isTierOrdered_concat t X.property.1 Y.property.1,
-      MixedGraphCat.noInternalAssoc_concat t X.property.2 Y.property.2⟩
+    ⟨Graph.concat t X.obj Y.obj,
+      Graph.isTierOrdered_concat t X.property.1 Y.property.1,
+      Graph.noInternalAssoc_concat t X.property.2 Y.property.2⟩
   tensorUnit :=
-    ⟨MixedGraphCat.empty S, MixedGraphCat.isTierOrdered_empty t,
-      MixedGraphCat.noInternalAssoc_empty⟩
-  tensorHom f g := InducedCategory.homMk (MixedGraphCat.Hom.concatMap t f.hom g.hom)
+    ⟨Graph.empty S, Graph.isTierOrdered_empty t,
+      Graph.noInternalAssoc_empty⟩
+  tensorHom f g := InducedCategory.homMk (Graph.Hom.concatMap t f.hom g.hom)
   whiskerLeft X _ _ f :=
-    InducedCategory.homMk (MixedGraphCat.Hom.concatMap t (MixedGraphCat.Hom.id X.obj) f.hom)
+    InducedCategory.homMk (Graph.Hom.concatMap t (Graph.Hom.id X.obj) f.hom)
   whiskerRight f Y :=
-    InducedCategory.homMk (MixedGraphCat.Hom.concatMap t f.hom (MixedGraphCat.Hom.id Y.obj))
-  associator X Y Z := mkIso (MixedGraphCat.concatAssocIso t X.obj Y.obj Z.obj)
-  leftUnitor X := mkIso (MixedGraphCat.emptyConcatIso t X.obj)
-  rightUnitor X := mkIso (MixedGraphCat.concatEmptyIso t X.obj)
+    InducedCategory.homMk (Graph.Hom.concatMap t f.hom (Graph.Hom.id Y.obj))
+  associator X Y Z := mkIso (Graph.concatAssocIso t X.obj Y.obj Z.obj)
+  leftUnitor X := mkIso (Graph.emptyConcatIso t X.obj)
+  rightUnitor X := mkIso (Graph.concatEmptyIso t X.obj)
 
 /-- The category of autosegmental representations is monoidal under morpheme
     concatenation — [jardine-heinz-2015] Theorems 1 and 3 packaged as coherence,
     with every proof a componentwise `rfl` over the concrete sum maps. -/
-instance : MonoidalCategory (Representation t) :=
+instance : MonoidalCategory (AR t) :=
   MonoidalCategory.ofTensorHom
     (id_tensorHom_id := fun _ _ => hom_ext (congrFun Sum.map_id_id))
     (id_tensorHom := fun _ _ _ _ => rfl)
@@ -665,29 +663,29 @@ instance : MonoidalCategory (Representation t) :=
 
 /-- Precedence preservation on representations: the classical morphisms of the
     theory, as a monoidally-stable wide subcategory of the broad category. -/
-def precPreserving : MorphismProperty (Representation t) :=
-  fun _ _ f => MixedGraphCat.precPreserving f.hom
+def precPreserving : MorphismProperty (AR t) :=
+  fun _ _ f => Graph.precPreserving f.hom
 
 instance : (precPreserving (t := t)).IsMonoidalStable where
   id_mem _ := fun _ _ h => h
   comp_mem _ _ hf hg := fun _ _ h => hg (hf h)
   whiskerLeft _ _ _ _ hg :=
-    MixedGraphCat.Hom.concatMap_precPreserving t (fun _ _ h => h) hg
+    Graph.Hom.concatMap_precPreserving t (fun _ _ h => h) hg
   whiskerRight _ hf _ :=
-    MixedGraphCat.Hom.concatMap_precPreserving t hf (fun _ _ h => h)
+    Graph.Hom.concatMap_precPreserving t hf (fun _ _ h => h)
   associator_hom_mem A B C :=
-    (MixedGraphCat.concatAssocIso t A.obj B.obj C.obj).toHom_precPreserving
+    (Graph.concatAssocIso t A.obj B.obj C.obj).toHom_precPreserving
   associator_inv_mem A B C :=
-    (MixedGraphCat.concatAssocIso t A.obj B.obj C.obj).symm.toHom_precPreserving
-  leftUnitor_hom_mem A := (MixedGraphCat.emptyConcatIso t A.obj).toHom_precPreserving
-  leftUnitor_inv_mem A := (MixedGraphCat.emptyConcatIso t A.obj).symm.toHom_precPreserving
-  rightUnitor_hom_mem A := (MixedGraphCat.concatEmptyIso t A.obj).toHom_precPreserving
-  rightUnitor_inv_mem A := (MixedGraphCat.concatEmptyIso t A.obj).symm.toHom_precPreserving
+    (Graph.concatAssocIso t A.obj B.obj C.obj).symm.toHom_precPreserving
+  leftUnitor_hom_mem A := (Graph.emptyConcatIso t A.obj).toHom_precPreserving
+  leftUnitor_inv_mem A := (Graph.emptyConcatIso t A.obj).symm.toHom_precPreserving
+  rightUnitor_hom_mem A := (Graph.concatEmptyIso t A.obj).toHom_precPreserving
+  rightUnitor_inv_mem A := (Graph.concatEmptyIso t A.obj).symm.toHom_precPreserving
 
 /-- Delinking preserves the structural axioms: arcs are untouched and the
     edge set shrinks. -/
-def delinkMinRep (i₀ : ι) (X : Representation t) : Representation t :=
-  ⟨MixedGraphCat.delinkMin t i₀ X.obj,
+def delinkMinRep (i₀ : ι) (X : AR t) : AR t :=
+  ⟨Graph.delinkMin t i₀ X.obj,
     ⟨X.property.1.tier_eq, X.property.1.total, X.property.1.irrefl, X.property.1.trans⟩,
     fun _ _ hadj harc => X.property.2 hadj.1 harc⟩
 
@@ -699,8 +697,8 @@ open CategoryTheory in
     label-preserving reindexing can move a non-initial vertex into initial
     position (`Studies/LaoideKemp2026`'s counterexample). -/
 def delinkMinFunctor (i₀ : ι) :
-    WideSubcategory (Representation.precPreserving (t := t)) ⥤
-      WideSubcategory (Representation.precPreserving (t := t)) where
+    WideSubcategory (AR.precPreserving (t := t)) ⥤
+      WideSubcategory (AR.precPreserving (t := t)) where
   obj X := ⟨delinkMinRep i₀ X.obj⟩
   map {X Y} f :=
     ⟨InducedCategory.homMk
@@ -728,6 +726,6 @@ def delinkMinFunctor (i₀ : ι) :
     apply InducedCategory.hom_ext
     rfl
 
-end Representation
+end AR
 
 end Autosegmental
