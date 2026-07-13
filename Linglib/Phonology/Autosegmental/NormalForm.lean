@@ -48,10 +48,7 @@ variable {ι : Type*} {τ : ι → Type*}
 section NormalForm
 open scoped Classical
 
-/-- Fiber of the tier coloring at `i`: vertices of `X.obj` labelled to tier `i`.
-    Under `IsTierOrdered` its arcs form a strict total order, and under
-    `Finite X.obj.V` it is finite — the two ingredients `monoEquivOfFin`
-    needs to enumerate the fiber as `Fin _`. -/
+/-- The vertices of `X.obj` labelled to tier `i`. -/
 def AR.fiber (X : AR (Sigma.fst : ((i : ι) × τ i) → ι)) (i : ι) :
     Type _ := {v : X.obj.V // (X.obj.label v).1 = i}
 
@@ -74,8 +71,7 @@ theorem AR.label_fiber {i : ι} (v : X.fiber i) :
 instance AR.fiber.instFinite [Finite X.obj.V] (i : ι) : Finite (X.fiber i) :=
   Subtype.finite
 
-/-- The arcs restricted to a tier fiber form a strict total order — the classed
-    form of Axioms 1–2 applied to the tier coloring `Sigma.fst`. -/
+/-- The arcs restricted to a tier fiber form a strict total order. -/
 instance AR.fiber.instIsStrictTotalOrder (i : ι) :
     IsStrictTotalOrder (X.fiber i) (fun a b => X.obj.arcs.Adj a.val b.val) where
   trichotomous a b hab hba := Subtype.ext <| of_not_not fun hne =>
@@ -151,8 +147,7 @@ noncomputable def AR.normalize
          X.property.1.total (fun hv => hne (X.vertexEquiv.injective hv)) htier },
      fun _ _ hadj harc => X.property.2 hadj harc⟩
 
-/-- The normal form is fully isomorphic to the original — definitionally,
-    since `normalize` is a pullback along `vertexEquiv`. -/
+/-- The normal form is fully isomorphic to the original. -/
 noncomputable def AR.normalizeFullIso [Finite X.obj.V] :
     Graph.Iso (X.normalize).obj X.obj where
   toEquiv := X.vertexEquiv
@@ -164,15 +159,12 @@ noncomputable def AR.normalizeFullIso [Finite X.obj.V] :
 noncomputable def AR.normalizeIso [Finite X.obj.V] : X.normalize ≅ X :=
   AR.mkIso X.normalizeFullIso
 
-/-- On normal forms the edges are exactly `linkRel` — with `arcs_normalize`,
-    the complete tuple reading of the normal form. -/
+/-- On normal forms the edges are exactly `linkRel`. -/
 theorem AR.edges_normalize [Finite X.obj.V] (i j : ι)
     (p : Fin (X.tierLength i)) (q : Fin (X.tierLength j)) :
     (X.normalize).obj.edges.Adj ⟨i, p⟩ ⟨j, q⟩ ↔ X.linkRel i j p q := Iff.rfl
 
-/-- On normal forms the arcs are the ascending position order — the
-    classification content: [jardine-heinz-2015]'s tiered presentation
-    recovered as a theorem. -/
+/-- On normal forms the arcs are the ascending position order. -/
 theorem AR.arcs_normalize [Finite X.obj.V] (i : ι)
     (p q : Fin (X.tierLength i)) :
     (X.normalize).obj.arcs.Adj ⟨i, p⟩ ⟨i, q⟩ ↔ p < q :=
@@ -287,10 +279,7 @@ theorem AR.tierWord_eq_ofFn {Z : AR (Sigma.fst : ((i : ι) × τ i) → ι)}
   rw [Subsingleton.elim e (Z.fiberEnum i)]
   rfl
 
-/-- **Concatenation appends tier content**: the tier word of a tensor is the
-    factors' tier words in sequence — the tuple presentation of
-    [jardine-heinz-2015]'s Definition 2, recovered as a theorem about normal
-    forms. -/
+/-- The tier word of a tensor is the concatenation of the factors' tier words. -/
 @[simp] theorem AR.tierWord_tensor (i : ι) :
     (X ⊗ Y).tierWord i = X.tierWord i ++ Y.tierWord i := by
   rw [AR.tierWord_eq_ofFn (AR.tensorEnum i), List.ofFn_add]
@@ -370,8 +359,7 @@ def AR.link [Finite X.obj.V] (i j : ι) (p q : ℕ) : Prop :=
 
 open scoped Classical in
 /-- The two-tier reading of tiers `i` over `j`: each tier-`j` position's label
-    with the tier-`i` labels linked to it, in ascending order — the phonetic
-    interpretation of a melody tier over its backbone. -/
+    paired with its linked tier-`i` labels in ascending order. -/
 noncomputable def AR.linearize [Finite X.obj.V] (i j : ι) :
     List (τ j × List (τ i)) :=
   (X.tierWord j).zipIdx.map fun bq =>
@@ -481,8 +469,7 @@ theorem AR.link_symm [Finite X.obj.V] {i j : ι} {p q : ℕ}
   obtain ⟨hp, hq, hl⟩ := h
   exact ⟨hq, hp, hl.symm⟩
 
-/-- Same-tier vertices are never linked: they are arc-comparable (Axioms 1–2),
-    and association never follows arcs (Axiom 3). -/
+/-- Same-tier vertices are never linked. -/
 theorem AR.not_link_self_tier [Finite X.obj.V] (i : ι) (p q : ℕ) :
     ¬ X.link i i p q := by
   rintro ⟨hp, hq, hl⟩
@@ -493,8 +480,7 @@ theorem AR.not_link_self_tier [Finite X.obj.V] (i : ι) (p q : ℕ) :
     rw [AR.label_vertexEquiv, AR.label_vertexEquiv]
   exact (X.property.1.total hl.ne hlab).elim (X.property.2 hl) (X.property.2 hl.symm)
 
-/-- The classification isomorphism, as a full-structure `Graph.Iso` —
-    the form that descends to the class monoid. -/
+/-- The classification isomorphism as a full-structure `Graph.Iso`. -/
 noncomputable def AR.fullIsoOfReaderEq
     {A B : AR (Sigma.fst : ((i : ι) × τ i) → ι)}
     [Finite A.obj.V] [Finite B.obj.V]
@@ -532,8 +518,8 @@ noncomputable def AR.fullIsoOfReaderEq
     rw [← AR.tierWord_getElem, ← AR.tierWord_getElem]
     simp only [hw, Fin.val_cast]
 
-/-- **Classification of finite representations**: equal tier words and equal
-    links give an isomorphism — the tuple reading is a complete invariant. -/
+/-- Finite representations with equal tier words and equal links are isomorphic;
+    the tuple reading is a complete invariant. -/
 noncomputable def AR.isoOfReaderEq
     {A B : AR (Sigma.fst : ((i : ι) × τ i) → ι)}
     [Finite A.obj.V] [Finite B.obj.V]

@@ -38,7 +38,7 @@ def AR.IsFactorAt [Finite F.obj.V] [Finite X.obj.V] (o : ι → ℕ) : Prop :=
   (∀ i p, p < F.tierLength i → (X.tierWord i)[p + o i]? = (F.tierWord i)[p]?) ∧
     ∀ i j p q, F.link i j p q → X.link i j (p + o i) (q + o j)
 
-/-- `F` **subgraph-embeds** in `X` when some offsets place it as a factor
+/-- `F` subgraph-embeds in `X` when some offsets place it as a factor
     ([jardine-2017]'s connected-subgraph embedding). -/
 def AR.FactorEmbeds [Finite F.obj.V] [Finite X.obj.V] : Prop :=
   ∃ o : ι → ℕ, F.IsFactorAt X o
