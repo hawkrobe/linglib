@@ -371,6 +371,26 @@ def Hom.concatMap {X₁ Y₁ X₂ Y₂ : MixedGraphCat S}
     rintro (v | v)
     exacts [f.label_comp v, g.label_comp v]
 
+/-- Concatenation of isomorphisms: full-structure isos compose blockwise, the
+    bridge transported by label preservation. -/
+def Iso.concatCongr {X₁ Y₁ X₂ Y₂ : MixedGraphCat S} (e₁ : Iso X₁ Y₁) (e₂ : Iso X₂ Y₂) :
+    Iso (concat t X₁ X₂) (concat t Y₁ Y₂) where
+  toEquiv := e₁.toEquiv.sumCongr e₂.toEquiv
+  edges_iff v w := by
+    rcases v with v | v <;> rcases w with w | w
+    exacts [e₁.edges_iff v w, Iff.rfl, Iff.rfl, e₂.edges_iff v w]
+  arcs_iff v w := by
+    rcases v with v | v <;> rcases w with w | w
+    · exact e₁.arcs_iff v w
+    · show Y₁.tier t (e₁.toEquiv v) = Y₂.tier t (e₂.toEquiv w) ↔ X₁.tier t v = X₂.tier t w
+      rw [show Y₁.tier t (e₁.toEquiv v) = X₁.tier t v from congrArg t (e₁.label_comp v),
+        show Y₂.tier t (e₂.toEquiv w) = X₂.tier t w from congrArg t (e₂.label_comp w)]
+    · exact Iff.rfl
+    · exact e₂.arcs_iff v w
+  label_comp v := by
+    rcases v with v | v
+    exacts [e₁.label_comp v, e₂.label_comp v]
+
 /-! #### Associativity up to isomorphism ([jardine-heinz-2015] Theorem 3) -/
 
 /-- Concatenation is associative up to isomorphism, over `Equiv.sumAssoc`; the
