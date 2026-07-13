@@ -23,9 +23,11 @@ category of autosegmental representations, monoidal under `Graph.concat`.
 
 * `IsTierOrdered`, `NoInternalAssoc`, `IsSaturated`, `IsPlanar`, `IsOCPClean`:
   the §4.2 axioms (1–2, 3, 4, 5, 6; [jardine-heinz-2015] numbers the NCC and OCP
-  as 4 and 5 and has no saturation axiom). Saturation is stated but
-  not imposed; tier-orderedness includes path-closure — the arcs are
-  transitively closed, [jardine-2019]'s reading that `A` represents the order.
+  as 4 and 5 and has no saturation axiom). Saturation ([goldsmith-1976]'s
+  original well-formedness condition) is stated but not imposed; tier-orderedness
+  includes path-closure — the arcs are transitively closed, [jardine-2019]'s
+  reading that `A` represents the order; the OCP reads adjacency as the covering
+  relation of the arcs, since order-closed arcs relate all comparable pairs.
 * `AR t`: the category of autosegmental representations — the full
   subcategory of labeled mixed graphs on Axioms 1–3, monoidal under `concat`.
 
@@ -56,8 +58,7 @@ variable {V S ι : Type*}
 section Axioms
 variable (E : SimpleGraph V) (A : Digraph V)
 
-/-- Axioms 1–2 ([jardine-2016-diss] §4.2): the arcs are tier-internal and
-    strictly totally order each fiber of the coloring `c`. -/
+/-- The arcs `A` are tier-internal and strictly totally order each fiber of `c` (Axioms 1–2). -/
 structure IsTierOrdered (c : V → ι) : Prop where
   /-- Arcs never leave a tier. -/
   tier_eq : ∀ ⦃v w⦄, A.Adj v w → c v = c w
@@ -68,25 +69,17 @@ structure IsTierOrdered (c : V → ι) : Prop where
   /-- Arcs compose. -/
   trans : ∀ ⦃u v w⦄, A.Adj u v → A.Adj v w → A.Adj u w
 
-/-- Axiom 3: association never links precedence-path-related (tier-internal)
-    vertices. Tier-free — stated on arcs alone, as in the dissertation. -/
+/-- No association edge links arc-related vertices (Axiom 3). -/
 def NoInternalAssoc : Prop := ∀ ⦃v w⦄, E.Adj v w → ¬ A.Adj v w
 
-/-- Axiom 4 (full specification): every vertex participates in an association.
-    [goldsmith-1976]'s original well-formedness condition; stated but deliberately
-    not imposed — floating elements are well-formed. -/
+/-- Every vertex meets an association edge (Axiom 4, full specification). -/
 def IsSaturated : Prop := ∀ v, ∃ w, E.Adj v w
 
-/-- Axiom 5, the No-Crossing Constraint in [jardine-2016-diss]'s general path
-    form: no two association edges whose endpoints straddle in opposite precedence
-    order. -/
+/-- No two association edges straddle in opposite precedence order (Axiom 5, the NCC). -/
 def IsPlanar : Prop :=
   ∀ ⦃v v' w w'⦄, E.Adj v v' → E.Adj w w' → A.Adj v w → ¬ A.Adj w' v'
 
-/-- Axiom 6, the OCP on melody tier `m`: precedence-adjacent vertices on `m`
-    bear distinct labels. Adjacency is the covering relation of the arcs — in
-    the order-closed signature bare arcs relate all order-comparable pairs,
-    which would wrongly ban any repeated label anywhere on the tier. -/
+/-- Precedence-adjacent vertices on melody tier `m` bear distinct labels (Axiom 6, the OCP). -/
 def IsOCPClean (ℓ : V → S) (t : S → ι) (m : ι) : Prop :=
   ∀ ⦃v w⦄, A.Adj v w → (∀ u, ¬ (A.Adj v u ∧ A.Adj u w)) →
     t (ℓ v) = m → ℓ v ≠ ℓ w
@@ -191,18 +184,13 @@ end Graph
 
 open CategoryTheory
 
-variable (t : S → ι)
-
-/-- The structural axiom class ([jardine-2016-diss] §4.2, Axioms 1–3) as an
-    object property of the graph category. -/
-def isRepresentation : ObjectProperty (Graph S) := fun X =>
-  IsTierOrdered X.arcs (X.tier t) ∧ NoInternalAssoc X.edges X.arcs
-
 /-- The category of **autosegmental representations** over a tier assignment:
     the full subcategory of labeled mixed graphs satisfying the structural
-    axioms — the formal literature's ARs ([jardine-2019],
-    [chandlee-jardine-2019]). -/
-abbrev AR := (isRepresentation t).FullSubcategory
+    axioms ([jardine-2016-diss] §4.2, Axioms 1–3) — the formal literature's
+    ARs ([jardine-2019], [chandlee-jardine-2019]). -/
+abbrev AR (t : S → ι) :=
+  ObjectProperty.FullSubcategory
+    fun X : Graph S => IsTierOrdered X.arcs (X.tier t) ∧ NoInternalAssoc X.edges X.arcs
 
 /-! ### The monoidal structure: morpheme concatenation -/
 
@@ -210,7 +198,7 @@ namespace AR
 
 open MonoidalCategory
 
-variable {t}
+variable {t : S → ι}
 
 /-- Under the structural axioms the tier map properly colors the association
     graph: same-tier vertices are precedence-related (Axioms 1–2) and associated
