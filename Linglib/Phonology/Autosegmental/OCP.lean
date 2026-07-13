@@ -109,8 +109,11 @@ noncomputable def AR.collapse [Finite X.obj.V] :
       arcs := ⟨fun v w => v.1 = w.1 ∧ (v.2 : ℕ) < (w.2 : ℕ)⟩
       label := fun v => ⟨v.1, (X.collapsedWord m v.1)[v.2]⟩ }
   property := by
-    refine ⟨⟨fun v w h => h.1, fun v w hne htier => ?_, fun v h => lt_irrefl _ h.2,
-      fun u v w huv hvw => ⟨huv.1.trans hvw.1, huv.2.trans hvw.2⟩⟩, fun v w hadj harc => ?_⟩
+    refine ⟨{ irrefl := fun v h => lt_irrefl _ h.2,
+              trans := fun u v w huv hvw => ⟨huv.1.trans hvw.1, huv.2.trans hvw.2⟩,
+              tier_eq := fun v w h => h.1,
+              total := fun v w hne htier => ?_ },
+      fun v w hadj harc => ?_⟩
     · obtain ⟨i, p⟩ := v
       obtain ⟨j, q⟩ := w
       obtain rfl : i = j := htier
