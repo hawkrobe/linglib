@@ -108,6 +108,9 @@ noncomputable def plateauRep (w : List TBU) :
       (Sigma.fst : ((b : Bool) × Autosegmental.TwoTier _root_.Tone.TRN Unit b) → Bool) :=
   ((Autosegmental.realize toRep w).collapse true).hull true
 
+instance (w : List TBU) : Finite (plateauRep w).obj.V :=
+  inferInstanceAs (Finite ((_ : Bool) × Fin _))
+
 section TierWords
 open CategoryTheory
 open scoped MonoidalCategory
@@ -277,6 +280,49 @@ theorem link_realizeMerged (w : List TBU) (k j : ℕ) :
       exact Autosegmental.runIdx_replicate _ _ _
     · unfold Autosegmental.Representation.collapseIdx
       rw [if_neg (by decide)]
+
+/-- **What surfaces is the representation**: slot `j` is H-linked in
+    `plateauRep w` iff some H-toned TBU lies at or before `j` and some at or
+    after it — fusion then spreading, read back as the string window. -/
+theorem link_plateauRep (w : List TBU) (j : ℕ) :
+    (∃ k, (plateauRep w).link true false k j) ↔
+      .H ∈ w.take (j + 1) ∧ .H ∈ w.drop j := by
+  haveI := Autosegmental.realize.instFinite toRep w
+  have hlen : ((Autosegmental.realize toRep w).collapse true).tierLength false
+      = w.length := by
+    rw [← Autosegmental.Representation.length_tierWord,
+      Autosegmental.Representation.tierWord_collapse,
+      show (Autosegmental.realize toRep w).collapsedWord true false
+        = (Autosegmental.realize toRep w).tierWord false from
+        Function.update_of_ne (by decide) _ _,
+      tierWord_realize_toRep_false]
+    exact List.length_replicate
+  rw [List.mem_take_iff, List.mem_drop_iff]
+  constructor
+  · rintro ⟨k, hk⟩
+    obtain ⟨-, hjb, -⟩ := id hk
+    have hlenh : (plateauRep w).tierLength false = w.length := by
+      rw [← Autosegmental.Representation.length_tierWord,
+        show (plateauRep w).tierWord false
+          = ((Autosegmental.realize toRep w).collapse true).tierWord false from
+          Autosegmental.Representation.tierWord_hull true _ false,
+        Autosegmental.Representation.length_tierWord, hlen]
+    have hjw : j < w.length := hlenh ▸ hjb
+    obtain ⟨q₁, q₂, h₁, h₂, hle₁, hle₂⟩ :=
+      (Autosegmental.Representation.link_hull_left true _ (by decide)
+        (by omega : j < ((Autosegmental.realize toRep w).collapse true).tierLength false)).mp hk
+    obtain ⟨-, hq₁⟩ := (link_realizeMerged w k q₁).mp h₁
+    obtain ⟨-, hq₂⟩ := (link_realizeMerged w k q₂).mp h₂
+    exact ⟨⟨q₁, by omega, hq₁⟩, q₂, hle₂, hq₂⟩
+  · rintro ⟨⟨q₁, hq₁b, hq₁⟩, q₂, hq₂b, hq₂⟩
+    have hq₂w : q₂ < w.length := by
+      rcases List.getElem?_eq_some_iff.mp hq₂ with ⟨h, -⟩
+      exact h
+    have hl₁ := (link_realizeMerged w 0 q₁).mpr ⟨rfl, hq₁⟩
+    have hl₂ := (link_realizeMerged w 0 q₂).mpr ⟨rfl, hq₂⟩
+    exact ⟨0, (Autosegmental.Representation.link_hull_left true _ (by decide)
+      (by omega : j < ((Autosegmental.realize toRep w).collapse true).tierLength false)).mpr
+      ⟨q₁, q₂, hl₁, hl₂, by omega, hq₂b⟩⟩
 
 end TierWords
 
