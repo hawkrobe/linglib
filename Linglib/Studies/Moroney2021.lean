@@ -4,8 +4,8 @@ import Linglib.Syntax.Category.Determiner.Basic
 import Linglib.Semantics.Definiteness.DeterminerLicensing
 import Linglib.Semantics.Definiteness.Description
 import Linglib.Semantics.Definiteness.Interpret
-import Linglib.Semantics.Kinds.MeaningPreservation
-import Linglib.Semantics.Kinds.NominalMappingParameter
+import Linglib.Semantics.Genericity.MeaningPreservation
+import Linglib.Semantics.Genericity.NominalMappingParameter
 import Linglib.Semantics.Definiteness.Basic
 import Linglib.Semantics.Classifier.Basic
 import Linglib.Fragments.English.Definiteness

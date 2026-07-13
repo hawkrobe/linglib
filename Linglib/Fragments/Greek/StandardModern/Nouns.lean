@@ -1,4 +1,4 @@
-import Linglib.Semantics.Kinds.NominalMappingParameter
+import Linglib.Semantics.Genericity.NominalMappingParameter
 
 /-! # Greek Noun Fragment
 

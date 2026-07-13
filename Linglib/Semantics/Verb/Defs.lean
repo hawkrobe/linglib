@@ -6,7 +6,7 @@ import Linglib.Features.Aktionsart
 import Linglib.Features.Attitudes
 import Linglib.Features.Causation
 import Linglib.Semantics.Verb.Class
-import Linglib.Semantics.NaturalLogic
+import Linglib.Semantics.Entailment.NaturalLogic
 import Linglib.Semantics.Aspect.ChangeOfState
 import Linglib.Semantics.Causation.Implicative
 import Linglib.Semantics.ArgumentStructure.Linking

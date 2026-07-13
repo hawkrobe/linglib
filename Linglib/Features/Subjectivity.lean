@@ -1,5 +1,5 @@
 import Mathlib.Order.Basic
-import Linglib.Semantics.Epistemicity
+import Linglib.Semantics.Evidential.Epistemicity
 
 /-!
 # Subjectivity Cline

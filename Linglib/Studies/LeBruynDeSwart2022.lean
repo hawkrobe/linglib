@@ -1,4 +1,4 @@
-import Linglib.Semantics.Kinds.NominalMappingParameter
+import Linglib.Semantics.Genericity.NominalMappingParameter
 import Linglib.Studies.Krifka2004
 import Linglib.Data.Examples.LeBruynDeSwart2022
 

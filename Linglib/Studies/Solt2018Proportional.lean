@@ -1,6 +1,6 @@
 import Linglib.Semantics.Degree.Aggregation
 import Linglib.Semantics.Degree.Discrete
-import Linglib.Semantics.Kinds.SortedOntology
+import Linglib.Semantics.Genericity.SortedOntology
 import Linglib.Core.Order.Boundedness
 import Mathlib.Algebra.Order.Ring.Rat
 import Mathlib.Tactic.Ring
@@ -312,7 +312,7 @@ theorem cardinal_proportional_divergence :
     the cardinal reading.
 
     The substrate primitive `PredicateLevel`
-    (`Semantics/Kinds/SortedOntology.lean §2`) is reused
+    (`Semantics/Genericity/SortedOntology.lean §2`) is reused
     here directly rather than re-stipulated; the same enum is
     consumed by `Fragments/German/BarePluralWordOrder.lean` and
     `Studies/Magri2009.lean`. -/

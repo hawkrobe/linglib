@@ -1,4 +1,4 @@
-import Linglib.Semantics.Kinds.NominalMappingParameter
+import Linglib.Semantics.Genericity.NominalMappingParameter
 import Linglib.Studies.Aikhenvald2000
 import Linglib.Fragments.Romance.French.Nouns
 import Linglib.Fragments.Mandarin.Nouns

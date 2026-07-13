@@ -561,7 +561,7 @@ For empirical patterns (scope judgments, predicate class effects), see
 
 For kind formation by salient equivalence relations (the Mendia 2020
 framework that subsumes Carlson's Disjointness Condition), see
-`Semantics/Kinds/Subkinds.lean`.
+`Semantics/Genericity/Subkinds.lean`.
 -/
 
 end Semantics.Kinds.NMP

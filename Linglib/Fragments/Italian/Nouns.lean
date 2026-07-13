@@ -1,7 +1,7 @@
 import Linglib.Features.Gender.Basic
 import Linglib.Data.UD.Basic
 import Linglib.Features.Number.Capabilities
-import Linglib.Semantics.Kinds.NominalMappingParameter
+import Linglib.Semantics.Genericity.NominalMappingParameter
 
 /-! # Italian Noun Lexicon Fragment
 

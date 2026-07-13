@@ -1,6 +1,6 @@
 import Linglib.Semantics.Attitudes.Doxastic
 import Linglib.Core.Logic.Aristotelian.Square
-import Linglib.Semantics.Homogeneity.Decided
+import Linglib.Semantics.Plurality.Homogeneity.Decided
 
 /-!
 # Neg-Raising as O→E Pragmatic Strengthening
@@ -43,7 +43,7 @@ includes cases where p is false, so strengthening to know(¬p) would require
 ## See also
 
 The domain-general structural core — neg-raising / force collapse ⟺ the modal's
-domain being a subsingleton — lives in `Semantics/Homogeneity/Decided.lean`. This
+domain being a subsingleton — lives in `Semantics/Plurality/Homogeneity/Decided.lean`. This
 file is the doxastic (believe / think / know) application layer.
 -/
 
@@ -188,7 +188,7 @@ theorem believe_square_contradictions {W E : Type*} (R : AccessRel W E)
    doxasticSquare_contradEI R agent worlds p w⟩
 
 -- The domain-general core — neg-raising / force-collapse / excluded middle ⟺ the
--- domain being a subsingleton — lives in `Semantics/Homogeneity/Decided.lean`,
+-- domain being a subsingleton — lives in `Semantics/Plurality/Homogeneity/Decided.lean`,
 -- consumed here (via `forall_opinionated_iff_subsingleton`) and by the modal-force
 -- studies and nominal plural homogeneity.
 

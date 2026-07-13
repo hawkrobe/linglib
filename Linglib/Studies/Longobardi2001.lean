@@ -1,5 +1,5 @@
-import Linglib.Semantics.Kinds.NominalMappingParameter
-import Linglib.Semantics.Kinds.SortedOntology
+import Linglib.Semantics.Genericity.NominalMappingParameter
+import Linglib.Semantics.Genericity.SortedOntology
 import Linglib.Fragments.Italian.Nouns
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.Greek.StandardModern.Nouns

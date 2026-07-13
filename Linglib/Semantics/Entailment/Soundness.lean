@@ -1,4 +1,4 @@
-import Linglib.Semantics.NaturalLogic
+import Linglib.Semantics.Entailment.NaturalLogic
 import Linglib.Semantics.Entailment.AntiAdditivity
 
 /-!

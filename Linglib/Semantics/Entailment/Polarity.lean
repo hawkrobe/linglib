@@ -1,5 +1,5 @@
 import Mathlib.Order.Monotone.Defs
-import Linglib.Semantics.NaturalLogic
+import Linglib.Semantics.Entailment.NaturalLogic
 import Linglib.Semantics.Entailment.Basic
 
 /-!

@@ -3,7 +3,7 @@ import Linglib.Semantics.Dynamic.PPCDRT.Defs
 import Linglib.Semantics.Dynamic.PPCDRT.Anaphora
 import Linglib.Semantics.Dynamic.PPCDRT.Cumulativity
 import Linglib.Semantics.Plurality.Cumulativity
-import Linglib.Semantics.Homogeneity.Basic
+import Linglib.Semantics.Plurality.Homogeneity.Basic
 import Linglib.Semantics.Supervaluation.Basic
 import Linglib.Core.Logic.Trivalent
 
@@ -48,7 +48,7 @@ the §5.2 empirical-fit table; the §7 typological excursus.
 
 - [champollion-bumford-henderson-2019] for the §5 supervaluationist
   truth-value-gap analysis — realised via
-  `Semantics/Homogeneity/Basic.lean`'s `removeGap` /
+  `Semantics/Plurality/Homogeneity/Basic.lean`'s `removeGap` /
   `Trivalent.metaAssert`.
 - [kriz-2015] for the homogeneity background; same substrate.
 - [langendoen-1978] for the reciprocity-as-cumulativity link —
@@ -488,7 +488,7 @@ theorem collective_groupIdentity_no_distinct :
     for the supervaluationist machinery.
 
     Here we encode the truth-value gap directly via `Trivalent`, exploiting
-    the existing `Semantics/Homogeneity/Basic.lean` substrate
+    the existing `Semantics/Plurality/Homogeneity/Basic.lean` substrate
     (`removeGap`, `Trivalent.metaAssert`). -/
 
 /-- The truth value of a quantified-antecedent reciprocal sentence,

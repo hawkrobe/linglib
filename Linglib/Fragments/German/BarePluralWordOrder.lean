@@ -1,4 +1,4 @@
-import Linglib.Semantics.Kinds.SortedOntology
+import Linglib.Semantics.Genericity.SortedOntology
 
 /-!
 # German Bare Plural Word Order

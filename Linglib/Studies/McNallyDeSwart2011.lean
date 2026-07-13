@@ -1,4 +1,4 @@
-import Linglib.Semantics.Kinds.Subkinds
+import Linglib.Semantics.Genericity.Subkinds
 import Linglib.Fragments.Dutch.Adjectives
 import Linglib.Morphology.RootFamily
 
@@ -44,7 +44,7 @@ The key empirical contrasts (paper §2.3):
   rather than enumerating them inline.
 * **Kind/subkind ontology**: [zamparelli-1995]'s layered DP plus
   [carlson-1977] kinds. The subkind relation is exactly what
-  `Semantics/Kinds/Subkinds.lean` provides: a salient
+  `Semantics/Genericity/Subkinds.lean` provides: a salient
   equivalence relation on shade-atoms partitions them into colour subkinds,
   and McNally & de Swart's `subkind(xk, red)` is precisely
   `Subkinds.subkindOf kfShade (canonicalShade rood)`. Carlson's
@@ -263,7 +263,7 @@ def adjectivalProperty (a : AdjEntry) : Shade → Prop :=
 /-- [mcnally-deswart-2011] (24b): `roodheid_N` denotes the set of
     subkinds of the entity correlate (Chierchia ∩) of the property
     `λy. Red(y)`. The substantive Chierchia ∩ operator lives in
-    `Semantics/Kinds/NMP.lean` (`down`/`up` for
+    `Semantics/Genericity/NominalMappingParameter.lean` (`down`/`up` for
     intensional kinds) and `Semantics/Composition/TypeShifting.lean`
     (`NOM` extensional counterpart, with `NOM = iota` in the finite
     setting); we do not call them here because the extensional collapse

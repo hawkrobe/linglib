@@ -2,7 +2,7 @@ import Linglib.Fragments.English.Plurals
 import Linglib.Fragments.Japanese.Plurals
 import Linglib.Features.Number.Resolve
 import Linglib.Syntax.Agreement.Basic
-import Linglib.Semantics.Kinds.NominalMappingParameter
+import Linglib.Semantics.Genericity.NominalMappingParameter
 
 /-!
 # Corbett (2000) — Number

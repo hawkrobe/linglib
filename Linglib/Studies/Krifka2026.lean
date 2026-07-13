@@ -1,4 +1,4 @@
-import Linglib.Semantics.Kinds.NominalMappingParameter
+import Linglib.Semantics.Genericity.NominalMappingParameter
 import Linglib.Semantics.Dynamic.DiscourseRef
 import Linglib.Semantics.Dynamic.Update
 import Linglib.Core.Logic.Assignment
@@ -13,7 +13,7 @@ tagged [MASS]/[COUNT] — which project past anaphoric islands (in Krifka's
 extended sense: negation, modals, conditionals), while entity drefs introduced
 by indefinites under negation are trapped. Kind anaphors pick up concept drefs
 and derive kind individuals via [chierchia-1998]'s ∩ from
-`Semantics/Kinds/NominalMappingParameter`: ⟦it⟧ = λP[MASS] λi.∩P(i),
+`Semantics/Genericity/NominalMappingParameter`: ⟦it⟧ = λP[MASS] λi.∩P(i),
 ⟦they⟧ = λP[COUNT] λi.∩⊔P(i) (17a,b). The dynamic layer instantiates the
 substrate `Update`/`test`/`dneg` algebra of `Semantics/Dynamic/Connectives`
 at heterogeneous assignments over `DRefVal`.
