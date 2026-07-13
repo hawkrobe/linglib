@@ -237,6 +237,93 @@ variable [DecidableEq α]
 theorem isCleanAR_contour : IsCleanAR (contour as b) ↔ OCP.IsClean as :=
   isCleanAR_junction
 
+/-! ### The junction in coordinates
+
+The complete association as a two-tier `Representation` (`Bool`-indexed:
+`true` the melody tier, `false` the timing tier), built by `ofData`; the
+No-Crossing keystone in the foundational path form. -/
+
+section CoordinateJunction
+
+universe u
+variable {α β : Type u}
+
+/-- The two-tier alphabet: melody labels over `true`, timing labels over
+    `false`. -/
+abbrev TwoTier (α β : Type u) : Bool → Type u := fun b => bif b then α else β
+
+/-- Complete many-to-many association of a melody onto a slot sequence, in
+    coordinates. -/
+def Representation.junction (as : List α) (bs : List β) :
+    Representation (Sigma.fst : ((b : Bool) × TwoTier α β b) → Bool) :=
+  Representation.ofData
+    (fun b => match b with
+      | true => (as : List (TwoTier α β true))
+      | false => (bs : List (TwoTier α β false)))
+    (fun i j p q => i = true ∧ j = false ∧ p < as.length ∧ q < bs.length)
+
+instance (as : List α) (bs : List β) :
+    Finite (Representation.junction as bs).obj.V :=
+  inferInstanceAs (Finite ((b : Bool) × Fin _))
+
+@[simp] theorem Representation.tierWord_junction_true (as : List α) (bs : List β) :
+    (Representation.junction as bs).tierWord true = as :=
+  Representation.tierWord_ofData true
+
+@[simp] theorem Representation.tierWord_junction_false (as : List α) (bs : List β) :
+    (Representation.junction as bs).tierWord false = bs :=
+  Representation.tierWord_ofData false
+
+/-- **The No-Crossing Constraint selects the one-sided junctions**: a complete
+    association is planar iff one side has at most one node — the one-to-many
+    `spread`, many-to-one `contour`, and degenerate cases. -/
+theorem Representation.isPlanar_junction_iff (as : List α) (bs : List β) :
+    IsPlanar (Representation.junction as bs).obj.graph ↔
+      as.length ≤ 1 ∨ bs.length ≤ 1 := by
+  constructor
+  · intro h
+    by_contra hc
+    rw [not_or] at hc
+    obtain ⟨ha, hb⟩ := hc
+    rw [Nat.not_le] at ha hb
+    exact h (v := ⟨true, ⟨0, show 0 < as.length by omega⟩⟩)
+      (v' := ⟨false, ⟨1, show 1 < bs.length by omega⟩⟩)
+      (w := ⟨true, ⟨1, show 1 < as.length by omega⟩⟩)
+      (w' := ⟨false, ⟨0, show 0 < bs.length by omega⟩⟩)
+      ⟨by simp, Or.inl ⟨rfl, rfl, show (0 : ℕ) < as.length by omega,
+        show (1 : ℕ) < bs.length by omega⟩⟩
+      ⟨by simp, Or.inl ⟨rfl, rfl, show (1 : ℕ) < as.length by omega,
+        show (0 : ℕ) < bs.length by omega⟩⟩
+      ⟨rfl, show (0 : ℕ) < 1 by omega⟩ ⟨rfl, show (0 : ℕ) < 1 by omega⟩
+  · rintro h ⟨bv, pv⟩ ⟨bv', pv'⟩ ⟨bw, pw⟩ ⟨bw', pw'⟩ hvv' hww' hvw hw'v'
+    obtain ⟨hbvw, hpvw⟩ := hvw
+    obtain ⟨hbw'v', hpw'v'⟩ := hw'v'
+    cases hbvw
+    cases hbw'v'
+    have hv' : bv' = !bv := by
+      rcases hvv' with ⟨hne, -⟩
+      cases bv <;> cases bv' <;> simp_all
+    subst hv'
+    rcases h with h | h <;> cases bv
+    · have h1 : (pv' : ℕ) < as.length := pv'.isLt
+      have h2 : (pw' : ℕ) < as.length := pw'.isLt
+      have h3 : (pw' : ℕ) < (pv' : ℕ) := hpw'v'
+      omega
+    · have h1 : (pv : ℕ) < as.length := pv.isLt
+      have h2 : (pw : ℕ) < as.length := pw.isLt
+      have h3 : (pv : ℕ) < (pw : ℕ) := hpvw
+      omega
+    · have h1 : (pv : ℕ) < bs.length := pv.isLt
+      have h2 : (pw : ℕ) < bs.length := pw.isLt
+      have h3 : (pv : ℕ) < (pw : ℕ) := hpvw
+      omega
+    · have h1 : (pv' : ℕ) < bs.length := pv'.isLt
+      have h2 : (pw' : ℕ) < bs.length := pw'.isLt
+      have h3 : (pw' : ℕ) < (pv' : ℕ) := hpw'v'
+      omega
+
+end CoordinateJunction
+
 end AR
 
 end Autosegmental
