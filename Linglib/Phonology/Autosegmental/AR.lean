@@ -83,8 +83,7 @@ def IsPlanar : Prop :=
 
 /-- Precedence-adjacent vertices on melody tier `m` bear distinct labels (Axiom 6, the OCP). -/
 def IsOCPClean (ℓ : V → S) (t : S → ι) (m : ι) : Prop :=
-  ∀ ⦃v w⦄, A.Adj v w → (∀ u, ¬ (A.Adj v u ∧ A.Adj u w)) →
-    t (ℓ v) = m → ℓ v ≠ ℓ w
+  ∀ ⦃v w⦄, A.Adj v w → (∀ u, ¬ (A.Adj v u ∧ A.Adj u w)) → t (ℓ v) = m → ℓ v ≠ ℓ w
 
 end Axioms
 
