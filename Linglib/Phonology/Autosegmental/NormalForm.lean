@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Mathlib.Algebra.FreeMonoid.Basic
+import Mathlib.CategoryTheory.Monoidal.Skeleton
 import Mathlib.Data.Finite.Sum
 import Mathlib.Data.Fintype.Sort
 import Mathlib.Data.Fintype.Sum
@@ -21,10 +22,10 @@ The normal form is a `Representation` — not a separate carrier — and
 `normalizeIso` is definitional: `normalize` pulls the graph back along the
 enumeration equivalence.
 
-Strictness lives on isomorphism classes: `Representation.IsoClass` carries
-concatenation with associativity on the nose — full-structure classes, since
-broad categorical isomorphism forgets the arcs and is too coarse to preserve
-tier words. `cls_normalize` says `normalize` chooses representatives.
+Strictness lives on isomorphism classes of the precedence-preserving wide
+subcategory (`PrecRepresentation`): full-structure classes, since broad
+categorical isomorphism forgets the arcs and is too coarse to preserve tier
+words. `cls_normalize` says `normalize` chooses representatives.
 
 ## Main definitions
 
@@ -46,8 +47,9 @@ tier words. `cls_normalize` says `normalize` chooses representatives.
 * `Representation.tierWord_tensor`, `Representation.tierWord_realize`:
   concatenation appends tier words; tier content of a realization is
   compositional.
-* `Representation.IsoClass`, `Representation.cls_normalize`: the concatenation
-  monoid of isomorphism classes; normal forms represent their class.
+* `PrecRepresentation`, `Representation.cls_normalize`: the monoid of
+  isomorphism classes of the precedence-preserving category; normal forms
+  represent their class.
 -/
 
 namespace Autosegmental
@@ -58,50 +60,46 @@ variable {ι : Type*} {τ : ι → Type*}
 
 /-! ### The monoid of representations up to isomorphism
 
-Full-structure isomorphism classes of representations, with strictly
-associative concatenation — [jardine-heinz-2015] Theorems 1 and 3 packaged as a
-`Monoid`. Full isos, not the broad categorical `≅` (which forgets arcs), are
-the theory's identity criterion: they preserve tier orders, so the tuple
-readers descend to classes. -/
+Isomorphism classes in the **precedence-preserving** wide subcategory — the
+theory's identity criterion. The broad categorical `≅` forgets arcs and is too
+coarse (it identifies tier orders); wide-subcategory isos are exactly the
+full-structure isomorphisms, so the tuple readers descend to classes. The
+monoid structure is stock: `precPreserving` is monoidally stable, so
+`WideSubcategory` inherits the monoidal category and `Monoidal.Skeleton` the
+strictly associative monoid. -/
 
 section IsoClasses
 open scoped MonoidalCategory
 
-/-- Full-structure isomorphism as an equivalence of representations. -/
-def Representation.isoSetoid :
-    Setoid (Representation (Sigma.fst : ((i : ι) × τ i) → ι)) where
-  r A B := Nonempty (MixedGraphCat.Iso A.obj B.obj)
-  iseqv := ⟨fun _ => ⟨MixedGraphCat.Iso.refl _⟩, fun ⟨e⟩ => ⟨e.symm⟩,
-    fun ⟨e⟩ ⟨f⟩ => ⟨e.trans f⟩⟩
+/-- Representations with the classical precedence-preserving morphisms. -/
+abbrev PrecRepresentation (ι : Type*) (τ : ι → Type*) :=
+  WideSubcategory (Representation.precPreserving (t := (Sigma.fst : ((i : ι) × τ i) → ι)))
 
-/-- Isomorphism classes of representations — the carrier of the concatenation
-    monoid of ARs. -/
-def Representation.IsoClass (ι : Type*) (τ : ι → Type*) :=
-  Quotient (Representation.isoSetoid (ι := ι) (τ := τ))
+/-- A full isomorphism is an isomorphism of the precedence-preserving
+    category: both directions preserve arcs. -/
+noncomputable def Representation.fullIsoToWideIso
+    {A B : Representation (Sigma.fst : ((i : ι) × τ i) → ι)}
+    (e : MixedGraphCat.Iso A.obj B.obj) :
+    (⟨A⟩ : PrecRepresentation ι τ) ≅ ⟨B⟩ where
+  hom := ⟨InducedCategory.homMk e.toHom, e.toHom_precPreserving⟩
+  inv := ⟨InducedCategory.homMk e.symm.toHom, e.symm.toHom_precPreserving⟩
+  hom_inv_id := InducedWideCategory.Hom.ext (InducedCategory.hom_ext
+    (MixedGraphCat.Hom.ext (funext fun v => e.toEquiv.symm_apply_apply v)))
+  inv_hom_id := InducedWideCategory.Hom.ext (InducedCategory.hom_ext
+    (MixedGraphCat.Hom.ext (funext fun v => e.toEquiv.apply_symm_apply v)))
 
-/-- The class of a representation. -/
-def Representation.cls (A : Representation (Sigma.fst : ((i : ι) × τ i) → ι)) :
-    Representation.IsoClass ι τ :=
-  Quotient.mk Representation.isoSetoid A
-
-instance : Monoid (Representation.IsoClass ι τ) where
-  mul := Quotient.map₂ (· ⊗ ·)
-    fun _ _ ⟨e₁⟩ _ _ ⟨e₂⟩ => ⟨MixedGraphCat.Iso.concatCongr _ e₁ e₂⟩
-  one := Representation.cls (𝟙_ _)
-  mul_assoc := by
-    rintro ⟨A⟩ ⟨B⟩ ⟨C⟩
-    exact Quotient.sound ⟨MixedGraphCat.concatAssocIso _ A.obj B.obj C.obj⟩
-  one_mul := by
-    rintro ⟨A⟩
-    exact Quotient.sound ⟨MixedGraphCat.emptyConcatIso _ A.obj⟩
-  mul_one := by
-    rintro ⟨A⟩
-    exact Quotient.sound ⟨MixedGraphCat.concatEmptyIso _ A.obj⟩
+/-- The class of a representation: its isomorphism class in the skeleton of the
+    precedence-preserving category — the monoid of ARs. -/
+noncomputable def Representation.cls
+    (A : Representation (Sigma.fst : ((i : ι) × τ i) → ι)) :
+    Skeleton (PrecRepresentation ι τ) :=
+  toSkeleton ⟨A⟩
 
 /-- Concatenation of classes is the class of the tensor. -/
 theorem Representation.cls_tensor
     (A B : Representation (Sigma.fst : ((i : ι) × τ i) → ι)) :
-    Representation.cls (A ⊗ B) = Representation.cls A * Representation.cls B := rfl
+    Representation.cls (A ⊗ B) = Representation.cls A * Representation.cls B :=
+  CategoryTheory.Skeleton.toSkeleton_tensorObj (⟨A⟩ : PrecRepresentation ι τ) ⟨B⟩
 
 end IsoClasses
 
@@ -239,7 +237,7 @@ theorem Representation.arcs_normalize [Finite X.obj.V] (i : ι)
     of the quotient onto `Representation.IsoClass`. -/
 theorem Representation.cls_normalize [Finite X.obj.V] :
     Representation.cls (X.normalize) = Representation.cls X :=
-  Quotient.sound ⟨X.normalizeFullIso⟩
+  Quotient.sound ⟨Representation.fullIsoToWideIso X.normalizeFullIso⟩
 
 end NormalForm
 
@@ -271,7 +269,7 @@ noncomputable def realize (g₀ : S → Representation (Sigma.fst : ((i : ι) ×
     on classes. -/
 noncomputable def realizeHom
     (g₀ : S → Representation (Sigma.fst : ((i : ι) × τ i) → ι)) :
-    FreeMonoid S →* Representation.IsoClass ι τ :=
+    FreeMonoid S →* Skeleton (PrecRepresentation ι τ) :=
   FreeMonoid.lift (Representation.cls ∘ g₀)
 
 end Realize

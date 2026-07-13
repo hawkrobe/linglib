@@ -876,7 +876,7 @@ noncomputable def Representation.collapseTensorFullIso :
 theorem Representation.cls_collapse_tensor :
     Representation.cls ((X ⊗ Y).collapse m)
       = Representation.cls ((X.collapse m ⊗ Y.collapse m).collapse m) :=
-  Quotient.sound ⟨Representation.collapseTensorFullIso X m⟩
+  Quotient.sound ⟨Representation.fullIsoToWideIso (Representation.collapseTensorFullIso X m)⟩
 
 end Congruence
 
