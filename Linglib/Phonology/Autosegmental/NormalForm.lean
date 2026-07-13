@@ -10,6 +10,7 @@ import Mathlib.Data.Finite.Sum
 import Mathlib.Data.Fintype.Sort
 import Mathlib.Data.Fintype.Sum
 import Mathlib.Logic.Equiv.Fin.Basic
+import Linglib.Core.Data.List.Factors
 import Linglib.Phonology.Autosegmental.MixedGraph
 
 /-!
@@ -547,6 +548,32 @@ def Representation.Free [Finite X.obj.V]
     (B : List {F : Representation (Sigma.fst : ((i : ι) × τ i) → ι) // Finite F.obj.V}) :
     Prop :=
   ∀ F ∈ B, haveI := F.property; ¬ F.val.FactorEmbeds X
+
+/-- For a link-free factor, embedding reduces to independent per-tier infix
+    occurrences ([jardine-2019]'s link-free fragment). -/
+theorem Representation.factorEmbeds_iff_infix_of_link_free
+    {F X : Representation (Sigma.fst : ((i : ι) × τ i) → ι)}
+    [Finite F.obj.V] [Finite X.obj.V]
+    (hF : ∀ i j p q, ¬ F.link i j p q) :
+    F.FactorEmbeds X ↔ ∀ i, F.tierWord i <:+: X.tierWord i := by
+  constructor
+  · rintro ⟨o, hw, -⟩ i
+    rw [List.isInfix_iff_exists_offset]
+    rcases Nat.eq_zero_or_pos (F.tierWord i).length with hzero | hpos
+    · exact ⟨0, Nat.zero_le _, fun p hp => absurd hp (by omega)⟩
+    · have h0 := hw i 0 (by simpa [Representation.length_tierWord] using hpos)
+      refine ⟨o i, ?_, fun p hp => hw i p
+        (by simpa [Representation.length_tierWord] using hp)⟩
+      rcases List.getElem?_eq_some_iff.mp
+        (h0 ▸ (List.getElem?_eq_some_iff.mpr
+          ⟨by simpa [Representation.length_tierWord] using hpos, rfl⟩ :
+            (F.tierWord i)[0]? = some _)) with ⟨hb, -⟩
+      omega
+  · intro h
+    choose o ho using fun i => (List.isInfix_iff_exists_offset _ _).mp (h i)
+    refine ⟨o, fun i p hp => ?_, fun i j p q hl => absurd hl (hF i j p q)⟩
+    obtain ⟨-, hoff⟩ := ho i
+    exact hoff p (by simpa [Representation.length_tierWord] using hp)
 
 open scoped MonoidalCategory in
 /-- Tensor links are blockwise: within the left factor, or within the right
