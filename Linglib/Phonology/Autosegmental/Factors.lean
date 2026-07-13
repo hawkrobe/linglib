@@ -30,7 +30,7 @@ are lists of forbidden factors.
 namespace Autosegmental
 
 variable {ι : Type*} {τ : ι → Type*}
-variable (F X : AR (Sigma.fst : ((i : ι) × τ i) → ι))
+variable (F X : TieredAR ι τ)
 
 /-- `F` occurs in `X` at per-tier offsets `o`: each tier word of `F` is the
     window of `X`'s at `o i`, and `F`'s links transport shifted. -/
@@ -38,7 +38,7 @@ def AR.IsFactorAt [Finite F.obj.V] [Finite X.obj.V] (o : ι → ℕ) : Prop :=
   (∀ i p, p < F.tierLength i → (X.tierWord i)[p + o i]? = (F.tierWord i)[p]?) ∧
     ∀ i j p q, F.link i j p q → X.link i j (p + o i) (q + o j)
 
-/-- `F` **subgraph-embeds** in `X` when some offsets place it as a factor
+/-- `F` subgraph-embeds in `X` when some offsets place it as a factor
     ([jardine-2017]'s connected-subgraph embedding). -/
 def AR.FactorEmbeds [Finite F.obj.V] [Finite X.obj.V] : Prop :=
   ∃ o : ι → ℕ, F.IsFactorAt X o
@@ -48,7 +48,7 @@ def AR.FactorEmbeds [Finite F.obj.V] [Finite X.obj.V] : Prop :=
     already forces the bound; empty factor tiers accept any offset, so `min`
     clamps them harmlessly. -/
 theorem AR.factorEmbeds_iff_bounded
-    {F X : AR (Sigma.fst : ((i : ι) × τ i) → ι)}
+    {F X : TieredAR ι τ}
     [Finite F.obj.V] [Finite X.obj.V] :
     F.FactorEmbeds X ↔
       ∃ o : ι → ℕ, (∀ i, o i ≤ X.tierLength i) ∧ F.IsFactorAt X o := by
@@ -93,14 +93,14 @@ theorem AR.factorEmbeds_iff_bounded
 /-- `X` avoids every forbidden factor of a banned-subgraph grammar
     ([jardine-2016-diss] Ch. 5's `L^NL_G`). -/
 def AR.Free [Finite X.obj.V]
-    (B : List {F : AR (Sigma.fst : ((i : ι) × τ i) → ι) // Finite F.obj.V}) :
+    (B : List {F : TieredAR ι τ // Finite F.obj.V}) :
     Prop :=
   ∀ F ∈ B, haveI := F.property; ¬ F.val.FactorEmbeds X
 
 /-- For a link-free factor, embedding reduces to independent per-tier infix
     occurrences ([jardine-2019]'s link-free fragment). -/
 theorem AR.factorEmbeds_iff_infix_of_link_free
-    {F X : AR (Sigma.fst : ((i : ι) × τ i) → ι)}
+    {F X : TieredAR ι τ}
     [Finite F.obj.V] [Finite X.obj.V]
     (hF : ∀ i j p q, ¬ F.link i j p q) :
     F.FactorEmbeds X ↔ ∀ i, F.tierWord i <:+: X.tierWord i := by

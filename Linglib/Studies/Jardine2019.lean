@@ -72,6 +72,7 @@ def AR.ASL (g₀ : S → AR (Sigma.fst : ((i : ι) × τ i) → ι))
     Language S :=
   { w | (realize g₀ w).Free B }
 
+omit [Finite ι] in
 @[simp] theorem AR.mem_ASL
     {g₀ : S → AR (Sigma.fst : ((i : ι) × τ i) → ι)}
     [∀ s, Finite (g₀ s).obj.V]
