@@ -49,6 +49,10 @@ hom-preserved, and its monoid laws are unconditional where the successor form's
 associativity requires string-graph tier classes ([jardine-heinz-2015]'s Lemma 1
 remark). The choice is not free elsewhere: subgraph-based notions such as
 `ASL.lean`'s forbidden factors are signature-sensitive ([jardine-2017-complexity]).
+
+Morphisms deliberately do not preserve precedence — reassociation analyses move
+material across the order — so `Hom` is the broad class where the coproduct and the
+OCP repair live; `precPreserving` marks the wide class of full-structure maps.
 -/
 
 namespace Autosegmental
@@ -57,9 +61,8 @@ variable {S ι : Type*}
 
 /-! ### The category of labeled mixed graphs -/
 
-/-- An object of the category of labeled mixed graphs over `S` — the
-    literature's labeled mixed graph `⟨V, E, A, ℓ⟩` / [jardine-2019]'s `GR(Γ)`,
-    carried fieldwise. -/
+/-- An object of the category of labeled mixed graphs over `S`, the literature's
+    labeled mixed graph `⟨V, E, A, ℓ⟩` ([jardine-2019]'s `GR(Γ)`) carried fieldwise. -/
 structure Graph (S : Type*) where
   /-- The vertex type. -/
   V : Type*
@@ -72,18 +75,14 @@ structure Graph (S : Type*) where
 
 namespace Graph
 
-variable {X Y Z : Graph S}
+variable {X Y Z X₁ Y₁ X₂ Y₂ : Graph S} (t : S → ι)
 
 /-- The tier of a vertex under a tier assignment on the alphabet. -/
-def tier (t : S → ι) (X : Graph S) : X.V → ι := t ∘ X.label
+def tier (X : Graph S) : X.V → ι := t ∘ X.label
 
 /-! ### Morphisms -/
 
-/-- A label- and association-preserving map of labeled mixed graphs. Precedence
-    is deliberately *not* required — reassociation analyses move material across
-    the order — so this is the broad morphism class where the coproduct and the
-    OCP repair live; the precedence-preserving maps form the wide morphism class
-    `precPreserving` (the legacy `AR.Hom` vs `PrecAR` split, at the foundation). -/
+/-- A label- and association-preserving map of labeled mixed graphs. -/
 @[ext]
 structure Hom (X Y : Graph S) where
   /-- The vertex map. -/
@@ -92,10 +91,6 @@ structure Hom (X Y : Graph S) where
   edge_map : ∀ ⦃v w⦄, X.edges.Adj v w → Y.edges.Adj (toFun v) (toFun w)
   /-- Labels are preserved. -/
   label_comp : ∀ v, Y.label (toFun v) = X.label v
-
-/-- The edge face of a morphism, a stock graph homomorphism. -/
-def Hom.edgesHom (f : Hom X Y) : X.edges →g Y.edges :=
-  ⟨f.toFun, fun h => f.edge_map h⟩
 
 /-- The identity morphism. -/
 def Hom.id (X : Graph S) : Hom X X :=
@@ -116,14 +111,6 @@ structure Iso (X Y : Graph S) extends X.V ≃ Y.V where
   arcs_iff : ∀ v w, Y.arcs.Adj (toEquiv v) (toEquiv w) ↔ X.arcs.Adj v w
   /-- Labels are preserved. -/
   label_comp : ∀ v, Y.label (toEquiv v) = X.label v
-
-/-- The edge face of an isomorphism, as a stock `SimpleGraph.Iso`. -/
-def Iso.edgesIso (e : Iso X Y) : X.edges ≃g Y.edges :=
-  ⟨e.toEquiv, e.edges_iff _ _⟩
-
-/-- The arc face of an isomorphism, as a stock `RelIso`. -/
-def Iso.arcsIso (e : Iso X Y) : X.arcs.Adj ≃r Y.arcs.Adj :=
-  ⟨e.toEquiv, e.arcs_iff _ _⟩
 
 /-- An isomorphism as a morphism. -/
 def Iso.toHom (e : Iso X Y) : Hom X Y :=
@@ -159,13 +146,8 @@ from every `X`-vertex to every same-tier `Y`-vertex. On the choice of the
 complete bridge over [jardine-2019]'s partial `(last, first)` pair, see the
 implementation notes above. -/
 
-section Concat
-variable (t : S → ι)
-
-/-- Concatenation ([jardine-heinz-2015] Definition 2, minus the `R_ID` melody
-    merge, in the precedence signature): stock disjoint sum on edges; on arcs the
-    per-tier ordinal sum — blockwise arcs plus a bridge from each `X`-vertex to
-    each same-tier `Y`-vertex. -/
+/-- The concatenation of two labeled mixed graphs, the disjoint edge sum with per-tier
+    ordinal-sum arcs ([jardine-heinz-2015] Definition 2 minus its `R_ID` melody merge). -/
 def concat (X Y : Graph S) : Graph S where
   V := X.V ⊕ Y.V
   edges := X.edges ⊕g Y.edges
@@ -230,21 +212,16 @@ def emptyConcatIso (X : Graph S) : Iso (concat t (empty S) X) X where
 
 /-! #### Functoriality of concatenation -/
 
-/-- Concatenation of morphisms is `Sum.map`: blockwise preservation from the
-    factors; label preservation transports the bridge's tier equality. -/
-def Hom.concatMap {X₁ Y₁ X₂ Y₂ : Graph S}
-    (f : Hom X₁ Y₁) (g : Hom X₂ Y₂) : Hom (concat t X₁ X₂) (concat t Y₁ Y₂) where
+/-- The concatenation of morphisms, `Sum.map` on vertices. -/
+def Hom.concatMap (f : Hom X₁ Y₁) (g : Hom X₂ Y₂) : Hom (concat t X₁ X₂) (concat t Y₁ Y₂) where
   toFun := Sum.map f.toFun g.toFun
   edge_map := by
     rintro (v | v) (w | w) h
-    exacts [f.edge_map h, absurd h (by simp), absurd h (by simp), g.edge_map h]
-  label_comp := by
-    rintro (v | v)
-    exacts [f.label_comp v, g.label_comp v]
+    exacts [f.edge_map h, Bool.noConfusion h, Bool.noConfusion h, g.edge_map h]
+  label_comp := Sum.rec f.label_comp g.label_comp
 
-/-- Concatenation of isomorphisms: full-structure isos compose blockwise, the
-    bridge transported by label preservation. -/
-def Iso.concatCongr {X₁ Y₁ X₂ Y₂ : Graph S} (e₁ : Iso X₁ Y₁) (e₂ : Iso X₂ Y₂) :
+/-- The concatenation of isomorphisms. -/
+def Iso.concatCongr (e₁ : Iso X₁ Y₁) (e₂ : Iso X₂ Y₂) :
     Iso (concat t X₁ X₂) (concat t Y₁ Y₂) where
   toEquiv := e₁.toEquiv.sumCongr e₂.toEquiv
   edges_iff v w := by
@@ -252,21 +229,14 @@ def Iso.concatCongr {X₁ Y₁ X₂ Y₂ : Graph S} (e₁ : Iso X₁ Y₁) (e₂
     exacts [e₁.edges_iff v w, Iff.rfl, Iff.rfl, e₂.edges_iff v w]
   arcs_iff v w := by
     rcases v with v | v <;> rcases w with w | w
-    · exact e₁.arcs_iff v w
-    · show Y₁.tier t (e₁.toEquiv v) = Y₂.tier t (e₂.toEquiv w) ↔ X₁.tier t v = X₂.tier t w
-      rw [show Y₁.tier t (e₁.toEquiv v) = X₁.tier t v from congrArg t (e₁.label_comp v),
-        show Y₂.tier t (e₂.toEquiv w) = X₂.tier t w from congrArg t (e₂.label_comp w)]
-    · exact Iff.rfl
-    · exact e₂.arcs_iff v w
-  label_comp v := by
-    rcases v with v | v
-    exacts [e₁.label_comp v, e₂.label_comp v]
+    exacts [e₁.arcs_iff v w,
+      Eq.congr (congrArg t (e₁.label_comp v)) (congrArg t (e₂.label_comp w)),
+      Iff.rfl, e₂.arcs_iff v w]
+  label_comp := Sum.rec e₁.label_comp e₂.label_comp
 
 /-! #### Associativity up to isomorphism ([jardine-heinz-2015] Theorem 3) -/
 
-/-- Concatenation is associative up to isomorphism, over `Equiv.sumAssoc`; the
-    edge face is the stock `SimpleGraph.Iso.sumAssoc`, and every arc case holds
-    definitionally in the order signature. -/
+/-- Concatenation is associative up to isomorphism. -/
 def concatAssocIso (X Y Z : Graph S) :
     Iso (concat t (concat t X Y) Z) (concat t X (concat t Y Z)) where
   toEquiv := Equiv.sumAssoc X.V Y.V Z.V
@@ -276,13 +246,11 @@ def concatAssocIso (X Y Z : Graph S) :
   label_comp v := by
     rcases v with (a | b) | c <;> rfl
 
-end Concat
-
 /-! ### The bridge-free sum
 
-The plain blockwise sum carries no bridging arcs: the categorical coproduct of
-the broad category. Why `concat` bridges instead — Axiom 2's totality fails
-across the seam — is `not_isTierOrdered_sum` (`AR.lean`). -/
+The plain blockwise sum carries no bridging arcs and is the categorical coproduct
+of the broad category; `not_isTierOrdered_sum` (`AR.lean`) shows why `concat`
+bridges instead. -/
 
 /-- The bridge-free blockwise sum. -/
 def sum (X Y : Graph S) : Graph S where
@@ -318,10 +286,8 @@ def sumDesc (f : Hom X Z) (g : Hom Y Z) : Hom (sum X Y) Z where
   toFun := Sum.elim f.toFun g.toFun
   edge_map := by
     rintro (v | v) (w | w) h
-    exacts [f.edge_map h, absurd h (by simp), absurd h (by simp), g.edge_map h]
-  label_comp := by
-    rintro (v | v)
-    exacts [f.label_comp v, g.label_comp v]
+    exacts [f.edge_map h, Bool.noConfusion h, Bool.noConfusion h, g.edge_map h]
+  label_comp := Sum.rec f.label_comp g.label_comp
 
 /-! ### Category structure, initial object, and coproducts -/
 
@@ -351,55 +317,40 @@ def inl (X Y : Graph S) : X ⟶ sum X Y :=
 def inr (X Y : Graph S) : Y ⟶ sum X Y :=
   ⟨Sum.inr, fun _ _ h => h, fun _ => rfl⟩
 
-/-- The bridge-free sum is the categorical coproduct of the broad category
-    (contrast `not_isTierOrdered_sum`: it leaves the axiom class, which is why
-    `AR`'s tensor is the bridged `concat` instead). -/
+/-- The bridge-free sum is the categorical coproduct of the broad category. -/
 instance (X Y : Graph S) : HasBinaryCoproduct X Y :=
   HasColimit.mk
     { cocone := BinaryCofan.mk (inl X Y) (inr X Y)
-      isColimit := BinaryCofan.IsColimit.mk _ (fun f g => sumDesc f g)
-        (fun f g => Hom.ext rfl)
-        (fun f g => Hom.ext rfl)
-        (fun f g m h₁ h₂ => Hom.ext (funext fun v => by
+      isColimit := BinaryCofan.IsColimit.mk _ sumDesc
+        (fun _ _ => Hom.ext rfl) (fun _ _ => Hom.ext rfl) fun _ _ m h₁ h₂ =>
+        Hom.ext <| funext fun v => by
           rcases v with v | v
-          · exact congrArg (fun φ => Hom.toFun φ v) h₁
-          · exact congrArg (fun φ => Hom.toFun φ v) h₂)) }
+          exacts [congrFun (congrArg Hom.toFun h₁) v, congrFun (congrArg Hom.toFun h₂) v] }
 
 instance : HasBinaryCoproducts (Graph S) := hasBinaryCoproducts_of_hasColimit_pair _
 
-end Graph
-
-open CategoryTheory
-
-/-- Precedence preservation as a morphism property: the maps that also preserve
-    arcs — the model-theoretic full-structure homomorphisms, the foundation
-    counterpart of the legacy `PrecAR` wide subcategory. -/
-def Graph.precPreserving : MorphismProperty (Graph S) := fun X Y f =>
+/-- The property of morphisms that also preserve the order arcs; such maps are the
+    model-theoretic full-structure homomorphisms. -/
+def precPreserving : MorphismProperty (Graph S) := fun X Y f =>
   ∀ ⦃v w⦄, X.arcs.Adj v w → Y.arcs.Adj (f.toFun v) (f.toFun w)
 
-instance : (Graph.precPreserving (S := S)).IsMultiplicative where
+instance : (precPreserving (S := S)).IsMultiplicative where
   id_mem _ := fun _ _ h => h
   comp_mem _ _ hf hg := fun _ _ h => hg (hf h)
 
 /-- A full isomorphism's underlying morphism preserves precedence. -/
-theorem Graph.Iso.toHom_precPreserving {X Y : Graph S}
-    (e : Graph.Iso X Y) : Graph.precPreserving e.toHom :=
+theorem Iso.toHom_precPreserving {X Y : Graph S} (e : Iso X Y) : precPreserving e.toHom :=
   fun _ _ h => (e.arcs_iff _ _).mpr h
 
-/-- Concatenation of precedence-preserving morphisms preserves precedence:
-    blockwise from the factors, the bridge transported by labels. -/
-theorem Graph.Hom.concatMap_precPreserving (t : S → ι)
-    {X₁ Y₁ X₂ Y₂ : Graph S}
-    {f : Graph.Hom X₁ Y₁} {g : Graph.Hom X₂ Y₂}
-    (hf : Graph.precPreserving f) (hg : Graph.precPreserving g) :
-    Graph.precPreserving (f.concatMap t g) := by
+/-- The concatenation of precedence-preserving morphisms preserves precedence. -/
+theorem Hom.concatMap_precPreserving {f : Hom X₁ Y₁} {g : Hom X₂ Y₂}
+    (hf : precPreserving f) (hg : precPreserving g) :
+    precPreserving (f.concatMap t g) := by
   rintro (v | v) (w | w) h
-  · exact hf h
-  · show Y₁.tier t (f.toFun v) = Y₂.tier t (g.toFun w)
-    rw [show Y₁.tier t (f.toFun v) = X₁.tier t v from congrArg t (f.label_comp v),
-      show Y₂.tier t (g.toFun w) = X₂.tier t w from congrArg t (g.label_comp w)]
-    exact h
-  · exact h.elim
-  · exact hg h
+  exacts [hf h,
+    (congrArg t (f.label_comp v)).trans ((h : _ = _).trans (congrArg t (g.label_comp w)).symm),
+    h.elim, hg h]
+
+end Graph
 
 end Autosegmental
