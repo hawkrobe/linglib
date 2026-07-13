@@ -12,19 +12,20 @@ import Linglib.Phonology.Autosegmental.Graph
 /-!
 # Autosegmental representations: the §4.2 axioms and their category
 
-The well-formedness axioms of [jardine-2016-diss] §4.2 as predicates on a
-`MixedGraph` and, for the tier-relative axioms, a vertex coloring `c : V → ι`;
-on a labeled mixed graph they are read at the tier coloring `X.tier t`. The
-class they carve out of `Graph S` is `AR t`, the category of autosegmental
-representations, monoidal under `Graph.concat`.
+The well-formedness axioms of [jardine-2016-diss] §4.2 as predicates on
+exactly the components each axiom reads — the order arcs (`Digraph`), the
+association edges (`SimpleGraph`), and for the tier-relative axioms a vertex
+coloring `c : V → ι`; on a labeled mixed graph they are read at the tier
+coloring `X.tier t`. The class they carve out of `Graph S` is `AR t`, the
+category of autosegmental representations, monoidal under `Graph.concat`.
 
 ## Main definitions
 
 * `IsTierOrdered`, `NoInternalAssoc`, `IsSaturated`, `IsPlanar`, `IsOCPClean`:
   the §4.2 axioms (1–2, 3, 4, 5, 6; [jardine-heinz-2015] numbers the NCC and OCP
   as 4 and 5 and has no saturation axiom). Saturation is stated but
-  not imposed; tier-orderedness includes path-closure
-  (`MixedGraph.PrecPath`), [jardine-2019]'s reading that `A` represents the order.
+  not imposed; tier-orderedness includes path-closure — the arcs are
+  transitively closed, [jardine-2019]'s reading that `A` represents the order.
 * `AR t`: the category of autosegmental representations — the full
   subcategory of labeled mixed graphs on Axioms 1–3, monoidal under `concat`.
 
@@ -53,57 +54,58 @@ variable {V S ι : Type*}
 /-! ### The §4.2 axioms -/
 
 section Axioms
-variable (G : MixedGraph V)
+variable (E : SimpleGraph V) (A : Digraph V)
 
 /-- Axioms 1–2 ([jardine-2016-diss] §4.2): the arcs are tier-internal and
     strictly totally order each fiber of the coloring `c`. -/
 structure IsTierOrdered (c : V → ι) : Prop where
   /-- Arcs never leave a tier. -/
-  tier_eq : ∀ ⦃v w⦄, G.arcs.Adj v w → c v = c w
+  tier_eq : ∀ ⦃v w⦄, A.Adj v w → c v = c w
   /-- Distinct same-tier vertices are arc-comparable. -/
-  total : ∀ ⦃v w⦄, v ≠ w → c v = c w → G.arcs.Adj v w ∨ G.arcs.Adj w v
+  total : ∀ ⦃v w⦄, v ≠ w → c v = c w → A.Adj v w ∨ A.Adj w v
   /-- No vertex precedes itself. -/
-  irrefl : ∀ v, ¬ G.arcs.Adj v v
+  irrefl : ∀ v, ¬ A.Adj v v
   /-- Arcs compose. -/
-  trans : ∀ ⦃u v w⦄, G.arcs.Adj u v → G.arcs.Adj v w → G.arcs.Adj u w
+  trans : ∀ ⦃u v w⦄, A.Adj u v → A.Adj v w → A.Adj u w
 
 /-- Axiom 3: association never links precedence-path-related (tier-internal)
     vertices. Tier-free — stated on arcs alone, as in the dissertation. -/
-def NoInternalAssoc : Prop := ∀ ⦃v w⦄, G.edges.Adj v w → ¬ G.arcs.Adj v w
+def NoInternalAssoc : Prop := ∀ ⦃v w⦄, E.Adj v w → ¬ A.Adj v w
 
 /-- Axiom 4 (full specification): every vertex participates in an association.
     [goldsmith-1976]'s original well-formedness condition; stated but deliberately
     not imposed — floating elements are well-formed. -/
-def IsSaturated : Prop := ∀ v, ∃ w, G.edges.Adj v w
+def IsSaturated : Prop := ∀ v, ∃ w, E.Adj v w
 
 /-- Axiom 5, the No-Crossing Constraint in [jardine-2016-diss]'s general path
     form: no two association edges whose endpoints straddle in opposite precedence
     order. -/
 def IsPlanar : Prop :=
-  ∀ ⦃v v' w w'⦄, G.edges.Adj v v' → G.edges.Adj w w' → G.arcs.Adj v w → ¬ G.arcs.Adj w' v'
+  ∀ ⦃v v' w w'⦄, E.Adj v v' → E.Adj w w' → A.Adj v w → ¬ A.Adj w' v'
 
 /-- Axiom 6, the OCP on melody tier `m`: precedence-adjacent vertices on `m`
     bear distinct labels. Adjacency is the covering relation of the arcs — in
     the order-closed signature bare arcs relate all order-comparable pairs,
     which would wrongly ban any repeated label anywhere on the tier. -/
 def IsOCPClean (ℓ : V → S) (t : S → ι) (m : ι) : Prop :=
-  ∀ ⦃v w⦄, G.arcs.Adj v w → (∀ u, ¬ (G.arcs.Adj v u ∧ G.arcs.Adj u w)) →
+  ∀ ⦃v w⦄, A.Adj v w → (∀ u, ¬ (A.Adj v u ∧ A.Adj u w)) →
     t (ℓ v) = m → ℓ v ≠ ℓ w
 
 end Axioms
 
-variable {G : MixedGraph V} {c : V → ι}
+variable {A : Digraph V} {c : V → ι}
 
-/-- On the axiom class, precedence paths coincide with the arcs — the
-    dissertation's `≺`. -/
-theorem IsTierOrdered.precPath_eq (h : IsTierOrdered G c) : G.PrecPath = G.arcs.Adj :=
-  haveI : IsTrans V G.arcs.Adj := ⟨h.trans⟩
+/-- On the axiom class, precedence paths — the transitive closure of the
+    arcs — coincide with the arcs: the dissertation's `≺`. -/
+theorem IsTierOrdered.transGen_eq (h : IsTierOrdered A c) :
+    Relation.TransGen A.Adj = A.Adj :=
+  haveI : IsTrans V A.Adj := ⟨h.trans⟩
   Relation.transGen_eq_self
 
 /-- The classed form of the axioms: on each tier the arcs are a strict total
     order. Feeds `linearOrderOfSTO` for sorting the fibers. -/
-theorem IsTierOrdered.isStrictTotalOrder (h : IsTierOrdered G c) (i : ι) :
-    IsStrictTotalOrder {v // c v = i} (G.arcs.Adj · ·) where
+theorem IsTierOrdered.isStrictTotalOrder (h : IsTierOrdered A c) (i : ι) :
+    IsStrictTotalOrder {v // c v = i} (A.Adj · ·) where
   trichotomous a b hab hba :=
     Subtype.ext <| of_not_not fun hne => (h.total hne (a.2.trans b.2.symm)).elim hab hba
   irrefl a := h.irrefl a
@@ -115,10 +117,11 @@ namespace Graph
 
 variable {X Y : Graph S}
 
-theorem isTierOrdered_empty (t : S → ι) : IsTierOrdered (empty S).graph ((empty S).tier t) :=
+theorem isTierOrdered_empty (t : S → ι) : IsTierOrdered (empty S).arcs ((empty S).tier t) :=
   ⟨fun v => v.elim, fun v => v.elim, fun v => v.elim, fun v => v.elim⟩
 
-theorem noInternalAssoc_empty : NoInternalAssoc (empty S).graph := fun v => v.elim
+theorem noInternalAssoc_empty : NoInternalAssoc (empty S).edges (empty S).arcs :=
+  fun v => v.elim
 
 section Concat
 variable (t : S → ι)
@@ -126,8 +129,8 @@ variable (t : S → ι)
 /-- Concatenation preserves Axioms 1–2; transitivity through the seam holds
     because arcs are tier-internal. -/
 theorem isTierOrdered_concat
-    (h₁ : IsTierOrdered X.graph (X.tier t)) (h₂ : IsTierOrdered Y.graph (Y.tier t)) :
-    IsTierOrdered (concat t X Y).graph ((concat t X Y).tier t) := by
+    (h₁ : IsTierOrdered X.arcs (X.tier t)) (h₂ : IsTierOrdered Y.arcs (Y.tier t)) :
+    IsTierOrdered (concat t X Y).arcs ((concat t X Y).tier t) := by
   refine ⟨?_, ?_, ?_, ?_⟩
   · rintro (v | v) (w | w) h
     exacts [h₁.tier_eq h, h, h.elim, h₂.tier_eq h]
@@ -151,8 +154,9 @@ theorem isTierOrdered_concat
 
 /-- Concatenation preserves Axiom 3: the disjoint edge sum adds no cross
     edges. -/
-theorem noInternalAssoc_concat (h₁ : NoInternalAssoc X.graph) (h₂ : NoInternalAssoc Y.graph) :
-    NoInternalAssoc (concat t X Y).graph := by
+theorem noInternalAssoc_concat (h₁ : NoInternalAssoc X.edges X.arcs)
+    (h₂ : NoInternalAssoc Y.edges Y.arcs) :
+    NoInternalAssoc (concat t X Y).edges (concat t X Y).arcs := by
   rintro (v | v) (w | w) hadj harc
   exacts [h₁ hadj harc, absurd hadj (by simp), absurd hadj (by simp), h₂ hadj harc]
 
@@ -161,8 +165,8 @@ theorem noInternalAssoc_concat (h₁ : NoInternalAssoc X.graph) (h₂ : NoIntern
     Association edges are blockwise, so a straddle needs both edges in one block —
     reducing to the factor's `IsPlanar` — or one per block, where the required
     return arc runs `inr → inl` and does not exist. -/
-theorem isPlanar_concat (h₁ : IsPlanar X.graph) (h₂ : IsPlanar Y.graph) :
-    IsPlanar (concat t X Y).graph := by
+theorem isPlanar_concat (h₁ : IsPlanar X.edges X.arcs) (h₂ : IsPlanar Y.edges Y.arcs) :
+    IsPlanar (concat t X Y).edges (concat t X Y).arcs := by
   rintro (v | v) (v' | v') (w | w) (w' | w') hvv' hww' hvw hw'v' <;>
     first
       | exact h₁ hvv' hww' hvw hw'v'
@@ -178,7 +182,7 @@ end Concat
     are precedence-unrelated across the seam. -/
 theorem not_isTierOrdered_sum (t : S → ι) (v : X.V) (w : Y.V)
     (htier : X.tier t v = Y.tier t w) :
-    ¬ IsTierOrdered (sum X Y).graph ((sum X Y).tier t) := fun h => by
+    ¬ IsTierOrdered (sum X Y).arcs ((sum X Y).tier t) := fun h => by
   simpa using h.total (v := .inl v) (w := .inr w) Sum.inl_ne_inr htier
 
 end Graph
@@ -192,7 +196,7 @@ variable (t : S → ι)
 /-- The structural axiom class ([jardine-2016-diss] §4.2, Axioms 1–3) as an
     object property of the graph category. -/
 def isRepresentation : ObjectProperty (Graph S) := fun X =>
-  IsTierOrdered X.graph (X.tier t) ∧ NoInternalAssoc X.graph
+  IsTierOrdered X.arcs (X.tier t) ∧ NoInternalAssoc X.edges X.arcs
 
 /-- The category of **autosegmental representations** over a tier assignment:
     the full subcategory of labeled mixed graphs satisfying the structural
@@ -212,14 +216,14 @@ variable {t}
     graph: same-tier vertices are precedence-related (Axioms 1–2) and associated
     vertices never are (Axiom 3), so associated vertices lie on distinct tiers.
     Goldsmith's bipartite two-tier geometry is the two-colorable case. -/
-def tierColoring (X : AR t) : X.obj.graph.edges.Coloring ι :=
+def tierColoring (X : AR t) : X.obj.edges.Coloring ι :=
   SimpleGraph.Coloring.mk (X.obj.tier t) fun {_ _} hadj htier =>
     (X.property.1.total hadj.ne htier).elim (X.property.2 hadj) (X.property.2 hadj.symm)
 
 /-- A representation's association graph is colorable by its tiers: tier arity
     bounds the chromatic number of the association pattern. -/
 theorem edges_colorable [Fintype ι] (X : AR t) :
-    X.obj.graph.edges.Colorable (Fintype.card ι) :=
+    X.obj.edges.Colorable (Fintype.card ι) :=
   (tierColoring X).colorable
 
 /-- A graph isomorphism as an isomorphism of representations. -/

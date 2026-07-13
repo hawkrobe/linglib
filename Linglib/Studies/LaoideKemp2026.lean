@@ -821,20 +821,19 @@ open Autosegmental
 
 /-- A vertex with no arc-predecessor: the tier-initial position. -/
 def NoPred {S : Type*} (X : Graph S) (v : X.V) : Prop :=
-  ∀ u, ¬ X.graph.arcs.Adj u v
+  ∀ u, ¬ X.arcs.Adj u v
 
 /-- Erase every association line incident to a tier-`i₀`-initial vertex — the
     graph model of the paper's initial-position delinking (lenition targeting
     the word-initial slot). Arcs and labels are untouched. -/
 def delinkInitial {S ι : Type*} (t : S → ι) (i₀ : ι) (X : Graph S) : Graph S where
   V := X.V
-  graph :=
-    { edges :=
-        { Adj := fun v w => X.graph.edges.Adj v w ∧
-            ¬ (X.tier t v = i₀ ∧ NoPred X v) ∧ ¬ (X.tier t w = i₀ ∧ NoPred X w)
-          symm := ⟨fun _ _ h => ⟨h.1.symm, h.2.2, h.2.1⟩⟩
-          loopless := ⟨fun v h => X.graph.edges.loopless.irrefl v h.1⟩ }
-      arcs := X.graph.arcs }
+  edges :=
+    { Adj := fun v w => X.edges.Adj v w ∧
+        ¬ (X.tier t v = i₀ ∧ NoPred X v) ∧ ¬ (X.tier t w = i₀ ∧ NoPred X w)
+      symm := ⟨fun _ _ h => ⟨h.1.symm, h.2.2, h.2.1⟩⟩
+      loopless := ⟨fun v h => X.edges.loopless.irrefl v h.1⟩ }
+  arcs := X.arcs
   label := X.label
 
 /-- Delinking preserves the structural axioms: arcs are untouched and the
@@ -935,7 +934,7 @@ theorem delinkInitial_not_functorial :
   refine ⟨fun g => ?_⟩
   let v1 : negA.obj.V := ⟨true, ⟨0, by decide⟩⟩
   let w1 : negA.obj.V := ⟨false, ⟨1, by decide⟩⟩
-  have hsurv : (delinkInitial Sigma.fst false negA.obj).graph.edges.Adj v1 w1 := by
+  have hsurv : (delinkInitial Sigma.fst false negA.obj).edges.Adj v1 w1 := by
     refine ⟨⟨by decide, Or.inl ⟨rfl, rfl, rfl, rfl⟩⟩, ?_, ?_⟩
     · rintro ⟨h, -⟩
       exact absurd h (by decide)

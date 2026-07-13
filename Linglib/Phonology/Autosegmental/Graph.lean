@@ -6,16 +6,17 @@ Authors: Robert Hawkins
 import Mathlib.CategoryTheory.Limits.Shapes.BinaryProducts
 import Mathlib.CategoryTheory.Limits.Shapes.Terminal
 import Mathlib.CategoryTheory.MorphismProperty.Composition
+import Mathlib.Combinatorics.Digraph.Basic
 import Mathlib.Combinatorics.SimpleGraph.Sum
-import Linglib.Core.Combinatorics.MixedGraph
 
 /-!
 # Labeled mixed graphs
 
 A labeled mixed graph `⟨V, E, A, ℓ⟩` has labeled vertices, undirected
 association edges, and directed order arcs — the autosegmental representation
-of [jardine-2019], with no further structure. The graph is a `MixedGraph` (Core)
-and the labeling a map `ℓ : V → S`; `Graph S` bundles the two. Tiers are
+of [jardine-2019], with no further structure. `Graph S` carries the quadruple
+as fields: a vertex type, a `SimpleGraph` of association edges, a `Digraph` of
+order arcs, and a labeling `ℓ : V → S`. Tiers are
 not part of the object: a tier assignment `t : S → ι` on the labels induces a
 vertex coloring `X.tier t`, and the §4.2 well-formedness axioms (`AR.lean`)
 carve the representations out of the raw graphs relative to it.
@@ -56,14 +57,16 @@ variable {S ι : Type*}
 
 /-! ### The category of labeled mixed graphs -/
 
-/-- An object of the category of labeled mixed graphs over `S`: a vertex type
-    with a mixed graph `⟨V, E, A⟩` on it and a labeling `ℓ : V → S` — the
-    literature's labeled mixed graph `⟨V, E, A, ℓ⟩` / [jardine-2019]'s `GR(Γ)`. -/
+/-- An object of the category of labeled mixed graphs over `S` — the
+    literature's labeled mixed graph `⟨V, E, A, ℓ⟩` / [jardine-2019]'s `GR(Γ)`,
+    carried fieldwise. -/
 structure Graph (S : Type*) where
   /-- The vertex type. -/
   V : Type*
-  /-- The mixed graph: undirected association edges and directed order arcs. -/
-  graph : MixedGraph V
+  /-- The undirected association edges (`E`). -/
+  edges : SimpleGraph V
+  /-- The directed order arcs (`A`). -/
+  arcs : Digraph V
   /-- The labeling (`ℓ`). -/
   label : V → S
 
@@ -86,12 +89,12 @@ structure Hom (X Y : Graph S) where
   /-- The vertex map. -/
   toFun : X.V → Y.V
   /-- Association edges are preserved. -/
-  edge_map : ∀ ⦃v w⦄, X.graph.edges.Adj v w → Y.graph.edges.Adj (toFun v) (toFun w)
+  edge_map : ∀ ⦃v w⦄, X.edges.Adj v w → Y.edges.Adj (toFun v) (toFun w)
   /-- Labels are preserved. -/
   label_comp : ∀ v, Y.label (toFun v) = X.label v
 
 /-- The edge face of a morphism, a stock graph homomorphism. -/
-def Hom.edgesHom (f : Hom X Y) : X.graph.edges →g Y.graph.edges :=
+def Hom.edgesHom (f : Hom X Y) : X.edges →g Y.edges :=
   ⟨f.toFun, fun h => f.edge_map h⟩
 
 /-- The identity morphism. -/
@@ -108,18 +111,18 @@ def Hom.comp (f : Hom X Y) (g : Hom Y Z) : Hom X Z :=
 /-- A label- and relation-preserving equivalence of labeled mixed graphs. -/
 structure Iso (X Y : Graph S) extends X.V ≃ Y.V where
   /-- Association edges correspond. -/
-  edges_iff : ∀ v w, Y.graph.edges.Adj (toEquiv v) (toEquiv w) ↔ X.graph.edges.Adj v w
+  edges_iff : ∀ v w, Y.edges.Adj (toEquiv v) (toEquiv w) ↔ X.edges.Adj v w
   /-- Order arcs correspond. -/
-  arcs_iff : ∀ v w, Y.graph.arcs.Adj (toEquiv v) (toEquiv w) ↔ X.graph.arcs.Adj v w
+  arcs_iff : ∀ v w, Y.arcs.Adj (toEquiv v) (toEquiv w) ↔ X.arcs.Adj v w
   /-- Labels are preserved. -/
   label_comp : ∀ v, Y.label (toEquiv v) = X.label v
 
 /-- The edge face of an isomorphism, as a stock `SimpleGraph.Iso`. -/
-def Iso.edgesIso (e : Iso X Y) : X.graph.edges ≃g Y.graph.edges :=
+def Iso.edgesIso (e : Iso X Y) : X.edges ≃g Y.edges :=
   ⟨e.toEquiv, e.edges_iff _ _⟩
 
 /-- The arc face of an isomorphism, as a stock `RelIso`. -/
-def Iso.arcsIso (e : Iso X Y) : X.graph.arcs.Adj ≃r Y.graph.arcs.Adj :=
+def Iso.arcsIso (e : Iso X Y) : X.arcs.Adj ≃r Y.arcs.Adj :=
   ⟨e.toEquiv, e.arcs_iff _ _⟩
 
 /-- An isomorphism as a morphism. -/
@@ -147,7 +150,7 @@ def Iso.trans (e : Iso X Y) (f : Iso Y Z) : Iso X Z where
 /-! ### The empty graph -/
 
 /-- The empty labeled mixed graph, on the empty vertex type. -/
-def empty (S : Type*) : Graph S := ⟨PEmpty, ⟨⊥, ⊥⟩, PEmpty.elim⟩
+def empty (S : Type*) : Graph S := ⟨PEmpty, ⊥, ⊥, PEmpty.elim⟩
 
 /-! ### Tier-bridging concatenation
 
@@ -165,11 +168,11 @@ variable (t : S → ι)
     each same-tier `Y`-vertex. -/
 def concat (X Y : Graph S) : Graph S where
   V := X.V ⊕ Y.V
-  graph.edges := X.graph.edges ⊕g Y.graph.edges
-  graph.arcs :=
+  edges := X.edges ⊕g Y.edges
+  arcs :=
     ⟨fun
-      | .inl v, .inl w => X.graph.arcs.Adj v w
-      | .inr v, .inr w => Y.graph.arcs.Adj v w
+      | .inl v, .inl w => X.arcs.Adj v w
+      | .inr v, .inr w => Y.arcs.Adj v w
       | .inl v, .inr w => X.tier t v = Y.tier t w
       | .inr _, .inl _ => False⟩
   label := Sum.elim X.label Y.label
@@ -179,19 +182,19 @@ def concat (X Y : Graph S) : Graph S where
 @[simp] theorem concat_label_inr (v : Y.V) : (concat t X Y).label (.inr v) = Y.label v := rfl
 
 @[simp] theorem concat_edges :
-    (concat t X Y).graph.edges = X.graph.edges ⊕g Y.graph.edges := rfl
+    (concat t X Y).edges = X.edges ⊕g Y.edges := rfl
 
 @[simp] theorem concat_arcs_inl_inl {v w : X.V} :
-    (concat t X Y).graph.arcs.Adj (.inl v) (.inl w) ↔ X.graph.arcs.Adj v w := Iff.rfl
+    (concat t X Y).arcs.Adj (.inl v) (.inl w) ↔ X.arcs.Adj v w := Iff.rfl
 
 @[simp] theorem concat_arcs_inr_inr {v w : Y.V} :
-    (concat t X Y).graph.arcs.Adj (.inr v) (.inr w) ↔ Y.graph.arcs.Adj v w := Iff.rfl
+    (concat t X Y).arcs.Adj (.inr v) (.inr w) ↔ Y.arcs.Adj v w := Iff.rfl
 
 @[simp] theorem concat_arcs_inl_inr {v : X.V} {w : Y.V} :
-    (concat t X Y).graph.arcs.Adj (.inl v) (.inr w) ↔ X.tier t v = Y.tier t w := Iff.rfl
+    (concat t X Y).arcs.Adj (.inl v) (.inr w) ↔ X.tier t v = Y.tier t w := Iff.rfl
 
 @[simp] theorem not_concat_arcs_inr_inl {v : Y.V} {w : X.V} :
-    ¬ (concat t X Y).graph.arcs.Adj (.inr v) (.inl w) := fun h => h
+    ¬ (concat t X Y).arcs.Adj (.inr v) (.inl w) := fun h => h
 
 /-! ### Unit laws ([jardine-heinz-2015] Theorem 1) -/
 
@@ -284,31 +287,31 @@ across the seam — is `not_isTierOrdered_sum` (`AR.lean`). -/
 /-- The bridge-free blockwise sum. -/
 def sum (X Y : Graph S) : Graph S where
   V := X.V ⊕ Y.V
-  graph.edges := X.graph.edges ⊕g Y.graph.edges
-  graph.arcs :=
+  edges := X.edges ⊕g Y.edges
+  arcs :=
     ⟨fun
-      | .inl v, .inl w => X.graph.arcs.Adj v w
-      | .inr v, .inr w => Y.graph.arcs.Adj v w
+      | .inl v, .inl w => X.arcs.Adj v w
+      | .inr v, .inr w => Y.arcs.Adj v w
       | _, _ => False⟩
   label := Sum.elim X.label Y.label
 
-@[simp] theorem sum_edges : (sum X Y).graph.edges = X.graph.edges ⊕g Y.graph.edges := rfl
+@[simp] theorem sum_edges : (sum X Y).edges = X.edges ⊕g Y.edges := rfl
 
 @[simp] theorem sum_label_inl (v : X.V) : (sum X Y).label (.inl v) = X.label v := rfl
 
 @[simp] theorem sum_label_inr (v : Y.V) : (sum X Y).label (.inr v) = Y.label v := rfl
 
 @[simp] theorem sum_arcs_inl_inl {v w : X.V} :
-    (sum X Y).graph.arcs.Adj (.inl v) (.inl w) ↔ X.graph.arcs.Adj v w := Iff.rfl
+    (sum X Y).arcs.Adj (.inl v) (.inl w) ↔ X.arcs.Adj v w := Iff.rfl
 
 @[simp] theorem sum_arcs_inr_inr {v w : Y.V} :
-    (sum X Y).graph.arcs.Adj (.inr v) (.inr w) ↔ Y.graph.arcs.Adj v w := Iff.rfl
+    (sum X Y).arcs.Adj (.inr v) (.inr w) ↔ Y.arcs.Adj v w := Iff.rfl
 
 @[simp] theorem not_sum_arcs_inl_inr {v : X.V} {w : Y.V} :
-    ¬ (sum X Y).graph.arcs.Adj (.inl v) (.inr w) := fun h => h
+    ¬ (sum X Y).arcs.Adj (.inl v) (.inr w) := fun h => h
 
 @[simp] theorem not_sum_arcs_inr_inl {v : Y.V} {w : X.V} :
-    ¬ (sum X Y).graph.arcs.Adj (.inr v) (.inl w) := fun h => h
+    ¬ (sum X Y).arcs.Adj (.inr v) (.inl w) := fun h => h
 
 /-- Copairing out of the bridge-free sum. -/
 def sumDesc (f : Hom X Z) (g : Hom Y Z) : Hom (sum X Y) Z where
@@ -372,7 +375,7 @@ open CategoryTheory
     arcs — the model-theoretic full-structure homomorphisms, the foundation
     counterpart of the legacy `PrecAR` wide subcategory. -/
 def Graph.precPreserving : MorphismProperty (Graph S) := fun X Y f =>
-  ∀ ⦃v w⦄, X.graph.arcs.Adj v w → Y.graph.arcs.Adj (f.toFun v) (f.toFun w)
+  ∀ ⦃v w⦄, X.arcs.Adj v w → Y.arcs.Adj (f.toFun v) (f.toFun w)
 
 instance : (Graph.precPreserving (S := S)).IsMultiplicative where
   id_mem _ := fun _ _ h => h

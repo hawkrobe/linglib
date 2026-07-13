@@ -137,7 +137,7 @@ instance AR.fiber.instFinite [Finite X.obj.V] (i : ι) : Finite (X.fiber i) :=
 /-- The arcs restricted to a tier fiber form a strict total order — the classed
     form of Axioms 1–2 applied to the tier coloring `Sigma.fst`. -/
 instance AR.fiber.instIsStrictTotalOrder (i : ι) :
-    IsStrictTotalOrder (X.fiber i) (fun a b => X.obj.graph.arcs.Adj a.val b.val) :=
+    IsStrictTotalOrder (X.fiber i) (fun a b => X.obj.arcs.Adj a.val b.val) :=
   X.property.1.isStrictTotalOrder i
 
 /-- Classical linear order on the fiber, from `IsStrictTotalOrder` via
@@ -145,7 +145,7 @@ instance AR.fiber.instIsStrictTotalOrder (i : ι) :
 noncomputable instance AR.fiber.instLinearOrder (i : ι) :
     LinearOrder (X.fiber i) := by
   classical
-  exact linearOrderOfSTO (fun a b : X.fiber i => X.obj.graph.arcs.Adj a.val b.val)
+  exact linearOrderOfSTO (fun a b : X.fiber i => X.obj.arcs.Adj a.val b.val)
 
 /-- The number of tier-`i` vertices. -/
 noncomputable def AR.tierLength (X : AR (Sigma.fst : ((i : ι) × τ i) → ι))
@@ -182,12 +182,12 @@ noncomputable def AR.tierWord [Finite X.obj.V] (i : ι) : List (τ i) :=
     finite representation. -/
 noncomputable def AR.linkRel [Finite X.obj.V] (i j : ι)
     (p : Fin (X.tierLength i)) (q : Fin (X.tierLength j)) : Prop :=
-  X.obj.graph.edges.Adj (X.vertexEquiv ⟨i, p⟩) (X.vertexEquiv ⟨j, q⟩)
+  X.obj.edges.Adj (X.vertexEquiv ⟨i, p⟩) (X.vertexEquiv ⟨j, q⟩)
 
 theorem AR.linkRel_def [Finite X.obj.V] {i j : ι} {p : Fin (X.tierLength i)}
     {q : Fin (X.tierLength j)} :
     X.linkRel i j p q ↔
-      X.obj.graph.edges.Adj (X.vertexEquiv ⟨i, p⟩) (X.vertexEquiv ⟨j, q⟩) := Iff.rfl
+      X.obj.edges.Adj (X.vertexEquiv ⟨i, p⟩) (X.vertexEquiv ⟨j, q⟩) := Iff.rfl
 
 /-- The normal form: `X` reindexed onto the canonical vertex type by pulling
     edges, arcs, and labels back along `vertexEquiv`. A `AR` — the
@@ -197,9 +197,8 @@ noncomputable def AR.normalize
     AR (Sigma.fst : ((i : ι) × τ i) → ι) where
   obj :=
     { V := (i : ι) × Fin (X.tierLength i)
-      graph :=
-        { edges := X.obj.graph.edges.comap X.vertexEquiv
-          arcs := ⟨fun v w => X.obj.graph.arcs.Adj (X.vertexEquiv v) (X.vertexEquiv w)⟩ }
+      edges := X.obj.edges.comap X.vertexEquiv
+      arcs := ⟨fun v w => X.obj.arcs.Adj (X.vertexEquiv v) (X.vertexEquiv w)⟩
       label := fun v => X.obj.label (X.vertexEquiv v) }
   property :=
     ⟨⟨fun _ _ h => X.property.1.tier_eq h,
@@ -225,14 +224,14 @@ noncomputable def AR.normalizeIso [Finite X.obj.V] : X.normalize ≅ X :=
     the complete tuple reading of the normal form. -/
 theorem AR.edges_normalize [Finite X.obj.V] (i j : ι)
     (p : Fin (X.tierLength i)) (q : Fin (X.tierLength j)) :
-    (X.normalize).obj.graph.edges.Adj ⟨i, p⟩ ⟨j, q⟩ ↔ X.linkRel i j p q := Iff.rfl
+    (X.normalize).obj.edges.Adj ⟨i, p⟩ ⟨j, q⟩ ↔ X.linkRel i j p q := Iff.rfl
 
 /-- On normal forms the arcs are the ascending position order — the
     classification content: [jardine-heinz-2015]'s tiered presentation
     recovered as a theorem. -/
 theorem AR.arcs_normalize [Finite X.obj.V] (i : ι)
     (p q : Fin (X.tierLength i)) :
-    (X.normalize).obj.graph.arcs.Adj ⟨i, p⟩ ⟨i, q⟩ ↔ p < q :=
+    (X.normalize).obj.arcs.Adj ⟨i, p⟩ ⟨i, q⟩ ↔ p < q :=
   (X.fiberEnum i).lt_iff_lt
 
 /-- Normal forms represent their isomorphism class: `normalize` is a section
@@ -712,7 +711,7 @@ theorem AR.label_normalize [Finite X.obj.V] {i : ι}
 
 theorem AR.arcs_normalize_ne [Finite X.obj.V] {i j : ι} (h : i ≠ j)
     (p : Fin (X.tierLength i)) (q : Fin (X.tierLength j)) :
-    ¬ (X.normalize).obj.graph.arcs.Adj ⟨i, p⟩ ⟨j, q⟩ := fun ha => by
+    ¬ (X.normalize).obj.arcs.Adj ⟨i, p⟩ ⟨j, q⟩ := fun ha => by
   have h2 := X.property.1.tier_eq ha
   rw [show Graph.tier Sigma.fst X.obj (X.vertexEquiv ⟨i, p⟩) = i from
       X.label_vertexEquiv i p,
@@ -756,15 +755,15 @@ noncomputable def AR.fullIsoOfReaderEq
       label_comp := fun v => ?_ }
   · obtain ⟨i, p⟩ := v
     obtain ⟨j, q⟩ := w
-    show B.normalize.obj.graph.edges.Adj ⟨i, Fin.cast (hlen i) p⟩ ⟨j, Fin.cast (hlen j) q⟩
-      ↔ A.normalize.obj.graph.edges.Adj ⟨i, p⟩ ⟨j, q⟩
+    show B.normalize.obj.edges.Adj ⟨i, Fin.cast (hlen i) p⟩ ⟨j, Fin.cast (hlen j) q⟩
+      ↔ A.normalize.obj.edges.Adj ⟨i, p⟩ ⟨j, q⟩
     rw [AR.edges_normalize, AR.edges_normalize,
       AR.linkRel_iff_link, AR.linkRel_iff_link]
     exact (hl i j p q).symm
   · obtain ⟨i, p⟩ := v
     obtain ⟨j, q⟩ := w
-    show B.normalize.obj.graph.arcs.Adj ⟨i, Fin.cast (hlen i) p⟩ ⟨j, Fin.cast (hlen j) q⟩
-      ↔ A.normalize.obj.graph.arcs.Adj ⟨i, p⟩ ⟨j, q⟩
+    show B.normalize.obj.arcs.Adj ⟨i, Fin.cast (hlen i) p⟩ ⟨j, Fin.cast (hlen j) q⟩
+      ↔ A.normalize.obj.arcs.Adj ⟨i, p⟩ ⟨j, q⟩
     rcases eq_or_ne i j with rfl | h
     · rw [AR.arcs_normalize, AR.arcs_normalize]
       exact (Fin.castOrderIso (hlen i)).lt_iff_lt
@@ -807,13 +806,12 @@ def AR.ofData (ws : ∀ i, List (τ i)) (L : ι → ι → ℕ → ℕ → Prop)
     AR (Sigma.fst : ((i : ι) × τ i) → ι) where
   obj :=
     { V := (i : ι) × Fin (ws i).length
-      graph :=
-        { edges :=
-            { Adj := fun v w => v.1 ≠ w.1 ∧
-                (L v.1 w.1 v.2 w.2 ∨ L w.1 v.1 w.2 v.2)
-              symm := ⟨fun _ _ h => ⟨h.1.symm, h.2.symm⟩⟩
-              loopless := ⟨fun _ h => h.1 rfl⟩ }
-          arcs := ⟨fun v w => v.1 = w.1 ∧ (v.2 : ℕ) < (w.2 : ℕ)⟩ }
+      edges :=
+        { Adj := fun v w => v.1 ≠ w.1 ∧
+            (L v.1 w.1 v.2 w.2 ∨ L w.1 v.1 w.2 v.2)
+          symm := ⟨fun _ _ h => ⟨h.1.symm, h.2.symm⟩⟩
+          loopless := ⟨fun _ h => h.1 rfl⟩ }
+      arcs := ⟨fun v w => v.1 = w.1 ∧ (v.2 : ℕ) < (w.2 : ℕ)⟩
       label := fun v => ⟨v.1, (ws v.1)[v.2]⟩ }
   property := by
     refine ⟨⟨fun v w h => h.1, fun v w hne htier => ?_, fun v h => lt_irrefl _ h.2,
