@@ -121,13 +121,13 @@ theorem isLinkedLower_realize_toAR {w : List TBU} {j : ℕ} :
 
 /-- The merged input representation: one fused H, linked to exactly the H-positions. -/
 theorem mem_links_realizeMerged_toAR {w : List TBU} {p : ℕ × ℕ} :
-    p ∈ (realizeMerged toAR w).links ↔ p.1 = 0 ∧ w[p.2]? = some TBU.H := by
+    p ∈ (AR.realizeMerged toAR w).links ↔ p.1 = 0 ∧ w[p.2]? = some TBU.H := by
   rw [realizeMerged_def, mem_links_collapseAR_of_upper_replicate (upper_realize_toAR w),
     isLinkedLower_realize_toAR]
 
 /-- The melodic tier of the merged representation: one fused H if any, else empty. -/
 theorem upper_realizeMerged_toAR (v : List TBU) :
-    (realizeMerged toAR v).upper.toList
+    (AR.realizeMerged toAR v).upper.toList
       = if .H ∈ v then [_root_.Tone.TRN.H] else [] := by
   rw [realizeMerged_def, upper_collapseAR, upper_realize_toAR]
   by_cases hv : .H ∈ v
@@ -139,23 +139,23 @@ theorem upper_realizeMerged_toAR (v : List TBU) :
 
 /-- The timing tier survives merging: the bare tier of the input's length. -/
 theorem lower_realizeMerged_toAR (v : List TBU) :
-    (realizeMerged toAR v).lower.toList = List.replicate v.length () := by
+    (AR.realizeMerged toAR v).lower.toList = List.replicate v.length () := by
   rw [realizeMerged_def, collapseAR_lower, lower_realize_toAR]
 
 /-- With any H present, the fused melody node is the H at index `0`. -/
 theorem upper_get?_realizeMerged_toAR {w : List TBU} (hw : .H ∈ w) :
-    (realizeMerged toAR w).upper.get? 0 = some _root_.Tone.TRN.H := by
+    (AR.realizeMerged toAR w).upper.get? 0 = some _root_.Tone.TRN.H := by
   rw [LabeledTuple.get?_eq_getElem?, upper_realizeMerged_toAR, if_pos hw]
   rfl
 
 /-- The output representation: fuse, then spread — the merged input, hull-closed. -/
-def plateauAR (w : List TBU) : AR _root_.Tone.TRN Unit := (realizeMerged toAR w).hull
+def plateauAR (w : List TBU) : AR _root_.Tone.TRN Unit := (AR.realizeMerged toAR w).hull
 
 @[simp] theorem plateauAR_upper {w : List TBU} :
-    (plateauAR w).upper = (realizeMerged toAR w).upper := rfl
+    (plateauAR w).upper = (AR.realizeMerged toAR w).upper := rfl
 
 @[simp] theorem plateauAR_lower {w : List TBU} :
-    (plateauAR w).lower = (realizeMerged toAR w).lower := rfl
+    (plateauAR w).lower = (AR.realizeMerged toAR w).lower := rfl
 
 /-- A link of the output representation: the fused node, over a flanked position. -/
 theorem mem_links_plateauAR {w : List TBU} {k j : ℕ} :
@@ -416,7 +416,7 @@ definition; the square closes the loop at the level of whole representations. -/
 output representation — fusion-plus-spreading followed by linearization equals `utp.map`
 followed by realization. -/
 theorem realizeMerged_toAR_map (w : List TBU) :
-    realizeMerged toAR (utp.map w) = plateauAR w := by
+    AR.realizeMerged toAR (utp.map w) = plateauAR w := by
   refine AR.ext_toGraph (Graph.ext (LabeledTuple.toList_injective ?_)
     (LabeledTuple.toList_injective ?_) ?_)
   · simp only [plateauAR_upper, upper_realizeMerged_toAR, utp.H_mem_map]

@@ -26,7 +26,7 @@ Two realizations are checked, against the same forbidden tone melody `*HLH`:
   catches only a *local* `H-L-H` (three adjacent tonal nodes) — `hlh_excluded`.
 * `Autosegmental.realizeMerged` (`Collapse.lean`) is [jardine-2019]'s OCP-*merging*
   `g_T`: `g_T(Hⁿ)` is a *single* `H` node multiply associated. Banning `*HLH` over
-  `realizeMerged` becomes genuinely **non-local** — it forbids `H⁺ L⁺ H⁺` for *any*
+  `AR.realizeMerged` becomes genuinely **non-local** — it forbids `H⁺ L⁺ H⁺` for *any*
   plateau widths, because the plateaus collapse to single nodes before the melody is
   read (`hlhTier_merged_excludes_plateau` vs `hlhTier_unmerged_admits_plateau`).
 
@@ -138,7 +138,7 @@ theorem hhlh_excluded : [ToneSym.H, .H, .L, .H] ∉ ASL gT [hlh] := by decide
 /-! ### The OCP-merging realization: non-local tone plateauing
 
 [jardine-2019]'s `g_T` is OCP-*merging* — an `H`-plateau `Hⁿ` is a single `H` node, not
-`n` of them. `realizeMerged` (`Collapse.lean`) supplies that merge. Against it we ban
+`n` of them. `AR.realizeMerged` (`Collapse.lean`) supplies that merge. Against it we ban
 the *tonal-tier melody* `*HLH` — an `H-L-H` sequence read off the tone tier alone
 (`hlhTier`: upper `[H, L, H]`, no morae pinned), so the constraint is on tonal adjacency
 after merging, not on per-mora docking. This is where merging buys non-local power:
@@ -153,13 +153,13 @@ def hlhTier : Graph ToneSym Mora :=
     AR.float ToneSym.H).toGraph
 
 /-- The merging variant of `ASL`: the same forbidden-subgraph preimage, taken along the
-    OCP-merging realization `realizeMerged` instead of the bridge-only `AR.realize`. -/
+    OCP-merging realization `AR.realizeMerged` instead of the bridge-only `AR.realize`. -/
 def ASL' (g₀ : ToneSym → AR ToneSym Mora) (B : List (Graph ToneSym Mora)) : Language ToneSym :=
-  realizeMerged g₀ ⁻¹' { A | isFreeOf B A }
+  AR.realizeMerged g₀ ⁻¹' { A | isFreeOf B A }
 
 instance (g₀ : ToneSym → AR ToneSym Mora) (B : List (Graph ToneSym Mora))
     (w : List ToneSym) : Decidable (w ∈ ASL' g₀ B) :=
-  inferInstanceAs (Decidable (isFreeOf B (realizeMerged g₀ w)))
+  inferInstanceAs (Decidable (isFreeOf B (AR.realizeMerged g₀ w)))
 
 /-- `LHHLH` is excluded under merging: the `HH`-plateau merges, so the tone tier reads
     `L-H-L-H` and the medial `H-L-H` melody appears ([jardine-2019]'s `*HLH`). -/
@@ -170,7 +170,7 @@ theorem lhhlh_merged_excluded : [ToneSym.L, .H, .H, .L, .H] ∉ ASL' gT [hlhTier
 theorem hhh_merged_included : [ToneSym.H, .H, .H] ∈ ASL' gT [hlhTier] := by decide
 
 /-- **The non-local power merging buys.** An *unbounded* plateau `HH-LL-HH` is excluded
-    under `realizeMerged`: every run collapses, so the tone tier reads `H-L-H` and the
+    under `AR.realizeMerged`: every run collapses, so the tone tier reads `H-L-H` and the
     melody appears — no matter the plateau widths. -/
 theorem hlhTier_merged_excludes_plateau :
     [ToneSym.H, .H, .L, .L, .H, .H] ∉ ASL' gT [hlhTier] := by decide

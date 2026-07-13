@@ -108,10 +108,13 @@ def IsSaturated : Prop := ∀ v, ∃ w, G.edges.Adj v w
 def IsPlanar : Prop :=
   ∀ ⦃v v' w w'⦄, G.edges.Adj v v' → G.edges.Adj w w' → G.arcs.Adj v w → ¬ G.arcs.Adj w' v'
 
-/-- Axiom 6, the OCP on melody tier `m`: precedence-adjacent vertices on `m` bear
-    distinct labels. Needs the labeling `ℓ` and its tier assignment `t`. -/
+/-- Axiom 6, the OCP on melody tier `m`: precedence-adjacent vertices on `m`
+    bear distinct labels. Adjacency is the covering relation of the arcs — in
+    the order-closed signature bare arcs relate all order-comparable pairs,
+    which would wrongly ban any repeated label anywhere on the tier. -/
 def IsOCPClean (ℓ : V → S) (t : S → ι) (m : ι) : Prop :=
-  ∀ ⦃v w⦄, G.arcs.Adj v w → t (ℓ v) = m → ℓ v ≠ ℓ w
+  ∀ ⦃v w⦄, G.arcs.Adj v w → (∀ u, ¬ (G.arcs.Adj v u ∧ G.arcs.Adj u w)) →
+    t (ℓ v) = m → ℓ v ≠ ℓ w
 
 end Axioms
 

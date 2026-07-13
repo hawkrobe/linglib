@@ -23,7 +23,7 @@ supplies the missing merge as a post-processing retraction on the upper tier:
   `(k, j)` is repointed to `(ρ k, j)`, where `ρ` (`runIdx`) sends an upper position to
   the index of its run in the collapsed tier. The lower tier is untouched, so a merged
   node keeps *all* the morae its run was associated with (multiple association).
-* `realizeMerged := collapseAR ∘ AR.realize` — the OCP-merging realization.
+* `AR.realizeMerged := collapseAR ∘ AR.realize` — the OCP-merging realization.
 
 The upper-tier collapse is exactly `OCP.collapse` (= `List.destutter (· ≠ ·)`); the
 link pushforward is the `SimpleGraph.map`/`Quiver.Push` idiom
@@ -596,13 +596,13 @@ variable {S : Type*}
 
 /-- **The OCP-merging realization** ([jardine-2019]): AR.realize the string via the
     bridge-only `concat`, then fuse adjacent identical upper nodes
-    (`collapseAR ∘ AR.realize`). Unlike `AR.realize`, `realizeMerged g₀ (Hⁿ)` is a single H
+    (`collapseAR ∘ AR.realize`). Unlike `AR.realize`, `AR.realizeMerged g₀ (Hⁿ)` is a single H
     node multiply associated — the merge that renders unbounded tone plateauing a
     *local* AR pattern. -/
-def realizeMerged (g₀ : S → AR α β) (w : List S) : AR α β := collapseAR (AR.realize g₀ w)
+def AR.realizeMerged (g₀ : S → AR α β) (w : List S) : AR α β := collapseAR (AR.realize g₀ w)
 
 @[simp] theorem realizeMerged_def (g₀ : S → AR α β) (w : List S) :
-    realizeMerged g₀ w = collapseAR (AR.realize g₀ w) := rfl
+    AR.realizeMerged g₀ w = collapseAR (AR.realize g₀ w) := rfl
 
 /-! ### The collapse in coordinates
 
@@ -879,6 +879,29 @@ theorem Representation.cls_collapse_tensor :
   Quotient.sound ⟨Representation.fullIsoToWideIso (Representation.collapseTensorFullIso X m)⟩
 
 end Congruence
+
+/-- OCP-cleanliness at melody tier `m`: the tier word has no adjacent
+    repeats. -/
+def Representation.IsCleanAt [Finite X.obj.V] : Prop := IsClean (X.tierWord m)
+
+/-- The collapse is OCP-clean at the collapsed tier. -/
+theorem Representation.isCleanAt_collapse [Finite X.obj.V] :
+    (X.collapse m).IsCleanAt m := by
+  unfold Representation.IsCleanAt
+  rw [Representation.tierWord_collapse]
+  simpa [Representation.collapsedWord] using collapse_clean (X.tierWord m)
+
+section RealizeMerged
+variable {S : Type*}
+
+/-- The OCP-merging realization at melody tier `m` — [jardine-2019]'s merging
+    `g_T`: realize, then merge the melody runs. -/
+noncomputable def realizeMerged (g₀ : S → Representation (Sigma.fst : ((i : ι) × τ i) → ι))
+    [∀ s, Finite (g₀ s).obj.V] (w : List S) :
+    Representation (Sigma.fst : ((i : ι) × τ i) → ι) :=
+  (realize g₀ w).collapse m
+
+end RealizeMerged
 
 end CoordinateCollapse
 
