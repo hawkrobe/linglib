@@ -108,6 +108,55 @@ noncomputable def plateauRep (w : List TBU) :
       (Sigma.fst : ((b : Bool) × Autosegmental.TwoTier _root_.Tone.TRN Unit b) → Bool) :=
   ((Autosegmental.realize toRep w).collapse true).hull true
 
+section TierWords
+open CategoryTheory
+open scoped MonoidalCategory
+
+/-- The melody word of a realized string: one `H` node per H-toned TBU. -/
+theorem tierWord_realize_toRep_true (w : List TBU) :
+    (Autosegmental.realize toRep w).tierWord true
+      = List.replicate (w.count .H) _root_.Tone.TRN.H := by
+  induction w with
+  | nil => simp [Autosegmental.Representation.tierWord_unit]
+  | cons a w ih =>
+    calc (Autosegmental.realize toRep (a :: w)).tierWord true
+        = (toRep a ⊗ Autosegmental.realize toRep w).tierWord true := rfl
+      _ = (toRep a).tierWord true ++ (Autosegmental.realize toRep w).tierWord true :=
+          Autosegmental.Representation.tierWord_tensor true
+      _ = List.replicate ((a :: w).count .H) _root_.Tone.TRN.H := by
+          rw [ih]
+          cases a
+          · rw [show (toRep TBU.H).tierWord true = [_root_.Tone.TRN.H] from
+              Autosegmental.Representation.tierWord_ofData true,
+              List.count_cons_self, List.replicate_succ]
+            rfl
+          · rw [show (toRep TBU.O).tierWord true = [] from
+              Autosegmental.Representation.tierWord_ofData true,
+              List.count_cons_of_ne (by decide)]
+            rfl
+
+/-- The timing word of a realized string: one slot per TBU. -/
+theorem tierWord_realize_toRep_false (w : List TBU) :
+    (Autosegmental.realize toRep w).tierWord false = List.replicate w.length () := by
+  induction w with
+  | nil => simp [Autosegmental.Representation.tierWord_unit]
+  | cons a w ih =>
+    calc (Autosegmental.realize toRep (a :: w)).tierWord false
+        = (toRep a ⊗ Autosegmental.realize toRep w).tierWord false := rfl
+      _ = (toRep a).tierWord false ++ (Autosegmental.realize toRep w).tierWord false :=
+          Autosegmental.Representation.tierWord_tensor false
+      _ = List.replicate (a :: w).length () := by
+          rw [ih, List.length_cons, List.replicate_succ]
+          cases a
+          · rw [show (toRep TBU.H).tierWord false = [()] from
+              Autosegmental.Representation.tierWord_ofData false]
+            rfl
+          · rw [show (toRep TBU.O).tierWord false = [()] from
+              Autosegmental.Representation.tierWord_ofData false]
+            rfl
+
+end TierWords
+
 theorem linearize_realize_toAR (w : List TBU) :
     (AR.realize toAR w).linearize
       = w.map fun a => ((), if a = .H then [_root_.Tone.TRN.H] else []) := by
