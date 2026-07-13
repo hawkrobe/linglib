@@ -191,18 +191,13 @@ end Graph
 
 open CategoryTheory
 
-variable (t : S → ι)
-
-/-- The structural axiom class ([jardine-2016-diss] §4.2, Axioms 1–3) as an
-    object property of the graph category. -/
-def isRepresentation : ObjectProperty (Graph S) := fun X =>
-  IsTierOrdered X.arcs (X.tier t) ∧ NoInternalAssoc X.edges X.arcs
-
 /-- The category of **autosegmental representations** over a tier assignment:
     the full subcategory of labeled mixed graphs satisfying the structural
-    axioms — the formal literature's ARs ([jardine-2019],
-    [chandlee-jardine-2019]). -/
-abbrev AR := (isRepresentation t).FullSubcategory
+    axioms ([jardine-2016-diss] §4.2, Axioms 1–3) — the formal literature's
+    ARs ([jardine-2019], [chandlee-jardine-2019]). -/
+abbrev AR (t : S → ι) :=
+  ObjectProperty.FullSubcategory
+    fun X : Graph S => IsTierOrdered X.arcs (X.tier t) ∧ NoInternalAssoc X.edges X.arcs
 
 /-! ### The monoidal structure: morpheme concatenation -/
 
@@ -210,7 +205,7 @@ namespace AR
 
 open MonoidalCategory
 
-variable {t}
+variable {t : S → ι}
 
 /-- Under the structural axioms the tier map properly colors the association
     graph: same-tier vertices are precedence-related (Axioms 1–2) and associated
