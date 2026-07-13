@@ -5,7 +5,7 @@ import Mathlib.Data.Set.Basic
 /-!
 # Kamp (1975): Two Theories about Adjectives [kamp-1975]
 
-In E. Keenan (ed.), *Formal Semantics of Natural Languages*, 123–155.
+In E. Keenan (ed.), *Formal Semantics of Natural Language*, 123–155.
 Cambridge University Press.
 
 ## Overview
@@ -15,7 +15,7 @@ Kamp presents two theories of adjective semantics:
 **Theory 1 (§ 1–2)**: Adjectives as functions from properties to
 properties (type `⟨⟨e,t⟩,⟨e,t⟩⟩`). The classification hierarchy —
 intersective, subsective, privative, extensional — is formalized in
-`Semantics/Gradability/Classification.lean`.
+`Semantics/Modification/Adjective.lean`.
 
 **Theory 2 (§ 3–7)**: Vague/graded models. Kamp introduces *vague
 models* `⟨M, S, F, p⟩` (partial model + completions + σ-field +
@@ -28,14 +28,14 @@ and § 3 formalizes the comparative definitions that descend from it.
 
 ## Structure
 
-- § 1: Single-world specialization of `Classification.lean`'s hierarchy
+- § 1: Single-world specialization of `Adjective.lean`'s hierarchy
 - § 2: Many-valued logic failure (motivation for Theory 2)
 - § 3: Kamp → Klein lineage: `kampAtLeastAs` ↔ `kleinMoreThan`
 - § 4: Concrete witnesses for each hierarchy class
 
 ## Key Insight
 
-Kamp argues (p. 233 of the Brill reprint) that truth-functional
+Kamp argues that truth-functional
 many-valued logic *fails* for natural language connectives: if
 `⟦φ⟧ = ½`, then `⟦φ ∧ ¬φ⟧` should be 0 (contradictions are false),
 but any truth-functional `F(∧)` satisfying `F(∧)(½, ½) = 0` also
@@ -45,11 +45,11 @@ motivates the move to supervaluation / probability over completions.
 
 namespace Kamp1975
 
-open Degree.Classification
+open Modification
 
 /-! ### Bridge to single-world predicates
 
-`Classification.lean` defines the general intensional hierarchy:
+`Adjective.lean` defines the general intensional hierarchy:
 `isIntersective`, `isSubsective`, `isPrivative`, `isExtensional` over
 `Property W E = W → E → Prop`. The bridge theorems below show that
 fixing a world reduces the intensional definitions to their single-
@@ -87,7 +87,7 @@ end Bridge
 
 /-! ### Many-Valued Logic Failure -/
 
-/-! [kamp-1975] (p. 233) argues that truth-functional many-valued
+/-! [kamp-1975] argues that truth-functional many-valued
     logic cannot adequately handle vague connectives. The key
     observation:
 
@@ -124,7 +124,7 @@ theorem kleene_dilemma :
 
 /-! ### Kamp → Klein Lineage -/
 
-/-! [kamp-1975]'s definition (12) for the comparative:
+/-! [kamp-1975]'s completion-based comparative definition:
 
     u₁ is at least as A as u₂ iff for every completion M' ∈ S where
     u₂ is in the extension of A, u₁ is also in the extension.
@@ -137,9 +137,9 @@ theorem kleene_dilemma :
     is equivalent to Klein's "¬∃ completion where u₂ ∈ ext ∧ u₁ ∉ ext",
     and Klein's strict comparative adds the asymmetric witness. -/
 
-/-- Kamp's definition (12) induces a `Preorder` on entities: `u₁ ≤ u₂`
-    iff every completion in S that puts u₂ in the extension also puts
-    u₁ in the extension.
+/-- Kamp's completion-based comparative induces a `Preorder` on
+    entities: `u₁ ≤ u₂` iff every completion in S that puts u₂ in the
+    extension also puts u₁ in the extension.
 
     This is the S-restricted analogue of `kleinPreorder` from
     `Delineation.lean`. The extension parameter remains `Bool`-valued
@@ -187,7 +187,7 @@ inductive E3 | a | b | c
     `{x | gray(x)} ∩ {x | N(w)(x)}` — a fixed property independent of
     the noun.
 
-    Models [kamp-1975] definition (4). Entailment pattern:
+    Models [kamp-1975]'s intersective class. Entailment pattern:
     "gray cat" entails both "gray" and "cat"; "gray" + "cat" entails
     "gray cat". -/
 def grayAdj : AdjMeaning W2 E3 := fun N w x =>
@@ -204,7 +204,7 @@ example : isSubsective grayAdj := intersective_implies_subsective gray_intersect
 /-- **"fake"**: a privative adjective (traditional analysis). "Fake N"
     entities are never N.
 
-    Models [kamp-1975] definition (5). Entailment pattern:
+    Models [kamp-1975]'s privative class. Entailment pattern:
     "fake gun" entails "not a gun".
 
     [partee-2010] argues this class should be reanalyzed as
@@ -220,7 +220,7 @@ theorem fake_privative : isPrivative fakeAdj := by
     Being a "skillful N" depends on N's intension — what counts as an N
     across worlds — not just who the N's are in this world.
 
-    Models [kamp-1975] definition (6) without definition (7).
+    Models [kamp-1975]'s subsective-but-not-extensional case.
     Entailment pattern: "skillful surgeon" entails "surgeon" (subsective),
     but "skillful surgeon" + "violinist" does not entail "skillful
     violinist" (not intersective, because not extensional). -/

@@ -1,5 +1,6 @@
 import Linglib.Semantics.Intensional.Defs
 import Linglib.Semantics.Intensional.Conjunction
+import Linglib.Semantics.Modification.Basic
 import Mathlib.Order.Hom.BoundedLattice
 import Mathlib.Data.Finset.Lattice.Fold
 
@@ -635,9 +636,9 @@ def CARD (μ : E → Nat) (n : Nat) : (E → Prop) :=
   fun x => μ x = n
 
 /-- PM: Predicate Modification ([heim-kratzer-1998], (7a)).
-    PM = λP.λQ.λx. P(x) ∧ Q(x). Intersective modifier. -/
+    PM = λP.λQ.λx. P(x) ∧ Q(x): `Modifier.intersective` at `e ⇒ t`. -/
 def PM (P Q : (E → Prop)) : (E → Prop) :=
-  fun x => P x ∧ Q x
+  Modifier.intersective P Q
 
 end NumeralShifts
 
