@@ -430,24 +430,31 @@ theorem surfacesWith_plateauAR {w : List TBU} {i : ℕ} :
 def utp : Surfacing TBU where
   hi := .H
   lo := .O
-  Surfaces w i := (plateauAR w).SurfacesWith _root_.Tone.TRN.H i
+  Surfaces w i := .H ∈ w.take (i + 1) ∧ .H ∈ w.drop i
   hi_ne_lo := by decide
   lt_length h := by
-    have h₂ := List.length_pos_of_mem (surfacesWith_plateauAR.mp h).2
+    have h₂ := List.length_pos_of_mem h.2
     rw [List.length_drop] at h₂
     omega
-  surfaces_of_hi h := surfacesWith_plateauAR.mpr
+  surfaces_of_hi h :=
     ⟨List.mem_take_iff.mpr ⟨_, Nat.lt_succ_self _, h⟩, List.mem_drop_iff.mpr ⟨_, le_rfl, h⟩⟩
-  decSurfaces w i := decidable_of_iff _ surfacesWith_plateauAR.symm
+  decSurfaces w i := inferInstanceAs (Decidable (_ ∧ _))
+
+/-- **What surfaces is the representation**: `utp.Surfaces w i` is H-linkedness
+    of timing slot `i` in the coordinate output representation `plateauRep w` —
+    the OCP-merged, hull-closed realization. -/
+theorem utp.surfaces_iff_link_plateauRep {w : List TBU} {i : ℕ} :
+    utp.Surfaces w i ↔ ∃ k, (plateauRep w).link true false k i :=
+  (link_plateauRep w i).symm
 
 @[simp] theorem utp.hi_def : utp.hi = .H := rfl
 
 @[simp] theorem utp.lo_def : utp.lo = .O := rfl
 
-/-- The string-level reading of surfacing: the windowed form, now derived. -/
+/-- The string-level reading of surfacing: the windowed form, definitional. -/
 theorem utp.surfaces_def {w : List TBU} {i : ℕ} :
     utp.Surfaces w i ↔ .H ∈ w.take (i + 1) ∧ .H ∈ w.drop i :=
-  surfacesWith_plateauAR
+  Iff.rfl
 
 variable {w : List TBU} {i j k : ℕ}
 
