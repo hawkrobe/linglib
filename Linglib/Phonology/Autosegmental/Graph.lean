@@ -367,39 +367,28 @@ instance (X Y : Graph S) : HasBinaryCoproduct X Y :=
 
 instance : HasBinaryCoproducts (Graph S) := hasBinaryCoproducts_of_hasColimit_pair _
 
-end Graph
-
-open CategoryTheory
-
-/-- Precedence preservation as a morphism property: the maps that also preserve
-    arcs — the model-theoretic full-structure homomorphisms, the foundation
-    counterpart of the legacy `PrecAR` wide subcategory. -/
-def Graph.precPreserving : MorphismProperty (Graph S) := fun X Y f =>
+/-- The property of morphisms that also preserve the order arcs; such maps are the
+    model-theoretic full-structure homomorphisms. -/
+def precPreserving : MorphismProperty (Graph S) := fun X Y f =>
   ∀ ⦃v w⦄, X.arcs.Adj v w → Y.arcs.Adj (f.toFun v) (f.toFun w)
 
-instance : (Graph.precPreserving (S := S)).IsMultiplicative where
+instance : (precPreserving (S := S)).IsMultiplicative where
   id_mem _ := fun _ _ h => h
   comp_mem _ _ hf hg := fun _ _ h => hg (hf h)
 
 /-- A full isomorphism's underlying morphism preserves precedence. -/
-theorem Graph.Iso.toHom_precPreserving {X Y : Graph S}
-    (e : Graph.Iso X Y) : Graph.precPreserving e.toHom :=
+theorem Iso.toHom_precPreserving {X Y : Graph S} (e : Iso X Y) : precPreserving e.toHom :=
   fun _ _ h => (e.arcs_iff _ _).mpr h
 
-/-- Concatenation of precedence-preserving morphisms preserves precedence:
-    blockwise from the factors, the bridge transported by labels. -/
-theorem Graph.Hom.concatMap_precPreserving (t : S → ι)
-    {X₁ Y₁ X₂ Y₂ : Graph S}
-    {f : Graph.Hom X₁ Y₁} {g : Graph.Hom X₂ Y₂}
-    (hf : Graph.precPreserving f) (hg : Graph.precPreserving g) :
-    Graph.precPreserving (f.concatMap t g) := by
+/-- The concatenation of precedence-preserving morphisms preserves precedence. -/
+theorem Hom.concatMap_precPreserving (t : S → ι) {X₁ Y₁ X₂ Y₂ : Graph S}
+    {f : Hom X₁ Y₁} {g : Hom X₂ Y₂} (hf : precPreserving f) (hg : precPreserving g) :
+    precPreserving (f.concatMap t g) := by
   rintro (v | v) (w | w) h
-  · exact hf h
-  · show Y₁.tier t (f.toFun v) = Y₂.tier t (g.toFun w)
-    rw [show Y₁.tier t (f.toFun v) = X₁.tier t v from congrArg t (f.label_comp v),
-      show Y₂.tier t (g.toFun w) = X₂.tier t w from congrArg t (g.label_comp w)]
-    exact h
-  · exact h.elim
-  · exact hg h
+  exacts [hf h,
+    (congrArg t (f.label_comp v)).trans ((h : _ = _).trans (congrArg t (g.label_comp w)).symm),
+    h.elim, hg h]
+
+end Graph
 
 end Autosegmental
