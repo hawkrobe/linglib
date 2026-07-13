@@ -3,6 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
+import Mathlib.Order.CompleteLattice.Finset
 import Linglib.Core.Computability.Variety.Langs
 
 /-!
@@ -96,5 +97,17 @@ theorem IsStarFree.comap {α β : Type*} {L : Language β} (h : L.IsStarFree)
 /-- **The full language is star-free** — recognized by the trivial monoid. -/
 theorem isStarFree_univ : IsStarFree (Set.univ : Language α) :=
   Monoid.aperiodicVariety.langs_univ
+
+/-- Star-free languages are closed under finitely-indexed intersections. -/
+theorem IsStarFree.iInter {ι : Type*} [Finite ι] {f : ι → Language α}
+    (h : ∀ i, (f i).IsStarFree) : IsStarFree (⋂ i, f i) := by
+  haveI := Fintype.ofFinite ι
+  classical
+  rw [show (⋂ i, f i) = ⋂ i ∈ (Finset.univ : Finset ι), f i by simp]
+  induction (Finset.univ : Finset ι) using Finset.induction_on with
+  | empty => simpa using isStarFree_univ
+  | insert a s ha ih =>
+    rw [Finset.set_biInter_insert]
+    exact (h a).inter ih
 
 end Language
