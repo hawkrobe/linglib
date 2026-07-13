@@ -8,7 +8,6 @@ import Linglib.Core.Computability.Subregular.Function.SideDeterminacy
 import Linglib.Core.Computability.Subregular.Function.LetterSubsequential
 import Linglib.Core.Computability.Subregular.Function.Bimachine
 import Linglib.Core.Computability.Subregular.Function.Hierarchy
-import Linglib.Phonology.Autosegmental.Realization
 import Linglib.Phonology.Autosegmental.Collapse
 import Linglib.Phonology.Autosegmental.Junction
 import Linglib.Phonology.Tone.Basic

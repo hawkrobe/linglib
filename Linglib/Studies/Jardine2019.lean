@@ -51,8 +51,6 @@ The relation-level `L = ASL^{gT}` equivalences ([jardine-2019]) remain future wo
 
 namespace Autosegmental
 
-open Graph
-
 variable {S : Type*}
 
 /-! #### The star-free placement in coordinates -/
