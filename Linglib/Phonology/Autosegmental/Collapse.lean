@@ -903,6 +903,82 @@ noncomputable def realizeMerged (g₀ : S → Representation (Sigma.fst : ((i : 
 
 end RealizeMerged
 
+section Axiom6Bridge
+
+omit [DecidableEq ι] [DecidableEq (τ m)]
+
+/-- On a normal form, one position covers another in the arc order iff it is
+    its immediate successor. -/
+theorem Representation.covering_normalize [Finite X.obj.V] {i : ι}
+    {p q : Fin (X.tierLength i)} :
+    ((X.normalize).obj.graph.arcs.Adj ⟨i, p⟩ ⟨i, q⟩ ∧
+        ∀ u, ¬ ((X.normalize).obj.graph.arcs.Adj ⟨i, p⟩ u ∧
+          (X.normalize).obj.graph.arcs.Adj u ⟨i, q⟩)) ↔
+      (q : ℕ) = p + 1 := by
+  constructor
+  · rintro ⟨hpq, hcov⟩
+    rw [Representation.arcs_normalize] at hpq
+    by_contra hne
+    have hmid : (p : ℕ) + 1 < q := by
+      have := Fin.lt_def.mp hpq; omega
+    have hq := q.isLt
+    refine hcov ⟨i, ⟨(p : ℕ) + 1, by omega⟩⟩ ⟨?_, ?_⟩
+    · exact (Representation.arcs_normalize _ _ _).mpr
+        (show (p : ℕ) < (p : ℕ) + 1 by omega)
+    · exact (Representation.arcs_normalize _ _ _).mpr
+        (show (p : ℕ) + 1 < (q : ℕ) from hmid)
+  · intro hsucc
+    refine ⟨(Representation.arcs_normalize _ _ _).mpr
+      (show (p : ℕ) < (q : ℕ) by omega), ?_⟩
+    rintro ⟨j, u⟩ ⟨h1, h2⟩
+    rcases eq_or_ne i j with rfl | hij
+    · rw [Representation.arcs_normalize] at h1 h2
+      have := Fin.lt_def.mp h1
+      have := Fin.lt_def.mp h2
+      omega
+    · exact Representation.arcs_normalize_ne hij p u h1
+
+/-- Cleanliness fails at a successor pair exactly when its labels repeat. -/
+private theorem Representation.label_normalize_succ [Finite X.obj.V]
+    {p : ℕ} (hp1 : p + 1 < X.tierLength m) (hp : p < X.tierLength m) :
+    (X.normalize).obj.label ⟨m, ⟨p, hp⟩⟩ = (X.normalize).obj.label ⟨m, ⟨p + 1, hp1⟩⟩ ↔
+      (X.tierWord m)[p]'(by simp; omega) = (X.tierWord m)[p + 1]'(by simp; omega) := by
+  rw [Representation.label_normalize, Representation.label_normalize,
+    ← Representation.tierWord_getElem (p := ⟨p, hp⟩),
+    ← Representation.tierWord_getElem (p := ⟨p + 1, hp1⟩)]
+  exact ⟨fun h => eq_of_heq (Sigma.mk.inj_iff.mp h).2, fun h => congrArg (Sigma.mk m) h⟩
+
+/-- **The OCP bridge**: tier-word cleanliness is Axiom 6 on the normal form —
+    the coordinate OCP and [jardine-2016-diss]'s §4.2 axiom agree. -/
+theorem Representation.isCleanAt_iff_isOCPClean [Finite X.obj.V] :
+    X.IsCleanAt m ↔
+      IsOCPClean (X.normalize).obj.graph (X.normalize).obj.label Sigma.fst m := by
+  constructor
+  · rintro h ⟨i, p⟩ ⟨j, q⟩ hpq hcov htier heq
+    rcases eq_or_ne i j with rfl | hij
+    · obtain rfl : m = i := by
+        symm; simpa [Representation.label_normalize] using htier
+      have hsucc : (q : ℕ) = (p : ℕ) + 1 := (X.covering_normalize).mp ⟨hpq, hcov⟩
+      have hq1 : (p : ℕ) + 1 < X.tierLength m := hsucc ▸ q.isLt
+      rw [show q = ⟨(p : ℕ) + 1, hq1⟩ from Fin.ext hsucc] at heq
+      have hp' : (p : ℕ) + 1 < (X.tierWord m).length := by
+        simp only [Representation.length_tierWord]
+        omega
+      exact List.isChain_iff_getElem.mp h p hp'
+        ((X.label_normalize_succ m hq1 p.isLt).mp heq)
+    · exact Representation.arcs_normalize_ne hij p q hpq
+  · intro h
+    refine List.isChain_iff_getElem.mpr fun p hp heq => ?_
+    have hlen : p + 1 < X.tierLength m := by
+      simpa only [Representation.length_tierWord] using hp
+    have hplt : p < X.tierLength m := by omega
+    have hcover := (X.covering_normalize
+      (p := ⟨p, hplt⟩) (q := ⟨p + 1, hlen⟩) (i := m)).mpr rfl
+    exact h hcover.1 hcover.2 (by simp [Representation.label_normalize])
+      ((X.label_normalize_succ m hlen hplt).mpr heq)
+
+end Axiom6Bridge
+
 end CoordinateCollapse
 
 end Autosegmental
