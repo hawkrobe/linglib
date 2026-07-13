@@ -1,7 +1,7 @@
 import Linglib.Data.UD.Basic
 import Linglib.Features.NounCategorization.Basic
 import Linglib.Fragments.Japanese.Classifier
-import Linglib.Semantics.Kinds.NominalMappingParameter
+import Linglib.Semantics.Genericity.NominalMappingParameter
 
 /-!
 # Japanese Noun Lexicon Fragment

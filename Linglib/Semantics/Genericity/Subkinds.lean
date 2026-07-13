@@ -23,7 +23,7 @@ Consumers:
 
 * `Studies/Snyder2026.lean` — instantiates the framework
   for the kind TWO with subkinds `2_ℕ, 2_ℤ, 2_ℚ, 2_ℝ` (Snyder §4.3, §5).
-* `Semantics/Kinds/MeaningPreservation.lean` — singular kinds satisfy
+* `Semantics/Genericity/MeaningPreservation.lean` — singular kinds satisfy
   the framework with the discrete partition (one-class-per-kind).
 -/
 

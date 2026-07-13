@@ -1,5 +1,5 @@
 import Mathlib.Data.Set.Basic
-import Linglib.Semantics.NaturalLogic
+import Linglib.Semantics.Entailment.NaturalLogic
 
 /-!
 # Focus-sensitive particles: even and only

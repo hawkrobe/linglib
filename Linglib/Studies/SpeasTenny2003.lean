@@ -10,7 +10,7 @@ import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Semantics.Context.Tower
 import Linglib.Discourse.Roles
 import Linglib.Semantics.Mood.Defs
-import Linglib.Semantics.Epistemicity
+import Linglib.Semantics.Evidential.Epistemicity
 import Linglib.Features.Evidentiality
 import Linglib.Fragments.English.Pronouns
 import Linglib.Features.Person.Basic
@@ -45,7 +45,7 @@ the content.
 - **Semantics/Mood/Defs.lean**: the configurational seat-of-knowledge
   *diverges* from Lakoff's deontic `Illocutionary.authority` on imperatives
   (`seatOfKnowledge_diverges_from_authority_on_imperative`).
-- **Semantics/Epistemicity.lean**: EvalP-spec → `EpistemicProfile.authority`,
+- **Semantics/Evidential/Epistemicity.lean**: EvalP-spec → `EpistemicProfile.authority`,
   EvidP-spec → `EpistemicProfile.source`; S&T's seat is the speech-act-
   participant restriction of `EpistemicAuthority` (`seat_never_nonparticipant`).
 
@@ -371,7 +371,7 @@ abbrev evalPSpecifier : SAPMood → PRole := seatOfKnowledge
     hierarchy is personal experience ≫ direct ≫ indirect ≫ hearsay (p.327). -/
 abbrev EvidPSpecifier := Features.Evidentiality.CoarseSource
 
-/-- **Real bridge to `Semantics/Epistemicity.lean`.** The Sentience Domain's
+/-- **Real bridge to `Semantics/Evidential/Epistemicity.lean`.** The Sentience Domain's
     two specifiers ARE the two main fields of an `EpistemicProfile`:
     EvalP-spec (SEAT OF KNOWLEDGE) → `authority`, EvidP-spec (EVIDENCE) →
     `source`. The structural hierarchy EvalP > EvidP corresponds to authority

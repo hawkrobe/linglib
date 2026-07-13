@@ -1,4 +1,4 @@
-import Linglib.Semantics.NaturalLogic
+import Linglib.Semantics.Entailment.NaturalLogic
 
 /-!
 # Disjunction Ignorance [chierchia-2013]

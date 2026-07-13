@@ -2,7 +2,7 @@ import Linglib.Features.Definiteness
 import Linglib.Semantics.Definiteness.Description
 import Linglib.Semantics.Definiteness.Interpret
 import Linglib.Semantics.Presupposition.MaximizePresupposition
-import Linglib.Semantics.Kinds.MeaningPreservation
+import Linglib.Semantics.Genericity.MeaningPreservation
 import Linglib.Semantics.Classifier.Basic
 import Linglib.Studies.Schwarz2009
 import Linglib.Syntax.Category.Determiner.Basic
@@ -224,7 +224,7 @@ do covertly what you can do overtly"), inherited from
 article means ι is unblocked — bare N can route to a unique-definite
 reading via the type-shift hierarchy of [dayal-2004].
 
-The substrate has Dayal's hierarchy (`Semantics/Kinds/MeaningPreservation.lean`),
+The substrate has Dayal's hierarchy (`Semantics/Genericity/MeaningPreservation.lean`),
 already used by `Moroney2021.lean`. The Mandarin parallel theorem is
 the same `selectShift` instance: when no shift is blocked, ι is
 selected first (Meaning Preservation). -/

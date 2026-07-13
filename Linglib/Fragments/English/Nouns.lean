@@ -1,7 +1,7 @@
 import Linglib.Data.UD.Basic
 import Linglib.Features.Gender.Basic
 import Linglib.Morphology.Exponence
-import Linglib.Semantics.Kinds.NominalMappingParameter
+import Linglib.Semantics.Genericity.NominalMappingParameter
 import Linglib.Features.MassCount
 import Linglib.Morphology.Word
 

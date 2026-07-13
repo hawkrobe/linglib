@@ -213,6 +213,7 @@ import Linglib.Core.Optimization.Semiring
 import Linglib.Core.Optimization.System
 import Linglib.Core.Order.AllenRelation
 import Linglib.Core.Order.Antichain
+import Linglib.Core.Order.Argmax
 import Linglib.Core.Order.Boundedness
 import Linglib.Core.Order.Branching
 import Linglib.Core.Order.Caratheodory
@@ -226,10 +227,10 @@ import Linglib.Core.Order.ComparativeProbability.Entailments
 import Linglib.Core.Order.ComparativeProbability.Patterns
 import Linglib.Core.Order.ComparativeProbability.Representability
 import Linglib.Core.Order.ComparativeProbability.Systems
-import Linglib.Core.Order.DeMorganAlgebra.Defs
-import Linglib.Core.Order.DeMorganAlgebra.Basic
 import Linglib.Core.Order.ComparativeScale
 import Linglib.Core.Order.Comparison
+import Linglib.Core.Order.DeMorganAlgebra.Basic
+import Linglib.Core.Order.DeMorganAlgebra.Defs
 import Linglib.Core.Order.Flat
 import Linglib.Core.Order.FourierMotzkin
 import Linglib.Core.Order.Interval
@@ -262,7 +263,6 @@ import Linglib.Core.Order.SimilarityOrdering
 import Linglib.Core.Order.StrictBounds
 import Linglib.Core.Order.TotalPreorder
 import Linglib.Core.Order.Tree
-import Linglib.Core.Order.Argmax
 import Linglib.Core.Order.TreePath
 import Linglib.Core.Order.UpperLower.Closure
 import Linglib.Core.Probability.BayesianUpdate
@@ -1600,7 +1600,6 @@ import Linglib.Semantics.Conditionals.SelectionFunction
 import Linglib.Semantics.Conditionals.Stalnaker
 import Linglib.Semantics.Conditionals.Sweetser
 import Linglib.Semantics.Conditionals.WillConditional
-import Linglib.Semantics.ContentLayer
 import Linglib.Semantics.Context.Basic
 import Linglib.Semantics.Context.Rich
 import Linglib.Semantics.Context.Shifts
@@ -1663,17 +1662,18 @@ import Linglib.Semantics.Entailment.AntiAdditivity
 import Linglib.Semantics.Entailment.AsymStronger
 import Linglib.Semantics.Entailment.Basic
 import Linglib.Semantics.Entailment.Extremum
+import Linglib.Semantics.Entailment.NaturalLogic
 import Linglib.Semantics.Entailment.Polarity
 import Linglib.Semantics.Entailment.PositionProfile
 import Linglib.Semantics.Entailment.Soundness
 import Linglib.Semantics.Entailment.StrawsonEntailment
 import Linglib.Semantics.Entailment.StrawsonSoundness
-import Linglib.Semantics.Epistemicity
 import Linglib.Semantics.Events.Adjacency
 import Linglib.Semantics.Events.Basic
 import Linglib.Semantics.Events.CEM
 import Linglib.Semantics.Evidential.Basic
 import Linglib.Semantics.Evidential.Defs
+import Linglib.Semantics.Evidential.Epistemicity
 import Linglib.Semantics.Exhaustification.Chain
 import Linglib.Semantics.Exhaustification.Combinators
 import Linglib.Semantics.Exhaustification.Excluder
@@ -1697,9 +1697,11 @@ import Linglib.Semantics.Focus.Particles
 import Linglib.Semantics.Focus.Unalternatives
 import Linglib.Semantics.Genericity.Basic
 import Linglib.Semantics.Genericity.Dynamic
+import Linglib.Semantics.Genericity.MeaningPreservation
+import Linglib.Semantics.Genericity.NominalMappingParameter
+import Linglib.Semantics.Genericity.SortedOntology
+import Linglib.Semantics.Genericity.Subkinds
 import Linglib.Semantics.Highlighting
-import Linglib.Semantics.Homogeneity.Basic
-import Linglib.Semantics.Homogeneity.Decided
 import Linglib.Semantics.Iconic.Basic
 import Linglib.Semantics.Intensional.Algebra
 import Linglib.Semantics.Intensional.CategoryType
@@ -1711,10 +1713,6 @@ import Linglib.Semantics.Intensional.Rigidity
 import Linglib.Semantics.Intensional.Situations
 import Linglib.Semantics.Intensional.Variables
 import Linglib.Semantics.Intensional.WorldTimeIndex
-import Linglib.Semantics.Kinds.MeaningPreservation
-import Linglib.Semantics.Kinds.NominalMappingParameter
-import Linglib.Semantics.Kinds.SortedOntology
-import Linglib.Semantics.Kinds.Subkinds
 import Linglib.Semantics.Mereology
 import Linglib.Semantics.Modality.ActualityEntailments
 import Linglib.Semantics.Modality.BranchingTime
@@ -1752,7 +1750,6 @@ import Linglib.Semantics.Mood.Situation
 import Linglib.Semantics.Mood.SpeechEvent
 import Linglib.Semantics.Mood.State
 import Linglib.Semantics.Mood.Verbal
-import Linglib.Semantics.NaturalLogic
 import Linglib.Semantics.Negation.CzechNegation
 import Linglib.Semantics.Negation.Defs
 import Linglib.Semantics.Negation.Expletive
@@ -1761,6 +1758,8 @@ import Linglib.Semantics.Plurality.Basic
 import Linglib.Semantics.Plurality.Cover
 import Linglib.Semantics.Plurality.Cumulativity
 import Linglib.Semantics.Plurality.Distributivity
+import Linglib.Semantics.Plurality.Homogeneity.Basic
+import Linglib.Semantics.Plurality.Homogeneity.Decided
 import Linglib.Semantics.Plurality.Implicature
 import Linglib.Semantics.Plurality.Reciprocal
 import Linglib.Semantics.Plurality.Trivalent
@@ -1778,6 +1777,7 @@ import Linglib.Semantics.Possessive.Relational
 import Linglib.Semantics.Presupposition.Accommodation
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Semantics.Presupposition.BeliefEmbedding
+import Linglib.Semantics.Presupposition.ContentLayer
 import Linglib.Semantics.Presupposition.Context
 import Linglib.Semantics.Presupposition.LocalContext
 import Linglib.Semantics.Presupposition.MaximizePresupposition

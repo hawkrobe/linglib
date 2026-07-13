@@ -1,4 +1,4 @@
-import Linglib.Semantics.Kinds.NominalMappingParameter
+import Linglib.Semantics.Genericity.NominalMappingParameter
 import Linglib.Semantics.Plurality.Distributivity
 import Linglib.Semantics.Plurality.Cumulativity
 import Linglib.Studies.TesslerGoodman2019

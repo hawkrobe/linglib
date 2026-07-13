@@ -1,4 +1,4 @@
-import Linglib.Semantics.Kinds.Subkinds
+import Linglib.Semantics.Genericity.Subkinds
 import Linglib.Studies.Spector2013
 import Linglib.Fragments.Dutch.Adjectives
 import Mathlib.Data.Fintype.Basic
@@ -40,7 +40,7 @@ The diagram from §5 (76a-j):
 
 ## Architecture
 
-* `Semantics/Kinds/Subkinds.lean` — substrate: kind formation
+* `Semantics/Genericity/Subkinds.lean` — substrate: kind formation
   by salient equivalence relation (= mathlib's `Setoid`); Carlson's
   Disjointness Condition. Snyder's account of why TWO has disjoint subkinds
   `2_ℕ, 2_ℤ, 2_ℚ, 2_ℝ` (§4.3, §5) instantiates the Mendia framework via

@@ -1,6 +1,6 @@
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fintype.Basic
-import Linglib.Semantics.Kinds.NominalMappingParameter
+import Linglib.Semantics.Genericity.NominalMappingParameter
 
 /-!
 # Bare NPs as properties

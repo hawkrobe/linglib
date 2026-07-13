@@ -1,7 +1,7 @@
 import Linglib.Data.Examples.Kriz2015
 import Linglib.Data.Generalizations.HomogeneityGap
 import Linglib.Studies.Magri2014
-import Linglib.Semantics.Homogeneity.Basic
+import Linglib.Semantics.Plurality.Homogeneity.Basic
 import Linglib.Semantics.Plurality.Distributivity
 import Linglib.Semantics.Plurality.Trivalent
 

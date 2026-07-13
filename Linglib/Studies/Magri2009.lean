@@ -2,7 +2,7 @@ import Mathlib.Tactic.DeriveFintype
 import Linglib.Pragmatics.Implicature.Defs
 import Linglib.Semantics.Exhaustification.InnocentExclusion
 import Linglib.Semantics.Alternatives.Lexical
-import Linglib.Semantics.Kinds.SortedOntology
+import Linglib.Semantics.Genericity.SortedOntology
 import Linglib.Data.Examples.CohenErteschikShir2002
 import Linglib.Fragments.German.BarePluralWordOrder
 

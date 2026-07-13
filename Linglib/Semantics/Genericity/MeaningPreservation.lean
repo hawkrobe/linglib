@@ -1,4 +1,4 @@
-import Linglib.Semantics.Kinds.NominalMappingParameter
+import Linglib.Semantics.Genericity.NominalMappingParameter
 import Linglib.Features.MassCount
 /-
 # Kind Reference and Number Marking
@@ -38,7 +38,7 @@ Singular kinds with one salient instance correspond to the discrete
 Mendia kind-formation (each instance is its own equivalence class). For
 the general framework — kinds formed by partitioning a domain via a
 salient equivalence relation — see
-`Semantics/Kinds/Subkinds.lean` ([mendia-2020]).
+`Semantics/Genericity/Subkinds.lean` ([mendia-2020]).
 Carlson's Disjointness Condition (subkinds of a context-relative
 partition are disjoint) is derived there.
 

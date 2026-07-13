@@ -3,7 +3,7 @@ import Linglib.Semantics.Composition.Tree
 import Linglib.Semantics.Degree.Quantifier
 import Linglib.Semantics.Mereology
 import Linglib.Semantics.ArgumentStructure.Thematic.Defs
-import Linglib.Semantics.Kinds.MeaningPreservation
+import Linglib.Semantics.Genericity.MeaningPreservation
 import Linglib.Features.Aktionsart
 import Linglib.Core.Order.Boundedness
 import Linglib.Fragments.English.Nouns

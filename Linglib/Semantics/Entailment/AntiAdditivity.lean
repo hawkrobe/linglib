@@ -4,7 +4,7 @@ import Mathlib.Order.Heyting.Hom
 import Mathlib.Data.List.Basic
 import Mathlib.Data.Finset.Card
 import Mathlib.Data.Fintype.Basic
-import Linglib.Semantics.NaturalLogic
+import Linglib.Semantics.Entailment.NaturalLogic
 import Linglib.Semantics.Entailment.Basic
 import Linglib.Semantics.Entailment.Polarity
 
