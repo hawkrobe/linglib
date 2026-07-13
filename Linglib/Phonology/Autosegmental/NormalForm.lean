@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 import Mathlib.Algebra.FreeMonoid.Basic
 import Mathlib.CategoryTheory.Monoidal.Skeleton
+import Mathlib.Data.Finite.Sigma
 import Mathlib.Data.Finite.Sum
 import Mathlib.Data.Fintype.Sort
 import Mathlib.Data.Fintype.Sum
@@ -683,5 +684,110 @@ noncomputable def Representation.isoOfReaderEq
   Representation.mkIso (Representation.fullIsoOfReaderEq hw hl)
 
 end Classification
+
+/-! ### Building representations from tuple data
+
+The constructor inverse to the readers: tier words plus a position-coordinate
+link relation determine a representation on the canonical carrier. This is the
+tiered presentation as a *function* — the essential-surjectivity direction of
+the classification. -/
+
+section OfData
+
+variable {ι : Type*} {τ : ι → Type*}
+
+/-- The representation presented by tier words `ws` and cross-tier links `L`
+    (positions in ℕ coordinates; same-tier and out-of-bounds pairs are
+    ignored). Arcs are the ascending position order on each tier. -/
+def Representation.ofData (ws : ∀ i, List (τ i)) (L : ι → ι → ℕ → ℕ → Prop)
+    (hL : ∀ i p q, ¬ L i i p q) :
+    Representation (Sigma.fst : ((i : ι) × τ i) → ι) where
+  obj :=
+    { V := (i : ι) × Fin (ws i).length
+      graph :=
+        { edges :=
+            { Adj := fun v w => v.1 ≠ w.1 ∧
+                (L v.1 w.1 v.2 w.2 ∨ L w.1 v.1 w.2 v.2)
+              symm := ⟨fun _ _ h => ⟨h.1.symm, h.2.symm⟩⟩
+              loopless := ⟨fun _ h => h.1 rfl⟩ }
+          arcs := ⟨fun v w => v.1 = w.1 ∧ (v.2 : ℕ) < (w.2 : ℕ)⟩ }
+      label := fun v => ⟨v.1, (ws v.1)[v.2]⟩ }
+  property := by
+    refine ⟨⟨fun v w h => h.1, fun v w hne htier => ?_, fun v h => lt_irrefl _ h.2,
+      fun u v w huv hvw => ⟨huv.1.trans hvw.1, huv.2.trans hvw.2⟩⟩,
+      fun v w hadj harc => hadj.1 harc.1⟩
+    obtain ⟨i, p⟩ := v
+    obtain ⟨j, q⟩ := w
+    obtain rfl : i = j := htier
+    rcases Nat.lt_trichotomy (p : ℕ) (q : ℕ) with h | h | h
+    · exact Or.inl ⟨rfl, h⟩
+    · exact absurd (by rw [Fin.ext h]) hne
+    · exact Or.inr ⟨rfl, h⟩
+
+variable [Finite ι] {ws : ∀ i, List (τ i)} {L : ι → ι → ℕ → ℕ → Prop}
+variable {hL : ∀ i p q, ¬ L i i p q}
+
+instance : Finite (Representation.ofData ws L hL).obj.V :=
+  inferInstanceAs (Finite ((i : ι) × Fin (ws i).length))
+
+/-- The canonical carrier's fiber at `i` is its position range. -/
+noncomputable def Representation.ofDataFiberEnum (i : ι) :
+    Fin ((ws i).length) ≃o (Representation.ofData ws L hL).fiber i := by
+  refine StrictMono.orderIsoOfSurjective (fun p => ⟨⟨i, p⟩, rfl⟩) (fun p q h => ⟨rfl, h⟩)
+    fun v => ?_
+  obtain ⟨⟨j, q⟩, hp⟩ := v
+  obtain rfl : j = i := hp
+  exact ⟨q, rfl⟩
+
+theorem Representation.tierLength_ofData (i : ι) :
+    (Representation.ofData ws L hL).tierLength i = (ws i).length := by
+  rw [← Representation.length_tierWord,
+    Representation.tierWord_eq_ofFn (Representation.ofDataFiberEnum i), List.length_ofFn]
+
+theorem Representation.fiberEnum_ofData (i : ι) :
+    (Representation.ofData ws L hL).fiberEnum i =
+      (Fin.castOrderIso (Representation.tierLength_ofData i)).trans
+        (Representation.ofDataFiberEnum i) :=
+  Subsingleton.elim _ _
+
+theorem Representation.vertexEquiv_ofData {i : ι}
+    (r : Fin ((Representation.ofData ws L hL).tierLength i)) :
+    (Representation.ofData ws L hL).vertexEquiv ⟨i, r⟩ =
+      ⟨i, Fin.cast (Representation.tierLength_ofData i) r⟩ := by
+  show ((Representation.ofData ws L hL).fiberEnum i r).val = _
+  rw [Representation.fiberEnum_ofData]
+  rfl
+
+/-- `ofData` reads back its words. -/
+@[simp] theorem Representation.tierWord_ofData (i : ι) :
+    (Representation.ofData ws L hL).tierWord i = ws i := by
+  rw [Representation.tierWord_eq_ofFn (Representation.ofDataFiberEnum i)]
+  exact List.ofFn_getElem
+
+/-- `ofData` reads back its links, symmetrized, on in-bounds cross-tier
+    pairs. -/
+theorem Representation.link_ofData (i j : ι) (p q : ℕ) :
+    (Representation.ofData ws L hL).link i j p q ↔
+      i ≠ j ∧ ∃ (hp : p < (ws i).length) (hq : q < (ws j).length),
+        (L i j p q ∨ L j i q p) := by
+  constructor
+  · rintro ⟨hp, hq, hl⟩
+    rw [Representation.linkRel_def, Representation.vertexEquiv_ofData,
+      Representation.vertexEquiv_ofData] at hl
+    obtain ⟨hne, hor⟩ := hl
+    have hp' : p < (ws i).length := Representation.tierLength_ofData i ▸ hp
+    have hq' : q < (ws j).length := Representation.tierLength_ofData j ▸ hq
+    exact ⟨hne, hp', hq', by simpa using hor⟩
+  · rintro ⟨hij, hp, hq, hor⟩
+    have hp' : p < (Representation.ofData ws L hL).tierLength i := by
+      rw [← Representation.length_tierWord, Representation.tierWord_ofData]; exact hp
+    have hq' : q < (Representation.ofData ws L hL).tierLength j := by
+      rw [← Representation.length_tierWord, Representation.tierWord_ofData]; exact hq
+    refine ⟨hp', hq', ?_⟩
+    rw [Representation.linkRel_def, Representation.vertexEquiv_ofData,
+      Representation.vertexEquiv_ofData]
+    exact ⟨hij, by simpa using hor⟩
+
+end OfData
 
 end Autosegmental
