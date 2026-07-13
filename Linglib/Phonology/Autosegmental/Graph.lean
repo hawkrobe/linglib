@@ -30,7 +30,7 @@ out of the raw graphs relative to it.
   the §4.2 axioms (1–2, 3, 4, 5, 6; [jardine-heinz-2015] numbers the NCC and OCP
   as 4 and 5 and has no saturation axiom) as predicates on a `MixedGraph` and, for
   tier-relative axioms, a vertex coloring `c : V → ι`. Saturation is stated but
-  not imposed, as in `AR.lean`; tier-orderedness includes path-closure
+  not imposed; tier-orderedness includes path-closure
   (`MixedGraph.PrecPath`), [jardine-2019]'s reading that `A` represents the order.
 * `Graph S`: the labeled mixed graph ([jardine-2019]'s `GR(Γ)`) and the
   category thereof, with `HasInitial` and `HasBinaryCoproducts`;
@@ -68,8 +68,10 @@ remark). The choice is not free elsewhere: subgraph-based notions such as
 
 ## TODO
 
-* The normal-form equivalence with the strict tuple presentation, with
-  `IsPlanar` reducing to the per-pair NCC on normal forms.
+* Package `AR.ofData` and `AR.isoOfReaderEq` (`NormalForm.lean`) as a
+  `CategoryTheory.Equivalence` between the strict tuple category and the
+  finite representations, and reduce `IsPlanar` on normal forms to the
+  per-pair `IsNonCrossing` of the link relation.
 -/
 
 namespace Autosegmental
@@ -99,7 +101,7 @@ def NoInternalAssoc : Prop := ∀ ⦃v w⦄, G.edges.Adj v w → ¬ G.arcs.Adj v
 
 /-- Axiom 4 (full specification): every vertex participates in an association.
     [goldsmith-1976]'s original well-formedness condition; stated but deliberately
-    not imposed — floating elements are well-formed, as in `AR.lean`. -/
+    not imposed — floating elements are well-formed. -/
 def IsSaturated : Prop := ∀ v, ∃ w, G.edges.Adj v w
 
 /-- Axiom 5, the No-Crossing Constraint in [jardine-2016-diss]'s general path
@@ -545,25 +547,6 @@ theorem Graph.Hom.concatMap_precPreserving (t : S → ι)
   · exact h.elim
   · exact hg h
 
-/-- A vertex with no arc-predecessor: the tier-initial position. -/
-def Graph.NoPred (X : Graph S) (v : X.V) : Prop :=
-  ∀ u, ¬ X.graph.arcs.Adj u v
-
-/-- Erase every association line incident to a tier-`i₀`-initial vertex — the
-    graph model of an initial-position delinking process (e.g. lenition
-    targeting the word-initial slot). Arcs and labels are untouched. -/
-def Graph.delinkMin (t : S → ι) (i₀ : ι) (X : Graph S) :
-    Graph S where
-  V := X.V
-  graph :=
-    { edges :=
-        { Adj := fun v w => X.graph.edges.Adj v w ∧
-            ¬ (X.tier t v = i₀ ∧ X.NoPred v) ∧ ¬ (X.tier t w = i₀ ∧ X.NoPred w)
-          symm := ⟨fun _ _ h => ⟨h.1.symm, h.2.2, h.2.1⟩⟩
-          loopless := ⟨fun v h => X.graph.edges.loopless.irrefl v h.1⟩ }
-      arcs := X.graph.arcs }
-  label := X.label
-
 /-! ### The category of autosegmental representations -/
 
 variable (t : S → ι)
@@ -681,50 +664,6 @@ instance : (precPreserving (t := t)).IsMonoidalStable where
   leftUnitor_inv_mem A := (Graph.emptyConcatIso t A.obj).symm.toHom_precPreserving
   rightUnitor_hom_mem A := (Graph.concatEmptyIso t A.obj).toHom_precPreserving
   rightUnitor_inv_mem A := (Graph.concatEmptyIso t A.obj).symm.toHom_precPreserving
-
-/-- Delinking preserves the structural axioms: arcs are untouched and the
-    edge set shrinks. -/
-def delinkMinRep (i₀ : ι) (X : AR t) : AR t :=
-  ⟨Graph.delinkMin t i₀ X.obj,
-    ⟨X.property.1.tier_eq, X.property.1.total, X.property.1.irrefl, X.property.1.trans⟩,
-    fun _ _ hadj harc => X.property.2 hadj.1 harc⟩
-
-open CategoryTheory in
-/-- **Initial-position delinking is an endofunctor of the precedence-preserving
-    wide subcategory**: an arc-preserving morphism transports tier-initiality
-    for free (an arc into `v` maps to an arc into `f v`), so the delinked edge
-    conditions carry over. On the broad category the lift fails — a
-    label-preserving reindexing can move a non-initial vertex into initial
-    position (`Studies/LaoideKemp2026`'s counterexample). -/
-def delinkMinFunctor (i₀ : ι) :
-    WideSubcategory (AR.precPreserving (t := t)) ⥤
-      WideSubcategory (AR.precPreserving (t := t)) where
-  obj X := ⟨delinkMinRep i₀ X.obj⟩
-  map {X Y} f :=
-    ⟨InducedCategory.homMk
-      { toFun := f.hom.hom.toFun
-        edge_map := by
-          rintro v w ⟨hadj, hv, hw⟩
-          refine ⟨f.hom.hom.edge_map hadj, ?_, ?_⟩
-          · rintro ⟨htier, hmin⟩
-            refine hv ⟨?_, fun u hu => hmin (f.hom.hom.toFun u) (f.property hu)⟩
-            rw [show X.obj.obj.tier t v = Y.obj.obj.tier t (f.hom.hom.toFun v) from
-              (congrArg t (f.hom.hom.label_comp v)).symm]
-            exact htier
-          · rintro ⟨htier, hmin⟩
-            refine hw ⟨?_, fun u hu => hmin (f.hom.hom.toFun u) (f.property hu)⟩
-            rw [show X.obj.obj.tier t w = Y.obj.obj.tier t (f.hom.hom.toFun w) from
-              (congrArg t (f.hom.hom.label_comp w)).symm]
-            exact htier
-        label_comp := f.hom.hom.label_comp }, f.property⟩
-  map_id X := by
-    apply WideSubcategory.hom_ext
-    apply InducedCategory.hom_ext
-    rfl
-  map_comp f g := by
-    apply WideSubcategory.hom_ext
-    apply InducedCategory.hom_ext
-    rfl
 
 end AR
 

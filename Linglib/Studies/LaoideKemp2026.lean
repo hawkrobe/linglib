@@ -743,8 +743,8 @@ as a preverbal particle rather than a suffix.
 The remaining Layer-2 frontier — modelling *lenition* and *docking*
 themselves as endofunctors of the representation category (acting on morphisms, not just
 objects) — is left open. The conjecture is that they are functorial
-only over the precedence-preserving `Graph.SubgraphEmbeds`, not over
-all broad morphisms; `delinkMinFunctor` settles the lenition case. The
+only over precedence-preserving morphisms, not over all broad ones;
+`delinkInitialFunctor` settles the lenition case. The
 extensional content (no look-ahead) is fully captured by
 `dPrimeSurfaces_withHist_concat_right` above: for any suffix, whether
 `(d)` surfaces depends only on the stem's left edge. -/
@@ -804,15 +804,14 @@ objects. At the graph level, lenition is `delinkInitial`: erase the
 association lines to the leftmost (word-initial) skeletal slot.
 
 The answer is a sharp dichotomy. `delinkInitial` is **not** a functor on
-the full category `AR α β`: a label-preserving reindexing
+the broad category: a label-preserving reindexing
 (a broad `Graph.Hom`) can move a non-initial element into initial position, after
 which there is *no* morphism between the delinked images at all
-(`delinkInitial_not_functorial`). But over the precedence-preserving wide subcategory, the
-**precedence-preserving wide subcategory** (the foundation's
-`AR.precPreserving`), it lifts to a genuine endofunctor `delinkInitialFunctor`
-(built from `delinkInitial_map` / `_id` / `_comp`; precedence-preservation
-discharges the reflects-initial-slot hypothesis via
-`precPreserving.reflects_zero`). This is the categorical content of the
+(`delinkInitial_not_functorial`). But over the **precedence-preserving wide
+subcategory** (the foundation's `AR.precPreserving`), it lifts to a genuine
+endofunctor `delinkInitialFunctor`: an arc-preserving morphism transports
+tier-initiality for free — an arc into `v` maps to an arc into `f v` — so the
+delinked edge conditions carry over. This is the categorical content of the
 linguistic fact that lenition targets the *word-initial* consonant: the
 process is functorial over exactly the maps that preserve precedence. -/
 
@@ -820,13 +819,70 @@ section Frontier
 
 open Autosegmental
 
-/-- Lenition's structural model on the foundation: erase the association
-    lines at the word-initial (tier-initial) skeletal position —
-    `Graph.delinkMin`. Its functoriality over precedence-preserving
-    morphisms is the substrate theorem `Autosegmental.delinkMinFunctor`;
-    here we exhibit the **negative half**: on the broad category the lift
-    fails, because a label-preserving reindexing can move a non-initial
-    slot into initial position. -/
+/-- A vertex with no arc-predecessor: the tier-initial position. -/
+def NoPred {S : Type*} (X : Graph S) (v : X.V) : Prop :=
+  ∀ u, ¬ X.graph.arcs.Adj u v
+
+/-- Erase every association line incident to a tier-`i₀`-initial vertex — the
+    graph model of the paper's initial-position delinking (lenition targeting
+    the word-initial slot). Arcs and labels are untouched. -/
+def delinkInitial {S ι : Type*} (t : S → ι) (i₀ : ι) (X : Graph S) : Graph S where
+  V := X.V
+  graph :=
+    { edges :=
+        { Adj := fun v w => X.graph.edges.Adj v w ∧
+            ¬ (X.tier t v = i₀ ∧ NoPred X v) ∧ ¬ (X.tier t w = i₀ ∧ NoPred X w)
+          symm := ⟨fun _ _ h => ⟨h.1.symm, h.2.2, h.2.1⟩⟩
+          loopless := ⟨fun v h => X.graph.edges.loopless.irrefl v h.1⟩ }
+      arcs := X.graph.arcs }
+  label := X.label
+
+/-- Delinking preserves the structural axioms: arcs are untouched and the
+    edge set shrinks. -/
+def delinkInitialRep {S ι : Type*} {t : S → ι} (i₀ : ι) (X : AR t) : AR t :=
+  ⟨delinkInitial t i₀ X.obj,
+    ⟨X.property.1.tier_eq, X.property.1.total, X.property.1.irrefl, X.property.1.trans⟩,
+    fun _ _ hadj harc => X.property.2 hadj.1 harc⟩
+
+open CategoryTheory in
+/-- **Initial-position delinking is an endofunctor of the precedence-preserving
+    wide subcategory**: an arc-preserving morphism transports tier-initiality
+    for free (an arc into `v` maps to an arc into `f v`), so the delinked edge
+    conditions carry over. On the broad category the lift fails
+    (`delinkInitial_not_functorial` below). -/
+def delinkInitialFunctor {S ι : Type*} {t : S → ι} (i₀ : ι) :
+    WideSubcategory (AR.precPreserving (t := t)) ⥤
+      WideSubcategory (AR.precPreserving (t := t)) where
+  obj X := ⟨delinkInitialRep i₀ X.obj⟩
+  map {X Y} f :=
+    ⟨InducedCategory.homMk
+      { toFun := f.hom.hom.toFun
+        edge_map := by
+          rintro v w ⟨hadj, hv, hw⟩
+          refine ⟨f.hom.hom.edge_map hadj, ?_, ?_⟩
+          · rintro ⟨htier, hmin⟩
+            refine hv ⟨?_, fun u hu => hmin (f.hom.hom.toFun u) (f.property hu)⟩
+            rw [show X.obj.obj.tier t v = Y.obj.obj.tier t (f.hom.hom.toFun v) from
+              (congrArg t (f.hom.hom.label_comp v)).symm]
+            exact htier
+          · rintro ⟨htier, hmin⟩
+            refine hw ⟨?_, fun u hu => hmin (f.hom.hom.toFun u) (f.property hu)⟩
+            rw [show X.obj.obj.tier t w = Y.obj.obj.tier t (f.hom.hom.toFun w) from
+              (congrArg t (f.hom.hom.label_comp w)).symm]
+            exact htier
+        label_comp := f.hom.hom.label_comp }, f.property⟩
+  map_id X := by
+    apply WideSubcategory.hom_ext
+    apply InducedCategory.hom_ext
+    rfl
+  map_comp f g := by
+    apply WideSubcategory.hom_ext
+    apply InducedCategory.hom_ext
+    rfl
+
+/-- The **negative half** of the dichotomy needs a witness: on the broad
+    category the lift fails, because a label-preserving reindexing can move a
+    non-initial slot into initial position. -/
 private abbrev negA :
     AR (Sigma.fst : ((b : Bool) × TwoTier Unit Bool b) → Bool) :=
   AR.ofData
@@ -871,15 +927,15 @@ private def negSwap : Graph.Hom negA.obj negB.obj where
     morphism, yet the delinked images admit no morphism at all — the
     surviving slot-1 link of `negA` lands on `negB`'s initial slot, which
     delinking erased. The obstruction is precisely failure to preserve
-    precedence (`Autosegmental.delinkMinFunctor` lifts it otherwise). -/
+    precedence (`delinkInitialFunctor` lifts it otherwise). -/
 theorem delinkInitial_not_functorial :
     IsEmpty (Graph.Hom
-      (Graph.delinkMin Sigma.fst false negA.obj)
-      (Graph.delinkMin Sigma.fst false negB.obj)) := by
+      (delinkInitial Sigma.fst false negA.obj)
+      (delinkInitial Sigma.fst false negB.obj)) := by
   refine ⟨fun g => ?_⟩
   let v1 : negA.obj.V := ⟨true, ⟨0, by decide⟩⟩
   let w1 : negA.obj.V := ⟨false, ⟨1, by decide⟩⟩
-  have hsurv : (Graph.delinkMin Sigma.fst false negA.obj).graph.edges.Adj v1 w1 := by
+  have hsurv : (delinkInitial Sigma.fst false negA.obj).graph.edges.Adj v1 w1 := by
     refine ⟨⟨by decide, Or.inl ⟨rfl, rfl, rfl, rfl⟩⟩, ?_, ?_⟩
     · rintro ⟨h, -⟩
       exact absurd h (by decide)
