@@ -263,6 +263,31 @@ example :
     (AR.realizeMerged toAR (utp.map [.H, .O, .O, .H])).links
       = {(0, 0), (0, 1), (0, 2), (0, 3)} := by decide
 
+/-! #### The autosegmental grounding in coordinates
+
+The same claims on the graph foundation: the output representation's melody
+fuses to one `H`, linked exactly to the surfacing slots. -/
+
+/-- (7) in coordinates: the merged output's links are the fused `H` node over
+    the surfacing positions. -/
+theorem link_realizeMerged_map {w : List TBU} {k j : ℕ} :
+    ((Autosegmental.realize Tone.Plateauing.toRep (utp.map w)).collapse true).link
+        true false k j ↔ k = 0 ∧ utp.Surfaces w j := by
+  rw [Tone.Plateauing.link_realizeMerged, utp.map_getElem?_H_iff]
+
+/-- (7) concretely: `HØØH` fuses to one H linked to all four TBUs. -/
+example : ∀ j < 4,
+    ((Autosegmental.realize Tone.Plateauing.toRep
+      (utp.map [.H, .O, .O, .H])).collapse true).link true false 0 j := by
+  intro j hj
+  rw [link_realizeMerged_map]
+  refine ⟨rfl, ?_⟩
+  match j, hj with
+  | 0, _ => decide
+  | 1, _ => decide
+  | 2, _ => decide
+  | 3, _ => decide
+
 end AutosegmentalGrounding
 
 /-- Computationally, tone is different (§7): UTP is fully regular — regular but neither
