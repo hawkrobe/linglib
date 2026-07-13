@@ -11,7 +11,7 @@ import Mathlib.Data.Fintype.Sort
 import Mathlib.Data.Fintype.Sum
 import Mathlib.Logic.Equiv.Fin.Basic
 import Linglib.Core.Data.List.Factors
-import Linglib.Phonology.Autosegmental.Graph
+import Linglib.Phonology.Autosegmental.AR
 
 /-!
 # Normal forms of autosegmental representations
