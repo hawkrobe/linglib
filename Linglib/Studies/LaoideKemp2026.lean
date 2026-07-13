@@ -424,7 +424,7 @@ theorem laoideKemp_fig1_fig5 :
 /-! ## §10 Modularity: the analysis lives in the monoidal subcategory
 
 [laoide-kemp-2026]'s strict-modularity thesis, formalised against the
-monoidal-subcategory framework (`Autosegmental.WellFormedAR`).
+monoidal category of representations.
 Three theorems, one per modular commitment: the morpheme is *composed*
 by the monoidal product `⊗ = concat` (not inserted by a non-local
 rule); the composition *preserves well-formedness* because the
@@ -732,9 +732,9 @@ theorem dPrimeSurfaces_withHist_concat_right (stem suffix : FloatingForm CVKind 
 
 The deepest categorical content: morpheme *prefixation* is not merely a
 function on representations but an **endofunctor on the monoidal
-category** `WellFormedAR` — mathlib's `tensorLeft`. This consumes the full
-`MonoidalCategory (WellFormedAR α β)` instance (not merely the `concat`
-operation), and the **associativity of prefixation** is `WellFormedAR`'s
+category** of representations — mathlib's `tensorLeft`. This consumes the
+full `MonoidalCategory (Representation t)` instance (not merely the tensor
+operation), and the **associativity of prefixation** is the category's
 associator, exhibited by `tensorLeftTensor` — a natural isomorphism
 that does not exist without coherence (pentagon + triangle).
 
@@ -743,10 +743,10 @@ not right: the categorical encoding of the morpheme's **directionality**
 as a preverbal particle rather than a suffix.
 
 The remaining Layer-2 frontier — modelling *lenition* and *docking*
-themselves as functors `WellFormedAR ⥤ WellFormedAR` (acting on morphisms, not just
+themselves as endofunctors of the representation category (acting on morphisms, not just
 objects) — is left open. The conjecture is that they are functorial
 only over the precedence-preserving `Graph.SubgraphEmbeds`, not over
-all of `AR.Hom`; settling it either way is a genuine result. The
+all broad morphisms; `delinkMinFunctor` settles the lenition case. The
 extensional content (no look-ahead) is fully captured by
 `dPrimeSurfaces_withHist_concat_right` above: for any suffix, whether
 `(d)` surfaces depends only on the stem's left edge. -/
@@ -763,9 +763,9 @@ def historicExponentRep :
     ⊥
 
 open CategoryTheory MonoidalCategory in
-/-- **The historic morpheme is an endofunctor on `WellFormedAR`.** Prefixing `(d)`
+/-- **The historic morpheme is an endofunctor of the representation category.** Prefixing `(d)`
     is left-tensoring by `historicExponentAR` — mathlib's `tensorLeft`,
-    which exists only because `WellFormedAR` is a `MonoidalCategory`. Left- rather
+    which exists only because the category is monoidal. Left- rather
     than right-tensoring encodes the morpheme's directionality as a
     preverbal particle. -/
 def withHistFunctor :
@@ -786,9 +786,9 @@ theorem withHistFunctor_obj
 open CategoryTheory MonoidalCategory in
 /-- **Associativity of prefixation is the associator.** This natural
     isomorphism — prefixing the compound `(d) ⊗ X` equals prefixing `X`
-    then prefixing `(d)` — is built from `WellFormedAR`'s associator, so it does
+    then prefixing `(d)` — is built from the category's associator, so it does
     not exist unless the monoidal structure is *coherent* (pentagon +
-    triangle). It is the concrete artifact that makes `WellFormedAR`'s coherence
+    triangle). It is the concrete artifact that makes the monoidal coherence
     load-bearing rather than decorative. -/
 noncomputable def prefixAssoc
     (X : Representation (Sigma.fst :
@@ -807,9 +807,9 @@ association lines to the leftmost (word-initial) skeletal slot.
 
 The answer is a sharp dichotomy. `delinkInitial` is **not** a functor on
 the full category `AR α β`: a label-preserving reindexing
-(`AR.Hom`) can move a non-initial element into initial position, after
+(a broad `MixedGraphCat.Hom`) can move a non-initial element into initial position, after
 which there is *no* morphism between the delinked images at all
-(`delinkInitial_not_functorial`). But over `PrecAR`, the
+(`delinkInitial_not_functorial`). But over the precedence-preserving wide subcategory, the
 **precedence-preserving wide subcategory** (`Autosegmental/Embedding.lean`:
 order-embedding tier maps; `SubgraphEmbeds` translations are canonical
 instances), it lifts to a genuine endofunctor `delinkInitialFunctor`
