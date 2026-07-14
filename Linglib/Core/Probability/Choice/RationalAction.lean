@@ -545,6 +545,12 @@ theorem binary_complement (cf : ChoiceFn A) {x y : A} (hxy : x ≠ y) :
       Finset.sum_singleton] at hsum
   exact hsum
 
+/-- Self-choice is certain: `cf.binary x x = 1`, since `{x, x} = {x}` and
+    probabilities sum to 1 on the singleton. -/
+theorem binary_self (cf : ChoiceFn A) (x : A) : cf.binary x x = 1 := by
+  have h := cf.prob_sum_eq_one {x} ⟨x, Finset.mem_singleton_self x⟩
+  simpa [binary] using h
+
 end ChoiceFn
 
 /-- **Axiom 1, Form (a)**: ratio scale representation.
@@ -661,6 +667,28 @@ theorem axiom1_ratio_iff_pairwiseIIA [Inhabited A] (cf : ChoiceFn A)
     (hpos : ∀ (T : Finset A) (a : A), a ∈ T → 0 < cf.prob T a) :
     cf.hasRatioScale ↔ cf.hasPairwiseIIA :=
   ⟨ratio_implies_pairwiseIIA cf, fun h => pairwiseIIA_implies_ratio cf h hpos⟩
+
+/-- A positive binary ratio scale on a set `S`: binary choice between distinct
+    elements of `S` follows the Luce rule `P(x, y) = v x / (v x + v y)`.
+
+    This is the binary trace of `hasRatioScale` restricted to `S`
+    (`ChoiceFn.hasRatioScale.binaryRatioScaleOn`). Keeping `S` local matters for
+    [luce-1959]'s Chapter 3, which mixes imperfect discrimination (a ratio scale
+    on a small set of gambles, via Theorem 4) with perfect discrimination
+    (`P ∈ {0, 1}`) elsewhere — a global positive scale forces every binary
+    probability into `(0, 1)`. Restricting to distinct pairs matters because
+    `binary x x = 1 ≠ 1/2` (`ChoiceFn.binary_self`). -/
+def ChoiceFn.BinaryRatioScaleOn (cf : ChoiceFn A) (S : Set A) (v : A → ℝ) : Prop :=
+  (∀ x ∈ S, 0 < v x) ∧
+    ∀ x ∈ S, ∀ y ∈ S, x ≠ y → cf.binary x y = v x / (v x + v y)
+
+/-- A global ratio scale restricts to a binary ratio scale on every set. -/
+theorem ChoiceFn.hasRatioScale.binaryRatioScaleOn {cf : ChoiceFn A}
+    (h : cf.hasRatioScale) : ∃ v : A → ℝ, ∀ S : Set A, cf.BinaryRatioScaleOn S v := by
+  obtain ⟨v, hv_pos, hv_rule⟩ := h
+  refine ⟨v, fun S => ⟨fun x _ => hv_pos x, fun x _ y _ hxy => ?_⟩⟩
+  rw [ChoiceFn.binary, hv_rule {x, y} x (Finset.mem_insert_self x _),
+      Finset.sum_pair hxy]
 
 end Appendix1
 
