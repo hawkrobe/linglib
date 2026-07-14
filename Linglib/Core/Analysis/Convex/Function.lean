@@ -25,28 +25,20 @@ variable [Semiring 𝕜] [PartialOrder 𝕜] [AddCommMonoid E]
   [AddCommMonoid β] [LinearOrder β] [IsOrderedAddMonoid β]
   [SMul 𝕜 E] [Module 𝕜 β] [PosSMulStrictMono 𝕜 β] {s : Set E}
 
-/-- The pointwise supremum of a nonempty finite family of convex functions is
-convex: the `Finset.sup'` generalization of `ConvexOn.sup`. -/
+/-- The supremum of a nonempty finite family of convex functions is convex:
+the `Finset.sup'` generalization of `ConvexOn.sup`. -/
 theorem convexOn_finset_sup' {t : Finset ι} (ht : t.Nonempty) {f : ι → E → β}
-    (hf : ∀ i ∈ t, ConvexOn 𝕜 s (f i)) :
-    ConvexOn 𝕜 s (fun x => t.sup' ht (f · x)) := by
+    (hf : ∀ i ∈ t, ConvexOn 𝕜 s (f i)) : ConvexOn 𝕜 s (t.sup' ht f) := by
   induction ht using Finset.Nonempty.cons_induction with
-  | singleton i =>
-    have h := hf i (mem_singleton_self i)
-    simpa only [sup'_singleton] using h
+  | singleton i => simpa using hf i (mem_singleton_self i)
   | cons i t hi ht ih =>
-    have heq : (fun x => (cons i t hi).sup' (cons_nonempty hi) (f · x))
-        = f i ⊔ fun x => t.sup' ht (f · x) :=
-      funext (λ x => sup'_cons ht (f · x))
-    rw [heq]
-    exact (hf i (mem_cons_self i t)).sup
-      (ih (λ j hj => hf j (mem_cons_of_mem hj)))
+    rw [sup'_cons ht]
+    exact (hf i (mem_cons_self i t)).sup (ih fun j hj => hf j (mem_cons_of_mem hj))
 
-/-- The pointwise infimum of a nonempty finite family of concave functions is
-concave: the `Finset.inf'` generalization of `ConcaveOn.inf`. -/
+/-- The infimum of a nonempty finite family of concave functions is concave:
+the `Finset.inf'` generalization of `ConcaveOn.inf`. -/
 theorem concaveOn_finset_inf' {t : Finset ι} (ht : t.Nonempty) {f : ι → E → β}
-    (hf : ∀ i ∈ t, ConcaveOn 𝕜 s (f i)) :
-    ConcaveOn 𝕜 s (fun x => t.inf' ht (f · x)) :=
+    (hf : ∀ i ∈ t, ConcaveOn 𝕜 s (f i)) : ConcaveOn 𝕜 s (t.inf' ht f) :=
   convexOn_finset_sup' (β := βᵒᵈ) ht hf
 
 end LinearOrderedAddCommMonoid
