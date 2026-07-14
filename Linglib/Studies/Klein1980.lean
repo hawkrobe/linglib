@@ -38,7 +38,7 @@ equivalence) lives in the theory layer: `Delineation.lean` §10.
 
 ## Connections
 
-- **Theory layer**: `Semantics/Degree/Gradability/Delineation.lean`
+- **Theory layer**: `Semantics/Degree/Delineation.lean`
   (comparison classes, ordering, monotonicity, very/fairly, less/as)
 - **Kamp (1975)**: `Studies/Kamp1975.lean` §3 (Kamp→Klein lineage,
   `kampPreorder` = `kleinPreorder` over Set.univ)
@@ -320,14 +320,9 @@ theorem klein_almost_connected {Entity : Type*}
 /-- Klein's preorder is exactly Kamp's preorder (over all completions)
     when both use the same extension function. -/
 theorem kleinPreorder_eq_kampPreorder {E : Type*}
-    (delineation : ComparisonClass E → E → Prop)
-    [∀ C (x : E), Decidable (delineation C x)] (u u' : E) :
+    (delineation : ComparisonClass E → E → Prop) (u u' : E) :
     (kleinPreorder delineation).le u u' ↔
-    (Kamp1975.kampPreorder (fun C x => decide (delineation C x)) Set.univ).le u u' := by
-  constructor
-  · intro h c _ hext
-    exact decide_eq_true_eq.mpr (h c (decide_eq_true_eq.mp hext))
-  · intro h c hd
-    exact decide_eq_true_eq.mp (h c (Set.mem_univ _) (decide_eq_true_eq.mpr hd))
+    (Kamp1975.kampPreorder delineation Set.univ).le u u' :=
+  ⟨fun h c _ => h c, fun h c => h c (Set.mem_univ _)⟩
 
 end Klein1980
