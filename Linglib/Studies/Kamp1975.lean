@@ -120,7 +120,7 @@ theorem kleene_dilemma :
 
 /-! ### Kamp → Klein Lineage -/
 
-/-! [kamp-1975]'s completion-based comparative definition:
+/-! [kamp-1975]'s completion-based comparative, definition (12):
 
     u₁ is at least as A as u₂ iff for every completion M' ∈ S where
     u₂ is in the extension of A, u₁ is also in the extension.
@@ -133,9 +133,11 @@ theorem kleene_dilemma :
     is equivalent to Klein's "¬∃ completion where u₂ ∈ ext ∧ u₁ ∉ ext",
     and Klein's strict comparative adds the asymmetric witness. -/
 
-/-- Kamp's completion-based comparative induces a `Preorder` on
-    entities: `u₁ ≤ u₂` iff every completion in S that puts u₂ in the
-    extension also puts u₁ in the extension.
+/-- Kamp's completion-based comparative (definition (12)) induces a
+    `Preorder` on entities: `u₁ ≤ u₂` iff every completion in S that puts
+    u₂ in the extension also puts u₁ in the extension. Kamp notes (12) is
+    "precisely the proposal … in Lewis (1970), where it is attributed to
+    David Kaplan".
 
     This is the S-restricted analogue of `kleinPreorder` from
     `Delineation.lean`. The extension parameter remains `Bool`-valued
@@ -183,7 +185,8 @@ inductive E3 | a | b | c
     `{x | gray(x)} ∩ {x | N(w)(x)}` — a fixed property independent of
     the noun.
 
-    Models [kamp-1975]'s intersective class. Entailment pattern:
+    Models [kamp-1975] definition (4), his "predicative" class (the
+    modern *intersective*). Entailment pattern:
     "gray cat" entails both "gray" and "cat"; "gray" + "cat" entails
     "gray cat". -/
 def grayAdj : Modifier (Property W2 E3) := fun N w x =>
@@ -202,11 +205,13 @@ example : isSubsective grayAdj := gray_intersective.isSubsective
 /-- **"fake"**: a privative adjective (traditional analysis). "Fake N"
     entities are never N.
 
-    Models [kamp-1975]'s privative class. Entailment pattern:
-    "fake gun" entails "not a gun".
+    Models [kamp-1975] definition (5); *fake* and *false* are Kamp's
+    examples. Entailment pattern: "fake gun" entails "not a gun".
 
-    [partee-2010] argues this class should be reanalyzed as
-    subsective with noun coercion — see `Partee2010.lean`. -/
+    Kamp himself doubts "that there is any English adjective which is
+    privative (in the precise sense here defined) in all of its possible
+    uses" — anticipating [partee-2010]'s reanalysis of the class as
+    subsective with noun coercion; see `Partee2010.lean`. -/
 def fakeAdj : Modifier (Property W2 E3) := fun N w x =>
   (match x with | .b => True | _ => False) ∧ ¬ N w x
 
@@ -217,7 +222,9 @@ theorem fake_privative : isPrivative fakeAdj :=
     Being a "skillful N" depends on N's intension — what counts as an N
     across worlds — not just who the N's are in this world.
 
-    Models [kamp-1975]'s subsective-but-not-extensional case.
+    Models [kamp-1975] definition (6), his "affirmative" class (the
+    modern *subsective*), without definition (7); *skilful* is Kamp's own
+    non-extensional example.
     Entailment pattern: "skillful surgeon" entails "surgeon" (subsective),
     but "skillful surgeon" + "violinist" does not entail "skillful
     violinist" (not intersective, because not extensional). -/
@@ -241,7 +248,8 @@ theorem skillful_not_extensional : ¬ Intensional.IsExtensional skillfulAdj := b
   have hLHS : skillfulAdj N₁ .w₂ .a := ⟨trivial, trivial⟩
   exact (congrFun h .a ▸ hLHS).2
 
-/-- **"alleged"**: a non-subsective (modal) adjective. An "alleged N"
+/-- **"alleged"**: a non-subsective (modal) adjective — [kamp-1975]'s
+    opening example (1), "Every alleged thief is a thief". An "alleged N"
     may or may not be an N — the adjective creates an intensional
     context without entailing or anti-entailing the noun.
 

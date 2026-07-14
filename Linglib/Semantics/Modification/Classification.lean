@@ -14,9 +14,11 @@ unfolding lemmas, the implication structure, and [partee-2010]'s
 post-collapse three-class hierarchy.
 
 The classification descends from the operator treatment of modifiers
-introduced independently by [parsons-1970] (intersective = his
-"predicative", subsective = his "standard") and [kamp-1975], and was
-consolidated in [kamp-partee-1995]; the class labels are Partee's.
+introduced independently by [parsons-1970] and [kamp-1975] — Kamp's
+definitions (4)–(7): "predicative" (intersective), "privative",
+"affirmative" (subsective), "extensional"; Parsons's terms were
+"predicative" and "standard" — and was consolidated in
+[kamp-partee-1995]; the modern labels are Partee's.
 Extensionality — dependence on the noun's extension at each world — is
 the orthogonal, cross-cutting dimension, not a rung of the entailment
 hierarchy: it is `Intensional.IsExtensional` at this carrier, and
@@ -59,7 +61,8 @@ variable {W E : Type*} {adj : Modifier (Property W E)}
 
 /-- Pointwise form of `Modifier.isIntersective` at the intensional
     carrier: the extension at each world is the intersection of the
-    noun's extension with some fixed property Q.
+    noun's extension with some fixed property Q ([kamp-1975]
+    definition (4), "predicative").
 
     Examples: "gray", "French", "carnivorous", "four-legged". -/
 theorem isIntersective_iff :
@@ -69,7 +72,8 @@ theorem isIntersective_iff :
   simp only [isIntersective, funext_iff, Pi.inf_apply, inf_Prop_eq, eq_iff_iff]
 
 /-- Pointwise form of `Modifier.isPrivative` at the intensional carrier:
-    the extension is always disjoint from the noun's extension.
+    the extension is always disjoint from the noun's extension
+    ([kamp-1975] definition (5)).
 
     Examples: "fake", "counterfeit".
     [partee-2010] argues this class should be eliminated. -/
