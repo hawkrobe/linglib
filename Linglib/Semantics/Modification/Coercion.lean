@@ -3,33 +3,25 @@ import Linglib.Semantics.Modification.Classification
 /-!
 # Modification-time noun coercion (NVP + HPP)
 
-`LicensedCoercion` and `SubsectiveReanalysis`: type-level architecture for
-noun-extension widening under the Non-Vacuity Principle and Head Primacy
-Principle of [kamp-partee-1995] (§ 5.3, p. 161; stated as formulae (18)
-and (20) in [partee-2010] § 4), used by [partee-2010] to reanalyse
-privative adjectives as subsective-after-coercion. Both principles are
-anticipated in [kamp-1975] § 7: the noun as the central contextual
-factor fixing the adjective's standards, and the requirement that an
-attributive adjective "cut the extension of the noun" nontrivially.
-Consumed by `Studies/Partee2010.lean` and `Studies/DelPinal2015.lean`.
+Noun-extension widening under the Non-Vacuity and Head Primacy
+Principles of [kamp-partee-1995], used by [partee-2010] to reanalyse
+privative adjectives as subsective-after-coercion; both principles are
+anticipated in [kamp-1975] § 7.
 
 ## Main definitions
 
 * `isNonVacuous P w d`: NVP at world `w` within local domain `d`.
-* `LicensedCoercion N adj w`: NVP-licensed widening of `N`. The `shift`
-  is a full intension even though licensing holds at the single context
-  world `w`: a non-extensional `adj` reads the shift's values at other
-  worlds.
-* `SubsectiveReanalysis adjClassical`: reanalysis as subsective-after-coercion.
+* `LicensedCoercion N adj w`: NVP-licensed widening of `N`.
+* `SubsectiveReanalysis adjClassical`: reanalysis as
+  subsective-after-coercion.
 
 ## Implementation notes
 
-This models the adjective-triggered widening of [partee-2010]'s fake-fur
-case; the constitutive-material case (stone lion) is bracketed there and
-not modelled here. `isNonVacuous` states the NVP bivalently (negative
-extension = complement), simplifying [kamp-partee-1995]'s partial
-setting. Not to be confused with complement coercion
-(`Studies/Pustejovsky1995.lean`), NP type-shifting
+This models the fake-fur widening of [partee-2010] § 4 (its formulae
+(18) and (20)); the constitutive-material case (stone lion) is bracketed
+there. `isNonVacuous` states the NVP bivalently, simplifying
+[kamp-partee-1995]'s partial setting. Not to be confused with complement
+coercion (`Studies/Pustejovsky1995.lean`), NP type-shifting
 (`Semantics/Composition/TypeShifting.lean`), or aspectual coercion
 (`Semantics/Aspect/Composition.lean`).
 -/
@@ -57,7 +49,9 @@ theorem isNonVacuous_compl {P : Property W E} {w : W} {d : E → Prop} :
   exact and_comm
 
 /-- A wider noun extension `shift ⊇ N` at `w` under which `adj shift`
-    is non-vacuous in `shift`'s extension (the HPP local domain). -/
+    is non-vacuous in `shift`'s extension (the HPP local domain). The
+    `shift` is a full intension although licensing holds at the single
+    world `w`: a non-extensional `adj` reads its values at other worlds. -/
 structure LicensedCoercion (N : Property W E) (adj : Modifier (Property W E)) (w : W) where
   shift : Property W E
   le_shift : N w ≤ shift w
