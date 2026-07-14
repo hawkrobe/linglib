@@ -1,6 +1,8 @@
 import Linglib.Semantics.Modification.Classification
 import Linglib.Core.Logic.Trivalent
 import Mathlib.Data.Set.Basic
+import Mathlib.Algebra.Order.Ring.Rat
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
 /-!
 # Kamp (1975): Two Theories about Adjectives [kamp-1975]
@@ -33,6 +35,9 @@ and § 3 formalizes the comparative definitions that descend from it.
 - § 2: Many-valued logic failure (motivation for Theory 2)
 - § 3: Kamp → Klein lineage: `kampAtLeastAs` ↔ `kleinMoreThan`
 - § 4: Concrete witnesses for each hierarchy class
+- § 5: definitions (12) vs (13) — the measure comparative forces
+  totality (*clever*); one-dimensionality (18) collapses the two
+  (*heavy*)
 
 ## Key Insight
 
@@ -155,6 +160,105 @@ theorem kleene_dilemma :
 theorem kampPreorder_antitone {E C : Type*} (ext : C → E → Bool) (u₁ u₂ : E) :
     Antitone (fun S => (kampPreorder ext S).le u₁ u₂) :=
   fun _ _ hle hall c hc => hall c (hle hc)
+
+/-! ### (12) vs (13): definite vs measured comparatives (§ 5)
+
+Kamp's second candidate, definition (13), compares the *measures* of the
+completion sets rather than the sets themselves. § 5 argues (13) is wrong
+for multi-criteria adjectives — it forces any two entities to be
+comparable — while (12) correctly leaves Smith and Jones incomparable in
+cleverness; for "one-dimensional" adjectives (condition (18): *heavy*,
+*tall*, *hot*) the two provably coincide. -/
+
+section MeasuredComparative
+
+variable {E C : Type*}
+
+/-- [kamp-1975] definition (13): the measure-based comparative. `u₁ ≤ u₂`
+    iff the weighted measure of completions putting `u₂` in the extension
+    is at most the measure of those putting `u₁` in (mirroring
+    `kampPreorder`'s orientation). -/
+def kamp13Le (ext : C → E → Bool) (S : Finset C) (p : C → ℚ) (u₁ u₂ : E) : Prop :=
+  ∑ c ∈ S with ext c u₂ = true, p c ≤ ∑ c ∈ S with ext c u₁ = true, p c
+
+/-- (13) is total: measures are rationals, hence linearly ordered — Kamp's
+    § 5 objection that (13) "implies that for any objects u₁ and u₂ ...
+    either u₁ is at least as A as u₂ or u₂ is at least as A as u₁". -/
+theorem kamp13Le_total (ext : C → E → Bool) (S : Finset C) (p : C → ℚ)
+    (u₁ u₂ : E) : kamp13Le ext S p u₁ u₂ ∨ kamp13Le ext S p u₂ u₁ :=
+  le_total _ _
+
+/-- Definite comparison entails measured comparison: (12) implies (13)
+    for nonnegative weights. -/
+theorem kamp13Le_of_kampPreorder_le (ext : C → E → Bool) (S : Finset C)
+    (p : C → ℚ) (hp : ∀ c ∈ S, 0 ≤ p c) {u₁ u₂ : E}
+    (h : (kampPreorder ext (S : Set C)).le u₁ u₂) :
+    kamp13Le ext S p u₁ u₂ := by
+  refine Finset.sum_le_sum_of_subset_of_nonneg ?_ fun c hc _ => hp c (Finset.mem_filter.mp hc).1
+  intro c hc
+  rw [Finset.mem_filter] at hc ⊢
+  exact ⟨hc.1, h c hc.1 hc.2⟩
+
+/-! ### The Smith/Jones incomparability witness (§ 5)
+
+Two criteria for *clever* — problem-solving and quick-wittedness — as two
+completions; Smith excels at one, Jones at the other. Under (12) the two
+are incomparable (correct, per Kamp); (13) would force a verdict. -/
+
+private inductive Crit | problemSolving | quickWit deriving DecidableEq
+
+private inductive P2 | smith | jones deriving DecidableEq
+
+private def cleverExt : Crit → P2 → Bool
+  | .problemSolving, .smith => true
+  | .quickWit,       .jones => true
+  | _,               _      => false
+
+/-- Under (12), Smith and Jones are incomparable in cleverness — Kamp's
+    argument that (12) "captures the comparative correctly" for
+    multi-criteria adjectives, against (13)'s forced totality
+    (`kamp13Le_total`). -/
+theorem clever_incomparable :
+    ¬ (kampPreorder cleverExt Set.univ).le .smith .jones ∧
+    ¬ (kampPreorder cleverExt Set.univ).le .jones .smith :=
+  ⟨fun h => by simpa [cleverExt] using h .quickWit trivial rfl,
+   fun h => by simpa [cleverExt] using h .problemSolving trivial rfl⟩
+
+/-! ### One-dimensionality (18) -/
+
+/-- [kamp-1975] condition (18): an adjective is *one-dimensional* on `S`
+    when any two entities' completion-sets are `⊆`-comparable — the
+    extensions form a chain, as with threshold adjectives (*heavy*,
+    *tall*, *hot*). -/
+def OneDimensional (ext : C → E → Bool) (S : Finset C) : Prop :=
+  ∀ u₁ u₂ : E, (∀ c ∈ S, ext c u₁ = true → ext c u₂ = true) ∨
+    (∀ c ∈ S, ext c u₂ = true → ext c u₁ = true)
+
+/-- For one-dimensional adjectives with strictly positive weights, the
+    measured comparative (13) collapses to the definite comparative (12)
+    — Kamp's § 5 observation that "for this special case the two
+    definitions are equivalent" (*heavy*). -/
+theorem kampPreorder_le_iff_kamp13Le (ext : C → E → Bool) (S : Finset C)
+    (p : C → ℚ) (hp : ∀ c ∈ S, 0 < p c) (h18 : OneDimensional ext S)
+    (u₁ u₂ : E) :
+    (kampPreorder ext (S : Set C)).le u₁ u₂ ↔ kamp13Le ext S p u₁ u₂ := by
+  refine ⟨kamp13Le_of_kampPreorder_le ext S p (fun c hc => (hp c hc).le), fun h13 => ?_⟩
+  rcases h18 u₂ u₁ with h | h
+  · exact fun c hc => h c hc
+  · -- u₁-set ⊆ u₂-set; equal measures force equal filter sets under positivity
+    intro c hcS hc₂
+    by_contra hc₁
+    have hlt : ∑ c ∈ S with ext c u₁ = true, p c < ∑ c ∈ S with ext c u₂ = true, p c := by
+      refine Finset.sum_lt_sum_of_subset ?_ (i := c) ?_ ?_ (hp c hcS) ?_
+      · intro d hd
+        rw [Finset.mem_filter] at hd ⊢
+        exact ⟨hd.1, h d hd.1 hd.2⟩
+      · exact Finset.mem_filter.mpr ⟨hcS, hc₂⟩
+      · simp [hc₁]
+      · exact fun d hd _ => (hp d (Finset.mem_filter.mp hd).1).le
+    exact absurd h13 (not_le.mpr hlt)
+
+end MeasuredComparative
 
 /-! ### Concrete Witnesses for Each Class
 
