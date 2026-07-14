@@ -33,7 +33,7 @@ via the **TensorAlgebra detour**:
 4. Show this respects `TensorAlgebra.SymRel` (the symmetric-algebra
    relation `ι(x)·ι(y) ~ ι(y)·ι(x)`) — substantive content uses
    `circTMultilinear_symm` (Lemma 2.5).
-5. Lift through the `SymmetricAlgebra = RingQuot SymRel` quotient.
+5. Lift through the `SymmetricAlgebra = (ringConGen SymRel).Quotient` quotient.
 
 Composed with mathlib's `SymmetricAlgebra.ι : L →ₗ[R] SymmetricAlgebra R L`
 on the codomain, this is the per-T operation `ι(T) ○ ·` of the OG ○.
@@ -47,7 +47,7 @@ left-arguments via OG Prop 2.7.iii.
   TensorAlgebra-level `circTTensor`) — sorry-free.
 - Item 4 (`circTTensor_symRel`: respects SymRel at n = 2 via
   `circTMultilinear_two_eval` + `RightPreLieRing.assoc_symm'`) — sorry-free.
-- Item 5 (`circByT_total`: lift through the `RingQuot` quotient to
+- Item 5 (`circByT_total`: lift through the `RingCon` quotient to
   `SymmetricAlgebra R L →ₗ[R] L`) — sorry-free via `Submodule.liftQ` +
   `LinearMap.quotKerEquivOfSurjective` on surjective `algHomL`. The kernel
   containment `ker algHomL ≤ ker (circTTensor T)` is proven through:
@@ -56,9 +56,9 @@ left-arguments via OG Prop 2.7.iii.
   + `PiTensorProduct.ext`);
   (b) `circTTensor_swap_general` (bilinear extension of `circTTensor_swap_tprod`
   to general `r, d ∈ TensorAlgebra`);
-  (c) `RingQuot.Rel`/`EqvGen` induction with the strong motive
+  (c) `RingConGen.Rel` induction with the strong motive
   `∀ r d, circTTensor T (r * z₁ * d) = circTTensor T (r * z₂ * d)`,
-  closing under `add_left`/`mul_left`/`mul_right` via associativity + additivity.
+  closing under `add`/`mul` via associativity + additivity.
 
 ## References
 
@@ -418,73 +418,66 @@ private lemma circTTensor_swap_general (T : L) (X Y : L) (r d : TensorAlgebra R 
     exact this
   exact h_d d'
 
-/-! ### §5.C: Kernel containment via Rel/EqvGen induction
+/-! ### §5.C: Kernel containment via `RingConGen.Rel` induction
 
-`ker algHomL ≤ ker (circTTensor T)`. Proof: `algHomL z = 0` iff `z` is in
-the same `Quot (Rel SymRel)`-class as `0`. Via Rel induction with a strong
-motive (`∀ r d, circTTensor T (r * z₁ * d) = circTTensor T (r * z₂ * d)`),
-the algebraic closure under `add_left`, `mul_left`, `mul_right` is preserved,
-and the base case is `circTTensor_swap_general`. -/
+`ker algHomL ≤ ker (circTTensor T)`. `SymmetricAlgebra R L` is the quotient of
+`TensorAlgebra R L` by the ring congruence `symRingCon R L = ringConGen SymRel`,
+whose underlying relation is `RingConGen.Rel SymRel` — already closed under
+`refl`/`symm`/`trans` (unlike `RingQuot.Rel`, which needed a separate `EqvGen`
+wrapper). `algHomL z = 0` iff `RingConGen.Rel SymRel z 0` (via `RingCon.eq`).
+Via `RingConGen.Rel` induction with a strong motive
+(`∀ r d, circTTensor T (r * z₁ * d) = circTTensor T (r * z₂ * d)`), the
+algebraic closure under `add` and `mul` is preserved, and the base case is
+`circTTensor_swap_general`. -/
 
-/-- Strong respects-relation property: invariant under `Rel SymRel`-related
-    elements, even after wrapping by arbitrary `r * · * d`. -/
+/-- Strong respects-relation property: invariant under `RingConGen.Rel SymRel`-
+    related elements, even after wrapping by arbitrary `r * · * d`. -/
 private lemma circTTensor_resp_Rel_strong (T : L) :
     ∀ {z₁ z₂ : TensorAlgebra R L},
-    RingQuot.Rel (TensorAlgebra.SymRel R L) z₁ z₂ →
+    RingConGen.Rel (TensorAlgebra.SymRel R L) z₁ z₂ →
     ∀ r d : TensorAlgebra R L,
       circTTensor T (r * z₁ * d) = circTTensor T (r * z₂ * d) := by
   intro z₁ z₂ h
   induction h with
-  | of h_sym =>
+  | of x y h_sym =>
     induction h_sym with
     | mul_comm X Y =>
       intro r d
       exact circTTensor_swap_general T X Y r d
-  | add_left _ ih =>
+  | refl x =>
+    intro r d; rfl
+  | symm _ ih =>
     intro r d
-    -- z₁ = a + c, z₂ = b + c with Rel a b
-    -- (r * (a + c) * d) = r * a * d + r * c * d
-    simp only [mul_add, add_mul, map_add, ih r d]
-  | @mul_left a b c _ ih =>
+    exact (ih r d).symm
+  | trans _ _ ih₁ ih₂ =>
     intro r d
-    -- z₁ = a * c, z₂ = b * c with Rel a b. Associate to apply IH with d' = c * d.
-    have hL : r * (a * c) * d = r * a * (c * d) := by
-      simp only [mul_assoc]
-    have hR : r * (b * c) * d = r * b * (c * d) := by
-      simp only [mul_assoc]
-    rw [hL, hR]
-    exact ih r (c * d)
-  | @mul_right a b c _ ih =>
+    exact (ih₁ r d).trans (ih₂ r d)
+  | @add w x y z _ _ ih₁ ih₂ =>
     intro r d
-    -- z₁ = a * b, z₂ = a * c with Rel b c. Associate to apply IH with r' = r * a.
-    have hL : r * (a * b) * d = (r * a) * b * d := by
-      simp only [mul_assoc]
-    have hR : r * (a * c) * d = (r * a) * c * d := by
-      simp only [mul_assoc]
-    rw [hL, hR]
-    exact ih (r * a) d
+    -- (w + y) ~ (x + z) with Rel w x, Rel y z.
+    -- r * (w + y) * d = r * w * d + r * y * d
+    simp only [mul_add, add_mul, map_add, ih₁ r d, ih₂ r d]
+  | @mul w x y z _ _ ih₁ ih₂ =>
+    intro r d
+    -- (w * y) ~ (x * z) with Rel w x, Rel y z. Chain: fix d' = y * d first (ih₁),
+    -- then fix r' = r * x (ih₂).
+    have hL : r * (w * y) * d = r * w * (y * d) := by simp only [mul_assoc]
+    have hR : r * (x * z) * d = r * x * z * d := by simp only [mul_assoc]
+    have hM : r * x * (y * d) = r * x * y * d := by simp only [mul_assoc]
+    rw [hL, hR, ih₁ r (y * d), hM, ih₂ (r * x) d]
 
-/-- `circTTensor T` respects `Rel SymRel` (pointwise). -/
+/-- `circTTensor T` respects `RingConGen.Rel SymRel` (pointwise). -/
 private lemma circTTensor_resp_Rel (T : L) {z₁ z₂ : TensorAlgebra R L}
-    (h : RingQuot.Rel (TensorAlgebra.SymRel R L) z₁ z₂) :
+    (h : RingConGen.Rel (TensorAlgebra.SymRel R L) z₁ z₂) :
     circTTensor T z₁ = circTTensor T z₂ := by
   have := circTTensor_resp_Rel_strong T h 1 1
   simpa using this
 
-/-- `circTTensor T` respects the equivalence closure of `Rel SymRel`. -/
-private lemma circTTensor_resp_EqvGen (T : L) {z₁ z₂ : TensorAlgebra R L}
-    (h : Relation.EqvGen (RingQuot.Rel (TensorAlgebra.SymRel R L)) z₁ z₂) :
-    circTTensor T z₁ = circTTensor T z₂ := by
-  induction h with
-  | rel _ _ h => exact circTTensor_resp_Rel T h
-  | refl _ => rfl
-  | symm _ _ _ ih => exact ih.symm
-  | trans _ _ _ _ _ ih₁ ih₂ => exact ih₁.trans ih₂
-
 /-- **Kernel-containment**: `circTTensor T` vanishes on `ker algHomL`.
 
-    Proof: `algHomL z = 0` iff `Quot.mk (Rel SymRel) z = Quot.mk (Rel SymRel) 0`
-    iff `EqvGen (Rel SymRel) z 0`. Apply `circTTensor_resp_EqvGen` and conclude
+    Proof: `algHomL z = algHomL 0` iff `(z : SymmetricAlgebra R L) = ↑(0 : TensorAlgebra R L)`
+    iff `RingConGen.Rel SymRel z 0` (via `symRingCon = ringConGen SymRel` and
+    `RingCon.eq`). Apply `circTTensor_resp_Rel` and conclude
     `circTTensor T z = circTTensor T 0 = 0`. -/
 private theorem circTTensor_vanishes_on_ker (T : L) :
     LinearMap.ker (algHomL (R := R) (L := L)) ≤ LinearMap.ker (circTTensor T) := by
@@ -492,24 +485,11 @@ private theorem circTTensor_vanishes_on_ker (T : L) :
   rw [LinearMap.mem_ker] at hz ⊢
   -- algHomL z = 0 = algHomL 0
   rw [← (algHomL (R := R) (L := L)).map_zero] at hz
-  -- Unfold algHomL = mkAlgHom, get to Quot.mk equality.
-  -- mkAlgHom z = mkAlgHom 0 iff Quot.mk z = Quot.mk 0 iff EqvGen z 0.
-  have h_quot : (Quot.mk (RingQuot.Rel (TensorAlgebra.SymRel R L)) z :
-                  Quot (RingQuot.Rel (TensorAlgebra.SymRel R L))) =
-                Quot.mk _ 0 := by
-    have : (SymmetricAlgebra.algHom R L z).toQuot =
-           (SymmetricAlgebra.algHom R L (0 : TensorAlgebra R L)).toQuot := by
-      exact congrArg (·.toQuot) hz
-    -- SymmetricAlgebra.algHom = mkAlgHom; mkAlgHom z = ⟨Quot.mk (Rel SymRel) z⟩ up to def.
-    -- Unfold to extract the Quot equality.
-    simp only [SymmetricAlgebra.algHom, RingQuot.mkAlgHom_def, RingQuot.mkRingHom_def] at this
-    exact this
-  -- From Quot.mk equality, derive EqvGen.
-  have h_eqv : Relation.EqvGen (RingQuot.Rel (TensorAlgebra.SymRel R L)) z 0 :=
-    Quot.eqvGen_exact h_quot
-  -- Apply circTTensor_resp_EqvGen.
-  have := circTTensor_resp_EqvGen T h_eqv
-  rw [this, (circTTensor T).map_zero]
+  -- algHomL is the canonical map into the `symRingCon`-quotient; extract the congruence.
+  have h_coe : (z : SymmetricAlgebra R L) = ((0 : TensorAlgebra R L) : SymmetricAlgebra R L) := hz
+  have h_rel : RingConGen.Rel (TensorAlgebra.SymRel R L) z 0 :=
+    (TensorAlgebra.symRingCon R L).eq.mp h_coe
+  rw [circTTensor_resp_Rel T h_rel, (circTTensor T).map_zero]
 
 /-- The per-T OG operation, on `SymmetricAlgebra R L`. Lands in `L`.
 
@@ -535,10 +515,10 @@ private theorem circTMultilinear_T_add (n : ℕ) (T₁ T₂ : L) :
   induction n with
   | zero =>
     ext f
-    simp only [circTMultilinear_zero, MultilinearMap.add_apply]
+    simp only [circTMultilinear_zero, add_apply]
   | succ n ih =>
     ext f
-    simp only [MultilinearMap.add_apply]
+    simp only [add_apply]
     rw [circTMultilinear_succ, circTMultilinear_succ, circTMultilinear_succ]
     have h_init : ∀ (g : Fin n → L),
         circTMultilinear R (T₁ + T₂) n g =
@@ -563,10 +543,10 @@ private theorem circTMultilinear_T_smul (n : ℕ) (r : R) (T : L) :
   induction n with
   | zero =>
     ext f
-    simp only [circTMultilinear_zero, MultilinearMap.smul_apply]
+    simp only [circTMultilinear_zero, smul_apply]
   | succ n ih =>
     ext f
-    simp only [MultilinearMap.smul_apply]
+    simp only [smul_apply]
     rw [circTMultilinear_succ, circTMultilinear_succ]
     have h_init : ∀ (g : Fin n → L),
         circTMultilinear R (r • T) n g = r • circTMultilinear R T n g := by
@@ -586,7 +566,7 @@ private theorem circTTensor_T_add (T₁ T₂ : L) :
     circTTensor (R := R) (T₁ + T₂) = circTTensor T₁ + circTTensor T₂ := by
   apply TA_linearMap_ext_tprod
   intro n a
-  rw [circTTensor_tprod, circTMultilinear_T_add, MultilinearMap.add_apply,
+  rw [circTTensor_tprod, circTMultilinear_T_add, add_apply,
       LinearMap.add_apply, circTTensor_tprod, circTTensor_tprod]
 
 /-- `circTTensor` is `R`-homogeneous in `T`. Via `TA_linearMap_ext_tprod`. -/
@@ -594,7 +574,7 @@ private theorem circTTensor_T_smul (r : R) (T : L) :
     circTTensor (R := R) (r • T) = r • circTTensor T := by
   apply TA_linearMap_ext_tprod
   intro n a
-  rw [circTTensor_tprod, circTMultilinear_T_smul, MultilinearMap.smul_apply,
+  rw [circTTensor_tprod, circTMultilinear_T_smul, smul_apply,
       LinearMap.smul_apply, circTTensor_tprod]
 
 /-- **Key characterization**: `circByT_total T` agrees with `circTTensor T`

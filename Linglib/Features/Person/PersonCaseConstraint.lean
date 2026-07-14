@@ -216,7 +216,8 @@ instance : Preorder PCCGrammar where
   le_refl _ := Finset.Subset.refl _
   le_trans _ _ _ h₁₂ h₂₃ := Finset.Subset.trans h₁₂ h₂₃
 
-instance (g₁ g₂ : PCCGrammar) : Decidable (g₁ ≤ g₂) := inferInstanceAs (Decidable (_ ⊆ _))
+instance (g₁ g₂ : PCCGrammar) : Decidable (g₁ ≤ g₂) :=
+  inferInstanceAs (Decidable (licitFinset g₁ ⊆ licitFinset g₂))
 
 /-- Entailment unfolded: every licit cell of `g₁` is licit in `g₂`. -/
 theorem le_iff_isLicit_imp (g₁ g₂ : PCCGrammar) :

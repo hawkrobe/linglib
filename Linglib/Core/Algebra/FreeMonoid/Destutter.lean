@@ -172,8 +172,10 @@ theorem destutterCon_eq_conGen : destutterCon (α := α) = conGen (destutterRel 
 /-- The concrete stutter-free model **is** the monoid presented by idempotent generators
 `⟨α | a · a = a⟩`, with `destutter (· ≠ ·)` computing normal forms. -/
 def presentedMonoidEquiv :
-    PresentedMonoid (destutterRel α) ≃* {l : List α // l.IsChain (· ≠ ·)} :=
-  (Con.congr destutterCon_eq_conGen.symm).trans destutterQuotientEquiv
+    PresentedMonoid (destutterRel α) ≃* {l : List α // l.IsChain (· ≠ ·)} := by
+  have h : (conGen (destutterRel α)).Quotient ≃* (destutterCon (α := α)).Quotient :=
+    (destutterCon_eq_conGen (α := α)).symm ▸ MulEquiv.refl (destutterCon (α := α)).Quotient
+  exact h.trans destutterQuotientEquiv
 
 /-! ### Universal property: the free monoid on idempotent generators -/
 

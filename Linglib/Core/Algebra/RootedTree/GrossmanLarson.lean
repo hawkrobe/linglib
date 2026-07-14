@@ -187,14 +187,17 @@ structure's `toFinsuppAlgEquiv` (the sanctioned escape hatch to the bare
 private noncomputable def basisLift {M : Type*} [AddCommMonoid M] [Module R M]
     (f : Forest (Nonplanar α) → M) : GrossmanLarson R α →ₗ[R] M :=
   (Finsupp.linearCombination R f).comp
-    (ConnesKreimer.toFinsuppAlgEquiv (R := R) (T := Nonplanar α)).toLinearMap
+    ((AddMonoidAlgebra.coeffLinearEquiv R).toLinearMap.comp
+      (ConnesKreimer.toFinsuppAlgEquiv (R := R) (T := Nonplanar α)).toLinearMap)
 
 omit [DecidableEq α] in
 private theorem basisLift_single {M : Type*} [AddCommMonoid M] [Module R M]
     (f : Forest (Nonplanar α) → M) (F : Forest (Nonplanar α)) (r : R) :
     basisLift f (ConnesKreimer.single F r) = r • f F := by
-  show Finsupp.linearCombination R f (ConnesKreimer.single F r).toFinsupp = r • f F
-  rw [ConnesKreimer.toFinsupp_single, Finsupp.linearCombination_single]
+  show Finsupp.linearCombination R f
+    ((AddMonoidAlgebra.coeffLinearEquiv R) (ConnesKreimer.single F r).toFinsupp) = r • f F
+  rw [ConnesKreimer.toFinsupp_single]
+  simp [Finsupp.linearCombination_single]
 
 omit [DecidableEq α] in
 private theorem basisLift_of' {M : Type*} [AddCommMonoid M] [Module R M]

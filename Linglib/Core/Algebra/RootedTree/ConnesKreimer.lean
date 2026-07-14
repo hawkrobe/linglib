@@ -178,8 +178,9 @@ instance instAlgebra : Algebra R (ConnesKreimer R T) where
 /-- Coefficient lookup: a Connes-Kreimer element is a function from forests
     to coefficients. -/
 instance instFunLike : FunLike (ConnesKreimer R T) (Forest T) R where
-  coe p := (p.toFinsupp : Forest T →₀ R)
-  coe_injective := fun _ _ h => ext (DFunLike.coe_injective (F := Forest T →₀ R) h)
+  coe p := ⇑p.toFinsupp.coeff
+  coe_injective := fun _ _ h =>
+    ext (AddMonoidAlgebra.coeff_inj.mp (DFunLike.coe_injective (F := Forest T →₀ R) h))
 
 /-! ### Global ring instance
 
@@ -231,10 +232,10 @@ def toFinsuppAlgEquiv :
 
 /-- Basis vector: coefficient `r` on the forest `F`. -/
 def single (F : Forest T) (r : R) : ConnesKreimer R T :=
-  ⟨Finsupp.single F r⟩
+  ⟨.single F r⟩
 
 @[simp] theorem toFinsupp_single (F : Forest T) (r : R) :
-    (single F r).toFinsupp = Finsupp.single F r := rfl
+    (single F r).toFinsupp = .single F r := rfl
 
 theorem smul_single_one (F : Forest T) (r : R) :
     single F r = r • single F (1 : R) := by
@@ -244,10 +245,9 @@ theorem smul_single_one (F : Forest T) (r : R) :
 @[elab_as_elim]
 theorem induction_linear {p : ConnesKreimer R T → Prop} (x : ConnesKreimer R T)
     (zero : p 0) (add : ∀ f g, p f → p g → p (f + g))
-    (single : ∀ (F : Forest T) (r : R), p (ConnesKreimer.single F r)) : p x := by
-  have h : ∀ y : AddMonoidAlgebra R (Forest T), p ⟨y⟩ := fun y =>
-    Finsupp.induction_linear y zero (fun f g hf hg => add ⟨f⟩ ⟨g⟩ hf hg) single
-  exact h x.toFinsupp
+    (single : ∀ (F : Forest T) (r : R), p (ConnesKreimer.single F r)) : p x :=
+  AddMonoidAlgebra.induction_linear (p := fun y => p (⟨y⟩ : ConnesKreimer R T)) x.toFinsupp
+    zero (fun f g hf hg => add ⟨f⟩ ⟨g⟩ hf hg) single
 
 /-- **Bare embedding**: a forest as the basis vector `single F 1`. -/
 def of' (F : Forest T) : ConnesKreimer R T := single F 1
@@ -263,21 +263,25 @@ def of : Multiplicative (Forest T) →* ConnesKreimer R T :=
 def ofTree (t : T) : ConnesKreimer R T :=
   of' ({t} : Forest T)
 
-theorem of_apply (F : Multiplicative (Forest T)) :
-    (of (R := R) F : ConnesKreimer R T) = of' F.toAdd := rfl
+@[simp] theorem toFinsupp_of (F : Multiplicative (Forest T)) :
+    (of (R := R) (T := T) F).toFinsupp = AddMonoidAlgebra.of R (Forest T) F := rfl
 
 theorem toFinsupp_of' (F : Forest T) :
-    (of' (R := R) F : ConnesKreimer R T).toFinsupp = Finsupp.single F 1 := rfl
+    (of' (R := R) F : ConnesKreimer R T).toFinsupp = .single F 1 := rfl
+
+theorem of_apply (F : Multiplicative (Forest T)) :
+    (of (R := R) F : ConnesKreimer R T) = of' F.toAdd :=
+  ext (by simp [toFinsupp_of, toFinsupp_of', AddMonoidAlgebra.of_apply])
 
 @[simp] theorem of'_zero :
     (of' (R := R) (0 : Forest T) : ConnesKreimer R T) = 1 :=
-  (of (R := R) (T := T)).map_one
+  ext (by simp [toFinsupp_of', AddMonoidAlgebra.one_def])
 
 /-- Headline algebraic fact: forest disjoint union ↔ algebra product. -/
 @[simp] theorem of'_add (F G : Forest T) :
     (of' (R := R) (F + G) : ConnesKreimer R T)
       = of' (R := R) F * of' (R := R) G :=
-  (of (R := R) (T := T)).map_mul (Multiplicative.ofAdd F) (Multiplicative.ofAdd G)
+  ext (by simp [toFinsupp_of', AddMonoidAlgebra.single_mul_single])
 
 @[simp] theorem of'_singleton (t : T) :
     (of' (R := R) ({t} : Forest T) : ConnesKreimer R T) = ofTree t := rfl
@@ -288,38 +292,40 @@ theorem toFinsupp_of' (F : Forest T) :
 (`Polynomial.coeff` analogue); the `FunLike` application `p F` reduces to it. -/
 
 /-- The coefficient of the forest `F`. -/
-def coeff (p : ConnesKreimer R T) (F : Forest T) : R := p.toFinsupp F
+def coeff (p : ConnesKreimer R T) (F : Forest T) : R := p.toFinsupp.coeff F
 
 @[simp] theorem coe_apply (p : ConnesKreimer R T) (F : Forest T) :
     p F = p.coeff F := rfl
 
 theorem coeff_def (p : ConnesKreimer R T) (F : Forest T) :
-    p.coeff F = p.toFinsupp F := rfl
+    p.coeff F = p.toFinsupp.coeff F := rfl
 
-@[simp] theorem coeff_zero (F : Forest T) : (0 : ConnesKreimer R T).coeff F = 0 := rfl
+@[simp] theorem coeff_zero (F : Forest T) : (0 : ConnesKreimer R T).coeff F = 0 := by
+  simp [coeff_def]
 
 @[simp] theorem coeff_add (p q : ConnesKreimer R T) (F : Forest T) :
-    (p + q).coeff F = p.coeff F + q.coeff F :=
-  Finsupp.add_apply p.toFinsupp q.toFinsupp F
+    (p + q).coeff F = p.coeff F + q.coeff F := by
+  simp [coeff_def]
 
 @[simp] theorem coeff_smul [SMulZeroClass S R] (s : S)
     (p : ConnesKreimer R T) (F : Forest T) :
-    (s • p).coeff F = s • p.coeff F :=
-  Finsupp.smul_apply s p.toFinsupp F
+    (s • p).coeff F = s • p.coeff F := by
+  simp [coeff_def]
 
 theorem coeff_single (F G : Forest T) (r : R) [Decidable (F = G)] :
     (single F r).coeff G = if F = G then r else 0 := by
-  rw [coeff_def, toFinsupp_single, Finsupp.single_apply]
+  rw [coeff_def, toFinsupp_single, AddMonoidAlgebra.coeff_single, Finsupp.single_apply]
 
 @[simp] theorem coeff_single_same (F : Forest T) (r : R) :
-    (single F r).coeff F = r := Finsupp.single_eq_same
+    (single F r).coeff F = r := by
+  rw [coeff_def, toFinsupp_single, AddMonoidAlgebra.coeff_single, Finsupp.single_eq_same]
 
 theorem coeff_of' (F G : Forest T) [Decidable (F = G)] :
     (of' (R := R) F).coeff G = if F = G then 1 else 0 := coeff_single F G 1
 
 /-- Elements agreeing coefficientwise are equal. -/
 theorem ext_coeff (h : ∀ F, p.coeff F = q.coeff F) : p = q :=
-  ext (Finsupp.ext h)
+  ext (AddMonoidAlgebra.coeff_inj.mp (Finsupp.ext h))
 
 /-- `coeff` bundled as a linear functional (`Polynomial.lcoeff` analogue). -/
 def lcoeff (F : Forest T) : ConnesKreimer R T →ₗ[R] R where
@@ -346,14 +352,15 @@ def lift (f : Multiplicative (Forest T) →* A) :
 
 @[simp] theorem lift_of' (f : Multiplicative (Forest T) →* A) (F : Forest T) :
     lift f (of' (R := R) F) = f (Multiplicative.ofAdd F) := by
-  show AddMonoidAlgebra.lift R A (Forest T) f (Finsupp.single F 1) = _
+  show AddMonoidAlgebra.lift R A (Forest T) f (.single F 1) = _
   rw [AddMonoidAlgebra.lift_single, one_smul]
 
 /-- Algebra homs off `ConnesKreimer` agree if they agree on `of'`. -/
 theorem algHom_ext {φ ψ : ConnesKreimer R T →ₐ[R] A}
     (h : ∀ F : Forest T, φ (of' F) = ψ (of' F)) : φ = ψ :=
   (AlgHom.cancel_right (f := toFinsuppAlgEquiv.symm.toAlgHom)
-    toFinsuppAlgEquiv.symm.surjective).mp (AddMonoidAlgebra.algHom_ext fun F => h F)
+    toFinsuppAlgEquiv.symm.surjective).mp
+    (AddMonoidAlgebra.algHom_ext (fun F => h F) (Subsingleton.elim _ _))
 
 end Lift
 
@@ -368,7 +375,7 @@ def ofFinsuppAddHom :
 theorem addHom_ext {M : Type*} [AddZeroClass M] {f g : ConnesKreimer R T →+ M}
     (h : ∀ (F : Forest T) (r : R), f (single F r) = g (single F r)) : f = g :=
   (AddMonoidHom.cancel_right (f := ofFinsuppAddHom) fun p => ⟨p.toFinsupp, rfl⟩).mp
-    (Finsupp.addHom_ext h)
+    (AddMonoidAlgebra.addMonoidHom_ext fun F r => h F r)
 
 section LinearApi
 variable {M : Type*} [AddCommMonoid M] [Module R M]
@@ -389,12 +396,14 @@ theorem lhom_ext' {f g : ConnesKreimer R T →ₗ[R] M}
     (wrapper-native `Finsupp.lift`). -/
 def linearLift (f : Forest T → M) : ConnesKreimer R T →ₗ[R] M :=
   (Finsupp.lift M R (Forest T) f).comp
-    (toFinsuppAlgEquiv (R := R) (T := T)).toLinearEquiv.toLinearMap
+    ((AddMonoidAlgebra.coeffLinearEquiv R).toLinearMap.comp
+      (toFinsuppAlgEquiv (R := R) (T := T)).toLinearEquiv.toLinearMap)
 
 @[simp] theorem linearLift_single (f : Forest T → M) (F : Forest T) (r : R) :
     linearLift f (single F r) = r • f F := by
-  show Finsupp.lift M R (Forest T) f (Finsupp.single F r) = r • f F
-  rw [Finsupp.lift_apply, Finsupp.sum_single_index (by simp)]
+  show Finsupp.lift M R (Forest T) f
+    ((AddMonoidAlgebra.single F r : AddMonoidAlgebra R (Forest T)).coeff) = r • f F
+  rw [AddMonoidAlgebra.coeff_single, Finsupp.lift_apply, Finsupp.sum_single_index (by simp)]
 
 @[simp] theorem linearLift_of' (f : Forest T → M) (F : Forest T) :
     linearLift f (of' (R := R) F) = f F := by
@@ -414,8 +423,8 @@ def mapDomainAlgHom {T' : Type*} (f : Forest T →+ Forest T') :
     (F : Forest T) :
     mapDomainAlgHom (R := R) f (of' F) = of' (f F) := by
   refine ext ?_
-  show Finsupp.mapDomain f (Finsupp.single F 1) = Finsupp.single (f F) 1
-  rw [Finsupp.mapDomain_single]
+  show AddMonoidAlgebra.mapDomain f (.single F 1) = AddMonoidAlgebra.single (f F) 1
+  rw [AddMonoidAlgebra.mapDomain_single]
 
 /-! ### The forest basis -/
 
@@ -423,12 +432,11 @@ def mapDomainAlgHom {T' : Type*} (f : Forest T →+ Forest T') :
     (`Polynomial.basisMonomials` analogue). -/
 def basisSingleOne :
     Module.Basis (Forest T) R (ConnesKreimer R T) :=
-  Module.Basis.map Finsupp.basisSingleOne
-    (toFinsuppAlgEquiv (R := R) (T := T)).symm.toLinearEquiv
+  (AddMonoidAlgebra.basis (Forest T) R).map (toFinsuppAlgEquiv (R := R) (T := T)).symm.toLinearEquiv
 
 @[simp] theorem basisSingleOne_apply (F : Forest T) :
     (basisSingleOne : Module.Basis (Forest T) R (ConnesKreimer R T)) F = of' F := by
-  simp only [basisSingleOne, Module.Basis.map_apply, Finsupp.coe_basisSingleOne]
+  simp only [basisSingleOne, Module.Basis.map_apply, AddMonoidAlgebra.basis_apply]
   rfl
 
 /-! ## The counit

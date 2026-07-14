@@ -124,11 +124,13 @@ noncomputable def pairing :
     ConnesKreimer R (Nonplanar α) →ₗ[R]
       ConnesKreimer R (Nonplanar α) →ₗ[R] R :=
   pairingAux.compl₁₂
-    (ConnesKreimer.toFinsuppAlgEquiv (R := R) (T := Nonplanar α)).toLinearMap
-    (ConnesKreimer.toFinsuppAlgEquiv (R := R) (T := Nonplanar α)).toLinearMap
+    ((AddMonoidAlgebra.coeffLinearEquiv R).toLinearMap.comp
+      (ConnesKreimer.toFinsuppAlgEquiv (R := R) (T := Nonplanar α)).toLinearMap)
+    ((AddMonoidAlgebra.coeffLinearEquiv R).toLinearMap.comp
+      (ConnesKreimer.toFinsuppAlgEquiv (R := R) (T := Nonplanar α)).toLinearMap)
 
 private theorem pairing_apply (x y : ConnesKreimer R (Nonplanar α)) :
-    pairing (R := R) x y = pairingAux x.toFinsupp y.toFinsupp := rfl
+    pairing (R := R) x y = pairingAux x.toFinsupp.coeff y.toFinsupp.coeff := rfl
 
 @[simp] theorem pairing_of'_of' (F G : Forest (Nonplanar α)) :
     pairing (R := R) (ConnesKreimer.of' (R := R) F)

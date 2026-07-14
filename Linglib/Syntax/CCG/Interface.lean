@@ -98,63 +98,72 @@ def DerivStep.interp {E W : Type} (d : DerivStep) (lex : SemLexicon E W)
       -- Forward application: X/Y Y → X
       let ⟨c1, m1⟩ ← d1.interp lex
       let ⟨c2, m2⟩ ← d2.interp lex
-      match c1 with
-      | .rslash x y =>
+      match c1, m1 with
+      | .rslash x y, m1 =>
           if h : c2 = y then
             let m2' : Denot E W (catToTy y) := h ▸ m2
             some ⟨x, m1 m2'⟩
           else none
-      | _ => none
+      | _, _ => none
 
   | .bapp d1 d2 => do
       -- Backward application: Y X\Y → X
       let ⟨c1, m1⟩ ← d1.interp lex
       let ⟨c2, m2⟩ ← d2.interp lex
-      match c2 with
-      | .lslash x y =>
+      match c2, m2 with
+      | .lslash x y, m2 =>
           if h : c1 = y then
             let m1' : Denot E W (catToTy y) := h ▸ m1
             some ⟨x, m2 m1'⟩
           else none
-      | _ => none
+      | _, _ => none
 
   | .fcomp d1 d2 => do
       -- Forward composition: X/Y + Y/Z → X/Z, semantically B (f ∘ g)
       let ⟨c1, m1⟩ ← d1.interp lex
       let ⟨c2, m2⟩ ← d2.interp lex
-      match c1, c2 with
-      | .rslash x y1, .rslash y2 z =>
-          if h : y1 = y2 then
-            let m2' : Denot E W (catToTy z ⇒ catToTy y1) :=
-              h ▸ m2
-            some ⟨x / z, B m1 m2'⟩
-          else none
+      match c1, m1 with
+      | .rslash x y1, m1 =>
+          match c2, m2 with
+          | .rslash y2 z, m2 =>
+              if h : y1 = y2 then
+                let m2' : Denot E W (catToTy z ⇒ catToTy y1) :=
+                  h ▸ m2
+                some ⟨x / z, B m1 m2'⟩
+              else none
+          | _, _ => none
       | _, _ => none
 
   | .bcomp d1 d2 => do
       -- Backward composition: Y\Z + X\Y → X\Z, semantically B (f ∘ g)
       let ⟨c1, m1⟩ ← d1.interp lex
       let ⟨c2, m2⟩ ← d2.interp lex
-      match c1, c2 with
-      | .lslash y1 z, .lslash x y2 =>
-          if h : y1 = y2 then
-            let m1' : Denot E W (catToTy z ⇒ catToTy y2) :=
-              h ▸ m1
-            some ⟨x \ z, B m2 m1'⟩
-          else none
+      match c1, m1 with
+      | .lslash y1 z, m1 =>
+          match c2, m2 with
+          | .lslash x y2, m2 =>
+              if h : y1 = y2 then
+                let m1' : Denot E W (catToTy z ⇒ catToTy y2) :=
+                  h ▸ m1
+                some ⟨x \ z, B m2 m1'⟩
+              else none
+          | _, _ => none
       | _, _ => none
 
   | .fcompx d1 d2 => do
       -- Forward crossed composition: X/Y + Y\Z → X\Z, semantically B (f ∘ g)
       let ⟨c1, m1⟩ ← d1.interp lex
       let ⟨c2, m2⟩ ← d2.interp lex
-      match c1, c2 with
-      | .rslash x y1, .lslash y2 z =>
-          if h : y1 = y2 then
-            let m2' : Denot E W (catToTy z ⇒ catToTy y1) :=
-              h ▸ m2
-            some ⟨x \ z, B m1 m2'⟩
-          else none
+      match c1, m1 with
+      | .rslash x y1, m1 =>
+          match c2, m2 with
+          | .lslash y2 z, m2 =>
+              if h : y1 = y2 then
+                let m2' : Denot E W (catToTy z ⇒ catToTy y1) :=
+                  h ▸ m2
+                some ⟨x \ z, B m1 m2'⟩
+              else none
+          | _, _ => none
       | _, _ => none
 
   | .ftr d t => do

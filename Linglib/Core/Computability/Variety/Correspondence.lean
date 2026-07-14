@@ -293,7 +293,7 @@ theorem mem_langToVariety_varietyToLang (V : Pseudovariety.{u}) {M : Type u} [Mo
   -- `M ≃* (ker φ).Quotient = (ker Ψ).Quotient ↪ ∏`, an injective hom into the product.
   let g : M →* (∀ m : M, (Lm m).syntacticMonoid) :=
     (Con.kerLift Ψ).comp ((Con.quotientKerEquivOfSurjective φ hφ).symm.trans
-      (Con.congr hkereq)).toMonoidHom
+      (hkereq ▸ MulEquiv.refl _)).toMonoidHom
   have hginj : Function.Injective g := by
     simp only [g, MonoidHom.coe_comp, MulEquiv.coe_toMonoidHom]
     exact (Con.kerLift_injective Ψ).comp (MulEquiv.injective _)
