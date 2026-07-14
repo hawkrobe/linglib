@@ -1,4 +1,5 @@
 import Linglib.Semantics.Modification.Basic
+import Linglib.Semantics.Intensional.Rigidity
 import Mathlib.Order.PropInstances
 import Mathlib.Data.Set.Basic
 import Mathlib.Tactic.Common
@@ -59,9 +60,10 @@ the licensing mechanism (NVP + HPP) lives in
 
 namespace Modification
 
-/-- An intensional property: a function from worlds to characteristic
-    predicates over entities. -/
-abbrev Property (W E : Type*) := W → E → Prop
+/-- An intensional property: an `Intensional.Intension` valued in
+    characteristic predicates over entities (a function from worlds to
+    predicates). -/
+abbrev Property (W E : Type*) := Intensional.Intension W (E → Prop)
 
 /-! ### Pointwise forms of the order-theoretic classes -/
 

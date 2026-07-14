@@ -1,5 +1,6 @@
 import Linglib.Semantics.Intensional.Defs
 import Linglib.Semantics.Intensional.Variables
+import Linglib.Semantics.Intensional.Algebra
 import Linglib.Semantics.Modification.Basic
 
 /-!

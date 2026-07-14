@@ -1,6 +1,7 @@
 import Linglib.Syntax.Tree.Basic
 import Linglib.Semantics.Intensional.Defs
 import Linglib.Semantics.Intensional.Variables
+import Linglib.Semantics.Intensional.Algebra
 import Linglib.Semantics.Composition.LexEntry
 import Linglib.Semantics.Modification.Basic
 
