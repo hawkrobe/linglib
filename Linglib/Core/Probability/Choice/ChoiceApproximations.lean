@@ -40,70 +40,8 @@ open Real BigOperators Finset
 
 variable {A : Type*} [DecidableEq A]
 
--- ============================================================================
--- §1. Pairwise Choice Probabilities
--- ============================================================================
-
-/-- The pairwise choice probability `P(x, {x,y})` under a ratio scale `v`:
-    `P(x, y) = v(x) / (v(x) + v(y))`.
-
-    This is the Luce model prediction for binary forced choice.
-    The function is symmetric in the sense that `P(x,y) + P(y,x) = 1`. -/
-noncomputable def pairwiseProb (v : A → ℝ) (x y : A) : ℝ :=
-  v x / (v x + v y)
-
-/-- Pairwise probabilities are non-negative for positive scales. -/
-theorem pairwiseProb_nonneg (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (x y : A) :
-    0 ≤ pairwiseProb v x y :=
-  div_nonneg (le_of_lt (hv x)) (le_of_lt (add_pos (hv x) (hv y)))
-
-/-- Pairwise probabilities are at most 1 for positive scales. -/
-theorem pairwiseProb_le_one (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (x y : A) :
-    pairwiseProb v x y ≤ 1 := by
-  simp only [pairwiseProb]
-  rw [div_le_one (add_pos (hv x) (hv y))]
-  linarith [hv y]
-
-/-- Complementarity: `P(x, y) + P(y, x) = 1` for positive scales. -/
-theorem pairwiseProb_complement (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (x y : A) :
-    pairwiseProb v x y + pairwiseProb v y x = 1 := by
-  simp only [pairwiseProb]
-  have hne : v x + v y ≠ 0 := ne_of_gt (add_pos (hv x) (hv y))
-  rw [show v y + v x = v x + v y from by ring, ← add_div, div_self hne]
-
-/-- `P(x, x) = 1/2` for positive scales (indifference with self). -/
-theorem pairwiseProb_self (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (x : A) :
-    pairwiseProb v x x = 1 / 2 := by
-  simp only [pairwiseProb]
-  have hne : v x ≠ 0 := ne_of_gt (hv x)
-  field_simp
-  ring
-
-/-- `P(x, y) > 1/2` iff `v(x) > v(y)`: the higher-scale alternative is
-    chosen more than half the time. -/
-theorem pairwiseProb_gt_half_iff (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (x y : A) :
-    1 / 2 < pairwiseProb v x y ↔ v y < v x := by
-  simp only [pairwiseProb]
-  rw [lt_div_iff₀ (add_pos (hv x) (hv y))]
-  constructor <;> intro h <;> nlinarith
-
-/-- `P(x, y) ≥ 1/2` iff `v(x) ≥ v(y)`. -/
-theorem pairwiseProb_ge_half_iff (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (x y : A) :
-    1 / 2 ≤ pairwiseProb v x y ↔ v y ≤ v x := by
-  simp only [pairwiseProb]
-  rw [le_div_iff₀ (add_pos (hv x) (hv y))]
-  constructor <;> intro h <;> nlinarith
-
-/-- Monotonicity: `P(x, z) ≥ P(y, z)` iff `v(x) ≥ v(y)`.
-
-    The function `t ↦ t/(t+c)` is monotone increasing for `c > 0`,
-    so the ordering of pairwise probabilities against any fixed `z`
-    mirrors the ordering of scale values. -/
-theorem pairwiseProb_mono_iff (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (x y z : A) :
-    pairwiseProb v y z ≤ pairwiseProb v x z ↔ v y ≤ v x := by
-  simp only [pairwiseProb]
-  rw [div_le_div_iff₀ (add_pos (hv y) (hv z)) (add_pos (hv x) (hv z))]
-  constructor <;> intro h <;> nlinarith [hv z]
+-- The pairwise kernel `pairwiseProb` and its lemma suite live in
+-- `Core.Probability.Choice.RationalAction` (imported above).
 
 -- ============================================================================
 -- §2. Just Noticeable Differences (Definition 3, p. 34)
@@ -154,7 +92,7 @@ Theorem 5 proves these hold for `(L(π), I(π))` under Axiom 1.
 theorem jndI_symm (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (thr : ℝ) (x y : A)
     (h : jndI v thr x y) : jndI v thr y x := by
   simp only [jndI] at *
-  have hc := pairwiseProb_complement v hv x y
+  have hc := pairwiseProb_complement (hv x) (hv y)
   constructor <;> linarith [h.1, h.2]
 
 /-- **I-reflexivity**: `x I(π) x`, since `P(x, x) = 1/2` and `1-π < 1/2 < π`
@@ -162,7 +100,7 @@ theorem jndI_symm (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (thr : ℝ) (x y : A
 theorem jndI_refl (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (thr : ℝ)
     (hthr_lower : 1 / 2 < thr) (_hthr_upper : thr < 1) (x : A) :
     jndI v thr x x := by
-  simp only [jndI, pairwiseProb_self v hv]
+  simp only [jndI, pairwiseProb_self (hv x)]
   constructor <;> linarith
 
 /-- **Trichotomy**: for any `x, y`, exactly one of `xLy`, `yLx`, or `xIy` holds.
@@ -175,14 +113,14 @@ theorem jnd_trichotomy (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (thr : ℝ)
     (jndL v thr x y ∧ ¬jndL v thr y x ∧ ¬jndI v thr x y) ∨
     (jndL v thr y x ∧ ¬jndL v thr x y ∧ ¬jndI v thr x y) ∨
     (jndI v thr x y ∧ ¬jndL v thr x y ∧ ¬jndL v thr y x) := by
-  have hc := pairwiseProb_complement v hv x y
+  have hc := pairwiseProb_complement (hv x) (hv y)
   unfold jndL jndI
   by_cases h₁ : thr < pairwiseProb v x y
   · left; exact ⟨h₁, fun h => by linarith, fun ⟨_, h⟩ => by linarith⟩
-  · push_neg at h₁
+  · push Not at h₁
     by_cases h₂ : thr < pairwiseProb v y x
     · right; left; exact ⟨h₂, fun h => by linarith, fun ⟨h, _⟩ => by linarith⟩
-    · push_neg at h₂
+    · push Not at h₂
       right; right; exact ⟨⟨by linarith, h₁⟩, fun h => by linarith, fun h => by linarith⟩
 
 omit [DecidableEq A] in
@@ -298,15 +236,15 @@ theorem trace_iff_scale_ge (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (x y : A) :
   · intro h
     -- Take z = y: P(y,y) ≤ P(x,y), i.e. 1/2 ≤ P(x,y)
     have := h y
-    rwa [pairwiseProb_mono_iff v hv x y y] at this
+    rwa [pairwiseProb_mono_iff (hv x) (hv y) (hv y)] at this
   · intro hle z
-    rwa [pairwiseProb_mono_iff v hv x y z]
+    rwa [pairwiseProb_mono_iff (hv x) (hv y) (hv z)]
 
 /-- Corollary: `x ≥_T y` iff `P(x, y) ≥ 1/2`. -/
 theorem trace_iff_pairwiseProb_ge_half (v : A → ℝ) (hv : ∀ a : A, 0 < v a)
     (x y : A) :
     traceGe v x y ↔ 1 / 2 ≤ pairwiseProb v x y := by
-  rw [trace_iff_scale_ge v hv, pairwiseProb_ge_half_iff v hv]
+  rw [trace_iff_scale_ge v hv, pairwiseProb_ge_half_iff (hv x) (hv y)]
 
 omit [DecidableEq A] in
 /-- The trace is reflexive: `x ≥_T x`. -/
