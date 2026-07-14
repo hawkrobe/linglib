@@ -9,7 +9,7 @@ import Linglib.Semantics.Degree.Measure.Dimensioned
 
 /-!
 # Morphisms between gradability representations
-[klein-1980] [kennedy-2007] [scontras-2014] [bale-schwarz-2022]
+[kamp-1975] [klein-1980] [kennedy-2007] [scontras-2014] [bale-schwarz-2022]
 
 The maps between the three framework objects for gradable predicates,
 with their faithfulness theorems — the degree-semantic analogue of the

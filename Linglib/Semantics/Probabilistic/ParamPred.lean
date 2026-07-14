@@ -43,7 +43,12 @@ namespace ParamPred
 variable {E Θ : Type*} [Fintype Θ]
 
 /-- Graded truth value: `P(x) = prior {θ | semantics θ x}`. The prior's
-mass on the set of parameter values where the Boolean predicate holds. -/
+mass on the set of parameter values where the Boolean predicate holds.
+
+The ancestor of this construction is [kamp-1975]'s § 4 probability
+measure over completions; its induced comparative is his definition (13)
+(`Kamp1975.kampMeasureLe`), whose forced totality Kamp himself rejects
+for multi-criteria adjectives (`Kamp1975.clever_incomparable`). -/
 noncomputable def gradedTruth (pred : ParamPred E Θ) (x : E) : ℝ≥0∞ :=
   pred.prior.probOfSet {θ | pred.semantics θ x = true}
 
