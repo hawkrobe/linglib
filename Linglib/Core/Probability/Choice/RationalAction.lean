@@ -468,6 +468,112 @@ theorem RationalAction.policy_eq_iff_proportional
 
 end UniquenessCharacterization
 
+/-! ### The pairwise choice kernel
+
+`pairwiseProb v x y = v x / (v x + v y)` is the binary Luce rule — the
+Bradley–Terry kernel. Hypotheses are pointwise (`0 < v x`) so the suite
+applies to locally positive scales such as `cf.prob T` produced by
+`ChoiceFn.HasChoiceAxiom.ratioScaleOn` below. On an exponential scale the
+kernel is the logistic of the utility difference (`pairwiseProb_exp`) —
+[luce-1959]'s Fechnerian coordinates `u = log v` (Ch. 2, §2.A.2). -/
+
+section PairwiseProb
+
+variable {A : Type*} {v : A → ℝ} {x y z : A}
+
+/-- The pairwise choice probability `P(x, {x,y})` under a ratio scale `v`:
+    `P(x, y) = v(x) / (v(x) + v(y))` — the Luce model prediction for binary
+    forced choice. -/
+noncomputable def pairwiseProb (v : A → ℝ) (x y : A) : ℝ :=
+  v x / (v x + v y)
+
+/-- Pairwise probabilities are non-negative for non-negative scales. -/
+theorem pairwiseProb_nonneg (hx : 0 ≤ v x) (hy : 0 ≤ v y) :
+    0 ≤ pairwiseProb v x y :=
+  div_nonneg hx (add_nonneg hx hy)
+
+/-- Pairwise probabilities are at most 1 for positive scales. -/
+theorem pairwiseProb_le_one (hx : 0 < v x) (hy : 0 < v y) :
+    pairwiseProb v x y ≤ 1 := by
+  simp only [pairwiseProb]
+  rw [div_le_one (add_pos hx hy)]
+  linarith
+
+/-- Complementarity: `P(x, y) + P(y, x) = 1` for positive scales. -/
+theorem pairwiseProb_complement (hx : 0 < v x) (hy : 0 < v y) :
+    pairwiseProb v x y + pairwiseProb v y x = 1 := by
+  simp only [pairwiseProb]
+  rw [show v y + v x = v x + v y from by ring, ← add_div,
+      div_self (ne_of_gt (add_pos hx hy))]
+
+/-- `P(x, x) = 1/2` for positive scales (indifference with self). -/
+theorem pairwiseProb_self (hx : 0 < v x) : pairwiseProb v x x = 1 / 2 := by
+  simp only [pairwiseProb]
+  rw [div_eq_iff (by linarith : v x + v x ≠ 0)]
+  ring
+
+/-- `P(x, y) > 1/2` iff `v(x) > v(y)`: the higher-scale alternative is
+    chosen more than half the time. -/
+theorem pairwiseProb_gt_half_iff (hx : 0 < v x) (hy : 0 < v y) :
+    1 / 2 < pairwiseProb v x y ↔ v y < v x := by
+  simp only [pairwiseProb]
+  rw [lt_div_iff₀ (add_pos hx hy)]
+  constructor <;> intro h <;> nlinarith
+
+/-- `P(x, y) ≥ 1/2` iff `v(x) ≥ v(y)`. -/
+theorem pairwiseProb_ge_half_iff (hx : 0 < v x) (hy : 0 < v y) :
+    1 / 2 ≤ pairwiseProb v x y ↔ v y ≤ v x := by
+  simp only [pairwiseProb]
+  rw [le_div_iff₀ (add_pos hx hy)]
+  constructor <;> intro h <;> nlinarith
+
+/-- `P(x, y) < 1/2` iff `v(x) < v(y)`. -/
+theorem pairwiseProb_lt_half_iff (hx : 0 < v x) (hy : 0 < v y) :
+    pairwiseProb v x y < 1 / 2 ↔ v x < v y := by
+  simp only [pairwiseProb]
+  rw [div_lt_iff₀ (add_pos hx hy)]
+  constructor <;> intro h <;> nlinarith
+
+/-- `P(x, y) = 1/2` iff `v(x) = v(y)`. -/
+theorem pairwiseProb_eq_half_iff (hx : 0 < v x) (hy : 0 < v y) :
+    pairwiseProb v x y = 1 / 2 ↔ v x = v y := by
+  simp only [pairwiseProb]
+  rw [div_eq_iff (ne_of_gt (add_pos hx hy))]
+  constructor <;> intro h <;> linarith
+
+/-- Monotonicity: `P(x, z) ≥ P(y, z)` iff `v(x) ≥ v(y)`.
+
+    The function `t ↦ t/(t+c)` is monotone increasing for `c > 0`,
+    so the ordering of pairwise probabilities against any fixed `z`
+    mirrors the ordering of scale values. -/
+theorem pairwiseProb_mono_iff (hx : 0 < v x) (hy : 0 < v y) (hz : 0 < v z) :
+    pairwiseProb v y z ≤ pairwiseProb v x z ↔ v y ≤ v x := by
+  simp only [pairwiseProb]
+  rw [div_le_div_iff₀ (add_pos hy hz) (add_pos hx hz)]
+  constructor <;> intro h <;> nlinarith
+
+/-- Constant-ratio law: two pairwise probabilities on the same scale agree
+    iff the cross products of their scale values do. -/
+theorem pairwiseProb_eq_pairwiseProb_iff {x' y' : A} (hx : 0 < v x)
+    (hy : 0 < v y) (hx' : 0 < v x') (hy' : 0 < v y') :
+    pairwiseProb v x y = pairwiseProb v x' y' ↔ v x * v y' = v x' * v y := by
+  simp only [pairwiseProb]
+  rw [div_eq_div_iff (by linarith) (by linarith)]
+  constructor <;> intro h <;> nlinarith
+
+/-- Fechnerian coordinates ([luce-1959] Ch. 2, §2.A.2, `u = log v`): on an
+    exponential scale the pairwise rule is the logistic of the utility
+    difference — the bridge from the Luce choice rule to logit choice. -/
+theorem pairwiseProb_exp (u : A → ℝ) (x y : A) :
+    pairwiseProb (λ a => Real.exp (u a)) x y = Real.sigmoid (u x - u y) := by
+  have hx := Real.exp_pos (u x)
+  have hy := Real.exp_pos (u y)
+  simp only [pairwiseProb, Real.sigmoid, neg_sub, Real.exp_sub]
+  rw [inv_eq_one_div, div_eq_div_iff (by positivity) (by positivity)]
+  field_simp
+
+end PairwiseProb
+
 /-! ### Alternative forms of the choice axiom
 
 [luce-1959] proves three equivalent formulations of the choice axiom:
@@ -483,6 +589,11 @@ P(y,{x,y}) · P(x,T)` — pairwise ratios are preserved in any superset.
 
 The ratio form (a) is the definition of `RationalAction`; (a)→(b) is
 `product_rule` and (a)→(c) is `pChoice_ratio`.
+
+All three describe the globally imperfect regime. Luce's Axiom 1 itself is
+two-clause and weaker: `ChoiceFn.HasChoiceAxiom` below states it in full,
+and `ChoiceFn.HasChoiceAxiom.ratioScaleOn` is the existence half of his
+Theorem 3 (local ratio scales on imperfectly discriminated menus).
 -/
 
 section Appendix1
@@ -680,7 +791,7 @@ theorem axiom1_ratio_iff_pairwiseIIA [Inhabited A] (cf : ChoiceFn A)
     `binary x x = 1 ≠ 1/2` (`ChoiceFn.binary_self`). -/
 def ChoiceFn.BinaryRatioScaleOn (cf : ChoiceFn A) (S : Set A) (v : A → ℝ) : Prop :=
   (∀ x ∈ S, 0 < v x) ∧
-    ∀ x ∈ S, ∀ y ∈ S, x ≠ y → cf.binary x y = v x / (v x + v y)
+    ∀ x ∈ S, ∀ y ∈ S, x ≠ y → cf.binary x y = pairwiseProb v x y
 
 /-- A global ratio scale restricts to a binary ratio scale on every set. -/
 theorem ChoiceFn.hasRatioScale.binaryRatioScaleOn {cf : ChoiceFn A}
@@ -688,7 +799,127 @@ theorem ChoiceFn.hasRatioScale.binaryRatioScaleOn {cf : ChoiceFn A}
   obtain ⟨v, hv_pos, hv_rule⟩ := h
   refine ⟨v, fun S => ⟨fun x _ => hv_pos x, fun x _ y _ hxy => ?_⟩⟩
   rw [ChoiceFn.binary, hv_rule {x, y} x (Finset.mem_insert_self x _),
-      Finset.sum_pair hxy]
+      Finset.sum_pair hxy, pairwiseProb]
+
+/-! ### The choice axiom in full -/
+
+/-- Discrimination is imperfect throughout `T`: `0 < P(x, y) < 1` for distinct
+    `x, y ∈ T` ([luce-1959]'s "`P(x, y) ≠ 0, 1` for all `x, y ∈ T`"). The
+    diagonal is excluded because [luce-1959] (p. 5) sets `P(x, x) = ½` by pure
+    notational convention, whereas a total `ChoiceFn` has `binary x x = 1`
+    (`ChoiceFn.binary_self`). -/
+def ChoiceFn.ImperfectOn (cf : ChoiceFn A) (T : Finset A) : Prop :=
+  ∀ x ∈ T, ∀ y ∈ T, x ≠ y → 0 < cf.binary x y ∧ cf.binary x y < 1
+
+/-- **Luce's choice axiom**, both clauses (Axiom 1, p. 6 of [luce-1959], with
+    `P_T(S) = ∑_{a ∈ S} P_T(a)`):
+
+    (i) `product_rule`: under imperfect discrimination throughout `T`,
+    nested-menu probabilities compose multiplicatively —
+    `P_T(R) = P_S(R) · P_T(S)` for `R ⊆ S ⊆ T`;
+
+    (ii) `deletion`: an alternative `x` never chosen over some `y` may be
+    deleted — `P_T(S) = P_{T∖{x}}(S∖{x})` for every `S ⊆ T`.
+
+    Unlike the globally positive `hasRatioScale`, clause (ii) lets the axiom
+    govern menus mixing perfect and imperfect discrimination — the regime of
+    [luce-1959] Chapter 3, where the three-class theorems force `Q ∈ {0, 1}`
+    between extreme event classes. -/
+structure ChoiceFn.HasChoiceAxiom (cf : ChoiceFn A) : Prop where
+  product_rule : ∀ T : Finset A, cf.ImperfectOn T → ∀ R S : Finset A,
+    R ⊆ S → S ⊆ T →
+    ∑ a ∈ R, cf.prob T a = (∑ a ∈ R, cf.prob S a) * ∑ a ∈ S, cf.prob T a
+  deletion : ∀ T : Finset A, ∀ x ∈ T, ∀ y ∈ T, x ≠ y → cf.binary x y = 0 →
+    ∀ S ⊆ T, ∑ a ∈ S, cf.prob T a = ∑ a ∈ S.erase x, cf.prob (T.erase x) a
+
+/-- A global ratio scale satisfies the full choice axiom: clause (i) by ratio
+    arithmetic, clause (ii) vacuously (no discrimination is perfect). -/
+theorem ChoiceFn.hasRatioScale.hasChoiceAxiom {cf : ChoiceFn A}
+    (h : cf.hasRatioScale) : cf.HasChoiceAxiom := by
+  obtain ⟨v, hv_pos, hv_rule⟩ := h
+  constructor
+  · intro T _ R S hRS hST
+    rcases R.eq_empty_or_nonempty with rfl | hR
+    · simp
+    have hS : S.Nonempty := hR.mono hRS
+    have hSne : (∑ b ∈ S, v b) ≠ 0 :=
+      ne_of_gt (Finset.sum_pos (fun b _ => hv_pos b) hS)
+    have hTne : (∑ b ∈ T, v b) ≠ 0 :=
+      ne_of_gt (Finset.sum_pos (fun b _ => hv_pos b) (hS.mono hST))
+    have eT : ∀ W : Finset A, W ⊆ T →
+        ∑ a ∈ W, cf.prob T a = (∑ a ∈ W, v a) / ∑ b ∈ T, v b := by
+      intro W hW
+      rw [Finset.sum_div]
+      exact Finset.sum_congr rfl fun a ha => hv_rule T a (hW ha)
+    have eS : ∑ a ∈ R, cf.prob S a = (∑ a ∈ R, v a) / ∑ b ∈ S, v b := by
+      rw [Finset.sum_div]
+      exact Finset.sum_congr rfl fun a ha => hv_rule S a (hRS ha)
+    rw [eT R (hRS.trans hST), eT S hST, eS]
+    field_simp
+  · intro T x hx y hy hxy h0 S hS
+    have hb : cf.binary x y = v x / (v x + v y) := by
+      rw [ChoiceFn.binary, hv_rule {x, y} x (Finset.mem_insert_self x _),
+          Finset.sum_pair hxy]
+    rw [hb] at h0
+    exact absurd h0
+      (ne_of_gt (div_pos (hv_pos x) (add_pos (hv_pos x) (hv_pos y))))
+
+/-- Existence half of **Theorem 3** of [luce-1959] (p. 23): under the choice
+    axiom, on any finite `T` with imperfect discrimination throughout, the
+    restricted choice probabilities are a ratio scale — with `v = P_T` itself
+    as the scale, Luce's own construction. (The uniqueness half — `v` unique
+    up to a positive multiple — is not formalized.) -/
+theorem ChoiceFn.HasChoiceAxiom.ratioScaleOn {cf : ChoiceFn A}
+    (h : cf.HasChoiceAxiom) {T : Finset A} (hT : T.Nonempty)
+    (himp : cf.ImperfectOn T) :
+    ∃ v : A → ℝ, (∀ x ∈ T, 0 < v x) ∧
+      ∀ S ⊆ T, ∀ a ∈ S, cf.prob S a = v a / ∑ b ∈ S, v b := by
+  have hpos : ∀ x ∈ T, 0 < cf.prob T x := by
+    intro x hx
+    rcases lt_or_eq_of_le (cf.prob_nonneg T x) with hlt | heq
+    · exact hlt
+    -- a zero propagates to every element of T, contradicting the unit sum
+    have hall : ∀ y ∈ T, cf.prob T y = 0 := by
+      intro y hy
+      rcases eq_or_ne y x with rfl | hyx
+      · exact heq.symm
+      have hsub : ({x, y} : Finset A) ⊆ T :=
+        Finset.insert_subset hx (Finset.singleton_subset_iff.mpr hy)
+      have hprod := h.product_rule T himp {x} {x, y} (by simp) hsub
+      rw [Finset.sum_singleton, Finset.sum_singleton,
+          Finset.sum_pair (Ne.symm hyx)] at hprod
+      have hbin : 0 < cf.prob {x, y} x := (himp x hx y hy (Ne.symm hyx)).1
+      have h0 : cf.prob {x, y} x * cf.prob T y = 0 := by
+        rw [← heq] at hprod
+        linarith [hprod]
+      rcases mul_eq_zero.mp h0 with h' | h'
+      · exact absurd h' (ne_of_gt hbin)
+      · exact h'
+    have hsum := cf.prob_sum_eq_one T hT
+    rw [Finset.sum_eq_zero hall] at hsum
+    exact absurd hsum (by norm_num)
+  refine ⟨cf.prob T, hpos, fun S hS a ha => ?_⟩
+  have hSpos : (0 : ℝ) < ∑ b ∈ S, cf.prob T b :=
+    Finset.sum_pos (fun b hb => hpos b (hS hb)) ⟨a, ha⟩
+  have hprod := h.product_rule T himp {a} S (Finset.singleton_subset_iff.mpr ha) hS
+  rw [Finset.sum_singleton, Finset.sum_singleton] at hprod
+  rw [eq_div_iff (ne_of_gt hSpos)]
+  linarith [hprod]
+
+/-- Binary form of Theorem 3: the choice axiom plus imperfect discrimination
+    on `T` yield a binary ratio scale on `T`. -/
+theorem ChoiceFn.HasChoiceAxiom.binaryRatioScaleOn {cf : ChoiceFn A}
+    (h : cf.HasChoiceAxiom) {T : Finset A} (hT : T.Nonempty)
+    (himp : cf.ImperfectOn T) :
+    ∃ v : A → ℝ, cf.BinaryRatioScaleOn ↑T v := by
+  obtain ⟨v, hvpos, hrule⟩ := h.ratioScaleOn hT himp
+  refine ⟨v, fun x hx => hvpos x (Finset.mem_coe.mp hx),
+    fun x hx y hy hxy => ?_⟩
+  have hsub : ({x, y} : Finset A) ⊆ T :=
+    Finset.insert_subset (Finset.mem_coe.mp hx)
+      (Finset.singleton_subset_iff.mpr (Finset.mem_coe.mp hy))
+  rw [ChoiceFn.binary, hrule {x, y} hsub x (Finset.mem_insert_self x _),
+      Finset.sum_pair hxy, pairwiseProb]
 
 end Appendix1
 
