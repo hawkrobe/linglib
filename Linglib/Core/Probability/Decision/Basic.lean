@@ -247,7 +247,13 @@ theorem euv_eq_evsi {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
 [van-rooy-2003] p. 743 states that `Q ⊑ Q' ↔ ∀ DP, EUV(Q) ≥ EUV(Q')` is "a special
 case of [blackwell-1953]". The `⟹` ("only if") direction is the data-processing /
 Jensen inequality: a *finer* question can only raise question utility. We prove it
-directly at the `questionUtility` level.
+directly at the `questionUtility` level; the kernel-level fact it specializes —
+coarsening a deterministic classifier is a Markov garbling, so the finer partition
+has lower Bayes risk in every decision problem — is
+`ProbabilityTheory.bayesRisk_deterministic_le_deterministic_comp` in
+`Core.Probability.Decision.Blackwell`, and `eig_deterministicObs_eq_euv` in
+`Core.Probability.Decision.ExperimentDesign` identifies `questionUtility` with the
+expected value of the corresponding deterministic experiment.
 
 The mathematical core is the **unnormalized cell value** `maxₐ ∑_{w∈c} P(w)·U(w,a)`,
 which equals `P(c)·V(D|c)` (`cellProb_mul_valueAfterLearning_eq_uValue`) and is

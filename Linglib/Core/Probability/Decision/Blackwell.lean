@@ -47,7 +47,9 @@ separation argument (see the implementation notes).
 The development is stated entirely over Mathlib's `Kernel` and `bayesRisk` with no further
 dependencies, so it can serve as a `Mathlib.Probability.Decision.Blackwell` candidate. The
 finite, `ℝ`-valued `eig` / `questionUtility` view in `Core.Probability.Decision.ExperimentDesign`
-is a downstream consumer, bridged via `ObservationModel.toPMFKernel`.
+is a downstream consumer: `eig_deterministicObs_eq_euv` there identifies the deterministic-
+experiment value with [van-rooy-2003]'s question utility, whose refinement monotonicity is the
+partition instance of `bayesRisk_deterministic_le_deterministic_comp` below.
 
 `Kernel.BlackwellDominates` quantifies over *all* decision problems (every measurable action space
 `𝓨` and loss `ℓ : Θ → 𝓨 → ℝ≥0∞`) and priors: dominance for a single one does not force garbling.
@@ -457,5 +459,37 @@ theorem isGarblingOf_iff_blackwellDominates
     {P : Kernel Θ 𝓧} {P' : Kernel Θ 𝓧'} [IsMarkovKernel P] [IsMarkovKernel P'] :
     P'.IsGarblingOf P ↔ P.BlackwellDominates P' :=
   ⟨blackwellDominates_of_isGarblingOf, isGarblingOf_of_blackwellDominates⟩
+
+/-! ### Deterministic experiments: partitions as kernels
+
+A deterministic classifier `f : Θ → 𝓧` is the experiment `Kernel.deterministic f hf` — the
+partition of `Θ` into the fibers of `f`, viewed as an error-free observation. Coarsening the
+partition (post-composing the classifier) is a deterministic garbling, so a finer partition
+Blackwell-dominates every coarsening. This is the kernel-level form of the fact that
+partition-refinement monotonicity of question value ([van-rooy-2003] §4.1, formalized
+ℚ-valued as `Core.DecisionTheory.questionUtility_mono_of_refines`) is a special case of
+[blackwell-1953]. -/
+
+/-- A coarsened classifier is a garbling of the classifier it factors through: the
+partition of `g ∘ f` is obtained from the partition of `f` by the deterministic
+post-processing `g`. -/
+theorem Kernel.deterministic_comp_isGarblingOf_deterministic {𝓨 : Type*} [MeasurableSpace 𝓨]
+    {f : Θ → 𝓧} {g : 𝓧 → 𝓨} (hf : Measurable f) (hg : Measurable g) :
+    (Kernel.deterministic (g ∘ f) (hg.comp hf)).IsGarblingOf (Kernel.deterministic f hf) :=
+  ⟨Kernel.deterministic g hg, inferInstance,
+    (Kernel.deterministic_comp_deterministic hf hg).symm⟩
+
+/-- **A finer partition is worth at least as much as any coarsening, in every decision
+problem**: the Bayes risk of the experiment "observe `f θ`" is at most that of
+"observe `g (f θ)`". The kernel-level [blackwell-1953] fact behind [van-rooy-2003]'s §4.1
+question-utility monotonicity. -/
+theorem bayesRisk_deterministic_le_deterministic_comp {𝓨 : Type u} [MeasurableSpace 𝓨]
+    {𝓨' : Type u} [MeasurableSpace 𝓨']
+    {f : Θ → 𝓧'} {g : 𝓧' → 𝓨} (hf : Measurable f) (hg : Measurable g)
+    (ℓ : Θ → 𝓨' → ℝ≥0∞) (π : Measure Θ) :
+    bayesRisk ℓ (Kernel.deterministic f hf) π ≤
+      bayesRisk ℓ (Kernel.deterministic (g ∘ f) (hg.comp hf)) π :=
+  bayesRisk_le_of_isGarblingOf ℓ
+    (Kernel.deterministic_comp_isGarblingOf_deterministic hf hg) π
 
 end ProbabilityTheory
