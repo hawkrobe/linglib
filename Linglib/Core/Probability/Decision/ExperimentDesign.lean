@@ -1,6 +1,7 @@
 import Linglib.Core.Probability.Choice.RationalAction
 import Linglib.Core.Probability.Decision.Basic
 import Linglib.Core.Probability.BayesianUpdate
+import Linglib.Core.Analysis.Convex.Function
 import Mathlib.Analysis.Convex.Jensen
 
 /-!
@@ -109,6 +110,31 @@ noncomputable def dpValueR {A : Type*} (utility : W → A → ℝ)
   fun post =>
     if h : actions.Nonempty then actions.sup' h (fun a => ∑ w : W, post w * utility w a)
     else 0
+
+/-- **`dpValueR` is a support function, hence convex**: the decision value
+`post ↦ maxₐ ∑_w post(w)·U(w,a)` is a finite supremum of linear functionals of
+the belief vector (`convexOn_finset_sup'` over `LinearMap.proj`-sums). The
+convexity that every value-of-information inequality in this directory runs
+on. -/
+theorem convexOn_dpValueR {A : Type*} (utility : W → A → ℝ) (actions : Finset A) :
+    ConvexOn ℝ Set.univ (dpValueR utility actions) := by
+  by_cases h : actions.Nonempty
+  · have heq : dpValueR utility actions = fun post =>
+        actions.sup' h (fun a => ∑ w : W, post w * utility w a) :=
+      funext (λ post => dif_pos h)
+    rw [heq]
+    refine convexOn_finset_sup' h (λ a _ => ?_)
+    have hlin : (fun post : W → ℝ => ∑ w : W, post w * utility w a)
+        = ⇑(∑ w : W, utility w a • LinearMap.proj (R := ℝ) (φ := λ _ : W => ℝ) w) := by
+      funext post
+      simp [LinearMap.sum_apply, LinearMap.smul_apply, LinearMap.proj_apply,
+        smul_eq_mul, mul_comm]
+    rw [hlin]
+    exact LinearMap.convexOn _ convex_univ
+  · have heq : dpValueR utility actions = fun _ => (0 : ℝ) :=
+      funext (λ post => dif_neg h)
+    rw [heq]
+    exact convexOn_const 0 convex_univ
 
 -- ============================================================================
 -- §4. Bridge to DecisionTheory
@@ -294,22 +320,6 @@ theorem marginalObs_sum (om : ObservationModel W E O) (prior : W → ℝ) (e : E
   rw [Finset.sum_comm]
   congr 1; ext w; rw [← Finset.mul_sum, om.likelihood_sum w e, mul_one]
 
-omit [Fintype W] in
-/-- Binary convexity over (W → ℝ) → ℝ implies Mathlib's `ConvexOn`. -/
-private theorem convexOn_of_binary
-    (V : (W → ℝ) → ℝ)
-    (hconv : ∀ (f g : W → ℝ) (t : ℝ), 0 ≤ t → t ≤ 1 →
-      V (fun w => t * f w + (1 - t) * g w) ≤ t * V f + (1 - t) * V g) :
-    ConvexOn ℝ Set.univ V := by
-  refine ⟨convex_univ, fun {x} _ {y} _ {a} {b} ha hb hab => ?_⟩
-  have h_b : b = 1 - a := by linarith
-  have h_le : a ≤ 1 := by linarith
-  subst h_b
-  have key : a • x + (1 - a) • y = fun w => a * x w + (1 - a) * y w := by
-    ext w; simp [Pi.add_apply, Pi.smul_apply, smul_eq_mul]
-  simp only [key, smul_eq_mul]
-  exact hconv x y a ha h_le
-
 /-- EIG is non-negative when V is convex (Jensen's inequality).
 
     For convex V: E[V(posterior)] ≥ V(E[posterior]) = V(prior).
@@ -321,15 +331,12 @@ theorem eig_nonneg_of_convex (om : ObservationModel W E O) (prior : W → ℝ)
     (valueFn : (W → ℝ) → ℝ) (e : E)
     (hprior : ∀ w, 0 ≤ prior w)
     (hprior_sum : ∑ w : W, prior w = 1)
-    (hconvex : ∀ (f g : W → ℝ) (t : ℝ), 0 ≤ t → t ≤ 1 →
-      valueFn (fun w => t * f w + (1 - t) * g w) ≤
-      t * valueFn f + (1 - t) * valueFn g) :
+    (hVO : ConvexOn ℝ Set.univ valueFn) :
     0 ≤ eig om prior valueFn e := by
   unfold eig
   suffices h : valueFn prior ≤
       ∑ o : O, marginalObs om prior e o * valueFn (posterior om prior e o) by linarith
   -- Apply Jensen (ConvexOn.map_sum_le) with weights = marginalObs, points = posterior
-  have hVO := convexOn_of_binary valueFn hconvex
   have hmo_sum : ∑ o : O, marginalObs om prior e o = 1 := by
     rw [marginalObs_sum]; exact hprior_sum
   have hJ := hVO.map_sum_le (p := posterior om prior e)
@@ -344,5 +351,15 @@ theorem eig_nonneg_of_convex (om : ObservationModel W E O) (prior : W → ℝ)
   -- Rewrite RHS of hJ: • → * for ℝ
   simp only [smul_eq_mul] at hJ
   exact hJ
+
+/-- **EIG of the decision value function is non-negative** — Jensen applied to
+the support function: information cannot hurt an expected-utility maximizer
+([blackwell-1953]'s forward direction at the value level). -/
+theorem eig_nonneg_dpValueR {A : Type*} (om : ObservationModel W E O)
+    (prior : W → ℝ) (utility : W → A → ℝ) (actions : Finset A) (e : E)
+    (hprior : ∀ w, 0 ≤ prior w) (hprior_sum : ∑ w : W, prior w = 1) :
+    0 ≤ eig om prior (dpValueR utility actions) e :=
+  eig_nonneg_of_convex om prior _ e hprior hprior_sum
+    (convexOn_dpValueR utility actions)
 
 end Core
