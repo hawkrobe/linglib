@@ -27,7 +27,7 @@ variable [Semiring 𝕜] [PartialOrder 𝕜] [AddCommMonoid E]
 
 /-- The supremum of a nonempty finite family of convex functions is convex:
 the `Finset.sup'` generalization of `ConvexOn.sup`. -/
-theorem convexOn_finset_sup' {t : Finset ι} (ht : t.Nonempty) {f : ι → E → β}
+protected theorem ConvexOn.finset_sup' {t : Finset ι} (ht : t.Nonempty) {f : ι → E → β}
     (hf : ∀ i ∈ t, ConvexOn 𝕜 s (f i)) : ConvexOn 𝕜 s (t.sup' ht f) := by
   induction ht using Finset.Nonempty.cons_induction with
   | singleton i => simpa using hf i (mem_singleton_self i)
@@ -35,10 +35,23 @@ theorem convexOn_finset_sup' {t : Finset ι} (ht : t.Nonempty) {f : ι → E →
     rw [sup'_cons ht]
     exact (hf i (mem_cons_self i t)).sup (ih fun j hj => hf j (mem_cons_of_mem hj))
 
+/-- Pointwise form of `ConvexOn.finset_sup'`. -/
+theorem ConvexOn.finset_sup'_apply {t : Finset ι} (ht : t.Nonempty) {f : ι → E → β}
+    (hf : ∀ i ∈ t, ConvexOn 𝕜 s (f i)) :
+    ConvexOn 𝕜 s (fun x => t.sup' ht (f · x)) := by
+  have h := ConvexOn.finset_sup' ht hf
+  rwa [funext (λ x => Finset.sup'_apply ht f x)] at h
+
 /-- The infimum of a nonempty finite family of concave functions is concave:
 the `Finset.inf'` generalization of `ConcaveOn.inf`. -/
-theorem concaveOn_finset_inf' {t : Finset ι} (ht : t.Nonempty) {f : ι → E → β}
+protected theorem ConcaveOn.finset_inf' {t : Finset ι} (ht : t.Nonempty) {f : ι → E → β}
     (hf : ∀ i ∈ t, ConcaveOn 𝕜 s (f i)) : ConcaveOn 𝕜 s (t.inf' ht f) :=
-  convexOn_finset_sup' (β := βᵒᵈ) ht hf
+  ConvexOn.finset_sup' (β := βᵒᵈ) ht hf
+
+/-- Pointwise form of `ConcaveOn.finset_inf'`. -/
+theorem ConcaveOn.finset_inf'_apply {t : Finset ι} (ht : t.Nonempty) {f : ι → E → β}
+    (hf : ∀ i ∈ t, ConcaveOn 𝕜 s (f i)) :
+    ConcaveOn 𝕜 s (fun x => t.inf' ht (f · x)) :=
+  ConvexOn.finset_sup'_apply (β := βᵒᵈ) ht hf
 
 end LinearOrderedAddCommMonoid
