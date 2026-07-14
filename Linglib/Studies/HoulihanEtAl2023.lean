@@ -385,7 +385,7 @@ a material-payoff decision problem.
 
 "Worlds" = opponent's possible actions. "Actions" = my possible actions. -/
 def toDecisionProblem (g : SymmetricGame)
-    (opponentBelief : Action2 → ℚ) : DecisionProblem Action2 Action2 where
+    (opponentBelief : Action2 → ℚ) : DecisionProblem ℚ Action2 Action2 where
   utility a₂ a₁ := g.payoff a₁ a₂
   prior := opponentBelief
 
@@ -397,7 +397,7 @@ for this domain: the latent variables the observer infers via inverse
 planning (Module 1). -/
 def toSocialDecisionProblem (g : SymmetricGame)
     (opponentBelief : Action2 → ℚ) (ωMoney ωAIA ωDIA : ℚ) :
-    DecisionProblem Action2 Action2 where
+    DecisionProblem ℚ Action2 Action2 where
   utility a₂ a₁ := g.socialUtility a₁ a₂ ωMoney ωAIA ωDIA
   prior := opponentBelief
 

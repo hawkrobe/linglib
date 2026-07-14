@@ -208,14 +208,14 @@ variable {M : Type*} {A : Type*}
 conditional EU by the cell's probability
 (`EU_Q(a) = Σ_{c ∈ cells Q} P(c) · EU(a | c)`). -/
 def partitionEU [Fintype M] [DecidableEq M]
-    (dp : DecisionProblem M A) (q : QUD M) (a : A) : ℚ :=
+    (dp : DecisionProblem ℚ M A) (q : QUD M) (a : A) : ℚ :=
   (q.toCellsFinset Finset.univ).sum (fun cell =>
     cell.sum dp.prior * conditionalEU dp cell a)
 
 /-- Cell probability times conditional EU is the raw weighted sum, for
 non-negative priors. -/
 private theorem cellProb_mul_conditionalEU [DecidableEq M]
-    (dp : DecisionProblem M A) (cell : Finset M) (a : A)
+    (dp : DecisionProblem ℚ M A) (cell : Finset M) (a : A)
     (hprior : ∀ w, dp.prior w ≥ 0) :
     cell.sum dp.prior * conditionalEU dp cell a =
     cell.sum (fun w => dp.prior w * dp.utility w a) := by
@@ -234,7 +234,7 @@ private theorem cellProb_mul_conditionalEU [DecidableEq M]
 /-- Law of total expectation: the unconditional expected utility equals
 the partition-relative EU, for any partition (non-negative priors). -/
 theorem eu_eq_partitionEU [Fintype M] [DecidableEq M]
-    (dp : DecisionProblem M A) (a : A) (q : QUD M)
+    (dp : DecisionProblem ℚ M A) (a : A) (q : QUD M)
     (hprior : ∀ w, dp.prior w ≥ 0) :
     expectedUtility dp a = partitionEU dp q a := by
   simp only [expectedUtility, partitionEU]
@@ -250,7 +250,7 @@ compute the unconditional EU. [merin-1999] p. 264 is the
 coarsening instance; the paper's FACT 5 — that non-coarsening
 re-coverings *fail* term-by-term re-usability — is not formalized. -/
 theorem partitionEU_congr [Fintype M] [DecidableEq M]
-    (dp : DecisionProblem M A) (q q' : QUD M) (a : A)
+    (dp : DecisionProblem ℚ M A) (q q' : QUD M) (a : A)
     (hprior : ∀ w, dp.prior w ≥ 0) :
     partitionEU dp q a = partitionEU dp q' a :=
   (eu_eq_partitionEU dp a q hprior).symm.trans (eu_eq_partitionEU dp a q' hprior)
@@ -259,7 +259,7 @@ theorem partitionEU_congr [Fintype M] [DecidableEq M]
 each coarse cell's term is the sum of the terms of the fine cells it
 groups, so a coarsening re-uses the finer partition's computations. -/
 theorem partitionEU_coarsening_regroup [Fintype M] [DecidableEq M]
-    (dp : DecisionProblem M A) {q q' : QUD M} (a : A)
+    (dp : DecisionProblem ℚ M A) {q q' : QUD M} (a : A)
     (hcoarse : q'.coarsens q)
     (hprior : ∀ w, dp.prior w ≥ 0) :
     partitionEU dp q' a =

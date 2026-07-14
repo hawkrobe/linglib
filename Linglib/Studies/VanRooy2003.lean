@@ -102,12 +102,12 @@ We will denote the proposition corresponding with a by a*". -/
     *partition condition* (p. 737: "exactly one action a ∈ A such that
     ∀b ∈ A−{a}: U(a,w) > U(b,w)"), which is what makes `actionPartition`
     genuinely disjoint (`optimalityCell_pairwise_disjoint`). -/
-def optimalityCell (dp : DecisionProblem W A) (acts : Set A) (a : A) : Set W :=
+def optimalityCell (dp : DecisionProblem ℚ W A) (acts : Set A) (a : A) : Set W :=
   {w | ∀ b ∈ acts, b ≠ a → dp.utility w a > dp.utility w b}
 
 /-- The **action-induced partition** `A*`: the set of optimality
     cells. [van-rooy-2003] p. 736-737. -/
-def actionPartition (dp : DecisionProblem W A) (acts : Set A) : Set (Set W) :=
+def actionPartition (dp : DecisionProblem ℚ W A) (acts : Set A) : Set (Set W) :=
   optimalityCell dp acts '' acts
 
 /-- The optimality cells are pairwise disjoint: each world lies in at
@@ -116,7 +116,7 @@ def actionPartition (dp : DecisionProblem W A) (acts : Set A) : Set (Set W) :=
     world `w` there is always exactly one action a ∈ A such that
     ∀b ∈ A−{a} : U(a,w) > U(b,w)".) -/
 theorem optimalityCell_pairwise_disjoint
-    (dp : DecisionProblem W A) (acts : Set A)
+    (dp : DecisionProblem ℚ W A) (acts : Set A)
     {a a' : A} (haa' : a ≠ a')
     (w : W) (hwa : w ∈ optimalityCell dp acts a) (hwa' : w ∈ optimalityCell dp acts a')
     (ha_acts : a ∈ acts) (ha'_acts : a' ∈ acts) :
@@ -161,7 +161,7 @@ change it. -/
     The nonemptiness clauses rule out the degenerate `Q = ⊥` case where
     the dominance conditions hold vacuously over empty witnesses. -/
 def IsDecisionRelevant
-    (Q : Question W) (dp : DecisionProblem W A) (acts : Set A) : Prop :=
+    (Q : Question W) (dp : DecisionProblem ℚ W A) (acts : Set A) : Prop :=
   ∃ p ∈ alt Q, p.Nonempty ∧ ∃ p' ∈ alt Q, p'.Nonempty ∧
     ∃ a ∈ acts, ∃ a' ∈ acts,
       (∀ w ∈ p,  dp.utility w a  > dp.utility w a') ∧
@@ -173,7 +173,7 @@ def IsDecisionRelevant
     decision-relevance is precisely "two `Q`-alts resolve to distinct
     actions" in the substrate's `IsResolved` vocabulary. -/
 theorem IsDecisionRelevant.alts_resolve_distinct
-    {Q : Question W} {dp : DecisionProblem W A} {acts : Set A}
+    {Q : Question W} {dp : DecisionProblem ℚ W A} {acts : Set A}
     (h : IsDecisionRelevant Q dp acts) :
     ∃ p ∈ alt Q, p.Nonempty ∧ ∃ p' ∈ alt Q, p'.Nonempty ∧
       ∃ a ∈ acts, ∃ a' ∈ acts, a ≠ a' ∧
@@ -206,7 +206,7 @@ theorem IsDecisionRelevant.alts_resolve_distinct
 /-- A question with at most one alternative is not decision-relevant:
     a single answer carries no decision value (`EVSI = 0`, p. 742). -/
 theorem not_isDecisionRelevant_of_subsingleton_alt
-    {Q : Question W} {dp : DecisionProblem W A} {acts : Set A}
+    {Q : Question W} {dp : DecisionProblem ℚ W A} {acts : Set A}
     (hSingle : ∀ p p', p ∈ alt Q → p' ∈ alt Q → p = p') :
     ¬ IsDecisionRelevant Q dp acts := by
   rintro ⟨p, hp, hpne, p', hp', _, a, _, a', _, hpa, hpa'⟩
@@ -264,7 +264,7 @@ def CoversAltsOf (Q Q' : Question W) : Prop :=
     `ProbabilityTheory.isGarblingOf_of_blackwellDominates`. -/
 theorem decisionRelevance_preserved_under_cover
     {Q Q' : Question W} (hCover : CoversAltsOf Q Q')
-    {dp : DecisionProblem W A} {acts : Set A}
+    {dp : DecisionProblem ℚ W A} {acts : Set A}
     (hQ' : IsDecisionRelevant Q' dp acts) :
     IsDecisionRelevant Q dp acts := by
   obtain ⟨p, hp, hpne, p', hp', hp'ne, a, ha, a', ha', hpa, hpa'⟩ := hQ'
@@ -301,7 +301,7 @@ theorem blackwell_euv_fact_forward [Fintype W] [DecidableEq W] [DecidableEq A]
     (hfine_disj : ∀ f₁ ∈ fine, ∀ f₂ ∈ fine, f₁ ≠ f₂ → Disjoint f₁ f₂)
     (hfine_cover : ∀ w : W, ∃ f ∈ fine, w ∈ f)
     (href : ∀ f ∈ fine, ∃ c ∈ coarse, f ⊆ c)
-    (dp : DecisionProblem W A) (acts : Finset A) (hprior : ∀ w, 0 ≤ dp.prior w) :
+    (dp : DecisionProblem ℚ W A) (acts : Finset A) (hprior : ∀ w, 0 ≤ dp.prior w) :
     questionUtility dp acts coarse ≤ questionUtility dp acts fine := by
   classical
   set g : Finset W → Finset W :=
@@ -351,7 +351,7 @@ theorem blackwell_euv_fact [Fintype W] [DecidableEq W] [DecidableEq A]
     (hcoarse_disj : ∀ c₁ ∈ coarse, ∀ c₂ ∈ coarse, c₁ ≠ c₂ → Disjoint c₁ c₂)
     (hfine_cover : ∀ w : W, ∃ f ∈ fine, w ∈ f) :
     (∀ f ∈ fine, ∃ c ∈ coarse, f ⊆ c) ↔
-      (∀ (dp : DecisionProblem W A) (acts : Finset A), (∀ w, 0 ≤ dp.prior w) →
+      (∀ (dp : DecisionProblem ℚ W A) (acts : Finset A), (∀ w, 0 ≤ dp.prior w) →
         questionUtility dp acts coarse ≤ questionUtility dp acts fine) := by
   refine ⟨fun href dp acts hprior =>
     blackwell_euv_fact_forward hcoarse_disj hfine_disj hfine_cover href dp acts hprior, ?_⟩

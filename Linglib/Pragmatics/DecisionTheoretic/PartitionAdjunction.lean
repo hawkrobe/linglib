@@ -53,18 +53,18 @@ variable {W A : Type*}
 
 /-- Two worlds are **utility-equivalent** for a decision problem and action
     list iff they yield identical utilities for every action. -/
-def utilityEquiv (dp : DecisionProblem W A) (actions : List A)
+def utilityEquiv (dp : DecisionProblem ℚ W A) (actions : List A)
     (w v : W) : Bool :=
   actions.all λ a => dp.utility w a == dp.utility v a
 
 /-- `utilityEquiv` is reflexive. -/
-private theorem utilityEquiv_refl (dp : DecisionProblem W A) (actions : List A) (w : W) :
+private theorem utilityEquiv_refl (dp : DecisionProblem ℚ W A) (actions : List A) (w : W) :
     utilityEquiv dp actions w w = true := by
   simp only [utilityEquiv, List.all_eq_true]
   intro a _; exact beq_self_eq_true _
 
 /-- `utilityEquiv` is symmetric. -/
-private theorem utilityEquiv_symm (dp : DecisionProblem W A) (actions : List A) (w v : W) :
+private theorem utilityEquiv_symm (dp : DecisionProblem ℚ W A) (actions : List A) (w v : W) :
     utilityEquiv dp actions w v = utilityEquiv dp actions v w := by
   unfold utilityEquiv
   apply Bool.eq_iff_iff.mpr
@@ -72,7 +72,7 @@ private theorem utilityEquiv_symm (dp : DecisionProblem W A) (actions : List A) 
   exact ⟨fun h a ha => (h a ha).symm, fun h a ha => (h a ha).symm⟩
 
 /-- `utilityEquiv` is transitive. -/
-private theorem utilityEquiv_trans (dp : DecisionProblem W A) (actions : List A)
+private theorem utilityEquiv_trans (dp : DecisionProblem ℚ W A) (actions : List A)
     (w v u : W) :
     utilityEquiv dp actions w v = true →
     utilityEquiv dp actions v u = true →
@@ -86,7 +86,7 @@ private theorem utilityEquiv_trans (dp : DecisionProblem W A) (actions : List A)
 
     Two worlds are in the same cell iff they have identical utility
     vectors across all actions. -/
-def sufficientPartition (dp : DecisionProblem W A) (actions : List A) : QUD W where
+def sufficientPartition (dp : DecisionProblem ℚ W A) (actions : List A) : QUD W where
   toSetoid :=
     { r := λ w v => utilityEquiv dp actions w v = true
       iseqv :=
@@ -96,7 +96,7 @@ def sufficientPartition (dp : DecisionProblem W A) (actions : List A) : QUD W wh
   decR := λ w v => decEq (utilityEquiv dp actions w v) true
 
 @[simp] theorem sufficientPartition_sameAnswer
-    (dp : DecisionProblem W A) (actions : List A) (w v : W) :
+    (dp : DecisionProblem ℚ W A) (actions : List A) (w v : W) :
     (sufficientPartition dp actions).sameAnswer w v = utilityEquiv dp actions w v := by
   show decide (utilityEquiv dp actions w v = true) = _
   cases h : utilityEquiv dp actions w v
@@ -104,13 +104,13 @@ def sufficientPartition (dp : DecisionProblem W A) (actions : List A) : QUD W wh
   · simp
 
 @[simp] theorem sufficientPartition_r_iff
-    (dp : DecisionProblem W A) (actions : List A) (w v : W) :
+    (dp : DecisionProblem ℚ W A) (actions : List A) (w v : W) :
     (sufficientPartition dp actions).r w v ↔ utilityEquiv dp actions w v = true :=
   Iff.rfl
 
 /-- Within a sufficient partition cell, utilities are identical for every action. -/
 theorem sufficientPartition_utility_eq
-    (dp : DecisionProblem W A) (actions : List A)
+    (dp : DecisionProblem ℚ W A) (actions : List A)
     {w v : W} (h : (sufficientPartition dp actions).r w v)
     {a : A} (ha : a ∈ actions) :
     dp.utility w a = dp.utility v a := by
@@ -127,7 +127,7 @@ theorem sufficientPartition_utility_eq
 
     This is the key lemma: refinement → utility preservation. -/
 theorem refinement_preserves_utility
-    (dp : DecisionProblem W A) (actions : List A) (q : QUD W)
+    (dp : DecisionProblem ℚ W A) (actions : List A) (q : QUD W)
     (hRef : QUD.refines q (sufficientPartition dp actions))
     {w v : W} (hCell : q.r w v)
     {a : A} (ha : a ∈ actions) :
@@ -141,7 +141,7 @@ theorem refinement_preserves_utility
     Dominance transfers because all worlds in the cell have identical
     utility vectors. -/
 theorem dominance_transfers_within_cell
-    (dp : DecisionProblem W A) (actions : List A)
+    (dp : DecisionProblem ℚ W A) (actions : List A)
     {w v : W} (hCell : (sufficientPartition dp actions).r w v)
     {a : A} (ha : a ∈ actions)
     (hDom : ∀ b ∈ actions, dp.utility w a ≥ dp.utility w b) :
@@ -162,7 +162,7 @@ theorem dominance_transfers_within_cell
     This states that the sufficient partition resolves dp in the strong
     sense: for each cell, there exists a dominating action. -/
 theorem sufficientPartition_cell_dominated
-    (dp : DecisionProblem W A) (actions : List A)
+    (dp : DecisionProblem ℚ W A) (actions : List A)
     {w v : W} (hCell : (sufficientPartition dp actions).r w v)
     {a : A} (ha : a ∈ actions)
     (hBest : ∀ b ∈ actions, dp.utility w a ≥ dp.utility w b) :
@@ -182,7 +182,7 @@ theorem sufficientPartition_cell_dominated
     (i.e., Q refines utility equivalence) must refine the sufficient
     partition. This is immediate from the definitions. -/
 theorem sufficientPartition_coarsest
-    (dp : DecisionProblem W A) (actions : List A) (q : QUD W)
+    (dp : DecisionProblem ℚ W A) (actions : List A) (q : QUD W)
     (hUtil : ∀ w v, q.r w v →
       ∀ a ∈ actions, dp.utility w a = dp.utility v a) :
     QUD.refines q (sufficientPartition dp actions) := by
@@ -199,7 +199,7 @@ theorem sufficientPartition_coarsest
     partition category. Witnesses the forward Galois direction
     categorically. -/
 def refinementMorphism
-    (dp : DecisionProblem W A) (actions : List A) (q : QUD W)
+    (dp : DecisionProblem ℚ W A) (actions : List A) (q : QUD W)
     (hRef : QUD.refines q (sufficientPartition dp actions)) :
     QUDHom ⟨q⟩ ⟨sufficientPartition dp actions⟩ :=
   ⟨hRef⟩
@@ -208,7 +208,7 @@ def refinementMorphism
     action), the sufficient partition is trivial. This is the case where
     world-state information has zero value for the decision problem. -/
 theorem sufficient_trivial_of_constant_utility
-    (dp : DecisionProblem W A) (actions : List A)
+    (dp : DecisionProblem ℚ W A) (actions : List A)
     (hConst : ∀ w v : W, ∀ a ∈ actions, dp.utility w a = dp.utility v a) :
     QUD.refines QUD.trivial (sufficientPartition dp actions) := by
   intro w v _
@@ -242,7 +242,7 @@ The Galois connection is one-sided. -/
 private inductive GW | w₁ | w₂ deriving DecidableEq
 private inductive GA | a | b deriving DecidableEq
 
-private def counterexDP : DecisionProblem GW GA where
+private def counterexDP : DecisionProblem ℚ GW GA where
   utility w act := match w, act with
     | .w₁, .a => 1 | .w₁, .b => 0
     | .w₂, .a => 3 | .w₂, .b => 0
@@ -275,22 +275,22 @@ theorem counterex_trivial_not_refines :
     By Blackwell's theorem (proved in `GSVanRooyBridge.lean`), this
     is equivalent to dp₁ being informationally more demanding:
     any partition that resolves dp₁ also resolves dp₂. -/
-def dpRefinement (dp₁ dp₂ : DecisionProblem W A) (actions : List A) : Prop :=
+def dpRefinement (dp₁ dp₂ : DecisionProblem ℚ W A) (actions : List A) : Prop :=
   QUD.refines (sufficientPartition dp₁ actions) (sufficientPartition dp₂ actions)
 
 /-- dpRefinement is reflexive. -/
-theorem dpRefinement_refl (dp : DecisionProblem W A) (actions : List A) :
+theorem dpRefinement_refl (dp : DecisionProblem ℚ W A) (actions : List A) :
     dpRefinement dp dp actions :=
   QUD.refines_refl _
 
 /-- dpRefinement is transitive. -/
-theorem dpRefinement_trans {dp₁ dp₂ dp₃ : DecisionProblem W A} {actions : List A}
+theorem dpRefinement_trans {dp₁ dp₂ dp₃ : DecisionProblem ℚ W A} {actions : List A}
     (h₁₂ : dpRefinement dp₁ dp₂ actions) (h₂₃ : dpRefinement dp₂ dp₃ actions) :
     dpRefinement dp₁ dp₃ actions :=
   QUD.refines_trans h₁₂ h₂₃
 
 /-- Categorically: dpRefinement gives a morphism in the partition category. -/
-def dpRefinementMorphism {dp₁ dp₂ : DecisionProblem W A} {actions : List A}
+def dpRefinementMorphism {dp₁ dp₂ : DecisionProblem ℚ W A} {actions : List A}
     (h : dpRefinement dp₁ dp₂ actions) :
     QUDHom ⟨sufficientPartition dp₁ actions⟩ ⟨sufficientPartition dp₂ actions⟩ :=
   ⟨h⟩

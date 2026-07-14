@@ -119,7 +119,7 @@ posterior at `o` equals the cast of the unnormalized best-action value of the
 fiber of `o`: `P(o) · V(post_o) = maxₐ ∑_{w ∈ fiber o} P(w)·U(w,a)`. The
 normalizing mass cancels; a zero-mass fiber makes both sides `0`. -/
 private lemma marginalObs_mul_dpValueR {A : Type*} [DecidableEq O] [DecidableEq W]
-    (classify : W → O) (dp : DecisionTheory.DecisionProblem W A)
+    (classify : W → O) (dp : DecisionTheory.DecisionProblem ℚ W A)
     (acts : Finset A) (hacts : acts.Nonempty) (hprior : ∀ w, 0 ≤ dp.prior w) (o : O) :
     marginalObs (deterministicObs classify) (fun w => (dp.prior w : ℝ)) () o *
       dpValueR (fun w a => (dp.utility w a : ℝ)) acts
@@ -196,7 +196,7 @@ The fiber-nonemptiness hypothesis keeps the `Finset.image` indexing faithful: em
 fibers would collapse in the cell set while still contributing (zero) terms to the
 observation sum. -/
 theorem eig_deterministicObs_eq_euv {A : Type*} [DecidableEq O] [DecidableEq W]
-    [DecidableEq A] (classify : W → O) (dp : DecisionTheory.DecisionProblem W A)
+    [DecidableEq A] (classify : W → O) (dp : DecisionTheory.DecisionProblem ℚ W A)
     (acts : Finset A) (hacts : acts.Nonempty)
     (hprior : ∀ w, 0 ≤ dp.prior w) (hsum : ∑ w : W, dp.prior w = 1)
     (hfib : ∀ o : O, (Finset.univ.filter (fun w => classify w = o)).Nonempty) :
