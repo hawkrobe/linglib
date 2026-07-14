@@ -8,7 +8,10 @@ import Mathlib.Analysis.Convex.Function
 /-!
 # Finite suprema of convex functions
 
-`[UPSTREAM]` candidates for `Mathlib.Analysis.Convex.Function`: the finite
+`[UPSTREAM]` candidates for `Mathlib/Analysis/Convex/` (likely `Jensen.lean`: the
+binary lemmas''s home `Function.lean` is deliberately `Finset`-free, and the
+`ContinuousAt.finset_sup'' family likewise lives downstream in
+`Topology/Order/Lattice.lean`): the finite
 (`Finset.sup'`) generalization of `ConvexOn.sup`, and its concave dual. The
 support function of a finite family of affine functionals — the "max of
 affine is convex" fact underlying decision values, Bayes risk, and Blackwell
