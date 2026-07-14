@@ -8,40 +8,29 @@ import Mathlib.Tactic.Common
 # Modifier-meaning classification at the intensional carrier
 
 We instantiate the order-theoretic modifier classes of
-`Modification/Basic.lean` (`Modifier.isIntersective`, `.isSubsective`,
-`.isPrivative`) at intensional properties, providing their pointwise
-unfolding lemmas, the implication structure, and [partee-2010]'s
-post-collapse three-class hierarchy.
-
-The classification descends from the operator treatment of modifiers
-introduced independently by [parsons-1970] and [kamp-1975] — Kamp's
-definitions (4)–(7): "predicative" (intersective), "privative",
-"affirmative" (subsective), "extensional"; Parsons's terms were
-"predicative" and "standard" — and was consolidated in
-[kamp-partee-1995]; the modern labels are Partee's.
-Extensionality — dependence on the noun's extension at each world — is
-the orthogonal, cross-cutting dimension, not a rung of the entailment
-hierarchy: it is `Intensional.IsExtensional` at this carrier, and
-`Studies/Kamp1975.lean` § 4 witnesses its independence from
-subsectivity. Whether *adjectives* uniformly denote
-`Modifier (Property W E)` is itself a theoretical claim
-(`Studies/Elbourne2026.lean`); the carrier is named for the denotation
-type, not the word class.
+`Modification/Basic.lean` at intensional properties. The classification
+goes back to [parsons-1970] and [kamp-1975] (definitions (4)–(7)) and
+was consolidated in [kamp-partee-1995]; the modern labels are Partee's.
 
 ## Main definitions
 
 * `Property W E`: intensional properties, `Intensional.Intension W (E → Prop)`.
 * `isIntersective_iff`, `isPrivative_iff`: pointwise forms of the
-  order-theoretic classes at this carrier ("gray"/"French" vs
-  "fake"/"counterfeit"; subsective "skillful" needs no unfolding lemma —
-  `Modifier.isSubsective` is already pointwise here).
+  order-theoretic classes at this carrier.
 * `isExtensional_of_isIntersective`: intersective modifier meanings are
   `Intensional.IsExtensional`.
 * `not_isSubsective_of_isPrivative`: privative meanings with non-empty
-  extension are not subsective (intersective → subsective holds at any
-  carrier: `Modifier.isIntersective.isSubsective`).
+  extension are not subsective.
 * `RevisedClass`: [partee-2010]'s three-class hierarchy after the
-  privative collapse, interpreted by `RevisedClass.satisfies`.
+  privative collapse.
+
+## Implementation notes
+
+Extensionality is orthogonal to the entailment hierarchy; the
+independence witnesses are in `Studies/Kamp1975.lean`. Whether
+*adjectives* uniformly denote `Modifier (Property W E)` is a
+theoretical claim (`Studies/Elbourne2026.lean`); the carrier is named
+for the denotation type, not the word class.
 -/
 
 namespace Modification
