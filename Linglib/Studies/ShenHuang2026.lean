@@ -655,7 +655,8 @@ order" ([fox-pesetsky-2005], as applied in [shen-huang-2026] §4.2). -/
 theorem binding_no_new_precedences (phases : List (List String)) :
     spelloutOrder (phases ++ [[]]) = spelloutOrder phases := by
   funext a b
-  refine propext ⟨Relation.TransGen.mono ?_, Relation.TransGen.mono ?_⟩ <;>
+  refine propext ⟨λ h => Relation.TransGen.mono ?_ a b h,
+    λ h => Relation.TransGen.mono ?_ a b h⟩ <;>
     rintro x y ⟨p, hp, hs⟩
   · rcases List.mem_append.mp hp with hp | hp
     · exact ⟨p, hp, hs⟩

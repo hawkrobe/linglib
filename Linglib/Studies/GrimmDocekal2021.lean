@@ -133,12 +133,14 @@ theorem isCluster_sup {P : α → Prop} {Z₁ Z₂ : Finset α}
   classical
   have hsub₁ : Z₁ ⊆ Z₁ ∪ Z₂ := Finset.subset_union_left
   have hsub₂ : Z₂ ⊆ Z₁ ∪ Z₂ := Finset.subset_union_right
-  have hmono₁ : ∀ a b, ChainIn C Z₁ a b → ChainIn C (Z₁ ∪ Z₂) a b :=
-    fun a b => Relation.ReflTransGen.mono
-      fun _ _ ⟨hu, hv, hC⟩ => ⟨hsub₁ hu, hsub₁ hv, hC⟩
-  have hmono₂ : ∀ a b, ChainIn C Z₂ a b → ChainIn C (Z₁ ∪ Z₂) a b :=
-    fun a b => Relation.ReflTransGen.mono
-      fun _ _ ⟨hu, hv, hC⟩ => ⟨hsub₂ hu, hsub₂ hv, hC⟩
+  have hrel₁ : (fun a b : α => a ∈ Z₁ ∧ b ∈ Z₁ ∧ C a b) ≤
+      (fun a b : α => a ∈ Z₁ ∪ Z₂ ∧ b ∈ Z₁ ∪ Z₂ ∧ C a b) :=
+    fun _ _ ⟨hu, hv, hC⟩ => ⟨hsub₁ hu, hsub₁ hv, hC⟩
+  have hrel₂ : (fun a b : α => a ∈ Z₂ ∧ b ∈ Z₂ ∧ C a b) ≤
+      (fun a b : α => a ∈ Z₁ ∪ Z₂ ∧ b ∈ Z₁ ∪ Z₂ ∧ C a b) :=
+    fun _ _ ⟨hu, hv, hC⟩ => ⟨hsub₂ hu, hsub₂ hv, hC⟩
+  have hmono₁ : ∀ a b, ChainIn C Z₁ a b → ChainIn C (Z₁ ∪ Z₂) a b := Relation.ReflTransGen.mono hrel₁
+  have hmono₂ : ∀ a b, ChainIn C Z₂ a b → ChainIn C (Z₁ ∪ Z₂) a b := Relation.ReflTransGen.mono hrel₂
   have hstep : ChainIn C (Z₁ ∪ Z₂) z₁ z₂ :=
     Relation.ReflTransGen.single ⟨hsub₁ hz₁, hsub₂ hz₂, hlink⟩
   have hstep' : ChainIn C (Z₁ ∪ Z₂) z₂ z₁ :=

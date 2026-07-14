@@ -176,7 +176,8 @@ theorem normalCDF_injective : Function.Injective normalCDF :=
 
     TODO: upstream to `Mathlib.Probability.CDF` — this works for any atomless
     probability measure on ℝ, not just the standard Gaussian. -/
-private theorem continuous_cdf_of_noAtoms (μ : Measure ℝ) [IsProbabilityMeasure μ] [NoAtoms μ] :
+private theorem continuous_cdf_of_noAtoms (μ : Measure ℝ) [IsProbabilityMeasure μ]
+    [NullSingletonClass μ] :
     Continuous (cdf μ) := by
   rw [continuous_iff_continuousAt]
   intro x
@@ -191,7 +192,8 @@ private theorem continuous_cdf_of_noAtoms (μ : Measure ℝ) [IsProbabilityMeasu
 
 /-- The standard normal CDF is continuous. -/
 theorem continuous_normalCDF : Continuous normalCDF := by
-  have : NoAtoms (gaussianReal (0 : ℝ) (1 : ℝ≥0)) := noAtoms_gaussianReal std_var_ne_zero
+  have : NullSingletonClass (gaussianReal (0 : ℝ) (1 : ℝ≥0)) :=
+    nullSingletonClass_gaussianReal std_var_ne_zero
   exact continuous_cdf_of_noAtoms (gaussianReal 0 1)
 
 /-- The standard normal CDF is surjective onto `(0, 1)`:

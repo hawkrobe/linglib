@@ -76,7 +76,7 @@ theorem consistent_iff_isStrictOrder :
     deleted — a larger derivation induces a larger order. -/
 theorem spelloutOrder_mono (h : ∀ p ∈ ps, p ∈ qs) (hab : spelloutOrder ps a b) :
     spelloutOrder qs a b :=
-  Relation.TransGen.mono (fun _ _ ⟨p, hp, hs⟩ => ⟨p, h p hp, hs⟩) hab
+  Relation.TransGen.mono (fun _ _ ⟨p, hp, hs⟩ => ⟨p, h p hp, hs⟩) a b hab
 
 /-- The induced order is blind to the sequencing of Spell-outs: it reads only the
     set of phase snapshots. -/

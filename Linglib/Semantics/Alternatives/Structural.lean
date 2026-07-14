@@ -585,7 +585,7 @@ private theorem lift_bind {C W : Type} {source : List (Tree C W)}
     (h : Relation.ReflTransGen (StructOp source) body body') :
     Relation.ReflTransGen (StructOp source) (.bind n cat body) (.bind n cat body') :=
   Relation.ReflTransGen.lift (fun t => Tree.bind n cat t)
-    (fun _ _ h => StructOp.inBind h) h
+    (fun _ _ h => StructOp.inBind h) body body' h
 
 /-- leafSubstList is just List.map. -/
 private theorem leafSubstList_eq_map {C W : Type} [BEq C] [BEq W]
