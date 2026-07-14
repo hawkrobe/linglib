@@ -54,9 +54,9 @@ theorem expectedUtilityR_nonneg {W A : Type*} [Fintype W]
 /-- ℚ-ordering of EU is preserved under the cast to ℝ. -/
 theorem expectedUtilityR_mono {W A : Type*} [Fintype W] [DecidableEq W]
     (dp : DecisionTheory.DecisionProblem ℚ W A) (a₁ a₂ : A)
-    (h : DecisionTheory.expectedUtility dp a₁ ≤ DecisionTheory.expectedUtility dp a₂) :
+    (h : DecisionTheory.DecisionProblem.expectedUtility dp a₁ ≤ DecisionTheory.DecisionProblem.expectedUtility dp a₂) :
     expectedUtilityR dp a₁ ≤ expectedUtilityR dp a₂ := by
-  simp only [expectedUtilityR, DecisionTheory.expectedUtility] at *
+  simp only [expectedUtilityR, DecisionTheory.DecisionProblem.expectedUtility] at *
   exact_mod_cast h
 
 /-- Softmax agent from a decision problem: score(a) = exp(α · EU(a)).

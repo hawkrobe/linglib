@@ -47,7 +47,7 @@ Note: UV(E) for a **single cell** E can be negative even when BF > 1
 
 namespace DTS.MerinBridge
 
-open Core.DecisionTheory
+open Core.DecisionTheory Core.DecisionTheory.DecisionProblem
 open DTS
 
 /-! ## Encoding Merin's Question as a Decision Problem
@@ -94,7 +94,7 @@ preferred. A Prop-level reformulation needs decidability for
 arbitrary `e : World4 → Prop`, which constrains the form of any
 finite enumeration argument. The intended proof: posRelevant means
 P(E∧H)·P(¬H) > P(E∧¬H)·P(H), which under uniform prior reduces to
-|E∩H|·|¬H| > |E∩¬H|·|H|; conditionalEU(accept|E) = |E∩H|/|E| while
+|E∩H|·|¬H| > |E∩¬H|·|H|; condExpectedUtility(accept|E) = |E∩H|/|E| while
 expectedUtility(accept) = |H|/|W|, so the shift inequality reduces
 to the same cell-count comparison. -/
 theorem posRelevant_shifts_accept_eu :
@@ -105,7 +105,7 @@ theorem posRelevant_shifts_accept_eu :
     (∃ w, w ∈ ctx.topic) →
     (∃ w, w ∉ ctx.topic) →
     posRelevant ctx e →
-    conditionalEU (truthDP ctx)
+    condExpectedUtility (truthDP ctx)
       (Finset.univ.filter (fun w => w ∈ e)) true >
     expectedUtility (truthDP ctx) true := by
   sorry
@@ -118,8 +118,8 @@ change any conditional EU, so UV(E) = 0.
 
 The key step: BF = 1 under uniform prior means P(E|H) = P(E|¬H),
 which gives |E∩H|/|H| = |E∩¬H|/|¬H|, hence |E∩H|/|E| = |H|/4.
-So conditionalEU(a|E) = expectedUtility(a) for each action a,
-making valueAfterLearning = dpValue.
+So condExpectedUtility(a|E) = expectedUtility(a) for each action a,
+making condValue = DecisionProblem.value.
 
 TODO: Original Bool-based proof used `decide` over the 256-cell
 finite verification. A kernel-checkable structural proof requires

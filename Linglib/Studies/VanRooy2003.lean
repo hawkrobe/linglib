@@ -21,22 +21,22 @@ notation maps to the substrate as:
 
 | [van-rooy-2003]                             | substrate                                  |
 |--------------------------------------------------|--------------------------------------------|
-| `EU(a) = ∑_w P(w) · U(a, w)` (p. 733)            | `Core.DecisionTheory.expectedUtility`      |
-| `UV(Choose now) = max_a EU(a)` (p. 734)          | `Core.DecisionTheory.dpValue`              |
-| `EU(a, C) = ∑_w P_C(w) · U(a, w)` (p. 735)       | `Core.DecisionTheory.conditionalEU`        |
-| `UV(Learn C, choose later) = max_a EU(a, C)`     | `Core.DecisionTheory.valueAfterLearning`   |
-| `UV(C) = UV(L C, c later) − UV(C now)` (p. 735)  | `Core.DecisionTheory.utilityValue`         |
-| `UV*(C) = VSI(C)` ≥ 0 (p. 735)                   | `Core.DecisionTheory.valueSampleInfo`      |
-| `EUV(Q) = ∑_q P(q) · UV(q)` (p. 742)             | `Core.DecisionTheory.questionUtility`      |
+| `EU(a) = ∑_w P(w) · U(a, w)` (p. 733)            | `Core.DecisionTheory.DecisionProblem.expectedUtility`      |
+| `UV(Choose now) = max_a EU(a)` (p. 734)          | `Core.DecisionTheory.DecisionProblem.value`              |
+| `EU(a, C) = ∑_w P_C(w) · U(a, w)` (p. 735)       | `Core.DecisionTheory.DecisionProblem.condExpectedUtility`        |
+| `UV(Learn C, choose later) = max_a EU(a, C)`     | `Core.DecisionTheory.DecisionProblem.condValue`   |
+| `UV(C) = UV(L C, c later) − UV(C now)` (p. 735)  | `Core.DecisionTheory.DecisionProblem.utilityValue`         |
+| `UV*(C) = VSI(C)` ≥ 0 (p. 735)                   | `Core.DecisionTheory.DecisionProblem.valueSampleInfo`      |
+| `EUV(Q) = ∑_q P(q) · UV(q)` (p. 742)             | `Core.DecisionTheory.DecisionProblem.questionUtility`      |
 | `Q ⊑ Q'`  (every Q-alt ⊆ some Q'-alt) (p. 741)   | `Question.Entails`                 |
-| `C resolves DP` (p. 736)                         | `Core.DecisionTheory.IsResolved`           |
+| `C resolves DP` (p. 736)                         | `Core.DecisionTheory.DecisionProblem.IsResolved`           |
 
 ## What this file proves
 
 * **§3.1 Action-induced partition `A*`** (p. 736-737):
   `optimalityCell dp acts a` and `actionPartition`.
 * **§3.1 *C* resolves DP** (p. 736): the substrate's
-  `Core.DecisionTheory.IsResolved dp acts C` — some action weakly
+  `Core.DecisionTheory.DecisionProblem.IsResolved dp acts C` — some action weakly
   dominates every other on every world in C.
 * **§3.1/§4.1 decision-relevance** (`IsDecisionRelevant`): the
   qualitative, prior-free core of van Rooy's relevance — a question is
@@ -50,7 +50,7 @@ notation maps to the substrate as:
   direction — a finer partition weakly dominates a coarser one for every decision
   problem — is the data-processing inequality `blackwell_euv_fact_forward`
   (deriving the substrate refinement map from `⊑` and applying
-  `Core.DecisionTheory.questionUtility_mono_of_refines`). The `⟸` direction is the
+  `Core.DecisionTheory.DecisionProblem.questionUtility_mono_of_refines`). The `⟸` direction is the
   [blackwell-1953] *converse*, `ProbabilityTheory.isGarblingOf_of_blackwellDominates`
   (finite, kernel-level — now proved; the partition-cell bridge to `questionUtility`
   is the remaining Layer-2 work, so this direction is still `sorry`).
@@ -82,7 +82,7 @@ bar). The reusable substrate it relied on stays one layer down:
 
 namespace VanRooy2003
 
-open Core Core.DecisionTheory Question
+open Core Core.DecisionTheory Core.DecisionTheory.DecisionProblem Question
 
 variable {W A : Type*}
 
@@ -132,7 +132,7 @@ theorem optimalityCell_pairwise_disjoint
 > actions, i.e., if in each resulting world no action has a higher
 > utility than this one."
 
-This is exactly `Core.DecisionTheory.IsResolved dp acts C`. We do not
+This is exactly `Core.DecisionTheory.DecisionProblem.IsResolved dp acts C`. We do not
 introduce a paper-vocabulary alias — consumers should use the
 substrate predicate directly. -/
 
@@ -248,7 +248,7 @@ def CoversAltsOf (Q Q' : Question W) : Prop :=
     theorem (p. 743, "a special case of [blackwell-1953]") is the
     quantitative *iff* `Q.Entails Q' ↔ ∀ dp, EUV(Q) ≥ EUV(Q')`
     over the expected utility value `EUV` (= substrate `questionUtility`,
-    with `EUV = EVSI` available as `euv_eq_evsi`). The result here is a
+    with `EUV = EVSI` available as `questionUtility_eq_expectedValueSampleInfo`). The result here is a
     one-directional, prior-free Prop transfer over the *dual* condition
     `CoversAltsOf`: on a general inquisitive (non-partition) `Question W`,
     `Entails` (P-alts ⊆ Q-alts) does not transfer the qualitative
@@ -256,7 +256,7 @@ def CoversAltsOf (Q Q' : Question W) : Prop :=
     recovering [van-rooy-2003]'s partition-based argument.
 
     For the *quantitative* §4.1 Fact (p. 743), the EUV-monotonicity ("only if")
-    direction is now `Core.DecisionTheory.questionUtility_split_ge` (a finer
+    direction is now `Core.DecisionTheory.DecisionProblem.questionUtility_split_ge` (a finer
     partition has `EUV ≥` the coarser one, for every decision problem). The
     remaining gap to the full `Entails`-level *iff* is (i) a
     `Question W → Finset (Finset W)` finite-alternatives partition-cell adapter, and
@@ -278,7 +278,7 @@ theorem decisionRelevance_preserved_under_cover
 
 [van-rooy-2003] p. 743 states that `Q ⊑ Q' ↔ ∀ DP, EUV(Q) ≥ EUV(Q')` is "a special case
 of [blackwell-1953]". We state it over [groenendijk-stokhof-1984] partition cells — the
-`Finset (Finset W)` that `Core.DecisionTheory.questionUtility` consumes. There, van Rooy's
+`Finset (Finset W)` that `Core.DecisionTheory.DecisionProblem.questionUtility` consumes. There, van Rooy's
 `Q ⊑ Q'` (p. 741: "∀ q ∈ Q : ∃ q' ∈ Q' : q ⊆ q'") is the cell-level refinement
 `∀ f ∈ fine, ∃ c ∈ coarse, f ⊆ c`, and the value side ranges over every decision problem
 with a proper prior.
@@ -291,7 +291,7 @@ discharging `Entails` against this cell refinement.) -/
 is weakly better than a coarser one for *every* decision problem (the data-processing
 inequality). Van Rooy's refinement `fine ⊑ coarse` (each fine cell `⊆` some coarse cell,
 p. 741) plus the partition structure furnish the substrate refinement map — each fine cell's
-containing coarse cell — and `Core.DecisionTheory.questionUtility_mono_of_refines` concludes.
+containing coarse cell — and `Core.DecisionTheory.DecisionProblem.questionUtility_mono_of_refines` concludes.
 
 `hfine_cover` and the disjointness hypotheses encode that `fine`, `coarse` are genuine
 [groenendijk-stokhof-1984] partitions of the world set. -/

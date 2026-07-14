@@ -40,7 +40,7 @@ only trivially dominable DPs.
 
 -/
 
-open Core.DecisionTheory
+open Core.DecisionTheory Core.DecisionTheory.DecisionProblem
 open Core.Categorical
 
 namespace DTS.PartitionAdjunction

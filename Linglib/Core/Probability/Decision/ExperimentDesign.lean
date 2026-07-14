@@ -41,7 +41,7 @@ The kernel-level Blackwell order behind both lives in
 | `ObservationModel`           | `Question W` (partition cells)         |
 | `marginalObs`                | `cellProbability`                      |
 | `posterior`                  | conditioning on cell membership        |
-| `dpValueR`                   | `valueAfterLearning` / `dpValue`       |
+| `dpValueR`                   | `condValue` / `DecisionProblem.value`       |
 | `eig`                        | `questionUtility` (EUV)                |
 | `optimalExperiment`          | (no softmax wrapper in DecisionTheory) |
 
@@ -101,7 +101,7 @@ noncomputable def optimalExperiment [Fintype E] (om : ObservationModel W E O)
     is the EU of the optimal action under those beliefs,
     `V(post) = maxₐ ∑_w post(w) · U(w,a)` (`0` if `actions` is empty).
 
-    The exact ℝ analog of `DecisionTheory.dpValue` — same `Finset.sup'` shape,
+    The exact ℝ analog of `DecisionTheory.DecisionProblem.value` — same `Finset.sup'` shape,
     so the deterministic-observation bridge (`eig_deterministicObs_eq_euv`)
     matches definitionally cell by cell. -/
 noncomputable def dpValueR {A : Type*} (utility : W → A → ℝ)
@@ -190,7 +190,7 @@ private lemma marginalObs_mul_dpValueR {A : Type*} [DecidableEq O] [DecidableEq 
 classifier `classify : W → O` whose fibers are all nonempty, the expected information
 gain of the (single) deterministic experiment under the decision-theoretic value
 function equals [van-rooy-2003]'s expected utility value of the corresponding
-partition question — `Core.DecisionTheory.questionUtility`, cast from ℚ to ℝ.
+partition question — `Core.DecisionTheory.DecisionProblem.questionUtility`, cast from ℚ to ℝ.
 
 The fiber-nonemptiness hypothesis keeps the `Finset.image` indexing faithful: empty
 fibers would collapse in the cell set while still contributing (zero) terms to the
@@ -202,7 +202,7 @@ theorem eig_deterministicObs_eq_euv {A : Type*} [DecidableEq O] [DecidableEq W]
     (hfib : ∀ o : O, (Finset.univ.filter (fun w => classify w = o)).Nonempty) :
     eig (deterministicObs classify) (fun w => (dp.prior w : ℝ))
         (dpValueR (fun w a => (dp.utility w a : ℝ)) acts) () =
-    (DecisionTheory.questionUtility dp acts
+    (DecisionTheory.DecisionProblem.questionUtility dp acts
       (Finset.univ.image (fun o : O =>
         Finset.univ.filter (fun w => classify w = o))) : ℚ) := by
   set fiberMap : O → Finset W := fun o => Finset.univ.filter (fun w => classify w = o)
@@ -215,17 +215,17 @@ theorem eig_deterministicObs_eq_euv {A : Type*} [DecidableEq O] [DecidableEq W]
     have hw₂ : w ∈ fiberMap o₂ := heq ▸ hw
     exact hw₁.symm.trans (Finset.mem_filter.mp hw₂).2
   -- Fiber probabilities sum to the total prior mass = 1.
-  have hcellSum : ∑ o : O, DecisionTheory.cellProbability dp (fiberMap o) = 1 := by
-    simp only [DecisionTheory.cellProbability, hfiberMap]
+  have hcellSum : ∑ o : O, DecisionTheory.DecisionProblem.cellProbability dp (fiberMap o) = 1 := by
+    simp only [DecisionTheory.DecisionProblem.cellProbability, hfiberMap]
     rw [Finset.sum_fiberwise_of_maps_to (fun w _ => Finset.mem_univ (classify w))]
     exact hsum
   -- Per-cell decision-theoretic identity (private lemma from Basic re-derived inline):
   -- P(cell) · V(D|cell) = sup'_a ∑_{w∈cell} P(w) · U(w,a).
   have hcell_val : ∀ cell : Finset W,
-      DecisionTheory.cellProbability dp cell * DecisionTheory.valueAfterLearning dp acts cell
+      DecisionTheory.DecisionProblem.cellProbability dp cell * DecisionTheory.DecisionProblem.condValue dp acts cell
         = acts.sup' hacts (fun a => ∑ w ∈ cell, dp.prior w * dp.utility w a) := by
     intro cell
-    unfold DecisionTheory.cellProbability DecisionTheory.valueAfterLearning
+    unfold DecisionTheory.DecisionProblem.cellProbability DecisionTheory.DecisionProblem.condValue
     rw [dif_pos hacts]
     have htp_nonneg : 0 ≤ cell.sum dp.prior :=
       Finset.sum_nonneg (fun w _ => hprior w)
@@ -238,23 +238,23 @@ theorem eig_deterministicObs_eq_euv {A : Type*} [DecidableEq O] [DecidableEq W]
       exact Finset.sum_eq_zero (fun w hw => by rw [hpw w hw, zero_mul])
     · rw [Finset.mul₀_sup' htp_nonneg _ acts hacts]
       refine Finset.sup'_congr hacts rfl (fun a _ => ?_)
-      have hcEU : DecisionTheory.conditionalEU dp cell a
+      have hcEU : DecisionTheory.DecisionProblem.condExpectedUtility dp cell a
           = cell.sum (fun w => dp.prior w / cell.sum dp.prior * dp.utility w a) := by
         show (if cell.sum dp.prior = 0 then (0 : ℚ) else _) = _
         rw [if_neg htp]
       rw [hcEU, Finset.mul_sum]
       refine Finset.sum_congr rfl (fun w _ => ?_)
       rw [div_mul_eq_mul_div, ← mul_div_assoc, mul_div_cancel_left₀ _ htp]
-  -- `dpValueR` on the ℝ-cast prior equals the cast of `dpValue`.
+  -- `dpValueR` on the ℝ-cast prior equals the cast of `DecisionProblem.value`.
   have hdpvR : dpValueR (fun w a => (dp.utility w a : ℝ)) acts (fun w => (dp.prior w : ℝ))
-      = ((DecisionTheory.dpValue dp acts : ℚ) : ℝ) := by
-    simp only [dpValueR, DecisionTheory.dpValue, dif_pos hacts]
+      = ((DecisionTheory.DecisionProblem.value dp acts : ℚ) : ℝ) := by
+    simp only [dpValueR, DecisionTheory.DecisionProblem.value, dif_pos hacts]
     rw [show acts.sup' hacts (fun a => ∑ w : W, (dp.prior w : ℝ) * (dp.utility w a : ℝ))
          = acts.sup' hacts
-             (fun a => ((DecisionTheory.expectedUtility dp a : ℚ) : ℝ)) from ?_]
+             (fun a => ((DecisionTheory.DecisionProblem.expectedUtility dp a : ℚ) : ℝ)) from ?_]
     · exact (Finset.apply_sup'_eq_sup'_comp hacts _ (fun x y => Rat.cast_max x y)).symm
     · refine Finset.sup'_congr hacts rfl (fun a _ => ?_)
-      simp only [DecisionTheory.expectedUtility]; push_cast; rfl
+      simp only [DecisionTheory.DecisionProblem.expectedUtility]; push_cast; rfl
   -- Assemble.
   unfold eig
   rw [hdpvR]
@@ -270,13 +270,13 @@ theorem eig_deterministicObs_eq_euv {A : Type*} [DecidableEq O] [DecidableEq W]
   rw [← Rat.cast_sum, ← Rat.cast_sub]
   -- Cast down: prove the ℚ identity.
   congr 1
-  unfold DecisionTheory.questionUtility
+  unfold DecisionTheory.DecisionProblem.questionUtility
   rw [Finset.sum_image hinj]
-  simp only [DecisionTheory.utilityValue]
+  simp only [DecisionTheory.DecisionProblem.utilityValue]
   simp_rw [mul_sub]
   rw [Finset.sum_sub_distrib]
-  rw [show (∑ o : O, DecisionTheory.cellProbability dp (fiberMap o) *
-        DecisionTheory.valueAfterLearning dp acts (fiberMap o))
+  rw [show (∑ o : O, DecisionTheory.DecisionProblem.cellProbability dp (fiberMap o) *
+        DecisionTheory.DecisionProblem.condValue dp acts (fiberMap o))
         = ∑ o : O, acts.sup' hacts (fun a =>
             ∑ w ∈ fiberMap o, dp.prior w * dp.utility w a) from
       Finset.sum_congr rfl (fun o _ => hcell_val (fiberMap o))]

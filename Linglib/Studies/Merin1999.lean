@@ -42,7 +42,7 @@ Merin, not proved there).
 
 namespace Merin1999
 
-open QUD Core.DecisionTheory
+open QUD Core.DecisionTheory Core.DecisionTheory.DecisionProblem
 
 /-! ### FACT 1: complement families -/
 
@@ -210,16 +210,16 @@ conditional EU by the cell's probability
 def partitionEU [Fintype M] [DecidableEq M]
     (dp : DecisionProblem ℚ M A) (q : QUD M) (a : A) : ℚ :=
   (q.toCellsFinset Finset.univ).sum (fun cell =>
-    cell.sum dp.prior * conditionalEU dp cell a)
+    cell.sum dp.prior * condExpectedUtility dp cell a)
 
 /-- Cell probability times conditional EU is the raw weighted sum, for
 non-negative priors. -/
 private theorem cellProb_mul_conditionalEU [DecidableEq M]
     (dp : DecisionProblem ℚ M A) (cell : Finset M) (a : A)
     (hprior : ∀ w, dp.prior w ≥ 0) :
-    cell.sum dp.prior * conditionalEU dp cell a =
+    cell.sum dp.prior * condExpectedUtility dp cell a =
     cell.sum (fun w => dp.prior w * dp.utility w a) := by
-  simp only [conditionalEU]
+  simp only [condExpectedUtility]
   by_cases htot : cell.sum dp.prior = 0
   · simp only [htot, ite_true, mul_zero]
     symm; apply Finset.sum_eq_zero; intro w hw
@@ -265,7 +265,7 @@ theorem partitionEU_coarsening_regroup [Fintype M] [DecidableEq M]
     partitionEU dp q' a =
       (q'.toCellsFinset Finset.univ).sum (fun c' =>
         ((q.toCellsFinset Finset.univ).filter (· ⊆ c')).sum (fun c =>
-          c.sum dp.prior * conditionalEU dp c a)) := by
+          c.sum dp.prior * condExpectedUtility dp c a)) := by
   unfold partitionEU
   refine Finset.sum_congr rfl (fun c' hc' => ?_)
   rw [cellProb_mul_conditionalEU dp c' a hprior]

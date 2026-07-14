@@ -1027,7 +1027,7 @@ def wantWithSloman [Fintype W]
 /-! ### §3. Bridge to `Core.Agent.DecisionTheory`
 
 `Lassiter.expectedValue` is the proposition-conditional analog of
-`Core.Agent.DecisionTheory.conditionalEU`. Wrapping the value function
+`Core.Agent.DecisionTheory.DecisionProblem.condExpectedUtility`. Wrapping the value function
 as a unit-action utility makes the bridge explicit. -/
 
 /-- Wrap a Lassiter `(prior, value)` pair as a unit-action
