@@ -76,24 +76,23 @@ theorem isIntersective.isSubsective {m : Modifier α}
   rw [hq]
   exact inf_le_right
 
-end SemilatticeInf
-
-/-- The intersective modifier built from a property `P`: combine `P` with the
-    modificand by pointwise conjunction — meet-translation at the carrier
-    `α → Prop` (`intersective_isIntersective`). The well-behaved special case
+/-- The intersective modifier built from `q`: meet the modificand with `q`.
+    At `α → Prop` this is pointwise conjunction; at conjoinable `Denot`
+    domains (`Intensional/Algebra.lean` instances) it is Partee-Rooth
+    generalized conjunction with the head. The well-behaved special case
     (restrictive relative clauses, intersective adjectives, manner adverbs). -/
-def intersective (P : α → Prop) : Modifier (α → Prop) :=
-  fun Q x => P x ∧ Q x
+def intersective (q : α) : Modifier α := (q ⊓ ·)
 
-@[simp] theorem intersective_apply (P Q : α → Prop) (x : α) :
+@[simp] theorem intersective_apply {β : Type*} (P Q : β → Prop) (x : β) :
     intersective P Q x = (P x ∧ Q x) := rfl
 
-/-- Head and modifier intersect symmetrically (conjunction is commutative). -/
-theorem intersective_comm (P Q : α → Prop) : intersective P Q = intersective Q P := by
-  funext x; exact propext And.comm
+/-- Modificand and modifier meet symmetrically. -/
+theorem intersective_comm (q r : α) : intersective q r = intersective r q :=
+  inf_comm q r
 
-theorem intersective_isIntersective (P : α → Prop) :
-    isIntersective (intersective P) :=
-  ⟨P, fun _ => rfl⟩
+theorem intersective_isIntersective (q : α) : isIntersective (intersective q) :=
+  ⟨q, fun _ => rfl⟩
+
+end SemilatticeInf
 
 end Modifier
