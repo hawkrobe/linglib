@@ -1,21 +1,18 @@
 import Linglib.Processing.Psychophysics.Psychophysics
 import Linglib.Core.Probability.Choice.ChoiceApproximations
-import Linglib.Core.Probability.Choice.UtilityTheory
 
 /-!
 # Psychophysical Choice Bridge [luce-1959]
 
-Connects three independently formalized modules that all operate on
+Connects two independently formalized modules that both operate on
 Luce ratio scales:
 
 - **Psychophysics** (§2.B–C): Stevens' power law `ψ(s) = k · sⁿ` and
   multidimensional multiplicative decomposition.
 - **ChoiceApproximations** (§1.G): Pairwise choice probabilities, JND
   thresholds, semiorder structure, and the trace ordering.
-- **UtilityTheory** (Chapter 3): Gamble decomposition `v(aρb) = w(a,b)·φ(ρ)`
-  and RSA utility as multiplicative factoring.
 
-The bridge connects them via four results:
+The bridge connects them via three results:
 
 1. **Stevens choiceProb = pairwiseProb**: Stevens' power-law choice
    probability is literally `pairwiseProb` on the power scale `v(s) = sⁿ`.
@@ -24,9 +21,6 @@ The bridge connects them via four results:
    law: `Δs/s = (π/(1-π))^(1/n) - 1`.
 3. **Trace = intensity ordering**: The trace ordering from §1.G on the
    power scale recovers the physical intensity ordering.
-4. **RSA utility = two-dimensional psychophysics**: RSA's multiplicative
-   score `informativity^α · exp(-α·cost)` is a two-factor psychophysical
-   scale in the sense of §2.C's dimension independence.
 -/
 
 namespace Core
@@ -123,7 +117,7 @@ theorem stevens_trace_iff_intensity (σ : StevensScale) {s₁ s₂ : ℝ}
   · -- Forward: positive-restricted trace → s₂ ≤ s₁
     -- Specialize at z = s₁ (positive): P(s₂, s₁) ≤ P(s₁, s₁) = 1/2
     intro htrace
-    by_contra hlt; push_neg at hlt
+    by_contra hlt; push Not at hlt
     have hpow := rpow_lt_rpow (le_of_lt h₁) hlt σ.hn_pos
     have hz := htrace s₁ h₁
     simp only [pairwiseProb] at hz
@@ -148,50 +142,5 @@ theorem stevens_trace_iff_intensity (σ : StevensScale) {s₁ s₂ : ℝ}
       rpow_le_rpow (le_of_lt h₂) hle (le_of_lt σ.hn_pos)
     rw [div_le_div_iff₀ (add_pos hp₂ hpz) (add_pos hp₁ hpz)]
     nlinarith [mul_le_mul_of_nonneg_right hpow (le_of_lt hpz)]
-
--- ============================================================================
--- §4. RSA utility = two-dimensional psychophysics
--- ============================================================================
-
-/-- RSA's multiplicative score factoring is an instance of multidimensional
-    psychophysics (§2.C).
-
-    `RSAUtilityDecomposition.score = informativity^α · exp(-α · cost)`
-
-    This is a two-factor product:
-    - Factor 1: `informativity^α` — a Stevens power law with exponent `α`
-    - Factor 2: `exp(-α · cost)` — a Fechner exponential with rate `-α`
-
-    The multiplicative independence axiom from §2.C says that the relative
-    contribution of informativity to choice probability is independent of
-    cost, and vice versa. This is a substantive empirical prediction of RSA,
-    not a modeling convenience — it says speakers' sensitivity to informativity
-    doesn't depend on utterance cost. -/
-theorem rsa_is_two_dimensional_psychophysics (d : RSAUtilityDecomposition) :
-    d.score = d.informativity ^ d.α * Real.exp (-d.α * d.cost) := by
-  rfl
-
-/-- The RSA informativity factor is a Stevens power law.
-
-    `informativity^α = StevensScale.psi ⟨α, 1,...⟩ informativity`
-    (with coefficient `k = 1`). -/
-theorem rsa_informativity_is_stevens (d : RSAUtilityDecomposition)
-    (hα_pos : 0 < d.α) :
-    d.informativity ^ d.α =
-    (StevensScale.mk d.α 1 hα_pos one_pos).psi d.informativity := by
-  simp only [StevensScale.psi, one_mul]
-
-/-- The full RSA decomposition is a two-dimensional psychophysical scale:
-    log(score) = α · log(informativity) + (-α) · cost.
-
-    In log-space, each dimension contributes additively with its own
-    "exponent" (α for informativity, -α for cost). This additive structure
-    in log-space is exactly Luce's Chapter 3 decomposition viewed through
-    the Stevens-Fechner equivalence. -/
-theorem rsa_log_decomposition (d : RSAUtilityDecomposition)
-    (hinfo_pos : 0 < d.informativity) :
-    Real.log d.score = d.α * Real.log d.informativity + (-d.α) * d.cost := by
-  have := rsa_utility_decomposition d hinfo_pos
-  linarith
 
 end Core

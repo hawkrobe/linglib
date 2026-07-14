@@ -183,9 +183,9 @@ theorem jndL_swap_ordered (v : A → ℝ) (hv : ∀ a, 0 < v a) (thr : ℝ)
   have hpos : ∀ b, 0 < ra.score () b := fun b => hv b
   have hne : x ≠ y := by
     intro heq; subst heq
-    simp [jndL, pairwiseProb_self v hv] at hL; linarith
+    simp [jndL, pairwiseProb_self (hv x)] at hL; linarith
   have hvxy : v y < v x :=
-    (pairwiseProb_gt_half_iff v hv x y).mp (lt_trans hthr_lower hL)
+    (pairwiseProb_gt_half_iff (hv x) (hv y)).mp (lt_trans hthr_lower hL)
   have hden_pos := rankProbRec_pos_of_score_pos ra () (y :: x :: rest) hpos
   have hratio := rankProbRec_swap_ratio ra () x y rest hne hx hy hnd hpos
   have hvy_S_pos : (0 : ℝ) < ra.score () y + ∑ b ∈ rest.toFinset, ra.score () b :=
@@ -276,7 +276,7 @@ theorem traceGe_iff_expectedRank_le (v : A → ℝ) (hv : ∀ a, 0 < v a)
     intro hle
     rw [trace_iff_scale_ge v hv x y]
     by_contra h_not
-    push_neg at h_not
+    push Not at h_not
     -- h_not : v x < v y, i.e., ra.score () y > ra.score () x
     have hgt : ra.score () y > ra.score () x := h_not
     have := expectedRank_lt_of_score_gt ra () T y x hy hx hne.symm hpos' hgt

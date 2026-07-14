@@ -272,7 +272,6 @@ import Linglib.Core.Probability.Choice.GumbelLuce
 import Linglib.Core.Probability.Choice.RankOrderings
 import Linglib.Core.Probability.Choice.RationalAction
 import Linglib.Core.Probability.Choice.SemiorderRanking
-import Linglib.Core.Probability.Choice.UtilityTheory
 import Linglib.Core.Probability.ConditionalProbability
 import Linglib.Core.Probability.Confirmation
 import Linglib.Core.Probability.Constructions
@@ -2475,6 +2474,7 @@ import Linglib.Studies.Longobardi2001
 import Linglib.Studies.Longobardi2005
 import Linglib.Studies.LuChuangBaayen2026
 import Linglib.Studies.LuPanDegen2025
+import Linglib.Studies.Luce1959
 import Linglib.Studies.LuckingGinzburg2022
 import Linglib.Studies.Lucy1994
 import Linglib.Studies.MacuchSilvaEtAl2024
