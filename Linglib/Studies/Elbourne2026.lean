@@ -43,7 +43,7 @@ construction.
 
 namespace Elbourne2026
 
-open Modification (Property isIntersective_iff)
+open Modification (Property)
 open Modifier (isIntersective isSubsective)
 
 /-! ### ⟨et,et⟩ Adjective Denotations -/

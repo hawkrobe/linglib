@@ -7,8 +7,11 @@ import Linglib.Semantics.Modification.Classification
 noun-extension widening under the Non-Vacuity Principle and Head Primacy
 Principle of [kamp-partee-1995] (§ 5.3, p. 161; stated as formulae (18)
 and (20) in [partee-2010] § 4), used by [partee-2010] to reanalyse
-privative adjectives as subsective-after-coercion. Consumed by
-`Studies/Partee2010.lean` and `Studies/DelPinal2015.lean`.
+privative adjectives as subsective-after-coercion. Both principles are
+anticipated in [kamp-1975] § 7: the noun as the central contextual
+factor fixing the adjective's standards, and the requirement that an
+attributive adjective "cut the extension of the noun" nontrivially.
+Consumed by `Studies/Partee2010.lean` and `Studies/DelPinal2015.lean`.
 
 Scope: models the adjective-triggered widening of [partee-2010]'s
 fake-fur case; the constitutive-material case (stone lion) is bracketed
