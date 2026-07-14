@@ -119,9 +119,10 @@ on. -/
 theorem convexOn_dpValueR {A : Type*} (utility : W → A → ℝ) (actions : Finset A) :
     ConvexOn ℝ Set.univ (dpValueR utility actions) := by
   by_cases h : actions.Nonempty
-  · have heq : dpValueR utility actions = fun post =>
-        actions.sup' h (fun a => ∑ w : W, post w * utility w a) :=
-      funext (λ post => dif_pos h)
+  · have heq : dpValueR utility actions
+        = actions.sup' h (fun a post => ∑ w : W, post w * utility w a) :=
+      funext (λ post => (dif_pos h).trans
+        (Finset.sup'_apply h (fun a post => ∑ w : W, post w * utility w a) post).symm)
     rw [heq]
     refine convexOn_finset_sup' h (λ a _ => ?_)
     have hlin : (fun post : W → ℝ => ∑ w : W, post w * utility w a)
