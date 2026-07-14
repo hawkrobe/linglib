@@ -1739,8 +1739,8 @@ import Linglib.Semantics.Modality.Temporal
 import Linglib.Semantics.Modality.TemporalAxes
 import Linglib.Semantics.Modality.TemporalConstraint
 import Linglib.Semantics.Modality.Typology
-import Linglib.Semantics.Modification.Adjective
 import Linglib.Semantics.Modification.Basic
+import Linglib.Semantics.Modification.Classification
 import Linglib.Semantics.Modification.Coercion
 import Linglib.Semantics.Modification.RelativeClause
 import Linglib.Semantics.Mood.Defs

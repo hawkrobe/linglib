@@ -27,7 +27,7 @@ abstract `PolarMeasure`.
 Core degree types (`Degree`, `Threshold`) live in `Core.MeasurementScale`; the
 threshold semantics (`positiveMeaning`, `negativeMeaning`) in `Semantics/Degree/Basic`.
 The intersective/subsective/privative classification lives in
-`Semantics/Modification/Adjective.lean`.
+`Semantics/Modification/Classification.lean`.
 -/
 
 namespace Degree

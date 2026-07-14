@@ -1,4 +1,4 @@
-import Linglib.Semantics.Modification.Adjective
+import Linglib.Semantics.Modification.Classification
 import Linglib.Core.Logic.Trivalent
 import Mathlib.Data.Set.Basic
 
@@ -15,7 +15,8 @@ Kamp presents two theories of adjective semantics:
 **Theory 1 (§ 1–2)**: Adjectives as functions from properties to
 properties (type `⟨⟨e,t⟩,⟨e,t⟩⟩`). The classification hierarchy —
 intersective, subsective, privative, extensional — is formalized in
-`Semantics/Modification/Adjective.lean`.
+`Modification/Basic.lean` (order-theoretic core) and
+`Semantics/Modification/Classification.lean` (intensional carrier).
 
 **Theory 2 (§ 3–7)**: Vague/graded models. Kamp introduces *vague
 models* `⟨M, S, F, p⟩` (partial model + completions + σ-field +
@@ -28,7 +29,7 @@ and § 3 formalizes the comparative definitions that descend from it.
 
 ## Structure
 
-- § 1: Single-world specialization of `Adjective.lean`'s hierarchy
+- § 1: Single-world specialization of the `Modifier.is*` hierarchy
 - § 2: Many-valued logic failure (motivation for Theory 2)
 - § 3: Kamp → Klein lineage: `kampAtLeastAs` ↔ `kleinMoreThan`
 - § 4: Concrete witnesses for each hierarchy class
@@ -45,43 +46,38 @@ motivates the move to supervaluation / probability over completions.
 
 namespace Kamp1975
 
-open Modification
+open Modification Modifier
 
 /-! ### Bridge to single-world predicates
 
-`Adjective.lean` defines the general intensional hierarchy:
-`isIntersective`, `isSubsective`, `isPrivative`, `isExtensional` over
-`Property W E = W → E → Prop`. The bridge theorems below show that
-fixing a world reduces the intensional definitions to their single-
-world counterparts. -/
+The classification (`Modifier.isIntersective`, `.isSubsective`, …) is
+one order-theoretic definition instantiated at two carriers: the
+intensional `Property W E = W → E → Prop` and the single-world
+`E → Prop`. The bridge theorems below show that fixing a world sends
+the first instance to the second. -/
 
 section Bridge
 
 variable {W E : Type*}
 
 /-- Single-world specialization: given a fixed world, the intensional
-    hierarchy reduces to the extensional one.
-
-    If `adj` is intersective, then at any fixed world `w`, the function
-    `N ↦ adj N w` is intersective in the extensional sense: there
-    exists a fixed predicate Q(w) such that the result is Q(w) ∩ N(w). -/
-theorem intersective_at_world {adj : AdjMeaning W E}
+    instance of `Modifier.isIntersective` reduces to the `E → Prop`
+    instance on the rigidified single-world view `N ↦ adj (fun _ => N) w`. -/
+theorem intersective_at_world {adj : Modifier (Property W E)}
     (h : isIntersective adj) (w : W) :
-    ∃ (Q_w : E → Prop), ∀ (N : E → Prop) (x : E),
-      adj (fun _ => N) w x ↔ (Q_w x ∧ N x) := by
+    isIntersective (fun N : E → Prop => adj (fun _ => N) w) := by
   obtain ⟨Q, hQ⟩ := h
-  exact ⟨Q w, fun N x => hQ (fun _ => N) w x⟩
+  exact ⟨Q w, fun N => congrFun (hQ fun _ => N) w⟩
 
-/-- Single-world specialization of subsective. -/
-theorem subsective_at_world {adj : AdjMeaning W E}
+/-- Single-world specialization of `Modifier.isSubsective`. -/
+theorem subsective_at_world {adj : Modifier (Property W E)}
     (h : isSubsective adj) (w : W) :
-    ∀ (N : E → Prop) (x : E), adj (fun _ => N) w x → N x := by
-  intro N x hadj
-  exact h (fun _ => N) w x hadj
+    isSubsective (fun N : E → Prop => adj (fun _ => N) w) :=
+  fun N => h (fun _ => N) w
 
 /-! `intersective_at_world` and `subsective_at_world` show that fixing
-    a world reduces the intensional hierarchy to single-world
-    predicates. -/
+    a world sends the intensional instance of the hierarchy to the
+    single-world instance — the same classes, one definition. -/
 
 end Bridge
 
@@ -190,16 +186,17 @@ inductive E3 | a | b | c
     Models [kamp-1975]'s intersective class. Entailment pattern:
     "gray cat" entails both "gray" and "cat"; "gray" + "cat" entails
     "gray cat". -/
-def grayAdj : AdjMeaning W2 E3 := fun N w x =>
+def grayAdj : Modifier (Property W2 E3) := fun N w x =>
   (match x with | .a => True | _ => False) ∧ N w x
 
 theorem gray_intersective : isIntersective grayAdj :=
-  ⟨fun _ x => match x with | .a => True | _ => False,
-   fun N w x => by cases x <;> simp [grayAdj]⟩
+  isIntersective_iff.mpr
+    ⟨fun _ x => match x with | .a => True | _ => False,
+     fun N w x => by cases x <;> simp [grayAdj]⟩
 
 /-- "gray" is therefore also extensional and subsective. -/
-example : isExtensional grayAdj := intersective_implies_extensional gray_intersective
-example : isSubsective grayAdj := intersective_implies_subsective gray_intersective
+example : isExtensional grayAdj := isExtensional_of_isIntersective gray_intersective
+example : isSubsective grayAdj := gray_intersective.isSubsective
 
 /-- **"fake"**: a privative adjective (traditional analysis). "Fake N"
     entities are never N.
@@ -209,12 +206,11 @@ example : isSubsective grayAdj := intersective_implies_subsective gray_intersect
 
     [partee-2010] argues this class should be reanalyzed as
     subsective with noun coercion — see `Partee2010.lean`. -/
-def fakeAdj : AdjMeaning W2 E3 := fun N w x =>
+def fakeAdj : Modifier (Property W2 E3) := fun N w x =>
   (match x with | .b => True | _ => False) ∧ ¬ N w x
 
-theorem fake_privative : isPrivative fakeAdj := by
-  intro N w x h
-  exact h.2
+theorem fake_privative : isPrivative fakeAdj :=
+  isPrivative_iff.mpr fun _ _ _ h => h.2
 
 /-- **"skillful"**: a subsective adjective that is NOT extensional.
     Being a "skillful N" depends on N's intension — what counts as an N
@@ -224,14 +220,13 @@ theorem fake_privative : isPrivative fakeAdj := by
     Entailment pattern: "skillful surgeon" entails "surgeon" (subsective),
     but "skillful surgeon" + "violinist" does not entail "skillful
     violinist" (not intersective, because not extensional). -/
-def skillfulAdj : AdjMeaning W2 E3 := fun N w x =>
+def skillfulAdj : Modifier (Property W2 E3) := fun N w x =>
   N w x ∧ match x with
     | .a => N .w₁ .a  -- a's skill assessment depends on N's intension
     | _  => False
 
-theorem skillful_subsective : isSubsective skillfulAdj := by
-  intro N w x h
-  exact h.1
+theorem skillful_subsective : isSubsective skillfulAdj :=
+  fun _ _ _ h => h.1
 
 theorem skillful_not_extensional : ¬ isExtensional skillfulAdj := by
   intro hext
@@ -253,7 +248,7 @@ theorem skillful_not_extensional : ¬ isExtensional skillfulAdj := by
     "alleged", "potential", "putative" that carry no meaning postulate
     constraining the relationship between the modified and unmodified
     extension. -/
-def allegedAdj : AdjMeaning W2 E3 := fun _N _ x =>
+def allegedAdj : Modifier (Property W2 E3) := fun _N _ x =>
   match x with | .a => True | _ => False
 
 /-- "alleged N" does not entail "N" (not subsective). -/
@@ -264,7 +259,7 @@ theorem alleged_not_subsective : ¬ isSubsective allegedAdj := by
 /-- "alleged N" does not entail "not N" (not privative). -/
 theorem alleged_not_privative : ¬ isPrivative allegedAdj := by
   intro h
-  exact h (fun _ _ => True) .w₁ .a trivial trivial
+  exact isPrivative_iff.mp h (fun _ _ => True) .w₁ .a trivial trivial
 
 end Witnesses
 
