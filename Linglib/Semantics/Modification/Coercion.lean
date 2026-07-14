@@ -13,15 +13,6 @@ factor fixing the adjective's standards, and the requirement that an
 attributive adjective "cut the extension of the noun" nontrivially.
 Consumed by `Studies/Partee2010.lean` and `Studies/DelPinal2015.lean`.
 
-Scope: models the adjective-triggered widening of [partee-2010]'s
-fake-fur case; the constitutive-material case (stone lion) is bracketed
-there and not modelled here. `isNonVacuous` states the NVP bivalently
-(negative extension = complement), simplifying [kamp-partee-1995]'s
-partial setting. Not to be confused with complement coercion
-(`Studies/Pustejovsky1995.lean`), NP type-shifting
-(`Semantics/Composition/TypeShifting.lean`), or aspectual coercion
-(`Semantics/Aspect/Composition.lean`).
-
 ## Main definitions
 
 * `isNonVacuous P w d`: NVP at world `w` within local domain `d`.
@@ -30,6 +21,17 @@ partial setting. Not to be confused with complement coercion
   world `w`: a non-extensional `adj` reads the shift's values at other
   worlds.
 * `SubsectiveReanalysis adjClassical`: reanalysis as subsective-after-coercion.
+
+## Implementation notes
+
+This models the adjective-triggered widening of [partee-2010]'s fake-fur
+case; the constitutive-material case (stone lion) is bracketed there and
+not modelled here. `isNonVacuous` states the NVP bivalently (negative
+extension = complement), simplifying [kamp-partee-1995]'s partial
+setting. Not to be confused with complement coercion
+(`Studies/Pustejovsky1995.lean`), NP type-shifting
+(`Semantics/Composition/TypeShifting.lean`), or aspectual coercion
+(`Semantics/Aspect/Composition.lean`).
 -/
 
 namespace Modification
