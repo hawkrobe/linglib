@@ -1033,7 +1033,7 @@ as a unit-action utility makes the bridge explicit. -/
 /-- Wrap a Lassiter `(prior, value)` pair as a unit-action
     `DecisionProblem`. -/
 def toDecisionProblem (pr : W → ℚ) (V : W → ℚ) :
-    Core.DecisionTheory.DecisionProblem W Unit where
+    Core.DecisionTheory.DecisionProblem ℚ W Unit where
   utility w _ := V w
   prior := pr
 

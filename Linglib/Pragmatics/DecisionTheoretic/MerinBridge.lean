@@ -62,7 +62,7 @@ A dichotomic issue {H, ¬H} with prior π corresponds to a decision problem:
 
 The agent must choose between accepting H (true) or rejecting H (false).
 Utility = 1 for correct choice, 0 for incorrect. -/
-def truthDP {W : Type*} (ctx : DTSContext W) : DecisionProblem W Bool where
+def truthDP {W : Type*} (ctx : DTSContext W) : DecisionProblem ℚ W Bool where
   utility w a :=
     if a then  -- accept H
       if w ∈ ctx.topic then 1 else 0

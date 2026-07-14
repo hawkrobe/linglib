@@ -75,13 +75,13 @@ EVPI; it is the paper's `ExpRegret(r*)` and the upper bound on
 /-- Maximum utility achievable at world `w` across actions.
 
     With Finset actions, this is `sup'` over utilities at world `w`. -/
-def bestUtilityAt {W A : Type*} (dp : DecisionProblem W A)
+def bestUtilityAt {W A : Type*} (dp : DecisionProblem ℚ W A)
     (actions : Finset A) (w : W) : ℚ :=
   if h : actions.Nonempty then actions.sup' h (dp.utility w) else 0
 
 /-- Oracle value: expected utility under perfect information.
     `Σ_w P(w) · max_a U(w, a)` -/
-def oracleValue {W A : Type*} [Fintype W] (dp : DecisionProblem W A)
+def oracleValue {W A : Type*} [Fintype W] (dp : DecisionProblem ℚ W A)
     (actions : Finset A) : ℚ :=
   ∑ w : W, dp.prior w * bestUtilityAt dp actions w
 
@@ -94,7 +94,7 @@ def oracleValue {W A : Type*} [Fintype W] (dp : DecisionProblem W A)
 
     [raiffa-schlaifer-1961] -/
 def evpi {W A : Type*} [Fintype W] [DecidableEq W]
-    (dp : DecisionProblem W A) (actions : Finset A) : ℚ :=
+    (dp : DecisionProblem ℚ W A) (actions : Finset A) : ℚ :=
   oracleValue dp actions - dpValue dp actions
 
 /-- EVPI is non-negative: acting with perfect information is at least
@@ -106,7 +106,7 @@ def evpi {W A : Type*} [Fintype W] [DecidableEq W]
     Therefore `oracleValue ≥ EU(a)` for every `a`, hence
     `oracleValue ≥ max_a EU(a) = dpValue`. -/
 theorem evpi_nonneg {W A : Type*} [Fintype W] [DecidableEq W]
-    (dp : DecisionProblem W A) (actions : Finset A)
+    (dp : DecisionProblem ℚ W A) (actions : Finset A)
     (hprior : ∀ w, 0 ≤ dp.prior w) (hne : actions.Nonempty) :
     0 ≤ evpi dp actions := by
   unfold evpi
@@ -142,7 +142,7 @@ instance : Nonempty Response := ⟨.exh⟩
 
 /-- The paper's parameterized decision problem: `P(g₂) = ε` (uncertainty),
 matching mention-some worth 1, mismatching 0, exhaustive `1 − δ` (cost). -/
-def dp (ε δ : ℚ) : DecisionProblem Goal Response where
+def dp (ε δ : ℚ) : DecisionProblem ℚ Goal Response where
   utility
     | .g₁, .ms1 => 1
     | .g₁, .ms2 => 0
@@ -174,7 +174,7 @@ speaker over the `(ε, δ)`-indexed state space. -/
 
 /-- Score for the canonical speaker: `α · EU(r)` at condition `(ε, δ)`. -/
 noncomputable def policyScore (α : ℝ) (p : ℚ × ℚ) (r : Response) : EReal :=
-  ((α * (expectedUtility (dp p.1 p.2) r : ℝ) : ℝ) : EReal)
+  ((α * ((expectedUtility (dp p.1 p.2) r : ℚ) : ℝ) : ℝ) : EReal)
 
 instance (α : ℝ) : RSA.Canonical.ViableSpeaker (policyScore α) where
   no_top _ _ := EReal.coe_ne_top _

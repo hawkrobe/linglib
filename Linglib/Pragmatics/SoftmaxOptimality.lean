@@ -40,12 +40,12 @@ open Real BigOperators Finset Filter Topology
 
 /-- Expected utility cast to ℝ for interfacing with softmax/RationalAction. -/
 noncomputable def expectedUtilityR {W A : Type*} [Fintype W]
-    (dp : DecisionTheory.DecisionProblem W A) (a : A) : ℝ :=
+    (dp : DecisionTheory.DecisionProblem ℚ W A) (a : A) : ℝ :=
   ∑ w : W, (dp.prior w : ℝ) * (dp.utility w a : ℝ)
 
 /-- EU in ℝ is non-negative when utility and prior are non-negative. -/
 theorem expectedUtilityR_nonneg {W A : Type*} [Fintype W]
-    (dp : DecisionTheory.DecisionProblem W A) (a : A)
+    (dp : DecisionTheory.DecisionProblem ℚ W A) (a : A)
     (hpr : ∀ w, 0 ≤ dp.prior w) (hu : ∀ w, 0 ≤ dp.utility w a) :
     0 ≤ expectedUtilityR dp a :=
   Finset.sum_nonneg fun w _ =>
@@ -53,7 +53,7 @@ theorem expectedUtilityR_nonneg {W A : Type*} [Fintype W]
 
 /-- ℚ-ordering of EU is preserved under the cast to ℝ. -/
 theorem expectedUtilityR_mono {W A : Type*} [Fintype W] [DecidableEq W]
-    (dp : DecisionTheory.DecisionProblem W A) (a₁ a₂ : A)
+    (dp : DecisionTheory.DecisionProblem ℚ W A) (a₁ a₂ : A)
     (h : DecisionTheory.expectedUtility dp a₁ ≤ DecisionTheory.expectedUtility dp a₂) :
     expectedUtilityR dp a₁ ≤ expectedUtilityR dp a₂ := by
   simp only [expectedUtilityR, DecisionTheory.expectedUtility] at *
@@ -65,7 +65,7 @@ The state type is `Unit` because the decision problem's prior already
 encodes the agent's beliefs — there is no external state to condition on. -/
 noncomputable def RationalAction.fromDecisionProblem {W A : Type*}
     [Fintype W] [Fintype A]
-    (dp : DecisionTheory.DecisionProblem W A) (α : ℝ) : RationalAction Unit A :=
+    (dp : DecisionTheory.DecisionProblem ℚ W A) (α : ℝ) : RationalAction Unit A :=
   RationalAction.fromSoftmax (fun () a => expectedUtilityR dp a) α
 
 -- ============================================================================
@@ -74,7 +74,7 @@ noncomputable def RationalAction.fromDecisionProblem {W A : Type*}
 
 /-- Higher EU implies higher choice probability (α > 0). -/
 theorem fromDP_policy_mono {W A : Type*} [Fintype W] [Fintype A] [Nonempty A]
-    (dp : DecisionTheory.DecisionProblem W A) {α : ℝ} (hα : 0 < α)
+    (dp : DecisionTheory.DecisionProblem ℚ W A) {α : ℝ} (hα : 0 < α)
     (a₁ a₂ : A) (h : expectedUtilityR dp a₁ ≤ expectedUtilityR dp a₂) :
     (RationalAction.fromDecisionProblem dp α).policy () a₁ ≤
     (RationalAction.fromDecisionProblem dp α).policy () a₂ := by
@@ -85,7 +85,7 @@ theorem fromDP_policy_mono {W A : Type*} [Fintype W] [Fintype A] [Nonempty A]
 
 /-- Strict version: strictly higher EU implies strictly higher probability. -/
 theorem fromDP_policy_strict_mono {W A : Type*} [Fintype W] [Fintype A] [Nonempty A]
-    (dp : DecisionTheory.DecisionProblem W A) {α : ℝ} (hα : 0 < α)
+    (dp : DecisionTheory.DecisionProblem ℚ W A) {α : ℝ} (hα : 0 < α)
     (a₁ a₂ : A) (h : expectedUtilityR dp a₁ < expectedUtilityR dp a₂) :
     (RationalAction.fromDecisionProblem dp α).policy () a₁ <
     (RationalAction.fromDecisionProblem dp α).policy () a₂ := by
@@ -106,7 +106,7 @@ The objective `entropyRegObjective` from `RationalAction.lean` is exactly
 `∑ p(a)·s(a) + (1/α)·H(p)` — we just instantiate `s = EU`. -/
 theorem softmax_maximizes_EU_plus_entropy {W A : Type*}
     [Fintype W] [Fintype A] [Nonempty A]
-    (dp : DecisionTheory.DecisionProblem W A) {α : ℝ} (hα : 0 < α)
+    (dp : DecisionTheory.DecisionProblem ℚ W A) {α : ℝ} (hα : 0 < α)
     (p : A → ℝ) (hp_nn : ∀ a, 0 ≤ p a) (hp_sum : ∑ a, p a = 1) :
     entropyRegObjective (fun a => expectedUtilityR dp a) α p ≤
     entropyRegObjective (fun a => expectedUtilityR dp a) α
@@ -124,7 +124,7 @@ theorem softmax_maximizes_EU_plus_entropy {W A : Type*}
 the same objective value must equal the softmax policy. -/
 theorem softmax_unique_EU_maximizer {W A : Type*}
     [Fintype W] [Fintype A] [Nonempty A]
-    (dp : DecisionTheory.DecisionProblem W A) {α : ℝ} (hα : 0 < α)
+    (dp : DecisionTheory.DecisionProblem ℚ W A) {α : ℝ} (hα : 0 < α)
     (p : A → ℝ) (hp_nn : ∀ a, 0 ≤ p a) (hp_sum : ∑ a, p a = 1)
     (h_max : entropyRegObjective (fun a => expectedUtilityR dp a) α p =
              entropyRegObjective (fun a => expectedUtilityR dp a) α
@@ -143,7 +143,7 @@ This is the decision-theoretic content of `tendsto_softmax_infty_at_max`
 from `Softmax.Limits`. -/
 theorem fromDP_converges_to_optimal {W A : Type*}
     [Fintype W] [Fintype A] [Nonempty A] [DecidableEq A]
-    (dp : DecisionTheory.DecisionProblem W A) (a_opt : A)
+    (dp : DecisionTheory.DecisionProblem ℚ W A) (a_opt : A)
     (h_opt : ∀ a, a ≠ a_opt → expectedUtilityR dp a < expectedUtilityR dp a_opt) :
     Tendsto (fun α => (RationalAction.fromDecisionProblem dp α).policy () a_opt)
       atTop (𝓝 1) := by
@@ -156,7 +156,7 @@ theorem fromDP_converges_to_optimal {W A : Type*}
 /-- As α → ∞, any non-optimal action gets probability → 0. -/
 theorem fromDP_nonoptimal_vanishes {W A : Type*}
     [Fintype W] [Fintype A] [Nonempty A] [DecidableEq A]
-    (dp : DecisionTheory.DecisionProblem W A) (a_opt a : A)
+    (dp : DecisionTheory.DecisionProblem ℚ W A) (a_opt a : A)
     (h_opt : ∀ a', a' ≠ a_opt → expectedUtilityR dp a' < expectedUtilityR dp a_opt)
     (ha : a ≠ a_opt) :
     Tendsto (fun α => (RationalAction.fromDecisionProblem dp α).policy () a)

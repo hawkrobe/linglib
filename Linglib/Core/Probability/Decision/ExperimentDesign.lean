@@ -31,8 +31,10 @@ that question selection is a special case of optimal experiment design.
 
 The `Core.DecisionTheory` module formalizes [van-rooy-2003]'s EUV for
 **deterministic** observations (partition cells). This module generalizes
-to **stochastic** observations, with a bridge theorem showing that
-EIG with deterministic observations recovers EUV.
+to **stochastic** observations; `eig_deterministicObs_eq_euv` proves that
+EIG with deterministic observations recovers EUV (ℚ-cast, nonempty fibers).
+The kernel-level Blackwell order behind both lives in
+`Core.Probability.Decision.Blackwell`.
 
 | This module (ℝ, stochastic)  | DecisionTheory (ℚ, deterministic)     |
 |------------------------------|----------------------------------------|
@@ -96,42 +98,189 @@ noncomputable def optimalExperiment [Fintype E] (om : ObservationModel W E O)
 -- ============================================================================
 
 /-- Decision-theoretic value function over ℝ: the value of holding beliefs `post`
-    is the EU of the optimal action under those beliefs.
+    is the EU of the optimal action under those beliefs,
+    `V(post) = maxₐ ∑_w post(w) · U(w,a)` (`0` if `actions` is empty).
 
-    V(post) = max_a Σ_w post(w) · U(w,a)
-
-    This is the ℝ analog of `DecisionTheory.dpValue`. The connection to
-    PRIOR-PQ: V(beliefs) = E_D[max_item Σ_w beliefs(w) · V(D, item)],
-    where the outer expectation over D is folded into the utility function. -/
+    The exact ℝ analog of `DecisionTheory.dpValue` — same `Finset.sup'` shape,
+    so the deterministic-observation bridge (`eig_deterministicObs_eq_euv`)
+    matches definitionally cell by cell. -/
 noncomputable def dpValueR {A : Type*} (utility : W → A → ℝ)
-    (actions : List A) : (W → ℝ) → ℝ :=
-  fun post => actions.foldl (fun best a =>
-    max best (∑ w : W, post w * utility w a)) 0
+    (actions : Finset A) : (W → ℝ) → ℝ :=
+  fun post =>
+    if h : actions.Nonempty then actions.sup' h (fun a => ∑ w : W, post w * utility w a)
+    else 0
 
 -- ============================================================================
 -- §4. Bridge to DecisionTheory
 -- ============================================================================
 
-/-- When observations are deterministic (partition cells), EIG equals
-    Van Rooy's expected utility value (EUV).
+/-- With deterministic observations, the probability-weighted value of the
+posterior at `o` equals the cast of the unnormalized best-action value of the
+fiber of `o`: `P(o) · V(post_o) = maxₐ ∑_{w ∈ fiber o} P(w)·U(w,a)`. The
+normalizing mass cancels; a zero-mass fiber makes both sides `0`. -/
+private lemma marginalObs_mul_dpValueR {A : Type*} [DecidableEq O] [DecidableEq W]
+    (classify : W → O) (dp : DecisionTheory.DecisionProblem ℚ W A)
+    (acts : Finset A) (hacts : acts.Nonempty) (hprior : ∀ w, 0 ≤ dp.prior w) (o : O) :
+    marginalObs (deterministicObs classify) (fun w => (dp.prior w : ℝ)) () o *
+      dpValueR (fun w a => (dp.utility w a : ℝ)) acts
+        (posterior (deterministicObs classify) (fun w => (dp.prior w : ℝ)) () o) =
+    (acts.sup' hacts (fun a =>
+      ∑ w ∈ Finset.univ.filter (fun w => classify w = o),
+        dp.prior w * dp.utility w a) : ℚ) := by
+  set fiber : Finset W := Finset.univ.filter (fun w => classify w = o) with hfiber
+  set m : ℝ := marginalObs (deterministicObs classify) (fun w => (dp.prior w : ℝ)) () o
+    with hm_def
+  -- Compute m as the cast of prior mass on the fiber.
+  have hm_eq : m = ((∑ w ∈ fiber, dp.prior w : ℚ) : ℝ) := by
+    simp only [hm_def, marginalObs, deterministicObs, mul_ite, mul_one, mul_zero,
+      ← Finset.sum_filter, ← hfiber]
+    push_cast; rfl
+  have hpriorR : ∀ w, (0 : ℝ) ≤ (dp.prior w : ℝ) := fun w => by exact_mod_cast hprior w
+  have hm_nonneg : 0 ≤ m :=
+    marginalObs_nonneg (deterministicObs classify) _ hpriorR () o
+  -- Push the ℚ→ℝ cast out of the RHS sup'.
+  have hcast_sup : ((acts.sup' hacts (fun a =>
+        ∑ w ∈ fiber, dp.prior w * dp.utility w a) : ℚ) : ℝ) =
+      acts.sup' hacts (fun a =>
+        ((∑ w ∈ fiber, dp.prior w * dp.utility w a : ℚ) : ℝ)) :=
+    Finset.apply_sup'_eq_sup'_comp hacts _ (fun x y => Rat.cast_max x y)
+  rw [hcast_sup]
+  -- Unfold dpValueR with hacts.
+  simp only [dpValueR, dif_pos hacts]
+  by_cases h0 : m = 0
+  · -- Zero-mass fiber: both sides collapse to 0.
+    rw [h0, zero_mul]
+    rw [hm_eq] at h0
+    have hp0 : ∑ w ∈ fiber, dp.prior w = 0 := by exact_mod_cast h0
+    have hpw : ∀ w ∈ fiber, dp.prior w = 0 :=
+      (Finset.sum_eq_zero_iff_of_nonneg (fun w _ => hprior w)).mp hp0
+    symm
+    refine Finset.sup'_eq_of_forall hacts _ (fun a _ => ?_)
+    have hqzero : ∑ w ∈ fiber, dp.prior w * dp.utility w a = 0 :=
+      Finset.sum_eq_zero (fun w hw => by rw [hpw w hw, zero_mul])
+    exact_mod_cast hqzero
+  · -- Positive-mass fiber: pull m into the sup' and cancel.
+    rw [Finset.mul₀_sup' hm_nonneg _ acts hacts]
+    refine Finset.sup'_congr hacts rfl (fun a _ => ?_)
+    have hpost_eq : ∀ w : W,
+        posterior (deterministicObs classify) (fun w' => (dp.prior w' : ℝ)) () o w
+          = (dp.prior w : ℝ) * (if classify w = o then 1 else 0) / m := by
+      intro w
+      change (if m = 0 then (0 : ℝ)
+              else (dp.prior w : ℝ) * (if classify w = o then 1 else 0) / m) = _
+      rw [if_neg h0]
+    simp_rw [hpost_eq]
+    -- (∑ w, (prior · ite / m) * util) = (∑ w, prior · ite · util) / m; then m · (X/m) = X.
+    rw [show (∑ w : W,
+        ((dp.prior w : ℝ) * (if classify w = o then 1 else 0) / m) *
+          ((dp.utility w a : ℝ))) =
+             (∑ w : W, (dp.prior w : ℝ) * (if classify w = o then 1 else 0) *
+              ((dp.utility w a : ℝ))) / m by
+      rw [Finset.sum_div]; refine Finset.sum_congr rfl (fun w _ => ?_); ring]
+    rw [mul_div_cancel₀ _ h0]
+    -- Collapse the indicator to a sum over the fiber, then push the cast in.
+    rw [show (∑ w : W, (dp.prior w : ℝ) * (if classify w = o then 1 else 0) *
+              ((dp.utility w a : ℝ))) =
+             ∑ w ∈ fiber, (dp.prior w : ℝ) * (dp.utility w a : ℝ) by
+      simp only [mul_ite, ite_mul, mul_one, mul_zero, zero_mul,
+        ← Finset.sum_filter, ← hfiber]]
+    push_cast; rfl
 
-    The proof requires showing that the ℝ-valued Bayesian posterior on
-    partition cells is equivalent to the ℚ-valued conditional EU in
-    `DecisionTheory.questionUtility`.
+/-- **The deterministic-observation bridge, for real**: with observations given by a
+classifier `classify : W → O` whose fibers are all nonempty, the expected information
+gain of the (single) deterministic experiment under the decision-theoretic value
+function equals [van-rooy-2003]'s expected utility value of the corresponding
+partition question — `Core.DecisionTheory.questionUtility`, cast from ℚ to ℝ.
 
-    TODO: The bridge requires converting between ℝ and ℚ arithmetic
-    and showing that `posterior` with indicator likelihoods reduces to
-    conditioning on the cell `{w | classify w = o}`. -/
-theorem eig_deterministic_eq_euv [DecidableEq O] [DecidableEq W]
-    {A : Type*} (classify : W → O) (utility : W → A → ℝ)
-    (prior : W → ℝ) (_hprior : ∀ w, 0 ≤ prior w)
-    (_hprior_sum : ∑ w : W, prior w = 1)
-    (actions : List A) :
-    eig (deterministicObs classify) prior (dpValueR utility actions) () =
-    (∑ o : O, marginalObs (deterministicObs classify) prior () o *
-      dpValueR utility actions (posterior (deterministicObs classify) prior () o))
-    - dpValueR utility actions prior := by
-  rfl
+The fiber-nonemptiness hypothesis keeps the `Finset.image` indexing faithful: empty
+fibers would collapse in the cell set while still contributing (zero) terms to the
+observation sum. -/
+theorem eig_deterministicObs_eq_euv {A : Type*} [DecidableEq O] [DecidableEq W]
+    [DecidableEq A] (classify : W → O) (dp : DecisionTheory.DecisionProblem ℚ W A)
+    (acts : Finset A) (hacts : acts.Nonempty)
+    (hprior : ∀ w, 0 ≤ dp.prior w) (hsum : ∑ w : W, dp.prior w = 1)
+    (hfib : ∀ o : O, (Finset.univ.filter (fun w => classify w = o)).Nonempty) :
+    eig (deterministicObs classify) (fun w => (dp.prior w : ℝ))
+        (dpValueR (fun w a => (dp.utility w a : ℝ)) acts) () =
+    (DecisionTheory.questionUtility dp acts
+      (Finset.univ.image (fun o : O =>
+        Finset.univ.filter (fun w => classify w = o))) : ℚ) := by
+  set fiberMap : O → Finset W := fun o => Finset.univ.filter (fun w => classify w = o)
+    with hfiberMap
+  -- The fiber map is injective on `Finset.univ` (uses nonemptiness of every fiber).
+  have hinj : ∀ o₁ ∈ (Finset.univ : Finset O), ∀ o₂ ∈ (Finset.univ : Finset O),
+      fiberMap o₁ = fiberMap o₂ → o₁ = o₂ := fun o₁ _ o₂ _ heq => by
+    obtain ⟨w, hw⟩ := hfib o₁
+    have hw₁ : classify w = o₁ := (Finset.mem_filter.mp hw).2
+    have hw₂ : w ∈ fiberMap o₂ := heq ▸ hw
+    exact hw₁.symm.trans (Finset.mem_filter.mp hw₂).2
+  -- Fiber probabilities sum to the total prior mass = 1.
+  have hcellSum : ∑ o : O, DecisionTheory.cellProbability dp (fiberMap o) = 1 := by
+    simp only [DecisionTheory.cellProbability, hfiberMap]
+    rw [Finset.sum_fiberwise_of_maps_to (fun w _ => Finset.mem_univ (classify w))]
+    exact hsum
+  -- Per-cell decision-theoretic identity (private lemma from Basic re-derived inline):
+  -- P(cell) · V(D|cell) = sup'_a ∑_{w∈cell} P(w) · U(w,a).
+  have hcell_val : ∀ cell : Finset W,
+      DecisionTheory.cellProbability dp cell * DecisionTheory.valueAfterLearning dp acts cell
+        = acts.sup' hacts (fun a => ∑ w ∈ cell, dp.prior w * dp.utility w a) := by
+    intro cell
+    unfold DecisionTheory.cellProbability DecisionTheory.valueAfterLearning
+    rw [dif_pos hacts]
+    have htp_nonneg : 0 ≤ cell.sum dp.prior :=
+      Finset.sum_nonneg (fun w _ => hprior w)
+    by_cases htp : cell.sum dp.prior = 0
+    · rw [htp, zero_mul]
+      have hpw : ∀ w ∈ cell, dp.prior w = 0 :=
+        (Finset.sum_eq_zero_iff_of_nonneg (fun w _ => hprior w)).mp htp
+      symm
+      refine Finset.sup'_eq_of_forall hacts _ (fun a _ => ?_)
+      exact Finset.sum_eq_zero (fun w hw => by rw [hpw w hw, zero_mul])
+    · rw [Finset.mul₀_sup' htp_nonneg _ acts hacts]
+      refine Finset.sup'_congr hacts rfl (fun a _ => ?_)
+      have hcEU : DecisionTheory.conditionalEU dp cell a
+          = cell.sum (fun w => dp.prior w / cell.sum dp.prior * dp.utility w a) := by
+        show (if cell.sum dp.prior = 0 then (0 : ℚ) else _) = _
+        rw [if_neg htp]
+      rw [hcEU, Finset.mul_sum]
+      refine Finset.sum_congr rfl (fun w _ => ?_)
+      rw [div_mul_eq_mul_div, ← mul_div_assoc, mul_div_cancel_left₀ _ htp]
+  -- `dpValueR` on the ℝ-cast prior equals the cast of `dpValue`.
+  have hdpvR : dpValueR (fun w a => (dp.utility w a : ℝ)) acts (fun w => (dp.prior w : ℝ))
+      = ((DecisionTheory.dpValue dp acts : ℚ) : ℝ) := by
+    simp only [dpValueR, DecisionTheory.dpValue, dif_pos hacts]
+    rw [show acts.sup' hacts (fun a => ∑ w : W, (dp.prior w : ℝ) * (dp.utility w a : ℝ))
+         = acts.sup' hacts
+             (fun a => ((DecisionTheory.expectedUtility dp a : ℚ) : ℝ)) from ?_]
+    · exact (Finset.apply_sup'_eq_sup'_comp hacts _ (fun x y => Rat.cast_max x y)).symm
+    · refine Finset.sup'_congr hacts rfl (fun a _ => ?_)
+      simp only [DecisionTheory.expectedUtility]; push_cast; rfl
+  -- Assemble.
+  unfold eig
+  rw [hdpvR]
+  rw [show (∑ o : O, marginalObs (deterministicObs classify)
+              (fun w => (dp.prior w : ℝ)) () o *
+              dpValueR (fun w a => ((dp.utility w a : ℝ))) acts
+                (posterior (deterministicObs classify)
+                  (fun w => ((dp.prior w : ℝ))) () o))
+          = ∑ o : O, ((acts.sup' hacts (fun a =>
+              ∑ w ∈ fiberMap o, dp.prior w * dp.utility w a) : ℚ) : ℝ) from
+      Finset.sum_congr rfl (fun o _ =>
+        marginalObs_mul_dpValueR classify dp acts hacts hprior o)]
+  rw [← Rat.cast_sum, ← Rat.cast_sub]
+  -- Cast down: prove the ℚ identity.
+  congr 1
+  unfold DecisionTheory.questionUtility
+  rw [Finset.sum_image hinj]
+  simp only [DecisionTheory.utilityValue]
+  simp_rw [mul_sub]
+  rw [Finset.sum_sub_distrib]
+  rw [show (∑ o : O, DecisionTheory.cellProbability dp (fiberMap o) *
+        DecisionTheory.valueAfterLearning dp acts (fiberMap o))
+        = ∑ o : O, acts.sup' hacts (fun a =>
+            ∑ w ∈ fiberMap o, dp.prior w * dp.utility w a) from
+      Finset.sum_congr rfl (fun o _ => hcell_val (fiberMap o))]
+  rw [← Finset.sum_mul, hcellSum, one_mul]
 
 -- ============================================================================
 -- §5. Properties
