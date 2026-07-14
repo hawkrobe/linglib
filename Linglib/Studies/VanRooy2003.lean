@@ -50,10 +50,10 @@ notation maps to the substrate as:
   direction — a finer partition weakly dominates a coarser one for every decision
   problem — is the data-processing inequality `blackwell_euv_fact_forward`
   (deriving the substrate refinement map from `⊑` and applying
-  `Core.DecisionTheory.DecisionProblem.questionUtility_mono_of_refines`). The `⟸` direction is the
-  [blackwell-1953] *converse*, `ProbabilityTheory.isGarblingOf_of_blackwellDominates`
-  (finite, kernel-level — now proved; the partition-cell bridge to `questionUtility`
-  is the remaining Layer-2 work, so this direction is still `sorry`).
+  `Core.DecisionTheory.DecisionProblem.questionUtility_mono_of_refines`). The `⟸`
+  direction is proved by an elementary two-world / two-action witness (both
+  `[Nontrivial A]` and `hcoarse_cover` rule out the vacuous-dominance corner cases
+  documented at the theorem).
   `decisionRelevance_preserved_under_cover` is a separate, qualitative
   one-directional transfer (see its docstring).
 
@@ -338,31 +338,289 @@ equivalent to: the finer question has expected utility value `≥` the coarser o
 *every* decision problem (with a proper, nonnegative prior). Van Rooy calls this "a special
 case of [blackwell-1953]".
 
-The `⟹` direction is `blackwell_euv_fact_forward` (the data-processing inequality). The
-`⟸` direction (EUV-dominance across all decision problems forces refinement) follows from
-the now-proved [blackwell-1953] *converse*,
-`ProbabilityTheory.isGarblingOf_of_blackwellDominates`, once the partition-cell bridge is in
-place: the deterministic experiments of `fine`/`coarse` as Markov kernels, deterministic
-garbling ↔ refinement, and `questionUtility ↔ bayesRisk`. That bridge (Layer 2) is the
-remaining work; this direction stays `sorry` until it lands. -/
+The `⟹` direction is `blackwell_euv_fact_forward` (the data-processing inequality); the
+`⟸` direction (EUV-dominance across all decision problems forces refinement) is proved
+here by the elementary two-world / two-action witness: if some fine cell holds worlds
+`w`, `v` in distinct coarse cells, the identification DP (nonneg prior 1 on `w` and `v`,
+utility 1 for naming each world's coarse cell) values `coarse` strictly above `fine`.
+
+### Hypothesis corrections
+
+Two hypotheses beyond the forward direction's are required, each grounded in a concrete
+counterexample to the plain statement:
+
+* `[Nontrivial A]` (else `acts` is forced to `∅`, both `questionUtility` sides collapse to
+  `0`, and dominance holds vacuously — while refinement can fail).
+* `[Nonempty W]` and `hcoarse_cover` (a mirror of `hfine_cover`) — without either, taking
+  e.g. `W = {w}`, `fine = {{w}}`, `coarse = ∅` makes both `questionUtility` sides `0`
+  (empty coarse sum on one side, `utilityValue = condValue − value = 0` on the other)
+  while refinement `∃ c ∈ ∅, {w} ⊆ c` fails. Together they force `coarse` to be a full
+  partition of `W`, ruling out both the empty-`W` and the uncovering-`coarse` pathologies. -/
 theorem blackwell_euv_fact [Fintype W] [DecidableEq W] [DecidableEq A]
+    [Nontrivial A] [Nonempty W]
     {fine coarse : Finset (Finset W)}
     (hfine_disj : ∀ f₁ ∈ fine, ∀ f₂ ∈ fine, f₁ ≠ f₂ → Disjoint f₁ f₂)
     (hcoarse_disj : ∀ c₁ ∈ coarse, ∀ c₂ ∈ coarse, c₁ ≠ c₂ → Disjoint c₁ c₂)
-    (hfine_cover : ∀ w : W, ∃ f ∈ fine, w ∈ f) :
+    (hfine_cover : ∀ w : W, ∃ f ∈ fine, w ∈ f)
+    (hcoarse_cover : ∀ w : W, ∃ c ∈ coarse, w ∈ c) :
     (∀ f ∈ fine, ∃ c ∈ coarse, f ⊆ c) ↔
       (∀ (dp : DecisionProblem ℚ W A) (acts : Finset A), (∀ w, 0 ≤ dp.prior w) →
         questionUtility dp acts coarse ≤ questionUtility dp acts fine) := by
   refine ⟨fun href dp acts hprior =>
     blackwell_euv_fact_forward hcoarse_disj hfine_disj hfine_cover href dp acts hprior, ?_⟩
-  -- ⟸ : EUV-dominance across all decision problems forces refinement.
-  -- TODO: two routes. (i) Elementary witness: if refinement fails, some fine cell
-  -- holds worlds w, v lying in distinct coarse cells; the two-action identification
-  -- DP (uniform prior on {w, v}, utility 1 for naming w's vs v's coarse cell)
-  -- values coarse strictly above fine, contradicting dominance.
-  -- (ii) Via the finite [blackwell-1953] converse
-  -- `ProbabilityTheory.isGarblingOf_of_blackwellDominates`, instantiated with the
-  -- deterministic partition-cell experiments of `fine`/`coarse`.
-  sorry
+  -- Contrapose and extract an offending fine cell.
+  intro hdom
+  by_contra hnref
+  push Not at hnref
+  obtain ⟨f₀, hf₀_fine, hf₀_uncov⟩ := hnref
+  -- With [Nonempty W] + hcoarse_cover, coarse is nonempty (some c₀ contains
+  -- an arbitrary world), and hf₀_uncov applied to c₀ finds v ∈ f₀ \ c₀.
+  obtain ⟨w_wit⟩ := ‹Nonempty W›
+  obtain ⟨c₀, hc₀, _⟩ := hcoarse_cover w_wit
+  have h_ns_c₀ : ¬ f₀ ⊆ c₀ := hf₀_uncov c₀ hc₀
+  rw [Finset.not_subset] at h_ns_c₀
+  obtain ⟨v, hv_f₀, hv_nc₀⟩ := h_ns_c₀
+  obtain ⟨c_v, hc_v, hv_c_v⟩ := hcoarse_cover v
+  have hc_v_ne_c₀ : c_v ≠ c₀ := fun heq => hv_nc₀ (heq ▸ hv_c_v)
+  -- Now apply hf₀_uncov to c_v: get w ∈ f₀ \ c_v.
+  have h_ns_c_v : ¬ f₀ ⊆ c_v := hf₀_uncov c_v hc_v
+  rw [Finset.not_subset] at h_ns_c_v
+  obtain ⟨w, hw_f₀, hw_nc_v⟩ := h_ns_c_v
+  obtain ⟨c_w, hc_w, hw_c_w⟩ := hcoarse_cover w
+  have hc_w_ne_c_v : c_w ≠ c_v := fun heq => hw_nc_v (heq ▸ hw_c_w)
+  have hwv_ne : w ≠ v := fun heq => by
+    exact absurd (heq ▸ hv_c_v)
+      (Finset.disjoint_left.mp (hcoarse_disj c_w hc_w c_v hc_v hc_w_ne_c_v) hw_c_w)
+  -- Two distinct actions from `[Nontrivial A]`.
+  obtain ⟨a₁, a₂, ha_ne⟩ := exists_pair_ne A
+  -- The identification decision problem: prior mass `1` on `w` and `v`; utility
+  -- `1` iff the action names the world's coarse cell (`a₁ ↦ c_w`, `a₂ ↦ c_v`).
+  let dp : DecisionProblem ℚ W A :=
+    { prior := fun w' => if w' = w then 1 else if w' = v then 1 else 0
+      utility := fun w' a =>
+        if w' = w ∧ a = a₁ then 1
+        else if w' = v ∧ a = a₂ then 1
+        else 0 }
+  have hprior_nn : ∀ w' : W, 0 ≤ dp.prior w' := fun w' => by
+    show 0 ≤ if w' = w then (1 : ℚ) else if w' = v then 1 else 0
+    split_ifs <;> norm_num
+  have hyp := hdom dp {a₁, a₂} hprior_nn
+  -- Per-cell characterization: `∑_{w'∈S} prior · util aᵢ` is the indicator that
+  -- the corresponding world lies in `S`.
+  have hsum_a₁ : ∀ S : Finset W,
+      ∑ w' ∈ S, dp.prior w' * dp.utility w' a₁ = if w ∈ S then (1 : ℚ) else 0 := by
+    intro S
+    have hpt : ∀ w' : W, dp.prior w' * dp.utility w' a₁ = if w' = w then (1 : ℚ) else 0 := by
+      intro w'
+      show (if w' = w then (1 : ℚ) else if w' = v then 1 else 0) *
+             (if w' = w ∧ a₁ = a₁ then 1 else if w' = v ∧ a₁ = a₂ then 1 else 0)
+           = if w' = w then 1 else 0
+      by_cases hw : w' = w
+      · subst hw; simp
+      · by_cases hv : w' = v
+        · subst hv; simp [hw, ha_ne]
+        · simp [hw, hv]
+    calc ∑ w' ∈ S, dp.prior w' * dp.utility w' a₁
+        = ∑ w' ∈ S, if w' = w then (1 : ℚ) else 0 := Finset.sum_congr rfl (fun w' _ => hpt w')
+      _ = if w ∈ S then 1 else 0 := Finset.sum_ite_eq' S w (fun _ => (1 : ℚ))
+  have hsum_a₂ : ∀ S : Finset W,
+      ∑ w' ∈ S, dp.prior w' * dp.utility w' a₂ = if v ∈ S then (1 : ℚ) else 0 := by
+    intro S
+    have hpt : ∀ w' : W, dp.prior w' * dp.utility w' a₂ = if w' = v then (1 : ℚ) else 0 := by
+      intro w'
+      show (if w' = w then (1 : ℚ) else if w' = v then 1 else 0) *
+             (if w' = w ∧ a₂ = a₁ then 1 else if w' = v ∧ a₂ = a₂ then 1 else 0)
+           = if w' = v then 1 else 0
+      by_cases hw : w' = w
+      · subst hw; simp [hwv_ne, ha_ne.symm]
+      · by_cases hv : w' = v
+        · subst hv; simp [hwv_ne.symm]
+        · simp [hw, hv]
+    calc ∑ w' ∈ S, dp.prior w' * dp.utility w' a₂
+        = ∑ w' ∈ S, if w' = v then (1 : ℚ) else 0 := Finset.sum_congr rfl (fun w' _ => hpt w')
+      _ = if v ∈ S then 1 else 0 := Finset.sum_ite_eq' S v (fun _ => (1 : ℚ))
+  -- Local specialization of `cellProbability_mul_condValue_eq_uValue` (private
+  -- in `Core.Probability.Decision.Basic`, replicated here at `K := ℚ`).
+  have hcpcv : ∀ (S : Finset W) (acts : Finset A) (hne : acts.Nonempty),
+      dp.cellProbability S * dp.condValue acts S =
+        acts.sup' hne (fun a => ∑ w' ∈ S, dp.prior w' * dp.utility w' a) := by
+    intro S acts hne
+    rw [condValue_of_nonempty hne]
+    have hpsum_nn : 0 ≤ dp.cellProbability S :=
+      Finset.sum_nonneg (fun w' _ => hprior_nn w')
+    by_cases hcp : dp.cellProbability S = 0
+    · rw [hcp, zero_mul]
+      have hprior_zero : ∀ w' ∈ S, dp.prior w' = 0 :=
+        (Finset.sum_eq_zero_iff_of_nonneg (fun w' _ => hprior_nn w')).mp hcp
+      exact (Finset.sup'_eq_of_forall (s := acts) (H := hne) (a := (0 : ℚ))
+        (f := fun a => ∑ w' ∈ S, dp.prior w' * dp.utility w' a)
+        (fun a _ => Finset.sum_eq_zero
+          fun w' hw' => by rw [hprior_zero w' hw', zero_mul])).symm
+    · have hS : S.sum dp.prior ≠ 0 := hcp
+      rw [Finset.mul₀_sup' hpsum_nn _ acts hne]
+      refine Finset.sup'_congr hne rfl (fun a _ => ?_)
+      show S.sum dp.prior * dp.condExpectedUtility S a = ∑ w' ∈ S, dp.prior w' * dp.utility w' a
+      rw [condExpectedUtility_of_ne_zero hS, Finset.mul_sum]
+      refine Finset.sum_congr rfl (fun w' _ => ?_)
+      rw [div_mul_eq_mul_div, ← mul_div_assoc, mul_div_cancel_left₀ _ hS]
+  -- For our action pair `{a₁, a₂}`, the `sup'` collapses to a `max` of indicators.
+  have hcpcv_max : ∀ S : Finset W,
+      dp.cellProbability S * dp.condValue {a₁, a₂} S =
+        max (if w ∈ S then (1 : ℚ) else 0) (if v ∈ S then 1 else 0) := by
+    intro S
+    rw [hcpcv S {a₁, a₂} (Finset.insert_nonempty _ _)]
+    refine le_antisymm ?_ ?_
+    · refine Finset.sup'_le _ _ fun a ha => ?_
+      simp only [Finset.mem_insert, Finset.mem_singleton] at ha
+      rcases ha with rfl | rfl
+      · rw [hsum_a₁]; exact le_max_left _ _
+      · rw [hsum_a₂]; exact le_max_right _ _
+    · refine max_le ?_ ?_
+      · rw [← hsum_a₁ S]
+        exact Finset.le_sup' (s := ({a₁, a₂} : Finset A))
+          (f := fun a => ∑ w' ∈ S, dp.prior w' * dp.utility w' a) (by simp)
+      · rw [← hsum_a₂ S]
+        exact Finset.le_sup' (s := ({a₁, a₂} : Finset A))
+          (f := fun a => ∑ w' ∈ S, dp.prior w' * dp.utility w' a) (by simp)
+  -- Filter equality: cells intersecting `{w, v}` are exactly the identified
+  -- pair on each side.
+  have hcoarse_filter : coarse.filter (fun c => w ∈ c ∨ v ∈ c) = {c_w, c_v} := by
+    ext c
+    simp only [Finset.mem_filter, Finset.mem_insert, Finset.mem_singleton]
+    refine ⟨fun ⟨hc, hor⟩ => ?_, ?_⟩
+    · rcases hor with hw | hv
+      · left
+        by_contra hne
+        exact absurd hw_c_w
+          (Finset.disjoint_left.mp (hcoarse_disj c hc c_w hc_w hne) hw)
+      · right
+        by_contra hne
+        exact absurd hv_c_v
+          (Finset.disjoint_left.mp (hcoarse_disj c hc c_v hc_v hne) hv)
+    · rintro (rfl | rfl)
+      · exact ⟨hc_w, Or.inl hw_c_w⟩
+      · exact ⟨hc_v, Or.inr hv_c_v⟩
+  have hfine_filter : fine.filter (fun f => w ∈ f ∨ v ∈ f) = {f₀} := by
+    ext f
+    simp only [Finset.mem_filter, Finset.mem_singleton]
+    refine ⟨fun ⟨hf, hor⟩ => ?_, ?_⟩
+    · rcases hor with hw | hv
+      · by_contra hne
+        exact absurd hw_f₀
+          (Finset.disjoint_left.mp (hfine_disj f hf f₀ hf₀_fine hne) hw)
+      · by_contra hne
+        exact absurd hv_f₀
+          (Finset.disjoint_left.mp (hfine_disj f hf f₀ hf₀_fine hne) hv)
+    · rintro rfl; exact ⟨hf₀_fine, Or.inl hw_f₀⟩
+  -- Similar filter equalities for the individual indicators (needed for the
+  -- `∑ cellProb` computations that appear via `hqu_eq` below).
+  have hcoarse_w_filter : coarse.filter (fun c => w ∈ c) = {c_w} := by
+    ext c
+    simp only [Finset.mem_filter, Finset.mem_singleton]
+    refine ⟨fun ⟨hc, hw⟩ => ?_, fun heq => heq ▸ ⟨hc_w, hw_c_w⟩⟩
+    by_contra hne
+    exact absurd hw_c_w
+      (Finset.disjoint_left.mp (hcoarse_disj c hc c_w hc_w hne) hw)
+  have hcoarse_v_filter : coarse.filter (fun c => v ∈ c) = {c_v} := by
+    ext c
+    simp only [Finset.mem_filter, Finset.mem_singleton]
+    refine ⟨fun ⟨hc, hv⟩ => ?_, fun heq => heq ▸ ⟨hc_v, hv_c_v⟩⟩
+    by_contra hne
+    exact absurd hv_c_v
+      (Finset.disjoint_left.mp (hcoarse_disj c hc c_v hc_v hne) hv)
+  have hfine_w_filter : fine.filter (fun f => w ∈ f) = {f₀} := by
+    ext f
+    simp only [Finset.mem_filter, Finset.mem_singleton]
+    refine ⟨fun ⟨hf, hw⟩ => ?_, fun heq => heq ▸ ⟨hf₀_fine, hw_f₀⟩⟩
+    by_contra hne
+    exact absurd hw_f₀
+      (Finset.disjoint_left.mp (hfine_disj f hf f₀ hf₀_fine hne) hw)
+  have hfine_v_filter : fine.filter (fun f => v ∈ f) = {f₀} := by
+    ext f
+    simp only [Finset.mem_filter, Finset.mem_singleton]
+    refine ⟨fun ⟨hf, hv⟩ => ?_, fun heq => heq ▸ ⟨hf₀_fine, hv_f₀⟩⟩
+    by_contra hne
+    exact absurd hv_f₀
+      (Finset.disjoint_left.mp (hfine_disj f hf f₀ hf₀_fine hne) hv)
+  -- Cell probabilities on `{w, v}`-supported prior: each partition's cellProbs
+  -- sum to the total prior mass (2).
+  have hcp_eq : ∀ (S : Finset W),
+      dp.cellProbability S
+        = (if w ∈ S then (1 : ℚ) else 0) + (if v ∈ S then 1 else 0) := by
+    intro S
+    show ∑ w' ∈ S, (if w' = w then (1 : ℚ) else if w' = v then 1 else 0)
+        = (if w ∈ S then 1 else 0) + (if v ∈ S then 1 else 0)
+    have hpt : ∀ w' : W,
+        (if w' = w then (1 : ℚ) else if w' = v then 1 else 0)
+          = (if w' = w then 1 else 0) + (if w' = v then 1 else 0) := by
+      intro w'
+      by_cases hw : w' = w
+      · subst hw; simp [hwv_ne]
+      · by_cases hv : w' = v
+        · subst hv; simp [hwv_ne.symm]
+        · simp [hw, hv]
+    rw [Finset.sum_congr rfl (fun w' _ => hpt w'), Finset.sum_add_distrib,
+      Finset.sum_ite_eq' S w (fun _ => (1 : ℚ)),
+      Finset.sum_ite_eq' S v (fun _ => (1 : ℚ))]
+  -- Sum over coarse of the indicator `if w ∈ c then 1 else 0` = 1 (only c_w).
+  have hi_w_coarse : (∑ c ∈ coarse, if w ∈ c then (1 : ℚ) else 0) = 1 := by
+    rw [← Finset.sum_filter, hcoarse_w_filter, Finset.sum_singleton]
+  have hi_v_coarse : (∑ c ∈ coarse, if v ∈ c then (1 : ℚ) else 0) = 1 := by
+    rw [← Finset.sum_filter, hcoarse_v_filter, Finset.sum_singleton]
+  have hi_w_fine : (∑ f ∈ fine, if w ∈ f then (1 : ℚ) else 0) = 1 := by
+    rw [← Finset.sum_filter, hfine_w_filter, Finset.sum_singleton]
+  have hi_v_fine : (∑ f ∈ fine, if v ∈ f then (1 : ℚ) else 0) = 1 := by
+    rw [← Finset.sum_filter, hfine_v_filter, Finset.sum_singleton]
+  -- Sum of max over coarse = 2 (via c_w and c_v being distinct nonzero contributors).
+  have hmax_coarse :
+      (∑ c ∈ coarse, max (if w ∈ c then (1 : ℚ) else 0) (if v ∈ c then 1 else 0)) = 2 := by
+    have hswap : ∀ c : Finset W,
+        max ((if w ∈ c then (1 : ℚ) else 0)) (if v ∈ c then 1 else 0)
+          = if w ∈ c ∨ v ∈ c then (1 : ℚ) else 0 := by
+      intro c
+      by_cases hw : w ∈ c <;> by_cases hv : v ∈ c <;> simp [hw, hv]
+    rw [Finset.sum_congr rfl (fun c _ => hswap c), ← Finset.sum_filter,
+      hcoarse_filter, Finset.sum_insert (by simp [hc_w_ne_c_v]),
+      Finset.sum_singleton]
+    norm_num
+  -- Sum of max over fine = 1 (only f₀ contributes).
+  have hmax_fine :
+      (∑ f ∈ fine, max (if w ∈ f then (1 : ℚ) else 0) (if v ∈ f then 1 else 0)) = 1 := by
+    have hswap : ∀ f : Finset W,
+        max ((if w ∈ f then (1 : ℚ) else 0)) (if v ∈ f then 1 else 0)
+          = if w ∈ f ∨ v ∈ f then (1 : ℚ) else 0 := by
+      intro f
+      by_cases hw : w ∈ f <;> by_cases hv : v ∈ f <;> simp [hw, hv]
+    rw [Finset.sum_congr rfl (fun f _ => hswap f), ← Finset.sum_filter,
+      hfine_filter, Finset.sum_singleton]
+  -- Cellprob sums (2 on each side) via the same indicator trick.
+  have hcpP_coarse : ∑ c ∈ coarse, dp.cellProbability c = 2 := by
+    simp_rw [hcp_eq]
+    rw [Finset.sum_add_distrib, hi_w_coarse, hi_v_coarse]
+    norm_num
+  have hcpP_fine : ∑ f ∈ fine, dp.cellProbability f = 2 := by
+    simp_rw [hcp_eq]
+    rw [Finset.sum_add_distrib, hi_w_fine, hi_v_fine]
+    norm_num
+  -- Unfolded `questionUtility`: `∑ cellProb · condValue − value · ∑ cellProb`.
+  have hqu_eq : ∀ (cells : Finset (Finset W)),
+      questionUtility dp {a₁, a₂} cells
+        = (∑ c ∈ cells, dp.cellProbability c * dp.condValue {a₁, a₂} c)
+          - dp.value {a₁, a₂} * (∑ c ∈ cells, dp.cellProbability c) := by
+    intro cells
+    unfold DecisionProblem.questionUtility DecisionProblem.utilityValue
+    simp_rw [mul_sub]
+    rw [Finset.sum_sub_distrib]
+    congr 1
+    rw [Finset.mul_sum]
+    exact Finset.sum_congr rfl (fun c _ => mul_comm _ _)
+  -- ∑ cellProb · condValue on each side = ∑ max = 2 (coarse) / 1 (fine).
+  have hX_coarse : ∑ c ∈ coarse, dp.cellProbability c * dp.condValue {a₁, a₂} c = 2 := by
+    simp_rw [hcpcv_max]; exact hmax_coarse
+  have hX_fine : ∑ f ∈ fine, dp.cellProbability f * dp.condValue {a₁, a₂} f = 1 := by
+    simp_rw [hcpcv_max]; exact hmax_fine
+  -- Assemble: `qU coarse − qU fine = 1 > 0`, contradicting `hyp : qU coarse ≤ qU fine`.
+  rw [hqu_eq coarse, hqu_eq fine, hX_coarse, hX_fine, hcpP_coarse, hcpP_fine] at hyp
+  linarith
 
 end VanRooy2003
