@@ -60,7 +60,7 @@ set_option autoImplicit false
 namespace TsvilodubEtAl2026
 
 open scoped ENNReal NNReal
-open Core.DecisionTheory
+open Core.DecisionTheory Core.DecisionTheory.DecisionProblem
 
 /-! ### Expected value of perfect information
 
@@ -87,7 +87,7 @@ def oracleValue {W A : Type*} [Fintype W] (dp : DecisionProblem ℚ W A)
 
 /-- Expected value of perfect information (EVPI).
 
-    EVPI = oracleValue − dpValue
+    EVPI = oracleValue − DecisionProblem.value
          = Σ_w P(w) · max_a U(w,a) − max_a Σ_w P(w) · U(w,a)
 
     Equivalently, the expected regret of the current best action.
@@ -95,7 +95,7 @@ def oracleValue {W A : Type*} [Fintype W] (dp : DecisionProblem ℚ W A)
     [raiffa-schlaifer-1961] -/
 def evpi {W A : Type*} [Fintype W] [DecidableEq W]
     (dp : DecisionProblem ℚ W A) (actions : Finset A) : ℚ :=
-  oracleValue dp actions - dpValue dp actions
+  oracleValue dp actions - DecisionProblem.value dp actions
 
 /-- EVPI is non-negative: acting with perfect information is at least
     as good as acting without.
@@ -104,15 +104,15 @@ def evpi {W A : Type*} [Fintype W] [DecidableEq W]
     `Σ_w P(w) · U(w,a)`. The oracle value `Σ_w P(w) · max_a' U(w,a')`
     is pointwise ≥ `Σ_w P(w) · U(w,a)` since `max_a' U(w,a') ≥ U(w,a)`.
     Therefore `oracleValue ≥ EU(a)` for every `a`, hence
-    `oracleValue ≥ max_a EU(a) = dpValue`. -/
+    `oracleValue ≥ max_a EU(a) = DecisionProblem.value`. -/
 theorem evpi_nonneg {W A : Type*} [Fintype W] [DecidableEq W]
     (dp : DecisionProblem ℚ W A) (actions : Finset A)
     (hprior : ∀ w, 0 ≤ dp.prior w) (hne : actions.Nonempty) :
     0 ≤ evpi dp actions := by
   unfold evpi
-  suffices h : dpValue dp actions ≤ oracleValue dp actions by linarith
-  -- dpValue = sup' of expectedUtility; show each EU(a) ≤ oracleValue
-  unfold dpValue oracleValue
+  suffices h : DecisionProblem.value dp actions ≤ oracleValue dp actions by linarith
+  -- DecisionProblem.value = sup' of expectedUtility; show each EU(a) ≤ oracleValue
+  unfold DecisionProblem.value oracleValue
   rw [dif_pos hne]
   apply Finset.sup'_le
   intro a ha
@@ -226,8 +226,8 @@ private theorem oracleValue_eq_one {ε δ : ℚ} (hδ0 : 0 ≤ δ) :
   ring
 
 private theorem dpValue_eq {ε δ : ℚ} (hε : ε ≤ 1/2) :
-    dpValue (dp ε δ) Finset.univ = 1 - min ε δ := by
-  rw [dpValue, dif_pos Finset.univ_nonempty]
+    DecisionProblem.value (dp ε δ) Finset.univ = 1 - min ε δ := by
+  rw [DecisionProblem.value, dif_pos Finset.univ_nonempty]
   refine le_antisymm (Finset.sup'_le _ _ fun r _ => ?_) ?_
   · have h₁ := min_le_left ε δ
     have h₂ := min_le_right ε δ

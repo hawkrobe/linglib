@@ -378,7 +378,7 @@ namespace for dot notation. -/
 
 namespace Pragmatics.GameTheory.SymmetricGame
 
-open Core.DecisionTheory
+open Core.DecisionTheory Core.DecisionTheory.DecisionProblem
 
 /-- A symmetric game with beliefs about the opponent's action yields
 a material-payoff decision problem.

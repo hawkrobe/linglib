@@ -467,7 +467,7 @@ partition of `Θ` into the fibers of `f`, viewed as an error-free observation. C
 partition (post-composing the classifier) is a deterministic garbling, so a finer partition
 Blackwell-dominates every coarsening. This is the kernel-level form of the fact that
 partition-refinement monotonicity of question value ([van-rooy-2003] §4.1, formalized
-ℚ-valued as `Core.DecisionTheory.questionUtility_mono_of_refines`) is a special case of
+ℚ-valued as `Core.DecisionTheory.DecisionProblem.questionUtility_mono_of_refines`) is a special case of
 [blackwell-1953]. -/
 
 /-- A coarsened classifier is a garbling of the classifier it factors through: the
