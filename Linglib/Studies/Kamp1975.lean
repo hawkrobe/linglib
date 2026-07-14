@@ -195,7 +195,8 @@ theorem gray_intersective : isIntersective grayAdj :=
      fun N w x => by cases x <;> simp [grayAdj]⟩
 
 /-- "gray" is therefore also extensional and subsective. -/
-example : isExtensional grayAdj := isExtensional_of_isIntersective gray_intersective
+example : Intensional.IsExtensional grayAdj :=
+  isExtensional_of_isIntersective gray_intersective
 example : isSubsective grayAdj := gray_intersective.isSubsective
 
 /-- **"fake"**: a privative adjective (traditional analysis). "Fake N"
@@ -228,17 +229,17 @@ def skillfulAdj : Modifier (Property W2 E3) := fun N w x =>
 theorem skillful_subsective : isSubsective skillfulAdj :=
   fun _ _ _ h => h.1
 
-theorem skillful_not_extensional : ¬ isExtensional skillfulAdj := by
+theorem skillful_not_extensional : ¬ Intensional.IsExtensional skillfulAdj := by
   intro hext
   let N₁ : Property W2 E3 := fun _ _ => True
   let N₂ : Property W2 E3 := fun w x => match w, x with
     | .w₁, .a => False
     | _, _    => True
-  have hagree : ∀ x, N₁ .w₂ x ↔ N₂ .w₂ x := fun x => by
-    cases x <;> simp [N₁, N₂]
-  have h := hext N₁ N₂ .w₂ hagree .a
+  have hagree : N₁ .w₂ = N₂ .w₂ := by
+    funext x; cases x <;> simp [N₁, N₂]
+  have h := hext .w₂ N₁ N₂ hagree
   have hLHS : skillfulAdj N₁ .w₂ .a := ⟨trivial, trivial⟩
-  exact (h.mp hLHS).2
+  exact (congrFun h .a ▸ hLHS).2
 
 /-- **"alleged"**: a non-subsective (modal) adjective. An "alleged N"
     may or may not be an N — the adjective creates an intensional
@@ -250,6 +251,12 @@ theorem skillful_not_extensional : ¬ isExtensional skillfulAdj := by
     extension. -/
 def allegedAdj : Modifier (Property W2 E3) := fun _N _ x =>
   match x with | .a => True | _ => False
+
+/-- "alleged" ignores the noun entirely, so it is trivially extensional —
+    with `skillful_not_extensional` and `skillful_subsective`, this
+    witnesses that extensionality is orthogonal to subsectivity. -/
+theorem alleged_extensional : Intensional.IsExtensional allegedAdj :=
+  fun _ _ _ _ => rfl
 
 /-- "alleged N" does not entail "N" (not subsective). -/
 theorem alleged_not_subsective : ¬ isSubsective allegedAdj := by

@@ -5,7 +5,7 @@ import Mathlib.Order.PropInstances
 [parsons-1970] [kamp-1975]
 
 A **modifier** of `τ` is a function on the modificand's denotation
-([parsons-1970]: "modifiers as functions on predicates"). Adjectives,
+([parsons-1970]: modifiers as functions on predicates). Adjectives,
 adverbs, and relative clauses are all modifiers — of *different* `τ` (nominal
 `e ⇒ t`, event `Event → Prop`, …) — unified by *being* this type, not by
 implementing an interface.

@@ -5,57 +5,41 @@ import Mathlib.Data.Set.Basic
 import Mathlib.Tactic.Common
 
 /-!
-# Modifier-Meaning Classification at the Intensional Carrier
-[kamp-1975] [kamp-partee-1995] [parsons-1970]
+# Modifier-meaning classification at the intensional carrier
 
-The standard classification of adnominal modifier meanings, constrained
-by meaning postulates. The order-theoretic classes
-(`Modifier.isIntersective` / `.isSubsective` / `.isPrivative`) live in
-`Modification/Basic.lean`; this file works at the intensional carrier
-`Modifier (Property W E)` — functions from properties to properties,
-type `⟨⟨s,⟨e,t⟩⟩, ⟨s,⟨e,t⟩⟩⟩` in Montague notation — adding the
-pointwise unfolding lemmas, the one genuinely intensional class
-(`isExtensional`), the implication structure, and [partee-2010]'s
-post-collapse `RevisedClass`.
+We instantiate the order-theoretic modifier classes of
+`Modification/Basic.lean` (`Modifier.isIntersective`, `.isSubsective`,
+`.isPrivative`) at intensional properties, providing their pointwise
+unfolding lemmas, the implication structure, and [partee-2010]'s
+post-collapse three-class hierarchy.
 
-[parsons-1970] independently introduced the operator approach
-(modifiers as functions on predicates, not conjoinable predicates) and
-distinguished "predicative" adjectives (analyzable as conjunction =
-intersective) from "non-predicative" (= non-intersective), and
-"standard" modifiers (A N → N = subsective) from "non-standard"
-(= non-subsective). [kamp-1975] refined these binary distinctions
-into the full four-class hierarchy below.
-
-## Hierarchy
-
-1. **Intersective**: `⟦A N⟧ = ⟦A⟧ ∩ ⟦N⟧`
-2. **Subsective**: `⟦A N⟧ ⊆ ⟦N⟧`
-3. **Privative**: `⟦A N⟧ ∩ ⟦N⟧ = ∅`
-4. **Extensional**: depends only on N's extension, not intension
-5. **Non-subsective** (modal): no entailment (alleged, potential)
-
-## Implication Structure
-
-    intersective → {extensional, subsective}
-
-Extensional and subsective are independent: neither implies the other
-(§ 3 provides witnesses for both separations).
-Privative is incompatible with subsective (given non-empty extension).
-
-## Design
-
-Single-world (extensional) specializations are the same order-theoretic
-classes at the carrier `E → Prop` — see `Studies/Kamp1975.lean` § 1 for
-the specialization theorems. Whether *adjectives* uniformly denote
-`Modifier (Property W E)` is itself a theoretical claim (see
-`Studies/Elbourne2026.lean`); the carrier is named for the denotation
+The classification descends from the operator treatment of modifiers
+introduced independently by [parsons-1970] (intersective = his
+"predicative", subsective = his "standard") and [kamp-1975], and was
+consolidated in [kamp-partee-1995]; the class labels are Partee's.
+Extensionality — dependence on the noun's extension at each world — is
+the orthogonal, cross-cutting dimension, not a rung of the entailment
+hierarchy: it is `Intensional.IsExtensional` at this carrier, and
+`Studies/Kamp1975.lean` § 4 witnesses its independence from
+subsectivity. Whether *adjectives* uniformly denote
+`Modifier (Property W E)` is itself a theoretical claim
+(`Studies/Elbourne2026.lean`); the carrier is named for the denotation
 type, not the word class.
 
-[partee-2010] argues the privative class should be eliminated
-in favor of subsective + noun coercion; see `Partee2010.lean`. The
-post-collapse 3-class hierarchy is captured by `RevisedClass` below;
-the licensing mechanism (NVP + HPP) lives in
-`Semantics/Modification/Coercion.lean`.
+## Main definitions
+
+* `Property W E`: intensional properties, `Intensional.Intension W (E → Prop)`.
+* `isIntersective_iff`, `isPrivative_iff`: pointwise forms of the
+  order-theoretic classes at this carrier ("gray"/"French" vs
+  "fake"/"counterfeit"; subsective "skillful" needs no unfolding lemma —
+  `Modifier.isSubsective` is already pointwise here).
+* `isExtensional_of_isIntersective`: intersective modifier meanings are
+  `Intensional.IsExtensional`.
+* `not_isSubsective_of_isPrivative`: privative meanings with non-empty
+  extension are not subsective (intersective → subsective holds at any
+  carrier: `Modifier.isIntersective.isSubsective`).
+* `RevisedClass`: [partee-2010]'s three-class hierarchy after the
+  privative collapse, interpreted by `RevisedClass.satisfies`.
 -/
 
 namespace Modification
@@ -75,31 +59,17 @@ variable {W E : Type*} {adj : Modifier (Property W E)}
 
 /-- Pointwise form of `Modifier.isIntersective` at the intensional
     carrier: the extension at each world is the intersection of the
-    noun's extension with some fixed property Q ([kamp-1975]).
+    noun's extension with some fixed property Q.
 
     Examples: "gray", "French", "carnivorous", "four-legged". -/
 theorem isIntersective_iff :
     isIntersective adj ↔
       ∃ (Q : Property W E), ∀ (N : Property W E) (w : W) (x : E),
         adj N w x ↔ (Q w x ∧ N w x) := by
-  refine ⟨fun ⟨Q, hQ⟩ => ⟨Q, fun N w x => by rw [hQ]; exact Iff.rfl⟩,
-          fun ⟨Q, hQ⟩ => ⟨Q, fun N => ?_⟩⟩
-  funext w x
-  exact propext (hQ N w x)
-
-/-- Pointwise form of `Modifier.isSubsective` at the intensional
-    carrier: the extension is always a subset of the noun's extension
-    ([kamp-1975]).
-
-    Examples: "skillful", "good", "typical". -/
-theorem isSubsective_iff :
-    isSubsective adj ↔
-      ∀ (N : Property W E) (w : W) (x : E), adj N w x → N w x :=
-  Iff.rfl
+  simp only [isIntersective, funext_iff, Pi.inf_apply, inf_Prop_eq, eq_iff_iff]
 
 /-- Pointwise form of `Modifier.isPrivative` at the intensional carrier:
-    the extension is always disjoint from the noun's extension
-    ([kamp-1975]).
+    the extension is always disjoint from the noun's extension.
 
     Examples: "fake", "counterfeit".
     [partee-2010] argues this class should be eliminated. -/
@@ -108,34 +78,20 @@ theorem isPrivative_iff :
       ∀ (N : Property W E) (w : W) (x : E), adj N w x → ¬ N w x := by
   simp only [isPrivative, Pi.disjoint_iff, Prop.disjoint_iff, not_and]
 
-/-- A modifier meaning is **extensional** if its extension in world w
-    depends only on the noun's extension in w, not on the noun's
-    intension ([kamp-1975]). The one class of the hierarchy that is
-    genuinely intensional — it has no order-theoretic form.
+/-! ### Implication structure
 
-    "four-legged" and "gray" are extensional; "skillful" is not (being a
-    skillful surgeon depends on what counts as a surgeon across contexts,
-    not just who the surgeons are in this world). -/
-def isExtensional (adj : Modifier (Property W E)) : Prop :=
-  ∀ (N₁ N₂ : Property W E) (w : W),
-    (∀ x, N₁ w x ↔ N₂ w x) → ∀ x, adj N₁ w x ↔ adj N₂ w x
+    Intersective → subsective holds at any carrier
+    (`Modifier.isIntersective.isSubsective`); intersective → extensional
+    and the privative/subsective incompatibility are stated here. The
+    order-theoretic core of the latter is `Modifier.isPrivative.eq_bot`. -/
 
-/-! ### Implication Structure
-
-    Intersective → {extensional, subsective} (the second is
-    `Modifier.isIntersective.isSubsective`, at any carrier).
-    Extensional and subsective are independent.
-    Privative is incompatible with subsective (given non-empty extension;
-    the order-theoretic core is `Modifier.isPrivative.eq_bot`). -/
-
-/-- Intersective modifier meanings are extensional: if
-    `F(N)(w)(x) ↔ Q(w)(x) ∧ N(w)(x)`, then the result in w depends only
-    on N(w). -/
+/-- Intersective modifier meanings are extensional: meet with a fixed
+    property reads the noun only through its extension at each world. -/
 theorem isExtensional_of_isIntersective (h : isIntersective adj) :
-    isExtensional adj := by
-  obtain ⟨Q, hQ⟩ := isIntersective_iff.mp h
-  intro N₁ N₂ w hext x
-  simp only [hQ, hext]
+    Intensional.IsExtensional adj := by
+  obtain ⟨Q, hQ⟩ := h
+  intro w N₁ N₂ hN
+  simp only [hQ, Pi.inf_apply, hN]
 
 /-- Privative modifier meanings are not subsective (when the modifier has
     non-empty extension for some noun). -/
@@ -147,61 +103,7 @@ theorem not_isSubsective_of_isPrivative (hp : isPrivative adj)
 
 end Hierarchy
 
-/-! ### Independence: Extensional ⊥ Subsective
-
-    Neither extensional → subsective nor subsective → extensional.
-    We construct explicit witnesses for both separations. -/
-
-section Independence
-
-open Modifier
-
-/-- Witness: extensional but NOT subsective.
-    A modifier that ignores both the noun and intension entirely
-    (always returns True) is trivially extensional, but not subsective
-    because it holds even when the noun does not. -/
-private inductive W1 | w
-private inductive E1 | a
-
-private def extNotSubAdj : Modifier (Property W1 E1) := fun _N _w _x => True
-
-theorem extensional_not_implies_subsective :
-    ∃ (adj : Modifier (Property W1 E1)), isExtensional adj ∧ ¬ isSubsective adj :=
-  ⟨extNotSubAdj,
-   fun _ _ _ _ _ => Iff.rfl,
-   fun h => (h (fun _ _ => False) .w .a trivial).elim⟩
-
-/-- Witness: subsective but NOT extensional.
-    "skillful N" depends on N's intension (whether entity a is N in
-    world w₁) to determine the result in world w₂. Subsective because
-    the first conjunct is `N w x`. -/
-private inductive W2' | w₁ | w₂
-private inductive E2 | a | b
-
-private def subNotExtAdj : Modifier (Property W2' E2) := fun N w x =>
-  N w x ∧ match x with
-    | .a => N .w₁ .a
-    | _  => False
-
-theorem subsective_not_implies_extensional :
-    ∃ (adj : Modifier (Property W2' E2)), isSubsective adj ∧ ¬ isExtensional adj :=
-  ⟨subNotExtAdj,
-   fun _ _ _ h => h.1,
-   fun hext => by
-     let N₁ : Property W2' E2 := fun _ _ => True
-     let N₂ : Property W2' E2 := fun w x => match w, x with
-       | .w₁, .a => False
-       | _, _    => True
-     have hagree : ∀ x, N₁ .w₂ x ↔ N₂ .w₂ x := fun x => by
-       cases x <;> simp [N₁, N₂]
-     have h := hext N₁ N₂ .w₂ hagree .a
-     -- LHS: subNotExtAdj N₁ .w₂ .a = True ∧ True; RHS: True ∧ False
-     have hLHS : subNotExtAdj N₁ .w₂ .a := ⟨trivial, trivial⟩
-     exact (h.mp hLHS).2⟩
-
-end Independence
-
-/-! ### Revised Hierarchy ([partee-2010])
+/-! ### Revised hierarchy ([partee-2010])
 
 The post-collapse 3-class hierarchy after eliminating "privative" via
 noun coercion. Per [partee-2010] footnote 1, the hierarchy is
@@ -221,7 +123,8 @@ inductive RevisedClass where
   | intersective
   /-- `⟦A N⟧ ⊆ ⟦N*⟧` — includes former "privatives" via coercion. -/
   | subsective
-  /-- No entailment: alleged, potential, putative (Kamp's non-subsective). -/
+  /-- No entailment: alleged, potential, putative (the plain/modal
+      non-subsective class). -/
   | nonSubsective
   deriving DecidableEq
 
