@@ -921,6 +921,36 @@ theorem ChoiceFn.HasChoiceAxiom.binaryRatioScaleOn {cf : ChoiceFn A}
   rw [ChoiceFn.binary, hrule {x, y} hsub x (Finset.mem_insert_self x _),
       Finset.sum_pair hxy, pairwiseProb]
 
+/-- **Theorem 2** of [luce-1959] (p. 16): under the choice axiom, imperfect
+    pairwise discrimination on a triple forces the cyclic product identity
+    `P(x,y)P(y,z)P(z,x) = P(x,z)P(z,y)P(y,x)` — a stochastic intransitivity
+    is exactly as probable as its reverse. -/
+theorem ChoiceFn.HasChoiceAxiom.binary_mul_cycle {cf : ChoiceFn A}
+    (h : cf.HasChoiceAxiom) {x y z : A} (hxy : x ≠ y) (hyz : y ≠ z)
+    (hxz : x ≠ z) (himp : cf.ImperfectOn {x, y, z}) :
+    cf.binary x y * cf.binary y z * cf.binary z x =
+      cf.binary x z * cf.binary z y * cf.binary y x := by
+  obtain ⟨v, hpos, hrule⟩ :=
+    h.binaryRatioScaleOn ⟨x, Finset.mem_insert_self x _⟩ himp
+  have mx : x ∈ (↑({x, y, z} : Finset A) : Set A) := by simp
+  have my : y ∈ (↑({x, y, z} : Finset A) : Set A) := by simp
+  have mz : z ∈ (↑({x, y, z} : Finset A) : Set A) := by simp
+  have px := hpos x mx
+  have py := hpos y my
+  have pz := hpos z mz
+  have n1 : v x + v y ≠ 0 := ne_of_gt (add_pos px py)
+  have n2 : v y + v z ≠ 0 := ne_of_gt (add_pos py pz)
+  have n3 : v z + v x ≠ 0 := ne_of_gt (add_pos pz px)
+  have n4 : v x + v z ≠ 0 := ne_of_gt (add_pos px pz)
+  have n5 : v z + v y ≠ 0 := ne_of_gt (add_pos pz py)
+  have n6 : v y + v x ≠ 0 := ne_of_gt (add_pos py px)
+  rw [hrule x mx y my hxy, hrule y my z mz hyz, hrule z mz x mx (Ne.symm hxz),
+      hrule x mx z mz hxz, hrule z mz y my (Ne.symm hyz),
+      hrule y my x mx (Ne.symm hxy)]
+  simp only [pairwiseProb]
+  field_simp
+  ring
+
 end Appendix1
 
 

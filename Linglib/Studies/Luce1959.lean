@@ -24,6 +24,14 @@ via Axiom 2: `P(aρb, aσb) = P(a,b)·Q(ρ,σ) + P(b,a)·Q(σ,ρ)`.
   complement — Luce's classes `C(½)`, `C(1)`, `C(0)` (Lemma 11, p. 85).
   `neutral_indifferent` is the first clause of Lemma 10 (p. 84);
   `favorable_gt_unfavorable` is the between-class ordering.
+- The §3.B.2 chain: `lemma5` (the cubic constraint, p. 80), `eventPref_trans`
+  (Lemma 6), `lemma7` (p. 81), and `atMostThreeClasses` — Lemma 8/Theorem 10
+  as a four-event pigeonhole. `theorem11` (p. 82): `Q` is constant across
+  `∼`-classes; with Lemma 9 it yields both clauses of Lemma 10
+  (`neutral_indifferent`, `neutral_of_indiff_neutral`, p. 84).
+- `theorem12` (p. 84): given Axioms 3–5 (`HasNeutralEvent` is Axiom 5) and
+  nondegeneracy, exactly three classes — Luce's `C(1)`, `C(½)`, `C(0)`
+  (`atLeastThreeClasses` is Lemma 11, p. 85).
 - `theorem13` / `theorem14`: the two §3.D theorems (pp. 86, 89) behind Luce's
   proposed experiment; `gam_of_factored` is the observable consequence (p. 90)
   of the *suggested* local decomposition `v(aρb) = w(a,b)·φ(ρ)` of §3.D.3 —
@@ -42,15 +50,17 @@ to the gamble set under discussion, because Chapter 3 mixes imperfect
 discrimination among gambles with perfect discrimination among pure
 alternatives (`P(a,b) = 1`), which a globally positive scale cannot represent.
 
-Theorems 10–12 (pp. 80, 84) — `∼` partitions `E` into (exactly) three
-equivalence classes, given Axioms 1–5 — remain future work. Their proofs run
-through Lemma 5's cubic identity for `P` on gamble triples, and the
-three-class conclusion forces perfect discrimination `Q ∈ {0, 1}` between the
-extreme classes, so no globally ratio-scaled `Q` satisfies the nondegenerate
-branch. The intended hypothesis is `ChoiceFn.HasChoiceAxiom` — Luce's full
-two-clause Axiom 1, whose deletion clause tolerates perfect discrimination
-and whose Theorem 3 (`ChoiceFn.HasChoiceAxiom.ratioScaleOn`) supplies the
-local ratio scales.
+Axiom 1 lives in the structure (`axiom1P`/`axiom1Q`, in
+`ChoiceFn.HasChoiceAxiom`'s two-clause form) exactly as Definition 5 demands;
+only the §3.C additional axioms and Theorem 10's nondegeneracy enter as
+per-theorem hypotheses, as in the book. The three-class theorems are stated
+representative-wise — among any four events two are equi-likely
+(`atMostThreeClasses`); three pairwise non-equivalent events to one of which
+every event is equivalent (`theorem12`) — avoiding quotient machinery; a
+`Setoid`-packaged corollary is natural future work. The three-class regime
+forces perfect discrimination `Q ∈ {0, 1}` between extreme classes, which is
+exactly what `HasChoiceAxiom`'s deletion clause (and no globally positive
+ratio scale) tolerates.
 -/
 
 namespace Luce1959
@@ -80,8 +90,8 @@ abbrev Alternative (A E : Type*) := Gamble A E ⊕ A
     `P(aρb, aσb) = P(a,b)·Q(ρ,σ) + P(b,a)·Q(σ,ρ)`.
 
     Deviations from Luce: `P` and `Q` are total `ChoiceFn`s rather than
-    families on ≤3-element subsets satisfying his Axiom 1 (choice-axiom
-    consequences enter per-theorem, as `BinaryRatioScaleOn` hypotheses), and
+    families on ≤3-element subsets (Axiom 1 enters as the `axiom1P`/`axiom1Q`
+    fields, in `ChoiceFn.HasChoiceAxiom`'s two-clause form), and
     Axiom 2 carries an `a ≠ b` guard — at `a = b` it is unsatisfiable for a
     total `P` (`axiom2_unguarded_false`), and Luce's own uses all have
     `P(a,b) ∉ {0, 1}` or `P(a,b) = 1` with `a`, `b` a genuine pair. -/
@@ -95,6 +105,10 @@ structure DecomposablePreference (A E : Type*) [DecidableEq A] [DecidableEq E] w
     P.binary (.inl ⟨a, ρ, b⟩) (.inl ⟨a, σ, b⟩) =
       P.binary (.inr a) (.inr b) * Q.binary ρ σ +
       P.binary (.inr b) (.inr a) * Q.binary σ ρ
+  /-- `P` satisfies Luce's Axiom 1, per Definition 5. -/
+  axiom1P : P.HasChoiceAxiom
+  /-- `Q` satisfies Luce's Axiom 1, per Definition 5. -/
+  axiom1Q : Q.HasChoiceAxiom
 
 /-- Without its `a ≠ b` guard, Axiom 2 is unsatisfiable for a total choice
     function: at `a = b` it forces `P(aρa, aσa) = Q(ρ,σ) + Q(σ,ρ) = 1` in both
@@ -143,14 +157,480 @@ theorem gam_of_alt_eq_one {a b : A} (hab : a ≠ b) (h1 : dp.alt a b = 1)
   rw [dp.axiom2 a b hab ρ σ, h1, hba]
   ring
 
-/-- **Theorem 13** (p. 86): if `P(a,b) = P(c,d) = 1` and binary choice among
-    the four gambles `{aρb, aσb, cρd, cσd}` follows a local ratio scale (Luce:
-    "all pairwise discriminations in `T` are imperfect", via his Theorem 4),
-    then `P(aρb, cρd) = P(aσb, cσd)` — the step-function prediction of §3.D. -/
-theorem theorem13 {a b c d : A} {ρ σ : E} {v : Alternative A E → ℝ}
+/-! ### Definition 6: the subjective likelihood order -/
+
+/-- Definition 6 (p. 79): `ρ ≿ σ` iff `Q(ρ, σ) ≥ ½` — `ρ` is deemed at least
+    as likely as `σ`. -/
+def EventPref (dp : DecomposablePreference A E) (ρ σ : E) : Prop :=
+  1 / 2 ≤ dp.Q.binary ρ σ
+
+/-- Subjective equi-likelihood `ρ ∼ σ`: the symmetric part of Definition 6's
+    `≿`. On distinct events this is `Q(ρ, σ) = ½` (`eventIndiff_iff_eq_half`);
+    on the diagonal it holds since `Q(ρ, ρ) = 1`. -/
+def EventIndiff (dp : DecomposablePreference A E) (ρ σ : E) : Prop :=
+  EventPref dp ρ σ ∧ EventPref dp σ ρ
+
+theorem eventIndiff_refl (dp : DecomposablePreference A E) (ρ : E) :
+    EventIndiff dp ρ ρ := by
+  unfold EventIndiff EventPref
+  rw [dp.Q.binary_self]
+  norm_num
+
+theorem EventIndiff.symm {ρ σ : E} (h : EventIndiff dp ρ σ) :
+    EventIndiff dp σ ρ := ⟨h.2, h.1⟩
+
+theorem eventIndiff_iff_eq_half {ρ σ : E} (hne : ρ ≠ σ) :
+    EventIndiff dp ρ σ ↔ dp.Q.binary ρ σ = 1 / 2 := by
+  have hc := dp.Q.binary_complement hne
+  unfold EventIndiff EventPref
+  constructor
+  · rintro ⟨h1, h2⟩; linarith
+  · intro h; exact ⟨by linarith, by linarith⟩
+
+theorem ne_of_not_eventIndiff {ρ σ : E} (h : ¬EventIndiff dp ρ σ) : ρ ≠ σ :=
+  λ he => h (he ▸ eventIndiff_refl dp ρ)
+
+/-- Totality of `≿` in strict form: a non-equi-likely pair is strictly
+    ordered one way or the other. -/
+theorem gt_half_or_of_not_eventIndiff {ρ σ : E} (h : ¬EventIndiff dp ρ σ) :
+    1 / 2 < dp.Q.binary ρ σ ∨ 1 / 2 < dp.Q.binary σ ρ := by
+  have hne := ne_of_not_eventIndiff h
+  have hc := dp.Q.binary_complement hne
+  by_contra hcon
+  push Not at hcon
+  exact h ⟨show 1 / 2 ≤ _ by linarith [hcon.1, hcon.2],
+    show 1 / 2 ≤ _ by linarith [hcon.1, hcon.2]⟩
+
+/-- The nondegeneracy hypothesis of **Theorem 10** (p. 80): some genuine pair
+    of alternatives is discriminated imperfectly and asymmetrically,
+    `P(a, b) ∉ {0, ½, 1}`. -/
+def Nondegenerate (dp : DecomposablePreference A E) : Prop :=
+  ∃ a b : A, a ≠ b ∧ dp.alt a b ≠ 0 ∧ dp.alt a b ≠ 1 / 2 ∧ dp.alt a b ≠ 1
+
+private lemma alt_pos_pos {a b : A} (hab : a ≠ b) (h0 : dp.alt a b ≠ 0)
+    (h1 : dp.alt a b ≠ 1) :
+    0 < dp.alt a b ∧ 0 < dp.alt b a ∧ dp.alt a b + dp.alt b a = 1 := by
+  have hc : dp.alt a b + dp.alt b a = 1 := dp.P.binary_complement
+    (show (Sum.inr a : Alternative A E) ≠ Sum.inr b by simpa using hab)
+  have hp0 : 0 ≤ dp.alt a b := dp.P.binary_nonneg _ _
+  have hq0 : 0 ≤ dp.alt b a := dp.P.binary_nonneg _ _
+  refine ⟨lt_of_le_of_ne hp0 (Ne.symm h0), ?_, hc⟩
+  rcases eq_or_lt_of_le hq0 with heq | hlt
+  · exact absurd (by linarith : dp.alt a b = 1) h1
+  · exact hlt
+
+private lemma mix_pos {p p' q : ℝ} (hp : 0 < p) (hp' : 0 < p')
+    (hq0 : 0 ≤ q) (hq1 : q ≤ 1) : 0 < p' + (p - p') * q := by
+  rcases eq_or_lt_of_le hq1 with rfl | hq
+  · linarith
+  · nlinarith [mul_pos hp' (show (0:ℝ) < 1 - q by linarith),
+      mul_nonneg hp.le hq0]
+
+private lemma mix_lt_one {p p' q : ℝ} (hp : 0 < p) (hp' : 0 < p')
+    (hpp' : p + p' = 1) (hq0 : 0 ≤ q) (hq1 : q ≤ 1) :
+    p' + (p - p') * q < 1 := by
+  have h := mix_pos hp' hp hq0 hq1
+  nlinarith [h]
+
+/-- Axiom 2 in mixture-collapsed form: for a genuine outcome pair the gamble
+    comparison is the `Q`-mixture `P(b,a) + [P(a,b) − P(b,a)]·Q(x, y)`. -/
+private lemma gam_mix {a b : A} (hab : a ≠ b) {x y : E} (hxy : x ≠ y) :
+    dp.gam ⟨a, x, b⟩ ⟨a, y, b⟩ =
+      dp.alt b a + (dp.alt a b - dp.alt b a) * dp.Q.binary x y := by
+  have hq := dp.Q.binary_complement hxy
+  simp only [gam, alt]
+  rw [dp.axiom2 a b hab x y,
+      show dp.Q.binary y x = 1 - dp.Q.binary x y by linarith]
+  ring
+
+/-! ### The three-class theorems (§3.B.2) -/
+
+/-- **Lemma 5** (p. 80), in denominator-cleared form: Luce's identity
+    `(K+1){2[Q(ρ,σ)+Q(σ,τ)+Q(τ,ρ)] − 3} + K²[Q(ρ,σ)Q(σ,τ)Q(τ,ρ) −
+    Q(ρ,τ)Q(τ,σ)Q(σ,ρ)] = 0`, `K = P(a,b)/P(b,a) − 1`, multiplied through by
+    `P(b,a)²`. From Axiom 2 and Theorem 2 for the gamble triple
+    `{aρb, aσb, aτb}`, whose pairwise discrimination is imperfect whenever
+    `P(a,b) ∉ {0, 1}`. -/
+theorem lemma5 {a b : A} (hab : a ≠ b)
+    (h0 : dp.alt a b ≠ 0) (hhalf : dp.alt a b ≠ 1 / 2) (h1 : dp.alt a b ≠ 1)
+    {ρ σ τ : E} (hρσ : ρ ≠ σ) (hστ : σ ≠ τ) (hρτ : ρ ≠ τ) :
+    dp.alt a b * dp.alt b a *
+        (2 * (dp.Q.binary ρ σ + dp.Q.binary σ τ + dp.Q.binary τ ρ) - 3) +
+      (dp.alt a b - dp.alt b a) ^ 2 *
+        (dp.Q.binary ρ σ * dp.Q.binary σ τ * dp.Q.binary τ ρ -
+          dp.Q.binary ρ τ * dp.Q.binary τ σ * dp.Q.binary σ ρ) = 0 := by
+  obtain ⟨hpa, hpb, hsum⟩ := alt_pos_pos hab h0 h1
+  have g12 : (Sum.inl ⟨a, ρ, b⟩ : Alternative A E) ≠ Sum.inl ⟨a, σ, b⟩ := by
+    simpa using hρσ
+  have g23 : (Sum.inl ⟨a, σ, b⟩ : Alternative A E) ≠ Sum.inl ⟨a, τ, b⟩ := by
+    simpa using hστ
+  have g13 : (Sum.inl ⟨a, ρ, b⟩ : Alternative A E) ≠ Sum.inl ⟨a, τ, b⟩ := by
+    simpa using hρτ
+  have hbnds : ∀ x y : E, x ≠ y →
+      0 < dp.P.binary (.inl ⟨a, x, b⟩) (.inl ⟨a, y, b⟩) ∧
+        dp.P.binary (.inl ⟨a, x, b⟩) (.inl ⟨a, y, b⟩) < 1 := by
+    intro x y hxy
+    have hmix := gam_mix (dp := dp) hab hxy
+    simp only [gam] at hmix
+    rw [hmix]
+    exact ⟨mix_pos hpa hpb (dp.Q.binary_nonneg x y) (dp.Q.binary_le_one x y),
+      mix_lt_one hpa hpb hsum (dp.Q.binary_nonneg x y) (dp.Q.binary_le_one x y)⟩
+  have himp : dp.P.ImperfectOn
+      {.inl ⟨a, ρ, b⟩, .inl ⟨a, σ, b⟩, .inl ⟨a, τ, b⟩} := by
+    intro x hx y hy hxy
+    simp only [Finset.mem_insert, Finset.mem_singleton] at hx hy
+    rcases hx with rfl | rfl | rfl <;> rcases hy with rfl | rfl | rfl <;>
+      first
+      | exact absurd rfl hxy
+      | exact hbnds _ _ hρσ
+      | exact hbnds _ _ hρσ.symm
+      | exact hbnds _ _ hστ
+      | exact hbnds _ _ hστ.symm
+      | exact hbnds _ _ hρτ
+      | exact hbnds _ _ hρτ.symm
+  have hcyc := dp.axiom1P.binary_mul_cycle g12 g23 g13 himp
+  have e12 := gam_mix (dp := dp) hab hρσ
+  have e23 := gam_mix (dp := dp) hab hστ
+  have e31 := gam_mix (dp := dp) hab hρτ.symm
+  have e13 := gam_mix (dp := dp) hab hρτ
+  have e32 := gam_mix (dp := dp) hab hστ.symm
+  have e21 := gam_mix (dp := dp) hab hρσ.symm
+  simp only [gam] at e12 e23 e31 e13 e32 e21
+  rw [e12, e23, e31, e13, e32, e21] at hcyc
+  have f1 : dp.Q.binary σ ρ = 1 - dp.Q.binary ρ σ := by
+    linarith [dp.Q.binary_complement hρσ]
+  have f2 : dp.Q.binary τ σ = 1 - dp.Q.binary σ τ := by
+    linarith [dp.Q.binary_complement hστ]
+  have f3 : dp.Q.binary ρ τ = 1 - dp.Q.binary τ ρ := by
+    linarith [dp.Q.binary_complement hρτ]
+  rw [f1, f2, f3] at hcyc ⊢
+  have hΔ : dp.alt a b - dp.alt b a ≠ 0 := by
+    intro h
+    exact hhalf (by linarith)
+  refine mul_left_cancel₀ hΔ ?_
+  rw [mul_zero]
+  linear_combination hcyc
+
+/-- **Lemma 6** (p. 80): `≿` is transitive (with `gt_half_or_of_not_eventIndiff`
+    totality, a weak ordering of `E`). -/
+theorem eventPref_trans (hnd : Nondegenerate dp)
+    {ρ σ τ : E} (h1 : EventPref dp ρ σ) (h2 : EventPref dp σ τ) :
+    EventPref dp ρ τ := by
+  rcases eq_or_ne ρ σ with rfl | hρσ
+  · exact h2
+  rcases eq_or_ne σ τ with rfl | hστ
+  · exact h1
+  rcases eq_or_ne ρ τ with rfl | hρτ
+  · show 1 / 2 ≤ _
+    rw [dp.Q.binary_self]
+    norm_num
+  obtain ⟨a, b, hab, h0, hhalf, hone⟩ := hnd
+  obtain ⟨hpa, hpb, -⟩ := alt_pos_pos hab h0 hone
+  unfold EventPref at h1 h2 ⊢
+  by_contra hcon
+  push Not at hcon
+  have h5 := lemma5 hab h0 hhalf hone hρσ hστ hρτ
+  have hq3 : 1 / 2 < dp.Q.binary τ ρ := by
+    linarith [dp.Q.binary_complement hρτ]
+  have f1 : dp.Q.binary σ ρ = 1 - dp.Q.binary ρ σ := by
+    linarith [dp.Q.binary_complement hρσ]
+  have f2 : dp.Q.binary τ σ = 1 - dp.Q.binary σ τ := by
+    linarith [dp.Q.binary_complement hστ]
+  have f3 : dp.Q.binary ρ τ = 1 - dp.Q.binary τ ρ := by
+    linarith [dp.Q.binary_complement hρτ]
+  rw [f1, f2, f3] at h5
+  set q1 := dp.Q.binary ρ σ with hq1_def
+  set q2 := dp.Q.binary σ τ with hq2_def
+  set q3 := dp.Q.binary τ ρ with hq3_def
+  have hb1 := dp.Q.binary_le_one ρ σ
+  have hb2 := dp.Q.binary_le_one σ τ
+  have hb3 := dp.Q.binary_le_one τ ρ
+  have s0 : (0:ℝ) ≤ (1 - q2) * (1 - q3) :=
+    mul_nonneg (by linarith) (by linarith)
+  have s1 : (1 - q1) * ((1 - q2) * (1 - q3)) ≤ q1 * ((1 - q2) * (1 - q3)) :=
+    mul_le_mul_of_nonneg_right (by linarith) s0
+  have s2 : q1 * ((1 - q2) * (1 - q3)) ≤ q1 * (q2 * (1 - q3)) := by
+    refine mul_le_mul_of_nonneg_left ?_ (by linarith : (0:ℝ) ≤ q1)
+    exact mul_le_mul_of_nonneg_right (by linarith) (by linarith)
+  have s3 : q1 * (q2 * (1 - q3)) ≤ q1 * (q2 * q3) := by
+    refine mul_le_mul_of_nonneg_left ?_ (by linarith : (0:ℝ) ≤ q1)
+    exact mul_le_mul_of_nonneg_left (by linarith) (by linarith)
+  nlinarith [h5, mul_pos (mul_pos hpa hpb)
+      (show (0:ℝ) < 2 * (q1 + q2 + q3) - 3 by linarith),
+    mul_nonneg (sq_nonneg (dp.alt a b - dp.alt b a))
+      (show (0:ℝ) ≤ q1 * q2 * q3 - (1 - q3) * (1 - q2) * (1 - q1) by
+        nlinarith [s1, s2, s3])]
+
+/-- `∼` is transitive: with `eventIndiff_refl` and `EventIndiff.symm`, an
+    equivalence relation (the content of **Theorem 10**'s first clause). -/
+theorem eventIndiff_trans (hnd : Nondegenerate dp)
+    {ρ σ τ : E} (h1 : EventIndiff dp ρ σ) (h2 : EventIndiff dp σ τ) :
+    EventIndiff dp ρ τ :=
+  ⟨eventPref_trans hnd h1.1 h2.1, eventPref_trans hnd h2.2 h1.2⟩
+
+private lemma cubic_of_sum_eq {x y z : ℝ} (hx : 0 < x) (hy : 0 < y)
+    (hz : 0 < z) (h : x / (x + y) + y / (y + z) + z / (z + x) = 3 / 2) :
+    (x - y) * (y - z) * (x - z) = 0 := by
+  have h1 : x + y ≠ 0 := ne_of_gt (add_pos hx hy)
+  have h2 : y + z ≠ 0 := ne_of_gt (add_pos hy hz)
+  have h3 : z + x ≠ 0 := ne_of_gt (add_pos hz hx)
+  field_simp at h
+  linear_combination h
+
+/-- **Lemma 7** (p. 81): three distinct events, pairwise imperfectly
+    discriminated, cannot lie in three distinct `∼`-classes. -/
+theorem lemma7 (hnd : Nondegenerate dp) {ρ σ τ : E} (hρσ : ρ ≠ σ) (hστ : σ ≠ τ)
+    (hρτ : ρ ≠ τ) (himp : dp.Q.ImperfectOn {ρ, σ, τ}) :
+    EventIndiff dp ρ σ ∨ EventIndiff dp σ τ ∨ EventIndiff dp ρ τ := by
+  obtain ⟨a, b, hab, h0, hhalf, hone⟩ := hnd
+  obtain ⟨hpa, hpb, -⟩ := alt_pos_pos hab h0 hone
+  have h5 := lemma5 hab h0 hhalf hone hρσ hστ hρτ
+  have hcyc := dp.axiom1Q.binary_mul_cycle hρσ hστ hρτ himp
+  have hzero : dp.alt a b * dp.alt b a *
+      (2 * (dp.Q.binary ρ σ + dp.Q.binary σ τ + dp.Q.binary τ ρ) - 3) = 0 := by
+    linear_combination h5 - (dp.alt a b - dp.alt b a) ^ 2 * hcyc
+  have hsum32 : dp.Q.binary ρ σ + dp.Q.binary σ τ + dp.Q.binary τ ρ = 3 / 2 := by
+    rcases mul_eq_zero.mp hzero with h' | h'
+    · exact absurd h' (ne_of_gt (mul_pos hpa hpb))
+    · linarith
+  obtain ⟨v, hpos, hrule⟩ :=
+    dp.axiom1Q.binaryRatioScaleOn ⟨ρ, Finset.mem_insert_self ρ _⟩ himp
+  have mρ : ρ ∈ (↑({ρ, σ, τ} : Finset E) : Set E) := by simp
+  have mσ : σ ∈ (↑({ρ, σ, τ} : Finset E) : Set E) := by simp
+  have mτ : τ ∈ (↑({ρ, σ, τ} : Finset E) : Set E) := by simp
+  have pρ := hpos ρ mρ
+  have pσ := hpos σ mσ
+  have pτ := hpos τ mτ
+  rw [hrule ρ mρ σ mσ hρσ, hrule σ mσ τ mτ hστ,
+      hrule τ mτ ρ mρ (Ne.symm hρτ)] at hsum32
+  simp only [pairwiseProb] at hsum32
+  have key := cubic_of_sum_eq pρ pσ pτ hsum32
+  rcases mul_eq_zero.mp key with h' | hρτ'
+  · rcases mul_eq_zero.mp h' with hρσ' | hστ'
+    · refine Or.inl ((eventIndiff_iff_eq_half hρσ).mpr ?_)
+      rw [hrule ρ mρ σ mσ hρσ]
+      exact (pairwiseProb_eq_half_iff pρ pσ).mpr (by linarith)
+    · refine Or.inr (Or.inl ((eventIndiff_iff_eq_half hστ).mpr ?_))
+      rw [hrule σ mσ τ mτ hστ]
+      exact (pairwiseProb_eq_half_iff pσ pτ).mpr (by linarith)
+  · refine Or.inr (Or.inr ((eventIndiff_iff_eq_half hρτ).mpr ?_))
+    rw [hrule ρ mρ τ mτ hρτ]
+    exact (pairwiseProb_eq_half_iff pρ pτ).mpr (by linarith)
+
+private lemma boost (hnd : Nondegenerate dp)
+    {ρ σ τ : E} (hρσ : ρ ≠ σ) (hστ : σ ≠ τ) (hρτ : ρ ≠ τ)
+    (h1 : dp.Q.binary ρ σ = 1) (h2 : 1 / 2 < dp.Q.binary σ τ) :
+    dp.Q.binary ρ τ = 1 := by
+  obtain ⟨a, b, hab, h0, hhalf, hone⟩ := hnd
+  obtain ⟨hpa, hpb, -⟩ := alt_pos_pos hab h0 hone
+  by_contra hne
+  have hlt : dp.Q.binary ρ τ < 1 :=
+    lt_of_le_of_ne (dp.Q.binary_le_one ρ τ) hne
+  have hq3 : 0 < dp.Q.binary τ ρ := by
+    linarith [dp.Q.binary_complement hρτ]
+  have hσρ : dp.Q.binary σ ρ = 0 := by
+    linarith [dp.Q.binary_complement hρσ]
+  have h5 := lemma5 hab h0 hhalf hone hρσ hστ hρτ
+  rw [h1, hσρ] at h5
+  nlinarith [h5, mul_pos (mul_pos hpa hpb)
+      (show (0:ℝ) < 2 * (1 + dp.Q.binary σ τ + dp.Q.binary τ ρ) - 3 by linarith),
+    mul_nonneg (sq_nonneg (dp.alt a b - dp.alt b a))
+      (mul_nonneg (mul_nonneg one_pos.le (dp.Q.binary_nonneg σ τ))
+        (dp.Q.binary_nonneg τ ρ))]
+
+private lemma boost' (hnd : Nondegenerate dp)
+    {ρ σ τ : E} (hρσ : ρ ≠ σ) (hστ : σ ≠ τ) (hρτ : ρ ≠ τ)
+    (h1 : 1 / 2 < dp.Q.binary ρ σ) (h2 : dp.Q.binary σ τ = 1) :
+    dp.Q.binary ρ τ = 1 := by
+  obtain ⟨a, b, hab, h0, hhalf, hone⟩ := hnd
+  obtain ⟨hpa, hpb, -⟩ := alt_pos_pos hab h0 hone
+  by_contra hne
+  have hlt : dp.Q.binary ρ τ < 1 :=
+    lt_of_le_of_ne (dp.Q.binary_le_one ρ τ) hne
+  have hq3 : 0 < dp.Q.binary τ ρ := by
+    linarith [dp.Q.binary_complement hρτ]
+  have hτσ : dp.Q.binary τ σ = 0 := by
+    linarith [dp.Q.binary_complement hστ]
+  have h5 := lemma5 hab h0 hhalf hone hρσ hστ hρτ
+  rw [h2, hτσ] at h5
+  nlinarith [h5, mul_pos (mul_pos hpa hpb)
+      (show (0:ℝ) < 2 * (dp.Q.binary ρ σ + 1 + dp.Q.binary τ ρ) - 3 by linarith),
+    mul_nonneg (sq_nonneg (dp.alt a b - dp.alt b a))
+      (mul_nonneg (mul_nonneg (dp.Q.binary_nonneg ρ σ) one_pos.le)
+        (dp.Q.binary_nonneg τ ρ))]
+
+private lemma no_strict_cycle (hnd : Nondegenerate dp) {ρ σ τ : E} (hρτ : ρ ≠ τ)
+    (h1 : 1 / 2 < dp.Q.binary ρ σ) (h2 : 1 / 2 < dp.Q.binary σ τ)
+    (h3 : 1 / 2 < dp.Q.binary τ ρ) : False := by
+  have hle : EventPref dp ρ τ :=
+    eventPref_trans hnd (show EventPref dp ρ σ from h1.le)
+      (show EventPref dp σ τ from h2.le)
+  have hc := dp.Q.binary_complement hρτ
+  unfold EventPref at hle
+  linarith
+
+private lemma no_four_chain (hnd : Nondegenerate dp) {ρ σ τ ω : E}
+    (nρσ : ¬EventIndiff dp ρ σ) (nρτ : ¬EventIndiff dp ρ τ)
+    (nρω : ¬EventIndiff dp ρ ω) (nστ : ¬EventIndiff dp σ τ)
+    (nτω : ¬EventIndiff dp τ ω)
+    (h1 : 1 / 2 < dp.Q.binary ρ σ) (h2 : 1 / 2 < dp.Q.binary σ τ)
+    (h3 : 1 / 2 < dp.Q.binary τ ω) : False := by
+  have dρσ := ne_of_not_eventIndiff nρσ
+  have dρτ := ne_of_not_eventIndiff nρτ
+  have dρω := ne_of_not_eventIndiff nρω
+  have dστ := ne_of_not_eventIndiff nστ
+  have dτω := ne_of_not_eventIndiff nτω
+  have hρτ : 1 / 2 < dp.Q.binary ρ τ := by
+    have hle := eventPref_trans hnd (show EventPref dp ρ σ from h1.le)
+      (show EventPref dp σ τ from h2.le)
+    unfold EventPref at hle
+    refine lt_of_le_of_ne hle (Ne.symm (λ he => nρτ ?_))
+    exact (eventIndiff_iff_eq_half dρτ).mpr he
+  have hQρτ : dp.Q.binary ρ τ = 1 := by
+    by_cases hA : dp.Q.binary ρ σ = 1
+    · exact boost hnd dρσ dστ dρτ hA h2
+    by_cases hB : dp.Q.binary σ τ = 1
+    · exact boost' hnd dρσ dστ dρτ h1 hB
+    by_cases hC : dp.Q.binary ρ τ = 1
+    · exact hC
+    have core : ∀ u w : E, u ≠ w → 1 / 2 < dp.Q.binary u w →
+        dp.Q.binary u w ≠ 1 →
+        (0 < dp.Q.binary u w ∧ dp.Q.binary u w < 1) ∧
+          0 < dp.Q.binary w u ∧ dp.Q.binary w u < 1 := by
+      intro u w huw hgt hne1
+      have hc := dp.Q.binary_complement huw
+      have hlt := lt_of_le_of_ne (dp.Q.binary_le_one u w) hne1
+      exact ⟨⟨by linarith, hlt⟩, by constructor <;> linarith⟩
+    have himp : dp.Q.ImperfectOn {ρ, σ, τ} := by
+      intro x hx y hy hxy
+      simp only [Finset.mem_insert, Finset.mem_singleton] at hx hy
+      rcases hx with rfl | rfl | rfl <;> rcases hy with rfl | rfl | rfl
+      · exact absurd rfl hxy
+      · exact (core _ _ dρσ h1 hA).1
+      · exact (core _ _ dρτ hρτ hC).1
+      · exact (core _ _ dρσ h1 hA).2
+      · exact absurd rfl hxy
+      · exact (core _ _ dστ h2 hB).1
+      · exact (core _ _ dρτ hρτ hC).2
+      · exact (core _ _ dστ h2 hB).2
+      · exact absurd rfl hxy
+    rcases lemma7 hnd dρσ dστ dρτ himp with h | h | h
+    · exact absurd h nρσ
+    · exact absurd h nστ
+    · exact absurd h nρτ
+  have hQρω : dp.Q.binary ρ ω = 1 := boost hnd dρτ dτω dρω hQρτ h3
+  obtain ⟨a, b, hab, h0, hhalf, hone⟩ := hnd
+  obtain ⟨hpa, hpb, -⟩ := alt_pos_pos hab h0 hone
+  have h5 := lemma5 hab h0 hhalf hone dρτ dτω dρω
+  have hτρ : dp.Q.binary τ ρ = 0 := by
+    linarith [dp.Q.binary_complement dρτ]
+  have hωρ : dp.Q.binary ω ρ = 0 := by
+    linarith [dp.Q.binary_complement dρω]
+  rw [hQρτ, hτρ, hωρ] at h5
+  have h5' : dp.alt a b * dp.alt b a * (2 * dp.Q.binary τ ω - 1) = 0 := by
+    linear_combination h5
+  have : dp.Q.binary τ ω = 1 / 2 := by
+    rcases mul_eq_zero.mp h5' with h' | h'
+    · exact absurd h' (ne_of_gt (mul_pos hpa hpb))
+    · linarith
+  exact nτω ((eventIndiff_iff_eq_half dτω).mpr this)
+
+private lemma no_chain_insert (hnd : Nondegenerate dp) {a b c ω : E}
+    (nab : ¬EventIndiff dp a b) (nac : ¬EventIndiff dp a c)
+    (naω : ¬EventIndiff dp a ω) (nbc : ¬EventIndiff dp b c)
+    (nbω : ¬EventIndiff dp b ω) (ncω : ¬EventIndiff dp c ω)
+    (sab : 1 / 2 < dp.Q.binary a b) (sbc : 1 / 2 < dp.Q.binary b c) :
+    False := by
+  have N : ∀ {x y : E}, ¬EventIndiff dp x y → ¬EventIndiff dp y x :=
+    λ n h => n h.symm
+  rcases gt_half_or_of_not_eventIndiff naω with haω | hωa
+  · rcases gt_half_or_of_not_eventIndiff nbω with hbω | hωb
+    · rcases gt_half_or_of_not_eventIndiff ncω with hcω | hωc
+      · exact no_four_chain hnd nab nac naω nbc ncω sab sbc hcω
+      · exact no_four_chain hnd nab naω nac nbω (N ncω) sab hbω hωc
+    · exact no_four_chain hnd naω nab nac (N nbω) nbc haω hωb sbc
+  · exact no_four_chain hnd (N naω) (N nbω) (N ncω) nab nbc hωa sab sbc
+
+/-- **Lemma 8** (p. 81) / the partition clause of **Theorem 10** (p. 80): in
+    a nondegenerate decomposable preference structure, `∼` partitions the
+    events into at most three classes — among any four events, two are
+    subjectively equi-likely. -/
+theorem atMostThreeClasses (hnd : Nondegenerate dp) (ρ σ τ ω : E) :
+    EventIndiff dp ρ σ ∨ EventIndiff dp ρ τ ∨ EventIndiff dp ρ ω ∨
+      EventIndiff dp σ τ ∨ EventIndiff dp σ ω ∨ EventIndiff dp τ ω := by
+  by_contra hcon
+  push Not at hcon
+  obtain ⟨nρσ, nρτ, nρω, nστ, nσω, nτω⟩ := hcon
+  have N : ∀ {x y : E}, ¬EventIndiff dp x y → ¬EventIndiff dp y x :=
+    λ n h => n h.symm
+  rcases gt_half_or_of_not_eventIndiff nρσ with h1 | h1'
+  · rcases gt_half_or_of_not_eventIndiff nστ with h2 | h2'
+    · rcases gt_half_or_of_not_eventIndiff nρτ with h3 | h3'
+      · exact no_chain_insert hnd nρσ nρτ nρω nστ nσω nτω h1 h2
+      · exact no_strict_cycle hnd (ne_of_not_eventIndiff nρτ) h1 h2 h3'
+    · rcases gt_half_or_of_not_eventIndiff nρτ with h3 | h3'
+      · exact no_chain_insert hnd nρτ nρσ nρω (N nστ) nτω nσω h3 h2'
+      · exact no_chain_insert hnd (N nρτ) (N nστ) nτω nρσ nρω nσω h3' h1
+  · rcases gt_half_or_of_not_eventIndiff nστ with h2 | h2'
+    · rcases gt_half_or_of_not_eventIndiff nρτ with h3 | h3'
+      · exact no_chain_insert hnd (N nρσ) nστ nσω nρτ nρω nτω h1' h3
+      · exact no_chain_insert hnd nστ (N nρσ) nσω (N nρτ) nτω nρω h2 h3'
+    · rcases gt_half_or_of_not_eventIndiff nρτ with h3 | h3'
+      · exact no_strict_cycle hnd (ne_of_not_eventIndiff nστ) h1' h3 h2'
+      · exact no_chain_insert hnd (N nστ) (N nρτ) nτω (N nρσ) nσω nρω h2' h1'
+
+private lemma q_congr_left (hnd : Nondegenerate dp) {ρ ρ' σ : E}
+    (h : EventIndiff dp ρ ρ') (hρσ : ρ ≠ σ) (hρ'σ : ρ' ≠ σ) :
+    dp.Q.binary ρ' σ = dp.Q.binary ρ σ := by
+  rcases eq_or_ne ρ ρ' with rfl | hρρ'
+  · rfl
+  obtain ⟨a, b, hab, h0, hhalf, hone⟩ := hnd
+  obtain ⟨hpa, hpb, -⟩ := alt_pos_pos hab h0 hone
+  have hhalf1 : dp.Q.binary ρ ρ' = 1 / 2 := (eventIndiff_iff_eq_half hρρ').mp h
+  have hhalf2 : dp.Q.binary ρ' ρ = 1 / 2 := by
+    linarith [dp.Q.binary_complement hρρ']
+  have h5 := lemma5 hab h0 hhalf hone hρρ' hρ'σ hρσ
+  have f1 : dp.Q.binary σ ρ = 1 - dp.Q.binary ρ σ := by
+    linarith [dp.Q.binary_complement hρσ]
+  have f2 : dp.Q.binary σ ρ' = 1 - dp.Q.binary ρ' σ := by
+    linarith [dp.Q.binary_complement hρ'σ]
+  rw [hhalf1, hhalf2, f1, f2] at h5
+  have key : (2 * (dp.alt a b * dp.alt b a) +
+      (dp.alt a b - dp.alt b a) ^ 2 / 2) *
+      (dp.Q.binary ρ' σ - dp.Q.binary ρ σ) = 0 := by
+    linear_combination h5
+  rcases mul_eq_zero.mp key with h' | h'
+  · nlinarith [mul_pos hpa hpb, sq_nonneg (dp.alt a b - dp.alt b a)]
+  · linarith
+
+/-- **Theorem 11** (p. 82): `Q` is constant across `∼`-classes — if `ρ ∼ ρ'`
+    and `σ ∼ σ'` then `Q(ρ, σ) = Q(ρ', σ')`. Both comparisons must be genuine
+    pairs: at `ρ' = σ'` the total-`ChoiceFn` diagonal `Q(ρ', ρ') = 1` breaks
+    the unguarded claim, which Luce's `P(x, x) = ½` convention (p. 5) hides. -/
+theorem theorem11 (hnd : Nondegenerate dp) {ρ ρ' σ σ' : E}
+    (h1 : EventIndiff dp ρ ρ') (h2 : EventIndiff dp σ σ')
+    (hρσ : ρ ≠ σ) (hρ'σ' : ρ' ≠ σ') :
+    dp.Q.binary ρ σ = dp.Q.binary ρ' σ' := by
+  rcases eq_or_ne ρ' σ with rfl | hρ'σ
+  · have e1 := (eventIndiff_iff_eq_half hρσ).mp h1
+    have e2 := (eventIndiff_iff_eq_half hρ'σ').mp h2
+    rw [e1, e2]
+  · have s1 : dp.Q.binary ρ' σ = dp.Q.binary ρ σ := q_congr_left hnd h1 hρσ hρ'σ
+    have s2 : dp.Q.binary σ' ρ' = dp.Q.binary σ ρ' :=
+      q_congr_left hnd h2 (Ne.symm hρ'σ) (Ne.symm hρ'σ')
+    have c1 := dp.Q.binary_complement hρ'σ
+    have c2 := dp.Q.binary_complement hρ'σ'
+    linarith [s1, s2, c1, c2]
+
+/-- **Theorem 13** (p. 86): if `P(a,b) = P(c,d) = 1` and "all pairwise
+    discriminations in the set `T = {aρb, aσb, cρd, cσd}` are imperfect",
+    then `P(aρb, cρd) = P(aσb, cσd)` — the step-function prediction of §3.D.
+    The local ratio scale of Luce's proof is supplied by Theorem 3
+    (`ChoiceFn.HasChoiceAxiom.binaryRatioScaleOn`). -/
+theorem theorem13 {a b c d : A} {ρ σ : E}
     (hab : a ≠ b) (hcd : c ≠ d) (ha1 : dp.alt a b = 1) (hc1 : dp.alt c d = 1)
-    (hv : dp.P.BinaryRatioScaleOn
-      {.inl ⟨a, ρ, b⟩, .inl ⟨a, σ, b⟩, .inl ⟨c, ρ, d⟩, .inl ⟨c, σ, d⟩} v) :
+    (himp : dp.P.ImperfectOn
+      {.inl ⟨a, ρ, b⟩, .inl ⟨a, σ, b⟩, .inl ⟨c, ρ, d⟩, .inl ⟨c, σ, d⟩}) :
     dp.gam ⟨a, ρ, b⟩ ⟨c, ρ, d⟩ = dp.gam ⟨a, σ, b⟩ ⟨c, σ, d⟩ := by
   by_cases hρσ : ρ = σ
   · subst hρσ; rfl
@@ -168,7 +648,8 @@ theorem theorem13 {a b c d : A} {ρ σ : E} {v : Alternative A E → ℝ}
     simpa using hacbd
   have h24 : (Sum.inl ⟨a, σ, b⟩ : Alternative A E) ≠ Sum.inl ⟨c, σ, d⟩ := by
     simpa using hacbd
-  obtain ⟨hpos, hrule⟩ := hv
+  obtain ⟨v, hpos, hrule⟩ := dp.axiom1P.binaryRatioScaleOn
+    ⟨_, Finset.mem_insert_self _ _⟩ himp
   have p1 := hpos (Sum.inl ⟨a, ρ, b⟩) (by simp)
   have p2 := hpos (Sum.inl ⟨a, σ, b⟩) (by simp)
   have p3 := hpos (Sum.inl ⟨c, ρ, d⟩) (by simp)
@@ -314,36 +795,22 @@ theorem favorable_iff_unfavorable_compl [Nontrivial E] (ρ : E) :
   rw [compl_compl]
   constructor <;> intro h <;> linarith
 
-private lemma v_eq_v_compl_of_neutral [Nontrivial E] {v : E → ℝ}
-    (hpos : ∀ x ∈ Set.univ, 0 < v x)
-    (hrule : ∀ x ∈ Set.univ, ∀ y ∈ Set.univ, x ≠ y →
-      dp.Q.binary x y = pairwiseProb v x y)
-    {ρ : E} (hρ : Neutral dp ρ) : v ρ = v ρᶜ := by
-  have h := hρ
-  unfold Neutral at h
-  rw [hrule ρ trivial ρᶜ trivial ((compl_ne_self (a := ρ)).symm)] at h
-  exact (pairwiseProb_eq_half_iff (hpos ρ trivial) (hpos ρᶜ trivial)).mp h
-
-/-- Two distinct neutral events are indifferent: `Q(ρ, σ) = ½`. This is the
-    first clause of Lemma 10 (p. 84) — "if ρ ∼ ρ̄ and σ ∼ σ̄, then ρ ∼ σ" —
-    derived here from the ratio scale and Lemma 9 rather than via Luce's
-    Theorem 11. Distinctness is required: `Q(ρ, ρ) = 1`. -/
-theorem neutral_indifferent [Nontrivial E] {v : E → ℝ}
-    (hv : dp.Q.BinaryRatioScaleOn Set.univ v) (ax3 : Complementation dp)
-    (ax4 : NontrivialPreference dp) {ρ σ : E} (hρ : Neutral dp ρ)
-    (hσ : Neutral dp σ) (hρσ : ρ ≠ σ) : dp.Q.binary ρ σ = 1 / 2 := by
-  obtain ⟨hpos, hrule⟩ := hv
-  have hconst := v_mul_v_compl_const ⟨hpos, hrule⟩ ax3 ax4 ρ σ
-  rw [← v_eq_v_compl_of_neutral hpos hrule hρ,
-      ← v_eq_v_compl_of_neutral hpos hrule hσ] at hconst
-  have p1 := hpos ρ trivial
-  have p2 := hpos σ trivial
-  have hvv : v ρ = v σ := by
-    rcases mul_self_eq_mul_self_iff.mp hconst with h | h
-    · exact h
-    · linarith
-  rw [hrule ρ trivial σ trivial hρσ]
-  exact (pairwiseProb_eq_half_iff p1 p2).mpr hvv
+/-- Two distinct neutral events are indifferent — the first clause of
+    **Lemma 10** (p. 84), "if ρ ∼ ρ̄ and σ ∼ σ̄, then ρ ∼ σ", via Theorem 11
+    and Lemma 9. Distinctness is required: `Q(ρ, ρ) = 1`. -/
+theorem neutral_indifferent [Nontrivial E] (hnd : Nondegenerate dp)
+    (ax3 : Complementation dp) (ax4 : NontrivialPreference dp) {ρ σ : E}
+    (hρ : Neutral dp ρ) (hσ : Neutral dp σ) (hρσ : ρ ≠ σ) :
+    dp.Q.binary ρ σ = 1 / 2 := by
+  have iρ : EventIndiff dp ρ ρᶜ :=
+    (eventIndiff_iff_eq_half (compl_ne_self (a := ρ)).symm).mpr hρ
+  have iσ : EventIndiff dp σ σᶜ :=
+    (eventIndiff_iff_eq_half (compl_ne_self (a := σ)).symm).mpr hσ
+  have h11 := theorem11 hnd iρ iσ hρσ (compl_injective.ne hρσ)
+  have h9 := q_compl_compl ax3 ax4 ρᶜ σᶜ
+  rw [compl_compl, compl_compl] at h9
+  have hc := dp.Q.binary_complement hρσ
+  linarith [h11, h9, hc]
 
 /-- Favorable events are preferred to unfavorable ones: the between-class
     ordering `C(1) > C(0)` of the three-class picture (§3.C.2, p. 85),
@@ -449,6 +916,70 @@ theorem theorem14 [Nontrivial E] (ax3 : Complementation dp)
   -- v(aρb)·v(cρd) = v(cσd)·v(aσb); transfer via Axiom 3
   rw [hρc, hσc] at hcross
   linarith [hcross, mul_comm (v (.inl ⟨d, σᶜ, c⟩)) (v (.inl ⟨a, σ, b⟩))]
+
+/-- **Axiom 5** (p. 84): some event is subjectively as likely as its
+    complement. -/
+def HasNeutralEvent (dp : DecomposablePreference A E) : Prop :=
+  ∃ ε : E, dp.Q.binary ε εᶜ = 1 / 2
+
+/-- The second clause of **Lemma 10** (p. 84): anything equi-likely with a
+    neutral event is itself neutral — `C(½)` is exactly the neutral class. -/
+theorem neutral_of_indiff_neutral [Nontrivial E] (hnd : Nondegenerate dp)
+    (ax3 : Complementation dp) (ax4 : NontrivialPreference dp) {ρ σ : E}
+    (hρ : Neutral dp ρ) (h : EventIndiff dp σ ρ) : Neutral dp σ := by
+  rcases eq_or_ne σ ρ with rfl | hne
+  · exact hρ
+  have hσρ : dp.Q.binary σ ρ = 1 / 2 := (eventIndiff_iff_eq_half hne).mp h
+  have h9 := q_compl_compl ax3 ax4 σ ρ
+  have hcc : dp.Q.binary ρᶜ σᶜ = 1 / 2 := by linarith
+  have icc : EventIndiff dp σᶜ ρᶜ :=
+    ((eventIndiff_iff_eq_half (compl_injective.ne (Ne.symm hne))).mpr hcc).symm
+  have h11 := theorem11 hnd h icc (compl_ne_self (a := σ)).symm
+    (compl_ne_self (a := ρ)).symm
+  unfold Neutral at hρ ⊢
+  linarith [h11]
+
+/-- **Lemma 11** (p. 85): with Axioms 3–5 and nondegeneracy there are at
+    least three classes — a neutral event, a non-neutral event, and its
+    complement are pairwise non-equivalent. -/
+theorem atLeastThreeClasses [Nontrivial E] (hnd : Nondegenerate dp)
+    (ax3 : Complementation dp) (ax4 : NontrivialPreference dp)
+    (ax5 : HasNeutralEvent dp) :
+    ∃ ε ρ : E, ¬EventIndiff dp ε ρ ∧ ¬EventIndiff dp ε ρᶜ ∧
+      ¬EventIndiff dp ρ ρᶜ := by
+  obtain ⟨ε, hε⟩ := ax5
+  have hex : ∃ ρ : E, ¬Neutral dp ρ := by
+    by_contra hall
+    push Not at hall
+    obtain ⟨ρ₀, σ₀, hρσ₀, hq₀⟩ := ax4.2
+    exact hq₀ (neutral_indifferent hnd ax3 ax4 (hall ρ₀) (hall σ₀) hρσ₀)
+  obtain ⟨ρ, hρ⟩ := hex
+  exact ⟨ε, ρ, λ h => hρ (neutral_of_indiff_neutral hnd ax3 ax4 hε h.symm),
+    λ h => hρ ((neutral_compl_iff ρ).mp
+      (neutral_of_indiff_neutral hnd ax3 ax4 hε h.symm)),
+    λ h => hρ ((eventIndiff_iff_eq_half (compl_ne_self (a := ρ)).symm).mp h)⟩
+
+/-- **Theorem 12** (p. 84): given Axioms 3–5 and a nondegenerately
+    discriminated pair of alternatives, `∼` partitions the events into
+    exactly three classes: three pairwise non-equivalent events to one of
+    which every event is equivalent. -/
+theorem theorem12 [Nontrivial E] (hnd : Nondegenerate dp)
+    (ax3 : Complementation dp) (ax4 : NontrivialPreference dp)
+    (ax5 : HasNeutralEvent dp) :
+    ∃ ρ₁ ρ₂ ρ₃ : E,
+      (¬EventIndiff dp ρ₁ ρ₂ ∧ ¬EventIndiff dp ρ₁ ρ₃ ∧
+        ¬EventIndiff dp ρ₂ ρ₃) ∧
+      ∀ σ : E, EventIndiff dp σ ρ₁ ∨ EventIndiff dp σ ρ₂ ∨
+        EventIndiff dp σ ρ₃ := by
+  obtain ⟨ε, ρ, n1, n2, n3⟩ := atLeastThreeClasses hnd ax3 ax4 ax5
+  refine ⟨ε, ρ, ρᶜ, ⟨n1, n2, n3⟩, λ σ => ?_⟩
+  rcases atMostThreeClasses hnd σ ε ρ ρᶜ with h | h | h | h | h | h
+  · exact Or.inl h
+  · exact Or.inr (Or.inl h)
+  · exact Or.inr (Or.inr h)
+  · exact absurd h n1
+  · exact absurd h n2
+  · exact absurd h n3
 
 end BooleanEvents
 
