@@ -337,37 +337,19 @@ private theorem avgRisk_id_uniform_eq [Fintype Θ] [Nonempty Θ] [MeasurableSing
 
 end GarblingPolytope
 
-/-- **Blackwell–Sherman–Stein converse** (finite case). If `P` Blackwell-dominates `P'` (attains a
-Bayes risk no larger than `P'` for *every* decision problem and prior), then `P'` is a garbling of
-`P`.
-
-Stated for finite parameter and sample spaces, with both experiments Markov kernels. All
-four hypotheses are essential:
-
-* The converse is **false** for general measurable spaces — this is the *finite* Blackwell
-  equivalence ([blackwell-1953]); the standard-Borel version additionally requires the
-  experiments to be dominated.
-* `[Nonempty Θ]` is necessary: with `Θ` empty every Bayes risk is `0`, so the hypothesis holds
-  vacuously, yet a Markov garbling `η : Kernel 𝓧 𝓧'` need not exist when `𝓧` is nonempty and
-  `𝓧'` is empty. (Nonempty `Θ` together with `[IsMarkovKernel P']` also forces `𝓧'` nonempty.)
-* `[IsMarkovKernel P]` is necessary: a defective `P` can attain low risk without being
-  informative. E.g. the zero kernel `P = 0` has `bayesRisk ℓ 0 π = 0` for every loss (the
-  least possible value), so it dominates every `P'`, yet `η ∘ₖ 0 = 0` forces `P' = 0`.
-* `[IsMarkovKernel P']` is necessary: an over-massed `P'` inflates every risk. E.g. over a
-  one-point sample space with `P' = 2 • P` one has `bayesRisk ℓ P' π = 2 • bayesRisk ℓ P π
-  ≥ bayesRisk ℓ P π` for every loss, yet `P'` (mass `2`) is not `η ∘ₖ P` for any Markov `η`.
-
-The quantification over *all* decision problems is likewise essential: dominance for a
-single one does not force garbling.
-
-The proof separates `encode P'` from the garbling polytope of `P` and realizes the separating
-functional as a shifted loss under the uniform prior (see the module-level implementation
-notes). -/
-theorem isGarblingOf_of_blackwellDominates
+/-- **Blackwell–Sherman–Stein converse, minimal-hypothesis form**. Same conclusion as
+`isGarblingOf_of_blackwellDominates`, but the risk-comparison hypothesis is required only for
+losses that are **everywhere finite** (`ℓ θ x' ≠ ⊤`) and **only at the uniform prior**. The
+proof body constructs exactly such a loss, so this weakened form is enough to conclude that
+`P'` is a garbling of `P`. Downstream users (e.g. Van Rooy's decision-theoretic converse
+transported through the utility–loss duality) supply only finite-valued losses. -/
+theorem isGarblingOf_of_bayesRisk_uniform_le
     [Fintype Θ] [Fintype 𝓧] [Fintype 𝓧'] [Nonempty Θ]
     [MeasurableSingletonClass Θ] [MeasurableSingletonClass 𝓧] [MeasurableSingletonClass 𝓧']
     {P : Kernel Θ 𝓧} {P' : Kernel Θ 𝓧'} [IsMarkovKernel P] [IsMarkovKernel P']
-    (h : P.BlackwellDominates P') :
+    (h : ∀ ℓ : Θ → 𝓧' → ℝ≥0∞, (∀ θ x', ℓ θ x' ≠ ⊤) →
+      bayesRisk ℓ P ((Fintype.card Θ : ℝ≥0∞)⁻¹ • Measure.count) ≤
+        bayesRisk ℓ P' ((Fintype.card Θ : ℝ≥0∞)⁻¹ • Measure.count)) :
     P'.IsGarblingOf P := by
   classical
   by_cases hmem : encode P' ∈ garblingSet P
@@ -395,6 +377,7 @@ theorem isGarblingOf_of_blackwellDominates
     have hN_pos : (0 : ℝ) < (Fintype.card Θ : ℝ) := by exact_mod_cast Fintype.card_pos
     -- The shifted loss and the uniform prior.
     set ℓ : Θ → 𝓧' → ℝ≥0∞ := fun θ x' => ENNReal.ofReal (a θ x' + C) with hℓ_def
+    have hℓ_ne_top : ∀ θ x', ℓ θ x' ≠ ⊤ := fun _ _ => ENNReal.ofReal_ne_top
     set π : Measure Θ := (Fintype.card Θ : ℝ≥0∞)⁻¹ • Measure.count with hπ_def
     -- The real risk value of a Markov `Q`: a nonnegative double sum that linearizes against `f`.
     have hnn : ∀ Q : Kernel Θ 𝓧',
@@ -446,7 +429,40 @@ theorem isGarblingOf_of_blackwellDominates
         < ENNReal.ofReal ((Fintype.card Θ : ℝ)⁻¹ * u + C) := by
       refine (ENNReal.ofReal_lt_ofReal_iff hpos).mpr ?_
       gcongr
-    exact absurd (h ℓ π) (not_le.mpr ((hP'_le.trans_lt hlt).trans_le hP_ge))
+    exact absurd (h ℓ hℓ_ne_top) (not_le.mpr ((hP'_le.trans_lt hlt).trans_le hP_ge))
+
+/-- **Blackwell–Sherman–Stein converse** (finite case). If `P` Blackwell-dominates `P'` (attains a
+Bayes risk no larger than `P'` for *every* decision problem and prior), then `P'` is a garbling of
+`P`.
+
+Stated for finite parameter and sample spaces, with both experiments Markov kernels. All
+four hypotheses are essential:
+
+* The converse is **false** for general measurable spaces — this is the *finite* Blackwell
+  equivalence ([blackwell-1953]); the standard-Borel version additionally requires the
+  experiments to be dominated.
+* `[Nonempty Θ]` is necessary: with `Θ` empty every Bayes risk is `0`, so the hypothesis holds
+  vacuously, yet a Markov garbling `η : Kernel 𝓧 𝓧'` need not exist when `𝓧` is nonempty and
+  `𝓧'` is empty. (Nonempty `Θ` together with `[IsMarkovKernel P']` also forces `𝓧'` nonempty.)
+* `[IsMarkovKernel P]` is necessary: a defective `P` can attain low risk without being
+  informative. E.g. the zero kernel `P = 0` has `bayesRisk ℓ 0 π = 0` for every loss (the
+  least possible value), so it dominates every `P'`, yet `η ∘ₖ 0 = 0` forces `P' = 0`.
+* `[IsMarkovKernel P']` is necessary: an over-massed `P'` inflates every risk. E.g. over a
+  one-point sample space with `P' = 2 • P` one has `bayesRisk ℓ P' π = 2 • bayesRisk ℓ P π
+  ≥ bayesRisk ℓ P π` for every loss, yet `P'` (mass `2`) is not `η ∘ₖ P` for any Markov `η`.
+
+The quantification over *all* decision problems is likewise essential: dominance for a
+single one does not force garbling.
+
+The proof factors through `isGarblingOf_of_bayesRisk_uniform_le`: the internal separating loss
+is finite-valued, so the full universal quantification is stronger than needed. -/
+theorem isGarblingOf_of_blackwellDominates
+    [Fintype Θ] [Fintype 𝓧] [Fintype 𝓧'] [Nonempty Θ]
+    [MeasurableSingletonClass Θ] [MeasurableSingletonClass 𝓧] [MeasurableSingletonClass 𝓧']
+    {P : Kernel Θ 𝓧} {P' : Kernel Θ 𝓧'} [IsMarkovKernel P] [IsMarkovKernel P']
+    (h : P.BlackwellDominates P') :
+    P'.IsGarblingOf P :=
+  isGarblingOf_of_bayesRisk_uniform_le fun ℓ _ => h ℓ _
 
 /-- **[blackwell-1953]** (finite case). `P` is at least as informative as `P'` (`P'` is a
 garbling of `P`) iff `P` Blackwell-dominates `P'` (no greater Bayes risk across every decision
@@ -491,5 +507,129 @@ theorem bayesRisk_deterministic_le_deterministic_comp {𝓨 : Type u} [Measurabl
       bayesRisk ℓ (Kernel.deterministic (g ∘ f) (hg.comp hf)) π :=
   bayesRisk_le_of_isGarblingOf ℓ
     (Kernel.deterministic_comp_isGarblingOf_deterministic hf hg) π
+
+/-- **Between deterministic experiments the Blackwell order is functional factoring**:
+`deterministic g` is a garbling of `deterministic f` iff `g` factors through `f`. The
+mixing kernel of any garbling of a deterministic experiment is forced to be Dirac on
+the range of `f`, so randomized post-processing buys nothing — the partition of `g`
+must genuinely coarsen the partition of `f`. -/
+theorem Kernel.deterministic_isGarblingOf_deterministic_iff {𝓨 : Type*}
+    [MeasurableSpace 𝓨] [Countable 𝓧] [MeasurableSingletonClass 𝓧]
+    [MeasurableSingletonClass 𝓨] [Nonempty 𝓨]
+    {f : Θ → 𝓧} {g : Θ → 𝓨} (hf : Measurable f) (hg : Measurable g) :
+    (Kernel.deterministic g hg).IsGarblingOf (Kernel.deterministic f hf) ↔
+      ∃ ψ : 𝓧 → 𝓨, g = ψ ∘ f := by
+  constructor
+  · rintro ⟨η, hη, hcomp⟩
+    have hpt : ∀ θ, η (f θ) = Measure.dirac (g θ) := by
+      intro θ
+      have h1 : (η ∘ₖ Kernel.deterministic f hf) θ = η (f θ) := by
+        rw [Kernel.comp_deterministic_eq_comap, Kernel.comap_apply]
+      rw [← h1, ← hcomp, Kernel.deterministic_apply]
+    have hft : Function.FactorsThrough g f := by
+      intro θ θ' hff
+      have h12 : Measure.dirac (g θ) = Measure.dirac (g θ') := by
+        rw [← hpt θ, ← hpt θ', hff]
+      by_contra hne
+      have he := congrArg (λ μ : Measure 𝓨 => μ {g θ}) h12
+      rw [Measure.dirac_apply' _ (measurableSet_singleton _),
+        Measure.dirac_apply' _ (measurableSet_singleton _)] at he
+      simp [Ne.symm hne] at he
+    exact ⟨Function.extend f g (λ _ => Classical.arbitrary 𝓨),
+      (hft.extend_comp _).symm⟩
+  · rintro ⟨ψ, rfl⟩
+    exact ⟨Kernel.deterministic ψ (measurable_of_countable ψ), inferInstance,
+      (Kernel.deterministic_comp_deterministic hf (measurable_of_countable ψ)).symm⟩
+
+/-- The average risk of any estimator `κ` on the deterministic experiment `f`,
+regrouped by cell: `avgRisk = ∑_x ∑_y κ(x){y} · ∑_{θ ∈ fiber x} π{θ}·ℓ(θ, y)`.
+No `IsMarkovKernel` hypothesis is needed — this is a pure algebraic rearrangement. -/
+private lemma avgRisk_deterministic_fintype_eq [Fintype Θ] [Fintype 𝓧]
+    [DecidableEq 𝓧] [MeasurableSingletonClass Θ] [MeasurableSingletonClass 𝓧]
+    {𝓨 : Type u} [MeasurableSpace 𝓨] [Fintype 𝓨] [MeasurableSingletonClass 𝓨]
+    {f : Θ → 𝓧} (hf : Measurable f) (ℓ : Θ → 𝓨 → ℝ≥0∞) (π : Measure Θ)
+    (κ : Kernel 𝓧 𝓨) :
+    avgRisk ℓ (Kernel.deterministic f hf) κ π =
+      ∑ x : 𝓧, ∑ y : 𝓨, κ x {y} *
+        ∑ θ ∈ Finset.univ.filter (f · = x), π {θ} * ℓ θ y := by
+  rw [avgRisk_fintype]
+  calc ∑ θ, (∫⁻ y, ℓ θ y ∂((κ ∘ₖ Kernel.deterministic f hf) θ)) * π {θ}
+      = ∑ θ, ∑ y : 𝓨, κ (f θ) {y} * (π {θ} * ℓ θ y) := by
+        refine Finset.sum_congr rfl fun θ _ => ?_
+        rw [Kernel.comp_deterministic_eq_comap, Kernel.comap_apply, lintegral_fintype,
+          Finset.sum_mul]
+        exact Finset.sum_congr rfl fun y _ => by ring
+    _ = ∑ x, ∑ θ ∈ Finset.univ.filter (f · = x),
+            ∑ y : 𝓨, κ x {y} * (π {θ} * ℓ θ y) := by
+        rw [← Finset.sum_fiberwise_of_maps_to (fun θ _ => Finset.mem_univ (f θ))
+              (fun θ => ∑ y : 𝓨, κ (f θ) {y} * (π {θ} * ℓ θ y))]
+        refine Finset.sum_congr rfl fun x _ => Finset.sum_congr rfl fun θ hθ => ?_
+        rw [(Finset.mem_filter.mp hθ).2]
+    _ = ∑ x, ∑ y : 𝓨, κ x {y} *
+            ∑ θ ∈ Finset.univ.filter (f · = x), π {θ} * ℓ θ y := by
+        refine Finset.sum_congr rfl fun x _ => ?_
+        rw [Finset.sum_comm]
+        exact Finset.sum_congr rfl fun y _ => by rw [Finset.mul_sum]
+
+/-- **Bayes risk of a deterministic experiment** (finite case): observing the exact
+cell of `θ` under `f`, the optimal estimator picks the best action per cell, so the
+Bayes risk is the sum over cells of the minimal conditional expected loss. The
+utility-scale reading — risk = bound minus partition value — is
+`Core.Probability.Decision.Duality`. -/
+theorem bayesRisk_deterministic [Fintype Θ] [Fintype 𝓧] [DecidableEq 𝓧]
+    [MeasurableSingletonClass Θ] [MeasurableSingletonClass 𝓧] {𝓨 : Type u}
+    [MeasurableSpace 𝓨] [Fintype 𝓨] [Nonempty 𝓨] [MeasurableSingletonClass 𝓨]
+    {f : Θ → 𝓧} (hf : Measurable f) (ℓ : Θ → 𝓨 → ℝ≥0∞) (π : Measure Θ)
+    [IsFiniteMeasure π] :
+    bayesRisk ℓ (Kernel.deterministic f hf) π =
+      ∑ x : 𝓧, ⨅ y : 𝓨, ∑ θ ∈ Finset.univ.filter (f · = x), π {θ} * ℓ θ y := by
+  classical
+  set F : 𝓧 → 𝓨 → ℝ≥0∞ :=
+    fun x y => ∑ θ ∈ Finset.univ.filter (f · = x), π {θ} * ℓ θ y with hF_def
+  -- Best action per cell.
+  have hbest : ∀ x : 𝓧, ∃ y : 𝓨, ∀ y' : 𝓨, F x y ≤ F x y' := fun x => by
+    obtain ⟨y, _, hy⟩ :=
+      Finset.exists_min_image Finset.univ (F x) Finset.univ_nonempty
+    exact ⟨y, fun y' => hy y' (Finset.mem_univ y')⟩
+  choose ystar hystar using hbest
+  have h_meas : Measurable ystar := measurable_of_countable ystar
+  have hstar_min : ∀ x, F x (ystar x) = ⨅ y : 𝓨, F x y := fun x =>
+    le_antisymm (le_iInf fun y => hystar x y) (iInf_le _ _)
+  refine le_antisymm ?_ ?_
+  · -- `≤`: the best-response estimator `κ* = deterministic ystar` attains the RHS.
+    calc bayesRisk ℓ (Kernel.deterministic f hf) π
+        ≤ avgRisk ℓ (Kernel.deterministic f hf)
+            (Kernel.deterministic ystar h_meas) π :=
+          bayesRisk_le_avgRisk _ _ _ _
+      _ = ∑ θ, ℓ θ (ystar (f θ)) * π {θ} := by
+          rw [avgRisk_fintype]
+          refine Finset.sum_congr rfl fun θ _ => ?_
+          rw [Kernel.deterministic_comp_deterministic hf h_meas,
+            Kernel.deterministic_apply, lintegral_dirac]; rfl
+      _ = ∑ x, ∑ θ ∈ Finset.univ.filter (f · = x), ℓ θ (ystar (f θ)) * π {θ} :=
+          (Finset.sum_fiberwise_of_maps_to (fun θ _ => Finset.mem_univ (f θ)) _).symm
+      _ = ∑ x, F x (ystar x) := by
+          refine Finset.sum_congr rfl fun x _ => ?_
+          simp only [hF_def]
+          refine Finset.sum_congr rfl fun θ hθ => ?_
+          rw [(Finset.mem_filter.mp hθ).2, mul_comm]
+      _ = ∑ x, ⨅ y : 𝓨, F x y := Finset.sum_congr rfl fun x _ => hstar_min x
+  · -- `≥`: every Markov estimator's cellwise risk exceeds the cellwise infimum.
+    rw [bayesRisk]
+    refine le_iInf fun κ => le_iInf fun hκ => ?_
+    haveI := hκ
+    rw [avgRisk_deterministic_fintype_eq hf ℓ π κ]
+    refine Finset.sum_le_sum fun x _ => ?_
+    calc (⨅ y : 𝓨, F x y)
+        = (⨅ y : 𝓨, F x y) * 1 := (mul_one _).symm
+      _ = (⨅ y : 𝓨, F x y) * κ x Set.univ := by rw [measure_univ]
+      _ = (⨅ y : 𝓨, F x y) * ∑ y : 𝓨, κ x {y} := by
+          congr 1
+          rw [← Finset.coe_univ (α := 𝓨),
+            ← sum_measure_singleton (μ := κ x) (s := Finset.univ)]
+      _ = ∑ y : 𝓨, (⨅ y' : 𝓨, F x y') * κ x {y} := Finset.mul_sum _ _ _
+      _ ≤ ∑ y : 𝓨, F x y * κ x {y} := by gcongr with y _; exact iInf_le _ _
+      _ = ∑ y : 𝓨, κ x {y} * F x y :=
+          Finset.sum_congr rfl fun y _ => mul_comm _ _
 
 end ProbabilityTheory

@@ -280,6 +280,7 @@ import Linglib.Core.Probability.CoupledEvaluation
 import Linglib.Core.Probability.DataProcessing
 import Linglib.Core.Probability.Decision.Basic
 import Linglib.Core.Probability.Decision.Blackwell
+import Linglib.Core.Probability.Decision.Duality
 import Linglib.Core.Probability.Decision.ExperimentDesign
 import Linglib.Core.Probability.DirichletMultinomial
 import Linglib.Core.Probability.ENNRealArith
