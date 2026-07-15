@@ -26,7 +26,7 @@ side by side:
 | Tower GQs (§3) | `Cont (Update S) (Update S → Update S)` | ✓ derived by scope-taking |
 | Completeness typing (§4) | `Completeness` annotations | pseudo-cumulative ruled ill-typed |
 | Post-suppositions (§5, App. B) | `PostSupp S A` (Writer monad) | ✓ via deferred cardinality tests |
-| Update semantics (§6) | `StateCCP W E` | ✓ via non-distributive `Mvar_u` |
+| Update semantics (§6) | `State.CCP W E` | ✓ via non-distributive `Mvar_u` |
 
 ## Main declarations
 
@@ -393,7 +393,7 @@ end PostSuppositional
 
 /-! ### Update-theoretic GQs (§6)
 
-The same operators defined directly over `StateCCP W E := State W E → State W E`.
+The same operators defined directly over `State.CCP W E := State W E → State W E`.
 `Mvar_u` maximizes over **the entire context**, not per-assignment; this
 makes it non-distributive, which is what produces cumulative readings
 without towers, typing, or post-suppositions. -/
@@ -402,38 +402,44 @@ section UpdateTheoretic
 
 variable {W E : Type*}
 
+/-- Charlow's context type: a set of world-assignment pairs. -/
+abbrev State (W E : Type*) := Set (W × Core.Assignment E)
+
+/-- Context change potential over Charlow's contexts. -/
+abbrev State.CCP (W E : Type*) := Semantics.Dynamic.Core.CCP (W × Core.Assignment E)
+
 /-- Existential dref introduction at the state level (eq. 74): for each
 world–assignment pair in the context, non-deterministically extend the
 assignment at position `v` with an entity satisfying `P`. -/
-def Evar_u (v : ℕ) (P : E → Prop) : StateCCP W E :=
+def Evar_u (v : ℕ) (P : E → Prop) : State.CCP W E :=
   λ s => {p | ∃ q ∈ s, p.1 = q.1 ∧ ∃ (x : E), P x ∧ p.2 = Function.update q.2 v x}
 
 /-- Mereological maximization at the state level (eq. 78): apply `K`, then
 retain only output pairs whose `v`-value is maximal **across the entire
 output state**. This is the non-distributive operator. -/
-def Mvar_u (v : ℕ) (K : StateCCP W E) [PartialOrder E] : StateCCP W E :=
+def Mvar_u (v : ℕ) (K : State.CCP W E) [PartialOrder E] : State.CCP W E :=
   λ s =>
     let out := K s
     {p ∈ out | Maximal (λ x => ∃ q ∈ out, q.2 v = x) (p.2 v)}
 
 /-- Cardinality test at the state level (eq. 75): filter the context for
 pairs where the atom count of `v` equals `n`. -/
-def CardTest_u (v : ℕ) (n : ℕ) [PartialOrder E] [Fintype E] : StateCCP W E :=
+def CardTest_u (v : ℕ) (n : ℕ) [PartialOrder E] [Fintype E] : State.CCP W E :=
   λ s => {p ∈ s | Mereology.atomCount E (p.2 v) = n}
 
 /-- Dynamic sequencing at the state level (eq. 80): function composition,
 `s[L ; R] := R (L s)`. -/
-def dseq_u (L R : StateCCP W E) : StateCCP W E := R ∘ L
+def dseq_u (L R : State.CCP W E) : State.CCP W E := R ∘ L
 
 /-- Relational test at the state level (eq. 73, the paper's entry for
 *saw*): filter for assignments where `R (g v₁) (g v₂)` holds. -/
-def RelTest (v₁ v₂ : ℕ) (R : E → E → Prop) : StateCCP W E :=
+def RelTest (v₁ v₂ : ℕ) (R : E → E → Prop) : State.CCP W E :=
   λ s => {p ∈ s | R (p.2 v₁) (p.2 v₂)}
 
 /-- Single-quantifier "exactly n" pipeline, `E^v P ; M_v(E^v P) ; n_v` — the
 trivial-scope instantiation of the scope-taking update GQ (eq. 81). -/
 def exactlyN_u (v : ℕ) (P : E → Prop) (n : ℕ) [PartialOrder E] [Fintype E] :
-    StateCCP W E :=
+    State.CCP W E :=
   dseq_u (dseq_u (Evar_u v P) (Mvar_u v (Evar_u v P))) (CardTest_u v n)
 
 /-- Update-theoretic meaning of "exactly `nSubj` `PSubj` `R` exactly `nObj`
@@ -444,7 +450,7 @@ maximizes over the whole context it correctly represents the cumulative
 reading (the paper's (83)/(84) contrast). -/
 def sentenceMeaning_u (v u : ℕ) (PSubj PObj : E → Prop)
     (R : E → E → Prop) (nSubj nObj : ℕ)
-    [PartialOrder E] [Fintype E] : StateCCP W E :=
+    [PartialOrder E] [Fintype E] : State.CCP W E :=
   let inner := Mvar_u u (dseq_u (Evar_u u PObj) (RelTest u v R))
   dseq_u
     (Mvar_u v (dseq_u (dseq_u (Evar_u v PSubj) inner) (CardTest_u u nObj)))
@@ -456,7 +462,7 @@ are `a < b`, whole-context maximization discards the `a`-pair, but
 per-element processing keeps both. -/
 theorem Mvar_u_nondistributive [PartialOrder E] [Nonempty W]
     (a b : E) (hab : a < b) :
-    ∃ (v : ℕ) (K : StateCCP W E), ¬ IsDistributive (Mvar_u v K) := by
+    ∃ (v : ℕ) (K : State.CCP W E), ¬ IsDistributive (Mvar_u v K) := by
   obtain ⟨w⟩ := ‹Nonempty W›
   refine ⟨0, id, fun h => ?_⟩
   let g₁ : Core.Assignment E := Function.const _ a
@@ -582,7 +588,7 @@ every state-level CCP is distributive. Witness: the constant CCP
 `λ _ => Set.univ` maps `∅` to `Set.univ`, but per-element processing of `∅`
 yields `∅`. -/
 theorem dependent_indefinites_need_extra {W E : Type*} [Nonempty W] [Nonempty E] :
-    ¬ ∀ (depIndef : Semantics.Dynamic.Core.StateCCP W E),
+    ¬ ∀ (depIndef : State.CCP W E),
       Semantics.Dynamic.Core.IsDistributive depIndef := by
   intro h
   have h0 := h (fun _ => Set.univ) ∅
