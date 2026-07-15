@@ -1,4 +1,4 @@
-import Linglib.Semantics.Dynamic.Intensional
+import Linglib.Semantics.Dynamic.ICDRT.Basic
 import Linglib.Data.Examples.Schema
 import Linglib.Data.Examples.Hofmann2025
 

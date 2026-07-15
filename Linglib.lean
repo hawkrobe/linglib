@@ -1642,10 +1642,10 @@ import Linglib.Semantics.Dynamic.DRS.Defs
 import Linglib.Semantics.Dynamic.DRS.Dynamics
 import Linglib.Semantics.Dynamic.DRS.Reduction
 import Linglib.Semantics.Dynamic.DRS.Semantics
-import Linglib.Semantics.Dynamic.DiscourseRef
+import Linglib.Semantics.Dynamic.ICDRT.Defs
 import Linglib.Semantics.Dynamic.State
 import Linglib.Semantics.Dynamic.Transition
-import Linglib.Semantics.Dynamic.Intensional
+import Linglib.Semantics.Dynamic.ICDRT.Basic
 import Linglib.Semantics.Dynamic.PLA.Basic
 import Linglib.Semantics.Dynamic.PLA.Epistemic
 import Linglib.Semantics.Dynamic.PLA.Semantics

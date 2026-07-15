@@ -1,6 +1,5 @@
 import Linglib.Core.Logic.Assignment
 import Linglib.Semantics.Dynamic.ContextChange
-import Linglib.Semantics.Dynamic.DiscourseRef
 import Linglib.Semantics.Intensional.WorldTimeIndex
 
 /-!
@@ -46,6 +45,16 @@ instances directly.
 -/
 abbrev SitContext (W Time : Type*) :=
   Set (Assignment (WorldTimeIndex W Time) × WorldTimeIndex W Time)
+
+/--
+A situation variable (names a situation dref).
+
+Kept as an `abbrev` so it inherits `DecidableEq`/`Repr`/`Hashable`/numeric
+literals from `Nat`. Situation drefs are introduced by `Mood.dynSUBJ` and
+retrieved by `Mood.dynIND` and the `Tense.dynPAST`/`dynPRES`/`dynFUT`
+constraints (see `Semantics/{Tense,Mood}/Dynamic.lean`).
+-/
+abbrev SVar := Nat
 
 /--
 Filter a context by a binary relation between two projections of each entry.
