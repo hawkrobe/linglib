@@ -119,6 +119,12 @@ def Condition.occL : List (Condition L V) → Finset V
   | c :: cs => Condition.occ c ∪ Condition.occL cs
 end
 
+@[simp] theorem Condition.occL_append (cs ds : List (Condition L V)) :
+    Condition.occL (cs ++ ds) = Condition.occL cs ∪ Condition.occL ds := by
+  induction cs with
+  | nil => simp [Condition.occL]
+  | cons c cs ih => simp [Condition.occL, ih, Finset.union_assoc]
+
 end Occ
 
 /-! ### Free discourse referents and properness -/

@@ -187,6 +187,17 @@ def DRS.transition (W : Type*) (K : DRS L V) (X : Finset V) (hK : K.fv ⊆ X) :
   supported_left _ _ _ _ h := DRS.toRelAt_congr_left X K h
   supported_right _ _ _ _ h := DRS.toRelAt_congr_right K hK h
 
+/-- The empty DRS denotes the identity transition. -/
+theorem DRS.transition_empty (W : Type*) (X : Finset V)
+    (h : (DRS.empty : DRS L V).fv ⊆ X) :
+    DRS.empty.transition (M := M) W X h =
+      (Transition.id X).copy rfl (Finset.union_empty X).symm := by
+  apply Transition.ext
+  funext w f g
+  rw [Transition.rel_copy]
+  show (Set.EqOn g f ↑X ∧ _) = _
+  simp [Transition.id, Set.eqOn_comm]
+
 /-- Established referents persist along a DRS transition. -/
 theorem DRS.transition_isExtension (W : Type*) (K : DRS L V) (X : Finset V)
     (hK : K.fv ⊆ X) : (K.transition (M := M) W X hK).IsExtension := by

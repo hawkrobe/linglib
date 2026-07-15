@@ -179,6 +179,19 @@ def copy (u : Transition W M X Y) {X' Y' : Finset V} (hX : X = X') (hY : Y = Y')
 
 @[simp] theorem copy_rfl (u : Transition W M X Y) : u.copy rfl rfl = u := rfl
 
+@[simp] theorem copy_copy (u : Transition W M X Y) {X' Y' X'' Y'' : Finset V}
+    (hX : X = X') (hY : Y = Y') (hX' : X' = X'') (hY' : Y' = Y'') :
+    (u.copy hX hY).copy hX' hY' = u.copy (hX.trans hX') (hY.trans hY') := by
+  subst hX hY hX' hY'
+  rfl
+
+/-- Repackaged transitions compose to the repackaged composite. -/
+theorem copy_comp_copy (u : Transition W M X Y) (v : Transition W M Y Z)
+    {X' Y' Z' : Finset V} (hX : X = X') (hY : Y = Y') (hZ : Z = Z') :
+    (u.copy hX hY).comp (v.copy hY hZ) = (u.comp v).copy hX hZ := by
+  subst hX hY hZ
+  rfl
+
 /-- Application is invariant under repackaging. -/
 @[simp] theorem apply_copy [DecidableEq V] (u : Transition W M X Y)
     {X' Y' : Finset V} (hX : X = X') (hY : Y = Y') (I : State W V M) :
