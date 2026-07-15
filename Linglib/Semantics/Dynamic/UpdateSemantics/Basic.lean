@@ -1,5 +1,5 @@
 import Linglib.Semantics.Dynamic.Update
-import Linglib.Semantics.Dynamic.PartialTransformer
+import Linglib.Semantics.Dynamic.Partial
 
 /-!
 # Update Semantics
