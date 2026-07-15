@@ -162,6 +162,13 @@ end
 @[simp] theorem Condition.fvL_cons (c : Condition L V) (cs : List (Condition L V)) :
     Condition.fvL (c :: cs) = c.fv ∪ Condition.fvL cs := rfl
 
+/-- The characteristic form of the referential presupposition: a box's free
+referents are supplied by `X` iff its conditions' are supplied by the grown
+base. -/
+theorem DRS.fv_subset_iff {U X : Finset V} {conds : List (Condition L V)} :
+    (DRS.mk U conds).fv ⊆ X ↔ Condition.fvL conds ⊆ X ∪ U := by
+  rw [DRS.fv_mk, sdiff_le_iff, sup_comm, Finset.sup_eq_union]
+
 mutual
 /-- Free referents occur. -/
 theorem DRS.fv_subset_occ (K : DRS L V) : K.fv ⊆ K.occ := by
