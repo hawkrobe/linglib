@@ -4,34 +4,33 @@ import Mathlib.CategoryTheory.Types.Basic
 
 /-!
 # The category of contexts
-[kamp-vangenabith-reyle-2011], [muskens-van-benthem-visser-2011],
-[groenendijk-stokhof-1991], [muskens-1996]
 
-Based dynamic semantics is a category: objects are contexts (bases of live
-discourse referents), morphisms are `Transition`s, composition is
-world-pointwise relational composition. The identity and associativity laws
-are `Transition.lean`'s `id_comp`/`comp_id`/`comp_assoc`.
+Based dynamic semantics is a category: objects are contexts (bases of
+live discourse referents), morphisms are `Transition`s, composition is
+world-pointwise relational composition. The identity and associativity
+laws are `Transition.lean`'s `id_comp`/`comp_id`/`comp_assoc`.
 
-Two structures make the levels of the spine mathematically precise:
+## Main definitions
 
-* `State.presheaf` — information states form a presheaf on the poset of
-  bases: the fiber over `X` is the states based at `X`, restriction along
-  `Y ⊆ X` is `State.restrict`.
-* `Ctx.collapse` — the *one-object collapse* to level 0 is a functor to
-  mathlib's `RelCat` sending a context to its possibilities *up to
-  agreement on the base* and a transition to its `toUpdate` relation.
-  The quotient is forced: `toUpdate` sends `𝟙 X` to agreement-on-`X`, not
-  to equality, so the collapse is only lawful on base-agreement classes —
-  `supported_left`/`supported_right` are exactly the congruence
-  conditions. The collapse is faithful (`Ctx.collapse_faithful`): a
-  transition loses nothing under it; what the collapse forgets is the
-  base-indexing of the objects.
+- `Ctx W M V`: bundled contexts, with a `Category` instance whose
+  morphisms are `Transition`s between the bases.
+- `State.presheaf`: information states as a presheaf on the poset of
+  bases — the fiber over `X` is the states based at `X`, restriction is
+  `State.restrict`.
 
-## Main declarations
+## Implementation notes
 
-* `Ctx` — bundled contexts; `Category (Ctx W M V)` with `Transition` homs.
-* `State.presheaf` — the fibered states, contravariant along `⊆`.
-* `Ctx.agreeSetoid` / `Ctx.collapse` — the collapse functor to `RelCat`.
+Morphisms are a one-field structure wrapping `Transition` (the
+`RelCat.Hom` pattern): an unbundled `Hom` field breaks dot-notation on
+morphisms. The collapse functor to `RelCat` lives in `Collapse.lean`,
+because importing `RelCat` interferes with instance resolution for the
+functions category on `Type u`, which `State.presheaf` needs.
+
+## References
+
+- [kamp-vangenabith-reyle-2011]
+- [muskens-van-benthem-visser-2011]
+- [groenendijk-stokhof-1991], [muskens-1996]
 -/
 
 namespace DynamicSemantics

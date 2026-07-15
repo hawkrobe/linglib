@@ -3,30 +3,39 @@ import Mathlib.CategoryTheory.Category.RelCat
 
 /-!
 # The one-object collapse
-[muskens-van-benthem-visser-2011], [muskens-1996], [groenendijk-stokhof-1991]
 
 The collapse of based dynamic semantics to level 0 — the relational
 algebra of procedures over a single state space, with composition,
 converse, and the diagonal ([muskens-van-benthem-visser-2011]'s "Dynamic
-Constants as Operators in Relational Algebra"; mathlib's `RelCat`). The
-collapse is a functor from the category of contexts to `RelCat`, sending a
-context to its possibilities *up to agreement on the base* and a
-transition to its `toUpdate` relation. The quotient is forced: `toUpdate` sends `𝟙 X` to
-agreement-on-`X`, not to equality, so the collapse is only lawful on
-base-agreement classes — `supported_left`/`supported_right` are exactly the
-congruence conditions. The collapse is faithful (`Ctx.collapse_faithful`):
-a transition loses nothing under it; what the collapse forgets is the
-base-indexing of the objects.
+Constants as Operators in Relational Algebra"; mathlib's `RelCat`).
 
-This lives apart from `Category.lean` because importing `RelCat` (a type
-synonym for `Type u` carrying the relations category) interferes with
-instance resolution for the functions category on `Type u`, which the
-state presheaf needs.
+## Main definitions
 
-## Main declarations
+- `Ctx.agreeSetoid`: `Possibility.agreeSetoid` at the context's base.
+- `Ctx.collapse`: the functor `Ctx W M V ⥤ RelCat` sending a context to
+  its possibilities up to base-agreement and a transition to its
+  `toUpdate` relation.
 
-* `Ctx.agreeSetoid` — `Possibility.agreeSetoid` at the context's base.
-* `Ctx.collapse` — the collapse functor to `RelCat`; faithful.
+## Main results
+
+- `Ctx.collapseRel_id`, `Ctx.collapseRel_comp`: identity and sequencing
+  collapse to equality and relational composition on agreement classes.
+- `Ctx.collapse_faithful`: a transition is recoverable from its collapsed
+  relation; what the collapse forgets is the base-indexing of objects.
+
+## Implementation notes
+
+The quotient is forced: `toUpdate` sends `𝟙 X` to agreement-on-`X`, not
+to equality, so the collapse is lawful only on base-agreement classes —
+`supported_left`/`supported_right` are exactly the congruence conditions.
+This file is separate from `Category.lean` because importing `RelCat` (a
+type synonym for `Type u` carrying the relations category) interferes
+with instance resolution for the functions category on `Type u`.
+
+## References
+
+- [muskens-van-benthem-visser-2011]
+- [muskens-1996], [groenendijk-stokhof-1991]
 -/
 
 namespace DynamicSemantics
@@ -37,7 +46,7 @@ open CategoryTheory
 
 namespace Ctx
 
-variable {W M V : Type*}
+variable {W M V : Type*} {X Y Z : Ctx W M V}
 
 /-- Agreement on the context's base: `Possibility.agreeSetoid` at `↑X.base`. -/
 abbrev agreeSetoid (X : Ctx W M V) : Setoid (Possibility W V M) :=
@@ -45,7 +54,7 @@ abbrev agreeSetoid (X : Ctx W M V) : Setoid (Possibility W V M) :=
 
 /-- `toUpdate` descends to base-agreement classes: `supported_left` and
 `supported_right` are precisely the congruence conditions. -/
-def collapseRel {X Y : Ctx W M V} (u : X ⟶ Y) :
+def collapseRel (u : X ⟶ Y) :
     Quotient X.agreeSetoid → Quotient Y.agreeSetoid → Prop :=
   Quotient.lift₂ (fun p q => u.t.toUpdate p q)
     fun p₁ q₁ p₂ q₂ hp hq => propext <| by
@@ -54,7 +63,7 @@ def collapseRel {X Y : Ctx W M V} (u : X ⟶ Y) :
       exact and_congr Iff.rfl
         ((u.t.supported_left hp.2).trans (u.t.supported_right hq.2))
 
-@[simp] theorem collapseRel_mk {X Y : Ctx W M V} (u : X ⟶ Y)
+@[simp] theorem collapseRel_mk (u : X ⟶ Y)
     (p q : Possibility W V M) :
     collapseRel u (⟦p⟧) (⟦q⟧) ↔ u.t.toUpdate p q := Iff.rfl
 
@@ -74,7 +83,7 @@ theorem collapseRel_id (X : Ctx W M V) (p q : Quotient X.agreeSetoid) :
 
 /-- On base-agreement classes sequencing collapses to relational
 composition. -/
-theorem collapseRel_comp {X Y Z : Ctx W M V} (u : X ⟶ Y) (v : Y ⟶ Z)
+theorem collapseRel_comp (u : X ⟶ Y) (v : Y ⟶ Z)
     (p : Quotient X.agreeSetoid) (r : Quotient Z.agreeSetoid) :
     collapseRel (u ≫ v) p r ↔
       ∃ q, collapseRel u p q ∧ collapseRel v q r := by

@@ -1,4 +1,4 @@
-import Linglib.Semantics.Dynamic.Possibility
+import Linglib.Semantics.Dynamic.InfoState
 import Linglib.Semantics.Dynamic.Ty2
 
 /-!

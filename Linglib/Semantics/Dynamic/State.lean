@@ -6,63 +6,63 @@ import Mathlib.Order.BoundedOrder.Basic
 import Mathlib.Order.Lattice
 
 /-!
-# Possibilities and based information states
-[kamp-vangenabith-reyle-2011] (Defs. 22–26), [heim-1982]
+# Based information states
 
-A *possibility* is a world paired with an assignment of discourse referents —
-the point type of dynamic semantics. An *information state* relative to a
-*base* `X` — a finite set of discourse referents — is a set of possibilities
-whose membership depends on assignments only through their values at `X`
-(mathlib's `DependsOn`, per world). The base is the "context as storage"
-dimension of dynamic meaning: finer than a proposition (it records which
-referents are live for anaphora — [kamp-vangenabith-reyle-2011]'s Partee
-marbles argument), coarser than syntax, and framework-neutral.
+A *possibility* is a world paired with a total assignment of discourse
+referents; an *information state* relative to a *base* `X` — a finite set
+of live discourse referents — is an `X`-supported set of possibilities.
+The base is the "context as storage" dimension of dynamic meaning: finer
+than a proposition, coarser than syntax ([kamp-vangenabith-reyle-2011]'s
+Partee-marbles argument). `InfoStateOf P` (`ContextChange.lean`) is the
+unbased level-0 notion; the transitions acting on states live in
+`Transition.lean`.
 
-Total-assignment rendering: the chapter's partial embeddings with domain `X`
-become total assignments with `X`-supported membership (`BaseSupported`).
-Under it the chapter's definitions collapse to order theory:
+## Main definitions
 
-* Def. 25's informativeness order is componentwise — the base grows and the
-  carrier shrinks (`le_def`; the chapter's projection form is
-  `le_iff_projection`).
-* Def. 26's consistent merge is carrier intersection at the union base, and
-  it is the *join* of the informativeness order (`SemilatticeSup`;
-  `mem_sup_iff_projection` recovers the chapter's choice-function form).
-* Def. 23(iv)'s minimal information state Λ (empty base, no information)
-  is `⊥`.
+- `BaseSupported X S`: membership in `S` depends on assignments only
+  through their values at `X` (mathlib's `DependsOn`, per world).
+- `State W V M`: a base with an `X`-supported carrier, ordered by
+  informativeness, with the minimal state Λ as `⊥` and consistent merge
+  as `⊔`.
+- `State.prop`: the proposition a state determines.
+- `State.restrict`: the best approximation supported on a smaller base.
+- `State.fiberEquiv`, `State.fiberOrderIso`: the states based at `X`, as
+  propositions over the `X`-collapsed state space.
 
-`InfoStateOf P` (`ContextChange.lean`) is the unbased, level-0 notion — a
-bare set of possibilities; `State` adds the base. The transitions acting on
-these states live in `Transition.lean`.
+## Main results
 
-Support is *saturation*: a carrier is supported on `X` iff it is a union of
-`Possibility.agreeSetoid ↑X` classes (`baseSupported_iff`), so a state
-based at `X` is exactly a proposition over the `X`-collapsed state space
-(`fiberEquiv`) — [muskens-van-benthem-visser-2011]'s propositions-over-a-
-state-space picture at granularity `X`. The projection ladder carrier →
-agreement classes (`fiberEquiv`) → worlds (`prop`) forgets in two
-documented steps; the marbles argument lives in the second.
+- `le_iff_projection`, `mem_sup_iff_projection`: the chapter's projection
+  and choice-function forms of order and merge coincide with the
+  componentwise ones — support supplies the witnesses.
+- `baseSupported_iff`, `BaseSupported.preimage_image_mk`: support is
+  *saturation* for `Possibility.agreeSetoid ↑X`.
+- `prop_restrict`, `le_restrict_iff`: restriction never changes the
+  proposition, and is the universal `Y`-supported approximation.
+
+## Implementation notes
+
+The chapter's partial embeddings with domain `X` are rendered as total
+assignments with `X`-supported membership; Def. 25's informativeness
+order, Def. 26's consistent merge, and Def. 23(iv)'s minimal state then
+collapse to order theory (`PartialOrder`, `SemilatticeSup`, `OrderBot`).
 
 `State` gets a `Membership` instance rather than `SetLike`: the coe to
-carriers is not injective (`Set.univ` is supported at every base — same
-carrier, different base), and `Filter` is the precedent.
+carriers is not injective (`Set.univ` is supported at every base), and
+`Filter` is the precedent. The projection ladder carrier → agreement
+classes (`fiberEquiv`) → worlds (`prop`) forgets in two documented steps;
+[muskens-van-benthem-visser-2011]'s propositions-over-a-state-space
+picture is the middle rung, at granularity `X`.
 
-## Main declarations
+## References
 
-* `BaseSupported` — membership depends only on assignment values at `X`
-  (`DependsOn`, per world); equivalently, saturation for the agreement
-  setoid (`baseSupported_iff`).
-* `State` — a base together with a supported carrier of possibilities.
-* `State.prop` — the proposition determined by a state (Def. 23(v)).
-* `State.restrict` — the best approximation supported on a smaller base
-  (presheaf restriction along base inclusion; `le_restrict_iff`).
-* `State.fiberEquiv` / `fiberOrderIso` — the states based at `X` are the
-  propositions over the `X`-collapsed state space, reversing the order.
+- [kamp-vangenabith-reyle-2011], Defs. 22–26
+- [heim-1982]
+- [muskens-van-benthem-visser-2011]
 -/
 
 namespace DynamicSemantics
 
-variable {W V M : Type*}
+variable {W V M : Type*} {X Y : Finset V} {S T : Set (Possibility W V M)}
 
 /-! ### Base-supported sets -/
 
@@ -73,30 +73,27 @@ def BaseSupported (X : Finset V) (S : Set (Possibility W V M)) : Prop :=
   ∀ w : W, DependsOn (fun f => (⟨w, f⟩ : Possibility W V M) ∈ S) ↑X
 
 /-- Introduction form: supply the membership-invariance iff. -/
-theorem baseSupported_of_iff {X : Finset V} {S : Set (Possibility W V M)}
+theorem baseSupported_of_iff
     (h : ∀ ⦃w : W⦄ ⦃f g : V → M⦄, Set.EqOn f g ↑X →
       ((⟨w, f⟩ : Possibility W V M) ∈ S ↔ ⟨w, g⟩ ∈ S)) :
     BaseSupported X S :=
   fun _ _ _ hfg => propext (h hfg)
 
 /-- Elimination form: membership is invariant under agreement on the base. -/
-theorem BaseSupported.mem_iff {X : Finset V} {S : Set (Possibility W V M)}
-    (h : BaseSupported X S) {w : W} {f g : V → M} (hfg : Set.EqOn f g ↑X) :
+theorem BaseSupported.mem_iff (h : BaseSupported X S) {w : W} {f g : V → M} (hfg : Set.EqOn f g ↑X) :
     (⟨w, f⟩ : Possibility W V M) ∈ S ↔ ⟨w, g⟩ ∈ S :=
   iff_of_eq (h w hfg)
 
-theorem BaseSupported.mono {X Y : Finset V} {S : Set (Possibility W V M)}
-    (h : BaseSupported X S) (hXY : X ⊆ Y) : BaseSupported Y S :=
+theorem BaseSupported.mono (h : BaseSupported X S) (hXY : X ⊆ Y) : BaseSupported Y S :=
   fun w => (h w).mono (Finset.coe_subset.mpr hXY)
 
-theorem BaseSupported.inter {X : Finset V} {S T : Set (Possibility W V M)}
-    (hS : BaseSupported X S) (hT : BaseSupported X T) : BaseSupported X (S ∩ T) :=
+theorem BaseSupported.inter (hS : BaseSupported X S) (hT : BaseSupported X T) : BaseSupported X (S ∩ T) :=
   baseSupported_of_iff fun _ _ _ hfg =>
     and_congr (hS.mem_iff hfg) (hT.mem_iff hfg)
 
 /-- A set is supported on `X` iff membership is invariant under agreement on
 `X`: `BaseSupported X` is saturation for `Possibility.agreeSetoid ↑X`. -/
-theorem baseSupported_iff {X : Finset V} {S : Set (Possibility W V M)} :
+theorem baseSupported_iff :
     BaseSupported X S ↔
       ∀ ⦃p q⦄, Possibility.agreeSetoid (↑X : Set V) p q → (p ∈ S ↔ q ∈ S) := by
   constructor
@@ -107,15 +104,13 @@ theorem baseSupported_iff {X : Finset V} {S : Set (Possibility W V M)} :
 
 /-- Point form of `BaseSupported.mem_iff`: membership is invariant on
 agreement classes. -/
-theorem BaseSupported.mem_congr {X : Finset V} {S : Set (Possibility W V M)}
-    (h : BaseSupported X S) {p q : Possibility W V M}
+theorem BaseSupported.mem_congr (h : BaseSupported X S) {p q : Possibility W V M}
     (hpq : Possibility.agreeSetoid (↑X : Set V) p q) : p ∈ S ↔ q ∈ S :=
   baseSupported_iff.mp h hpq
 
 /-- The saturation round trip: a supported set is the preimage of its image
 in the collapsed state space. -/
-theorem BaseSupported.preimage_image_mk {X : Finset V} {S : Set (Possibility W V M)}
-    (h : BaseSupported X S) :
+theorem BaseSupported.preimage_image_mk (h : BaseSupported X S) :
     Quotient.mk (Possibility.agreeSetoid ↑X) ⁻¹' (Quotient.mk _ '' S) = S :=
   Set.Subset.antisymm (fun _ ⟨_, hq, hqp⟩ => (h.mem_congr (Quotient.exact hqp)).mp hq)
     (Set.subset_preimage_image _ _)
@@ -135,10 +130,12 @@ possibilities. -/
 
 namespace State
 
+variable {I I' J : State W V M} {p : Possibility W V M}
+
 instance : Membership (Possibility W V M) (State W V M) :=
   ⟨fun I p => p ∈ I.carrier⟩
 
-@[simp] theorem mem_carrier {I : State W V M} {p : Possibility W V M} :
+@[simp] theorem mem_carrier :
     p ∈ I.carrier ↔ p ∈ I := Iff.rfl
 
 /-! ### The informativeness order -/
@@ -153,13 +150,13 @@ instance : PartialOrder (State W V M) where
   le_antisymm _ _ h h' :=
     State.ext (Finset.Subset.antisymm h.1 h'.1) (Set.Subset.antisymm h'.2 h.2)
 
-theorem le_def {I I' : State W V M} :
+theorem le_def :
     I ≤ I' ↔ I.base ⊆ I'.base ∧ I'.carrier ⊆ I.carrier := Iff.rfl
 
 /-- The chapter's projection form of Def. 25 — every possibility of the
 stronger state restricts to one of the weaker — coincides with `≤`: support
 makes the projected witness the possibility itself. -/
-theorem le_iff_projection {I I' : State W V M} :
+theorem le_iff_projection :
     I ≤ I' ↔ I.base ⊆ I'.base ∧
       ∀ ⦃w g⦄, (⟨w, g⟩ : Possibility W V M) ∈ I' →
         ∃ f, (⟨w, f⟩ : Possibility W V M) ∈ I ∧ Set.EqOn f g ↑I.base := by
@@ -181,7 +178,7 @@ instance : OrderBot (State W V M) where
 @[simp] theorem base_bot : (⊥ : State W V M).base = ∅ := rfl
 @[simp] theorem carrier_bot : (⊥ : State W V M).carrier = Set.univ := rfl
 
-@[simp] theorem mem_bot {p : Possibility W V M} : p ∈ (⊥ : State W V M) := trivial
+@[simp] theorem mem_bot : p ∈ (⊥ : State W V M) := trivial
 
 /-! ### Consistent merge is the join -/
 
@@ -205,13 +202,13 @@ instance : SemilatticeSup (State W V M) where
 @[simp] theorem carrier_sup (I I' : State W V M) :
     (I ⊔ I').carrier = I.carrier ∩ I'.carrier := rfl
 
-@[simp] theorem mem_sup {I I' : State W V M} {p : Possibility W V M} :
+@[simp] theorem mem_sup :
     p ∈ I ⊔ I' ↔ p ∈ I ∧ p ∈ I' := Iff.rfl
 
 /-- The chapter's choice-function form of Def. 26: a possibility belongs to
 the merge iff it restricts into each component — support makes the choice
 functions the possibility itself. -/
-theorem mem_sup_iff_projection {I I' : State W V M} {w : W} {k : V → M} :
+theorem mem_sup_iff_projection {w : W} {k : V → M} :
     (⟨w, k⟩ : Possibility W V M) ∈ I ⊔ I' ↔
       (∃ f, (⟨w, f⟩ : Possibility W V M) ∈ I ∧ Set.EqOn f k ↑I.base) ∧
       (∃ g, (⟨w, g⟩ : Possibility W V M) ∈ I' ∧ Set.EqOn g k ↑I'.base) := by
@@ -229,7 +226,7 @@ end Merge
 Def. 23(v)): the worlds compatible with some assignment. -/
 def prop (I : State W V M) : Set W := {w | ∃ f, (⟨w, f⟩ : Possibility W V M) ∈ I}
 
-@[simp] theorem mem_prop {I : State W V M} {w : W} :
+@[simp] theorem mem_prop {w : W} :
     w ∈ I.prop ↔ ∃ f, (⟨w, f⟩ : Possibility W V M) ∈ I := Iff.rfl
 
 theorem prop_eq_image (I : State W V M) : I.prop = Possibility.world '' I.carrier :=
@@ -258,8 +255,7 @@ def restrict (I : State W V M) (Y : Finset V) : State W V M where
 @[simp] theorem base_restrict (I : State W V M) (Y : Finset V) :
     (I.restrict Y).base = Y := rfl
 
-@[simp] theorem mem_restrict {I : State W V M} {Y : Finset V} {w : W}
-    {g : V → M} :
+@[simp] theorem mem_restrict {w : W} {g : V → M} :
     (⟨w, g⟩ : Possibility W V M) ∈ I.restrict Y ↔
       ∃ f, (⟨w, f⟩ : Possibility W V M) ∈ I ∧ Set.EqOn f g ↑Y := Iff.rfl
 
@@ -272,7 +268,7 @@ def restrict (I : State W V M) (Y : Finset V) : State W V M where
       fun h => ⟨g, h, Set.eqOn_refl g _⟩⟩
 
 /-- Restriction is transitive along shrinking bases. -/
-theorem restrict_restrict (I : State W V M) {Y Z : Finset V} (hZY : Z ⊆ Y) :
+theorem restrict_restrict (I : State W V M) {Z : Finset V} (hZY : Z ⊆ Y) :
     (I.restrict Y).restrict Z = I.restrict Z := by
   ext1
   · rfl
@@ -284,14 +280,13 @@ theorem restrict_restrict (I : State W V M) {Y Z : Finset V} (hZY : Z ⊆ Y) :
       exact ⟨f, ⟨f, hf, Set.eqOn_refl f _⟩, hfg⟩
 
 /-- Restriction to a sub-base weakens the state. -/
-theorem restrict_le {I : State W V M} {Y : Finset V} (h : Y ⊆ I.base) :
+theorem restrict_le (h : Y ⊆ I.base) :
     I.restrict Y ≤ I :=
   ⟨h, fun p hp => ⟨p.assignment, hp, Set.eqOn_refl p.assignment _⟩⟩
 
 /-- Restriction is the *best* `Y`-supported approximation: for states based
 below `Y`, lying below `I.restrict Y` is lying below `I`. -/
-theorem le_restrict_iff {I J : State W V M} {Y : Finset V}
-    (hJ : J.base ⊆ Y) (hY : Y ⊆ I.base) : J ≤ I.restrict Y ↔ J ≤ I := by
+theorem le_restrict_iff (hJ : J.base ⊆ Y) (hY : Y ⊆ I.base) : J ≤ I.restrict Y ↔ J ≤ I := by
   constructor
   · exact fun h => h.trans (restrict_le hY)
   · rintro ⟨hb, hc⟩
@@ -312,7 +307,7 @@ theorem le_restrict_iff {I J : State W V M} {Y : Finset V}
 abbrev fiber (W M : Type*) {V : Type*} (X : Finset V) : Type _ :=
   {I : State W V M // I.base = X}
 
-theorem fiber_supported {X : Finset V} (I : fiber W M X) :
+theorem fiber_supported (I : fiber W M X) :
     BaseSupported X I.1.carrier :=
   (congrArg (fun b => BaseSupported b I.1.carrier) I.2).mp I.1.supported
 
@@ -332,16 +327,16 @@ def fiberEquiv (X : Finset V) :
     induction q using Quotient.ind
     exact Iff.rfl
 
-@[simp] theorem mem_fiberEquiv {X : Finset V} {I : fiber W M X} {p : Possibility W V M} :
+@[simp] theorem mem_fiberEquiv {I : fiber W M X} :
     Quotient.mk _ p ∈ fiberEquiv X I ↔ p ∈ I.1 := Iff.rfl
 
-@[simp] theorem mem_fiberEquiv_symm {X : Finset V} {p : Possibility W V M}
+@[simp] theorem mem_fiberEquiv_symm
     {T : Set (Quotient (Possibility.agreeSetoid (W := W) (M := M) (↑X : Set V)))} :
     p ∈ ((fiberEquiv X).symm T).1 ↔ Quotient.mk _ p ∈ T := Iff.rfl
 
 /-- The equivalence is the image of the carrier in the collapsed space —
 the sibling of `prop_eq_image`, one rung up the ladder. -/
-theorem fiberEquiv_eq_image {X : Finset V} (I : fiber W M X) :
+theorem fiberEquiv_eq_image (I : fiber W M X) :
     fiberEquiv X I = Quotient.mk _ '' I.1.carrier := by
   have h := (fiber_supported I).preimage_image_mk
   ext q
