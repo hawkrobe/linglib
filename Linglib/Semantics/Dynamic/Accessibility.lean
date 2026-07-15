@@ -1,4 +1,4 @@
-import Linglib.Semantics.Dynamic.DiscourseRef
+import Linglib.Semantics.Dynamic.ICDRT.Defs
 
 /-!
 # Anaphoric accessibility over dref-carrying contexts

@@ -1,19 +1,19 @@
-import Linglib.Semantics.Dynamic.DiscourseRef
+import Linglib.Semantics.Dynamic.ICDRT.Defs
 import Linglib.Semantics.Dynamic.Update
 import Linglib.Semantics.Dynamic.Accessibility
 import Mathlib.Data.Set.Basic
 
 /-!
-# Intensional Dynamic Semantics — Generic Substrate
+# Intensional CDRT
 
 [muskens-1996] [stone-1999] [brasoveanu-2006] [hofmann-2025]
 
-Generic infrastructure for dynamic semantics built over `ICDRTAssignment`
+ICDRT ([hofmann-2025]'s intensional extension of [muskens-1996]'s
+Compositional DRT): dynamic semantics built over `ICDRTAssignment`
 (individual drefs as `IVar → W → Entity E` plus propositional drefs as
-`PVar → Set W`). This is a layer above `Dynamic/DiscourseRef.lean`
-(which owns the assignment type) and below paper-specific theories such as
-[hofmann-2025] (whose paper apparatus lives in
-`Studies/Hofmann2025.lean`).
+`PVar → Set W`). This is a layer above `ICDRT/Defs.lean` (which owns the
+carrier types) and below paper-specific theories such as [hofmann-2025]
+(whose paper apparatus lives in `Studies/Hofmann2025.lean`).
 
 ## Main definitions
 

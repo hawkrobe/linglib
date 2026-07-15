@@ -1,5 +1,5 @@
 import Linglib.Semantics.Genericity.NominalMappingParameter
-import Linglib.Semantics.Dynamic.DiscourseRef
+import Linglib.Semantics.Dynamic.ICDRT.Defs
 import Linglib.Semantics.Dynamic.Update
 import Linglib.Core.Logic.Assignment
 import Linglib.Features.MassCount
