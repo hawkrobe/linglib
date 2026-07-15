@@ -20,12 +20,12 @@ carrier types) and below paper-specific theories such as [hofmann-2025]
 | Layer | Names |
 |-------|-------|
 | Information state | `IContext` (set of assignment-world pairs), `DynProp` (context transformer) |
-| Update relations | `ICDRTUpdate`, `ICDRTUpdate.{seq, idUp, toDynProp}` |
+| Update relations | `ICDRTUpdate`, `ICDRTUpdate.{seq, idUp, toUpdate}` |
 | Variable updates | `propVarUp`, `indivVarUp`, `multiVarUp`, `relVarUp` |
 | Dynamic conditions | `dynInclusion`, `dynIdentity`, `dynComplement`, `isComplement`, `dynUnion` |
 | Predication | `dynPred`, `localEntailment` |
 | Veridicality typology | `veridicalIndiv/Prop`, `counterfactualIndiv/Prop`, `hypotheticalIndiv/Prop`, `accessible`, `subsetReq` |
-| Static-to-dynamic bridge | `fiberDRS`, `toDynProp_eq_lift_fiberDRS` |
+| Static-to-dynamic bridge | `fiberDRS`, `toUpdate_eq_lift_fiberDRS` |
 
 ## Architecture
 
@@ -37,11 +37,11 @@ ICDRTUpdate W E ──fiberDRS──→ Update (ICDRTAssignment W E × W) ──
     seq = dseq              dseq (fiber level)                    CCP.seq
 ```
 
-The factorization `toDynProp = lift ∘ fiberDRS` separates two concerns:
+The factorization `toUpdate = lift ∘ fiberDRS` separates two concerns:
 - `fiberDRS`: embed assignment-only relations into pair relations (passive worlds)
 - `lift`: convert relational meanings to set-transformer meanings
 
-`toDynProp` is always distributive (corollary of `lift_isDistributive`).
+`toUpdate` is always distributive (corollary of `lift_isDistributive`).
 This is the algebraic content of [hofmann-2025]'s observation that
 ICDRT-style negation via propositional dref complementation stays
 distributive — unlike test-based dynamic negation that inspects whole
@@ -51,7 +51,6 @@ states.
 namespace DynamicSemantics
 
 open Core (Assignment)
-open DynProp
 
 variable {W E : Type*}
 
@@ -130,7 +129,7 @@ end DynProp
 Following [muskens-1996]'s Compositional DRT, dynamic updates are
 relations between assignments rather than operations on sets of
 assignment-world pairs. The lift to context transformers is done by
-`toDynProp` below. -/
+`toUpdate` below. -/
 def ICDRTUpdate (W : Type*) (E : Type*) :=
   ICDRTAssignment W E → ICDRTAssignment W E → Prop
 
@@ -151,18 +150,18 @@ def successful (D : ICDRTUpdate W E) (i : ICDRTAssignment W E) : Prop :=
   ∃ j, D i j
 
 /-- Lift a static update relation to a context update on information states. -/
-def toDynProp (D : ICDRTUpdate W E) : DynProp W E :=
+def toUpdate (D : ICDRTUpdate W E) : DynProp W E :=
   λ c => { p | ∃ i, (i, p.2) ∈ c ∧ D i p.1 }
 
 /-- Identity update lifts to identity on contexts. -/
-theorem idUp_toDynProp (c : IContext W E) :
-    ICDRTUpdate.idUp.toDynProp c = c :=
+theorem idUp_toUpdate (c : IContext W E) :
+    ICDRTUpdate.idUp.toUpdate c = c :=
   Set.ext (λ ⟨j, _⟩ =>
     ⟨λ ⟨_, hic, rfl⟩ => hic, λ hjc => ⟨j, hjc, rfl⟩⟩)
 
 /-- Sequential composition lifts to function composition on contexts. -/
-theorem seq_toDynProp (D₁ D₂ : ICDRTUpdate W E) (c : IContext W E) :
-    (seq D₁ D₂).toDynProp c = D₂.toDynProp (D₁.toDynProp c) :=
+theorem seq_toUpdate (D₁ D₂ : ICDRTUpdate W E) (c : IContext W E) :
+    (seq D₁ D₂).toUpdate c = D₂.toUpdate (D₁.toUpdate c) :=
   Set.ext (λ ⟨_, _⟩ =>
     ⟨λ ⟨i, hic, k, h1, h2⟩ => ⟨k, ⟨i, hic, h1⟩, h2⟩,
      λ ⟨k, ⟨i, hic, h1⟩, h2⟩ => ⟨i, hic, k, h1, h2⟩⟩)
@@ -563,13 +562,13 @@ ICDRT updates operate on assignments only and worlds are inert fibers.
 def fiberDRS (D : ICDRTUpdate W E) : Update (ICDRTAssignment W E × W) :=
   λ ⟨i, w⟩ ⟨j, w'⟩ => w = w' ∧ D i j
 
-/-- `toDynProp = lift ∘ fiberDRS`: the static-to-dynamic bridge factors
+/-- `toUpdate = lift ∘ fiberDRS`: the static-to-dynamic bridge factors
 through fiberwise embedding followed by relational image. -/
-theorem toDynProp_eq_lift_fiberDRS (D : ICDRTUpdate W E) :
-    D.toDynProp = lift (fiberDRS D) := by
+theorem toUpdate_eq_lift_fiberDRS (D : ICDRTUpdate W E) :
+    D.toUpdate = lift (fiberDRS D) := by
   funext σ
   apply Set.ext; intro ⟨j, w⟩
-  simp only [ICDRTUpdate.toDynProp, lift, fiberDRS, Set.mem_setOf_eq]
+  simp only [ICDRTUpdate.toUpdate, lift, fiberDRS, Set.mem_setOf_eq]
   constructor
   · rintro ⟨i, hic, hD⟩
     exact ⟨⟨i, w⟩, hic, rfl, hD⟩
@@ -606,54 +605,54 @@ theorem fiberDRS_homomorphism :
 -- § 11. Distributivity, Test Eliminativity, and Round-Trip
 -- ════════════════════════════════════════════════════════════════
 
-/-- `toDynProp D` is always distributive: it processes each
+/-- `toUpdate D` is always distributive: it processes each
 assignment-world pair independently. Corollary of `lift_isDistributive`. -/
-theorem toDynProp_isDistributive (D : ICDRTUpdate W E) :
-    IsDistributive (D.toDynProp) := by
-  rw [toDynProp_eq_lift_fiberDRS]
+theorem toUpdate_isDistributive (D : ICDRTUpdate W E) :
+    IsDistributive (D.toUpdate) := by
+  rw [toUpdate_eq_lift_fiberDRS]
   exact lift_isDistributive (fiberDRS D)
 
 /-- A test update — one that preserves the assignment — lifts to an
 eliminative CCP: it can only shrink the context, never grow it. -/
-theorem toDynProp_test_eliminative (C : ICDRTAssignment W E → Prop) :
-    IsEliminative (ICDRTUpdate.toDynProp (λ i j => i = j ∧ C j)) := by
+theorem toUpdate_test_eliminative (C : ICDRTAssignment W E → Prop) :
+    IsEliminative (ICDRTUpdate.toUpdate (λ i j => i = j ∧ C j)) := by
   intro _ ⟨_, _⟩ hjw
   obtain ⟨_, hiw, rfl, _⟩ := hjw
   exact hiw
 
 /-- The DEC condition lifts to an eliminative CCP: assertion narrows the
 context (removes worlds from the commitment set). -/
-theorem toDynProp_dec_eliminative (φ_DC φ : PVar) :
-    IsEliminative (ICDRTUpdate.toDynProp
+theorem toUpdate_dec_eliminative (φ_DC φ : PVar) :
+    IsEliminative (ICDRTUpdate.toUpdate
       (λ i j : ICDRTAssignment W E => i = j ∧ decCondition φ_DC φ j)) :=
-  toDynProp_test_eliminative _
+  toUpdate_test_eliminative _
 
 /-- ICDRT-style negation via complementation stays distributive — unlike
 test-based dynamic negation that inspects the whole input state. -/
 theorem complement_update_distributive (φ_outer φ_inner : PVar) :
-    IsDistributive (ICDRTUpdate.toDynProp
+    IsDistributive (ICDRTUpdate.toUpdate
       (λ i j : ICDRTAssignment W E =>
         i = j ∧ isComplement φ_outer φ_inner j)) :=
-  toDynProp_isDistributive _
+  toUpdate_isDistributive _
 
 /-- Round-trip: lowering the CCP back to a relation recovers the fiberwise
 embedding. Combined with `lower_lift`, this shows no information is lost
 in the `fiberDRS`/`lift` factorization. -/
-theorem lower_toDynProp (D : ICDRTUpdate W E) :
-    lower (D.toDynProp) = fiberDRS D := by
-  rw [toDynProp_eq_lift_fiberDRS, lower_lift]
+theorem lower_toUpdate (D : ICDRTUpdate W E) :
+    lower (D.toUpdate) = fiberDRS D := by
+  rw [toUpdate_eq_lift_fiberDRS, lower_lift]
 
-/-- `toDynProp` preserves sequential composition — algebraic derivation via
+/-- `toUpdate` preserves sequential composition — algebraic derivation via
 `fiberDRS_seq` + `lift_dseq`. -/
-theorem toDynProp_seq_algebraic (D₁ D₂ : ICDRTUpdate W E) (c : IContext W E) :
-    (ICDRTUpdate.seq D₁ D₂).toDynProp c = CCP.seq D₁.toDynProp D₂.toDynProp c := by
-  conv_lhs => rw [toDynProp_eq_lift_fiberDRS, fiberDRS_seq, lift_dseq]
-  conv_rhs => rw [toDynProp_eq_lift_fiberDRS D₁, toDynProp_eq_lift_fiberDRS D₂]
+theorem toUpdate_seq_algebraic (D₁ D₂ : ICDRTUpdate W E) (c : IContext W E) :
+    (ICDRTUpdate.seq D₁ D₂).toUpdate c = CCP.seq D₁.toUpdate D₂.toUpdate c := by
+  conv_lhs => rw [toUpdate_eq_lift_fiberDRS, fiberDRS_seq, lift_dseq]
+  conv_rhs => rw [toUpdate_eq_lift_fiberDRS D₁, toUpdate_eq_lift_fiberDRS D₂]
 
-/-- `toDynProp` preserves identity — algebraic derivation via `fiberDRS_idUp`. -/
-theorem toDynProp_id_algebraic (c : IContext W E) :
-    ICDRTUpdate.idUp.toDynProp c = CCP.id c := by
-  rw [toDynProp_eq_lift_fiberDRS, fiberDRS_idUp]
+/-- `toUpdate` preserves identity — algebraic derivation via `fiberDRS_idUp`. -/
+theorem toUpdate_id_algebraic (c : IContext W E) :
+    ICDRTUpdate.idUp.toUpdate c = CCP.id c := by
+  rw [toUpdate_eq_lift_fiberDRS, fiberDRS_idUp]
   apply Set.ext; intro ⟨j, w⟩
   simp only [lift, CCP.id, Set.mem_setOf_eq]
   constructor

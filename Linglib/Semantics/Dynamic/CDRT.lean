@@ -38,7 +38,6 @@ the paper's derivations) and the weakest-precondition calculus live in
 
 namespace DynamicSemantics
 
-open DynProp
 
 /-- Discourse referent (Muskens' type `se`): a function from states to
 individuals. Constant drefs (`Function.const`, AX4's names) are drefs
@@ -110,7 +109,7 @@ end DynamicSemantics
 
 namespace CDRT
 
-open DynamicSemantics DynamicSemantics.DynProp
+open DynamicSemantics
 
 /-- CDRT state: Muskens' type `s`, concretely an assignment `Nat → E`.
 His *registers* are register indices `n : ℕ` with values read by `dref`
@@ -162,7 +161,7 @@ abbrev DProp.impl {E : Type*} (φ ψ : DProp E) : DProp E := test (dimpl φ ψ)
 /-- Dynamic disjunction as a test (SEM2, [muskens-1996] p. 148): the
 spine's `ddisj` via `test`. -/
 abbrev DProp.ddisj {E : Type*} (φ ψ : DProp E) : DProp E :=
-  test (DynamicSemantics.DynProp.ddisj φ ψ)
+  test (DynamicSemantics.ddisj φ ψ)
 
 /-- Truth at a state: the spine's `closure`. -/
 abbrev DProp.true_at {E : Type*} (φ : DProp E) (i : State E) : Prop :=

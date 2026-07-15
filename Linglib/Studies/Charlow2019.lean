@@ -18,6 +18,7 @@ namespace Charlow2019
 
 open DPL
 open DynamicSemantics
+open _root_.Core (Assignment)
 
 /-- Truth at an assignment: K True at g ⟺ ∃h. K g h (Charlow's (7)). -/
 def trueAt {E : Type*} (K : DPLRel E) (g : Assignment E) : Prop :=

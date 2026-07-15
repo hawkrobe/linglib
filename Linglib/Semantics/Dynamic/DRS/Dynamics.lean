@@ -44,7 +44,7 @@ lowerCamel operation names (`dneg`, `dseq`, `closure`); the static face
 -/
 
 open FirstOrder FirstOrder.Language
-open DynamicSemantics.DynProp (Update dneg dimpl ddisj closure dseq)
+open DynamicSemantics (Update dneg dimpl ddisj closure dseq)
 
 namespace DRT
 

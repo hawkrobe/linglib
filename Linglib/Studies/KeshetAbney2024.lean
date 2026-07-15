@@ -63,7 +63,7 @@ The DPL comparison below (`dpl_dne_fails_anaphora`) consumes these; they stay in
 namespace DynamicSemantics
 
 open _root_.Core (Assignment)
-open DynamicSemantics.DynProp
+open DynamicSemantics
 
 variable {E : Type*}
 
@@ -1069,7 +1069,7 @@ theorem pip_quantifier_blocking :
 section DPLComparison
 
 open DynamicSemantics (existsAt existsAt_iff)
-open DynamicSemantics.DynProp (Update dneg test)
+open DynamicSemantics (Update dneg test)
 open _root_.Core (Assignment)
 
 /-!

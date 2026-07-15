@@ -745,7 +745,7 @@ Type-driven compositional semantics for ICDRT. Each lexical entry is a
 higher-order function over dynamic meta-types; composition is function
 application + sequential update. The resulting `ICDRTUpdate` values lift
 to distributive CCPs via `Core/Intensional.lean`'s
-`toDynProp_isDistributive`.
+`toUpdate_isDistributive`.
 
 ### Meta-types (Definition 13)
 
@@ -922,18 +922,18 @@ theorem double_neg_complement (φ' φ'' : PVar) (φ : PVar)
 
 /-- Every compositional derivation lifts to a distributive CCP. -/
 theorem comp_isDistributive (D : ICDRTUpdate W E) :
-    IsDistributive D.toDynProp :=
-  toDynProp_isDistributive D
+    IsDistributive D.toUpdate :=
+  toUpdate_isDistributive D
 
 /-- Every compositional derivation factors through `fiberDRS`. -/
 theorem comp_factorizes (D : ICDRTUpdate W E) :
-    D.toDynProp = lift (fiberDRS D) :=
-  toDynProp_eq_lift_fiberDRS D
+    D.toUpdate = lift (fiberDRS D) :=
+  toUpdate_eq_lift_fiberDRS D
 
 /-- Sequential composition in the fragment lifts to CCP composition. -/
 theorem comp_seq_lifts (D₁ D₂ : ICDRTUpdate W E) (c : IContext W E) :
-    (ICDRTUpdate.seq D₁ D₂).toDynProp c = D₂.toDynProp (D₁.toDynProp c) :=
-  ICDRTUpdate.seq_toDynProp D₁ D₂ c
+    (ICDRTUpdate.seq D₁ D₂).toUpdate c = D₂.toUpdate (D₁.toUpdate c) :=
+  ICDRTUpdate.seq_toUpdate D₁ D₂ c
 
 -- § 6.4 Compositional derivations applied to Model M₁
 
@@ -987,15 +987,15 @@ def modalSub_comp : ICDRTUpdate BWorld BEnt :=
 
 /-- Every compositional derivation lifts to a distributive CCP. -/
 theorem veridical_comp_distributive :
-    IsDistributive veridical_comp.toDynProp :=
-  toDynProp_isDistributive _
+    IsDistributive veridical_comp.toUpdate :=
+  toUpdate_isDistributive _
 
 /-- Sequential composition lifts correctly. -/
 theorem veridical_comp_factors (c : IContext BWorld BEnt) :
-    veridical_comp.toDynProp c =
-    (semDEC pDC_S p3 itIsUpstairs).toDynProp
-      ((semDEC pDC_S p1 thereIsABathroom).toDynProp c) :=
-  ICDRTUpdate.seq_toDynProp _ _ c
+    veridical_comp.toUpdate c =
+    (semDEC pDC_S p3 itIsUpstairs).toUpdate
+      ((semDEC pDC_S p1 thereIsABathroom).toUpdate c) :=
+  ICDRTUpdate.seq_toUpdate _ _ c
 
 
 -- ════════════════════════════════════════════════════════════════
