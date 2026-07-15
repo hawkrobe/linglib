@@ -32,8 +32,8 @@ powerset monad, transformers their suplattice completion.
 - `Update.IsTest`: DPL's tests — updates that never change the state.
 - `valid`, `entails` (`⊨`), `sEntails` (`⊨ₛ`): truth and
   [groenendijk-stokhof-1991] §3.5's two entailment notions.
-- `InfoStateOf P`, `CCP P`: states as sets, meanings as set
-  transformers, a monoid under `CCP.seq`; `CCP.neg`, `disj`,
+- `CCP P`: meanings as transformers of information states (plain
+  `Set P`), a monoid under `CCP.seq`; `CCP.neg`, `disj`,
   `CCP.guard` and the whole-state tests `might`, `must`, `negTest`.
 - `IsEliminative`, `IsExpansive`, `IsTest`, `IsDistributive`: the
   classification of CCPs. N.B. the CCP-level `IsTest` (pass-or-`∅`,
@@ -328,21 +328,11 @@ end Theorems
 
 
 /--
-An InfoState is a set of possibilities.
-
-Different theories instantiate `P` differently:
-- PLA: Assignment × WitnessSeq
-- DRT: Assignment
-- Intensional: World × Assignment
--/
-abbrev InfoStateOf (P : Type*) := Set P
-
-/--
 A Context Change Potential (CCP) is a function from states to states.
 
 This is the semantic type for dynamic meanings.
 -/
-abbrev CCP (P : Type*) := InfoStateOf P → InfoStateOf P
+abbrev CCP (P : Type*) := Set P → Set P
 
 namespace CCP
 
@@ -392,15 +382,15 @@ open Classical in
 /-- Whole-state test: pass the state through iff it satisfies `C` — the
 shared shape of `negTest`, `might`, `must`, and `impl`, the
 non-distributive tests that inspect the entire input state. -/
-noncomputable def guard (C : InfoStateOf P → Prop) : CCP P :=
+noncomputable def guard (C : Set P → Prop) : CCP P :=
   λ s => if C s then s else ∅
 
 /-- A guard whose condition holds passes the state through. -/
-@[simp] theorem guard_pos {C : InfoStateOf P → Prop} {s} (h : C s) : guard C s = s :=
+@[simp] theorem guard_pos {C : Set P → Prop} {s} (h : C s) : guard C s = s :=
   if_pos h
 
 /-- A guard whose condition fails crashes to `∅`. -/
-@[simp] theorem guard_neg {C : InfoStateOf P → Prop} {s} (h : ¬C s) : guard C s = ∅ :=
+@[simp] theorem guard_neg {C : Set P → Prop} {s} (h : ¬C s) : guard C s = ∅ :=
   if_neg h
 
 /--
@@ -452,7 +442,7 @@ def disj (φ ψ : CCP P) : CCP P := neg (seq (neg φ) (neg ψ))
 
 /-- Dynamic entailment: φ entails ψ iff ψ adds no information after φ. -/
 def entails (φ ψ : CCP P) : Prop :=
-  ∀ s : InfoStateOf P, (φ s).Nonempty → ψ (φ s) = φ s
+  ∀ s : Set P, (φ s).Nonempty → ψ (φ s) = φ s
 
 /-- Entailment is reflexive -/
 theorem entails_id (φ : CCP P) : entails φ id := by
@@ -563,13 +553,13 @@ Support relation: s supports ψ if all possibilities in s satisfy ψ.
 
 This is the fundamental entailment relation of dynamic semantics.
 -/
-def supportOf (sat : P → φ → Prop) (s : InfoStateOf P) (ψ : φ) : Prop :=
+def supportOf (sat : P → φ → Prop) (s : Set P) (ψ : φ) : Prop :=
   ∀ p ∈ s, sat p ψ
 
 /--
 Content of a formula: all possibilities satisfying it.
 -/
-def contentOf (sat : P → φ → Prop) (ψ : φ) : InfoStateOf P :=
+def contentOf (sat : P → φ → Prop) (ψ : φ) : Set P :=
   { p | sat p ψ }
 
 /--
@@ -577,7 +567,7 @@ Galois connection: s ⊆ content ψ ↔ s supports ψ
 
 This is the fundamental duality of dynamic semantics.
 -/
-theorem support_iff_subset_content (sat : P → φ → Prop) (s : InfoStateOf P) (ψ : φ) :
+theorem support_iff_subset_content (sat : P → φ → Prop) (s : Set P) (ψ : φ) :
     supportOf sat s ψ ↔ s ⊆ contentOf sat ψ := by
   constructor
   · intro h p hp
@@ -588,7 +578,7 @@ theorem support_iff_subset_content (sat : P → φ → Prop) (s : InfoStateOf P)
 /--
 Support is downward closed: smaller states support more.
 -/
-theorem support_mono (sat : P → φ → Prop) (s t : InfoStateOf P) (ψ : φ)
+theorem support_mono (sat : P → φ → Prop) (s t : Set P) (ψ : φ)
     (h : t ⊆ s) (hs : supportOf sat s ψ) : supportOf sat t ψ :=
   λ p hp => hs p (h hp)
 
@@ -638,19 +628,19 @@ theorem updateFromSat_eliminative {P φ : Type*} (sat : P → φ → Prop) (ψ :
 
 /-- Standard update membership -/
 theorem mem_updateFromSat {P φ : Type*} (sat : P → φ → Prop) (ψ : φ)
-    (s : InfoStateOf P) (p : P) :
+    (s : Set P) (p : P) :
     p ∈ updateFromSat sat ψ s ↔ p ∈ s ∧ sat p ψ := Iff.rfl
 
 /-- Update equals intersection with content -/
 theorem updateFromSat_eq_inter_content {P φ : Type*} (sat : P → φ → Prop)
-    (ψ : φ) (s : InfoStateOf P) :
+    (ψ : φ) (s : Set P) :
     updateFromSat sat ψ s = s ∩ contentOf sat ψ := by
   ext p
   simp only [mem_updateFromSat, contentOf, Set.mem_inter_iff, Set.mem_setOf_eq]
 
 /-- Support-Update equivalence -/
 theorem support_iff_update_eq {P φ : Type*} (sat : P → φ → Prop)
-    (ψ : φ) (s : InfoStateOf P) :
+    (ψ : φ) (s : Set P) :
     supportOf sat s ψ ↔ updateFromSat sat ψ s = s := by
   constructor
   · intro h
@@ -669,7 +659,7 @@ Dynamic entailment: φ dynamically entails ψ if updating with φ
 always yields a state that supports ψ.
 -/
 def dynamicEntailsOf {P φ : Type*} (sat : P → φ → Prop) (ψ₁ ψ₂ : φ) : Prop :=
-  ∀ s : InfoStateOf P, supportOf sat (updateFromSat sat ψ₁ s) ψ₂
+  ∀ s : Set P, supportOf sat (updateFromSat sat ψ₁ s) ψ₂
 
 /-- Dynamic entailment is reflexive -/
 theorem dynamicEntails_refl {P φ : Type*} (sat : P → φ → Prop) (ψ : φ) :
