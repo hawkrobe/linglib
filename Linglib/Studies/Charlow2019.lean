@@ -111,12 +111,18 @@ theorem antisymmetry_fails {E : Type*} [Nontrivial E] :
     funext n
     by_cases hn : n = 0 <;> simp [hn, g, h, Function.update_apply]
 
+/-- Charlow's context type: a set of world-assignment pairs. -/
+abbrev State (W E : Type*) := Set (W × Assignment E)
+
+/-- Context change potential over Charlow's contexts. -/
+abbrev State.CCP (W E : Type*) := Semantics.Dynamic.Core.CCP (W × Assignment E)
+
 /-- Non-distributive negation (28): removes from s points that survive φ. -/
-def stateNeg {W E : Type*} (φ : StateCCP W E) : StateCCP W E :=
+def stateNeg {W E : Type*} (φ : State.CCP W E) : State.CCP W E :=
   λ s => {i ∈ s | i ∉ φ s}
 
 /-- Distributive negation (29): tests each point individually. -/
-def stateDistNeg {W E : Type*} (φ : StateCCP W E) : StateCCP W E :=
+def stateDistNeg {W E : Type*} (φ : State.CCP W E) : State.CCP W E :=
   λ s => {i ∈ s | φ {i} = ∅}
 
 /-- Partition by assignment: groups points sharing the same assignment (Charlow's (35)). -/
@@ -124,11 +130,11 @@ def partByAssignment {W E : Type*} (s : State W E) : Set (State W E) :=
   {t | t ⊆ s ∧ t.Nonempty ∧ ∀ i ∈ t, ∀ j ∈ t, i.2 = j.2}
 
 /-- Anaphorically distributive: processes each assignment-group separately (Charlow's (39)). -/
-def anaphoricallyDistributive {W E : Type*} (φ : StateCCP W E) : Prop :=
+def anaphoricallyDistributive {W E : Type*} (φ : State.CCP W E) : Prop :=
   ∀ s, φ s = {p | ∃ t ∈ partByAssignment s, p ∈ φ t}
 
 /-- Every distributive meaning is anaphorically distributive. -/
-theorem distributive_implies_anaphoric {W E : Type*} (φ : StateCCP W E) :
+theorem distributive_implies_anaphoric {W E : Type*} (φ : State.CCP W E) :
     IsDistributive φ → anaphoricallyDistributive φ := by
   intro hD s
   ext p; simp only [Set.mem_setOf_eq]
@@ -150,22 +156,22 @@ theorem distributive_implies_anaphoric {W E : Type*} (φ : StateCCP W E) :
 -- ════════════════════════════════════════════════════════════════
 
 /-! Charlow's ↑ (`liftPW`) promotes a pointwise `Update (Assignment E)`
-(Dynamic Ty2, [muskens-1996]) to a context-level `StateCCP W E`; his ↓
+(Dynamic Ty2, [muskens-1996]) to a context-level `State.CCP W E`; his ↓
 (`lowerPW`) extracts a pointwise relation back. Lifted meanings are always
 distributive (`liftPW_preserves_distributive`), so pointwise meanings can
 never produce irreducibly context-level effects — cumulative readings
-require non-distributive updates, which live only in `StateCCP`. -/
+require non-distributive updates, which live only in `State.CCP`. -/
 
 /-- Charlow's ↑: lift a pointwise Update to an update on states.
     `liftPW D s = {⟨w, h⟩ | ∃ ⟨w, g⟩ ∈ s, D g h}`
     Each world-assignment pair in the output comes from applying D to some
     input assignment in s, preserving the world. -/
-def liftPW {W E : Type*} (D : Update (Assignment E)) : StateCCP W E :=
+def liftPW {W E : Type*} (D : Update (Assignment E)) : State.CCP W E :=
   λ s => {p | ∃ q ∈ s, p.1 = q.1 ∧ D q.2 p.2}
 
 /-- Charlow's ↓: extract a pointwise Update from a state update by
     evaluating K on a singleton context at an arbitrary world. -/
-def lowerPW {W E : Type*} (K : StateCCP W E) (w₀ : W) : Update (Assignment E) :=
+def lowerPW {W E : Type*} (K : State.CCP W E) (w₀ : W) : Update (Assignment E) :=
   λ g h => (w₀, h) ∈ K {(w₀, g)}
 
 /-- Round-trip identity: lowering a lifted Update recovers the original.
@@ -227,10 +233,10 @@ theorem liftPW_preserves_distributive {W E : Type*} (D : Update (Assignment E)) 
 
     Requires `Nonempty W` and `Nonempty E` to construct the witness. -/
 theorem liftPW_lowerPW_not_id {W E : Type*} [Nonempty W] [Nonempty E] :
-    ∃ (K : StateCCP W E) (w₀ : W), liftPW (lowerPW K w₀) ≠ K := by
+    ∃ (K : State.CCP W E) (w₀ : W), liftPW (lowerPW K w₀) ≠ K := by
   let w₀ : W := Classical.arbitrary W
   let g₀ : Assignment E := λ _ => Classical.arbitrary E
-  let K : StateCCP W E := λ _ => {(w₀, g₀)}
+  let K : State.CCP W E := λ _ => {(w₀, g₀)}
   use K, w₀
   intro heq
   have h₁ : liftPW (lowerPW K w₀) ∅ = (∅ : State W E) := by

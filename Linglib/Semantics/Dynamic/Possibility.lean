@@ -1,19 +1,165 @@
 import Linglib.Semantics.Dynamic.ContextChange
 
 /-!
-# Context Change Potentials
+# Possibilities
+[kamp-vangenabith-reyle-2011] (Def. 22), [heim-1982]
 
-Core update operations for dynamic semantics over `Possibility W E` states.
+A *possibility* is a world paired with an assignment of discourse referents —
+the point type of dynamic semantics. This file holds the point object and its
+small coupled constructions: the pointwise API (`extend`, `agreeOn`,
+`sameWorld`), the register-form instances of the legacy `Core` spine
+(`Nat`-keyed assignments), the unbased set-of-possibilities vocabulary
+(`InfoState.definedAt`, `novelAt`, `worlds`, `subsistsIn`, `supports`), and
+the possibility-specific CCP constructors (`InfoState.update`,
+`randomAssign`, `CCP.exists_`, `CCP.ofProp`).
 
-## Main definitions
-
-`update`, `randomAssign`, `exists_`, `ofProp`, `ofPred1`, `ofPred2`
+The based information states built over possibilities live in `State.lean`;
+the generic level-0 CCP algebra in `ContextChange.lean`.
 -/
+
+namespace Semantics.Dynamic
+
+/-! ### The point object -/
+
+/-- A possibility: a world paired with an assignment of discourse referents
+to individuals — the point type of dynamic semantics. -/
+@[ext] structure Possibility (W V M : Type*) where
+  /-- The world coordinate. -/
+  world : W
+  /-- The assignment of discourse referents. -/
+  assignment : V → M
+
+namespace Possibility
+
+variable {W V M : Type*}
+
+/-- Two possibilities agree on the referents in `vars`. -/
+def agreeOn (p q : Possibility W V M) (vars : Set V) : Prop :=
+  ∀ x ∈ vars, p.assignment x = q.assignment x
+
+/-- Same world, possibly different assignment. -/
+def sameWorld (p q : Possibility W V M) : Prop := p.world = q.world
+
+/-- Extend the assignment at a single referent, via `Function.update`. -/
+def extend [DecidableEq V] (p : Possibility W V M) (x : V) (e : M) :
+    Possibility W V M :=
+  { p with assignment := Function.update p.assignment x e }
+
+@[simp] theorem extend_at [DecidableEq V] (p : Possibility W V M) (x : V) (e : M) :
+    (p.extend x e).assignment x = e := by simp [extend]
+
+@[simp] theorem extend_other [DecidableEq V] (p : Possibility W V M) (x y : V)
+    (e : M) (h : y ≠ x) : (p.extend x e).assignment y = p.assignment y := by
+  simp [extend, h]
+
+@[simp] theorem extend_world [DecidableEq V] (p : Possibility W V M) (x : V) (e : M) :
+    (p.extend x e).world = p.world := rfl
+
+end Possibility
+
+end Semantics.Dynamic
 
 namespace Semantics.Dynamic.Core
 
-open InfoState
+open _root_.Core (Assignment)
 
+/-! ### Register-form instances (legacy `Core` spine)
+
+The pre-2026-07 spine keys assignments by `Nat` registers
+(`Assignment E := Nat → E`); these abbrevs instantiate the general point
+object at `V := ℕ`. -/
+
+/-- A possibility with a register-form assignment. -/
+abbrev Possibility (W E : Type*) := Semantics.Dynamic.Possibility W ℕ E
+
+/-- Information state: set of possibilities.
+
+This is `InfoStateOf (Possibility W E)` — a specialization of the
+generic `InfoStateOf` to world-assignment possibilities. -/
+abbrev InfoState (W : Type*) (E : Type*) := Set (Possibility W E)
+
+namespace InfoState
+
+variable {W E : Type*}
+
+/-- The trivial state: all possibilities. -/
+def univ : InfoState W E := Set.univ
+
+/-- The absurd state: no possibilities. -/
+def empty : InfoState W E := (∅ : Set (Possibility W E))
+
+/-- State is consistent (non-empty). -/
+def consistent (s : InfoState W E) : Prop := s.Nonempty
+
+/-- State is trivial (all possibilities). -/
+def trivial (s : InfoState W E) : Prop := s = Set.univ
+
+/-- Variable x is defined in state s iff all possibilities agree on x's value. -/
+def definedAt (s : InfoState W E) (x : Nat) : Prop :=
+  ∀ p q : Possibility W E, p ∈ s → q ∈ s → p.assignment x = q.assignment x
+
+/-- The set of defined variables in a state. -/
+def definedVars (s : InfoState W E) : Set Nat :=
+  { x | s.definedAt x }
+
+/-- Variable x is novel in state s iff x is not defined. -/
+def novelAt (s : InfoState W E) (x : Nat) : Prop := ¬s.definedAt x
+
+/-- In a consistent state, novel means assignments actually disagree. -/
+theorem novelAt_iff_disagree (s : InfoState W E) (x : Nat) (hs : s.consistent) :
+    s.novelAt x ↔ ∃ p q : Possibility W E, p ∈ s ∧ q ∈ s ∧ p.assignment x ≠ q.assignment x := by
+  constructor
+  · intro h
+    simp only [novelAt, definedAt] at h
+    push Not at h
+    exact h
+  · intro ⟨p, q, hp, hq, hne⟩
+    simp only [novelAt, definedAt]
+    push Not
+    exact ⟨p, q, hp, hq, hne⟩
+
+/-- Project to the set of worlds in the state. -/
+def worlds (s : InfoState W E) : Set W :=
+  { w | ∃ p ∈ s, p.world = w }
+
+end InfoState
+
+/-- State subsistence: s subsists in s' iff every possibility in s has a descendant in s'. -/
+def InfoState.subsistsIn {W E : Type*} (s s' : InfoState W E) : Prop :=
+  ∀ p ∈ s, ∃ p' ∈ s', p.world = p'.world ∧
+    ∀ x, s.definedAt x → p.assignment x = p'.assignment x
+
+scoped notation:50 s " ⪯ " s' => InfoState.subsistsIn s s'
+
+namespace InfoState
+
+variable {W E : Type*}
+
+/-- Subsistence is reflexive. -/
+theorem subsistsIn_refl (s : InfoState W E) : s ⪯ s := by
+  intro p hp
+  exact ⟨p, hp, rfl, λ _ _ => rfl⟩
+
+/-- Subset implies subsistence. -/
+theorem subset_subsistsIn {s s' : InfoState W E} (h : s ⊆ s') : s ⪯ s' := by
+  intro p hp
+  exact ⟨p, h hp, rfl, λ _ _ => rfl⟩
+
+/-- State s supports proposition φ iff φ holds at all worlds in s:
+`supportOf` at the world-evaluation satisfaction relation. -/
+def supports (s : InfoState W E) (φ : W → Prop) : Prop :=
+  supportOf (λ p ψ => ψ p.world) s φ
+
+scoped notation:50 s " ⊫ " φ => InfoState.supports s φ
+
+/-- Support is preserved by subset. -/
+theorem supports_mono {s s' : InfoState W E} (h : s ⊆ s')
+    (φ : W → Prop) (hsupp : s' ⊫ φ) : s ⊫ φ :=
+  support_mono _ s' s φ h hsupp
+
+end InfoState
+
+/-! ### Context change over possibilities -/
 
 /-- Update state with proposition: keep only possibilities where φ holds. -/
 def InfoState.update {W E : Type*} (s : InfoState W E) (φ : W → Prop) : InfoState W E :=
@@ -83,7 +229,6 @@ theorem dynamicEntails_conj (φ ψ : W → Prop)
 
 end InfoState
 
-
 /-- Random assignment: introduce new discourse referent at variable x. -/
 def InfoState.randomAssign {W E : Type*} (s : InfoState W E) (x : Nat)
     (domain : Set E) : InfoState W E :=
@@ -104,7 +249,7 @@ theorem randomAssign_makes_novel (s : InfoState W E) (x : Nat) (domain : Set E)
   obtain ⟨p, hp⟩ := hs
   obtain ⟨e₁, e₂, he₁, he₂, hne⟩ := hdom
   simp only [novelAt, definedAt]
-  push_neg
+  push Not
   refine ⟨p.extend x e₁, p.extend x e₂, ?_, ?_, ?_⟩
   · exact ⟨p, hp, e₁, he₁, rfl⟩
   · exact ⟨p, hp, e₂, he₂, rfl⟩
@@ -121,7 +266,6 @@ theorem randomAssign_preserves_defined (s : InfoState W E) (x y : Nat) (domain :
   exact h p' q' hp' hq'
 
 end InfoState
-
 
 /-- Existential CCP: ∃x.φ introduces x then updates with φ. -/
 def CCP.exists_ {W E : Type*} (x : Nat) (domain : Set E)

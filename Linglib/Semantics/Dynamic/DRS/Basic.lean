@@ -232,6 +232,66 @@ theorem DRS.isProper_merge {K₁ K₂ : DRS L V} (h₁ : K₁.IsProper)
 
 end Fv
 
+/-! ### Reuse-freeness
+
+No discourse referent is declared twice along a nesting path: each universe is
+fresh for the ambient declarations, threaded through sub-boxes the way
+verification threads the base (the antecedent of a `⇒` feeds its referents
+into the consequent). This is the hypothesis under which the total
+agree-off-universe semantics and the persistence semantics coincide
+(`DRS.trueRel_iff_toRelAt` in `DRS/Based.lean`). -/
+
+section ReuseFree
+variable [DecidableEq V]
+
+mutual
+/-- A DRS is *reuse-free* at ambient declarations `X`: its universe avoids `X`
+and its conditions are reuse-free at the grown set. -/
+def DRS.ReuseFreeAt (X : Finset V) : DRS L V → Prop
+  | .mk U conds => Disjoint X U ∧ Condition.ReuseFreeAtL (X ∪ U) conds
+/-- A condition is reuse-free at ambient declarations `X`. -/
+def Condition.ReuseFreeAt (X : Finset V) : Condition L V → Prop
+  | .rel _ _ => True
+  | .eq _ _ => True
+  | .neg K => DRS.ReuseFreeAt X K
+  | .imp a c => DRS.ReuseFreeAt X a ∧ DRS.ReuseFreeAt (X ∪ a.referents) c
+  | .dis l r => DRS.ReuseFreeAt X l ∧ DRS.ReuseFreeAt X r
+/-- Reuse-freeness for a list of conditions. -/
+def Condition.ReuseFreeAtL (X : Finset V) : List (Condition L V) → Prop
+  | [] => True
+  | c :: cs => Condition.ReuseFreeAt X c ∧ Condition.ReuseFreeAtL X cs
+end
+
+@[simp] theorem DRS.reuseFreeAt_mk (X U : Finset V) (conds : List (Condition L V)) :
+    DRS.ReuseFreeAt X (.mk U conds) ↔
+      Disjoint X U ∧ Condition.ReuseFreeAtL (X ∪ U) conds := Iff.rfl
+
+@[simp] theorem Condition.reuseFreeAt_rel (X : Finset V) {n : ℕ} (R : L.Relations n)
+    (args : Fin n → V) : Condition.ReuseFreeAt X (.rel R args) := trivial
+
+@[simp] theorem Condition.reuseFreeAt_eq (X : Finset V) (u v : V) :
+    Condition.ReuseFreeAt X (.eq u v : Condition L V) := trivial
+
+@[simp] theorem Condition.reuseFreeAt_neg (X : Finset V) (K : DRS L V) :
+    Condition.ReuseFreeAt X (.neg K) ↔ DRS.ReuseFreeAt X K := Iff.rfl
+
+@[simp] theorem Condition.reuseFreeAt_imp (X : Finset V) (a c : DRS L V) :
+    Condition.ReuseFreeAt X (.imp a c) ↔
+      DRS.ReuseFreeAt X a ∧ DRS.ReuseFreeAt (X ∪ a.referents) c := Iff.rfl
+
+@[simp] theorem Condition.reuseFreeAt_dis (X : Finset V) (l r : DRS L V) :
+    Condition.ReuseFreeAt X (.dis l r) ↔
+      DRS.ReuseFreeAt X l ∧ DRS.ReuseFreeAt X r := Iff.rfl
+
+@[simp] theorem Condition.reuseFreeAtL_nil (X : Finset V) :
+    Condition.ReuseFreeAtL X ([] : List (Condition L V)) := trivial
+
+@[simp] theorem Condition.reuseFreeAtL_cons (X : Finset V) (c : Condition L V)
+    (cs : List (Condition L V)) :
+    Condition.ReuseFreeAtL X (c :: cs) ↔
+      Condition.ReuseFreeAt X c ∧ Condition.ReuseFreeAtL X cs := Iff.rfl
+
+end ReuseFree
 
 /-! ### Accessibility (decidable, host-relative)
 

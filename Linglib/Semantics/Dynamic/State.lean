@@ -1,3 +1,4 @@
+import Linglib.Semantics.Dynamic.Possibility
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Set.Function
 import Mathlib.Logic.Function.DependsOn
@@ -40,7 +41,6 @@ rest of the spine migrates into.
 
 ## Main declarations
 
-* `Possibility` — a world paired with an assignment of discourse referents.
 * `BaseSupported` — membership depends only on assignment values at `X`
   (`DependsOn`, per world).
 * `State` — a base together with a supported carrier of possibilities.
@@ -52,16 +52,6 @@ rest of the spine migrates into.
 namespace Semantics.Dynamic
 
 variable {W V M : Type*}
-
-/-! ### Possibilities -/
-
-/-- A possibility: a world paired with an assignment of discourse referents
-to individuals — the point type of dynamic semantics. -/
-@[ext] structure Possibility (W V M : Type*) where
-  /-- The world coordinate. -/
-  world : W
-  /-- The assignment of discourse referents. -/
-  assignment : V → M
 
 /-! ### Base-supported sets -/
 
