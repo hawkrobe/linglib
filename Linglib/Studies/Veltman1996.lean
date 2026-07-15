@@ -1,6 +1,8 @@
 import Linglib.Core.Logic.TweetyNixon
 import Linglib.Core.Order.Normality
+import Linglib.Semantics.Dynamic.UpdateSemantics.Basic
 import Linglib.Semantics.Dynamic.UpdateSemantics.Default
+import Linglib.Semantics.Dynamic.State
 
 /-!
 # [veltman-1996] — Full Study
@@ -862,5 +864,56 @@ theorem optimal_as_normalcy (no : Preorder W) (d : Set W)
 
 end GenericsBridge
 
+/-! ### Update-semantics states as the referent-free fiber
+
+Veltman's information states are bare sets of worlds. In the based
+substrate they are exactly the states at the empty context: `toBasedState`
+embeds them, the embedding is an order-reversal onto the `∅`-fiber
+(`State.fiberEmptyOrderIso`), and propositional update transports to
+carrier filtering. -/
+
+section BasedFiber
+
+open DynamicSemantics UpdateSemantics
+
+variable {W V M : Type*} {s t : Set W}
+
+/-- A Veltman state as a based state at the empty context. -/
+def toBasedState (V M : Type*) (s : Set W) : DynamicSemantics.State W V M where
+  base := ∅
+  carrier := {p | p.world ∈ s}
+  supported := baseSupported_of_iff fun _ _ _ _ => Iff.rfl
+
+@[simp] theorem mem_toBasedState {p : Possibility W V M} :
+    p ∈ toBasedState V M s ↔ p.world ∈ s := Iff.rfl
+
+/-- The embedding reverses the orders: eliminating worlds is gaining
+information. -/
+theorem toBasedState_le_iff [Nonempty M] :
+    toBasedState V M s ≤ toBasedState V M t ↔ t ⊆ s := by
+  constructor
+  · intro h w hw
+    exact h.2 (show (⟨w, fun _ => Classical.arbitrary M⟩ : Possibility W V M) ∈ _ from hw)
+  · exact fun h => ⟨subset_rfl, fun p hp => h hp⟩
+
+/-- Propositional update ([veltman-1996]'s elimination) transports to
+carrier filtering on based states. -/
+theorem toBasedState_update_prop (φ : W → Prop) :
+    (toBasedState V M (UpdateSemantics.Update.prop φ s)).carrier =
+      {p ∈ (toBasedState V M s).carrier | φ p.world} := rfl
+
+/-- The embedding inverts the fiber classification: a Veltman state is
+precisely a state of the `∅`-fiber, read through
+`State.fiberEmptyOrderIso`. -/
+theorem fiberEmptyOrderIso_toBasedState [Nonempty M] (s : Set W) :
+    State.fiberEmptyOrderIso (M := M) ⟨toBasedState V M s, rfl⟩ =
+      OrderDual.toDual s := by
+  have h : ∀ w : W,
+      w ∈ OrderDual.ofDual
+        (State.fiberEmptyOrderIso (M := M) ⟨toBasedState V M s, rfl⟩) ↔ w ∈ s :=
+    fun w => State.mem_fiberEmptyOrderIso (g := fun _ => Classical.arbitrary M)
+  exact Set.ext h
+
+end BasedFiber
 
 end Veltman1996
