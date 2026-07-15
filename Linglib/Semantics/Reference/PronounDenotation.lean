@@ -3,7 +3,7 @@ import Linglib.Semantics.Reference.Nominal
 import Linglib.Semantics.Presupposition.PhiFeatures
 import Linglib.Semantics.Intensional.Variables
 import Linglib.Core.Logic.Assignment
-import Linglib.Semantics.Dynamic.Accessibility
+import Linglib.Semantics.Dynamic.Lookup
 import Linglib.Semantics.Definiteness.Interpret
 
 /-!
@@ -83,7 +83,7 @@ def PersonalPronoun.denote {E : Type} [PartialOrder E] (e : PersonalPronoun) (i 
 
 /-- The pronoun's canonical variable selector `interpPronoun i` is exactly the
 `M = Id` extensional-baseline instance of the dynamic-anaphora lookup interface
-`HasFiberedLookup.iLookup` (`Semantics/Dynamic/Accessibility.lean`,
+`HasFiberedLookup.iLookup` (`Semantics/Dynamic/Lookup.lean`,
 `instAssignmentHasFiberedLookup`). So static reference and dynamic (`Set`/`PMF`)
 anaphora already agree at the static fiber — modulo the `Option` partiality
 layer `Entry.denote` adds. This discharges the first step of the functor-

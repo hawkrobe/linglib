@@ -1,6 +1,6 @@
 import Linglib.Semantics.Dynamic.ICDRT.Defs
 import Linglib.Semantics.Dynamic.Update
-import Linglib.Semantics.Dynamic.Accessibility
+import Linglib.Semantics.Dynamic.Lookup
 import Mathlib.Data.Set.Basic
 
 /-!
@@ -332,6 +332,30 @@ asserted content". -/
 def decCondition (φ_DC : PVar) (φ : PVar) (j : ICDRTAssignment W E) : Prop :=
   j.prop φ_DC ⊆ j.prop φ
 
+/-- **Counterfactual antecedent blocks veridical anaphor**
+([hofmann-2025]'s bathroom-sentence theorem: "There isn't a bathroom.
+#It is upstairs."). If `j` extends `i` keeping the commitment set and the
+negated content fixed, the antecedent is counterfactual
+(`φ_DC(i) ∩ φ_neg(i) = ∅`), and `j` satisfies both the DEC condition and
+the anaphor's subset requirement, then the discourse is inconsistent.
+
+Frameworks without propositional-dref structure have no analogue —
+[charlow-2019]'s `State W E` handles the same phenomenon by
+alternative-set filtering (`Studies/Charlow2019.lean`). -/
+theorem counterfactual_blocks_veridical (i j : ICDRTAssignment W E)
+    (φ_DC φ_anaphor φ_neg : PVar)
+    (h_extends_DC : j.prop φ_DC = i.prop φ_DC)
+    (h_extends_neg : j.prop φ_neg = i.prop φ_neg)
+    (h_disjoint : counterfactualProp φ_DC φ_neg i)
+    (h_dec : decCondition φ_DC φ_anaphor j)
+    (h_subset : subsetReq φ_anaphor φ_neg j) :
+    ¬(j.prop φ_DC).Nonempty := by
+  rintro ⟨w, hw⟩
+  have hmem : w ∈ i.prop φ_DC ∩ i.prop φ_neg :=
+    ⟨h_extends_DC ▸ hw, h_extends_neg ▸ h_subset (h_dec hw)⟩
+  rw [h_disjoint] at hmem
+  exact hmem
+
 /-- A multi-agent discourse context: a current discourse state plus an
 assignment from interlocutors to commitment-set propositional variables.
 
@@ -638,27 +662,14 @@ theorem toDynProp_id_algebraic (c : IContext W E) :
 
 
 -- ════════════════════════════════════════════════════════════════
--- § Dynamic.Context typeclass instances for ICDRTAssignment
+-- § Fibered lookup instance
 -- ════════════════════════════════════════════════════════════════
 
-/-! Register `ICDRTAssignment W E` as an instance of the abstract
-`Dynamic.Context` typeclass family. With these instances, every
-predicate and theorem in `Dynamic.Context` (e.g.
-`counterfactual_blocks_veridical`, `multi_counterfactual_blocks_veridical`)
-applies to ICDRT contexts without re-proof. -/
-
-open Semantics.Dynamic.Context in
-instance instHasIndivDrefs_ICDRT :
-    HasIndivDrefs (ICDRTAssignment W E) IVar W E where
+/-- ICDRT contexts expose the shared lookup interface at `M = Entity`
+(`Dynamic/Lookup.lean`), making ICDRT lookups comparable with the
+extensional (`M = Id`) and [charlow-2019] (`M = Set`) families. -/
+instance : Semantics.Dynamic.Context.HasFiberedLookup Entity
+    (ICDRTAssignment W E) IVar W E where
   iLookup i v w := i.indiv v w
-  iVarUp v i j := indivVarUp v i j
-  iVarUp_other _ _ _ u := λ ⟨_, hu⟩ hne => funext (λ _ => by rw [hu u hne])
-
-open Semantics.Dynamic.Context in
-instance instHasPropDrefs_ICDRT :
-    HasPropDrefs (ICDRTAssignment W E) PVar W where
-  pLookup i p := i.prop p
-  pVarUp p i j := propVarUp p i j
-  pVarUp_other _ _ _ q := λ ⟨hq, _⟩ hne => hq q hne
 
 end Semantics.Dynamic.Core

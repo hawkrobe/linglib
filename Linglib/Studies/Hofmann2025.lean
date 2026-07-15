@@ -420,12 +420,9 @@ theorem counterfactual_complement :
     φ_{DC_S} ⊆ φ₃ (DEC) and φ₃ ⊆ φ₂ (subset requirement)
     must have φ_{DC_S} ⊆ φ₂, but φ_{DC_S} ∩ φ₂ = ∅.
 
-    Re-derived as a corollary of the typeclass theorem
-    `Semantics.Dynamic.Context.counterfactual_blocks_veridical`: the only
-    paper-specific work is the disjointness witness `h_disjoint`. The
-    ICDRT-specific extension/DEC/subset structure is fully delegated to
-    the abstract theorem via the `HasPropDrefs (ICDRTAssignment BWorld BEnt)
-    PVar BWorld` instance. -/
+    Re-derived as a corollary of the general blocking theorem
+    `counterfactual_blocks_veridical` (`ICDRT/Basic.lean`): the only
+    paper-specific work is the disjointness witness `h_disjoint`. -/
 theorem counterfactual_veridical_impossible
     (j : ICDRTAssignment BWorld BEnt)
     (h_extends : ∀ p, p ≠ p3 → j.prop p = j_counterfactual.prop p)
@@ -437,8 +434,7 @@ theorem counterfactual_veridical_impossible
   have h_disjoint :
       j_counterfactual.prop pDC_S ∩ j_counterfactual.prop p2 = ∅ := by
     ext w; cases w <;> simp [j_counterfactual, pDC_S, p2]
-  exact Semantics.Dynamic.Context.counterfactual_blocks_veridical
-    (W := BWorld) j_counterfactual j pDC_S p3 p2
+  exact counterfactual_blocks_veridical j_counterfactual j pDC_S p3 p2
     (h_extends pDC_S (by decide))
     (h_extends p2 (by decide))
     h_disjoint h_dec h_subset
