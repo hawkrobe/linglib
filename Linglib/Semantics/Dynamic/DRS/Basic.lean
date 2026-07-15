@@ -207,6 +207,18 @@ end
   | nil => simp
   | cons c cs ih => simp [ih, Finset.union_assoc]
 
+/-- Merging preserves boundedness: the merge's free referents are supplied by
+`X` when the context's are and the increment's are supplied by the grown base. -/
+theorem DRS.fv_merge_subset {X : Finset V} {K₁ K₂ : DRS L V} (h₁ : K₁.fv ⊆ X)
+    (h₂ : K₂.fv ⊆ X ∪ K₁.referents) : (K₁.merge K₂).fv ⊆ X := by
+  obtain ⟨U₁, c₁⟩ := K₁
+  obtain ⟨U₂, c₂⟩ := K₂
+  rw [DRS.referents_mk] at h₂
+  rw [DRS.fv_subset_iff] at h₁ h₂
+  rw [DRS.merge, DRS.referents_mk, DRS.conditions_mk, DRS.fv_subset_iff,
+    Condition.fvL_append, ← Finset.union_assoc]
+  exact Finset.union_subset (h₁.trans Finset.subset_union_left) h₂
+
 /-- A DRS is *proper* iff it has no free discourse referent
 ([kamp-reyle-1993], Def. 1.4.2–1.4.3). -/
 def DRS.IsProper (K : DRS L V) : Prop := K.fv = ∅
@@ -214,17 +226,9 @@ def DRS.IsProper (K : DRS L V) : Prop := K.fv = ∅
 /-- Merging preserves properness when the increment's free referents are
 supplied by the context DRS's universe. -/
 theorem DRS.isProper_merge {K₁ K₂ : DRS L V} (h₁ : K₁.IsProper)
-    (h₂ : K₂.fv ⊆ K₁.referents) : (K₁.merge K₂).IsProper := by
-  obtain ⟨U₁, c₁⟩ := K₁
-  obtain ⟨U₂, c₂⟩ := K₂
-  rw [DRS.IsProper, DRS.fv_mk, Finset.sdiff_eq_empty_iff_subset] at h₁
-  rw [DRS.fv_mk, DRS.referents_mk] at h₂
-  rw [DRS.merge, DRS.conditions_mk, DRS.referents_mk, DRS.IsProper, DRS.fv_mk,
-    Condition.fvL_append, Finset.sdiff_eq_empty_iff_subset]
-  refine Finset.union_subset (h₁.trans Finset.subset_union_left) fun x hx => ?_
-  by_cases hxU₂ : x ∈ U₂
-  · exact Finset.mem_union_right _ hxU₂
-  · exact Finset.mem_union_left _ (h₂ (Finset.mem_sdiff.mpr ⟨hx, hxU₂⟩))
+    (h₂ : K₂.fv ⊆ K₁.referents) : (K₁.merge K₂).IsProper :=
+  Finset.subset_empty.mp (DRS.fv_merge_subset (Finset.subset_empty.mpr h₁)
+    (h₂.trans Finset.subset_union_right))
 
 end Fv
 

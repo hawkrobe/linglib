@@ -20,11 +20,11 @@ presupposition* `K.fv ⊆ X`), so a well-formed DRS denotes a spine
 `Transition X (X ∪ U)` (`DRS.transition`), and a proper DRS expresses an
 information state by acting on `⊥` (`DRS.state`, Def. 22).
 
-The Merging Lemma and the action equation for this semantics
-(`toRelAt_merge`, `state_merge`) are stated with the familiar freshness
-hypothesis; the based setting needs strictly less — only *capture* by
-sub-box universes is fatal, re-declaration is harmless — and the TODOs
-record the sharp side condition.
+The Merging Lemma for this semantics (`toRelAt_merge`) needs strictly less
+than the flat freshness hypothesis — only *capture* by sub-box universes is
+fatal, re-declaration is harmless — and lifts to the spine
+(`transition_merge`), where the action equation (`state_merge`) becomes an
+instance of functoriality (`Transition.apply_comp`).
 
 ## Main declarations
 
@@ -32,6 +32,8 @@ record the sharp side condition.
 * `DRS.toRelAt_congr_left` / `toRelAt_congr_right` — read/write support.
 * `DRS.transition` — a DRS as a spine transition `X ⟶ X ∪ U`.
 * `DRS.state` — the information state a proper DRS expresses.
+* `DRS.transition_merge` / `DRS.state_merge` — the Merging Lemma on the
+  spine and the action equation.
 -/
 
 open FirstOrder FirstOrder.Language
@@ -188,6 +190,13 @@ theorem DRS.transition_isExtension (W : Type*) (K : DRS L V) (X : Finset V)
   intro w f g h
   obtain ⟨U, conds⟩ := K
   exact h.1
+
+/-- Repackaging a DRS transition along an equality of context bases is the
+transition at the new base. -/
+theorem DRS.transition_copy (W : Type*) {X X' : Finset V} (K : DRS L V)
+    (hX : X = X') (hK : K.fv ⊆ X) (hK' : K.fv ⊆ X') :
+    (K.transition (M := M) W X hK).copy hX (by rw [hX]) = K.transition W X' hK' := by
+  subst hX; rfl
 
 /-- The information state a proper DRS expresses
 ([kamp-vangenabith-reyle-2011], Def. 22): act on the minimal state. -/
@@ -398,27 +407,33 @@ theorem DRS.toRelAt_merge {X : Finset V} (K₁ K₂ : DRS L V) (h₁ : K₁.fv �
       (Condition.holdsAllAt_union_fresh c₁ hfresh hfvc₁ g).mpr
         ((Condition.holdsAllAt_congr c₁ hfvc₁ hgh).mpr hh₁), hh₂⟩
 
+/-- **Transition-level Merging Lemma**: sequencing the transitions is the
+merge's transition, repackaged along associativity of the grown bases. -/
+theorem DRS.transition_merge (W : Type*) {X : Finset V} (K₁ K₂ : DRS L V)
+    (h₁ : K₁.fv ⊆ X) (h₂ : K₂.fv ⊆ X ∪ K₁.referents)
+    (hfresh : Disjoint K₂.referents (Condition.occL K₁.conditions)) :
+    (K₁.transition (M := M) W X h₁).comp (K₂.transition W (X ∪ K₁.referents) h₂) =
+      ((K₁.merge K₂).transition W X (DRS.fv_merge_subset h₁ h₂)).copy rfl
+        (by rw [DRS.merge_referents, ← Finset.union_assoc]) := by
+  ext w f g
+  simp only [Transition.rel_copy, Transition.comp, DRS.transition,
+    DRS.toRelAt_merge K₁ K₂ h₁ hfresh, Semantics.Dynamic.Core.DynProp.dseq]
+
 /-- **Action equation** ([kamp-vangenabith-reyle-2011], p. 159): applying a
 DRS's transition to the state a proper context DRS expresses yields the
-state of the merge. -/
+state of the merge — an instance of `Transition.apply_comp` through the
+transition-level Merging Lemma. -/
 theorem DRS.state_merge (W : Type*) (K₁ K₂ : DRS L V) (h₁ : K₁.IsProper)
     (h₂ : K₂.fv ⊆ K₁.referents)
     (hfresh : Disjoint K₂.referents (Condition.occL K₁.conditions)) :
     (K₂.transition (M := M) W K₁.referents h₂).apply (K₁.state W h₁) =
       (K₁.merge K₂).state W (DRS.isProper_merge h₁ h₂) := by
-  have hmerge := DRS.toRelAt_merge (X := (∅ : Finset V)) (M := M) K₁ K₂
-    (Finset.subset_empty.mpr h₁) hfresh
-  ext1
-  · ext x
-    simp [DRS.merge, Finset.mem_union]
-  · ext ⟨w, g⟩
-    simp only [State.mem_carrier, Transition.mem_apply, DRS.mem_state, hmerge,
-      DRS.transition, Semantics.Dynamic.Core.DynProp.dseq, Relation.Comp,
-      Finset.empty_union]
-    constructor
-    · rintro ⟨f, ⟨e, he⟩, hr⟩
-      exact ⟨e, f, he, hr⟩
-    · rintro ⟨e, f, he, hr⟩
-      exact ⟨f, ⟨e, he⟩, hr⟩
+  simp only [DRS.state]
+  rw [← DRS.transition_copy (M := M) W K₂ (Finset.empty_union _)
+      (h₂.trans Finset.subset_union_right) h₂,
+    Transition.apply_copy, ← Transition.apply_comp,
+    DRS.transition_merge (M := M) W K₁ K₂ (Finset.subset_empty.mpr h₁)
+      (h₂.trans Finset.subset_union_right) hfresh,
+    Transition.apply_copy]
 
 end DRT
