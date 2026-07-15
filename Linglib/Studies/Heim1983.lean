@@ -1,5 +1,5 @@
 import Linglib.Semantics.Presupposition.TriggerTypology
-import Linglib.Semantics.Dynamic.PartialTransformer
+import Linglib.Semantics.Dynamic.Partial
 
 /-!
 # Heim (1983): Projection and Partial Context Change
@@ -15,7 +15,7 @@ from partial context change potentials.
   `ifKingThenBald_no_presup` showing conditional filtering.
 - `johnKnowsRaining`: the factive example.
 - `conditional_admitted_everywhere` / `bare_consequent_not_admitted`: the
-  filtering recorded in the trigger tables, derived from `PartialCCP`
+  filtering recorded in the trigger tables, derived from `CCP.Partial`
   admittance rather than stipulated.
 -/
 
@@ -160,7 +160,7 @@ theorem filtering_removes_trigger :
 /-! ### Filtering derived from partial CCPs
 
 [heim-1983]'s actual machinery: sentences denote *partial* context change
-potentials (`DynamicSemantics.PartialCCP`), and admittance does the
+potentials (`DynamicSemantics.CCP.Partial`), and admittance does the
 projection work. The conditional's CCP is admitted by every context — the
 antecedent's update satisfies the consequent's king-presupposition — while
 the bare consequent's CCP is not admitted by the full context. The
@@ -172,8 +172,8 @@ open DynamicSemantics in
     antecedent's update filters the consequent's presupposition
     ([heim-1983]'s conditional CCP). -/
 theorem conditional_admitted_everywhere (c : Set KingWorld) :
-    (PartialCCP.pcond (PartialCCP.ofPartialProp kingExists)
-      (PartialCCP.ofPartialProp kingBald)).admits c := by
+    (CCP.Partial.cond (CCP.Partial.ofPartialProp kingExists)
+      (CCP.Partial.ofPartialProp kingBald)).admits c := by
   refine ⟨fun w _ => trivial, ?_⟩
   rintro w ⟨_, ha⟩
   cases w
@@ -185,7 +185,7 @@ open DynamicSemantics in
     context: the `noKing` world fails the presupposition, which therefore
     projects. -/
 theorem bare_consequent_not_admitted :
-    ¬ (PartialCCP.ofPartialProp kingBald).admits Set.univ := by
+    ¬ (CCP.Partial.ofPartialProp kingBald).admits Set.univ := by
   intro h
   exact h (Set.mem_univ .noKing)
 

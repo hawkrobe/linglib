@@ -1656,7 +1656,7 @@ import Linglib.Semantics.Dynamic.PLA.Update
 import Linglib.Semantics.Dynamic.PPCDRT.Anaphora
 import Linglib.Semantics.Dynamic.PPCDRT.Cumulativity
 import Linglib.Semantics.Dynamic.PPCDRT.Defs
-import Linglib.Semantics.Dynamic.PartialTransformer
+import Linglib.Semantics.Dynamic.Partial
 import Linglib.Semantics.Dynamic.Possibility
 import Linglib.Semantics.Dynamic.Update
 import Linglib.Semantics.Dynamic.UpdateSemantics.Basic

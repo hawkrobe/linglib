@@ -1,5 +1,5 @@
 import Linglib.Semantics.Dynamic.Update
-import Linglib.Semantics.Dynamic.PartialTransformer
+import Linglib.Semantics.Dynamic.Partial
 
 /-!
 # Update Semantics
@@ -198,13 +198,13 @@ noncomputable def PUpdate.presup (p φ : W → Prop) : PState W → PState W
       none
 
 /-- `PUpdate.presup` is the `Option`-valued shadow of
-    `DynamicSemantics.PartialCCP.ofPartialProp`: defined (≠ `none`) at `some s` exactly
-    when `s` admits the corresponding partial update. `PartialCCP` is the
+    `DynamicSemantics.CCP.Partial.ofPartialProp`: defined (≠ `none`) at `some s` exactly
+    when `s` admits the corresponding partial update. `CCP.Partial` is the
     canonical `Part`-based form; this clause survives for the
     [yagi-2025] disjunction machinery below. -/
 theorem PUpdate.presup_ne_none_iff_admits (p φ : W → Prop) (s : State W) :
     PUpdate.presup p φ (some s) ≠ none ↔
-      (DynamicSemantics.PartialCCP.ofPartialProp ⟨p, φ⟩).admits s := by
+      (DynamicSemantics.CCP.Partial.ofPartialProp ⟨p, φ⟩).admits s := by
   simp only [PUpdate.presup]
   split_ifs with h
   · refine ⟨fun _ w hw => ?_, fun _ => Option.some_ne_none _⟩
