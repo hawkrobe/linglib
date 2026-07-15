@@ -1,5 +1,5 @@
 import Linglib.Semantics.Dynamic.PLA.Semantics
-import Linglib.Semantics.Dynamic.ContextChange
+import Linglib.Semantics.Dynamic.Update
 
 /-!
 # PLA dynamic update semantics

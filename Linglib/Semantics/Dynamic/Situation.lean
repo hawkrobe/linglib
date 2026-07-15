@@ -1,5 +1,5 @@
 import Linglib.Core.Logic.Assignment
-import Linglib.Semantics.Dynamic.ContextChange
+import Linglib.Semantics.Dynamic.Update
 import Linglib.Semantics.Intensional.WorldTimeIndex
 
 /-!
@@ -9,7 +9,7 @@ import Linglib.Semantics.Intensional.WorldTimeIndex
 of pairs of a situation-variable assignment and a current evaluation
 situation. Its two update primitives split along the
 eliminative-vs-generative dichotomy of [groenendijk-stokhof-veltman-1996]
-(`IsEliminative`, `ContextChange.lean`):
+(`IsEliminative`, `Update.lean`):
 
 * `dynRelationOn` / `dynRelation` — eliminative filters by a relation
   between two projections; the workhorse behind temporal trichotomy

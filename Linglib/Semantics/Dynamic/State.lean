@@ -14,7 +14,7 @@ discourse referents — is an `X`-supported set of possibilities
 (`Possibility.lean`). The base is the "context as storage" dimension of
 dynamic meaning: finer than a proposition, coarser than syntax
 ([kamp-vangenabith-reyle-2011]'s Partee-marbles argument). The unbased
-level-0 notion is `InfoStateOf P` (`ContextChange.lean`); the transitions
+level-0 notion is `InfoStateOf P` (`Update.lean`); the transitions
 acting on states live in `Transition.lean`.
 
 ## Main definitions

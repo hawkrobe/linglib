@@ -1635,7 +1635,6 @@ import Linglib.Semantics.Dynamic.UpdateSemantics.Bilateral
 import Linglib.Semantics.Dynamic.CDRT
 import Linglib.Semantics.Dynamic.Category
 import Linglib.Semantics.Dynamic.Collapse
-import Linglib.Semantics.Dynamic.ContextChange
 import Linglib.Semantics.Dynamic.Situation
 import Linglib.Semantics.Dynamic.DPL
 import Linglib.Semantics.Dynamic.DRS.Based

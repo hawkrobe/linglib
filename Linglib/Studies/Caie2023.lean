@@ -54,7 +54,7 @@ sequential update = single conjunctive update — apply directly.
 - The `SpecSpace` in `Supervaluation/Basic.lean` is the ∀-dual:
   super-truth = true under ALL specs; Caie's survival = true under SOME.
 
-- `CCP` in `Dynamic/ContextChange.lean` operates on ⟨assignment, world⟩
+- `CCP` in `Dynamic/Update.lean` operates on ⟨assignment, world⟩
   pairs; `ContextFragment` here uses ⟨compositional-context, world⟩ — a
   structural analogue with different conceptual content.
 -/

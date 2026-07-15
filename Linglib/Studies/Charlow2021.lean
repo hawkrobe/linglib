@@ -1,5 +1,5 @@
 import Linglib.Semantics.Dynamic.CDRT
-import Linglib.Semantics.Dynamic.ContextChange
+import Linglib.Semantics.Dynamic.Update
 import Linglib.Semantics.Composition.Continuation
 import Linglib.Semantics.Mereology
 import Mathlib.Control.Monad.Writer

@@ -1,5 +1,5 @@
 import Linglib.Core.Order.Normality
-import Linglib.Semantics.Dynamic.ContextChange
+import Linglib.Semantics.Dynamic.Update
 
 /-!
 # Default Reasoning in Update Semantics
@@ -96,7 +96,7 @@ def ExpState.optimal (σ : ExpState W) : Set W :=
 /-- **Assertion update** (Veltman's factual update): eliminate
     non-φ-worlds, preserve the pattern. Information grows; expectations
     are unchanged. This is [portner-2018]'s `+`-update on the context
-    set, and the standard eliminative update from ContextChange.lean
+    set, and the standard eliminative update from Update.lean
     lifted to expectation states. -/
 def ExpState.assert (σ : ExpState W) (φ : W → Prop) : ExpState W :=
   ⟨{ w ∈ σ.info | φ w }, σ.order⟩

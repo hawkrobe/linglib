@@ -27,7 +27,7 @@ The pattern instantiates a long-standing thread in dynamic semantics:
 - [groenendijk-stokhof-veltman-1996] ("Coreference and Modality")
   generalize tests to *eliminative updates* — context-level operations
   `f : Set α → Set α` with `f c ⊆ c`. Linglib's
-  `Dynamic/ContextChange.lean`'s `IsEliminative` captures exactly this
+  `Dynamic/Update.lean`'s `IsEliminative` captures exactly this
   property, and `dynRelation R v₁ v₂` is the canonical eliminative update
   for a binary relation on situation-variable values.
 

@@ -1,4 +1,4 @@
-import Linglib.Semantics.Dynamic.ContextChange
+import Linglib.Semantics.Dynamic.Update
 import Mathlib.Data.Set.Functor
 import Mathlib.CategoryTheory.Category.KleisliCat
 import Mathlib.CategoryTheory.Category.RelCat
@@ -8,8 +8,8 @@ import Mathlib.Order.Hom.CompleteLattice
 # The update algebra is the Kleisli construction
 [charlow-2014] [muskens-van-benthem-visser-2011]
 
-The relational/set-transformer pair of `Update.lean` and
-`ContextChange.lean` is canonical, not a design choice. An update
+The two faces of `Update.lean`'s algebra are canonical, not a design
+choice. An update
 `S → S → Prop` is a Kleisli arrow `S → Set S` of the powerset monad —
 definitionally — and under that reading sequencing is Kleisli
 composition, the trivial test is `pure`, and `lift` is `bind`:
@@ -47,12 +47,10 @@ variable {S : Type*}
 /-- Sequencing is Kleisli composition for the powerset monad: an update
 is a Kleisli arrow `S → Set S`, definitionally. -/
 theorem dseq_eq_kleisliComp (D₁ D₂ : S → Set S) :
-    ((D₁ ⨟ D₂ : Update S) : S → Set S) = D₁ >=> D₂ := by
-  funext i
-  ext j
-  show (∃ k, D₁ i k ∧ D₂ k j) ↔ j ∈ D₁ i >>= D₂
-  simp only [Set.bind_def, Set.mem_iUnion, exists_prop]
-  rfl
+    (dseq D₁ D₂ : S → Set S) = D₁ >=> D₂ :=
+  funext fun i => Set.ext fun j => by
+    rw [Bind.kleisliRight, Set.bind_def, Set.mem_iUnion₂]
+    exact exists_congr fun k => exists_prop.symm
 
 /-- The trivial test is `pure`. -/
 theorem test_top_eq_pure :
