@@ -111,24 +111,24 @@ force output = input, so no binding escapes them. This accounts for
 `Heim1982.Examples.universal_blocks`, `standard_negation_blocks`, and
 `conditional_antecedent`. -/
 
-open DynamicSemantics.DynProp (IsTest) in
+open DynamicSemantics (IsTest) in
 /-- Negation is a test. -/
-theorem neg_isTest (φ : DPLRel E) : IsTest (toDRS (DPLRel.neg φ)) :=
+theorem neg_isTest (φ : DPLRel E) : DynamicSemantics.Update.IsTest (toDRS (DPLRel.neg φ)) :=
   fun _ _ hn => hn.1
 
-open DynamicSemantics.DynProp (IsTest) in
+open DynamicSemantics (IsTest) in
 /-- Implication is a test: antecedent bindings do not escape. -/
-theorem impl_isTest (φ ψ : DPLRel E) : IsTest (toDRS (DPLRel.impl φ ψ)) :=
+theorem impl_isTest (φ ψ : DPLRel E) : DynamicSemantics.Update.IsTest (toDRS (DPLRel.impl φ ψ)) :=
   fun _ _ hi => hi.1
 
-open DynamicSemantics.DynProp (IsTest) in
+open DynamicSemantics (IsTest) in
 /-- Disjunction is a test: no anaphora across or out of disjuncts. -/
-theorem disj_isTest (φ ψ : DPLRel E) : IsTest (toDRS (DPLRel.disj φ ψ)) :=
+theorem disj_isTest (φ ψ : DPLRel E) : DynamicSemantics.Update.IsTest (toDRS (DPLRel.disj φ ψ)) :=
   fun _ _ hd => hd.1
 
-open DynamicSemantics.DynProp (IsTest) in
+open DynamicSemantics (IsTest) in
 /-- The universal quantifier is a test: it introduces no referents. -/
-theorem forall_isTest (x : ℕ) (φ : DPLRel E) : IsTest (toDRS (DPLRel.forall_ x φ)) :=
+theorem forall_isTest (x : ℕ) (φ : DPLRel E) : DynamicSemantics.Update.IsTest (toDRS (DPLRel.forall_ x φ)) :=
   fun _ _ hfa => hfa.1
 
 /-! ### Logical facts (§3.4) -/
@@ -264,7 +264,7 @@ theorem forall_interdefinable (x : ℕ) (φ : DPLRel E) :
 
 section Metatheory
 
-open DynamicSemantics.DynProp
+open DynamicSemantics
 
 /-- s-equivalence (Definition 7) at a fixed model: same satisfaction
 set. The paper quantifies over models; `DPLRel` fixes one. -/
@@ -297,15 +297,15 @@ theorem sEquiv_pEquiv_ne [Nontrivial E] :
 /-- Definition 12's semantic core, clause 2: a conjunction of tests is a
 test. With the static constants (`neg_isTest`, ..., Fact 5) this closes
 the conditions under the semantics. -/
-theorem conj_isTest {φ ψ : DPLRel E} (hφ : IsTest (toDRS φ))
-    (hψ : IsTest (toDRS ψ)) : IsTest (toDRS (DPLRel.conj φ ψ)) :=
+theorem conj_isTest {φ ψ : DPLRel E} (hφ : DynamicSemantics.Update.IsTest (toDRS φ))
+    (hψ : DynamicSemantics.Update.IsTest (toDRS ψ)) : DynamicSemantics.Update.IsTest (toDRS (DPLRel.conj φ ψ)) :=
   fun _ _ ⟨_, h1, h2⟩ => (hφ h1).trans (hψ h2)
 
 /-- Fact 4: for tests, s-equivalence coincides with equivalence — a test
 is determined by its truth conditions (`IsTest.eq_test_closure`, the
 semantic form of Fact 6). -/
 theorem sEquiv_iff_eq_of_isTest {φ ψ : DPLRel E}
-    (hφ : IsTest (toDRS φ)) (hψ : IsTest (toDRS ψ)) :
+    (hφ : DynamicSemantics.Update.IsTest (toDRS φ)) (hψ : DynamicSemantics.Update.IsTest (toDRS ψ)) :
     sEquiv φ ψ ↔ φ = ψ := by
   refine ⟨fun h => ?_, sEquiv_of_eq⟩
   have hc : closure (toDRS φ) = closure (toDRS ψ) :=
@@ -317,7 +317,7 @@ theorem sEquiv_iff_eq_of_isTest {φ ψ : DPLRel E}
 /-! ### Entailment (§3.5)
 
 Dynamic entailment (Definition 20) is the generic
-`DynamicSemantics.DynProp.entails`; s-entailment (Definition 18) is
+`DynamicSemantics.entails`; s-entailment (Definition 18) is
 `sEntails`, and meaning inclusion implies it (`sEntails_of_subset`,
 Fact 10). Facts 13–16 — the restricted reflexivity and transitivity
 laws — carry syntactic `AQV/FV` side conditions and await the syntax
@@ -387,7 +387,7 @@ section SatisfactionSets
 
 open Core.CylindricAlgebra
 open Core (Assignment)
-open DynamicSemantics.DynProp (closure)
+open DynamicSemantics (closure)
 
 /-- **DPL existential = cylindrification**: `\∃xφ\ = cₓ\φ\` — the
 existential case of Fact 19's computation. -/

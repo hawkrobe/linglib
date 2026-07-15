@@ -410,7 +410,7 @@ theorem DRS.toRelAt_merge {X : Finset V} (K₁ K₂ : DRS L V) (h₁ : K₁.fv �
   funext f g
   apply propext
   simp only [DRS.merge, DRS.referents_mk, DRS.conditions_mk, DRS.toRelAt_mk,
-    Condition.holdsAllAt_append, DynamicSemantics.DynProp.dseq, Relation.Comp]
+    Condition.holdsAllAt_append, DynamicSemantics.dseq, Relation.Comp]
   rw [← Finset.union_assoc]
   constructor
   · rintro ⟨hag, hh₁, hh₂⟩
@@ -428,10 +428,10 @@ theorem DRS.transition_merge (W : Type*) {X : Finset V} (K₁ K₂ : DRS L V)
     (hfresh : Disjoint K₂.referents (Condition.occL K₁.conditions)) :
     (K₁.transition (M := M) W X h₁).comp (K₂.transition W (X ∪ K₁.referents) h₂) =
       ((K₁.merge K₂).transition W X (DRS.fv_merge_subset h₁ h₂)).copy rfl
-        (by rw [DRS.merge_referents, ← Finset.union_assoc]) := by
+        (by rw [DRS.referents_merge, ← Finset.union_assoc]) := by
   ext w f g
   simp only [Transition.rel_copy, Transition.comp, DRS.transition,
-    DRS.toRelAt_merge K₁ K₂ h₁ hfresh, DynamicSemantics.DynProp.dseq]
+    DRS.toRelAt_merge K₁ K₂ h₁ hfresh, DynamicSemantics.dseq]
 
 /-- **Action equation** ([kamp-vangenabith-reyle-2011], p. 159): applying a
 DRS's transition to the state a proper context DRS expresses yields the

@@ -88,7 +88,7 @@ theorem comp_assoc (u : Transition W M X Y) (v : Transition W M Y Z)
 /-- Forget the bases: the level-0 relation on possibilities (the world is
 preserved). -/
 def toUpdate (u : Transition W M X Y) :
-    DynProp.Update (Possibility W V M) :=
+    Update (Possibility W V M) :=
   fun p q => p.world = q.world ∧ u.rel p.world p.assignment q.assignment
 
 /-- Forgetting bases sends sequencing to relational composition — the
@@ -98,7 +98,7 @@ collapse in `Category.lean`.) -/
 theorem toUpdate_comp (u : Transition W M X Y) (v : Transition W M Y Z) :
     (u.comp v).toUpdate = u.toUpdate ⨟ v.toUpdate := by
   funext p q
-  simp only [toUpdate, comp, DynProp.dseq, Relation.Comp, eq_iff_iff]
+  simp only [toUpdate, comp, dseq, Relation.Comp, eq_iff_iff]
   constructor
   · rintro ⟨hw, k, huk, hkv⟩
     exact ⟨⟨p.world, k⟩, ⟨rfl, huk⟩, hw, hkv⟩

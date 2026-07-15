@@ -8,63 +8,39 @@ import Linglib.Semantics.Dynamic.UpdateSemantics.Default
 /-!
 # Necessity modals over expectation states
 
-[portner-2018]'s **partially ordered set of worlds** (posw) — the pair
-`⟨cs, ≤⟩` of a context set and an ordering that his mood unification has
-verbal mood, sentence mood, and modal flavor operate on — is
-[veltman-1996]'s expectation state `ExpState` read at the discourse
-level, a lineage Portner makes explicit by crediting Veltman's update
-logic for his update operations and writing the promotion update via
-Veltman's `∘` refinement. `info` is the Stalnakerian context set
+[portner-2018]'s partially ordered set of worlds — the pair `⟨cs, ≤⟩`
+his mood unification operates on — is [veltman-1996]'s `ExpState` read
+at the discourse level: `info` is the Stalnakerian context set
 ([stalnaker-1978]), `order` the Kratzerian ordering source
-([kratzer-1981]), `ExpState.assert` Portner's assertive update, and
-`ExpState.promote` his ordering-refinement update ([portner-2004]'s
-To-Do-List update). Portner's central architectural insight — belief vs.
-desire is `□_cs` vs. `□_≤` over the same agent's state, assertion vs.
-directive is the informational vs. the preferential update over the
-discourse state — becomes: the two updates touch disjoint components
-(`ExpState.assert_order`, `ExpState.promote_info`), and the two modals
-quantify over them.
+([kratzer-1981]). This file adds the modal half of that API: the
+necessity modals over the two components, and the comparison of each
+with its update's acceptance fixpoint ([veltman-1996]'s `σ ⊩ φ` iff
+`σ[φ] = σ`, reformulated by [portner-2018] for *believe* and *want*
+following [farkas-2003]).
 
-This file adds the *modal* half of that API: the necessity modals
-`□_cs` (`boxCs`) and `□_≤` (`boxLe`), the `best` worlds the latter
-quantifies over, their normality in the modal-logic sense
-(`NormalModality`), and the support/necessity comparison relating
-each modal to its update's acceptance fixpoint.
+## Main definitions
 
-## Support vs necessity
+- `ExpState.boxCs`: informational necessity `□_cs` — truth throughout
+  the information state (Portner's *believe*).
+- `ExpState.boxLe`: preferential necessity `□_≤` — truth at all optimal
+  worlds (Portner's *want*, Kratzerian deontic/bouletic modals
+  ([condoravdi-lauer-2012]), and the test condition of [veltman-1996]'s
+  *presumably*).
+- `NormalModality`: necessitation plus the K-axiom.
 
-[veltman-1996]'s acceptance (`σ ⊩ φ` iff `σ[φ] = σ`) gives each
-update a *support* condition (`ExpState.le_assert_iff`,
-`ExpState.le_promote_iff`). Comparing support with necessity:
+## Main results
 
-- **informational**: support of `assert` *is* `boxCs`
-  (`le_assert_iff_boxCs`) — the fixpoint [farkas-2003] uses to
-  characterize indicative-licensing (assertive) contexts.
-- **preferential**: support of `promote` is `Normality.respects`
-  ("φ is already on the To-Do List"), which is *not* equivalent to
-  `boxLe` and implies it only on connected orders with a φ-witness
-  (`boxLe_of_respects` — [veltman-1996]'s *normally φ ⊩ presumably
-  φ*). Connectedness can be destroyed by `promote` itself; Veltman's
-  ambiguous states are exactly the disconnected ones.
+- `le_assert_iff_boxCs`: support of `assert` *is* `boxCs` — the fixpoint
+  [farkas-2003] uses to characterize indicative-licensing contexts.
+- `boxLe_of_respects`: support of `promote` (`Normality.respects`)
+  implies `boxLe` on connected orders with a witness — [veltman-1996]'s
+  *normally φ ⊩ presumably φ*. The converse fails, and disconnected
+  orders (Veltman's ambiguous states) break this direction too.
 
-The support conditions are linguistically load-bearing:
-[portner-2018] reformulates the attitudes as update fixpoints —
-*believe* as `m + φ = m` and *want* as `m ⋆ φ = m`, extending
-[farkas-2003]'s Heim-style assertive fixpoint to the preferential
-side — so his fixpoint clauses are exactly `ExpState.le_assert_iff` /
-`ExpState.le_promote_iff`, and `boxLe_of_respects` is the formal
-relation between his two semantics for *want* (modal vs. fixpoint).
-That the informational component is the one where support and
-necessity coincide is the type-level face of assertion's special
-status among the updates.
-
-**Caveat** on the preferential side: [condoravdi-lauer-2012]'s
-*preference structures* are strict partial orders on **propositions**,
-one type level above the world ordering here; see
-`Core.Order.PreferenceStructure`. POSW-style states consume the
-maximal-element-induced world preorder
-(`Core.Order.PreferenceStructure.maxInducedLe`) rather than
-instantiating them.
+[condoravdi-lauer-2012]'s preference structures order *propositions*,
+one type level above the world ordering here; POSW-style states consume
+`Core.Order.PreferenceStructure.maxInducedLe` rather than instantiating
+them.
 -/
 
 namespace UpdateSemantics.Default.ExpState
@@ -147,18 +123,14 @@ variable {W : Type*}
 
 /-! ### Normal modality structure
 
-`boxCs` and `boxLe` are both **normal modalities** in the modal-logic
-sense: each satisfies necessitation (`□⊤`) and the K-axiom
-(`□(p→q) → □p → □q`) — one shape of the inf-preservation pattern that
-`∀` over any subset enjoys. The third State modal `boxAns` is *not*
-normal (see `Semantics/Mood/State.lean`); it has its own closure
-structure under boolean operations instead. -/
+`boxCs` and `boxLe` are both normal modalities — one shape of the
+inf-preservation pattern that `∀` over any subset enjoys. The third
+State modal `boxAns` is *not* normal (see `Semantics/Mood/State.lean`);
+it has its own closure structure under boolean operations instead. -/
 
-/-- A **normal modality** in the sense of basic modal logic:
-    quantifies a unary box over `W → Prop` predicates, satisfying
-    necessitation (`box ⊤`) and the K-axiom (`box (p → q) → box p
-    → box q`). The two universal modals `ExpState.boxCs` and
-    `ExpState.boxLe` are normal; `State.boxAns` is not. -/
+/-- A **normal modality** in the sense of basic modal logic: a unary box
+    over `W → Prop` predicates satisfying necessitation (`box ⊤`) and
+    the K-axiom (`box (p → q) → box p → box q`). -/
 class NormalModality (W : Type*) (box : (W → Prop) → Prop) : Prop where
   /-- Necessitation: the box always holds for `⊤`. -/
   necessitation : box (fun _ => True)

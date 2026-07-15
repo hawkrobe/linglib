@@ -5,82 +5,46 @@ import Mathlib.Tactic.ByContra
 import Mathlib.Tactic.Use
 
 /-!
-# Dynamic Propositions: The Semantic Algebra
+# The relational update algebra
 [heim-1982] [groenendijk-stokhof-1991] [kamp-reyle-1993]
 
-The relational type `Update S = S → S → Prop` and its core operations
-form the semantic algebra shared by all dynamic semantic systems:
-DRT, DPL, File Change Semantics, PLA, CDRT, BUS, and others.
+`Update S = S → S → Prop` and its operations: the semantic algebra that
+DRT, DPL, File Change Semantics, PLA, CDRT, and BUS instantiate.
+[heim-1982]'s file change potentials, [kamp-reyle-1993]'s verification
+clauses (Def. 1.4.4), and [groenendijk-stokhof-1991]'s DPL relations all
+arrive at this structure; [muskens-1996] parametrizes it over the state
+type. The set-transformer face, and the bridge identifying this algebra
+with its distributive fragment, live in `ContextChange.lean`.
 
-## Intellectual Origins
+## Main definitions
 
-Three independent but converging lines of work arrive at essentially
-the same algebraic structure:
+- `Update S`, `Condition S`: relations on states, properties of states.
+- `dseq` (`⨟`), `test`, `dneg`, `dimpl`, `ddisj`, `closure`: the
+  connectives; a `Monoid` under `⨟` (scoped instance).
+- `Update.IsTest`: DPL's tests — updates that never change the state.
+- `valid`, `entails` (`⊨`), `sEntails` (`⊨ₛ`): truth and
+  [groenendijk-stokhof-1991] §3.5's two entailment notions.
 
-- **[heim-1982]**: Sentence meanings are *file change potentials* —
-  functions from files to files. Her principle (A),
-  `SAT(F + φ) = SAT(F) ∩ {a : a SAT φ}`, decomposes update into
-  the operations formalized here as `test` (intersection) and `dseq`
-  (successive file change).
+## Main results
 
-- **[kamp-reyle-1993]**: Update verification clauses (Def 1.4.4)
-  define when an embedding can be extended to satisfy each connective.
-  These clauses correspond exactly to `test`, `dseq`, `dneg`, `dimpl`,
-  and `ddisj`.
+- `Update.IsTest.eq_test_closure`: a test is the test of its own truth
+  conditions — the semantic content of [groenendijk-stokhof-1991]'s
+  Fact 6.
+- `entails_iff_valid_test_dimpl` (the deduction theorem, Fact 11),
+  `sEntails_iff_test_closure_entails` (Fact 12), `sEntails_of_subset`
+  (Fact 10).
 
-- **[groenendijk-stokhof-1991]**: Dynamic Predicate Logic makes
-  the relational type explicit: meanings ARE binary relations on
-  assignments. Their DPL conjunction = relational composition (`dseq`),
-  DPL negation = universal non-existence (`dneg`), etc.
+## Implementation notes
 
-[muskens-1996] unified these by parametrizing over the state
-type `S`, showing all systems embed into this algebra.
-
-## Operations
-
-| Operation | Type | Origin |
-|-----------|------|--------|
-| `Update S` | `S → S → Prop` | G&S 1991, implicit in Heim 1982 |
-| `dseq` | `Update S → Update S → Update S` | relational composition |
-| `test` | `Condition S → Update S` | identity + check |
-| `dneg` | `Update S → Condition S` | universal non-existence |
-| `dimpl` | `Update S → Update S → Condition S` | K&R verification for ⇒ |
-| `ddisj` | `Update S → Update S → Condition S` | K&R verification for ∨ |
-| `closure` | `Update S → Condition S` | existential closure (Heim's truth) |
-
-## Cross-cutting smell: three incompatible DNE solutions
-
-`dneg` (above) gives the standard relational negation `¬D i ⟺ ¬∃k, D i k`,
-which fails double-negation elimination — `dneg (dneg D) ≢ D` because
-positive update information is destroyed when negation collapses to a
-state predicate. Three downstream frameworks repair DNE in mutually
-incompatible ways:
-
-| Framework | DNE mechanism | File |
-|-----------|---------------|------|
-| Bilateral (BUS, [krahmer-muskens-1995], [elliott-sudo-2025]) | Two update channels (positive/negative); negation = swap | `Dynamic/UpdateSemantics/Bilateral.lean`, `Studies/ElliottSudo2025.lean` |
-| ICDRT ([hofmann-2025]) | Propositional drefs + complementation under flat update | `Studies/Hofmann2025.lean` |
-| TTR ([cooper-2023]) | Classical metalanguage reduction; negation is static | `Semantics/TypeTheoretic/` |
-
-These are not mere notational variants. Bilateral DNE is structural
-(swap is involutive by definition); ICDRT DNE is derived (complementation
-of a propositional dref); TTR DNE is inherited (the metalanguage is
-classical so `¬¬p ↔ p` holds at the static layer). Each repair pays
-for itself with different downstream costs — bilateral cannot
-distinguish speaker-vs-hearer commitments; ICDRT requires intensional
-contexts; TTR loses dynamic state-threading at the negation site.
-
-The cross-framework comparisons are formalized at the phenomenon level:
-`Studies/Hofmann2025.lean §7` (bilateral vs ICDRT on
-the bathroom sentence), `Studies/Cooper2023.lean §§ 4-5`
-(CDRT ↔ TTR truth-conditional equivalence + dynamic divergence under
-negation), and `Studies/Dekker2012.lean` (PLA vs BUS
-on the bathroom sentence: eliminative test vs structural swap). New
-dynamic frameworks should declare which DNE strategy they adopt and
-link to one of these comparisons.
+`dneg` fails double-negation elimination: negation collapses positive
+update information to a state predicate. The repairs are
+framework-specific and mutually incompatible — bilateral swap
+(`UpdateSemantics/Bilateral.lean`), propositional drefs (ICDRT,
+`Studies/Hofmann2025.lean`), classical metalanguage (TTR,
+`Studies/Cooper2023.lean`) — and the comparisons live in those studies.
 -/
 
-namespace DynamicSemantics.DynProp
+namespace DynamicSemantics
 
 /-! ### Core types -/
 
@@ -130,10 +94,14 @@ theorem eq_of_test {C : Condition S} {i j : S} (h : test C i j) : i = j :=
   h.1
 
 /-- An update is a *test* when it never changes the state
-([groenendijk-stokhof-1991], Definition 11). -/
-def IsTest (D : Update S) : Prop := ∀ ⦃i j⦄, D i j → i = j
+([groenendijk-stokhof-1991], Definition 11) — DPL's tests. The CCP-level
+`IsTest` of `ContextChange.lean` (pass-or-`∅`, Veltman's tests) is a
+different notion: `lift` of a relational test is a filter, not a
+pass-or-`∅` test. -/
+def Update.IsTest (D : Update S) : Prop := ∀ ⦃i j⦄, D i j → i = j
 
-theorem isTest_test (C : Condition S) : IsTest (test C) := fun _ _ h => h.1
+theorem Update.isTest_test (C : Condition S) : Update.IsTest (test C) :=
+  fun _ _ h => h.1
 
 /-- Dynamic conjunction (sequencing): `D₁ ; D₂`.
 
@@ -192,7 +160,7 @@ scoped notation D₁ " ⊨ " D₂ => entails D₁ D₂
 /-- A test is the test of its own closure — the semantic content of
 [groenendijk-stokhof-1991]'s Fact 6: up to contradictions, tests are
 exactly the conditions. -/
-theorem IsTest.eq_test_closure {D : Update S} (h : IsTest D) :
+theorem Update.IsTest.eq_test_closure {D : Update S} (h : Update.IsTest D) :
     D = test (closure D) := by
   funext i j
   simp only [test, closure, eq_iff_iff]
@@ -278,7 +246,7 @@ theorem dseq_test (D : Update S) (C : Condition S) (hC : ∀ i, C i) :
 test as unit (`dseq_assoc`, `test_dseq`, `dseq_test`). Scoped because
 `Update S` is an abbreviation for `S → S → Prop`: a global instance would
 attach `*`/`1` to the bare function type. Activate with
-`open scoped DynamicSemantics.DynProp`; mathlib's
+`open scoped DynamicSemantics`; mathlib's
 `WriterT (Update S) Id` then gets `Monad`/`LawfulMonad` for free. -/
 scoped instance : Monoid (Update S) where
   mul := dseq
@@ -331,16 +299,5 @@ theorem dseq_closure (D₁ D₂ : Update S) :
     exact ⟨j, h, hD₁, hD₂⟩
 
 end Theorems
-
-end DynamicSemantics.DynProp
-
-namespace DynamicSemantics
-
--- Surface the level-0 algebra: downstream files open `DynamicSemantics`
--- and use these unqualified.
-export DynProp (Update Condition
-  dseq test dneg dimpl ddisj closure
-  valid entails
-  dseq_assoc test_dseq dseq_test dneg_dneg_test closure_closure dseq_closure)
 
 end DynamicSemantics

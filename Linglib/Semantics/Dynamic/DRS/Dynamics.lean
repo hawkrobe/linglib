@@ -38,13 +38,15 @@ identification:
 * `DRS.toRel_merge` — the Merging Lemma: under freshness, `merge` denotes the
   spine sequencing `⨟` (relational composition) of the two box relations.
 
+## Implementation notes
+
 Naming: the dynamic face (`toRel`, `holds`, `trueRel`) follows the spine's
 lowerCamel operation names (`dneg`, `dseq`, `closure`); the static face
 (`DRS.Realize`, `DRS/Semantics.lean`) follows mathlib's `Formula.Realize`.
 -/
 
 open FirstOrder FirstOrder.Language
-open DynamicSemantics.DynProp (Update dneg dimpl ddisj closure dseq)
+open DynamicSemantics (Update dneg dimpl ddisj closure dseq)
 
 namespace DRT
 
@@ -284,11 +286,11 @@ for `K₁`'s conditions, the merge `K₁ ⊕ K₂` denotes the spine sequencing
 (relational composition) of the two box relations — `‖K₁ ⊕ K₂‖ = ‖K₁‖ ⨟ ‖K₂‖`.
 This is what gives `merge` its dynamic meaning. -/
 theorem DRS.toRel_merge [DecidableEq V] (K₁ K₂ : DRS L V)
-    (hfresh : ∀ x ∈ K₂.referents, x ∉ Condition.occL K₁.conditions) :
+    (hfresh : Disjoint K₂.referents (Condition.occL K₁.conditions)) :
     (DRS.toRel (K₁.merge K₂) : Update (V → M)) = DRS.toRel K₁ ⨟ DRS.toRel K₂ := by
   obtain ⟨U₁, conds₁⟩ := K₁
   obtain ⟨U₂, conds₂⟩ := K₂
-  simp only [DRS.referents_mk, DRS.conditions_mk] at hfresh
+  simp only [DRS.referents_mk, DRS.conditions_mk, Finset.disjoint_left] at hfresh
   funext a a'
   apply propext
   simp only [DRS.merge, DRS.referents_mk, DRS.conditions_mk, DRS.toRel,
@@ -306,7 +308,7 @@ theorem DRS.toRel_merge [DecidableEq V] (K₁ K₂ : DRS L V)
     · refine (Condition.holdsAll_congr conds₁ _ a' ?_).mpr hh₁
       intro x hx
       exact Finset.piecewise_eq_of_notMem _ _ _
-        (fun h => hfresh x h (Finset.mem_coe.mp hx))
+        (fun h => hfresh h (Finset.mem_coe.mp hx))
     · intro x hx
       exact (Finset.piecewise_eq_of_notMem _ _ _ hx).symm
     · exact hh₂
@@ -316,6 +318,6 @@ theorem DRS.toRel_merge [DecidableEq V] (K₁ K₂ : DRS L V)
       rw [Finset.mem_union, not_or] at hx
       rw [hag2 x hx.2, hag1 x hx.1]
     · exact (Condition.holdsAll_congr conds₁ a' a''
-        (fun x hx => hag2 x (fun hu => hfresh x hu (Finset.mem_coe.mp hx)))).mpr hh1
+        (fun x hx => hag2 x (fun hu => hfresh hu (Finset.mem_coe.mp hx)))).mpr hh1
 
 end DRT

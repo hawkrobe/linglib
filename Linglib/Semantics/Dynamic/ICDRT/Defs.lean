@@ -26,8 +26,7 @@ namespace DynamicSemantics
 Entities extended with the universal falsifier ⋆ ([brasoveanu-2006]; adopted
 by [hofmann-2025]): individual drefs map to ⋆ in worlds where the referent
 does not exist — in "There's no bathroom", the bathroom variable maps to ⋆
-in all worlds. Lexical relations are axiomatically false of ⋆
-(`star_falsifies`).
+in all worlds. Lexical relations are axiomatically false of ⋆.
 -/
 inductive Entity (E : Type*) where
   | some : E → Entity E
@@ -38,35 +37,12 @@ namespace Entity
 
 variable {E : Type*}
 
-/-- Lift a predicate to handle ⋆ (false for ⋆) -/
-def liftPred (p : E → Bool) : Entity E → Bool
-  | .some e => p e
-  | .star => false
-
-/-- Lift a binary predicate (false if either is ⋆) -/
-def liftPred₂ (p : E → E → Bool) : Entity E → Entity E → Bool
-  | .some e₁, .some e₂ => p e₁ e₂
-  | _, _ => false
-
 /-- Is this a real entity (not ⋆)? -/
 def isSome : Entity E → Prop
   | .some _ => True
   | .star => False
 
 instance : DecidablePred (@isSome E) := fun e => by unfold isSome; cases e <;> infer_instance
-
-/-- ⋆ is the universal falsifier: any lifted predicate yields false for ⋆ —
-[hofmann-2025]'s axiom that lexical relations are false of ⋆. -/
-@[simp] theorem star_falsifies (p : E → Bool) :
-    Entity.liftPred p (.star : Entity E) = false := rfl
-
-/-- ⋆ falsifies binary predicates from the left. -/
-@[simp] theorem star_falsifies₂_left (p : E → E → Bool) (e : Entity E) :
-    Entity.liftPred₂ p (.star : Entity E) e = false := by cases e <;> rfl
-
-/-- ⋆ falsifies binary predicates from the right. -/
-@[simp] theorem star_falsifies₂_right (p : E → E → Bool) (e : Entity E) :
-    Entity.liftPred₂ p e (.star : Entity E) = false := by cases e <;> rfl
 
 instance [Inhabited E] : Inhabited (Entity E) where
   default := .star
@@ -86,13 +62,6 @@ instance [Fintype E] : Fintype (Entity E) where
   complete := λ x => by cases x <;> simp [Finset.mem_cons]
 
 end Entity
-
-/--
-Variable indices for discourse referents.
-
-We use natural numbers but provide type wrappers for clarity.
--/
-abbrev Var := Nat
 
 /--
 A propositional variable (names a propositional dref).

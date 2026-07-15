@@ -69,7 +69,7 @@ namespace Charlow2021
 
 open DynamicSemantics
 open Semantics.Composition.Continuation
-open scoped DynamicSemantics.DynProp
+open scoped DynamicSemantics
 
 /-! ### Witness models: the cumulative-reading puzzle
 

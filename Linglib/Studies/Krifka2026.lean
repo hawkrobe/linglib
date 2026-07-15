@@ -42,8 +42,8 @@ namespace Krifka2026
 
 open Semantics.Kinds.NMP (Property Kind IsMass
   kindAnaphorMass kindAnaphorCount kindAnaphorCount_mass)
-open DynamicSemantics.DynProp (Update Condition test dneg eq_of_test)
-open scoped DynamicSemantics.DynProp
+open DynamicSemantics (Update Condition test dneg eq_of_test)
+open scoped DynamicSemantics
 
 /-! ### Concept drefs and heterogeneous dref values ([krifka-2026] §4)
 
