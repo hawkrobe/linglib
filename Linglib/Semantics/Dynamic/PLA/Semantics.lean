@@ -1,5 +1,5 @@
 import Linglib.Semantics.Dynamic.PLA.Basic
-import Linglib.Semantics.Dynamic.Ty2
+import Linglib.Semantics.Dynamic.CDRT
 import Linglib.Semantics.Dynamic.PLA.Translation
 
 /-!

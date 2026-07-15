@@ -1659,7 +1659,6 @@ import Linglib.Semantics.Dynamic.PPCDRT.Cumulativity
 import Linglib.Semantics.Dynamic.PPCDRT.Defs
 import Linglib.Semantics.Dynamic.PartialTransformer
 import Linglib.Semantics.Dynamic.Possibility
-import Linglib.Semantics.Dynamic.Ty2
 import Linglib.Semantics.Dynamic.Update
 import Linglib.Semantics.Dynamic.UpdateSemantics.Basic
 import Linglib.Semantics.Dynamic.UpdateSemantics.Default

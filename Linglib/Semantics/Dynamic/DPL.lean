@@ -1,5 +1,5 @@
 import Linglib.Core.Logic.Assignment
-import Linglib.Semantics.Dynamic.Ty2
+import Linglib.Semantics.Dynamic.CDRT
 
 /-!
 # Dynamic Predicate Logic

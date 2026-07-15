@@ -333,3 +333,14 @@ theorem dseq_closure (D₁ D₂ : Update S) :
 end Theorems
 
 end DynamicSemantics.DynProp
+
+namespace DynamicSemantics
+
+-- Surface the level-0 algebra: downstream files open `DynamicSemantics`
+-- and use these unqualified.
+export DynProp (Update Condition
+  dseq test dneg dimpl ddisj closure
+  valid entails
+  dseq_assoc test_dseq dseq_test dneg_dneg_test closure_closure dseq_closure)
+
+end DynamicSemantics
