@@ -46,7 +46,7 @@ fundamental bridge between PIP's formula language and its set-based
 compositional interface.
 
 This is the *static* analogue of `PIP.Basic.summationFiltered`, which
-performs the same collection on the dynamic `IContext` level. Agreement
+performs the same collection on the dynamic `ICDRT.Context` level. Agreement
 between the two is part of the static↔dynamic correspondence.
 -/
 def sigmaEval (body : D → PIPExprF W D) (w : W) : Set D :=

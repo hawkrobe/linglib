@@ -11,8 +11,8 @@ Dynamic Ty2): entities extended with the universal falsifier ⋆
 (`Entity`, [brasoveanu-2006]'s dummy value for referent-less worlds), the
 two variable sorts (`IVar` for individuals, `PVar` for the propositional
 drefs that store local contexts), and the two-sorted assignment
-(`ICDRTAssignment` — individual drefs as individual concepts `W → Entity E`,
-propositional drefs as `Set W`).
+(`ICDRT.Assignment` — individual drefs as individual concepts
+`W → Entity E`, propositional drefs as `Set W`).
 
 The system built over these types — updates, dynamic conditions, the
 veridicality typology — lives in `ICDRT/Basic.lean`; the paper-specific
@@ -20,13 +20,16 @@ apparatus in `Studies/Hofmann2025.lean`. (The concept drefs of
 [krifka-2026] live with their consumer in `Studies/Krifka2026.lean`.)
 -/
 
-namespace DynamicSemantics
+namespace DynamicSemantics.ICDRT
 
 /--
 Entities extended with the universal falsifier ⋆ ([brasoveanu-2006]; adopted
 by [hofmann-2025]): individual drefs map to ⋆ in worlds where the referent
 does not exist — in "There's no bathroom", the bathroom variable maps to ⋆
 in all worlds. Lexical relations are axiomatically false of ⋆.
+
+`Option E` under a renaming, kept as its own inductive for the paper's ⋆
+vocabulary and constructor-level pattern matching in consumers.
 -/
 inductive Entity (E : Type*) where
   | some : E → Entity E
@@ -90,7 +93,7 @@ In ICDRT, we need to track two kinds of assignments:
 This is used by the ICDRT system (`ICDRT/Basic.lean`); simpler theories
 can use Nat → E.
 -/
-structure ICDRTAssignment (W : Type*) (E : Type*) where
+structure Assignment (W : Type*) (E : Type*) where
   /-- Individual variable assignment: intensional individual drefs (individual
       concepts). Each variable maps worlds to entities, possibly ⋆.
       In [hofmann-2025]'s notation: type s(we), i.e., for each variable v,
@@ -100,28 +103,29 @@ structure ICDRTAssignment (W : Type*) (E : Type*) where
   /-- Propositional variable assignment -/
   prop : PVar → Set W
 
-namespace ICDRTAssignment
+namespace Assignment
 
 variable {W E : Type*}
 
 /-- Empty assignment (all variables map to ⋆ / empty set) -/
-def empty : ICDRTAssignment W E where
+def empty : Assignment W E where
   indiv := λ _ _ => .star
   prop := λ _ => ∅
 
-/-- Update individual variable with an individual concept (world-dependent). -/
-def updateIndiv (g : ICDRTAssignment W E) (v : IVar) (e : W → Entity E) : ICDRTAssignment W E :=
-  { g with indiv := λ v' => if v' == v then e else g.indiv v' }
+/-- Update individual variable with an individual concept (world-dependent):
+mathlib's `Function.update` at the `indiv` field. -/
+def updateIndiv (g : Assignment W E) (v : IVar) (e : W → Entity E) : Assignment W E :=
+  { g with indiv := Function.update g.indiv v e }
 
 /-- Update individual variable with a constant entity (world-invariant).
     Convenience for cases where the entity is the same in all worlds. -/
-def updateIndivConst (g : ICDRTAssignment W E) (v : IVar) (e : Entity E) : ICDRTAssignment W E :=
+def updateIndivConst (g : Assignment W E) (v : IVar) (e : Entity E) : Assignment W E :=
   g.updateIndiv v (λ _ => e)
 
-/-- Update propositional variable -/
-def updateProp (g : ICDRTAssignment W E) (p : PVar) (s : Set W) : ICDRTAssignment W E :=
-  { g with prop := λ p' => if p' == p then s else g.prop p' }
+/-- Update propositional variable: `Function.update` at the `prop` field. -/
+def updateProp (g : Assignment W E) (p : PVar) (s : Set W) : Assignment W E :=
+  { g with prop := Function.update g.prop p s }
 
-end ICDRTAssignment
+end Assignment
 
-end DynamicSemantics
+end DynamicSemantics.ICDRT

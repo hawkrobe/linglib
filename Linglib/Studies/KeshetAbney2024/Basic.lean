@@ -20,7 +20,7 @@ evaluation world.
 PIP is natively a **static, truth-conditional** system: formulas denote
 truth values relative to a model, plural assignment set G, and evaluation
 world w*. Our formalization encodes PIP as a dynamic update system over
-the generic intensional context type `IContext W E` (in
+the generic intensional context type `ICDRT.Context W E` (in
 `Dynamic/Intensional.lean`), which is a legitimate approach:
 [brasoveanu-2010] shows the equivalence between plural predicate calculi
 and dynamic plural logics. The key properties (label monotonicity,
@@ -48,6 +48,7 @@ external/local variable distinction) are faithfully preserved.
 namespace KeshetAbney2024.PIP
 
 open DynamicSemantics
+open DynamicSemantics.ICDRT
 
 
 -- ============================================================
@@ -77,7 +78,7 @@ structure Description (W : Type*) (E : Type*) where
   /-- The variable being described -/
   var : IVar
   /-- The constraining predicate (per assignment and world) -/
-  predicate : ICDRTAssignment W E → W → Prop
+  predicate : ICDRT.Assignment W E → W → Prop
 
 
 -- ============================================================
@@ -137,7 +138,7 @@ cross-boundary anaphora.
 -/
 structure Discourse (W : Type*) (E : Type*) where
   /-- The information state (set of assignment-world pairs) -/
-  info : IContext W E
+  info : ICDRT.Context W E
   /-- The label registry (monotonically accumulated) -/
   labels : LabelStore W E
 
@@ -147,7 +148,7 @@ variable {W E : Type*}
 
 /-- Initial discourse: all possibilities, no labels. -/
 def initial : Discourse W E where
-  info := IContext.univ
+  info := ICDRT.Context.univ
   labels := LabelStore.empty
 
 /-- Empty discourse: contradiction. -/
@@ -159,7 +160,7 @@ def empty : Discourse W E where
 def consistent (d : Discourse W E) : Prop := d.info.Nonempty
 
 /-- Update only the info state, preserving labels. -/
-def mapInfo (d : Discourse W E) (f : IContext W E → IContext W E) : Discourse W E :=
+def mapInfo (d : Discourse W E) (f : ICDRT.Context W E → ICDRT.Context W E) : Discourse W E :=
   { d with info := f d.info }
 
 /-- Register a new label, preserving info state. -/
@@ -200,7 +201,7 @@ In PIP, presuppositions are used for:
 2. Pronominal anaphora (presupposes antecedent is accessible)
 -/
 def presuppose {W E : Type*}
-    (pred : ICDRTAssignment W E → W → Prop) : PUpdate W E :=
+    (pred : ICDRT.Assignment W E → W → Prop) : PUpdate W E :=
   λ d => d.mapInfo (λ c => { gw ∈ c | pred gw.1 gw.2 })
 
 
@@ -245,7 +246,7 @@ assignments may bind different entities to the same variable, and
 truth requires the predicate to hold across all of them.
 -/
 def pluralTruth {W E : Type*}
-    (c : IContext W E) (w : W) (pred : ICDRTAssignment W E → W → Prop) : Prop :=
+    (c : ICDRT.Context W E) (w : W) (pred : ICDRT.Assignment W E → W → Prop) : Prop :=
   ∀ g, (g, w) ∈ c → pred g w
 
 
@@ -296,24 +297,24 @@ For "Every farmer bought a donkey. They paid a lot for them.",
 This is a core PIP operation (paper items 25–27), not study-specific.
 GQ arguments in PIP take two summation terms: restrictor and scope.
 -/
-def summationFiltered {W E : Type*} (c : IContext W E) (v : IVar)
-    (φ : ICDRTAssignment W E → W → Prop) : Set (Entity E) :=
+def summationFiltered {W E : Type*} (c : ICDRT.Context W E) (v : IVar)
+    (φ : ICDRT.Assignment W E → W → Prop) : Set (Entity E) :=
   { e | ∃ g w, (g, w) ∈ c ∧ φ g w ∧ g.indiv v w = e }
 
 /-- Summation without filtering: collects all values of variable v. -/
-def summationValues {W E : Type*} (c : IContext W E) (v : IVar) : Set (Entity E) :=
+def summationValues {W E : Type*} (c : ICDRT.Context W E) (v : IVar) : Set (Entity E) :=
   { e | ∃ g w, (g, w) ∈ c ∧ g.indiv v w = e }
 
 /-- Unfiltered summation equals trivially filtered summation. -/
 theorem summationValues_eq_trivial_filter {W E : Type*}
-    (c : IContext W E) (v : IVar) :
+    (c : ICDRT.Context W E) (v : IVar) :
     summationValues c v = summationFiltered c v (λ _ _ => True) := by
   ext e; simp [summationValues, summationFiltered]
 
 /-- Any assignment in a non-empty context contributes to summation. -/
 theorem summation_nonempty {W E : Type*}
-    (c : IContext W E) (v : IVar)
-    (gw : ICDRTAssignment W E × W)
+    (c : ICDRT.Context W E) (v : IVar)
+    (gw : ICDRT.Assignment W E × W)
     (h : gw ∈ c) :
     gw.1.indiv v gw.2 ∈ summationValues c v :=
   ⟨gw.1, gw.2, h, rfl⟩
