@@ -2,10 +2,10 @@ import Linglib.Semantics.Dynamic.State
 import Linglib.Semantics.Dynamic.Update
 
 /-!
-# Transitions between based information states
+# Transitions between indexed information states
 [kamp-vangenabith-reyle-2011] (Defs. 24, 27)
 
-The hom type of based dynamic semantics: a `Transition W M X Y` is a
+The hom type of indexed dynamic semantics: a `Transition W M X Y` is a
 world-indexed relation between assignments that reads its input only at the
 source base `X` and writes its output only at the target base `Y ⊇ X`.
 Objects are bases (finite sets of discourse referents); a DRS denotes an
@@ -16,13 +16,13 @@ Applying a transition to a `State` (Def. 24) is the level-0 `lift` of
 level 0 by construction. The chapter's regularity conditions (Def. 27)
 become theorems: the base of the output is `I.base ∪ Y` (`apply_base`), and
 applying an extension at its source base only adds information
-(`le_apply`). In the unbased, one-object collapse these facts degrade into
+(`le_apply`). In the unindexed, one-object collapse these facts degrade into
 side conditions (the Merging Lemma's freshness hypothesis); here the typing
 carries them.
 
 ## Main declarations
 
-* `Transition` — the based relation; `id`, `comp` and their laws.
+* `Transition` — the indexed relation; `id`, `comp` and their laws.
 * `Transition.toUpdate` — forget the bases (the collapse to level 0).
 * `Transition.apply` — Def. 24's context change, via `lift`.
 * `Transition.IsExtension` / `le_apply` — Def. 27(ii): information growth.

@@ -18,7 +18,7 @@ is then an equivalence onto the completely-join-preserving transformers
 (`sSupHom`), so the transformer algebra is the suplattice completion of
 the relational one and the non-distributive tests (`might`, `must`) are
 exactly the residue. Categorically, `RelCat ≌ KleisliCat Set`; with
-`Ctx.collapse` landing in `RelCat`, the based tower reads
+`Ctx.collapse` landing in `RelCat`, the indexed tower reads
 `Ctx ⥤ RelCat ≌ KleisliCat Set ↪ suplattice endomaps`, every arrow
 canonical.
 

@@ -245,7 +245,7 @@ fresh for the ambient declarations, threaded through sub-boxes the way
 verification threads the base (the antecedent of a `⇒` feeds its referents
 into the consequent). This is the hypothesis under which the total
 agree-off-universe semantics and the persistence semantics coincide
-(`DRS.trueRel_iff_toRelAt` in `DRS/Based.lean`). -/
+(`DRS.trueRel_iff_toRelAt` in `DRS/Indexed.lean`). -/
 
 section ReuseFree
 variable [DecidableEq V]

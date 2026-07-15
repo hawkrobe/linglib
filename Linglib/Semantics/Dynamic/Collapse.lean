@@ -4,7 +4,7 @@ import Mathlib.CategoryTheory.Category.RelCat
 /-!
 # The one-object collapse
 
-The collapse of based dynamic semantics to level 0 — the relational
+The collapse of indexed dynamic semantics to level 0 — the relational
 algebra of procedures over a single state space, with composition,
 converse, and the diagonal ([muskens-van-benthem-visser-2011]'s "Dynamic
 Constants as Operators in Relational Algebra"; mathlib's `RelCat`).

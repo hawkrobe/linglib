@@ -5,7 +5,7 @@ import Mathlib.CategoryTheory.Types.Basic
 /-!
 # The category of contexts
 
-Based dynamic semantics is a category: objects are contexts (bases of
+Indexed dynamic semantics is a category: objects are contexts (bases of
 live discourse referents), morphisms are `Transition`s, composition is
 world-pointwise relational composition. The identity and associativity
 laws are `Transition.lean`'s `id_comp`/`comp_id`/`comp_assoc`.
@@ -15,7 +15,7 @@ laws are `Transition.lean`'s `id_comp`/`comp_id`/`comp_assoc`.
 - `Ctx W M V`: bundled contexts, with a `Category` instance whose
   morphisms are `Transition`s between the bases.
 - `State.presheaf`: information states as a presheaf on the poset of
-  bases — the fiber over `X` is the states based at `X`, restriction is
+  bases — the fiber over `X` is the states indexed at `X`, restriction is
   `State.restrict`.
 
 ## Implementation notes
@@ -72,7 +72,7 @@ end Ctx
 universe u v w
 
 /-- Information states form a presheaf on the poset of bases: the fiber
-over `X` is the states based at `X`, and restriction along `Y ⊆ X` is
+over `X` is the states indexed at `X`, and restriction along `Y ⊆ X` is
 `State.restrict` — the presheaf laws are `restrict_base` and
 `restrict_restrict`. -/
 def State.presheaf (W : Type u) (M : Type v) (V : Type w) :

@@ -1,4 +1,4 @@
-import Linglib.Semantics.Dynamic.DRS.Based
+import Linglib.Semantics.Dynamic.DRS.Indexed
 import Linglib.Semantics.Dynamic.Category
 
 /-!

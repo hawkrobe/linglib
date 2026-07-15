@@ -1,4 +1,4 @@
-import Linglib.Semantics.Dynamic.DRS.Based
+import Linglib.Semantics.Dynamic.DRS.Indexed
 import Mathlib.Data.Fin.VecNotation
 
 /-!
@@ -6,8 +6,8 @@ import Mathlib.Data.Fin.VecNotation
 [kamp-vangenabith-reyle-2011]
 
 The Handbook of Philosophical Logic chapter's information-state architecture,
-run against the based substrate (`Semantics/Dynamic/State.lean`,
-`DRS/Based.lean`).
+run against the indexed substrate (`Semantics/Dynamic/State.lean`,
+`DRS/Indexed.lean`).
 
 * **Partee's marbles** ((42), the argument for Def. 22): two information
   states that determine the *same proposition* but differ — anaphoric

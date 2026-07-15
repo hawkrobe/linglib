@@ -397,7 +397,7 @@ noncomputable def guard (C : Set S → Prop) : CCP S :=
   if_neg h
 
 /--
-Test-based negation: passes (returns input) iff φ yields ∅.
+Test-indexed negation: passes (returns input) iff φ yields ∅.
 
 A whole-state consistency test ("must-not"), NOT [heim-1982]'s or
 [veltman-1996]'s negation (that is `neg`, set difference). The two

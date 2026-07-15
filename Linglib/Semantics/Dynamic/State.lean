@@ -7,14 +7,14 @@ import Mathlib.Order.Hom.CompleteLattice
 import Mathlib.Order.Lattice
 
 /-!
-# Based information states
+# Indexed information states
 
 An *information state* relative to a *base* `X` — a finite set of live
 discourse referents — is an `X`-supported set of possibilities
 (`Possibility.lean`). The base is the "context as storage" dimension of
 dynamic meaning: finer than a proposition, coarser than syntax
-([kamp-vangenabith-reyle-2011]'s Partee-marbles argument). Unbased level-0 states
-are plain sets of possibilities (`Update.lean`); the transitions
+([kamp-vangenabith-reyle-2011]'s Partee-marbles argument). Level-0 states are plain,
+unindexed sets of possibilities (`Update.lean`); the transitions
 acting on states live in `Transition.lean`.
 
 ## Main definitions
@@ -26,7 +26,7 @@ acting on states live in `Transition.lean`.
   as `⊔`.
 - `State.prop`: the proposition a state determines.
 - `State.restrict`: the best approximation supported on a smaller base.
-- `State.fiberEquiv`, `State.fiberOrderIso`: the states based at `X`, as
+- `State.fiberEquiv`, `State.fiberOrderIso`: the states indexed at `X`, as
   propositions over the `X`-collapsed state space.
 
 ## Main results
@@ -44,6 +44,12 @@ acting on states live in `Transition.lean`.
   ([veltman-1996]'s update-semantics states).
 
 ## Implementation notes
+
+*Indexed* is Jacobs' term, via [visser-1998]'s "indexed" treatment of
+predicate-logic semantics: meanings carry their variable declaration —
+the pair ⟨base, carrier⟩ — rather than living over one global assignment
+space. The chapter calls the declaration a *base*; type theory calls it
+a basis.
 
 The chapter's partial embeddings with domain `X` are rendered as total
 assignments with `X`-supported membership; Def. 25's informativeness
@@ -288,7 +294,7 @@ theorem restrict_le (h : Y ⊆ I.base) :
     I.restrict Y ≤ I :=
   ⟨h, fun p hp => ⟨p.assignment, hp, Set.eqOn_refl p.assignment _⟩⟩
 
-/-- Restriction is the *best* `Y`-supported approximation: for states based
+/-- Restriction is the *best* `Y`-supported approximation: for states indexed
 below `Y`, lying below `I.restrict Y` is lying below `I`. -/
 theorem le_restrict_iff (hJ : J.base ⊆ Y) (hY : Y ⊆ I.base) : J ≤ I.restrict Y ↔ J ≤ I := by
   constructor
@@ -340,7 +346,7 @@ end RandomAssign
 
 /-! ### States at a base as collapsed propositions -/
 
-/-- The states based at `X`. -/
+/-- The states indexed at `X`. -/
 abbrev fiber (W M : Type*) {V : Type*} (X : Finset V) : Type _ :=
   {I : State W V M // I.base = X}
 
@@ -348,7 +354,7 @@ theorem fiber_supported (I : fiber W M X) :
     BaseSupported X I.1.carrier :=
   (congrArg (fun b => BaseSupported b I.1.carrier) I.2).mp I.1.supported
 
-/-- A state based at `X` is a proposition over the `X`-collapsed state
+/-- A state indexed at `X` is a proposition over the `X`-collapsed state
 space ([muskens-van-benthem-visser-2011]'s picture at granularity `X`):
 support is saturation, so carriers and sets of agreement classes are in
 bijection. -/
@@ -399,7 +405,7 @@ def fiberOrderIso (X : Finset V) :
 section Classified
 variable [Nonempty M]
 
-/-- The fiber at `X`, classified: a based state is a proposition over
+/-- The fiber at `X`, classified: a indexed state is a proposition over
 world–`X`-assignment pairs, reversed by informativeness — [heim-1982]'s
 satisfaction sets of domain-`X` sequences, as a theorem rather than a
 gloss. -/

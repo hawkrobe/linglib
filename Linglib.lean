@@ -1637,7 +1637,7 @@ import Linglib.Semantics.Dynamic.Category
 import Linglib.Semantics.Dynamic.Collapse
 import Linglib.Semantics.Dynamic.Situation
 import Linglib.Semantics.Dynamic.DPL
-import Linglib.Semantics.Dynamic.DRS.Based
+import Linglib.Semantics.Dynamic.DRS.Indexed
 import Linglib.Semantics.Dynamic.DRS.Basic
 import Linglib.Semantics.Dynamic.DRS.Category
 import Linglib.Semantics.Dynamic.DRS.Defs
