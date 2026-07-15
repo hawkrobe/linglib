@@ -1,4 +1,4 @@
-import Linglib.Semantics.Dynamic.ContextFilter
+import Linglib.Semantics.Dynamic.Situation
 import Linglib.Semantics.Tense.Compositional
 
 /-!
@@ -27,9 +27,9 @@ The pattern instantiates a long-standing thread in dynamic semantics:
 - [groenendijk-stokhof-veltman-1996] ("Coreference and Modality")
   generalize tests to *eliminative updates* — context-level operations
   `f : Set α → Set α` with `f c ⊆ c`. Linglib's
-  `Dynamic/ContextFilter.lean`'s `IsContextFilter` captures exactly this property,
-  and `dynRelation R v₁ v₂` is the canonical eliminative update for a
-  binary relation on situation-variable values.
+  `Dynamic/ContextChange.lean`'s `IsEliminative` captures exactly this
+  property, and `dynRelation R v₁ v₂` is the canonical eliminative update
+  for a binary relation on situation-variable values.
 
 - [de-groote-2006] gives a continuation-passing-style translation
   from static Montague semantics to dynamic, recovering the static reading

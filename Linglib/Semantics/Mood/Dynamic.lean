@@ -3,7 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Semantics.Dynamic.ContextFilter
+import Linglib.Semantics.Dynamic.Situation
 import Linglib.Semantics.Modality.HistoricalAlternatives
 import Linglib.Semantics.Mood.Situation
 import Linglib.Semantics.Mood.Defs
@@ -24,7 +24,7 @@ a stipulated feature.
 
 * `dynSUBJ_realizes_SUBJ`: on singleton contexts, `dynSUBJ` realizes
   the static existential `SUBJ` of [mendes-2025].
-* `dynOp_indicative_isFilter`, `dynOp_subjunctive_introduces`: the
+* `dynOp_indicative_isEliminative`, `dynOp_subjunctive_introduces`: the
   polarity contrast, derived from the `dynOp` assignment.
 * `dynIND_after_dynSUBJ_same_var`: indicative retrieval of a
   just-introduced subjunctive variable is vacuous.
@@ -65,10 +65,10 @@ def dynSUBJ : SitContext W Time → SitContext W Time :=
 /-! ### The eliminative side -/
 
 /-- `dynIND` is a context filter. -/
-theorem dynIND_isFilter :
-    IsContextFilter (α := Assignment (WorldTimeIndex W Time) × WorldTimeIndex W Time)
+theorem dynIND_isEliminative :
+    IsEliminative (P := Assignment (WorldTimeIndex W Time) × WorldTimeIndex W Time)
       (dynIND v) :=
-  dynRelationOn_isFilter _ _ _
+  dynRelationOn_isEliminative _ _ _
 
 /-- Surviving `dynIND` means the current and bound situations share a
 world. -/
@@ -149,10 +149,10 @@ def Grammatical.dynOp :
   | .subjunctive => dynSUBJ history
 
 /-- Indicative's dynamic operator is eliminative: a context filter. -/
-theorem dynOp_indicative_isFilter :
-    IsContextFilter (α := Assignment (WorldTimeIndex W Time) × WorldTimeIndex W Time)
+theorem dynOp_indicative_isEliminative :
+    IsEliminative (P := Assignment (WorldTimeIndex W Time) × WorldTimeIndex W Time)
       (Grammatical.indicative.dynOp history v) :=
-  dynIND_isFilter v
+  dynIND_isEliminative v
 
 /-- Subjunctive's dynamic operator is generative: every output entry
 carries a freshly introduced situation, bound to `v`. -/
