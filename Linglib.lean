@@ -1642,6 +1642,7 @@ import Linglib.Semantics.Dynamic.DRS.Dynamics
 import Linglib.Semantics.Dynamic.DRS.Reduction
 import Linglib.Semantics.Dynamic.DRS.Semantics
 import Linglib.Semantics.Dynamic.DiscourseRef
+import Linglib.Semantics.Dynamic.InfoState
 import Linglib.Semantics.Dynamic.Intensional
 import Linglib.Semantics.Dynamic.PLA.Basic
 import Linglib.Semantics.Dynamic.PLA.Epistemic
