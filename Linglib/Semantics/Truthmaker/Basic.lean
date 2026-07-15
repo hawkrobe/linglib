@@ -329,7 +329,7 @@ variable {S : Type*}
 theorem neg_involutive : Function.Involutive (@neg S) := neg_neg
 
 /-- `BilProp S` carries an `InvolutiveNeg` structure — the same mathlib
-    abstraction satisfied by `Semantics/Dynamic/Bilateral.lean`'s
+    abstraction satisfied by `Semantics/Dynamic/UpdateSemantics/Bilateral.lean`'s
     `BilateralDen`. The two bilateral frameworks (state-based truthmaker,
     update-based dynamic) are unified at the swap-pair level by being
     instances of `InvolutiveNeg`. -/
