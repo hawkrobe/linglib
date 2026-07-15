@@ -75,6 +75,21 @@ theorem BilateralDen.ext {W E : Type*} {φ ψ : BilateralDen W E}
   simp only [mk.injEq]
   exact ⟨hp, hn⟩
 
+/-- Referent `x` is defined in `s`: all possibilities agree on its value.
+BUS's emergent-base vocabulary — the based `State` carries this as data
+(`State.base`); here it is recomputed from the carrier. -/
+def InfoState.definedAt {W E : Type*} (s : InfoState W E) (x : Nat) : Prop :=
+  ∀ p q : Possibility W ℕ E, p ∈ s → q ∈ s → p.assignment x = q.assignment x
+
+/-- Subsistence: every possibility has a descendant with the same world,
+agreeing on all defined referents — the emergent form of the based
+projection order (`State.le_iff_projection`). -/
+def InfoState.subsistsIn {W E : Type*} (s s' : InfoState W E) : Prop :=
+  ∀ p ∈ s, ∃ p' ∈ s', p.world = p'.world ∧
+    ∀ x, InfoState.definedAt s x → p.assignment x = p'.assignment x
+
+@[inherit_doc] scoped notation:50 s " ⪯ " s' => InfoState.subsistsIn s s'
+
 namespace BilateralDen
 
 variable {W E : Type*}

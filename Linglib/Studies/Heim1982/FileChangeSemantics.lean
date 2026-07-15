@@ -54,8 +54,7 @@ existential quantification into the notion of truth itself.
 |-------------|------------------------|
 | `HeimFile` | `InfoState W E` (enriched with a domain) |
 | `FCP` (partial) | `CCP` (total) |
-| novelty guard | `InfoState.novelAt` |
-| familiarity guard | `InfoState.definedAt` |
+| novelty/familiarity guards | `HeimFile.novel` / `HeimFile.familiar` |
 -/
 
 namespace FileChangeSemantics

@@ -8,14 +8,13 @@ import Mathlib.Order.Lattice
 /-!
 # Based information states
 
-A *possibility* is a world paired with a total assignment of discourse
-referents; an *information state* relative to a *base* `X` — a finite set
-of live discourse referents — is an `X`-supported set of possibilities.
-The base is the "context as storage" dimension of dynamic meaning: finer
-than a proposition, coarser than syntax ([kamp-vangenabith-reyle-2011]'s
-Partee-marbles argument). `InfoStateOf P` (`ContextChange.lean`) is the
-unbased level-0 notion; the transitions acting on states live in
-`Transition.lean`.
+An *information state* relative to a *base* `X` — a finite set of live
+discourse referents — is an `X`-supported set of possibilities
+(`Possibility.lean`). The base is the "context as storage" dimension of
+dynamic meaning: finer than a proposition, coarser than syntax
+([kamp-vangenabith-reyle-2011]'s Partee-marbles argument). The unbased
+level-0 notion is `InfoStateOf P` (`ContextChange.lean`); the transitions
+acting on states live in `Transition.lean`.
 
 ## Main definitions
 
