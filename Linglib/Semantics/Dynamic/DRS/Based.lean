@@ -1,4 +1,5 @@
 import Linglib.Semantics.Dynamic.DRS.Basic
+import Linglib.Semantics.Dynamic.DRS.Dynamics
 import Linglib.Semantics.Dynamic.Transition
 
 /-!
@@ -34,6 +35,8 @@ instance of functoriality (`Transition.apply_comp`).
 * `DRS.state` — the information state a proper DRS expresses.
 * `DRS.transition_merge` / `DRS.state_merge` — the Merging Lemma on the
   spine and the action equation.
+* `DRS.trueRel_iff_toRelAt` — on reuse-free DRSs the flat and based
+  semantics have the same truth conditions.
 -/
 
 open FirstOrder FirstOrder.Language
@@ -435,5 +438,164 @@ theorem DRS.state_merge (W : Type*) (K₁ K₂ : DRS L V) (h₁ : K₁.IsProper)
     DRS.transition_merge (M := M) W K₁ K₂ (Finset.subset_empty.mpr h₁)
       (h₂.trans Finset.subset_union_right) hfresh,
     Transition.apply_copy]
+
+/-! ### Reconciliation with the flat semantics
+
+On reuse-free DRSs (`DRS.ReuseFreeAt`, `DRS/Basic.lean`) the flat
+agree-off-universe semantics (`DRS.toRel`, `DRS/Dynamics.lean`) and the based
+persistence semantics coincide at truth level: every flat output is a based
+output, and a based output repairs, off the grown base, into a flat one.
+Reuse-freeness is needed — on a DRS that re-declares a referent the two
+diverge ([muskens-1996], fn. 4; witness in `Studies/Muskens1996.lean`). -/
+
+/-- Flat-to-based on a reuse-free box: agreement off the universe restricts
+to agreement on a disjoint base. -/
+private theorem DRS.toRelAt_of_toRel' {X U : Finset V} {conds : List (Condition L V)}
+    (hXU : Disjoint X U)
+    (hIH : ∀ k : V → M, Condition.holdsAll conds k ↔ Condition.holdsAllAt (X ∪ U) conds k)
+    {g g' : V → M} (h : DRS.toRel (.mk U conds) g g') :
+    DRS.toRelAt X (.mk U conds) g g' := by
+  obtain ⟨hag, hh⟩ := h
+  exact ⟨fun x hx => hag x (Finset.disjoint_left.mp hXU (Finset.mem_coe.mp hx)),
+    (hIH g').mp hh⟩
+
+/-- Based-to-flat on a bounded box: repair the output off the grown base with
+the input's values. -/
+private theorem DRS.toRel_of_toRelAt' {X U : Finset V} {conds : List (Condition L V)}
+    (hfvc : Condition.fvL conds ⊆ X ∪ U)
+    (hIH : ∀ k : V → M, Condition.holdsAll conds k ↔ Condition.holdsAllAt (X ∪ U) conds k)
+    {g g' : V → M} (h : DRS.toRelAt X (.mk U conds) g g') :
+    DRS.toRel (.mk U conds) g (fun x => if x ∈ U then g' x else g x) ∧
+      Set.EqOn (fun x => if x ∈ U then g' x else g x) g' ↑(X ∪ U) := by
+  obtain ⟨hag, hh⟩ := h
+  have heq : Set.EqOn (fun x => if x ∈ U then g' x else g x) g' ↑(X ∪ U) := by
+    intro x hx
+    by_cases hxU : x ∈ U
+    · simp only [if_pos hxU]
+    · have hxX : x ∈ X := by
+        rcases Finset.mem_union.mp (Finset.mem_coe.mp hx) with h | h
+        · exact h
+        · exact absurd h hxU
+      simp only [if_neg hxU]
+      exact (hag (Finset.mem_coe.mpr hxX)).symm
+  exact ⟨⟨fun x hxU => if_neg hxU,
+    (hIH _).mpr ((Condition.holdsAllAt_congr conds hfvc heq).mpr hh)⟩, heq⟩
+
+mutual
+/-- On a reuse-free condition with free referents in the base, the flat set
+denotation and the based one coincide. -/
+theorem Condition.holds_iff_holdsAt {X : Finset V} (c : Condition L V)
+    (hrf : Condition.ReuseFreeAt X c) (hfv : c.fv ⊆ X) (g : V → M) :
+    Condition.holds c g ↔ Condition.holdsAt X c g := by
+  match c with
+  | .rel R args => exact Iff.rfl
+  | .eq u v => exact Iff.rfl
+  | .neg K =>
+    obtain ⟨U, conds⟩ := K
+    simp only [Condition.reuseFreeAt_neg, DRS.reuseFreeAt_mk] at hrf
+    rw [Condition.fv_neg] at hfv
+    have hfvc := DRS.fv_subset_iff.mp hfv
+    have hIH : ∀ k : V → M, Condition.holdsAll conds k ↔
+        Condition.holdsAllAt (X ∪ U) conds k :=
+      fun k => Condition.holdsAll_iff_holdsAllAt conds hrf.2 hfvc k
+    simp only [Condition.holds_neg, Condition.holdsAt_neg]
+    exact not_congr ⟨fun ⟨k, hk⟩ => ⟨k, DRS.toRelAt_of_toRel' hrf.1 hIH hk⟩,
+      fun ⟨k, hk⟩ => ⟨_, (DRS.toRel_of_toRelAt' hfvc hIH hk).1⟩⟩
+  | .imp a c' =>
+    obtain ⟨Ua, ca⟩ := a
+    obtain ⟨Uc, cc⟩ := c'
+    simp only [Condition.reuseFreeAt_imp, DRS.reuseFreeAt_mk, DRS.referents_mk] at hrf
+    obtain ⟨⟨hXUa, hrfa⟩, hXUc, hrfc⟩ := hrf
+    rw [Condition.fv_imp, Finset.union_subset_iff] at hfv
+    obtain ⟨hfva, hfvc'⟩ := hfv
+    have hfvca : Condition.fvL ca ⊆ X ∪ Ua := DRS.fv_subset_iff.mp hfva
+    have hfvcc : Condition.fvL cc ⊆ (X ∪ Ua) ∪ Uc := by
+      intro x hx
+      by_cases hxUc : x ∈ Uc
+      · exact Finset.mem_union_right _ hxUc
+      · by_cases hxUa : x ∈ Ua
+        · exact Finset.mem_union_left _ (Finset.mem_union_right _ hxUa)
+        · refine Finset.mem_union_left _ (Finset.mem_union_left _ (hfvc' ?_))
+          rw [DRS.fv_mk, DRS.referents_mk, Finset.mem_sdiff, Finset.mem_sdiff]
+          exact ⟨⟨hx, hxUc⟩, hxUa⟩
+    have hIHa : ∀ k : V → M, Condition.holdsAll ca k ↔
+        Condition.holdsAllAt (X ∪ Ua) ca k :=
+      fun k => Condition.holdsAll_iff_holdsAllAt ca hrfa hfvca k
+    have hIHc : ∀ k : V → M, Condition.holdsAll cc k ↔
+        Condition.holdsAllAt ((X ∪ Ua) ∪ Uc) cc k :=
+      fun k => Condition.holdsAll_iff_holdsAllAt cc hrfc hfvcc k
+    simp only [Condition.holds_imp, Condition.holdsAt_imp, DRS.referents_mk]
+    constructor
+    · intro hL g₁ hg₁
+      obtain ⟨hflat, heq⟩ := DRS.toRel_of_toRelAt' hfvca hIHa hg₁
+      obtain ⟨g₂, hg₂⟩ := hL _ hflat
+      exact ⟨g₂, (DRS.toRelAt_congr_left (X ∪ Ua) _ heq).mp
+        (DRS.toRelAt_of_toRel' hXUc hIHc hg₂)⟩
+    · intro hR g₁ hg₁
+      obtain ⟨g₂, hg₂⟩ := hR g₁ (DRS.toRelAt_of_toRel' hXUa hIHa hg₁)
+      exact ⟨_, (DRS.toRel_of_toRelAt' hfvcc hIHc hg₂).1⟩
+  | .dis l r =>
+    obtain ⟨Ul, cl⟩ := l
+    obtain ⟨Ur, cr⟩ := r
+    simp only [Condition.reuseFreeAt_dis, DRS.reuseFreeAt_mk] at hrf
+    obtain ⟨⟨hXUl, hrfl⟩, hXUr, hrfr⟩ := hrf
+    rw [Condition.fv_dis, Finset.union_subset_iff] at hfv
+    have hfvcl : Condition.fvL cl ⊆ X ∪ Ul := DRS.fv_subset_iff.mp hfv.1
+    have hfvcr : Condition.fvL cr ⊆ X ∪ Ur := DRS.fv_subset_iff.mp hfv.2
+    have hIHl : ∀ k : V → M, Condition.holdsAll cl k ↔
+        Condition.holdsAllAt (X ∪ Ul) cl k :=
+      fun k => Condition.holdsAll_iff_holdsAllAt cl hrfl hfvcl k
+    have hIHr : ∀ k : V → M, Condition.holdsAll cr k ↔
+        Condition.holdsAllAt (X ∪ Ur) cr k :=
+      fun k => Condition.holdsAll_iff_holdsAllAt cr hrfr hfvcr k
+    simp only [Condition.holds_dis, Condition.holdsAt_dis]
+    constructor
+    · rintro ⟨k, hk | hk⟩
+      · exact ⟨k, Or.inl (DRS.toRelAt_of_toRel' hXUl hIHl hk)⟩
+      · exact ⟨k, Or.inr (DRS.toRelAt_of_toRel' hXUr hIHr hk)⟩
+    · rintro ⟨k, hk | hk⟩
+      · exact ⟨_, Or.inl (DRS.toRel_of_toRelAt' hfvcl hIHl hk).1⟩
+      · exact ⟨_, Or.inr (DRS.toRel_of_toRelAt' hfvcr hIHr hk).1⟩
+/-- The list analogue of `Condition.holds_iff_holdsAt`. -/
+theorem Condition.holdsAll_iff_holdsAllAt {X : Finset V} (cs : List (Condition L V))
+    (hrf : Condition.ReuseFreeAtL X cs) (hfv : Condition.fvL cs ⊆ X) (g : V → M) :
+    Condition.holdsAll cs g ↔ Condition.holdsAllAt X cs g := by
+  match cs with
+  | [] => exact Iff.rfl
+  | c :: cs =>
+    simp only [Condition.reuseFreeAtL_cons] at hrf
+    rw [Condition.fvL_cons, Finset.union_subset_iff] at hfv
+    exact and_congr (Condition.holds_iff_holdsAt c hrf.1 hfv.1 g)
+      (Condition.holdsAll_iff_holdsAllAt cs hrf.2 hfv.2 g)
+end
+
+/-- Flat-to-based: on a reuse-free DRS every flat output is a based output. -/
+theorem DRS.toRelAt_of_toRel {X : Finset V} {K : DRS L V} (hrf : DRS.ReuseFreeAt X K)
+    (hfv : K.fv ⊆ X) {g g' : V → M} (h : DRS.toRel K g g') : DRS.toRelAt X K g g' := by
+  obtain ⟨U, conds⟩ := K
+  simp only [DRS.reuseFreeAt_mk] at hrf
+  exact DRS.toRelAt_of_toRel' hrf.1
+    (fun k => Condition.holdsAll_iff_holdsAllAt conds hrf.2 (DRS.fv_subset_iff.mp hfv) k) h
+
+/-- Based-to-flat: on a reuse-free DRS a based output repairs, off the grown
+base, into a flat output. -/
+theorem DRS.toRel_of_toRelAt {X : Finset V} {K : DRS L V} (hrf : DRS.ReuseFreeAt X K)
+    (hfv : K.fv ⊆ X) {g g' : V → M} (h : DRS.toRelAt X K g g') :
+    ∃ g'', DRS.toRel K g g'' ∧ Set.EqOn g'' g' ↑(X ∪ K.referents) := by
+  obtain ⟨U, conds⟩ := K
+  simp only [DRS.reuseFreeAt_mk] at hrf
+  exact ⟨_, DRS.toRel_of_toRelAt' (DRS.fv_subset_iff.mp hfv)
+    (fun k => Condition.holdsAll_iff_holdsAllAt conds hrf.2 (DRS.fv_subset_iff.mp hfv) k) h⟩
+
+/-- **Truth-level reconciliation** ([muskens-1996], fn. 4): on a reuse-free
+DRS the flat total-assignment semantics and the based persistence semantics
+have the same truth conditions. Reuse-freeness is needed — a re-declaring
+witness separates the two (`Studies/Muskens1996.lean`). -/
+theorem DRS.trueRel_iff_toRelAt {X : Finset V} {K : DRS L V} (hrf : DRS.ReuseFreeAt X K)
+    (hfv : K.fv ⊆ X) (g : V → M) :
+    DRS.trueRel K g ↔ ∃ g', DRS.toRelAt X K g g' := by
+  rw [DRS.trueRel_iff]
+  exact ⟨fun ⟨g', h⟩ => ⟨g', DRS.toRelAt_of_toRel hrf hfv h⟩,
+    fun ⟨g', h⟩ => (DRS.toRel_of_toRelAt hrf hfv h).imp fun _ hg => hg.1⟩
 
 end DRT

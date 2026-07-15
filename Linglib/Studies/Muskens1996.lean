@@ -1,6 +1,8 @@
 import Linglib.Core.Logic.CylindricAlgebra
 import Linglib.Semantics.Dynamic.CDRT
+import Linglib.Semantics.Dynamic.DRS.Based
 import Linglib.Semantics.Dynamic.Ty2
+import Mathlib.Data.Fin.VecNotation
 
 /-!
 # Muskens (1996): Combining Montague Semantics and Discourse Representation
@@ -321,5 +323,87 @@ theorem cdrt_eq_dref_eq_diagonal {E : Type*} (i j : Nat) :
   ext g; simp only [eq', dref, diagonal]
 
 end CylindricAlgebra
+
+/-! ### fn. 4: the equivalence is a fact about total assignments
+
+[muskens-1996]'s fn. 4 scopes the SEM ≡ verification equivalence
+(`DRS.toRel_iff_realize`) to total assignments, contrasting them with
+[kamp-reyle-1993]'s partial embeddings, where re-declared referents keep
+their values. A DRS that re-declares a referent separates the two: on
+`[ | [x | man x] ⇒ [x | mortal x]]` the agree-off-universe semantics may
+reassign the re-declared `x`, so it only demands that some mortal exist,
+while the persistence rendering (`DRS.toRelAt`, `DRS/Based.lean`) forces
+every man to be mortal. In a model with a non-mortal man the two truth
+values differ (`fn4_diverges`) — the witness is proper (`fn4_isProper`), so
+what fails is exactly reuse-freeness (`fn4_not_reuseFreeAt`), the hypothesis
+of the reconciliation `DRS.trueRel_iff_toRelAt`. -/
+
+section Fn4
+
+open FirstOrder FirstOrder.Language DRT
+
+/-- Relation symbols of the fn. 4 witness: `man` and `mortal`. -/
+inductive Fn4Rel : ℕ → Type
+  | man : Fn4Rel 1
+  | mortal : Fn4Rel 1
+
+/-- The language of the fn. 4 witness (no function symbols). -/
+def fn4Lang : Language := ⟨fun _ => Empty, Fn4Rel⟩
+
+/-- The antecedent `[x | man x]`. -/
+def fn4Ante : DRS fn4Lang ℕ := .mk {0} [.rel .man (![0])]
+
+/-- The consequent `[x | mortal x]` — re-declaring `x`. -/
+def fn4Cons : DRS fn4Lang ℕ := .mk {0} [.rel .mortal (![0])]
+
+/-- `[ | [x | man x] ⇒ [x | mortal x]]` with the referent `0` re-declared in
+the consequent. -/
+def fn4 : DRS fn4Lang ℕ := .mk ∅ [.imp fn4Ante fn4Cons]
+
+/-- A man (`0`) who is not mortal, and a mortal (`1`). -/
+instance : fn4Lang.Structure (Fin 2) where
+  funMap {_} f _ := f.elim
+  RelMap {n} R := match n, R with
+    | 1, .man => fun args => args 0 = 0
+    | 1, .mortal => fun args => args 0 = 1
+
+/-- The witness is proper: its referential presuppositions are satisfied. -/
+theorem fn4_isProper : fn4.IsProper := by
+  simp [DRS.IsProper, fn4, fn4Ante, fn4Cons]
+
+/-- The witness is not reuse-free: the consequent re-declares `0`. -/
+theorem fn4_not_reuseFreeAt : ¬ DRS.ReuseFreeAt ∅ fn4 := by
+  simp [fn4, fn4Ante, fn4Cons]
+
+/-- Flat truth: every input verifies the witness — the re-declared referent
+may be reassigned, so it suffices that some mortal exist. -/
+theorem fn4_trueRel (g : ℕ → Fin 2) : DRS.trueRel fn4 g := by
+  refine ⟨g, fun x _ => rfl, ?_, trivial⟩
+  rw [Condition.holds_imp]
+  intro g₁ _
+  refine ⟨Function.update g₁ 0 1,
+    fun x hx => by rw [Function.update_apply, if_neg (by simpa [fn4Cons] using hx)], ?_, trivial⟩
+  show Function.update g₁ 0 1 0 = 1
+  simp
+
+/-- Based falsity: persistence keeps the re-declared referent's man value, so
+no output verifies the witness in a model with a non-mortal man. -/
+theorem fn4_not_toRelAt (g : ℕ → Fin 2) : ¬ ∃ g', DRS.toRelAt ∅ fn4 g g' := by
+  rintro ⟨g', hg'⟩
+  have himp : Condition.holdsAt (∅ ∪ ∅) (.imp fn4Ante fn4Cons) g' := hg'.2.1
+  have hman : DRS.toRelAt (∅ ∪ ∅) fn4Ante g' (fun _ => 0) :=
+    ⟨fun x hx => absurd hx (by simp), rfl, trivial⟩
+  obtain ⟨g₂, heq, hmortal, -⟩ := himp _ hman
+  have h0 : g₂ 0 = 0 := heq (by simp [fn4Ante])
+  have h1 : g₂ 0 = 1 := hmortal
+  exact absurd (h0.symm.trans h1) (by decide)
+
+/-- The reconciliation `DRS.trueRel_iff_toRelAt` fails on the witness:
+flat-true, based-false. -/
+theorem fn4_diverges (g : ℕ → Fin 2) :
+    ¬ (DRS.trueRel fn4 g ↔ ∃ g', DRS.toRelAt ∅ fn4 g g') :=
+  fun h => fn4_not_toRelAt g (h.mp (fn4_trueRel g))
+
+end Fn4
 
 end Muskens1996
