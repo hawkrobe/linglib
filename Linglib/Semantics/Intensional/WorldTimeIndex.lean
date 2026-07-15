@@ -1,4 +1,4 @@
-import Mathlib.Tactic.TypeStar
+import Linglib.Semantics.Dynamic.Possibility
 
 /-!
 # World–Time Indices
@@ -29,5 +29,14 @@ structure WorldTimeIndex (W Time : Type*) where
   /-- The temporal coordinate -/
   time : Time
   deriving Repr
+
+/-- The point of index-dref dynamic semantics (`Tense/Dynamic.lean`,
+`Mood/Dynamic.lean`): a `Possibility` whose world coordinate is the
+current evaluation index and whose `ℕ`-registered drefs are also
+world-time indices. Contexts are plain level-0 states
+(`Set (WorldTimeIndex.Possibility W Time)`), so the update spine of
+`Semantics/Dynamic/Update.lean` applies directly. -/
+abbrev WorldTimeIndex.Possibility (W Time : Type*) :=
+  DynamicSemantics.Possibility (WorldTimeIndex W Time) ℕ (WorldTimeIndex W Time)
 
 end Intensional
