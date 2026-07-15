@@ -129,6 +129,12 @@ the algebraic core of anaphoric-island facts. -/
 theorem eq_of_test {C : Condition S} {i j : S} (h : test C i j) : i = j :=
   h.1
 
+/-- An update is a *test* when it never changes the state
+([groenendijk-stokhof-1991], Definition 11). -/
+def IsTest (D : Update S) : Prop := ∀ ⦃i j⦄, D i j → i = j
+
+theorem isTest_test (C : Condition S) : IsTest (test C) := fun _ _ h => h.1
+
 /-- Dynamic conjunction (sequencing): `D₁ ; D₂`.
 
 Mathlib's relational composition `Relation.Comp` at endorelations: there
@@ -182,6 +188,52 @@ def entails (D₁ D₂ : Update S) : Prop :=
   ∀ i j, D₁ i j → closure D₂ j
 
 scoped notation D₁ " ⊨ " D₂ => entails D₁ D₂
+
+/-- A test is the test of its own closure — the semantic content of
+[groenendijk-stokhof-1991]'s Fact 6: up to contradictions, tests are
+exactly the conditions. -/
+theorem IsTest.eq_test_closure {D : Update S} (h : IsTest D) :
+    D = test (closure D) := by
+  funext i j
+  simp only [test, closure, eq_iff_iff]
+  constructor
+  · intro hij
+    obtain rfl := h hij
+    exact ⟨rfl, i, hij⟩
+  · rintro ⟨rfl, k, hk⟩
+    obtain rfl := h hk
+    exact hk
+
+/-- s-entailment ([groenendijk-stokhof-1991], Definition 18): truth is
+preserved from premiss to conclusion. Unlike `⊨`, it sees no binding
+between them. -/
+def sEntails (D₁ D₂ : Update S) : Prop :=
+  ∀ i, closure D₁ i → closure D₂ i
+
+scoped notation D₁ " ⊨ₛ " D₂ => sEntails D₁ D₂
+
+/-- Meaning inclusion implies s-entailment ([groenendijk-stokhof-1991],
+Fact 10); the converse fails. -/
+theorem sEntails_of_subset {D₁ D₂ : Update S}
+    (h : ∀ ⦃i j⦄, D₁ i j → D₂ i j) : D₁ ⊨ₛ D₂ :=
+  fun _ ⟨j, hj⟩ => ⟨j, h hj⟩
+
+/-- The deduction theorem ([groenendijk-stokhof-1991], Fact 11):
+entailment is validity of the implication test. -/
+theorem entails_iff_valid_test_dimpl (D₁ D₂ : Update S) :
+    (D₁ ⊨ D₂) ↔ valid (test (dimpl D₁ D₂)) := by
+  constructor
+  · intro h i
+    exact ⟨i, rfl, h i⟩
+  · rintro h i j hij
+    obtain ⟨k, rfl, hd⟩ := h i
+    exact hd j hij
+
+/-- [groenendijk-stokhof-1991]'s Fact 12, in closure form: s-entailment
+is entailment from the closed premiss. -/
+theorem sEntails_iff_test_closure_entails (D₁ D₂ : Update S) :
+    (D₁ ⊨ₛ D₂) ↔ (test (closure D₁) ⊨ D₂) :=
+  ⟨fun h _ j ⟨_, hc⟩ => h j hc, fun h i hc => h i i ⟨rfl, hc⟩⟩
 
 end Truth
 

@@ -111,21 +111,25 @@ force output = input, so no binding escapes them. This accounts for
 `Heim1982.Examples.universal_blocks`, `standard_negation_blocks`, and
 `conditional_antecedent`. -/
 
+open DynamicSemantics.DynProp (IsTest) in
 /-- Negation is a test. -/
-theorem neg_isTest (φ : DPLRel E) (g h : ℕ → E)
-    (hn : DPLRel.neg φ g h) : g = h := hn.1
+theorem neg_isTest (φ : DPLRel E) : IsTest (toDRS (DPLRel.neg φ)) :=
+  fun _ _ hn => hn.1
 
+open DynamicSemantics.DynProp (IsTest) in
 /-- Implication is a test: antecedent bindings do not escape. -/
-theorem impl_isTest (φ ψ : DPLRel E) (g h : ℕ → E)
-    (hi : DPLRel.impl φ ψ g h) : g = h := hi.1
+theorem impl_isTest (φ ψ : DPLRel E) : IsTest (toDRS (DPLRel.impl φ ψ)) :=
+  fun _ _ hi => hi.1
 
+open DynamicSemantics.DynProp (IsTest) in
 /-- Disjunction is a test: no anaphora across or out of disjuncts. -/
-theorem disj_isTest (φ ψ : DPLRel E) (g h : ℕ → E)
-    (hd : DPLRel.disj φ ψ g h) : g = h := hd.1
+theorem disj_isTest (φ ψ : DPLRel E) : IsTest (toDRS (DPLRel.disj φ ψ)) :=
+  fun _ _ hd => hd.1
 
+open DynamicSemantics.DynProp (IsTest) in
 /-- The universal quantifier is a test: it introduces no referents. -/
-theorem forall_isTest (x : ℕ) (φ : DPLRel E) (g h : ℕ → E)
-    (hfa : DPLRel.forall_ x φ g h) : g = h := hfa.1
+theorem forall_isTest (x : ℕ) (φ : DPLRel E) : IsTest (toDRS (DPLRel.forall_ x φ)) :=
+  fun _ _ hfa => hfa.1
 
 /-! ### Logical facts (§3.4) -/
 
@@ -255,6 +259,120 @@ theorem forall_interdefinable (x : ℕ) (φ : DPLRel E) :
     exact hneg (hall d)
   · rintro ⟨rfl, hneg⟩
     refine ⟨rfl, fun d => by_contra fun hne => hneg ⟨_, d, rfl, hne⟩⟩
+
+/-! ### Equivalence notions and conditions (§3.2, §3.4) -/
+
+section Metatheory
+
+open DynamicSemantics.DynProp
+
+/-- s-equivalence (Definition 7) at a fixed model: same satisfaction
+set. The paper quantifies over models; `DPLRel` fixes one. -/
+def sEquiv (φ ψ : DPLRel E) : Prop :=
+  φ.satisfactionSet = ψ.satisfactionSet
+
+/-- p-equivalence (Definition 10): same production set. -/
+def pEquiv (φ ψ : DPLRel E) : Prop :=
+  φ.productionSet = ψ.productionSet
+
+/-- Facts 1–2: equivalence implies s-equivalence and p-equivalence. -/
+theorem sEquiv_of_eq {φ ψ : DPLRel E} (h : φ = ψ) : sEquiv φ ψ := h ▸ rfl
+
+theorem pEquiv_of_eq {φ ψ : DPLRel E} (h : φ = ψ) : pEquiv φ ψ := h ▸ rfl
+
+/-- Fact 3: joint s- and p-equivalence does not imply equivalence — the
+trivial test and the total relation agree on both sets. -/
+theorem sEquiv_pEquiv_ne [Nontrivial E] :
+    ∃ φ ψ : DPLRel E, sEquiv φ ψ ∧ pEquiv φ ψ ∧ φ ≠ ψ := by
+  obtain ⟨e₁, e₂, hne⟩ := exists_pair_ne E
+  refine ⟨DPLRel.atom (fun _ => True), fun _ _ => True, ?_, ?_, fun heq => ?_⟩
+  · ext g
+    simp [DPLRel.satisfactionSet, DPLRel.atom]
+  · ext h
+    simp [DPLRel.productionSet, DPLRel.atom]
+  · have h2 : DPLRel.atom (fun _ => True) (fun _ => e₁) (fun _ => e₂) := by
+      rw [heq]; trivial
+    exact hne (congr_fun h2.1 0)
+
+/-- Definition 12's semantic core, clause 2: a conjunction of tests is a
+test. With the static constants (`neg_isTest`, ..., Fact 5) this closes
+the conditions under the semantics. -/
+theorem conj_isTest {φ ψ : DPLRel E} (hφ : IsTest (toDRS φ))
+    (hψ : IsTest (toDRS ψ)) : IsTest (toDRS (DPLRel.conj φ ψ)) :=
+  fun _ _ ⟨_, h1, h2⟩ => (hφ h1).trans (hψ h2)
+
+/-- Fact 4: for tests, s-equivalence coincides with equivalence — a test
+is determined by its truth conditions (`IsTest.eq_test_closure`, the
+semantic form of Fact 6). -/
+theorem sEquiv_iff_eq_of_isTest {φ ψ : DPLRel E}
+    (hφ : IsTest (toDRS φ)) (hψ : IsTest (toDRS ψ)) :
+    sEquiv φ ψ ↔ φ = ψ := by
+  refine ⟨fun h => ?_, sEquiv_of_eq⟩
+  have hc : closure (toDRS φ) = closure (toDRS ψ) :=
+    funext fun g => congrArg (fun s => g ∈ s) h
+  have h1 := hφ.eq_test_closure
+  rw [hc] at h1
+  exact h1.trans hψ.eq_test_closure.symm
+
+/-! ### Entailment (§3.5)
+
+Dynamic entailment (Definition 20) is the generic
+`DynamicSemantics.DynProp.entails`; s-entailment (Definition 18) is
+`sEntails`, and meaning inclusion implies it (`sEntails_of_subset`,
+Fact 10). Facts 13–16 — the restricted reflexivity and transitivity
+laws — carry syntactic `AQV/FV` side conditions and await the syntax
+stratum. -/
+
+/-- The deduction theorem (Fact 11): `φ ⊨ ψ` iff `⊨ φ → ψ` — DPL
+implication is the test of dynamic implication, so this is the generic
+deduction theorem read through the Ty2 embedding. -/
+theorem deduction (φ ψ : DPLRel E) :
+    (toDRS φ ⊨ toDRS ψ) ↔ valid (toDRS (DPLRel.impl φ ψ)) := by
+  rw [impl_eq_test_dimpl]
+  exact entails_iff_valid_test_dimpl (toDRS φ) (toDRS ψ)
+
+/-- Fact 12: s-entailment is dynamic entailment from the closed premiss
+`♦φ`. -/
+theorem sEntails_iff_close_entails (φ ψ : DPLRel E) :
+    (toDRS φ ⊨ₛ toDRS ψ) ↔ (toDRS (DPLRel.close φ) ⊨ toDRS ψ) := by
+  rw [close_eq_test_closure]
+  exact sEntails_iff_test_closure_entails (toDRS φ) (toDRS ψ)
+
+/-- The flagship dynamic entailment (§3.5): `∃xPx ⊨ Px` — the premiss's
+output binds the conclusion's free variable ("A man came in. So, he wore
+a hat."). Not an s-entailment. -/
+theorem exists_atom_entails_atom (x : ℕ) (p : E → Prop) :
+    toDRS (DPLRel.exists_ x (DPLRel.atom fun g => p (g x)))
+      ⊨ toDRS (DPLRel.atom fun g => p (g x)) := by
+  rintro g h ⟨d, rfl, hp⟩
+  exact ⟨_, rfl, hp⟩
+
+/-- Conversely `Px ⊨ ∃xPx` — so the pair entail each other, yet are not
+equivalent (the atom is a test, the existential is not): mutual dynamic
+entailment is weaker than equivalence (§3.5). -/
+theorem atom_entails_exists (x : ℕ) (p : E → Prop) :
+    toDRS (DPLRel.atom fun g => p (g x))
+      ⊨ toDRS (DPLRel.exists_ x (DPLRel.atom fun g => p (g x))) := by
+  rintro g h ⟨rfl, hp⟩
+  exact ⟨_, g x, rfl, by simpa using hp⟩
+
+/-- Dynamic entailment is not reflexive (§3.5): `Px ∧ ∃xQx` does not
+entail itself — its outputs forget that the input satisfied `Px`. The
+restricted law (Fact 15) needs `AQV(φ) ∩ FV(φ) = ∅`. -/
+theorem entails_not_refl [Nontrivial E] :
+    ∃ φ : DPLRel E, ¬(toDRS φ ⊨ toDRS φ) := by
+  obtain ⟨e₁, e₂, hne⟩ := exists_pair_ne E
+  refine ⟨DPLRel.conj (DPLRel.atom fun g => g 0 = e₁)
+    (DPLRel.exists_ 0 (DPLRel.atom fun _ => True)), fun h => ?_⟩
+  have hstep : (DPLRel.conj (DPLRel.atom fun g => g 0 = e₁)
+      (DPLRel.exists_ 0 (DPLRel.atom fun _ => True)))
+      (fun _ => e₁) (fun n => if n = 0 then e₂ else e₁) :=
+    ⟨fun _ => e₁, ⟨rfl, rfl⟩, e₂, rfl, trivial⟩
+  obtain ⟨k, m, ⟨-, h0⟩, -⟩ := h _ _ hstep
+  simp only [reduceIte] at h0
+  exact hne h0.symm
+
+end Metatheory
 
 /-! ### Satisfaction sets and PL (§3.6) -/
 
