@@ -88,11 +88,11 @@ theorem comp_assoc (u : Transition W M X Y) (v : Transition W M Y Z)
 section Apply
 variable [DecidableEq V]
 
-/-- Forget the bases: the level-0 relation on world–assignment pairs (the
-world is preserved). -/
+/-- Forget the bases: the level-0 relation on possibilities (the world is
+preserved). -/
 def toUpdate (u : Transition W M X Y) :
-    Core.DynProp.Update (W × (V → M)) :=
-  fun p q => p.1 = q.1 ∧ u.rel p.1 p.2 q.2
+    Core.DynProp.Update (Possibility W V M) :=
+  fun p q => p.world = q.world ∧ u.rel p.world p.assignment q.assignment
 
 /-- Context change ([kamp-vangenabith-reyle-2011], Def. 24): the carrier is
 the level-0 `lift` of the forgotten relation; the base grows to
@@ -100,21 +100,22 @@ the level-0 `lift` of the forgotten relation; the base grows to
 def apply (u : Transition W M X Y) (I : State W V M) : State W V M where
   base := I.base ∪ Y
   carrier := lift u.toUpdate I.carrier
-  supported := by
-    intro w g g' hgg'
-    exact exists_congr fun p => and_congr_right fun _ => and_congr_right fun _ =>
+  supported := baseSupported_of_iff fun _ _ _ hgg' =>
+    exists_congr fun _ => and_congr_right fun _ => and_congr_right fun _ =>
       u.supported_right (hgg'.mono (by simp))
 
 @[simp] theorem apply_base (u : Transition W M X Y) (I : State W V M) :
     (u.apply I).base = I.base ∪ Y := rfl
 
 theorem mem_apply {u : Transition W M X Y} {I : State W V M} {w : W}
-    {g : V → M} : (w, g) ∈ u.apply I ↔ ∃ f, (w, f) ∈ I ∧ u.rel w f g := by
+    {g : V → M} :
+    (⟨w, g⟩ : Possibility W V M) ∈ u.apply I ↔
+      ∃ f, (⟨w, f⟩ : Possibility W V M) ∈ I ∧ u.rel w f g := by
   constructor
   · rintro ⟨⟨w', f⟩, hf, rfl, hr⟩
     exact ⟨f, hf, hr⟩
   · rintro ⟨f, hf, hr⟩
-    exact ⟨(w, f), hf, rfl, hr⟩
+    exact ⟨⟨w, f⟩, hf, rfl, hr⟩
 
 /-- Applying the identity transition is the identity, at the identity. -/
 @[simp] theorem apply_id (I : State W V M) (h : I.base = X) :
@@ -123,7 +124,7 @@ theorem mem_apply {u : Transition W M X Y} {I : State W V M} {w : W}
   · simp [h]
   · ext ⟨w, g⟩
     rw [State.mem_carrier, mem_apply]
-    exact ⟨fun ⟨f, hf, hfg⟩ => (I.supported (h ▸ hfg)).mp hf,
+    exact ⟨fun ⟨f, hf, hfg⟩ => (I.supported.mem_iff (h ▸ hfg)).mp hf,
       fun hg => ⟨g, hg, Set.eqOn_refl g _⟩⟩
 
 /-- `apply` is functorial: sequencing then applying is applying twice. -/
@@ -166,7 +167,7 @@ theorem le_apply [DecidableEq V] (u : Transition W M X Y) (hu : u.IsExtension)
   refine ⟨hbase ▸ Finset.subset_union_left, ?_⟩
   rintro ⟨w, g⟩ hg
   obtain ⟨f, hf, hr⟩ := mem_apply.mp hg
-  exact (I.supported ((hu hr).symm.mono (by rw [hbase]))).mp hf
+  exact (I.supported.mem_iff ((hu hr).symm.mono (by rw [hbase]))).mp hf
 
 end Transition
 
