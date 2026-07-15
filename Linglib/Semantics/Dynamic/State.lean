@@ -195,24 +195,21 @@ end Merge
 
 /-- The proposition a state determines ([kamp-vangenabith-reyle-2011],
 Def. 23(v)): the worlds compatible with some assignment. -/
-def prop (I : State W V M) : Set W := Possibility.world '' I.carrier
+def prop (I : State W V M) : Set W := {w | ∃ f, (⟨w, f⟩ : Possibility W V M) ∈ I}
 
-theorem mem_prop {I : State W V M} {w : W} :
-    w ∈ I.prop ↔ ∃ f, (⟨w, f⟩ : Possibility W V M) ∈ I := by
-  constructor
-  · rintro ⟨⟨w', f⟩, hp, rfl⟩
-    exact ⟨f, hp⟩
-  · rintro ⟨f, hf⟩
-    exact ⟨⟨w, f⟩, hf, rfl⟩
+@[simp] theorem mem_prop {I : State W V M} {w : W} :
+    w ∈ I.prop ↔ ∃ f, (⟨w, f⟩ : Possibility W V M) ∈ I := Iff.rfl
+
+theorem prop_eq_image (I : State W V M) : I.prop = Possibility.world '' I.carrier :=
+  Set.ext fun _ => ⟨fun ⟨f, hf⟩ => ⟨⟨_, f⟩, hf, rfl⟩, fun ⟨⟨_, f⟩, hp, hw⟩ => ⟨f, hw ▸ hp⟩⟩
 
 /-- Stronger states determine stronger propositions. -/
 theorem prop_anti : Antitone (prop : State W V M → Set W) :=
-  fun _ _ h => Set.image_mono h.2
+  fun _ _ h _ ⟨f, hf⟩ => ⟨f, h.2 hf⟩
 
 @[simp] theorem prop_bot [Nonempty M] : (⊥ : State W V M).prop = Set.univ := by
   ext w
-  exact ⟨fun _ => trivial,
-    fun _ => ⟨⟨w, fun _ => Classical.arbitrary M⟩, trivial, rfl⟩⟩
+  exact ⟨fun _ => trivial, fun _ => ⟨fun _ => Classical.arbitrary M, trivial⟩⟩
 
 /-! ### Restriction to a smaller base -/
 
