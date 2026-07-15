@@ -143,6 +143,30 @@ theorem apply_comp (u : Transition W M X Y) (v : Transition W M Y Z)
 
 end Apply
 
+/-! ### Repackaging along base equalities
+
+The substrate-safe form of `eqToHom` conjugation (mathlib's `Filter.copy`
+pattern): composites whose indices differ by `Finset` identities — e.g.
+`(X ∪ U₁) ∪ U₂` against `X ∪ (U₁ ∪ U₂)` — are equated through `copy`, keeping
+cast-free statements everywhere below the category layer. -/
+
+/-- Repackage a transition along equalities of its bases. -/
+def copy (u : Transition W M X Y) {X' Y' : Finset V} (hX : X = X') (hY : Y = Y') :
+    Transition W M X' Y' :=
+  hX ▸ hY ▸ u
+
+@[simp] theorem rel_copy (u : Transition W M X Y) {X' Y' : Finset V}
+    (hX : X = X') (hY : Y = Y') : (u.copy hX hY).rel = u.rel := by
+  subst hX hY; rfl
+
+@[simp] theorem copy_rfl (u : Transition W M X Y) : u.copy rfl rfl = u := rfl
+
+/-- Application is invariant under repackaging. -/
+@[simp] theorem apply_copy [DecidableEq V] (u : Transition W M X Y)
+    {X' Y' : Finset V} (hX : X = X') (hY : Y = Y') (I : State W V M) :
+    (u.copy hX hY).apply I = u.apply I := by
+  subst hX hY; rfl
+
 /-! ### Information growth (Def. 27) -/
 
 /-- A transition is an *extension* when outputs agree with inputs on the source
