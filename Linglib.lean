@@ -1630,7 +1630,7 @@ import Linglib.Semantics.Degree.MeasurePhrase
 import Linglib.Semantics.Degree.Noun
 import Linglib.Semantics.Degree.Predicate
 import Linglib.Semantics.Degree.Quantifier
-import Linglib.Semantics.Dynamic.Accessibility
+import Linglib.Semantics.Dynamic.Lookup
 import Linglib.Semantics.Dynamic.Bilateral
 import Linglib.Semantics.Dynamic.CDRT
 import Linglib.Semantics.Dynamic.ContextChange

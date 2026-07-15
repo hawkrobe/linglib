@@ -1,6 +1,7 @@
 import Linglib.Semantics.Dynamic.DPL
 import Linglib.Semantics.Dynamic.ContextChange
-import Linglib.Semantics.Dynamic.Accessibility
+import Linglib.Semantics.Dynamic.Lookup
+import Linglib.Semantics.Dynamic.ICDRT.Defs
 import Linglib.Core.Logic.CylindricAlgebra
 
 /-!
@@ -378,15 +379,13 @@ theorem supportCollapse_singletonLift {W E : Type} [Inhabited E]
 -- ════════════════════════════════════════════════════════════════
 
 /-! Charlow's `State W E = Set (W × Assignment E)` deliberately carries
-**no propositional-dref structure**: Charlow does not instantiate
-`HasPropDrefs`, so the bathroom-sentence theorem
-`Semantics.Dynamic.Context.counterfactual_blocks_veridical` (which needs
-only `[HasPropDrefs Ctx P W]`) does not apply here. The same
-anaphora-under-negation phenomenon ("There isn't a bathroom. #It is
-upstairs.") is handled by **alternative-set filtering** — a negative
-antecedent yields an empty alternative set, which by the empty-set
-falsifier makes downstream lookup empty. The divergence is a genuine
-typeclass-instance gap, not papered over by a phony `pLookup`. -/
+**no propositional-dref structure**, so the bathroom-sentence blocking
+theorem (`counterfactual_blocks_veridical`, `ICDRT/Basic.lean`) — whose
+every hypothesis is about propositional drefs — has no analogue here.
+The same anaphora-under-negation phenomenon ("There isn't a bathroom.
+#It is upstairs.") is handled by **alternative-set filtering** — a
+negative antecedent yields an empty alternative set, which by the
+empty-set falsifier makes downstream lookup empty. -/
 
 -- ════════════════════════════════════════════════════════════════
 -- § Cylindric algebra bridges

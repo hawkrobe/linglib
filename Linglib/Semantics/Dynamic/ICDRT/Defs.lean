@@ -74,7 +74,7 @@ instance [Inhabited E] : Inhabited (Entity E) where
 /-- `Entity` is a functor: `f <$> .some e = .some (f e)` and `f <$> .star = .star` —
 `Option`'s functor structure under the renaming `some ↔ Entity.some`,
 `none ↔ Entity.star`. Used by the effect-functor-parameterized lookup
-interface in `Semantics/Dynamic/Accessibility.lean`. -/
+interface in `Semantics/Dynamic/Lookup.lean`. -/
 instance : Functor Entity where
   map f
     | .some e => .some (f e)
