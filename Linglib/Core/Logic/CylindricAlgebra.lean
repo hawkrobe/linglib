@@ -23,20 +23,19 @@ algebraic source.
 
 ## Connections across the library
 
-### Proved bridges (`Core/Logic/CylindricAlgebra/`)
+### Proved bridges
 
-The bridge modules in `Core/Logic/CylindricAlgebra/` prove algebraic identities
-(not analogies) between framework-specific operations and cylindric ops.
+Paper-anchored study files prove algebraic identities (not analogies) between
+framework-specific operations and cylindric ops.
 
 | Framework | Operation | = Cylindric | Bridge |
 |---|---|---|---|
-| CDRT ([muskens-1996]) | `closure (new n ;; φ)` | `cylindrify n (closure φ)` | `DynamicSemantics.lean` |
-| CDRT | `eq' (dref n) (dref m)` | `diagonal n m` | `DynamicSemantics.lean` |
-| Charlow ([charlow-2019]) | `staticExists x body` | `cylindrify x body` | `DynamicSemantics.lean` |
-| Charlow | `dynamicExists x body` | `cylindrify x body` | `DynamicSemantics.lean` |
-| Update/Accessibility | `closure (introReg n ;; D)` | `cylindrify n (closure D)` | `Accessibility.lean` |
-| DPL ([groenendijk-stokhof-1991]) | `closure (DPLRel.exists_ x φ)` | `cylindrify x (closure φ)` | `DynamicSemantics.lean` |
-| DPL | `closure (atom (g(x) = g(y)))` | `diagonal x y` | `DynamicSemantics.lean` |
+| CDRT ([muskens-1996]) | `closure (new n ;; φ)` | `cylindrify n (closure φ)` | `Studies/Muskens1996.lean` |
+| CDRT | `eq' (dref n) (dref m)` | `diagonal n m` | `Studies/Muskens1996.lean` |
+| Charlow ([charlow-2019]) | `staticExists x body` | `cylindrify x body` | `Studies/Charlow2019.lean` |
+| Charlow | `dynamicExists x body` | `cylindrify x body` | `Studies/Charlow2019.lean` |
+| DPL ([groenendijk-stokhof-1991]) | `closure (DPLRel.exists_ x φ)` | `cylindrify x (closure φ)` | `Studies/GroenendijkStokhof1991.lean` |
+| DPL | `closure (atom (g(x) = g(y)))` | `diagonal x y` | `Studies/GroenendijkStokhof1991.lean` |
 
 ### Unproved connections (same algebra, bridges not yet formalized)
 

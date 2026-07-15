@@ -6,11 +6,18 @@ import Mathlib.ModelTheory.Semantics
 [kamp-reyle-1993]
 
 DRS truth via *verifying embeddings* into a mathlib `FirstOrder.Language.Structure`
-— exactly Kamp & Reyle's Def. 1.4.4–1.4.5. An embedding is an assignment
-`v : V → M` of discourse referents to the model domain; the discourse referents
-introduced by a sub-DRS are existentially (re)assigned when that sub-DRS is
-entered, which is what `(∀ x ∉ K.referents, v' x = v x)` expresses (`v'` extends
-`v` on `K`'s universe).
+— Kamp & Reyle's Def. 1.4.4–1.4.5 in the *total-assignment* rendering. An
+embedding is an assignment `v : V → M` of discourse referents to the model
+domain; the discourse referents introduced by a sub-DRS are existentially
+(re)assigned when that sub-DRS is entered, which is what
+`(∀ x ∉ K.referents, v' x = v x)` expresses (`v'` extends `v` on `K`'s universe).
+
+**Deviation** ([muskens-1996], fn. 4): K&R's embeddings are *partial* functions
+that sub-DRSs strictly *extend*, so a re-declared referent keeps its value; here
+embeddings are total and a re-declared referent is freely reassigned. The two
+agree on DRSs that declare each referent once — the construction algorithm never
+re-declares — but diverge on re-declaration: `[ | [x | man x] ⇒ [x | mortal x]]`
+says "every man is mortal" for K&R, "if there is a man there is a mortal" here.
 
 ## Main declarations
 
@@ -32,11 +39,13 @@ mutual
 holds under the assignment `v`. -/
 def DRS.Realize (v : V → M) : DRS L V → Prop
   | .mk _ conds => Condition.RealizeAll v conds
-/-- `v` verifies a condition (Def. 1.4.4(ii)). A sub-DRS `K` is entered by
-existentially (re)assigning the referents of its universe (`v'` agrees with `v`
-off `K.referents`). For `imp`, the consequent witness `v''` extends the
-*antecedent* assignment `v'` (not the host `v`): antecedent referents are visible
-in the consequent — the `⇒` accessibility asymmetry. -/
+/-- `v` verifies a condition — Def. 1.4.4(ii) for the atomic and `¬` clauses;
+the `⇒`/`∨` clauses are K&R's Chapter 2 conditional and disjunction semantics.
+A sub-DRS `K` is entered by existentially (re)assigning the referents of its
+universe (`v'` agrees with `v` off `K.referents`). For `imp`, the consequent
+witness `v''` extends the *antecedent* assignment `v'` (not the host `v`):
+antecedent referents are visible in the consequent — the `⇒` accessibility
+asymmetry. -/
 def Condition.Realize (v : V → M) : Condition L V → Prop
   | .rel R args => Structure.RelMap R (fun i => v (args i))
   | .eq a b => v a = v b

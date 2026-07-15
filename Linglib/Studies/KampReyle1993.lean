@@ -1,6 +1,5 @@
 import Linglib.Semantics.Dynamic.DRS.Dynamics
 import Mathlib.Data.Fin.VecNotation
-import Mathlib.Tactic.FinCases
 
 /-!
 # Kamp & Reyle (1993): From Discourse to Logic
@@ -16,10 +15,11 @@ not a local re-implementation.
 1. **Existential persistence**: "A man walked in. He sat down." The indefinite's
    discourse referent persists across sentences — `∃ e, man e ∧ walked-in e ∧
    sat-down e` (`persistence_tc`).
-2. **Donkey anaphora**: "If a farmer owns a donkey, he beats it." The implication
-   clause (K&R Def. 1.4.4) yields the **universal** reading — `∀ farmer-donkey
-   owning pairs, beats` (`donkey_universal_reading`). The antecedent's referents
-   are universally bound and remain accessible in the consequent.
+2. **Donkey anaphora**: "If a farmer owns a donkey, he beats it." The `⇒`
+   verification clause (K&R's Chapter 2 conditional semantics) yields the
+   **universal** reading — `∀ farmer-donkey owning pairs, beats`
+   (`donkey_universal_reading`). The antecedent's referents are universally
+   bound and remain accessible in the consequent.
 3. **Negation blocks anaphora**: "A man didn't walk in. *He…" — a referent
    introduced under negation is inaccessible (`negation_tc`).
 4. **Subordination/accessibility** (Def. 1.4.10/1.4.11): the antecedent and
@@ -57,6 +57,22 @@ variable {M : Type*} [krLang.Structure M]
 `L`). Lets truth-conditions read as `rm .farmer ![e]`. -/
 abbrev rm {n} (R : krLang.Relations n) (x : Fin n → M) : Prop := Structure.RelMap R x
 
+/-- Reindex a composed vector argument componentwise: with `comp_vecEmpty`, folds
+`fun i => v (![k₁, …] i)` to `![v k₁, …]`, so truth-condition proofs work with the
+atoms' assigned values directly. Point-ful because `Condition.holds_rel` produces
+the eta-expanded form, which the point-free mathlib lemmas (`Fin.comp_cons`,
+`FinVec.map_eq`) do not match. -/
+private theorem comp_vecCons {α β : Type*} (v : α → β) (k : α) {n : ℕ} (t : Fin n → α) :
+    (fun i => v (Matrix.vecCons k t i)) = Matrix.vecCons (v k) (fun i => v (t i)) := by
+  funext i
+  cases i using Fin.cases <;> rfl
+
+/-- Base case of `comp_vecCons`. -/
+private theorem comp_vecEmpty {α β : Type*} (v : α → β) :
+    (fun i => v (Matrix.vecEmpty i)) = (![] : Fin 0 → β) := by
+  funext i
+  exact i.elim0
+
 /-! ### Existential persistence -/
 
 /-- "A¹ man walked in. He₁ sat down." — `[u₁ | man u₁, walked-in u₁, sat-down u₁]`. -/
@@ -67,8 +83,8 @@ def persistence : DRS krLang ℕ :=
 that is a man, walked in, and sat down. -/
 theorem persistence_tc (a : ℕ → M) :
     DRS.trueRel persistence a ↔ ∃ e : M, rm .man ![e] ∧ rm .walkedIn ![e] ∧ rm .satDown ![e] := by
-  simp only [DRS.trueRel, persistence, DRS.toRel, Condition.holdsAll, Condition.holds, vecArg₁,
-    and_true]
+  simp only [DRS.trueRel_iff, persistence, DRS.toRel_mk, Condition.holdsAll_cons,
+    Condition.holdsAll_nil, Condition.holds_rel, comp_vecCons, comp_vecEmpty, and_true]
   constructor
   · rintro ⟨a', _, hm, hw, hs⟩; exact ⟨a' 1, hm, hw, hs⟩
   · rintro ⟨e, hm, hw, hs⟩
@@ -88,16 +104,17 @@ def donkeyCons : DRS krLang ℕ := .mk ∅ [.rel .beats (![1, 2])]
 /-- "If a¹ farmer owns a² donkey, he₁ beats it₂." — `[ | donkeyAnte ⇒ donkeyCons]`. -/
 def donkey : DRS krLang ℕ := .mk ∅ [.imp donkeyAnte donkeyCons]
 
-/-- The donkey universal reading: the implication clause (K&R Def. 1.4.4) makes the
-antecedent's existentials universal — every owning farmer-donkey pair satisfies
-`beats`. The empty-universe consequent reuses the antecedent's values (the
-anaphora). -/
+/-- The donkey universal reading: the `⇒` verification clause (K&R's Chapter 2
+conditional semantics) makes the antecedent's existentials universal — every
+owning farmer-donkey pair satisfies `beats`. The empty-universe consequent
+reuses the antecedent's values (the anaphora). -/
 theorem donkey_universal_reading (a : ℕ → M) :
     DRS.trueRel donkey a ↔
     ∀ e₁ e₂ : M, (rm .farmer ![e₁] ∧ rm .donkey ![e₂] ∧ rm .owns ![e₁, e₂]) →
       rm .beats ![e₁, e₂] := by
-  simp only [DRS.trueRel, donkey, donkeyAnte, donkeyCons, DRS.toRel, Condition.holdsAll,
-    Condition.holds, vecArg₁, vecArg₂, and_true]
+  simp only [DRS.trueRel_iff, donkey, donkeyAnte, donkeyCons, DRS.toRel_mk,
+    Condition.holdsAll_cons, Condition.holdsAll_nil, Condition.holds_imp, Condition.holds_rel,
+    comp_vecCons, comp_vecEmpty, and_true]
   constructor
   · rintro ⟨a', _, himp⟩ e₁ e₂ ⟨hf, hd, ho⟩
     set v' := Function.update (Function.update a' 1 e₁) 2 e₂ with hv'
@@ -122,8 +139,9 @@ def negation : DRS krLang ℕ := .mk ∅ [.neg negInner]
 is bound inside the negation and inaccessible to any continuation. -/
 theorem negation_tc (a : ℕ → M) :
     DRS.trueRel negation a ↔ ¬ ∃ e : M, rm .man ![e] ∧ rm .walkedIn ![e] := by
-  simp only [DRS.trueRel, negation, negInner, DRS.toRel, Condition.holdsAll, Condition.holds,
-    vecArg₁, and_true]
+  simp only [DRS.trueRel_iff, negation, negInner, DRS.toRel_mk, Condition.holdsAll_cons,
+    Condition.holdsAll_nil, Condition.holds_neg, Condition.holds_rel, comp_vecCons,
+    comp_vecEmpty, and_true]
   constructor
   · rintro ⟨a', _, hneg⟩ ⟨e, hm, hw⟩
     exact hneg ⟨Function.update a' 1 e, fun x hx => by
