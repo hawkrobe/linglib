@@ -1,5 +1,6 @@
 import Linglib.Semantics.Dynamic.UpdateSemantics.Bilateral
 import Linglib.Semantics.Dynamic.DPL
+import Linglib.Studies.GroenendijkStokhof1991
 import Linglib.Data.Examples.ElliottSudo2025
 
 /-!
@@ -338,7 +339,7 @@ theorem dpl_diverges_on_double_negation [Nontrivial E] :
     Examples.double_negation.judgment = .acceptable ∧
     ∃ (x : Nat) (φ : DPL.DPLRel E),
       DPL.DPLRel.neg (.neg (.exists_ x φ)) ≠ .exists_ x φ :=
-  ⟨rfl, DPL.dpl_dne_fails_anaphora⟩
+  ⟨rfl, GroenendijkStokhof1991.dne_fails_anaphora⟩
 
 /-! ### Bathroom configuration -/
 

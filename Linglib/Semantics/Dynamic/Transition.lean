@@ -161,6 +161,43 @@ theorem apply_comp (u : Transition W M X Y) (v : Transition W M Y Z)
 
 end Apply
 
+/-! ### Random assignment -/
+
+section RandomAssign
+variable [DecidableEq V]
+
+/-- The random-assignment transition ([groenendijk-stokhof-1991]'s random
+reset `k[x]g`, [heim-1982]'s indefinite widening): read the input off `x`,
+leave the output free at `x` — the generating arrow `X ⟶ insert x X` of
+context extension. -/
+def randomAssign (X : Finset V) (x : V) : Transition W M X (insert x X) where
+  rel _ f h := Set.EqOn f h ↑(X.erase x)
+  grow := Finset.subset_insert x X
+  supported_left _ _ _ _ hff' :=
+    have hsub : (↑(X.erase x) : Set V) ⊆ ↑X :=
+      Finset.coe_subset.mpr (Finset.erase_subset ..)
+    ⟨((hff'.mono hsub).symm.trans ·), ((hff'.mono hsub).trans ·)⟩
+  supported_right _ _ _ _ hgg' :=
+    have hsub : (↑(X.erase x) : Set V) ⊆ ↑(insert x X) :=
+      Finset.coe_subset.mpr ((Finset.erase_subset ..).trans (Finset.subset_insert ..))
+    ⟨(·.trans (hgg'.mono hsub)), (·.trans (hgg'.symm.mono hsub))⟩
+
+@[simp] theorem rel_randomAssign {x : V} {w : W} {f h : V → M} :
+    (randomAssign (M := M) X x).rel w f h ↔ Set.EqOn f h ↑(X.erase x) :=
+  Iff.rfl
+
+/-- Applying the random-assignment transition at a state's own base is the
+state-level random assignment of `State.lean`. -/
+theorem randomAssign_apply (I : State W V M) (x : V) :
+    (randomAssign I.base x).apply I = I.randomAssign x := by
+  ext1
+  · exact Finset.union_eq_right.mpr (Finset.subset_insert ..)
+  · ext ⟨w, g⟩
+    rw [State.mem_carrier, mem_apply]
+    exact Iff.rfl
+
+end RandomAssign
+
 /-! ### Repackaging along base equalities
 
 The substrate-safe form of `eqToHom` conjugation (mathlib's `Filter.copy`
