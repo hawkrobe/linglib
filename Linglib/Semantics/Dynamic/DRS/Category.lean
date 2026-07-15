@@ -21,12 +21,16 @@ Merging Lemma (`DRS.transition_merge`).
 
 "Category of contexts" is the field's name for this structure: it is a
 syntactic category in the sense of categorical logic (objects are
-contexts, arrows are syntax), and the diachronic information ordering
-of [visser-vermeulen-1996]'s bracketing approach, in which contexts
-under merge form a category ([muskens-van-benthem-visser-2011]'s
-m-categories). `DRT.Ctx` and `DynamicSemantics.Ctx` are owner-relative
-names: DRT's contexts compose by merging representations, dynamic
-semantics' by relational composition of transitions.
+contexts — declarations of variables, type theory's *bases*, cf.
+[visser-1998] — and arrows are syntax), and the diachronic information
+ordering of [visser-vermeulen-1996]'s bracketing approach, in which
+contexts under merge form a category
+([muskens-van-benthem-visser-2011]'s m-categories). `DRT.Ctx` and
+`DynamicSemantics.Ctx` name the two levels of DRT's architecture, not
+rival theories: DRT's distinctive *representation* level, where contexts
+compose by merging boxes, and the framework-neutral semantic level,
+where they compose transitions relationally — the level other dynamic
+frameworks interpret into as well.
 
 ## Main definitions
 
@@ -37,7 +41,8 @@ semantics' by relational composition of transitions.
 
 ## References
 
-- [visser-vermeulen-1996], [muskens-1996] (the merge algebra)
+- [visser-vermeulen-1996], [visser-1998], [muskens-1996] (the merge
+  algebra and context typing)
 - [kamp-vangenabith-reyle-2011], [kamp-reyle-1993]
 -/
 
