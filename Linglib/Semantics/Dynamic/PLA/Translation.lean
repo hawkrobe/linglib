@@ -1,4 +1,5 @@
-import Linglib.Semantics.Dynamic.InfoState
+import Linglib.Semantics.Dynamic.ContextChange
+import Linglib.Semantics.Dynamic.Possibility
 import Linglib.Core.Logic.Assignment
 
 /-!
@@ -41,15 +42,16 @@ Embed PLA possibility into Core possibility.
 Uses Unit world and combines assignment/witnesses into single assignment.
 Pronouns are offset by a large constant to avoid collision.
 -/
-def PLAPoss.toCore {E : Type*} (p : PLAPoss E) : Possibility Unit ℕ E where
+def PLAPoss.toPossibility {E : Type*} (p : PLAPoss E) : Possibility Unit ℕ E where
   world := ()
   assignment := λ n =>
     if n < 1000 then p.assignment n  -- Variables: indices < 1000
     else p.witnesses (n - 1000)       -- Pronouns: indices ≥ 1000
 
-/-- Lift PLA state to Core state -/
-def PLAInfoState.toCore {E : Type*} (s : PLAInfoState E) : InfoState Unit E :=
-  PLAPoss.toCore '' s
+/-- Lift a PLA state to a set of possibilities. -/
+def PLAInfoState.toPossibilities {E : Type*} (s : PLAInfoState E) :
+    Set (Possibility Unit ℕ E) :=
+  PLAPoss.toPossibility '' s
 
 
 /--
@@ -61,21 +63,21 @@ def Possibility.toPLA {W E : Type*} (p : Possibility W ℕ E) : PLAPoss E where
   assignment := λ n => p.assignment n
   witnesses := λ n => p.assignment (n + 1000)
 
-/-- Project Core state to PLA state -/
-def InfoState.toPLA {W E : Type*} (s : InfoState W E) : PLAInfoState E :=
+/-- Project a set of possibilities to a PLA state. -/
+def PLAInfoState.ofPossibilities {W E : Type*} (s : Set (Possibility W ℕ E)) : PLAInfoState E :=
   Possibility.toPLA '' s
 
 
 /-- PLA → Core → PLA is identity on the relevant components -/
-theorem pla_core_pla_assignment {E : Type*} (p : PLAPoss E) (n : Nat) (h : n < 1000) :
-    p.toCore.toPLA.assignment n = p.assignment n := by
-  simp only [PLAPoss.toCore, Possibility.toPLA]
+theorem toPossibility_toPLA_assignment {E : Type*} (p : PLAPoss E) (n : Nat) (h : n < 1000) :
+    p.toPossibility.toPLA.assignment n = p.assignment n := by
+  simp only [PLAPoss.toPossibility, Possibility.toPLA]
   simp [h]
 
 /-- PLA → Core → PLA preserves witnesses -/
-theorem pla_core_pla_witnesses {E : Type*} (p : PLAPoss E) (n : Nat) :
-    p.toCore.toPLA.witnesses n = p.witnesses n := by
-  simp only [PLAPoss.toCore, Possibility.toPLA]
+theorem toPossibility_toPLA_witnesses {E : Type*} (p : PLAPoss E) (n : Nat) :
+    p.toPossibility.toPLA.witnesses n = p.witnesses n := by
+  simp only [PLAPoss.toPossibility, Possibility.toPLA]
   have h : ¬(n + 1000 < 1000) := by omega
   simp [h]
 
@@ -89,9 +91,9 @@ their Core translations agree on all assignments.
 theorem embedding_preserves_agreement {E : Type*} (p q : PLAPoss E)
     (hv : ∀ n < 1000, p.assignment n = q.assignment n)
     (hw : ∀ n, p.witnesses n = q.witnesses n) :
-    ∀ n, p.toCore.assignment n = q.toCore.assignment n := by
+    ∀ n, p.toPossibility.assignment n = q.toPossibility.assignment n := by
   intro n
-  simp only [PLAPoss.toCore]
+  simp only [PLAPoss.toPossibility]
   by_cases h : n < 1000
   · simp [h, hv n h]
   · simp [h, hw (n - 1000)]
@@ -102,17 +104,15 @@ PLA-style CCP: no world dependency.
 -/
 def PLACCP (E : Type*) := PLAInfoState E → PLAInfoState E
 
-/--
-Lift PLA CCP to Core CCP.
--/
-def PLACCP.toCoreCCP {E : Type*} (φ : PLACCP E) : CCP (Possibility Unit ℕ E) :=
-  λ s => (φ (InfoState.toPLA s)).toCore
+/-- Lift a PLA CCP to a CCP over possibilities. -/
+def PLACCP.toCCP {E : Type*} (φ : PLACCP E) : CCP (Possibility Unit ℕ E) :=
+  λ s => (φ (PLAInfoState.ofPossibilities s)).toPossibilities
 
 /--
 Project Core CCP to PLA CCP (for Unit world).
 -/
 def CCP.toPLACCP {E : Type*} (φ : CCP (Possibility Unit ℕ E)) : PLACCP E :=
-  λ s => InfoState.toPLA (φ s.toCore)
+  λ s => PLAInfoState.ofPossibilities (φ (PLAInfoState.toPossibilities s))
 
 
 /-!

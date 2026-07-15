@@ -1,5 +1,4 @@
 import Linglib.Semantics.Dynamic.PLA.Update
-import Linglib.Semantics.Dynamic.InfoState
 
 /-!
 # Dekker (2012): Predicate Logic with Anaphora vs Bilateral Update Semantics
@@ -150,17 +149,18 @@ theorem bathroom_pla_has_domain :
 with the type
 
 ```
-structure BilateralDen (W E : Type*) where
-  positive : InfoState W E → InfoState W E
-  negative : InfoState W E → InfoState W E
+structure BilateralDen (W V E : Type*) where
+  positive negative :
+    Set (Possibility W V (Option E)) → Set (Possibility W V (Option E))
 ```
 
 and negation as `def neg φ := { positive := φ.negative, negative := φ.positive }`.
 The DNE law `neg (neg φ) = φ` then holds by `rfl`
 (`BilateralDen.neg_neg` in `UpdateSemantics/Bilateral.lean`).
 
-PLA and BUS use different `InfoState` parametrizations, so a single
-file cannot import both side-by-side. The BUS-side facts are stated
+PLA states (assignment-witness pairs) and BUS states (Option-partial
+possibility sets) are different carriers, so a single file cannot state
+both side-by-side. The BUS-side facts are stated
 abstractly here and verified in their home file.
 
 ### Bathroom sentence in BUS

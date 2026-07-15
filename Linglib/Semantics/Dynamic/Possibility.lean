@@ -6,8 +6,8 @@ import Mathlib.Data.Setoid.Basic
 
 A *possibility* is a world paired with an assignment of discourse
 referents — the point type of dynamic semantics. Based information
-states over possibilities live in `State.lean`, the unbased register-form
-states in `InfoState.lean`, and the generic level-0 CCP algebra in
+states over possibilities live in `State.lean`; unbased states are plain
+sets of possibilities, with the generic level-0 CCP algebra in
 `ContextChange.lean`.
 
 ## Main definitions
