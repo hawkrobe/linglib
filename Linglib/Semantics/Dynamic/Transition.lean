@@ -1,5 +1,5 @@
 import Linglib.Semantics.Dynamic.State
-import Linglib.Semantics.Dynamic.ContextChange
+import Linglib.Semantics.Dynamic.Update
 
 /-!
 # Transitions between based information states
@@ -12,7 +12,7 @@ Objects are bases (finite sets of discourse referents); a DRS denotes an
 arrow `X ⟶ X ∪ U`; sequencing is world-pointwise relational composition.
 
 Applying a transition to a `State` (Def. 24) is the level-0 `lift` of
-`ContextChange.lean` at the forgotten relation (`toUpdate`) — level 1 rides
+`Update.lean` at the forgotten relation (`toUpdate`) — level 1 rides
 level 0 by construction. The chapter's regularity conditions (Def. 27)
 become theorems: the base of the output is `I.base ∪ Y` (`apply_base`), and
 applying an extension at its source base only adds information

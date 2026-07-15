@@ -1,4 +1,4 @@
-import Linglib.Semantics.Dynamic.ContextChange
+import Linglib.Semantics.Dynamic.Update
 
 /-!
 # ABLE: A Bit Like English

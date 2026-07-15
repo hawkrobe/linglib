@@ -1,5 +1,5 @@
 import Linglib.Semantics.Dynamic.DPL
-import Linglib.Semantics.Dynamic.ContextChange
+import Linglib.Semantics.Dynamic.Update
 import Linglib.Semantics.Dynamic.Lookup
 import Linglib.Semantics.Dynamic.ICDRT.Defs
 import Linglib.Core.Logic.CylindricAlgebra
