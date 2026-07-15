@@ -194,9 +194,30 @@ theorem Condition.fvL_subset_occL (cs : List (Condition L V)) :
       (Condition.fvL_subset_occL cs)
 end
 
+@[simp] theorem Condition.fvL_append (cs ds : List (Condition L V)) :
+    Condition.fvL (cs ++ ds) = Condition.fvL cs ∪ Condition.fvL ds := by
+  induction cs with
+  | nil => simp
+  | cons c cs ih => simp [ih, Finset.union_assoc]
+
 /-- A DRS is *proper* iff it has no free discourse referent
 ([kamp-reyle-1993], Def. 1.4.2–1.4.3). -/
 def DRS.IsProper (K : DRS L V) : Prop := K.fv = ∅
+
+/-- Merging preserves properness when the increment's free referents are
+supplied by the context DRS's universe. -/
+theorem DRS.isProper_merge {K₁ K₂ : DRS L V} (h₁ : K₁.IsProper)
+    (h₂ : K₂.fv ⊆ K₁.referents) : (K₁.merge K₂).IsProper := by
+  obtain ⟨U₁, c₁⟩ := K₁
+  obtain ⟨U₂, c₂⟩ := K₂
+  rw [DRS.IsProper, DRS.fv_mk, Finset.sdiff_eq_empty_iff_subset] at h₁
+  rw [DRS.fv_mk, DRS.referents_mk] at h₂
+  rw [DRS.merge, DRS.conditions_mk, DRS.referents_mk, DRS.IsProper, DRS.fv_mk,
+    Condition.fvL_append, Finset.sdiff_eq_empty_iff_subset]
+  refine Finset.union_subset (h₁.trans Finset.subset_union_left) fun x hx => ?_
+  by_cases hxU₂ : x ∈ U₂
+  · exact Finset.mem_union_right _ hxU₂
+  · exact Finset.mem_union_left _ (h₂ (Finset.mem_sdiff.mpr ⟨hx, hxU₂⟩))
 
 end Fv
 
