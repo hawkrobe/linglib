@@ -25,7 +25,7 @@ state presheaf needs.
 
 ## Main declarations
 
-* `Ctx.agreeSetoid` — possibilities up to agreement on the base.
+* `Ctx.agreeSetoid` — `Possibility.agreeSetoid` at the context's base.
 * `Ctx.collapse` — the collapse functor to `RelCat`; faithful.
 -/
 
@@ -39,15 +39,9 @@ namespace Ctx
 
 variable {W M V : Type*}
 
-/-- Possibilities up to agreement on the base: same world, same assignment
-at every live referent. The collapse functor sends a context to the
-quotient by this relation. -/
-def agreeSetoid (X : Ctx W M V) : Setoid (Possibility W V M) where
-  r p q := p.world = q.world ∧ Set.EqOn p.assignment q.assignment ↑X.base
-  iseqv :=
-    ⟨fun _ => ⟨rfl, Set.eqOn_refl _ _⟩,
-     fun h => ⟨h.1.symm, h.2.symm⟩,
-     fun h h' => ⟨h.1.trans h'.1, h.2.trans h'.2⟩⟩
+/-- Agreement on the context's base: `Possibility.agreeSetoid` at `↑X.base`. -/
+abbrev agreeSetoid (X : Ctx W M V) : Setoid (Possibility W V M) :=
+  Possibility.agreeSetoid ↑X.base
 
 /-- `toUpdate` descends to base-agreement classes: `supported_left` and
 `supported_right` are precisely the congruence conditions. -/

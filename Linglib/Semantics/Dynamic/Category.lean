@@ -72,17 +72,13 @@ end Ctx
 
 universe u v w
 
-/-- The states based at `X`: the fiber of the presheaf of states. -/
-abbrev State.fiber (W M : Type*) {V : Type*} (X : (Finset V)ᵒᵖ) : Type _ :=
-  {I : State W V M // I.base = X.unop}
-
 /-- Information states form a presheaf on the poset of bases: the fiber
 over `X` is the states based at `X`, and restriction along `Y ⊆ X` is
 `State.restrict` — the presheaf laws are `restrict_base` and
 `restrict_restrict`. -/
 def State.presheaf (W : Type u) (M : Type v) (V : Type w) :
     (Finset V)ᵒᵖ ⥤ Type (max u v w) where
-  obj := State.fiber W M
+  obj X := State.fiber W M X.unop
   map {X Y} f := TypeCat.ofHom
     fun I => ⟨I.val.restrict Y.unop, State.base_restrict I.val Y.unop⟩
   map_id X := by
