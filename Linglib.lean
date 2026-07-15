@@ -1652,7 +1652,6 @@ import Linglib.Semantics.Dynamic.Kleisli
 import Linglib.Semantics.Dynamic.PLA.Basic
 import Linglib.Semantics.Dynamic.PLA.Epistemic
 import Linglib.Semantics.Dynamic.PLA.Semantics
-import Linglib.Semantics.Dynamic.PLA.Translation
 import Linglib.Semantics.Dynamic.PLA.Update
 import Linglib.Semantics.Dynamic.PPCDRT.Anaphora
 import Linglib.Semantics.Dynamic.PPCDRT.Cumulativity
