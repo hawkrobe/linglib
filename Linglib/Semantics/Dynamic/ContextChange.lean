@@ -14,6 +14,8 @@ form a round trip — `lower_lift` everywhere, `lift_lower` exactly on the
 `IsDistributive` CCPs, which process elements independently. What the
 set-transformer view genuinely adds is the non-distributive tests
 (`CCP.guard`, `might`, `must`, `negTest`) that inspect the whole state.
+`Kleisli.lean` certifies this picture: `lift` is the powerset monad's
+`bind`, an equivalence onto the completely-join-preserving transformers.
 
 ## Main definitions
 

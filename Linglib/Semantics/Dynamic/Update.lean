@@ -14,7 +14,9 @@ DRT, DPL, File Change Semantics, PLA, CDRT, and BUS instantiate.
 clauses (Def. 1.4.4), and [groenendijk-stokhof-1991]'s DPL relations all
 arrive at this structure; [muskens-1996] parametrizes it over the state
 type. The set-transformer face, and the bridge identifying this algebra
-with its distributive fragment, live in `ContextChange.lean`.
+with its distributive fragment, live in `ContextChange.lean`; the
+canonical account of the pair — Kleisli arrows of the powerset monad
+inside their suplattice completion — is certified in `Kleisli.lean`.
 
 ## Main definitions
 
