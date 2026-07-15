@@ -1,8 +1,6 @@
 import Linglib.Semantics.Dynamic.DRS.Basic
 import Linglib.Semantics.Dynamic.DRS.Reduction
 import Linglib.Semantics.Dynamic.Update
-import Mathlib.Data.Fin.VecNotation
-import Mathlib.Tactic.FinCases
 
 /-!
 # Relational (dynamic) semantics of DRSs, and its equivalence with verifying embeddings
@@ -51,26 +49,6 @@ open Semantics.Dynamic.Core.DynProp (Update dneg dimpl ddisj closure dseq)
 namespace DRT
 
 universe u v w x
-
-/-! ### Reindexing concrete atomic arguments
-
-A concrete DRS atom `.rel R ![k₁, …]` interprets (via `holds`/`Realize`) to
-`RelMap R (fun i => v (![k₁, …] i))`. These `@[simp]` lemmas reindex that to
-`![v k₁, …]`, so truth-condition proofs over concrete DRSs work with the atom's
-assigned values directly. (No general mathlib form exists — Loogle finds only a
-buried `comp_fin3` in the elliptic-curve files.) -/
-section Reindex
-variable {α β : Type*}
-
-@[simp] theorem vecArg₁ (v : α → β) (k : α) : (fun i => v (![k] i)) = ![v k] := by
-  funext i; fin_cases i; rfl
-@[simp] theorem vecArg₂ (v : α → β) (j k : α) : (fun i => v (![j, k] i)) = ![v j, v k] := by
-  funext i; fin_cases i <;> rfl
-@[simp] theorem vecArg₃ (v : α → β) (j k l : α) :
-    (fun i => v (![j, k, l] i)) = ![v j, v k, v l] := by
-  funext i; fin_cases i <;> rfl
-
-end Reindex
 
 variable {L : Language.{u, v}} {V : Type w} {M : Type x} [L.Structure M]
 
@@ -152,8 +130,8 @@ theorem DRS.toRel_iff_realize (K : DRS L V) (a a' : V → M) :
 theorem Condition.holds_iff_realize (c : Condition L V) (a : V → M) :
     Condition.holds c a ↔ Condition.Realize a c := by
   match c with
-  | .rel R args => simp only [Condition.holds, Condition.Realize]
-  | .eq u v => simp only [Condition.holds, Condition.Realize]
+  | .rel R args => exact Iff.rfl
+  | .eq u v => exact Iff.rfl
   | .neg K =>
     simp only [Condition.holds_neg, Condition.Realize]
     exact not_congr (exists_congr (fun a' => DRS.toRel_iff_realize K a a'))
@@ -171,7 +149,7 @@ theorem Condition.holds_iff_realize (c : Condition L V) (a : V → M) :
 theorem Condition.holdsAll_iff_realizeAll (cs : List (Condition L V)) (a : V → M) :
     Condition.holdsAll cs a ↔ Condition.RealizeAll a cs := by
   match cs with
-  | [] => simp only [Condition.holdsAll, Condition.RealizeAll]
+  | [] => exact Iff.rfl
   | c :: cs =>
     simp only [Condition.holdsAll, Condition.RealizeAll]
     exact and_congr (Condition.holds_iff_realize c a) (Condition.holdsAll_iff_realizeAll cs a)
@@ -193,7 +171,6 @@ embedding's values at its occurring referents. Proved by surgery on the output
 witness, the load-bearing case being the `imp` clause of `Condition.holds_congr`. -/
 theorem DRS.trueRel_congr [DecidableEq V] (K : DRS L V) (a₁ a₂ : V → M)
     (h : Set.EqOn a₁ a₂ ↑(DRS.occ K)) : DRS.trueRel K a₁ ↔ DRS.trueRel K a₂ := by
-  classical
   match K with
   | .mk U conds =>
     simp only [DRS.trueRel_iff, DRS.toRel_mk]
@@ -201,22 +178,21 @@ theorem DRS.trueRel_congr [DecidableEq V] (K : DRS L V) (a₁ a₂ : V → M)
         (∃ a', (∀ x, x ∉ U → a' x = b₁ x) ∧ Condition.holdsAll conds a') →
         (∃ a', (∀ x, x ∉ U → a' x = b₂ x) ∧ Condition.holdsAll conds a') := by
       rintro b₁ b₂ hb ⟨a', hag, hh⟩
-      refine ⟨(↑(Condition.occL conds) : Set V).piecewise a' b₂, ?_, ?_⟩
+      refine ⟨(Condition.occL conds).piecewise a' b₂, ?_, ?_⟩
       · intro x hx
-        by_cases hxc : x ∈ (↑(Condition.occL conds) : Set V)
-        · rw [Set.piecewise_eq_of_mem _ _ _ hxc, hag x hx]
+        by_cases hxc : x ∈ Condition.occL conds
+        · rw [Finset.piecewise_eq_of_mem _ _ _ hxc, hag x hx]
           refine hb ?_
           simp only [DRS.occ, Finset.coe_union]
-          exact Or.inr hxc
-        · rw [Set.piecewise_eq_of_notMem _ _ _ hxc]
+          exact Or.inr (Finset.mem_coe.mpr hxc)
+        · rw [Finset.piecewise_eq_of_notMem _ _ _ hxc]
       · refine (Condition.holdsAll_congr conds _ a' ?_).mpr hh
         intro x hx
-        exact Set.piecewise_eq_of_mem _ _ _ hx
+        exact Finset.piecewise_eq_of_mem _ _ _ (Finset.mem_coe.mp hx)
     exact ⟨key a₁ a₂ h, key a₂ a₁ h.symm⟩
 /-- A condition's set denotation depends only on its occurring referents. -/
 theorem Condition.holds_congr [DecidableEq V] (c : Condition L V) (a₁ a₂ : V → M)
     (h : Set.EqOn a₁ a₂ ↑(Condition.occ c)) : Condition.holds c a₁ ↔ Condition.holds c a₂ := by
-  classical
   match c with
   | .rel R args =>
     simp only [Condition.holds]
@@ -241,25 +217,28 @@ theorem Condition.holds_congr [DecidableEq V] (c : Condition L V) (a₁ a₂ : V
       cases ante with
       | mk Ua condsa =>
         obtain ⟨hag, hh⟩ := ha'
-        have hset : (↑(DRS.occ (DRS.mk Ua condsa)) ∪ ↑(DRS.occ cons) : Set V) =
-            ↑(Condition.occ (Condition.imp (DRS.mk Ua condsa) cons)) := by
-          simp [Condition.occ, Finset.coe_union]
+        have hset : DRS.occ (DRS.mk Ua condsa) ∪ DRS.occ cons =
+            Condition.occ (Condition.imp (DRS.mk Ua condsa) cons) := by
+          simp [Condition.occ]
         have hagree : Set.EqOn
-            ((↑(DRS.occ (DRS.mk Ua condsa)) ∪ ↑(DRS.occ cons) : Set V).piecewise a' b₁) a'
+            ((DRS.occ (DRS.mk Ua condsa) ∪ DRS.occ cons).piecewise a' b₁) a'
             ↑(DRS.occ cons) := by
-          intro x hx; exact Set.piecewise_eq_of_mem _ _ _ (Or.inr hx)
+          intro x hx
+          exact Finset.piecewise_eq_of_mem _ _ _
+            (Finset.mem_union_right _ (Finset.mem_coe.mp hx))
         have hr₁ : DRS.toRel (DRS.mk Ua condsa) b₁
-            ((↑(DRS.occ (DRS.mk Ua condsa)) ∪ ↑(DRS.occ cons) : Set V).piecewise a' b₁) := by
+            ((DRS.occ (DRS.mk Ua condsa) ∪ DRS.occ cons).piecewise a' b₁) := by
           refine ⟨?_, ?_⟩
           · intro x hx
-            by_cases hxS : x ∈ (↑(DRS.occ (DRS.mk Ua condsa)) ∪ ↑(DRS.occ cons) : Set V)
-            · rw [Set.piecewise_eq_of_mem _ _ _ hxS, hag x hx]
-              exact (hb (hset ▸ hxS)).symm
-            · rw [Set.piecewise_eq_of_notMem _ _ _ hxS]
+            by_cases hxS : x ∈ DRS.occ (DRS.mk Ua condsa) ∪ DRS.occ cons
+            · rw [Finset.piecewise_eq_of_mem _ _ _ hxS, hag x hx]
+              exact (hb (Finset.mem_coe.mpr (hset ▸ hxS))).symm
+            · rw [Finset.piecewise_eq_of_notMem _ _ _ hxS]
           · refine (Condition.holdsAll_congr condsa _ a' ?_).mpr hh
             intro x hx
-            refine Set.piecewise_eq_of_mem _ _ _ (Or.inl ?_)
-            simp only [DRS.occ, Finset.coe_union]; exact Or.inr hx
+            refine Finset.piecewise_eq_of_mem _ _ _ (Finset.mem_union_left _ ?_)
+            simp only [DRS.occ]
+            exact Finset.mem_union_right _ (Finset.mem_coe.mp hx)
         obtain ⟨a₄, ha₄⟩ := hL _ hr₁
         have hcc := DRS.trueRel_congr cons _ a' hagree
         simp only [DRS.trueRel_iff] at hcc
@@ -280,9 +259,9 @@ theorem Condition.holdsAll_congr [DecidableEq V] (cs : List (Condition L V)) (a�
     (h : Set.EqOn a₁ a₂ ↑(Condition.occL cs)) :
     Condition.holdsAll cs a₁ ↔ Condition.holdsAll cs a₂ := by
   match cs with
-  | [] => simp only [Condition.holdsAll]
+  | [] => exact Iff.rfl
   | c :: cs =>
-    simp only [Condition.holdsAll]
+    simp only [Condition.holdsAll_cons]
     have hsub : ↑(Condition.occ c) ⊆ ↑(Condition.occL (c :: cs)) :=
       Finset.coe_subset.mpr Finset.subset_union_left
     have hsubr : ↑(Condition.occL cs) ⊆ ↑(Condition.occL (c :: cs)) :=
@@ -294,7 +273,7 @@ end
 /-! ### The merging lemma: sequencing is merge, under freshness -/
 
 /-- The conjunction of conditions distributes over list append. -/
-theorem Condition.holdsAll_append (cs ds : List (Condition L V)) (a : V → M) :
+@[simp] theorem Condition.holdsAll_append (cs ds : List (Condition L V)) (a : V → M) :
     Condition.holdsAll (cs ++ ds) a ↔ Condition.holdsAll cs a ∧ Condition.holdsAll ds a := by
   induction cs with
   | nil => simp [Condition.holdsAll]
@@ -307,7 +286,6 @@ This is what gives `merge` its dynamic meaning. -/
 theorem DRS.toRel_merge [DecidableEq V] (K₁ K₂ : DRS L V)
     (hfresh : ∀ x ∈ K₂.referents, x ∉ Condition.occL K₁.conditions) :
     (DRS.toRel (K₁.merge K₂) : Update (V → M)) = DRS.toRel K₁ ⨟ DRS.toRel K₂ := by
-  classical
   obtain ⟨U₁, conds₁⟩ := K₁
   obtain ⟨U₂, conds₂⟩ := K₂
   simp only [DRS.referents_mk, DRS.conditions_mk] at hfresh
@@ -317,20 +295,20 @@ theorem DRS.toRel_merge [DecidableEq V] (K₁ K₂ : DRS L V)
     Condition.holdsAll_append, dseq, Relation.Comp]
   constructor
   · rintro ⟨hag, hh₁, hh₂⟩
-    refine ⟨(↑U₂ : Set V).piecewise a a', ⟨?_, ?_⟩, ?_, ?_⟩
+    refine ⟨U₂.piecewise a a', ⟨?_, ?_⟩, ?_, ?_⟩
     · intro x hx
-      by_cases hxU2 : x ∈ (↑U₂ : Set V)
-      · rw [Set.piecewise_eq_of_mem _ _ _ hxU2]
-      · rw [Set.piecewise_eq_of_notMem _ _ _ hxU2]
+      by_cases hxU2 : x ∈ U₂
+      · rw [Finset.piecewise_eq_of_mem _ _ _ hxU2]
+      · rw [Finset.piecewise_eq_of_notMem _ _ _ hxU2]
         refine hag x ?_
         rw [Finset.mem_union, not_or]
-        exact ⟨hx, fun h => hxU2 (Finset.mem_coe.mpr h)⟩
+        exact ⟨hx, hxU2⟩
     · refine (Condition.holdsAll_congr conds₁ _ a' ?_).mpr hh₁
       intro x hx
-      exact Set.piecewise_eq_of_notMem _ _ _
-        (fun h => hfresh x (Finset.mem_coe.mp h) (Finset.mem_coe.mp hx))
+      exact Finset.piecewise_eq_of_notMem _ _ _
+        (fun h => hfresh x h (Finset.mem_coe.mp hx))
     · intro x hx
-      exact (Set.piecewise_eq_of_notMem _ _ _ (fun h => hx (Finset.mem_coe.mp h))).symm
+      exact (Finset.piecewise_eq_of_notMem _ _ _ hx).symm
     · exact hh₂
   · rintro ⟨a'', ⟨hag1, hh1⟩, hag2, hh2⟩
     refine ⟨?_, ?_, hh2⟩
