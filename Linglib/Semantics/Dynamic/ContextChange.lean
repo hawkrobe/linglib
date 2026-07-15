@@ -553,6 +553,19 @@ theorem lift_lower (φ : CCP S) (hd : IsDistributive φ) :
   rw [hd σ]
   simp only [Set.mem_setOf_eq]
 
+/-- `lift` is the strongest-postcondition operator `SP(A, R) = R[A]` of
+[muskens-van-benthem-visser-2011], and it reflects the pointwise order:
+update inclusion at every input state is relational inclusion — the
+SP-characterization of update-update consequence. -/
+theorem lift_le_lift_iff {R R' : Update S} : lift R ≤ lift R' ↔ R ≤ R' := by
+  constructor
+  · intro h i j hR
+    obtain ⟨i', hi', hR'⟩ := h {i} ⟨i, rfl, hR⟩
+    cases hi'
+    exact hR'
+  · rintro h σ j ⟨i, hi, hR⟩
+    exact ⟨i, hi, h i j hR⟩
+
 /-- `lift (test C)` is eliminative: it only removes elements. -/
 theorem lift_test_isEliminative (C : Condition S) :
     IsEliminative (lift (DynProp.test C)) := by

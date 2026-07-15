@@ -3,12 +3,15 @@ import Mathlib.CategoryTheory.Category.RelCat
 
 /-!
 # The one-object collapse
-[muskens-1996], [groenendijk-stokhof-1991]
+[muskens-van-benthem-visser-2011], [muskens-1996], [groenendijk-stokhof-1991]
 
-The collapse of based dynamic semantics to level 0: a functor from the
-category of contexts to mathlib's `RelCat`, sending a context to its
-possibilities *up to agreement on the base* and a transition to its
-`toUpdate` relation. The quotient is forced: `toUpdate` sends `𝟙 X` to
+The collapse of based dynamic semantics to level 0 — the relational
+algebra of procedures over a single state space, with composition,
+converse, and the diagonal ([muskens-van-benthem-visser-2011]'s "Dynamic
+Constants as Operators in Relational Algebra"; mathlib's `RelCat`). The
+collapse is a functor from the category of contexts to `RelCat`, sending a
+context to its possibilities *up to agreement on the base* and a
+transition to its `toUpdate` relation. The quotient is forced: `toUpdate` sends `𝟙 X` to
 agreement-on-`X`, not to equality, so the collapse is only lawful on
 base-agreement classes — `supported_left`/`supported_right` are exactly the
 congruence conditions. The collapse is faithful (`Ctx.collapse_faithful`):
