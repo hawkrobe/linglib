@@ -2737,6 +2737,7 @@ import Linglib.Studies.VanRooy2003
 import Linglib.Studies.VanTielEtAl2016
 import Linglib.Studies.VanTielEtAl2021
 import Linglib.Studies.Veltman1996
+import Linglib.Studies.Visser1998
 import Linglib.Studies.ViknerJensen2002
 import Linglib.Studies.VonFintel1993
 import Linglib.Studies.VonFintel1999
