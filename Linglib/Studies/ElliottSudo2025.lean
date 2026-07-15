@@ -141,7 +141,7 @@ theorem diamond_negative_eq (φ : BUSDen W E) (s) :
 
 /-- Diamond positive is a test (returns s or ∅). -/
 theorem diamond_positive_isTest (φ : BUSDen W E) :
-    IsTest (◇ᵇφ).positive (P := Possibility W ℕ (Option E)) := by
+    IsTest (◇ᵇφ).positive (S := Possibility W ℕ (Option E)) := by
   intro s
   rw [diamond_positive_eq]
   split
@@ -150,7 +150,7 @@ theorem diamond_positive_isTest (φ : BUSDen W E) :
 
 /-- Diamond negative is a test (returns s or ∅). -/
 theorem diamond_negative_isTest (φ : BUSDen W E) :
-    IsTest (◇ᵇφ).negative (P := Possibility W ℕ (Option E)) := by
+    IsTest (◇ᵇφ).negative (S := Possibility W ℕ (Option E)) := by
   intro s
   rw [diamond_negative_eq]
   split
@@ -159,7 +159,7 @@ theorem diamond_negative_isTest (φ : BUSDen W E) :
 
 /-- Diamond positive is eliminative (from IsTest). -/
 theorem diamond_positive_eliminative (φ : BUSDen W E) :
-    IsEliminative (◇ᵇφ).positive (P := Possibility W ℕ (Option E)) :=
+    IsEliminative (◇ᵇφ).positive (S := Possibility W ℕ (Option E)) :=
   test_eliminative _ (diamond_positive_isTest φ)
 
 /-- Diamond positive subset (convenience form). -/
@@ -169,7 +169,7 @@ theorem diamond_positive_subset (φ : BUSDen W E) (s) :
 
 /-- Diamond negative is eliminative (from IsTest). -/
 theorem diamond_negative_eliminative (φ : BUSDen W E) :
-    IsEliminative (◇ᵇφ).negative (P := Possibility W ℕ (Option E)) :=
+    IsEliminative (◇ᵇφ).negative (S := Possibility W ℕ (Option E)) :=
   test_eliminative _ (diamond_negative_isTest φ)
 
 /-- Diamond negative subset (convenience form). -/
@@ -179,12 +179,12 @@ theorem diamond_negative_subset (φ : BUSDen W E) (s) :
 
 /-- Box positive is eliminative (□φ = ¬◇¬φ, so positive = diamond negative of ¬φ). -/
 theorem box_positive_eliminative (φ : BUSDen W E) :
-    IsEliminative (□ᵇφ).positive (P := Possibility W ℕ (Option E)) :=
+    IsEliminative (□ᵇφ).positive (S := Possibility W ℕ (Option E)) :=
   diamond_negative_eliminative (BilateralDen.neg φ)
 
 /-- Box negative is eliminative. -/
 theorem box_negative_eliminative (φ : BUSDen W E) :
-    IsEliminative (□ᵇφ).negative (P := Possibility W ℕ (Option E)) :=
+    IsEliminative (□ᵇφ).negative (S := Possibility W ℕ (Option E)) :=
   diamond_positive_eliminative (BilateralDen.neg φ)
 
 end BUSDen

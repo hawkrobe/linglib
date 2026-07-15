@@ -76,7 +76,7 @@ def dynRelationOn (c : SitContext W Time) : SitContext W Time :=
   { gs ∈ c | R (proj₁ gs) (proj₂ gs) }
 
 theorem dynRelationOn_isEliminative :
-    IsEliminative (P := SitEntry W Time) (dynRelationOn proj₁ proj₂ R) :=
+    IsEliminative (S := SitEntry W Time) (dynRelationOn proj₁ proj₂ R) :=
   fun _ _ h => h.1
 
 /-- Idempotence of any `dynRelationOn` filter. -/

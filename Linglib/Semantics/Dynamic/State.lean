@@ -13,8 +13,8 @@ An *information state* relative to a *base* `X` — a finite set of live
 discourse referents — is an `X`-supported set of possibilities
 (`Possibility.lean`). The base is the "context as storage" dimension of
 dynamic meaning: finer than a proposition, coarser than syntax
-([kamp-vangenabith-reyle-2011]'s Partee-marbles argument). The unbased
-level-0 notion is `InfoStateOf P` (`Update.lean`); the transitions
+([kamp-vangenabith-reyle-2011]'s Partee-marbles argument). Unbased level-0 states
+are plain sets of possibilities (`Update.lean`); the transitions
 acting on states live in `Transition.lean`.
 
 ## Main definitions

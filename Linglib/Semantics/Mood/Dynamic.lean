@@ -66,7 +66,7 @@ def dynSUBJ : SitContext W Time → SitContext W Time :=
 
 /-- `dynIND` is a context filter. -/
 theorem dynIND_isEliminative :
-    IsEliminative (P := Assignment (WorldTimeIndex W Time) × WorldTimeIndex W Time)
+    IsEliminative (S := Assignment (WorldTimeIndex W Time) × WorldTimeIndex W Time)
       (dynIND v) :=
   dynRelationOn_isEliminative _ _ _
 
@@ -150,7 +150,7 @@ def Grammatical.dynOp :
 
 /-- Indicative's dynamic operator is eliminative: a context filter. -/
 theorem dynOp_indicative_isEliminative :
-    IsEliminative (P := Assignment (WorldTimeIndex W Time) × WorldTimeIndex W Time)
+    IsEliminative (S := Assignment (WorldTimeIndex W Time) × WorldTimeIndex W Time)
       (Grammatical.indicative.dynOp history v) :=
   dynIND_isEliminative v
 
