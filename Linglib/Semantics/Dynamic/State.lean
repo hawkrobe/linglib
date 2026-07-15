@@ -28,19 +28,23 @@ Under it the chapter's definitions collapse to order theory:
   is `⊥`.
 
 `InfoStateOf P` (`ContextChange.lean`) is the unbased, level-0 notion — a
-bare set of possibilities; `InfoState` adds the base. The based update
-relations acting on these states live in `BasedUpdate.lean`.
+bare set of possibilities; `State` adds the base. The based update
+relations acting on these states live in `Transition.lean`.
+
+The namespace is `Semantics.Dynamic` (not the legacy `Semantics.Dynamic.Core`
+of the pre-2026-07 spine): the based layer starts the clean namespace the
+rest of the spine migrates into.
 
 ## Main declarations
 
 * `BaseSupported` — membership depends only on assignment values at `X`.
-* `InfoState` — a base together with a supported carrier.
-* `InfoState.prop` — the proposition determined by a state (Def. 23(v)).
-* `InfoState.restrict` — the best approximation supported on a smaller base
+* `State` — a base together with a supported carrier.
+* `State.prop` — the proposition determined by a state (Def. 23(v)).
+* `State.restrict` — the best approximation supported on a smaller base
   (presheaf restriction along base inclusion).
 -/
 
-namespace Semantics.Dynamic.Core
+namespace Semantics.Dynamic
 
 variable {W V M : Type*}
 
@@ -60,7 +64,7 @@ theorem BaseSupported.inter {X : Finset V} {S T : Set (W × (V → M))}
 /-- An information state ([kamp-vangenabith-reyle-2011], Defs. 22–23): a base
 `X` of live discourse referents together with an `X`-supported set of
 world–assignment pairs. -/
-@[ext] structure InfoState (W : Type*) (V : Type*) (M : Type*) where
+@[ext] structure State (W : Type*) (V : Type*) (M : Type*) where
   /-- The live discourse referents (the chapter's base `X`). -/
   base : Finset V
   /-- The world–assignment pairs compatible with the information. -/
@@ -68,12 +72,12 @@ world–assignment pairs. -/
   /-- Membership depends on assignments only through their values at `base`. -/
   supported : BaseSupported base carrier
 
-namespace InfoState
+namespace State
 
-instance : Membership (W × (V → M)) (InfoState W V M) :=
+instance : Membership (W × (V → M)) (State W V M) :=
   ⟨fun I p => p ∈ I.carrier⟩
 
-@[simp] theorem mem_carrier {I : InfoState W V M} {p : W × (V → M)} :
+@[simp] theorem mem_carrier {I : State W V M} {p : W × (V → M)} :
     p ∈ I.carrier ↔ p ∈ I := Iff.rfl
 
 /-! ### The informativeness order -/
@@ -81,20 +85,20 @@ instance : Membership (W × (V → M)) (InfoState W V M) :=
 /-- Informativeness ([kamp-vangenabith-reyle-2011], Def. 25): `I ≤ I'` iff
 `I'` carries at least as much information — the base grows and the carrier
 shrinks. -/
-instance : PartialOrder (InfoState W V M) where
+instance : PartialOrder (State W V M) where
   le I I' := I.base ⊆ I'.base ∧ I'.carrier ⊆ I.carrier
   le_refl _ := ⟨subset_rfl, subset_rfl⟩
   le_trans _ _ _ h h' := ⟨h.1.trans h'.1, h'.2.trans h.2⟩
   le_antisymm _ _ h h' :=
-    InfoState.ext (Finset.Subset.antisymm h.1 h'.1) (Set.Subset.antisymm h'.2 h.2)
+    State.ext (Finset.Subset.antisymm h.1 h'.1) (Set.Subset.antisymm h'.2 h.2)
 
-theorem le_def {I I' : InfoState W V M} :
+theorem le_def {I I' : State W V M} :
     I ≤ I' ↔ I.base ⊆ I'.base ∧ I'.carrier ⊆ I.carrier := Iff.rfl
 
 /-- The chapter's projection form of Def. 25 — every pair of the stronger
 state restricts to one of the weaker — coincides with `≤`: support makes the
 projected witness the pair itself. -/
-theorem le_iff_projection {I I' : InfoState W V M} :
+theorem le_iff_projection {I I' : State W V M} :
     I ≤ I' ↔ I.base ⊆ I'.base ∧
       ∀ ⦃w g⦄, (w, g) ∈ I' → ∃ f, (w, f) ∈ I ∧ Set.EqOn f g ↑I.base := by
   constructor
@@ -108,12 +112,12 @@ theorem le_iff_projection {I I' : InfoState W V M} :
 
 /-- The minimal information state Λ ([kamp-vangenabith-reyle-2011],
 Def. 23(iv)): empty base, no information. -/
-instance : OrderBot (InfoState W V M) where
+instance : OrderBot (State W V M) where
   bot := ⟨∅, Set.univ, fun _ _ _ _ => Iff.rfl⟩
   bot_le _ := ⟨Finset.empty_subset _, Set.subset_univ _⟩
 
-@[simp] theorem base_bot : (⊥ : InfoState W V M).base = ∅ := rfl
-@[simp] theorem carrier_bot : (⊥ : InfoState W V M).carrier = Set.univ := rfl
+@[simp] theorem base_bot : (⊥ : State W V M).base = ∅ := rfl
+@[simp] theorem carrier_bot : (⊥ : State W V M).carrier = Set.univ := rfl
 
 /-! ### Consistent merge is the join -/
 
@@ -122,7 +126,7 @@ variable [DecidableEq V]
 
 /-- Consistent merge ([kamp-vangenabith-reyle-2011], Def. 26) is the join of
 the informativeness order: union the bases, intersect the carriers. -/
-instance : SemilatticeSup (InfoState W V M) where
+instance : SemilatticeSup (State W V M) where
   sup I I' :=
     ⟨I.base ∪ I'.base, I.carrier ∩ I'.carrier,
       (I.supported.mono Finset.subset_union_left).inter
@@ -132,15 +136,15 @@ instance : SemilatticeSup (InfoState W V M) where
   sup_le _ _ _ h h' :=
     ⟨Finset.union_subset h.1 h'.1, Set.subset_inter h.2 h'.2⟩
 
-@[simp] theorem base_sup (I I' : InfoState W V M) :
+@[simp] theorem base_sup (I I' : State W V M) :
     (I ⊔ I').base = I.base ∪ I'.base := rfl
-@[simp] theorem carrier_sup (I I' : InfoState W V M) :
+@[simp] theorem carrier_sup (I I' : State W V M) :
     (I ⊔ I').carrier = I.carrier ∩ I'.carrier := rfl
 
 /-- The chapter's choice-function form of Def. 26: a pair belongs to the
 merge iff it restricts into each component — support makes the choice
 functions the pair itself. -/
-theorem mem_sup_iff {I I' : InfoState W V M} {w : W} {h : V → M} :
+theorem mem_sup_iff {I I' : State W V M} {w : W} {h : V → M} :
     (w, h) ∈ I ⊔ I' ↔
       (∃ f, (w, f) ∈ I ∧ Set.EqOn f h ↑I.base) ∧
       (∃ g, (w, g) ∈ I' ∧ Set.EqOn g h ↑I'.base) := by
@@ -156,17 +160,17 @@ end Merge
 
 /-- The proposition a state determines ([kamp-vangenabith-reyle-2011],
 Def. 23(v)): the worlds compatible with some assignment. -/
-def prop (I : InfoState W V M) : Set W := Prod.fst '' I.carrier
+def prop (I : State W V M) : Set W := Prod.fst '' I.carrier
 
-theorem mem_prop {I : InfoState W V M} {w : W} :
+theorem mem_prop {I : State W V M} {w : W} :
     w ∈ I.prop ↔ ∃ f, (w, f) ∈ I := by
   simp [prop, Prod.exists]
 
 /-- Stronger states determine stronger propositions. -/
-theorem prop_anti {I I' : InfoState W V M} (h : I ≤ I') : I'.prop ⊆ I.prop :=
+theorem prop_anti {I I' : State W V M} (h : I ≤ I') : I'.prop ⊆ I.prop :=
   Set.image_mono h.2
 
-@[simp] theorem prop_bot [Nonempty M] : (⊥ : InfoState W V M).prop = Set.univ := by
+@[simp] theorem prop_bot [Nonempty M] : (⊥ : State W V M).prop = Set.univ := by
   ext w
   exact ⟨fun _ => trivial, fun _ => ⟨(w, fun _ => Classical.arbitrary M), trivial, rfl⟩⟩
 
@@ -174,21 +178,21 @@ theorem prop_anti {I I' : InfoState W V M} (h : I ≤ I') : I'.prop ⊆ I.prop :
 
 /-- Restrict a state to base `Y`: the best `Y`-supported approximation — a
 pair survives iff some carrier member agrees with it on `Y`. -/
-def restrict (I : InfoState W V M) (Y : Finset V) : InfoState W V M where
+def restrict (I : State W V M) (Y : Finset V) : State W V M where
   base := Y
   carrier := {p | ∃ f, (p.1, f) ∈ I.carrier ∧ Set.EqOn f p.2 ↑Y}
   supported := fun _ _ _ hgg' =>
     exists_congr fun _ => and_congr_right fun _ =>
       ⟨fun h => h.trans hgg', fun h => h.trans hgg'.symm⟩
 
-@[simp] theorem base_restrict (I : InfoState W V M) (Y : Finset V) :
+@[simp] theorem base_restrict (I : State W V M) (Y : Finset V) :
     (I.restrict Y).base = Y := rfl
 
-theorem mem_restrict {I : InfoState W V M} {Y : Finset V} {w : W} {g : V → M} :
+theorem mem_restrict {I : State W V M} {Y : Finset V} {w : W} {g : V → M} :
     (w, g) ∈ I.restrict Y ↔ ∃ f, (w, f) ∈ I ∧ Set.EqOn f g ↑Y := Iff.rfl
 
 /-- Restricting to the state's own base is the identity. -/
-@[simp] theorem restrict_base (I : InfoState W V M) : I.restrict I.base = I := by
+@[simp] theorem restrict_base (I : State W V M) : I.restrict I.base = I := by
   ext1
   · rfl
   · ext ⟨w, g⟩
@@ -196,7 +200,7 @@ theorem mem_restrict {I : InfoState W V M} {Y : Finset V} {w : W} {g : V → M} 
       fun h => ⟨g, h, Set.eqOn_refl g _⟩⟩
 
 /-- Restriction is transitive along shrinking bases. -/
-theorem restrict_restrict (I : InfoState W V M) {Y Z : Finset V} (hZY : Z ⊆ Y) :
+theorem restrict_restrict (I : State W V M) {Y Z : Finset V} (hZY : Z ⊆ Y) :
     (I.restrict Y).restrict Z = I.restrict Z := by
   ext1
   · rfl
@@ -208,10 +212,10 @@ theorem restrict_restrict (I : InfoState W V M) {Y Z : Finset V} (hZY : Z ⊆ Y)
       exact ⟨f, ⟨f, hf, Set.eqOn_refl f _⟩, hfg⟩
 
 /-- Restriction to a sub-base weakens the state. -/
-theorem restrict_le {I : InfoState W V M} {Y : Finset V} (h : Y ⊆ I.base) :
+theorem restrict_le {I : State W V M} {Y : Finset V} (h : Y ⊆ I.base) :
     I.restrict Y ≤ I :=
   ⟨h, fun p hp => ⟨p.2, hp, Set.eqOn_refl p.2 _⟩⟩
 
-end InfoState
+end State
 
-end Semantics.Dynamic.Core
+end Semantics.Dynamic
