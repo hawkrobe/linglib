@@ -83,16 +83,34 @@ theorem comp_assoc (u : Transition W M X Y) (v : Transition W M Y Z)
   exact ⟨fun ⟨k, ⟨j, hj, hjk⟩, hk⟩ => ⟨j, hj, k, hjk, hk⟩,
     fun ⟨j, hj, k, hjk, hk⟩ => ⟨k, ⟨j, hj, hjk⟩, hk⟩⟩
 
-/-! ### Application to information states -/
-
-section Apply
-variable [DecidableEq V]
+/-! ### The forgotten relation -/
 
 /-- Forget the bases: the level-0 relation on possibilities (the world is
 preserved). -/
 def toUpdate (u : Transition W M X Y) :
     DynProp.Update (Possibility W V M) :=
   fun p q => p.world = q.world ∧ u.rel p.world p.assignment q.assignment
+
+/-- Forgetting bases sends sequencing to relational composition — the
+one-object collapse is functorial on composition. (It is not unital:
+`toUpdate (id X)` is agreement on `X`, not equality — see the quotient
+collapse in `Category.lean`.) -/
+theorem toUpdate_comp (u : Transition W M X Y) (v : Transition W M Y Z) :
+    (u.comp v).toUpdate = u.toUpdate ⨟ v.toUpdate := by
+  funext p q
+  simp only [toUpdate, comp, DynProp.dseq, Relation.Comp, eq_iff_iff]
+  constructor
+  · rintro ⟨hw, k, huk, hkv⟩
+    exact ⟨⟨p.world, k⟩, ⟨rfl, huk⟩, hw, hkv⟩
+  · rintro ⟨k, ⟨hwk, huk⟩, hkw, hkv⟩
+    refine ⟨hwk.trans hkw, k.assignment, huk, ?_⟩
+    rw [hwk]
+    exact hkv
+
+/-! ### Application to information states -/
+
+section Apply
+variable [DecidableEq V]
 
 /-- Context change ([kamp-vangenabith-reyle-2011], Def. 24): the carrier is
 the level-0 `lift` of the forgotten relation; the base grows to
