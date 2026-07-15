@@ -837,6 +837,45 @@ theorem lift_test_isEliminative (C : Condition S) :
     IsEliminative (lift (test C)) := by
   rw [lift_test]; intro σ j ⟨hj, _⟩; exact hj
 
+@[simp] theorem mem_lift_test {C : Condition S} {σ : Set S} {i : S} :
+    i ∈ lift (test C) σ ↔ i ∈ σ ∧ C i := by
+  rw [lift_test]; exact Iff.rfl
+
+/-- Composing test filters conjoins the conditions. -/
+theorem lift_test_lift_test (C₁ C₂ : Condition S) (σ : Set S) :
+    lift (test C₂) (lift (test C₁) σ) = lift (test fun i => C₁ i ∧ C₂ i) σ :=
+  Set.ext fun i => by
+    simp only [mem_lift_test]
+    exact and_assoc
+
+/-- Test filters are idempotent. -/
+theorem lift_test_idem (C : Condition S) (σ : Set S) :
+    lift (test C) (lift (test C) σ) = lift (test C) σ := by
+  rw [lift_test_lift_test]
+  exact Set.ext fun i => by simp only [mem_lift_test, and_self]
+
+/-- Contradictory test filters compose to the empty state. -/
+theorem lift_test_disjoint (C₁ C₂ : Condition S)
+    (h : ∀ i, C₁ i → C₂ i → False) (σ : Set S) :
+    lift (test C₂) (lift (test C₁) σ) = ∅ := by
+  rw [lift_test_lift_test]
+  exact Set.eq_empty_of_forall_notMem fun i hi =>
+    h i (mem_lift_test.mp hi).2.1 (mem_lift_test.mp hi).2.2
+
+/-- Covering test filters partition the state: if the conditions cover,
+the union of the filters is the identity. -/
+theorem lift_test_cover₃ (C₁ C₂ C₃ : Condition S)
+    (h : ∀ i, C₁ i ∨ C₂ i ∨ C₃ i) (σ : Set S) :
+    lift (test C₁) σ ∪ lift (test C₂) σ ∪ lift (test C₃) σ = σ :=
+  Set.ext fun i => by
+    simp only [Set.mem_union, mem_lift_test]
+    refine ⟨fun hi => ?_, fun hi => ?_⟩
+    · rcases hi with (⟨h', -⟩ | ⟨h', -⟩) | ⟨h', -⟩ <;> exact h'
+    · rcases h i with h' | h' | h'
+      · exact Or.inl (Or.inl ⟨hi, h'⟩)
+      · exact Or.inl (Or.inr ⟨hi, h'⟩)
+      · exact Or.inr ⟨hi, h'⟩
+
 /-- `updateFromSat` is the lifting of `test` applied to a satisfaction
 relation. This connects the CCP-native `updateFromSat` to the
 primary relational algebra. -/

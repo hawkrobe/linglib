@@ -35,7 +35,7 @@ abbrev TenseOp (W Time : Type*) := SitProp W Time → WorldTimeIndex W Time → 
 /-!
 The temporal constraint of each tense, factored out as a pure relation
 on `WorldTimeIndex` pairs and shared with the dynamic-context-update
-counterparts in `Tense/Dynamic.lean` via `dynRelation`. This is the
+counterparts in `Tense/Dynamic.lean` via the spine test filter. This is the
 Heim-Kratzer "tense as relation between times" intuition isolated from
 the propositional payload, so that a single relation kernel (`precedes`/
 `coincides`/`follows`) is the source of truth for both static `PAST`/

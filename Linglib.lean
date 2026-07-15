@@ -1635,7 +1635,6 @@ import Linglib.Semantics.Dynamic.UpdateSemantics.Bilateral
 import Linglib.Semantics.Dynamic.CDRT
 import Linglib.Semantics.Dynamic.Category
 import Linglib.Semantics.Dynamic.Collapse
-import Linglib.Semantics.Dynamic.Situation
 import Linglib.Semantics.Dynamic.DPL
 import Linglib.Semantics.Dynamic.DRS.Indexed
 import Linglib.Semantics.Dynamic.DRS.Basic
@@ -2737,6 +2736,7 @@ import Linglib.Studies.VanRooy2003
 import Linglib.Studies.VanTielEtAl2016
 import Linglib.Studies.VanTielEtAl2021
 import Linglib.Studies.Veltman1996
+import Linglib.Studies.Visser1998
 import Linglib.Studies.ViknerJensen2002
 import Linglib.Studies.VonFintel1993
 import Linglib.Studies.VonFintel1999
