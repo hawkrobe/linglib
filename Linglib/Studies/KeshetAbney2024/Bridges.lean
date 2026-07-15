@@ -41,7 +41,7 @@ formalized here.
 namespace KeshetAbney2024.PIP.Bridges
 
 open KeshetAbney2024.PIP
-open DynamicSemantics (IVar ICDRTAssignment Entity IContext)
+open DynamicSemantics.ICDRT (IVar Assignment Entity Context)
 open Core.Logic.Modal (AccessRel box diamond)
 open Core.Logic.Modal.Logic (frameConditions)
 
@@ -332,7 +332,7 @@ theorem mustBase_agrees_box {W D : Type*}
 
 PIP is natively a static, truth-conditional system. Our formalization
 in `Basic.lean` / `Connectives.lean` encodes PIP as a dynamic update
-system over `IContext W E`. [brasoveanu-2010] shows the equivalence
+system over `Context W E`. [brasoveanu-2010] shows the equivalence
 between plural predicate calculi and dynamic plural logics.
 
 The following theorems prove that the static system (`PIPExprF.truth`)
@@ -352,10 +352,10 @@ and `atom p` filters the info state to pairs where `p g w`.
 When the info state is a singleton, the dynamic update is non-empty
 iff the static truth value is true.
 
-TODO: Full proof requires reasoning about `Set.sep` over singleton IContext.
+TODO: Full proof requires reasoning about `Set.sep` over singleton Context.
 -/
 theorem static_atom_agrees_dynamic {W E : Type*}
-    (p : ICDRTAssignment W E → W → Prop) (g : ICDRTAssignment W E) (w : W)
+    (p : Assignment W E → W → Prop) (g : Assignment W E) (w : W)
     (d : Discourse W E) (hd : (g, w) ∈ d.info) :
     (g, w) ∈ (atom p d).info ↔ p g w := by
   unfold atom Discourse.mapInfo
@@ -368,7 +368,7 @@ Negation in both systems complements the truth value / info state.
 The dynamic system keeps pairs from the input that did NOT survive φ.
 -/
 theorem static_neg_agrees_dynamic {W E : Type*}
-    (φ : PUpdate W E) (g : ICDRTAssignment W E) (w : W)
+    (φ : PUpdate W E) (g : Assignment W E) (w : W)
     (d : Discourse W E) (hd : (g, w) ∈ d.info) :
     (g, w) ∈ (negation φ d).info ↔ (g, w) ∉ (φ d).info := by
   unfold negation

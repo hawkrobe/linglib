@@ -18,6 +18,7 @@ namespace Charlow2019
 
 open DPL
 open DynamicSemantics
+open DynamicSemantics.ICDRT
 open _root_.Core (Assignment)
 
 /-- Truth at an assignment: K True at g ⟺ ∃h. K g h (Charlow's (7)). -/
@@ -279,14 +280,14 @@ instance instCharlowHasFiberedLookup (W E : Type) :
 -- Bridge natural transformations — Hofmann ⇄ Charlow
 -- ════════════════════════════════════════════════════════════════
 
-/-- **Hofmann ↪ Charlow**: lift an `ICDRTAssignment` to a Charlow state on
+/-- **Hofmann ↪ Charlow**: lift an `ICDRT.Assignment` to a Charlow state on
 the worlds where every `vars`-listed variable has a non-`⋆` referent.
 At such worlds the resulting state has exactly one alternative — the
 assignment forced by Hofmann's values on `vars` (free elsewhere).
 At ⋆-worlds for any `vars`-listed variable, the world contributes no
 alternatives. -/
 def singletonLift {W E : Type} [Inhabited E]
-    (worlds : Set W) (vars : Finset Nat) (i : ICDRTAssignment W E) :
+    (worlds : Set W) (vars : Finset Nat) (i : ICDRT.Assignment W E) :
     State W E :=
   { p | p.1 ∈ worlds ∧
         (∀ v ∈ vars, i.indiv ⟨v⟩ p.1 ≠ Entity.star) ∧
@@ -302,7 +303,7 @@ drefs are dropped (Charlow has no propositional-dref structure to
 preserve). The reverse-image `singletonLift` ∘ `supportCollapse` loses
 information whenever the Charlow state has genuine uncertainty. -/
 noncomputable def supportCollapse {W E : Type}
-    (s : State W E) : ICDRTAssignment W E where
+    (s : State W E) : ICDRT.Assignment W E where
   prop _ := ∅
   indiv v w :=
     open Classical in
@@ -324,7 +325,7 @@ reverse direction (`singletonLift ∘ supportCollapse`) is *not* the
 identity — collapsing genuine Charlow uncertainty to `⋆` and then
 re-singleton-lifting forgets which alternatives were possible. -/
 theorem supportCollapse_singletonLift {W E : Type} [Inhabited E]
-    (worlds : Set W) (vars : Finset Nat) (i : ICDRTAssignment W E)
+    (worlds : Set W) (vars : Finset Nat) (i : ICDRT.Assignment W E)
     (v : IVar) (w : W) (hw : w ∈ worlds) (hv : v.idx ∈ vars)
     (hall : ∀ u ∈ vars, i.indiv ⟨u⟩ w ≠ Entity.star) :
     (supportCollapse (singletonLift worlds vars i)).indiv v w =
