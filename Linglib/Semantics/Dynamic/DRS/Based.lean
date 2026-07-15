@@ -428,7 +428,7 @@ theorem DRS.transition_merge (W : Type*) {X : Finset V} (K₁ K₂ : DRS L V)
     (hfresh : Disjoint K₂.referents (Condition.occL K₁.conditions)) :
     (K₁.transition (M := M) W X h₁).comp (K₂.transition W (X ∪ K₁.referents) h₂) =
       ((K₁.merge K₂).transition W X (DRS.fv_merge_subset h₁ h₂)).copy rfl
-        (by rw [DRS.merge_referents, ← Finset.union_assoc]) := by
+        (by rw [DRS.referents_merge, ← Finset.union_assoc]) := by
   ext w f g
   simp only [Transition.rel_copy, Transition.comp, DRS.transition,
     DRS.toRelAt_merge K₁ K₂ h₁ hfresh, DynamicSemantics.dseq]

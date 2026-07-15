@@ -6,7 +6,7 @@ import Mathlib.ModelTheory.Semantics
 [kamp-reyle-1993]
 
 DRS truth via *verifying embeddings* into a mathlib `FirstOrder.Language.Structure`
-— Kamp & Reyle's Def. 1.4.4–1.4.5 in the *total-assignment* rendering. An
+— Kamp & Reyle's Def. 1.4.4 in the *total-assignment* rendering. An
 embedding is an assignment `v : V → M` of discourse referents to the model
 domain; the discourse referents introduced by a sub-DRS are existentially
 (re)assigned when that sub-DRS is entered, which is what
@@ -23,7 +23,6 @@ says "every man is mortal" for K&R, "if there is a man there is a mortal" here.
 
 * `DRS.Realize` / `Condition.Realize` — the verifying-embedding relation
   (Def. 1.4.4), reusing mathlib's `Structure.RelMap` for atomic conditions.
-* `DRS.trueIn` — `K` is true in `M` iff some embedding verifies it (Def. 1.4.5).
 -/
 
 open FirstOrder FirstOrder.Language
@@ -63,10 +62,5 @@ def Condition.RealizeAll (v : V → M) : List (Condition L V) → Prop
   | [] => True
   | c :: cs => Condition.Realize v c ∧ Condition.RealizeAll v cs
 end
-
-/-- `K` is *true* in `M` iff some embedding verifies it ([kamp-reyle-1993],
-Def. 1.4.5). -/
-def DRS.trueIn (M : Type x) [L.Structure M] (K : DRS L V) : Prop :=
-  ∃ v : V → M, K.Realize v
 
 end DRT

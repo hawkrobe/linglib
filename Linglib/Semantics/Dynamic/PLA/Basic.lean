@@ -6,36 +6,28 @@ import Mathlib.Data.List.Basic
 import Mathlib.Data.Fintype.Basic
 
 /-!
-# Predicate Logic with Anaphora (PLA)
-[dekker-1994] [dekker-2012]
+# Predicate Logic with Anaphora: syntax
 
-The foundational system for dynamic semantics with explicit pronoun
-indices, originating in [dekker-1994] and consolidated in [dekker-2012].
+Syntax for Predicate Logic with Anaphora (PLA), the dynamic system originating
+in [dekker-1994] and consolidated in [dekker-2012]. PLA distinguishes variables
+`x_i`, bound by quantifiers, from pronouns `p_i`, anaphoric expressions resolved
+from discourse context; the distinction prevents variable clash and keeps
+composition clean.
 
-## Innovation
+## Main definitions
 
-PLA distinguishes variables (x_i) from pronouns (p_i):
-- Variables are bound by quantifiers (∃x_i)
-- Pronouns are anaphoric expressions resolved from discourse context
+- `PLA.Term`, `PLA.Formula`: terms (variables or pronouns) and formulas
+- `PLA.Formula.domain`: the variables existentially bound in a formula, `n(φ)`
+- `PLA.Formula.range`: the pronouns occurring in a formula, `r(φ)`
+- `PLA.Resolution`, `PLA.Formula.resolve`: replacing pronouns with variables, `φ^ρ`
 
-This distinction prevents variable clash and enables clean compositional semantics.
+## Main results
 
-## Core Definitions ([dekker-2012] Ch. 2)
-
-| Concept | Notation | Description |
-|---------|----------|-------------|
-| Domain | n(φ) | Variables existentially bound in φ |
-| Range | r(φ) | Pronouns occurring in φ |
-| Resolution | φ^ρ | Replace pronouns with variables |
-
-## Implementation Notes
-
-Uses `Finset.biUnion` instead of `List.foldl` for cleaner proofs.
+- `PLA.Formula.resolve_preserves_domain`: resolution preserves the domain
+- `PLA.Formula.resolve_no_pronouns`: resolution eliminates all pronouns
 -/
 
 namespace PLA
-
-open Classical
 
 
 /-- Variable index: identifies a variable x_i -/
@@ -63,16 +55,6 @@ def vars : Term → Finset VarIdx
   | .var i => {i}
   | .pron _ => ∅
 
-/-- Is this a pronoun? -/
-def isPron : Term → Prop
-  | .var _ => False
-  | .pron _ => True
-
-instance : DecidablePred isPron := fun t => by unfold isPron; cases t <;> infer_instance
-
-theorem pronouns_var (i : VarIdx) : (Term.var i).pronouns = ∅ := rfl
-theorem pronouns_pron (i : PronIdx) : (Term.pron i).pronouns = {i} := rfl
-
 end Term
 
 
@@ -83,9 +65,6 @@ def termsPronouns (ts : List Term) : Finset PronIdx :=
 theorem mem_termsPronouns (ts : List Term) (i : PronIdx) :
     i ∈ termsPronouns ts ↔ ∃ t ∈ ts, i ∈ t.pronouns := by
   simp only [termsPronouns, Finset.mem_biUnion, List.mem_toFinset]
-
-theorem termsPronouns_nil : termsPronouns [] = ∅ := by
-  simp [termsPronouns]
 
 
 /-- PLA Formula -/
@@ -106,7 +85,7 @@ def disj (φ ψ : Formula) : Formula := neg (conj (neg φ) (neg ψ))
 infixr:30 " ⋁ " => disj
 
 def impl (φ ψ : Formula) : Formula := neg (conj φ (neg ψ))
-infixr:25 " ⟶ " => impl
+scoped infixr:25 " ⟶ " => impl
 
 def forall_ (i : VarIdx) (φ : Formula) : Formula := neg (exists_ i (neg φ))
 

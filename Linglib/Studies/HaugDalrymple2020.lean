@@ -33,7 +33,7 @@ the PPCDRT substrate (`Semantics/Dynamic/PPCDRT/`):
 | §4.5    | Subgroup readings (forks, gravity)     | Weak-vs-strong contrast    |
 | §4.6    | Collective antecedents                 | Distinctness neutralization |
 | §5      | Quantified antecedents + truth-value gap | `Trivalent` via `removeGap` |
-| §6      | Maximize Anaphora as a principle       | `R_u` + `maximizeAnaphora` |
+| §6      | Maximize Anaphora as a principle       | `R_u` |
 | §6.2    | Multi-reciprocal pairwise prediction   | `R_u` over two reciprocals |
 | §6.3    | MA interacting with scope              | Tracy/Matty/Chris case     |
 

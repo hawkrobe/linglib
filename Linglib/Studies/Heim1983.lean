@@ -187,6 +187,6 @@ open DynamicSemantics in
 theorem bare_consequent_not_admitted :
     ¬ (PartialCCP.ofPartialProp kingBald).admits Set.univ := by
   intro h
-  exact h .noKing trivial
+  exact h (Set.mem_univ .noKing)
 
 end Heim1983

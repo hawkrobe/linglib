@@ -4,7 +4,6 @@ import Linglib.Semantics.Presupposition.Context
 
 /-!
 # Partial Context Change Potentials
-[karttunen-1974] [heim-1983]
 
 Heim's context change potentials are *partial* functions on contexts: the
 domain condition IS the presupposition ([heim-1983]'s "c admits φ",
@@ -30,8 +29,7 @@ dynamic conjunction, conditional, and disjunction
   ([heim-1983] gives CCPs for *not/and/if*; the disjunction clause with
   ¬φ local context follows [beaver-2001])
 - `admits_pseq` — the Karttunen satisfaction law, by construction
-- `admits_ofPartialProp_iff_presupSatisfied` — admittance is
-  `Context.presupSatisfied`
+- `admits_ofPartialProp` — admittance is `Context.presupSatisfied`
 - `admits_pseq_ofPartialProp`, `admits_pcond_ofPartialProp`,
   `admits_pdisj_ofPartialProp` — the filtering connectives, derived
 -/
@@ -59,16 +57,17 @@ def ofCCP (φ : CCP P) : PartialCCP P := λ s => Part.some (φ s)
 @[simp] theorem admits_ofCCP (φ : CCP P) (s : InfoStateOf P) :
     (ofCCP φ).admits s := trivial
 
-/-- The Heimian update of a static partial proposition: defined iff every
-    world of the input satisfies the presupposition, updating by
-    intersecting with the assertion.
+/-- The Heimian update of a static partial proposition: defined iff the
+    context globally satisfies the presupposition
+    (`Context.presupSatisfied`), updating by intersecting with the
+    assertion.
 
     The whole-state domain condition is what separates admittance from
     per-world filtering (`updateFromSat`): a context containing a single
     presupposition-failing world admits nothing, rather than silently
     discarding the world. -/
 def ofPartialProp (p : PartialProp W) : PartialCCP W :=
-  λ s => ⟨∀ w ∈ s, p.presup w, λ _ => { w ∈ s | p.assertion w }⟩
+  λ s => ⟨Context.presupSatisfied s p, λ _ => { w ∈ s | p.assertion w }⟩
 
 @[simp] theorem ofPartialProp_get (p : PartialProp W) (s : InfoStateOf W)
     (h : ((ofPartialProp p) s).Dom) :
@@ -131,17 +130,12 @@ theorem admits_pdisj (φ ψ : PartialCCP P) (s : InfoStateOf P) :
 
 /-! ### The Stalnaker bridge -/
 
-/-- Admittance of an atomic update is global presupposition satisfaction. -/
+/-- Admittance of an atomic update is the static layer's
+    `Context.presupSatisfied`, by construction: the dynamic definedness
+    condition and the satisfaction-theoretic context condition are one
+    notion. -/
 theorem admits_ofPartialProp (p : PartialProp W) (s : InfoStateOf W) :
-    (ofPartialProp p).admits s ↔ ∀ w ∈ s, p.presup w :=
-  Iff.rfl
-
-/-- Admittance is the static layer's `Context.presupSatisfied`: the dynamic
-    definedness condition and the satisfaction-theoretic context condition
-    are one notion. -/
-theorem admits_ofPartialProp_iff_presupSatisfied (p : PartialProp W)
-    (c : CommonGround.ContextSet W) :
-    (ofPartialProp p).admits c ↔ Context.presupSatisfied c p :=
+    (ofPartialProp p).admits s ↔ Context.presupSatisfied s p :=
   Iff.rfl
 
 /-! ### Filtering connectives, derived
@@ -155,36 +149,26 @@ composition law of partial updates, not a stipulation. -/
     presupposition pointwise. -/
 theorem admits_pseq_ofPartialProp (p q : PartialProp W) (s : InfoStateOf W) :
     (pseq (ofPartialProp p) (ofPartialProp q)).admits s ↔
-      ∀ w ∈ s, (PartialProp.andFilter p q).presup w := by
-  constructor
-  · rintro ⟨hp, hq⟩ w hw
-    exact ⟨hp w hw, λ ha => hq w ⟨hw, ha⟩⟩
-  · intro h
-    exact ⟨λ w hw => (h w hw).1, λ w hw => (h w hw.1).2 hw.2⟩
+      ∀ w ∈ s, (PartialProp.andFilter p q).presup w :=
+  ⟨λ ⟨hp, hq⟩ _ hw => ⟨hp hw, λ ha => hq ⟨hw, ha⟩⟩,
+   λ h => ⟨λ w hw => (h w hw).1, λ w hw => (h w hw.1).2 hw.2⟩⟩
 
 /-- Dynamic conditional admits `s` iff `s` satisfies `impFilter`'s
     presupposition pointwise. -/
 theorem admits_pcond_ofPartialProp (p q : PartialProp W) (s : InfoStateOf W) :
     (pcond (ofPartialProp p) (ofPartialProp q)).admits s ↔
-      ∀ w ∈ s, (PartialProp.impFilter p q).presup w := by
-  constructor
-  · rintro ⟨hp, hq⟩ w hw
-    exact ⟨hp w hw, λ ha => hq w ⟨hw, ha⟩⟩
-  · intro h
-    exact ⟨λ w hw => (h w hw).1, λ w hw => (h w hw.1).2 hw.2⟩
+      ∀ w ∈ s, (PartialProp.impFilter p q).presup w :=
+  admits_pseq_ofPartialProp p q s
 
 /-- Dynamic disjunction admits `s` iff `s` satisfies `orFilter`'s
     presupposition pointwise: the ¬φ local context is Karttunen's
     negative-antecedent filtering. -/
 theorem admits_pdisj_ofPartialProp (p q : PartialProp W) (s : InfoStateOf W) :
     (pdisj (ofPartialProp p) (ofPartialProp q)).admits s ↔
-      ∀ w ∈ s, (PartialProp.orFilter p q).presup w := by
-  constructor
-  · rintro ⟨hp, hq⟩ w hw
-    exact ⟨hp w hw, λ hna => hq w ⟨hw, λ hc => hna hc.2⟩⟩
-  · intro h
-    exact ⟨λ w hw => (h w hw).1,
-           λ w hw => (h w hw.1).2 (λ ha => hw.2 ⟨hw.1, ha⟩)⟩
+      ∀ w ∈ s, (PartialProp.orFilter p q).presup w :=
+  ⟨λ ⟨hp, hq⟩ _ hw => ⟨hp hw, λ hna => hq ⟨hw, λ hc => hna hc.2⟩⟩,
+   λ h => ⟨λ w hw => (h w hw).1,
+     λ w hw => (h w hw.1).2 (λ ha => hw.2 ⟨hw.1, ha⟩)⟩⟩
 
 /-- Negation projects the atomic presupposition unchanged. -/
 theorem admits_pneg_ofPartialProp (p : PartialProp W) (s : InfoStateOf W) :

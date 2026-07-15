@@ -2,26 +2,28 @@ import Linglib.Semantics.Dynamic.PLA.Update
 import Linglib.Semantics.Intensional.Rigidity
 
 /-!
-# PLA Epistemic Operators
+# PLA epistemic operators
 
-[dekker-2012] Chapter 4: Quantification and Modality (§4.3: Alethic and Epistemic Modality).
+Epistemic modals for PLA, from [dekker-2012]'s chapter on quantification and
+modality. Unlike assertoric updates, `might` and `must` are tests in the sense
+of [veltman-1996]: `might φ` passes an information state iff `φ` is consistent
+with it, `must φ` iff the state supports `φ`; neither eliminates possibilities.
+For de re vs de dicto distinctions, `PLA.Concept` instantiates
+`Intensional.Intension` at PLA possibilities: a way of identifying entities
+across assignment-witness pairs.
 
-## Key Concepts
+## Main definitions
 
-### Epistemic Modality
-- Might φ: φ is compatible with current information
-- Must φ: φ follows from current information
+- `PLA.Formula.might`, `PLA.Formula.must`: epistemic tests on information
+  states
+- `PLA.Concept`, `PLA.Concept.isRigid`: concepts over PLA possibilities
 
-### The Test Semantics
-Unlike assertoric updates that eliminate possibilities, epistemic modals
-TEST the information state:
-- might φ passes if some (g, ê) satisfies φ
-- must φ passes if all (g, ê) satisfy φ
+## Main results
 
-### Conceptual Covers ([dekker-2012] §3.2/§4.2)
-For de re/de dicto distinctions:
-- A peg is an extensional reference to an entity
-- A concept is an intensional way of identifying entities
+- `PLA.might_iff_consistent`, `PLA.must_iff_supports`: test characterizations
+- `PLA.might_idempotent`, `PLA.must_idempotent`: testing twice is testing once
+- `PLA.might_iff_not_must_neg`: the dynamic version of the modal duality
+  ◇φ ↔ ¬□¬φ
 -/
 
 namespace PLA
@@ -29,8 +31,7 @@ namespace PLA
 open Classical
 open DynamicSemantics.CCP
 
-
-variable {E : Type*} [Nonempty E]
+variable {E : Type*} (M : Model E)
 
 /--
 Might φ: φ is consistent with the information state.
@@ -39,7 +40,7 @@ Might φ: φ is consistent with the information state.
 
 This is a TEST: it doesn't eliminate possibilities, it checks if φ is possible.
 -/
-def Formula.might (M : Model E) (φ : Formula) : Update E :=
+def Formula.might (φ : Formula) : Update E :=
   λ s => if (φ.update M s).Nonempty then s else ∅
 
 /--
@@ -49,14 +50,14 @@ Must φ: φ is supported by the information state.
 
 This is also a TEST: it passes only if φ is certain.
 -/
-def Formula.must (M : Model E) (φ : Formula) : Update E :=
+def Formula.must (φ : Formula) : Update E :=
   λ s => if s ⊫[M] φ then s else ∅
 
 
 /--
 Might as consistency test: might φ passes iff some possibility satisfies φ.
 -/
-theorem might_iff_consistent (M : Model E) (φ : Formula) (s : InfoState E) :
+theorem might_iff_consistent (φ : Formula) (s : InfoState E) :
     φ.might M s = s ↔ (φ.update M s).Nonempty ∨ s = ∅ := by
   simp only [Formula.might]
   constructor
@@ -75,7 +76,7 @@ theorem might_iff_consistent (M : Model E) (φ : Formula) (s : InfoState E) :
 /--
 Must as support test: must φ passes iff the state supports φ.
 -/
-theorem must_iff_supports (M : Model E) (φ : Formula) (s : InfoState E) :
+theorem must_iff_supports (φ : Formula) (s : InfoState E) :
     φ.must M s = s ↔ (s ⊫[M] φ) ∨ s = ∅ := by
   simp only [Formula.must]
   constructor
@@ -93,27 +94,26 @@ theorem must_iff_supports (M : Model E) (φ : Formula) (s : InfoState E) :
 /--
 Testing doesn't change information (when it passes).
 -/
-theorem might_preserves_info (M : Model E) (φ : Formula) (s : InfoState E)
+theorem might_preserves_info (φ : Formula) (s : InfoState E)
     (h : (φ.update M s).Nonempty) :
     φ.might M s = s := by
   simp only [Formula.might, if_pos h]
 
-theorem must_preserves_info (M : Model E) (φ : Formula) (s : InfoState E)
-    (h : s ⊫[M] φ) :
+theorem must_preserves_info (φ : Formula) (s : InfoState E) (h : s ⊫[M] φ) :
     φ.must M s = s := by
   simp only [Formula.must, if_pos h]
 
 /--
 [veltman-1996]: Tests never add possibilities.
 -/
-theorem might_subset (M : Model E) (φ : Formula) (s : InfoState E) :
+theorem might_subset (φ : Formula) (s : InfoState E) :
     φ.might M s ⊆ s := by
   simp only [Formula.might]
   split_ifs
   · exact Set.Subset.rfl
   · exact Set.empty_subset s
 
-theorem must_subset (M : Model E) (φ : Formula) (s : InfoState E) :
+theorem must_subset (φ : Formula) (s : InfoState E) :
     φ.must M s ⊆ s := by
   simp only [Formula.must]
   split_ifs
@@ -124,13 +124,13 @@ theorem must_subset (M : Model E) (φ : Formula) (s : InfoState E) :
 /--
 Asserting then testing: φ; might ψ passes iff φ-update leaves room for ψ.
 -/
-theorem update_then_might (M : Model E) (φ ψ : Formula) (s : InfoState E) :
+theorem update_then_might (φ ψ : Formula) (s : InfoState E) :
     (φ.update M ;; ψ.might M) s = ψ.might M (φ.update M s) := rfl
 
 /--
 Asserting then requiring: φ; must ψ passes iff φ-update supports ψ.
 -/
-theorem update_then_must (M : Model E) (φ ψ : Formula) (s : InfoState E) :
+theorem update_then_must (φ ψ : Formula) (s : InfoState E) :
     (φ.update M ;; ψ.must M) s = ψ.must M (φ.update M s) := rfl
 
 
@@ -139,7 +139,7 @@ Must idempotence: must (must φ) ≡ must φ
 
 Once we've verified certainty, re-checking doesn't change anything.
 -/
-theorem must_idempotent (M : Model E) (φ : Formula) (s : InfoState E) :
+theorem must_idempotent (φ : Formula) (s : InfoState E) :
     φ.must M (φ.must M s) = φ.must M s := by
   simp only [Formula.must]
   by_cases hsup : s ⊫[M] φ
@@ -151,7 +151,7 @@ Might idempotence: might (might φ) ≡ might φ
 
 Testing for consistency twice is the same as testing once.
 -/
-theorem might_idempotent (M : Model E) (φ : Formula) (s : InfoState E) :
+theorem might_idempotent (φ : Formula) (s : InfoState E) :
     φ.might M (φ.might M s) = φ.might M s := by
   simp only [Formula.might]
   by_cases hne : (φ.update M s).Nonempty
@@ -164,7 +164,7 @@ theorem might_idempotent (M : Model E) (φ : Formula) (s : InfoState E) :
 /--
 If s supports φ, then might φ passes.
 -/
-theorem supports_implies_might (M : Model E) (φ : Formula) (s : InfoState E)
+theorem supports_implies_might (φ : Formula) (s : InfoState E)
     (hs : s.Nonempty) (hsup : s ⊫[M] φ) :
     φ.might M s = s := by
   simp only [Formula.might]
@@ -175,14 +175,6 @@ theorem supports_implies_might (M : Model E) (φ : Formula) (s : InfoState E)
     exact ⟨hp, hsup p hp⟩
   simp only [if_pos hne]
 
-/--
-If s supports φ, then must φ passes.
--/
-theorem supports_implies_must (M : Model E) (φ : Formula) (s : InfoState E)
-    (hsup : s ⊫[M] φ) :
-    φ.must M s = s := by
-  simp only [Formula.must, if_pos hsup]
-
 
 /--
 Modal duality: might φ passes iff must ¬φ fails (on nonempty states).
@@ -190,45 +182,18 @@ Modal duality: might φ passes iff must ¬φ fails (on nonempty states).
 `might φ` passes on s ↔ `must ¬φ` fails on s (i.e., s does not support ¬φ).
 This is the dynamic version of the classical duality ◇φ ↔ ¬□¬φ.
 -/
-theorem might_iff_not_must_neg (M : Model E) (φ : Formula) (s : InfoState E)
-    (hs : s.Nonempty) :
+theorem might_iff_not_must_neg (φ : Formula) (s : InfoState E) (hs : s.Nonempty) :
     φ.might M s = s ↔ (∼φ).must M s ≠ s := by
+  rw [ne_eq, might_iff_consistent, must_iff_supports]
+  simp only [Set.nonempty_iff_ne_empty.mp hs, or_false]
   constructor
-  · -- (→) might φ passes → must ¬φ fails
-    intro hmight hmust
-    -- might passed, so φ.update M s is nonempty
-    have hne : (φ.update M s).Nonempty := by
-      simp only [Formula.might] at hmight
-      split_ifs at hmight with h
-      · exact h
-      · exact absurd hmight.symm (Set.nonempty_iff_ne_empty.mp hs)
-    -- must ¬φ passed, so s supports ¬φ
-    have hsup : s ⊫[M] (∼φ) := by
-      simp only [Formula.must] at hmust
-      split_ifs at hmust with h
-      · exact h
-      · exact absurd hmust.symm (Set.nonempty_iff_ne_empty.mp hs)
-    -- Contradiction: some p ∈ s satisfies φ, but all p ∈ s satisfy ¬φ
-    obtain ⟨p, hp⟩ := hne
-    simp only [Formula.update, InfoState.restrict, Set.mem_setOf_eq] at hp
-    have := hsup p hp.1
-    simp only [Formula.sat] at this
-    exact this hp.2
-  · -- (←) must ¬φ fails → might φ passes
-    intro h
-    -- s does not support ¬φ
-    have hnsup : ¬(s ⊫[M] (∼φ)) := by
-      intro hsup
-      apply h
-      simp only [Formula.must, if_pos hsup]
-    -- So some p ∈ s does not satisfy ¬φ, i.e., satisfies φ
-    simp only [InfoState.supports, Formula.sat, not_forall, Classical.not_not] at hnsup
-    obtain ⟨p, hp, hsat⟩ := hnsup
-    have hne : (φ.update M s).Nonempty := by
-      use p
-      simp only [Formula.update, InfoState.restrict, Set.mem_setOf_eq]
-      exact ⟨hp, hsat⟩
-    simp only [Formula.might, if_pos hne]
+  · rintro ⟨⟨g, ê⟩, hp⟩ hsup
+    rw [Formula.mem_update] at hp
+    exact hsup _ hp.1 hp.2
+  · intro h
+    simp only [InfoState.supports, Formula.sat, not_forall, Classical.not_not] at h
+    obtain ⟨p, hp, hsat⟩ := h
+    exact ⟨p, (Formula.mem_update M φ s p.1 p.2).mpr ⟨hp, hsat⟩⟩
 
 
 /--
@@ -260,7 +225,6 @@ Alias for `Intensional.Intension.rigid` at the PLA index.
 -/
 abbrev Concept.const (e : E) : Concept E := Intensional.Intension.rigid e
 
-omit [Nonempty E] in
 theorem const_is_rigid (e : E) : (Concept.const e).isRigid :=
   Intensional.Intension.rigid_isRigid e
 

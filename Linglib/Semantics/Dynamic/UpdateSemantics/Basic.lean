@@ -17,7 +17,7 @@ In Update Semantics:
 
 namespace UpdateSemantics
 
-open Classical
+variable {W : Type*}
 
 /--
 Update Semantics state: a set of possible worlds.
@@ -37,7 +37,7 @@ Propositional update: eliminate worlds where φ fails.
 
 ⟦φ⟧(s) = { w ∈ s | φ(w) }
 -/
-def Update.prop {W : Type*} (φ : W → Prop) : Update W :=
+def Update.prop (φ : W → Prop) : Update W :=
   λ s => { w ∈ s | φ w }
 
 /--
@@ -47,7 +47,7 @@ Conjunction: sequential update.
 
 Delegates to `DynamicSemantics.CCP.seq`.
 -/
-def Update.conj {W : Type*} (φ ψ : Update W) : Update W :=
+abbrev Update.conj (φ ψ : Update W) : Update W :=
   DynamicSemantics.CCP.seq φ ψ
 
 /--
@@ -58,7 +58,7 @@ Negation: complement within the input state.
 Delegates to `DynamicSemantics.CCP.neg`. The whole-state consistency test is
 `DynamicSemantics.CCP.negTest`.
 -/
-def Update.neg {W : Type*} (φ : Update W) : Update W :=
+abbrev Update.neg (φ : Update W) : Update W :=
   DynamicSemantics.CCP.neg φ
 
 /--
@@ -68,7 +68,7 @@ Epistemic "might": compatibility test.
 
 Delegates to `DynamicSemantics.CCP.might`.
 -/
-noncomputable def Update.might {W : Type*} (φ : Update W) : Update W :=
+noncomputable abbrev Update.might (φ : Update W) : Update W :=
   DynamicSemantics.CCP.might φ
 
 /--
@@ -78,16 +78,15 @@ Epistemic "must": universal test.
 
 Delegates to `DynamicSemantics.CCP.must`.
 -/
-noncomputable def Update.must {W : Type*} (φ : Update W) : Update W :=
+noncomputable abbrev Update.must (φ : Update W) : Update W :=
   DynamicSemantics.CCP.must φ
 
 /--
 Might is a TEST: it doesn't change the state (if it passes).
 -/
-theorem might_is_test {W : Type*} (φ : Update W) (s : State W)
-    (h : (φ s).Nonempty) :
-    Update.might φ s = s := by
-  simp [Update.might, DynamicSemantics.CCP.might, DynamicSemantics.CCP.guard, h]
+theorem Update.might_eq_self_of_nonempty (φ : Update W) (s : State W)
+    (h : (φ s).Nonempty) : Update.might φ s = s :=
+  DynamicSemantics.CCP.guard_pos h
 
 /--
 Order matters for epistemic might.
@@ -99,33 +98,28 @@ the might test passes on the initial state, then learning eliminates ¬rain worl
 
 Requires `Nontrivial W`: for empty or singleton W, no state has both
 p-worlds and ¬p-worlds, making the second conjunct unsatisfiable. -/
-theorem might_order_matters {W : Type*} [DecidableEq W] [Nontrivial W] :
+theorem might_order_matters [Nontrivial W] :
     ∃ (p : W → Prop) (_ : DecidablePred p) (s : State W),
       Update.conj (Update.prop p) (Update.might (Update.prop fun w => ¬p w)) s = ∅ ∧
       (Update.conj (Update.might (Update.prop fun w => ¬p w)) (Update.prop p) s).Nonempty := by
   obtain ⟨w₁, w₂, hne⟩ := exists_pair_ne W
-  refine ⟨fun w => w = w₁, inferInstance, {w₁, w₂}, ?_, ?_⟩
+  refine ⟨fun w => w = w₁, Classical.decPred _, {w₁, w₂}, ?_, ?_⟩
   · -- "p and might(not p)" fails: after learning p, only w₁ remains, and ¬p w₁ is false
-    simp only [Update.conj, DynamicSemantics.CCP.seq, Update.prop, Update.might, DynamicSemantics.CCP.might,
-      DynamicSemantics.CCP.guard]
-    have h_not_nonempty :
-        ¬({w ∈ {w ∈ ({w₁, w₂} : Set W) | w = w₁} | ¬w = w₁}).Nonempty := by
-      rintro ⟨w, ⟨_, hw_p⟩, hw_np⟩; exact hw_np hw_p
-    simp only [h_not_nonempty, ↓reduceIte]
+    simp only [Update.conj, DynamicSemantics.CCP.seq, DynamicSemantics.CCP.might]
+    refine DynamicSemantics.CCP.guard_neg ?_
+    rintro ⟨w, ⟨_, hw_p⟩, hw_np⟩; exact hw_np hw_p
   · -- "might(not p) and p" succeeds: might test passes on {w₁, w₂}, then p keeps w₁
-    simp only [Update.conj, DynamicSemantics.CCP.seq, Update.prop, Update.might, DynamicSemantics.CCP.might,
-      DynamicSemantics.CCP.guard]
-    have h_nonempty : ({w ∈ ({w₁, w₂} : Set W) | ¬w = w₁}).Nonempty :=
-      ⟨w₂, Or.inr rfl, hne.symm⟩
-    simp only [h_nonempty, ↓reduceIte]
-    exact ⟨w₁, ⟨Or.inl rfl, rfl⟩⟩
+    have h : Update.might (Update.prop fun w => ¬w = w₁) ({w₁, w₂} : State W) = {w₁, w₂} :=
+      DynamicSemantics.CCP.guard_pos ⟨w₂, Or.inr rfl, hne.symm⟩
+    simp only [Update.conj, DynamicSemantics.CCP.seq, h]
+    exact ⟨w₁, Or.inl rfl, rfl⟩
 
 /--
 State s supports φ iff updating with φ doesn't change s.
 
 s ⊨ φ iff ⟦φ⟧(s) = s
 -/
-def supports {W : Type*} (s : State W) (φ : Update W) : Prop :=
+def supports (s : State W) (φ : Update W) : Prop :=
   φ s = s
 
 /--
@@ -133,11 +127,10 @@ State s accepts φ iff updating with φ yields a non-empty state.
 
 s accepts φ iff ⟦φ⟧(s) ≠ ∅
 -/
-def accepts {W : Type*} (s : State W) (φ : Update W) : Prop :=
+def accepts (s : State W) (φ : Update W) : Prop :=
   (φ s).Nonempty
 
-
--- ═══ Three Notions of Validity (§1.2) ═══
+/-! ### Three notions of validity -/
 
 /-- **Validity₁**: updating the minimal state **0** with the premises
     in order yields a state that supports the conclusion.
@@ -147,28 +140,27 @@ def accepts {W : Type*} (s : State W) (φ : Update W) : Prop :=
     [veltman-1996], §1.2. This is the notion Veltman concentrates on:
     it captures the fact that default conclusions depend on exactly what
     information is available. -/
-def valid₁ {W : Type*} (premises : List (Update W)) (conclusion : Update W) : Prop :=
+def valid₁ (premises : List (Update W)) (conclusion : Update W) : Prop :=
   supports (premises.foldl (fun s u => u s) Set.univ) conclusion
 
 /-- **Validity₂**: for *every* state σ, updating with the premises
     in order yields a state that supports the conclusion.
 
     ψ₁,...,ψₙ ⊩₂ φ  iff  ∀σ, σ[ψ₁]⋯[ψₙ] ⊨ φ -/
-def valid₂ {W : Type*} (premises : List (Update W)) (conclusion : Update W) : Prop :=
+def valid₂ (premises : List (Update W)) (conclusion : Update W) : Prop :=
   ∀ σ : State W, supports (premises.foldl (fun s u => u s) σ) conclusion
 
 /-- **Validity₃**: one cannot accept all premises without accepting
     the conclusion. Closest to the classical notion.
 
     ψ₁,...,ψₙ ⊩₃ φ  iff  ∀σ, (σ ⊨ ψ₁ ∧ ... ∧ σ ⊨ ψₙ) → σ ⊨ φ -/
-def valid₃ {W : Type*} (premises : List (Update W)) (conclusion : Update W) : Prop :=
+def valid₃ (premises : List (Update W)) (conclusion : Update W) : Prop :=
   ∀ σ : State W, (∀ p ∈ premises, supports σ p) → supports σ conclusion
 
 /-- Validity₂ implies validity₁: specializing σ = **0**.
 
     [veltman-1996], Proposition 1.3 (one direction, unconditional). -/
-theorem valid₂_imp_valid₁ {W : Type*}
-    (premises : List (Update W)) (conclusion : Update W) :
+theorem valid₂_imp_valid₁ (premises : List (Update W)) (conclusion : Update W) :
     valid₂ premises conclusion → valid₁ premises conclusion :=
   fun h => h Set.univ
 
@@ -176,12 +168,11 @@ theorem valid₂_imp_valid₁ {W : Type*}
 
     [veltman-1996], §1.2: validity₃ is the only notion that is
     both left and right monotonic. -/
-theorem valid₃_monotone {W : Type*}
-    (premises extra : List (Update W)) (conclusion : Update W) :
+theorem valid₃_monotone (premises extra : List (Update W)) (conclusion : Update W) :
     valid₃ premises conclusion → valid₃ (premises ++ extra) conclusion :=
   fun h σ hsup => h σ (fun p hp => hsup p (List.mem_append_left extra hp))
 
--- ═══ Presuppositional Updates (§2.3 of [yagi-2025]) ═══
+/-! ### Presuppositional updates -/
 
 /-- The designated undefined state: update failure.
 
@@ -189,6 +180,7 @@ theorem valid₃_monotone {W : Type*}
     the update yields ∗. We model ∗ as `none` via `Option (State W)`. -/
 abbrev PState (W : Type*) := Option (State W)
 
+open Classical in
 /-- Presuppositional update: update by φ_p is defined only when the
     presupposition p is supported (i.e. `s[p] = s`).
 
@@ -197,7 +189,7 @@ abbrev PState (W : Type*) := Option (State W)
              = s[φ]  otherwise
 
     [heim-1982] [beaver-2001] [veltman-1996] -/
-noncomputable def PUpdate.presup {W : Type*} (p φ : W → Prop) : PState W → PState W
+noncomputable def PUpdate.presup (p φ : W → Prop) : PState W → PState W
   | none => none
   | some s =>
     if Update.prop p s = s then
@@ -210,8 +202,7 @@ noncomputable def PUpdate.presup {W : Type*} (p φ : W → Prop) : PState W → 
     when `s` admits the corresponding partial update. `PartialCCP` is the
     canonical `Part`-based form; this clause survives for the
     [yagi-2025] disjunction machinery below. -/
-theorem PUpdate.presup_ne_none_iff_admits {W : Type*} (p φ : W → Prop)
-    (s : State W) :
+theorem PUpdate.presup_ne_none_iff_admits (p φ : W → Prop) (s : State W) :
     PUpdate.presup p φ (some s) ≠ none ↔
       (DynamicSemantics.PartialCCP.ofPartialProp ⟨p, φ⟩).admits s := by
   simp only [PUpdate.presup]
@@ -226,7 +217,7 @@ theorem PUpdate.presup_ne_none_iff_admits {W : Type*} (p φ : W → Prop)
 /-- Negation extended to PState: s[¬φ] = s/s[φ].
 
     [yagi-2025] Definition 4: s[¬φ] = s \ s[φ]. -/
-noncomputable def PUpdate.neg {W : Type*} (φ : W → Prop) : PState W → PState W
+def PUpdate.neg (φ : W → Prop) : PState W → PState W
   | none => none
   | some s => some (s \ Update.prop φ s)
 
@@ -234,8 +225,7 @@ noncomputable def PUpdate.neg {W : Type*} (φ : W → Prop) : PState W → PStat
 
     [yagi-2025] Definition 4, [heim-1982].
     Extended with ∗ ∪ s = s ∪ ∗ = ∗. -/
-noncomputable def PUpdate.disj {W : Type*} (φ ψ : W → Prop) :
-    PState W → PState W
+def PUpdate.disj (φ ψ : W → Prop) : PState W → PState W
   | none => none
   | some s =>
     let left := Update.prop φ s
@@ -251,7 +241,7 @@ noncomputable def PUpdate.disj {W : Type*} (φ ψ : W → Prop) :
 
     Both presuppositional updates must be defined for the result to be
     defined: s[φ_p] requires s ⊨ p, and s[¬φ_p][ψ_q] requires s[¬φ_p] ⊨ q. -/
-noncomputable def PUpdate.disjPresup {W : Type*} (p φ q ψ : W → Prop) :
+noncomputable def PUpdate.disjPresup (p φ q ψ : W → Prop) :
     PState W → PState W
   | none => none
   | some s =>
@@ -278,8 +268,7 @@ noncomputable def PUpdate.disjPresup {W : Type*} (p φ q ψ : W → Prop) :
     By default χ = ω = ⊤ (both tautological), but when the default
     violates genuineness ([zimmermann-2000]), the split becomes
     non-trivial: χ = ¬q and ω = ¬p for conflicting presuppositions. -/
-noncomputable def PUpdate.disjFlex {W : Type*}
-    (χ φ_presup φ ω ψ_presup ψ : W → Prop)
+noncomputable def PUpdate.disjFlex (χ φ_presup φ ω ψ_presup ψ : W → Prop)
     (_h_split : ∀ s : State W, Update.prop χ s ∪ Update.prop ω s = s) :
     PState W → PState W
   | none => none
@@ -292,8 +281,7 @@ noncomputable def PUpdate.disjFlex {W : Type*}
     | some l, some r => some (l ∪ r)
     | _, _ => none  -- ∗ poisons: if either side is undefined, result is ∗
 
-
--- ═══ Yagi's Core Observations (Dynamic) ═══
+/-! ### Yagi's core observations -/
 
 /-- Presuppositional disjunction update is uninformative when both
     presuppositions are already supported: if s ⊨ p and s ⊨ q and the
@@ -305,8 +293,7 @@ noncomputable def PUpdate.disjFlex {W : Type*}
     (unless s = ∅). For the conflicting case, see
     `update_yields_undefined` in the Yagi2025 study, which shows the
     update is undefined (∗) rather than uninformative. -/
-theorem presup_disj_uninformative_when_supported {W : Type*}
-    (p φ q ψ : W → Prop) (s : State W)
+theorem presup_disj_uninformative_when_supported (p φ q ψ : W → Prop) (s : State W)
     (hp : Update.prop p s = s) (hq : Update.prop q s = s)
     (h_or : ∀ w, w ∈ s → (φ w ∨ ψ w)) :
     PUpdate.disjPresup p φ q ψ (some s) = some s := by

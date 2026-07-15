@@ -110,6 +110,14 @@ non-distributive tests that inspect the entire input state. -/
 noncomputable def guard (C : InfoStateOf P → Prop) : CCP P :=
   λ s => if C s then s else ∅
 
+/-- A guard whose condition holds passes the state through. -/
+@[simp] theorem guard_pos {C : InfoStateOf P → Prop} {s} (h : C s) : guard C s = s :=
+  if_pos h
+
+/-- A guard whose condition fails crashes to `∅`. -/
+@[simp] theorem guard_neg {C : InfoStateOf P → Prop} {s} (h : ¬C s) : guard C s = ∅ :=
+  if_neg h
+
 /--
 Test-based negation: passes (returns input) iff φ yields ∅.
 

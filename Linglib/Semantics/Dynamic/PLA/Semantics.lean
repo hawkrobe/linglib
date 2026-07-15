@@ -3,26 +3,27 @@ import Linglib.Semantics.Dynamic.CDRT
 import Linglib.Semantics.Dynamic.PLA.Translation
 
 /-!
-# PLA Semantics
-[dekker-2012]
+# PLA satisfaction and truth
 
-Satisfaction and truth for Predicate Logic with Anaphora.
+Satisfaction and truth for Predicate Logic with Anaphora [dekker-2012].
+Variables are interpreted by an assignment `g`; pronouns get their values from
+outside the formula through a witness sequence `ê`. Satisfaction `M, g, ê ⊨ φ`
+is relative to both; truth existentially quantifies the witness sequence.
 
-## Key Concepts
+## Main definitions
 
-### Witness Sequences
-Pronouns are interpreted via witness sequences ê = (e₁,..., eₙ).
-Unlike variables (interpreted by assignments), pronouns get their values
-from outside the formula through the witness sequence.
+- `PLA.Assignment`, `PLA.WitnessSeq`, `PLA.Model`, `PLA.Term.eval`
+- `PLA.Formula.sat`, `PLA.Formula.trueIn`: satisfaction and truth
+- `PLA.formulaToDRS`: embedding into Dynamic Ty2 [muskens-1996]
 
-### Satisfaction
-M, g, ê ⊨ φ means formula φ is satisfied in model M relative to:
-- Assignment g (for variables)
-- Witness sequence ê (for pronouns)
+## Main results
 
-### Truth
-M ⊨ φ means φ is true in M: for all assignments g, there exists a witness
-sequence ê such that M, g, ê ⊨ φ.
+- `PLA.Formula.sat_resolve`: resolution correctness (Observation 7 of
+  [dekker-2012])
+- `PLA.obs4_pla_pl_equivalence`: PLA conservatively extends predicate logic
+- `PLA.obs5_relevance`: satisfaction depends only on occurring free variables
+  and pronouns
+- `PLA.formulaToDRS_correct`: the Dynamic Ty2 embedding preserves satisfaction
 -/
 
 namespace PLA
@@ -37,14 +38,19 @@ abbrev Assignment (E : Type*) := VarIdx → E
 /-- A witness sequence maps pronoun indices to entities -/
 abbrev WitnessSeq (E : Type*) := PronIdx → E
 
-/-- Assignment-update notation `g[i ↦ e]` for mathlib's `Function.update`. -/
-notation g "[" i " ↦ " e "]" => Function.update g i e
+/-- Assignment-update notation `g[i ↦ e]` for mathlib's `Function.update`.
+
+Unlike `Semantics/Intensional/Variables.lean`'s `notation:max`, this stays at the
+default precedence: at `max` the trailing `[` would capture the list-literal
+arguments of `Formula.atom`. -/
+scoped notation g "[" i " ↦ " e "]" => Function.update g i e
 
 /-- A model provides predicate interpretations -/
 structure Model (E : Type*) where
   /-- Interpretation: predicate name → argument tuple → truth value -/
   interp : String → List E → Bool
 
+variable {E : Type*}
 
 /--
 Evaluate a term given assignment g and witness sequence ê.
@@ -54,18 +60,42 @@ Evaluate a term given assignment g and witness sequence ê.
 
 Variables and pronouns have different interpretation sources.
 -/
-def Term.eval {E : Type*} (g : Assignment E) (ê : WitnessSeq E) : Term → E
+def Term.eval (g : Assignment E) (ê : WitnessSeq E) : Term → E
   | .var i => g i
   | .pron i => ê i
 
 @[simp]
-theorem Term.eval_var {E : Type*} (g : Assignment E) (ê : WitnessSeq E) (i : VarIdx) :
+theorem Term.eval_var (g : Assignment E) (ê : WitnessSeq E) (i : VarIdx) :
     (Term.var i).eval g ê = g i := rfl
 
 @[simp]
-theorem Term.eval_pron {E : Type*} (g : Assignment E) (ê : WitnessSeq E) (i : PronIdx) :
+theorem Term.eval_pron (g : Assignment E) (ê : WitnessSeq E) (i : PronIdx) :
     (Term.pron i).eval g ê = ê i := rfl
 
+/--
+Term evaluation under resolution: when ê(i) = g(ρ(i)), evaluation is preserved.
+-/
+theorem Term.eval_resolve (g : Assignment E) (ê : WitnessSeq E) (ρ : Resolution)
+    (t : Term) (h : ∀ i, t = .pron i → ê i = g (ρ i)) :
+    t.eval g ê = (t.resolve ρ).eval g ê := by
+  cases t with
+  | var i => rfl
+  | pron i =>
+    simp only [eval, resolve]
+    exact h i rfl
+
+/-- For pronoun-free terms, evaluation doesn't depend on the witness sequence. -/
+theorem Term.eval_witness_irrelevant (t : Term) (ht : t.pronouns = ∅)
+    (g : Assignment E) (ê₁ ê₂ : WitnessSeq E) :
+    t.eval g ê₁ = t.eval g ê₂ := by
+  cases t with
+  | var _ => rfl
+  | pron i => simp [Term.pronouns] at ht
+
+
+section Satisfaction
+
+variable (M : Model E)
 
 /--
 PLA Satisfaction: M, g, ê ⊨ φ
@@ -77,58 +107,41 @@ PLA Satisfaction: M, g, ê ⊨ φ
 - Conjunction: both conjuncts satisfied
 - Existential: witness exists in domain
 -/
-def Formula.sat {E : Type*} [Nonempty E] (M : Model E) (g : Assignment E) (ê : WitnessSeq E) :
-    Formula → Prop
+def Formula.sat (g : Assignment E) (ê : WitnessSeq E) : Formula → Prop
   | .atom name ts => M.interp name (ts.map (Term.eval g ê))
-  | .neg φ => ¬φ.sat M g ê
-  | .conj φ ψ => φ.sat M g ê ∧ ψ.sat M g ê
-  | .exists_ i φ => ∃ e : E, φ.sat M (g[i ↦ e]) ê
+  | .neg φ => ¬φ.sat g ê
+  | .conj φ ψ => φ.sat g ê ∧ ψ.sat g ê
+  | .exists_ i φ => ∃ e : E, φ.sat (g[i ↦ e]) ê
 
 /-- Truth in a model: M ⊨ φ iff for all g, ∃ê such that M, g, ê ⊨ φ -/
-def Formula.trueIn {E : Type*} [Nonempty E] (M : Model E) (φ : Formula) : Prop :=
+def Formula.trueIn (φ : Formula) : Prop :=
   ∀ g : Assignment E, ∃ ê : WitnessSeq E, φ.sat M g ê
 
 
 /-- Double negation elimination -/
-theorem Formula.sat_neg_neg {E : Type*} [Nonempty E] (M : Model E) (g : Assignment E)
-    (ê : WitnessSeq E) (φ : Formula) :
+theorem Formula.sat_neg_neg (g : Assignment E) (ê : WitnessSeq E) (φ : Formula) :
     (∼(∼φ)).sat M g ê ↔ φ.sat M g ê := by
   simp only [Formula.sat]
   exact Classical.not_not
 
 /-- Conjunction elimination (left) -/
-theorem Formula.sat_conj_left {E : Type*} [Nonempty E] (M : Model E) (g : Assignment E)
-    (ê : WitnessSeq E) (φ ψ : Formula) :
+theorem Formula.sat_conj_left (g : Assignment E) (ê : WitnessSeq E) (φ ψ : Formula) :
     (φ ⋀ ψ).sat M g ê → φ.sat M g ê := And.left
 
 /-- Conjunction elimination (right) -/
-theorem Formula.sat_conj_right {E : Type*} [Nonempty E] (M : Model E) (g : Assignment E)
-    (ê : WitnessSeq E) (φ ψ : Formula) :
+theorem Formula.sat_conj_right (g : Assignment E) (ê : WitnessSeq E) (φ ψ : Formula) :
     (φ ⋀ ψ).sat M g ê → ψ.sat M g ê := And.right
 
 /-- Conjunction introduction -/
-theorem Formula.sat_conj_intro {E : Type*} [Nonempty E] (M : Model E) (g : Assignment E)
-    (ê : WitnessSeq E) (φ ψ : Formula) :
+theorem Formula.sat_conj_intro (g : Assignment E) (ê : WitnessSeq E) (φ ψ : Formula) :
     φ.sat M g ê → ψ.sat M g ê → (φ ⋀ ψ).sat M g ê := And.intro
 
 /-- Existential introduction -/
-theorem Formula.sat_exists_intro {E : Type*} [Nonempty E] (M : Model E) (g : Assignment E)
-    (ê : WitnessSeq E) (i : VarIdx) (φ : Formula) (e : E) :
+theorem Formula.sat_exists_intro (g : Assignment E) (ê : WitnessSeq E) (i : VarIdx)
+    (φ : Formula) (e : E) :
     φ.sat M (g[i ↦ e]) ê → (Formula.exists_ i φ).sat M g ê :=
   λ h => ⟨e, h⟩
 
-
-/--
-Term evaluation under resolution: when ê(i) = g(ρ(i)), evaluation is preserved.
--/
-theorem Term.eval_resolve {E : Type*} (g : Assignment E) (ê : WitnessSeq E) (ρ : Resolution)
-    (t : Term) (h : ∀ i, t = .pron i → ê i = g (ρ i)) :
-    t.eval g ê = (t.resolve ρ).eval g ê := by
-  cases t with
-  | var i => rfl
-  | pron i =>
-    simp only [eval, resolve]
-    exact h i rfl
 
 /--
 Resolution Correctness ([dekker-2012] Observation 7, §2.2, p.30).
@@ -138,8 +151,7 @@ and no pronoun resolves to a bound variable, then satisfaction is preserved:
 
   M, g, ê ⊨ φ ↔ M, g, ê ⊨ φ^ρ
 -/
-theorem Formula.sat_resolve {E : Type*} [Nonempty E]
-    (M : Model E) (g : Assignment E) (ê : WitnessSeq E) (ρ : Resolution)
+theorem Formula.sat_resolve (g : Assignment E) (ê : WitnessSeq E) (ρ : Resolution)
     (φ : Formula)
     (hcompat : ∀ i ∈ φ.range, ê i = g (ρ i))
     (hnoCapture : ∀ i ∈ φ.range, ρ i ∉ φ.domain) :
@@ -214,22 +226,12 @@ example : (exManWalkedIn.resolve exResolution).range = ∅ :=
 end Examples
 
 
-/-- For pronoun-free terms, evaluation doesn't depend on the witness sequence. -/
-theorem Term.eval_witness_irrelevant {E : Type*} (t : Term) (ht : t.pronouns = ∅)
-    (g : Assignment E) (ê₁ ê₂ : WitnessSeq E) :
-    t.eval g ê₁ = t.eval g ê₂ := by
-  cases t with
-  | var _ => rfl
-  | pron i => simp [Term.pronouns] at ht
-
-
 /-- Observation 4 ([dekker-2012] §2.2, p.25): PLA and PL equivalence.
 
 For pronoun-free formulas, satisfaction is independent of the witness sequence.
 This shows PLA conservatively extends PL: standard predicate logic formulas have
 the same truth conditions in PLA as in PL. -/
-theorem obs4_pla_pl_equivalence {E : Type*} [Nonempty E] (M : Model E)
-    (φ : Formula) (hfree : φ.range = ∅)
+theorem obs4_pla_pl_equivalence (φ : Formula) (hfree : φ.range = ∅)
     (g : Assignment E) (ê₁ ê₂ : WitnessSeq E) :
     φ.sat M g ê₁ ↔ φ.sat M g ê₂ := by
   induction φ generalizing g with
@@ -273,8 +275,7 @@ Satisfaction depends only on the values of free variables and pronouns
 that actually occur in the formula. Assignments that agree on freeVars
 and witness sequences that agree on range yield the same satisfaction.
 -/
-theorem obs5_relevance {E : Type*} [Nonempty E] (M : Model E)
-    (φ : Formula) (g₁ g₂ : Assignment E) (ê₁ ê₂ : WitnessSeq E)
+theorem obs5_relevance (φ : Formula) (g₁ g₂ : Assignment E) (ê₁ ê₂ : WitnessSeq E)
     (hg : ∀ x ∈ φ.freeVars, g₁ x = g₂ x)
     (hê : ∀ i ∈ φ.range, ê₁ i = ê₂ i) :
     φ.sat M g₁ ê₁ ↔ φ.sat M g₂ ê₂ := by
@@ -325,14 +326,14 @@ theorem obs5_relevance {E : Type*} [Nonempty E] (M : Model E)
     · intro i hi
       exact hê i hi
 
+end Satisfaction
 
--- ════════════════════════════════════════════════════════════════
--- § Embedding into Dynamic Ty2 [muskens-1996]
--- ════════════════════════════════════════════════════════════════
 
-/-! PLA distinguishes variables (`VarIdx`) from pronouns (`PronIdx`);
-Dynamic Ty2 has a single dref type `S → E`. The embedding uses the
-sum type `(VarIdx ⊕ PronIdx) → E` as the `S` parameter, providing
+/-! ### Embedding into Dynamic Ty2
+
+PLA distinguishes variables (`VarIdx`) from pronouns (`PronIdx`);
+Dynamic Ty2 ([muskens-1996]) has a single dref type `S → E`. The embedding
+uses the sum type `(VarIdx ⊕ PronIdx) → E` as the `S` parameter, providing
 type-safe separation without magic numbers. Because PLA updates are
 eliminative (filter, never extend), every PLA formula translates to
 a `test` in Dynamic Ty2. -/
@@ -342,33 +343,33 @@ a `test` in Dynamic Ty2. -/
 abbrev MergedAssignment (E : Type*) := (VarIdx ⊕ PronIdx) → E
 
 /-- Variable dref: projection at `.inl i`. -/
-def varDref {E : Type*} (i : VarIdx) : Dref (MergedAssignment E) E :=
+def varDref (i : VarIdx) : Dref (MergedAssignment E) E :=
   λ g => g (.inl i)
 
 /-- Pronoun dref: projection at `.inr i`. -/
-def pronDref {E : Type*} (i : PronIdx) : Dref (MergedAssignment E) E :=
+def pronDref (i : PronIdx) : Dref (MergedAssignment E) E :=
   λ g => g (.inr i)
 
 /-- Interpret a PLA term as a Dynamic Ty2 dref. -/
-def termToDref {E : Type*} : Term → Dref (MergedAssignment E) E
+def termToDref : Term → Dref (MergedAssignment E) E
   | .var i => varDref i
   | .pron i => pronDref i
 
 /-- Convert `PLAPoss` to merged assignment. -/
-def plaPossToMerged {E : Type*} (p : PLAPoss E) : MergedAssignment E
+def plaPossToMerged (p : PLAPoss E) : MergedAssignment E
   | .inl i => p.assignment i
   | .inr i => p.witnesses i
 
 /-- Convert merged assignment to `PLAPoss`. -/
-def mergedToPLAPoss {E : Type*} (g : MergedAssignment E) : PLAPoss E :=
+def mergedToPLAPoss (g : MergedAssignment E) : PLAPoss E :=
   { assignment := λ i => g (.inl i)
   , witnesses := λ i => g (.inr i) }
 
-theorem plaPoss_roundtrip {E : Type*} (p : PLAPoss E) :
+theorem plaPoss_roundtrip (p : PLAPoss E) :
     mergedToPLAPoss (plaPossToMerged p) = p := by
   simp only [mergedToPLAPoss, plaPossToMerged]
 
-theorem merged_roundtrip {E : Type*} (g : MergedAssignment E) :
+theorem merged_roundtrip (g : MergedAssignment E) :
     plaPossToMerged (mergedToPLAPoss g) = g := by
   funext x
   cases x <;> rfl
@@ -376,7 +377,7 @@ theorem merged_roundtrip {E : Type*} (g : MergedAssignment E) :
 
 section Embedding
 
-variable {E : Type*} [Nonempty E]
+variable (M : Model E)
 
 /-- Functional update for merged assignments (only affects variables). -/
 def extend (g : MergedAssignment E) (i : VarIdx) (e : E) : MergedAssignment E :=
@@ -388,36 +389,6 @@ def extend (g : MergedAssignment E) (i : VarIdx) (e : E) : MergedAssignment E :=
 def evalTerm (g : MergedAssignment E) : Term → E
   | .var i => g (.inl i)
   | .pron i => g (.inr i)
-
-/-- Translate a PLA formula to a Dynamic Ty2 condition.
-
-PLA existentials check for *existence* of a witness but don't extend the
-assignment (eliminative semantics). -/
-def formulaToCondition (M : Model E) : Formula → Condition (MergedAssignment E)
-  | .atom name ts => λ g => M.interp name (ts.map (evalTerm g))
-  | .neg φ => λ g => ¬(formulaToCondition M φ g)
-  | .conj φ ψ => λ g => formulaToCondition M φ g ∧ formulaToCondition M ψ g
-  | .exists_ x φ => λ g => ∃ e : E, formulaToCondition M φ (extend g x e)
-
-/-- Translate a PLA formula to a Dynamic Ty2 Update. PLA's eliminative
-updates mean every formula translates to a `test`. -/
-def formulaToDRS (M : Model E) (φ : Formula) : Update (MergedAssignment E) :=
-  test (formulaToCondition M φ)
-
-theorem formulaToDRS_atom (M : Model E) (name : String) (ts : List Term) :
-    formulaToDRS M (.atom name ts) =
-      test (λ g => M.interp name (ts.map (evalTerm g))) := rfl
-
-theorem formulaToDRS_neg (M : Model E) (φ : Formula) :
-    formulaToDRS M (∼φ) = test (λ g => ¬formulaToCondition M φ g) := rfl
-
-theorem formulaToDRS_conj (M : Model E) (φ ψ : Formula) :
-    formulaToDRS M (φ ⋀ ψ) =
-      test (λ g => formulaToCondition M φ g ∧ formulaToCondition M ψ g) := rfl
-
-theorem formulaToDRS_exists (M : Model E) (x : VarIdx) (φ : Formula) :
-    formulaToDRS M (.exists_ x φ) =
-      test (λ g => ∃ e : E, formulaToCondition M φ (extend g x e)) := rfl
 
 /-- Split a merged assignment into variable and witness components. -/
 def splitAssignment (g : MergedAssignment E) : Assignment E × WitnessSeq E :=
@@ -439,7 +410,37 @@ theorem extend_snd_eq (g : MergedAssignment E) (x : VarIdx) (e : E) :
   ext n
   simp only [splitAssignment, extend]
 
-theorem formulaToCondition_eq_sat (M : Model E) (φ : Formula) (g : MergedAssignment E) :
+/-- Translate a PLA formula to a Dynamic Ty2 condition.
+
+PLA existentials check for *existence* of a witness but don't extend the
+assignment (eliminative semantics). -/
+def formulaToCondition : Formula → Condition (MergedAssignment E)
+  | .atom name ts => λ g => M.interp name (ts.map (evalTerm g))
+  | .neg φ => λ g => ¬(formulaToCondition φ g)
+  | .conj φ ψ => λ g => formulaToCondition φ g ∧ formulaToCondition ψ g
+  | .exists_ x φ => λ g => ∃ e : E, formulaToCondition φ (extend g x e)
+
+/-- Translate a PLA formula to a Dynamic Ty2 Update. PLA's eliminative
+updates mean every formula translates to a `test`. -/
+def formulaToDRS (φ : Formula) : Update (MergedAssignment E) :=
+  test (formulaToCondition M φ)
+
+theorem formulaToDRS_atom (name : String) (ts : List Term) :
+    formulaToDRS M (.atom name ts) =
+      test (λ g => M.interp name (ts.map (evalTerm g))) := rfl
+
+theorem formulaToDRS_neg (φ : Formula) :
+    formulaToDRS M (∼φ) = test (λ g => ¬formulaToCondition M φ g) := rfl
+
+theorem formulaToDRS_conj (φ ψ : Formula) :
+    formulaToDRS M (φ ⋀ ψ) =
+      test (λ g => formulaToCondition M φ g ∧ formulaToCondition M ψ g) := rfl
+
+theorem formulaToDRS_exists (x : VarIdx) (φ : Formula) :
+    formulaToDRS M (.exists_ x φ) =
+      test (λ g => ∃ e : E, formulaToCondition M φ (extend g x e)) := rfl
+
+theorem formulaToCondition_eq_sat (φ : Formula) (g : MergedAssignment E) :
     formulaToCondition M φ g ↔ φ.sat M (splitAssignment g).1 (splitAssignment g).2 := by
   induction φ generalizing g with
   | atom name ts =>
@@ -471,7 +472,7 @@ theorem formulaToCondition_eq_sat (M : Model E) (φ : Formula) (g : MergedAssign
 
 /-- A merged assignment satisfies the embedded Update iff the split
 assignment satisfies the original PLA formula. -/
-theorem formulaToDRS_correct (M : Model E) (φ : Formula) (g h : MergedAssignment E) :
+theorem formulaToDRS_correct (φ : Formula) (g h : MergedAssignment E) :
     formulaToDRS M φ g h ↔ (g = h ∧ φ.sat M (splitAssignment g).1 (splitAssignment g).2) := by
   simp only [formulaToDRS, test]
   constructor

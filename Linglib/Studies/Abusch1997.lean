@@ -206,7 +206,7 @@ section
 open Classical
 open _root_.PLA
 
-variable {E : Type*} [Nonempty E]
+variable {E : Type*}
 
 /--
 Doxastic accessibility relation: what worlds/possibilities agent a

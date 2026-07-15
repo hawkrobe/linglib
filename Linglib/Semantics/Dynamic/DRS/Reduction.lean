@@ -5,8 +5,8 @@ import Mathlib.ModelTheory.Syntax
 # From DRT to predicate logic: the DRS → first-order reduction
 [kamp-reyle-1993] (§1.5), [muskens-1996]
 
-The "surprise" theorem of the whole development: the bespoke DRS box language is
-*equivalent to ordinary first-order logic*. We translate each DRS into a mathlib
+The bespoke DRS box language is *equivalent to ordinary first-order
+logic*. We translate each DRS into a mathlib
 `FirstOrder.Language.Formula` and prove its `Realize` coincides with the bespoke
 `DRS.Realize` — Kamp & Reyle's §1.5 ("From DRT to Predicate Logic") and Muskens's
 "DRSs are already present in classical logic", now a Lean theorem
@@ -54,7 +54,9 @@ over the conjunction of the (translated) conditions ([kamp-reyle-1993] §1.5). -
 noncomputable def DRS.toFormula [DecidableEq V] : DRS L V → L.Formula V
   | .mk U conds => closeExists U (Condition.toFormulaAll conds)
 /-- The conjunction of a DRS's conditions, *without* closing its universe (used
-as the antecedent body of a `⇒`). -/
+as the antecedent body of a `⇒`). A mutual sibling — the composite
+`Condition.toFormulaAll ∘ conditions` fails the nested-inductive
+structural-recursion checker. -/
 noncomputable def DRS.bodyFormula [DecidableEq V] : DRS L V → L.Formula V
   | .mk _ conds => Condition.toFormulaAll conds
 /-- Translate a single DRS-condition to a formula. -/
@@ -150,13 +152,14 @@ theorem DRS.realize_toFormula [DecidableEq V] (K : DRS L V) (v : V → M) :
   | .mk U conds =>
     rw [DRS.toFormula, realize_closeExists]
     simp only [DRS.referents_mk, DRS.Realize]
-    exact exists_congr (fun v' => and_congr_right (fun _ => realize_toFormulaAll conds v'))
+    exact exists_congr fun v' =>
+      and_congr_right fun _ => Condition.realize_toFormulaAll conds v'
 /-- The open body of a DRS (its conditions, no universe closure) realizes as
 `DRS.Realize` (used for the antecedent of `⇒`). -/
 theorem DRS.realize_bodyFormula [DecidableEq V] (K : DRS L V) (v : V → M) :
     (DRS.bodyFormula K).Realize v ↔ DRS.Realize v K := by
   match K with
-  | .mk _ conds => exact realize_toFormulaAll conds v
+  | .mk _ conds => exact Condition.realize_toFormulaAll conds v
 /-- A single condition's translation realizes as `Condition.Realize`. -/
 theorem Condition.realize_toFormula [DecidableEq V] (c : Condition L V) (v : V → M) :
     (Condition.toFormula c).Realize v ↔ Condition.Realize v c := by
@@ -178,13 +181,13 @@ theorem Condition.realize_toFormula [DecidableEq V] (c : Condition L V) (v : V �
     simp only [Condition.toFormula, Condition.Realize, Formula.realize_sup]
     rw [DRS.realize_toFormula l v, DRS.realize_toFormula r v]
 /-- A list of conditions' conjoined translation realizes as `RealizeAll`. -/
-theorem realize_toFormulaAll [DecidableEq V] (cs : List (Condition L V)) (v : V → M) :
+theorem Condition.realize_toFormulaAll [DecidableEq V] (cs : List (Condition L V)) (v : V → M) :
     (Condition.toFormulaAll cs).Realize v ↔ Condition.RealizeAll v cs := by
   match cs with
   | [] => simp [Condition.toFormulaAll, Condition.RealizeAll, Formula.realize_top]
   | c :: cs =>
     rw [Condition.toFormulaAll, Condition.RealizeAll, Formula.realize_inf,
-      Condition.realize_toFormula c v, realize_toFormulaAll cs v]
+      Condition.realize_toFormula c v, Condition.realize_toFormulaAll cs v]
 end
 
 end DRT

@@ -45,6 +45,8 @@ namespace DRT
 
 universe u v w
 
+variable {L : Language.{u, v}} {V : Type w}
+
 mutual
 /-- A discourse representation structure: the pair `⟨referents, conditions⟩`
 ([kamp-reyle-1993], Def. 1.4.1). `referents` is the universe `U` (a finite
@@ -68,8 +70,6 @@ inductive Condition (L : Language.{u, v}) (V : Type w) where
 end
 
 namespace DRS
-
-variable {L : Language.{u, v}} {V : Type w}
 
 /-- The referents (universe `U`) of a DRS — the discourse referents it introduces. -/
 def referents : DRS L V → Finset V
@@ -95,10 +95,10 @@ symmetric binary `⊕`. An operation, not a syntactic constructor. -/
 def merge [DecidableEq V] (K₁ K₂ : DRS L V) : DRS L V :=
   .mk (K₁.referents ∪ K₂.referents) (K₁.conditions ++ K₂.conditions)
 
-@[simp] theorem merge_referents [DecidableEq V] (K₁ K₂ : DRS L V) :
+@[simp] theorem referents_merge [DecidableEq V] (K₁ K₂ : DRS L V) :
     (K₁.merge K₂).referents = K₁.referents ∪ K₂.referents := rfl
 
-@[simp] theorem merge_conditions [DecidableEq V] (K₁ K₂ : DRS L V) :
+@[simp] theorem conditions_merge [DecidableEq V] (K₁ K₂ : DRS L V) :
     (K₁.merge K₂).conditions = K₁.conditions ++ K₂.conditions := rfl
 
 end DRS
@@ -114,8 +114,7 @@ extension:
 * the consequent of a `⇒` is subordinate to its *antecedent* (the ⇒ asymmetry:
   antecedent referents are accessible in the consequent, not conversely);
 * each disjunct of a `∨` is subordinate to the containing DRS. -/
-inductive DirectlySubordinate {L : Language.{u, v}} {V : Type w} :
-    DRS L V → DRS L V → Prop where
+inductive DirectlySubordinate : DRS L V → DRS L V → Prop where
   | neg {D K : DRS L V} : Condition.neg K ∈ D.conditions → DirectlySubordinate K D
   | impAnte {D a c : DRS L V} : Condition.imp a c ∈ D.conditions → DirectlySubordinate a D
   | impCons {D a c : DRS L V} : Condition.imp a c ∈ D.conditions → DirectlySubordinate c a
@@ -123,13 +122,16 @@ inductive DirectlySubordinate {L : Language.{u, v}} {V : Type w} :
   | disR {D l r : DRS L V} : Condition.dis l r ∈ D.conditions → DirectlySubordinate r D
 
 /-- `K₁ < K₂`: subordinate — transitive closure of `DirectlySubordinate`
-([kamp-reyle-1993], Def. 1.4.10(ii)). -/
-abbrev Subordinate {L : Language.{u, v}} {V : Type w} : DRS L V → DRS L V → Prop :=
+([kamp-reyle-1993], Def. 1.4.10(ii)). Anchors Def. 1.4.10(ii) only:
+accessibility (`accessibleFrom`, `DRS/Basic.lean`) does not build on this
+closure. -/
+abbrev Subordinate : DRS L V → DRS L V → Prop :=
   Relation.TransGen DirectlySubordinate
 
 /-- `K₁ ≤ K₂`: weakly subordinate — reflexive-transitive closure
-([kamp-reyle-1993]; the `≤` of Def. 1.4.10). -/
-abbrev WeakSubordinate {L : Language.{u, v}} {V : Type w} : DRS L V → DRS L V → Prop :=
+([kamp-reyle-1993]; the `≤` of Def. 1.4.10). Anchors Def. 1.4.10(ii) only:
+accessibility does not build on this closure. -/
+abbrev WeakSubordinate : DRS L V → DRS L V → Prop :=
   Relation.ReflTransGen DirectlySubordinate
 
 end DRT

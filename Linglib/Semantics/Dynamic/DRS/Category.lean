@@ -87,19 +87,19 @@ instance : Category (Ctx L V) where
     { drs := u.drs.merge v.drs
       presup := DRS.fv_merge_subset u.presup (by rw [u.target]; exact v.presup)
       occ_le := by
-        rw [DRS.merge_conditions, Condition.occL_append, DRS.merge_referents,
+        rw [DRS.conditions_merge, Condition.occL_append, DRS.referents_merge,
           ← Finset.union_assoc]
         exact Finset.union_subset
           (u.occ_le.trans Finset.subset_union_left)
           (by rw [u.target]; exact v.occ_le)
       fresh := by
-        rw [DRS.merge_referents, Finset.disjoint_union_right]
+        rw [DRS.referents_merge, Finset.disjoint_union_right]
         refine ⟨u.fresh, ?_⟩
         have : Disjoint Y.base v.drs.referents := v.fresh
         rw [← u.target] at this
         exact this.mono_left Finset.subset_union_left
       target := by
-        rw [DRS.merge_referents, ← Finset.union_assoc, u.target, v.target] }
+        rw [DRS.referents_merge, ← Finset.union_assoc, u.target, v.target] }
   id_comp u := Hom.ext (DRS.empty_merge u.drs)
   comp_id u := Hom.ext (DRS.merge_empty u.drs)
   assoc u v w := Hom.ext (DRS.merge_assoc u.drs v.drs w.drs)

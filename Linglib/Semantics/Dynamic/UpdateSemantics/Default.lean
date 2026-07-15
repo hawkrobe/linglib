@@ -36,7 +36,7 @@ Key patterns are verified as regression tests in
 `Studies/Veltman1996.lean`.
 
 §4 (expectation frames, conditional defaults, specificity) is
-formalized in `Frames.lean` alongside this module.
+formalized in `Studies/Veltman1996.lean`.
 
 ## Connection to existing infrastructure
 
@@ -62,8 +62,7 @@ open Core.Order
 
 variable {W : Type*}
 
-
--- ═══ Expectation States ═══
+/-! ### Expectation states -/
 
 /-- An **expectation state**: an information state paired with a
     normality ordering on worlds.
@@ -92,14 +91,13 @@ def ExpState.init : ExpState W where
 def ExpState.optimal (σ : ExpState W) : Set W :=
   Normality.optimal σ.order σ.info
 
-
--- ═══ Update Operations ═══
+/-! ### Update operations -/
 
 /-- **Assertion update** (Veltman's factual update): eliminate
     non-φ-worlds, preserve the pattern. Information grows; expectations
     are unchanged. This is [portner-2018]'s `+`-update on the context
-    set, and the standard eliminative update from CCP.lean lifted to
-    expectation states. -/
+    set, and the standard eliminative update from ContextChange.lean
+    lifted to expectation states. -/
 def ExpState.assert (σ : ExpState W) (φ : W → Prop) : ExpState W :=
   ⟨{ w ∈ σ.info | φ w }, σ.order⟩
 
@@ -133,8 +131,7 @@ noncomputable def mightTest (φ : W → Prop) (σ : ExpState W) : ExpState W :=
 
 end Classical
 
-
--- ═══ Basic Properties ═══
+/-! ### Basic properties -/
 
 namespace ExpState
 
@@ -196,7 +193,7 @@ theorem mem_foldl_assert_info (ps : List (W → Prop)) (σ : ExpState W) (v : W)
   | nil => simp
   | cons p ps ih =>
     rw [List.foldl_cons, ih]
-    simp only [assert_info, Set.mem_setOf_eq, List.mem_cons, Set.mem_sep_iff]
+    simp only [assert_info, Set.mem_setOf_eq, List.mem_cons]
     constructor
     · rintro ⟨⟨hv, hp⟩, hps⟩
       exact ⟨hv, fun q hq => hq.elim (fun h => h ▸ hp) (hps q)⟩
@@ -212,7 +209,7 @@ theorem foldl_promote_order_le (ps : List (W → Prop)) (σ : ExpState W) (w v :
   | nil => exact ⟨fun h => ⟨h, by simp⟩, And.left⟩
   | cons p ps ih =>
     rw [List.foldl_cons, ih]
-    simp only [promote_order, Core.Order.Normality.refine_le, List.mem_cons]
+    simp only [List.mem_cons]
     constructor
     · rintro ⟨⟨hle, hp⟩, hps⟩
       exact ⟨hle, fun q hq => hq.elim (fun h => h ▸ hp) (hps q)⟩
@@ -231,7 +228,7 @@ theorem foldl_promote_order_le (ps : List (W → Prop)) (σ : ExpState W) (w v :
     information state. -/
 theorem le_assert_iff (σ : ExpState W) (φ : W → Prop) :
     σ ≤ σ.assert φ ↔ ∀ w ∈ σ.info, φ w :=
-  ⟨fun h w hw => (h.1 hw).2, fun h => ⟨fun _ hw => ⟨hw, h _ hw⟩, le_refl _⟩⟩
+  ⟨fun h _ hw => (h.1 hw).2, fun h => ⟨fun _ hw => ⟨hw, h _ hw⟩, le_refl _⟩⟩
 
 /-- **Acceptance fixpoint for promotion** ([veltman-1996]: `e` is a
     *default* in `ε` iff `ε ∘ e = ε`, his Def 4.2): the input refines
@@ -267,8 +264,7 @@ theorem presumablyTest_preserves_order (φ : W → Prop) (σ : ExpState W) :
     (presumablyTest φ σ).order = σ.order := by
   unfold presumablyTest; split <;> rfl
 
-
--- ═══ Key Theorem — "Normally p; Presumably p" Succeeds ═══
+/-! ### "Normally p; presumably p" succeeds -/
 
 /-- **General presumably**: if the ordering is connected, respects φ,
     and the info state has φ-worlds, then "presumably φ" passes.
@@ -302,12 +298,11 @@ theorem normally_presumably_succeeds (φ : W → Prop) (d : Set W)
   rw [Normality.refine_total_optimal φ d hex] at hw
   exact hw.2
 
+/-! ### Persistence -/
 
--- ═══ Persistence ═══
-
-/-- **Persistence under assertion**: if the ordering respects p
-    (i.e., the state has accepted "normally p"), then asserting any
-    q preserves this. Learning new facts does not undo expectations.
+/-- **Persistence under assertion**: asserting any `ψ` preserves respect
+    for `φ` — learning new facts does not undo expectations. Immediate,
+    since `assert` leaves the ordering untouched (`assert_order`).
 
     [veltman-1996], Proposition 3.6(iv). -/
 theorem persistence_assert (σ : ExpState W) (φ ψ : W → Prop)
@@ -330,8 +325,7 @@ theorem normally_creates_respect (σ : ExpState W) (φ : W → Prop) :
     Normality.respects (σ.promote φ).order φ :=
   Normality.refine_respects σ.order φ
 
-
--- ═══ Idempotency and Commutativity ═══
+/-! ### Idempotency and commutativity -/
 
 /-- **Idempotency**: if the state already accepts "normally φ" (the
     ordering respects φ), then processing "normally φ" again is a no-op.
@@ -352,14 +346,10 @@ theorem promote_promote_self (σ : ExpState W) (φ : W → Prop) :
 /-- **Commutativity**: the order of defaults doesn't matter.
     "Normally φ; normally ψ" = "normally ψ; normally φ". -/
 theorem promote_comm (σ : ExpState W) (φ ψ : W → Prop) :
-    (σ.promote φ).promote ψ = (σ.promote ψ).promote φ := by
-  show ExpState.mk σ.info (Normality.refine (Normality.refine σ.order φ) ψ) =
-       ExpState.mk σ.info (Normality.refine (Normality.refine σ.order ψ) φ)
-  congr 1
-  exact Normality.refine_comm σ.order φ ψ
+    (σ.promote φ).promote ψ = (σ.promote ψ).promote φ :=
+  congrArg (ExpState.mk σ.info) (Normality.refine_comm σ.order φ ψ)
 
-
--- ═══ Conflicting Defaults ═══
+/-! ### Conflicting defaults -/
 
 /-- **Conflicting defaults produce agnosticism.** After processing both
     "normally p" and "normally ¬p", the ordering relates worlds only
@@ -378,8 +368,7 @@ theorem conflicting_defaults_le (φ : W → Prop) (w v : W) :
 
 /-- The conflicting-default ordering is equivalent to p-agreement:
     w is at most as normal as v iff they agree on p. -/
-theorem conflicting_defaults_iff_agree (φ : W → Prop) [DecidablePred φ]
-    (w v : W) :
+theorem conflicting_defaults_iff_agree (φ : W → Prop) (w v : W) :
     (Normality.refine (Normality.refine Normality.total φ) (fun x => ¬φ x)).le w v ↔
     (φ w ↔ φ v) := by
   rw [conflicting_defaults_le]
@@ -389,8 +378,7 @@ theorem conflicting_defaults_iff_agree (φ : W → Prop) [DecidablePred φ]
   · intro ⟨h1, h2⟩
     exact ⟨h2, fun hv hw => hv (h1 hw)⟩
 
-
--- ═══ Compatible Defaults ═══
+/-! ### Compatible defaults -/
 
 /-- When two defaults are compatible (p implies q), processing both in
     sequence makes p-worlds optimal: the expectations reinforce rather
