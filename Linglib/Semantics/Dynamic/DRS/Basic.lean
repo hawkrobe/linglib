@@ -12,8 +12,8 @@ Structural operations and lemmas over the faithful `DRS` core (`DRS/Defs.lean`):
   variant* (the prose preceding Def. 1.4.8); `map_id` makes "renaming to the
   identity is the identity" a free corollary.
 * `merge` algebra — identity (`empty`) and associativity.
-* `DRS.Bound` / `DRS.IsProper` — properness (no free discourse referent,
-  Def. 1.4.2–1.4.3).
+* `DRS.fv` / `DRS.IsProper` — free discourse referents (as a `Finset`) and
+  properness (`fv K = ∅`, Def. 1.4.2–1.4.3).
 * `Condition.occ` / `DRS.occ` — occurring referents, as a decidable `Finset`.
 * `DRS.accessibleFrom` / `DRS.Accessible` — decidable, host-relative
   accessibility (Def. 1.4.11).
@@ -95,39 +95,6 @@ theorem merge_assoc (K₁ K₂ K₃ : DRS L V) :
 
 end DRS
 
-/-! ### Properness (no free discourse referent) -/
-
-section Proper
-variable [DecidableEq V]
-
-mutual
-/-- `Bound b K`: every discourse referent occurring in `K` is bound — present in
-`b` or introduced by `K`'s universe or by an ancestor reachable "left and up"
-(the antecedent of a `⇒` threads its referents into the consequent). -/
-def DRS.Bound (b : Finset V) : DRS L V → Prop
-  | .mk U conds => Condition.BoundAll (b ∪ U) conds
-/-- `b`-boundedness of a condition. -/
-def Condition.Bound (b : Finset V) : Condition L V → Prop
-  | .rel _ args => ∀ i, args i ∈ b
-  | .eq u v => u ∈ b ∧ v ∈ b
-  | .neg K => DRS.Bound b K
-  | .imp a c => DRS.Bound b a ∧ DRS.Bound (b ∪ a.referents) c
-  | .dis l r => DRS.Bound b l ∧ DRS.Bound b r
-/-- `b`-boundedness of a list of conditions. A `List` helper (not
-`List.Forall (Condition.Bound b)`) — the higher-order form fails the
-nested-inductive structural-recursion checker. -/
-def Condition.BoundAll (b : Finset V) : List (Condition L V) → Prop
-  | [] => True
-  | c :: cs => Condition.Bound b c ∧ Condition.BoundAll b cs
-end
-
-/-- A DRS is *proper* iff it has no free discourse referent
-([kamp-reyle-1993], Def. 1.4.2–1.4.3): every occurring referent is bound at
-its position. -/
-def DRS.IsProper (K : DRS L V) : Prop := DRS.Bound ∅ K
-
-end Proper
-
 /-! ### Occurring referents -/
 
 section Occ
@@ -153,6 +120,86 @@ def Condition.occL : List (Condition L V) → Finset V
 end
 
 end Occ
+
+/-! ### Free discourse referents and properness -/
+
+section Fv
+variable [DecidableEq V]
+
+mutual
+/-- The free discourse referents of a DRS: referents occurring in its
+conditions and not bound by its universe or by an ancestor reachable "left
+and up" (the antecedent of a `⇒` threads its referents into the consequent).
+`K.fv ⊆ b` says every referent of `K` is bound in context `b`. -/
+def DRS.fv : DRS L V → Finset V
+  | .mk U conds => Condition.fvL conds \ U
+/-- The free discourse referents of a condition. -/
+def Condition.fv : Condition L V → Finset V
+  | .rel _ args => Finset.image args Finset.univ
+  | .eq u v => {u, v}
+  | .neg K => DRS.fv K
+  | .imp a c => DRS.fv a ∪ (DRS.fv c \ a.referents)
+  | .dis l r => DRS.fv l ∪ DRS.fv r
+/-- Free referents of a list of conditions. A `List` helper — the
+higher-order form fails the nested-inductive structural-recursion checker. -/
+def Condition.fvL : List (Condition L V) → Finset V
+  | [] => ∅
+  | c :: cs => Condition.fv c ∪ Condition.fvL cs
+end
+
+@[simp] theorem DRS.fv_mk (U : Finset V) (conds : List (Condition L V)) :
+    (DRS.mk U conds).fv = Condition.fvL conds \ U := rfl
+@[simp] theorem Condition.fv_rel {n : ℕ} (R : L.Relations n) (args : Fin n → V) :
+    (Condition.rel R args).fv = Finset.image args Finset.univ := rfl
+@[simp] theorem Condition.fv_eq (u v : V) :
+    (Condition.eq u v : Condition L V).fv = {u, v} := rfl
+@[simp] theorem Condition.fv_neg (K : DRS L V) : (Condition.neg K).fv = K.fv := rfl
+@[simp] theorem Condition.fv_imp (a c : DRS L V) :
+    (Condition.imp a c).fv = a.fv ∪ (c.fv \ a.referents) := rfl
+@[simp] theorem Condition.fv_dis (l r : DRS L V) :
+    (Condition.dis l r).fv = l.fv ∪ r.fv := rfl
+@[simp] theorem Condition.fvL_nil : Condition.fvL ([] : List (Condition L V)) = ∅ := rfl
+@[simp] theorem Condition.fvL_cons (c : Condition L V) (cs : List (Condition L V)) :
+    Condition.fvL (c :: cs) = c.fv ∪ Condition.fvL cs := rfl
+
+mutual
+/-- Free referents occur. -/
+theorem DRS.fv_subset_occ (K : DRS L V) : K.fv ⊆ K.occ := by
+  match K with
+  | .mk U conds =>
+    simp only [DRS.fv_mk, DRS.occ]
+    exact (Finset.sdiff_subset).trans (Condition.fvL_subset_occL conds) |>.trans
+      Finset.subset_union_right
+/-- Free referents of a condition occur. -/
+theorem Condition.fv_subset_occ (c : Condition L V) : c.fv ⊆ c.occ := by
+  match c with
+  | .rel R args => simp [Condition.occ]
+  | .eq u v => simp [Condition.occ]
+  | .neg K => simpa [Condition.occ] using DRS.fv_subset_occ K
+  | .imp a c =>
+    simp only [Condition.fv_imp, Condition.occ]
+    exact Finset.union_subset_union (DRS.fv_subset_occ a)
+      ((Finset.sdiff_subset).trans (DRS.fv_subset_occ c))
+  | .dis l r =>
+    simp only [Condition.fv_dis, Condition.occ]
+    exact Finset.union_subset_union (DRS.fv_subset_occ l) (DRS.fv_subset_occ r)
+/-- The list analogue of `Condition.fv_subset_occ`. -/
+theorem Condition.fvL_subset_occL (cs : List (Condition L V)) :
+    Condition.fvL cs ⊆ Condition.occL cs := by
+  match cs with
+  | [] => simp
+  | c :: cs =>
+    simp only [Condition.fvL_cons, Condition.occL]
+    exact Finset.union_subset_union (Condition.fv_subset_occ c)
+      (Condition.fvL_subset_occL cs)
+end
+
+/-- A DRS is *proper* iff it has no free discourse referent
+([kamp-reyle-1993], Def. 1.4.2–1.4.3). -/
+def DRS.IsProper (K : DRS L V) : Prop := K.fv = ∅
+
+end Fv
+
 
 /-! ### Accessibility (decidable, host-relative)
 
