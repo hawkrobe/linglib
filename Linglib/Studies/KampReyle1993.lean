@@ -68,8 +68,8 @@ def persistence : DRS krLang ℕ :=
 that is a man, walked in, and sat down. -/
 theorem persistence_tc (a : ℕ → M) :
     DRS.trueRel persistence a ↔ ∃ e : M, rm .man ![e] ∧ rm .walkedIn ![e] ∧ rm .satDown ![e] := by
-  simp only [DRS.trueRel, persistence, DRS.toRel, Condition.holdsAll, Condition.holds, vecArg₁,
-    and_true]
+  simp only [DRS.trueRel_iff, persistence, DRS.toRel_mk, Condition.holdsAll_cons,
+    Condition.holdsAll_nil, Condition.holds_rel, vecArg₁, and_true]
   constructor
   · rintro ⟨a', _, hm, hw, hs⟩; exact ⟨a' 1, hm, hw, hs⟩
   · rintro ⟨e, hm, hw, hs⟩
@@ -97,8 +97,9 @@ theorem donkey_universal_reading (a : ℕ → M) :
     DRS.trueRel donkey a ↔
     ∀ e₁ e₂ : M, (rm .farmer ![e₁] ∧ rm .donkey ![e₂] ∧ rm .owns ![e₁, e₂]) →
       rm .beats ![e₁, e₂] := by
-  simp only [DRS.trueRel, donkey, donkeyAnte, donkeyCons, DRS.toRel, Condition.holdsAll,
-    Condition.holds, vecArg₁, vecArg₂, and_true]
+  simp only [DRS.trueRel_iff, donkey, donkeyAnte, donkeyCons, DRS.toRel_mk,
+    Condition.holdsAll_cons, Condition.holdsAll_nil, Condition.holds_imp, Condition.holds_rel,
+    vecArg₁, vecArg₂, and_true]
   constructor
   · rintro ⟨a', _, himp⟩ e₁ e₂ ⟨hf, hd, ho⟩
     set v' := Function.update (Function.update a' 1 e₁) 2 e₂ with hv'
@@ -123,8 +124,8 @@ def negation : DRS krLang ℕ := .mk ∅ [.neg negInner]
 is bound inside the negation and inaccessible to any continuation. -/
 theorem negation_tc (a : ℕ → M) :
     DRS.trueRel negation a ↔ ¬ ∃ e : M, rm .man ![e] ∧ rm .walkedIn ![e] := by
-  simp only [DRS.trueRel, negation, negInner, DRS.toRel, Condition.holdsAll, Condition.holds,
-    vecArg₁, and_true]
+  simp only [DRS.trueRel_iff, negation, negInner, DRS.toRel_mk, Condition.holdsAll_cons,
+    Condition.holdsAll_nil, Condition.holds_neg, Condition.holds_rel, vecArg₁, and_true]
   constructor
   · rintro ⟨a', _, hneg⟩ ⟨e, hm, hw⟩
     exact hneg ⟨Function.update a' 1 e, fun x hx => by
