@@ -55,7 +55,7 @@ since we don't model discourse markers.
 namespace Beaver2001.ABLE
 
 open Classical
-open DynamicSemantics (CCP InfoStateOf IsEliminative IsTest
+open DynamicSemantics (CCP IsEliminative IsTest
   updateFromSat eliminative_seq test_eliminative)
 
 variable {P : Type*}
@@ -130,7 +130,7 @@ A state σ *admits* φ iff:
 - For `might φ`: σ admits φ
 - For `∂ φ`: σ already entails φ (i.e., σ[φ] = σ)
 -/
-noncomputable def pulAdmits : Formula P → InfoStateOf P → Prop
+noncomputable def pulAdmits : Formula P → Set P → Prop
   | .pred _     => λ _ => True
   | .not φ      => λ σ => φ.pulAdmits σ
   | .and φ ψ    => λ σ => φ.pulAdmits σ ∧ ψ.pulAdmits (φ.eval σ)
@@ -151,7 +151,7 @@ theorem presup_eliminative (φ : Formula P) : IsEliminative φ.presup.eval := by
   exact test_eliminative _ (presup_isTest φ)
 
 /-- Admittance of ∂φ is equivalent to σ[φ] = σ. -/
-theorem presup_admits_iff (φ : Formula P) (σ : InfoStateOf P) :
+theorem presup_admits_iff (φ : Formula P) (σ : Set P) :
     (Formula.presup φ).pulAdmits σ ↔ φ.eval σ = σ := by
   simp only [pulAdmits]
 
@@ -164,28 +164,28 @@ theorem presup_admits_iff (φ : Formula P) (σ : InfoStateOf P) :
 If φ presupposes ψ (i.e., φ = ∂ψ AND χ), then NOT φ also
 presupposes ψ. Here we prove the component: admitting NOT φ
 requires admitting φ. -/
-theorem admits_not (φ : Formula P) (σ : InfoStateOf P) :
+theorem admits_not (φ : Formula P) (σ : Set P) :
     (Formula.not φ).pulAdmits σ ↔ φ.pulAdmits σ := by
   simp only [pulAdmits]
 
 /-- **Fact 8.1 (ii)**: Left presupposition projects through AND.
 
 Admitting AND φ ψ requires admitting φ (among other things). -/
-theorem admits_and_left (φ ψ : Formula P) (σ : InfoStateOf P) :
+theorem admits_and_left (φ ψ : Formula P) (σ : Set P) :
     (Formula.and φ ψ).pulAdmits σ → φ.pulAdmits σ := by
   intro ⟨h, _⟩; exact h
 
 /-- Admitting AND φ ψ requires that the intermediate context σ[φ]
 admits ψ. This is the structural basis for conditional presupposition
 projection (used in the proof of Fact 8.3). -/
-theorem admits_and_right (φ ψ : Formula P) (σ : InfoStateOf P) :
+theorem admits_and_right (φ ψ : Formula P) (σ : Set P) :
     (Formula.and φ ψ).pulAdmits σ → ψ.pulAdmits (φ.eval σ) := by
   intro ⟨_, h⟩; exact h
 
 /-- **Fact 8.1 (iii)**: Presupposition projects through IF...THEN.
 
 Admitting IF φ THEN ψ (= NOT(φ AND NOT ψ)) requires admitting φ. -/
-theorem admits_impl_left (φ ψ : Formula P) (σ : InfoStateOf P) :
+theorem admits_impl_left (φ ψ : Formula P) (σ : Set P) :
     (Formula.impl φ ψ).pulAdmits σ → φ.pulAdmits σ := by
   intro h; exact h.1
 
@@ -204,13 +204,13 @@ theorem might_eliminative (φ : Formula P) : IsEliminative (Formula.might φ).ev
 /-- **Fact 8.8 (1)**: Presupposition projects through MIGHT.
 
 Admitting MIGHT φ requires admitting φ. -/
-theorem admits_might (φ : Formula P) (σ : InfoStateOf P) :
+theorem admits_might (φ : Formula P) (σ : Set P) :
     (Formula.might φ).pulAdmits σ ↔ φ.pulAdmits σ := by
   simp only [pulAdmits]
 
 /-- **Fact 8.8 (2)**: MUST φ = NOT(MIGHT(NOT φ)) projects presuppositions
 of φ. Admitting MUST φ requires admitting φ. -/
-theorem admits_must (φ : Formula P) (σ : InfoStateOf P) :
+theorem admits_must (φ : Formula P) (σ : Set P) :
     (Formula.must φ).pulAdmits σ ↔ φ.pulAdmits σ := by
   simp only [Formula.must, pulAdmits]
 
@@ -250,7 +250,7 @@ while CCP.negTest is a test (pass/fail on the whole context).
 They coincide only when φ is eliminative AND σ[φ] = ∅ or σ[φ] = σ.
 -/
 theorem not_neq_ccpNegTest :
-    ∃ (P : Type) (φ : Formula P) (σ : InfoStateOf P),
+    ∃ (P : Type) (φ : Formula P) (σ : Set P),
       (Formula.not φ).eval σ ≠ CCP.negTest φ.eval σ := by
   -- Witness: P = Bool, φ = pred (· = true), σ = {true, false}
   -- NOT φ gives σ \ {true} = {false} (nonempty)
@@ -306,13 +306,13 @@ theorem eval_eliminative (φ : Formula P) : IsEliminative φ.eval := by
 /-- A state σ **satisfies** φ iff σ[φ] = σ (updating adds no information).
 [beaver-2001] D29 / MP4 (closure-based; we use the set-based equivalent:
 φ is satisfied when the update is a fixed point). -/
-noncomputable def satisfies (φ : Formula P) (σ : InfoStateOf P) : Prop :=
+noncomputable def satisfies (φ : Formula P) (σ : Set P) : Prop :=
   φ.eval σ = σ
 
 /-- A formula φ **presupposes** ψ iff every state that admits φ
 also satisfies ψ. [beaver-2001] D46, MP6. -/
 def presupposes (φ ψ : Formula P) : Prop :=
-  ∀ σ : InfoStateOf P, φ.pulAdmits σ → ψ.satisfies σ
+  ∀ σ : Set P, φ.pulAdmits σ → ψ.satisfies σ
 
 -- ════════════════════════════════════════════════════════════════
 -- § 9b. Satisfaction–Consistency Bridge (Lemma 8.6, Fact 8.7)
@@ -326,7 +326,7 @@ def presupposes (φ ψ : Formula P) : Prop :=
 The proof uses eliminativity: since φ.eval σ ⊆ σ (all ABLE formulas
 are eliminative), the fixed-point condition φ.eval σ = σ reduces to
 checking that σ \ φ.eval σ is empty. -/
-theorem lemma_8_6 (φ : Formula P) (σ : InfoStateOf P) :
+theorem lemma_8_6 (φ : Formula P) (σ : Set P) :
     φ.satisfies σ ↔ ¬((Formula.not φ).eval σ).Nonempty := by
   simp only [satisfies, eval]
   constructor
@@ -354,7 +354,7 @@ theorem must_eliminative (φ : Formula P) : IsEliminative (Formula.must φ).eval
 The proof chains through Lemma 8.6: satisfaction ↔ ¬consistent-with-NOT
 ↔ MIGHT(NOT φ) fails ↔ NOT(MIGHT(NOT φ)) passes.
 [beaver-2001] Ch. 8 §8.3. -/
-theorem fact_8_7 (φ : Formula P) (σ : InfoStateOf P) :
+theorem fact_8_7 (φ : Formula P) (σ : Set P) :
     (Formula.must φ).satisfies σ ↔ φ.satisfies σ := by
   constructor
   · intro h
@@ -458,7 +458,7 @@ from updating with φ satisfies ψ.
 In our set-based formulation (without discourse markers), this reduces
 to: for all σ, ψ.eval(φ.eval σ) = φ.eval σ. -/
 noncomputable def entails (φ ψ : Formula P) : Prop :=
-  ∀ σ : InfoStateOf P, ψ.eval (φ.eval σ) = φ.eval σ
+  ∀ σ : Set P, ψ.eval (φ.eval σ) = φ.eval σ
 
 /-- **ABLE entailment ↔ CCP entailment**.
 
@@ -486,7 +486,7 @@ theorem entails_trans (φ ψ χ : Formula P)
 
 /-- Entailment preserves satisfaction: if φ ⊨ ψ and σ satisfies φ,
 then σ satisfies ψ. -/
-theorem satisfies_of_entails (φ ψ : Formula P) (σ : InfoStateOf P)
+theorem satisfies_of_entails (φ ψ : Formula P) (σ : Set P)
     (hent : φ.entails ψ) (hsat : φ.satisfies σ) :
     ψ.satisfies σ := by
   unfold satisfies at hsat ⊢

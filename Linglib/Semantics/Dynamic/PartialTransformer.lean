@@ -8,7 +8,7 @@ import Linglib.Semantics.Presupposition.Context
 Heim's context change potentials are *partial* functions on contexts: the
 domain condition IS the presupposition ([heim-1983]'s "c admits φ",
 [karttunen-1974]'s "c satisfies-the-presuppositions-of φ").
-`PartialCCP P := InfoStateOf P →. InfoStateOf P` grounds this in mathlib's
+`PartialCCP P := Set P →. Set P` grounds this in mathlib's
 `PFun`: `Part.Dom` is admittance, and the satisfaction law for conjunction —
 "c admits φ∧ψ iff c admits φ and c[φ] admits ψ" — is the domain condition
 of partial-function composition, true by construction (`admits_pseq`).
@@ -41,7 +41,7 @@ open Semantics.Presupposition
 /-- A partial context change potential: a partial function on information
     states. The domain condition is the presupposition; `Part.Dom` is
     [heim-1983]'s admittance. -/
-abbrev PartialCCP (P : Type*) := InfoStateOf P →. InfoStateOf P
+abbrev PartialCCP (P : Type*) := Set P →. Set P
 
 namespace PartialCCP
 
@@ -49,12 +49,12 @@ variable {P W : Type*}
 
 /-- `u.admits s`: the update is defined at `s` ([heim-1983]'s "s admits u",
     [karttunen-1974]'s satisfaction). This is `Part.Dom`. -/
-def admits (u : PartialCCP P) (s : InfoStateOf P) : Prop := (u s).Dom
+def admits (u : PartialCCP P) (s : Set P) : Prop := (u s).Dom
 
 /-- Total CCPs are partial CCPs with trivial presupposition. -/
 def ofCCP (φ : CCP P) : PartialCCP P := λ s => Part.some (φ s)
 
-@[simp] theorem admits_ofCCP (φ : CCP P) (s : InfoStateOf P) :
+@[simp] theorem admits_ofCCP (φ : CCP P) (s : Set P) :
     (ofCCP φ).admits s := trivial
 
 /-- The Heimian update of a static partial proposition: defined iff the
@@ -69,7 +69,7 @@ def ofCCP (φ : CCP P) : PartialCCP P := λ s => Part.some (φ s)
 def ofPartialProp (p : PartialProp W) : PartialCCP W :=
   λ s => ⟨Context.presupSatisfied s p, λ _ => { w ∈ s | p.assertion w }⟩
 
-@[simp] theorem ofPartialProp_get (p : PartialProp W) (s : InfoStateOf W)
+@[simp] theorem ofPartialProp_get (p : PartialProp W) (s : Set W)
     (h : ((ofPartialProp p) s).Dom) :
     ((ofPartialProp p) s).get h = { w ∈ s | p.assertion w } := rfl
 
@@ -99,31 +99,31 @@ def pdisj (φ ψ : PartialCCP P) : PartialCCP P :=
 /-- **The Karttunen satisfaction law** ([karttunen-1974]), by construction:
     `s` admits `φ ∧ ψ` iff `s` admits `φ` and `s[φ]` admits `ψ`. The
     statement is the domain condition of `Part.bind`. -/
-theorem admits_pseq (φ ψ : PartialCCP P) (s : InfoStateOf P) :
+theorem admits_pseq (φ ψ : PartialCCP P) (s : Set P) :
     (pseq φ ψ).admits s ↔ ∃ h : φ.admits s, ψ.admits ((φ s).get h) :=
   Iff.rfl
 
 /-- The satisfaction law, with admittance of the first conjunct given. -/
-theorem admits_pseq_iff (φ ψ : PartialCCP P) (s : InfoStateOf P)
+theorem admits_pseq_iff (φ ψ : PartialCCP P) (s : Set P)
     (h : φ.admits s) :
     (pseq φ ψ).admits s ↔ ψ.admits ((φ s).get h) :=
   ⟨λ ⟨_, hb⟩ => hb, λ hb => ⟨h, hb⟩⟩
 
 /-- Negation projects: `s` admits `¬φ` iff `s` admits `φ`. -/
-@[simp] theorem admits_pneg (φ : PartialCCP P) (s : InfoStateOf P) :
+@[simp] theorem admits_pneg (φ : PartialCCP P) (s : Set P) :
     (pneg φ).admits s ↔ φ.admits s :=
   Iff.rfl
 
 /-- Conditional admittance: `s` admits `if φ, ψ` iff `s` admits `φ` and
     `s[φ]` admits `ψ` — the same condition as conjunction
     ([karttunen-1974]). -/
-theorem admits_pcond (φ ψ : PartialCCP P) (s : InfoStateOf P) :
+theorem admits_pcond (φ ψ : PartialCCP P) (s : Set P) :
     (pcond φ ψ).admits s ↔ ∃ h : φ.admits s, ψ.admits ((φ s).get h) :=
   Iff.rfl
 
 /-- Disjunction admittance: `s` admits `φ ∨ ψ` iff `s` admits `φ` and the
     ¬φ local context `s \ s[φ]` admits `ψ`. -/
-theorem admits_pdisj (φ ψ : PartialCCP P) (s : InfoStateOf P) :
+theorem admits_pdisj (φ ψ : PartialCCP P) (s : Set P) :
     (pdisj φ ψ).admits s ↔
       ∃ h : φ.admits s, ψ.admits (s \ (φ s).get h) :=
   Iff.rfl
@@ -134,7 +134,7 @@ theorem admits_pdisj (φ ψ : PartialCCP P) (s : InfoStateOf P) :
     `Context.presupSatisfied`, by construction: the dynamic definedness
     condition and the satisfaction-theoretic context condition are one
     notion. -/
-theorem admits_ofPartialProp (p : PartialProp W) (s : InfoStateOf W) :
+theorem admits_ofPartialProp (p : PartialProp W) (s : Set W) :
     (ofPartialProp p).admits s ↔ Context.presupSatisfied s p :=
   Iff.rfl
 
@@ -147,7 +147,7 @@ composition law of partial updates, not a stipulation. -/
 
 /-- Dynamic conjunction admits `s` iff `s` satisfies `andFilter`'s
     presupposition pointwise. -/
-theorem admits_pseq_ofPartialProp (p q : PartialProp W) (s : InfoStateOf W) :
+theorem admits_pseq_ofPartialProp (p q : PartialProp W) (s : Set W) :
     (pseq (ofPartialProp p) (ofPartialProp q)).admits s ↔
       ∀ w ∈ s, (PartialProp.andFilter p q).presup w :=
   ⟨λ ⟨hp, hq⟩ _ hw => ⟨hp hw, λ ha => hq ⟨hw, ha⟩⟩,
@@ -155,7 +155,7 @@ theorem admits_pseq_ofPartialProp (p q : PartialProp W) (s : InfoStateOf W) :
 
 /-- Dynamic conditional admits `s` iff `s` satisfies `impFilter`'s
     presupposition pointwise. -/
-theorem admits_pcond_ofPartialProp (p q : PartialProp W) (s : InfoStateOf W) :
+theorem admits_pcond_ofPartialProp (p q : PartialProp W) (s : Set W) :
     (pcond (ofPartialProp p) (ofPartialProp q)).admits s ↔
       ∀ w ∈ s, (PartialProp.impFilter p q).presup w :=
   admits_pseq_ofPartialProp p q s
@@ -163,7 +163,7 @@ theorem admits_pcond_ofPartialProp (p q : PartialProp W) (s : InfoStateOf W) :
 /-- Dynamic disjunction admits `s` iff `s` satisfies `orFilter`'s
     presupposition pointwise: the ¬φ local context is Karttunen's
     negative-antecedent filtering. -/
-theorem admits_pdisj_ofPartialProp (p q : PartialProp W) (s : InfoStateOf W) :
+theorem admits_pdisj_ofPartialProp (p q : PartialProp W) (s : Set W) :
     (pdisj (ofPartialProp p) (ofPartialProp q)).admits s ↔
       ∀ w ∈ s, (PartialProp.orFilter p q).presup w :=
   ⟨λ ⟨hp, hq⟩ _ hw => ⟨hp hw, λ hna => hq ⟨hw, λ hc => hna hc.2⟩⟩,
@@ -171,7 +171,7 @@ theorem admits_pdisj_ofPartialProp (p q : PartialProp W) (s : InfoStateOf W) :
      λ w hw => (h w hw.1).2 (λ ha => hw.2 ⟨hw.1, ha⟩)⟩⟩
 
 /-- Negation projects the atomic presupposition unchanged. -/
-theorem admits_pneg_ofPartialProp (p : PartialProp W) (s : InfoStateOf W) :
+theorem admits_pneg_ofPartialProp (p : PartialProp W) (s : Set W) :
     (pneg (ofPartialProp p)).admits s ↔ ∀ w ∈ s, p.presup w :=
   Iff.rfl
 
