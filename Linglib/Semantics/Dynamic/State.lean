@@ -3,6 +3,7 @@ import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Set.Function
 import Mathlib.Logic.Function.DependsOn
 import Mathlib.Order.BoundedOrder.Basic
+import Mathlib.Order.Hom.CompleteLattice
 import Mathlib.Order.Lattice
 
 /-!
@@ -37,6 +38,10 @@ acting on states live in `Transition.lean`.
   *saturation* for `Possibility.agreeSetoid ↑X`.
 - `prop_restrict`, `le_restrict_iff`: restriction never changes the
   proposition, and is the universal `Y`-supported approximation.
+- `fiberOrderIsoProd`, `fiberEmptyOrderIso`: the fiber at `X` classified
+  as propositions over world–`X`-assignment pairs ([heim-1982]'s
+  satisfaction sets), degenerating at `X = ∅` to bare propositions
+  ([veltman-1996]'s update-semantics states).
 
 ## Implementation notes
 
@@ -390,6 +395,61 @@ def fiberOrderIso (X : Finset V) :
     · rintro ⟨-, hc⟩ q hq
       induction q using Quotient.ind
       exact mem_fiberEquiv.mpr (hc (mem_fiberEquiv.mp hq))
+
+section Classified
+variable [Nonempty M]
+
+/-- The fiber at `X`, classified: a based state is a proposition over
+world–`X`-assignment pairs, reversed by informativeness — [heim-1982]'s
+satisfaction sets of domain-`X` sequences, as a theorem rather than a
+gloss. -/
+noncomputable def fiberOrderIsoProd (X : Finset V) :
+    fiber W M X ≃o (Set (W × ((↑X : Set V) → M)))ᵒᵈ :=
+  (fiberOrderIso X).trans
+    (Possibility.agreeQuotientEquiv (↑X : Set V)).toOrderIsoSet.dual
+
+/-- Membership form of the classification: a pair lies in the classified
+state iff the corresponding possibility does. -/
+theorem mem_fiberOrderIsoProd {I : fiber W M X} {w : W} {g : V → M} :
+    (w, (↑X : Set V).restrict g) ∈
+        OrderDual.ofDual (fiberOrderIsoProd X I) ↔
+      (⟨w, g⟩ : Possibility W V M) ∈ I.1 := by
+  show (w, (↑X : Set V).restrict g) ∈
+    Possibility.agreeQuotientEquiv (↑X : Set V) '' fiberEquiv X I ↔ _
+  constructor
+  · rintro ⟨q, hq, heq⟩
+    obtain ⟨p⟩ := q
+    obtain ⟨h1, h2⟩ := Prod.ext_iff.mp heq
+    exact ((fiber_supported I).mem_congr
+      ⟨h1, fun v hv => congrFun h2 ⟨v, hv⟩⟩).mp (mem_fiberEquiv.mp hq)
+  · intro hg
+    exact ⟨Quotient.mk _ ⟨w, g⟩, mem_fiberEquiv.mpr hg, rfl⟩
+
+/-- At the empty context the fiber degenerates to bare propositions:
+[veltman-1996]'s update-semantics states are the referent-free fiber. -/
+noncomputable def fiberEmptyOrderIso :
+    fiber W M (∅ : Finset V) ≃o (Set W)ᵒᵈ :=
+  haveI : IsEmpty ((↑(∅ : Finset V) : Set V) : Type _) :=
+    ⟨fun x => by simpa using x.2⟩
+  (fiberOrderIsoProd ∅).trans (Equiv.prodUnique W _).toOrderIsoSet.dual
+
+/-- Membership form: at the empty context, membership is a fact about the
+world alone. -/
+theorem mem_fiberEmptyOrderIso {I : fiber W M (∅ : Finset V)} {w : W}
+    {g : V → M} :
+    w ∈ OrderDual.ofDual (fiberEmptyOrderIso I) ↔
+      (⟨w, g⟩ : Possibility W V M) ∈ I.1 := by
+  haveI : IsEmpty ((↑(∅ : Finset V) : Set V) : Type _) :=
+    ⟨fun x => by simpa using x.2⟩
+  rw [← mem_fiberOrderIsoProd (g := g)]
+  show w ∈ Equiv.prodUnique W _ '' OrderDual.ofDual (fiberOrderIsoProd ∅ I) ↔ _
+  constructor
+  · rintro ⟨⟨w', f⟩, hf, rfl⟩
+    rwa [Subsingleton.elim ((↑(∅ : Finset V) : Set V).restrict g) f]
+  · intro h
+    exact ⟨(w, _), h, rfl⟩
+
+end Classified
 
 end State
 

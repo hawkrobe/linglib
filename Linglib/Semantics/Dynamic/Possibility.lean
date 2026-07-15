@@ -51,6 +51,27 @@ def agreeSetoid (X : Set V) : Setoid (Possibility W V M) where
 theorem agreeSetoid_anti : Antitone (agreeSetoid : Set V → Setoid (Possibility W V M)) :=
   fun _ _ hXY _ _ h => ⟨h.1, h.2.mono hXY⟩
 
+open scoped Classical in
+/-- The state space at granularity `X`, classified: a possibility up to
+agreement on `X` is a world together with an assignment of the
+`X`-referents. -/
+noncomputable def agreeQuotientEquiv (X : Set V) [Nonempty M] :
+    Quotient (agreeSetoid (W := W) (M := M) X) ≃ W × (X → M) where
+  toFun := Quotient.lift (fun p => (p.world, X.restrict p.assignment))
+    fun _ _ h => Prod.ext h.1 (funext fun x => h.2 x.2)
+  invFun wf :=
+    Quotient.mk _
+      ⟨wf.1, fun v => if h : v ∈ X then wf.2 ⟨v, h⟩ else Classical.arbitrary M⟩
+  left_inv := by
+    rintro ⟨p⟩
+    exact Quotient.sound ⟨rfl, fun v hv => dif_pos hv⟩
+  right_inv wf := Prod.ext rfl (funext fun x => dif_pos x.2)
+
+@[simp] theorem agreeQuotientEquiv_mk (X : Set V) [Nonempty M]
+    (p : Possibility W V M) :
+    agreeQuotientEquiv X (Quotient.mk _ p) = (p.world, X.restrict p.assignment) :=
+  rfl
+
 /-- Extend the assignment at a single referent, via `Function.update`. -/
 def extend [DecidableEq V] (p : Possibility W V M) (x : V) (e : M) :
     Possibility W V M :=
