@@ -54,18 +54,16 @@ theorem dseq_eq_kleisliComp (D₁ D₂ : S → Set S) :
 
 /-- The trivial test is `pure`. -/
 theorem test_top_eq_pure :
-    (test (fun _ => True) : Update S) = fun i => (pure i : Set S) := by
-  funext i j
-  show (i = j ∧ True) = (j ∈ ({i} : Set S))
-  simp [eq_comm]
+    (test (fun _ => True) : Update S) = fun i => (pure i : Set S) :=
+  funext fun _ => Set.ext fun _ => (and_iff_left trivial).trans eq_comm
 
 /-- `lift` is `bind`: the relational image is the monad's extension
 operator. -/
 theorem lift_eq_bind (R : Update S) (σ : Set S) :
-    lift R σ = σ >>= (R : S → Set S) := by
-  ext j
-  simp only [lift, Set.bind_def, Set.mem_iUnion, Set.mem_setOf_eq, exists_prop]
-  rfl
+    lift R σ = σ >>= (R : S → Set S) :=
+  Set.ext fun j => by
+    rw [Set.bind_def, Set.mem_iUnion₂]
+    exact exists_congr fun i => exists_prop.symm
 
 /-! ### Distributivity is complete join preservation -/
 
