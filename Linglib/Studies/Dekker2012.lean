@@ -1,4 +1,5 @@
 import Linglib.Semantics.Dynamic.PLA.Update
+import Linglib.Semantics.Dynamic.Possibility
 
 /-!
 # Dekker (2012): Predicate Logic with Anaphora vs Bilateral Update Semantics
