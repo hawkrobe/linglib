@@ -34,6 +34,7 @@ produces the same truth conditions as `Intensional.box`.
 namespace KeshetAbney2024.PIP
 
 open DynamicSemantics
+open DynamicSemantics.ICDRT
 open Core.Logic.Modal (AccessRel box diamond box_T)
 
 variable {W E : Type*}
@@ -47,7 +48,7 @@ variable {W E : Type*}
 Atomic predicate: filters the info state to pairs satisfying the predicate.
 Labels are preserved.
 -/
-def atom (pred : ICDRTAssignment W E → W → Prop) : PUpdate W E :=
+def atom (pred : ICDRT.Assignment W E → W → Prop) : PUpdate W E :=
   λ d => d.mapInfo (λ c => { gw ∈ c | pred gw.1 gw.2 })
 
 /--
@@ -116,10 +117,10 @@ negation and modal operators. This is what enables:
 - Paycheck pronouns: "John spent his paycheck. Bill saved it."
 -/
 def existsLabeled (α : FLabel) (v : IVar) (domain : Set E)
-    (bodyPred : ICDRTAssignment W E → W → Prop)
+    (bodyPred : ICDRT.Assignment W E → W → Prop)
     (body : PUpdate W E) : PUpdate W E :=
   λ d =>
-    let extended : IContext W E :=
+    let extended : ICDRT.Context W E :=
       { gw | ∃ g₀ e, (g₀, gw.2) ∈ d.info ∧
                       e ∈ domain ∧
                       gw.1 = g₀.updateIndivConst v (.some e) }
@@ -133,7 +134,7 @@ Unlabeled existential: standard ∃x. φ without descriptive tracking.
 def exists_ (v : IVar) (domain : Set E)
     (body : PUpdate W E) : PUpdate W E :=
   λ d =>
-    let extended : IContext W E :=
+    let extended : ICDRT.Context W E :=
       { gw | ∃ g₀ e, (g₀, gw.2) ∈ d.info ∧
                       e ∈ domain ∧
                       gw.1 = g₀.updateIndivConst v (.some e) }
@@ -164,17 +165,17 @@ would produce no accessible-world pairs for universal modals to check,
 making must/would vacuously satisfied and losing the modal subordination
 mechanism.
 -/
-def modalExpand (c : IContext W E) (access : AccessRel W) : IContext W E :=
+def modalExpand (c : ICDRT.Context W E) (access : AccessRel W) : ICDRT.Context W E :=
   c ∪ { gw | ∃ w₀, (gw.1, w₀) ∈ c ∧ access w₀ gw.2 }
 
 /-- Modal expansion includes all original pairs. -/
-theorem modalExpand_superset (c : IContext W E) (access : AccessRel W) :
+theorem modalExpand_superset (c : ICDRT.Context W E) (access : AccessRel W) :
     c ⊆ modalExpand c access := by
   intro x hx; left; exact hx
 
 /-- Modal expansion adds accessible-world pairs. -/
-theorem modalExpand_adds_accessible (c : IContext W E) (access : AccessRel W)
-    (g : ICDRTAssignment W E) (w₀ w₁ : W)
+theorem modalExpand_adds_accessible (c : ICDRT.Context W E) (access : AccessRel W)
+    (g : ICDRT.Assignment W E) (w₀ w₁ : W)
     (hc : (g, w₀) ∈ c) (hacc : access w₀ w₁) :
     (g, w₁) ∈ modalExpand c access := by
   right; exact ⟨w₀, hc, hacc⟩
@@ -202,7 +203,7 @@ def must (access : AccessRel W) (allWorlds : List W)
     (body : PUpdate W E) : PUpdate W E :=
   λ d =>
     let bodyResult := body { d with info := modalExpand d.info access }
-    let result : IContext W E :=
+    let result : ICDRT.Context W E :=
       { gw ∈ d.info |
         ∀ w₁ ∈ allWorlds, access gw.2 w₁ → (gw.1, w₁) ∈ bodyResult.info }
     -- Labels from the body propagate outward
@@ -221,7 +222,7 @@ def might (access : AccessRel W) (allWorlds : List W)
     (body : PUpdate W E) : PUpdate W E :=
   λ d =>
     let bodyResult := body { d with info := modalExpand d.info access }
-    let result : IContext W E :=
+    let result : ICDRT.Context W E :=
       { gw ∈ d.info |
         ∃ w₁ ∈ allWorlds, access gw.2 w₁ ∧ (gw.1, w₁) ∈ bodyResult.info }
     { info := result, labels := bodyResult.labels }
@@ -291,8 +292,8 @@ used throughout `Semantics/Modality/`. Since accessibility is now the
 project-canonical Prop-valued `AccessRel`, the identity is direct — no lift.
 -/
 theorem must_truth_agrees_box [Fintype W]
-    (R : AccessRel W) (p : ICDRTAssignment W E → W → Prop)
-    (d : Discourse W E) (g : ICDRTAssignment W E) (w₀ : W)
+    (R : AccessRel W) (p : ICDRT.Assignment W E → W → Prop)
+    (d : Discourse W E) (g : ICDRT.Assignment W E) (w₀ : W)
     (hd : (g, w₀) ∈ d.info) :
     ((g, w₀) ∈ (must R (Finset.univ : Finset W).toList (atom p) d).info) ↔
     box R (p g) w₀ := by
@@ -311,8 +312,8 @@ theorem must_truth_agrees_box [Fintype W]
 PIP's `might` agrees with `diamond`.
 -/
 theorem might_truth_agrees_diamond [Fintype W]
-    (R : AccessRel W) (p : ICDRTAssignment W E → W → Prop)
-    (d : Discourse W E) (g : ICDRTAssignment W E) (w₀ : W)
+    (R : AccessRel W) (p : ICDRT.Assignment W E → W → Prop)
+    (d : Discourse W E) (g : ICDRT.Assignment W E) (w₀ : W)
     (hd : (g, w₀) ∈ d.info) :
     ((g, w₀) ∈ (might R (Finset.univ : Finset W).toList (atom p) d).info) ↔
     diamond R (p g) w₀ := by
@@ -335,8 +336,8 @@ modal base guarantees the description holds at the evaluation world — from
 -/
 theorem must_realistic_of_refl [Fintype W]
     (R : AccessRel W) [Std.Refl R]
-    (p : ICDRTAssignment W E → W → Prop)
-    (d : Discourse W E) (g : ICDRTAssignment W E) (w₀ : W)
+    (p : ICDRT.Assignment W E → W → Prop)
+    (d : Discourse W E) (g : ICDRT.Assignment W E) (w₀ : W)
     (hd : (g, w₀) ∈ d.info)
     (hmust : (g, w₀) ∈ (must R (Finset.univ : Finset W).toList (atom p) d).info) :
     p g w₀ :=
@@ -351,8 +352,8 @@ This is the version that applies to non-globally-reflexive relations
 [kratzer-1991]'s realistic modal base without requiring global reflexivity.
 -/
 theorem must_realistic_at [Fintype W]
-    (R : AccessRel W) (p : ICDRTAssignment W E → W → Prop)
-    (d : Discourse W E) (g : ICDRTAssignment W E) (w₀ : W)
+    (R : AccessRel W) (p : ICDRT.Assignment W E → W → Prop)
+    (d : Discourse W E) (g : ICDRT.Assignment W E) (w₀ : W)
     (hRefl_at : R w₀ w₀)
     (hmust : (g, w₀) ∈ (must R (Finset.univ : Finset W).toList (atom p) d).info) :
     p g w₀ := by
