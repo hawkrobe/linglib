@@ -14,8 +14,11 @@ Dynamic meanings in their two canonical faces. The *relational* face
 [heim-1982]'s file change potentials, [kamp-reyle-1993]'s verification
 clauses, parametrized over the state type by [muskens-1996]): meanings
 relate input states to output states pointwise. The *set-transformer*
-face (`CCP P = Set P → Set P`, [heim-1983], [veltman-1996]): meanings
-act on information states as wholes. `lift` (the relational image,
+face (`CCP S = Set S → Set S`, [heim-1983], [veltman-1996]): meanings
+act on information states — plain sets — as wholes. The literature says
+"state" at both levels: DPL's states are the points `S`, Veltman's are
+the sets `Set S`, and `lift` identifies the relational face's states
+with the transformer face's points — one carrier, two vocabularies. `lift` (the relational image,
 [muskens-van-benthem-visser-2011]'s strongest postcondition) and `lower`
 identify the relational algebra with the *distributive* transformers —
 those that process elements independently — and what the transformer
@@ -32,8 +35,8 @@ powerset monad, transformers their suplattice completion.
 - `Update.IsTest`: DPL's tests — updates that never change the state.
 - `valid`, `entails` (`⊨`), `sEntails` (`⊨ₛ`): truth and
   [groenendijk-stokhof-1991] §3.5's two entailment notions.
-- `CCP P`: meanings as transformers of information states (plain
-  `Set P`), a monoid under `CCP.seq`; `CCP.neg`, `disj`,
+- `CCP S`: meanings as transformers of information states (plain
+  `Set S`), a monoid under `CCP.seq`; `CCP.neg`, `disj`,
   `CCP.guard` and the whole-state tests `might`, `must`, `negTest`.
 - `IsEliminative`, `IsExpansive`, `IsTest`, `IsDistributive`: the
   classification of CCPs. N.B. the CCP-level `IsTest` (pass-or-`∅`,
@@ -332,32 +335,32 @@ A Context Change Potential (CCP) is a function from states to states.
 
 This is the semantic type for dynamic meanings.
 -/
-abbrev CCP (P : Type*) := Set P → Set P
+abbrev CCP (S : Type*) := Set S → Set S
 
 namespace CCP
 
-variable {P : Type*}
+variable {S : Type*}
 
 /-- Identity CCP: leaves state unchanged -/
-def id : CCP P := λ s => s
+def id : CCP S := λ s => s
 
 /-- Absurd CCP: yields empty state -/
-def absurd : CCP P := λ _ => ∅
+def absurd : CCP S := λ _ => ∅
 
 /-- Sequential composition of CCPs -/
-def seq (u v : CCP P) : CCP P := λ s => v (u s)
+def seq (u v : CCP S) : CCP S := λ s => v (u s)
 
 scoped infixl:70 " ;; " => seq
 
-theorem seq_assoc (u v w : CCP P) : (u ;; v) ;; w = u ;; (v ;; w) := rfl
-theorem id_seq (u : CCP P) : id ;; u = u := rfl
-theorem seq_id (u : CCP P) : u ;; id = u := rfl
+theorem seq_assoc (u v w : CCP S) : (u ;; v) ;; w = u ;; (v ;; w) := rfl
+theorem id_seq (u : CCP S) : id ;; u = u := rfl
+theorem seq_id (u : CCP S) : u ;; id = u := rfl
 
 /-- CCPs form a monoid under sequential composition. Scoped because
-`CCP P` is an abbreviation for `Set P → Set P`: a global instance would
+`CCP S` is an abbreviation for `Set S → Set S`: a global instance would
 attach `*`/`1` to a bare function type for every importer. Activate with
 `open scoped DynamicSemantics.CCP`. -/
-scoped instance : Monoid (CCP P) where
+scoped instance : Monoid (CCP S) where
   mul := seq
   one := id
   mul_assoc _ _ _ := rfl
@@ -365,7 +368,7 @@ scoped instance : Monoid (CCP P) where
   mul_one _ := rfl
 
 /-- seq_absurd: anything followed by absurd is absurd -/
-theorem seq_absurd (u : CCP P) : u ;; absurd = absurd := rfl
+theorem seq_absurd (u : CCP S) : u ;; absurd = absurd := rfl
 
 /--
 Dynamic negation: complement within the input state.
@@ -375,22 +378,22 @@ This is the standard dynamic negation of [heim-1982], [veltman-1996]:
 Does not validate DNE on non-eliminative updates. For the whole-state
 consistency test (must-not), see `negTest`.
 -/
-def neg (φ : CCP P) : CCP P :=
+def neg (φ : CCP S) : CCP S :=
   λ s => s \ φ s
 
 open Classical in
 /-- Whole-state test: pass the state through iff it satisfies `C` — the
 shared shape of `negTest`, `might`, `must`, and `impl`, the
 non-distributive tests that inspect the entire input state. -/
-noncomputable def guard (C : Set P → Prop) : CCP P :=
+noncomputable def guard (C : Set S → Prop) : CCP S :=
   λ s => if C s then s else ∅
 
 /-- A guard whose condition holds passes the state through. -/
-@[simp] theorem guard_pos {C : Set P → Prop} {s} (h : C s) : guard C s = s :=
+@[simp] theorem guard_pos {C : Set S → Prop} {s} (h : C s) : guard C s = s :=
   if_pos h
 
 /-- A guard whose condition fails crashes to `∅`. -/
-@[simp] theorem guard_neg {C : Set P → Prop} {s} (h : ¬C s) : guard C s = ∅ :=
+@[simp] theorem guard_neg {C : Set S → Prop} {s} (h : ¬C s) : guard C s = ∅ :=
   if_neg h
 
 /--
@@ -401,7 +404,7 @@ A whole-state consistency test ("must-not"), NOT [heim-1982]'s or
 coincide only when `φ s = ∅` or `φ s = s` — see
 `Studies/Beaver2001/ABLE.lean` for the proven divergence.
 -/
-noncomputable def negTest (φ : CCP P) : CCP P :=
+noncomputable def negTest (φ : CCP S) : CCP S :=
   guard (λ s => ¬ (φ s).Nonempty)
 
 /--
@@ -409,7 +412,7 @@ Compatibility test ("might"): passes iff φ yields a nonempty result.
 
 might(φ)(s) = s if φ(s) ≠ ∅, else ∅
 -/
-noncomputable def might (φ : CCP P) : CCP P :=
+noncomputable def might (φ : CCP S) : CCP S :=
   guard (λ s => (φ s).Nonempty)
 
 open Classical in
@@ -418,7 +421,7 @@ Full support test ("must"): passes iff φ returns input unchanged.
 
 must(φ)(s) = s if φ(s) = s, else ∅
 -/
-noncomputable def must (φ : CCP P) : CCP P :=
+noncomputable def must (φ : CCP S) : CCP S :=
   guard (λ s => φ s = s)
 
 open Classical in
@@ -427,7 +430,7 @@ Dynamic implication test: passes iff output of φ is preserved by ψ.
 
 impl(φ,ψ)(s) = s if φ(s) ⊆ ψ(φ(s)), else ∅
 -/
-noncomputable def impl (φ ψ : CCP P) : CCP P :=
+noncomputable def impl (φ ψ : CCP S) : CCP S :=
   guard (λ s => φ s ⊆ ψ (φ s))
 
 /--
@@ -438,19 +441,19 @@ disjunct is evaluated in the input updated with the negation of the
 first — the local-context clause of the satisfaction literature
 ([beaver-2001]; [heim-1983] itself gives CCPs only for *not/and/if*).
 -/
-def disj (φ ψ : CCP P) : CCP P := neg (seq (neg φ) (neg ψ))
+def disj (φ ψ : CCP S) : CCP S := neg (seq (neg φ) (neg ψ))
 
 /-- Dynamic entailment: φ entails ψ iff ψ adds no information after φ. -/
-def entails (φ ψ : CCP P) : Prop :=
-  ∀ s : Set P, (φ s).Nonempty → ψ (φ s) = φ s
+def entails (φ ψ : CCP S) : Prop :=
+  ∀ s : Set S, (φ s).Nonempty → ψ (φ s) = φ s
 
 /-- Entailment is reflexive -/
-theorem entails_id (φ : CCP P) : entails φ id := by
+theorem entails_id (φ : CCP S) : entails φ id := by
   intro s _; rfl
 
 end CCP
 
-variable {P : Type*}
+variable {S : Type*}
 
 /--
 An update is eliminative if it never adds possibilities.
@@ -458,15 +461,15 @@ An update is eliminative if it never adds possibilities.
 This is the fundamental property of dynamic semantics:
 information only grows (possibilities only decrease).
 -/
-def IsEliminative (u : CCP P) : Prop :=
+def IsEliminative (u : CCP S) : Prop :=
   ∀ s, u s ⊆ s
 
 /-- Identity is eliminative -/
-theorem eliminative_id : IsEliminative (CCP.id : CCP P) :=
+theorem eliminative_id : IsEliminative (CCP.id : CCP S) :=
   λ _ => Set.Subset.rfl
 
 /-- Sequential composition preserves eliminativity -/
-theorem eliminative_seq (u v : CCP P)
+theorem eliminative_seq (u v : CCP S)
     (hu : IsEliminative u) (hv : IsEliminative v) :
     IsEliminative (u.seq v) := λ s _ hp =>
   hu s (hv (u s) hp)
@@ -480,21 +483,21 @@ modal horizon expansion ([kirkpatrick-2024]), and accommodation.
 These are the dual of eliminative operations: where eliminative updates
 can only shrink the state, expansive updates can only grow it.
 -/
-def IsExpansive (u : CCP P) : Prop :=
+def IsExpansive (u : CCP S) : Prop :=
   ∀ s, s ⊆ u s
 
 /-- Identity is expansive -/
-theorem expansive_id : IsExpansive (CCP.id : CCP P) :=
+theorem expansive_id : IsExpansive (CCP.id : CCP S) :=
   λ _ => Set.Subset.rfl
 
 /-- Sequential composition preserves expansiveness -/
-theorem expansive_seq (u v : CCP P)
+theorem expansive_seq (u v : CCP S)
     (hu : IsExpansive u) (hv : IsExpansive v) :
     IsExpansive (u.seq v) := λ s _ hp =>
   hv (u s) (hu s hp)
 
 /-- A CCP that is both eliminative and expansive is the identity on every input. -/
-theorem eliminative_expansive_id (u : CCP P)
+theorem eliminative_expansive_id (u : CCP S)
     (he : IsEliminative u) (hx : IsExpansive u) :
     ∀ s, u s = s :=
   λ s => Set.Subset.antisymm (he s) (hx s)
@@ -503,37 +506,37 @@ theorem eliminative_expansive_id (u : CCP P)
 [veltman-1996]'s tests: `might`, `must`, presupposition checks. Not the
 counterpart of the relational `Update.IsTest`: lifting a relational
 test gives an eliminative filter, not a pass-or-`∅` test. -/
-def IsTest (u : CCP P) : Prop :=
+def IsTest (u : CCP S) : Prop :=
   ∀ s, u s = s ∨ u s = ∅
 
 /-- Tests are eliminative -/
-theorem test_eliminative (u : CCP P) (h : IsTest u) :
+theorem test_eliminative (u : CCP S) (h : IsTest u) :
     IsEliminative u := λ s p hp => by
   cases h s with
   | inl heq => rw [heq] at hp; exact hp
   | inr hemp => rw [hemp] at hp; exact False.elim hp
 
 open Classical in
-theorem CCP.guard_isTest (C : Set P → Prop) : IsTest (CCP.guard C) := by
+theorem CCP.guard_isTest (C : Set S → Prop) : IsTest (CCP.guard C) := by
   intro s; simp only [CCP.guard]; split <;> simp
 
-theorem CCP.negTest_isTest (φ : CCP P) : IsTest (CCP.negTest φ) :=
+theorem CCP.negTest_isTest (φ : CCP S) : IsTest (CCP.negTest φ) :=
   CCP.guard_isTest _
 
-theorem CCP.might_isTest (φ : CCP P) : IsTest (CCP.might φ) :=
+theorem CCP.might_isTest (φ : CCP S) : IsTest (CCP.might φ) :=
   CCP.guard_isTest _
 
-theorem CCP.must_isTest (φ : CCP P) : IsTest (CCP.must φ) :=
+theorem CCP.must_isTest (φ : CCP S) : IsTest (CCP.must φ) :=
   CCP.guard_isTest _
 
-theorem CCP.impl_isTest (φ ψ : CCP P) : IsTest (CCP.impl φ ψ) :=
+theorem CCP.impl_isTest (φ ψ : CCP S) : IsTest (CCP.impl φ ψ) :=
   CCP.guard_isTest _
 
 open Classical in
 /-- Duality for the test pair: might φ = must-not (must-not φ). The
 analogous identity fails for set-difference `neg` (DNE holds instead
 on eliminative updates). -/
-theorem CCP.might_eq_negTest_negTest (φ : CCP P) :
+theorem CCP.might_eq_negTest_negTest (φ : CCP S) :
     CCP.might φ = CCP.negTest (CCP.negTest φ) := by
   funext s
   by_cases h : (φ s).Nonempty
@@ -546,20 +549,20 @@ theorem CCP.might_eq_negTest_negTest (φ : CCP P) :
 
 section GaloisContent
 
-variable {P φ : Type*}
+variable {S φ : Type*}
 
 /--
 Support relation: s supports ψ if all possibilities in s satisfy ψ.
 
 This is the fundamental entailment relation of dynamic semantics.
 -/
-def supportOf (sat : P → φ → Prop) (s : Set P) (ψ : φ) : Prop :=
+def supportOf (sat : S → φ → Prop) (s : Set S) (ψ : φ) : Prop :=
   ∀ p ∈ s, sat p ψ
 
 /--
 Content of a formula: all possibilities satisfying it.
 -/
-def contentOf (sat : P → φ → Prop) (ψ : φ) : Set P :=
+def contentOf (sat : S → φ → Prop) (ψ : φ) : Set S :=
   { p | sat p ψ }
 
 /--
@@ -567,7 +570,7 @@ Galois connection: s ⊆ content ψ ↔ s supports ψ
 
 This is the fundamental duality of dynamic semantics.
 -/
-theorem support_iff_subset_content (sat : P → φ → Prop) (s : Set P) (ψ : φ) :
+theorem support_iff_subset_content (sat : S → φ → Prop) (s : Set S) (ψ : φ) :
     supportOf sat s ψ ↔ s ⊆ contentOf sat ψ := by
   constructor
   · intro h p hp
@@ -578,20 +581,20 @@ theorem support_iff_subset_content (sat : P → φ → Prop) (s : Set P) (ψ : �
 /--
 Support is downward closed: smaller states support more.
 -/
-theorem support_mono (sat : P → φ → Prop) (s t : Set P) (ψ : φ)
+theorem support_mono (sat : S → φ → Prop) (s t : Set S) (ψ : φ)
     (h : t ⊆ s) (hs : supportOf sat s ψ) : supportOf sat t ψ :=
   λ p hp => hs p (h hp)
 
 /--
 Empty state supports everything (vacuously).
 -/
-theorem empty_supports (sat : P → φ → Prop) (ψ : φ) :
+theorem empty_supports (sat : S → φ → Prop) (ψ : φ) :
     supportOf sat ∅ ψ := λ _ hp => False.elim hp
 
 /--
 Content is antitone in entailment.
 -/
-theorem content_mono (sat : P → φ → Prop) (ψ₁ ψ₂ : φ)
+theorem content_mono (sat : S → φ → Prop) (ψ₁ ψ₂ : φ)
     (h : ∀ p, sat p ψ₁ → sat p ψ₂) :
     contentOf sat ψ₁ ⊆ contentOf sat ψ₂ :=
   λ _ hp => h _ hp
@@ -603,13 +606,13 @@ end GaloisContent
 
 /-- Filtering a set by a predicate is monotone. This is the shared foundation
     for monotonicity of `updateFromSat`, `atom`, `pred1`, `pred2`, etc. -/
-theorem sep_monotone (pred : P → Prop) :
-    Monotone (λ s : Set P => { p ∈ s | pred p }) :=
+theorem sep_monotone (pred : S → Prop) :
+    Monotone (λ s : Set S => { p ∈ s | pred p }) :=
   λ _ _ h _ hp => ⟨h hp.1, hp.2⟩
 
 /-- Filtering a set by a predicate is eliminative. -/
-theorem sep_eliminative (pred : P → Prop) :
-    IsEliminative (λ s : Set P => { p ∈ s | pred p }) :=
+theorem sep_eliminative (pred : S → Prop) :
+    IsEliminative (λ s : Set S => { p ∈ s | pred p }) :=
   λ _ _ hp => hp.1
 
 
@@ -618,29 +621,29 @@ The standard update construction: filter by satisfaction.
 
 This is how PLA, DRT, DPL all define updates.
 -/
-def updateFromSat {P φ : Type*} (sat : P → φ → Prop) (ψ : φ) : CCP P :=
+def updateFromSat {S φ : Type*} (sat : S → φ → Prop) (ψ : φ) : CCP S :=
   λ s => { p ∈ s | sat p ψ }
 
 /-- Standard updates are eliminative -/
-theorem updateFromSat_eliminative {P φ : Type*} (sat : P → φ → Prop) (ψ : φ) :
+theorem updateFromSat_eliminative {S φ : Type*} (sat : S → φ → Prop) (ψ : φ) :
     IsEliminative (updateFromSat sat ψ) :=
   sep_eliminative _
 
 /-- Standard update membership -/
-theorem mem_updateFromSat {P φ : Type*} (sat : P → φ → Prop) (ψ : φ)
-    (s : Set P) (p : P) :
+theorem mem_updateFromSat {S φ : Type*} (sat : S → φ → Prop) (ψ : φ)
+    (s : Set S) (p : S) :
     p ∈ updateFromSat sat ψ s ↔ p ∈ s ∧ sat p ψ := Iff.rfl
 
 /-- Update equals intersection with content -/
-theorem updateFromSat_eq_inter_content {P φ : Type*} (sat : P → φ → Prop)
-    (ψ : φ) (s : Set P) :
+theorem updateFromSat_eq_inter_content {S φ : Type*} (sat : S → φ → Prop)
+    (ψ : φ) (s : Set S) :
     updateFromSat sat ψ s = s ∩ contentOf sat ψ := by
   ext p
   simp only [mem_updateFromSat, contentOf, Set.mem_inter_iff, Set.mem_setOf_eq]
 
 /-- Support-Update equivalence -/
-theorem support_iff_update_eq {P φ : Type*} (sat : P → φ → Prop)
-    (ψ : φ) (s : Set P) :
+theorem support_iff_update_eq {S φ : Type*} (sat : S → φ → Prop)
+    (ψ : φ) (s : Set S) :
     supportOf sat s ψ ↔ updateFromSat sat ψ s = s := by
   constructor
   · intro h
@@ -658,16 +661,16 @@ theorem support_iff_update_eq {P φ : Type*} (sat : P → φ → Prop)
 Dynamic entailment: φ dynamically entails ψ if updating with φ
 always yields a state that supports ψ.
 -/
-def dynamicEntailsOf {P φ : Type*} (sat : P → φ → Prop) (ψ₁ ψ₂ : φ) : Prop :=
-  ∀ s : Set P, supportOf sat (updateFromSat sat ψ₁ s) ψ₂
+def dynamicEntailsOf {S φ : Type*} (sat : S → φ → Prop) (ψ₁ ψ₂ : φ) : Prop :=
+  ∀ s : Set S, supportOf sat (updateFromSat sat ψ₁ s) ψ₂
 
 /-- Dynamic entailment is reflexive -/
-theorem dynamicEntails_refl {P φ : Type*} (sat : P → φ → Prop) (ψ : φ) :
+theorem dynamicEntails_refl {S φ : Type*} (sat : S → φ → Prop) (ψ : φ) :
     dynamicEntailsOf sat ψ ψ :=
   λ _ _ hp => hp.2
 
 /-- Dynamic entailment is transitive -/
-theorem dynamicEntails_trans {P φ : Type*} (sat : P → φ → Prop)
+theorem dynamicEntails_trans {S φ : Type*} (sat : S → φ → Prop)
     (ψ₁ ψ₂ ψ₃ : φ) (h1 : dynamicEntailsOf sat ψ₁ ψ₂) (h2 : dynamicEntailsOf sat ψ₂ ψ₃) :
     dynamicEntailsOf sat ψ₁ ψ₃ :=
   fun s p hp => h2 s p ⟨hp.1, h1 s p hp⟩
@@ -678,7 +681,7 @@ theorem dynamicEntails_trans {P φ : Type*} (sat : P → φ → Prop)
 larger output states. Uses mathlib's `Monotone` (i.e., `s ≤ t → f s ≤ f t`
 where `≤` on `Set` is `⊆`).
 -/
-theorem updateFromSat_monotone {P φ : Type*} (sat : P → φ → Prop) (ψ : φ) :
+theorem updateFromSat_monotone {S φ : Type*} (sat : S → φ → Prop) (ψ : φ) :
     Monotone (updateFromSat sat ψ) :=
   sep_monotone _
 
@@ -687,11 +690,11 @@ theorem updateFromSat_monotone {P φ : Type*} (sat : P → φ → Prop) (ψ : φ
 
 /-- A CCP is distributive when it processes each element of the input independently:
     φ(s) = ⋃_{i∈s} φ({i}). -/
-def IsDistributive (φ : CCP P) : Prop :=
+def IsDistributive (φ : CCP S) : Prop :=
   ∀ s, φ s = {p | ∃ i ∈ s, p ∈ φ {i}}
 
 /-- `updateFromSat` is always distributive: it filters per-element. -/
-theorem updateFromSat_isDistributive {P φ : Type*} (sat : P → φ → Prop) (ψ : φ) :
+theorem updateFromSat_isDistributive {S φ : Type*} (sat : S → φ → Prop) (ψ : φ) :
     IsDistributive (updateFromSat sat ψ) := by
   intro s; ext p; simp only [updateFromSat, Set.mem_setOf_eq]
   constructor
@@ -701,12 +704,12 @@ theorem updateFromSat_isDistributive {P φ : Type*} (sat : P → φ → Prop) (�
 /-- `CCP.might` is not distributive: the whole-context test can pass while
     individual-element tests fail.
 
-    Witness: P = Bool, φ keeps only `true`.
+    Witness: S = Bool, φ keeps only `true`.
     `might φ {true, false} = {true, false}` (whole-context test passes),
     but per-singleton: `might φ {false} = ∅` (test fails on false-only context).
     So `false` is in the whole-context result but not the distributive union. -/
 theorem might_not_isDistributive :
-    ∃ (P : Type) (φ : CCP P), ¬IsDistributive (CCP.might φ) := by
+    ∃ (S : Type) (φ : CCP S), ¬IsDistributive (CCP.might φ) := by
   use Bool
   let φ : CCP Bool := λ s => {p ∈ s | p = true}
   use φ
@@ -837,7 +840,7 @@ theorem lift_test_isEliminative (C : Condition S) :
 /-- `updateFromSat` is the lifting of `test` applied to a satisfaction
 relation. This connects the CCP-native `updateFromSat` to the
 primary relational algebra. -/
-theorem updateFromSat_eq_lift_test {P φ : Type*} (sat : P → φ → Prop) (ψ : φ) :
+theorem updateFromSat_eq_lift_test {S φ : Type*} (sat : S → φ → Prop) (ψ : φ) :
     updateFromSat sat ψ = lift (test (λ p => sat p ψ)) := by
   funext σ; ext p
   simp only [updateFromSat, lift, test, Set.mem_setOf_eq]
