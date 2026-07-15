@@ -1,6 +1,7 @@
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Core.Logic.Trivalent
 import Linglib.Semantics.Dynamic.UpdateSemantics.Basic
+import Linglib.Semantics.Dynamic.Partial
 import Linglib.Studies.Geurts2005
 import Linglib.Studies.Karttunen1973
 import Mathlib.Tactic.DeriveFintype
@@ -241,6 +242,176 @@ operator. -/
 section UpdateSemantics
 
 open UpdateSemantics
+
+/-! ### Presuppositional updates over `Option`-states
+
+[yagi-2025]'s Definition 4-5 apparatus, single-consumer and hence
+study-local: `Option (State W)` renders Definition 5's failure value as
+`none`. The canonical `Part`-based partiality layer is
+`DynamicSemantics.CCP.Partial`; `PUpdate.presup_ne_none_iff_admits`
+identifies the two where they overlap, and the `Option` form survives for
+the disjunction machinery (`disjPresup`, `disjFlex`) below. -/
+
+section PolymorphicState
+variable {V : Type*}
+
+/-- The designated undefined state: update failure.
+
+    [yagi-2025] Definition 5: when a presupposition is not satisfied,
+    the update yields ∗. We model ∗ as `none` via `Option (State V)`. -/
+abbrev PState (V : Type*) := Option (State V)
+
+open Classical in
+/-- Presuppositional update: update by φ_p is defined only when the
+    presupposition p is supported (i.e. `s[p] = s`).
+
+    [yagi-2025] Definition 5:
+      s[φ_p] = ∗  if s[p] ≠ s
+             = s[φ]  otherwise
+
+    [heim-1982] [beaver-2001] [veltman-1996] -/
+noncomputable def PUpdate.presup (p φ : V → Prop) : PState V → PState V
+  | none => none
+  | some s =>
+    if Update.prop p s = s then
+      some (Update.prop φ s)
+    else
+      none
+
+/-- `PUpdate.presup` is the `Option`-valued shadow of
+    `DynamicSemantics.CCP.Partial.ofPartialProp`: defined (≠ `none`) at `some s` exactly
+    when `s` admits the corresponding partial update. `CCP.Partial` is the
+    canonical `Part`-based form; this clause survives for the
+    [yagi-2025] disjunction machinery below. -/
+theorem PUpdate.presup_ne_none_iff_admits (p φ : V → Prop) (s : State V) :
+    PUpdate.presup p φ (some s) ≠ none ↔
+      (DynamicSemantics.CCP.Partial.ofPartialProp ⟨p, φ⟩).admits s := by
+  simp only [PUpdate.presup]
+  split_ifs with h
+  · refine ⟨fun _ w hw => ?_, fun _ => Option.some_ne_none _⟩
+    have hm : w ∈ Update.prop p s := h.symm ▸ hw
+    exact hm.2
+  · refine ⟨fun hne => absurd rfl hne, fun hadm => absurd ?_ h⟩
+    have hadm' : ∀ w ∈ s, p w := hadm
+    exact Set.ext fun w => ⟨fun hw => hw.1, fun hw => ⟨hw, hadm' w hw⟩⟩
+
+/-- Negation extended to PState: s[¬φ] = s/s[φ].
+
+    [yagi-2025] Definition 4: s[¬φ] = s \ s[φ]. -/
+def PUpdate.neg (φ : V → Prop) : PState V → PState V
+  | none => none
+  | some s => some (s \ Update.prop φ s)
+
+/-- Disjunction extended to PState: s[φ ∨ ψ] = s[φ] ∪ s[¬φ][ψ].
+
+    [yagi-2025] Definition 4, [heim-1982].
+    Extended with ∗ ∪ s = s ∪ ∗ = ∗. -/
+def PUpdate.disj (φ ψ : V → Prop) : PState V → PState V
+  | none => none
+  | some s =>
+    let left := Update.prop φ s
+    let negLeft := s \ left
+    let right := Update.prop ψ negLeft
+    some (left ∪ right)
+
+/-- Presuppositional disjunction: s[φ_p ∨ ψ_q].
+    Apply presupposition checks to each disjunct.
+
+    This is the standard Heim/Beaver definition:
+      s[φ_p ∨ ψ_q] = s[φ_p] ∪ s[¬φ_p][ψ_q]
+
+    Both presuppositional updates must be defined for the result to be
+    defined: s[φ_p] requires s ⊨ p, and s[¬φ_p][ψ_q] requires s[¬φ_p] ⊨ q. -/
+noncomputable def PUpdate.disjPresup (p φ q ψ : V → Prop) :
+    PState V → PState V
+  | none => none
+  | some s =>
+    -- Left disjunct: s[φ_p]
+    let left := PUpdate.presup p φ (some s)
+    -- Right context: s[¬φ_p] — but ¬φ_p requires negating the presuppositional φ
+    -- Following Yagi: s[¬φ_p] = s \ s[φ_p], but s[φ_p] may be ∗
+    match left with
+    | none => none  -- left undefined → whole disjunction undefined
+    | some leftResult =>
+      let negLeftCtx := s \ leftResult
+      -- Right disjunct: s[¬φ_p][ψ_q]
+      let right := PUpdate.presup q ψ (some negLeftCtx)
+      match right with
+      | none => none
+      | some rightResult => some (leftResult ∪ rightResult)
+
+/-- **Flexible accommodation disjunction** (dynamic version).
+
+    [yagi-2025] (13) / [geurts-2005] / [aloni-2022]:
+      s[φ ∨ ψ] = s[χ][φ] ∪ s[ω][ψ], where s[χ] ∪ s[ω] = s
+
+    The propositions χ and ω *split* the state s into two substates.
+    By default χ = ω = ⊤ (both tautological), but when the default
+    violates genuineness ([zimmermann-2000]), the split becomes
+    non-trivial: χ = ¬q and ω = ¬p for conflicting presuppositions. -/
+noncomputable def PUpdate.disjFlex (χ φ_presup φ ω ψ_presup ψ : V → Prop)
+    (_h_split : ∀ s : State V, Update.prop χ s ∪ Update.prop ω s = s) :
+    PState V → PState V
+  | none => none
+  | some s =>
+    let leftCtx := Update.prop χ s
+    let rightCtx := Update.prop ω s
+    let left := PUpdate.presup φ_presup φ (some leftCtx)
+    let right := PUpdate.presup ψ_presup ψ (some rightCtx)
+    match left, right with
+    | some l, some r => some (l ∪ r)
+    | _, _ => none  -- ∗ poisons: if either side is undefined, result is ∗
+
+/-! ### Yagi's core observations -/
+
+/-- Presuppositional disjunction update is uninformative when both
+    presuppositions are already supported: if s ⊨ p and s ⊨ q and the
+    disjunction φ ∨ ψ is already true throughout s, the update returns
+    s unchanged.
+
+    Note: this applies to **non-conflicting** presuppositions. When
+    p ∧ q = ⊥, the hypotheses hp and hq are jointly unsatisfiable
+    (unless s = ∅). For the conflicting case, see
+    `update_yields_undefined` in the Yagi2025 study, which shows the
+    update is undefined (∗) rather than uninformative. -/
+theorem presup_disj_uninformative_when_supported (p φ q ψ : V → Prop) (s : State V)
+    (hp : Update.prop p s = s) (hq : Update.prop q s = s)
+    (h_or : ∀ w, w ∈ s → (φ w ∨ ψ w)) :
+    PUpdate.disjPresup p φ q ψ (some s) = some s := by
+  unfold PUpdate.disjPresup PUpdate.presup
+  -- Helper: q holds at every world in s (from hq)
+  have hq_at : ∀ w, w ∈ s → q w := by
+    intro w hw
+    have : w ∈ Update.prop q s := hq.symm ▸ hw
+    exact this.2
+  -- Helper: q is supported on any subset of s
+  have hq_sub : ∀ t : State V, t ⊆ s → Update.prop q t = t := by
+    intro t ht; ext w
+    exact ⟨fun h => h.1, fun hw => ⟨hw, hq_at w (ht hw)⟩⟩
+  -- Helper: ψ holds everywhere in s \ Update.prop φ s (by h_or + φ failure)
+  have hψ_sub : ∀ w, w ∈ s \ Update.prop φ s → ψ w := by
+    intro w ⟨hw, hnφ⟩
+    cases h_or w hw with
+    | inl h => exact absurd (show w ∈ Update.prop φ s from ⟨hw, h⟩) hnφ
+    | inr h => exact h
+  have h_q_neg : Update.prop q (s \ Update.prop φ s) = s \ Update.prop φ s :=
+    hq_sub _ (fun _ h => h.1)
+  simp only [hp, ↓reduceIte, h_q_neg]
+  -- Result: Update.prop φ s ∪ Update.prop ψ (s \ Update.prop φ s) = s
+  suffices h : Update.prop φ s ∪ Update.prop ψ (s \ Update.prop φ s) = s by
+    exact congrArg some h
+  apply Set.Subset.antisymm
+  · intro w hw
+    cases hw with
+    | inl h => exact h.1
+    | inr h => exact h.1.1
+  · intro w hw
+    by_cases hφ : φ w
+    · exact Set.mem_union_left _ ⟨hw, hφ⟩
+    · exact Set.mem_union_right _ ⟨⟨hw, fun h => hφ h.2⟩, hψ_sub w ⟨hw, fun h => hφ h.2⟩⟩
+
+
+end PolymorphicState
 
 /-- The ideal input state for (1c): all worlds with a head of state. The
 `noHeadOfState` world is excluded — Yagi's discussion presupposes a context
