@@ -3,12 +3,16 @@ import Linglib.Core.Logic.Bilateral.Defs
 import Mathlib.Algebra.Group.Defs
 
 /-!
-# Bilateral Denotations
+# Bilateral Update Semantics
+[elliott-sudo-2025], [krahmer-muskens-1995]
 
-
-The bilateral denotation structure for dynamic semantics. Bilateral semantics
-tracks both positive and negative update dimensions, enabling Double Negation
-Elimination (DNE) and proper treatment of cross-disjunct anaphora.
+Bilateral Update Semantics (BUS, [elliott-sudo-2025]'s formulation, with
+[krahmer-muskens-1995]'s bilateral DRT as ancestor): update semantics where
+each sentence carries both a positive and a negative update dimension,
+enabling Double Negation Elimination (DNE) and cross-disjunct anaphora.
+Unlike the Veltman states of `UpdateSemantics/Basic.lean` (bare `Set W`),
+BUS states are possibility sets (`InfoState W E`) — they carry assignments,
+since anaphora is the target phenomenon.
 
 ## Insight
 

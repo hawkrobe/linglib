@@ -58,7 +58,7 @@ incompatible ways:
 
 | Framework | DNE mechanism | File |
 |-----------|---------------|------|
-| Bilateral (BUS, [krahmer-muskens-1995], [elliott-sudo-2025]) | Two update channels (positive/negative); negation = swap | `Dynamic/Bilateral.lean`, `Studies/ElliottSudo2025.lean` |
+| Bilateral (BUS, [krahmer-muskens-1995], [elliott-sudo-2025]) | Two update channels (positive/negative); negation = swap | `Dynamic/UpdateSemantics/Bilateral.lean`, `Studies/ElliottSudo2025.lean` |
 | ICDRT ([hofmann-2025]) | Propositional drefs + complementation under flat update | `Studies/Hofmann2025.lean` |
 | TTR ([cooper-2023]) | Classical metalanguage reduction; negation is static | `Semantics/TypeTheoretic/` |
 

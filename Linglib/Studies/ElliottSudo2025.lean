@@ -1,4 +1,4 @@
-import Linglib.Semantics.Dynamic.Bilateral
+import Linglib.Semantics.Dynamic.UpdateSemantics.Bilateral
 import Linglib.Semantics.Dynamic.DPL
 import Linglib.Data.Examples.ElliottSudo2025
 

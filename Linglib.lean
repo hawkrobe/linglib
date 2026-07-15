@@ -1631,7 +1631,7 @@ import Linglib.Semantics.Degree.Noun
 import Linglib.Semantics.Degree.Predicate
 import Linglib.Semantics.Degree.Quantifier
 import Linglib.Semantics.Dynamic.Lookup
-import Linglib.Semantics.Dynamic.Bilateral
+import Linglib.Semantics.Dynamic.UpdateSemantics.Bilateral
 import Linglib.Semantics.Dynamic.CDRT
 import Linglib.Semantics.Dynamic.ContextChange
 import Linglib.Semantics.Dynamic.Situation
