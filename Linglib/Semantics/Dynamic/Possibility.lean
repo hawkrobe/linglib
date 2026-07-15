@@ -1,4 +1,6 @@
 import Linglib.Semantics.Dynamic.ContextChange
+import Mathlib.Data.Set.Function
+import Mathlib.Data.Setoid.Basic
 
 /-!
 # Possibilities
@@ -6,8 +8,8 @@ import Linglib.Semantics.Dynamic.ContextChange
 
 A *possibility* is a world paired with an assignment of discourse referents —
 the point type of dynamic semantics. This file holds the point object and its
-small coupled constructions: the pointwise API (`extend`, `agreeOn`,
-`sameWorld`), the register-form instances
+small coupled constructions: the pointwise API (`extend`, `agreeSetoid`),
+the register-form instances
 (`Nat`-keyed assignments), the unbased set-of-possibilities vocabulary
 (`InfoState.definedAt`, `novelAt`, `worlds`, `subsistsIn`, `supports`), and
 the possibility-specific CCP constructors (`InfoState.update`,
@@ -33,12 +35,18 @@ namespace Possibility
 
 variable {W V M : Type*}
 
-/-- Two possibilities agree on the referents in `vars`. -/
-def agreeOn (p q : Possibility W V M) (vars : Set V) : Prop :=
-  ∀ x ∈ vars, p.assignment x = q.assignment x
+/-- Possibilities up to agreement on `X`: equal worlds, assignments agreeing
+on `X`. Quotienting by this setoid is the state space at granularity `X` —
+the collapse of `Collapse.lean`, and the target of `State.fiberEquiv`. -/
+def agreeSetoid (X : Set V) : Setoid (Possibility W V M) where
+  r p q := p.world = q.world ∧ Set.EqOn p.assignment q.assignment X
+  iseqv :=
+    ⟨fun _ => ⟨rfl, Set.eqOn_refl _ _⟩, fun h => ⟨h.1.symm, h.2.symm⟩,
+      fun h h' => ⟨h.1.trans h'.1, h.2.trans h'.2⟩⟩
 
-/-- Same world, possibly different assignment. -/
-def sameWorld (p q : Possibility W V M) : Prop := p.world = q.world
+/-- Coarser bases identify more possibilities. -/
+theorem agreeSetoid_anti : Antitone (agreeSetoid : Set V → Setoid (Possibility W V M)) :=
+  fun _ _ hXY _ _ h => ⟨h.1, h.2.mono hXY⟩
 
 /-- Extend the assignment at a single referent, via `Function.update`. -/
 def extend [DecidableEq V] (p : Possibility W V M) (x : V) (e : M) :
