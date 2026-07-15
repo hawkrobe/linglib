@@ -1,4 +1,4 @@
-import Linglib.Semantics.Dynamic.Ty2
+import Linglib.Semantics.Dynamic.CDRT
 import Linglib.Semantics.Dynamic.ContextChange
 import Linglib.Semantics.Composition.Continuation
 import Linglib.Semantics.Mereology
@@ -158,36 +158,36 @@ must reach. -/
 
 section Pointwise
 
-variable {S E : Type*} [AssignmentStructure S E] [PartialOrder E] [Fintype E]
+variable {R S E : Type*} [RegisterStructure R S E] [PartialOrder E] [Fintype E]
 
 /-- Existential dref introduction (eq. 17): introduce a referent satisfying
 `P` at dref `v`. -/
-def Evar (v : Dref S E) (P : E → Prop) : Update S :=
-  λ i j => ∃ x, P x ∧ j = AssignmentStructure.extend i v x
+def Evar (v : R) (P : E → Prop) : Update S :=
+  λ i j => ∃ x, P x ∧ j = RegisterStructure.extend i v x
 
 /-- Mereological maximization (eq. 18): retain outputs of `D` whose `v`-value
 is maximal among the `v`-values of all outputs of `D`. -/
-def Mvar (v : Dref S E) (D : Update S) : Update S :=
-  λ i j => D i j ∧ Maximal (λ x => ∃ k, D i k ∧ v k = x) (v j)
+def Mvar (v : R) (D : Update S) : Update S :=
+  λ i j => D i j ∧ Maximal (λ x => ∃ k, D i k ∧ RegisterStructure.val v k = x) (RegisterStructure.val v j)
 
 /-- Cardinality test (eq. 19): test (identity on assignments) that the atom
 count of `v` equals `n`. -/
-def CardTest (v : Dref S E) (n : ℕ) : Update S :=
-  λ i j => i = j ∧ Mereology.atomCount E (v j) = n
+def CardTest (v : R) (n : ℕ) : Update S :=
+  λ i j => i = j ∧ Mereology.atomCount E (RegisterStructure.val v j) = n
 
 /-- Transitive verb as a test that `R` holds between two drefs. -/
-def sawDRS (u v : Dref S E) (R : E → E → Prop) : Update S :=
-  test (λ i => R (u i) (v i))
+def sawDRS (u v : R) (rel : E → E → Prop) : Update S :=
+  test (λ i => rel (RegisterStructure.val u i) (RegisterStructure.val v i))
 
 /-- Composed pointwise "exactly n" with trivial nuclear scope:
 `E^v P ; M_v(E^v P) ; n_v` (the flat counterpart of the scope-taking
 dynamic-GQ entry, eq. 3). -/
-def exactlyN_pw (v : Dref S E) (P : E → Prop) (n : ℕ) : Update S :=
+def exactlyN_pw (v : R) (P : E → Prop) (n : ℕ) : Update S :=
   dseq (dseq (Evar v P) (Mvar v (Evar v P))) (CardTest v n)
 
 /-- The pseudo-cumulative LF (5): the object's cardinality test is trapped
 inside the subject's maximization. -/
-def pseudoCumulative (v u : Dref S E) (boys movies : E → Prop)
+def pseudoCumulative (v u : R) (boys movies : E → Prop)
     (saw' : E → E → Prop) : Update S :=
   dseq
     (Mvar v (dseq
@@ -197,7 +197,7 @@ def pseudoCumulative (v u : Dref S E) (boys movies : E → Prop)
 
 /-- The cumulative LF (6): both cardinality tests scope outside both
 maximizations. -/
-def cumulative (v u : Dref S E) (boys movies : E → Prop)
+def cumulative (v u : R) (boys movies : E → Prop)
     (saw' : E → E → Prop) : Update S :=
   dseq (dseq
     (Mvar v (dseq (Evar v boys) (Mvar u (dseq (Evar u movies) (sawDRS u v saw')))))
@@ -215,7 +215,7 @@ the nuclear scope can only attach outside maximization. -/
 
 section Tower
 
-variable {S E : Type*} [AssignmentStructure S E] [PartialOrder E] [Fintype E]
+variable {R S E : Type*} [RegisterStructure R S E] [PartialOrder E] [Fintype E]
 
 /-- Higher-order dynamic GQ type, `(Q → t) → t` with `Q ::= (e→t)→t`
 (eq. 24), rendered via the substrate continuation monad with answer type
@@ -228,14 +228,14 @@ abbrev TowerGQ (S : Type*) := Cont (Update S) (Update S → Update S)
 `λc. c (λk. M_v(E^v P ; k v)) ; n_v`, with the scope-taker rendered as
 `Update S → Update S`. The cardinality test is evaluated after the
 higher-order scope argument `c` — the key that unlocks cumulative readings. -/
-def exactlyN_tower (v : Dref S E) (P : E → Prop) (n : ℕ) : TowerGQ S :=
+def exactlyN_tower (v : R) (P : E → Prop) (n : ℕ) : TowerGQ S :=
   λ k => dseq (k (λ body => Mvar v (dseq (Evar v P) body))) (CardTest v n)
 
 /-- Higher-order derivation of "exactly 3 boys saw exactly 5 movies"
 (eq. 27, derived in §3.3 by β-reduction of the linearized terms; §3.4's
 towers are notational sugar for the same derivation): `sawDRS` threads
 inside both maximizations while both cardinality tests land outside. -/
-def cumulativeTower (v u : Dref S E) (boys movies : E → Prop)
+def cumulativeTower (v u : R) (boys movies : E → Prop)
     (saw' : E → E → Prop) : Update S :=
   exactlyN_tower v boys 3 (λ fv =>
     exactlyN_tower u movies 5 (λ fu =>
@@ -243,9 +243,9 @@ def cumulativeTower (v u : Dref S E) (boys movies : E → Prop)
 
 /-- The tower derivation produces exactly the cumulative LF (6) — the
 reading the pointwise system cannot reach. -/
-theorem cumulativeTower_eq_cumulative (v u : Dref S E)
+theorem cumulativeTower_eq_cumulative (v u : R)
     (boys movies : E → Prop) (saw' : E → E → Prop) :
-    cumulativeTower v u boys movies saw' = cumulative v u boys movies saw' := rfl
+    cumulativeTower (S := S) v u boys movies saw' = cumulative v u boys movies saw' := rfl
 
 end Tower
 
@@ -362,11 +362,11 @@ def trueAt (p : PostSupp S (Update S)) (i : S) : Prop :=
 
 end PostSupp
 
-variable {S E : Type*} [AssignmentStructure S E] [PartialOrder E] [Fintype E]
+variable {R S E : Type*} [RegisterStructure R S E] [PartialOrder E] [Fintype E]
 
 /-- "Exactly n" as a bi-dimensional meaning (eq. 53): maximized dref
 introduction at issue; the cardinality test deferred as a post-supposition. -/
-def exactlyN_postsup (v : Dref S E) (P : E → Prop) (n : ℕ) :
+def exactlyN_postsup (v : R) (P : E → Prop) (n : ℕ) :
     PostSupp S (Update S) :=
   PostSupp.mk (Mvar v (Evar v P)) (CardTest v n)
 
@@ -374,7 +374,7 @@ def exactlyN_postsup (v : Dref S E) (P : E → Prop) (n : ℕ) :
 nested maximizations at issue; both cardinality tests accumulate
 post-suppositionally (under `bind`, tests from different quantifiers simply
 `dseq`-accumulate, independent of scope). -/
-def cumulativePostsup (v u : Dref S E) (boys movies : E → Prop)
+def cumulativePostsup (v u : R) (boys movies : E → Prop)
     (saw' : E → E → Prop) : PostSupp S (Update S) :=
   PostSupp.mk
     (Mvar v (dseq (Evar v boys) (Mvar u (dseq (Evar u movies) (sawDRS u v saw')))))
@@ -383,9 +383,9 @@ def cumulativePostsup (v u : Dref S E) (boys movies : E → Prop)
 /-- Reifying the bi-dimensional derivation recovers exactly the cumulative
 LF (6): deferring cardinality tests as post-suppositions yields the
 cumulative reading. -/
-theorem reify_cumulativePostsup (v u : Dref S E) (boys movies : E → Prop)
+theorem reify_cumulativePostsup (v u : R) (boys movies : E → Prop)
     (saw' : E → E → Prop) :
-    (cumulativePostsup v u boys movies saw').reify =
+    (cumulativePostsup (S := S) v u boys movies saw').reify =
       cumulative v u boys movies saw' :=
   (dseq_assoc _ _ _).symm
 

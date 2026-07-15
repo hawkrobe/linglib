@@ -1,7 +1,6 @@
 import Linglib.Core.Logic.CylindricAlgebra
 import Linglib.Semantics.Dynamic.CDRT
 import Linglib.Semantics.Dynamic.DRS.Based
-import Linglib.Semantics.Dynamic.Ty2
 import Mathlib.Data.Fin.VecNotation
 
 /-!
@@ -37,7 +36,7 @@ namespace Muskens1996
 
 open DynamicSemantics
 
-variable {S E : Type*}
+variable {R S E : Type*}
 
 /-! ### Semantic types -/
 
@@ -64,19 +63,22 @@ def tv (R : E → E → Prop) : DynQuant S E → DynPred S E :=
 
 /-- Indefinite determiner: `aⁿ ↝ λP'λP([uₙ]; P'(uₙ); P(uₙ))`.
 Type `[π] → [[π]]`; introduces discourse referent `u`. -/
-def detA [AssignmentStructure S E] (u : Dref S E) : DynPred S E → DynQuant S E :=
-  λ noun vp => dseq (AssignmentStructure.randomAssign u) (dseq (noun u) (vp u))
+def detA [RegisterStructure R S E] (u : R) : DynPred S E → DynQuant S E :=
+  λ noun vp => dseq (RegisterStructure.randomAssign u)
+    (dseq (noun (RegisterStructure.val u)) (vp (RegisterStructure.val u)))
 
 /-- Universal determiner: `everyⁿ ↝ λP'λP(([uₙ]; P'(uₙ)) ⇒ P(uₙ))`.
 Dynamic implication gives universal force. -/
-def detEvery [AssignmentStructure S E] (u : Dref S E) : DynPred S E → DynQuant S E :=
+def detEvery [RegisterStructure R S E] (u : R) : DynPred S E → DynQuant S E :=
   λ noun vp =>
-    test (dimpl (dseq (AssignmentStructure.randomAssign u) (noun u)) (vp u))
+    test (dimpl (dseq (RegisterStructure.randomAssign u) (noun (RegisterStructure.val u)))
+      (vp (RegisterStructure.val u)))
 
 /-- Negative determiner: `noⁿ ↝ λP'λP[|not([uₙ]; P'(uₙ); P(uₙ))]`. -/
-def detNo [AssignmentStructure S E] (u : Dref S E) : DynPred S E → DynQuant S E :=
+def detNo [RegisterStructure R S E] (u : R) : DynPred S E → DynQuant S E :=
   λ noun vp =>
-    test (dneg (dseq (AssignmentStructure.randomAssign u) (dseq (noun u) (vp u))))
+    test (dneg (dseq (RegisterStructure.randomAssign u)
+      (dseq (noun (RegisterStructure.val u)) (vp (RegisterStructure.val u)))))
 
 /-- Proper name NP: `Maryⁿ ↝ λP.P(Mary)`. Type `[[π]]`. -/
 def properNP (name : Dref S E) : DynQuant S E :=
@@ -127,8 +129,8 @@ def orNP : DynQuant S E → DynQuant S E → DynQuant S E :=
 
 section Examples
 
-variable [AssignmentStructure S E]
-variable (u₁ u₂ : Dref S E)
+variable [RegisterStructure R S E]
+variable (u₁ u₂ : R)
 
 /-- "A¹ man adores a² woman. She₂ abhors him₁." — cross-sentential anaphora:
 `[u₁]; [man u₁]; [u₂]; [woman u₂]; [u₁ adores u₂]; [u₂ abhors u₁]`. The
@@ -139,7 +141,7 @@ abhors x₂ x₁)`. -/
 def exampleText (man woman : E → Prop) (adores abhors : E → E → Prop) : Update S :=
   dseq
     (detA u₁ (cn man) (tv adores (detA u₂ (cn woman))))
-    (pro u₂ (tv abhors (pro u₁)))
+    (pro (RegisterStructure.val u₂) (tv abhors (pro (RegisterStructure.val u₁))))
 
 /-- "Every¹ farmer who owns a² donkey beats it₂." — universal force from
 `detEvery`, anaphoric `it₂` picking up the indefinite's dref:
@@ -148,7 +150,7 @@ def donkeySentence
     (farmer donkey_ : E → Prop) (owns beats : E → E → Prop) : Update S :=
   detEvery u₁
     (λ v => dseq (cn farmer v) (detA u₂ (cn donkey_) (λ w => test (atom2 owns v w))))
-    (tv beats (pro u₂))
+    (tv beats (pro (RegisterStructure.val u₂)))
 
 /-- "A² cat catches a¹ fish and eats it₁." — the paper's (52), decorated as
 tree (56): VP coordination with cross-conjunct anaphora. `andVP` sequences
@@ -157,7 +159,7 @@ the conjuncts, so the dref introduced by "a¹ fish" is accessible to "it₁"
 def vpCoordExample
     (cat fish : E → Prop) (catches eats : E → E → Prop) : Update S :=
   detA u₂ (cn cat)
-    (andVP (tv catches (detA u₁ (cn fish))) (tv eats (pro u₁)))
+    (andVP (tv catches (detA u₁ (cn fish))) (tv eats (pro (RegisterStructure.val u₁))))
 
 end Examples
 
@@ -194,20 +196,20 @@ theorem wp_seq (D₁ D₂ : Update S) (χ : Condition S) :
 
 /-- WP of random assignment (the ∃ clause of WP_{[]}): introducing a dref
 existentially quantifies over its values. -/
-theorem wp_randomAssign [AssignmentStructure S E] (u : S → E) (χ : Condition S) :
-    wp (AssignmentStructure.randomAssign u) χ =
-    λ i => ∃ e : E, χ (AssignmentStructure.extend i u e) := by
+theorem wp_randomAssign [RegisterStructure R S E] (u : R) (χ : Condition S) :
+    wp (RegisterStructure.randomAssign u) χ =
+    λ i => ∃ e : E, χ (RegisterStructure.extend i u e) := by
   ext i
-  simp only [wp, AssignmentStructure.randomAssign]
+  simp only [wp, RegisterStructure.randomAssign]
   constructor
   · rintro ⟨j, ⟨e, rfl⟩, hχ⟩; exact ⟨e, hχ⟩
   · rintro ⟨e, hχ⟩; exact ⟨_, ⟨e, rfl⟩, hχ⟩
 
 /-- WP of existential `Update`: `wp (∃u. D) χ = ∃e, wp D χ (extend i u e)`. -/
-theorem wp_dexists [AssignmentStructure S E] (u : S → E) (D : Update S) (χ : Condition S) :
-    wp (AssignmentStructure.dexists u D) χ =
-    λ i => ∃ e : E, wp D χ (AssignmentStructure.extend i u e) := by
-  simp only [AssignmentStructure.dexists]
+theorem wp_dexists [RegisterStructure R S E] (u : R) (D : Update S) (χ : Condition S) :
+    wp (RegisterStructure.dexists u D) χ =
+    λ i => ∃ e : E, wp D χ (RegisterStructure.extend i u e) := by
+  simp only [RegisterStructure.dexists]
   rw [wp_seq, wp_randomAssign]
 
 /-- Proposition 2: `wp(K, ⊤)` is the existential closure `∃j K(i)(j)` —

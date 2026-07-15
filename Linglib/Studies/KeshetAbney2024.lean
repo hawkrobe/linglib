@@ -53,8 +53,8 @@ finite models.
 (`Core.Assignment`), generic over `E`: `randomAssignAt n` (DPL `[x_n]`), `existsAt n φ`
 (DPL `∃x_n.φ`, CDRT `[u_n]; φ`), `forallAt n φ` (DPL `∀x_n.φ`), `closeAt φ` (DPL `◇φ`).
 `existsAt n` is `dseq` after `randomAssignAt n`; `forallAt n` is `¬∃¬` via `test`/`dneg`.
-The abstract `AssignmentStructure` (`Dynamic/Ty2.lean`) takes drefs `S → E`,
-but only projection drefs `fun g => g n` make sense for concrete `Assignment E`.
+`RegisterStructure` (`Dynamic/CDRT.lean`) abstracts these: its canonical
+instance at `Nat → E` has register indices `n` with projection values.
 
 The DPL comparison below (`dpl_dne_fails_anaphora`) consumes these; they stay in
 `DynamicSemantics` so they read as substrate names, awaiting promotion to
