@@ -163,14 +163,12 @@ theorem DRS.toRelAt_congr_right {X : Finset V} (K : DRS L V) (hfv : K.fv ⊆ X)
     {f g g' : V → M} (hgg' : Set.EqOn g g' ↑(X ∪ K.referents)) :
     DRS.toRelAt X K f g ↔ DRS.toRelAt X K f g' := by
   obtain ⟨U, conds⟩ := K
-  rw [DRS.fv_mk, sdiff_le_iff] at hfv
   rw [DRS.referents_mk] at hgg'
   have hX : Set.EqOn g g' ↑X := hgg'.mono (by simp)
   simp only [DRS.toRelAt_mk]
   exact and_congr
     ⟨fun he => hX.symm.trans he, fun he => hX.trans he⟩
-    (Condition.holdsAllAt_congr conds
-      (by rwa [sup_comm, Finset.sup_eq_union] at hfv) hgg')
+    (Condition.holdsAllAt_congr conds (DRS.fv_subset_iff.mp hfv) hgg')
 
 /-! ### A DRS as a spine transition -/
 
@@ -195,6 +193,18 @@ theorem DRS.transition_isExtension (W : Type*) (K : DRS L V) (X : Finset V)
 ([kamp-vangenabith-reyle-2011], Def. 22): act on the minimal state. -/
 def DRS.state (W : Type*) (K : DRS L V) (hK : K.IsProper) : State W V M :=
   (K.transition W ∅ (Finset.subset_empty.mpr hK)).apply ⊥
+
+@[simp] theorem DRS.state_base (W : Type*) (K : DRS L V) (hK : K.IsProper) :
+    (K.state (M := M) W hK).base = K.referents := by
+  simp [DRS.state]
+
+/-- The characteristic membership form: a possibility survives in `⟦K⟧ˢ` iff
+some input reaches its assignment. -/
+@[simp] theorem DRS.mem_state {W : Type*} {K : DRS L V} {hK : K.IsProper}
+    {w : W} {g : V → M} :
+    (⟨w, g⟩ : Possibility W V M) ∈ K.state W hK ↔ ∃ e, DRS.toRelAt ∅ K e g := by
+  simp only [DRS.state, Transition.mem_apply]
+  exact ⟨fun ⟨e, _, he⟩ => ⟨e, he⟩, fun ⟨e, he⟩ => ⟨e, Set.mem_univ _, he⟩⟩
 
 /-! ### Base invariance
 
@@ -271,10 +281,9 @@ theorem Condition.holdsAt_union_fresh {X Δ : Finset V} (c : Condition L V)
   | .neg K =>
     obtain ⟨U, conds⟩ := K
     simp only [Condition.occ, DRS.occ] at hocc
-    rw [Condition.fv_neg, DRS.fv_mk, sdiff_le_iff] at hfv
+    rw [Condition.fv_neg] at hfv
     obtain ⟨hΔU, hΔc⟩ := Finset.disjoint_union_right.mp hocc
-    have hfvc : Condition.fvL conds ⊆ X ∪ U := by
-      rwa [sup_comm, Finset.sup_eq_union] at hfv
+    have hfvc : Condition.fvL conds ⊆ X ∪ U := DRS.fv_subset_iff.mp hfv
     have hIH : ∀ k : V → M, Condition.holdsAllAt ((X ∪ U) ∪ Δ) conds k ↔
         Condition.holdsAllAt (X ∪ U) conds k :=
       fun k => Condition.holdsAllAt_union_fresh conds hΔc hfvc k
@@ -290,9 +299,7 @@ theorem Condition.holdsAt_union_fresh {X Δ : Finset V} (c : Condition L V)
     obtain ⟨hΔUc, hΔcc⟩ := Finset.disjoint_union_right.mp hc
     rw [Condition.fv_imp, Finset.union_subset_iff] at hfv
     obtain ⟨hfva, hfvc'⟩ := hfv
-    rw [DRS.fv_mk, sdiff_le_iff] at hfva
-    have hfvca : Condition.fvL ca ⊆ X ∪ Ua := by
-      rwa [sup_comm, Finset.sup_eq_union] at hfva
+    have hfvca : Condition.fvL ca ⊆ X ∪ Ua := DRS.fv_subset_iff.mp hfva
     have hfvcc : Condition.fvL cc ⊆ (X ∪ Ua) ∪ Uc := by
       intro x hx
       by_cases hxUc : x ∈ Uc
@@ -330,11 +337,8 @@ theorem Condition.holdsAt_union_fresh {X Δ : Finset V} (c : Condition L V)
     obtain ⟨hΔUr, hΔcr⟩ := Finset.disjoint_union_right.mp hr
     rw [Condition.fv_dis, Finset.union_subset_iff] at hfv
     obtain ⟨hfvl, hfvr⟩ := hfv
-    rw [DRS.fv_mk, sdiff_le_iff] at hfvl hfvr
-    have hfvcl : Condition.fvL cl ⊆ X ∪ Ul := by
-      rwa [sup_comm, Finset.sup_eq_union] at hfvl
-    have hfvcr : Condition.fvL cr ⊆ X ∪ Ur := by
-      rwa [sup_comm, Finset.sup_eq_union] at hfvr
+    have hfvcl : Condition.fvL cl ⊆ X ∪ Ul := DRS.fv_subset_iff.mp hfvl
+    have hfvcr : Condition.fvL cr ⊆ X ∪ Ur := DRS.fv_subset_iff.mp hfvr
     have hIHl : ∀ k : V → M, Condition.holdsAllAt ((X ∪ Ul) ∪ Δ) cl k ↔
         Condition.holdsAllAt (X ∪ Ul) cl k :=
       fun k => Condition.holdsAllAt_union_fresh cl hΔcl hfvcl k
@@ -373,32 +377,26 @@ re-declaration of context or `K₁`-universe referents is allowed — persistenc
 makes it inert. Contrast the flat lemma (`DRS.toRel_merge`), whose freshness
 hypothesis also had to forbid re-declaration. -/
 theorem DRS.toRelAt_merge {X : Finset V} (K₁ K₂ : DRS L V) (h₁ : K₁.fv ⊆ X)
-    (hfresh : Disjoint K₂.referents (Condition.occL K₁.conditions))
-    (f g : V → M) :
-    DRS.toRelAt X (K₁.merge K₂) f g ↔
-      ∃ h, DRS.toRelAt X K₁ f h ∧ DRS.toRelAt (X ∪ K₁.referents) K₂ h g := by
+    (hfresh : Disjoint K₂.referents (Condition.occL K₁.conditions)) :
+    (DRS.toRelAt X (K₁.merge K₂) : (V → M) → (V → M) → Prop) =
+      DRS.toRelAt X K₁ ⨟ DRS.toRelAt (X ∪ K₁.referents) K₂ := by
   obtain ⟨U₁, c₁⟩ := K₁
   obtain ⟨U₂, c₂⟩ := K₂
-  rw [DRS.fv_mk, sdiff_le_iff] at h₁
-  have hfvc₁ : Condition.fvL c₁ ⊆ X ∪ U₁ := by
-    rwa [sup_comm, Finset.sup_eq_union] at h₁
+  have hfvc₁ := DRS.fv_subset_iff.mp h₁
   simp only [DRS.referents_mk, DRS.conditions_mk] at hfresh
+  funext f g
+  apply propext
   simp only [DRS.merge, DRS.referents_mk, DRS.conditions_mk, DRS.toRelAt_mk,
-    Condition.holdsAllAt_append]
+    Condition.holdsAllAt_append, Semantics.Dynamic.Core.DynProp.dseq, Relation.Comp]
+  rw [← Finset.union_assoc]
   constructor
   · rintro ⟨hag, hh₁, hh₂⟩
-    refine ⟨g, ⟨hag, ?_⟩, Set.eqOn_refl g _, ?_⟩
-    · rw [← Finset.union_assoc] at hh₁
-      exact (Condition.holdsAllAt_union_fresh c₁ hfresh hfvc₁ g).mp hh₁
-    · rwa [← Finset.union_assoc] at hh₂
+    exact ⟨g, ⟨hag, (Condition.holdsAllAt_union_fresh c₁ hfresh hfvc₁ g).mp hh₁⟩,
+      Set.eqOn_refl g _, hh₂⟩
   · rintro ⟨h, ⟨hhf, hh₁⟩, hgh, hh₂⟩
-    refine ⟨fun x hx =>
-      (hgh ((Finset.coe_subset.mpr Finset.subset_union_left) hx)).trans (hhf hx),
-      ?_, ?_⟩
-    · rw [← Finset.union_assoc]
-      exact (Condition.holdsAllAt_union_fresh c₁ hfresh hfvc₁ g).mpr
-        ((Condition.holdsAllAt_congr c₁ hfvc₁ hgh).mpr hh₁)
-    · rwa [← Finset.union_assoc]
+    exact ⟨(hgh.mono (Finset.coe_subset.mpr Finset.subset_union_left)).trans hhf,
+      (Condition.holdsAllAt_union_fresh c₁ hfresh hfvc₁ g).mpr
+        ((Condition.holdsAllAt_congr c₁ hfvc₁ hgh).mpr hh₁), hh₂⟩
 
 /-- **Action equation** ([kamp-vangenabith-reyle-2011], p. 159): applying a
 DRS's transition to the state a proper context DRS expresses yields the
@@ -408,21 +406,19 @@ theorem DRS.state_merge (W : Type*) (K₁ K₂ : DRS L V) (h₁ : K₁.IsProper)
     (hfresh : Disjoint K₂.referents (Condition.occL K₁.conditions)) :
     (K₂.transition (M := M) W K₁.referents h₂).apply (K₁.state W h₁) =
       (K₁.merge K₂).state W (DRS.isProper_merge h₁ h₂) := by
-  have hmerge := fun (e g : V → M) => DRS.toRelAt_merge (X := (∅ : Finset V)) K₁ K₂
-    (Finset.subset_empty.mpr h₁) hfresh e g
+  have hmerge := DRS.toRelAt_merge (X := (∅ : Finset V)) (M := M) K₁ K₂
+    (Finset.subset_empty.mpr h₁) hfresh
   ext1
   · ext x
-    simp [DRS.state, DRS.merge, Finset.mem_union]
+    simp [DRS.merge, Finset.mem_union]
   · ext ⟨w, g⟩
-    simp only [State.mem_carrier, DRS.state, Transition.mem_apply]
+    simp only [State.mem_carrier, Transition.mem_apply, DRS.mem_state, hmerge,
+      DRS.transition, Semantics.Dynamic.Core.DynProp.dseq, Relation.Comp,
+      Finset.empty_union]
     constructor
-    · rintro ⟨f, ⟨e, -, he⟩, hr⟩
-      have hr' : DRS.toRelAt (∅ ∪ K₁.referents) K₂ f g := by
-        rw [Finset.empty_union]; exact hr
-      exact ⟨e, Set.mem_univ _, (hmerge e g).mpr ⟨f, he, hr'⟩⟩
-    · rintro ⟨e, -, he⟩
-      obtain ⟨f, hef, hfg⟩ := (hmerge e g).mp he
-      rw [Finset.empty_union] at hfg
-      exact ⟨f, ⟨e, Set.mem_univ _, hef⟩, hfg⟩
+    · rintro ⟨f, ⟨e, he⟩, hr⟩
+      exact ⟨e, f, he, hr⟩
+    · rintro ⟨e, f, he, hr⟩
+      exact ⟨f, ⟨e, he⟩, hr⟩
 
 end DRT
