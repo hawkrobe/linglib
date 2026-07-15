@@ -4,7 +4,8 @@ import Mathlib.CategoryTheory.Types.Basic
 
 /-!
 # The category of contexts
-[kamp-vangenabith-reyle-2011], [groenendijk-stokhof-1991], [muskens-1996]
+[kamp-vangenabith-reyle-2011], [muskens-van-benthem-visser-2011],
+[groenendijk-stokhof-1991], [muskens-1996]
 
 Based dynamic semantics is a category: objects are contexts (bases of live
 discourse referents), morphisms are `Transition`s, composition is
