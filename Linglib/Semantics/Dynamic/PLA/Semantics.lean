@@ -1,6 +1,5 @@
 import Linglib.Semantics.Dynamic.PLA.Basic
 import Linglib.Semantics.Dynamic.CDRT
-import Linglib.Semantics.Dynamic.PLA.Translation
 
 /-!
 # PLA satisfaction and truth
@@ -354,25 +353,6 @@ def pronDref (i : PronIdx) : Dref (MergedAssignment E) E :=
 def termToDref : Term → Dref (MergedAssignment E) E
   | .var i => varDref i
   | .pron i => pronDref i
-
-/-- Convert `PLAPoss` to merged assignment. -/
-def plaPossToMerged (p : PLAPoss E) : MergedAssignment E
-  | .inl i => p.assignment i
-  | .inr i => p.witnesses i
-
-/-- Convert merged assignment to `PLAPoss`. -/
-def mergedToPLAPoss (g : MergedAssignment E) : PLAPoss E :=
-  { assignment := λ i => g (.inl i)
-  , witnesses := λ i => g (.inr i) }
-
-theorem plaPoss_roundtrip (p : PLAPoss E) :
-    mergedToPLAPoss (plaPossToMerged p) = p := by
-  simp only [mergedToPLAPoss, plaPossToMerged]
-
-theorem merged_roundtrip (g : MergedAssignment E) :
-    plaPossToMerged (mergedToPLAPoss g) = g := by
-  funext x
-  cases x <;> rfl
 
 
 section Embedding

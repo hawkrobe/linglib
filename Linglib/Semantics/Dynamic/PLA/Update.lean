@@ -74,6 +74,12 @@ This instantiates the generic DynamicSemantics.CCP framework for PLA.
 -/
 abbrev Poss (E : Type*) := Assignment E × WitnessSeq E
 
+/-- A PLA possibility is a merged assignment (`MergedAssignment`, the
+sum-indexed carrier of the Ty2 embedding): mathlib's sum-arrow
+equivalence, componentwise. -/
+def possEquivMerged {E : Type*} : Poss E ≃ MergedAssignment E :=
+  (Equiv.sumArrowEquivProdArrow _ _ E).symm
+
 /--
 An update is a Context Change Potential over PLA possibilities.
 
