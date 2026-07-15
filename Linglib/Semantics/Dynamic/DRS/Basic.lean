@@ -9,9 +9,14 @@ Structural operations and lemmas over the faithful `DRS` core (`DRS/Defs.lean`):
 
 * `DRS.map` / `Condition.map` — functorial renaming of discourse referents along
   `f : V → W`. When `f` is a bijection this is Kamp & Reyle's *alphabetic
-  variant* (Def. 1.4.7); `map_id` makes "renaming to the identity is the
-  identity" a free corollary.
+  variant* (the prose preceding Def. 1.4.8); `map_id` makes "renaming to the
+  identity is the identity" a free corollary.
 * `merge` algebra — identity (`empty`) and associativity.
+* `DRS.Bound` / `DRS.IsProper` — properness (no free discourse referent,
+  Def. 1.4.2–1.4.3).
+* `Condition.occ` / `DRS.occ` — occurring referents, as a decidable `Finset`.
+* `DRS.accessibleFrom` / `DRS.Accessible` — decidable, host-relative
+  accessibility (Def. 1.4.11).
 -/
 
 open FirstOrder
@@ -189,8 +194,10 @@ def Condition.accScopeL (s : Finset V) : List (Condition L V) → V → Option (
       | none => Condition.accScopeL s cs x
 end
 
-/-- The referents accessible from `u`'s introduction in `T` ([kamp-reyle-1993],
-Def. 1.4.11), as a decidable `Finset`; `∅` if `u` is not introduced in `T`. -/
+/-- The referents accessible from `u`'s introduction in `T`, as a decidable
+`Finset`; `∅` if `u` is not introduced in `T`. ([kamp-reyle-1993] Def. 1.4.11
+defines accessibility of a referent from a *condition*; this is the derived
+referent-to-referent relation of the surrounding prose.) -/
 def DRS.accessibleFrom (T : DRS L V) (u : V) : Finset V := (DRS.accScope ∅ T u).getD ∅
 
 /-- `v` is accessible from `u`'s position in `T`. Decidable (Finset membership). -/

@@ -8,14 +8,18 @@ import Mathlib.Tactic.FinCases
 [muskens-1996]
 
 Muskens's reformulation of DRT. Conditions denote *sets* of embeddings (SEM1/2);
-boxes denote *binary relations* between embeddings (SEM3, input → output); a box
-is true under an input embedding `a` iff some output `a'` is related to it
-(p. 148). This is the dynamic / CCP face of DRT, dual to the static
-verifying-embedding semantics `DRS.Realize` ([kamp-reyle-1993], Def. 1.4.4).
+boxes denote *binary relations* between embeddings (SEM3, input → output, the
+format of [groenendijk-stokhof-1991]); a box is true under an input embedding
+`a` iff some output `a'` is related to it (p. 148). This is the dynamic / CCP
+face of DRT, dual to the static verifying-embedding semantics `DRS.Realize` —
+the total-assignment rendering of [kamp-reyle-1993]'s verification (see the
+deviation note in `DRS/Semantics.lean`).
 
 The two semantics are *defined independently* and proved equivalent — Muskens's
-remark that the relational interpretation "is in fact equivalent" to Kamp &
-Reyle's. The equivalence is a theorem, not a definitional identification:
+remark that the relational interpretation "is in fact equivalent" to the
+verifying-embedding one (his fn. 4 scopes the remark: both sides here are the
+total-assignment variant). The equivalence is a theorem, not a definitional
+identification:
 
 * `DRS.toRel_iff_realize` — the relation `toRel K a a'` holds iff `a'` extends `a`
   over `K`'s universe and verifies `K` (the keystone bridge).
@@ -30,8 +34,8 @@ Reyle's. The equivalence is a theorem, not a definitional identification:
 * `DRS.trueRel` — relational truth: some output embedding is related to the input.
 * `DRS.toRel_iff_realize` / `Condition.holds_iff_realize` — equivalence with the
   static `DRS.Realize` semantics.
-* `DRS.occ` / `DRS.trueRel_congr` — occurring referents and the coincidence lemma
-  (denotation depends only on them).
+* `DRS.trueRel_congr` — the coincidence lemma: denotation depends only on the
+  occurring referents (`DRS.occ`, from `DRS/Basic.lean`).
 * `DRS.toRel_merge` — the Merging Lemma: under freshness, `merge` denotes the
   sequencing (relational composition) of the two box relations.
 -/
@@ -95,9 +99,10 @@ def DRS.trueRel (K : DRS L V) (a : V → M) : Prop := ∃ a', DRS.toRel K a a'
 /-! ### Equivalence with the verifying-embedding semantics -/
 
 mutual
-/-- **Muskens ≡ Kamp & Reyle** ([muskens-1996]): the relational denotation
+/-- **SEM3 ≡ verification semantics** ([muskens-1996]): the relational denotation
 agrees with the static verifying-embedding semantics — `toRel K a a'` holds iff
-the output `a'` extends the input `a` over `K`'s universe and verifies `K`. -/
+the output `a'` extends the input `a` over `K`'s universe and verifies `K`.
+(Both sides are the total-assignment variant; see `DRS/Semantics.lean`.) -/
 theorem DRS.toRel_iff_realize (K : DRS L V) (a a' : V → M) :
     DRS.toRel K a a' ↔ (∀ x, x ∉ K.referents → a' x = a x) ∧ DRS.Realize a' K := by
   match K with

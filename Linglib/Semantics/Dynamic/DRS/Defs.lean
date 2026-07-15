@@ -14,8 +14,10 @@ A faithful Lean model of the canonical DRS data type, built on mathlib's
 A DRS is a pair `⟨referents, conditions⟩` (Def. 1.4.1): `referents` is the
 *universe* `U` — a finite set of discourse referents — and `conditions` a
 collection of DRS-conditions. Conditions are **atomic** (`rel`, `eq`) or
-**complex** (`neg`, `imp`, `dis`); sub-DRSs occur *only* inside complex
-conditions. Relation symbols come arity-indexed from a `FirstOrder.Language`.
+**complex**; sub-DRSs occur *only* inside complex conditions. Def. 1.4.1's only
+complex condition is `neg`; `imp` and `dis` are its Chapter 2 extension
+(conditionals and disjunction). Relation symbols come arity-indexed from a
+`FirstOrder.Language`.
 
 ## Main declarations
 
@@ -49,8 +51,9 @@ mutual
 set of discourse referents); `conditions` the DRS-conditions. -/
 inductive DRS (L : Language.{u, v}) (V : Type w) where
   | mk (referents : Finset V) (conditions : List (Condition L V))
-/-- A DRS-condition ([kamp-reyle-1993], Def. 1.4.1): atomic (`rel`, `eq`) or
-complex (`neg`, `imp`, `dis`). Sub-DRSs occur only inside complex conditions. -/
+/-- A DRS-condition ([kamp-reyle-1993]): atomic (`rel`, `eq`) or complex —
+`neg` per Def. 1.4.1, `imp`/`dis` per its Chapter 2 extension. Sub-DRSs occur
+only inside complex conditions. -/
 inductive Condition (L : Language.{u, v}) (V : Type w) where
   /-- Atomic condition: `n`-ary relation symbol `R` applied to referents `args`. -/
   | rel {n : ℕ} (R : L.Relations n) (args : Fin n → V)

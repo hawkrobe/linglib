@@ -16,10 +16,11 @@ not a local re-implementation.
 1. **Existential persistence**: "A man walked in. He sat down." The indefinite's
    discourse referent persists across sentences — `∃ e, man e ∧ walked-in e ∧
    sat-down e` (`persistence_tc`).
-2. **Donkey anaphora**: "If a farmer owns a donkey, he beats it." The implication
-   clause (K&R Def. 1.4.4) yields the **universal** reading — `∀ farmer-donkey
-   owning pairs, beats` (`donkey_universal_reading`). The antecedent's referents
-   are universally bound and remain accessible in the consequent.
+2. **Donkey anaphora**: "If a farmer owns a donkey, he beats it." The `⇒`
+   verification clause (K&R's Chapter 2 conditional semantics) yields the
+   **universal** reading — `∀ farmer-donkey owning pairs, beats`
+   (`donkey_universal_reading`). The antecedent's referents are universally
+   bound and remain accessible in the consequent.
 3. **Negation blocks anaphora**: "A man didn't walk in. *He…" — a referent
    introduced under negation is inaccessible (`negation_tc`).
 4. **Subordination/accessibility** (Def. 1.4.10/1.4.11): the antecedent and
@@ -88,10 +89,10 @@ def donkeyCons : DRS krLang ℕ := .mk ∅ [.rel .beats (![1, 2])]
 /-- "If a¹ farmer owns a² donkey, he₁ beats it₂." — `[ | donkeyAnte ⇒ donkeyCons]`. -/
 def donkey : DRS krLang ℕ := .mk ∅ [.imp donkeyAnte donkeyCons]
 
-/-- The donkey universal reading: the implication clause (K&R Def. 1.4.4) makes the
-antecedent's existentials universal — every owning farmer-donkey pair satisfies
-`beats`. The empty-universe consequent reuses the antecedent's values (the
-anaphora). -/
+/-- The donkey universal reading: the `⇒` verification clause (K&R's Chapter 2
+conditional semantics) makes the antecedent's existentials universal — every
+owning farmer-donkey pair satisfies `beats`. The empty-universe consequent
+reuses the antecedent's values (the anaphora). -/
 theorem donkey_universal_reading (a : ℕ → M) :
     DRS.trueRel donkey a ↔
     ∀ e₁ e₂ : M, (rm .farmer ![e₁] ∧ rm .donkey ![e₂] ∧ rm .owns ![e₁, e₂]) →
