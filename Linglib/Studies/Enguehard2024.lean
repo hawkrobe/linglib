@@ -689,13 +689,13 @@ theorem constant_presup_satisfied_iff_satisfiable
 discourse referents accessible for subsequent anaphora, following
 [elliott-2020]'s bilateral dynamic framework. The key mechanism:
 
-1. `exists_ x domain φ` introduces a discourse referent `x` by random
+1. `exists_ x φ` introduces a discourse referent `x` by random
    assignment into the positive update.
-2. `neg` swaps positive and negative updates, so
-   `neg (exists_ x domain φ)` has positive update:
-   `{ p ∈ s | ∀ e ∈ domain, p.extend x e ∉ φ.positive (s.randomAssign x domain) }`
-   The possibilities that survive are those from the INPUT state `s`
-   where no witness satisfies `φ`.
+2. `neg` swaps positive and negative updates, so `neg (exists_ x φ)`
+   has as positive update [elliott-sudo-2025]'s (45): the possibilities
+   of the INPUT state `s` whose world classically falsifies the
+   existential — retained when a referent is introduced and negatively
+   updated, absent from the positive update.
 3. The discourse referent `x` is introduced in the INNER computation but
    the output possibilities come from `s` — so `x` is available for
    subsequent anaphora (via composition with further updates).
@@ -718,7 +718,7 @@ existential introduction but the output state is a subset of the input.
 
 section BilateralBridge
 
-open DynamicSemantics (BilateralDen Possibility InfoState)
+open DynamicSemantics (BilateralDen Possibility worlds randomAssign)
 open DynamicSemantics.BilateralDen (neg exists_ atom)
 
 variable {W E : Type*}
@@ -733,25 +733,27 @@ structure NumberedDRef where
   number : IndefNumber
   deriving DecidableEq, Repr
 
-/-- The negative update of an existential keeps exactly those
-    possibilities from `s` where no domain element witnesses `φ`. -/
+/-- The negative update of an existential ([elliott-sudo-2025], (45))
+    keeps exactly those possibilities from `s` whose world falsifies the
+    existential classically: no world of the positive update, some world
+    of the negative continuation. -/
 theorem exists_negative_characterization
-    (x : Nat) (domain : Set E) (φ : BilateralDen W E)
-    (s : InfoState W E) (p : Possibility W ℕ E) :
-    p ∈ (exists_ x domain φ).negative s ↔
-    p ∈ s ∧ ∀ e ∈ domain, (p.extend x e) ∉
-      φ.positive (s.randomAssign x domain) := by
+    (x : Nat) (φ : BilateralDen W ℕ E)
+    (s : Set (Possibility W ℕ (Option E))) (p : Possibility W ℕ (Option E)) :
+    p ∈ (exists_ x φ).negative s ↔
+    p ∈ s ∧ p.world ∉ worlds (φ.positive (randomAssign s x)) ∧
+      p.world ∈ worlds (φ.negative (randomAssign s x)) := by
   simp only [exists_, Set.mem_setOf_eq]
 
 /-- Negating an existential: the positive update of `¬∃x.φ` collects
-    exactly those input possibilities where no witness satisfies `φ`.
+    exactly those input possibilities whose world hosts no witness.
     This is the bilateral analog of universal falsification. -/
 theorem neg_exists_positive
-    (x : Nat) (domain : Set E) (φ : BilateralDen W E)
-    (s : InfoState W E) (p : Possibility W ℕ E) :
-    p ∈ (neg (exists_ x domain φ)).positive s ↔
-    p ∈ s ∧ ∀ e ∈ domain, (p.extend x e) ∉
-      φ.positive (s.randomAssign x domain) := by
+    (x : Nat) (φ : BilateralDen W ℕ E)
+    (s : Set (Possibility W ℕ (Option E))) (p : Possibility W ℕ (Option E)) :
+    p ∈ (neg (exists_ x φ)).positive s ↔
+    p ∈ s ∧ p.world ∉ worlds (φ.positive (randomAssign s x)) ∧
+      p.world ∈ worlds (φ.negative (randomAssign s x)) := by
   simp only [neg, exists_negative_characterization]
 
 /-- The output of `¬∃x.φ` is a subset of the input state — negated
@@ -761,9 +763,9 @@ theorem neg_exists_positive
     (it encodes the speaker's expectation about the predicate's
     extension). -/
 theorem neg_exists_eliminative
-    (x : Nat) (domain : Set E) (φ : BilateralDen W E)
-    (s : InfoState W E) :
-    (neg (exists_ x domain φ)).positive s ⊆ s := by
+    (x : Nat) (φ : BilateralDen W ℕ E)
+    (s : Set (Possibility W ℕ (Option E))) :
+    (neg (exists_ x φ)).positive s ⊆ s := by
   intro p hp
   rw [neg_exists_positive] at hp
   exact hp.1
@@ -772,11 +774,11 @@ theorem neg_exists_eliminative
     same positive update as ∃x.φ. This is definitional in bilateral
     semantics — `neg` swaps, so two swaps restore the original. -/
 theorem neg_neg_exists
-    (x : Nat) (domain : Set E) (φ : BilateralDen W E)
-    (s : InfoState W E) :
+    (x : Nat) (φ : BilateralDen W ℕ E)
+    (s : Set (Possibility W ℕ (Option E))) :
     (neg (neg
-      (exists_ x domain φ))).positive s =
-    (exists_ x domain φ).positive s := rfl
+      (exists_ x φ))).positive s =
+    (exists_ x φ).positive s := rfl
 
 /-- Agreement constraint: a continuation sentence with pronoun `y`
     agreeing in number with discourse referent `dref` is felicitous

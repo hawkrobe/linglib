@@ -1,4 +1,5 @@
-import Linglib.Semantics.Dynamic.InfoState
+import Linglib.Semantics.Dynamic.ContextChange
+import Linglib.Semantics.Dynamic.Possibility
 import Linglib.Core.Logic.Bilateral.Defs
 import Mathlib.Algebra.Group.Defs
 
@@ -7,520 +8,435 @@ import Mathlib.Algebra.Group.Defs
 [elliott-sudo-2025], [krahmer-muskens-1995]
 
 Bilateral Update Semantics (BUS, [elliott-sudo-2025]'s formulation, with
-[krahmer-muskens-1995]'s bilateral DRT as ancestor): update semantics where
-each sentence carries both a positive and a negative update dimension,
-enabling Double Negation Elimination (DNE) and cross-disjunct anaphora.
-Unlike the Veltman states of `UpdateSemantics/Basic.lean` (bare `Set W`),
-BUS states are possibility sets (`InfoState W E`) — they carry assignments,
-since anaphora is the target phenomenon.
+[krahmer-muskens-1995]'s bilateral DRT as ancestor): update semantics
+where each sentence carries a positive and a negative update dimension,
+validating Double Negation Elimination (negation swaps the dimensions)
+and cross-disjunct anaphora.
 
-## Insight
+States are Heimian (the paper's Def. 3.1): sets of world-assignment
+pairs whose assignments are total functions into `Option E` — `none` is
+the paper's `∗`, so definedness is per-possibility and non-uniform.
+This is strictly more expressive than the based `State` of `State.lean`:
+a uniform base cannot represent partially familiar states, on which the
+paper's separation of assertability (54) from Heimian familiarity rests.
 
-Standard dynamic semantics struggles with:
-1. Double Negation Elimination (DNE): ¬¬φ should entail φ
-2. Cross-disjunct anaphora in Free Choice contexts
-3. Donkey disjunctions: "Either there's no bathroom, or it's upstairs"
+## Main definitions
 
-Bilateral semantics solves these by tracking positive and negative updates
-separately. Negation simply swaps the two dimensions.
+- `Possibility.Descendant`, `Subsists` (`≺`), `subsistsIn` (`⪯`):
+  descendance and subsistence (Def. 3.3, after
+  [groenendijk-stokhof-veltman-1996]).
+- `worlds`, `Familiar`: worldly information (Def. 3.1's 𝒲) and
+  familiarity (Def. 3.2) — defined at every possibility, values free.
+- `randomAssign`: the paper's `s[εₓ]` (43); novelty is not encoded.
+- `BilateralDen` with `atom`, `pred1`, `pred2`, `neg` (`~`), `conj`
+  (`⊙`, (61)), `disj` (`⊕`, (64)), `exists_` ((44)–(45)), `forall_`.
+- `unknownUpdate` (`s[φ]?`, (53)) and `assertable` ((54)).
+- `supports`, `entails` (`⊨ᵇ`): subsistence-based support.
 
-## The Core Structure
+## Main results
 
-```
-BilateralDen W E = {
-  positive : InfoState W E → InfoState W E -- What survives assertion
-  negative : InfoState W E → InfoState W E -- What survives denial
-}
-```
+- `neg_neg`: DNE is definitional.
+- `partition`, `partition_assertable`: every possibility subsists
+  positively, subsists negatively, or is unknown.
+- `de_morgan_disj`, `de_morgan_conj`: de Morgan's laws, unlike in
+  standard dynamic semantics.
+- `egli`: Egli's theorem for the positive dimension, definitionally.
+- `isBilateral`: the update algebra is a bilateral logic in the sense of
+  `Core.Logic.Bilateral`.
 
-## Key Properties
+## Implementation notes
 
-- DNE: ¬¬φ = φ (definitional - negation swaps, swap twice = identity)
-- de Morgan: ¬(φ ∨ ψ) ⟺ ¬φ ∧ ¬ψ (valid, unlike standard DS)
+Descendance requires the descendant to *extend* the assignment, per
+[groenendijk-stokhof-veltman-1996]; [elliott-sudo-2025]'s Def. 3.3
+phrases the clause as domain inclusion, and their examples do not
+discriminate. The paper overloads `≺` for possibility-in-state and
+state-in-state subsistence (their fn. on (73)); here the latter is `⪯`.
 
-## Cross-cutting pointers
-
-This is the BUS / bilateral DNE strategy listed in `Dynamic/Update.lean`'s
-"three incompatible DNE solutions" table. The empirical comparison
-against full ICDRT (which solves disagreement, modal
-subordination, and three-way veridicality on top of DNE + bathroom) is in
-`Studies/Hofmann2025.lean §7`. The empirical comparison
-against PLA (which lacks DNE for anaphora and fails on the bathroom
-sentence) is in `Studies/Dekker2012.lean`.
+The empirical comparison against full ICDRT is in
+`Studies/Hofmann2025.lean`; against PLA in `Studies/Dekker2012.lean`.
 -/
 
 namespace DynamicSemantics
 
+variable {W V E : Type*}
 
-/--
-A bilateral denotation: positive and negative update functions.
+/-! ### Partiality, descendance, subsistence -/
 
-In bilateral semantics, a sentence φ denotes a pair of update functions:
-- `positive`: s[φ]⁺ - the result of asserting φ in state s
-- `negative`: s[φ]⁻ - the result of denying φ in state s
+/-- `q` is a *descendant* of `p` ([elliott-sudo-2025], Def. 3.3): same
+world, and `q`'s assignment extends `p`'s wherever the latter is defined
+([groenendijk-stokhof-veltman-1996]'s form — see the module docstring). -/
+def Possibility.Descendant (p q : Possibility W V (Option E)) : Prop :=
+  p.world = q.world ∧ ∀ x e, p.assignment x = some e → q.assignment x = some e
 
-Standard dynamic semantics only has positive updates. The negative dimension
-is what enables DNE and proper treatment of cross-disjunct anaphora.
--/
-structure BilateralDen (W : Type*) (E : Type*) where
-  /-- Positive update: result of asserting the sentence -/
-  positive : InfoState W E → InfoState W E
-  /-- Negative update: result of denying the sentence -/
-  negative : InfoState W E → InfoState W E
+theorem Possibility.Descendant.refl (p : Possibility W V (Option E)) :
+    p.Descendant p :=
+  ⟨rfl, fun _ _ h => h⟩
 
-@[ext]
-theorem BilateralDen.ext {W E : Type*} {φ ψ : BilateralDen W E}
-    (hp : φ.positive = ψ.positive) (hn : φ.negative = ψ.negative) : φ = ψ := by
-  cases φ; cases ψ
-  simp only [mk.injEq]
-  exact ⟨hp, hn⟩
+theorem Possibility.Descendant.trans {p q r : Possibility W V (Option E)}
+    (hpq : p.Descendant q) (hqr : q.Descendant r) : p.Descendant r :=
+  ⟨hpq.1.trans hqr.1, fun x e h => hqr.2 x e (hpq.2 x e h)⟩
 
-/-- Referent `x` is defined in `s`: all possibilities agree on its value.
-BUS's emergent-base vocabulary — the based `State` carries this as data
-(`State.base`); here it is recomputed from the carrier. -/
-def InfoState.definedAt {W E : Type*} (s : InfoState W E) (x : Nat) : Prop :=
-  ∀ p q : Possibility W ℕ E, p ∈ s → q ∈ s → p.assignment x = q.assignment x
+/-- `p` *subsists* in `s` ([elliott-sudo-2025], Def. 3.3): it has a
+descendant in `s`. -/
+def Subsists (p : Possibility W V (Option E))
+    (s : Set (Possibility W V (Option E))) : Prop :=
+  ∃ q ∈ s, p.Descendant q
 
-/-- Subsistence: every possibility has a descendant with the same world,
-agreeing on all defined referents — the emergent form of the based
-projection order (`State.le_iff_projection`). -/
-def InfoState.subsistsIn {W E : Type*} (s s' : InfoState W E) : Prop :=
-  ∀ p ∈ s, ∃ p' ∈ s', p.world = p'.world ∧
-    ∀ x, InfoState.definedAt s x → p.assignment x = p'.assignment x
+@[inherit_doc] scoped notation:50 p " ≺ " s => Subsists p s
 
-@[inherit_doc] scoped notation:50 s " ⪯ " s' => InfoState.subsistsIn s s'
+theorem Subsists.of_mem {p : Possibility W V (Option E)}
+    {s : Set (Possibility W V (Option E))} (h : p ∈ s) : p ≺ s :=
+  ⟨p, h, Possibility.Descendant.refl p⟩
+
+/-- A state subsists in another when each of its possibilities does — the
+state-level reading of the paper's overloaded `≺`. -/
+def subsistsIn (s s' : Set (Possibility W V (Option E))) : Prop :=
+  ∀ p ∈ s, p ≺ s'
+
+@[inherit_doc] scoped notation:50 s " ⪯ " s' => subsistsIn s s'
+
+/-! ### Worldly information, familiarity, random assignment -/
+
+/-- The *worldly information* of a state ([elliott-sudo-2025], Def. 3.1's
+𝒲): its image in the worlds. -/
+def worlds {M : Type*} (s : Set (Possibility W V M)) : Set W :=
+  Possibility.world '' s
+
+@[simp] theorem mem_worlds {M : Type*} {s : Set (Possibility W V M)} {w : W} :
+    w ∈ worlds s ↔ ∃ p ∈ s, Possibility.world p = w := Iff.rfl
+
+/-- A variable is *familiar* at a state ([elliott-sudo-2025], Def. 3.2)
+when it is defined at every possibility; its values may still differ
+across possibilities. -/
+def Familiar (s : Set (Possibility W V (Option E))) (x : V) : Prop :=
+  ∀ p ∈ s, p.assignment x ≠ none
+
+/-- Random assignment ([elliott-sudo-2025], (43)): indeterministically
+extend each possibility to a defined value at `x`. Novelty is not encoded
+— updates may be destructive, per the paper. -/
+def randomAssign [DecidableEq V] (s : Set (Possibility W V (Option E)))
+    (x : V) : Set (Possibility W V (Option E)) :=
+  {q | ∃ p ∈ s, ∃ e : E, q = p.extend x (some e)}
+
+/-! ### Bilateral denotations -/
+
+/-- A bilateral denotation: a positive dimension `s[φ]⁺` (what survives
+assertion) and a negative dimension `s[φ]⁻` (what survives denial).
+Standard dynamic semantics has only the former; the latter is what makes
+DNE and cross-disjunct anaphora work. -/
+@[ext] structure BilateralDen (W V E : Type*) where
+  /-- Positive update: the result of asserting the sentence. -/
+  positive : Set (Possibility W V (Option E)) → Set (Possibility W V (Option E))
+  /-- Negative update: the result of denying the sentence. -/
+  negative : Set (Possibility W V (Option E)) → Set (Possibility W V (Option E))
 
 namespace BilateralDen
 
-variable {W E : Type*}
+variable {φ ψ : BilateralDen W V E} {s : Set (Possibility W V (Option E))}
+  {p : Possibility W V (Option E)}
 
+/-- Worldly atom: keep the possibilities where the proposition holds
+(positively) or fails (negatively). -/
+def atom (pred : W → Prop) : BilateralDen W V E where
+  positive s := {p ∈ s | pred p.world}
+  negative s := {p ∈ s | ¬ pred p.world}
 
-/--
-Atomic proposition: lift a classical proposition to bilateral form.
+/-- Unary atomic predication at `t`. Atoms are *partial*: a possibility
+where `t` is undefined survives in neither dimension
+([elliott-sudo-2025]'s definedness clause for atomic sentences). -/
+def pred1 (P : E → W → Prop) (t : V) : BilateralDen W V E where
+  positive s := {p ∈ s | ∃ e, p.assignment t = some e ∧ P e p.world}
+  negative s := {p ∈ s | ∃ e, p.assignment t = some e ∧ ¬ P e p.world}
 
-For an atomic proposition p:
-- s[p]⁺ = { w ∈ s | p(w) } (keep worlds where p holds)
-- s[p]⁻ = { w ∈ s | ¬p(w) } (keep worlds where p fails)
--/
-def atom (pred : W → Prop) : BilateralDen W E :=
-  { positive := λ s => s.update pred
-  , negative := λ s => s.update (λ w => ¬ pred w) }
+/-- Binary atomic predication at `t₁`, `t₂`; partial like `pred1`. -/
+def pred2 (P : E → E → W → Prop) (t₁ t₂ : V) : BilateralDen W V E where
+  positive s := {p ∈ s | ∃ e₁ e₂, p.assignment t₁ = some e₁ ∧
+    p.assignment t₂ = some e₂ ∧ P e₁ e₂ p.world}
+  negative s := {p ∈ s | ∃ e₁ e₂, p.assignment t₁ = some e₁ ∧
+    p.assignment t₂ = some e₂ ∧ ¬ P e₁ e₂ p.world}
 
-/-- Atomic positive and negative are complementary -/
-theorem atom_complementary (pred : W → Prop) (s : InfoState W E) :
-    (atom pred).positive s ∪ (atom pred).negative s = s := by
+/-- Negation swaps the dimensions: `s[¬φ]⁺ = s[φ]⁻` and `s[¬φ]⁻ = s[φ]⁺`.
+Negation does not "push in" — this is the key insight of bilateralism. -/
+def neg (φ : BilateralDen W V E) : BilateralDen W V E where
+  positive := φ.negative
+  negative := φ.positive
+
+@[inherit_doc] prefix:max "~" => neg
+
+/-- Double negation is the identity, definitionally. -/
+@[simp] theorem neg_neg (φ : BilateralDen W V E) : ~~φ = φ := rfl
+
+theorem dne_positive (φ : BilateralDen W V E) (s) :
+    (~~φ).positive s = φ.positive s := rfl
+
+theorem dne_negative (φ : BilateralDen W V E) (s) :
+    (~~φ).negative s = φ.negative s := rfl
+
+theorem neg_involutive :
+    Function.Involutive (neg : BilateralDen W V E → BilateralDen W V E) :=
+  neg_neg
+
+/-! ### The unknown update and assertability -/
+
+/-- The *unknown* update `s[φ]?` ([elliott-sudo-2025], (53)): the
+possibilities of `s` that subsist in neither dimension — the dynamic
+analogue of the third Strong Kleene truth value. -/
+def unknownUpdate (φ : BilateralDen W V E)
+    (s : Set (Possibility W V (Option E))) : Set (Possibility W V (Option E)) :=
+  {p ∈ s | ¬(p ≺ φ.positive s) ∧ ¬(p ≺ φ.negative s)}
+
+/-- Assertability ([elliott-sudo-2025], (54)): the unknown update is
+empty — every possibility is accounted for by one of the dimensions.
+Strictly weaker than Heimian familiarity. -/
+def assertable (φ : BilateralDen W V E)
+    (c : Set (Possibility W V (Option E))) : Prop :=
+  φ.unknownUpdate c = ∅
+
+/-- The unknown update is invariant under negation. -/
+theorem unknownUpdate_neg (φ : BilateralDen W V E) (s) :
+    (~φ).unknownUpdate s = φ.unknownUpdate s := by
   ext p
-  simp only [atom, InfoState.update, Set.mem_union, Set.mem_setOf_eq]
+  simp only [unknownUpdate, neg, Set.mem_setOf_eq,
+    and_comm (a := ¬(p ≺ φ.negative s))]
+
+/-- Worldly atoms never gap. -/
+theorem unknownUpdate_atom (pred : W → Prop) (s) :
+    (atom pred (V := V) (E := E)).unknownUpdate s = ∅ := by
+  ext p
+  simp only [unknownUpdate, Set.mem_setOf_eq, Set.mem_empty_iff_false,
+    iff_false, not_and]
+  intro hp hpos hneg
+  by_cases h : pred p.world
+  · exact hpos (Subsists.of_mem ⟨hp, h⟩)
+  · exact hneg (Subsists.of_mem ⟨hp, h⟩)
+
+/-- Every possibility subsists positively, subsists negatively, or is
+unknown. -/
+theorem partition (φ : BilateralDen W V E) (hp : p ∈ s) :
+    (p ≺ φ.positive s) ∨ (p ≺ φ.negative s) ∨ p ∈ φ.unknownUpdate s := by
+  by_cases h1 : p ≺ φ.positive s
+  · exact Or.inl h1
+  · by_cases h2 : p ≺ φ.negative s
+    · exact Or.inr (Or.inl h2)
+    · exact Or.inr (Or.inr ⟨hp, h1, h2⟩)
+
+/-- Under assertability, every possibility subsists in one of the
+dimensions. -/
+theorem partition_assertable (h : φ.assertable s) (hp : p ∈ s) :
+    (p ≺ φ.positive s) ∨ (p ≺ φ.negative s) := by
+  rcases partition φ hp with h1 | h2 | h3
+  · exact Or.inl h1
+  · exact Or.inr h2
+  · rw [assertable] at h
+    exact absurd (h ▸ h3) (Set.notMem_empty p)
+
+/-! ### Connectives -/
+
+/-- Conjunction ([elliott-sudo-2025], (61)): the positive update
+sequences the positive dimensions (the one verifying Strong Kleene cell);
+the negative update is the union of the dynamic falsifications, one per
+falsifying cell. -/
+def conj (φ ψ : BilateralDen W V E) : BilateralDen W V E where
+  positive s := ψ.positive (φ.positive s)
+  negative s :=
+    ψ.positive (φ.negative s) ∪ ψ.negative (φ.negative s)
+      ∪ ψ.unknownUpdate (φ.negative s) ∪ ψ.negative (φ.positive s)
+      ∪ ψ.negative (φ.unknownUpdate s)
+
+@[inherit_doc] infixl:65 " ⊙ " => conj
+
+/-- Disjunction ([elliott-sudo-2025], (64)): verification via the first
+disjunct (the `s[φ]⁺` row) or via the second (the `[ψ]⁺` column); denial
+is sequential. The state-passing `ψ.positive (φ.negative s)` term is what
+makes bathroom disjunctions work: by DNE, `s[¬∃xP(x)]⁻ = s[∃xP(x)]⁺`
+introduces the referent for the second disjunct. -/
+def disj (φ ψ : BilateralDen W V E) : BilateralDen W V E where
+  positive s :=
+    ψ.positive (φ.positive s) ∪ ψ.negative (φ.positive s)
+      ∪ ψ.unknownUpdate (φ.positive s) ∪ ψ.positive (φ.negative s)
+      ∪ ψ.positive (φ.unknownUpdate s)
+  negative s := ψ.negative (φ.negative s)
+
+@[inherit_doc] infixl:60 " ⊕ " => disj
+
+/-- Conjunction associates in the positive dimension. -/
+theorem conj_assoc_positive (φ ψ χ : BilateralDen W V E) (s) :
+    ((φ ⊙ ψ) ⊙ χ).positive s = (φ ⊙ (ψ ⊙ χ)).positive s := rfl
+
+/-- De Morgan: `¬(φ ∨ ψ)` and `¬φ ∧ ¬ψ` agree positively, definitionally. -/
+theorem de_morgan_disj (φ ψ : BilateralDen W V E) (s) :
+    (~(φ ⊕ ψ)).positive s = ((~φ) ⊙ (~ψ)).positive s := rfl
+
+/-- De Morgan: `¬(φ ∧ ψ)` and `¬φ ∨ ¬ψ` agree positively. -/
+theorem de_morgan_conj (φ ψ : BilateralDen W V E) (s) :
+    (~(φ ⊙ ψ)).positive s = ((~φ) ⊕ (~ψ)).positive s := by
+  have h := unknownUpdate_neg φ s
+  have h' := unknownUpdate_neg ψ (φ.negative s)
+  show ψ.positive (φ.negative s) ∪ ψ.negative (φ.negative s)
+      ∪ ψ.unknownUpdate (φ.negative s) ∪ ψ.negative (φ.positive s)
+      ∪ ψ.negative (φ.unknownUpdate s)
+    = ψ.negative (φ.negative s) ∪ ψ.positive (φ.negative s)
+      ∪ (~ψ).unknownUpdate (φ.negative s) ∪ ψ.negative (φ.positive s)
+      ∪ ψ.negative ((~φ).unknownUpdate s)
+  rw [h, h',
+    Set.union_comm (ψ.negative (φ.negative s)) (ψ.positive (φ.negative s))]
+
+/-! ### Quantifiers -/
+
+section Quantifiers
+variable [DecidableEq V]
+
+/-- Existential quantification ([elliott-sudo-2025], (44)–(45)): the
+positive update introduces the referent by random assignment and asserts
+the scope; the negative update merely removes possibilities — it retains
+those of `s` whose world falsifies the existential classically, and
+introduces no anaphoric information. -/
+def exists_ (x : V) (φ : BilateralDen W V E) : BilateralDen W V E where
+  positive s := φ.positive (randomAssign s x)
+  negative s :=
+    {p ∈ s | p.world ∉ worlds (φ.positive (randomAssign s x)) ∧
+      p.world ∈ worlds (φ.negative (randomAssign s x))}
+
+/-- Universal quantification, by de Morgan duality: `∀x φ = ¬∃x ¬φ`. -/
+def forall_ (x : V) (φ : BilateralDen W V E) : BilateralDen W V E :=
+  ~(exists_ x (~φ))
+
+/-- Egli's theorem, definitionally: an existential scoping over a
+conjunction binds into the second conjunct, `(∃x φ) ∧ ψ = ∃x (φ ∧ ψ)` in
+the positive dimension — the key property for cross-sentential anaphora. -/
+theorem egli (x : V) (φ ψ : BilateralDen W V E) (s) :
+    ((exists_ x φ) ⊙ ψ).positive s = (exists_ x (φ ⊙ ψ)).positive s := rfl
+
+end Quantifiers
+
+/-! ### Support and entailment -/
+
+/-- Bilateral support: the positive update is consistent and the state
+subsists in it. -/
+def supports (s : Set (Possibility W V (Option E)))
+    (φ : BilateralDen W V E) : Prop :=
+  (φ.positive s).Nonempty ∧ s ⪯ φ.positive s
+
+/-- Bilateral entailment: every consistent positive update of `φ`
+supports `ψ`. -/
+def entails (φ ψ : BilateralDen W V E) : Prop :=
+  ∀ s : Set (Possibility W V (Option E)),
+    (φ.positive s).Nonempty → supports (φ.positive s) ψ
+
+@[inherit_doc] notation:50 φ " ⊨ᵇ " ψ => entails φ ψ
+
+/-! ### Structural lemmas -/
+
+theorem atom_complementary (pred : W → Prop) (s : Set (Possibility W V (Option E))) :
+    (atom pred (E := E)).positive s ∪ (atom pred).negative s = s := by
+  ext p
+  simp only [atom, Set.mem_union, Set.mem_setOf_eq]
   constructor
   · rintro (⟨h, _⟩ | ⟨h, _⟩) <;> exact h
   · intro h
     by_cases hp : pred p.world
-    · left; exact ⟨h, hp⟩
-    · right; exact ⟨h, hp⟩
+    · exact Or.inl ⟨h, hp⟩
+    · exact Or.inr ⟨h, hp⟩
 
-/-- Atomic positive and negative are disjoint -/
-theorem atom_disjoint (pred : W → Prop) (s : InfoState W E) :
-    (atom pred).positive s ∩ (atom pred).negative s = ∅ := by
+theorem atom_disjoint (pred : W → Prop) (s : Set (Possibility W V (Option E))) :
+    (atom pred (E := E)).positive s ∩ (atom pred).negative s = ∅ := by
   ext p
-  constructor
-  · intro ⟨⟨_, hp⟩, ⟨_, hnp⟩⟩
-    exact absurd hp hnp
-  · intro h; exact h.elim
+  exact ⟨fun ⟨⟨_, hp⟩, ⟨_, hnp⟩⟩ => absurd hp hnp, False.elim⟩
 
-/-- Atomic positive update is monotone. -/
 theorem atom_positive_monotone (pred : W → Prop) :
-    Monotone (atom pred).positive (α := InfoState W E) :=
+    Monotone (atom pred (V := V) (E := E)).positive :=
   sep_monotone _
 
-/-- Atomic negative update is monotone. -/
 theorem atom_negative_monotone (pred : W → Prop) :
-    Monotone (atom pred).negative (α := InfoState W E) :=
+    Monotone (atom pred (V := V) (E := E)).negative :=
   sep_monotone _
 
-/-- Atomic positive update is eliminative. -/
 theorem atom_positive_eliminative (pred : W → Prop) :
-    IsEliminative (atom pred).positive (P := Possibility W ℕ E) :=
+    IsEliminative (atom pred (V := V) (E := E)).positive :=
   sep_eliminative _
 
-/-- Atomic negative update is eliminative. -/
 theorem atom_negative_eliminative (pred : W → Prop) :
-    IsEliminative (atom pred).negative (P := Possibility W ℕ E) :=
+    IsEliminative (atom pred (V := V) (E := E)).negative :=
   sep_eliminative _
 
-
-/--
-Negation: swap positive and negative updates.
-
-This is the key insight of bilateral semantics. Negation doesn't "push in" -
-it simply swaps which update is positive and which is negative.
-
-s[¬φ]⁺ = s[φ]⁻
-s[¬φ]⁻ = s[φ]⁺
--/
-def neg (φ : BilateralDen W E) : BilateralDen W E :=
-  { positive := φ.negative
-  , negative := φ.positive }
-
-/-- Notation for negation -/
-prefix:max "~" => neg
-
-/-- Double negation is identity (DNE). -/
-@[simp]
-theorem neg_neg (φ : BilateralDen W E) : ~~φ = φ := rfl
-
-/-- DNE for positive updates -/
-theorem dne_positive (φ : BilateralDen W E) (s : InfoState W E) :
-    (~~φ).positive s = φ.positive s := rfl
-
-/-- DNE for negative updates -/
-theorem dne_negative (φ : BilateralDen W E) (s : InfoState W E) :
-    (~~φ).negative s = φ.negative s := rfl
-
-/-- Negation is involutive -/
-theorem neg_involutive : Function.Involutive (neg : BilateralDen W E → BilateralDen W E) :=
-  λ φ => neg_neg φ
-
-
-/--
-Unknown update: possibilities in s that subsist in neither the positive
-nor the negative update.
-
-This is the dynamic analog of the third truth value (#) in Strong Kleene
-logic. For atomic propositions, the unknown update is always empty.
-For existential statements, it captures possibilities where variable
-definedness introduces a gap.
-
-Equation (53) of [elliott-sudo-2025].
--/
-def unknownUpdate (φ : BilateralDen W E) (s : InfoState W E) : InfoState W E :=
-  { p ∈ s | p ∉ φ.positive s ∧ p ∉ φ.negative s }
-
-/-- The unknown update of a negation equals the unknown update of the original. -/
-theorem unknownUpdate_neg (φ : BilateralDen W E) (s : InfoState W E) :
-    unknownUpdate (~φ) s = unknownUpdate φ s := by
-  ext p
-  simp only [unknownUpdate, neg, Set.mem_setOf_eq, and_comm (a := p ∉ φ.negative s)]
-
-/-- For atomic propositions, the unknown update is empty. -/
-theorem unknownUpdate_atom (pred : W → Prop) (s : InfoState W E) :
-    unknownUpdate (atom pred) s = ∅ := by
-  ext p
-  simp only [unknownUpdate, atom, InfoState.update, Set.mem_setOf_eq,
-    Set.mem_empty_iff_false, iff_false, not_and]
-  intro hp hpos hneg
-  by_cases h : pred p.world
-  · exact hpos hp h
-  · exact hneg hp h
-
-/--
-Assertability condition: φ is assertable at context c iff the unknown
-update is empty — every possibility is accounted for by either the
-positive or negative update.
-
-Definition (54) of [elliott-sudo-2025].
--/
-def assertable (φ : BilateralDen W E) (c : InfoState W E) : Prop :=
-  unknownUpdate φ c = ∅
-
-/-- Every possibility in s is either verified, falsified, or unknown.
-    This is the partition property of the Strong Kleene truth table. -/
-theorem partition (φ : BilateralDen W E) (s : InfoState W E) :
-    s ⊆ φ.positive s ∪ φ.negative s ∪ unknownUpdate φ s := by
-  intro p hp
-  by_cases h1 : p ∈ φ.positive s
-  · exact Set.mem_union_left _ (Set.mem_union_left _ h1)
-  · by_cases h2 : p ∈ φ.negative s
-    · exact Set.mem_union_left _ (Set.mem_union_right _ h2)
-    · exact Set.mem_union_right _ ⟨hp, h1, h2⟩
-
-/-- Assertability implies the positive and negative updates cover the state. -/
-theorem partition_assertable (φ : BilateralDen W E) (s : InfoState W E)
-    (h : assertable φ s) : s ⊆ φ.positive s ∪ φ.negative s := by
-  intro p hp
-  have hmem := partition φ s hp
-  rcases hmem with (hp' | hp') | hp'
-  · exact Set.mem_union_left _ hp'
-  · exact Set.mem_union_right _ hp'
-  · exfalso
-    have hempty : unknownUpdate φ s = ∅ := h
-    rw [hempty] at hp'
-    exact hp'
-
-
-/--
-Conjunction: sequence positive updates, combine negative updates
-following the Strong Kleene truth table.
-
-For conjunction φ ∧ ψ:
-- s[φ ∧ ψ]⁺ = s[φ]⁺[ψ]⁺ (the (1,1) cell: both verified)
-- s[φ ∧ ψ]⁻ = s[φ]⁻                    (the (0,*) row: φ falsified)
-             ∪ s[φ]⁺[ψ]⁻              (the (1,0) cell: φ verified, ψ falsified)
-             ∪ s[φ]?[ψ]⁻              (the (#,0) cell: φ unknown, ψ falsified)
-
-Equation (61) of [elliott-sudo-2025].
--/
-def conj (φ ψ : BilateralDen W E) : BilateralDen W E :=
-  { positive := λ s => ψ.positive (φ.positive s)
-  , negative := λ s => φ.negative s
-      ∪ ψ.negative (φ.positive s)
-      ∪ ψ.negative (φ.unknownUpdate s) }
-
-/-- Notation for conjunction -/
-infixl:65 " ⊙ " => conj
-
-/-- Conjunction associates (for positive updates) -/
-theorem conj_assoc_positive (φ ψ χ : BilateralDen W E) (s : InfoState W E) :
-    ((φ ⊙ ψ) ⊙ χ).positive s = (φ ⊙ (ψ ⊙ χ)).positive s := by
-  simp only [conj]
-
-
-/--
-Standard disjunction: dynamic Strong Kleene semantics.
-
-For disjunction φ ∨ ψ, the positive update covers two verification routes:
-
-- **Verification via φ**: s[φ]⁺ (φ is true, ψ is anything)
-- **Verification via ψ**: s[φ]⁻[ψ]⁺ ∪ s[φ]?[ψ]⁺ (φ is false or unknown, ψ is true)
-
-The negative update is sequential: s[φ ∨ ψ]⁻ = s[φ]⁻[ψ]⁻ (both must be
-denied in sequence, passing state dynamically).
-
-The dynamic state-passing in the positive update is what makes bathroom
-disjunctions work: s[¬∃xP(x)]⁻[Q(x)]⁺ = s[∃xP(x)]⁺[Q(x)]⁺ (by DNE),
-introducing the discourse referent x for cross-disjunct anaphora.
-
-Equations (64)/(67) of [elliott-sudo-2025].
--/
-def disj (φ ψ : BilateralDen W E) : BilateralDen W E :=
-  { positive := λ s =>
-      φ.positive s                           -- verification via φ
-      ∪ ψ.positive (φ.negative s)            -- verification via ψ (φ false)
-      ∪ ψ.positive (φ.unknownUpdate s)       -- verification via ψ (φ unknown)
-  , negative := λ s =>
-      ψ.negative (φ.negative s)              -- sequential denial
-  }
-
-/-- Notation for disjunction -/
-infixl:60 " ⊕ " => disj
-
-/-- De Morgan: ¬(φ ∨ ψ) = ¬φ ∧ ¬ψ (positive dimension). -/
-theorem de_morgan_disj (φ ψ : BilateralDen W E) (s : InfoState W E) :
-    (~(φ ⊕ ψ)).positive s = (conj (~φ) (~ψ)).positive s := by
-  simp only [neg, disj, conj]
-
-/-- De Morgan: ¬(φ ∧ ψ) = ¬φ ∨ ¬ψ (positive dimension). -/
-theorem de_morgan_conj (φ ψ : BilateralDen W E) (s : InfoState W E) :
-    (~(φ ⊙ ψ)).positive s = (disj (~φ) (~ψ)).positive s := by
-  unfold neg conj disj unknownUpdate
-  congr 1; congr 1
-  ext p; simp only [and_comm]
-
-
-/--
-Existential quantification: introduce a discourse referent.
-
-For ∃x.φ:
-- s[∃x.φ]⁺ = s[x:=?][φ]⁺ (introduce x, then assert φ)
-- s[∃x.φ]⁻ = { p ∈ s | ∀e, p[x↦e] ∉ s[x:=?][φ]⁺ } (no witness makes φ true)
--/
-def exists_ (x : Nat) (domain : Set E) (φ : BilateralDen W E) : BilateralDen W E :=
-  { positive := λ s => φ.positive (s.randomAssign x domain)
-  , negative := λ s =>
-      { p ∈ s | ∀ e ∈ domain,
-        (p.extend x e) ∉ φ.positive (s.randomAssign x domain) } }
-
-/-- Existential with full domain -/
-def existsFull (x : Nat) (φ : BilateralDen W E) : BilateralDen W E :=
-  { positive := λ s => φ.positive (s.randomAssignFull x)
-  , negative := λ s =>
-      { p ∈ s | ∀ e : E, (p.extend x e) ∉ φ.positive (s.randomAssignFull x) } }
-
-
-/--
-Universal quantification: ∀x.φ = ¬∃x.¬φ
-
-In bilateral semantics, universal quantification is defined via de Morgan duality.
-This ensures proper interaction with negation.
--/
-def forall_ (x : Nat) (domain : Set E) (φ : BilateralDen W E) : BilateralDen W E :=
-  ~(exists_ x domain (~φ))
-
-
-/--
-Bilateral support: state s supports φ iff positive update is non-empty
-and s subsists in s[φ]⁺.
--/
-def supports (s : InfoState W E) (φ : BilateralDen W E) : Prop :=
-  (φ.positive s).consistent ∧ s ⪯ φ.positive s
-
-/--
-Bilateral entailment: φ entails ψ iff for all consistent states s,
-s[φ]⁺ supports ψ.
--/
-def entails (φ ψ : BilateralDen W E) : Prop :=
-  ∀ s : InfoState W E, (φ.positive s).consistent →
-    supports (φ.positive s) ψ
-
-notation:50 φ " ⊨ᵇ " ψ => entails φ ψ
-
-
-/--
-Egli's theorem: ∃x.φ ∧ ψ ⊨ ∃x[φ ∧ ψ]
-
-When an existential takes wide scope over conjunction, the variable it
-introduces is accessible in the second conjunct. This is the key property
-for cross-sentential anaphora.
-
-In bilateral semantics, this follows from the sequencing of updates.
--/
-theorem egli (x : Nat) (domain : Set E) (φ ψ : BilateralDen W E) (s : InfoState W E) :
-    ((exists_ x domain φ) ⊙ ψ).positive s ⊆
-    (exists_ x domain (φ ⊙ ψ)).positive s := by
-  intro p hp
-  -- These are definitionally equal due to how conj and exists_ are defined
-  exact hp
-
-
-/-- Create bilateral from predicate over entities.
-
-The predicate is `Prop`-valued (with per-point `Decidable`), following the
-project-wide migration of propositional positions from `Bool` to `Prop`. -/
-def pred1 (p : E → W → Prop) [∀ e w, Decidable (p e w)] (t : Nat) : BilateralDen W E :=
-  { positive := λ s => { poss ∈ s | p (poss.assignment t) poss.world }
-  , negative := λ s => { poss ∈ s | ¬ p (poss.assignment t) poss.world } }
-
-/-- Create bilateral from binary predicate. -/
-def pred2 (p : E → E → W → Prop) [∀ e₁ e₂ w, Decidable (p e₁ e₂ w)] (t₁ t₂ : Nat) :
-    BilateralDen W E :=
-  { positive := λ s => { poss ∈ s | p (poss.assignment t₁) (poss.assignment t₂) poss.world }
-  , negative := λ s => { poss ∈ s | ¬ p (poss.assignment t₁) (poss.assignment t₂) poss.world } }
-
-/-- pred1 positive update is monotone. -/
-theorem pred1_positive_monotone (p : E → W → Prop) [∀ e w, Decidable (p e w)] (t : Nat) :
-    Monotone (pred1 p t).positive (α := InfoState W E) :=
+theorem pred1_positive_monotone (P : E → W → Prop) (t : V) :
+    Monotone (pred1 P t (W := W)).positive :=
   sep_monotone _
 
-/-- pred1 negative update is monotone. -/
-theorem pred1_negative_monotone (p : E → W → Prop) [∀ e w, Decidable (p e w)] (t : Nat) :
-    Monotone (pred1 p t).negative (α := InfoState W E) :=
+theorem pred1_negative_monotone (P : E → W → Prop) (t : V) :
+    Monotone (pred1 P t (W := W)).negative :=
   sep_monotone _
 
-/-- pred1 positive update is eliminative. -/
-theorem pred1_positive_eliminative (p : E → W → Prop) [∀ e w, Decidable (p e w)] (t : Nat) :
-    IsEliminative (pred1 p t).positive (P := Possibility W ℕ E) :=
+theorem pred1_positive_eliminative (P : E → W → Prop) (t : V) :
+    IsEliminative (pred1 P t (W := W)).positive :=
   sep_eliminative _
 
-/-- pred1 negative update is eliminative. -/
-theorem pred1_negative_eliminative (p : E → W → Prop) [∀ e w, Decidable (p e w)] (t : Nat) :
-    IsEliminative (pred1 p t).negative (P := Possibility W ℕ E) :=
+theorem pred1_negative_eliminative (P : E → W → Prop) (t : V) :
+    IsEliminative (pred1 P t (W := W)).negative :=
   sep_eliminative _
 
-/-- pred2 positive update is monotone. -/
-theorem pred2_positive_monotone (p : E → E → W → Prop) [∀ e₁ e₂ w, Decidable (p e₁ e₂ w)]
-    (t₁ t₂ : Nat) :
-    Monotone (pred2 p t₁ t₂).positive (α := InfoState W E) :=
-  sep_monotone _
-
-/-- pred2 negative update is monotone. -/
-theorem pred2_negative_monotone (p : E → E → W → Prop) [∀ e₁ e₂ w, Decidable (p e₁ e₂ w)]
-    (t₁ t₂ : Nat) :
-    Monotone (pred2 p t₁ t₂).negative (α := InfoState W E) :=
-  sep_monotone _
-
-/-- pred2 positive update is eliminative. -/
-theorem pred2_positive_eliminative (p : E → E → W → Prop) [∀ e₁ e₂ w, Decidable (p e₁ e₂ w)]
-    (t₁ t₂ : Nat) :
-    IsEliminative (pred2 p t₁ t₂).positive (P := Possibility W ℕ E) :=
+theorem pred2_positive_eliminative (P : E → E → W → Prop) (t₁ t₂ : V) :
+    IsEliminative (pred2 P t₁ t₂ (W := W)).positive :=
   sep_eliminative _
 
-/-- pred2 negative update is eliminative. -/
-theorem pred2_negative_eliminative (p : E → E → W → Prop) [∀ e₁ e₂ w, Decidable (p e₁ e₂ w)]
-    (t₁ t₂ : Nat) :
-    IsEliminative (pred2 p t₁ t₂).negative (P := Possibility W ℕ E) :=
+theorem pred2_negative_eliminative (P : E → E → W → Prop) (t₁ t₂ : V) :
+    IsEliminative (pred2 P t₁ t₂ (W := W)).negative :=
   sep_eliminative _
 
+/-! ### The bilateral algebra -/
 
-/-- Unilateral denotation: single update function -/
-def UnilateralDen (W : Type*) (E : Type*) := InfoState W E → InfoState W E
-
-/-- View bilateral as pair of updates -/
-def toPair (φ : BilateralDen W E) : (InfoState W E → InfoState W E) × (InfoState W E → InfoState W E) :=
+/-- View a bilateral denotation as a pair of updates. -/
+def toPair (φ : BilateralDen W V E) :=
   (φ.positive, φ.negative)
 
-/-- Construct bilateral from pair -/
-def ofPair (p : (InfoState W E → InfoState W E) × (InfoState W E → InfoState W E)) : BilateralDen W E :=
-  { positive := p.1, negative := p.2 }
+/-- Construct a bilateral denotation from a pair of updates. -/
+def ofPair (u : (Set (Possibility W V (Option E)) → Set (Possibility W V (Option E))) ×
+    (Set (Possibility W V (Option E)) → Set (Possibility W V (Option E)))) :
+    BilateralDen W V E where
+  positive := u.1
+  negative := u.2
 
-theorem toPair_ofPair (p : (InfoState W E → InfoState W E) × (InfoState W E → InfoState W E)) :
-    toPair (ofPair p) = p := rfl
+theorem toPair_ofPair (u) : toPair (ofPair (W := W) (V := V) (E := E) u) = u := rfl
 
-theorem ofPair_toPair (φ : BilateralDen W E) : ofPair (toPair φ) = φ := rfl
+theorem ofPair_toPair (φ : BilateralDen W V E) : ofPair (toPair φ) = φ := rfl
 
-/-- Negation = swap on pairs -/
-theorem neg_eq_swap (φ : BilateralDen W E) :
+/-- Negation is the swap on pairs; DNE is `swap ∘ swap = id`. -/
+theorem neg_eq_swap (φ : BilateralDen W V E) :
     toPair (~φ) = Prod.swap (toPair φ) := rfl
 
-/-- DNE follows from swap ∘ swap = id -/
-theorem dne_from_swap (φ : BilateralDen W E) :
-    toPair (~~φ) = toPair φ := rfl
-
-/-- Projection: bilateral → unilateral (forgets negative) -/
-def toUnilateral (φ : BilateralDen W E) : UnilateralDen W E := φ.positive
-
-
-instance : InvolutiveNeg (BilateralDen W E) where
+instance : InvolutiveNeg (BilateralDen W V E) where
   neg := neg
   neg_neg := neg_neg
 
-/-- BUS's `BilateralDen` is itself a paraconsistent bilateral logic
-    (`Core.Logic.Bilateral.IsBilateral`): the BilateralDen *value* IS the
-    formula; `positive` and `negative` are the field projections; `neg`
-    swaps them by definition. Both axioms reduce to `rfl`. -/
+/-- BUS is a paraconsistent bilateral logic (`Core.Logic.Bilateral`): the
+denotation is the formula, the dimensions are the projections, and `neg`
+swaps them by definition. -/
 theorem isBilateral :
     Core.Logic.Bilateral.IsBilateral
-      (Form := BilateralDen W E)
-      (Result := InfoState W E → InfoState W E)
+      (Form := BilateralDen W V E)
+      (Result := Set (Possibility W V (Option E)) → Set (Possibility W V (Option E)))
       (·.positive) (·.negative) neg where
   positive_negate _ := rfl
   negative_negate _ := rfl
 
-
--- ============================================================================
--- Order-theoretic structure
--- ============================================================================
-
-/--
-Pointwise partial order on bilateral denotations: φ ≤ ψ iff both
-`φ.positive s ⊆ ψ.positive s` and `φ.negative s ⊆ ψ.negative s` for all s.
--/
-instance : PartialOrder (BilateralDen W E) where
+/-- The pointwise order: both dimensions componentwise. -/
+instance : PartialOrder (BilateralDen W V E) where
   le φ ψ := (∀ s, φ.positive s ≤ ψ.positive s) ∧ (∀ s, φ.negative s ≤ ψ.negative s)
-  le_refl _ := ⟨λ _ => le_refl _, λ _ => le_refl _⟩
+  le_refl _ := ⟨fun _ => le_refl _, fun _ => le_refl _⟩
   le_trans _ _ _ h1 h2 :=
-    ⟨λ s => le_trans (h1.1 s) (h2.1 s), λ s => le_trans (h1.2 s) (h2.2 s)⟩
+    ⟨fun s => le_trans (h1.1 s) (h2.1 s), fun s => le_trans (h1.2 s) (h2.2 s)⟩
   le_antisymm _ _ h1 h2 := BilateralDen.ext
-    (funext λ s => le_antisymm (h1.1 s) (h2.1 s))
-    (funext λ s => le_antisymm (h1.2 s) (h2.2 s))
+    (funext fun s => le_antisymm (h1.1 s) (h2.1 s))
+    (funext fun s => le_antisymm (h1.2 s) (h2.2 s))
 
-/-- Negation is monotone: swapping dimensions preserves the pointwise order.
-    `~φ ≤ ~ψ ↔ φ ≤ ψ` because the pointwise order checks both components
-    independently, and swap just rearranges them. -/
-theorem neg_monotone : Monotone (neg : BilateralDen W E → BilateralDen W E) := by
-  intro φ ψ ⟨hp, hn⟩
-  show (∀ s, φ.negative s ≤ ψ.negative s) ∧ (∀ s, φ.positive s ≤ ψ.positive s)
-  exact ⟨hn, hp⟩
+/-- Negation is monotone: the swap rearranges the componentwise checks. -/
+theorem neg_monotone : Monotone (neg : BilateralDen W V E → BilateralDen W V E) :=
+  fun _ _ ⟨hp, hn⟩ => ⟨hn, hp⟩
 
-/-- Negation reflects and preserves order: ~φ ≤ ~ψ ↔ φ ≤ ψ. -/
-theorem neg_le_neg_iff (φ ψ : BilateralDen W E) : ~φ ≤ ~ψ ↔ φ ≤ ψ := by
-  constructor
-  · intro h
-    show (∀ s, φ.positive s ≤ ψ.positive s) ∧ (∀ s, φ.negative s ≤ ψ.negative s)
-    exact ⟨h.2, h.1⟩
-  · intro ⟨hp, hn⟩
-    show (∀ s, φ.negative s ≤ ψ.negative s) ∧ (∀ s, φ.positive s ≤ ψ.positive s)
-    exact ⟨hn, hp⟩
+/-- Negation preserves and reflects the order. -/
+theorem neg_le_neg_iff : ~φ ≤ ~ψ ↔ φ ≤ ψ :=
+  ⟨fun ⟨hp, hn⟩ => ⟨hn, hp⟩, fun ⟨hp, hn⟩ => ⟨hn, hp⟩⟩
 
 end BilateralDen
-
 
 end DynamicSemantics
