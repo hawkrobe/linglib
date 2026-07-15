@@ -1,58 +1,26 @@
-import Mathlib.Data.Set.Basic
 import Linglib.Core.Logic.Assignment
-import Linglib.Semantics.Intensional.WorldTimeIndex
+import Linglib.Semantics.Dynamic.ContextChange
 import Linglib.Semantics.Dynamic.DiscourseRef
+import Linglib.Semantics.Intensional.WorldTimeIndex
 
 /-!
-# Context Filters and Situation Contexts
+# Situation contexts
 
-A *context filter* is a function `f : Set α → Set α` that only removes
-entries, never adds them. This is the dynamic-semantics notion that
-unifies linguistic operations like predication, temporal constraints,
-and mood retrieval (IND): they all narrow an information state.
+`SitContext` is the carrier of situation-variable dynamic semantics: sets
+of pairs of a situation-variable assignment and a current evaluation
+situation. Its two update primitives split along the
+eliminative-vs-generative dichotomy of [groenendijk-stokhof-veltman-1996]
+(`IsEliminative`, `ContextChange.lean`):
 
-The most common source of context filters is set-builder filtering
-(`Set.sep`, the `{x ∈ c | p x}` notation), which is *always* a context
-filter — see `sep_isContextFilter` below, a thin restatement of
-`Set.sep_subset`.
-
-This file also hosts `SitContext` — the carrier of situation-variable
-dynamic semantics — and `dynRelation`, the workhorse filter behind
-temporal trichotomy (`<`/`=`/`>` on `.time`, used to define
-`Tense.dynPAST`/`dynPRES`/`dynFUT`).
+* `dynRelationOn` / `dynRelation` — eliminative filters by a relation
+  between two projections; the workhorse behind temporal trichotomy
+  (`<`/`=`/`>` on `.time`, used by `Tense.dynPAST`/`dynPRES`/`dynFUT`) and
+  mood retrieval (`Mood.dynIND`).
+* `dynIntroduce` — generative introduction of a fresh situation dref from
+  a Kleisli arrow (`Mood.dynSUBJ`).
 -/
 
 namespace Semantics.Dynamic.Core
-
-variable {α : Type*}
-
-/-- A context filter: a `Set α → Set α` operation that only removes
-entries, never introduces new ones. -/
-def IsContextFilter (f : Set α → Set α) : Prop :=
-  ∀ c, f c ⊆ c
-
-namespace IsContextFilter
-
-/-- The identity is a context filter (removes nothing). -/
-theorem id_isContextFilter : IsContextFilter (id : Set α → Set α) :=
-  fun _ _ h => h
-
-/-- Composition of two context filters is a context filter. -/
-theorem comp {f g : Set α → Set α}
-    (hf : IsContextFilter f) (hg : IsContextFilter g) :
-    IsContextFilter (fun c => g (f c)) :=
-  fun c => Set.Subset.trans (hg (f c)) (hf c)
-
-end IsContextFilter
-
-/-- Set-builder filtering by `p` is always a context filter. -/
-theorem sep_isContextFilter (p : α → Prop) :
-    IsContextFilter (fun c : Set α => {x ∈ c | p x}) :=
-  fun _ => Set.sep_subset _ _
-
--- ════════════════════════════════════════════════════════════════
--- Situation contexts
--- ════════════════════════════════════════════════════════════════
 
 open _root_.Core (Assignment)
 open _root_.Intensional (WorldTimeIndex)
@@ -101,12 +69,12 @@ def dynRelationOn {W Time : Type*}
     (c : SitContext W Time) : SitContext W Time :=
   { gs ∈ c | R (proj₁ gs) (proj₂ gs) }
 
-theorem dynRelationOn_isFilter {W Time : Type*}
+theorem dynRelationOn_isEliminative {W Time : Type*}
     (proj₁ proj₂ :
       Assignment (WorldTimeIndex W Time) × WorldTimeIndex W Time
         → WorldTimeIndex W Time)
     (R : WorldTimeIndex W Time → WorldTimeIndex W Time → Prop) :
-    IsContextFilter (α := Assignment (WorldTimeIndex W Time) × WorldTimeIndex W Time)
+    IsEliminative (P := Assignment (WorldTimeIndex W Time) × WorldTimeIndex W Time)
       (dynRelationOn proj₁ proj₂ R) :=
   fun _ _ h => h.1
 
@@ -156,9 +124,9 @@ theorem dynRelation_eq_dynRelationOn {W Time : Type*}
     dynRelation R v₁ v₂ c =
       dynRelationOn (fun gs => gs.1 v₁) (fun gs => gs.1 v₂) R c := rfl
 
-theorem dynRelation_isFilter {W Time : Type*}
+theorem dynRelation_isEliminative {W Time : Type*}
     (R : WorldTimeIndex W Time → WorldTimeIndex W Time → Prop) (v₁ v₂ : SVar) :
-    IsContextFilter (α := Assignment (WorldTimeIndex W Time) × WorldTimeIndex W Time)
+    IsEliminative (P := Assignment (WorldTimeIndex W Time) × WorldTimeIndex W Time)
       (dynRelation R v₁ v₂) :=
   fun _ _ h => h.1
 
@@ -243,7 +211,7 @@ The current situation is updated to the new dref, and the assignment
 is extended at `v`. Definitionally a `Set.bind`/Kleisli composition
 for the powerset monad.
 
-Unlike `dynRelationOn`/`dynRelation`, this is *not* a context filter
+Unlike `dynRelationOn`/`dynRelation`, this is *not* eliminative
 — it can produce entries that did not appear in the input context.
 -/
 def dynIntroduce {W Time : Type*}

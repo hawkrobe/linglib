@@ -1634,7 +1634,7 @@ import Linglib.Semantics.Dynamic.Accessibility
 import Linglib.Semantics.Dynamic.Bilateral
 import Linglib.Semantics.Dynamic.CDRT
 import Linglib.Semantics.Dynamic.ContextChange
-import Linglib.Semantics.Dynamic.ContextFilter
+import Linglib.Semantics.Dynamic.Situation
 import Linglib.Semantics.Dynamic.DPL
 import Linglib.Semantics.Dynamic.DRS.Based
 import Linglib.Semantics.Dynamic.DRS.Basic

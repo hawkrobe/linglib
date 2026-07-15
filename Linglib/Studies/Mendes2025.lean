@@ -226,7 +226,7 @@ SF in restrictor enables future reference for strong quantifiers.
 
 With SF in the relative clause, "every" can quantify over future entities.
 
-Restrictor and nuclear must be context filters (`IsContextFilter`).
+Restrictor and nuclear must be context filters (`IsEliminative`).
 Linguistically, predicates filter contexts without modifying assignments.
 -/
 theorem sf_restrictor_future_reference {W Time : Type*} [Preorder Time]
@@ -236,7 +236,7 @@ theorem sf_restrictor_future_reference {W Time : Type*} [Preorder Time]
     (c : SitContext W Time)
     (gs : Assignment (WorldTimeIndex W Time) × WorldTimeIndex W Time)
     (h : gs ∈ everyWithSFRestrictor history rcVar speechVar restrictor nuclear c)
-    (hR : IsContextFilter restrictor) (hN : IsContextFilter nuclear) :
+    (hR : IsEliminative restrictor) (hN : IsEliminative nuclear) :
     -- The restrictor situation can be future relative to speech time
     (gs.1 rcVar).time > (gs.1 speechVar).time := by
   -- Track through the filter chain
@@ -709,7 +709,7 @@ theorem subj_ind_chain_modal_donkey {W Time : Type*} [LE Time]
     (c : SitContext W Time)
     (gs : Assignment (WorldTimeIndex W Time) × WorldTimeIndex W Time)
     (h : gs ∈ subjIndChain history v P Q c)
-    (hQ : IsContextFilter Q) :
+    (hQ : IsEliminative Q) :
     gs.2.world = (gs.1 v).world := by
   unfold subjIndChain at h
   have h_in_ind : gs ∈ dynIND v (P (dynSUBJ history v c)) := hQ _ h
