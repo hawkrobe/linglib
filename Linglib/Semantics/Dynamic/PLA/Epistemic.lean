@@ -24,10 +24,10 @@ For de re/de dicto distinctions:
 - A concept is an intensional way of identifying entities
 -/
 
-namespace Semantics.Dynamic.PLA
+namespace PLA
 
 open Classical
-open Semantics.Dynamic.Core.CCP
+open DynamicSemantics.CCP
 
 
 variable {E : Type*} [Nonempty E]
@@ -330,4 +330,4 @@ See `Semantics.Modality.Kratzer` for the full Kratzer framework with:
 - Galois connection (extension/intension duality)
 -/
 
-end Semantics.Dynamic.PLA
+end PLA

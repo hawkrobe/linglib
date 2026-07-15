@@ -29,9 +29,9 @@ In DPL:
 3. DNE failure: ¬¬φ ≠ φ for anaphora (negation is a test)
 -/
 
-namespace Semantics.Dynamic.DPL
+namespace DPL
 
-open Semantics.Dynamic.Core
+open DynamicSemantics
 
 -- Placeholder: Full implementation TODO
 
@@ -430,4 +430,4 @@ theorem trueAt_eq_closure {E : Type*} (φ : DPLRel E) (g : Assignment E) :
 
 export DPLRel (atom conj exists_ neg impl disj forall_ close)
 
-end Semantics.Dynamic.DPL
+end DPL

@@ -20,7 +20,7 @@ apparatus in `Studies/Hofmann2025.lean`. (The concept drefs of
 [krifka-2026] live with their consumer in `Studies/Krifka2026.lean`.)
 -/
 
-namespace Semantics.Dynamic.Core
+namespace DynamicSemantics
 
 /--
 Entities extended with the universal falsifier ⋆ ([brasoveanu-2006]; adopted
@@ -155,4 +155,4 @@ def updateProp (g : ICDRTAssignment W E) (p : PVar) (s : Set W) : ICDRTAssignmen
 
 end ICDRTAssignment
 
-end Semantics.Dynamic.Core
+end DynamicSemantics

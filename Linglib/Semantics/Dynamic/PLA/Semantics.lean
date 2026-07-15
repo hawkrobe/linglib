@@ -25,10 +25,10 @@ M ⊨ φ means φ is true in M: for all assignments g, there exists a witness
 sequence ê such that M, g, ê ⊨ φ.
 -/
 
-namespace Semantics.Dynamic.PLA
+namespace PLA
 
 open Classical
-open Semantics.Dynamic.Core
+open DynamicSemantics
 
 
 /-- An assignment maps variable indices to entities -/
@@ -484,4 +484,4 @@ theorem formulaToDRS_correct (M : Model E) (φ : Formula) (g h : MergedAssignmen
 
 end Embedding
 
-end Semantics.Dynamic.PLA
+end PLA

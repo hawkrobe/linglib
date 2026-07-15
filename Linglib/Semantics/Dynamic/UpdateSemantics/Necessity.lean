@@ -67,7 +67,7 @@ maximal-element-induced world preorder
 instantiating them.
 -/
 
-namespace Semantics.Dynamic.Default.ExpState
+namespace UpdateSemantics.Default.ExpState
 
 open Core.Order
 
@@ -139,9 +139,9 @@ theorem boxLe_of_respects (σ : ExpState W) (p : W → Prop)
     (Normality.optimal_of_respects_connected σ.order p σ.info hresp hconn hex
       hw).2
 
-end Semantics.Dynamic.Default.ExpState
+end UpdateSemantics.Default.ExpState
 
-namespace Semantics.Dynamic.Default
+namespace UpdateSemantics.Default
 
 variable {W : Type*}
 
@@ -173,4 +173,4 @@ instance (σ : ExpState W) : NormalModality W σ.boxLe where
   necessitation := fun _ _ => trivial
   K _ _ hpq hp w hopt := hpq w hopt (hp w hopt)
 
-end Semantics.Dynamic.Default
+end UpdateSemantics.Default

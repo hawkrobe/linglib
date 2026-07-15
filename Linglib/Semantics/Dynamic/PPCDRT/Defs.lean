@@ -61,7 +61,7 @@ them into PPCDRT. Initial linglib consumer:
 single current consumer).
 -/
 
-namespace Semantics.Dynamic.PPCDRT
+namespace PPCDRT
 
 open Core
 
@@ -80,4 +80,4 @@ variable {E : Type u}
     without changing this signature. -/
 abbrev PPDRSCond (E : Type u) := PluralAssign E → Set Nat → Prop
 
-end Semantics.Dynamic.PPCDRT
+end PPCDRT

@@ -28,9 +28,9 @@ carries them.
 * `Transition.IsExtension` / `le_apply` — Def. 27(ii): information growth.
 -/
 
-namespace Semantics.Dynamic
+namespace DynamicSemantics
 
-open Semantics.Dynamic.Core (lift)
+open DynamicSemantics (lift)
 
 variable {W V M : Type*} {X Y Z : Finset V}
 
@@ -91,7 +91,7 @@ variable [DecidableEq V]
 /-- Forget the bases: the level-0 relation on possibilities (the world is
 preserved). -/
 def toUpdate (u : Transition W M X Y) :
-    Core.DynProp.Update (Possibility W V M) :=
+    DynProp.Update (Possibility W V M) :=
   fun p q => p.world = q.world ∧ u.rel p.world p.assignment q.assignment
 
 /-- Context change ([kamp-vangenabith-reyle-2011], Def. 24): the carrier is
@@ -195,4 +195,4 @@ theorem le_apply [DecidableEq V] (u : Transition W M X Y) (hu : u.IsExtension)
 
 end Transition
 
-end Semantics.Dynamic
+end DynamicSemantics

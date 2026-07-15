@@ -83,7 +83,7 @@ namespace Beck2001
 
 open Semantics.Plurality.Cumulativity
 open Semantics.Plurality.Reciprocal
-open Semantics.Dynamic.PPCDRT
+open PPCDRT
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1: Four Basic Reciprocal Readings (paper §2)

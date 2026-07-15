@@ -33,7 +33,7 @@ produces the same truth conditions as `Intensional.box`.
 
 namespace KeshetAbney2024.PIP
 
-open Semantics.Dynamic.Core
+open DynamicSemantics
 open Core.Logic.Modal (AccessRel box diamond box_T)
 
 variable {W E : Type*}

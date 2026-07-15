@@ -50,7 +50,7 @@ existential quantification into the notion of truth itself.
 
 ## Relation to Core Infrastructure
 
-| This Module | `Semantics.Dynamic.Core` |
+| This Module | `DynamicSemantics` |
 |-------------|------------------------|
 | `HeimFile` | `InfoState W E` (enriched with a domain) |
 | `FCP` (partial) | `CCP` (total) |
@@ -58,9 +58,9 @@ existential quantification into the notion of truth itself.
 | familiarity guard | `InfoState.definedAt` |
 -/
 
-namespace Semantics.Dynamic.FileChangeSemantics
+namespace FileChangeSemantics
 
-open Semantics.Dynamic.Core
+open DynamicSemantics
 open Classical
 
 -- ════════════════════════════════════════════════════
@@ -163,7 +163,7 @@ updates also expand the domain: Dom(F + φ) = Dom(F) ∪ {i₁,...,iₙ}.
 We follow the modern convention where domain expansion is handled
 by `indef` only. This is equivalent in practice because every variable
 in an atomic predicate has been previously introduced. -/
-def atom (pred : Core.Possibility W E → Prop) : FCP W E :=
+def atom (pred : Possibility W ℕ E → Prop) : FCP W E :=
   λ F => some { dom := F.dom, sat := { p ∈ F.sat | pred p } }
 
 /-- Atomic predicate on world only. -/
@@ -333,7 +333,7 @@ theorem seq_id (φ : FCP W E) : FCP.seq φ FCP.id = φ := by
   cases φ F <;> rfl
 
 /-- Atomic updates preserve the domain. -/
-theorem atom_preserves_dom (pred : Core.Possibility W E → Prop) (F : HeimFile W E) :
+theorem atom_preserves_dom (pred : Possibility W ℕ E → Prop) (F : HeimFile W E) :
     (FCP.atom pred F).map (·.dom) = some F.dom := by
   simp [FCP.atom]
 
@@ -371,7 +371,7 @@ theorem cond_eq (φ ψ : FCP W E) :
 
 This is Principle (A): information only grows
 (possibilities only decrease). -/
-theorem atom_eliminative (pred : Core.Possibility W E → Prop)
+theorem atom_eliminative (pred : Possibility W ℕ E → Prop)
     (F : HeimFile W E) (F' : HeimFile W E)
     (h : FCP.atom pred F = some F') :
     F'.sat ⊆ F.sat := by
@@ -438,17 +438,17 @@ section Bridge
 variable {W E : Type*}
 
 /-- Lift a total CCP to a (total) FCP that preserves domain. -/
-def liftCCP (u : CCP (Core.Possibility W E)) : FCP W E :=
+def liftCCP (u : CCP (Possibility W ℕ E)) : FCP W E :=
   λ F => some { dom := F.dom, sat := u F.sat }
 
 /-- Lift preserves sequential composition. -/
-theorem liftCCP_seq (u v : CCP (Core.Possibility W E)) :
+theorem liftCCP_seq (u v : CCP (Possibility W ℕ E)) :
     liftCCP (CCP.seq u v) = FCP.seq (liftCCP u) (liftCCP v) := by
   funext F
   simp [liftCCP, FCP.seq, CCP.seq]
 
 /-- Lifted CCPs are always defined (total). -/
-theorem liftCCP_definedOn (u : CCP (Core.Possibility W E)) (F : HeimFile W E) :
+theorem liftCCP_definedOn (u : CCP (Possibility W ℕ E)) (F : HeimFile W E) :
     definedOn F (liftCCP u) :=
   ⟨{ dom := F.dom, sat := u F.sat }, rfl⟩
 
@@ -461,9 +461,9 @@ def resultSat (φ : FCP W E) (F : HeimFile W E) : Option (InfoState W E) :=
 /-- Lift an Update (relational meaning) to an FCP via the relational image.
 
 This connects FCPs to the relational algebra
-in `Core.DynProp`. The resulting FCP preserves domain and is always
+in `DynamicSemantics.DynProp`. The resulting FCP preserves domain and is always
 defined (total). -/
-def liftDRS (R : DynProp.Update (Core.Possibility W E)) : FCP W E :=
+def liftDRS (R : DynProp.Update (Possibility W ℕ E)) : FCP W E :=
   liftCCP (lift R)
 
 /-- `liftDRS` preserves sequential composition: lifting a relational
@@ -471,7 +471,7 @@ sequence equals sequencing lifted FCPs.
 
 This shows the FCS algebra homomorphically embeds the DynProp
 algebra — the unification underlying [muskens-1996]. -/
-theorem liftDRS_seq (R₁ R₂ : DynProp.Update (Core.Possibility W E)) :
+theorem liftDRS_seq (R₁ R₂ : DynProp.Update (Possibility W ℕ E)) :
     liftDRS (DynProp.dseq R₁ R₂) = FCP.seq (liftDRS R₁) (liftDRS R₂) := by
   simp only [liftDRS]
   rw [lift_dseq]
@@ -483,7 +483,7 @@ set_option linter.unusedSimpArgs false in
 FCS's `atom pred` = lifting `DynProp.test (λ p => pred p)`. This
 shows atomic FCPs are exactly the relational tests, connecting
 Principle (A) to the DynProp algebra. -/
-theorem atom_eq_liftDRS_test (pred : Core.Possibility W E → Prop) :
+theorem atom_eq_liftDRS_test (pred : Possibility W ℕ E → Prop) :
     FCP.atom pred = liftDRS (DynProp.test pred) := by
   funext F
   simp only [FCP.atom, liftDRS, liftCCP, lift, DynProp.test]
@@ -496,4 +496,4 @@ theorem atom_eq_liftDRS_test (pred : Core.Possibility W E → Prop) :
 
 end Bridge
 
-end Semantics.Dynamic.FileChangeSemantics
+end FileChangeSemantics

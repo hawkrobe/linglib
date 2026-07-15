@@ -71,7 +71,7 @@ namespace Tense
 
 open _root_.Core (Assignment)
 open _root_.Intensional (WorldTimeIndex)
-open Semantics.Dynamic.Core
+open DynamicSemantics
 
 /--
 Dynamic PAST: lifts the static `precedes` relation to an eliminative

@@ -46,7 +46,7 @@ so the inquisitive route induces the initial state. Binding height
 
 namespace Mood
 
-open Semantics.Dynamic.Default
+open UpdateSemantics.Default
 open Semantics.Modality (ModalFlavor)
 open HasTarget (target)
 open Semantics.Modality.EventRelativity (EventProjection)

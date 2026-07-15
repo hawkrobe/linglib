@@ -718,8 +718,8 @@ existential introduction but the output state is a subset of the input.
 
 section BilateralBridge
 
-open Semantics.Dynamic.Core (BilateralDen Possibility InfoState)
-open Semantics.Dynamic.Core.BilateralDen (neg exists_ atom)
+open DynamicSemantics (BilateralDen Possibility InfoState)
+open DynamicSemantics.BilateralDen (neg exists_ atom)
 
 variable {W E : Type*}
 
@@ -737,7 +737,7 @@ structure NumberedDRef where
     possibilities from `s` where no domain element witnesses `φ`. -/
 theorem exists_negative_characterization
     (x : Nat) (domain : Set E) (φ : BilateralDen W E)
-    (s : InfoState W E) (p : Possibility W E) :
+    (s : InfoState W E) (p : Possibility W ℕ E) :
     p ∈ (exists_ x domain φ).negative s ↔
     p ∈ s ∧ ∀ e ∈ domain, (p.extend x e) ∉
       φ.positive (s.randomAssign x domain) := by
@@ -748,7 +748,7 @@ theorem exists_negative_characterization
     This is the bilateral analog of universal falsification. -/
 theorem neg_exists_positive
     (x : Nat) (domain : Set E) (φ : BilateralDen W E)
-    (s : InfoState W E) (p : Possibility W E) :
+    (s : InfoState W E) (p : Possibility W ℕ E) :
     p ∈ (neg (exists_ x domain φ)).positive s ↔
     p ∈ s ∧ ∀ e ∈ domain, (p.extend x e) ∉
       φ.positive (s.randomAssign x domain) := by

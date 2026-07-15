@@ -56,7 +56,7 @@ formalized in `Frames.lean` alongside this module.
 
 -/
 
-namespace Semantics.Dynamic.Default
+namespace UpdateSemantics.Default
 
 open Core.Order
 
@@ -412,4 +412,4 @@ theorem compatible_defaults_optimal (φ ψ : W → Prop) (d : Set W)
   exact hnφw ((Normality.refine_le.mp (hopt hvd hle)).2 hφv)
 
 
-end Semantics.Dynamic.Default
+end UpdateSemantics.Default

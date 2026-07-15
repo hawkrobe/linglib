@@ -68,7 +68,7 @@ docstrings here follow that attribution.
 namespace HaugDalrymple2020
 
 open Semantics.Reference.Reciprocals
-open Semantics.Dynamic.PPCDRT
+open PPCDRT
 open Core
 open Trivalent (dist metaAssert)
 open Semantics.Plurality.Cumulativity

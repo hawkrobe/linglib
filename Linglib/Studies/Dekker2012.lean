@@ -50,8 +50,8 @@ cannot be co-imported.
 
 namespace Dekker2012
 
-open Semantics.Dynamic.PLA
-open Semantics.Dynamic.Core.CCP
+open PLA
+open DynamicSemantics.CCP
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1. PLA-side facts: domain vs witness asymmetry
@@ -88,7 +88,7 @@ theorem pla_seq_certifies_both {E : Type*} [Nonempty E] (M : Model E)
     (x : VarIdx) (φ ψ : Formula) (s : InfoState E) (p : Poss E)
     (hp : p ∈ ((Formula.exists_ x φ).update M ;; ψ.update M) s) :
     p ∈ (Formula.exists_ x φ).update M s ∧ ψ.sat M p.1 p.2 := by
-  simp only [Semantics.Dynamic.Core.CCP.seq] at hp
+  simp only [DynamicSemantics.CCP.seq] at hp
   constructor
   · exact update_eliminative M ψ _ hp
   · simp only [Formula.update, InfoState.restrict, Set.mem_setOf_eq] at hp

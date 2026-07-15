@@ -52,10 +52,10 @@ since we don't model discourse markers.
 - **D45/MP5**: Entailment — equivalent to `CCP.entails` (eliminativity makes guard redundant)
 -/
 
-namespace Semantics.Dynamic.ABLE
+namespace Beaver2001.ABLE
 
 open Classical
-open Semantics.Dynamic.Core (CCP InfoStateOf IsEliminative IsTest
+open DynamicSemantics (CCP InfoStateOf IsEliminative IsTest
   updateFromSat eliminative_seq test_eliminative)
 
 variable {P : Type*}
@@ -496,4 +496,4 @@ theorem satisfies_of_entails (φ ψ : Formula P) (σ : InfoStateOf P)
 
 end Formula
 
-end Semantics.Dynamic.ABLE
+end Beaver2001.ABLE

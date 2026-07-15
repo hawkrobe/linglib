@@ -19,7 +19,7 @@ run against the based substrate (`Semantics/Dynamic/State.lean`,
 -/
 
 open FirstOrder FirstOrder.Language DRT
-open Semantics.Dynamic (Possibility State baseSupported_of_iff)
+open DynamicSemantics (Possibility State baseSupported_of_iff)
 
 namespace KampVanGenabithReyle2011
 

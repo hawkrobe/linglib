@@ -47,7 +47,7 @@ the normalcy predicate in the GEN operator for generic sentences.
 namespace Veltman1996
 
 open Core.Logic.TweetyNixon
-open Semantics.Dynamic.Default
+open UpdateSemantics.Default
 open Core.Order
 open Classical
 

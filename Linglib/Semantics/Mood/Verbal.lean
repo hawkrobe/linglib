@@ -42,7 +42,7 @@ complementation.
 
 namespace Mood
 
-open Semantics.Dynamic.Default
+open UpdateSemantics.Default
 open HasTarget (target)
 
 variable {W : Type*}

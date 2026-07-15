@@ -19,7 +19,7 @@ the family's file; the comparisons live in the studies that draw them
 (`Studies/Hofmann2025.lean`, `Studies/Charlow2019.lean`).
 -/
 
-namespace Semantics.Dynamic.Context
+namespace DynamicSemantics
 
 open _root_.Core (Assignment)
 
@@ -44,4 +44,4 @@ instance instAssignmentHasFiberedLookup (E : Type u) :
     HasFiberedLookup Id (Assignment E) Nat PUnit.{u + 1} E where
   iLookup g v _ := g v
 
-end Semantics.Dynamic.Context
+end DynamicSemantics

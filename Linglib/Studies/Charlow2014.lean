@@ -53,7 +53,7 @@ the dichotomy. Each of DPL, DRT, CDRT supplies one stateful framework.
 
 namespace Charlow2014
 
-open Semantics.Dynamic.CDRT (DProp State)
+open CDRT (DProp State)
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1. The dichotomy

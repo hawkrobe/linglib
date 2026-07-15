@@ -345,7 +345,7 @@ The compositional context determines how context-sensitive expressions
 (indexicals, gradable adjectives, configurational predicates) are
 interpreted; the world determines matters of fact.
 
-Structurally analogous to `Possibility W E` in `Dynamic/Possibility.lean`
+Structurally analogous to `Possibility W V M` in `Dynamic/Possibility.lean`
 (⟨world, assignment⟩ pairs in dynamic semantics), but the non-world
 parameter is a compositional context rather than a variable assignment. -/
 structure ContextFragment (C W : Type*) where

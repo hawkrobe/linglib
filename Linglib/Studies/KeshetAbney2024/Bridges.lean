@@ -41,7 +41,7 @@ formalized here.
 namespace KeshetAbney2024.PIP.Bridges
 
 open KeshetAbney2024.PIP
-open Semantics.Dynamic.Core (IVar ICDRTAssignment Entity IContext)
+open DynamicSemantics (IVar ICDRTAssignment Entity IContext)
 open Core.Logic.Modal (AccessRel box diamond)
 open Core.Logic.Modal.Logic (frameConditions)
 

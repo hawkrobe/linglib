@@ -15,7 +15,7 @@ In Update Semantics:
 
 -/
 
-namespace Semantics.Dynamic.UpdateSemantics
+namespace UpdateSemantics
 
 open Classical
 
@@ -30,7 +30,7 @@ abbrev State (W : Type*) := Set W
 Update function: how a sentence modifies a state. This is the spine's
 `CCP W` (set-transformer context change potential) under Veltman's name.
 -/
-abbrev Update (W : Type*) := Core.CCP W
+abbrev Update (W : Type*) := DynamicSemantics.CCP W
 
 /--
 Propositional update: eliminate worlds where φ fails.
@@ -45,41 +45,41 @@ Conjunction: sequential update.
 
 ⟦φ ∧ ψ⟧ = ⟦ψ⟧ ∘ ⟦φ⟧
 
-Delegates to `Core.CCP.seq`.
+Delegates to `DynamicSemantics.CCP.seq`.
 -/
 def Update.conj {W : Type*} (φ ψ : Update W) : Update W :=
-  Core.CCP.seq φ ψ
+  DynamicSemantics.CCP.seq φ ψ
 
 /--
 Negation: complement within the input state.
 
 ⟦¬φ⟧(s) = s \ ⟦φ⟧(s)   ([veltman-1996])
 
-Delegates to `Core.CCP.neg`. The whole-state consistency test is
-`Core.CCP.negTest`.
+Delegates to `DynamicSemantics.CCP.neg`. The whole-state consistency test is
+`DynamicSemantics.CCP.negTest`.
 -/
 def Update.neg {W : Type*} (φ : Update W) : Update W :=
-  Core.CCP.neg φ
+  DynamicSemantics.CCP.neg φ
 
 /--
 Epistemic "might": compatibility test.
 
 ⟦might φ⟧(s) = s if ⟦φ⟧(s) ≠ ∅, else ∅
 
-Delegates to `Core.CCP.might`.
+Delegates to `DynamicSemantics.CCP.might`.
 -/
 noncomputable def Update.might {W : Type*} (φ : Update W) : Update W :=
-  Core.CCP.might φ
+  DynamicSemantics.CCP.might φ
 
 /--
 Epistemic "must": universal test.
 
 ⟦must φ⟧(s) = s if ⟦φ⟧(s) = s, else ∅
 
-Delegates to `Core.CCP.must`.
+Delegates to `DynamicSemantics.CCP.must`.
 -/
 noncomputable def Update.must {W : Type*} (φ : Update W) : Update W :=
-  Core.CCP.must φ
+  DynamicSemantics.CCP.must φ
 
 /--
 Might is a TEST: it doesn't change the state (if it passes).
@@ -87,7 +87,7 @@ Might is a TEST: it doesn't change the state (if it passes).
 theorem might_is_test {W : Type*} (φ : Update W) (s : State W)
     (h : (φ s).Nonempty) :
     Update.might φ s = s := by
-  simp [Update.might, Core.CCP.might, Core.CCP.guard, h]
+  simp [Update.might, DynamicSemantics.CCP.might, DynamicSemantics.CCP.guard, h]
 
 /--
 Order matters for epistemic might.
@@ -106,15 +106,15 @@ theorem might_order_matters {W : Type*} [DecidableEq W] [Nontrivial W] :
   obtain ⟨w₁, w₂, hne⟩ := exists_pair_ne W
   refine ⟨fun w => w = w₁, inferInstance, {w₁, w₂}, ?_, ?_⟩
   · -- "p and might(not p)" fails: after learning p, only w₁ remains, and ¬p w₁ is false
-    simp only [Update.conj, Core.CCP.seq, Update.prop, Update.might, Core.CCP.might,
-      Core.CCP.guard]
+    simp only [Update.conj, DynamicSemantics.CCP.seq, Update.prop, Update.might, DynamicSemantics.CCP.might,
+      DynamicSemantics.CCP.guard]
     have h_not_nonempty :
         ¬({w ∈ {w ∈ ({w₁, w₂} : Set W) | w = w₁} | ¬w = w₁}).Nonempty := by
       rintro ⟨w, ⟨_, hw_p⟩, hw_np⟩; exact hw_np hw_p
     simp only [h_not_nonempty, ↓reduceIte]
   · -- "might(not p) and p" succeeds: might test passes on {w₁, w₂}, then p keeps w₁
-    simp only [Update.conj, Core.CCP.seq, Update.prop, Update.might, Core.CCP.might,
-      Core.CCP.guard]
+    simp only [Update.conj, DynamicSemantics.CCP.seq, Update.prop, Update.might, DynamicSemantics.CCP.might,
+      DynamicSemantics.CCP.guard]
     have h_nonempty : ({w ∈ ({w₁, w₂} : Set W) | ¬w = w₁}).Nonempty :=
       ⟨w₂, Or.inr rfl, hne.symm⟩
     simp only [h_nonempty, ↓reduceIte]
@@ -206,14 +206,14 @@ noncomputable def PUpdate.presup {W : Type*} (p φ : W → Prop) : PState W → 
       none
 
 /-- `PUpdate.presup` is the `Option`-valued shadow of
-    `Core.PartialCCP.ofPartialProp`: defined (≠ `none`) at `some s` exactly
+    `DynamicSemantics.PartialCCP.ofPartialProp`: defined (≠ `none`) at `some s` exactly
     when `s` admits the corresponding partial update. `PartialCCP` is the
     canonical `Part`-based form; this clause survives for the
     [yagi-2025] disjunction machinery below. -/
 theorem PUpdate.presup_ne_none_iff_admits {W : Type*} (p φ : W → Prop)
     (s : State W) :
     PUpdate.presup p φ (some s) ≠ none ↔
-      (Core.PartialCCP.ofPartialProp ⟨p, φ⟩).admits s := by
+      (DynamicSemantics.PartialCCP.ofPartialProp ⟨p, φ⟩).admits s := by
   simp only [PUpdate.presup]
   split_ifs with h
   · refine ⟨fun _ w hw => ?_, fun _ => Option.some_ne_none _⟩
@@ -342,4 +342,4 @@ theorem presup_disj_uninformative_when_supported {W : Type*}
     · exact Set.mem_union_left _ ⟨hw, hφ⟩
     · exact Set.mem_union_right _ ⟨⟨hw, fun h => hφ h.2⟩, hψ_sub w ⟨hw, fun h => hφ h.2⟩⟩
 
-end Semantics.Dynamic.UpdateSemantics
+end UpdateSemantics

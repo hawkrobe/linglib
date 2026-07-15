@@ -34,10 +34,10 @@ dref's as functions taking info states as arguments.
 - BUS: Dynamic Ty2 + bilateral (pos/neg) structure
 -/
 
-namespace Semantics.Dynamic.Core
+namespace DynamicSemantics
 
 -- Re-export the Update algebra so downstream code that opens
--- Semantics.Dynamic.Core continues to see Update, Condition, dseq, test, etc.
+-- DynamicSemantics continues to see Update, Condition, dseq, test, etc.
 export DynProp (Update Condition
   dseq test dneg dimpl ddisj closure
   valid entails
@@ -193,4 +193,4 @@ theorem specificDref_extend_invariant {S E : Type*} [AssignmentStructure S E]
   exact AssignmentStructure.extend_other i u (specificDref e) d h.symm
 
 
-end Semantics.Dynamic.Core
+end DynamicSemantics

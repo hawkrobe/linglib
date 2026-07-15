@@ -67,9 +67,9 @@ Appendix B as a Writer monad.
 
 namespace Charlow2021
 
-open Semantics.Dynamic.Core
+open DynamicSemantics
 open Semantics.Composition.Continuation
-open scoped Semantics.Dynamic.Core.DynProp
+open scoped DynamicSemantics.DynProp
 
 /-! ### Witness models: the cumulative-reading puzzle
 
@@ -358,7 +358,7 @@ def reify (p : PostSupp S (Update S)) : Update S := dseq p.val p.postsup
 /-- Truth of a bi-dimensional meaning at an assignment (eq. 56): the reified
 update is true at `i` in the substrate sense. -/
 def trueAt (p : PostSupp S (Update S)) (i : S) : Prop :=
-  Semantics.Dynamic.Core.closure p.reify i
+  DynamicSemantics.closure p.reify i
 
 end PostSupp
 
@@ -406,7 +406,7 @@ variable {W E : Type*}
 abbrev State (W E : Type*) := Set (W × Core.Assignment E)
 
 /-- Context change potential over Charlow's contexts. -/
-abbrev State.CCP (W E : Type*) := Semantics.Dynamic.Core.CCP (W × Core.Assignment E)
+abbrev State.CCP (W E : Type*) := DynamicSemantics.CCP (W × Core.Assignment E)
 
 /-- Existential dref introduction at the state level (eq. 74): for each
 world–assignment pair in the context, non-deterministically extend the
@@ -589,7 +589,7 @@ every state-level CCP is distributive. Witness: the constant CCP
 yields `∅`. -/
 theorem dependent_indefinites_need_extra {W E : Type*} [Nonempty W] [Nonempty E] :
     ¬ ∀ (depIndef : State.CCP W E),
-      Semantics.Dynamic.Core.IsDistributive depIndef := by
+      DynamicSemantics.IsDistributive depIndef := by
   intro h
   have h0 := h (fun _ => Set.univ) ∅
   simp only [Set.mem_empty_iff_false, false_and, exists_false, Set.setOf_false] at h0

@@ -36,7 +36,7 @@ dynamic conjunction, conditional, and disjunction
   `admits_pdisj_ofPartialProp` — the filtering connectives, derived
 -/
 
-namespace Semantics.Dynamic.Core
+namespace DynamicSemantics
 
 open Semantics.Presupposition
 
@@ -193,4 +193,4 @@ theorem admits_pneg_ofPartialProp (p : PartialProp W) (s : InfoStateOf W) :
 
 end PartialCCP
 
-end Semantics.Dynamic.Core
+end DynamicSemantics

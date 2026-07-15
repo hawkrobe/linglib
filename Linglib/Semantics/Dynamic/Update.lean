@@ -80,7 +80,7 @@ dynamic frameworks should declare which DNE strategy they adopt and
 link to one of these comparisons.
 -/
 
-namespace Semantics.Dynamic.Core.DynProp
+namespace DynamicSemantics.DynProp
 
 /-! ### Core types -/
 
@@ -226,7 +226,7 @@ theorem dseq_test (D : Update S) (C : Condition S) (hC : ∀ i, C i) :
 test as unit (`dseq_assoc`, `test_dseq`, `dseq_test`). Scoped because
 `Update S` is an abbreviation for `S → S → Prop`: a global instance would
 attach `*`/`1` to the bare function type. Activate with
-`open scoped Semantics.Dynamic.Core.DynProp`; mathlib's
+`open scoped DynamicSemantics.DynProp`; mathlib's
 `WriterT (Update S) Id` then gets `Monad`/`LawfulMonad` for free. -/
 scoped instance : Monoid (Update S) where
   mul := dseq
@@ -280,4 +280,4 @@ theorem dseq_closure (D₁ D₂ : Update S) :
 
 end Theorems
 
-end Semantics.Dynamic.Core.DynProp
+end DynamicSemantics.DynProp

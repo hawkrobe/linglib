@@ -21,12 +21,12 @@ import Linglib.Semantics.Dynamic.ContextChange
 - Dynamic conjunction: non-commutative, non-idempotent
 -/
 
-namespace Semantics.Dynamic.PLA
+namespace PLA
 
--- We use Core.CCP infrastructure directly via qualified names
+-- We use DynamicSemantics.CCP infrastructure directly via qualified names
 
 open Classical
-open Semantics.Dynamic.Core.CCP
+open DynamicSemantics.CCP
 
 
 /--
@@ -89,15 +89,15 @@ theorem Formula.content_conj {E : Type*} [Nonempty E] (M : Model E) (φ ψ : For
 /--
 PLA Possibility type: (assignment, witness sequence) pairs.
 
-This instantiates the generic Core.CCP framework for PLA.
+This instantiates the generic DynamicSemantics.CCP framework for PLA.
 -/
 abbrev Poss (E : Type*) := Assignment E × WitnessSeq E
 
 /--
 PLA satisfaction relation: possibility satisfies formula.
 
-This bridges PLA to the Core.CCP infrastructure, matching the signature
-`P → φ → Prop` expected by Core.updateFromSat.
+This bridges PLA to the DynamicSemantics.CCP infrastructure, matching the signature
+`P → φ → Prop` expected by DynamicSemantics.updateFromSat.
 -/
 def satisfiesPLA {E : Type*} [Nonempty E] (M : Model E) :
     Poss E → Formula → Prop :=
@@ -114,28 +114,28 @@ def Formula.satPoss {E : Type*} [Nonempty E] (M : Model E) (φ : Formula) :
 /--
 An update is a Context Change Potential over PLA possibilities.
 
-We inherit the Monoid structure from `Core.CCP`:
-- Identity: `Core.CCP.id` (leaves state unchanged)
-- Composition: `Core.CCP.seq` (do u, then v), notation `;`
+We inherit the Monoid structure from `DynamicSemantics.CCP`:
+- Identity: `DynamicSemantics.CCP.id` (leaves state unchanged)
+- Composition: `DynamicSemantics.CCP.seq` (do u, then v), notation `;`
 - Associativity: guaranteed by the Monoid laws
 -/
-abbrev Update (E : Type*) := Core.CCP (Poss E)
+abbrev Update (E : Type*) := DynamicSemantics.CCP (Poss E)
 
 namespace Update
 
 variable {E : Type*}
 
-/-- Identity update: leaves state unchanged (from Core.CCP) -/
-abbrev id : Update E := Core.CCP.id
+/-- Identity update: leaves state unchanged (from DynamicSemantics.CCP) -/
+abbrev id : Update E := DynamicSemantics.CCP.id
 
-/-- Absurd update: always yields empty state (from Core.CCP) -/
-abbrev absurd : Update E := Core.CCP.absurd
+/-- Absurd update: always yields empty state (from DynamicSemantics.CCP) -/
+abbrev absurd : Update E := DynamicSemantics.CCP.absurd
 
--- Sequential composition notation comes from Core.CCP
--- infixl:70 " ;; " => Core.CCP.seq
+-- Sequential composition notation comes from DynamicSemantics.CCP
+-- infixl:70 " ;; " => DynamicSemantics.CCP.seq
 
-/-- Absurd before anything yields absurd output (from Core.CCP) -/
-theorem seq_absurd (u : Update E) : Core.CCP.seq u absurd = absurd := Core.CCP.seq_absurd u
+/-- Absurd before anything yields absurd output (from DynamicSemantics.CCP) -/
+theorem seq_absurd (u : Update E) : DynamicSemantics.CCP.seq u absurd = absurd := DynamicSemantics.CCP.seq_absurd u
 
 end Update
 
@@ -249,7 +249,7 @@ theorem Formula.dynConj_eq {E : Type*} [Nonempty E] (M : Model E) (φ ψ : Formu
 theorem Formula.mem_dynConj {E : Type*} [Nonempty E] (M : Model E) (φ ψ : Formula)
     (s : InfoState E) (g : Assignment E) (ê : WitnessSeq E) :
     (g, ê) ∈ (φ.dynConj M ψ) s ↔ (g, ê) ∈ s ∧ φ.sat M g ê ∧ ψ.sat M g ê := by
-  simp only [Formula.dynConj, Core.CCP.seq, Formula.mem_update]
+  simp only [Formula.dynConj, DynamicSemantics.CCP.seq, Formula.mem_update]
   tauto
 
 /--
@@ -261,7 +261,7 @@ theorem dynConj_static {E : Type*} [Nonempty E] (M : Model E)
     (_hφ : φ.domain = ∅) (_hψ : ψ.domain = ∅) :
     (φ.dynConj M ψ) s = (φ ⋀ ψ).update M s := by
   ext ⟨g, ê⟩
-  simp only [Formula.dynConj, Core.CCP.seq, Formula.mem_update, Formula.sat]
+  simp only [Formula.dynConj, DynamicSemantics.CCP.seq, Formula.mem_update, Formula.sat]
   tauto
 
 
@@ -313,11 +313,11 @@ theorem update_elim {E : Type*} [Nonempty E] (M : Model E) (s : InfoState E)
 
 
 /--
-PLA formula update equals Core.updateFromSat via satPoss.
+PLA formula update equals DynamicSemantics.updateFromSat via satPoss.
 -/
 theorem update_eq_updateFromSat {E : Type*} [Nonempty E] (M : Model E) (φ : Formula)
     (s : InfoState E) :
-    φ.update M s = Core.updateFromSat (satisfiesPLA M) φ s := rfl
+    φ.update M s = DynamicSemantics.updateFromSat (satisfiesPLA M) φ s := rfl
 
 /--
 Eliminativity: updates never add possibilities, only remove them.
@@ -325,29 +325,29 @@ Eliminativity: updates never add possibilities, only remove them.
 This is the fundamental property of dynamic semantics: information only grows.
 Every update is a subset of the input state.
 
-This follows from `Core.updateFromSat_eliminative`.
+This follows from `DynamicSemantics.updateFromSat_eliminative`.
 -/
 theorem update_eliminative {E : Type*} [Nonempty E] (M : Model E) (φ : Formula)
     (s : InfoState E) : φ.update M s ⊆ s :=
-  Core.updateFromSat_eliminative (satisfiesPLA M) φ s
+  DynamicSemantics.updateFromSat_eliminative (satisfiesPLA M) φ s
 
 /--
 PLA's formula update is eliminative in the Core sense.
 -/
 theorem update_isEliminative {E : Type*} [Nonempty E] (M : Model E) (φ : Formula) :
-    Core.IsEliminative (φ.update M : Update E) :=
-  Core.updateFromSat_eliminative (satisfiesPLA M) φ
+    DynamicSemantics.IsEliminative (φ.update M : Update E) :=
+  DynamicSemantics.updateFromSat_eliminative (satisfiesPLA M) φ
 
 /--
 Monotonicity of update: larger input states yield larger output states.
 
 If s ⊆ t, then φ.update(s) ⊆ φ.update(t).
 
-This follows from `Core.updateFromSat_monotone`.
+This follows from `DynamicSemantics.updateFromSat_monotone`.
 -/
 theorem update_monotone {E : Type*} [Nonempty E] (M : Model E) (φ : Formula)
     (s t : InfoState E) (h : s ⊆ t) : φ.update M s ⊆ φ.update M t :=
-  Core.updateFromSat_monotone (satisfiesPLA M) φ h
+  DynamicSemantics.updateFromSat_monotone (satisfiesPLA M) φ h
 
 /--
 Support is downward closed: if t ⊆ s and s supports φ, then t supports φ.
@@ -415,7 +415,7 @@ theorem static_seq_is_intersection {E : Type*} [Nonempty E] (M : Model E)
     (φ ψ : Formula) (s : InfoState E)
     (_hφ : φ.domain = ∅) (_hψ : ψ.domain = ∅) :
     (φ.update M ;; ψ.update M) s = s ∩ φ.content M ∩ ψ.content M := by
-  simp only [Core.CCP.seq, contents_updates_equiv, Set.inter_assoc]
+  simp only [DynamicSemantics.CCP.seq, contents_updates_equiv, Set.inter_assoc]
 
 /-- Only ∃ introduces discourse referents. -/
 theorem dynamicity_source_exists (x : VarIdx) (φ : Formula) :
@@ -590,7 +590,7 @@ figure in the *membership condition*, not in the surviving possibilities. -/
 
 section UpdateAPI
 
-open Semantics.Dynamic.Core.CCP
+open DynamicSemantics.CCP
 
 variable {E : Type*} [Nonempty E]
 
@@ -623,7 +623,7 @@ theorem exists_domain_nonempty (x : VarIdx) (φ : Formula) :
 theorem seq_update_mem (M : Model E) (φ ψ : Formula) (s : InfoState E) (p : Poss E) :
     p ∈ (φ.update M ;; ψ.update M) s ↔
     p ∈ s ∧ φ.sat M p.1 p.2 ∧ ψ.sat M p.1 p.2 := by
-  simp only [Core.CCP.seq, Formula.update, InfoState.restrict, Set.mem_setOf_eq]
+  simp only [DynamicSemantics.CCP.seq, Formula.update, InfoState.restrict, Set.mem_setOf_eq]
   tauto
 
 /-- Sequential update as set comprehension. -/
@@ -663,4 +663,4 @@ theorem static_existential_local_scope (x : VarIdx) (φ ψ : Formula) :
 
 end UpdateAPI
 
-end Semantics.Dynamic.PLA
+end PLA

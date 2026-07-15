@@ -37,7 +37,7 @@ intrinsic presupposition is layered on separately in `toPartialProp`.
 The unification this core was built toward is realized by the seam lemma
 `PronounDenotation.interpPronoun_eq_iLookup`: the pronoun's static
 `interpPronoun` selector *is* the `M = Id` extensional-baseline instance of
-`Semantics.Dynamic.Context.HasFiberedLookup.iLookup`, modulo the `Option`
+`DynamicSemantics.HasFiberedLookup.iLookup`, modulo the `Option`
 partiality layer this signature adds. Static reference and dynamic
 (`Set`/`PMF`) anaphora therefore meet at one lookup interface on the static
 fiber, and bound pronouns share that selector with binding supplied externally

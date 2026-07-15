@@ -19,7 +19,7 @@ eliminative-vs-generative dichotomy of [groenendijk-stokhof-veltman-1996]
   a Kleisli arrow (`Mood.dynSUBJ`).
 -/
 
-namespace Semantics.Dynamic.Core
+namespace DynamicSemantics
 
 open _root_.Core (Assignment)
 open _root_.Intensional (WorldTimeIndex)
@@ -258,4 +258,4 @@ theorem dynIntroduce_current_in_gen {W Time : Type*}
   obtain ⟨g, s, s', hc, h_gen, _, h_eq⟩ := h
   exact ⟨s, ⟨g, hc⟩, h_eq ▸ h_gen⟩
 
-end Semantics.Dynamic.Core
+end DynamicSemantics

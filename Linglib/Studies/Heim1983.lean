@@ -160,14 +160,14 @@ theorem filtering_removes_trigger :
 /-! ### Filtering derived from partial CCPs
 
 [heim-1983]'s actual machinery: sentences denote *partial* context change
-potentials (`Semantics.Dynamic.Core.PartialCCP`), and admittance does the
+potentials (`DynamicSemantics.PartialCCP`), and admittance does the
 projection work. The conditional's CCP is admitted by every context — the
 antecedent's update satisfies the consequent's king-presupposition — while
 the bare consequent's CCP is not admitted by the full context. The
 filtering recorded in the trigger tables above is a theorem, not a table
 entry. -/
 
-open Semantics.Dynamic.Core in
+open DynamicSemantics in
 /-- Every context admits ⟦if the king exists, the king is bald⟧: the
     antecedent's update filters the consequent's presupposition
     ([heim-1983]'s conditional CCP). -/
@@ -180,7 +180,7 @@ theorem conditional_admitted_everywhere (c : Set KingWorld) :
   · trivial
   · exact ha
 
-open Semantics.Dynamic.Core in
+open DynamicSemantics in
 /-- The bare consequent ⟦the king is bald⟧ is NOT admitted by the full
     context: the `noKing` world fails the presupposition, which therefore
     projects. -/
