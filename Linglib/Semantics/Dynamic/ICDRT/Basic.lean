@@ -48,10 +48,10 @@ distributive — unlike test-based dynamic negation that inspects whole
 states.
 -/
 
-namespace Semantics.Dynamic.Core
+namespace DynamicSemantics
 
 open Core (Assignment)
-open Core.DynProp
+open DynProp
 
 variable {W E : Type*}
 
@@ -668,8 +668,8 @@ theorem toDynProp_id_algebraic (c : IContext W E) :
 /-- ICDRT contexts expose the shared lookup interface at `M = Entity`
 (`Dynamic/Lookup.lean`), making ICDRT lookups comparable with the
 extensional (`M = Id`) and [charlow-2019] (`M = Set`) families. -/
-instance : Semantics.Dynamic.Context.HasFiberedLookup Entity
+instance : DynamicSemantics.HasFiberedLookup Entity
     (ICDRTAssignment W E) IVar W E where
   iLookup i v w := i.indiv v w
 
-end Semantics.Dynamic.Core
+end DynamicSemantics

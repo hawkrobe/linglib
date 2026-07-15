@@ -288,7 +288,7 @@ theorem properName_deJure {C W E : Type*} (e : E) :
 
 /-! ## Bridge: PLA and the Frege Puzzle
 
-[dekker-2012]'s cover-relative belief framework (`Semantics.Dynamic.PLA`) gives a
+[dekker-2012]'s cover-relative belief framework (`PLA`) gives a
 formal mechanism for Frege puzzles: two concepts can co-refer at the actual
 world but diverge in belief-accessible worlds. This is exactly the scenario
 where proper names have the same referent but different cognitive significance.

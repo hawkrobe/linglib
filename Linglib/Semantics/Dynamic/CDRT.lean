@@ -21,9 +21,9 @@ the paper's derivations) and the weakest-precondition calculus live in
 `Studies/Muskens1996.lean`.
 -/
 
-namespace Semantics.Dynamic.CDRT
+namespace CDRT
 
-open Semantics.Dynamic.Core.DynProp
+open DynamicSemantics.DynProp
 
 /-- CDRT state: Muskens's type `s`, concretely an assignment `Nat → E`.
 His *registers* are the maps from states (see `dref`), not the states —
@@ -35,7 +35,7 @@ abbrev State (E : Type*) := Core.Assignment E
 
 /-- Register lookup as a Dynamic Ty2 dref: Muskens's type `se`,
 picking out the value stored at position `n`. -/
-def dref {E : Type*} (n : Nat) : Semantics.Dynamic.Core.Dref (State E) E :=
+def dref {E : Type*} (n : Nat) : DynamicSemantics.Dref (State E) E :=
   λ r => r n
 
 /-- Dynamic proposition (box, type `s(st)`): the relational `Update`
@@ -68,7 +68,7 @@ abbrev DProp.impl {E : Type*} (φ ψ : DProp E) : DProp E := test (dimpl φ ψ)
 /-- Dynamic disjunction as a test (SEM2, [muskens-1996] p. 148): the
 spine's `ddisj` via `test`. -/
 abbrev DProp.ddisj {E : Type*} (φ ψ : DProp E) : DProp E :=
-  test (Semantics.Dynamic.Core.DynProp.ddisj φ ψ)
+  test (DynamicSemantics.DynProp.ddisj φ ψ)
 
 /-- Truth at a state: the spine's `closure`. -/
 abbrev DProp.true_at {E : Type*} (φ : DProp E) (i : State E) : Prop :=
@@ -97,4 +97,4 @@ theorem DProp.ofStatic_true_at {E : Type*} (p : SProp E) (i : State E) :
   simp only [DProp.true_at, closure, DProp.ofStatic, test]
   exact ⟨λ ⟨_, rfl, h⟩ => h, λ h => ⟨i, rfl, h⟩⟩
 
-end Semantics.Dynamic.CDRT
+end CDRT

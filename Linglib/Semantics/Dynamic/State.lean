@@ -35,10 +35,6 @@ Under it the chapter's definitions collapse to order theory:
 bare set of possibilities; `State` adds the base. The transitions acting on
 these states live in `Transition.lean`.
 
-The namespace is `Semantics.Dynamic` (not the legacy `Semantics.Dynamic.Core`
-of the pre-2026-07 spine): the based layer starts the clean namespace the
-rest of the spine migrates into.
-
 ## Main declarations
 
 * `BaseSupported` — membership depends only on assignment values at `X`
@@ -49,7 +45,7 @@ rest of the spine migrates into.
   (presheaf restriction along base inclusion).
 -/
 
-namespace Semantics.Dynamic
+namespace DynamicSemantics
 
 variable {W V M : Type*}
 
@@ -249,4 +245,4 @@ theorem restrict_le {I : State W V M} {Y : Finset V} (h : Y ⊆ I.base) :
 
 end State
 
-end Semantics.Dynamic
+end DynamicSemantics

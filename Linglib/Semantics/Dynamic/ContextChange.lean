@@ -21,7 +21,7 @@ operations (`CCP.negTest`, `CCP.might`, `CCP.must`) test the *whole*
 input state rather than filtering per-element.
 -/
 
-namespace Semantics.Dynamic.Core
+namespace DynamicSemantics
 
 open _root_.Core (Assignment)
 
@@ -70,7 +70,7 @@ theorem seq_id (u : CCP P) : u ;; id = u := rfl
 /-- CCPs form a monoid under sequential composition. Scoped because
 `CCP P` is an abbreviation for `Set P → Set P`: a global instance would
 attach `*`/`1` to a bare function type for every importer. Activate with
-`open scoped Semantics.Dynamic.Core.CCP`. -/
+`open scoped DynamicSemantics.CCP`. -/
 scoped instance : Monoid (CCP P) where
   mul := seq
   one := id
@@ -571,4 +571,4 @@ theorem updateFromSat_eq_lift_test {P φ : Type*} (sat : P → φ → Prop) (ψ 
 
 end RelationalBridge
 
-end Semantics.Dynamic.Core
+end DynamicSemantics

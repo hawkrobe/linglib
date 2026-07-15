@@ -33,7 +33,7 @@ This distinction prevents variable clash and enables clean compositional semanti
 Uses `Finset.biUnion` instead of `List.foldl` for cleaner proofs.
 -/
 
-namespace Semantics.Dynamic.PLA
+namespace PLA
 
 open Classical
 
@@ -214,4 +214,4 @@ theorem Formula.resolve_no_pronouns (φ : Formula) (ρ : Resolution) :
   | conj φ ψ ih1 ih2 => simp [Formula.resolve, Formula.range, ih1, ih2]
   | exists_ i φ ih => exact ih
 
-end Semantics.Dynamic.PLA
+end PLA

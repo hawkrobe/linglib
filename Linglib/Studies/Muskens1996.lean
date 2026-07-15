@@ -9,7 +9,7 @@ import Mathlib.Data.Fin.VecNotation
 
 [muskens-1996] shows that DRT embeds in classical type theory once states are
 atomic and discourse referents are functions from states — the Dynamic Ty2
-substrate at `Semantics.Dynamic.Core`. This study covers the paper's two
+substrate at `DynamicSemantics`. This study covers the paper's two
 worked developments over that substrate:
 
 * **The compositional fragment** (§III.4, §IV): lexical translations T₀ for a
@@ -35,7 +35,7 @@ application, `dseq`, and λ-abstraction.
 
 namespace Muskens1996
 
-open Semantics.Dynamic.Core
+open DynamicSemantics
 
 variable {S E : Type*}
 
@@ -301,7 +301,7 @@ the correspondence whose DPL face lives in
 section CylindricAlgebra
 
 open Core.CylindricAlgebra
-open Semantics.Dynamic.CDRT
+open CDRT
 
 /-- Discourse referent introduction under closure = cylindrification.
 

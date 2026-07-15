@@ -65,7 +65,7 @@ distributive operators (§5) and logophoric antecedents (§6) — see
 
 namespace Semantics.Reference.Reciprocals
 
-open Semantics.Dynamic.PPCDRT
+open PPCDRT
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1: Anaphoric Relations ([higginbotham-1985], [williams-1991])

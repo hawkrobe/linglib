@@ -397,7 +397,7 @@ class DynamicTruth (δ : Type u) (i : outParam (Type v))
 -- § 9. Substrate instance: the canonical DPL substrate
 -- ════════════════════════════════════════════════════════════════
 
-open Semantics.Dynamic.DPL
+open DPL
 
 /-- The DPL relational meaning type (`DPLRel E := (Nat → E) → (Nat → E) → Prop`)
 is a `DynamicSubstrate` via its native conjunction and negation. -/

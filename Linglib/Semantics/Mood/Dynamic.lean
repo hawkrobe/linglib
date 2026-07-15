@@ -45,7 +45,7 @@ namespace Mood
 
 open Core (Assignment)
 open Intensional (WorldTimeIndex)
-open HistoricalAlternatives Semantics.Dynamic.Core
+open HistoricalAlternatives DynamicSemantics
 
 variable {W Time : Type*} [LE Time] (history : HistoricalAlternatives W Time)
   (v : SVar) (c : SitContext W Time)

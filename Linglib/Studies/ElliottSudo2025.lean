@@ -45,8 +45,8 @@ Under these simplification conditions, the general FC preconditions
 
 namespace ElliottSudo2025
 
-open Semantics.Dynamic.Core
-open Semantics.Dynamic
+open DynamicSemantics
+open DynamicSemantics
 open Classical
 
 variable {W E : Type*}
@@ -132,7 +132,7 @@ prefix:max "□ᵇ" => box
 
 /-- Diamond positive is a test (returns s or ∅). -/
 theorem diamond_positive_isTest (φ : BUSDen W E) :
-    IsTest (◇ᵇφ).positive (P := Core.Possibility W E) := by
+    IsTest (◇ᵇφ).positive (P := Possibility W ℕ E) := by
   intro s
   show (if (φ.positive s).consistent then s else ∅) = s ∨
        (if (φ.positive s).consistent then s else ∅) = ∅
@@ -142,7 +142,7 @@ theorem diamond_positive_isTest (φ : BUSDen W E) :
 
 /-- Diamond negative is a test (returns s or ∅). -/
 theorem diamond_negative_isTest (φ : BUSDen W E) :
-    IsTest (◇ᵇφ).negative (P := Core.Possibility W E) := by
+    IsTest (◇ᵇφ).negative (P := Possibility W ℕ E) := by
   intro s
   show (if s ⪯ φ.negative s then s else ∅) = s ∨
        (if s ⪯ φ.negative s then s else ∅) = ∅
@@ -152,7 +152,7 @@ theorem diamond_negative_isTest (φ : BUSDen W E) :
 
 /-- Diamond positive is eliminative (from IsTest). -/
 theorem diamond_positive_eliminative (φ : BUSDen W E) :
-    IsEliminative (◇ᵇφ).positive (P := Core.Possibility W E) :=
+    IsEliminative (◇ᵇφ).positive (P := Possibility W ℕ E) :=
   test_eliminative _ (diamond_positive_isTest φ)
 
 /-- Diamond positive subset (convenience form). -/
@@ -162,7 +162,7 @@ theorem diamond_positive_subset (φ : BUSDen W E) (s : InfoState W E) :
 
 /-- Diamond negative is eliminative (from IsTest). -/
 theorem diamond_negative_eliminative (φ : BUSDen W E) :
-    IsEliminative (◇ᵇφ).negative (P := Core.Possibility W E) :=
+    IsEliminative (◇ᵇφ).negative (P := Possibility W ℕ E) :=
   test_eliminative _ (diamond_negative_isTest φ)
 
 /-- Diamond negative subset (convenience form). -/
@@ -172,12 +172,12 @@ theorem diamond_negative_subset (φ : BUSDen W E) (s : InfoState W E) :
 
 /-- Box positive is eliminative (□φ = ¬◇¬φ, so positive = diamond negative of ¬φ). -/
 theorem box_positive_eliminative (φ : BUSDen W E) :
-    IsEliminative (□ᵇφ).positive (P := Core.Possibility W E) :=
+    IsEliminative (□ᵇφ).positive (P := Possibility W ℕ E) :=
   diamond_negative_eliminative (BilateralDen.neg φ)
 
 /-- Box negative is eliminative. -/
 theorem box_negative_eliminative (φ : BUSDen W E) :
-    IsEliminative (□ᵇφ).negative (P := Core.Possibility W E) :=
+    IsEliminative (□ᵇφ).negative (P := Possibility W ℕ E) :=
   diamond_positive_eliminative (BilateralDen.neg φ)
 
 end BUSDen
@@ -349,9 +349,9 @@ because `¬¬φ = φ` (`dne_preserves_binding`), whereas in DPL negation is
 a test, so `¬¬∃xφ ≠ ∃xφ` and the discourse referent never escapes. -/
 theorem dpl_diverges_on_double_negation [Nontrivial E] :
     Examples.double_negation.judgment = .acceptable ∧
-    ∃ (x : Nat) (φ : Semantics.Dynamic.DPL.DPLRel E),
-      Semantics.Dynamic.DPL.DPLRel.neg (.neg (.exists_ x φ)) ≠ .exists_ x φ :=
-  ⟨rfl, Semantics.Dynamic.DPL.dpl_dne_fails_anaphora⟩
+    ∃ (x : Nat) (φ : DPL.DPLRel E),
+      DPL.DPLRel.neg (.neg (.exists_ x φ)) ≠ .exists_ x φ :=
+  ⟨rfl, DPL.dpl_dne_fails_anaphora⟩
 
 /-- Egli's theorem (positive): `(∃x.φ) ∧ ψ ⊆ ∃x(φ ∧ ψ)` for positive
 updates. The positive direction holds because conjunction sequences

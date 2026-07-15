@@ -176,15 +176,15 @@ theorem integrate_comm_eq_cg_add {W SignT : Type}
     (utt : SignT) (p : Set W) :
     (s.integrate utt (p :: s.commitments)).toCG = s.toCG.add p := rfl
 
-/-! ## Bridge to Semantics.Dynamic.Core.InfoState -/
+/-! ## Bridge to DynamicSemantics.InfoState -/
 
 /-- TTR's InfoState tracks discourse state via agenda/commitments.
-Semantics.Dynamic.Core.InfoState tracks possibilities (world + assignment).
+DynamicSemantics.InfoState tracks possibilities (world + assignment).
 Bridge: a TTR InfoState with `Set W` commitments induces a Core InfoState
 by filtering possibilities that satisfy all commitments. -/
 def InfoState.toCoreInfoState {W E SignT : Type}
     (s : InfoState SignT (List (Set W))) :
-    Set (_root_.Semantics.Dynamic.Core.Possibility W E) :=
+    Set (_root_.DynamicSemantics.Possibility W ℕ E) :=
   { p | s.commitments.Forall (p.world ∈ ·) }
 
 -- ============================================================================

@@ -47,7 +47,7 @@ external/local variable distinction) are faithfully preserved.
 
 namespace KeshetAbney2024.PIP
 
-open Semantics.Dynamic.Core
+open DynamicSemantics
 
 
 -- ============================================================

@@ -115,7 +115,7 @@ The key insight: this classification is DERIVED from the `PartialProp` produced 
 field of the PartialProp determines the classification.
 
 Postsuppositions (yǐwéi's ◇¬p) are output-context constraints, formalized
-separately in `Semantics.Dynamic.Postsupposition`.
+separately in `PPCDRT`.
 -/
 
 /--
@@ -353,7 +353,7 @@ their projective content is fundamentally different:
 
 1. **Not a presupposition**: [glass-2025] argues yǐwéi's falsity inference
    is a postsupposition (about output context) not presupposition (input).
-   Postsuppositions are formalized in `Semantics.Dynamic.Postsupposition`.
+   Postsuppositions are formalized in `PPCDRT`.
 
 2. **Different requirement**: yǐwéi requires CommonGround ◇ ¬p (CommonGround compatible with ¬p),
    not CommonGround ⊨ ¬p (CommonGround entails ¬p)

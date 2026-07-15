@@ -12,7 +12,7 @@ PLA uses:
   `Poss E = Assignment E × Assignment E` (no worlds, explicit pronouns)
 
 Core uses:
-  `Possibility W E = { world : W, assignment : Assignment E }` (worlds, no pronouns)
+  `Possibility W ℕ E = { world : W, assignment : Assignment E }` (worlds, no pronouns)
 
 ## The Solution
 
@@ -20,7 +20,7 @@ Core uses:
 2. Core to PLA: split assignment, use trivial world
 -/
 
-namespace Semantics.Dynamic.Core
+namespace DynamicSemantics
 
 open _root_.Core (Assignment)
 
@@ -41,7 +41,7 @@ Embed PLA possibility into Core possibility.
 Uses Unit world and combines assignment/witnesses into single assignment.
 Pronouns are offset by a large constant to avoid collision.
 -/
-def PLAPoss.toCore {E : Type*} (p : PLAPoss E) : Possibility Unit E where
+def PLAPoss.toCore {E : Type*} (p : PLAPoss E) : Possibility Unit ℕ E where
   world := ()
   assignment := λ n =>
     if n < 1000 then p.assignment n  -- Variables: indices < 1000
@@ -57,7 +57,7 @@ Project Core possibility to PLA possibility.
 
 Discards world, splits assignment into variable/pronoun parts.
 -/
-def Possibility.toPLA {W E : Type*} (p : Possibility W E) : PLAPoss E where
+def Possibility.toPLA {W E : Type*} (p : Possibility W ℕ E) : PLAPoss E where
   assignment := λ n => p.assignment n
   witnesses := λ n => p.assignment (n + 1000)
 
@@ -105,13 +105,13 @@ def PLACCP (E : Type*) := PLAInfoState E → PLAInfoState E
 /--
 Lift PLA CCP to Core CCP.
 -/
-def PLACCP.toCoreCCP {E : Type*} (φ : PLACCP E) : CCP (Possibility Unit E) :=
+def PLACCP.toCoreCCP {E : Type*} (φ : PLACCP E) : CCP (Possibility Unit ℕ E) :=
   λ s => (φ (InfoState.toPLA s)).toCore
 
 /--
 Project Core CCP to PLA CCP (for Unit world).
 -/
-def CCP.toPLACCP {E : Type*} (φ : CCP (Possibility Unit E)) : PLACCP E :=
+def CCP.toPLACCP {E : Type*} (φ : CCP (Possibility Unit ℕ E)) : PLACCP E :=
   λ s => InfoState.toPLA (φ s.toCore)
 
 
@@ -146,4 +146,4 @@ Both PLA and Core can have bilateral variants.
 -/
 
 
-end Semantics.Dynamic.Core
+end DynamicSemantics

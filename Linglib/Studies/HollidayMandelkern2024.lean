@@ -780,7 +780,7 @@ theorem hm_predicts_disjSyll_failure :
     semantics.
 
     Veltman 1996's update semantics predicts the opposite: order MATTERS.
-    `Semantics.Dynamic.UpdateSemantics.Basic.might_order_matters`
+    `UpdateSemantics.Basic.might_order_matters`
     proves that `p ∧ might ¬p` collapses to ∅ but `might ¬p ∧ p` does not,
     on any state with `Nontrivial W`.
 
@@ -814,15 +814,15 @@ theorem hm_veltman_disagree_on_wittgenstein_symmetry :
               (diamond epistemicScale (orthoNeg pathFrame propP)) x)) ∧
     -- Veltman side: some Bool state distinguishes the two orderings.
     (∃ p : Bool → Prop, ∃ _ : DecidablePred p,
-       ∃ s : Semantics.Dynamic.UpdateSemantics.State Bool,
-       Semantics.Dynamic.UpdateSemantics.Update.conj
-         (Semantics.Dynamic.UpdateSemantics.Update.prop p)
-         (Semantics.Dynamic.UpdateSemantics.Update.might
-           (Semantics.Dynamic.UpdateSemantics.Update.prop (fun w => ¬ p w))) s = ∅ ∧
-       (Semantics.Dynamic.UpdateSemantics.Update.conj
-         (Semantics.Dynamic.UpdateSemantics.Update.might
-           (Semantics.Dynamic.UpdateSemantics.Update.prop (fun w => ¬ p w)))
-         (Semantics.Dynamic.UpdateSemantics.Update.prop p) s).Nonempty) :=
-  ⟨hm_wittgenstein_symmetric, Semantics.Dynamic.UpdateSemantics.might_order_matters⟩
+       ∃ s : UpdateSemantics.State Bool,
+       UpdateSemantics.Update.conj
+         (UpdateSemantics.Update.prop p)
+         (UpdateSemantics.Update.might
+           (UpdateSemantics.Update.prop (fun w => ¬ p w))) s = ∅ ∧
+       (UpdateSemantics.Update.conj
+         (UpdateSemantics.Update.might
+           (UpdateSemantics.Update.prop (fun w => ¬ p w)))
+         (UpdateSemantics.Update.prop p) s).Nonempty) :=
+  ⟨hm_wittgenstein_symmetric, UpdateSemantics.might_order_matters⟩
 
 end HollidayMandelkern2024

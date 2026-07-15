@@ -322,7 +322,7 @@ def directionUpdate (K : Scoreboard W) (p : W → Prop)
 /-! ### POSW substrate bridge
 
 The scoreboard's CommonGround and G components project jointly into a
-the POSW substrate (`Semantics.Dynamic.Default.ExpState` under its
+the POSW substrate (`UpdateSemantics.Default.ExpState` under its
 `Semantics/Dynamic/UpdateSemantics/Necessity.lean` modal reading): CommonGround via
 `contextSet`, G via the goal-induced preference ordering. Assertion ↔
 `assert`, direction ↔ `promote`. -/
@@ -377,7 +377,7 @@ lemma mem_directionUpdate_goalContents (K : Scoreboard W) (p : W → Prop)
 
 /-- Project the scoreboard into a POSW-style expectation state: `info`
     from CommonGround, `order` from goal-induced preference. -/
-def toExpState (K : Scoreboard W) : Semantics.Dynamic.Default.ExpState W where
+def toExpState (K : Scoreboard W) : UpdateSemantics.Default.ExpState W where
   info := K.contextSet
   order := Preorder.ofLE (fun w v => ∀ p ∈ K.goalContents, p v → p w)
     (fun _ _ _ hp => hp)
@@ -414,7 +414,7 @@ theorem toExpState_direction_eq_promote (K : Scoreboard W) (p : W → Prop)
     (s t pr : Nat) (hin : t < K.goals.length) (w v : W) :
     (K.directionUpdate p s t pr).toExpState.order.le w v ↔
       (K.toExpState.promote p).order.le w v := by
-  simp only [toExpState_le, Semantics.Dynamic.Default.ExpState.promote_order,
+  simp only [toExpState_le, UpdateSemantics.Default.ExpState.promote_order,
     Core.Order.Normality.refine_le, toExpState_le]
   constructor
   · intro h
@@ -498,7 +498,7 @@ open Intensional (WorldTimeIndex)
 open Discourse (forceLinkingPrinciple defaultSemanticType Scoreboard)
 open Mood.Illocutionary (sincerityCondition)
 open Mood (State Component Illocutionary HasTarget)
-open Semantics.Dynamic.Default (ExpState)
+open UpdateSemantics.Default (ExpState)
 open HistoricalAlternatives
 open Semantics.Modality.Kratzer
 

@@ -42,7 +42,7 @@ the multi-reciprocal pairwise prediction, the Tracy/Matty/Chris case) live
 in `Studies/HaugDalrymple2020.lean`.
 -/
 
-namespace Semantics.Dynamic.PPCDRT
+namespace PPCDRT
 
 open Core
 
@@ -218,4 +218,4 @@ theorem maximizeAnaphora_implies_relation (φ : Nat → Nat → PPDRSCond E)
     (h : maximizeAnaphora φ uAnaph uAnt S Δ) :
     φ uAnaph uAnt S Δ := h.1
 
-end Semantics.Dynamic.PPCDRT
+end PPCDRT

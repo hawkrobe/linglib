@@ -40,7 +40,7 @@ instance of functoriality (`Transition.apply_comp`).
 -/
 
 open FirstOrder FirstOrder.Language
-open Semantics.Dynamic (Possibility State Transition baseSupported_of_iff)
+open DynamicSemantics (Possibility State Transition baseSupported_of_iff)
 
 namespace DRT
 
@@ -399,7 +399,7 @@ theorem DRS.toRelAt_merge {X : Finset V} (K₁ K₂ : DRS L V) (h₁ : K₁.fv �
   funext f g
   apply propext
   simp only [DRS.merge, DRS.referents_mk, DRS.conditions_mk, DRS.toRelAt_mk,
-    Condition.holdsAllAt_append, Semantics.Dynamic.Core.DynProp.dseq, Relation.Comp]
+    Condition.holdsAllAt_append, DynamicSemantics.DynProp.dseq, Relation.Comp]
   rw [← Finset.union_assoc]
   constructor
   · rintro ⟨hag, hh₁, hh₂⟩
@@ -420,7 +420,7 @@ theorem DRS.transition_merge (W : Type*) {X : Finset V} (K₁ K₂ : DRS L V)
         (by rw [DRS.merge_referents, ← Finset.union_assoc]) := by
   ext w f g
   simp only [Transition.rel_copy, Transition.comp, DRS.transition,
-    DRS.toRelAt_merge K₁ K₂ h₁ hfresh, Semantics.Dynamic.Core.DynProp.dseq]
+    DRS.toRelAt_merge K₁ K₂ h₁ hfresh, DynamicSemantics.DynProp.dseq]
 
 /-- **Action equation** ([kamp-vangenabith-reyle-2011], p. 159): applying a
 DRS's transition to the state a proper context DRS expresses yields the

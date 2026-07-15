@@ -7,7 +7,7 @@ import Linglib.Semantics.Dynamic.ContextChange
 A *possibility* is a world paired with an assignment of discourse referents —
 the point type of dynamic semantics. This file holds the point object and its
 small coupled constructions: the pointwise API (`extend`, `agreeOn`,
-`sameWorld`), the register-form instances of the legacy `Core` spine
+`sameWorld`), the register-form instances
 (`Nat`-keyed assignments), the unbased set-of-possibilities vocabulary
 (`InfoState.definedAt`, `novelAt`, `worlds`, `subsistsIn`, `supports`), and
 the possibility-specific CCP constructors (`InfoState.update`,
@@ -17,7 +17,7 @@ The based information states built over possibilities live in `State.lean`;
 the generic level-0 CCP algebra in `ContextChange.lean`.
 -/
 
-namespace Semantics.Dynamic
+namespace DynamicSemantics
 
 /-! ### The point object -/
 
@@ -57,26 +57,18 @@ def extend [DecidableEq V] (p : Possibility W V M) (x : V) (e : M) :
 
 end Possibility
 
-end Semantics.Dynamic
-
-namespace Semantics.Dynamic.Core
-
 open _root_.Core (Assignment)
 
-/-! ### Register-form instances (legacy `Core` spine)
+/-! ### Register-form information states
 
-The pre-2026-07 spine keys assignments by `Nat` registers
-(`Assignment E := Nat → E`); these abbrevs instantiate the general point
-object at `V := ℕ`. -/
-
-/-- A possibility with a register-form assignment. -/
-abbrev Possibility (W E : Type*) := Semantics.Dynamic.Possibility W ℕ E
+Register-keyed dynamic semantics (`Assignment E := Nat → E`) instantiates
+the point object at `V := ℕ`. -/
 
 /-- Information state: set of possibilities.
 
-This is `InfoStateOf (Possibility W E)` — a specialization of the
+This is `InfoStateOf (Possibility W ℕ E)` — a specialization of the
 generic `InfoStateOf` to world-assignment possibilities. -/
-abbrev InfoState (W : Type*) (E : Type*) := Set (Possibility W E)
+abbrev InfoState (W : Type*) (E : Type*) := Set (Possibility W ℕ E)
 
 namespace InfoState
 
@@ -86,7 +78,7 @@ variable {W E : Type*}
 def univ : InfoState W E := Set.univ
 
 /-- The absurd state: no possibilities. -/
-def empty : InfoState W E := (∅ : Set (Possibility W E))
+def empty : InfoState W E := (∅ : Set (Possibility W ℕ E))
 
 /-- State is consistent (non-empty). -/
 def consistent (s : InfoState W E) : Prop := s.Nonempty
@@ -96,7 +88,7 @@ def trivial (s : InfoState W E) : Prop := s = Set.univ
 
 /-- Variable x is defined in state s iff all possibilities agree on x's value. -/
 def definedAt (s : InfoState W E) (x : Nat) : Prop :=
-  ∀ p q : Possibility W E, p ∈ s → q ∈ s → p.assignment x = q.assignment x
+  ∀ p q : Possibility W ℕ E, p ∈ s → q ∈ s → p.assignment x = q.assignment x
 
 /-- The set of defined variables in a state. -/
 def definedVars (s : InfoState W E) : Set Nat :=
@@ -107,7 +99,7 @@ def novelAt (s : InfoState W E) (x : Nat) : Prop := ¬s.definedAt x
 
 /-- In a consistent state, novel means assignments actually disagree. -/
 theorem novelAt_iff_disagree (s : InfoState W E) (x : Nat) (hs : s.consistent) :
-    s.novelAt x ↔ ∃ p q : Possibility W E, p ∈ s ∧ q ∈ s ∧ p.assignment x ≠ q.assignment x := by
+    s.novelAt x ↔ ∃ p q : Possibility W ℕ E, p ∈ s ∧ q ∈ s ∧ p.assignment x ≠ q.assignment x := by
   constructor
   · intro h
     simp only [novelAt, definedAt] at h
@@ -269,31 +261,31 @@ end InfoState
 
 /-- Existential CCP: ∃x.φ introduces x then updates with φ. -/
 def CCP.exists_ {W E : Type*} (x : Nat) (domain : Set E)
-    (φ : CCP (Possibility W E)) : CCP (Possibility W E) :=
+    (φ : CCP (Possibility W ℕ E)) : CCP (Possibility W ℕ E) :=
   λ (s : InfoState W E) => φ (s.randomAssign x domain)
 
 /-- Existential with full domain -/
 def CCP.existsFull {W E : Type*} (x : Nat)
-    (φ : CCP (Possibility W E)) : CCP (Possibility W E) :=
+    (φ : CCP (Possibility W ℕ E)) : CCP (Possibility W ℕ E) :=
   λ (s : InfoState W E) => φ (s.randomAssignFull x)
 
 /--
 Lift a classical proposition to a CCP.
 -/
-def CCP.ofProp {W E : Type*} (φ : W → Prop) : CCP (Possibility W E) :=
+def CCP.ofProp {W E : Type*} (φ : W → Prop) : CCP (Possibility W ℕ E) :=
   λ (s : InfoState W E) => s⟦φ⟧
 
 /--
 Lift a predicate on entities (via variable lookup).
 -/
-def CCP.ofPred1 {W E : Type*} (p : E → W → Prop) (x : Nat) : CCP (Possibility W E) :=
+def CCP.ofPred1 {W E : Type*} (p : E → W → Prop) (x : Nat) : CCP (Possibility W ℕ E) :=
   λ (s : InfoState W E) => { poss ∈ s | p (poss.assignment x) poss.world }
 
 /--
 Lift a binary predicate.
 -/
-def CCP.ofPred2 {W E : Type*} (p : E → E → W → Prop) (x y : Nat) : CCP (Possibility W E) :=
+def CCP.ofPred2 {W E : Type*} (p : E → E → W → Prop) (x y : Nat) : CCP (Possibility W ℕ E) :=
   λ (s : InfoState W E) => { poss ∈ s | p (poss.assignment x) (poss.assignment y) poss.world }
 
 
-end Semantics.Dynamic.Core
+end DynamicSemantics

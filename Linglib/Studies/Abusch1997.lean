@@ -204,7 +204,7 @@ available "ways of thinking about" entities. -/
 section
 
 open Classical
-open _root_.Semantics.Dynamic.PLA
+open _root_.PLA
 
 variable {E : Type*} [Nonempty E]
 
@@ -838,7 +838,7 @@ theorem abusch_derives_temporal_de_re_full_metaphysical
 theorem pla_isAcquaintedWith_unifies_with_polymorphic
     {E : Type*} (individual : E)
     (C : Cover E)
-    (p : Semantics.Dynamic.PLA.Poss E) :
+    (p : PLA.Poss E) :
     isAcquaintedWith individual C p ↔
     Semantics.Reference.Acquaintance.isAcquaintedWith individual C p :=
   Iff.rfl

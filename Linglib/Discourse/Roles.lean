@@ -19,7 +19,7 @@ namespace Discourse
 open Semantics.Context
 
 /-- The two fundamental discourse participants. `.addressee` matches
-    `KContext.addressee` (not `.listener` as in `Semantics.Dynamic`). -/
+    `KContext.addressee` (not `.listener` as in `DynamicSemantics`). -/
 inductive DiscourseRole where
   | speaker
   | addressee

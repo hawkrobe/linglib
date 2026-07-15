@@ -46,7 +46,7 @@ points. References: [heim-1983], [schlenker-2009], [von-fintel-1999],
 ## Implementation notes
 
 `PartialProp W` is parametric over the evaluation point. Common instantiations:
-`PartialProp World` (classical possible worlds), `PartialProp (Possibility W E)`
+`PartialProp World` (classical possible worlds), `PartialProp (Possibility W ℕ E)`
 (dynamic world-assignment pairs).
 
 The choice of connective system (how gaps behave under ∧/∨) is orthogonal

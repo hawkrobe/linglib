@@ -57,13 +57,13 @@ The abstract `AssignmentStructure` (`Dynamic/Ty2.lean`) takes drefs `S → E`,
 but only projection drefs `fun g => g n` make sense for concrete `Assignment E`.
 
 The DPL comparison below (`dpl_dne_fails_anaphora`) consumes these; they stay in
-`Semantics.Dynamic.Core` so they read as substrate names, awaiting promotion to
+`DynamicSemantics` so they read as substrate names, awaiting promotion to
 `Studies/GroenendijkStokhof1991.lean`. -/
 
-namespace Semantics.Dynamic.Core
+namespace DynamicSemantics
 
 open _root_.Core (Assignment)
-open Semantics.Dynamic.Core.DynProp
+open DynamicSemantics.DynProp
 
 variable {E : Type*}
 
@@ -118,13 +118,13 @@ def closeAt (φ : Update (Assignment E)) : Update (Assignment E) :=
 @[simp] theorem closeAt_eq (φ : Update (Assignment E)) :
     closeAt φ = test (closure φ) := rfl
 
-end Semantics.Dynamic.Core
+end DynamicSemantics
 
 
 namespace KeshetAbney2024
 
 open KeshetAbney2024.PIP
-open Semantics.Dynamic.Core (IVar ICDRTAssignment Entity IContext)
+open DynamicSemantics (IVar ICDRTAssignment Entity IContext)
 open Core.Logic.Modal (AccessRel)
 
 
@@ -1068,8 +1068,8 @@ theorem pip_quantifier_blocking :
 
 section DPLComparison
 
-open Semantics.Dynamic.Core (existsAt existsAt_iff)
-open Semantics.Dynamic.Core.DynProp (Update dneg test)
+open DynamicSemantics (existsAt existsAt_iff)
+open DynamicSemantics.DynProp (Update dneg test)
 open _root_.Core (Assignment)
 
 /-!

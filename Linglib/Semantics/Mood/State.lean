@@ -60,7 +60,7 @@ embedding.
 
 namespace Mood
 
-open Semantics.Dynamic.Default
+open UpdateSemantics.Default
 
 /-- The mood state: an `ExpState` enriched with an inquiry partition
 recording the open question (`⊤` is "no question"). -/

@@ -49,7 +49,7 @@ against PLA (which lacks DNE for anaphora and fails on the bathroom
 sentence) is in `Studies/Dekker2012.lean`.
 -/
 
-namespace Semantics.Dynamic.Core
+namespace DynamicSemantics
 
 
 /--
@@ -124,12 +124,12 @@ theorem atom_negative_monotone (pred : W → Prop) :
 
 /-- Atomic positive update is eliminative. -/
 theorem atom_positive_eliminative (pred : W → Prop) :
-    IsEliminative (atom pred).positive (P := Possibility W E) :=
+    IsEliminative (atom pred).positive (P := Possibility W ℕ E) :=
   sep_eliminative _
 
 /-- Atomic negative update is eliminative. -/
 theorem atom_negative_eliminative (pred : W → Prop) :
-    IsEliminative (atom pred).negative (P := Possibility W E) :=
+    IsEliminative (atom pred).negative (P := Possibility W ℕ E) :=
   sep_eliminative _
 
 
@@ -392,12 +392,12 @@ theorem pred1_negative_monotone (p : E → W → Prop) [∀ e w, Decidable (p e 
 
 /-- pred1 positive update is eliminative. -/
 theorem pred1_positive_eliminative (p : E → W → Prop) [∀ e w, Decidable (p e w)] (t : Nat) :
-    IsEliminative (pred1 p t).positive (P := Possibility W E) :=
+    IsEliminative (pred1 p t).positive (P := Possibility W ℕ E) :=
   sep_eliminative _
 
 /-- pred1 negative update is eliminative. -/
 theorem pred1_negative_eliminative (p : E → W → Prop) [∀ e w, Decidable (p e w)] (t : Nat) :
-    IsEliminative (pred1 p t).negative (P := Possibility W E) :=
+    IsEliminative (pred1 p t).negative (P := Possibility W ℕ E) :=
   sep_eliminative _
 
 /-- pred2 positive update is monotone. -/
@@ -415,13 +415,13 @@ theorem pred2_negative_monotone (p : E → E → W → Prop) [∀ e₁ e₂ w, D
 /-- pred2 positive update is eliminative. -/
 theorem pred2_positive_eliminative (p : E → E → W → Prop) [∀ e₁ e₂ w, Decidable (p e₁ e₂ w)]
     (t₁ t₂ : Nat) :
-    IsEliminative (pred2 p t₁ t₂).positive (P := Possibility W E) :=
+    IsEliminative (pred2 p t₁ t₂).positive (P := Possibility W ℕ E) :=
   sep_eliminative _
 
 /-- pred2 negative update is eliminative. -/
 theorem pred2_negative_eliminative (p : E → E → W → Prop) [∀ e₁ e₂ w, Decidable (p e₁ e₂ w)]
     (t₁ t₂ : Nat) :
-    IsEliminative (pred2 p t₁ t₂).negative (P := Possibility W E) :=
+    IsEliminative (pred2 p t₁ t₂).negative (P := Possibility W ℕ E) :=
   sep_eliminative _
 
 
@@ -508,4 +508,4 @@ theorem neg_le_neg_iff (φ ψ : BilateralDen W E) : ~φ ≤ ~ψ ↔ φ ≤ ψ :=
 end BilateralDen
 
 
-end Semantics.Dynamic.Core
+end DynamicSemantics

@@ -178,8 +178,8 @@ the second is type-dependency (witnesses as structure). Both reduce
 to the same classical truth conditions.
 -/
 
-open Semantics.Dynamic.CDRT (DProp State SProp)
-open Semantics.Dynamic.Core.DynProp (closure dseq test dneg dimpl)
+open CDRT (DProp State SProp)
+open DynamicSemantics.DynProp (closure dseq test dneg dimpl)
 open Semantics.TypeTheoretic (Ppty PPpty Parametric IsTrue IsFalse propT)
 open Cooper2023Ch7 (purify purifyUniv)
 
@@ -198,7 +198,7 @@ def ttr_exists (P : E → Prop) : Type := (x : E) × propT (P x)
 the same truth conditions. Both reduce to `∃ x, P x`. -/
 theorem exists_equiv (n : Nat) (P : E → Prop) (i : State E) :
     DProp.true_at (cdrt_exists n P) i ↔ Nonempty (ttr_exists P) := by
-  simp only [DProp.true_at, Semantics.Dynamic.Core.DynProp.closure, cdrt_exists, DProp.seq, dseq, Relation.Comp, DProp.new,
+  simp only [DProp.true_at, DynamicSemantics.DynProp.closure, cdrt_exists, DProp.seq, dseq, Relation.Comp, DProp.new,
     DProp.ofStatic, test, ttr_exists]
   constructor
   · rintro ⟨o, k, ⟨e, rfl⟩, rfl, hp⟩
@@ -228,7 +228,7 @@ def ttr_donkey (P Q : E → Prop) : Type :=
 the same truth conditions. Both reduce to `∀ x, P x → Q x`. -/
 theorem donkey_equiv (n : Nat) (P Q : E → Prop) (i : State E) :
     DProp.true_at (cdrt_donkey n P Q) i ↔ Nonempty (ttr_donkey P Q) := by
-  simp only [DProp.true_at, Semantics.Dynamic.Core.DynProp.closure, cdrt_donkey, DProp.impl, dimpl, DProp.seq, dseq, Relation.Comp,
+  simp only [DProp.true_at, DynamicSemantics.DynProp.closure, cdrt_donkey, DProp.impl, dimpl, DProp.seq, dseq, Relation.Comp,
     DProp.new, DProp.ofStatic, test, ttr_donkey]
   constructor
   · rintro ⟨o, rfl, hall⟩
@@ -361,7 +361,7 @@ the *input* register (no binding). -/
 theorem dne_same_truth (n : Nat) (P : E → Prop) (i : State E) :
     DProp.true_at (DProp.neg (DProp.neg (cdrt_exists n P))) i ↔
     DProp.true_at (cdrt_exists n P) i := by
-  simp only [DProp.true_at, Semantics.Dynamic.Core.DynProp.closure, DProp.neg, test, dneg]
+  simp only [DProp.true_at, DynamicSemantics.DynProp.closure, DProp.neg, test, dneg]
   constructor
   · rintro ⟨_, rfl, h⟩
     exact Classical.byContradiction (λ hno => h ⟨i, rfl, hno⟩)

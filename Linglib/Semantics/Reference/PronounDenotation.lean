@@ -93,7 +93,7 @@ higher-blast-radius stage makes `selector` itself functor-valued and *be*
 theorem interpPronoun_eq_iLookup {E W : Type} (i : ℕ) (g : Assignment E)
     (w : PUnit) :
     interpPronoun (E := E) (W := W) i g
-      = Semantics.Dynamic.Context.HasFiberedLookup.iLookup (M := Id) g i w :=
+      = DynamicSemantics.HasFiberedLookup.iLookup (M := Id) g i w :=
   rfl
 
 /-! ### Featural definedness tests -/

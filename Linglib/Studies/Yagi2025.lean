@@ -233,14 +233,14 @@ theorem kp_presup_entails_assertion :
 
 /-! ## Failure 3: Update semantics ([yagi-2025] §2.3)
 
-Bridges to `Semantics.Dynamic.UpdateSemantics.Basic`, which
+Bridges to `UpdateSemantics.Basic`, which
 collapses the [heim-1982]/[veltman-1996]/[beaver-2001]
 treatments of presuppositional disjunction into a single `PUpdate.disjPresup`
 operator. -/
 
 section UpdateSemantics
 
-open Semantics.Dynamic.UpdateSemantics
+open UpdateSemantics
 
 /-- The ideal input state for (1c): all worlds with a head of state. The
 `noHeadOfState` world is excluded — Yagi's discussion presupposes a context

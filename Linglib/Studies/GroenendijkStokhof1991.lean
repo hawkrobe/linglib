@@ -27,7 +27,7 @@ Dynamic Predicate Logic. *Linguistics and Philosophy* 14(1): 39-100.
 
 namespace GroenendijkStokhof1991
 
-open Semantics.Dynamic.DPL
+open DPL
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1. Cross-Sentential Anaphora (§2.1, §2.3)
@@ -179,7 +179,7 @@ section CylindricAlgebra
 
 open Core.CylindricAlgebra
 open Core (Assignment)
-open Semantics.Dynamic.Core.DynProp (closure)
+open DynamicSemantics.DynProp (closure)
 
 /-- **DPL existential = cylindrification.**
 

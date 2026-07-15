@@ -14,10 +14,10 @@ reduces to a single operator ↑ determining whether modified assignments
 are retained.
 -/
 
-namespace Semantics.Dynamic.Charlow2019
+namespace Charlow2019
 
 open DPL
-open Semantics.Dynamic.Core
+open DynamicSemantics
 
 /-- Truth at an assignment: K True at g ⟺ ∃h. K g h (Charlow's (7)). -/
 def trueAt {E : Type*} (K : DPLRel E) (g : Assignment E) : Prop :=
@@ -116,7 +116,7 @@ theorem antisymmetry_fails {E : Type*} [Nontrivial E] :
 abbrev State (W E : Type*) := Set (W × Assignment E)
 
 /-- Context change potential over Charlow's contexts. -/
-abbrev State.CCP (W E : Type*) := Semantics.Dynamic.Core.CCP (W × Assignment E)
+abbrev State.CCP (W E : Type*) := DynamicSemantics.CCP (W × Assignment E)
 
 /-- Non-distributive negation (28): removes from s points that survive φ. -/
 def stateNeg {W E : Type*} (φ : State.CCP W E) : State.CCP W E :=
@@ -271,7 +271,7 @@ fibered projection is lossy — the native joint state records which worlds
 pair with which assignments beyond what a single `(v, w)` query reveals;
 the `supportCollapse` bridge below collapses genuinely-uncertain states. -/
 instance instCharlowHasFiberedLookup (W E : Type) :
-    Semantics.Dynamic.Context.HasFiberedLookup Set (State W E) Nat W E where
+    DynamicSemantics.HasFiberedLookup Set (State W E) Nat W E where
   iLookup s v w := { e | ∃ g : Assignment E, (w, g) ∈ s ∧ g v = e }
 
 -- ════════════════════════════════════════════════════════════════
@@ -402,7 +402,7 @@ empty-set falsifier makes downstream lookup empty. -/
 section CylindricAlgebraBridges
 
 open Core.CylindricAlgebra
-open Semantics.Dynamic.DPL
+open DPL
 
 /-- Static existential truth = cylindrification.
 
@@ -423,4 +423,4 @@ theorem charlow_dynamic_eq_cylindrify {E : Type*}
 
 end CylindricAlgebraBridges
 
-end Semantics.Dynamic.Charlow2019
+end Charlow2019

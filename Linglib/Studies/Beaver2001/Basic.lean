@@ -57,7 +57,7 @@ function output.
 ## Formalization Coverage
 
 This file formalizes key results from Chs. 2-7. The ABLE fragment (Ch. 7)
-is formalized in `Semantics.Dynamic.ABLE.Basic` and demonstrated
+is formalized in `Beaver2001.ABLE.Basic` and demonstrated
 here via worked examples (§8). Quantifier projection (Ch. 8) and ABLE
 accommodation (Ch. 9) are not yet formalized. Quantifier projection is
 partially addressed by the `QuantifierProjection` type in
@@ -372,7 +372,7 @@ context updates. The core operations map to `ContextSet` operations:
 - **Conditional** σ[φ → ψ] = σ \ (σ[φ] \ σ[φ][ψ]) (residual)
 
 PUL conjunction is exactly CCP sequential composition
-(`CCP.seq` from `Semantics.Dynamic.Core.CCP`).
+(`CCP.seq` from `DynamicSemantics.CCP`).
 PUL negation differs from CCP's test-based negation:
 PUL computes the complement within the input state, while CCP
 negation passes or fails the entire state.
@@ -448,7 +448,7 @@ theorem pulImpl_atomic (p q : Set W) (σ : ContextSet W) (w : W) :
 
 /-! ### ABLE Fragment Demonstrations
 
-The ABLE formalization in `Semantics.Dynamic.ABLE.Basic` provides
+The ABLE formalization in `Beaver2001.ABLE.Basic` provides
 the `Formula` type and its evaluation semantics. Here we instantiate it
 with the Spaceman Spiff scenario from §6 to demonstrate projection through
 negation and conditionals.
@@ -468,7 +468,7 @@ This is why presupposition projection is asymmetric for conjunction:
 in `φ AND ψ`, σ must admit φ, and σ[φ] must admit ψ — so ψ's presupposition
 can be "filtered" by φ's content. -/
 
-open Semantics.Dynamic.ABLE (Formula)
+open Beaver2001.ABLE (Formula)
 
 section ABLEExamples
 

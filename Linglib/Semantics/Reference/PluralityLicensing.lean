@@ -38,7 +38,7 @@ substrate that defines `bindingCond`, `reciprocityCond`,
 
 namespace Semantics.Reference.PluralityLicensing
 
-open Semantics.Dynamic.PPCDRT
+open PPCDRT
 open Core
 
 universe u

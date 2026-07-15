@@ -22,7 +22,7 @@ the structural identity that the original `Reference/Reciprocals.lean`
 docstring asserted as prose.
 -/
 
-namespace Semantics.Dynamic.PPCDRT
+namespace PPCDRT
 
 open Core
 open Semantics.Plurality.Cumulativity
@@ -99,4 +99,4 @@ theorem groupIdentityCond_iff_cumulative_eq [DecidableEq E]
     intro d
     rw [← hxa d, ← hxb d, h]
 
-end Semantics.Dynamic.PPCDRT
+end PPCDRT

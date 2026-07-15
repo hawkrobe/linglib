@@ -53,7 +53,7 @@ namespace Rakosi2019
 
 open Semantics.Reference.Reciprocals
 open Semantics.Reference.PluralityLicensing
-open Semantics.Dynamic.PPCDRT
+open PPCDRT
 open Core
 open Hungarian.Reciprocals
 

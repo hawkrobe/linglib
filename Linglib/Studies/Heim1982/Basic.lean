@@ -37,8 +37,8 @@ example rows in `Heim1982.Examples`.
 
 namespace Heim1982
 
-open Semantics.Dynamic.FileChangeSemantics
-open Semantics.Dynamic.Core
+open FileChangeSemantics
+open DynamicSemantics
 
 -- ════════════════════════════════════════════════════
 -- § 1. Model Setup
@@ -253,7 +253,7 @@ inductive ExEntity : Type where
 
 open ExWorld ExEntity
 
-instance : Nonempty (Possibility ExWorld ExEntity) :=
+instance : Nonempty (Possibility ExWorld ℕ ExEntity) :=
   ⟨⟨w₀, λ _ => john⟩⟩
 
 /-- Starting file: no discourse referents, all possibilities. -/
