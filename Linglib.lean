@@ -2372,6 +2372,7 @@ import Linglib.Studies.KalinBjorkmanEtAl2026
 import Linglib.Studies.Kalyakin2026
 import Linglib.Studies.Kamp1975
 import Linglib.Studies.KampReyle1993
+import Linglib.Studies.KampVanGenabithReyle2011
 import Linglib.Studies.KampanarouAlexiadou2026
 import Linglib.Studies.KaoEtAl2014PMFHyperbole
 import Linglib.Studies.KaoEtAl2014PMFMetaphor
