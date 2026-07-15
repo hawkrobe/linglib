@@ -1,4 +1,4 @@
-import Linglib.Semantics.Dynamic.InfoState
+import Linglib.Core.Logic.Assignment
 import Linglib.Semantics.Dynamic.Ty2
 
 /-!
@@ -32,6 +32,7 @@ In DPL:
 namespace DPL
 
 open DynamicSemantics
+open _root_.Core (Assignment)
 
 -- Placeholder: Full implementation TODO
 

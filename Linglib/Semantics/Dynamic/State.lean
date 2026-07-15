@@ -300,6 +300,39 @@ theorem le_restrict_iff (hJ : J.base ⊆ Y) (hY : Y ⊆ I.base) : J ≤ I.restri
   Set.ext fun _ =>
     ⟨fun ⟨_, f, hf, _⟩ => ⟨f, hf⟩, fun ⟨f, hf⟩ => ⟨f, f, hf, Set.eqOn_refl f _⟩⟩
 
+/-! ### Random assignment -/
+
+/-- Random assignment: introduce the discourse referent `x` — the base
+grows, and any constraint at `x` is dropped ([heim-1982]'s indefinite
+widening, [groenendijk-stokhof-1991]'s random reset). For a novel `x` the
+carrier is unchanged (`randomAssign_of_notMem`) — supported carriers are
+already cylindric off the base, so introduction is pure base growth; for a
+live `x` the update is destructive. -/
+def randomAssign [DecidableEq V] (I : State W V M) (x : V) : State W V M where
+  base := insert x I.base
+  carrier := (I.restrict (I.base.erase x)).carrier
+  supported := (I.restrict (I.base.erase x)).supported.mono
+    ((Finset.erase_subset ..).trans (Finset.subset_insert ..))
+
+section RandomAssign
+variable [DecidableEq V] {x : V}
+
+@[simp] theorem base_randomAssign (I : State W V M) (x : V) :
+    (I.randomAssign x).base = insert x I.base := rfl
+
+theorem mem_randomAssign {w : W} {g : V → M} :
+    (⟨w, g⟩ : Possibility W V M) ∈ I.randomAssign x ↔
+      ∃ f, (⟨w, f⟩ : Possibility W V M) ∈ I ∧ Set.EqOn f g ↑(I.base.erase x) :=
+  Iff.rfl
+
+/-- Introducing a novel referent only grows the base. -/
+theorem randomAssign_of_notMem (hx : x ∉ I.base) :
+    (I.randomAssign x).carrier = I.carrier := by
+  show (I.restrict (I.base.erase x)).carrier = I.carrier
+  rw [Finset.erase_eq_of_notMem hx, restrict_base]
+
+end RandomAssign
+
 /-! ### States at a base as collapsed propositions -/
 
 /-- The states based at `X`. -/

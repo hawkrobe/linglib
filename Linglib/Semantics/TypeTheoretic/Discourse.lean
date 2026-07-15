@@ -1,5 +1,6 @@
 import Linglib.Semantics.TypeTheoretic.Basic
-import Linglib.Semantics.Dynamic.InfoState
+import Linglib.Semantics.Dynamic.Possibility
+import Linglib.Core.Logic.Assignment
 import Linglib.Semantics.Mood.Defs
 import Linglib.Features.ClauseForm
 
