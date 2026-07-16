@@ -53,21 +53,22 @@ referents to individuals. -/
 
 namespace Possibility
 
-variable {W V M : Type*}
+variable {W V M : Type*} (X : Set V)
 
-/-- The projection of a possibility to granularity `A` is its world
-together with its assignment of the `A`-referents. -/
-def proj (A : Set V) (p : Possibility W V M) : W × (A → M) :=
-  (p.world, A.restrict p.assignment)
+/-- The projection of a possibility to granularity `X` is its world
+together with its assignment of the `X`-referents. -/
+def proj (p : Possibility W V M) : W × (X → M) :=
+  (p.world, X.restrict p.assignment)
 
 /-- Two possibilities agree at granularity `X` when their projections to
 `X` coincide. -/
-def agreeSetoid (X : Set V) : Setoid (Possibility W V M) :=
+def agreeSetoid : Setoid (Possibility W V M) :=
   Setoid.ker (proj X)
 
+variable {X} in
 /-- Possibilities agree at `X` exactly when they share their world and
 their assignments agree on `X`. -/
-theorem agreeSetoid_iff {X : Set V} {p q : Possibility W V M} :
+theorem agreeSetoid_iff {p q : Possibility W V M} :
     agreeSetoid X p q ↔
       p.world = q.world ∧ Set.EqOn p.assignment q.assignment X :=
   Prod.ext_iff.trans (and_congr Iff.rfl Set.restrict_eq_restrict_iff)
@@ -81,7 +82,7 @@ theorem agreeSetoid_anti :
 
 /-- A possibility up to agreement at `X` is a world together with an
 assignment of the `X`-referents. -/
-noncomputable def agreeQuotientEquiv (X : Set V) [Nonempty M] :
+noncomputable def agreeQuotientEquiv [Nonempty M] :
     Quotient (agreeSetoid (W := W) (M := M) X) ≃ W × (X → M) :=
   Setoid.quotientKerEquivOfRightInverse (proj X)
     (fun wf => ⟨wf.1,
@@ -90,7 +91,7 @@ noncomputable def agreeQuotientEquiv (X : Set V) [Nonempty M] :
       exact Subtype.val_injective.extend_apply wf.2
         (fun _ => Classical.arbitrary M) x)
 
-@[simp] theorem agreeQuotientEquiv_mk (X : Set V) [Nonempty M]
+@[simp] theorem agreeQuotientEquiv_mk [Nonempty M]
     (p : Possibility W V M) :
     agreeQuotientEquiv X (Quotient.mk _ p) = (p.world, X.restrict p.assignment) :=
   rfl
@@ -221,6 +222,50 @@ theorem Descendant.union_descendant {p q u : Possibility W V (Option M)}
     · exact hq.2 v e (by simpa [union, hpv] using h)
     · have : e' = e := by simpa [union, hpv] using h
       exact this ▸ hp.2 v e' hpv⟩
+
+theorem Compatible.symm {p q : Possibility W V (Option M)}
+    (h : p.Compatible q) : q.Compatible p :=
+  ⟨h.1.symm, fun v e e' hq hp => (h.2 v e' e hp hq).symm⟩
+
+/-- Union of points is associative. -/
+theorem union_assoc (p q v : Possibility W V (Option M)) :
+    (p.union q).union v = p.union (q.union v) :=
+  Possibility.ext rfl (funext fun _ => Option.or_assoc ..)
+
+/-- On compatible points the left precedence of `union` is
+immaterial. -/
+theorem Compatible.union_comm {p q : Possibility W V (Option M)}
+    (h : p.Compatible q) : p.union q = q.union p :=
+  Possibility.ext h.1 (funext fun v => by
+    rcases hp : p.assignment v with _ | e <;>
+      rcases hq : q.assignment v with _ | e' <;> simp [union, hp, hq]
+    exact h.2 v e e' hp hq)
+
+/-- A union is compatible with whatever both components are compatible
+with. -/
+theorem Compatible.union_left {p q v : Possibility W V (Option M)}
+    (hpv : p.Compatible v) (hqv : q.Compatible v) :
+    (p.union q).Compatible v :=
+  ⟨hpv.1, fun x e e' he he' => by
+    rcases hp : p.assignment x with _ | c
+    · exact hqv.2 x e e' (by simpa [union, hp] using he) he'
+    · have hce : c = e := by simpa [union, hp] using he
+      exact hce ▸ hpv.2 x c e' hp he'⟩
+
+/-- The left component of a compatible union is compatible. -/
+theorem Compatible.left_of_union {p q v : Possibility W V (Option M)}
+    (h : (p.union q).Compatible v) : p.Compatible v :=
+  ⟨h.1, fun x e e' hp hv => h.2 x e e' (by simp [union, hp]) hv⟩
+
+/-- The right component of a compatible union is compatible, given the
+components agree. -/
+theorem Compatible.right_of_union {p q v : Possibility W V (Option M)}
+    (hpq : p.Compatible q) (h : (p.union q).Compatible v) :
+    q.Compatible v :=
+  ⟨hpq.1.symm.trans h.1, fun x e e' hq hv => by
+    rcases hp : p.assignment x with _ | c
+    · exact h.2 x e e' (by simp [union, hp, hq]) hv
+    · exact hpq.2 x c e hp hq ▸ h.2 x c e' (by simp [union, hp]) hv⟩
 
 /-! ### Restriction and the indexed classification -/
 
