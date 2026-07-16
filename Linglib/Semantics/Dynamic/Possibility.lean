@@ -53,12 +53,11 @@ referents to individuals. -/
 
 namespace Possibility
 
-variable {W V M : Type*} (X : Set V)
+variable {W V M : Type*} (X : Set V) (p : Possibility W V M)
 
 /-- The projection of a possibility to granularity `X` is its world
 together with its assignment of the `X`-referents. -/
-def proj (p : Possibility W V M) : W × (X → M) :=
-  (p.world, X.restrict p.assignment)
+def proj : W × (X → M) := (p.world, X.restrict p.assignment)
 
 /-- Two possibilities agree at granularity `X` when their projections to
 `X` coincide. -/
@@ -82,27 +81,24 @@ noncomputable def agreeQuotientEquiv [Nonempty M] :
       exact Subtype.val_injective.extend_apply wf.2
         (fun _ => Classical.arbitrary M) x)
 
-@[simp] theorem agreeQuotientEquiv_mk [Nonempty M]
-    (p : Possibility W V M) :
+@[simp] theorem agreeQuotientEquiv_mk [Nonempty M] :
     agreeQuotientEquiv X (Quotient.mk _ p) = (p.world, X.restrict p.assignment) :=
   rfl
 
 /-- Update the assignment at a single referent. -/
-def update [DecidableEq V] (p : Possibility W V M) (x : V) (e : M) :
-    Possibility W V M :=
+def update [DecidableEq V] (x : V) (e : M) : Possibility W V M :=
   { p with assignment := Function.update p.assignment x e }
 
-@[simp] theorem update_self [DecidableEq V] (p : Possibility W V M)
-    (x : V) (e : M) : (p.update x e).assignment x = e :=
+@[simp] theorem update_self [DecidableEq V] (x : V) (e : M) :
+    (p.update x e).assignment x = e :=
   Function.update_self ..
 
-@[simp] theorem update_of_ne [DecidableEq V] (p : Possibility W V M)
-    {x y : V} (e : M) (h : y ≠ x) :
-    (p.update x e).assignment y = p.assignment y :=
+@[simp] theorem update_of_ne [DecidableEq V] {x y : V} (e : M)
+    (h : y ≠ x) : (p.update x e).assignment y = p.assignment y :=
   Function.update_of_ne h ..
 
-@[simp] theorem update_world [DecidableEq V] (p : Possibility W V M)
-    (x : V) (e : M) : (p.update x e).world = p.world := rfl
+@[simp] theorem update_world [DecidableEq V] (x : V) (e : M) :
+    (p.update x e).world = p.world := rfl
 
 /-! ### Partial points -/
 
