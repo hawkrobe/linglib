@@ -21,7 +21,12 @@ algebra is the suplattice completion of the relational one and the
 non-distributive tests (`might`, `must`) are exactly the residue.
 Categorically, `RelCat ≌ KleisliCat Set`, and the indexed tower reads
 `Ctx ⥤ RelCat ≌ KleisliCat Set ↪ suplattice endomaps`, every arrow
-canonical.
+canonical. The collapsed state space at `X` is the `X`-stratum of root
+states, classified by `Possibility.domEquiv`/`State.uniformEquiv`, and
+the relational action computes the root-state CCP through that
+classification (`Transition.uniformEquiv_applyState`) — the extraction
+of a relational meaning from a DRT-style one, as a morphism
+([visser-vermeulen-1996]).
 
 The powerset monad is one column of the effect view of dynamic semantics
 ([moggi-1991], [shan-2001], [bumford-charlow-2024]): a framework's update
@@ -32,7 +37,7 @@ continuation-based systems choose further effects.
 ## Main definitions
 
 - `Ctx.collapse`: the functor `Ctx W M V ⥤ RelCat` sending a context to
-  its environment space and a transition to its world-threaded relation.
+  its possibility space and a transition to its world-threaded relation.
 - `liftEquiv`: `Update S ≃ sSupHom (Set S) (Set S)`.
 - `relCatEquivKleisli`: `RelCat ≌ KleisliCat Set`. [UPSTREAM] candidate —
   pure category theory, absent from mathlib.
@@ -72,7 +77,7 @@ namespace Ctx
 variable {W M V : Type*} {X Y Z : Ctx W M V}
 
 /-- **The one-object collapse**: forget the base-indexing, sending a
-context to its environment space and a transition to its world-threaded
+context to its possibility space and a transition to its world-threaded
 relation. Unital by typing — no quotient needed. -/
 def collapse (W M V : Type*) : Ctx W M V ⥤ RelCat where
   obj X := W × ((↑X.base : Set V) → M)

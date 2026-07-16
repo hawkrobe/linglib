@@ -16,7 +16,7 @@ assumes: the absurd state is `∅`, the initial state is `W × {g_⊤}`
 
 There is no base field: Def. 23's "Dom(f) = X" is the *uniform* stratum
 (`UniformAt`), and a base is the index of a fiber, not part of the data.
-Points with domain `X` are world–`X`-environment pairs, constructively
+Points with domain `X` are world–`X`-assignment pairs, constructively
 (`Possibility.domEquiv` — the total-assignment rendering needed choice
 and an inhabitant of `M` to recover this). Two preorders run through states, and they are
 dual on shared strata. *Informativeness* (`⊑`,
@@ -45,6 +45,9 @@ stratum they reduce to `⊇` and `⊆` respectively
 ## Main results
 
 - `merge_infoLe`: the merge is the `⊑`-least upper bound.
+- `merge_assoc`, `merge_comm`, `merge_initial`: states form a
+  commutative monoid under consistent merge — the content half of
+  [visser-vermeulen-1996]'s monoidal processing.
 - `infoLe_iff_superset`, `subsistsIn_iff_subset`: on a uniform stratum
   both preorders are partial orders, coinciding with `⊇`/`⊆` (via
   `Possibility.Descendant.eq_of_dom_eq`).
@@ -164,6 +167,49 @@ theorem merge_infoLe {s s' t : State W V M} (hs : s ⊑ t)
   obtain ⟨q, hq, hqu⟩ := hs' u hu
   exact ⟨p.union q, ⟨p, hp, q, hq, hpu.compatible hqu, rfl⟩,
     hpu.union_descendant hqu⟩
+
+/-- Consistent merge is commutative. -/
+theorem merge_comm (s s' : State W V M) : s.merge s' = s'.merge s := by
+  ext r
+  constructor <;> rintro ⟨p, hp, q, hq, h, rfl⟩ <;>
+    exact ⟨q, hq, p, hp, h.symm, h.union_comm⟩
+
+/-- Consistent merge is associative. -/
+theorem merge_assoc (s t u : State W V M) :
+    (s.merge t).merge u = s.merge (t.merge u) := by
+  ext r
+  constructor
+  · rintro ⟨a, ⟨p, hp, q, hq, hpq, rfl⟩, v, hv, hav, rfl⟩
+    have hpv := hav.left_of_union
+    have hqv := hpq.right_of_union hav
+    exact ⟨p, hp, q.union v, ⟨q, hq, v, hv, hqv, rfl⟩,
+      (Possibility.Compatible.union_left hpq.symm hpv.symm).symm,
+      Possibility.union_assoc p q v⟩
+  · rintro ⟨p, hp, a, ⟨q, hq, v, hv, hqv, rfl⟩, hpa, rfl⟩
+    have hpq := hpa.symm.left_of_union.symm
+    have hpv := (hqv.right_of_union hpa.symm).symm
+    exact ⟨p.union q, ⟨p, hp, q, hq, hpq, rfl⟩, v, hv,
+      Possibility.Compatible.union_left hpv hqv,
+      (Possibility.union_assoc p q v).symm⟩
+
+/-- The initial state is a unit for consistent merge: with `merge_comm`,
+`merge_assoc`, and `merge_infoLe`, updating is joining in a commutative
+monoid of information — the content half of
+[visser-vermeulen-1996]'s monoidal processing. -/
+@[simp] theorem merge_initial (s : State W V M) : s.merge State.initial = s := by
+  ext r
+  constructor
+  · rintro ⟨p, hp, q, hq, -, rfl⟩
+    have hq' : p.union q = p :=
+      Possibility.ext rfl (funext fun v => by simp [Possibility.union, hq v])
+    rwa [hq']
+  · intro hr
+    exact ⟨r, hr, ⟨r.world, fun _ => none⟩, fun _ => rfl,
+      ⟨rfl, fun _ _ _ _ h => by simp at h⟩,
+      Possibility.ext rfl (funext fun v => by simp [Possibility.union])⟩
+
+@[simp] theorem initial_merge (s : State W V M) : State.merge State.initial s = s := by
+  rw [merge_comm, merge_initial]
 
 /-- The worldly content of a state ([elliott-sudo-2025] Def. 3.1's 𝒲). -/
 def worlds (s : State W V M) : Set W :=
@@ -309,7 +355,7 @@ theorem restrict_restrict (X Y : Finset V) (I : State W V M) :
 [groenendijk-stokhof-1991]'s `x := random`): indeterministically extend
 each point to a defined value at `x`. -/
 def randomAssign (I : State W V M) (x : V) : State W V M :=
-  {p | ∃ q ∈ I, ∃ m : M, p = q.extend x (some m)}
+  {p | ∃ q ∈ I, ∃ m : M, p = q.update x (some m)}
 
 /-- Random assignment makes its referent familiar. -/
 theorem familiar_randomAssign (I : State W V M) (x : V) :
@@ -319,7 +365,7 @@ theorem familiar_randomAssign (I : State W V M) (x : V) :
 
 /-! ### The uniform classification -/
 
-/-- Uniform states at `X` are sets of world–`X`-environment pairs — the
+/-- Uniform states at `X` are sets of world–`X`-assignment pairs — the
 state-level face of `Possibility.domEquiv`, and the comparison to the
 predecessor's fibers: an order isomorphism for `⊆` (which is `⪯` on the
 stratum, `subsistsIn_iff_subset`), hence an anti-isomorphism for `⊑`

@@ -1,5 +1,6 @@
 import Linglib.Semantics.Dynamic.Transition
 import Mathlib.CategoryTheory.Category.Preorder
+import Mathlib.CategoryTheory.Elements
 import Mathlib.CategoryTheory.Types.Basic
 import Mathlib.Data.Set.Functor
 
@@ -11,12 +12,12 @@ live discourse referents), morphisms are `Transition`s, composition is
 world-pointwise relational composition. The identity and associativity
 laws are `Transition.lean`'s `id_comp`/`comp_id`/`comp_assoc`.
 
-The presheaf of state fibers is the composite of the environments
+The presheaf of state fibers is the composite of the possibilities
 presheaf with the powerset functor — definitionally, in this
 formulation: the predecessor proved the isomorphism
-(`presheafIsoEnvironments`); typing states at their environments makes
+typing states at the possibilities makes
 it the definition (`State.presheaf`). Restriction is `Set.image` along
-environment weakening, the ∃-leg of mathlib's
+weakening, the ∃-leg of mathlib's
 `Set.image_preimage`/`Set.preimage_kernImage` triple ([lawvere-1969]'s
 quantifiers as adjoints to weakening, as retold by [jacobs-1999]).
 Syntax categories interpret into `Ctx` (`DRS/Category.lean`); the fiber
@@ -26,14 +27,17 @@ at `∅` is [veltman-1996]'s update semantics.
 
 - `Ctx W M V`: bundled contexts, with a `Category` instance whose
   morphisms are `Transition`s between the bases.
-- `environments`: the presheaf of world–assignment pairs at each
+- `possibilities`: the presheaf of world–assignment pairs at each
   granularity — a set-valued indexed category in [jacobs-1999]'s sense,
   its maps the semantic face of *weakening*. Precedent for the
   states-as-presheaf reading: [abramsky-sadrzadeh-2014].
-- `State.presheaf`: the state fibers — `environments ⋙ Set`.
-- `environments_glue`, `environments_beck_chevalley`: the context-lattice
-  square is a pullback of environments, so quantification commutes with
+- `State.presheaf`: the state fibers — `possibilities ⋙ Set`.
+- `possibilities_glue`, `possibilities_beck_chevalley`: the context-lattice
+  square is a pullback of possibilities, so quantification commutes with
   weakening — the fibers are a hyperdoctrine.
+- `elementsEquivBased`: the Grothendieck total of the family is the point
+  type — the category of elements is the descent preorder on
+  `Possibility.Based`, opposed.
 
 ## References
 
@@ -77,37 +81,37 @@ instance : Category (Ctx W M V) where
 
 end Ctx
 
-/-! ### The environments presheaf and the state fibers -/
+/-! ### The possibilities presheaf and the state fibers -/
 
 universe u v w
 
-/-- The presheaf of environments: over `X`, world–assignment pairs at
+/-- The presheaf of possibilities: over `X`, world–assignment pairs at
 granularity `X`; restriction precomposes with the inclusion. A model read
 over the category of contexts — a set-valued *indexed category* in
 [jacobs-1999]'s sense, whose maps are the semantic face of *weakening*
 (the functor "which adds an extra dummy" variable, in the book's own
 gloss). -/
-def environments (W : Type u) (M : Type v) (V : Type w) :
+def possibilities (W : Type u) (M : Type v) (V : Type w) :
     (Finset V)ᵒᵖ ⥤ Type (max u v w) where
   obj X := W × ((↑X.unop : Set V) → M)
   map {X Y} f := TypeCat.ofHom fun p =>
     ⟨p.1, fun v => p.2 ⟨v.1, leOfHom f.unop v.2⟩⟩
 
 /-- The state fibers as a presheaf on the poset of bases: the powerset
-functor applied fiberwise to the environments — by definition, in this
+functor applied fiberwise to the possibilities — by definition, in this
 formulation. The fiber over `X` is `Set (W × (↑X → M))`; restriction is
-direct image along environment weakening. -/
+direct image along weakening. -/
 def State.presheaf (W : Type u) (M : Type v) (V : Type w) :
     (Finset V)ᵒᵖ ⥤ Type (max u v w) :=
-  environments W M V ⋙ ofTypeFunctor Set
+  possibilities W M V ⋙ ofTypeFunctor Set
 
 /-! ### Gluing and Beck–Chevalley
 
-`environments` sends each square of the context lattice to a pullback
-(`environments_glue`), so quantification and weakening cohere: the
+`possibilities` sends each square of the context lattice to a pullback
+(`possibilities_glue`), so quantification and weakening cohere: the
 existential legs (`Set.image`, which is `State.presheaf`'s own action)
 commute with reindexing (`Set.preimage`) across the square
-(`environments_beck_chevalley`). Together with mathlib's
+(`possibilities_beck_chevalley`). Together with mathlib's
 `Set.image_subset_iff` (`∃ ⊣ weakening`), `Set.preimage_kernImage`
 (`weakening ⊣ ∀`), and `Set.image_inter_preimage` (Frobenius), the
 fibers form a hyperdoctrine over the context lattice ([lawvere-1969],
@@ -119,27 +123,27 @@ open Opposite
 
 variable {W M V : Type*} {X Y : Finset V}
 
-/-- The action of `environments` on a lattice inequality, elementwise. -/
-@[simp] theorem environments_map_apply (h : X ≤ Y)
-    (p : (environments W M V).obj (op Y)) :
-    (environments W M V).map (homOfLE h).op p =
+/-- The action of `possibilities` on a lattice inequality, elementwise. -/
+@[simp] theorem possibilities_map_apply (h : X ≤ Y)
+    (p : (possibilities W M V).obj (op Y)) :
+    (possibilities W M V).map (homOfLE h).op p =
       (p.1, fun v => p.2 ⟨v.1, h v.2⟩) := rfl
 
 variable [DecidableEq V]
 
-/-- Environments glue: a pair of environments over `X` and `Y` whose
+/-- Possibilities glue: a pair of possibilities over `X` and `Y` whose
 weakenings to `X ⊓ Y` agree is jointly the weakening of a unique
-environment over `X ⊔ Y` — `environments` sends the lattice square to a
-pullback of types. The piecewise witness is the environment face of
-`Possibility.union`. -/
-theorem environments_glue
-    (a : (environments W M V).obj (op X)) (b : (environments W M V).obj (op Y))
-    (hab : (environments W M V).map (homOfLE inf_le_left).op a =
-      (environments W M V).map (homOfLE inf_le_right).op b) :
-    ∃! c : (environments W M V).obj (op (X ⊔ Y)),
-      (environments W M V).map (homOfLE le_sup_left).op c = a ∧
-        (environments W M V).map (homOfLE le_sup_right).op c = b := by
-  simp only [environments_map_apply] at hab ⊢
+possibility over `X ⊔ Y` — `possibilities` sends the lattice square to a
+pullback of types. The piecewise witness is `Possibility.union` in the charts of
+`Possibility.domEquiv`. -/
+theorem possibilities_glue
+    (a : (possibilities W M V).obj (op X)) (b : (possibilities W M V).obj (op Y))
+    (hab : (possibilities W M V).map (homOfLE inf_le_left).op a =
+      (possibilities W M V).map (homOfLE inf_le_right).op b) :
+    ∃! c : (possibilities W M V).obj (op (X ⊔ Y)),
+      (possibilities W M V).map (homOfLE le_sup_left).op c = a ∧
+        (possibilities W M V).map (homOfLE le_sup_right).op c = b := by
+  simp only [possibilities_map_apply] at hab ⊢
   have hw : a.1 = b.1 := congrArg Prod.fst hab
   have hagree : ∀ (v : V) (hX : v ∈ X) (hY : v ∈ Y),
       a.2 ⟨v, hX⟩ = b.2 ⟨v, hY⟩ := fun v hX hY =>
@@ -159,22 +163,89 @@ along `X ⊓ Y ≤ X` then weakening to `Y` is weakening to `X ⊔ Y` then
 existential image along `Y ≤ X ⊔ Y` — quantifying and reindexing
 commute. The image legs are `State.presheaf`'s own action on the
 square's arrows. -/
-theorem environments_beck_chevalley (X Y : Finset V)
-    (S : Set ((environments W M V).obj (op X))) :
-    (environments W M V).map (homOfLE (inf_le_right : X ⊓ Y ≤ Y)).op ⁻¹'
-      ((environments W M V).map (homOfLE (inf_le_left : X ⊓ Y ≤ X)).op '' S) =
-    (environments W M V).map (homOfLE (le_sup_right : Y ≤ X ⊔ Y)).op ''
-      ((environments W M V).map (homOfLE (le_sup_left : X ≤ X ⊔ Y)).op ⁻¹' S) := by
+theorem possibilities_beck_chevalley (X Y : Finset V)
+    (S : Set ((possibilities W M V).obj (op X))) :
+    (possibilities W M V).map (homOfLE (inf_le_right : X ⊓ Y ≤ Y)).op ⁻¹'
+      ((possibilities W M V).map (homOfLE (inf_le_left : X ⊓ Y ≤ X)).op '' S) =
+    (possibilities W M V).map (homOfLE (le_sup_right : Y ≤ X ⊔ Y)).op ''
+      ((possibilities W M V).map (homOfLE (le_sup_left : X ≤ X ⊔ Y)).op ⁻¹' S) := by
   ext b
   constructor
   · rintro ⟨a, ha, hab⟩
-    obtain ⟨c, ⟨hcX, hcY⟩, -⟩ := environments_glue a b hab
+    obtain ⟨c, ⟨hcX, hcY⟩, -⟩ := possibilities_glue a b hab
     exact ⟨c, show _ ∈ S by rw [hcX]; exact ha, hcY⟩
   · rintro ⟨c, hc, rfl⟩
-    refine ⟨(environments W M V).map (homOfLE le_sup_left).op c, hc, ?_⟩
+    refine ⟨(possibilities W M V).map (homOfLE le_sup_left).op c, hc, ?_⟩
     rw [← Functor.map_comp_apply, ← Functor.map_comp_apply,
       ← op_comp, ← op_comp, homOfLE_comp, homOfLE_comp]
 
 end Gluing
+
+/-! ### The Grothendieck total -/
+
+section Total
+
+open Opposite
+
+variable {W M V : Type*} [DecidableEq V]
+
+/-- Classify each element of the possibilities family as a based point:
+on objects this is `Possibility.domEquiv`; arrows become descents, by
+`Possibility.descendant_iff_eq_restrict`. -/
+noncomputable def elementsToBased :
+    (possibilities W M V).Elements ⥤ (Possibility.Based W V M)ᵒᵖ where
+  obj x := op ⟨((Possibility.domEquiv x.1.unop).symm x.2).1, by
+    rw [((Possibility.domEquiv x.1.unop).symm x.2).2]
+    exact x.1.unop.finite_toSet⟩
+  map {x y} f := (homOfLE (show
+      ((Possibility.domEquiv y.1.unop).symm y.2).1.Descendant
+        ((Possibility.domEquiv x.1.unop).symm x.2).1 by
+    have hb : y.1.unop ≤ x.1.unop := leOfHom f.1.unop
+    have hmap : (possibilities W M V).map f.1 x.2 = y.2 := f.2
+    rw [Subsingleton.elim f.1 (homOfLE hb).op, possibilities_map_apply]
+      at hmap
+    rw [← hmap, ← Possibility.restrict_domEquiv_symm hb]
+    exact Possibility.restrict_descendant _ _)).op
+  map_id _ := Subsingleton.elim _ _
+  map_comp _ _ := Subsingleton.elim _ _
+
+instance : (elementsToBased (W := W) (M := M) (V := V)).Faithful where
+  map_injective _ := Subtype.ext (Subsingleton.elim _ _)
+
+instance : (elementsToBased (W := W) (M := M) (V := V)).Full where
+  map_surjective {x y} f := by
+    have hd : ((Possibility.domEquiv y.1.unop).symm y.2).1.Descendant
+        ((Possibility.domEquiv x.1.unop).symm x.2).1 := leOfHom f.unop
+    have hb : y.1.unop ≤ x.1.unop := Finset.coe_subset.mp
+      (((Possibility.domEquiv y.1.unop).symm y.2).2 ▸
+        ((Possibility.domEquiv x.1.unop).symm x.2).2 ▸ hd.dom_subset)
+    refine ⟨⟨(homOfLE hb).op, ?_⟩, Subsingleton.elim _ _⟩
+    refine (Possibility.domEquiv y.1.unop).symm.injective (Subtype.ext ?_)
+    rw [possibilities_map_apply, ← Possibility.restrict_domEquiv_symm hb]
+    exact ((Possibility.descendant_iff_eq_restrict
+      ((Possibility.domEquiv y.1.unop).symm y.2).2).mp hd).symm
+
+instance : (elementsToBased (W := W) (M := M) (V := V)).EssSurj where
+  mem_essImage y :=
+    ⟨⟨op y.unop.2.toFinset,
+        Possibility.domEquiv _ ⟨y.unop.1, y.unop.2.coe_toFinset.symm⟩⟩,
+      ⟨eqToIso (by
+        apply Opposite.unop_injective
+        apply Subtype.ext
+        have hval := congrArg Subtype.val
+          ((Possibility.domEquiv y.unop.2.toFinset).symm_apply_apply
+            ⟨y.unop.1, y.unop.2.coe_toFinset.symm⟩)
+        exact hval)⟩⟩
+
+instance : (elementsToBased (W := W) (M := M) (V := V)).IsEquivalence := {}
+
+/-- **The Grothendieck total of the possibilities family is the point
+type**: the category of elements is equivalent to the opposite of the
+descent preorder on based points. -/
+noncomputable def elementsEquivBased :
+    (possibilities W M V).Elements ≌ (Possibility.Based W V M)ᵒᵖ :=
+  elementsToBased.asEquivalence
+
+end Total
 
 end DynamicSemantics
