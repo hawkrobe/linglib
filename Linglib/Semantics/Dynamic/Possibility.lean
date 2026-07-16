@@ -5,20 +5,10 @@ import Mathlib.Data.Set.Function
 /-!
 # Possibilities
 
-A *possibility* is a world paired with an assignment of discourse
-referents — the point type of dynamic semantics. Indexed information
-states over possibilities live in `State.lean`; unindexed states are plain
-sets of possibilities, with the generic level-0 CCP algebra in
-`Update.lean`.
-
-*Possibility* is the update-semantics tradition's word:
-[groenendijk-stokhof-veltman-1996]'s possibilities are triples carrying a
-referent system ([vermeulen-1995]) we do not; [elliott-sudo-2025]'s are
-world–assignment pairs like ours. [kamp-vangenabith-reyle-2011] leaves the
-pairs of its Def. 22 unnamed — DRT's word for the assignment is
-*(verifying) embedding*, a partial function on referents with one
-universe across worlds — and the monadic tradition calls the same points
-*indices* ([charlow-2025-staged-updates]).
+This file defines a *possibility* — a world paired with an assignment
+of discourse referents — and the structure of its partial points: the
+descent order, compatibility and union, restriction, and the
+classification of each stratum as world–assignment pairs.
 
 ## Main definitions
 

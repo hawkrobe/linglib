@@ -181,12 +181,12 @@ theorem DRS.toRelAt_congr_right {X : Finset V} (K : DRS L V) (hfv : K.fv ⊆ X)
 base grown by its universe — `K.fv ⊆ X` is the *referential presupposition*
 ([kamp-vangenabith-reyle-2011], Def. 27(i)). -/
 theorem DRS.readsAt_toRelAt {W : Type*} (X : Finset V) (K : DRS L V) :
-    Transition.ReadsAt (W := W) X fun _ => DRS.toRelAt (M := M) X K :=
+    Transition.ReadsAt (W := W) ↑X fun _ => DRS.toRelAt (M := M) X K :=
   fun _ _ _ _ h => DRS.toRelAt_congr_left X K h
 
 theorem DRS.writesAt_toRelAt {W : Type*} {X : Finset V} (K : DRS L V)
     (hK : K.fv ⊆ X) :
-    Transition.WritesAt (W := W) (X ∪ K.referents)
+    Transition.WritesAt (W := W) ↑(X ∪ K.referents)
       fun _ => DRS.toRelAt (M := M) X K :=
   fun _ _ _ _ h => DRS.toRelAt_congr_right K hK h
 
@@ -195,8 +195,10 @@ at `X`, write at `X ∪ U`. The referential presupposition documents
 Def. 24's domain condition; the congruence lemmas above are the bridge's
 support hypotheses. -/
 def DRS.transition (W : Type*) (K : DRS L V) (X : Finset V)
-    (_hK : K.fv ⊆ X) : Transition W M X (X ∪ K.referents) :=
-  Transition.ofTotal Finset.subset_union_left fun _ => DRS.toRelAt X K
+    (_hK : K.fv ⊆ X) :
+    Transition W M (↑X : Set V) (↑(X ∪ K.referents) : Set V) :=
+  Transition.ofTotal (Finset.coe_subset.mpr Finset.subset_union_left)
+    fun _ => DRS.toRelAt X K
 
 /-- The empty DRS denotes the identity transition, repackaged to its
 source: interpretation sends DRT's unit to the semantic unit. Nonempty
@@ -205,8 +207,8 @@ the empty box from the identity. -/
 theorem DRS.transition_empty [Nonempty M] (W : Type*) (X : Finset V)
     (h : (DRS.empty : DRS L V).fv ⊆ X)
     (he : X ∪ (DRS.empty : DRS L V).referents = X) :
-    (DRS.empty.transition (M := M) W X h).copy rfl he =
-      Transition.id X := by
+    (DRS.empty.transition (M := M) W X h).copy rfl (Finset.coe_inj.mpr he) =
+      Transition.id (↑X : Set V) := by
   unfold DRS.transition
   rw [Transition.ofTotal_copy]
   apply Transition.ext
@@ -233,7 +235,8 @@ theorem DRS.transition_isExtension (W : Type*) (K : DRS L V) (X : Finset V)
 transition at the new base. -/
 theorem DRS.transition_copy (W : Type*) {X X' : Finset V} (K : DRS L V)
     (hX : X = X') (hK : K.fv ⊆ X) (hK' : K.fv ⊆ X') :
-    (K.transition (M := M) W X hK).copy hX (by rw [hX]) = K.transition W X' hK' := by
+    (K.transition (M := M) W X hK).copy (Finset.coe_inj.mpr hX) (by rw [hX]) =
+      K.transition W X' hK' := by
   subst hX; rfl
 
 /-- The information state a proper DRS expresses
@@ -243,10 +246,10 @@ def DRS.state (W : Type*) (K : DRS L V) (hK : K.IsProper) : State W V M :=
 
 /-- The state a DRS expresses lives in its referents' stratum. -/
 theorem DRS.uniformAt_state (W : Type*) (K : DRS L V) (hK : K.IsProper) :
-    State.UniformAt K.referents (K.state (M := M) W hK) := by
-  rw [← Finset.empty_union K.referents]
-  exact Transition.uniformAt_applyState
-    (K.transition W ∅ (Finset.subset_empty.mpr hK)) State.initial
+    State.UniformAt ↑K.referents (K.state (M := M) W hK) := by
+  have h := Transition.uniformAt_applyState
+    (K.transition (M := M) W ∅ (Finset.subset_empty.mpr hK)) State.initial
+  simpa [DRS.state] using h
 
 /-- The characteristic membership form: a point survives in `⟦K⟧ˢ` iff it
 lives on the referents and its values are reached from some input. -/
