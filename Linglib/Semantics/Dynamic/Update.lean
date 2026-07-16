@@ -333,43 +333,31 @@ theorem mem_lift : j ∈ lift R σ ↔ ∃ i ∈ σ, R i j := Iff.rfl
 /-- `lift` sends sequencing to composition. -/
 theorem lift_dseq (R₁ R₂ : Update S) :
     lift (dseq R₁ R₂) = CCP.seq (lift R₁) (lift R₂) :=
-  funext λ _ => Set.ext λ _ =>
-    ⟨λ ⟨i, hi, j, hR₁, hR₂⟩ => ⟨j, ⟨i, hi, hR₁⟩, hR₂⟩,
-     λ ⟨j, ⟨i, hi, hR₁⟩, hR₂⟩ => ⟨i, hi, j, hR₁, hR₂⟩⟩
+  funext λ _ => Set.ext λ _ => ⟨λ ⟨i, m, j, a, b⟩ => ⟨j, ⟨i, m, a⟩, b⟩,
+    λ ⟨j, ⟨i, m, a⟩, b⟩ => ⟨i, m, j, a, b⟩⟩
 
 /-- `lift (test C)` is the filter by `C`. -/
 theorem lift_test (C : Condition S) :
     lift (test C) = λ σ => { i ∈ σ | C i } :=
-  funext λ _ => Set.ext λ j =>
-    ⟨λ ⟨_, hi, hij, hC⟩ => ⟨hij ▸ hi, hC⟩, λ ⟨hj, hC⟩ => ⟨j, hj, rfl, hC⟩⟩
+  funext λ _ => Set.ext λ j => ⟨λ ⟨_, m, e, c⟩ => ⟨e ▸ m, c⟩, λ ⟨m, c⟩ => ⟨j, m, rfl, c⟩⟩
 
 /-- Lifted transformers are distributive. -/
 theorem lift_isDistributive (R : Update S) : CCP.IsDistributive (lift R) :=
-  λ _ => Set.ext λ _ =>
-    ⟨λ ⟨i, hi, hR⟩ => ⟨i, hi, i, rfl, hR⟩,
-     λ ⟨i, hi, _, hi', hR⟩ => ⟨i, hi, hi' ▸ hR⟩⟩
+  λ _ => Set.ext λ _ => ⟨λ ⟨i, m, r⟩ => ⟨i, m, i, rfl, r⟩, λ ⟨i, m, _, e, r⟩ => ⟨i, m, e ▸ r⟩⟩
 
 /-- `lower` is a left inverse of `lift`: the relational face loses nothing. -/
 theorem lower_lift (R : Update S) : lower (lift R) = R :=
-  funext₂ λ i _ => propext
-    ⟨λ ⟨_, hi', hR⟩ => hi' ▸ hR, λ hR => ⟨i, rfl, hR⟩⟩
+  funext₂ λ i _ => propext ⟨λ ⟨_, e, r⟩ => e ▸ r, λ r => ⟨i, rfl, r⟩⟩
 
 /-- `lift` is a right inverse of `lower` on distributive transformers. -/
 theorem lift_lower (φ : CCP S) (hd : CCP.IsDistributive φ) :
-    lift (lower φ) = φ := by
-  funext σ; ext j; simp only [lift, lower, Set.mem_setOf_eq]
-  rw [hd σ]
-  simp only [Set.mem_setOf_eq]
+    lift (lower φ) = φ :=
+  funext λ σ => (hd σ).symm
 
 /-- `lift` reflects (and preserves) the pointwise order. -/
-theorem lift_le_lift_iff : lift R ≤ lift R' ↔ R ≤ R' := by
-  constructor
-  · intro h i j hR
-    obtain ⟨i', hi', hR'⟩ := h {i} ⟨i, rfl, hR⟩
-    cases hi'
-    exact hR'
-  · rintro h σ j ⟨i, hi, hR⟩
-    exact ⟨i, hi, h i j hR⟩
+theorem lift_le_lift_iff : lift R ≤ lift R' ↔ R ≤ R' :=
+  ⟨λ h i _ r => match h {i} ⟨i, rfl, r⟩ with | ⟨_, e, r'⟩ => e ▸ r',
+   λ h _ j ⟨i, m, r⟩ => ⟨i, m, h i j r⟩⟩
 
 /-! ### Test filters -/
 
