@@ -162,6 +162,38 @@ theorem applyState_comp (u : Transition W M X Y) (v : Transition W M Y Z)
     · rw [hkk']
       exact hvk
 
+/-- Root and fiber semantics agree under the classification: on the
+`X`-stratum, the regular CCP `applyState` is `apply`, transported along
+`State.uniformEquiv` — the relational collapse computes the root-state
+update. -/
+theorem uniformEquiv_applyState (u : Transition W M X Y)
+    {I : State W V M} (hI : State.UniformAt X I) :
+    State.uniformEquiv Y ⟨u.applyState I, uniformAt_applyState u I⟩ =
+      u.apply (State.uniformEquiv X ⟨I, hI⟩) := by
+  ext f
+  constructor
+  · intro hf
+    obtain ⟨-, p, hp, hpX, hw, e, f', hpe, hqf, hrel⟩ :
+        ptOf Y f.1 f.2 ∈ u.applyState I := hf
+    have hf' : f' = f.2 := funext fun v =>
+      Option.some_inj.mp ((hqf v).symm.trans (dif_pos v.2))
+    subst hf'
+    refine ⟨e, ?_, by exact hrel⟩
+    show ptOf X f.1 e ∈ I
+    have hpeq : ptOf X f.1 e = p := by
+      refine Possibility.ext (by exact hw.symm) (funext fun v => ?_)
+      by_cases hv : v ∈ (↑X : Set V)
+      · exact (dif_pos hv).trans (hpe ⟨v, hv⟩).symm
+      · exact (dif_neg hv).trans
+          (Option.not_isSome_iff_eq_none.mp fun hs => hv (hpX ▸ hs)).symm
+    rw [hpeq]; exact hp
+  · rintro ⟨e, hmem, hrel⟩
+    have hpI : ptOf X f.1 e ∈ I := hmem
+    show ptOf Y f.1 f.2 ∈ u.applyState I
+    exact ⟨dom_ptOf .., ptOf X f.1 e, hpI, dom_ptOf .., by simp [ptOf], e,
+      f.2, fun v => by simp [ptOf], fun v => by simp [ptOf],
+      by exact hrel⟩
+
 end ApplyState
 
 /-! ### Random assignment -/

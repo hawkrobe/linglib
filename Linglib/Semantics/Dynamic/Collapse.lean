@@ -21,7 +21,12 @@ algebra is the suplattice completion of the relational one and the
 non-distributive tests (`might`, `must`) are exactly the residue.
 Categorically, `RelCat ≌ KleisliCat Set`, and the indexed tower reads
 `Ctx ⥤ RelCat ≌ KleisliCat Set ↪ suplattice endomaps`, every arrow
-canonical.
+canonical. The collapsed state space at `X` is the `X`-stratum of root
+states, classified by `Possibility.domEquiv`/`State.uniformEquiv`, and
+the relational action computes the root-state CCP through that
+classification (`Transition.uniformEquiv_applyState`) — the extraction
+of a relational meaning from a DRT-style one, as a morphism
+([visser-vermeulen-1996]).
 
 The powerset monad is one column of the effect view of dynamic semantics
 ([moggi-1991], [shan-2001], [bumford-charlow-2024]): a framework's update
