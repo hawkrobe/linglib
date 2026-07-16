@@ -475,7 +475,7 @@ section IndexedReading
 
 open DynamicSemantics DynamicSemantics.Update
 
-variable {W : Type*} {X Y : Finset ℕ}
+variable {W : Type*} {X Y : Set ℕ}
 
 /-- A DPL relation as a transition at contexts, worlds inert, via the
 substrate's total–typed bridge. -/
@@ -485,15 +485,15 @@ def toTransition (h : X ⊆ Y) (φ : DPLRel E) : Transition W E X Y :=
 /-- A DPL test as a transition: a condition on the context, checked
 without changing the environment. Clauses 1–3, 5, 6, and 8 of
 Definition 2 are all of this form. -/
-def testTransition (X : Finset ℕ) (C : ((↑X : Set ℕ) → E) → Prop) :
+def testTransition (X : Set ℕ) (C : (X → E) → Prop) :
     Transition W E X X where
   rel _ e e' := e = e' ∧ C e
   grow := subset_rfl
 
 /-- Applying a test filters the fiber — the indexed form of
 Definition 2's test clauses. -/
-theorem testTransition_apply {C : ((↑X : Set ℕ) → E) → Prop}
-    (T : Set (W × ((↑X : Set ℕ) → E))) :
+theorem testTransition_apply {C : (X → E) → Prop}
+    (T : Set (W × (X → E))) :
     (testTransition X C).apply T = {e ∈ T | C e.2} := by
   ext ⟨w, e⟩
   constructor
@@ -505,7 +505,7 @@ theorem testTransition_apply {C : ((↑X : Set ℕ) → E) → Prop}
 
 /-- Clause 4 is transition composition: with the second conjunct reading
 within its context, typed sequencing is DPL conjunction. -/
-theorem toTransition_comp {Z : Finset ℕ} (h₁ : X ⊆ Y) (h₂ : Y ⊆ Z)
+theorem toTransition_comp {Z : Set ℕ} (h₁ : X ⊆ Y) (h₂ : Y ⊆ Z)
     {φ ψ : DPLRel E}
     (hψ : Transition.ReadsAt (W := W) Y fun _ => ψ) :
     (toTransition (W := W) h₁ φ).comp (toTransition h₂ ψ) =
@@ -519,7 +519,7 @@ reset's underspecification off `x` collapse to Definition 2's `∃d`. -/
 theorem randomAssign_comp_toTransition {x : ℕ} (h : insert x X ⊆ Y)
     (φ : DPLRel E) :
     (Transition.randomAssign X x).comp (toTransition (W := W) h φ) =
-      toTransition ((Finset.subset_insert x X).trans h)
+      toTransition ((Set.subset_insert x X).trans h)
         (DPLRel.exists_ x φ) := by
   ext w e e''
   constructor
@@ -533,8 +533,8 @@ theorem randomAssign_comp_toTransition {x : ℕ} (h : insert x X ⊆ Y)
           exact Function.update_self ..
         · show Function.update f x (e ⟨x, hx⟩) v.1 = e v
           rw [Function.update_of_ne hvx]
-          have h1 : f v.1 = e' ⟨v.1, Finset.mem_insert_of_mem v.2⟩ :=
-            congrFun hf ⟨v.1, Finset.mem_insert_of_mem v.2⟩
+          have h1 : f v.1 = e' ⟨v.1, Set.mem_insert_of_mem x v.2⟩ :=
+            congrFun hf ⟨v.1, Set.mem_insert_of_mem x v.2⟩
           rw [h1]
           exact (hmid v.1 v.2 hvx).symm
       · have hff : (fun n => if n = x then f x
@@ -547,8 +547,8 @@ theorem randomAssign_comp_toTransition {x : ℕ} (h : insert x X ⊆ Y)
         exact hφ
     · refine ⟨f, g, funext fun v => ?_, hg, f x, ?_⟩
       · show f v.1 = e v
-        have h1 : f v.1 = e' ⟨v.1, Finset.mem_insert_of_mem v.2⟩ :=
-          congrFun hf ⟨v.1, Finset.mem_insert_of_mem v.2⟩
+        have h1 : f v.1 = e' ⟨v.1, Set.mem_insert_of_mem x v.2⟩ :=
+          congrFun hf ⟨v.1, Set.mem_insert_of_mem x v.2⟩
         rw [h1]
         exact (hmid v.1 v.2 fun hvx => hx (hvx ▸ v.2)).symm
       · have hff : (fun n => if n = x then f x else f n) = f :=

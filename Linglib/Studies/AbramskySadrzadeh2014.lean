@@ -326,7 +326,7 @@ open DynamicSemantics
 /-- The anticorrelation state on two referents: points defining exactly
 `{i, j}`, with distinct values. -/
 private def anti (i j : Fin 3) : State Unit (Fin 3) Bool :=
-  {p | p.dom = (↑({i, j} : Finset (Fin 3)) : Set (Fin 3)) ∧
+  {p | p.dom = ({i, j} : Set (Fin 3)) ∧
     p.assignment i ≠ p.assignment j}
 
 /-- A two-referent point. -/
@@ -403,13 +403,13 @@ theorem no_gluing_triangle :
     obtain ⟨hdom, hne⟩ := hmem
     rw [Possibility.dom_restrict] at hdom
     have hi : (r.assignment i).isSome := by
-      have : i ∈ (↑({i, j} : Finset (Fin 3)) : Set (Fin 3)) ∩
+      have : i ∈ ({i, j} : Set (Fin 3)) ∩
           Possibility.dom r := by
         rw [hdom]
         simp
       exact this.2
     have hj : (r.assignment j).isSome := by
-      have : j ∈ (↑({i, j} : Finset (Fin 3)) : Set (Fin 3)) ∩
+      have : j ∈ ({i, j} : Set (Fin 3)) ∩
           Possibility.dom r := by
         rw [hdom]
         simp
