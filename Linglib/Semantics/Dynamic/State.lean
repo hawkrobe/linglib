@@ -58,9 +58,9 @@ stratum they reduce to `⊇` and `⊆` respectively
 
 `State` is an abbreviation, so `Set`'s complete lattice is available and
 `⊑`/`⪯` are scoped relations rather than instances. Neither is
-antisymmetric on raw sets (adding an ancestor of an existing point is
-invisible to both); antisymmetry holds on each uniform stratum, where
-they coincide with `⊇`/`⊆`. The predecessor of this file classified its
+antisymmetric on raw sets (adding a comparable point is invisible — an
+ancestor for `⪯`, a descendant for `⊑`); antisymmetry holds on each
+uniform stratum, where they coincide with `⊇`/`⊆`. The predecessor of this file classified its
 fibers as `(Set (W × (↑X → M)))ᵒᵈ` — the dual lands here because its
 order was Def. 25's, matching `⊑`, not `⪯`.
 
