@@ -323,98 +323,116 @@ theorem noGluing_merged : ¬ ∃ s, IsGluing mergedCover mergedFamily s := by
 
 open DynamicSemantics
 
-/-- The anticorrelation state on two referents. -/
-private def anti (i j : Fin 3) : State Unit (Fin 3) Bool where
-  base := {i, j}
-  carrier := {p | p.assignment i ≠ p.assignment j}
-  supported := baseSupported_of_iff fun _ f g hfg => by
-    show f i ≠ f j ↔ g i ≠ g j
-    rw [hfg (by simp), hfg (by simp)]
+/-- The anticorrelation state on two referents: points defining exactly
+`{i, j}`, with distinct values. -/
+private def anti (i j : Fin 3) : State Unit (Fin 3) Bool :=
+  {p | p.dom = (↑({i, j} : Finset (Fin 3)) : Set (Fin 3)) ∧
+    p.assignment i ≠ p.assignment j}
 
-/-- Anticorrelation restricted to a singleton is no information: flip
-the other coordinate to witness any value. -/
-private theorem mem_anti_restrict {i j k : Fin 3} (hij : i ≠ j)
-    (hk : i = k ∨ j = k) (p : Possibility Unit (Fin 3) Bool) :
-    p ∈ (anti i j).restrict {k} := by
-  obtain ⟨w, g⟩ := p
-  rcases hk with rfl | rfl
-  · refine ⟨Function.update (fun _ => !(g i)) i (g i), ?_, fun y hy => ?_⟩
-    · show Function.update (fun _ => !(g i)) i (g i) i ≠
-        Function.update (fun _ => !(g i)) i (g i) j
-      rw [Function.update_self, Function.update_of_ne (Ne.symm hij)]
-      exact fun h => Bool.not_ne_self _ h.symm
-    · obtain rfl : y = i := by simpa using hy
-      exact Function.update_self ..
-  · refine ⟨Function.update (fun _ => !(g j)) j (g j), ?_, fun y hy => ?_⟩
-    · show Function.update (fun _ => !(g j)) j (g j) i ≠
-        Function.update (fun _ => !(g j)) j (g j) j
-      rw [Function.update_self, Function.update_of_ne hij]
-      exact Bool.not_ne_self _
-    · obtain rfl : y = j := by simpa using hy
-      exact Function.update_self ..
+/-- A two-referent point. -/
+private def pt2 (i j : Fin 3) (a b : Bool) :
+    Possibility Unit (Fin 3) (Option Bool) :=
+  ⟨(), fun v => if v = i then some a else if v = j then some b else none⟩
 
-private theorem anti_restrict_eq {i j k i' j' : Fin 3} (hij : i ≠ j)
-    (hij' : i' ≠ j') (hk : i = k ∨ j = k) (hk' : i' = k ∨ j' = k) :
-    (anti i j).restrict {k} = (anti i' j').restrict {k} :=
-  State.ext rfl (Set.ext fun p =>
-    iff_of_true (mem_anti_restrict hij hk p) (mem_anti_restrict hij' hk' p))
+private theorem pt2_mem_anti {i j : Fin 3} (hij : i ≠ j) (a b : Bool)
+    (hab : a ≠ b) : pt2 i j a b ∈ anti i j := by
+  refine ⟨?_, ?_⟩
+  · ext v
+    by_cases hvi : v = i
+    · simp [pt2, Possibility.dom, hvi]
+    · by_cases hvj : v = j <;>
+        simp [pt2, Possibility.dom, hvi, hvj, hij.symm]
+  · simp only [pt2, if_neg hij.symm]
+    exact fun h => hab (Option.some.injEq .. ▸ h :)
 
-/-- The three anticorrelation states are pairwise compatible. -/
-theorem anti_pairwise_compatible :
-    ((anti 0 1).Compatible (anti 1 2)) ∧
-    ((anti 1 2).Compatible (anti 0 2)) ∧
-    ((anti 0 1).Compatible (anti 0 2)) := by
-  refine ⟨?_, ?_, ?_⟩
-  · show (anti 0 1).restrict _ = (anti 1 2).restrict _
-    rw [show ((anti 0 1).base ∩ (anti 1 2).base : Finset (Fin 3)) = {1}
-      from by decide]
-    exact anti_restrict_eq (by decide) (by decide) (Or.inr rfl) (Or.inl rfl)
-  · show (anti 1 2).restrict _ = (anti 0 2).restrict _
-    rw [show ((anti 1 2).base ∩ (anti 0 2).base : Finset (Fin 3)) = {2}
-      from by decide]
-    exact anti_restrict_eq (by decide) (by decide) (Or.inr rfl) (Or.inr rfl)
-  · show (anti 0 1).restrict _ = (anti 0 2).restrict _
-    rw [show ((anti 0 1).base ∩ (anti 0 2).base : Finset (Fin 3)) = {0}
-      from by decide]
-    exact anti_restrict_eq (by decide) (by decide) (Or.inl rfl) (Or.inl rfl)
+/-- Adjacent anticorrelation states are consistent: their Def. 26 merge
+is inhabited — the pair glues. -/
+private theorem merge_anti_nonempty {i j k : Fin 3} (hij : i ≠ j)
+    (hjk : j ≠ k) (hik : i ≠ k) :
+    ((anti i j).merge (anti j k)).Nonempty := by
+  refine ⟨(pt2 i j false true).union (pt2 j k true false),
+    pt2 i j false true, pt2_mem_anti hij false true (by simp),
+    pt2 j k true false, pt2_mem_anti hjk true false (by simp), ?_, rfl⟩
+  refine ⟨rfl, fun v e e' he he' => ?_⟩
+  simp only [pt2] at he he'
+  split at he
+  · rename_i hvi
+    subst hvi
+    rw [if_neg hij, if_neg hik] at he'
+    exact absurd he' (by simp)
+  · split at he
+    · rename_i hvi hvj
+      subst hvj
+      rw [if_pos rfl] at he'
+      have h1 : e = true := by
+        have := he.symm
+        simpa using this
+      have h2 : e' = true := by
+        have := he'.symm
+        simpa using this
+      rw [h1, h2]
+    · exact absurd he (by simp)
 
-/-- **Contextuality in the `State` fibers**: no state restricts onto all
-three anticorrelation constraints — Boolean anticorrelation cannot hold
-on three referents at once. Pairwise-compatible local information with
-no global section, the paper's contextuality, model-theoretically. -/
+/-- **Contextuality in the states** ([abramsky-sadrzadeh-2014]'s frame,
+model-theoretically): the three anticorrelation constraints are pairwise
+consistent — each pair merges (`merge_anti_nonempty`) — but no state
+restricts onto all three: Boolean anticorrelation cannot hold on three
+referents at once. Local consistency without a global section. -/
 theorem no_gluing_triangle :
     ¬ ∃ S : State Unit (Fin 3) Bool,
       S.restrict {0, 1} = anti 0 1 ∧ S.restrict {1, 2} = anti 1 2 ∧
       S.restrict {0, 2} = anti 0 2 := by
   rintro ⟨S, h01, h12, h02⟩
-  have hsub : ∀ {Y : Finset (Fin 3)} {p : Possibility Unit (Fin 3) Bool},
-      p ∈ S → p ∈ S.restrict Y :=
-    fun hp => ⟨_, hp, Set.eqOn_refl _ _⟩
-  have hempty : S.carrier = ∅ := by
-    refine Set.eq_empty_iff_forall_notMem.mpr fun p hp => ?_
-    have hp01 : p.assignment 0 ≠ p.assignment 1 := by
-      have h := hsub (Y := ({0, 1} : Finset (Fin 3))) hp
-      rw [h01] at h
-      exact h
-    have hp12 : p.assignment 1 ≠ p.assignment 2 := by
-      have h := hsub (Y := ({1, 2} : Finset (Fin 3))) hp
-      rw [h12] at h
-      exact h
-    have hp02 : p.assignment 0 ≠ p.assignment 2 := by
-      have h := hsub (Y := ({0, 2} : Finset (Fin 3))) hp
-      rw [h02] at h
-      exact h
-    cases hb0 : p.assignment 0 <;> cases hb1 : p.assignment 1 <;>
-      cases hb2 : p.assignment 2 <;> simp_all
-  have h2 : (anti 0 1).prop = ∅ := by
-    rw [← h01, State.prop_restrict]
-    refine Set.eq_empty_iff_forall_notMem.mpr fun w hw => ?_
-    obtain ⟨f, hf⟩ := hw
-    exact Set.eq_empty_iff_forall_notMem.mp hempty _ hf
-  have hwit : (() : Unit) ∈ (anti 0 1).prop :=
-    ⟨fun k => decide (k = 1),
-      show decide ((0 : Fin 3) = 1) ≠ decide ((1 : Fin 3) = 1) by decide⟩
-  rw [h2] at hwit
-  exact hwit
+  -- the target states are inhabited, so S is
+  have hne : S.Nonempty := by
+    rcases Set.eq_empty_or_nonempty S with rfl | h
+    · have : (∅ : State Unit (Fin 3) Bool) = anti 0 1 := by
+        simpa [State.restrict] using h01
+      exact absurd (this ▸ pt2_mem_anti (by decide) false true (by simp) :
+        pt2 0 1 false true ∈ (∅ : State Unit (Fin 3) Bool)) (by simp)
+    · exact h
+  obtain ⟨r, hr⟩ := hne
+  -- r's restrictions land in each anticorrelation state
+  have key : ∀ (i j : Fin 3), S.restrict {i, j} = anti i j →
+      ∃ a b : Bool, r.assignment i = some a ∧ r.assignment j = some b ∧
+        a ≠ b := by
+    intro i j hS
+    have hmem : r.restrict {i, j} ∈ anti i j := by
+      rw [← hS]
+      exact ⟨r, hr, rfl⟩
+    obtain ⟨hdom, hne⟩ := hmem
+    rw [Possibility.dom_restrict] at hdom
+    have hi : (r.assignment i).isSome := by
+      have : i ∈ (↑({i, j} : Finset (Fin 3)) : Set (Fin 3)) ∩
+          Possibility.dom r := by
+        rw [hdom]
+        simp
+      exact this.2
+    have hj : (r.assignment j).isSome := by
+      have : j ∈ (↑({i, j} : Finset (Fin 3)) : Set (Fin 3)) ∩
+          Possibility.dom r := by
+        rw [hdom]
+        simp
+      exact this.2
+    obtain ⟨a, ha⟩ := Option.isSome_iff_exists.mp hi
+    obtain ⟨b, hb⟩ := Option.isSome_iff_exists.mp hj
+    refine ⟨a, b, ha, hb, fun hab => ?_⟩
+    subst hab
+    apply hne
+    have hri : (r.restrict {i, j}).assignment i = some a := by
+      simpa [Possibility.restrict] using ha
+    have hrj : (r.restrict {i, j}).assignment j = some a := by
+      simpa [Possibility.restrict] using hb
+    rw [hri, hrj]
+  obtain ⟨a, b, ha, hb, hab⟩ := key 0 1 h01
+  obtain ⟨b', c, hb', hc, hbc⟩ := key 1 2 h12
+  obtain ⟨a', c', ha', hc', hac⟩ := key 0 2 h02
+  rw [hb] at hb'
+  rw [ha] at ha'
+  rw [hc] at hc'
+  obtain rfl := (Option.some.injEq .. ▸ hb' :)
+  obtain rfl := (Option.some.injEq .. ▸ ha' :)
+  obtain rfl := (Option.some.injEq .. ▸ hc' :)
+  cases a <;> cases b <;> cases c <;> simp_all
 
 end AbramskySadrzadeh2014

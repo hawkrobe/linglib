@@ -7,7 +7,7 @@ import Linglib.Data.Examples.Heim1982
 
 Formal analysis of cross-sentential anaphora using [heim-1982]'s
 File Change Semantics. This study file connects the FCS theory
-(`Semantics/Dynamic/FileChange/Basic.lean`) to the example rows
+(`Studies/Heim1982/FileChangeSemantics.lean`) to the example rows
 in `Data/Examples/Heim1982.json` (`Heim1982.Examples`).
 
 ## Key Claims Formalized
@@ -27,7 +27,9 @@ in `Data/Examples/Heim1982.json` (`Heim1982.Examples`).
 
 5. **Truth criterion (C)**: φ is true w.r.t. F iff Sat(F + φ) is
    nonempty ([heim-1982], Ch III §3.2). This builds existential
-   quantification into the notion of truth.
+   quantification into the notion of truth — see `trueIn`,
+   `supports_trueIn`, `supports_idempotent`, and the eliminativity
+   family (Principle (A)) in `FileChangeSemantics.lean`.
 
 ## Connection to Empirical Data
 
@@ -68,39 +70,39 @@ where ∃x₁ extends Dom(F) to include x₁.
 
 /-- The indefinite "a man walked in" as an FCP:
 ∃x. man(x) ∧ walkedIn(x). -/
-def aManWalkedIn (man walkedIn : E → Prop) (x : Nat) : FCP W E :=
+def aManWalkedIn (man walkedIn : E → Prop) (x : ℕ) : FCP W E :=
   FCP.indef x (FCP.seq (FCP.atomVar man x) (FCP.atomVar walkedIn x))
 
 /-- "He sat down" as an FCP: satDown(x). -/
-def heSatDown (satDown : E → Prop) (x : Nat) : FCP W E :=
+def heSatDown (satDown : E → Prop) (x : ℕ) : FCP W E :=
   FCP.atomVar satDown x
 
 /-- The full discourse "A man walked in. He sat down." -/
-def indefinitePersistsDiscourse (man walkedIn satDown : E → Prop) (x : Nat) :
+def indefinitePersistsDiscourse (man walkedIn satDown : E → Prop) (x : ℕ) :
     FCP W E :=
   FCP.seq (aManWalkedIn man walkedIn x) (heSatDown satDown x)
 
 /-- When x is novel, the indefinite FCP is defined
-(not a presupposition failure) — provided the body is total. -/
-theorem indef_defined_when_novel (x : Nat) (F : State W ℕ E)
-    (hnovel : x ∉ F.base) (body : FCP W E)
-    (hbody : ∀ G, ∃ G', body G = some G') :
-    ∃ F', FCP.indef x body F = some F' := by
-  simp only [FCP.indef, if_neg hnovel]
-  exact hbody _
+(not a presupposition failure) — provided the body is defined on the
+randomly assigned file. -/
+theorem indef_defined_when_novel (x : ℕ) (F : State W ℕ E)
+    (hnovel : ∀ p ∈ F, p.assignment x = none) (body : FCP W E)
+    (hbody : (body (F.randomAssign x)).Dom) :
+    definedOn F (FCP.indef x body) :=
+  ⟨hnovel, hbody⟩
 
-/-- After the indefinite, x is in the domain — provided the body
-preserves domain membership.
+/-- After the indefinite, x is familiar — provided the body preserves
+familiarity.
 
 This is the formal content of "indefinites introduce discourse
 referents" — the defining claim of [heim-1982]. -/
-theorem indef_adds_to_dom (x : Nat) (body : FCP W E)
-    (F F' : State W ℕ E) (hnovel : x ∉ F.base)
-    (hres : FCP.indef x body F = some F')
-    (hbody_dom : ∀ G G', body G = some G' → x ∈ G.base → x ∈ G'.base) :
-    x ∈ F'.base := by
-  simp only [FCP.indef, if_neg hnovel] at hres
-  exact hbody_dom _ F' hres (by simp)
+theorem indef_adds_to_dom (x : ℕ) (body : FCP W E)
+    (F : State W ℕ E) {F' : State W ℕ E}
+    (hres : F' ∈ FCP.indef x body F)
+    (hbody : ∀ G, Familiar G x → ∀ G' ∈ body G, Familiar G' x) :
+    Familiar F' x := by
+  obtain ⟨-, hmem⟩ := Part.mem_assert_iff.mp hres
+  exact hbody _ (State.familiar_randomAssign F x) F' hmem
 
 -- ════════════════════════════════════════════════════
 -- § 3. Negation Blocks Dref Export
@@ -110,21 +112,19 @@ theorem indef_adds_to_dom (x : Nat) (body : FCP W E)
 
 This accounts for `Examples.standard_negation_blocks`.
 The FCS analysis: negation closes the scope of the indefinite's dref.
-After F + [¬(∃x. bird(x) ∧ saw(j,x))], x is NOT in Dom — the
-negation's domain matches the input domain, not the extended one.
--/
+After F + [¬(∃x. bird(x) ∧ saw(j,x))], x is NOT familiar — negation
+keeps points of the input file, where x was never assigned. -/
 
-/-- A variable introduced inside negation is NOT in the output domain.
+/-- A variable introduced inside negation stays novel in the output.
 
-Negation preserves the input domain (`neg_preserves_dom`), so a
-novel variable stays novel after negation — the dref is trapped
+Negation is eliminative over the *input* file (`neg_eliminative`), so
+a novel variable stays novel after negation — the dref is trapped
 inside the scope of ¬. -/
-theorem neg_blocks_dref (x : Nat) (φ : FCP W E)
-    (F : State W ℕ E) (hnovel : x ∉ F.base)
-    (F' : State W ℕ E) (h : FCP.neg (FCP.indef x φ) F = some F') :
-    x ∉ F'.base := by
-  rw [neg_preserves_base (FCP.indef x φ) F F' h]
-  exact hnovel
+theorem neg_blocks_dref (x : ℕ) (φ : FCP W E) {F F' : State W ℕ E}
+    (hnovel : ∀ p ∈ F, p.assignment x = none)
+    (h : F' ∈ FCP.neg φ F) :
+    ∀ p ∈ F', p.assignment x = none :=
+  fun p hp => hnovel p (neg_eliminative φ h hp)
 
 -- ════════════════════════════════════════════════════
 -- § 4. Novelty-Familiarity Condition
@@ -137,98 +137,40 @@ p. 202):
 - Definites REQUIRE familiarity (x ∈ Dom(F))
 
 Violations cause undefinedness (presupposition failure), not
-falsehood. This is modeled by FCPs returning `none`. -/
+falsehood. This is modeled by FCPs being `Part`-undefined. -/
 
 /-- An indefinite with a familiar index causes presupposition failure.
 
 This accounts for why "*A man₁ walked in. A man₁ sat down." is
 infelicitous when the second indefinite reuses index 1. -/
-theorem novelty_violation (x : Nat) (body : FCP W E)
-    (F : State W ℕ E) (h : x ∈ F.base) :
-    FCP.indef x body F = none :=
-  indef_familiar_none x body F h
+theorem novelty_violation (x : ℕ) (body : FCP W E)
+    (F : State W ℕ E) (hne : F.Nonempty) (h : Familiar F x) :
+    ¬ definedOn F (FCP.indef x body) :=
+  indef_not_novel_not_definedOn x body F fun hall => by
+    obtain ⟨p, hp⟩ := hne
+    exact h p hp (hall p hp)
 
 /-- A definite with a novel index causes presupposition failure.
 
 This accounts for why "#He₁ sat down." is infelicitous at the start
 of a discourse (when no index 1 dref has been established). -/
-theorem familiarity_violation (x : Nat) (body : FCP W E)
-    (F : State W ℕ E) (h : x ∉ F.base) :
-    FCP.def_ x body F = none :=
-  def_novel_none x body F h
+theorem familiarity_violation (x : ℕ) (body : FCP W E)
+    (F : State W ℕ E) (h : ¬ Familiar F x) :
+    ¬ definedOn F (FCP.def_ x body) :=
+  def_not_familiar_not_definedOn x body F h
 
-/-- An indefinite followed by a definite with the same index is
-well-defined: the indefinite makes x familiar for the definite.
+/-- On a file where x is familiar, the definite applies transparently.
 
-"A man₁ walked in. He₁ sat down." — after the indefinite introduces
-dref 1, the definite "he₁" finds it familiar. -/
-theorem indef_then_def_defined (x : Nat)
-    (bodyIndef bodyDef : FCP W E)
-    (F : State W ℕ E) (_hnovel : x ∉ F.base)
-    (F₁ : State W ℕ E)
-    (_hstep1 : FCP.indef x bodyIndef F = some F₁)
-    (hfam : x ∈ F₁.base) :
-    FCP.def_ x bodyDef F₁ = bodyDef F₁ :=
-  if_pos hfam
+With `indef_adds_to_dom`, this derives "A man₁ walked in. He₁ sat
+down.": the indefinite makes index 1 familiar, so the definite "he₁"
+is no presupposition failure. -/
+theorem def_familiar (x : ℕ) (body : FCP W E)
+    (F : State W ℕ E) (hfam : Familiar F x) :
+    FCP.def_ x body F = body F :=
+  Part.assert_pos hfam
 
 -- ════════════════════════════════════════════════════
--- § 5. Truth Criterion (C)
--- ════════════════════════════════════════════════════
-
-/-! [heim-1982]'s truth definition (Ch III §3.2, p. 214):
-
-> (C) A formula φ is true w.r.t. a file F if F + φ is true,
->     and false w.r.t. F if F + φ is false.
-
-A file is true iff Sat(F) ≠ ∅. So truth of φ w.r.t. F amounts to
-Sat(F + φ) being nonempty. Crucially, this builds existential
-quantification into the notion of truth, making Existential Closure
-dispensable (Ch III §3.1). -/
-
-/-- Truth unfolds to: F + φ is defined and has nonempty Sat. -/
-theorem trueIn_iff (F : State W ℕ E) (φ : FCP W E) :
-    trueIn F φ ↔ ∃ F', φ F = some F' ∧ F'.carrier.Nonempty :=
-  Iff.rfl
-
-/-- Falsity unfolds to: F + φ is defined but has empty Sat. -/
-theorem falseIn_iff (F : State W ℕ E) (φ : FCP W E) :
-    falseIn F φ ↔ ∃ F', φ F = some F' ∧ ¬F'.carrier.Nonempty :=
-  Iff.rfl
-
-/-- Support (idempotency) implies truth for consistent files. -/
-theorem support_implies_truth (F : State W ℕ E) (φ : FCP W E)
-    (hsup : supports F φ) (hcons : F.carrier.Nonempty) : trueIn F φ :=
-  supports_trueIn F φ hsup hcons
-
-/-- Support is idempotent: if F supports φ, then updating twice
-equals updating once. -/
-theorem support_double_update (F : State W ℕ E) (φ : FCP W E)
-    (h : supports F φ) : FCP.seq φ φ F = φ F :=
-  supports_idempotent F φ h
-
--- ════════════════════════════════════════════════════
--- § 6. Eliminativity (Principle A)
--- ════════════════════════════════════════════════════
-
-/-! [heim-1982]'s Principle (A): file change only eliminates
-possibilities, never adds them. This holds for atomic updates,
-negation, and their compositions. -/
-
-/-- Negation is eliminative: Sat(F + ¬φ) ⊆ Sat(F). -/
-theorem neg_is_eliminative (φ : FCP W E) (F F' : State W ℕ E)
-    (h : FCP.neg φ F = some F') : F'.carrier ⊆ F.carrier :=
-  neg_eliminative φ F F' h
-
-/-- Sequential composition preserves eliminativity. -/
-theorem seq_is_eliminative (φ ψ : FCP W E)
-    (hφ : ∀ F F', φ F = some F' → F'.carrier ⊆ F.carrier)
-    (hψ : ∀ F F', ψ F = some F' → F'.carrier ⊆ F.carrier)
-    (F F' : State W ℕ E) (h : FCP.seq φ ψ F = some F') :
-    F'.carrier ⊆ F.carrier :=
-  seq_eliminative φ ψ hφ hψ F F' h
-
--- ════════════════════════════════════════════════════
--- § 7. Concrete Examples
+-- § 5. Concrete Examples
 -- ════════════════════════════════════════════════════
 
 /-! We instantiate the FCS framework with a concrete finite model
@@ -249,24 +191,21 @@ inductive ExEntity : Type where
 
 open ExWorld ExEntity
 
-instance : Nonempty (Possibility ExWorld ℕ ExEntity) :=
-  ⟨⟨w₀, λ _ => john⟩⟩
-
-/-- Starting file: no discourse referents, all possibilities — the
-minimal state `Λ`. -/
-def startFile : State ExWorld ℕ ExEntity := ⊥
+/-- Starting file: no discourse referents, all worlds open — the
+minimal state. -/
+def startFile : State ExWorld ℕ ExEntity := State.initial
 
 /-- Index 1 is novel in the start file (no drefs yet). -/
-example : 1 ∉ startFile.base := by
-  simp [startFile]
+example : ∀ p ∈ startFile, p.assignment 1 = none :=
+  fun _ hp => hp 1
 
-/-- The start file is consistent (Sat = Set.univ is nonempty). -/
-example : startFile.carrier.Nonempty := Set.univ_nonempty
+/-- The start file is consistent (nonempty). -/
+example : startFile.Nonempty := ⟨⟨w₀, λ _ => none⟩, λ _ => rfl⟩
 
 end ConcreteExamples
 
 -- ════════════════════════════════════════════════════
--- § 8. Connection to Empirical Data
+-- § 6. Connection to Empirical Data
 -- ════════════════════════════════════════════════════
 
 /-! Each row in `Heim1982.Examples` corresponds to a structural property
@@ -274,12 +213,13 @@ of FCS. The per-row theorems below check the row's recorded judgment
 against the FCS prediction derived above. -/
 
 /-- Indefinite persistence is judged acceptable; FCS predicts this via
-`indef_adds_to_dom` (the indefinite extends Dom and nothing closes it). -/
+`indef_adds_to_dom` (the indefinite makes its index familiar and nothing
+closes it). -/
 theorem datum_indefinitePersists :
     Examples.indefinite_persists.judgment = .acceptable := rfl
 
 /-- Single negation blocks; FCS predicts this via `neg_blocks_dref`
-(negation preserves the input domain). -/
+(negation keeps only input-file points). -/
 theorem datum_standardNegationBlocks :
     Examples.standard_negation_blocks.judgment = .unacceptable := rfl
 
@@ -292,7 +232,7 @@ theorem datum_negativeBlocks :
     Examples.negative_blocks.judgment = .unacceptable := rfl
 
 /-- Definite reference is acceptable; FCS predicts this via
-`indef_then_def_defined` (the established dref satisfies familiarity). -/
+`def_familiar` (the established dref satisfies familiarity). -/
 theorem datum_definiteReference :
     Examples.definite_reference.judgment = .acceptable := rfl
 

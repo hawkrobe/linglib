@@ -113,15 +113,13 @@ instance : Category (Ctx L V) where
 of contexts to the semantic one, identically on objects and a DRS to its
 transition — and functoriality on composition is the Merging Lemma, its
 capture-freshness side condition derived from the visibility invariant. -/
-def sem (W M : Type*) [L.Structure M] :
+def sem (W M : Type*) [L.Structure M] [Nonempty M] :
     Ctx L V ⥤ DynamicSemantics.Ctx W M V where
   obj X := ⟨X.base⟩
   map {X Y} u := ⟨(u.drs.transition W X.base u.presup).copy rfl u.target⟩
   map_id X := by
     apply DynamicSemantics.Ctx.Hom.ext
-    show ((DRS.empty.transition W X.base _).copy rfl _) = Transition.id X.base
-    rw [DRS.transition_empty]
-    exact (Transition.copy_copy _ _ _ _ _).trans (Transition.copy_rfl _)
+    exact DRS.transition_empty W X.base _ _
   map_comp {X Y Z} u v := by
     apply DynamicSemantics.Ctx.Hom.ext
     have hocc : Condition.occL u.drs.conditions ⊆ Y.base := by

@@ -864,13 +864,14 @@ theorem optimal_as_normalcy (no : Preorder W) (d : Set W)
 
 end GenericsBridge
 
-/-! ### Update-semantics states as the referent-free fiber
+/-! ### Update-semantics states as the referent-free stratum
 
-Veltman's information states are bare sets of worlds. In the indexed
-substrate they are exactly the states at the empty context: `toIndexedState`
-embeds them, the embedding is an order-reversal onto the `∅`-fiber
-(`State.fiberEmptyOrderIso`), and propositional update transports to
-carrier filtering. -/
+Veltman's information states are bare sets of worlds. In the substrate
+they are exactly the uniform states at the empty context:
+`toIndexedState` embeds them constructively — no choice, no inhabitant
+of `M`, unlike under the total-assignment rendering — the embedding
+reverses into the informativeness order `⊑`, and propositional update
+transports to point filtering. -/
 
 section IndexedFiber
 
@@ -878,41 +879,53 @@ open DynamicSemantics UpdateSemantics
 
 variable {W V M : Type*} {s t : Set W}
 
-/-- A Veltman state as a indexed state at the empty context. -/
-def toIndexedState (V M : Type*) (s : Set W) : DynamicSemantics.State W V M where
-  base := ∅
-  carrier := {p | p.world ∈ s}
-  supported := baseSupported_of_iff fun _ _ _ _ => Iff.rfl
+/-- A Veltman state as the referent-free state: its worlds, with nothing
+yet introduced. -/
+def toIndexedState (V M : Type*) (s : Set W) :
+    DynamicSemantics.State W V M :=
+  {p | p.world ∈ s ∧ ∀ v, p.assignment v = none}
 
-@[simp] theorem mem_toIndexedState {p : Possibility W V M} :
-    p ∈ toIndexedState V M s ↔ p.world ∈ s := Iff.rfl
+@[simp] theorem mem_toIndexedState {p : Possibility W V (Option M)} :
+    p ∈ toIndexedState V M s ↔
+      p.world ∈ s ∧ ∀ v, p.assignment v = none := Iff.rfl
 
-/-- The embedding reverses the orders: eliminating worlds is gaining
-information. -/
-theorem toIndexedState_le_iff [Nonempty M] :
-    toIndexedState V M s ≤ toIndexedState V M t ↔ t ⊆ s := by
+/-- The embedding lands in the empty stratum. -/
+theorem uniformAt_toIndexedState :
+    State.UniformAt ∅ (toIndexedState V M s) := fun p hp => by
+  ext v
+  simp [Possibility.dom, hp.2 v]
+
+/-- The embedding is faithful on worldly content. -/
+@[simp] theorem worlds_toIndexedState :
+    worlds (toIndexedState V M s) = s := by
+  ext w
+  constructor
+  · rintro ⟨p, hp, rfl⟩
+    exact hp.1
+  · intro hw
+    exact ⟨⟨w, fun _ => none⟩, ⟨hw, fun _ => rfl⟩, rfl⟩
+
+/-- Eliminating worlds is gaining information: the embedding reverses
+into `⊑`. -/
+theorem toIndexedState_infoLe_iff :
+    (toIndexedState V M s ⊑ toIndexedState V M t) ↔ t ⊆ s := by
   constructor
   · intro h w hw
-    exact h.2 (show (⟨w, fun _ => Classical.arbitrary M⟩ : Possibility W V M) ∈ _ from hw)
-  · exact fun h => ⟨subset_rfl, fun p hp => h hp⟩
+    obtain ⟨p, hp, hpq⟩ := h ⟨w, fun _ => none⟩ ⟨hw, fun _ => rfl⟩
+    have hs := hp.1
+    rwa [hpq.1] at hs
+  · rintro h q ⟨hq, hnone⟩
+    exact ⟨q, ⟨h hq, hnone⟩, Possibility.Descendant.refl q⟩
 
 /-- Propositional update ([veltman-1996]'s elimination) transports to
-carrier filtering on indexed states. -/
+point filtering. -/
 theorem toIndexedState_update_prop (φ : W → Prop) :
-    (toIndexedState V M (UpdateSemantics.Update.prop φ s)).carrier =
-      {p ∈ (toIndexedState V M s).carrier | φ p.world} := rfl
-
-/-- The embedding inverts the fiber classification: a Veltman state is
-precisely a state of the `∅`-fiber, read through
-`State.fiberEmptyOrderIso`. -/
-theorem fiberEmptyOrderIso_toIndexedState [Nonempty M] (s : Set W) :
-    State.fiberEmptyOrderIso (M := M) ⟨toIndexedState V M s, rfl⟩ =
-      OrderDual.toDual s := by
-  have h : ∀ w : W,
-      w ∈ OrderDual.ofDual
-        (State.fiberEmptyOrderIso (M := M) ⟨toIndexedState V M s, rfl⟩) ↔ w ∈ s :=
-    fun w => State.mem_fiberEmptyOrderIso (g := fun _ => Classical.arbitrary M)
-  exact Set.ext h
+    toIndexedState V M (UpdateSemantics.Update.prop φ s) =
+      {p ∈ toIndexedState V M s | φ p.world} :=
+  Set.ext fun p => by
+    simp only [mem_toIndexedState, Set.mem_setOf_eq,
+      UpdateSemantics.Update.prop]
+    tauto
 
 end IndexedFiber
 

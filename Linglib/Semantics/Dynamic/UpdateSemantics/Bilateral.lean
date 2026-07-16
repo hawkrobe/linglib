@@ -1,5 +1,5 @@
+import Linglib.Semantics.Dynamic.State
 import Linglib.Semantics.Dynamic.Update
-import Linglib.Semantics.Dynamic.Possibility
 import Linglib.Core.Logic.Bilateral.Defs
 import Mathlib.Algebra.Group.Defs
 
@@ -39,7 +39,9 @@ paper's separation of assertability (54) from Heimian familiarity rests.
 - `partition`, `partition_assertable`: every possibility subsists
   positively, subsists negatively, or is unknown.
 - `de_morgan_disj`, `de_morgan_conj`: de Morgan's laws, unlike in
-  standard dynamic semantics.
+  standard dynamic semantics. (Descendance, subsistence, `worlds`,
+  `Familiar`, and random assignment now live at the root, in
+  `State.lean` — this file's vocabulary became the module's.)
 - `egli`: Egli's theorem for the positive dimension, definitionally.
 - `isBilateral`: the update algebra is a bilateral logic in the sense of
   `Core.Logic.Bilateral`.
@@ -59,64 +61,6 @@ The empirical comparison against full ICDRT is in
 namespace DynamicSemantics
 
 variable {W V E : Type*}
-
-/-! ### Partiality, descendance, subsistence -/
-
-/-- `q` is a *descendant* of `p` ([elliott-sudo-2025], Def. 3.3): same
-world, and `q`'s assignment extends `p`'s wherever the latter is defined
-([groenendijk-stokhof-veltman-1996]'s form — see the module docstring). -/
-def Possibility.Descendant (p q : Possibility W V (Option E)) : Prop :=
-  p.world = q.world ∧ ∀ x e, p.assignment x = some e → q.assignment x = some e
-
-theorem Possibility.Descendant.refl (p : Possibility W V (Option E)) :
-    p.Descendant p :=
-  ⟨rfl, fun _ _ h => h⟩
-
-theorem Possibility.Descendant.trans {p q r : Possibility W V (Option E)}
-    (hpq : p.Descendant q) (hqr : q.Descendant r) : p.Descendant r :=
-  ⟨hpq.1.trans hqr.1, fun x e h => hqr.2 x e (hpq.2 x e h)⟩
-
-/-- `p` *subsists* in `s` ([elliott-sudo-2025], Def. 3.3): it has a
-descendant in `s`. -/
-def Subsists (p : Possibility W V (Option E))
-    (s : Set (Possibility W V (Option E))) : Prop :=
-  ∃ q ∈ s, p.Descendant q
-
-@[inherit_doc] scoped notation:50 p " ≺ " s => Subsists p s
-
-theorem Subsists.of_mem {p : Possibility W V (Option E)}
-    {s : Set (Possibility W V (Option E))} (h : p ∈ s) : p ≺ s :=
-  ⟨p, h, Possibility.Descendant.refl p⟩
-
-/-- A state subsists in another when each of its possibilities does — the
-state-level reading of the paper's overloaded `≺`. -/
-def subsistsIn (s s' : Set (Possibility W V (Option E))) : Prop :=
-  ∀ p ∈ s, p ≺ s'
-
-@[inherit_doc] scoped notation:50 s " ⪯ " s' => subsistsIn s s'
-
-/-! ### Worldly information, familiarity, random assignment -/
-
-/-- The *worldly information* of a state ([elliott-sudo-2025], Def. 3.1's
-𝒲): its image in the worlds. -/
-def worlds {M : Type*} (s : Set (Possibility W V M)) : Set W :=
-  Possibility.world '' s
-
-@[simp] theorem mem_worlds {M : Type*} {s : Set (Possibility W V M)} {w : W} :
-    w ∈ worlds s ↔ ∃ p ∈ s, Possibility.world p = w := Iff.rfl
-
-/-- A variable is *familiar* at a state ([elliott-sudo-2025], Def. 3.2)
-when it is defined at every possibility; its values may still differ
-across possibilities. -/
-def Familiar (s : Set (Possibility W V (Option E))) (x : V) : Prop :=
-  ∀ p ∈ s, p.assignment x ≠ none
-
-/-- Random assignment ([elliott-sudo-2025], (43)): indeterministically
-extend each possibility to a defined value at `x`. Novelty is not encoded
-— updates may be destructive, per the paper. -/
-def randomAssign [DecidableEq V] (s : Set (Possibility W V (Option E)))
-    (x : V) : Set (Possibility W V (Option E)) :=
-  {q | ∃ p ∈ s, ∃ e : E, q = p.extend x (some e)}
 
 /-! ### Bilateral denotations -/
 
@@ -292,10 +236,10 @@ the scope; the negative update merely removes possibilities — it retains
 those of `s` whose world falsifies the existential classically, and
 introduces no anaphoric information. -/
 def exists_ (x : V) (φ : BilateralDen W V E) : BilateralDen W V E where
-  positive s := φ.positive (randomAssign s x)
+  positive s := φ.positive (State.randomAssign s x)
   negative s :=
-    {p ∈ s | p.world ∉ worlds (φ.positive (randomAssign s x)) ∧
-      p.world ∈ worlds (φ.negative (randomAssign s x))}
+    {p ∈ s | p.world ∉ worlds (φ.positive (State.randomAssign s x)) ∧
+      p.world ∈ worlds (φ.negative (State.randomAssign s x))}
 
 /-- Universal quantification, by de Morgan duality: `∀x φ = ¬∃x ¬φ`. -/
 def forall_ (x : V) (φ : BilateralDen W V E) : BilateralDen W V E :=

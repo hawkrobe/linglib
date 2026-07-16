@@ -1,724 +1,527 @@
 import Linglib.Semantics.Dynamic.Possibility
 import Mathlib.Data.Finset.Basic
-import Mathlib.Data.Finset.Lattice.Lemmas
-import Mathlib.Data.Finset.Piecewise
 import Mathlib.Data.Set.Function
-import Mathlib.Order.BoundedOrder.Basic
-import Mathlib.Order.Hom.CompleteLattice
-import Mathlib.Order.Lattice
 
 /-!
-# Indexed information states
+# Information states
 
-An *information state* relative to a *base* `X` — a finite set of live
-discourse referents — is an `X`-supported set of possibilities
-(`Possibility.lean`). The base is the "context as storage" dimension of
-dynamic meaning: finer than a proposition, coarser than syntax
-([kamp-vangenabith-reyle-2011]'s Partee-marbles argument). Level-0 states are plain,
-unindexed sets of possibilities (`Update.lean`); the transitions
-acting on states live in `Transition.lean`.
+An *information state* is a set of world–assignment pairs, with the
+assignments partial — [kamp-vangenabith-reyle-2011]'s Def. 23 (sets of
+pairs of a world and an embedding), the form the field standardly
+assumes: the absurd state is `∅`, the initial state is `W × {g_⊤}`
+(`initial`), and the lattice of states is `Set`'s. Partiality is by
+`Option` ([elliott-sudo-2025]'s Def. 3.1: total functions into
+`D ∪ {∗}`), so no component of a state carries a proof obligation.
+
+There is no base field: Def. 23's "Dom(f) = X" is the *uniform* stratum
+(`UniformAt`), and a base is the index of a fiber, not part of the data.
+Points with domain `X` are world–`X`-environment pairs, constructively
+(`Possibility.domEquiv` — the total-assignment rendering needed choice
+and an inhabitant of `M` to recover this). Two preorders run through states, and they are
+dual on shared strata. *Informativeness* (`⊑`,
+[kamp-vangenabith-reyle-2011] Def. 25) quantifies over the stronger
+state: every point of the stronger has an ancestor in the weaker — the
+absurd state `∅` is maximally informative, the eliminative direction.
+*Subsistence* (`⪯`, [elliott-sudo-2025] Def. 3.3, after
+[groenendijk-stokhof-veltman-1996] Defs. 2.8–2.9) quantifies over the
+weaker: every point survives, extended, into the stronger — the
+anaphoric-support direction, with `∅` at the bottom. On a uniform
+stratum they reduce to `⊇` and `⊆` respectively
+(`infoLe_iff_superset`, `subsistsIn_iff_subset`).
 
 ## Main definitions
 
-- `BaseSupported X S`: `S` is a cylinder at granularity `X` — a preimage
-  along `Possibility.proj`, so membership depends on assignments only
-  through their values at `X`.
-- `State W V M`: a base with an `X`-supported carrier, ordered by
-  informativeness, with the minimal state Λ as `⊥` and consistent merge
-  as `⊔`.
-- `State.prop`: the proposition a state determines.
-- `State.restrict`, `State.weaken`, `State.kernRestrict`: the transports
-  along base inclusion — [lawvere-1969]'s quantifier triple.
-- `State.fiberEquiv`, `State.fiberOrderIso`: the states indexed at `X`, as
-  propositions over the `X`-collapsed state space.
+- `Possibility.dom`, `Possibility.Descendant`: the defined referents of
+  a partial point, and same-world graph-extension.
+- `State W V M`: information states; `initial`, with `∅` the absurd
+  state.
+- `infoLe` (`⊑`): informativeness (Def. 25); `Subsists` (`≺`),
+  `subsistsIn` (`⪯`): subsistence.
+- `worlds`, `Familiar`: worldly content and familiarity.
+- `State.UniformAt`, `Possibility.domEquiv`: the indexed stratum and its
+  constructive classification.
+- `Possibility.restrict`, `State.restrict`, `State.randomAssign`:
+  domain restriction (pointwise, by direct image) and random assignment.
 
 ## Main results
 
-- `le_iff_projection`, `mem_sup_iff_projection`: the chapter's projection
-  and choice-function forms of order and merge coincide with the
-  componentwise ones — support supplies the witnesses.
-- `baseSupported_iff`, `BaseSupported.preimage_image_mk`: support is
-  *saturation* for `Possibility.agreeSetoid ↑X`.
-- `prop_restrict`, `le_restrict_iff`: restriction never changes the
-  proposition, and is the universal `Y`-supported approximation.
-- `Compatible.restrict_sup_left`, `sup_le_of_restrict_eq`: consistent
-  merge is sheaf gluing for the presheaf of states
-  ([abramsky-sadrzadeh-2014]'s semantic unification), and the least one;
-  `exists_ne_of_restrict_eq`: the gluing is not unique — restriction
-  forgets cross-referent correlation.
-- `weaken_le_iff`, `kernRestrict_le_iff`, `restrict_weaken`,
-  `restrict_sup_weaken`: the adjunctions `kernRestrict ⊣ weaken ⊣
-  restrict`, Beck–Chevalley, and Frobenius — the fibers form a
-  hyperdoctrine over the category of contexts ([jacobs-1999]).
-- `fiberOrderIsoProd`, `fiberEmptyOrderIso`: the fiber at `X` classified
-  as propositions over world–`X`-assignment pairs ([heim-1982]'s
-  satisfaction sets), degenerating at `X = ∅` to bare propositions
-  ([veltman-1996]'s update-semantics states).
+- `Possibility.Descendant.eq_of_dom_eq`: on a shared domain, descendance
+  is equality — so both preorders are partial orders on each uniform
+  stratum (`infoLe_iff_superset`, `subsistsIn_iff_subset`).
+- `subsistsIn_restrict`: restriction only forgets — the restricted state
+  subsists in the original.
+- `uniformAt_restrict`, `restrict_restrict`: restriction meets the
+  stratification.
+- `uniformAt_initial`: the initial state is the empty-base fiber.
 
 ## Implementation notes
 
-*Indexed* is Jacobs' term, via [visser-1998]'s "indexed" treatment of
-predicate-logic semantics: meanings carry their variable declaration —
-the pair ⟨base, carrier⟩ — rather than living over one global assignment
-space. The chapter calls the declaration a *base*; type theory calls it
-a basis.
-
-The chapter's partial embeddings with domain `X` are rendered as total
-assignments with `X`-supported membership; Def. 25's informativeness
-order, Def. 26's consistent merge, and Def. 23(iv)'s minimal state then
-collapse to order theory (`PartialOrder`, `SemilatticeSup`, `OrderBot`).
-
-`State` gets a `Membership` instance rather than `SetLike`: the coe to
-carriers is not injective (`Set.univ` is supported at every base), and
-`Filter` is the precedent. The projection ladder carrier → agreement
-classes (`fiberEquiv`) → worlds (`prop`) forgets in two documented steps;
-[muskens-van-benthem-visser-2011]'s propositions-over-a-state-space
-picture is the middle rung, at granularity `X`.
+`State` is an abbreviation, so `Set`'s complete lattice is available and
+`⊑`/`⪯` are scoped relations rather than instances. Neither is
+antisymmetric on raw sets (adding a comparable point is invisible — an
+ancestor for `⪯`, a descendant for `⊑`); antisymmetry holds on each
+uniform stratum, where they coincide with `⊇`/`⊆`. The predecessor of this file classified its
+fibers as `(Set (W × (↑X → M)))ᵒᵈ` — the dual lands here because its
+order was Def. 25's, matching `⊑`, not `⪯`.
 
 ## References
 
-- [kamp-vangenabith-reyle-2011], Defs. 22–26
+- [kamp-vangenabith-reyle-2011], Defs. 23, 25
+- [groenendijk-stokhof-veltman-1996], [elliott-sudo-2025]
 - [heim-1982]
-- [muskens-van-benthem-visser-2011], [abramsky-sadrzadeh-2014]
-- [lawvere-1969], [jacobs-1999]
 -/
 
 namespace DynamicSemantics
 
-variable {W V M : Type*} {X Y : Finset V} {S T : Set (Possibility W V M)}
+variable {W V M : Type*}
 
-/-! ### Base-supported sets -/
+/-! ### Partial points -/
 
-/-- A set of possibilities is *supported* on `X` when it is a *cylinder*
-at granularity `X`: a preimage along `Possibility.proj`. Membership then
-depends on the assignment only through its values at `X`
-(`BaseSupported.mem_iff`). -/
-def BaseSupported (X : Finset V) (S : Set (Possibility W V M)) : Prop :=
-  S ∈ Set.range (Set.preimage (Possibility.proj (↑X : Set V)))
+namespace Possibility
 
-/-- Introduction form: supply the membership-invariance iff. -/
-theorem baseSupported_of_iff
-    (h : ∀ ⦃w : W⦄ ⦃f g : V → M⦄, Set.EqOn f g ↑X →
-      ((⟨w, f⟩ : Possibility W V M) ∈ S ↔ ⟨w, g⟩ ∈ S)) :
-    BaseSupported X S := by
-  refine ⟨Possibility.proj (↑X : Set V) '' S, ?_⟩
-  refine Set.Subset.antisymm ?_ (Set.subset_preimage_image _ _)
-  rintro ⟨w, g⟩ ⟨⟨w', f⟩, hf, heq⟩
-  obtain ⟨rfl, h2⟩ := Prod.ext_iff.mp heq
-  exact (h (Set.restrict_eq_restrict_iff.mp h2)).mp hf
+/-- The referents a partial point defines — Def. 23's `Dom(f)`. -/
+def dom (p : Possibility W V (Option M)) : Set V :=
+  {v | (p.assignment v).isSome}
 
-/-- Elimination form: membership is invariant under agreement on the base. -/
-theorem BaseSupported.mem_iff (h : BaseSupported X S) {w : W} {f g : V → M}
-    (hfg : Set.EqOn f g ↑X) :
-    (⟨w, f⟩ : Possibility W V M) ∈ S ↔ ⟨w, g⟩ ∈ S := by
-  obtain ⟨T, rfl⟩ := h
-  exact iff_of_eq (congrArg (· ∈ T) (Possibility.proj_eq_proj_iff.mpr ⟨rfl, hfg⟩))
+@[simp] theorem mem_dom {p : Possibility W V (Option M)} {v : V} :
+    v ∈ p.dom ↔ (p.assignment v).isSome := Iff.rfl
 
-/-- Cylinders coarsen: precompose with the restriction of environments. -/
-theorem BaseSupported.mono (h : BaseSupported X S) (hXY : X ⊆ Y) :
-    BaseSupported Y S := by
-  obtain ⟨T, rfl⟩ := h
-  exact ⟨(fun e : W × ((↑Y : Set V) → M) =>
-    (e.1, fun v : (↑X : Set V) => e.2 ⟨v.1, hXY v.2⟩)) ⁻¹' T, rfl⟩
+/-- `q` is a *descendant* of `p` ([elliott-sudo-2025], Def. 3.3): same
+world, and `q`'s assignment extends `p`'s wherever the latter is defined
+([groenendijk-stokhof-veltman-1996]'s graph-extension). -/
+def Descendant (p q : Possibility W V (Option M)) : Prop :=
+  p.world = q.world ∧ ∀ x e, p.assignment x = some e → q.assignment x = some e
 
-/-- Preimages intersect: cylinders are closed under intersection. -/
-theorem BaseSupported.inter (hS : BaseSupported X S) (hT : BaseSupported X T) :
-    BaseSupported X (S ∩ T) := by
-  obtain ⟨A, rfl⟩ := hS
-  obtain ⟨B, rfl⟩ := hT
-  exact ⟨A ∩ B, rfl⟩
+theorem Descendant.refl (p : Possibility W V (Option M)) :
+    p.Descendant p :=
+  ⟨rfl, fun _ _ h => h⟩
 
-/-- A set is supported on `X` iff membership is invariant under agreement on
-`X`: `BaseSupported X` is saturation for `Possibility.agreeSetoid ↑X`. -/
-theorem baseSupported_iff :
-    BaseSupported X S ↔
-      ∀ ⦃p q⦄, Possibility.agreeSetoid (↑X : Set V) p q → (p ∈ S ↔ q ∈ S) := by
-  constructor
-  · rintro h ⟨w, f⟩ ⟨w', g⟩ ⟨rfl, hfg⟩
-    exact h.mem_iff hfg
-  · intro h
-    exact baseSupported_of_iff fun _ _ _ hfg => h ⟨rfl, hfg⟩
+theorem Descendant.trans {p q r : Possibility W V (Option M)}
+    (hpq : p.Descendant q) (hqr : q.Descendant r) : p.Descendant r :=
+  ⟨hpq.1.trans hqr.1, fun x e h => hqr.2 x e (hpq.2 x e h)⟩
 
-/-- Point form of `BaseSupported.mem_iff`: membership is invariant on
-agreement classes. -/
-theorem BaseSupported.mem_congr (h : BaseSupported X S) {p q : Possibility W V M}
-    (hpq : Possibility.agreeSetoid (↑X : Set V) p q) : p ∈ S ↔ q ∈ S :=
-  baseSupported_iff.mp h hpq
+/-- Descendance grows the domain. -/
+theorem Descendant.dom_subset {p q : Possibility W V (Option M)}
+    (h : p.Descendant q) : p.dom ⊆ q.dom := fun v hv => by
+  obtain ⟨e, he⟩ := Option.isSome_iff_exists.mp hv
+  exact Option.isSome_iff_exists.mpr ⟨e, h.2 v e he⟩
 
-/-- The saturation round trip: a supported set is the preimage of its image
-in the collapsed state space. -/
-theorem BaseSupported.preimage_image_mk (h : BaseSupported X S) :
-    Quotient.mk (Possibility.agreeSetoid ↑X) ⁻¹' (Quotient.mk _ '' S) = S :=
-  Set.Subset.antisymm (fun _ ⟨_, hq, hqp⟩ => (h.mem_congr (Quotient.exact hqp)).mp hq)
-    (Set.subset_preimage_image _ _)
+/-- On a shared domain, descendance is equality: there is no room to
+grow. -/
+theorem Descendant.eq_of_dom_eq {p q : Possibility W V (Option M)}
+    (h : p.Descendant q) (hdom : p.dom = q.dom) : p = q := by
+  refine Possibility.ext h.1 (funext fun v => ?_)
+  rcases hp : p.assignment v with _ | e
+  · rcases hq : q.assignment v with _ | e
+    · rfl
+    · have : v ∈ p.dom := hdom ▸ Option.isSome_iff_exists.mpr ⟨e, hq⟩
+      rw [Possibility.mem_dom, hp] at this
+      exact absurd this (by simp)
+  · exact (h.2 v e hp).symm ▸ rfl
+
+/-- Two partial points are *compatible*: same world, agreeing wherever
+both are defined — [kamp-vangenabith-reyle-2011] Def. 26's condition
+that the union of chosen points be a function. -/
+def Compatible (p q : Possibility W V (Option M)) : Prop :=
+  p.world = q.world ∧
+    ∀ v e e', p.assignment v = some e → q.assignment v = some e' → e = e'
+
+/-- The union of two points: defined wherever either is, the left
+taking precedence (agreement makes the choice immaterial). -/
+def union (p q : Possibility W V (Option M)) :
+    Possibility W V (Option M) :=
+  ⟨p.world, fun v => (p.assignment v).or (q.assignment v)⟩
+
+theorem left_descendant_union (p q : Possibility W V (Option M)) :
+    p.Descendant (p.union q) :=
+  ⟨rfl, fun v e h => by simp [union, h]⟩
+
+theorem Compatible.right_descendant_union
+    {p q : Possibility W V (Option M)} (h : p.Compatible q) :
+    q.Descendant (p.union q) :=
+  ⟨h.1.symm, fun v e hq => by
+    rcases hp : p.assignment v with _ | e'
+    · simp [union, hp, hq]
+    · simp [union, hp, h.2 v e' e hp hq]⟩
+
+/-- On a shared domain, compatibility is equality. -/
+theorem Compatible.eq_of_dom_eq {p q : Possibility W V (Option M)}
+    (h : p.Compatible q) (hdom : p.dom = q.dom) : p = q := by
+  refine Possibility.ext h.1 (funext fun v => ?_)
+  rcases hp : p.assignment v with _ | e
+  · rcases hq : q.assignment v with _ | e
+    · rfl
+    · have : v ∈ p.dom := hdom ▸ Option.isSome_iff_exists.mpr ⟨e, hq⟩
+      rw [Possibility.mem_dom, hp] at this
+      exact absurd this (by simp)
+  · rcases hq : q.assignment v with _ | e'
+    · have : v ∈ q.dom := hdom ▸ Option.isSome_iff_exists.mpr ⟨e, hp⟩
+      rw [Possibility.mem_dom, hq] at this
+      exact absurd this (by simp)
+    · exact congrArg some (h.2 v e e' hp hq)
+
+/-- Union of points unites domains. -/
+theorem dom_union (p q : Possibility W V (Option M)) :
+    (p.union q).dom = p.dom ∪ q.dom := by
+  ext v
+  rcases hp : p.assignment v with _ | e <;> simp [union, dom, hp]
+
+/-- Common ancestors are compatible. -/
+theorem Descendant.compatible {p q u : Possibility W V (Option M)}
+    (hp : p.Descendant u) (hq : q.Descendant u) : p.Compatible q :=
+  ⟨hp.1.trans hq.1.symm, fun v e e' he he' => by
+    have h1 := hp.2 v e he
+    have h2 := hq.2 v e' he'
+    rw [h1] at h2
+    exact (Option.some.injEq .. ▸ h2 :)⟩
+
+/-- The union of two ancestors is an ancestor. -/
+theorem Descendant.union_descendant {p q u : Possibility W V (Option M)}
+    (hp : p.Descendant u) (hq : q.Descendant u) :
+    (p.union q).Descendant u :=
+  ⟨hp.1, fun v e h => by
+    rcases hpv : p.assignment v with _ | e'
+    · exact hq.2 v e (by simpa [union, hpv] using h)
+    · have : e' = e := by simpa [union, hpv] using h
+      exact this ▸ hp.2 v e' hpv⟩
+
+end Possibility
 
 /-! ### Information states -/
 
-/-- An information state ([kamp-vangenabith-reyle-2011], Defs. 22–23): a base
-`X` of live discourse referents together with an `X`-supported set of
-possibilities. -/
-@[ext] structure State (W V M : Type*) where
-  /-- The live discourse referents (the chapter's base `X`). -/
-  base : Finset V
-  /-- The possibilities compatible with the information. -/
-  carrier : Set (Possibility W V M)
-  /-- Membership depends on assignments only through their values at `base`. -/
-  supported : BaseSupported base carrier
+/-- An information state: a set of world–assignment pairs, the
+assignments partial (Def. 23). The absurd state is `∅`; the lattice of
+states is `Set`'s. -/
+abbrev State (W V M : Type*) := Set (Possibility W V (Option M))
+
+/-- The initial information state `W × {g_⊤}`: every world live, no
+referent defined. -/
+def State.initial : State W V M := {p | ∀ v, p.assignment v = none}
+
+/-- `p` *subsists* in `s` ([elliott-sudo-2025], Def. 3.3): it has a
+descendant in `s`. -/
+def Subsists (p : Possibility W V (Option M)) (s : State W V M) : Prop :=
+  ∃ q ∈ s, p.Descendant q
+
+@[inherit_doc] scoped notation:50 p " ≺ " s => Subsists p s
+
+theorem Subsists.of_mem {p : Possibility W V (Option M)} {s : State W V M}
+    (h : p ∈ s) : p ≺ s :=
+  ⟨p, h, Possibility.Descendant.refl p⟩
+
+/-- `s` subsists in `s'`: the informativeness order, Def. 25's
+projection form — every point of the weaker state has a descendant in
+the stronger. -/
+def subsistsIn (s s' : State W V M) : Prop :=
+  ∀ p ∈ s, p ≺ s'
+
+@[inherit_doc] scoped notation:50 s " ⪯ " s' => subsistsIn s s'
+
+theorem subsistsIn_refl (s : State W V M) : s ⪯ s :=
+  fun _ hp => Subsists.of_mem hp
+
+theorem subsistsIn_trans {s t u : State W V M} (hst : s ⪯ t)
+    (htu : t ⪯ u) : s ⪯ u := fun p hp => by
+  obtain ⟨q, hq, hpq⟩ := hst p hp
+  obtain ⟨r, hr, hqr⟩ := htu q hq
+  exact ⟨r, hr, hpq.trans hqr⟩
+
+/-- Informativeness ([kamp-vangenabith-reyle-2011] Def. 25): `s'` carries
+at least as much information as `s` — every point of the stronger state
+has an ancestor in the weaker. The absurd state is maximally
+informative; the eliminative direction, dual to `⪯` on shared strata. -/
+def infoLe (s s' : State W V M) : Prop :=
+  ∀ q ∈ s', ∃ p ∈ s, p.Descendant q
+
+@[inherit_doc] scoped notation:50 s " ⊑ " s' => infoLe s s'
+
+theorem infoLe_refl (s : State W V M) : s ⊑ s :=
+  fun q hq => ⟨q, hq, Possibility.Descendant.refl q⟩
+
+theorem infoLe_trans {s t u : State W V M} (hst : s ⊑ t) (htu : t ⊑ u) :
+    s ⊑ u := fun r hr => by
+  obtain ⟨q, hq, hqr⟩ := htu r hr
+  obtain ⟨p, hp, hpq⟩ := hst q hq
+  exact ⟨p, hp, hpq.trans hqr⟩
+
+/-- The absurd state is maximally informative. -/
+theorem infoLe_empty (s : State W V M) : s ⊑ (∅ : State W V M) :=
+  fun q hq => absurd hq (Set.notMem_empty q)
+
+/-! ### Consistent merge -/
+
+/-- Consistent merge ([kamp-vangenabith-reyle-2011] Def. 26, binary):
+the points assembled from compatible pairs. Across strata this is the
+descendant-mediated join — plain intersection of point-sets is empty
+between distinct strata. -/
+def State.merge (s s' : State W V M) : State W V M :=
+  {r | ∃ p ∈ s, ∃ q ∈ s', p.Compatible q ∧ r = p.union q}
+
+/-- The merge is above the left component in informativeness. -/
+theorem infoLe_merge_left (s s' : State W V M) : s ⊑ s.merge s' := by
+  rintro r ⟨p, hp, q, hq, hpq, rfl⟩
+  exact ⟨p, hp, Possibility.left_descendant_union p q⟩
+
+/-- The merge is above the right component in informativeness. -/
+theorem infoLe_merge_right (s s' : State W V M) : s' ⊑ s.merge s' := by
+  rintro r ⟨p, hp, q, hq, hpq, rfl⟩
+  exact ⟨q, hq, hpq.right_descendant_union⟩
+
+/-- **The merge is the least upper bound** (Def. 26's universal
+property, in the informativeness preorder): anything above both
+components is above their merge. -/
+theorem merge_infoLe {s s' t : State W V M} (hs : s ⊑ t)
+    (hs' : s' ⊑ t) : s.merge s' ⊑ t := fun u hu => by
+  obtain ⟨p, hp, hpu⟩ := hs u hu
+  obtain ⟨q, hq, hqu⟩ := hs' u hu
+  exact ⟨p.union q, ⟨p, hp, q, hq, hpu.compatible hqu, rfl⟩,
+    hpu.union_descendant hqu⟩
+
+/-- The worldly content of a state ([elliott-sudo-2025] Def. 3.1's 𝒲). -/
+def worlds (s : State W V M) : Set W :=
+  Possibility.world '' s
+
+@[simp] theorem mem_worlds {s : State W V M} {w : W} :
+    w ∈ worlds s ↔ ∃ p ∈ s, Possibility.world p = w := Iff.rfl
+
+/-- A referent is *familiar* at a state ([elliott-sudo-2025], Def. 3.2;
+[heim-1982]'s files): defined at every point. -/
+def Familiar (s : State W V M) (x : V) : Prop :=
+  ∀ p ∈ s, p.assignment x ≠ none
+
+/-! ### Restriction and random assignment -/
+
+namespace Possibility
+
+variable [DecidableEq V]
+
+/-- Restrict a partial point to the referents in `X`. -/
+def restrict (X : Finset V) (p : Possibility W V (Option M)) :
+    Possibility W V (Option M) :=
+  ⟨p.world, fun v => if v ∈ X then p.assignment v else none⟩
+
+@[simp] theorem restrict_world (X : Finset V)
+    (p : Possibility W V (Option M)) :
+    (p.restrict X).world = p.world := rfl
+
+/-- Restriction is an ancestor. -/
+theorem restrict_descendant (X : Finset V)
+    (p : Possibility W V (Option M)) : (p.restrict X).Descendant p :=
+  ⟨rfl, fun x e h => by
+    by_cases hx : x ∈ X
+    · simpa [restrict, hx] using h
+    · simp [restrict, hx] at h⟩
+
+/-- Restriction intersects the domain. -/
+theorem dom_restrict (X : Finset V) (p : Possibility W V (Option M)) :
+    (p.restrict X).dom = ↑X ∩ p.dom := by
+  ext v
+  by_cases hv : v ∈ X <;> simp [restrict, dom, hv]
+
+/-- Descendance out of a stratum is *being the restriction*: for `p` at
+`X`, `p` grows into `q` exactly when `p` is `q` cut to `X`. The
+hom-characterization of the fibred order. -/
+theorem descendant_iff_eq_restrict {X : Finset V}
+    {p q : Possibility W V (Option M)} (hp : p.dom = (↑X : Set V)) :
+    p.Descendant q ↔ p = q.restrict X := by
+  constructor
+  · intro h
+    refine Possibility.ext h.1 (funext fun v => ?_)
+    by_cases hv : v ∈ X
+    · have hsome : (p.assignment v).isSome :=
+        (Set.ext_iff.mp hp v).mpr hv
+      obtain ⟨e, he⟩ := Option.isSome_iff_exists.mp hsome
+      rw [he]
+      simp only [restrict, if_pos hv]
+      exact (h.2 v e he).symm
+    · have hnone : p.assignment v = none :=
+        Option.not_isSome_iff_eq_none.mp
+          fun hs => hv ((Set.ext_iff.mp hp v).mp hs)
+      rw [hnone]
+      simp [restrict, hv]
+  · rintro rfl
+    exact restrict_descendant X q
+
+/-- Restriction is pointwise idempotent along intersections. -/
+theorem restrict_restrict (X Y : Finset V)
+    (p : Possibility W V (Option M)) :
+    (p.restrict Y).restrict X = p.restrict (X ∩ Y) := by
+  refine Possibility.ext rfl (funext fun v => ?_)
+  by_cases hx : v ∈ X <;> by_cases hy : v ∈ Y <;>
+    simp [restrict, hx, hy]
+
+end Possibility
 
 namespace State
 
-variable {I I' J : State W V M} {p : Possibility W V M}
+/-! ### The uniform stratum -/
 
-instance : Membership (Possibility W V M) (State W V M) :=
-  ⟨fun I p => p ∈ I.carrier⟩
+/-- The state is uniform at `X`: every point defines exactly the
+referents in `X` — Def. 23's "Dom(f) = X", as a stratum rather than a
+component. -/
+def UniformAt (X : Finset V) (I : State W V M) : Prop :=
+  ∀ p ∈ I, Possibility.dom p = (↑X : Set V)
 
-@[simp] theorem mem_carrier :
-    p ∈ I.carrier ↔ p ∈ I := Iff.rfl
+/-- The initial state is uniform at the empty base. -/
+theorem uniformAt_initial : UniformAt ∅ (initial : State W V M) :=
+  fun p hp => by
+    ext v
+    simp [Possibility.dom, hp v]
 
-/-! ### The informativeness order -/
-
-/-- Informativeness ([kamp-vangenabith-reyle-2011], Def. 25): `I ≤ I'` iff
-`I'` carries at least as much information — the base grows and the carrier
-shrinks. -/
-instance : PartialOrder (State W V M) where
-  le I I' := I.base ⊆ I'.base ∧ I'.carrier ⊆ I.carrier
-  le_refl _ := ⟨subset_rfl, subset_rfl⟩
-  le_trans _ _ _ h h' := ⟨h.1.trans h'.1, h'.2.trans h.2⟩
-  le_antisymm _ _ h h' :=
-    State.ext (Finset.Subset.antisymm h.1 h'.1) (Set.Subset.antisymm h'.2 h.2)
-
-theorem le_def :
-    I ≤ I' ↔ I.base ⊆ I'.base ∧ I'.carrier ⊆ I.carrier := Iff.rfl
-
-/-- The chapter's projection form of Def. 25 — every possibility of the
-stronger state restricts to one of the weaker — coincides with `≤`: support
-makes the projected witness the possibility itself. -/
-theorem le_iff_projection :
-    I ≤ I' ↔ I.base ⊆ I'.base ∧
-      ∀ ⦃w g⦄, (⟨w, g⟩ : Possibility W V M) ∈ I' →
-        ∃ f, (⟨w, f⟩ : Possibility W V M) ∈ I ∧ Set.EqOn f g ↑I.base := by
+/-- On a uniform stratum, subsistence is inclusion. -/
+theorem subsistsIn_iff_subset {X : Finset V} {s s' : State W V M}
+    (hs : UniformAt X s) (hs' : UniformAt X s') :
+    (s ⪯ s') ↔ s ⊆ s' := by
   constructor
-  · rintro ⟨hb, hc⟩
-    exact ⟨hb, fun w g hg => ⟨g, hc hg, Set.eqOn_refl g _⟩⟩
-  · rintro ⟨hb, hproj⟩
-    refine ⟨hb, fun p hp => ?_⟩
-    obtain ⟨w, g⟩ := p
-    obtain ⟨f, hf, hfg⟩ := hproj hp
-    exact (I.supported.mem_iff hfg).mp hf
+  · intro h p hp
+    obtain ⟨q, hq, hpq⟩ := h p hp
+    rwa [hpq.eq_of_dom_eq ((hs p hp).trans (hs' q hq).symm)]
+  · exact fun h p hp => Subsists.of_mem (h hp)
 
-/-- The minimal information state Λ ([kamp-vangenabith-reyle-2011],
-Def. 23(iv)): empty base, no information. -/
-instance : OrderBot (State W V M) where
-  bot := ⟨∅, Set.univ, ⟨Set.univ, rfl⟩⟩
-  bot_le _ := ⟨Finset.empty_subset _, Set.subset_univ _⟩
+/-- On a uniform stratum, informativeness is reverse inclusion — the
+eliminative direction. -/
+theorem infoLe_iff_superset {X : Finset V} {s s' : State W V M}
+    (hs : UniformAt X s) (hs' : UniformAt X s') :
+    (s ⊑ s') ↔ s' ⊆ s := by
+  constructor
+  · intro h q hq
+    obtain ⟨p, hp, hpq⟩ := h q hq
+    rwa [← hpq.eq_of_dom_eq ((hs p hp).trans (hs' q hq).symm)]
+  · exact fun h q hq => ⟨q, h hq, Possibility.Descendant.refl q⟩
 
-@[simp] theorem base_bot : (⊥ : State W V M).base = ∅ := rfl
-@[simp] theorem carrier_bot : (⊥ : State W V M).carrier = Set.univ := rfl
+/-- Within one stratum, merge is intersection: compatibility on a shared
+domain forces equality. -/
+theorem merge_eq_inter_of_uniform {X : Finset V} {s s' : State W V M}
+    (hs : UniformAt X s) (hs' : UniformAt X s') :
+    s.merge s' = s ∩ s' := by
+  have hself : ∀ r : Possibility W V (Option M), r.union r = r := fun r =>
+    Possibility.ext rfl (funext fun v => by
+      rcases h : r.assignment v with _ | e <;> simp [Possibility.union, h])
+  ext r
+  constructor
+  · rintro ⟨p, hp, q, hq, hpq, rfl⟩
+    obtain rfl := hpq.eq_of_dom_eq ((hs p hp).trans (hs' q hq).symm)
+    rw [hself p]
+    exact ⟨hp, hq⟩
+  · rintro ⟨hr, hr'⟩
+    refine ⟨r, hr, r, hr', ⟨rfl, fun v e e' he he' => ?_⟩, (hself r).symm⟩
+    rw [he] at he'
+    exact (Option.some.injEq .. ▸ he' :)
 
-@[simp] theorem mem_bot : p ∈ (⊥ : State W V M) := trivial
-
-/-! ### Consistent merge is the join -/
-
-section Merge
+section Fibred
 variable [DecidableEq V]
 
-/-- Consistent merge ([kamp-vangenabith-reyle-2011], Def. 26) is the join of
-the informativeness order: union the bases, intersect the carriers. -/
-instance : SemilatticeSup (State W V M) where
-  sup I I' :=
-    ⟨I.base ∪ I'.base, I.carrier ∩ I'.carrier,
-      (I.supported.mono Finset.subset_union_left).inter
-        (I'.supported.mono Finset.subset_union_right)⟩
-  le_sup_left _ _ := ⟨Finset.subset_union_left, Set.inter_subset_left⟩
-  le_sup_right _ _ := ⟨Finset.subset_union_right, Set.inter_subset_right⟩
-  sup_le _ _ _ h h' :=
-    ⟨Finset.union_subset h.1 h'.1, Set.subset_inter h.2 h'.2⟩
+/-- Merge unites strata. -/
+theorem uniformAt_merge {X Y : Finset V} {s s' : State W V M}
+    (hs : UniformAt X s) (hs' : UniformAt Y s') :
+    UniformAt (X ∪ Y) (s.merge s') := by
+  rintro r ⟨p, hp, q, hq, -, rfl⟩
+  rw [Possibility.dom_union, hs p hp, hs' q hq, Finset.coe_union]
 
-@[simp] theorem base_sup (I I' : State W V M) :
-    (I ⊔ I').base = I.base ∪ I'.base := rfl
-@[simp] theorem carrier_sup (I I' : State W V M) :
-    (I ⊔ I').carrier = I.carrier ∩ I'.carrier := rfl
-
-@[simp] theorem mem_sup :
-    p ∈ I ⊔ I' ↔ p ∈ I ∧ p ∈ I' := Iff.rfl
-
-/-- The chapter's choice-function form of Def. 26: a possibility belongs to
-the merge iff it restricts into each component — support makes the choice
-functions the possibility itself. -/
-theorem mem_sup_iff_projection {w : W} {k : V → M} :
-    (⟨w, k⟩ : Possibility W V M) ∈ I ⊔ I' ↔
-      (∃ f, (⟨w, f⟩ : Possibility W V M) ∈ I ∧ Set.EqOn f k ↑I.base) ∧
-      (∃ g, (⟨w, g⟩ : Possibility W V M) ∈ I' ∧ Set.EqOn g k ↑I'.base) := by
+/-- Subsistence out of a stratum factors through reindexing: the weaker
+state includes into the restricted image of the stronger — the fibred
+order, glued from within-stratum `⊆` along `restrict`. -/
+theorem subsistsIn_iff_subset_restrict {X : Finset V}
+    {s s' : State W V M} (hs : UniformAt X s) :
+    (s ⪯ s') ↔ s ⊆ Possibility.restrict X '' s' := by
   constructor
-  · rintro ⟨hI, hI'⟩
-    exact ⟨⟨k, hI, Set.eqOn_refl k _⟩, ⟨k, hI', Set.eqOn_refl k _⟩⟩
-  · rintro ⟨⟨f, hf, hfk⟩, ⟨g, hg, hgk⟩⟩
-    exact ⟨(I.supported.mem_iff hfk).mp hf, (I'.supported.mem_iff hgk).mp hg⟩
+  · intro h p hp
+    obtain ⟨q, hq, hpq⟩ := h p hp
+    exact ⟨q, hq,
+      ((Possibility.descendant_iff_eq_restrict (hs p hp)).mp hpq).symm⟩
+  · rintro h p hp
+    obtain ⟨q, hq, rfl⟩ := h hp
+    exact ⟨q, hq, Possibility.restrict_descendant X q⟩
 
-end Merge
-
-/-! ### The proposition determined by a state -/
-
-/-- The proposition a state determines ([kamp-vangenabith-reyle-2011],
-Def. 23(v)): the worlds compatible with some assignment. -/
-def prop (I : State W V M) : Set W := {w | ∃ f, (⟨w, f⟩ : Possibility W V M) ∈ I}
-
-@[simp] theorem mem_prop {w : W} :
-    w ∈ I.prop ↔ ∃ f, (⟨w, f⟩ : Possibility W V M) ∈ I := Iff.rfl
-
-theorem prop_eq_image (I : State W V M) : I.prop = Possibility.world '' I.carrier :=
-  Set.ext fun _ => ⟨fun ⟨f, hf⟩ => ⟨⟨_, f⟩, hf, rfl⟩, fun ⟨⟨_, f⟩, hp, hw⟩ => ⟨f, hw ▸ hp⟩⟩
-
-/-- Stronger states determine stronger propositions. -/
-theorem prop_anti : Antitone (prop : State W V M → Set W) :=
-  fun _ _ h _ ⟨f, hf⟩ => ⟨f, h.2 hf⟩
-
-@[simp] theorem prop_bot [Nonempty M] : (⊥ : State W V M).prop = Set.univ :=
-  Set.eq_univ_of_forall fun _ => ⟨fun _ => Classical.arbitrary M, trivial⟩
-
-/-! ### Restriction to a smaller base -/
-
-/-- Restrict a state to base `Y`: the best `Y`-supported approximation — a
-possibility survives iff some carrier member agrees with it on `Y`. -/
-def restrict (I : State W V M) (Y : Finset V) : State W V M where
-  base := Y
-  carrier :=
-    {p | ∃ f, (⟨p.world, f⟩ : Possibility W V M) ∈ I.carrier ∧
-      Set.EqOn f p.assignment ↑Y}
-  supported := baseSupported_of_iff fun _ _ _ hgg' =>
-    exists_congr fun _ => and_congr_right fun _ =>
-      ⟨fun h => h.trans hgg', fun h => h.trans hgg'.symm⟩
-
-@[simp] theorem base_restrict (I : State W V M) (Y : Finset V) :
-    (I.restrict Y).base = Y := rfl
-
-@[simp] theorem mem_restrict {w : W} {g : V → M} :
-    (⟨w, g⟩ : Possibility W V M) ∈ I.restrict Y ↔
-      ∃ f, (⟨w, f⟩ : Possibility W V M) ∈ I ∧ Set.EqOn f g ↑Y := Iff.rfl
-
-/-- Restricting to the state's own base is the identity. -/
-@[simp] theorem restrict_base (I : State W V M) : I.restrict I.base = I := by
-  ext1
-  · rfl
-  · ext ⟨w, g⟩
-    exact ⟨fun ⟨f, hf, hfg⟩ => (I.supported.mem_iff hfg).mp hf,
-      fun h => ⟨g, h, Set.eqOn_refl g _⟩⟩
-
-/-- Restriction is transitive along shrinking bases. -/
-theorem restrict_restrict (I : State W V M) {Z : Finset V} (hZY : Z ⊆ Y) :
-    (I.restrict Y).restrict Z = I.restrict Z := by
-  ext1
-  · rfl
-  · ext ⟨w, g⟩
-    constructor
-    · rintro ⟨f, ⟨f', hf', hf'f⟩, hfg⟩
-      exact ⟨f', hf', (hf'f.mono (Finset.coe_subset.mpr hZY)).trans hfg⟩
-    · rintro ⟨f, hf, hfg⟩
-      exact ⟨f, ⟨f, hf, Set.eqOn_refl f _⟩, hfg⟩
-
-/-- Restriction to a sub-base weakens the state. -/
-theorem restrict_le (h : Y ⊆ I.base) :
-    I.restrict Y ≤ I :=
-  ⟨h, fun p hp => ⟨p.assignment, hp, Set.eqOn_refl p.assignment _⟩⟩
-
-/-- Restriction is the *best* `Y`-supported approximation: for states indexed
-below `Y`, lying below `I.restrict Y` is lying below `I`. -/
-theorem le_restrict_iff (hJ : J.base ⊆ Y) (hY : Y ⊆ I.base) : J ≤ I.restrict Y ↔ J ≤ I := by
+/-- Informativeness out of a stratum factors through reindexing: the
+restricted image of the stronger is included in the weaker — the
+eliminative direction of the fibred order. -/
+theorem infoLe_iff_restrict_subset {X : Finset V}
+    {s s' : State W V M} (hs : UniformAt X s) :
+    (s ⊑ s') ↔ Possibility.restrict X '' s' ⊆ s := by
   constructor
-  · exact fun h => h.trans (restrict_le hY)
-  · rintro ⟨hb, hc⟩
-    refine ⟨hJ, fun p hp => ?_⟩
-    obtain ⟨w, g⟩ := p
-    obtain ⟨f, hf, hfg⟩ := hp
-    exact (J.supported.mem_iff (hfg.mono (Finset.coe_subset.mpr hJ))).mp (hc hf)
+  · rintro h r ⟨q, hq, rfl⟩
+    obtain ⟨p, hp, hpq⟩ := h q hq
+    rwa [← (Possibility.descendant_iff_eq_restrict (hs p hp)).mp hpq]
+  · intro h q hq
+    exact ⟨q.restrict X, h ⟨q, hq, rfl⟩,
+      Possibility.restrict_descendant X q⟩
 
-/-- Restriction never changes the proposition — only anaphoric potential. -/
-@[simp] theorem prop_restrict (I : State W V M) (Y : Finset V) :
-    (I.restrict Y).prop = I.prop :=
-  Set.ext fun _ =>
-    ⟨fun ⟨_, f, hf, _⟩ => ⟨f, hf⟩, fun ⟨f, hf⟩ => ⟨f, f, hf, Set.eqOn_refl f _⟩⟩
+end Fibred
 
-/-! ### Weakening and the quantifier adjoints
-
-The three transports along a base inclusion — `kernRestrict`, `weaken`,
-`restrict` — are [lawvere-1969]'s quantifier triple `∀ ⊣ w* ⊣ ∃`
-(mathlib's `Set.kernImage`, `Set.preimage`, `Set.image` along environment
-projections; `Category.lean`'s `fiberOrderIsoProd_restrict` computes the
-`restrict` leg). The informativeness order reverses inclusion, so here
-the ∃-leg is the *right* adjoint: `kernRestrict ⊣ weaken ⊣ restrict`.
-Beck–Chevalley (`restrict_weaken`) commutes the adjoints across the
-poset's pullback squares: the fibers form a hyperdoctrine over the
-category of contexts ([jacobs-1999]). -/
-
-/-- Weakening: grow the base, keep the carrier — supported carriers are
-already cylindric off the base. Semantically vacuous, anaphorically not:
-the new referents are live. [jacobs-1999]'s weakening. -/
-def weaken (I : State W V M) (h : I.base ⊆ Y) : State W V M where
-  base := Y
-  carrier := I.carrier
-  supported := I.supported.mono h
-
-@[simp] theorem base_weaken (h : I.base ⊆ Y) : (I.weaken h).base = Y := rfl
-
-@[simp] theorem carrier_weaken (h : I.base ⊆ Y) :
-    (I.weaken h).carrier = I.carrier := rfl
-
-@[simp] theorem weaken_self (I : State W V M) : I.weaken subset_rfl = I := rfl
-
-theorem weaken_weaken {Z : Finset V} (h : I.base ⊆ Y) (h' : Y ⊆ Z) :
-    (I.weaken h).weaken h' = I.weaken (h.trans h') := rfl
-
-/-- The universal counterpart of restriction: a possibility survives iff
-*every* variant agreeing with it on `Y` is in the carrier. The ∀-leg of
-the quantifier triple (`Set.kernImage` where `restrict` is `Set.image`),
-and the transport for universal quantification and the DRS conditional. -/
-def kernRestrict (I : State W V M) (Y : Finset V) : State W V M where
-  base := Y
-  carrier := {p | ∀ f, Set.EqOn f p.assignment ↑Y →
-    (⟨p.world, f⟩ : Possibility W V M) ∈ I.carrier}
-  supported := baseSupported_of_iff fun _ _ _ hfg =>
-    forall_congr' fun _ =>
-      imp_congr_left ⟨fun h => h.trans hfg, fun h => h.trans hfg.symm⟩
-
-@[simp] theorem base_kernRestrict : (I.kernRestrict Y).base = Y := rfl
-
-@[simp] theorem mem_kernRestrict {w : W} {g : V → M} :
-    (⟨w, g⟩ : Possibility W V M) ∈ I.kernRestrict Y ↔
-      ∀ f, Set.EqOn f g ↑Y → (⟨w, f⟩ : Possibility W V M) ∈ I := Iff.rfl
-
-/-- The universal approximation is at least as informative as the
-existential one. -/
-theorem restrict_le_kernRestrict (I : State W V M) (Y : Finset V) :
-    I.restrict Y ≤ I.kernRestrict Y :=
-  ⟨subset_rfl, fun p hp =>
-    ⟨p.assignment, hp p.assignment (Set.eqOn_refl _ _), Set.eqOn_refl _ _⟩⟩
-
-/-- Weakening is left adjoint to restriction — `Set.image_preimage` in the
-fibers, the informativeness order making the ∃-leg the right adjoint.
-`le_restrict_iff` is this connection with the weakening left implicit. -/
-theorem weaken_le_iff (hJ : J.base ⊆ Y) (hY : Y ⊆ I.base) :
-    J.weaken hJ ≤ I ↔ J ≤ I.restrict Y := by
-  constructor
-  · rintro ⟨-, hc⟩
-    refine ⟨hJ, fun p hp => ?_⟩
-    obtain ⟨w, g⟩ := p
-    obtain ⟨f, hf, hfg⟩ := hp
-    exact (J.supported.mem_iff (hfg.mono (Finset.coe_subset.mpr hJ))).mp (hc hf)
-  · rintro ⟨-, hc⟩
-    exact ⟨hY, fun p hp => hc ⟨p.assignment, hp, Set.eqOn_refl _ _⟩⟩
-
-/-- `kernRestrict` is left adjoint to weakening — `Set.preimage_kernImage`
-in the fibers: `I.kernRestrict J.base` is the strongest `J.base`-supported
-consequence of `I`. -/
-theorem kernRestrict_le_iff (h : J.base ⊆ I.base) :
-    I.kernRestrict J.base ≤ J ↔ I ≤ J.weaken h := by
-  constructor
-  · rintro ⟨-, hc⟩
-    exact ⟨subset_rfl, fun p hp => hc hp p.assignment (Set.eqOn_refl _ _)⟩
-  · rintro ⟨-, hc⟩
-    refine ⟨subset_rfl, fun p hp => ?_⟩
-    obtain ⟨w, g⟩ := p
-    intro f hfg
-    exact hc ((J.supported.mem_iff hfg).mpr hp)
-
-section BeckChevalley
 variable [DecidableEq V]
 
-/-- Beck–Chevalley: weakening then restricting is restricting to the
-intersection then weakening — the quantifier adjoints commute across the
-poset's pullback squares. -/
-theorem restrict_weaken (I : State W V M) (Z : Finset V) :
-    (I.weaken (Finset.subset_union_left : I.base ⊆ I.base ∪ Z)).restrict Z =
-      (I.restrict (I.base ∩ Z)).weaken Finset.inter_subset_right := by
-  refine State.ext rfl (Set.ext fun p => ?_)
-  obtain ⟨w, g⟩ := p
-  constructor
-  · rintro ⟨f, hf, hfg⟩
-    exact ⟨f, hf, hfg.mono (by rw [Finset.coe_inter]; exact Set.inter_subset_right)⟩
-  · rintro ⟨f, hf, hfg⟩
-    refine ⟨I.base.piecewise f g,
-      (I.supported.mem_iff fun x hx => I.base.piecewise_eq_of_mem f g hx).mpr hf,
-      fun z hz => ?_⟩
-    by_cases hzB : z ∈ I.base
-    · rw [Finset.piecewise_eq_of_mem _ _ _ hzB]
-      exact hfg (by rw [Finset.coe_inter]; exact ⟨hzB, hz⟩)
-    · rw [Finset.piecewise_eq_of_notMem _ _ _ hzB]
+/-- Restriction of a state: pointwise, by direct image. -/
+def restrict (X : Finset V) (I : State W V M) : State W V M :=
+  Possibility.restrict X '' I
 
-end BeckChevalley
+/-- Restriction only forgets: the restricted state subsists in the
+original. -/
+theorem subsistsIn_restrict (X : Finset V) (I : State W V M) :
+    I.restrict X ⪯ I := by
+  rintro p ⟨q, hq, rfl⟩
+  exact ⟨q, hq, Possibility.restrict_descendant X q⟩
 
-/-! ### Merge is gluing -/
+/-- Restriction meets the stratification. -/
+theorem uniformAt_restrict {X Y : Finset V} {I : State W V M}
+    (h : UniformAt Y I) : UniformAt (X ∩ Y) (I.restrict X) := by
+  rintro p ⟨q, hq, rfl⟩
+  rw [Possibility.dom_restrict, h q hq, Finset.coe_inter]
 
-section Gluing
-variable [DecidableEq V]
+/-- Restriction composes along intersections. -/
+theorem restrict_restrict (X Y : Finset V) (I : State W V M) :
+    (I.restrict Y).restrict X = I.restrict (X ∩ Y) := by
+  unfold restrict
+  rw [← Set.image_comp]
+  exact congrFun (congrArg _ (funext (Possibility.restrict_restrict X Y))) I
 
-/-- Two states are *compatible* when they agree under restriction to their
-common base ([abramsky-sadrzadeh-2014]'s compatible families, for pairs). -/
-def Compatible (I J : State W V M) : Prop :=
-  I.restrict (I.base ∩ J.base) = J.restrict (I.base ∩ J.base)
+/-- Random assignment ([elliott-sudo-2025], (43);
+[groenendijk-stokhof-1991]'s `x := random`): indeterministically extend
+each point to a defined value at `x`. -/
+def randomAssign (I : State W V M) (x : V) : State W V M :=
+  {p | ∃ q ∈ I, ∃ m : M, p = q.extend x (some m)}
 
-@[simp] theorem compatible_refl (I : State W V M) : I.Compatible I := by
-  show I.restrict _ = I.restrict _
-  rw [Finset.inter_self]
-
-theorem Compatible.symm (h : I.Compatible J) : J.Compatible I := by
-  show J.restrict _ = I.restrict _
-  rw [Finset.inter_comm]
-  exact Eq.symm h
-
-/-- Disjoint-base states determining the same proposition are compatible —
-[kamp-vangenabith-reyle-2011] Def. 26's "of particular importance" case. -/
-theorem compatible_of_disjoint (hd : Disjoint I.base J.base)
-    (hw : I.prop = J.prop) : I.Compatible J := by
-  show I.restrict _ = J.restrict _
-  rw [Finset.disjoint_iff_inter_eq_empty.mp hd]
-  refine State.ext rfl (Set.ext fun p => ?_)
-  constructor
-  · rintro ⟨f, hf, -⟩
-    obtain ⟨g, hg⟩ : p.world ∈ J.prop := hw ▸ ⟨f, hf⟩
-    exact ⟨g, hg, fun x hx => absurd hx (by simp)⟩
-  · rintro ⟨f, hf, -⟩
-    obtain ⟨g, hg⟩ : p.world ∈ I.prop := hw.symm ▸ ⟨f, hf⟩
-    exact ⟨g, hg, fun x hx => absurd hx (by simp)⟩
-
-/-- **Merge is gluing**: the join of compatible states restricts back onto
-the left component — [abramsky-sadrzadeh-2014]'s semantic unification,
-with no disjointness hypothesis. The carrier witness is repaired on
-`J.base` only, which support tolerates. -/
-theorem Compatible.restrict_sup_left (h : I.Compatible J) :
-    (I ⊔ J).restrict I.base = I := by
-  refine State.ext rfl (Set.ext fun p => ?_)
-  obtain ⟨w, g⟩ := p
-  constructor
-  · rintro ⟨f, hf, hfg⟩
-    exact (I.supported.mem_iff hfg).mp (mem_sup.mp hf).1
-  · intro hg
-    have hD : (⟨w, g⟩ : Possibility W V M) ∈ I.restrict (I.base ∩ J.base) :=
-      ⟨g, hg, Set.eqOn_refl _ _⟩
-    rw [show I.restrict (I.base ∩ J.base) = J.restrict (I.base ∩ J.base)
-      from h] at hD
-    obtain ⟨f, hfJ, hfg⟩ := hD
-    have hpw : Set.EqOn (J.base.piecewise f g) g ↑I.base := fun x hx => by
-      by_cases hxJ : x ∈ J.base
-      · rw [Finset.piecewise_eq_of_mem _ _ _ hxJ]
-        exact hfg (by rw [Finset.coe_inter]; exact ⟨hx, hxJ⟩)
-      · rw [Finset.piecewise_eq_of_notMem _ _ _ hxJ]
-    refine ⟨J.base.piecewise f g, mem_sup.mpr ⟨?_, ?_⟩, hpw⟩
-    · exact (I.supported.mem_iff hpw).mpr hg
-    · exact (J.supported.mem_iff
-        (fun x hx => J.base.piecewise_eq_of_mem f g hx)).mpr hfJ
-
-/-- Merge is gluing, right component. -/
-theorem Compatible.restrict_sup_right (h : I.Compatible J) :
-    (I ⊔ J).restrict J.base = J := by
-  rw [sup_comm]
-  exact h.symm.restrict_sup_left
-
-/-- Frobenius reciprocity: restriction distributes over merge with a
-weakened state, unconditionally — where the gluing law needs
-compatibility, the weakened component needs nothing. -/
-theorem restrict_sup_weaken (hJ : J.base ⊆ Y) (hY : Y ⊆ I.base) :
-    (I ⊔ J.weaken (hJ.trans hY)).restrict Y = I.restrict Y ⊔ J := by
-  refine State.ext (Finset.union_eq_left.mpr hJ).symm (Set.ext fun p => ?_)
-  obtain ⟨w, g⟩ := p
-  constructor
-  · rintro ⟨f, hf, hfg⟩
-    obtain ⟨hfI, hfJ⟩ := mem_sup.mp hf
-    exact mem_sup.mpr ⟨⟨f, hfI, hfg⟩,
-      (J.supported.mem_iff (hfg.mono (Finset.coe_subset.mpr hJ))).mp hfJ⟩
-  · intro hp
-    obtain ⟨⟨f, hfI, hfg⟩, hpJ⟩ := mem_sup.mp hp
-    exact ⟨f, mem_sup.mpr ⟨hfI,
-      (J.supported.mem_iff (hfg.mono (Finset.coe_subset.mpr hJ))).mpr hpJ⟩, hfg⟩
-
-/-- The merge is the *least* gluing: any state that restricts onto both
-components over the union base lies above it. -/
-theorem sup_le_of_restrict_eq {S : State W V M} (hb : S.base = I.base ∪ J.base)
-    (hI : S.restrict I.base = I) (hJ : S.restrict J.base = J) : I ⊔ J ≤ S :=
-  ⟨le_of_eq hb.symm, fun p hp => mem_sup.mpr
-    ⟨by rw [← hI]; exact ⟨p.assignment, hp, Set.eqOn_refl _ _⟩,
-     by rw [← hJ]; exact ⟨p.assignment, hp, Set.eqOn_refl _ _⟩⟩⟩
-
-end Gluing
-
-/-- The diagonal state: two referents, correlated. -/
-private def diag : State Unit Bool Bool where
-  base := {false, true}
-  carrier := {p | p.assignment false = p.assignment true}
-  supported := baseSupported_of_iff fun _ f g hfg => by
-    show f false = f true ↔ g false = g true
-    rw [hfg (by simp), hfg (by simp)]
-
-/-- The full state: two referents, unconstrained. -/
-private def square : State Unit Bool Bool where
-  base := {false, true}
-  carrier := Set.univ
-  supported := baseSupported_of_iff fun _ _ _ _ => Iff.rfl
-
-/-- **The gluing is not unique**: the diagonal and the full square agree on
-every singleton restriction yet differ. Restriction forgets cross-referent
-correlation, so a state is not determined by its per-referent
-projections — the marbles argument, one referent up. -/
-theorem exists_ne_of_restrict_eq :
-    ∃ I J : State Unit Bool Bool, I.base = J.base ∧ I ≠ J ∧
-      ∀ x, I.restrict {x} = J.restrict {x} := by
-  refine ⟨diag, square, rfl, fun h => ?_, fun x => ?_⟩
-  · have : (⟨(), id⟩ : Possibility Unit Bool Bool) ∈ diag := by
-      rw [h]; trivial
-    exact Bool.false_ne_true this
-  · refine State.ext rfl (Set.ext fun p => ?_)
-    constructor
-    · rintro ⟨f, -, hfg⟩
-      exact ⟨f, trivial, hfg⟩
-    · rintro ⟨f, -, -⟩
-      refine ⟨fun _ => p.assignment x, rfl, fun y hy => ?_⟩
-      obtain rfl : y = x := by simpa using hy
-      rfl
-
-/-! ### Random assignment -/
-
-/-- Random assignment: introduce the discourse referent `x` — the base
-grows, and any constraint at `x` is dropped ([heim-1982]'s indefinite
-widening, [groenendijk-stokhof-1991]'s random reset). For a novel `x` the
-carrier is unchanged (`randomAssign_of_notMem`) — supported carriers are
-already cylindric off the base, so introduction is pure base growth; for a
-live `x` the update is destructive. -/
-def randomAssign [DecidableEq V] (I : State W V M) (x : V) : State W V M :=
-  (I.restrict (I.base.erase x)).weaken
-    (show I.base.erase x ⊆ insert x I.base from
-      (Finset.erase_subset ..).trans (Finset.subset_insert ..))
-
-section RandomAssign
-variable [DecidableEq V] {x : V}
-
-@[simp] theorem base_randomAssign (I : State W V M) (x : V) :
-    (I.randomAssign x).base = insert x I.base := rfl
-
-theorem mem_randomAssign {w : W} {g : V → M} :
-    (⟨w, g⟩ : Possibility W V M) ∈ I.randomAssign x ↔
-      ∃ f, (⟨w, f⟩ : Possibility W V M) ∈ I ∧ Set.EqOn f g ↑(I.base.erase x) :=
-  Iff.rfl
-
-/-- Introducing a novel referent only grows the base. -/
-theorem randomAssign_of_notMem (hx : x ∉ I.base) :
-    (I.randomAssign x).carrier = I.carrier := by
-  show (I.restrict (I.base.erase x)).carrier = I.carrier
-  rw [Finset.erase_eq_of_notMem hx, restrict_base]
-
-end RandomAssign
-
-/-! ### States at a base as collapsed propositions -/
-
-/-- The states indexed at `X`. -/
-abbrev fiber (W M : Type*) {V : Type*} (X : Finset V) : Type _ :=
-  {I : State W V M // I.base = X}
-
-theorem fiber_supported (I : fiber W M X) :
-    BaseSupported X I.1.carrier :=
-  (congrArg (fun b => BaseSupported b I.1.carrier) I.2).mp I.1.supported
-
-/-- A state indexed at `X` is a proposition over the `X`-collapsed state
-space ([muskens-van-benthem-visser-2011]'s picture at granularity `X`):
-support is saturation, so carriers and sets of agreement classes are in
-bijection. -/
-def fiberEquiv (X : Finset V) :
-    fiber W M X ≃ Set (Quotient (Possibility.agreeSetoid (W := W) (M := M) (↑X : Set V))) where
-  toFun I := {q | q.liftOn (· ∈ I.1) fun _ _ h => propext ((fiber_supported I).mem_congr h)}
-  invFun T :=
-    ⟨⟨X, Quotient.mk _ ⁻¹' T, baseSupported_iff.mpr fun _ _ h => by
-        rw [Set.mem_preimage, Set.mem_preimage, Quotient.sound h]⟩, rfl⟩
-  left_inv I := Subtype.ext (State.ext I.2.symm rfl)
-  right_inv T := by
-    ext q
-    induction q using Quotient.ind
-    exact Iff.rfl
-
-@[simp] theorem mem_fiberEquiv {I : fiber W M X} :
-    Quotient.mk _ p ∈ fiberEquiv X I ↔ p ∈ I.1 := Iff.rfl
-
-@[simp] theorem mem_fiberEquiv_symm
-    {T : Set (Quotient (Possibility.agreeSetoid (W := W) (M := M) (↑X : Set V)))} :
-    p ∈ ((fiberEquiv X).symm T).1 ↔ Quotient.mk _ p ∈ T := Iff.rfl
-
-/-- The equivalence is the image of the carrier in the collapsed space —
-the sibling of `prop_eq_image`, one rung up the ladder. -/
-theorem fiberEquiv_eq_image (I : fiber W M X) :
-    fiberEquiv X I = Quotient.mk _ '' I.1.carrier := by
-  have h := (fiber_supported I).preimage_image_mk
-  ext q
-  induction q using Quotient.ind
-  rw [mem_fiberEquiv, ← State.mem_carrier, ← Set.mem_preimage, h]
-
-/-- Informativeness at a fixed base is reverse inclusion of collapsed
-propositions. -/
-def fiberOrderIso (X : Finset V) :
-    fiber W M X ≃o (Set (Quotient (Possibility.agreeSetoid (W := W) (M := M) (↑X : Set V))))ᵒᵈ where
-  toEquiv := (fiberEquiv X).trans OrderDual.toDual
-  map_rel_iff' {I I'} := by
-    show OrderDual.toDual (fiberEquiv X I) ≤ OrderDual.toDual (fiberEquiv X I') ↔ I ≤ I'
-    rw [OrderDual.toDual_le_toDual]
-    constructor
-    · intro h
-      refine ⟨by rw [I.2, I'.2], fun p hp => ?_⟩
-      exact mem_fiberEquiv.mp (h (mem_fiberEquiv.mpr hp))
-    · rintro ⟨-, hc⟩ q hq
-      induction q using Quotient.ind
-      exact mem_fiberEquiv.mpr (hc (mem_fiberEquiv.mp hq))
-
-section Classified
-variable [Nonempty M]
-
-/-- The fiber at `X`, classified: a indexed state is a proposition over
-world–`X`-assignment pairs, reversed by informativeness — [heim-1982]'s
-satisfaction sets of domain-`X` sequences, as a theorem rather than a
-gloss. -/
-noncomputable def fiberOrderIsoProd (X : Finset V) :
-    fiber W M X ≃o (Set (W × ((↑X : Set V) → M)))ᵒᵈ :=
-  (fiberOrderIso X).trans
-    (Possibility.agreeQuotientEquiv (↑X : Set V)).toOrderIsoSet.dual
-
-/-- Membership form of the classification: a pair lies in the classified
-state iff the corresponding possibility does. -/
-theorem mem_fiberOrderIsoProd {I : fiber W M X} {w : W} {g : V → M} :
-    (w, (↑X : Set V).restrict g) ∈
-        OrderDual.ofDual (fiberOrderIsoProd X I) ↔
-      (⟨w, g⟩ : Possibility W V M) ∈ I.1 := by
-  show (w, (↑X : Set V).restrict g) ∈
-    Possibility.agreeQuotientEquiv (↑X : Set V) '' fiberEquiv X I ↔ _
-  constructor
-  · rintro ⟨q, hq, heq⟩
-    obtain ⟨p⟩ := q
-    obtain ⟨h1, h2⟩ := Prod.ext_iff.mp heq
-    exact ((fiber_supported I).mem_congr
-      ⟨h1, fun v hv => congrFun h2 ⟨v, hv⟩⟩).mp (mem_fiberEquiv.mp hq)
-  · intro hg
-    exact ⟨Quotient.mk _ ⟨w, g⟩, mem_fiberEquiv.mpr hg, rfl⟩
-
-/-- At the empty context the fiber degenerates to bare propositions:
-[veltman-1996]'s update-semantics states are the referent-free fiber. -/
-noncomputable def fiberEmptyOrderIso :
-    fiber W M (∅ : Finset V) ≃o (Set W)ᵒᵈ :=
-  haveI : IsEmpty ((↑(∅ : Finset V) : Set V) : Type _) :=
-    ⟨fun x => by simpa using x.2⟩
-  (fiberOrderIsoProd ∅).trans (Equiv.prodUnique W _).toOrderIsoSet.dual
-
-/-- Membership form: at the empty context, membership is a fact about the
-world alone. -/
-theorem mem_fiberEmptyOrderIso {I : fiber W M (∅ : Finset V)} {w : W}
-    {g : V → M} :
-    w ∈ OrderDual.ofDual (fiberEmptyOrderIso I) ↔
-      (⟨w, g⟩ : Possibility W V M) ∈ I.1 := by
-  haveI : IsEmpty ((↑(∅ : Finset V) : Set V) : Type _) :=
-    ⟨fun x => by simpa using x.2⟩
-  rw [← mem_fiberOrderIsoProd (g := g)]
-  show w ∈ Equiv.prodUnique W _ '' OrderDual.ofDual (fiberOrderIsoProd ∅ I) ↔ _
-  constructor
-  · rintro ⟨⟨w', f⟩, hf, rfl⟩
-    rwa [Subsingleton.elim ((↑(∅ : Finset V) : Set V).restrict g) f]
-  · intro h
-    exact ⟨(w, _), h, rfl⟩
-
-end Classified
+/-- Random assignment makes its referent familiar. -/
+theorem familiar_randomAssign (I : State W V M) (x : V) :
+    Familiar (I.randomAssign x) x := by
+  rintro p ⟨q, -, m, rfl⟩
+  simp
 
 end State
+
+/-! ### The indexed classification -/
+
+namespace Possibility
+
+variable [DecidableEq V]
+
+/-- Partial points with domain `X` are world–`X`-environment pairs —
+constructively: the classification that the total-assignment rendering
+recovered only with choice and an inhabitant of `M`. -/
+def domEquiv (X : Finset V) :
+    {p : Possibility W V (Option M) // p.dom = (↑X : Set V)} ≃
+      W × ((↑X : Set V) → M) where
+  toFun p :=
+    (p.1.world, fun v => (p.1.assignment v.1).get
+      ((Set.ext_iff.mp p.2 v.1).mpr v.2))
+  invFun e :=
+    ⟨⟨e.1, fun v => if h : v ∈ (↑X : Set V) then some (e.2 ⟨v, h⟩)
+      else none⟩, by
+      ext v
+      by_cases h : v ∈ (↑X : Set V) <;> simp [dom, h]⟩
+  left_inv p := by
+    obtain ⟨⟨w, g⟩, hp⟩ := p
+    refine Subtype.ext (Possibility.ext rfl (funext fun v => ?_))
+    by_cases h : v ∈ (↑X : Set V)
+    · simp only [dif_pos h, Option.some_get]
+    · have hnone : g v = none := Option.not_isSome_iff_eq_none.mp
+        fun hs => h ((Set.ext_iff.mp hp v).mp hs)
+      simp only [dif_neg h]
+      exact hnone.symm
+  right_inv e := by
+    refine Prod.ext rfl (funext fun v => ?_)
+    simp
+
+end Possibility
 
 end DynamicSemantics
