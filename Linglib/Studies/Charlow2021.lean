@@ -354,7 +354,7 @@ def reify (p : PostSupp S (Update S)) : Update S := dseq p.val p.postsup
 
 @[simp] theorem reify_pure (D : Update S) :
     (pure D : PostSupp S (Update S)).reify = D :=
-  dseq_test D _ (λ _ => trivial)
+  mul_one D
 
 /-- Truth of a bi-dimensional meaning at an assignment (eq. 56): the reified
 update is true at `i` in the substrate sense. -/
@@ -388,7 +388,7 @@ theorem reify_cumulativePostsup (v u : R) (boys movies : E → Prop)
     (saw' : E → E → Prop) :
     (cumulativePostsup (S := S) v u boys movies saw').reify =
       cumulative v u boys movies saw' :=
-  (dseq_assoc _ _ _).symm
+  (mul_assoc _ _ _).symm
 
 end PostSuppositional
 

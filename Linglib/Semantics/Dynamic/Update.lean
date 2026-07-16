@@ -138,29 +138,16 @@ def closure (D : Update S) : Condition S := λ i => ∃ k, D i k
 
 /-! ### The update quantale -/
 
-/-- Sequencing is associative. -/
-theorem dseq_assoc (D₁ D₂ D₃ : Update S) :
-    (D₁ ⨟ D₂) ⨟ D₃ = D₁ ⨟ (D₂ ⨟ D₃) :=
-  Relation.comp_assoc
-
-/-- An everywhere-true test is a left identity for sequencing. -/
-theorem test_dseq (C : Condition S) (D : Update S) (hC : ∀ i, C i) :
-    test C ⨟ D = D := by
-  funext i j; simp [dseq, Relation.Comp, test, hC]
-
-/-- An everywhere-true test is a right identity for sequencing. -/
-theorem dseq_test (D : Update S) (C : Condition S) (hC : ∀ i, C i) :
-    D ⨟ test C = D := by
-  funext i j; simp [dseq, Relation.Comp, test, hC]
-
 /-- `Update S` is a monoid under `⨟` with the trivial test as unit (scoped;
 see the implementation notes). -/
 scoped instance : Monoid (Update S) where
   mul := dseq
   one := test (λ _ => True)
-  mul_assoc := dseq_assoc
-  one_mul D := test_dseq _ D (λ _ => trivial)
-  mul_one D := dseq_test D _ (λ _ => trivial)
+  mul_assoc _ _ _ := Relation.comp_assoc
+  one_mul D := funext₂ λ i j => propext
+    ⟨λ ⟨_, ⟨hik, _⟩, hD⟩ => hik ▸ hD, λ hD => ⟨i, ⟨rfl, trivial⟩, hD⟩⟩
+  mul_one D := funext₂ λ i j => propext
+    ⟨λ ⟨_, hD, hkj, _⟩ => hkj ▸ hD, λ hD => ⟨j, hD, rfl, trivial⟩⟩
 
 /-- `Update S` is a quantale: sequencing distributes over arbitrary unions of
 updates, so mathlib's residuation vocabulary applies (scoped). -/
