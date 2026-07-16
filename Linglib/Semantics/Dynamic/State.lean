@@ -119,6 +119,72 @@ theorem Descendant.eq_of_dom_eq {p q : Possibility W V (Option M)}
       exact absurd this (by simp)
   · exact (h.2 v e hp).symm ▸ rfl
 
+/-- Two partial points are *compatible*: same world, agreeing wherever
+both are defined — [kamp-vangenabith-reyle-2011] Def. 26's condition
+that the union of chosen points be a function. -/
+def Compatible (p q : Possibility W V (Option M)) : Prop :=
+  p.world = q.world ∧
+    ∀ v e e', p.assignment v = some e → q.assignment v = some e' → e = e'
+
+/-- The union of two points: defined wherever either is, the left
+taking precedence (agreement makes the choice immaterial). -/
+def union (p q : Possibility W V (Option M)) :
+    Possibility W V (Option M) :=
+  ⟨p.world, fun v => (p.assignment v).or (q.assignment v)⟩
+
+theorem left_descendant_union (p q : Possibility W V (Option M)) :
+    p.Descendant (p.union q) :=
+  ⟨rfl, fun v e h => by simp [union, h]⟩
+
+theorem Compatible.right_descendant_union
+    {p q : Possibility W V (Option M)} (h : p.Compatible q) :
+    q.Descendant (p.union q) :=
+  ⟨h.1.symm, fun v e hq => by
+    rcases hp : p.assignment v with _ | e'
+    · simp [union, hp, hq]
+    · simp [union, hp, h.2 v e' e hp hq]⟩
+
+/-- On a shared domain, compatibility is equality. -/
+theorem Compatible.eq_of_dom_eq {p q : Possibility W V (Option M)}
+    (h : p.Compatible q) (hdom : p.dom = q.dom) : p = q := by
+  refine Possibility.ext h.1 (funext fun v => ?_)
+  rcases hp : p.assignment v with _ | e
+  · rcases hq : q.assignment v with _ | e
+    · rfl
+    · have : v ∈ p.dom := hdom ▸ Option.isSome_iff_exists.mpr ⟨e, hq⟩
+      rw [Possibility.mem_dom, hp] at this
+      exact absurd this (by simp)
+  · rcases hq : q.assignment v with _ | e'
+    · have : v ∈ q.dom := hdom ▸ Option.isSome_iff_exists.mpr ⟨e, hp⟩
+      rw [Possibility.mem_dom, hq] at this
+      exact absurd this (by simp)
+    · exact congrArg some (h.2 v e e' hp hq)
+
+/-- Union of points unites domains. -/
+theorem dom_union (p q : Possibility W V (Option M)) :
+    (p.union q).dom = p.dom ∪ q.dom := by
+  ext v
+  rcases hp : p.assignment v with _ | e <;> simp [union, dom, hp]
+
+/-- Common ancestors are compatible. -/
+theorem Descendant.compatible {p q u : Possibility W V (Option M)}
+    (hp : p.Descendant u) (hq : q.Descendant u) : p.Compatible q :=
+  ⟨hp.1.trans hq.1.symm, fun v e e' he he' => by
+    have h1 := hp.2 v e he
+    have h2 := hq.2 v e' he'
+    rw [h1] at h2
+    exact (Option.some.injEq .. ▸ h2 :)⟩
+
+/-- The union of two ancestors is an ancestor. -/
+theorem Descendant.union_descendant {p q u : Possibility W V (Option M)}
+    (hp : p.Descendant u) (hq : q.Descendant u) :
+    (p.union q).Descendant u :=
+  ⟨hp.1, fun v e h => by
+    rcases hpv : p.assignment v with _ | e'
+    · exact hq.2 v e (by simpa [union, hpv] using h)
+    · have : e' = e := by simpa [union, hpv] using h
+      exact this ▸ hp.2 v e' hpv⟩
+
 end Possibility
 
 /-! ### Information states -/
@@ -181,6 +247,35 @@ theorem infoLe_trans {s t u : State W V M} (hst : s ⊑ t) (htu : t ⊑ u) :
 /-- The absurd state is maximally informative. -/
 theorem infoLe_empty (s : State W V M) : s ⊑ (∅ : State W V M) :=
   fun q hq => absurd hq (Set.notMem_empty q)
+
+/-! ### Consistent merge -/
+
+/-- Consistent merge ([kamp-vangenabith-reyle-2011] Def. 26, binary):
+the points assembled from compatible pairs. Across strata this is the
+descendant-mediated join — plain intersection of point-sets is empty
+between distinct strata. -/
+def State.merge (s s' : State W V M) : State W V M :=
+  {r | ∃ p ∈ s, ∃ q ∈ s', p.Compatible q ∧ r = p.union q}
+
+/-- The merge is above the left component in informativeness. -/
+theorem infoLe_merge_left (s s' : State W V M) : s ⊑ s.merge s' := by
+  rintro r ⟨p, hp, q, hq, hpq, rfl⟩
+  exact ⟨p, hp, Possibility.left_descendant_union p q⟩
+
+/-- The merge is above the right component in informativeness. -/
+theorem infoLe_merge_right (s s' : State W V M) : s' ⊑ s.merge s' := by
+  rintro r ⟨p, hp, q, hq, hpq, rfl⟩
+  exact ⟨q, hq, hpq.right_descendant_union⟩
+
+/-- **The merge is the least upper bound** (Def. 26's universal
+property, in the informativeness preorder): anything above both
+components is above their merge. -/
+theorem merge_infoLe {s s' t : State W V M} (hs : s ⊑ t)
+    (hs' : s' ⊑ t) : s.merge s' ⊑ t := fun u hu => by
+  obtain ⟨p, hp, hpu⟩ := hs u hu
+  obtain ⟨q, hq, hqu⟩ := hs' u hu
+  exact ⟨p.union q, ⟨p, hp, q, hq, hpu.compatible hqu, rfl⟩,
+    hpu.union_descendant hqu⟩
 
 /-- The worldly content of a state ([elliott-sudo-2025] Def. 3.1's 𝒲). -/
 def worlds (s : State W V M) : Set W :=
@@ -294,8 +389,34 @@ theorem infoLe_iff_superset {X : Finset V} {s s' : State W V M}
     rwa [← hpq.eq_of_dom_eq ((hs p hp).trans (hs' q hq).symm)]
   · exact fun h q hq => ⟨q, h hq, Possibility.Descendant.refl q⟩
 
+/-- Within one stratum, merge is intersection: compatibility on a shared
+domain forces equality. -/
+theorem merge_eq_inter_of_uniform {X : Finset V} {s s' : State W V M}
+    (hs : UniformAt X s) (hs' : UniformAt X s') :
+    s.merge s' = s ∩ s' := by
+  have hself : ∀ r : Possibility W V (Option M), r.union r = r := fun r =>
+    Possibility.ext rfl (funext fun v => by
+      rcases h : r.assignment v with _ | e <;> simp [Possibility.union, h])
+  ext r
+  constructor
+  · rintro ⟨p, hp, q, hq, hpq, rfl⟩
+    obtain rfl := hpq.eq_of_dom_eq ((hs p hp).trans (hs' q hq).symm)
+    rw [hself p]
+    exact ⟨hp, hq⟩
+  · rintro ⟨hr, hr'⟩
+    refine ⟨r, hr, r, hr', ⟨rfl, fun v e e' he he' => ?_⟩, (hself r).symm⟩
+    rw [he] at he'
+    exact (Option.some.injEq .. ▸ he' :)
+
 section Fibred
 variable [DecidableEq V]
+
+/-- Merge unites strata. -/
+theorem uniformAt_merge {X Y : Finset V} {s s' : State W V M}
+    (hs : UniformAt X s) (hs' : UniformAt Y s') :
+    UniformAt (X ∪ Y) (s.merge s') := by
+  rintro r ⟨p, hp, q, hq, -, rfl⟩
+  rw [Possibility.dom_union, hs p hp, hs' q hq, Finset.coe_union]
 
 /-- Subsistence out of a stratum factors through reindexing: the weaker
 state includes into the restricted image of the stronger — the fibred
