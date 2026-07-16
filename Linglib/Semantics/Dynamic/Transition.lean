@@ -117,6 +117,67 @@ def randomAssign [DecidableEq V] (X : Finset V) (x : V) :
     e ⟨v, hv⟩ = e' ⟨v, Finset.mem_insert_of_mem hv⟩
   grow := Finset.subset_insert x X
 
+/-! ### Typing total-assignment relations
+
+Frameworks state their clauses on total assignments (DPL's Definition 2,
+DRT's verification). `ofTotal` types such a relation at contexts by
+existential extension; the predecessor's `supported_left`/
+`supported_right` fields return as *hypotheses* — `ReadsAt`/`WritesAt` —
+carried by the framework's own congruence lemmas, and under them the
+typing is faithful (`ofTotal_rel_restrict`) and functorial
+(`ofTotal_comp`). -/
+
+section OfTotal
+
+variable {R S : W → (V → M) → (V → M) → Prop}
+
+/-- The relation reads its input only at `X`. -/
+def ReadsAt (X : Finset V) (R : W → (V → M) → (V → M) → Prop) : Prop :=
+  ∀ ⦃w f f' g⦄, Set.EqOn f f' (↑X : Set V) → (R w f g ↔ R w f' g)
+
+/-- The relation constrains its output only at `Y`. -/
+def WritesAt (Y : Finset V) (R : W → (V → M) → (V → M) → Prop) : Prop :=
+  ∀ ⦃w f g g'⦄, Set.EqOn g g' (↑Y : Set V) → (R w f g ↔ R w f g')
+
+/-- Type a total-assignment relation at contexts, by existential
+extension of the environments. -/
+def ofTotal (h : X ⊆ Y) (R : W → (V → M) → (V → M) → Prop) :
+    Transition W M X Y where
+  rel w e e' := ∃ f g : V → M, (↑X : Set V).restrict f = e ∧
+    (↑Y : Set V).restrict g = e' ∧ R w f g
+  grow := h
+
+/-- Under the support hypotheses, the typing is faithful: related
+environments are exactly the restrictions of related assignments. -/
+theorem ofTotal_rel_restrict {h : X ⊆ Y} (hR : ReadsAt X R)
+    (hW : WritesAt Y R) {w : W} {f g : V → M} :
+    (ofTotal h R).rel w ((↑X : Set V).restrict f)
+      ((↑Y : Set V).restrict g) ↔ R w f g := by
+  constructor
+  · rintro ⟨f', g', hf', hg', hR'⟩
+    rw [hR (Set.restrict_eq_restrict_iff.mp hf'),
+      hW (Set.restrict_eq_restrict_iff.mp hg')] at hR'
+    exact hR'
+  · intro hfg
+    exact ⟨f, g, rfl, rfl, hfg⟩
+
+/-- Typing is functorial on composition, given read-support of the second
+relation: the mid-assignments stitch. -/
+theorem ofTotal_comp {h₁ : X ⊆ Y} {h₂ : Y ⊆ Z} (hS : ReadsAt Y S) :
+    (ofTotal h₁ R).comp (ofTotal h₂ S) =
+      ofTotal (h₁.trans h₂) (fun w => Relation.Comp (R w) (S w)) := by
+  ext w e e''
+  constructor
+  · rintro ⟨e', ⟨f, g₁, hf, hg₁, hR⟩, f₂, g, hf₂, hg, hS'⟩
+    refine ⟨f, g, hf, hg, g₁, hR, ?_⟩
+    rw [← hf₂] at hg₁
+    exact (hS (Set.restrict_eq_restrict_iff.mp hg₁)).mpr hS'
+  · rintro ⟨f, g, hf, hg, k, hR, hS'⟩
+    exact ⟨(↑Y : Set V).restrict k, ⟨f, k, hf, rfl, hR⟩,
+      ⟨k, g, rfl, hg, hS'⟩⟩
+
+end OfTotal
+
 /-! ### Repackaging along base equalities
 
 The substrate-safe form of `eqToHom` conjugation (mathlib's `Filter.copy`
