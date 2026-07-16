@@ -37,6 +37,7 @@ it.
 namespace GroenendijkStokhof1991
 
 open DPL
+open DynamicSemantics (Update)
 
 /-! ### Scope extension (§2.1, §2.3) -/
 
@@ -111,24 +112,20 @@ force output = input, so no binding escapes them. This accounts for
 `Heim1982.Examples.universal_blocks`, `standard_negation_blocks`, and
 `conditional_antecedent`. -/
 
-open DynamicSemantics (IsTest) in
 /-- Negation is a test. -/
-theorem neg_isTest (φ : DPLRel E) : DynamicSemantics.Update.IsTest (toDRS (DPLRel.neg φ)) :=
+theorem neg_isTest (φ : DPLRel E) : Update.IsTest (toDRS (DPLRel.neg φ)) :=
   fun _ _ hn => hn.1
 
-open DynamicSemantics (IsTest) in
 /-- Implication is a test: antecedent bindings do not escape. -/
-theorem impl_isTest (φ ψ : DPLRel E) : DynamicSemantics.Update.IsTest (toDRS (DPLRel.impl φ ψ)) :=
+theorem impl_isTest (φ ψ : DPLRel E) : Update.IsTest (toDRS (DPLRel.impl φ ψ)) :=
   fun _ _ hi => hi.1
 
-open DynamicSemantics (IsTest) in
 /-- Disjunction is a test: no anaphora across or out of disjuncts. -/
-theorem disj_isTest (φ ψ : DPLRel E) : DynamicSemantics.Update.IsTest (toDRS (DPLRel.disj φ ψ)) :=
+theorem disj_isTest (φ ψ : DPLRel E) : Update.IsTest (toDRS (DPLRel.disj φ ψ)) :=
   fun _ _ hd => hd.1
 
-open DynamicSemantics (IsTest) in
 /-- The universal quantifier is a test: it introduces no referents. -/
-theorem forall_isTest (x : ℕ) (φ : DPLRel E) : DynamicSemantics.Update.IsTest (toDRS (DPLRel.forall_ x φ)) :=
+theorem forall_isTest (x : ℕ) (φ : DPLRel E) : Update.IsTest (toDRS (DPLRel.forall_ x φ)) :=
   fun _ _ hfa => hfa.1
 
 /-! ### Logical facts (§3.4) -/
@@ -264,7 +261,7 @@ theorem forall_interdefinable (x : ℕ) (φ : DPLRel E) :
 
 section Metatheory
 
-open DynamicSemantics
+open DynamicSemantics DynamicSemantics.Update
 
 /-- s-equivalence (Definition 7) at a fixed model: same satisfaction
 set. The paper quantifies over models; `DPLRel` fixes one. -/
@@ -297,15 +294,15 @@ theorem sEquiv_pEquiv_ne [Nontrivial E] :
 /-- Definition 12's semantic core, clause 2: a conjunction of tests is a
 test. With the static constants (`neg_isTest`, ..., Fact 5) this closes
 the conditions under the semantics. -/
-theorem conj_isTest {φ ψ : DPLRel E} (hφ : DynamicSemantics.Update.IsTest (toDRS φ))
-    (hψ : DynamicSemantics.Update.IsTest (toDRS ψ)) : DynamicSemantics.Update.IsTest (toDRS (DPLRel.conj φ ψ)) :=
+theorem conj_isTest {φ ψ : DPLRel E} (hφ : Update.IsTest (toDRS φ))
+    (hψ : Update.IsTest (toDRS ψ)) : Update.IsTest (toDRS (DPLRel.conj φ ψ)) :=
   fun _ _ ⟨_, h1, h2⟩ => (hφ h1).trans (hψ h2)
 
 /-- Fact 4: for tests, s-equivalence coincides with equivalence — a test
 is determined by its truth conditions (`IsTest.eq_test_closure`, the
 semantic form of Fact 6). -/
 theorem sEquiv_iff_eq_of_isTest {φ ψ : DPLRel E}
-    (hφ : DynamicSemantics.Update.IsTest (toDRS φ)) (hψ : DynamicSemantics.Update.IsTest (toDRS ψ)) :
+    (hφ : Update.IsTest (toDRS φ)) (hψ : Update.IsTest (toDRS ψ)) :
     sEquiv φ ψ ↔ φ = ψ := by
   refine ⟨fun h => ?_, sEquiv_of_eq⟩
   have hc : closure (toDRS φ) = closure (toDRS ψ) :=
@@ -316,12 +313,56 @@ theorem sEquiv_iff_eq_of_isTest {φ ψ : DPLRel E}
 
 /-! ### Entailment (§3.5)
 
-Dynamic entailment (Definition 20) is the generic
-`DynamicSemantics.entails`; s-entailment (Definition 18) is
-`sEntails`, and meaning inclusion implies it (`sEntails_of_subset`,
-Fact 10). Facts 13–16 — the restricted reflexivity and transitivity
-laws — carry syntactic `AQV/FV` side conditions and await the syntax
-stratum. -/
+The paper's two entailment notions, stated over the spine's carrier
+(`Update S`) at full generality. Facts 13–16 — the restricted
+reflexivity and transitivity laws — carry syntactic `AQV/FV` side
+conditions and await the syntax stratum. -/
+
+section Entailment
+
+variable {S : Type*}
+
+/-- An `Update` is valid iff satisfiable (`closure`) at every input. -/
+def valid (D : Update S) : Prop := ∀ i, closure D i
+
+/-- Dynamic entailment (Definition 20): every output of `D₁` can be
+extended by `D₂`. -/
+def entails (D₁ D₂ : Update S) : Prop :=
+  ∀ i j, D₁ i j → closure D₂ j
+
+scoped notation D₁ " ⊨ " D₂ => entails D₁ D₂
+
+/-- s-entailment (Definition 18): truth is preserved from premiss to
+conclusion. Unlike `⊨`, it sees no binding between them. -/
+def sEntails (D₁ D₂ : Update S) : Prop :=
+  ∀ i, closure D₁ i → closure D₂ i
+
+scoped notation D₁ " ⊨ₛ " D₂ => sEntails D₁ D₂
+
+/-- Meaning inclusion implies s-entailment (Fact 10); the converse
+fails. -/
+theorem sEntails_of_subset {D₁ D₂ : Update S}
+    (h : ∀ ⦃i j⦄, D₁ i j → D₂ i j) : D₁ ⊨ₛ D₂ :=
+  fun _ ⟨j, hj⟩ => ⟨j, h hj⟩
+
+/-- The deduction theorem (Fact 11) in spine vocabulary: entailment is
+validity of the implication test. -/
+theorem entails_iff_valid_test_impl (D₁ D₂ : Update S) :
+    (D₁ ⊨ D₂) ↔ valid (test (impl D₁ D₂)) := by
+  constructor
+  · intro h i
+    exact ⟨i, rfl, h i⟩
+  · rintro h i j hij
+    obtain ⟨k, rfl, hd⟩ := h i
+    exact hd j hij
+
+/-- Fact 12, in closure form: s-entailment is entailment from the
+closed premiss. -/
+theorem sEntails_iff_test_closure_entails (D₁ D₂ : Update S) :
+    (D₁ ⊨ₛ D₂) ↔ (test (closure D₁) ⊨ D₂) :=
+  ⟨fun h _ j ⟨_, hc⟩ => h j hc, fun h i hc => h i i ⟨rfl, hc⟩⟩
+
+end Entailment
 
 /-- The deduction theorem (Fact 11): `φ ⊨ ψ` iff `⊨ φ → ψ` — DPL
 implication is the test of dynamic implication, so this is the generic
@@ -329,7 +370,7 @@ deduction theorem read through the Ty2 embedding. -/
 theorem deduction (φ ψ : DPLRel E) :
     (toDRS φ ⊨ toDRS ψ) ↔ valid (toDRS (DPLRel.impl φ ψ)) := by
   rw [impl_eq_test_dimpl]
-  exact entails_iff_valid_test_dimpl (toDRS φ) (toDRS ψ)
+  exact entails_iff_valid_test_impl (toDRS φ) (toDRS ψ)
 
 /-- Fact 12: s-entailment is dynamic entailment from the closed premiss
 `♦φ`. -/
@@ -387,7 +428,7 @@ section SatisfactionSets
 
 open Core.CylindricAlgebra
 open Core (Assignment)
-open DynamicSemantics (closure)
+open DynamicSemantics.Update (closure)
 
 /-- **DPL existential = cylindrification**: `\∃xφ\ = cₓ\φ\` — the
 existential case of Fact 19's computation. -/
@@ -431,7 +472,7 @@ a composite of the generating arrows of `DynamicSemantics.Ctx`. -/
 
 section IndexedReading
 
-open DynamicSemantics
+open DynamicSemantics DynamicSemantics.Update
 
 variable {W : Type*} {X Y : Finset ℕ}
 

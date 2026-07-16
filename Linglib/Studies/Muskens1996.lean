@@ -29,12 +29,12 @@ worked developments over that substrate:
 | `[[π]]` | `DynPred S E → Update S` | dynamic quantifier (`DynQuant`) |
 
 Composition rules T₁–T₅ need no special formalization: they are function
-application, `dseq`, and λ-abstraction.
+application, `seq`, and λ-abstraction.
 -/
 
 namespace Muskens1996
 
-open DynamicSemantics
+open DynamicSemantics DynamicSemantics.Update
 
 variable {R S E : Type*}
 
@@ -64,21 +64,21 @@ def tv (R : E → E → Prop) : DynQuant S E → DynPred S E :=
 /-- Indefinite determiner: `aⁿ ↝ λP'λP([uₙ]; P'(uₙ); P(uₙ))`.
 Type `[π] → [[π]]`; introduces discourse referent `u`. -/
 def detA [RegisterStructure R S E] (u : R) : DynPred S E → DynQuant S E :=
-  λ noun vp => dseq (RegisterStructure.randomAssign u)
-    (dseq (noun (RegisterStructure.val u)) (vp (RegisterStructure.val u)))
+  λ noun vp => seq (RegisterStructure.randomAssign u)
+    (seq (noun (RegisterStructure.val u)) (vp (RegisterStructure.val u)))
 
 /-- Universal determiner: `everyⁿ ↝ λP'λP(([uₙ]; P'(uₙ)) ⇒ P(uₙ))`.
 Dynamic implication gives universal force. -/
 def detEvery [RegisterStructure R S E] (u : R) : DynPred S E → DynQuant S E :=
   λ noun vp =>
-    test (dimpl (dseq (RegisterStructure.randomAssign u) (noun (RegisterStructure.val u)))
+    test (impl (seq (RegisterStructure.randomAssign u) (noun (RegisterStructure.val u)))
       (vp (RegisterStructure.val u)))
 
 /-- Negative determiner: `noⁿ ↝ λP'λP[|not([uₙ]; P'(uₙ); P(uₙ))]`. -/
 def detNo [RegisterStructure R S E] (u : R) : DynPred S E → DynQuant S E :=
   λ noun vp =>
-    test (dneg (dseq (RegisterStructure.randomAssign u)
-      (dseq (noun (RegisterStructure.val u)) (vp (RegisterStructure.val u)))))
+    test (neg (seq (RegisterStructure.randomAssign u)
+      (seq (noun (RegisterStructure.val u)) (vp (RegisterStructure.val u)))))
 
 /-- Proper name NP: `Maryⁿ ↝ λP.P(Mary)`. Type `[[π]]`. -/
 def properNP (name : Dref S E) : DynQuant S E :=
@@ -90,12 +90,12 @@ def pro (u : Dref S E) : DynQuant S E :=
 
 /-- Conditional: `if ↝ λpq[|p ⇒ q]`. -/
 def cond : Update S → Update S → Update S :=
-  λ p q => test (dimpl p q)
+  λ p q => test (impl p q)
 
 /-- Auxiliary negation: `doesn't ↝ λPλQ[|not Q(P)]` — takes VP (P) then
 subject NP (Q), matching [muskens-1996]'s argument order. -/
 def auxNeg : DynPred S E → DynQuant S E → Update S :=
-  λ P Q => test (dneg (Q P))
+  λ P Q => test (neg (Q P))
 
 /-! ### Generalized coordination (§IV)
 
@@ -103,27 +103,27 @@ def auxNeg : DynPred S E → DynQuant S E → Update S :=
 pointwise. The same schema works at every syntactic category. -/
 
 /-- Sentence-level `and`: `K₁ and K₂ = K₁; K₂`. -/
-def andS : Update S → Update S → Update S := dseq
+def andS : Update S → Update S → Update S := seq
 
 /-- Sentence-level `or`: `K₁ or K₂ = [K₁ or K₂]` (disjunction test). -/
 def orS : Update S → Update S → Update S :=
-  λ D₁ D₂ => test (ddisj D₁ D₂)
+  λ D₁ D₂ => test (disj D₁ D₂)
 
 /-- VP-level `and`: `λv(P₁(v); P₂(v))`. -/
 def andVP : DynPred S E → DynPred S E → DynPred S E :=
-  λ P₁ P₂ u => dseq (P₁ u) (P₂ u)
+  λ P₁ P₂ u => seq (P₁ u) (P₂ u)
 
 /-- VP-level `or`: `λv[P₁(v) or P₂(v)]`. -/
 def orVP : DynPred S E → DynPred S E → DynPred S E :=
-  λ P₁ P₂ u => test (ddisj (P₁ u) (P₂ u))
+  λ P₁ P₂ u => test (disj (P₁ u) (P₂ u))
 
 /-- NP-level `and`: `λP(Q₁(P); Q₂(P))`. -/
 def andNP : DynQuant S E → DynQuant S E → DynQuant S E :=
-  λ Q₁ Q₂ P => dseq (Q₁ P) (Q₂ P)
+  λ Q₁ Q₂ P => seq (Q₁ P) (Q₂ P)
 
 /-- NP-level `or`: `λP[Q₁(P) or Q₂(P)]`. -/
 def orNP : DynQuant S E → DynQuant S E → DynQuant S E :=
-  λ Q₁ Q₂ P => test (ddisj (Q₁ P) (Q₂ P))
+  λ Q₁ Q₂ P => test (disj (Q₁ P) (Q₂ P))
 
 /-! ### The paper's derivations -/
 
@@ -139,7 +139,7 @@ abhors box is the worked example Muskens runs the wp calculus on (p. 173),
 with truth conditions `∃x₁ x₂ (man x₁ ∧ woman x₂ ∧ adores x₁ x₂ ∧
 abhors x₂ x₁)`. -/
 def exampleText (man woman : E → Prop) (adores abhors : E → E → Prop) : Update S :=
-  dseq
+  seq
     (detA u₁ (cn man) (tv adores (detA u₂ (cn woman))))
     (pro (RegisterStructure.val u₂) (tv abhors (pro (RegisterStructure.val u₁))))
 
@@ -149,7 +149,7 @@ def exampleText (man woman : E → Prop) (adores abhors : E → E → Prop) : Up
 def donkeySentence
     (farmer donkey_ : E → Prop) (owns beats : E → E → Prop) : Update S :=
   detEvery u₁
-    (λ v => dseq (cn farmer v) (detA u₂ (cn donkey_) (λ w => test (atom2 owns v w))))
+    (λ v => seq (cn farmer v) (detA u₂ (cn donkey_) (λ w => test (atom2 owns v w))))
     (tv beats (pro (RegisterStructure.val u₂)))
 
 /-- "A² cat catches a¹ fish and eats it₁." — the paper's (52), decorated as
@@ -185,9 +185,9 @@ theorem wp_test (C : Condition S) (χ : Condition S) :
 
 /-- WP of sequencing (WP_{;}): the postcondition threads through. -/
 theorem wp_seq (D₁ D₂ : Update S) (χ : Condition S) :
-    wp (dseq D₁ D₂) χ = wp D₁ (wp D₂ χ) := by
+    wp (seq D₁ D₂) χ = wp D₁ (wp D₂ χ) := by
   ext i
-  simp only [wp, dseq, Relation.Comp]
+  simp only [wp, seq, Relation.Comp]
   constructor
   · rintro ⟨j, ⟨h, hD₁, hD₂⟩, hχ⟩
     exact ⟨h, hD₁, j, hD₂, hχ⟩
@@ -238,22 +238,22 @@ def dplEntails (D₁ D₂ : Update S) : Prop :=
 /-- Corollary to Proposition 3: DPL entailment = validity of dynamic
 implication. -/
 theorem dpl_entailment_eq_dimpl_valid (D₁ D₂ : Update S) :
-    dplEntails D₁ D₂ ↔ ∀ i, dimpl D₁ D₂ i := by
-  simp only [dplEntails, dimpl]
+    dplEntails D₁ D₂ ↔ ∀ i, impl D₁ D₂ i := by
+  simp only [dplEntails, impl]
 
 /-! ### Truth-condition extraction rules -/
 
 /-- TR of negation: `tr(not K) = ¬wp(K, ⊤)`. -/
 theorem tr_neg_eq (D : Update S) :
-    dneg D = λ i => ¬ wp D (λ _ => True) i := by
+    neg D = λ i => ¬ wp D (λ _ => True) i := by
   simp only [wp_true_eq_closure]; rfl
 
 /-- TR of disjunction: `tr(K₁ or K₂) = wp(K₁, ⊤) ∨ wp(K₂, ⊤)` — the
 existential distributes over disjunction. -/
 theorem tr_disj_eq (D₁ D₂ : Update S) :
-    ddisj D₁ D₂ = λ i => wp D₁ (λ _ => True) i ∨ wp D₂ (λ _ => True) i := by
+    disj D₁ D₂ = λ i => wp D₁ (λ _ => True) i ∨ wp D₂ (λ _ => True) i := by
   ext i
-  simp only [ddisj, wp, and_true]
+  simp only [disj, wp, and_true]
   constructor
   · rintro ⟨k, hk⟩
     cases hk with
@@ -266,9 +266,9 @@ theorem tr_disj_eq (D₁ D₂ : Update S) :
 /-- TR of implication: `tr(K₁ ⇒ K₂) = ¬wp(K₁, ¬wp(K₂, ⊤))` — no way to
 satisfy the antecedent without satisfying the consequent. -/
 theorem tr_impl_eq (D₁ D₂ : Update S) :
-    dimpl D₁ D₂ = λ i => ¬ wp D₁ (λ j => ¬ wp D₂ (λ _ => True) j) i := by
+    impl D₁ D₂ = λ i => ¬ wp D₁ (λ j => ¬ wp D₂ (λ _ => True) j) i := by
   ext i
-  simp only [dimpl, wp, and_true]
+  simp only [impl, wp, and_true]
   constructor
   · intro h ⟨j, hD₁, hNot⟩
     exact hNot (h j hD₁)
@@ -307,12 +307,12 @@ open CDRT
 
 /-- Discourse referent introduction under closure = cylindrification.
 
-`closure(new n ;; φ) = cₙ(closure(φ))`: introducing dref `n`
+`closure(new n * φ) = cₙ(closure(φ))`: introducing dref `n`
 then continuing with `φ` equals cylindrifying `φ` at `n`. -/
 theorem cdrt_new_seq_eq_cylindrify {E : Type*} (n : Nat) (φ : DProp E) :
-    closure (DProp.new n ;; φ) =
+    closure (DProp.new n * φ) =
     cylindrify n (closure φ) := by
-  ext g; simp only [closure, DProp.seq, dseq, Relation.Comp, DProp.new, cylindrify]
+  ext g; simp only [closure, DProp.seq, seq, Relation.Comp, DProp.new, cylindrify]
   constructor
   · rintro ⟨o, k, ⟨e, rfl⟩, hφ⟩
     exact ⟨e, o, by convert hφ using 2; simp [Function.update_apply]⟩

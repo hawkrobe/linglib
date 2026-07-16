@@ -402,7 +402,8 @@ hypothesis also had to forbid re-declaration. -/
 theorem DRS.toRelAt_merge {X : Finset V} (K₁ K₂ : DRS L V) (h₁ : K₁.fv ⊆ X)
     (hfresh : Disjoint K₂.referents (Condition.occL K₁.conditions)) :
     (DRS.toRelAt X (K₁.merge K₂) : (V → M) → (V → M) → Prop) =
-      DRS.toRelAt X K₁ ⨟ DRS.toRelAt (X ∪ K₁.referents) K₂ := by
+      DynamicSemantics.Update.seq (DRS.toRelAt X K₁)
+        (DRS.toRelAt (X ∪ K₁.referents) K₂) := by
   obtain ⟨U₁, c₁⟩ := K₁
   obtain ⟨U₂, c₂⟩ := K₂
   have hfvc₁ := DRS.fv_subset_iff.mp h₁
@@ -410,7 +411,7 @@ theorem DRS.toRelAt_merge {X : Finset V} (K₁ K₂ : DRS L V) (h₁ : K₁.fv �
   funext f g
   apply propext
   simp only [DRS.merge, DRS.referents_mk, DRS.conditions_mk, DRS.toRelAt_mk,
-    Condition.holdsAllAt_append, DynamicSemantics.dseq, Relation.Comp]
+    Condition.holdsAllAt_append, DynamicSemantics.Update.seq, Relation.Comp]
   rw [← Finset.union_assoc]
   constructor
   · rintro ⟨hag, hh₁, hh₂⟩
@@ -431,7 +432,7 @@ theorem DRS.transition_merge (W : Type*) {X : Finset V} (K₁ K₂ : DRS L V)
         (by rw [DRS.referents_merge, ← Finset.union_assoc]) := by
   ext w f g
   simp only [Transition.rel_copy, Transition.comp, DRS.transition,
-    DRS.toRelAt_merge K₁ K₂ h₁ hfresh, DynamicSemantics.dseq]
+    DRS.toRelAt_merge K₁ K₂ h₁ hfresh, DynamicSemantics.Update.seq]
 
 /-- **Action equation** ([kamp-vangenabith-reyle-2011], p. 159): applying a
 DRS's transition to the state a proper context DRS expresses yields the

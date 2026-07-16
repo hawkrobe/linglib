@@ -29,6 +29,7 @@ namespace PLA
 
 open Classical
 open DynamicSemantics
+open DynamicSemantics.Update (test)
 
 
 /-- An assignment maps variable indices to entities -/

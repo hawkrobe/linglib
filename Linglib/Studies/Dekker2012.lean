@@ -77,7 +77,7 @@ theorem pla_exists_certifies_witness {E : Type*} [Nonempty E] (M : Model E)
   simp only [Formula.update, InfoState.restrict, Set.mem_setOf_eq, Formula.sat] at hp
   exact hp.2
 
-/-- Surviving a sequenced update `(∃x.φ) ;; ψ` means surviving the
+/-- Surviving a sequenced update `∃x.φ` then `ψ` means surviving the
 existential update *and* satisfying `ψ` — the possibility is filtered by
 both conjuncts. Since the state is only filtered, this records
 satisfiability of both conjuncts at `p`; it does not link `ψ`'s pronouns
@@ -85,7 +85,7 @@ to the existential's witness (that would require witness export, which
 the eliminative formalization lacks). -/
 theorem pla_seq_certifies_both {E : Type*} [Nonempty E] (M : Model E)
     (x : VarIdx) (φ ψ : Formula) (s : InfoState E) (p : Poss E)
-    (hp : p ∈ ((Formula.exists_ x φ).update M ;; ψ.update M) s) :
+    (hp : p ∈ (seq ((Formula.exists_ x φ).update M) (ψ.update M)) s) :
     p ∈ (Formula.exists_ x φ).update M s ∧ ψ.sat M p.1 p.2 := by
   simp only [DynamicSemantics.CCP.seq] at hp
   constructor
@@ -93,11 +93,11 @@ theorem pla_seq_certifies_both {E : Type*} [Nonempty E] (M : Model E)
   · simp only [Formula.update, InfoState.restrict, Set.mem_setOf_eq] at hp
     exact hp.2
 
-/-- Combining the two: a possibility surviving `(∃x.φ) ;; ψ` certifies a
+/-- Combining the two: a possibility surviving `∃x.φ` then `ψ` certifies a
 witness for `φ` and satisfies `ψ`. -/
 theorem pla_seq_certifies_witness {E : Type*} [Nonempty E] (M : Model E)
     (x : VarIdx) (φ ψ : Formula) (s : InfoState E) (p : Poss E)
-    (hp : p ∈ ((Formula.exists_ x φ).update M ;; ψ.update M) s) :
+    (hp : p ∈ (seq ((Formula.exists_ x φ).update M) (ψ.update M)) s) :
     (∃ e : E, φ.sat M (p.1[x ↦ e]) p.2) ∧ ψ.sat M p.1 p.2 :=
   ⟨pla_exists_certifies_witness M x φ s p (pla_seq_certifies_both M x φ ψ s p hp).1,
    (pla_seq_certifies_both M x φ ψ s p hp).2⟩

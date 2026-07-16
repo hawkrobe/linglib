@@ -48,6 +48,7 @@ Under these simplification conditions, the general FC preconditions
 namespace ElliottSudo2025
 
 open DynamicSemantics
+open DynamicSemantics.CCP (IsTest IsEliminative)
 open Classical
 
 variable {W E : Type*}
@@ -160,7 +161,7 @@ theorem diamond_negative_isTest (φ : BUSDen W E) :
 /-- Diamond positive is eliminative (from IsTest). -/
 theorem diamond_positive_eliminative (φ : BUSDen W E) :
     IsEliminative (◇ᵇφ).positive (S := Possibility W ℕ (Option E)) :=
-  test_eliminative _ (diamond_positive_isTest φ)
+  (diamond_positive_isTest φ).isEliminative
 
 /-- Diamond positive subset (convenience form). -/
 theorem diamond_positive_subset (φ : BUSDen W E) (s) :
@@ -170,7 +171,7 @@ theorem diamond_positive_subset (φ : BUSDen W E) (s) :
 /-- Diamond negative is eliminative (from IsTest). -/
 theorem diamond_negative_eliminative (φ : BUSDen W E) :
     IsEliminative (◇ᵇφ).negative (S := Possibility W ℕ (Option E)) :=
-  test_eliminative _ (diamond_negative_isTest φ)
+  (diamond_negative_isTest φ).isEliminative
 
 /-- Diamond negative subset (convenience form). -/
 theorem diamond_negative_subset (φ : BUSDen W E) (s) :

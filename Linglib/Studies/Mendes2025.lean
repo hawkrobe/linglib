@@ -41,6 +41,7 @@ open Core (Assignment)
 open Intensional (WorldTimeIndex)
 open HistoricalAlternatives
 open DynamicSemantics
+open DynamicSemantics.CCP (IsEliminative)
 open Tense
 open Mood
 

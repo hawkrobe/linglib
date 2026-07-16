@@ -22,12 +22,13 @@ restricted double-negation laws, interdefinability) are proved in
 - `trueAt`, `satisfactionSet`, `productionSet` (Definitions 3, 6, 9).
 - `toDRS`/`ofDRS`: a DPL relation is an `Update` over assignments — DPL
   embeds in dynamic Ty2 at `S = Assignment E`, each connective matching
-  its `DynProp` combinator (`conj_eq_dseq`, `neg_eq_test_dneg`, ...).
+  its spine combinator (`conj_eq_dseq`, `neg_eq_test_dneg`, ...).
 -/
 
 namespace DPL
 
 open DynamicSemantics
+open DynamicSemantics.Update
 open _root_.Core (Assignment)
 
 variable {E : Type*}
@@ -96,7 +97,7 @@ def DPLRel.productionSet (φ : DPLRel E) : Set (ℕ → E) :=
 
 DPL embeds directly into dynamic Ty2 at `S = Assignment E`: DPL
 assignments are Ty2 states, DPL relations are `Update` meanings, and
-each connective matches its `DynProp` combinator. -/
+each connective matches its spine combinator. -/
 
 /-- DPL dref: projection function for variable `n`. -/
 def dref (n : ℕ) : Dref (Assignment E) E := λ g => g n
@@ -129,14 +130,14 @@ theorem atom_eq_test (p : Assignment E → Prop) :
   · intro ⟨heq, hp⟩; exact ⟨heq, by rw [heq]; exact hp⟩
 
 theorem conj_eq_dseq (φ ψ : DPLRel E) :
-    toDRS (DPLRel.conj φ ψ) = dseq (toDRS φ) (toDRS ψ) := by
+    toDRS (DPLRel.conj φ ψ) = seq (toDRS φ) (toDRS ψ) := by
   ext g h
-  simp only [toDRS, DPLRel.conj, dseq, Relation.Comp]
+  simp only [toDRS, DPLRel.conj, seq, Relation.Comp]
 
 theorem neg_eq_test_dneg (φ : DPLRel E) :
-    toDRS (DPLRel.neg φ) = test (dneg (toDRS φ)) := by
+    toDRS (DPLRel.neg φ) = test (neg (toDRS φ)) := by
   ext g h
-  simp only [toDRS, DPLRel.neg, test, dneg]
+  simp only [toDRS, DPLRel.neg, test, neg]
   constructor
   · intro ⟨heq, hnex⟩; exact ⟨heq, by rw [← heq]; exact hnex⟩
   · intro ⟨heq, hnex⟩; exact ⟨heq, by rw [heq]; exact hnex⟩
@@ -151,18 +152,18 @@ theorem exists_eq (x : ℕ) (φ : DPLRel E) :
 
 /-- DPL implication is the test of dynamic implication. -/
 theorem impl_eq_test_dimpl (φ ψ : DPLRel E) :
-    toDRS (DPLRel.impl φ ψ) = test (dimpl (toDRS φ) (toDRS ψ)) := by
+    toDRS (DPLRel.impl φ ψ) = test (impl (toDRS φ) (toDRS ψ)) := by
   ext g h
-  simp only [toDRS, DPLRel.impl, test, dimpl]
+  simp only [toDRS, DPLRel.impl, test, impl]
   constructor
   · intro ⟨heq, hall⟩; exact ⟨heq, by rw [← heq]; exact hall⟩
   · intro ⟨heq, hall⟩; exact ⟨heq, by rw [heq]; exact hall⟩
 
 /-- DPL disjunction is the test of dynamic disjunction. -/
 theorem disj_eq_test_ddisj (φ ψ : DPLRel E) :
-    toDRS (DPLRel.disj φ ψ) = test (ddisj (toDRS φ) (toDRS ψ)) := by
+    toDRS (DPLRel.disj φ ψ) = test (disj (toDRS φ) (toDRS ψ)) := by
   ext g h
-  simp only [toDRS, DPLRel.disj, test, ddisj]
+  simp only [toDRS, DPLRel.disj, test, disj]
   constructor
   · intro ⟨heq, hd⟩; exact ⟨heq, by rw [← heq]; exact hd⟩
   · intro ⟨heq, hd⟩; exact ⟨heq, by rw [heq]; exact hd⟩

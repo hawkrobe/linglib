@@ -15,10 +15,10 @@ by indefinites under negation are trapped. Kind anaphors pick up concept drefs
 and derive kind individuals via [chierchia-1998]'s ∩ from
 `Semantics/Genericity/NominalMappingParameter`: ⟦it⟧ = λP[MASS] λi.∩P(i),
 ⟦they⟧ = λP[COUNT] λi.∩⊔P(i) (17a,b). The dynamic layer instantiates the
-substrate `Update`/`test`/`dneg` algebra of `Semantics/Dynamic/Connectives`
+substrate `Update`/`test`/`neg` algebra of `Semantics/Dynamic/Connectives`
 at heterogeneous assignments over `DRefVal`.
 
-Negation here is the paper's VP negation ⟦doesn't⟧ (44b), `test (∼φ)`; the
+Negation here is the paper's VP negation ⟦doesn't⟧ (44b), `test (neg φ)`; the
 sentential ⟦NEG⟧ (34) additionally restricts the negated existential to
 extensions g≤k, and both carry a world-time index — differences orthogonal to
 projection, which needs only that negation is a test. The paper derives the
@@ -42,7 +42,8 @@ namespace Krifka2026
 
 open Semantics.Kinds.NMP (Property Kind IsMass
   kindAnaphorMass kindAnaphorCount kindAnaphorCount_mass)
-open DynamicSemantics (Update Condition test dneg eq_of_test)
+open DynamicSemantics (Update Condition)
+open DynamicSemantics.Update (test neg)
 open scoped DynamicSemantics
 
 /-! ### Concept drefs and heterogeneous dref values ([krifka-2026] §4)
@@ -231,7 +232,7 @@ def entityIntro (n : Nat) (body : Update (HAssign W E)) : Update (HAssign W E) :
     fact covers [krifka-2026]'s whole island list at once. -/
 theorem test_apply_eq {C : Condition (HAssign W E)} {g h : HAssign W E}
     (hTest : test C g h) (n : Nat) : h n = g n :=
-  congrFun (eq_of_test hTest).symm n
+  congrFun hTest.1.symm n
 
 /-- **Concept drefs survive islands** ((5a), (25), (44–45)): a concept dref
     presupposed in the input is still anchored in the output of any test.
@@ -252,7 +253,7 @@ theorem entity_trapped_by_test {n : Nat}
     h n = .undef :=
   (test_apply_eq hTest n).trans hNovel
 
-/-- The concept/entity asymmetry under negation `test (∼φ)` ((44e)): the
+/-- The concept/entity asymmetry under negation `test (neg φ)` ((44e)): the
     concept dref persists, the entity dref does not. Both conjuncts are
     instances of `test_apply_eq` — the asymmetry is carried entirely by where
     the hypotheses place the two conditions (input presupposition vs input
@@ -260,7 +261,7 @@ theorem entity_trapped_by_test {n : Nat}
 theorem concept_entity_asymmetry {nC nE : Nat} {c : ConceptDRef W E}
     {φ : Update (HAssign W E)} {g h : HAssign W E}
     (hPresup : g nC = .concept c) (hNovel : g nE = .undef)
-    (hNeg : test (∼φ) g h) :
+    (hNeg : test (neg φ) g h) :
     h nC = .concept c ∧ h nE = .undef :=
   ⟨concept_survives_test hPresup hNeg, entity_trapped_by_test hNovel hNeg⟩
 
@@ -279,7 +280,7 @@ theorem dog_concept_survives_negation
     {g h : HAssign W E}
     (hDog : g 2 = .concept dogConcept)
     (hNovel : g 3 = .undef)
-    (hNeg : test (∼φ) g h) :
+    (hNeg : test (neg φ) g h) :
     h 2 = .concept dogConcept ∧ h 3 = .undef :=
   concept_entity_asymmetry hDog hNovel hNeg
 
@@ -321,7 +322,7 @@ def ownADog : Update (HAssign Wld Ent) := entityIntro 3 (λ g h =>
 
 /-- "John₁ doesn't own [DP a₃ [NP dog]₂]": the paper's VP negation
     ⟦doesn't⟧ (44b) is the substrate test of dynamic negation. -/
-def doesntOwnADog : Update (HAssign Wld Ent) := test (∼ownADog)
+def doesntOwnADog : Update (HAssign Wld Ent) := test (neg ownADog)
 
 /-- The negation is satisfiable in this model (no dogs exist).
     Output: g₀ = h (test), confirming no entity dref was introduced. -/

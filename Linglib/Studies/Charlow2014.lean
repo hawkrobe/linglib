@@ -163,12 +163,11 @@ def dpl : AnaphoraFramework farmer donkey owns beats where
 /-! ### CDRT (Muskens 1996)
 
 Donkey encoding: `cdrt_full_donkey` (`Cooper2023.lean §4`):
-`DProp.impl (DProp.new 0 ;; ofStatic (farmer ∘ ·0) ;;
-              DProp.new 1 ;; ofStatic (donkey ∘ ·1 ∧ owns ·0 ·1))
-            (ofStatic (beats ·0 ·1))`.
+`DProp.impl (DProp.new 0 * ofStatic (farmer ∘ ·0) * DProp.new 1 *
+              ofStatic (donkey ∘ ·1 ∧ owns ·0 ·1)) (ofStatic (beats ·0 ·1))`.
 Truth equivalence: `full_donkey_equiv` (Cooper2023 §4) + Π-type
 classical reduction.
-Negation: `DProp.neg φ := test (dneg φ)` — a test. Output
+Negation: `DProp.neg φ := test (Update.neg φ)` — a test. Output
 register equals input; drefs from inside negation are dropped
 (`neg_destroys_dref`, `dne_same_truth` in Cooper2023 §5). -/
 def cdrt : AnaphoraFramework farmer donkey owns beats where

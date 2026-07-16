@@ -196,7 +196,7 @@ inductive NegFree {Atom : Type v} : DynForm Atom → Prop where
 
 /-- A formula is **double-negation-free** if no subformula has the shape
 `¬¬ψ`. The constructors enumerate the allowed `¬`-prefixed shapes (atom,
-exi, conj of dneg-frees), excluding `.neg (.neg ψ)`. -/
+exi, conj of neg-frees), excluding `.neg (.neg ψ)`. -/
 inductive DNegFree {Atom : Type v} : DynForm Atom → Prop where
   | atom (a : Atom) : DNegFree (.atom a)
   | exi (n : Nat) : DNegFree (.exi n)

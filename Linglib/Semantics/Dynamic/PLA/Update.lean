@@ -80,59 +80,11 @@ equivalence, componentwise. -/
 def possEquivMerged {E : Type*} : Poss E ≃ MergedAssignment E :=
   (Equiv.sumArrowEquivProdArrow _ _ E).symm
 
-/--
-An update is a Context Change Potential over PLA possibilities.
-
-We inherit the Monoid structure from `DynamicSemantics.CCP`:
-- Identity: `DynamicSemantics.CCP.id` (leaves state unchanged)
-- Composition: `DynamicSemantics.CCP.seq` (do u, then v), notation `;`
-- Associativity: guaranteed by the Monoid laws
--/
+/-- An update is a context change potential over PLA possibilities. -/
 abbrev Update (E : Type*) := DynamicSemantics.CCP (Poss E)
-
-namespace Update
-
-/-- Identity update: leaves state unchanged (from DynamicSemantics.CCP) -/
-abbrev id : Update E := DynamicSemantics.CCP.id
-
-/-- Absurd update: always yields empty state (from DynamicSemantics.CCP) -/
-abbrev absurd : Update E := DynamicSemantics.CCP.absurd
-
-/-- Absurd before anything yields absurd output (from DynamicSemantics.CCP) -/
-theorem seq_absurd (u : Update E) : DynamicSemantics.CCP.seq u absurd = absurd :=
-  DynamicSemantics.CCP.seq_absurd u
-
-end Update
-
 
 section
 variable (M : Model E)
-
-/--
-The content of a formula: set of (g, ê) pairs where φ is satisfied.
-
-⟦φ⟧^M = { (g, ê) | M, g, ê ⊨ φ }
-
-This is the "static" meaning - what information φ conveys.
--/
-def Formula.content (φ : Formula) : InfoState E :=
-  { p | φ.sat M p.1 p.2 }
-
-theorem Formula.mem_content (φ : Formula) (g : Assignment E) (ê : WitnessSeq E) :
-    (g, ê) ∈ φ.content M ↔ φ.sat M g ê := Iff.rfl
-
-/-- Content of negation is complement -/
-theorem Formula.content_neg (φ : Formula) :
-    (∼φ).content M = (φ.content M)ᶜ := by
-  ext ⟨g, ê⟩
-  simp [content, sat]
-
-/-- Content of conjunction is intersection -/
-theorem Formula.content_conj (φ ψ : Formula) :
-    (φ ⋀ ψ).content M = φ.content M ∩ ψ.content M := by
-  ext ⟨g, ê⟩
-  simp [content, sat]
-
 
 /--
 PLA satisfaction relation: possibility satisfies formula.
@@ -142,6 +94,33 @@ This bridges PLA to the DynamicSemantics.CCP infrastructure, matching the signat
 -/
 def satisfiesPLA : Poss E → Formula → Prop :=
   λ p φ => φ.sat M p.1 p.2
+
+/--
+The content of a formula: set of (g, ê) pairs where φ is satisfied —
+the spine's `contentOf` at `satisfiesPLA`.
+
+⟦φ⟧^M = { (g, ê) | M, g, ê ⊨ φ }
+
+This is the "static" meaning - what information φ conveys.
+-/
+def Formula.content (φ : Formula) : InfoState E :=
+  DynamicSemantics.contentOf (satisfiesPLA M) φ
+
+theorem Formula.mem_content (φ : Formula) (g : Assignment E) (ê : WitnessSeq E) :
+    (g, ê) ∈ φ.content M ↔ φ.sat M g ê := Iff.rfl
+
+/-- Content of negation is complement -/
+theorem Formula.content_neg (φ : Formula) :
+    (∼φ).content M = (φ.content M)ᶜ := by
+  ext ⟨g, ê⟩
+  simp [content, DynamicSemantics.contentOf, satisfiesPLA, sat]
+
+/-- Content of conjunction is intersection -/
+theorem Formula.content_conj (φ ψ : Formula) :
+    (φ ⋀ ψ).content M = φ.content M ∩ ψ.content M := by
+  ext ⟨g, ê⟩
+  simp [content, DynamicSemantics.contentOf, satisfiesPLA, sat]
+
 
 /--
 The update of a formula: filter state to satisfying pairs.
@@ -168,20 +147,20 @@ The update of φ is intersection with the content of φ:
 This shows Contents and Updates are equivalent perspectives.
 -/
 theorem contents_updates_equiv (φ : Formula) (s : InfoState E) :
-    φ.update M s = s ∩ φ.content M := by
-  ext ⟨g, ê⟩
-  simp [Formula.update, Formula.content, InfoState.restrict]
+    φ.update M s = s ∩ φ.content M :=
+  DynamicSemantics.updateFromSat_eq_inter_content (satisfiesPLA M) φ s
 
 
 /--
-A state supports a formula iff the formula is satisfied throughout the state.
+A state supports a formula iff the formula is satisfied throughout the
+state — the spine's `supportOf` at `satisfiesPLA`.
 
 s ⊨ φ iff ∀(g, ê) ∈ s, M, g, ê ⊨ φ
 
 This is the evidential perspective: the speaker's evidence supports φ.
 -/
 def InfoState.supports (s : InfoState E) (φ : Formula) : Prop :=
-  ∀ p ∈ s, φ.sat M p.1 p.2
+  DynamicSemantics.supportOf (satisfiesPLA M) s φ
 
 end
 
@@ -192,14 +171,14 @@ variable (M : Model E)
 
 /-- Empty state supports everything (vacuously) -/
 theorem InfoState.empty_supports (φ : Formula) :
-    (∅ : InfoState E) ⊫[M] φ := by
-  intro p hp
-  exact False.elim hp
+    (∅ : InfoState E) ⊫[M] φ :=
+  DynamicSemantics.empty_supports (satisfiesPLA M) φ
 
 /-- Support is monotonic: if s ⊆ t and t supports φ, then s supports φ -/
 theorem InfoState.supports_mono (s t : InfoState E) (φ : Formula) (h : s ⊆ t)
     (ht : t ⊫[M] φ) :
-    s ⊫[M] φ := λ p hp => ht p (h hp)
+    s ⊫[M] φ :=
+  DynamicSemantics.support_mono (satisfiesPLA M) t s φ h ht
 
 /-- Support and conjunction -/
 theorem InfoState.supports_conj (s : InfoState E) (φ ψ : Formula) :
@@ -207,10 +186,10 @@ theorem InfoState.supports_conj (s : InfoState E) (φ ψ : Formula) :
   constructor
   · intro h
     constructor
-    · intro p hp; exact (h p hp).1
-    · intro p hp; exact (h p hp).2
+    · intro p hp; exact (h hp).1
+    · intro p hp; exact (h hp).2
   · intro ⟨hφ, hψ⟩ p hp
-    exact ⟨hφ p hp, hψ p hp⟩
+    exact ⟨hφ hp, hψ hp⟩
 
 
 /--
@@ -223,17 +202,8 @@ A state supports φ iff updating with φ leaves it unchanged:
 This shows Updates and Support are equivalent perspectives.
 -/
 theorem updates_support_equiv (φ : Formula) (s : InfoState E) :
-    (s ⊫[M] φ) ↔ φ.update M s = s := by
-  constructor
-  · intro h
-    ext ⟨g, ê⟩
-    simp [Formula.update, InfoState.restrict]
-    intro hs
-    exact h (g, ê) hs
-  · intro h p hp
-    have : p ∈ φ.update M s := by rw [h]; exact hp
-    simp [Formula.update, InfoState.restrict] at this
-    exact this.2
+    (s ⊫[M] φ) ↔ φ.update M s = s :=
+  DynamicSemantics.support_iff_update_eq (satisfiesPLA M) φ s
 
 
 /--
@@ -247,7 +217,7 @@ which this formalization does not render: existentials certify witnesses in
 the membership condition without exporting them to output states.
 -/
 def Formula.dynConj (φ ψ : Formula) : Update E :=
-  φ.update M ;; ψ.update M
+  seq (φ.update M) (ψ.update M)
 
 /-- Dynamic conjunction update rule -/
 theorem Formula.dynConj_eq (φ ψ : Formula) (s : InfoState E) :
@@ -337,7 +307,7 @@ theorem update_eliminative (φ : Formula) (s : InfoState E) : φ.update M s ⊆ 
 PLA's formula update is eliminative in the Core sense.
 -/
 theorem update_isEliminative (φ : Formula) :
-    DynamicSemantics.IsEliminative (φ.update M : Update E) :=
+    DynamicSemantics.CCP.IsEliminative (φ.update M : Update E) :=
   DynamicSemantics.updateFromSat_eliminative (satisfiesPLA M) φ
 
 /--
@@ -358,29 +328,21 @@ Smaller states have "more information" (fewer possibilities = more certainty).
 -/
 theorem support_downward_closed (φ : Formula) (s t : InfoState E) (h : t ⊆ s)
     (hs : s ⊫[M] φ) : t ⊫[M] φ :=
-  λ p hp => hs p (h hp)
+  h.trans hs
 
 /--
 Intersection preserves support: if s and t both support φ, so does s ∩ t.
 -/
 theorem support_inter (φ : Formula) (s t : InfoState E) (hs : s ⊫[M] φ)
-    (_ht : t ⊫[M] φ) : (s ∩ t) ⊫[M] φ := by
-  intro p hp
-  exact hs p hp.1
+    (_ht : t ⊫[M] φ) : (s ∩ t) ⊫[M] φ :=
+  Set.inter_subset_left.trans hs
 
 /--
 Union and support: s ∪ t supports φ iff both s and t support φ.
 -/
 theorem support_union_iff (φ : Formula) (s t : InfoState E) :
-    ((s ∪ t) ⊫[M] φ) ↔ (s ⊫[M] φ) ∧ (t ⊫[M] φ) := by
-  constructor
-  · intro h
-    exact ⟨λ p hp => h p (Set.mem_union_left t hp),
-           λ p hp => h p (Set.mem_union_right s hp)⟩
-  · intro ⟨hs, ht⟩ p hp
-    cases hp with
-    | inl hps => exact hs p hps
-    | inr hpt => exact ht p hpt
+    ((s ∪ t) ⊫[M] φ) ↔ (s ⊫[M] φ) ∧ (t ⊫[M] φ) :=
+  Set.union_subset_iff
 
 /--
 Update distributes over intersection: φ.update(s ∩ t) = φ.update(s) ∩ φ.update(t)
@@ -407,7 +369,7 @@ theorem dynConj_subset_inter (φ ψ : Formula) (s : InfoState E) :
 
 /-- Sequential composition is nested intersection of contents. -/
 theorem static_seq_is_intersection (φ ψ : Formula) (s : InfoState E) :
-    (φ.update M ;; ψ.update M) s = s ∩ φ.content M ∩ ψ.content M := by
+    seq (φ.update M) (ψ.update M) s = s ∩ φ.content M ∩ ψ.content M := by
   simp only [DynamicSemantics.CCP.seq, contents_updates_equiv, Set.inter_assoc]
 
 /-- Only ∃ introduces discourse referents. -/
@@ -440,12 +402,11 @@ theorem same_content_same_update (φ ψ : Formula) (hcontent : φ.content M = ψ
 
 /--
 Dynamic entailment: φ dynamically entails ψ if updating with φ always
-yields a state that supports ψ.
-
-This is the fundamental semantic consequence relation for dynamic semantics.
+yields a state that supports ψ — the spine's `dynamicEntailsOf` at
+`satisfiesPLA`.
 -/
 def dynamicEntails (φ ψ : Formula) : Prop :=
-  ∀ s : InfoState E, (φ.update M s) ⊫[M] ψ
+  DynamicSemantics.dynamicEntailsOf (satisfiesPLA M) φ ψ
 
 end
 
@@ -460,19 +421,15 @@ Reflexivity of dynamic entailment: φ ⊨_dyn φ.
 Updating with φ yields a state that supports φ.
 -/
 theorem dynamicEntails_refl (φ : Formula) :
-    φ ⊨[M]_dyn φ := by
-  intro s p hp
-  simp only [Formula.update, InfoState.restrict, Set.mem_setOf_eq] at hp
-  exact hp.2
+    φ ⊨[M]_dyn φ :=
+  DynamicSemantics.dynamicEntails_refl (satisfiesPLA M) φ
 
 /--
 Transitivity of dynamic entailment; holds because update is eliminative.
 -/
 theorem dynamicEntails_trans (φ ψ χ : Formula) (h1 : φ ⊨[M]_dyn ψ) (h2 : ψ ⊨[M]_dyn χ) :
-    φ ⊨[M]_dyn χ := by
-  intro s p hp
-  exact h2 s p ((Formula.mem_update M ψ s p.1 p.2).mpr
-    ⟨update_eliminative M φ s hp, h1 s p hp⟩)
+    φ ⊨[M]_dyn χ :=
+  DynamicSemantics.dynamicEntails_trans (satisfiesPLA M) φ ψ χ h1 h2
 
 /--
 Weakening: if s supports φ and φ ⊨_dyn ψ, then φ.update(s) supports ψ.
@@ -499,10 +456,10 @@ theorem obs10_dynamic_eq_classical_entailment (φ ψ : Formula) :
     have hmem : (g, ê) ∈ φ.update M Set.univ := by
       simp only [Formula.update, InfoState.restrict, Set.mem_setOf_eq, Set.mem_univ, true_and]
       exact hsat
-    exact hdyn Set.univ (g, ê) hmem
+    exact hdyn Set.univ hmem
   · -- Classical → Dynamic: unfold update membership
     intro hclass s p hp
-    simp only [Formula.update, InfoState.restrict, Set.mem_setOf_eq] at hp
+    simp only [DynamicSemantics.mem_updateFromSat, satisfiesPLA] at hp
     exact hclass p.1 p.2 hp.2
 
 /--
@@ -516,22 +473,22 @@ theorem obs11_deduction_theorem (φ χ ψ : Formula) :
   constructor
   · -- (→) If φ∧χ ⊨ ψ, then φ ⊨ χ→ψ
     intro h s p hp
-    simp only [Formula.update, InfoState.restrict, Set.mem_setOf_eq] at hp
+    simp only [DynamicSemantics.mem_updateFromSat, satisfiesPLA] at hp
     show (χ ⟶ ψ).sat M p.1 p.2
     simp only [Formula.impl, Formula.sat]
     intro ⟨hχ, hnψ⟩
     have hmem : p ∈ (φ ⋀ χ).update M s := by
       simp only [Formula.update, InfoState.restrict, Set.mem_setOf_eq, Formula.sat]
       exact ⟨hp.1, hp.2, hχ⟩
-    exact hnψ (h s p hmem)
+    exact hnψ (h s hmem)
   · -- (←) If φ ⊨ χ→ψ, then φ∧χ ⊨ ψ
     intro h s p hp
-    simp only [Formula.update, InfoState.restrict, Set.mem_setOf_eq, Formula.sat] at hp
+    simp only [DynamicSemantics.mem_updateFromSat, satisfiesPLA, Formula.sat] at hp
     have hp_φ : p ∈ φ.update M s := by
       simp only [Formula.update, InfoState.restrict, Set.mem_setOf_eq]
       exact ⟨hp.1, hp.2.1⟩
-    have himpl := h s p hp_φ
-    simp only [Formula.impl, Formula.sat] at himpl
+    have himpl := h s hp_φ
+    simp only [Formula.impl] at himpl
     by_contra hnψ
     exact himpl ⟨hp.2.2, hnψ⟩
 
@@ -564,7 +521,7 @@ theorem exists_domain_nonempty (x : VarIdx) (φ : Formula) :
 
 /-- Sequential update as set comprehension. -/
 theorem seq_update_eq (φ ψ : Formula) (s : InfoState E) :
-    (φ.update M ;; ψ.update M) s =
+    seq (φ.update M) (ψ.update M) s =
     { p ∈ s | φ.sat M p.1 p.2 ∧ ψ.sat M p.1 p.2 } := by
   ext ⟨g, ê⟩
   exact Formula.mem_dynConj M φ ψ s g ê
@@ -572,7 +529,7 @@ theorem seq_update_eq (φ ψ : Formula) (s : InfoState E) :
 /-- Sequential update commutes: eliminative updates are filters, so order is
 irrelevant. ([dekker-2012] restricts this to dref-free formulas.) -/
 theorem static_conjunction_commutes (φ ψ : Formula) (s : InfoState E) :
-    (φ.update M ;; ψ.update M) s = (ψ.update M ;; φ.update M) s := by
+    seq (φ.update M) (ψ.update M) s = seq (ψ.update M) (φ.update M) s := by
   rw [seq_update_eq, seq_update_eq]
   ext p
   simp only [Set.mem_setOf_eq]

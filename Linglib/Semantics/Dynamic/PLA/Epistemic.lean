@@ -125,13 +125,13 @@ theorem must_subset (φ : Formula) (s : InfoState E) :
 Asserting then testing: φ; might ψ passes iff φ-update leaves room for ψ.
 -/
 theorem update_then_might (φ ψ : Formula) (s : InfoState E) :
-    (φ.update M ;; ψ.might M) s = ψ.might M (φ.update M s) := rfl
+    seq (φ.update M) (ψ.might M) s = ψ.might M (φ.update M s) := rfl
 
 /--
 Asserting then requiring: φ; must ψ passes iff φ-update supports ψ.
 -/
 theorem update_then_must (φ ψ : Formula) (s : InfoState E) :
-    (φ.update M ;; ψ.must M) s = ψ.must M (φ.update M s) := rfl
+    seq (φ.update M) (ψ.must M) s = ψ.must M (φ.update M s) := rfl
 
 
 /--
@@ -172,7 +172,7 @@ theorem supports_implies_might (φ : Formula) (s : InfoState E)
     obtain ⟨p, hp⟩ := hs
     use p
     simp only [Formula.update, InfoState.restrict, Set.mem_setOf_eq]
-    exact ⟨hp, hsup p hp⟩
+    exact ⟨hp, hsup hp⟩
   simp only [if_pos hne]
 
 
@@ -189,9 +189,11 @@ theorem might_iff_not_must_neg (φ : Formula) (s : InfoState E) (hs : s.Nonempty
   constructor
   · rintro ⟨⟨g, ê⟩, hp⟩ hsup
     rw [Formula.mem_update] at hp
-    exact hsup _ hp.1 hp.2
+    exact hsup hp.1 hp.2
   · intro h
-    simp only [InfoState.supports, Formula.sat, not_forall, Classical.not_not] at h
+    simp only [InfoState.supports, DynamicSemantics.supportOf, Set.subset_def,
+      DynamicSemantics.contentOf, Set.mem_setOf_eq, satisfiesPLA, Formula.sat,
+      not_forall, Classical.not_not] at h
     obtain ⟨p, hp, hsat⟩ := h
     exact ⟨p, (Formula.mem_update M φ s p.1 p.2).mpr ⟨hp, hsat⟩⟩
 

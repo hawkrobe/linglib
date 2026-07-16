@@ -303,7 +303,7 @@ But it fails the third axiom:
    `horizonStep g h₁ ⊄ horizonStep g h₂`
 
 This is structurally interesting: eliminative updates (assertion, test) ARE
-monotone (`updateFromSat_monotone` in `Core/CCP.lean`), so they form closure
+monotone (`DynamicSemantics.updateFromSat_monotone`), so they form closure
 operators on the dual lattice. Expansive generic updates fail monotonicity
 precisely because a LARGER input can BLOCK expansion that a smaller input
 would trigger — a phenomenon impossible in eliminative semantics. -/
@@ -356,7 +356,7 @@ omit [DecidableEq E] in
     horizonStep g []` but `false ∉ horizonStep g [true]`.
 
     This contrasts with eliminative updates, which ARE monotone
-    (`updateFromSat_monotone` in `Core/CCP.lean`): for eliminative
+    (`DynamicSemantics.updateFromSat_monotone`): for eliminative
     semantics, `s ⊆ t → u(s) ⊆ u(t)`. The failure of monotonicity
     for expansive updates is what prevents `horizonStep` from being
     a closure operator (`Order.ClosureOperator` in Mathlib), despite
