@@ -27,7 +27,8 @@ acting on states live in `Transition.lean`.
   informativeness, with the minimal state Λ as `⊥` and consistent merge
   as `⊔`.
 - `State.prop`: the proposition a state determines.
-- `State.restrict`: the best approximation supported on a smaller base.
+- `State.restrict`, `State.weaken`, `State.kernRestrict`: the transports
+  along base inclusion — [lawvere-1969]'s quantifier triple.
 - `State.fiberEquiv`, `State.fiberOrderIso`: the states indexed at `X`, as
   propositions over the `X`-collapsed state space.
 
@@ -45,6 +46,12 @@ acting on states live in `Transition.lean`.
   ([abramsky-sadrzadeh-2014]'s semantic unification), and the least one;
   `exists_ne_of_restrict_eq`: the gluing is not unique — restriction
   forgets cross-referent correlation.
+- `weaken_le_iff`, `kernRestrict_le_iff`, `restrict_weaken`,
+  `restrict_sup_weaken`: the adjunctions `kernRestrict ⊣ weaken ⊣
+  restrict`, Beck–Chevalley, and Frobenius — the fibers form a
+  hyperdoctrine over the category of contexts ([jacobs-1999]).
+- `baseSupported_iff_exists_preimage`: supported sets are the cylinders —
+  preimages along the projection to environments.
 - `fiberOrderIsoProd`, `fiberEmptyOrderIso`: the fiber at `X` classified
   as propositions over world–`X`-assignment pairs ([heim-1982]'s
   satisfaction sets), degenerating at `X = ∅` to bare propositions
@@ -75,6 +82,7 @@ picture is the middle rung, at granularity `X`.
 - [kamp-vangenabith-reyle-2011], Defs. 22–26
 - [heim-1982]
 - [muskens-van-benthem-visser-2011], [abramsky-sadrzadeh-2014]
+- [lawvere-1969], [jacobs-1999]
 -/
 
 namespace DynamicSemantics
@@ -131,6 +139,25 @@ theorem BaseSupported.preimage_image_mk (h : BaseSupported X S) :
     Quotient.mk (Possibility.agreeSetoid ↑X) ⁻¹' (Quotient.mk _ '' S) = S :=
   Set.Subset.antisymm (fun _ ⟨_, hq, hqp⟩ => (h.mem_congr (Quotient.exact hqp)).mp hq)
     (Set.subset_preimage_image _ _)
+
+/-- Supported sets are exactly the *cylinders*: preimages along the
+projection to `X`-environments (`Category.lean`'s `environments`). -/
+theorem baseSupported_iff_exists_preimage :
+    BaseSupported X S ↔ ∃ T : Set (W × ((↑X : Set V) → M)),
+      S = (fun p : Possibility W V M =>
+        (p.world, (↑X : Set V).restrict p.assignment)) ⁻¹' T := by
+  constructor
+  · intro h
+    refine ⟨(fun p : Possibility W V M =>
+      (p.world, (↑X : Set V).restrict p.assignment)) '' S,
+      Set.Subset.antisymm (Set.subset_preimage_image _ _) ?_⟩
+    rintro ⟨w, g⟩ ⟨⟨w', f⟩, hf, heq⟩
+    obtain ⟨rfl, h2⟩ := Prod.mk.injEq .. |>.mp heq
+    exact (h.mem_iff (Set.restrict_eq_restrict_iff.mp h2)).mp hf
+  · rintro ⟨T, rfl⟩
+    exact baseSupported_of_iff fun w f g hfg => by
+      simp only [Set.mem_preimage]
+      rw [Set.restrict_eq_restrict_iff.mpr hfg]
 
 /-! ### Information states -/
 
@@ -318,6 +345,114 @@ theorem le_restrict_iff (hJ : J.base ⊆ Y) (hY : Y ⊆ I.base) : J ≤ I.restri
   Set.ext fun _ =>
     ⟨fun ⟨_, f, hf, _⟩ => ⟨f, hf⟩, fun ⟨f, hf⟩ => ⟨f, f, hf, Set.eqOn_refl f _⟩⟩
 
+/-! ### Weakening and the quantifier adjoints
+
+The three transports along a base inclusion — `kernRestrict`, `weaken`,
+`restrict` — are [lawvere-1969]'s quantifier triple `∀ ⊣ w* ⊣ ∃`
+(mathlib's `Set.kernImage`, `Set.preimage`, `Set.image` along environment
+projections; `Category.lean`'s `fiberOrderIsoProd_restrict` computes the
+`restrict` leg). The informativeness order reverses inclusion, so here
+the ∃-leg is the *right* adjoint: `kernRestrict ⊣ weaken ⊣ restrict`.
+Beck–Chevalley (`restrict_weaken`) commutes the adjoints across the
+poset's pullback squares: the fibers form a hyperdoctrine over the
+category of contexts ([jacobs-1999]). -/
+
+/-- Weakening: grow the base, keep the carrier — supported carriers are
+already cylindric off the base. Semantically vacuous, anaphorically not:
+the new referents are live. [jacobs-1999]'s weakening. -/
+def weaken (I : State W V M) (h : I.base ⊆ Y) : State W V M where
+  base := Y
+  carrier := I.carrier
+  supported := I.supported.mono h
+
+@[simp] theorem base_weaken (h : I.base ⊆ Y) : (I.weaken h).base = Y := rfl
+
+@[simp] theorem carrier_weaken (h : I.base ⊆ Y) :
+    (I.weaken h).carrier = I.carrier := rfl
+
+@[simp] theorem weaken_self (I : State W V M) : I.weaken subset_rfl = I := rfl
+
+theorem weaken_weaken {Z : Finset V} (h : I.base ⊆ Y) (h' : Y ⊆ Z) :
+    (I.weaken h).weaken h' = I.weaken (h.trans h') := rfl
+
+/-- The universal counterpart of restriction: a possibility survives iff
+*every* variant agreeing with it on `Y` is in the carrier. The ∀-leg of
+the quantifier triple (`Set.kernImage` where `restrict` is `Set.image`),
+and the transport for universal quantification and the DRS conditional. -/
+def kernRestrict (I : State W V M) (Y : Finset V) : State W V M where
+  base := Y
+  carrier := {p | ∀ f, Set.EqOn f p.assignment ↑Y →
+    (⟨p.world, f⟩ : Possibility W V M) ∈ I.carrier}
+  supported := baseSupported_of_iff fun _ _ _ hfg =>
+    forall_congr' fun _ =>
+      imp_congr_left ⟨fun h => h.trans hfg, fun h => h.trans hfg.symm⟩
+
+@[simp] theorem base_kernRestrict : (I.kernRestrict Y).base = Y := rfl
+
+@[simp] theorem mem_kernRestrict {w : W} {g : V → M} :
+    (⟨w, g⟩ : Possibility W V M) ∈ I.kernRestrict Y ↔
+      ∀ f, Set.EqOn f g ↑Y → (⟨w, f⟩ : Possibility W V M) ∈ I := Iff.rfl
+
+/-- The universal approximation is at least as informative as the
+existential one. -/
+theorem restrict_le_kernRestrict (I : State W V M) (Y : Finset V) :
+    I.restrict Y ≤ I.kernRestrict Y :=
+  ⟨subset_rfl, fun p hp =>
+    ⟨p.assignment, hp p.assignment (Set.eqOn_refl _ _), Set.eqOn_refl _ _⟩⟩
+
+/-- Weakening is left adjoint to restriction — `Set.image_preimage` in the
+fibers, the informativeness order making the ∃-leg the right adjoint.
+`le_restrict_iff` is this connection with the weakening left implicit. -/
+theorem weaken_le_iff (hJ : J.base ⊆ Y) (hY : Y ⊆ I.base) :
+    J.weaken hJ ≤ I ↔ J ≤ I.restrict Y := by
+  constructor
+  · rintro ⟨-, hc⟩
+    refine ⟨hJ, fun p hp => ?_⟩
+    obtain ⟨w, g⟩ := p
+    obtain ⟨f, hf, hfg⟩ := hp
+    exact (J.supported.mem_iff (hfg.mono (Finset.coe_subset.mpr hJ))).mp (hc hf)
+  · rintro ⟨-, hc⟩
+    exact ⟨hY, fun p hp => hc ⟨p.assignment, hp, Set.eqOn_refl _ _⟩⟩
+
+/-- `kernRestrict` is left adjoint to weakening — `Set.preimage_kernImage`
+in the fibers: `I.kernRestrict J.base` is the strongest `J.base`-supported
+consequence of `I`. -/
+theorem kernRestrict_le_iff (h : J.base ⊆ I.base) :
+    I.kernRestrict J.base ≤ J ↔ I ≤ J.weaken h := by
+  constructor
+  · rintro ⟨-, hc⟩
+    exact ⟨subset_rfl, fun p hp => hc hp p.assignment (Set.eqOn_refl _ _)⟩
+  · rintro ⟨-, hc⟩
+    refine ⟨subset_rfl, fun p hp => ?_⟩
+    obtain ⟨w, g⟩ := p
+    intro f hfg
+    exact hc ((J.supported.mem_iff hfg).mpr hp)
+
+section BeckChevalley
+variable [DecidableEq V]
+
+/-- Beck–Chevalley: weakening then restricting is restricting to the
+intersection then weakening — the quantifier adjoints commute across the
+poset's pullback squares. -/
+theorem restrict_weaken (I : State W V M) (Z : Finset V) :
+    (I.weaken (Finset.subset_union_left : I.base ⊆ I.base ∪ Z)).restrict Z =
+      (I.restrict (I.base ∩ Z)).weaken Finset.inter_subset_right := by
+  refine State.ext rfl (Set.ext fun p => ?_)
+  obtain ⟨w, g⟩ := p
+  constructor
+  · rintro ⟨f, hf, hfg⟩
+    exact ⟨f, hf, hfg.mono (by rw [Finset.coe_inter]; exact Set.inter_subset_right)⟩
+  · rintro ⟨f, hf, hfg⟩
+    refine ⟨I.base.piecewise f g,
+      (I.supported.mem_iff fun x hx => I.base.piecewise_eq_of_mem f g hx).mpr hf,
+      fun z hz => ?_⟩
+    by_cases hzB : z ∈ I.base
+    · rw [Finset.piecewise_eq_of_mem _ _ _ hzB]
+      exact hfg (by rw [Finset.coe_inter]; exact ⟨hzB, hz⟩)
+    · rw [Finset.piecewise_eq_of_notMem _ _ _ hzB]
+
+end BeckChevalley
+
 /-! ### Merge is gluing -/
 
 section Gluing
@@ -385,6 +520,23 @@ theorem Compatible.restrict_sup_right (h : I.Compatible J) :
   rw [sup_comm]
   exact h.symm.restrict_sup_left
 
+/-- Frobenius reciprocity: restriction distributes over merge with a
+weakened state, unconditionally — where the gluing law needs
+compatibility, the weakened component needs nothing. -/
+theorem restrict_sup_weaken (hJ : J.base ⊆ Y) (hY : Y ⊆ I.base) :
+    (I ⊔ J.weaken (hJ.trans hY)).restrict Y = I.restrict Y ⊔ J := by
+  refine State.ext (Finset.union_eq_left.mpr hJ).symm (Set.ext fun p => ?_)
+  obtain ⟨w, g⟩ := p
+  constructor
+  · rintro ⟨f, hf, hfg⟩
+    obtain ⟨hfI, hfJ⟩ := mem_sup.mp hf
+    exact mem_sup.mpr ⟨⟨f, hfI, hfg⟩,
+      (J.supported.mem_iff (hfg.mono (Finset.coe_subset.mpr hJ))).mp hfJ⟩
+  · intro hp
+    obtain ⟨⟨f, hfI, hfg⟩, hpJ⟩ := mem_sup.mp hp
+    exact ⟨f, mem_sup.mpr ⟨hfI,
+      (J.supported.mem_iff (hfg.mono (Finset.coe_subset.mpr hJ))).mpr hpJ⟩, hfg⟩
+
 /-- The merge is the *least* gluing: any state that restricts onto both
 components over the union base lies above it. -/
 theorem sup_le_of_restrict_eq {S : State W V M} (hb : S.base = I.base ∪ J.base)
@@ -437,11 +589,10 @@ widening, [groenendijk-stokhof-1991]'s random reset). For a novel `x` the
 carrier is unchanged (`randomAssign_of_notMem`) — supported carriers are
 already cylindric off the base, so introduction is pure base growth; for a
 live `x` the update is destructive. -/
-def randomAssign [DecidableEq V] (I : State W V M) (x : V) : State W V M where
-  base := insert x I.base
-  carrier := (I.restrict (I.base.erase x)).carrier
-  supported := (I.restrict (I.base.erase x)).supported.mono
-    ((Finset.erase_subset ..).trans (Finset.subset_insert ..))
+def randomAssign [DecidableEq V] (I : State W V M) (x : V) : State W V M :=
+  (I.restrict (I.base.erase x)).weaken
+    (show I.base.erase x ⊆ insert x I.base from
+      (Finset.erase_subset ..).trans (Finset.subset_insert ..))
 
 section RandomAssign
 variable [DecidableEq V] {x : V}
