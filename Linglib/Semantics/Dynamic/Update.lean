@@ -102,8 +102,6 @@ namespace DynamicSemantics
 
 /-! ## The relational face -/
 
-section Relational
-
 /-- A dynamic meaning as a binary relation between input and output states. -/
 abbrev Update (S : Type*) := S → S → Prop
 
@@ -185,8 +183,6 @@ theorem IsTest.eq_test_closure (h : IsTest D) :
   exact propext (by grind [test, closure, IsTest])
 
 end Update
-
-end Relational
 
 /-! ## The transformer face -/
 
