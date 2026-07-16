@@ -52,7 +52,7 @@ finite models.
 `Nat`-indexed dynamic operators on the Tarski-style state `Assignment E := Nat → E`
 (`Core.Assignment`), generic over `E`: `randomAssignAt n` (DPL `[x_n]`), `existsAt n φ`
 (DPL `∃x_n.φ`, CDRT `[u_n]; φ`), `forallAt n φ` (DPL `∀x_n.φ`), `closeAt φ` (DPL `◇φ`).
-`existsAt n` is `dseq` after `randomAssignAt n`; `forallAt n` is `¬∃¬` via `test`/`dneg`.
+`existsAt n` is `seq` after `randomAssignAt n`; `forallAt n` is `¬∃¬` via `test`/`neg`.
 `RegisterStructure` (`Dynamic/CDRT.lean`) abstracts these: its canonical
 instance at `Nat → E` has register indices `n` with projection values.
 
@@ -64,6 +64,7 @@ namespace DynamicSemantics
 
 open _root_.Core (Assignment)
 open DynamicSemantics
+open DynamicSemantics.Update (test seq neg closure)
 
 variable {E : Type*}
 
@@ -71,33 +72,33 @@ variable {E : Type*}
 def randomAssignAt (n : Nat) : Update (Assignment E) :=
   fun g h => ∃ d : E, h = Function.update g n d
 
-/-- `existsAt n φ` is `dseq (randomAssignAt n) φ`. Holds at `(g, h)` iff
+/-- `existsAt n φ` is `seq (randomAssignAt n) φ`. Holds at `(g, h)` iff
 some witness `d : E` makes `φ` accept the input `g[n↦d]` and produce `h`. -/
 def existsAt (n : Nat) (φ : Update (Assignment E)) : Update (Assignment E) :=
-  dseq (randomAssignAt n) φ
+  seq (randomAssignAt n) φ
 
-/-- The decomposition: `existsAt = dseq ∘ randomAssignAt`. -/
+/-- The decomposition: `existsAt = seq ∘ randomAssignAt`. -/
 @[simp] theorem existsAt_eq_dseq (n : Nat) (φ : Update (Assignment E)) :
-    existsAt n φ = dseq (randomAssignAt n) φ := rfl
+    existsAt n φ = seq (randomAssignAt n) φ := rfl
 
 /-- Direct unfolding: `existsAt n φ g h ↔ ∃ d : E, φ (Function.update g n d) h`. -/
 theorem existsAt_iff (n : Nat) (φ : Update (Assignment E)) (g h : Assignment E) :
     existsAt n φ g h ↔ ∃ d : E, φ (Function.update g n d) h := by
-  simp only [existsAt, dseq, Relation.Comp, randomAssignAt]
+  simp only [existsAt, seq, Relation.Comp, randomAssignAt]
   constructor
   · rintro ⟨k, ⟨d, rfl⟩, hφ⟩; exact ⟨d, hφ⟩
   · rintro ⟨d, hφ⟩; exact ⟨Function.update g n d, ⟨d, rfl⟩, hφ⟩
 
 /-- `forallAt n φ`: a test that requires `φ` to succeed for every value at `n`.
-Definitionally `test (dneg (existsAt n (test (dneg φ))))` — the standard
+Definitionally `test (neg (existsAt n (test (neg φ))))` — the standard
 DPL/Muskens reduction `∀ ≈ ¬∃¬`. -/
 def forallAt (n : Nat) (φ : Update (Assignment E)) : Update (Assignment E) :=
-  test (dneg (existsAt n (test (dneg φ))))
+  test (neg (existsAt n (test (neg φ))))
 
 /-- Direct truth condition: `forallAt n φ g h ↔ g = h ∧ ∀ d, ∃ k, φ (Function.update g n d) k`. -/
 theorem forallAt_iff (n : Nat) (φ : Update (Assignment E)) (g h : Assignment E) :
     forallAt n φ g h ↔ g = h ∧ ∀ d : E, ∃ k, φ (Function.update g n d) k := by
-  simp only [forallAt, test, dneg, existsAt, dseq, Relation.Comp, randomAssignAt]
+  simp only [forallAt, test, neg, existsAt, seq, Relation.Comp, randomAssignAt]
   constructor
   · rintro ⟨rfl, hneg⟩
     refine ⟨rfl, fun d => ?_⟩
@@ -1069,7 +1070,8 @@ theorem pip_quantifier_blocking :
 section DPLComparison
 
 open DynamicSemantics (existsAt existsAt_iff)
-open DynamicSemantics (Update dneg test)
+open DynamicSemantics (Update)
+open DynamicSemantics.Update (neg test)
 open _root_.Core (Assignment)
 
 /-!
@@ -1089,19 +1091,19 @@ The following theorems make this architectural difference explicit.
 
 **Substrate names**: DPL relations are `Update (Assignment E)` from
 `Semantics/Dynamic/`. The DPL operator aliases are
-substrate operations: `DPLRel.neg φ` is `test (dneg φ)`,
+substrate operations: `DPLRel.neg φ` is `test (neg φ)`,
 `DPLRel.exists_ x φ` is `existsAt x φ`. -/
 
 /--
 DPL negation resets the output assignment — it cannot export bindings.
 
 This is the key structural property of DPL that blocks cross-negation
-anaphora: after `¬φ` (`test (dneg φ)`), the output assignment equals the
+anaphora: after `¬φ` (`test (neg φ)`), the output assignment equals the
 input, so any variables bound inside φ are inaccessible.
 -/
 theorem dpl_neg_is_test :
     ∀ (E : Type*) (φ : Update (Assignment E)) (g h : Assignment E),
-    test (dneg φ) g h → g = h :=
+    test (neg φ) g h → g = h :=
   λ _ _ _ _ h => h.1
 
 /--
@@ -1123,7 +1125,7 @@ theorem pip_neg_preserves_labels :
 DPL double negation does not recover anaphora.
 
 For `Nontrivial E`, there exist `x : Nat` and `φ : Update (Assignment E)` such
-that `test (dneg (test (dneg (existsAt x φ))))` ≠ `existsAt x φ`. The
+that `test (neg (test (neg (existsAt x φ))))` ≠ `existsAt x φ`. The
 substrate-name restatement of [groenendijk-stokhof-1991]'s observation
 that DPL negation collapses positive update information.
 
@@ -1132,7 +1134,7 @@ that DPL negation collapses positive update information.
 for DPL theorems in substrate form. -/
 private theorem dpl_dne_fails_anaphora {E : Type*} [Nontrivial E] :
     ∃ (x : Nat) (φ : Update (Assignment E)),
-      test (dneg (test (dneg (existsAt x φ)))) ≠ existsAt x φ := by
+      test (neg (test (neg (existsAt x φ)))) ≠ existsAt x φ := by
   obtain ⟨e₁, e₂, hne⟩ := exists_pair_ne E
   refine ⟨0, fun g h => g = h, fun heq => hne ?_⟩
   let g₀ : Assignment E := fun _ => e₁
@@ -1158,7 +1160,7 @@ Concretely:
 theorem pip_solves_dpl_negation_problem :
     -- DPL: ¬¬∃xφ ≠ ∃xφ (double negation fails for anaphora)
     (∃ (x : Nat) (φ : Update (Assignment Nat)),
-      test (dneg (test (dneg (existsAt x φ)))) ≠ existsAt x φ) ∧
+      test (neg (test (neg (existsAt x φ)))) ≠ existsAt x φ) ∧
     -- PIP: labels survive negation (bathroom sentences work)
     (∀ d : Discourse BWorld BEntity,
       (negation

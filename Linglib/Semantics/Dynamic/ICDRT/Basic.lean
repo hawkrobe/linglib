@@ -17,7 +17,7 @@ carrier types) and below paper-specific theories such as [hofmann-2025]
 
 ICDRT's *delta* over the level-0 spine is exactly its carrier and its
 conditions: `ICDRT.Update` is the spine's relational `Update` at ICDRT
-assignments, sequencing is the spine's `dseq`, and the static-to-dynamic
+assignments, sequencing is the spine's `seq`, and the static-to-dynamic
 bridge `toUpdate` is `lift ∘ fiberDRS` — by definition, not by theorem.
 `fiberDRS` embeds assignment-only relations into pair relations (passive
 worlds); `lift` is the spine's relational image. Consequently `toUpdate`
@@ -40,6 +40,8 @@ dynamic negation that inspects whole states.
 
 namespace DynamicSemantics.ICDRT
 
+open Update
+
 variable {W E : Type*}
 variable (φ φ₁ φ₂ φ₃ φ_DC φ_anaphor φ_antecedent : PVar) (v : IVar)
 variable (i j : Assignment W E)
@@ -61,7 +63,7 @@ def Context.univ : Context W E := Set.univ
 /-- Static update relation between input and output assignments: the
 spine's relational `Update` at ICDRT assignments. Following
 [muskens-1996]'s Compositional DRT, dynamic updates are relations between
-assignments; sequencing is the spine's `dseq` and the lift to context
+assignments; sequencing is the spine's `seq` and the lift to context
 transformers is `toUpdate` below. -/
 abbrev Update (W : Type*) (E : Type*) :=
   DynamicSemantics.Update (Assignment W E)
@@ -105,10 +107,10 @@ theorem idUp_toUpdate : toUpdate (idUp : Update W E) c = c :=
      λ hjc => ⟨(j, w), hjc, rfl, rfl⟩⟩
 
 /-- `fiberDRS` preserves sequential composition. -/
-theorem fiberDRS_dseq :
-    fiberDRS (D₁ ⨟ D₂) = dseq (fiberDRS D₁) (fiberDRS D₂) := by
+theorem fiberDRS_seq :
+    fiberDRS (D₁ ⨟ D₂) = seq (fiberDRS D₁) (fiberDRS D₂) := by
   funext p q; cases p; cases q
-  simp only [fiberDRS, dseq, Relation.Comp, eq_iff_iff]
+  simp only [fiberDRS, seq, Relation.Comp, eq_iff_iff]
   constructor
   · rintro ⟨rfl, k, h1, h2⟩
     exact ⟨⟨k, _⟩, ⟨rfl, h1⟩, ⟨rfl, h2⟩⟩
@@ -116,8 +118,8 @@ theorem fiberDRS_dseq :
     exact ⟨rfl, k, h1, h2⟩
 
 /-- Sequential composition lifts to function composition on contexts. -/
-theorem dseq_toUpdate : toUpdate (D₁ ⨟ D₂) c = toUpdate D₂ (toUpdate D₁ c) := by
-  rw [toUpdate, fiberDRS_dseq, lift_dseq]
+theorem seq_toUpdate : toUpdate (D₁ ⨟ D₂) c = toUpdate D₂ (toUpdate D₁ c) := by
+  rw [toUpdate, fiberDRS_seq, lift_seq]
   rfl
 
 /-- `toUpdate D` is always distributive: it processes each

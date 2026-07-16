@@ -36,8 +36,9 @@ iff it is eliminative and distributive (`exists_eq_lift_test_iff`).
 ## Main definitions
 
 * `Update S`, `Condition S`: relations on states and properties of states.
-* `test`, `dneg`, `dseq`, `dimpl`, `ddisj`, `closure`: the relational
-  connectives; `Update S` is a scoped `Monoid` and `IsQuantale`.
+* `Update.test`, `Update.neg`, `Update.seq` (`⨟`), `Update.impl`,
+  `Update.disj`, `Update.closure`: the relational connectives; `Update S` is
+  a scoped `Monoid` and `IsQuantale`.
 * `Update.IsTest`: updates that never change the state.
 * `CCP S`: transformers of information states, a scoped `Monoid` under
   `CCP.seq`, with `CCP.neg`, the whole-state tests `CCP.guard`, `might`,
@@ -66,17 +67,17 @@ iff it is eliminative and distributive (`exists_eq_lift_test_iff`).
 
 ## Notation
 
-* `D₁ ⨟ D₂` for `dseq D₁ D₂`.
+* `D₁ ⨟ D₂` for `Update.seq D₁ D₂`.
 * `u ;; v` for `CCP.seq u v`, scoped to `DynamicSemantics.CCP`.
 
 ## Implementation notes
 
 The algebraic instances are scoped: `Update S` and `CCP S` abbreviate
 function types, so global instances would attach `*` and `1` to bare function
-types for every importer. `open scoped DynamicSemantics` also makes mathlib's
+types for every importer. `open scoped DynamicSemantics.Update` also makes mathlib's
 `WriterT (Update S) Id` a lawful monad.
 
-`dneg` does not validate double-negation elimination: negation collapses
+`Update.neg` does not validate double-negation elimination: negation collapses
 update information to a state predicate. The repairs are framework-specific —
 bilateral swap (`UpdateSemantics/Bilateral.lean`), propositional discourse
 referents (`Studies/Hofmann2025.lean`), classical metalanguage
@@ -109,6 +110,8 @@ abbrev Update (S : Type*) := S → S → Prop
 /-- A static property of a single state; `test` embeds conditions into updates. -/
 abbrev Condition (S : Type*) := S → Prop
 
+namespace Update
+
 variable {S : Type*} {C : Condition S} {D : Update S} {i j : S}
 
 /-! ### The connectives -/
@@ -116,22 +119,19 @@ variable {S : Type*} {C : Condition S} {D : Update S} {i j : S}
 /-- `test C` checks `C` without changing the state. -/
 def test (C : Condition S) : Update S := λ i j => i = j ∧ C j
 
-/-- A test relates a state only to itself. -/
-theorem eq_of_test (h : test C i j) : i = j := h.1
-
-/-- `dneg D` holds at `i` iff no output `k` satisfies `D`. -/
-def dneg (D : Update S) : Condition S := λ i => ¬∃ k, D i k
+/-- `neg D` holds at `i` iff no output `k` satisfies `D`. -/
+def neg (D : Update S) : Condition S := λ i => ¬∃ k, D i k
 
 /-- `D₁ ⨟ D₂` relates `i` to `k` iff some intermediate `j` has `D₁ i j` and `D₂ j k`. -/
-def dseq (D₁ D₂ : Update S) : Update S := Relation.Comp D₁ D₂
+def seq (D₁ D₂ : Update S) : Update S := Relation.Comp D₁ D₂
 
-infixl:65 " ⨟ " => dseq
+infixl:65 " ⨟ " => Update.seq
 
-/-- `dimpl D₁ D₂` holds at `i` iff every `D₁`-output from `i` has a `D₂`-output. -/
-def dimpl (D₁ D₂ : Update S) : Condition S := λ i => ∀ h, D₁ i h → ∃ k, D₂ h k
+/-- `impl D₁ D₂` holds at `i` iff every `D₁`-output from `i` has a `D₂`-output. -/
+def impl (D₁ D₂ : Update S) : Condition S := λ i => ∀ h, D₁ i h → ∃ k, D₂ h k
 
-/-- `ddisj D₁ D₂` holds at `i` iff some disjunct has an output from `i`. -/
-def ddisj (D₁ D₂ : Update S) : Condition S := λ i => ∃ k, D₁ i k ∨ D₂ i k
+/-- `disj D₁ D₂` holds at `i` iff some disjunct has an output from `i`. -/
+def disj (D₁ D₂ : Update S) : Condition S := λ i => ∃ k, D₁ i k ∨ D₂ i k
 
 /-- `closure D` holds at `i` iff `D` has an output from `i` — [heim-1982]'s truth definition. -/
 def closure (D : Update S) : Condition S := λ i => ∃ k, D i k
@@ -141,7 +141,7 @@ def closure (D : Update S) : Condition S := λ i => ∃ k, D i k
 /-- `Update S` is a monoid under `⨟` with the trivial test as unit (scoped;
 see the implementation notes). -/
 scoped instance : Monoid (Update S) where
-  mul := dseq
+  mul := seq
   one := test (λ _ => True)
   mul_assoc _ _ _ := Relation.comp_assoc
   one_mul D := funext₂ λ i _ => propext ⟨λ ⟨_, ⟨h, _⟩, d⟩ => h ▸ d, λ d => ⟨i, ⟨rfl, ⟨⟩⟩, d⟩⟩
@@ -153,13 +153,13 @@ scoped instance : IsQuantale (Update S) where
   mul_sSup_distrib D s := by
     funext i k
     show (D ⨟ sSup s) i k = (⨆ E ∈ s, D ⨟ E) i k
-    simp only [dseq, Relation.Comp, sSup_apply, iSup_apply, iSup_Prop_eq]
+    simp only [seq, Relation.Comp, sSup_apply, iSup_apply, iSup_Prop_eq]
     exact propext ⟨fun ⟨b, hD, ⟨E, hE⟩, hbk⟩ => ⟨E, hE, b, hD, hbk⟩,
       fun ⟨E, hE, b, hD, hbk⟩ => ⟨b, hD, ⟨E, hE⟩, hbk⟩⟩
   sSup_mul_distrib s D := by
     funext i k
     show (sSup s ⨟ D) i k = (⨆ E ∈ s, E ⨟ D) i k
-    simp only [dseq, Relation.Comp, sSup_apply, iSup_apply, iSup_Prop_eq]
+    simp only [seq, Relation.Comp, sSup_apply, iSup_apply, iSup_Prop_eq]
     exact propext ⟨fun ⟨b, ⟨⟨E, hE⟩, hib⟩, hbk⟩ => ⟨E, hE, b, hib, hbk⟩,
       fun ⟨E, hE, b, hib, hbk⟩ => ⟨b, ⟨⟨E, hE⟩, hib⟩, hbk⟩⟩
 
@@ -167,22 +167,24 @@ scoped instance : IsQuantale (Update S) where
 
 /-- An update is a *test* if it never changes the state
 ([groenendijk-stokhof-1991], Definition 11). -/
-def Update.IsTest (D : Update S) : Prop := ∀ ⦃i j⦄, D i j → i = j
+def IsTest (D : Update S) : Prop := ∀ ⦃i j⦄, D i j → i = j
 
 /-- `test C` is a test. -/
-theorem Update.isTest_test (C : Condition S) : Update.IsTest (test C) :=
+theorem isTest_test (C : Condition S) : IsTest (test C) :=
   fun _ _ h => h.1
 
 /-- Tests are the subidentities of the update monoid: the coreflexives `D ≤ 1`. -/
-theorem Update.isTest_iff_le_one : D.IsTest ↔ D ≤ 1 :=
+theorem isTest_iff_le_one : D.IsTest ↔ D ≤ 1 :=
   ⟨fun h _ _ hij => ⟨h hij, trivial⟩, fun h _ _ hij => (h _ _ hij).1⟩
 
 /-- A test is the test of its own closure ([groenendijk-stokhof-1991]'s
 Fact 6); the transformer-face mirror is `CCP.IsTest.eq_guard`. -/
-theorem Update.IsTest.eq_test_closure (h : Update.IsTest D) :
+theorem IsTest.eq_test_closure (h : IsTest D) :
     D = test (closure D) := by
   funext i j
-  exact propext (by grind [test, closure, Update.IsTest])
+  exact propext (by grind [test, closure, IsTest])
+
+end Update
 
 end Relational
 
@@ -321,6 +323,8 @@ section RelationalBridge
 
 variable {S : Type*} {R R' : Update S} {C : Condition S} {σ : Set S} {i j : S}
 
+open Update
+
 /-- The relational image: `lift R σ` collects the `R`-outputs of the elements
 of `σ` — the strongest postcondition of [muskens-van-benthem-visser-2011]. -/
 def lift (R : Update S) : CCP S := λ σ => { j | ∃ i ∈ σ, R i j }
@@ -331,8 +335,8 @@ def lower (φ : CCP S) : Update S := λ i j => j ∈ φ {i}
 theorem mem_lift : j ∈ lift R σ ↔ ∃ i ∈ σ, R i j := Iff.rfl
 
 /-- `lift` sends sequencing to composition. -/
-theorem lift_dseq (R₁ R₂ : Update S) :
-    lift (dseq R₁ R₂) = CCP.seq (lift R₁) (lift R₂) :=
+theorem lift_seq (R₁ R₂ : Update S) :
+    lift (R₁ ⨟ R₂) = CCP.seq (lift R₁) (lift R₂) :=
   funext λ _ => Set.ext λ _ => ⟨λ ⟨i, m, j, a, b⟩ => ⟨j, ⟨i, m, a⟩, b⟩,
     λ ⟨j, ⟨i, m, a⟩, b⟩ => ⟨i, m, j, a, b⟩⟩
 
@@ -438,6 +442,8 @@ in content, and dynamic entailment is content inclusion
 section Satisfaction
 
 variable {S φ : Type*}
+
+open Update (test)
 
 /-- The content of a formula: all possibilities satisfying it. -/
 def contentOf (sat : S → φ → Prop) (ψ : φ) : Set S := { p | sat p ψ }

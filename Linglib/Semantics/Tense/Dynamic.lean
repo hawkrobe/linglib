@@ -50,6 +50,7 @@ namespace Tense
 
 open _root_.Intensional (WorldTimeIndex)
 open DynamicSemantics
+open DynamicSemantics.Update (test closure)
 
 variable {W Time : Type*}
 

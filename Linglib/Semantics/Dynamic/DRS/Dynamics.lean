@@ -41,12 +41,13 @@ identification:
 ## Implementation notes
 
 Naming: the dynamic face (`toRel`, `holds`, `trueRel`) follows the spine's
-lowerCamel operation names (`dneg`, `dseq`, `closure`); the static face
+lowerCamel operation names (`neg`, `seq`, `closure`); the static face
 (`DRS.Realize`, `DRS/Semantics.lean`) follows mathlib's `Formula.Realize`.
 -/
 
 open FirstOrder FirstOrder.Language
-open DynamicSemantics (Update dneg dimpl ddisj closure dseq)
+open DynamicSemantics (Update)
+open DynamicSemantics.Update (neg impl disj closure seq)
 
 namespace DRT
 
@@ -64,13 +65,13 @@ def DRS.toRel : DRS L V → Update (V → M)
   | .mk U conds => fun a a' => (∀ x, x ∉ U → a' x = a x) ∧ Condition.holdsAll conds a'
 /-- The set denotation of a condition ([muskens-1996], SEM1/2): the set of
 embeddings at which it holds. Complex conditions apply the spine connectives
-`dneg`/`dimpl`/`ddisj` to the box relations of their sub-DRSs. -/
+`neg`/`impl`/`disj` to the box relations of their sub-DRSs. -/
 def Condition.holds : Condition L V → (V → M) → Prop
   | .rel R args => fun a => Structure.RelMap R (fun i => a (args i))
   | .eq u v => fun a => a u = a v
-  | .neg K => dneg (DRS.toRel K)
-  | .imp ante cons => dimpl (DRS.toRel ante) (DRS.toRel cons)
-  | .dis l r => ddisj (DRS.toRel l) (DRS.toRel r)
+  | .neg K => neg (DRS.toRel K)
+  | .imp ante cons => impl (DRS.toRel ante) (DRS.toRel cons)
+  | .dis l r => disj (DRS.toRel l) (DRS.toRel r)
 /-- Every condition in the list holds at `a`. A `List` helper — the higher-order
 form fails the nested-inductive structural-recursion checker. -/
 def Condition.holdsAll : List (Condition L V) → (V → M) → Prop
@@ -294,7 +295,7 @@ theorem DRS.toRel_merge [DecidableEq V] (K₁ K₂ : DRS L V)
   funext a a'
   apply propext
   simp only [DRS.merge, DRS.referents_mk, DRS.conditions_mk, DRS.toRel,
-    Condition.holdsAll_append, dseq, Relation.Comp]
+    Condition.holdsAll_append, seq, Relation.Comp]
   constructor
   · rintro ⟨hag, hh₁, hh₂⟩
     refine ⟨U₂.piecewise a a', ⟨?_, ?_⟩, ?_, ?_⟩

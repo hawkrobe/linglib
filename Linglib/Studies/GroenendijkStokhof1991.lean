@@ -261,7 +261,7 @@ theorem forall_interdefinable (x : ℕ) (φ : DPLRel E) :
 
 section Metatheory
 
-open DynamicSemantics
+open DynamicSemantics DynamicSemantics.Update
 
 /-- s-equivalence (Definition 7) at a fixed model: same satisfaction
 set. The paper quantifies over models; `DPLRel` fixes one. -/
@@ -347,8 +347,8 @@ theorem sEntails_of_subset {D₁ D₂ : Update S}
 
 /-- The deduction theorem (Fact 11) in spine vocabulary: entailment is
 validity of the implication test. -/
-theorem entails_iff_valid_test_dimpl (D₁ D₂ : Update S) :
-    (D₁ ⊨ D₂) ↔ valid (test (dimpl D₁ D₂)) := by
+theorem entails_iff_valid_test_impl (D₁ D₂ : Update S) :
+    (D₁ ⊨ D₂) ↔ valid (test (impl D₁ D₂)) := by
   constructor
   · intro h i
     exact ⟨i, rfl, h i⟩
@@ -370,7 +370,7 @@ deduction theorem read through the Ty2 embedding. -/
 theorem deduction (φ ψ : DPLRel E) :
     (toDRS φ ⊨ toDRS ψ) ↔ valid (toDRS (DPLRel.impl φ ψ)) := by
   rw [impl_eq_test_dimpl]
-  exact entails_iff_valid_test_dimpl (toDRS φ) (toDRS ψ)
+  exact entails_iff_valid_test_impl (toDRS φ) (toDRS ψ)
 
 /-- Fact 12: s-entailment is dynamic entailment from the closed premiss
 `♦φ`. -/
@@ -428,7 +428,7 @@ section SatisfactionSets
 
 open Core.CylindricAlgebra
 open Core (Assignment)
-open DynamicSemantics (closure)
+open DynamicSemantics.Update (closure)
 
 /-- **DPL existential = cylindrification**: `\∃xφ\ = cₓ\φ\` — the
 existential case of Fact 19's computation. -/
@@ -472,7 +472,7 @@ a composite of the generating arrows of `DynamicSemantics.Ctx`. -/
 
 section IndexedReading
 
-open DynamicSemantics
+open DynamicSemantics DynamicSemantics.Update
 
 variable {W : Type*} {X Y : Finset ℕ}
 

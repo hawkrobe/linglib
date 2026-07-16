@@ -64,6 +64,7 @@ empirical applications.
 namespace Hofmann2025
 
 open DynamicSemantics
+open DynamicSemantics.Update (seq test closure)
 open DynamicSemantics.CCP (IsDistributive)
 open DynamicSemantics.ICDRT
 
@@ -786,7 +787,7 @@ abbrev intransVP (R : E → W → Prop) : SemE W E := commonNoun R
 The biconditional in `relVarUp` ensures `v` has a referent exactly in
 the φ-worlds, preventing scope leakage. -/
 def indefinite (v : IVar) (P P' : SemE W E) (φ : PVar) : ICDRT.Update W E :=
-  dseq (dseq (λ i j => relVarUp φ v i j) (P v φ)) (P' v φ)
+  seq (seq (λ i j => relVarUp φ v i j) (P v φ)) (P' v φ)
 
 /-- (17) Pronoun: `it_v ⟿ λP.λφ.P(v)(φ)`. The pronoun contributes no
 update — it simply passes its index `v` to the predicate. -/
@@ -796,7 +797,7 @@ def pronoun (v : IVar) (P : SemE W E) (φ : PVar) : ICDRT.Update W E :=
 /-- (14) Proper name: `Mary ⟿ λP.λφ.[v | v ≡ Mary_e]; P(v)(φ)`. -/
 def properName (name : E) (v : IVar) (P : SemE W E) (φ : PVar) :
     ICDRT.Update W E :=
-  dseq
+  seq
     (λ i j => indivVarUp v i j ∧ ∀ w : W, j.indiv v w = .some name)
     (P v φ)
 
@@ -805,7 +806,7 @@ def properName (name : E) (v : IVar) (P : SemE W E) (φ : PVar) :
 Static complementation over propositional drefs, NOT bilateral swap —
 the algebraic content of [hofmann-2025]'s key insight (§5.1.1). -/
 def semNOT (φ' : PVar) (Sc : SemW W E) (φ : PVar) : ICDRT.Update W E :=
-  dseq
+  seq
     (λ i j => propVarUp φ' i j ∧ isComplement φ φ' j)
     (propMaxOp φ' (Sc φ'))
 
@@ -816,8 +817,8 @@ The disjuncts' local contexts need NOT overlap — this is how bathroom
 disjunctions enable cross-disjunct anaphora. -/
 def semOR (φ' φ'' : PVar) (Sc' Sc'' : SemW W E) (φ : PVar) :
     ICDRT.Update W E :=
-  dseq
-    (dseq
+  seq
+    (seq
       (λ i j => multiVarUp [φ', φ''] [] i j ∧
         j.prop φ = j.prop φ' ∪ j.prop φ'')
       (propMaxOp φ' (Sc' φ')))
@@ -827,8 +828,8 @@ def semOR (φ' φ'' : PVar) (Sc' Sc'' : SemW W E) (φ : PVar) :
 max_{φ'}(Sc'(φ')); max_{φ''}(Sc''(φ''))`. -/
 def semIF (φ' φ'' : PVar) (Sc' Sc'' : SemW W E) (φ : PVar) :
     ICDRT.Update W E :=
-  dseq
-    (dseq
+  seq
+    (seq
       (λ i j => multiVarUp [φ', φ''] [] i j ∧
         j.prop φ = (j.prop φ')ᶜ ∪ j.prop φ'')
       (propMaxOp φ' (Sc' φ')))
@@ -838,9 +839,9 @@ def semIF (φ' φ'' : PVar) (Sc' Sc'' : SemW W E) (φ : PVar) :
 [φ' | φ'⊑φ]; max_{φ'}(Sc'(φ')); [φ'' | φ''⊑φ']; max_{φ''}(Sc''(φ''))`. -/
 def semAND (φ' φ'' : PVar) (Sc' Sc'' : SemW W E) (φ : PVar) :
     ICDRT.Update W E :=
-  dseq
-    (dseq
-      (dseq
+  seq
+    (seq
+      (seq
         (λ i j => propVarUp φ' i j ∧ dynInclusion φ' φ j)
         (propMaxOp φ' (Sc' φ')))
       (λ i j => propVarUp φ'' i j ∧ dynInclusion φ'' φ' j))
@@ -849,14 +850,14 @@ def semAND (φ' φ'' : PVar) (Sc' Sc'' : SemW W E) (φ : PVar) :
 /-- (18e) Attitude verb: `believed ⟿ λv.λSc.λφ.[φ' | believe_φ(v,φ')]; max_{φ'}(Sc(φ'))`. -/
 def semBelieved (φ' : PVar) (dox : ICDRT.Assignment W E → Set W)
     (Sc : SemW W E) (_φ : PVar) : ICDRT.Update W E :=
-  dseq
+  seq
     (λ i j => propVarUp φ' i j ∧ believeCondition φ' dox j)
     (propMaxOp φ' (Sc φ'))
 
 /-- (19) Declarative assertion: `DEC_S^φ ⟿ λSc.[φ | φ_{DC_S}⊑φ]; max_φ(Sc(φ))`. -/
 def semDEC (φ_DC : PVar) (φ : PVar) (Sc : SemW W E) :
     ICDRT.Update W E :=
-  dseq
+  seq
     (λ i j => propVarUp φ i j ∧ decCondition φ_DC φ j)
     (propMaxOp φ (Sc φ))
 
@@ -936,7 +937,7 @@ theorem comp_factorizes (D : ICDRT.Update W E) :
 /-- Sequential composition in the fragment lifts to CCP composition. -/
 theorem comp_seq_lifts (D₁ D₂ : ICDRT.Update W E) (c : ICDRT.Context W E) :
     ICDRT.toUpdate (D₁ ⨟ D₂) c = ICDRT.toUpdate D₂ (ICDRT.toUpdate D₁ c) :=
-  dseq_toUpdate D₁ D₂ c
+  seq_toUpdate D₁ D₂ c
 
 -- § 6.4 Compositional derivations applied to Model M₁
 
@@ -952,7 +953,7 @@ def itIsUpstairs : SemW BWorld BEnt :=
 
 /-- **Veridical**: "There is a bathroom. It is upstairs." -/
 def veridical_comp : ICDRT.Update BWorld BEnt :=
-  dseq
+  seq
     (semDEC pDC_S p1 thereIsABathroom)
     (semDEC pDC_S p3 itIsUpstairs)
 
@@ -975,13 +976,13 @@ def bathDisj_comp : ICDRT.Update BWorld BEnt :=
 Different speakers have different commitment sets — what bilateral
 accounts CANNOT handle (§5.1.1). -/
 def disagree_comp : ICDRT.Update BWorld BEnt :=
-  dseq
+  seq
     (semDEC pDC_A p1 (semNOT p2 thereIsABathroom))
     (semDEC pDC_B p3 itIsUpstairs)
 
 /-- **Modal subordination**: "There isn't a bathroom. Sue believes it's upstairs." -/
 def modalSub_comp : ICDRT.Update BWorld BEnt :=
-  dseq
+  seq
     (semDEC pDC_S p1 (semNOT p2 thereIsABathroom))
     (semDEC pDC_S p3
       (semBelieved p4_modal
@@ -998,7 +999,7 @@ theorem veridical_comp_factors (c : ICDRT.Context BWorld BEnt) :
     ICDRT.toUpdate veridical_comp c =
     ICDRT.toUpdate (semDEC pDC_S p3 itIsUpstairs)
       (ICDRT.toUpdate (semDEC pDC_S p1 thereIsABathroom) c) :=
-  dseq_toUpdate _ _ c
+  seq_toUpdate _ _ c
 
 
 -- ════════════════════════════════════════════════════════════════

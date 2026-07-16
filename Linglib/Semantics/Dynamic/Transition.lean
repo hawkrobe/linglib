@@ -31,6 +31,7 @@ carries them.
 namespace DynamicSemantics
 
 open DynamicSemantics (lift)
+open Update
 
 variable {W V M : Type*} {X Y Z : Finset V}
 
@@ -98,7 +99,7 @@ collapse in `Category.lean`.) -/
 theorem toUpdate_comp (u : Transition W M X Y) (v : Transition W M Y Z) :
     (u.comp v).toUpdate = u.toUpdate ⨟ v.toUpdate := by
   funext p q
-  simp only [toUpdate, comp, dseq, Relation.Comp, eq_iff_iff]
+  simp only [toUpdate, comp, seq, Relation.Comp, eq_iff_iff]
   constructor
   · rintro ⟨hw, k, huk, hkv⟩
     exact ⟨⟨p.world, k⟩, ⟨rfl, huk⟩, hw, hkv⟩

@@ -346,7 +346,7 @@ end Bridge
 
 `PostSupp S A` ([charlow-2021]) is structurally identical to a single
 Writer monad: a value paired with accumulated side-effect content, composed
-via `pure`/`bind` with log sequencing via `dseq`. The Writer monad for CIs
+via `pure`/`bind` with log sequencing via `Update.seq`. The Writer monad for CIs
 and Charlow's `PostSupp` for modified numerals are the same pattern applied
 to different side-effects (CI propositions vs cardinality tests), confirming
 [shan-2001]'s insight that monads capture recurring compositional

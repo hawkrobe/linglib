@@ -37,6 +37,7 @@ the paper's derivations) and the weakest-precondition calculus live in
 
 namespace DynamicSemantics
 
+open Update
 
 /-- Discourse referent (Muskens' type `se`): a function from states to
 individuals. Constant drefs (`Function.const`, AX4's names) are drefs
@@ -78,11 +79,11 @@ def randomAssign (r : R) : Update S :=
 
 /-- Existential update: `∃r(D) = [r]; D`. -/
 def dexists (r : R) (D : Update S) : Update S :=
-  dseq (randomAssign r) D
+  seq (randomAssign r) D
 
 /-- Universal condition: `∀r(D) = ¬∃r(¬D)`. -/
 def dforall (r : R) (D : Update S) : Condition S :=
-  dneg (dexists r (test (dneg D)))
+  neg (dexists r (test (neg D)))
 
 end RegisterStructure
 
@@ -108,7 +109,7 @@ end DynamicSemantics
 
 namespace CDRT
 
-open DynamicSemantics
+open DynamicSemantics DynamicSemantics.Update
 
 /-- CDRT state: Muskens' type `s`, concretely an assignment `Nat → E`.
 His *registers* are register indices `n : ℕ` with values read by `dref`
@@ -130,8 +131,8 @@ abbrev SProp (E : Type*) := Condition (State E)
 /-- Embed a static proposition as a dynamic one: the spine's `test`. -/
 abbrev DProp.ofStatic {E : Type*} (p : SProp E) : DProp E := test p
 
-/-- Dynamic conjunction: the spine's relational composition `dseq`. -/
-abbrev DProp.seq {E : Type*} (φ ψ : DProp E) : DProp E := dseq φ ψ
+/-- Dynamic conjunction: the spine's relational composition `seq`. -/
+abbrev DProp.seq {E : Type*} (φ ψ : DProp E) : DProp E := Update.seq φ ψ
 
 @[inherit_doc] infixl:65 " ;; " => DProp.seq
 
@@ -150,17 +151,17 @@ theorem DProp.new_eq_randomAssign {E : Type*} (n : Nat) :
     constructor <;> (rintro rfl; funext m; simp [RegisterStructure.extend,
       Function.update_apply])
 
-/-- Dynamic negation: the spine's `dneg`, re-entering the update algebra
+/-- Dynamic negation: the spine's `neg`, re-entering the update algebra
 via `test`. -/
-abbrev DProp.neg {E : Type*} (φ : DProp E) : DProp E := test (dneg φ)
+abbrev DProp.neg {E : Type*} (φ : DProp E) : DProp E := test (Update.neg φ)
 
-/-- Dynamic implication: the spine's `dimpl` via `test`. -/
-abbrev DProp.impl {E : Type*} (φ ψ : DProp E) : DProp E := test (dimpl φ ψ)
+/-- Dynamic implication: the spine's `impl` via `test`. -/
+abbrev DProp.impl {E : Type*} (φ ψ : DProp E) : DProp E := test (Update.impl φ ψ)
 
 /-- Dynamic disjunction as a test (SEM2, [muskens-1996] p. 148): the
-spine's `ddisj` via `test`. -/
-abbrev DProp.ddisj {E : Type*} (φ ψ : DProp E) : DProp E :=
-  test (DynamicSemantics.ddisj φ ψ)
+spine's `disj` via `test`. -/
+abbrev DProp.disj {E : Type*} (φ ψ : DProp E) : DProp E :=
+  test (Update.disj φ ψ)
 
 /-- Truth at a state: the spine's `closure`. -/
 abbrev DProp.true_at {E : Type*} (φ : DProp E) (i : State E) : Prop :=
@@ -176,7 +177,7 @@ theorem DProp.neg_output {E : Type*} {φ : DProp E} {i o : State E}
 the consequent. -/
 theorem DProp.impl_true_at {E : Type*} (φ ψ : DProp E) (i : State E) :
     DProp.true_at (DProp.impl φ ψ) i ↔ ∀ k, φ i k → DProp.true_at ψ k := by
-  simp only [DProp.true_at, closure, DProp.impl, test, dimpl]
+  simp only [DProp.true_at, closure, DProp.impl, test, Update.impl]
   exact ⟨fun ⟨_, rfl, h⟩ => h, fun h => ⟨i, rfl, h⟩⟩
 
 /-- A static `DProp` is true at `i` iff its static content holds. -/

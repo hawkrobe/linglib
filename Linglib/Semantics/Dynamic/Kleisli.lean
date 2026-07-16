@@ -24,9 +24,9 @@ canonical.
 
 ## Main results
 
-- `dseq_eq_kleisliComp`, `test_top_eq_pure`, `lift_eq_bind`: the monadic
+- `seq_eq_kleisliComp`, `test_top_eq_pure`, `lift_eq_bind`: the monadic
   reading of the update algebra.
-- `isDistributive_iff_map_sSup`, `liftEquiv`, `liftEquiv_dseq`:
+- `isDistributive_iff_map_sSup`, `liftEquiv`, `liftEquiv_seq`:
   distributive CCPs are exactly the completely-join-preserving maps, and
   `lift`/`lower` is an equivalence onto them, sending sequencing to
   composition.
@@ -35,6 +35,8 @@ canonical.
 -/
 
 namespace DynamicSemantics
+
+open Update
 
 attribute [local instance] Set.monad
 
@@ -46,8 +48,8 @@ variable {S : Type*}
 
 /-- Sequencing is Kleisli composition for the powerset monad: an update
 is a Kleisli arrow `S → Set S`, definitionally. -/
-theorem dseq_eq_kleisliComp (D₁ D₂ : S → Set S) :
-    (dseq D₁ D₂ : S → Set S) = D₁ >=> D₂ :=
+theorem seq_eq_kleisliComp (D₁ D₂ : S → Set S) :
+    (seq D₁ D₂ : S → Set S) = D₁ >=> D₂ :=
   funext fun i => Set.ext fun j => by
     rw [Bind.kleisliRight, Set.bind_def, Set.mem_iUnion₂]
     exact exists_congr fun k => exists_prop.symm
@@ -112,14 +114,14 @@ def liftEquiv : Update S ≃ sSupHom (Set S) (Set S) where
 
 /-- The equivalence sends sequencing to composition (diagrammatic order):
 the transformer monoid restricts to the relational one. -/
-theorem liftEquiv_dseq (D₁ D₂ : Update S) :
+theorem liftEquiv_seq (D₁ D₂ : Update S) :
     (liftEquiv (D₁ ⨟ D₂) : Set S → Set S) =
       (liftEquiv D₂ : Set S → Set S) ∘ (liftEquiv D₁ : Set S → Set S) :=
-  lift_dseq D₁ D₂
+  lift_seq D₁ D₂
 
 /-! ### `RelCat ≌ KleisliCat Set` -/
 
-open CategoryTheory
+open CategoryTheory Update
 
 /-- [UPSTREAM] Relations to Kleisli arrows of the powerset monad: curry. -/
 def relCatToKleisli : RelCat.{u} ⥤ KleisliCat Set where
