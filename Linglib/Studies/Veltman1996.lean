@@ -923,7 +923,7 @@ theorem toIndexedState_update_prop (φ : W → Prop) :
     toIndexedState V M (UpdateSemantics.Update.prop φ s) =
       {p ∈ toIndexedState V M s | φ p.world} :=
   Set.ext fun p => by
-    simp only [mem_toIndexedState, Set.mem_sep_iff, Set.mem_setOf_eq,
+    simp only [mem_toIndexedState, Set.mem_setOf_eq,
       UpdateSemantics.Update.prop]
     tauto
 
