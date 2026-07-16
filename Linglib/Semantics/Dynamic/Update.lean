@@ -9,88 +9,61 @@ import Mathlib.Tactic.Use
 /-!
 # The update algebra
 
-This file defines dynamic meanings in their two canonical forms and the bridge
-between them. A relational update (`Update S`) relates input states to output
-states pointwise — [groenendijk-stokhof-1991]'s DPL relations and
-[kamp-reyle-1993]'s verifying embeddings, parametrized over the state type
-following [muskens-1996]. A context change potential (`CCP S`) transforms
-information states — sets of states — as wholes: the file change potentials of
-[heim-1982] and [heim-1983] and the updates of [veltman-1996]. `lift` sends a
-relation to its image transformer ([muskens-van-benthem-visser-2011]'s
-strongest postcondition), `lower` recovers a relation from behaviour on
-singletons, and the image of `lift` is exactly the distributive transformers.
-`Kleisli.lean` upgrades the pair to the Kleisli and Eilenberg–Moore
-presentations of the powerset monad.
-
-Both faces carry the same algebra. Updates form a monoid under sequencing —
-indeed a quantale, since sequencing distributes over arbitrary unions — and
-tests are its subidentities (`Update.isTest_iff_le_one`), with a normal form
-at each face: a relational test is the `test` of its truth condition
-(`Update.IsTest.eq_test_closure`), a transformer test is the `guard` of its
-acceptance condition (`CCP.IsTest.eq_guard`). The two test notions are one
-concept at adjacent carriers, so `lift` does not interchange them: `lift` of
-a relational test is an eliminative filter, not a pass-or-`∅` guard. The
-static fragment is their common ground: a transformer is a lifted test filter
-iff it is eliminative and distributive (`exists_eq_lift_test_iff`).
+Dynamic meanings come in two forms: a relational update `Update S` relates
+input states to output states, and a context change potential `CCP S`
+transforms sets of states as wholes. `lift` sends an update to its image
+transformer, `lower` recovers it, and the distributive transformers are
+exactly the relational images. A satisfaction relation induces the standard
+eliminative fragment (`updateFromSat`), which PLA, DRT, and DPL instantiate.
+The monadic reading of the pair is in `Kleisli.lean`.
 
 ## Main definitions
 
-* `Update S`, `Condition S`: relations on states and properties of states.
-* `Update.test`, `Update.neg`, `Update.seq`, `Update.impl`,
-  `Update.disj`, `Update.closure`: the relational connectives; `Update S` is
-  a scoped `Monoid` and `IsQuantale`.
+* `Update S`, `Condition S`: relations on states, properties of states.
+* `Update.test`, `Update.neg`, `Update.seq`, `Update.impl`, `Update.disj`,
+  `Update.closure`: the relational connectives.
 * `Update.IsTest`: updates that never change the state.
-* `CCP S`: transformers of information states, a scoped `Monoid` under
-  `CCP.seq`, with `CCP.neg`, the whole-state tests `CCP.guard`, `might`,
-  `must`, `negTest`, and acceptance consequence `CCP.entails`.
-* `CCP.IsEliminative`, `CCP.IsTest`, `CCP.IsDistributive`: the classification
-  of transformers.
-* `lift`, `lower`: the bridge between the two faces.
+* `CCP.guard`, `CCP.might`, `CCP.must`, `CCP.negTest`: whole-state tests.
+* `CCP.IsEliminative`, `CCP.IsTest`, `CCP.IsDistributive`: the
+  classification of transformers.
+* `lift`, `lower`: the bridge between the two forms.
 * `supportOf`, `contentOf`, `updateFromSat`, `dynamicEntailsOf`: the layer a
-  satisfaction relation induces; PLA, DRT, and DPL instantiate it.
+  satisfaction relation induces.
 
 ## Main results
 
-* `Update.isTest_iff_le_one`, `Update.IsTest.eq_test_closure`
-  ([groenendijk-stokhof-1991]'s Fact 6), `CCP.IsTest.eq_guard`: tests are the
-  subidentities, with a normal form at each face.
-* `lower_lift`, `lift_lower`, `lift_isDistributive`: the distributive
-  transformers are exactly the relational images.
-* `lift_le_lift_iff`: `lift` reflects the pointwise order.
+* `Update S` is a `Monoid` and an `IsQuantale` under sequencing (scoped);
+  tests are its subidentities (`Update.isTest_iff_le_one`).
+* `Update.IsTest.eq_test_closure`, `CCP.IsTest.eq_guard`: a test is the test
+  of its truth condition, a guard of its acceptance condition.
+* `lower_lift`, `lift_lower`: `lift` and `lower` are mutually inverse on
+  distributive transformers.
 * `exists_eq_lift_test_iff`: a transformer is a lifted test filter iff it is
-  eliminative and distributive — [van-benthem-1986]'s additivity, per
-  [rothschild-yalcin-2016] and [gillies-2022]. `CCP.might_not_isDistributive`
-  witnesses that whole-state tests lie outside this fragment.
-* `support_iff_update_eq`, `dynamicEntailsOf_iff_entails`: support is being a
-  fixed point of the update, and the satisfaction layer's consequence is
-  acceptance consequence.
+  eliminative and distributive; `CCP.might_not_isDistributive` separates.
+* `support_iff_update_eq`: support is being a fixed point of the update.
 
 ## Implementation notes
 
 The algebraic instances are scoped: `Update S` and `CCP S` abbreviate
-function types, so global instances would attach `*` and `1` to bare function
-types for every importer. `open scoped DynamicSemantics.Update` also makes mathlib's
-`WriterT (Update S) Id` a lawful monad.
-
-`Update.neg` does not validate double-negation elimination: negation collapses
-update information to a state predicate. The repairs are framework-specific —
-bilateral swap (`UpdateSemantics/Bilateral.lean`), propositional discourse
-referents (`Studies/Hofmann2025.lean`), classical metalanguage
-(`Studies/Cooper2023/`). Similarly `CCP.negTest` is not `CCP.neg`: the two
-coincide only on fixed or crashed inputs (`Studies/Beaver2001/ABLE.lean`).
-
-`updateFromSat` is kept as the literal filter rather than defined as
-`lift (test _)` (see `updateFromSat_eq_lift_test`) so that instantiating
-frameworks connect to it by `rfl`. [groenendijk-stokhof-1991]'s entailment
-notions and Facts 10–12 live with their paper in
+function types. `updateFromSat` is the literal filter rather than
+`lift (test _)` so that instantiating frameworks connect to it by `rfl`.
+`Update.neg` does not validate double-negation elimination and `CCP.negTest`
+is not `CCP.neg`; the framework-specific repairs and comparisons live in the
+studies. [groenendijk-stokhof-1991]'s entailment notions live in
 `Studies/GroenendijkStokhof1991.lean`.
 
 ## References
 
-* [groenendijk-stokhof-1991], [kamp-reyle-1993], [muskens-1996]
-* [heim-1982], [heim-1983], [veltman-1996]
-* [muskens-van-benthem-visser-2011]
-* [van-benthem-1986], [rothschild-yalcin-2016], [gillies-2022]
+* [J. Groenendijk and M. Stokhof, *Dynamic Predicate Logic*][groenendijk-stokhof-1991]
+* [H. Kamp and U. Reyle, *From Discourse to Logic*][kamp-reyle-1993]
+* [R. Muskens, *Combining Montague Semantics and Discourse Representation*][muskens-1996]
+* [I. Heim, *The Semantics of Definite and Indefinite Noun Phrases*][heim-1982]
+* [I. Heim, *On the Projection Problem for Presuppositions*][heim-1983]
+* [F. Veltman, *Defaults in Update Semantics*][veltman-1996]
+* [R. Muskens, J. van Benthem, and A. Visser, *Dynamics*][muskens-van-benthem-visser-2011]
+* [J. van Benthem, *Essays in Logical Semantics*][van-benthem-1986]
+* [D. Rothschild and S. Yalcin, *Three Notions of Dynamicness in Language*][rothschild-yalcin-2016]
+* [A. Gillies, *On Groenendijk and Stokhof's "Dynamic Predicate Logic"*][gillies-2022]
 -/
 
 namespace DynamicSemantics
