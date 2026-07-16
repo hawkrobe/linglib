@@ -54,15 +54,12 @@ variable {p q u : Possibility W V (Option M)}
 /-- Descent orders partial points: same world, assignments pointwise in
 the flat information order ([elliott-sudo-2025], Def. 3.3). -/
 instance : Preorder (Possibility W V (Option M)) where
-  le p q := p.world = q.world ∧
-    ∀ x, (p.assignment x).FlatLE (q.assignment x)
+  le p q := p.world = q.world ∧ ∀ x, (p.assignment x).FlatLE (q.assignment x)
   le_refl _ := ⟨rfl, fun x => Option.FlatLE.refl _⟩
-  le_trans _ _ _ hpq hqr :=
-    ⟨hpq.1.trans hqr.1, fun x => (hpq.2 x).trans (hqr.2 x)⟩
+  le_trans _ _ _ hpq hqr := ⟨hpq.1.trans hqr.1, fun x => (hpq.2 x).trans (hqr.2 x)⟩
 
-theorem le_def :
-    p ≤ q ↔ p.world = q.world ∧
-      ∀ x, (p.assignment x).FlatLE (q.assignment x) := Iff.rfl
+theorem le_def : p ≤ q ↔ p.world = q.world ∧ ∀ x, (p.assignment x).FlatLE (q.assignment x) :=
+  Iff.rfl
 
 /-- The domain of a partial point is the set of referents it defines. -/
 def dom (p : Possibility W V (Option M)) : Set V :=
