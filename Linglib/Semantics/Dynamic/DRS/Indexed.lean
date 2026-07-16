@@ -198,6 +198,29 @@ def DRS.transition (W : Type*) (K : DRS L V) (X : Finset V)
     (_hK : K.fv ⊆ X) : Transition W M X (X ∪ K.referents) :=
   Transition.ofTotal Finset.subset_union_left fun _ => DRS.toRelAt X K
 
+/-- The empty DRS denotes the identity transition, repackaged to its
+source: interpretation sends DRT's unit to the semantic unit. Nonempty
+entities are needed — under extension-typing an empty domain separates
+the empty box from the identity. -/
+theorem DRS.transition_empty [Nonempty M] (W : Type*) (X : Finset V)
+    (h : (DRS.empty : DRS L V).fv ⊆ X)
+    (he : X ∪ (DRS.empty : DRS L V).referents = X) :
+    (DRS.empty.transition (M := M) W X h).copy rfl he =
+      Transition.id X := by
+  unfold DRS.transition
+  rw [Transition.ofTotal_copy]
+  apply Transition.ext
+  funext w e e'
+  apply propext
+  constructor
+  · rintro ⟨f, g, rfl, rfl, hfg, -⟩
+    exact funext fun v => (hfg v.2).symm
+  · rintro rfl
+    refine ⟨fun v => if hv : v ∈ (↑X : Set V) then e ⟨v, hv⟩
+      else Classical.arbitrary M, fun v => if hv : v ∈ (↑X : Set V) then e ⟨v, hv⟩
+      else Classical.arbitrary M, funext fun v => dif_pos v.2,
+      funext fun v => dif_pos v.2, fun v _ => rfl, trivial⟩
+
 /-- Established referents persist along a DRS transition. -/
 theorem DRS.transition_isExtension (W : Type*) (K : DRS L V) (X : Finset V)
     (hK : K.fv ⊆ X) : (K.transition (M := M) W X hK).IsExtension := by
