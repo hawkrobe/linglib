@@ -333,10 +333,10 @@ end Restrict
 
 /-! ### Based points -/
 
-/-- A *based* point: a possibility whose domain is finite —
-[kamp-vangenabith-reyle-2011] Def. 23 calls the domain the *base*.
-Under descent, based points form the total space of `Category.lean`'s
-possibilities family. -/
+/-- A possibility is *based* when its domain is a base — realizable as
+some `X : Finset V`, [kamp-vangenabith-reyle-2011] Def. 23's word —
+which is exactly finiteness. Under descent, based points form the total
+space of `Category.lean`'s possibilities family. -/
 def Based (W V M : Type*) := {p : Possibility W V (Option M) // p.dom.Finite}
 
 instance : Preorder (Based W V M) where
