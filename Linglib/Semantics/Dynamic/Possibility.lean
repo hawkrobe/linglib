@@ -73,15 +73,9 @@ theorem domain_mono (h : p ≤ q) : p.domain ⊆ q.domain := fun v => (h.2 v).is
 
 /-- On a shared domain, descent is equality: there is no room to
 grow. -/
-theorem eq_of_le_of_domain_eq (h : p ≤ q) (hdom : p.domain = q.domain) : p = q := by
-  refine Possibility.ext h.1 (funext fun v => ?_)
-  rcases hp : p.assignment v with _ | e
-  · rcases hq : q.assignment v with _ | e
-    · rfl
-    · have : v ∈ p.domain := hdom ▸ Option.isSome_iff_exists.mpr ⟨e, hq⟩
-      rw [Possibility.mem_domain, hp] at this
-      exact absurd this (by simp)
-  · exact (h.2 v e hp).symm ▸ rfl
+theorem eq_of_le_of_domain_eq (h : p ≤ q) (hdom : p.domain = q.domain) : p = q :=
+  Possibility.ext h.1 (funext fun v =>
+    (h.2 v).eq_of_isSome fun hv => (Set.ext_iff.mp hdom v).mpr hv)
 
 /-- Two partial points are *compatible*: same world, agreeing wherever
 both are defined — [kamp-vangenabith-reyle-2011] Def. 26's condition
@@ -98,29 +92,25 @@ def union (p q : Possibility W V (Option M)) :
 
 theorem le_union_left (p q : Possibility W V (Option M)) :
     p ≤ p.union q :=
-  ⟨rfl, fun v e h => by simp [union, h]⟩
+  ⟨rfl, fun v e h => by simp [union, show p.assignment v = some e from h]⟩
 
 theorem Compatible.le_union_right (h : p.Compatible q) :
     q ≤ p.union q :=
   ⟨h.1.symm, fun v e hq => by
+    have hq' : q.assignment v = some e := hq
     rcases hp : p.assignment v with _ | e'
-    · simp [union, hp, hq]
-    · simp [union, hp, h.2 v e' e hp hq]⟩
+    · simp [union, hp, hq']
+    · simp [union, hp, h.2 v e' e hp hq']⟩
 
 /-- On a shared domain, compatibility is equality. -/
-theorem Compatible.eq_of_domain_eq (h : p.Compatible q) (hdom : p.domain = q.domain) : p = q := by
-  refine Possibility.ext h.1 (funext fun v => ?_)
-  rcases hp : p.assignment v with _ | e
-  · rcases hq : q.assignment v with _ | e
-    · rfl
-    · have : v ∈ p.domain := hdom ▸ Option.isSome_iff_exists.mpr ⟨e, hq⟩
-      rw [Possibility.mem_domain, hp] at this
-      exact absurd this (by simp)
-  · rcases hq : q.assignment v with _ | e'
-    · have : v ∈ q.domain := hdom ▸ Option.isSome_iff_exists.mpr ⟨e, hp⟩
-      rw [Possibility.mem_domain, hq] at this
-      exact absurd this (by simp)
-    · exact congrArg some (h.2 v e e' hp hq)
+theorem Compatible.eq_of_domain_eq (h : p.Compatible q)
+    (hdom : p.domain = q.domain) : p = q :=
+  eq_of_le_of_domain_eq
+    ⟨h.1, fun v e hv => by
+      obtain ⟨e', he'⟩ := Option.isSome_iff_exists.mp
+        ((Set.ext_iff.mp hdom v).mp (Option.isSome_iff_exists.mpr ⟨e, hv⟩))
+      exact he'.trans (congrArg some (h.2 v e e' hv he').symm)⟩
+    hdom
 
 /-- Union of points unites domains. -/
 theorem domain_union (p q : Possibility W V (Option M)) :
@@ -131,8 +121,8 @@ theorem domain_union (p q : Possibility W V (Option M)) :
 /-- Points below a common point are compatible. -/
 theorem compatible_of_le_of_le (hp : p ≤ u) (hq : q ≤ u) : p.Compatible q :=
   ⟨hp.1.trans hq.1.symm, fun v e e' he he' => by
-    have h1 := hp.2 v e he
-    have h2 := hq.2 v e' he'
+    have h1 : u.assignment v = some e := hp.2 v e he
+    have h2 : u.assignment v = some e' := hq.2 v e' he'
     rw [h1] at h2
     exact (Option.some.injEq .. ▸ h2 :)⟩
 
@@ -140,9 +130,10 @@ theorem compatible_of_le_of_le (hp : p ≤ u) (hq : q ≤ u) : p.Compatible q :=
 theorem union_le (hp : p ≤ u) (hq : q ≤ u) :
     p.union q ≤ u :=
   ⟨hp.1, fun v e h => by
+    have h' : (p.union q).assignment v = some e := h
     rcases hpv : p.assignment v with _ | e'
-    · exact hq.2 v e (by simpa [union, hpv] using h)
-    · have : e' = e := by simpa [union, hpv] using h
+    · exact hq.2 v e (by simpa [union, hpv] using h')
+    · have : e' = e := by simpa [union, hpv] using h'
       exact this ▸ hp.2 v e' hpv⟩
 
 theorem Compatible.symm (h : p.Compatible q) : q.Compatible p :=
