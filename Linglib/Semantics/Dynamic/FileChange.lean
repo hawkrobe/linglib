@@ -269,17 +269,17 @@ theorem atomVar_eq_of_novel [DecidableEq V] (pred : M → Prop) (x : V)
       Option.not_isSome_iff_eq_none.mp fun hs => hv (by
         have : v ∈ q.dom := hs
         rwa [hqdom] at this)
-    have huq : p.union q = p.extend x (some m) :=
+    have huq : p.union q = p.update x (some m) :=
       Possibility.ext rfl (funext fun v => by
         by_cases hv : v = x
-        · subst hv; simp [Possibility.union, Possibility.extend,
+        · subst hv; simp [Possibility.union, Possibility.update,
             hnov p hp, hqx]
-        · simp [Possibility.union, Possibility.extend, hqnone v hv, hv])
+        · simp [Possibility.union, Possibility.update, hqnone v hv, hv])
     rw [huq]
-    exact ⟨⟨p, hp, m, rfl⟩, m, Possibility.extend_at .., hpred⟩
+    exact ⟨⟨p, hp, m, rfl⟩, m, Possibility.update_self .., hpred⟩
   · rintro ⟨hmem, m, hrx, hpred⟩
     obtain ⟨p, hp, m', rfl⟩ := hmem
-    rw [Possibility.extend_at] at hrx
+    rw [Possibility.update_self] at hrx
     obtain rfl := (Option.some_inj.mp hrx).symm
     refine ⟨p, hp, ⟨p.world, fun v => if v = x then some m else none⟩,
       ⟨Set.ext fun v => by by_cases hv : v = x <;>
@@ -294,8 +294,8 @@ theorem atomVar_eq_of_novel [DecidableEq V] (pred : M → Prop) (x : V)
     · refine Possibility.ext (by simp [Possibility.union]) (funext fun v => ?_)
       by_cases hv : v = x
       · rw [hv]
-        simp [Possibility.union, Possibility.extend, hnov p hp]
-      · simp [Possibility.union, Possibility.extend, hv]
+        simp [Possibility.union, Possibility.update, hnov p hp]
+      · simp [Possibility.union, Possibility.update, hv]
 
 /-- World atoms are eliminative (the familiar face of Principle (A)). -/
 theorem atomW_eliminative (pred : W → Prop) {F F' : State W V M}

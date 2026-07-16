@@ -309,7 +309,7 @@ theorem restrict_restrict (X Y : Finset V) (I : State W V M) :
 [groenendijk-stokhof-1991]'s `x := random`): indeterministically extend
 each point to a defined value at `x`. -/
 def randomAssign (I : State W V M) (x : V) : State W V M :=
-  {p | ∃ q ∈ I, ∃ m : M, p = q.extend x (some m)}
+  {p | ∃ q ∈ I, ∃ m : M, p = q.update x (some m)}
 
 /-- Random assignment makes its referent familiar. -/
 theorem familiar_randomAssign (I : State W V M) (x : V) :
