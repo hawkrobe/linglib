@@ -329,18 +329,16 @@ theorem restrict_domEquiv_symm {Y X : Set V} [∀ v, Decidable (v ∈ X)]
 
 end Restrict
 
-/-! ### Based points -/
-
-/-- A possibility is *based* when its domain is a base — realizable as
-some `X : Finset V`, [kamp-vangenabith-reyle-2011] Def. 23's word —
-which is exactly finiteness. Under descent, based points form the total
+/-- Descent is the canonical order on partial points: every point lies
+over its own domain, and under this order the points form the total
 space of `Category.lean`'s possibilities family. -/
-def Based (W V M : Type*) := {p : Possibility W V (Option M) // p.dom.Finite}
-
-instance : Preorder (Based W V M) where
-  le p q := p.1.Descendant q.1
-  le_refl p := Descendant.refl p.1
+instance : Preorder (Possibility W V (Option M)) where
+  le := Descendant
+  le_refl := Descendant.refl
   le_trans _ _ _ := Descendant.trans
+
+@[simp] theorem le_def {p q : Possibility W V (Option M)} :
+    p ≤ q ↔ p.Descendant q := Iff.rfl
 
 /-! ### Instantiations
 
