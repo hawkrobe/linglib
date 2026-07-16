@@ -31,23 +31,22 @@ stratum they reduce to `⊇` and `⊆` respectively
 
 ## Main definitions
 
-- `Possibility.dom`, `Possibility.Descendant`: the defined referents of
-  a partial point, and same-world graph-extension.
 - `State W V M`: information states; `initial`, with `∅` the absurd
   state.
 - `infoLe` (`⊑`): informativeness (Def. 25); `Subsists` (`≺`),
   `subsistsIn` (`⪯`): subsistence.
+- `State.merge`: Def. 26's consistent merge.
 - `worlds`, `Familiar`: worldly content and familiarity.
-- `State.UniformAt`, `Possibility.domEquiv`: the indexed stratum and its
-  constructive classification.
-- `Possibility.restrict`, `State.restrict`, `State.randomAssign`:
-  domain restriction (pointwise, by direct image) and random assignment.
+- `State.UniformAt`: the indexed stratum (Def. 23's `Dom(f) = X`).
+- `State.restrict`, `State.randomAssign`: domain restriction (by direct
+  image of `Possibility.restrict`) and random assignment.
 
 ## Main results
 
-- `Possibility.Descendant.eq_of_dom_eq`: on a shared domain, descendance
-  is equality — so both preorders are partial orders on each uniform
-  stratum (`infoLe_iff_superset`, `subsistsIn_iff_subset`).
+- `merge_infoLe`: the merge is the `⊑`-least upper bound.
+- `infoLe_iff_superset`, `subsistsIn_iff_subset`: on a uniform stratum
+  both preorders are partial orders, coinciding with `⊇`/`⊆` (via
+  `Possibility.Descendant.eq_of_dom_eq`).
 - `subsistsIn_restrict`: restriction only forgets — the restricted state
   subsists in the original.
 - `uniformAt_restrict`, `restrict_restrict`: restriction meets the
@@ -74,118 +73,6 @@ order was Def. 25's, matching `⊑`, not `⪯`.
 namespace DynamicSemantics
 
 variable {W V M : Type*}
-
-/-! ### Partial points -/
-
-namespace Possibility
-
-/-- The referents a partial point defines — Def. 23's `Dom(f)`. -/
-def dom (p : Possibility W V (Option M)) : Set V :=
-  {v | (p.assignment v).isSome}
-
-@[simp] theorem mem_dom {p : Possibility W V (Option M)} {v : V} :
-    v ∈ p.dom ↔ (p.assignment v).isSome := Iff.rfl
-
-/-- `q` is a *descendant* of `p` ([elliott-sudo-2025], Def. 3.3): same
-world, and `q`'s assignment extends `p`'s wherever the latter is defined
-([groenendijk-stokhof-veltman-1996]'s graph-extension). -/
-def Descendant (p q : Possibility W V (Option M)) : Prop :=
-  p.world = q.world ∧ ∀ x e, p.assignment x = some e → q.assignment x = some e
-
-theorem Descendant.refl (p : Possibility W V (Option M)) :
-    p.Descendant p :=
-  ⟨rfl, fun _ _ h => h⟩
-
-theorem Descendant.trans {p q r : Possibility W V (Option M)}
-    (hpq : p.Descendant q) (hqr : q.Descendant r) : p.Descendant r :=
-  ⟨hpq.1.trans hqr.1, fun x e h => hqr.2 x e (hpq.2 x e h)⟩
-
-/-- Descendance grows the domain. -/
-theorem Descendant.dom_subset {p q : Possibility W V (Option M)}
-    (h : p.Descendant q) : p.dom ⊆ q.dom := fun v hv => by
-  obtain ⟨e, he⟩ := Option.isSome_iff_exists.mp hv
-  exact Option.isSome_iff_exists.mpr ⟨e, h.2 v e he⟩
-
-/-- On a shared domain, descendance is equality: there is no room to
-grow. -/
-theorem Descendant.eq_of_dom_eq {p q : Possibility W V (Option M)}
-    (h : p.Descendant q) (hdom : p.dom = q.dom) : p = q := by
-  refine Possibility.ext h.1 (funext fun v => ?_)
-  rcases hp : p.assignment v with _ | e
-  · rcases hq : q.assignment v with _ | e
-    · rfl
-    · have : v ∈ p.dom := hdom ▸ Option.isSome_iff_exists.mpr ⟨e, hq⟩
-      rw [Possibility.mem_dom, hp] at this
-      exact absurd this (by simp)
-  · exact (h.2 v e hp).symm ▸ rfl
-
-/-- Two partial points are *compatible*: same world, agreeing wherever
-both are defined — [kamp-vangenabith-reyle-2011] Def. 26's condition
-that the union of chosen points be a function. -/
-def Compatible (p q : Possibility W V (Option M)) : Prop :=
-  p.world = q.world ∧
-    ∀ v e e', p.assignment v = some e → q.assignment v = some e' → e = e'
-
-/-- The union of two points: defined wherever either is, the left
-taking precedence (agreement makes the choice immaterial). -/
-def union (p q : Possibility W V (Option M)) :
-    Possibility W V (Option M) :=
-  ⟨p.world, fun v => (p.assignment v).or (q.assignment v)⟩
-
-theorem left_descendant_union (p q : Possibility W V (Option M)) :
-    p.Descendant (p.union q) :=
-  ⟨rfl, fun v e h => by simp [union, h]⟩
-
-theorem Compatible.right_descendant_union
-    {p q : Possibility W V (Option M)} (h : p.Compatible q) :
-    q.Descendant (p.union q) :=
-  ⟨h.1.symm, fun v e hq => by
-    rcases hp : p.assignment v with _ | e'
-    · simp [union, hp, hq]
-    · simp [union, hp, h.2 v e' e hp hq]⟩
-
-/-- On a shared domain, compatibility is equality. -/
-theorem Compatible.eq_of_dom_eq {p q : Possibility W V (Option M)}
-    (h : p.Compatible q) (hdom : p.dom = q.dom) : p = q := by
-  refine Possibility.ext h.1 (funext fun v => ?_)
-  rcases hp : p.assignment v with _ | e
-  · rcases hq : q.assignment v with _ | e
-    · rfl
-    · have : v ∈ p.dom := hdom ▸ Option.isSome_iff_exists.mpr ⟨e, hq⟩
-      rw [Possibility.mem_dom, hp] at this
-      exact absurd this (by simp)
-  · rcases hq : q.assignment v with _ | e'
-    · have : v ∈ q.dom := hdom ▸ Option.isSome_iff_exists.mpr ⟨e, hp⟩
-      rw [Possibility.mem_dom, hq] at this
-      exact absurd this (by simp)
-    · exact congrArg some (h.2 v e e' hp hq)
-
-/-- Union of points unites domains. -/
-theorem dom_union (p q : Possibility W V (Option M)) :
-    (p.union q).dom = p.dom ∪ q.dom := by
-  ext v
-  rcases hp : p.assignment v with _ | e <;> simp [union, dom, hp]
-
-/-- Common ancestors are compatible. -/
-theorem Descendant.compatible {p q u : Possibility W V (Option M)}
-    (hp : p.Descendant u) (hq : q.Descendant u) : p.Compatible q :=
-  ⟨hp.1.trans hq.1.symm, fun v e e' he he' => by
-    have h1 := hp.2 v e he
-    have h2 := hq.2 v e' he'
-    rw [h1] at h2
-    exact (Option.some.injEq .. ▸ h2 :)⟩
-
-/-- The union of two ancestors is an ancestor. -/
-theorem Descendant.union_descendant {p q u : Possibility W V (Option M)}
-    (hp : p.Descendant u) (hq : q.Descendant u) :
-    (p.union q).Descendant u :=
-  ⟨hp.1, fun v e h => by
-    rcases hpv : p.assignment v with _ | e'
-    · exact hq.2 v e (by simpa [union, hpv] using h)
-    · have : e' = e := by simpa [union, hpv] using h
-      exact this ▸ hp.2 v e' hpv⟩
-
-end Possibility
 
 /-! ### Information states -/
 
@@ -288,69 +175,6 @@ def worlds (s : State W V M) : Set W :=
 [heim-1982]'s files): defined at every point. -/
 def Familiar (s : State W V M) (x : V) : Prop :=
   ∀ p ∈ s, p.assignment x ≠ none
-
-/-! ### Restriction and random assignment -/
-
-namespace Possibility
-
-variable [DecidableEq V]
-
-/-- Restrict a partial point to the referents in `X`. -/
-def restrict (X : Finset V) (p : Possibility W V (Option M)) :
-    Possibility W V (Option M) :=
-  ⟨p.world, fun v => if v ∈ X then p.assignment v else none⟩
-
-@[simp] theorem restrict_world (X : Finset V)
-    (p : Possibility W V (Option M)) :
-    (p.restrict X).world = p.world := rfl
-
-/-- Restriction is an ancestor. -/
-theorem restrict_descendant (X : Finset V)
-    (p : Possibility W V (Option M)) : (p.restrict X).Descendant p :=
-  ⟨rfl, fun x e h => by
-    by_cases hx : x ∈ X
-    · simpa [restrict, hx] using h
-    · simp [restrict, hx] at h⟩
-
-/-- Restriction intersects the domain. -/
-theorem dom_restrict (X : Finset V) (p : Possibility W V (Option M)) :
-    (p.restrict X).dom = ↑X ∩ p.dom := by
-  ext v
-  by_cases hv : v ∈ X <;> simp [restrict, dom, hv]
-
-/-- Descendance out of a stratum is *being the restriction*: for `p` at
-`X`, `p` grows into `q` exactly when `p` is `q` cut to `X`. The
-hom-characterization of the fibred order. -/
-theorem descendant_iff_eq_restrict {X : Finset V}
-    {p q : Possibility W V (Option M)} (hp : p.dom = (↑X : Set V)) :
-    p.Descendant q ↔ p = q.restrict X := by
-  constructor
-  · intro h
-    refine Possibility.ext h.1 (funext fun v => ?_)
-    by_cases hv : v ∈ X
-    · have hsome : (p.assignment v).isSome :=
-        (Set.ext_iff.mp hp v).mpr hv
-      obtain ⟨e, he⟩ := Option.isSome_iff_exists.mp hsome
-      rw [he]
-      simp only [restrict, if_pos hv]
-      exact (h.2 v e he).symm
-    · have hnone : p.assignment v = none :=
-        Option.not_isSome_iff_eq_none.mp
-          fun hs => hv ((Set.ext_iff.mp hp v).mp hs)
-      rw [hnone]
-      simp [restrict, hv]
-  · rintro rfl
-    exact restrict_descendant X q
-
-/-- Restriction is pointwise idempotent along intersections. -/
-theorem restrict_restrict (X Y : Finset V)
-    (p : Possibility W V (Option M)) :
-    (p.restrict Y).restrict X = p.restrict (X ∩ Y) := by
-  refine Possibility.ext rfl (funext fun v => ?_)
-  by_cases hx : v ∈ X <;> by_cases hy : v ∈ Y <;>
-    simp [restrict, hx, hy]
-
-end Possibility
 
 namespace State
 
@@ -488,40 +312,5 @@ theorem familiar_randomAssign (I : State W V M) (x : V) :
   simp
 
 end State
-
-/-! ### The indexed classification -/
-
-namespace Possibility
-
-variable [DecidableEq V]
-
-/-- Partial points with domain `X` are world–`X`-environment pairs —
-constructively: the classification that the total-assignment rendering
-recovered only with choice and an inhabitant of `M`. -/
-def domEquiv (X : Finset V) :
-    {p : Possibility W V (Option M) // p.dom = (↑X : Set V)} ≃
-      W × ((↑X : Set V) → M) where
-  toFun p :=
-    (p.1.world, fun v => (p.1.assignment v.1).get
-      ((Set.ext_iff.mp p.2 v.1).mpr v.2))
-  invFun e :=
-    ⟨⟨e.1, fun v => if h : v ∈ (↑X : Set V) then some (e.2 ⟨v, h⟩)
-      else none⟩, by
-      ext v
-      by_cases h : v ∈ (↑X : Set V) <;> simp [dom, h]⟩
-  left_inv p := by
-    obtain ⟨⟨w, g⟩, hp⟩ := p
-    refine Subtype.ext (Possibility.ext rfl (funext fun v => ?_))
-    by_cases h : v ∈ (↑X : Set V)
-    · simp only [dif_pos h, Option.some_get]
-    · have hnone : g v = none := Option.not_isSome_iff_eq_none.mp
-        fun hs => h ((Set.ext_iff.mp hp v).mp hs)
-      simp only [dif_neg h]
-      exact hnone.symm
-  right_inv e := by
-    refine Prod.ext rfl (funext fun v => ?_)
-    simp
-
-end Possibility
 
 end DynamicSemantics
