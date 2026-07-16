@@ -481,6 +481,12 @@ each point to a defined value at `x`. -/
 def randomAssign (I : State W V M) (x : V) : State W V M :=
   {p | ∃ q ∈ I, ∃ m : M, p = q.extend x (some m)}
 
+/-- Random assignment makes its referent familiar. -/
+theorem familiar_randomAssign (I : State W V M) (x : V) :
+    Familiar (I.randomAssign x) x := by
+  rintro p ⟨q, -, m, rfl⟩
+  simp
+
 end State
 
 /-! ### The indexed classification -/
