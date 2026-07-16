@@ -66,8 +66,7 @@ iff it is eliminative and distributive (`exists_eq_lift_test_iff`).
 
 ## Notation
 
-* `D₁ ⨟ D₂` for `dseq D₁ D₂`; scoped `∼ D` for `dneg D`, `[ C ]` for
-  `test C`, `! D` for `closure D`.
+* `D₁ ⨟ D₂` for `dseq D₁ D₂`.
 * `u ;; v` for `CCP.seq u v`, scoped to `DynamicSemantics.CCP`.
 
 ## Implementation notes
@@ -117,15 +116,11 @@ variable {S : Type*} {C : Condition S} {D : Update S} {i j : S}
 /-- `test C` checks `C` without changing the state. -/
 def test (C : Condition S) : Update S := λ i j => i = j ∧ C j
 
-scoped notation "[" C "]" => test C
-
 /-- A test relates a state only to itself. -/
 theorem eq_of_test (h : test C i j) : i = j := h.1
 
-/-- `∼D` holds at `i` iff no output `k` satisfies `D`. -/
+/-- `dneg D` holds at `i` iff no output `k` satisfies `D`. -/
 def dneg (D : Update S) : Condition S := λ i => ¬∃ k, D i k
-
-scoped notation "∼" D => dneg D
 
 /-- `D₁ ⨟ D₂` relates `i` to `k` iff some intermediate `j` has `D₁ i j` and `D₂ j k`. -/
 def dseq (D₁ D₂ : Update S) : Update S := Relation.Comp D₁ D₂
@@ -138,10 +133,8 @@ def dimpl (D₁ D₂ : Update S) : Condition S := λ i => ∀ h, D₁ i h → �
 /-- `ddisj D₁ D₂` holds at `i` iff some disjunct has an output from `i`. -/
 def ddisj (D₁ D₂ : Update S) : Condition S := λ i => ∃ k, D₁ i k ∨ D₂ i k
 
-/-- `!D` holds at `i` iff `D` has an output from `i` — [heim-1982]'s truth definition. -/
+/-- `closure D` holds at `i` iff `D` has an output from `i` — [heim-1982]'s truth definition. -/
 def closure (D : Update S) : Condition S := λ i => ∃ k, D i k
-
-scoped notation "!" D => closure D
 
 /-! ### The update quantale -/
 
@@ -153,14 +146,12 @@ theorem dseq_assoc (D₁ D₂ D₃ : Update S) :
 /-- An everywhere-true test is a left identity for sequencing. -/
 theorem test_dseq (C : Condition S) (D : Update S) (hC : ∀ i, C i) :
     test C ⨟ D = D := by
-  funext i j
-  simp [dseq, Relation.Comp, test, hC]
+  funext i j; simp [dseq, Relation.Comp, test, hC]
 
 /-- An everywhere-true test is a right identity for sequencing. -/
 theorem dseq_test (D : Update S) (C : Condition S) (hC : ∀ i, C i) :
     D ⨟ test C = D := by
-  funext i j
-  simp [dseq, Relation.Comp, test, hC]
+  funext i j; simp [dseq, Relation.Comp, test, hC]
 
 /-- `Update S` is a monoid under `⨟` with the trivial test as unit (scoped;
 see the implementation notes). -/
@@ -293,15 +284,12 @@ theorem IsEliminative.seq (hu : IsEliminative u) (hv : IsEliminative v) :
 def IsTest (u : CCP S) : Prop := ∀ s, u s = s ∨ u s = ∅
 
 /-- Tests are eliminative. -/
-theorem IsTest.isEliminative (h : IsTest u) :
-    IsEliminative u := λ s p hp => by
-  cases h s with
-  | inl heq => rw [heq] at hp; exact hp
-  | inr hemp => rw [hemp] at hp; exact False.elim hp
+theorem IsTest.isEliminative (h : IsTest u) : IsEliminative u :=
+  λ s p hp => (h s).elim (· ▸ hp) (λ hemp => (Set.notMem_empty p (hemp ▸ hp)).elim)
 
 /-- Guards are tests. -/
-theorem guard_isTest (C : Set S → Prop) : IsTest (guard C) := by
-  intro s; simp only [guard]; split <;> simp
+theorem guard_isTest (C : Set S → Prop) : IsTest (guard C) :=
+  λ s => (Classical.em (C s)).elim (λ h => .inl (guard_pos h)) (λ h => .inr (guard_neg h))
 
 /-- A test is the guard of its own acceptance condition — the mirror of
 `Update.IsTest.eq_test_closure`. -/
@@ -359,37 +347,27 @@ theorem mem_lift : j ∈ lift R σ ↔ ∃ i ∈ σ, R i j := Iff.rfl
 
 /-- `lift` sends sequencing to composition. -/
 theorem lift_dseq (R₁ R₂ : Update S) :
-    lift (dseq R₁ R₂) = CCP.seq (lift R₁) (lift R₂) := by
-  funext σ; ext k; simp only [lift, CCP.seq, dseq, Relation.Comp, Set.mem_setOf_eq]
-  constructor
-  · rintro ⟨i, hi, j, hR₁, hR₂⟩
-    exact ⟨j, ⟨i, hi, hR₁⟩, hR₂⟩
-  · rintro ⟨j, ⟨i, hi, hR₁⟩, hR₂⟩
-    exact ⟨i, hi, j, hR₁, hR₂⟩
+    lift (dseq R₁ R₂) = CCP.seq (lift R₁) (lift R₂) :=
+  funext λ _ => Set.ext λ _ =>
+    ⟨λ ⟨i, hi, j, hR₁, hR₂⟩ => ⟨j, ⟨i, hi, hR₁⟩, hR₂⟩,
+     λ ⟨j, ⟨i, hi, hR₁⟩, hR₂⟩ => ⟨i, hi, j, hR₁, hR₂⟩⟩
 
 /-- `lift (test C)` is the filter by `C`. -/
 theorem lift_test (C : Condition S) :
-    lift (test C) = λ σ => { i ∈ σ | C i } := by
-  funext σ; ext j; simp only [lift, test, Set.mem_setOf_eq]
-  constructor
-  · rintro ⟨i, hi, rfl, hC⟩; exact ⟨hi, hC⟩
-  · rintro ⟨hj, hC⟩; exact ⟨j, hj, rfl, hC⟩
+    lift (test C) = λ σ => { i ∈ σ | C i } :=
+  funext λ _ => Set.ext λ j =>
+    ⟨λ ⟨_, hi, hij, hC⟩ => ⟨hij ▸ hi, hC⟩, λ ⟨hj, hC⟩ => ⟨j, hj, rfl, hC⟩⟩
 
 /-- Lifted transformers are distributive. -/
-theorem lift_isDistributive (R : Update S) : CCP.IsDistributive (lift R) := by
-  intro σ; ext j; simp only [lift, Set.mem_setOf_eq]
-  constructor
-  · rintro ⟨i, hi, hR⟩
-    refine ⟨i, hi, i, ?_, hR⟩; exact rfl
-  · rintro ⟨i, hi, i', hi', hR⟩
-    refine ⟨i, hi, ?_⟩; rwa [hi'] at hR
+theorem lift_isDistributive (R : Update S) : CCP.IsDistributive (lift R) :=
+  λ _ => Set.ext λ _ =>
+    ⟨λ ⟨i, hi, hR⟩ => ⟨i, hi, i, rfl, hR⟩,
+     λ ⟨i, hi, _, hi', hR⟩ => ⟨i, hi, hi' ▸ hR⟩⟩
 
 /-- `lower` is a left inverse of `lift`: the relational face loses nothing. -/
-theorem lower_lift (R : Update S) : lower (lift R) = R := by
-  funext i j; simp only [lower, lift, Set.mem_setOf_eq, eq_iff_iff]
-  constructor
-  · rintro ⟨i', hi', hR⟩; rwa [hi'] at hR
-  · intro hR; exact ⟨i, rfl, hR⟩
+theorem lower_lift (R : Update S) : lower (lift R) = R :=
+  funext₂ λ i _ => propext
+    ⟨λ ⟨_, hi', hR⟩ => hi' ▸ hR, λ hR => ⟨i, rfl, hR⟩⟩
 
 /-- `lift` is a right inverse of `lower` on distributive transformers. -/
 theorem lift_lower (φ : CCP S) (hd : CCP.IsDistributive φ) :
@@ -551,12 +529,9 @@ theorem updateFromSat_eq_inter_content (sat : S → φ → Prop)
 
 /-- The induced update is the lift of the satisfaction test. -/
 theorem updateFromSat_eq_lift_test (sat : S → φ → Prop) (ψ : φ) :
-    updateFromSat sat ψ = lift (test (λ p => sat p ψ)) := by
-  funext σ; ext p
-  simp only [updateFromSat, lift, test, Set.mem_setOf_eq]
-  constructor
-  · rintro ⟨hp, hsat⟩; exact ⟨p, hp, rfl, hsat⟩
-  · rintro ⟨i, hi, rfl, hsat⟩; exact ⟨hi, hsat⟩
+    updateFromSat sat ψ = lift (test (λ p => sat p ψ)) :=
+  funext λ _ => Set.ext λ p =>
+    ⟨λ ⟨hp, hs⟩ => ⟨p, hp, rfl, hs⟩, λ ⟨_, hi, hip, hs⟩ => ⟨hip ▸ hi, hs⟩⟩
 
 /-- Induced updates are distributive. -/
 theorem updateFromSat_isDistributive (sat : S → φ → Prop) (ψ : φ) :
@@ -568,14 +543,9 @@ theorem updateFromSat_isDistributive (sat : S → φ → Prop) (ψ : φ) :
 Support). -/
 theorem support_iff_update_eq (sat : S → φ → Prop)
     (ψ : φ) (s : Set S) :
-    supportOf sat s ψ ↔ updateFromSat sat ψ s = s := by
-  constructor
-  · intro h
-    ext p
-    exact ⟨fun hp => hp.1, fun hp => ⟨hp, h p hp⟩⟩
-  · intro h p hp
-    have : p ∈ updateFromSat sat ψ s := by rw [h]; exact hp
-    exact this.2
+    supportOf sat s ψ ↔ updateFromSat sat ψ s = s :=
+  ⟨λ h => Set.ext λ p => ⟨λ hp => hp.1, λ hp => ⟨hp, h p hp⟩⟩,
+   λ h p hp => by rw [← h] at hp; exact hp.2⟩
 
 /-- Dynamic entailment: updating with `ψ₁` always yields a state supporting
 `ψ₂`. -/
