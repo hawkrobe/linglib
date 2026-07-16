@@ -124,7 +124,10 @@ def State.presheaf (W : Type u) (M : Type v) (V : Type w) :
 
 /-- The presheaf of environments: over `X`, world–assignment pairs at
 granularity `X`; restriction precomposes with the inclusion. A model read
-over the category of contexts ([jacobs-1999]). -/
+over the category of contexts — a set-valued *indexed category* in
+[jacobs-1999]'s sense, whose maps are the semantic face of *weakening*
+(the functor "which adds an extra dummy" variable, in the book's own
+gloss). -/
 def environments (W : Type u) (M : Type v) (V : Type w) :
     (Finset V)ᵒᵖ ⥤ Type (max u v w) where
   obj X := W × ((↑X.unop : Set V) → M)
@@ -136,9 +139,10 @@ variable {W : Type u} {M : Type v} {V : Type w} [Nonempty M]
 
 open scoped Classical in
 /-- Under the fiber classification, restriction is direct image along the
-environment projection — the left adjoint of mathlib's
+environment projection (weakening) — the left adjoint of mathlib's
 `Set.image_preimage`/`Set.preimage_kernImage` triple: [lawvere-1969]'s
-quantifiers as adjoints, over the category of contexts. -/
+quantifiers as left and right adjoints to weakening, as retold by
+[jacobs-1999]. -/
 theorem State.fiberOrderIsoProd_restrict {X Y : Finset V} (hYX : Y ⊆ X)
     (I : State.fiber W M X) :
     OrderDual.ofDual (State.fiberOrderIsoProd Y
