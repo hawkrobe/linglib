@@ -12,14 +12,14 @@ run against the indexed substrate (`Semantics/Dynamic/State.lean`,
 * **Partee's marbles** ((42), the argument for Def. 22): two information
   states that determine the *same proposition* but differ — anaphoric
   potential lives strictly below truth conditions, so propositions cannot be
-  the objects of context change (`marble_prop_eq_coin`, `marble_ne_coin`).
+  the objects of context change (`marble_worlds_eq_coin`, `marble_ne_coin`).
 * **The action equation on a discourse** (p. 159): "A¹ man walked in. He₁
   sat down." — applying the second sentence's transition to the state the
   first expresses is the state of the merge (`persistence_action`).
 -/
 
 open FirstOrder FirstOrder.Language DRT
-open DynamicSemantics (Possibility State baseSupported_of_iff)
+open DynamicSemantics (Possibility State worlds mem_worlds)
 
 namespace KampVanGenabithReyle2011
 
@@ -31,41 +31,38 @@ missing" and "a coin is missing" express the same proposition — true in
 exactly world `true` — but the states record different witnesses for the
 referent, so anaphora can distinguish them. -/
 
-/-- "A marble is missing": the referent is the marble `0`, in world `true`. -/
-def marbleState : State Bool Unit (Fin 2) where
-  base := {()}
-  carrier := {p | p.world = true ∧ p.assignment () = 0}
-  supported := baseSupported_of_iff fun w f g h => by
-    have hfg : f () = g () := h (by simp)
-    simp [Set.mem_setOf_eq, hfg]
+/-- "A marble is missing": the referent carries the marble `0`, in world
+`true`. -/
+def marbleState : State Bool Unit (Fin 2) :=
+  {p | p.world = true ∧ p.assignment () = some 0}
 
-/-- "A coin is missing": the referent is the coin `1`, in world `true`. -/
-def coinState : State Bool Unit (Fin 2) where
-  base := {()}
-  carrier := {p | p.world = true ∧ p.assignment () = 1}
-  supported := baseSupported_of_iff fun w f g h => by
-    have hfg : f () = g () := h (by simp)
-    simp [Set.mem_setOf_eq, hfg]
+/-- "A coin is missing": the referent carries the coin `1`, in world
+`true`. -/
+def coinState : State Bool Unit (Fin 2) :=
+  {p | p.world = true ∧ p.assignment () = some 1}
 
-/-- The two states determine the same proposition. -/
-theorem marble_prop_eq_coin : marbleState.prop = coinState.prop := by
+/-- The two states determine the same worldly content (Def. 23(v)'s
+proposition). -/
+theorem marble_worlds_eq_coin : worlds marbleState = worlds coinState := by
   ext w
-  simp only [State.mem_prop]
+  simp only [mem_worlds]
   constructor
-  · rintro ⟨f, hw, -⟩
-    exact ⟨fun _ => 1, hw, rfl⟩
-  · rintro ⟨f, hw, -⟩
-    exact ⟨fun _ => 0, hw, rfl⟩
+  · rintro ⟨p, ⟨hw, -⟩, rfl⟩
+    exact ⟨⟨p.world, fun _ => some 1⟩, ⟨hw, rfl⟩, rfl⟩
+  · rintro ⟨p, ⟨hw, -⟩, rfl⟩
+    exact ⟨⟨p.world, fun _ => some 0⟩, ⟨hw, rfl⟩, rfl⟩
 
 /-- But the states differ: the marble witness is not a coin witness. The
-proposition collapse (`marble_prop_eq_coin`) plus this separation is Partee's
+worldly collapse (`marble_worlds_eq_coin`) plus this separation is Partee's
 argument that context change operates on information states, not
 propositions. -/
 theorem marble_ne_coin : marbleState ≠ coinState := by
   intro h
-  have : (⟨true, fun _ => 0⟩ : Possibility Bool Unit (Fin 2)) ∈ coinState.carrier := by
-    rw [← h]; exact ⟨rfl, rfl⟩
-  exact absurd this.2 (by decide)
+  have hmem : (⟨true, fun _ => some 0⟩ : Possibility Bool Unit (Option (Fin 2))) ∈
+      coinState := by
+    rw [← h]
+    exact ⟨rfl, rfl⟩
+  exact absurd hmem.2 (by simp)
 
 /-! ### The action equation on a two-sentence discourse (p. 159) -/
 
@@ -99,7 +96,7 @@ theorem sentence₂_fresh :
 /-- The action equation for the discourse: interpreting sentence two against
 the context sentence one expresses is interpreting their merge from scratch. -/
 theorem persistence_action {M : Type} [dLang.Structure M] :
-    (sentence₂.transition (M := M) Bool sentence₁.referents sentence₂_bound).apply
+    (sentence₂.transition (M := M) Bool sentence₁.referents sentence₂_bound).applyState
         (sentence₁.state Bool sentence₁_proper) =
       (sentence₁.merge sentence₂).state Bool
         (DRS.isProper_merge sentence₁_proper sentence₂_bound) :=
