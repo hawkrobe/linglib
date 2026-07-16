@@ -13,6 +13,13 @@ domain condition IS the presupposition ([heim-1983]'s "c admits φ",
 "c admits φ∧ψ iff c admits φ and c[φ] admits ψ" — is the domain condition
 of partial-function composition, true by construction (`admits_seq`).
 
+This is partiality of the *arrow*, and it is orthogonal to the partiality
+of the *points*: DRT's embeddings are partial assignments of discourse
+referents (`Possibility.dom`, `Option`-valued — `Dynamic/State.lean`),
+which encodes referential growth, not presupposition. The two compose in
+`Dynamic/FileChange.lean`, where `FCP` is `CCP.Partial` at partial-point
+states. ([haug-2014]'s "partial dynamic semantics" is the *point* sense.)
+
 `ofPartialProp` sends a static partial proposition to its Heimian update:
 defined iff the context globally satisfies the presupposition (whole-state
 admittance, NOT per-world filtering), updating by intersecting with the
