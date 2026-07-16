@@ -53,22 +53,21 @@ referents to individuals. -/
 
 namespace Possibility
 
-variable {W V M : Type*} (X : Set V)
+variable {W V M : Type*}
 
 /-- The projection of a possibility to granularity `X` is its world
 together with its assignment of the `X`-referents. -/
-def proj (p : Possibility W V M) : W × (X → M) :=
+def proj (X : Set V) (p : Possibility W V M) : W × (X → M) :=
   (p.world, X.restrict p.assignment)
 
 /-- Two possibilities agree at granularity `X` when their projections to
 `X` coincide. -/
-def agreeSetoid : Setoid (Possibility W V M) :=
+def agreeSetoid (X : Set V) : Setoid (Possibility W V M) :=
   Setoid.ker (proj X)
 
-variable {X} in
 /-- Possibilities agree at `X` exactly when they share their world and
 their assignments agree on `X`. -/
-theorem agreeSetoid_iff {p q : Possibility W V M} :
+theorem agreeSetoid_iff {X : Set V} {p q : Possibility W V M} :
     agreeSetoid X p q ↔
       p.world = q.world ∧ Set.EqOn p.assignment q.assignment X :=
   Prod.ext_iff.trans (and_congr Iff.rfl Set.restrict_eq_restrict_iff)
@@ -82,7 +81,7 @@ theorem agreeSetoid_anti :
 
 /-- A possibility up to agreement at `X` is a world together with an
 assignment of the `X`-referents. -/
-noncomputable def agreeQuotientEquiv [Nonempty M] :
+noncomputable def agreeQuotientEquiv (X : Set V) [Nonempty M] :
     Quotient (agreeSetoid (W := W) (M := M) X) ≃ W × (X → M) :=
   Setoid.quotientKerEquivOfRightInverse (proj X)
     (fun wf => ⟨wf.1,
@@ -91,7 +90,7 @@ noncomputable def agreeQuotientEquiv [Nonempty M] :
       exact Subtype.val_injective.extend_apply wf.2
         (fun _ => Classical.arbitrary M) x)
 
-@[simp] theorem agreeQuotientEquiv_mk [Nonempty M]
+@[simp] theorem agreeQuotientEquiv_mk (X : Set V) [Nonempty M]
     (p : Possibility W V M) :
     agreeQuotientEquiv X (Quotient.mk _ p) = (p.world, X.restrict p.assignment) :=
   rfl
