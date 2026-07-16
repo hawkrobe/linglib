@@ -36,7 +36,7 @@ iff it is eliminative and distributive (`exists_eq_lift_test_iff`).
 ## Main definitions
 
 * `Update S`, `Condition S`: relations on states and properties of states.
-* `Update.test`, `Update.neg`, `Update.seq` (`⨟`), `Update.impl`,
+* `Update.test`, `Update.neg`, `Update.seq`, `Update.impl`,
   `Update.disj`, `Update.closure`: the relational connectives; `Update S` is
   a scoped `Monoid` and `IsQuantale`.
 * `Update.IsTest`: updates that never change the state.
@@ -67,7 +67,6 @@ iff it is eliminative and distributive (`exists_eq_lift_test_iff`).
 
 ## Notation
 
-* `D₁ ⨟ D₂` for `Update.seq D₁ D₂`.
 * `u ;; v` for `CCP.seq u v`, scoped to `DynamicSemantics.CCP`.
 
 ## Implementation notes
@@ -120,10 +119,8 @@ def test (C : Condition S) : Update S := λ i j => i = j ∧ C j
 /-- `neg D` holds at `i` iff no output `k` satisfies `D`. -/
 def neg (D : Update S) : Condition S := λ i => ¬∃ k, D i k
 
-/-- `D₁ ⨟ D₂` relates `i` to `k` iff some intermediate `j` has `D₁ i j` and `D₂ j k`. -/
+/-- `seq D₁ D₂` relates `i` to `k` iff some intermediate `j` has `D₁ i j` and `D₂ j k`. -/
 def seq (D₁ D₂ : Update S) : Update S := Relation.Comp D₁ D₂
-
-infixl:65 " ⨟ " => Update.seq
 
 /-- `impl D₁ D₂` holds at `i` iff every `D₁`-output from `i` has a `D₂`-output. -/
 def impl (D₁ D₂ : Update S) : Condition S := λ i => ∀ h, D₁ i h → ∃ k, D₂ h k
@@ -136,7 +133,7 @@ def closure (D : Update S) : Condition S := λ i => ∃ k, D i k
 
 /-! ### The update quantale -/
 
-/-- `Update S` is a monoid under `⨟` with the trivial test as unit (scoped;
+/-- `Update S` is a monoid under `seq` with the trivial test as unit (scoped;
 see the implementation notes). -/
 scoped instance : Monoid (Update S) where
   mul := seq
@@ -150,13 +147,13 @@ updates, so mathlib's residuation vocabulary applies (scoped). -/
 scoped instance : IsQuantale (Update S) where
   mul_sSup_distrib D s := by
     funext i k
-    show (D ⨟ sSup s) i k = (⨆ E ∈ s, D ⨟ E) i k
+    show seq D (sSup s) i k = (⨆ E ∈ s, seq D E) i k
     simp only [seq, Relation.Comp, sSup_apply, iSup_apply, iSup_Prop_eq]
     exact propext ⟨fun ⟨b, hD, ⟨E, hE⟩, hbk⟩ => ⟨E, hE, b, hD, hbk⟩,
       fun ⟨E, hE, b, hD, hbk⟩ => ⟨b, hD, ⟨E, hE⟩, hbk⟩⟩
   sSup_mul_distrib s D := by
     funext i k
-    show (sSup s ⨟ D) i k = (⨆ E ∈ s, E ⨟ D) i k
+    show seq (sSup s) D i k = (⨆ E ∈ s, seq E D) i k
     simp only [seq, Relation.Comp, sSup_apply, iSup_apply, iSup_Prop_eq]
     exact propext ⟨fun ⟨b, ⟨⟨E, hE⟩, hib⟩, hbk⟩ => ⟨E, hE, b, hib, hbk⟩,
       fun ⟨E, hE, b, hib, hbk⟩ => ⟨b, ⟨⟨E, hE⟩, hib⟩, hbk⟩⟩
@@ -332,7 +329,7 @@ theorem mem_lift : j ∈ lift R σ ↔ ∃ i ∈ σ, R i j := Iff.rfl
 
 /-- `lift` sends sequencing to composition. -/
 theorem lift_seq (R₁ R₂ : Update S) :
-    lift (R₁ ⨟ R₂) = CCP.seq (lift R₁) (lift R₂) :=
+    lift (seq R₁ R₂) = CCP.seq (lift R₁) (lift R₂) :=
   funext λ _ => Set.ext λ _ => ⟨λ ⟨i, m, j, a, b⟩ => ⟨j, ⟨i, m, a⟩, b⟩,
     λ ⟨j, ⟨i, m, a⟩, b⟩ => ⟨i, m, j, a, b⟩⟩
 

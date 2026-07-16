@@ -115,7 +115,7 @@ def liftEquiv : Update S ≃ sSupHom (Set S) (Set S) where
 /-- The equivalence sends sequencing to composition (diagrammatic order):
 the transformer monoid restricts to the relational one. -/
 theorem liftEquiv_seq (D₁ D₂ : Update S) :
-    (liftEquiv (D₁ ⨟ D₂) : Set S → Set S) =
+    (liftEquiv (seq D₁ D₂) : Set S → Set S) =
       (liftEquiv D₂ : Set S → Set S) ∘ (liftEquiv D₁ : Set S → Set S) :=
   lift_seq D₁ D₂
 

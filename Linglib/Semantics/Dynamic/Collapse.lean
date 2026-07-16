@@ -92,7 +92,7 @@ theorem collapseRel_comp (u : X ⟶ Y) (v : Y ⟶ Z)
   rename_i p r
   constructor
   · intro h
-    have h' : (u.t.toUpdate ⨟ v.t.toUpdate) p r := by
+    have h' : Update.seq u.t.toUpdate v.t.toUpdate p r := by
       rw [← Transition.toUpdate_comp, ← t_comp]
       exact h
     obtain ⟨k, hk₁, hk₂⟩ := h'

@@ -313,7 +313,7 @@ universe u
 
 /-- Bi-dimensional meaning (§5.1): an at-issue value paired with accumulated
 post-suppositional content — mathlib's Writer monad `WriterT (Update S) Id`
-over the monoid `(Update S, ⨟, test ⊤)`. The `Monad`/`LawfulMonad` instances
+over the monoid `(Update S, Update.seq, test ⊤)`. The `Monad`/`LawfulMonad` instances
 come from mathlib via the scoped `Monoid (Update S)` instance, and agree with
 the paper's `pure`/`bind` (Appendix B, eqs. 120–121): `pure` carries the
 trivial post-supposition; `bind` accumulates post-suppositions via `seq`. -/

@@ -108,7 +108,7 @@ theorem idUp_toUpdate : toUpdate (idUp : Update W E) c = c :=
 
 /-- `fiberDRS` preserves sequential composition. -/
 theorem fiberDRS_seq :
-    fiberDRS (D₁ ⨟ D₂) = seq (fiberDRS D₁) (fiberDRS D₂) := by
+    fiberDRS (Update.seq D₁ D₂) = seq (fiberDRS D₁) (fiberDRS D₂) := by
   funext p q; cases p; cases q
   simp only [fiberDRS, seq, Relation.Comp, eq_iff_iff]
   constructor
@@ -118,7 +118,7 @@ theorem fiberDRS_seq :
     exact ⟨rfl, k, h1, h2⟩
 
 /-- Sequential composition lifts to function composition on contexts. -/
-theorem seq_toUpdate : toUpdate (D₁ ⨟ D₂) c = toUpdate D₂ (toUpdate D₁ c) := by
+theorem seq_toUpdate : toUpdate (Update.seq D₁ D₂) c = toUpdate D₂ (toUpdate D₁ c) := by
   rw [toUpdate, fiberDRS_seq, lift_seq]
   rfl
 

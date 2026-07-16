@@ -40,7 +40,7 @@ the PPCDRT substrate (`Semantics/Dynamic/PPCDRT/`):
 Sections paper-acknowledged but not formalised (out of scope for a
 study-file size budget): the full §2.3 Δ-relativised distribution
 machinery (deferred — the substrate-trimming pass removed the prototyped
-`delta`/`⨟`/`∂`/`max^u` operators since no consumer exercised them; they
+`delta`/`seq`/`∂`/`max^u` operators since no consumer exercised them; they
 will return alongside a Brasoveanu 2007 / Dotlačil 2013 study file);
 the §5.2 empirical-fit table; the §7 typological excursus.
 

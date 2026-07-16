@@ -936,7 +936,7 @@ theorem comp_factorizes (D : ICDRT.Update W E) :
 
 /-- Sequential composition in the fragment lifts to CCP composition. -/
 theorem comp_seq_lifts (D₁ D₂ : ICDRT.Update W E) (c : ICDRT.Context W E) :
-    ICDRT.toUpdate (D₁ ⨟ D₂) c = ICDRT.toUpdate D₂ (ICDRT.toUpdate D₁ c) :=
+    ICDRT.toUpdate (seq D₁ D₂) c = ICDRT.toUpdate D₂ (ICDRT.toUpdate D₁ c) :=
   seq_toUpdate D₁ D₂ c
 
 -- § 6.4 Compositional derivations applied to Model M₁

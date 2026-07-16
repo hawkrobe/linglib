@@ -36,7 +36,7 @@ identification:
 * `DRS.trueRel_congr` — the coincidence lemma: denotation depends only on the
   occurring referents (`DRS.occ`, from `DRS/Basic.lean`).
 * `DRS.toRel_merge` — the Merging Lemma: under freshness, `merge` denotes the
-  spine sequencing `⨟` (relational composition) of the two box relations.
+  spine sequencing `Update.seq` (relational composition) of the two box relations.
 
 ## Implementation notes
 
@@ -284,11 +284,11 @@ end
 
 /-- **Merging Lemma** ([muskens-1996], §II.2): when `K₂`'s universe is fresh
 for `K₁`'s conditions, the merge `K₁ ⊕ K₂` denotes the spine sequencing
-(relational composition) of the two box relations — `‖K₁ ⊕ K₂‖ = ‖K₁‖ ⨟ ‖K₂‖`.
+(relational composition) of the two box relations — `‖K₁ ⊕ K₂‖ = seq ‖K₁‖ ‖K₂‖`.
 This is what gives `merge` its dynamic meaning. -/
 theorem DRS.toRel_merge [DecidableEq V] (K₁ K₂ : DRS L V)
     (hfresh : Disjoint K₂.referents (Condition.occL K₁.conditions)) :
-    (DRS.toRel (K₁.merge K₂) : Update (V → M)) = DRS.toRel K₁ ⨟ DRS.toRel K₂ := by
+    (DRS.toRel (K₁.merge K₂) : Update (V → M)) = seq (DRS.toRel K₁) (DRS.toRel K₂) := by
   obtain ⟨U₁, conds₁⟩ := K₁
   obtain ⟨U₂, conds₂⟩ := K₂
   simp only [DRS.referents_mk, DRS.conditions_mk, Finset.disjoint_left] at hfresh
