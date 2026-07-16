@@ -10,18 +10,6 @@ of discourse referents — and the structure of its partial points: the
 descent order, compatibility and union, restriction, and the
 classification of each stratum as world–assignment pairs.
 
-## Main definitions
-
-- `Possibility W V M`: the point object; `Possibility.update` rewrites
-  one referent.
-- `Possibility.dom`, the `Preorder` instance (descent),
-  `Possibility.Compatible`, `Possibility.union`: partial points
-  (`Option`-valued assignments) — their defined referents, information
-  order, and consistent union.
-- `Possibility.restrict`, `Possibility.domEquiv`: domain restriction and
-  the constructive classification of the domain-`X` points as
-  world–`X`-assignment pairs.
-
 ## References
 
 - [groenendijk-stokhof-veltman-1996], [elliott-sudo-2025]
