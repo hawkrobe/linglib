@@ -31,6 +31,9 @@ at `∅` is [veltman-1996]'s update semantics.
   its maps the semantic face of *weakening*. Precedent for the
   states-as-presheaf reading: [abramsky-sadrzadeh-2014].
 - `State.presheaf`: the state fibers — `environments ⋙ Set`.
+- `environments_glue`, `environments_beck_chevalley`: the context-lattice
+  square is a pullback of environments, so quantification commutes with
+  weakening — the fibers are a hyperdoctrine.
 
 ## References
 
@@ -97,5 +100,81 @@ direct image along environment weakening. -/
 def State.presheaf (W : Type u) (M : Type v) (V : Type w) :
     (Finset V)ᵒᵖ ⥤ Type (max u v w) :=
   environments W M V ⋙ ofTypeFunctor Set
+
+/-! ### Gluing and Beck–Chevalley
+
+`environments` sends each square of the context lattice to a pullback
+(`environments_glue`), so quantification and weakening cohere: the
+existential legs (`Set.image`, which is `State.presheaf`'s own action)
+commute with reindexing (`Set.preimage`) across the square
+(`environments_beck_chevalley`). Together with mathlib's
+`Set.image_subset_iff` (`∃ ⊣ weakening`), `Set.preimage_kernImage`
+(`weakening ⊣ ∀`), and `Set.image_inter_preimage` (Frobenius), the
+fibers form a hyperdoctrine over the context lattice ([lawvere-1969],
+[jacobs-1999]). -/
+
+section Gluing
+
+open Opposite
+
+variable {W M V : Type*} {X Y : Finset V}
+
+/-- The action of `environments` on a lattice inequality, elementwise. -/
+@[simp] theorem environments_map_apply (h : X ≤ Y)
+    (p : (environments W M V).obj (op Y)) :
+    (environments W M V).map (homOfLE h).op p =
+      (p.1, fun v => p.2 ⟨v.1, h v.2⟩) := rfl
+
+variable [DecidableEq V]
+
+/-- Environments glue: a pair of environments over `X` and `Y` whose
+weakenings to `X ⊓ Y` agree is jointly the weakening of a unique
+environment over `X ⊔ Y` — `environments` sends the lattice square to a
+pullback of types. The piecewise witness is the environment face of
+`Possibility.union`. -/
+theorem environments_glue
+    (a : (environments W M V).obj (op X)) (b : (environments W M V).obj (op Y))
+    (hab : (environments W M V).map (homOfLE inf_le_left).op a =
+      (environments W M V).map (homOfLE inf_le_right).op b) :
+    ∃! c : (environments W M V).obj (op (X ⊔ Y)),
+      (environments W M V).map (homOfLE le_sup_left).op c = a ∧
+        (environments W M V).map (homOfLE le_sup_right).op c = b := by
+  simp only [environments_map_apply] at hab ⊢
+  have hw : a.1 = b.1 := congrArg Prod.fst hab
+  have hagree : ∀ (v : V) (hX : v ∈ X) (hY : v ∈ Y),
+      a.2 ⟨v, hX⟩ = b.2 ⟨v, hY⟩ := fun v hX hY =>
+    congrFun (congrArg Prod.snd hab) ⟨v, Finset.mem_inter.mpr ⟨hX, hY⟩⟩
+  refine ⟨(a.1, fun v => if h : v.1 ∈ X then a.2 ⟨v.1, h⟩
+      else b.2 ⟨v.1, (Finset.mem_union.mp v.2).resolve_left h⟩),
+    ⟨Prod.ext rfl (funext fun v => dif_pos v.2),
+      Prod.ext hw (funext fun v => ?_)⟩, fun c' hc' => ?_⟩
+  · by_cases h : v.1 ∈ X
+    · exact (dif_pos h).trans (hagree v.1 h v.2)
+    · exact dif_neg h
+  · obtain ⟨rfl, rfl⟩ := hc'
+    exact Prod.ext rfl (funext fun v => by by_cases h : v.1 ∈ X <;> simp [h])
+
+/-- Beck–Chevalley for the context-lattice square: existential image
+along `X ⊓ Y ≤ X` then weakening to `Y` is weakening to `X ⊔ Y` then
+existential image along `Y ≤ X ⊔ Y` — quantifying and reindexing
+commute. The image legs are `State.presheaf`'s own action on the
+square's arrows. -/
+theorem environments_beck_chevalley (X Y : Finset V)
+    (S : Set ((environments W M V).obj (op X))) :
+    (environments W M V).map (homOfLE (inf_le_right : X ⊓ Y ≤ Y)).op ⁻¹'
+      ((environments W M V).map (homOfLE (inf_le_left : X ⊓ Y ≤ X)).op '' S) =
+    (environments W M V).map (homOfLE (le_sup_right : Y ≤ X ⊔ Y)).op ''
+      ((environments W M V).map (homOfLE (le_sup_left : X ≤ X ⊔ Y)).op ⁻¹' S) := by
+  ext b
+  constructor
+  · rintro ⟨a, ha, hab⟩
+    obtain ⟨c, ⟨hcX, hcY⟩, -⟩ := environments_glue a b hab
+    exact ⟨c, show _ ∈ S by rw [hcX]; exact ha, hcY⟩
+  · rintro ⟨c, hc, rfl⟩
+    refine ⟨(environments W M V).map (homOfLE le_sup_left).op c, hc, ?_⟩
+    rw [← Functor.map_comp_apply, ← Functor.map_comp_apply,
+      ← op_comp, ← op_comp, homOfLE_comp, homOfLE_comp]
+
+end Gluing
 
 end DynamicSemantics

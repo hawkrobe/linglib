@@ -1,6 +1,7 @@
 import Linglib.Semantics.Dynamic.Possibility
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Set.Function
+import Mathlib.Order.Hom.Basic
 
 /-!
 # Information states
@@ -310,6 +311,39 @@ theorem familiar_randomAssign (I : State W V M) (x : V) :
     Familiar (I.randomAssign x) x := by
   rintro p ⟨q, -, m, rfl⟩
   simp
+
+/-! ### The uniform classification -/
+
+/-- Uniform states at `X` are sets of world–`X`-environment pairs — the
+state-level face of `Possibility.domEquiv`, and the comparison to the
+predecessor's fibers: an order isomorphism for `⊆` (which is `⪯` on the
+stratum, `subsistsIn_iff_subset`), hence an anti-isomorphism for `⊑`
+(`infoLe_iff_superset`). -/
+def uniformEquiv (X : Finset V) :
+    {I : State W V M // UniformAt X I} ≃o Set (W × ((↑X : Set V) → M)) where
+  toFun I := {e | ((Possibility.domEquiv X).symm e).1 ∈ I.1}
+  invFun S :=
+    ⟨{p | ∃ h : p.dom = (↑X : Set V), Possibility.domEquiv X ⟨p, h⟩ ∈ S},
+      fun _ ⟨h, _⟩ => h⟩
+  left_inv I := by
+    refine Subtype.ext (Set.ext fun p => ?_)
+    constructor
+    · rintro ⟨h, hmem⟩
+      simpa using hmem
+    · intro hp
+      exact ⟨I.2 p hp, by simpa using hp⟩
+  right_inv S := Set.ext fun e => by
+    constructor
+    · rintro ⟨h, hmem⟩
+      simpa using hmem
+    · intro he
+      exact ⟨((Possibility.domEquiv X).symm e).2, by simpa using he⟩
+  map_rel_iff' {I J} := by
+    constructor
+    · intro h p hp
+      simpa using h (a := Possibility.domEquiv X ⟨p, I.2 p hp⟩)
+        (by simpa using hp)
+    · exact fun h _ he => h he
 
 end State
 
