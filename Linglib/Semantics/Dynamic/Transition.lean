@@ -5,15 +5,15 @@ import Linglib.Semantics.Dynamic.State
 [kamp-vangenabith-reyle-2011] (Defs. 24, 27)
 
 The hom type of indexed dynamic semantics: a `Transition W M X Y` is a
-world-indexed relation between an `X`-environment and a `Y`-environment,
+world-indexed relation between an `X`-assignment and a `Y`-assignment,
 `Y ⊇ X`. Objects are bases; a DRS denotes an arrow `X ⟶ X ∪ U`;
 sequencing is world-pointwise relational composition. The predecessor of
 this file stated transitions on total assignments and carried
 `supported_left`/`supported_right` invariants; typing the relation at the
-environments dissolves both, and the identity transition becomes plain
+assignments dissolves both, and the identity transition becomes plain
 equality rather than agreement-on-`X`.
 
-Applying a transition acts fiberwise on sets of environments — the
+Applying a transition acts fiberwise on sets of possibilities — the
 presheaf fibers of `Category.lean` — functorially (`apply_comp`). The
 chapter's own name for the induced map is the (regular) *Context Change
 Potential* (Def. 24); *transition* names the underlying relation, after
@@ -34,18 +34,18 @@ namespace DynamicSemantics
 
 variable {W V M : Type*} {X Y Z : Finset V}
 
-/-- A transition: a world-indexed relation from `X`-environments to
-`Y`-environments. The `grow` field makes arrows context-extending —
+/-- A transition: a world-indexed relation from `X`-assignments to
+`Y`-assignments. The `grow` field makes arrows context-extending —
 bases never shrink. -/
 @[ext] structure Transition (W M : Type*) {V : Type*} (X Y : Finset V) where
-  /-- The world-indexed relation between input and output environments. -/
+  /-- The world-indexed relation between input and output assignments. -/
   rel : W → ((↑X : Set V) → M) → ((↑Y : Set V) → M) → Prop
   /-- Bases only grow along an update. -/
   grow : X ⊆ Y
 
 namespace Transition
 
-/-- The identity transition at `X`: equality of environments. -/
+/-- The identity transition at `X`: equality of assignments. -/
 def id (X : Finset V) : Transition W M X X where
   rel _ e e' := e = e'
   grow := subset_rfl
@@ -77,7 +77,7 @@ theorem comp_assoc (u : Transition W M X Y) (v : Transition W M Y Z)
 /-! ### Application to fibers -/
 
 /-- Context change ([kamp-vangenabith-reyle-2011], Def. 24), on the
-presheaf fibers: relate environments through the transition, worlds
+presheaf fibers: relate assignments through the transition, worlds
 preserved. -/
 def apply (u : Transition W M X Y)
     (T : Set (W × ((↑X : Set V) → M))) :
@@ -128,7 +128,7 @@ theorem uniformAt_applyState (u : Transition W M X Y) (I : State W V M) :
 
 variable [DecidableEq V]
 
-/-- The point of the `Y`-stratum carrying a given world and environment. -/
+/-- The point of the `Y`-stratum carrying a given world and assignment. -/
 private def ptOf (Y : Finset V) (w : W) (e : (↑Y : Set V) → M) :
     Possibility W V (Option M) :=
   ⟨w, fun v => if hv : v ∈ (↑Y : Set V) then some (e ⟨v, hv⟩) else none⟩
@@ -231,7 +231,7 @@ def WritesAt (Y : Finset V) (R : W → (V → M) → (V → M) → Prop) : Prop 
   ∀ ⦃w f g g'⦄, Set.EqOn g g' (↑Y : Set V) → (R w f g ↔ R w f g')
 
 /-- Type a total-assignment relation at contexts, by existential
-extension of the environments. -/
+extension of the assignments. -/
 def ofTotal (h : X ⊆ Y) (R : W → (V → M) → (V → M) → Prop) :
     Transition W M X Y where
   rel w e e' := ∃ f g : V → M, (↑X : Set V).restrict f = e ∧
@@ -239,7 +239,7 @@ def ofTotal (h : X ⊆ Y) (R : W → (V → M) → (V → M) → Prop) :
   grow := h
 
 /-- Under the support hypotheses, the typing is faithful: related
-environments are exactly the restrictions of related assignments. -/
+assignments are exactly the restrictions of related assignments. -/
 theorem ofTotal_rel_restrict {h : X ⊆ Y} (hR : ReadsAt X R)
     (hW : WritesAt Y R) {w : W} {f g : V → M} :
     (ofTotal h R).rel w ((↑X : Set V).restrict f)

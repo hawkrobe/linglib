@@ -16,7 +16,7 @@ assumes: the absurd state is `∅`, the initial state is `W × {g_⊤}`
 
 There is no base field: Def. 23's "Dom(f) = X" is the *uniform* stratum
 (`UniformAt`), and a base is the index of a fiber, not part of the data.
-Points with domain `X` are world–`X`-environment pairs, constructively
+Points with domain `X` are world–`X`-assignment pairs, constructively
 (`Possibility.domEquiv` — the total-assignment rendering needed choice
 and an inhabitant of `M` to recover this). Two preorders run through states, and they are
 dual on shared strata. *Informativeness* (`⊑`,
@@ -365,7 +365,7 @@ theorem familiar_randomAssign (I : State W V M) (x : V) :
 
 /-! ### The uniform classification -/
 
-/-- Uniform states at `X` are sets of world–`X`-environment pairs — the
+/-- Uniform states at `X` are sets of world–`X`-assignment pairs — the
 state-level face of `Possibility.domEquiv`, and the comparison to the
 predecessor's fibers: an order isomorphism for `⊆` (which is `⪯` on the
 stratum, `subsistsIn_iff_subset`), hence an anti-isomorphism for `⊑`

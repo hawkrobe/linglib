@@ -1,4 +1,5 @@
 import Mathlib.Data.Finset.Basic
+import Mathlib.Data.Set.Finite.Basic
 import Mathlib.Data.Set.Function
 
 /-!
@@ -28,7 +29,7 @@ universe across worlds — and the monadic tradition calls the same points
   their defined referents, growth order, and consistent union.
 - `Possibility.restrict`, `Possibility.domEquiv`: domain restriction and
   the constructive classification of the domain-`X` points as
-  world–`X`-environment pairs.
+  world–`X`-assignment pairs.
 
 ## References
 
@@ -281,7 +282,7 @@ theorem restrict_restrict (X Y : Finset V)
   by_cases hx : v ∈ X <;> by_cases hy : v ∈ Y <;>
     simp [restrict, hx, hy]
 
-/-- Partial points with domain `X` are world–`X`-environment pairs —
+/-- Partial points with domain `X` are world–`X`-assignment pairs —
 constructively: the classification that the total-assignment rendering
 recovered only with choice and an inhabitant of `M`. -/
 def domEquiv (X : Finset V) :
@@ -308,7 +309,40 @@ def domEquiv (X : Finset V) :
     refine Prod.ext rfl (funext fun v => ?_)
     simp
 
+@[simp] theorem domEquiv_symm_val (X : Finset V)
+    (e : W × ((↑X : Set V) → M)) :
+    ((domEquiv X).symm e).1 =
+      ⟨e.1, fun v => if h : v ∈ (↑X : Set V) then some (e.2 ⟨v, h⟩)
+        else none⟩ :=
+  rfl
+
+/-- The charts commute with restriction: restricting a classified point
+is weakening its chart. -/
+theorem restrict_domEquiv_symm {Y X : Finset V} (h : Y ≤ X)
+    (e : W × ((↑X : Set V) → M)) :
+    ((domEquiv X).symm e).1.restrict Y =
+      ((domEquiv Y).symm (e.1, fun v => e.2 ⟨v.1, h v.2⟩)).1 := by
+  rw [domEquiv_symm_val, domEquiv_symm_val]
+  refine Possibility.ext rfl (funext fun v => ?_)
+  by_cases hv : v ∈ Y
+  · have hvX : v ∈ X := h hv
+    simp [restrict, hv, hvX]
+  · simp [restrict, hv]
+
 end Restrict
+
+/-! ### Based points -/
+
+/-- A *based* point: a possibility whose domain is finite —
+[kamp-vangenabith-reyle-2011] Def. 23 calls the domain the *base*.
+Under descent, based points form the total space of `Category.lean`'s
+possibilities family. -/
+def Based (W V M : Type*) := {p : Possibility W V (Option M) // p.dom.Finite}
+
+instance : Preorder (Based W V M) where
+  le p q := p.1.Descendant q.1
+  le_refl p := Descendant.refl p.1
+  le_trans _ _ _ := Descendant.trans
 
 end Possibility
 
