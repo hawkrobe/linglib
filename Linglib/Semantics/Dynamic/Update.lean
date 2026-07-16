@@ -264,11 +264,9 @@ def down (u : CCP S) : Set S := {i | (u {i}).Nonempty}
   Set.ext λ _ => Set.singleton_inter_nonempty
 
 /-- On eliminative updates, content is acceptance on singletons. -/
-theorem IsEliminative.down_eq (he : IsEliminative u) :
-    down u = {i | u {i} = {i}} := by
-  ext i
-  show (u {i}).Nonempty ↔ u {i} = {i}
-  exact ⟨λ h => h.subset_singleton_iff.mp (he {i}), λ h => (Set.singleton_nonempty i).mono h.ge⟩
+theorem IsEliminative.down_eq (he : IsEliminative u) : down u = {i | u {i} = {i}} :=
+  Set.ext λ i => show (u {i}).Nonempty ↔ u {i} = {i} from
+    ⟨λ h => h.subset_singleton_iff.mp (he {i}), λ h => (Set.singleton_nonempty i).mono h.ge⟩
 
 /-- An update is *classical* if it is eliminative and distributive. -/
 def IsClassical (u : CCP S) : Prop := IsEliminative u ∧ IsDistributive u
