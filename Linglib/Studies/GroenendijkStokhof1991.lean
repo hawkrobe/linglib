@@ -1,6 +1,7 @@
 import Linglib.Core.Logic.CylindricAlgebra
 import Linglib.Semantics.Dynamic.DPL
 import Linglib.Semantics.Dynamic.Transition
+import Mathlib.Logic.Function.DependsOn
 
 /-!
 # Groenendijk & Stokhof (1991): Dynamic Predicate Logic
