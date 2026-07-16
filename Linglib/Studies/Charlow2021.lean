@@ -68,6 +68,7 @@ Appendix B as a Writer monad.
 namespace Charlow2021
 
 open DynamicSemantics
+open DynamicSemantics.CCP (IsDistributive)
 open Semantics.Composition.Continuation
 open scoped DynamicSemantics
 
@@ -589,7 +590,7 @@ every state-level CCP is distributive. Witness: the constant CCP
 yields `∅`. -/
 theorem dependent_indefinites_need_extra {W E : Type*} [Nonempty W] [Nonempty E] :
     ¬ ∀ (depIndef : State.CCP W E),
-      DynamicSemantics.IsDistributive depIndef := by
+      DynamicSemantics.CCP.IsDistributive depIndef := by
   intro h
   have h0 := h (fun _ => Set.univ) ∅
   simp only [Set.mem_empty_iff_false, false_and, exists_false, Set.setOf_false] at h0

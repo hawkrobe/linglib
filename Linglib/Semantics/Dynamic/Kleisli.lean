@@ -69,7 +69,7 @@ theorem lift_eq_bind (R : Update S) (σ : Set S) :
 
 /-- A CCP is distributive iff it preserves arbitrary joins of states. -/
 theorem isDistributive_iff_map_sSup (φ : CCP S) :
-    IsDistributive φ ↔ ∀ T : Set (Set S), φ (sSup T) = sSup (φ '' T) := by
+    CCP.IsDistributive φ ↔ ∀ T : Set (Set S), φ (sSup T) = sSup (φ '' T) := by
   simp only [Set.sSup_eq_sUnion]
   constructor
   · intro h T

@@ -22,7 +22,7 @@ restricted double-negation laws, interdefinability) are proved in
 - `trueAt`, `satisfactionSet`, `productionSet` (Definitions 3, 6, 9).
 - `toDRS`/`ofDRS`: a DPL relation is an `Update` over assignments — DPL
   embeds in dynamic Ty2 at `S = Assignment E`, each connective matching
-  its `DynProp` combinator (`conj_eq_dseq`, `neg_eq_test_dneg`, ...).
+  its spine combinator (`conj_eq_dseq`, `neg_eq_test_dneg`, ...).
 -/
 
 namespace DPL
@@ -96,7 +96,7 @@ def DPLRel.productionSet (φ : DPLRel E) : Set (ℕ → E) :=
 
 DPL embeds directly into dynamic Ty2 at `S = Assignment E`: DPL
 assignments are Ty2 states, DPL relations are `Update` meanings, and
-each connective matches its `DynProp` combinator. -/
+each connective matches its spine combinator. -/
 
 /-- DPL dref: projection function for variable `n`. -/
 def dref (n : ℕ) : Dref (Assignment E) E := λ g => g n

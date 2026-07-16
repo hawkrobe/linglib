@@ -191,7 +191,8 @@ theorem might_iff_not_must_neg (φ : Formula) (s : InfoState E) (hs : s.Nonempty
     rw [Formula.mem_update] at hp
     exact hsup _ hp.1 hp.2
   · intro h
-    simp only [InfoState.supports, Formula.sat, not_forall, Classical.not_not] at h
+    simp only [InfoState.supports, DynamicSemantics.supportOf, satisfiesPLA,
+      Formula.sat, not_forall, Classical.not_not] at h
     obtain ⟨p, hp, hsat⟩ := h
     exact ⟨p, (Formula.mem_update M φ s p.1 p.2).mpr ⟨hp, hsat⟩⟩
 

@@ -18,6 +18,7 @@ namespace Charlow2019
 
 open DPL
 open DynamicSemantics
+open DynamicSemantics.CCP (IsDistributive)
 open DynamicSemantics.ICDRT
 open _root_.Core (Assignment)
 

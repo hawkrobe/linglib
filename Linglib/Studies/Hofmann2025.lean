@@ -64,6 +64,7 @@ empirical applications.
 namespace Hofmann2025
 
 open DynamicSemantics
+open DynamicSemantics.CCP (IsDistributive)
 open DynamicSemantics.ICDRT
 
 -- ════════════════════════════════════════════════════════════════

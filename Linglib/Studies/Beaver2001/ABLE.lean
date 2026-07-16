@@ -49,14 +49,14 @@ since we don't model discourse markers.
 - **Lemma 8.6**: Satisfaction ↔ inconsistency with NOT (eliminativity bridge)
 - **Fact 8.7**: MUST is a test for satisfaction
 - **Facts 8.5, 8.8**: MIGHT and MUST are tests; presupposition projects through them
-- **D45/MP5**: Entailment — equivalent to `CCP.entails` (eliminativity makes guard redundant)
+- **D45/MP5**: Entailment — the spine's `CCP.entails`, by definition
 -/
 
 namespace Beaver2001.ABLE
 
 open Classical
-open DynamicSemantics (CCP IsEliminative IsTest
-  updateFromSat eliminative_seq test_eliminative)
+open DynamicSemantics (CCP updateFromSat)
+open DynamicSemantics.CCP (IsEliminative IsTest)
 
 variable {P : Type*}
 
@@ -148,7 +148,7 @@ theorem presup_isTest (φ : Formula P) : IsTest φ.presup.eval := by
 
 /-- ∂ is eliminative. -/
 theorem presup_eliminative (φ : Formula P) : IsEliminative φ.presup.eval := by
-  exact test_eliminative _ (presup_isTest φ)
+  exact (presup_isTest φ).isEliminative
 
 /-- Admittance of ∂φ is equivalent to σ[φ] = σ. -/
 theorem presup_admits_iff (φ : Formula P) (σ : Set P) :
@@ -199,7 +199,7 @@ theorem might_isTest (φ : Formula P) : IsTest (Formula.might φ).eval := by
 
 /-- MIGHT is eliminative. -/
 theorem might_eliminative (φ : Formula P) : IsEliminative (Formula.might φ).eval :=
-  test_eliminative _ (might_isTest φ)
+  (might_isTest φ).isEliminative
 
 /-- **Fact 8.8 (1)**: Presupposition projects through MIGHT.
 
@@ -286,7 +286,7 @@ theorem not_eliminative (φ : Formula P) :
 theorem and_eliminative (φ ψ : Formula P)
     (hφ : IsEliminative φ.eval) (hψ : IsEliminative ψ.eval) :
     IsEliminative (Formula.and φ ψ).eval :=
-  eliminative_seq φ.eval ψ.eval hφ hψ
+  hφ.seq hψ
 
 /-- All ABLE formulas are eliminative (output ⊆ input).
 This is the inductive closure of the per-constructor eliminativity
@@ -345,7 +345,7 @@ theorem must_isTest (φ : Formula P) : IsTest (Formula.must φ).eval := by
 
 /-- MUST is eliminative. -/
 theorem must_eliminative (φ : Formula P) : IsEliminative (Formula.must φ).eval :=
-  test_eliminative _ (must_isTest φ)
+  (must_isTest φ).isEliminative
 
 /-- **Fact 8.7 (2–3)**: MUST φ is a test for satisfaction of φ.
 
@@ -450,30 +450,16 @@ theorem eval_empty (φ : Formula P) : φ.eval ∅ = ∅ :=
   Set.subset_empty_iff.mp (eval_eliminative φ ∅)
 
 /-- **Entailment in ABLE (D45)**: φ entails ψ iff every state resulting
-from updating with φ satisfies ψ.
+from updating with φ satisfies ψ — the spine's acceptance-based
+`CCP.entails`.
 
 [beaver-2001] Ch. 7 §7.2, Meaning Postulate MP5:
 `entails = λF λF' [∀I∀J, I{F}J → J satisfies F']`
 
-In our set-based formulation (without discourse markers), this reduces
+In the set-based formulation (without discourse markers), this reduces
 to: for all σ, ψ.eval(φ.eval σ) = φ.eval σ. -/
 noncomputable def entails (φ ψ : Formula P) : Prop :=
-  ∀ σ : Set P, ψ.eval (φ.eval σ) = φ.eval σ
-
-/-- **ABLE entailment ↔ CCP entailment**.
-
-The nonemptiness guard in `CCP.entails` is redundant for ABLE formulas
-because all ABLE formulas are eliminative: ψ.eval ∅ = ∅.
-[beaver-2001] D45 = `CCP.entails` modulo this vacuous case. -/
-theorem entails_iff_ccp_entails (φ ψ : Formula P) :
-    φ.entails ψ ↔ CCP.entails φ.eval ψ.eval := by
-  constructor
-  · intro h s _; exact h s
-  · intro h s
-    by_cases hne : (φ.eval s).Nonempty
-    · exact h s hne
-    · simp only [Set.not_nonempty_iff_eq_empty] at hne
-      rw [hne, eval_empty]
+  CCP.entails φ.eval ψ.eval
 
 /-- ABLE entailment is transitive. -/
 theorem entails_trans (φ ψ χ : Formula P)

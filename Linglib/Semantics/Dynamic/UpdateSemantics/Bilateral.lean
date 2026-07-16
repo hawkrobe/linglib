@@ -352,11 +352,11 @@ theorem atom_negative_monotone (pred : W → Prop) :
   sep_monotone _
 
 theorem atom_positive_eliminative (pred : W → Prop) :
-    IsEliminative (atom pred (V := V) (E := E)).positive :=
+    CCP.IsEliminative (atom pred (V := V) (E := E)).positive :=
   sep_eliminative _
 
 theorem atom_negative_eliminative (pred : W → Prop) :
-    IsEliminative (atom pred (V := V) (E := E)).negative :=
+    CCP.IsEliminative (atom pred (V := V) (E := E)).negative :=
   sep_eliminative _
 
 theorem pred1_positive_monotone (P : E → W → Prop) (t : V) :
@@ -368,19 +368,19 @@ theorem pred1_negative_monotone (P : E → W → Prop) (t : V) :
   sep_monotone _
 
 theorem pred1_positive_eliminative (P : E → W → Prop) (t : V) :
-    IsEliminative (pred1 P t (W := W)).positive :=
+    CCP.IsEliminative (pred1 P t (W := W)).positive :=
   sep_eliminative _
 
 theorem pred1_negative_eliminative (P : E → W → Prop) (t : V) :
-    IsEliminative (pred1 P t (W := W)).negative :=
+    CCP.IsEliminative (pred1 P t (W := W)).negative :=
   sep_eliminative _
 
 theorem pred2_positive_eliminative (P : E → E → W → Prop) (t₁ t₂ : V) :
-    IsEliminative (pred2 P t₁ t₂ (W := W)).positive :=
+    CCP.IsEliminative (pred2 P t₁ t₂ (W := W)).positive :=
   sep_eliminative _
 
 theorem pred2_negative_eliminative (P : E → E → W → Prop) (t₁ t₂ : V) :
-    IsEliminative (pred2 P t₁ t₂ (W := W)).negative :=
+    CCP.IsEliminative (pred2 P t₁ t₂ (W := W)).negative :=
   sep_eliminative _
 
 /-! ### The bilateral algebra -/

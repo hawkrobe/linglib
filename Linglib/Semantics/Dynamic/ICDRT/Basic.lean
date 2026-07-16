@@ -122,13 +122,13 @@ theorem dseq_toUpdate : toUpdate (D₁ ⨟ D₂) c = toUpdate D₂ (toUpdate D�
 
 /-- `toUpdate D` is always distributive: it processes each
 assignment-world pair independently. Corollary of `lift_isDistributive`. -/
-theorem toUpdate_isDistributive : IsDistributive (toUpdate D) :=
+theorem toUpdate_isDistributive : CCP.IsDistributive (toUpdate D) :=
   lift_isDistributive (fiberDRS D)
 
 /-- A test update — one that preserves the assignment — lifts to an
 eliminative CCP: it can only shrink the context, never grow it. -/
 theorem toUpdate_test_eliminative (C : Assignment W E → Prop) :
-    IsEliminative (toUpdate (λ i j => i = j ∧ C j)) := by
+    CCP.IsEliminative (toUpdate (λ i j => i = j ∧ C j)) := by
   intro _ ⟨_, _⟩ hjw
   obtain ⟨⟨_, _⟩, hiw, rfl, rfl, _⟩ := hjw
   exact hiw

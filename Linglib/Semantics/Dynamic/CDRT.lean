@@ -166,10 +166,6 @@ abbrev DProp.ddisj {E : Type*} (φ ψ : DProp E) : DProp E :=
 abbrev DProp.true_at {E : Type*} (φ : DProp E) (i : State E) : Prop :=
   closure φ i
 
-/-- Dynamic entailment: every output of `φ` can be extended by `ψ`. -/
-def DProp.entails {E : Type*} (φ ψ : DProp E) : Prop :=
-  ∀ i o, φ i o → ψ.true_at o
-
 /-! ### Reduction lemmas -/
 
 /-- The output of a negated `DProp` always equals the input state. -/

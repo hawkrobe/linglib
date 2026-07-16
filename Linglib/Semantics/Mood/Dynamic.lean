@@ -54,6 +54,7 @@ namespace Mood
 
 open Intensional (WorldTimeIndex)
 open HistoricalAlternatives DynamicSemantics
+open DynamicSemantics.CCP (IsEliminative)
 
 variable {W Time : Type*}
 

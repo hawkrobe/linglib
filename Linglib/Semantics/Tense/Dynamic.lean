@@ -26,7 +26,7 @@ world coordinate is the current evaluation index, drefs are indices.
   intersection with the satisfaction set — is the prototype "static
   condition lifts to context filter"; [veltman-1996] formalizes it as
   the *test*, and [groenendijk-stokhof-veltman-1996] generalize to
-  eliminative updates (`IsEliminative`).
+  eliminative updates (`CCP.IsEliminative`).
 - [de-groote-2006] recovers static readings from dynamic ones by the
   trivial continuation; [charlow-2021] recasts the lift monadically.
   The `dynPAST = lift (test (precedes · ·))` factoring below is the
