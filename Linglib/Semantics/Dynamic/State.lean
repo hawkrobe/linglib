@@ -17,12 +17,17 @@ There is no base field: Def. 23's "Dom(f) = X" is the *uniform* stratum
 (`UniformAt`), and a base is the index of a fiber, not part of the data.
 Points with domain `X` are world–`X`-environment pairs, constructively
 (`Possibility.domEquiv` — the total-assignment rendering needed choice
-and an inhabitant of `M` to recover this). Informativeness
-([kamp-vangenabith-reyle-2011] Def. 25) is *subsistence*: every point of
-the weaker state has a descendant in the stronger — the order of
-[groenendijk-stokhof-veltman-1996] Defs. 2.8–2.9 and
-[elliott-sudo-2025] Def. 3.3, promoted here from the bilateral system to
-the root.
+and an inhabitant of `M` to recover this). Two preorders run through states, and they are
+dual on shared strata. *Informativeness* (`⊑`,
+[kamp-vangenabith-reyle-2011] Def. 25) quantifies over the stronger
+state: every point of the stronger has an ancestor in the weaker — the
+absurd state `∅` is maximally informative, the eliminative direction.
+*Subsistence* (`⪯`, [elliott-sudo-2025] Def. 3.3, after
+[groenendijk-stokhof-veltman-1996] Defs. 2.8–2.9) quantifies over the
+weaker: every point survives, extended, into the stronger — the
+anaphoric-support direction, with `∅` at the bottom. On a uniform
+stratum they reduce to `⊇` and `⊆` respectively
+(`infoLe_iff_superset`, `subsistsIn_iff_subset`).
 
 ## Main definitions
 
@@ -30,7 +35,8 @@ the root.
   a partial point, and same-world graph-extension.
 - `State W V M`: information states; `initial`, with `∅` the absurd
   state.
-- `Subsists` (`≺`), `subsistsIn` (`⪯`): the informativeness order.
+- `infoLe` (`⊑`): informativeness (Def. 25); `Subsists` (`≺`),
+  `subsistsIn` (`⪯`): subsistence.
 - `worlds`, `Familiar`: worldly content and familiarity.
 - `State.UniformAt`, `Possibility.domEquiv`: the indexed stratum and its
   constructive classification.
@@ -39,9 +45,24 @@ the root.
 
 ## Main results
 
+- `Possibility.Descendant.eq_of_dom_eq`: on a shared domain, descendance
+  is equality — so both preorders are partial orders on each uniform
+  stratum (`infoLe_iff_superset`, `subsistsIn_iff_subset`).
 - `subsistsIn_restrict`: restriction only forgets — the restricted state
   subsists in the original.
+- `uniformAt_restrict`, `restrict_restrict`: restriction meets the
+  stratification.
 - `uniformAt_initial`: the initial state is the empty-base fiber.
+
+## Implementation notes
+
+`State` is an abbreviation, so `Set`'s complete lattice is available and
+`⊑`/`⪯` are scoped relations rather than instances. Neither is
+antisymmetric on raw sets (adding an ancestor of an existing point is
+invisible to both); antisymmetry holds on each uniform stratum, where
+they coincide with `⊇`/`⊆`. The predecessor of this file classified its
+fibers as `(Set (W × (↑X → M)))ᵒᵈ` — the dual lands here because its
+order was Def. 25's, matching `⊑`, not `⪯`.
 
 ## References
 
@@ -85,6 +106,19 @@ theorem Descendant.dom_subset {p q : Possibility W V (Option M)}
   obtain ⟨e, he⟩ := Option.isSome_iff_exists.mp hv
   exact Option.isSome_iff_exists.mpr ⟨e, h.2 v e he⟩
 
+/-- On a shared domain, descendance is equality: there is no room to
+grow. -/
+theorem Descendant.eq_of_dom_eq {p q : Possibility W V (Option M)}
+    (h : p.Descendant q) (hdom : p.dom = q.dom) : p = q := by
+  refine Possibility.ext h.1 (funext fun v => ?_)
+  rcases hp : p.assignment v with _ | e
+  · rcases hq : q.assignment v with _ | e
+    · rfl
+    · have : v ∈ p.dom := hdom ▸ Option.isSome_iff_exists.mpr ⟨e, hq⟩
+      rw [Possibility.mem_dom, hp] at this
+      exact absurd this (by simp)
+  · exact (h.2 v e hp).symm ▸ rfl
+
 end Possibility
 
 /-! ### Information states -/
@@ -126,6 +160,28 @@ theorem subsistsIn_trans {s t u : State W V M} (hst : s ⪯ t)
   obtain ⟨r, hr, hqr⟩ := htu q hq
   exact ⟨r, hr, hpq.trans hqr⟩
 
+/-- Informativeness ([kamp-vangenabith-reyle-2011] Def. 25): `s'` carries
+at least as much information as `s` — every point of the stronger state
+has an ancestor in the weaker. The absurd state is maximally
+informative; the eliminative direction, dual to `⪯` on shared strata. -/
+def infoLe (s s' : State W V M) : Prop :=
+  ∀ q ∈ s', ∃ p ∈ s, p.Descendant q
+
+@[inherit_doc] scoped notation:50 s " ⊑ " s' => infoLe s s'
+
+theorem infoLe_refl (s : State W V M) : s ⊑ s :=
+  fun q hq => ⟨q, hq, Possibility.Descendant.refl q⟩
+
+theorem infoLe_trans {s t u : State W V M} (hst : s ⊑ t) (htu : t ⊑ u) :
+    s ⊑ u := fun r hr => by
+  obtain ⟨q, hq, hqr⟩ := htu r hr
+  obtain ⟨p, hp, hpq⟩ := hst q hq
+  exact ⟨p, hp, hpq.trans hqr⟩
+
+/-- The absurd state is maximally informative. -/
+theorem infoLe_empty (s : State W V M) : s ⊑ (∅ : State W V M) :=
+  fun q hq => absurd hq (Set.notMem_empty q)
+
 /-- The worldly content of a state ([elliott-sudo-2025] Def. 3.1's 𝒲). -/
 def worlds (s : State W V M) : Set W :=
   Possibility.world '' s
@@ -161,6 +217,44 @@ theorem restrict_descendant (X : Finset V)
     · simpa [restrict, hx] using h
     · simp [restrict, hx] at h⟩
 
+/-- Restriction intersects the domain. -/
+theorem dom_restrict (X : Finset V) (p : Possibility W V (Option M)) :
+    (p.restrict X).dom = ↑X ∩ p.dom := by
+  ext v
+  by_cases hv : v ∈ X <;> simp [restrict, dom, hv]
+
+/-- Descendance out of a stratum is *being the restriction*: for `p` at
+`X`, `p` grows into `q` exactly when `p` is `q` cut to `X`. The
+hom-characterization of the fibred order. -/
+theorem descendant_iff_eq_restrict {X : Finset V}
+    {p q : Possibility W V (Option M)} (hp : p.dom = (↑X : Set V)) :
+    p.Descendant q ↔ p = q.restrict X := by
+  constructor
+  · intro h
+    refine Possibility.ext h.1 (funext fun v => ?_)
+    by_cases hv : v ∈ X
+    · have hsome : (p.assignment v).isSome :=
+        (Set.ext_iff.mp hp v).mpr hv
+      obtain ⟨e, he⟩ := Option.isSome_iff_exists.mp hsome
+      rw [he]
+      simp only [restrict, if_pos hv]
+      exact (h.2 v e he).symm
+    · have hnone : p.assignment v = none :=
+        Option.not_isSome_iff_eq_none.mp
+          fun hs => hv ((Set.ext_iff.mp hp v).mp hs)
+      rw [hnone]
+      simp [restrict, hv]
+  · rintro rfl
+    exact restrict_descendant X q
+
+/-- Restriction is pointwise idempotent along intersections. -/
+theorem restrict_restrict (X Y : Finset V)
+    (p : Possibility W V (Option M)) :
+    (p.restrict Y).restrict X = p.restrict (X ∩ Y) := by
+  refine Possibility.ext rfl (funext fun v => ?_)
+  by_cases hx : v ∈ X <;> by_cases hy : v ∈ Y <;>
+    simp [restrict, hx, hy]
+
 end Possibility
 
 namespace State
@@ -179,6 +273,61 @@ theorem uniformAt_initial : UniformAt ∅ (initial : State W V M) :=
     ext v
     simp [Possibility.dom, hp v]
 
+/-- On a uniform stratum, subsistence is inclusion. -/
+theorem subsistsIn_iff_subset {X : Finset V} {s s' : State W V M}
+    (hs : UniformAt X s) (hs' : UniformAt X s') :
+    (s ⪯ s') ↔ s ⊆ s' := by
+  constructor
+  · intro h p hp
+    obtain ⟨q, hq, hpq⟩ := h p hp
+    rwa [hpq.eq_of_dom_eq ((hs p hp).trans (hs' q hq).symm)]
+  · exact fun h p hp => Subsists.of_mem (h hp)
+
+/-- On a uniform stratum, informativeness is reverse inclusion — the
+eliminative direction. -/
+theorem infoLe_iff_superset {X : Finset V} {s s' : State W V M}
+    (hs : UniformAt X s) (hs' : UniformAt X s') :
+    (s ⊑ s') ↔ s' ⊆ s := by
+  constructor
+  · intro h q hq
+    obtain ⟨p, hp, hpq⟩ := h q hq
+    rwa [← hpq.eq_of_dom_eq ((hs p hp).trans (hs' q hq).symm)]
+  · exact fun h q hq => ⟨q, h hq, Possibility.Descendant.refl q⟩
+
+section Fibred
+variable [DecidableEq V]
+
+/-- Subsistence out of a stratum factors through reindexing: the weaker
+state includes into the restricted image of the stronger — the fibred
+order, glued from within-stratum `⊆` along `restrict`. -/
+theorem subsistsIn_iff_subset_restrict {X : Finset V}
+    {s s' : State W V M} (hs : UniformAt X s) :
+    (s ⪯ s') ↔ s ⊆ Possibility.restrict X '' s' := by
+  constructor
+  · intro h p hp
+    obtain ⟨q, hq, hpq⟩ := h p hp
+    exact ⟨q, hq,
+      ((Possibility.descendant_iff_eq_restrict (hs p hp)).mp hpq).symm⟩
+  · rintro h p hp
+    obtain ⟨q, hq, rfl⟩ := h hp
+    exact ⟨q, hq, Possibility.restrict_descendant X q⟩
+
+/-- Informativeness out of a stratum factors through reindexing: the
+restricted image of the stronger is included in the weaker — the
+eliminative direction of the fibred order. -/
+theorem infoLe_iff_restrict_subset {X : Finset V}
+    {s s' : State W V M} (hs : UniformAt X s) :
+    (s ⊑ s') ↔ Possibility.restrict X '' s' ⊆ s := by
+  constructor
+  · rintro h r ⟨q, hq, rfl⟩
+    obtain ⟨p, hp, hpq⟩ := h q hq
+    rwa [← (Possibility.descendant_iff_eq_restrict (hs p hp)).mp hpq]
+  · intro h q hq
+    exact ⟨q.restrict X, h ⟨q, hq, rfl⟩,
+      Possibility.restrict_descendant X q⟩
+
+end Fibred
+
 variable [DecidableEq V]
 
 /-- Restriction of a state: pointwise, by direct image. -/
@@ -192,12 +341,24 @@ theorem subsistsIn_restrict (X : Finset V) (I : State W V M) :
   rintro p ⟨q, hq, rfl⟩
   exact ⟨q, hq, Possibility.restrict_descendant X q⟩
 
+/-- Restriction meets the stratification. -/
+theorem uniformAt_restrict {X Y : Finset V} {I : State W V M}
+    (h : UniformAt Y I) : UniformAt (X ∩ Y) (I.restrict X) := by
+  rintro p ⟨q, hq, rfl⟩
+  rw [Possibility.dom_restrict, h q hq, Finset.coe_inter]
+
+/-- Restriction composes along intersections. -/
+theorem restrict_restrict (X Y : Finset V) (I : State W V M) :
+    (I.restrict Y).restrict X = I.restrict (X ∩ Y) := by
+  unfold restrict
+  rw [← Set.image_comp]
+  exact congrFun (congrArg _ (funext (Possibility.restrict_restrict X Y))) I
+
 /-- Random assignment ([elliott-sudo-2025], (43);
 [groenendijk-stokhof-1991]'s `x := random`): indeterministically extend
 each point to a defined value at `x`. -/
 def randomAssign (I : State W V M) (x : V) : State W V M :=
-  {p | ∃ q ∈ I, ∃ m : M,
-    p = ⟨q.world, Function.update q.assignment x (some m)⟩}
+  {p | ∃ q ∈ I, ∃ m : M, p = q.extend x (some m)}
 
 end State
 
