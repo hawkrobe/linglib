@@ -69,8 +69,8 @@ theorem agreeSetoid_anti : Antitone (agreeSetoid : Set V → Setoid (Possibility
     congrArg (fun wf : W × (Y → M) =>
       ((wf.1, fun v => wf.2 ⟨v.1, hXY v.2⟩) : W × (X → M))) h
 
-/-- The possibility over a world–`X`-environment pair, junk-valued off
-`X`. -/
+/-- Extend a world–`X`-environment pair to a possibility, taking
+arbitrary values outside `X`. -/
 noncomputable def ofEnv [Nonempty M] (wf : W × (X → M)) : Possibility W V M :=
   ⟨wf.1, Function.extend Subtype.val wf.2 fun _ => Classical.arbitrary M⟩
 
