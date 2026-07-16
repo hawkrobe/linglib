@@ -32,6 +32,8 @@ dynamic conjunction, conditional, and disjunction
   the partiality column of the effect view, beside `Collapse.lean`'s
   powerset column
 - `admits_seq` — the Karttunen satisfaction law, by construction
+- `neg_eliminative`, `seq_eliminative` — Heim's Principle (A), and its
+  closure under sequencing
 - `admits_ofPartialProp` — admittance is `Context.presupSatisfied`
 - `admits_seq_ofPartialProp`, `admits_cond_ofPartialProp`,
   `admits_disj_ofPartialProp` — the filtering connectives, derived
@@ -103,6 +105,23 @@ def cond (φ ψ : CCP.Partial P) : CCP.Partial P :=
     `s[φ ∨ ψ] = s[φ] ∪ (s \ s[φ])[ψ]`. -/
 def disj (φ ψ : CCP.Partial P) : CCP.Partial P :=
   λ s => (φ s).bind λ sφ => (ψ (s \ sφ)).map λ sψ => sφ ∪ sψ
+
+/-! ### Eliminativity -/
+
+/-- Negation is eliminative: defined outputs shrink the input. -/
+theorem neg_eliminative (φ : CCP.Partial P) {s s' : Set P}
+    (h : s' ∈ neg φ s) : s' ⊆ s := by
+  obtain ⟨t, -, rfl⟩ := (Part.mem_map_iff _).mp h
+  exact Set.sdiff_subset
+
+/-- Eliminativity ([heim-1982]'s Principle (A);
+[groenendijk-stokhof-1990]'s `↓`-direction) is closed under
+sequencing. -/
+theorem seq_eliminative {φ ψ : CCP.Partial P}
+    (hφ : ∀ s, ∀ s' ∈ φ s, s' ⊆ s) (hψ : ∀ s, ∀ s' ∈ ψ s, s' ⊆ s)
+    {s s' : Set P} (h : s' ∈ seq φ ψ s) : s' ⊆ s := by
+  obtain ⟨t, ht, hs'⟩ := Part.mem_bind_iff.mp h
+  exact (hψ t s' hs').trans (hφ s t ht)
 
 /-! ### The satisfaction law -/
 

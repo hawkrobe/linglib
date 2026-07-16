@@ -193,15 +193,20 @@ theorem uniformAt_initial : UniformAt ∅ (initial : State W V M) :=
     ext v
     simp [Possibility.dom, hp v]
 
+/-- Into a uniform stratum, subsistence is membership: a point already
+at the stratum's domain has no room to grow. -/
+theorem subsists_iff_mem {X : Finset V} {s : State W V M}
+    (hs : UniformAt X s) {p : Possibility W V (Option M)}
+    (hp : p.dom = (↑X : Set V)) : (p ≺ s) ↔ p ∈ s :=
+  ⟨fun ⟨q, hq, hpq⟩ =>
+    (hpq.eq_of_dom_eq (hp.trans (hs q hq).symm)).symm ▸ hq,
+    Subsists.of_mem⟩
+
 /-- On a uniform stratum, subsistence is inclusion. -/
 theorem subsistsIn_iff_subset {X : Finset V} {s s' : State W V M}
     (hs : UniformAt X s) (hs' : UniformAt X s') :
-    (s ⪯ s') ↔ s ⊆ s' := by
-  constructor
-  · intro h p hp
-    obtain ⟨q, hq, hpq⟩ := h p hp
-    rwa [hpq.eq_of_dom_eq ((hs p hp).trans (hs' q hq).symm)]
-  · exact fun h p hp => Subsists.of_mem (h hp)
+    (s ⪯ s') ↔ s ⊆ s' :=
+  forall₂_congr fun p hp => subsists_iff_mem hs' (hs p hp)
 
 /-- On a uniform stratum, informativeness is reverse inclusion — the
 eliminative direction. -/
