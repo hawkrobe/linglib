@@ -122,7 +122,9 @@ def cond (φ ψ : FCP W V M) : FCP W V M :=
 /-- Indefinite introduction: defined only if `x` is novel (the Novelty
 Condition — no point defines it); then introduce `x` by random
 assignment and update with the body. Indefinites don't quantify — they
-open a new file card. -/
+open a new file card. [heim-1991] later derives novelty from Maximize
+Presupposition rather than stipulating it; the guard here is the
+original (15). -/
 def indef [DecidableEq V] (x : V) (body : FCP W V M) : FCP W V M :=
   fun F => Part.assert (∀ p ∈ F, p.assignment x = none) fun _ =>
     body (State.randomAssign F x)
