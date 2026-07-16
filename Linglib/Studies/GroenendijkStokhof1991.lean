@@ -1,7 +1,6 @@
 import Linglib.Core.Logic.CylindricAlgebra
 import Linglib.Semantics.Dynamic.DPL
 import Linglib.Semantics.Dynamic.Transition
-import Mathlib.Logic.Function.DependsOn
 
 /-!
 # Groenendijk & Stokhof (1991): Dynamic Predicate Logic
@@ -462,13 +461,14 @@ end SatisfactionSets
 /-! ### The indexed reading: DPL generators as context extension -/
 
 /-! DPL meanings are relations on total assignments (Definition 2); the
-indexed substrate (`Transition.lean`) types them by the contexts they read
-and write. The two generators land as arrows: tests (clauses 1–3, 5, 6, 8
-are all of this shape) become `testTransition`s `X ⟶ X`, and the random
-reset of clause 7 is `Transition.randomAssign : X ⟶ insert x X`.
-Sequencing is clause 4 (`rel_comp_iff_conj`), and the existential factors
-as random assignment composed with its scope
-(`rel_randomAssign_comp_iff_exists`) — so a DPL formula's indexed meaning is
+indexed substrate (`Transition.lean`) types them by the contexts they
+read and write, via the total–typed bridge `Transition.ofTotal`. Tests
+(clauses 1–3, 5, 6, 8 are all of this shape) become `testTransition`s
+`X ⟶ X` — the predecessor's `DependsOn` guard dissolved with the
+typing — and the random reset of clause 7 is `Transition.randomAssign :
+X ⟶ insert x X`. Sequencing is clause 4 (`toTransition_comp`), and the
+existential factors through the category *unconditionally*
+(`randomAssign_comp_toTransition`) — a DPL formula's indexed meaning is
 a composite of the generating arrows of `DynamicSemantics.Ctx`. -/
 
 section IndexedReading
@@ -477,62 +477,95 @@ open DynamicSemantics DynamicSemantics.Update
 
 variable {W : Type*} {X Y : Finset ℕ}
 
-/-- A DPL test as a transition: a condition supported on the context,
-checked without changing the assignment. Clauses 1–3, 5, 6, and 8 of
+/-- A DPL relation as a transition at contexts, worlds inert, via the
+substrate's total–typed bridge. -/
+def toTransition (h : X ⊆ Y) (φ : DPLRel E) : Transition W E X Y :=
+  Transition.ofTotal h fun _ => φ
+
+/-- A DPL test as a transition: a condition on the context, checked
+without changing the environment. Clauses 1–3, 5, 6, and 8 of
 Definition 2 are all of this form. -/
-def testTransition (X : Finset ℕ) (C : (ℕ → E) → Prop)
-    (hC : DependsOn C ↑X) : Transition W E X X where
-  rel _ f h := Set.EqOn f h ↑X ∧ C f
+def testTransition (X : Finset ℕ) (C : ((↑X : Set ℕ) → E) → Prop) :
+    Transition W E X X where
+  rel _ e e' := e = e' ∧ C e
   grow := subset_rfl
-  supported_left _ _ _ _ hff' :=
-    and_congr ⟨(hff'.symm.trans ·), (hff'.trans ·)⟩ (iff_of_eq (hC hff'))
-  supported_right _ _ _ _ hgg' :=
-    and_congr ⟨(·.trans hgg'), (·.trans hgg'.symm)⟩ Iff.rfl
 
-/-- Applying a test at a state indexed below its context filters the
-carrier — the indexed form of Definition 2's test clauses. -/
-theorem mem_testTransition_apply {C : (ℕ → E) → Prop} {hC : DependsOn C ↑X}
-    {I : State W ℕ E} (hbase : I.base ⊆ X) {w : W} {g : ℕ → E} :
-    (⟨w, g⟩ : Possibility W ℕ E) ∈ (testTransition X C hC).apply I ↔
-      (⟨w, g⟩ : Possibility W ℕ E) ∈ I ∧ C g := by
-  rw [Transition.mem_apply]
+/-- Applying a test filters the fiber — the indexed form of
+Definition 2's test clauses. -/
+theorem testTransition_apply {C : ((↑X : Set ℕ) → E) → Prop}
+    (T : Set (W × ((↑X : Set ℕ) → E))) :
+    (testTransition X C).apply T = {e ∈ T | C e.2} := by
+  ext ⟨w, e⟩
   constructor
-  · rintro ⟨f, hf, hfg, hCf⟩
-    exact ⟨(I.supported.mem_iff (hfg.mono (Finset.coe_subset.mpr hbase))).mp hf,
-      (hC hfg) ▸ hCf⟩
-  · rintro ⟨hg, hCg⟩
-    exact ⟨g, hg, Set.eqOn_refl g _, hCg⟩
+  · rintro ⟨e₀, he₀, heq, hC⟩
+    cases heq
+    exact ⟨he₀, hC⟩
+  · rintro ⟨hT, hC⟩
+    exact ⟨e, hT, rfl, hC⟩
 
-/-- Clause 4 is transition composition: if `u` and `v` realize `φ` and
-`ψ` world-pointwise, their composite realizes `φ ∧ ψ`. -/
-theorem rel_comp_iff_conj {Z : Finset ℕ} {u : Transition W E X Y}
-    {v : Transition W E Y Z} {φ ψ : DPLRel E}
-    (hu : ∀ w f h, u.rel w f h ↔ φ f h) (hv : ∀ w f h, v.rel w f h ↔ ψ f h)
-    (w : W) (f h : ℕ → E) :
-    (u.comp v).rel w f h ↔ DPLRel.conj φ ψ f h :=
-  exists_congr fun k => and_congr (hu w f k) (hv w k h)
+/-- Clause 4 is transition composition: with the second conjunct reading
+within its context, typed sequencing is DPL conjunction. -/
+theorem toTransition_comp {Z : Finset ℕ} (h₁ : X ⊆ Y) (h₂ : Y ⊆ Z)
+    {φ ψ : DPLRel E}
+    (hψ : Transition.ReadsAt (W := W) Y fun _ => ψ) :
+    (toTransition (W := W) h₁ φ).comp (toTransition h₂ ψ) =
+      toTransition (h₁.trans h₂) (φ.conj ψ) :=
+  Transition.ofTotal_comp hψ
 
-/-- Clause 7 factors through the category: the existential is the
-random-assignment arrow composed with its scope. The scope's transition
-reads only `insert x X`, which is what lets the reset's underspecification
-off `x` collapse to Definition 2's `∃d`. -/
-theorem rel_randomAssign_comp_iff_exists {x : ℕ}
-    {u : Transition W E (insert x X) Y} {φ : DPLRel E}
-    (hu : ∀ w f h, u.rel w f h ↔ φ f h) (w : W) (f h : ℕ → E) :
-    ((Transition.randomAssign X x).comp u).rel w f h ↔
-      DPLRel.exists_ x φ f h := by
+/-- Clause 7 factors through the category, unconditionally: composing the
+random-assignment arrow with a typed scope is the existential. The
+scope's transition reads only `insert x X`, which is what lets the
+reset's underspecification off `x` collapse to Definition 2's `∃d`. -/
+theorem randomAssign_comp_toTransition {x : ℕ} (h : insert x X ⊆ Y)
+    (φ : DPLRel E) :
+    (Transition.randomAssign X x).comp (toTransition (W := W) h φ) =
+      toTransition ((Finset.subset_insert x X).trans h)
+        (DPLRel.exists_ x φ) := by
+  ext w e e''
   constructor
-  · rintro ⟨k, hfk, huk⟩
-    refine ⟨k x, (hu ..).mp ((u.supported_left fun y hy => ?_).mp huk)⟩
-    rcases Finset.mem_insert.mp hy with rfl | hyX
-    · simp
-    · rcases eq_or_ne y x with rfl | hyx
-      · simp
-      · exact (hfk (Finset.mem_coe.mpr (Finset.mem_erase.mpr ⟨hyx, hyX⟩))).symm.trans
-          (if_neg hyx).symm
-  · rintro ⟨d, hφ⟩
-    refine ⟨fun n => if n = x then d else f n, fun y hy => ?_, (hu ..).mpr hφ⟩
-    exact (if_neg (Finset.mem_erase.mp hy).1).symm
+  · rintro ⟨e', hmid, f, g, hf, hg, hφ⟩
+    by_cases hx : x ∈ X
+    · refine ⟨Function.update f x (e ⟨x, hx⟩), g, funext fun v => ?_, hg,
+        f x, ?_⟩
+      · rcases eq_or_ne v.1 x with hvx | hvx
+        · show Function.update f x (e ⟨x, hx⟩) v.1 = e v
+          rw [show v = ⟨x, hx⟩ from Subtype.ext hvx]
+          exact Function.update_self ..
+        · show Function.update f x (e ⟨x, hx⟩) v.1 = e v
+          rw [Function.update_of_ne hvx]
+          have h1 : f v.1 = e' ⟨v.1, Finset.mem_insert_of_mem v.2⟩ :=
+            congrFun hf ⟨v.1, Finset.mem_insert_of_mem v.2⟩
+          rw [h1]
+          exact (hmid v.1 v.2 hvx).symm
+      · have hff : (fun n => if n = x then f x
+            else Function.update f x (e ⟨x, hx⟩) n) = f := funext fun n => by
+          rcases eq_or_ne n x with rfl | hn
+          · simp
+          · simp [Function.update_of_ne hn, if_neg hn]
+        show φ _ g
+        rw [hff]
+        exact hφ
+    · refine ⟨f, g, funext fun v => ?_, hg, f x, ?_⟩
+      · show f v.1 = e v
+        have h1 : f v.1 = e' ⟨v.1, Finset.mem_insert_of_mem v.2⟩ :=
+          congrFun hf ⟨v.1, Finset.mem_insert_of_mem v.2⟩
+        rw [h1]
+        exact (hmid v.1 v.2 fun hvx => hx (hvx ▸ v.2)).symm
+      · have hff : (fun n => if n = x then f x else f n) = f :=
+          funext fun n => by
+            rcases eq_or_ne n x with rfl | hn
+            · simp
+            · simp [if_neg hn]
+        show φ _ g
+        rw [hff]
+        exact hφ
+  · rintro ⟨F, g, hF, hg, d, hφ⟩
+    refine ⟨(↑(insert x X) : Set ℕ).restrict fun n => if n = x then d else F n,
+      fun v hv hvx => ?_, (fun n => if n = x then d else F n), g,
+      rfl, hg, hφ⟩
+    show e ⟨v, hv⟩ = if v = x then d else F v
+    rw [if_neg hvx]
+    exact (congrFun hF ⟨v, hv⟩).symm
 
 end IndexedReading
 
