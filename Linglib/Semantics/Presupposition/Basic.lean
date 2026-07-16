@@ -716,7 +716,7 @@ theorem andFlex_presup_weaker (p q : PartialProp W) (w : W)
 theorem eval_or (p q : PartialProp W) (w : W) :
     (or p q).eval w = Trivalent.joinWeak (p.eval w) (q.eval w) := by
   simp only [eval, or, Trivalent.joinWeak]
-  by_cases hp : p.presup w <;> by_cases hq : q.presup w <;> simp [hp, hq] <;>
+  by_cases hp : p.presup w <;> by_cases hq : q.presup w <;> simp [hp, hq];
     by_cases ha : p.assertion w <;> by_cases hb : q.assertion w <;>
     simp [ha, hb]
 
