@@ -64,8 +64,7 @@ def proj : W × (X → M) := (p.world, X.restrict p.assignment)
 def agreeSetoid : Setoid (Possibility W V M) := Setoid.ker (proj X)
 
 /-- Coarser granularities identify more possibilities. -/
-theorem agreeSetoid_anti :
-    Antitone (agreeSetoid : Set V → Setoid (Possibility W V M)) :=
+theorem agreeSetoid_anti : Antitone (agreeSetoid : Set V → Setoid (Possibility W V M)) :=
   fun X Y hXY _ _ h =>
     congrArg (fun wf : W × (Y → M) =>
       ((wf.1, fun v => wf.2 ⟨v.1, hXY v.2⟩) : W × (X → M))) h
