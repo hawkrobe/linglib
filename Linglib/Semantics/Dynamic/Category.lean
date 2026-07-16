@@ -11,48 +11,26 @@ live discourse referents), morphisms are `Transition`s, composition is
 world-pointwise relational composition. The identity and associativity
 laws are `Transition.lean`'s `id_comp`/`comp_id`/`comp_assoc`.
 
-The category locates the module's inhabitants. States over a context are
-not an independent structure: `State.presheaf` is the powerset functor
-applied fiberwise to the presheaf of environments
-(`presheafIsoEnvironments`), so level 1 is the `Set` effect read over
-the category of contexts, exactly as `Collapse.lean`'s level 0 is the
-same effect read over a point — and `Partial.lean`'s partial CCPs are
-the `Part` column. Under the identification, `State.restrict` is direct
-image along environment projections (`fiberOrderIsoProd_restrict`), the
-left adjoint of mathlib's `Set.image_preimage`/`Set.preimage_kernImage`
-triple: [lawvere-1969]'s quantifiers as adjoints, in [jacobs-1999]'s
-fibrational reading of contexts — the "indexed" picture `State.lean`
-cites via [visser-1998]. Syntax categories interpret into `Ctx`
-(`DRS/Category.lean`'s `sem`); the degenerate fiber at `∅` is
-[veltman-1996]'s update semantics (`State.fiberEmptyOrderIso`).
+The presheaf of state fibers is the composite of the environments
+presheaf with the powerset functor — definitionally, in this
+formulation: the predecessor proved the isomorphism
+(`presheafIsoEnvironments`); typing states at their environments makes
+it the definition (`State.presheaf`). Restriction is `Set.image` along
+environment weakening, the ∃-leg of mathlib's
+`Set.image_preimage`/`Set.preimage_kernImage` triple ([lawvere-1969]'s
+quantifiers as adjoints to weakening, as retold by [jacobs-1999]).
+Syntax categories interpret into `Ctx` (`DRS/Category.lean`); the fiber
+at `∅` is [veltman-1996]'s update semantics.
 
 ## Main definitions
 
 - `Ctx W M V`: bundled contexts, with a `Category` instance whose
   morphisms are `Transition`s between the bases.
-- `State.presheaf`: information states as a presheaf on the poset of
-  bases — the fiber over `X` is the states indexed at `X`, restriction is
-  `State.restrict`. Precedent: [abramsky-sadrzadeh-2014]'s presheaf of
-  basic DRSs over vocabulary–variable contexts, whose base category
-  additionally has relabelling morphisms; ours is the inclusions-only
-  fragment with model-theoretic fibers.
 - `environments`: the presheaf of world–assignment pairs at each
-  granularity — a model read over the category of contexts.
-- `State.presheafIsoEnvironments`: `State.presheaf` is the composite of
-  `environments` with the powerset functor.
-
-## Main results
-
-- `State.fiberOrderIsoProd_restrict`: under the fiber classification,
-  restriction is direct image along the environment projection.
-
-## Implementation notes
-
-Morphisms are a one-field structure wrapping `Transition` (the
-`RelCat.Hom` pattern): an unbundled `Hom` field breaks dot-notation on
-morphisms. The collapse functor to `RelCat` lives in `Collapse.lean`,
-because importing `RelCat` interferes with instance resolution for the
-functions category on `Type u`, which `State.presheaf` needs.
+  granularity — a set-valued indexed category in [jacobs-1999]'s sense,
+  its maps the semantic face of *weakening*. Precedent for the
+  states-as-presheaf reading: [abramsky-sadrzadeh-2014].
+- `State.presheaf`: the state fibers — `environments ⋙ Set`.
 
 ## References
 
@@ -96,31 +74,9 @@ instance : Category (Ctx W M V) where
 
 end Ctx
 
-/-! ### The state presheaf -/
+/-! ### The environments presheaf and the state fibers -/
 
 universe u v w
-
-/-- Information states form a presheaf on the poset of bases: the fiber
-over `X` is the states indexed at `X`, and restriction along `Y ⊆ X` is
-`State.restrict` — the presheaf laws are `restrict_base` and
-`restrict_restrict`. -/
-def State.presheaf (W : Type u) (M : Type v) (V : Type w) :
-    (Finset V)ᵒᵖ ⥤ Type (max u v w) where
-  obj X := State.fiber W M X.unop
-  map {X Y} f := TypeCat.ofHom
-    fun I => ⟨I.val.restrict Y.unop, State.base_restrict I.val Y.unop⟩
-  map_id X := by
-    ext I : 3
-    apply Subtype.ext
-    obtain ⟨J, hJ⟩ := I
-    show J.restrict X.unop = J
-    rw [← hJ]
-    exact J.restrict_base
-  map_comp {X Y Z} h k := by
-    ext I : 3
-    exact Subtype.ext (I.val.restrict_restrict (leOfHom k.unop)).symm
-
-/-! ### The presheaf is a composite -/
 
 /-- The presheaf of environments: over `X`, world–assignment pairs at
 granularity `X`; restriction precomposes with the inclusion. A model read
@@ -134,74 +90,12 @@ def environments (W : Type u) (M : Type v) (V : Type w) :
   map {X Y} f := TypeCat.ofHom fun p =>
     ⟨p.1, fun v => p.2 ⟨v.1, leOfHom f.unop v.2⟩⟩
 
-section Classified
-variable {W : Type u} {M : Type v} {V : Type w} [Nonempty M]
-
-open scoped Classical in
-/-- Under the fiber classification, restriction is direct image along the
-environment projection (weakening) — the left adjoint of mathlib's
-`Set.image_preimage`/`Set.preimage_kernImage` triple: [lawvere-1969]'s
-quantifiers as left and right adjoints to weakening, as retold by
-[jacobs-1999]. -/
-theorem State.fiberOrderIsoProd_restrict {X Y : Finset V} (hYX : Y ⊆ X)
-    (I : State.fiber W M X) :
-    OrderDual.ofDual (State.fiberOrderIsoProd Y
-        ⟨I.val.restrict Y, State.base_restrict I.val Y⟩) =
-      (fun p : W × ((↑X : Set V) → M) =>
-        (p.1, fun v : (↑Y : Set V) => p.2 ⟨v.1, hYX v.2⟩)) ''
-        OrderDual.ofDual (State.fiberOrderIsoProd X I) := by
-  ext ⟨w, h⟩
-  constructor
-  · intro hmem
-    have hg : (↑Y : Set V).restrict (fun v => if hv : v ∈ (↑Y : Set V) then
-        h ⟨v, hv⟩ else Classical.arbitrary M) = h :=
-      funext fun v => dif_pos v.2
-    rw [← hg] at hmem
-    obtain ⟨k, hk, hkg⟩ := State.mem_restrict.mp
-      (State.mem_fiberOrderIsoProd.mp hmem)
-    refine ⟨(w, (↑X : Set V).restrict k),
-      State.mem_fiberOrderIsoProd.mpr hk, ?_⟩
-    refine Prod.ext rfl ?_
-    rw [← hg]
-    funext v
-    exact hkg v.2
-  · rintro ⟨⟨w', e⟩, hmem, heq⟩
-    obtain ⟨rfl, rfl⟩ := Prod.mk.injEq .. |>.mp heq
-    have hk : (↑X : Set V).restrict (fun v => if hv : v ∈ (↑X : Set V) then
-        e ⟨v, hv⟩ else Classical.arbitrary M) = e :=
-      funext fun v => dif_pos v.2
-    rw [← hk] at hmem
-    have hYk : (↑Y : Set V).restrict (fun v => if hv : v ∈ (↑X : Set V) then
-        e ⟨v, hv⟩ else Classical.arbitrary M) =
-        fun v : (↑Y : Set V) => e ⟨v.1, hYX v.2⟩ :=
-      funext fun v => dif_pos (hYX v.2)
-    rw [← hYk]
-    exact State.mem_fiberOrderIsoProd.mpr
-      (State.mem_restrict.mpr
-        ⟨_, State.mem_fiberOrderIsoProd.mp hmem, Set.eqOn_refl _ _⟩)
-
-/-- `State.presheaf` is not primitive: it is the composite of the
-environments presheaf with the powerset functor — the fiber
-classification `State.fiberOrderIsoProd`, naturally in the base. The
-`Set` here is the same monad whose Kleisli category is level 0
-(`Collapse.lean`): the presheaf face and the monadic face of dynamic
-semantics are one structure. -/
-noncomputable def State.presheafIsoEnvironments
-    (W : Type u) (M : Type v) (V : Type w) [Nonempty M] :
-    State.presheaf W M V ≅ environments W M V ⋙ ofTypeFunctor Set :=
-  NatIso.ofComponents
-    (fun X => ((State.fiberOrderIsoProd X.unop).toEquiv.trans
-      OrderDual.ofDual).toIso)
-    (by
-      intro X Y f
-      ext I : 3
-      show OrderDual.ofDual (State.fiberOrderIsoProd Y.unop
-          ⟨I.val.restrict Y.unop, State.base_restrict I.val Y.unop⟩) = _
-      rw [State.fiberOrderIsoProd_restrict (leOfHom f.unop) I]
-      show _ = Functor.map _ (OrderDual.ofDual (State.fiberOrderIsoProd X.unop I))
-      rw [Set.fmap_eq_image]
-      rfl)
-
-end Classified
+/-- The state fibers as a presheaf on the poset of bases: the powerset
+functor applied fiberwise to the environments — by definition, in this
+formulation. The fiber over `X` is `Set (W × (↑X → M))`; restriction is
+direct image along environment weakening. -/
+def State.presheaf (W : Type u) (M : Type v) (V : Type w) :
+    (Finset V)ᵒᵖ ⥤ Type (max u v w) :=
+  environments W M V ⋙ ofTypeFunctor Set
 
 end DynamicSemantics
