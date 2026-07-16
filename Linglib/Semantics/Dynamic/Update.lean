@@ -250,10 +250,7 @@ theorem isTest_iff_exists_guard : IsTest u ↔ ∃ C, u = guard C :=
 def IsDistributive (φ : CCP S) : Prop :=
   ∀ s, φ s = {p | ∃ i ∈ s, p ∈ φ {i}}
 
-/-! ### The classical fragment
-
-The `up`/`down` coercions, classical updates, and their normal form are
-Definitions 1 and 4 and facts (a)–(d) of [groenendijk-stokhof-1990]. -/
+/-! ### The classical fragment -/
 
 /-- The static update a content determines: intersection with it. -/
 def up (c : Set S) : CCP S := λ s => s ∩ c
@@ -268,10 +265,10 @@ def down (u : CCP S) : Set S := {i | (u {i}).Nonempty}
 
 /-- On eliminative updates, content is acceptance on singletons. -/
 theorem IsEliminative.down_eq (he : IsEliminative u) :
-    down u = {i | u {i} = {i}} :=
-  Set.ext λ i =>
-    ⟨λ ⟨_, hx⟩ => (he {i}).antisymm (Set.singleton_subset_iff.mpr (he {i} hx ▸ hx)),
-     λ h => ⟨i, by rw [show u {i} = {i} from h]; exact rfl⟩⟩
+    down u = {i | u {i} = {i}} := by
+  ext i
+  show (u {i}).Nonempty ↔ u {i} = {i}
+  exact ⟨λ h => h.subset_singleton_iff.mp (he {i}), λ h => (Set.singleton_nonempty i).mono h.ge⟩
 
 /-- An update is *classical* if it is eliminative and distributive. -/
 def IsClassical (u : CCP S) : Prop := IsEliminative u ∧ IsDistributive u
