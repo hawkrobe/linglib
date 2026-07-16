@@ -1,6 +1,5 @@
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Set.Function
-import Mathlib.Data.Setoid.Basic
 
 /-!
 # Possibilities
@@ -24,9 +23,6 @@ universe across worlds — and the monadic tradition calls the same points
 
 - `Possibility W V M`: the point object; `Possibility.update` rewrites
   one referent.
-- `Possibility.agreeSetoid X`: agreement at granularity `X`, as the
-  kernel of the projection `Possibility.proj X`; quotienting by it is
-  the state space at granularity `X` (`Collapse.lean`).
 - `Possibility.dom`, `Possibility.Descendant`, `Possibility.Compatible`,
   `Possibility.union`: partial points (`Option`-valued assignments) —
   their defined referents, growth order, and consistent union.
@@ -53,42 +49,7 @@ referents to individuals. -/
 
 namespace Possibility
 
-variable {W V M : Type*} (X : Set V) (p : Possibility W V M)
-
-/-- The projection of a possibility to granularity `X` is its world
-together with its assignment of the `X`-referents. -/
-def proj : W × (X → M) := (p.world, X.restrict p.assignment)
-
-/-- Two possibilities agree at granularity `X` when their projections to
-`X` coincide. -/
-def agreeSetoid : Setoid (Possibility W V M) := Setoid.ker (proj X)
-
-/-- Coarser granularities identify more possibilities. -/
-theorem agreeSetoid_anti : Antitone (agreeSetoid : Set V → Setoid (Possibility W V M)) :=
-  fun X Y hXY _ _ h =>
-    congrArg (fun wf : W × (Y → M) =>
-      ((wf.1, fun v => wf.2 ⟨v.1, hXY v.2⟩) : W × (X → M))) h
-
-/-- Extend a world–`X`-environment pair to a possibility, taking
-arbitrary values outside `X`. -/
-noncomputable def ofEnv [Nonempty M] (wf : W × (X → M)) : Possibility W V M :=
-  ⟨wf.1, Function.extend Subtype.val wf.2 fun _ => Classical.arbitrary M⟩
-
-/-- `proj X` retracts `ofEnv X`. -/
-@[simp] theorem proj_ofEnv [Nonempty M] (wf : W × (X → M)) :
-    proj X (ofEnv X wf) = wf :=
-  Prod.ext rfl (funext fun x => by
-    exact Subtype.val_injective.extend_apply wf.2 (fun _ => Classical.arbitrary M) x)
-
-/-- A possibility up to agreement at `X` is a world together with an
-assignment of the `X`-referents. -/
-noncomputable def agreeQuotientEquiv [Nonempty M] :
-    Quotient (agreeSetoid X : Setoid (Possibility W V M)) ≃ W × (X → M) :=
-  Setoid.quotientKerEquivOfRightInverse (proj X) (ofEnv X) (proj_ofEnv X)
-
-@[simp] theorem agreeQuotientEquiv_mk [Nonempty M] :
-    agreeQuotientEquiv X (Quotient.mk _ p) = (p.world, X.restrict p.assignment) :=
-  rfl
+variable {W V M : Type*} (p : Possibility W V M)
 
 /-- Update the assignment at a single referent. -/
 def update [DecidableEq V] (x : V) (e : M) : Possibility W V M :=
