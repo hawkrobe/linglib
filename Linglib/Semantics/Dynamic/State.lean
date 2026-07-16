@@ -21,7 +21,7 @@ Points with domain `X` are world–`X`-assignment pairs, constructively
 and an inhabitant of `M` to recover this). Two preorders run through states, and they are
 dual on shared strata. *Informativeness* (`⊑`,
 [kamp-vangenabith-reyle-2011] Def. 25) quantifies over the stronger
-state: every point of the stronger has an ancestor in the weaker — the
+state: every point of the stronger lies above a point of the weaker — the
 absurd state `∅` is maximally informative, the eliminative direction.
 *Subsistence* (`⪯`, [elliott-sudo-2025] Def. 3.3, after
 [groenendijk-stokhof-veltman-1996] Defs. 2.8–2.9) quantifies over the
@@ -50,7 +50,7 @@ stratum they reduce to `⊇` and `⊆` respectively
   [visser-vermeulen-1996]'s monoidal processing.
 - `infoLe_iff_superset`, `subsistsIn_iff_subset`: on a uniform stratum
   both preorders are partial orders, coinciding with `⊇`/`⊆` (via
-  `Possibility.Descendant.eq_of_dom_eq`).
+  `Possibility.eq_of_le_of_dom_eq`).
 - `subsistsIn_restrict`: restriction only forgets — the restricted state
   subsists in the original.
 - `uniformAt_restrict`, `restrict_restrict`: restriction meets the
@@ -61,8 +61,8 @@ stratum they reduce to `⊇` and `⊆` respectively
 
 `State` is an abbreviation, so `Set`'s complete lattice is available and
 `⊑`/`⪯` are scoped relations rather than instances. Neither is
-antisymmetric on raw sets (adding a comparable point is invisible — an
-ancestor for `⪯`, a descendant for `⊑`); antisymmetry holds on each
+antisymmetric on raw sets (adding a comparable point is invisible —
+below for `⪯`, above for `⊑`); antisymmetry holds on each
 uniform stratum, where they coincide with `⊇`/`⊆`. The predecessor of this file classified its
 fibers as `(Set (W × (↑X → M)))ᵒᵈ` — the dual lands here because its
 order was Def. 25's, matching `⊑`, not `⪯`.
@@ -90,15 +90,15 @@ referent defined. -/
 def State.initial : State W V M := {p | ∀ v, p.assignment v = none}
 
 /-- `p` *subsists* in `s` ([elliott-sudo-2025], Def. 3.3): it has a
-descendant in `s`. -/
+point above it in `s`. -/
 def Subsists (p : Possibility W V (Option M)) (s : State W V M) : Prop :=
-  ∃ q ∈ s, p.Descendant q
+  ∃ q ∈ s, p ≤ q
 
 @[inherit_doc] scoped notation:50 p " ≺ " s => Subsists p s
 
 theorem Subsists.of_mem {p : Possibility W V (Option M)} {s : State W V M}
     (h : p ∈ s) : p ≺ s :=
-  ⟨p, h, Possibility.Descendant.refl p⟩
+  ⟨p, h, le_refl p⟩
 
 /-- `s` subsists in `s'`: the informativeness order, Def. 25's
 projection form — every point of the weaker state has a descendant in
@@ -119,15 +119,15 @@ theorem subsistsIn_trans {s t u : State W V M} (hst : s ⪯ t)
 
 /-- Informativeness ([kamp-vangenabith-reyle-2011] Def. 25): `s'` carries
 at least as much information as `s` — every point of the stronger state
-has an ancestor in the weaker. The absurd state is maximally
+lies above a point of the weaker. The absurd state is maximally
 informative; the eliminative direction, dual to `⪯` on shared strata. -/
 def infoLe (s s' : State W V M) : Prop :=
-  ∀ q ∈ s', ∃ p ∈ s, p.Descendant q
+  ∀ q ∈ s', ∃ p ∈ s, p ≤ q
 
 @[inherit_doc] scoped notation:50 s " ⊑ " s' => infoLe s s'
 
 theorem infoLe_refl (s : State W V M) : s ⊑ s :=
-  fun q hq => ⟨q, hq, Possibility.Descendant.refl q⟩
+  fun q hq => ⟨q, hq, le_refl q⟩
 
 theorem infoLe_trans {s t u : State W V M} (hst : s ⊑ t) (htu : t ⊑ u) :
     s ⊑ u := fun r hr => by
@@ -151,12 +151,12 @@ def State.merge (s s' : State W V M) : State W V M :=
 /-- The merge is above the left component in informativeness. -/
 theorem infoLe_merge_left (s s' : State W V M) : s ⊑ s.merge s' := by
   rintro r ⟨p, hp, q, hq, hpq, rfl⟩
-  exact ⟨p, hp, Possibility.left_descendant_union p q⟩
+  exact ⟨p, hp, Possibility.le_union_left p q⟩
 
 /-- The merge is above the right component in informativeness. -/
 theorem infoLe_merge_right (s s' : State W V M) : s' ⊑ s.merge s' := by
   rintro r ⟨p, hp, q, hq, hpq, rfl⟩
-  exact ⟨q, hq, hpq.right_descendant_union⟩
+  exact ⟨q, hq, hpq.le_union_right⟩
 
 /-- **The merge is the least upper bound** (Def. 26's universal
 property, in the informativeness preorder): anything above both
@@ -165,8 +165,8 @@ theorem merge_infoLe {s s' t : State W V M} (hs : s ⊑ t)
     (hs' : s' ⊑ t) : s.merge s' ⊑ t := fun u hu => by
   obtain ⟨p, hp, hpu⟩ := hs u hu
   obtain ⟨q, hq, hqu⟩ := hs' u hu
-  exact ⟨p.union q, ⟨p, hp, q, hq, hpu.compatible hqu, rfl⟩,
-    hpu.union_descendant hqu⟩
+  exact ⟨p.union q, ⟨p, hp, q, hq, Possibility.compatible_of_le_of_le hpu hqu, rfl⟩,
+    Possibility.union_le hpu hqu⟩
 
 /-- Consistent merge is commutative. -/
 theorem merge_comm (s s' : State W V M) : s.merge s' = s'.merge s := by
@@ -245,7 +245,7 @@ theorem subsists_iff_mem {X : Set V} {s : State W V M}
     (hs : UniformAt X s) {p : Possibility W V (Option M)}
     (hp : p.dom = X) : (p ≺ s) ↔ p ∈ s :=
   ⟨fun ⟨q, hq, hpq⟩ =>
-    (hpq.eq_of_dom_eq (hp.trans (hs q hq).symm)).symm ▸ hq,
+    (Possibility.eq_of_le_of_dom_eq hpq (hp.trans (hs q hq).symm)).symm ▸ hq,
     Subsists.of_mem⟩
 
 /-- On a uniform stratum, subsistence is inclusion. -/
@@ -262,8 +262,8 @@ theorem infoLe_iff_superset {X : Set V} {s s' : State W V M}
   constructor
   · intro h q hq
     obtain ⟨p, hp, hpq⟩ := h q hq
-    rwa [← hpq.eq_of_dom_eq ((hs p hp).trans (hs' q hq).symm)]
-  · exact fun h q hq => ⟨q, h hq, Possibility.Descendant.refl q⟩
+    rwa [← Possibility.eq_of_le_of_dom_eq hpq ((hs p hp).trans (hs' q hq).symm)]
+  · exact fun h q hq => ⟨q, h hq, le_refl q⟩
 
 /-- Within one stratum, merge is intersection: compatibility on a shared
 domain forces equality. -/
@@ -304,10 +304,10 @@ theorem subsistsIn_iff_subset_restrict {X : Set V}
   · intro h p hp
     obtain ⟨q, hq, hpq⟩ := h p hp
     exact ⟨q, hq,
-      ((Possibility.descendant_iff_eq_restrict (hs p hp)).mp hpq).symm⟩
+      ((Possibility.le_iff_eq_restrict (hs p hp)).mp hpq).symm⟩
   · rintro h p hp
     obtain ⟨q, hq, rfl⟩ := h hp
-    exact ⟨q, hq, Possibility.restrict_descendant X q⟩
+    exact ⟨q, hq, Possibility.restrict_le X q⟩
 
 /-- Informativeness out of a stratum factors through reindexing: the
 restricted image of the stronger is included in the weaker — the
@@ -319,10 +319,10 @@ theorem infoLe_iff_restrict_subset {X : Set V}
   constructor
   · rintro h r ⟨q, hq, rfl⟩
     obtain ⟨p, hp, hpq⟩ := h q hq
-    rwa [← (Possibility.descendant_iff_eq_restrict (hs p hp)).mp hpq]
+    rwa [← (Possibility.le_iff_eq_restrict (hs p hp)).mp hpq]
   · intro h q hq
     exact ⟨q.restrict X, h ⟨q, hq, rfl⟩,
-      Possibility.restrict_descendant X q⟩
+      Possibility.restrict_le X q⟩
 
 end Fibred
 
@@ -336,7 +336,7 @@ original. -/
 theorem subsistsIn_restrict (X : Set V) [∀ v, Decidable (v ∈ X)]
     (I : State W V M) : I.restrict X ⪯ I := by
   rintro p ⟨q, hq, rfl⟩
-  exact ⟨q, hq, Possibility.restrict_descendant X q⟩
+  exact ⟨q, hq, Possibility.restrict_le X q⟩
 
 /-- Restriction meets the stratification. -/
 theorem uniformAt_restrict {X Y : Set V} [∀ v, Decidable (v ∈ X)]

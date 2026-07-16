@@ -193,19 +193,19 @@ variable {W M V : Type*}
 
 /-- Classify each element of the possibilities family as a point: on
 objects this is `Possibility.domEquiv`; arrows become descents, by
-`Possibility.descendant_iff_eq_restrict`. -/
+`Possibility.le_iff_eq_restrict`. -/
 noncomputable def elementsToPoints :
     (possibilities W M V).Elements ⥤ (Possibility W V (Option M))ᵒᵖ where
   obj x := op ((Possibility.domEquiv x.1.unop).symm x.2).1
   map {x y} f := (homOfLE (show
-      ((Possibility.domEquiv y.1.unop).symm y.2).1.Descendant
+      ((Possibility.domEquiv y.1.unop).symm y.2).1 ≤
         ((Possibility.domEquiv x.1.unop).symm x.2).1 by
     have hb : y.1.unop ≤ x.1.unop := leOfHom f.1.unop
     have hmap : (possibilities W M V).map f.1 x.2 = y.2 := f.2
     rw [Subsingleton.elim f.1 (homOfLE hb).op, possibilities_map_apply]
       at hmap
     rw [← hmap, ← Possibility.restrict_domEquiv_symm hb]
-    exact Possibility.restrict_descendant _ _)).op
+    exact Possibility.restrict_le _ _)).op
   map_id _ := Subsingleton.elim _ _
   map_comp _ _ := Subsingleton.elim _ _
 
@@ -214,16 +214,16 @@ instance : (elementsToPoints (W := W) (M := M) (V := V)).Faithful where
 
 instance : (elementsToPoints (W := W) (M := M) (V := V)).Full where
   map_surjective {x y} f := by
-    have hd : ((Possibility.domEquiv y.1.unop).symm y.2).1.Descendant
+    have hd : ((Possibility.domEquiv y.1.unop).symm y.2).1 ≤
         ((Possibility.domEquiv x.1.unop).symm x.2).1 := leOfHom f.unop
     have hb : y.1.unop ≤ x.1.unop := by
-      have hsub := hd.dom_subset
+      have hsub := Possibility.dom_mono hd
       rwa [((Possibility.domEquiv y.1.unop).symm y.2).2,
         ((Possibility.domEquiv x.1.unop).symm x.2).2] at hsub
     refine ⟨⟨(homOfLE hb).op, ?_⟩, Subsingleton.elim _ _⟩
     refine (Possibility.domEquiv y.1.unop).symm.injective (Subtype.ext ?_)
     rw [possibilities_map_apply, ← Possibility.restrict_domEquiv_symm hb]
-    exact ((Possibility.descendant_iff_eq_restrict
+    exact ((Possibility.le_iff_eq_restrict
       ((Possibility.domEquiv y.1.unop).symm y.2).2).mp hd).symm
 
 instance : (elementsToPoints (W := W) (M := M) (V := V)).EssSurj where

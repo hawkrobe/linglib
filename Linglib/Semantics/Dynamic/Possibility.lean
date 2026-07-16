@@ -24,9 +24,10 @@ universe across worlds — and the monadic tradition calls the same points
 
 - `Possibility W V M`: the point object; `Possibility.update` rewrites
   one referent.
-- `Possibility.dom`, `Possibility.Descendant`, `Possibility.Compatible`,
-  `Possibility.union`: partial points (`Option`-valued assignments) —
-  their defined referents, growth order, and consistent union.
+- `Possibility.dom`, the `Preorder` instance (descent),
+  `Possibility.Compatible`, `Possibility.union`: partial points
+  (`Option`-valued assignments) — their defined referents, information
+  order, and consistent union.
 - `Possibility.restrict`, `Possibility.domEquiv`: domain restriction and
   the constructive classification of the domain-`X` points as
   world–`X`-assignment pairs.
@@ -69,6 +70,23 @@ def update [DecidableEq V] (x : V) (e : M) : Possibility W V M :=
 
 /-! ### Partial points -/
 
+/-- Descent is the canonical order on partial points ([elliott-sudo-2025]
+Def. 3.3's descendance, [groenendijk-stokhof-veltman-1996]'s
+graph-extension — pointwise, the information order mathlib gives
+`Part`): same world, and the larger assignment defined wherever the
+smaller is. Every point lies over its own domain, so under descent the
+points form the total space of `Category.lean`'s possibilities family. -/
+instance : Preorder (Possibility W V (Option M)) where
+  le p q := p.world = q.world ∧
+    ∀ x e, p.assignment x = some e → q.assignment x = some e
+  le_refl _ := ⟨rfl, fun _ _ h => h⟩
+  le_trans _ _ _ hpq hqr :=
+    ⟨hpq.1.trans hqr.1, fun x e h => hqr.2 x e (hpq.2 x e h)⟩
+
+theorem le_def {p q : Possibility W V (Option M)} :
+    p ≤ q ↔ p.world = q.world ∧
+      ∀ x e, p.assignment x = some e → q.assignment x = some e := Iff.rfl
+
 /-- The referents a partial point defines —
 [kamp-vangenabith-reyle-2011] Def. 23's `Dom(f)`. -/
 def dom (p : Possibility W V (Option M)) : Set V :=
@@ -77,31 +95,16 @@ def dom (p : Possibility W V (Option M)) : Set V :=
 @[simp] theorem mem_dom {p : Possibility W V (Option M)} {v : V} :
     v ∈ p.dom ↔ (p.assignment v).isSome := Iff.rfl
 
-/-- `q` is a *descendant* of `p` ([elliott-sudo-2025], Def. 3.3): same
-world, and `q`'s assignment extends `p`'s wherever the latter is defined
-([groenendijk-stokhof-veltman-1996]'s graph-extension — pointwise, the
-information order mathlib gives `Part`). -/
-def Descendant (p q : Possibility W V (Option M)) : Prop :=
-  p.world = q.world ∧ ∀ x e, p.assignment x = some e → q.assignment x = some e
-
-theorem Descendant.refl (p : Possibility W V (Option M)) :
-    p.Descendant p :=
-  ⟨rfl, fun _ _ h => h⟩
-
-theorem Descendant.trans {p q r : Possibility W V (Option M)}
-    (hpq : p.Descendant q) (hqr : q.Descendant r) : p.Descendant r :=
-  ⟨hpq.1.trans hqr.1, fun x e h => hqr.2 x e (hpq.2 x e h)⟩
-
-/-- Descendance grows the domain. -/
-theorem Descendant.dom_subset {p q : Possibility W V (Option M)}
-    (h : p.Descendant q) : p.dom ⊆ q.dom := fun v hv => by
+/-- Descent grows the domain. -/
+theorem dom_mono {p q : Possibility W V (Option M)}
+    (h : p ≤ q) : p.dom ⊆ q.dom := fun v hv => by
   obtain ⟨e, he⟩ := Option.isSome_iff_exists.mp hv
   exact Option.isSome_iff_exists.mpr ⟨e, h.2 v e he⟩
 
-/-- On a shared domain, descendance is equality: there is no room to
+/-- On a shared domain, descent is equality: there is no room to
 grow. -/
-theorem Descendant.eq_of_dom_eq {p q : Possibility W V (Option M)}
-    (h : p.Descendant q) (hdom : p.dom = q.dom) : p = q := by
+theorem eq_of_le_of_dom_eq {p q : Possibility W V (Option M)}
+    (h : p ≤ q) (hdom : p.dom = q.dom) : p = q := by
   refine Possibility.ext h.1 (funext fun v => ?_)
   rcases hp : p.assignment v with _ | e
   · rcases hq : q.assignment v with _ | e
@@ -124,13 +127,13 @@ def union (p q : Possibility W V (Option M)) :
     Possibility W V (Option M) :=
   ⟨p.world, fun v => (p.assignment v).or (q.assignment v)⟩
 
-theorem left_descendant_union (p q : Possibility W V (Option M)) :
-    p.Descendant (p.union q) :=
+theorem le_union_left (p q : Possibility W V (Option M)) :
+    p ≤ p.union q :=
   ⟨rfl, fun v e h => by simp [union, h]⟩
 
-theorem Compatible.right_descendant_union
+theorem Compatible.le_union_right
     {p q : Possibility W V (Option M)} (h : p.Compatible q) :
-    q.Descendant (p.union q) :=
+    q ≤ p.union q :=
   ⟨h.1.symm, fun v e hq => by
     rcases hp : p.assignment v with _ | e'
     · simp [union, hp, hq]
@@ -158,19 +161,19 @@ theorem dom_union (p q : Possibility W V (Option M)) :
   ext v
   rcases hp : p.assignment v with _ | e <;> simp [union, dom, hp]
 
-/-- Common ancestors are compatible. -/
-theorem Descendant.compatible {p q u : Possibility W V (Option M)}
-    (hp : p.Descendant u) (hq : q.Descendant u) : p.Compatible q :=
+/-- Points below a common point are compatible. -/
+theorem compatible_of_le_of_le {p q u : Possibility W V (Option M)}
+    (hp : p ≤ u) (hq : q ≤ u) : p.Compatible q :=
   ⟨hp.1.trans hq.1.symm, fun v e e' he he' => by
     have h1 := hp.2 v e he
     have h2 := hq.2 v e' he'
     rw [h1] at h2
     exact (Option.some.injEq .. ▸ h2 :)⟩
 
-/-- The union of two ancestors is an ancestor. -/
-theorem Descendant.union_descendant {p q u : Possibility W V (Option M)}
-    (hp : p.Descendant u) (hq : q.Descendant u) :
-    (p.union q).Descendant u :=
+/-- The union of two lower bounds is a lower bound. -/
+theorem union_le {p q u : Possibility W V (Option M)}
+    (hp : p ≤ u) (hq : q ≤ u) :
+    p.union q ≤ u :=
   ⟨hp.1, fun v e h => by
     rcases hpv : p.assignment v with _ | e'
     · exact hq.2 v e (by simpa [union, hpv] using h)
@@ -234,9 +237,9 @@ def restrict (X : Set V) [∀ v, Decidable (v ∈ X)]
     (p : Possibility W V (Option M)) :
     (p.restrict X).world = p.world := rfl
 
-/-- Restriction is an ancestor. -/
-theorem restrict_descendant (X : Set V) [∀ v, Decidable (v ∈ X)]
-    (p : Possibility W V (Option M)) : (p.restrict X).Descendant p :=
+/-- Restriction descends. -/
+theorem restrict_le (X : Set V) [∀ v, Decidable (v ∈ X)]
+    (p : Possibility W V (Option M)) : p.restrict X ≤ p :=
   ⟨rfl, fun x e h => by
     by_cases hx : x ∈ X
     · simpa [restrict, hx] using h
@@ -249,12 +252,12 @@ theorem dom_restrict (X : Set V) [∀ v, Decidable (v ∈ X)]
   ext v
   by_cases hv : v ∈ X <;> simp [restrict, dom, hv]
 
-/-- Descendance out of a stratum is *being the restriction*: for `p` at
+/-- Descent out of a stratum is *being the restriction*: for `p` at
 `X`, `p` grows into `q` exactly when `p` is `q` cut to `X`. The
 hom-characterization of the fibred order. -/
-theorem descendant_iff_eq_restrict {X : Set V} [∀ v, Decidable (v ∈ X)]
+theorem le_iff_eq_restrict {X : Set V} [∀ v, Decidable (v ∈ X)]
     {p q : Possibility W V (Option M)} (hp : p.dom = X) :
-    p.Descendant q ↔ p = q.restrict X := by
+    p ≤ q ↔ p = q.restrict X := by
   constructor
   · intro h
     refine Possibility.ext h.1 (funext fun v => ?_)
@@ -271,7 +274,7 @@ theorem descendant_iff_eq_restrict {X : Set V} [∀ v, Decidable (v ∈ X)]
       rw [hnone]
       simp [restrict, hv]
   · rintro rfl
-    exact restrict_descendant X q
+    exact restrict_le X q
 
 /-- Restriction is pointwise idempotent along intersections. -/
 theorem restrict_restrict (X Y : Set V) [∀ v, Decidable (v ∈ X)]
@@ -328,17 +331,6 @@ theorem restrict_domEquiv_symm {Y X : Set V} [∀ v, Decidable (v ∈ X)]
   · simp [restrict, hv]
 
 end Restrict
-
-/-- Descent is the canonical order on partial points: every point lies
-over its own domain, and under this order the points form the total
-space of `Category.lean`'s possibilities family. -/
-instance : Preorder (Possibility W V (Option M)) where
-  le := Descendant
-  le_refl := Descendant.refl
-  le_trans _ _ _ := Descendant.trans
-
-@[simp] theorem le_def {p q : Possibility W V (Option M)} :
-    p ≤ q ↔ p.Descendant q := Iff.rfl
 
 /-! ### Instantiations
 

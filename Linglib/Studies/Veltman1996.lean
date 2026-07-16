@@ -915,7 +915,7 @@ theorem toIndexedState_infoLe_iff :
     have hs := hp.1
     rwa [hpq.1] at hs
   · rintro h q ⟨hq, hnone⟩
-    exact ⟨q, ⟨h hq, hnone⟩, Possibility.Descendant.refl q⟩
+    exact ⟨q, ⟨h hq, hnone⟩, le_refl q⟩
 
 /-- Propositional update ([veltman-1996]'s elimination) transports to
 point filtering. -/
