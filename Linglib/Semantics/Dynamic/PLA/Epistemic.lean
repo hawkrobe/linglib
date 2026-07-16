@@ -125,13 +125,13 @@ theorem must_subset (φ : Formula) (s : InfoState E) :
 Asserting then testing: φ; might ψ passes iff φ-update leaves room for ψ.
 -/
 theorem update_then_might (φ ψ : Formula) (s : InfoState E) :
-    (φ.update M ;; ψ.might M) s = ψ.might M (φ.update M s) := rfl
+    seq (φ.update M) (ψ.might M) s = ψ.might M (φ.update M s) := rfl
 
 /--
 Asserting then requiring: φ; must ψ passes iff φ-update supports ψ.
 -/
 theorem update_then_must (φ ψ : Formula) (s : InfoState E) :
-    (φ.update M ;; ψ.must M) s = ψ.must M (φ.update M s) := rfl
+    seq (φ.update M) (ψ.must M) s = ψ.must M (φ.update M s) := rfl
 
 
 /--

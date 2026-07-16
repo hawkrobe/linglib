@@ -180,6 +180,7 @@ to the same classical truth conditions.
 
 open CDRT (DProp State SProp)
 open DynamicSemantics.Update (closure seq test neg impl)
+open scoped DynamicSemantics.Update
 open Semantics.TypeTheoretic (Ppty PPpty Parametric IsTrue IsFalse propT)
 open Cooper2023Ch7 (purify purifyUniv)
 
@@ -187,7 +188,7 @@ variable {E : Type}
 
 /-- CDRT existential: introduce dref n, test P on r(n). -/
 def cdrt_exists (n : Nat) (P : E → Prop) : DProp E :=
-  DProp.new n ;; DProp.ofStatic (λ r => P (r n))
+  DProp.new n * DProp.ofStatic (λ r => P (r n))
 
 /-- TTR existential: Σ-type with entity witness. This is `purify` applied
 to a parametric property with background `E`; the result doesn't depend
@@ -215,7 +216,7 @@ theorem exists_classical (P : E → Prop) :
 extending the register with a P-entity at n, Q holds of that entity." -/
 def cdrt_donkey (n : Nat) (P Q : E → Prop) : DProp E :=
   DProp.impl
-    (DProp.new n ;; DProp.ofStatic (λ r => P (r n)))
+    (DProp.new n * DProp.ofStatic (λ r => P (r n)))
     (DProp.ofStatic (λ r => Q (r n)))
 
 /-- TTR donkey: Π-type over witnesses. "For every P-witness, Q holds."
@@ -255,8 +256,8 @@ theorem donkey_classical (P Q : E → Prop) :
 def cdrt_full_donkey (farmer donkey_ : E → Prop) (owns beats : E → E → Prop) :
     DProp E :=
   DProp.impl
-    (DProp.new 0 ;; DProp.ofStatic (λ r => farmer (r 0)) ;;
-     DProp.new 1 ;; DProp.ofStatic (λ r => donkey_ (r 1) ∧ owns (r 0) (r 1)))
+    (DProp.new 0 * DProp.ofStatic (λ r => farmer (r 0)) *
+     DProp.new 1 * DProp.ofStatic (λ r => donkey_ (r 1) ∧ owns (r 0) (r 1)))
     (DProp.ofStatic (λ r => beats (r 0) (r 1)))
 
 def ttr_full_donkey (farmer donkey_ : E → Prop) (owns beats : E → E → Prop) :
@@ -265,10 +266,12 @@ def ttr_full_donkey (farmer donkey_ : E → Prop) (owns beats : E → E → Prop
 
 private theorem donkey_antecedent_iff
     (farmer donkey_ : E → Prop) (owns : E → E → Prop) (i k : State E) :
-    (DProp.new 0 ;; DProp.ofStatic (λ r => farmer (r 0)) ;;
-     DProp.new 1 ;; DProp.ofStatic (λ r => donkey_ (r 1) ∧ owns (r 0) (r 1))) i k ↔
+    (DProp.new 0 * DProp.ofStatic (λ r => farmer (r 0)) *
+     DProp.new 1 * DProp.ofStatic (λ r => donkey_ (r 1) ∧ owns (r 0) (r 1))
+       : DProp E) i k ↔
     ∃ x y, k = (λ m => if m = 1 then y else if m = 0 then x else i m) ∧
       farmer x ∧ donkey_ y ∧ owns x y := by
+  show DProp.seq (DProp.seq (DProp.seq _ _) _) _ i k ↔ _
   simp only [DProp.seq, seq, Relation.Comp, DProp.new, DProp.ofStatic, test]
   constructor
   · rintro ⟨k₃, ⟨k₂, ⟨k₁, ⟨e₀, rfl⟩, rfl, hf⟩, ⟨e₁, rfl⟩⟩, rfl, hd, ho⟩

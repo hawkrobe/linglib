@@ -134,8 +134,6 @@ abbrev DProp.ofStatic {E : Type*} (p : SProp E) : DProp E := test p
 /-- Dynamic conjunction: the spine's relational composition `seq`. -/
 abbrev DProp.seq {E : Type*} (φ ψ : DProp E) : DProp E := Update.seq φ ψ
 
-@[inherit_doc] infixl:65 " ;; " => DProp.seq
-
 /-- New discourse referent: `[new n]` extends the state at position `n`
 with an arbitrary value. -/
 def DProp.new {E : Type*} (n : Nat) : DProp E :=

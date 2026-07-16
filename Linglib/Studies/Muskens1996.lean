@@ -307,10 +307,10 @@ open CDRT
 
 /-- Discourse referent introduction under closure = cylindrification.
 
-`closure(new n ;; φ) = cₙ(closure(φ))`: introducing dref `n`
+`closure(new n * φ) = cₙ(closure(φ))`: introducing dref `n`
 then continuing with `φ` equals cylindrifying `φ` at `n`. -/
 theorem cdrt_new_seq_eq_cylindrify {E : Type*} (n : Nat) (φ : DProp E) :
-    closure (DProp.new n ;; φ) =
+    closure (DProp.new n * φ) =
     cylindrify n (closure φ) := by
   ext g; simp only [closure, DProp.seq, seq, Relation.Comp, DProp.new, cylindrify]
   constructor

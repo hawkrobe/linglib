@@ -65,10 +65,6 @@ iff it is eliminative and distributive (`exists_eq_lift_test_iff`).
   fixed point of the update, and the satisfaction layer's consequence is
   acceptance consequence.
 
-## Notation
-
-* `u ;; v` for `CCP.seq u v`, scoped to `DynamicSemantics.CCP`.
-
 ## Implementation notes
 
 The algebraic instances are scoped: `Update S` and `CCP S` abbreviate
@@ -199,8 +195,6 @@ def absurd : CCP S := λ _ => ∅
 /-- Sequential composition of CCPs, in diagrammatic order. -/
 def seq (u v : CCP S) : CCP S := λ s => v (u s)
 
-scoped infixl:70 " ;; " => seq
-
 /-- `CCP S` is a monoid under `seq` (scoped; see the implementation notes). -/
 scoped instance : Monoid (CCP S) where
   mul := seq
@@ -210,7 +204,7 @@ scoped instance : Monoid (CCP S) where
   mul_one _ := rfl
 
 /-- The absurd CCP absorbs on the right. -/
-theorem seq_absurd (u : CCP S) : u ;; absurd = absurd := rfl
+theorem seq_absurd (u : CCP S) : seq u absurd = absurd := rfl
 
 /-- Dynamic negation by set difference: the states that do not survive `φ`
 ([heim-1982]; [veltman-1996]). -/

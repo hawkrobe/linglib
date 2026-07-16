@@ -30,7 +30,7 @@ framework-specific operations and cylindric ops.
 
 | Framework | Operation | = Cylindric | Bridge |
 |---|---|---|---|
-| CDRT ([muskens-1996]) | `closure (new n ;; φ)` | `cylindrify n (closure φ)` | `Studies/Muskens1996.lean` |
+| CDRT ([muskens-1996]) | `closure (new n * φ)` | `cylindrify n (closure φ)` | `Studies/Muskens1996.lean` |
 | CDRT | `eq' (dref n) (dref m)` | `diagonal n m` | `Studies/Muskens1996.lean` |
 | Charlow ([charlow-2019]) | `staticExists x body` | `cylindrify x body` | `Studies/Charlow2019.lean` |
 | Charlow | `dynamicExists x body` | `cylindrify x body` | `Studies/Charlow2019.lean` |
@@ -52,7 +52,7 @@ same argument — the bridge theorems just haven't been written yet.
 | PIP ([keshet-abney-2024]) | `exists_ v domain body` | `cylindrify v (domain ∩ body)` |
 | File Change ([heim-1982]) | indefinite extends Dom, widens Sat | `cylindrify n (⟦φ⟧)` |
 | Kamp & Reyle Update ([kamp-reyle-1993]) | `box [n] [conds]` | `cylindrify n (interp conds)` |
-| IntensionalCDRT ([hofmann-2025]) | intensional `new n ;; φ` | `cylindrify n (closure φ)` |
+| IntensionalCDRT ([hofmann-2025]) | intensional `new n * φ` | `cylindrify n (closure φ)` |
 
 ### Same algebra, different base type
 

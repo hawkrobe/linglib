@@ -239,7 +239,7 @@ which this formalization does not render: existentials certify witnesses in
 the membership condition without exporting them to output states.
 -/
 def Formula.dynConj (φ ψ : Formula) : Update E :=
-  φ.update M ;; ψ.update M
+  seq (φ.update M) (ψ.update M)
 
 /-- Dynamic conjunction update rule -/
 theorem Formula.dynConj_eq (φ ψ : Formula) (s : InfoState E) :
@@ -391,7 +391,7 @@ theorem dynConj_subset_inter (φ ψ : Formula) (s : InfoState E) :
 
 /-- Sequential composition is nested intersection of contents. -/
 theorem static_seq_is_intersection (φ ψ : Formula) (s : InfoState E) :
-    (φ.update M ;; ψ.update M) s = s ∩ φ.content M ∩ ψ.content M := by
+    seq (φ.update M) (ψ.update M) s = s ∩ φ.content M ∩ ψ.content M := by
   simp only [DynamicSemantics.CCP.seq, contents_updates_equiv, Set.inter_assoc]
 
 /-- Only ∃ introduces discourse referents. -/
@@ -543,7 +543,7 @@ theorem exists_domain_nonempty (x : VarIdx) (φ : Formula) :
 
 /-- Sequential update as set comprehension. -/
 theorem seq_update_eq (φ ψ : Formula) (s : InfoState E) :
-    (φ.update M ;; ψ.update M) s =
+    seq (φ.update M) (ψ.update M) s =
     { p ∈ s | φ.sat M p.1 p.2 ∧ ψ.sat M p.1 p.2 } := by
   ext ⟨g, ê⟩
   exact Formula.mem_dynConj M φ ψ s g ê
@@ -551,7 +551,7 @@ theorem seq_update_eq (φ ψ : Formula) (s : InfoState E) :
 /-- Sequential update commutes: eliminative updates are filters, so order is
 irrelevant. ([dekker-2012] restricts this to dref-free formulas.) -/
 theorem static_conjunction_commutes (φ ψ : Formula) (s : InfoState E) :
-    (φ.update M ;; ψ.update M) s = (ψ.update M ;; φ.update M) s := by
+    seq (φ.update M) (ψ.update M) s = seq (ψ.update M) (φ.update M) s := by
   rw [seq_update_eq, seq_update_eq]
   ext p
   simp only [Set.mem_setOf_eq]
