@@ -1,5 +1,7 @@
 import Linglib.Semantics.Dynamic.Possibility
 import Mathlib.Data.Finset.Basic
+import Mathlib.Data.Finset.Lattice.Lemmas
+import Mathlib.Data.Finset.Piecewise
 import Mathlib.Data.Set.Function
 import Mathlib.Logic.Function.DependsOn
 import Mathlib.Order.BoundedOrder.Basic
@@ -38,6 +40,11 @@ acting on states live in `Transition.lean`.
   *saturation* for `Possibility.agreeSetoid ↑X`.
 - `prop_restrict`, `le_restrict_iff`: restriction never changes the
   proposition, and is the universal `Y`-supported approximation.
+- `Compatible.restrict_sup_left`, `sup_le_of_restrict_eq`: consistent
+  merge is sheaf gluing for the presheaf of states
+  ([abramsky-sadrzadeh-2014]'s semantic unification), and the least one;
+  `exists_ne_of_restrict_eq`: the gluing is not unique — restriction
+  forgets cross-referent correlation.
 - `fiberOrderIsoProd`, `fiberEmptyOrderIso`: the fiber at `X` classified
   as propositions over world–`X`-assignment pairs ([heim-1982]'s
   satisfaction sets), degenerating at `X = ∅` to bare propositions
@@ -67,7 +74,7 @@ picture is the middle rung, at granularity `X`.
 
 - [kamp-vangenabith-reyle-2011], Defs. 22–26
 - [heim-1982]
-- [muskens-van-benthem-visser-2011]
+- [muskens-van-benthem-visser-2011], [abramsky-sadrzadeh-2014]
 -/
 
 namespace DynamicSemantics
@@ -310,6 +317,117 @@ theorem le_restrict_iff (hJ : J.base ⊆ Y) (hY : Y ⊆ I.base) : J ≤ I.restri
     (I.restrict Y).prop = I.prop :=
   Set.ext fun _ =>
     ⟨fun ⟨_, f, hf, _⟩ => ⟨f, hf⟩, fun ⟨f, hf⟩ => ⟨f, f, hf, Set.eqOn_refl f _⟩⟩
+
+/-! ### Merge is gluing -/
+
+section Gluing
+variable [DecidableEq V]
+
+/-- Two states are *compatible* when they agree under restriction to their
+common base ([abramsky-sadrzadeh-2014]'s compatible families, for pairs). -/
+def Compatible (I J : State W V M) : Prop :=
+  I.restrict (I.base ∩ J.base) = J.restrict (I.base ∩ J.base)
+
+@[simp] theorem compatible_refl (I : State W V M) : I.Compatible I := by
+  show I.restrict _ = I.restrict _
+  rw [Finset.inter_self]
+
+theorem Compatible.symm (h : I.Compatible J) : J.Compatible I := by
+  show J.restrict _ = I.restrict _
+  rw [Finset.inter_comm]
+  exact Eq.symm h
+
+/-- Disjoint-base states determining the same proposition are compatible —
+[kamp-vangenabith-reyle-2011] Def. 26's "of particular importance" case. -/
+theorem compatible_of_disjoint (hd : Disjoint I.base J.base)
+    (hw : I.prop = J.prop) : I.Compatible J := by
+  show I.restrict _ = J.restrict _
+  rw [Finset.disjoint_iff_inter_eq_empty.mp hd]
+  refine State.ext rfl (Set.ext fun p => ?_)
+  constructor
+  · rintro ⟨f, hf, -⟩
+    obtain ⟨g, hg⟩ : p.world ∈ J.prop := hw ▸ ⟨f, hf⟩
+    exact ⟨g, hg, fun x hx => absurd hx (by simp)⟩
+  · rintro ⟨f, hf, -⟩
+    obtain ⟨g, hg⟩ : p.world ∈ I.prop := hw.symm ▸ ⟨f, hf⟩
+    exact ⟨g, hg, fun x hx => absurd hx (by simp)⟩
+
+/-- **Merge is gluing**: the join of compatible states restricts back onto
+the left component — [abramsky-sadrzadeh-2014]'s semantic unification,
+with no disjointness hypothesis. The carrier witness is repaired on
+`J.base` only, which support tolerates. -/
+theorem Compatible.restrict_sup_left (h : I.Compatible J) :
+    (I ⊔ J).restrict I.base = I := by
+  refine State.ext rfl (Set.ext fun p => ?_)
+  obtain ⟨w, g⟩ := p
+  constructor
+  · rintro ⟨f, hf, hfg⟩
+    exact (I.supported.mem_iff hfg).mp (mem_sup.mp hf).1
+  · intro hg
+    have hD : (⟨w, g⟩ : Possibility W V M) ∈ I.restrict (I.base ∩ J.base) :=
+      ⟨g, hg, Set.eqOn_refl _ _⟩
+    rw [show I.restrict (I.base ∩ J.base) = J.restrict (I.base ∩ J.base)
+      from h] at hD
+    obtain ⟨f, hfJ, hfg⟩ := hD
+    have hpw : Set.EqOn (J.base.piecewise f g) g ↑I.base := fun x hx => by
+      by_cases hxJ : x ∈ J.base
+      · rw [Finset.piecewise_eq_of_mem _ _ _ hxJ]
+        exact hfg (by rw [Finset.coe_inter]; exact ⟨hx, hxJ⟩)
+      · rw [Finset.piecewise_eq_of_notMem _ _ _ hxJ]
+    refine ⟨J.base.piecewise f g, mem_sup.mpr ⟨?_, ?_⟩, hpw⟩
+    · exact (I.supported.mem_iff hpw).mpr hg
+    · exact (J.supported.mem_iff
+        (fun x hx => J.base.piecewise_eq_of_mem f g hx)).mpr hfJ
+
+/-- Merge is gluing, right component. -/
+theorem Compatible.restrict_sup_right (h : I.Compatible J) :
+    (I ⊔ J).restrict J.base = J := by
+  rw [sup_comm]
+  exact h.symm.restrict_sup_left
+
+/-- The merge is the *least* gluing: any state that restricts onto both
+components over the union base lies above it. -/
+theorem sup_le_of_restrict_eq {S : State W V M} (hb : S.base = I.base ∪ J.base)
+    (hI : S.restrict I.base = I) (hJ : S.restrict J.base = J) : I ⊔ J ≤ S :=
+  ⟨le_of_eq hb.symm, fun p hp => mem_sup.mpr
+    ⟨by rw [← hI]; exact ⟨p.assignment, hp, Set.eqOn_refl _ _⟩,
+     by rw [← hJ]; exact ⟨p.assignment, hp, Set.eqOn_refl _ _⟩⟩⟩
+
+end Gluing
+
+/-- The diagonal state: two referents, correlated. -/
+private def diag : State Unit Bool Bool where
+  base := {false, true}
+  carrier := {p | p.assignment false = p.assignment true}
+  supported := baseSupported_of_iff fun _ f g hfg => by
+    show f false = f true ↔ g false = g true
+    rw [hfg (by simp), hfg (by simp)]
+
+/-- The full state: two referents, unconstrained. -/
+private def square : State Unit Bool Bool where
+  base := {false, true}
+  carrier := Set.univ
+  supported := baseSupported_of_iff fun _ _ _ _ => Iff.rfl
+
+/-- **The gluing is not unique**: the diagonal and the full square agree on
+every singleton restriction yet differ. Restriction forgets cross-referent
+correlation, so a state is not determined by its per-referent
+projections — the marbles argument, one referent up. -/
+theorem exists_ne_of_restrict_eq :
+    ∃ I J : State Unit Bool Bool, I.base = J.base ∧ I ≠ J ∧
+      ∀ x, I.restrict {x} = J.restrict {x} := by
+  refine ⟨diag, square, rfl, fun h => ?_, fun x => ?_⟩
+  · have : (⟨(), id⟩ : Possibility Unit Bool Bool) ∈ diag := by
+      rw [h]; trivial
+    exact Bool.false_ne_true this
+  · refine State.ext rfl (Set.ext fun p => ?_)
+    constructor
+    · rintro ⟨f, -, hfg⟩
+      exact ⟨f, trivial, hfg⟩
+    · rintro ⟨f, -, -⟩
+      refine ⟨fun _ => p.assignment x, rfl, fun y hy => ?_⟩
+      obtain rfl : y = x := by simpa using hy
+      rfl
 
 /-! ### Random assignment -/
 
