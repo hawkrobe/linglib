@@ -208,10 +208,10 @@ theorem InfoState.supports_conj (s : InfoState E) (φ ψ : Formula) :
   constructor
   · intro h
     constructor
-    · intro p hp; exact (h p hp).1
-    · intro p hp; exact (h p hp).2
+    · intro p hp; exact (h hp).1
+    · intro p hp; exact (h hp).2
   · intro ⟨hφ, hψ⟩ p hp
-    exact ⟨hφ p hp, hψ p hp⟩
+    exact ⟨hφ hp, hψ hp⟩
 
 
 /--
@@ -350,29 +350,21 @@ Smaller states have "more information" (fewer possibilities = more certainty).
 -/
 theorem support_downward_closed (φ : Formula) (s t : InfoState E) (h : t ⊆ s)
     (hs : s ⊫[M] φ) : t ⊫[M] φ :=
-  λ p hp => hs p (h hp)
+  h.trans hs
 
 /--
 Intersection preserves support: if s and t both support φ, so does s ∩ t.
 -/
 theorem support_inter (φ : Formula) (s t : InfoState E) (hs : s ⊫[M] φ)
-    (_ht : t ⊫[M] φ) : (s ∩ t) ⊫[M] φ := by
-  intro p hp
-  exact hs p hp.1
+    (_ht : t ⊫[M] φ) : (s ∩ t) ⊫[M] φ :=
+  Set.inter_subset_left.trans hs
 
 /--
 Union and support: s ∪ t supports φ iff both s and t support φ.
 -/
 theorem support_union_iff (φ : Formula) (s t : InfoState E) :
-    ((s ∪ t) ⊫[M] φ) ↔ (s ⊫[M] φ) ∧ (t ⊫[M] φ) := by
-  constructor
-  · intro h
-    exact ⟨λ p hp => h p (Set.mem_union_left t hp),
-           λ p hp => h p (Set.mem_union_right s hp)⟩
-  · intro ⟨hs, ht⟩ p hp
-    cases hp with
-    | inl hps => exact hs p hps
-    | inr hpt => exact ht p hpt
+    ((s ∪ t) ⊫[M] φ) ↔ (s ⊫[M] φ) ∧ (t ⊫[M] φ) :=
+  Set.union_subset_iff
 
 /--
 Update distributes over intersection: φ.update(s ∩ t) = φ.update(s) ∩ φ.update(t)
@@ -486,7 +478,7 @@ theorem obs10_dynamic_eq_classical_entailment (φ ψ : Formula) :
     have hmem : (g, ê) ∈ φ.update M Set.univ := by
       simp only [Formula.update, InfoState.restrict, Set.mem_setOf_eq, Set.mem_univ, true_and]
       exact hsat
-    exact hdyn Set.univ (g, ê) hmem
+    exact hdyn Set.univ hmem
   · -- Classical → Dynamic: unfold update membership
     intro hclass s p hp
     simp only [DynamicSemantics.mem_updateFromSat, satisfiesPLA] at hp
@@ -510,14 +502,14 @@ theorem obs11_deduction_theorem (φ χ ψ : Formula) :
     have hmem : p ∈ (φ ⋀ χ).update M s := by
       simp only [Formula.update, InfoState.restrict, Set.mem_setOf_eq, Formula.sat]
       exact ⟨hp.1, hp.2, hχ⟩
-    exact hnψ (h s p hmem)
+    exact hnψ (h s hmem)
   · -- (←) If φ ⊨ χ→ψ, then φ∧χ ⊨ ψ
     intro h s p hp
     simp only [DynamicSemantics.mem_updateFromSat, satisfiesPLA, Formula.sat] at hp
     have hp_φ : p ∈ φ.update M s := by
       simp only [Formula.update, InfoState.restrict, Set.mem_setOf_eq]
       exact ⟨hp.1, hp.2.1⟩
-    have himpl := h s p hp_φ
+    have himpl := h s hp_φ
     simp only [Formula.impl] at himpl
     by_contra hnψ
     exact himpl ⟨hp.2.2, hnψ⟩

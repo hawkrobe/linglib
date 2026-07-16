@@ -172,7 +172,7 @@ theorem supports_implies_might (φ : Formula) (s : InfoState E)
     obtain ⟨p, hp⟩ := hs
     use p
     simp only [Formula.update, InfoState.restrict, Set.mem_setOf_eq]
-    exact ⟨hp, hsup p hp⟩
+    exact ⟨hp, hsup hp⟩
   simp only [if_pos hne]
 
 
@@ -189,10 +189,11 @@ theorem might_iff_not_must_neg (φ : Formula) (s : InfoState E) (hs : s.Nonempty
   constructor
   · rintro ⟨⟨g, ê⟩, hp⟩ hsup
     rw [Formula.mem_update] at hp
-    exact hsup _ hp.1 hp.2
+    exact hsup hp.1 hp.2
   · intro h
-    simp only [InfoState.supports, DynamicSemantics.supportOf, satisfiesPLA,
-      Formula.sat, not_forall, Classical.not_not] at h
+    simp only [InfoState.supports, DynamicSemantics.supportOf, Set.subset_def,
+      DynamicSemantics.contentOf, Set.mem_setOf_eq, satisfiesPLA, Formula.sat,
+      not_forall, Classical.not_not] at h
     obtain ⟨p, hp, hsat⟩ := h
     exact ⟨p, (Formula.mem_update M φ s p.1 p.2).mpr ⟨hp, hsat⟩⟩
 

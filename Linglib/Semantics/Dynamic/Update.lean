@@ -429,46 +429,44 @@ end RelationalBridge
 /-! ## The satisfaction layer
 
 A satisfaction relation `sat : S → φ → Prop` induces the standard eliminative
-fragment: per-formula contents, filter updates, the support relation, and
-dynamic entailment. PLA, DRT, and DPL define their updates by instantiating
+fragment, and the layer reduces to mathlib's intersection–subset API: the
+induced update intersects with content (definitionally), support is inclusion
+in content, and dynamic entailment is content inclusion
+(`dynamicEntailsOf_iff_content_subset`). PLA, DRT, and DPL instantiate
 `sat`. -/
 
 section Satisfaction
 
 variable {S φ : Type*}
 
-/-- `s` supports `ψ` when every possibility in `s` satisfies `ψ`. -/
-def supportOf (sat : S → φ → Prop) (s : Set S) (ψ : φ) : Prop :=
-  ∀ p ∈ s, sat p ψ
-
 /-- The content of a formula: all possibilities satisfying it. -/
-def contentOf (sat : S → φ → Prop) (ψ : φ) : Set S :=
-  { p | sat p ψ }
+def contentOf (sat : S → φ → Prop) (ψ : φ) : Set S := { p | sat p ψ }
 
-/-- Support is inclusion in content. -/
-theorem support_iff_subset_content (sat : S → φ → Prop) (s : Set S) (ψ : φ) :
-    supportOf sat s ψ ↔ s ⊆ contentOf sat ψ :=
-  Iff.rfl
+/-- `s` supports `ψ` when every possibility in `s` satisfies `ψ`: inclusion
+in content. -/
+def supportOf (sat : S → φ → Prop) (s : Set S) (ψ : φ) : Prop :=
+  s ⊆ contentOf sat ψ
 
 /-- Support is downward closed: smaller states support more. -/
 theorem support_mono (sat : S → φ → Prop) (s t : Set S) (ψ : φ)
     (h : t ⊆ s) (hs : supportOf sat s ψ) : supportOf sat t ψ :=
-  λ p hp => hs p (h hp)
+  h.trans hs
 
 /-- The empty state supports everything (vacuously). -/
 theorem empty_supports (sat : S → φ → Prop) (ψ : φ) :
-    supportOf sat ∅ ψ := λ _ hp => False.elim hp
+    supportOf sat ∅ ψ :=
+  Set.empty_subset _
 
 /-- Content is monotone in pointwise entailment. -/
 theorem content_mono (sat : S → φ → Prop) (ψ₁ ψ₂ : φ)
     (h : ∀ p, sat p ψ₁ → sat p ψ₂) :
     contentOf sat ψ₁ ⊆ contentOf sat ψ₂ :=
-  λ _ hp => h _ hp
+  Set.setOf_subset_setOf.mpr h
 
 /-- Filtering a set by a predicate is monotone. -/
 theorem sep_monotone (pred : S → Prop) :
     Monotone (λ s : Set S => { p ∈ s | pred p }) :=
-  λ _ _ h _ hp => ⟨h hp.1, hp.2⟩
+  λ _ _ h => Set.inter_subset_inter_left _ h
 
 /-- Filtering a set by a predicate is eliminative. -/
 theorem sep_eliminative (pred : S → Prop) :
@@ -487,12 +485,12 @@ def updateFromSat (sat : S → φ → Prop) (ψ : φ) : CCP S :=
 /-- Induced updates are eliminative. -/
 theorem updateFromSat_eliminative (sat : S → φ → Prop) (ψ : φ) :
     CCP.IsEliminative (updateFromSat sat ψ) :=
-  sep_eliminative _
+  λ _ => Set.inter_subset_left
 
 /-- `updateFromSat` is monotone in the state argument. -/
 theorem updateFromSat_monotone (sat : S → φ → Prop) (ψ : φ) :
     Monotone (updateFromSat sat ψ) :=
-  sep_monotone _
+  λ _ _ h => Set.inter_subset_inter_left _ h
 
 /-- Updating is intersecting with the content. -/
 theorem updateFromSat_eq_inter_content (sat : S → φ → Prop)
@@ -508,22 +506,26 @@ theorem updateFromSat_eq_lift_test (sat : S → φ → Prop) (ψ : φ) :
 
 /-- Induced updates are distributive. -/
 theorem updateFromSat_isDistributive (sat : S → φ → Prop) (ψ : φ) :
-    CCP.IsDistributive (updateFromSat sat ψ) := by
-  rw [updateFromSat_eq_lift_test]
-  exact lift_isDistributive _
+    CCP.IsDistributive (updateFromSat sat ψ) :=
+  updateFromSat_eq_lift_test sat ψ ▸ lift_isDistributive _
 
 /-- Support is being a fixed point of the update ([dekker-2012]'s Proper
 Support). -/
 theorem support_iff_update_eq (sat : S → φ → Prop)
     (ψ : φ) (s : Set S) :
     supportOf sat s ψ ↔ updateFromSat sat ψ s = s :=
-  ⟨λ h => Set.ext λ p => ⟨λ hp => hp.1, λ hp => ⟨hp, h p hp⟩⟩,
-   λ h p hp => by rw [← h] at hp; exact hp.2⟩
+  Set.inter_eq_left.symm
 
 /-- Dynamic entailment: updating with `ψ₁` always yields a state supporting
 `ψ₂`. -/
 def dynamicEntailsOf (sat : S → φ → Prop) (ψ₁ ψ₂ : φ) : Prop :=
   ∀ s : Set S, supportOf sat (updateFromSat sat ψ₁ s) ψ₂
+
+/-- Dynamic entailment is content inclusion — the layer's consequence
+relation is classical entailment on contents. -/
+theorem dynamicEntailsOf_iff_content_subset (sat : S → φ → Prop) (ψ₁ ψ₂ : φ) :
+    dynamicEntailsOf sat ψ₁ ψ₂ ↔ contentOf sat ψ₁ ⊆ contentOf sat ψ₂ :=
+  ⟨λ h _ hp => h Set.univ ⟨trivial, hp⟩, λ h _ => Set.inter_subset_right.trans h⟩
 
 /-- Dynamic entailment is acceptance consequence of the induced updates. -/
 theorem dynamicEntailsOf_iff_entails (sat : S → φ → Prop) (ψ₁ ψ₂ : φ) :
@@ -534,13 +536,13 @@ theorem dynamicEntailsOf_iff_entails (sat : S → φ → Prop) (ψ₁ ψ₂ : φ
 /-- Dynamic entailment is reflexive. -/
 theorem dynamicEntails_refl (sat : S → φ → Prop) (ψ : φ) :
     dynamicEntailsOf sat ψ ψ :=
-  λ _ _ hp => hp.2
+  λ _ => Set.inter_subset_right
 
 /-- Dynamic entailment is transitive. -/
 theorem dynamicEntails_trans (sat : S → φ → Prop) (ψ₁ ψ₂ ψ₃ : φ)
     (h1 : dynamicEntailsOf sat ψ₁ ψ₂) (h2 : dynamicEntailsOf sat ψ₂ ψ₃) :
     dynamicEntailsOf sat ψ₁ ψ₃ :=
-  fun s p hp => h2 s p ⟨hp.1, h1 s p hp⟩
+  λ s => Set.Subset.trans (h1 s) ((dynamicEntailsOf_iff_content_subset sat ψ₂ ψ₃).mp h2)
 
 end Satisfaction
 
