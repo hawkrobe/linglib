@@ -536,7 +536,7 @@ theorem ExpFrame.const_normal_of_connected (no : Preorder W)
     (d : Set W) (hconn : Normality.connected no) :
     (ExpFrame.const no).normal d = Normality.optimal no d := by
   ext w
-  simp only [normal, const, Set.mem_setOf_eq, Normality.optimal]
+  simp only [normal, Set.mem_setOf_eq, Normality.optimal]
   constructor
   · -- normal → optimal: weaker condition
     intro ⟨hwd, hsub⟩
@@ -580,16 +580,16 @@ def birdDomain : Set TweetyWorld := { w | isBird w }
 def penguinDomain : Set TweetyWorld := { w | isPenguin w }
 
 /-- Ordering for the bird domain: promotes flying. -/
-private def birdOrd : Preorder TweetyWorld :=
+@[reducible] private def birdOrd : Preorder TweetyWorld :=
   Preorder.ofLE (fun w v => flies v → flies w) (fun _ => id)
     (fun _ _ _ huv hvw h => huv (hvw h))
 
 /-- Ordering for the penguin domain: promotes ¬flying. -/
-private def penguinOrd : Preorder TweetyWorld :=
+@[reducible] private def penguinOrd : Preorder TweetyWorld :=
   Preorder.ofLE (fun w v => ¬flies v → ¬flies w) (fun _ => id)
     (fun _ _ _ huv hvw h => huv (hvw h))
 
-private noncomputable def tweetyPattern (d : Set TweetyWorld) :
+@[reducible] private noncomputable def tweetyPattern (d : Set TweetyWorld) :
     Preorder TweetyWorld :=
   if d = penguinDomain then penguinOrd
   else if d = birdDomain then birdOrd
@@ -670,15 +670,15 @@ open NixonWorld
 def quakerDomain : Set NixonWorld := { w | isQuaker w }
 def repDomain : Set NixonWorld := { w | isRepublican w }
 
-private def quakerOrd : Preorder NixonWorld :=
+@[reducible] private def quakerOrd : Preorder NixonWorld :=
   Preorder.ofLE (fun w v => isPacifist v → isPacifist w) (fun _ => id)
     (fun _ _ _ huv hvw h => huv (hvw h))
 
-private def repOrd : Preorder NixonWorld :=
+@[reducible] private def repOrd : Preorder NixonWorld :=
   Preorder.ofLE (fun w v => ¬isPacifist v → ¬isPacifist w) (fun _ => id)
     (fun _ _ _ huv hvw h => huv (hvw h))
 
-private noncomputable def nixonPattern (d : Set NixonWorld) :
+@[reducible] private noncomputable def nixonPattern (d : Set NixonWorld) :
     Preorder NixonWorld :=
   if d = quakerDomain then quakerOrd
   else if d = repDomain then repOrd
