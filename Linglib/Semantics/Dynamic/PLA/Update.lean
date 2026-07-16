@@ -80,30 +80,8 @@ equivalence, componentwise. -/
 def possEquivMerged {E : Type*} : Poss E ≃ MergedAssignment E :=
   (Equiv.sumArrowEquivProdArrow _ _ E).symm
 
-/--
-An update is a Context Change Potential over PLA possibilities.
-
-We inherit the Monoid structure from `DynamicSemantics.CCP`:
-- Identity: `DynamicSemantics.CCP.id` (leaves state unchanged)
-- Composition: `DynamicSemantics.CCP.seq` (do u, then v), notation `;`
-- Associativity: guaranteed by the Monoid laws
--/
+/-- An update is a context change potential over PLA possibilities. -/
 abbrev Update (E : Type*) := DynamicSemantics.CCP (Poss E)
-
-namespace Update
-
-/-- Identity update: leaves state unchanged (from DynamicSemantics.CCP) -/
-abbrev id : Update E := DynamicSemantics.CCP.id
-
-/-- Absurd update: always yields empty state (from DynamicSemantics.CCP) -/
-abbrev absurd : Update E := DynamicSemantics.CCP.absurd
-
-/-- Absurd before anything yields absurd output (from DynamicSemantics.CCP) -/
-theorem seq_absurd (u : Update E) : DynamicSemantics.CCP.seq u absurd = absurd :=
-  DynamicSemantics.CCP.seq_absurd u
-
-end Update
-
 
 section
 variable (M : Model E)

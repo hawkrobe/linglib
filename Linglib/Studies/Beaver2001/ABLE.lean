@@ -224,11 +224,19 @@ theorem eval_and_eq_seq (φ ψ : Formula P) :
 
 /-- ABLE MIGHT = CCP.might. -/
 theorem eval_might_eq_ccpMight (φ : Formula P) :
-    (Formula.might φ).eval = CCP.might φ.eval := rfl
+    (Formula.might φ).eval = CCP.might φ.eval := by
+  funext σ
+  by_cases h : (φ.eval σ).Nonempty
+  · rw [CCP.might, CCP.guard_pos (C := λ s => (φ.eval s).Nonempty) h]; simp only [eval, if_pos h]
+  · rw [CCP.might, CCP.guard_neg (C := λ s => (φ.eval s).Nonempty) h]; simp only [eval, if_neg h]
 
 /-- ABLE ∂ = CCP.must. -/
 theorem eval_presup_eq_ccpMust (φ : Formula P) :
-    (Formula.presup φ).eval = CCP.must φ.eval := rfl
+    (Formula.presup φ).eval = CCP.must φ.eval := by
+  funext σ
+  by_cases h : φ.eval σ = σ
+  · rw [CCP.must, CCP.guard_pos (C := λ s => φ.eval s = s) h]; simp only [eval, if_pos h]
+  · rw [CCP.must, CCP.guard_neg (C := λ s => φ.eval s = s) h]; simp only [eval, if_neg h]
 
 /-- ABLE pred = updateFromSat (via identity).
 
@@ -262,10 +270,10 @@ theorem not_neq_ccpNegTest :
     refine Set.mem_diff_of_mem (Or.inr rfl) ?_
     intro ⟨_, hf⟩; exact Bool.noConfusion hf
   rw [h] at this
-  simp only [eval, CCP.negTest, CCP.guard] at this
-  have hne : ({ p : Bool | p ∈ ({true, false} : Set Bool) ∧ p = true}).Nonempty :=
+  have hne : ((Formula.pred (· = true)).eval ({true, false} : Set Bool)).Nonempty :=
     ⟨true, Or.inl rfl, rfl⟩
-  simp only [hne, not_true, ↓reduceIte] at this
+  rw [CCP.negTest, CCP.guard_neg (C := λ s => ¬((Formula.pred (· = true)).eval s).Nonempty)
+    (not_not_intro hne)] at this
   exact this
 
 -- ════════════════════════════════════════════════════════════════

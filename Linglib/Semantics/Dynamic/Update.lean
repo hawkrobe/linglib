@@ -157,13 +157,7 @@ abbrev CCP (S : Type*) := Set S → Set S
 
 namespace CCP
 
-variable {S : Type*} {u v φ ψ : CCP S}
-
-/-- The identity CCP. -/
-def id : CCP S := λ s => s
-
-/-- The absurd CCP: crash to the empty state. -/
-def absurd : CCP S := λ _ => ∅
+variable {S : Type*} {u v : CCP S}
 
 /-- Sequential composition of CCPs, in diagrammatic order. -/
 def seq (u v : CCP S) : CCP S := λ s => v (u s)
@@ -176,36 +170,32 @@ scoped instance : Monoid (CCP S) where
   one_mul _ := rfl
   mul_one _ := rfl
 
-/-- The absurd CCP absorbs on the right. -/
-theorem seq_absurd (u : CCP S) : seq u absurd = absurd := rfl
-
 /-- Dynamic negation by set difference: the states that do not survive `φ`
 ([heim-1982]; [veltman-1996]). -/
 def neg (φ : CCP S) : CCP S := λ s => s \ φ s
 
 /-! ### Whole-state tests -/
 
-open Classical in
 /-- `guard C` passes a state through iff it satisfies `C`, else crashes to `∅`. -/
-noncomputable def guard (C : Set S → Prop) : CCP S := λ s => if C s then s else ∅
+def guard (C : Set S → Prop) : CCP S := λ s => { p ∈ s | C s }
 
 /-- A guard whose condition holds passes the state through. -/
 @[simp] theorem guard_pos {C : Set S → Prop} {s} (h : C s) : guard C s = s :=
-  if_pos h
+  Set.ext λ _ => and_iff_left h
 
 /-- A guard whose condition fails crashes to `∅`. -/
 @[simp] theorem guard_neg {C : Set S → Prop} {s} (h : ¬C s) : guard C s = ∅ :=
-  if_neg h
+  Set.eq_empty_of_forall_notMem λ _ hp => h hp.2
 
 /-- `negTest φ` passes iff `φ` crashes — a whole-state consistency test, not
 the set-difference `neg` (see the implementation notes). -/
-noncomputable def negTest (φ : CCP S) : CCP S := guard (λ s => ¬ (φ s).Nonempty)
+def negTest (φ : CCP S) : CCP S := guard (λ s => ¬ (φ s).Nonempty)
 
 /-- `might φ` passes iff `φ` yields a nonempty result ([veltman-1996]). -/
-noncomputable def might (φ : CCP S) : CCP S := guard (λ s => (φ s).Nonempty)
+def might (φ : CCP S) : CCP S := guard (λ s => (φ s).Nonempty)
 
 /-- `must φ` passes iff `φ` returns its input unchanged ([veltman-1996]). -/
-noncomputable def must (φ : CCP S) : CCP S := guard (λ s => φ s = s)
+def must (φ : CCP S) : CCP S := guard (λ s => φ s = s)
 
 /-- Acceptance consequence: every `φ`-output is a fixed point of `ψ`
 ([veltman-1996]'s acceptance validity; [beaver-2001]'s D45). -/
@@ -213,18 +203,16 @@ def entails (φ ψ : CCP S) : Prop := ∀ s : Set S, ψ (φ s) = φ s
 
 /-! ### Classification -/
 
-/-- A transformer is *eliminative* if it never adds possibilities: `u ≤ id`
-pointwise. -/
-def IsEliminative (u : CCP S) : Prop := ∀ s, u s ⊆ s
+/-- A transformer is *eliminative* if it never adds possibilities. -/
+def IsEliminative (u : CCP S) : Prop := u ≤ id
 
 /-- The identity is eliminative. -/
-theorem isEliminative_id : IsEliminative (id : CCP S) :=
-  λ _ => Set.Subset.rfl
+theorem isEliminative_id : IsEliminative (id : CCP S) := le_rfl
 
 /-- Sequencing preserves eliminativity. -/
 theorem IsEliminative.seq (hu : IsEliminative u) (hv : IsEliminative v) :
-    IsEliminative (u.seq v) := λ s _ hp =>
-  hu s (hv (u s) hp)
+    IsEliminative (u.seq v) :=
+  λ s => (hv (u s)).trans (hu s)
 
 /-- A transformer is a *test* if it passes its input through or crashes to
 `∅` — [veltman-1996]'s tests, `Update.IsTest` one carrier up. -/
