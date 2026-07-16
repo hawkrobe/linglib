@@ -1,6 +1,6 @@
 import Linglib.Core.Logic.CylindricAlgebra
 import Linglib.Semantics.Dynamic.CDRT
-import Linglib.Semantics.Dynamic.DRS.Based
+import Linglib.Semantics.Dynamic.DRS.Indexed
 import Mathlib.Data.Fin.VecNotation
 
 /-!
@@ -334,7 +334,7 @@ end CylindricAlgebra
 their values. A DRS that re-declares a referent separates the two: on
 `[ | [x | man x] ⇒ [x | mortal x]]` the agree-off-universe semantics may
 reassign the re-declared `x`, so it only demands that some mortal exist,
-while the persistence rendering (`DRS.toRelAt`, `DRS/Based.lean`) forces
+while the persistence rendering (`DRS.toRelAt`, `DRS/Indexed.lean`) forces
 every man to be mortal. In a model with a non-mortal man the two truth
 values differ (`fn4_diverges`) — the witness is proper (`fn4_isProper`), so
 what fails is exactly reuse-freeness (`fn4_not_reuseFreeAt`), the hypothesis
@@ -388,7 +388,7 @@ theorem fn4_trueRel (g : ℕ → Fin 2) : DRS.trueRel fn4 g := by
   show Function.update g₁ 0 1 0 = 1
   simp
 
-/-- Based falsity: persistence keeps the re-declared referent's man value, so
+/-- Indexed falsity: persistence keeps the re-declared referent's man value, so
 no output verifies the witness in a model with a non-mortal man. -/
 theorem fn4_not_toRelAt (g : ℕ → Fin 2) : ¬ ∃ g', DRS.toRelAt ∅ fn4 g g' := by
   rintro ⟨g', hg'⟩
@@ -401,7 +401,7 @@ theorem fn4_not_toRelAt (g : ℕ → Fin 2) : ¬ ∃ g', DRS.toRelAt ∅ fn4 g g
   exact absurd (h0.symm.trans h1) (by decide)
 
 /-- The reconciliation `DRS.trueRel_iff_toRelAt` fails on the witness:
-flat-true, based-false. -/
+flat-true, indexed-false. -/
 theorem fn4_diverges (g : ℕ → Fin 2) :
     ¬ (DRS.trueRel fn4 g ↔ ∃ g', DRS.toRelAt ∅ fn4 g g') :=
   fun h => fn4_not_toRelAt g (h.mp (fn4_trueRel g))

@@ -16,7 +16,7 @@ and cross-disjunct anaphora.
 States are Heimian (the paper's Def. 3.1): sets of world-assignment
 pairs whose assignments are total functions into `Option E` — `none` is
 the paper's `∗`, so definedness is per-possibility and non-uniform.
-This is strictly more expressive than the based `State` of `State.lean`:
+This is strictly more expressive than the indexed `State` of `State.lean`:
 a uniform base cannot represent partially familiar states, on which the
 paper's separation of assertability (54) from Heimian familiarity rests.
 

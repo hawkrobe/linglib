@@ -28,7 +28,7 @@ it.
 - `closure_exists_eq_cylindrify` and friends: the satisfaction-set
   computations from Fact 19's proof (§3.6), in cylindric-algebra
   vocabulary.
-- The based reading: DPL's generators as context-extension arrows
+- The indexed reading: DPL's generators as context-extension arrows
   (`testTransition`, `Transition.randomAssign`), with clause 4 as
   transition composition and clause 7 factoring through the
   random-assignment arrow.
@@ -417,19 +417,19 @@ theorem closure_neg_eq (φ : DPLRel E) :
 
 end SatisfactionSets
 
-/-! ### The based reading: DPL generators as context extension -/
+/-! ### The indexed reading: DPL generators as context extension -/
 
 /-! DPL meanings are relations on total assignments (Definition 2); the
-based substrate (`Transition.lean`) types them by the contexts they read
+indexed substrate (`Transition.lean`) types them by the contexts they read
 and write. The two generators land as arrows: tests (clauses 1–3, 5, 6, 8
 are all of this shape) become `testTransition`s `X ⟶ X`, and the random
 reset of clause 7 is `Transition.randomAssign : X ⟶ insert x X`.
 Sequencing is clause 4 (`rel_comp_iff_conj`), and the existential factors
 as random assignment composed with its scope
-(`rel_randomAssign_comp_iff_exists`) — so a DPL formula's based meaning is
+(`rel_randomAssign_comp_iff_exists`) — so a DPL formula's indexed meaning is
 a composite of the generating arrows of `DynamicSemantics.Ctx`. -/
 
-section BasedReading
+section IndexedReading
 
 open DynamicSemantics
 
@@ -447,8 +447,8 @@ def testTransition (X : Finset ℕ) (C : (ℕ → E) → Prop)
   supported_right _ _ _ _ hgg' :=
     and_congr ⟨(·.trans hgg'), (·.trans hgg'.symm)⟩ Iff.rfl
 
-/-- Applying a test at a state based below its context filters the
-carrier — the based form of Definition 2's test clauses. -/
+/-- Applying a test at a state indexed below its context filters the
+carrier — the indexed form of Definition 2's test clauses. -/
 theorem mem_testTransition_apply {C : (ℕ → E) → Prop} {hC : DependsOn C ↑X}
     {I : State W ℕ E} (hbase : I.base ⊆ X) {w : W} {g : ℕ → E} :
     (⟨w, g⟩ : Possibility W ℕ E) ∈ (testTransition X C hC).apply I ↔
@@ -492,6 +492,6 @@ theorem rel_randomAssign_comp_iff_exists {x : ℕ}
     refine ⟨fun n => if n = x then d else f n, fun y hy => ?_, (hu ..).mpr hφ⟩
     exact (if_neg (Finset.mem_erase.mp hy).1).symm
 
-end BasedReading
+end IndexedReading
 
 end GroenendijkStokhof1991

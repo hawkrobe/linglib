@@ -3,7 +3,7 @@ import Linglib.Semantics.Dynamic.DRS.Dynamics
 import Linglib.Semantics.Dynamic.Transition
 
 /-!
-# Based relational semantics of DRSs
+# Indexed relational semantics of DRSs
 [kamp-vangenabith-reyle-2011] (Defs. 19, 22, 24), [kamp-reyle-1993]
 
 The base-threaded verification semantics: `toRelAt X K f g` holds when the
@@ -14,7 +14,7 @@ total-assignment rendering of K&R's partial-embedding semantics
 `DRS.toRel` (`DRS/Dynamics.lean`), whose agree-off-universe clause freely
 reassigns re-declared referents (Muskens's fn. 4 divergence).
 
-Persistence is what makes the based semantics well-typed: `toRelAt X K` is
+Persistence is what makes the indexed semantics well-typed: `toRelAt X K` is
 read only at `X` (`toRelAt_congr_left` — one line, no witness surgery) and
 written only at `X ∪ U` (`toRelAt_congr_right`, given the *referential
 presupposition* `K.fv ⊆ X`), so a well-formed DRS denotes a spine
@@ -35,7 +35,7 @@ instance of functoriality (`Transition.apply_comp`).
 * `DRS.state` — the information state a proper DRS expresses.
 * `DRS.transition_merge` / `DRS.state_merge` — the Merging Lemma on the
   spine and the action equation.
-* `DRS.trueRel_iff_toRelAt` — on reuse-free DRSs the flat and based
+* `DRS.trueRel_iff_toRelAt` — on reuse-free DRSs the flat and indexed
   semantics have the same truth conditions.
 -/
 
@@ -111,7 +111,7 @@ end
 
 /-! ### Read and write support
 
-The based clauses only mention the input through the agreement conjunct, so
+The indexed clauses only mention the input through the agreement conjunct, so
 read-support is one line — the flat semantics' piecewise witness surgery
 disappears. Write-support needs the referential presupposition `fv ⊆ X`
 only at the atomic clauses. -/
@@ -394,7 +394,7 @@ end
 
 /-! ### The Merging Lemma and the action equation -/
 
-/-- **Based Merging Lemma**: merge is sequencing. The side condition asks
+/-- **Indexed Merging Lemma**: merge is sequencing. The side condition asks
 only that `K₂`'s universe not occur in `K₁`'s conditions (no *capture*);
 re-declaration of context or `K₁`-universe referents is allowed — persistence
 makes it inert. Contrast the flat lemma (`DRS.toRel_merge`), whose freshness
@@ -453,13 +453,13 @@ theorem DRS.state_merge (W : Type*) (K₁ K₂ : DRS L V) (h₁ : K₁.IsProper)
 /-! ### Reconciliation with the flat semantics
 
 On reuse-free DRSs (`DRS.ReuseFreeAt`, `DRS/Basic.lean`) the flat
-agree-off-universe semantics (`DRS.toRel`, `DRS/Dynamics.lean`) and the based
-persistence semantics coincide at truth level: every flat output is a based
-output, and a based output repairs, off the grown base, into a flat one.
+agree-off-universe semantics (`DRS.toRel`, `DRS/Dynamics.lean`) and the indexed
+persistence semantics coincide at truth level: every flat output is a indexed
+output, and a indexed output repairs, off the grown base, into a flat one.
 Reuse-freeness is needed — on a DRS that re-declares a referent the two
 diverge ([muskens-1996], fn. 4; witness in `Studies/Muskens1996.lean`). -/
 
-/-- Flat-to-based on a reuse-free box: agreement off the universe restricts
+/-- Flat-to-indexed on a reuse-free box: agreement off the universe restricts
 to agreement on a disjoint base. -/
 private theorem DRS.toRelAt_of_toRel' {X U : Finset V} {conds : List (Condition L V)}
     (hXU : Disjoint X U)
@@ -470,7 +470,7 @@ private theorem DRS.toRelAt_of_toRel' {X U : Finset V} {conds : List (Condition 
   exact ⟨fun x hx => hag x (Finset.disjoint_left.mp hXU (Finset.mem_coe.mp hx)),
     (hIH g').mp hh⟩
 
-/-- Based-to-flat on a bounded box: repair the output off the grown base with
+/-- Indexed-to-flat on a bounded box: repair the output off the grown base with
 the input's values. -/
 private theorem DRS.toRel_of_toRelAt' {X U : Finset V} {conds : List (Condition L V)}
     (hfvc : Condition.fvL conds ⊆ X ∪ U)
@@ -494,7 +494,7 @@ private theorem DRS.toRel_of_toRelAt' {X U : Finset V} {conds : List (Condition 
 
 mutual
 /-- On a reuse-free condition with free referents in the base, the flat set
-denotation and the based one coincide. -/
+denotation and the indexed one coincide. -/
 theorem Condition.holds_iff_holdsAt {X : Finset V} (c : Condition L V)
     (hrf : Condition.ReuseFreeAt X c) (hfv : c.fv ⊆ X) (g : V → M) :
     Condition.holds c g ↔ Condition.holdsAt X c g := by
@@ -580,7 +580,7 @@ theorem Condition.holdsAll_iff_holdsAllAt {X : Finset V} (cs : List (Condition L
       (Condition.holdsAll_iff_holdsAllAt cs hrf.2 hfv.2 g)
 end
 
-/-- Flat-to-based: on a reuse-free DRS every flat output is a based output. -/
+/-- Flat-to-indexed: on a reuse-free DRS every flat output is a indexed output. -/
 theorem DRS.toRelAt_of_toRel {X : Finset V} {K : DRS L V} (hrf : DRS.ReuseFreeAt X K)
     (hfv : K.fv ⊆ X) {g g' : V → M} (h : DRS.toRel K g g') : DRS.toRelAt X K g g' := by
   obtain ⟨U, conds⟩ := K
@@ -588,7 +588,7 @@ theorem DRS.toRelAt_of_toRel {X : Finset V} {K : DRS L V} (hrf : DRS.ReuseFreeAt
   exact DRS.toRelAt_of_toRel' hrf.1
     (fun k => Condition.holdsAll_iff_holdsAllAt conds hrf.2 (DRS.fv_subset_iff.mp hfv) k) h
 
-/-- Based-to-flat: on a reuse-free DRS a based output repairs, off the grown
+/-- Indexed-to-flat: on a reuse-free DRS a indexed output repairs, off the grown
 base, into a flat output. -/
 theorem DRS.toRel_of_toRelAt {X : Finset V} {K : DRS L V} (hrf : DRS.ReuseFreeAt X K)
     (hfv : K.fv ⊆ X) {g g' : V → M} (h : DRS.toRelAt X K g g') :
@@ -599,7 +599,7 @@ theorem DRS.toRel_of_toRelAt {X : Finset V} {K : DRS L V} (hrf : DRS.ReuseFreeAt
     (fun k => Condition.holdsAll_iff_holdsAllAt conds hrf.2 (DRS.fv_subset_iff.mp hfv) k) h⟩
 
 /-- **Truth-level reconciliation** ([muskens-1996], fn. 4): on a reuse-free
-DRS the flat total-assignment semantics and the based persistence semantics
+DRS the flat total-assignment semantics and the indexed persistence semantics
 have the same truth conditions. Reuse-freeness is needed — a re-declaring
 witness separates the two (`Studies/Muskens1996.lean`). -/
 theorem DRS.trueRel_iff_toRelAt {X : Finset V} {K : DRS L V} (hrf : DRS.ReuseFreeAt X K)
