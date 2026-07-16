@@ -1,4 +1,4 @@
-import Linglib.Studies.Heim1982.FileChangeSemantics
+import Linglib.Semantics.Dynamic.FileChange
 import Linglib.Data.Examples.Heim1982
 
 /-!
@@ -7,7 +7,7 @@ import Linglib.Data.Examples.Heim1982
 
 Formal analysis of cross-sentential anaphora using [heim-1982]'s
 File Change Semantics. This study file connects the FCS theory
-(`Studies/Heim1982/FileChangeSemantics.lean`) to the example rows
+(`Semantics/Dynamic/FileChange.lean`) to the example rows
 in `Data/Examples/Heim1982.json` (`Heim1982.Examples`).
 
 ## Key Claims Formalized
@@ -27,9 +27,10 @@ in `Data/Examples/Heim1982.json` (`Heim1982.Examples`).
 
 5. **Truth criterion (C)**: φ is true w.r.t. F iff Sat(F + φ) is
    nonempty ([heim-1982], Ch III §3.2). This builds existential
-   quantification into the notion of truth — see `trueIn`,
-   `supports_trueIn`, `supports_idempotent`, and the eliminativity
-   family (Principle (A)) in `FileChangeSemantics.lean`.
+   quantification into the notion of truth — see `FCP.trueIn`,
+   `FCP.supports_trueIn`, `FCP.supports_idempotent`, and the
+   eliminativity family (Principle (A)) in
+   `Semantics/Dynamic/FileChange.lean`.
 
 ## Connection to Empirical Data
 
@@ -39,7 +40,6 @@ example rows in `Heim1982.Examples`.
 
 namespace Heim1982
 
-open FileChangeSemantics
 open DynamicSemantics
 
 -- ════════════════════════════════════════════════════
@@ -47,7 +47,8 @@ open DynamicSemantics
 -- ════════════════════════════════════════════════════
 
 /-! We work with a simple model: `W` = possible worlds, `E` = entities.
-Predicates are modeled as functions on possibilities. -/
+Predicates are modeled as functions on possibilities. Heim's file cards
+are numbered, so referents are `ℕ`. -/
 
 variable {W E : Type*}
 
@@ -70,25 +71,25 @@ where ∃x₁ extends Dom(F) to include x₁.
 
 /-- The indefinite "a man walked in" as an FCP:
 ∃x. man(x) ∧ walkedIn(x). -/
-def aManWalkedIn (man walkedIn : E → Prop) (x : ℕ) : FCP W E :=
-  FCP.indef x (FCP.seq (FCP.atomVar man x) (FCP.atomVar walkedIn x))
+def aManWalkedIn (man walkedIn : E → Prop) (x : ℕ) : FCP W ℕ E :=
+  FCP.indef x ((FCP.atomVar man x).seq (FCP.atomVar walkedIn x))
 
 /-- "He sat down" as an FCP: satDown(x). -/
-def heSatDown (satDown : E → Prop) (x : ℕ) : FCP W E :=
+def heSatDown (satDown : E → Prop) (x : ℕ) : FCP W ℕ E :=
   FCP.atomVar satDown x
 
 /-- The full discourse "A man walked in. He sat down." -/
 def indefinitePersistsDiscourse (man walkedIn satDown : E → Prop) (x : ℕ) :
-    FCP W E :=
-  FCP.seq (aManWalkedIn man walkedIn x) (heSatDown satDown x)
+    FCP W ℕ E :=
+  (aManWalkedIn man walkedIn x).seq (heSatDown satDown x)
 
 /-- When x is novel, the indefinite FCP is defined
 (not a presupposition failure) — provided the body is defined on the
 randomly assigned file. -/
 theorem indef_defined_when_novel (x : ℕ) (F : State W ℕ E)
-    (hnovel : ∀ p ∈ F, p.assignment x = none) (body : FCP W E)
+    (hnovel : ∀ p ∈ F, p.assignment x = none) (body : FCP W ℕ E)
     (hbody : (body (F.randomAssign x)).Dom) :
-    definedOn F (FCP.indef x body) :=
+    (FCP.indef x body).admits F :=
   ⟨hnovel, hbody⟩
 
 /-- After the indefinite, x is familiar — provided the body preserves
@@ -96,7 +97,7 @@ familiarity.
 
 This is the formal content of "indefinites introduce discourse
 referents" — the defining claim of [heim-1982]. -/
-theorem indef_adds_to_dom (x : ℕ) (body : FCP W E)
+theorem indef_adds_to_dom (x : ℕ) (body : FCP W ℕ E)
     (F : State W ℕ E) {F' : State W ℕ E}
     (hres : F' ∈ FCP.indef x body F)
     (hbody : ∀ G, Familiar G x → ∀ G' ∈ body G, Familiar G' x) :
@@ -117,14 +118,14 @@ keeps points of the input file, where x was never assigned. -/
 
 /-- A variable introduced inside negation stays novel in the output.
 
-Negation is eliminative over the *input* file (`neg_eliminative`), so
-a novel variable stays novel after negation — the dref is trapped
+Negation is eliminative over the *input* file (`FCP.neg_eliminative`),
+so a novel variable stays novel after negation — the dref is trapped
 inside the scope of ¬. -/
-theorem neg_blocks_dref (x : ℕ) (φ : FCP W E) {F F' : State W ℕ E}
+theorem neg_blocks_dref (x : ℕ) (φ : FCP W ℕ E) {F F' : State W ℕ E}
     (hnovel : ∀ p ∈ F, p.assignment x = none)
     (h : F' ∈ FCP.neg φ F) :
     ∀ p ∈ F', p.assignment x = none :=
-  fun p hp => hnovel p (neg_eliminative φ h hp)
+  fun p hp => hnovel p (FCP.neg_eliminative φ h hp)
 
 -- ════════════════════════════════════════════════════
 -- § 4. Novelty-Familiarity Condition
@@ -143,28 +144,29 @@ falsehood. This is modeled by FCPs being `Part`-undefined. -/
 
 This accounts for why "*A man₁ walked in. A man₁ sat down." is
 infelicitous when the second indefinite reuses index 1. -/
-theorem novelty_violation (x : ℕ) (body : FCP W E)
+theorem novelty_violation (x : ℕ) (body : FCP W ℕ E)
     (F : State W ℕ E) (hne : F.Nonempty) (h : Familiar F x) :
-    ¬ definedOn F (FCP.indef x body) :=
-  indef_not_novel_not_definedOn x body F fun hall => by
-    obtain ⟨p, hp⟩ := hne
-    exact h p hp (hall p hp)
+    ¬ (FCP.indef x body).admits F := by
+  rintro ⟨hall, -⟩
+  obtain ⟨p, hp⟩ := hne
+  exact h p hp (hall p hp)
 
 /-- A definite with a novel index causes presupposition failure.
 
 This accounts for why "#He₁ sat down." is infelicitous at the start
 of a discourse (when no index 1 dref has been established). -/
-theorem familiarity_violation (x : ℕ) (body : FCP W E)
+theorem familiarity_violation (x : ℕ) (body : FCP W ℕ E)
     (F : State W ℕ E) (h : ¬ Familiar F x) :
-    ¬ definedOn F (FCP.def_ x body) :=
-  def_not_familiar_not_definedOn x body F h
+    ¬ (FCP.def_ x body).admits F := by
+  rintro ⟨hfam, -⟩
+  exact h hfam
 
 /-- On a file where x is familiar, the definite applies transparently.
 
 With `indef_adds_to_dom`, this derives "A man₁ walked in. He₁ sat
 down.": the indefinite makes index 1 familiar, so the definite "he₁"
 is no presupposition failure. -/
-theorem def_familiar (x : ℕ) (body : FCP W E)
+theorem def_familiar (x : ℕ) (body : FCP W ℕ E)
     (F : State W ℕ E) (hfam : Familiar F x) :
     FCP.def_ x body F = body F :=
   Part.assert_pos hfam
