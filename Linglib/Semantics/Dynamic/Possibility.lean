@@ -50,12 +50,8 @@ end Update
 
 variable {p q u : Possibility W V (Option M)}
 
-/-- Descent is the canonical order on partial points ([elliott-sudo-2025]
-Def. 3.3's descendance, [groenendijk-stokhof-veltman-1996]'s
-graph-extension — pointwise, the information order mathlib gives
-`Part`): same world, and the larger assignment defined wherever the
-smaller is. Every point lies over its own domain, so under descent the
-points form the total space of `Category.lean`'s possibilities family. -/
+/-- Descent orders partial points: same world, and the larger assignment
+defined wherever the smaller is ([elliott-sudo-2025], Def. 3.3). -/
 instance : Preorder (Possibility W V (Option M)) where
   le p q := p.world = q.world ∧
     ∀ x e, p.assignment x = some e → q.assignment x = some e
