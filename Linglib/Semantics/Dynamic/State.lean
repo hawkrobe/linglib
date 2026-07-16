@@ -230,8 +230,8 @@ namespace State
 /-- The state is uniform at `X`: every point defines exactly the
 referents in `X` — Def. 23's "Dom(f) = X", as a stratum rather than a
 component. -/
-def UniformAt (X : Finset V) (I : State W V M) : Prop :=
-  ∀ p ∈ I, Possibility.dom p = (↑X : Set V)
+def UniformAt (X : Set V) (I : State W V M) : Prop :=
+  ∀ p ∈ I, Possibility.dom p = X
 
 /-- The initial state is uniform at the empty base. -/
 theorem uniformAt_initial : UniformAt ∅ (initial : State W V M) :=
@@ -241,22 +241,22 @@ theorem uniformAt_initial : UniformAt ∅ (initial : State W V M) :=
 
 /-- Into a uniform stratum, subsistence is membership: a point already
 at the stratum's domain has no room to grow. -/
-theorem subsists_iff_mem {X : Finset V} {s : State W V M}
+theorem subsists_iff_mem {X : Set V} {s : State W V M}
     (hs : UniformAt X s) {p : Possibility W V (Option M)}
-    (hp : p.dom = (↑X : Set V)) : (p ≺ s) ↔ p ∈ s :=
+    (hp : p.dom = X) : (p ≺ s) ↔ p ∈ s :=
   ⟨fun ⟨q, hq, hpq⟩ =>
     (hpq.eq_of_dom_eq (hp.trans (hs q hq).symm)).symm ▸ hq,
     Subsists.of_mem⟩
 
 /-- On a uniform stratum, subsistence is inclusion. -/
-theorem subsistsIn_iff_subset {X : Finset V} {s s' : State W V M}
+theorem subsistsIn_iff_subset {X : Set V} {s s' : State W V M}
     (hs : UniformAt X s) (hs' : UniformAt X s') :
     (s ⪯ s') ↔ s ⊆ s' :=
   forall₂_congr fun p hp => subsists_iff_mem hs' (hs p hp)
 
 /-- On a uniform stratum, informativeness is reverse inclusion — the
 eliminative direction. -/
-theorem infoLe_iff_superset {X : Finset V} {s s' : State W V M}
+theorem infoLe_iff_superset {X : Set V} {s s' : State W V M}
     (hs : UniformAt X s) (hs' : UniformAt X s') :
     (s ⊑ s') ↔ s' ⊆ s := by
   constructor
@@ -267,7 +267,7 @@ theorem infoLe_iff_superset {X : Finset V} {s s' : State W V M}
 
 /-- Within one stratum, merge is intersection: compatibility on a shared
 domain forces equality. -/
-theorem merge_eq_inter_of_uniform {X : Finset V} {s s' : State W V M}
+theorem merge_eq_inter_of_uniform {X : Set V} {s s' : State W V M}
     (hs : UniformAt X s) (hs' : UniformAt X s') :
     s.merge s' = s ∩ s' := by
   have hself : ∀ r : Possibility W V (Option M), r.union r = r := fun r =>
@@ -285,19 +285,19 @@ theorem merge_eq_inter_of_uniform {X : Finset V} {s s' : State W V M}
     exact (Option.some.injEq .. ▸ he' :)
 
 section Fibred
-variable [DecidableEq V]
 
 /-- Merge unites strata. -/
-theorem uniformAt_merge {X Y : Finset V} {s s' : State W V M}
+theorem uniformAt_merge {X Y : Set V} {s s' : State W V M}
     (hs : UniformAt X s) (hs' : UniformAt Y s') :
     UniformAt (X ∪ Y) (s.merge s') := by
   rintro r ⟨p, hp, q, hq, -, rfl⟩
-  rw [Possibility.dom_union, hs p hp, hs' q hq, Finset.coe_union]
+  rw [Possibility.dom_union, hs p hp, hs' q hq]
 
 /-- Subsistence out of a stratum factors through reindexing: the weaker
 state includes into the restricted image of the stronger — the fibred
 order, glued from within-stratum `⊆` along `restrict`. -/
-theorem subsistsIn_iff_subset_restrict {X : Finset V}
+theorem subsistsIn_iff_subset_restrict {X : Set V}
+    [∀ v, Decidable (v ∈ X)]
     {s s' : State W V M} (hs : UniformAt X s) :
     (s ⪯ s') ↔ s ⊆ Possibility.restrict X '' s' := by
   constructor
@@ -312,7 +312,8 @@ theorem subsistsIn_iff_subset_restrict {X : Finset V}
 /-- Informativeness out of a stratum factors through reindexing: the
 restricted image of the stronger is included in the weaker — the
 eliminative direction of the fibred order. -/
-theorem infoLe_iff_restrict_subset {X : Finset V}
+theorem infoLe_iff_restrict_subset {X : Set V}
+    [∀ v, Decidable (v ∈ X)]
     {s s' : State W V M} (hs : UniformAt X s) :
     (s ⊑ s') ↔ Possibility.restrict X '' s' ⊆ s := by
   constructor
@@ -325,31 +326,34 @@ theorem infoLe_iff_restrict_subset {X : Finset V}
 
 end Fibred
 
-variable [DecidableEq V]
-
 /-- Restriction of a state: pointwise, by direct image. -/
-def restrict (X : Finset V) (I : State W V M) : State W V M :=
+def restrict (X : Set V) [∀ v, Decidable (v ∈ X)] (I : State W V M) :
+    State W V M :=
   Possibility.restrict X '' I
 
 /-- Restriction only forgets: the restricted state subsists in the
 original. -/
-theorem subsistsIn_restrict (X : Finset V) (I : State W V M) :
-    I.restrict X ⪯ I := by
+theorem subsistsIn_restrict (X : Set V) [∀ v, Decidable (v ∈ X)]
+    (I : State W V M) : I.restrict X ⪯ I := by
   rintro p ⟨q, hq, rfl⟩
   exact ⟨q, hq, Possibility.restrict_descendant X q⟩
 
 /-- Restriction meets the stratification. -/
-theorem uniformAt_restrict {X Y : Finset V} {I : State W V M}
+theorem uniformAt_restrict {X Y : Set V} [∀ v, Decidable (v ∈ X)]
+    {I : State W V M}
     (h : UniformAt Y I) : UniformAt (X ∩ Y) (I.restrict X) := by
   rintro p ⟨q, hq, rfl⟩
-  rw [Possibility.dom_restrict, h q hq, Finset.coe_inter]
+  rw [Possibility.dom_restrict, h q hq]
 
 /-- Restriction composes along intersections. -/
-theorem restrict_restrict (X Y : Finset V) (I : State W V M) :
+theorem restrict_restrict (X Y : Set V) [∀ v, Decidable (v ∈ X)]
+    [∀ v, Decidable (v ∈ Y)] (I : State W V M) :
     (I.restrict Y).restrict X = I.restrict (X ∩ Y) := by
   unfold restrict
   rw [← Set.image_comp]
   exact congrFun (congrArg _ (funext (Possibility.restrict_restrict X Y))) I
+
+variable [DecidableEq V]
 
 /-- Random assignment ([elliott-sudo-2025], (43);
 [groenendijk-stokhof-1991]'s `x := random`): indeterministically extend
@@ -370,11 +374,11 @@ state-level face of `Possibility.domEquiv`, and the comparison to the
 predecessor's fibers: an order isomorphism for `⊆` (which is `⪯` on the
 stratum, `subsistsIn_iff_subset`), hence an anti-isomorphism for `⊑`
 (`infoLe_iff_superset`). -/
-def uniformEquiv (X : Finset V) :
-    {I : State W V M // UniformAt X I} ≃o Set (W × ((↑X : Set V) → M)) where
+def uniformEquiv (X : Set V) [∀ v, Decidable (v ∈ X)] :
+    {I : State W V M // UniformAt X I} ≃o Set (W × (X → M)) where
   toFun I := {e | ((Possibility.domEquiv X).symm e).1 ∈ I.1}
   invFun S :=
-    ⟨{p | ∃ h : p.dom = (↑X : Set V), Possibility.domEquiv X ⟨p, h⟩ ∈ S},
+    ⟨{p | ∃ h : p.dom = X, Possibility.domEquiv X ⟨p, h⟩ ∈ S},
       fun _ ⟨h, _⟩ => h⟩
   left_inv I := by
     refine Subtype.ext (Set.ext fun p => ?_)

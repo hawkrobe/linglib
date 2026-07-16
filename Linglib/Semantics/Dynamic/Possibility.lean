@@ -225,19 +225,17 @@ theorem Compatible.right_of_union {p q v : Possibility W V (Option M)}
 
 section Restrict
 
-variable [DecidableEq V]
-
 /-- Restrict a partial point to the referents in `X`. -/
-def restrict (X : Finset V) (p : Possibility W V (Option M)) :
-    Possibility W V (Option M) :=
+def restrict (X : Set V) [∀ v, Decidable (v ∈ X)]
+    (p : Possibility W V (Option M)) : Possibility W V (Option M) :=
   ⟨p.world, fun v => if v ∈ X then p.assignment v else none⟩
 
-@[simp] theorem restrict_world (X : Finset V)
+@[simp] theorem restrict_world (X : Set V) [∀ v, Decidable (v ∈ X)]
     (p : Possibility W V (Option M)) :
     (p.restrict X).world = p.world := rfl
 
 /-- Restriction is an ancestor. -/
-theorem restrict_descendant (X : Finset V)
+theorem restrict_descendant (X : Set V) [∀ v, Decidable (v ∈ X)]
     (p : Possibility W V (Option M)) : (p.restrict X).Descendant p :=
   ⟨rfl, fun x e h => by
     by_cases hx : x ∈ X
@@ -245,16 +243,17 @@ theorem restrict_descendant (X : Finset V)
     · simp [restrict, hx] at h⟩
 
 /-- Restriction intersects the domain. -/
-theorem dom_restrict (X : Finset V) (p : Possibility W V (Option M)) :
-    (p.restrict X).dom = ↑X ∩ p.dom := by
+theorem dom_restrict (X : Set V) [∀ v, Decidable (v ∈ X)]
+    (p : Possibility W V (Option M)) :
+    (p.restrict X).dom = X ∩ p.dom := by
   ext v
   by_cases hv : v ∈ X <;> simp [restrict, dom, hv]
 
 /-- Descendance out of a stratum is *being the restriction*: for `p` at
 `X`, `p` grows into `q` exactly when `p` is `q` cut to `X`. The
 hom-characterization of the fibred order. -/
-theorem descendant_iff_eq_restrict {X : Finset V}
-    {p q : Possibility W V (Option M)} (hp : p.dom = (↑X : Set V)) :
+theorem descendant_iff_eq_restrict {X : Set V} [∀ v, Decidable (v ∈ X)]
+    {p q : Possibility W V (Option M)} (hp : p.dom = X) :
     p.Descendant q ↔ p = q.restrict X := by
   constructor
   · intro h
@@ -275,8 +274,8 @@ theorem descendant_iff_eq_restrict {X : Finset V}
     exact restrict_descendant X q
 
 /-- Restriction is pointwise idempotent along intersections. -/
-theorem restrict_restrict (X Y : Finset V)
-    (p : Possibility W V (Option M)) :
+theorem restrict_restrict (X Y : Set V) [∀ v, Decidable (v ∈ X)]
+    [∀ v, Decidable (v ∈ Y)] (p : Possibility W V (Option M)) :
     (p.restrict Y).restrict X = p.restrict (X ∩ Y) := by
   refine Possibility.ext rfl (funext fun v => ?_)
   by_cases hx : v ∈ X <;> by_cases hy : v ∈ Y <;>
@@ -285,21 +284,20 @@ theorem restrict_restrict (X Y : Finset V)
 /-- Partial points with domain `X` are world–`X`-assignment pairs —
 constructively: the classification that the total-assignment rendering
 recovered only with choice and an inhabitant of `M`. -/
-def domEquiv (X : Finset V) :
-    {p : Possibility W V (Option M) // p.dom = (↑X : Set V)} ≃
-      W × ((↑X : Set V) → M) where
+def domEquiv (X : Set V) [∀ v, Decidable (v ∈ X)] :
+    {p : Possibility W V (Option M) // p.dom = X} ≃ W × (X → M) where
   toFun p :=
     (p.1.world, fun v => (p.1.assignment v.1).get
       ((Set.ext_iff.mp p.2 v.1).mpr v.2))
   invFun e :=
-    ⟨⟨e.1, fun v => if h : v ∈ (↑X : Set V) then some (e.2 ⟨v, h⟩)
+    ⟨⟨e.1, fun v => if h : v ∈ X then some (e.2 ⟨v, h⟩)
       else none⟩, by
       ext v
-      by_cases h : v ∈ (↑X : Set V) <;> simp [dom, h]⟩
+      by_cases h : v ∈ X <;> simp [dom, h]⟩
   left_inv p := by
     obtain ⟨⟨w, g⟩, hp⟩ := p
     refine Subtype.ext (Possibility.ext rfl (funext fun v => ?_))
-    by_cases h : v ∈ (↑X : Set V)
+    by_cases h : v ∈ X
     · simp only [dif_pos h, Option.some_get]
     · have hnone : g v = none := Option.not_isSome_iff_eq_none.mp
         fun hs => h ((Set.ext_iff.mp hp v).mp hs)
@@ -309,17 +307,17 @@ def domEquiv (X : Finset V) :
     refine Prod.ext rfl (funext fun v => ?_)
     simp
 
-@[simp] theorem domEquiv_symm_val (X : Finset V)
-    (e : W × ((↑X : Set V) → M)) :
+theorem domEquiv_symm_val (X : Set V) [∀ v, Decidable (v ∈ X)]
+    (e : W × (X → M)) :
     ((domEquiv X).symm e).1 =
-      ⟨e.1, fun v => if h : v ∈ (↑X : Set V) then some (e.2 ⟨v, h⟩)
+      ⟨e.1, fun v => if h : v ∈ X then some (e.2 ⟨v, h⟩)
         else none⟩ :=
   rfl
 
 /-- The charts commute with restriction: restricting a classified point
 is weakening its chart. -/
-theorem restrict_domEquiv_symm {Y X : Finset V} (h : Y ≤ X)
-    (e : W × ((↑X : Set V) → M)) :
+theorem restrict_domEquiv_symm {Y X : Set V} [∀ v, Decidable (v ∈ X)]
+    [∀ v, Decidable (v ∈ Y)] (h : Y ⊆ X) (e : W × (X → M)) :
     ((domEquiv X).symm e).1.restrict Y =
       ((domEquiv Y).symm (e.1, fun v => e.2 ⟨v.1, h v.2⟩)).1 := by
   rw [domEquiv_symm_val, domEquiv_symm_val]
@@ -343,6 +341,30 @@ instance : Preorder (Based W V M) where
   le p q := p.1.Descendant q.1
   le_refl p := Descendant.refl p.1
   le_trans _ _ _ := Descendant.trans
+
+/-! ### Instantiations
+
+Update systems share one form — states are sets of points, updates act
+on states — and differ in the point. The parameters select the system:
+worlds only gives propositional update semantics ([veltman-1996]; the
+`∅`-fiber), assignments only gives lifted DPL, and the general form is
+FCS/DRT's pairs. Propositional inquisitive semantics instead *iterates*
+the construction — its points are sets of worlds — a level shift, not a
+parameter choice. -/
+
+/-- Worlds-only points: propositional update semantics. -/
+def worldEquiv (W M : Type*) : Possibility W Empty M ≃ W where
+  toFun p := p.world
+  invFun w := ⟨w, Empty.elim⟩
+  left_inv _ := Possibility.ext rfl (funext fun v => v.elim)
+  right_inv _ := rfl
+
+/-- Assignments-only points: lifted DPL. -/
+def assignmentEquiv (V M : Type*) : Possibility Unit V M ≃ (V → M) where
+  toFun p := p.assignment
+  invFun g := ⟨(), g⟩
+  left_inv _ := rfl
+  right_inv _ := rfl
 
 end Possibility
 
