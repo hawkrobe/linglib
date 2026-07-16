@@ -187,6 +187,9 @@ def guard (C : Set S → Prop) : CCP S := λ s => { p ∈ s | C s }
 @[simp] theorem guard_neg {C : Set S → Prop} {s} (h : ¬C s) : guard C s = ∅ :=
   Set.eq_empty_of_forall_notMem λ _ hp => h hp.2
 
+@[simp] theorem mem_guard {C : Set S → Prop} {s : Set S} {p : S} :
+    p ∈ guard C s ↔ p ∈ s ∧ C s := Iff.rfl
+
 /-- `negTest φ` passes iff `φ` crashes — a whole-state consistency test, not
 the set-difference `neg` (see the implementation notes). -/
 def negTest (φ : CCP S) : CCP S := guard (λ s => ¬ (φ s).Nonempty)
@@ -228,12 +231,11 @@ theorem guard_isTest (C : Set S → Prop) : IsTest (guard C) :=
 
 /-- A test is the guard of its own acceptance condition — the mirror of
 `Update.IsTest.eq_test_closure`. -/
-theorem IsTest.eq_guard (h : IsTest u) : u = guard fun s => u s = s := by
-  funext s
-  by_cases hs : u s = s
-  · rw [guard_pos (C := fun t => u t = t) hs, hs]
-  · rw [guard_neg (C := fun t => u t = t) hs]
-    exact (h s).resolve_left hs
+theorem IsTest.eq_guard (h : IsTest u) : u = guard fun s => u s = s :=
+  funext λ s => Set.ext λ p =>
+    ⟨λ hp => (h s).elim (λ hs => ⟨hs ▸ hp, hs⟩)
+      (λ h₀ => absurd (h₀ ▸ hp) (Set.notMem_empty p)),
+     λ ⟨hp, hs⟩ => hs.symm ▸ hp⟩
 
 /-- The tests are exactly the guards. -/
 theorem isTest_iff_exists_guard : IsTest u ↔ ∃ C, u = guard C :=
@@ -251,17 +253,14 @@ theorem might_not_isDistributive :
     ∃ (S : Type) (φ : CCP S), ¬IsDistributive (might φ) := by
   refine ⟨Bool, (fun s => {p ∈ s | p = true}), fun hD => ?_⟩
   have hfalse :
-      false ∈ might (fun s : Set Bool => {p ∈ s | p = true}) {true, false} := by
-    rw [might, guard_pos ⟨true, Or.inl rfl, rfl⟩]
-    exact Or.inr rfl
+      false ∈ might (fun s : Set Bool => {p ∈ s | p = true}) {true, false} :=
+    ⟨Or.inr rfl, true, Or.inl rfl, rfl⟩
   rw [hD] at hfalse
   obtain ⟨i, hi, hmem⟩ := hfalse
   rcases hi with rfl | rfl
-  · rw [might, guard_pos ⟨true, rfl, rfl⟩] at hmem
-    exact Bool.false_ne_true hmem
-  · rw [might, guard_neg (fun ⟨x, hx, hx'⟩ => Bool.false_ne_true (hx ▸ hx'))]
-      at hmem
-    exact hmem
+  · exact Bool.false_ne_true hmem.1
+  · obtain ⟨x, hx, hx'⟩ := hmem.2
+    exact Bool.false_ne_true (hx ▸ hx')
 
 end CCP
 
