@@ -69,16 +69,22 @@ theorem agreeSetoid_anti : Antitone (agreeSetoid : Set V → Setoid (Possibility
     congrArg (fun wf : W × (Y → M) =>
       ((wf.1, fun v => wf.2 ⟨v.1, hXY v.2⟩) : W × (X → M))) h
 
+/-- The possibility over a world–`X`-environment pair, junk-valued off
+`X`. -/
+noncomputable def ofEnv [Nonempty M] (wf : W × (X → M)) : Possibility W V M :=
+  ⟨wf.1, Function.extend Subtype.val wf.2 fun _ => Classical.arbitrary M⟩
+
+/-- `proj X` retracts `ofEnv X`. -/
+@[simp] theorem proj_ofEnv [Nonempty M] (wf : W × (X → M)) :
+    proj X (ofEnv X wf) = wf :=
+  Prod.ext rfl (funext fun x => by
+    exact Subtype.val_injective.extend_apply wf.2 (fun _ => Classical.arbitrary M) x)
+
 /-- A possibility up to agreement at `X` is a world together with an
 assignment of the `X`-referents. -/
 noncomputable def agreeQuotientEquiv [Nonempty M] :
-    Quotient (agreeSetoid (W := W) (M := M) X) ≃ W × (X → M) :=
-  Setoid.quotientKerEquivOfRightInverse (proj X)
-    (fun wf => ⟨wf.1,
-      Function.extend Subtype.val wf.2 fun _ => Classical.arbitrary M⟩)
-    fun wf => Prod.ext rfl (funext fun x => by
-      exact Subtype.val_injective.extend_apply wf.2
-        (fun _ => Classical.arbitrary M) x)
+    Quotient (agreeSetoid X : Setoid (Possibility W V M)) ≃ W × (X → M) :=
+  Setoid.quotientKerEquivOfRightInverse (proj X) (ofEnv X) (proj_ofEnv X)
 
 @[simp] theorem agreeQuotientEquiv_mk [Nonempty M] :
     agreeQuotientEquiv X (Quotient.mk _ p) = (p.world, X.restrict p.assignment) :=
