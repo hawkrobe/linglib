@@ -245,36 +245,35 @@ theorem isTest_iff_exists_guard : IsTest u ↔ ∃ C, u = guard C :=
   ⟨fun h => ⟨_, h.eq_guard⟩, fun ⟨C, hC⟩ => hC ▸ guard_isTest C⟩
 
 /-- A transformer is *distributive* if it acts per-element:
-`φ s = ⋃ i ∈ s, φ {i}` ([groenendijk-stokhof-1990], Definition 3) —
-equivalently, it preserves arbitrary joins (`Kleisli.lean`'s
-`isDistributive_iff_map_sSup`). -/
+`φ s = ⋃ i ∈ s, φ {i}` — equivalently, it preserves arbitrary joins
+(`Kleisli.lean`'s `isDistributive_iff_map_sSup`). -/
 def IsDistributive (φ : CCP S) : Prop :=
   ∀ s, φ s = {p | ∃ i ∈ s, p ∈ φ {i}}
 
-/-! ### The classical fragment -/
+/-! ### The classical fragment
 
-/-- The static update a content determines: intersection — 'up',
-[groenendijk-stokhof-1990] Definition 1. -/
+The `up`/`down` coercions, classical updates, and their normal form are
+Definitions 1 and 4 and facts (a)–(d) of [groenendijk-stokhof-1990]. -/
+
+/-- The static update a content determines: intersection with it. -/
 def up (c : Set S) : CCP S := λ s => s ∩ c
 
 /-- The content an update determines: the indices whose singleton it
-updates successfully — 'down', [groenendijk-stokhof-1990] Definition 1. -/
+updates successfully. -/
 def down (u : CCP S) : Set S := {i | (u {i}).Nonempty}
 
 /-- `down` retracts `up`. -/
 @[simp] theorem down_up (c : Set S) : down (up c) = c :=
   Set.ext λ _ => Set.singleton_inter_nonempty
 
-/-- On eliminative updates, content is acceptance on singletons
-([groenendijk-stokhof-1990], fact (a)). -/
+/-- On eliminative updates, content is acceptance on singletons. -/
 theorem IsEliminative.down_eq (he : IsEliminative u) :
     down u = {i | u {i} = {i}} :=
   Set.ext λ i =>
     ⟨λ ⟨_, hx⟩ => (he {i}).antisymm (Set.singleton_subset_iff.mpr (he {i} hx ▸ hx)),
      λ h => ⟨i, by rw [show u {i} = {i} from h]; exact rfl⟩⟩
 
-/-- An update is *classical* if it is eliminative and distributive
-([groenendijk-stokhof-1990], Definition 4). -/
+/-- An update is *classical* if it is eliminative and distributive. -/
 def IsClassical (u : CCP S) : Prop := IsEliminative u ∧ IsDistributive u
 
 /-- Static updates are classical. -/
@@ -282,22 +281,6 @@ theorem isClassical_up (c : Set S) : IsClassical (up c) :=
   ⟨λ _ => Set.inter_subset_left,
    λ _ => Set.ext λ p =>
      ⟨λ ⟨hp, hc⟩ => ⟨p, hp, rfl, hc⟩, λ ⟨_, hi, hpi, hc⟩ => ⟨hpi ▸ hi, hc⟩⟩⟩
-
-/-- The classical updates are exactly the static ones: `up ∘ down` is
-their normal form ([groenendijk-stokhof-1990], facts (c) and (d) — "a
-dynamic semantics which assigns only classical updates is not really
-dynamic after all"). -/
-theorem isClassical_iff_up_down_eq : IsClassical u ↔ up (down u) = u := by
-  refine ⟨λ ⟨he, hd⟩ => funext λ s => ?_, λ h => h ▸ isClassical_up _⟩
-  rw [hd s]
-  ext j
-  constructor
-  · rintro ⟨hj, x, hx⟩
-    obtain rfl : x = j := he {j} hx
-    exact ⟨x, hj, hx⟩
-  · rintro ⟨i, hi, hji⟩
-    obtain rfl : j = i := he {i} hji
-    exact ⟨hi, j, hji⟩
 
 /-- `might` is not distributive: a whole-state test can pass where every
 per-singleton test fails. -/
@@ -406,22 +389,35 @@ theorem lift_test_cover₃ (C₁ C₂ C₃ : Condition S)
       · exact Or.inl (Or.inr ⟨hi, h'⟩)
       · exact Or.inr ⟨hi, h'⟩
 
-/-! ### The static fragment -/
+/-! ### The static fragment
 
-/-- `up` is the lifted test filter of membership in the content. -/
-theorem up_eq_lift_test (c : Set S) : CCP.up c = lift (test (· ∈ c)) :=
-  (lift_test _).symm
+Van Benthem's additivity ([van-benthem-1986]; [rothschild-yalcin-2016];
+[gillies-2022]): the classical transformers are exactly the lifted test
+filters. Update semantics keeps eliminativity but its whole-state tests
+break distributivity; DPL's random reassignment does the reverse
+([groenendijk-stokhof-1990], §4). -/
 
-/-- A transformer is a lifted test filter iff it is classical —
-[van-benthem-1986]'s additivity ([rothschild-yalcin-2016];
-[gillies-2022]). Update semantics keeps eliminativity but its whole-state
-tests break distributivity; DPL's random reassignment keeps distributivity
-but breaks eliminativity ([groenendijk-stokhof-1990], §4). -/
+/-- `up` of a condition's extension is its lifted test filter. -/
+theorem up_eq_lift_test (C : Condition S) : CCP.up {i | C i} = lift (test C) :=
+  (lift_test C).symm
+
+/-- A transformer is a lifted test filter iff it is classical. -/
 theorem exists_eq_lift_test_iff {φ : CCP S} :
-    (∃ C : Condition S, φ = lift (test C)) ↔ CCP.IsClassical φ :=
-  ⟨λ ⟨C, hC⟩ => hC ▸ ⟨lift_test_isEliminative C, lift_isDistributive _⟩,
-   λ h => ⟨(· ∈ CCP.down φ),
-     (CCP.isClassical_iff_up_down_eq.mp h).symm.trans (up_eq_lift_test _)⟩⟩
+    (∃ C : Condition S, φ = lift (test C)) ↔ CCP.IsClassical φ := by
+  refine ⟨λ ⟨C, hC⟩ => hC ▸ ⟨lift_test_isEliminative C, lift_isDistributive _⟩,
+    λ ⟨he, hd⟩ => ⟨λ i => i ∈ φ {i}, funext λ s => ?_⟩⟩
+  rw [hd s, lift_test]
+  ext p
+  exact ⟨λ ⟨i, hi, hpi⟩ => have h : p = i := he {i} hpi; ⟨h ▸ hi, h ▸ hpi⟩,
+    λ ⟨hp, hC⟩ => ⟨p, hp, hC⟩⟩
+
+/-- The classical updates are exactly the static ones: `up ∘ down` is
+their normal form. -/
+theorem CCP.isClassical_iff_up_down_eq {φ : CCP S} :
+    CCP.IsClassical φ ↔ CCP.up (CCP.down φ) = φ :=
+  ⟨λ h => by obtain ⟨C, rfl⟩ := exists_eq_lift_test_iff.mpr h
+             rw [← up_eq_lift_test, down_up],
+   λ h => h ▸ CCP.isClassical_up _⟩
 
 end RelationalBridge
 
