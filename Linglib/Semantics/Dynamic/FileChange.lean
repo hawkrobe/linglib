@@ -278,10 +278,10 @@ theorem atomVar_eq_of_novel [DecidableEq V] (pred : M → Prop) (x : V)
             hnov p hp, hqx]
         · simp [Possibility.union, Possibility.update, hqnone v hv, hv])
     rw [huq]
-    exact ⟨⟨p, hp, m, rfl⟩, m, Possibility.update_self .., hpred⟩
+    exact ⟨⟨p, hp, m, rfl⟩, m, by simp, hpred⟩
   · rintro ⟨hmem, m, hrx, hpred⟩
     obtain ⟨p, hp, m', rfl⟩ := hmem
-    rw [Possibility.update_self] at hrx
+    simp only [Possibility.update_assignment, Function.update_self] at hrx
     obtain rfl := (Option.some_inj.mp hrx).symm
     refine ⟨p, hp, ⟨p.world, fun v => if v = x then some m else none⟩,
       ⟨Set.ext fun v => by by_cases hv : v = x <;>

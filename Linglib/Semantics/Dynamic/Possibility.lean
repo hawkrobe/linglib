@@ -53,20 +53,20 @@ namespace Possibility
 
 variable {W V M : Type*} (p : Possibility W V M)
 
+section Update
+
+variable [DecidableEq V] (x : V) (e : M)
+
 /-- Update the assignment at a single referent. -/
-def update [DecidableEq V] (x : V) (e : M) : Possibility W V M :=
+def update : Possibility W V M :=
   { p with assignment := Function.update p.assignment x e }
 
-@[simp] theorem update_self [DecidableEq V] (x : V) (e : M) :
-    (p.update x e).assignment x = e :=
-  Function.update_self ..
+@[simp] theorem update_world : (p.update x e).world = p.world := rfl
 
-@[simp] theorem update_of_ne [DecidableEq V] {x y : V} (e : M)
-    (h : y ≠ x) : (p.update x e).assignment y = p.assignment y :=
-  Function.update_of_ne h ..
+@[simp] theorem update_assignment :
+    (p.update x e).assignment = Function.update p.assignment x e := rfl
 
-@[simp] theorem update_world [DecidableEq V] (x : V) (e : M) :
-    (p.update x e).world = p.world := rfl
+end Update
 
 /-! ### Partial points -/
 
@@ -87,8 +87,7 @@ theorem le_def {p q : Possibility W V (Option M)} :
     p ≤ q ↔ p.world = q.world ∧
       ∀ x e, p.assignment x = some e → q.assignment x = some e := Iff.rfl
 
-/-- The referents a partial point defines —
-[kamp-vangenabith-reyle-2011] Def. 23's `Dom(f)`. -/
+/-- The domain of a partial point is the set of referents it defines. -/
 def dom (p : Possibility W V (Option M)) : Set V :=
   {v | (p.assignment v).isSome}
 
