@@ -70,6 +70,8 @@ end Update
 
 /-! ### Partial points -/
 
+variable {p q u : Possibility W V (Option M)}
+
 /-- Descent is the canonical order on partial points ([elliott-sudo-2025]
 Def. 3.3's descendance, [groenendijk-stokhof-veltman-1996]'s
 graph-extension — pointwise, the information order mathlib gives
@@ -83,7 +85,7 @@ instance : Preorder (Possibility W V (Option M)) where
   le_trans _ _ _ hpq hqr :=
     ⟨hpq.1.trans hqr.1, fun x e h => hqr.2 x e (hpq.2 x e h)⟩
 
-theorem le_def {p q : Possibility W V (Option M)} :
+theorem le_def :
     p ≤ q ↔ p.world = q.world ∧
       ∀ x e, p.assignment x = some e → q.assignment x = some e := Iff.rfl
 
@@ -91,19 +93,17 @@ theorem le_def {p q : Possibility W V (Option M)} :
 def dom (p : Possibility W V (Option M)) : Set V :=
   {v | (p.assignment v).isSome}
 
-@[simp] theorem mem_dom {p : Possibility W V (Option M)} {v : V} :
+@[simp] theorem mem_dom {v : V} :
     v ∈ p.dom ↔ (p.assignment v).isSome := Iff.rfl
 
 /-- Descent grows the domain. -/
-theorem dom_mono {p q : Possibility W V (Option M)}
-    (h : p ≤ q) : p.dom ⊆ q.dom := fun v hv => by
+theorem dom_mono (h : p ≤ q) : p.dom ⊆ q.dom := fun v hv => by
   obtain ⟨e, he⟩ := Option.isSome_iff_exists.mp hv
   exact Option.isSome_iff_exists.mpr ⟨e, h.2 v e he⟩
 
 /-- On a shared domain, descent is equality: there is no room to
 grow. -/
-theorem eq_of_le_of_dom_eq {p q : Possibility W V (Option M)}
-    (h : p ≤ q) (hdom : p.dom = q.dom) : p = q := by
+theorem eq_of_le_of_dom_eq (h : p ≤ q) (hdom : p.dom = q.dom) : p = q := by
   refine Possibility.ext h.1 (funext fun v => ?_)
   rcases hp : p.assignment v with _ | e
   · rcases hq : q.assignment v with _ | e
@@ -130,8 +130,7 @@ theorem le_union_left (p q : Possibility W V (Option M)) :
     p ≤ p.union q :=
   ⟨rfl, fun v e h => by simp [union, h]⟩
 
-theorem Compatible.le_union_right
-    {p q : Possibility W V (Option M)} (h : p.Compatible q) :
+theorem Compatible.le_union_right (h : p.Compatible q) :
     q ≤ p.union q :=
   ⟨h.1.symm, fun v e hq => by
     rcases hp : p.assignment v with _ | e'
@@ -139,8 +138,7 @@ theorem Compatible.le_union_right
     · simp [union, hp, h.2 v e' e hp hq]⟩
 
 /-- On a shared domain, compatibility is equality. -/
-theorem Compatible.eq_of_dom_eq {p q : Possibility W V (Option M)}
-    (h : p.Compatible q) (hdom : p.dom = q.dom) : p = q := by
+theorem Compatible.eq_of_dom_eq (h : p.Compatible q) (hdom : p.dom = q.dom) : p = q := by
   refine Possibility.ext h.1 (funext fun v => ?_)
   rcases hp : p.assignment v with _ | e
   · rcases hq : q.assignment v with _ | e
@@ -161,8 +159,7 @@ theorem dom_union (p q : Possibility W V (Option M)) :
   rcases hp : p.assignment v with _ | e <;> simp [union, dom, hp]
 
 /-- Points below a common point are compatible. -/
-theorem compatible_of_le_of_le {p q u : Possibility W V (Option M)}
-    (hp : p ≤ u) (hq : q ≤ u) : p.Compatible q :=
+theorem compatible_of_le_of_le (hp : p ≤ u) (hq : q ≤ u) : p.Compatible q :=
   ⟨hp.1.trans hq.1.symm, fun v e e' he he' => by
     have h1 := hp.2 v e he
     have h2 := hq.2 v e' he'
@@ -170,8 +167,7 @@ theorem compatible_of_le_of_le {p q u : Possibility W V (Option M)}
     exact (Option.some.injEq .. ▸ h2 :)⟩
 
 /-- The union of two lower bounds is a lower bound. -/
-theorem union_le {p q u : Possibility W V (Option M)}
-    (hp : p ≤ u) (hq : q ≤ u) :
+theorem union_le (hp : p ≤ u) (hq : q ≤ u) :
     p.union q ≤ u :=
   ⟨hp.1, fun v e h => by
     rcases hpv : p.assignment v with _ | e'
@@ -179,8 +175,7 @@ theorem union_le {p q u : Possibility W V (Option M)}
     · have : e' = e := by simpa [union, hpv] using h
       exact this ▸ hp.2 v e' hpv⟩
 
-theorem Compatible.symm {p q : Possibility W V (Option M)}
-    (h : p.Compatible q) : q.Compatible p :=
+theorem Compatible.symm (h : p.Compatible q) : q.Compatible p :=
   ⟨h.1.symm, fun v e e' hq hp => (h.2 v e' e hp hq).symm⟩
 
 /-- Union of points is associative. -/
@@ -190,8 +185,7 @@ theorem union_assoc (p q v : Possibility W V (Option M)) :
 
 /-- On compatible points the left precedence of `union` is
 immaterial. -/
-theorem Compatible.union_comm {p q : Possibility W V (Option M)}
-    (h : p.Compatible q) : p.union q = q.union p :=
+theorem Compatible.union_comm (h : p.Compatible q) : p.union q = q.union p :=
   Possibility.ext h.1 (funext fun v => by
     rcases hp : p.assignment v with _ | e <;>
       rcases hq : q.assignment v with _ | e' <;> simp [union, hp, hq]
@@ -199,25 +193,24 @@ theorem Compatible.union_comm {p q : Possibility W V (Option M)}
 
 /-- A union is compatible with whatever both components are compatible
 with. -/
-theorem Compatible.union_left {p q v : Possibility W V (Option M)}
-    (hpv : p.Compatible v) (hqv : q.Compatible v) :
-    (p.union q).Compatible v :=
-  ⟨hpv.1, fun x e e' he he' => by
+theorem Compatible.union_left (hpu : p.Compatible u) (hqu : q.Compatible u) :
+    (p.union q).Compatible u :=
+  ⟨hpu.1, fun x e e' he he' => by
     rcases hp : p.assignment x with _ | c
-    · exact hqv.2 x e e' (by simpa [union, hp] using he) he'
+    · exact hqu.2 x e e' (by simpa [union, hp] using he) he'
     · have hce : c = e := by simpa [union, hp] using he
-      exact hce ▸ hpv.2 x c e' hp he'⟩
+      exact hce ▸ hpu.2 x c e' hp he'⟩
 
 /-- The left component of a compatible union is compatible. -/
-theorem Compatible.left_of_union {p q v : Possibility W V (Option M)}
-    (h : (p.union q).Compatible v) : p.Compatible v :=
+theorem Compatible.left_of_union
+    (h : (p.union q).Compatible u) : p.Compatible u :=
   ⟨h.1, fun x e e' hp hv => h.2 x e e' (by simp [union, hp]) hv⟩
 
 /-- The right component of a compatible union is compatible, given the
 components agree. -/
-theorem Compatible.right_of_union {p q v : Possibility W V (Option M)}
-    (hpq : p.Compatible q) (h : (p.union q).Compatible v) :
-    q.Compatible v :=
+theorem Compatible.right_of_union
+    (hpq : p.Compatible q) (h : (p.union q).Compatible u) :
+    q.Compatible u :=
   ⟨hpq.1.symm.trans h.1, fun x e e' hq hv => by
     rcases hp : p.assignment x with _ | c
     · exact h.2 x e e' (by simp [union, hp, hq]) hv
@@ -255,7 +248,7 @@ theorem dom_restrict (X : Set V) [∀ v, Decidable (v ∈ X)]
 `X`, `p` grows into `q` exactly when `p` is `q` cut to `X`. The
 hom-characterization of the fibred order. -/
 theorem le_iff_eq_restrict {X : Set V} [∀ v, Decidable (v ∈ X)]
-    {p q : Possibility W V (Option M)} (hp : p.dom = X) :
+    (hp : p.dom = X) :
     p ≤ q ↔ p = q.restrict X := by
   constructor
   · intro h
