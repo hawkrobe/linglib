@@ -15,7 +15,7 @@ transforms sets of states as wholes. `lift` sends an update to its image
 transformer, `lower` recovers it, and the distributive transformers are
 exactly the relational images. A satisfaction relation induces the standard
 eliminative fragment (`updateFromSat`), which PLA, DRT, and DPL instantiate.
-The monadic reading of the pair is in `Kleisli.lean`.
+The monadic reading of the pair is in `Collapse.lean`.
 
 ## Main definitions
 
@@ -246,7 +246,7 @@ theorem isTest_iff_exists_guard : IsTest u ↔ ∃ C, u = guard C :=
 
 /-- A transformer is *distributive* if it acts per-element:
 `φ s = ⋃ i ∈ s, φ {i}` — equivalently, it preserves arbitrary joins
-(`Kleisli.lean`'s `isDistributive_iff_map_sSup`). -/
+(`Collapse.lean`'s `isDistributive_iff_map_sSup`). -/
 def IsDistributive (φ : CCP S) : Prop :=
   ∀ s, φ s = {p | ∃ i ∈ s, p ∈ φ {i}}
 

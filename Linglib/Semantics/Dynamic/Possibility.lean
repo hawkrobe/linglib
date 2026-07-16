@@ -10,6 +10,13 @@ states over possibilities live in `State.lean`; unindexed states are plain
 sets of possibilities, with the generic level-0 CCP algebra in
 `Update.lean`.
 
+*Possibility* is the update-semantics tradition's word:
+[groenendijk-stokhof-veltman-1996]'s possibilities are triples carrying a
+referent system ([vermeulen-1995]) we do not; [elliott-sudo-2025]'s are
+world–assignment pairs like ours. [kamp-vangenabith-reyle-2011] leaves the
+pairs of its Def. 22 unnamed, and the monadic tradition calls the same
+points *indices* ([charlow-2025-staged-updates]).
+
 ## Main definitions
 
 - `Possibility W V M`: the point object.
@@ -18,6 +25,7 @@ sets of possibilities, with the generic level-0 CCP algebra in
 
 ## References
 
+- [groenendijk-stokhof-veltman-1996], [elliott-sudo-2025]
 - [kamp-vangenabith-reyle-2011], Def. 22
 - [heim-1982]
 -/

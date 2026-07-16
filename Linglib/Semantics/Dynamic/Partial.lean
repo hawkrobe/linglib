@@ -28,6 +28,9 @@ dynamic conjunction, conditional, and disjunction
 - `seq`, `neg`, `cond`, `disj` — the partial-update clauses
   ([heim-1983] gives CCPs for *not/and/if*; the disjunction clause with
   ¬φ local context follows [beaver-2001])
+- `seq_eq_kleisliComp` — sequencing is Kleisli composition for `Part`:
+  the partiality column of the effect view, beside `Collapse.lean`'s
+  powerset column
 - `admits_seq` — the Karttunen satisfaction law, by construction
 - `admits_ofPartialProp` — admittance is `Context.presupSatisfied`
 - `admits_seq_ofPartialProp`, `admits_cond_ofPartialProp`,
@@ -79,6 +82,13 @@ def ofPartialProp (p : PartialProp W) : CCP.Partial W :=
     `PFun.comp`; the projection behavior of conjunction is the
     composition law of partial functions. -/
 def seq (φ ψ : CCP.Partial P) : CCP.Partial P := ψ.comp φ
+
+/-- Sequencing is Kleisli composition for the `Part` monad: a partial CCP
+    is a Kleisli arrow `Set P → Part (Set P)`, definitionally — the
+    partiality column of the effect view of dynamic semantics, beside the
+    powerset column in `Collapse.lean` ([moggi-1991], [shan-2001]). -/
+theorem seq_eq_kleisliComp (φ ψ : Set P → Part (Set P)) :
+    (seq φ ψ : Set P → Part (Set P)) = φ >=> ψ := rfl
 
 /-- Heim negation: `s[¬φ] = s \ s[φ]`, defined iff `s[φ]` is. -/
 def neg (φ : CCP.Partial P) : CCP.Partial P := λ s => (φ s).map (s \ ·)

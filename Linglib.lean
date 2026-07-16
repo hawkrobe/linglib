@@ -1647,7 +1647,6 @@ import Linglib.Semantics.Dynamic.ICDRT.Defs
 import Linglib.Semantics.Dynamic.State
 import Linglib.Semantics.Dynamic.Transition
 import Linglib.Semantics.Dynamic.ICDRT.Basic
-import Linglib.Semantics.Dynamic.Kleisli
 import Linglib.Semantics.Dynamic.PLA.Basic
 import Linglib.Semantics.Dynamic.PLA.Epistemic
 import Linglib.Semantics.Dynamic.PLA.Semantics

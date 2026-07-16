@@ -20,6 +20,11 @@ applying an extension at its source base only adds information
 side conditions (the Merging Lemma's freshness hypothesis); here the typing
 carries them.
 
+The chapter's own name for the induced map on information states is the
+(regular) *Context Change Potential* (Def. 24); *transition* names the
+underlying world-indexed relation, after the transition-system reading of
+dynamic semantics ([fernando-1992], cited there).
+
 ## Main declarations
 
 * `Transition` — the indexed relation; `id`, `comp` and their laws.

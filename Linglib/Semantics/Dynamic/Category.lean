@@ -16,7 +16,10 @@ laws are `Transition.lean`'s `id_comp`/`comp_id`/`comp_assoc`.
   morphisms are `Transition`s between the bases.
 - `State.presheaf`: information states as a presheaf on the poset of
   bases — the fiber over `X` is the states indexed at `X`, restriction is
-  `State.restrict`.
+  `State.restrict`. Precedent: [abramsky-sadrzadeh-2014]'s presheaf of
+  basic DRSs over vocabulary–variable contexts, whose base category
+  additionally has relabelling morphisms; ours is the inclusions-only
+  fragment with model-theoretic fibers.
 
 ## Implementation notes
 
@@ -29,7 +32,7 @@ functions category on `Type u`, which `State.presheaf` needs.
 ## References
 
 - [kamp-vangenabith-reyle-2011]
-- [muskens-van-benthem-visser-2011]
+- [muskens-van-benthem-visser-2011], [abramsky-sadrzadeh-2014]
 - [groenendijk-stokhof-1991], [muskens-1996]
 -/
 
