@@ -105,6 +105,65 @@ theorem apply_comp (u : Transition W M X Y) (v : Transition W M Y Z)
   · rintro ⟨k, ⟨e, he, hek⟩, hkh⟩
     exact ⟨e, he, k, hek, hkh⟩
 
+/-! ### Application to root states -/
+
+section ApplyState
+
+/-- Context change on root states ([kamp-vangenabith-reyle-2011],
+Def. 24 — the regular CCP): points of the `X`-stratum step to points of
+the `Y`-stratum through the transition, worlds preserved. Index-free:
+both sides are plain states. -/
+def applyState (u : Transition W M X Y) (I : State W V M) :
+    State W V M :=
+  {q | q.dom = (↑Y : Set V) ∧ ∃ p ∈ I, p.dom = (↑X : Set V) ∧
+    p.world = q.world ∧
+    ∃ (e : (↑X : Set V) → M) (e' : (↑Y : Set V) → M),
+      (∀ v : (↑X : Set V), p.assignment v.1 = some (e v)) ∧
+      (∀ v : (↑Y : Set V), q.assignment v.1 = some (e' v)) ∧
+      u.rel q.world e e'}
+
+/-- Application lands in the target stratum. -/
+theorem uniformAt_applyState (u : Transition W M X Y) (I : State W V M) :
+    State.UniformAt Y (u.applyState I) := fun _ hq => hq.1
+
+variable [DecidableEq V]
+
+/-- The point of the `Y`-stratum carrying a given world and environment. -/
+private def ptOf (Y : Finset V) (w : W) (e : (↑Y : Set V) → M) :
+    Possibility W V (Option M) :=
+  ⟨w, fun v => if hv : v ∈ (↑Y : Set V) then some (e ⟨v, hv⟩) else none⟩
+
+private theorem dom_ptOf (Y : Finset V) (w : W) (e : (↑Y : Set V) → M) :
+    (ptOf Y w e).dom = (↑Y : Set V) := by
+  ext v
+  by_cases hv : v ∈ (↑Y : Set V) <;> simp [ptOf, Possibility.dom, hv]
+
+/-- Root application is functorial. -/
+theorem applyState_comp (u : Transition W M X Y) (v : Transition W M Y Z)
+    (I : State W V M) :
+    (u.comp v).applyState I = v.applyState (u.applyState I) := by
+  ext q
+  constructor
+  · rintro ⟨hq, p, hpI, hp, hw, e, e'', he, he'', k, huk, hkv⟩
+    refine ⟨hq, ptOf Y q.world k, ⟨dom_ptOf .., p, hpI, hp, hw, e, k, he,
+      fun x => ?_, huk⟩, dom_ptOf .., rfl, k, e'', fun x => ?_, he'', hkv⟩
+    · simp [ptOf]
+    · simp [ptOf]
+  · rintro ⟨hq, m, ⟨hm, p, hpI, hp, hw, e, k, he, hk, huk⟩, -, hmw, k', e'',
+      hk', he'', hvk⟩
+    have hkk' : k = k' := funext fun x => by
+      have h1 := hk x
+      have h2 := hk' x
+      rw [h1] at h2
+      exact (Option.some.injEq .. ▸ h2 :)
+    refine ⟨hq, p, hpI, hp, hw.trans hmw, e, e'', he, he'', k, ?_, ?_⟩
+    · rw [← hmw]
+      exact huk
+    · rw [hkk']
+      exact hvk
+
+end ApplyState
+
 /-! ### Random assignment -/
 
 /-- The random-assignment transition ([groenendijk-stokhof-1991]'s random
@@ -197,6 +256,13 @@ def copy (u : Transition W M X Y) {X' Y' : Finset V} (hX : X = X')
     (hX' : X' = X'') (hY' : Y' = Y'') :
     (u.copy hX hY).copy hX' hY' = u.copy (hX.trans hX') (hY.trans hY') := by
   subst hX hY hX' hY'
+  rfl
+
+/-- Typed relations repackage by re-proving the growth. -/
+theorem ofTotal_copy {R : W → (V → M) → (V → M) → Prop} {h : X ⊆ Y}
+    {Y' : Finset V} (hY : Y = Y') :
+    (ofTotal h R).copy rfl hY = ofTotal (hY ▸ h) R := by
+  subst hY
   rfl
 
 /-- Repackaged transitions compose to the repackaged composite. -/
