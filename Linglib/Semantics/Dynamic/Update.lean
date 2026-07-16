@@ -144,10 +144,8 @@ scoped instance : Monoid (Update S) where
   mul := dseq
   one := test (λ _ => True)
   mul_assoc _ _ _ := Relation.comp_assoc
-  one_mul D := funext₂ λ i j => propext
-    ⟨λ ⟨_, ⟨hik, _⟩, hD⟩ => hik ▸ hD, λ hD => ⟨i, ⟨rfl, trivial⟩, hD⟩⟩
-  mul_one D := funext₂ λ i j => propext
-    ⟨λ ⟨_, hD, hkj, _⟩ => hkj ▸ hD, λ hD => ⟨j, hD, rfl, trivial⟩⟩
+  one_mul D := funext₂ λ i _ => propext ⟨λ ⟨_, ⟨h, _⟩, d⟩ => h ▸ d, λ d => ⟨i, ⟨rfl, ⟨⟩⟩, d⟩⟩
+  mul_one D := funext₂ λ _ j => propext ⟨λ ⟨_, d, h, _⟩ => h ▸ d, λ d => ⟨j, d, rfl, ⟨⟩⟩⟩
 
 /-- `Update S` is a quantale: sequencing distributes over arbitrary unions of
 updates, so mathlib's residuation vocabulary applies (scoped). -/
