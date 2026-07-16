@@ -3,7 +3,6 @@ import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Finset.Lattice.Lemmas
 import Mathlib.Data.Finset.Piecewise
 import Mathlib.Data.Set.Function
-import Mathlib.Logic.Function.DependsOn
 import Mathlib.Order.BoundedOrder.Basic
 import Mathlib.Order.Hom.CompleteLattice
 import Mathlib.Order.Lattice
@@ -21,8 +20,9 @@ acting on states live in `Transition.lean`.
 
 ## Main definitions
 
-- `BaseSupported X S`: membership in `S` depends on assignments only
-  through their values at `X` (mathlib's `DependsOn`, per world).
+- `BaseSupported X S`: `S` is a cylinder at granularity `X` — a preimage
+  along `Possibility.proj`, so membership depends on assignments only
+  through their values at `X`.
 - `State W V M`: a base with an `X`-supported carrier, ordered by
   informativeness, with the minimal state Λ as `⊥` and consistent merge
   as `⊔`.
@@ -50,8 +50,6 @@ acting on states live in `Transition.lean`.
   `restrict_sup_weaken`: the adjunctions `kernRestrict ⊣ weaken ⊣
   restrict`, Beck–Chevalley, and Frobenius — the fibers form a
   hyperdoctrine over the category of contexts ([jacobs-1999]).
-- `baseSupported_iff_exists_preimage`: supported sets are the cylinders —
-  preimages along the projection to environments.
 - `fiberOrderIsoProd`, `fiberEmptyOrderIso`: the fiber at `X` classified
   as propositions over world–`X`-assignment pairs ([heim-1982]'s
   satisfaction sets), degenerating at `X = ∅` to bare propositions
@@ -91,30 +89,44 @@ variable {W V M : Type*} {X Y : Finset V} {S T : Set (Possibility W V M)}
 
 /-! ### Base-supported sets -/
 
-/-- A set of possibilities is *supported* on `X` when membership depends on
-the assignment only through its values at `X`: for each world, the
-membership predicate `DependsOn` the coordinates in `X`. -/
+/-- A set of possibilities is *supported* on `X` when it is a *cylinder*
+at granularity `X`: a preimage along `Possibility.proj`. Membership then
+depends on the assignment only through its values at `X`
+(`BaseSupported.mem_iff`). -/
 def BaseSupported (X : Finset V) (S : Set (Possibility W V M)) : Prop :=
-  ∀ w : W, DependsOn (fun f => (⟨w, f⟩ : Possibility W V M) ∈ S) ↑X
+  S ∈ Set.range (Set.preimage (Possibility.proj (↑X : Set V)))
 
 /-- Introduction form: supply the membership-invariance iff. -/
 theorem baseSupported_of_iff
     (h : ∀ ⦃w : W⦄ ⦃f g : V → M⦄, Set.EqOn f g ↑X →
       ((⟨w, f⟩ : Possibility W V M) ∈ S ↔ ⟨w, g⟩ ∈ S)) :
-    BaseSupported X S :=
-  fun _ _ _ hfg => propext (h hfg)
+    BaseSupported X S := by
+  refine ⟨Possibility.proj (↑X : Set V) '' S, ?_⟩
+  refine Set.Subset.antisymm ?_ (Set.subset_preimage_image _ _)
+  rintro ⟨w, g⟩ ⟨⟨w', f⟩, hf, heq⟩
+  obtain ⟨rfl, h2⟩ := Prod.ext_iff.mp heq
+  exact (h (Set.restrict_eq_restrict_iff.mp h2)).mp hf
 
 /-- Elimination form: membership is invariant under agreement on the base. -/
-theorem BaseSupported.mem_iff (h : BaseSupported X S) {w : W} {f g : V → M} (hfg : Set.EqOn f g ↑X) :
-    (⟨w, f⟩ : Possibility W V M) ∈ S ↔ ⟨w, g⟩ ∈ S :=
-  iff_of_eq (h w hfg)
+theorem BaseSupported.mem_iff (h : BaseSupported X S) {w : W} {f g : V → M}
+    (hfg : Set.EqOn f g ↑X) :
+    (⟨w, f⟩ : Possibility W V M) ∈ S ↔ ⟨w, g⟩ ∈ S := by
+  obtain ⟨T, rfl⟩ := h
+  exact iff_of_eq (congrArg (· ∈ T) (Possibility.proj_eq_proj_iff.mpr ⟨rfl, hfg⟩))
 
-theorem BaseSupported.mono (h : BaseSupported X S) (hXY : X ⊆ Y) : BaseSupported Y S :=
-  fun w => (h w).mono (Finset.coe_subset.mpr hXY)
+/-- Cylinders coarsen: precompose with the restriction of environments. -/
+theorem BaseSupported.mono (h : BaseSupported X S) (hXY : X ⊆ Y) :
+    BaseSupported Y S := by
+  obtain ⟨T, rfl⟩ := h
+  exact ⟨(fun e : W × ((↑Y : Set V) → M) =>
+    (e.1, fun v : (↑X : Set V) => e.2 ⟨v.1, hXY v.2⟩)) ⁻¹' T, rfl⟩
 
-theorem BaseSupported.inter (hS : BaseSupported X S) (hT : BaseSupported X T) : BaseSupported X (S ∩ T) :=
-  baseSupported_of_iff fun _ _ _ hfg =>
-    and_congr (hS.mem_iff hfg) (hT.mem_iff hfg)
+/-- Preimages intersect: cylinders are closed under intersection. -/
+theorem BaseSupported.inter (hS : BaseSupported X S) (hT : BaseSupported X T) :
+    BaseSupported X (S ∩ T) := by
+  obtain ⟨A, rfl⟩ := hS
+  obtain ⟨B, rfl⟩ := hT
+  exact ⟨A ∩ B, rfl⟩
 
 /-- A set is supported on `X` iff membership is invariant under agreement on
 `X`: `BaseSupported X` is saturation for `Possibility.agreeSetoid ↑X`. -/
@@ -139,25 +151,6 @@ theorem BaseSupported.preimage_image_mk (h : BaseSupported X S) :
     Quotient.mk (Possibility.agreeSetoid ↑X) ⁻¹' (Quotient.mk _ '' S) = S :=
   Set.Subset.antisymm (fun _ ⟨_, hq, hqp⟩ => (h.mem_congr (Quotient.exact hqp)).mp hq)
     (Set.subset_preimage_image _ _)
-
-/-- Supported sets are exactly the *cylinders*: preimages along the
-projection to `X`-environments (`Category.lean`'s `environments`). -/
-theorem baseSupported_iff_exists_preimage :
-    BaseSupported X S ↔ ∃ T : Set (W × ((↑X : Set V) → M)),
-      S = (fun p : Possibility W V M =>
-        (p.world, (↑X : Set V).restrict p.assignment)) ⁻¹' T := by
-  constructor
-  · intro h
-    refine ⟨(fun p : Possibility W V M =>
-      (p.world, (↑X : Set V).restrict p.assignment)) '' S,
-      Set.Subset.antisymm (Set.subset_preimage_image _ _) ?_⟩
-    rintro ⟨w, g⟩ ⟨⟨w', f⟩, hf, heq⟩
-    obtain ⟨rfl, h2⟩ := Prod.mk.injEq .. |>.mp heq
-    exact (h.mem_iff (Set.restrict_eq_restrict_iff.mp h2)).mp hf
-  · rintro ⟨T, rfl⟩
-    exact baseSupported_of_iff fun w f g hfg => by
-      simp only [Set.mem_preimage]
-      rw [Set.restrict_eq_restrict_iff.mpr hfg]
 
 /-! ### Information states -/
 
@@ -216,7 +209,7 @@ theorem le_iff_projection :
 /-- The minimal information state Λ ([kamp-vangenabith-reyle-2011],
 Def. 23(iv)): empty base, no information. -/
 instance : OrderBot (State W V M) where
-  bot := ⟨∅, Set.univ, fun _ _ _ _ => rfl⟩
+  bot := ⟨∅, Set.univ, ⟨Set.univ, rfl⟩⟩
   bot_le _ := ⟨Finset.empty_subset _, Set.subset_univ _⟩
 
 @[simp] theorem base_bot : (⊥ : State W V M).base = ∅ := rfl

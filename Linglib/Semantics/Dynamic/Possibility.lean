@@ -46,6 +46,12 @@ namespace Possibility
 
 variable {W V M : Type*}
 
+/-- The projection of a possibility to granularity `A`: its world together
+with its assignment of the `A`-referents — the pointwise face of
+`Category.lean`'s `environments`. -/
+def proj (A : Set V) (p : Possibility W V M) : W × (A → M) :=
+  (p.world, A.restrict p.assignment)
+
 /-- Possibilities up to agreement on `X`: equal worlds, assignments agreeing
 on `X`. Quotienting by this setoid is the state space at granularity `X` —
 the collapse of `Collapse.lean`, and the target of `State.fiberEquiv`. -/
@@ -54,6 +60,12 @@ def agreeSetoid (X : Set V) : Setoid (Possibility W V M) where
   iseqv :=
     ⟨fun _ => ⟨rfl, Set.eqOn_refl _ _⟩, fun h => ⟨h.1.symm, h.2.symm⟩,
       fun h h' => ⟨h.1.trans h'.1, h.2.trans h'.2⟩⟩
+
+/-- Projections agree exactly on agreement classes: `proj A` is the
+effective quotient map for `agreeSetoid A`. -/
+theorem proj_eq_proj_iff {A : Set V} {p q : Possibility W V M} :
+    proj A p = proj A q ↔ agreeSetoid A p q :=
+  Prod.ext_iff.trans (and_congr Iff.rfl Set.restrict_eq_restrict_iff)
 
 /-- Coarser bases identify more possibilities. -/
 theorem agreeSetoid_anti : Antitone (agreeSetoid : Set V → Setoid (Possibility W V M)) :=
@@ -65,8 +77,7 @@ agreement on `X` is a world together with an assignment of the
 `X`-referents. -/
 noncomputable def agreeQuotientEquiv (X : Set V) [Nonempty M] :
     Quotient (agreeSetoid (W := W) (M := M) X) ≃ W × (X → M) where
-  toFun := Quotient.lift (fun p => (p.world, X.restrict p.assignment))
-    fun _ _ h => Prod.ext h.1 (funext fun x => h.2 x.2)
+  toFun := Quotient.lift (proj X) fun _ _ h => proj_eq_proj_iff.mpr h
   invFun wf :=
     Quotient.mk _
       ⟨wf.1, fun v => if h : v ∈ X then wf.2 ⟨v, h⟩ else Classical.arbitrary M⟩
