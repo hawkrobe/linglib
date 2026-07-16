@@ -135,7 +135,7 @@ variable [∀ v, Decidable (v ∈ X)]
 weakenings to `X ⊓ Y` agree is jointly the weakening of a unique
 possibility over `X ⊔ Y` — `possibilities` sends the lattice square to a
 pullback of types. The piecewise witness is `Possibility.union` in the charts of
-`Possibility.domEquiv`. -/
+`Possibility.domainEquiv`. -/
 theorem possibilities_glue
     (a : (possibilities W M V).obj (op X)) (b : (possibilities W M V).obj (op Y))
     (hab : (possibilities W M V).map (homOfLE inf_le_left).op a =
@@ -192,19 +192,19 @@ open scoped Classical
 variable {W M V : Type*}
 
 /-- Classify each element of the possibilities family as a point: on
-objects this is `Possibility.domEquiv`; arrows become descents, by
+objects this is `Possibility.domainEquiv`; arrows become descents, by
 `Possibility.le_iff_eq_restrict`. -/
 noncomputable def elementsToPoints :
     (possibilities W M V).Elements ⥤ (Possibility W V (Option M))ᵒᵖ where
-  obj x := op ((Possibility.domEquiv x.1.unop).symm x.2).1
+  obj x := op ((Possibility.domainEquiv x.1.unop).symm x.2).1
   map {x y} f := (homOfLE (show
-      ((Possibility.domEquiv y.1.unop).symm y.2).1 ≤
-        ((Possibility.domEquiv x.1.unop).symm x.2).1 by
+      ((Possibility.domainEquiv y.1.unop).symm y.2).1 ≤
+        ((Possibility.domainEquiv x.1.unop).symm x.2).1 by
     have hb : y.1.unop ≤ x.1.unop := leOfHom f.1.unop
     have hmap : (possibilities W M V).map f.1 x.2 = y.2 := f.2
     rw [Subsingleton.elim f.1 (homOfLE hb).op, possibilities_map_apply]
       at hmap
-    rw [← hmap, ← Possibility.restrict_domEquiv_symm hb]
+    rw [← hmap, ← Possibility.restrict_domainEquiv_symm hb]
     exact Possibility.restrict_le _ _)).op
   map_id _ := Subsingleton.elim _ _
   map_comp _ _ := Subsingleton.elim _ _
@@ -214,25 +214,25 @@ instance : (elementsToPoints (W := W) (M := M) (V := V)).Faithful where
 
 instance : (elementsToPoints (W := W) (M := M) (V := V)).Full where
   map_surjective {x y} f := by
-    have hd : ((Possibility.domEquiv y.1.unop).symm y.2).1 ≤
-        ((Possibility.domEquiv x.1.unop).symm x.2).1 := leOfHom f.unop
+    have hd : ((Possibility.domainEquiv y.1.unop).symm y.2).1 ≤
+        ((Possibility.domainEquiv x.1.unop).symm x.2).1 := leOfHom f.unop
     have hb : y.1.unop ≤ x.1.unop := by
-      have hsub := Possibility.dom_mono hd
-      rwa [((Possibility.domEquiv y.1.unop).symm y.2).2,
-        ((Possibility.domEquiv x.1.unop).symm x.2).2] at hsub
+      have hsub := Possibility.domain_mono hd
+      rwa [((Possibility.domainEquiv y.1.unop).symm y.2).2,
+        ((Possibility.domainEquiv x.1.unop).symm x.2).2] at hsub
     refine ⟨⟨(homOfLE hb).op, ?_⟩, Subsingleton.elim _ _⟩
-    refine (Possibility.domEquiv y.1.unop).symm.injective (Subtype.ext ?_)
-    rw [possibilities_map_apply, ← Possibility.restrict_domEquiv_symm hb]
+    refine (Possibility.domainEquiv y.1.unop).symm.injective (Subtype.ext ?_)
+    rw [possibilities_map_apply, ← Possibility.restrict_domainEquiv_symm hb]
     exact ((Possibility.le_iff_eq_restrict
-      ((Possibility.domEquiv y.1.unop).symm y.2).2).mp hd).symm
+      ((Possibility.domainEquiv y.1.unop).symm y.2).2).mp hd).symm
 
 instance : (elementsToPoints (W := W) (M := M) (V := V)).EssSurj where
   mem_essImage y :=
-    ⟨⟨op y.unop.dom, Possibility.domEquiv _ ⟨y.unop, rfl⟩⟩,
+    ⟨⟨op y.unop.domain, Possibility.domainEquiv _ ⟨y.unop, rfl⟩⟩,
       ⟨eqToIso (by
         apply Opposite.unop_injective
         have hval := congrArg Subtype.val
-          ((Possibility.domEquiv y.unop.dom).symm_apply_apply ⟨y.unop, rfl⟩)
+          ((Possibility.domainEquiv y.unop.domain).symm_apply_apply ⟨y.unop, rfl⟩)
         exact hval)⟩⟩
 
 instance : (elementsToPoints (W := W) (M := M) (V := V)).IsEquivalence := {}

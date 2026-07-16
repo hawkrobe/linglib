@@ -93,18 +93,18 @@ theorem infoLe_ofState (A : State W V M) {F F' : State W V M}
 /-- Atomic predicate on the world: merge with the empty-domain
 proposition state. -/
 def atomW (pred : W → Prop) : FCP W V M :=
-  ofState {q | q.dom = ∅ ∧ pred q.world}
+  ofState {q | q.domain = ∅ ∧ pred q.world}
 
 /-- Atomic predicate at card `x`: merge with the `{x}`-domain
 proposition state. Familiar `x` filters (rule (13)); novel `x` extends
 (rule (18)) — per point, so partially familiar files update
 pointwise. -/
 def atomVar (pred : M → Prop) (x : V) : FCP W V M :=
-  ofState {q | q.dom = {x} ∧ ∃ m, q.assignment x = some m ∧ pred m}
+  ofState {q | q.domain = {x} ∧ ∃ m, q.assignment x = some m ∧ pred m}
 
 /-- Binary atomic predicate at `x` and `y`. -/
 def atomVar2 (pred : M → M → Prop) (x y : V) : FCP W V M :=
-  ofState {q | q.dom = {x, y} ∧ ∃ m m', q.assignment x = some m ∧
+  ofState {q | q.domain = {x, y} ∧ ∃ m m', q.assignment x = some m ∧
     q.assignment y = some m' ∧ pred m m'}
 
 /-- Negation: keep the points of `F` that do not subsist in the scope's
@@ -215,7 +215,7 @@ theorem atomW_eq (pred : W → Prop) (F : State W V M) :
     exact ⟨hp, hpq.1.symm ▸ hqpred⟩
   · rintro ⟨hr, hpred⟩
     refine ⟨r, hr, ⟨r.world, fun _ => none⟩,
-      ⟨Set.ext fun v => by simp [Possibility.dom], hpred⟩,
+      ⟨Set.ext fun v => by simp [Possibility.domain], hpred⟩,
       ⟨rfl, fun _ _ _ _ h => by simp at h⟩, ?_⟩
     exact Possibility.ext rfl (funext fun v => by simp [Possibility.union])
 
@@ -229,7 +229,7 @@ theorem atomVar_eq_of_familiar [DecidableEq V] (pred : M → Prop) (x : V)
   · rintro ⟨p, hp, q, ⟨hqdom, m, hqx, hpred⟩, hpq, rfl⟩
     have hqnone : ∀ v, v ≠ x → q.assignment v = none := fun v hv =>
       Option.not_isSome_iff_eq_none.mp fun hs => hv (by
-        have : v ∈ q.dom := hs
+        have : v ∈ q.domain := hs
         rwa [hqdom] at this)
     obtain ⟨m₀, hpx⟩ := Option.ne_none_iff_exists'.mp (hfam p hp)
     have huq : p.union q = p :=
@@ -242,7 +242,7 @@ theorem atomVar_eq_of_familiar [DecidableEq V] (pred : M → Prop) (x : V)
   · rintro ⟨hr, m, hrx, hpred⟩
     refine ⟨r, hr, ⟨r.world, fun v => if v = x then some m else none⟩,
       ⟨Set.ext fun v => by by_cases hv : v = x <;>
-        simp [Possibility.dom, hv], m, by simp, hpred⟩,
+        simp [Possibility.domain, hv], m, by simp, hpred⟩,
       ⟨rfl, fun v e e' he he' => ?_⟩, ?_⟩
     · have he2 : (if v = x then some m else none) = some e' := he'
       by_cases hv : v = x
@@ -269,7 +269,7 @@ theorem atomVar_eq_of_novel [DecidableEq V] (pred : M → Prop) (x : V)
   · rintro ⟨p, hp, q, ⟨hqdom, m, hqx, hpred⟩, hpq, rfl⟩
     have hqnone : ∀ v, v ≠ x → q.assignment v = none := fun v hv =>
       Option.not_isSome_iff_eq_none.mp fun hs => hv (by
-        have : v ∈ q.dom := hs
+        have : v ∈ q.domain := hs
         rwa [hqdom] at this)
     have huq : p.union q = p.update x (some m) :=
       Possibility.ext rfl (funext fun v => by
@@ -285,7 +285,7 @@ theorem atomVar_eq_of_novel [DecidableEq V] (pred : M → Prop) (x : V)
     obtain rfl := (Option.some_inj.mp hrx).symm
     refine ⟨p, hp, ⟨p.world, fun v => if v = x then some m else none⟩,
       ⟨Set.ext fun v => by by_cases hv : v = x <;>
-        simp [Possibility.dom, hv], m, by simp, hpred⟩,
+        simp [Possibility.domain, hv], m, by simp, hpred⟩,
       ⟨rfl, fun v e e' he he' => ?_⟩, ?_⟩
     · have he2 : (if v = x then some m else none) = some e' := he'
       by_cases hv : v = x

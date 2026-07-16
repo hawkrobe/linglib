@@ -87,6 +87,10 @@ variable {α : Type*} {a b c : Option α}
 
 protected theorem refl (a : Option α) : a.FlatLE a := λ _ h => h
 
+/-- Flat order preserves definedness. -/
+theorem isSome_mono (h : a.FlatLE b) : a.isSome → b.isSome := fun ha =>
+  Option.isSome_iff_exists.mpr ((Option.isSome_iff_exists.mp ha).imp h)
+
 protected theorem trans (h1 : a.FlatLE b) (h2 : b.FlatLE c) : a.FlatLE c :=
   λ x hx => h2 x (h1 x hx)
 

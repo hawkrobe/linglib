@@ -115,7 +115,7 @@ the `Y`-stratum through the transition, worlds preserved. Index-free:
 both sides are plain states. -/
 def applyState (u : Transition W M X Y) (I : State W V M) :
     State W V M :=
-  {q | q.dom = Y ∧ ∃ p ∈ I, p.dom = X ∧
+  {q | q.domain = Y ∧ ∃ p ∈ I, p.domain = X ∧
     p.world = q.world ∧
     ∃ (e : X → M) (e' : Y → M),
       (∀ v : X, p.assignment v.1 = some (e v)) ∧
@@ -133,10 +133,10 @@ private def ptOf (Y : Set V) [∀ v, Decidable (v ∈ Y)] (w : W) (e : Y → M) 
     Possibility W V (Option M) :=
   ⟨w, fun v => if hv : v ∈ Y then some (e ⟨v, hv⟩) else none⟩
 
-private theorem dom_ptOf (Y : Set V) [∀ v, Decidable (v ∈ Y)] (w : W) (e : Y → M) :
-    (ptOf Y w e).dom = Y := by
+private theorem domain_ptOf (Y : Set V) [∀ v, Decidable (v ∈ Y)] (w : W) (e : Y → M) :
+    (ptOf Y w e).domain = Y := by
   ext v
-  by_cases hv : v ∈ Y <;> simp [ptOf, Possibility.dom, hv]
+  by_cases hv : v ∈ Y <;> simp [ptOf, Possibility.domain, hv]
 
 /-- Root application is functorial. -/
 theorem applyState_comp (u : Transition W M X Y) (v : Transition W M Y Z)
@@ -145,8 +145,8 @@ theorem applyState_comp (u : Transition W M X Y) (v : Transition W M Y Z)
   ext q
   constructor
   · rintro ⟨hq, p, hpI, hp, hw, e, e'', he, he'', k, huk, hkv⟩
-    refine ⟨hq, ptOf Y q.world k, ⟨dom_ptOf .., p, hpI, hp, hw, e, k, he,
-      fun x => ?_, huk⟩, dom_ptOf .., rfl, k, e'', fun x => ?_, he'', hkv⟩
+    refine ⟨hq, ptOf Y q.world k, ⟨domain_ptOf .., p, hpI, hp, hw, e, k, he,
+      fun x => ?_, huk⟩, domain_ptOf .., rfl, k, e'', fun x => ?_, he'', hkv⟩
     · simp [ptOf]
     · simp [ptOf]
   · rintro ⟨hq, m, ⟨hm, p, hpI, hp, hw, e, k, he, hk, huk⟩, -, hmw, k', e'',
@@ -190,7 +190,7 @@ theorem uniformEquiv_applyState [∀ v, Decidable (v ∈ X)] (u : Transition W M
   · rintro ⟨e, hmem, hrel⟩
     have hpI : ptOf X f.1 e ∈ I := hmem
     show ptOf Y f.1 f.2 ∈ u.applyState I
-    exact ⟨dom_ptOf .., ptOf X f.1 e, hpI, dom_ptOf .., by simp [ptOf], e,
+    exact ⟨domain_ptOf .., ptOf X f.1 e, hpI, domain_ptOf .., by simp [ptOf], e,
       f.2, fun v => by simp [ptOf], fun v => by simp [ptOf],
       by exact hrel⟩
 

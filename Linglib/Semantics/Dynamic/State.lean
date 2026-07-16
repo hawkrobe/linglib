@@ -17,7 +17,7 @@ assumes: the absurd state is `∅`, the initial state is `W × {g_⊤}`
 There is no base field: Def. 23's "Dom(f) = X" is the *uniform* stratum
 (`UniformAt`), and a base is the index of a fiber, not part of the data.
 Points with domain `X` are world–`X`-assignment pairs, constructively
-(`Possibility.domEquiv` — the total-assignment rendering needed choice
+(`Possibility.domainEquiv` — the total-assignment rendering needed choice
 and an inhabitant of `M` to recover this). Two preorders run through states, and they are
 dual on shared strata. *Informativeness* (`⊑`,
 [kamp-vangenabith-reyle-2011] Def. 25) quantifies over the stronger
@@ -50,7 +50,7 @@ stratum they reduce to `⊇` and `⊆` respectively
   [visser-vermeulen-1996]'s monoidal processing.
 - `infoLe_iff_superset`, `subsistsIn_iff_subset`: on a uniform stratum
   both preorders are partial orders, coinciding with `⊇`/`⊆` (via
-  `Possibility.eq_of_le_of_dom_eq`).
+  `Possibility.eq_of_le_of_domain_eq`).
 - `subsistsIn_restrict`: restriction only forgets — the restricted state
   subsists in the original.
 - `uniformAt_restrict`, `restrict_restrict`: restriction meets the
@@ -231,21 +231,21 @@ namespace State
 referents in `X` — Def. 23's "Dom(f) = X", as a stratum rather than a
 component. -/
 def UniformAt (X : Set V) (I : State W V M) : Prop :=
-  ∀ p ∈ I, Possibility.dom p = X
+  ∀ p ∈ I, Possibility.domain p = X
 
 /-- The initial state is uniform at the empty base. -/
 theorem uniformAt_initial : UniformAt ∅ (initial : State W V M) :=
   fun p hp => by
     ext v
-    simp [Possibility.dom, hp v]
+    simp [Possibility.domain, hp v]
 
 /-- Into a uniform stratum, subsistence is membership: a point already
 at the stratum's domain has no room to grow. -/
 theorem subsists_iff_mem {X : Set V} {s : State W V M}
     (hs : UniformAt X s) {p : Possibility W V (Option M)}
-    (hp : p.dom = X) : (p ≺ s) ↔ p ∈ s :=
+    (hp : p.domain = X) : (p ≺ s) ↔ p ∈ s :=
   ⟨fun ⟨q, hq, hpq⟩ =>
-    (Possibility.eq_of_le_of_dom_eq hpq (hp.trans (hs q hq).symm)).symm ▸ hq,
+    (Possibility.eq_of_le_of_domain_eq hpq (hp.trans (hs q hq).symm)).symm ▸ hq,
     Subsists.of_mem⟩
 
 /-- On a uniform stratum, subsistence is inclusion. -/
@@ -262,7 +262,7 @@ theorem infoLe_iff_superset {X : Set V} {s s' : State W V M}
   constructor
   · intro h q hq
     obtain ⟨p, hp, hpq⟩ := h q hq
-    rwa [← Possibility.eq_of_le_of_dom_eq hpq ((hs p hp).trans (hs' q hq).symm)]
+    rwa [← Possibility.eq_of_le_of_domain_eq hpq ((hs p hp).trans (hs' q hq).symm)]
   · exact fun h q hq => ⟨q, h hq, le_refl q⟩
 
 /-- Within one stratum, merge is intersection: compatibility on a shared
@@ -276,7 +276,7 @@ theorem merge_eq_inter_of_uniform {X : Set V} {s s' : State W V M}
   ext r
   constructor
   · rintro ⟨p, hp, q, hq, hpq, rfl⟩
-    obtain rfl := hpq.eq_of_dom_eq ((hs p hp).trans (hs' q hq).symm)
+    obtain rfl := hpq.eq_of_domain_eq ((hs p hp).trans (hs' q hq).symm)
     rw [hself p]
     exact ⟨hp, hq⟩
   · rintro ⟨hr, hr'⟩
@@ -291,7 +291,7 @@ theorem uniformAt_merge {X Y : Set V} {s s' : State W V M}
     (hs : UniformAt X s) (hs' : UniformAt Y s') :
     UniformAt (X ∪ Y) (s.merge s') := by
   rintro r ⟨p, hp, q, hq, -, rfl⟩
-  rw [Possibility.dom_union, hs p hp, hs' q hq]
+  rw [Possibility.domain_union, hs p hp, hs' q hq]
 
 /-- Subsistence out of a stratum factors through reindexing: the weaker
 state includes into the restricted image of the stronger — the fibred
@@ -343,7 +343,7 @@ theorem uniformAt_restrict {X Y : Set V} [∀ v, Decidable (v ∈ X)]
     {I : State W V M}
     (h : UniformAt Y I) : UniformAt (X ∩ Y) (I.restrict X) := by
   rintro p ⟨q, hq, rfl⟩
-  rw [Possibility.dom_restrict, h q hq]
+  rw [Possibility.domain_restrict, h q hq]
 
 /-- Restriction composes along intersections. -/
 theorem restrict_restrict (X Y : Set V) [∀ v, Decidable (v ∈ X)]
@@ -370,15 +370,15 @@ theorem familiar_randomAssign (I : State W V M) (x : V) :
 /-! ### The uniform classification -/
 
 /-- Uniform states at `X` are sets of world–`X`-assignment pairs — the
-state-level face of `Possibility.domEquiv`, and the comparison to the
+state-level face of `Possibility.domainEquiv`, and the comparison to the
 predecessor's fibers: an order isomorphism for `⊆` (which is `⪯` on the
 stratum, `subsistsIn_iff_subset`), hence an anti-isomorphism for `⊑`
 (`infoLe_iff_superset`). -/
 def uniformEquiv (X : Set V) [∀ v, Decidable (v ∈ X)] :
     {I : State W V M // UniformAt X I} ≃o Set (W × (X → M)) where
-  toFun I := {e | ((Possibility.domEquiv X).symm e).1 ∈ I.1}
+  toFun I := {e | ((Possibility.domainEquiv X).symm e).1 ∈ I.1}
   invFun S :=
-    ⟨{p | ∃ h : p.dom = X, Possibility.domEquiv X ⟨p, h⟩ ∈ S},
+    ⟨{p | ∃ h : p.domain = X, Possibility.domainEquiv X ⟨p, h⟩ ∈ S},
       fun _ ⟨h, _⟩ => h⟩
   left_inv I := by
     refine Subtype.ext (Set.ext fun p => ?_)
@@ -392,11 +392,11 @@ def uniformEquiv (X : Set V) [∀ v, Decidable (v ∈ X)] :
     · rintro ⟨h, hmem⟩
       simpa using hmem
     · intro he
-      exact ⟨((Possibility.domEquiv X).symm e).2, by simpa using he⟩
+      exact ⟨((Possibility.domainEquiv X).symm e).2, by simpa using he⟩
   map_rel_iff' {I J} := by
     constructor
     · intro h p hp
-      simpa using h (a := Possibility.domEquiv X ⟨p, I.2 p hp⟩)
+      simpa using h (a := Possibility.domainEquiv X ⟨p, I.2 p hp⟩)
         (by simpa using hp)
     · exact fun h _ he => h he
 

@@ -326,7 +326,7 @@ open DynamicSemantics
 /-- The anticorrelation state on two referents: points defining exactly
 `{i, j}`, with distinct values. -/
 private def anti (i j : Fin 3) : State Unit (Fin 3) Bool :=
-  {p | p.dom = ({i, j} : Set (Fin 3)) ∧
+  {p | p.domain = ({i, j} : Set (Fin 3)) ∧
     p.assignment i ≠ p.assignment j}
 
 /-- A two-referent point. -/
@@ -339,9 +339,9 @@ private theorem pt2_mem_anti {i j : Fin 3} (hij : i ≠ j) (a b : Bool)
   refine ⟨?_, ?_⟩
   · ext v
     by_cases hvi : v = i
-    · simp [pt2, Possibility.dom, hvi]
+    · simp [pt2, Possibility.domain, hvi]
     · by_cases hvj : v = j <;>
-        simp [pt2, Possibility.dom, hvi, hvj, hij.symm]
+        simp [pt2, Possibility.domain, hvi, hvj, hij.symm]
   · simp only [pt2, if_neg hij.symm]
     exact fun h => hab (Option.some.injEq .. ▸ h :)
 
@@ -401,16 +401,16 @@ theorem no_gluing_triangle :
       rw [← hS]
       exact ⟨r, hr, rfl⟩
     obtain ⟨hdom, hne⟩ := hmem
-    rw [Possibility.dom_restrict] at hdom
+    rw [Possibility.domain_restrict] at hdom
     have hi : (r.assignment i).isSome := by
       have : i ∈ ({i, j} : Set (Fin 3)) ∩
-          Possibility.dom r := by
+          Possibility.domain r := by
         rw [hdom]
         simp
       exact this.2
     have hj : (r.assignment j).isSome := by
       have : j ∈ ({i, j} : Set (Fin 3)) ∩
-          Possibility.dom r := by
+          Possibility.domain r := by
         rw [hdom]
         simp
       exact this.2

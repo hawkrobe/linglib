@@ -22,7 +22,7 @@ non-distributive tests (`might`, `must`) are exactly the residue.
 Categorically, `RelCat ≌ KleisliCat Set`, and the indexed tower reads
 `Ctx ⥤ RelCat ≌ KleisliCat Set ↪ suplattice endomaps`, every arrow
 canonical. The collapsed state space at `X` is the `X`-stratum of root
-states, classified by `Possibility.domEquiv`/`State.uniformEquiv`, and
+states, classified by `Possibility.domainEquiv`/`State.uniformEquiv`, and
 the relational action computes the root-state CCP through that
 classification (`Transition.uniformEquiv_applyState`) — the extraction
 of a relational meaning from a DRT-style one, as a morphism

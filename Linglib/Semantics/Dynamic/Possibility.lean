@@ -62,26 +62,24 @@ theorem le_def : p ≤ q ↔ p.world = q.world ∧ ∀ x, (p.assignment x).FlatL
   Iff.rfl
 
 /-- The domain of a partial point is the set of referents it defines. -/
-def dom (p : Possibility W V (Option M)) : Set V :=
+def domain (p : Possibility W V (Option M)) : Set V :=
   {v | (p.assignment v).isSome}
 
-@[simp] theorem mem_dom {v : V} :
-    v ∈ p.dom ↔ (p.assignment v).isSome := Iff.rfl
+@[simp] theorem mem_domain {v : V} :
+    v ∈ p.domain ↔ (p.assignment v).isSome := Iff.rfl
 
 /-- Descent grows the domain. -/
-theorem dom_mono (h : p ≤ q) : p.dom ⊆ q.dom := fun v hv => by
-  obtain ⟨e, he⟩ := Option.isSome_iff_exists.mp hv
-  exact Option.isSome_iff_exists.mpr ⟨e, h.2 v e he⟩
+theorem domain_mono (h : p ≤ q) : p.domain ⊆ q.domain := fun v => (h.2 v).isSome_mono
 
 /-- On a shared domain, descent is equality: there is no room to
 grow. -/
-theorem eq_of_le_of_dom_eq (h : p ≤ q) (hdom : p.dom = q.dom) : p = q := by
+theorem eq_of_le_of_domain_eq (h : p ≤ q) (hdom : p.domain = q.domain) : p = q := by
   refine Possibility.ext h.1 (funext fun v => ?_)
   rcases hp : p.assignment v with _ | e
   · rcases hq : q.assignment v with _ | e
     · rfl
-    · have : v ∈ p.dom := hdom ▸ Option.isSome_iff_exists.mpr ⟨e, hq⟩
-      rw [Possibility.mem_dom, hp] at this
+    · have : v ∈ p.domain := hdom ▸ Option.isSome_iff_exists.mpr ⟨e, hq⟩
+      rw [Possibility.mem_domain, hp] at this
       exact absurd this (by simp)
   · exact (h.2 v e hp).symm ▸ rfl
 
@@ -110,25 +108,25 @@ theorem Compatible.le_union_right (h : p.Compatible q) :
     · simp [union, hp, h.2 v e' e hp hq]⟩
 
 /-- On a shared domain, compatibility is equality. -/
-theorem Compatible.eq_of_dom_eq (h : p.Compatible q) (hdom : p.dom = q.dom) : p = q := by
+theorem Compatible.eq_of_domain_eq (h : p.Compatible q) (hdom : p.domain = q.domain) : p = q := by
   refine Possibility.ext h.1 (funext fun v => ?_)
   rcases hp : p.assignment v with _ | e
   · rcases hq : q.assignment v with _ | e
     · rfl
-    · have : v ∈ p.dom := hdom ▸ Option.isSome_iff_exists.mpr ⟨e, hq⟩
-      rw [Possibility.mem_dom, hp] at this
+    · have : v ∈ p.domain := hdom ▸ Option.isSome_iff_exists.mpr ⟨e, hq⟩
+      rw [Possibility.mem_domain, hp] at this
       exact absurd this (by simp)
   · rcases hq : q.assignment v with _ | e'
-    · have : v ∈ q.dom := hdom ▸ Option.isSome_iff_exists.mpr ⟨e, hp⟩
-      rw [Possibility.mem_dom, hq] at this
+    · have : v ∈ q.domain := hdom ▸ Option.isSome_iff_exists.mpr ⟨e, hp⟩
+      rw [Possibility.mem_domain, hq] at this
       exact absurd this (by simp)
     · exact congrArg some (h.2 v e e' hp hq)
 
 /-- Union of points unites domains. -/
-theorem dom_union (p q : Possibility W V (Option M)) :
-    (p.union q).dom = p.dom ∪ q.dom := by
+theorem domain_union (p q : Possibility W V (Option M)) :
+    (p.union q).domain = p.domain ∪ q.domain := by
   ext v
-  rcases hp : p.assignment v with _ | e <;> simp [union, dom, hp]
+  rcases hp : p.assignment v with _ | e <;> simp [union, domain, hp]
 
 /-- Points below a common point are compatible. -/
 theorem compatible_of_le_of_le (hp : p ≤ u) (hq : q ≤ u) : p.Compatible q :=
@@ -210,17 +208,17 @@ theorem restrict_le (X : Set V) [∀ v, Decidable (v ∈ X)]
     · simp [restrict, hx] at h⟩
 
 /-- Restriction intersects the domain. -/
-theorem dom_restrict (X : Set V) [∀ v, Decidable (v ∈ X)]
+theorem domain_restrict (X : Set V) [∀ v, Decidable (v ∈ X)]
     (p : Possibility W V (Option M)) :
-    (p.restrict X).dom = X ∩ p.dom := by
+    (p.restrict X).domain = X ∩ p.domain := by
   ext v
-  by_cases hv : v ∈ X <;> simp [restrict, dom, hv]
+  by_cases hv : v ∈ X <;> simp [restrict, domain, hv]
 
 /-- Descent out of a stratum is *being the restriction*: for `p` at
 `X`, `p` grows into `q` exactly when `p` is `q` cut to `X`. The
 hom-characterization of the fibred order. -/
 theorem le_iff_eq_restrict {X : Set V} [∀ v, Decidable (v ∈ X)]
-    (hp : p.dom = X) :
+    (hp : p.domain = X) :
     p ≤ q ↔ p = q.restrict X := by
   constructor
   · intro h
@@ -251,8 +249,8 @@ theorem restrict_restrict (X Y : Set V) [∀ v, Decidable (v ∈ X)]
 /-- Partial points with domain `X` are world–`X`-assignment pairs —
 constructively: the classification that the total-assignment rendering
 recovered only with choice and an inhabitant of `M`. -/
-def domEquiv (X : Set V) [∀ v, Decidable (v ∈ X)] :
-    {p : Possibility W V (Option M) // p.dom = X} ≃ W × (X → M) where
+def domainEquiv (X : Set V) [∀ v, Decidable (v ∈ X)] :
+    {p : Possibility W V (Option M) // p.domain = X} ≃ W × (X → M) where
   toFun p :=
     (p.1.world, fun v => (p.1.assignment v.1).get
       ((Set.ext_iff.mp p.2 v.1).mpr v.2))
@@ -260,7 +258,7 @@ def domEquiv (X : Set V) [∀ v, Decidable (v ∈ X)] :
     ⟨⟨e.1, fun v => if h : v ∈ X then some (e.2 ⟨v, h⟩)
       else none⟩, by
       ext v
-      by_cases h : v ∈ X <;> simp [dom, h]⟩
+      by_cases h : v ∈ X <;> simp [domain, h]⟩
   left_inv p := by
     obtain ⟨⟨w, g⟩, hp⟩ := p
     refine Subtype.ext (Possibility.ext rfl (funext fun v => ?_))
@@ -274,20 +272,20 @@ def domEquiv (X : Set V) [∀ v, Decidable (v ∈ X)] :
     refine Prod.ext rfl (funext fun v => ?_)
     simp
 
-theorem domEquiv_symm_val (X : Set V) [∀ v, Decidable (v ∈ X)]
+theorem domainEquiv_symm_val (X : Set V) [∀ v, Decidable (v ∈ X)]
     (e : W × (X → M)) :
-    ((domEquiv X).symm e).1 =
+    ((domainEquiv X).symm e).1 =
       ⟨e.1, fun v => if h : v ∈ X then some (e.2 ⟨v, h⟩)
         else none⟩ :=
   rfl
 
 /-- The charts commute with restriction: restricting a classified point
 is weakening its chart. -/
-theorem restrict_domEquiv_symm {Y X : Set V} [∀ v, Decidable (v ∈ X)]
+theorem restrict_domainEquiv_symm {Y X : Set V} [∀ v, Decidable (v ∈ X)]
     [∀ v, Decidable (v ∈ Y)] (h : Y ⊆ X) (e : W × (X → M)) :
-    ((domEquiv X).symm e).1.restrict Y =
-      ((domEquiv Y).symm (e.1, fun v => e.2 ⟨v.1, h v.2⟩)).1 := by
-  rw [domEquiv_symm_val, domEquiv_symm_val]
+    ((domainEquiv X).symm e).1.restrict Y =
+      ((domainEquiv Y).symm (e.1, fun v => e.2 ⟨v.1, h v.2⟩)).1 := by
+  rw [domainEquiv_symm_val, domainEquiv_symm_val]
   refine Possibility.ext rfl (funext fun v => ?_)
   by_cases hv : v ∈ Y
   · have hvX : v ∈ X := h hv

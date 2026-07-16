@@ -255,7 +255,7 @@ theorem DRS.uniformAt_state (W : Type*) (K : DRS L V) (hK : K.IsProper) :
 lives on the referents and its values are reached from some input. -/
 theorem DRS.mem_state {W : Type*} {K : DRS L V} {hK : K.IsProper}
     {q : Possibility W V (Option M)} :
-    q ∈ K.state W hK ↔ q.dom = (↑(∅ ∪ K.referents) : Set V) ∧
+    q ∈ K.state W hK ↔ q.domain = (↑(∅ ∪ K.referents) : Set V) ∧
       ∃ f g : V → M, DRS.toRelAt ∅ K f g ∧
         ∀ v : (↑(∅ ∪ K.referents) : Set V), q.assignment v.1 = some (g v.1) := by
   constructor
@@ -269,7 +269,7 @@ theorem DRS.mem_state {W : Type*} {K : DRS L V} {hK : K.IsProper}
       (↑(∅ ∪ K.referents) : Set V).restrict g,
       fun v => absurd v.2 (by simp), fun v => hvals v, f, g, rfl, rfl, hrel⟩
     ext v
-    simp [Possibility.dom]
+    simp [Possibility.domain]
 
 /-! ### Base invariance
 

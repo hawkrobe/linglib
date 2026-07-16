@@ -893,7 +893,7 @@ def toIndexedState (V M : Type*) (s : Set W) :
 theorem uniformAt_toIndexedState :
     State.UniformAt ∅ (toIndexedState V M s) := fun p hp => by
   ext v
-  simp [Possibility.dom, hp.2 v]
+  simp [Possibility.domain, hp.2 v]
 
 /-- The embedding is faithful on worldly content. -/
 @[simp] theorem worlds_toIndexedState :
