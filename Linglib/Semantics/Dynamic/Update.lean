@@ -24,8 +24,9 @@ The monadic reading of the pair is in `Kleisli.lean`.
   `Update.closure`: the relational connectives.
 * `Update.IsTest`: updates that never change the state.
 * `CCP.guard`, `CCP.might`, `CCP.must`, `CCP.negTest`: whole-state tests.
-* `CCP.IsEliminative`, `CCP.IsTest`, `CCP.IsDistributive`: the
-  classification of transformers.
+* `CCP.IsEliminative`, `CCP.IsTest`, `CCP.IsDistributive`,
+  `CCP.IsClassical`: the classification of transformers.
+* `CCP.up`, `CCP.down`: the content–update coercions.
 * `lift`, `lower`: the bridge between the two forms.
 * `supportOf`, `contentOf`, `updateFromSat`, `dynamicEntailsOf`: the layer a
   satisfaction relation induces.
@@ -38,8 +39,9 @@ The monadic reading of the pair is in `Kleisli.lean`.
   of its truth condition, a guard of its acceptance condition.
 * `lower_lift`, `lift_lower`: `lift` and `lower` are mutually inverse on
   distributive transformers.
-* `exists_eq_lift_test_iff`: a transformer is a lifted test filter iff it is
-  eliminative and distributive; `CCP.might_not_isDistributive` separates.
+* `CCP.isClassical_iff_up_down_eq`, `exists_eq_lift_test_iff`: the classical
+  transformers are exactly the static ones — `up` of their own content, the
+  lifted test filters; `CCP.might_not_isDistributive` separates.
 * `support_iff_update_eq`: support is being a fixed point of the update.
 
 ## Implementation notes
@@ -59,6 +61,7 @@ studies. [groenendijk-stokhof-1991]'s entailment notions live in
 * [R. Muskens, *Combining Montague Semantics and Discourse Representation*][muskens-1996]
 * [I. Heim, *The Semantics of Definite and Indefinite Noun Phrases*][heim-1982]
 * [I. Heim, *On the Projection Problem for Presuppositions*][heim-1983]
+* [J. Groenendijk and M. Stokhof, *Two Theories of Dynamic Semantics*][groenendijk-stokhof-1990]
 * [F. Veltman, *Defaults in Update Semantics*][veltman-1996]
 * [R. Muskens, J. van Benthem, and A. Visser, *Dynamics*][muskens-van-benthem-visser-2011]
 * [J. van Benthem, *Essays in Logical Semantics*][van-benthem-1986]
@@ -247,6 +250,33 @@ theorem isTest_iff_exists_guard : IsTest u ↔ ∃ C, u = guard C :=
 def IsDistributive (φ : CCP S) : Prop :=
   ∀ s, φ s = {p | ∃ i ∈ s, p ∈ φ {i}}
 
+/-! ### The classical fragment -/
+
+/-- The static update a content determines: intersection with it. -/
+def up (c : Set S) : CCP S := λ s => s ∩ c
+
+/-- The content an update determines: the indices whose singleton it
+updates successfully. -/
+def down (u : CCP S) : Set S := {i | (u {i}).Nonempty}
+
+/-- `down` retracts `up`. -/
+@[simp] theorem down_up (c : Set S) : down (up c) = c :=
+  Set.ext λ _ => Set.singleton_inter_nonempty
+
+/-- On eliminative updates, content is acceptance on singletons. -/
+theorem IsEliminative.down_eq (he : IsEliminative u) : down u = {i | u {i} = {i}} :=
+  Set.ext λ i => show (u {i}).Nonempty ↔ u {i} = {i} from
+    ⟨λ h => h.subset_singleton_iff.mp (he {i}), λ h => (Set.singleton_nonempty i).mono h.ge⟩
+
+/-- An update is *classical* if it is eliminative and distributive. -/
+def IsClassical (u : CCP S) : Prop := IsEliminative u ∧ IsDistributive u
+
+/-- Static updates are classical. -/
+theorem isClassical_up (c : Set S) : IsClassical (up c) :=
+  ⟨λ _ => Set.inter_subset_left,
+   λ _ => Set.ext λ p =>
+     ⟨λ ⟨hp, hc⟩ => ⟨p, hp, rfl, hc⟩, λ ⟨_, hi, hpi, hc⟩ => ⟨hpi ▸ hi, hc⟩⟩⟩
+
 /-- `might` is not distributive: a whole-state test can pass where every
 per-singleton test fails. -/
 theorem might_not_isDistributive :
@@ -354,26 +384,35 @@ theorem lift_test_cover₃ (C₁ C₂ C₃ : Condition S)
       · exact Or.inl (Or.inr ⟨hi, h'⟩)
       · exact Or.inr ⟨hi, h'⟩
 
-/-! ### The static fragment -/
+/-! ### The static fragment
 
-/-- A transformer is a lifted test filter iff it is eliminative and
-distributive — [van-benthem-1986]'s additivity ([rothschild-yalcin-2016];
-[gillies-2022]). Update semantics keeps eliminativity but its whole-state
-tests break distributivity; DPL's random reassignment keeps distributivity
-but breaks eliminativity. -/
+Van Benthem's additivity ([van-benthem-1986]; [rothschild-yalcin-2016];
+[gillies-2022]): the classical transformers are exactly the lifted test
+filters. Update semantics keeps eliminativity but its whole-state tests
+break distributivity; DPL's random reassignment does the reverse
+([groenendijk-stokhof-1990], §4). -/
+
+/-- `up` of a condition's extension is its lifted test filter. -/
+theorem up_eq_lift_test (C : Condition S) : CCP.up {i | C i} = lift (test C) :=
+  (lift_test C).symm
+
+/-- A transformer is a lifted test filter iff it is classical. -/
 theorem exists_eq_lift_test_iff {φ : CCP S} :
-    (∃ C : Condition S, φ = lift (test C)) ↔
-      CCP.IsEliminative φ ∧ CCP.IsDistributive φ := by
-  constructor
-  · rintro ⟨C, rfl⟩
-    exact ⟨lift_test_isEliminative C, lift_isDistributive _⟩
-  · rintro ⟨he, hd⟩
-    refine ⟨fun i => i ∈ φ {i}, ?_⟩
-    funext s
-    rw [hd s, lift_test]
-    ext p
-    exact ⟨fun ⟨i, hi, hpi⟩ => by obtain rfl : p = i := he {i} hpi; exact ⟨hi, hpi⟩,
-      fun ⟨hp, hC⟩ => ⟨p, hp, hC⟩⟩
+    (∃ C : Condition S, φ = lift (test C)) ↔ CCP.IsClassical φ := by
+  refine ⟨λ ⟨C, hC⟩ => hC ▸ ⟨lift_test_isEliminative C, lift_isDistributive _⟩,
+    λ ⟨he, hd⟩ => ⟨λ i => i ∈ φ {i}, funext λ s => ?_⟩⟩
+  rw [hd s, lift_test]
+  ext p
+  exact ⟨λ ⟨i, hi, hpi⟩ => have h : p = i := he {i} hpi; ⟨h ▸ hi, h ▸ hpi⟩,
+    λ ⟨hp, hC⟩ => ⟨p, hp, hC⟩⟩
+
+/-- The classical updates are exactly the static ones: `up ∘ down` is
+their normal form. -/
+theorem CCP.isClassical_iff_up_down_eq {φ : CCP S} :
+    CCP.IsClassical φ ↔ CCP.up (CCP.down φ) = φ :=
+  ⟨λ h => by obtain ⟨C, rfl⟩ := exists_eq_lift_test_iff.mpr h
+             rw [← up_eq_lift_test, down_up],
+   λ h => h ▸ CCP.isClassical_up _⟩
 
 end RelationalBridge
 
