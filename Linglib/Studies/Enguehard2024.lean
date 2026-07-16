@@ -674,8 +674,7 @@ theorem constant_presup_satisfied_iff_satisfiable
   · intro hsat
     obtain ⟨w, hw⟩ := hne
     exact ⟨w, hw, hsat hw⟩
-  · intro ⟨_, _, hdef⟩
-    intro _ _
+  · intro ⟨_, _, hdef⟩ _ _
     exact hdef
 
 -- ============================================================================
@@ -718,7 +717,8 @@ existential introduction but the output state is a subset of the input.
 
 section BilateralBridge
 
-open DynamicSemantics (BilateralDen Possibility worlds randomAssign)
+open DynamicSemantics (BilateralDen Possibility worlds)
+open DynamicSemantics.State (randomAssign)
 open DynamicSemantics.BilateralDen (neg exists_ atom)
 
 variable {W E : Type*}
