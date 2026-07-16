@@ -65,19 +65,12 @@ def proj (X : Set V) (p : Possibility W V M) : W × (X → M) :=
 def agreeSetoid (X : Set V) : Setoid (Possibility W V M) :=
   Setoid.ker (proj X)
 
-/-- Possibilities agree at `X` exactly when they share their world and
-their assignments agree on `X`. -/
-theorem agreeSetoid_iff {X : Set V} {p q : Possibility W V M} :
-    agreeSetoid X p q ↔
-      p.world = q.world ∧ Set.EqOn p.assignment q.assignment X :=
-  Prod.ext_iff.trans (and_congr Iff.rfl Set.restrict_eq_restrict_iff)
-
 /-- Coarser granularities identify more possibilities. -/
 theorem agreeSetoid_anti :
     Antitone (agreeSetoid : Set V → Setoid (Possibility W V M)) :=
-  fun _ _ hXY _ _ h =>
-    have h' := agreeSetoid_iff.mp h
-    agreeSetoid_iff.mpr ⟨h'.1, h'.2.mono hXY⟩
+  fun X Y hXY _ _ h =>
+    congrArg (fun wf : W × (Y → M) =>
+      ((wf.1, fun v => wf.2 ⟨v.1, hXY v.2⟩) : W × (X → M))) h
 
 /-- A possibility up to agreement at `X` is a world together with an
 assignment of the `X`-referents. -/
