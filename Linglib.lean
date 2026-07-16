@@ -1910,6 +1910,7 @@ import Linglib.Semantics.Verb.Root.Typology
 import Linglib.Semantics.Verb.RootContent
 import Linglib.Semantics.Verb.Smuggling
 import Linglib.Studies.AbneyKeshet2025
+import Linglib.Studies.AbramskySadrzadeh2014
 import Linglib.Studies.Abusch1997
 import Linglib.Studies.AckemaNeeleman2018
 import Linglib.Studies.AckermanMalouf2013
