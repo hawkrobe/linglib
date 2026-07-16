@@ -1643,6 +1643,7 @@ import Linglib.Semantics.Dynamic.DRS.Defs
 import Linglib.Semantics.Dynamic.DRS.Dynamics
 import Linglib.Semantics.Dynamic.DRS.Reduction
 import Linglib.Semantics.Dynamic.DRS.Semantics
+import Linglib.Semantics.Dynamic.FileChange
 import Linglib.Semantics.Dynamic.ICDRT.Defs
 import Linglib.Semantics.Dynamic.State
 import Linglib.Semantics.Dynamic.Transition
@@ -2314,7 +2315,6 @@ import Linglib.Studies.Hayes1995
 import Linglib.Studies.HayesWilson2008
 import Linglib.Studies.HeKaiserIskarous2025
 import Linglib.Studies.Heim1982.Basic
-import Linglib.Studies.Heim1982.FileChangeSemantics
 import Linglib.Studies.Heim1983
 import Linglib.Studies.Heim1992Desire
 import Linglib.Studies.Heim1992Projection
