@@ -40,7 +40,7 @@ instance of functoriality (`Transition.apply_comp`).
 -/
 
 open FirstOrder FirstOrder.Language
-open DynamicSemantics (Possibility State Transition baseSupported_of_iff)
+open DynamicSemantics (Possibility State Transition)
 
 namespace DRT
 
@@ -180,30 +180,31 @@ theorem DRS.toRelAt_congr_right {X : Finset V} (K : DRS L V) (hfv : K.fv ⊆ X)
 /-- A well-formed DRS denotes a transition from its context base to the
 base grown by its universe — `K.fv ⊆ X` is the *referential presupposition*
 ([kamp-vangenabith-reyle-2011], Def. 27(i)). -/
-def DRS.transition (W : Type*) (K : DRS L V) (X : Finset V) (hK : K.fv ⊆ X) :
-    Transition W M X (X ∪ K.referents) where
-  rel _ f g := DRS.toRelAt X K f g
-  grow := Finset.subset_union_left
-  supported_left _ _ _ _ h := DRS.toRelAt_congr_left X K h
-  supported_right _ _ _ _ h := DRS.toRelAt_congr_right K hK h
+theorem DRS.readsAt_toRelAt {W : Type*} (X : Finset V) (K : DRS L V) :
+    Transition.ReadsAt (W := W) X fun _ => DRS.toRelAt (M := M) X K :=
+  fun _ _ _ _ h => DRS.toRelAt_congr_left X K h
 
-/-- The empty DRS denotes the identity transition. -/
-theorem DRS.transition_empty (W : Type*) (X : Finset V)
-    (h : (DRS.empty : DRS L V).fv ⊆ X) :
-    DRS.empty.transition (M := M) W X h =
-      (Transition.id X).copy rfl (Finset.union_empty X).symm := by
-  apply Transition.ext
-  funext w f g
-  rw [Transition.rel_copy]
-  show (Set.EqOn g f ↑X ∧ _) = _
-  simp [Transition.id, Set.eqOn_comm]
+theorem DRS.writesAt_toRelAt {W : Type*} {X : Finset V} (K : DRS L V)
+    (hK : K.fv ⊆ X) :
+    Transition.WritesAt (W := W) (X ∪ K.referents)
+      fun _ => DRS.toRelAt (M := M) X K :=
+  fun _ _ _ _ h => DRS.toRelAt_congr_right K hK h
+
+/-- A well-formed DRS as a transition, via the total–typed bridge: read
+at `X`, write at `X ∪ U`. The referential presupposition documents
+Def. 24's domain condition; the congruence lemmas above are the bridge's
+support hypotheses. -/
+def DRS.transition (W : Type*) (K : DRS L V) (X : Finset V)
+    (_hK : K.fv ⊆ X) : Transition W M X (X ∪ K.referents) :=
+  Transition.ofTotal Finset.subset_union_left fun _ => DRS.toRelAt X K
 
 /-- Established referents persist along a DRS transition. -/
 theorem DRS.transition_isExtension (W : Type*) (K : DRS L V) (X : Finset V)
     (hK : K.fv ⊆ X) : (K.transition (M := M) W X hK).IsExtension := by
-  intro w f g h
+  rintro w e e' ⟨f, g, rfl, rfl, hrel⟩
   obtain ⟨U, conds⟩ := K
-  exact h.1
+  funext v
+  exact (hrel.1 v.2).symm
 
 /-- Repackaging a DRS transition along an equality of context bases is the
 transition at the new base. -/
@@ -213,21 +214,36 @@ theorem DRS.transition_copy (W : Type*) {X X' : Finset V} (K : DRS L V)
   subst hX; rfl
 
 /-- The information state a proper DRS expresses
-([kamp-vangenabith-reyle-2011], Def. 22): act on the minimal state. -/
+([kamp-vangenabith-reyle-2011], Def. 22): act on the initial state. -/
 def DRS.state (W : Type*) (K : DRS L V) (hK : K.IsProper) : State W V M :=
-  (K.transition W ∅ (Finset.subset_empty.mpr hK)).apply ⊥
+  (K.transition W ∅ (Finset.subset_empty.mpr hK)).applyState State.initial
 
-@[simp] theorem DRS.state_base (W : Type*) (K : DRS L V) (hK : K.IsProper) :
-    (K.state (M := M) W hK).base = K.referents := by
-  simp [DRS.state]
+/-- The state a DRS expresses lives in its referents' stratum. -/
+theorem DRS.uniformAt_state (W : Type*) (K : DRS L V) (hK : K.IsProper) :
+    State.UniformAt K.referents (K.state (M := M) W hK) := by
+  rw [← Finset.empty_union K.referents]
+  exact Transition.uniformAt_applyState
+    (K.transition W ∅ (Finset.subset_empty.mpr hK)) State.initial
 
-/-- The characteristic membership form: a possibility survives in `⟦K⟧ˢ` iff
-some input reaches its assignment. -/
-@[simp] theorem DRS.mem_state {W : Type*} {K : DRS L V} {hK : K.IsProper}
-    {w : W} {g : V → M} :
-    (⟨w, g⟩ : Possibility W V M) ∈ K.state W hK ↔ ∃ e, DRS.toRelAt ∅ K e g := by
-  simp only [DRS.state, Transition.mem_apply]
-  exact ⟨fun ⟨e, _, he⟩ => ⟨e, he⟩, fun ⟨e, he⟩ => ⟨e, Set.mem_univ _, he⟩⟩
+/-- The characteristic membership form: a point survives in `⟦K⟧ˢ` iff it
+lives on the referents and its values are reached from some input. -/
+theorem DRS.mem_state {W : Type*} {K : DRS L V} {hK : K.IsProper}
+    {q : Possibility W V (Option M)} :
+    q ∈ K.state W hK ↔ q.dom = (↑(∅ ∪ K.referents) : Set V) ∧
+      ∃ f g : V → M, DRS.toRelAt ∅ K f g ∧
+        ∀ v : (↑(∅ ∪ K.referents) : Set V), q.assignment v.1 = some (g v.1) := by
+  constructor
+  · rintro ⟨hq, p, hpI, hp, hw, e, e', he, he', f, g, hf, hg, hrel⟩
+    refine ⟨hq, f, g, hrel, fun v => ?_⟩
+    rw [he' v]
+    exact congrArg some (congrFun hg v).symm
+  · rintro ⟨hq, f, g, hrel, hvals⟩
+    refine ⟨hq, ⟨q.world, fun _ => none⟩, fun _ => rfl, ?_, rfl,
+      (↑(∅ : Finset V) : Set V).restrict f,
+      (↑(∅ ∪ K.referents) : Set V).restrict g,
+      fun v => absurd v.2 (by simp), fun v => hvals v, f, g, rfl, rfl, hrel⟩
+    ext v
+    simp [Possibility.dom]
 
 /-! ### Base invariance
 
@@ -430,9 +446,11 @@ theorem DRS.transition_merge (W : Type*) {X : Finset V} (K₁ K₂ : DRS L V)
     (K₁.transition (M := M) W X h₁).comp (K₂.transition W (X ∪ K₁.referents) h₂) =
       ((K₁.merge K₂).transition W X (DRS.fv_merge_subset h₁ h₂)).copy rfl
         (by rw [DRS.referents_merge, ← Finset.union_assoc]) := by
-  ext w f g
-  simp only [Transition.rel_copy, Transition.comp, DRS.transition,
-    DRS.toRelAt_merge K₁ K₂ h₁ hfresh, DynamicSemantics.Update.seq]
+  unfold DRS.transition
+  rw [Transition.ofTotal_comp (DRS.readsAt_toRelAt (X ∪ K₁.referents) K₂),
+    Transition.ofTotal_copy]
+  exact Transition.ofTotal_congr _ _
+    (funext fun _ => (DRS.toRelAt_merge K₁ K₂ h₁ hfresh).symm)
 
 /-- **Action equation** ([kamp-vangenabith-reyle-2011], p. 159): applying a
 DRS's transition to the state a proper context DRS expresses yields the
@@ -441,15 +459,15 @@ transition-level Merging Lemma. -/
 theorem DRS.state_merge (W : Type*) (K₁ K₂ : DRS L V) (h₁ : K₁.IsProper)
     (h₂ : K₂.fv ⊆ K₁.referents)
     (hfresh : Disjoint K₂.referents (Condition.occL K₁.conditions)) :
-    (K₂.transition (M := M) W K₁.referents h₂).apply (K₁.state W h₁) =
+    (K₂.transition (M := M) W K₁.referents h₂).applyState (K₁.state W h₁) =
       (K₁.merge K₂).state W (DRS.isProper_merge h₁ h₂) := by
   simp only [DRS.state]
   rw [← DRS.transition_copy (M := M) W K₂ (Finset.empty_union _)
       (h₂.trans Finset.subset_union_right) h₂,
-    Transition.apply_copy, ← Transition.apply_comp,
+    Transition.applyState_copy, ← Transition.applyState_comp,
     DRS.transition_merge (M := M) W K₁ K₂ (Finset.subset_empty.mpr h₁)
       (h₂.trans Finset.subset_union_right) hfresh,
-    Transition.apply_copy]
+    Transition.applyState_copy]
 
 /-! ### Reconciliation with the flat semantics
 

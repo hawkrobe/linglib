@@ -258,6 +258,12 @@ def copy (u : Transition W M X Y) {X' Y' : Finset V} (hX : X = X')
   subst hX hY hX' hY'
   rfl
 
+/-- Typing respects relation equality; the growth proof is irrelevant. -/
+theorem ofTotal_congr {R R' : W → (V → M) → (V → M) → Prop}
+    (h h' : X ⊆ Y) (hR : R = R') : ofTotal h R = ofTotal h' R' := by
+  subst hR
+  rfl
+
 /-- Typed relations repackage by re-proving the growth. -/
 theorem ofTotal_copy {R : W → (V → M) → (V → M) → Prop} {h : X ⊆ Y}
     {Y' : Finset V} (hY : Y = Y') :
@@ -276,6 +282,13 @@ theorem copy_comp_copy (u : Transition W M X Y) (v : Transition W M Y Z)
 @[simp] theorem apply_copy (u : Transition W M X Y) {X' Y' : Finset V}
     (hX : X = X') (hY : Y = Y') (T : Set (W × ((↑X' : Set V) → M))) :
     (u.copy hX hY).apply T = (by subst hX hY; exact u.apply T) := by
+  subst hX hY
+  rfl
+
+/-- Root application is invariant under repackaging. -/
+@[simp] theorem applyState_copy [DecidableEq V] (u : Transition W M X Y)
+    {X' Y' : Finset V} (hX : X = X') (hY : Y = Y') (I : State W V M) :
+    (u.copy hX hY).applyState I = u.applyState I := by
   subst hX hY
   rfl
 
