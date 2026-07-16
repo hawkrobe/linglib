@@ -342,7 +342,7 @@ private theorem pt2_mem_anti {i j : Fin 3} (hij : i ≠ j) (a b : Bool)
     · simp [pt2, Possibility.dom, hvi]
     · by_cases hvj : v = j <;>
         simp [pt2, Possibility.dom, hvi, hvj, hij.symm]
-  · simp only [pt2, if_pos rfl, if_neg hij.symm]
+  · simp only [pt2, if_neg hij.symm]
     exact fun h => hab (Option.some.injEq .. ▸ h :)
 
 /-- Adjacent anticorrelation states are consistent: their Def. 26 merge
