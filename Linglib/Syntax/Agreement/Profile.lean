@@ -1,4 +1,4 @@
-import Linglib.Syntax.Agreement.Basic
+import Linglib.Syntax.Agreement.Target
 import Mathlib.Data.Finset.Basic
 import Mathlib.Tactic.DeriveFintype
 

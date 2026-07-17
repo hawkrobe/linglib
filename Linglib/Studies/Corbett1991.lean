@@ -1,4 +1,4 @@
-import Linglib.Syntax.Agreement.Basic
+import Linglib.Syntax.Agreement.Target
 import Linglib.Features.Gender.Basic
 import Linglib.Data.WALS.Features.F30A
 import Linglib.Data.WALS.Features.F31A
