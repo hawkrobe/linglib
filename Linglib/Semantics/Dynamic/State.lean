@@ -8,64 +8,29 @@ import Mathlib.Order.Hom.Basic
 /-!
 # Information states
 
-An *information state* is a set of world–assignment pairs with the
-assignments partial ([kamp-vangenabith-reyle-2011], Def. 0.23;
-partiality by `Part`, after [elliott-sudo-2025], Def. 3.1). `State`
-carries *informativeness* (Def. 0.25) as its preorder, lifted along the
-upper closure of the point set: `s ≤ s'` iff every point of the
-stronger state lies above a point of the weaker. The initial state is
-`⊥`, the absurd state is `⊤ = ∅`, and consistent merge (Def. 0.26) is
-the monoid multiplication and the least upper bound.
+This file defines an *information state* — a set of possibilities with
+partial assignments ([kamp-vangenabith-reyle-2011], Def. 0.23) — and
+its order and algebra: informativeness (Def. 0.25) as the preorder
+lifted along `upperClosure`, with initial state `⊥` and absurd state
+`⊤ = ∅`; consistent merge (Def. 0.26) as the monoid `*` and least
+upper bound, dually union as greatest lower bound
+([visser-vermeulen-1996]'s monoidal processing); subsistence
+([elliott-sudo-2025], Def. 3.3) as the dual `lowerClosure` kernel; the
+uniform strata, where both kernels collapse to inclusion; and the
+classifications of a stratum as world–assignment pairs
+(`State.uniformEquiv`) and of states up to informational equivalence
+as the complete lattice of upper sets
+(`State.antisymmetrizationOrderIso`).
 
-Def. 0.23's base `X` is not a component: `State.UniformAt X` carves it
-out as a stratum, whose states are sets of world–`X`-assignment pairs
-(`State.uniformEquiv`). *Subsistence* ([elliott-sudo-2025], Def. 3.3,
-after [groenendijk-stokhof-veltman-1996] Defs. 2.8–2.9) is not a new
-relation: a point subsists in a state iff it lies in `lowerClosure` of
-its point set, a state subsists in another iff the lower closures are
-ordered — the dual closure kernel. On a uniform stratum both kernels
-are partial orders, coinciding with `⊇` and `⊆`.
-
-## Main definitions
-
-- `State`: information states, preordered by informativeness; `⊥` is
-  the initial state (Def. 0.23's Λ), `⊤ = ∅` the absurd state.
-- the `CommMonoid` instance: `*` is consistent merge (Def. 0.26,
-  binary, as `Set.lubs`) and `1 = ⊥`, so `Multiset.prod` is the finite
-  n-ary merge.
-- `State.UniformAt`, `State.restrict`: the base-`X` stratum; domain
-  restriction.
-- `Familiar`, `State.randomAssign`: familiarity and random assignment
-  ([elliott-sudo-2025]); worldly content (Def. 0.23(v)'s proposition,
-  [elliott-sudo-2025]'s 𝒲) is the image `Possibility.world '' s`.
-
-## Main results
-
-- `State.isLUB_mul`, `State.isGLB_union`: merge is the least upper
-  bound and union the greatest lower bound — with the `CommMonoid` and
-  `CovariantClass` instances, the content half of
-  [visser-vermeulen-1996]'s monoidal processing.
-- `State.UniformAt.le_iff_superset`, `State.UniformAt.lowerClosure_le_iff`,
-  `State.UniformAt.mul_eq_inter`: on a uniform stratum the orders are
-  `⊇`/`⊆` and merge is intersection.
-- `State.antisymmetrizationOrderIso`: up to informational equivalence,
-  states are the complete lattice of upper sets of possibilities.
-- `State.uniformEquiv`: uniform states at `X` are `Set (W × (X → M))`.
-
-## Implementation notes
-
-`State` is a type synonym for the point-set, in the `Lex`/`OrderDual`
-mold: membership and the set operations are re-exposed, while `≤` is
-informativeness — the kernel of `upperClosure` — rather than `⊆`, which
-remains available with its literal meaning. Neither closure kernel is
-antisymmetric on point sets (adding a comparable point is invisible),
-so `State` is a `Preorder` only; antisymmetry holds on each uniform
-stratum.
+`State` is a type synonym in the `OrderDual` mold: `≤` is
+informativeness while `⊆` keeps its literal meaning, and since neither
+kernel is antisymmetric, `State` is a `Preorder` only.
 
 ## References
 
 - [kamp-vangenabith-reyle-2011], Defs. 0.23–0.26
-- [elliott-sudo-2025], [groenendijk-stokhof-veltman-1996], [heim-1982]
+- [elliott-sudo-2025], [groenendijk-stokhof-veltman-1996],
+  [heim-1982]
 -/
 
 namespace DynamicSemantics
