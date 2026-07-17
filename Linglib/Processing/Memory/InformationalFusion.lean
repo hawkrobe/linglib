@@ -1,4 +1,4 @@
-import Linglib.Morphology.Paradigm
+import Linglib.Morphology.Paradigm.Complexity
 import Linglib.Processing.Memory.SurprisalTradeoff
 
 /-!
@@ -145,7 +145,7 @@ to `informationalFusion` (the `τ` parameter was unused), so it has been
 removed; future readers should use the recipe above. -/
 
 /-- Average informational fusion across all forms expressing feature set σ. -/
-noncomputable def averageInformationalFusion {n : Nat} {Form : Type} [BEq Form]
+noncomputable def averageInformationalFusion {n : Nat} {Form : Type} [DecidableEq Form]
     (M : LearnerModel n Form) (corpus : ParadigmSystem n Form)
     (σ : Fin n) : ℝ :=
   let cellDist := corpus.cellDistribution σ
@@ -193,7 +193,7 @@ attested at the cell — this is the "totally surprising" case
     flagged as future work in the substrate restructure. The empirical
     learner's behaviour on the toy paradigms `L_agg` and `L_fus` is
     discussed in the Rathi 2026 study file. -/
-noncomputable def empiricalLearner {n : Nat} {Form : Type} [BEq Form] :
+noncomputable def empiricalLearner {n : Nat} {Form : Type} [DecidableEq Form] :
     LearnerModel n Form where
   predict corpus σ w :=
     let cellDist := corpus.cellDistribution σ

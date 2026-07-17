@@ -11,14 +11,14 @@ import Mathlib.Tactic.TFAE
 person-pronoun syncretism, case syncretism, noun stem allomorphy —
 with two components: a fixed base hierarchy of prominence relations,
 and the requirement that the form assignment from it be feasibly
-monotonic (`Morphology.Containment.FeasiblyMonotone`, his def. (6)).
+monotonic (`Morphology.FeasiblyMonotone`, his def. (6)).
 The keystone here is `isContiguous_tfae`: contiguity, feasible
 monotonicity, Elsewhere-generability, and Superset-spellability
 coincide over linear hierarchies — Graf's "effective theory" and the
 two insertion mechanisms are provably one constraint. Graf establishes
 the 3-cell case by exhaustion and verifies larger hierarchies
 instance-by-instance; the general equivalence is
-`Morphology.Containment.isContiguous_iff_feasiblyMonotone`, which this
+`Morphology.isContiguous_iff_feasiblyMonotone`, which this
 file instantiates on his Table 1 (adjectival gradation, via the
 English fragment) and Table 2 (person-pronoun syncretism,
 [harbour-2015]'s survey).
@@ -38,7 +38,7 @@ Graf's preferred case-layer hierarchy, the PCC person-pair poset, and
 the GCC gender poset are genuinely *partial* orders — and the PCC/GCC
 maps go into the fixed two-element truth-value algebra (upper sets,
 not kernels) — so they need a partial-order generalization of
-`Pattern` and an upper-set substrate. Concrete deferred targets: his
+`Paradigm` and an upper-set substrate. Concrete deferred targets: his
 ban (14) on multiple cross-level case syncretisms; McFadden's
 nominative stem-allomorphy generalization (16) via the conflated
 hierarchy's cycle-forces-identity argument; the exactly-nine monotone
@@ -47,7 +47,7 @@ PCC maps as a finite check.
 
 namespace Graf2019
 
-open Morphology.Containment
+open Morphology Morphology.Containment
 open Morphology.DegreeContainment
 open English.Modifiers.Adjectives
 
@@ -60,7 +60,7 @@ antihomophonous vocabulary (DM, [bobaljik-2012] ch. 2); it is
 spellable by Superset competition over a context-free antihomophonous
 lexicon (nanosyntax, [caha-2009]). Graf's "effective theory" and the
 two insertion mechanisms are one constraint. -/
-theorem isContiguous_tfae {n : ℕ} {F : Type*} (p : Pattern n F) :
+theorem isContiguous_tfae {n : ℕ} {F : Type*} (p : Paradigm n F) :
     [IsContiguous p,
      FeasiblyMonotone p,
      ElsewhereGenerable p,
@@ -76,14 +76,14 @@ theorem isContiguous_tfae {n : ℕ} {F : Type*} (p : Pattern n F) :
 [graf-2019] Table 1's attested rows (AAA *smart*, ABB *good*), run
 over the whole fragment. -/
 theorem english_suppletion_feasiblyMonotone :
-    ∀ e ∈ allEntries, FeasiblyMonotone e.suppletion.toPattern := by
+    ∀ e ∈ allEntries, FeasiblyMonotone e.suppletion.toParadigm := by
   simp only [← isContiguous_iff_feasiblyMonotone]
   decide
 
 /-- The unattested *ABA row: no codomain order makes `good – better –
 goodest` monotone ("Irrespective of how this set is ordered, there can
 be no monotonic function f with f(1) = f(3) ≠ f(2)"). -/
-theorem aba_not_feasiblyMonotone : ¬ FeasiblyMonotone aba.toPattern := by
+theorem aba_not_feasiblyMonotone : ¬ FeasiblyMonotone aba.toParadigm := by
   rw [← isContiguous_iff_feasiblyMonotone]
   decide
 
@@ -103,18 +103,18 @@ syncretism." The encoding runs the hierarchy with index ascending
 monotonicity, his fn. 1. -/
 
 /-- Jarawa, Kiowa: all three persons distinct (1|2|3). -/
-def personJarawa : Pattern 3 ℕ := ![0, 1, 2]
+def personJarawa : Paradigm 3 ℕ := ![0, 1, 2]
 
 /-- Damin: second and third person share a form (1|23). -/
-def personDamin : Pattern 3 ℕ := ![0, 1, 1]
+def personDamin : Paradigm 3 ℕ := ![0, 1, 1]
 
 /-- Winnebago: first and second person share a form (12|3) — an AAB
 shape, attested in person though not in gradation. -/
-def personWinnebago : Pattern 3 ℕ := ![0, 0, 1]
+def personWinnebago : Paradigm 3 ℕ := ![0, 0, 1]
 
 /-- The unattested partition 13|2: first and third persons syncretic
 to the exclusion of second. -/
-def personGap : Pattern 3 ℕ := ![0, 1, 0]
+def personGap : Paradigm 3 ℕ := ![0, 1, 0]
 
 /-- The attested person partitions are all feasibly monotonic over
 `1 > 2 > 3`. -/
@@ -146,7 +146,7 @@ data make in `Studies/SmithMoskalEtAl2019.lean`. -/
 
 /-- AAB is feasibly monotonic: Graf's account cannot — and, given
 Winnebago, should not — exclude it. -/
-theorem aab_feasiblyMonotone : FeasiblyMonotone aab.toPattern := by
+theorem aab_feasiblyMonotone : FeasiblyMonotone aab.toParadigm := by
   rw [← isContiguous_iff_feasiblyMonotone]
   decide
 

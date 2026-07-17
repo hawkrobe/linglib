@@ -4,7 +4,7 @@ import Linglib.Studies.AckermanMalouf2013
 import Linglib.Studies.Bybee1985
 import Linglib.Studies.BickelNichols2013
 import Linglib.Morphology.MorphRule
-import Linglib.Morphology.Paradigm
+import Linglib.Morphology.Paradigm.Complexity
 
 /-!
 # [rathi-hahn-futrell-2026]: Information-theoretic morphological fusion
@@ -80,7 +80,7 @@ X₂ ∈ {PRESENT, PAST}) to a 2-character string Y₁Y₂ ∈ {A,B,C,D}². The 
 (X₁, X₂) combinations have frequencies 3/8, 1/8, 1/8, 3/8 — chosen so that
 mutual information `I[X₁; X₂] > 0` while marginals are uniform.
 
-We encode each (X₁, X₂) combination as a separate `InflectionClass 2` (a
+We encode each (X₁, X₂) combination as a separate `Paradigm 2` (a
 two-cell paradigm: cell 0 is the first character, cell 1 is the second).
 Frequencies attach to inflection classes, recovering the table-4 weights.
 
@@ -102,13 +102,13 @@ Y₂=C iff X₂=PRESENT). L_fus: Y₂ is the XOR of X₁ and X₂ (Controlled-NO
 def L_agg : ParadigmSystem 2 String :=
   { entries :=
     [ -- (ACTIVE, PRESENT) → AC, freq 3/8
-      ({ realize := fun i => if i = 0 then "A" else "C" }, 3/8)
+      ((fun i => if i = 0 then "A" else "C"), 3/8)
     , -- (ACTIVE, PAST) → AD, freq 1/8
-      ({ realize := fun i => if i = 0 then "A" else "D" }, 1/8)
+      ((fun i => if i = 0 then "A" else "D"), 1/8)
     , -- (PASSIVE, PRESENT) → BC, freq 1/8
-      ({ realize := fun i => if i = 0 then "B" else "C" }, 1/8)
+      ((fun i => if i = 0 then "B" else "C"), 1/8)
     , -- (PASSIVE, PAST) → BD, freq 3/8
-      ({ realize := fun i => if i = 0 then "B" else "D" }, 3/8)
+      ((fun i => if i = 0 then "B" else "D"), 3/8)
     ] }
 
 /-- L_fus, the fusional toy language. Same paradigm shape as L_agg but the
@@ -116,13 +116,13 @@ def L_agg : ParadigmSystem 2 String :=
 def L_fus : ParadigmSystem 2 String :=
   { entries :=
     [ -- (ACTIVE, PRESENT) → AC, freq 3/8
-      ({ realize := fun i => if i = 0 then "A" else "C" }, 3/8)
+      ((fun i => if i = 0 then "A" else "C"), 3/8)
     , -- (ACTIVE, PAST) → AD, freq 1/8
-      ({ realize := fun i => if i = 0 then "A" else "D" }, 1/8)
+      ((fun i => if i = 0 then "A" else "D"), 1/8)
     , -- (PASSIVE, PRESENT) → BD, freq 1/8 (XOR-flipped from BC)
-      ({ realize := fun i => if i = 0 then "B" else "D" }, 1/8)
+      ((fun i => if i = 0 then "B" else "D"), 1/8)
     , -- (PASSIVE, PAST) → BC, freq 3/8 (XOR-flipped from BD)
-      ({ realize := fun i => if i = 0 then "B" else "C" }, 3/8)
+      ((fun i => if i = 0 then "B" else "C"), 3/8)
     ] }
 
 /-- E-complexity (`[ackerman-malouf-2013]`): both toy languages have
@@ -159,10 +159,10 @@ L_nonclustered alternates the order based on voice value. -/
 /-- L_clustered: voice always realized in slot 0, tense always in slot 1. -/
 def L_clustered : ParadigmSystem 2 String :=
   { entries :=
-    [ ({ realize := fun i => if i = 0 then "A" else "C" }, 1/4)
-    , ({ realize := fun i => if i = 0 then "A" else "D" }, 1/4)
-    , ({ realize := fun i => if i = 0 then "B" else "C" }, 1/4)
-    , ({ realize := fun i => if i = 0 then "B" else "D" }, 1/4)
+    [ ((fun i => if i = 0 then "A" else "C"), 1/4)
+    , ((fun i => if i = 0 then "A" else "D"), 1/4)
+    , ((fun i => if i = 0 then "B" else "C"), 1/4)
+    , ((fun i => if i = 0 then "B" else "D"), 1/4)
     ] }
 
 /-- L_nonclustered: voice morpheme in slot 0 for ACTIVE; in slot 1 for
@@ -170,10 +170,10 @@ def L_clustered : ParadigmSystem 2 String :=
     depending on the value of X₁. -/
 def L_nonclustered : ParadigmSystem 2 String :=
   { entries :=
-    [ ({ realize := fun i => if i = 0 then "A" else "C" }, 1/4)
-    , ({ realize := fun i => if i = 0 then "D" else "A" }, 1/4)
-    , ({ realize := fun i => if i = 0 then "B" else "C" }, 1/4)
-    , ({ realize := fun i => if i = 0 then "D" else "B" }, 1/4)
+    [ ((fun i => if i = 0 then "A" else "C"), 1/4)
+    , ((fun i => if i = 0 then "D" else "A"), 1/4)
+    , ((fun i => if i = 0 then "B" else "C"), 1/4)
+    , ((fun i => if i = 0 then "D" else "B"), 1/4)
     ] }
 
 /-- Both clustered languages have the same E-complexity. -/

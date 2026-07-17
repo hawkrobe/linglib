@@ -1,6 +1,6 @@
 import Mathlib.Order.Fin.Basic
 import Linglib.Features.Case.Basic
-import Linglib.Morphology.Containment.Basic
+import Linglib.Morphology.Paradigm.Contiguity
 
 /-!
 # Case Allomorphy and Syncretism — Substrate
@@ -43,19 +43,19 @@ structure AllomorphyPattern where
   deriving DecidableEq, Repr
 
 /-- The general-substrate form of an allomorphy pattern: the n = 4
-    instance of `Morphology.Containment.Pattern`. -/
-def AllomorphyPattern.toPattern (p : AllomorphyPattern) :
-    Morphology.Containment.Pattern 4 ℕ :=
+    instance of `Morphology.Paradigm`. -/
+def AllomorphyPattern.toParadigm (p : AllomorphyPattern) :
+    Morphology.Paradigm 4 ℕ :=
   ![p.nom, p.acc, p.gen, p.dat]
 
 /-- Is a pattern contiguous? Each form class occupies a contiguous span
     on the hierarchy — the generic
-    `Morphology.Containment.IsContiguous`, by construction. -/
+    `Morphology.IsContiguous`, by construction. -/
 def AllomorphyPattern.IsContiguous (p : AllomorphyPattern) : Prop :=
-  Morphology.Containment.IsContiguous p.toPattern
+  Morphology.IsContiguous p.toParadigm
 
 instance (p : AllomorphyPattern) : Decidable p.IsContiguous :=
-  inferInstanceAs (Decidable (Morphology.Containment.IsContiguous _))
+  inferInstanceAs (Decidable (Morphology.IsContiguous _))
 
 /-- A pattern violates *ABA: some form class recurs across a distinct
     intervening one. Equivalent to ¬IsContiguous. -/
