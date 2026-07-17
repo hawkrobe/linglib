@@ -118,7 +118,7 @@ modulo introduced anaphoric information — state-level subsistence.
 -/
 def diamond (φ : BUSDen W E) : BUSDen W E where
   positive s := {_i ∈ s | (φ.positive s).Nonempty}
-  negative s := {_i ∈ s | subsistsIn s (φ.negative s)}
+  negative s := {_i ∈ s | lowerClosure s ≤ lowerClosure (φ.negative s)}
 
 /--
 Epistemic necessity ([elliott-sudo-2025], (77)): the dual, □φ = ¬◇¬φ.
@@ -137,8 +137,12 @@ theorem diamond_positive_eq (φ : BUSDen W E) (s) :
 
 /-- The diamond's negative update as a conditional. -/
 theorem diamond_negative_eq (φ : BUSDen W E) (s) :
-    (◇ᵇφ).negative s = if subsistsIn s (φ.negative s) then s else ∅ := by
-  by_cases h : subsistsIn s (φ.negative s) <;> simp [diamond, h]
+    (◇ᵇφ).negative s = if lowerClosure s ≤ lowerClosure (φ.negative s) then s else ∅ := by
+  by_cases h : lowerClosure s ≤ lowerClosure (φ.negative s)
+  · simp only [diamond, if_pos h]
+    exact Set.sep_eq_self_iff_mem_true.mpr fun _ _ => h
+  · simp only [diamond, if_neg h]
+    exact Set.sep_eq_empty_iff_mem_false.mpr fun _ _ => h
 
 /-- Diamond positive is a test (returns s or ∅). -/
 theorem diamond_positive_isTest (φ : BUSDen W E) :
@@ -200,7 +204,7 @@ def possible (φ : BUSDen W E) (s : Set (Possibility W ℕ (Part E))) : Prop :=
 
 /-- Necessity: state s makes □φ true iff s subsists in s[φ]⁺. -/
 def necessary (φ : BUSDen W E) (s : Set (Possibility W ℕ (Part E))) : Prop :=
-  subsistsIn s (φ.positive s)
+  lowerClosure s ≤ lowerClosure (φ.positive s)
 
 /-- Impossibility: ¬◇φ iff s[φ]⁺ is empty. -/
 def impossible (φ : BUSDen W E) (s : Set (Possibility W ℕ (Part E))) : Prop :=

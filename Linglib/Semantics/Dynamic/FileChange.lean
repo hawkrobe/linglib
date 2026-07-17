@@ -24,7 +24,7 @@ appropriateness ((15)) lives on `indef`/`def_`, as in the paper.
 Principle (A) in its general form is ascent in informativeness
 (`le_ofState`); set-shrinking eliminativity is its familiar face.
 
-Negation keeps the points of `F` that do not *subsist* (`≺`) in the
+Negation keeps the points of `F` that do not *subsist* in the
 scope's update — the no-verifying-extension clause, generalizing
 [heim-1983]'s world-only `s \ s[φ]` (`CCP.Partial.neg`): on a uniform
 stratum the two coincide (`neg_eq_partial_neg`), so the 1983 clauses are
@@ -112,7 +112,7 @@ update — the no-verifying-extension clause, as non-subsistence.
 Referents introduced inside the scope are trapped. Undefined when the
 scope is. -/
 def neg (φ : FCP W V M) : FCP W V M :=
-  fun F => (φ F).map fun F' => {p ∈ F | ¬ p ≺ F'}
+  fun F => (φ F).map fun F' => {p ∈ F | p ∉ lowerClosure F'}
 
 /-- Conditional: `F + [if φ then ψ] = F + [¬(φ ∧ ¬ψ)]` — Heim's analysis
 of conditionals as negated conjunctions. -/
@@ -317,11 +317,11 @@ theorem neg_eq_partial_neg [DecidableEq V] {X : Finset V}
     (hφ : ∀ F' ∈ φ F, State.UniformAt X F') :
     neg φ F = CCP.Partial.neg φ F := by
   refine Part.ext' Iff.rfl fun h₁ h₂ => ?_
-  show ({p ∈ (F : Set (Possibility W V (Part M))) | ¬ p ≺ (φ F).get h₁} : Set _) =
+  show ({p ∈ (F : Set (Possibility W V (Part M))) | p ∉ lowerClosure ((φ F).get h₁)} : Set _) =
     (F : Set (Possibility W V (Part M))) \ (φ F).get h₁
   ext p
   exact and_congr_right fun hp => not_congr
-    (State.subsists_iff_mem (hφ _ (Part.get_mem _)) (hF p hp))
+    (State.mem_lowerClosure_iff (hφ _ (Part.get_mem _)) (hF p hp))
 
 end FCP
 

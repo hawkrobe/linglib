@@ -16,17 +16,17 @@ the least upper bound.
 
 Def. 0.23's base `X` is not a component: `State.UniformAt X` carves it
 out as a stratum, whose states are sets of world–`X`-assignment pairs
-(`State.uniformEquiv`). *Subsistence* (`subsistsIn`,
-[elliott-sudo-2025], Def. 3.3, after
-[groenendijk-stokhof-veltman-1996] Defs. 2.8–2.9) is the dual closure
-kernel, lifted along the lower closure. On a uniform stratum both
-orders are partial orders, coinciding with `⊇` and `⊆`.
+(`State.uniformEquiv`). *Subsistence* ([elliott-sudo-2025], Def. 3.3,
+after [groenendijk-stokhof-veltman-1996] Defs. 2.8–2.9) is not a new
+relation: a point subsists in a state iff it lies in `lowerClosure` of
+its point set, a state subsists in another iff the lower closures are
+ordered — the dual closure kernel. On a uniform stratum both kernels
+are partial orders, coinciding with `⊇` and `⊆`.
 
 ## Main definitions
 
 - `State`: information states, preordered by informativeness; `⊥` is
   the initial state (Def. 0.23's Λ), `⊤ = ∅` the absurd state.
-- `Subsists` (`≺`), `subsistsIn`: point- and state-level subsistence.
 - `State.merge`: consistent merge (Def. 0.26, binary), as `Set.lubs`.
 - `State.UniformAt`, `State.restrict`: the base-`X` stratum; domain
   restriction.
@@ -35,10 +35,11 @@ orders are partial orders, coinciding with `⊇` and `⊆`.
 
 ## Main results
 
-- `State.isLUB_merge`: merge is the least upper bound — with
-  `merge_comm`, `merge_assoc`, `merge_bot`, the content half of
+- `State.isLUB_merge`, `State.isGLB_union`: merge is the least upper
+  bound and union the greatest lower bound — with `merge_comm`,
+  `merge_assoc`, `merge_bot`, the content half of
   [visser-vermeulen-1996]'s monoidal processing.
-- `State.le_iff_superset`, `State.subsistsIn_iff_subset`,
+- `State.le_iff_superset`, `State.lowerClosure_le_iff`,
   `State.merge_eq_inter_of_uniform`: on a uniform stratum the orders
   are `⊇`/`⊆` and merge is intersection.
 - `State.uniformEquiv`: uniform states at `X` are `Set (W × (X → M))`.
@@ -132,37 +133,15 @@ instance : OrderTop (State W V M) where
 
 end State
 
-/-! ### Subsistence -/
+/-! ### Subsistence
 
-/-- `p` *subsists* in `s` ([elliott-sudo-2025], Def. 3.3): it survives,
-possibly extended, into `s` — membership in the lower closure of the
-point set. -/
-def Subsists (p : Possibility W V (Part M)) (s : State W V M) : Prop :=
-  p ∈ lowerClosure (s : Set (Possibility W V (Part M)))
-
-@[inherit_doc] scoped notation:50 p " ≺ " s => Subsists p s
-
-/-- Subsistence unfolded: a point of `s` lies above `p`. -/
-theorem subsists_iff {p : Possibility W V (Part M)} {s : State W V M} :
-    (p ≺ s) ↔ ∃ q ∈ s, p ≤ q :=
-  Iff.rfl
-
-theorem Subsists.of_mem {p : Possibility W V (Part M)} {s : State W V M}
-    (h : p ∈ s) : p ≺ s :=
-  ⟨p, h, le_rfl⟩
-
-/-- `s` subsists in `s'` ([elliott-sudo-2025], Def. 3.3, state-level;
-[groenendijk-stokhof-veltman-1996] Defs. 2.8–2.9): every point survives,
-extended, into `s'` — the preorder lifted along the lower closure, dual
-to `≤` on shared strata, with `⊤ = ∅` at the bottom. -/
-def subsistsIn (s s' : State W V M) : Prop :=
-  lowerClosure (s : Set (Possibility W V (Part M))) ≤
-    lowerClosure (s' : Set (Possibility W V (Part M)))
-
-/-- Subsistence in projection form: every point subsists. -/
-theorem subsistsIn_iff {s s' : State W V M} :
-    subsistsIn s s' ↔ ∀ p ∈ s, p ≺ s' :=
-  lowerClosure_le
+*Subsistence* ([elliott-sudo-2025], Def. 3.3, after
+[groenendijk-stokhof-veltman-1996] Defs. 2.8–2.9) is not a new
+relation: a point subsists in a state iff it lies in the lower closure
+of its point set (`mem_lowerClosure`: some point of the state extends
+it), and a state subsists in another iff `lowerClosure s ≤
+lowerClosure s'` — the closure kernel dual to `≤`, with `⊤ = ∅` at the
+bottom. -/
 
 /-! ### Consistent merge -/
 
@@ -243,6 +222,44 @@ monoidal processing. -/
 @[simp] theorem bot_merge (s : State W V M) : merge ⊥ s = s := by
   rw [merge_comm, merge_bot]
 
+/-! ### Union is the meet
+
+Merge is the join of the informativeness order; plain union is its
+meet — pooling two states keeps exactly their common information. `∪`
+is **not** merge: within a stratum merge is intersection
+(`merge_eq_inter_of_uniform`), the eliminative regime. -/
+
+/-- The Smyth face of the union: upper closures compose by meet. -/
+theorem upperClosure_union :
+    upperClosure ((s ∪ s' : State W V M) : Set (Possibility W V (Part M))) =
+      upperClosure (s : Set (Possibility W V (Part M))) ⊓
+        upperClosure (s' : Set (Possibility W V (Part M))) :=
+  _root_.upperClosure_union _ _
+
+/-- The union is below the left component. -/
+theorem union_le_left : s ∪ s' ≤ s := by
+  change upperClosure _ ≤ upperClosure _
+  rw [upperClosure_union]
+  exact inf_le_left
+
+/-- The union is below the right component. -/
+theorem union_le_right : s ∪ s' ≤ s' := by
+  change upperClosure _ ≤ upperClosure _
+  rw [upperClosure_union]
+  exact inf_le_right
+
+/-- Anything below both components is below their union. -/
+theorem le_union (h : t ≤ s) (h' : t ≤ s') : t ≤ s ∪ s' := by
+  change upperClosure _ ≤ upperClosure _
+  rw [upperClosure_union]
+  exact le_inf h h'
+
+/-- **The union is the greatest lower bound** of its components in the
+informativeness preorder — the meet dual to `isLUB_merge`. -/
+theorem isGLB_union : IsGLB {s, s'} (s ∪ s') :=
+  ⟨by rintro x (rfl | rfl); exacts [union_le_left, union_le_right],
+   fun _ hu => le_union (hu (Set.mem_insert _ _)) (hu (Set.mem_insert_of_mem _ rfl))⟩
+
 end State
 
 /-! ### Worldly content and familiarity -/
@@ -277,16 +294,18 @@ theorem uniformAt_bot : UniformAt ∅ (⊥ : State W V M) := fun _ hp =>
 
 /-- Into a uniform stratum, subsistence is membership: a point already
 at the stratum's domain has no room to grow. -/
-theorem subsists_iff_mem {X : Set V} (hs : UniformAt X s)
-    {p : Possibility W V (Part M)} (hp : p.domain = X) : (p ≺ s) ↔ p ∈ s :=
+theorem mem_lowerClosure_iff {X : Set V} (hs : UniformAt X s)
+    {p : Possibility W V (Part M)} (hp : p.domain = X) :
+    p ∈ lowerClosure s ↔ p ∈ s :=
   ⟨fun ⟨q, hq, hpq⟩ =>
     (Possibility.eq_of_le_of_domain_eq hpq (hp.trans (hs q hq).symm)).symm ▸ hq,
-    Subsists.of_mem⟩
+    fun h => subset_lowerClosure h⟩
 
 /-- On a uniform stratum, subsistence is inclusion. -/
-theorem subsistsIn_iff_subset {X : Set V} (hs : UniformAt X s)
-    (hs' : UniformAt X s') : subsistsIn s s' ↔ s ⊆ s' :=
-  subsistsIn_iff.trans (forall₂_congr fun p hp => subsists_iff_mem hs' (hs p hp))
+theorem lowerClosure_le_iff {X : Set V} (hs : UniformAt X s)
+    (hs' : UniformAt X s') :
+    lowerClosure s ≤ lowerClosure s' ↔ s ⊆ s' :=
+  lowerClosure_le.trans (forall₂_congr fun p hp => mem_lowerClosure_iff hs' (hs p hp))
 
 /-- On a uniform stratum, informativeness is reverse inclusion — the
 eliminative direction. -/
@@ -334,12 +353,12 @@ theorem uniformAt_merge {X Y : Set V} (hs : UniformAt X s) (hs' : UniformAt Y s'
 /-- Subsistence out of a stratum factors through reindexing: the weaker
 state includes into the restricted image of the stronger — the fibred
 order, glued from within-stratum `⊆` along `restrict`. -/
-theorem subsistsIn_iff_subset_restrict {X : Set V} (hs : UniformAt X s) :
-    subsistsIn s s' ↔ s ⊆ s'.restrict X := by
-  rw [subsistsIn_iff]
+theorem lowerClosure_le_iff_subset_restrict {X : Set V} (hs : UniformAt X s) :
+    lowerClosure s ≤ lowerClosure s' ↔ s ⊆ s'.restrict X := by
+  rw [lowerClosure_le]
   constructor
   · intro h p hp
-    obtain ⟨q, hq, hpq⟩ := h p hp
+    obtain ⟨q, hq, hpq⟩ := h hp
     exact ⟨q, hq, ((Possibility.le_iff_eq_restrict (hs p hp)).mp hpq).symm⟩
   · intro h p hp
     obtain ⟨q, hq, rfl⟩ := h hp
@@ -362,9 +381,9 @@ end Fibred
 
 /-- Restriction only forgets: the restricted state subsists in the
 original. -/
-theorem subsistsIn_restrict (X : Set V) (I : State W V M) :
-    subsistsIn (I.restrict X) I := by
-  rw [subsistsIn_iff]
+theorem lowerClosure_restrict_le (X : Set V) (I : State W V M) :
+    lowerClosure (I.restrict X) ≤ lowerClosure I := by
+  rw [lowerClosure_le]
   rintro p ⟨q, hq, rfl⟩
   exact ⟨q, hq, Possibility.restrict_le⟩
 
