@@ -22,7 +22,7 @@ paper's separation of assertability (54) from Heimian familiarity rests.
 
 ## Main definitions
 
-- `Possibility.Descendant`, `Subsists` (`≺`), `subsistsIn` (`⪯`):
+- the descent order, `Subsists` (`≺`), `subsistsIn` (`⪯`):
   descendance and subsistence (Def. 3.3, after
   [groenendijk-stokhof-veltman-1996]).
 - `worlds`, `Familiar`: worldly information (Def. 3.1's 𝒲) and
@@ -48,7 +48,7 @@ paper's separation of assertability (54) from Heimian familiarity rests.
 
 ## Implementation notes
 
-Descendance requires the descendant to *extend* the assignment, per
+Descent requires the larger point to *extend* the assignment, per
 [groenendijk-stokhof-veltman-1996]; [elliott-sudo-2025]'s Def. 3.3
 phrases the clause as domain inclusion, and their examples do not
 discriminate. The paper overloads `≺` for possibility-in-state and

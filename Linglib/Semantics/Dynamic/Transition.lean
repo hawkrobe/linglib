@@ -32,25 +32,25 @@ cited there).
 
 namespace DynamicSemantics
 
-variable {W V M : Type*} {X Y Z : Finset V}
+variable {W V M : Type*} {X Y Z : Set V}
 
 /-- A transition: a world-indexed relation from `X`-assignments to
 `Y`-assignments. The `grow` field makes arrows context-extending —
 bases never shrink. -/
-@[ext] structure Transition (W M : Type*) {V : Type*} (X Y : Finset V) where
+@[ext] structure Transition (W M : Type*) {V : Type*} (X Y : Set V) where
   /-- The world-indexed relation between input and output assignments. -/
-  rel : W → ((↑X : Set V) → M) → ((↑Y : Set V) → M) → Prop
+  rel : W → (X → M) → (Y → M) → Prop
   /-- Bases only grow along an update. -/
   grow : X ⊆ Y
 
 namespace Transition
 
 /-- The identity transition at `X`: equality of assignments. -/
-def id (X : Finset V) : Transition W M X X where
+def id (X : Set V) : Transition W M X X where
   rel _ e e' := e = e'
   grow := subset_rfl
 
-@[simp] theorem rel_id {w : W} {e e' : (↑X : Set V) → M} :
+@[simp] theorem rel_id {w : W} {e e' : X → M} :
     (id X : Transition W M X X).rel w e e' ↔ e = e' := Iff.rfl
 
 /-- Sequencing: world-pointwise relational composition. -/
@@ -68,7 +68,7 @@ def comp (u : Transition W M X Y) (v : Transition W M Y Z) :
   exact ⟨fun ⟨k, hk, hke⟩ => hke ▸ hk, fun h => ⟨e', h, rfl⟩⟩
 
 theorem comp_assoc (u : Transition W M X Y) (v : Transition W M Y Z)
-    {Z' : Finset V} (t : Transition W M Z Z') :
+    {Z' : Set V} (t : Transition W M Z Z') :
     (u.comp v).comp t = u.comp (v.comp t) := by
   ext w e e'
   exact ⟨fun ⟨k, ⟨j, hj, hjk⟩, hk⟩ => ⟨j, hj, k, hjk, hk⟩,
@@ -80,23 +80,23 @@ theorem comp_assoc (u : Transition W M X Y) (v : Transition W M Y Z)
 presheaf fibers: relate assignments through the transition, worlds
 preserved. -/
 def apply (u : Transition W M X Y)
-    (T : Set (W × ((↑X : Set V) → M))) :
-    Set (W × ((↑Y : Set V) → M)) :=
+    (T : Set (W × (X → M))) :
+    Set (W × (Y → M)) :=
   {e' | ∃ e, (e'.1, e) ∈ T ∧ u.rel e'.1 e e'.2}
 
 theorem mem_apply {u : Transition W M X Y}
-    {T : Set (W × ((↑X : Set V) → M))} {w : W} {g : (↑Y : Set V) → M} :
+    {T : Set (W × (X → M))} {w : W} {g : Y → M} :
     (w, g) ∈ u.apply T ↔ ∃ e, (w, e) ∈ T ∧ u.rel w e g := Iff.rfl
 
 /-- Applying the identity transition is the identity. -/
-@[simp] theorem apply_id (T : Set (W × ((↑X : Set V) → M))) :
+@[simp] theorem apply_id (T : Set (W × (X → M))) :
     (id X).apply T = T := by
   ext ⟨w, e⟩
   exact ⟨fun ⟨k, hk, hke⟩ => (show k = e from hke) ▸ hk, fun h => ⟨e, h, rfl⟩⟩
 
 /-- `apply` is functorial: sequencing then applying is applying twice. -/
 theorem apply_comp (u : Transition W M X Y) (v : Transition W M Y Z)
-    (T : Set (W × ((↑X : Set V) → M))) :
+    (T : Set (W × (X → M))) :
     (u.comp v).apply T = v.apply (u.apply T) := by
   ext ⟨w, h⟩
   constructor
@@ -115,28 +115,28 @@ the `Y`-stratum through the transition, worlds preserved. Index-free:
 both sides are plain states. -/
 def applyState (u : Transition W M X Y) (I : State W V M) :
     State W V M :=
-  {q | q.dom = (↑Y : Set V) ∧ ∃ p ∈ I, p.dom = (↑X : Set V) ∧
+  {q | q.domain = Y ∧ ∃ p ∈ I, p.domain = X ∧
     p.world = q.world ∧
-    ∃ (e : (↑X : Set V) → M) (e' : (↑Y : Set V) → M),
-      (∀ v : (↑X : Set V), p.assignment v.1 = some (e v)) ∧
-      (∀ v : (↑Y : Set V), q.assignment v.1 = some (e' v)) ∧
+    ∃ (e : X → M) (e' : Y → M),
+      (∀ v : X, p.assignment v.1 = some (e v)) ∧
+      (∀ v : Y, q.assignment v.1 = some (e' v)) ∧
       u.rel q.world e e'}
 
 /-- Application lands in the target stratum. -/
 theorem uniformAt_applyState (u : Transition W M X Y) (I : State W V M) :
     State.UniformAt Y (u.applyState I) := fun _ hq => hq.1
 
-variable [DecidableEq V]
+variable [∀ v, Decidable (v ∈ Y)]
 
 /-- The point of the `Y`-stratum carrying a given world and assignment. -/
-private def ptOf (Y : Finset V) (w : W) (e : (↑Y : Set V) → M) :
+private def ptOf (Y : Set V) [∀ v, Decidable (v ∈ Y)] (w : W) (e : Y → M) :
     Possibility W V (Option M) :=
-  ⟨w, fun v => if hv : v ∈ (↑Y : Set V) then some (e ⟨v, hv⟩) else none⟩
+  ⟨w, fun v => if hv : v ∈ Y then some (e ⟨v, hv⟩) else none⟩
 
-private theorem dom_ptOf (Y : Finset V) (w : W) (e : (↑Y : Set V) → M) :
-    (ptOf Y w e).dom = (↑Y : Set V) := by
+private theorem domain_ptOf (Y : Set V) [∀ v, Decidable (v ∈ Y)] (w : W) (e : Y → M) :
+    (ptOf Y w e).domain = Y := by
   ext v
-  by_cases hv : v ∈ (↑Y : Set V) <;> simp [ptOf, Possibility.dom, hv]
+  by_cases hv : v ∈ Y <;> simp [ptOf, Possibility.domain, hv]
 
 /-- Root application is functorial. -/
 theorem applyState_comp (u : Transition W M X Y) (v : Transition W M Y Z)
@@ -145,8 +145,8 @@ theorem applyState_comp (u : Transition W M X Y) (v : Transition W M Y Z)
   ext q
   constructor
   · rintro ⟨hq, p, hpI, hp, hw, e, e'', he, he'', k, huk, hkv⟩
-    refine ⟨hq, ptOf Y q.world k, ⟨dom_ptOf .., p, hpI, hp, hw, e, k, he,
-      fun x => ?_, huk⟩, dom_ptOf .., rfl, k, e'', fun x => ?_, he'', hkv⟩
+    refine ⟨hq, ptOf Y q.world k, ⟨domain_ptOf .., p, hpI, hp, hw, e, k, he,
+      fun x => ?_, huk⟩, domain_ptOf .., rfl, k, e'', fun x => ?_, he'', hkv⟩
     · simp [ptOf]
     · simp [ptOf]
   · rintro ⟨hq, m, ⟨hm, p, hpI, hp, hw, e, k, he, hk, huk⟩, -, hmw, k', e'',
@@ -166,7 +166,7 @@ theorem applyState_comp (u : Transition W M X Y) (v : Transition W M Y Z)
 `X`-stratum, the regular CCP `applyState` is `apply`, transported along
 `State.uniformEquiv` — the relational collapse computes the root-state
 update. -/
-theorem uniformEquiv_applyState (u : Transition W M X Y)
+theorem uniformEquiv_applyState [∀ v, Decidable (v ∈ X)] (u : Transition W M X Y)
     {I : State W V M} (hI : State.UniformAt X I) :
     State.uniformEquiv Y ⟨u.applyState I, uniformAt_applyState u I⟩ =
       u.apply (State.uniformEquiv X ⟨I, hI⟩) := by
@@ -182,7 +182,7 @@ theorem uniformEquiv_applyState (u : Transition W M X Y)
     show ptOf X f.1 e ∈ I
     have hpeq : ptOf X f.1 e = p := by
       refine Possibility.ext (by exact hw.symm) (funext fun v => ?_)
-      by_cases hv : v ∈ (↑X : Set V)
+      by_cases hv : v ∈ X
       · exact (dif_pos hv).trans (hpe ⟨v, hv⟩).symm
       · exact (dif_neg hv).trans
           (Option.not_isSome_iff_eq_none.mp fun hs => hv (hpX ▸ hs)).symm
@@ -190,7 +190,7 @@ theorem uniformEquiv_applyState (u : Transition W M X Y)
   · rintro ⟨e, hmem, hrel⟩
     have hpI : ptOf X f.1 e ∈ I := hmem
     show ptOf Y f.1 f.2 ∈ u.applyState I
-    exact ⟨dom_ptOf .., ptOf X f.1 e, hpI, dom_ptOf .., by simp [ptOf], e,
+    exact ⟨domain_ptOf .., ptOf X f.1 e, hpI, domain_ptOf .., by simp [ptOf], e,
       f.2, fun v => by simp [ptOf], fun v => by simp [ptOf],
       by exact hrel⟩
 
@@ -202,11 +202,11 @@ end ApplyState
 reset `k[x]g`, [heim-1982]'s indefinite widening): preserve the input off
 `x`, leave the output free at `x` — the generating arrow
 `X ⟶ insert x X` of context extension. -/
-def randomAssign [DecidableEq V] (X : Finset V) (x : V) :
+def randomAssign (X : Set V) (x : V) :
     Transition W M X (insert x X) where
   rel _ e e' := ∀ (v : V) (hv : v ∈ X), v ≠ x →
-    e ⟨v, hv⟩ = e' ⟨v, Finset.mem_insert_of_mem hv⟩
-  grow := Finset.subset_insert x X
+    e ⟨v, hv⟩ = e' ⟨v, Set.mem_insert_of_mem x hv⟩
+  grow := Set.subset_insert x X
 
 /-! ### Typing total-assignment relations
 
@@ -223,27 +223,27 @@ section OfTotal
 variable {R S : W → (V → M) → (V → M) → Prop}
 
 /-- The relation reads its input only at `X`. -/
-def ReadsAt (X : Finset V) (R : W → (V → M) → (V → M) → Prop) : Prop :=
-  ∀ ⦃w f f' g⦄, Set.EqOn f f' (↑X : Set V) → (R w f g ↔ R w f' g)
+def ReadsAt (X : Set V) (R : W → (V → M) → (V → M) → Prop) : Prop :=
+  ∀ ⦃w f f' g⦄, Set.EqOn f f' X → (R w f g ↔ R w f' g)
 
 /-- The relation constrains its output only at `Y`. -/
-def WritesAt (Y : Finset V) (R : W → (V → M) → (V → M) → Prop) : Prop :=
-  ∀ ⦃w f g g'⦄, Set.EqOn g g' (↑Y : Set V) → (R w f g ↔ R w f g')
+def WritesAt (Y : Set V) (R : W → (V → M) → (V → M) → Prop) : Prop :=
+  ∀ ⦃w f g g'⦄, Set.EqOn g g' Y → (R w f g ↔ R w f g')
 
 /-- Type a total-assignment relation at contexts, by existential
 extension of the assignments. -/
 def ofTotal (h : X ⊆ Y) (R : W → (V → M) → (V → M) → Prop) :
     Transition W M X Y where
-  rel w e e' := ∃ f g : V → M, (↑X : Set V).restrict f = e ∧
-    (↑Y : Set V).restrict g = e' ∧ R w f g
+  rel w e e' := ∃ f g : V → M, X.restrict f = e ∧
+    Y.restrict g = e' ∧ R w f g
   grow := h
 
 /-- Under the support hypotheses, the typing is faithful: related
 assignments are exactly the restrictions of related assignments. -/
 theorem ofTotal_rel_restrict {h : X ⊆ Y} (hR : ReadsAt X R)
     (hW : WritesAt Y R) {w : W} {f g : V → M} :
-    (ofTotal h R).rel w ((↑X : Set V).restrict f)
-      ((↑Y : Set V).restrict g) ↔ R w f g := by
+    (ofTotal h R).rel w (X.restrict f)
+      (Y.restrict g) ↔ R w f g := by
   constructor
   · rintro ⟨f', g', hf', hg', hR'⟩
     rw [hR (Set.restrict_eq_restrict_iff.mp hf'),
@@ -264,7 +264,7 @@ theorem ofTotal_comp {h₁ : X ⊆ Y} {h₂ : Y ⊆ Z} (hS : ReadsAt Y S) :
     rw [← hf₂] at hg₁
     exact (hS (Set.restrict_eq_restrict_iff.mp hg₁)).mpr hS'
   · rintro ⟨f, g, hf, hg, k, hR, hS'⟩
-    exact ⟨(↑Y : Set V).restrict k, ⟨f, k, hf, rfl, hR⟩,
+    exact ⟨Y.restrict k, ⟨f, k, hf, rfl, hR⟩,
       ⟨k, g, rfl, hg, hS'⟩⟩
 
 end OfTotal
@@ -272,19 +272,19 @@ end OfTotal
 /-! ### Repackaging along base equalities
 
 The substrate-safe form of `eqToHom` conjugation (mathlib's `Filter.copy`
-pattern): composites whose indices differ by `Finset` identities — e.g.
+pattern): composites whose indices differ by base identities — e.g.
 `(X ∪ U₁) ∪ U₂` against `X ∪ (U₁ ∪ U₂)` — are equated through `copy`,
 keeping cast-free statements everywhere below the category layer. -/
 
 /-- Repackage a transition along equalities of its bases. -/
-def copy (u : Transition W M X Y) {X' Y' : Finset V} (hX : X = X')
+def copy (u : Transition W M X Y) {X' Y' : Set V} (hX : X = X')
     (hY : Y = Y') : Transition W M X' Y' :=
   hX ▸ hY ▸ u
 
 @[simp] theorem copy_rfl (u : Transition W M X Y) : u.copy rfl rfl = u := rfl
 
 @[simp] theorem copy_copy (u : Transition W M X Y)
-    {X' Y' X'' Y'' : Finset V} (hX : X = X') (hY : Y = Y')
+    {X' Y' X'' Y'' : Set V} (hX : X = X') (hY : Y = Y')
     (hX' : X' = X'') (hY' : Y' = Y'') :
     (u.copy hX hY).copy hX' hY' = u.copy (hX.trans hX') (hY.trans hY') := by
   subst hX hY hX' hY'
@@ -298,20 +298,20 @@ theorem ofTotal_congr {R R' : W → (V → M) → (V → M) → Prop}
 
 /-- Typed relations repackage by re-proving the growth. -/
 theorem ofTotal_copy {R : W → (V → M) → (V → M) → Prop} {h : X ⊆ Y}
-    {Y' : Finset V} (hY : Y = Y') :
+    {Y' : Set V} (hY : Y = Y') :
     (ofTotal h R).copy rfl hY = ofTotal (hY ▸ h) R := by
   subst hY
   rfl
 
 /-- Repackaged transitions compose to the repackaged composite. -/
 theorem copy_comp_copy (u : Transition W M X Y) (v : Transition W M Y Z)
-    {X' Y' Z' : Finset V} (hX : X = X') (hY : Y = Y') (hZ : Z = Z') :
+    {X' Y' Z' : Set V} (hX : X = X') (hY : Y = Y') (hZ : Z = Z') :
     (u.copy hX hY).comp (v.copy hY hZ) = (u.comp v).copy hX hZ := by
   subst hX hY hZ
   rfl
 
 /-- Application is invariant under repackaging. -/
-@[simp] theorem apply_copy (u : Transition W M X Y) {X' Y' : Finset V}
+@[simp] theorem apply_copy (u : Transition W M X Y) {X' Y' : Set V}
     (hX : X = X') (hY : Y = Y') (T : Set (W × ((↑X' : Set V) → M))) :
     (u.copy hX hY).apply T = (by subst hX hY; exact u.apply T) := by
   subst hX hY
@@ -319,7 +319,7 @@ theorem copy_comp_copy (u : Transition W M X Y) (v : Transition W M Y Z)
 
 /-- Root application is invariant under repackaging. -/
 @[simp] theorem applyState_copy [DecidableEq V] (u : Transition W M X Y)
-    {X' Y' : Finset V} (hX : X = X') (hY : Y = Y') (I : State W V M) :
+    {X' Y' : Set V} (hX : X = X') (hY : Y = Y') (I : State W V M) :
     (u.copy hX hY).applyState I = u.applyState I := by
   subst hX hY
   rfl

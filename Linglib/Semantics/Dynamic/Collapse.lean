@@ -22,7 +22,7 @@ non-distributive tests (`might`, `must`) are exactly the residue.
 Categorically, `RelCat ≌ KleisliCat Set`, and the indexed tower reads
 `Ctx ⥤ RelCat ≌ KleisliCat Set ↪ suplattice endomaps`, every arrow
 canonical. The collapsed state space at `X` is the `X`-stratum of root
-states, classified by `Possibility.domEquiv`/`State.uniformEquiv`, and
+states, classified by `Possibility.domainEquiv`/`State.uniformEquiv`, and
 the relational action computes the root-state CCP through that
 classification (`Transition.uniformEquiv_applyState`) — the extraction
 of a relational meaning from a DRT-style one, as a morphism
@@ -80,7 +80,7 @@ variable {W M V : Type*} {X Y Z : Ctx W M V}
 context to its possibility space and a transition to its world-threaded
 relation. Unital by typing — no quotient needed. -/
 def collapse (W M V : Type*) : Ctx W M V ⥤ RelCat where
-  obj X := W × ((↑X.base : Set V) → M)
+  obj X := W × (X.base → M)
   map {X Y} u := .ofRel {p | p.1.1 = p.2.1 ∧ u.t.rel p.1.1 p.1.2 p.2.2}
   map_id X := by
     apply RelCat.Hom.ext

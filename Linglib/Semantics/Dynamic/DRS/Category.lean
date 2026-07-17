@@ -115,11 +115,12 @@ transition — and functoriality on composition is the Merging Lemma, its
 capture-freshness side condition derived from the visibility invariant. -/
 def sem (W M : Type*) [L.Structure M] [Nonempty M] :
     Ctx L V ⥤ DynamicSemantics.Ctx W M V where
-  obj X := ⟨X.base⟩
-  map {X Y} u := ⟨(u.drs.transition W X.base u.presup).copy rfl u.target⟩
+  obj X := ⟨↑X.base⟩
+  map {X Y} u := ⟨(u.drs.transition W X.base u.presup).copy rfl
+    (Finset.coe_inj.mpr u.target)⟩
   map_id X := by
     apply DynamicSemantics.Ctx.Hom.ext
-    exact DRS.transition_empty W X.base _ _
+    exact DRS.transition_empty W X.base (by simp [DRS.empty]) (by simp [DRS.empty])
   map_comp {X Y Z} u v := by
     apply DynamicSemantics.Ctx.Hom.ext
     have hocc : Condition.occL u.drs.conditions ⊆ Y.base := by
@@ -128,9 +129,12 @@ def sem (W M : Type*) [L.Structure M] [Nonempty M] :
       v.fresh.symm.mono_right hocc
     have hv : v.drs.fv ⊆ X.base ∪ u.drs.referents := by
       rw [u.target]; exact v.presup
-    show ((u ≫ v).drs.transition W X.base (u ≫ v).presup).copy rfl (u ≫ v).target =
-      ((u.drs.transition W X.base u.presup).copy rfl u.target).comp
-        ((v.drs.transition W Y.base v.presup).copy rfl v.target)
+    show ((u ≫ v).drs.transition W X.base (u ≫ v).presup).copy rfl
+        (Finset.coe_inj.mpr (u ≫ v).target) =
+      ((u.drs.transition W X.base u.presup).copy rfl
+        (Finset.coe_inj.mpr u.target)).comp
+        ((v.drs.transition W Y.base v.presup).copy rfl
+          (Finset.coe_inj.mpr v.target))
     rw [← DRS.transition_copy (M := M) W v.drs u.target hv v.presup,
       Transition.copy_copy, Transition.copy_comp_copy,
       DRS.transition_merge (M := M) W u.drs v.drs u.presup hv hfresh,

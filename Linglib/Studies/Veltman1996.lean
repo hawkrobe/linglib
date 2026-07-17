@@ -893,7 +893,7 @@ def toIndexedState (V M : Type*) (s : Set W) :
 theorem uniformAt_toIndexedState :
     State.UniformAt ∅ (toIndexedState V M s) := fun p hp => by
   ext v
-  simp [Possibility.dom, hp.2 v]
+  simp [Possibility.domain, hp.2 v]
 
 /-- The embedding is faithful on worldly content. -/
 @[simp] theorem worlds_toIndexedState :
@@ -915,7 +915,7 @@ theorem toIndexedState_infoLe_iff :
     have hs := hp.1
     rwa [hpq.1] at hs
   · rintro h q ⟨hq, hnone⟩
-    exact ⟨q, ⟨h hq, hnone⟩, Possibility.Descendant.refl q⟩
+    exact ⟨q, ⟨h hq, hnone⟩, le_refl q⟩
 
 /-- Propositional update ([veltman-1996]'s elimination) transports to
 point filtering. -/

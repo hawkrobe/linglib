@@ -360,7 +360,7 @@ private theorem clause_of_flatLE {α : Type _} [BEq α] [LawfulBEq α] {a b u : 
     | some y =>
       have hx := ha x rfl
       have hy := hb y rfl
-      simp [beq_iff_eq, Option.some.inj (hx.symm.trans hy)]
+      simp [Option.some.inj (hx.symm.trans hy)]
 
 /-- Bounded above implies the executable check passes. -/
 theorem compatible_of_le {f g u : MorphFeatures} (hf : f ≤ u) (hg : g ≤ u) :

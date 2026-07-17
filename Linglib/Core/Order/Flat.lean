@@ -77,15 +77,20 @@ relation out of the `Option` namespace (`Option.FlatLE → Flat.LE`).
 
 /-- The flat information order on an atomic feature slot: every
 committed value persists upward, so `none` is below everything and
-distinct atoms are incomparable. -/
+distinct atoms are incomparable. This is `Part`'s partial order,
+carried on `Option` for computability (`flatLE_iff_ofOption_le`). -/
 def Option.FlatLE {α : Type*} (a b : Option α) : Prop :=
-  ∀ x : α, a = some x → b = some x
+  ∀ x ∈ a, x ∈ b
 
 namespace Option.FlatLE
 
 variable {α : Type*} {a b c : Option α}
 
 protected theorem refl (a : Option α) : a.FlatLE a := λ _ h => h
+
+/-- Flat order preserves definedness. -/
+theorem isSome_mono (h : a.FlatLE b) : a.isSome → b.isSome := fun ha =>
+  Option.isSome_iff_exists.mpr ((Option.isSome_iff_exists.mp ha).imp h)
 
 protected theorem trans (h1 : a.FlatLE b) (h2 : b.FlatLE c) : a.FlatLE c :=
   λ x hx => h2 x (h1 x hx)
@@ -97,6 +102,19 @@ protected theorem antisymm (h1 : a.FlatLE b) (h2 : b.FlatLE a) : a = b := by
     cases b with
     | none => rfl
     | some y => exact absurd (h2 y rfl) (by simp)
+
+/-- Flat order with no definedness gain is equality. -/
+theorem eq_of_isSome (h : a.FlatLE b) (hb : b.isSome → a.isSome) : a = b :=
+  h.antisymm fun x hx => by
+    obtain ⟨y, hy⟩ := Option.isSome_iff_exists.mp
+      (hb (Option.isSome_iff_exists.mpr ⟨x, hx⟩))
+    rwa [← Option.some_inj.mp ((h y hy).symm.trans hx)]
+
+/-- The flat order is `Part`'s order, along `Part.ofOption`. -/
+theorem flatLE_iff_ofOption_le {a b : Option α} :
+    a.FlatLE b ↔ Part.ofOption a ≤ Part.ofOption b :=
+  ⟨fun h x hx => Part.mem_ofOption.mpr (h x (Part.mem_ofOption.mp hx)),
+    fun h x hx => Part.mem_ofOption.mp (h x (Part.mem_ofOption.mpr hx))⟩
 
 theorem none_le (b : Option α) : Option.FlatLE none b := λ _ h => nomatch h
 
@@ -212,14 +230,16 @@ private theorem ωSupImpl_isLUB (c : Chain (Flat α)) :
     split
     · next h =>
       intro a ha
-      have hj : (c j).isSome := by rw [ha]; rfl
+      have ha' : c j = some a := ha
+      show c (Nat.find h) = some a
+      have hj : (c j).isSome := by rw [ha']; rfl
       have hmono : c (Nat.find h) ≤ c j := (OrderHomClass.mono c) (Nat.find_min' h hj)
       obtain ⟨b, hb⟩ := Option.isSome_iff_exists.mp (Nat.find_spec h)
       have hjb : c j = some b := hmono b hb
-      rw [hb, Option.some.inj (ha.symm.trans hjb)]
+      rw [hb, Option.some.inj (ha'.symm.trans hjb)]
     · next h =>
       intro a ha
-      exact absurd ⟨j, by rw [ha]; rfl⟩ h
+      exact absurd ⟨j, by rw [show c j = some a from ha]; rfl⟩ h
   · intro u hu
     unfold ωSupImpl
     split

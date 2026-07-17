@@ -1,3 +1,4 @@
+import Linglib.Core.Order.Flat
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Set.Finite.Basic
 import Mathlib.Data.Set.Function
@@ -5,31 +6,10 @@ import Mathlib.Data.Set.Function
 /-!
 # Possibilities
 
-A *possibility* is a world paired with an assignment of discourse
-referents — the point type of dynamic semantics. Indexed information
-states over possibilities live in `State.lean`; unindexed states are plain
-sets of possibilities, with the generic level-0 CCP algebra in
-`Update.lean`.
-
-*Possibility* is the update-semantics tradition's word:
-[groenendijk-stokhof-veltman-1996]'s possibilities are triples carrying a
-referent system ([vermeulen-1995]) we do not; [elliott-sudo-2025]'s are
-world–assignment pairs like ours. [kamp-vangenabith-reyle-2011] leaves the
-pairs of its Def. 22 unnamed — DRT's word for the assignment is
-*(verifying) embedding*, a partial function on referents with one
-universe across worlds — and the monadic tradition calls the same points
-*indices* ([charlow-2025-staged-updates]).
-
-## Main definitions
-
-- `Possibility W V M`: the point object; `Possibility.update` rewrites
-  one referent.
-- `Possibility.dom`, `Possibility.Descendant`, `Possibility.Compatible`,
-  `Possibility.union`: partial points (`Option`-valued assignments) —
-  their defined referents, growth order, and consistent union.
-- `Possibility.restrict`, `Possibility.domEquiv`: domain restriction and
-  the constructive classification of the domain-`X` points as
-  world–`X`-assignment pairs.
+This file defines a *possibility* — a world paired with an assignment
+of discourse referents — and the structure of its partial points: the
+descent order, compatibility and union, restriction, and the
+classification of each stratum as world–assignment pairs.
 
 ## References
 
@@ -52,64 +32,50 @@ namespace Possibility
 
 variable {W V M : Type*} (p : Possibility W V M)
 
+section Update
+
+variable [DecidableEq V] (x : V) (e : M)
+
 /-- Update the assignment at a single referent. -/
-def update [DecidableEq V] (x : V) (e : M) : Possibility W V M :=
+def update : Possibility W V M :=
   { p with assignment := Function.update p.assignment x e }
 
-@[simp] theorem update_self [DecidableEq V] (x : V) (e : M) :
-    (p.update x e).assignment x = e :=
-  Function.update_self ..
+@[simp] theorem update_world : (p.update x e).world = p.world := rfl
 
-@[simp] theorem update_of_ne [DecidableEq V] {x y : V} (e : M)
-    (h : y ≠ x) : (p.update x e).assignment y = p.assignment y :=
-  Function.update_of_ne h ..
+@[simp] theorem update_assignment :
+    (p.update x e).assignment = Function.update p.assignment x e := rfl
 
-@[simp] theorem update_world [DecidableEq V] (x : V) (e : M) :
-    (p.update x e).world = p.world := rfl
+end Update
 
 /-! ### Partial points -/
 
-/-- The referents a partial point defines —
-[kamp-vangenabith-reyle-2011] Def. 23's `Dom(f)`. -/
-def dom (p : Possibility W V (Option M)) : Set V :=
+variable {p q u : Possibility W V (Option M)}
+
+/-- Descent orders partial points: same world, assignments pointwise in
+the flat information order ([elliott-sudo-2025], Def. 3.3). -/
+instance : Preorder (Possibility W V (Option M)) where
+  le p q := p.world = q.world ∧ ∀ x, (p.assignment x).FlatLE (q.assignment x)
+  le_refl _ := ⟨rfl, fun x => Option.FlatLE.refl _⟩
+  le_trans _ _ _ hpq hqr := ⟨hpq.1.trans hqr.1, fun x => (hpq.2 x).trans (hqr.2 x)⟩
+
+theorem le_def : p ≤ q ↔ p.world = q.world ∧ ∀ x, (p.assignment x).FlatLE (q.assignment x) :=
+  Iff.rfl
+
+/-- The domain of a partial point is the set of referents it defines. -/
+def domain (p : Possibility W V (Option M)) : Set V :=
   {v | (p.assignment v).isSome}
 
-@[simp] theorem mem_dom {p : Possibility W V (Option M)} {v : V} :
-    v ∈ p.dom ↔ (p.assignment v).isSome := Iff.rfl
+@[simp] theorem mem_domain {v : V} :
+    v ∈ p.domain ↔ (p.assignment v).isSome := Iff.rfl
 
-/-- `q` is a *descendant* of `p` ([elliott-sudo-2025], Def. 3.3): same
-world, and `q`'s assignment extends `p`'s wherever the latter is defined
-([groenendijk-stokhof-veltman-1996]'s graph-extension — pointwise, the
-information order mathlib gives `Part`). -/
-def Descendant (p q : Possibility W V (Option M)) : Prop :=
-  p.world = q.world ∧ ∀ x e, p.assignment x = some e → q.assignment x = some e
+/-- Descent grows the domain. -/
+theorem domain_mono (h : p ≤ q) : p.domain ⊆ q.domain := fun v => (h.2 v).isSome_mono
 
-theorem Descendant.refl (p : Possibility W V (Option M)) :
-    p.Descendant p :=
-  ⟨rfl, fun _ _ h => h⟩
-
-theorem Descendant.trans {p q r : Possibility W V (Option M)}
-    (hpq : p.Descendant q) (hqr : q.Descendant r) : p.Descendant r :=
-  ⟨hpq.1.trans hqr.1, fun x e h => hqr.2 x e (hpq.2 x e h)⟩
-
-/-- Descendance grows the domain. -/
-theorem Descendant.dom_subset {p q : Possibility W V (Option M)}
-    (h : p.Descendant q) : p.dom ⊆ q.dom := fun v hv => by
-  obtain ⟨e, he⟩ := Option.isSome_iff_exists.mp hv
-  exact Option.isSome_iff_exists.mpr ⟨e, h.2 v e he⟩
-
-/-- On a shared domain, descendance is equality: there is no room to
+/-- On a shared domain, descent is equality: there is no room to
 grow. -/
-theorem Descendant.eq_of_dom_eq {p q : Possibility W V (Option M)}
-    (h : p.Descendant q) (hdom : p.dom = q.dom) : p = q := by
-  refine Possibility.ext h.1 (funext fun v => ?_)
-  rcases hp : p.assignment v with _ | e
-  · rcases hq : q.assignment v with _ | e
-    · rfl
-    · have : v ∈ p.dom := hdom ▸ Option.isSome_iff_exists.mpr ⟨e, hq⟩
-      rw [Possibility.mem_dom, hp] at this
-      exact absurd this (by simp)
-  · exact (h.2 v e hp).symm ▸ rfl
+theorem eq_of_le_of_domain_eq (h : p ≤ q) (hdom : p.domain = q.domain) : p = q :=
+  Possibility.ext h.1 (funext fun v =>
+    (h.2 v).eq_of_isSome fun hv => (Set.ext_iff.mp hdom v).mpr hv)
 
 /-- Two partial points are *compatible*: same world, agreeing wherever
 both are defined — [kamp-vangenabith-reyle-2011] Def. 26's condition
@@ -124,61 +90,53 @@ def union (p q : Possibility W V (Option M)) :
     Possibility W V (Option M) :=
   ⟨p.world, fun v => (p.assignment v).or (q.assignment v)⟩
 
-theorem left_descendant_union (p q : Possibility W V (Option M)) :
-    p.Descendant (p.union q) :=
-  ⟨rfl, fun v e h => by simp [union, h]⟩
+theorem le_union_left (p q : Possibility W V (Option M)) :
+    p ≤ p.union q :=
+  ⟨rfl, fun v e h => by simp [union, show p.assignment v = some e from h]⟩
 
-theorem Compatible.right_descendant_union
-    {p q : Possibility W V (Option M)} (h : p.Compatible q) :
-    q.Descendant (p.union q) :=
+theorem Compatible.le_union_right (h : p.Compatible q) :
+    q ≤ p.union q :=
   ⟨h.1.symm, fun v e hq => by
+    have hq' : q.assignment v = some e := hq
     rcases hp : p.assignment v with _ | e'
-    · simp [union, hp, hq]
-    · simp [union, hp, h.2 v e' e hp hq]⟩
+    · simp [union, hp, hq']
+    · simp [union, hp, h.2 v e' e hp hq']⟩
 
 /-- On a shared domain, compatibility is equality. -/
-theorem Compatible.eq_of_dom_eq {p q : Possibility W V (Option M)}
-    (h : p.Compatible q) (hdom : p.dom = q.dom) : p = q := by
-  refine Possibility.ext h.1 (funext fun v => ?_)
-  rcases hp : p.assignment v with _ | e
-  · rcases hq : q.assignment v with _ | e
-    · rfl
-    · have : v ∈ p.dom := hdom ▸ Option.isSome_iff_exists.mpr ⟨e, hq⟩
-      rw [Possibility.mem_dom, hp] at this
-      exact absurd this (by simp)
-  · rcases hq : q.assignment v with _ | e'
-    · have : v ∈ q.dom := hdom ▸ Option.isSome_iff_exists.mpr ⟨e, hp⟩
-      rw [Possibility.mem_dom, hq] at this
-      exact absurd this (by simp)
-    · exact congrArg some (h.2 v e e' hp hq)
+theorem Compatible.eq_of_domain_eq (h : p.Compatible q)
+    (hdom : p.domain = q.domain) : p = q :=
+  eq_of_le_of_domain_eq
+    ⟨h.1, fun v e hv => by
+      obtain ⟨e', he'⟩ := Option.isSome_iff_exists.mp
+        ((Set.ext_iff.mp hdom v).mp (Option.isSome_iff_exists.mpr ⟨e, hv⟩))
+      exact he'.trans (congrArg some (h.2 v e e' hv he').symm)⟩
+    hdom
 
 /-- Union of points unites domains. -/
-theorem dom_union (p q : Possibility W V (Option M)) :
-    (p.union q).dom = p.dom ∪ q.dom := by
+theorem domain_union (p q : Possibility W V (Option M)) :
+    (p.union q).domain = p.domain ∪ q.domain := by
   ext v
-  rcases hp : p.assignment v with _ | e <;> simp [union, dom, hp]
+  rcases hp : p.assignment v with _ | e <;> simp [union, domain, hp]
 
-/-- Common ancestors are compatible. -/
-theorem Descendant.compatible {p q u : Possibility W V (Option M)}
-    (hp : p.Descendant u) (hq : q.Descendant u) : p.Compatible q :=
+/-- Points below a common point are compatible. -/
+theorem compatible_of_le_of_le (hp : p ≤ u) (hq : q ≤ u) : p.Compatible q :=
   ⟨hp.1.trans hq.1.symm, fun v e e' he he' => by
-    have h1 := hp.2 v e he
-    have h2 := hq.2 v e' he'
+    have h1 : u.assignment v = some e := hp.2 v e he
+    have h2 : u.assignment v = some e' := hq.2 v e' he'
     rw [h1] at h2
     exact (Option.some.injEq .. ▸ h2 :)⟩
 
-/-- The union of two ancestors is an ancestor. -/
-theorem Descendant.union_descendant {p q u : Possibility W V (Option M)}
-    (hp : p.Descendant u) (hq : q.Descendant u) :
-    (p.union q).Descendant u :=
+/-- The union of two lower bounds is a lower bound. -/
+theorem union_le (hp : p ≤ u) (hq : q ≤ u) :
+    p.union q ≤ u :=
   ⟨hp.1, fun v e h => by
+    have h' : (p.union q).assignment v = some e := h
     rcases hpv : p.assignment v with _ | e'
-    · exact hq.2 v e (by simpa [union, hpv] using h)
-    · have : e' = e := by simpa [union, hpv] using h
+    · exact hq.2 v e (by simpa [union, hpv] using h')
+    · have : e' = e := by simpa [union, hpv] using h'
       exact this ▸ hp.2 v e' hpv⟩
 
-theorem Compatible.symm {p q : Possibility W V (Option M)}
-    (h : p.Compatible q) : q.Compatible p :=
+theorem Compatible.symm (h : p.Compatible q) : q.Compatible p :=
   ⟨h.1.symm, fun v e e' hq hp => (h.2 v e' e hp hq).symm⟩
 
 /-- Union of points is associative. -/
@@ -188,8 +146,7 @@ theorem union_assoc (p q v : Possibility W V (Option M)) :
 
 /-- On compatible points the left precedence of `union` is
 immaterial. -/
-theorem Compatible.union_comm {p q : Possibility W V (Option M)}
-    (h : p.Compatible q) : p.union q = q.union p :=
+theorem Compatible.union_comm (h : p.Compatible q) : p.union q = q.union p :=
   Possibility.ext h.1 (funext fun v => by
     rcases hp : p.assignment v with _ | e <;>
       rcases hq : q.assignment v with _ | e' <;> simp [union, hp, hq]
@@ -197,25 +154,24 @@ theorem Compatible.union_comm {p q : Possibility W V (Option M)}
 
 /-- A union is compatible with whatever both components are compatible
 with. -/
-theorem Compatible.union_left {p q v : Possibility W V (Option M)}
-    (hpv : p.Compatible v) (hqv : q.Compatible v) :
-    (p.union q).Compatible v :=
-  ⟨hpv.1, fun x e e' he he' => by
+theorem Compatible.union_left (hpu : p.Compatible u) (hqu : q.Compatible u) :
+    (p.union q).Compatible u :=
+  ⟨hpu.1, fun x e e' he he' => by
     rcases hp : p.assignment x with _ | c
-    · exact hqv.2 x e e' (by simpa [union, hp] using he) he'
+    · exact hqu.2 x e e' (by simpa [union, hp] using he) he'
     · have hce : c = e := by simpa [union, hp] using he
-      exact hce ▸ hpv.2 x c e' hp he'⟩
+      exact hce ▸ hpu.2 x c e' hp he'⟩
 
 /-- The left component of a compatible union is compatible. -/
-theorem Compatible.left_of_union {p q v : Possibility W V (Option M)}
-    (h : (p.union q).Compatible v) : p.Compatible v :=
+theorem Compatible.left_of_union
+    (h : (p.union q).Compatible u) : p.Compatible u :=
   ⟨h.1, fun x e e' hp hv => h.2 x e e' (by simp [union, hp]) hv⟩
 
 /-- The right component of a compatible union is compatible, given the
 components agree. -/
-theorem Compatible.right_of_union {p q v : Possibility W V (Option M)}
-    (hpq : p.Compatible q) (h : (p.union q).Compatible v) :
-    q.Compatible v :=
+theorem Compatible.right_of_union
+    (hpq : p.Compatible q) (h : (p.union q).Compatible u) :
+    q.Compatible u :=
   ⟨hpq.1.symm.trans h.1, fun x e e' hq hv => by
     rcases hp : p.assignment x with _ | c
     · exact h.2 x e e' (by simp [union, hp, hq]) hv
@@ -225,37 +181,36 @@ theorem Compatible.right_of_union {p q v : Possibility W V (Option M)}
 
 section Restrict
 
-variable [DecidableEq V]
-
 /-- Restrict a partial point to the referents in `X`. -/
-def restrict (X : Finset V) (p : Possibility W V (Option M)) :
-    Possibility W V (Option M) :=
+def restrict (X : Set V) [∀ v, Decidable (v ∈ X)]
+    (p : Possibility W V (Option M)) : Possibility W V (Option M) :=
   ⟨p.world, fun v => if v ∈ X then p.assignment v else none⟩
 
-@[simp] theorem restrict_world (X : Finset V)
+@[simp] theorem restrict_world (X : Set V) [∀ v, Decidable (v ∈ X)]
     (p : Possibility W V (Option M)) :
     (p.restrict X).world = p.world := rfl
 
-/-- Restriction is an ancestor. -/
-theorem restrict_descendant (X : Finset V)
-    (p : Possibility W V (Option M)) : (p.restrict X).Descendant p :=
+/-- Restriction descends. -/
+theorem restrict_le (X : Set V) [∀ v, Decidable (v ∈ X)]
+    (p : Possibility W V (Option M)) : p.restrict X ≤ p :=
   ⟨rfl, fun x e h => by
     by_cases hx : x ∈ X
     · simpa [restrict, hx] using h
     · simp [restrict, hx] at h⟩
 
 /-- Restriction intersects the domain. -/
-theorem dom_restrict (X : Finset V) (p : Possibility W V (Option M)) :
-    (p.restrict X).dom = ↑X ∩ p.dom := by
+theorem domain_restrict (X : Set V) [∀ v, Decidable (v ∈ X)]
+    (p : Possibility W V (Option M)) :
+    (p.restrict X).domain = X ∩ p.domain := by
   ext v
-  by_cases hv : v ∈ X <;> simp [restrict, dom, hv]
+  by_cases hv : v ∈ X <;> simp [restrict, domain, hv]
 
-/-- Descendance out of a stratum is *being the restriction*: for `p` at
+/-- Descent out of a stratum is *being the restriction*: for `p` at
 `X`, `p` grows into `q` exactly when `p` is `q` cut to `X`. The
 hom-characterization of the fibred order. -/
-theorem descendant_iff_eq_restrict {X : Finset V}
-    {p q : Possibility W V (Option M)} (hp : p.dom = (↑X : Set V)) :
-    p.Descendant q ↔ p = q.restrict X := by
+theorem le_iff_eq_restrict {X : Set V} [∀ v, Decidable (v ∈ X)]
+    (hp : p.domain = X) :
+    p ≤ q ↔ p = q.restrict X := by
   constructor
   · intro h
     refine Possibility.ext h.1 (funext fun v => ?_)
@@ -272,11 +227,11 @@ theorem descendant_iff_eq_restrict {X : Finset V}
       rw [hnone]
       simp [restrict, hv]
   · rintro rfl
-    exact restrict_descendant X q
+    exact restrict_le X q
 
 /-- Restriction is pointwise idempotent along intersections. -/
-theorem restrict_restrict (X Y : Finset V)
-    (p : Possibility W V (Option M)) :
+theorem restrict_restrict (X Y : Set V) [∀ v, Decidable (v ∈ X)]
+    [∀ v, Decidable (v ∈ Y)] (p : Possibility W V (Option M)) :
     (p.restrict Y).restrict X = p.restrict (X ∩ Y) := by
   refine Possibility.ext rfl (funext fun v => ?_)
   by_cases hx : v ∈ X <;> by_cases hy : v ∈ Y <;>
@@ -285,21 +240,20 @@ theorem restrict_restrict (X Y : Finset V)
 /-- Partial points with domain `X` are world–`X`-assignment pairs —
 constructively: the classification that the total-assignment rendering
 recovered only with choice and an inhabitant of `M`. -/
-def domEquiv (X : Finset V) :
-    {p : Possibility W V (Option M) // p.dom = (↑X : Set V)} ≃
-      W × ((↑X : Set V) → M) where
+def domainEquiv (X : Set V) [∀ v, Decidable (v ∈ X)] :
+    {p : Possibility W V (Option M) // p.domain = X} ≃ W × (X → M) where
   toFun p :=
     (p.1.world, fun v => (p.1.assignment v.1).get
       ((Set.ext_iff.mp p.2 v.1).mpr v.2))
   invFun e :=
-    ⟨⟨e.1, fun v => if h : v ∈ (↑X : Set V) then some (e.2 ⟨v, h⟩)
+    ⟨⟨e.1, fun v => if h : v ∈ X then some (e.2 ⟨v, h⟩)
       else none⟩, by
       ext v
-      by_cases h : v ∈ (↑X : Set V) <;> simp [dom, h]⟩
+      by_cases h : v ∈ X <;> simp [domain, h]⟩
   left_inv p := by
     obtain ⟨⟨w, g⟩, hp⟩ := p
     refine Subtype.ext (Possibility.ext rfl (funext fun v => ?_))
-    by_cases h : v ∈ (↑X : Set V)
+    by_cases h : v ∈ X
     · simp only [dif_pos h, Option.some_get]
     · have hnone : g v = none := Option.not_isSome_iff_eq_none.mp
         fun hs => h ((Set.ext_iff.mp hp v).mp hs)
@@ -309,20 +263,20 @@ def domEquiv (X : Finset V) :
     refine Prod.ext rfl (funext fun v => ?_)
     simp
 
-@[simp] theorem domEquiv_symm_val (X : Finset V)
-    (e : W × ((↑X : Set V) → M)) :
-    ((domEquiv X).symm e).1 =
-      ⟨e.1, fun v => if h : v ∈ (↑X : Set V) then some (e.2 ⟨v, h⟩)
+theorem domainEquiv_symm_val (X : Set V) [∀ v, Decidable (v ∈ X)]
+    (e : W × (X → M)) :
+    ((domainEquiv X).symm e).1 =
+      ⟨e.1, fun v => if h : v ∈ X then some (e.2 ⟨v, h⟩)
         else none⟩ :=
   rfl
 
 /-- The charts commute with restriction: restricting a classified point
 is weakening its chart. -/
-theorem restrict_domEquiv_symm {Y X : Finset V} (h : Y ≤ X)
-    (e : W × ((↑X : Set V) → M)) :
-    ((domEquiv X).symm e).1.restrict Y =
-      ((domEquiv Y).symm (e.1, fun v => e.2 ⟨v.1, h v.2⟩)).1 := by
-  rw [domEquiv_symm_val, domEquiv_symm_val]
+theorem restrict_domainEquiv_symm {Y X : Set V} [∀ v, Decidable (v ∈ X)]
+    [∀ v, Decidable (v ∈ Y)] (h : Y ⊆ X) (e : W × (X → M)) :
+    ((domainEquiv X).symm e).1.restrict Y =
+      ((domainEquiv Y).symm (e.1, fun v => e.2 ⟨v.1, h v.2⟩)).1 := by
+  rw [domainEquiv_symm_val, domainEquiv_symm_val]
   refine Possibility.ext rfl (funext fun v => ?_)
   by_cases hv : v ∈ Y
   · have hvX : v ∈ X := h hv
@@ -331,18 +285,29 @@ theorem restrict_domEquiv_symm {Y X : Finset V} (h : Y ≤ X)
 
 end Restrict
 
-/-! ### Based points -/
+/-! ### Instantiations
 
-/-- A possibility is *based* when its domain is a base — realizable as
-some `X : Finset V`, [kamp-vangenabith-reyle-2011] Def. 23's word —
-which is exactly finiteness. Under descent, based points form the total
-space of `Category.lean`'s possibilities family. -/
-def Based (W V M : Type*) := {p : Possibility W V (Option M) // p.dom.Finite}
+Update systems share one form — states are sets of points, updates act
+on states — and differ in the point. The parameters select the system:
+worlds only gives propositional update semantics ([veltman-1996]; the
+`∅`-fiber), assignments only gives lifted DPL, and the general form is
+FCS/DRT's pairs. Propositional inquisitive semantics instead *iterates*
+the construction — its points are sets of worlds — a level shift, not a
+parameter choice. -/
 
-instance : Preorder (Based W V M) where
-  le p q := p.1.Descendant q.1
-  le_refl p := Descendant.refl p.1
-  le_trans _ _ _ := Descendant.trans
+/-- Worlds-only points: propositional update semantics. -/
+def worldEquiv (W M : Type*) : Possibility W Empty M ≃ W where
+  toFun p := p.world
+  invFun w := ⟨w, Empty.elim⟩
+  left_inv _ := Possibility.ext rfl (funext fun v => v.elim)
+  right_inv _ := rfl
+
+/-- Assignments-only points: lifted DPL. -/
+def assignmentEquiv (V M : Type*) : Possibility Unit V M ≃ (V → M) where
+  toFun p := p.assignment
+  invFun g := ⟨(), g⟩
+  left_inv _ := rfl
+  right_inv _ := rfl
 
 end Possibility
 

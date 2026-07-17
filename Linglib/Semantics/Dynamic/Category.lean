@@ -35,9 +35,9 @@ at `∅` is [veltman-1996]'s update semantics.
 - `possibilities_glue`, `possibilities_beck_chevalley`: the context-lattice
   square is a pullback of possibilities, so quantification commutes with
   weakening — the fibers are a hyperdoctrine.
-- `elementsEquivBased`: the Grothendieck total of the family is the point
-  type — the category of elements is the descent preorder on
-  `Possibility.Based`, opposed.
+- `elementsEquivPoints`: the Grothendieck total of the family is the
+  point type — the category of elements is the descent preorder on the
+  points, opposed.
 
 ## References
 
@@ -55,7 +55,7 @@ open CategoryTheory
 the category whose morphisms are `Transition W M X Y`. -/
 @[ext] structure Ctx (W M : Type*) (V : Type*) where
   /-- The live discourse referents. -/
-  base : Finset V
+  base : Set V
 
 namespace Ctx
 
@@ -92,8 +92,8 @@ over the category of contexts — a set-valued *indexed category* in
 (the functor "which adds an extra dummy" variable, in the book's own
 gloss). -/
 def possibilities (W : Type u) (M : Type v) (V : Type w) :
-    (Finset V)ᵒᵖ ⥤ Type (max u v w) where
-  obj X := W × ((↑X.unop : Set V) → M)
+    (Set V)ᵒᵖ ⥤ Type (max u v w) where
+  obj X := W × (X.unop → M)
   map {X Y} f := TypeCat.ofHom fun p =>
     ⟨p.1, fun v => p.2 ⟨v.1, leOfHom f.unop v.2⟩⟩
 
@@ -102,7 +102,7 @@ functor applied fiberwise to the possibilities — by definition, in this
 formulation. The fiber over `X` is `Set (W × (↑X → M))`; restriction is
 direct image along weakening. -/
 def State.presheaf (W : Type u) (M : Type v) (V : Type w) :
-    (Finset V)ᵒᵖ ⥤ Type (max u v w) :=
+    (Set V)ᵒᵖ ⥤ Type (max u v w) :=
   possibilities W M V ⋙ ofTypeFunctor Set
 
 /-! ### Gluing and Beck–Chevalley
@@ -121,7 +121,7 @@ section Gluing
 
 open Opposite
 
-variable {W M V : Type*} {X Y : Finset V}
+variable {W M V : Type*} {X Y : Set V}
 
 /-- The action of `possibilities` on a lattice inequality, elementwise. -/
 @[simp] theorem possibilities_map_apply (h : X ≤ Y)
@@ -129,13 +129,13 @@ variable {W M V : Type*} {X Y : Finset V}
     (possibilities W M V).map (homOfLE h).op p =
       (p.1, fun v => p.2 ⟨v.1, h v.2⟩) := rfl
 
-variable [DecidableEq V]
+variable [∀ v, Decidable (v ∈ X)]
 
 /-- Possibilities glue: a pair of possibilities over `X` and `Y` whose
 weakenings to `X ⊓ Y` agree is jointly the weakening of a unique
 possibility over `X ⊔ Y` — `possibilities` sends the lattice square to a
 pullback of types. The piecewise witness is `Possibility.union` in the charts of
-`Possibility.domEquiv`. -/
+`Possibility.domainEquiv`. -/
 theorem possibilities_glue
     (a : (possibilities W M V).obj (op X)) (b : (possibilities W M V).obj (op Y))
     (hab : (possibilities W M V).map (homOfLE inf_le_left).op a =
@@ -147,9 +147,9 @@ theorem possibilities_glue
   have hw : a.1 = b.1 := congrArg Prod.fst hab
   have hagree : ∀ (v : V) (hX : v ∈ X) (hY : v ∈ Y),
       a.2 ⟨v, hX⟩ = b.2 ⟨v, hY⟩ := fun v hX hY =>
-    congrFun (congrArg Prod.snd hab) ⟨v, Finset.mem_inter.mpr ⟨hX, hY⟩⟩
+    congrFun (congrArg Prod.snd hab) ⟨v, hX, hY⟩
   refine ⟨(a.1, fun v => if h : v.1 ∈ X then a.2 ⟨v.1, h⟩
-      else b.2 ⟨v.1, (Finset.mem_union.mp v.2).resolve_left h⟩),
+      else b.2 ⟨v.1, v.2.resolve_left h⟩),
     ⟨Prod.ext rfl (funext fun v => dif_pos v.2),
       Prod.ext hw (funext fun v => ?_)⟩, fun c' hc' => ?_⟩
   · by_cases h : v.1 ∈ X
@@ -163,7 +163,7 @@ along `X ⊓ Y ≤ X` then weakening to `Y` is weakening to `X ⊔ Y` then
 existential image along `Y ≤ X ⊔ Y` — quantifying and reindexing
 commute. The image legs are `State.presheaf`'s own action on the
 square's arrows. -/
-theorem possibilities_beck_chevalley (X Y : Finset V)
+theorem possibilities_beck_chevalley
     (S : Set ((possibilities W M V).obj (op X))) :
     (possibilities W M V).map (homOfLE (inf_le_right : X ⊓ Y ≤ Y)).op ⁻¹'
       ((possibilities W M V).map (homOfLE (inf_le_left : X ⊓ Y ≤ X)).op '' S) =
@@ -187,64 +187,62 @@ section Total
 
 open Opposite
 
-variable {W M V : Type*} [DecidableEq V]
+open scoped Classical
 
-/-- Classify each element of the possibilities family as a based point:
-on objects this is `Possibility.domEquiv`; arrows become descents, by
-`Possibility.descendant_iff_eq_restrict`. -/
-noncomputable def elementsToBased :
-    (possibilities W M V).Elements ⥤ (Possibility.Based W V M)ᵒᵖ where
-  obj x := op ⟨((Possibility.domEquiv x.1.unop).symm x.2).1, by
-    rw [((Possibility.domEquiv x.1.unop).symm x.2).2]
-    exact x.1.unop.finite_toSet⟩
+variable {W M V : Type*}
+
+/-- Classify each element of the possibilities family as a point: on
+objects this is `Possibility.domainEquiv`; arrows become descents, by
+`Possibility.le_iff_eq_restrict`. -/
+noncomputable def elementsToPoints :
+    (possibilities W M V).Elements ⥤ (Possibility W V (Option M))ᵒᵖ where
+  obj x := op ((Possibility.domainEquiv x.1.unop).symm x.2).1
   map {x y} f := (homOfLE (show
-      ((Possibility.domEquiv y.1.unop).symm y.2).1.Descendant
-        ((Possibility.domEquiv x.1.unop).symm x.2).1 by
+      ((Possibility.domainEquiv y.1.unop).symm y.2).1 ≤
+        ((Possibility.domainEquiv x.1.unop).symm x.2).1 by
     have hb : y.1.unop ≤ x.1.unop := leOfHom f.1.unop
     have hmap : (possibilities W M V).map f.1 x.2 = y.2 := f.2
     rw [Subsingleton.elim f.1 (homOfLE hb).op, possibilities_map_apply]
       at hmap
-    rw [← hmap, ← Possibility.restrict_domEquiv_symm hb]
-    exact Possibility.restrict_descendant _ _)).op
+    rw [← hmap, ← Possibility.restrict_domainEquiv_symm hb]
+    exact Possibility.restrict_le _ _)).op
   map_id _ := Subsingleton.elim _ _
   map_comp _ _ := Subsingleton.elim _ _
 
-instance : (elementsToBased (W := W) (M := M) (V := V)).Faithful where
+instance : (elementsToPoints (W := W) (M := M) (V := V)).Faithful where
   map_injective _ := Subtype.ext (Subsingleton.elim _ _)
 
-instance : (elementsToBased (W := W) (M := M) (V := V)).Full where
+instance : (elementsToPoints (W := W) (M := M) (V := V)).Full where
   map_surjective {x y} f := by
-    have hd : ((Possibility.domEquiv y.1.unop).symm y.2).1.Descendant
-        ((Possibility.domEquiv x.1.unop).symm x.2).1 := leOfHom f.unop
-    have hb : y.1.unop ≤ x.1.unop := Finset.coe_subset.mp
-      (((Possibility.domEquiv y.1.unop).symm y.2).2 ▸
-        ((Possibility.domEquiv x.1.unop).symm x.2).2 ▸ hd.dom_subset)
+    have hd : ((Possibility.domainEquiv y.1.unop).symm y.2).1 ≤
+        ((Possibility.domainEquiv x.1.unop).symm x.2).1 := leOfHom f.unop
+    have hb : y.1.unop ≤ x.1.unop := by
+      have hsub := Possibility.domain_mono hd
+      rwa [((Possibility.domainEquiv y.1.unop).symm y.2).2,
+        ((Possibility.domainEquiv x.1.unop).symm x.2).2] at hsub
     refine ⟨⟨(homOfLE hb).op, ?_⟩, Subsingleton.elim _ _⟩
-    refine (Possibility.domEquiv y.1.unop).symm.injective (Subtype.ext ?_)
-    rw [possibilities_map_apply, ← Possibility.restrict_domEquiv_symm hb]
-    exact ((Possibility.descendant_iff_eq_restrict
-      ((Possibility.domEquiv y.1.unop).symm y.2).2).mp hd).symm
+    refine (Possibility.domainEquiv y.1.unop).symm.injective (Subtype.ext ?_)
+    rw [possibilities_map_apply, ← Possibility.restrict_domainEquiv_symm hb]
+    exact ((Possibility.le_iff_eq_restrict
+      ((Possibility.domainEquiv y.1.unop).symm y.2).2).mp hd).symm
 
-instance : (elementsToBased (W := W) (M := M) (V := V)).EssSurj where
+instance : (elementsToPoints (W := W) (M := M) (V := V)).EssSurj where
   mem_essImage y :=
-    ⟨⟨op y.unop.2.toFinset,
-        Possibility.domEquiv _ ⟨y.unop.1, y.unop.2.coe_toFinset.symm⟩⟩,
+    ⟨⟨op y.unop.domain, Possibility.domainEquiv _ ⟨y.unop, rfl⟩⟩,
       ⟨eqToIso (by
         apply Opposite.unop_injective
-        apply Subtype.ext
         have hval := congrArg Subtype.val
-          ((Possibility.domEquiv y.unop.2.toFinset).symm_apply_apply
-            ⟨y.unop.1, y.unop.2.coe_toFinset.symm⟩)
+          ((Possibility.domainEquiv y.unop.domain).symm_apply_apply ⟨y.unop, rfl⟩)
         exact hval)⟩⟩
 
-instance : (elementsToBased (W := W) (M := M) (V := V)).IsEquivalence := {}
+instance : (elementsToPoints (W := W) (M := M) (V := V)).IsEquivalence := {}
 
 /-- **The Grothendieck total of the possibilities family is the point
 type**: the category of elements is equivalent to the opposite of the
-descent preorder on based points. -/
-noncomputable def elementsEquivBased :
-    (possibilities W M V).Elements ≌ (Possibility.Based W V M)ᵒᵖ :=
-  elementsToBased.asEquivalence
+descent preorder on points — every point lies over its own domain. -/
+noncomputable def elementsEquivPoints :
+    (possibilities W M V).Elements ≌ (Possibility W V (Option M))ᵒᵖ :=
+  elementsToPoints.asEquivalence
 
 end Total
 
