@@ -1,11 +1,12 @@
 import Mathlib.Data.Finset.Card
 import Mathlib.Data.Fintype.Powerset
+import Mathlib.Order.Defs.Unbundled
 import Linglib.Features.Case.Capabilities
 import Linglib.Features.Gender.Capabilities
 import Linglib.Features.Number.Capabilities
 import Linglib.Features.Person.Capabilities
 import Linglib.Morphology.Word
-import Linglib.Syntax.Agreement.Basic
+import Linglib.Syntax.Agreement.Target
 
 /-!
 # Wechsler & Zlatić 2000: Agreement via the Declension–Concord–Index–Semantics chain
@@ -505,9 +506,10 @@ instance (p : Bool) : DecidablePred (readsIndex p) := fun t => by
     law ([corbett-1998]; their fn. 21). W&Z rank no INDEX-reader above
     another, and none is needed: `verb`, off the hierarchy, reads INDEX
     outright (`readsIndex_verb`). -/
-theorem indexReaders_lowerSet (p : Bool) (t u : Target)
-    (h : u ≤ t) : readsIndex p t → readsIndex p u := by
-  cases p <;> revert t u <;> decide
+theorem indexReaders_lowerSet (p : Bool) : IsLowerSet {t | readsIndex p t} := by
+  intro t u hle hmem
+  revert t u
+  cases p <;> decide
 
 /-- Verbs read INDEX unconditionally (they agree in person, which only
     INDEX carries) — no hierarchy position needed. -/

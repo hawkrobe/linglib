@@ -2784,7 +2784,7 @@ import Linglib.Studies.Zimmermann2026
 import Linglib.Studies.Zuraw2010
 import Linglib.Studies.ZurawHayes2017
 import Linglib.Studies.ZwickyPullum1983
-import Linglib.Syntax.Agreement.Basic
+import Linglib.Syntax.Agreement.Target
 import Linglib.Syntax.Agreement.Controller
 import Linglib.Syntax.Agreement.Paradigm
 import Linglib.Syntax.Agreement.Profile
