@@ -22,7 +22,7 @@ paper's separation of assertability (54) from Heimian familiarity rests.
 
 ## Main definitions
 
-- the descent order, `Subsists` (`≺`), `subsistsIn` (`⪯`):
+- the descent order, `Subsists` (`≺`), `subsistsIn`:
   descendance and subsistence (Def. 3.3, after
   [groenendijk-stokhof-veltman-1996]).
 - `worlds`, `Familiar`: worldly information (Def. 3.1's 𝒲) and
@@ -52,7 +52,7 @@ Descent requires the larger point to *extend* the assignment, per
 [groenendijk-stokhof-veltman-1996]; [elliott-sudo-2025]'s Def. 3.3
 phrases the clause as domain inclusion, and their examples do not
 discriminate. The paper overloads `≺` for possibility-in-state and
-state-in-state subsistence (their fn. on (73)); here the latter is `⪯`.
+state-in-state subsistence (their fn. on (73)); here the latter is `subsistsIn`.
 
 The empirical comparison against full ICDRT is in
 `Studies/Hofmann2025.lean`; against PLA in `Studies/Dekker2012.lean`.
@@ -259,7 +259,7 @@ end Quantifiers
 subsists in it. -/
 def supports (s : Set (Possibility W V (Part E)))
     (φ : BilateralDen W V E) : Prop :=
-  (φ.positive s).Nonempty ∧ s ⪯ φ.positive s
+  (φ.positive s).Nonempty ∧ subsistsIn s (φ.positive s)
 
 /-- Bilateral entailment: every consistent positive update of `φ`
 supports `ψ`. -/

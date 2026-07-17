@@ -118,7 +118,7 @@ modulo introduced anaphoric information — state-level subsistence.
 -/
 def diamond (φ : BUSDen W E) : BUSDen W E where
   positive s := {_i ∈ s | (φ.positive s).Nonempty}
-  negative s := {_i ∈ s | s ⪯ φ.negative s}
+  negative s := {_i ∈ s | subsistsIn s (φ.negative s)}
 
 /--
 Epistemic necessity ([elliott-sudo-2025], (77)): the dual, □φ = ¬◇¬φ.
@@ -137,8 +137,8 @@ theorem diamond_positive_eq (φ : BUSDen W E) (s) :
 
 /-- The diamond's negative update as a conditional. -/
 theorem diamond_negative_eq (φ : BUSDen W E) (s) :
-    (◇ᵇφ).negative s = if s ⪯ φ.negative s then s else ∅ := by
-  by_cases h : s ⪯ φ.negative s <;> simp [diamond, h]
+    (◇ᵇφ).negative s = if subsistsIn s (φ.negative s) then s else ∅ := by
+  by_cases h : subsistsIn s (φ.negative s) <;> simp [diamond, h]
 
 /-- Diamond positive is a test (returns s or ∅). -/
 theorem diamond_positive_isTest (φ : BUSDen W E) :
@@ -200,7 +200,7 @@ def possible (φ : BUSDen W E) (s : Set (Possibility W ℕ (Part E))) : Prop :=
 
 /-- Necessity: state s makes □φ true iff s subsists in s[φ]⁺. -/
 def necessary (φ : BUSDen W E) (s : Set (Possibility W ℕ (Part E))) : Prop :=
-  s ⪯ φ.positive s
+  subsistsIn s (φ.positive s)
 
 /-- Impossibility: ¬◇φ iff s[φ]⁺ is empty. -/
 def impossible (φ : BUSDen W E) (s : Set (Possibility W ℕ (Part E))) : Prop :=
@@ -454,7 +454,7 @@ theorem not_assertable_s56 :
 `not_assertable_s56` so does assertability; the paper's point is that the
 converse can fail (assertability is strictly weaker). -/
 theorem not_familiar_s56 : ¬Familiar s56 0 := fun h =>
-  h ⟨.w0, blank⟩ (by simp [s56])
+  h ⟨.w0, blank⟩ (show ⟨PWorld.w0, blank⟩ ∈ s56 by simp [s56])
 
 end PartialFamiliarity
 

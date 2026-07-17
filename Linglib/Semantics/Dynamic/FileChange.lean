@@ -22,7 +22,7 @@ cards (rule (13), `atomVar_eq_of_familiar`) and extends where it does
 not (`atomVar_eq_of_novel`) — per point, so atoms are total and
 appropriateness ((15)) lives on `indef`/`def_`, as in the paper.
 Principle (A) in its general form is ascent in informativeness
-(`infoLe_ofState`); set-shrinking eliminativity is its familiar face.
+(`le_ofState`); set-shrinking eliminativity is its familiar face.
 
 Negation keeps the points of `F` that do not *subsist* (`≺`) in the
 scope's update — the no-verifying-extension clause, generalizing
@@ -47,7 +47,7 @@ the referent-free shadow of the 1982 ones.
 
 - `admits_def_`, `admits_indef`: the Familiarity and Novelty Conditions
   are exactly definedness.
-- `infoLe_ofState`: Principle (A) — updates only add information.
+- `le_ofState`: Principle (A) — updates only add information.
 - `atomW_eq`, `atomVar_eq_of_familiar`, `atomVar_eq_of_novel`: the
   filtering and extending regimes of the merge-based atom (rules (13)
   and (18)).
@@ -82,13 +82,13 @@ def ofState (A : State W V M) : FCP W V M :=
   fun F => Part.some (State.merge F A)
 
 /-- Principle (A), general form: assertive update ascends in
-informativeness — `merge_infoLe`'s left leg. Set-shrinking
-eliminativity is its familiar-regime shadow (`atomVar_eq_of_familiar`);
-on novel referents the update extends rather than shrinks. -/
-theorem infoLe_ofState (A : State W V M) {F F' : State W V M}
-    (h : F' ∈ ofState A F) : F ⊑ F' := by
+informativeness — `State.le_merge_left`. Set-shrinking eliminativity is
+its familiar-regime shadow (`atomVar_eq_of_familiar`); on novel
+referents the update extends rather than shrinks. -/
+theorem le_ofState (A : State W V M) {F F' : State W V M}
+    (h : F' ∈ ofState A F) : F ≤ F' := by
   obtain rfl := Part.mem_some_iff.mp h
-  exact infoLe_merge_left
+  exact State.le_merge_left
 
 /-- Atomic predicate on the world: merge with the empty-domain
 proposition state. -/
@@ -173,7 +173,8 @@ same as once. -/
 theorem supports_idempotent {F : State W V M} {φ : FCP W V M}
     (h : supports F φ) : φ.seq φ F = φ F := by
   show (φ F).bind φ = φ F
-  rw [h, Part.bind_some, h]
+  rw [h]
+  exact (Part.bind_some _ _).trans h
 
 /-! ### Admittance -/
 
@@ -197,7 +198,7 @@ theorem admits_def_ (x : V) (body : FCP W V M) (F : State W V M) :
 The merge-based atom has rule (13) as its familiar face and rule (18)'s
 domain extension as its novel face, per point; `⊆`-eliminativity holds
 exactly on the familiar face, while Principle (A) in general is
-`infoLe_ofState`. -/
+`le_ofState`. -/
 
 /-- World atoms filter, unconditionally: merging with an empty-domain
 proposition state eliminates the points at incompatible worlds. -/
@@ -316,9 +317,9 @@ theorem neg_eq_partial_neg [DecidableEq V] {X : Finset V}
     (hφ : ∀ F' ∈ φ F, State.UniformAt X F') :
     neg φ F = CCP.Partial.neg φ F := by
   refine Part.ext' Iff.rfl fun h₁ h₂ => ?_
-  show {p ∈ F | ¬ p ≺ (φ F).get h₁} = F \ (φ F).get h₁
+  show ({p ∈ (F : Set (Possibility W V (Part M))) | ¬ p ≺ (φ F).get h₁} : Set _) =
+    (F : Set (Possibility W V (Part M))) \ (φ F).get h₁
   ext p
-  simp only [Set.mem_sep_iff, Set.mem_sdiff]
   exact and_congr_right fun hp => not_congr
     (State.subsists_iff_mem (hφ _ (Part.get_mem _)) (hF p hp))
 

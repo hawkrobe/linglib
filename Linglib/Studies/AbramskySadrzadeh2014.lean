@@ -385,10 +385,11 @@ theorem no_gluing_triangle :
   -- the target states are inhabited, so S is
   have hne : S.Nonempty := by
     rcases Set.eq_empty_or_nonempty S with rfl | h
-    · have : (∅ : State Unit (Fin 3) Bool) = anti 0 1 := by
-        simpa [State.restrict] using h01
-      exact absurd (this ▸ pt2_mem_anti (by decide) false true (by simp) :
-        pt2 0 1 false true ∈ (∅ : State Unit (Fin 3) Bool)) (by simp)
+    · have hpt : pt2 0 1 false true ∈ anti 0 1 :=
+        pt2_mem_anti (by decide) false true (by simp)
+      rw [← h01] at hpt
+      obtain ⟨q, hq, -⟩ := hpt
+      exact hq.elim
     · exact h
   obtain ⟨r, hr⟩ := hne
   -- r's restrictions land in each anticorrelation state

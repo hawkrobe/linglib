@@ -195,11 +195,11 @@ open ExWorld ExEntity
 
 /-- Starting file: no discourse referents, all worlds open — the
 minimal state. -/
-def startFile : State ExWorld ℕ ExEntity := State.initial
+def startFile : State ExWorld ℕ ExEntity := ⊥
 
 /-- Index 1 is novel in the start file (no drefs yet). -/
 example : ∀ p ∈ startFile, p.assignment 1 = ⊥ :=
-  fun _ hp => State.mem_initial.mp hp 1
+  fun _ hp => State.mem_bot.mp hp 1
 
 /-- The start file is consistent (nonempty). -/
 example : startFile.Nonempty := ⟨Possibility.bot w₀, w₀, rfl⟩
