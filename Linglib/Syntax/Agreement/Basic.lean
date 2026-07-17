@@ -2,30 +2,32 @@ import Mathlib.Order.Nat
 import Mathlib.Tactic.DeriveFintype
 
 /-!
-# Agreement targets [corbett-1979]
+# Agreement targets
 
-`Agreement.Target` enumerates the morphosyntactic positions where agreement
-surfaces: the four positions of the Agreement Hierarchy ([corbett-1979];
-[corbett-1991] ch. 8; [corbett-2006]) — attributive > predicate > relative
-pronoun > personal pronoun, along which the likelihood of *semantic* (rather
-than syntactic) agreement increases monotonically from left to right — plus
-`verb` for languages with verbal gender/number agreement.
+This file defines the morphosyntactic positions where agreement surfaces,
+ordered by Corbett's Agreement Hierarchy ([corbett-1979]; [corbett-1991]
+ch. 8; [corbett-2006]): attributive > predicate > relative pronoun >
+personal pronoun, with semantic (rather than syntactic) agreement
+increasingly likely from left to right.
 
-`verb` is a label only: it is not a fifth position of Corbett's hierarchy,
-and the literature licenses no ranking for it. [wechsler-zlatic-2000]
-classify verbs with the pronouns as INDEX-readers but do not rank the
-INDEX-readers among themselves (`WechslerZlatic2000.indexReaders_lowerSet`
-needs no such ranking), while [comrie-1975]'s Predicate Hierarchy grades
-semantic-agreement *likelihood* within the predicate position (finite verb
-least likely; `Corbett2000.PredicateTarget`). Reading INDEX and showing
-semantic agreement are orthogonal axes — INDEX features can be lexically
-fixed — so the two classifications are not rival rankings of `verb`, and
-neither is encoded here. Accordingly the order on `Target` is partial:
-`hierarchyRank` places the four canonical positions on a chain (higher =
-more syntactic) and leaves `verb` comparable only to itself.
+## Main declarations
 
-This type is shared by gender typology (`Studies/Corbett1991.lean`) and
-number agreement (`Studies/Corbett2000.lean`).
+* `Agreement.Target`: the four hierarchy positions, plus `verb` for
+  languages with verbal gender/number agreement.
+* `Agreement.Target.hierarchyRank`: position on the hierarchy (higher =
+  more syntactic); `none` for `verb`.
+* The `PartialOrder` instance: the four positions form a chain; `verb` is
+  comparable only to itself.
+
+## Implementation notes
+
+`verb` is not a position of Corbett's hierarchy, and no ranking of it is
+encoded. [wechsler-zlatic-2000] classify verbs with the pronouns as
+INDEX-readers without ranking the INDEX-readers among themselves
+(`WechslerZlatic2000.indexReaders_lowerSet`), and [comrie-1975]'s Predicate
+Hierarchy grades semantic-agreement likelihood among predicate
+sub-positions (`Corbett2000.PredicateTarget`); the two classifications are
+orthogonal. Hence the order is partial rather than linear.
 -/
 
 namespace Agreement
