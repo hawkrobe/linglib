@@ -288,6 +288,23 @@ theorem lubs_comm (s t : Set α) : s.lubs t = t.lubs s := by
   constructor <;> rintro ⟨a, ha, b, hb, h⟩ <;>
     exact ⟨b, hb, a, ha, pair_comm a b ▸ h⟩
 
+/-- A set of local units is a right identity for `lubs`: every element
+dominates a member of `t`, and members of `t` sit below anything they
+are compatible with — the set-level face of `⊥` as identity. -/
+theorem lubs_eq_left (h₁ : ∀ a : α, ∃ b ∈ t, b ≤ a)
+    (h₂ : ∀ a : α, ∀ b ∈ t, Compat a b → b ≤ a) : s.lubs t = s := by
+  ext c
+  constructor
+  · rintro ⟨a, ha, b, hb, hub, hleast⟩
+    have hca : c = a := le_antisymm
+      (hleast (PartialUnify.mem_upperBounds_pair.mpr ⟨le_rfl, h₂ a b hb ⟨c, hub⟩⟩))
+      (hub (mem_insert _ _))
+    exact hca ▸ ha
+  · intro hc
+    obtain ⟨b, hb, hbc⟩ := h₁ c
+    exact ⟨c, hc, b, hb, PartialUnify.mem_upperBounds_pair.mpr ⟨le_rfl, hbc⟩,
+      fun _ hu => hu (mem_insert _ _)⟩
+
 /-- Under pairwise bounded completeness, upper closure sends `lubs` to
 the join: a point bounds a pairwise join iff it bounds a point of each
 set. -/

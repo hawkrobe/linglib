@@ -136,16 +136,9 @@ bottom. -/
 /-! ### Consistent merge as multiplication -/
 
 private theorem lubs_bot (s : State W V M) :
-    (Set.lubs s (⊥ : State W V M) : State W V M) = s := by
-  ext r
-  constructor
-  · rintro ⟨p, hp, q, ⟨w, rfl⟩, hlub⟩
-    obtain ⟨-, rfl⟩ := Possibility.isLUB_pair_iff.mp hlub
-    rwa [Possibility.union_bot]
-  · intro hr
-    exact ⟨r, hr, Possibility.bot r.world, ⟨r.world, rfl⟩,
-      Possibility.isLUB_pair_iff.mpr
-        ⟨.of_le le_rfl Possibility.bot_le, Possibility.union_bot.symm⟩⟩
+    (Set.lubs s (⊥ : State W V M) : State W V M) = s :=
+  Set.lubs_eq_left (fun p => ⟨.bot p.world, ⟨p.world, rfl⟩, Possibility.bot_le⟩)
+    fun _ _ ⟨_, hw⟩ h => hw ▸ Possibility.bot_le_of_compat (hw ▸ h)
 
 /-- `s * s'` is consistent merge — the joins of pairs of points, one
 from each state — and `1 = ⊥`. -/
