@@ -9,17 +9,14 @@ import Mathlib.Order.Hom.Basic
 # Information states
 
 This file defines an *information state* — a set of possibilities with
-partial assignments ([kamp-vangenabith-reyle-2011], Def. 0.23) — and
-its order and algebra: informativeness (Def. 0.25) as the preorder
-lifted along `upperClosure`, with initial state `⊥` and absurd state
-`⊤ = ∅`; consistent merge (Def. 0.26) as the monoid `*` and least
-upper bound, dually union as greatest lower bound
-([visser-vermeulen-1996]'s monoidal processing); subsistence
-([elliott-sudo-2025], Def. 3.3) as the dual `lowerClosure` kernel; the
-uniform strata, where both kernels collapse to inclusion; and the
-classifications of a stratum as world–assignment pairs
-(`State.uniformEquiv`) and of states up to informational equivalence
-as the complete lattice of upper sets
+partial assignments — and its order and algebra: informativeness as
+the preorder lifted along `upperClosure`, with initial state `⊥` and
+absurd state `⊤ = ∅`; consistent merge as the monoid `*` and least
+upper bound, dually union as greatest lower bound; subsistence as the
+dual `lowerClosure` kernel; the uniform strata, where both kernels
+collapse to inclusion; and the classifications of a stratum as
+world–assignment pairs (`State.uniformEquiv`) and of states up to
+informational equivalence as the complete lattice of upper sets
 (`State.antisymmetrizationOrderIso`).
 
 `State` is a type synonym in the `OrderDual` mold: `≤` is
@@ -28,9 +25,11 @@ kernel is antisymmetric, `State` is a `Preorder` only.
 
 ## References
 
-- [kamp-vangenabith-reyle-2011], Defs. 0.23–0.26
-- [elliott-sudo-2025], [groenendijk-stokhof-veltman-1996],
-  [heim-1982]
+- [kamp-vangenabith-reyle-2011], Defs. 0.23 (information states),
+  0.25 (informativeness), 0.26 (consistent merge)
+- [elliott-sudo-2025], Def. 3.3 (subsistence);
+  [groenendijk-stokhof-veltman-1996]
+- [visser-vermeulen-1996] (monoidal processing); [heim-1982]
 -/
 
 namespace DynamicSemantics
