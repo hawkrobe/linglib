@@ -135,7 +135,9 @@ for a disjunction because it forces KB) is `Studies/Sauerland2004.lean`. -/
 
 /-- The speaker commitment after asserting φ against `alts`: the
 assertion is known (Kφ) and every primary implicature holds (¬Kψ for
-each alternative). -/
+each alternative). Per [sauerland-2004] (42), the caller supplies only
+the asymmetrically-stronger alternatives (ψ ⇒ φ but not φ ⇒ ψ, e.g. via
+`asymStrongerOn`); the definition itself does not enforce the filter. -/
 def SatisfiesPrimaries (e : EpistemicState W) (φ : W → Prop)
     (alts : List (W → Prop)) : Prop :=
   knows e φ ∧ ∀ ψ ∈ alts, ¬ knows e ψ

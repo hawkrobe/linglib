@@ -16,7 +16,9 @@ against the alternatives {A, B, A∧B} yields the primary implicatures
 is consistent with the commitments and licensed
 (`conj_secondary_licensed`), while K¬A is **blocked**
 (`disjunct_secondary_blocked`): K¬A together with K(A∨B) forces KB,
-contradicting the primary ¬KB. This asymmetry — "not both" arises but
+contradicting the primary ¬KB. (The paper frames the same block dually:
+K¬A contradicts the possibility implicature PA entailed by the
+assertion plus ¬KB.) This asymmetry — "not both" arises but
 "not A" does not — is the paper's signature prediction for disjunction,
 unavailable to accounts that negate all stronger alternatives
 indiscriminately.
