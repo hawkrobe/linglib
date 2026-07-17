@@ -331,19 +331,22 @@ private def anti (i j : Fin 3) : State Unit (Fin 3) Bool :=
 
 /-- A two-referent point. -/
 private def pt2 (i j : Fin 3) (a b : Bool) :
-    Possibility Unit (Fin 3) (Option Bool) :=
-  ⟨(), fun v => if v = i then some a else if v = j then some b else none⟩
+    Possibility Unit (Fin 3) (Part Bool) :=
+  ⟨(), fun v => if v = i then Part.some a else if v = j then Part.some b else ⊥⟩
 
 private theorem pt2_mem_anti {i j : Fin 3} (hij : i ≠ j) (a b : Bool)
     (hab : a ≠ b) : pt2 i j a b ∈ anti i j := by
   refine ⟨?_, ?_⟩
   · ext v
+    simp only [Possibility.mem_domain, pt2]
     by_cases hvi : v = i
-    · simp [pt2, Possibility.domain, hvi]
-    · by_cases hvj : v = j <;>
-        simp [pt2, Possibility.domain, hvi, hvj, hij.symm]
+    · simp [hvi, Part.some_dom]
+    · by_cases hvj : v = j
+      · simp [hvj, hij.symm, Part.some_dom]
+      · simp only [if_neg hvi, if_neg hvj]
+        exact iff_of_false (fun h => h) (by simp [hvi, hvj])
   · simp only [pt2, if_neg hij.symm]
-    exact fun h => hab (Option.some.injEq .. ▸ h :)
+    exact fun h => hab (Part.some_inj.mp (by simpa using h))
 
 /-- Adjacent anticorrelation states are consistent: their Def. 26 merge
 is inhabited — the pair glues. -/
@@ -359,19 +362,15 @@ private theorem merge_anti_nonempty {i j k : Fin 3} (hij : i ≠ j)
   · rename_i hvi
     subst hvi
     rw [if_neg hij, if_neg hik] at he'
-    exact absurd he' (by simp)
+    exact absurd he' (Part.notMem_none e')
   · split at he
     · rename_i hvi hvj
       subst hvj
       rw [if_pos rfl] at he'
-      have h1 : e = true := by
-        have := he.symm
-        simpa using this
-      have h2 : e' = true := by
-        have := he'.symm
-        simpa using this
-      rw [h1, h2]
-    · exact absurd he (by simp)
+      obtain rfl := Part.mem_some_iff.mp he
+      obtain rfl := Part.mem_some_iff.mp he'
+      rfl
+    · exact absurd he (Part.notMem_none e)
 
 /-- **Contextuality in the states** ([abramsky-sadrzadeh-2014]'s frame,
 model-theoretically): the three anticorrelation constraints are pairwise
@@ -394,7 +393,7 @@ theorem no_gluing_triangle :
   obtain ⟨r, hr⟩ := hne
   -- r's restrictions land in each anticorrelation state
   have key : ∀ (i j : Fin 3), S.restrict {i, j} = anti i j →
-      ∃ a b : Bool, r.assignment i = some a ∧ r.assignment j = some b ∧
+      ∃ a b : Bool, a ∈ r.assignment i ∧ b ∈ r.assignment j ∧
         a ≠ b := by
     intro i j hS
     have hmem : r.restrict {i, j} ∈ anti i j := by
@@ -402,37 +401,34 @@ theorem no_gluing_triangle :
       exact ⟨r, hr, rfl⟩
     obtain ⟨hdom, hne⟩ := hmem
     rw [Possibility.domain_restrict] at hdom
-    have hi : (r.assignment i).isSome := by
+    have hi : (r.assignment i).Dom := by
       have : i ∈ ({i, j} : Set (Fin 3)) ∩
           Possibility.domain r := by
         rw [hdom]
         simp
       exact this.2
-    have hj : (r.assignment j).isSome := by
+    have hj : (r.assignment j).Dom := by
       have : j ∈ ({i, j} : Set (Fin 3)) ∩
           Possibility.domain r := by
         rw [hdom]
         simp
       exact this.2
-    obtain ⟨a, ha⟩ := Option.isSome_iff_exists.mp hi
-    obtain ⟨b, hb⟩ := Option.isSome_iff_exists.mp hj
+    obtain ⟨a, ha⟩ := Part.dom_iff_mem.mp hi
+    obtain ⟨b, hb⟩ := Part.dom_iff_mem.mp hj
     refine ⟨a, b, ha, hb, fun hab => ?_⟩
     subst hab
     apply hne
-    have hri : (r.restrict {i, j}).assignment i = some a := by
-      simpa [Possibility.restrict] using ha
-    have hrj : (r.restrict {i, j}).assignment j = some a := by
-      simpa [Possibility.restrict] using hb
+    have hri : (r.restrict {i, j}).assignment i = Part.some a :=
+      Part.eq_some_iff.mpr ⟨⟨by simp, hi⟩, Part.get_eq_of_mem ha _⟩
+    have hrj : (r.restrict {i, j}).assignment j = Part.some a :=
+      Part.eq_some_iff.mpr ⟨⟨by simp, hj⟩, Part.get_eq_of_mem hb _⟩
     rw [hri, hrj]
   obtain ⟨a, b, ha, hb, hab⟩ := key 0 1 h01
   obtain ⟨b', c, hb', hc, hbc⟩ := key 1 2 h12
   obtain ⟨a', c', ha', hc', hac⟩ := key 0 2 h02
-  rw [hb] at hb'
-  rw [ha] at ha'
-  rw [hc] at hc'
-  obtain rfl := (Option.some.injEq .. ▸ hb' :)
-  obtain rfl := (Option.some.injEq .. ▸ ha' :)
-  obtain rfl := (Option.some.injEq .. ▸ hc' :)
+  obtain rfl := Part.mem_unique hb hb'
+  obtain rfl := Part.mem_unique ha ha'
+  obtain rfl := Part.mem_unique hc hc'
   cases a <;> cases b <;> cases c <;> simp_all
 
 end AbramskySadrzadeh2014

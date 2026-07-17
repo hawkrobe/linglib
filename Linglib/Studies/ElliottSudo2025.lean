@@ -67,14 +67,14 @@ abbrev BUSDen (W : Type*) (E : Type*) := BilateralDen W ℕ E
 
 namespace BUSDen
 
-variable {s : Set (Possibility W ℕ (Option E))}
+variable {s : Set (Possibility W ℕ (Part E))}
 
 /-- Truth-value gap: presupposition failure. -/
-def hasGap (φ : BUSDen W E) (s : Set (Possibility W ℕ (Option E))) : Prop :=
+def hasGap (φ : BUSDen W E) (s : Set (Possibility W ℕ (Part E))) : Prop :=
   φ.positive s ∪ φ.negative s ⊂ s
 
 /-- Sentence is defined (no presupposition failure). -/
-def defined (φ : BUSDen W E) (s : Set (Possibility W ℕ (Option E))) : Prop :=
+def defined (φ : BUSDen W E) (s : Set (Possibility W ℕ (Part E))) : Prop :=
   φ.positive s ∪ φ.negative s = s
 
 /-- Strong Kleene conjunction. -/
@@ -89,14 +89,14 @@ def pConj (φ ψ : BUSDen W E) : BUSDen W E where
 
 /-- Strawson entailment: φ entails ψ when φ is defined and true. -/
 def strawsonEntails (φ ψ : BUSDen W E) : Prop :=
-  ∀ s : Set (Possibility W ℕ (Option E)),
+  ∀ s : Set (Possibility W ℕ (Part E)),
     defined φ s →
     (φ.positive s).Nonempty →
     (φ.positive s) ⊆ ψ.positive (φ.positive s)
 
 /-- Strong entailment: φ entails ψ with no presupposition failure. -/
 def strongEntails (φ ψ : BUSDen W E) : Prop :=
-  ∀ s : Set (Possibility W ℕ (Option E)),
+  ∀ s : Set (Possibility W ℕ (Part E)),
     (φ.positive s).Nonempty →
     defined ψ (φ.positive s) ∧
     (φ.positive s) ⊆ ψ.positive (φ.positive s)
@@ -142,7 +142,7 @@ theorem diamond_negative_eq (φ : BUSDen W E) (s) :
 
 /-- Diamond positive is a test (returns s or ∅). -/
 theorem diamond_positive_isTest (φ : BUSDen W E) :
-    IsTest (◇ᵇφ).positive (S := Possibility W ℕ (Option E)) := by
+    IsTest (◇ᵇφ).positive (S := Possibility W ℕ (Part E)) := by
   intro s
   rw [diamond_positive_eq]
   split
@@ -151,7 +151,7 @@ theorem diamond_positive_isTest (φ : BUSDen W E) :
 
 /-- Diamond negative is a test (returns s or ∅). -/
 theorem diamond_negative_isTest (φ : BUSDen W E) :
-    IsTest (◇ᵇφ).negative (S := Possibility W ℕ (Option E)) := by
+    IsTest (◇ᵇφ).negative (S := Possibility W ℕ (Part E)) := by
   intro s
   rw [diamond_negative_eq]
   split
@@ -160,7 +160,7 @@ theorem diamond_negative_isTest (φ : BUSDen W E) :
 
 /-- Diamond positive is eliminative (from IsTest). -/
 theorem diamond_positive_eliminative (φ : BUSDen W E) :
-    IsEliminative (◇ᵇφ).positive (S := Possibility W ℕ (Option E)) :=
+    IsEliminative (◇ᵇφ).positive (S := Possibility W ℕ (Part E)) :=
   (diamond_positive_isTest φ).isEliminative
 
 /-- Diamond positive subset (convenience form). -/
@@ -170,7 +170,7 @@ theorem diamond_positive_subset (φ : BUSDen W E) (s) :
 
 /-- Diamond negative is eliminative (from IsTest). -/
 theorem diamond_negative_eliminative (φ : BUSDen W E) :
-    IsEliminative (◇ᵇφ).negative (S := Possibility W ℕ (Option E)) :=
+    IsEliminative (◇ᵇφ).negative (S := Possibility W ℕ (Part E)) :=
   (diamond_negative_isTest φ).isEliminative
 
 /-- Diamond negative subset (convenience form). -/
@@ -180,30 +180,30 @@ theorem diamond_negative_subset (φ : BUSDen W E) (s) :
 
 /-- Box positive is eliminative (□φ = ¬◇¬φ, so positive = diamond negative of ¬φ). -/
 theorem box_positive_eliminative (φ : BUSDen W E) :
-    IsEliminative (□ᵇφ).positive (S := Possibility W ℕ (Option E)) :=
+    IsEliminative (□ᵇφ).positive (S := Possibility W ℕ (Part E)) :=
   diamond_negative_eliminative (BilateralDen.neg φ)
 
 /-- Box negative is eliminative. -/
 theorem box_negative_eliminative (φ : BUSDen W E) :
-    IsEliminative (□ᵇφ).negative (S := Possibility W ℕ (Option E)) :=
+    IsEliminative (□ᵇφ).negative (S := Possibility W ℕ (Part E)) :=
   diamond_positive_eliminative (BilateralDen.neg φ)
 
 end BUSDen
 
 /-! ### Modality concepts -/
 
-variable {s : Set (Possibility W ℕ (Option E))}
+variable {s : Set (Possibility W ℕ (Part E))}
 
 /-- Possibility: state s makes ◇φ true iff s[φ]⁺ is consistent. -/
-def possible (φ : BUSDen W E) (s : Set (Possibility W ℕ (Option E))) : Prop :=
+def possible (φ : BUSDen W E) (s : Set (Possibility W ℕ (Part E))) : Prop :=
   (φ.positive s).Nonempty
 
 /-- Necessity: state s makes □φ true iff s subsists in s[φ]⁺. -/
-def necessary (φ : BUSDen W E) (s : Set (Possibility W ℕ (Option E))) : Prop :=
+def necessary (φ : BUSDen W E) (s : Set (Possibility W ℕ (Part E))) : Prop :=
   s ⪯ φ.positive s
 
 /-- Impossibility: ¬◇φ iff s[φ]⁺ is empty. -/
-def impossible (φ : BUSDen W E) (s : Set (Possibility W ℕ (Option E))) : Prop :=
+def impossible (φ : BUSDen W E) (s : Set (Possibility W ℕ (Part E))) : Prop :=
   ¬(φ.positive s).Nonempty
 
 theorem impossible_iff_empty (φ : BUSDen W E) :
@@ -224,8 +224,8 @@ disjunct is responsible for: the (1,*) row of the Strong Kleene truth table.
 
 Every possibility in `s[φ]⁺` is verified by φ, and then classified by ψ
 into one of three truth values. (eq. 92a) -/
-def disjPos1 (φ ψ : BUSDen W E) (s : Set (Possibility W ℕ (Option E))) :
-    Set (Possibility W ℕ (Option E)) :=
+def disjPos1 (φ ψ : BUSDen W E) (s : Set (Possibility W ℕ (Part E))) :
+    Set (Possibility W ℕ (Part E)) :=
   ψ.positive (φ.positive s)
   ∪ ψ.negative (φ.positive s)
   ∪ ψ.unknownUpdate (φ.positive s)
@@ -239,8 +239,8 @@ table.
 The key term for cross-disjunct anaphora is `s[φ]⁻[ψ]⁺`: when
 `φ = ¬∃x.P(x)`, `s[φ]⁻ = s[∃x.P(x)]⁺` by DNE, introducing the
 discourse referent for binding across disjuncts. (eq. 92b) -/
-def disjPos2 (φ ψ : BUSDen W E) (s : Set (Possibility W ℕ (Option E))) :
-    Set (Possibility W ℕ (Option E)) :=
+def disjPos2 (φ ψ : BUSDen W E) (s : Set (Possibility W ℕ (Part E))) :
+    Set (Possibility W ℕ (Part E)) :=
   ψ.positive (φ.positive s)
   ∪ ψ.positive (φ.negative s)
   ∪ ψ.positive (φ.unknownUpdate s)
@@ -378,7 +378,7 @@ The hypotheses `h_dp1` and `h_dp2` encode these simplifications: the
 general forms are contained in the simplified forms, so nonemptiness
 of the general forms transfers to the simplified forms. -/
 theorem fc_with_anaphora (cfg : BathroomConfig W E)
-    (s : Set (Possibility W ℕ (Option E)))
+    (s : Set (Possibility W ℕ (Part E)))
     (h_poss : possible (bathroomSentence cfg) s)
     (h_dp1 : disjPos1 (BilateralDen.neg cfg.bathroom) cfg.funnyPlace s ⊆
              cfg.bathroom.negative s)
@@ -414,32 +414,35 @@ def pHolds : PEntity → PWorld → Prop
   | _, _ => False
 
 /-- The paper's `[x → e]`: register 0 defined, all else `∗`. -/
-def xTo (e : PEntity) : ℕ → Option PEntity :=
-  fun n => if n = 0 then some e else none
+def xTo (e : PEntity) : ℕ → Part PEntity :=
+  fun n => if n = 0 then Part.some e else ⊥
 
 /-- The paper's `[]`: everything `∗`. -/
-def blank : ℕ → Option PEntity := fun _ => none
+def blank : ℕ → Part PEntity := fun _ => ⊥
 
 open PWorld in
 /-- The state of (56). -/
-def s56 : Set (Possibility PWorld ℕ (Option PEntity)) :=
+def s56 : Set (Possibility PWorld ℕ (Part PEntity)) :=
   {⟨wa, xTo .a⟩, ⟨wa, xTo .b⟩, ⟨wb, xTo .a⟩, ⟨wb, xTo .b⟩, ⟨w0, blank⟩}
 
 /-- Positive consistency: `(wa, [x → a])` survives assertion (56a). -/
 theorem mem_positive_s56 :
-    (⟨.wa, xTo .a⟩ : Possibility PWorld ℕ (Option PEntity)) ∈
+    (⟨.wa, xTo .a⟩ : Possibility PWorld ℕ (Part PEntity)) ∈
       (BilateralDen.pred1 pHolds 0).positive s56 :=
-  ⟨by simp [s56], .a, rfl, trivial⟩
+  ⟨by simp [s56], .a, Part.mem_some _, trivial⟩
 
 /-- The gap: `(w∅, [])` subsists in neither dimension, so it is in the
 unknown update (56c). -/
 theorem gap_mem_unknownUpdate_s56 :
-    (⟨.w0, blank⟩ : Possibility PWorld ℕ (Option PEntity)) ∈
+    (⟨.w0, blank⟩ : Possibility PWorld ℕ (Part PEntity)) ∈
       (BilateralDen.pred1 pHolds 0).unknownUpdate s56 := by
   refine ⟨by simp [s56], ?_, ?_⟩ <;>
   · rintro ⟨q, ⟨hq, e, he, -⟩, hw, -⟩
     rcases (by simpa [s56] using hq : q = _ ∨ q = _ ∨ q = _ ∨ q = _ ∨ q = _)
-      with rfl | rfl | rfl | rfl | rfl <;> simp_all [blank]
+      with rfl | rfl | rfl | rfl | rfl <;>
+      first
+        | exact absurd he (Part.notMem_none e)
+        | simp_all
 
 /-- (56)'s upshot: `P(x)` is not assertable at the partially familiar
 state. -/
@@ -451,7 +454,7 @@ theorem not_assertable_s56 :
 `not_assertable_s56` so does assertability; the paper's point is that the
 converse can fail (assertability is strictly weaker). -/
 theorem not_familiar_s56 : ¬Familiar s56 0 := fun h =>
-  h ⟨.w0, blank⟩ (by simp [s56]) rfl
+  h ⟨.w0, blank⟩ (by simp [s56])
 
 end PartialFamiliarity
 

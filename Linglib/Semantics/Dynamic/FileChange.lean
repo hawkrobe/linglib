@@ -33,7 +33,7 @@ the referent-free shadow of the 1982 ones.
 ## Main definitions
 
 - `FCP`: file change potentials —
-  `CCP.Partial (Possibility W V (Option M))`.
+  `CCP.Partial (Possibility W V (Part M))`.
 - `FCP.ofState`: assertive update as consistent merge; `FCP.atomW`,
   `FCP.atomVar`, `FCP.atomVar2` are its instances at proposition
   states.
@@ -61,7 +61,7 @@ namespace DynamicSemantics
 referential information states — `CCP.Partial` at the possibility type.
 Partiality is presupposition (`CCP.Partial.admits`); Heim's files number
 their cards, `V := ℕ`. -/
-abbrev FCP (W V M : Type*) := CCP.Partial (Possibility W V (Option M))
+abbrev FCP (W V M : Type*) := CCP.Partial (Possibility W V (Part M))
 
 namespace FCP
 
@@ -70,7 +70,7 @@ variable {W V M : Type*}
 /-- Card `x` in `F` refers to `m`: every point assigns `m` to `x`
 (Ch. III §2.3). -/
 def refersTo (F : State W V M) (x : V) (m : M) : Prop :=
-  ∀ p ∈ F, p.assignment x = some m
+  ∀ p ∈ F, m ∈ p.assignment x
 
 /-- Assertive update by a state: consistent merge ([heim-1983]'s revised
 atomic rule (18), which is [kamp-vangenabith-reyle-2011] Def. 26's
@@ -100,12 +100,12 @@ proposition state. Familiar `x` filters (rule (13)); novel `x` extends
 (rule (18)) — per point, so partially familiar files update
 pointwise. -/
 def atomVar (pred : M → Prop) (x : V) : FCP W V M :=
-  ofState {q | q.domain = {x} ∧ ∃ m, q.assignment x = some m ∧ pred m}
+  ofState {q | q.domain = {x} ∧ ∃ m ∈ q.assignment x, pred m}
 
 /-- Binary atomic predicate at `x` and `y`. -/
 def atomVar2 (pred : M → M → Prop) (x y : V) : FCP W V M :=
-  ofState {q | q.domain = {x, y} ∧ ∃ m m', q.assignment x = some m ∧
-    q.assignment y = some m' ∧ pred m m'}
+  ofState {q | q.domain = {x, y} ∧ ∃ m ∈ q.assignment x,
+    ∃ m' ∈ q.assignment y, pred m m'}
 
 /-- Negation: keep the points of `F` that do not subsist in the scope's
 update — the no-verifying-extension clause, as non-subsistence.
@@ -126,7 +126,7 @@ open a new file card. [heim-1991] later derives novelty from Maximize
 Presupposition rather than stipulating it; the guard here is the
 original (15). -/
 def indef [DecidableEq V] (x : V) (body : FCP W V M) : FCP W V M :=
-  fun F => Part.assert (∀ p ∈ F, p.assignment x = none) fun _ =>
+  fun F => Part.assert (∀ p ∈ F, ¬(p.assignment x).Dom) fun _ =>
     body (State.randomAssign F x)
 
 /-- Definite reference: defined only if `x` is familiar (the Familiarity
@@ -182,7 +182,7 @@ its card is novel and the body is defined on the extended file. -/
 theorem admits_indef [DecidableEq V] (x : V) (body : FCP W V M)
     (F : State W V M) :
     (indef x body).admits F ↔
-      ∃ _ : ∀ p ∈ F, p.assignment x = none,
+      ∃ _ : ∀ p ∈ F, ¬(p.assignment x).Dom,
         (body (F.randomAssign x)).Dom := by
   exact Iff.rfl
 
@@ -205,99 +205,98 @@ theorem atomW_eq (pred : W → Prop) (F : State W V M) :
     atomW pred F = Part.some {p ∈ F | pred p.world} := by
   refine congrArg Part.some (Set.ext fun r => ⟨?_, ?_⟩)
   · rintro ⟨p, hp, q, ⟨hqdom, hqpred⟩, hpq, rfl⟩
-    have hqnone : ∀ v, q.assignment v = none := fun v =>
-      Option.not_isSome_iff_eq_none.mp fun hs =>
-        Set.eq_empty_iff_forall_notMem.mp hqdom v hs
-    have huq : p.union q = p :=
-      Possibility.ext rfl (funext fun v => by
-        simp [Possibility.union, hqnone v])
-    rw [huq]
+    have hqle : q ≤ p := ⟨(Possibility.compat_iff.mp hpq).1.symm, fun v e he =>
+      absurd (Part.dom_iff_mem.mpr ⟨e, he⟩)
+        (Set.eq_empty_iff_forall_notMem.mp hqdom v)⟩
+    rw [le_antisymm (Possibility.union_le le_rfl hqle) (Possibility.le_union_left p q)]
     exact ⟨hp, (Possibility.compat_iff.mp hpq).1.symm ▸ hqpred⟩
   · rintro ⟨hr, hpred⟩
-    refine ⟨r, hr, ⟨r.world, fun _ => none⟩,
-      ⟨Set.ext fun v => by simp [Possibility.domain], hpred⟩,
-      Possibility.compat_iff.mpr ⟨rfl, fun _ _ _ _ h => by simp at h⟩, ?_⟩
-    exact Possibility.ext rfl (funext fun v => by simp [Possibility.union])
+    have hqle : (⟨r.world, fun _ => ⊥⟩ : Possibility W V (Part M)) ≤ r :=
+      ⟨rfl, fun _ => bot_le⟩
+    refine ⟨r, hr, ⟨r.world, fun _ => ⊥⟩,
+      ⟨Set.eq_empty_iff_forall_notMem.mpr fun _ hv => hv, hpred⟩,
+      Possibility.compat_iff.mpr ⟨rfl, fun _ _ _ _ h => absurd h (Part.notMem_none _)⟩, ?_⟩
+    exact (le_antisymm (Possibility.union_le le_rfl hqle)
+      (Possibility.le_union_left ..)).symm
 
 /-- Rule (13), the familiar regime: at a familiar card the atom
 filters — and in particular is eliminative. -/
-theorem atomVar_eq_of_familiar [DecidableEq V] (pred : M → Prop) (x : V)
+theorem atomVar_eq_of_familiar (pred : M → Prop) (x : V)
     {F : State W V M} (hfam : Familiar F x) :
     atomVar pred x F =
-      Part.some {p ∈ F | ∃ m, p.assignment x = some m ∧ pred m} := by
+      Part.some {p ∈ F | ∃ m ∈ p.assignment x, pred m} := by
   refine congrArg Part.some (Set.ext fun r => ⟨?_, ?_⟩)
   · rintro ⟨p, hp, q, ⟨hqdom, m, hqx, hpred⟩, hpq, rfl⟩
-    have hqnone : ∀ v, v ≠ x → q.assignment v = none := fun v hv =>
-      Option.not_isSome_iff_eq_none.mp fun hs => hv (by
-        have : v ∈ q.domain := hs
-        rwa [hqdom] at this)
-    obtain ⟨m₀, hpx⟩ := Option.ne_none_iff_exists'.mp (hfam p hp)
-    have huq : p.union q = p :=
-      Possibility.ext rfl (funext fun v => by
-        by_cases hv : v = x
-        · subst hv; simp [Possibility.union, hpx]
-        · simp [Possibility.union, hqnone v hv])
-    rw [huq]
-    exact ⟨hp, m₀, hpx, by rw [(Possibility.compat_iff.mp hpq).2 x m₀ m hpx hqx]; exact hpred⟩
+    obtain ⟨hw, hag⟩ := Possibility.compat_iff.mp hpq
+    obtain ⟨m₀, hpx⟩ := Part.dom_iff_mem.mp (hfam p hp)
+    have hqle : q ≤ p := ⟨hw.symm, fun v e he => by
+      have hveq : v = x := hqdom.subset (Part.dom_iff_mem.mpr ⟨e, he⟩)
+      subst hveq
+      exact (Part.mem_unique he hqx).trans (hag v m₀ m hpx hqx).symm ▸ hpx⟩
+    rw [le_antisymm (Possibility.union_le le_rfl hqle) (Possibility.le_union_left p q)]
+    exact ⟨hp, m₀, hpx, hag x m₀ m hpx hqx ▸ hpred⟩
   · rintro ⟨hr, m, hrx, hpred⟩
-    refine ⟨r, hr, ⟨r.world, fun v => if v = x then some m else none⟩,
-      ⟨Set.ext fun v => by by_cases hv : v = x <;>
-        simp [Possibility.domain, hv], m, by simp, hpred⟩,
+    have hqle : (⟨r.world, fun v => ⟨v = x, fun _ => m⟩⟩ : Possibility W V (Part M)) ≤ r :=
+      ⟨rfl, fun v e he => by obtain ⟨rfl, rfl⟩ := he; exact hrx⟩
+    refine ⟨r, hr, ⟨r.world, fun v => ⟨v = x, fun _ => m⟩⟩,
+      ⟨Set.ext fun v => Iff.rfl, m, ⟨rfl, rfl⟩, hpred⟩,
       Possibility.compat_iff.mpr ⟨rfl, fun v e e' he he' => ?_⟩, ?_⟩
-    · have he2 : (if v = x then some m else none) = some e' := he'
-      by_cases hv : v = x
-      · rw [if_pos hv] at he2
-        rw [hv, hrx] at he
-        exact (Option.some_inj.mp he).symm.trans (Option.some_inj.mp he2)
-      · rw [if_neg hv] at he2
-        simp at he2
-    · refine Possibility.ext rfl (funext fun v => ?_)
-      by_cases hv : v = x
-      · subst hv; simp [Possibility.union, hrx]
-      · simp [Possibility.union, hv]
+    · obtain ⟨rfl, rfl⟩ := he'
+      exact Part.mem_unique he hrx
+    · exact (le_antisymm (Possibility.union_le le_rfl hqle)
+        (Possibility.le_union_left ..)).symm
 
 /-- Rule (18), the novel regime: at a novel card the atom extends each
 point with every witness — random assignment then filtering, in one
 step. The indefinite needs no extra content clause; `indef` adds only
 the Novelty guard. -/
 theorem atomVar_eq_of_novel [DecidableEq V] (pred : M → Prop) (x : V)
-    {F : State W V M} (hnov : ∀ p ∈ F, p.assignment x = none) :
+    {F : State W V M} (hnov : ∀ p ∈ F, ¬(p.assignment x).Dom) :
     atomVar pred x F = Part.some
-      {p ∈ State.randomAssign F x |
-        ∃ m, p.assignment x = some m ∧ pred m} := by
+      {p ∈ State.randomAssign F x | ∃ m ∈ p.assignment x, pred m} := by
   refine congrArg Part.some (Set.ext fun r => ⟨?_, ?_⟩)
   · rintro ⟨p, hp, q, ⟨hqdom, m, hqx, hpred⟩, hpq, rfl⟩
-    have hqnone : ∀ v, v ≠ x → q.assignment v = none := fun v hv =>
-      Option.not_isSome_iff_eq_none.mp fun hs => hv (by
-        have : v ∈ q.domain := hs
-        rwa [hqdom] at this)
-    have huq : p.union q = p.update x (some m) :=
+    have huq : p.union q = p.update x (Part.some m) :=
       Possibility.ext rfl (funext fun v => by
         by_cases hv : v = x
-        · subst hv; simp [Possibility.union, Possibility.update,
-            hnov p hp, hqx]
-        · simp [Possibility.union, Possibility.update, hqnone v hv, hv])
+        · subst hv
+          simp only [Possibility.union, Possibility.update_assignment,
+            Function.update_self]
+          rw [if_neg (hnov p hp)]
+          exact Part.eq_some_iff.mpr hqx
+        · have hqv : q.assignment v = ⊥ :=
+            Part.eq_none_iff'.mpr fun hd => hv (hqdom.subset hd)
+          by_cases hdp : (p.assignment v).Dom
+          · simp [Possibility.union, Possibility.update, hdp, Function.update_of_ne hv]
+          · have hpv : p.assignment v = ⊥ := Part.eq_none_iff'.mpr hdp
+            simp [Possibility.union, Possibility.update, hqv, hpv,
+              Function.update_of_ne hv])
     rw [huq]
-    exact ⟨⟨p, hp, m, rfl⟩, m, by simp, hpred⟩
+    exact ⟨⟨p, hp, m, rfl⟩, m, by simp [Possibility.update], hpred⟩
   · rintro ⟨hmem, m, hrx, hpred⟩
     obtain ⟨p, hp, m', rfl⟩ := hmem
-    simp only [Possibility.update_assignment, Function.update_self] at hrx
-    obtain rfl := (Option.some_inj.mp hrx).symm
-    refine ⟨p, hp, ⟨p.world, fun v => if v = x then some m else none⟩,
-      ⟨Set.ext fun v => by by_cases hv : v = x <;>
-        simp [Possibility.domain, hv], m, by simp, hpred⟩,
+    obtain rfl : m = m' := by
+      simpa [Possibility.update] using hrx
+    refine ⟨p, hp, ⟨p.world, fun v => ⟨v = x, fun _ => m⟩⟩,
+      ⟨Set.ext fun v => Iff.rfl, m, ⟨rfl, rfl⟩, hpred⟩,
       Possibility.compat_iff.mpr ⟨rfl, fun v e e' he he' => ?_⟩, ?_⟩
-    · have he2 : (if v = x then some m else none) = some e' := he'
+    · obtain ⟨rfl, rfl⟩ := he'
+      exact absurd (Part.dom_iff_mem.mpr ⟨e, he⟩) (hnov p hp)
+    · refine Possibility.ext rfl (funext fun v => ?_)
       by_cases hv : v = x
-      · rw [hv, hnov p hp] at he
-        simp at he
-      · rw [if_neg hv] at he2
-        simp at he2
-    · refine Possibility.ext (by simp [Possibility.union]) (funext fun v => ?_)
-      by_cases hv : v = x
-      · rw [hv]
-        simp [Possibility.union, Possibility.update, hnov p hp]
-      · simp [Possibility.union, Possibility.update, hv]
+      · subst hv
+        simp only [Possibility.union, Possibility.update_assignment,
+          Function.update_self]
+        rw [if_neg (hnov p hp)]
+        symm
+        exact Part.eq_some_iff.mpr ⟨rfl, rfl⟩
+      · have hqv : (⟨v = x, fun _ => m⟩ : Part M) = ⊥ :=
+          Part.eq_none_iff'.mpr fun hd => hv hd
+        by_cases hdp : (p.assignment v).Dom
+        · simp [Possibility.union, Possibility.update, hdp, Function.update_of_ne hv]
+        · have hpv : p.assignment v = ⊥ := Part.eq_none_iff'.mpr hdp
+          simp [Possibility.union, Possibility.update, hqv, hpv,
+            Function.update_of_ne hv]
 
 /-- World atoms are eliminative (the familiar face of Principle (A)). -/
 theorem atomW_eliminative (pred : W → Prop) {F F' : State W V M}
@@ -307,7 +306,7 @@ theorem atomW_eliminative (pred : W → Prop) {F F' : State W V M}
   exact fun p hp => hp.1
 
 /-- Variable atoms are eliminative at familiar cards. -/
-theorem atomVar_eliminative [DecidableEq V] (pred : M → Prop) (x : V)
+theorem atomVar_eliminative (pred : M → Prop) (x : V)
     {F F' : State W V M}
     (hfam : Familiar F x) (h : F' ∈ atomVar pred x F) : F' ⊆ F := by
   rw [atomVar_eq_of_familiar pred x hfam] at h

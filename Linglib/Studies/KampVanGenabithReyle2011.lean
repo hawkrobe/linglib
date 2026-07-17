@@ -34,12 +34,12 @@ referent, so anaphora can distinguish them. -/
 /-- "A marble is missing": the referent carries the marble `0`, in world
 `true`. -/
 def marbleState : State Bool Unit (Fin 2) :=
-  {p | p.world = true ∧ p.assignment () = some 0}
+  {p | p.world = true ∧ p.assignment () = Part.some 0}
 
 /-- "A coin is missing": the referent carries the coin `1`, in world
 `true`. -/
 def coinState : State Bool Unit (Fin 2) :=
-  {p | p.world = true ∧ p.assignment () = some 1}
+  {p | p.world = true ∧ p.assignment () = Part.some 1}
 
 /-- The two states determine the same worldly content (Def. 23(v)'s
 proposition). -/
@@ -48,9 +48,9 @@ theorem marble_worlds_eq_coin : worlds marbleState = worlds coinState := by
   simp only [mem_worlds]
   constructor
   · rintro ⟨p, ⟨hw, -⟩, rfl⟩
-    exact ⟨⟨p.world, fun _ => some 1⟩, ⟨hw, rfl⟩, rfl⟩
+    exact ⟨⟨p.world, fun _ => Part.some 1⟩, ⟨hw, rfl⟩, rfl⟩
   · rintro ⟨p, ⟨hw, -⟩, rfl⟩
-    exact ⟨⟨p.world, fun _ => some 0⟩, ⟨hw, rfl⟩, rfl⟩
+    exact ⟨⟨p.world, fun _ => Part.some 0⟩, ⟨hw, rfl⟩, rfl⟩
 
 /-- But the states differ: the marble witness is not a coin witness. The
 worldly collapse (`marble_worlds_eq_coin`) plus this separation is Partee's
@@ -58,11 +58,11 @@ argument that context change operates on information states, not
 propositions. -/
 theorem marble_ne_coin : marbleState ≠ coinState := by
   intro h
-  have hmem : (⟨true, fun _ => some 0⟩ : Possibility Bool Unit (Option (Fin 2))) ∈
+  have hmem : (⟨true, fun _ => Part.some 0⟩ : Possibility Bool Unit (Part (Fin 2))) ∈
       coinState := by
     rw [← h]
     exact ⟨rfl, rfl⟩
-  exact absurd hmem.2 (by simp)
+  exact absurd (Part.some_inj.mp hmem.2) (by simp)
 
 /-! ### The action equation on a two-sentence discourse (p. 159) -/
 
