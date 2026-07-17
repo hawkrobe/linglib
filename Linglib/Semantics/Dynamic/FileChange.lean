@@ -15,7 +15,7 @@ Presupposition is `Part`-definedness (`CCP.Partial.admits`, Heim's
 definedness conditions; sequencing and its monoid laws are `PFun.comp`'s
 (`PFun.comp_assoc`, `PFun.id_comp`, `PFun.comp_id`).
 
-The assertive update is *consistent merge* (`State.merge`,
+The assertive update is *consistent merge* (the `State` monoid's `*`,
 [kamp-vangenabith-reyle-2011] Def. 26): [heim-1983]'s revised atomic
 rule (18), which filters where the input already defines the atom's
 cards (rule (13), `atomVar_eq_of_familiar`) and extends where it does
@@ -74,21 +74,22 @@ def refersTo (F : State W V M) (x : V) (m : M) : Prop :=
 
 /-- Assertive update by a state: consistent merge ([heim-1983]'s revised
 atomic rule (18), which is [kamp-vangenabith-reyle-2011] Def. 26's
-`State.merge`) — each input point pairs with every compatible point of
+consistent merge, the `State` monoid's `*`) — each input point pairs
+with every compatible point of
 `A`, filtering where their domains overlap and extending where `A`
 defines more. Total: appropriateness ((15), the Novelty/Familiarity
 Condition) lives on `indef`/`def_`, as in the paper. -/
 def ofState (A : State W V M) : FCP W V M :=
-  fun F => Part.some (State.merge F A)
+  fun F => Part.some (F.toState * A)
 
 /-- Principle (A), general form: assertive update ascends in
-informativeness — `State.le_merge_left`. Set-shrinking eliminativity is
+informativeness — `State.left_le_mul`. Set-shrinking eliminativity is
 its familiar-regime shadow (`atomVar_eq_of_familiar`); on novel
 referents the update extends rather than shrinks. -/
 theorem le_ofState (A : State W V M) {F F' : State W V M}
     (h : F' ∈ ofState A F) : F ≤ F' := by
   obtain rfl := Part.mem_some_iff.mp h
-  exact State.le_merge_left
+  exact State.left_le_mul
 
 /-- Atomic predicate on the world: merge with the empty-domain
 proposition state. -/
@@ -206,14 +207,14 @@ theorem atomW_eq (pred : W → Prop) (F : State W V M) :
     atomW pred F = Part.some {p ∈ F | pred p.world} := by
   refine congrArg Part.some (Set.ext fun r => ⟨?_, ?_⟩)
   · intro hr
-    obtain ⟨p, hp, q, ⟨hqdom, hqpred⟩, hpq, rfl⟩ := State.mem_merge.mp hr
+    obtain ⟨p, hp, q, ⟨hqdom, hqpred⟩, hpq, rfl⟩ := State.mem_mul.mp hr
     have hqle : q ≤ p := ⟨(Possibility.compat_iff.mp hpq).1.symm, fun v e he =>
       absurd (Part.dom_iff_mem.mpr ⟨e, he⟩)
         (Set.eq_empty_iff_forall_notMem.mp hqdom v)⟩
     rw [le_antisymm (Possibility.union_le le_rfl hqle) Possibility.le_union_left]
     exact ⟨hp, (Possibility.compat_iff.mp hpq).1.symm ▸ hqpred⟩
   · rintro ⟨hr, hpred⟩
-    exact State.mem_merge.mpr ⟨r, hr, Possibility.bot r.world,
+    exact State.mem_mul.mpr ⟨r, hr, Possibility.bot r.world,
       ⟨Possibility.domain_bot, hpred⟩, .of_le le_rfl Possibility.bot_le,
       Possibility.union_bot.symm⟩
 
@@ -225,7 +226,7 @@ theorem atomVar_eq_of_familiar (pred : M → Prop) (x : V)
       Part.some {p ∈ F | ∃ m ∈ p.assignment x, pred m} := by
   refine congrArg Part.some (Set.ext fun r => ⟨?_, ?_⟩)
   · intro hmem
-    obtain ⟨p, hp, q, ⟨hqdom, m, hqx, hpred⟩, hpq, rfl⟩ := State.mem_merge.mp hmem
+    obtain ⟨p, hp, q, ⟨hqdom, m, hqx, hpred⟩, hpq, rfl⟩ := State.mem_mul.mp hmem
     obtain ⟨hw, hag⟩ := Possibility.compat_iff.mp hpq
     obtain ⟨m₀, hpx⟩ := Part.dom_iff_mem.mp (hfam p hp)
     have hqle : q ≤ p := ⟨hw.symm, fun v e he => by
@@ -237,7 +238,7 @@ theorem atomVar_eq_of_familiar (pred : M → Prop) (x : V)
   · rintro ⟨hr, m, hrx, hpred⟩
     have hqle : (⟨r.world, fun v => ⟨v = x, fun _ => m⟩⟩ : Possibility W V (Part M)) ≤ r :=
       ⟨rfl, fun v e he => by obtain ⟨rfl, rfl⟩ := he; exact hrx⟩
-    refine State.mem_merge.mpr ⟨r, hr, ⟨r.world, fun v => ⟨v = x, fun _ => m⟩⟩,
+    refine State.mem_mul.mpr ⟨r, hr, ⟨r.world, fun v => ⟨v = x, fun _ => m⟩⟩,
       ⟨Set.ext fun v => Iff.rfl, m, ⟨rfl, rfl⟩, hpred⟩,
       Possibility.compat_iff.mpr ⟨rfl, fun v e e' he he' => ?_⟩, ?_⟩
     · obtain ⟨rfl, rfl⟩ := he'
@@ -255,7 +256,7 @@ theorem atomVar_eq_of_novel [DecidableEq V] (pred : M → Prop) (x : V)
       {p ∈ State.randomAssign F x | ∃ m ∈ p.assignment x, pred m} := by
   refine congrArg Part.some (Set.ext fun r => ⟨?_, ?_⟩)
   · intro hmem
-    obtain ⟨p, hp, q, ⟨hqdom, m, hqx, hpred⟩, hpq, rfl⟩ := State.mem_merge.mp hmem
+    obtain ⟨p, hp, q, ⟨hqdom, m, hqx, hpred⟩, hpq, rfl⟩ := State.mem_mul.mp hmem
     have huq : p.union q = p.update x (Part.some m) :=
       Possibility.ext rfl (funext fun v => by
         by_cases hv : v = x
@@ -270,7 +271,7 @@ theorem atomVar_eq_of_novel [DecidableEq V] (pred : M → Prop) (x : V)
     obtain ⟨p, hp, m', rfl⟩ := hmem
     obtain rfl : m = m' := by
       simpa [Possibility.update] using hrx
-    refine State.mem_merge.mpr ⟨p, hp, ⟨p.world, fun v => ⟨v = x, fun _ => m⟩⟩,
+    refine State.mem_mul.mpr ⟨p, hp, ⟨p.world, fun v => ⟨v = x, fun _ => m⟩⟩,
       ⟨Set.ext fun v => Iff.rfl, m, ⟨rfl, rfl⟩, hpred⟩,
       Possibility.compat_iff.mpr ⟨rfl, fun v e e' he he' => ?_⟩, ?_⟩
     · obtain ⟨rfl, rfl⟩ := he'

@@ -1,4 +1,6 @@
 import Linglib.Semantics.Dynamic.Possibility
+import Mathlib.Algebra.Group.Defs
+import Mathlib.Algebra.Order.Monoid.Unbundled.Defs
 import Mathlib.Order.UpperLower.CompleteLattice
 import Mathlib.Order.Hom.Basic
 
@@ -12,7 +14,7 @@ carries *informativeness* (Def. 0.25) as its preorder, lifted along the
 upper closure of the point set: `s ≤ s'` iff every point of the
 stronger state lies above a point of the weaker. The initial state is
 `⊥`, the absurd state is `⊤ = ∅`, and consistent merge (Def. 0.26) is
-the least upper bound.
+the monoid multiplication and the least upper bound.
 
 Def. 0.23's base `X` is not a component: `State.UniformAt X` carves it
 out as a stratum, whose states are sets of world–`X`-assignment pairs
@@ -27,7 +29,9 @@ are partial orders, coinciding with `⊇` and `⊆`.
 
 - `State`: information states, preordered by informativeness; `⊥` is
   the initial state (Def. 0.23's Λ), `⊤ = ∅` the absurd state.
-- `State.merge`: consistent merge (Def. 0.26, binary), as `Set.lubs`.
+- the `CommMonoid` instance: `*` is consistent merge (Def. 0.26,
+  binary, as `Set.lubs`) and `1 = ⊥`, so `Multiset.prod` is the finite
+  n-ary merge.
 - `State.UniformAt`, `State.restrict`: the base-`X` stratum; domain
   restriction.
 - `Familiar`, `State.randomAssign`: familiarity and random assignment
@@ -36,12 +40,12 @@ are partial orders, coinciding with `⊇` and `⊆`.
 
 ## Main results
 
-- `State.isLUB_merge`, `State.isGLB_union`: merge is the least upper
-  bound and union the greatest lower bound — with `merge_comm`,
-  `merge_assoc`, `merge_bot`, the content half of
+- `State.isLUB_mul`, `State.isGLB_union`: merge is the least upper
+  bound and union the greatest lower bound — with the `CommMonoid` and
+  `CovariantClass` instances, the content half of
   [visser-vermeulen-1996]'s monoidal processing.
 - `State.le_iff_superset`, `State.lowerClosure_le_iff`,
-  `State.merge_eq_inter_of_uniform`: on a uniform stratum the orders
+  `State.mul_eq_inter_of_uniform`: on a uniform stratum the orders
   are `⊇`/`⊆` and merge is intersection.
 - `State.uniformEquiv`: uniform states at `X` are `Set (W × (X → M))`.
 
@@ -90,6 +94,11 @@ instance : HasSubset (State W V M) := ⟨fun s s' => ∀ ⦃p⦄, p ∈ s → p 
 @[reducible] instance : Inter (State W V M) := inferInstanceAs (Inter (Set _))
 
 @[reducible] instance : SDiff (State W V M) := inferInstanceAs (SDiff (Set _))
+
+/-- Interpret a point set as an information state — the type-synonym
+retyping (`OrderDual.toDual`'s analogue), for positions whose binder is
+`Set`-typed. -/
+def _root_.Set.toState (s : Set (Possibility W V (Part M))) : State W V M := s
 
 @[ext] theorem ext {s s' : State W V M} (h : ∀ p, p ∈ s ↔ p ∈ s') : s = s' :=
   Set.ext h
@@ -144,72 +153,14 @@ it), and a state subsists in another iff `lowerClosure s ≤
 lowerClosure s'` — the closure kernel dual to `≤`, with `⊤ = ∅` at the
 bottom. -/
 
-/-! ### Consistent merge -/
+/-! ### Consistent merge as multiplication -/
 
 namespace State
 
 variable {s s' t : State W V M} {r : Possibility W V (Part M)}
 
-/-- Consistent merge ([kamp-vangenabith-reyle-2011] Def. 0.26, binary):
-the joins of pairs of points, one from each state (`Set.lubs`). Across
-strata this is the descendant-mediated join — plain intersection of
-point-sets is empty between distinct strata. -/
-def merge (s s' : State W V M) : State W V M :=
-  Set.lubs s s'
-
-/-- Membership in a merge, in union form. -/
-theorem mem_merge :
-    r ∈ s.merge s' ↔ ∃ p ∈ s, ∃ q ∈ s', Compat p q ∧ r = p.union q := by
-  show r ∈ Set.lubs (s : Set (Possibility W V (Part M))) s' ↔ _
-  simp only [Set.mem_lubs, Possibility.isLUB_pair_iff]
-  rfl
-
-/-- The Smyth face of the merge: upper closures compose by join. -/
-theorem upperClosure_merge :
-    upperClosure (s.merge s' : Set (Possibility W V (Part M))) =
-      upperClosure (s : Set (Possibility W V (Part M))) ⊔
-        upperClosure (s' : Set (Possibility W V (Part M))) :=
-  Set.upperClosure_lubs (fun _ _ h => ⟨_, Possibility.isLUB_union h⟩) _ _
-
-/-- The merge is above the left component. -/
-theorem le_merge_left : s ≤ s.merge s' := by
-  change upperClosure _ ≤ upperClosure _
-  rw [upperClosure_merge]
-  exact le_sup_left
-
-/-- The merge is above the right component. -/
-theorem le_merge_right : s' ≤ s.merge s' := by
-  change upperClosure _ ≤ upperClosure _
-  rw [upperClosure_merge]
-  exact le_sup_right
-
-/-- Def. 0.26's universal property: anything above both components is
-above their merge. -/
-theorem merge_le (h : s ≤ t) (h' : s' ≤ t) : s.merge s' ≤ t := by
-  change upperClosure _ ≤ upperClosure _
-  rw [upperClosure_merge]
-  exact sup_le h h'
-
-/-- **The merge is the least upper bound** of its components in the
-informativeness preorder. -/
-theorem isLUB_merge : IsLUB {s, s'} (s.merge s') :=
-  ⟨by rintro x (rfl | rfl); exacts [le_merge_left, le_merge_right],
-   fun _ hu => merge_le (hu (Set.mem_insert _ _)) (hu (Set.mem_insert_of_mem _ rfl))⟩
-
-/-- Consistent merge is commutative. -/
-theorem merge_comm (s s' : State W V M) : s.merge s' = s'.merge s :=
-  Set.lubs_comm s s'
-
-/-- Consistent merge is associative. -/
-theorem merge_assoc (s t u : State W V M) :
-    (s.merge t).merge u = s.merge (t.merge u) :=
-  Set.lubs_assoc (fun _ _ h => ⟨_, Possibility.isLUB_union h⟩) s t u
-
-/-- The initial state is a unit for consistent merge: with `merge_comm`,
-`merge_assoc`, and `isLUB_merge`, updating is joining in a commutative
-monoid of information — the content half of [visser-vermeulen-1996]'s
-monoidal processing. -/
-@[simp] theorem merge_bot (s : State W V M) : s.merge ⊥ = s := by
+private theorem lubs_bot (s : State W V M) :
+    (Set.lubs s (⊥ : State W V M) : State W V M) = s := by
   ext r
   constructor
   · rintro ⟨p, hp, q, ⟨w, rfl⟩, hlub⟩
@@ -220,15 +171,76 @@ monoidal processing. -/
       Possibility.isLUB_pair_iff.mpr
         ⟨.of_le le_rfl Possibility.bot_le, Possibility.union_bot.symm⟩⟩
 
-@[simp] theorem bot_merge (s : State W V M) : merge ⊥ s = s := by
-  rw [merge_comm, merge_bot]
+/-- States form a commutative monoid: `*` is consistent merge
+([kamp-vangenabith-reyle-2011] Def. 0.26, binary) — the joins of pairs
+of points, one from each state (`Set.lubs`) — and `1` is the initial
+state `⊥`. Updating is joining in a commutative monoid of information
+([visser-vermeulen-1996]'s monoidal processing); `Multiset.prod` is
+Def. 0.26's finite n-ary merge. -/
+instance : CommMonoid (State W V M) where
+  mul s s' := Set.lubs s s'
+  mul_assoc := Set.lubs_assoc fun _ _ h => ⟨_, Possibility.isLUB_union h⟩
+  one := ⊥
+  one_mul s := (Set.lubs_comm _ _).trans (lubs_bot s)
+  mul_one := lubs_bot
+  mul_comm := Set.lubs_comm
+
+theorem one_eq_bot : (1 : State W V M) = ⊥ := rfl
+
+/-- Membership in the merge, in union form. -/
+theorem mem_mul :
+    r ∈ s * s' ↔ ∃ p ∈ s, ∃ q ∈ s', Compat p q ∧ r = p.union q := by
+  show r ∈ Set.lubs (s : Set (Possibility W V (Part M))) s' ↔ _
+  simp only [Set.mem_lubs, Possibility.isLUB_pair_iff]
+  rfl
+
+/-- The Smyth face of the merge: upper closures compose by join. -/
+theorem upperClosure_mul :
+    upperClosure ((s * s' : State W V M) : Set (Possibility W V (Part M))) =
+      upperClosure (s : Set (Possibility W V (Part M))) ⊔
+        upperClosure (s' : Set (Possibility W V (Part M))) :=
+  Set.upperClosure_lubs (fun _ _ h => ⟨_, Possibility.isLUB_union h⟩) _ _
+
+/-- The merge is above the left factor. -/
+theorem left_le_mul : s ≤ s * s' := by
+  change upperClosure _ ≤ upperClosure _
+  rw [upperClosure_mul]
+  exact le_sup_left
+
+/-- The merge is above the right factor. -/
+theorem right_le_mul : s' ≤ s * s' := by
+  change upperClosure _ ≤ upperClosure _
+  rw [upperClosure_mul]
+  exact le_sup_right
+
+/-- Def. 0.26's universal property: anything above both factors is
+above their merge. -/
+theorem mul_le (h : s ≤ t) (h' : s' ≤ t) : s * s' ≤ t := by
+  change upperClosure _ ≤ upperClosure _
+  rw [upperClosure_mul]
+  exact sup_le h h'
+
+/-- **The merge is the least upper bound** of its factors in the
+informativeness preorder. -/
+theorem isLUB_mul : IsLUB {s, s'} (s * s') :=
+  ⟨by rintro x (rfl | rfl); exacts [left_le_mul, right_le_mul],
+   fun _ hu => mul_le (hu (Set.mem_insert _ _)) (hu (Set.mem_insert_of_mem _ rfl))⟩
+
+/-- Merge is monotone: the ordered-monoid law, [kamp-vangenabith-reyle-2011]
+Def. 0.27's ascent composes across updates. -/
+instance : CovariantClass (State W V M) (State W V M) (· * ·) (· ≤ ·) :=
+  ⟨fun _ _ _ h => mul_le left_le_mul (h.trans right_le_mul)⟩
+
+instance : CovariantClass (State W V M) (State W V M)
+    (Function.swap (· * ·)) (· ≤ ·) :=
+  ⟨fun _ _ _ h => mul_le (h.trans left_le_mul) right_le_mul⟩
 
 /-! ### Union is the meet
 
 Merge is the join of the informativeness order; plain union is its
 meet — pooling two states keeps exactly their common information. `∪`
 is **not** merge: within a stratum merge is intersection
-(`merge_eq_inter_of_uniform`), the eliminative regime. -/
+(`mul_eq_inter_of_uniform`), the eliminative regime. -/
 
 /-- The Smyth face of the union: upper closures compose by meet. -/
 theorem upperClosure_union :
@@ -256,7 +268,7 @@ theorem le_union (h : t ≤ s) (h' : t ≤ s') : t ≤ s ∪ s' := by
   exact le_inf h h'
 
 /-- **The union is the greatest lower bound** of its components in the
-informativeness preorder — the meet dual to `isLUB_merge`. -/
+informativeness preorder — the meet dual to `isLUB_mul`. -/
 theorem isGLB_union : IsGLB {s, s'} (s ∪ s') :=
   ⟨by rintro x (rfl | rfl); exacts [union_le_left, union_le_right],
    fun _ hu => le_union (hu (Set.mem_insert _ _)) (hu (Set.mem_insert_of_mem _ rfl))⟩
@@ -317,10 +329,10 @@ theorem le_iff_superset {X : Set V} (hs : UniformAt X s) (hs' : UniformAt X s') 
 
 /-- Within one stratum, merge is intersection: compatibility on a shared
 domain forces equality. -/
-theorem merge_eq_inter_of_uniform {X : Set V} (hs : UniformAt X s)
-    (hs' : UniformAt X s') : s.merge s' = s ∩ s' := by
+theorem mul_eq_inter_of_uniform {X : Set V} (hs : UniformAt X s)
+    (hs' : UniformAt X s') : s * s' = s ∩ s' := by
   ext r
-  rw [mem_merge]
+  rw [mem_mul]
   constructor
   · rintro ⟨p, hp, q, hq, hpq, rfl⟩
     obtain rfl := Possibility.eq_of_compat_of_domain_eq hpq ((hs p hp).trans (hs' q hq).symm)
@@ -341,10 +353,10 @@ theorem mem_restrict {X : Set V} {I : State W V M} {p : Possibility W V (Part M)
 section Fibred
 
 /-- Merge unites strata. -/
-theorem uniformAt_merge {X Y : Set V} (hs : UniformAt X s) (hs' : UniformAt Y s') :
-    UniformAt (X ∪ Y) (s.merge s') := by
+theorem uniformAt_mul {X Y : Set V} (hs : UniformAt X s) (hs' : UniformAt Y s') :
+    UniformAt (X ∪ Y) (s * s') := by
   intro r hr
-  obtain ⟨p, hp, q, hq, -, rfl⟩ := mem_merge.mp hr
+  obtain ⟨p, hp, q, hq, -, rfl⟩ := mem_mul.mp hr
   rw [Possibility.domain_union, hs p hp, hs' q hq]
 
 /-- Subsistence out of a stratum factors through reindexing: the weaker
