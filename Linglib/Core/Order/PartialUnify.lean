@@ -1,5 +1,7 @@
 import Mathlib.Order.Bounds.Image
 import Mathlib.Data.Fintype.Basic
+import Mathlib.Order.UpperLower.Closure
+import Mathlib.Order.UpperLower.CompleteLattice
 
 /-!
 # Partial unification: computable pairwise least upper bounds
@@ -285,6 +287,40 @@ theorem lubs_comm (s t : Set α) : s.lubs t = t.lubs s := by
   ext c
   constructor <;> rintro ⟨a, ha, b, hb, h⟩ <;>
     exact ⟨b, hb, a, ha, pair_comm a b ▸ h⟩
+
+/-- A set of local units is a right identity for `lubs`: every element
+dominates a member of `t`, and members of `t` sit below anything they
+are compatible with — the set-level face of `⊥` as identity. -/
+theorem lubs_eq_left (h₁ : ∀ a : α, ∃ b ∈ t, b ≤ a)
+    (h₂ : ∀ a : α, ∀ b ∈ t, Compat a b → b ≤ a) : s.lubs t = s := by
+  ext c
+  constructor
+  · rintro ⟨a, ha, b, hb, hub, hleast⟩
+    have hca : c = a := le_antisymm
+      (hleast (PartialUnify.mem_upperBounds_pair.mpr ⟨le_rfl, h₂ a b hb ⟨c, hub⟩⟩))
+      (hub (mem_insert _ _))
+    exact hca ▸ ha
+  · intro hc
+    obtain ⟨b, hb, hbc⟩ := h₁ c
+    exact ⟨c, hc, b, hb, PartialUnify.mem_upperBounds_pair.mpr ⟨le_rfl, hbc⟩,
+      fun _ hu => hu (mem_insert _ _)⟩
+
+/-- Under pairwise bounded completeness, upper closure sends `lubs` to
+the join: a point bounds a pairwise join iff it bounds a point of each
+set. -/
+theorem upperClosure_lubs
+    (H : ∀ a b : α, Compat a b → ∃ c, IsLUB ({a, b} : Set α) c) (s t : Set α) :
+    upperClosure (s.lubs t) = upperClosure s ⊔ upperClosure t := by
+  ext x
+  simp only [SetLike.mem_coe, UpperSet.mem_sup_iff, mem_upperClosure, mem_lubs]
+  constructor
+  · rintro ⟨c, ⟨a, ha, b, hb, hab⟩, hcx⟩
+    obtain ⟨hac, hbc⟩ := PartialUnify.mem_upperBounds_pair.mp hab.1
+    exact ⟨⟨a, ha, hac.trans hcx⟩, b, hb, hbc.trans hcx⟩
+  · rintro ⟨⟨a, ha, hax⟩, b, hb, hbx⟩
+    obtain ⟨c, hc⟩ := H a b ⟨x, PartialUnify.mem_upperBounds_pair.mpr ⟨hax, hbx⟩⟩
+    exact ⟨c, ⟨a, ha, b, hb, hc⟩,
+      hc.2 (PartialUnify.mem_upperBounds_pair.mpr ⟨hax, hbx⟩)⟩
 
 private theorem mem_lubs_left_iff
     (H : ∀ a b : α, Compat a b → ∃ c, IsLUB ({a, b} : Set α) c) :

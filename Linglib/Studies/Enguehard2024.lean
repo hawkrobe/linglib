@@ -717,7 +717,7 @@ existential introduction but the output state is a subset of the input.
 
 section BilateralBridge
 
-open DynamicSemantics (BilateralDen Possibility worlds)
+open DynamicSemantics (BilateralDen Possibility)
 open DynamicSemantics.State (randomAssign)
 open DynamicSemantics.BilateralDen (neg exists_ atom)
 
@@ -741,8 +741,8 @@ theorem exists_negative_characterization
     (x : Nat) (φ : BilateralDen W ℕ E)
     (s : Set (Possibility W ℕ (Part E))) (p : Possibility W ℕ (Part E)) :
     p ∈ (exists_ x φ).negative s ↔
-    p ∈ s ∧ p.world ∉ worlds (φ.positive (randomAssign s x)) ∧
-      p.world ∈ worlds (φ.negative (randomAssign s x)) := by
+    p ∈ s ∧ p.world ∉ Possibility.world '' φ.positive (randomAssign s x) ∧
+      p.world ∈ Possibility.world '' φ.negative (randomAssign s x) := by
   simp only [exists_, Set.mem_setOf_eq]
 
 /-- Negating an existential: the positive update of `¬∃x.φ` collects
@@ -752,8 +752,8 @@ theorem neg_exists_positive
     (x : Nat) (φ : BilateralDen W ℕ E)
     (s : Set (Possibility W ℕ (Part E))) (p : Possibility W ℕ (Part E)) :
     p ∈ (neg (exists_ x φ)).positive s ↔
-    p ∈ s ∧ p.world ∉ worlds (φ.positive (randomAssign s x)) ∧
-      p.world ∈ worlds (φ.negative (randomAssign s x)) := by
+    p ∈ s ∧ p.world ∉ Possibility.world '' φ.positive (randomAssign s x) ∧
+      p.world ∈ Possibility.world '' φ.negative (randomAssign s x) := by
   simp only [neg, exists_negative_characterization]
 
 /-- The output of `¬∃x.φ` is a subset of the input state — negated

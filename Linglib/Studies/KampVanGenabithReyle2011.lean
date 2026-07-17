@@ -19,7 +19,7 @@ run against the indexed substrate (`Semantics/Dynamic/State.lean`,
 -/
 
 open FirstOrder FirstOrder.Language DRT
-open DynamicSemantics (Possibility State worlds mem_worlds)
+open DynamicSemantics (Possibility State)
 
 namespace KampVanGenabithReyle2011
 
@@ -43,9 +43,10 @@ def coinState : State Bool Unit (Fin 2) :=
 
 /-- The two states determine the same worldly content (Def. 23(v)'s
 proposition). -/
-theorem marble_worlds_eq_coin : worlds marbleState = worlds coinState := by
+theorem marble_worlds_eq_coin :
+    Possibility.world '' marbleState = Possibility.world '' coinState := by
   ext w
-  simp only [mem_worlds]
+  simp only [Set.mem_image]
   constructor
   · rintro ⟨p, ⟨hw, -⟩, rfl⟩
     exact ⟨⟨p.world, fun _ => Part.some 1⟩, ⟨hw, rfl⟩, rfl⟩

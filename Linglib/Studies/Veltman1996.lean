@@ -870,7 +870,7 @@ Veltman's information states are bare sets of worlds. In the substrate
 they are exactly the uniform states at the empty context:
 `toIndexedState` embeds them constructively — no choice, no inhabitant
 of `M`, unlike under the total-assignment rendering — the embedding
-reverses into the informativeness order `⊑`, and propositional update
+reverses into the informativeness order `≤`, and propositional update
 transports to point filtering. -/
 
 section IndexedFiber
@@ -895,8 +895,8 @@ theorem uniformAt_toIndexedState :
   Possibility.domain_eq_empty_iff.mpr hp.2
 
 /-- The embedding is faithful on worldly content. -/
-@[simp] theorem worlds_toIndexedState :
-    worlds (toIndexedState V M s) = s := by
+@[simp] theorem world_image_toIndexedState :
+    Possibility.world '' toIndexedState V M s = s := by
   ext w
   constructor
   · rintro ⟨p, hp, rfl⟩
@@ -905,9 +905,10 @@ theorem uniformAt_toIndexedState :
     exact ⟨⟨w, fun _ => ⊥⟩, ⟨hw, fun _ => rfl⟩, rfl⟩
 
 /-- Eliminating worlds is gaining information: the embedding reverses
-into `⊑`. -/
-theorem toIndexedState_infoLe_iff :
-    (toIndexedState V M s ⊑ toIndexedState V M t) ↔ t ⊆ s := by
+into `≤`. -/
+theorem toIndexedState_le_iff :
+    toIndexedState V M s ≤ toIndexedState V M t ↔ t ⊆ s := by
+  rw [State.le_def]
   constructor
   · intro h w hw
     obtain ⟨p, hp, hpq⟩ := h ⟨w, fun _ => ⊥⟩ ⟨hw, fun _ => rfl⟩
@@ -922,9 +923,11 @@ theorem toIndexedState_update_prop (φ : W → Prop) :
     toIndexedState V M (UpdateSemantics.Update.prop φ s) =
       {p ∈ toIndexedState V M s | φ p.world} :=
   Set.ext fun p => by
-    simp only [mem_toIndexedState, Set.mem_setOf_eq,
-      UpdateSemantics.Update.prop]
-    tauto
+    constructor
+    · rintro ⟨⟨hw, hφ⟩, hnone⟩
+      exact ⟨⟨hw, hnone⟩, hφ⟩
+    · rintro ⟨⟨hw, hnone⟩, hφ⟩
+      exact ⟨⟨hw, hφ⟩, hnone⟩
 
 end IndexedFiber
 

@@ -170,6 +170,14 @@ def bot (w : W) : Possibility W V (Part M) :=
 theorem bot_le : bot p.world ≤ p :=
   ⟨rfl, fun _ => _root_.bot_le⟩
 
+/-- An empty point compatible with `p` shares its world, hence sits
+below it. -/
+theorem bot_le_of_compat {w : W} (h : Compat p (bot w)) : bot w ≤ p := by
+  obtain ⟨u, hu⟩ := h
+  obtain ⟨hpu, hbu⟩ := PartialUnify.mem_upperBounds_pair.mp hu
+  rw [show w = p.world from hbu.1.trans hpu.1.symm]
+  exact bot_le
+
 @[simp] theorem union_bot {w : W} : p.union (bot w) = p :=
   Possibility.ext rfl <| funext fun _ => Part.or_bot
 
@@ -206,6 +214,10 @@ theorem le_iff_eq_restrict (hp : p.domain = X) :
   refine Part.ext' ⟨fun hd => ⟨hp.subset hd, domain_mono h hd⟩, fun hd => hp.superset hd.1⟩
     fun hd hd' => ?_
   exact Part.mem_unique (h.2 v _ (Part.get_mem hd)) (Part.get_mem hd'.2)
+
+/-- A point at its own domain is fixed by restriction. -/
+theorem restrict_eq_self (hp : p.domain = X) : p.restrict X = p :=
+  ((le_iff_eq_restrict hp).mp le_rfl).symm
 
 /-- Consecutive restrictions restrict to the intersection. -/
 theorem restrict_restrict : (p.restrict Y).restrict X = p.restrict (X ∩ Y) :=

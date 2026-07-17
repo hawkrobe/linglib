@@ -1,76 +1,35 @@
 import Linglib.Semantics.Dynamic.Possibility
-import Mathlib.Data.Set.Image
+import Mathlib.Algebra.Group.Defs
+import Mathlib.Algebra.Order.Monoid.Unbundled.Defs
+import Mathlib.Order.Antisymmetrization
+import Mathlib.Order.UpperLower.CompleteLattice
 import Mathlib.Order.Hom.Basic
 
 /-!
 # Information states
 
-An *information state* is a set of world–assignment pairs, with the
-assignments partial — [kamp-vangenabith-reyle-2011]'s Def. 23 (sets of
-pairs of a world and an embedding), the form the field standardly
-assumes: the absurd state is `∅`, the initial state is `W × {g_⊤}`
-(`initial`), and the lattice of states is `Set`'s. Partiality is by
-`Part` ([elliott-sudo-2025]'s Def. 3.1 renders it as total functions
-into `D ∪ {∗}`), so no component of a state carries data beyond the
-world–assignment pair.
+This file defines an *information state* — a set of possibilities with
+partial assignments — and its order and algebra: informativeness as
+the preorder lifted along `upperClosure`, with initial state `⊥` and
+absurd state `⊤ = ∅`; consistent merge as the monoid `*` and least
+upper bound, dually union as greatest lower bound; subsistence as the
+dual `lowerClosure` kernel; the uniform strata, where both kernels
+collapse to inclusion; and the classifications of a stratum as
+world–assignment pairs (`State.uniformEquiv`) and of states up to
+informational equivalence as the complete lattice of upper sets
+(`State.antisymmetrizationOrderIso`).
 
-There is no base field: Def. 23's "Dom(f) = X" is the *uniform* stratum
-(`UniformAt`), and a base is the index of a fiber, not part of the data.
-Points with domain `X` are world–`X`-assignment pairs, constructively
-(`Possibility.domainEquiv`). Two preorders run through states, and they
-are dual on shared strata. *Informativeness* (`⊑`,
-[kamp-vangenabith-reyle-2011] Def. 25) quantifies over the stronger
-state: every point of the stronger lies above a point of the weaker — the
-absurd state `∅` is maximally informative, the eliminative direction.
-*Subsistence* (`⪯`, [elliott-sudo-2025] Def. 3.3, after
-[groenendijk-stokhof-veltman-1996] Defs. 2.8–2.9) quantifies over the
-weaker: every point survives, extended, into the stronger — the
-anaphoric-support direction, with `∅` at the bottom. On a uniform
-stratum they reduce to `⊇` and `⊆` respectively
-(`infoLe_iff_superset`, `subsistsIn_iff_subset`).
-
-## Main definitions
-
-- `State W V M`: information states; `initial`, with `∅` the absurd
-  state.
-- `infoLe` (`⊑`): informativeness (Def. 25); `Subsists` (`≺`),
-  `subsistsIn` (`⪯`): subsistence.
-- `State.merge`: Def. 26's consistent merge.
-- `worlds`, `Familiar`: worldly content and familiarity.
-- `State.UniformAt`: the indexed stratum (Def. 23's `Dom(f) = X`).
-- `State.restrict`, `State.randomAssign`: domain restriction (by direct
-  image of `Possibility.restrict`) and random assignment.
-
-## Main results
-
-- `merge_infoLe`: the merge is the `⊑`-least upper bound.
-- `merge_assoc`, `merge_comm`, `merge_initial`: states form a
-  commutative monoid under consistent merge — the content half of
-  [visser-vermeulen-1996]'s monoidal processing.
-- `infoLe_iff_superset`, `subsistsIn_iff_subset`: on a uniform stratum
-  both preorders are partial orders, coinciding with `⊇`/`⊆` (via
-  `Possibility.eq_of_le_of_domain_eq`).
-- `subsistsIn_restrict`: restriction only forgets — the restricted state
-  subsists in the original.
-- `uniformAt_restrict`, `restrict_restrict`: restriction meets the
-  stratification.
-- `uniformAt_initial`: the initial state is the empty-base fiber.
-
-## Implementation notes
-
-`State` is an abbreviation, so `Set`'s complete lattice is available and
-`⊑`/`⪯` are scoped relations rather than instances. Neither is
-antisymmetric on raw sets (adding a comparable point is invisible —
-below for `⪯`, above for `⊑`); antisymmetry holds on each
-uniform stratum, where they coincide with `⊇`/`⊆`. `Subsists` is
-membership in `lowerClosure`, so `⪯` and `⊑` are the containments
-`s ⊆ ↑(lowerClosure s')` and `s' ⊆ ↑(upperClosure s)`.
+`State` is a type synonym in the `OrderDual` mold: `≤` is
+informativeness while `⊆` keeps its literal meaning, and since neither
+kernel is antisymmetric, `State` is a `Preorder` only.
 
 ## References
 
-- [kamp-vangenabith-reyle-2011], Defs. 23, 25
-- [groenendijk-stokhof-veltman-1996], [elliott-sudo-2025]
-- [heim-1982]
+- [kamp-vangenabith-reyle-2011], Defs. 0.23 (information states),
+  0.25 (informativeness), 0.26 (consistent merge)
+- [elliott-sudo-2025], Def. 3.3 (subsistence);
+  [groenendijk-stokhof-veltman-1996]
+- [visser-vermeulen-1996] (monoidal processing); [heim-1982]
 -/
 
 namespace DynamicSemantics
@@ -79,193 +38,204 @@ variable {W V M : Type*}
 
 /-! ### Information states -/
 
-/-- An information state: a set of world–assignment pairs, the
-assignments partial (Def. 23). The absurd state is `∅`; the lattice of
-states is `Set`'s. -/
-abbrev State (W V M : Type*) := Set (Possibility W V (Part M))
-
-/-- The initial information state `W × {g_⊤}`: every world live, no
-referent defined — the range of the empty points. -/
-def State.initial : State W V M :=
-  Set.range Possibility.bot
-
-/-- Membership in the initial state: no referent defined. -/
-theorem State.mem_initial {p : Possibility W V (Part M)} :
-    p ∈ (State.initial : State W V M) ↔ ∀ v, p.assignment v = ⊥ :=
-  ⟨fun ⟨_, hw⟩ _ => hw ▸ rfl, fun h =>
-    ⟨p.world, Possibility.ext rfl (funext fun v => (h v).symm)⟩⟩
-
-/-- `p` *subsists* in `s` ([elliott-sudo-2025], Def. 3.3): it has a
-point above it in `s`. -/
-def Subsists (p : Possibility W V (Part M)) (s : State W V M) : Prop :=
-  ∃ q ∈ s, p ≤ q
-
-@[inherit_doc] scoped notation:50 p " ≺ " s => Subsists p s
-
-theorem Subsists.of_mem {p : Possibility W V (Part M)} {s : State W V M}
-    (h : p ∈ s) : p ≺ s :=
-  ⟨p, h, le_rfl⟩
-
-/-- `s` subsists in `s'`: the informativeness order, Def. 25's
-projection form — every point of the weaker state has a descendant in
-the stronger. -/
-def subsistsIn (s s' : State W V M) : Prop :=
-  ∀ p ∈ s, p ≺ s'
-
-@[inherit_doc] scoped notation:50 s " ⪯ " s' => subsistsIn s s'
-
-theorem subsistsIn_refl (s : State W V M) : s ⪯ s :=
-  fun _ hp => Subsists.of_mem hp
-
-theorem subsistsIn_trans {s t u : State W V M} (hst : s ⪯ t)
-    (htu : t ⪯ u) : s ⪯ u := fun p hp => by
-  obtain ⟨q, hq, hpq⟩ := hst p hp
-  obtain ⟨r, hr, hqr⟩ := htu q hq
-  exact ⟨r, hr, hpq.trans hqr⟩
-
-/-- Informativeness ([kamp-vangenabith-reyle-2011] Def. 25): `s'` carries
-at least as much information as `s` — every point of the stronger state
-lies above a point of the weaker. The absurd state is maximally
-informative; the eliminative direction, dual to `⪯` on shared strata. -/
-def infoLe (s s' : State W V M) : Prop :=
-  ∀ q ∈ s', ∃ p ∈ s, p ≤ q
-
-@[inherit_doc] scoped notation:50 s " ⊑ " s' => infoLe s s'
-
-theorem infoLe_refl (s : State W V M) : s ⊑ s :=
-  fun q hq => ⟨q, hq, le_rfl⟩
-
-theorem infoLe_trans {s t u : State W V M} (hst : s ⊑ t) (htu : t ⊑ u) :
-    s ⊑ u := fun r hr => by
-  obtain ⟨q, hq, hqr⟩ := htu r hr
-  obtain ⟨p, hp, hpq⟩ := hst q hq
-  exact ⟨p, hp, hpq.trans hqr⟩
-
-/-- The absurd state is maximally informative. -/
-theorem infoLe_empty (s : State W V M) : s ⊑ (∅ : State W V M) :=
-  fun _ hq => hq.elim
-
-/-! ### Consistent merge -/
-
-variable {s s' t : State W V M} {r : Possibility W V (Part M)}
-
-/-- Consistent merge ([kamp-vangenabith-reyle-2011] Def. 0.26, binary):
-the joins of pairs of points, one from each state (`Set.lubs`). Across
-strata this is the descendant-mediated join — plain intersection of
-point-sets is empty between distinct strata. -/
-def State.merge (s s' : State W V M) : State W V M :=
-  s.lubs s'
-
-/-- Membership in a merge, in union form. -/
-theorem State.mem_merge :
-    r ∈ s.merge s' ↔ ∃ p ∈ s, ∃ q ∈ s', Compat p q ∧ r = p.union q := by
-  simp only [State.merge, Set.mem_lubs, Possibility.isLUB_pair_iff]
-
-/-- The merge is above the left component in informativeness. -/
-theorem infoLe_merge_left : s ⊑ s.merge s' := by
-  rintro r ⟨p, hp, q, hq, hlub⟩
-  exact ⟨p, hp, hlub.1 (Set.mem_insert _ _)⟩
-
-/-- The merge is above the right component in informativeness. -/
-theorem infoLe_merge_right : s' ⊑ s.merge s' := by
-  rintro r ⟨p, hp, q, hq, hlub⟩
-  exact ⟨q, hq, hlub.1 (Set.mem_insert_of_mem _ rfl)⟩
-
-/-- **The merge is the least upper bound** (Def. 0.26's universal
-property, in the informativeness preorder): anything above both
-components is above their merge. -/
-theorem merge_infoLe (hs : s ⊑ t) (hs' : s' ⊑ t) : s.merge s' ⊑ t := fun u hu => by
-  obtain ⟨p, hp, hpu⟩ := hs u hu
-  obtain ⟨q, hq, hqu⟩ := hs' u hu
-  exact ⟨p.union q, ⟨p, hp, q, hq, Possibility.isLUB_union (Compat.of_le hpu hqu)⟩,
-    Possibility.union_le hpu hqu⟩
-
-/-- Consistent merge is commutative. -/
-theorem merge_comm (s s' : State W V M) : s.merge s' = s'.merge s :=
-  Set.lubs_comm s s'
-
-/-- Consistent merge is associative. -/
-theorem merge_assoc (s t u : State W V M) :
-    (s.merge t).merge u = s.merge (t.merge u) :=
-  Set.lubs_assoc (fun _ _ h => ⟨_, Possibility.isLUB_union h⟩) s t u
-
-/-- The initial state is a unit for consistent merge: with `merge_comm`,
-`merge_assoc`, and `merge_infoLe`, updating is joining in a commutative
-monoid of information — the content half of
-[visser-vermeulen-1996]'s monoidal processing. -/
-@[simp] theorem merge_initial (s : State W V M) : s.merge State.initial = s := by
-  ext r
-  constructor
-  · rintro ⟨p, hp, q, ⟨w, rfl⟩, hlub⟩
-    obtain ⟨-, rfl⟩ := Possibility.isLUB_pair_iff.mp hlub
-    rwa [Possibility.union_bot]
-  · intro hr
-    exact ⟨r, hr, Possibility.bot r.world, ⟨r.world, rfl⟩,
-      Possibility.isLUB_pair_iff.mpr
-        ⟨.of_le le_rfl Possibility.bot_le, Possibility.union_bot.symm⟩⟩
-
-@[simp] theorem initial_merge (s : State W V M) : State.merge State.initial s = s := by
-  rw [merge_comm, merge_initial]
-
-/-- The worldly content of a state ([elliott-sudo-2025] Def. 3.1's 𝒲). -/
-def worlds (s : State W V M) : Set W :=
-  Possibility.world '' s
-
-@[simp] theorem mem_worlds {s : State W V M} {w : W} :
-    w ∈ worlds s ↔ ∃ p ∈ s, Possibility.world p = w := Iff.rfl
-
-/-- A referent is *familiar* at a state ([elliott-sudo-2025], Def. 3.2;
-[heim-1982]'s files): defined at every point. -/
-def Familiar (s : State W V M) (x : V) : Prop :=
-  ∀ p ∈ s, (p.assignment x).Dom
+/-- An information state is a set of world–assignment pairs. -/
+def State (W V M : Type*) := Set (Possibility W V (Part M))
 
 namespace State
+
+variable {s s' t : State W V M} {p q r : Possibility W V (Part M)} {X Y : Set V}
+
+@[reducible] instance : Membership (Possibility W V (Part M)) (State W V M) :=
+  inferInstanceAs (Membership _ (Set _))
+
+instance : HasSubset (State W V M) := ⟨fun s s' => ∀ ⦃p⦄, p ∈ s → p ∈ s'⟩
+
+@[reducible] instance : EmptyCollection (State W V M) :=
+  inferInstanceAs (EmptyCollection (Set _))
+
+@[reducible] instance : Union (State W V M) := inferInstanceAs (Union (Set _))
+
+@[reducible] instance : Inter (State W V M) := inferInstanceAs (Inter (Set _))
+
+@[reducible] instance : SDiff (State W V M) := inferInstanceAs (SDiff (Set _))
+
+@[ext] theorem ext (h : ∀ p, p ∈ s ↔ p ∈ s') : s = s' :=
+  Set.ext h
+
+/-- `s ≤ s'` iff `s'` carries at least as much information as `s`. -/
+instance : Preorder (State W V M) :=
+  .lift upperClosure
+
+/-- Every point of the stronger state lies above a point of the weaker. -/
+theorem le_def : s ≤ s' ↔ ∀ q ∈ s', ∃ p ∈ s, p ≤ q :=
+  le_upperClosure
+
+/-- The initial information state `⊥ = W × {g_⊤}`. -/
+instance : OrderBot (State W V M) where
+  bot := Set.range Possibility.bot
+  bot_le _ := le_def.mpr fun q _ => ⟨.bot q.world, ⟨q.world, rfl⟩, Possibility.bot_le⟩
+
+/-- Membership in the initial state: no referent defined. -/
+theorem mem_bot : r ∈ (⊥ : State W V M) ↔ ∀ v, r.assignment v = ⊥ :=
+  ⟨fun ⟨_, hw⟩ _ => hw ▸ rfl, fun h =>
+    ⟨r.world, Possibility.ext rfl (funext fun v => (h v).symm)⟩⟩
+
+/-- The absurd state `⊤ = ∅` is maximally informative. -/
+instance : OrderTop (State W V M) where
+  top := ∅
+  le_top _ := le_def.mpr fun _ hq => hq.elim
+
+@[simp] theorem top_eq_empty : (⊤ : State W V M) = ∅ := rfl
+
+/-! ### Subsistence
+
+*Subsistence* ([elliott-sudo-2025], Def. 3.3, after
+[groenendijk-stokhof-veltman-1996] Defs. 2.8–2.9) is not a new
+relation: a point subsists in a state iff it lies in the lower closure
+of its point set (`mem_lowerClosure`: some point of the state extends
+it), and a state subsists in another iff `lowerClosure s ≤
+lowerClosure s'` — the closure kernel dual to `≤`, with `⊤ = ∅` at the
+bottom. -/
+
+/-! ### Consistent merge as multiplication -/
+
+/-- `s * s'` is consistent merge — the joins of pairs of points, one
+from each state — and `1 = ⊥`. -/
+instance : CommMonoid (State W V M) where
+  mul := Set.lubs
+  mul_assoc := Set.lubs_assoc fun _ _ h => ⟨_, Possibility.isLUB_union h⟩
+  one := ⊥
+  one_mul _ := (Set.lubs_comm _ _).trans <| Set.lubs_eq_left
+    (fun p => ⟨.bot p.world, ⟨p.world, rfl⟩, Possibility.bot_le⟩)
+    fun _ _ ⟨_, hw⟩ h => hw ▸ Possibility.bot_le_of_compat (hw ▸ h)
+  mul_one _ := Set.lubs_eq_left
+    (fun p => ⟨.bot p.world, ⟨p.world, rfl⟩, Possibility.bot_le⟩)
+    fun _ _ ⟨_, hw⟩ h => hw ▸ Possibility.bot_le_of_compat (hw ▸ h)
+  mul_comm := Set.lubs_comm
+
+theorem one_eq_bot : (1 : State W V M) = ⊥ := rfl
+
+/-- Membership in the merge, in union form. -/
+theorem mem_mul :
+    r ∈ s * s' ↔ ∃ p ∈ s, ∃ q ∈ s', Compat p q ∧ r = p.union q := by
+  show r ∈ Set.lubs s s' ↔ _
+  simp only [Set.mem_lubs, Possibility.isLUB_pair_iff]
+  rfl
+
+/-- The Smyth face of the merge: upper closures compose by join. -/
+theorem upperClosure_mul :
+    upperClosure (s * s') = upperClosure s ⊔ upperClosure s' :=
+  Set.upperClosure_lubs (fun _ _ h => ⟨_, Possibility.isLUB_union h⟩) _ _
+
+/-- The merge is above the left factor. -/
+theorem left_le_mul : s ≤ s * s' :=
+  le_sup_left.trans_eq upperClosure_mul.symm
+
+/-- The merge is above the right factor. -/
+theorem right_le_mul : s' ≤ s * s' :=
+  le_sup_right.trans_eq upperClosure_mul.symm
+
+/-- Anything above both factors is above their merge. -/
+theorem mul_le (h : s ≤ t) (h' : s' ≤ t) : s * s' ≤ t :=
+  upperClosure_mul.trans_le (sup_le h h')
+
+/-- The merge is the least upper bound of its factors. -/
+theorem isLUB_mul : IsLUB {s, s'} (s * s') :=
+  ⟨by rintro x (rfl | rfl); exacts [left_le_mul, right_le_mul],
+   fun _ hu => mul_le (hu (Set.mem_insert _ _)) (hu (Set.mem_insert_of_mem _ rfl))⟩
+
+/-- Merge is monotone in the informativeness order. -/
+instance : CovariantClass (State W V M) (State W V M) (· * ·) (· ≤ ·) :=
+  ⟨fun _ _ _ h => mul_le left_le_mul (h.trans right_le_mul)⟩
+
+/-! ### Union is the meet
+
+Merge is the join of the informativeness order; plain union is its
+meet — pooling two states keeps exactly their common information. `∪`
+is **not** merge: within a stratum merge is intersection
+(`mul_eq_inter_of_uniform`), the eliminative regime. -/
+
+/-- The Smyth face of the union: upper closures compose by meet. -/
+theorem upperClosure_union :
+    upperClosure (s ∪ s') = upperClosure s ⊓ upperClosure s' :=
+  _root_.upperClosure_union _ _
+
+/-- The union is below the left component. -/
+theorem union_le_left : s ∪ s' ≤ s :=
+  upperClosure_union.trans_le inf_le_left
+
+/-- The union is below the right component. -/
+theorem union_le_right : s ∪ s' ≤ s' :=
+  upperClosure_union.trans_le inf_le_right
+
+/-- Anything below both components is below their union. -/
+theorem le_union (h : t ≤ s) (h' : t ≤ s') : t ≤ s ∪ s' :=
+  (le_inf h h').trans_eq upperClosure_union.symm
+
+/-- The union is the greatest lower bound of its components. -/
+theorem isGLB_union : IsGLB {s, s'} (s ∪ s') :=
+  ⟨by rintro x (rfl | rfl); exacts [union_le_left, union_le_right],
+   fun _ hu => le_union (hu (Set.mem_insert _ _)) (hu (Set.mem_insert_of_mem _ rfl))⟩
+
+/-! ### States up to informational equivalence
+
+The Smyth kernel is full: `UpperSet`'s complete lattice is the algebra
+of states up to equivalence, and Def. 0.26's unrestricted
+(arbitrary-family) merge is `sSup` there. -/
+
+/-- Up to informational equivalence, states are exactly the upper sets
+of possibilities. -/
+def antisymmetrizationOrderIso :
+    Antisymmetrization (State W V M) (· ≤ ·) ≃o
+      UpperSet (Possibility W V (Part M)) where
+  toFun := Quotient.lift (fun s : State W V M => upperClosure s)
+    fun _ _ h => le_antisymm (α := UpperSet _) h.1 h.2
+  invFun U := toAntisymmetrization (· ≤ ·)
+    (↑U : Set (Possibility W V (Part M)))
+  left_inv := by
+    refine Quotient.ind fun s => Quotient.sound ?_
+    have key : upperClosure ↑(upperClosure (s : Set (Possibility W V (Part M)))) =
+        upperClosure (s : Set (Possibility W V (Part M))) :=
+      SetLike.coe_injective (upperClosure _).upper'.upperClosure
+    exact ⟨le_of_eq (α := UpperSet _) key, le_of_eq (α := UpperSet _) key.symm⟩
+  right_inv U := SetLike.coe_injective U.upper'.upperClosure
+  map_rel_iff' {a b} := by
+    induction a using Quotient.ind
+    induction b using Quotient.ind
+    exact Iff.rfl
+
+/-! ### Familiarity
+
+The worldly content of a state — Def. 0.23(v)'s proposition,
+[elliott-sudo-2025] Def. 3.1's 𝒲 — is the image `Possibility.world '' s`. -/
+
+/-- A referent is *familiar* at a state: defined at every point. -/
+def Familiar (s : State W V M) (x : V) : Prop :=
+  ∀ p ∈ s, (p.assignment x).Dom
 
 /-! ### The uniform stratum -/
 
 /-- The state is uniform at `X`: every point defines exactly the
-referents in `X` — Def. 23's "Dom(f) = X", as a stratum rather than a
-component. -/
-def UniformAt (X : Set V) (I : State W V M) : Prop :=
-  ∀ p ∈ I, Possibility.domain p = X
+referents in `X`. -/
+def UniformAt (X : Set V) (s : State W V M) : Prop :=
+  ∀ p ∈ s, Possibility.domain p = X
 
 /-- The initial state is uniform at the empty base. -/
-theorem uniformAt_initial : UniformAt ∅ (initial : State W V M) := fun _ hp =>
-  Possibility.domain_eq_empty_iff.mpr (mem_initial.mp hp)
+theorem uniformAt_bot : UniformAt ∅ (⊥ : State W V M) := fun _ hp =>
+  Possibility.domain_eq_empty_iff.mpr (mem_bot.mp hp)
 
-/-- Into a uniform stratum, subsistence is membership: a point already
-at the stratum's domain has no room to grow. -/
-theorem subsists_iff_mem {X : Set V} {s : State W V M}
-    (hs : UniformAt X s) {p : Possibility W V (Part M)}
-    (hp : p.domain = X) : (p ≺ s) ↔ p ∈ s :=
-  ⟨fun ⟨q, hq, hpq⟩ =>
-    (Possibility.eq_of_le_of_domain_eq hpq (hp.trans (hs q hq).symm)).symm ▸ hq,
-    Subsists.of_mem⟩
+/-- A uniform stratum is an antichain: comparable points with one
+domain are equal. -/
+theorem UniformAt.isAntichain (hs : UniformAt X s) :
+    IsAntichain (· ≤ ·) (s : Set (Possibility W V (Part M))) :=
+  fun p hp q hq hne hpq =>
+    hne (Possibility.eq_of_le_of_domain_eq hpq ((hs p hp).trans (hs q hq).symm))
 
-/-- On a uniform stratum, subsistence is inclusion. -/
-theorem subsistsIn_iff_subset {X : Set V} {s s' : State W V M}
-    (hs : UniformAt X s) (hs' : UniformAt X s') :
-    (s ⪯ s') ↔ s ⊆ s' :=
-  forall₂_congr fun p hp => subsists_iff_mem hs' (hs p hp)
-
-/-- On a uniform stratum, informativeness is reverse inclusion — the
-eliminative direction. -/
-theorem infoLe_iff_superset {X : Set V} {s s' : State W V M}
-    (hs : UniformAt X s) (hs' : UniformAt X s') :
-    (s ⊑ s') ↔ s' ⊆ s := by
-  constructor
-  · intro h q hq
-    obtain ⟨p, hp, hpq⟩ := h q hq
-    rwa [← Possibility.eq_of_le_of_domain_eq hpq ((hs p hp).trans (hs' q hq).symm)]
-  · exact fun h q hq => ⟨q, h hq, le_rfl⟩
-
-/-- Within one stratum, merge is intersection: compatibility on a shared
-domain forces equality. -/
-theorem merge_eq_inter_of_uniform {X : Set V} {s s' : State W V M}
-    (hs : UniformAt X s) (hs' : UniformAt X s') :
-    s.merge s' = s ∩ s' := by
+/-- Within one stratum, merge is intersection. -/
+theorem UniformAt.mul_eq_inter (hs : UniformAt X s) (hs' : UniformAt X s') :
+    s * s' = s ∩ s' := by
   ext r
-  rw [mem_merge]
+  rw [mem_mul]
   constructor
   · rintro ⟨p, hp, q, hq, hpq, rfl⟩
     obtain rfl := Possibility.eq_of_compat_of_domain_eq hpq ((hs p hp).trans (hs' q hq).symm)
@@ -275,117 +245,121 @@ theorem merge_eq_inter_of_uniform {X : Set V} {s s' : State W V M}
     exact ⟨r, hr, r, hr', compat_self r, Possibility.union_self.symm⟩
 
 /-- Restriction of a state: pointwise, by direct image. -/
-def restrict (X : Set V) (I : State W V M) : State W V M :=
-  Possibility.restrict X '' I
+def restrict (X : Set V) (s : State W V M) : State W V M :=
+  Possibility.restrict X '' s
 
 /-- Membership in a restriction. -/
-theorem mem_restrict {X : Set V} {I : State W V M} {p : Possibility W V (Part M)} :
-    p ∈ I.restrict X ↔ ∃ q ∈ I, q.restrict X = p :=
+theorem mem_restrict : p ∈ s.restrict X ↔ ∃ q ∈ s, q.restrict X = p :=
   Iff.rfl
+
+/-- Restriction fixes its stratum. -/
+theorem UniformAt.restrict_eq (hs : UniformAt X s) : s.restrict X = s :=
+  ext fun p =>
+    ⟨fun ⟨q, hq, hqp⟩ => (hqp.symm.trans (Possibility.restrict_eq_self (hs q hq))) ▸ hq,
+     fun hp => ⟨p, hp, Possibility.restrict_eq_self (hs p hp)⟩⟩
+
+/-- A point at the stratum's domain lies below `s` iff it lies in the
+restriction of `s`. -/
+theorem mem_lowerClosure_iff_mem_restrict (hp : p.domain = X) :
+    p ∈ lowerClosure s ↔ p ∈ s.restrict X :=
+  ⟨fun ⟨q, hq, hpq⟩ => ⟨q, hq, ((Possibility.le_iff_eq_restrict hp).mp hpq).symm⟩,
+   fun ⟨q, hq, hqp⟩ => ⟨q, hq, hqp ▸ Possibility.restrict_le⟩⟩
+
+/-- A point lies above a uniform `s` iff its restriction is a point
+of `s`. -/
+theorem UniformAt.mem_upperClosure_iff_restrict_mem (hs : UniformAt X s) :
+    q ∈ upperClosure s ↔ q.restrict X ∈ s :=
+  ⟨fun ⟨p, hp, hpq⟩ => (Possibility.le_iff_eq_restrict (hs p hp)).mp hpq ▸ hp,
+   fun h => ⟨q.restrict X, h, Possibility.restrict_le⟩⟩
+
+/-- Into a uniform stratum, subsistence is membership. -/
+theorem UniformAt.mem_lowerClosure (hs : UniformAt X s) (hp : p.domain = X) :
+    p ∈ lowerClosure s ↔ p ∈ s :=
+  (mem_lowerClosure_iff_mem_restrict hp).trans (by rw [hs.restrict_eq])
+
+/-- On a uniform stratum, subsistence is inclusion. -/
+theorem UniformAt.lowerClosure_le_iff (hs : UniformAt X s) (hs' : UniformAt X s') :
+    lowerClosure s ≤ lowerClosure s' ↔ s ⊆ s' :=
+  lowerClosure_le.trans (forall₂_congr fun p hp => hs'.mem_lowerClosure (hs p hp))
+
+/-- Into a uniform stratum, domination is membership. -/
+theorem UniformAt.mem_upperClosure (hs : UniformAt X s) (hq : q.domain = X) :
+    q ∈ upperClosure s ↔ q ∈ s :=
+  hs.mem_upperClosure_iff_restrict_mem.trans (by rw [Possibility.restrict_eq_self hq])
+
+/-- On a uniform stratum, informativeness is reverse inclusion. -/
+theorem UniformAt.le_iff_superset (hs : UniformAt X s) (hs' : UniformAt X s') :
+    s ≤ s' ↔ s' ⊆ s :=
+  le_def.trans (forall₂_congr fun q hq => hs.mem_upperClosure (hs' q hq))
 
 section Fibred
 
 /-- Merge unites strata. -/
-theorem uniformAt_merge {X Y : Set V} {s s' : State W V M}
-    (hs : UniformAt X s) (hs' : UniformAt Y s') :
-    UniformAt (X ∪ Y) (s.merge s') := by
+theorem UniformAt.mul (hs : UniformAt X s) (hs' : UniformAt Y s') :
+    UniformAt (X ∪ Y) (s * s') := by
   intro r hr
-  obtain ⟨p, hp, q, hq, -, rfl⟩ := mem_merge.mp hr
+  obtain ⟨p, hp, q, hq, -, rfl⟩ := mem_mul.mp hr
   rw [Possibility.domain_union, hs p hp, hs' q hq]
 
-/-- Subsistence out of a stratum factors through reindexing: the weaker
-state includes into the restricted image of the stronger — the fibred
-order, glued from within-stratum `⊆` along `restrict`. -/
-theorem subsistsIn_iff_subset_restrict {X : Set V}
-    {s s' : State W V M} (hs : UniformAt X s) :
-    (s ⪯ s') ↔ s ⊆ s'.restrict X := by
-  constructor
-  · intro h p hp
-    obtain ⟨q, hq, hpq⟩ := h p hp
-    exact ⟨q, hq,
-      ((Possibility.le_iff_eq_restrict (hs p hp)).mp hpq).symm⟩
-  · intro h p hp
-    obtain ⟨q, hq, rfl⟩ := h hp
-    exact ⟨q, hq, Possibility.restrict_le⟩
+/-- Subsistence out of a stratum is inclusion into the restricted image. -/
+theorem UniformAt.lowerClosure_le_iff_restrict (hs : UniformAt X s) :
+    lowerClosure s ≤ lowerClosure s' ↔ s ⊆ s'.restrict X :=
+  lowerClosure_le.trans
+    (forall₂_congr fun p hp => mem_lowerClosure_iff_mem_restrict (hs p hp))
 
-/-- Informativeness out of a stratum factors through reindexing: the
-restricted image of the stronger is included in the weaker — the
-eliminative direction of the fibred order. -/
-theorem infoLe_iff_restrict_subset {X : Set V}
-    {s s' : State W V M} (hs : UniformAt X s) :
-    (s ⊑ s') ↔ s'.restrict X ⊆ s := by
-  constructor
-  · rintro h r ⟨q, hq, rfl⟩
-    obtain ⟨p, hp, hpq⟩ := h q hq
-    rwa [← (Possibility.le_iff_eq_restrict (hs p hp)).mp hpq]
-  · intro h q hq
-    exact ⟨q.restrict X, h ⟨q, hq, rfl⟩,
-      Possibility.restrict_le⟩
+/-- Informativeness out of a stratum is reverse inclusion of the
+restricted image. -/
+theorem UniformAt.le_iff_restrict_subset (hs : UniformAt X s) :
+    s ≤ s' ↔ s'.restrict X ⊆ s :=
+  le_def.trans <|
+    (forall₂_congr fun _ _ => hs.mem_upperClosure_iff_restrict_mem).trans
+      Set.forall_mem_image.symm
 
 end Fibred
 
 /-- Restriction only forgets: the restricted state subsists in the
 original. -/
-theorem subsistsIn_restrict (X : Set V) (I : State W V M) : I.restrict X ⪯ I := by
-  rintro p ⟨q, hq, rfl⟩
-  exact ⟨q, hq, Possibility.restrict_le⟩
+theorem lowerClosure_restrict_le :
+    lowerClosure (s.restrict X) ≤ lowerClosure s :=
+  lowerClosure_le.mpr <|
+    Set.forall_mem_image.mpr fun q hq => ⟨q, hq, Possibility.restrict_le⟩
 
 /-- Restriction meets the stratification. -/
-theorem uniformAt_restrict {X Y : Set V} {I : State W V M}
-    (h : UniformAt Y I) : UniformAt (X ∩ Y) (I.restrict X) := by
+theorem UniformAt.restrict (hs : UniformAt Y s) :
+    UniformAt (X ∩ Y) (s.restrict X) := by
   rintro p ⟨q, hq, rfl⟩
-  rw [Possibility.domain_restrict, h q hq]
+  rw [Possibility.domain_restrict, hs q hq]
 
 /-- Restriction composes along intersections. -/
-theorem restrict_restrict (X Y : Set V) (I : State W V M) :
-    (I.restrict Y).restrict X = I.restrict (X ∩ Y) := by
+theorem restrict_restrict :
+    (s.restrict Y).restrict X = s.restrict (X ∩ Y) := by
   simp only [restrict, Set.image_image, Possibility.restrict_restrict]
-
-variable [DecidableEq V]
-
-/-- Random assignment ([elliott-sudo-2025], (43);
-[groenendijk-stokhof-1991]'s `x := random`): indeterministically extend
-each point to a defined value at `x`. -/
-def randomAssign (I : State W V M) (x : V) : State W V M :=
-  {p | ∃ q ∈ I, ∃ m : M, p = q.update x (Part.some m)}
-
-/-- Random assignment makes its referent familiar. -/
-theorem familiar_randomAssign (I : State W V M) (x : V) :
-    Familiar (I.randomAssign x) x := by
-  rintro p ⟨q, -, m, rfl⟩
-  simp
 
 /-! ### The uniform classification -/
 
-/-- Uniform states at `X` are sets of world–`X`-assignment pairs — the
-state-level face of `Possibility.domainEquiv`: an order isomorphism for
-`⊆` (which is `⪯` on the stratum, `subsistsIn_iff_subset`), hence an
-anti-isomorphism for `⊑` (`infoLe_iff_superset`). -/
+/-- Uniform states at `X` are sets of world–`X`-assignment pairs. -/
 def uniformEquiv (X : Set V) :
-    {I : State W V M // UniformAt X I} ≃o Set (W × (X → M)) where
-  toFun I := {e | ((Possibility.domainEquiv X).symm e).1 ∈ I.1}
-  invFun S :=
-    ⟨{p | ∃ h : p.domain = X, Possibility.domainEquiv X ⟨p, h⟩ ∈ S},
-      fun _ ⟨h, _⟩ => h⟩
-  left_inv I := by
-    refine Subtype.ext (Set.ext fun p => ?_)
-    constructor
-    · rintro ⟨h, hmem⟩
-      simpa using hmem
-    · intro hp
-      exact ⟨I.2 p hp, by simpa using hp⟩
-  right_inv S := Set.ext fun e => by
-    constructor
-    · rintro ⟨h, hmem⟩
-      simpa using hmem
-    · intro he
-      exact ⟨((Possibility.domainEquiv X).symm e).2, by simpa using he⟩
-  map_rel_iff' {I J} := by
-    constructor
-    · intro h p hp
-      simpa using h (a := Possibility.domainEquiv X ⟨p, I.2 p hp⟩)
-        (by simpa using hp)
-    · exact fun h _ he => h he
+    {I : State W V M // UniformAt X I} ≃ Set (W × (X → M)) :=
+  (Equiv.Set.powerset {p : Possibility W V (Part M) | p.domain = X}).trans
+    (Equiv.Set.congr (Possibility.domainEquiv X))
+
+@[simp] theorem mem_uniformEquiv {I : {I : State W V M // UniformAt X I}}
+    {e : W × (X → M)} :
+    e ∈ uniformEquiv X I ↔ ((Possibility.domainEquiv X).symm e).1 ∈ I.1 :=
+  Set.mem_image_equiv
+
+variable [DecidableEq V]
+
+/-- Random assignment: indeterministically extend each point to a
+defined value at `x`. -/
+def randomAssign (s : State W V M) (x : V) : State W V M :=
+  {p | ∃ q ∈ s, ∃ m : M, p = q.update x (Part.some m)}
+
+/-- Random assignment makes its referent familiar. -/
+theorem familiar_randomAssign (s : State W V M) (x : V) :
+    Familiar (s.randomAssign x) x := by
+  rintro p ⟨q, -, m, rfl⟩
+  simp
 
 end State
 

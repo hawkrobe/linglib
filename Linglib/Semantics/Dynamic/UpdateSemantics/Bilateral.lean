@@ -22,11 +22,12 @@ paper's separation of assertability (54) from Heimian familiarity rests.
 
 ## Main definitions
 
-- the descent order, `Subsists` (`≺`), `subsistsIn` (`⪯`):
-  descendance and subsistence (Def. 3.3, after
-  [groenendijk-stokhof-veltman-1996]).
-- `worlds`, `Familiar`: worldly information (Def. 3.1's 𝒲) and
-  familiarity (Def. 3.2) — defined at every possibility, values free.
+- subsistence (Def. 3.3, after [groenendijk-stokhof-veltman-1996]),
+  rendered as the lower closure: membership for points, `≤` of
+  closures for states.
+- `State.Familiar`: familiarity (Def. 3.2) — defined at every possibility,
+  values free; worldly information (Def. 3.1's 𝒲) is the image
+  `Possibility.world '' s`.
 - `randomAssign`: the paper's `s[εₓ]` (43); novelty is not encoded.
 - `BilateralDen` with `atom`, `pred1`, `pred2`, `neg` (`~`), `conj`
   (`⊙`, (61)), `disj` (`⊕`, (64)), `exists_` ((44)–(45)), `forall_`.
@@ -39,9 +40,9 @@ paper's separation of assertability (54) from Heimian familiarity rests.
 - `partition`, `partition_assertable`: every possibility subsists
   positively, subsists negatively, or is unknown.
 - `de_morgan_disj`, `de_morgan_conj`: de Morgan's laws, unlike in
-  standard dynamic semantics. (Descendance, subsistence, `worlds`,
-  `Familiar`, and random assignment now live at the root, in
-  `State.lean` — this file's vocabulary became the module's.)
+  standard dynamic semantics. (Descendance, subsistence, `State.Familiar`,
+  and random assignment now live at the root, in `State.lean` — this
+  file's vocabulary became the module's.)
 - `egli`: Egli's theorem for the positive dimension, definitionally.
 - `isBilateral`: the update algebra is a bilateral logic in the sense of
   `Core.Logic.Bilateral`.
@@ -52,7 +53,8 @@ Descent requires the larger point to *extend* the assignment, per
 [groenendijk-stokhof-veltman-1996]; [elliott-sudo-2025]'s Def. 3.3
 phrases the clause as domain inclusion, and their examples do not
 discriminate. The paper overloads `≺` for possibility-in-state and
-state-in-state subsistence (their fn. on (73)); here the latter is `⪯`.
+state-in-state subsistence (their fn. on (73)); here both are the
+lower closure — membership for points, `≤` of closures for states.
 
 The empirical comparison against full ICDRT is in
 `Studies/Hofmann2025.lean`; against PLA in `Studies/Dekker2012.lean`.
@@ -127,7 +129,7 @@ possibilities of `s` that subsist in neither dimension — the dynamic
 analogue of the third Strong Kleene truth value. -/
 def unknownUpdate (φ : BilateralDen W V E)
     (s : Set (Possibility W V (Part E))) : Set (Possibility W V (Part E)) :=
-  {p ∈ s | ¬(p ≺ φ.positive s) ∧ ¬(p ≺ φ.negative s)}
+  {p ∈ s | p ∉ lowerClosure (φ.positive s) ∧ p ∉ lowerClosure (φ.negative s)}
 
 /-- Assertability ([elliott-sudo-2025], (54)): the unknown update is
 empty — every possibility is accounted for by one of the dimensions.
@@ -141,7 +143,7 @@ theorem unknownUpdate_neg (φ : BilateralDen W V E) (s) :
     (~φ).unknownUpdate s = φ.unknownUpdate s := by
   ext p
   simp only [unknownUpdate, neg, Set.mem_setOf_eq,
-    and_comm (a := ¬(p ≺ φ.negative s))]
+    and_comm (a := p ∉ lowerClosure (φ.negative s))]
 
 /-- Worldly atoms never gap. -/
 theorem unknownUpdate_atom (pred : W → Prop) (s) :
@@ -151,23 +153,23 @@ theorem unknownUpdate_atom (pred : W → Prop) (s) :
     iff_false, not_and]
   intro hp hpos hneg
   by_cases h : pred p.world
-  · exact hpos (Subsists.of_mem ⟨hp, h⟩)
-  · exact hneg (Subsists.of_mem ⟨hp, h⟩)
+  · exact hpos (subset_lowerClosure ⟨hp, h⟩)
+  · exact hneg (subset_lowerClosure ⟨hp, h⟩)
 
 /-- Every possibility subsists positively, subsists negatively, or is
 unknown. -/
 theorem partition (φ : BilateralDen W V E) (hp : p ∈ s) :
-    (p ≺ φ.positive s) ∨ (p ≺ φ.negative s) ∨ p ∈ φ.unknownUpdate s := by
-  by_cases h1 : p ≺ φ.positive s
+    p ∈ lowerClosure (φ.positive s) ∨ p ∈ lowerClosure (φ.negative s) ∨ p ∈ φ.unknownUpdate s := by
+  by_cases h1 : p ∈ lowerClosure (φ.positive s)
   · exact Or.inl h1
-  · by_cases h2 : p ≺ φ.negative s
+  · by_cases h2 : p ∈ lowerClosure (φ.negative s)
     · exact Or.inr (Or.inl h2)
     · exact Or.inr (Or.inr ⟨hp, h1, h2⟩)
 
 /-- Under assertability, every possibility subsists in one of the
 dimensions. -/
 theorem partition_assertable (h : φ.assertable s) (hp : p ∈ s) :
-    (p ≺ φ.positive s) ∨ (p ≺ φ.negative s) := by
+    p ∈ lowerClosure (φ.positive s) ∨ p ∈ lowerClosure (φ.negative s) := by
   rcases partition φ hp with h1 | h2 | h3
   · exact Or.inl h1
   · exact Or.inr h2
@@ -238,8 +240,8 @@ introduces no anaphoric information. -/
 def exists_ (x : V) (φ : BilateralDen W V E) : BilateralDen W V E where
   positive s := φ.positive (State.randomAssign s x)
   negative s :=
-    {p ∈ s | p.world ∉ worlds (φ.positive (State.randomAssign s x)) ∧
-      p.world ∈ worlds (φ.negative (State.randomAssign s x))}
+    {p ∈ s | p.world ∉ Possibility.world '' φ.positive (State.randomAssign s x) ∧
+      p.world ∈ Possibility.world '' φ.negative (State.randomAssign s x)}
 
 /-- Universal quantification, by de Morgan duality: `∀x φ = ¬∃x ¬φ`. -/
 def forall_ (x : V) (φ : BilateralDen W V E) : BilateralDen W V E :=
@@ -259,7 +261,7 @@ end Quantifiers
 subsists in it. -/
 def supports (s : Set (Possibility W V (Part E)))
     (φ : BilateralDen W V E) : Prop :=
-  (φ.positive s).Nonempty ∧ s ⪯ φ.positive s
+  (φ.positive s).Nonempty ∧ lowerClosure s ≤ lowerClosure (φ.positive s)
 
 /-- Bilateral entailment: every consistent positive update of `φ`
 supports `ψ`. -/

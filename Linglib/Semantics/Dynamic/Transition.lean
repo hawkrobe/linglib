@@ -165,12 +165,12 @@ theorem uniformEquiv_applyState (u : Transition W M X Y)
   constructor
   · intro hf
     obtain ⟨-, p, hp, hpX, hw, e, f', hpe, hqf, hrel⟩ :
-        ptOf Y f.1 f.2 ∈ u.applyState I := hf
+        ptOf Y f.1 f.2 ∈ u.applyState I := State.mem_uniformEquiv.mp hf
     have hf' : f' = f.2 := funext fun v => by
       obtain ⟨hv, hval⟩ := hqf v
       exact hval.symm
     subst hf'
-    refine ⟨e, ?_, by exact hrel⟩
+    refine ⟨e, State.mem_uniformEquiv.mpr ?_, by exact hrel⟩
     show ptOf X f.1 e ∈ I
     have hpeq : ptOf X f.1 e = p :=
       Possibility.ext hw.symm <| funext fun v =>
@@ -178,7 +178,8 @@ theorem uniformEquiv_applyState (u : Transition W M X Y)
           fun hv hd => Part.mem_unique (hpe ⟨v, hv⟩) (Part.get_mem hd)
     rw [hpeq]; exact hp
   · rintro ⟨e, hmem, hrel⟩
-    have hpI : ptOf X f.1 e ∈ I := hmem
+    have hpI : ptOf X f.1 e ∈ I := State.mem_uniformEquiv.mp hmem
+    refine State.mem_uniformEquiv.mpr ?_
     show ptOf Y f.1 f.2 ∈ u.applyState I
     exact ⟨domain_ptOf .., ptOf X f.1 e, hpI, domain_ptOf .., rfl, e,
       f.2, fun v => ⟨v.2, rfl⟩, fun v => ⟨v.2, rfl⟩, by exact hrel⟩

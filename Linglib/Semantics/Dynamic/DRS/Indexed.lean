@@ -242,13 +242,13 @@ theorem DRS.transition_copy (W : Type*) {X X' : Finset V} (K : DRS L V)
 /-- The information state a proper DRS expresses
 ([kamp-vangenabith-reyle-2011], Def. 22): act on the initial state. -/
 def DRS.state (W : Type*) (K : DRS L V) (hK : K.IsProper) : State W V M :=
-  (K.transition W ∅ (Finset.subset_empty.mpr hK)).applyState State.initial
+  (K.transition W ∅ (Finset.subset_empty.mpr hK)).applyState ⊥
 
 /-- The state a DRS expresses lives in its referents' stratum. -/
 theorem DRS.uniformAt_state (W : Type*) (K : DRS L V) (hK : K.IsProper) :
     State.UniformAt ↑K.referents (K.state (M := M) W hK) := by
   have h := Transition.uniformAt_applyState
-    (K.transition (M := M) W ∅ (Finset.subset_empty.mpr hK)) State.initial
+    (K.transition (M := M) W ∅ (Finset.subset_empty.mpr hK)) ⊥
   simpa [DRS.state] using h
 
 /-- The characteristic membership form: a point survives in `⟦K⟧ˢ` iff it

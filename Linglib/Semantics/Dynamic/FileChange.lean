@@ -15,16 +15,16 @@ Presupposition is `Part`-definedness (`CCP.Partial.admits`, Heim's
 definedness conditions; sequencing and its monoid laws are `PFun.comp`'s
 (`PFun.comp_assoc`, `PFun.id_comp`, `PFun.comp_id`).
 
-The assertive update is *consistent merge* (`State.merge`,
+The assertive update is *consistent merge* (the `State` monoid's `*`,
 [kamp-vangenabith-reyle-2011] Def. 26): [heim-1983]'s revised atomic
 rule (18), which filters where the input already defines the atom's
 cards (rule (13), `atomVar_eq_of_familiar`) and extends where it does
 not (`atomVar_eq_of_novel`) — per point, so atoms are total and
 appropriateness ((15)) lives on `indef`/`def_`, as in the paper.
 Principle (A) in its general form is ascent in informativeness
-(`infoLe_ofState`); set-shrinking eliminativity is its familiar face.
+(`le_ofState`); set-shrinking eliminativity is its familiar face.
 
-Negation keeps the points of `F` that do not *subsist* (`≺`) in the
+Negation keeps the points of `F` that do not *subsist* in the
 scope's update — the no-verifying-extension clause, generalizing
 [heim-1983]'s world-only `s \ s[φ]` (`CCP.Partial.neg`): on a uniform
 stratum the two coincide (`neg_eq_partial_neg`), so the 1983 clauses are
@@ -47,7 +47,7 @@ the referent-free shadow of the 1982 ones.
 
 - `admits_def_`, `admits_indef`: the Familiarity and Novelty Conditions
   are exactly definedness.
-- `infoLe_ofState`: Principle (A) — updates only add information.
+- `le_ofState`: Principle (A) — updates only add information.
 - `atomW_eq`, `atomVar_eq_of_familiar`, `atomVar_eq_of_novel`: the
   filtering and extending regimes of the merge-based atom (rules (13)
   and (18)).
@@ -74,21 +74,22 @@ def refersTo (F : State W V M) (x : V) (m : M) : Prop :=
 
 /-- Assertive update by a state: consistent merge ([heim-1983]'s revised
 atomic rule (18), which is [kamp-vangenabith-reyle-2011] Def. 26's
-`State.merge`) — each input point pairs with every compatible point of
+consistent merge, the `State` monoid's `*`) — each input point pairs
+with every compatible point of
 `A`, filtering where their domains overlap and extending where `A`
 defines more. Total: appropriateness ((15), the Novelty/Familiarity
 Condition) lives on `indef`/`def_`, as in the paper. -/
 def ofState (A : State W V M) : FCP W V M :=
-  fun F => Part.some (State.merge F A)
+  fun F => Part.some (Set.lubs F A)
 
 /-- Principle (A), general form: assertive update ascends in
-informativeness — `merge_infoLe`'s left leg. Set-shrinking
-eliminativity is its familiar-regime shadow (`atomVar_eq_of_familiar`);
-on novel referents the update extends rather than shrinks. -/
-theorem infoLe_ofState (A : State W V M) {F F' : State W V M}
-    (h : F' ∈ ofState A F) : F ⊑ F' := by
+informativeness — `State.left_le_mul`. Set-shrinking eliminativity is
+its familiar-regime shadow (`atomVar_eq_of_familiar`); on novel
+referents the update extends rather than shrinks. -/
+theorem le_ofState (A : State W V M) {F F' : State W V M}
+    (h : F' ∈ ofState A F) : F ≤ F' := by
   obtain rfl := Part.mem_some_iff.mp h
-  exact infoLe_merge_left
+  exact State.left_le_mul
 
 /-- Atomic predicate on the world: merge with the empty-domain
 proposition state. -/
@@ -112,7 +113,7 @@ update — the no-verifying-extension clause, as non-subsistence.
 Referents introduced inside the scope are trapped. Undefined when the
 scope is. -/
 def neg (φ : FCP W V M) : FCP W V M :=
-  fun F => (φ F).map fun F' => {p ∈ F | ¬ p ≺ F'}
+  fun F => (φ F).map fun F' => {p ∈ F | p ∉ lowerClosure F'}
 
 /-- Conditional: `F + [if φ then ψ] = F + [¬(φ ∧ ¬ψ)]` — Heim's analysis
 of conditionals as negated conjunctions. -/
@@ -133,7 +134,7 @@ def indef [DecidableEq V] (x : V) (body : FCP W V M) : FCP W V M :=
 Condition); the card is already established, so the file passes through
 to the body. -/
 def def_ (x : V) (body : FCP W V M) : FCP W V M :=
-  fun F => Part.assert (Familiar F x) fun _ => body F
+  fun F => Part.assert (State.Familiar F x) fun _ => body F
 
 /-! ### Truth and entailment (Ch. III §3) -/
 
@@ -173,7 +174,8 @@ same as once. -/
 theorem supports_idempotent {F : State W V M} {φ : FCP W V M}
     (h : supports F φ) : φ.seq φ F = φ F := by
   show (φ F).bind φ = φ F
-  rw [h, Part.bind_some, h]
+  rw [h]
+  exact (Part.bind_some _ _).trans h
 
 /-! ### Admittance -/
 
@@ -189,7 +191,7 @@ theorem admits_indef [DecidableEq V] (x : V) (body : FCP W V M)
 /-- **The Familiarity Condition is definedness** ((15)): a definite is
 defined iff its card is familiar (and the body is defined). -/
 theorem admits_def_ (x : V) (body : FCP W V M) (F : State W V M) :
-    (def_ x body).admits F ↔ ∃ _ : Familiar F x, (body F).Dom := by
+    (def_ x body).admits F ↔ ∃ _ : State.Familiar F x, (body F).Dom := by
   exact Iff.rfl
 
 /-! ### The two regimes: filtering and extension
@@ -197,7 +199,7 @@ theorem admits_def_ (x : V) (body : FCP W V M) (F : State W V M) :
 The merge-based atom has rule (13) as its familiar face and rule (18)'s
 domain extension as its novel face, per point; `⊆`-eliminativity holds
 exactly on the familiar face, while Principle (A) in general is
-`infoLe_ofState`. -/
+`le_ofState`. -/
 
 /-- World atoms filter, unconditionally: merging with an empty-domain
 proposition state eliminates the points at incompatible worlds. -/
@@ -205,26 +207,26 @@ theorem atomW_eq (pred : W → Prop) (F : State W V M) :
     atomW pred F = Part.some {p ∈ F | pred p.world} := by
   refine congrArg Part.some (Set.ext fun r => ⟨?_, ?_⟩)
   · intro hr
-    obtain ⟨p, hp, q, ⟨hqdom, hqpred⟩, hpq, rfl⟩ := State.mem_merge.mp hr
+    obtain ⟨p, hp, q, ⟨hqdom, hqpred⟩, hpq, rfl⟩ := State.mem_mul.mp hr
     have hqle : q ≤ p := ⟨(Possibility.compat_iff.mp hpq).1.symm, fun v e he =>
       absurd (Part.dom_iff_mem.mpr ⟨e, he⟩)
         (Set.eq_empty_iff_forall_notMem.mp hqdom v)⟩
     rw [le_antisymm (Possibility.union_le le_rfl hqle) Possibility.le_union_left]
     exact ⟨hp, (Possibility.compat_iff.mp hpq).1.symm ▸ hqpred⟩
   · rintro ⟨hr, hpred⟩
-    exact State.mem_merge.mpr ⟨r, hr, Possibility.bot r.world,
+    exact State.mem_mul.mpr ⟨r, hr, Possibility.bot r.world,
       ⟨Possibility.domain_bot, hpred⟩, .of_le le_rfl Possibility.bot_le,
       Possibility.union_bot.symm⟩
 
 /-- Rule (13), the familiar regime: at a familiar card the atom
 filters — and in particular is eliminative. -/
 theorem atomVar_eq_of_familiar (pred : M → Prop) (x : V)
-    {F : State W V M} (hfam : Familiar F x) :
+    {F : State W V M} (hfam : State.Familiar F x) :
     atomVar pred x F =
       Part.some {p ∈ F | ∃ m ∈ p.assignment x, pred m} := by
   refine congrArg Part.some (Set.ext fun r => ⟨?_, ?_⟩)
   · intro hmem
-    obtain ⟨p, hp, q, ⟨hqdom, m, hqx, hpred⟩, hpq, rfl⟩ := State.mem_merge.mp hmem
+    obtain ⟨p, hp, q, ⟨hqdom, m, hqx, hpred⟩, hpq, rfl⟩ := State.mem_mul.mp hmem
     obtain ⟨hw, hag⟩ := Possibility.compat_iff.mp hpq
     obtain ⟨m₀, hpx⟩ := Part.dom_iff_mem.mp (hfam p hp)
     have hqle : q ≤ p := ⟨hw.symm, fun v e he => by
@@ -236,7 +238,7 @@ theorem atomVar_eq_of_familiar (pred : M → Prop) (x : V)
   · rintro ⟨hr, m, hrx, hpred⟩
     have hqle : (⟨r.world, fun v => ⟨v = x, fun _ => m⟩⟩ : Possibility W V (Part M)) ≤ r :=
       ⟨rfl, fun v e he => by obtain ⟨rfl, rfl⟩ := he; exact hrx⟩
-    refine State.mem_merge.mpr ⟨r, hr, ⟨r.world, fun v => ⟨v = x, fun _ => m⟩⟩,
+    refine State.mem_mul.mpr ⟨r, hr, ⟨r.world, fun v => ⟨v = x, fun _ => m⟩⟩,
       ⟨Set.ext fun v => Iff.rfl, m, ⟨rfl, rfl⟩, hpred⟩,
       Possibility.compat_iff.mpr ⟨rfl, fun v e e' he he' => ?_⟩, ?_⟩
     · obtain ⟨rfl, rfl⟩ := he'
@@ -254,7 +256,7 @@ theorem atomVar_eq_of_novel [DecidableEq V] (pred : M → Prop) (x : V)
       {p ∈ State.randomAssign F x | ∃ m ∈ p.assignment x, pred m} := by
   refine congrArg Part.some (Set.ext fun r => ⟨?_, ?_⟩)
   · intro hmem
-    obtain ⟨p, hp, q, ⟨hqdom, m, hqx, hpred⟩, hpq, rfl⟩ := State.mem_merge.mp hmem
+    obtain ⟨p, hp, q, ⟨hqdom, m, hqx, hpred⟩, hpq, rfl⟩ := State.mem_mul.mp hmem
     have huq : p.union q = p.update x (Part.some m) :=
       Possibility.ext rfl (funext fun v => by
         by_cases hv : v = x
@@ -269,7 +271,7 @@ theorem atomVar_eq_of_novel [DecidableEq V] (pred : M → Prop) (x : V)
     obtain ⟨p, hp, m', rfl⟩ := hmem
     obtain rfl : m = m' := by
       simpa [Possibility.update] using hrx
-    refine State.mem_merge.mpr ⟨p, hp, ⟨p.world, fun v => ⟨v = x, fun _ => m⟩⟩,
+    refine State.mem_mul.mpr ⟨p, hp, ⟨p.world, fun v => ⟨v = x, fun _ => m⟩⟩,
       ⟨Set.ext fun v => Iff.rfl, m, ⟨rfl, rfl⟩, hpred⟩,
       Possibility.compat_iff.mpr ⟨rfl, fun v e e' he he' => ?_⟩, ?_⟩
     · obtain ⟨rfl, rfl⟩ := he'
@@ -294,7 +296,7 @@ theorem atomW_eliminative (pred : W → Prop) {F F' : State W V M}
 /-- Variable atoms are eliminative at familiar cards. -/
 theorem atomVar_eliminative (pred : M → Prop) (x : V)
     {F F' : State W V M}
-    (hfam : Familiar F x) (h : F' ∈ atomVar pred x F) : F' ⊆ F := by
+    (hfam : State.Familiar F x) (h : F' ∈ atomVar pred x F) : F' ⊆ F := by
   rw [atomVar_eq_of_familiar pred x hfam] at h
   obtain rfl := Part.mem_some_iff.mp h
   exact fun p hp => hp.1
@@ -316,11 +318,11 @@ theorem neg_eq_partial_neg [DecidableEq V] {X : Finset V}
     (hφ : ∀ F' ∈ φ F, State.UniformAt X F') :
     neg φ F = CCP.Partial.neg φ F := by
   refine Part.ext' Iff.rfl fun h₁ h₂ => ?_
-  show {p ∈ F | ¬ p ≺ (φ F).get h₁} = F \ (φ F).get h₁
+  show ({p ∈ (F : Set (Possibility W V (Part M))) | p ∉ lowerClosure ((φ F).get h₁)} : Set _) =
+    (F : Set (Possibility W V (Part M))) \ (φ F).get h₁
   ext p
-  simp only [Set.mem_sep_iff, Set.mem_sdiff]
   exact and_congr_right fun hp => not_congr
-    (State.subsists_iff_mem (hφ _ (Part.get_mem _)) (hF p hp))
+    ((hφ _ (Part.get_mem _)).mem_lowerClosure (hF p hp))
 
 end FCP
 
