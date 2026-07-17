@@ -1,5 +1,5 @@
 import Linglib.Features.Case.Basic
-import Linglib.Morphology.Realization
+import Linglib.Morphology.Focus
 import Linglib.Syntax.Extraction
 import Linglib.Fragments.Mayan.Params
 
@@ -140,7 +140,7 @@ namespace Extraction
     3rd person follows from the absent AF marking:
     `Maxki₁ tyi y-il-ä (___₁) jiñi wiñik (___₁)?`
     'Who saw the man?' / 'Who did the man see?' -/
-def realize : ExtractionTarget → List (Morphology.Reflex Empty) :=
+def realize : ExtractionTarget → List (Morphology.Focus.Reflex Empty) :=
   fun _ => []
 
 /-- WALS-style label: extraction is unmarked. -/

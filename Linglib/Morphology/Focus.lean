@@ -35,7 +35,7 @@ note `Mereology.Overlap` is vacuous over orders with a bottom, so that
 member must use `¬ Disjoint` or bot-free carriers.
 -/
 
-namespace Morphology
+namespace Morphology.Focus
 
 variable {C : Type*}
 
@@ -132,4 +132,4 @@ def EveryFocusPerceptible {I : Type*} (realize : I → Realization C) : Prop :=
   ∀ i, (realize i).IsOvert
 
 
-end Morphology
+end Morphology.Focus

@@ -1,4 +1,4 @@
-import Linglib.Morphology.Realization
+import Linglib.Morphology.Focus
 import Linglib.Syntax.Extraction
 
 /-!
@@ -226,7 +226,7 @@ inductive Site where
     syntactically, not morphologically), and oblique extraction adds
     *wi* via copy spellout at the foot of the Ā-chain
     ([mendes-ranero-2021]). Core-object extraction is unmarked. -/
-def realize : ExtractionTarget → List (Morphology.Reflex Site)
+def realize : ExtractionTarget → List (Morphology.Focus.Reflex Site)
   | .subject => [.morpheme .verb]
   | .oblique => [.morpheme .verb]
   | _ => []

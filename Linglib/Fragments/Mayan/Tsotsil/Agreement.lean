@@ -1,5 +1,5 @@
 import Linglib.Fragments.Mayan.Tseltalan
-import Linglib.Morphology.Realization
+import Linglib.Morphology.Focus
 import Linglib.Syntax.Extraction
 
 /-!
@@ -107,7 +107,7 @@ namespace Extraction
 
 /-- No Agent Focus morphology is required for A-extraction, consistent
     with Tsotsil being LOW-ABS. -/
-def realize : ExtractionTarget → List (Morphology.Reflex Empty) :=
+def realize : ExtractionTarget → List (Morphology.Focus.Reflex Empty) :=
   fun _ => []
 
 /-- WALS-style label: extraction is unmarked. -/
