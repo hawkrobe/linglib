@@ -50,7 +50,7 @@ end Update
 
 /-! ### Partial points -/
 
-variable {p q u : Possibility W V (Part M)}
+variable {p q r u : Possibility W V (Part M)}
 
 /-- `p ≤ q` iff `p` and `q` share their world and the assignments grow
 pointwise in the order of partial values. -/
@@ -72,15 +72,19 @@ def domain (p : Possibility W V (Part M)) : Set V :=
     v ∈ p.domain ↔ (p.assignment v).Dom := Iff.rfl
 
 /-- Descent grows the domain. -/
-theorem domain_mono (h : p ≤ q) : p.domain ⊆ q.domain := fun v hd =>
-  Part.dom_iff_mem.mpr ⟨_, h.2 v _ (Part.get_mem hd)⟩
+theorem domain_mono (h : p ≤ q) : p.domain ⊆ q.domain := fun v =>
+  Part.dom_mono (h.2 v)
 
 /-- On a shared domain, descent is equality — there is no room to grow. -/
 theorem eq_of_le_of_domain_eq (h : p ≤ q) (hdom : p.domain = q.domain) : p = q :=
-  Possibility.ext h.1 <| funext fun v => le_antisymm (h.2 v) fun e he => by
-    have hd : (p.assignment v).Dom := hdom.superset (Part.dom_iff_mem.mpr ⟨e, he⟩)
-    obtain rfl := Part.mem_unique (h.2 v _ (Part.get_mem hd)) he
-    exact Part.get_mem hd
+  Possibility.ext h.1 <| funext fun v =>
+    Part.eq_of_le_of_dom (h.2 v) fun hd => hdom.superset hd
+
+/-- A point defines no referent exactly when its assignment is nowhere
+defined. -/
+theorem domain_eq_empty_iff : p.domain = ∅ ↔ ∀ v, p.assignment v = ⊥ := by
+  simp only [Set.eq_empty_iff_forall_notMem, mem_domain]
+  exact forall_congr' fun v => Part.eq_none_iff'.symm
 
 /-- The union of two points, defined wherever either is, with the left
 taking precedence; on compatible points the precedence is immaterial
@@ -93,24 +97,20 @@ noncomputable def union (p q : Possibility W V (Part M)) : Possibility W V (Part
 @[simp] theorem union_assignment (v : V) :
     (p.union q).assignment v = (p.assignment v).or (q.assignment v) := rfl
 
-/-- A union assignment holds the left component's values, and the
-right's outside the left's domain. -/
-theorem mem_assignment_union {v : V} {e : M} :
-    e ∈ (p.union q).assignment v ↔
-      e ∈ p.assignment v ∨ v ∉ p.domain ∧ e ∈ q.assignment v :=
-  Part.mem_or_iff
-
 theorem le_union_left : p ≤ p.union q :=
   ⟨rfl, fun _ => Part.le_or_left⟩
 
-private theorem le_union_right_of_agree (hw : p.world = q.world)
-    (hag : ∀ v e e', e ∈ p.assignment v → e' ∈ q.assignment v → e = e') :
-    q ≤ p.union q :=
-  ⟨hw.symm, fun v e he => mem_assignment_union.mpr <| or_iff_not_imp_left.mpr
-    fun hp => ⟨fun hd => hp (hag v _ e (Part.get_mem hd) he ▸ Part.get_mem hd), he⟩⟩
-
 theorem union_le (hp : p ≤ u) (hq : q ≤ u) : p.union q ≤ u :=
   ⟨hp.1, fun v => Part.or_le (hp.2 v) (hq.2 v)⟩
+
+/-- Compatibility of partial points is worldwise and pointwise. -/
+theorem compat_iff_forall : Compat p q ↔
+    p.world = q.world ∧ ∀ v, Compat (p.assignment v) (q.assignment v) :=
+  ⟨fun ⟨_, hu⟩ =>
+    have ⟨hp, hq⟩ := PartialUnify.mem_upperBounds_pair.mp hu
+    ⟨hp.1.trans hq.1.symm, fun v => .of_le (hp.2 v) (hq.2 v)⟩,
+   fun ⟨hw, hc⟩ => .of_le le_union_left
+    ⟨hw.symm, fun v => Part.le_or_right (hc v)⟩⟩
 
 /-- Two partial points are compatible (`Compat`: bounded above in the
 descent order) exactly when they share their world and agree wherever
@@ -119,18 +119,11 @@ Def. 0.26, that the union of chosen points be a function. -/
 theorem compat_iff : Compat p q ↔
     p.world = q.world ∧
       ∀ v e e', e ∈ p.assignment v → e' ∈ q.assignment v → e = e' := by
-  constructor
-  · rintro ⟨u, hu⟩
-    obtain ⟨hp, hq⟩ := PartialUnify.mem_upperBounds_pair.mp hu
-    exact ⟨hp.1.trans hq.1.symm,
-      fun v e e' he he' => Part.mem_unique (hp.2 v e he) (hq.2 v e' he')⟩
-  · rintro ⟨hw, hag⟩
-    exact ⟨p.union q, PartialUnify.mem_upperBounds_pair.mpr
-      ⟨le_union_left, le_union_right_of_agree hw hag⟩⟩
+  simp only [compat_iff_forall, Part.compat_iff]
 
 theorem le_union_right (h : Compat p q) : q ≤ p.union q :=
-  have h' := compat_iff.mp h
-  le_union_right_of_agree h'.1 h'.2
+  have h' := compat_iff_forall.mp h
+  ⟨h'.1.symm, fun v => Part.le_or_right (h'.2 v)⟩
 
 /-- The union of compatible points is their least upper bound. -/
 theorem isLUB_union (h : Compat p q) : IsLUB {p, q} (p.union q) :=
@@ -139,9 +132,16 @@ theorem isLUB_union (h : Compat p q) : IsLUB {p, q} (p.union q) :=
       have h := PartialUnify.mem_upperBounds_pair.mp hu
       union_le h.1 h.2⟩
 
+/-- The joins of pairs of points: `u` bounds `{p, q}` least exactly when
+the pair is compatible and `u` is its union. -/
+theorem isLUB_pair_iff : IsLUB {p, q} u ↔ Compat p q ∧ u = p.union q :=
+  ⟨fun h =>
+    have hc : Compat p q := ⟨u, h.1⟩
+    ⟨hc, ((isLUB_union hc).unique h).symm⟩,
+   fun ⟨hc, hu⟩ => hu ▸ isLUB_union hc⟩
+
 /-- The union of two points defines the union of their domains. -/
-theorem domain_union (p q : Possibility W V (Part M)) :
-    (p.union q).domain = p.domain ∪ q.domain := by
+theorem domain_union : (p.union q).domain = p.domain ∪ q.domain := by
   ext v; simp
 
 /-- On a shared domain, compatibility is equality. -/
@@ -151,68 +151,64 @@ theorem eq_of_compat_of_domain_eq (h : Compat p q) (hdom : p.domain = q.domain) 
   (eq_of_le_of_domain_eq le_union_left hu.symm).trans
     (eq_of_le_of_domain_eq (le_union_right h) (hdom.symm.trans hu.symm)).symm
 
-theorem union_assoc (p q r : Possibility W V (Part M)) :
-    (p.union q).union r = p.union (q.union r) :=
-  Possibility.ext rfl <| funext fun _ => Part.or_assoc ..
+theorem union_assoc : (p.union q).union r = p.union (q.union r) :=
+  Possibility.ext rfl <| funext fun _ => Part.or_assoc
+
+@[simp] theorem union_self : p.union p = p :=
+  Possibility.ext rfl <| funext fun _ => Part.or_self
 
 /-- On compatible points the left precedence of `union` is immaterial. -/
 theorem union_comm (h : Compat p q) : p.union q = q.union p :=
   (isLUB_union h).unique (Set.pair_comm p q ▸ isLUB_union h.symm)
 
-/-- A union is compatible with whatever both components are compatible
-with. -/
-theorem compat_union_left (hpu : Compat p u) (hqu : Compat q u) :
-    Compat (p.union q) u := by
-  obtain ⟨hpw, hpa⟩ := compat_iff.mp hpu
-  obtain ⟨-, hqa⟩ := compat_iff.mp hqu
-  exact compat_iff.mpr ⟨hpw, fun v e e' he he' =>
-    (mem_assignment_union.mp he).elim (fun h => hpa v e e' h he') fun h =>
-      hqa v e e' h.2 he'⟩
+/-! ### The empty point -/
 
-/-- The left component of a compatible union is compatible. -/
-theorem compat_of_union_left (h : Compat (p.union q) u) : Compat p u :=
-  h.mono le_union_left le_rfl
+/-- The empty point at a world: no referent defined. -/
+def bot (w : W) : Possibility W V (Part M) :=
+  ⟨w, fun _ => ⊥⟩
 
-/-- The right component of a compatible union is compatible, given the
-components agree. -/
-theorem compat_of_union_right (hpq : Compat p q) (h : Compat (p.union q) u) :
-    Compat q u :=
-  h.mono (le_union_right hpq) le_rfl
+theorem bot_le : bot p.world ≤ p :=
+  ⟨rfl, fun _ => _root_.bot_le⟩
+
+@[simp] theorem union_bot {w : W} : p.union (bot w) = p :=
+  Possibility.ext rfl <| funext fun _ => Part.or_bot
+
+@[simp] theorem domain_bot {w : W} : (bot w : Possibility W V (Part M)).domain = ∅ :=
+  domain_eq_empty_iff.mpr fun _ => rfl
 
 /-! ### Restriction and the indexed classification -/
 
 section Restrict
 
+variable {X Y : Set V}
+
 /-- Restrict a partial point to the referents in `X`. -/
 def restrict (X : Set V) (p : Possibility W V (Part M)) : Possibility W V (Part M) :=
   ⟨p.world, fun v => ⟨v ∈ X ∧ (p.assignment v).Dom, fun h => (p.assignment v).get h.2⟩⟩
 
-@[simp] theorem restrict_world (X : Set V) (p : Possibility W V (Part M)) :
-    (p.restrict X).world = p.world := rfl
+@[simp] theorem restrict_world : (p.restrict X).world = p.world := rfl
 
 /-- Restriction descends. -/
-theorem restrict_le (X : Set V) (p : Possibility W V (Part M)) : p.restrict X ≤ p :=
+theorem restrict_le : p.restrict X ≤ p :=
   ⟨rfl, fun v e he => by
     obtain ⟨⟨-, hd⟩, rfl⟩ := he
     exact Part.get_mem hd⟩
 
 /-- Restriction intersects the domain. -/
-theorem domain_restrict (X : Set V) (p : Possibility W V (Part M)) :
-    (p.restrict X).domain = X ∩ p.domain :=
+theorem domain_restrict : (p.restrict X).domain = X ∩ p.domain :=
   rfl
 
 /-- A point with domain `X` descends into `q` exactly when it is `q`
 restricted to `X`. -/
-theorem le_iff_eq_restrict {X : Set V} (hp : p.domain = X) :
+theorem le_iff_eq_restrict (hp : p.domain = X) :
     p ≤ q ↔ p = q.restrict X := by
-  refine ⟨fun h => Possibility.ext h.1 (funext fun v => ?_), fun h => h ▸ restrict_le X q⟩
+  refine ⟨fun h => Possibility.ext h.1 (funext fun v => ?_), fun h => h ▸ restrict_le⟩
   refine Part.ext' ⟨fun hd => ⟨hp.subset hd, domain_mono h hd⟩, fun hd => hp.superset hd.1⟩
     fun hd hd' => ?_
   exact Part.mem_unique (h.2 v _ (Part.get_mem hd)) (Part.get_mem hd'.2)
 
 /-- Consecutive restrictions restrict to the intersection. -/
-theorem restrict_restrict (X Y : Set V) (p : Possibility W V (Part M)) :
-    (p.restrict Y).restrict X = p.restrict (X ∩ Y) :=
+theorem restrict_restrict : (p.restrict Y).restrict X = p.restrict (X ∩ Y) :=
   Possibility.ext rfl <| funext fun v =>
     Part.ext' (by simp [restrict, Set.mem_inter_iff, and_assoc]) fun _ _ => rfl
 
@@ -226,12 +222,8 @@ def domainEquiv (X : Set V) :
     Part.ext' ⟨fun hx => p.2.superset hx, fun hd => p.2.subset hd⟩ fun _ _ => rfl
   right_inv _ := rfl
 
-theorem domainEquiv_symm_val (X : Set V) (e : W × (X → M)) :
-    ((domainEquiv X).symm e).1 = ⟨e.1, fun v => ⟨v ∈ X, fun h => e.2 ⟨v, h⟩⟩⟩ :=
-  rfl
-
 /-- Restricting a classified point restricts its chart. -/
-theorem restrict_domainEquiv_symm {Y X : Set V} (h : Y ⊆ X) (e : W × (X → M)) :
+theorem restrict_domainEquiv_symm (h : Y ⊆ X) (e : W × (X → M)) :
     ((domainEquiv X).symm e).1.restrict Y =
       ((domainEquiv Y).symm (e.1, fun v => e.2 ⟨v.1, h v.2⟩)).1 :=
   Possibility.ext rfl <| funext fun _ =>
