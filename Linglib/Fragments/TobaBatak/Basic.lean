@@ -1,4 +1,4 @@
-import Linglib.Morphology.Realization
+import Linglib.Morphology.Focus
 import Linglib.Syntax.Extraction
 import Linglib.Syntax.Voice.Basic
 
@@ -151,7 +151,7 @@ inductive Site where
     voice form. The restriction derives from predicate fronting +
     nominal licensing: non-pivot DPs in Spec,CP lack a Case licensor
     ([erlewine-2018], §4). -/
-def realize : ExtractionTarget → List (Morphology.Reflex Site)
+def realize : ExtractionTarget → List (Morphology.Focus.Reflex Site)
   | .subject => [.morpheme .verb]
   | _ => []
 

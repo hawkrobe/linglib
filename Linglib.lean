@@ -1318,6 +1318,7 @@ import Linglib.Morphology.DM.VocabularyInsertion
 import Linglib.Morphology.DegreeContainment
 import Linglib.Morphology.Derivation
 import Linglib.Morphology.Exponence
+import Linglib.Morphology.Focus
 import Linglib.Morphology.FragmentGrammars.AdaptorGrammar
 import Linglib.Morphology.FragmentGrammars.CFGFragment
 import Linglib.Morphology.FragmentGrammars.Comparisons
@@ -1335,12 +1336,10 @@ import Linglib.Morphology.Number
 import Linglib.Morphology.Paradigm.Basic
 import Linglib.Morphology.Paradigm.Complexity
 import Linglib.Morphology.Paradigm.Contiguity
-import Linglib.Morphology.Realization
 import Linglib.Morphology.RootFamily
 import Linglib.Morphology.RootTypology
 import Linglib.Morphology.TenseAspect
 import Linglib.Morphology.TheorySpace
-import Linglib.Morphology.Typology
 import Linglib.Morphology.Unification
 import Linglib.Morphology.UsageBased.Network
 import Linglib.Morphology.Word

@@ -1,4 +1,4 @@
-import Linglib.Morphology.Realization
+import Linglib.Morphology.Focus
 
 /-!
 # Branan and Erlewine 2023: Anti-pied-piping
@@ -12,7 +12,7 @@ from the position of its semantic contribution. This file formalizes
 the introductory paradigm (their (1)–(8)): Japanese *mo* placement and
 Hungarian focus movement each attest exact targeting, pied-piping, and
 anti-pied-piping, stated over the host–focus containment relations of
-`Morphology/Realization.lean`.
+`Morphology/Focus.lean`.
 
 ## Main declarations
 
@@ -34,7 +34,7 @@ anti-pied-piping, stated over the host–focus containment relations of
 
 namespace BrananErlewine2023
 
-open Morphology
+open Morphology Morphology.Focus
 
 /-! ### The clause skeleton -/
 
