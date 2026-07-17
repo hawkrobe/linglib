@@ -1,6 +1,5 @@
 import Linglib.Pragmatics.Implicature.SomeAll
 import Linglib.Studies.GeurtsPouscoulous2009
-import Linglib.Pragmatics.Implicature.Defs
 import Linglib.Pragmatics.Implicature.Diagnostics
 
 /-!
@@ -89,9 +88,9 @@ are verified at the rate level.
   second graded-TVJ consumer materializes (Beltrama-Schwarz 2024,
   Ramotowska 2025, Tieu et al. — none currently expose monotonicity as
   a theorem).
-- The qualitative "local reading exists" conclusion is bridged through
-  `Implicature` (the spine in `Pragmatics/Implicature/`) using
-  `mechanism := .exhIE` (the localist EXH family).
+- The qualitative "local reading exists" conclusion is submitted to the
+  Gricean diagnostics in `Pragmatics/Implicature/Diagnostics.lean` over
+  the (literal, local-reading) pair.
 
 ## Subsequent literature (forward pointers)
 
@@ -124,8 +123,7 @@ particular interpretive option, parameterized by the picture type.
 We use `Prop` rather than `Bool` so that `Decidable` instances derive
 automatically from `Fin n`'s `Fintype` (mathlib idiom: define
 predicates as `Prop`, get `Decidable` from `Fintype` + per-cell
-`DecidableEq`, use `decide` for finite checks). The `Implicature W`
-spine defaults to `S = Prop`, so this also matches the spine bridge. -/
+`DecidableEq`, use `decide` for finite checks). -/
 abbrev Reading (P : Type) := P → Prop
 
 /-- The three theory families the paper distinguishes (§1, page 3).
@@ -689,7 +687,7 @@ def deControlsExp2Or : DEControlCondition → Nat
 
 section Bridges
 
-/-! ## Bridges to GP09 and the Implicature spine
+/-! ## Bridges to GP09 and the Gricean diagnostics
 
 Three connections to existing linglib content:
 
@@ -700,9 +698,9 @@ Three connections to existing linglib content:
    relative — GP09's binary inference task vs CS11's graded TVJ. We do
    not state "GP09 wrong / CS11 right"; we state the empirical
    complementarity and the methodological argument.
-2. **Implicature spine**: the qualitative "embedded local reading exists"
-   conclusion is wrapped as an `Implicature` value over `Picture6` with
-   `mechanism := .exhIE` (Innocent Exclusion / localist EXH family —
+2. **Diagnostics**: the qualitative "embedded local reading exists"
+   conclusion is submitted to the Gricean diagnostics over `Picture6`
+   (Innocent Exclusion / localist EXH family —
    the [fox-2007] / [chierchia-fox-spector-2008] / T2 cluster).
 3. **GP09 *exactly two* connection**: GP09's Exp 3 *exactly two*
    condition is the binary-task analog of CS11's Exp 2 *exactly one*.
@@ -725,21 +723,13 @@ theorem cs_gp_agree_on_de_local_far_below_baseline :
     GeurtsPouscoulous2009.genuineAmbiguityRates.sum /
       GeurtsPouscoulous2009.genuineAmbiguityRates.length > 60 := by decide
 
-/-- The qualitative "local reading exists in embedded position" finding
-expressed as an `Implicature Picture6`: scalar SI, content = the local
-reading extension, alternative = the global reading, mechanism = exhIE
-(the [fox-2007]-style localist EXH family that T2 represents). -/
-def localReadingExistsExp1 : Implicature Picture6 Prop :=
-  { kind := .scalar
-  , content := Exp1Some.local_
-  , altsUsed := {Exp1Some.global}
-  , mechanism := .exhIE }
-
 /-- The local-reading SI is *reinforceable*: there's a picture (WEAK
-condition) where the literal reading holds but the local reading fails.
-The `IsReinforceable` diagnostic (Sadock 1978) thus applies. -/
+condition) where the literal reading holds but the local reading
+(`Exp1Some.local_`, the [fox-2007]-style localist EXH reading that T2
+represents) fails. The `IsReinforceable` diagnostic (Sadock 1978) thus
+applies to the (literal, local) pair. -/
 theorem localReadingExistsExp1_isReinforceable :
-    Implicature.IsReinforceable Exp1Some.literal localReadingExistsExp1 := by
+    Implicature.IsReinforceable Exp1Some.literal Exp1Some.local_ := by
   refine ⟨Exp1Condition.witness .weak, ?_, ?_⟩
   · decide
   · show ¬ Exp1Some.local_ (Exp1Condition.witness .weak)

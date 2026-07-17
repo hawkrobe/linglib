@@ -1426,14 +1426,10 @@ import Linglib.Pragmatics.Emotion
 import Linglib.Pragmatics.Expressives.Basic
 import Linglib.Pragmatics.GameTheory
 import Linglib.Pragmatics.GriceanMaxims
-import Linglib.Pragmatics.Implicature.Basic
-import Linglib.Pragmatics.Implicature.Competence
-import Linglib.Pragmatics.Implicature.Defs
 import Linglib.Pragmatics.Implicature.Diagnostics
-import Linglib.Pragmatics.Implicature.EpistemicBlocking
-import Linglib.Pragmatics.Implicature.Markedness
-import Linglib.Pragmatics.Implicature.Scales
 import Linglib.Pragmatics.Implicature.SomeAll
+import Linglib.Pragmatics.NeoGricean.Basic
+import Linglib.Pragmatics.NeoGricean.Markedness
 import Linglib.Pragmatics.InformationTheory.Channel
 import Linglib.Pragmatics.InformationTheory.ChannelCapacity
 import Linglib.Pragmatics.RSA.ArgumentativeStrength

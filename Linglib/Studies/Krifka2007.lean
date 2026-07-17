@@ -1,6 +1,7 @@
 import Linglib.Semantics.Degree.Antonymy
 import Linglib.Semantics.Degree.Antonymy
-import Linglib.Pragmatics.Implicature.Markedness
+import Linglib.Pragmatics.NeoGricean.Markedness
+import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Data.Examples.TesslerFranke2019
 import Linglib.Phonology.Constraints.Defs
 import Linglib.Phonology.OptimalityTheory.Tableau
@@ -231,9 +232,9 @@ theorem equivalent_to_positive_iff_strengthened :
 /-- Krifka's form complexity ordering matches the markedness infrastructure.
     "unhappy" is marked over "happy" by morphological complexity. -/
 theorem unhappy_marked_by_morphology :
-    Implicature.Markedness.computeMarked
-      Implicature.Markedness.happy_with_morphology
-      Implicature.Markedness.unhappy_with_morphology = some "unhappy" := by
+    NeoGricean.Markedness.computeMarked
+      English.Predicates.Adjectival.happy_with_morphology
+      English.Predicates.Adjectival.unhappy_with_morphology = some "unhappy" := by
   decide
 
 /-- **Cost = complexity**: the rows' cost parameters (`C(un-) = 2`,

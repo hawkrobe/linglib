@@ -1,4 +1,5 @@
 import Linglib.Semantics.Degree.Adjective
+import Linglib.Pragmatics.NeoGricean.Markedness
 
 /-! # Adjectival Predicate Lexicon Fragment
 
@@ -845,5 +846,38 @@ theorem decent_no_cc      : ¬ decent.IsRelative := by decide
 theorem all_gradable :
     tall.IsGradable ∧ full.IsGradable ∧ wet.IsGradable ∧ good.IsGradable ∧
       decent.IsGradable := by decide
+
+/-! ### Morphology-extended entries
+
+Antonym-pair entries extended with the morphological and scale-pole
+metadata that `NeoGricean.Markedness` computes markedness from.
+Exercised by `Studies/Horn1984.lean`, `Studies/Krifka2007.lean`, and
+`Studies/Rett2015Implicature.lean`. -/
+
+open NeoGricean.Markedness (GradableAdjWithMorphology simpleMorphology prefixedMorphology)
+
+/-- *tall* with morphology: simple, positive pole. -/
+def tall_with_morphology : GradableAdjWithMorphology where
+  toGradableAdjective := tall
+  morphology := simpleMorphology "tall"
+  isPositivePole := true
+
+/-- *short* with morphology: simple, negative pole. -/
+def short_with_morphology : GradableAdjWithMorphology where
+  toGradableAdjective := short
+  morphology := simpleMorphology "short"
+  isPositivePole := false
+
+/-- *happy* with morphology: simple, positive pole. -/
+def happy_with_morphology : GradableAdjWithMorphology where
+  toGradableAdjective := happy
+  morphology := simpleMorphology "happy"
+  isPositivePole := true
+
+/-- *unhappy* with morphology: prefixed, negative pole. -/
+def unhappy_with_morphology : GradableAdjWithMorphology where
+  toGradableAdjective := unhappy
+  morphology := prefixedMorphology "unhappy"
+  isPositivePole := false
 
 end English.Predicates.Adjectival

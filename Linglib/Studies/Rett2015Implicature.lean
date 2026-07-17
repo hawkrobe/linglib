@@ -1,6 +1,6 @@
 import Mathlib.Data.Rat.Defs
-import Linglib.Pragmatics.Implicature.Basic
-import Linglib.Pragmatics.Implicature.Markedness
+import Linglib.Pragmatics.NeoGricean.Markedness
+import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Semantics.Degree.Adjective
 import Linglib.Semantics.Degree.Defs
 import Linglib.Studies.Rett2015
@@ -56,8 +56,8 @@ Why do equatives show asymmetry (marked antonyms evaluative) but comparatives do
 
 namespace Rett2015Implicature
 
-open Implicature
-open Implicature.Markedness
+open NeoGricean.Markedness
+open English.Predicates.Adjectival (tall_with_morphology short_with_morphology happy_with_morphology unhappy_with_morphology)
 open Degree (AdjectivalConstruction)
 open Degree
 
@@ -452,7 +452,7 @@ def applyMMP
   -- Check if this form is marked in the pair
   let isMarked := isMarkedForm adjForm adj1 adj2
   -- Check if construction is polar-invariant
-  let isPolarInvariant := Markedness.polarVariance construction == .invariant
+  let isPolarInvariant := polarVariance construction == .invariant
   -- Get the unmarked alternative
   let unmarkedAlt := if isMarked then
       if adjForm == adj1.form then some adj2.form else some adj1.form
@@ -628,14 +628,14 @@ MMP only applies in polar-invariant constructions (equative case).
 -/
 theorem mmp_requires_invariance_equative :
     (applyMMP "short" .equative tall_with_morphology short_with_morphology).mmpApplies = true →
-    Markedness.polarVariance .equative = .invariant := λ _ => rfl
+    polarVariance .equative = .invariant := λ _ => rfl
 
 /--
 MMP only applies in polar-invariant constructions (question case).
 -/
 theorem mmp_requires_invariance_question :
     (applyMMP "short" .degreeQuestion tall_with_morphology short_with_morphology).mmpApplies = true →
-    Markedness.polarVariance .degreeQuestion = .invariant := λ _ => rfl
+    polarVariance .degreeQuestion = .invariant := λ _ => rfl
 
 /--
 MMP does not apply in comparative constructions.
@@ -663,7 +663,7 @@ Equative asymmetry emerges from MMP + markedness.
 -/
 theorem equative_asymmetry_from_mmp :
     (isMarkedForm "short" tall_with_morphology short_with_morphology) ∧
-    (Markedness.polarVariance .equative = .invariant) →
+    (polarVariance .equative = .invariant) →
     ((applyMMP "short" .equative tall_with_morphology short_with_morphology).implicature = some .manner ∧
      (applyMMP "tall" .equative tall_with_morphology short_with_morphology).implicature = none) := by
   intro ⟨_, _⟩
@@ -873,7 +873,7 @@ theorem complete_derivation_as_short_as :
     -- Step 2: Markedness
     isMarkedForm "short" tall_with_morphology short_with_morphology = true ∧
     -- Step 3: Polar invariance
-    Markedness.polarVariance .equative = .invariant ∧
+    polarVariance .equative = .invariant ∧
     -- Step 4: MMP applies
     (applyMMP "short" .equative tall_with_morphology short_with_morphology).mmpApplies = true ∧
     -- Step 5: Manner implicature
@@ -897,7 +897,7 @@ theorem complete_derivation_as_tall_as :
     -- Step 2: Not marked
     isMarkedForm "tall" tall_with_morphology short_with_morphology = false ∧
     -- Step 3: Polar invariance (still holds)
-    Markedness.polarVariance .equative = .invariant ∧
+    polarVariance .equative = .invariant ∧
     -- Step 4: MMP doesn't apply (not marked)
     (applyMMP "tall" .equative tall_with_morphology short_with_morphology).mmpApplies = false ∧
     -- Step 5: No implicature

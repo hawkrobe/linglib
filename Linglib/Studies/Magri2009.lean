@@ -1,5 +1,4 @@
 import Mathlib.Tactic.DeriveFintype
-import Linglib.Pragmatics.Implicature.Defs
 import Linglib.Semantics.Exhaustification.InnocentExclusion
 import Linglib.Semantics.Alternatives.Lexical
 import Linglib.Semantics.Genericity.SortedOntology
@@ -1255,15 +1254,14 @@ theorem strengthened_eq_alternativeSource :
 end AlternativeSourceBridge
 
 -- ═══════════════════════════════════════════════════════════════════════
--- §  Implicature spine bridge — magriToImplicature + honest diagnostic
+-- §  Blind SI content vs common ground — the honest Magri diagnostic
 -- ═══════════════════════════════════════════════════════════════════════
 
-/-! ## Bridge: blind SI as `Implicature W Prop`
+/-! ## The blind SI's content has no common-ground realizer
 
-Wraps a `BlindScenario`-derived strengthened meaning as an `Implicature`
-value over the same world type, exercising the cross-mechanism spine in
-`Pragmatics/Implicature/Defs.lean`. The `Bool`-valued
-strengthening becomes a `Prop`-valued implicature `content` via
+States [magri-2009]'s mismatch consequence directly over the
+`BlindScenario`-derived strengthened meaning: the `Bool`-valued
+strengthening becomes the `Prop`-valued inferred content via
 `s.strengthened u w = true`.
 
 ### Why NOT a non-cancellability theorem
@@ -1284,24 +1282,20 @@ section ImplicatureSpineBridge
 
 variable {W U : Type} [Fintype W] [DecidableEq W]
 
-/-- Wrap a `BlindScenario`-derived strengthened meaning as an
-`Implicature W Prop`. The `content` is `s.strengthened u · = true`
-(the EXH'd meaning at each world); the `mechanism` is `.exhIE` —
-[magri-2009] uses Fox's innocent-exclusion operator only
-(`innocent.exh` in `Semantics/Exhaustification/Excluder.lean`,
-implementing [fox-2007]'s IE algorithm), not the Bar-Lev–Fox
-2020 IE+II extension that postdates the paper by 11 years. -/
-def magriToImplicature (s : BlindScenario W U) (u : U) : Implicature W Prop where
-  kind      := .scalar
-  content   := fun w => s.strengthened u w = true
-  altsUsed  := { p | ∃ alt ∈ s.alternatives u, p = fun w => s.meaning alt w = true }
-  mechanism := .exhIE
+/-- The strengthened meaning as a `Prop`-valued inferred content. The
+strengthening is `innocent.exh` — [magri-2009] uses Fox's
+innocent-exclusion operator only (`innocent.exh` in
+`Semantics/Exhaustification/Excluder.lean`, implementing [fox-2007]'s
+IE algorithm), not the Bar-Lev–Fox 2020 IE+II extension that postdates
+the paper by 11 years. -/
+def magriContent (s : BlindScenario W U) (u : U) : W → Prop :=
+  fun w => s.strengthened u w = true
 
-/-- **Magri's mismatch consequence, restated against the implicature
-spine.** When EXH is applied to φ blind to CK ([magri-2009] §3.2.2
-eq. (32), the Blindness Hypothesis), and the resulting strengthened
-meaning has no CK-realizer (eq. (33), the Mismatch Hypothesis), then
-the wrapped implicature's content has no CK-compatible realizer.
+/-- **Magri's mismatch consequence.** When EXH is applied to φ blind to
+CK ([magri-2009] §3.2.2 eq. (32), the Blindness Hypothesis), and the
+resulting strengthened meaning has no CK-realizer (eq. (33), the
+Mismatch Hypothesis), then the inferred content has no CK-compatible
+realizer.
 
 The deviance [magri-2009] predicts is **not** Sadock truth-conditional
 non-cancellability — for the "Some Italians" example, the continuation
@@ -1313,15 +1307,15 @@ holds. The load-bearing premise is [magri-2009] §3.2.5 eq. (41)
 when uttering a cancellation continuation, and this commitment is what
 creates the deviance. The mandatoriness machinery is formalized below
 in `RelevantBlindScenario`; this theorem only states the *outcome*
-(eq. (33) antecedent) translated to the implicature spine. -/
+(eq. (33) antecedent). -/
 theorem magri_blindOdd_no_ck_realizer
     (s : BlindScenario W U) (u : U) (h : s.blindOdd u = true) :
-    ¬ ∃ w, s.context w = true ∧ (magriToImplicature s u).content w := by
+    ¬ ∃ w, s.context w = true ∧ magriContent s u w := by
   rintro ⟨w, hctx, hcontent⟩
   have hExhMem :
       w ∈ innocent.exh (altsFromPreds ((s.alternatives u).map s.meaning))
                        (predToFinset (s.meaning u)) := by
-    simpa [magriToImplicature, BlindScenario.strengthened] using hcontent
+    simpa [magriContent, BlindScenario.strengthened] using hcontent
   exact s.blindOdd_excludes_cWorlds u h w (s.mem_cWorlds_of_context w hctx) hExhMem
 
 end ImplicatureSpineBridge

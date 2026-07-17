@@ -2,7 +2,7 @@ import Linglib.Features.Acceptability
 import Mathlib.Data.Rat.Defs
 import Linglib.Semantics.Conditionals.Exhaustivity
 import Linglib.Semantics.Conditionals.Basic
-import Linglib.Pragmatics.Implicature.Competence
+import Linglib.Pragmatics.NeoGricean.Basic
 import Linglib.Studies.BaleEtAl2025
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fintype.Basic
@@ -715,7 +715,7 @@ theorem cp_is_pragmatic :
 /-! ## Competence Bridge
 
 The competence assumption in conditional perfection is the same mechanism
-formalized in `Implicature.Competence` and tested experimentally by
+formalized in `NeoGricean` and tested experimentally by
 [bale-etal-2025] for scalar implicatures. Both paradigms:
 - Map full speaker knowledge to `BeliefState.disbelief` (speaker knows ¬ψ)
 - Map partial knowledge to `BeliefState.noOpinion` (speaker is agnostic)
@@ -723,7 +723,7 @@ formalized in `Implicature.Competence` and tested experimentally by
 
 This section connects `KnowledgeCondition` to the shared infrastructure. -/
 
-open Implicature Implicature.Competence
+open NeoGricean
 
 private abbrev siToBeliefState :=
   BaleEtAl2025.toBeliefState
@@ -770,7 +770,7 @@ theorem pk_processAlternative_weak :
 Both [evcen-bale-barner-2026] (conditional perfection) and
 [bale-etal-2025] (scalar implicatures) map full knowledge to strong
 inference and partial knowledge to weak-only, via the identical
-`processAlternative` machinery from `Implicature.Competence`. -/
+`processAlternative` machinery from `NeoGricean`. -/
 theorem cp_si_competence_unity :
     -- CP: full knowledge → strong, partial → weak
     (processAlternative true (toBeliefStateCP .fullKnowledge)).strongDerived = true ∧
