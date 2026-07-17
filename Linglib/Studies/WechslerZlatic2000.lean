@@ -34,7 +34,7 @@ the seven a-priori possibilities, all attested (their §9, n. 3).
 * `no_single_phi_bundle_for_deca` — the §3.3 single-bundle "illusion" as
   a refutation against `Word.Agree`
 * `indexReaders_lowerSet` — the Agreement Hierarchy skeleton over
-  `Agreement.AgreementTarget`, robust to the open predicate position
+  `Agreement.Target`, robust to the open predicate position
 
 Coordinate resolution (their fn. 18) is handled in
 `Studies/DalrympleKaplan2000.lean`, to which the paper defers; the HPSG
@@ -472,20 +472,20 @@ theorem no_single_phi_bundle_for_deca :
 
 /-! ### The Agreement Hierarchy, derived (their §8)
 
-Corbett's hierarchy lives as `Agreement.AgreementTarget`; W&Z's
+Corbett's hierarchy lives as `Agreement.Target`; W&Z's
 contribution is `readsIndex`, the bundle-access derivation of it.
 Attributives lack referential indices (read only CONCORD); pronouns and
 verbs read INDEX, which alone connects to the semantics. The predicate
 position is open in the paper (§7.3): secondary predication points to
 concord (ex. 50), coordination to index (exs. 51–53). -/
 
-open _root_.Agreement (AgreementTarget)
+open _root_.Agreement (Target)
 
 /-- Whether a target reads the INDEX bundle — the precondition for
     semantic agreement (their §8). `predReadsIndex` is the open predicate
     position (§7.3, "left for future research"); the hierarchy's
     monotonicity (`indexReaders_lowerSet`) holds for either value. -/
-def readsIndex (predReadsIndex : Bool) : AgreementTarget → Prop
+def readsIndex (predReadsIndex : Bool) : Target → Prop
   | .attributive => False
   | .predicate => predReadsIndex
   | .relativePronoun => True
@@ -496,15 +496,21 @@ instance (p : Bool) : DecidablePred (readsIndex p) := fun t => by
   cases t <;> simp only [readsIndex] <;> infer_instance
 
 /-- **The hierarchy skeleton**: the index readers form a lower set in the
-    `AgreementTarget` rank (higher rank = more syntactic), so semantic
+    `Agreement.Target` order (higher = more syntactic), so semantic
     agreement can surface only at more-semantic targets — and this holds
     whichever way the open predicate position resolves. This is the
     *categorical* claim W&Z derive (their §8, "concord elements should
     never show semantic agreement unless the pronouns do"); it explains
     but does not reproduce Corbett's gradient, corpus-level likelihood
-    law ([corbett-1998]; their fn. 21). -/
-theorem indexReaders_lowerSet (p : Bool) (t u : AgreementTarget)
-    (h : u.rank ≤ t.rank) : readsIndex p t → readsIndex p u := by
+    law ([corbett-1998]; their fn. 21). W&Z rank no INDEX-reader above
+    another, and none is needed: `verb`, off the hierarchy, reads INDEX
+    outright (`readsIndex_verb`). -/
+theorem indexReaders_lowerSet (p : Bool) (t u : Target)
+    (h : u ≤ t) : readsIndex p t → readsIndex p u := by
   cases p <;> revert t u <;> decide
+
+/-- Verbs read INDEX unconditionally (they agree in person, which only
+    INDEX carries) — no hierarchy position needed. -/
+theorem readsIndex_verb (p : Bool) : readsIndex p .verb := trivial
 
 end WechslerZlatic2000

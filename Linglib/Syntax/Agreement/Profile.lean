@@ -44,6 +44,6 @@ inductive Dimension where
     the dimensions in which that target's form covaries. `∅` = invariant
     (bare) forms. Conditioned splits (e.g. Russian verbs: person/number in
     nonpast, gender/number in past) are unioned, not modeled. -/
-abbrev Profile := AgreementTarget → Finset Dimension
+abbrev Profile := Target → Finset Dimension
 
 end Agreement
