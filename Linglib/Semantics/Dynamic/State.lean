@@ -439,6 +439,19 @@ theorem restrict_restrict (X Y : Set V) (I : State W V M) :
     (I.restrict Y).restrict X = I.restrict (X ∩ Y) := by
   simp only [restrict, Set.image_image, Possibility.restrict_restrict]
 
+/-! ### The uniform classification -/
+
+/-- Uniform states at `X` are sets of world–`X`-assignment pairs. -/
+def uniformEquiv (X : Set V) :
+    {I : State W V M // UniformAt X I} ≃ Set (W × (X → M)) :=
+  (Equiv.Set.powerset {p : Possibility W V (Part M) | p.domain = X}).trans
+    (Equiv.Set.congr (Possibility.domainEquiv X))
+
+@[simp] theorem mem_uniformEquiv {X : Set V}
+    {I : {I : State W V M // UniformAt X I}} {e : W × (X → M)} :
+    e ∈ uniformEquiv X I ↔ ((Possibility.domainEquiv X).symm e).1 ∈ I.1 :=
+  Set.mem_image_equiv
+
 variable [DecidableEq V]
 
 /-- Random assignment ([elliott-sudo-2025], (43);
@@ -452,32 +465,6 @@ theorem familiar_randomAssign (I : State W V M) (x : V) :
     Familiar (I.randomAssign x) x := by
   rintro p ⟨q, -, m, rfl⟩
   simp
-
-/-! ### The uniform classification -/
-
-/-- Uniform states at `X` are sets of world–`X`-assignment pairs — the
-state-level face of `Possibility.domainEquiv`. The stratum's order
-faces are `le_iff_superset` and `lowerClosure_le_iff`: informativeness
-is reverse inclusion, subsistence inclusion. -/
-def uniformEquiv (X : Set V) :
-    {I : State W V M // UniformAt X I} ≃ Set (W × (X → M)) where
-  toFun I := {e | ((Possibility.domainEquiv X).symm e).1 ∈ I.1}
-  invFun S :=
-    ⟨{p | ∃ h : p.domain = X, Possibility.domainEquiv X ⟨p, h⟩ ∈ S},
-      fun _ ⟨h, _⟩ => h⟩
-  left_inv I := by
-    refine Subtype.ext (State.ext fun p => ?_)
-    constructor
-    · rintro ⟨h, hmem⟩
-      simpa using hmem
-    · intro hp
-      exact ⟨I.2 p hp, by simpa using hp⟩
-  right_inv S := Set.ext fun e => by
-    constructor
-    · rintro ⟨h, hmem⟩
-      simpa using hmem
-    · intro he
-      exact ⟨((Possibility.domainEquiv X).symm e).2, by simpa using he⟩
 
 end State
 
