@@ -1,8 +1,9 @@
 import Linglib.Fragments.English.Plurals
 import Linglib.Fragments.Japanese.Plurals
 import Linglib.Features.Number.Resolve
-import Linglib.Syntax.Agreement.Basic
+import Linglib.Syntax.Agreement.Target
 import Linglib.Semantics.Genericity.NominalMappingParameter
+import Mathlib.Order.Defs.Unbundled
 
 /-!
 # Corbett (2000) — Number
@@ -294,20 +295,17 @@ structure AgreementProfile where
   /-- Targets where semantic (meaning-driven) agreement is possible. -/
   semanticTargets : List Target
 
-/-- The four positions of [corbett-1991]'s Agreement Hierarchy (`verb`
-    is not one of them — see `Agreement.Target`). -/
-private def hierarchyPositions : List Target :=
-  [.attributive, .predicate, .relativePronoun, .personalPronoun]
-
 /-- The Agreement Hierarchy monotonicity constraint: once semantic agreement
     becomes possible at a target, it remains possible at all targets further
-    right (= lower in the `Agreement.Target` order) on the hierarchy. -/
+    down the `Agreement.Target` order — the semantic targets form a lower
+    set. `verb`, comparable only to itself, is unconstrained. -/
 def AgreementProfile.RespectsHierarchy (p : AgreementProfile) : Prop :=
-  ∀ t1 ∈ hierarchyPositions, ∀ t2 ∈ hierarchyPositions,
-    t1 ≤ t2 ∨ t1 ∉ p.semanticTargets ∨ t2 ∈ p.semanticTargets
+  IsLowerSet {t | t ∈ p.semanticTargets}
 
-instance (p : AgreementProfile) : Decidable p.RespectsHierarchy := by
-  unfold AgreementProfile.RespectsHierarchy; infer_instance
+instance (p : AgreementProfile) : Decidable p.RespectsHierarchy :=
+  decidable_of_iff
+    (∀ t u : Target, u ≤ t → t ∈ p.semanticTargets → u ∈ p.semanticTargets)
+    Iff.rfl
 
 -- Language data
 
