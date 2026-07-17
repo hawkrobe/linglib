@@ -203,7 +203,7 @@ def elementsToPoints :
     rw [Subsingleton.elim f.1 (homOfLE hb).op, possibilities_map_apply]
       at hmap
     rw [← hmap, ← Possibility.restrict_domainEquiv_symm hb]
-    exact Possibility.restrict_le _ _)).op
+    exact Possibility.restrict_le)).op
   map_id _ := Subsingleton.elim _ _
   map_comp _ _ := Subsingleton.elim _ _
 

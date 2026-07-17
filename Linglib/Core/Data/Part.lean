@@ -33,27 +33,27 @@ theorem mem_or_iff : a ∈ p.or q ↔ a ∈ p ∨ ¬p.Dom ∧ a ∈ q := by
   · simp [Part.or, h]
   · simp [Part.or, eq_none_iff'.mpr h]
 
-@[simp] theorem none_or (q : Part α) : Part.none.or q = q :=
+@[simp] theorem none_or : Part.none.or q = q :=
   if_neg not_none_dom
 
-@[simp] theorem or_none (p : Part α) : p.or none = p := by
+@[simp] theorem or_none : p.or none = p := by
   by_cases h : p.Dom
   · simp [Part.or, h]
   · simp [Part.or, eq_none_iff'.mpr h]
 
-@[simp] theorem some_or (a : α) (q : Part α) : (Part.some a).or q = Part.some a :=
+@[simp] theorem some_or : (Part.some a).or q = Part.some a :=
   if_pos trivial
 
-@[simp] theorem bot_or (q : Part α) : (⊥ : Part α).or q = q :=
-  none_or q
+@[simp] theorem bot_or : (⊥ : Part α).or q = q :=
+  none_or
 
-@[simp] theorem or_bot (p : Part α) : p.or ⊥ = p :=
-  or_none p
+@[simp] theorem or_bot : p.or ⊥ = p :=
+  or_none
 
-@[simp] theorem or_self (p : Part α) : p.or p = p :=
+@[simp] theorem or_self : p.or p = p :=
   ite_self p
 
-theorem or_assoc (p q r : Part α) : (p.or q).or r = p.or (q.or r) := by
+theorem or_assoc : (p.or q).or r = p.or (q.or r) := by
   by_cases hp : p.Dom <;> by_cases hq : q.Dom <;> simp [Part.or, hp, hq]
 
 theorem le_or_left : p ≤ p.or q := fun _ ha => mem_or_iff.mpr (.inl ha)
@@ -82,5 +82,12 @@ theorem compat_iff : Compat p q ↔ ∀ a b, a ∈ p → b ∈ q → a = b := by
     exact fun a b ha hb => mem_unique (hp a ha) (hq b hb)
   · exact fun hag => ⟨p.or q, PartialUnify.mem_upperBounds_pair.mpr
       ⟨le_or_left, le_or_right_of_agree hag⟩⟩
+
+theorem le_or_right (h : Compat p q) : q ≤ p.or q :=
+  le_or_right_of_agree (compat_iff.mp h)
+
+theorem compat_or_left (hp : Compat p r) (hq : Compat q r) : Compat (p.or q) r :=
+  compat_iff.mpr fun a b ha hb => (mem_or_iff.mp ha).elim
+    (fun h => compat_iff.mp hp a b h hb) fun h => compat_iff.mp hq a b h.2 hb
 
 end Part

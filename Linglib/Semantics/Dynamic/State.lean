@@ -185,13 +185,13 @@ theorem merge_assoc (s t u : State W V M) :
     have hqv := Possibility.compat_of_union_right hpq hav
     exact ⟨p, hp, q.union v, ⟨q, hq, v, hv, hqv, rfl⟩,
       (Possibility.compat_union_left hpq.symm hpv.symm).symm,
-      Possibility.union_assoc p q v⟩
+      Possibility.union_assoc⟩
   · rintro ⟨p, hp, a, ⟨q, hq, v, hv, hqv, rfl⟩, hpa, rfl⟩
     have hpq := (Possibility.compat_of_union_left hpa.symm).symm
     have hpv := (Possibility.compat_of_union_right hqv hpa.symm).symm
     exact ⟨p.union q, ⟨p, hp, q, hq, hpq, rfl⟩, v, hv,
       Possibility.compat_union_left hpv hqv,
-      (Possibility.union_assoc p q v).symm⟩
+      (Possibility.union_assoc).symm⟩
 
 /-- The initial state is a unit for consistent merge: with `merge_comm`,
 `merge_assoc`, and `merge_infoLe`, updating is joining in a commutative
@@ -305,7 +305,7 @@ theorem subsistsIn_iff_subset_restrict {X : Set V}
       ((Possibility.le_iff_eq_restrict (hs p hp)).mp hpq).symm⟩
   · rintro h p hp
     obtain ⟨q, hq, rfl⟩ := h hp
-    exact ⟨q, hq, Possibility.restrict_le X q⟩
+    exact ⟨q, hq, Possibility.restrict_le⟩
 
 /-- Informativeness out of a stratum factors through reindexing: the
 restricted image of the stronger is included in the weaker — the
@@ -319,7 +319,7 @@ theorem infoLe_iff_restrict_subset {X : Set V}
     rwa [← (Possibility.le_iff_eq_restrict (hs p hp)).mp hpq]
   · intro h q hq
     exact ⟨q.restrict X, h ⟨q, hq, rfl⟩,
-      Possibility.restrict_le X q⟩
+      Possibility.restrict_le⟩
 
 end Fibred
 
@@ -331,7 +331,7 @@ def restrict (X : Set V) (I : State W V M) : State W V M :=
 original. -/
 theorem subsistsIn_restrict (X : Set V) (I : State W V M) : I.restrict X ⪯ I := by
   rintro p ⟨q, hq, rfl⟩
-  exact ⟨q, hq, Possibility.restrict_le X q⟩
+  exact ⟨q, hq, Possibility.restrict_le⟩
 
 /-- Restriction meets the stratification. -/
 theorem uniformAt_restrict {X Y : Set V} {I : State W V M}
@@ -344,7 +344,7 @@ theorem restrict_restrict (X Y : Set V) (I : State W V M) :
     (I.restrict Y).restrict X = I.restrict (X ∩ Y) := by
   unfold restrict
   rw [← Set.image_comp]
-  exact congrFun (congrArg _ (funext (Possibility.restrict_restrict X Y))) I
+  exact congrFun (congrArg _ (funext fun _ => Possibility.restrict_restrict)) I
 
 variable [DecidableEq V]
 
