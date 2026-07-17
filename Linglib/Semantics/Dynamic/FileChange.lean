@@ -134,7 +134,7 @@ def indef [DecidableEq V] (x : V) (body : FCP W V M) : FCP W V M :=
 Condition); the card is already established, so the file passes through
 to the body. -/
 def def_ (x : V) (body : FCP W V M) : FCP W V M :=
-  fun F => Part.assert (Familiar F x) fun _ => body F
+  fun F => Part.assert (State.Familiar F x) fun _ => body F
 
 /-! ### Truth and entailment (Ch. III §3) -/
 
@@ -191,7 +191,7 @@ theorem admits_indef [DecidableEq V] (x : V) (body : FCP W V M)
 /-- **The Familiarity Condition is definedness** ((15)): a definite is
 defined iff its card is familiar (and the body is defined). -/
 theorem admits_def_ (x : V) (body : FCP W V M) (F : State W V M) :
-    (def_ x body).admits F ↔ ∃ _ : Familiar F x, (body F).Dom := by
+    (def_ x body).admits F ↔ ∃ _ : State.Familiar F x, (body F).Dom := by
   exact Iff.rfl
 
 /-! ### The two regimes: filtering and extension
@@ -221,7 +221,7 @@ theorem atomW_eq (pred : W → Prop) (F : State W V M) :
 /-- Rule (13), the familiar regime: at a familiar card the atom
 filters — and in particular is eliminative. -/
 theorem atomVar_eq_of_familiar (pred : M → Prop) (x : V)
-    {F : State W V M} (hfam : Familiar F x) :
+    {F : State W V M} (hfam : State.Familiar F x) :
     atomVar pred x F =
       Part.some {p ∈ F | ∃ m ∈ p.assignment x, pred m} := by
   refine congrArg Part.some (Set.ext fun r => ⟨?_, ?_⟩)
@@ -296,7 +296,7 @@ theorem atomW_eliminative (pred : W → Prop) {F F' : State W V M}
 /-- Variable atoms are eliminative at familiar cards. -/
 theorem atomVar_eliminative (pred : M → Prop) (x : V)
     {F F' : State W V M}
-    (hfam : Familiar F x) (h : F' ∈ atomVar pred x F) : F' ⊆ F := by
+    (hfam : State.Familiar F x) (h : F' ∈ atomVar pred x F) : F' ⊆ F := by
   rw [atomVar_eq_of_familiar pred x hfam] at h
   obtain rfl := Part.mem_some_iff.mp h
   exact fun p hp => hp.1
@@ -322,7 +322,7 @@ theorem neg_eq_partial_neg [DecidableEq V] {X : Finset V}
     (F : Set (Possibility W V (Part M))) \ (φ F).get h₁
   ext p
   exact and_congr_right fun hp => not_congr
-    (State.mem_lowerClosure_iff (hφ _ (Part.get_mem _)) (hF p hp))
+    ((hφ _ (Part.get_mem _)).mem_lowerClosure (hF p hp))
 
 end FCP
 

@@ -45,9 +45,9 @@ are partial orders, coinciding with `⊇` and `⊆`.
   bound and union the greatest lower bound — with the `CommMonoid` and
   `CovariantClass` instances, the content half of
   [visser-vermeulen-1996]'s monoidal processing.
-- `State.le_iff_superset`, `State.lowerClosure_le_iff`,
-  `State.mul_eq_inter_of_uniform`: on a uniform stratum the orders
-  are `⊇`/`⊆` and merge is intersection.
+- `State.UniformAt.le_iff_superset`, `State.UniformAt.lowerClosure_le_iff`,
+  `State.UniformAt.mul_eq_inter`: on a uniform stratum the orders are
+  `⊇`/`⊆` and merge is intersection.
 - `State.antisymmetrizationOrderIso`: up to informational equivalence,
   states are the complete lattice of upper sets of possibilities.
 - `State.uniformEquiv`: uniform states at `X` are `Set (W × (X → M))`.
@@ -240,8 +240,6 @@ def antisymmetrizationOrderIso :
     induction b using Quotient.ind
     exact Iff.rfl
 
-end State
-
 /-! ### Familiarity
 
 The worldly content of a state — Def. 0.23(v)'s proposition,
@@ -251,11 +249,7 @@ The worldly content of a state — Def. 0.23(v)'s proposition,
 def Familiar (s : State W V M) (x : V) : Prop :=
   ∀ p ∈ s, (p.assignment x).Dom
 
-namespace State
-
 /-! ### The uniform stratum -/
-
-variable {s s' : State W V M}
 
 /-- The state is uniform at `X`: every point defines exactly the
 referents in `X`. -/
@@ -266,8 +260,15 @@ def UniformAt (X : Set V) (I : State W V M) : Prop :=
 theorem uniformAt_bot : UniformAt ∅ (⊥ : State W V M) := fun _ hp =>
   Possibility.domain_eq_empty_iff.mpr (mem_bot.mp hp)
 
+/-- A uniform stratum is an antichain: comparable points with one
+domain are equal. -/
+theorem UniformAt.isAntichain {X : Set V} (hs : UniformAt X s) :
+    IsAntichain (· ≤ ·) (s : Set (Possibility W V (Part M))) :=
+  fun p hp q hq hne hpq =>
+    hne (Possibility.eq_of_le_of_domain_eq hpq ((hs p hp).trans (hs q hq).symm))
+
 /-- Into a uniform stratum, subsistence is membership. -/
-theorem mem_lowerClosure_iff {X : Set V} (hs : UniformAt X s)
+theorem UniformAt.mem_lowerClosure {X : Set V} (hs : UniformAt X s)
     {p : Possibility W V (Part M)} (hp : p.domain = X) :
     p ∈ lowerClosure s ↔ p ∈ s :=
   ⟨fun ⟨q, hq, hpq⟩ =>
@@ -275,23 +276,26 @@ theorem mem_lowerClosure_iff {X : Set V} (hs : UniformAt X s)
     fun h => subset_lowerClosure h⟩
 
 /-- On a uniform stratum, subsistence is inclusion. -/
-theorem lowerClosure_le_iff {X : Set V} (hs : UniformAt X s)
+theorem UniformAt.lowerClosure_le_iff {X : Set V} (hs : UniformAt X s)
     (hs' : UniformAt X s') :
     lowerClosure s ≤ lowerClosure s' ↔ s ⊆ s' :=
-  lowerClosure_le.trans (forall₂_congr fun p hp => mem_lowerClosure_iff hs' (hs p hp))
+  lowerClosure_le.trans (forall₂_congr fun p hp => hs'.mem_lowerClosure (hs p hp))
+
+/-- Into a uniform stratum, domination is membership. -/
+theorem UniformAt.mem_upperClosure {X : Set V} (hs : UniformAt X s)
+    {q : Possibility W V (Part M)} (hq : q.domain = X) :
+    q ∈ upperClosure s ↔ q ∈ s :=
+  ⟨fun ⟨p, hp, hpq⟩ =>
+    Possibility.eq_of_le_of_domain_eq hpq ((hs p hp).trans hq.symm) ▸ hp,
+    fun h => subset_upperClosure h⟩
 
 /-- On a uniform stratum, informativeness is reverse inclusion. -/
-theorem le_iff_superset {X : Set V} (hs : UniformAt X s) (hs' : UniformAt X s') :
-    s ≤ s' ↔ s' ⊆ s := by
-  rw [le_def]
-  constructor
-  · intro h q hq
-    obtain ⟨p, hp, hpq⟩ := h q hq
-    rwa [← Possibility.eq_of_le_of_domain_eq hpq ((hs p hp).trans (hs' q hq).symm)]
-  · exact fun h q hq => ⟨q, h hq, le_rfl⟩
+theorem UniformAt.le_iff_superset {X : Set V} (hs : UniformAt X s)
+    (hs' : UniformAt X s') : s ≤ s' ↔ s' ⊆ s :=
+  le_def.trans (forall₂_congr fun q hq => hs.mem_upperClosure (hs' q hq))
 
 /-- Within one stratum, merge is intersection. -/
-theorem mul_eq_inter_of_uniform {X : Set V} (hs : UniformAt X s)
+theorem UniformAt.mul_eq_inter {X : Set V} (hs : UniformAt X s)
     (hs' : UniformAt X s') : s * s' = s ∩ s' := by
   ext r
   rw [mem_mul]
@@ -315,14 +319,14 @@ theorem mem_restrict {X : Set V} {I : State W V M} {p : Possibility W V (Part M)
 section Fibred
 
 /-- Merge unites strata. -/
-theorem uniformAt_mul {X Y : Set V} (hs : UniformAt X s) (hs' : UniformAt Y s') :
+theorem UniformAt.mul {X Y : Set V} (hs : UniformAt X s) (hs' : UniformAt Y s') :
     UniformAt (X ∪ Y) (s * s') := by
   intro r hr
   obtain ⟨p, hp, q, hq, -, rfl⟩ := mem_mul.mp hr
   rw [Possibility.domain_union, hs p hp, hs' q hq]
 
 /-- Subsistence out of a stratum is inclusion into the restricted image. -/
-theorem lowerClosure_le_iff_subset_restrict {X : Set V} (hs : UniformAt X s) :
+theorem UniformAt.lowerClosure_le_iff_restrict {X : Set V} (hs : UniformAt X s) :
     lowerClosure s ≤ lowerClosure s' ↔ s ⊆ s'.restrict X := by
   rw [lowerClosure_le]
   constructor
@@ -335,7 +339,7 @@ theorem lowerClosure_le_iff_subset_restrict {X : Set V} (hs : UniformAt X s) :
 
 /-- Informativeness out of a stratum is reverse inclusion of the
 restricted image. -/
-theorem le_iff_restrict_subset {X : Set V} (hs : UniformAt X s) :
+theorem UniformAt.le_iff_restrict_subset {X : Set V} (hs : UniformAt X s) :
     s ≤ s' ↔ s'.restrict X ⊆ s := by
   rw [le_def]
   constructor
@@ -356,7 +360,7 @@ theorem lowerClosure_restrict_le (X : Set V) (I : State W V M) :
   exact ⟨q, hq, Possibility.restrict_le⟩
 
 /-- Restriction meets the stratification. -/
-theorem uniformAt_restrict {X Y : Set V} {I : State W V M}
+theorem UniformAt.restrict {X Y : Set V} {I : State W V M}
     (h : UniformAt Y I) : UniformAt (X ∩ Y) (I.restrict X) := by
   rintro p ⟨q, hq, rfl⟩
   rw [Possibility.domain_restrict, h q hq]

@@ -25,7 +25,7 @@ paper's separation of assertability (54) from Heimian familiarity rests.
 - subsistence (Def. 3.3, after [groenendijk-stokhof-veltman-1996]),
   rendered as the lower closure: membership for points, `≤` of
   closures for states.
-- `Familiar`: familiarity (Def. 3.2) — defined at every possibility,
+- `State.Familiar`: familiarity (Def. 3.2) — defined at every possibility,
   values free; worldly information (Def. 3.1's 𝒲) is the image
   `Possibility.world '' s`.
 - `randomAssign`: the paper's `s[εₓ]` (43); novelty is not encoded.
@@ -40,7 +40,7 @@ paper's separation of assertability (54) from Heimian familiarity rests.
 - `partition`, `partition_assertable`: every possibility subsists
   positively, subsists negatively, or is unknown.
 - `de_morgan_disj`, `de_morgan_conj`: de Morgan's laws, unlike in
-  standard dynamic semantics. (Descendance, subsistence, `Familiar`,
+  standard dynamic semantics. (Descendance, subsistence, `State.Familiar`,
   and random assignment now live at the root, in `State.lean` — this
   file's vocabulary became the module's.)
 - `egli`: Egli's theorem for the positive dimension, definitionally.

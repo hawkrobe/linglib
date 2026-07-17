@@ -100,8 +100,8 @@ referents" — the defining claim of [heim-1982]. -/
 theorem indef_adds_to_dom (x : ℕ) (body : FCP W ℕ E)
     (F : State W ℕ E) {F' : State W ℕ E}
     (hres : F' ∈ FCP.indef x body F)
-    (hbody : ∀ G, Familiar G x → ∀ G' ∈ body G, Familiar G' x) :
-    Familiar F' x := by
+    (hbody : ∀ G, State.Familiar G x → ∀ G' ∈ body G, State.Familiar G' x) :
+    State.Familiar F' x := by
   obtain ⟨-, hmem⟩ := Part.mem_assert_iff.mp hres
   exact hbody _ (State.familiar_randomAssign F x) F' hmem
 
@@ -145,7 +145,7 @@ falsehood. This is modeled by FCPs being `Part`-undefined. -/
 This accounts for why "*A man₁ walked in. A man₁ sat down." is
 infelicitous when the second indefinite reuses index 1. -/
 theorem novelty_violation (x : ℕ) (body : FCP W ℕ E)
-    (F : State W ℕ E) (hne : F.Nonempty) (h : Familiar F x) :
+    (F : State W ℕ E) (hne : F.Nonempty) (h : State.Familiar F x) :
     ¬ (FCP.indef x body).admits F := by
   rintro ⟨hall, -⟩
   obtain ⟨p, hp⟩ := hne
@@ -156,7 +156,7 @@ theorem novelty_violation (x : ℕ) (body : FCP W ℕ E)
 This accounts for why "#He₁ sat down." is infelicitous at the start
 of a discourse (when no index 1 dref has been established). -/
 theorem familiarity_violation (x : ℕ) (body : FCP W ℕ E)
-    (F : State W ℕ E) (h : ¬ Familiar F x) :
+    (F : State W ℕ E) (h : ¬ State.Familiar F x) :
     ¬ (FCP.def_ x body).admits F := by
   rintro ⟨hfam, -⟩
   exact h hfam
@@ -167,7 +167,7 @@ With `indef_adds_to_dom`, this derives "A man₁ walked in. He₁ sat
 down.": the indefinite makes index 1 familiar, so the definite "he₁"
 is no presupposition failure. -/
 theorem def_familiar (x : ℕ) (body : FCP W ℕ E)
-    (F : State W ℕ E) (hfam : Familiar F x) :
+    (F : State W ℕ E) (hfam : State.Familiar F x) :
     FCP.def_ x body F = body F :=
   Part.assert_pos hfam
 

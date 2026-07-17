@@ -457,7 +457,7 @@ theorem not_assertable_s56 :
 /-- `x` is not familiar at (56)'s state — familiarity fails, and by
 `not_assertable_s56` so does assertability; the paper's point is that the
 converse can fail (assertability is strictly weaker). -/
-theorem not_familiar_s56 : ¬Familiar s56 0 := fun h =>
+theorem not_familiar_s56 : ¬State.Familiar s56 0 := fun h =>
   h ⟨.w0, blank⟩ (show ⟨PWorld.w0, blank⟩ ∈ s56 by simp [s56])
 
 end PartialFamiliarity
