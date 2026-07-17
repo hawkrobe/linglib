@@ -1,4 +1,5 @@
 import Mathlib.Data.Finset.Basic
+import Mathlib.Data.Fintype.Basic
 import Linglib.Semantics.Entailment.AsymStronger
 import Linglib.Core.Logic.Modal.Defs
 
@@ -20,12 +21,12 @@ The epistemic modalization ¬Kψ goes back to [soames-1982] and
 secondaries is formalized by [sauerland-2004], [vanrooij-schulz-2004],
 and [spector-2006]; [geurts-2010] is the textbook presentation.
 
-This file provides the modal substrate and the recipe over the
-classification it induces. The full Sauerland derivation — computing the
-secondary implicatures jointly consistent with the assertion and the
-primary set — is TODO; `secondary_blocked_if_possible` and
-`primary_possibility` are instances of K/P duality, not that consistency
-check.
+This file provides the modal substrate, the consistency-gated
+derivation (`SatisfiesPrimaries`, `SecondaryLicensed`), and the recipe
+over the belief-state classification. `secondary_blocked_if_possible`
+and `primary_possibility` are instances of K/P duality; the flagship
+multi-alternative blocking case is exercised in
+`Studies/Sauerland2004.lean`.
 
 The asymmetric-entailment primitive characterizing primary-implicature
 alternatives is `asymStrongerOn` in `Semantics/Entailment/AsymStronger.lean`;
@@ -119,6 +120,54 @@ theorem primary_possibility (e : EpistemicState W) (ψ : W → Prop) :
   simp only [knows, not_forall] at h
   obtain ⟨w, hw⟩ := h
   exact ⟨w, hw.1, hw.2⟩
+
+/-! ### The Sauerland derivation
+
+Asserting φ against scalar alternatives `alts` commits the speaker to
+Kφ plus, for each alternative, the primary implicature ¬Kψ
+([sauerland-2004] (42), verified p. 383). A secondary implicature K¬ψ
+arises exactly when it is *consistent* with that commitment set
+([sauerland-2004] (43)): here, when some epistemic state realizes the
+commitments together with K¬ψ. `secondaryLicensed_iff_reinforceable`
+identifies the single-alternative case with the reinforceability
+diagnostic; the flagship multi-alternative blocking case (K¬A blocked
+for a disjunction because it forces KB) is `Studies/Sauerland2004.lean`. -/
+
+/-- The speaker commitment after asserting φ against `alts`: the
+assertion is known (Kφ) and every primary implicature holds (¬Kψ for
+each alternative). -/
+def SatisfiesPrimaries (e : EpistemicState W) (φ : W → Prop)
+    (alts : List (W → Prop)) : Prop :=
+  knows e φ ∧ ∀ ψ ∈ alts, ¬ knows e ψ
+
+/-- Sauerland's consistency condition: the secondary implicature K¬ψ is
+licensed iff some epistemic state realizes the assertion, all primary
+implicatures, and K¬ψ jointly. -/
+def SecondaryLicensed (φ : W → Prop) (alts : List (W → Prop))
+    (ψ : W → Prop) : Prop :=
+  ∃ e : EpistemicState W, SatisfiesPrimaries e φ alts ∧ hasSecondaryImplicature e ψ
+
+/-- For a lone alternative, Sauerland licensing reduces to consistency
+of the strengthened meaning: K¬ψ is compatible with the commitments
+Kφ ∧ ¬Kψ exactly when φ ∧ ¬ψ is realizable at some world — the same
+condition under which the content ¬ψ is a non-redundant strengthening
+of φ (`Implicature.IsReinforceable φ ψ` in the diagnostics' pair
+form). -/
+theorem secondaryLicensed_iff_strengthening_consistent [Fintype W]
+    (φ ψ : W → Prop) [DecidablePred φ] [DecidablePred ψ] :
+    SecondaryLicensed φ [ψ] ψ ↔ ∃ w, φ w ∧ ¬ ψ w := by
+  constructor
+  · rintro ⟨e, ⟨hφ, _⟩, hψ⟩
+    obtain ⟨w, hw⟩ := e.nonempty
+    exact ⟨w, hφ w hw, hψ w hw⟩
+  · rintro ⟨w, hφw, hψw⟩
+    have hmem : w ∈ Finset.univ.filter (fun v => φ v ∧ ¬ ψ v) :=
+      Finset.mem_filter.2 ⟨Finset.mem_univ w, hφw, hψw⟩
+    refine ⟨⟨Finset.univ.filter (fun v => φ v ∧ ¬ ψ v), ⟨w, hmem⟩⟩, ⟨?_, ?_⟩, ?_⟩
+    · exact fun v hv => ((Finset.mem_filter.1 hv).2).1
+    · simp only [List.mem_singleton, forall_eq]
+      exact fun hk => hψw (hk w hmem)
+    · exact fun v hv => ((Finset.mem_filter.1 hv).2).2
 
 /-! ### The three-way belief-state classification
 
