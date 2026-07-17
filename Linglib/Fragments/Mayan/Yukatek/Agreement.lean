@@ -40,7 +40,6 @@ is not yet encoded.
 namespace Yukatek
 
 open Mayan (ExponentTable)
-open Agreement
 
 /-! ### ABS position (LOW-ABS) -/
 
@@ -52,8 +51,8 @@ def absPosition : Mayan.ABSPosition := .low
 /-- Set A markers ([hofling-2017] Table 24.8). -/
 def setAExponent : ExponentTable :=
   [(.pn .first .Sing, "in(w)-"), (.pn .second .Sing, "a(w)-"), (.pn .third .Sing, "u(y)-"),
-   (.pn .first .Plur, "k-"), (.pn .second .Plur, "a(w)-...-e'ex"),
-   (.pn .third .Plur, "u(y)-...-o'ob'")]
+   (.pn .first .Plur, "k-"), (.pn .second .Plur, "a(w)-…-e'ex"),
+   (.pn .third .Plur, "u(y)-…-o'ob'")]
 
 /-! ### Set B exponents -/
 
