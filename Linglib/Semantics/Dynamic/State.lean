@@ -114,15 +114,8 @@ instance : Preorder (State W V M) :=
 
 /-- Def. 0.25 in projection form: every point of the stronger state lies
 above a point of the weaker. -/
-theorem le_def {s s' : State W V M} : s ≤ s' ↔ ∀ q ∈ s', ∃ p ∈ s, p ≤ q := by
-  change upperClosure _ ≤ upperClosure _ ↔ _
-  rw [← UpperSet.coe_subset_coe]
-  constructor
-  · intro h q hq
-    exact h (subset_upperClosure hq)
-  · rintro h x ⟨q, hq, hqx⟩
-    obtain ⟨p, hp, hpq⟩ := h q hq
-    exact ⟨p, hp, hpq.trans hqx⟩
+theorem le_def {s s' : State W V M} : s ≤ s' ↔ ∀ q ∈ s', ∃ p ∈ s, p ≤ q :=
+  le_upperClosure
 
 /-- The initial information state `⊥ = W × {g_⊤}` (Def. 0.23's Λ):
 every world live, no referent defined — the range of the empty points,
@@ -205,23 +198,17 @@ theorem upperClosure_mul :
   Set.upperClosure_lubs (fun _ _ h => ⟨_, Possibility.isLUB_union h⟩) _ _
 
 /-- The merge is above the left factor. -/
-theorem left_le_mul : s ≤ s * s' := by
-  change upperClosure _ ≤ upperClosure _
-  rw [upperClosure_mul]
-  exact le_sup_left
+theorem left_le_mul : s ≤ s * s' :=
+  le_sup_left.trans_eq upperClosure_mul.symm
 
 /-- The merge is above the right factor. -/
-theorem right_le_mul : s' ≤ s * s' := by
-  change upperClosure _ ≤ upperClosure _
-  rw [upperClosure_mul]
-  exact le_sup_right
+theorem right_le_mul : s' ≤ s * s' :=
+  le_sup_right.trans_eq upperClosure_mul.symm
 
 /-- Def. 0.26's universal property: anything above both factors is
 above their merge. -/
-theorem mul_le (h : s ≤ t) (h' : s' ≤ t) : s * s' ≤ t := by
-  change upperClosure _ ≤ upperClosure _
-  rw [upperClosure_mul]
-  exact sup_le h h'
+theorem mul_le (h : s ≤ t) (h' : s' ≤ t) : s * s' ≤ t :=
+  upperClosure_mul.trans_le (sup_le h h')
 
 /-- **The merge is the least upper bound** of its factors in the
 informativeness preorder. -/
@@ -253,22 +240,16 @@ theorem upperClosure_union :
   _root_.upperClosure_union _ _
 
 /-- The union is below the left component. -/
-theorem union_le_left : s ∪ s' ≤ s := by
-  change upperClosure _ ≤ upperClosure _
-  rw [upperClosure_union]
-  exact inf_le_left
+theorem union_le_left : s ∪ s' ≤ s :=
+  upperClosure_union.trans_le inf_le_left
 
 /-- The union is below the right component. -/
-theorem union_le_right : s ∪ s' ≤ s' := by
-  change upperClosure _ ≤ upperClosure _
-  rw [upperClosure_union]
-  exact inf_le_right
+theorem union_le_right : s ∪ s' ≤ s' :=
+  upperClosure_union.trans_le inf_le_right
 
 /-- Anything below both components is below their union. -/
-theorem le_union (h : t ≤ s) (h' : t ≤ s') : t ≤ s ∪ s' := by
-  change upperClosure _ ≤ upperClosure _
-  rw [upperClosure_union]
-  exact le_inf h h'
+theorem le_union (h : t ≤ s) (h' : t ≤ s') : t ≤ s ∪ s' :=
+  (le_inf h h').trans_eq upperClosure_union.symm
 
 /-- **The union is the greatest lower bound** of its components in the
 informativeness preorder — the meet dual to `isLUB_mul`. -/
