@@ -6,7 +6,9 @@ import Mathlib.Data.Part
 `Part.or` is the `Part` analogue of `Option.or`: `p.or q` is defined
 wherever either argument is, with the left taking precedence.
 Noncomputable, since it decides `p.Dom`; `Flat.or` is its computable
-twin on `Option`-carried partial values. An `[UPSTREAM]` candidate for
+twin on `Option`-carried partial values. Also two lemmas on the order:
+definedness is monotone (`dom_mono`), and descent without domain
+growth is equality (`eq_of_le_of_dom`). `[UPSTREAM]` candidates for
 `Mathlib/Data/Part.lean`.
 -/
 
@@ -55,5 +57,13 @@ theorem le_or_left : p ≤ p.or q := fun _ ha => mem_or_iff.mpr (.inl ha)
 
 theorem or_le (hp : p ≤ r) (hq : q ≤ r) : p.or q ≤ r := fun a ha =>
   (mem_or_iff.mp ha).elim (hp a) fun h => hq a h.2
+
+theorem dom_mono (h : p ≤ q) (hd : p.Dom) : q.Dom :=
+  dom_iff_mem.mpr ⟨_, h _ (get_mem hd)⟩
+
+theorem eq_of_le_of_dom (h : p ≤ q) (hd : q.Dom → p.Dom) : p = q :=
+  Part.ext fun a => ⟨h a, fun ha =>
+    have hp := hd (dom_iff_mem.mpr ⟨a, ha⟩)
+    mem_unique (h _ (get_mem hp)) ha ▸ get_mem hp⟩
 
 end Part
