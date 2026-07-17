@@ -72,15 +72,13 @@ def domain (p : Possibility W V (Part M)) : Set V :=
     v ∈ p.domain ↔ (p.assignment v).Dom := Iff.rfl
 
 /-- Descent grows the domain. -/
-theorem domain_mono (h : p ≤ q) : p.domain ⊆ q.domain := fun v hd =>
-  Part.dom_iff_mem.mpr ⟨_, h.2 v _ (Part.get_mem hd)⟩
+theorem domain_mono (h : p ≤ q) : p.domain ⊆ q.domain := fun v =>
+  Part.dom_mono (h.2 v)
 
 /-- On a shared domain, descent is equality — there is no room to grow. -/
 theorem eq_of_le_of_domain_eq (h : p ≤ q) (hdom : p.domain = q.domain) : p = q :=
-  Possibility.ext h.1 <| funext fun v => le_antisymm (h.2 v) fun e he => by
-    have hd : (p.assignment v).Dom := hdom.superset (Part.dom_iff_mem.mpr ⟨e, he⟩)
-    obtain rfl := Part.mem_unique (h.2 v _ (Part.get_mem hd)) he
-    exact Part.get_mem hd
+  Possibility.ext h.1 <| funext fun v =>
+    Part.eq_of_le_of_dom (h.2 v) fun hd => hdom.superset hd
 
 /-- The union of two points, defined wherever either is, with the left
 taking precedence; on compatible points the precedence is immaterial
