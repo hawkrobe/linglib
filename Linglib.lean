@@ -1303,7 +1303,6 @@ import Linglib.Morphology.Case.Allomorphy
 import Linglib.Morphology.Case.WALS
 import Linglib.Morphology.ConsonantalRoot
 import Linglib.Morphology.Containment.Basic
-import Linglib.Morphology.Containment.Merger
 import Linglib.Morphology.Containment.Superset
 import Linglib.Morphology.Containment.Vocabulary
 import Linglib.Morphology.DM.Allosemy
@@ -1313,6 +1312,7 @@ import Linglib.Morphology.DM.DomainLocality
 import Linglib.Morphology.DM.Fission
 import Linglib.Morphology.DM.Impoverishment
 import Linglib.Morphology.DM.LinearPostsyntax
+import Linglib.Morphology.DM.Merger
 import Linglib.Morphology.DM.NominalStructure
 import Linglib.Morphology.DM.VocabSimple
 import Linglib.Morphology.DM.VocabularyInsertion

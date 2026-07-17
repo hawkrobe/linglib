@@ -59,7 +59,7 @@ hypothesis set, mirroring the book's cost accounting:
 
 The dual Superset engine lives in
 `Morphology/Containment/Superset.lean`; synthetic/analytic structure
-(Merger) in `Morphology/Containment/Merger.lean`; the n = 3 degree
+(Merger) in `Morphology/DM/Merger.lean`; the n = 3 degree
 instantiations with the book's worked vocabularies in
 `Studies/Bobaljik2012.lean`.
 -/
