@@ -267,30 +267,6 @@ theorem UniformAt.isAntichain (hs : UniformAt X s) :
   fun p hp q hq hne hpq =>
     hne (Possibility.eq_of_le_of_domain_eq hpq ((hs p hp).trans (hs q hq).symm))
 
-/-- Into a uniform stratum, subsistence is membership. -/
-theorem UniformAt.mem_lowerClosure (hs : UniformAt X s) (hp : p.domain = X) :
-    p ∈ lowerClosure s ↔ p ∈ s :=
-  ⟨fun ⟨q, hq, hpq⟩ =>
-    (Possibility.eq_of_le_of_domain_eq hpq (hp.trans (hs q hq).symm)).symm ▸ hq,
-    fun h => subset_lowerClosure h⟩
-
-/-- On a uniform stratum, subsistence is inclusion. -/
-theorem UniformAt.lowerClosure_le_iff (hs : UniformAt X s) (hs' : UniformAt X s') :
-    lowerClosure s ≤ lowerClosure s' ↔ s ⊆ s' :=
-  lowerClosure_le.trans (forall₂_congr fun p hp => hs'.mem_lowerClosure (hs p hp))
-
-/-- Into a uniform stratum, domination is membership. -/
-theorem UniformAt.mem_upperClosure (hs : UniformAt X s) (hq : q.domain = X) :
-    q ∈ upperClosure s ↔ q ∈ s :=
-  ⟨fun ⟨p, hp, hpq⟩ =>
-    Possibility.eq_of_le_of_domain_eq hpq ((hs p hp).trans hq.symm) ▸ hp,
-    fun h => subset_upperClosure h⟩
-
-/-- On a uniform stratum, informativeness is reverse inclusion. -/
-theorem UniformAt.le_iff_superset (hs : UniformAt X s) (hs' : UniformAt X s') :
-    s ≤ s' ↔ s' ⊆ s :=
-  le_def.trans (forall₂_congr fun q hq => hs.mem_upperClosure (hs' q hq))
-
 /-- Within one stratum, merge is intersection. -/
 theorem UniformAt.mul_eq_inter (hs : UniformAt X s) (hs' : UniformAt X s') :
     s * s' = s ∩ s' := by
@@ -312,6 +288,12 @@ def restrict (X : Set V) (s : State W V M) : State W V M :=
 theorem mem_restrict : p ∈ s.restrict X ↔ ∃ q ∈ s, q.restrict X = p :=
   Iff.rfl
 
+/-- Restriction fixes its stratum. -/
+theorem UniformAt.restrict_eq (hs : UniformAt X s) : s.restrict X = s :=
+  ext fun p =>
+    ⟨fun ⟨q, hq, hqp⟩ => (hqp.symm.trans (Possibility.restrict_eq_self (hs q hq))) ▸ hq,
+     fun hp => ⟨p, hp, Possibility.restrict_eq_self (hs p hp)⟩⟩
+
 /-- A point at the stratum's domain lies below `s` iff it lies in the
 restriction of `s`. -/
 theorem mem_lowerClosure_iff_mem_restrict (hp : p.domain = X) :
@@ -325,6 +307,26 @@ theorem UniformAt.mem_upperClosure_iff_restrict_mem (hs : UniformAt X s) :
     q ∈ upperClosure s ↔ q.restrict X ∈ s :=
   ⟨fun ⟨p, hp, hpq⟩ => (Possibility.le_iff_eq_restrict (hs p hp)).mp hpq ▸ hp,
    fun h => ⟨q.restrict X, h, Possibility.restrict_le⟩⟩
+
+/-- Into a uniform stratum, subsistence is membership. -/
+theorem UniformAt.mem_lowerClosure (hs : UniformAt X s) (hp : p.domain = X) :
+    p ∈ lowerClosure s ↔ p ∈ s :=
+  (mem_lowerClosure_iff_mem_restrict hp).trans (by rw [hs.restrict_eq])
+
+/-- On a uniform stratum, subsistence is inclusion. -/
+theorem UniformAt.lowerClosure_le_iff (hs : UniformAt X s) (hs' : UniformAt X s') :
+    lowerClosure s ≤ lowerClosure s' ↔ s ⊆ s' :=
+  lowerClosure_le.trans (forall₂_congr fun p hp => hs'.mem_lowerClosure (hs p hp))
+
+/-- Into a uniform stratum, domination is membership. -/
+theorem UniformAt.mem_upperClosure (hs : UniformAt X s) (hq : q.domain = X) :
+    q ∈ upperClosure s ↔ q ∈ s :=
+  hs.mem_upperClosure_iff_restrict_mem.trans (by rw [Possibility.restrict_eq_self hq])
+
+/-- On a uniform stratum, informativeness is reverse inclusion. -/
+theorem UniformAt.le_iff_superset (hs : UniformAt X s) (hs' : UniformAt X s') :
+    s ≤ s' ↔ s' ⊆ s :=
+  le_def.trans (forall₂_congr fun q hq => hs.mem_upperClosure (hs' q hq))
 
 section Fibred
 
@@ -386,12 +388,12 @@ variable [DecidableEq V]
 
 /-- Random assignment: indeterministically extend each point to a
 defined value at `x`. -/
-def randomAssign (I : State W V M) (x : V) : State W V M :=
-  {p | ∃ q ∈ I, ∃ m : M, p = q.update x (Part.some m)}
+def randomAssign (s : State W V M) (x : V) : State W V M :=
+  {p | ∃ q ∈ s, ∃ m : M, p = q.update x (Part.some m)}
 
 /-- Random assignment makes its referent familiar. -/
-theorem familiar_randomAssign (I : State W V M) (x : V) :
-    Familiar (I.randomAssign x) x := by
+theorem familiar_randomAssign (s : State W V M) (x : V) :
+    Familiar (s.randomAssign x) x := by
   rintro p ⟨q, -, m, rfl⟩
   simp
 

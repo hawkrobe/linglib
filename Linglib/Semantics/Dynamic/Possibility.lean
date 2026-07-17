@@ -215,6 +215,10 @@ theorem le_iff_eq_restrict (hp : p.domain = X) :
     fun hd hd' => ?_
   exact Part.mem_unique (h.2 v _ (Part.get_mem hd)) (Part.get_mem hd'.2)
 
+/-- A point at its own domain is fixed by restriction. -/
+theorem restrict_eq_self (hp : p.domain = X) : p.restrict X = p :=
+  ((le_iff_eq_restrict hp).mp le_rfl).symm
+
 /-- Consecutive restrictions restrict to the intersection. -/
 theorem restrict_restrict : (p.restrict Y).restrict X = p.restrict (X ∩ Y) :=
   Possibility.ext rfl <| funext fun v =>
