@@ -1,4 +1,5 @@
-import Linglib.Pragmatics.Implicature.Markedness
+import Linglib.Pragmatics.NeoGricean.Markedness
+import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Studies.Rett2015
 
 /-!
@@ -16,7 +17,8 @@ Tests that the M-alternative framework correctly identifies:
 
 namespace Horn1984
 
-open Implicature.Markedness
+open NeoGricean.Markedness
+open English.Predicates.Adjectival (tall_with_morphology short_with_morphology happy_with_morphology unhappy_with_morphology)
 
 
 /--

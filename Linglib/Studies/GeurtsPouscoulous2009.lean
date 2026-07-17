@@ -1,8 +1,7 @@
 import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.NormNum
-import Linglib.Pragmatics.Implicature.Competence
+import Linglib.Pragmatics.NeoGricean.Basic
 import Linglib.Pragmatics.Implicature.SomeAll
-import Linglib.Pragmatics.Implicature.Defs
 import Linglib.Pragmatics.Implicature.Diagnostics
 import Linglib.Semantics.Entailment.Polarity
 
@@ -71,7 +70,7 @@ The paper uses different statistical tests at different points:
 The canonical *some*/*all* world model `SomeAllWorld` lives in
 `Pragmatics.Implicature.SomeAll`; this file uses it for the
 implicature-spine bridge. The §8 derivation routes through
-`Implicature.Competence.processAlternative` (Sauerland-style competence
+`NeoGricean.processAlternative` (Sauerland-style competence
 machinery). The `think` empirical condition is bridged to the
 global/local distinction for attitude-embedded scalars
 (`AttitudeInterpretation`, defined in the bridge section below).
@@ -827,7 +826,7 @@ derivation of seemingly-embedded SIs that the §8 argument is built on:
 or [geurts-2006] are formalized in linglib yet. -/
 
 /-- The §8 derivation routed through the canonical Sauerland-style
-competence machinery in `Implicature.Competence`. The paper's claim is
+competence machinery in `NeoGricean`. The paper's claim is
 that *given* the speaker has a determinate negative stance about the
 alternative (here `.disbelief` — speaker believes ¬(Bob-believes-all))
 *and* the competence assumption (33), the strong implicature is
@@ -836,9 +835,9 @@ strong-derived flag exactly when these conditions hold; this theorem
 exhibits the spine's `outcome_ii_strong` machinery applied to the §8
 think-reading derivation. -/
 theorem competence_explains_think_via_processAlternative :
-    let p := Implicature.Competence.processAlternative true .disbelief
+    let p := NeoGricean.processAlternative true .disbelief
     p.weakHolds = true ∧ p.competenceAssumed = true ∧ p.strongDerived = true :=
-  Implicature.Competence.outcome_ii_strong
+  NeoGricean.outcome_ii_strong
 
 /-- The same derivation chain *applied to universal quantifiers*
 (paper §8 (35)–(38)). For "All the customers shot at some of the
@@ -877,45 +876,28 @@ end GriceanCamp
 
 section ImplicatureSpineBridge
 
-/-! ## Bridge: ∅-condition SI as `Implicature SomeAllWorld`
+/-! ## Diagnostics for the ∅-condition SI
 
-Wraps the canonical *some*-derived SI as an `Implicature` value over
-the canonical `SomeAllWorld` model from `Pragmatics.Implicature.SomeAll`,
-exercising the spine in `Defs.lean` and the diagnostics in
+The canonical *some*-derived SI over the `SomeAllWorld` model from
+`Pragmatics.Implicature.SomeAll` (paper §1's ∅-condition, tested in
+Experiments 1a-b): assertion `atLeastOne`, inferred content
+`notUniversal`, submitted to the Gricean diagnostics in
 `Diagnostics.lean`. -/
 
 open SomeAllWorld
-
-/-- The neo-Gricean SI derived from *some students passed* in a UE
-context (paper §1's ∅-condition). Mechanism is the Sauerland Standard
-Recipe / neo-Gricean derivation; the SI content is `notUniversal`
-(= the canonical "not all" inference from `SomeAllWorld`). -/
-def somePassedSI : Implicature SomeAllWorld Prop :=
-  { kind := .scalar
-  , content := notUniversal
-  , altsUsed := {universal}
-  , mechanism := .neoGricean }
 
 /-- The SI is *reinforceable*: there's an assertion-world (`.all`)
 where the assertion holds but the inferred content fails — so adding
 "…but not all" is non-redundant. -/
 theorem somePassedSI_isReinforceable :
-    Implicature.IsReinforceable atLeastOne somePassedSI :=
+    Implicature.IsReinforceable atLeastOne notUniversal :=
   ⟨.all, trivial, fun h => h trivial⟩
 
-/-- The SI is *cancellable* (Sadock 1978's diagnostic), via the
-spine's `IsReinforceable.toCancellable`. -/
+/-- The SI is *cancellable* (Sadock 1978's diagnostic), via
+`IsReinforceable.toCancellable`. -/
 theorem somePassedSI_isCancellable :
-    Implicature.IsCancellable atLeastOne somePassedSI :=
+    Implicature.IsCancellable atLeastOne notUniversal :=
   Implicature.IsReinforceable.toCancellable somePassedSI_isReinforceable
-
-/-- The neo-Gricean SI for `somePassedSI` corresponds to the
-∅-condition tested in Experiments 1a-b, where the empirical SI
-endorsement rate is 93% (Exp 1a) and 94% (Exp 1b). The spine bridge is
-anchored in the data. -/
-theorem somePassedSI_corresponds_to_unembedded_data :
-    lookupRate exp1aResults .simple = 93 ∧
-    lookupRate exp1bResults .simple = 94 := by decide
 
 end ImplicatureSpineBridge
 

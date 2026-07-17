@@ -1,298 +1,79 @@
-import Linglib.Pragmatics.Implicature.Defs
+import Mathlib.Tactic.TypeStar
 
 /-!
-# Gricean Diagnostics over `Implicature`
-[grice-1975] [sadock-1978] [hirschberg-1985] [horn-1991]
-[geurts-2010] [potts-2005] [delpinal-bassi-sauerland-2024]
+# Gricean diagnostics for pragmatic inference
+[grice-1975] [sadock-1978] [hirschberg-1985] [horn-1991] [geurts-2010]
 
-Formalizes the standard Gricean diagnostic tests for distinguishing
-implicatures from entailments and presuppositions, stated uniformly
-over the `Implicature W Prop` type from `Defs.lean`. The headline
-application is the BPS bridge in
-`Semantics/Exhaustification/Presuppositional.lean`, which
-delivers two non-cancellability theorems for pex outputs: `bps_not_cancellable`
-(structural — assertion = `p.holds` makes content survive trivially)
-and `bps_neg_not_cancellable` (substantive — assertion = `p.neg.holds`
-makes content survive *because `PartialProp.neg` projects*; the
-family-of-sentences test in [bassi-delpinal-sauerland-2021]'s
-sense). The substrate's projecting `PartialProp.neg` is what makes the
-projection theorem work; swapping in non-projecting `PartialProp.negExt`
-would falsify it.
+The classical cancellability and reinforceability tests, stated over a
+bare pair of an **assertion** `φ : W → Prop` and an inferred **content**
+`W → Prop`. Any strengthening mechanism — a Neo-Gricean recipe
+(`Pragmatics/NeoGricean/`), grammatical exhaustification
+(`Semantics/Exhaustification/`), a thresholded RSA posterior
+(`Pragmatics/RSA/`) — can submit its output to these predicates; no
+shared record type is required, so the diagnostics stay neutral between
+frameworks that disagree about what an implicature *is*.
 
-## The four classical tests
+[grice-1975] introduced calculability and non-detachability as defining
+features; [sadock-1978] added cancellability and schematized the test
+battery; [horn-1991] extends the reinforceability discussion via the
+redundancy diagnostic. Calculability and detachability are properties of
+a *derivation*, not of an (assertion, content) pair, so they are stated
+where the derivations live, not here.
 
-| Test                | Sketch                                                         |
-|---------------------|----------------------------------------------------------------|
-| Cancellability      | A felicitous continuation contradicting the inference exists.  |
-| Reinforceability    | The inference can be added explicitly without redundancy.      |
-| Calculability       | The inference is derived (not lexically encoded).              |
-| Non-detachability   | Paraphrases preserve the inference (form-independence).        |
+The headline consumer is `Studies/DelPinalBassiSauerland2024.lean`: pex
+outputs fail cancellability via
+`IsCancellable.false_of_assertion_implies_content` because the pex
+assertion entails its presupposed content.
 
-[grice-1975] introduced calculability and non-detachability as
-defining features. [sadock-1978] added cancellability and
-schematized the four-test apparatus. [hirschberg-1985] surveys the
-diagnostics and their interaction; [horn-1991] extends the
-reinforceability discussion via the redundancy diagnostic.
-
-## Joint vs. mechanism-internal tests
-
-`Cancellable` and `Reinforceable` are *joint* properties of an implicature
-together with the assertion that gave rise to it — they ask about the
-relationship between asserted content and inferred content. These take
-two arguments.
-
-`Calculable` and `NonDetachable` are properties of how the inference was
-derived, and lift cleanly from the `mechanism` (and, for non-detachability,
-the `kind`) field of `Implicature`. These take one argument.
-
-## Strength specialization
-
-The Gricean diagnostics defined here are specialized to the **discrete /
-categorical** ontology — they operate on `Implicature W Prop`. The
-`S = Prop` `content` lets us write `¬ i.content w` and similar. For
-graded mechanisms (RSA-style `Implicature W ℝ`), the diagnostics do not
-apply directly: cancellability
-and reinforceability would require a thresholding interpretation, which
-is itself an empirical commitment. Future work could add a separate
-`GradedDiagnostics.lean` if and when graded-content study files demand
-it.
-
-The kind- and mechanism-level helpers (`isCalculable`,
-`isNonDetachable`) and the failure-mode theorems are polymorphic in `S`
-because they only inspect the `kind` and `mechanism` fields.
-
-## Failure modes are diagnostic
-
-A *conventional* implicature (Potts 2005) is by definition lexically
-encoded, so it fails calculability — and that failure is itself a
-theorem (`lexical_not_calculable`). A *manner* implicature is by
-definition form-relative, so it fails non-detachability
-(`manner_is_detachable`). These are not bugs; they're how the
-diagnostics divide the implicature space.
-
-## What this file delivers vs. what it does NOT
-
-**Delivered structurally** (`bps_not_cancellable`): when assertion =
-`p.holds`, the inferred presup is trivially entailed by the assertion.
-The substantive content lives in the wrapper's choice to use `holds`,
-not in pex itself.
-
-**Delivered substantively** (`bps_neg_not_cancellable`): when assertion =
-`p.neg.holds` (i.e., the speaker negates the pex output), the inferred
-presup *still* survives — because `PartialProp.neg` is constructed to project
-the presupposition (`(neg p).presup := p.presup`). This is the family-of-
-sentences projection test in formal form. Falsifies for `PartialProp.negExt`.
-
-**Not delivered as cancellability failure:** Magri-style obligatory SI
-([magri-2009]) is not non-cancellable in the Sadock sense, even
-CK-relativized. For "#Some Italians come from a warm country" with CK
-restricting to all-warm worlds, "in fact all" is a consistent
-continuation at the CK world that contradicts the EXH'd implicature —
-so `IsCancellable` holds even with the CK restriction baked into the
-assertion. The contentful Magri claim is a different diagnostic — *no
-CK-realizer of the strengthened meaning* — formalized as
-`magri_blindOdd_no_ck_realizer` in `Magri2009.lean`. Magri obligatoriness
-≠ IsCancellable failure; the docstring previously conflated these.
+Magri-style obligatory SI ([magri-2009]) is **not** an `IsCancellable`
+failure, even common-ground-relativized: for "#Some Italians come from a
+warm country" with CK restricting to all-warm worlds, "in fact all" is a
+consistent continuation contradicting the EXH'd implicature, so
+`IsCancellable` holds. The contentful Magri claim — no CK-realizer of
+the strengthened meaning — is `magri_blindOdd_no_ck_realizer` in
+`Studies/Magri2009.lean`.
 -/
-
--- ============================================================
--- Mechanism- and kind-level helpers (declared at root so dot
--- notation `m.isCalculable` / `k.isNonDetachable` works on values
--- of those types, mirroring `ImplicatureKind.isConversational` in
--- Defs.lean).
--- ============================================================
-
-/--
-A *mechanism* is **calculable** iff inferences derived by it could in
-principle be reconstructed from cooperative reasoning over alternatives.
-This is the case for every mechanism in the library *except* the lexical
-one, which by definition encodes the inference in the lexical entry.
-
-Grice's calculability test is the philosophical anchor of the
-conversational/conventional distinction.
--/
-def ImplicatureMechanism.isCalculable : ImplicatureMechanism → Prop
-  | .lexical => False
-  | _ => True
-
-instance : DecidablePred ImplicatureMechanism.isCalculable
-  | .lexical => isFalse not_false
-  | .neoGricean | .exhIE | .exhII | .exhIEII | .rsa | .ibr
-  | .bpsPresuppositional => isTrue trivial
-
-/--
-A *kind* is **non-detachable** iff inferences of that kind depend on
-asserted content rather than asserted form. The exception is `manner`,
-whose entire raison d'être is form-relativity.
-
-[horn-1984], [levinson-2000].
--/
-def ImplicatureKind.isNonDetachable : ImplicatureKind → Prop
-  | .manner => False
-  | _ => True
-
-instance : DecidablePred ImplicatureKind.isNonDetachable
-  | .manner => isFalse not_false
-  | .scalar | .freeChoice | .ignorance | .clausal | .conventional =>
-      isTrue trivial
-
 
 namespace Implicature
 
-variable {W : Type*}
+variable {W : Type*} {φ content : W → Prop}
 
--- ============================================================
--- Cancellability ([sadock-1978])
--- ============================================================
-
-/--
-An implicature `i` derived from `assertion φ` is **cancellable** iff
-there exists a continuation `cancel` that:
-
-1. is consistent with `φ` (`∃ w, φ w ∧ cancel w`), and
-2. contradicts the implicature (`∀ w, cancel w → ¬ i.content w`).
-
-This formalizes the standard Sadock test: "Some students passed —
-in fact, all of them did" is felicitous (the *not all* implicature
-cancels) iff the continuation "all of them did" is consistent with
-the assertion and contradicts "not all."
-
-Negation of `IsCancellable` is the load-bearing diagnostic for the
-[bassi-delpinal-sauerland-2021] *Presuppositional EXH* account:
-when pex outputs are wrapped as `Implicature W Prop` with
-`assertion := PartialProp.holds · p` and `content := p.presup`, the
-non-cancellability follows from `holds → presup` via
-`IsCancellable.false_of_assertion_implies_content`. The substantive
-content of "presuppositions fail cancellability" comes from the
-structural assertion-vs-presupposition split in `PartialProp`, not from
-stipulation. The bridge theorem `bps_not_cancellable` is in
-`Semantics/Exhaustification/Presuppositional.lean`.
--/
-def IsCancellable (φ : W → Prop) (i : Implicature W Prop) : Prop :=
+/-- An inferred `content` derived from an assertion `φ` is
+**cancellable** iff some continuation is consistent with `φ` and
+contradicts the content: "Some students passed — in fact, all of them
+did" is felicitous iff "all passed" is consistent with the assertion and
+contradicts *not all*. [sadock-1978]'s diagnostic. -/
+def IsCancellable (φ content : W → Prop) : Prop :=
   ∃ cancel : W → Prop,
     (∃ w, φ w ∧ cancel w) ∧
-    (∀ w, cancel w → ¬ i.content w)
+    (∀ w, cancel w → ¬ content w)
 
-/-- Cancellation by the negation of the implicature itself: if there
-exists an assertion-world where the implicature fails, then `¬i.content`
-witnesses cancellability. The most common cancellation form. -/
+/-- Cancellation by the negation of the content itself: if some
+assertion-world falsifies the content, `¬content` witnesses
+cancellability. The most common cancellation form. -/
 theorem IsCancellable.of_assertion_compatible_with_negation
-    {φ : W → Prop} {i : Implicature W Prop}
-    (h : ∃ w, φ w ∧ ¬ i.content w) : IsCancellable φ i :=
-  ⟨fun w => ¬ i.content w, h, fun _ hw => hw⟩
+    (h : ∃ w, φ w ∧ ¬ content w) : IsCancellable φ content :=
+  ⟨fun w => ¬ content w, h, fun _ hw => hw⟩
 
 /-- The load-bearing non-cancellability principle: if every
-assertion-world satisfies the implicature content, no continuation
-can cancel it. Used by the BPS bridge — when `assertion` is `pex.holds`
-and `content` is `pex.presup`, this fires from `holds → presup`. -/
+assertion-world satisfies the content, no continuation cancels it. Fires
+for pex outputs from `holds → presup`. -/
 theorem IsCancellable.false_of_assertion_implies_content
-    {φ : W → Prop} {i : Implicature W Prop}
-    (h : ∀ w, φ w → i.content w) : ¬ IsCancellable φ i := by
-  rintro ⟨cancel, ⟨w, hφ, hc⟩, hcontra⟩
-  exact hcontra w hc (h w hφ)
+    (h : ∀ w, φ w → content w) : ¬ IsCancellable φ content :=
+  fun ⟨_, ⟨w, hφ, hc⟩, hcontra⟩ => hcontra w hc (h w hφ)
 
+/-- An inferred `content` is **reinforceable** over assertion `φ` iff it
+is not already entailed by the assertion: "Some students passed, but not
+all" is non-redundant iff *some passed* does not entail *not all*.
+([sadock-1978]; [horn-1991]'s redundancy diagnostic.) -/
+def IsReinforceable (φ content : W → Prop) : Prop :=
+  ∃ w, φ w ∧ ¬ content w
 
--- ============================================================
--- Reinforceability ([sadock-1978]; [horn-1991])
--- ============================================================
-
-/--
-An implicature `i` derived from `assertion φ` is **reinforceable** iff
-the implicature content is not already entailed by the assertion alone:
-`∃ w, φ w ∧ ¬ i.content w`.
-
-This formalizes the standard "can be reinforced without redundancy"
-test: "Some students passed, but not all" is felicitous (the *not all*
-implicature reinforces non-redundantly) iff the assertion *some students
-passed* does not already entail *not all*.
-
-Note the equivalence: a reinforceable implicature is exactly one whose
-content is genuinely additional information beyond the assertion. By
-`IsCancellable.of_assertion_compatible_with_negation`, **reinforceable
-inferences are cancellable** (the same witness works), so reinforceability
-implies cancellability. The converse may fail ([hirschberg-1985]).
--/
-def IsReinforceable (φ : W → Prop) (i : Implicature W Prop) : Prop :=
-  ∃ w, φ w ∧ ¬ i.content w
-
-/-- Reinforceable ⇒ cancellable. The two diagnostics are not independent:
-reinforceability is the stricter condition. -/
+/-- Reinforceable ⇒ cancellable: the same witness works, so
+reinforceability is the stricter diagnostic. The converse may fail
+([hirschberg-1985]). -/
 theorem IsReinforceable.toCancellable
-    {φ : W → Prop} {i : Implicature W Prop}
-    (h : IsReinforceable φ i) : IsCancellable φ i :=
+    (h : IsReinforceable φ content) : IsCancellable φ content :=
   IsCancellable.of_assertion_compatible_with_negation h
-
-
--- ============================================================
--- Calculability (Grice 1975) — lifted from `ImplicatureMechanism`
--- ============================================================
-
-/-- An implicature is calculable iff its mechanism is. Polymorphic in
-the strength type: only the `mechanism` field is inspected. -/
-def IsCalculable {S : Type*} (i : Implicature W S) : Prop :=
-  i.mechanism.isCalculable
-
-instance {S : Type*} (i : Implicature W S) : Decidable (IsCalculable i) :=
-  inferInstanceAs (Decidable i.mechanism.isCalculable)
-
-/-- The lexical mechanism is the unique non-calculable mechanism. -/
-theorem isCalculable_iff_not_lexical {S : Type*} (i : Implicature W S) :
-    IsCalculable i ↔ i.mechanism ≠ .lexical := by
-  unfold IsCalculable ImplicatureMechanism.isCalculable
-  cases i.mechanism <;> decide
-
-
--- ============================================================
--- Non-detachability (Grice 1975) — lifted from `ImplicatureKind`
--- ============================================================
-
-/-- An implicature is non-detachable iff its kind is. Polymorphic in
-the strength type: only the `kind` field is inspected. -/
-def IsNonDetachable {S : Type*} (i : Implicature W S) : Prop :=
-  i.kind.isNonDetachable
-
-instance {S : Type*} (i : Implicature W S) : Decidable (IsNonDetachable i) :=
-  inferInstanceAs (Decidable i.kind.isNonDetachable)
-
-
--- ============================================================
--- Diagnostic profiles
--- ============================================================
-
-/--
-A bundle of the four standard diagnostics holding for an implicature
-relative to its assertion. Useful as a single hypothesis for downstream
-theorems.
--/
-structure GriceanProfile (φ : W → Prop) (i : Implicature W Prop) : Prop where
-  cancellable    : IsCancellable φ i
-  reinforceable  : IsReinforceable φ i
-  calculable     : IsCalculable i
-  nonDetachable  : IsNonDetachable i
-
-
--- ============================================================
--- Failure-mode theorems
--- ============================================================
-
-/-- The lexical mechanism is by definition not derived from cooperative
-reasoning — the inference is encoded in the lexical entry — so it fails
-calculability. The agreement with [grice-1975]'s original
-conventional/conversational distinction is the contentful theorem here.
-(Conventional implicatures in [potts-2005]'s sense are the
-canonical instantiation: kind `.conventional` paired with mechanism
-`.lexical`. The kind hypothesis is unnecessary for the proof; the
-mechanism alone suffices.) -/
-theorem lexical_not_calculable {S : Type*}
-    (i : Implicature W S) (hLex : i.mechanism = .lexical) :
-    ¬ IsCalculable i := by
-  simp [IsCalculable, ImplicatureMechanism.isCalculable, hLex]
-
-/-- Manner implicatures are by definition form-relative, so they fail
-non-detachability. The agreement with [horn-1984]'s Division of
-Pragmatic Labor is the contentful theorem. -/
-theorem manner_is_detachable {S : Type*}
-    (i : Implicature W S) (h : i.kind = .manner) : ¬ IsNonDetachable i := by
-  simp [IsNonDetachable, ImplicatureKind.isNonDetachable, h]
 
 end Implicature

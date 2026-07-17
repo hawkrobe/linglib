@@ -1,5 +1,4 @@
 import Linglib.Semantics.Quantification.Numerals.Basic
-import Linglib.Pragmatics.Implicature.EpistemicBlocking
 import Linglib.Semantics.Entailment.AsymStronger
 import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.DeriveFintype

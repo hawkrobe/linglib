@@ -1,4 +1,5 @@
 import Linglib.Semantics.Exhaustification.Presuppositional
+import Linglib.Pragmatics.Implicature.Diagnostics
 import Linglib.Semantics.Presupposition.LocalContext
 import Linglib.Semantics.Presupposition.BeliefEmbedding
 import Linglib.Semantics.Presupposition.Accommodation
@@ -835,59 +836,61 @@ theorem enemy_territory_blocks_projection {W : Type*}
   heim_cancellation_equivalence c pex_output.presup h_inconsistent
 
 -- ============================================================================
--- §11. Implicature Spine Bridge — `pexFC` as `Implicature FCWorld Prop`
+-- §11. Gricean diagnostics — BPS non-cancellability
 -- ============================================================================
 
-/-! ## Bridge: `pexFC` as `Implicature FCWorld Prop` + non-cancellability
+/-! ## Non-cancellability of pex outputs
 
-The marquee BPS-style result the cross-mechanism `Implicature` spine in
-`Pragmatics/Implicature/Defs.lean` was designed to host. The
-free-choice inference (◇A ∧ ◇B from ◇(A ∨ B)) is wrapped as an
-`Implicature FCWorld Prop` whose `content` is the presupposed component
-of `pexFC`. Two non-cancellability theorems are stated, tracking the
-structural-vs-substantive distinction documented at the
-`Presuppositional.lean` BPS bridge: `pexFC_not_cancellable` follows from
-the wrapper's choice to set assertion to `holds`; `pexFC_neg_not_cancellable`
-follows from projection of `pexFC.presup` through `PartialProp.neg`, the
-formal counterpart to BPS's family-of-sentences test. -/
+The marquee BPS-style diagnostic results, stated over
+(assertion, content) pairs via `Pragmatics/Implicature/Diagnostics.lean`.
+For any pex output the inferred content is the presupposed component;
+two non-cancellability theorems track the structural-vs-substantive
+distinction: `bps_not_cancellable` follows from the choice to set the
+assertion to `holds`; `bps_neg_not_cancellable` follows from projection
+of the presupposition through `PartialProp.neg`, the formal counterpart
+to BPS's family-of-sentences test. The `pexFC_*` corollaries instantiate
+both on the free-choice inference (◇A ∧ ◇B from ◇(A ∨ B)). -/
 
 open Exhaustification.Presuppositional
 
-/-- The free-choice inference, wrapped as a categorical implicature. The
-`content` is `pexFC.presup`, i.e., the negated IE alternatives plus the
-homogeneity over II alternatives — the *non-at-issue* content that BPS
-treats as projective. The `kind` is updated to `.freeChoice` (the default
-from `bpsToImplicature` is `.scalar`). -/
-def fcImplicature : Implicature FCWorld Prop :=
-  { bpsToImplicature fcALT pexFC with kind := .freeChoice }
+/-- **BPS non-cancellability — structural form.** For any pex output
+`p`, with assertion `p.holds` and inferred content `p.presup`,
+non-cancellability follows from the trivial direction of
+`holds := presup ∧ assertion`. The substantive content lives in the
+choice to use `holds` (not `assertion`) as the assertion. -/
+theorem bps_not_cancellable {W : Type*} (p : PartialProp W) :
+    ¬ Implicature.IsCancellable (fun w => PartialProp.holds w p) p.presup :=
+  Implicature.IsCancellable.false_of_assertion_implies_content (fun _ h => h.1)
+
+/-- **BPS non-cancellability — substantive form (projection through
+negation).** Even when the speaker asserts the negation of the pex
+output (`p.neg.holds`), the inferred content (`p.presup`) survives. The
+load-bearing step is that `PartialProp.neg` projects the presupposition
+(`(neg p).presup = p.presup`) — a structural property of the
+construction, not a logical tautology. This formalizes the
+family-of-sentences projection test [bassi-delpinal-sauerland-2021]
+contrasts with flat-EXH grammaticalism; swapping `PartialProp.neg` for
+the external Bochvar negation `PartialProp.negExt` would falsify it. -/
+theorem bps_neg_not_cancellable {W : Type*} (p : PartialProp W) :
+    ¬ Implicature.IsCancellable (fun w => PartialProp.holds w p.neg) p.presup :=
+  Implicature.IsCancellable.false_of_assertion_implies_content (fun _ h => h.1)
 
 /-- **Structural non-cancellability** for the FCWorld instance: when the
-assertion is the full pex output (`pexFC.holds`), no continuation cancels
-the inferred content. This follows from `holds := presup ∧ assertion`
-trivially. -/
+assertion is the full pex output (`pexFC.holds`), no continuation
+cancels the free-choice content `pexFC.presup` (the negated IE
+alternatives plus homogeneity over II alternatives — the *non-at-issue*
+content BPS treats as projective). -/
 theorem pexFC_not_cancellable :
-    ¬ Implicature.IsCancellable (fun w => PartialProp.holds w pexFC)
-                                fcImplicature := by
-  -- the proof of bps_not_cancellable applies; fcImplicature differs from
-  -- (bpsToImplicature fcALT pexFC) only in the `kind` field, which the
-  -- IsCancellable predicate doesn't inspect.
-  apply Implicature.IsCancellable.false_of_assertion_implies_content
-  intro _ h
-  exact h.1
+    ¬ Implicature.IsCancellable (fun w => PartialProp.holds w pexFC) pexFC.presup :=
+  bps_not_cancellable pexFC
 
 /-- **Substantive non-cancellability — projection through negation.**
-Even after asserting `¬pexFC` (the negation of the FC pex output), the
-free-choice inference (`pexFC.presup`, which yields `permA w ∧ permB w`
-by `pex_fc`) survives. This is the formal counterpart to BPS's
+Even after asserting `¬pexFC`, the free-choice inference (`pexFC.presup`,
+which yields `permA w ∧ permB w` by `pex_fc`) survives — BPS's
 projection argument: the inference is not at-issue, so embedding under
-negation does not cancel it. The proof traces through
-`PartialProp.neg_presup` — the structural projection identity — not just
-the trivial `holds → presup`. -/
+negation does not cancel it. -/
 theorem pexFC_neg_not_cancellable :
-    ¬ Implicature.IsCancellable (fun w => PartialProp.holds w pexFC.neg)
-                                fcImplicature := by
-  apply Implicature.IsCancellable.false_of_assertion_implies_content
-  intro _ h
-  exact h.1
+    ¬ Implicature.IsCancellable (fun w => PartialProp.holds w pexFC.neg) pexFC.presup :=
+  bps_neg_not_cancellable pexFC
 
 end DelPinalBassiSauerland2024
