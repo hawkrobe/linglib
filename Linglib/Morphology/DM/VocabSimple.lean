@@ -1,5 +1,7 @@
 import Linglib.Syntax.Minimalist.Agree.Basic
 import Linglib.Syntax.Agreement.Paradigm
+import Linglib.Morphology.Exponence.Rule
+import Mathlib.Data.List.MinMax
 
 /-!
 # VocabSimple: Minimalist-specific Vocabulary Insertion
@@ -93,15 +95,7 @@ abbrev Vocabulary := List VocabEntry
     the one with the most features wins. Ties are broken by list order. -/
 def bestMatch (vocab : Vocabulary) (target : FeatureBundle) (ctx : Option Cat) :
     Option VocabEntry :=
-  let candidates := vocab.filter (λ e => decide (e.Matches target ctx))
-  -- Pick the most specific (most features) among matching entries
-  match candidates with
-  | [] => none
-  | _ => candidates.foldl (λ best entry =>
-      match best with
-      | none => some entry
-      | some b => if entry.specificity > b.specificity then some entry else some b
-    ) none
+  (vocab.filter (λ e => decide (e.Matches target ctx))).argmax VocabEntry.specificity
 
 /-- Spell out a feature bundle: find the best matching entry's exponent.
     Returns `none` if no vocabulary entry matches (zero/null exponent). -/
@@ -143,5 +137,66 @@ def makePersonVocab {PN : Type*} (cells : List PN) (toPhi : PN → List PhiFeatu
     { features := .ofGramFeatures ((toPhi pn).map (λ p => .valued (.phi p)))
     , exponent := exponentOf pn
     , context := ctx }
+
+-- ============================================================================
+-- § 5: The shared exponence core
+-- ============================================================================
+
+section ExponenceCore
+
+open Morphology.Exponence
+
+/-- View a vocabulary entry as a rule of the shared exponence core
+(`Morphology.Exponence.Rule`): contexts are (target bundle, syntactic
+context) pairs, applicability is `Matches`. -/
+def VocabEntry.toRule (e : VocabEntry) : Rule (FeatureBundle × Option Cat) String :=
+  ⟨e.exponent, λ tc => e.Matches tc.1 tc.2⟩
+
+/-- Syntactic refinement: a feature-superset entry (with compatible
+context restriction) is at least as specific in the derived order of
+the shared core. -/
+theorem VocabEntry.toRule_moreSpecific_of_superset {e e' : VocabEntry}
+    (hf : ∀ f ∈ FeatureBundle.toGramFeatures e'.features,
+      f ∈ FeatureBundle.toGramFeatures e.features)
+    (hc : e'.context = none ∨ e'.context = e.context) :
+    e.toRule.MoreSpecific e'.toRule := by
+  rintro ⟨t, c⟩ ⟨hm, hctx⟩
+  refine ⟨?_, ?_⟩
+  · rw [VocabEntry.MatchesFeatures, List.all_eq_true] at hm ⊢
+    exact λ ef hef => hm _ (hf ef hef)
+  · rcases hc with h | h
+    · exact Or.inl h
+    · rcases hctx with h2 | h2
+      · exact Or.inl (h.trans h2)
+      · exact Or.inr (h.trans h2)
+
+/-- Under a specificity stipulation faithful to the derived order on
+the matching entries, `bestMatch` returns an Elsewhere winner of the
+shared core. The feature-count `specificity` is one such stipulation
+whenever distinct matching entries are feature-comparable. -/
+theorem bestMatch_isElsewhereWinner {vocab : Vocabulary} {target : FeatureBundle}
+    {ctx : Option Cat} {e : VocabEntry}
+    (h : bestMatch vocab target ctx = some e)
+    (hfaith : ∀ a ∈ vocab, ∀ b ∈ vocab, a.Matches target ctx →
+      b.Matches target ctx → a.toRule.MoreSpecific b.toRule →
+      ¬ b.toRule.MoreSpecific a.toRule → b.specificity < a.specificity) :
+    IsElsewhereWinner (vocab.map VocabEntry.toRule) (target, ctx) e.toRule := by
+  have hmem := List.argmax_mem h
+  rw [List.mem_filter] at hmem
+  obtain ⟨hev, hem⟩ := hmem
+  have hematch : e.Matches target ctx := of_decide_eq_true hem
+  refine ⟨List.mem_map_of_mem hev, hematch, ?_⟩
+  rintro s hs happ hspec
+  obtain ⟨b, hb, rfl⟩ := List.mem_map.mp hs
+  by_contra hns
+  have hlt : e.specificity < b.specificity :=
+    hfaith b hb e hev happ hematch hspec hns
+  have hble : ¬ e.specificity < b.specificity :=
+    List.not_lt_of_mem_argmax
+      (List.mem_filter.mpr
+        ⟨hb, decide_eq_true (show b.Matches target ctx from happ)⟩) h
+  exact hble hlt
+
+end ExponenceCore
 
 end Minimalist

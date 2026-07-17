@@ -1315,9 +1315,9 @@ import Linglib.Morphology.DM.Merger
 import Linglib.Morphology.DM.NominalStructure
 import Linglib.Morphology.DM.VocabSimple
 import Linglib.Morphology.DM.VocabularyInsertion
+import Linglib.Morphology.Exponence.Rule
 import Linglib.Morphology.DegreeContainment
 import Linglib.Morphology.Derivation
-import Linglib.Morphology.Exponence
 import Linglib.Morphology.Focus
 import Linglib.Morphology.FragmentGrammars.AdaptorGrammar
 import Linglib.Morphology.FragmentGrammars.CFGFragment
@@ -1327,6 +1327,7 @@ import Linglib.Morphology.FragmentGrammars.FragmentGrammar
 import Linglib.Morphology.FragmentGrammars.FragmentLambda
 import Linglib.Morphology.FragmentGrammars.MultinomialPCFG
 import Linglib.Morphology.Grammaticalization
+import Linglib.Morphology.InflectionRules
 import Linglib.Morphology.MorphProfile
 import Linglib.Morphology.MorphRule
 import Linglib.Morphology.MorphWord

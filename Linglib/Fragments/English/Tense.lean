@@ -1,5 +1,5 @@
 import Linglib.Semantics.Tense.Evidential
-import Linglib.Morphology.Exponence
+import Linglib.Morphology.InflectionRules
 import Linglib.Semantics.Tense.SOT.Decomposition
 
 /-!

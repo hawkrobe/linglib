@@ -1,4 +1,5 @@
 import Linglib.Morphology.Paradigm.Contiguity
+import Linglib.Morphology.Exponence.Rule
 import Mathlib.Data.List.MinMax
 import Mathlib.Data.Finset.Max
 
@@ -584,5 +585,37 @@ theorem exists_portmanteau_of_ne {v : List (ExponenceRule 3 F)} (hA : Adjacent v
     threshold_le_one (Nat.le_zero.mp htop) (hA w2 hw2v)
   exact h12 (realize_congr
     ((maxThreshold_eq_coe_of_between hmt2 hτle (by decide)).trans hmt2.symm))
+
+/-! ### The shared exponence core
+
+The containment engine instantiates `Morphology.Exponence.Rule`:
+applicability is threshold containment, derived specificity is
+threshold comparison, and the Elsewhere winner is a winner of the
+shared core — all true by construction. -/
+
+/-- View a containment-hierarchy rule as a rule of the shared exponence
+core: contexts are grades, applicability is `AppliesAt`. -/
+def ExponenceRule.toRule (it : ExponenceRule n F) : Exponence.Rule (Fin n) F :=
+  ⟨it.exponent, it.AppliesAt⟩
+
+/-- Containment specificity is definitionally the derived specificity
+of the shared core. -/
+theorem ExponenceRule.toRule_moreSpecific_iff {it jt : ExponenceRule n F} :
+    it.toRule.MoreSpecific jt.toRule ↔ it.MoreSpecific jt :=
+  Iff.rfl
+
+/-- The containment engine's Elsewhere winner is an Elsewhere winner of
+the shared core. -/
+theorem isElsewhereWinner_toRule {v : List (ExponenceRule n F)} {g : Fin n}
+    {it : ExponenceRule n F} (h : winner v g = some it) :
+    Exponence.IsElsewhereWinner (v.map ExponenceRule.toRule) g it.toRule := by
+  obtain ⟨hmem, hmt⟩ := winner_spec h
+  obtain ⟨-, -, -, hle⟩ := exists_of_maxThreshold_eq_coe hmt
+  refine ⟨List.mem_map_of_mem hmem, hle, ?_⟩
+  rintro s hs hsapp -
+  obtain ⟨jt, hjt, rfl⟩ := List.mem_map.mp hs
+  rw [ExponenceRule.toRule_moreSpecific_iff,
+    ExponenceRule.moreSpecific_iff_threshold_le]
+  exact threshold_le_of_maxThreshold_eq_coe hmt hjt hsapp
 
 end Morphology.Containment

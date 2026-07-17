@@ -2,7 +2,7 @@ import Linglib.Morphology.DegreeContainment
 import Linglib.Morphology.Containment.Vocabulary
 import Linglib.Morphology.Containment.Superset
 import Linglib.Morphology.DM.Merger
-import Linglib.Morphology.Exponence
+import Linglib.Morphology.InflectionRules
 import Linglib.Semantics.Alternatives.Lexical
 import Linglib.Fragments.English.Modifiers.Adjectives
 import Linglib.Fragments.Latin.Adjectives

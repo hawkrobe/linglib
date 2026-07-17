@@ -1,4 +1,5 @@
 import Mathlib.Tactic.TypeStar
+import Linglib.Morphology.Exponence.Rule
 
 /-!
 # Vocabulary Insertion (Distributed Morphology)
@@ -221,5 +222,89 @@ theorem elsewhere_always_matches {F E : Type*} [BEq F]
     (e : E) (target : List F) :
     (FeatureVI.mk ([] : List F) e).features.all (target.contains ·) = true := by
   simp [List.all_nil]
+
+-- ============================================================================
+-- § 7: The shared exponence core
+-- ============================================================================
+
+section ExponenceCore
+
+open Morphology.Exponence
+
+variable {Ctx Root : Type*}
+
+/-- View a Vocabulary Item as a rule of the shared exponence core
+(`Morphology.Exponence.Rule`): contexts are (feature-context, root)
+pairs, applicability is `matches`. -/
+def VocabItem.toRule (vi : VocabItem Ctx Root) : Rule (Ctx × Root) String :=
+  ⟨vi.exponent, λ cr => vi.matches cr.1 cr.2 = true⟩
+
+/-- The stipulated `specificity` rank is **faithful** when it refines
+the derived specificity of the shared core: a strictly more specific
+item always outranks. With opaque `contextMatch` predicates the derived
+order is not computable, so this engine must stipulate a rank — this
+Prop is the obligation the stipulation incurs, and
+`vocabularyInsert_isElsewhereWinner` is what discharging it buys. -/
+def SpecificityFaithful (rules : List (VocabItem Ctx Root)) : Prop :=
+  ∀ a ∈ rules, ∀ b ∈ rules, a.toRule.MoreSpecific b.toRule →
+    ¬ b.toRule.MoreSpecific a.toRule → b.specificity < a.specificity
+
+private theorem findSome?_pairwise_max {l : List (VocabItem Ctx Root)}
+    (hs : l.Pairwise (λ a b => b.specificity ≤ a.specificity))
+    {ctx : Ctx} {root : Root} {e : String}
+    (h : (l.findSome? λ vi =>
+      if vi.matches ctx root then some vi.exponent else none) = some e) :
+    ∃ vi ∈ l, vi.matches ctx root = true ∧ vi.exponent = e ∧
+      ∀ b ∈ l, b.matches ctx root = true → b.specificity ≤ vi.specificity := by
+  induction l with
+  | nil => simp at h
+  | cons x l ih =>
+    rw [List.findSome?_cons] at h
+    obtain ⟨hx, hl⟩ := List.pairwise_cons.mp hs
+    by_cases hm : x.matches ctx root
+    · rw [if_pos hm] at h
+      refine ⟨x, List.mem_cons_self .., hm, Option.some.inj h, ?_⟩
+      intro b hb
+      rcases List.mem_cons.mp hb with rfl | hb'
+      · exact λ _ => Nat.le_refl _
+      · exact λ _ => hx b hb'
+    · rw [if_neg hm] at h
+      obtain ⟨vi, hvi, hvm, hve, hmax⟩ := ih hl h
+      refine ⟨vi, List.mem_cons_of_mem _ hvi, hvm, hve, ?_⟩
+      intro b hb
+      rcases List.mem_cons.mp hb with rfl | hb'
+      · exact λ hbm => absurd hbm (by simpa using hm)
+      · exact hmax b hb'
+
+/-- Under a faithful specificity stipulation, the engine's selection is
+an Elsewhere winner of the shared core. -/
+theorem vocabularyInsert_isElsewhereWinner {rules : List (VocabItem Ctx Root)}
+    {ctx : Ctx} {root : Root} {e : String}
+    (h : vocabularyInsert rules ctx root = some e)
+    (hf : SpecificityFaithful rules) :
+    ∃ vi ∈ rules, vi.exponent = e ∧
+      IsElsewhereWinner (rules.map VocabItem.toRule) (ctx, root) vi.toRule := by
+  unfold vocabularyInsert at h
+  have hsort : (rules.mergeSort (λ a b => a.specificity ≥ b.specificity)).Pairwise
+      (λ a b => b.specificity ≤ a.specificity) := by
+    have := List.pairwise_mergeSort
+      (le := λ a b : VocabItem Ctx Root => decide (a.specificity ≥ b.specificity))
+      (λ a b c hab hbc => by
+        simp only [decide_eq_true_eq] at *; omega)
+      (λ a b => by simp only [Bool.or_eq_true, decide_eq_true_eq]; omega)
+      rules
+    exact this.imp (λ hab => by simpa using hab)
+  obtain ⟨vi, hvi, hvm, hve, hmax⟩ := findSome?_pairwise_max hsort h
+  rw [List.mem_mergeSort] at hvi
+  refine ⟨vi, hvi, hve, List.mem_map_of_mem hvi, hvm, ?_⟩
+  rintro s hs happ hspec
+  obtain ⟨b, hb, rfl⟩ := List.mem_map.mp hs
+  by_contra hns
+  have hlt : vi.specificity < b.specificity := hf b hb vi hvi hspec hns
+  have hble : b.specificity ≤ vi.specificity :=
+    hmax b (List.mem_mergeSort.mpr hb) happ
+  omega
+
+end ExponenceCore
 
 end Morphology.DM.VI
