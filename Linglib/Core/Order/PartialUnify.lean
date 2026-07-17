@@ -265,3 +265,52 @@ instance [PartialOrder α] [PartialUnify α] (a b : α) : Decidable (Compat a b)
   decidable_of_iff _ PartialUnify.isSome_unify_iff_bddAbove
 
 end Compat
+
+/-! ### Joining point sets -/
+
+namespace Set
+
+variable {α : Type*} [PartialOrder α] {s t : Set α} {c : α}
+
+/-- The least upper bounds of pairs drawn from two sets — the
+partial-join analogue of `Set.sups`, keeping exactly the bounded pairs:
+unification of description sets in [carpenter-1992]'s setting. -/
+def lubs (s t : Set α) : Set α :=
+  {c | ∃ a ∈ s, ∃ b ∈ t, IsLUB {a, b} c}
+
+@[simp] theorem mem_lubs : c ∈ s.lubs t ↔ ∃ a ∈ s, ∃ b ∈ t, IsLUB {a, b} c :=
+  Iff.rfl
+
+theorem lubs_comm (s t : Set α) : s.lubs t = t.lubs s := by
+  ext c
+  constructor <;> rintro ⟨a, ha, b, hb, h⟩ <;>
+    exact ⟨b, hb, a, ha, pair_comm a b ▸ h⟩
+
+private theorem mem_lubs_left_iff
+    (H : ∀ a b : α, Compat a b → ∃ c, IsLUB ({a, b} : Set α) c) :
+    ∀ (s t u : Set α) (c : α),
+      c ∈ (s.lubs t).lubs u ↔ ∃ a ∈ s, ∃ b ∈ t, ∃ w ∈ u, IsLUB {a, b, w} c := by
+  intro s t u c
+  constructor
+  · rintro ⟨v, ⟨a, ha, b, hb, hab⟩, w, hw, hvw⟩
+    exact ⟨a, ha, b, hb, w, hw, (PartialUnify.isLUB_pair_step hab).mp hvw⟩
+  · rintro ⟨a, ha, b, hb, w, hw, h⟩
+    obtain ⟨v, hv⟩ := H a b (Compat.of_le (h.1 (mem_insert _ _))
+      (h.1 (mem_insert_of_mem _ (mem_insert _ _))))
+    exact ⟨v, ⟨a, ha, b, hb, hv⟩, w, hw, (PartialUnify.isLUB_pair_step hv).mpr h⟩
+
+/-- Under pairwise bounded completeness — every bounded pair has a join —
+joining point sets is associative. -/
+theorem lubs_assoc (H : ∀ a b : α, Compat a b → ∃ c, IsLUB ({a, b} : Set α) c)
+    (s t u : Set α) : (s.lubs t).lubs u = s.lubs (t.lubs u) := by
+  have hset : ∀ b w a : α, ({b, w, a} : Set α) = {a, b, w} := by
+    intro b w a; ext x; simp [mem_insert_iff]; tauto
+  ext c
+  rw [mem_lubs_left_iff H, lubs_comm s (t.lubs u), mem_lubs_left_iff H]
+  constructor
+  · rintro ⟨a, ha, b, hb, w, hw, h⟩
+    exact ⟨b, hb, w, hw, a, ha, (hset b w a).symm ▸ h⟩
+  · rintro ⟨b, hb, w, hw, a, ha, h⟩
+    exact ⟨a, ha, b, hb, w, hw, hset b w a ▸ h⟩
+
+end Set

@@ -199,10 +199,10 @@ def startFile : State ExWorld ℕ ExEntity := State.initial
 
 /-- Index 1 is novel in the start file (no drefs yet). -/
 example : ∀ p ∈ startFile, p.assignment 1 = ⊥ :=
-  fun _ hp => hp 1
+  fun _ hp => State.mem_initial.mp hp 1
 
 /-- The start file is consistent (nonempty). -/
-example : startFile.Nonempty := ⟨⟨w₀, λ _ => ⊥⟩, λ _ => rfl⟩
+example : startFile.Nonempty := ⟨Possibility.bot w₀, w₀, rfl⟩
 
 end ConcreteExamples
 

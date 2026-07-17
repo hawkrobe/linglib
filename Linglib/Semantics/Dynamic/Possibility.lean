@@ -80,6 +80,12 @@ theorem eq_of_le_of_domain_eq (h : p ≤ q) (hdom : p.domain = q.domain) : p = q
   Possibility.ext h.1 <| funext fun v =>
     Part.eq_of_le_of_dom (h.2 v) fun hd => hdom.superset hd
 
+/-- A point defines no referent exactly when its assignment is nowhere
+defined. -/
+theorem domain_eq_empty_iff : p.domain = ∅ ↔ ∀ v, p.assignment v = ⊥ := by
+  simp only [Set.eq_empty_iff_forall_notMem, mem_domain]
+  exact forall_congr' fun v => Part.eq_none_iff'.symm
+
 /-- The union of two points, defined wherever either is, with the left
 taking precedence; on compatible points the precedence is immaterial
 (`union_comm`). -/
@@ -100,7 +106,7 @@ theorem union_le (hp : p ≤ u) (hq : q ≤ u) : p.union q ≤ u :=
 /-- Compatibility of partial points is worldwise and pointwise. -/
 theorem compat_iff_forall : Compat p q ↔
     p.world = q.world ∧ ∀ v, Compat (p.assignment v) (q.assignment v) :=
-  ⟨fun ⟨u, hu⟩ =>
+  ⟨fun ⟨_, hu⟩ =>
     have ⟨hp, hq⟩ := PartialUnify.mem_upperBounds_pair.mp hu
     ⟨hp.1.trans hq.1.symm, fun v => .of_le (hp.2 v) (hq.2 v)⟩,
    fun ⟨hw, hc⟩ => .of_le le_union_left
@@ -126,6 +132,14 @@ theorem isLUB_union (h : Compat p q) : IsLUB {p, q} (p.union q) :=
       have h := PartialUnify.mem_upperBounds_pair.mp hu
       union_le h.1 h.2⟩
 
+/-- The joins of pairs of points: `u` bounds `{p, q}` least exactly when
+the pair is compatible and `u` is its union. -/
+theorem isLUB_pair_iff : IsLUB {p, q} u ↔ Compat p q ∧ u = p.union q :=
+  ⟨fun h =>
+    have hc : Compat p q := ⟨u, h.1⟩
+    ⟨hc, ((isLUB_union hc).unique h).symm⟩,
+   fun ⟨hc, hu⟩ => hu ▸ isLUB_union hc⟩
+
 /-- The union of two points defines the union of their domains. -/
 theorem domain_union : (p.union q).domain = p.domain ∪ q.domain := by
   ext v; simp
@@ -140,27 +154,27 @@ theorem eq_of_compat_of_domain_eq (h : Compat p q) (hdom : p.domain = q.domain) 
 theorem union_assoc : (p.union q).union r = p.union (q.union r) :=
   Possibility.ext rfl <| funext fun _ => Part.or_assoc
 
+@[simp] theorem union_self : p.union p = p :=
+  Possibility.ext rfl <| funext fun _ => Part.or_self
+
 /-- On compatible points the left precedence of `union` is immaterial. -/
 theorem union_comm (h : Compat p q) : p.union q = q.union p :=
   (isLUB_union h).unique (Set.pair_comm p q ▸ isLUB_union h.symm)
 
-/-- A union is compatible with whatever both components are compatible
-with. -/
-theorem compat_union_left (hpu : Compat p u) (hqu : Compat q u) :
-    Compat (p.union q) u :=
-  have ⟨hpw, hpc⟩ := compat_iff_forall.mp hpu
-  have ⟨_, hqc⟩ := compat_iff_forall.mp hqu
-  compat_iff_forall.mpr ⟨hpw, fun v => Part.compat_or_left (hpc v) (hqc v)⟩
+/-! ### The empty point -/
 
-/-- The left component of a compatible union is compatible. -/
-theorem compat_of_union_left (h : Compat (p.union q) u) : Compat p u :=
-  h.mono le_union_left le_rfl
+/-- The empty point at a world: no referent defined. -/
+def bot (w : W) : Possibility W V (Part M) :=
+  ⟨w, fun _ => ⊥⟩
 
-/-- The right component of a compatible union is compatible, given the
-components agree. -/
-theorem compat_of_union_right (hpq : Compat p q) (h : Compat (p.union q) u) :
-    Compat q u :=
-  h.mono (le_union_right hpq) le_rfl
+theorem bot_le : bot p.world ≤ p :=
+  ⟨rfl, fun _ => _root_.bot_le⟩
+
+@[simp] theorem union_bot {w : W} : p.union (bot w) = p :=
+  Possibility.ext rfl <| funext fun _ => Part.or_bot
+
+@[simp] theorem domain_bot {w : W} : (bot w : Possibility W V (Part M)).domain = ∅ :=
+  domain_eq_empty_iff.mpr fun _ => rfl
 
 /-! ### Restriction and the indexed classification -/
 

@@ -891,10 +891,8 @@ def toIndexedState (V M : Type*) (s : Set W) :
 
 /-- The embedding lands in the empty stratum. -/
 theorem uniformAt_toIndexedState :
-    State.UniformAt ∅ (toIndexedState V M s) := fun p hp => by
-  ext v
-  simp only [Possibility.mem_domain, hp.2 v, Set.mem_empty_iff_false, iff_false]
-  exact Part.not_none_dom
+    State.UniformAt ∅ (toIndexedState V M s) := fun _ hp =>
+  Possibility.domain_eq_empty_iff.mpr hp.2
 
 /-- The embedding is faithful on worldly content. -/
 @[simp] theorem worlds_toIndexedState :

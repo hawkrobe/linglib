@@ -353,9 +353,9 @@ is inhabited — the pair glues. -/
 private theorem merge_anti_nonempty {i j k : Fin 3} (hij : i ≠ j)
     (hjk : j ≠ k) (hik : i ≠ k) :
     ((anti i j).merge (anti j k)).Nonempty := by
-  refine ⟨(pt2 i j false true).union (pt2 j k true false),
-    pt2 i j false true, pt2_mem_anti hij false true (by simp),
-    pt2 j k true false, pt2_mem_anti hjk true false (by simp), ?_, rfl⟩
+  refine ⟨(pt2 i j false true).union (pt2 j k true false), State.mem_merge.mpr
+    ⟨pt2 i j false true, pt2_mem_anti hij false true (by simp),
+      pt2 j k true false, pt2_mem_anti hjk true false (by simp), ?_, rfl⟩⟩
   refine Possibility.compat_iff.mpr ⟨rfl, fun v e e' he he' => ?_⟩
   simp only [pt2] at he he'
   split at he

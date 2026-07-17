@@ -265,7 +265,7 @@ theorem DRS.mem_state {W : Type*} {K : DRS L V} {hK : K.IsProper}
     rw [← hg] at hv
     exact hv
   · rintro ⟨hq, f, g, hrel, hvals⟩
-    refine ⟨hq, ⟨q.world, fun _ => ⊥⟩, fun _ => rfl, ?_, rfl,
+    refine ⟨hq, ⟨q.world, fun _ => ⊥⟩, ⟨q.world, rfl⟩, ?_, rfl,
       (↑(∅ : Finset V) : Set V).restrict f,
       (↑(∅ ∪ K.referents) : Set V).restrict g,
       fun v => absurd v.2 (by simp), fun v => hvals v, f, g, rfl, rfl, hrel⟩
