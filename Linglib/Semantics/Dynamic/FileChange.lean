@@ -208,7 +208,7 @@ theorem atomW_eq (pred : W → Prop) (F : State W V M) :
     have hqle : q ≤ p := ⟨(Possibility.compat_iff.mp hpq).1.symm, fun v e he =>
       absurd (Part.dom_iff_mem.mpr ⟨e, he⟩)
         (Set.eq_empty_iff_forall_notMem.mp hqdom v)⟩
-    rw [le_antisymm (Possibility.union_le le_rfl hqle) (Possibility.le_union_left p q)]
+    rw [le_antisymm (Possibility.union_le le_rfl hqle) Possibility.le_union_left]
     exact ⟨hp, (Possibility.compat_iff.mp hpq).1.symm ▸ hqpred⟩
   · rintro ⟨hr, hpred⟩
     have hqle : (⟨r.world, fun _ => ⊥⟩ : Possibility W V (Part M)) ≤ r :=
@@ -217,7 +217,7 @@ theorem atomW_eq (pred : W → Prop) (F : State W V M) :
       ⟨Set.eq_empty_iff_forall_notMem.mpr fun _ hv => hv, hpred⟩,
       Possibility.compat_iff.mpr ⟨rfl, fun _ _ _ _ h => absurd h (Part.notMem_none _)⟩, ?_⟩
     exact (le_antisymm (Possibility.union_le le_rfl hqle)
-      (Possibility.le_union_left ..)).symm
+      Possibility.le_union_left).symm
 
 /-- Rule (13), the familiar regime: at a familiar card the atom
 filters — and in particular is eliminative. -/
@@ -233,7 +233,7 @@ theorem atomVar_eq_of_familiar (pred : M → Prop) (x : V)
       have hveq : v = x := hqdom.subset (Part.dom_iff_mem.mpr ⟨e, he⟩)
       subst hveq
       exact (Part.mem_unique he hqx).trans (hag v m₀ m hpx hqx).symm ▸ hpx⟩
-    rw [le_antisymm (Possibility.union_le le_rfl hqle) (Possibility.le_union_left p q)]
+    rw [le_antisymm (Possibility.union_le le_rfl hqle) Possibility.le_union_left]
     exact ⟨hp, m₀, hpx, hag x m₀ m hpx hqx ▸ hpred⟩
   · rintro ⟨hr, m, hrx, hpred⟩
     have hqle : (⟨r.world, fun v => ⟨v = x, fun _ => m⟩⟩ : Possibility W V (Part M)) ≤ r :=
@@ -244,7 +244,7 @@ theorem atomVar_eq_of_familiar (pred : M → Prop) (x : V)
     · obtain ⟨rfl, rfl⟩ := he'
       exact Part.mem_unique he hrx
     · exact (le_antisymm (Possibility.union_le le_rfl hqle)
-        (Possibility.le_union_left ..)).symm
+        Possibility.le_union_left).symm
 
 /-- Rule (18), the novel regime: at a novel card the atom extends each
 point with every witness — random assignment then filtering, in one
@@ -260,17 +260,10 @@ theorem atomVar_eq_of_novel [DecidableEq V] (pred : M → Prop) (x : V)
       Possibility.ext rfl (funext fun v => by
         by_cases hv : v = x
         · subst hv
-          simp only [Possibility.union, Possibility.update_assignment,
-            Function.update_self]
-          rw [if_neg (hnov p hp)]
-          exact Part.eq_some_iff.mpr hqx
+          simp [Part.eq_none_iff'.mpr (hnov p hp), Part.eq_some_iff.mpr hqx]
         · have hqv : q.assignment v = ⊥ :=
             Part.eq_none_iff'.mpr fun hd => hv (hqdom.subset hd)
-          by_cases hdp : (p.assignment v).Dom
-          · simp [Possibility.union, Possibility.update, hdp, Function.update_of_ne hv]
-          · have hpv : p.assignment v = ⊥ := Part.eq_none_iff'.mpr hdp
-            simp [Possibility.union, Possibility.update, hqv, hpv,
-              Function.update_of_ne hv])
+          simp [hqv, Function.update_of_ne hv])
     rw [huq]
     exact ⟨⟨p, hp, m, rfl⟩, m, by simp [Possibility.update], hpred⟩
   · rintro ⟨hmem, m, hrx, hpred⟩
@@ -285,18 +278,12 @@ theorem atomVar_eq_of_novel [DecidableEq V] (pred : M → Prop) (x : V)
     · refine Possibility.ext rfl (funext fun v => ?_)
       by_cases hv : v = x
       · subst hv
-        simp only [Possibility.union, Possibility.update_assignment,
-          Function.update_self]
-        rw [if_neg (hnov p hp)]
-        symm
-        exact Part.eq_some_iff.mpr ⟨rfl, rfl⟩
+        have hqx : (⟨v = v, fun _ => m⟩ : Part M) = Part.some m :=
+          Part.eq_some_iff.mpr ⟨rfl, rfl⟩
+        simp [Part.eq_none_iff'.mpr (hnov p hp), hqx]
       · have hqv : (⟨v = x, fun _ => m⟩ : Part M) = ⊥ :=
           Part.eq_none_iff'.mpr fun hd => hv hd
-        by_cases hdp : (p.assignment v).Dom
-        · simp [Possibility.union, Possibility.update, hdp, Function.update_of_ne hv]
-        · have hpv : p.assignment v = ⊥ := Part.eq_none_iff'.mpr hdp
-          simp [Possibility.union, Possibility.update, hqv, hpv,
-            Function.update_of_ne hv]
+        simp [hqv, Function.update_of_ne hv]
 
 /-- World atoms are eliminative (the familiar face of Principle (A)). -/
 theorem atomW_eliminative (pred : W → Prop) {F F' : State W V M}
