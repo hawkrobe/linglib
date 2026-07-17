@@ -1,5 +1,6 @@
 import Linglib.Core.Order.Flat
 import Mathlib.Data.Set.Function
+import Mathlib.Data.Sigma.Order
 
 /-!
 # Possibilities
@@ -51,7 +52,8 @@ variable {p q u : Possibility W V (Option M)}
 
 /-- A partial point lies below another in the *descent* order when they
 share their world and the assignments grow pointwise in the flat
-information order ([elliott-sudo-2025], Def. 3.3). -/
+information order ([elliott-sudo-2025], Def. 3.3); cf.
+`orderIsoSigmaFlat`. -/
 instance : PartialOrder (Possibility W V (Option M)) where
   le p q := p.world = q.world ∧ ∀ x, (p.assignment x).FlatLE (q.assignment x)
   le_refl _ := ⟨rfl, fun _ => .refl _⟩
@@ -61,6 +63,25 @@ instance : PartialOrder (Possibility W V (Option M)) where
 
 theorem le_def : p ≤ q ↔ p.world = q.world ∧ ∀ x, (p.assignment x).FlatLE (q.assignment x) :=
   Iff.rfl
+
+/-- The descent order is assembled from library orders, not hand-rolled:
+partial points are order-isomorphic to `Σ _ : W, (V → Flat M)` — the
+disjoint sum, over worlds, of the pointwise flat orders. -/
+def orderIsoSigmaFlat :
+    Possibility W V (Option M) ≃o Σ _ : W, (V → Flat M) where
+  toFun p := ⟨p.world, p.assignment⟩
+  invFun x := ⟨x.1, x.2⟩
+  left_inv _ := rfl
+  right_inv _ := rfl
+  map_rel_iff' {p q} := by
+    obtain ⟨pw, pa⟩ := p
+    obtain ⟨qw, qa⟩ := q
+    constructor
+    · intro h
+      cases h with
+      | fiber _ _ _ hab => exact ⟨rfl, hab⟩
+    · rintro ⟨rfl, hle⟩
+      exact Sigma.LE.fiber _ _ _ hle
 
 /-- The domain of a partial point is the set of referents it defines. -/
 def domain (p : Possibility W V (Option M)) : Set V :=
@@ -76,32 +97,22 @@ theorem domain_mono (h : p ≤ q) : p.domain ⊆ q.domain := fun v => (h.2 v).is
 theorem eq_of_le_of_domain_eq (h : p ≤ q) (hdom : p.domain = q.domain) : p = q :=
   Possibility.ext h.1 <| funext fun v => (h.2 v).eq_of_isSome fun hv => hdom.superset hv
 
-/-- Two partial points are *compatible* if they share their world and
-agree wherever both are defined — the requirement in
-[kamp-vangenabith-reyle-2011], Def. 0.26, that the union of chosen
-points be a function. Equivalently, the pair is bounded above in the
-descent order (`compatible_iff_bddAbove`). -/
-def Compatible (p q : Possibility W V (Option M)) : Prop :=
-  p.world = q.world ∧
-    ∀ v e e', p.assignment v = some e → q.assignment v = some e' → e = e'
-
-theorem Compatible.symm (h : p.Compatible q) : q.Compatible p :=
-  ⟨h.1.symm, fun v e e' hq hp => (h.2 v e' e hp hq).symm⟩
-
 /-- The union of two points, defined wherever either is, with the left
 taking precedence; on compatible points the precedence is immaterial
-(`Compatible.union_comm`). -/
+(`union_comm`). -/
 def union (p q : Possibility W V (Option M)) : Possibility W V (Option M) :=
   ⟨p.world, fun v => (p.assignment v).or (q.assignment v)⟩
 
 theorem le_union_left (p q : Possibility W V (Option M)) : p ≤ p.union q :=
   ⟨rfl, fun v e h => by simp [union, Option.mem_def.mp h]⟩
 
-theorem Compatible.le_union_right (h : p.Compatible q) : q ≤ p.union q :=
-  ⟨h.1.symm, fun v e hq => by
+private theorem le_union_right_of_agree (hw : p.world = q.world)
+    (hag : ∀ v e e', p.assignment v = some e → q.assignment v = some e' → e = e') :
+    q ≤ p.union q :=
+  ⟨hw.symm, fun v e hq => by
     rcases hp : p.assignment v with _ | e'
     · simpa [union, hp] using hq
-    · simpa [union, hp] using h.2 v e' e hp (Option.mem_def.mp hq)⟩
+    · simpa [union, hp] using hag v e' e hp (Option.mem_def.mp hq)⟩
 
 theorem union_le (hp : p ≤ u) (hq : q ≤ u) : p.union q ≤ u :=
   ⟨hp.1, fun v e h => by
@@ -110,35 +121,33 @@ theorem union_le (hp : p ≤ u) (hq : q ≤ u) : p.union q ≤ u :=
     · obtain rfl : e' = e := by simpa [union, hpv] using h
       exact hp.2 v e' hpv⟩
 
-/-- Points below a common point are compatible. -/
-theorem compatible_of_le_of_le (hp : p ≤ u) (hq : q ≤ u) : p.Compatible q :=
-  ⟨hp.1.trans hq.1.symm, fun v e e' he he' =>
-    Option.some_injective M ((Option.mem_def.mp (hp.2 v e he)).symm.trans
-      (Option.mem_def.mp (hq.2 v e' he')))⟩
+/-- Two partial points are compatible (`Compat`: bounded above in the
+descent order) exactly when they share their world and agree wherever
+both are defined — the requirement in [kamp-vangenabith-reyle-2011],
+Def. 0.26, that the union of chosen points be a function. -/
+theorem compat_iff : Compat p q ↔
+    p.world = q.world ∧
+      ∀ v e e', p.assignment v = some e → q.assignment v = some e' → e = e' := by
+  constructor
+  · rintro ⟨u, hu⟩
+    obtain ⟨hp, hq⟩ := PartialUnify.mem_upperBounds_pair.mp hu
+    exact ⟨hp.1.trans hq.1.symm, fun v e e' he he' =>
+      Option.some_injective M ((Option.mem_def.mp (hp.2 v e he)).symm.trans
+        (Option.mem_def.mp (hq.2 v e' he')))⟩
+  · rintro ⟨hw, hag⟩
+    exact ⟨p.union q, PartialUnify.mem_upperBounds_pair.mpr
+      ⟨le_union_left p q, le_union_right_of_agree hw hag⟩⟩
+
+theorem le_union_right (h : Compat p q) : q ≤ p.union q :=
+  have h' := compat_iff.mp h
+  le_union_right_of_agree h'.1 h'.2
 
 /-- The union of compatible points is their least upper bound. -/
-theorem Compatible.isLUB_union (h : p.Compatible q) : IsLUB {p, q} (p.union q) :=
-  ⟨PartialUnify.mem_upperBounds_pair.mpr ⟨le_union_left p q, h.le_union_right⟩,
+theorem isLUB_union (h : Compat p q) : IsLUB {p, q} (p.union q) :=
+  ⟨PartialUnify.mem_upperBounds_pair.mpr ⟨le_union_left p q, le_union_right h⟩,
     fun _ hu =>
       have h := PartialUnify.mem_upperBounds_pair.mp hu
       union_le h.1 h.2⟩
-
-/-- Compatibility is boundedness above in the descent order — the
-consistency relation `Compat` of the unification substrate. -/
-theorem compatible_iff_bddAbove : p.Compatible q ↔ BddAbove {p, q} :=
-  ⟨fun h => ⟨p.union q, h.isLUB_union.1⟩, fun ⟨_, hu⟩ =>
-    have h := PartialUnify.mem_upperBounds_pair.mp hu
-    compatible_of_le_of_le h.1 h.2⟩
-
-/-- On a shared domain, compatibility is equality. -/
-theorem Compatible.eq_of_domain_eq (h : p.Compatible q)
-    (hdom : p.domain = q.domain) : p = q :=
-  eq_of_le_of_domain_eq
-    ⟨h.1, fun v e hv => by
-      obtain ⟨e', he'⟩ := Option.isSome_iff_exists.mp
-        (hdom.subset (Option.isSome_iff_exists.mpr ⟨e, hv⟩))
-      exact (h.2 v e e' hv he').symm ▸ he'⟩
-    hdom
 
 /-- The union of two points defines the union of their domains. -/
 theorem domain_union (p q : Possibility W V (Option M)) :
@@ -146,41 +155,42 @@ theorem domain_union (p q : Possibility W V (Option M)) :
   ext v
   rcases hp : p.assignment v with _ | e <;> simp [union, domain, hp]
 
+/-- On a shared domain, compatibility is equality. -/
+theorem eq_of_compat_of_domain_eq (h : Compat p q) (hdom : p.domain = q.domain) :
+    p = q :=
+  have hu : (p.union q).domain = p.domain := by rw [domain_union, ← hdom, Set.union_self]
+  (eq_of_le_of_domain_eq (le_union_left p q) hu.symm).trans
+    (eq_of_le_of_domain_eq (le_union_right h) (hdom.symm.trans hu.symm)).symm
+
 theorem union_assoc (p q v : Possibility W V (Option M)) :
     (p.union q).union v = p.union (q.union v) :=
   Possibility.ext rfl (funext fun _ => Option.or_assoc ..)
 
 /-- On compatible points the left precedence of `union` is immaterial. -/
-theorem Compatible.union_comm (h : p.Compatible q) : p.union q = q.union p :=
-  Possibility.ext h.1 <| funext fun v => by
-    rcases hp : p.assignment v with _ | e <;> rcases hq : q.assignment v with _ | e' <;>
-      simp [union, hp, hq]
-    exact h.2 v e e' hp hq
+theorem union_comm (h : Compat p q) : p.union q = q.union p :=
+  (isLUB_union h).unique (Set.pair_comm p q ▸ isLUB_union h.symm)
 
 /-- A union is compatible with whatever both components are compatible
 with. -/
-theorem Compatible.union_left (hpu : p.Compatible u) (hqu : q.Compatible u) :
-    (p.union q).Compatible u :=
-  ⟨hpu.1, fun x e e' he he' => by
-    rcases hp : p.assignment x with _ | c
-    · exact hqu.2 x e e' (by simpa [union, hp] using he) he'
-    · obtain rfl : c = e := by simpa [union, hp] using he
-      exact hpu.2 x c e' hp he'⟩
+theorem compat_union_left (hpu : Compat p u) (hqu : Compat q u) :
+    Compat (p.union q) u := by
+  obtain ⟨hpw, hpa⟩ := compat_iff.mp hpu
+  obtain ⟨hqw, hqa⟩ := compat_iff.mp hqu
+  refine compat_iff.mpr ⟨hpw, fun x e e' he he' => ?_⟩
+  rcases hp : p.assignment x with _ | c
+  · exact hqa x e e' (by simpa [union, hp] using he) he'
+  · obtain rfl : c = e := by simpa [union, hp] using he
+    exact hpa x c e' hp he'
 
 /-- The left component of a compatible union is compatible. -/
-theorem Compatible.left_of_union
-    (h : (p.union q).Compatible u) : p.Compatible u :=
-  ⟨h.1, fun x e e' hp hu => h.2 x e e' (by simp [union, hp]) hu⟩
+theorem compat_of_union_left (h : Compat (p.union q) u) : Compat p u :=
+  h.mono (le_union_left p q) le_rfl
 
 /-- The right component of a compatible union is compatible, given the
 components agree. -/
-theorem Compatible.right_of_union
-    (hpq : p.Compatible q) (h : (p.union q).Compatible u) :
-    q.Compatible u :=
-  ⟨hpq.1.symm.trans h.1, fun x e e' hq hu => by
-    rcases hp : p.assignment x with _ | c
-    · exact h.2 x e e' (by simp [union, hp, hq]) hu
-    · exact hpq.2 x c e hp hq ▸ h.2 x c e' (by simp [union, hp]) hu⟩
+theorem compat_of_union_right (hpq : Compat p q) (h : Compat (p.union q) u) :
+    Compat q u :=
+  h.mono (le_union_right hpq) le_rfl
 
 /-! ### Restriction and the indexed classification -/
 

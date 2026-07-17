@@ -353,7 +353,7 @@ private theorem merge_anti_nonempty {i j k : Fin 3} (hij : i ≠ j)
   refine ⟨(pt2 i j false true).union (pt2 j k true false),
     pt2 i j false true, pt2_mem_anti hij false true (by simp),
     pt2 j k true false, pt2_mem_anti hjk true false (by simp), ?_, rfl⟩
-  refine ⟨rfl, fun v e e' he he' => ?_⟩
+  refine Possibility.compat_iff.mpr ⟨rfl, fun v e e' he he' => ?_⟩
   simp only [pt2] at he he'
   split at he
   · rename_i hvi

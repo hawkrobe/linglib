@@ -212,11 +212,11 @@ theorem atomW_eq (pred : W → Prop) (F : State W V M) :
       Possibility.ext rfl (funext fun v => by
         simp [Possibility.union, hqnone v])
     rw [huq]
-    exact ⟨hp, hpq.1.symm ▸ hqpred⟩
+    exact ⟨hp, (Possibility.compat_iff.mp hpq).1.symm ▸ hqpred⟩
   · rintro ⟨hr, hpred⟩
     refine ⟨r, hr, ⟨r.world, fun _ => none⟩,
       ⟨Set.ext fun v => by simp [Possibility.domain], hpred⟩,
-      ⟨rfl, fun _ _ _ _ h => by simp at h⟩, ?_⟩
+      Possibility.compat_iff.mpr ⟨rfl, fun _ _ _ _ h => by simp at h⟩, ?_⟩
     exact Possibility.ext rfl (funext fun v => by simp [Possibility.union])
 
 /-- Rule (13), the familiar regime: at a familiar card the atom
@@ -238,12 +238,12 @@ theorem atomVar_eq_of_familiar [DecidableEq V] (pred : M → Prop) (x : V)
         · subst hv; simp [Possibility.union, hpx]
         · simp [Possibility.union, hqnone v hv])
     rw [huq]
-    exact ⟨hp, m₀, hpx, by rw [hpq.2 x m₀ m hpx hqx]; exact hpred⟩
+    exact ⟨hp, m₀, hpx, by rw [(Possibility.compat_iff.mp hpq).2 x m₀ m hpx hqx]; exact hpred⟩
   · rintro ⟨hr, m, hrx, hpred⟩
     refine ⟨r, hr, ⟨r.world, fun v => if v = x then some m else none⟩,
       ⟨Set.ext fun v => by by_cases hv : v = x <;>
         simp [Possibility.domain, hv], m, by simp, hpred⟩,
-      ⟨rfl, fun v e e' he he' => ?_⟩, ?_⟩
+      Possibility.compat_iff.mpr ⟨rfl, fun v e e' he he' => ?_⟩, ?_⟩
     · have he2 : (if v = x then some m else none) = some e' := he'
       by_cases hv : v = x
       · rw [if_pos hv] at he2
@@ -286,7 +286,7 @@ theorem atomVar_eq_of_novel [DecidableEq V] (pred : M → Prop) (x : V)
     refine ⟨p, hp, ⟨p.world, fun v => if v = x then some m else none⟩,
       ⟨Set.ext fun v => by by_cases hv : v = x <;>
         simp [Possibility.domain, hv], m, by simp, hpred⟩,
-      ⟨rfl, fun v e e' he he' => ?_⟩, ?_⟩
+      Possibility.compat_iff.mpr ⟨rfl, fun v e e' he he' => ?_⟩, ?_⟩
     · have he2 : (if v = x then some m else none) = some e' := he'
       by_cases hv : v = x
       · rw [hv, hnov p hp] at he

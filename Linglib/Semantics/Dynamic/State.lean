@@ -141,12 +141,12 @@ theorem infoLe_empty (s : State W V M) : s ⊑ (∅ : State W V M) :=
 
 /-! ### Consistent merge -/
 
-/-- Consistent merge ([kamp-vangenabith-reyle-2011] Def. 26, binary):
+/-- Consistent merge ([kamp-vangenabith-reyle-2011] Def. 0.26, binary):
 the points assembled from compatible pairs. Across strata this is the
 descendant-mediated join — plain intersection of point-sets is empty
 between distinct strata. -/
 def State.merge (s s' : State W V M) : State W V M :=
-  {r | ∃ p ∈ s, ∃ q ∈ s', p.Compatible q ∧ r = p.union q}
+  {r | ∃ p ∈ s, ∃ q ∈ s', Compat p q ∧ r = p.union q}
 
 /-- The merge is above the left component in informativeness. -/
 theorem infoLe_merge_left (s s' : State W V M) : s ⊑ s.merge s' := by
@@ -156,23 +156,23 @@ theorem infoLe_merge_left (s s' : State W V M) : s ⊑ s.merge s' := by
 /-- The merge is above the right component in informativeness. -/
 theorem infoLe_merge_right (s s' : State W V M) : s' ⊑ s.merge s' := by
   rintro r ⟨p, hp, q, hq, hpq, rfl⟩
-  exact ⟨q, hq, hpq.le_union_right⟩
+  exact ⟨q, hq, Possibility.le_union_right hpq⟩
 
-/-- **The merge is the least upper bound** (Def. 26's universal
+/-- **The merge is the least upper bound** (Def. 0.26's universal
 property, in the informativeness preorder): anything above both
 components is above their merge. -/
 theorem merge_infoLe {s s' t : State W V M} (hs : s ⊑ t)
     (hs' : s' ⊑ t) : s.merge s' ⊑ t := fun u hu => by
   obtain ⟨p, hp, hpu⟩ := hs u hu
   obtain ⟨q, hq, hqu⟩ := hs' u hu
-  exact ⟨p.union q, ⟨p, hp, q, hq, Possibility.compatible_of_le_of_le hpu hqu, rfl⟩,
+  exact ⟨p.union q, ⟨p, hp, q, hq, Compat.of_le hpu hqu, rfl⟩,
     Possibility.union_le hpu hqu⟩
 
 /-- Consistent merge is commutative. -/
 theorem merge_comm (s s' : State W V M) : s.merge s' = s'.merge s := by
   ext r
   constructor <;> rintro ⟨p, hp, q, hq, h, rfl⟩ <;>
-    exact ⟨q, hq, p, hp, h.symm, h.union_comm⟩
+    exact ⟨q, hq, p, hp, h.symm, Possibility.union_comm h⟩
 
 /-- Consistent merge is associative. -/
 theorem merge_assoc (s t u : State W V M) :
@@ -180,16 +180,16 @@ theorem merge_assoc (s t u : State W V M) :
   ext r
   constructor
   · rintro ⟨a, ⟨p, hp, q, hq, hpq, rfl⟩, v, hv, hav, rfl⟩
-    have hpv := hav.left_of_union
-    have hqv := hpq.right_of_union hav
+    have hpv := Possibility.compat_of_union_left hav
+    have hqv := Possibility.compat_of_union_right hpq hav
     exact ⟨p, hp, q.union v, ⟨q, hq, v, hv, hqv, rfl⟩,
-      (Possibility.Compatible.union_left hpq.symm hpv.symm).symm,
+      (Possibility.compat_union_left hpq.symm hpv.symm).symm,
       Possibility.union_assoc p q v⟩
   · rintro ⟨p, hp, a, ⟨q, hq, v, hv, hqv, rfl⟩, hpa, rfl⟩
-    have hpq := hpa.symm.left_of_union.symm
-    have hpv := (hqv.right_of_union hpa.symm).symm
+    have hpq := (Possibility.compat_of_union_left hpa.symm).symm
+    have hpv := (Possibility.compat_of_union_right hqv hpa.symm).symm
     exact ⟨p.union q, ⟨p, hp, q, hq, hpq, rfl⟩, v, hv,
-      Possibility.Compatible.union_left hpv hqv,
+      Possibility.compat_union_left hpv hqv,
       (Possibility.union_assoc p q v).symm⟩
 
 /-- The initial state is a unit for consistent merge: with `merge_comm`,
@@ -205,7 +205,7 @@ monoid of information — the content half of
     rwa [hq']
   · intro hr
     exact ⟨r, hr, ⟨r.world, fun _ => none⟩, fun _ => rfl,
-      ⟨rfl, fun _ _ _ _ h => by simp at h⟩,
+      Possibility.compat_iff.mpr ⟨rfl, fun _ _ _ _ h => by simp at h⟩,
       Possibility.ext rfl (funext fun v => by simp [Possibility.union])⟩
 
 @[simp] theorem initial_merge (s : State W V M) : State.merge State.initial s = s := by
@@ -276,13 +276,11 @@ theorem merge_eq_inter_of_uniform {X : Set V} {s s' : State W V M}
   ext r
   constructor
   · rintro ⟨p, hp, q, hq, hpq, rfl⟩
-    obtain rfl := hpq.eq_of_domain_eq ((hs p hp).trans (hs' q hq).symm)
+    obtain rfl := Possibility.eq_of_compat_of_domain_eq hpq ((hs p hp).trans (hs' q hq).symm)
     rw [hself p]
     exact ⟨hp, hq⟩
   · rintro ⟨hr, hr'⟩
-    refine ⟨r, hr, r, hr', ⟨rfl, fun v e e' he he' => ?_⟩, (hself r).symm⟩
-    rw [he] at he'
-    exact (Option.some.injEq .. ▸ he' :)
+    exact ⟨r, hr, r, hr', compat_self r, (hself r).symm⟩
 
 section Fibred
 
