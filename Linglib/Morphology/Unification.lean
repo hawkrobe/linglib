@@ -1,5 +1,6 @@
 import Linglib.Data.UD.Basic
 import Linglib.Features.Basic
+import Linglib.Core.Order.Flat
 import Linglib.Core.Order.PartialUnify
 import Mathlib.Order.Bounds.Basic
 import Mathlib.Order.BoundedOrder.Basic
@@ -26,7 +27,6 @@ Unification (§3.2.3) is "the most general feature structure `D` such that `D′
 
 ## Main declarations
 
-* `Option.FlatLE` — the flat information order on one atomic feature slot.
 * `instance : PartialOrder UD.MorphFeatures` — subsumption ("only a partial order",
   §3.2.3), with decidable `≤`.
 * `instance : OrderBot UD.MorphFeatures` — the empty bundle is bottom.
@@ -71,7 +71,7 @@ pays for `Mathlib.Order` — and it is the canonical home for order instances on
 `UD.MorphFeatures`.
 
 The non-distributivity of the subsumption lattice is a documented
-obstruction (`MorphFeatures.not_distrib_witness`): any ≥3-value slot
+obstruction (`Flat.unify_distinct_eq_none`): any ≥3-value slot
 (here, `Case`) makes the per-slot lattice the diamond Mₙ, modular but
 *not* distributive ([carpenter-1992] p. 15, eq. (4), notes this
 explicitly: "our partial orders are *not* required to be distributive
@@ -84,14 +84,11 @@ set_option autoImplicit false
 
 /-! ### The flat order on one feature slot
 
-`Option.FlatLE` is the slot-level subsumption relation ([shieber-1986]
-§3.2.2: `none` below everything, distinct atoms incomparable). The
-definition and its `refl`/`trans`/`antisymm`/`none_le` API live in
-`Linglib/Core/Order/Flat.lean`, where they also carry the bundled
-`PartialOrder`/`OrderBot`/`SemilatticeInf`/`PartialUnify` instances on
-the order-carrying alias `Flat α`. Re-exported here under their
-original names for backward compatibility with this file's own proofs
-and consumers.
+The slot-level subsumption relation ([shieber-1986] §3.2.2: `⊥` below
+everything, distinct atoms incomparable) is the order of `Flat`
+(`Linglib/Core/Order/Flat.lean`), whose
+`PartialOrder`/`OrderBot`/`SemilatticeInf`/`PartialUnify` instances
+supply the per-slot steps of the bundle-level proofs below.
 -/
 
 namespace UD
@@ -151,12 +148,12 @@ namespace UD.MorphFeatures
 /-- Subsumption ([shieber-1986] §3.2.2): `f` carries a subset of `g`'s information —
 field-wise flat order on the option slots, implication on the `reflex` flag. -/
 def Subsumes (f g : MorphFeatures) : Prop :=
-  f.number.FlatLE g.number ∧ f.gender.FlatLE g.gender ∧ f.case_.FlatLE g.case_ ∧
-  f.definite.FlatLE g.definite ∧ f.degree.FlatLE g.degree ∧
-  f.pronType.FlatLE g.pronType ∧ (f.reflex = true → g.reflex = true) ∧
-  f.person.FlatLE g.person ∧ f.verbForm.FlatLE g.verbForm ∧ f.tense.FlatLE g.tense ∧
-  f.aspect.FlatLE g.aspect ∧ f.mood.FlatLE g.mood ∧ f.voice.FlatLE g.voice ∧
-  f.polarity.FlatLE g.polarity
+  f.number ≤ g.number ∧ f.gender ≤ g.gender ∧ f.case_ ≤ g.case_ ∧
+  f.definite ≤ g.definite ∧ f.degree ≤ g.degree ∧
+  f.pronType ≤ g.pronType ∧ (f.reflex = true → g.reflex = true) ∧
+  f.person ≤ g.person ∧ f.verbForm ≤ g.verbForm ∧ f.tense ≤ g.tense ∧
+  f.aspect ≤ g.aspect ∧ f.mood ≤ g.mood ∧ f.voice ≤ g.voice ∧
+  f.polarity ≤ g.polarity
 
 /-! ### `MorphFeatures` as a feature bundle, and the derived order
 
@@ -179,7 +176,7 @@ def val (f : MorphFeatures) :
   | .definite => f.definite
   | .degree   => f.degree
   | .pronType => f.pronType
-  | .reflex   => if f.reflex then some () else none
+  | .reflex   => if f.reflex then (↑() : Flat Unit) else ⊥
   | .person   => f.person
   | .verbForm => f.verbForm
   | .tense    => f.tense
@@ -193,7 +190,7 @@ instance : BundleLike MorphFeatures MorphFeatureType
   val := MorphFeatures.val
 
 private theorem reflex_eq_of_val_reflex_eq {b1 b2 : Bool}
-    (h : (if b1 then some () else none) = (if b2 then some () else none)) :
+    (h : (if b1 then (↑() : Flat Unit) else ⊥) = if b2 then ↑() else ⊥) :
     b1 = b2 := by
   cases b1 <;> cases b2 <;> simp_all
 
@@ -223,9 +220,9 @@ instance : LawfulBundleLike MorphFeatures :=
   ⟨val_injective⟩
 
 private theorem reflex_val_le_iff {b1 b2 : Bool} :
-    Option.FlatLE (if b1 then some () else none) (if b2 then some () else none)
+    (if b1 then (↑() : Flat Unit) else ⊥) ≤ (if b2 then ↑() else ⊥)
       ↔ (b1 = true → b2 = true) := by
-  cases b1 <;> cases b2 <;> simp [Option.FlatLE]
+  cases b1 <;> cases b2 <;> simp
 
 /-- Subsumption is exactly the bundle order: the field-wise 14-conjunct form
 coincides with the per-slot `Flat` order on the valuation `val`. -/
@@ -275,7 +272,7 @@ other feature structures … they contain no information at all" (§3.2.2). -/
 instance : OrderBot MorphFeatures where
   bot := {}
   bot_le f := (subsumes_iff_val_le {} f).mpr (by
-    intro t; cases t <;> exact Option.FlatLE.none_le _)
+    intro t; cases t <;> exact bot_le)
 
 /-! ### Compatibility is boundedness above; unification is the least upper bound -/
 
@@ -285,31 +282,24 @@ the executable `compatible` check via `compatible_iff_bddAbove`, which also make
 it decidable. -/
 def Compatible (f g : MorphFeatures) : Prop := BddAbove ({f, g} : Set MorphFeatures)
 
-private theorem clause_of_some_some {α : Type _} [BEq α] [LawfulBEq α] {x y : α}
-    (h : ((some x : Option α).isNone || (some y : Option α).isNone
-          || (some x : Option α) == some y) = true) : x = y := by
-  simpa [Option.isNone] using h
-
-private theorem some_flatLE_orElse {α : Type _} (a b : Option α) {x : α}
-    (hx : a = some x) : (a <|> b) = some x := by
-  subst hx; rfl
-
 /-- The left input subsumes the merge. -/
 theorem le_merge_left (f g : MorphFeatures) : f ≤ f.merge g := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;>
     first
-      | exact fun x hx => some_flatLE_orElse _ _ hx
+      | exact Flat.le_or_left _ _
       | exact fun hr => by simp [merge, hr]
 
-private theorem flatLE_merge_right {α : Type _} [BEq α] [LawfulBEq α] (a b : Option α)
-    (hcl : (a.isNone || b.isNone || a == b) = true) : b.FlatLE (a <|> b) := by
-  intro x hx
+private theorem le_or_of_clause {α : Type _} [BEq α] [LawfulBEq α] {a b : Flat α}
+    (hcl : (a.isNone || b.isNone || a == b) = true) : b ≤ a.or b := by
   cases a with
-  | none => simpa using hx
-  | some v =>
-    subst hx
-    have : v = x := clause_of_some_some hcl
-    simp [this]
+  | bot => exact le_rfl
+  | coe v =>
+    cases b with
+    | bot => exact bot_le
+    | coe x =>
+      obtain rfl : v = x :=
+        Flat.coe_inj.mp (eq_of_beq (show ((v : Flat α) == ↑x) = true from hcl))
+      exact le_rfl
 
 /-- The right input subsumes the merge — *given compatibility* (the doubly committed
 slots agree, so the left bias is harmless). -/
@@ -317,21 +307,14 @@ theorem le_merge_right {f g : MorphFeatures} (h : f.compatible g = true) :
     g ≤ f.merge g := by
   simp only [compatible, Bool.and_eq_true] at h
   obtain ⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨h1, h2⟩, h3⟩, h4⟩, h5⟩, h6⟩, h7⟩, h8⟩, h9⟩, h10⟩, h11⟩, h12⟩, h13⟩ := h
-  exact ⟨flatLE_merge_right _ _ h1, flatLE_merge_right _ _ h2,
-         flatLE_merge_right _ _ h3, flatLE_merge_right _ _ h4,
-         flatLE_merge_right _ _ h5, flatLE_merge_right _ _ h6,
+  exact ⟨le_or_of_clause h1, le_or_of_clause h2,
+         le_or_of_clause h3, le_or_of_clause h4,
+         le_or_of_clause h5, le_or_of_clause h6,
          fun hr => by simp [merge, hr],
-         flatLE_merge_right _ _ h7, flatLE_merge_right _ _ h8,
-         flatLE_merge_right _ _ h9, flatLE_merge_right _ _ h10,
-         flatLE_merge_right _ _ h11, flatLE_merge_right _ _ h12,
-         flatLE_merge_right _ _ h13⟩
-
-private theorem orElse_flatLE {α : Type _} {a b u : Option α}
-    (ha : a.FlatLE u) (hb : b.FlatLE u) : (a <|> b).FlatLE u := by
-  intro x hx
-  cases a with
-  | none => exact hb x (by simpa using hx)
-  | some v => exact ha x (by simpa using hx)
+         le_or_of_clause h7, le_or_of_clause h8,
+         le_or_of_clause h9, le_or_of_clause h10,
+         le_or_of_clause h11, le_or_of_clause h12,
+         le_or_of_clause h13⟩
 
 /-- The merge is below every common upper bound — minimality ("the *most general*
 feature structure", §3.2.3). -/
@@ -339,28 +322,27 @@ theorem merge_le {f g u : MorphFeatures} (hf : f ≤ u) (hg : g ≤ u) :
     f.merge g ≤ u := by
   obtain ⟨a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14⟩ := hf
   obtain ⟨b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12, b13, b14⟩ := hg
-  refine ⟨orElse_flatLE a1 b1, orElse_flatLE a2 b2, orElse_flatLE a3 b3,
-          orElse_flatLE a4 b4, orElse_flatLE a5 b5, orElse_flatLE a6 b6, ?_,
-          orElse_flatLE a8 b8, orElse_flatLE a9 b9, orElse_flatLE a10 b10,
-          orElse_flatLE a11 b11, orElse_flatLE a12 b12, orElse_flatLE a13 b13,
-          orElse_flatLE a14 b14⟩
+  refine ⟨Flat.or_le a1 b1, Flat.or_le a2 b2, Flat.or_le a3 b3,
+          Flat.or_le a4 b4, Flat.or_le a5 b5, Flat.or_le a6 b6, ?_,
+          Flat.or_le a8 b8, Flat.or_le a9 b9, Flat.or_le a10 b10,
+          Flat.or_le a11 b11, Flat.or_le a12 b12, Flat.or_le a13 b13,
+          Flat.or_le a14 b14⟩
   intro hr
   rcases Bool.or_eq_true_iff.mp (by simpa [merge] using hr) with h | h
   · exact a7 h
   · exact b7 h
 
-private theorem clause_of_flatLE {α : Type _} [BEq α] [LawfulBEq α] {a b u : Option α}
-    (ha : a.FlatLE u) (hb : b.FlatLE u) :
-    (a.isNone || b.isNone || a == b) = true := by
+private theorem clause_of_le {α : Type _} [BEq α] [LawfulBEq α] {a b u : Flat α}
+    (ha : a ≤ u) (hb : b ≤ u) : (a.isNone || b.isNone || a == b) = true := by
   cases a with
-  | none => simp
-  | some x =>
+  | bot => rfl
+  | coe x =>
     cases b with
-    | none => simp
-    | some y =>
-      have hx := ha x rfl
-      have hy := hb y rfl
-      simp [Option.some.inj (hx.symm.trans hy)]
+    | bot => rfl
+    | coe y =>
+      obtain rfl : u = ↑x := Flat.coe_le_iff.mp ha
+      obtain rfl : y = x := Flat.coe_le_coe.mp hb
+      exact beq_self_eq_true _
 
 /-- Bounded above implies the executable check passes. -/
 theorem compatible_of_le {f g u : MorphFeatures} (hf : f ≤ u) (hg : g ≤ u) :
@@ -368,11 +350,11 @@ theorem compatible_of_le {f g u : MorphFeatures} (hf : f ≤ u) (hg : g ≤ u) :
   obtain ⟨a1, a2, a3, a4, a5, a6, _, a8, a9, a10, a11, a12, a13, a14⟩ := hf
   obtain ⟨b1, b2, b3, b4, b5, b6, _, b8, b9, b10, b11, b12, b13, b14⟩ := hg
   simp only [compatible, Bool.and_eq_true]
-  exact ⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨clause_of_flatLE a1 b1, clause_of_flatLE a2 b2⟩,
-    clause_of_flatLE a3 b3⟩, clause_of_flatLE a4 b4⟩, clause_of_flatLE a5 b5⟩,
-    clause_of_flatLE a6 b6⟩, clause_of_flatLE a8 b8⟩, clause_of_flatLE a9 b9⟩,
-    clause_of_flatLE a10 b10⟩, clause_of_flatLE a11 b11⟩, clause_of_flatLE a12 b12⟩,
-    clause_of_flatLE a13 b13⟩, clause_of_flatLE a14 b14⟩
+  exact ⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨clause_of_le a1 b1, clause_of_le a2 b2⟩,
+    clause_of_le a3 b3⟩, clause_of_le a4 b4⟩, clause_of_le a5 b5⟩,
+    clause_of_le a6 b6⟩, clause_of_le a8 b8⟩, clause_of_le a9 b9⟩,
+    clause_of_le a10 b10⟩, clause_of_le a11 b11⟩, clause_of_le a12 b12⟩,
+    clause_of_le a13 b13⟩, clause_of_le a14 b14⟩
 
 /-- The `Bool` check is exactly boundedness above in the subsumption order: the
 order-theoretic identity of "compatible". -/
@@ -422,46 +404,22 @@ Shieber's *generalization* (anti-unification): the most specific bundle subsumed
 both inputs. Unlike unification it is total — the meet always exists — so
 `MorphFeatures` is a genuine `SemilatticeInf` with `⊥`. -/
 
-private def slotInf {α : Type _} [DecidableEq α] (a b : Option α) : Option α :=
-  if a = b then a else none
-
-private theorem slotInf_flatLE_left {α : Type _} [DecidableEq α] (a b : Option α) :
-    (slotInf a b).FlatLE a := by
-  unfold slotInf; split
-  · exact .refl _
-  · exact .none_le _
-
-private theorem slotInf_flatLE_right {α : Type _} [DecidableEq α] (a b : Option α) :
-    (slotInf a b).FlatLE b := by
-  unfold slotInf; split
-  · next h => subst h; exact .refl _
-  · exact .none_le _
-
-private theorem flatLE_slotInf {α : Type _} [DecidableEq α] {a b c : Option α}
-    (h1 : c.FlatLE a) (h2 : c.FlatLE b) : c.FlatLE (slotInf a b) := by
-  intro x hx
-  have ha := h1 x hx
-  have hb := h2 x hx
-  unfold slotInf
-  rw [ha, hb]
-  simp
-
 instance : Min MorphFeatures where
   min f g :=
-    { number   := slotInf f.number g.number
-      gender   := slotInf f.gender g.gender
-      case_    := slotInf f.case_ g.case_
-      definite := slotInf f.definite g.definite
-      degree   := slotInf f.degree g.degree
-      pronType := slotInf f.pronType g.pronType
+    { number   := f.number ⊓ g.number
+      gender   := f.gender ⊓ g.gender
+      case_    := f.case_ ⊓ g.case_
+      definite := f.definite ⊓ g.definite
+      degree   := f.degree ⊓ g.degree
+      pronType := f.pronType ⊓ g.pronType
       reflex   := f.reflex && g.reflex
-      person   := slotInf f.person g.person
-      verbForm := slotInf f.verbForm g.verbForm
-      tense    := slotInf f.tense g.tense
-      aspect   := slotInf f.aspect g.aspect
-      mood     := slotInf f.mood g.mood
-      voice    := slotInf f.voice g.voice
-      polarity := slotInf f.polarity g.polarity }
+      person   := f.person ⊓ g.person
+      verbForm := f.verbForm ⊓ g.verbForm
+      tense    := f.tense ⊓ g.tense
+      aspect   := f.aspect ⊓ g.aspect
+      mood     := f.mood ⊓ g.mood
+      voice    := f.voice ⊓ g.voice
+      polarity := f.polarity ⊓ g.polarity }
 
 private theorem band_true_left {x y : Bool} (h : (x && y) = true) : x = true := by
   cases x <;> simp_all
@@ -477,28 +435,24 @@ instance : SemilatticeInf MorphFeatures :=
     (inferInstance : Min MorphFeatures) with
     inf := min
     inf_le_left := fun f g => show Subsumes (min f g) f from
-      ⟨slotInf_flatLE_left _ _, slotInf_flatLE_left _ _, slotInf_flatLE_left _ _,
-       slotInf_flatLE_left _ _, slotInf_flatLE_left _ _, slotInf_flatLE_left _ _,
+      ⟨inf_le_left, inf_le_left, inf_le_left, inf_le_left, inf_le_left, inf_le_left,
        fun hr => band_true_left hr,
-       slotInf_flatLE_left _ _, slotInf_flatLE_left _ _, slotInf_flatLE_left _ _,
-       slotInf_flatLE_left _ _, slotInf_flatLE_left _ _, slotInf_flatLE_left _ _,
-       slotInf_flatLE_left _ _⟩
+       inf_le_left, inf_le_left, inf_le_left, inf_le_left, inf_le_left, inf_le_left,
+       inf_le_left⟩
     inf_le_right := fun f g => show Subsumes (min f g) g from
-      ⟨slotInf_flatLE_right _ _, slotInf_flatLE_right _ _, slotInf_flatLE_right _ _,
-       slotInf_flatLE_right _ _, slotInf_flatLE_right _ _, slotInf_flatLE_right _ _,
+      ⟨inf_le_right, inf_le_right, inf_le_right, inf_le_right, inf_le_right, inf_le_right,
        fun hr => band_true_right hr,
-       slotInf_flatLE_right _ _, slotInf_flatLE_right _ _, slotInf_flatLE_right _ _,
-       slotInf_flatLE_right _ _, slotInf_flatLE_right _ _, slotInf_flatLE_right _ _,
-       slotInf_flatLE_right _ _⟩
+       inf_le_right, inf_le_right, inf_le_right, inf_le_right, inf_le_right, inf_le_right,
+       inf_le_right⟩
     le_inf := fun c f g hcf hcg => by
       obtain ⟨a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14⟩ := hcf
       obtain ⟨b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12, b13, b14⟩ := hcg
-      exact ⟨flatLE_slotInf a1 b1, flatLE_slotInf a2 b2, flatLE_slotInf a3 b3,
-             flatLE_slotInf a4 b4, flatLE_slotInf a5 b5, flatLE_slotInf a6 b6,
+      exact ⟨le_inf a1 b1, le_inf a2 b2, le_inf a3 b3,
+             le_inf a4 b4, le_inf a5 b5, le_inf a6 b6,
              fun hr => band_true_intro (a7 hr) (b7 hr),
-             flatLE_slotInf a8 b8, flatLE_slotInf a9 b9, flatLE_slotInf a10 b10,
-             flatLE_slotInf a11 b11, flatLE_slotInf a12 b12, flatLE_slotInf a13 b13,
-             flatLE_slotInf a14 b14⟩ }
+             le_inf a8 b8, le_inf a9 b9, le_inf a10 b10,
+             le_inf a11 b11, le_inf a12 b12, le_inf a13 b13,
+             le_inf a14 b14⟩ }
 
 /-! ### Unification computes least upper bounds — further laws -/
 

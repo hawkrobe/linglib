@@ -569,7 +569,7 @@ def equivFlatBool : Trivalent ≃ Flat Bool where
   toFun := toFlat
   invFun := ofFlat
   left_inv a := by cases a <;> rfl
-  right_inv x := by cases x with | none => rfl | some b => cases b <;> rfl
+  right_inv x := by cases x with | bot => rfl | coe b => cases b <;> rfl
 
 /-- The truth order and the knowledge order genuinely differ: in the truth order
 `false ≤ indet`, but in the knowledge order the committed value `false` is not below

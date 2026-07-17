@@ -139,7 +139,7 @@ variable [∀ t, PartialOrder (S t)]
 
 /-- Subsumption: pointwise ≤ on slots — `b₂` is at least as specified as
 `b₁` ([shieber-1986] §3.2.2; [carpenter-1992] Definition 2.1). For flat
-slots this is `Option.FlatLE`; for set-valued slots it is the
+slots this is `≤` on `Flat`; for set-valued slots it is the
 indeterminacy order ([dalrymple-kaplan-2000]: superset = less
 determinate). -/
 def Subsumes (b₁ b₂ : B) : Prop :=

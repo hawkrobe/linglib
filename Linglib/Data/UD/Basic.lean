@@ -1,4 +1,5 @@
 import Mathlib.Tactic.DeriveFintype
+import Linglib.Core.Order.Flat
 
 /-!
 # Universal Dependencies Types
@@ -23,8 +24,9 @@ substrate every other layer builds on: `Features/` aliases the feature types
 (e.g. `Number.fromUD`/`Number.toUD`, …) and `Morphology/Word.lean` builds the
 ms-word token over the vocabulary.
 The bare `UD` namespace (no `Data.` prefix) is intentional — UD is its own
-external project. Subsumption-order theory over `MorphFeatures` lives in
-`Morphology/Unification.lean` (mathlib-importing); this file stays mathlib-light.
+external project. Feature slots are `Flat`-valued (`Core/Order/Flat.lean`);
+subsumption-order theory over `MorphFeatures` lives in
+`Morphology/Unification.lean`.
 -/
 
 namespace UD
@@ -289,25 +291,25 @@ inductive Polarity where
 -- Feature Bundle
 
 /-- A morphological feature bundle (partial assignment).
-    Uses Option to represent unspecified features. -/
+    Slots are `Flat`-valued: `⊥` = unspecified. -/
 structure MorphFeatures where
-  number   : Option Number   := none
-  gender   : Option Gender   := none
-  case_    : Option Case     := none
-  definite : Option Definite := none
-  degree   : Option Degree   := none
-  pronType : Option PronType := none
+  number   : Flat Number   := ⊥
+  gender   : Flat Gender   := ⊥
+  case_    : Flat Case     := ⊥
+  definite : Flat Definite := ⊥
+  degree   : Flat Degree   := ⊥
+  pronType : Flat PronType := ⊥
   /-- Reflexive (UD `Reflex=Yes`); `false` = feature absent. Distinguishes a reflexive
       anaphor from a plain personal pronoun; not an agreement feature, so not consulted
       by `compatible`. -/
-  reflex   : Bool            := false
-  person   : Option Person   := none
-  verbForm : Option VerbForm := none
-  tense    : Option Tense    := none
-  aspect   : Option Aspect   := none
-  mood     : Option Mood     := none
-  voice    : Option Voice    := none
-  polarity : Option Polarity := none
+  reflex   : Bool          := false
+  person   : Flat Person   := ⊥
+  verbForm : Flat VerbForm := ⊥
+  tense    : Flat Tense    := ⊥
+  aspect   : Flat Aspect   := ⊥
+  mood     : Flat Mood     := ⊥
+  voice    : Flat Voice    := ⊥
+  polarity : Flat Polarity := ⊥
   deriving DecidableEq, Repr, Inhabited
 
 /-- Empty feature bundle -/
@@ -319,7 +321,7 @@ def MorphFeatures.isWh (f : MorphFeatures) : Bool :=
   f.pronType == some .Int || f.pronType == some .Rel
 
 /-- Are two feature bundles compatible — bounded above in the subsumption order
-    ([shieber-1986] §3.2.3)? Total over *all* option-valued fields: a conflict in any
+    ([shieber-1986] §3.2.3)? Total over *all* `Flat`-valued fields: a conflict in any
     committed feature makes unification fail. (`reflex` needs no clause — a `Bool` slot
     with `false` = absent is always joinable by `||`.) The order-theoretic
     characterization is proved in `Morphology/Unification.lean`. -/
@@ -345,9 +347,16 @@ def MorphFeatures.compatible (f1 f2 : MorphFeatures) : Bool :=
   simp only [MorphFeatures.compatible, beq_self_eq_true, Bool.or_true, Bool.and_true]
 
 private theorem MorphFeatures.compatible_clause_comm {α : Type _} [BEq α] [LawfulBEq α]
-    (a b : Option α) :
+    (a b : Flat α) :
     (a.isNone || b.isNone || a == b) = (b.isNone || a.isNone || b == a) := by
-  cases a <;> cases b <;> simp [eq_comm]
+  cases a with
+  | bot => cases b <;> rfl
+  | coe v =>
+    cases b with
+    | bot => rfl
+    | coe x =>
+      show (v == x) = (x == v)
+      simp [eq_comm]
 
 /-- Feature compatibility is symmetric. -/
 theorem MorphFeatures.compatible_comm (f1 f2 : MorphFeatures) :
@@ -398,20 +407,20 @@ theorem MorphFeatures.compatible_person {f1 f2 : MorphFeatures}
     (left-biased per field, which on `compatible` inputs is symmetric since doubly
     committed fields agree). Only meaningful under `compatible`; `unify` adds the guard. -/
 def MorphFeatures.merge (f1 f2 : MorphFeatures) : MorphFeatures where
-  number   := f1.number   <|> f2.number
-  gender   := f1.gender   <|> f2.gender
-  case_    := f1.case_    <|> f2.case_
-  definite := f1.definite <|> f2.definite
-  degree   := f1.degree   <|> f2.degree
-  pronType := f1.pronType <|> f2.pronType
-  reflex   := f1.reflex   || f2.reflex
-  person   := f1.person   <|> f2.person
-  verbForm := f1.verbForm <|> f2.verbForm
-  tense    := f1.tense    <|> f2.tense
-  aspect   := f1.aspect   <|> f2.aspect
-  mood     := f1.mood     <|> f2.mood
-  voice    := f1.voice    <|> f2.voice
-  polarity := f1.polarity <|> f2.polarity
+  number   := f1.number.or f2.number
+  gender   := f1.gender.or f2.gender
+  case_    := f1.case_.or f2.case_
+  definite := f1.definite.or f2.definite
+  degree   := f1.degree.or f2.degree
+  pronType := f1.pronType.or f2.pronType
+  reflex   := f1.reflex || f2.reflex
+  person   := f1.person.or f2.person
+  verbForm := f1.verbForm.or f2.verbForm
+  tense    := f1.tense.or f2.tense
+  aspect   := f1.aspect.or f2.aspect
+  mood     := f1.mood.or f2.mood
+  voice    := f1.voice.or f2.voice
+  polarity := f1.polarity.or f2.polarity
 
 /-- Unify two feature bundles ([shieber-1986] §3.2.3): the least upper bound in the
     subsumption order when the bundles are compatible (`Morphology/Unification.lean` proves
