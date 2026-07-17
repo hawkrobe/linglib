@@ -20,7 +20,7 @@ Both share scale type and antonym information, but serve different grammatical f
 
 import Linglib.Data.UD.Basic
 import Linglib.Features.PropertyDomain
-import Linglib.Morphology.Exponence
+import Linglib.Morphology.InflectionRules
 import Linglib.Morphology.DegreeContainment
 import Linglib.Semantics.Degree.Adjective
 import Linglib.Morphology.Word

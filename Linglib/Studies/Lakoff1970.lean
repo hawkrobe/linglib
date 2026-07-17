@@ -1,4 +1,4 @@
-import Linglib.Morphology.Exponence
+import Linglib.Morphology.InflectionRules
 import Linglib.Fragments.English.Tense
 import Linglib.Semantics.Tense.Evidential
 
