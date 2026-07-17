@@ -100,7 +100,7 @@ instance : HasSubset (State W V M) := ⟨fun s s' => ∀ ⦃p⦄, p ∈ s → p 
 
 /-- `s ≤ s'` iff `s'` carries at least as much information as `s`. -/
 instance : Preorder (State W V M) :=
-  .lift fun s => upperClosure (s : Set (Possibility W V (Part M)))
+  .lift upperClosure
 
 /-- Every point of the stronger state lies above a point of the weaker. -/
 theorem le_def : s ≤ s' ↔ ∀ q ∈ s', ∃ p ∈ s, p ≤ q :=
@@ -135,19 +135,18 @@ bottom. -/
 
 /-! ### Consistent merge as multiplication -/
 
-private theorem lubs_bot (s : State W V M) :
-    (Set.lubs s (⊥ : State W V M) : State W V M) = s :=
-  Set.lubs_eq_left (fun p => ⟨.bot p.world, ⟨p.world, rfl⟩, Possibility.bot_le⟩)
-    fun _ _ ⟨_, hw⟩ h => hw ▸ Possibility.bot_le_of_compat (hw ▸ h)
-
 /-- `s * s'` is consistent merge — the joins of pairs of points, one
 from each state — and `1 = ⊥`. -/
 instance : CommMonoid (State W V M) where
-  mul s s' := Set.lubs s s'
+  mul := Set.lubs
   mul_assoc := Set.lubs_assoc fun _ _ h => ⟨_, Possibility.isLUB_union h⟩
   one := ⊥
-  one_mul s := (Set.lubs_comm _ _).trans (lubs_bot s)
-  mul_one := lubs_bot
+  one_mul _ := (Set.lubs_comm _ _).trans <| Set.lubs_eq_left
+    (fun p => ⟨.bot p.world, ⟨p.world, rfl⟩, Possibility.bot_le⟩)
+    fun _ _ ⟨_, hw⟩ h => hw ▸ Possibility.bot_le_of_compat (hw ▸ h)
+  mul_one _ := Set.lubs_eq_left
+    (fun p => ⟨.bot p.world, ⟨p.world, rfl⟩, Possibility.bot_le⟩)
+    fun _ _ ⟨_, hw⟩ h => hw ▸ Possibility.bot_le_of_compat (hw ▸ h)
   mul_comm := Set.lubs_comm
 
 theorem one_eq_bot : (1 : State W V M) = ⊥ := rfl
@@ -155,15 +154,13 @@ theorem one_eq_bot : (1 : State W V M) = ⊥ := rfl
 /-- Membership in the merge, in union form. -/
 theorem mem_mul :
     r ∈ s * s' ↔ ∃ p ∈ s, ∃ q ∈ s', Compat p q ∧ r = p.union q := by
-  show r ∈ Set.lubs (s : Set (Possibility W V (Part M))) s' ↔ _
+  show r ∈ Set.lubs s s' ↔ _
   simp only [Set.mem_lubs, Possibility.isLUB_pair_iff]
   rfl
 
 /-- The Smyth face of the merge: upper closures compose by join. -/
 theorem upperClosure_mul :
-    upperClosure ((s * s' : State W V M) : Set (Possibility W V (Part M))) =
-      upperClosure (s : Set (Possibility W V (Part M))) ⊔
-        upperClosure (s' : Set (Possibility W V (Part M))) :=
+    upperClosure (s * s') = upperClosure s ⊔ upperClosure s' :=
   Set.upperClosure_lubs (fun _ _ h => ⟨_, Possibility.isLUB_union h⟩) _ _
 
 /-- The merge is above the left factor. -/
@@ -187,10 +184,6 @@ theorem isLUB_mul : IsLUB {s, s'} (s * s') :=
 instance : CovariantClass (State W V M) (State W V M) (· * ·) (· ≤ ·) :=
   ⟨fun _ _ _ h => mul_le left_le_mul (h.trans right_le_mul)⟩
 
-instance : CovariantClass (State W V M) (State W V M)
-    (Function.swap (· * ·)) (· ≤ ·) :=
-  ⟨fun _ _ _ h => mul_le (h.trans left_le_mul) right_le_mul⟩
-
 /-! ### Union is the meet
 
 Merge is the join of the informativeness order; plain union is its
@@ -200,9 +193,7 @@ is **not** merge: within a stratum merge is intersection
 
 /-- The Smyth face of the union: upper closures compose by meet. -/
 theorem upperClosure_union :
-    upperClosure ((s ∪ s' : State W V M) : Set (Possibility W V (Part M))) =
-      upperClosure (s : Set (Possibility W V (Part M))) ⊓
-        upperClosure (s' : Set (Possibility W V (Part M))) :=
+    upperClosure (s ∪ s') = upperClosure s ⊓ upperClosure s' :=
   _root_.upperClosure_union _ _
 
 /-- The union is below the left component. -/
@@ -233,16 +224,13 @@ of possibilities. -/
 def antisymmetrizationOrderIso :
     Antisymmetrization (State W V M) (· ≤ ·) ≃o
       UpperSet (Possibility W V (Part M)) where
-  toFun := Quotient.lift
-    (fun s : State W V M => upperClosure (s : Set (Possibility W V (Part M))))
+  toFun := Quotient.lift (fun s : State W V M => upperClosure s)
     fun _ _ h => le_antisymm (α := UpperSet _) h.1 h.2
   invFun U := toAntisymmetrization (· ≤ ·)
     (↑U : Set (Possibility W V (Part M)))
   left_inv := by
     refine Quotient.ind fun s => Quotient.sound ?_
-    have key : upperClosure
-          ((upperClosure (s : Set (Possibility W V (Part M))) : UpperSet _) :
-            Set (Possibility W V (Part M))) =
+    have key : upperClosure ↑(upperClosure (s : Set (Possibility W V (Part M)))) =
         upperClosure (s : Set (Possibility W V (Part M))) :=
       SetLike.coe_injective (upperClosure _).upper'.upperClosure
     exact ⟨le_of_eq (α := UpperSet _) key, le_of_eq (α := UpperSet _) key.symm⟩
