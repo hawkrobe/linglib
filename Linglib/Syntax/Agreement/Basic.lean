@@ -5,10 +5,9 @@ import Mathlib.Tactic.DeriveFintype
 # Agreement targets
 
 This file defines the morphosyntactic positions where agreement surfaces,
-ordered by Corbett's Agreement Hierarchy ([corbett-1979]; [corbett-1991]
-ch. 8; [corbett-2006]): attributive > predicate > relative pronoun >
-personal pronoun, with semantic (rather than syntactic) agreement
-increasingly likely from left to right.
+ordered by Corbett's Agreement Hierarchy: attributive > predicate >
+relative pronoun > personal pronoun, with semantic (rather than syntactic)
+agreement increasingly likely from left to right.
 
 ## Main declarations
 
@@ -28,6 +27,12 @@ INDEX-readers without ranking the INDEX-readers among themselves
 Hierarchy grades semantic-agreement likelihood among predicate
 sub-positions (`Corbett2000.PredicateTarget`); the two classifications are
 orthogonal. Hence the order is partial rather than linear.
+
+## References
+
+* [corbett-1979] — the Agreement Hierarchy
+* [corbett-1991], ch. 8 — the hierarchy applied to gender
+* [corbett-2006] — the standard monograph on agreement
 -/
 
 namespace Agreement
