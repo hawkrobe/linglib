@@ -57,7 +57,7 @@ set_option autoImplicit false
 
 namespace Dekier2021
 
-open Morphology.Containment
+open Morphology Morphology.Containment
 open Morphology.Nanosyntax
 open Indefinite
 open Russian.Indefinites

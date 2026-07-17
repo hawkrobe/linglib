@@ -504,7 +504,7 @@ constraint. If entry β beats entry α for case Y, β also beats α
 for all cases below Y on the fseq —
 `Morphology.Containment.isContiguous_spellout` in general. -/
 
-open Morphology.Containment in
+open _root_.Morphology Morphology.Containment in
 /-- An attempted ABA lexicon — "A" sized for the bottom grade, "B" for
     the top — produces ABB instead: the larger entry also wins the
     middle grade, and its pattern is contiguous by
