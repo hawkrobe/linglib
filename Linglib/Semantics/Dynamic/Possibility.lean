@@ -101,12 +101,6 @@ theorem mem_assignment_union {v : V} {e : M} :
 theorem le_union_left : p ≤ p.union q :=
   ⟨rfl, fun _ => Part.le_or_left⟩
 
-private theorem le_union_right_of_agree (hw : p.world = q.world)
-    (hag : ∀ v e e', e ∈ p.assignment v → e' ∈ q.assignment v → e = e') :
-    q ≤ p.union q :=
-  ⟨hw.symm, fun v e he => mem_assignment_union.mpr <| or_iff_not_imp_left.mpr
-    fun hp => ⟨fun hd => hp (hag v _ e (Part.get_mem hd) he ▸ Part.get_mem hd), he⟩⟩
-
 theorem union_le (hp : p ≤ u) (hq : q ≤ u) : p.union q ≤ u :=
   ⟨hp.1, fun v => Part.or_le (hp.2 v) (hq.2 v)⟩
 
@@ -121,14 +115,14 @@ theorem compat_iff : Compat p q ↔
   · rintro ⟨u, hu⟩
     obtain ⟨hp, hq⟩ := PartialUnify.mem_upperBounds_pair.mp hu
     exact ⟨hp.1.trans hq.1.symm,
-      fun v e e' he he' => Part.mem_unique (hp.2 v e he) (hq.2 v e' he')⟩
+      fun v => Part.compat_iff.mp (Compat.of_le (hp.2 v) (hq.2 v))⟩
   · rintro ⟨hw, hag⟩
     exact ⟨p.union q, PartialUnify.mem_upperBounds_pair.mpr
-      ⟨le_union_left, le_union_right_of_agree hw hag⟩⟩
+      ⟨le_union_left, hw.symm, fun v => Part.le_or_right_of_agree (hag v)⟩⟩
 
 theorem le_union_right (h : Compat p q) : q ≤ p.union q :=
   have h' := compat_iff.mp h
-  le_union_right_of_agree h'.1 h'.2
+  ⟨h'.1.symm, fun v => Part.le_or_right_of_agree (h'.2 v)⟩
 
 /-- The union of compatible points is their least upper bound. -/
 theorem isLUB_union (h : Compat p q) : IsLUB {p, q} (p.union q) :=

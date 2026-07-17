@@ -1,3 +1,4 @@
+import Linglib.Core.Order.PartialUnify
 import Mathlib.Data.Part
 
 /-!
@@ -6,10 +7,12 @@ import Mathlib.Data.Part
 `Part.or` is the `Part` analogue of `Option.or`: `p.or q` is defined
 wherever either argument is, with the left taking precedence.
 Noncomputable, since it decides `p.Dom`; `Flat.or` is its computable
-twin on `Option`-carried partial values. Also two lemmas on the order:
-definedness is monotone (`dom_mono`), and descent without domain
-growth is equality (`eq_of_le_of_dom`). `[UPSTREAM]` candidates for
-`Mathlib/Data/Part.lean`.
+twin on `Option`-carried partial values. Also the order facts of the
+flat domain: definedness is monotone (`dom_mono`), descent without
+domain growth is equality (`eq_of_le_of_dom`), and two partial values
+are bounded above exactly when they agree wherever both are defined
+(`compat_iff`), with `p.or q` the witnessing bound. `[UPSTREAM]`
+candidates for `Mathlib/Data/Part.lean`.
 -/
 
 namespace Part
@@ -65,5 +68,19 @@ theorem eq_of_le_of_dom (h : p ≤ q) (hd : q.Dom → p.Dom) : p = q :=
   Part.ext fun a => ⟨h a, fun ha =>
     have hp := hd (dom_iff_mem.mpr ⟨a, ha⟩)
     mem_unique (h _ (get_mem hp)) ha ▸ get_mem hp⟩
+
+theorem le_or_right_of_agree (hag : ∀ a b, a ∈ p → b ∈ q → a = b) :
+    q ≤ p.or q := fun b hb => mem_or_iff.mpr <| or_iff_not_imp_left.mpr
+  fun hp => ⟨fun hd => hp (hag _ b (get_mem hd) hb ▸ get_mem hd), hb⟩
+
+/-- Two partial values are compatible — bounded above in the flat
+order — exactly when they agree wherever both are defined. -/
+theorem compat_iff : Compat p q ↔ ∀ a b, a ∈ p → b ∈ q → a = b := by
+  constructor
+  · rintro ⟨u, hu⟩
+    obtain ⟨hp, hq⟩ := PartialUnify.mem_upperBounds_pair.mp hu
+    exact fun a b ha hb => mem_unique (hp a ha) (hq b hb)
+  · exact fun hag => ⟨p.or q, PartialUnify.mem_upperBounds_pair.mpr
+      ⟨le_or_left, le_or_right_of_agree hag⟩⟩
 
 end Part
