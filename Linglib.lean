@@ -1302,7 +1302,6 @@ import Linglib.Morphology.AffixTemplate
 import Linglib.Morphology.Case.Allomorphy
 import Linglib.Morphology.Case.WALS
 import Linglib.Morphology.ConsonantalRoot
-import Linglib.Morphology.Containment.Basic
 import Linglib.Morphology.Containment.Superset
 import Linglib.Morphology.Containment.Vocabulary
 import Linglib.Morphology.DM.Allosemy
@@ -1333,7 +1332,9 @@ import Linglib.Morphology.MorphWord
 import Linglib.Morphology.Nanosyntax.Basic
 import Linglib.Morphology.Nanosyntax.TreeSpellout
 import Linglib.Morphology.Number
-import Linglib.Morphology.Paradigm
+import Linglib.Morphology.Paradigm.Basic
+import Linglib.Morphology.Paradigm.Complexity
+import Linglib.Morphology.Paradigm.Contiguity
 import Linglib.Morphology.Realization
 import Linglib.Morphology.RootFamily
 import Linglib.Morphology.RootTypology

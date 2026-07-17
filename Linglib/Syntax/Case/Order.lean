@@ -11,7 +11,7 @@ value is a downward-closed stack of nested feature shells, and one value
 *contains* another iff its shell stack does. The order is then the
 partial-rank order `Core.Order.partialOrderOfRank` over a shell-rank
 (unranked elements isolated), and the empirical *ABA syncretism law over
-it is the framework-neutral `Morphology.Containment.IsContiguous`
+it is the framework-neutral `Morphology.IsContiguous`
 (syncretism targets only adjacent cells). Both the order gadget and the
 *ABA predicate name no paper.
 

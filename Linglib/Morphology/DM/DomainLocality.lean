@@ -1,4 +1,4 @@
-import Linglib.Morphology.Containment.Basic
+import Linglib.Morphology.Paradigm.Contiguity
 
 /-!
 # Domain-Relativized Contiguity
@@ -54,14 +54,13 @@ projection they want; the substrate doesn't pick.
 
 * `DomainPartition n Tag` — domain tag per grade
 * `ViolatesABAWithin`, `IsContiguousWithin` — *ABA relativized to
-  same-domain triples, over `Morphology.Containment.Pattern`
+  same-domain triples, over `Morphology.Paradigm`
 * `isContiguousWithin_trivial_iff` — under the trivial partition this
-  is exactly `Morphology.Containment.IsContiguous`
+  is exactly `Morphology.IsContiguous`
 -/
 
 namespace Morphology.DomainLocality
 
-open Morphology.Containment (Pattern IsContiguous)
 
 variable {n : ℕ} {Tag F : Type*}
 
@@ -84,25 +83,25 @@ abbrev DomainPartition.trivial (n : ℕ) : DomainPartition n Unit := λ _ => ()
 /-- A pattern violates the domain-relativized *ABA constraint: some
 form recurs across a distinct intervening form, with all three grades
 in the same domain. -/
-def ViolatesABAWithin (π : DomainPartition n Tag) (p : Pattern n F) : Prop :=
+def ViolatesABAWithin (π : DomainPartition n Tag) (p : Paradigm n F) : Prop :=
   ∃ i j k : Fin n, i < j ∧ j < k ∧
     SameDomain π i j ∧ SameDomain π i k ∧ p i = p k ∧ p i ≠ p j
 
 instance [DecidableEq Tag] [DecidableEq F] (π : DomainPartition n Tag)
-    (p : Pattern n F) : Decidable (ViolatesABAWithin π p) := by
+    (p : Paradigm n F) : Decidable (ViolatesABAWithin π p) := by
   unfold ViolatesABAWithin; infer_instance
 
 /-- Domain-relativized contiguity: no within-domain *ABA violation. -/
-def IsContiguousWithin (π : DomainPartition n Tag) (p : Pattern n F) : Prop :=
+def IsContiguousWithin (π : DomainPartition n Tag) (p : Paradigm n F) : Prop :=
   ¬ ViolatesABAWithin π p
 
 instance [DecidableEq Tag] [DecidableEq F] (π : DomainPartition n Tag)
-    (p : Pattern n F) : Decidable (IsContiguousWithin π p) :=
+    (p : Paradigm n F) : Decidable (IsContiguousWithin π p) :=
   inferInstanceAs (Decidable (¬ _))
 
 /-- Under the trivial partition, domain-relativized contiguity is
 exactly the universal contiguity predicate. -/
-theorem isContiguousWithin_trivial_iff (p : Pattern n F) :
+theorem isContiguousWithin_trivial_iff (p : Paradigm n F) :
     IsContiguousWithin (DomainPartition.trivial n) p ↔ IsContiguous p := by
   constructor
   · intro h i j k hij hjk heq
@@ -123,18 +122,18 @@ across-domain examples show ABA-shapes are admitted when the outer
 grades fall in different domains. -/
 
 example : IsContiguousWithin (DomainPartition.trivial 3)
-    (![0, 1, 1] : Pattern 3 ℕ) := by decide
+    (![0, 1, 1] : Paradigm 3 ℕ) := by decide
 
 example : ViolatesABAWithin (DomainPartition.trivial 3)
-    (![0, 1, 0] : Pattern 3 ℕ) := by decide
+    (![0, 1, 0] : Paradigm 3 ℕ) := by decide
 
 example : IsContiguousWithin (DomainPartition.trivial 3)
-    (![0, 0, 1] : Pattern 3 ℕ) := by decide
+    (![0, 0, 1] : Paradigm 3 ℕ) := by decide
 
 /-- An ABA shape with the final grade in its own domain: the
 within-domain check does not fire — the universal predicate would
 reject this pattern; the domain-relativized one permits it. -/
 example : IsContiguousWithin (![false, false, true] : DomainPartition 3 Bool)
-    (![0, 1, 0] : Pattern 3 ℕ) := by decide
+    (![0, 1, 0] : Paradigm 3 ℕ) := by decide
 
 end Morphology.DomainLocality

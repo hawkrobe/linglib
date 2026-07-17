@@ -1,4 +1,4 @@
-import Linglib.Morphology.Containment.Basic
+import Linglib.Morphology.Paradigm.Contiguity
 import Mathlib.Data.List.MinMax
 import Mathlib.Data.Finset.Max
 
@@ -294,7 +294,7 @@ theorem winner_congr {v : List (ExponenceRule n F)} {g g' : Fin n}
 
 /-- The realized pattern: at each grade, the Elsewhere winner's
 exponent (`none` when no rule applies — a paradigm gap). -/
-def realize (v : List (ExponenceRule n F)) : Pattern n (Option F) :=
+def realize (v : List (ExponenceRule n F)) : Paradigm n (Option F) :=
   λ g => (winner v g).map ExponenceRule.exponent
 
 theorem realize_congr {v : List (ExponenceRule n F)} {g g' : Fin n}
@@ -395,17 +395,17 @@ section Completeness
 variable [DecidableEq F]
 
 /-- The earliest grade sharing `g`'s form. -/
-def firstOcc (p : Pattern n F) (g : Fin n) : Fin n :=
+def firstOcc (p : Paradigm n F) (g : Fin n) : Fin n :=
   (Finset.univ.filter (λ j => p j = p g)).min' ⟨g, by simp⟩
 
-theorem apply_firstOcc (p : Pattern n F) (g : Fin n) : p (firstOcc p g) = p g :=
+theorem apply_firstOcc (p : Paradigm n F) (g : Fin n) : p (firstOcc p g) = p g :=
   (Finset.mem_filter.mp
     (Finset.min'_mem (Finset.univ.filter (λ j => p j = p g)) ⟨g, by simp⟩)).2
 
-theorem firstOcc_le (p : Pattern n F) (g : Fin n) : firstOcc p g ≤ g :=
+theorem firstOcc_le (p : Paradigm n F) (g : Fin n) : firstOcc p g ≤ g :=
   Finset.min'_le _ g (by simp)
 
-theorem firstOcc_congr {p : Pattern n F} {g g' : Fin n} (h : p g = p g') :
+theorem firstOcc_congr {p : Paradigm n F} {g g' : Fin n} (h : p g = p g') :
     firstOcc p g = firstOcc p g' := by
   have hset : Finset.univ.filter (λ j => p j = p g)
       = Finset.univ.filter (λ j => p j = p g') := by
@@ -416,11 +416,11 @@ theorem firstOcc_congr {p : Pattern n F} {g g' : Fin n} (h : p g = p g') :
 
 /-- The canonical vocabulary of a pattern: one rule per form,
 introduced at the form's first grade and conditioned on it. -/
-def ofPattern (p : Pattern n F) : List (ExponenceRule n F) :=
+def ofPattern (p : Paradigm n F) : List (ExponenceRule n F) :=
   (List.finRange n).filterMap (λ s =>
     if firstOcc p s = s then some ⟨p s, ⟨0, s.pos⟩, some s⟩ else none)
 
-theorem mem_ofPattern {p : Pattern n F} {it : ExponenceRule n F} :
+theorem mem_ofPattern {p : Paradigm n F} {it : ExponenceRule n F} :
     it ∈ ofPattern p ↔
       ∃ s : Fin n, firstOcc p s = s ∧ it = ⟨p s, ⟨0, s.pos⟩, some s⟩ := by
   simp only [ofPattern, List.mem_filterMap, List.mem_finRange, true_and]
@@ -433,18 +433,18 @@ theorem mem_ofPattern {p : Pattern n F} {it : ExponenceRule n F} :
     exact ⟨s, by rw [if_pos hfo]⟩
 
 omit [DecidableEq F] in
-theorem threshold_ofPattern {p : Pattern n F} {s : Fin n} :
+theorem threshold_ofPattern {p : Paradigm n F} {s : Fin n} :
     (⟨p s, ⟨0, s.pos⟩, some s⟩ : ExponenceRule n F).threshold = s := by
   unfold ExponenceRule.threshold
   simp only [Option.getD_some]
   exact max_eq_right (by rw [Fin.le_def]; exact Nat.zero_le _)
 
-theorem terminal_ofPattern (p : Pattern n F) : Terminal (ofPattern p) := by
+theorem terminal_ofPattern (p : Paradigm n F) : Terminal (ofPattern p) := by
   intro it hit
   obtain ⟨s, -, rfl⟩ := mem_ofPattern.mp hit
   rfl
 
-theorem antihomophonous_ofPattern (p : Pattern n F) :
+theorem antihomophonous_ofPattern (p : Paradigm n F) :
     Antihomophonous (ofPattern p) := by
   intro it hit jt hjt hexp
   obtain ⟨s, hs, rfl⟩ := mem_ofPattern.mp hit
@@ -454,7 +454,7 @@ theorem antihomophonous_ofPattern (p : Pattern n F) :
   subst hst
   rfl
 
-theorem realize_ofPattern {p : Pattern n F} (hp : IsContiguous p) (g : Fin n) :
+theorem realize_ofPattern {p : Paradigm n F} (hp : IsContiguous p) (g : Fin n) :
     realize (ofPattern p) g = some (p g) := by
   have hff : firstOcc p (firstOcc p g) = firstOcc p g :=
     firstOcc_congr (apply_firstOcc p g)
@@ -493,7 +493,7 @@ end Completeness
 
 /-- A pattern is **Elsewhere-generable**: some terminal antihomophonous
 vocabulary realizes it in full. -/
-def ElsewhereGenerable (p : Pattern n F) : Prop :=
+def ElsewhereGenerable (p : Paradigm n F) : Prop :=
   ∃ v : List (ExponenceRule n F), Terminal v ∧ Antihomophonous v ∧
     ∀ g, realize v g = some (p g)
 
@@ -501,7 +501,7 @@ def ElsewhereGenerable (p : Pattern n F) : Prop :=
 Elsewhere insertion over a terminal antihomophonous vocabulary iff it
 is contiguous: the forward direction is the canonical-vocabulary
 construction, the backward direction CSG1. -/
-theorem isContiguous_iff_generable (p : Pattern n F) :
+theorem isContiguous_iff_generable (p : Paradigm n F) :
     IsContiguous p ↔ ElsewhereGenerable p := by
   classical
   constructor

@@ -1,4 +1,4 @@
-import Linglib.Morphology.Containment.Basic
+import Linglib.Morphology.Paradigm.Contiguity
 import Linglib.Syntax.Case.Order
 
 /-!
@@ -42,12 +42,12 @@ Location=Goal (Type 3, her Table 9.1).
 
 namespace Pantcheva2011
 
-open Morphology.Containment (IsContiguous)
+open Morphology (IsContiguous)
 
 /-- A syncretism pattern over the four path roles, in containment order
     [Place, Goal, Source, Route], as form-class indices: the n = 4
-    instance of `Morphology.Containment.Pattern`. -/
-abbrev Pattern := Morphology.Containment.Pattern 4 ℕ
+    instance of `Morphology.Paradigm`. -/
+abbrev Pattern := Morphology.Paradigm 4 ℕ
 
 /-- The 15 canonical syncretism patterns — restricted-growth strings over
     four positions, i.e. the set-partitions of {Place, Goal, Source,

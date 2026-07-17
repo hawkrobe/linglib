@@ -200,7 +200,7 @@ theorem spelloutWinner_congr {v : List (ExponenceRule n F)} {g g' : Fin n}
 exponent (`none` when no entry contains the structure — a spellout
 gap; full nanosyntax would attempt rescue operations before declaring
 ineffability). -/
-def spellout (v : List (ExponenceRule n F)) : Pattern n (Option F) :=
+def spellout (v : List (ExponenceRule n F)) : Paradigm n (Option F) :=
   λ g => (spelloutWinner v g).map ExponenceRule.exponent
 
 theorem spellout_congr {v : List (ExponenceRule n F)} {g g' : Fin n}
@@ -265,17 +265,17 @@ section Completeness
 variable [DecidableEq F]
 
 /-- The latest grade sharing `g`'s form. -/
-def lastOcc (p : Pattern n F) (g : Fin n) : Fin n :=
+def lastOcc (p : Paradigm n F) (g : Fin n) : Fin n :=
   (Finset.univ.filter (λ j => p j = p g)).max' ⟨g, by simp⟩
 
-theorem apply_lastOcc (p : Pattern n F) (g : Fin n) : p (lastOcc p g) = p g :=
+theorem apply_lastOcc (p : Paradigm n F) (g : Fin n) : p (lastOcc p g) = p g :=
   (Finset.mem_filter.mp
     (Finset.max'_mem (Finset.univ.filter (λ j => p j = p g)) ⟨g, by simp⟩)).2
 
-theorem le_lastOcc (p : Pattern n F) (g : Fin n) : g ≤ lastOcc p g :=
+theorem le_lastOcc (p : Paradigm n F) (g : Fin n) : g ≤ lastOcc p g :=
   Finset.le_max' _ g (by simp)
 
-theorem lastOcc_congr {p : Pattern n F} {g g' : Fin n} (h : p g = p g') :
+theorem lastOcc_congr {p : Paradigm n F} {g g' : Fin n} (h : p g = p g') :
     lastOcc p g = lastOcc p g' := by
   have hset : Finset.univ.filter (λ j => p j = p g)
       = Finset.univ.filter (λ j => p j = p g') := by
@@ -286,11 +286,11 @@ theorem lastOcc_congr {p : Pattern n F} {g g' : Fin n} (h : p g = p g') :
 
 /-- The canonical nanosyntax lexicon of a pattern: one context-free
 entry per form, storing the form's largest constituent. -/
-def spelloutOfPattern (p : Pattern n F) : List (ExponenceRule n F) :=
+def spelloutOfPattern (p : Paradigm n F) : List (ExponenceRule n F) :=
   (List.finRange n).filterMap (λ s =>
     if lastOcc p s = s then some ⟨p s, s, none⟩ else none)
 
-theorem mem_spelloutOfPattern {p : Pattern n F} {it : ExponenceRule n F} :
+theorem mem_spelloutOfPattern {p : Paradigm n F} {it : ExponenceRule n F} :
     it ∈ spelloutOfPattern p ↔
       ∃ s : Fin n, lastOcc p s = s ∧ it = ⟨p s, s, none⟩ := by
   simp only [spelloutOfPattern, List.mem_filterMap, List.mem_finRange, true_and]
@@ -302,13 +302,13 @@ theorem mem_spelloutOfPattern {p : Pattern n F} {it : ExponenceRule n F} :
   · rintro ⟨s, hlo, rfl⟩
     exact ⟨s, by rw [if_pos hlo]⟩
 
-theorem contextFree_spelloutOfPattern (p : Pattern n F) :
+theorem contextFree_spelloutOfPattern (p : Paradigm n F) :
     ContextFree (spelloutOfPattern p) := by
   intro it hit
   obtain ⟨s, -, rfl⟩ := mem_spelloutOfPattern.mp hit
   rfl
 
-theorem antihomophonous_spelloutOfPattern (p : Pattern n F) :
+theorem antihomophonous_spelloutOfPattern (p : Paradigm n F) :
     Antihomophonous (spelloutOfPattern p) := by
   intro it hit jt hjt hexp
   obtain ⟨s, hs, rfl⟩ := mem_spelloutOfPattern.mp hit
@@ -318,7 +318,7 @@ theorem antihomophonous_spelloutOfPattern (p : Pattern n F) :
   subst hst
   rfl
 
-theorem spellout_spelloutOfPattern {p : Pattern n F} (hp : IsContiguous p)
+theorem spellout_spelloutOfPattern {p : Paradigm n F} (hp : IsContiguous p)
     (g : Fin n) : spellout (spelloutOfPattern p) g = some (p g) := by
   have hll : lastOcc p (lastOcc p g) = lastOcc p g :=
     lastOcc_congr (apply_lastOcc p g)
@@ -354,7 +354,7 @@ end Completeness
 
 /-- A pattern is **Superset-spellable**: some context-free
 antihomophonous lexicon spells it out in full. -/
-def SupersetSpellable (p : Pattern n F) : Prop :=
+def SupersetSpellable (p : Paradigm n F) : Prop :=
   ∃ v : List (ExponenceRule n F), ContextFree v ∧ Antihomophonous v ∧
     ∀ g, spellout v g = some (p g)
 
@@ -364,7 +364,7 @@ is contiguous — [caha-2009]'s Universal Contiguity as a theorem of the
 engine, mirroring Caha's own derivation of UC from the Superset
 Principle; the converse direction sharpens it to exact generative
 capacity. -/
-theorem isContiguous_iff_spelloutGenerable (p : Pattern n F) :
+theorem isContiguous_iff_spelloutGenerable (p : Paradigm n F) :
     IsContiguous p ↔ SupersetSpellable p := by
   classical
   constructor
@@ -385,7 +385,7 @@ vocabularies generate exactly the same fully realized patterns — the
 contiguous ones. The frameworks differ intensionally (rule format and
 selection direction; see the divergence examples below) but not in
 generative capacity on this fragment. -/
-theorem spelloutGenerable_iff_generable (p : Pattern n F) :
+theorem spelloutGenerable_iff_generable (p : Paradigm n F) :
     SupersetSpellable p ↔ ElsewhereGenerable p :=
   (isContiguous_iff_spelloutGenerable p).symm.trans (isContiguous_iff_generable p)
 

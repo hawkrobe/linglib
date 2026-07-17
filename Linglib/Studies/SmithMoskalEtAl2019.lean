@@ -141,20 +141,20 @@ suppletive third cell takes root-class 1). -/
 /-- Wardaman 3SG: ABS=*narnaj*, ERG=*narnaj-(j)i*, DAT=*gunga*.
     [smith-moskal-xu-kang-bobaljik-2019] Table 25 (data from
     [merlan-1994]). -/
-def wardamanThirdSg : Morphology.Containment.Pattern 3 ℕ := ![0, 0, 1]
+def wardamanThirdSg : Morphology.Paradigm 3 ℕ := ![0, 0, 1]
 
 /-- Khinalugh 2SG: ABS=*vɨ*, ERG=*va*, DAT=*oX(ɨr)*.
     [smith-moskal-xu-kang-bobaljik-2019] Table 24. -/
-def khinalughSecondSg : Morphology.Containment.Pattern 3 ℕ := ![0, 0, 1]
+def khinalughSecondSg : Morphology.Paradigm 3 ℕ := ![0, 0, 1]
 
 /-- Both genuine-AAB witnesses are contiguous in the substrate sense
     (no *ABA violation): cells at positions 0 and 2 do not share a
     root they don't also share with position 1. -/
 theorem wardaman_3sg_contiguous :
-    Morphology.Containment.IsContiguous wardamanThirdSg := by decide
+    Morphology.IsContiguous wardamanThirdSg := by decide
 
 theorem khinalugh_2sg_contiguous :
-    Morphology.Containment.IsContiguous khinalughSecondSg := by decide
+    Morphology.IsContiguous khinalughSecondSg := by decide
 
 /-- The defining AAB shape: cells 1 and 2 differ (suppletion in the
     third position but not the second). This is the structural feature
@@ -189,8 +189,8 @@ theorem khinalugh_2sg_is_aab :
     linear adjacency (Embick 2010) to domain-based locality
     ([moskal-2015]); see § 4 below. -/
 theorem case_aab_attested_falsifies_dm :
-    ∃ p : Morphology.Containment.Pattern 3 ℕ,
-      Morphology.Containment.IsContiguous p ∧ p 1 ≠ p 2 :=
+    ∃ p : Morphology.Paradigm 3 ℕ,
+      Morphology.IsContiguous p ∧ p 1 ≠ p 2 :=
   ⟨wardamanThirdSg, wardaman_3sg_contiguous, wardaman_3sg_is_aab⟩
 
 /-- The falsification run through the engine: no terminal vocabulary
@@ -243,10 +243,10 @@ Yagua, the SG–PL–DL ordering matches the table caption directly. -/
     (data from [payne-payne-1990]). The PL is transparently
     *jiy* + *-éy*; the DL is suppletive. Projects to `[0, 0, 1]`
     over SG/PL/DL. -/
-def yaguaSecond : Morphology.Containment.Pattern 3 ℕ := ![0, 0, 1]
+def yaguaSecond : Morphology.Paradigm 3 ℕ := ![0, 0, 1]
 
 theorem yagua_2_contiguous :
-    Morphology.Containment.IsContiguous yaguaSecond := by decide
+    Morphology.IsContiguous yaguaSecond := by decide
 
 theorem yagua_2_is_aab :
     yaguaSecond 1 ≠ yaguaSecond 2 := by decide
@@ -259,8 +259,8 @@ theorem yagua_2_is_aab :
     suffix; DL is suppletive — exactly the AAB shape that
     `realize_const_of_terminal_adjacent` would predict cannot arise. -/
 theorem number_aab_attested_falsifies_dm :
-    ∃ p : Morphology.Containment.Pattern 3 ℕ,
-      Morphology.Containment.IsContiguous p ∧ p 1 ≠ p 2 :=
+    ∃ p : Morphology.Paradigm 3 ℕ,
+      Morphology.IsContiguous p ∧ p 1 ≠ p 2 :=
   ⟨yaguaSecond, yagua_2_contiguous, yagua_2_is_aab⟩
 
 /-- Number-side analog: the Yagua-shaped AAB realization is not
@@ -395,7 +395,7 @@ theorem wardaman_not_grounded : ¬ Grounded wardamanVocab := by decide
     Elsewhere (with antihomophony) suffices — the paper's closing
     point of §3.7. -/
 theorem wardaman_realize_contiguous :
-    Morphology.Containment.IsContiguous (realize wardamanVocab) :=
+    Morphology.IsContiguous (realize wardamanVocab) :=
   isContiguous_realize (by decide)
 
 -- ============================================================================

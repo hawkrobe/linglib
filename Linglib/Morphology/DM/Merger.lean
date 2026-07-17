@@ -181,7 +181,7 @@ condition (90) applied through Merger). Models the
 comparative-embedding periphrasis type (Greek, the book's (107a–b));
 the positive-embedding type (Russian, (107c–d)) needs a per-grade
 embedding choice rather than a single `wordTop`. -/
-def realizeIn (s : Synthesis n) (v : List (ExponenceRule n F)) : Pattern n (Option F) :=
+def realizeIn (s : Synthesis n) (v : List (ExponenceRule n F)) : Paradigm n (Option F) :=
   λ g => realize v (min g s.wordTop)
 
 /-- At a synthetic grade, word-internal realization is realization. -/

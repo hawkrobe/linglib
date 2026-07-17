@@ -1,5 +1,5 @@
 import Linglib.Morphology.MorphRule
-import Linglib.Morphology.Paradigm
+import Linglib.Morphology.Paradigm.Complexity
 import Mathlib.Data.Rat.Defs
 
 /-!
@@ -29,7 +29,7 @@ H(Cᵢ | Cⱼ) is the conditional entropy of cell i given cell j.
 ## Structure
 
 - §0: i-Complexity (paper-specific aggregation; substrate types
-  `InflectionClass`/`ParadigmSystem`/`cellEntropy`/`conditionalCellEntropy`
+  `Paradigm`/`ParadigmSystem`/`cellEntropy`/`conditionalCellEntropy`
   live in `Morphology/Paradigm.lean`, hoisted there 0.230.X for shared
   use with [rathi-hahn-futrell-2026]'s informational fusion)
 - §1: Per-language LCEC verification (all 10 languages)

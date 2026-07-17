@@ -1,4 +1,4 @@
-import Linglib.Morphology.Containment.Basic
+import Linglib.Morphology.Paradigm.Contiguity
 
 /-!
 # Degree Containment — Substrate
@@ -6,9 +6,9 @@ import Linglib.Morphology.Containment.Basic
 
 Framework-neutral substrate for the three-grade degree hierarchy
 (positive, comparative, superlative) and the *ABA generalization over
-it: the n = 3 specialization of `Morphology.Containment.Pattern`,
+it: the n = 3 specialization of `Morphology.Paradigm`,
 mirroring `Morphology.Case.Allomorphy` for case. `DegreePattern` is the
-ergonomic record form; `DegreePattern.toPattern` connects it to the
+ergonomic record form; `DegreePattern.toParadigm` connects it to the
 general substrate, and all predicates are defined through that
 projection, so the generic theory applies by construction.
 
@@ -29,7 +29,6 @@ hence the containment structure.
 
 namespace Morphology.DegreeContainment
 
-open Morphology.Containment (Pattern IsContiguous)
 
 /-! ### Degree grades -/
 
@@ -69,26 +68,26 @@ structure DegreePattern where
   deriving DecidableEq, Repr
 
 /-- The general-substrate form of a degree pattern. -/
-def DegreePattern.toPattern (p : DegreePattern) : Pattern 3 ℕ :=
+def DegreePattern.toParadigm (p : DegreePattern) : Paradigm 3 ℕ :=
   ![p.pos, p.cmpr, p.sprl]
 
-@[simp] theorem DegreePattern.toPattern_zero (p : DegreePattern) :
-    p.toPattern 0 = p.pos := rfl
+@[simp] theorem DegreePattern.toParadigm_zero (p : DegreePattern) :
+    p.toParadigm 0 = p.pos := rfl
 
-@[simp] theorem DegreePattern.toPattern_one (p : DegreePattern) :
-    p.toPattern 1 = p.cmpr := rfl
+@[simp] theorem DegreePattern.toParadigm_one (p : DegreePattern) :
+    p.toParadigm 1 = p.cmpr := rfl
 
-@[simp] theorem DegreePattern.toPattern_two (p : DegreePattern) :
-    p.toPattern 2 = p.sprl := rfl
+@[simp] theorem DegreePattern.toParadigm_two (p : DegreePattern) :
+    p.toParadigm 2 = p.sprl := rfl
 
 /-- A pattern is contiguous: each form class occupies an interval of
-grades. The generic `Morphology.Containment.IsContiguous`, by
+grades. The generic `Morphology.IsContiguous`, by
 construction. -/
 def DegreePattern.IsContiguous (p : DegreePattern) : Prop :=
-  Morphology.Containment.IsContiguous p.toPattern
+  Morphology.IsContiguous p.toParadigm
 
 instance (p : DegreePattern) : Decidable p.IsContiguous :=
-  inferInstanceAs (Decidable (Morphology.Containment.IsContiguous _))
+  inferInstanceAs (Decidable (Morphology.IsContiguous _))
 
 /-- A pattern violates the *ABA constraint. -/
 def DegreePattern.ViolatesABA (p : DegreePattern) : Prop :=
@@ -97,7 +96,7 @@ def DegreePattern.ViolatesABA (p : DegreePattern) : Prop :=
 instance (p : DegreePattern) : Decidable p.ViolatesABA :=
   inferInstanceAs (Decidable (¬ _))
 
-/-! ### Pattern classification -/
+/-! ### Paradigm classification -/
 
 /-- All three grades share the same root (regular paradigm). -/
 def DegreePattern.IsRegular (p : DegreePattern) : Prop :=
@@ -120,7 +119,7 @@ def DegreePattern.SprlSuppletive (p : DegreePattern) : Prop :=
 instance (p : DegreePattern) : Decidable p.SprlSuppletive :=
   inferInstanceAs (Decidable (_ ≠ _))
 
-/-! ### Pattern constants -/
+/-! ### Paradigm constants -/
 
 /-- AAA: regular throughout. -/
 def aaa : DegreePattern := ⟨0, 0, 0⟩
@@ -171,7 +170,7 @@ identical cells: positive root is index 0, fresh roots get fresh
 indices. Connects the realizational engine's output
 (`Morphology.Containment.realize`) to the fragment-level pattern
 vocabulary; see `Studies/Bobaljik2012.lean` for the worked instances. -/
-def degreeShape {F : Type*} [DecidableEq F] (p : Pattern 3 F) : DegreePattern :=
+def degreeShape {F : Type*} [DecidableEq F] (p : Paradigm 3 F) : DegreePattern :=
   let c : Nat := if p 1 = p 0 then 0 else 1
   ⟨0, c, if p 2 = p 0 then 0 else if p 2 = p 1 then c else c + 1⟩
 
