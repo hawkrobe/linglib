@@ -25,8 +25,9 @@ paper's separation of assertability (54) from Heimian familiarity rests.
 - subsistence (Def. 3.3, after [groenendijk-stokhof-veltman-1996]),
   rendered as the lower closure: membership for points, `≤` of
   closures for states.
-- `worlds`, `Familiar`: worldly information (Def. 3.1's 𝒲) and
-  familiarity (Def. 3.2) — defined at every possibility, values free.
+- `Familiar`: familiarity (Def. 3.2) — defined at every possibility,
+  values free; worldly information (Def. 3.1's 𝒲) is the image
+  `Possibility.world '' s`.
 - `randomAssign`: the paper's `s[εₓ]` (43); novelty is not encoded.
 - `BilateralDen` with `atom`, `pred1`, `pred2`, `neg` (`~`), `conj`
   (`⊙`, (61)), `disj` (`⊕`, (64)), `exists_` ((44)–(45)), `forall_`.
@@ -39,9 +40,9 @@ paper's separation of assertability (54) from Heimian familiarity rests.
 - `partition`, `partition_assertable`: every possibility subsists
   positively, subsists negatively, or is unknown.
 - `de_morgan_disj`, `de_morgan_conj`: de Morgan's laws, unlike in
-  standard dynamic semantics. (Descendance, subsistence, `worlds`,
-  `Familiar`, and random assignment now live at the root, in
-  `State.lean` — this file's vocabulary became the module's.)
+  standard dynamic semantics. (Descendance, subsistence, `Familiar`,
+  and random assignment now live at the root, in `State.lean` — this
+  file's vocabulary became the module's.)
 - `egli`: Egli's theorem for the positive dimension, definitionally.
 - `isBilateral`: the update algebra is a bilateral logic in the sense of
   `Core.Logic.Bilateral`.
@@ -239,8 +240,8 @@ introduces no anaphoric information. -/
 def exists_ (x : V) (φ : BilateralDen W V E) : BilateralDen W V E where
   positive s := φ.positive (State.randomAssign s x)
   negative s :=
-    {p ∈ s | p.world ∉ worlds (φ.positive (State.randomAssign s x)) ∧
-      p.world ∈ worlds (φ.negative (State.randomAssign s x))}
+    {p ∈ s | p.world ∉ Possibility.world '' φ.positive (State.randomAssign s x) ∧
+      p.world ∈ Possibility.world '' φ.negative (State.randomAssign s x)}
 
 /-- Universal quantification, by de Morgan duality: `∀x φ = ¬∃x ¬φ`. -/
 def forall_ (x : V) (φ : BilateralDen W V E) : BilateralDen W V E :=

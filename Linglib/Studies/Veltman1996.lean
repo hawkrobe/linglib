@@ -895,8 +895,8 @@ theorem uniformAt_toIndexedState :
   Possibility.domain_eq_empty_iff.mpr hp.2
 
 /-- The embedding is faithful on worldly content. -/
-@[simp] theorem worlds_toIndexedState :
-    worlds (toIndexedState V M s) = s := by
+@[simp] theorem world_image_toIndexedState :
+    Possibility.world '' toIndexedState V M s = s := by
   ext w
   constructor
   · rintro ⟨p, hp, rfl⟩

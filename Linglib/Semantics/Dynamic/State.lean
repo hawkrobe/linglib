@@ -30,8 +30,9 @@ are partial orders, coinciding with `⊇` and `⊆`.
 - `State.merge`: consistent merge (Def. 0.26, binary), as `Set.lubs`.
 - `State.UniformAt`, `State.restrict`: the base-`X` stratum; domain
   restriction.
-- `worlds`, `Familiar`, `State.randomAssign`: worldly content,
-  familiarity, random assignment ([elliott-sudo-2025]).
+- `Familiar`, `State.randomAssign`: familiarity and random assignment
+  ([elliott-sudo-2025]); worldly content (Def. 0.23(v)'s proposition,
+  [elliott-sudo-2025]'s 𝒲) is the image `Possibility.world '' s`.
 
 ## Main results
 
@@ -262,14 +263,10 @@ theorem isGLB_union : IsGLB {s, s'} (s ∪ s') :=
 
 end State
 
-/-! ### Worldly content and familiarity -/
+/-! ### Familiarity
 
-/-- The worldly content of a state ([elliott-sudo-2025] Def. 3.1's 𝒲). -/
-def worlds (s : State W V M) : Set W :=
-  Possibility.world '' s
-
-@[simp] theorem mem_worlds {s : State W V M} {w : W} :
-    w ∈ worlds s ↔ ∃ p ∈ s, Possibility.world p = w := Iff.rfl
+The worldly content of a state — Def. 0.23(v)'s proposition,
+[elliott-sudo-2025] Def. 3.1's 𝒲 — is the image `Possibility.world '' s`. -/
 
 /-- A referent is *familiar* at a state ([elliott-sudo-2025], Def. 3.2;
 [heim-1982]'s files): defined at every point. -/
