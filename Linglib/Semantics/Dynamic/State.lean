@@ -1,6 +1,7 @@
 import Linglib.Semantics.Dynamic.Possibility
 import Mathlib.Algebra.Group.Defs
 import Mathlib.Algebra.Order.Monoid.Unbundled.Defs
+import Mathlib.Order.Antisymmetrization
 import Mathlib.Order.UpperLower.CompleteLattice
 import Mathlib.Order.Hom.Basic
 
@@ -47,6 +48,8 @@ are partial orders, coinciding with `⊇` and `⊆`.
 - `State.le_iff_superset`, `State.lowerClosure_le_iff`,
   `State.mul_eq_inter_of_uniform`: on a uniform stratum the orders
   are `⊇`/`⊆` and merge is intersection.
+- `State.antisymmetrizationOrderIso`: up to informational equivalence,
+  states are the complete lattice of upper sets of possibilities.
 - `State.uniformEquiv`: uniform states at `X` are `Set (W × (X → M))`.
 
 ## Implementation notes
@@ -273,6 +276,35 @@ theorem isGLB_union : IsGLB {s, s'} (s ∪ s') :=
   ⟨by rintro x (rfl | rfl); exacts [union_le_left, union_le_right],
    fun _ hu => le_union (hu (Set.mem_insert _ _)) (hu (Set.mem_insert_of_mem _ rfl))⟩
 
+/-! ### States up to informational equivalence -/
+
+/-- Up to informational equivalence, states are exactly the upper sets
+of possibilities: `upperClosure` descends to an order isomorphism on
+the antisymmetrization — the Smyth kernel is full. `UpperSet`'s
+complete lattice is the algebra of states up to equivalence; there,
+Def. 0.26's unrestricted (arbitrary-family) merge is `sSup`. -/
+def antisymmetrizationOrderIso :
+    Antisymmetrization (State W V M) (· ≤ ·) ≃o
+      UpperSet (Possibility W V (Part M)) where
+  toFun := Quotient.lift
+    (fun s : State W V M => upperClosure (s : Set (Possibility W V (Part M))))
+    fun _ _ h => le_antisymm (α := UpperSet _) h.1 h.2
+  invFun U := toAntisymmetrization (· ≤ ·)
+    (↑U : Set (Possibility W V (Part M))).toState
+  left_inv := by
+    refine Quotient.ind fun s => Quotient.sound ?_
+    have key : upperClosure
+          ((upperClosure (s : Set (Possibility W V (Part M))) : UpperSet _) :
+            Set (Possibility W V (Part M))) =
+        upperClosure (s : Set (Possibility W V (Part M))) :=
+      SetLike.coe_injective (upperClosure _).upper'.upperClosure
+    exact ⟨le_of_eq (α := UpperSet _) key, le_of_eq (α := UpperSet _) key.symm⟩
+  right_inv U := SetLike.coe_injective U.upper'.upperClosure
+  map_rel_iff' {a b} := by
+    induction a using Quotient.ind
+    induction b using Quotient.ind
+    exact Iff.rfl
+
 end State
 
 /-! ### Familiarity
@@ -424,14 +456,14 @@ theorem familiar_randomAssign (I : State W V M) (x : V) :
 /-! ### The uniform classification -/
 
 /-- Uniform states at `X` are sets of world–`X`-assignment pairs — the
-state-level face of `Possibility.domainEquiv`. Informativeness on the
-stratum is reverse inclusion (`le_iff_superset`), so the isomorphism
-lands in the dual order. -/
+state-level face of `Possibility.domainEquiv`. The stratum's order
+faces are `le_iff_superset` and `lowerClosure_le_iff`: informativeness
+is reverse inclusion, subsistence inclusion. -/
 def uniformEquiv (X : Set V) :
-    {I : State W V M // UniformAt X I} ≃o (Set (W × (X → M)))ᵒᵈ where
-  toFun I := OrderDual.toDual {e | ((Possibility.domainEquiv X).symm e).1 ∈ I.1}
+    {I : State W V M // UniformAt X I} ≃ Set (W × (X → M)) where
+  toFun I := {e | ((Possibility.domainEquiv X).symm e).1 ∈ I.1}
   invFun S :=
-    ⟨{p | ∃ h : p.domain = X, Possibility.domainEquiv X ⟨p, h⟩ ∈ OrderDual.ofDual S},
+    ⟨{p | ∃ h : p.domain = X, Possibility.domainEquiv X ⟨p, h⟩ ∈ S},
       fun _ ⟨h, _⟩ => h⟩
   left_inv I := by
     refine Subtype.ext (State.ext fun p => ?_)
@@ -440,21 +472,12 @@ def uniformEquiv (X : Set V) :
       simpa using hmem
     · intro hp
       exact ⟨I.2 p hp, by simpa using hp⟩
-  right_inv S := OrderDual.ofDual.injective <| Set.ext fun e => by
+  right_inv S := Set.ext fun e => by
     constructor
     · rintro ⟨h, hmem⟩
       simpa using hmem
     · intro he
       exact ⟨((Possibility.domainEquiv X).symm e).2, by simpa using he⟩
-  map_rel_iff' {I J} := by
-    rw [← Subtype.coe_le_coe, le_iff_superset I.2 J.2]
-    show ({e | ((Possibility.domainEquiv X).symm e).1 ∈ J.1} : Set (W × (X → M))) ⊆
-        {e | ((Possibility.domainEquiv X).symm e).1 ∈ I.1} ↔ _
-    constructor
-    · intro h p hp
-      simpa using h (show Possibility.domainEquiv X ⟨p, J.2 p hp⟩ ∈
-        {e | ((Possibility.domainEquiv X).symm e).1 ∈ J.1} by simpa using hp)
-    · exact fun h _ he => h he
 
 end State
 
