@@ -1,4 +1,4 @@
-import Mathlib.Order.Nat
+import Mathlib.Data.Sum.Order
 import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -66,27 +66,30 @@ def hierarchyRank : Target → Option ℕ
   | .personalPronoun => some 0
   | .verb            => none
 
-private def HierarchyLE (t u : Target) : Prop :=
-  match t.hierarchyRank, u.hierarchyRank with
-  | some rt, some ru => rt ≤ ru
-  | none, none => True
-  | _, _ => False
+/-- Coordinate of a target in the disjoint sum `ℕ ⊕ Unit`: chain positions
+    to `Sum.inl` via `hierarchyRank`, `verb` to the isolated point. -/
+private def hierarchyCoord (t : Target) : ℕ ⊕ Unit :=
+  t.hierarchyRank.elim (.inr ()) .inl
 
-private instance : DecidableRel HierarchyLE := fun t u => by
-  cases t <;> cases u <;> simp only [HierarchyLE, hierarchyRank] <;> infer_instance
+-- [UPSTREAM] Mathlib has the disjoint-sum order (`Sum.instLESum`) but no
+-- decidability instance for it.
+instance {α β : Type*} [LE α] [LE β] [DecidableRel ((· ≤ ·) : α → α → Prop)]
+    [DecidableRel ((· ≤ ·) : β → β → Prop)] :
+    DecidableRel ((· ≤ ·) : α ⊕ β → α ⊕ β → Prop)
+  | .inl a, .inl b => decidable_of_iff (a ≤ b) Sum.inl_le_inl_iff.symm
+  | .inl _, .inr _ => .isFalse Sum.not_inl_le_inr
+  | .inr _, .inl _ => .isFalse Sum.not_inr_le_inl
+  | .inr a, .inr b => decidable_of_iff (a ≤ b) Sum.inr_le_inr_iff.symm
 
-/-- The Agreement Hierarchy as a partial order: `t ≤ u` iff both occupy
-    hierarchy positions and `t`'s is at most as syntactic as `u`'s (so
+/-- The Agreement Hierarchy as a partial order, lifted along
+    `hierarchyCoord`: the four canonical positions form a chain (so
     `personalPronoun ≤ attributive`); `verb`, off the hierarchy, is
     comparable only to itself. -/
-instance : PartialOrder Target where
-  le := HierarchyLE
-  le_refl := by decide
-  le_trans := by decide
-  le_antisymm := by decide
+instance : PartialOrder Target :=
+  .lift hierarchyCoord (by decide)
 
 instance : DecidableRel ((· ≤ ·) : Target → Target → Prop) :=
-  fun t u => inferInstanceAs (Decidable (HierarchyLE t u))
+  fun t u => inferInstanceAs (Decidable (hierarchyCoord t ≤ hierarchyCoord u))
 
 end Target
 
