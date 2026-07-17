@@ -50,10 +50,8 @@ end Update
 
 variable {p q u : Possibility W V (Option M)}
 
-/-- A partial point lies below another in the *descent* order when they
-share their world and the assignments grow pointwise in the flat
-information order ([elliott-sudo-2025], Def. 3.3); cf.
-`orderIsoSigmaFlat`. -/
+/-- `p ≤ q` iff `p` and `q` share their world and the assignments grow
+pointwise in the flat information order. -/
 instance : PartialOrder (Possibility W V (Option M)) where
   le p q := p.world = q.world ∧ ∀ x, (p.assignment x).FlatLE (q.assignment x)
   le_refl _ := ⟨rfl, fun _ => .refl _⟩
