@@ -79,7 +79,7 @@ def State (W V M : Type*) := Set (Possibility W V (Part M))
 
 namespace State
 
-variable {s s' t : State W V M} {r : Possibility W V (Part M)}
+variable {s s' t : State W V M} {p q r : Possibility W V (Part M)} {X Y : Set V}
 
 @[reducible] instance : Membership (Possibility W V (Part M)) (State W V M) :=
   inferInstanceAs (Membership _ (Set _))
@@ -253,8 +253,8 @@ def Familiar (s : State W V M) (x : V) : Prop :=
 
 /-- The state is uniform at `X`: every point defines exactly the
 referents in `X`. -/
-def UniformAt (X : Set V) (I : State W V M) : Prop :=
-  ∀ p ∈ I, Possibility.domain p = X
+def UniformAt (X : Set V) (s : State W V M) : Prop :=
+  ∀ p ∈ s, Possibility.domain p = X
 
 /-- The initial state is uniform at the empty base. -/
 theorem uniformAt_bot : UniformAt ∅ (⊥ : State W V M) := fun _ hp =>
@@ -262,41 +262,38 @@ theorem uniformAt_bot : UniformAt ∅ (⊥ : State W V M) := fun _ hp =>
 
 /-- A uniform stratum is an antichain: comparable points with one
 domain are equal. -/
-theorem UniformAt.isAntichain {X : Set V} (hs : UniformAt X s) :
+theorem UniformAt.isAntichain (hs : UniformAt X s) :
     IsAntichain (· ≤ ·) (s : Set (Possibility W V (Part M))) :=
   fun p hp q hq hne hpq =>
     hne (Possibility.eq_of_le_of_domain_eq hpq ((hs p hp).trans (hs q hq).symm))
 
 /-- Into a uniform stratum, subsistence is membership. -/
-theorem UniformAt.mem_lowerClosure {X : Set V} (hs : UniformAt X s)
-    {p : Possibility W V (Part M)} (hp : p.domain = X) :
+theorem UniformAt.mem_lowerClosure (hs : UniformAt X s) (hp : p.domain = X) :
     p ∈ lowerClosure s ↔ p ∈ s :=
   ⟨fun ⟨q, hq, hpq⟩ =>
     (Possibility.eq_of_le_of_domain_eq hpq (hp.trans (hs q hq).symm)).symm ▸ hq,
     fun h => subset_lowerClosure h⟩
 
 /-- On a uniform stratum, subsistence is inclusion. -/
-theorem UniformAt.lowerClosure_le_iff {X : Set V} (hs : UniformAt X s)
-    (hs' : UniformAt X s') :
+theorem UniformAt.lowerClosure_le_iff (hs : UniformAt X s) (hs' : UniformAt X s') :
     lowerClosure s ≤ lowerClosure s' ↔ s ⊆ s' :=
   lowerClosure_le.trans (forall₂_congr fun p hp => hs'.mem_lowerClosure (hs p hp))
 
 /-- Into a uniform stratum, domination is membership. -/
-theorem UniformAt.mem_upperClosure {X : Set V} (hs : UniformAt X s)
-    {q : Possibility W V (Part M)} (hq : q.domain = X) :
+theorem UniformAt.mem_upperClosure (hs : UniformAt X s) (hq : q.domain = X) :
     q ∈ upperClosure s ↔ q ∈ s :=
   ⟨fun ⟨p, hp, hpq⟩ =>
     Possibility.eq_of_le_of_domain_eq hpq ((hs p hp).trans hq.symm) ▸ hp,
     fun h => subset_upperClosure h⟩
 
 /-- On a uniform stratum, informativeness is reverse inclusion. -/
-theorem UniformAt.le_iff_superset {X : Set V} (hs : UniformAt X s)
-    (hs' : UniformAt X s') : s ≤ s' ↔ s' ⊆ s :=
+theorem UniformAt.le_iff_superset (hs : UniformAt X s) (hs' : UniformAt X s') :
+    s ≤ s' ↔ s' ⊆ s :=
   le_def.trans (forall₂_congr fun q hq => hs.mem_upperClosure (hs' q hq))
 
 /-- Within one stratum, merge is intersection. -/
-theorem UniformAt.mul_eq_inter {X : Set V} (hs : UniformAt X s)
-    (hs' : UniformAt X s') : s * s' = s ∩ s' := by
+theorem UniformAt.mul_eq_inter (hs : UniformAt X s) (hs' : UniformAt X s') :
+    s * s' = s ∩ s' := by
   ext r
   rw [mem_mul]
   constructor
@@ -308,66 +305,68 @@ theorem UniformAt.mul_eq_inter {X : Set V} (hs : UniformAt X s)
     exact ⟨r, hr, r, hr', compat_self r, Possibility.union_self.symm⟩
 
 /-- Restriction of a state: pointwise, by direct image. -/
-def restrict (X : Set V) (I : State W V M) : State W V M :=
-  Possibility.restrict X '' I
+def restrict (X : Set V) (s : State W V M) : State W V M :=
+  Possibility.restrict X '' s
 
 /-- Membership in a restriction. -/
-theorem mem_restrict {X : Set V} {I : State W V M} {p : Possibility W V (Part M)} :
-    p ∈ I.restrict X ↔ ∃ q ∈ I, q.restrict X = p :=
+theorem mem_restrict : p ∈ s.restrict X ↔ ∃ q ∈ s, q.restrict X = p :=
   Iff.rfl
+
+/-- A point at the stratum's domain lies below `s` iff it lies in the
+restriction of `s`. -/
+theorem mem_lowerClosure_iff_mem_restrict (hp : p.domain = X) :
+    p ∈ lowerClosure s ↔ p ∈ s.restrict X :=
+  ⟨fun ⟨q, hq, hpq⟩ => ⟨q, hq, ((Possibility.le_iff_eq_restrict hp).mp hpq).symm⟩,
+   fun ⟨q, hq, hqp⟩ => ⟨q, hq, hqp ▸ Possibility.restrict_le⟩⟩
+
+/-- A point lies above a uniform `s` iff its restriction is a point
+of `s`. -/
+theorem UniformAt.mem_upperClosure_iff_restrict_mem (hs : UniformAt X s) :
+    q ∈ upperClosure s ↔ q.restrict X ∈ s :=
+  ⟨fun ⟨p, hp, hpq⟩ => (Possibility.le_iff_eq_restrict (hs p hp)).mp hpq ▸ hp,
+   fun h => ⟨q.restrict X, h, Possibility.restrict_le⟩⟩
 
 section Fibred
 
 /-- Merge unites strata. -/
-theorem UniformAt.mul {X Y : Set V} (hs : UniformAt X s) (hs' : UniformAt Y s') :
+theorem UniformAt.mul (hs : UniformAt X s) (hs' : UniformAt Y s') :
     UniformAt (X ∪ Y) (s * s') := by
   intro r hr
   obtain ⟨p, hp, q, hq, -, rfl⟩ := mem_mul.mp hr
   rw [Possibility.domain_union, hs p hp, hs' q hq]
 
 /-- Subsistence out of a stratum is inclusion into the restricted image. -/
-theorem UniformAt.lowerClosure_le_iff_restrict {X : Set V} (hs : UniformAt X s) :
-    lowerClosure s ≤ lowerClosure s' ↔ s ⊆ s'.restrict X := by
-  rw [lowerClosure_le]
-  constructor
-  · intro h p hp
-    obtain ⟨q, hq, hpq⟩ := h hp
-    exact ⟨q, hq, ((Possibility.le_iff_eq_restrict (hs p hp)).mp hpq).symm⟩
-  · intro h p hp
-    obtain ⟨q, hq, rfl⟩ := h hp
-    exact ⟨q, hq, Possibility.restrict_le⟩
+theorem UniformAt.lowerClosure_le_iff_restrict (hs : UniformAt X s) :
+    lowerClosure s ≤ lowerClosure s' ↔ s ⊆ s'.restrict X :=
+  lowerClosure_le.trans
+    (forall₂_congr fun p hp => mem_lowerClosure_iff_mem_restrict (hs p hp))
 
 /-- Informativeness out of a stratum is reverse inclusion of the
 restricted image. -/
-theorem UniformAt.le_iff_restrict_subset {X : Set V} (hs : UniformAt X s) :
-    s ≤ s' ↔ s'.restrict X ⊆ s := by
-  rw [le_def]
-  constructor
-  · rintro h r ⟨q, hq, rfl⟩
-    obtain ⟨p, hp, hpq⟩ := h q hq
-    rwa [← (Possibility.le_iff_eq_restrict (hs p hp)).mp hpq]
-  · intro h q hq
-    exact ⟨q.restrict X, h ⟨q, hq, rfl⟩, Possibility.restrict_le⟩
+theorem UniformAt.le_iff_restrict_subset (hs : UniformAt X s) :
+    s ≤ s' ↔ s'.restrict X ⊆ s :=
+  le_def.trans <|
+    (forall₂_congr fun _ _ => hs.mem_upperClosure_iff_restrict_mem).trans
+      Set.forall_mem_image.symm
 
 end Fibred
 
 /-- Restriction only forgets: the restricted state subsists in the
 original. -/
-theorem lowerClosure_restrict_le (X : Set V) (I : State W V M) :
-    lowerClosure (I.restrict X) ≤ lowerClosure I := by
-  rw [lowerClosure_le]
-  rintro p ⟨q, hq, rfl⟩
-  exact ⟨q, hq, Possibility.restrict_le⟩
+theorem lowerClosure_restrict_le :
+    lowerClosure (s.restrict X) ≤ lowerClosure s :=
+  lowerClosure_le.mpr <|
+    Set.forall_mem_image.mpr fun q hq => ⟨q, hq, Possibility.restrict_le⟩
 
 /-- Restriction meets the stratification. -/
-theorem UniformAt.restrict {X Y : Set V} {I : State W V M}
-    (h : UniformAt Y I) : UniformAt (X ∩ Y) (I.restrict X) := by
+theorem UniformAt.restrict (hs : UniformAt Y s) :
+    UniformAt (X ∩ Y) (s.restrict X) := by
   rintro p ⟨q, hq, rfl⟩
-  rw [Possibility.domain_restrict, h q hq]
+  rw [Possibility.domain_restrict, hs q hq]
 
 /-- Restriction composes along intersections. -/
-theorem restrict_restrict (X Y : Set V) (I : State W V M) :
-    (I.restrict Y).restrict X = I.restrict (X ∩ Y) := by
+theorem restrict_restrict :
+    (s.restrict Y).restrict X = s.restrict (X ∩ Y) := by
   simp only [restrict, Set.image_image, Possibility.restrict_restrict]
 
 /-! ### The uniform classification -/
@@ -378,8 +377,8 @@ def uniformEquiv (X : Set V) :
   (Equiv.Set.powerset {p : Possibility W V (Part M) | p.domain = X}).trans
     (Equiv.Set.congr (Possibility.domainEquiv X))
 
-@[simp] theorem mem_uniformEquiv {X : Set V}
-    {I : {I : State W V M // UniformAt X I}} {e : W × (X → M)} :
+@[simp] theorem mem_uniformEquiv {I : {I : State W V M // UniformAt X I}}
+    {e : W × (X → M)} :
     e ∈ uniformEquiv X I ↔ ((Possibility.domainEquiv X).symm e).1 ∈ I.1 :=
   Set.mem_image_equiv
 
