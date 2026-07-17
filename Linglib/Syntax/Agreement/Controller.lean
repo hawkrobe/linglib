@@ -6,8 +6,8 @@ While `Syntax/Agreement/Basic.lean` enumerates WHERE agreement morphology
 surfaces (Corbett 1991 Agreement Hierarchy), this file enumerates WHICH
 GRAMMATICAL ROLE the controlling NP plays. The two axes are orthogonal:
 a language can have subject-controlled verb agreement
-(`Controller.subj` × `AgreementTarget.verb`) and possessor-controlled
-attributive agreement (`Controller.poss` × `AgreementTarget.attributive`).
+(`Controller.subj` × `Target.verb`) and possessor-controlled
+attributive agreement (`Controller.poss` × `Target.attributive`).
 
 ## Typological labels
 

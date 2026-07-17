@@ -271,13 +271,13 @@ theorem constraint_iii_holds :
 
 /-! ### The Agreement Hierarchy (Ch 6, §6.2) -/
 
-open Agreement (AgreementTarget)
+open Agreement (Target)
 
 /-- Whether agreement is determined by morphological form (syntactic)
     or by referential meaning (semantic).
 
-    Distinct from `Agreement.AgreementType` (grammatical vs. pronominal,
-    [bickel-nichols-2001]), which is about whether the agreement
+    Distinct from the grammatical-vs-pronominal split
+    ([bickel-nichols-2001]), which is about whether the agreement
     marker has referential autonomy. This type is about what *controls*
     agreement — the formal features of the controller or its semantic
     content. -/
@@ -292,19 +292,19 @@ structure AgreementProfile where
   /-- Controller description -/
   controller : String
   /-- Targets where semantic (meaning-driven) agreement is possible. -/
-  semanticTargets : List AgreementTarget
+  semanticTargets : List Target
 
 /-- The four positions of [corbett-1991]'s Agreement Hierarchy (`verb`
-    is not one of them — see `Agreement.AgreementTarget`). -/
-private def hierarchyPositions : List AgreementTarget :=
+    is not one of them — see `Agreement.Target`). -/
+private def hierarchyPositions : List Target :=
   [.attributive, .predicate, .relativePronoun, .personalPronoun]
 
 /-- The Agreement Hierarchy monotonicity constraint: once semantic agreement
     becomes possible at a target, it remains possible at all targets further
-    right (= lower `Agreement.AgreementTarget.rank`) on the hierarchy. -/
+    right (= lower in the `Agreement.Target` order) on the hierarchy. -/
 def AgreementProfile.RespectsHierarchy (p : AgreementProfile) : Prop :=
   ∀ t1 ∈ hierarchyPositions, ∀ t2 ∈ hierarchyPositions,
-    t1.rank ≤ t2.rank ∨ t1 ∉ p.semanticTargets ∨ t2 ∈ p.semanticTargets
+    t1 ≤ t2 ∨ t1 ∉ p.semanticTargets ∨ t2 ∈ p.semanticTargets
 
 instance (p : AgreementProfile) : Decidable p.RespectsHierarchy := by
   unfold AgreementProfile.RespectsHierarchy; infer_instance
@@ -799,7 +799,32 @@ theorem japanese_count_mass_uniform :
 
 /-! ### Predicate Hierarchy Bridge -/
 
-open Agreement (PredicateTarget)
+/-- The Predicate Hierarchy ([comrie-1975], systematized in [corbett-2000]
+    ch. 6) decomposes the predicate position of the Agreement Hierarchy into
+    a sub-hierarchy: verb < participle < adjective < noun, with semantic
+    agreement increasing monotonically toward the noun end (the finite verb
+    is the most-syntactic sub-position). Sub-positions of
+    `Agreement.Target.predicate`, at finer resolution — `verb` here is the
+    finite verb *as predicate*, distinct from the bare `Agreement.Target.verb`
+    label. -/
+inductive PredicateTarget where
+  /-- Finite verb agreement. -/
+  | verb
+  /-- Participial agreement. -/
+  | participle
+  /-- Predicate adjective (e.g. Russian *kniga interesna*). -/
+  | adjective
+  /-- Predicate noun ("she is a doctor"). -/
+  | noun
+  deriving DecidableEq, Repr, Inhabited
+
+/-- Rank in the Predicate Hierarchy: higher = more likely to show
+    semantic agreement. verb (0) < participle (1) < adjective (2) < noun (3). -/
+def PredicateTarget.rank : PredicateTarget → ℕ
+  | .verb       => 0
+  | .participle => 1
+  | .adjective  => 2
+  | .noun       => 3
 
 /-- A predicate-hierarchy profile records the sub-positions (verb, participle,
     adjective, noun) where semantic agreement is possible for a controller —

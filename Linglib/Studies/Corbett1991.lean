@@ -49,7 +49,7 @@ set_option autoImplicit false
 
 namespace Corbett1991
 
-open Agreement (AgreementTarget)
+open Agreement (Target)
 open Data.WALS
 
 /-! ### Substrate: semantic bases and per-language profiles -/
@@ -84,7 +84,7 @@ structure Profile where
   /-- Targets where gender agreement surfaces. An *inventory*, not the
       Agreement Hierarchy itself (which is a monotonicity claim about
       hybrid nouns; not yet formalized). -/
-  agreementTargets : List AgreementTarget := []
+  agreementTargets : List Target := []
   /-- Semantic dimensions organising the system. -/
   semanticBases : List SemanticBasis := []
   /-- Comparative-label bridge for systems the

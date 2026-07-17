@@ -2,171 +2,92 @@ import Mathlib.Order.Nat
 import Mathlib.Tactic.DeriveFintype
 
 /-!
-# Agreement Target Hierarchy [corbett-1979]
+# Agreement targets
 
-The Agreement Hierarchy ([corbett-1979]; [corbett-1991] ch. 8) has four
-positions — attributive > predicate > relative pronoun > personal pronoun —
-along which the likelihood of *semantic* (rather than syntactic) agreement
-increases monotonically from left to right.
+This file defines the morphosyntactic positions where agreement surfaces,
+ordered by Corbett's Agreement Hierarchy: attributive > predicate >
+relative pronoun > personal pronoun, with semantic (rather than syntactic)
+agreement increasingly likely from left to right.
 
-The `AgreementTarget` enum below additionally carries a `verb` target for
-languages with verbal gender/number agreement. `verb` is a linglib
-refinement, not a fifth position of Corbett's hierarchy, and its placement
-is theory-laden: it is ranked below personal pronoun (the semantic end),
-following [wechsler-zlatic-2000]'s classification of verbal agreement as
-INDEX-reading (see `WechslerZlatic2000.indexReaders_lowerSet`, which
-depends on this placement). Corbett instead subsumes verbal agreement
-under the *predicate* position, where his Predicate Hierarchy
-([comrie-1975]) makes the finite verb the most-syntactic sub-position —
-the opposite end. That view is formalized separately as
-`PredicateTarget` below; the two codings are a genuine cross-framework
-disagreement, kept visible rather than merged. Theorems about the
-four-position hierarchy proper should quantify over the four canonical
-positions only (as `Corbett2000.hierarchyPositions` does).
+## Main declarations
 
-This type is shared by gender typology (`Studies/Corbett1991.lean`) and
-number agreement (`Studies/Corbett2000.lean`).
+* `Agreement.Target`: the four hierarchy positions, plus `verb` for
+  languages with verbal gender/number agreement.
+* `Agreement.Target.hierarchyRank`: position on the hierarchy (higher =
+  more syntactic); `none` for `verb`.
+* The `PartialOrder` instance: the four positions form a chain; `verb` is
+  comparable only to itself.
+
+## Implementation notes
+
+`verb` is not a position of Corbett's hierarchy, and no ranking of it is
+encoded. [wechsler-zlatic-2000] classify verbs with the pronouns as
+INDEX-readers without ranking the INDEX-readers among themselves
+(`WechslerZlatic2000.indexReaders_lowerSet`), and [comrie-1975]'s Predicate
+Hierarchy grades semantic-agreement likelihood among predicate
+sub-positions (`Corbett2000.PredicateTarget`); the two classifications are
+orthogonal. Hence the order is partial rather than linear.
+
+## References
+
+* [corbett-1979] — the Agreement Hierarchy
+* [corbett-1991], ch. 8 — the hierarchy applied to gender
+* [corbett-2006] — the standard monograph on agreement
 -/
 
 namespace Agreement
 
-/-- Morphosyntactic targets where agreement can surface, ranked by the
-    Agreement Hierarchy ([corbett-1979]). `verb` is a linglib refinement
-    placed at the semantic end per [wechsler-zlatic-2000] — NOT a
-    position of Corbett's hierarchy; see the module docstring for the
-    competing Corbett/Comrie placement (`PredicateTarget`).
-
-    Higher rank = closer to the controller, agreement more syntactic.
-    Lower rank = further from the controller, agreement more semantic. -/
-inductive AgreementTarget where
-  | attributive       -- attributive adjective (e.g. French *un bon livre*)
-  | predicate         -- predicate adjective/verb (e.g. Russian *kniga interesnaja*)
-  | relativePronoun   -- relative pronoun (e.g. German *der/die/das*)
-  | personalPronoun   -- personal pronoun (e.g. English *he/she/it*)
-  | verb              -- verb (e.g. Hindi *laRkaa aayaa / laRkii aayii*)
+/-- A morphosyntactic target where agreement can surface: the four positions
+    of the Agreement Hierarchy ([corbett-1979]), plus `verb` for verbal
+    gender/number agreement (off the hierarchy — see the module docstring). -/
+inductive Target where
+  /-- Attributive adjective (e.g. French *un bon livre*). -/
+  | attributive
+  /-- Predicate adjective/verb (e.g. Russian *kniga interesna*). -/
+  | predicate
+  /-- Relative pronoun (e.g. German *der/die/das*). -/
+  | relativePronoun
+  /-- Personal pronoun (e.g. English *he/she/it*). -/
+  | personalPronoun
+  /-- Verb (e.g. Hindi *laRkaa aayaa* vs *laRkii aayii*). A label only,
+      not a fifth hierarchy position: `hierarchyRank` is `none`. -/
+  | verb
   deriving DecidableEq, Repr, Inhabited, Fintype
 
-/-- Numeric rank in the Agreement Hierarchy: higher = more likely to show
-    agreement (more syntactic); lower = less likely (more semantic). -/
-def AgreementTarget.rank : AgreementTarget → Nat
-  | .attributive     => 4
-  | .predicate       => 3
-  | .relativePronoun => 2
-  | .personalPronoun => 1
-  | .verb            => 0
+namespace Target
 
-/-- The Agreement Hierarchy is a `LinearOrder` lifted from the rank.
-    Provides `≤`, `<`, `min`, `max`, `Finset.sort`, etc. for free. -/
-instance : LinearOrder AgreementTarget :=
-  LinearOrder.lift' AgreementTarget.rank
-    (fun a b h => by cases a <;> cases b <;> simp_all [AgreementTarget.rank])
+/-- Position on the four-point Agreement Hierarchy, higher = more syntactic
+    (more likely to show syntactic agreement); `none` for `verb`, which is
+    off the hierarchy. -/
+def hierarchyRank : Target → Option ℕ
+  | .attributive     => some 3
+  | .predicate       => some 2
+  | .relativePronoun => some 1
+  | .personalPronoun => some 0
+  | .verb            => none
 
-/-- The hierarchy rank is injective — derivable from the `LinearOrder`
-    instance, restated here as a named lemma for direct invocation. -/
-theorem AgreementTarget.rank_injective :
-    Function.Injective AgreementTarget.rank :=
-  fun a b h => by cases a <;> cases b <;> simp_all [AgreementTarget.rank]
+private def HierarchyLE (t u : Target) : Prop :=
+  match t.hierarchyRank, u.hierarchyRank with
+  | some rt, some ru => rt ≤ ru
+  | none, none => True
+  | _, _ => False
 
--- ============================================================================
--- § 2: Predicate Hierarchy ([comrie-1975]; [corbett-2000] Ch 6)
--- ============================================================================
+private instance : DecidableRel HierarchyLE := fun t u => by
+  cases t <;> cases u <;> simp only [HierarchyLE, hierarchyRank] <;> infer_instance
 
-/-- The Predicate Hierarchy ([comrie-1975], systematised by
-    [corbett-2000]) decomposes the predicate position on the Agreement
-    Hierarchy into a sub-hierarchy:
-    verb < participle < adjective < noun.
+/-- The Agreement Hierarchy as a partial order: `t ≤ u` iff both occupy
+    hierarchy positions and `t`'s is at most as syntactic as `u`'s (so
+    `personalPronoun ≤ attributive`); `verb`, off the hierarchy, is
+    comparable only to itself. -/
+instance : PartialOrder Target where
+  le := HierarchyLE
+  le_refl := by decide
+  le_trans := by decide
+  le_antisymm := by decide
 
-    Semantic agreement increases monotonically along this sub-hierarchy:
-    if semantic agreement is possible on a verb, it is possible on a
-    participle; if on a participle, then on an adjective; etc.
+instance : DecidableRel ((· ≤ ·) : Target → Target → Prop) :=
+  fun t u => inferInstanceAs (Decidable (HierarchyLE t u))
 
-    This is orthogonal to `AgreementTarget`, which treats `.predicate` and
-    `.verb` as two positions on the main hierarchy. The Predicate Hierarchy
-    provides finer resolution *within* the predicate position. -/
-inductive PredicateTarget where
-  | verb         -- finite verb agreement (= AgreementTarget.verb)
-  | participle   -- participial agreement
-  | adjective    -- predicate adjective (= AgreementTarget.predicate)
-  | noun         -- predicate noun ("she is a doctor")
-  deriving DecidableEq, Repr, Inhabited
-
-/-- Rank in the Predicate Hierarchy: higher = more likely to show
-    semantic agreement. verb (0) < participle (1) < adjective (2) < noun (3). -/
-def PredicateTarget.rank : PredicateTarget → Nat
-  | .verb       => 0
-  | .participle => 1
-  | .adjective  => 2
-  | .noun       => 3
-
-/-- The Predicate Hierarchy is a `LinearOrder` lifted from the rank. -/
-instance : LinearOrder PredicateTarget :=
-  LinearOrder.lift' PredicateTarget.rank
-    (fun a b h => by cases a <;> cases b <;> simp_all [PredicateTarget.rank])
-
-/-- The Predicate Hierarchy rank is injective. -/
-theorem PredicateTarget.rank_injective :
-    Function.Injective PredicateTarget.rank :=
-  fun a b h => by cases a <;> cases b <;> simp_all [PredicateTarget.rank]
-
-/-- Map a `PredicateTarget` to the corresponding `AgreementTarget`.
-    Verb maps to `.verb`; participle/adjective/noun all map to
-    `.predicate`. Many-to-one, monotone (preserves the `≤` order
-    once you account for rank collapsing inside `.predicate`). -/
-def PredicateTarget.toAgreementTarget : PredicateTarget → AgreementTarget
-  | .verb       => .verb
-  | .participle => .predicate
-  | .adjective  => .predicate
-  | .noun       => .predicate
-
--- ============================================================================
--- § 3: Agreement Type ([bickel-nichols-2001])
--- ============================================================================
-
-/-- Whether agreement markers have referential autonomy.
-    [bickel-nichols-2001]
-
-    - **grammatical**: pure agreement — the marker cannot stand alone as
-      an argument; an independent NP is required (English *she walk-s*,
-      the *-s* cannot replace *she*)
-    - **pronominal**: cross-referencing — the marker can function as the
-      sole expression of the argument; an independent NP is optional
-      (Swahili *a-li-ki-soma (kitabu)* — the prefixes suffice without
-      the noun)
-
-    This distinction is orthogonal to the Agreement Hierarchy: a language
-    can have pronominal agreement on verbs but grammatical agreement on
-    adjectives, or vice versa. -/
-inductive AgreementType where
-  | grammatical   -- pure agreement (cannot stand alone as argument)
-  | pronominal    -- cross-referencing (can be sole argument expression)
-  deriving DecidableEq, Repr, Inhabited
-
--- ============================================================================
--- § 4: Agreement Direction ([bickel-nichols-2001])
--- ============================================================================
-
-/-- Direction of agreement: which element originates ("drives") the features.
-    [bickel-nichols-2001] §9
-
-    - **headDriven**: the phrasal head provides features that percolate to
-      its dependents — dependents carry the agreement morphology.
-      (German/Watam NP concord: noun's gender/number → adjective, det;
-      = dependent marking in the sense of §3.)
-    - **dependentDriven**: a dependent provides features that the head
-      matches — the head carries the agreement morphology.
-      (Belhare/Swahili verb agreement: subject's person/number → verb;
-      = head marking in the sense of §3.)
-
-    Related to but distinct from `Morphology.LocusOfMarking`: locus
-    is a language-level WALS typological parameter classifying where *all*
-    grammatical relations are marked (head, dependent, double, zero).
-    `AgreementDirection` is phenomenon-specific — a language can be
-    overall head-marking (`LocusOfMarking.headMarking`) yet have specific
-    head-driven agreement (e.g., NP concord in an otherwise head-marking
-    language). -/
-inductive AgreementDirection where
-  | headDriven       -- head drives features → dependents carry morphology (NP concord)
-  | dependentDriven  -- dependent drives features → head carries morphology (verb agreement)
-  deriving DecidableEq, Repr, Inhabited
+end Target
 
 end Agreement
