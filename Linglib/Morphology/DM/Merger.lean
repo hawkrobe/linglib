@@ -1,4 +1,4 @@
-import Linglib.Morphology.Containment.Vocabulary
+import Linglib.Morphology.Exponence.Hierarchy
 import Linglib.Morphology.DM.DomainLocality
 import Mathlib.Logic.Relation
 

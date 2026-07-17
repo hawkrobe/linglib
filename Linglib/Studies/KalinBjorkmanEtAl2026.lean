@@ -1,7 +1,7 @@
 import Linglib.Morphology.TheorySpace
 import Linglib.Morphology.MorphRule
 import Linglib.Studies.ZwickyPullum1983
-import Linglib.Morphology.Containment.Superset
+import Linglib.Morphology.Nanosyntax.Superset
 
 -- ============================================================================
 -- § 0b: PFM Substrate (was Morphology/PFM/Core.lean,

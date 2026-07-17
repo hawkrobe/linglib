@@ -1302,8 +1302,6 @@ import Linglib.Morphology.AffixTemplate
 import Linglib.Morphology.Case.Allomorphy
 import Linglib.Morphology.Case.WALS
 import Linglib.Morphology.ConsonantalRoot
-import Linglib.Morphology.Containment.Superset
-import Linglib.Morphology.Containment.Vocabulary
 import Linglib.Morphology.DM.Allosemy
 import Linglib.Morphology.DM.Categorizer
 import Linglib.Morphology.DM.CategorizerSemantics
@@ -1316,6 +1314,7 @@ import Linglib.Morphology.DM.NominalStructure
 import Linglib.Morphology.DM.VocabSimple
 import Linglib.Morphology.DM.VocabularyInsertion
 import Linglib.Morphology.Exponence.Rule
+import Linglib.Morphology.Exponence.Hierarchy
 import Linglib.Morphology.DegreeContainment
 import Linglib.Morphology.Derivation
 import Linglib.Morphology.Focus
@@ -1331,7 +1330,7 @@ import Linglib.Morphology.InflectionRules
 import Linglib.Morphology.MorphProfile
 import Linglib.Morphology.MorphRule
 import Linglib.Morphology.MorphWord
-import Linglib.Morphology.Nanosyntax.Basic
+import Linglib.Morphology.Nanosyntax.Superset
 import Linglib.Morphology.Nanosyntax.TreeSpellout
 import Linglib.Morphology.Number
 import Linglib.Morphology.Paradigm.Basic

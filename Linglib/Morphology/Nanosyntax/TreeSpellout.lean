@@ -1,4 +1,3 @@
-import Linglib.Morphology.Nanosyntax.Basic
 import Linglib.Core.Order.Branching
 
 /-!
@@ -6,7 +5,7 @@ import Linglib.Core.Order.Branching
 [taraldsen-et-al-2018] [caha-2009] [starke-2009]
 
 Extension of rank-based Superset spellout
-(`Morphology/Containment/Superset.lean`) to tree-structured spellout. Implements the Superset Principle (SP) for trees: a lexical
+(`Morphology/Nanosyntax/Superset.lean`) to tree-structured spellout. Implements the Superset Principle (SP) for trees: a lexical
 entry M ↔ S' can spell out syntactic target S if S' structurally
 contains S (`NanoTree.Contains`). Among matching entries, the Elsewhere
 Condition selects the smallest (by tree size).
@@ -31,6 +30,14 @@ uses containment as the simpler equivalent formulation.
 -/
 
 namespace Morphology.Nanosyntax
+
+/-- Morphological type of an exponent derived from nanosyntactic
+spellout. Suffixes arise from spellout-driven movement (roll-up, unary
+foot); prefixes arise from subderivation (binary foot) — [dekier-2021]
+for this diagnostic on indefinite markers. -/
+inductive MorphType where
+  | suffix | prefix
+  deriving DecidableEq, Repr
 
 /-! ### NanoTree -/
 
@@ -185,7 +192,7 @@ end NanoTree
     fragments). The tree encodes the full feature geometry that the
     morpheme lexicalizes.
 
-    Contrast with `ExponenceRule` (`Morphology/Containment/Vocabulary.lean`)
+    Contrast with `ExponenceRule` (`Morphology/Exponence/Hierarchy.lean`)
     which stores only a span (depth on a 1D functional sequence). -/
 structure TreeLexEntry (F : Type*) (α : Type*) where
   /-- The stored feature tree. -/

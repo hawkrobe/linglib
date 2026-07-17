@@ -59,7 +59,7 @@ hypothesis set, mirroring the book's cost accounting:
   `exists_portmanteau_of_ne`
 
 The dual Superset engine lives in
-`Morphology/Containment/Superset.lean`; synthetic/analytic structure
+`Morphology/Nanosyntax/Superset.lean`; synthetic/analytic structure
 (Merger) in `Morphology/DM/Merger.lean`; the n = 3 degree
 instantiations with the book's worked vocabularies in
 `Studies/Bobaljik2012.lean`.
@@ -79,7 +79,7 @@ when `spans > 0` — and applies only when the (optional) conditioning
 head `context` is present in the structure. DM vocabulary items are
 the `Terminal`-restricted special case; nanosyntax lexical entries
 share the context-free span format but pair it with Superset-based
-selection (`Morphology/Containment/Superset.lean`) rather than this
+selection (`Morphology/Nanosyntax/Superset.lean`) rather than this
 file's containment-directed `AppliesAt`, so the insertion semantics
 differs.
 Latin ([bobaljik-2012] (204)): `bon` is `⟨bon, 0, none⟩`, `mel-` is

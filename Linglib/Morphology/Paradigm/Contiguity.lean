@@ -23,7 +23,7 @@ insertion mechanism.
 
 Theory-laden derivations of contiguity (vocabulary insertion under the
 Elsewhere Condition over containment hierarchies) live in
-`Morphology/Containment/Vocabulary.lean`; the n = 3 degree and n = 4
+`Morphology/Exponence/Hierarchy.lean`; the n = 3 degree and n = 4
 case specializations in `Morphology/DegreeContainment.lean` and
 `Morphology/Case/Allomorphy.lean`.
 
@@ -44,7 +44,7 @@ intervening form: if the cells at `i ≤ k` agree, every cell between
 them agrees too, so each form's fiber is an interval of cells. ABA
 (`![a, b, a]`) violates this; AAA, ABB, ABC — and AAB — satisfy it.
 (*AAB is excluded by vocabulary-level conditions, not by contiguity;
-see `Morphology/Containment/Vocabulary.lean`.) -/
+see `Morphology/Exponence/Hierarchy.lean`.) -/
 def IsContiguous (p : Paradigm n F) : Prop :=
   ∀ ⦃i j k : Fin n⦄, i ≤ j → j ≤ k → p i = p k → p i = p j
 

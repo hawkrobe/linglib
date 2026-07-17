@@ -1,4 +1,4 @@
-import Linglib.Morphology.Containment.Vocabulary
+import Linglib.Morphology.Exponence.Hierarchy
 
 /-!
 # Superset spellout over containment hierarchies
@@ -7,7 +7,7 @@ import Linglib.Morphology.Containment.Vocabulary
 The static core of the nanosyntax selection rule (no cyclic override
 or spellout-driven movement), stated over the same `ExponenceRule`
 vocabularies as the Elsewhere engine of
-`Morphology/Containment/Vocabulary.lean`. A nanosyntax lexical entry
+`Morphology/Exponence/Hierarchy.lean`. A nanosyntax lexical entry
 stores a constituent and carries no contextual restriction
 (`ContextFree`); it can spell out any structure it *contains* — the
 Superset Principle ([starke-2009]) — and competition selects the
@@ -44,9 +44,10 @@ degree case) — where DM needs the context-restricted portmanteau of
 * `isContiguous_iff_spelloutGenerable` — spellable = contiguous
 * `spelloutGenerable_iff_generable` — DM/nanosyntax equigenerativity
 
-The older tree-based nanosyntax fragment
-(`Morphology/Nanosyntax/Basic.lean`) predates this engine and is not
-yet grounded in it.
+Tree-structured phrasal spellout
+(`Morphology/Nanosyntax/TreeSpellout.lean`) generalizes this
+rank-based engine: for right-branching chains, tree containment
+reduces to rank comparison (`chain_contains_iff_le`).
 -/
 
 namespace Morphology.Containment
