@@ -1,15 +1,16 @@
+import Linglib.Core.Data.Part
 import Linglib.Core.Order.PartialUnify
-import Mathlib.Data.Part
-import Mathlib.Data.Set.Function
+import Mathlib.Data.PFun
+import Mathlib.Logic.Function.Basic
 
 /-!
 # Possibilities
 
 This file defines a *possibility* — a world paired with an assignment
 of discourse referents — and the structure of its partial points, with
-`Part`-valued assignments: the descent order, compatibility and union,
-restriction, and the classification of each stratum as
-world–assignment pairs.
+`Part`-valued assignments (partial functions `V →. M`): the descent
+order, compatibility and union, restriction, and the classification of
+each stratum as world–assignment pairs.
 
 ## References
 
@@ -65,7 +66,7 @@ theorem le_def : p ≤ q ↔ p.world = q.world ∧ ∀ x, p.assignment x ≤ q.a
 
 /-- The domain of a partial point is the set of referents it defines. -/
 def domain (p : Possibility W V (Part M)) : Set V :=
-  {v | (p.assignment v).Dom}
+  PFun.Dom p.assignment
 
 @[simp] theorem mem_domain {v : V} :
     v ∈ p.domain ↔ (p.assignment v).Dom := Iff.rfl
@@ -81,35 +82,35 @@ theorem eq_of_le_of_domain_eq (h : p ≤ q) (hdom : p.domain = q.domain) : p = q
     obtain rfl := Part.mem_unique (h.2 v _ (Part.get_mem hd)) he
     exact Part.get_mem hd
 
-open Classical in
 /-- The union of two points, defined wherever either is, with the left
 taking precedence; on compatible points the precedence is immaterial
 (`union_comm`). -/
 noncomputable def union (p q : Possibility W V (Part M)) : Possibility W V (Part M) :=
-  ⟨p.world, fun v => if (p.assignment v).Dom then p.assignment v else q.assignment v⟩
+  ⟨p.world, fun v => (p.assignment v).or (q.assignment v)⟩
 
-theorem le_union_left (p q : Possibility W V (Part M)) : p ≤ p.union q :=
-  ⟨rfl, fun v e he => by
-    simp only [union]
-    split
-    · exact he
-    · next h => exact absurd (Part.dom_iff_mem.mpr ⟨e, he⟩) h⟩
+@[simp] theorem union_world : (p.union q).world = p.world := rfl
+
+@[simp] theorem union_assignment (v : V) :
+    (p.union q).assignment v = (p.assignment v).or (q.assignment v) := rfl
+
+/-- A union assignment holds the left component's values, and the
+right's outside the left's domain. -/
+theorem mem_assignment_union {v : V} {e : M} :
+    e ∈ (p.union q).assignment v ↔
+      e ∈ p.assignment v ∨ v ∉ p.domain ∧ e ∈ q.assignment v :=
+  Part.mem_or_iff
+
+theorem le_union_left : p ≤ p.union q :=
+  ⟨rfl, fun _ => Part.le_or_left⟩
 
 private theorem le_union_right_of_agree (hw : p.world = q.world)
     (hag : ∀ v e e', e ∈ p.assignment v → e' ∈ q.assignment v → e = e') :
     q ≤ p.union q :=
-  ⟨hw.symm, fun v e he => by
-    simp only [union]
-    split
-    · next hd => exact hag v _ e (Part.get_mem hd) he ▸ Part.get_mem hd
-    · exact he⟩
+  ⟨hw.symm, fun v e he => mem_assignment_union.mpr <| or_iff_not_imp_left.mpr
+    fun hp => ⟨fun hd => hp (hag v _ e (Part.get_mem hd) he ▸ Part.get_mem hd), he⟩⟩
 
 theorem union_le (hp : p ≤ u) (hq : q ≤ u) : p.union q ≤ u :=
-  ⟨hp.1, fun v e he => by
-    simp only [union] at he
-    split at he
-    · exact hp.2 v e he
-    · exact hq.2 v e he⟩
+  ⟨hp.1, fun v => Part.or_le (hp.2 v) (hq.2 v)⟩
 
 /-- Two partial points are compatible (`Compat`: bounded above in the
 descent order) exactly when they share their world and agree wherever
@@ -125,7 +126,7 @@ theorem compat_iff : Compat p q ↔
       fun v e e' he he' => Part.mem_unique (hp.2 v e he) (hq.2 v e' he')⟩
   · rintro ⟨hw, hag⟩
     exact ⟨p.union q, PartialUnify.mem_upperBounds_pair.mpr
-      ⟨le_union_left p q, le_union_right_of_agree hw hag⟩⟩
+      ⟨le_union_left, le_union_right_of_agree hw hag⟩⟩
 
 theorem le_union_right (h : Compat p q) : q ≤ p.union q :=
   have h' := compat_iff.mp h
@@ -133,7 +134,7 @@ theorem le_union_right (h : Compat p q) : q ≤ p.union q :=
 
 /-- The union of compatible points is their least upper bound. -/
 theorem isLUB_union (h : Compat p q) : IsLUB {p, q} (p.union q) :=
-  ⟨PartialUnify.mem_upperBounds_pair.mpr ⟨le_union_left p q, le_union_right h⟩,
+  ⟨PartialUnify.mem_upperBounds_pair.mpr ⟨le_union_left, le_union_right h⟩,
     fun _ hu =>
       have h := PartialUnify.mem_upperBounds_pair.mp hu
       union_le h.1 h.2⟩
@@ -141,21 +142,18 @@ theorem isLUB_union (h : Compat p q) : IsLUB {p, q} (p.union q) :=
 /-- The union of two points defines the union of their domains. -/
 theorem domain_union (p q : Possibility W V (Part M)) :
     (p.union q).domain = p.domain ∪ q.domain := by
-  ext v
-  by_cases h : (p.assignment v).Dom <;> simp [union, domain, h]
+  ext v; simp
 
 /-- On a shared domain, compatibility is equality. -/
 theorem eq_of_compat_of_domain_eq (h : Compat p q) (hdom : p.domain = q.domain) :
     p = q :=
   have hu : (p.union q).domain = p.domain := by rw [domain_union, ← hdom, Set.union_self]
-  (eq_of_le_of_domain_eq (le_union_left p q) hu.symm).trans
+  (eq_of_le_of_domain_eq le_union_left hu.symm).trans
     (eq_of_le_of_domain_eq (le_union_right h) (hdom.symm.trans hu.symm)).symm
 
-theorem union_assoc (p q v : Possibility W V (Part M)) :
-    (p.union q).union v = p.union (q.union v) :=
-  Possibility.ext rfl <| funext fun x => by
-    by_cases hp : (p.assignment x).Dom <;> by_cases hq : (q.assignment x).Dom <;>
-      simp [union, hp, hq]
+theorem union_assoc (p q r : Possibility W V (Part M)) :
+    (p.union q).union r = p.union (q.union r) :=
+  Possibility.ext rfl <| funext fun _ => Part.or_assoc ..
 
 /-- On compatible points the left precedence of `union` is immaterial. -/
 theorem union_comm (h : Compat p q) : p.union q = q.union p :=
@@ -166,16 +164,14 @@ with. -/
 theorem compat_union_left (hpu : Compat p u) (hqu : Compat q u) :
     Compat (p.union q) u := by
   obtain ⟨hpw, hpa⟩ := compat_iff.mp hpu
-  obtain ⟨hqw, hqa⟩ := compat_iff.mp hqu
-  refine compat_iff.mpr ⟨hpw, fun x e e' he he' => ?_⟩
-  simp only [union] at he
-  split at he
-  · exact hpa x e e' he he'
-  · exact hqa x e e' he he'
+  obtain ⟨-, hqa⟩ := compat_iff.mp hqu
+  exact compat_iff.mpr ⟨hpw, fun v e e' he he' =>
+    (mem_assignment_union.mp he).elim (fun h => hpa v e e' h he') fun h =>
+      hqa v e e' h.2 he'⟩
 
 /-- The left component of a compatible union is compatible. -/
 theorem compat_of_union_left (h : Compat (p.union q) u) : Compat p u :=
-  h.mono (le_union_left p q) le_rfl
+  h.mono le_union_left le_rfl
 
 /-- The right component of a compatible union is compatible, given the
 components agree. -/

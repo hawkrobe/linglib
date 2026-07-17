@@ -152,7 +152,7 @@ def State.merge (s s' : State W V M) : State W V M :=
 /-- The merge is above the left component in informativeness. -/
 theorem infoLe_merge_left (s s' : State W V M) : s ⊑ s.merge s' := by
   rintro r ⟨p, hp, q, hq, hpq, rfl⟩
-  exact ⟨p, hp, Possibility.le_union_left p q⟩
+  exact ⟨p, hp, Possibility.le_union_left⟩
 
 /-- The merge is above the right component in informativeness. -/
 theorem infoLe_merge_right (s s' : State W V M) : s' ⊑ s.merge s' := by
@@ -202,20 +202,12 @@ monoid of information — the content half of
   constructor
   · rintro ⟨p, hp, q, hq, -, rfl⟩
     have hq' : p.union q = p :=
-      Possibility.ext rfl (funext fun v => by
-        by_cases h : (p.assignment v).Dom
-        · simp [Possibility.union, h]
-        · have h' : p.assignment v = ⊥ := Part.eq_none_iff'.mpr h
-          simp [Possibility.union, hq v, h'])
+      Possibility.ext rfl (funext fun v => by simp [hq v])
     rwa [hq']
   · intro hr
     exact ⟨r, hr, ⟨r.world, fun _ => ⊥⟩, fun _ => rfl,
       Possibility.compat_iff.mpr ⟨rfl, fun _ _ _ _ h => absurd h (Part.notMem_none _)⟩,
-      Possibility.ext rfl (funext fun v => by
-        by_cases h : (r.assignment v).Dom
-        · simp [Possibility.union, h]
-        · have h' : r.assignment v = ⊥ := Part.eq_none_iff'.mpr h
-          simp [Possibility.union, h'])⟩
+      Possibility.ext rfl (funext fun v => by simp)⟩
 
 @[simp] theorem initial_merge (s : State W V M) : State.merge State.initial s = s := by
   rw [merge_comm, merge_initial]
