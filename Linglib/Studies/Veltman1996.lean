@@ -883,17 +883,18 @@ variable {W V M : Type*} {s t : Set W}
 yet introduced. -/
 def toIndexedState (V M : Type*) (s : Set W) :
     DynamicSemantics.State W V M :=
-  {p | p.world ∈ s ∧ ∀ v, p.assignment v = none}
+  {p | p.world ∈ s ∧ ∀ v, p.assignment v = ⊥}
 
-@[simp] theorem mem_toIndexedState {p : Possibility W V (Option M)} :
+@[simp] theorem mem_toIndexedState {p : Possibility W V (Part M)} :
     p ∈ toIndexedState V M s ↔
-      p.world ∈ s ∧ ∀ v, p.assignment v = none := Iff.rfl
+      p.world ∈ s ∧ ∀ v, p.assignment v = ⊥ := Iff.rfl
 
 /-- The embedding lands in the empty stratum. -/
 theorem uniformAt_toIndexedState :
     State.UniformAt ∅ (toIndexedState V M s) := fun p hp => by
   ext v
-  simp [Possibility.domain, hp.2 v]
+  simp only [Possibility.mem_domain, hp.2 v, Set.mem_empty_iff_false, iff_false]
+  exact Part.not_none_dom
 
 /-- The embedding is faithful on worldly content. -/
 @[simp] theorem worlds_toIndexedState :
@@ -903,7 +904,7 @@ theorem uniformAt_toIndexedState :
   · rintro ⟨p, hp, rfl⟩
     exact hp.1
   · intro hw
-    exact ⟨⟨w, fun _ => none⟩, ⟨hw, fun _ => rfl⟩, rfl⟩
+    exact ⟨⟨w, fun _ => ⊥⟩, ⟨hw, fun _ => rfl⟩, rfl⟩
 
 /-- Eliminating worlds is gaining information: the embedding reverses
 into `⊑`. -/
@@ -911,7 +912,7 @@ theorem toIndexedState_infoLe_iff :
     (toIndexedState V M s ⊑ toIndexedState V M t) ↔ t ⊆ s := by
   constructor
   · intro h w hw
-    obtain ⟨p, hp, hpq⟩ := h ⟨w, fun _ => none⟩ ⟨hw, fun _ => rfl⟩
+    obtain ⟨p, hp, hpq⟩ := h ⟨w, fun _ => ⊥⟩ ⟨hw, fun _ => rfl⟩
     have hs := hp.1
     rwa [hpq.1] at hs
   · rintro h q ⟨hq, hnone⟩

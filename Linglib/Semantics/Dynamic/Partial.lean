@@ -15,7 +15,7 @@ of partial-function composition, true by construction (`admits_seq`).
 
 This is partiality of the *arrow*, and it is orthogonal to the partiality
 of the *points*: DRT's embeddings are partial assignments of discourse
-referents (`Possibility.domain`, `Option`-valued — `Dynamic/State.lean`),
+referents (`Possibility.domain`, `Part`-valued — `Dynamic/State.lean`),
 which encodes referential growth, not presupposition. The two compose in
 `Dynamic/FileChange.lean`, where `FCP` is `CCP.Partial` at partial-point
 states. ([haug-2014]'s "partial dynamic semantics" is the *point* sense.)

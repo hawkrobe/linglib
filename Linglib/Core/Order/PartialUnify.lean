@@ -232,6 +232,13 @@ theorem Compat.symm [Preorder α] {a b : α} (h : Compat a b) : Compat b a := by
   obtain ⟨ha, hb⟩ := PartialUnify.mem_upperBounds_pair.mp hu
   exact Compat.of_le hb ha
 
+/-- Compatibility persists downward. -/
+theorem Compat.mono [Preorder α] {a b c d : α} (h₁ : a ≤ b) (h₂ : c ≤ d)
+    (h : Compat b d) : Compat a c := by
+  obtain ⟨u, hu⟩ := h
+  obtain ⟨hb, hd⟩ := PartialUnify.mem_upperBounds_pair.mp hu
+  exact Compat.of_le (h₁.trans hb) (h₂.trans hd)
+
 theorem compat_self [Preorder α] (a : α) : Compat a a :=
   Compat.of_le le_rfl le_rfl
 

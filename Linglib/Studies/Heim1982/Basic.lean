@@ -87,7 +87,7 @@ def indefinitePersistsDiscourse (man walkedIn satDown : E → Prop) (x : ℕ) :
 (not a presupposition failure) — provided the body is defined on the
 randomly assigned file. -/
 theorem indef_defined_when_novel (x : ℕ) (F : State W ℕ E)
-    (hnovel : ∀ p ∈ F, p.assignment x = none) (body : FCP W ℕ E)
+    (hnovel : ∀ p ∈ F, ¬(p.assignment x).Dom) (body : FCP W ℕ E)
     (hbody : (body (F.randomAssign x)).Dom) :
     (FCP.indef x body).admits F :=
   ⟨hnovel, hbody⟩
@@ -122,9 +122,9 @@ Negation is eliminative over the *input* file (`FCP.neg_eliminative`),
 so a novel variable stays novel after negation — the dref is trapped
 inside the scope of ¬. -/
 theorem neg_blocks_dref (x : ℕ) (φ : FCP W ℕ E) {F F' : State W ℕ E}
-    (hnovel : ∀ p ∈ F, p.assignment x = none)
+    (hnovel : ∀ p ∈ F, ¬(p.assignment x).Dom)
     (h : F' ∈ FCP.neg φ F) :
-    ∀ p ∈ F', p.assignment x = none :=
+    ∀ p ∈ F', ¬(p.assignment x).Dom :=
   fun p hp => hnovel p (FCP.neg_eliminative φ h hp)
 
 -- ════════════════════════════════════════════════════
@@ -149,7 +149,7 @@ theorem novelty_violation (x : ℕ) (body : FCP W ℕ E)
     ¬ (FCP.indef x body).admits F := by
   rintro ⟨hall, -⟩
   obtain ⟨p, hp⟩ := hne
-  exact h p hp (hall p hp)
+  exact hall p hp (h p hp)
 
 /-- A definite with a novel index causes presupposition failure.
 
@@ -198,11 +198,11 @@ minimal state. -/
 def startFile : State ExWorld ℕ ExEntity := State.initial
 
 /-- Index 1 is novel in the start file (no drefs yet). -/
-example : ∀ p ∈ startFile, p.assignment 1 = none :=
+example : ∀ p ∈ startFile, p.assignment 1 = ⊥ :=
   fun _ hp => hp 1
 
 /-- The start file is consistent (nonempty). -/
-example : startFile.Nonempty := ⟨⟨w₀, λ _ => none⟩, λ _ => rfl⟩
+example : startFile.Nonempty := ⟨⟨w₀, λ _ => ⊥⟩, λ _ => rfl⟩
 
 end ConcreteExamples
 

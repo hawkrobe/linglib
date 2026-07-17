@@ -1,3 +1,4 @@
+import Linglib.Core.Order.Flat
 import Linglib.Morphology.Unification
 import Linglib.Features.Case.Basic
 import Linglib.Features.Person.Decomposition
@@ -35,7 +36,7 @@ This is the flagship counterexample to treating the flat information order
 (`Morphology/Unification.lean`) as linguistically definitional: indeterminate
 agreement is an *annotation-level* phenomenon demanding non-flat (set-valued) slots.
 `toIndet` below certifies the relationship — the flat order embeds into the
-(superset-ordered) indeterminacy lattice as the determinate fragment, with `none`
+(superset-ordered) indeterminacy lattice as the determinate fragment, with `⊥`
 (no information) mapping to the universal set.
 
 Formal highlights replicated as theorems: the German/Polish contrast set
@@ -129,17 +130,16 @@ theorem kaufen_rnr :
 /-! ### The refinement certificate: the flat order is the determinate fragment
 
 `Morphology/Unification.lean`'s flat slot order embeds into the indeterminacy
-lattice: a determinate commitment `some x` is the singleton `{x}`, and *no
-information* is the universal set (any realization possible). Information increases
-as sets *shrink*, so the embedding is order-reversing into `⊆` — i.e. an embedding
-into the superset order. Set-valued slots are a refinement of the flat layer, not a
-rival to it. -/
+lattice: a determinate commitment `↑x` is the singleton `{x}`, and *no
+information* (`⊥`) is the universal set (any realization possible). Information
+increases as sets *shrink*, so the embedding is order-reversing into `⊆` — i.e. an
+embedding into the superset order. Set-valued slots are a refinement of the flat
+layer, not a rival to it. -/
 
-/-- A flat slot as an indeterminate value: `none` = no commitment = anything goes. -/
-def toIndet (a : Option Case) : IndetVal Case :=
-  match a with
-  | none => Finset.univ
-  | some x => {x}
+/-- A flat slot as an indeterminate value: `⊥` = no commitment = anything goes. -/
+def toIndet : Flat Case → IndetVal Case
+  | ⊥ => Finset.univ
+  | (x : Case) => {x}
 
 private theorem univ_ne_singleton (y : Case) : (Finset.univ : Finset Case) ≠ {y} := by
   intro h
@@ -150,40 +150,26 @@ private theorem univ_ne_singleton (y : Case) : (Finset.univ : Finset Case) ≠ {
 theorem toIndet_injective : Function.Injective toIndet := by
   intro a b h
   match a, b with
-  | none, none => rfl
-  | none, some y => exact absurd h (univ_ne_singleton y)
-  | some x, none => exact absurd h.symm (univ_ne_singleton x)
-  | some x, some y =>
+  | ⊥, ⊥ => rfl
+  | ⊥, (y : Case) => exact absurd h (univ_ne_singleton y)
+  | (x : Case), ⊥ => exact absurd h.symm (univ_ne_singleton x)
+  | (x : Case), (y : Case) =>
     simp only [toIndet, Finset.singleton_inj] at h
-    exact congrArg some h
+    exact Flat.coe_inj.mpr h
 
 /-- The embedding certificate: flat subsumption is superset inclusion of realization
-    sets. More committed = smaller set; `none` sits below everything because `univ`
+    sets. More committed = smaller set; `⊥` sits below everything because `univ`
     contains everything. -/
-theorem flatLE_iff_toIndet_superset (a b : Option Case) :
-    a.FlatLE b ↔ toIndet b ⊆ toIndet a := by
-  match a, b with
-  | none, b =>
-    simp only [toIndet]
-    exact ⟨fun _ => Finset.subset_univ _, fun _ => Option.FlatLE.none_le _⟩
-  | some x, none =>
-    constructor
-    · intro h
-      exact absurd (h x rfl) (by simp)
-    · intro h
-      exact absurd (Finset.Subset.antisymm (Finset.subset_univ _) h).symm
-        (univ_ne_singleton x)
-  | some x, some z =>
-    constructor
-    · intro h
-      have := Option.some.inj (h x rfl)
-      simp [toIndet, this]
-    · intro h y hy
-      have hxy : x = y := Option.some.inj hy
-      subst hxy
-      have hz : z ∈ ({x} : Finset Case) := h (by simp [toIndet])
-      rw [Finset.mem_singleton] at hz
-      exact congrArg some hz
+theorem le_iff_toIndet_superset (a b : Flat Case) :
+    a ≤ b ↔ toIndet b ⊆ toIndet a := by
+  cases a with
+  | bot => exact iff_of_true bot_le (Finset.subset_univ _)
+  | coe x =>
+    cases b with
+    | bot =>
+      refine iff_of_false (Flat.not_coe_le_bot x) fun h => ?_
+      exact univ_ne_singleton x (Finset.Subset.antisymm h (Finset.subset_univ _))
+    | coe z => simp [toIndet, eq_comm]
 
 /-! ### §§5–6: feature resolution — person as marker sets, resolution as union -/
 

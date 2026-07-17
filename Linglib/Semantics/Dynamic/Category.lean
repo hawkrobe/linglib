@@ -187,15 +187,13 @@ section Total
 
 open Opposite
 
-open scoped Classical
-
 variable {W M V : Type*}
 
 /-- Classify each element of the possibilities family as a point: on
 objects this is `Possibility.domainEquiv`; arrows become descents, by
 `Possibility.le_iff_eq_restrict`. -/
-noncomputable def elementsToPoints :
-    (possibilities W M V).Elements ⥤ (Possibility W V (Option M))ᵒᵖ where
+def elementsToPoints :
+    (possibilities W M V).Elements ⥤ (Possibility W V (Part M))ᵒᵖ where
   obj x := op ((Possibility.domainEquiv x.1.unop).symm x.2).1
   map {x y} f := (homOfLE (show
       ((Possibility.domainEquiv y.1.unop).symm y.2).1 ≤
@@ -241,7 +239,7 @@ instance : (elementsToPoints (W := W) (M := M) (V := V)).IsEquivalence := {}
 type**: the category of elements is equivalent to the opposite of the
 descent preorder on points — every point lies over its own domain. -/
 noncomputable def elementsEquivPoints :
-    (possibilities W M V).Elements ≌ (Possibility W V (Option M))ᵒᵖ :=
+    (possibilities W M V).Elements ≌ (Possibility W V (Part M))ᵒᵖ :=
   elementsToPoints.asEquivalence
 
 end Total

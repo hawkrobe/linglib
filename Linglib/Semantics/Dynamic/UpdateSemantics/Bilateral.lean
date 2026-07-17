@@ -14,8 +14,8 @@ validating Double Negation Elimination (negation swaps the dimensions)
 and cross-disjunct anaphora.
 
 States are Heimian (the paper's Def. 3.1): sets of world-assignment
-pairs whose assignments are total functions into `Option E` — `none` is
-the paper's `∗`, so definedness is per-possibility and non-uniform.
+pairs whose assignments are `Part E`-valued — `⊥` is the paper's `∗`,
+so definedness is per-possibility and non-uniform.
 This is strictly more expressive than the indexed `State` of `State.lean`:
 a uniform base cannot represent partially familiar states, on which the
 paper's separation of assertability (54) from Heimian familiarity rests.
@@ -70,14 +70,14 @@ Standard dynamic semantics has only the former; the latter is what makes
 DNE and cross-disjunct anaphora work. -/
 @[ext] structure BilateralDen (W V E : Type*) where
   /-- Positive update: the result of asserting the sentence. -/
-  positive : Set (Possibility W V (Option E)) → Set (Possibility W V (Option E))
+  positive : Set (Possibility W V (Part E)) → Set (Possibility W V (Part E))
   /-- Negative update: the result of denying the sentence. -/
-  negative : Set (Possibility W V (Option E)) → Set (Possibility W V (Option E))
+  negative : Set (Possibility W V (Part E)) → Set (Possibility W V (Part E))
 
 namespace BilateralDen
 
-variable {φ ψ : BilateralDen W V E} {s : Set (Possibility W V (Option E))}
-  {p : Possibility W V (Option E)}
+variable {φ ψ : BilateralDen W V E} {s : Set (Possibility W V (Part E))}
+  {p : Possibility W V (Part E)}
 
 /-- Worldly atom: keep the possibilities where the proposition holds
 (positively) or fails (negatively). -/
@@ -89,15 +89,15 @@ def atom (pred : W → Prop) : BilateralDen W V E where
 where `t` is undefined survives in neither dimension
 ([elliott-sudo-2025]'s definedness clause for atomic sentences). -/
 def pred1 (P : E → W → Prop) (t : V) : BilateralDen W V E where
-  positive s := {p ∈ s | ∃ e, p.assignment t = some e ∧ P e p.world}
-  negative s := {p ∈ s | ∃ e, p.assignment t = some e ∧ ¬ P e p.world}
+  positive s := {p ∈ s | ∃ e ∈ p.assignment t, P e p.world}
+  negative s := {p ∈ s | ∃ e ∈ p.assignment t, ¬ P e p.world}
 
 /-- Binary atomic predication at `t₁`, `t₂`; partial like `pred1`. -/
 def pred2 (P : E → E → W → Prop) (t₁ t₂ : V) : BilateralDen W V E where
-  positive s := {p ∈ s | ∃ e₁ e₂, p.assignment t₁ = some e₁ ∧
-    p.assignment t₂ = some e₂ ∧ P e₁ e₂ p.world}
-  negative s := {p ∈ s | ∃ e₁ e₂, p.assignment t₁ = some e₁ ∧
-    p.assignment t₂ = some e₂ ∧ ¬ P e₁ e₂ p.world}
+  positive s := {p ∈ s | ∃ e₁ ∈ p.assignment t₁,
+    ∃ e₂ ∈ p.assignment t₂, P e₁ e₂ p.world}
+  negative s := {p ∈ s | ∃ e₁ ∈ p.assignment t₁,
+    ∃ e₂ ∈ p.assignment t₂, ¬ P e₁ e₂ p.world}
 
 /-- Negation swaps the dimensions: `s[¬φ]⁺ = s[φ]⁻` and `s[¬φ]⁻ = s[φ]⁺`.
 Negation does not "push in" — this is the key insight of bilateralism. -/
@@ -126,14 +126,14 @@ theorem neg_involutive :
 possibilities of `s` that subsist in neither dimension — the dynamic
 analogue of the third Strong Kleene truth value. -/
 def unknownUpdate (φ : BilateralDen W V E)
-    (s : Set (Possibility W V (Option E))) : Set (Possibility W V (Option E)) :=
+    (s : Set (Possibility W V (Part E))) : Set (Possibility W V (Part E)) :=
   {p ∈ s | ¬(p ≺ φ.positive s) ∧ ¬(p ≺ φ.negative s)}
 
 /-- Assertability ([elliott-sudo-2025], (54)): the unknown update is
 empty — every possibility is accounted for by one of the dimensions.
 Strictly weaker than Heimian familiarity. -/
 def assertable (φ : BilateralDen W V E)
-    (c : Set (Possibility W V (Option E))) : Prop :=
+    (c : Set (Possibility W V (Part E))) : Prop :=
   φ.unknownUpdate c = ∅
 
 /-- The unknown update is invariant under negation. -/
@@ -257,21 +257,21 @@ end Quantifiers
 
 /-- Bilateral support: the positive update is consistent and the state
 subsists in it. -/
-def supports (s : Set (Possibility W V (Option E)))
+def supports (s : Set (Possibility W V (Part E)))
     (φ : BilateralDen W V E) : Prop :=
   (φ.positive s).Nonempty ∧ s ⪯ φ.positive s
 
 /-- Bilateral entailment: every consistent positive update of `φ`
 supports `ψ`. -/
 def entails (φ ψ : BilateralDen W V E) : Prop :=
-  ∀ s : Set (Possibility W V (Option E)),
+  ∀ s : Set (Possibility W V (Part E)),
     (φ.positive s).Nonempty → supports (φ.positive s) ψ
 
 @[inherit_doc] notation:50 φ " ⊨ᵇ " ψ => entails φ ψ
 
 /-! ### Structural lemmas -/
 
-theorem atom_complementary (pred : W → Prop) (s : Set (Possibility W V (Option E))) :
+theorem atom_complementary (pred : W → Prop) (s : Set (Possibility W V (Part E))) :
     (atom pred (E := E)).positive s ∪ (atom pred).negative s = s := by
   ext p
   simp only [atom, Set.mem_union, Set.mem_setOf_eq]
@@ -282,7 +282,7 @@ theorem atom_complementary (pred : W → Prop) (s : Set (Possibility W V (Option
     · exact Or.inl ⟨h, hp⟩
     · exact Or.inr ⟨h, hp⟩
 
-theorem atom_disjoint (pred : W → Prop) (s : Set (Possibility W V (Option E))) :
+theorem atom_disjoint (pred : W → Prop) (s : Set (Possibility W V (Part E))) :
     (atom pred (E := E)).positive s ∩ (atom pred).negative s = ∅ := by
   ext p
   exact ⟨fun ⟨⟨_, hp⟩, ⟨_, hnp⟩⟩ => absurd hp hnp, False.elim⟩
@@ -334,8 +334,8 @@ def toPair (φ : BilateralDen W V E) :=
   (φ.positive, φ.negative)
 
 /-- Construct a bilateral denotation from a pair of updates. -/
-def ofPair (u : (Set (Possibility W V (Option E)) → Set (Possibility W V (Option E))) ×
-    (Set (Possibility W V (Option E)) → Set (Possibility W V (Option E)))) :
+def ofPair (u : (Set (Possibility W V (Part E)) → Set (Possibility W V (Part E))) ×
+    (Set (Possibility W V (Part E)) → Set (Possibility W V (Part E)))) :
     BilateralDen W V E where
   positive := u.1
   negative := u.2
@@ -358,7 +358,7 @@ swaps them by definition. -/
 theorem isBilateral :
     Core.Logic.Bilateral.IsBilateral
       (Form := BilateralDen W V E)
-      (Result := Set (Possibility W V (Option E)) → Set (Possibility W V (Option E)))
+      (Result := Set (Possibility W V (Part E)) → Set (Possibility W V (Part E)))
       (·.positive) (·.negative) neg where
   positive_negate _ := rfl
   negative_negate _ := rfl

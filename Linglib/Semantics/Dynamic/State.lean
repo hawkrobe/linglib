@@ -11,8 +11,9 @@ assignments partial — [kamp-vangenabith-reyle-2011]'s Def. 23 (sets of
 pairs of a world and an embedding), the form the field standardly
 assumes: the absurd state is `∅`, the initial state is `W × {g_⊤}`
 (`initial`), and the lattice of states is `Set`'s. Partiality is by
-`Option` ([elliott-sudo-2025]'s Def. 3.1: total functions into
-`D ∪ {∗}`), so no component of a state carries a proof obligation.
+`Part` ([elliott-sudo-2025]'s Def. 3.1 renders it as total functions
+into `D ∪ {∗}`), so no component of a state carries data beyond the
+world–assignment pair.
 
 There is no base field: Def. 23's "Dom(f) = X" is the *uniform* stratum
 (`UniformAt`), and a base is the index of a fiber, not part of the data.
@@ -83,20 +84,20 @@ variable {W V M : Type*}
 /-- An information state: a set of world–assignment pairs, the
 assignments partial (Def. 23). The absurd state is `∅`; the lattice of
 states is `Set`'s. -/
-abbrev State (W V M : Type*) := Set (Possibility W V (Option M))
+abbrev State (W V M : Type*) := Set (Possibility W V (Part M))
 
 /-- The initial information state `W × {g_⊤}`: every world live, no
 referent defined. -/
-def State.initial : State W V M := {p | ∀ v, p.assignment v = none}
+def State.initial : State W V M := {p | ∀ v, p.assignment v = ⊥}
 
 /-- `p` *subsists* in `s` ([elliott-sudo-2025], Def. 3.3): it has a
 point above it in `s`. -/
-def Subsists (p : Possibility W V (Option M)) (s : State W V M) : Prop :=
+def Subsists (p : Possibility W V (Part M)) (s : State W V M) : Prop :=
   ∃ q ∈ s, p ≤ q
 
 @[inherit_doc] scoped notation:50 p " ≺ " s => Subsists p s
 
-theorem Subsists.of_mem {p : Possibility W V (Option M)} {s : State W V M}
+theorem Subsists.of_mem {p : Possibility W V (Part M)} {s : State W V M}
     (h : p ∈ s) : p ≺ s :=
   ⟨p, h, le_refl p⟩
 
@@ -141,12 +142,12 @@ theorem infoLe_empty (s : State W V M) : s ⊑ (∅ : State W V M) :=
 
 /-! ### Consistent merge -/
 
-/-- Consistent merge ([kamp-vangenabith-reyle-2011] Def. 26, binary):
+/-- Consistent merge ([kamp-vangenabith-reyle-2011] Def. 0.26, binary):
 the points assembled from compatible pairs. Across strata this is the
 descendant-mediated join — plain intersection of point-sets is empty
 between distinct strata. -/
 def State.merge (s s' : State W V M) : State W V M :=
-  {r | ∃ p ∈ s, ∃ q ∈ s', p.Compatible q ∧ r = p.union q}
+  {r | ∃ p ∈ s, ∃ q ∈ s', Compat p q ∧ r = p.union q}
 
 /-- The merge is above the left component in informativeness. -/
 theorem infoLe_merge_left (s s' : State W V M) : s ⊑ s.merge s' := by
@@ -156,23 +157,23 @@ theorem infoLe_merge_left (s s' : State W V M) : s ⊑ s.merge s' := by
 /-- The merge is above the right component in informativeness. -/
 theorem infoLe_merge_right (s s' : State W V M) : s' ⊑ s.merge s' := by
   rintro r ⟨p, hp, q, hq, hpq, rfl⟩
-  exact ⟨q, hq, hpq.le_union_right⟩
+  exact ⟨q, hq, Possibility.le_union_right hpq⟩
 
-/-- **The merge is the least upper bound** (Def. 26's universal
+/-- **The merge is the least upper bound** (Def. 0.26's universal
 property, in the informativeness preorder): anything above both
 components is above their merge. -/
 theorem merge_infoLe {s s' t : State W V M} (hs : s ⊑ t)
     (hs' : s' ⊑ t) : s.merge s' ⊑ t := fun u hu => by
   obtain ⟨p, hp, hpu⟩ := hs u hu
   obtain ⟨q, hq, hqu⟩ := hs' u hu
-  exact ⟨p.union q, ⟨p, hp, q, hq, Possibility.compatible_of_le_of_le hpu hqu, rfl⟩,
+  exact ⟨p.union q, ⟨p, hp, q, hq, Compat.of_le hpu hqu, rfl⟩,
     Possibility.union_le hpu hqu⟩
 
 /-- Consistent merge is commutative. -/
 theorem merge_comm (s s' : State W V M) : s.merge s' = s'.merge s := by
   ext r
   constructor <;> rintro ⟨p, hp, q, hq, h, rfl⟩ <;>
-    exact ⟨q, hq, p, hp, h.symm, h.union_comm⟩
+    exact ⟨q, hq, p, hp, h.symm, Possibility.union_comm h⟩
 
 /-- Consistent merge is associative. -/
 theorem merge_assoc (s t u : State W V M) :
@@ -180,16 +181,16 @@ theorem merge_assoc (s t u : State W V M) :
   ext r
   constructor
   · rintro ⟨a, ⟨p, hp, q, hq, hpq, rfl⟩, v, hv, hav, rfl⟩
-    have hpv := hav.left_of_union
-    have hqv := hpq.right_of_union hav
+    have hpv := Possibility.compat_of_union_left hav
+    have hqv := Possibility.compat_of_union_right hpq hav
     exact ⟨p, hp, q.union v, ⟨q, hq, v, hv, hqv, rfl⟩,
-      (Possibility.Compatible.union_left hpq.symm hpv.symm).symm,
+      (Possibility.compat_union_left hpq.symm hpv.symm).symm,
       Possibility.union_assoc p q v⟩
   · rintro ⟨p, hp, a, ⟨q, hq, v, hv, hqv, rfl⟩, hpa, rfl⟩
-    have hpq := hpa.symm.left_of_union.symm
-    have hpv := (hqv.right_of_union hpa.symm).symm
+    have hpq := (Possibility.compat_of_union_left hpa.symm).symm
+    have hpv := (Possibility.compat_of_union_right hqv hpa.symm).symm
     exact ⟨p.union q, ⟨p, hp, q, hq, hpq, rfl⟩, v, hv,
-      Possibility.Compatible.union_left hpv hqv,
+      Possibility.compat_union_left hpv hqv,
       (Possibility.union_assoc p q v).symm⟩
 
 /-- The initial state is a unit for consistent merge: with `merge_comm`,
@@ -201,12 +202,20 @@ monoid of information — the content half of
   constructor
   · rintro ⟨p, hp, q, hq, -, rfl⟩
     have hq' : p.union q = p :=
-      Possibility.ext rfl (funext fun v => by simp [Possibility.union, hq v])
+      Possibility.ext rfl (funext fun v => by
+        by_cases h : (p.assignment v).Dom
+        · simp [Possibility.union, h]
+        · have h' : p.assignment v = ⊥ := Part.eq_none_iff'.mpr h
+          simp [Possibility.union, hq v, h'])
     rwa [hq']
   · intro hr
-    exact ⟨r, hr, ⟨r.world, fun _ => none⟩, fun _ => rfl,
-      ⟨rfl, fun _ _ _ _ h => by simp at h⟩,
-      Possibility.ext rfl (funext fun v => by simp [Possibility.union])⟩
+    exact ⟨r, hr, ⟨r.world, fun _ => ⊥⟩, fun _ => rfl,
+      Possibility.compat_iff.mpr ⟨rfl, fun _ _ _ _ h => absurd h (Part.notMem_none _)⟩,
+      Possibility.ext rfl (funext fun v => by
+        by_cases h : (r.assignment v).Dom
+        · simp [Possibility.union, h]
+        · have h' : r.assignment v = ⊥ := Part.eq_none_iff'.mpr h
+          simp [Possibility.union, h'])⟩
 
 @[simp] theorem initial_merge (s : State W V M) : State.merge State.initial s = s := by
   rw [merge_comm, merge_initial]
@@ -221,7 +230,7 @@ def worlds (s : State W V M) : Set W :=
 /-- A referent is *familiar* at a state ([elliott-sudo-2025], Def. 3.2;
 [heim-1982]'s files): defined at every point. -/
 def Familiar (s : State W V M) (x : V) : Prop :=
-  ∀ p ∈ s, p.assignment x ≠ none
+  ∀ p ∈ s, (p.assignment x).Dom
 
 namespace State
 
@@ -237,12 +246,13 @@ def UniformAt (X : Set V) (I : State W V M) : Prop :=
 theorem uniformAt_initial : UniformAt ∅ (initial : State W V M) :=
   fun p hp => by
     ext v
-    simp [Possibility.domain, hp v]
+    simp only [Possibility.mem_domain, hp v, Set.mem_empty_iff_false, iff_false]
+    exact Part.not_none_dom
 
 /-- Into a uniform stratum, subsistence is membership: a point already
 at the stratum's domain has no room to grow. -/
 theorem subsists_iff_mem {X : Set V} {s : State W V M}
-    (hs : UniformAt X s) {p : Possibility W V (Option M)}
+    (hs : UniformAt X s) {p : Possibility W V (Part M)}
     (hp : p.domain = X) : (p ≺ s) ↔ p ∈ s :=
   ⟨fun ⟨q, hq, hpq⟩ =>
     (Possibility.eq_of_le_of_domain_eq hpq (hp.trans (hs q hq).symm)).symm ▸ hq,
@@ -270,19 +280,16 @@ domain forces equality. -/
 theorem merge_eq_inter_of_uniform {X : Set V} {s s' : State W V M}
     (hs : UniformAt X s) (hs' : UniformAt X s') :
     s.merge s' = s ∩ s' := by
-  have hself : ∀ r : Possibility W V (Option M), r.union r = r := fun r =>
-    Possibility.ext rfl (funext fun v => by
-      rcases h : r.assignment v with _ | e <;> simp [Possibility.union, h])
+  have hself : ∀ r : Possibility W V (Part M), r.union r = r := fun r =>
+    Possibility.ext rfl (funext fun v => by simp [Possibility.union])
   ext r
   constructor
   · rintro ⟨p, hp, q, hq, hpq, rfl⟩
-    obtain rfl := hpq.eq_of_domain_eq ((hs p hp).trans (hs' q hq).symm)
+    obtain rfl := Possibility.eq_of_compat_of_domain_eq hpq ((hs p hp).trans (hs' q hq).symm)
     rw [hself p]
     exact ⟨hp, hq⟩
   · rintro ⟨hr, hr'⟩
-    refine ⟨r, hr, r, hr', ⟨rfl, fun v e e' he he' => ?_⟩, (hself r).symm⟩
-    rw [he] at he'
-    exact (Option.some.injEq .. ▸ he' :)
+    exact ⟨r, hr, r, hr', compat_self r, (hself r).symm⟩
 
 section Fibred
 
@@ -297,7 +304,6 @@ theorem uniformAt_merge {X Y : Set V} {s s' : State W V M}
 state includes into the restricted image of the stronger — the fibred
 order, glued from within-stratum `⊆` along `restrict`. -/
 theorem subsistsIn_iff_subset_restrict {X : Set V}
-    [∀ v, Decidable (v ∈ X)]
     {s s' : State W V M} (hs : UniformAt X s) :
     (s ⪯ s') ↔ s ⊆ Possibility.restrict X '' s' := by
   constructor
@@ -313,7 +319,6 @@ theorem subsistsIn_iff_subset_restrict {X : Set V}
 restricted image of the stronger is included in the weaker — the
 eliminative direction of the fibred order. -/
 theorem infoLe_iff_restrict_subset {X : Set V}
-    [∀ v, Decidable (v ∈ X)]
     {s s' : State W V M} (hs : UniformAt X s) :
     (s ⊑ s') ↔ Possibility.restrict X '' s' ⊆ s := by
   constructor
@@ -327,27 +332,23 @@ theorem infoLe_iff_restrict_subset {X : Set V}
 end Fibred
 
 /-- Restriction of a state: pointwise, by direct image. -/
-def restrict (X : Set V) [∀ v, Decidable (v ∈ X)] (I : State W V M) :
-    State W V M :=
+def restrict (X : Set V) (I : State W V M) : State W V M :=
   Possibility.restrict X '' I
 
 /-- Restriction only forgets: the restricted state subsists in the
 original. -/
-theorem subsistsIn_restrict (X : Set V) [∀ v, Decidable (v ∈ X)]
-    (I : State W V M) : I.restrict X ⪯ I := by
+theorem subsistsIn_restrict (X : Set V) (I : State W V M) : I.restrict X ⪯ I := by
   rintro p ⟨q, hq, rfl⟩
   exact ⟨q, hq, Possibility.restrict_le X q⟩
 
 /-- Restriction meets the stratification. -/
-theorem uniformAt_restrict {X Y : Set V} [∀ v, Decidable (v ∈ X)]
-    {I : State W V M}
+theorem uniformAt_restrict {X Y : Set V} {I : State W V M}
     (h : UniformAt Y I) : UniformAt (X ∩ Y) (I.restrict X) := by
   rintro p ⟨q, hq, rfl⟩
   rw [Possibility.domain_restrict, h q hq]
 
 /-- Restriction composes along intersections. -/
-theorem restrict_restrict (X Y : Set V) [∀ v, Decidable (v ∈ X)]
-    [∀ v, Decidable (v ∈ Y)] (I : State W V M) :
+theorem restrict_restrict (X Y : Set V) (I : State W V M) :
     (I.restrict Y).restrict X = I.restrict (X ∩ Y) := by
   unfold restrict
   rw [← Set.image_comp]
@@ -359,7 +360,7 @@ variable [DecidableEq V]
 [groenendijk-stokhof-1991]'s `x := random`): indeterministically extend
 each point to a defined value at `x`. -/
 def randomAssign (I : State W V M) (x : V) : State W V M :=
-  {p | ∃ q ∈ I, ∃ m : M, p = q.update x (some m)}
+  {p | ∃ q ∈ I, ∃ m : M, p = q.update x (Part.some m)}
 
 /-- Random assignment makes its referent familiar. -/
 theorem familiar_randomAssign (I : State W V M) (x : V) :
@@ -374,7 +375,7 @@ state-level face of `Possibility.domainEquiv`, and the comparison to the
 predecessor's fibers: an order isomorphism for `⊆` (which is `⪯` on the
 stratum, `subsistsIn_iff_subset`), hence an anti-isomorphism for `⊑`
 (`infoLe_iff_superset`). -/
-def uniformEquiv (X : Set V) [∀ v, Decidable (v ∈ X)] :
+def uniformEquiv (X : Set V) :
     {I : State W V M // UniformAt X I} ≃o Set (W × (X → M)) where
   toFun I := {e | ((Possibility.domainEquiv X).symm e).1 ∈ I.1}
   invFun S :=

@@ -254,22 +254,23 @@ theorem DRS.uniformAt_state (W : Type*) (K : DRS L V) (hK : K.IsProper) :
 /-- The characteristic membership form: a point survives in `⟦K⟧ˢ` iff it
 lives on the referents and its values are reached from some input. -/
 theorem DRS.mem_state {W : Type*} {K : DRS L V} {hK : K.IsProper}
-    {q : Possibility W V (Option M)} :
+    {q : Possibility W V (Part M)} :
     q ∈ K.state W hK ↔ q.domain = (↑(∅ ∪ K.referents) : Set V) ∧
       ∃ f g : V → M, DRS.toRelAt ∅ K f g ∧
-        ∀ v : (↑(∅ ∪ K.referents) : Set V), q.assignment v.1 = some (g v.1) := by
+        ∀ v : (↑(∅ ∪ K.referents) : Set V), g v.1 ∈ q.assignment v.1 := by
   constructor
   · rintro ⟨hq, p, hpI, hp, hw, e, e', he, he', f, g, hf, hg, hrel⟩
     refine ⟨hq, f, g, hrel, fun v => ?_⟩
-    rw [he' v]
-    exact congrArg some (congrFun hg v).symm
+    have hv := he' v
+    rw [← hg] at hv
+    exact hv
   · rintro ⟨hq, f, g, hrel, hvals⟩
-    refine ⟨hq, ⟨q.world, fun _ => none⟩, fun _ => rfl, ?_, rfl,
+    refine ⟨hq, ⟨q.world, fun _ => ⊥⟩, fun _ => rfl, ?_, rfl,
       (↑(∅ : Finset V) : Set V).restrict f,
       (↑(∅ ∪ K.referents) : Set V).restrict g,
       fun v => absurd v.2 (by simp), fun v => hvals v, f, g, rfl, rfl, hrel⟩
     ext v
-    simp [Possibility.domain]
+    exact iff_of_false (fun h => h) (by simp)
 
 /-! ### Base invariance
 

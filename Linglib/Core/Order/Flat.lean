@@ -2,46 +2,36 @@ import Mathlib.Order.OmegaCompletePartialOrder
 import Linglib.Core.Order.PartialUnify
 
 /-!
-# The flat domain
+# The flat order
 
-`Flat α` is `Option α` carrying the *flat* order: `⊥` (`none`, no information)
-below everything, distinct values incomparable. An order-carrying alias in the
-`WithBot` mold, but the underlying order is *discrete*, not lifted — committed
-values are an antichain.
+`Flat α` is `Option α` with the flat order: `⊥` below everything, distinct
+values incomparable. It is the lift of the discrete order on `α` — the order
+of partial values under extension — and is mathlib's order on `Part α`
+carried on its decidable twin `Option` (`le_iff_ofOption_le`), where it
+supports `DecidableEq`, `DecidableLE`, `#eval`, and constructor
+pattern-matching. "Flat domain" is the domain-theory name for this poset
+([winskel-1993]; the `flat` class of Isabelle/HOLCF).
 
-This is the **free (Scott) domain on a set**: the lift of the discrete order,
-`Flat = lift ∘ discrete`, equivalently `1 + α` as an object. Two facts make it
-the canonical small domain rather than an ad-hoc gadget:
+The flat order is bounded-complete but not a lattice: meets are total
+(`SemilatticeInf`), joins partial (`PartialUnify`). It is ω-complete
+(`OmegaCompletePartialOrder`), every chain being eventually constant.
+Linguistically it is one atomic feature slot, ordered by [shieber-1986]'s and
+[carpenter-1992]'s subsumption; `Flat Bool` is the knowledge order of Kleene
+three-valued logic. Feature bundles arise via the `Pi` `PartialUnify`
+instance, with `Compat` as consistency.
 
-* it is **bounded-complete but not a lattice** — meets are total
-  (`SemilatticeInf`, agreement or `⊥`) while joins are *partial*
-  (`PartialUnify`: `⊥` is identity, equal commitments merge, distinct
-  commitments have no upper bound). Bounded-completeness *is* the join being
-  partial-yet-unique-when-defined;
-* it is **ω-complete** (`OmegaCompletePartialOrder`) — chains are eventually
-  constant, so they have suprema. `Flat` is the generator of domain theory and
-  the order side of the lifting/partiality monad (`Option`), whose Kleisli
-  arrows `α → Flat β` are partial functions — `PartialUnify.unify` among them.
-
-Linguistically it is one atomic feature slot: the order is [shieber-1986]'s and
-[carpenter-1992]'s subsumption order (an *information* order — `⊥` = unmarked,
-a wildcard for agreement), and `Flat Bool` is the knowledge order of Kleene
-three-valued logic. Feature bundles are built from it by the `Pi` `PartialUnify`
-instance; `Compat` is consistency.
-
-The order skeleton (`Option.FlatLE`, `Flat`, the `PartialOrder`/`OrderBot`/
-`SemilatticeInf`/`OmegaCompletePartialOrder` instances) is an `[UPSTREAM]`
-candidate for `Mathlib/Order/Flat.lean` — root-level `Flat` as with `WithBot`,
-coexisting with the existing namespaced `Module.Flat` and `ConvexCone.Flat`
-(write `_root_.Flat` under `open Module`). The `PartialUnify` instance and
-`compat_iff` stay here: `PartialUnify` is linglib's, not mathlib's.
+The order skeleton follows the `WithBot` mold (`Mathlib/Order/TypeTags.lean`,
+`Mathlib/Order/WithBot.lean`) and is an `[UPSTREAM]` candidate for
+`Mathlib/Order/Flat.lean`, coexisting with the namespaced `Module.Flat` and
+`ConvexCone.Flat`. The `PartialUnify` instance and `compat_iff` stay here.
 
 ## Main declarations
 
-* `Option.FlatLE` — the flat order as a relation on `Option α`
-* `Flat` — the order-carrying alias, with `PartialOrder`, `OrderBot`,
-  `SemilatticeInf`, `OmegaCompletePartialOrder`, and `PartialUnify` instances
+* `Flat` — the order-carrying alias, with coercion `↑ : α → Flat α`, and
+  `PartialOrder`, `OrderBot`, `SemilatticeInf`, `OmegaCompletePartialOrder`,
+  and `PartialUnify` instances
 * `Flat.coe_le_coe`, `Flat.not_coe_le_bot` — the order, characterized
+* `Flat.or` — left-biased total merge, with `le_or_left`/`or_le`
 * `Flat.ωSup_mem_range` — chains attain their supremum (the domain has height ≤ 2)
 * `Flat.ωScottContinuous_of_monotone` — monotone maps out of `Flat` are continuous
 * `Flat.liftEquiv` — the free-domain universal property: functions `α → D` are
@@ -69,73 +59,30 @@ The free-domain universal property is now `liftEquiv` (with its enabling lemma
 * **Three-valued logic.** `Flat Bool` is the knowledge order of Kleene
   three-valued logic; the strong-Kleene connectives are exactly its continuous
   maps. Connects this substrate to the trivalence/presupposition layer.
-
-Ergonomics, separately: add a coercion `↑ : α → Flat α` (as `WithBot.some`) so
-`coe_le_coe`/`not_coe_le_bot` need no explicit `@LE.le`, and move the order
-relation out of the `Option` namespace (`Option.FlatLE → Flat.LE`).
+* An inductive `Flat.LT` in the `WithBot.LT` mold, for upstreaming.
 -/
 
-/-- The flat information order on an atomic feature slot: every
-committed value persists upward, so `none` is below everything and
-distinct atoms are incomparable. This is `Part`'s partial order,
-carried on `Option` for computability (`flatLE_iff_ofOption_le`). -/
-def Option.FlatLE {α : Type*} (a b : Option α) : Prop :=
-  ∀ x ∈ a, x ∈ b
-
-namespace Option.FlatLE
-
-variable {α : Type*} {a b c : Option α}
-
-protected theorem refl (a : Option α) : a.FlatLE a := λ _ h => h
-
-/-- Flat order preserves definedness. -/
-theorem isSome_mono (h : a.FlatLE b) : a.isSome → b.isSome := fun ha =>
-  Option.isSome_iff_exists.mpr ((Option.isSome_iff_exists.mp ha).imp h)
-
-protected theorem trans (h1 : a.FlatLE b) (h2 : b.FlatLE c) : a.FlatLE c :=
-  λ x hx => h2 x (h1 x hx)
-
-protected theorem antisymm (h1 : a.FlatLE b) (h2 : b.FlatLE a) : a = b := by
-  cases a with
-  | some x => exact (h1 x rfl).symm
-  | none =>
-    cases b with
-    | none => rfl
-    | some y => exact absurd (h2 y rfl) (by simp)
-
-/-- Flat order with no definedness gain is equality. -/
-theorem eq_of_isSome (h : a.FlatLE b) (hb : b.isSome → a.isSome) : a = b :=
-  h.antisymm fun x hx => by
-    obtain ⟨y, hy⟩ := Option.isSome_iff_exists.mp
-      (hb (Option.isSome_iff_exists.mpr ⟨x, hx⟩))
-    rwa [← Option.some_inj.mp ((h y hy).symm.trans hx)]
-
-/-- The flat order is `Part`'s order, along `Part.ofOption`. -/
-theorem flatLE_iff_ofOption_le {a b : Option α} :
-    a.FlatLE b ↔ Part.ofOption a ≤ Part.ofOption b :=
-  ⟨fun h x hx => Part.mem_ofOption.mpr (h x (Part.mem_ofOption.mp hx)),
-    fun h x hx => Part.mem_ofOption.mp (h x (Part.mem_ofOption.mpr hx))⟩
-
-theorem none_le (b : Option α) : Option.FlatLE none b := λ _ h => nomatch h
-
-instance [DecidableEq α] : Decidable (a.FlatLE b) :=
-  match a, b with
-  | none, _ => .isTrue (λ _ h => nomatch h)
-  | some x, some y =>
-    if h : x = y then .isTrue (λ _ hx => by simpa [h] using hx)
-    else .isFalse (λ hle => h (Option.some.inj (hle x rfl)).symm)
-  | some x, none => .isFalse (λ hle => nomatch hle x rfl)
-
-end Option.FlatLE
-
-/-- An atomic feature slot: `Option α` carrying the flat information
-order as its `≤`. A `def`, not an `abbrev`, so the order instances do
-not leak onto bare `Option`. -/
+/-- `Flat α` is `Option α` carrying the flat information order: `⊥` below
+everything, distinct values incomparable. A `def`, not an `abbrev`, so the
+order instances do not leak onto bare `Option`. -/
 def Flat (α : Type*) := Option α
 
 namespace Flat
 
-variable {α : Type*}
+variable {α : Type*} {a b : α} {x y z : Flat α}
+
+/-- The canonical map from `α` into `Flat α`. -/
+@[coe, match_pattern] def some : α → Flat α :=
+  Option.some
+
+instance coe : Coe α (Flat α) :=
+  ⟨some⟩
+
+instance bot : Bot (Flat α) :=
+  ⟨none⟩
+
+instance inhabited : Inhabited (Flat α) :=
+  ⟨⊥⟩
 
 instance [DecidableEq α] : DecidableEq (Flat α) :=
   inferInstanceAs (DecidableEq (Option α))
@@ -147,62 +94,160 @@ instance [BEq α] [LawfulBEq α] : LawfulBEq (Flat α) :=
   inferInstanceAs (LawfulBEq (Option α))
 
 instance [Repr α] : Repr (Flat α) :=
-  inferInstanceAs (Repr (Option α))
+  ⟨fun o _ =>
+    match o with
+    | none => "⊥"
+    | Option.some a => "↑" ++ repr a⟩
 
-instance : Inhabited (Flat α) :=
-  ⟨(none : Option α)⟩
+theorem coe_injective : Function.Injective ((↑) : α → Flat α) :=
+  Option.some_injective _
 
-instance : PartialOrder (Flat α) where
-  le a b := Option.FlatLE a b
-  le_refl := Option.FlatLE.refl
-  le_trans _ _ _ := Option.FlatLE.trans
-  le_antisymm _ _ := Option.FlatLE.antisymm
-
-instance : OrderBot (Flat α) where
-  bot := (none : Option α)
-  bot_le := Option.FlatLE.none_le
-
-instance [DecidableEq α] (a b : Flat α) : Decidable (a ≤ b) :=
-  inferInstanceAs (Decidable (Option.FlatLE a b))
-
-theorem le_def {a b : Flat α} : a ≤ b ↔ Option.FlatLE a b := Iff.rfl
+@[simp, norm_cast] theorem coe_inj : (a : Flat α) = b ↔ a = b :=
+  Option.some_inj
 
 theorem none_eq_bot : (none : Flat α) = (⊥ : Flat α) := rfl
 
-@[simp] theorem coe_le_coe {a b : α} :
-    @LE.le (Flat α) _ (some a) (some b) ↔ a = b := by
-  rw [le_def]
-  refine ⟨λ h => (Option.some.inj (h a rfl)).symm, ?_⟩
-  rintro rfl x hx
-  exact hx
+theorem some_eq_coe (a : α) : (Option.some a : Flat α) = (↑a : Flat α) := rfl
 
-@[simp] theorem not_coe_le_bot (a : α) : ¬ @LE.le (Flat α) _ (some a) ⊥ := by
-  rw [le_def]
-  exact λ h => (Option.some_ne_none a).symm (h a rfl)
+@[simp] theorem bot_ne_coe : ⊥ ≠ (a : Flat α) := nofun
 
-/-- The meet of two slots: their agreement, or nothing. -/
-protected def inf [DecidableEq α] (a b : Flat α) : Flat α :=
-  if (a : Option α) = (b : Option α) then a else (none : Option α)
+@[simp] theorem coe_ne_bot : (a : Flat α) ≠ ⊥ := nofun
+
+/-- Recursor for `Flat` using the preferred forms `⊥` and `↑a`. -/
+@[elab_as_elim, induction_eliminator, cases_eliminator]
+def recBotCoe {C : Flat α → Sort*} (bot : C ⊥) (coe : ∀ a : α, C a) : ∀ x : Flat α, C x
+  | ⊥ => bot
+  | (a : α) => coe a
+
+@[simp] theorem recBotCoe_bot {C : Flat α → Sort*} (d : C ⊥) (f : ∀ a : α, C a) :
+    @recBotCoe _ C d f ⊥ = d := rfl
+
+@[simp] theorem recBotCoe_coe {C : Flat α → Sort*} (d : C ⊥) (f : ∀ a : α, C a) (x : α) :
+    @recBotCoe _ C d f ↑x = f x := rfl
+
+theorem ne_bot_iff_exists : x ≠ ⊥ ↔ ∃ a : α, x = ↑a := by
+  cases x <;> simp
+
+/-! ### The flat order -/
+
+/-- Auxiliary definition for the order on `Flat`. -/
+@[mk_iff le_def_aux]
+protected inductive LE : Flat α → Flat α → Prop
+  | protected bot_le (x : Flat α) : Flat.LE ⊥ x
+  | protected refl (a : α) : Flat.LE ↑a ↑a
+
+/-- The flat order on `Flat α`, defined by `⊥ ≤ x` and `↑a ≤ ↑a`. The
+definition as an inductive predicate follows `WithBot.LE`; it cannot be
+accidentally unfolded too far. -/
+instance (priority := 10) instLE : LE (Flat α) where le := Flat.LE
+
+lemma le_def : x ≤ y ↔ x = ⊥ ∨ ∃ a : α, x = ↑a ∧ y = ↑a := by
+  rw [show (x ≤ y) = Flat.LE x y from rfl, le_def_aux]
+
+@[simp, norm_cast] theorem coe_le_coe : (a : Flat α) ≤ b ↔ a = b :=
+  ⟨fun h => by cases h; rfl, fun h => h ▸ .refl a⟩
+
+@[simp] theorem not_coe_le_bot (a : α) : ¬(a : Flat α) ≤ ⊥ :=
+  fun h => by cases h
+
+instance : OrderBot (Flat α) where
+  bot_le := Flat.LE.bot_le
+
+instance : PartialOrder (Flat α) where
+  le_refl x := by cases x with
+    | bot => exact .bot_le _
+    | coe a => exact .refl a
+  le_trans x y z hxy hyz := by
+    cases hxy with
+    | bot_le => exact .bot_le _
+    | refl => exact hyz
+  le_antisymm x y hxy hyx := by
+    cases hxy with
+    | bot_le => cases hyx with | bot_le => rfl
+    | refl => rfl
+
+@[simp] theorem le_bot_iff : x ≤ ⊥ ↔ x = ⊥ := by
+  cases x <;> simp
+
+theorem coe_le_iff : (a : Flat α) ≤ y ↔ y = ↑a :=
+  ⟨fun h => by cases h; rfl, fun h => h ▸ .refl a⟩
+
+theorem le_coe_iff : x ≤ (b : Flat α) ↔ x = ⊥ ∨ x = ↑b := by
+  cases x <;> simp
+
+instance [DecidableEq α] : DecidableLE (Flat α)
+  | ⊥, _ => isTrue (.bot_le _)
+  | (a : α), ⊥ => isFalse (not_coe_le_bot a)
+  | (a : α), (b : α) => decidable_of_iff' _ coe_le_coe
+
+/-- Definedness persists up the flat order. -/
+theorem ne_bot_of_le (h : x ≤ y) (hx : x ≠ ⊥) : y ≠ ⊥ :=
+  fun hy => hx (le_bot_iff.mp (hy ▸ h))
+
+/-- A flat inequality with no definedness gain is an equality. -/
+theorem eq_of_le (h : x ≤ y) (hyx : y ≠ ⊥ → x ≠ ⊥) : x = y := by
+  cases h with
+  | bot_le y =>
+    cases y with
+    | bot => rfl
+    | coe a => exact absurd (hyx coe_ne_bot) (by simp)
+  | refl => rfl
+
+/-- The flat order is `Part`'s order, along `Part.ofOption`. -/
+theorem le_iff_ofOption_le :
+    x ≤ y ↔ Part.ofOption (x : Option α) ≤ Part.ofOption (y : Option α) := by
+  constructor
+  · rintro (_ | _)
+    · exact fun i hi => absurd (Part.mem_ofOption.mp hi) nofun
+    · exact le_rfl
+  · intro h
+    cases x with
+    | bot => exact bot_le
+    | coe a =>
+      obtain rfl : y = ↑a :=
+        Part.mem_ofOption.mp (h a (Part.mem_ofOption.mpr rfl))
+      exact le_rfl
+
+/-! ### Left-biased merge -/
+
+/-- The left-biased total merge of two slots, keeping the first committed
+value; the total companion of the partial join `Flat.unify`. -/
+protected def or (x y : Flat α) : Flat α :=
+  Option.or x y
+
+@[simp] theorem bot_or (y : Flat α) : (⊥ : Flat α).or y = y := rfl
+
+@[simp] theorem coe_or (a : α) (y : Flat α) : (↑a : Flat α).or y = ↑a := rfl
+
+@[simp] theorem or_bot (x : Flat α) : x.or ⊥ = x := by cases x <;> rfl
+
+theorem or_assoc (x y z : Flat α) : (x.or y).or z = x.or (y.or z) :=
+  Option.or_assoc ..
+
+theorem le_or_left (x y : Flat α) : x ≤ x.or y := by
+  cases x <;> simp
+
+theorem or_le (hx : x ≤ z) (hy : y ≤ z) : x.or y ≤ z := by
+  cases x with
+  | bot => exact hy
+  | coe a => exact hx
+
+/-! ### Meets -/
+
+/-- The meet of two slots is their agreement, or `⊥`. -/
+protected def inf [DecidableEq α] (x y : Flat α) : Flat α :=
+  if x = y then x else ⊥
 
 instance [DecidableEq α] : SemilatticeInf (Flat α) where
   inf := Flat.inf
-  inf_le_left a b := by
-    unfold Flat.inf
-    split
-    · exact Option.FlatLE.refl a
-    · exact Option.FlatLE.none_le a
-  inf_le_right a b := by
-    unfold Flat.inf
-    split
-    · next h => exact h ▸ Option.FlatLE.refl a
-    · exact Option.FlatLE.none_le b
-  le_inf c a b hca hcb := by
-    intro x hx
-    have ha := hca x hx
-    have hb := hcb x hx
-    unfold Flat.inf
-    rw [ha, hb]
-    exact if_pos rfl
+  inf_le_left x y := by unfold Flat.inf; split <;> simp
+  inf_le_right x y := by unfold Flat.inf; split <;> simp_all
+  le_inf x y z hxy hxz := by
+    cases hxy with
+    | bot_le => exact bot_le
+    | refl a =>
+      obtain rfl : z = ↑a := by cases hxz; rfl
+      simp [Flat.inf]
 
 /-! ### The flat domain is ω-complete
 
@@ -214,37 +259,37 @@ supremum. This is the *flat domain*, the canonical nontrivial example of an
 section OmegaCPO
 open OmegaCompletePartialOrder
   (Chain ωScottContinuous ContinuousHom ωSup le_ωSup isLUB_range_ωSup)
+open Classical
 
-open Classical in
 /-- The supremum of a chain in the flat order: the committed value if the chain
 ever leaves `⊥`, and `⊥` otherwise. The implementation behind the `ωSup`
 projection (cf. `Prod.ωSupImpl`); state results about `ωSup`. -/
 private noncomputable def ωSupImpl (c : Chain (Flat α)) : Flat α :=
-  if h : ∃ i, (c i).isSome then c (Nat.find h) else none
+  if h : ∃ i, c i ≠ ⊥ then c (Nat.find h) else ⊥
 
 private theorem ωSupImpl_isLUB (c : Chain (Flat α)) :
     IsLUB (Set.range c) (ωSupImpl c) := by
-  refine ⟨?_, ?_⟩
+  constructor
   · rintro _ ⟨j, rfl⟩
     unfold ωSupImpl
     split
     · next h =>
-      intro a ha
-      have ha' : c j = some a := ha
-      show c (Nat.find h) = some a
-      have hj : (c j).isSome := by rw [ha']; rfl
-      have hmono : c (Nat.find h) ≤ c j := (OrderHomClass.mono c) (Nat.find_min' h hj)
-      obtain ⟨b, hb⟩ := Option.isSome_iff_exists.mp (Nat.find_spec h)
-      have hjb : c j = some b := hmono b hb
-      rw [hb, Option.some.inj (ha'.symm.trans hjb)]
+      cases hj : c j with
+      | bot => exact bot_le
+      | coe a =>
+        obtain ⟨b, hb⟩ := ne_bot_iff_exists.mp (Nat.find_spec h)
+        have hmono : c (Nat.find h) ≤ c j :=
+          (OrderHomClass.mono c) (Nat.find_min' h (by simp [hj]))
+        rw [hj, hb, coe_le_coe] at hmono
+        rw [hb, hmono]
     · next h =>
-      intro a ha
-      exact absurd ⟨j, by rw [show c j = some a from ha]; rfl⟩ h
+      push Not at h
+      exact (h j).le
   · intro u hu
     unfold ωSupImpl
     split
     · next h => exact hu (Set.mem_range_self (Nat.find h))
-    · exact Option.FlatLE.none_le u
+    · exact bot_le
 
 /-- The flat domain is an `OmegaCompletePartialOrder`: chains are eventually
 constant, so their suprema are the eventual value (or `⊥`). -/
@@ -261,12 +306,8 @@ theorem ωSup_mem_range (c : Chain (Flat α)) : ωSup c ∈ Set.range c := by
   split
   · next h => exact ⟨Nat.find h, rfl⟩
   · next h =>
-    refine ⟨0, ?_⟩
-    by_contra hne
-    refine h ⟨0, ?_⟩
-    cases hc : c 0 with
-    | none => exact absurd hc hne
-    | some a => rfl
+    push Not at h
+    exact ⟨0, h 0⟩
 
 /-- Every monotone map out of the flat domain is `ωScottContinuous`: chains
 attain their suprema (`ωSup_mem_range`), so continuity is automatic. This is
@@ -283,110 +324,103 @@ theorem ωScottContinuous_of_monotone {D : Type*} [OmegaCompletePartialOrder D]
     exact hu ⟨k, rfl⟩
 
 /-- The extension of `g : α → D` to the flat domain by `⊥ ↦ ⊥`. -/
-private def liftFun {D : Type*} [Bot D] (g : α → D) : Flat α → D
-  | none => ⊥
-  | some a => g a
+private def liftFun {D : Type*} [Bot D] (g : α → D) : Flat α → D :=
+  recBotCoe ⊥ g
 
 private theorem liftFun_monotone {D : Type*} [Preorder D] [OrderBot D]
     (g : α → D) : Monotone (liftFun g) := by
   intro x y hxy
-  cases x with
-  | none => exact bot_le
-  | some a =>
-    obtain rfl : y = some a := le_def.mp hxy a rfl
-    exact le_refl _
+  cases hxy with
+  | bot_le => exact bot_le
+  | refl => exact le_rfl
 
-/-- **The flat domain is free.** Strict continuous maps out of `Flat α` into a
-pointed domain `D` are exactly functions `α → D` — the universal property of
-the free domain. The forward map precomposes with `some`; the inverse extends
-by `⊥ ↦ ⊥`, continuous by `ωScottContinuous_of_monotone`. -/
+/-- The flat domain is free: functions `α → D` into a pointed domain are
+exactly the strict continuous maps `Flat α →𝒄 D`. The forward map extends by
+`⊥ ↦ ⊥`, continuous by `ωScottContinuous_of_monotone`; the inverse
+precomposes with `↑`. -/
 noncomputable def liftEquiv {D : Type*} [OmegaCompletePartialOrder D] [OrderBot D] :
     (α → D) ≃ {f : Flat α →𝒄 D // f ⊥ = ⊥} where
   toFun g := ⟨ContinuousHom.ofFun (liftFun g)
     (ωScottContinuous_of_monotone (liftFun_monotone g)), rfl⟩
-  invFun f a := f.1 (some a)
+  invFun f a := f.1 ↑a
   left_inv g := by funext a; rfl
   right_inv := by
     rintro ⟨f, hf⟩
     refine Subtype.ext (DFunLike.ext _ _ ?_)
     intro x
     cases x with
-    | none => exact hf.symm
-    | some a => rfl
+    | bot => exact hf.symm
+    | coe a => rfl
 
 end OmegaCPO
 
-/-- Unify two slots: `none` is identity, equal commitments merge,
-distinct commitments clash. -/
-protected def unify [DecidableEq α] (a b : Flat α) : Option (Flat α) :=
-  match (a : Option α), (b : Option α) with
-  | none, b => some b
-  | some x, none => some (some x)
-  | some x, some y => if x = y then some (some x) else none
+/-! ### Unification -/
 
-private theorem unify_some_some [DecidableEq α] (x y : α) :
-    Flat.unify (some x : Flat α) (some y) = if x = y then some (some x) else none :=
+/-- Unification of two slots merges equal commitments, treats `⊥` as
+identity, and fails on distinct commitments. -/
+protected def unify [DecidableEq α] (x y : Flat α) : Option (Flat α) :=
+  match x, y with
+  | ⊥, y => Option.some y
+  | (a : α), ⊥ => Option.some ↑a
+  | (a : α), (b : α) => if a = b then Option.some ↑a else Option.none
+
+private theorem unify_coe_coe [DecidableEq α] (a b : α) :
+    Flat.unify (↑a : Flat α) ↑b = if a = b then Option.some ↑a else Option.none :=
   rfl
 
 instance [DecidableEq α] : PartialUnify (Flat α) where
   unify := Flat.unify
   isLUB_of_unify_eq_some := by
-    intro a b c h
-    match a, b with
-    | none, b =>
-      obtain rfl : b = c := Option.some.inj h
-      exact ⟨PartialUnify.mem_upperBounds_pair.mpr
-          ⟨Option.FlatLE.none_le _, le_rfl⟩,
-        λ u hu => (PartialUnify.mem_upperBounds_pair.mp hu).2⟩
-    | some x, none =>
-      obtain rfl : (some x : Flat α) = c := Option.some.inj h
-      exact ⟨PartialUnify.mem_upperBounds_pair.mpr
-          ⟨le_rfl, Option.FlatLE.none_le _⟩,
-        λ u hu => (PartialUnify.mem_upperBounds_pair.mp hu).1⟩
-    | some x, some y =>
-      rw [unify_some_some] at h
+    intro x y z h
+    match x, y with
+    | ⊥, y =>
+      obtain rfl : y = z := Option.some.inj h
+      exact ⟨PartialUnify.mem_upperBounds_pair.mpr ⟨bot_le, le_rfl⟩,
+        fun u hu => (PartialUnify.mem_upperBounds_pair.mp hu).2⟩
+    | (a : α), ⊥ =>
+      obtain rfl : (↑a : Flat α) = z := Option.some.inj h
+      exact ⟨PartialUnify.mem_upperBounds_pair.mpr ⟨le_rfl, bot_le⟩,
+        fun u hu => (PartialUnify.mem_upperBounds_pair.mp hu).1⟩
+    | (a : α), (b : α) =>
+      rw [unify_coe_coe] at h
       split at h
-      · next hxy =>
-        subst hxy
-        obtain rfl : (some x : Flat α) = c := Option.some.inj h
+      · next hab =>
+        subst hab
+        obtain rfl : (↑a : Flat α) = z := Option.some.inj h
         rw [Set.pair_eq_singleton]
         exact isLUB_singleton
-      · exact absurd h.symm (Option.some_ne_none c)
+      · exact absurd h.symm (Option.some_ne_none z)
   isSome_unify_of_bddAbove := by
-    intro a b hbdd
+    intro x y hbdd
     obtain ⟨u, hu⟩ := hbdd
-    obtain ⟨hau, hbu⟩ := PartialUnify.mem_upperBounds_pair.mp hu
-    match a, b with
-    | none, b => exact rfl
-    | some x, none => exact rfl
-    | some x, some y =>
-      have hx : (u : Option α) = some x := hau x rfl
-      have hy : (u : Option α) = some y := hbu y rfl
-      have hxy : x = y := Option.some.inj (hx.symm.trans hy)
-      show (Flat.unify (some x : Option α) (some y : Option α)).isSome
-      rw [unify_some_some, if_pos hxy]
+    obtain ⟨hxu, hyu⟩ := PartialUnify.mem_upperBounds_pair.mp hu
+    match x, y with
+    | ⊥, y => exact rfl
+    | (a : α), ⊥ => exact rfl
+    | (a : α), (b : α) =>
+      obtain rfl : u = ↑a := coe_le_iff.mp hxu
+      obtain rfl : a = b := coe_inj.mp (coe_le_iff.mp hyu)
+      show (Flat.unify (↑a : Flat α) ↑a).isSome
+      rw [unify_coe_coe, if_pos rfl]
       rfl
 
-/-- Slot compatibility, characterized: committed values must coincide;
-    an uncommitted slot is a wildcard. -/
-theorem compat_iff [DecidableEq α] {a b : Flat α} :
-    Compat a b ↔ ∀ x : α, a = some x → ∀ y : α, b = some y → x = y := by
+/-- Two slots are compatible exactly when their committed values coincide;
+an uncommitted slot is a wildcard. -/
+theorem compat_iff [DecidableEq α] :
+    Compat x y ↔ ∀ a : α, x = ↑a → ∀ b : α, y = ↑b → a = b := by
   rw [compat_iff_isSome_unify]
-  show (Flat.unify a b).isSome = true ↔ _
-  match a, b with
-  | none, b =>
-    exact iff_of_true rfl (λ x hx => nomatch hx)
-  | some x, none =>
-    exact iff_of_true rfl (λ x' _ y hy => nomatch hy)
-  | some x, some y =>
-    rw [unify_some_some]
-    by_cases hxy : x = y
-    · subst hxy
+  show (Flat.unify x y).isSome = true ↔ _
+  match x, y with
+  | ⊥, y => exact iff_of_true rfl (fun a ha => absurd ha bot_ne_coe)
+  | (a : α), ⊥ => exact iff_of_true rfl (fun _ _ b hb => absurd hb bot_ne_coe)
+  | (a : α), (b : α) =>
+    rw [unify_coe_coe]
+    by_cases hab : a = b
+    · subst hab
       exact iff_of_true (by rw [if_pos rfl]; rfl)
-        (λ x' hx' y' hy' =>
-          (Option.some.inj hx').symm.trans (Option.some.inj hy'))
-    · rw [if_neg hxy]
-      exact iff_of_false nofun (λ h => hxy (h x rfl y rfl))
+        (fun a' ha' b' hb' => (coe_inj.mp ha').symm.trans (coe_inj.mp hb'))
+    · rw [if_neg hab]
+      exact iff_of_false nofun (fun h => hab (h a rfl b rfl))
 
 /-! ### Non-distributivity
 
@@ -397,9 +431,9 @@ partial join (`PartialUnify`), so the distributive law cannot even be
 *stated* on it directly; `unify_distinct_eq_none` is the witness — distinct
 atoms have no upper bound, so the join the law would require is undefined. -/
 
-theorem unify_distinct_eq_none [DecidableEq α] {a b : α} (h : a ≠ b) :
-    Flat.unify (some a : Flat α) (some b) = none := by
-  show (if a = b then some (some a : Flat α) else none) = none
+theorem unify_distinct_eq_none [DecidableEq α] (h : a ≠ b) :
+    Flat.unify (↑a : Flat α) ↑b = Option.none := by
+  rw [unify_coe_coe]
   exact if_neg h
 
 end Flat

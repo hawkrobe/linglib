@@ -739,7 +739,7 @@ structure NumberedDRef where
     of the negative continuation. -/
 theorem exists_negative_characterization
     (x : Nat) (φ : BilateralDen W ℕ E)
-    (s : Set (Possibility W ℕ (Option E))) (p : Possibility W ℕ (Option E)) :
+    (s : Set (Possibility W ℕ (Part E))) (p : Possibility W ℕ (Part E)) :
     p ∈ (exists_ x φ).negative s ↔
     p ∈ s ∧ p.world ∉ worlds (φ.positive (randomAssign s x)) ∧
       p.world ∈ worlds (φ.negative (randomAssign s x)) := by
@@ -750,7 +750,7 @@ theorem exists_negative_characterization
     This is the bilateral analog of universal falsification. -/
 theorem neg_exists_positive
     (x : Nat) (φ : BilateralDen W ℕ E)
-    (s : Set (Possibility W ℕ (Option E))) (p : Possibility W ℕ (Option E)) :
+    (s : Set (Possibility W ℕ (Part E))) (p : Possibility W ℕ (Part E)) :
     p ∈ (neg (exists_ x φ)).positive s ↔
     p ∈ s ∧ p.world ∉ worlds (φ.positive (randomAssign s x)) ∧
       p.world ∈ worlds (φ.negative (randomAssign s x)) := by
@@ -764,7 +764,7 @@ theorem neg_exists_positive
     extension). -/
 theorem neg_exists_eliminative
     (x : Nat) (φ : BilateralDen W ℕ E)
-    (s : Set (Possibility W ℕ (Option E))) :
+    (s : Set (Possibility W ℕ (Part E))) :
     (neg (exists_ x φ)).positive s ⊆ s := by
   intro p hp
   rw [neg_exists_positive] at hp
@@ -775,7 +775,7 @@ theorem neg_exists_eliminative
     semantics — `neg` swaps, so two swaps restore the original. -/
 theorem neg_neg_exists
     (x : Nat) (φ : BilateralDen W ℕ E)
-    (s : Set (Possibility W ℕ (Option E))) :
+    (s : Set (Possibility W ℕ (Part E))) :
     (neg (neg
       (exists_ x φ))).positive s =
     (exists_ x φ).positive s := rfl

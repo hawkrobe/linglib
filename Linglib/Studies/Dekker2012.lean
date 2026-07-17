@@ -151,14 +151,14 @@ with the type
 ```
 structure BilateralDen (W V E : Type*) where
   positive negative :
-    Set (Possibility W V (Option E)) → Set (Possibility W V (Option E))
+    Set (Possibility W V (Part E)) → Set (Possibility W V (Part E))
 ```
 
 and negation as `def neg φ := { positive := φ.negative, negative := φ.positive }`.
 The DNE law `neg (neg φ) = φ` then holds by `rfl`
 (`BilateralDen.neg_neg` in `UpdateSemantics/Bilateral.lean`).
 
-PLA states (assignment-witness pairs) and BUS states (Option-partial
+PLA states (assignment-witness pairs) and BUS states (`Part`-partial
 possibility sets) are different carriers, so a single file cannot state
 both side-by-side. The BUS-side facts are stated
 abstractly here and verified in their home file.

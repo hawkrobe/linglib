@@ -120,10 +120,10 @@ end Element
 structure MR where
   /-- The numeration — Breit's complement-position `C`: every element present. -/
   elements : Finset Element
-  /-- The optional head (SOHC: at most one). -/
-  head : Option Element
+  /-- The optional head (SOHC: at most one), a `Flat` slot: `⊥` = unheaded. -/
+  head : Flat Element
   /-- The head, if any, is among the elements (Breit: `H ⊆ C`). -/
-  head_mem : ∀ e ∈ head, e ∈ elements
+  head_mem : ∀ e : Element, head = ↑e → e ∈ elements
   deriving DecidableEq
 
 namespace MR
@@ -133,19 +133,19 @@ variable (m : MR) (e : Element)
 /-! ### Set-merge constructors -/
 
 /-- The empty MR | |: the empty representation (usually [ə]). -/
-def empty : MR := ⟨∅, none, by simp⟩
+def empty : MR := ⟨∅, ⊥, by simp⟩
 
 /-- The **unheaded simplex** |e|: a single bare element. -/
-def simplex : MR := ⟨{e}, none, by simp⟩
+def simplex : MR := ⟨{e}, ⊥, by simp⟩
 
 /-- The **headed simplex** |e̲|: a single element that is also its own head. -/
-def headedSimplex : MR := ⟨{e}, some e, by simp⟩
+def headedSimplex : MR := ⟨{e}, ↑e, by simp⟩
 
 /-- |h̲ op|: a head `h` with one operator `op`. -/
-def headPlusOp (h op : Element) : MR := ⟨{h, op}, some h, by simp⟩
+def headPlusOp (h op : Element) : MR := ⟨{h, op}, ↑h, by simp⟩
 
 /-- An **unheaded numeration**: a bare set of elements with no head. -/
-def numeration (es : Finset Element) : MR := ⟨es, none, by simp⟩
+def numeration (es : Finset Element) : MR := ⟨es, ⊥, by simp⟩
 
 /-! ### Head, complement, operators -/
 
@@ -155,18 +155,18 @@ def HasElement : Prop := e ∈ m.elements
 instance : Decidable (m.HasElement e) := inferInstanceAs (Decidable (e ∈ m.elements))
 
 /-- `e` is the head of the MR. -/
-def IsHead : Prop := m.head = some e
+def IsHead : Prop := m.head = ↑e
 
-instance : Decidable (m.IsHead e) := inferInstanceAs (Decidable (m.head = some e))
+instance : Decidable (m.IsHead e) := inferInstanceAs (Decidable (m.head = ↑e))
 
 /-- The MR has a head. -/
-def IsHeaded : Prop := m.head ≠ none
+def IsHeaded : Prop := m.head ≠ ⊥
 
 /-- The **operators** (dependents): all but the head ([kaye-lowenstamm-vergnaud-1985]). -/
 def ops : Finset Element :=
   match m.head with
-  | none => m.elements
-  | some h => m.elements.erase h
+  | ⊥ => m.elements
+  | (h : Element) => m.elements.erase h
 
 /-! ### Antagonism -/
 
@@ -199,42 +199,52 @@ def compose : MR where
 /-- Remove element `e`, demoting it from head if present (complement-decomposition). -/
 def decompose : MR where
   elements := m.elements.erase e
-  head := if m.head = some e then none else m.head
-  head_mem := by grind [MR.head_mem, Option.mem_def]
+  head := if m.head = ↑e then ⊥ else m.head
+  head_mem := by
+    intro x hx
+    split at hx
+    · exact absurd hx Flat.bot_ne_coe
+    · next h => exact Finset.mem_erase.mpr ⟨fun hxe => h (hxe ▸ hx), m.head_mem x hx⟩
 
 /-- Promote `e` to head, adding it if absent (head-composition). -/
 def headCompose : MR where
   elements := insert e m.elements
-  head := some e
-  head_mem := by grind [Finset.mem_insert_self, Option.mem_def]
+  head := ↑e
+  head_mem := by simp
 
 /-- Remove the head, leaving the elements bare (head-decomposition). -/
-def headDecompose : MR := ⟨m.elements, none, by simp⟩
+def headDecompose : MR := ⟨m.elements, ⊥, by simp⟩
 
 /-- Union `host` and `floater`, the floater's head overriding (non-monotone, so
     not the order-join). -/
 def dock (host floater : MR) : MR where
   elements := host.elements ∪ floater.elements
-  head := match floater.head with
-    | some f => some f
-    | none   => host.head
-  head_mem := by grind [MR.head_mem, Option.mem_def]
+  head := floater.head.or host.head
+  head_mem := by
+    intro x hx
+    cases hf : floater.head with
+    | bot =>
+      rw [hf, Flat.bot_or] at hx
+      exact Finset.mem_union_left _ (host.head_mem x hx)
+    | coe f =>
+      rw [hf, Flat.coe_or] at hx
+      exact Finset.mem_union_right _ (floater.head_mem x (hf.trans hx))
 
 /-! ### Elemental refinement order -/
 
-/-- Refinement: inclusion on elements, flat order (`Option.FlatLE`) on the head
+/-- Refinement: inclusion on elements, flat order (`≤` on `Flat`) on the head
     ([cavirani-vandenwyngaerd-2026]). -/
 def Refines (m₁ m₂ : MR) : Prop :=
-  m₁.elements ⊆ m₂.elements ∧ Option.FlatLE m₁.head m₂.head
+  m₁.elements ⊆ m₂.elements ∧ m₁.head ≤ m₂.head
 
 instance (m₁ m₂ : MR) : Decidable (Refines m₁ m₂) := inferInstanceAs (Decidable (_ ∧ _))
 
 instance : PartialOrder MR where
   le := Refines
-  le_refl _ := ⟨Finset.Subset.refl _, Option.FlatLE.refl _⟩
+  le_refl _ := ⟨Finset.Subset.refl _, le_rfl⟩
   le_trans _ _ _ h₁ h₂ := ⟨h₁.1.trans h₂.1, h₁.2.trans h₂.2⟩
   le_antisymm _ _ h₁ h₂ :=
-    MR.ext (Finset.Subset.antisymm h₁.1 h₂.1) (Option.FlatLE.antisymm h₁.2 h₂.2)
+    MR.ext (Finset.Subset.antisymm h₁.1 h₂.1) (h₁.2.antisymm h₂.2)
 
 instance (m₁ m₂ : MR) : Decidable (m₁ ≤ m₂) := inferInstanceAs (Decidable (Refines m₁ m₂))
 
