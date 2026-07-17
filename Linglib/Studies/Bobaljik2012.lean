@@ -1,6 +1,6 @@
 import Linglib.Morphology.DegreeContainment
-import Linglib.Morphology.Containment.Vocabulary
-import Linglib.Morphology.Containment.Superset
+import Linglib.Morphology.Exponence.Hierarchy
+import Linglib.Morphology.Nanosyntax.Superset
 import Linglib.Morphology.DM.Merger
 import Linglib.Morphology.InflectionRules
 import Linglib.Semantics.Alternatives.Lexical
@@ -28,7 +28,7 @@ contains the comparative (`[[[ADJ] CMPR] SPRL]`).
    + Elsewhere + Antihomophony, CSG2 additionally portmanteau exponence,
    adjacency, and the markedness condition (202) — in the formalization
    adjacency's AAB-blocking role is absorbed into `Grounded`; see
-   `Morphology/Containment/Vocabulary.lean`. Both are instantiated on
+   `Morphology/Exponence/Hierarchy.lean`. Both are instantiated on
    the book's worked vocabularies below.
    **Scope**: relative superlatives only, not absolute superlatives /
    elatives (p. 2, p. 28). The CSG ranges over synthetic grades; among
@@ -264,7 +264,7 @@ theorem latin_all_three_patterns :
 
 /-! ### The Realizational Derivation: the Book's Worked Vocabularies -/
 
-/-! The engine of `Morphology/Containment/Vocabulary.lean` run on the
+/-! The engine of `Morphology/Exponence/Hierarchy.lean` run on the
 vocabularies [bobaljik-2012] actually writes down. `ExponenceRule`s record
 exponent, exponed span, and conditioning context; `realize` runs
 Elsewhere insertion; `degreeShape` reads the root-suppletion class off
@@ -352,7 +352,7 @@ theorem latin_sprl_needs_portmanteau :
 
 /-- The nanosyntax lexicon for Latin GOOD, in the [caha-2009] method
     (the degree application is later literature; see
-    `Morphology/Containment/Superset.lean`): context-free entries
+    `Morphology/Nanosyntax/Superset.lean`): context-free entries
     storing successively larger constituents, competing under the
     Superset Principle. -/
 def latinBonusNS : List (ExponenceRule 3 String) :=
