@@ -80,7 +80,7 @@ with every compatible point of
 defines more. Total: appropriateness ((15), the Novelty/Familiarity
 Condition) lives on `indef`/`def_`, as in the paper. -/
 def ofState (A : State W V M) : FCP W V M :=
-  fun F => Part.some (F.toState * A)
+  fun F => Part.some (Set.lubs F A)
 
 /-- Principle (A), general form: assertive update ascends in
 informativeness — `State.left_le_mul`. Set-shrinking eliminativity is

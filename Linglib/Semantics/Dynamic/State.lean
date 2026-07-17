@@ -84,8 +84,6 @@ variable {s s' t : State W V M} {r : Possibility W V (Part M)}
 @[reducible] instance : Membership (Possibility W V (Part M)) (State W V M) :=
   inferInstanceAs (Membership _ (Set _))
 
-/-- Point-set inclusion, coinciding with the order only stratum-wise
-(`le_iff_superset`). -/
 instance : HasSubset (State W V M) := ⟨fun s s' => ∀ ⦃p⦄, p ∈ s → p ∈ s'⟩
 
 @[reducible] instance : EmptyCollection (State W V M) :=
@@ -97,11 +95,7 @@ instance : HasSubset (State W V M) := ⟨fun s s' => ∀ ⦃p⦄, p ∈ s → p 
 
 @[reducible] instance : SDiff (State W V M) := inferInstanceAs (SDiff (Set _))
 
-/-- Interpret a point set as an information state, in the
-`OrderDual.toDual` mold. -/
-def _root_.Set.toState (s : Set (Possibility W V (Part M))) : State W V M := s
-
-@[ext] theorem ext {s s' : State W V M} (h : ∀ p, p ∈ s ↔ p ∈ s') : s = s' :=
+@[ext] theorem ext (h : ∀ p, p ∈ s ↔ p ∈ s') : s = s' :=
   Set.ext h
 
 /-- `s ≤ s'` iff `s'` carries at least as much information as `s`. -/
@@ -118,10 +112,9 @@ instance : OrderBot (State W V M) where
   bot_le _ := le_def.mpr fun q _ => ⟨.bot q.world, ⟨q.world, rfl⟩, Possibility.bot_le⟩
 
 /-- Membership in the initial state: no referent defined. -/
-theorem mem_bot {p : Possibility W V (Part M)} :
-    p ∈ (⊥ : State W V M) ↔ ∀ v, p.assignment v = ⊥ :=
+theorem mem_bot : r ∈ (⊥ : State W V M) ↔ ∀ v, r.assignment v = ⊥ :=
   ⟨fun ⟨_, hw⟩ _ => hw ▸ rfl, fun h =>
-    ⟨p.world, Possibility.ext rfl (funext fun v => (h v).symm)⟩⟩
+    ⟨r.world, Possibility.ext rfl (funext fun v => (h v).symm)⟩⟩
 
 /-- The absurd state `⊤ = ∅` is maximally informative. -/
 instance : OrderTop (State W V M) where
@@ -251,7 +244,7 @@ def antisymmetrizationOrderIso :
     (fun s : State W V M => upperClosure (s : Set (Possibility W V (Part M))))
     fun _ _ h => le_antisymm (α := UpperSet _) h.1 h.2
   invFun U := toAntisymmetrization (· ≤ ·)
-    (↑U : Set (Possibility W V (Part M))).toState
+    (↑U : Set (Possibility W V (Part M)))
   left_inv := by
     refine Quotient.ind fun s => Quotient.sound ?_
     have key : upperClosure
