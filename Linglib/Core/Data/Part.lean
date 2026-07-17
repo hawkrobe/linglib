@@ -86,8 +86,4 @@ theorem compat_iff : Compat p q ↔ ∀ a b, a ∈ p → b ∈ q → a = b := by
 theorem le_or_right (h : Compat p q) : q ≤ p.or q :=
   le_or_right_of_agree (compat_iff.mp h)
 
-theorem compat_or_left (hp : Compat p r) (hq : Compat q r) : Compat (p.or q) r :=
-  compat_iff.mpr fun a b ha hb => (mem_or_iff.mp ha).elim
-    (fun h => compat_iff.mp hp a b h hb) fun h => compat_iff.mp hq a b h.2 hb
-
 end Part
