@@ -73,10 +73,19 @@ open Features.Prominence (ArgumentRole)
 /-! ### Agreement marker paradigms -/
 
 /-- Set A (ERG) markers cross-referencing the transitive agent
-    ([scott-2023] Table 2.8); t- is syncretic for 2/3SG, ky- for 2/3PL. -/
-def setAExponent : ExponentTable :=
-  [(.pn .first .Sing, "n-/w-"), (.pn .second .Sing, "t-"), (.pn .third .Sing, "t-"),
-   (.pn .first .Plur, "q-"), (.pn .second .Plur, "ky-"), (.pn .third .Plur, "ky-")]
+    ([scott-2023] Table 2.8) by following-segment environment; t- is
+    syncretic for 2/3SG, ky- for 2/3PL. Scott: 1SG is the sole Set A
+    allomorphy — pre-consonantal `n-`, pre-vocalic `w-` (exx. (28)-(29));
+    the other markers do not alternate. -/
+def setAExponent : Morphology.Following → ExponentTable
+  | .consonant =>
+    [(.pn .first .Sing, [.pref "n"]), (.pn .second .Sing, [.pref "t"]),
+     (.pn .third .Sing, [.pref "t"]), (.pn .first .Plur, [.pref "q"]),
+     (.pn .second .Plur, [.pref "ky"]), (.pn .third .Plur, [.pref "ky"])]
+  | .vowel =>
+    [(.pn .first .Sing, [.pref "w"]), (.pn .second .Sing, [.pref "t"]),
+     (.pn .third .Sing, [.pref "t"]), (.pn .first .Plur, [.pref "q"]),
+     (.pn .second .Plur, [.pref "ky"]), (.pn .third .Plur, [.pref "ky"])]
 
 /-- Set B (ABS) markers ([scott-2023] Table 3.5). The 2/3SG form tz'= is
     the Elsewhere default: it realizes both real 2/3SG intransitive-S
@@ -85,8 +94,9 @@ def setAExponent : ExponentTable :=
     specific Vocabulary Items but surface via Elsewhere fallback (see
     `setBSpecificCells`). -/
 def setBExponent : ExponentTable :=
-  [(.pn .first .Sing, "chin"), (.pn .second .Sing, "tz'="), (.pn .third .Sing, "tz'="),
-   (.pn .first .Plur, "qo"), (.pn .second .Plur, "chi"), (.pn .third .Plur, "chi")]
+  [(.pn .first .Sing, [.free "chin"]), (.pn .second .Sing, [.procl "tz'"]),
+   (.pn .third .Sing, [.procl "tz'"]), (.pn .first .Plur, [.free "qo"]),
+   (.pn .second .Plur, [.free "chi"]), (.pn .third .Plur, [.free "chi"])]
 
 /-- The four Set B cells with specific Vocabulary Items ([scott-2023]);
     2SG and 3SG fall through to the Elsewhere entry. -/
@@ -95,7 +105,7 @@ def setBSpecificCells : List Cell :=
 
 /-- The Elsewhere Set B marker, surfacing in transitives when Infl's
     probe is blocked and for 2/3SG intransitive S. -/
-def defaultSetB : String := "tz'="
+def defaultSetB : Morphology.Exponent := [.procl "tz'"]
 
 /-! ### Argument positions and agreement status -/
 
@@ -299,16 +309,19 @@ def setBLinearity : MarkerLinearity := .prefixal
 
 /-! ### Marker verification -/
 
-/-- Set A 1SG marker. -/
-theorem setA_1sg : setAExponent.realize (.pn .first .Sing) = some "n-/w-" := rfl
+/-- Set A 1SG marker: pre-consonantal `n-`, pre-vocalic `w-`. -/
+theorem setA_1sg :
+    (setAExponent .consonant).realize (.pn .first .Sing) = some [.pref "n"] ∧
+    (setAExponent .vowel).realize (.pn .first .Sing) = some [.pref "w"] := ⟨rfl, rfl⟩
 
-/-- Set A 3SG marker is "t-" (the default singular Set A — syncretic with 2SG). -/
-theorem setA_3sg : setAExponent.realize (.pn .third .Sing) = some "t-" := rfl
+/-- Set A 3SG marker is `t-` (the default singular Set A — syncretic with 2SG). -/
+theorem setA_3sg :
+    (setAExponent .consonant).realize (.pn .third .Sing) = some [.pref "t"] := rfl
 
-/-- Set B 1SG marker is "chin". -/
-theorem setB_1sg : setBExponent.realize (.pn .first .Sing) = some "chin" := rfl
+/-- Set B 1SG marker is *chin*. -/
+theorem setB_1sg : setBExponent.realize (.pn .first .Sing) = some [.free "chin"] := rfl
 
-/-- Set B 3SG marker is the default "tz'=". -/
+/-- Set B 3SG marker is the default `tz'=`. -/
 theorem setB_3sg : setBExponent.realize (.pn .third .Sing) = some defaultSetB := rfl
 
 /-- A controller's φ-features index the agreement paradigm directly: the
@@ -317,8 +330,9 @@ theorem setB_3sg : setBExponent.realize (.pn .third .Sing) = some defaultSetB :=
     ([corbett-1998]; [scott-2023] Ch. 2). The realizational account
     (impoverishment, Elsewhere; [scott-2023] Ch. 4) stays in the study. -/
 theorem erg_1sg_from_phi :
-    setAExponent.realizeFor
-      { form :="", cat := .PRON, features := { person := some .first, number := some .Sing }} = some "n-/w-" := by
+    (setAExponent .consonant).realizeFor
+      { form :="", cat := .PRON, features := { person := some .first, number := some .Sing }} =
+      some [.pref "n"] := by
   rfl
 
 end Mam

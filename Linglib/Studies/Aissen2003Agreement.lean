@@ -643,8 +643,10 @@ theorem kaqchikel_A_and_P_indexed :
     distinct: every person-number combination gets a unique marker in
     each set (except 3SG which is ∅ in Set B). -/
 theorem kaqchikel_dual_paradigms :
-    setAExponent.realize (.pn .first .Sing) ≠ setBExponent.realize (.pn .first .Sing) ∧
-    setAExponent.realize (.pn .second .Sing) ≠ setBExponent.realize (.pn .second .Sing) := by
+    (setAExponent .consonant).realize (.pn .first .Sing) ≠
+      setBExponent.realize (.pn .first .Sing) ∧
+    (setAExponent .consonant).realize (.pn .second .Sing) ≠
+      setBExponent.realize (.pn .second .Sing) := by
   decide
 
 -- ============================================================================

@@ -82,24 +82,37 @@ def setBLinearity : MarkerLinearity := .either
 
 /-! ### Set A/B exponents (Zinacantec Tsotsil) -/
 
-/-- Set A (ERG/GEN) exponents for Zinacantec Tsotsil ([polian-2013]):
-    prefixes on the verb (ERG) or possessed noun (GEN), varying by following
-    segment, shown as `pre-C/pre-V` allomorph pairs. -/
-def setAExponent : ExponentTable :=
-  [(.pn .first .Sing, "k-/j-"), (.pn .second .Sing, "a-/av-"), (.pn .third .Sing, "s-/y-"),
-   (.pn .first .Plur, "k-/j-"), (.pn .second .Plur, "a-/av-"), (.pn .third .Plur, "s-/y-")]
+/-- Set A (ERG/GEN) exponents for Zinacantec Tsotsil ([polian-2013]) by
+    following-segment environment: prefixes on the verb (ERG) or
+    possessed noun (GEN) — `j-`/`a-`/`s-` pre-consonantally,
+    `k-`/`av-`/`y-` pre-vocalically (same orientation as Tseltal; an
+    earlier revision reversed the 1st-person pair). -/
+def setAExponent : Morphology.Following → ExponentTable
+  | .consonant =>
+    [(.pn .first .Sing, [.pref "j"]), (.pn .second .Sing, [.pref "a"]),
+     (.pn .third .Sing, [.pref "s"]), (.pn .first .Plur, [.pref "j"]),
+     (.pn .second .Plur, [.pref "a"]), (.pn .third .Plur, [.pref "s"])]
+  | .vowel =>
+    [(.pn .first .Sing, [.pref "k"]), (.pn .second .Sing, [.pref "av"]),
+     (.pn .third .Sing, [.pref "y"]), (.pn .first .Plur, [.pref "k"]),
+     (.pn .second .Plur, [.pref "av"]), (.pn .third .Plur, [.pref "y"])]
 
-/-- Set B (ABS) exponents for Zinacantec Tsotsil ([polian-2013]): 3rd person
-    singular has no overt exponent (`-∅`); some forms alternate by suffix
-    harmony. -/
+/-- Set B (ABS) exponents for Zinacantec Tsotsil ([polian-2013]): 3rd
+    person singular has zero exponence. The default `-o-` series is
+    listed; harmonic variants (`-un`, `-at`, `-utik`, conditioned by the
+    preceding stem vowel per Aissen/Haviland course materials — the
+    cited Table 1 itself was not accessible for verification) are morph
+    variants of the same suffixes, recorded here rather than as a
+    second table. -/
 def setBExponent : ExponentTable :=
-  [(.pn .first .Sing, "-on/-un"), (.pn .second .Sing, "-ot/-at"), (.pn .third .Sing, "-∅"),
-   (.pn .first .Plur, "-otik/-utik"), (.pn .second .Plur, "-oxuk"), (.pn .third .Plur, "-ik")]
+  [(.pn .first .Sing, [.suff "on"]), (.pn .second .Sing, [.suff "ot"]),
+   (.pn .third .Sing, []), (.pn .first .Plur, [.suff "otik"]),
+   (.pn .second .Plur, [.suff "oxuk"]), (.pn .third .Plur, [.suff "ik"])]
 
 /-- 3rd person absolutive is null — invariant across the standard
     Mayan branches per [kaufman-norman-1984] Table 8. **Not**
     pan-Mayan: see Mam exception via `Mayan.isStandard`. -/
-theorem p3sg_abs_null : setBExponent.realize (.pn .third .Sing) = some "-∅" := rfl
+theorem p3sg_abs_null : setBExponent.realize (.pn .third .Sing) = some [] := rfl
 
 /-! ### Extraction marking -/
 

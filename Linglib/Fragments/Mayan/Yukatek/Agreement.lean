@@ -48,22 +48,33 @@ def absPosition : Mayan.ABSPosition := .low
 
 /-! ### Set A exponents -/
 
-/-- Set A markers ([hofling-2017] Table 24.8). -/
-def setAExponent : ExponentTable :=
-  [(.pn .first .Sing, "in(w)-"), (.pn .second .Sing, "a(w)-"), (.pn .third .Sing, "u(y)-"),
-   (.pn .first .Plur, "k-"), (.pn .second .Plur, "a(w)-…-e'ex"),
-   (.pn .third .Plur, "u(y)-…-o'ob'")]
+/-- Set A markers by following-segment environment ([hofling-2017]
+    Table 24.8, where the pre-vocalic glide is parenthesized:
+    *in(w)-*, *a(w)-*, *u(y)-*). 2pl/3pl are discontinuous: person
+    prefix plus the plural suffixes *-e'ex*/*-o'ob'*. -/
+def setAExponent : Morphology.Following → ExponentTable
+  | .consonant =>
+    [(.pn .first .Sing, [.pref "in"]), (.pn .second .Sing, [.pref "a"]),
+     (.pn .third .Sing, [.pref "u"]), (.pn .first .Plur, [.pref "k"]),
+     (.pn .second .Plur, [.pref "a", .suff "e'ex"]),
+     (.pn .third .Plur, [.pref "u", .suff "o'ob'"])]
+  | .vowel =>
+    [(.pn .first .Sing, [.pref "inw"]), (.pn .second .Sing, [.pref "aw"]),
+     (.pn .third .Sing, [.pref "uy"]), (.pn .first .Plur, [.pref "k"]),
+     (.pn .second .Plur, [.pref "aw", .suff "e'ex"]),
+     (.pn .third .Plur, [.pref "uy", .suff "o'ob'"])]
 
 /-! ### Set B exponents -/
 
-/-- Set B markers; ∅ 3SG ([hofling-2017] Table 24.12). -/
+/-- Set B markers; zero-exponence 3SG ([hofling-2017] Table 24.12). -/
 def setBExponent : ExponentTable :=
-  [(.pn .first .Sing, "-en"), (.pn .second .Sing, "-ech"), (.pn .third .Sing, "-∅"),
-   (.pn .first .Plur, "-o'on"), (.pn .second .Plur, "-e'ex"), (.pn .third .Plur, "-o'ob'")]
+  [(.pn .first .Sing, [.suff "en"]), (.pn .second .Sing, [.suff "ech"]),
+   (.pn .third .Sing, []), (.pn .first .Plur, [.suff "o'on"]),
+   (.pn .second .Plur, [.suff "e'ex"]), (.pn .third .Plur, [.suff "o'ob'"])]
 
 /-- 3rd person absolutive is null, as across the standard Mayan
     branches ([kaufman-norman-1984] Table 8). -/
-theorem p3sg_abs_null : setBExponent.realize (.pn .third .Sing) = some "-∅" := rfl
+theorem p3sg_abs_null : setBExponent.realize (.pn .third .Sing) = some [] := rfl
 
 /-! ### Argument positions -/
 

@@ -165,37 +165,42 @@ def absIntranSInNonFinite : Bool := false
 
 /-! ### Person-number paradigm ([vazquez-alvarez-2011] Tables 9-10) -/
 
-/-- Set A (ergative/possessive/genitive) markers: pre-consonantal allomorphs
-    ([vazquez-alvarez-2011] Table 10, p. 83). Note the morphophonemic
-    rule k- → j- /_k (1sg before a /k/ root, e.g., `tyi j-kajpelo`
-    'in my coffee field' p. 76). Plural forms use the inclusive clitic
-    `=la` for 1pl (the unmarked plural form per VA §4.2); the exclusive
-    paradigm with `=l(oj)oñ` is a per-language refinement not exposed
-    by the canonical φ-cell `Agreement.Cell` substrate. -/
-def setAExponentPreC : ExponentTable :=
-  [(.pn .first .Sing, "k-"), (.pn .second .Sing, "a-"), (.pn .third .Sing, "i-"),
-   (.pn .first .Plur, "k-…=la"), (.pn .second .Plur, "a-…=la"), (.pn .third .Plur, "i-…-ob")]
-
-/-- Set A markers: pre-vocalic allomorphs ([vazquez-alvarez-2011]
-    Table 10, p. 83). 1sg `k-` is identical pre-C and pre-V; 2sg surfaces
-    as `aw-`, 3sg as `(i)y-` (some speakers omit the initial vowel —
-    [vazquez-alvarez-2011] examples (12)-(13) p. 76-77). -/
-def setAExponentPreV : ExponentTable :=
-  [(.pn .first .Sing, "k-"), (.pn .second .Sing, "aw-"), (.pn .third .Sing, "(i)y-"),
-   (.pn .first .Plur, "k-…=la"), (.pn .second .Plur, "aw-…=la"), (.pn .third .Plur, "(i)y-…-ob")]
-
-/-- Canonical Set A exponent table for cross-Mayan typology. The
-    pre-consonantal allomorph is the citation form (matching Q'anjob'al's
-    convention); per-context realization uses `setAExponentPreV` before
-    vowel-initial roots. -/
-abbrev setAExponent : ExponentTable := setAExponentPreC
+/-- Set A (ergative/possessive/genitive) markers by following-segment
+    environment ([vazquez-alvarez-2011] Table 10, p. 83). 1sg `k-` is
+    identical in both environments; 2sg surfaces pre-vocalically as
+    `aw-`, 3sg as `iy-` (with speaker-variable omission of the initial
+    vowel, i.e. a variant `y-` — [vazquez-alvarez-2011] examples
+    (12)-(13) p. 76-77). Note the morphophonemic rule k- → j- /_k (1sg
+    before a /k/ root, e.g., `tyi j-kajpelo` 'in my coffee field'
+    p. 76). Plural cells are discontinuous: person prefix plus the
+    inclusive enclitic `=la` for 1pl/2pl (the unmarked plural form per
+    VA §4.2; the exclusive paradigm with `=l(oj)oñ` is a per-language
+    refinement not exposed by the canonical φ-cell substrate) and the
+    suffix `-ob` for 3pl. -/
+def setAExponent : Morphology.Following → ExponentTable
+  | .consonant =>
+    [(.pn .first .Sing, [.pref "k"]), (.pn .second .Sing, [.pref "a"]),
+     (.pn .third .Sing, [.pref "i"]),
+     (.pn .first .Plur, [.pref "k", .encl "la"]),
+     (.pn .second .Plur, [.pref "a", .encl "la"]),
+     (.pn .third .Plur, [.pref "i", .suff "ob"])]
+  | .vowel =>
+    [(.pn .first .Sing, [.pref "k"]), (.pn .second .Sing, [.pref "aw"]),
+     (.pn .third .Sing, [.pref "iy"]),
+     (.pn .first .Plur, [.pref "k", .encl "la"]),
+     (.pn .second .Plur, [.pref "aw", .encl "la"]),
+     (.pn .third .Plur, [.pref "iy", .suff "ob"])]
 
 /-- Set B (absolutive) markers: suffixes ([vazquez-alvarez-2011]
-    Table 10, p. 83). 3rd person is null (`-∅`). Plurals use the
-    inclusive `=la` clitic for 1pl per the convention above. -/
+    Table 10, p. 83). 3rd singular has zero exponence; 3pl is the plural
+    suffix alone; 1pl/2pl are discontinuous with the inclusive `=la`
+    enclitic per the convention above. -/
 def setBExponent : ExponentTable :=
-  [(.pn .first .Sing, "-oñ"), (.pn .second .Sing, "-ety"), (.pn .third .Sing, "-∅"),
-   (.pn .first .Plur, "-oñ=la"), (.pn .second .Plur, "-ety=la"), (.pn .third .Plur, "-∅-ob")]
+  [(.pn .first .Sing, [.suff "oñ"]), (.pn .second .Sing, [.suff "ety"]),
+   (.pn .third .Sing, []),
+   (.pn .first .Plur, [.suff "oñ", .encl "la"]),
+   (.pn .second .Plur, [.suff "ety", .encl "la"]),
+   (.pn .third .Plur, [.suff "ob"])]
 
 /-- 3rd person absolutive is null — invariant across the standard
     Mayan branches (Cholan, Q'anjob'alan, Tseltalan, K'ichean) per
@@ -204,16 +209,16 @@ def setBExponent : ExponentTable :=
     ([scott-2023]), and `Mayan.isStandard` excludes Mam from the
     cross-Mayan theorem
     (`CoonMateoPedroPreminger2014.mayan_p3sg_abs_null`). -/
-theorem p3sg_abs_null : setBExponent.realize (.pn .third .Sing) = some "-∅" := rfl
+theorem p3sg_abs_null : setBExponent.realize (.pn .third .Sing) = some [] := rfl
 
 /-- 3rd person Set A allomorphy: pre-consonantal `i-` vs pre-vocalic
-    `(i)y-`. Distinct from Q'anjob'al's `s-` vs `y-` (the proto-Mayan
+    `iy-`. Distinct from Q'anjob'al's `s-` vs `y-` (the proto-Mayan
     `*s-` ~ `*y-` allomorphy was leveled to `*r` → `y` in proto-Tseltalan,
     and Chol inherited the leveled form per [kaufman-norman-1984]
     p. 91). -/
 theorem p3sg_erg_allomorphy :
-    setAExponentPreC.realize (.pn .third .Sing) = some "i-" ∧
-    setAExponentPreV.realize (.pn .third .Sing) = some "(i)y-" :=
+    (setAExponent .consonant).realize (.pn .third .Sing) = some [.pref "i"] ∧
+    (setAExponent .vowel).realize (.pn .third .Sing) = some [.pref "iy"] :=
   ⟨rfl, rfl⟩
 
 end Chol
