@@ -20,7 +20,12 @@ theorem from that engine's score-reflection lemma. The order/select/realize
 triad: `Basic` orders rules by specificity, `selectBy` selects the optimal
 applicable rule, `realize` reads off its exponent. The theory models
 selection within a single rule block; realizational frameworks compose
-per-block winners into the paradigm function ([stump-2001]).
+per-block winners into the paradigm function ([stump-2001]). Since
+`Realizes.eq` makes the per-block prediction unique, *optional* multiple
+exponence within a block (free co-realization variants, Jubba Maay —
+[trommer-zimmermann-2015] p. 60) is outside scope, not merely a
+multi-block composition matter; deterministic symbiotic co-exponence
+composes across blocks as usual.
 
 ## Main declarations
 

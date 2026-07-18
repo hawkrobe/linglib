@@ -30,7 +30,7 @@ positions are implicit between adjacent morphemes in the flattened list.
 | `circumfixed`  | circumfix wrapping            | German *ge-mach-t*            |
 | `compound`     | compounding                   | *desk* + *lamp*               |
 | `reduplicated` | total or partial reduplication| Warlpiri *kijikiji*           |
-| `converted`    | zero affixation / conversion  | noun *telephone* → verb       |
+| `converted`    | conversion                    | noun *telephone* → verb       |
 
 -/
 
@@ -62,7 +62,7 @@ structure CircumfixExponence where
 def CircumfixExponence.realize (c : CircumfixExponence) : String :=
   c.prefix_ ++ c.stem ++ c.suffix_
 
-/-- A circumfix as a two-morph construction. [haspelmath-2020] (p. 123)
+/-- A circumfix as a two-morph construction. [haspelmath-2020] §4
 treats a circumfix not as one discontinuous morph but as a construction
 containing a prefix and a suffix; this realizes that reading as the
 prefix/suffix `Morph`s of `Morphology/Morph.lean` (the stem is not part
@@ -111,7 +111,9 @@ open Morphology.Circumfix (CircumfixExponence)
 -- §1: Morpheme
 -- ============================================================================
 
-/-- A morpheme: the minimal meaningful unit (Hayes §5.1).
+/-- A morpheme: the classical "minimal meaningful unit" ([hayes-2009];
+[anderson-2015] problematizes the classical definition — this carrier
+keeps it as the descriptive convenience both textbooks use).
 
 Carries its form as a `Morph` (`Morphology/Morph.lean`), an optional
 gloss, and its morphological `status`. `status` (`MorphStatus`) and
@@ -131,7 +133,7 @@ def Morpheme.surface (m : Morpheme) : String := m.morph.form
 -- §2: Reduplication Type
 -- ============================================================================
 
-/-- Type of reduplication (Hayes §5.2).
+/-- Type of reduplication ([hayes-2009]).
 
 - `total`: copies the entire base (Warlpiri *kijikiji* from *kiji*)
 - `partialCopy copied`: copies a prosodic template; the copied material is
@@ -150,27 +152,28 @@ inductive RedupType where
 /-- Hierarchical word structure as a tree of morphemes.
 
 Each constructor corresponds to a morphological operation from
-Hayes §5.2–5.5. The tree structure captures the derivational
-history and word-internal constituency. -/
+[hayes-2009]'s survey — the item-and-arrangement tree-of-morphemes
+lineage ([anderson-2015] pp. 28-29), with `reduplicated`/`converted` as
+process-constructor exceptions. The tree structure captures the
+derivational history and word-internal constituency. -/
 inductive MorphWord where
   /-- Leaf node: a single morpheme (free or bound). -/
   | root : Morpheme → MorphWord
-  /-- Hayes §5.2: attach morpheme before base. -/
+  /-- Attach morpheme before base. -/
   | prefixed : Morpheme → MorphWord → MorphWord
-  /-- Hayes §5.2: attach morpheme after base. -/
+  /-- Attach morpheme after base. -/
   | suffixed : MorphWord → Morpheme → MorphWord
-  /-- Hayes §5.2: insert morpheme at position `pos` within base's
+  /-- Insert morpheme at position `pos` within base's
       surface form. Example: Tagalog *-um-* in *s⟨um⟩ulat*. -/
   | infixed : MorphWord → Morpheme → Nat → MorphWord
-  /-- Hayes §5.2: wrap base with a prefix and suffix.
+  /-- Wrap base with a prefix and suffix.
       Example: German *ge-mach-t*. -/
   | circumfixed : Morpheme → MorphWord → Morpheme → MorphWord
-  /-- Hayes §5.4: two stems joined. Example: *desk* + *lamp*. -/
+  /-- Two stems joined. Example: *desk* + *lamp*. -/
   | compound : MorphWord → MorphWord → MorphWord
-  /-- Hayes §5.2: total or partial reduplication. -/
+  /-- Total or partial reduplication. -/
   | reduplicated : RedupType → MorphWord → MorphWord
-  /-- Hayes §5.2: zero affixation / conversion.
-      Example: noun *telephone* → verb *to telephone*. -/
+  /-- Conversion. Example: noun *telephone* → verb *to telephone*. -/
   | converted : MorphWord → MorphWord
   deriving Repr
 
@@ -206,9 +209,7 @@ def MorphWord.morphemes : MorphWord → List Morpheme
   | .prefixed afx base => afx :: base.morphemes
   | .suffixed base afx => base.morphemes ++ [afx]
   | .infixed base afx _ => base.morphemes ++ [afx]
-  | .circumfixed pre base suf =>
-    ⟨pre.morph, pre.gloss, .inflAffix⟩ :: base.morphemes
-      ++ [⟨suf.morph, suf.gloss, .inflAffix⟩]
+  | .circumfixed pre base suf => pre :: base.morphemes ++ [suf]
   | .compound left right => left.morphemes ++ right.morphemes
   | .reduplicated _ base => base.morphemes
   | .converted base => base.morphemes
@@ -219,7 +220,7 @@ def MorphWord.morphemeCount (w : MorphWord) : Nat := w.morphemes.length
 /-- Positions of morpheme boundaries in the surface string.
 Each `Nat` is a character offset where one morpheme ends and
 the next begins. Phonological rules can reference these
-positions (Hayes Chs 6–8). -/
+positions ([hayes-2009]). -/
 def MorphWord.boundaryPositions : MorphWord → List Nat
   | .root _ => []
   | .prefixed afx base =>
@@ -281,7 +282,7 @@ def MorphWord.IsReduplicated : MorphWord → Prop
 instance : DecidablePred MorphWord.IsReduplicated := fun w => by
   cases w <;> unfold MorphWord.IsReduplicated <;> infer_instance
 
-/-- Is this word derived by conversion (zero affixation)? -/
+/-- Is this word derived by conversion? -/
 def MorphWord.IsConverted : MorphWord → Prop
   | .converted _ => True
   | _ => False

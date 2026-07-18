@@ -6,9 +6,14 @@ import Mathlib.Tactic.TypeStar
 A **template** stipulates a word's positional skeleton directly — the
 word-skeletal answer to where affix order comes from, rival to the
 rule-combining answer on which templates are emergent patterns of rule
-composition ([stump-2022]). `AffixTemplate` is the position-class species
-(a prosodic/CV species would be its sibling); the rivalry itself is study
-content, not settled here.
+composition ([stump-2022]). The layered-vs-templatic *typological*
+contrast and its diagnostics (long-distance slot dependencies,
+non-functional slot assignment) are [bickel-nichols-2007] §6, with the
+caveat that templatic vs layered properties "are likely to hold of
+individual formatives rather than of the entire string" (p. 219).
+`AffixTemplate` is the position-class species (a prosodic/CV species
+would be its sibling); the rivalry itself is study content, not settled
+here.
 
 A word's affix template: the ordered position-class slots of its prefix and
 suffix strings, parameterized by the slot type `Slot` — so the order lives

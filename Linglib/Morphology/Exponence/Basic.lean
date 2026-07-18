@@ -9,7 +9,10 @@ import Mathlib.Data.Set.Basic
 content to form) is the class every framework engine's carrier implements:
 an exponent projection and an applicability set, ordered by set inclusion
 ([kiparsky-1973]'s Elsewhere Condition), so the most specific applicable
-rule has the smallest applicability domain. The order is [stump-2022]'s
+rule has the smallest applicability domain. The class is selection-side
+only: the phonological substance of exponents (additive vs
+transformational vs templatic, [trommer-zimmermann-2015]) is opaque in
+`F` and lives in `Phonology/`. The order is [stump-2022]'s
 single-clause formulation of Pāṇini's principle — domain-subset precedence
 — to which [stump-2001]'s two-clause rule narrowness collapses when
 contexts pair expressions with their full property sets. Selection over

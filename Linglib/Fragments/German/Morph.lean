@@ -5,10 +5,14 @@ import Linglib.Morphology.FusionTypology
 [wals-2013] [bickel-nichols-2007]
 
 WALS-derived profile (Ch 20A–29A, 21B, 62A, 79A/B, 80A) for German (ISO `deu`,
-WALS code `ger`). The B&N 2007 parameters (`flexivity := flexive`,
-`bnExponence := cumulative`) are not derivable from any WALS chapter and are
-paper-stipulated per [bickel-nichols-2007]; together with the WALS-derived
-`fusion := concatenative` they place German in the traditional "fusional" cell.
+WALS code `ger`). The `flexivity := flexive` and `bnExponence := cumulative`
+values are not derivable from any WALS chapter; they are textbook-consensus
+summary stipulations (strong-verb ablaut is [bickel-nichols-2007]'s own
+stem-flexivity example, p. 184 — though the same chapter's Table 3.5 puts
+Germanic *weak* verbs in the no-stem-allomorphy row, so the language-level
+bit summarizes a split system). Together with the WALS-derived
+`fusion := concatenative` they place German in the traditional "fusional"
+cell.
 
 WALS F20A's `exclusivelyConcatenative` verdict samples a small set of formatives
 and systematically under-weights ablaut (`singen` ~ `sang` ~ `gesungen`) and
@@ -22,7 +26,7 @@ open Morphology
 
 /-- German: WALS-derived `MorphProfile` via `MorphProfile.fromWALS`. Required-field
     fallbacks match WALS values (lookup wins when present); `flexivity` and
-    `bnExponence` are stipulated per B&N 2007. -/
+    `bnExponence` are textbook-consensus stipulations (see header). -/
 def morphProfile : MorphProfile :=
   .fromWALS "German" "deu"
     (fusionFb        := .concatenative)
@@ -33,7 +37,7 @@ def morphProfile : MorphProfile :=
 /-- Typo sentry for the ISO and language label. -/
 example : morphProfile.iso = "deu" ∧ morphProfile.language = "German" := ⟨rfl, rfl⟩
 
-/-- B&N 2007 places German in the "fusional" cell. Bridge theorem made local
+/-- Textbook-consensus classification: German falls in the "fusional" cell. Bridge theorem made local
     so the per-language commitment is visible here, not only inside
     `BickelNichols2013.lean`'s 18-language aggregate. -/
 example : morphProfile.IsFusional := by decide

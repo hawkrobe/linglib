@@ -4,8 +4,9 @@ import Linglib.Morphology.FusionTypology
 # Quechua (Imbabura) Morphological Profile
 [wals-2013] [bickel-nichols-2007]
 
-WALS-derived profile for Imbabura Quechua (ISO `qvi`). B&N 2007 places
-Quechua in the "agglutinating" cell (concatenative + nonflexive + separative).
+WALS-derived profile for Imbabura Quechua (ISO `qvi`). Textbook-consensus
+classification: Quechua falls in the "agglutinating" cell (concatenative +
+nonflexive + separative).
 Consistent with the Imbabura data used in the Negation and PolarityItems
 fragments in this directory.
 -/
@@ -25,7 +26,7 @@ def morphProfile : MorphProfile :=
 example : morphProfile.iso = "qvi" ∧ morphProfile.language = "Quechua (Imbabura)" :=
   ⟨rfl, rfl⟩
 
-/-- B&N 2007 places Quechua in the "agglutinating" cell. -/
+/-- Textbook-consensus classification: Quechua falls in the "agglutinating" cell. -/
 example : morphProfile.IsAgglutinating := by decide
 
 end Quechua
