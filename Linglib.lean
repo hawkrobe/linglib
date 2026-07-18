@@ -716,12 +716,10 @@ import Linglib.Fragments.Akan.Determiners
 import Linglib.Fragments.Akan.Phonology
 import Linglib.Fragments.Amharic.ConsonantalRoots
 import Linglib.Fragments.Arabic.Egyptian.Morph
-import Linglib.Fragments.Arabic.Egyptian.TenseAspect
 import Linglib.Fragments.Arabic.ModernStandard.Adposition
 import Linglib.Fragments.Arabic.ModernStandard.Case
 import Linglib.Fragments.Arabic.ModernStandard.Comparison
 import Linglib.Fragments.Arabic.ModernStandard.Negation
-import Linglib.Fragments.Arabic.ModernStandard.Plurals
 import Linglib.Fragments.Arabic.ModernStandard.Possession
 import Linglib.Fragments.Arabic.ModernStandard.Relativization
 import Linglib.Fragments.Arabic.ModernStandard.WordOrder
@@ -780,7 +778,6 @@ import Linglib.Fragments.English.Negation
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.NumeralModifiers
 import Linglib.Fragments.English.Phonology
-import Linglib.Fragments.English.Plurals
 import Linglib.Fragments.English.PolarityItems
 import Linglib.Fragments.English.PolarityMarking
 import Linglib.Fragments.English.Possession
@@ -798,7 +795,6 @@ import Linglib.Fragments.English.Scales
 import Linglib.Fragments.English.TemporalDeictic
 import Linglib.Fragments.English.TemporalExpressions
 import Linglib.Fragments.English.Tense
-import Linglib.Fragments.English.TenseAspect
 import Linglib.Fragments.English.Toy
 import Linglib.Fragments.English.V2
 import Linglib.Fragments.English.WordOrder
@@ -816,13 +812,11 @@ import Linglib.Fragments.Finnish.Infinitives
 import Linglib.Fragments.Finnish.Morph
 import Linglib.Fragments.Finnish.Negation
 import Linglib.Fragments.Finnish.Phonology
-import Linglib.Fragments.Finnish.Plurals
 import Linglib.Fragments.Finnish.PolarityItems
 import Linglib.Fragments.Finnish.Possession
 import Linglib.Fragments.Finnish.Predicates
 import Linglib.Fragments.Finnish.Relativization
 import Linglib.Fragments.Finnish.TemporalConnectives
-import Linglib.Fragments.Finnish.TenseAspect
 import Linglib.Fragments.Finnish.VowelHarmony
 import Linglib.Fragments.Ga.Basic
 import Linglib.Fragments.Ga.Predicates
@@ -885,7 +879,6 @@ import Linglib.Fragments.Hausa.Gender
 import Linglib.Fragments.Hausa.TAM
 import Linglib.Fragments.Hausa.Tone
 import Linglib.Fragments.Hausa.VerbGrades
-import Linglib.Fragments.Hawaiian.Plurals
 import Linglib.Fragments.Hawaiian.Possession
 import Linglib.Fragments.Hebrew.ConsonantalRoots
 import Linglib.Fragments.Hebrew.Relativization
@@ -893,10 +886,8 @@ import Linglib.Fragments.Hebrew.TemporalDeictic
 import Linglib.Fragments.Hemba.AuxiliaryVerbs
 import Linglib.Fragments.Hindi.Case
 import Linglib.Fragments.Hindi.Morph
-import Linglib.Fragments.Hindi.Plurals
 import Linglib.Fragments.Hindi.PolarityItems
 import Linglib.Fragments.Hindi.Pronouns
-import Linglib.Fragments.Hindi.TenseAspect
 import Linglib.Fragments.HindiUrdu.Adposition
 import Linglib.Fragments.HindiUrdu.Comparison
 import Linglib.Fragments.HindiUrdu.Coordination
@@ -914,7 +905,6 @@ import Linglib.Fragments.Hungarian.Coordination
 import Linglib.Fragments.Hungarian.Modals
 import Linglib.Fragments.Hungarian.Morph
 import Linglib.Fragments.Hungarian.Phonology
-import Linglib.Fragments.Hungarian.Plurals
 import Linglib.Fragments.Hungarian.PolarityItems
 import Linglib.Fragments.Hungarian.Possession
 import Linglib.Fragments.Hungarian.Predicates
@@ -930,7 +920,6 @@ import Linglib.Fragments.Icelandic.Verbs
 import Linglib.Fragments.Indonesian.Adposition
 import Linglib.Fragments.Indonesian.Morph
 import Linglib.Fragments.Indonesian.Morphophonology
-import Linglib.Fragments.Indonesian.Plurals
 import Linglib.Fragments.Indonesian.Predicates
 import Linglib.Fragments.Indonesian.TAM
 import Linglib.Fragments.Indonesian.VoiceSystem
@@ -970,7 +959,6 @@ import Linglib.Fragments.Japanese.Nouns
 import Linglib.Fragments.Japanese.Particles
 import Linglib.Fragments.Japanese.Passive
 import Linglib.Fragments.Japanese.Phonology
-import Linglib.Fragments.Japanese.Plurals
 import Linglib.Fragments.Japanese.PolarityItems
 import Linglib.Fragments.Japanese.Possession
 import Linglib.Fragments.Japanese.Predicates
@@ -980,7 +968,6 @@ import Linglib.Fragments.Japanese.Questions
 import Linglib.Fragments.Japanese.Relativization
 import Linglib.Fragments.Japanese.TemporalConnectives
 import Linglib.Fragments.Japanese.TemporalDeictic
-import Linglib.Fragments.Japanese.TenseAspect
 import Linglib.Fragments.Japanese.WordOrder
 import Linglib.Fragments.Jarawara.PossessedNouns
 import Linglib.Fragments.Javanese.Modals
@@ -999,19 +986,16 @@ import Linglib.Fragments.Korean.MedialVerbs
 import Linglib.Fragments.Korean.Modals
 import Linglib.Fragments.Korean.Morph
 import Linglib.Fragments.Korean.Phonology
-import Linglib.Fragments.Korean.Plurals
 import Linglib.Fragments.Korean.PolarityItems
 import Linglib.Fragments.Korean.Possession
 import Linglib.Fragments.Korean.Predicates
 import Linglib.Fragments.Korean.Pronouns
 import Linglib.Fragments.Korean.Relativization
-import Linglib.Fragments.Korean.TenseAspect
 import Linglib.Fragments.Korean.WordOrder
 import Linglib.Fragments.Koryak.Modals
 import Linglib.Fragments.Laal.Prosody
 import Linglib.Fragments.Lakhota.Definiteness
 import Linglib.Fragments.Lango.Coordination
-import Linglib.Fragments.Lango.TenseAspect
 import Linglib.Fragments.Latin.Adjectives
 import Linglib.Fragments.Latin.Case
 import Linglib.Fragments.Latin.Comparison
@@ -1019,7 +1003,6 @@ import Linglib.Fragments.Latin.Coordination
 import Linglib.Fragments.Latin.Indefinites
 import Linglib.Fragments.Latin.Phonology
 import Linglib.Fragments.Latvian.IndeterminatePronouns
-import Linglib.Fragments.Lezgian.Plurals
 import Linglib.Fragments.Magahi.Pronouns
 import Linglib.Fragments.Maithili.Pronouns
 import Linglib.Fragments.Malagasy.Relativization
@@ -1040,7 +1023,6 @@ import Linglib.Fragments.Mandarin.Negation
 import Linglib.Fragments.Mandarin.Nouns
 import Linglib.Fragments.Mandarin.Particles
 import Linglib.Fragments.Mandarin.Phonology
-import Linglib.Fragments.Mandarin.Plurals
 import Linglib.Fragments.Mandarin.PolarityItems
 import Linglib.Fragments.Mandarin.Possession
 import Linglib.Fragments.Mandarin.Predicates
@@ -1050,7 +1032,6 @@ import Linglib.Fragments.Mandarin.Reciprocals
 import Linglib.Fragments.Mandarin.Relativization
 import Linglib.Fragments.Mandarin.Resultatives
 import Linglib.Fragments.Mandarin.TemporalDeictic
-import Linglib.Fragments.Mandarin.TenseAspect
 import Linglib.Fragments.Mandarin.WordOrder
 import Linglib.Fragments.Maori.Negation
 import Linglib.Fragments.Maori.Phonology
@@ -1107,7 +1088,6 @@ import Linglib.Fragments.Quechua.Negation
 import Linglib.Fragments.Quechua.PolarityItems
 import Linglib.Fragments.Quechua.Possession
 import Linglib.Fragments.Quechua.SaraguroKichwa.Evidentiality
-import Linglib.Fragments.Quechua.TenseAspect
 import Linglib.Fragments.Romance.BrazilianPortuguese.Predicates
 import Linglib.Fragments.Romance.BrazilianPortuguese.Reciprocals
 import Linglib.Fragments.Romance.Catalan.Predicates
@@ -1128,7 +1108,6 @@ import Linglib.Fragments.Romance.French.PolarityMarking
 import Linglib.Fragments.Romance.French.Predicates
 import Linglib.Fragments.Romance.French.Reciprocals
 import Linglib.Fragments.Romance.French.Relativization
-import Linglib.Fragments.Romance.French.TenseAspect
 import Linglib.Fragments.Romance.Galician.Pronouns
 import Linglib.Fragments.Romance.Italian.Predicates
 import Linglib.Fragments.Romance.Italian.Reciprocals
@@ -1170,14 +1149,12 @@ import Linglib.Fragments.Slavic.Russian.Indefinites
 import Linglib.Fragments.Slavic.Russian.Morph
 import Linglib.Fragments.Slavic.Russian.Negation
 import Linglib.Fragments.Slavic.Russian.Phonology
-import Linglib.Fragments.Slavic.Russian.Plurals
 import Linglib.Fragments.Slavic.Russian.PolarityItems
 import Linglib.Fragments.Slavic.Russian.Possession
 import Linglib.Fragments.Slavic.Russian.QuestionParticles
 import Linglib.Fragments.Slavic.Russian.Reciprocals
 import Linglib.Fragments.Slavic.Russian.Relativization
 import Linglib.Fragments.Slavic.Russian.TemporalDeictic
-import Linglib.Fragments.Slavic.Russian.TenseAspect
 import Linglib.Fragments.Slavic.Russian.VerbalPrefixes
 import Linglib.Fragments.Slavic.Russian.WordOrder
 import Linglib.Fragments.Slavic.Serbian.Case
@@ -1202,7 +1179,6 @@ import Linglib.Fragments.Spanish.PolarityItems
 import Linglib.Fragments.Spanish.PolarityMarking
 import Linglib.Fragments.Spanish.Predicates
 import Linglib.Fragments.Spanish.Pronouns
-import Linglib.Fragments.Spanish.TenseAspect
 import Linglib.Fragments.Statimcets.Modals
 import Linglib.Fragments.Swahili.Adposition
 import Linglib.Fragments.Swahili.Basic
@@ -1210,12 +1186,10 @@ import Linglib.Fragments.Swahili.ClassifierSystem
 import Linglib.Fragments.Swahili.Comparison
 import Linglib.Fragments.Swahili.Morph
 import Linglib.Fragments.Swahili.Phonology
-import Linglib.Fragments.Swahili.Plurals
 import Linglib.Fragments.Swahili.Possession
 import Linglib.Fragments.Swahili.Predicates
 import Linglib.Fragments.Swahili.Reciprocals
 import Linglib.Fragments.Swahili.Relativization
-import Linglib.Fragments.Swahili.TenseAspect
 import Linglib.Fragments.Swahili.WordOrder
 import Linglib.Fragments.Swedish.AnswerParticles
 import Linglib.Fragments.Swedish.QuestionParticles
@@ -1227,7 +1201,6 @@ import Linglib.Fragments.Tagalog.Plurals
 import Linglib.Fragments.Tagalog.Pronouns
 import Linglib.Fragments.Tagalog.Relativization
 import Linglib.Fragments.Tagalog.TemporalConnectives
-import Linglib.Fragments.Tagalog.TenseAspect
 import Linglib.Fragments.Tamil.Case
 import Linglib.Fragments.Tamil.Pronouns
 import Linglib.Fragments.Tangale.Phonology
@@ -1240,7 +1213,6 @@ import Linglib.Fragments.Teop.Nouns
 import Linglib.Fragments.Thai.Comparison
 import Linglib.Fragments.Thai.Definiteness
 import Linglib.Fragments.Thai.Morph
-import Linglib.Fragments.Thai.TenseAspect
 import Linglib.Fragments.Tibetan.Coordination
 import Linglib.Fragments.Tibetan.Evidentiality
 import Linglib.Fragments.Tigre.Phonology
@@ -1260,7 +1232,6 @@ import Linglib.Fragments.Turkish.MedialVerbs
 import Linglib.Fragments.Turkish.Morph
 import Linglib.Fragments.Turkish.Negation
 import Linglib.Fragments.Turkish.Phonology
-import Linglib.Fragments.Turkish.Plurals
 import Linglib.Fragments.Turkish.PolarityItems
 import Linglib.Fragments.Turkish.Possession
 import Linglib.Fragments.Turkish.Predicates
@@ -1268,7 +1239,6 @@ import Linglib.Fragments.Turkish.QuestionParticles
 import Linglib.Fragments.Turkish.Relativization
 import Linglib.Fragments.Turkish.SuffixTemplate
 import Linglib.Fragments.Turkish.TAM
-import Linglib.Fragments.Turkish.TenseAspect
 import Linglib.Fragments.Turkish.VowelHarmony
 import Linglib.Fragments.Turkish.WordOrder
 import Linglib.Fragments.Tuyuca.Evidentiality
@@ -1276,7 +1246,6 @@ import Linglib.Fragments.Tzotzil.Adposition
 import Linglib.Fragments.Tzotzil.WordOrder
 import Linglib.Fragments.Urdu.CausativeSystem
 import Linglib.Fragments.Uyghur.Complementizers
-import Linglib.Fragments.Vietnamese.TenseAspect
 import Linglib.Fragments.Wambaya.Reciprocals
 import Linglib.Fragments.Wan.Reciprocals
 import Linglib.Fragments.Washo.Modals
@@ -1294,13 +1263,10 @@ import Linglib.Fragments.Yoruba.FocusParticles
 import Linglib.Fragments.Yoruba.Phonology
 import Linglib.Fragments.Yoruba.Possession
 import Linglib.Fragments.Yoruba.Relativization
-import Linglib.Fragments.Yoruba.TenseAspect
 import Linglib.Fragments.ZarmaSonrai.Negation
 import Linglib.Fragments.Zulu.Phonology
-import Linglib.Fragments.Zulu.Plurals
 import Linglib.Morphology.Template
 import Linglib.Morphology.Case.Allomorphy
-import Linglib.Morphology.Case.WALS
 import Linglib.Morphology.Root.Basic
 import Linglib.Morphology.DM.Allosemy
 import Linglib.Morphology.DM.Categorizer
@@ -1331,10 +1297,9 @@ import Linglib.Morphology.FragmentGrammars.MultinomialPCFG
 import Linglib.Morphology.Grammaticalization
 import Linglib.Morphology.InflectionRules
 import Linglib.Morphology.Morph
-import Linglib.Morphology.MorphProfile
+import Linglib.Morphology.FusionTypology
 import Linglib.Morphology.MorphWord
 import Linglib.Morphology.Nanosyntax.TreeSpellout
-import Linglib.Morphology.Number
 import Linglib.Morphology.Paradigm.Basic
 import Linglib.Morphology.Paradigm.Complexity
 import Linglib.Morphology.Paradigm.Contiguity
@@ -1345,7 +1310,6 @@ import Linglib.Morphology.Periphrasis
 import Linglib.Morphology.Realization
 import Linglib.Morphology.RelevanceHierarchy
 import Linglib.Morphology.Root.Family
-import Linglib.Morphology.TenseAspect
 import Linglib.Morphology.UsageBased.Network
 import Linglib.Morphology.Word
 import Linglib.Phonology.Autosegmental.AR

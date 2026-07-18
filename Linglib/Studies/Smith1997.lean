@@ -1,10 +1,8 @@
 import Linglib.Features.Aktionsart
 import Linglib.Semantics.Aspect.Basic
 import Linglib.Semantics.Aspect.Composition
-import Linglib.Features.Aktionsart
-import Linglib.Fragments.English.TenseAspect
-import Linglib.Fragments.Romance.French.TenseAspect
-import Linglib.Fragments.Mandarin.TenseAspect
+import Linglib.Data.WALS.Features.F65A
+import Linglib.Data.WALS.Features.F67A
 import Linglib.Features.MassCount
 
 /-!
@@ -215,18 +213,26 @@ theorem three_perf_stative_patterns :
 
 /-! ### WALS typology bridge -/
 
-/-- Smith's sample languages all have grammaticalised aspect in WALS Ch. 65.
-    Consistent with each having both `.perfective` and `.imperfective`. -/
-theorem smith_languages_have_wals_aspect :
-    English.tenseAspectProfile.aspect = .grammatical ∧
-    French.tenseAspectProfile.aspect = .grammatical ∧
-    Mandarin.tenseAspectProfile.aspect = .grammatical := by decide
+/-- WALS Ch 65 (perfective/imperfective aspect) records grammatical aspect for
+    French and Mandarin, consistent with Smith giving each both `.perfective`
+    and `.imperfective` viewpoints.
 
-/-- French has the neutral viewpoint (the Futur), and WALS records French as
-    having an inflectional future — consistent across the two encodings. -/
+    English diverges: WALS Ch 65 codes English as having no grammatical
+    perfective/imperfective marking, whereas Smith analyses English as having a
+    perfective/imperfective (progressive) opposition. The theorem states the
+    WALS rows as they stand rather than forcing agreement with Smith's account. -/
+theorem wals_aspect_rows :
+    (Data.WALS.F65A.lookupISO "fra").map (·.value) = some .grammaticalMarking ∧
+    (Data.WALS.F65A.lookupISO "cmn").map (·.value) = some .grammaticalMarking ∧
+    (Data.WALS.F65A.lookupISO "eng").map (·.value) = some .noGrammaticalMarking := by
+  decide
+
+/-- French has the neutral viewpoint (the Futur), and WALS Ch 67 records French
+    as having an inflectional future — consistent across the two encodings. -/
 theorem french_neutral_has_inflectional_future :
     ViewpointType.neutral ∈ french.viewpoints ∧
-    French.tenseAspectProfile.future = .inflectional := by decide
+    (Data.WALS.F67A.lookupISO "fra").map (·.value) = some .inflectionalFutureExists := by
+  decide
 
 /-! ### Imperfective paradox -/
 

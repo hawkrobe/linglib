@@ -1,4 +1,4 @@
-import Linglib.Morphology.MorphProfile
+import Linglib.Morphology.FusionTypology
 
 /-!
 # Georgian Morphological Profile
@@ -17,10 +17,6 @@ def morphProfile : MorphProfile :=
   .fromWALS "Georgian" "kat"
     (fusionFb        := .concatenative)
     (exponenceFb     := .monoexponential)
-    (verbSynthesisFb := .moderate)
-    (locusFb         := .dependentMarking)
-    (prefixSuffixFb  := .stronglySuffixing)
-    (reduplicationFb := .noProductive)
     (flexivity       := some .flexive)
     (bnExponence     := some .cumulative)
 

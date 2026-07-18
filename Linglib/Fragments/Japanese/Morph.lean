@@ -1,4 +1,4 @@
-import Linglib.Morphology.MorphProfile
+import Linglib.Morphology.FusionTypology
 import Linglib.Morphology.Template
 
 /-!
@@ -31,10 +31,6 @@ def morphProfile : MorphProfile :=
   .fromWALS "Japanese" "jpn"
     (fusionFb        := .concatenative)
     (exponenceFb     := .monoexponential)
-    (verbSynthesisFb := .moderate)
-    (locusFb         := .dependentMarking)
-    (prefixSuffixFb  := .stronglySuffixing)
-    (reduplicationFb := .noProductive)
     (flexivity       := some .nonflexive)
     (bnExponence     := some .separative)
 

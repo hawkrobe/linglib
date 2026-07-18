@@ -1,4 +1,4 @@
-import Linglib.Morphology.MorphProfile
+import Linglib.Morphology.FusionTypology
 import Linglib.Fragments.English.Morph
 import Linglib.Fragments.Mandarin.Morph
 import Linglib.Fragments.Japanese.Morph
@@ -50,7 +50,7 @@ two parameters are independent.
 ## Out of scope
 
 The substrate types (`MorphProfile`, `Fusion`, `Flexivity`, ...) and WALS
-converters live in `Morphology/MorphProfile.lean`. Per-language B&N
+converters live in `Morphology/FusionTypology.lean`. Per-language B&N
 classification commitments (e.g., "German is fusional") live in each
 `Fragments/{Lang}/Morph.lean` as local bridge theorems.
 [ackerman-malouf-2013]'s E-complexity / I-complexity analysis lives
@@ -59,7 +59,7 @@ in `Studies/AckermanMalouf2013.lean`.
 This file deliberately omits aggregate-count theorems (`sample_X_count = N`)
 — exact counts go stale every time a Fragment is added to the sample. The
 mutual-exclusion theorem `MorphProfile.agglutinating_fusional_exclusive`
-is structural and lives in `Morphology/MorphProfile.lean §6`.
+is structural and lives in `Morphology/FusionTypology.lean §6`.
 -/
 
 set_option autoImplicit false
@@ -158,7 +158,7 @@ theorem concatenative_partition :
 
 /-- Sample partition: every language falls into exactly one of agglutinating
     / fusional / nonlinear / isolating. The disjointness half lives in
-    `Morphology/MorphProfile.lean §6` as a structural theorem
+    `Morphology/FusionTypology.lean §6` as a structural theorem
     (`MorphProfile.agglutinating_fusional_exclusive`); this is the empirical
     claim that the four cells exhaust the sample. -/
 theorem sample_type_exhaustive :

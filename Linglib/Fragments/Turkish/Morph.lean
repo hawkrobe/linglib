@@ -1,4 +1,4 @@
-import Linglib.Morphology.MorphProfile
+import Linglib.Morphology.FusionTypology
 
 /-!
 # Turkish Morphological Profile
@@ -19,10 +19,6 @@ def morphProfile : MorphProfile :=
   .fromWALS "Turkish" "tur"
     (fusionFb        := .concatenative)
     (exponenceFb     := .monoexponential)
-    (verbSynthesisFb := .moderate)
-    (locusFb         := .dependentMarking)
-    (prefixSuffixFb  := .stronglySuffixing)
-    (reduplicationFb := .noProductive)
     (flexivity       := some .nonflexive)
     (bnExponence     := some .separative)
 

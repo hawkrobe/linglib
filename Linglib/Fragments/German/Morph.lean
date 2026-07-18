@@ -1,4 +1,4 @@
-import Linglib.Morphology.MorphProfile
+import Linglib.Morphology.FusionTypology
 
 /-!
 # German Morphological Profile
@@ -27,10 +27,6 @@ def morphProfile : MorphProfile :=
   .fromWALS "German" "deu"
     (fusionFb        := .concatenative)
     (exponenceFb     := .monoexponential)
-    (verbSynthesisFb := .moderate)
-    (locusFb         := .dependentMarking)
-    (prefixSuffixFb  := .stronglySuffixing)
-    (reduplicationFb := .noProductive)
     (flexivity       := some .flexive)
     (bnExponence     := some .cumulative)
 

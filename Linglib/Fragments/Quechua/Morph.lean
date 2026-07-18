@@ -1,4 +1,4 @@
-import Linglib.Morphology.MorphProfile
+import Linglib.Morphology.FusionTypology
 
 /-!
 # Quechua (Imbabura) Morphological Profile
@@ -19,10 +19,6 @@ def morphProfile : MorphProfile :=
   .fromWALS "Quechua (Imbabura)" "qvi"
     (fusionFb        := .concatenative)
     (exponenceFb     := .monoexponential)
-    (verbSynthesisFb := .high)
-    (locusFb         := .dependentMarking)
-    (prefixSuffixFb  := .stronglySuffixing)
-    (reduplicationFb := .fullOnly)
     (flexivity       := some .nonflexive)
     (bnExponence     := some .separative)
 

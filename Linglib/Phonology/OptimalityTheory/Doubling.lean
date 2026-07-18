@@ -216,16 +216,17 @@ theorem redupFor_not_monotone :
   · decide
 
 -- ============================================================================
--- § 2d: Bridge to MorphProfile
+-- § 2d: Bridge to the reduplication typology
 -- ============================================================================
 
 /-- Languages without productive reduplication (WALS Ch 27) have no
     reduplication for any `DoublingFunction`.
 
     This connects the `DoublingGrammar` framework to the coarse-grained
-    `MorphProfile.Reduplication` typology: if `Reduplication = .noProductive`,
-    then `redupFor f = false` for all *f*, which means `hasAnyRedup = false`
-    and negative transfer is impossible (by `no_redup_no_negative_transfer`). -/
+    WALS Ch 27 reduplication typology: for a language classified as having
+    no productive reduplication, `redupFor f = false` for all *f*, which
+    means `hasAnyRedup = false` and negative transfer is impossible (by
+    `no_redup_no_negative_transfer`). -/
 def noRedupGrammar (morphFor : DoublingFunction → Bool) : DoublingGrammar :=
   { morphFor := morphFor
     redupFor := fun _ => false }
@@ -236,7 +237,7 @@ theorem noRedupGrammar_no_redup (morphFor : DoublingFunction → Bool) :
 
 /-- For languages without productive reduplication, REALIZE-MORPH
     availability equals `morphFor f` — no negative transfer is possible.
-    Connects `MorphProfile.reduplication = .noProductive` to the
+    Connects the WALS Ch 27 "no productive reduplication" type to the
     doubling predictions. -/
 theorem noRedup_realizeMorph (morphFor : DoublingFunction → Bool)
     (f : DoublingFunction) :

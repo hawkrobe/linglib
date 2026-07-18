@@ -1,4 +1,4 @@
-import Linglib.Morphology.MorphProfile
+import Linglib.Morphology.FusionTypology
 
 /-!
 # Mandarin Chinese Morphological Profile
@@ -20,10 +20,6 @@ def morphProfile : MorphProfile :=
   .fromWALS "Mandarin Chinese" "cmn"
     (fusionFb        := .isolating)
     (exponenceFb     := .monoexponential)
-    (verbSynthesisFb := .moderate)
-    (locusFb         := .dependentMarking)
-    (prefixSuffixFb  := .stronglySuffixing)
-    (reduplicationFb := .noProductive)
 
 example : morphProfile.iso = "cmn" ∧ morphProfile.language = "Mandarin Chinese" :=
   ⟨rfl, rfl⟩
