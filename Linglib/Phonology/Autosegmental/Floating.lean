@@ -3,9 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Morphology.MorphWord
 import Linglib.Core.CategoryTheory.Monoidal.LabeledTuple
-import Linglib.Phonology.Autosegmental.NonCrossing
 import Linglib.Phonology.Autosegmental.NonCrossing
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Finset.Image
@@ -29,10 +27,11 @@ chooses other `T` values.
 ## Main definitions
 
 * `Link` — an autosegmental link `(tier-index, backbone-index)`.
-* `TierSpec T`, `SegSpec S` — tier and backbone elements carrying
-  morpheme membership via `Morphology.WordStructure.Morpheme`
-  (re-exported into this namespace).
-* `FloatingForm S T` — autosegmental form with underlying/surface
+* `TierSpec T M`, `SegSpec S M` — tier and backbone elements carrying
+  membership in a **sponsor** of opaque type `M` — the morpheme
+  identity, kept abstract so the phonology imports nothing from the
+  morphology (Morphology instantiates `M := Morpheme` at its call sites).
+* `FloatingForm S T M` — autosegmental form with underlying/surface
   split.
 * `FloatingForm.IsAlive`, `IsLinked`, `IsFloating`, `IsTautomorphemic`,
   `Crosses` — decidable predicates on tier elements and links.
@@ -65,10 +64,6 @@ link is **tautomorphemic** when its tier element and backbone share a morpheme
 
 namespace Autosegmental
 
--- Re-export `Morpheme` so autosegmental consumers see it unqualified
--- after `open Autosegmental`.
-export Morphology.WordStructure (Morpheme)
-
 /-! ### Tier and link primitives -/
 
 /-- Index into the upper tier. -/
@@ -81,26 +76,29 @@ abbrev SegIdx := ℕ
     backbone-position `snd`. -/
 abbrev Link := TierIdx × SegIdx
 
-/-- An autosegmental tier element: a value of type `T` plus morpheme
-    membership. Generalises [goldsmith-1976]'s tonal-tier element
-    to arbitrary tier-value types (tones, segments, features). -/
-structure TierSpec (T : Type*) where
+/-- An autosegmental tier element: a value of type `T` plus its
+    sponsoring morpheme identity `M`. Generalises [goldsmith-1976]'s
+    tonal-tier element to arbitrary tier-value types (tones, segments,
+    features) and an opaque sponsor. -/
+structure TierSpec (T M : Type*) where
   /-- The tier value (tone, segment, feature, ...). -/
   value : T
-  morpheme : Morpheme
+  /-- The sponsoring morpheme identity (opaque). -/
+  morpheme : M
   deriving DecidableEq, Repr
 
-/-- A segmental backbone element: segment plus morpheme membership.
-    Generic over the segment type `S`. -/
-structure SegSpec (S : Type*) where
+/-- A segmental backbone element: segment plus its sponsoring morpheme
+    identity. Generic over the segment type `S` and sponsor type `M`. -/
+structure SegSpec (S M : Type*) where
   seg : S
-  morpheme : Morpheme
+  /-- The sponsoring morpheme identity (opaque). -/
+  morpheme : M
   deriving DecidableEq, Repr
 
 /-! ### `FloatingForm`
 
-`FloatingForm S T` is an autosegmental form with segmental backbone
-of type `S` and tier-value type `T`. Tonal use chooses `T := TRN`;
+`FloatingForm S T M` is an autosegmental form with segmental backbone
+of type `S`, tier-value type `T`, and sponsor type `M`. Tonal use chooses `T := TRN`;
 non-tonal autosegmental work chooses other `T` values
 ([laoide-kemp-2026], [lieber-1983]). The OT-style
 bookkeeping (`deletedTier`, `surfaceLinks` vs underlying `links`) is
@@ -110,11 +108,11 @@ language-independent.
 /-- An autosegmental form: an underlying two-tier presentation (tones over
     segments, with association links) plus OT-style surface bookkeeping —
     `deletedTier` and `surfaceLinks` track the surface state separately. -/
-structure FloatingForm (S T : Type*) where
+structure FloatingForm (S T M : Type*) where
   /-- The tonal tier (underlying). -/
-  upper : LabeledTuple (TierSpec T)
+  upper : LabeledTuple (TierSpec T M)
   /-- The segmental backbone (underlying). -/
-  lower : LabeledTuple (SegSpec S)
+  lower : LabeledTuple (SegSpec S M)
   /-- The underlying association links. -/
   links : Finset Link
   /-- SURFACE deletion set on the upper tier (current state). -/
@@ -127,13 +125,13 @@ structure FloatingForm (S T : Type*) where
 
 /-- Hides the `Finset` fields (mathlib's `Finset.Repr` is `unsafe`) and
     prints only segments and underlying tier elements; debug-only. -/
-instance {S T : Type*} [Repr S] [Repr T] : Repr (FloatingForm S T) where
+instance {S T M : Type*} [Repr S] [Repr T] [Repr M] : Repr (FloatingForm S T M) where
   reprPrec f _ :=
     f!"⟨lower={repr (f.lower.toList.map SegSpec.seg)}, upper={repr f.upper.toList}⟩"
 
 namespace FloatingForm
 
-variable {S T : Type*} [DecidableEq S] [DecidableEq T] (f : FloatingForm S T)
+variable {S T M : Type*} [DecidableEq S] [DecidableEq T] [DecidableEq M] (f : FloatingForm S T M)
 
 /-! ### Surface graph (derived view) -/
 
@@ -145,8 +143,8 @@ abbrev SurfaceIsPlanar : Prop := IsNonCrossing f.surfaceLinks
 
 /-- Construct an input form: surface state mirrors underlying state,
     nothing deleted, all underlying links intact. -/
-def mkInput (lower : List (SegSpec S)) (upper : List (TierSpec T))
-    (links : Finset Link) : FloatingForm S T :=
+def mkInput (lower : List (SegSpec S M)) (upper : List (TierSpec T M))
+    (links : Finset Link) : FloatingForm S T M :=
   { lower := .ofList lower
     upper := .ofList upper
     links := links
@@ -156,13 +154,13 @@ def mkInput (lower : List (SegSpec S)) (upper : List (TierSpec T))
 /-! ### Morphemic structure -/
 
 /-- The morpheme of the `k`-th upper-tier element, or `none` if out of range. -/
-def upperMorpheme? (k : TierIdx) : Option Morpheme := (f.upper.get? (k)).map TierSpec.morpheme
+def upperMorpheme? (k : TierIdx) : Option M := (f.upper.get? (k)).map TierSpec.morpheme
 
 /-- The morpheme of the `i`-th lower-tier element, or `none` if out of range. -/
-def lowerMorpheme? (i : SegIdx) : Option Morpheme := (f.lower.get? (i)).map SegSpec.morpheme
+def lowerMorpheme? (i : SegIdx) : Option M := (f.lower.get? (i)).map SegSpec.morpheme
 
 /-- Every morpheme occurring on either tier. -/
-def morphemes : Finset Morpheme :=
+def morphemes : Finset M :=
   (f.lower.toList.map SegSpec.morpheme).toFinset ∪ (f.upper.toList.map TierSpec.morpheme).toFinset
 
 /-! ### Predicates on tier elements and links -/
@@ -212,7 +210,7 @@ instance [DecidableEq S] [DecidableEq T] : Decidable f.InBounds :=
 
 /-- Concatenation of underlying input states ([jardine-heinz-2015]): tier
     juxtaposition with index-shifted links, surface mirroring underlying. -/
-def hconcat (g : FloatingForm S T) : FloatingForm S T :=
+def hconcat (g : FloatingForm S T M) : FloatingForm S T M :=
   let ls := f.links ∪ g.links.image (shiftLink f.upper.len f.lower.len)
   { upper := f.upper.concat g.upper
     lower := f.lower.concat g.lower
@@ -220,37 +218,37 @@ def hconcat (g : FloatingForm S T) : FloatingForm S T :=
     deletedTier := ∅
     surfaceLinks := ls }
 
-@[simp] theorem hconcat_upper (g : FloatingForm S T) :
+@[simp] theorem hconcat_upper (g : FloatingForm S T M) :
     (f.hconcat g).upper = f.upper.concat g.upper := rfl
 
-@[simp] theorem hconcat_lower (g : FloatingForm S T) :
+@[simp] theorem hconcat_lower (g : FloatingForm S T M) :
     (f.hconcat g).lower = f.lower.concat g.lower := rfl
 
-@[simp] theorem hconcat_links (g : FloatingForm S T) :
+@[simp] theorem hconcat_links (g : FloatingForm S T M) :
     (f.hconcat g).links = f.links ∪ g.links.image (shiftLink f.upper.len f.lower.len) := rfl
 
-@[simp] theorem hconcat_surfaceLinks (g : FloatingForm S T) :
+@[simp] theorem hconcat_surfaceLinks (g : FloatingForm S T M) :
     (f.hconcat g).surfaceLinks
       = f.links ∪ g.links.image (shiftLink f.upper.len f.lower.len) := rfl
 
-@[simp] theorem hconcat_deletedTier (g : FloatingForm S T) :
+@[simp] theorem hconcat_deletedTier (g : FloatingForm S T M) :
     (f.hconcat g).deletedTier = ∅ := rfl
 
 /-! ### Atomic GEN operations -/
 
 /-- Delete the underlying upper-tier element at index `k`. Cascades to remove
     any surface link referencing it. -/
-def deleteTierElem (k : TierIdx) : FloatingForm S T :=
+def deleteTierElem (k : TierIdx) : FloatingForm S T M :=
   { f with
     deletedTier := insert k f.deletedTier
     surfaceLinks := f.surfaceLinks.filter (λ l => l.fst ≠ k) }
 
 /-- Insert a surface link `(k, i)`. -/
-def insertLink (k : TierIdx) (i : SegIdx) : FloatingForm S T :=
+def insertLink (k : TierIdx) (i : SegIdx) : FloatingForm S T M :=
   { f with surfaceLinks := insert (k, i) f.surfaceLinks }
 
 /-- Delete the surface link `(k, i)`. -/
-def deleteLink (k : TierIdx) (i : SegIdx) : FloatingForm S T :=
+def deleteLink (k : TierIdx) (i : SegIdx) : FloatingForm S T M :=
   { f with surfaceLinks := f.surfaceLinks.erase (k, i) }
 
 /-! ### Well-formedness: no crossing lines -/
@@ -271,7 +269,7 @@ abbrev Crosses (k : TierIdx) (i : SegIdx) : Prop :=
     insert-and-associate and shift). The no-crossing filter ([goldsmith-1976])
     enforces well-formedness: without it a floating tone could dock across an
     intervening linked tone. -/
-def gen : Finset (FloatingForm S T) :=
+def gen : Finset (FloatingForm S T M) :=
   let aliveIdxs := (Finset.range f.upper.len).filter (λ k => f.IsAlive k)
   let floatIdxs := aliveIdxs.filter (λ k => ¬ f.IsLinked k)
   let segIdxs := Finset.range f.lower.len
@@ -326,7 +324,7 @@ def aliveTierIdxs : List TierIdx :=
 
 /-- Lower-tier (backbone) indices belonging to morpheme `m`, in order.
     Out-of-range indices are excluded by construction. -/
-def segsOfMorpheme (m : Morpheme) : List SegIdx :=
+def segsOfMorpheme (m : M) : List SegIdx :=
   (List.range f.lower.len).filter (λ i => f.lowerMorpheme? i = some m)
 
 /-! ### Position counts -/
@@ -341,11 +339,11 @@ def countLower (p : SegIdx → Prop) [DecidablePred p] : ℕ :=
   (List.range f.lower.len).countP (λ i => decide (p i))
 
 /-- The empty input. -/
-def emptyInput : FloatingForm S T :=
+def emptyInput : FloatingForm S T M :=
   { upper := .empty, lower := .empty, links := ∅, deletedTier := ∅, surfaceLinks := ∅ }
 
 /-- Left-to-right concatenation of a list of input states. -/
-def concatInputs (gs : List (FloatingForm S T)) : FloatingForm S T :=
+def concatInputs (gs : List (FloatingForm S T M)) : FloatingForm S T M :=
   gs.foldr hconcat emptyInput
 
 end FloatingForm

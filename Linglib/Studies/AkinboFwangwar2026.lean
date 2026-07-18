@@ -1,6 +1,7 @@
 import Linglib.Fragments.Mwaghavul.Basic
 import Linglib.Pragmatics.Expressives.Basic
 import Linglib.Morphology.DM.Categorizer
+import Linglib.Morphology.MorphWord
 import Linglib.Studies.Rolle2018
 import Linglib.Phonology.Autosegmental.Floating
 import Linglib.Phonology.OptimalityTheory.Cophonology
@@ -41,7 +42,7 @@ grammatical tones targeting ideophones in Mwaghavul. *Natural Language
 
 ## Substrate
 
-The OT analysis is built on `Autosegmental.FloatingForm Syl TRN`
+The OT analysis is built on `Autosegmental.FloatingForm Syl TRN Morpheme`
 (Goldsmith-style autosegmental representation; built originally for
 [mcpherson-lamont-2026]). Each `ulTier` entry is one
 autosegment; `surfaceLinks` records associations between tier and
@@ -73,6 +74,7 @@ namespace AkinboFwangwar2026
 open OptimalityTheory
 open Constraints
 open Autosegmental
+open Morphology.WordStructure (Morpheme)
 open Tone (TRN)
 open Tone (integrityTone)
 open Mwaghavul
@@ -82,7 +84,7 @@ open Mwaghavul
 -- ============================================================================
 
 /-- The Mwaghavul-instantiated autosegmental form. -/
-abbrev MwaghavulForm := FloatingForm Syl TRN
+abbrev MwaghavulForm := FloatingForm Syl TRN Morpheme
 
 /-- The ideophone root (wùlàʃ in Tableau 24, háŋláyáp in Tableau 25).
     Both single-root tableaux share this morpheme. -/
@@ -100,28 +102,28 @@ def rootRedMorph : Morpheme := { morph := .root "root-red" }
 def rootBaseMorph : Morpheme := { morph := .root "root-base" }
 
 /-- Wrap a Mwaghavul syllable as a TBU of the (single) ideophone root. -/
-def rootSeg (s : Syl) : SegSpec Syl := { seg := s, morpheme := rootMorph }
+def rootSeg (s : Syl) : SegSpec Syl Morpheme := { seg := s, morpheme := rootMorph }
 
 /-- Wrap a syllable as a TBU of the reduplicant (Tableau 26). -/
-def redSeg (s : Syl) : SegSpec Syl := { seg := s, morpheme := rootRedMorph }
+def redSeg (s : Syl) : SegSpec Syl Morpheme := { seg := s, morpheme := rootRedMorph }
 
 /-- Wrap a syllable as a TBU of the base (Tableau 26). -/
-def baseSeg (s : Syl) : SegSpec Syl := { seg := s, morpheme := rootBaseMorph }
+def baseSeg (s : Syl) : SegSpec Syl Morpheme := { seg := s, morpheme := rootBaseMorph }
 
 /-- L tone of the (single) ideophone root. -/
-def rootL : TierSpec TRN := { value := TRN.L, morpheme := rootMorph }
+def rootL : TierSpec TRN Morpheme := { value := TRN.L, morpheme := rootMorph }
 
 /-- M tone of the verbaliser. -/
-def vbzM : TierSpec TRN := { value := TRN.M, morpheme := vbzMorph }
+def vbzM : TierSpec TRN Morpheme := { value := TRN.M, morpheme := vbzMorph }
 
 /-- H tone of the verbaliser. -/
-def vbzH : TierSpec TRN := { value := TRN.H, morpheme := vbzMorph }
+def vbzH : TierSpec TRN Morpheme := { value := TRN.H, morpheme := vbzMorph }
 
 /-- L tone of the reduplicant root (Tableau 26). -/
-def lRed : TierSpec TRN := { value := TRN.L, morpheme := rootRedMorph }
+def lRed : TierSpec TRN Morpheme := { value := TRN.L, morpheme := rootRedMorph }
 
 /-- L tone of the base root (Tableau 26). -/
-def lBase : TierSpec TRN := { value := TRN.L, morpheme := rootBaseMorph }
+def lBase : TierSpec TRN Morpheme := { value := TRN.L, morpheme := rootBaseMorph }
 
 -- ============================================================================
 -- §2: Constraints over `MwaghavulForm`

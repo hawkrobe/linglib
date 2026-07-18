@@ -428,10 +428,11 @@ end McPhersonLamont2026
 namespace Autosegmental
 
 open Tone (TBU TRN)
+open Morphology.WordStructure (Morpheme)
 
 /-- Embed a `tonalOverwrite` output into `FloatingForm`: one morpheme `m`, links `(i, i)`. -/
 def FloatingForm.ofTBUList {S : Type*} (host : List (TBU S)) (m : Morpheme) :
-    FloatingForm S TRN where
+    FloatingForm S TRN Morpheme where
   lower := .ofList (host.map (fun tbu => { seg := tbu.seg, morpheme := m }))
   upper := .ofList (host.map (fun tbu => { value := tbu.tone, morpheme := m }))
   links := ((List.range host.length).map (fun i => (i, i))).toFinset
@@ -467,7 +468,7 @@ theorem FloatingForm.ofTBUList_linksTo_subsingleton {S : Type*}
 
 /-- A `FloatingForm` with two surface tones on one TBU — unreachable by `ofTBUList`. -/
 theorem FloatingForm.exists_multi_tone_TBU :
-    ∃ f : FloatingForm Unit TRN, ∃ i : SegIdx, 2 ≤ (f.linksTo i).length := by
+    ∃ f : FloatingForm Unit TRN Morpheme, ∃ i : SegIdx, 2 ≤ (f.linksTo i).length := by
   refine ⟨?_, 0, ?_⟩
   · exact
     { lower := .ofList [{ seg := (), morpheme := { morph := .root "m" } }]
