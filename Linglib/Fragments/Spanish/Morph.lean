@@ -4,8 +4,7 @@ import Linglib.Morphology.FusionTypology
 # Spanish Morphological Profile
 [wals-2013] [bickel-nichols-2007]
 
-WALS-derived profile for Spanish (ISO `spa`). B&N 2007 places Spanish in
-the "fusional" cell (concatenative + flexive + cumulative).
+WALS-derived profile for Spanish (ISO `spa`). Textbook-consensus classification: Spanish falls in the "fusional" cell (concatenative + flexive + cumulative).
 -/
 
 namespace Spanish
@@ -22,7 +21,7 @@ def morphProfile : MorphProfile :=
 
 example : morphProfile.iso = "spa" ∧ morphProfile.language = "Spanish" := ⟨rfl, rfl⟩
 
-/-- B&N 2007 places Spanish in the "fusional" cell. -/
+/-- Textbook-consensus classification: Spanish falls in the "fusional" cell. -/
 example : morphProfile.IsFusional := by decide
 
 end Spanish

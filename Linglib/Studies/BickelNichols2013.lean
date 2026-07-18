@@ -30,13 +30,16 @@ Shopen-volume chapter on the orthogonality of fusion and flexivity. The
 
 ## Bickel & Nichols's central insight
 
-The traditional 1D typological scale `isolating > agglutinating > fusional
-> polysynthetic` conflates two orthogonal parameters: **fusion** (whether
-formatives are concatenative, nonlinear, or isolating) and **flexivity**
-(whether classes are predictable from form vs. arbitrary). Both
-"agglutinating" (`concatenative + nonflexive`) and "fusional"
-(`concatenative + flexive`) are attested in the sample, demonstrating the
-two parameters are independent.
+The traditional 1D typological scale — "isolating > agglutinative >
+ﬂexive > nonlinear (or introﬂexive)" with prototypes Chinese > Turkish >
+Latin > Arabic ([bickel-nichols-2007] p. 185) — conflates two orthogonal
+parameters: **fusion** (whether formatives are isolating, concatenative,
+or nonlinear) and **flexivity** (whether formatives show item-based,
+class-conditioned allomorphy or vary only by general rule). All six cells
+of the 3 × 2 space are attested cross-linguistically (pp. 186-187);
+within the sample, both "agglutinative" (`concatenative + nonflexive`)
+and "fusional" (`concatenative + flexive`) cells are populated,
+demonstrating the independence on the concatenative row.
 
 ## Contents
 
@@ -112,10 +115,11 @@ theorem morph_iso_unique :
 -- §2. B&N Orthogonality and Cell-Population Theorems
 -- ============================================================================
 
-/-! [bickel-nichols-2007] argue fusion and flexivity are orthogonal,
-    and that the four cells of the (concatenative ∪ nonlinear ∪ isolating)
-    × (flexive ∪ nonflexive ∪ none) space are independently attested. The
-    theorems below witness the cells the sample populates. -/
+/-! [bickel-nichols-2007] argue fusion and flexivity are orthogonal: "all
+    possible combinations of values on the two parameters are attested"
+    (p. 186) — six cells, including flexive-isolating (Yidiɲ) and
+    nonflexive-isolating (Lai Chin) which this sample does not populate.
+    The theorems below witness the cells the sample does. -/
 
 /-- Key orthogonality test: among concatenative languages, both flexive
     and nonflexive are attested. This refutes the traditional 1D scale's
@@ -125,17 +129,11 @@ theorem concatenative_admits_both_flexivities :
     (concats.filter (fun p => decide p.IsFlexive)).length > 0 ∧
     (concats.filter (fun p => decide p.IsNonflexive)).length > 0 := by decide
 
-/-- Nonlinear cell witnessed by Arabic root-and-pattern morphology. The
-    sample's only nonlinear member is also flexive and cumulative — the
-    classic templatic profile. -/
-theorem arabic_nonlinear_flexive :
-    arabicMorph.IsNonlinear ∧ arabicMorph.IsFlexive ∧ arabicMorph.IsCumulative := by
-  decide
-
-/-- Isolating cell (Mandarin, Thai) has no flexivity / no exponence
-    marking — the B&N parameters do not apply to isolating typology. -/
-theorem isolating_no_flexivity :
-    mandarinMorph.flexivity = none ∧ thaiMorph.flexivity = none := by decide
+/-- Flexive-nonlinear ("introﬂexive", [bickel-nichols-2007] p. 186) cell
+    witnessed by Arabic root-and-pattern morphology; the sample's only
+    nonlinear member is also cumulative — the classic templatic profile. -/
+theorem arabic_introflexive :
+    arabicMorph.IsIntroflexive ∧ arabicMorph.IsCumulative := by decide
 
 /-- WALS Exponence (Ch 21A, case-specific) and B&N ExponenceScope (general)
     are independent: both poly+sep (Finnish, Tagalog) and mono+cum (Hindi,
@@ -148,10 +146,11 @@ theorem exponence_scope_independent :
   decide
 
 set_option maxRecDepth 2000 in
-/-- B&N decomposition is exhaustive on the concatenative dimension: every
-    concatenative language in the sample is either agglutinating
-    (concatenative + nonflexive + separative) or fusional (concatenative +
-    flexive + cumulative). -/
+/-- Every concatenative language in the sample has a stipulated flexivity
+    value, so falls in the agglutinative (concatenative + nonflexive) or
+    fusional (concatenative + flexive) cell. A sample fact about coding
+    completeness, not a B&N prediction — a concatenative language with
+    unstipulated flexivity would fall outside both. -/
 theorem concatenative_partition :
     ∀ p ∈ allMorphProfiles, p.IsConcatenative →
       p.IsAgglutinating ∨ p.IsFusional := by decide

@@ -8,7 +8,8 @@ WALS-derived profile for Thai (ISO `tha`). WALS F20A codes Thai as
 `isolatingConcatenative`, a mixed type the local 3-way `Fusion` enum cannot
 represent — `walsFusion` returns `none` and the fallback `.isolating` is
 exercised. F21A returns `noCase`, mapping to `none`; the local `.noCase`
-fallback is exercised. B&N 2007 flexivity/bnExponence are not stipulated.
+fallback is exercised. flexivity/bnExponence are left uncoded (`none`): no
+consensus language-level value is stipulated for Thai.
 -/
 
 namespace Thai

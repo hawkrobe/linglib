@@ -11,8 +11,12 @@ record, WALS grounding functions, and the traditional agglutinating/fusional
 predicates with their mutual-exclusion theorems.
 
 The `fusion` and `exponence` fields are derived from WALS Chapters 20 and 21;
-the orthogonal `flexivity` and `bnExponence` parameters are paper-stipulated
-per [bickel-nichols-2007] and not derivable from WALS.
+the orthogonal `flexivity` and `bnExponence` parameters are not derivable from
+WALS and are stipulated per language in the Fragments as textbook-consensus
+summary values. [bickel-nichols-2007] themselves type *formatives*, not
+languages ("it clearly makes little sense to talk about concatenative or
+nonlinear languages per se", p. 183); a profile's value summarizes the
+language's dominant formative type.
 -/
 
 namespace Morphology
@@ -39,16 +43,22 @@ inductive Fusion where
 
     [bickel-nichols-2007] argue this is the crucial parameter that
     the traditional typology conflates with fusion:
-    - **nonflexive** ("agglutinating"): formatives have invariant or
-      rule-governed shape (Turkish *-ler* ~ *-lar* is vowel-harmony,
+    - **nonflexive**: formatives "are invariant across the lexicon"
+      (p. 185) or vary by rule (Turkish *-ler* ~ *-lar* is vowel-harmony,
       not item-based allomorphy)
-    - **flexive** ("fusional"): formatives vary unpredictably by
-      inflectional class (Latin *-ī* ~ *-ae* ~ *-ūs* for genitive
-      singular depending on declension class)
+    - **flexive**: formatives "come in sets of variants called allomorphs
+      ... selected on lexical, i.e. item-based, principles" (p. 184;
+      Latin nominative singular *-s* ~ *-m* ~ zero by declension class).
+      Traditionally "(in)ﬂecting" (German *flektierend*); B&N's fn. 9
+      (p. 184) rejects Comrie's "fusional" for this parameter as
+      conflating flexivity with phonological fusion.
 
-    Orthogonal to `Fusion`: a language can be concatenative + nonflexive
-    (Turkish), concatenative + flexive (Russian), nonlinear + flexive
-    (Arabic), or isolating (flexivity N/A). -/
+    "Flexivity is orthogonal to fusion, and all possible combinations of
+    values on the two parameters are attested" (p. 186) — all SIX cells
+    of the 3 × 2 space, including flexive-isolating (Yidiɲ) and
+    nonflexive-isolating (Lai Chin, p. 187). A `none` value in
+    `MorphProfile.flexivity` therefore means *not coded here*, never
+    "inapplicable because isolating". -/
 inductive Flexivity where
   | nonflexive   -- formatives phonologically invariant / rule-governed
   | flexive      -- formatives show item-based (class-conditioned) allomorphy
@@ -59,8 +69,9 @@ inductive Flexivity where
     bundle number, TAM, etc.
 
     Distinct from `ExponenceScope` (B&N's broader cumulative/separative
-    parameter which applies to all morphological categories, not just case).
-    [bickel-nichols-2007] -/
+    parameter which applies to all morphological categories, not just
+    case). The mono/polyexponential value labels are WALS Ch 21's
+    ([bickel-nichols-2013b]), not the chapter's. -/
 inductive CaseExponence where
   | monoexponential
   | polyexponential
@@ -109,13 +120,20 @@ structure MorphProfile where
 -- §3. WALS Converter Functions
 -- ============================================================================
 
-/-- Convert WALS 20A fusion type to the local three-way `Fusion` classification.
-    Returns `none` for mixed categories that do not map cleanly. -/
+/-- Convert WALS 20A fusion type to the local three-way `Fusion`
+    classification. Every mixed WALS category (`ablautConcatenative`,
+    `tonalIsolating`, `tonalConcatenative`, `isolatingConcatenative`)
+    returns `none`: WALS 20A itself refuses a pure whole-language value
+    for these, and collapsing a mixture to one pole is a per-language
+    analytic judgment that belongs in the Fragment's fallback with its
+    own docstring (e.g. Arabic: predominantly nonlinear, though person
+    and number inflection is concatenative — [bickel-nichols-2007]
+    p. 183). -/
 def fromWALS20A : Data.WALS.F20A.FusionType → Option Fusion
   | .exclusivelyConcatenative => some .concatenative
   | .exclusivelyIsolating     => some .isolating
   | .exclusivelyTonal         => some .nonlinear
-  | .ablautConcatenative      => some .nonlinear
+  | .ablautConcatenative      => none
   | .tonalIsolating           => none
   | .tonalConcatenative       => none
   | .isolatingConcatenative   => none
@@ -158,9 +176,11 @@ def walsExponence (iso : String) : Option CaseExponence :=
     enum and yields `none`). When WALS has data the lookup wins; the fallback
     is exercised only when WALS is silent.
 
-    The B&N 2007 parameters `flexivity` and `bnExponence` are NOT derivable
-    from any WALS chapter — they are paper-stipulated per
-    [bickel-nichols-2007] and must be passed explicitly when known. -/
+    The `flexivity` and `bnExponence` parameters are NOT derivable from any
+    WALS chapter and must be passed explicitly when known. They are
+    per-language textbook-consensus summary values supplied by the Fragments
+    — [bickel-nichols-2007] themselves type formatives, not languages
+    (p. 183), and stipulate no per-language table. -/
 def MorphProfile.fromWALS
     (language iso : String)
     (fusionFb : Fusion)
@@ -227,24 +247,42 @@ def IsSeparative (p : MorphProfile) : Prop := p.bnExponence = some .separative
 instance : DecidablePred IsSeparative :=
   fun p => decidable_of_iff _ (isSeparative_iff p).symm
 
-/-- Traditional "agglutinating" = concatenative + nonflexive + separative.
-    [bickel-nichols-2007] decomposition of the traditional typology. -/
+/-- Traditional "agglutinative" = concatenative + nonflexive: "When
+    nonﬂexive formatives are concatenative, they are traditionally called
+    agglutinative" ([bickel-nichols-2007] p. 187). Exponence is *not* part
+    of the definition — separative exponence is a defeasible tendency of
+    this type, not a criterion (p. 189: Turkish 1pl *-k* cumulates person
+    and number yet is "clearly nonﬂexive"). -/
 def IsAgglutinating (p : MorphProfile) : Prop :=
-  p.IsConcatenative ∧ p.IsNonflexive ∧ p.IsSeparative
+  p.IsConcatenative ∧ p.IsNonflexive
 @[simp] theorem isAgglutinating_iff (p : MorphProfile) :
-    p.IsAgglutinating ↔ p.IsConcatenative ∧ p.IsNonflexive ∧ p.IsSeparative :=
+    p.IsAgglutinating ↔ p.IsConcatenative ∧ p.IsNonflexive :=
   Iff.rfl
 instance : DecidablePred IsAgglutinating :=
   fun p => decidable_of_iff _ (isAgglutinating_iff p).symm
 
-/-- Traditional "fusional" = concatenative + flexive + cumulative.
-    [bickel-nichols-2007] decomposition of the traditional typology. -/
+/-- Traditional "fusional" (textbook label) = concatenative + flexive:
+    "the traditional notion of ﬂexive or '(in)ﬂecting' is often restricted
+    to just this combination" ([bickel-nichols-2007] p. 186; the chapter
+    itself avoids "fusional" — fn. 9 rejects it as conflating flexivity
+    with fusion). Cumulative exponence is a tendency of this type, not a
+    criterion (p. 189). -/
 def IsFusional (p : MorphProfile) : Prop :=
-  p.IsConcatenative ∧ p.IsFlexive ∧ p.IsCumulative
+  p.IsConcatenative ∧ p.IsFlexive
 @[simp] theorem isFusional_iff (p : MorphProfile) :
-    p.IsFusional ↔ p.IsConcatenative ∧ p.IsFlexive ∧ p.IsCumulative := Iff.rfl
+    p.IsFusional ↔ p.IsConcatenative ∧ p.IsFlexive := Iff.rfl
 instance : DecidablePred IsFusional :=
   fun p => decidable_of_iff _ (isFusional_iff p).symm
+
+/-- "Introflexive" = nonlinear + flexive: "the label introﬂexive for just
+    this combination" ([bickel-nichols-2007] p. 186) — the classic Semitic
+    root-and-pattern profile. -/
+def IsIntroflexive (p : MorphProfile) : Prop :=
+  p.IsNonlinear ∧ p.IsFlexive
+@[simp] theorem isIntroflexive_iff (p : MorphProfile) :
+    p.IsIntroflexive ↔ p.IsNonlinear ∧ p.IsFlexive := Iff.rfl
+instance : DecidablePred IsIntroflexive :=
+  fun p => decidable_of_iff _ (isIntroflexive_iff p).symm
 
 end MorphProfile
 
@@ -277,7 +315,7 @@ theorem cumulative_separative_exclusive (p : MorphProfile) :
     flexivity values (nonflexive vs flexive). Follows from the B&N
     decomposition; not an empirical observation. -/
 theorem agglutinating_fusional_exclusive (p : MorphProfile) :
-    ¬(p.IsAgglutinating ∧ p.IsFusional) := fun ⟨⟨_, hnf, _⟩, _, hf, _⟩ =>
+    ¬(p.IsAgglutinating ∧ p.IsFusional) := fun ⟨⟨_, hnf⟩, _, hf⟩ =>
   nonflexive_flexive_exclusive p ⟨hnf, hf⟩
 
 end MorphProfile

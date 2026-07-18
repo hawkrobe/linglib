@@ -24,18 +24,25 @@ inductive AttachmentSide where
   deriving DecidableEq, Repr
 
 /-- Typological position classification for formatives.
-    [bickel-nichols-2007] Table 2.
+    [bickel-nichols-2007] Table 3.2 (p. 198), flattened: the table crosses
+    five positions (Prae/In/Post/Simul/Detached) with formative types; this
+    enum keeps the positions, promoting circumfixation (the table's common
+    Simul subtype) and endoclisis (an In subtype) to their own cases.
 
-    Superset of `AttachmentSide`: adds simulfixation (process morphology),
-    detached formatives (Wackernagel clitics, free auxiliaries), and
-    endoclisis (clitic insertion inside a word). -/
+    Superset of `AttachmentSide`: adds simulfixation, detached formatives
+    (Wackernagel clitics, free auxiliaries), and endoclisis (clitic
+    insertion inside a word). -/
 inductive FormativePosition where
   | praefixed     -- formative precedes host (= `AttachmentSide.prefix`)
   | postfixed     -- formative follows host (= `AttachmentSide.suffix`)
   | infixed       -- formative inserted within host (= `AttachmentSide.infix`)
   | circumfixed   -- formative wraps host (= `AttachmentSide.circumfix`)
-  | simultaneous  -- non-segmental: ablaut, umlaut, tonal change, reduplication
-  | detached      -- syntactically free formative (auxiliary, Wackernagel clitic)
+  /-- Several tokens of one morpheme realized at different places in the
+  word ([bickel-nichols-2007] p. 200, after Hagège) — NOT process
+  morphology: bare ablaut, substitution, and subtraction are In-position
+  formatives, reduplication is Prae/Post, in the source table. -/
+  | simultaneous
+  | detached      -- not attached to its host (may still be phonologically bound)
   | endoclitic    -- clitic inserted inside a word (Udi, European Portuguese)
   deriving DecidableEq, Repr
 

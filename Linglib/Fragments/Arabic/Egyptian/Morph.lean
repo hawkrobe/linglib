@@ -5,11 +5,13 @@ import Linglib.Morphology.FusionTypology
 [wals-2013] [bickel-nichols-2007]
 
 WALS-derived profile for Egyptian Arabic (ISO `arz`, WALS code `aeg`).
-WALS F20A codes Arabic as `ablautConcatenative`, mapping to the local
-`.nonlinear` `Fusion` value. B&N flexive + cumulative are stipulated, but
-the language is NOT in the "fusional" cell because that requires
-`.concatenative` fusion — Arabic root-and-pattern templatic morphology
-is the canonical non-concatenative case.
+WALS F20A codes Arabic as `ablautConcatenative` — a mixed category the
+converter refuses — so `fusion` comes from the fallback `.nonlinear`:
+root-and-pattern morphology is predominantly nonlinear, though person and
+number inflection is concatenative ([bickel-nichols-2007] p. 183). The
+flexive + cumulative values are textbook-consensus summary stipulations
+(Semitic is [bickel-nichols-2007]'s flexive-nonlinear "introflexive"
+type, p. 186; the chapter types formatives, not whole languages).
 -/
 
 namespace Arabic.Egyptian
@@ -27,13 +29,11 @@ def morphProfile : MorphProfile :=
 example : morphProfile.iso = "arz" ∧ morphProfile.language = "Arabic (Egyptian)" :=
   ⟨rfl, rfl⟩
 
-/-- Arabic is NOT in the "fusional" cell despite being flexive + cumulative,
-    because templatic root-and-pattern morphology is `.nonlinear`, not
-    `.concatenative`. The `IsFusional` predicate correctly excludes it. -/
-example : ¬ morphProfile.IsFusional := by decide
-
-/-- Arabic is also not "agglutinating" — the same templatic morphology
-    fails the concatenative requirement. -/
-example : ¬ morphProfile.IsAgglutinating := by decide
+/-- Arabic is the "introflexive" type — flexive + nonlinear, the label
+    [bickel-nichols-2007] p. 186 reserve for exactly this combination —
+    hence neither agglutinating nor fusional (both require concatenative
+    fusion). -/
+example : morphProfile.IsIntroflexive ∧
+    ¬ morphProfile.IsFusional ∧ ¬ morphProfile.IsAgglutinating := by decide
 
 end Arabic.Egyptian

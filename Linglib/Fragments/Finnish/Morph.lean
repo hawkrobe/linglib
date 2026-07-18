@@ -4,8 +4,7 @@ import Linglib.Morphology.FusionTypology
 # Finnish Morphological Profile
 [wals-2013] [bickel-nichols-2007]
 
-WALS-derived profile for Finnish (ISO `fin`). B&N 2007 places Finnish in the
-"agglutinating" cell (concatenative + nonflexive + separative).
+WALS-derived profile for Finnish (ISO `fin`). Textbook-consensus classification: Finnish falls in the "agglutinating" cell (concatenative + nonflexive + separative).
 -/
 
 namespace Finnish
@@ -22,7 +21,7 @@ def morphProfile : MorphProfile :=
 
 example : morphProfile.iso = "fin" ∧ morphProfile.language = "Finnish" := ⟨rfl, rfl⟩
 
-/-- B&N 2007 places Finnish in the "agglutinating" cell. -/
+/-- Textbook-consensus classification: Finnish falls in the "agglutinating" cell. -/
 example : morphProfile.IsAgglutinating := by decide
 
 end Finnish

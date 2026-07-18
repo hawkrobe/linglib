@@ -4,10 +4,9 @@ import Linglib.Morphology.FusionTypology
 # Swahili Morphological Profile
 [wals-2013] [bickel-nichols-2007]
 
-WALS-derived profile for Swahili (ISO `swh`). B&N 2007 places Swahili in the
-"agglutinating" cell (concatenative + nonflexive + separative); Swahili is
-unusual among the 18-language sample in being weakly prefixing rather than
-suffixing.
+WALS-derived profile for Swahili (ISO `swh`). Textbook-consensus classification: Swahili falls in the "agglutinating" cell (concatenative + nonflexive + separative); Swahili is
+the sample's one weakly prefixing (rather than suffixing) member — the
+18-language sample is linglib's own, not B&N's.
 -/
 
 namespace Swahili
@@ -24,7 +23,7 @@ def morphProfile : MorphProfile :=
 
 example : morphProfile.iso = "swh" ∧ morphProfile.language = "Swahili" := ⟨rfl, rfl⟩
 
-/-- B&N 2007 places Swahili in the "agglutinating" cell. -/
+/-- Textbook-consensus classification: Swahili falls in the "agglutinating" cell. -/
 example : morphProfile.IsAgglutinating := by decide
 
 end Swahili

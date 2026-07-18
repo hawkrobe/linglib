@@ -4,11 +4,13 @@ import Linglib.Morphology.FusionTypology
 # Russian Morphological Profile
 [wals-2013] [bickel-nichols-2007]
 
-WALS-derived profile for Russian (ISO `rus`). B&N 2007 places Russian in the
-canonical "fusional" cell (concatenative + flexive + cumulative); the genitive
-singular *-ī ~ -ae ~ -ūs* class-conditioned allomorphy pattern cited by
-B&N as the diagnostic for flexivity is the same pattern Russian instantiates
-across declension classes.
+WALS-derived profile for Russian (ISO `rus`). Textbook-consensus
+classification: Russian falls in the "fusional" cell (concatenative +
+flexive + cumulative). [bickel-nichols-2007] p. 187: "Russian case
+desinences are mostly dependent on lexical declension classes and are
+therefore ﬂexive" — *mostly*: the same page notes the dative, instrumental,
+and locative plural formatives are invariant, so the language-level bit
+summarizes a split system.
 -/
 
 namespace Russian
@@ -25,7 +27,7 @@ def morphProfile : MorphProfile :=
 
 example : morphProfile.iso = "rus" ∧ morphProfile.language = "Russian" := ⟨rfl, rfl⟩
 
-/-- B&N 2007 places Russian in the canonical "fusional" cell. -/
+/-- Textbook-consensus classification: Russian falls in the canonical "fusional" cell. -/
 example : morphProfile.IsFusional := by decide
 
 end Russian

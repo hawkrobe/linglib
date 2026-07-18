@@ -4,8 +4,7 @@ import Linglib.Morphology.FusionTypology
 # English Morphological Profile
 [wals-2013] [bickel-nichols-2007]
 
-WALS-derived profile for English (ISO `eng`). B&N 2007 places English
-in the "agglutinating" cell (concatenative + nonflexive + separative)
+WALS-derived profile for English (ISO `eng`). Textbook-consensus classification: English falls in the "agglutinating" cell (concatenative + nonflexive + separative)
 despite its small inflectional inventory; cf. [bickel-nichols-2007].
 -/
 
@@ -23,7 +22,7 @@ def morphProfile : MorphProfile :=
 
 example : morphProfile.iso = "eng" ∧ morphProfile.language = "English" := ⟨rfl, rfl⟩
 
-/-- B&N 2007 places English in the "agglutinating" cell. -/
+/-- Textbook-consensus classification: English falls in the "agglutinating" cell. -/
 example : morphProfile.IsAgglutinating := by decide
 
 end English
