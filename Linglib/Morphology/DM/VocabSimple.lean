@@ -104,18 +104,7 @@ def spellout (vocab : Vocabulary) (target : FeatureBundle) (ctx : Option Cat) : 
   (bestMatch vocab target ctx).map (·.exponent)
 
 -- ============================================================================
--- § 3: Properties
--- ============================================================================
-
-/-- A vocabulary entry with no features matches any target (Elsewhere entry). -/
-theorem empty_features_matches_any (entry : VocabEntry)
-    (h : entry.features = ⊥) (target : FeatureBundle) :
-    entry.MatchesFeatures target := by
-  have hb : FeatureBundle.toGramFeatures entry.features = [] := by rw [h]; rfl
-  simp only [VocabEntry.MatchesFeatures, hb, List.all_nil]
-
--- ============================================================================
--- § 4: Vocabulary Builders
+-- § 3: Vocabulary Builders
 -- ============================================================================
 
 /-- The φ-feature list of a person-number cell, in the shape `makePersonVocab`
@@ -140,7 +129,7 @@ def makePersonVocab {PN : Type*} (cells : List PN) (toPhi : PN → List PhiFeatu
     , context := ctx }
 
 -- ============================================================================
--- § 5: The shared exponence core
+-- § 4: The shared exponence core
 -- ============================================================================
 
 section ExponenceCore

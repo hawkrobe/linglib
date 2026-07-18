@@ -950,6 +950,14 @@ theorem strong_vs_weak_distinction :
     strongAllomorphyPattern.IsContiguous ∧
     ¬ weakAllomorphyPattern.IsContiguous := ⟨by decide, by decide⟩
 
+/-- Outward sensitivity ([bobaljik-2000] root-out VI): an alternation
+    at `targetPos` conditioned by material at or beyond it (positions
+    counted root-out from 0) cannot be contextual allomorphy — the
+    conditioning exponents are not yet inserted. The paper's diagnostic
+    for routing the weak alternation to phonology. -/
+def isOutwardSensitive (conditioningPos targetPos : Nat) : Bool :=
+  conditioningPos ≥ targetPos
+
 /-- The outward sensitivity of the weak alternation: the form of *n*
     (closer to root) depends on material further from the root (case
     and agreement suffixes). Under root-out VI, this is impossible —
