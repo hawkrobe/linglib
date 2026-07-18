@@ -1,6 +1,7 @@
-import Linglib.Fragments.English.Plurals
-import Linglib.Fragments.Japanese.Plurals
+import Linglib.Data.WALS.Features.F33A
+import Linglib.Data.WALS.Features.F34A
 import Linglib.Features.Number.Resolve
+import Linglib.Features.Prominence
 import Linglib.Syntax.Agreement.Target
 import Linglib.Semantics.Genericity.NominalMappingParameter
 import Mathlib.Order.Defs.Unbundled
@@ -511,22 +512,24 @@ theorem animacy_rank_ordering_consistent :
     AnimacyRank.higherAnimal.toNat > AnimacyRank.discreteInanimate.toNat := by
   decide
 
-/-- Bridge: English `Number.System` matches the English plurality profile in
-    `English.Plurals` — both record a 2-value obligatory system. -/
+/-- Bridge: English `Number.System` (Corbett) agrees with WALS Ch 34 — both
+    record plural as obligatory on all nouns; `englishNS` is a 2-value system
+    with no general number. -/
 theorem english_matches_plurals_typology :
     englishNS.size = 2 ∧
     englishNS.hasGeneral = false ∧
-    English.pluralityProfile.occurrence =
-      .allNounsAlwaysObligatory := by
+    (Data.WALS.F34A.lookupISO "eng").map (·.value) =
+      some .allNounsAlwaysObligatory := by
   decide
 
-/-- Bridge: Japanese general number in Corbett's analysis corresponds to the
-    `noPlural` coding in `Japanese.Plurals`. WALS and Corbett
-    describe the same facts differently: WALS says "no nominal plural,"
-    Corbett says "general number exists (form outside the system)." -/
+/-- Bridge: Corbett analyses Japanese as having general number (`-tachi` stands
+    outside the number system as an optional associative/plural form), while
+    WALS Ch 33 codes Japanese as having a plural suffix — crediting `-tachi` as
+    a nominal plural marker. The two accounts disagree on whether `-tachi` is a
+    plural affix; the theorem states the WALS row as it stands. -/
 theorem japanese_general_vs_wals :
     japaneseNS.hasGeneral = true ∧
-    Japanese.pluralityProfile.coding = .noPlural := by
+    (Data.WALS.F33A.lookupISO "jpn").map (·.value) = some .pluralSuffix := by
   decide
 
 /-- Bridge: Bayso's general number explains its "no nominal plural"

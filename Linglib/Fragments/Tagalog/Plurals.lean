@@ -1,5 +1,3 @@
-import Linglib.Morphology.Number
-
 /-!
 # Tagalog plurality profile (WALS Chs 33–36)
 [wals-2013] [himmelmann-2005-tagalog] [schachter-otanes-1972]
@@ -62,20 +60,6 @@ and *kami* (1+3 exclusive) instantiate Cysouw's *minimal-augmented* type
 set_option autoImplicit false
 
 namespace Tagalog
-
-/-- Tagalog plurality profile across [wals-2013] Chs 33-36.
-
-Coding (Ch 33): plural word *mga*. Occurrence (Ch 34): all nouns, always
-optional. Pronoun plurality (Ch 35): person-number stem (refined to
-minimal-augmented in `Tagalog.clusivitySystem`). Associative
-(Ch 36): unique periphrastic — *sina* on personal names. -/
-def pluralityProfile : Morphology.Number.PluralityProfile :=
-  { language := "Tagalog"
-  , iso := "tgl"
-  , coding := .pluralWord
-  , occurrence := .allNounsAlwaysOptional
-  , pronounPlurality := .personNumberStem
-  , associativePlural := .uniquePeriphrastic }
 
 -- ============================================================================
 -- Tagalog-specific extensions
