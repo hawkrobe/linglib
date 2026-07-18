@@ -1336,6 +1336,8 @@ import Linglib.Morphology.Number
 import Linglib.Morphology.Paradigm.Basic
 import Linglib.Morphology.Paradigm.Complexity
 import Linglib.Morphology.Paradigm.Contiguity
+import Linglib.Morphology.Paradigm.Morphome
+import Linglib.Morphology.Paradigm.OfCells
 import Linglib.Morphology.RootFamily
 import Linglib.Morphology.RootTypology
 import Linglib.Morphology.TenseAspect
@@ -2319,6 +2321,7 @@ import Linglib.Studies.HeimComments1994
 import Linglib.Studies.HeimKratzer1998
 import Linglib.Studies.HeimLasnikMay1991
 import Linglib.Studies.Heine1997
+import Linglib.Studies.Herce2023
 import Linglib.Studies.HeitmeierChuangBaayen2026
 import Linglib.Studies.HerbstrittFranke2019
 import Linglib.Studies.Hewett2026
