@@ -1,4 +1,5 @@
 import Linglib.Morphology.FragmentGrammars.FragmentGrammar
+import Linglib.Morphology.Exponence.Rule
 
 /-!
 # O'Donnell 2015: English derivational morphology
@@ -422,6 +423,90 @@ theorem dmpcfgFromObserved_mapWeightPMF_prior_and_posterior_disagree
       dmpcfgFromObserved.mapWeightPMF D nIon) :=
   ⟨dmpcfgFromObserved_mapWeightPMF_prior_lt,
    dmpcfgFromObserved_mapWeightPMF_lt_of_count_gap D h⟩
+
+/-! ### The Probabilistic Elsewhere Condition (§5.5.3)
+
+[odonnell-2015] §5.5.3 (pp. 189–191) derives the Elsewhere Condition —
+"also known as Pāṇini's principle, pre-emption, the subset principle,
+or the blocking principle" — from probabilistic inference alone: rules
+define distributions over the forms they generate, so a rule whose
+support properly includes another's "must assign lower probability to
+each of those forms, on average" (conservation of belief), and
+conditioning preserves the preference. The book quotes
+[kiparsky-1973]'s formulation — prefer `r₂` when
+`Inputs(r₂) ⊂ Inputs(r₁)` — which is the specificity order of
+`Morphology.Exponence.Rule` (applicability-set inclusion).
+
+Formalized in the uniform-generation case, where the preference is
+pointwise rather than on average: nested supports give the narrower
+rule a strictly higher generation probability at every shared form
+(`genProb_lt_of_ssubset`), and a likelihood-maximal rule among a
+vocabulary's generators is an Elsewhere winner
+(`maxGenProb_isElsewhereWinner`) — no nesting or comparability
+assumption needed, because card-minimality forces `⊆`-minimality. -/
+
+section ProbabilisticElsewhere
+
+open Morphology.Exponence
+
+variable {Ctx F : Type*} [DecidableEq Ctx]
+
+/-- Uniform generation probability over a finite support — the uniform
+case of [odonnell-2015] §5.5.3's rules-as-distributions. -/
+def genProb (s : Finset Ctx) (c : Ctx) : ℚ :=
+  if c ∈ s then (s.card : ℚ)⁻¹ else 0
+
+/-- The pointwise probabilistic Elsewhere Condition: at every shared
+form, a properly narrower rule assigns strictly higher probability. -/
+theorem genProb_lt_of_ssubset {s₁ s₂ : Finset Ctx} (h : s₂ ⊂ s₁)
+    {c : Ctx} (hc : c ∈ s₂) : genProb s₁ c < genProb s₂ c := by
+  have hc₁ : c ∈ s₁ := h.1 hc
+  have h₂ : (0 : ℚ) < s₂.card := by
+    exact_mod_cast Finset.card_pos.mpr ⟨c, hc⟩
+  have hlt : (s₂.card : ℚ) < s₁.card := by
+    exact_mod_cast Finset.card_lt_card h
+  simp only [genProb, if_pos hc, if_pos hc₁]
+  gcongr
+
+/-- A finitely supported rule: an exponent with a finite set of forms
+it can generate. -/
+structure FinRule (Ctx F : Type*) where
+  /-- The exponent. -/
+  exponent : F
+  /-- The forms the rule generates. -/
+  supp : Finset Ctx
+
+/-- View a finitely supported rule in the shared exponence core:
+applicability is support membership. -/
+def FinRule.toRule (r : FinRule Ctx F) : Rule Ctx F :=
+  ⟨r.exponent, (· ∈ r.supp)⟩
+
+/-- **Elsewhere selection is maximum-likelihood inference**
+([odonnell-2015] §5.5.3): a rule maximizing uniform generation
+probability at `c` among a vocabulary's generators is an Elsewhere
+winner of the corresponding vocabulary. -/
+theorem maxGenProb_isElsewhereWinner {v : List (FinRule Ctx F)} {c : Ctx}
+    {r : FinRule Ctx F} (hrv : r ∈ v) (hrc : c ∈ r.supp)
+    (hmax : ∀ s ∈ v, c ∈ s.supp → genProb s.supp c ≤ genProb r.supp c) :
+    IsElsewhereWinner (v.map FinRule.toRule) c r.toRule := by
+  refine ⟨⟨List.mem_map_of_mem hrv, hrc⟩, ?_⟩
+  rintro t ⟨ht, htc⟩ hle
+  obtain ⟨s, hsv, rfl⟩ := List.mem_map.mp ht
+  have htc' : c ∈ s.supp := htc
+  have hsub : s.supp ⊆ r.supp := fun x hx => Rule.le_iff.mp hle hx
+  have hcard : r.supp.card ≤ s.supp.card := by
+    have hp := hmax s hsv htc'
+    simp only [genProb] at hp
+    rw [if_pos htc', if_pos hrc] at hp
+    have hs₀ : (0 : ℚ) < s.supp.card := by
+      exact_mod_cast Finset.card_pos.mpr ⟨c, htc'⟩
+    have hr₀ : (0 : ℚ) < r.supp.card := by
+      exact_mod_cast Finset.card_pos.mpr ⟨c, hrc⟩
+    exact_mod_cast (inv_le_inv₀ hs₀ hr₀).mp hp
+  have heq : s.supp = r.supp := Finset.eq_of_subset_of_card_le hsub hcard
+  exact Rule.le_iff.mpr fun x hx => show x ∈ s.supp from heq ▸ hx
+
+end ProbabilisticElsewhere
 
 end ODonnell2015
 
