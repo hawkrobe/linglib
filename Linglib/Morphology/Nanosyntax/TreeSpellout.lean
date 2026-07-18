@@ -26,7 +26,7 @@ uses containment as the simpler equivalent formulation.
 - `TreeLexEntry`: a stored tree paired with an exponent; `TreeLexEntry.Matches`
 - `treeSelect`, `treeSpellout`: Superset Principle + Elsewhere Condition
 - `treeSelect_isElsewhereWinner`: the engine as an instance of the shared
-  exponence core (`RuleLike`) — derived specificity is reverse tree
+  exponence core (`Exponence`) — derived specificity is reverse tree
   containment (`TreeLexEntry.le_iff`), and smallest-tree selection is an
   Elsewhere winner with no side conditions
 - `FootConditionMet`: [taraldsen-et-al-2018]'s constraint on backtracking
@@ -270,15 +270,15 @@ instance [DecidableEq F] (entry : TreeLexEntry F α) (target : NanoTree F) :
 open Morphology.Exponence
 
 /-- A tree lexical entry exposes the shared exponence core interface
-(`Morphology.Exponence.RuleLike`): contexts are syntactic targets,
+(`Morphology.Exponence`): contexts are syntactic targets,
 applicability is Superset-Principle matching. -/
-instance : RuleLike (TreeLexEntry F α) (NanoTree F) α :=
+instance : Exponence (TreeLexEntry F α) (NanoTree F) α :=
   ⟨TreeLexEntry.exponent, fun e => {t | e.Matches t}⟩
 
-instance : Preorder (TreeLexEntry F α) := RuleLike.toPreorder
+instance : Preorder (TreeLexEntry F α) := Exponence.toPreorder
 
 instance [DecidableEq F] (target : NanoTree F) :
-    DecidablePred (fun e : TreeLexEntry F α => RuleLike.Applies (F := α) e target) :=
+    DecidablePred (fun e : TreeLexEntry F α => Exponence.Applies (F := α) e target) :=
   fun e => inferInstanceAs (Decidable (e.Matches target))
 
 /-- The specificity order is reverse containment of the stored trees:

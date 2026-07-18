@@ -157,12 +157,12 @@ open Morphology.Exponence
 variable {Ctx Root : Type*}
 
 /-- A Vocabulary Item exposes the shared exponence core interface
-(`Morphology.Exponence.RuleLike`): contexts are (feature-context, root)
+(`Morphology.Exponence`): contexts are (feature-context, root)
 pairs, applicability is `matches`. -/
-instance : RuleLike (VocabItem Ctx Root) (Ctx × Root) String :=
+instance : Exponence (VocabItem Ctx Root) (Ctx × Root) String :=
   ⟨VocabItem.exponent, fun vi => {cr | vi.matches cr.1 cr.2 = true}⟩
 
-instance : Preorder (VocabItem Ctx Root) := RuleLike.toPreorder
+instance : Preorder (VocabItem Ctx Root) := Exponence.toPreorder
 
 /-- The stipulated `specificity` rank is **faithful** when it refines
 the derived specificity of the shared core: a strictly more specific

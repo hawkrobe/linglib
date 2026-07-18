@@ -452,7 +452,7 @@ soundness law via `Finset.eq_of_subset_of_card_le`. -/
 
 section ProbabilisticElsewhere
 
-open Morphology.Exponence
+open Morphology Morphology.Exponence
 
 variable {Ctx F : Type*} [DecidableEq Ctx]
 
@@ -496,14 +496,14 @@ structure FinRule (Ctx F : Type*) where
   supp : Finset Ctx
 
 /-- A finitely supported rule exposes the shared exponence core interface
-(`Morphology.Exponence.RuleLike`): applicability is support membership. -/
-instance : RuleLike (FinRule Ctx F) Ctx F :=
+(`Morphology.Exponence`): applicability is support membership. -/
+instance : Exponence (FinRule Ctx F) Ctx F :=
   ⟨FinRule.exponent, fun r => {c | c ∈ r.supp}⟩
 
-instance : Preorder (FinRule Ctx F) := RuleLike.toPreorder
+instance : Preorder (FinRule Ctx F) := Exponence.toPreorder
 
 instance (c : Ctx) :
-    DecidablePred (fun r : FinRule Ctx F => RuleLike.Applies (F := F) r c) :=
+    DecidablePred (fun r : FinRule Ctx F => Exponence.Applies (F := F) r c) :=
   fun r => inferInstanceAs (Decidable (c ∈ r.supp))
 
 omit [DecidableEq Ctx] in
@@ -515,8 +515,8 @@ is at least as specific as `s`. This is the conditional reflection the
 fails — card `≤` does not imply support `⊆`, but `⊆` plus card `≤` forces
 equality (`Finset.eq_of_subset_of_card_le`). -/
 private theorem finRule_card_reflection {v : List (FinRule Ctx F)} {c : Ctx} :
-    ∀ r ∈ v, ∀ s ∈ v, RuleLike.Applies (F := F) r c →
-      RuleLike.Applies (F := F) s c → s ≤ r →
+    ∀ r ∈ v, ∀ s ∈ v, Exponence.Applies (F := F) r c →
+      Exponence.Applies (F := F) s c → s ≤ r →
       OrderDual.toDual s.supp.card ≤ OrderDual.toDual r.supp.card → r ≤ s :=
   fun r _ s _ _ _ hsr hcard => by
     have hsub : s.supp ⊆ r.supp := fun x hx => hsr hx
