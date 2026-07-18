@@ -86,18 +86,18 @@ abbrev MwaghavulForm := FloatingForm Syl TRN
 
 /-- The ideophone root (wùlàʃ in Tableau 24, háŋláyáp in Tableau 25).
     Both single-root tableaux share this morpheme. -/
-def rootMorph : Morpheme := { form := "root" }
+def rootMorph : Morpheme := { morph := .root "root" }
 
 /-- The verbaliser. The M-tone verbaliser (Tableau 24) and the M-H
     verbaliser (Tableaux 25/26) share this morpheme — they're suppletive
     allomorphs of the same verbaliser per paper p. 20 eq. (17). -/
-def vbzMorph : Morpheme := { form := "vbz" }
+def vbzMorph : Morpheme := { morph := .root "vbz" }
 
 /-- The reduplicant root in pluractional Tableau 26. -/
-def rootRedMorph : Morpheme := { form := "root-red" }
+def rootRedMorph : Morpheme := { morph := .root "root-red" }
 
 /-- The base root in pluractional Tableau 26. -/
-def rootBaseMorph : Morpheme := { form := "root-base" }
+def rootBaseMorph : Morpheme := { morph := .root "root-base" }
 
 /-- Wrap a Mwaghavul syllable as a TBU of the (single) ideophone root. -/
 def rootSeg (s : Syl) : SegSpec Syl := { seg := s, morpheme := rootMorph }

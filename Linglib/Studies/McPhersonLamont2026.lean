@@ -470,10 +470,10 @@ theorem FloatingForm.exists_multi_tone_TBU :
     ∃ f : FloatingForm Unit TRN, ∃ i : SegIdx, 2 ≤ (f.linksTo i).length := by
   refine ⟨?_, 0, ?_⟩
   · exact
-    { lower := .ofList [{ seg := (), morpheme := { form := "m" } }]
+    { lower := .ofList [{ seg := (), morpheme := { morph := .root "m" } }]
       upper :=
-        .ofList [{ value := TRN.H, morpheme := { form := "m" } },
-         { value := TRN.L, morpheme := { form := "m" } }]
+        .ofList [{ value := TRN.H, morpheme := { morph := .root "m" } },
+         { value := TRN.L, morpheme := { morph := .root "m" } }]
       links := ∅
       deletedTier := ∅
       surfaceLinks := {(0, 0), (1, 0)} }
