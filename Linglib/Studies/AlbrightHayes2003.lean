@@ -1,6 +1,7 @@
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Real.Basic
-import Linglib.Morphology.WugTest
+import Mathlib.Data.Fintype.Basic
+import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Albright & Hayes (2003): Rules vs. analogy in English past tenses
@@ -51,8 +52,10 @@ sensitive to IOR membership.
 
 ## What this file formalises
 
-This is the second consumer of `Morphology/WugTest.lean` (the first is
-[breiss-katsuda-kawahara-2026]). It supplies:
+The shared wug-paradigm vocabulary (formerly `Morphology/WugTest.lean`,
+dissolved into this file 2026-07-17) is declared below the module
+docstring; [breiss-katsuda-kawahara-2026] imports it from here. The
+paper-specific content supplies:
 
 - The 4-way IOR Core wug stem set (example 14 in the paper);
 - A `StochasticRule` type with scope/hits/rawConfidence;
@@ -87,6 +90,177 @@ across IOR membership), not on the adjustment formula. We expose
 wiring this to a real Wilson interval (or the [albright-hayes-2002]
 MGL implementation) is deferred.
 -/
+
+/-! ### Wug-paradigm vocabulary ([berko-1958])
+
+Shared typed vocabulary for wug studies, homed in the modern reference
+paper for gradient wug responses (its other consumer,
+[breiss-katsuda-kawahara-2026], imports this file). [berko-1958]
+introduced the test as a probe for productive morpho-phonological
+knowledge: presented with the nonce *wug*, children produce *wugs*
+/wʌgz/ rather than refusing or randomising. A single parametric lens
+class `HasFactor` (with lens laws) plus a `Rate` observable lets
+studies state the qualitative discriminator between grammar-locus
+accounts of productivity (novel forms show a factor gradient:
+indexed-constraint [pater-2010], scaled-weight [coetzee-pater-2008])
+and listing-locus accounts (novel forms are factor-invariant:
+UseListed [zuraw-2000]). -/
+
+namespace Morphology.WugTest
+
+-- ============================================================================
+-- §1. Attestation factor
+-- ============================================================================
+
+/-- Whether a stimulus is an *attested* lexical item or a *novel*
+    (nonce, wug-like) form. The basic categorical contrast that
+    [berko-1958] introduced and that every wug paradigm crosses. -/
+inductive Attestation where
+  | attested
+  | novel
+  deriving DecidableEq, Repr, Inhabited, Fintype
+
+-- ============================================================================
+-- §2. Lens class — the parametric factor schema
+-- ============================================================================
+
+/-! Studies' `Cell` types vary in what additional factors they cross
+(item, paradigm slot, frequency stratum, IOR membership, …). The
+shared minimum is that every wug cell carries some collection of
+factors and a way to swap each one without touching others. The lens
+laws (`get_set`, `set_get`, `set_set`) make `setFactor` a proper lens;
+the paradigm-level predicates rely on them to express "swapping the
+factor changes the rate" as a statement that quantifies over the rest
+of the cell uniformly.
+
+`HasFactor` takes the codomain `F` as a parameter so that one schema
+covers `Attestation` (categorical), `ℝ` (frequency), `Bool` (binary
+IOR membership), and any other factor a future study introduces.
+Each `Cell` declares one `HasFactor` instance per factor it exposes;
+typeclass synthesis routes by the requested `F`. -/
+
+/-- A lens on `Cell` exposing a factor of type `F`. -/
+class HasFactor (Cell : Type) (F : Type) where
+  factorOf : Cell → F
+  setFactor : F → Cell → Cell
+  factorOf_setFactor :
+      ∀ f c, factorOf (setFactor f c) = f
+  setFactor_factorOf :
+      ∀ c, setFactor (factorOf c) c = c
+  setFactor_setFactor :
+      ∀ f₁ f₂ c, setFactor f₁ (setFactor f₂ c) = setFactor f₁ c
+
+/-- `Cell` has an attestation factor that can be swapped without
+    touching other factors. The [berko-1958] dimension. -/
+abbrev HasAttestation (Cell : Type) := HasFactor Cell Attestation
+
+/-- `Cell` exposes a real-valued frequency factor (e.g. log token
+    frequency of the source lexeme; log corpus frequency of an
+    analogous attested compound). Frequency is `ℝ`-valued because
+    lexical-frequency theories ([coetzee-pater-2008],
+    [coetzee-kawahara-2013]) operate on log frequencies as a
+    continuous regressor. -/
+abbrev HasFrequency (Cell : Type) := HasFactor Cell ℝ
+
+-- ============================================================================
+-- §3. Observable
+-- ============================================================================
+
+/-- Per-cell numeric outcome — the wug paradigm's primary observable.
+    Polymorphic over the codomain `R` so that empirical tables (`ℚ`
+    proportions) and theory predictions (`ℝ` log-odds, MaxEnt
+    probabilities) can both ride along the same predicate machinery. -/
+abbrev Rate (Cell : Type) (R : Type) := Cell → R
+
+-- ============================================================================
+-- §4. Paradigm-level qualitative predicates
+-- ============================================================================
+
+/-! These predicates state empirical patterns at the paradigm level.
+They are written in terms of `setFactor` (the lens), so any `Cell`
+type with the relevant `HasFactor` instances can claim them without
+re-deriving the universal quantification per study. The predicates
+are *abstract*; they express a shape ("novel forms show a factor
+gradient") that empirical studies and theoretical models may or may
+not satisfy. -/
+
+variable {Cell : Type} {F : Type} {R : Type}
+
+/-- A rate observable shows the *novel-form factor gradient* if,
+    holding all other factors constant and fixing `attestation =
+    novel`, varying the `F`-typed factor strictly varies the rate.
+    This is the prediction of indexed-constraint
+    ([pater-2010]), scaled-weight
+    ([coetzee-pater-2008]), and representation-strength
+    ([moore-cantwell-2021], [smolensky-goldrick-2016])
+    theories: novel forms inherit a frequency-conditioned grammar
+    pressure from analogous lexical items and therefore show a
+    factor gradient even though they are themselves unlisted. -/
+def NovelShowsFactorGradient
+    [HasAttestation Cell] [HasFactor Cell F] [LT F] [LT R]
+    (rate : Rate Cell R) : Prop :=
+  ∀ (c : Cell) (f₁ f₂ : F), f₁ < f₂ →
+    rate (HasFactor.setFactor f₁ (HasFactor.setFactor Attestation.novel c)) <
+    rate (HasFactor.setFactor f₂ (HasFactor.setFactor Attestation.novel c))
+
+/-- A rate observable is *factor-invariant on novel forms* if, holding
+    all other factors constant and fixing `attestation = novel`,
+    varying the `F`-typed factor leaves the rate unchanged. This is
+    the prediction of UseListed ([zuraw-2000]): novel forms have
+    no lexical entry, so no entry-keyed factor lookup can affect their
+    grammar pressure. The two hypotheses thus make opposite predictions
+    on the same paradigm cell. -/
+def NovelInvariantInFactor
+    [HasAttestation Cell] [HasFactor Cell F]
+    (rate : Rate Cell R) : Prop :=
+  ∀ (c : Cell) (f₁ f₂ : F),
+    rate (HasFactor.setFactor f₁ (HasFactor.setFactor Attestation.novel c)) =
+    rate (HasFactor.setFactor f₂ (HasFactor.setFactor Attestation.novel c))
+
+/-- Frequency-specific spelling of `NovelShowsFactorGradient` at
+    `F := ℝ`. Kept as an `abbrev` for readability at use sites where
+    "frequency gradient" is the linguist-facing terminology. -/
+abbrev NovelShowsFreqGradient
+    [HasAttestation Cell] [HasFrequency Cell] [LT R]
+    (rate : Rate Cell R) : Prop :=
+  NovelShowsFactorGradient (F := ℝ) rate
+
+/-- Frequency-specific spelling of `NovelInvariantInFactor` at
+    `F := ℝ`. -/
+abbrev NovelInvariantInFrequency
+    [HasAttestation Cell] [HasFrequency Cell]
+    (rate : Rate Cell R) : Prop :=
+  NovelInvariantInFactor (F := ℝ) rate
+
+-- ============================================================================
+-- §5. Discriminator theorem
+-- ============================================================================
+
+/-- The two predictions are *structurally* incompatible: any rate
+    observable that satisfies both `NovelShowsFactorGradient` and
+    `NovelInvariantInFactor` at the same factor type `F` must have a
+    vacuous factor space (no two `F`-distinct values). On any cell
+    whose typeclasses permit `f₁ < f₂` for some `F`-typed factors,
+    the predicates are mutually exclusive — exactly the discriminator
+    a wug paradigm is supposed to provide.
+
+    For binary factors (`F := Bool`), the precondition `f₁ < f₂` is
+    discharged automatically by `Bool.false_lt_true`; for real-valued
+    factors (`F := ℝ`) any concrete pair like `(0 : ℝ) < 1` works.
+
+    This is the structural source of the empirical claim that wug
+    paradigms can adjudicate between grammar-locus and listing-locus
+    accounts of productivity: the bridge theorem is a single
+    application of this lemma to a study's cell type. -/
+theorem novelGradient_inconsistent_with_invariance
+    [HasAttestation Cell] [HasFactor Cell F] [LT F] [Preorder R]
+    (rate : Rate Cell R)
+    (h_grad : NovelShowsFactorGradient (F := F) rate)
+    (h_inv  : NovelInvariantInFactor (F := F) rate)
+    (c : Cell) (f₁ f₂ : F) (h_lt : f₁ < f₂) : False := by
+  exact absurd (h_inv c f₁ f₂) (ne_of_lt (h_grad c f₁ f₂ h_lt))
+
+end Morphology.WugTest
 
 namespace AlbrightHayes2003
 
@@ -233,7 +407,7 @@ theorem StochasticRule.rawConfidence_le_one (r : StochasticRule) :
 noncomputable def adjustedConfidence (r : StochasticRule) : ℚ := r.rawConfidence
 
 -- ============================================================================
--- § 3: Wug cell — wiring to `Morphology/WugTest.lean`
+-- § 3: Wug cell — wiring to the wug-paradigm vocabulary
 -- ============================================================================
 
 /-- A cell in the A&H wug-rating paradigm. Carries:
@@ -254,7 +428,7 @@ structure AHWugCell where
 
 namespace AHWugCell
 
-/-- The `Morphology/WugTest.lean` `HasAttestation` instance: BKK and
+/-- The wug-vocabulary `HasAttestation` instance: BKK and
     A&H both use the same wug paradigm contract. Lens laws by `rfl`
     on the structure projections. -/
 instance : HasAttestation AHWugCell where
