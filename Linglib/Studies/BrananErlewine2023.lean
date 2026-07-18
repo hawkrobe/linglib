@@ -1,4 +1,4 @@
-import Linglib.Morphology.Focus
+import Linglib.Morphology.Reflex
 
 /-!
 # Branan and Erlewine 2023: Anti-pied-piping
@@ -12,7 +12,7 @@ from the position of its semantic contribution. This file formalizes
 the introductory paradigm (their (1)–(8)): Japanese *mo* placement and
 Hungarian focus movement each attest exact targeting, pied-piping, and
 anti-pied-piping, stated over the host–focus containment relations of
-`Morphology/Focus.lean`.
+`Morphology/Reflex.lean`.
 
 ## Main declarations
 
@@ -34,7 +34,7 @@ anti-pied-piping, stated over the host–focus containment relations of
 
 namespace BrananErlewine2023
 
-open Morphology Morphology.Focus
+open Morphology Morphology
 
 /-! ### The clause skeleton -/
 
@@ -72,29 +72,29 @@ all three host–focus configurations. -/
 
 /-- Their (2): Hanako-wa [hon]F*-mo* katta — *mo* on the focused object
 itself. -/
-def moExact : Realization Node := ⟨.obj, [.morpheme .obj]⟩
+def moExact : Marking Node := ⟨.obj, [.morpheme .obj]⟩
 
 /-- Their (4): Hanako-wa [[hon]F-o kai]*-mo* — *mo* on the VP properly
 containing the focused object (Kuroda's pied-piping datum). -/
-def moPiedPiped : Realization Node := ⟨.obj, [.morpheme .vp]⟩
+def moPiedPiped : Marking Node := ⟨.obj, [.morpheme .vp]⟩
 
 /-- Their (8): [[Ame]*-mo* furu]F — sentence focus with *mo* on the
 subject properly contained in it (Nagano's anti-pied-piping datum). -/
-def moAntiPiedPiped : Realization Node := ⟨.s, [.morpheme .sbj]⟩
+def moAntiPiedPiped : Marking Node := ⟨.s, [.morpheme .sbj]⟩
 
 /-- Their (1): Hungarian movement of exactly the focused argument to
 the immediately preverbal focus position. -/
-def movementExact : Realization Node := ⟨.obj, [.displacement .obj]⟩
+def movementExact : Marking Node := ⟨.obj, [.displacement .obj]⟩
 
 /-- Their (3): [a [használt]F autót] adta el — the whole object DP moves
 for a focus on the attributive adjective (Kenesei's pied-piping
 datum). -/
-def movementPiedPiped : Realization Node := ⟨.att, [.displacement .obj]⟩
+def movementPiedPiped : Marking Node := ⟨.att, [.displacement .obj]⟩
 
 /-- Their (7): Péter [a Hamletet] [olvasta fel _ a kertben]F — predicate
 focus with movement of the object properly contained in it (Kenesei's
 anti-pied-piping datum). -/
-def movementAntiPiedPiped : Realization Node := ⟨.vp, [.displacement .obj]⟩
+def movementAntiPiedPiped : Marking Node := ⟨.vp, [.displacement .obj]⟩
 
 /-! ### All three relations, in both processes -/
 

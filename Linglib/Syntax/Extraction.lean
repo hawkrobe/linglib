@@ -1,4 +1,4 @@
-import Linglib.Morphology.Focus
+import Linglib.Morphology.Reflex
 
 /-!
 # Extraction Morphology
@@ -126,11 +126,11 @@ inductive Extractee where
 /-! ### Extraction marking as morphological reflexes
 
 A language's extraction marking is the overt morphosyntactic *response* to
-extraction from each target position, as `Morphology.Focus.Reflex` lists — the
+extraction from each target position, as `Morphology.Reflex` lists — the
 movement itself is not a reflex ([branan-erlewine-2023]). Per-language data
 are a nested `Lang.Extraction` namespace with a host type `Site` and
 
-    realize : ExtractionTarget → List (Morphology.Focus.Reflex Site)
+    realize : ExtractionTarget → List (Morphology.Reflex Site)
 
 (`Site := Empty` for languages that mark nothing). Languages with several
 markers place them at their cells — K'iche' AF at `.subject` and *wi* at
@@ -141,15 +141,14 @@ WALS-style typology. Per-language `Lang.Extraction` namespaces must not
 redeclare root `Extraction` leaf names, so unqualified references keep
 resolving. -/
 
-/-- Does the language overtly mark extraction from a given target? -/
-def Marked {C : Type*} (realize : ExtractionTarget → List (Morphology.Focus.Reflex C))
+/-- Does the language overtly mark extraction from a given target? The
+shared overtness predicate of `Morphology/Reflex.lean`. -/
+def Marked {C : Type*} (realize : ExtractionTarget → List (Morphology.Reflex C))
     (t : ExtractionTarget) : Prop :=
-  realize t ≠ []
+  Morphology.Reflex.Overt (realize t)
 
-instance {C : Type*} (realize : ExtractionTarget → List (Morphology.Focus.Reflex C))
+instance {C : Type*} (realize : ExtractionTarget → List (Morphology.Reflex C))
     (t : ExtractionTarget) : Decidable (Marked realize t) :=
-  match h : realize t with
-  | []     => isFalse fun hne => hne h
-  | _ :: _ => isTrue (by simp [Marked, h])
+  inferInstanceAs (Decidable (Morphology.Reflex.Overt _))
 
 end Extraction

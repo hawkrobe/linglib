@@ -1,5 +1,5 @@
 import Linglib.Fragments.Mayan.Kaqchikel.Agreement
-import Linglib.Morphology.Focus
+import Linglib.Morphology.Reflex
 
 /-!
 # Kaqchikel Focus Fragment
@@ -14,7 +14,7 @@ fronts like A but intransitive verbs have no AF form.
 ## Main declarations
 
 * `Kaqchikel.focusRealize`: focus realization by focused argument
-  position, as a `Morphology.Focus.Realization` reflex list.
+  position, as a `Morphology.Marking` reflex list.
 * `Kaqchikel.af_reflex_iff`: the verb-hosted AF reflex appears exactly
   under transitive-subject (A) focus.
 * `Kaqchikel.marked_subject_is_A_not_S`: the A-focus vs S-focus split
@@ -30,12 +30,12 @@ focus (no *ja*, no AF). Across Mayan, information focus stays in situ
 and unmarked except for the transitive subject, which in AF-languages
 must front and trigger AF ([aissen-2017]); Kaqchikel-specific in-situ
 data are not in the sources here, so `focusRealize` covers the fronted
-construction only and no `EveryFocusPerceptible` claim is made.
+construction only and no `EveryTargetOvert` claim is made.
 -/
 
 namespace Kaqchikel
 
-open Morphology Morphology.Focus
+open Morphology Morphology
 
 /-! ### Sites -/
 
@@ -56,7 +56,7 @@ inductive FocusSite where
     S fronts like A but intransitive verbs have no AF form. Ditransitive
     R/T focus is unattested in the source and falls to the A-less
     default. -/
-def focusRealize : ArgPosition → Realization FocusSite
+def focusRealize : ArgPosition → Marking FocusSite
   | .A => ⟨.focusPhrase,
            [.displacement .focusPhrase, .morpheme .focusPhrase, .morpheme .verb]⟩
   | _  => ⟨.focusPhrase, [.displacement .focusPhrase, .morpheme .focusPhrase]⟩
