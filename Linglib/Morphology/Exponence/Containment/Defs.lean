@@ -137,7 +137,7 @@ directly: applicability is threshold containment (the upper set
 `Set.Ici threshold`) and derived specificity is threshold comparison. -/
 
 instance : Exponence (SpanRule n F) (Fin n) F :=
-  ⟨SpanRule.exponent, fun it => Set.Ici it.threshold⟩
+  ⟨SpanRule.exponent, fun it i => it.threshold ≤ i⟩
 
 instance : Preorder (SpanRule n F) := Exponence.toPreorder
 
@@ -190,7 +190,7 @@ grade `g` when its stored constituent contains `g` (the down-set
 def SupersetRule (n : ℕ) (F : Type*) := SpanRule n F
 
 instance : Exponence (SupersetRule n F) (Fin n) F :=
-  ⟨SpanRule.exponent, fun it => Set.Iic (SpanRule.spans it)⟩
+  ⟨SpanRule.exponent, fun it i => i ≤ SpanRule.spans it⟩
 
 instance : Preorder (SupersetRule n F) := Exponence.toPreorder
 

@@ -60,7 +60,7 @@ structure DiagOp where
 
 instance instExponence : Exponence DiagOp Root String where
   exponent := DiagOp.exponent
-  applySet op := {r | op.Applies r}
+  Applies := DiagOp.Applies
 
 instance (r : Root) :
     DecidablePred (fun op : DiagOp => Exponence.Applies (F := String) op r) :=

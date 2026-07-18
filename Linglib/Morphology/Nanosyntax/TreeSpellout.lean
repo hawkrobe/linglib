@@ -273,7 +273,7 @@ open Morphology.Exponence
 (`Morphology.Exponence`): contexts are syntactic targets,
 applicability is Superset-Principle matching. -/
 instance : Exponence (TreeLexEntry F α) (NanoTree F) α :=
-  ⟨TreeLexEntry.exponent, fun e => {t | e.Matches t}⟩
+  ⟨TreeLexEntry.exponent, fun e t => e.Matches t⟩
 
 instance : Preorder (TreeLexEntry F α) := Exponence.toPreorder
 
