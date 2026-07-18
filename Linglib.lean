@@ -1276,7 +1276,6 @@ import Linglib.Morphology.DM.Merger
 import Linglib.Morphology.DM.NominalStructure
 import Linglib.Morphology.DM.VocabSimple
 import Linglib.Morphology.DM.VocabularyInsertion
-import Linglib.Morphology.Derivation
 import Linglib.Morphology.Exponence.Basic
 import Linglib.Morphology.Exponence.Containment.Contiguity
 import Linglib.Morphology.Exponence.Containment.Defs

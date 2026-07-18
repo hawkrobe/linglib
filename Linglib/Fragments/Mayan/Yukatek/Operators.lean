@@ -1,4 +1,4 @@
-import Linglib.Morphology.Derivation
+import Linglib.Morphology.Exponence.Select
 import Linglib.Semantics.Verb.Root.SalienceClass
 import Linglib.Fragments.Mayan.Yukatek.Roots
 
@@ -43,8 +43,31 @@ diagnose interface with [bohnemeyer-2004]'s Yukatek stem classes
 namespace Yukatek.Operators
 
 open Verb
-open Morphology.Derivation
+open Morphology
 open Yukatek.Roots
+
+/-! ### The operator carrier -/
+
+/-- A diagnostic derivational operator: a rule of exponence over roots
+    (`exponent` is the suffix, `Applies` the structural condition on the
+    root's entailments) with bundled decidability so applicability
+    profiles compute. Selection/profile machinery comes from the
+    `Morphology.Exponence` class instance below, not re-stipulated. -/
+structure DiagOp where
+  exponent : String
+  Applies : Root → Prop
+  decApplies : DecidablePred Applies
+
+instance instExponence : Exponence DiagOp Root String where
+  exponent := DiagOp.exponent
+  applySet op := {r | op.Applies r}
+
+instance (r : Root) :
+    DecidablePred (fun op : DiagOp => Exponence.Applies (F := String) op r) :=
+  fun op => show Decidable (op.Applies r) from op.decApplies r
+
+@[simp] theorem applies_iff (op : DiagOp) (r : Root) :
+    Exponence.Applies (F := String) op r ↔ op.Applies r := Iff.rfl
 
 /-! ### The four operators -/
 
@@ -53,9 +76,9 @@ open Yukatek.Roots
     to roots whose underived form is intransitive and refers to
     "actions or activities that some entity undertakes" — manner
     without inherent result. -/
-def affectiveT : DerivOp :=
-  { name := "=t"
-  , applies := fun r => IsAgentSalient r.kinds (arity r)
+def affectiveT : DiagOp :=
+  { exponent := "=t"
+  , Applies := fun r => IsAgentSalient r.kinds (arity r)
   , decApplies := inferInstance }
 
 /-- Zero derivation `=∅`: signals that the root is already lexically
@@ -64,9 +87,9 @@ def affectiveT : DerivOp :=
     The condition is root transitivity (`Root.Arity.selectsTheme`),
     not any feature configuration: root transitives like *p'is*
     'measure' entail no change of state. -/
-def zeroDeriv : DerivOp :=
-  { name := "=∅"
-  , applies := fun r => IsAgentPatientSalient (arity r)
+def zeroDeriv : DiagOp :=
+  { exponent := "=∅"
+  , Applies := fun r => IsAgentPatientSalient (arity r)
   , decApplies := inferInstance }
 
 /-- Causative `=s`: forms a transitive stem from a *patient-salient*
@@ -74,9 +97,9 @@ def zeroDeriv : DerivOp :=
     to roots whose underived form is intransitive and refers to "state
     changes that some entity undergoes more or less spontaneously" —
     result without specified manner. -/
-def causativeS : DerivOp :=
-  { name := "=s"
-  , applies := fun r => IsPatientSalient r.kinds (arity r)
+def causativeS : DiagOp :=
+  { exponent := "=s"
+  , Applies := fun r => IsPatientSalient r.kinds (arity r)
   , decApplies := inferInstance }
 
 /-- Positional inchoative `-tal` (allomorph `-lah`): forms a positional stem from a
@@ -85,9 +108,9 @@ def causativeS : DerivOp :=
     "denote relational states and assume two arguments that are in the
     relation" — encoded here as a pure stative root with no manner,
     result, or cause atoms. -/
-def positionalTal : DerivOp :=
-  { name := "-tal"
-  , applies := fun r => IsPositional r.kinds (arity r)
+def positionalTal : DiagOp :=
+  { exponent := "-tal"
+  , Applies := fun r => IsPositional r.kinds (arity r)
   , decApplies := inferInstance }
 
 /-! ### The inventory -/
@@ -95,7 +118,7 @@ def positionalTal : DerivOp :=
 /-- [lucy-1994]'s diagnostic transitiviser inventory. Order is
     chosen to match the presentation in [lucy-1994] ex. (1):
     `=t`, `=∅`, `=s`, with the positional inchoative appended. -/
-def inventory : Inventory :=
+def inventory : List DiagOp :=
   [affectiveT, zeroDeriv, causativeS, positionalTal]
 
 end Yukatek.Operators
