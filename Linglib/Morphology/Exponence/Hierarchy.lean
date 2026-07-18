@@ -1,5 +1,5 @@
 import Linglib.Morphology.Paradigm.Contiguity
-import Linglib.Morphology.Exponence.Rule
+import Linglib.Morphology.Exponence.Select
 import Mathlib.Data.List.MinMax
 import Mathlib.Data.Finset.Max
 
