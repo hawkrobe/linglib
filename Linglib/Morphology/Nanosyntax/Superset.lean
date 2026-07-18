@@ -5,7 +5,7 @@ import Linglib.Morphology.Exponence.Hierarchy
 [starke-2009] [caha-2009] [bobaljik-2012]
 
 The static core of the nanosyntax selection rule (no cyclic override
-or spellout-driven movement), stated over the same `ExponenceRule`
+or spellout-driven movement), stated over the same `SpanRule`
 vocabularies as the Elsewhere engine of
 `Morphology/Exponence/Hierarchy.lean`. A nanosyntax lexical entry
 stores a constituent and carries no contextual restriction
@@ -35,7 +35,7 @@ degree case) — where DM needs the context-restricted portmanteau of
 
 ## Main declarations
 
-* `ExponenceRule.Matches` — the Superset Principle: entry contains the
+* `SpanRule.Matches` — the Superset Principle: entry contains the
   target structure
 * `ContextFree` — the nanosyntax restriction on vocabularies
 * `minSpan`, `spelloutWinner`, `spellout` — Minimize-Junk competition
@@ -59,70 +59,70 @@ variable {n : ℕ} {F : Type*}
 /-- The **Superset Principle** ([starke-2009]): an entry can spell out
 grade `g` when the constituent it stores contains grade `g`'s
 structure. Anti-monotone in `g`, dually to `AppliesAt`. -/
-def ExponenceRule.Matches (it : ExponenceRule n F) (g : Fin n) : Prop :=
+def SpanRule.Matches (it : SpanRule n F) (g : Fin n) : Prop :=
   g ≤ it.spans
 
-instance (it : ExponenceRule n F) (g : Fin n) : Decidable (it.Matches g) :=
+instance (it : SpanRule n F) (g : Fin n) : Decidable (it.Matches g) :=
   inferInstanceAs (Decidable (_ ≤ _))
 
-theorem ExponenceRule.Matches.anti {it : ExponenceRule n F} {g g' : Fin n}
+theorem SpanRule.Matches.anti {it : SpanRule n F} {g g' : Fin n}
     (h : it.Matches g') (hg : g ≤ g') : it.Matches g :=
   le_trans hg h
 
 /-- Minimize Junk derived, dually to
-`ExponenceRule.moreSpecific_iff_threshold_le`: an entry matches in a
+`SpanRule.moreSpecific_iff_threshold_le`: an entry matches in a
 subset of the structures another matches in iff it stores the smaller
 constituent — smallest-match selection is Pāṇinian specificity under
 superset matching. -/
-theorem ExponenceRule.matches_imp_iff_spans_le {it jt : ExponenceRule n F} :
+theorem SpanRule.matches_imp_iff_spans_le {it jt : SpanRule n F} :
     (∀ ⦃g : Fin n⦄, it.Matches g → jt.Matches g) ↔ it.spans ≤ jt.spans :=
   ⟨λ h => h (le_refl it.spans), λ h _ hg => le_trans hg h⟩
 
 /-- The nanosyntax restriction, in the pointer-free idealization of
 [caha-2009]: entries store bare constituents, with no DM-style
 contextual environment. -/
-def ContextFree (v : List (ExponenceRule n F)) : Prop :=
+def ContextFree (v : List (SpanRule n F)) : Prop :=
   ∀ it ∈ v, it.context = none
 
-instance (v : List (ExponenceRule n F)) : Decidable (ContextFree v) := by
+instance (v : List (SpanRule n F)) : Decidable (ContextFree v) := by
   unfold ContextFree; infer_instance
 
 /-! ### Minimize-Junk competition -/
 
 /-- The entries matching at grade `g`, in vocabulary order. -/
-def matching (v : List (ExponenceRule n F)) (g : Fin n) : List (ExponenceRule n F) :=
+def matching (v : List (SpanRule n F)) (g : Fin n) : List (SpanRule n F) :=
   v.filter (λ it => it.Matches g)
 
-@[simp] theorem mem_matching {v : List (ExponenceRule n F)} {g : Fin n}
-    {it : ExponenceRule n F} :
+@[simp] theorem mem_matching {v : List (SpanRule n F)} {g : Fin n}
+    {it : SpanRule n F} :
     it ∈ matching v g ↔ it ∈ v ∧ g ≤ it.spans := by
-  simp [matching, ExponenceRule.Matches]
+  simp [matching, SpanRule.Matches]
 
 /-- The least matching span at grade `g` — Minimize Junk: the winning
 entry stores as little unrealized structure as possible. `⊤` when no
 entry matches. -/
-def minSpan (v : List (ExponenceRule n F)) (g : Fin n) : WithTop (Fin n) :=
-  ((matching v g).map ExponenceRule.spans).minimum
+def minSpan (v : List (SpanRule n F)) (g : Fin n) : WithTop (Fin n) :=
+  ((matching v g).map SpanRule.spans).minimum
 
-theorem minSpan_eq_top_iff {v : List (ExponenceRule n F)} {g : Fin n} :
+theorem minSpan_eq_top_iff {v : List (SpanRule n F)} {g : Fin n} :
     minSpan v g = ⊤ ↔ matching v g = [] := by
   rw [minSpan, List.minimum_eq_top, List.map_eq_nil_iff]
 
-theorem exists_of_minSpan_eq_coe {v : List (ExponenceRule n F)} {g m : Fin n}
+theorem exists_of_minSpan_eq_coe {v : List (SpanRule n F)} {g m : Fin n}
     (h : minSpan v g = ↑m) : ∃ it ∈ v, it.spans = m ∧ g ≤ m := by
   obtain ⟨hmem, -⟩ := List.minimum_eq_coe_iff.mp h
   obtain ⟨it, hit, hsp⟩ := List.mem_map.mp hmem
   obtain ⟨hitv, hle⟩ := mem_matching.mp hit
   exact ⟨it, hitv, hsp, hsp ▸ hle⟩
 
-theorem le_spans_of_minSpan_eq_coe {v : List (ExponenceRule n F)} {g m : Fin n}
-    (h : minSpan v g = ↑m) {it : ExponenceRule n F} (hitv : it ∈ v)
+theorem le_spans_of_minSpan_eq_coe {v : List (SpanRule n F)} {g m : Fin n}
+    (h : minSpan v g = ↑m) {it : SpanRule n F} (hitv : it ∈ v)
     (hle : g ≤ it.spans) : m ≤ it.spans :=
   (List.minimum_eq_coe_iff.mp h).2 _
     (List.mem_map_of_mem (mem_matching.mpr ⟨hitv, hle⟩))
 
-theorem minSpan_eq_coe_intro {v : List (ExponenceRule n F)} {g : Fin n}
-    {it : ExponenceRule n F} (hitv : it ∈ v) (hle : g ≤ it.spans)
+theorem minSpan_eq_coe_intro {v : List (SpanRule n F)} {g : Fin n}
+    {it : SpanRule n F} (hitv : it ∈ v) (hle : g ≤ it.spans)
     (hlb : ∀ jt ∈ v, g ≤ jt.spans → it.spans ≤ jt.spans) :
     minSpan v g = ↑it.spans := by
   rw [minSpan, List.minimum_eq_coe_iff]
@@ -133,14 +133,14 @@ theorem minSpan_eq_coe_intro {v : List (ExponenceRule n F)} {g : Fin n}
 
 /-- The key transfer lemma, dual to `maxThreshold_eq_coe_of_between`: a
 winning span persists upward as long as the grade stays inside it. -/
-theorem minSpan_eq_coe_of_between {v : List (ExponenceRule n F)} {g g' m : Fin n}
+theorem minSpan_eq_coe_of_between {v : List (SpanRule n F)} {g g' m : Fin n}
     (h : minSpan v g = ↑m) (hg : g ≤ g') (hm : g' ≤ m) : minSpan v g' = ↑m := by
   obtain ⟨it, hitv, hsp, -⟩ := exists_of_minSpan_eq_coe h
   subst hsp
   exact minSpan_eq_coe_intro hitv hm
     (λ jt hjv hjle => le_spans_of_minSpan_eq_coe h hjv (le_trans hg hjle))
 
-theorem minSpan_eq_top_of_le {v : List (ExponenceRule n F)} {g g' : Fin n}
+theorem minSpan_eq_top_of_le {v : List (SpanRule n F)} {g g' : Fin n}
     (h : minSpan v g = ⊤) (hg : g ≤ g') : minSpan v g' = ⊤ := by
   rw [minSpan_eq_top_iff] at h ⊢
   rw [List.eq_nil_iff_forall_not_mem] at h ⊢
@@ -150,21 +150,21 @@ theorem minSpan_eq_top_of_le {v : List (ExponenceRule n F)} {g g' : Fin n}
 
 /-- The spellout winner at grade `g`: the first entry attaining the
 least matching span. -/
-def spelloutWinner (v : List (ExponenceRule n F)) (g : Fin n) :
-    Option (ExponenceRule n F) :=
+def spelloutWinner (v : List (SpanRule n F)) (g : Fin n) :
+    Option (SpanRule n F) :=
   (minSpan v g).recTopCoe none (λ m => v.find? (λ it => it.spans == m))
 
-theorem spelloutWinner_eq_none_of_top {v : List (ExponenceRule n F)} {g : Fin n}
+theorem spelloutWinner_eq_none_of_top {v : List (SpanRule n F)} {g : Fin n}
     (h : minSpan v g = ⊤) : spelloutWinner v g = none := by
   rw [spelloutWinner, h]; rfl
 
-theorem spelloutWinner_of_coe {v : List (ExponenceRule n F)} {g m : Fin n}
+theorem spelloutWinner_of_coe {v : List (SpanRule n F)} {g m : Fin n}
     (h : minSpan v g = ↑m) :
     spelloutWinner v g = v.find? (λ it => it.spans == m) := by
   rw [spelloutWinner, h]; rfl
 
-theorem spelloutWinner_spec {v : List (ExponenceRule n F)} {g : Fin n}
-    {it : ExponenceRule n F} (h : spelloutWinner v g = some it) :
+theorem spelloutWinner_spec {v : List (SpanRule n F)} {g : Fin n}
+    {it : SpanRule n F} (h : spelloutWinner v g = some it) :
     it ∈ v ∧ minSpan v g = ↑it.spans := by
   cases hms : minSpan v g with
   | top => rw [spelloutWinner_eq_none_of_top hms] at h; exact absurd h (by simp)
@@ -173,7 +173,7 @@ theorem spelloutWinner_spec {v : List (ExponenceRule n F)} {g : Fin n}
     have hsp : it.spans = m := by simpa using List.find?_some h
     exact ⟨List.mem_of_find?_eq_some h, by rw [hsp]⟩
 
-theorem exists_spelloutWinner_of_coe {v : List (ExponenceRule n F)} {g m : Fin n}
+theorem exists_spelloutWinner_of_coe {v : List (SpanRule n F)} {g m : Fin n}
     (h : minSpan v g = ↑m) : ∃ it, spelloutWinner v g = some it := by
   rw [spelloutWinner_of_coe h]
   obtain ⟨it, hitv, hsp, -⟩ := exists_of_minSpan_eq_coe h
@@ -183,7 +183,7 @@ theorem exists_spelloutWinner_of_coe {v : List (ExponenceRule n F)} {g m : Fin n
     rw [List.find?_eq_none] at hf
     exact absurd (by simp [hsp] : (it.spans == m) = true) (by simpa using hf it hitv)
 
-theorem spelloutWinner_eq_none_iff {v : List (ExponenceRule n F)} {g : Fin n} :
+theorem spelloutWinner_eq_none_iff {v : List (SpanRule n F)} {g : Fin n} :
     spelloutWinner v g = none ↔ minSpan v g = ⊤ := by
   refine ⟨λ h => ?_, spelloutWinner_eq_none_of_top⟩
   cases hms : minSpan v g with
@@ -193,7 +193,7 @@ theorem spelloutWinner_eq_none_iff {v : List (ExponenceRule n F)} {g : Fin n} :
     rw [hit] at h
     exact absurd h (by simp)
 
-theorem spelloutWinner_congr {v : List (ExponenceRule n F)} {g g' : Fin n}
+theorem spelloutWinner_congr {v : List (SpanRule n F)} {g g' : Fin n}
     (h : minSpan v g = minSpan v g') : spelloutWinner v g = spelloutWinner v g' := by
   rw [spelloutWinner, spelloutWinner, h]
 
@@ -201,15 +201,15 @@ theorem spelloutWinner_congr {v : List (ExponenceRule n F)} {g g' : Fin n}
 exponent (`none` when no entry contains the structure — a spellout
 gap; full nanosyntax would attempt rescue operations before declaring
 ineffability). -/
-def spellout (v : List (ExponenceRule n F)) : Paradigm n (Option F) :=
-  λ g => (spelloutWinner v g).map ExponenceRule.exponent
+def spellout (v : List (SpanRule n F)) : Paradigm n (Option F) :=
+  λ g => (spelloutWinner v g).map SpanRule.exponent
 
-theorem spellout_congr {v : List (ExponenceRule n F)} {g g' : Fin n}
+theorem spellout_congr {v : List (SpanRule n F)} {g g' : Fin n}
     (h : minSpan v g = minSpan v g') : spellout v g = spellout v g' := by
   show (spelloutWinner v g).map _ = (spelloutWinner v g').map _
   rw [spelloutWinner_congr h]
 
-theorem spellout_eq_none_iff {v : List (ExponenceRule n F)} {g : Fin n} :
+theorem spellout_eq_none_iff {v : List (SpanRule n F)} {g : Fin n} :
     spellout v g = none ↔ minSpan v g = ⊤ := by
   rw [← spelloutWinner_eq_none_iff]
   unfold spellout
@@ -218,7 +218,7 @@ theorem spellout_eq_none_iff {v : List (ExponenceRule n F)} {g : Fin n} :
 /-- Spellout gaps propagate upward: an entry matching a higher grade
 would match the lower one too, so a gap at `g` forces gaps at every
 `g' ≥ g` — [dekier-2021]'s paradigm-gap monotonicity for indefinites. -/
-theorem spellout_eq_none_of_le {v : List (ExponenceRule n F)} {g g' : Fin n}
+theorem spellout_eq_none_of_le {v : List (SpanRule n F)} {g g' : Fin n}
     (h : spellout v g = none) (hg : g ≤ g') : spellout v g' = none :=
   spellout_eq_none_iff.mpr
     (minSpan_eq_top_of_le (spellout_eq_none_iff.mp h) hg)
@@ -232,7 +232,7 @@ the winner's exponent injective — so spellout fibers are convex. This
 is the nanosyntax derivation of *ABA ([caha-2009]), run on the same
 vocabulary type as the DM derivation. -/
 
-theorem isContiguous_spellout {v : List (ExponenceRule n F)}
+theorem isContiguous_spellout {v : List (SpanRule n F)}
     (hAH : Antihomophonous v) : IsContiguous (spellout v) := by
   intro i j k hij hjk heq
   cases hwi : spelloutWinner v i with
@@ -287,11 +287,11 @@ theorem lastOcc_congr {p : Paradigm n F} {g g' : Fin n} (h : p g = p g') :
 
 /-- The canonical nanosyntax lexicon of a pattern: one context-free
 entry per form, storing the form's largest constituent. -/
-def spelloutOfPattern (p : Paradigm n F) : List (ExponenceRule n F) :=
+def spelloutOfPattern (p : Paradigm n F) : List (SpanRule n F) :=
   (List.finRange n).filterMap (λ s =>
     if lastOcc p s = s then some ⟨p s, s, none⟩ else none)
 
-theorem mem_spelloutOfPattern {p : Paradigm n F} {it : ExponenceRule n F} :
+theorem mem_spelloutOfPattern {p : Paradigm n F} {it : SpanRule n F} :
     it ∈ spelloutOfPattern p ↔
       ∃ s : Fin n, lastOcc p s = s ∧ it = ⟨p s, s, none⟩ := by
   simp only [spelloutOfPattern, List.mem_filterMap, List.mem_finRange, true_and]
@@ -323,11 +323,11 @@ theorem spellout_spelloutOfPattern {p : Paradigm n F} (hp : IsContiguous p)
     (g : Fin n) : spellout (spelloutOfPattern p) g = some (p g) := by
   have hll : lastOcc p (lastOcc p g) = lastOcc p g :=
     lastOcc_congr (apply_lastOcc p g)
-  have hitem : (⟨p (lastOcc p g), lastOcc p g, none⟩ : ExponenceRule n F)
+  have hitem : (⟨p (lastOcc p g), lastOcc p g, none⟩ : SpanRule n F)
       ∈ spelloutOfPattern p :=
     mem_spelloutOfPattern.mpr ⟨lastOcc p g, hll, rfl⟩
   have hlb : ∀ jt ∈ spelloutOfPattern p, g ≤ jt.spans →
-      (⟨p (lastOcc p g), lastOcc p g, none⟩ : ExponenceRule n F).spans ≤ jt.spans := by
+      (⟨p (lastOcc p g), lastOcc p g, none⟩ : SpanRule n F).spans ≤ jt.spans := by
     intro jt hjv hjle
     obtain ⟨t, htlo, rfl⟩ := mem_spelloutOfPattern.mp hjv
     show lastOcc p g ≤ t
@@ -346,7 +346,7 @@ theorem spellout_spelloutOfPattern {p : Paradigm n F} (hp : IsContiguous p)
   obtain ⟨t, htlo, rfl⟩ := mem_spelloutOfPattern.mp hwv
   have : t = lastOcc p g := hwsp
   subst this
-  show (spelloutWinner (spelloutOfPattern p) g).map ExponenceRule.exponent
+  show (spelloutWinner (spelloutOfPattern p) g).map SpanRule.exponent
       = some (p g)
   rw [hw, Option.map_some]
   exact congrArg some (apply_lastOcc p g)
@@ -356,7 +356,7 @@ end Completeness
 /-- A pattern is **Superset-spellable**: some context-free
 antihomophonous lexicon spells it out in full. -/
 def SupersetSpellable (p : Paradigm n F) : Prop :=
-  ∃ v : List (ExponenceRule n F), ContextFree v ∧ Antihomophonous v ∧
+  ∃ v : List (SpanRule n F), ContextFree v ∧ Antihomophonous v ∧
     ∀ g, spellout v g = some (p g)
 
 /-- **Spellable = contiguous**: a fully realized pattern arises from
@@ -399,10 +399,10 @@ gap under Elsewhere insertion. This is nanosyntax's characteristic
 prediction — overspecified entries double as defaults for smaller
 structures — against DM's characteristic gaps. -/
 
-example : spellout [(⟨"gwell", 1, none⟩ : ExponenceRule 3 String)] 0
+example : spellout [(⟨"gwell", 1, none⟩ : SpanRule 3 String)] 0
     = some "gwell" := by decide
 
-example : realize [(⟨"gwell", 1, none⟩ : ExponenceRule 3 String)] 0
+example : realize [(⟨"gwell", 1, none⟩ : SpanRule 3 String)] 0
     = none := by decide
 
 /-! ### Antihomophony is necessary for *ABA
@@ -415,7 +415,7 @@ syncretism (one item over a contiguous span); the `Antihomophonous`
 hypothesis of `isContiguous_spellout` is exactly that distinction. -/
 
 /-- Accidental homophony: "A" stored at two non-adjacent grades. -/
-private def homophonous : List (ExponenceRule 3 String) :=
+private def homophonous : List (SpanRule 3 String) :=
   [⟨"A", 0, none⟩, ⟨"B", 1, none⟩, ⟨"A", 2, none⟩]
 
 example : ¬ Antihomophonous homophonous := by decide
@@ -428,7 +428,7 @@ example :
 /-! ### The shared exponence core
 
 One carrier, two `RuleLike` views: the Subset reading on
-`ExponenceRule` (`Morphology/Exponence/Hierarchy.lean`) and the Superset
+`SpanRule` (`Morphology/Exponence/Hierarchy.lean`) and the Superset
 reading on the `SupersetRule` synonym below install the shared core with
 dual applicability conditions and opposite derived-specificity orders, à
 la `OrderDual`. -/
@@ -439,23 +439,23 @@ open Morphology.Exponence
 
 /-- The **Superset** reading of an exponence rule: an entry spells out
 grade `g` when its stored constituent contains `g` (the down-set
-`Set.Iic spans`), dually to the Subset reading of `ExponenceRule`. A
+`Set.Iic spans`), dually to the Subset reading of `SpanRule`. A
 distinct type synonym so the two readings can carry different `RuleLike`
 instances on one carrier, mirroring `OrderDual`. -/
-def SupersetRule (n : ℕ) (F : Type*) := ExponenceRule n F
+def SupersetRule (n : ℕ) (F : Type*) := SpanRule n F
 
 instance : RuleLike (SupersetRule n F) (Fin n) F :=
-  ⟨ExponenceRule.exponent, fun it => Set.Iic (ExponenceRule.spans it)⟩
+  ⟨SpanRule.exponent, fun it => Set.Iic (SpanRule.spans it)⟩
 
 instance : Preorder (SupersetRule n F) := RuleLike.toPreorder
 
 /-- Read an exponence rule under the Superset reading. -/
-def ExponenceRule.superset (it : ExponenceRule n F) : SupersetRule n F := it
+def SpanRule.superset (it : SpanRule n F) : SupersetRule n F := it
 
 /-- Minimize Junk is the Superset reading's specificity order: smaller
 span = more specific. -/
 theorem SupersetRule.le_iff {it jt : SupersetRule n F} :
-    it ≤ jt ↔ ExponenceRule.spans it ≤ ExponenceRule.spans jt :=
+    it ≤ jt ↔ SpanRule.spans it ≤ SpanRule.spans jt :=
   Set.Iic_subset_Iic
 
 /-- **Subset/Superset duality** over context-free vocabularies (the
@@ -463,12 +463,12 @@ nanosyntax idealization): DM-style Subset specificity of `it` over `jt`
 is Superset specificity of `jt` over `it`. With contextual restrictions
 the Subset order compares thresholds, not spans, and the duality is
 only one-directional. -/
-theorem ExponenceRule.subset_le_iff_superset_le {it jt : ExponenceRule n F}
+theorem SpanRule.subset_le_iff_superset_le {it jt : SpanRule n F}
     (hit : it.context = none) (hjt : jt.context = none) :
     it ≤ jt ↔ jt.superset ≤ it.superset := by
-  rw [ExponenceRule.le_iff, ExponenceRule.moreSpecific_iff_threshold_le,
+  rw [SpanRule.le_iff, SpanRule.moreSpecific_iff_threshold_le,
     SupersetRule.le_iff]
-  unfold ExponenceRule.threshold ExponenceRule.superset
+  unfold SpanRule.threshold SpanRule.superset
   rw [hit, hjt]
   simp
 
@@ -476,10 +476,10 @@ theorem ExponenceRule.subset_le_iff_superset_le {it jt : ExponenceRule n F}
 under the Superset reading — with no side conditions: over a linear
 hierarchy the span order is total, so the least-span match is maximally
 specific. -/
-theorem spelloutWinner_isElsewhereWinner {v : List (ExponenceRule n F)}
-    {g : Fin n} {it : ExponenceRule n F}
+theorem spelloutWinner_isElsewhereWinner {v : List (SpanRule n F)}
+    {g : Fin n} {it : SpanRule n F}
     (h : spelloutWinner v g = some it) :
-    Exponence.IsElsewhereWinner (v.map ExponenceRule.superset) g it.superset := by
+    Exponence.IsElsewhereWinner (v.map SpanRule.superset) g it.superset := by
   obtain ⟨hmem, hms⟩ := spelloutWinner_spec h
   obtain ⟨-, -, -, hle⟩ := exists_of_minSpan_eq_coe hms
   refine ⟨⟨List.mem_map_of_mem hmem, hle⟩, ?_⟩

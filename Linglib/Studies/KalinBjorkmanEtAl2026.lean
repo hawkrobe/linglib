@@ -736,14 +736,14 @@ open _root_.Morphology Morphology.Containment in
     middle grade, and its pattern is contiguous by
     `isContiguous_spellout`. -/
 theorem starABA_verified :
-    spellout [(⟨"A", 0, none⟩ : ExponenceRule 3 String), ⟨"B", 2, none⟩] 0
+    spellout [(⟨"A", 0, none⟩ : SpanRule 3 String), ⟨"B", 2, none⟩] 0
       = some "A" ∧
-    spellout [(⟨"A", 0, none⟩ : ExponenceRule 3 String), ⟨"B", 2, none⟩] 1
+    spellout [(⟨"A", 0, none⟩ : SpanRule 3 String), ⟨"B", 2, none⟩] 1
       = some "B" ∧
-    spellout [(⟨"A", 0, none⟩ : ExponenceRule 3 String), ⟨"B", 2, none⟩] 2
+    spellout [(⟨"A", 0, none⟩ : SpanRule 3 String), ⟨"B", 2, none⟩] 2
       = some "B" ∧
     IsContiguous (spellout
-      [(⟨"A", 0, none⟩ : ExponenceRule 3 String), ⟨"B", 2, none⟩]) :=
+      [(⟨"A", 0, none⟩ : SpanRule 3 String), ⟨"B", 2, none⟩]) :=
   ⟨by decide, by decide, by decide, isContiguous_spellout (by decide)⟩
 
 /-! ### 4b. PFM's Paradigm Function architecture

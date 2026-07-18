@@ -94,14 +94,14 @@ axioms are à la carte Props rather than baked into the rule type. -/
 /-- Elsewhere insertion under [bobaljik-2012]'s structural adjacency
     (terminal items, adjacent contexts) cannot generate a pattern whose
     CMPR cell differs from its SPRL cell. -/
-theorem dm_excludes_cmpr_sprl_distinct {v : List (ExponenceRule 3 ℕ)}
+theorem dm_excludes_cmpr_sprl_distinct {v : List (SpanRule 3 ℕ)}
     (hT : Terminal v) (hAdj : Adjacent v) :
     realize v 1 = realize v 2 :=
   realize_const_of_terminal_adjacent hT hAdj
 
 /-- Specific corollary: the AAB shape (POS = CMPR ≠ SPRL) cannot be
     generated under structural adjacency. -/
-theorem dm_excludes_aab {v : List (ExponenceRule 3 ℕ)}
+theorem dm_excludes_aab {v : List (SpanRule 3 ℕ)}
     (hT : Terminal v) (hAdj : Adjacent v) {a b : ℕ} (hab : a ≠ b) :
     realize v ≠ ![some a, some a, some b] := by
   intro h
@@ -198,7 +198,7 @@ theorem case_aab_attested_falsifies_dm :
     realization. Since Wardaman attests it, structural adjacency is the
     hypothesis that must go — the paper's §3.7 conclusion. -/
 theorem wardaman_not_generable_under_adjacency :
-    ∀ v : List (ExponenceRule 3 ℕ), Terminal v → Adjacent v →
+    ∀ v : List (SpanRule 3 ℕ), Terminal v → Adjacent v →
       realize v ≠ ![some 0, some 0, some 1] :=
   λ _ hT hA => dm_excludes_aab hT hA (by decide)
 
@@ -266,7 +266,7 @@ theorem number_aab_attested_falsifies_dm :
 /-- Number-side analog: the Yagua-shaped AAB realization is not
     generable under structural adjacency either. -/
 theorem yagua_not_generable_under_adjacency :
-    ∀ v : List (ExponenceRule 3 ℕ), Terminal v → Adjacent v →
+    ∀ v : List (SpanRule 3 ℕ), Terminal v → Adjacent v →
       realize v ≠ ![some 0, some 0, some 1] :=
   λ _ hT hA => dm_excludes_aab hT hA (by decide)
 
@@ -314,21 +314,21 @@ menu. The paper's degree/pronoun split, as theorems:
     restricted, since the AD governs what may *condition* insertion,
     not what is inserted. -/
 def DomainLocal {n : ℕ} {F : Type*} (d : Fin n)
-    (v : List (ExponenceRule n F)) : Prop :=
+    (v : List (SpanRule n F)) : Prop :=
   ∀ it ∈ v, ∀ c : Fin n, it.context = some c → c ≤ d
 
-instance {n : ℕ} {F : Type*} (d : Fin n) (v : List (ExponenceRule n F)) :
+instance {n : ℕ} {F : Type*} (d : Fin n) (v : List (SpanRule n F)) :
     Decidable (DomainLocal d v) := by
   unfold DomainLocal; infer_instance
 
 /-- Under AD locality, terminal rules have thresholds inside the
     domain. -/
 theorem threshold_le_of_terminal_domainLocal {n : ℕ} {F : Type*}
-    {d : Fin n} {v : List (ExponenceRule n F)}
+    {d : Fin n} {v : List (SpanRule n F)}
     (hT : Terminal v) (hD : DomainLocal d v)
-    {it : ExponenceRule n F} (hit : it ∈ v) : it.threshold ≤ d := by
+    {it : SpanRule n F} (hit : it ∈ v) : it.threshold ≤ d := by
   have h0 := hT it hit
-  unfold ExponenceRule.threshold
+  unfold SpanRule.threshold
   cases hc : it.context with
   | none =>
     simp only [Option.getD_none, max_self]
@@ -344,7 +344,7 @@ theorem threshold_le_of_terminal_domainLocal {n : ℕ} {F : Type*}
     adjectives with no adjacency stipulation, which is the paper's
     reconstruction of the degree facts. -/
 theorem realize_const_of_terminal_domainLocal {n : ℕ} {F : Type*}
-    {d : Fin n} {v : List (ExponenceRule n F)}
+    {d : Fin n} {v : List (SpanRule n F)}
     (hT : Terminal v) (hD : DomainLocal d v)
     {g g' : Fin n} (hg : d ≤ g) (hg' : d ≤ g') :
     realize v g = realize v g' :=
@@ -355,7 +355,7 @@ theorem realize_const_of_terminal_domainLocal {n : ℕ} {F : Type*}
     first head: the [bobaljik-2012] regime is the smallest nontrivial
     accessibility domain. -/
 theorem domainLocal_of_terminal_adjacent {n : ℕ} {F : Type*}
-    {d : Fin n} (hd : 1 ≤ (d : ℕ)) {v : List (ExponenceRule n F)}
+    {d : Fin n} (hd : 1 ≤ (d : ℕ)) {v : List (SpanRule n F)}
     (hT : Terminal v) (hA : Adjacent v) : DomainLocal d v := by
   intro it hit c hc
   have h1 := hA it hit c hc
@@ -366,7 +366,7 @@ theorem domainLocal_of_terminal_adjacent {n : ℕ} {F : Type*}
     (stated there for featural containment; transposed here to the
     3-cell structural hierarchy of §3.1): elsewhere `narnaj`,
     oblique-conditioned `gunga`. -/
-def wardamanVocab : List (ExponenceRule 3 String) :=
+def wardamanVocab : List (SpanRule 3 String) :=
   [⟨"narnaj", 0, none⟩, ⟨"gunga", 0, some 2⟩]
 
 /-- **The generability converse**: the AD-local pronoun vocabulary

@@ -83,7 +83,7 @@ open Kannada.Indefinites
     Features are ordered on a universal fseq. Each layer is characterized
     by its rank (depth). A lexical entry at rank r stores F₁...Fᵣ and
     matches any target of rank ≤ r via the Superset Principle —
-    `ExponenceRule.Matches` over the three-grade hierarchy `Fin 3`. -/
+    `SpanRule.Matches` over the three-grade hierarchy `Fin 3`. -/
 
 /-- Fseq grades for indefinite features. -/
 def nsRank : Fin 3 := 0   -- F₁P: non-specific
@@ -161,12 +161,12 @@ def gapParadigms : List ParadigmEntry :=
 /-! Each syncretism pattern corresponds to a particular lexicon
     configuration. The spellout algorithm (Superset + Minimize Junk,
     `Morphology.Containment.spellout`) derives the surface pattern from
-    the lexicon. Entries are context-free `ExponenceRule`s: an exponent
+    the lexicon. Entries are context-free `SpanRule`s: an exponent
     paired with the largest grade its stored constituent spans. -/
 
 /-- English AAA: a single entry at rank 2 covers all three layers.
     *some-* ⇔ F₃P. -/
-def englishLex : List (ExponenceRule 3 String) := [⟨"some-", 2, none⟩]
+def englishLex : List (SpanRule 3 String) := [⟨"some-", 2, none⟩]
 
 theorem english_spellout :
     spellout englishLex nsRank = some "some-" ∧
@@ -175,7 +175,7 @@ theorem english_spellout :
 
 /-- Yakut ABB: *-emeEntry* at rank 0 (F₁P), *-ereEntry* at rank 2 (F₃P).
     Elsewhere gives *-emeEntry* for NS, *-ereEntry* covers SU and SK. -/
-def yakutLex : List (ExponenceRule 3 String) := [⟨"-eme", 0, none⟩, ⟨"-ere", 2, none⟩]
+def yakutLex : List (SpanRule 3 String) := [⟨"-eme", 0, none⟩, ⟨"-ere", 2, none⟩]
 
 theorem yakut_spellout :
     spellout yakutLex nsRank = some "-eme" ∧
@@ -189,7 +189,7 @@ theorem yakut_spellout :
     Note: the nanosyntactic derivation is complex — *aliEntry-* is
     a prefix (subderivation), *-damEntry* is a suffix (constituent
     extraction). -/
-def latinLex : List (ExponenceRule 3 String) := [⟨"ali-", 1, none⟩, ⟨"-dam", 2, none⟩]
+def latinLex : List (SpanRule 3 String) := [⟨"ali-", 1, none⟩, ⟨"-dam", 2, none⟩]
 
 theorem latin_spellout :
     spellout latinLex nsRank = some "ali-" ∧
@@ -200,7 +200,7 @@ theorem latin_spellout :
     own exponent.
     *-nibudEntry'* ⇔ F₁P (suffix), *-to* ⇔ F₂P (suffix),
     *koeEntry-* ⇔ F₃P (prefix). -/
-def russianLex : List (ExponenceRule 3 String) :=
+def russianLex : List (SpanRule 3 String) :=
   [⟨"-nibud'", 0, none⟩, ⟨"-to", 1, none⟩, ⟨"koe-", 2, none⟩]
 
 theorem russian_spellout :
@@ -210,7 +210,7 @@ theorem russian_spellout :
 
 /-- Lithuanian ABC: three entries at ranks 0, 1, 2.
     [dekier-2021] Table 7. -/
-def lithuanianLex : List (ExponenceRule 3 String) :=
+def lithuanianLex : List (SpanRule 3 String) :=
   [⟨"-nors", 0, none⟩, ⟨"kaž-", 1, none⟩, ⟨"kai-", 2, none⟩]
 
 theorem lithuanian_spellout :
@@ -302,7 +302,7 @@ theorem aba_unattested_pattern :
     ABSENCE of high-rank entries. -/
 
 -- Kannada (AB-): entries at ranks 0 and 1, no rank-2 entry
-def kannadaLex : List (ExponenceRule 3 String) :=
+def kannadaLex : List (SpanRule 3 String) :=
   [⟨"-aadaruu", 0, none⟩, ⟨"-oo", 1, none⟩]
 
 theorem kannada_gap :
@@ -311,7 +311,7 @@ theorem kannada_gap :
     spellout kannadaLex skRank = none := by decide
 
 -- Chinese (A--): single entry at rank 0
-def chineseLex : List (ExponenceRule 3 String) := [⟨"wh-pron", 0, none⟩]
+def chineseLex : List (SpanRule 3 String) := [⟨"wh-pron", 0, none⟩]
 
 theorem chinese_gap :
     spellout chineseLex nsRank = some "wh-pron" ∧
@@ -319,7 +319,7 @@ theorem chinese_gap :
     spellout chineseLex skRank = none := by decide
 
 -- Empty lexicon (---): Swahili, Irish, Filipino
-def emptyLex : List (ExponenceRule 3 String) := []
+def emptyLex : List (SpanRule 3 String) := []
 
 theorem empty_gap :
     spellout emptyLex nsRank = none ∧
@@ -327,14 +327,14 @@ theorem empty_gap :
     spellout emptyLex skRank = none := by decide
 
 /-- Consequence: if NS (rank 0) has no form, nothing does. -/
-theorem no_ns_implies_no_su_sk (lex : List (ExponenceRule 3 String))
+theorem no_ns_implies_no_su_sk (lex : List (SpanRule 3 String))
     (h : spellout lex nsRank = none) :
     spellout lex suRank = none ∧ spellout lex skRank = none :=
   ⟨spellout_eq_none_of_le h (by decide),
    spellout_eq_none_of_le h (by decide)⟩
 
 /-- Consequence: if SU (rank 1) has no form, SK doesn't either. -/
-theorem no_su_implies_no_sk (lex : List (ExponenceRule 3 String))
+theorem no_su_implies_no_sk (lex : List (SpanRule 3 String))
     (h : spellout lex suRank = none) :
     spellout lex skRank = none :=
   spellout_eq_none_of_le h (by decide)

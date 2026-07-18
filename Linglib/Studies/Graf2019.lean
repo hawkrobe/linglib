@@ -154,7 +154,7 @@ theorem aab_feasiblyMonotone : FeasiblyMonotone aab.toParadigm := by
 /-- Under antihomophony plus the markedness condition (202), no
 vocabulary realizes an AAB pattern — the gradation-side exclusion,
 carried by the realization engine rather than by monotonicity. -/
-theorem aab_not_groundedly_realizable {v : List (ExponenceRule 3 ℕ)}
+theorem aab_not_groundedly_realizable {v : List (SpanRule 3 ℕ)}
     {a b : ℕ} (hAH : Antihomophonous v) (hG : Grounded v) (hab : a ≠ b) :
     realize v ≠ ![some a, some a, some b] := by
   intro h

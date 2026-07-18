@@ -212,10 +212,10 @@ theorem diachronic_weakening_grounded
 /-- Nanosyntax + Dekier: losing entry A (rank 0, NS-only) makes entry B
     (rank 1, SU) cover NS too via Superset Principle.
     Predicts SU → epistemic (AB → BB), but NOT NS → epistemic. -/
-def dekierInitial : List (ExponenceRule 3 String) :=
+def dekierInitial : List (SpanRule 3 String) :=
   [⟨"A", 0, none⟩, ⟨"B", 1, none⟩]
 
-def dekierAfterLoss : List (ExponenceRule 3 String) :=
+def dekierAfterLoss : List (SpanRule 3 String) :=
   [⟨"B", 1, none⟩]
 
 theorem dekier_initial_ab :

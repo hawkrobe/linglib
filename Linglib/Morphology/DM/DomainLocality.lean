@@ -43,7 +43,7 @@ grade, which locality unit it belongs to. The AD theory itself is
 *trigger-relative* — a bound on which heads may condition root
 suppletion, formalized at rule level as
 `SmithMoskalEtAl2019.DomainLocal` on
-`Morphology.Containment.ExponenceRule` vocabularies. The substrate is
+`Morphology.Containment.SpanRule` vocabularies. The substrate is
 theory-neutral about how the partition is computed:
 [moskal-2015a-dissertation]'s AD is one source, [embick-2010]'s linear
 adjacency another (every grade its own one-cell domain),
