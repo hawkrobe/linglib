@@ -1,4 +1,4 @@
-import Linglib.Morphology.DegreeContainment
+import Linglib.Morphology.Paradigm.Degree
 import Linglib.Morphology.Exponence.Containment.Contiguity
 import Linglib.Morphology.DM.Merger
 import Linglib.Semantics.Alternatives.Lexical
@@ -102,7 +102,7 @@ end Bobaljik2012.ScaleFromParadigm
 
 namespace Bobaljik2012
 
-open Morphology.DegreeContainment
+open Morphology.Degree
 open English.Modifiers.Adjectives
 
 /-! ### Pattern Verification (English) -/

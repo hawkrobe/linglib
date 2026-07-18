@@ -13,7 +13,7 @@ inventory: the values languages' case systems distinguish. All
 theoretical machinery — Blake's hierarchy (here), Caha containment
 (`Syntax/Case/Order.lean`), syncretism and *ABA
 (`Morphology/Case/Allomorphy.lean`), grammaticalization clines
-(`Diachronic/CaseGrammaticalization.lean`) — operates over this type.
+(`Features/Case/Grammaticalization.lean`) — operates over this type.
 
 `UD.Case` (`Data/UD/Basic.lean`) is the *realization* vocabulary — what
 corpora annotate — reachable by `toUD`/`fromUD`. The two inventories

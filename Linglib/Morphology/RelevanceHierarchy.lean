@@ -1,3 +1,4 @@
+import Linglib.Morphology.Template
 import Linglib.Syntax.Agreement.Controller
 
 /-!
@@ -13,6 +14,8 @@ verb stem, and the stem-outward order this ranking induces.
 - `MorphCategory.peripherality`: a numeric rank realizing the order.
 - `MorphCategory.RelevanceLE`/`RelevanceLT`: the induced order.
 - `RespectsRelevanceHierarchy`: a slot list sorted stem-outward.
+- `AffixTemplate.suffixRespectsRelevance`: a template's suffix slots
+  are sorted by relevance.
 -/
 
 namespace Morphology
@@ -36,9 +39,7 @@ inductive MorphCategory where
       distinction (subj vs obj vs poss vs ...) is what allows Anderson
       Ch 5 §5.2 split/doubled AVC typology to be Lean-checkable;
       Bybee 1985's `personAgr / personAgrObj / genderAgr` source
-      distinctions also round-trip cleanly. See
-      `scratch/morphcategory_agreement_split_plan.md` for the design
-      rationale (0.230.578-0.230.584). -/
+      distinctions also round-trip cleanly. -/
   | agreement (controller : Agreement.Controller)
   | nonfinite     -- nonfinite markers, interrogative/relative
   | number        -- number marking on nouns (not verb agreement)
@@ -158,5 +159,12 @@ def RespectsRelevanceHierarchy (slots : List MorphCategory) : Prop :=
 
 instance : DecidablePred RespectsRelevanceHierarchy := fun _ => by
   unfold RespectsRelevanceHierarchy; exact inferInstance
+
+/-- The template's suffix order respects [bybee-1985]'s relevance hierarchy. -/
+def AffixTemplate.suffixRespectsRelevance (t : AffixTemplate MorphCategory) : Prop :=
+  RespectsRelevanceHierarchy t.suffixSlots
+
+instance (t : AffixTemplate MorphCategory) : Decidable t.suffixRespectsRelevance :=
+  inferInstanceAs (Decidable (RespectsRelevanceHierarchy _))
 
 end Morphology

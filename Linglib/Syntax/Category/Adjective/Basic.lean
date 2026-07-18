@@ -1,5 +1,5 @@
 import Linglib.Features.ScalarDimension
-import Linglib.Morphology.DegreeContainment
+import Linglib.Morphology.Paradigm.Degree
 
 /-!
 # Adjective
@@ -33,7 +33,7 @@ noun-strategy fragment lands, factor a `PropertyConcept` superclass.
 -/
 
 open Features (ScalarDimension)
-open Morphology.DegreeContainment (DegreePattern)
+open Morphology.Degree (DegreePattern)
 
 set_option autoImplicit false
 
@@ -46,7 +46,7 @@ inductive Adjective.ComparisonStrategy
 
 /-- Grade-level comparison morphology: the cross-linguistic structure (per-grade
     formation strategy + the suppletion pattern, whose *ABA constraint lives in
-    `Morphology/DegreeContainment`, [bobaljik-2012]) plus the surface comparative and
+    `Morphology/Paradigm/Degree.lean`, [bobaljik-2012]) plus the surface comparative and
     superlative forms. -/
 structure Adjective.ComparisonFacet where
   formComp  : Option String := none

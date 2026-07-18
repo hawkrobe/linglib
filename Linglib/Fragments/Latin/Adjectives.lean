@@ -21,7 +21,7 @@ No Latin adjective shows an *ABA pattern.
 
 namespace Latin.Adjectives
 
-open Morphology.DegreeContainment (DegreePattern aaa abb abc)
+open Morphology.Degree (DegreePattern aaa abb abc)
 
 -- ============================================================================
 -- § 1: Regular Adjectives (AAA)

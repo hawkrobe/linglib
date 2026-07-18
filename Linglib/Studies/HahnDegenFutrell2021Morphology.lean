@@ -88,7 +88,7 @@ the §6 morpheme-order corollary, stated as a failure of the substrate predicate
 not a positional count. -/
 theorem japanese_violates_surveyed_relevance :
     Bybee1985.SurveyedCloser .tense .mood ∧
-    ¬ RespectsRelevanceHierarchy japaneseSuffixSlots := by
+    ¬ Japanese.verbAffixTemplate.suffixRespectsRelevance := by
   decide
 
 -- ============================================================================
@@ -117,7 +117,7 @@ relevance order, which on the surveyed categories *is* Bybee's §6 order
 (`Bybee1985.survey_order_iso_relevance`). Contrast
 `japanese_violates_surveyed_relevance`: same surveyed order, opposite outcome. -/
 theorem sesotho_suffixes_respect_bybee :
-    RespectsRelevanceHierarchy sesothoSuffixSlots := by decide
+    Sesotho.verbAffixTemplate.suffixRespectsRelevance := by decide
 
 -- ============================================================================
 -- §4: Memory-Surprisal Efficiency (SI Figures 6, 8)
@@ -226,7 +226,7 @@ that the relevance hierarchy captures the right notion of locality. -/
 theorem relevance_hierarchy_implies_locality :
     -- Languages whose morpheme orders respect Bybee's hierarchy
     -- are also efficient in memory-surprisal terms
-    RespectsRelevanceHierarchy sesothoSuffixSlots ∧
+    Sesotho.verbAffixTemplate.suffixRespectsRelevance ∧
     sesothoRealAUC100 < sesothoRandomAUC100 :=
   ⟨by decide, by native_decide⟩
 
