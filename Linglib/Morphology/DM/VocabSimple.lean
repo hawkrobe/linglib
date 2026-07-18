@@ -136,21 +136,30 @@ section ExponenceCore
 
 open Morphology.Exponence
 
-/-- View a vocabulary entry as a rule of the shared exponence core
-(`Morphology.Exponence.Rule`): contexts are (target bundle, syntactic
-context) pairs, applicability is `Matches`. -/
-def VocabEntry.toRule (e : VocabEntry) : Rule (FeatureBundle × Option Cat) String :=
-  ⟨e.exponent, λ tc => e.Matches tc.1 tc.2⟩
+/-- A vocabulary entry exposes the shared exponence core interface
+(`Morphology.Exponence.RuleLike`): contexts are (target bundle,
+syntactic context) pairs, applicability is `Matches`. -/
+instance : RuleLike VocabEntry (FeatureBundle × Option Cat) String :=
+  ⟨VocabEntry.exponent, fun e => {tc | e.Matches tc.1 tc.2}⟩
+
+instance : Preorder VocabEntry := RuleLike.toPreorder
+
+/-- Derived specificity, unfolded: `e ≤ e'` iff `e'` matches wherever
+`e` does. -/
+theorem VocabEntry.le_iff_matches {e e' : VocabEntry} :
+    e ≤ e' ↔ ∀ ⦃tc : FeatureBundle × Option Cat⦄,
+      e.Matches tc.1 tc.2 → e'.Matches tc.1 tc.2 :=
+  Iff.rfl
 
 /-- Syntactic refinement: a feature-superset entry (with compatible
 context restriction) is at least as specific in the shared core's
 order. -/
-theorem VocabEntry.toRule_le_of_superset {e e' : VocabEntry}
+theorem VocabEntry.le_of_superset {e e' : VocabEntry}
     (hf : ∀ f ∈ FeatureBundle.toGramFeatures e'.features,
       f ∈ FeatureBundle.toGramFeatures e.features)
     (hc : e'.context = none ∨ e'.context = e.context) :
-    e.toRule ≤ e'.toRule := by
-  rw [Rule.le_iff]
+    e ≤ e' := by
+  rw [VocabEntry.le_iff_matches]
   rintro ⟨t, c⟩ ⟨hm, hctx⟩
   refine ⟨?_, ?_⟩
   · rw [VocabEntry.MatchesFeatures, List.all_eq_true] at hm ⊢
@@ -170,27 +179,26 @@ theorem VocabEntry.matchesFeatures_self (e : VocabEntry) :
 
 /-- The shared core's specificity order, characterized: `e ≤ e'` iff
 `e'`'s features are a subset of `e`'s and `e'`'s context restriction is
-compatible. Upgrades `toRule_le_of_superset` to an iff — over feature
-bundles the intensional superset order IS the specificity order, with
-no faithfulness assumption (contrast
-`Morphology.DM.VI.SpecificityFaithful`, which the opaque-predicate
-engine must stipulate). -/
-theorem VocabEntry.toRule_le_iff {e e' : VocabEntry} :
-    e.toRule ≤ e'.toRule ↔
+compatible. Upgrades `le_of_superset` to an iff — over feature bundles
+the intensional superset order IS the specificity order, with no
+faithfulness assumption (contrast `Morphology.DM.VI.SpecificityFaithful`,
+which the opaque-predicate engine must stipulate). -/
+theorem VocabEntry.le_iff {e e' : VocabEntry} :
+    e ≤ e' ↔
       (∀ f ∈ FeatureBundle.toGramFeatures e'.features,
         f ∈ FeatureBundle.toGramFeatures e.features) ∧
       (e'.context = none ∨ e'.context = e.context) := by
   constructor
   · intro h
     obtain ⟨hm', hctx'⟩ :=
-      Rule.le_iff.mp h (c := (e.features, e.context))
+      VocabEntry.le_iff_matches.mp h (tc := (e.features, e.context))
         ⟨e.matchesFeatures_self, Or.inr rfl⟩
     refine ⟨?_, hctx'⟩
     rw [VocabEntry.MatchesFeatures, List.all_eq_true] at hm'
     intro f hf
     obtain ⟨tf, htf, hbeq⟩ := List.any_eq_true.mp (hm' f hf)
     exact (beq_iff_eq.mp hbeq) ▸ htf
-  · exact λ ⟨hf, hc⟩ => toRule_le_of_superset hf hc
+  · exact λ ⟨hf, hc⟩ => le_of_superset hf hc
 
 /-! #### Bridge to the opaque-predicate engine -/
 
@@ -213,24 +221,20 @@ theorem VocabEntry.toVocabItem_matches (e : VocabEntry)
   simp [Morphology.DM.VI.VocabItem.matches, VocabEntry.toVocabItem,
     VocabEntry.Matches]
 
-/-- The two engines' shared-core views agree: the embedded item's rule
-applies exactly where the entry's rule does. -/
-theorem VocabEntry.toVocabItem_toRule_applies (e : VocabEntry)
+/-- The two engines' interfaces agree: the embedded item applies exactly
+where the entry does. -/
+theorem VocabEntry.toVocabItem_applies (e : VocabEntry)
     (tc : FeatureBundle × Option Cat) :
-    e.toVocabItem.toRule.Applies tc ↔ e.toRule.Applies tc :=
+    RuleLike.Applies e.toVocabItem tc ↔ RuleLike.Applies e tc :=
   e.toVocabItem_matches tc.1 tc.2
 
 /-- Specificity transfers along the embedding — the cross-engine
 translation is faithful to the shared core's order. -/
-theorem VocabEntry.toVocabItem_toRule_le_iff {e f : VocabEntry} :
-    e.toVocabItem.toRule ≤ f.toVocabItem.toRule ↔
-      e.toRule ≤ f.toRule := by
-  simp only [Rule.le_iff]
+theorem VocabEntry.toVocabItem_le_iff {e f : VocabEntry} :
+    e.toVocabItem ≤ f.toVocabItem ↔ e ≤ f := by
   constructor <;> intro h c hc
-  · exact (f.toVocabItem_toRule_applies c).mp
-      (h ((e.toVocabItem_toRule_applies c).mpr hc))
-  · exact (f.toVocabItem_toRule_applies c).mpr
-      (h ((e.toVocabItem_toRule_applies c).mp hc))
+  · exact (f.toVocabItem_applies c).mp (h ((e.toVocabItem_applies c).mpr hc))
+  · exact (f.toVocabItem_applies c).mpr (h ((e.toVocabItem_applies c).mp hc))
 
 /-- Under a specificity stipulation faithful to the derived order on
 the matching entries, `bestMatch` returns an Elsewhere winner of the
@@ -240,23 +244,22 @@ theorem bestMatch_isElsewhereWinner {vocab : Vocabulary} {target : FeatureBundle
     {ctx : Option Cat} {e : VocabEntry}
     (h : bestMatch vocab target ctx = some e)
     (hfaith : ∀ a ∈ vocab, ∀ b ∈ vocab, a.Matches target ctx →
-      b.Matches target ctx → a.toRule ≤ b.toRule →
-      ¬ b.toRule ≤ a.toRule → b.specificity < a.specificity) :
-    IsElsewhereWinner (vocab.map VocabEntry.toRule) (target, ctx) e.toRule := by
+      b.Matches target ctx → a ≤ b →
+      ¬ b ≤ a → b.specificity < a.specificity) :
+    IsElsewhereWinner vocab (target, ctx) e := by
   have hmem := List.argmax_mem h
   rw [List.mem_filter] at hmem
   obtain ⟨hev, hem⟩ := hmem
   have hematch : e.Matches target ctx := of_decide_eq_true hem
-  refine ⟨⟨List.mem_map_of_mem hev, hematch⟩, ?_⟩
+  refine ⟨⟨hev, hematch⟩, ?_⟩
   rintro s ⟨hs, happ⟩ hspec
-  obtain ⟨b, hb, rfl⟩ := List.mem_map.mp hs
   by_contra hns
-  have hlt : e.specificity < b.specificity :=
-    hfaith b hb e hev happ hematch hspec hns
-  have hble : ¬ e.specificity < b.specificity :=
+  have hlt : e.specificity < s.specificity :=
+    hfaith s hs e hev happ hematch hspec hns
+  have hble : ¬ e.specificity < s.specificity :=
     List.not_lt_of_mem_argmax
       (List.mem_filter.mpr
-        ⟨hb, decide_eq_true (show b.Matches target ctx from happ)⟩) h
+        ⟨hs, decide_eq_true (show s.Matches target ctx from happ)⟩) h
   exact hble hlt
 
 end ExponenceCore

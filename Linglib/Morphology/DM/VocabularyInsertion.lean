@@ -156,11 +156,13 @@ open Morphology.Exponence
 
 variable {Ctx Root : Type*}
 
-/-- View a Vocabulary Item as a rule of the shared exponence core
-(`Morphology.Exponence.Rule`): contexts are (feature-context, root)
+/-- A Vocabulary Item exposes the shared exponence core interface
+(`Morphology.Exponence.RuleLike`): contexts are (feature-context, root)
 pairs, applicability is `matches`. -/
-def VocabItem.toRule (vi : VocabItem Ctx Root) : Rule (Ctx × Root) String :=
-  ⟨vi.exponent, λ cr => vi.matches cr.1 cr.2 = true⟩
+instance : RuleLike (VocabItem Ctx Root) (Ctx × Root) String :=
+  ⟨VocabItem.exponent, fun vi => {cr | vi.matches cr.1 cr.2 = true}⟩
+
+instance : Preorder (VocabItem Ctx Root) := RuleLike.toPreorder
 
 /-- The stipulated `specificity` rank is **faithful** when it refines
 the derived specificity of the shared core: a strictly more specific
@@ -169,8 +171,7 @@ order is not computable, so this engine must stipulate a rank — this
 Prop is the obligation the stipulation incurs, and
 `vocabularyInsert_isElsewhereWinner` is what discharging it buys. -/
 def SpecificityFaithful (rules : List (VocabItem Ctx Root)) : Prop :=
-  ∀ a ∈ rules, ∀ b ∈ rules, a.toRule ≤ b.toRule →
-    ¬ b.toRule ≤ a.toRule → b.specificity < a.specificity
+  ∀ a ∈ rules, ∀ b ∈ rules, a ≤ b → ¬ b ≤ a → b.specificity < a.specificity
 
 private theorem findSome?_pairwise_max {l : List (VocabItem Ctx Root)}
     (hs : l.Pairwise (λ a b => b.specificity ≤ a.specificity))
@@ -206,7 +207,7 @@ theorem vocabularyInsert_isElsewhereWinner {rules : List (VocabItem Ctx Root)}
     (h : vocabularyInsert rules ctx root = some e)
     (hf : SpecificityFaithful rules) :
     ∃ vi ∈ rules, vi.exponent = e ∧
-      IsElsewhereWinner (rules.map VocabItem.toRule) (ctx, root) vi.toRule := by
+      IsElsewhereWinner rules (ctx, root) vi := by
   unfold vocabularyInsert at h
   have hsort : (rules.mergeSort (λ a b => a.specificity ≥ b.specificity)).Pairwise
       (λ a b => b.specificity ≤ a.specificity) := by
@@ -219,13 +220,12 @@ theorem vocabularyInsert_isElsewhereWinner {rules : List (VocabItem Ctx Root)}
     exact this.imp (λ hab => by simpa using hab)
   obtain ⟨vi, hvi, hvm, hve, hmax⟩ := findSome?_pairwise_max hsort h
   rw [List.mem_mergeSort] at hvi
-  refine ⟨vi, hvi, hve, ⟨List.mem_map_of_mem hvi, hvm⟩, ?_⟩
+  refine ⟨vi, hvi, hve, ⟨hvi, hvm⟩, ?_⟩
   rintro s ⟨hs, happ⟩ hspec
-  obtain ⟨b, hb, rfl⟩ := List.mem_map.mp hs
   by_contra hns
-  have hlt : vi.specificity < b.specificity := hf b hb vi hvi hspec hns
-  have hble : b.specificity ≤ vi.specificity :=
-    hmax b (List.mem_mergeSort.mpr hb) happ
+  have hlt : vi.specificity < s.specificity := hf s hs vi hvi hspec hns
+  have hble : s.specificity ≤ vi.specificity :=
+    hmax s (List.mem_mergeSort.mpr hs) happ
   omega
 
 end ExponenceCore

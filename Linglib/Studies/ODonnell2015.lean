@@ -476,10 +476,12 @@ structure FinRule (Ctx F : Type*) where
   /-- The forms the rule generates. -/
   supp : Finset Ctx
 
-/-- View a finitely supported rule in the shared exponence core:
-applicability is support membership. -/
-def FinRule.toRule (r : FinRule Ctx F) : Rule Ctx F :=
-  ⟨r.exponent, (· ∈ r.supp)⟩
+/-- A finitely supported rule exposes the shared exponence core interface
+(`Morphology.Exponence.RuleLike`): applicability is support membership. -/
+instance : RuleLike (FinRule Ctx F) Ctx F :=
+  ⟨FinRule.exponent, fun r => {c | c ∈ r.supp}⟩
+
+instance : Preorder (FinRule Ctx F) := RuleLike.toPreorder
 
 /-- **Elsewhere selection is maximum-likelihood inference**
 ([odonnell-2015] §5.5.3): a rule maximizing uniform generation
@@ -488,12 +490,11 @@ winner of the corresponding vocabulary. -/
 theorem maxGenProb_isElsewhereWinner {v : List (FinRule Ctx F)} {c : Ctx}
     {r : FinRule Ctx F} (hrv : r ∈ v) (hrc : c ∈ r.supp)
     (hmax : ∀ s ∈ v, c ∈ s.supp → genProb s.supp c ≤ genProb r.supp c) :
-    IsElsewhereWinner (v.map FinRule.toRule) c r.toRule := by
-  refine ⟨⟨List.mem_map_of_mem hrv, hrc⟩, ?_⟩
-  rintro t ⟨ht, htc⟩ hle
-  obtain ⟨s, hsv, rfl⟩ := List.mem_map.mp ht
+    IsElsewhereWinner v c r := by
+  refine ⟨⟨hrv, hrc⟩, ?_⟩
+  rintro s ⟨hsv, htc⟩ hle
   have htc' : c ∈ s.supp := htc
-  have hsub : s.supp ⊆ r.supp := fun x hx => Rule.le_iff.mp hle hx
+  have hsub : s.supp ⊆ r.supp := fun x hx => hle hx
   have hcard : r.supp.card ≤ s.supp.card := by
     have hp := hmax s hsv htc'
     simp only [genProb] at hp
@@ -504,7 +505,7 @@ theorem maxGenProb_isElsewhereWinner {v : List (FinRule Ctx F)} {c : Ctx}
       exact_mod_cast Finset.card_pos.mpr ⟨c, hrc⟩
     exact_mod_cast (inv_le_inv₀ hs₀ hr₀).mp hp
   have heq : s.supp = r.supp := Finset.eq_of_subset_of_card_le hsub hcard
-  exact Rule.le_iff.mpr fun x hx => show x ∈ s.supp from heq ▸ hx
+  exact fun x hx => show x ∈ s.supp from heq ▸ hx
 
 end ProbabilisticElsewhere
 

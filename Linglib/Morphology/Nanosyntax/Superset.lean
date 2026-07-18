@@ -131,7 +131,7 @@ theorem minSpan_eq_coe_intro {v : List (ExponenceRule n F)} {g : Fin n}
   obtain ⟨hjv, hjle⟩ := mem_matching.mp hjt
   exact hlb jt hjv hjle
 
-/-- The key transfer lemma, dual to `maxThreshold_eq_coe_of_le`: a
+/-- The key transfer lemma, dual to `maxThreshold_eq_coe_of_between`: a
 winning span persists upward as long as the grade stays inside it. -/
 theorem minSpan_eq_coe_of_between {v : List (ExponenceRule n F)} {g g' m : Fin n}
     (h : minSpan v g = ↑m) (hg : g ≤ g') (hm : g' ≤ m) : minSpan v g' = ↑m := by
@@ -427,44 +427,48 @@ example :
 
 /-! ### The shared exponence core
 
-One carrier, two `Rule` views: the Subset reading
-(`ExponenceRule.toRule`, `Morphology/Exponence/Hierarchy.lean`) and the
-Superset reading below instantiate the shared core with dual
-applicability conditions and opposite derived-specificity orders. -/
+One carrier, two `RuleLike` views: the Subset reading on
+`ExponenceRule` (`Morphology/Exponence/Hierarchy.lean`) and the Superset
+reading on the `SupersetRule` synonym below install the shared core with
+dual applicability conditions and opposite derived-specificity orders, à
+la `OrderDual`. -/
 
 section ExponenceCore
 
 open Morphology.Exponence
 
-/-- View an entry under the **Superset** reading as a rule of the
-shared exponence core: applicability is `Matches` (the stored
-constituent contains the structure), dually to `ExponenceRule.toRule`'s
-Subset reading. -/
-def ExponenceRule.toSupersetRule (it : ExponenceRule n F) :
-    Exponence.Rule (Fin n) F :=
-  ⟨it.exponent, it.Matches⟩
+/-- The **Superset** reading of an exponence rule: an entry spells out
+grade `g` when its stored constituent contains `g` (the down-set
+`Set.Iic spans`), dually to the Subset reading of `ExponenceRule`. A
+distinct type synonym so the two readings can carry different `RuleLike`
+instances on one carrier, mirroring `OrderDual`. -/
+def SupersetRule (n : ℕ) (F : Type*) := ExponenceRule n F
 
-/-- Minimize Junk is the shared core's specificity order under the
-Superset reading: smaller span = more specific. -/
-theorem ExponenceRule.toSupersetRule_le_iff
-    {it jt : ExponenceRule n F} :
-    it.toSupersetRule ≤ jt.toSupersetRule ↔ it.spans ≤ jt.spans :=
-  Exponence.Rule.le_iff.trans ExponenceRule.matches_imp_iff_spans_le
+instance : RuleLike (SupersetRule n F) (Fin n) F :=
+  ⟨ExponenceRule.exponent, fun it => Set.Iic (ExponenceRule.spans it)⟩
+
+instance : Preorder (SupersetRule n F) := RuleLike.toPreorder
+
+/-- Read an exponence rule under the Superset reading. -/
+def ExponenceRule.superset (it : ExponenceRule n F) : SupersetRule n F := it
+
+/-- Minimize Junk is the Superset reading's specificity order: smaller
+span = more specific. -/
+theorem SupersetRule.le_iff {it jt : SupersetRule n F} :
+    it ≤ jt ↔ ExponenceRule.spans it ≤ ExponenceRule.spans jt :=
+  Set.Iic_subset_Iic
 
 /-- **Subset/Superset duality** over context-free vocabularies (the
 nanosyntax idealization): DM-style Subset specificity of `it` over `jt`
 is Superset specificity of `jt` over `it`. With contextual restrictions
 the Subset order compares thresholds, not spans, and the duality is
 only one-directional. -/
-theorem ExponenceRule.toRule_le_iff_toSupersetRule_le
-    {it jt : ExponenceRule n F}
+theorem ExponenceRule.subset_le_iff_superset_le {it jt : ExponenceRule n F}
     (hit : it.context = none) (hjt : jt.context = none) :
-    it.toRule ≤ jt.toRule ↔
-      jt.toSupersetRule ≤ it.toSupersetRule := by
-  rw [ExponenceRule.toRule_le_iff,
-    ExponenceRule.moreSpecific_iff_threshold_le,
-    ExponenceRule.toSupersetRule_le_iff]
-  unfold ExponenceRule.threshold
+    it ≤ jt ↔ jt.superset ≤ it.superset := by
+  rw [ExponenceRule.le_iff, ExponenceRule.moreSpecific_iff_threshold_le,
+    SupersetRule.le_iff]
+  unfold ExponenceRule.threshold ExponenceRule.superset
   rw [hit, hjt]
   simp
 
@@ -475,14 +479,13 @@ specific. -/
 theorem spelloutWinner_isElsewhereWinner {v : List (ExponenceRule n F)}
     {g : Fin n} {it : ExponenceRule n F}
     (h : spelloutWinner v g = some it) :
-    Exponence.IsElsewhereWinner (v.map ExponenceRule.toSupersetRule) g
-      it.toSupersetRule := by
+    Exponence.IsElsewhereWinner (v.map ExponenceRule.superset) g it.superset := by
   obtain ⟨hmem, hms⟩ := spelloutWinner_spec h
   obtain ⟨-, -, -, hle⟩ := exists_of_minSpan_eq_coe hms
   refine ⟨⟨List.mem_map_of_mem hmem, hle⟩, ?_⟩
   rintro s ⟨hs, hsapp⟩ -
   obtain ⟨jt, hjt, rfl⟩ := List.mem_map.mp hs
-  rw [ExponenceRule.toSupersetRule_le_iff]
+  rw [SupersetRule.le_iff]
   exact le_spans_of_minSpan_eq_coe hms hjt hsapp
 
 end ExponenceCore
