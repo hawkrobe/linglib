@@ -521,34 +521,32 @@ theorem exists_portmanteau_of_ne {v : List (ExponenceRule 3 F)} (hA : Adjacent v
 
 /-! ### The shared exponence core
 
-The containment engine instantiates `Morphology.Exponence.Rule`:
-applicability is threshold containment, derived specificity is
-threshold comparison, and the Elsewhere winner is a winner of the
-shared core. -/
+The containment engine implements `Morphology.Exponence.RuleLike`
+directly: applicability is threshold containment (the upper set
+`Set.Ici threshold`) and derived specificity is threshold comparison,
+so the Elsewhere winner is an Elsewhere winner of the shared core over
+the native carrier. -/
 
-/-- View a containment-hierarchy rule as a rule of the shared exponence
-core: contexts are grades, applicability is `AppliesAt`. -/
-def ExponenceRule.toRule (it : ExponenceRule n F) : Exponence.Rule (Fin n) F :=
-  ⟨it.exponent, it.AppliesAt⟩
+instance : Exponence.RuleLike (ExponenceRule n F) (Fin n) F :=
+  ⟨ExponenceRule.exponent, fun it => Set.Ici it.threshold⟩
 
-/-- Containment specificity is definitionally the shared core's
-specificity order. -/
-theorem ExponenceRule.toRule_le_iff {it jt : ExponenceRule n F} :
-    it.toRule ≤ jt.toRule ↔ it.MoreSpecific jt :=
+instance : Preorder (ExponenceRule n F) := Exponence.RuleLike.toPreorder
+
+/-- Containment specificity is the shared core's specificity order. -/
+theorem ExponenceRule.le_iff {it jt : ExponenceRule n F} :
+    it ≤ jt ↔ it.MoreSpecific jt :=
   Iff.rfl
 
 /-- The containment engine's Elsewhere winner is an Elsewhere winner of
 the shared core. -/
-theorem isElsewhereWinner_toRule {v : List (ExponenceRule n F)} {g : Fin n}
+theorem winner_isElsewhereWinner {v : List (ExponenceRule n F)} {g : Fin n}
     {it : ExponenceRule n F} (h : winner v g = some it) :
-    Exponence.IsElsewhereWinner (v.map ExponenceRule.toRule) g it.toRule := by
+    Exponence.IsElsewhereWinner v g it := by
   obtain ⟨hmem, hmt⟩ := winner_spec h
   obtain ⟨-, -, -, hle⟩ := exists_of_maxThreshold_eq_coe hmt
-  refine ⟨⟨List.mem_map_of_mem hmem, hle⟩, ?_⟩
+  refine ⟨⟨hmem, hle⟩, ?_⟩
   rintro s ⟨hs, hsapp⟩ -
-  obtain ⟨jt, hjt, rfl⟩ := List.mem_map.mp hs
-  rw [ExponenceRule.toRule_le_iff,
-    ExponenceRule.moreSpecific_iff_threshold_le]
-  exact threshold_le_of_maxThreshold_eq_coe hmt hjt hsapp
+  rw [ExponenceRule.le_iff, ExponenceRule.moreSpecific_iff_threshold_le]
+  exact threshold_le_of_maxThreshold_eq_coe hmt hs hsapp
 
 end Morphology.Containment

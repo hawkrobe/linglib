@@ -25,10 +25,10 @@ uses containment as the simpler equivalent formulation.
 - `NanoTree`: feature trees; `NanoTree.Contains`: sub-constituency
 - `TreeLexEntry`: a stored tree paired with an exponent; `TreeLexEntry.Matches`
 - `treeSelect`, `treeSpellout`: Superset Principle + Elsewhere Condition
-- `TreeLexEntry.toRule`, `treeSelect_isElsewhereWinner`: the engine as an
-  instance of the shared exponence core — derived specificity is reverse
-  tree containment (`toRule_le_iff`), and smallest-tree
-  selection is an Elsewhere winner with no side conditions
+- `treeSelect_isElsewhereWinner`: the engine as an instance of the shared
+  exponence core (`RuleLike`) — derived specificity is reverse tree
+  containment (`TreeLexEntry.le_iff`), and smallest-tree selection is an
+  Elsewhere winner with no side conditions
 - `FootConditionMet`: [taraldsen-et-al-2018]'s constraint on backtracking
 - `chain_contains_iff_le`: for right-branching chains, tree containment
   reduces to rank comparison — tree-based spellout generalizes (not
@@ -290,19 +290,21 @@ section ExponenceCore
 
 open Morphology.Exponence
 
-/-- View a tree lexical entry as a rule of the shared exponence core
-(`Morphology.Exponence.Rule`): contexts are syntactic targets,
+/-- A tree lexical entry exposes the shared exponence core interface
+(`Morphology.Exponence.RuleLike`): contexts are syntactic targets,
 applicability is Superset-Principle matching. -/
-def TreeLexEntry.toRule (e : TreeLexEntry F α) : Rule (NanoTree F) α :=
-  ⟨e.exponent, e.Matches⟩
+instance : RuleLike (TreeLexEntry F α) (NanoTree F) α :=
+  ⟨TreeLexEntry.exponent, fun e => {t | e.Matches t}⟩
+
+instance : Preorder (TreeLexEntry F α) := RuleLike.toPreorder
 
 /-- The specificity order is reverse containment of the stored trees:
 `a` is at least as specific as `b` exactly when `b`'s tree contains
 `a`'s. Tree size is therefore a faithful specificity measure
 (`Contains.size_le`), which is what licenses smallest-tree selection. -/
-theorem TreeLexEntry.toRule_le_iff {a b : TreeLexEntry F α} :
-    a.toRule ≤ b.toRule ↔ b.tree.Contains a.tree :=
-  Rule.le_iff.trans ⟨λ h => h (.refl a.tree), λ h _ hc => h.trans hc⟩
+theorem TreeLexEntry.le_iff {a b : TreeLexEntry F α} :
+    a ≤ b ↔ b.tree.Contains a.tree :=
+  ⟨λ h => h (.refl a.tree), λ h _ hc => h.trans hc⟩
 
 /-- Smallest-tree selection is an Elsewhere winner of the shared core,
 with no side conditions: containment is size-antisymmetric
@@ -311,19 +313,18 @@ maximally specific among the matching entries. -/
 theorem treeSelect_isElsewhereWinner [DecidableEq F]
     {entries : List (TreeLexEntry F α)} {target : NanoTree F}
     {e : TreeLexEntry F α} (h : treeSelect entries target = some e) :
-    IsElsewhereWinner (entries.map TreeLexEntry.toRule) target e.toRule := by
+    IsElsewhereWinner entries target e := by
   have hmem := List.argmin_mem h
   rw [List.mem_filter] at hmem
   obtain ⟨hev, hem⟩ := hmem
   have hematch : e.Matches target := of_decide_eq_true hem
-  refine ⟨⟨List.mem_map_of_mem hev, hematch⟩, ?_⟩
+  refine ⟨⟨hev, hematch⟩, ?_⟩
   rintro s ⟨hs, happ⟩ hspec
-  obtain ⟨b, hb, rfl⟩ := List.mem_map.mp hs
-  rw [TreeLexEntry.toRule_le_iff] at hspec ⊢
-  have hble : ¬ b.tree.size < e.tree.size :=
+  rw [TreeLexEntry.le_iff] at hspec ⊢
+  have hble : ¬ s.tree.size < e.tree.size :=
     List.not_lt_of_mem_argmin (f := λ e : TreeLexEntry F α => e.tree.size)
       (List.mem_filter.mpr
-        ⟨hb, decide_eq_true (show b.Matches target from happ)⟩) h
+        ⟨hs, decide_eq_true (show s.Matches target from happ)⟩) h
   exact hspec.eq_of_size_le (Nat.le_of_not_lt hble) ▸ .refl _
 
 /-- The spelled-out exponent is an Elsewhere winner's exponent. -/
@@ -331,7 +332,7 @@ theorem treeSpellout_isElsewhereWinner [DecidableEq F]
     {entries : List (TreeLexEntry F α)} {target : NanoTree F} {x : α}
     (h : treeSpellout entries target = some x) :
     ∃ e ∈ entries, e.exponent = x ∧
-      IsElsewhereWinner (entries.map TreeLexEntry.toRule) target e.toRule := by
+      IsElsewhereWinner entries target e := by
   obtain ⟨e, he, rfl⟩ := Option.map_eq_some_iff.mp h
   exact ⟨e, (List.mem_filter.mp (List.argmin_mem he)).1, rfl,
     treeSelect_isElsewhereWinner he⟩
