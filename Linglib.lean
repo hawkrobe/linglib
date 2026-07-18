@@ -1267,7 +1267,6 @@ import Linglib.Fragments.ZarmaSonrai.Negation
 import Linglib.Fragments.Zulu.Phonology
 import Linglib.Morphology.Template
 import Linglib.Morphology.Case.Allomorphy
-import Linglib.Morphology.Case.WALS
 import Linglib.Morphology.Root.Basic
 import Linglib.Morphology.DM.Allosemy
 import Linglib.Morphology.DM.Categorizer
