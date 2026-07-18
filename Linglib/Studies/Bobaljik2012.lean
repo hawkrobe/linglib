@@ -139,7 +139,7 @@ theorem bad_csg : bad.suppletion.SprlSuppletive :=
 
 /-- CSG Part II on the English data: if the superlative is suppletive,
     the comparative is too. Data-level check; the engine derivation
-    (`Morphology.Containment.csg2`) is instantiated at
+    (`Morphology.Containment.realize_const_of_grounded`) is instantiated at
     `welshAAB_blocked` below. -/
 theorem good_csg_part2 : good.suppletion.CmprSuppletive := by decide
 theorem bad_csg_part2 : bad.suppletion.CmprSuppletive := by decide
@@ -268,8 +268,9 @@ theorem latin_all_three_patterns :
 vocabularies [bobaljik-2012] actually writes down. `ExponenceRule`s record
 exponent, exponed span, and conditioning context; `realize` runs
 Elsewhere insertion; `degreeShape` reads the root-suppletion class off
-the realized cells. The hypotheses of the engine's theorems (`csg2`,
-`exists_portmanteau_of_ne`) are `decide`-checked on each vocabulary,
+the realized cells. The hypotheses of the engine's theorems
+(`realize_const_of_grounded`, `exists_portmanteau_of_ne`) are
+`decide`-checked on each vocabulary,
 and the two unattested shapes are exhibited as violations of exactly
 one condition each: AAB violates `Grounded` ((202)), surface ABA
 violates `Antihomophonous` ((44)). -/
@@ -386,11 +387,12 @@ theorem welshAAB_realizes_aab : degreeShape (realize welshAAB) = aab := by decid
     skips the comparative grade, violating `Grounded` ((202)). -/
 theorem welshAAB_not_grounded : ¬ Grounded welshAAB := by decide
 
-/-- The engine theorem `csg2` applied: no vocabulary realizing the AAB
-    cells can satisfy both Antihomophony and `Grounded` — the AAB
-    realization itself refutes the conjunction. -/
+/-- The engine theorem `realize_const_of_grounded` applied: no vocabulary
+    realizing the AAB cells can satisfy both Antihomophony and `Grounded` —
+    the AAB realization itself refutes the conjunction. -/
 theorem welshAAB_blocked : ¬ (Antihomophonous welshAAB ∧ Grounded welshAAB) :=
-  λ ⟨hAH, hG⟩ => absurd (csg2 hAH hG (by decide) (by decide)) (by decide)
+  λ ⟨hAH, hG⟩ =>
+    absurd (realize_const_of_grounded hAH hG (by decide) (by decide)) (by decide)
 
 /-- The homophonous-ABC loophole ([bobaljik-2012] (44) discussion):
     without Antihomophony, surface ABA is generable — a superlative

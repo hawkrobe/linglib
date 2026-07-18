@@ -131,7 +131,7 @@ theorem minSpan_eq_coe_intro {v : List (ExponenceRule n F)} {g : Fin n}
   obtain ⟨hjv, hjle⟩ := mem_matching.mp hjt
   exact hlb jt hjv hjle
 
-/-- The key transfer lemma, dual to `maxThreshold_eq_coe_of_le`: a
+/-- The key transfer lemma, dual to `maxThreshold_eq_coe_of_between`: a
 winning span persists upward as long as the grade stays inside it. -/
 theorem minSpan_eq_coe_of_between {v : List (ExponenceRule n F)} {g g' m : Fin n}
     (h : minSpan v g = ↑m) (hg : g ≤ g') (hm : g' ≤ m) : minSpan v g' = ↑m := by

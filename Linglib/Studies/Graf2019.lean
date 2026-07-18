@@ -140,7 +140,8 @@ in terms of syntactic containment (his suggestion). The pair below
 states the division precisely: AAB is feasibly monotonic, and its
 gradation-side exclusion is carried by realization-level conditions
 ([bobaljik-2012]'s markedness condition (202), via
-`Morphology.Containment.csg2`) — which the person attestation shows
+`Morphology.Containment.realize_const_of_grounded`) — which the person
+attestation shows
 are not category-general, the same point the pronominal case/number
 data make in `Studies/SmithMoskalEtAl2019.lean`. -/
 
@@ -159,7 +160,7 @@ theorem aab_not_groundedly_realizable {v : List (ExponenceRule 3 ℕ)}
   intro h
   have h01 : realize v 0 = realize v 1 := by simp [h]
   have h2 : (realize v 2).isSome := by simp [h]
-  have h12 := csg2 hAH hG h01 h2
+  have h12 := realize_const_of_grounded hAH hG h01 h2
   rw [h] at h12
   exact hab (by simpa using h12)
 

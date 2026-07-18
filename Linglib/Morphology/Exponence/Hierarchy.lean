@@ -8,61 +8,25 @@ import Mathlib.Data.Finset.Max
 [bobaljik-2012] [halle-marantz-1993] [kiparsky-1973]
 
 The realizational engine behind [bobaljik-2012]'s comparative-suppletion
-generalizations, stated over an arbitrary `n`-grade containment
-hierarchy. An `ExponenceRule` realizes the initial span `[0, spans]` of
-the hierarchy (the root, possibly fused with the first `spans` heads —
-the portmanteau exponence of [bobaljik-2012]'s ch. 5, via Fusion (196)
-or Radkevich's Vocabulary Insertion Principle (197)), optionally
-conditioned on the presence of a higher head. Selection at each grade
-is by the Elsewhere Condition ([kiparsky-1973]): the most specific
-applicable rule wins, where Pāṇinian specificity is *derived* as
-applicability-set inclusion
-(`ExponenceRule.moreSpecific_iff_threshold_le`) — over a linear
-hierarchy applicability sets are nested upward sets, so the Elsewhere
-ordering is total.
-
-Each of [bobaljik-2012]'s generalizations is a theorem with its own
-hypothesis set, mirroring the book's cost accounting:
-
-* CSG1 / *ABA (`isContiguous_realize`): Antihomophony alone — the
-  book's ch. 2 derivation from containment + Elsewhere + the
-  antihomophony assumption (44). The homophony loophole is real: a
-  non-antihomophonous vocabulary generating surface ABA is exhibited in
-  `Studies/Bobaljik2012.lean`.
-* Completeness (`isContiguous_iff_generable`): generable = contiguous
-  over terminal antihomophonous vocabularies.
-* The plateau (`realize_const_of_terminal_adjacent`): terminal rules +
-  adjacent contexts generate only `{AAA, ABB}` — the
-  Bobaljik-minus-portmanteaux fragment, which over-excludes the
-  attested ABC (Latin *bon- ~ mel- ~ opt-*); portmanteau rules repair it.
-* CSG2 / *AAB (`csg2`): Antihomophony + `Grounded` (the book's
-  markedness condition (202)). The book blocks the two AAB routes by
-  two mechanisms — adjacency for root-rules conditioned across an
-  intervening head (190a), condition (202) for context-sensitive
-  portmanteaux (201); under the threshold encoding both reduce to
-  downward closure of the threshold set, so one hypothesis suffices.
-* ABC requires a portmanteau (`exists_portmanteau_of_ne`;
-  [bobaljik-2012] §5.3.1, the degree-domain consequence generalized
-  there as (199)): under adjacency, superlative-grade root allomorphy
-  distinct from the comparative grade arises only via a portmanteau
-  rule.
+generalizations, over an arbitrary `n`-grade containment hierarchy. An
+`ExponenceRule` realizes the initial span `[0, spans]` of the hierarchy,
+optionally conditioned on a higher head; the Elsewhere Condition
+([kiparsky-1973]) selects the most specific applicable rule. Over a linear
+hierarchy, specificity is applicability-set inclusion, so the Elsewhere
+ordering is threshold comparison (`moreSpecific_iff_threshold_le`).
 
 ## Main declarations
 
-* `ExponenceRule n F` — rule of exponence: exponent, exponed span
-  `[0, spans]`, optional conditioning head
-* `Terminal`, `Adjacent`, `Antihomophonous`, `Grounded` — the axiom
-  Props on vocabularies, à la carte
+* `ExponenceRule n F` — exponent, exponed span `[0, spans]`, optional
+  conditioning head
+* `Terminal`, `Adjacent`, `Antihomophonous`, `Grounded` — well-formedness
+  conditions on vocabularies
 * `winner`, `realize` — Elsewhere selection and the realized pattern
-* `isContiguous_realize`, `isContiguous_iff_generable`,
-  `realize_const_of_terminal_adjacent`, `csg2`,
-  `exists_portmanteau_of_ne`
-
-The dual Superset engine lives in
-`Morphology/Nanosyntax/Superset.lean`; synthetic/analytic structure
-(Merger) in `Morphology/DM/Merger.lean`; the n = 3 degree
-instantiations with the book's worked vocabularies in
-`Studies/Bobaljik2012.lean`.
+* `isContiguous_realize`, `isContiguous_iff_generable` — *ABA (CSG1) and
+  generable = contiguous
+* `realize_const_of_terminal_adjacent`, `realize_const_of_grounded`,
+  `exists_portmanteau_of_ne` — the plateau, *AAB (CSG2), and the ABC
+  portmanteau prediction
 -/
 
 namespace Morphology.Containment
@@ -71,18 +35,11 @@ variable {n : ℕ} {F : Type*}
 
 /-! ### Rules of exponence and derived specificity -/
 
-/-- A **rule of exponence** ([bobaljik-2012]'s term — Matthews's
-*exponence*, used in the realizational sense of [stump-2001]) over an
-`n`-grade containment hierarchy. The rule realizes the initial span
-`[0, spans]` — the root when `spans = 0`, a root+heads portmanteau
-when `spans > 0` — and applies only when the (optional) conditioning
-head `context` is present in the structure. DM vocabulary items are
-the `Terminal`-restricted special case; nanosyntax lexical entries
-share the context-free span format but pair it with Superset-based
-selection (`Morphology/Nanosyntax/Superset.lean`) rather than this
-file's containment-directed `AppliesAt`, so the insertion semantics
-differs.
-Latin ([bobaljik-2012] (204)): `bon` is `⟨bon, 0, none⟩`, `mel-` is
+/-- A **rule of exponence** ([bobaljik-2012]) over an `n`-grade containment
+hierarchy. The rule realizes the initial span `[0, spans]` — the bare root
+when `spans = 0`, a root+heads portmanteau when `spans > 0` — and applies
+only when its optional conditioning head `context` is present. Latin
+([bobaljik-2012] (204)): `bon` is `⟨bon, 0, none⟩`, `mel-` is
 `⟨mel, 0, some 1⟩`, the portmanteau `opt-` is `⟨opt, 1, some 2⟩`. -/
 structure ExponenceRule (n : ℕ) (F : Type*) where
   /-- The phonological exponent inserted for the span. -/
@@ -109,22 +66,14 @@ def AppliesAt (it : ExponenceRule n F) (g : Fin n) : Prop :=
 instance (it : ExponenceRule n F) (g : Fin n) : Decidable (it.AppliesAt g) :=
   inferInstanceAs (Decidable (_ ≤ _))
 
-theorem appliesAt_iff {it : ExponenceRule n F} {g : Fin n} :
-    it.AppliesAt g ↔ it.spans ≤ g ∧ ∀ c : Fin n, it.context = some c → c ≤ g := by
-  unfold AppliesAt threshold
-  cases hc : it.context with
-  | none => simp
-  | some c => simp
-
-/-- Pāṇinian specificity: `it` is at least as specific as `jt` when it
-applies in a subset of the structures `jt` applies in. -/
+/-- A rule `it` is at least as specific as `jt` when it applies in a
+subset of the contexts `jt` applies in (Pāṇinian specificity). -/
 def MoreSpecific (it jt : ExponenceRule n F) : Prop :=
   ∀ ⦃g : Fin n⦄, it.AppliesAt g → jt.AppliesAt g
 
 /-- Over a linear containment hierarchy, applicability sets are nested
 upward sets, so derived specificity is threshold comparison — the
-Elsewhere ordering ([kiparsky-1973]) is total and needs no stipulated
-specificity ranking. -/
+Elsewhere ordering ([kiparsky-1973]) is total. -/
 theorem moreSpecific_iff_threshold_le {it jt : ExponenceRule n F} :
     it.MoreSpecific jt ↔ jt.threshold ≤ it.threshold :=
   ⟨λ h => h (le_refl it.threshold), λ h _ hg => le_trans h hg⟩
@@ -138,7 +87,7 @@ needs; vocabularies violating a condition witness the corresponding
 unattested pattern (see the worked examples in
 `Studies/Bobaljik2012.lean`). -/
 
-/-- No portmanteaux: every rule expones the bare root. -/
+/-- Every rule expones the bare root (no portmanteaux). -/
 def Terminal (v : List (ExponenceRule n F)) : Prop :=
   ∀ it ∈ v, (it.spans : ℕ) = 0
 
@@ -154,28 +103,19 @@ def Adjacent (v : List (ExponenceRule n F)) : Prop :=
 instance (v : List (ExponenceRule n F)) : Decidable (Adjacent v) := by
   unfold Adjacent; infer_instance
 
-/-- Distinct rules carry distinct exponents — [bobaljik-2012]'s
-Antihomophony assumption (44), closing the loophole of a surface-ABA
-pattern that is really an ABC with accidental A ≡ C homophony. Stated
-as pairwise antihomophony, a mild strengthening of the book's
-default-vs-contextual formulation; all worked vocabularies satisfy
-it. -/
+/-- Distinct rules carry distinct exponents — [bobaljik-2012]'s Antihomophony
+assumption (44), closing the loophole where a surface-ABA pattern is really an
+ABC with accidental A ≡ C homophony. -/
 def Antihomophonous (v : List (ExponenceRule n F)) : Prop :=
   ∀ it ∈ v, ∀ jt ∈ v, it.exponent = jt.exponent → it = jt
 
 instance [DecidableEq F] (v : List (ExponenceRule n F)) : Decidable (Antihomophonous v) := by
   unfold Antihomophonous; infer_instance
 
-/-- [bobaljik-2012]'s markedness condition (202): a context-sensitive
-rule of exponence involving a node requires a context-free rule
-involving that node. A rule is context-free *for* the node `[0, k]`
-when nothing it mentions extends beyond `k` — i.e. its threshold is
-`k` (the book's fn. 15 rewrites Latin `mel- / __]CMPR]` as the
-node-level context-free `GOOD, CMPR → mel-CMPR`) — so (202) says the
-vocabulary's threshold set is downward closed. On `Adjacent`
-vocabularies this is exactly the book's condition; on non-adjacent
-ones it is a mild strengthening (it also covers the skipped-head items
-the book independently excludes by adjacency). -/
+/-- [bobaljik-2012]'s markedness condition (202): a context-sensitive rule of
+exponence involving a node requires a context-free rule involving that node.
+Under the threshold encoding, this is downward closure of the vocabulary's
+threshold set. -/
 def Grounded (v : List (ExponenceRule n F)) : Prop :=
   ∀ it ∈ v, ∀ k : Fin n, k < it.threshold → ∃ jt ∈ v, jt.threshold = k
 
@@ -224,9 +164,8 @@ theorem maxThreshold_eq_coe_intro {v : List (ExponenceRule n F)} {g : Fin n}
   obtain ⟨hjv, hjle⟩ := mem_applicable.mp hjt
   exact hub jt hjv hjle
 
-/-- The key transfer lemma: a winning threshold persists downward as
-long as it stays applicable. With monotone applicability this is what
-makes Elsewhere selection plateau between grades. -/
+/-- A winning threshold persists downward as long as it stays applicable,
+which is what makes Elsewhere selection plateau between grades. -/
 theorem maxThreshold_eq_coe_of_between {v : List (ExponenceRule n F)} {g g' m : Fin n}
     (h : maxThreshold v g' = ↑m) (hm : m ≤ g) (hg : g ≤ g') :
     maxThreshold v g = ↑m := by
@@ -244,9 +183,7 @@ theorem maxThreshold_eq_bot_of_le {v : List (ExponenceRule n F)} {g g' : Fin n}
   exact h it (mem_applicable.mpr ⟨hv, le_trans hle hg⟩)
 
 /-- The Elsewhere winner at grade `g`: the first rule attaining the
-greatest applicable threshold. By
-`ExponenceRule.moreSpecific_iff_threshold_le`, this is the most specific
-applicable rule. -/
+greatest applicable threshold — the most specific applicable rule. -/
 def winner (v : List (ExponenceRule n F)) (g : Fin n) : Option (ExponenceRule n F) :=
   (maxThreshold v g).recBotCoe none (λ m => v.find? (λ it => it.threshold == m))
 
@@ -518,16 +455,12 @@ theorem isContiguous_iff_generable (p : Paradigm n F) :
 
 /-! ### Three-grade hierarchies: *AAB and the portmanteau prediction -/
 
-/-- **CSG2 / *AAB exclusion** ([bobaljik-2012] ch. 5). Over the
-three-grade degree hierarchy, if the positive and comparative cells
-agree and the superlative cell is realized, all three agree:
-`good – gooder – *best` is not generable. Hypotheses: antihomophony
-plus `Grounded` (the book's markedness condition (202)); the
-threshold-set downward closure makes both of the book's AAB routes —
-the skipped-head root rule (190a) and the context-sensitive
-portmanteau (201) — fail for the same reason, a threshold gap at the
-comparative grade. -/
-theorem csg2 {v : List (ExponenceRule 3 F)} (hAH : Antihomophonous v) (hG : Grounded v)
+/-- **CSG2 / *AAB exclusion** ([bobaljik-2012] ch. 5). Over the three-grade
+degree hierarchy, if the positive and comparative cells agree and the
+superlative cell is realized, all three agree — `good – gooder – *best` is not
+generable — given antihomophony and `Grounded` (the book's condition (202)). -/
+theorem realize_const_of_grounded {v : List (ExponenceRule 3 F)}
+    (hAH : Antihomophonous v) (hG : Grounded v)
     (h01 : realize v 0 = realize v 1) (h2 : (realize v 2).isSome) :
     realize v 1 = realize v 2 := by
   obtain ⟨w2, hw2⟩ : ∃ w, winner v 2 = some w := by
@@ -591,7 +524,7 @@ theorem exists_portmanteau_of_ne {v : List (ExponenceRule 3 F)} (hA : Adjacent v
 The containment engine instantiates `Morphology.Exponence.Rule`:
 applicability is threshold containment, derived specificity is
 threshold comparison, and the Elsewhere winner is a winner of the
-shared core — all true by construction. -/
+shared core. -/
 
 /-- View a containment-hierarchy rule as a rule of the shared exponence
 core: contexts are grades, applicability is `AppliesAt`. -/

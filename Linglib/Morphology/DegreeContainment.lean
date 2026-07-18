@@ -135,8 +135,8 @@ def abc : DegreePattern := ⟨0, 1, 2⟩
 def aba : DegreePattern := ⟨0, 1, 0⟩
 
 /-- *AAB: contiguous, but unattested — excluded by the vocabulary-level
-conditions of `Morphology/Exponence/Hierarchy.lean` (`csg2`), not by
-contiguity. -/
+conditions of `Morphology/Exponence/Hierarchy.lean`
+(`realize_const_of_grounded`), not by contiguity. -/
 def aab : DegreePattern := ⟨0, 0, 1⟩
 
 /-! Smoke tests confirming each named pattern resolves correctly. -/
