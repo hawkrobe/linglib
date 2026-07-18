@@ -2,7 +2,7 @@ import Linglib.Morphology.FusionTypology
 
 /-!
 # Indonesian Morphological Profile
-[wals-2013] [bickel-nichols-2001]
+[wals-2013] [bickel-nichols-2007]
 
 WALS-derived profile for Indonesian (ISO `ind`). WALS F20A codes Indonesian
 as `exclusivelyIsolating`, which the local 3-way `Fusion` enum maps to

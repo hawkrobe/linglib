@@ -2,9 +2,9 @@ import Linglib.Morphology.FusionTypology
 
 /-!
 # Russian Morphological Profile
-[wals-2013] [bickel-nichols-2001]
+[wals-2013] [bickel-nichols-2007]
 
-WALS-derived profile for Russian (ISO `rus`). B&N 2001 places Russian in the
+WALS-derived profile for Russian (ISO `rus`). B&N 2007 places Russian in the
 canonical "fusional" cell (concatenative + flexive + cumulative); the genitive
 singular *-ī ~ -ae ~ -ūs* class-conditioned allomorphy pattern cited by
 B&N as the diagnostic for flexivity is the same pattern Russian instantiates
@@ -25,7 +25,7 @@ def morphProfile : MorphProfile :=
 
 example : morphProfile.iso = "rus" ∧ morphProfile.language = "Russian" := ⟨rfl, rfl⟩
 
-/-- B&N 2001 places Russian in the canonical "fusional" cell. -/
+/-- B&N 2007 places Russian in the canonical "fusional" cell. -/
 example : morphProfile.IsFusional := by decide
 
 end Russian

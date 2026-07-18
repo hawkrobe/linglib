@@ -2,9 +2,9 @@ import Linglib.Morphology.FusionTypology
 
 /-!
 # Korean Morphological Profile
-[wals-2013] [bickel-nichols-2001]
+[wals-2013] [bickel-nichols-2007]
 
-WALS-derived profile for Korean (ISO `kor`). B&N 2001 places Korean
+WALS-derived profile for Korean (ISO `kor`). B&N 2007 places Korean
 in the "agglutinating" cell (concatenative + nonflexive + separative).
 -/
 
@@ -22,7 +22,7 @@ def morphProfile : MorphProfile :=
 
 example : morphProfile.iso = "kor" ∧ morphProfile.language = "Korean" := ⟨rfl, rfl⟩
 
-/-- B&N 2001 places Korean in the "agglutinating" cell. -/
+/-- B&N 2007 places Korean in the "agglutinating" cell. -/
 example : morphProfile.IsAgglutinating := by decide
 
 end Korean

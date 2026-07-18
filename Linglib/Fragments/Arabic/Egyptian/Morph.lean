@@ -2,7 +2,7 @@ import Linglib.Morphology.FusionTypology
 
 /-!
 # Arabic (Egyptian) Morphological Profile
-[wals-2013] [bickel-nichols-2001]
+[wals-2013] [bickel-nichols-2007]
 
 WALS-derived profile for Egyptian Arabic (ISO `arz`, WALS code `aeg`).
 WALS F20A codes Arabic as `ablautConcatenative`, mapping to the local

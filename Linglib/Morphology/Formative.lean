@@ -1,6 +1,6 @@
 /-!
 # Form status of morphemes
-[zwicky-pullum-1983] [bickel-nichols-2001]
+[zwicky-pullum-1983] [bickel-nichols-2007]
 
 Typological classification of bound and free formatives by attachment
 position, host selectivity, and syntactic independence.
@@ -24,7 +24,7 @@ inductive AttachmentSide where
   deriving DecidableEq, Repr
 
 /-- Typological position classification for formatives.
-    [bickel-nichols-2001] Table 2.
+    [bickel-nichols-2007] Table 2.
 
     Superset of `AttachmentSide`: adds simulfixation (process morphology),
     detached formatives (Wackernagel clitics, free auxiliaries), and
@@ -82,7 +82,7 @@ inductive MorphStatus where
   | freeWord
   /-- Simple clitic: phonologically bound form that can attach to
       hosts of virtually any syntactic category.
-      [bickel-nichols-2001]: defined primarily by low selectivity
+      [bickel-nichols-2007]: defined primarily by low selectivity
       (categorical freedom) + phonological dependence, not necessarily
       by being a reduced variant of a free word. Many simple clitics
       have no free-word counterpart (Latin *-que*). English contracted

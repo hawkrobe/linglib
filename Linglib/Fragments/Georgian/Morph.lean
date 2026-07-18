@@ -2,9 +2,9 @@ import Linglib.Morphology.FusionTypology
 
 /-!
 # Georgian Morphological Profile
-[wals-2013] [bickel-nichols-2001]
+[wals-2013] [bickel-nichols-2007]
 
-WALS-derived profile for Georgian (ISO `kat`). B&N 2001 places Georgian
+WALS-derived profile for Georgian (ISO `kat`). B&N 2007 places Georgian
 in the "fusional" cell (concatenative + flexive + cumulative).
 -/
 
@@ -22,7 +22,7 @@ def morphProfile : MorphProfile :=
 
 example : morphProfile.iso = "kat" ∧ morphProfile.language = "Georgian" := ⟨rfl, rfl⟩
 
-/-- B&N 2001 places Georgian in the "fusional" cell. -/
+/-- B&N 2007 places Georgian in the "fusional" cell. -/
 example : morphProfile.IsFusional := by decide
 
 end Georgian

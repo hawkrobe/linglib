@@ -21,12 +21,12 @@ import Linglib.Fragments.Spanish.Morph
 /-!
 # BickelNichols2013
 [bickel-nichols-2013a] [bickel-nichols-2013b] [bickel-nichols-2013c]
-[bickel-nichols-2001]
+[bickel-nichols-2007]
 
 Cross-linguistic analyses anchored on Bickel & Nichols's WALS chapters
 (Ch 20 fusion, Ch 21 exponence, Ch 22 inflectional synthesis) and their
-2001 paper on the orthogonality of fusion and flexivity. The 18-language
-`MorphProfile` sample is the testbed.
+Shopen-volume chapter on the orthogonality of fusion and flexivity. The
+18-language `MorphProfile` sample is the testbed.
 
 ## Bickel & Nichols's central insight
 
@@ -112,7 +112,7 @@ theorem morph_iso_unique :
 -- §2. B&N Orthogonality and Cell-Population Theorems
 -- ============================================================================
 
-/-! [bickel-nichols-2001] argue fusion and flexivity are orthogonal,
+/-! [bickel-nichols-2007] argue fusion and flexivity are orthogonal,
     and that the four cells of the (concatenative ∪ nonlinear ∪ isolating)
     × (flexive ∪ nonflexive ∪ none) space are independently attested. The
     theorems below witness the cells the sample populates. -/

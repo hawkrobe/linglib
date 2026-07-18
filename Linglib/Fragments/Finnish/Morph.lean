@@ -2,9 +2,9 @@ import Linglib.Morphology.FusionTypology
 
 /-!
 # Finnish Morphological Profile
-[wals-2013] [bickel-nichols-2001]
+[wals-2013] [bickel-nichols-2007]
 
-WALS-derived profile for Finnish (ISO `fin`). B&N 2001 places Finnish in the
+WALS-derived profile for Finnish (ISO `fin`). B&N 2007 places Finnish in the
 "agglutinating" cell (concatenative + nonflexive + separative).
 -/
 
@@ -22,7 +22,7 @@ def morphProfile : MorphProfile :=
 
 example : morphProfile.iso = "fin" ∧ morphProfile.language = "Finnish" := ⟨rfl, rfl⟩
 
-/-- B&N 2001 places Finnish in the "agglutinating" cell. -/
+/-- B&N 2007 places Finnish in the "agglutinating" cell. -/
 example : morphProfile.IsAgglutinating := by decide
 
 end Finnish
