@@ -1,4 +1,4 @@
-import Linglib.Morphology.RootTypology
+import Linglib.Semantics.Verb.Root.Classification
 import Linglib.Studies.KoontzGarboden2009
 import Linglib.Morphology.DM.Categorizer
 import Linglib.Semantics.Possessive.Relational
@@ -17,11 +17,11 @@ Property concept (PC) roots in Wá·šiw come in two semantic types:
 
 - **Individual/state relations** (Class 1, Class 3): `λx_e λs_v[P(x)(s)]`
   These relate an individual to a state (e.g., √IHUK' 'dry': λx λs[dry(x)(s)]).
-  Type: `⟨e, ⟨v, t⟩⟩` = `RootDenotationType.indivStatePred`.
+  Type: `⟨e, ⟨v, t⟩⟩` = `DenotationType.indivStatePred`.
 
 - **Quality predicates** (Class 2): `λs_v[P(s)]`
   These are predicates of states with no individual argument
-  (e.g., √I:YEL 'big': λs[big(s)]). Type: `⟨v, t⟩` = `RootDenotationType.statePred`.
+  (e.g., √I:YEL 'big': λs[big(s)]). Type: `⟨v, t⟩` = `DenotationType.statePred`.
 
 ## Three morphological classes
 
@@ -63,7 +63,7 @@ Property concept (PC) roots in Wá·šiw come in two semantic types:
 
 namespace HaninkKoontzGarboden2025
 
-open Verb
+open Verb Verb.Root
 open KoontzGarboden2009.Monotonicity
 open Morphology.DM (Categorizer)
 open ArgumentStructure.Relational (π Pred1 Pred2)
@@ -79,25 +79,25 @@ inductive MorphClass where
   | class3  -- ʔil- + reduplication + root + -iʔ (kaykay 'tall', ši:šip 'straight')
   deriving DecidableEq, Repr
 
-/-- The `RootDenotationType` of roots in each morphological class.
+/-- The `DenotationType` of roots in each morphological class.
 
     Derived from the paper's analysis (§§4–5):
     - Class 1/3: individual/state relations ⟨e, ⟨v, t⟩⟩
     - Class 2: quality predicates ⟨v, t⟩ -/
-def MorphClass.denotationType : MorphClass → RootDenotationType
+def MorphClass.denotationType : MorphClass → DenotationType
   | .class1 => .indivStatePred
   | .class2 => .statePred
   | .class3 => .indivStatePred
 
 -- ════════════════════════════════════════════════════
--- § 2. Bipartite Verb Composability (derived from RootDenotationType)
+-- § 2. Bipartite Verb Composability (derived from DenotationType)
 -- ════════════════════════════════════════════════════
 
 /-- v_become requires an individual/state relation ⟨e, ⟨v, t⟩⟩.
     A root can serve as a bipartite verb "final" (result component) iff
     its denotation type has an individual argument.
 
-    This is DERIVED from `RootDenotationType.hasIndivArg`, not stipulated
+    This is DERIVED from `DenotationType.hasIndivArg`, not stipulated
     per morphological class. -/
 def MorphClass.canBeResultFinal (mc : MorphClass) : Bool :=
   mc.denotationType.hasIndivArg
@@ -168,7 +168,7 @@ def nabla [BEq Entity] (entities : List Entity)
 
 /-- ∇ produces a quality-type predicate: its output depends only on the
     state, with the individual argument existentially closed.
-    This matches `RootDenotationType.statePred` (⟨v,t⟩). -/
+    This matches `DenotationType.statePred` (⟨v,t⟩). -/
 theorem nabla_closes_indiv_arg [BEq Entity] (entities : List Entity)
     (P : Entity → State → Bool) (s₁ s₂ : State)
     (h : ∀ x, P x s₁ = P x s₂) :
@@ -269,8 +269,8 @@ theorem within_language_variation :
 
 /-- A Wá·šiw property concept root entry.
 
-    The theory-layer `RootClassification` is exposed as a *derived projection*
-    `toRootClassification` rather than a stored field — all PC roots share
+    The theory-layer `Classification` is exposed as a *derived projection*
+    `toClassification` rather than a stored field — all PC roots share
     `arity := .noTheme`, `changeType := .propertyConcept`, and have
     `denotationType` determined by `morphClass.denotationType`. Storing it
     redundantly would invite the encoding-conclusions-as-definitions
@@ -282,10 +282,10 @@ structure WasiwPCRoot where
   dixonCat : PCClass
   deriving Repr
 
-/-- The theory-layer `RootClassification` derived from a Wáshiw PC root.
+/-- The theory-layer `Classification` derived from a Wáshiw PC root.
     All PC roots are `propertyConcept` (+S −M −R −C) and `noTheme`; their
     `denotationType` is determined by `MorphClass.denotationType`. -/
-def WasiwPCRoot.toRootClassification (w : WasiwPCRoot) : RootClassification :=
+def WasiwPCRoot.toClassification (w : WasiwPCRoot) : Classification :=
   { arity := .noTheme,
     changeType := .propertyConcept,
     denotationType := some w.morphClass.denotationType }
@@ -359,7 +359,7 @@ def sampleRoots : List WasiwPCRoot := [
 
 /-! All Wáshiw PC roots are property-concept (`changeType = .propertyConcept`),
     `noTheme` arity, and have a denotation type determined by their morph class
-    — these invariants are *true by construction* of `WasiwPCRoot.toRootClassification`,
+    — these invariants are *true by construction* of `WasiwPCRoot.toClassification`,
     so no separate theorems are needed. The theorems below test substantive
     claims about the sample's *composition*, not its constructor's consistency. -/
 
@@ -379,10 +379,10 @@ theorem class_distribution :
 -- § 10. Bridge Theorems
 -- ════════════════════════════════════════════════════
 
-/-- `statePred` is the only `RootDenotationType` without an individual
+/-- `statePred` is the only `DenotationType` without an individual
     argument — it is the type that forces possessive morphology. -/
 theorem statePred_unique_no_indiv :
-    ∀ dt : RootDenotationType, dt.hasIndivArg = false ↔ dt = .statePred := by
+    ∀ dt : DenotationType, dt.hasIndivArg = false ↔ dt = .statePred := by
   intro dt; cases dt <;> decide
 
 /-- Class 1 and Class 3 share denotation type (both `indivStatePred`). -/

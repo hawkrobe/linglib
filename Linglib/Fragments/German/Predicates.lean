@@ -1,5 +1,5 @@
 import Linglib.Semantics.Verb.Basic
-import Linglib.Morphology.RootTypology
+import Linglib.Semantics.Verb.Root.Classification
 
 /-!
 # German Predicate Lexicon Fragment
@@ -39,7 +39,7 @@ structure GermanVerbEntry extends Verb where
   formPastPart : String
   /-- Root type ([beavers-etal-2021]): result vs property concept.
       Only set for change-of-state verbs where the distinction is applicable. -/
-  rootType : Option _root_.RootType := none
+  rootType : Option Verb.Root.ChangeType := none
   deriving Repr, BEq
 
 -- ============================================================================
