@@ -1331,7 +1331,7 @@ import Linglib.Morphology.FragmentGrammars.MultinomialPCFG
 import Linglib.Morphology.Grammaticalization
 import Linglib.Morphology.InflectionRules
 import Linglib.Morphology.Morph
-import Linglib.Morphology.MorphProfile
+import Linglib.Morphology.FusionTypology
 import Linglib.Morphology.MorphWord
 import Linglib.Morphology.Nanosyntax.TreeSpellout
 import Linglib.Morphology.Number

@@ -2,10 +2,13 @@ import Linglib.Data.WALS.Features.F20A
 import Linglib.Data.WALS.Features.F21A
 
 /-!
-# Morphological Profile Types
+# Fusion Typology
 
-Framework-agnostic types for the Bickel & Nichols fusion typology,
-grounding functions from WALS data, and the `MorphProfile` structure.
+The Bickel & Nichols fusion/flexivity typology [bickel-nichols-2001]
+[bickel-nichols-2013a]: framework-agnostic classification types (`Fusion`,
+`Flexivity`, `CaseExponence`, `ExponenceScope`), the per-language `MorphProfile`
+record, WALS grounding functions, and the traditional agglutinating/fusional
+predicates with their mutual-exclusion theorems.
 
 The `fusion` and `exponence` fields are derived from WALS Chapters 20 and 21;
 the orthogonal `flexivity` and `bnExponence` parameters are paper-stipulated
@@ -199,18 +202,6 @@ def IsNonlinear (p : MorphProfile) : Prop := p.fusion = .nonlinear
     p.IsNonlinear ↔ p.fusion = .nonlinear := Iff.rfl
 instance : DecidablePred IsNonlinear :=
   fun p => decidable_of_iff _ (isNonlinear_iff p).symm
-
-def IsMono (p : MorphProfile) : Prop := p.exponence = .monoexponential
-@[simp] theorem isMono_iff (p : MorphProfile) :
-    p.IsMono ↔ p.exponence = .monoexponential := Iff.rfl
-instance : DecidablePred IsMono :=
-  fun p => decidable_of_iff _ (isMono_iff p).symm
-
-def IsPoly (p : MorphProfile) : Prop := p.exponence = .polyexponential
-@[simp] theorem isPoly_iff (p : MorphProfile) :
-    p.IsPoly ↔ p.exponence = .polyexponential := Iff.rfl
-instance : DecidablePred IsPoly :=
-  fun p => decidable_of_iff _ (isPoly_iff p).symm
 
 def IsFlexive (p : MorphProfile) : Prop := p.flexivity = some .flexive
 @[simp] theorem isFlexive_iff (p : MorphProfile) :
