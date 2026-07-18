@@ -20,10 +20,6 @@ def morphProfile : MorphProfile :=
   .fromWALS "Thai" "tha"
     (fusionFb        := .isolating)
     (exponenceFb     := .noCase)
-    (verbSynthesisFb := .moderate)
-    (locusFb         := .dependentMarking)
-    (prefixSuffixFb  := .stronglySuffixing)
-    (reduplicationFb := .noProductive)
 
 example : morphProfile.iso = "tha" ∧ morphProfile.language = "Thai" := ⟨rfl, rfl⟩
 

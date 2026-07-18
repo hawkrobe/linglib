@@ -17,10 +17,6 @@ def morphProfile : MorphProfile :=
   .fromWALS "Hindi-Urdu" "hin"
     (fusionFb        := .concatenative)
     (exponenceFb     := .monoexponential)
-    (verbSynthesisFb := .moderate)
-    (locusFb         := .dependentMarking)
-    (prefixSuffixFb  := .stronglySuffixing)
-    (reduplicationFb := .noProductive)
     (flexivity       := some .flexive)
     (bnExponence     := some .cumulative)
 

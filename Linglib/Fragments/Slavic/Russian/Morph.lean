@@ -20,10 +20,6 @@ def morphProfile : MorphProfile :=
   .fromWALS "Russian" "rus"
     (fusionFb        := .concatenative)
     (exponenceFb     := .monoexponential)
-    (verbSynthesisFb := .moderate)
-    (locusFb         := .dependentMarking)
-    (prefixSuffixFb  := .stronglySuffixing)
-    (reduplicationFb := .noProductive)
     (flexivity       := some .flexive)
     (bnExponence     := some .cumulative)
 

@@ -18,10 +18,6 @@ def morphProfile : MorphProfile :=
   .fromWALS "English" "eng"
     (fusionFb        := .concatenative)
     (exponenceFb     := .monoexponential)
-    (verbSynthesisFb := .moderate)
-    (locusFb         := .dependentMarking)
-    (prefixSuffixFb  := .stronglySuffixing)
-    (reduplicationFb := .noProductive)
     (flexivity       := some .nonflexive)
     (bnExponence     := some .separative)
 

@@ -17,10 +17,6 @@ def morphProfile : MorphProfile :=
   .fromWALS "Spanish" "spa"
     (fusionFb        := .concatenative)
     (exponenceFb     := .monoexponential)
-    (verbSynthesisFb := .moderate)
-    (locusFb         := .dependentMarking)
-    (prefixSuffixFb  := .stronglySuffixing)
-    (reduplicationFb := .noProductive)
     (flexivity       := some .flexive)
     (bnExponence     := some .cumulative)
 

@@ -17,10 +17,6 @@ def morphProfile : MorphProfile :=
   .fromWALS "Hungarian" "hun"
     (fusionFb        := .concatenative)
     (exponenceFb     := .monoexponential)
-    (verbSynthesisFb := .moderate)
-    (locusFb         := .dependentMarking)
-    (prefixSuffixFb  := .stronglySuffixing)
-    (reduplicationFb := .noProductive)
     (flexivity       := some .nonflexive)
     (bnExponence     := some .separative)
 

@@ -1,18 +1,15 @@
 import Linglib.Data.WALS.Features.F20A
 import Linglib.Data.WALS.Features.F21A
-import Linglib.Data.WALS.Features.F22A
-import Linglib.Data.WALS.Features.F23A
-import Linglib.Data.WALS.Features.F26A
-import Linglib.Data.WALS.Features.F27A
 
 /-!
 # Morphological Profile Types
 
-Framework-agnostic types for cross-linguistic morphological typology,
+Framework-agnostic types for the Bickel & Nichols fusion typology,
 grounding functions from WALS data, and the `MorphProfile` structure.
 
-Types correspond to WALS chapters 20, 21, 22, 23, 26, 27. Grounding functions
-map WALS auto-generated data to these coarser local classifications.
+The `fusion` and `exponence` fields are derived from WALS Chapters 20 and 21;
+the orthogonal `flexivity` and `bnExponence` parameters are paper-stipulated
+per [bickel-nichols-2001] and not derivable from WALS.
 -/
 
 namespace Morphology
@@ -80,58 +77,14 @@ inductive ExponenceScope where
   | separative    -- one formative per category
   deriving DecidableEq, Repr
 
-/-- WALS Ch 22: How many inflectional categories are expressed on the verb. -/
-inductive VerbSynthesis where
-  | low       -- 0--3 categories per verb word
-  | moderate  -- 4--7 categories per verb word
-  | high      -- 8+ categories per verb word
-  deriving DecidableEq, Repr
-
-/-- Locus of marking: where grammatical relations are marked.
-    Derived from WALS Ch 25A [nichols-bickel-2013a]. -/
-inductive LocusOfMarking where
-  | headMarking
-  | dependentMarking
-  | doubleMarking
-  | zeroMarking
-  | inconsistentOrOther
-  deriving DecidableEq, Repr
-
-/-- WALS Ch 26: Whether a language predominantly uses prefixes or suffixes. -/
-inductive PrefixSuffix where
-  | stronglySuffixing
-  | weaklySuffixing
-  | equalPrefixSuffix
-  | weaklyPrefixing
-  | stronglyPrefixing
-  | littleAffixation
-  deriving DecidableEq, Repr
-
-/-- WALS Ch 27: Whether the language has productive reduplication. -/
-inductive Reduplication where
-  | productiveFull
-  | fullOnly
-  | noProductive
-  deriving DecidableEq, Repr
-
-/-- WALS Ch 23: Where grammatical relations are marked in clausal syntax.
-    [nichols-bickel-2013b] -/
-inductive LocusClause where
-  | headMarking
-  | dependentMarking
-  | doubleMarking
-  | noMarking
-  | other
-  deriving DecidableEq, Repr
-
 -- ============================================================================
 -- §2. MorphProfile Structure
 -- ============================================================================
 
-/-- A language's morphological profile, combining dimensions from WALS
-    Chapters 20--27. Required fields are derived from WALS where possible;
-    the B&N 2001 optional fields (`flexivity`, `bnExponence`) are populated
-    when the paper stipulates them. -/
+/-- A language's morphological profile in the B&N fusion typology. The
+    `fusion` and `exponence` fields are derived from WALS where possible;
+    the orthogonal `flexivity` and `bnExponence` parameters are populated
+    when [bickel-nichols-2001] stipulates them. -/
 structure MorphProfile where
   language : String
   iso : String
@@ -139,14 +92,6 @@ structure MorphProfile where
   fusion : Fusion
   /-- Ch 21: Exponence type -/
   exponence : CaseExponence
-  /-- Ch 22: Inflectional synthesis of the verb -/
-  verbSynthesis : VerbSynthesis
-  /-- Locus of marking (derived from Ch 23 clause-level; fallback for absent languages) -/
-  locus : LocusOfMarking
-  /-- Ch 26: Prefixing vs suffixing -/
-  prefixSuffix : PrefixSuffix
-  /-- Ch 27: Productive reduplication -/
-  reduplication : Reduplication
   /-- [bickel-nichols-2001]: Flexivity — whether inflectional formatives
       show item-based allomorphic variation (flexive) or are phonologically
       invariant (nonflexive). Orthogonal to `fusion`. Not derivable from WALS. -/
@@ -181,47 +126,9 @@ def fromWALS21A : Data.WALS.F21A.ExponenceType → Option CaseExponence
   | .caseTam              => some .polyexponential
   | .noCase               => none
 
-/-- Convert WALS 22A inflectional synthesis to the local three-way classification. -/
-def fromWALS22A : Data.WALS.F22A.InflectionalSynthesis → VerbSynthesis
-  | .categoryPerWord0_1    => .low
-  | .categoriesPerWord2_3  => .low
-  | .categoriesPerWord4_5  => .moderate
-  | .categoriesPerWord6_7  => .moderate
-  | .categoriesPerWord8_9  => .high
-  | .categoriesPerWord10_11 => .high
-  | .categoriesPerWord12_13 => .high
-
-def fromWALS26A : Data.WALS.F26A.PrefixSuffixPreference → PrefixSuffix
-  | .littleAffixation             => .littleAffixation
-  | .stronglySuffixing            => .stronglySuffixing
-  | .weaklySuffixing              => .weaklySuffixing
-  | .equalPrefixingAndSuffixing   => .equalPrefixSuffix
-  | .weaklyPrefixing              => .weaklyPrefixing
-  | .strongPrefixing              => .stronglyPrefixing
-
-def fromWALS27A : Data.WALS.F27A.ReduplicationType → Reduplication
-  | .productiveFullAndPartialReduplication => .productiveFull
-  | .fullReduplicationOnly                => .fullOnly
-  | .noProductiveReduplication            => .noProductive
-
-def fromWALS23A : Data.WALS.F23A.LocusOfMarkingInTheClause → LocusClause
-  | .headMarking      => .headMarking
-  | .dependentMarking => .dependentMarking
-  | .doubleMarking    => .doubleMarking
-  | .noMarking        => .noMarking
-  | .other            => .other
-
 -- ============================================================================
 -- §4. WALS Lookup Helpers
 -- ============================================================================
-
-/-- Map clause-level locus (F23A) to the 5-way whole-language classification. -/
-def locusClauseToLocus : LocusClause → LocusOfMarking
-  | .headMarking      => .headMarking
-  | .dependentMarking => .dependentMarking
-  | .doubleMarking    => .doubleMarking
-  | .noMarking        => .zeroMarking
-  | .other            => .inconsistentOrOther
 
 /-! WALS lookup helpers derive MorphProfile field values from auto-generated
     WALS data. Each returns `Option`, yielding `none` when the language is
@@ -235,27 +142,15 @@ def walsFusion (iso : String) : Option Fusion :=
 def walsExponence (iso : String) : Option CaseExponence :=
   (Data.WALS.F21A.lookupISO iso).bind (fromWALS21A ·.value)
 
-def walsVerbSynthesis (iso : String) : Option VerbSynthesis :=
-  (Data.WALS.F22A.lookupISO iso).map (fromWALS22A ·.value)
-
-def walsLocus (iso : String) : Option LocusOfMarking :=
-  (Data.WALS.F23A.lookupISO iso).map (λ e => locusClauseToLocus (fromWALS23A e.value))
-
-def walsPrefixSuffix (iso : String) : Option PrefixSuffix :=
-  (Data.WALS.F26A.lookupISO iso).map (fromWALS26A ·.value)
-
-def walsReduplication (iso : String) : Option Reduplication :=
-  (Data.WALS.F27A.lookupISO iso).map (fromWALS27A ·.value)
-
 -- ============================================================================
 -- §4½. Smart Constructor
 -- ============================================================================
 
 /-- Build a `MorphProfile` from an ISO 639-3 code via WALS lookups.
 
-    Required-field fallbacks (`fusionFb`, `exponenceFb`, …) must be supplied
-    for the six WALS chapters where the lookup may return `none` (language
-    absent from chapter, or grounding function uninformative — e.g. WALS 20A
+    Required-field fallbacks (`fusionFb`, `exponenceFb`) must be supplied for
+    the two WALS chapters where the lookup may return `none` (language absent
+    from chapter, or grounding function uninformative — e.g. WALS 20A
     `isolatingConcatenative` does not map cleanly to the local 3-way `Fusion`
     enum and yields `none`). When WALS has data the lookup wins; the fallback
     is exercised only when WALS is silent.
@@ -267,19 +162,11 @@ def MorphProfile.fromWALS
     (language iso : String)
     (fusionFb : Fusion)
     (exponenceFb : CaseExponence)
-    (verbSynthesisFb : VerbSynthesis)
-    (locusFb : LocusOfMarking)
-    (prefixSuffixFb : PrefixSuffix)
-    (reduplicationFb : Reduplication)
     (flexivity : Option Flexivity := none)
     (bnExponence : Option ExponenceScope := none) : MorphProfile :=
   { language, iso
   , fusion := (walsFusion iso).getD fusionFb
   , exponence := (walsExponence iso).getD exponenceFb
-  , verbSynthesis := (walsVerbSynthesis iso).getD verbSynthesisFb
-  , locus := (walsLocus iso).getD locusFb
-  , prefixSuffix := (walsPrefixSuffix iso).getD prefixSuffixFb
-  , reduplication := (walsReduplication iso).getD reduplicationFb
   , flexivity, bnExponence
   }
 
@@ -324,44 +211,6 @@ def IsPoly (p : MorphProfile) : Prop := p.exponence = .polyexponential
     p.IsPoly ↔ p.exponence = .polyexponential := Iff.rfl
 instance : DecidablePred IsPoly :=
   fun p => decidable_of_iff _ (isPoly_iff p).symm
-
-def HasRedup (p : MorphProfile) : Prop :=
-  p.reduplication = .productiveFull ∨ p.reduplication = .fullOnly
-@[simp] theorem hasRedup_iff (p : MorphProfile) :
-    p.HasRedup ↔ p.reduplication = .productiveFull ∨ p.reduplication = .fullOnly :=
-  Iff.rfl
-instance : DecidablePred HasRedup :=
-  fun p => decidable_of_iff _ (hasRedup_iff p).symm
-
-def IsSuffixing (p : MorphProfile) : Prop :=
-  p.prefixSuffix = .stronglySuffixing ∨ p.prefixSuffix = .weaklySuffixing
-@[simp] theorem isSuffixing_iff (p : MorphProfile) :
-    p.IsSuffixing ↔
-      p.prefixSuffix = .stronglySuffixing ∨ p.prefixSuffix = .weaklySuffixing :=
-  Iff.rfl
-instance : DecidablePred IsSuffixing :=
-  fun p => decidable_of_iff _ (isSuffixing_iff p).symm
-
-def IsPrefixing (p : MorphProfile) : Prop :=
-  p.prefixSuffix = .stronglyPrefixing ∨ p.prefixSuffix = .weaklyPrefixing
-@[simp] theorem isPrefixing_iff (p : MorphProfile) :
-    p.IsPrefixing ↔
-      p.prefixSuffix = .stronglyPrefixing ∨ p.prefixSuffix = .weaklyPrefixing :=
-  Iff.rfl
-instance : DecidablePred IsPrefixing :=
-  fun p => decidable_of_iff _ (isPrefixing_iff p).symm
-
-def IsLowSynthesis (p : MorphProfile) : Prop := p.verbSynthesis = .low
-@[simp] theorem isLowSynthesis_iff (p : MorphProfile) :
-    p.IsLowSynthesis ↔ p.verbSynthesis = .low := Iff.rfl
-instance : DecidablePred IsLowSynthesis :=
-  fun p => decidable_of_iff _ (isLowSynthesis_iff p).symm
-
-def IsHighSynthesis (p : MorphProfile) : Prop := p.verbSynthesis = .high
-@[simp] theorem isHighSynthesis_iff (p : MorphProfile) :
-    p.IsHighSynthesis ↔ p.verbSynthesis = .high := Iff.rfl
-instance : DecidablePred IsHighSynthesis :=
-  fun p => decidable_of_iff _ (isHighSynthesis_iff p).symm
 
 def IsFlexive (p : MorphProfile) : Prop := p.flexivity = some .flexive
 @[simp] theorem isFlexive_iff (p : MorphProfile) :

@@ -21,10 +21,6 @@ def morphProfile : MorphProfile :=
   .fromWALS "Arabic (Egyptian)" "arz"
     (fusionFb        := .nonlinear)
     (exponenceFb     := .polyexponential)
-    (verbSynthesisFb := .moderate)
-    (locusFb         := .dependentMarking)
-    (prefixSuffixFb  := .weaklySuffixing)
-    (reduplicationFb := .productiveFull)
     (flexivity       := some .flexive)
     (bnExponence     := some .cumulative)
 
