@@ -1,5 +1,5 @@
 import Linglib.Fragments.Mayan.Tseltalan
-import Linglib.Morphology.Focus
+import Linglib.Morphology.Reflex
 import Linglib.Syntax.Extraction
 
 /-!
@@ -120,7 +120,7 @@ namespace Extraction
 
 /-- No Agent Focus morphology is required for A-extraction, consistent
     with Tseltal being LOW-ABS. -/
-def realize : ExtractionTarget → List (Morphology.Focus.Reflex Empty) :=
+def realize : ExtractionTarget → List (Morphology.Reflex Empty) :=
   fun _ => []
 
 /-- WALS-style label: extraction is unmarked. -/

@@ -1,4 +1,4 @@
-import Linglib.Morphology.Focus
+import Linglib.Morphology.Reflex
 import Linglib.Syntax.Extraction
 import Linglib.Data.UD.Basic
 
@@ -340,7 +340,7 @@ inductive Site where
     Voice/Dir head — conditioned by clause size, exempting temporal
     obliques (§8.1), island-sensitive (§7.1). Core-object extraction is
     unmarked. -/
-def realize : ExtractionTarget → List (Morphology.Focus.Reflex Site)
+def realize : ExtractionTarget → List (Morphology.Reflex Site)
   | .subject => [.morpheme .verb]
   | .oblique => [.morpheme .voiceHead]
   | _ => []
@@ -353,7 +353,7 @@ theorem marks_oblique : Marked realize .oblique := by decide
 /-- =(y)a' tracks obliques, not subjects: no voice-head reflex under
     subject extraction (subject marking is verb-hosted AF instead). -/
 theorem eqya_not_on_subject :
-    Morphology.Focus.Reflex.morpheme Site.voiceHead ∉ realize .subject := by decide
+    Morphology.Reflex.morpheme Site.voiceHead ∉ realize .subject := by decide
 
 end Extraction
 

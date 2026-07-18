@@ -1281,7 +1281,6 @@ import Linglib.Morphology.Exponence.Containment.Contiguity
 import Linglib.Morphology.Exponence.Containment.Defs
 import Linglib.Morphology.Exponence.Containment.Selection
 import Linglib.Morphology.Exponence.Select
-import Linglib.Morphology.Focus
 import Linglib.Morphology.Formative
 import Linglib.Morphology.FragmentGrammars.AdaptorGrammar
 import Linglib.Morphology.FragmentGrammars.CFGFragment
@@ -1305,6 +1304,7 @@ import Linglib.Morphology.Paradigm.Morphome
 import Linglib.Morphology.Paradigm.OfCells
 import Linglib.Morphology.Periphrasis
 import Linglib.Morphology.Realization
+import Linglib.Morphology.Reflex
 import Linglib.Morphology.RelevanceHierarchy
 import Linglib.Morphology.Root.Basic
 import Linglib.Morphology.Root.Family

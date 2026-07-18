@@ -1,4 +1,4 @@
-import Linglib.Morphology.Focus
+import Linglib.Morphology.Reflex
 import Linglib.Syntax.Extraction
 
 /-!
@@ -44,7 +44,7 @@ inductive Site where
 /-- Transitive-subject extraction switches the verb to AF (the suffix
     *-ö* or *-n*, with Set A suppressed, [erlewine-2016]); nothing else
     is marked. -/
-def realize : ExtractionTarget → List (Morphology.Focus.Reflex Site)
+def realize : ExtractionTarget → List (Morphology.Reflex Site)
   | .subject => [.morpheme .verb]
   | _ => []
 

@@ -8,7 +8,7 @@ import Linglib.Core.Logic.FactorsThroughOn
 import Linglib.Phonology.OptimalityTheory.Tableau
 import Linglib.Phonology.Prosody.Phrase
 import Linglib.Semantics.Focus.Control
-import Linglib.Morphology.Focus
+import Linglib.Morphology.Reflex
 import Linglib.Fragments.Tangale.TAM
 import Linglib.Fragments.Tangale.Phonology
 import Linglib.Data.Examples.HartmannZimmermann2004
@@ -32,7 +32,7 @@ audible.
 
 ## Implementation notes
 
-Realisation uses the shared `Morphology.Focus.Realization` vocabulary
+Realisation uses the shared `Morphology.Marking` vocabulary
 (reflex lists; the paper's strategy labels are read off the reflex
 shape in the data linkage). Configurations carry the fragment's
 tense–aspect type directly (`Tangale.TAM`): the perfective rows are
@@ -59,7 +59,7 @@ perceptible.
 
 namespace HartmannZimmermann2004
 
-open Semantics.Focus Morphology Morphology.Focus
+open Semantics.Focus Morphology Morphology
 open Constraints (Constraint)
 open OptimalityTheory (Tableau)
 
@@ -95,7 +95,7 @@ intransitive predicate focus bears *-i* ((24b)); transitive perfective
 foci get the boundary after the verb ((25a–c)); progressive foci
 receive nothing ((31)/(32a–c)). Untested frames fall to the unmarked
 default, guarded by `Config.WF`. -/
-def realize : Config → Realization Focused
+def realize : Config → Marking Focused
   | ⟨.subject, _, _⟩        => ⟨.subject, [.displacement .subject]⟩
   | ⟨f, .perfective, false⟩ => ⟨f, [.morpheme f]⟩
   | ⟨f, .perfective, true⟩  => ⟨f, [.boundary .verb]⟩
@@ -126,7 +126,7 @@ theorem focus_marking_not_obligatory :
 overt reflex — the Tangale side of the counterexample the Hausa
 chapter states against the Basic Focus Rule. -/
 theorem tangale_refutes_perceptibility :
-    ¬ EveryFocusPerceptible realize :=
+    ¬ EveryTargetOvert realize :=
   fun h => h ⟨.object, .continuous, true⟩ rfl
 
 /-- The boundary underdetermines the focus extent: on the transitive
