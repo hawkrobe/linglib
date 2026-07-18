@@ -2,18 +2,8 @@ import Linglib.Data.WALS.Features.F20A
 import Linglib.Data.WALS.Features.F21A
 import Linglib.Data.WALS.Features.F22A
 import Linglib.Data.WALS.Features.F23A
-import Linglib.Data.WALS.Features.F24A
-import Linglib.Data.WALS.Features.F25A
-import Linglib.Data.WALS.Features.F25B
 import Linglib.Data.WALS.Features.F26A
 import Linglib.Data.WALS.Features.F27A
-import Linglib.Data.WALS.Features.F28A
-import Linglib.Data.WALS.Features.F29A
-import Linglib.Data.WALS.Features.F21B
-import Linglib.Data.WALS.Features.F62A
-import Linglib.Data.WALS.Features.F79A
-import Linglib.Data.WALS.Features.F79B
-import Linglib.Data.WALS.Features.F80A
 
 /-!
 # Morphological Profile Types
@@ -21,9 +11,8 @@ import Linglib.Data.WALS.Features.F80A
 Framework-agnostic types for cross-linguistic morphological typology,
 grounding functions from WALS data, and the `MorphProfile` structure.
 
-Types correspond to WALS chapters 20--29 plus supplementary chapters
-(21B, 62A, 79A/B, 80A). Grounding functions map WALS auto-generated
-data to these coarser local classifications.
+Types correspond to WALS chapters 20, 21, 22, 23, 26, 27. Grounding functions
+map WALS auto-generated data to these coarser local classifications.
 -/
 
 namespace Morphology
@@ -135,104 +124,14 @@ inductive LocusClause where
   | other
   deriving DecidableEq, Repr
 
-/-- WALS Ch 24: Where grammatical relations are marked in possessive NPs.
-    [nichols-bickel-2013c] -/
-inductive LocusPossessive where
-  | headMarking
-  | dependentMarking
-  | doubleMarking
-  | noMarking
-  | other
-  deriving DecidableEq, Repr
-
-/-- WALS Ch 25A: Whole-language locus-of-marking classification.
-    [nichols-bickel-2013a] -/
-inductive WholeLanguageMarking where
-  | headMarking
-  | dependentMarking
-  | doubleMarking
-  | zeroMarking
-  | inconsistentOrOther
-  deriving DecidableEq, Repr
-
-/-- WALS Ch 25B: Whether A and P arguments are zero-marked.
-    [nichols-bickel-2013d] -/
-inductive ZeroMarkingAP where
-  | zeroMarking
-  | nonZeroMarking
-  deriving DecidableEq, Repr
-
-/-- WALS Ch 28: Whether a language exhibits case syncretism. -/
-inductive CaseSyncretism where
-  | noCaseMarking
-  | coreCasesOnly
-  | coreAndNonCore
-  | noSyncretism
-  deriving DecidableEq, Repr
-
-/-- WALS Ch 29: Whether a language exhibits syncretism in verbal person/number. -/
-inductive VerbalSyncretism where
-  | noSubjectMarking
-  | syncretic
-  | notSyncretic
-  deriving DecidableEq, Repr
-
-/-- WALS Ch 21B: What categories co-occur with TAM in a single formative. -/
-inductive TAMExponence where
-  | monoexponential
-  | tamAgreement
-  | tamAgreementDiathesis
-  | tamAgreementConstruct
-  | tamPolarity
-  | noTam
-  deriving DecidableEq, Repr
-
-/-- WALS Ch 62: How a language constructs action nominals. -/
-inductive ActionNominal where
-  | sentential
-  | possessiveAccusative
-  | ergativePossessive
-  | doublePossessive
-  | other
-  | mixed
-  | restricted
-  | noActionNominals
-  deriving DecidableEq, Repr
-
-/-- WALS Ch 79A: Whether suppletion is conditioned by tense, aspect, or both. -/
-inductive SuppletionTA where
-  | tense
-  | aspect
-  | tenseAndAspect
-  | none
-  deriving DecidableEq, Repr
-
-/-- WALS Ch 79B: Whether a language has suppletive imperatives/hortatives. -/
-inductive SuppletionImperative where
-  | alternating
-  | imperative
-  | hortative
-  | imperativeAndHortative
-  | none
-  deriving DecidableEq, Repr
-
-/-- WALS Ch 80A: Whether a language has verbal number marking. -/
-inductive VerbalNumber where
-  | none
-  | pairsNoSuppletion
-  | pairsSuppletion
-  | triplesNoSuppletion
-  | triplesSuppletion
-  deriving DecidableEq, Repr
-
 -- ============================================================================
 -- §2. MorphProfile Structure
 -- ============================================================================
 
 /-- A language's morphological profile, combining dimensions from WALS
-    Chapters 20--29 plus supplementary chapters. Required fields are derived
-    from WALS where possible; optional fields are populated when the language
-    appears in the relevant WALS chapter. -/
+    Chapters 20--27. Required fields are derived from WALS where possible;
+    the B&N 2001 optional fields (`flexivity`, `bnExponence`) are populated
+    when the paper stipulates them. -/
 structure MorphProfile where
   language : String
   iso : String
@@ -248,28 +147,6 @@ structure MorphProfile where
   prefixSuffix : PrefixSuffix
   /-- Ch 27: Productive reduplication -/
   reduplication : Reduplication
-  /-- Ch 23: Locus of marking in the clause (optional) -/
-  locusClause : Option LocusClause := none
-  /-- Ch 24: Locus of marking in possessive NP (optional) -/
-  locusPossessive : Option LocusPossessive := none
-  /-- Ch 25A: Whole-language marking typology (optional) -/
-  wholeLanguageMarking : Option WholeLanguageMarking := none
-  /-- Ch 25B: Zero marking of A and P arguments (optional) -/
-  zeroMarkingAP : Option ZeroMarkingAP := none
-  /-- Ch 28: Case syncretism (optional) -/
-  caseSyncretism : Option CaseSyncretism := none
-  /-- Ch 29: Syncretism in verbal person/number marking (optional) -/
-  verbalSyncretism : Option VerbalSyncretism := none
-  /-- Ch 21B: Exponence of TAM inflection (optional) -/
-  tamExponence : Option TAMExponence := none
-  /-- Ch 62A: Action nominal constructions (optional) -/
-  actionNominal : Option ActionNominal := none
-  /-- Ch 79A: Suppletion according to tense and aspect (optional) -/
-  suppletionTA : Option SuppletionTA := none
-  /-- Ch 79B: Suppletion in imperatives and hortatives (optional) -/
-  suppletionImperative : Option SuppletionImperative := none
-  /-- Ch 80A: Verbal number and suppletion (optional) -/
-  verbalNumber : Option VerbalNumber := none
   /-- [bickel-nichols-2001]: Flexivity — whether inflectional formatives
       show item-based allomorphic variation (flexive) or are phonologically
       invariant (nonflexive). Orthogonal to `fusion`. Not derivable from WALS. -/
@@ -334,82 +211,6 @@ def fromWALS23A : Data.WALS.F23A.LocusOfMarkingInTheClause → LocusClause
   | .noMarking        => .noMarking
   | .other            => .other
 
-def fromWALS24A :
-    Data.WALS.F24A.LocusOfMarkingInPossessiveNounPhrases → LocusPossessive
-  | .headMarking      => .headMarking
-  | .dependentMarking => .dependentMarking
-  | .doubleMarking    => .doubleMarking
-  | .noMarking        => .noMarking
-  | .other            => .other
-
-def fromWALS25A :
-    Data.WALS.F25A.LocusOfMarkingWholeLanguageTypology → WholeLanguageMarking
-  | .headMarking         => .headMarking
-  | .dependentMarking    => .dependentMarking
-  | .doubleMarking       => .doubleMarking
-  | .zeroMarking         => .zeroMarking
-  | .inconsistentOrOther => .inconsistentOrOther
-
-def fromWALS25B :
-    Data.WALS.F25B.ZeroMarkingOfAAndPArguments → ZeroMarkingAP
-  | .zeroMarking    => .zeroMarking
-  | .nonZeroMarking => .nonZeroMarking
-
-def fromWALS28A : Data.WALS.F28A.CaseSyncretism → CaseSyncretism
-  | .noCaseMarking  => .noCaseMarking
-  | .coreCasesOnly  => .coreCasesOnly
-  | .coreAndNonCore => .coreAndNonCore
-  | .noSyncretism   => .noSyncretism
-
-def fromWALS29A :
-    Data.WALS.F29A.SyncretismInVerbalPersonNumberMarking → VerbalSyncretism
-  | .noSubjectPersonNumberMarking => .noSubjectMarking
-  | .syncretic                    => .syncretic
-  | .notSyncretic                 => .notSyncretic
-
-def fromWALS21B :
-    Data.WALS.F21B.ExponenceOfTenseAspectMoodInflection → TAMExponence
-  | .monoexponentialTam      => .monoexponential
-  | .tamAgreement            => .tamAgreement
-  | .tamAgreementDiathesis   => .tamAgreementDiathesis
-  | .tamAgreementConstruct   => .tamAgreementConstruct
-  | .tamPolarity             => .tamPolarity
-  | .noTam                   => .noTam
-
-def fromWALS62A :
-    Data.WALS.F62A.ActionNominalConstructions → ActionNominal
-  | .sentential           => .sentential
-  | .possessiveAccusative => .possessiveAccusative
-  | .ergativePossessive   => .ergativePossessive
-  | .doublePossessive     => .doublePossessive
-  | .other                => .other
-  | .mixed                => .mixed
-  | .restricted           => .restricted
-  | .noActionNominals     => .noActionNominals
-
-def fromWALS79A :
-    Data.WALS.F79A.SuppletionAccordingToTenseAndAspect → SuppletionTA
-  | .tense          => .tense
-  | .aspect         => .aspect
-  | .tenseAndAspect => .tenseAndAspect
-  | .none           => .none
-
-def fromWALS79B :
-    Data.WALS.F79B.SuppletionInImperativesAndHortatives → SuppletionImperative
-  | .aRegularAndASuppletiveFormAlternate => .alternating
-  | .imperative                          => .imperative
-  | .hortative                           => .hortative
-  | .imperativeAndHortative              => .imperativeAndHortative
-  | .none                                => .none
-
-def fromWALS80A :
-    Data.WALS.F80A.VerbalNumberAndSuppletion → VerbalNumber
-  | .none                                    => .none
-  | .singularPluralPairsNoSuppletion         => .pairsNoSuppletion
-  | .singularPluralPairsSuppletion           => .pairsSuppletion
-  | .singularDualPluralTriplesNoSuppletion   => .triplesNoSuppletion
-  | .singularDualPluralTriplesSuppletion     => .triplesSuppletion
-
 -- ============================================================================
 -- §4. WALS Lookup Helpers
 -- ============================================================================
@@ -446,39 +247,6 @@ def walsPrefixSuffix (iso : String) : Option PrefixSuffix :=
 def walsReduplication (iso : String) : Option Reduplication :=
   (Data.WALS.F27A.lookupISO iso).map (fromWALS27A ·.value)
 
-def walsLocusClause (iso : String) : Option LocusClause :=
-  (Data.WALS.F23A.lookupISO iso).map (fromWALS23A ·.value)
-
-def walsLocusPossessive (iso : String) : Option LocusPossessive :=
-  (Data.WALS.F24A.lookupISO iso).map (fromWALS24A ·.value)
-
-def walsWholeLanguageMarking (iso : String) : Option WholeLanguageMarking :=
-  (Data.WALS.F25A.lookupISO iso).map (fromWALS25A ·.value)
-
-def walsZeroMarkingAP (iso : String) : Option ZeroMarkingAP :=
-  (Data.WALS.F25B.lookupISO iso).map (fromWALS25B ·.value)
-
-def walsCaseSyncretism (iso : String) : Option CaseSyncretism :=
-  (Data.WALS.F28A.lookupISO iso).map (fromWALS28A ·.value)
-
-def walsVerbalSyncretism (iso : String) : Option VerbalSyncretism :=
-  (Data.WALS.F29A.lookupISO iso).map (fromWALS29A ·.value)
-
-def walsTAMExponence (iso : String) : Option TAMExponence :=
-  (Data.WALS.F21B.lookupISO iso).map (fromWALS21B ·.value)
-
-def walsActionNominal (iso : String) : Option ActionNominal :=
-  (Data.WALS.F62A.lookupISO iso).map (fromWALS62A ·.value)
-
-def walsSuppletionTA (iso : String) : Option SuppletionTA :=
-  (Data.WALS.F79A.lookupISO iso).map (fromWALS79A ·.value)
-
-def walsSuppletionImperative (iso : String) : Option SuppletionImperative :=
-  (Data.WALS.F79B.lookupISO iso).map (fromWALS79B ·.value)
-
-def walsVerbalNumber (iso : String) : Option VerbalNumber :=
-  (Data.WALS.F80A.lookupISO iso).map (fromWALS80A ·.value)
-
 -- ============================================================================
 -- §4½. Smart Constructor
 -- ============================================================================
@@ -491,9 +259,6 @@ def walsVerbalNumber (iso : String) : Option VerbalNumber :=
     `isolatingConcatenative` does not map cleanly to the local 3-way `Fusion`
     enum and yields `none`). When WALS has data the lookup wins; the fallback
     is exercised only when WALS is silent.
-
-    Optional WALS fields (`locusClause`, `locusPossessive`, …) auto-populate
-    from their lookup helpers and remain `none` if absent.
 
     The B&N 2001 parameters `flexivity` and `bnExponence` are NOT derivable
     from any WALS chapter — they are paper-stipulated per
@@ -515,17 +280,6 @@ def MorphProfile.fromWALS
   , locus := (walsLocus iso).getD locusFb
   , prefixSuffix := (walsPrefixSuffix iso).getD prefixSuffixFb
   , reduplication := (walsReduplication iso).getD reduplicationFb
-  , locusClause := walsLocusClause iso
-  , locusPossessive := walsLocusPossessive iso
-  , wholeLanguageMarking := walsWholeLanguageMarking iso
-  , zeroMarkingAP := walsZeroMarkingAP iso
-  , caseSyncretism := walsCaseSyncretism iso
-  , verbalSyncretism := walsVerbalSyncretism iso
-  , tamExponence := walsTAMExponence iso
-  , actionNominal := walsActionNominal iso
-  , suppletionTA := walsSuppletionTA iso
-  , suppletionImperative := walsSuppletionImperative iso
-  , verbalNumber := walsVerbalNumber iso
   , flexivity, bnExponence
   }
 
