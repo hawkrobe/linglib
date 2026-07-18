@@ -3,14 +3,18 @@ import Mathlib.Data.Set.Basic
 
 /-!
 # Rules of exponence
-[kiparsky-1973] [halle-marantz-1993] [stump-2001]
+[kiparsky-1973] [halle-marantz-1993] [stump-2001] [stump-2022]
 
 A **rule of exponence** pairs an exponent with an applicability
-condition on contexts. `RuleLike` is the interface every framework
-engine's carrier implements: an exponent projection and an
+condition on contexts ([matthews-1991]'s term for the mapping from
+morphosyntactic content to form). `RuleLike` is the interface every
+framework engine's carrier implements: an exponent projection and an
 applicability set, ordered by set inclusion ([kiparsky-1973]'s
 Elsewhere Condition), so the most specific applicable rule has the
-smallest applicability domain. Selection over this order — existence,
+smallest applicability domain. The order is [stump-2022]'s single-clause
+formulation of Pāṇini's principle — domain-subset precedence — to which
+[stump-2001]'s two-clause rule narrowness collapses when contexts pair
+expressions with their full property sets. Selection over this order — existence,
 coherence, and the framework-neutral prediction relation — lives in
 `Morphology/Exponence/Select.lean`.
 

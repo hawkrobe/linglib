@@ -1,5 +1,5 @@
 import Linglib.Morphology.MorphProfile
-import Linglib.Morphology.AffixTemplate
+import Linglib.Morphology.Template
 
 /-!
 # Japanese Morphological Profile

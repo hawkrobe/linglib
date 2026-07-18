@@ -1,7 +1,14 @@
 import Linglib.Morphology.MorphRule
 
 /-!
-# Affix position-class templates
+# Templates: word-skeletal morphotactic substrate
+
+A **template** stipulates a word's positional skeleton directly — the
+word-skeletal answer to where affix order comes from, rival to the
+rule-combining answer on which templates are emergent patterns of rule
+composition ([stump-2022]). `AffixTemplate` is the position-class species
+(a prosodic/CV species would be its sibling); the rivalry itself is study
+content, not settled here.
 
 A word's affix template: the ordered position-class slots of its prefix and
 suffix strings, parameterized by the slot type `Slot`. Instantiating at

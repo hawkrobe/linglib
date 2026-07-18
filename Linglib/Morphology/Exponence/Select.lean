@@ -6,7 +6,7 @@ import Mathlib.Data.List.MinMax
 
 /-!
 # Elsewhere selection over rules of exponence
-[kiparsky-1973] [halle-marantz-1993] [caha-2009]
+[kiparsky-1973] [halle-marantz-1993] [stump-2001] [caha-2009]
 
 Selection over the specificity preorder of `Morphology/Exponence/Basic.lean`.
 An **Elsewhere winner** is a `≤`-minimal applicable rule; over a coherent
@@ -18,7 +18,9 @@ applicable sublist; min-scores enter via `OrderDual`). Its soundness law
 `selectBy_isElsewhereWinner` discharges each engine's winner-is-Elsewhere
 theorem from that engine's score-reflection lemma. The order/select/realize
 triad: `Basic` orders rules by specificity, `selectBy` selects the optimal
-applicable rule, `realize` reads off its exponent.
+applicable rule, `realize` reads off its exponent. The theory models
+selection within a single rule block; realizational frameworks compose
+per-block winners into the paradigm function ([stump-2001]).
 
 ## Main declarations
 
@@ -62,7 +64,8 @@ theorem IsElsewhereWinner.antisymmRel {v : List R} {c : Ctx} {r s : R}
 /-- A **coherent** vocabulary assigns equivalent rules the same
 exponent, so the exponent descends to the antisymmetrization of the
 specificity preorder ([caha-2009]-style antihomophony, stated
-order-theoretically). -/
+order-theoretically). Incomparable competitors are tolerated, where
+[stump-2001]'s Pāṇinian Determinism Hypothesis forbids them. -/
 def Coherent (v : List R) : Prop :=
   ∀ r ∈ v, ∀ s ∈ v, AntisymmRel (· ≤ ·) r s →
     RuleLike.exponent (F := F) r = RuleLike.exponent (F := F) s
@@ -75,7 +78,9 @@ theorem IsElsewhereWinner.exponent_eq {v : List R} {c : Ctx} {r s : R}
     RuleLike.exponent (F := F) r = RuleLike.exponent (F := F) s :=
   hv r hr.1.1 s hs.1.1 (hr.antisymmRel hs h)
 
-/-- A vocabulary with an applicable rule has an Elsewhere winner. -/
+/-- A vocabulary with an applicable rule has an Elsewhere winner —
+proved, where [stump-2001] guarantees existence by stipulating a
+bottom-element Identity Function Default. -/
 theorem exists_isElsewhereWinner {v : List R} {c : Ctx}
     (h : ∃ r ∈ v, RuleLike.Applies (F := F) r c) : ∃ r, IsElsewhereWinner v c r :=
   (v.finite_toSet.subset fun _ hr => hr.1).exists_minimal h

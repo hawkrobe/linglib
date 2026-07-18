@@ -1298,7 +1298,7 @@ import Linglib.Fragments.Yoruba.TenseAspect
 import Linglib.Fragments.ZarmaSonrai.Negation
 import Linglib.Fragments.Zulu.Phonology
 import Linglib.Fragments.Zulu.Plurals
-import Linglib.Morphology.AffixTemplate
+import Linglib.Morphology.Template
 import Linglib.Morphology.Case.Allomorphy
 import Linglib.Morphology.Case.WALS
 import Linglib.Morphology.ConsonantalRoot

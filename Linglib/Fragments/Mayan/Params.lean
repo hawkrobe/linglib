@@ -5,7 +5,7 @@ import Linglib.Syntax.Case.Alignment
 import Linglib.Syntax.Agreement.Paradigm
 import Linglib.Morphology.Morph
 import Linglib.Morphology.Word
-import Linglib.Morphology.AffixTemplate
+import Linglib.Morphology.Template
 
 /-!
 # Shared Mayan Fragment Infrastructure
