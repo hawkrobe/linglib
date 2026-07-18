@@ -1308,7 +1308,6 @@ import Linglib.Morphology.DM.CategorizerSemantics
 import Linglib.Morphology.DM.DomainLocality
 import Linglib.Morphology.DM.Fission
 import Linglib.Morphology.DM.Impoverishment
-import Linglib.Morphology.DM.LinearPostsyntax
 import Linglib.Morphology.DM.Merger
 import Linglib.Morphology.DM.NominalStructure
 import Linglib.Morphology.DM.VocabSimple
