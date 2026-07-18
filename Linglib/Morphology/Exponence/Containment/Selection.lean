@@ -228,8 +228,8 @@ theorem winner_isElsewhereWinner {v : List (SpanRule n F)} {g : Fin n}
     {it : SpanRule n F} (h : winner v g = some it) :
     Exponence.IsElsewhereWinner v g it :=
   Exponence.selectBy_isElsewhereWinner
-    (fun r _ s _ _ _ => (SpanRule.le_iff.trans SpanRule.moreSpecific_iff_threshold_le :
-      r ≤ s ↔ SpanRule.threshold s ≤ SpanRule.threshold r)) h
+    (fun _ _ _ _ _ _ _ hfs =>
+      (SpanRule.le_iff.trans SpanRule.moreSpecific_iff_threshold_le).mpr hfs) h
 
 /-! ### Superset reading: Minimize-Junk selection
 
