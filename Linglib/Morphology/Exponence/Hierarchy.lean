@@ -9,7 +9,7 @@ import Mathlib.Data.Finset.Max
 
 The realizational engine behind [bobaljik-2012]'s comparative-suppletion
 generalizations, over an arbitrary `n`-grade containment hierarchy. An
-`ExponenceRule` realizes the initial span `[0, spans]` of the hierarchy,
+`SpanRule` realizes the initial span `[0, spans]` of the hierarchy,
 optionally conditioned on a higher head; the Elsewhere Condition
 ([kiparsky-1973]) selects the most specific applicable rule. Over a linear
 hierarchy, specificity is applicability-set inclusion, so the Elsewhere
@@ -17,7 +17,7 @@ ordering is threshold comparison (`moreSpecific_iff_threshold_le`).
 
 ## Main declarations
 
-* `ExponenceRule n F` — exponent, exponed span `[0, spans]`, optional
+* `SpanRule n F` — exponent, exponed span `[0, spans]`, optional
   conditioning head
 * `Terminal`, `Adjacent`, `Antihomophonous`, `Grounded` — well-formedness
   conditions on vocabularies
@@ -41,7 +41,7 @@ when `spans = 0`, a root+heads portmanteau when `spans > 0` — and applies
 only when its optional conditioning head `context` is present. Latin
 ([bobaljik-2012] (204)): `bon` is `⟨bon, 0, none⟩`, `mel-` is
 `⟨mel, 0, some 1⟩`, the portmanteau `opt-` is `⟨opt, 1, some 2⟩`. -/
-structure ExponenceRule (n : ℕ) (F : Type*) where
+structure SpanRule (n : ℕ) (F : Type*) where
   /-- The phonological exponent inserted for the span. -/
   exponent : F
   /-- Upper end of the exponed initial span `[0, spans]`. -/
@@ -50,35 +50,35 @@ structure ExponenceRule (n : ℕ) (F : Type*) where
   context : Option (Fin n)
   deriving DecidableEq, Repr
 
-namespace ExponenceRule
+namespace SpanRule
 
 /-- The least grade at which the rule is applicable: everything the
 rule mentions — exponed span and conditioning context — must be
 contained in the structure. -/
-def threshold (it : ExponenceRule n F) : Fin n :=
+def threshold (it : SpanRule n F) : Fin n :=
   max it.spans (it.context.getD it.spans)
 
 /-- A rule applies at grade `g` when grade `g`'s structure contains
 everything the rule mentions. -/
-def AppliesAt (it : ExponenceRule n F) (g : Fin n) : Prop :=
+def AppliesAt (it : SpanRule n F) (g : Fin n) : Prop :=
   it.threshold ≤ g
 
-instance (it : ExponenceRule n F) (g : Fin n) : Decidable (it.AppliesAt g) :=
+instance (it : SpanRule n F) (g : Fin n) : Decidable (it.AppliesAt g) :=
   inferInstanceAs (Decidable (_ ≤ _))
 
 /-- A rule `it` is at least as specific as `jt` when it applies in a
 subset of the contexts `jt` applies in (Pāṇinian specificity). -/
-def MoreSpecific (it jt : ExponenceRule n F) : Prop :=
+def MoreSpecific (it jt : SpanRule n F) : Prop :=
   ∀ ⦃g : Fin n⦄, it.AppliesAt g → jt.AppliesAt g
 
 /-- Over a linear containment hierarchy, applicability sets are nested
 upward sets, so derived specificity is threshold comparison — the
 Elsewhere ordering ([kiparsky-1973]) is total. -/
-theorem moreSpecific_iff_threshold_le {it jt : ExponenceRule n F} :
+theorem moreSpecific_iff_threshold_le {it jt : SpanRule n F} :
     it.MoreSpecific jt ↔ jt.threshold ≤ it.threshold :=
   ⟨λ h => h (le_refl it.threshold), λ h _ hg => le_trans h hg⟩
 
-end ExponenceRule
+end SpanRule
 
 /-! ### Well-formedness conditions on vocabularies
 
@@ -88,74 +88,74 @@ unattested pattern (see the worked examples in
 `Studies/Bobaljik2012.lean`). -/
 
 /-- Every rule expones the bare root (no portmanteaux). -/
-def Terminal (v : List (ExponenceRule n F)) : Prop :=
+def Terminal (v : List (SpanRule n F)) : Prop :=
   ∀ it ∈ v, (it.spans : ℕ) = 0
 
-instance (v : List (ExponenceRule n F)) : Decidable (Terminal v) := by
+instance (v : List (SpanRule n F)) : Decidable (Terminal v) := by
   unfold Terminal; infer_instance
 
 /-- Conditioning heads are adjacent to the exponed span —
 [bobaljik-2012]'s (tentatively adopted) adjacency condition on
 contextual allomorphy. -/
-def Adjacent (v : List (ExponenceRule n F)) : Prop :=
+def Adjacent (v : List (SpanRule n F)) : Prop :=
   ∀ it ∈ v, ∀ c : Fin n, it.context = some c → (c : ℕ) = (it.spans : ℕ) + 1
 
-instance (v : List (ExponenceRule n F)) : Decidable (Adjacent v) := by
+instance (v : List (SpanRule n F)) : Decidable (Adjacent v) := by
   unfold Adjacent; infer_instance
 
 /-- Distinct rules carry distinct exponents — [bobaljik-2012]'s Antihomophony
 assumption (44), closing the loophole where a surface-ABA pattern is really an
 ABC with accidental A ≡ C homophony. -/
-def Antihomophonous (v : List (ExponenceRule n F)) : Prop :=
+def Antihomophonous (v : List (SpanRule n F)) : Prop :=
   ∀ it ∈ v, ∀ jt ∈ v, it.exponent = jt.exponent → it = jt
 
-instance [DecidableEq F] (v : List (ExponenceRule n F)) : Decidable (Antihomophonous v) := by
+instance [DecidableEq F] (v : List (SpanRule n F)) : Decidable (Antihomophonous v) := by
   unfold Antihomophonous; infer_instance
 
 /-- [bobaljik-2012]'s markedness condition (202): a context-sensitive rule of
 exponence involving a node requires a context-free rule involving that node.
 Under the threshold encoding, this is downward closure of the vocabulary's
 threshold set. -/
-def Grounded (v : List (ExponenceRule n F)) : Prop :=
+def Grounded (v : List (SpanRule n F)) : Prop :=
   ∀ it ∈ v, ∀ k : Fin n, k < it.threshold → ∃ jt ∈ v, jt.threshold = k
 
-instance (v : List (ExponenceRule n F)) : Decidable (Grounded v) := by
+instance (v : List (SpanRule n F)) : Decidable (Grounded v) := by
   unfold Grounded; infer_instance
 
 /-! ### Elsewhere selection -/
 
 /-- The rules applicable at grade `g`, in vocabulary order. -/
-def applicable (v : List (ExponenceRule n F)) (g : Fin n) : List (ExponenceRule n F) :=
+def applicable (v : List (SpanRule n F)) (g : Fin n) : List (SpanRule n F) :=
   v.filter (λ it => it.threshold ≤ g)
 
-@[simp] theorem mem_applicable {v : List (ExponenceRule n F)} {g : Fin n} {it : ExponenceRule n F} :
+@[simp] theorem mem_applicable {v : List (SpanRule n F)} {g : Fin n} {it : SpanRule n F} :
     it ∈ applicable v g ↔ it ∈ v ∧ it.threshold ≤ g := by
   simp [applicable]
 
 /-- The greatest applicable threshold at grade `g` — the specificity
 level of the Elsewhere winner, `⊥` when nothing applies. -/
-def maxThreshold (v : List (ExponenceRule n F)) (g : Fin n) : WithBot (Fin n) :=
-  ((applicable v g).map ExponenceRule.threshold).maximum
+def maxThreshold (v : List (SpanRule n F)) (g : Fin n) : WithBot (Fin n) :=
+  ((applicable v g).map SpanRule.threshold).maximum
 
-theorem maxThreshold_eq_bot_iff {v : List (ExponenceRule n F)} {g : Fin n} :
+theorem maxThreshold_eq_bot_iff {v : List (SpanRule n F)} {g : Fin n} :
     maxThreshold v g = ⊥ ↔ applicable v g = [] := by
   rw [maxThreshold, List.maximum_eq_bot, List.map_eq_nil_iff]
 
-theorem exists_of_maxThreshold_eq_coe {v : List (ExponenceRule n F)} {g m : Fin n}
+theorem exists_of_maxThreshold_eq_coe {v : List (SpanRule n F)} {g m : Fin n}
     (h : maxThreshold v g = ↑m) : ∃ it ∈ v, it.threshold = m ∧ m ≤ g := by
   obtain ⟨hmem, -⟩ := List.maximum_eq_coe_iff.mp h
   obtain ⟨it, hit, hτ⟩ := List.mem_map.mp hmem
   obtain ⟨hitv, hle⟩ := mem_applicable.mp hit
   exact ⟨it, hitv, hτ, hτ ▸ hle⟩
 
-theorem threshold_le_of_maxThreshold_eq_coe {v : List (ExponenceRule n F)} {g m : Fin n}
-    (h : maxThreshold v g = ↑m) {it : ExponenceRule n F} (hitv : it ∈ v)
+theorem threshold_le_of_maxThreshold_eq_coe {v : List (SpanRule n F)} {g m : Fin n}
+    (h : maxThreshold v g = ↑m) {it : SpanRule n F} (hitv : it ∈ v)
     (hle : it.threshold ≤ g) : it.threshold ≤ m :=
   (List.maximum_eq_coe_iff.mp h).2 _
     (List.mem_map_of_mem (mem_applicable.mpr ⟨hitv, hle⟩))
 
-theorem maxThreshold_eq_coe_intro {v : List (ExponenceRule n F)} {g : Fin n}
-    {it : ExponenceRule n F} (hitv : it ∈ v) (hle : it.threshold ≤ g)
+theorem maxThreshold_eq_coe_intro {v : List (SpanRule n F)} {g : Fin n}
+    {it : SpanRule n F} (hitv : it ∈ v) (hle : it.threshold ≤ g)
     (hub : ∀ jt ∈ v, jt.threshold ≤ g → jt.threshold ≤ it.threshold) :
     maxThreshold v g = ↑it.threshold := by
   rw [maxThreshold, List.maximum_eq_coe_iff]
@@ -166,7 +166,7 @@ theorem maxThreshold_eq_coe_intro {v : List (ExponenceRule n F)} {g : Fin n}
 
 /-- A winning threshold persists downward as long as it stays applicable,
 which is what makes Elsewhere selection plateau between grades. -/
-theorem maxThreshold_eq_coe_of_between {v : List (ExponenceRule n F)} {g g' m : Fin n}
+theorem maxThreshold_eq_coe_of_between {v : List (SpanRule n F)} {g g' m : Fin n}
     (h : maxThreshold v g' = ↑m) (hm : m ≤ g) (hg : g ≤ g') :
     maxThreshold v g = ↑m := by
   obtain ⟨it, hitv, hτ, -⟩ := exists_of_maxThreshold_eq_coe h
@@ -174,7 +174,7 @@ theorem maxThreshold_eq_coe_of_between {v : List (ExponenceRule n F)} {g g' m : 
   exact maxThreshold_eq_coe_intro hitv hm
     (λ jt hjv hjle => threshold_le_of_maxThreshold_eq_coe h hjv (le_trans hjle hg))
 
-theorem maxThreshold_eq_bot_of_le {v : List (ExponenceRule n F)} {g g' : Fin n}
+theorem maxThreshold_eq_bot_of_le {v : List (SpanRule n F)} {g g' : Fin n}
     (h : maxThreshold v g' = ⊥) (hg : g ≤ g') : maxThreshold v g = ⊥ := by
   rw [maxThreshold_eq_bot_iff] at h ⊢
   rw [List.eq_nil_iff_forall_not_mem] at h ⊢
@@ -184,19 +184,19 @@ theorem maxThreshold_eq_bot_of_le {v : List (ExponenceRule n F)} {g g' : Fin n}
 
 /-- The Elsewhere winner at grade `g`: the first rule attaining the
 greatest applicable threshold — the most specific applicable rule. -/
-def winner (v : List (ExponenceRule n F)) (g : Fin n) : Option (ExponenceRule n F) :=
+def winner (v : List (SpanRule n F)) (g : Fin n) : Option (SpanRule n F) :=
   (maxThreshold v g).recBotCoe none (λ m => v.find? (λ it => it.threshold == m))
 
-theorem winner_eq_none_of_bot {v : List (ExponenceRule n F)} {g : Fin n}
+theorem winner_eq_none_of_bot {v : List (SpanRule n F)} {g : Fin n}
     (h : maxThreshold v g = ⊥) : winner v g = none := by
   rw [winner, h]; rfl
 
-theorem winner_of_coe {v : List (ExponenceRule n F)} {g m : Fin n}
+theorem winner_of_coe {v : List (SpanRule n F)} {g m : Fin n}
     (h : maxThreshold v g = ↑m) :
     winner v g = v.find? (λ it => it.threshold == m) := by
   rw [winner, h]; rfl
 
-theorem winner_spec {v : List (ExponenceRule n F)} {g : Fin n} {it : ExponenceRule n F}
+theorem winner_spec {v : List (SpanRule n F)} {g : Fin n} {it : SpanRule n F}
     (h : winner v g = some it) :
     it ∈ v ∧ maxThreshold v g = ↑it.threshold := by
   cases hmt : maxThreshold v g with
@@ -206,7 +206,7 @@ theorem winner_spec {v : List (ExponenceRule n F)} {g : Fin n} {it : ExponenceRu
     have hτ : it.threshold = m := by simpa using List.find?_some h
     exact ⟨List.mem_of_find?_eq_some h, by rw [hτ]⟩
 
-theorem exists_winner_of_coe {v : List (ExponenceRule n F)} {g m : Fin n}
+theorem exists_winner_of_coe {v : List (SpanRule n F)} {g m : Fin n}
     (h : maxThreshold v g = ↑m) : ∃ it, winner v g = some it := by
   rw [winner_of_coe h]
   obtain ⟨it, hitv, hτ, -⟩ := exists_of_maxThreshold_eq_coe h
@@ -216,7 +216,7 @@ theorem exists_winner_of_coe {v : List (ExponenceRule n F)} {g m : Fin n}
     rw [List.find?_eq_none] at hf
     exact absurd (by simp [hτ] : (it.threshold == m) = true) (by simpa using hf it hitv)
 
-theorem winner_eq_none_iff {v : List (ExponenceRule n F)} {g : Fin n} :
+theorem winner_eq_none_iff {v : List (SpanRule n F)} {g : Fin n} :
     winner v g = none ↔ maxThreshold v g = ⊥ := by
   refine ⟨λ h => ?_, winner_eq_none_of_bot⟩
   cases hmt : maxThreshold v g with
@@ -226,21 +226,21 @@ theorem winner_eq_none_iff {v : List (ExponenceRule n F)} {g : Fin n} :
     rw [hit] at h
     exact absurd h (by simp)
 
-theorem winner_congr {v : List (ExponenceRule n F)} {g g' : Fin n}
+theorem winner_congr {v : List (SpanRule n F)} {g g' : Fin n}
     (h : maxThreshold v g = maxThreshold v g') : winner v g = winner v g' := by
   rw [winner, winner, h]
 
 /-- The realized pattern: at each grade, the Elsewhere winner's
 exponent (`none` when no rule applies — a paradigm gap). -/
-def realize (v : List (ExponenceRule n F)) : Paradigm n (Option F) :=
-  λ g => (winner v g).map ExponenceRule.exponent
+def realize (v : List (SpanRule n F)) : Paradigm n (Option F) :=
+  λ g => (winner v g).map SpanRule.exponent
 
-theorem realize_congr {v : List (ExponenceRule n F)} {g g' : Fin n}
+theorem realize_congr {v : List (SpanRule n F)} {g g' : Fin n}
     (h : maxThreshold v g = maxThreshold v g') : realize v g = realize v g' := by
   show (winner v g).map _ = (winner v g').map _
   rw [winner_congr h]
 
-theorem realize_eq_none_iff {v : List (ExponenceRule n F)} {g : Fin n} :
+theorem realize_eq_none_iff {v : List (SpanRule n F)} {g : Fin n} :
     realize v g = none ↔ maxThreshold v g = ⊥ := by
   rw [← winner_eq_none_iff]
   unfold realize
@@ -257,7 +257,7 @@ makes exponents injective in the winner — so realization factors as
 monotone-then-injective and `Basic.lean`'s composition principle
 applies (here inlined as the sandwich argument). -/
 
-theorem isContiguous_realize {v : List (ExponenceRule n F)} (hAH : Antihomophonous v) :
+theorem isContiguous_realize {v : List (SpanRule n F)} (hAH : Antihomophonous v) :
     IsContiguous (realize v) := by
   intro i j k hij hjk heq
   cases hwi : winner v i with
@@ -293,7 +293,7 @@ comparative and superlative cells to coincide and so *over-excludes*
 the attested ABC patterns (Latin *bon- ~ mel- ~ opt-*). Portmanteau items
 (`0 < spans`) are what license ABC; see `exists_portmanteau_of_ne`. -/
 
-theorem applicable_eq_of_cap {v : List (ExponenceRule n F)} {m g g' : Fin n}
+theorem applicable_eq_of_cap {v : List (SpanRule n F)} {m g g' : Fin n}
     (hcap : ∀ it ∈ v, it.threshold ≤ m) (hg : m ≤ g) (hg' : m ≤ g') :
     applicable v g = applicable v g' := by
   unfold applicable
@@ -301,17 +301,17 @@ theorem applicable_eq_of_cap {v : List (ExponenceRule n F)} {m g g' : Fin n}
   simp only [decide_eq_decide]
   exact iff_of_true (le_trans (hcap it hit) hg) (le_trans (hcap it hit) hg')
 
-theorem realize_const_of_cap {v : List (ExponenceRule n F)} {m g g' : Fin n}
+theorem realize_const_of_cap {v : List (SpanRule n F)} {m g g' : Fin n}
     (hcap : ∀ it ∈ v, it.threshold ≤ m) (hg : m ≤ g) (hg' : m ≤ g') :
     realize v g = realize v g' :=
   realize_congr (by unfold maxThreshold; rw [applicable_eq_of_cap hcap hg hg'])
 
-private theorem threshold_le_one {it : ExponenceRule 3 F}
+private theorem threshold_le_one {it : SpanRule 3 F}
     (h0 : (it.spans : ℕ) = 0)
     (hc : ∀ c : Fin 3, it.context = some c → (c : ℕ) = (it.spans : ℕ) + 1) :
     it.threshold ≤ (1 : Fin 3) := by
   have h1 : it.spans ≤ (1 : Fin 3) := by rw [Fin.le_def]; simp [h0]
-  unfold ExponenceRule.threshold
+  unfold SpanRule.threshold
   cases hcx : it.context with
   | none => simpa using h1
   | some c =>
@@ -321,7 +321,7 @@ private theorem threshold_le_one {it : ExponenceRule 3 F}
 /-- Terminal rules with adjacent contexts have thresholds at most the
 first head, so the comparative and superlative cells coincide: only
 AAA and ABB root patterns are generable. -/
-theorem realize_const_of_terminal_adjacent {v : List (ExponenceRule 3 F)}
+theorem realize_const_of_terminal_adjacent {v : List (SpanRule 3 F)}
     (hT : Terminal v) (hA : Adjacent v) : realize v 1 = realize v 2 :=
   realize_const_of_cap (m := (1 : Fin 3))
     (λ it hit => threshold_le_one (hT it hit) (hA it hit)) le_rfl (by decide)
@@ -354,11 +354,11 @@ theorem firstOcc_congr {p : Paradigm n F} {g g' : Fin n} (h : p g = p g') :
 
 /-- The canonical vocabulary of a pattern: one rule per form,
 introduced at the form's first grade and conditioned on it. -/
-def ofPattern (p : Paradigm n F) : List (ExponenceRule n F) :=
+def ofPattern (p : Paradigm n F) : List (SpanRule n F) :=
   (List.finRange n).filterMap (λ s =>
     if firstOcc p s = s then some ⟨p s, ⟨0, s.pos⟩, some s⟩ else none)
 
-theorem mem_ofPattern {p : Paradigm n F} {it : ExponenceRule n F} :
+theorem mem_ofPattern {p : Paradigm n F} {it : SpanRule n F} :
     it ∈ ofPattern p ↔
       ∃ s : Fin n, firstOcc p s = s ∧ it = ⟨p s, ⟨0, s.pos⟩, some s⟩ := by
   simp only [ofPattern, List.mem_filterMap, List.mem_finRange, true_and]
@@ -372,8 +372,8 @@ theorem mem_ofPattern {p : Paradigm n F} {it : ExponenceRule n F} :
 
 omit [DecidableEq F] in
 theorem threshold_ofPattern {p : Paradigm n F} {s : Fin n} :
-    (⟨p s, ⟨0, s.pos⟩, some s⟩ : ExponenceRule n F).threshold = s := by
-  unfold ExponenceRule.threshold
+    (⟨p s, ⟨0, s.pos⟩, some s⟩ : SpanRule n F).threshold = s := by
+  unfold SpanRule.threshold
   simp only [Option.getD_some]
   exact max_eq_right (by rw [Fin.le_def]; exact Nat.zero_le _)
 
@@ -397,11 +397,11 @@ theorem realize_ofPattern {p : Paradigm n F} (hp : IsContiguous p) (g : Fin n) :
   have hff : firstOcc p (firstOcc p g) = firstOcc p g :=
     firstOcc_congr (apply_firstOcc p g)
   have hitem : (⟨p (firstOcc p g), ⟨0, (firstOcc p g).pos⟩, some (firstOcc p g)⟩ :
-      ExponenceRule n F) ∈ ofPattern p :=
+      SpanRule n F) ∈ ofPattern p :=
     mem_ofPattern.mpr ⟨firstOcc p g, hff, rfl⟩
   have hub : ∀ jt ∈ ofPattern p, jt.threshold ≤ g →
       jt.threshold ≤ (⟨p (firstOcc p g), ⟨0, (firstOcc p g).pos⟩,
-        some (firstOcc p g)⟩ : ExponenceRule n F).threshold := by
+        some (firstOcc p g)⟩ : SpanRule n F).threshold := by
     intro jt hjv hjle
     obtain ⟨t, htfo, rfl⟩ := mem_ofPattern.mp hjv
     rw [threshold_ofPattern] at hjle ⊢
@@ -423,7 +423,7 @@ theorem realize_ofPattern {p : Paradigm n F} (hp : IsContiguous p) (g : Fin n) :
   obtain ⟨t, htfo, rfl⟩ := mem_ofPattern.mp hwv
   rw [threshold_ofPattern] at hwτ
   subst hwτ
-  show (winner (ofPattern p) g).map ExponenceRule.exponent = some (p g)
+  show (winner (ofPattern p) g).map SpanRule.exponent = some (p g)
   rw [hw, Option.map_some]
   exact congrArg some (apply_firstOcc p g)
 
@@ -432,7 +432,7 @@ end Completeness
 /-- A pattern is **Elsewhere-generable**: some terminal antihomophonous
 vocabulary realizes it in full. -/
 def ElsewhereGenerable (p : Paradigm n F) : Prop :=
-  ∃ v : List (ExponenceRule n F), Terminal v ∧ Antihomophonous v ∧
+  ∃ v : List (SpanRule n F), Terminal v ∧ Antihomophonous v ∧
     ∀ g, realize v g = some (p g)
 
 /-- **Generable = contiguous.** A fully realized pattern arises from
@@ -459,7 +459,7 @@ theorem isContiguous_iff_generable (p : Paradigm n F) :
 degree hierarchy, if the positive and comparative cells agree and the
 superlative cell is realized, all three agree — `good – gooder – *best` is not
 generable — given antihomophony and `Grounded` (the book's condition (202)). -/
-theorem realize_const_of_grounded {v : List (ExponenceRule 3 F)}
+theorem realize_const_of_grounded {v : List (SpanRule 3 F)}
     (hAH : Antihomophonous v) (hG : Grounded v)
     (h01 : realize v 0 = realize v 1) (h2 : (realize v 2).isSome) :
     realize v 1 = realize v 2 := by
@@ -500,7 +500,7 @@ degree-domain consequence generalized there as (199)): under
 adjacency, root allomorphy at the superlative grade distinct from the
 comparative grade arises only via a portmanteau — the winning rule
 must expone more than the bare root (Latin `opt-`, Welsh `gor-`). -/
-theorem exists_portmanteau_of_ne {v : List (ExponenceRule 3 F)} (hA : Adjacent v)
+theorem exists_portmanteau_of_ne {v : List (SpanRule 3 F)} (hA : Adjacent v)
     (h12 : realize v 1 ≠ realize v 2) :
     ∃ it ∈ v, winner v 2 = some it ∧ 0 < (it.spans : ℕ) := by
   obtain ⟨w2, hw2⟩ : ∃ w, winner v 2 = some w := by
@@ -527,26 +527,26 @@ directly: applicability is threshold containment (the upper set
 so the Elsewhere winner is an Elsewhere winner of the shared core over
 the native carrier. -/
 
-instance : Exponence.RuleLike (ExponenceRule n F) (Fin n) F :=
-  ⟨ExponenceRule.exponent, fun it => Set.Ici it.threshold⟩
+instance : Exponence.RuleLike (SpanRule n F) (Fin n) F :=
+  ⟨SpanRule.exponent, fun it => Set.Ici it.threshold⟩
 
-instance : Preorder (ExponenceRule n F) := Exponence.RuleLike.toPreorder
+instance : Preorder (SpanRule n F) := Exponence.RuleLike.toPreorder
 
 /-- Containment specificity is the shared core's specificity order. -/
-theorem ExponenceRule.le_iff {it jt : ExponenceRule n F} :
+theorem SpanRule.le_iff {it jt : SpanRule n F} :
     it ≤ jt ↔ it.MoreSpecific jt :=
   Iff.rfl
 
 /-- The containment engine's Elsewhere winner is an Elsewhere winner of
 the shared core. -/
-theorem winner_isElsewhereWinner {v : List (ExponenceRule n F)} {g : Fin n}
-    {it : ExponenceRule n F} (h : winner v g = some it) :
+theorem winner_isElsewhereWinner {v : List (SpanRule n F)} {g : Fin n}
+    {it : SpanRule n F} (h : winner v g = some it) :
     Exponence.IsElsewhereWinner v g it := by
   obtain ⟨hmem, hmt⟩ := winner_spec h
   obtain ⟨-, -, -, hle⟩ := exists_of_maxThreshold_eq_coe hmt
   refine ⟨⟨hmem, hle⟩, ?_⟩
   rintro s ⟨hs, hsapp⟩ -
-  rw [ExponenceRule.le_iff, ExponenceRule.moreSpecific_iff_threshold_le]
+  rw [SpanRule.le_iff, SpanRule.moreSpecific_iff_threshold_le]
   exact threshold_le_of_maxThreshold_eq_coe hmt hs hsapp
 
 end Morphology.Containment

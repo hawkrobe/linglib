@@ -181,11 +181,11 @@ condition (90) applied through Merger). Models the
 comparative-embedding periphrasis type (Greek, the book's (107a–b));
 the positive-embedding type (Russian, (107c–d)) needs a per-grade
 embedding choice rather than a single `wordTop`. -/
-def realizeIn (s : Synthesis n) (v : List (ExponenceRule n F)) : Paradigm n (Option F) :=
+def realizeIn (s : Synthesis n) (v : List (SpanRule n F)) : Paradigm n (Option F) :=
   λ g => realize v (min g s.wordTop)
 
 /-- At a synthetic grade, word-internal realization is realization. -/
-theorem realizeIn_eq_realize_of_le {s : Synthesis n} {v : List (ExponenceRule n F)}
+theorem realizeIn_eq_realize_of_le {s : Synthesis n} {v : List (SpanRule n F)}
     {g : Fin n} (h : g ≤ s.wordTop) : realizeIn s v g = realize v g := by
   unfold realizeIn
   rw [min_eq_left h]
@@ -193,21 +193,21 @@ theorem realizeIn_eq_realize_of_le {s : Synthesis n} {v : List (ExponenceRule n 
 /-- At a periphrastic grade, the root word realizes as at `wordTop` —
 the highest grade whose structure is word-internal. -/
 theorem realizeIn_eq_realize_wordTop_of_le {s : Synthesis n}
-    {v : List (ExponenceRule n F)} {g : Fin n} (h : s.wordTop ≤ g) :
+    {v : List (SpanRule n F)} {g : Fin n} (h : s.wordTop ≤ g) :
     realizeIn s v g = realize v s.wordTop := by
   unfold realizeIn
   rw [min_eq_right h]
 
 /-- Word-internal realization is still contiguous: `realizeIn` is
 `realize` precomposed with the monotone regrading `min · wordTop`. -/
-theorem isContiguous_realizeIn {s : Synthesis n} {v : List (ExponenceRule n F)}
+theorem isContiguous_realizeIn {s : Synthesis n} {v : List (SpanRule n F)}
     (hAH : Antihomophonous v) : IsContiguous (realizeIn s v) :=
   (isContiguous_realize hAH).comp_monotone (λ _ _ h => min_le_min_right _ h)
 
 /-- A lexeme with no Merger at all (`wordTop = 0`, fully periphrastic
 paradigm) realizes the same root form at every grade. -/
 theorem realizeIn_const_of_wordTop_eq_zero {s : Synthesis n}
-    {v : List (ExponenceRule n F)} (h : (s.wordTop : ℕ) = 0) (g g' : Fin n) :
+    {v : List (SpanRule n F)} (h : (s.wordTop : ℕ) = 0) (g g' : Fin n) :
     realizeIn s v g = realizeIn s v g' := by
   have hle : ∀ x : Fin n, s.wordTop ≤ x := λ x => by
     rw [Fin.le_def, h]; exact Nat.zero_le _
@@ -220,7 +220,7 @@ a grade requires that grade's word to be synthetic. Contrapositively:
 above `wordTop` the word realizes constantly (`
 realizeIn_eq_realize_wordTop_of_le`). -/
 theorem min_lt_wordTop_of_realizeIn_ne {s : Synthesis n}
-    {v : List (ExponenceRule n F)} {g g' : Fin n}
+    {v : List (SpanRule n F)} {g g' : Fin n}
     (h : realizeIn s v g ≠ realizeIn s v g') : min g g' < s.wordTop := by
   by_contra hle
   push Not at hle
@@ -232,7 +232,7 @@ theorem min_lt_wordTop_of_realizeIn_ne {s : Synthesis n}
 synthetic comparatives — a lexeme showing distinct root forms at two
 grades has undergone Merger at least once, so its comparative is
 synthetic. Excludes `*good – more bett`. -/
-theorem rsg {s : Synthesis 3} {v : List (ExponenceRule 3 F)} {g g' : Fin 3}
+theorem rsg {s : Synthesis 3} {v : List (SpanRule 3 F)} {g g' : Fin 3}
     (h : realizeIn s v g ≠ realizeIn s v g') : s.SyntheticAt 1 := by
   have hlt := min_lt_wordTop_of_realizeIn_ne h
   rw [Fin.lt_def] at hlt

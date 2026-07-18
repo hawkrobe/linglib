@@ -121,7 +121,7 @@ where
     relation ([taraldsen-et-al-2018] (35)).
 
     For 1D chains: a chain of depth n contains all chains of depth
-    k ≤ n, matching `ExponenceRule.Matches` (`chain_contains_iff_le`). -/
+    k ≤ n, matching `SpanRule.Matches` (`chain_contains_iff_le`). -/
 inductive Contains : NanoTree F → NanoTree F → Prop
   | refl (t : NanoTree F) : Contains t t
   | child {f : F} {cs : List (NanoTree F)} {c target : NanoTree F} :
@@ -242,7 +242,7 @@ end NanoTree
     fragments). The tree encodes the full feature geometry that the
     morpheme lexicalizes.
 
-    Contrast with `ExponenceRule` (`Morphology/Exponence/Hierarchy.lean`)
+    Contrast with `SpanRule` (`Morphology/Exponence/Hierarchy.lean`)
     which stores only a span (depth on a 1D functional sequence). -/
 structure TreeLexEntry (F : Type*) (α : Type*) where
   /-- The stored feature tree. -/
@@ -365,7 +365,7 @@ instance [DecidableEq F] (entry : TreeLexEntry F α) (tree : NanoTree F) :
     `chainTree feat 1 = node (feat 1) [leaf (feat 0)]`
     `chainTree feat n = node (feat n) [chainTree feat (n-1)]`
 
-    A chain of depth n is isomorphic to an `ExponenceRule` spanning
+    A chain of depth n is isomorphic to an `SpanRule` spanning
     grade n in the 1D nanosyntax. -/
 def chainTree (feat : Nat → F) : Nat → NanoTree F
   | 0 => .leaf (feat 0)
@@ -403,7 +403,7 @@ theorem chainTree_injective (feat : Nat → F) :
 /-- For right-branching chains, tree containment reduces to rank
     comparison: a chain of depth re contains a chain of depth r iff
     r ≤ re. This is exactly the matching condition of the rank-based
-    `ExponenceRule.Matches`, establishing that tree-based spellout
+    `SpanRule.Matches`, establishing that tree-based spellout
     generalizes (not replaces) rank-based spellout.
 
     Unlike the previous Bool formulation, no injectivity of `feat` is
