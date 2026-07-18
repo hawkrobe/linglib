@@ -266,7 +266,7 @@ theorem Hkm_not_templateInvariant : ¬ templateInvariant .Hkm :=
     `complement_selection_at_root_level` in `Categorizer.lean`) but l-selection is
     not: the two kinds of selection factor differently in the grammar. -/
 theorem cSelection_vs_lSelection :
-    (∀ (r : RootClassification) (c1 c2 : Categorizer),
+    (∀ (r : Verb.Root.Classification) (c1 c2 : Categorizer),
       (CategorizedRoot.mk r c1).root.arity = (CategorizedRoot.mk r c2).root.arity) ∧
     (∃ r : RootLabel, ¬ templateInvariant r) :=
   ⟨fun _ _ _ => rfl, ⟨.krh, krh_not_templateInvariant⟩⟩

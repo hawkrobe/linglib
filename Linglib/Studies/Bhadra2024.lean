@@ -1,5 +1,8 @@
-import Linglib.Morphology.RootTypology
+import Linglib.Semantics.Verb.Root.Classification
+import Linglib.Semantics.Verb.Root.Outcomes
 import Linglib.Semantics.ArgumentStructure.Affectedness
+import Linglib.Semantics.ArgumentStructure.EventStructure
+import Linglib.Semantics.ArgumentStructure.RoleList
 import Linglib.Semantics.ArgumentStructure.Thematic.Defs
 import Linglib.Semantics.Events.Basic
 import Linglib.Fragments.English.Predicates.Verbal
@@ -462,13 +465,13 @@ theorem affectedness_bridge :
     ¬ (1 < LevinClass.outcomeCard .hit) :=
   ⟨rfl, bend_predicts_un, hit_blocks_un_class⟩
 
-/-- RootTypology bridge: result roots entail change and lack the restitutive
+/-- Change-type bridge: result roots entail change and lack the restitutive
     *again* reading; property-concept roots are the reverse. -/
 theorem roottype_bridge :
-    RootType.entailsChange .result = true ∧
-    RootType.allowsRestitutiveAgain .result = false ∧
-    RootType.entailsChange .propertyConcept = false ∧
-    RootType.allowsRestitutiveAgain .propertyConcept = true :=
+    Verb.Root.ChangeType.entailsChange .result = true ∧
+    Verb.Root.ChangeType.allowsRestitutiveAgain .result = false ∧
+    Verb.Root.ChangeType.entailsChange .propertyConcept = false ∧
+    Verb.Root.ChangeType.allowsRestitutiveAgain .propertyConcept = true :=
   ⟨rfl, rfl, rfl, rfl⟩
 
 end Bhadra2024

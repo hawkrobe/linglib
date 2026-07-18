@@ -1337,7 +1337,6 @@ import Linglib.Morphology.Paradigm.Basic
 import Linglib.Morphology.Paradigm.Complexity
 import Linglib.Morphology.Paradigm.Contiguity
 import Linglib.Morphology.RootFamily
-import Linglib.Morphology.RootTypology
 import Linglib.Morphology.TenseAspect
 import Linglib.Morphology.TheorySpace
 import Linglib.Morphology.Unification
@@ -1895,6 +1894,7 @@ import Linglib.Semantics.Verb.Denotation
 import Linglib.Semantics.Verb.Distributivity
 import Linglib.Semantics.Verb.Root.Arity
 import Linglib.Semantics.Verb.Root.Basic
+import Linglib.Semantics.Verb.Root.Classification
 import Linglib.Semantics.Verb.Root.Closure
 import Linglib.Semantics.Verb.Root.OutcomeCardinality
 import Linglib.Semantics.Verb.Root.Outcomes

@@ -997,7 +997,7 @@ theorem ung_ge_e_mirror (pe : PreverbalElement) (h : pe.synLevel = .head) :
 -- ────────────────────────────────────────────────────
 
 /-! These theorems chain through four independently defined modules:
-`RootTypology.lean` (root semantics) → `Allosemy.lean` (v alloseme
+`Verb/Root/Classification.lean` (root semantics) → `Allosemy.lean` (v alloseme
 selection) → `Allosemy.lean` (nominalization reading) → `Benz2025.lean`
 (PE distribution from abstract principles). No single module defines
 the full path. -/

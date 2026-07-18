@@ -1,5 +1,5 @@
 import Linglib.Features.Gender.Interp
-import Linglib.Morphology.RootTypology
+import Linglib.Semantics.Verb.Root.Classification
 import Linglib.Syntax.Minimalist.Features
 import Linglib.Syntax.Minimalist.Verbal.Voice
 
@@ -57,7 +57,7 @@ in `VocabularyInsertion.lean`.
 namespace Morphology.DM
 
 open Minimalist Minimalist.Voice
-open Verb
+open Verb Verb.Root
 
 -- ============================================================================
 -- § 1: Categorizer Type
@@ -595,7 +595,7 @@ def GenderImpoverishmentRule.apply (rule : GenderImpoverishmentRule)
     syntactically projectable unit ([harley-2014] §2). -/
 structure CategorizedRoot where
   /-- The acategorial root (arity, change-type, etc.) -/
-  root : RootClassification
+  root : Classification
   /-- The categorizing head that gives it syntactic category -/
   categorizer : Categorizer
   deriving BEq, Repr
@@ -612,7 +612,7 @@ def CategorizedRoot.category (cr : CategorizedRoot) : Cat :=
     This is the formal content of the claim that √HAMMER can surface as
     either a noun (hammer) or a verb (to hammer) — same root, different
     category, determined entirely by the categorizer ([harley-2014] §2). -/
-theorem same_root_different_category (r : RootClassification) (c1 c2 : Categorizer)
+theorem same_root_different_category (r : Classification) (c1 c2 : Categorizer)
     (h : c1 ≠ c2) :
     (CategorizedRoot.mk r c1).category ≠ (CategorizedRoot.mk r c2).category := by
   simp only [CategorizedRoot.category, Categorizer.toCategory]
@@ -639,12 +639,12 @@ theorem same_root_different_category (r : RootClassification) (c1 c2 : Categoriz
     3. Hiaki suppletive verbs: suppletive forms are conditioned by the
        root's complement (singular vs. plural object), showing locality
        between root and argument below the categorizer. -/
-theorem complement_selection_at_root_level (r : RootClassification) (c1 c2 : Categorizer) :
+theorem complement_selection_at_root_level (r : Classification) (c1 c2 : Categorizer) :
     (CategorizedRoot.mk r c1).root.arity = (CategorizedRoot.mk r c2).root.arity := rfl
 
 /-- A theme-selecting root maintains its complement requirement regardless
     of whether it surfaces as a noun, verb, or adjective ([harley-2014] §3). -/
-theorem theme_selecting_root_always_selects (r : RootClassification) (c : Categorizer)
+theorem theme_selecting_root_always_selects (r : Classification) (c : Categorizer)
     (h : r.arity = .selectsTheme) :
     (CategorizedRoot.mk r c).root.arity.hasInternalArg = true := by
   simp [h, Root.Arity.hasInternalArg]
@@ -714,14 +714,14 @@ theorem recategorization_changes_category (cr : CategorizedRoot)
     V directly; √HAMMER + n + v also gives V but via layered derivation.
     This structural ambiguity is invisible at the category level
     ([harley-2014] §2). -/
-theorem denominal_yields_verbal (r : RootClassification) :
+theorem denominal_yields_verbal (r : Classification) :
     ∃ cr, (CategorizedRoot.mk r .n).recategorize .denominal = some cr ∧
           cr.category = Cat.V :=
   ⟨⟨r, .v⟩, rfl, rfl⟩
 
-/-- Deadjectival derivation (a → v) connects to [embick-2004]'s resultStative structure: what RootTypology calls
-    `AdjectivalStructure.resultStative` is, in DM terms, a root
-    first categorized by a, then further categorized by v. -/
+/-- Deadjectival derivation (a → v) connects to [embick-2004]'s result-stative
+    structure ([AspP AspR [vP DP v_become √ROOT]]): in DM terms, a root first
+    categorized by a, then further categorized by v. -/
 theorem deadjectival_source_target :
     Recategorization.deadjectival.source = .a ∧
     Recategorization.deadjectival.target = .v := ⟨rfl, rfl⟩

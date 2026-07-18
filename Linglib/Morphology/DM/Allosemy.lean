@@ -1,6 +1,6 @@
 import Linglib.Morphology.DM.Categorizer
 import Linglib.Morphology.DM.CategorizerSemantics
-import Linglib.Morphology.RootTypology
+import Linglib.Semantics.Verb.Root.Classification
 import Linglib.Syntax.Minimalist.Verbal.Voice
 
 /-!
@@ -27,8 +27,8 @@ linglib already formalizes several cases of allosemy without naming them:
   (relational/sortal/alienator), selected by `selectsD` and context
 - `Minimalist.Voice.Flavor`: Voice has six flavors (agentive/causer/
   nonThematic/expletive/impersonal/passive), each with different semantics
-- `RootType` / `RootClassification.changeType`: roots vary in whether
-  they entail change, conditioning the semantics of the v that embeds them
+- `Verb.Root.ChangeType` / `Verb.Root.Classification.changeType`: roots vary in
+  whether they entail change, conditioning the semantics of the v that embeds them
 
 This module provides the general abstraction: `AllosemicEntry` and
 `AllosemicHead` capture the pattern that a single morpheme has
@@ -149,7 +149,7 @@ theorem v_has_two_allosemes : vAllosemic.allosemeCount = 2 := rfl
     This connects [beavers-etal-2021]'s root typology to
     v allosemy: the root's lexical semantics
     determines which v alloseme is selected. -/
-def VAlloseme.fromRootType : _root_.RootType → VAlloseme
+def VAlloseme.fromRootType : Verb.Root.ChangeType → VAlloseme
   | .result          => .eventive
   | .propertyConcept => .zero
 
@@ -163,7 +163,7 @@ theorem pc_root_zero :
 
 /-- The bridge preserves the change entailment information:
     eventive v iff the root entails change. -/
-theorem fromRootType_iff_entailsChange (rt : _root_.RootType) :
+theorem fromRootType_iff_entailsChange (rt : Verb.Root.ChangeType) :
     (VAlloseme.fromRootType rt).introducesEvent = rt.entailsChange := by
   cases rt <;> rfl
 

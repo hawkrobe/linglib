@@ -1,4 +1,4 @@
-import Linglib.Morphology.RootTypology
+import Linglib.Semantics.Verb.Root.Classification
 import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Fragments.Chuj.VerbBuilding
 
@@ -32,7 +32,7 @@ Connect the fragment's theory-neutral types (`CRootClass`, `ChujVoiceSuffix`,
 
 ### Chuj fragment bridge (§§10–15)
 
-1. **Root class ↔ Root arity**: `CRootClass` maps to `RootClassification` values.
+1. **Root class ↔ Root arity**: `CRootClass` maps to `Classification` values.
    √TV = selectsTheme, others = noTheme.
 2. **Voice suffix ↔ Head**: theta assignment, D feature, phase head.
 3. **Paradigm predictions**: `isGrammatical` matches data attestation.
@@ -54,6 +54,7 @@ so only the later paper may reference the earlier).
 namespace Coon2019
 
 open Chuj
+open Verb.Root
 
 -- ════════════════════════════════════════════════════
 -- § 1. Paradigm Examples (§§2–5)
@@ -340,13 +341,13 @@ theorem chuj_causative_alternation_result :
 -- § 10. Chuj Fragment Bridge Theorems
 -- ════════════════════════════════════════════════════
 
-/-- Map the phenomena's root class to the fragment's RootClassification.
+/-- Map the phenomena's root class to the fragment's Classification.
     This connects theory-neutral distributional classes to the
-    theoretically analyzed RootClassification structure.
+    theoretically analyzed Classification structure.
     √TV maps to `rootTV_res` as a representative — the choice between
     `rootTV_res` and `rootTV_pc` is arbitrary for arity (both are
     `selectsTheme`); only changeType differs. -/
-def toFragmentRoot : CRootClass → RootClassification
+def toFragmentRoot : CRootClass → Classification
   | .tv  => rootTV_res
   | .itv => rootITV
   | .pos => rootPOS
