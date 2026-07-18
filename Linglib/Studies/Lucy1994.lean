@@ -46,16 +46,22 @@ finite lookups.
 namespace Lucy1994
 
 open Verb
-open Morphology.Derivation
+open Morphology
 open Yukatek.Roots
 open Yukatek.Operators
 
 /-! ### Salience classes (re-exported from theory) -/
 
 /-! `SalienceClass` and `classOf` live in
-    `Semantics/Lexical/Roots/SalienceClass.lean`. This file
+    `Semantics/Verb/Root/SalienceClass.lean`. This file
     provides the full [lucy-1994] analysis on top of them:
     operator-applicability characterizations and per-root sanity checks. -/
+
+/-- A root's applicability profile: the exponents of the inventory's
+    applicable operators at `r`, in inventory order — derived from the
+    `Morphology.Exponence` selection API, not re-stipulated. -/
+def profile (r : Root) : List String :=
+  (Exponence.applicable (F := String) inventory r).map DiagOp.exponent
 
 /-- A root's predicted salience class: the substrate classifier
     applied to its signature and the fragment's arity assignment. -/
@@ -75,23 +81,23 @@ theorem class_depends_only_on_signature_and_arity
     factor through the pair (kind signature × arity), drawn from a
     32-element fintype. Each characterisation therefore reduces —
     after rewriting the profile to pair level
-    (`applicableNames_eq_profile`) and generalising the pair — to a
+    (`profile_eq`) and generalising the pair — to a
     statement over all pairs that `decide` checks. The local macro
     `lucy_applicable` packages the reduction. -/
 
-/-- The inventory's applicability profile as a function of the
+/-- The applicability profile as a function of the
     (signature × arity) pair. The four operator conditions are
     pairwise disjoint (`classes_pairwise_disjoint`), so at most one
-    name appears. -/
-private theorem applicableNames_eq_profile (r : Root) :
-    inventory.applicableNames r =
+    exponent appears. -/
+private theorem profile_eq (r : Root) :
+    profile r =
       (if IsAgentSalient r.kinds (arity r) then ["=t"] else []) ++
       (if IsAgentPatientSalient (arity r) then ["=∅"] else []) ++
       (if IsPatientSalient r.kinds (arity r) then ["=s"] else []) ++
       (if IsPositional r.kinds (arity r) then ["-tal"] else []) := by
-  simp only [inventory, Inventory.applicableNames, affectiveT, zeroDeriv,
-    causativeS, positionalTal, List.filter_cons, List.filter_nil,
-    decide_eq_true_eq]
+  simp only [profile, Exponence.applicable, applies_iff, inventory,
+    affectiveT, zeroDeriv, causativeS, positionalTal, List.filter_cons,
+    List.filter_nil, decide_eq_true_eq]
   generalize r.kinds = s
   generalize arity r = a
   revert s a
@@ -99,7 +105,7 @@ private theorem applicableNames_eq_profile (r : Root) :
 
 local macro "lucy_applicable " r:term : tactic =>
   `(tactic|
-    (rw [applicableNames_eq_profile]
+    (rw [profile_eq]
      unfold predictedClass
      generalize ($r).kinds = s
      generalize arity $r = a
@@ -108,39 +114,39 @@ local macro "lucy_applicable " r:term : tactic =>
 
 /-- The `=t`-only applicability profile characterises agent-salient roots. -/
 theorem agent_iff_applicable_t (r : Root) :
-    predictedClass r = some .agent ↔ inventory.applicableNames r = ["=t"] := by
+    predictedClass r = some .agent ↔ profile r = ["=t"] := by
   lucy_applicable r
 
 /-- The `=∅`-only applicability profile characterises agent-patient salient roots. -/
 theorem agentPatient_iff_applicable_zero (r : Root) :
-    predictedClass r = some .agentPatient ↔ inventory.applicableNames r = ["=∅"] := by
+    predictedClass r = some .agentPatient ↔ profile r = ["=∅"] := by
   lucy_applicable r
 
 /-- The `=s`-only applicability profile characterises patient-salient roots. -/
 theorem patient_iff_applicable_s (r : Root) :
-    predictedClass r = some .patient ↔ inventory.applicableNames r = ["=s"] := by
+    predictedClass r = some .patient ↔ profile r = ["=s"] := by
   lucy_applicable r
 
 /-- The `-tal`-only applicability profile characterises positional roots. -/
 theorem positional_iff_applicable_tal (r : Root) :
-    predictedClass r = some .positional ↔ inventory.applicableNames r = ["-tal"] := by
+    predictedClass r = some .positional ↔ profile r = ["-tal"] := by
   lucy_applicable r
 
 /-- An empty applicability profile characterises roots in [lucy-1994]'s
     diagnostic gap (the no-manner, no-result signatures other than the
     pure positional configuration `{.state}`). -/
 theorem none_iff_applicable_empty (r : Root) :
-    predictedClass r = none ↔ inventory.applicableNames r = [] := by
+    predictedClass r = none ↔ profile r = [] := by
   lucy_applicable r
 
 /-- **Applicability-as-classifier.** Two roots have the same applicability profile
     under [lucy-1994]'s diagnostic inventory iff they have the
     same predicted salience class. The 4 named-class iff-theorems are
     special cases. -/
-theorem applicableNames_eq_iff_predictedClass_eq (r₁ r₂ : Root) :
-    inventory.applicableNames r₁ = inventory.applicableNames r₂ ↔
+theorem profile_eq_iff_predictedClass_eq (r₁ r₂ : Root) :
+    profile r₁ = profile r₂ ↔
       predictedClass r₁ = predictedClass r₂ := by
-  rw [applicableNames_eq_profile, applicableNames_eq_profile]
+  rw [profile_eq, profile_eq]
   unfold predictedClass
   generalize r₁.kinds = s₁
   generalize arity r₁ = a₁
