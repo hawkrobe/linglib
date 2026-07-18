@@ -22,7 +22,7 @@ open Morphology
 
 /-- Sesotho verb affix template ([demuth-1992], [doke-mofokeng-1967]). The
 suffix slots run stem-outward; the prefix slots run word-edge inward. -/
-def verbAffixTemplate : AffixTemplate where
+def verbAffixTemplate : AffixTemplate MorphCategory where
   suffixSlots :=
     [ .valence    -- 1. reversive
     , .valence    -- 2. causative
