@@ -434,11 +434,11 @@ theorem singular_features_match :
   rintro c (rfl | rfl | rfl) <;> rfl
 
 -- ============================================================================
--- § 11: Epistemic Authority ([bickel-nichols-2001])
+-- § 11: Epistemic Authority ([bickel-nichols-2007])
 -- ============================================================================
 
 /-- Epistemic authority marking on verb agreement.
-    [bickel-nichols-2001]
+    [bickel-nichols-2007]
 
     Some languages (Akhvakh, Kathmandu Newari, Tibetan) mark whether the
     speaker has direct epistemic authority over the event. The morphological

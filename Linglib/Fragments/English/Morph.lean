@@ -2,11 +2,11 @@ import Linglib.Morphology.FusionTypology
 
 /-!
 # English Morphological Profile
-[wals-2013] [bickel-nichols-2001]
+[wals-2013] [bickel-nichols-2007]
 
-WALS-derived profile for English (ISO `eng`). B&N 2001 places English
+WALS-derived profile for English (ISO `eng`). B&N 2007 places English
 in the "agglutinating" cell (concatenative + nonflexive + separative)
-despite its small inflectional inventory; cf. [bickel-nichols-2001].
+despite its small inflectional inventory; cf. [bickel-nichols-2007].
 -/
 
 namespace English
@@ -23,7 +23,7 @@ def morphProfile : MorphProfile :=
 
 example : morphProfile.iso = "eng" ∧ morphProfile.language = "English" := ⟨rfl, rfl⟩
 
-/-- B&N 2001 places English in the "agglutinating" cell. -/
+/-- B&N 2007 places English in the "agglutinating" cell. -/
 example : morphProfile.IsAgglutinating := by decide
 
 end English

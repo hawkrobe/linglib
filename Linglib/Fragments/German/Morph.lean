@@ -2,12 +2,12 @@ import Linglib.Morphology.FusionTypology
 
 /-!
 # German Morphological Profile
-[wals-2013] [bickel-nichols-2001]
+[wals-2013] [bickel-nichols-2007]
 
 WALS-derived profile (Ch 20A–29A, 21B, 62A, 79A/B, 80A) for German (ISO `deu`,
-WALS code `ger`). The B&N 2001 parameters (`flexivity := flexive`,
+WALS code `ger`). The B&N 2007 parameters (`flexivity := flexive`,
 `bnExponence := cumulative`) are not derivable from any WALS chapter and are
-paper-stipulated per [bickel-nichols-2001]; together with the WALS-derived
+paper-stipulated per [bickel-nichols-2007]; together with the WALS-derived
 `fusion := concatenative` they place German in the traditional "fusional" cell.
 
 WALS F20A's `exclusivelyConcatenative` verdict samples a small set of formatives
@@ -22,7 +22,7 @@ open Morphology
 
 /-- German: WALS-derived `MorphProfile` via `MorphProfile.fromWALS`. Required-field
     fallbacks match WALS values (lookup wins when present); `flexivity` and
-    `bnExponence` are stipulated per B&N 2001. -/
+    `bnExponence` are stipulated per B&N 2007. -/
 def morphProfile : MorphProfile :=
   .fromWALS "German" "deu"
     (fusionFb        := .concatenative)
@@ -33,7 +33,7 @@ def morphProfile : MorphProfile :=
 /-- Typo sentry for the ISO and language label. -/
 example : morphProfile.iso = "deu" ∧ morphProfile.language = "German" := ⟨rfl, rfl⟩
 
-/-- B&N 2001 places German in the "fusional" cell. Bridge theorem made local
+/-- B&N 2007 places German in the "fusional" cell. Bridge theorem made local
     so the per-language commitment is visible here, not only inside
     `BickelNichols2013.lean`'s 18-language aggregate. -/
 example : morphProfile.IsFusional := by decide

@@ -2,9 +2,9 @@ import Linglib.Morphology.FusionTypology
 
 /-!
 # Tagalog Morphological Profile
-[wals-2013] [bickel-nichols-2001]
+[wals-2013] [bickel-nichols-2007]
 
-WALS-derived profile for Tagalog (ISO `tgl`). B&N 2001 places Tagalog in
+WALS-derived profile for Tagalog (ISO `tgl`). B&N 2007 places Tagalog in
 the "agglutinating" cell (concatenative + nonflexive + separative).
 -/
 
@@ -22,7 +22,7 @@ def morphProfile : MorphProfile :=
 
 example : morphProfile.iso = "tgl" ∧ morphProfile.language = "Tagalog" := ⟨rfl, rfl⟩
 
-/-- B&N 2001 places Tagalog in the "agglutinating" cell. -/
+/-- B&N 2007 places Tagalog in the "agglutinating" cell. -/
 example : morphProfile.IsAgglutinating := by decide
 
 end Tagalog

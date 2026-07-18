@@ -279,7 +279,7 @@ open Agreement (Target)
     or by referential meaning (semantic).
 
     Distinct from the grammatical-vs-pronominal split
-    ([bickel-nichols-2001]), which is about whether the agreement
+    ([bickel-nichols-2007]), which is about whether the agreement
     marker has referential autonomy. This type is about what *controls*
     agreement — the formal features of the controller or its semantic
     content. -/

@@ -2,9 +2,9 @@ import Linglib.Morphology.FusionTypology
 
 /-!
 # Hungarian Morphological Profile
-[wals-2013] [bickel-nichols-2001]
+[wals-2013] [bickel-nichols-2007]
 
-WALS-derived profile for Hungarian (ISO `hun`). B&N 2001 places Hungarian
+WALS-derived profile for Hungarian (ISO `hun`). B&N 2007 places Hungarian
 in the "agglutinating" cell (concatenative + nonflexive + separative).
 -/
 
@@ -22,7 +22,7 @@ def morphProfile : MorphProfile :=
 
 example : morphProfile.iso = "hun" ∧ morphProfile.language = "Hungarian" := ⟨rfl, rfl⟩
 
-/-- B&N 2001 places Hungarian in the "agglutinating" cell. -/
+/-- B&N 2007 places Hungarian in the "agglutinating" cell. -/
 example : morphProfile.IsAgglutinating := by decide
 
 end Hungarian

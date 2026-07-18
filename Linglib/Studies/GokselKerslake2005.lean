@@ -1,5 +1,7 @@
 import Linglib.Semantics.Tense.Evidential
 import Linglib.Fragments.Turkish.TAM
+import Linglib.Fragments.Turkish.SuffixTemplate
+import Linglib.Fragments.Turkish.VowelHarmony
 
 /-!
 # Göksel & Kerslake 2005: Turkish Evidential TAM
@@ -55,17 +57,67 @@ theorem same_tense_different_evidence :
     diUP = mişUP ∧ diEP ≠ mişEP := by
   exact ⟨rfl, by decide⟩
 
-/-- Both -DI and -mIş occupy the TAM slot in the Turkish suffix template.
-    They are in complementary distribution: you cannot have both. -/
-theorem di_miş_same_slot :
-    let di := (entries.filter (·.category == .pastDef)).head!
-    let miş := (entries.filter (·.category == .evidential)).head!
-    di.category != miş.category = true := by native_decide
-
 /-- -DI is the only category with contemporaneous EP (direct witness). -/
 theorem di_unique_direct : diEP = .contemporaneous := rfl
 
 /-- -mIş EP is strictly downstream — evidence comes after the event. -/
 theorem miş_indirect : mişEP = .strictDownstream := rfl
+
+-- ============================================================================
+-- § 3: The suffix template (Ch 6, 8, 13-14)
+-- ============================================================================
+
+/-! Ordering predictions derived from the Fragment templates
+(`Turkish.SuffixTemplate.verbTemplate`/`nounTemplate`), checked as
+slot-position facts rather than re-typed rank tables. -/
+
+open Turkish.SuffixTemplate
+
+/-- The verbal template has a single TAM slot, so -DI and -mIş — both
+TAM-category suffixes — are in complementary distribution: a simplex
+verb form cannot carry both. -/
+theorem tam_slot_unique :
+    verbTemplate.suffixSlots.count .tam = 1 := by decide
+
+/-- Negation strictly precedes TAM in the template, matching the surface
+order stem-NEG-TAM: every symmetric negative in the TAM inventory spells
+NEG before the TAM suffix (gel-**me**-**di** 'come-NEG-PST'). -/
+theorem negation_precedes_tam :
+    verbTemplate.suffixSlots.idxOf .negation < verbTemplate.suffixSlots.idxOf .tam ∧
+    ∀ e ∈ entries, e.isNegSymmetric → e.negSuffix.data.take 2 = ['-', 'm'] := by decide
+
+/-- The question particle mI fills the outermost verbal slot, following
+agreement: gel-di-**m** **mi**? (come-PST-1SG Q). -/
+theorem question_is_outermost :
+    ∀ s ∈ verbTemplate.suffixSlots,
+      verbTemplate.suffixSlots.idxOf s ≤ verbTemplate.suffixSlots.idxOf .question := by
+  decide
+
+/-- Nominal ordering: plural before possessive before case
+(ev-**ler**-**im**-**de** 'house-PL-1SG.POSS-LOC'). -/
+theorem noun_slot_order :
+    nounTemplate.suffixSlots.idxOf .plural < nounTemplate.suffixSlots.idxOf .possessive ∧
+    nounTemplate.suffixSlots.idxOf .possessive < nounTemplate.suffixSlots.idxOf .case := by
+  decide
+
+-- ============================================================================
+-- § 4: Vowel harmony resolves TAM suffix vowels
+-- ============================================================================
+
+open Turkish.VowelHarmony
+
+/-- The archiphonemic I in progressive -Iyor resolves to 4 surface vowels
+by stem harmony: kol → -ıyor, gel → -iyor, kork → -uyor, göz → -üyor. -/
+theorem progressive_I_resolution :
+    resolveI true  false = ı_vowel ∧
+    resolveI false false = i_vowel ∧
+    resolveI true  true  = u_vowel ∧
+    resolveI false true  = ü_vowel := ⟨rfl, rfl, rfl, rfl⟩
+
+/-- The archiphonemic A in future -(y)AcAK resolves to a/e by palatal
+harmony: kol → -(y)acak, gel → -(y)ecek. -/
+theorem future_A_resolution :
+    resolveA true  = a_vowel ∧
+    resolveA false = e_vowel := ⟨rfl, rfl⟩
 
 end GokselKerslake2005

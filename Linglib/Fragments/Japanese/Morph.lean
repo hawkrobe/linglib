@@ -4,9 +4,9 @@ import Linglib.Morphology.Template
 
 /-!
 # Japanese Morphological Profile
-[wals-2013] [bickel-nichols-2001] [kaiser-yamamoto-2013]
+[wals-2013] [bickel-nichols-2007] [kaiser-yamamoto-2013]
 
-WALS-derived profile for Japanese (ISO `jpn`). B&N 2001 places Japanese
+WALS-derived profile for Japanese (ISO `jpn`). B&N 2007 places Japanese
 in the "agglutinating" cell (concatenative + nonflexive + separative).
 
 The verb suffix template (`verbAffixTemplate`) follows [kaiser-yamamoto-2013]
@@ -37,7 +37,7 @@ def morphProfile : MorphProfile :=
 
 example : morphProfile.iso = "jpn" ∧ morphProfile.language = "Japanese" := ⟨rfl, rfl⟩
 
-/-- B&N 2001 places Japanese in the "agglutinating" cell. -/
+/-- B&N 2007 places Japanese in the "agglutinating" cell. -/
 example : morphProfile.IsAgglutinating := by decide
 
 /-- Japanese verb suffix template, stem-outward ([kaiser-yamamoto-2013], UD
