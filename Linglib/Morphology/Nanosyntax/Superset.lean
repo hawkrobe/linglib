@@ -425,4 +425,66 @@ example :
     spellout homophonous 1 = some "B" ∧
     spellout homophonous 2 = some "A" := by decide
 
+/-! ### The shared exponence core
+
+One carrier, two `Rule` views: the Subset reading
+(`ExponenceRule.toRule`, `Morphology/Exponence/Hierarchy.lean`) and the
+Superset reading below instantiate the shared core with dual
+applicability conditions and opposite derived-specificity orders. -/
+
+section ExponenceCore
+
+open Morphology.Exponence
+
+/-- View an entry under the **Superset** reading as a rule of the
+shared exponence core: applicability is `Matches` (the stored
+constituent contains the structure), dually to `ExponenceRule.toRule`'s
+Subset reading. -/
+def ExponenceRule.toSupersetRule (it : ExponenceRule n F) :
+    Exponence.Rule (Fin n) F :=
+  ⟨it.exponent, it.Matches⟩
+
+/-- Minimize Junk is the derived specificity of the shared core under
+the Superset reading: smaller span = more specific. -/
+theorem ExponenceRule.toSupersetRule_moreSpecific_iff
+    {it jt : ExponenceRule n F} :
+    it.toSupersetRule.MoreSpecific jt.toSupersetRule ↔ it.spans ≤ jt.spans :=
+  ExponenceRule.matches_imp_iff_spans_le
+
+/-- **Subset/Superset duality** over context-free vocabularies (the
+nanosyntax idealization): DM-style Subset specificity of `it` over `jt`
+is Superset specificity of `jt` over `it`. With contextual restrictions
+the Subset order compares thresholds, not spans, and the duality is
+only one-directional. -/
+theorem ExponenceRule.toRule_moreSpecific_iff_toSupersetRule
+    {it jt : ExponenceRule n F}
+    (hit : it.context = none) (hjt : jt.context = none) :
+    it.toRule.MoreSpecific jt.toRule ↔
+      jt.toSupersetRule.MoreSpecific it.toSupersetRule := by
+  rw [ExponenceRule.toRule_moreSpecific_iff,
+    ExponenceRule.moreSpecific_iff_threshold_le,
+    ExponenceRule.toSupersetRule_moreSpecific_iff]
+  unfold ExponenceRule.threshold
+  rw [hit, hjt]
+  simp
+
+/-- Minimize-Junk selection is an Elsewhere winner of the shared core
+under the Superset reading — with no side conditions: over a linear
+hierarchy the span order is total, so the least-span match is maximally
+specific. -/
+theorem spelloutWinner_isElsewhereWinner {v : List (ExponenceRule n F)}
+    {g : Fin n} {it : ExponenceRule n F}
+    (h : spelloutWinner v g = some it) :
+    Exponence.IsElsewhereWinner (v.map ExponenceRule.toSupersetRule) g
+      it.toSupersetRule := by
+  obtain ⟨hmem, hms⟩ := spelloutWinner_spec h
+  obtain ⟨-, -, -, hle⟩ := exists_of_minSpan_eq_coe hms
+  refine ⟨List.mem_map_of_mem hmem, hle, ?_⟩
+  rintro s hs hsapp -
+  obtain ⟨jt, hjt, rfl⟩ := List.mem_map.mp hs
+  rw [ExponenceRule.toSupersetRule_moreSpecific_iff]
+  exact le_spans_of_minSpan_eq_coe hms hjt hsapp
+
+end ExponenceCore
+
 end Morphology.Containment

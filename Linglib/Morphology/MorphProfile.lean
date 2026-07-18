@@ -72,7 +72,7 @@ inductive Flexivity where
     Distinct from `ExponenceScope` (B&N's broader cumulative/separative
     parameter which applies to all morphological categories, not just case).
     [bickel-nichols-2001] -/
-inductive Exponence where
+inductive CaseExponence where
   | monoexponential
   | polyexponential
   | noCase
@@ -239,7 +239,7 @@ structure MorphProfile where
   /-- Ch 20: Fusion type -/
   fusion : Fusion
   /-- Ch 21: Exponence type -/
-  exponence : Exponence
+  exponence : CaseExponence
   /-- Ch 22: Inflectional synthesis of the verb -/
   verbSynthesis : VerbSynthesis
   /-- Locus of marking (derived from Ch 23 clause-level; fallback for absent languages) -/
@@ -297,7 +297,7 @@ def fromWALS20A : Data.WALS.F20A.FusionType → Option Fusion
 
 /-- Convert WALS 21A exponence type to the local `Exponence` classification.
     Returns `none` for `noCase` (no information about overall exponence). -/
-def fromWALS21A : Data.WALS.F21A.ExponenceType → Option Exponence
+def fromWALS21A : Data.WALS.F21A.ExponenceType → Option CaseExponence
   | .monoexponentialCase  => some .monoexponential
   | .caseNumber           => some .polyexponential
   | .caseReferentiality   => some .polyexponential
@@ -431,7 +431,7 @@ def locusClauseToLocus : LocusClause → LocusOfMarking
 def walsFusion (iso : String) : Option Fusion :=
   (Data.WALS.F20A.lookupISO iso).bind (fromWALS20A ·.value)
 
-def walsExponence (iso : String) : Option Exponence :=
+def walsExponence (iso : String) : Option CaseExponence :=
   (Data.WALS.F21A.lookupISO iso).bind (fromWALS21A ·.value)
 
 def walsVerbSynthesis (iso : String) : Option VerbSynthesis :=
@@ -501,7 +501,7 @@ def walsVerbalNumber (iso : String) : Option VerbalNumber :=
 def MorphProfile.fromWALS
     (language iso : String)
     (fusionFb : Fusion)
-    (exponenceFb : Exponence)
+    (exponenceFb : CaseExponence)
     (verbSynthesisFb : VerbSynthesis)
     (locusFb : LocusOfMarking)
     (prefixSuffixFb : PrefixSuffix)
