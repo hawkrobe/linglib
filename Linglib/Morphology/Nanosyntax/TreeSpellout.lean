@@ -1,4 +1,6 @@
 import Linglib.Core.Order.Branching
+import Linglib.Morphology.Exponence.Rule
+import Mathlib.Data.List.MinMax
 
 /-!
 # Nanosyntax: Tree-Based Spellout
@@ -22,7 +24,11 @@ uses containment as the simpler equivalent formulation.
 
 - `NanoTree`: feature trees; `NanoTree.Contains`: sub-constituency
 - `TreeLexEntry`: a stored tree paired with an exponent; `TreeLexEntry.Matches`
-- `treeSpellout`: Superset Principle + Elsewhere Condition
+- `treeSelect`, `treeSpellout`: Superset Principle + Elsewhere Condition
+- `TreeLexEntry.toRule`, `treeSelect_isElsewhereWinner`: the engine as an
+  instance of the shared exponence core — derived specificity is reverse
+  tree containment (`toRule_moreSpecific_iff`), and smallest-tree
+  selection is an Elsewhere winner with no side conditions
 - `FootConditionMet`: [taraldsen-et-al-2018]'s constraint on backtracking
 - `chain_contains_iff_le`: for right-branching chains, tree containment
   reduces to rank comparison — tree-based spellout generalizes (not
@@ -173,6 +179,50 @@ where
 instance [DecidableEq F] (s t : NanoTree F) : Decidable (Contains s t) :=
   NanoTree.decContains s t
 
+theorem Contains.trans {a b c : NanoTree F} (h₁ : Contains a b)
+    (h₂ : Contains b c) : Contains a c := by
+  induction h₁ with
+  | refl => exact h₂
+  | child hmem _ ih => exact .child hmem (ih h₂)
+
+instance : Trans (Contains (F := F)) Contains Contains := ⟨Contains.trans⟩
+
+/-- Each daughter's size is bounded by the daughters' total size. -/
+theorem le_sizeList_of_mem {cs : List (NanoTree F)} {c : NanoTree F}
+    (h : c ∈ cs) : c.size ≤ size.sizeList cs := by
+  induction cs with
+  | nil => cases h
+  | cons d ds ih =>
+    rcases List.mem_cons.mp h with rfl | h
+    · simp only [size.sizeList]; omega
+    · have := ih h; simp only [size.sizeList]; omega
+
+theorem size_lt_of_mem {f : F} {cs : List (NanoTree F)} {c : NanoTree F}
+    (h : c ∈ cs) : c.size < (NanoTree.node f cs).size := by
+  have := le_sizeList_of_mem h
+  simp only [size]; omega
+
+/-- Containment is size-monotone: a contained tree is no larger. -/
+theorem Contains.size_le {s t : NanoTree F} (h : Contains s t) :
+    t.size ≤ s.size := by
+  induction h with
+  | refl => exact Nat.le_refl _
+  | child hmem _ ih => exact ih.trans (Nat.le_of_lt (size_lt_of_mem hmem))
+
+/-- Containment is size-strict off the diagonal: a contained tree of no
+smaller size is the tree itself. -/
+theorem Contains.eq_of_size_le {s t : NanoTree F} (h : Contains s t)
+    (hs : s.size ≤ t.size) : s = t := by
+  cases h with
+  | refl => rfl
+  | child hmem hc =>
+    exact absurd hs
+      (Nat.not_le.mpr (Nat.lt_of_le_of_lt hc.size_le (size_lt_of_mem hmem)))
+
+theorem Contains.antisymm {s t : NanoTree F} (h₁ : Contains s t)
+    (h₂ : Contains t s) : s = t :=
+  h₁.eq_of_size_le h₂.size_le
+
 /-! ### Foot -/
 
 /-- The foot of a tree: the feature at the bottom of the leftmost
@@ -217,6 +267,12 @@ instance [DecidableEq F] (entry : TreeLexEntry F α) (target : NanoTree F) :
 
 /-! ### Tree spellout (Elsewhere Condition) -/
 
+/-- The matching entry with the smallest stored tree (first-listed on
+    ties): Minimize Junk over tree-generalized Superset matching. -/
+def treeSelect [DecidableEq F] (entries : List (TreeLexEntry F α))
+    (target : NanoTree F) : Option (TreeLexEntry F α) :=
+  (entries.filter fun e => decide (e.Matches target)).argmin (·.tree.size)
+
 /-- Phrasal spellout via the tree-generalized Superset Principle:
     among entries whose tree contains the target, select the one
     with the smallest tree (most specific match).
@@ -226,14 +282,61 @@ instance [DecidableEq F] (entry : TreeLexEntry F α) (target : NanoTree F) :
     specificity metric is tree size instead of rank. -/
 def treeSpellout [DecidableEq F] (entries : List (TreeLexEntry F α))
     (target : NanoTree F) : Option α :=
-  let matching := entries.filter fun e => decide (e.Matches target)
-  (matching.foldl (init := none) fun acc entry =>
-    match acc with
-    | none => some entry
-    | some prev =>
-      if entry.tree.size < prev.tree.size then some entry
-      else some prev
-  ).map (·.exponent)
+  (treeSelect entries target).map (·.exponent)
+
+/-! ### The shared exponence core -/
+
+section ExponenceCore
+
+open Morphology.Exponence
+
+/-- View a tree lexical entry as a rule of the shared exponence core
+(`Morphology.Exponence.Rule`): contexts are syntactic targets,
+applicability is Superset-Principle matching. -/
+def TreeLexEntry.toRule (e : TreeLexEntry F α) : Rule (NanoTree F) α :=
+  ⟨e.exponent, e.Matches⟩
+
+/-- Derived specificity is reverse containment of the stored trees:
+`a` is at least as specific as `b` exactly when `b`'s tree contains
+`a`'s. Tree size is therefore a faithful specificity measure
+(`Contains.size_le`), which is what licenses smallest-tree selection. -/
+theorem TreeLexEntry.toRule_moreSpecific_iff {a b : TreeLexEntry F α} :
+    a.toRule.MoreSpecific b.toRule ↔ b.tree.Contains a.tree :=
+  ⟨λ h => h (.refl a.tree), λ h _ hc => h.trans hc⟩
+
+/-- Smallest-tree selection is an Elsewhere winner of the shared core,
+with no side conditions: containment is size-antisymmetric
+(`Contains.eq_of_size_le`), so a size-minimal matching entry is
+maximally specific among the matching entries. -/
+theorem treeSelect_isElsewhereWinner [DecidableEq F]
+    {entries : List (TreeLexEntry F α)} {target : NanoTree F}
+    {e : TreeLexEntry F α} (h : treeSelect entries target = some e) :
+    IsElsewhereWinner (entries.map TreeLexEntry.toRule) target e.toRule := by
+  have hmem := List.argmin_mem h
+  rw [List.mem_filter] at hmem
+  obtain ⟨hev, hem⟩ := hmem
+  have hematch : e.Matches target := of_decide_eq_true hem
+  refine ⟨List.mem_map_of_mem hev, hematch, ?_⟩
+  rintro s hs happ hspec
+  obtain ⟨b, hb, rfl⟩ := List.mem_map.mp hs
+  rw [TreeLexEntry.toRule_moreSpecific_iff] at hspec ⊢
+  have hble : ¬ b.tree.size < e.tree.size :=
+    List.not_lt_of_mem_argmin (f := λ e : TreeLexEntry F α => e.tree.size)
+      (List.mem_filter.mpr
+        ⟨hb, decide_eq_true (show b.Matches target from happ)⟩) h
+  exact hspec.eq_of_size_le (Nat.le_of_not_lt hble) ▸ .refl _
+
+/-- The spelled-out exponent is an Elsewhere winner's exponent. -/
+theorem treeSpellout_isElsewhereWinner [DecidableEq F]
+    {entries : List (TreeLexEntry F α)} {target : NanoTree F} {x : α}
+    (h : treeSpellout entries target = some x) :
+    ∃ e ∈ entries, e.exponent = x ∧
+      IsElsewhereWinner (entries.map TreeLexEntry.toRule) target e.toRule := by
+  obtain ⟨e, he, rfl⟩ := Option.map_eq_some_iff.mp h
+  exact ⟨e, (List.mem_filter.mp (List.argmin_mem he)).1, rfl,
+    treeSelect_isElsewhereWinner he⟩
+
+end ExponenceCore
 
 /-! ### Foot Condition -/
 
