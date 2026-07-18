@@ -1313,7 +1313,9 @@ import Linglib.Morphology.DM.NominalStructure
 import Linglib.Morphology.DM.VocabSimple
 import Linglib.Morphology.DM.VocabularyInsertion
 import Linglib.Morphology.Exponence.Basic
-import Linglib.Morphology.Exponence.Hierarchy
+import Linglib.Morphology.Exponence.Containment.Contiguity
+import Linglib.Morphology.Exponence.Containment.Defs
+import Linglib.Morphology.Exponence.Containment.Selection
 import Linglib.Morphology.Exponence.Select
 import Linglib.Morphology.DegreeContainment
 import Linglib.Morphology.Derivation
@@ -1331,7 +1333,6 @@ import Linglib.Morphology.Morph
 import Linglib.Morphology.MorphProfile
 import Linglib.Morphology.MorphRule
 import Linglib.Morphology.MorphWord
-import Linglib.Morphology.Nanosyntax.Superset
 import Linglib.Morphology.Nanosyntax.TreeSpellout
 import Linglib.Morphology.Number
 import Linglib.Morphology.Paradigm.Basic

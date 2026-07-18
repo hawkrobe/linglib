@@ -7,7 +7,7 @@ import Mathlib.Data.List.MinMax
 [taraldsen-et-al-2018] [caha-2009] [starke-2009]
 
 Extension of rank-based Superset spellout
-(`Morphology/Nanosyntax/Superset.lean`) to tree-structured spellout. Implements the Superset Principle (SP) for trees: a lexical
+(`Morphology/Exponence/Containment/Contiguity.lean`) to tree-structured spellout. Implements the Superset Principle (SP) for trees: a lexical
 entry M ↔ S' can spell out syntactic target S if S' structurally
 contains S (`NanoTree.Contains`). Among matching entries, the Elsewhere
 Condition selects the smallest (by tree size).
@@ -242,7 +242,7 @@ end NanoTree
     fragments). The tree encodes the full feature geometry that the
     morpheme lexicalizes.
 
-    Contrast with `SpanRule` (`Morphology/Exponence/Hierarchy.lean`)
+    Contrast with `SpanRule` (`Morphology/Exponence/Containment/Contiguity.lean`)
     which stores only a span (depth on a 1D functional sequence). -/
 structure TreeLexEntry (F : Type*) (α : Type*) where
   /-- The stored feature tree. -/

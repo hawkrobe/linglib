@@ -1,6 +1,6 @@
 import Mathlib.Order.UpperLower.Basic
 import Linglib.Features.Case.Basic
-import Linglib.Morphology.Nanosyntax.Superset
+import Linglib.Morphology.Exponence.Containment.Contiguity
 import Linglib.Syntax.Case.Order
 import Linglib.Fragments.Dargwa.Case
 import Linglib.Fragments.Finnish.Case
