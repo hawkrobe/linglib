@@ -5,7 +5,10 @@
 A root family records the word forms a single (sub-morphemic) root projects
 across lexical categories — the [marantz-1997] uncategorised-roots pattern:
 the category of the surface word is determined by the morphological
-environment, not by the root itself.
+environment, not by the root itself. This is the *category-neutral lexical*
+root, distinct from the consonantal melody `Morphology.Root` and the
+lexical-semantic `Verb.Root`; identifying it with either is a framework
+claim that lives in the study asserting it, not here.
 
 ## Main declarations
 
@@ -35,8 +38,11 @@ structure RootFamily where
   forms : List (String × LexCat)
   deriving Repr
 
-/-- Does this root family have a form in the given category? -/
-def RootFamily.hasCategory (rf : RootFamily) (c : LexCat) : Bool :=
-  rf.forms.any (·.2 == c)
+/-- The family has a form in category `c`. -/
+def RootFamily.HasCategory (rf : RootFamily) (c : LexCat) : Prop :=
+  ∃ f ∈ rf.forms, f.2 = c
+
+instance (rf : RootFamily) (c : LexCat) : Decidable (rf.HasCategory c) :=
+  List.decidableBEx _ rf.forms
 
 end Morphology

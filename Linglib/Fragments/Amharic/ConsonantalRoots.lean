@@ -1,4 +1,4 @@
-import Linglib.Morphology.ConsonantalRoot
+import Linglib.Morphology.Root
 import Linglib.Phonology.Constraints.Basic
 
 /-!
@@ -74,9 +74,9 @@ def wd : Root String := ⟨["w", "d"]⟩
 -- § 3: Sanity properties
 -- ============================================================================
 
-theorem fdj_triradical : fdj.triradical = true := rfl
-theorem sbr_triradical : sbr.triradical = true := rfl
-theorem wd_biradical : wd.biradical = true := rfl
+theorem fdj_triradical : fdj.Triradical := rfl
+theorem sbr_triradical : sbr.Triradical := rfl
+theorem wd_biradical : wd.Biradical := rfl
 
 /-- [faust-2026]'s key claim about √wd (page 432): even though
     the surface form [wäddäd-ä] has adjacent identical [d][d], the

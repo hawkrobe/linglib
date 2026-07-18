@@ -213,15 +213,14 @@ theorem three_categorizers_predict_tricategoriality :
 
 /-- The √DESTROY family's three categories correspond to three categorizers. -/
 theorem destroy_matches_categorizers :
-    destroy.hasCategory .verb = true ∧
-    destroy.hasCategory .noun = true ∧
-    destroy.hasCategory .adjective = true := by native_decide
+    destroy.HasCategory .verb ∧ destroy.HasCategory .noun ∧
+    destroy.HasCategory .adjective := by decide
 
 /-- Every root family in the sample has a form for each categorizer's category. -/
 theorem all_families_match_all_categorizers :
-    allFamilies.all (fun rf =>
-      rf.hasCategory .verb && rf.hasCategory .noun && rf.hasCategory .adjective) = true := by
-  native_decide
+    ∀ rf ∈ allFamilies,
+      rf.HasCategory .verb ∧ rf.HasCategory .noun ∧ rf.HasCategory .adjective := by
+  decide
 
 -- ════════════════════════════════════════════════════════════════
 -- § 6: Cross-framework bridge to [mcnally-deswart-2011]

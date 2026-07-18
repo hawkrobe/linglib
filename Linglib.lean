@@ -1301,7 +1301,7 @@ import Linglib.Fragments.Zulu.Plurals
 import Linglib.Morphology.Template
 import Linglib.Morphology.Case.Allomorphy
 import Linglib.Morphology.Case.WALS
-import Linglib.Morphology.ConsonantalRoot
+import Linglib.Morphology.Root
 import Linglib.Morphology.DM.Allosemy
 import Linglib.Morphology.DM.Categorizer
 import Linglib.Morphology.DM.CategorizerSemantics
