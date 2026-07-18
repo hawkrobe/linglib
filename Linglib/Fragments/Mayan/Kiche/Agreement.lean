@@ -365,4 +365,56 @@ def setBExponent : ExponentTable :=
     pan-Mayan: see Mam exception via `Mayan.isStandard`. -/
 theorem p3sg_abs_null : setBExponent.realize (.pn .third .Sing) = some [] := rfl
 
+/-! ### Formality-forgetting hom to canonical cells -/
+
+/-- The formality-forgetting hom from K'iche' φ-bundles to the canonical
+    `Agreement.Cell`: an informal bundle maps to its person/number cell
+    (person via `Person.toUD`, number via `Number.toUD`); the two formal
+    2nd-person forms are postverbal, outside the prefix paradigm the
+    Cell-keyed tables record, so they forget to `none`. -/
+def PhiFeatures.toCell (φ : PhiFeatures) : Option Agreement.Cell :=
+  match φ.formality with
+  | .formal => none
+  | .informal => some { person := some φ.person.toUD, number := φ.number.toUD }
+
+/-- Formal cells lie outside the prefix paradigm and forget to `none`. -/
+theorem toCell_formal (p : Person) (n : Number) :
+    PhiFeatures.toCell ⟨p, n, .formal⟩ = none := rfl
+
+/-- On the six basic informal cells the hom lands on the very cell the
+    canonical Set B table keys, and the two tables agree: looking `φ.toCell`
+    up in `setBExponent` returns the direct exponent `setBMarker φ`. -/
+theorem setBExponent_agrees_informal :
+    (phi .first  .singular).toCell.bind setBExponent.realize
+      = some (setBMarker (phi .first  .singular)) ∧
+    (phi .second .singular).toCell.bind setBExponent.realize
+      = some (setBMarker (phi .second .singular)) ∧
+    (phi .third  .singular).toCell.bind setBExponent.realize
+      = some (setBMarker (phi .third  .singular)) ∧
+    (phi .first  .plural).toCell.bind setBExponent.realize
+      = some (setBMarker (phi .first  .plural)) ∧
+    (phi .second .plural).toCell.bind setBExponent.realize
+      = some (setBMarker (phi .second .plural)) ∧
+    (phi .third  .plural).toCell.bind setBExponent.realize
+      = some (setBMarker (phi .third  .plural)) :=
+  ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+
+/-- The same agreement holds for Set A in both following-segment
+    environments: `φ.toCell` in `setAExponent env` returns `setAPreC φ`
+    (pre-consonant) or `setAPreV φ` (pre-vowel). -/
+theorem setAExponent_agrees_informal :
+    (phi .first  .singular).toCell.bind (setAExponent .consonant).realize
+      = some (setAPreC (phi .first  .singular)) ∧
+    (phi .second .singular).toCell.bind (setAExponent .consonant).realize
+      = some (setAPreC (phi .second .singular)) ∧
+    (phi .third  .plural).toCell.bind (setAExponent .consonant).realize
+      = some (setAPreC (phi .third  .plural)) ∧
+    (phi .first  .singular).toCell.bind (setAExponent .vowel).realize
+      = some (setAPreV (phi .first  .singular)) ∧
+    (phi .second .singular).toCell.bind (setAExponent .vowel).realize
+      = some (setAPreV (phi .second .singular)) ∧
+    (phi .third  .plural).toCell.bind (setAExponent .vowel).realize
+      = some (setAPreV (phi .third  .plural)) :=
+  ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+
 end Kiche
