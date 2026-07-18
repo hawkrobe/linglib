@@ -317,7 +317,7 @@ semantic relation is idiosyncratic and must be listed in the lexicon
 
 /-- Morphological structure of dǎ-sǐ "hit-die". -/
 def dasi_morph : MorphWord :=
-  .compound (.root { form := "da", gloss := "hit" }) (.root { form := "si", gloss := "die" })
+  .compound (.root { morph := .root "da", gloss := "hit" }) (.root { morph := .root "si", gloss := "die" })
 
 /-- V-V compounds are recognized as compounds by `IsCompound`. -/
 theorem dasi_is_compound : dasi_morph.IsCompound := by decide
@@ -330,7 +330,7 @@ theorem dasi_morpheme_count : dasi_morph.morphemeCount = 2 := rfl
 
 /-- Morphological structure of kū-lèi "cry-tired" (subject-oriented). -/
 def kulei_morph : MorphWord :=
-  .compound (.root { form := "ku", gloss := "cry" }) (.root { form := "lei", gloss := "tired" })
+  .compound (.root { morph := .root "ku", gloss := "cry" }) (.root { morph := .root "lei", gloss := "tired" })
 
 theorem kulei_is_compound : kulei_morph.IsCompound := by decide
 theorem kulei_surface : kulei_morph.surface = "kulei" := rfl

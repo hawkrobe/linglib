@@ -1339,8 +1339,6 @@ import Linglib.Morphology.Paradigm.Contiguity
 import Linglib.Morphology.Paradigm.Linkage
 import Linglib.Morphology.RootFamily
 import Linglib.Morphology.TenseAspect
-import Linglib.Morphology.TheorySpace
-import Linglib.Morphology.Unification
 import Linglib.Morphology.UsageBased.Network
 import Linglib.Morphology.Word
 import Linglib.Phonology.Autosegmental.AR

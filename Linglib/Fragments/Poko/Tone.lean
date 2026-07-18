@@ -62,14 +62,14 @@ inductive Syll
 
 /-- Stable morpheme per stem, keyed by the syllable's surface form. -/
 def Syll.morpheme : Syll → Morpheme
-  | .kak => { form := "kak" }
-  | .ri  => { form := "ri" }
-  | .do  => { form := "do" }
-  | .nan => { form := "nan" }
-  | .na  => { form := "na" }
-  | .ka  => { form := "ka" }
-  | .ili => { form := "ili" }
-  | .ne  => { form := "ne" }
+  | .kak => { morph := .root "kak" }
+  | .ri  => { morph := .root "ri" }
+  | .do  => { morph := .root "do" }
+  | .nan => { morph := .root "nan" }
+  | .na  => { morph := .root "na" }
+  | .ka  => { morph := .root "ka" }
+  | .ili => { morph := .root "ili" }
+  | .ne  => { morph := .root "ne" }
 
 /-- Each stem's lexical melody ([mcpherson-lamont-2026] ex. 3): tones
     over the stem's single TBU, with the lexical pre-linking — the H of
