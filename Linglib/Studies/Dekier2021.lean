@@ -1,5 +1,5 @@
-import Linglib.Morphology.Containment.Superset
-import Linglib.Morphology.Nanosyntax.Basic
+import Linglib.Morphology.Nanosyntax.Superset
+import Linglib.Morphology.Nanosyntax.TreeSpellout
 import Linglib.Syntax.Category.Pronoun.IndefiniteParadigm
 import Linglib.Fragments.Slavic.Russian.Indefinites
 import Linglib.Fragments.English.Indefinites

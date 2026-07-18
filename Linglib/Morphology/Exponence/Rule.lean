@@ -15,17 +15,30 @@ applicable rule.
 Framework engines specialize the context type and expose *intensional*
 context specifications from which the derived order is computable:
 
-* `Morphology.Containment.ExponenceRule` — contexts are the grades of a
-  containment hierarchy; specificity is threshold comparison
-  (`Containment.ExponenceRule.moreSpecific_iff_threshold_le`).
+* `Morphology.Containment.ExponenceRule`
+  (`Morphology/Exponence/Hierarchy.lean`) — contexts are the grades of
+  a containment hierarchy; specificity is threshold comparison
+  (`moreSpecific_iff_threshold_le`). The same carrier's **Superset**
+  reading (`Morphology/Nanosyntax/Superset.lean`, `toSupersetRule`)
+  carries the dual order — span comparison — and over context-free
+  vocabularies the two orders are exact mirrors
+  (`toRule_moreSpecific_iff_toSupersetRule`).
 * `Minimalist.VocabEntry` (`Morphology/DM/VocabSimple.lean`) — contexts
-  are feature bundles; feature-superset entries are at least as
-  specific.
+  are feature bundles; the feature-superset order is exactly the
+  derived order (`VocabEntry.toRule_moreSpecific_iff`), and the entry
+  embeds into the opaque-predicate engine specificity-faithfully
+  (`VocabEntry.toVocabItem`).
 * `Morphology.DM.VI.VocabItem` — contexts are opaque predicates, so the
   derived order is not computable and the engine stipulates a
   `specificity` rank; `SpecificityFaithful` states that the stipulation
   refines the derived order, and under it the engine's selection is an
   Elsewhere winner.
+* `Morphology.Nanosyntax.TreeLexEntry`
+  (`Morphology/Nanosyntax/TreeSpellout.lean`) — contexts are syntactic
+  trees; specificity is reverse tree containment
+  (`toRule_moreSpecific_iff`), and smallest-tree selection is an
+  Elsewhere winner with no side conditions
+  (`treeSelect_isElsewhereWinner`).
 
 ## Main declarations
 

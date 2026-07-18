@@ -569,7 +569,7 @@ inductive ImpoverishmentContext where
 
     [adamson-2024] ex. 63: Jarawara [MASC] → ∅ in the context of
     [PL] or [PARTICIPANT]. -/
-structure ImpoverishmentRule where
+structure GenderImpoverishmentRule where
   /-- The feature to be deleted. -/
   targetGender : GenderVal
   /-- The conditioning context (feature that triggers deletion). -/
@@ -577,7 +577,7 @@ structure ImpoverishmentRule where
   deriving DecidableEq, Repr
 
 /-- Apply impoverishment: if the rule matches, delete the gender feature. -/
-def ImpoverishmentRule.apply (rule : ImpoverishmentRule)
+def GenderImpoverishmentRule.apply (rule : GenderImpoverishmentRule)
     (phi : PhiBundle) (contextActive : Bool) : PhiBundle :=
   if contextActive then
     match phi.gender with

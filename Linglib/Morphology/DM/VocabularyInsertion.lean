@@ -105,84 +105,7 @@ def vocabularyInsertSimple {Ctx : Type*}
   vocabularyInsert rules ctx ()
 
 -- ============================================================================
--- § 3: Elsewhere Condition Properties
--- ============================================================================
-
-/-- A rule set has a **default** (elsewhere) rule if some rule matches
-    every context. -/
-def hasDefault {Ctx Root : Type*}
-    (rules : List (VocabItem Ctx Root)) : Prop :=
-  ∃ vi ∈ rules, ∀ (ctx : Ctx) (root : Root), vi.matches ctx root = true
-
-/-- A rule **overrides** another: both match the same context, but the
-    first has strictly higher specificity. -/
-def overrides {Ctx Root : Type*}
-    (vi₁ vi₂ : VocabItem Ctx Root) (ctx : Ctx) (root : Root) : Prop :=
-  vi₁.matches ctx root = true ∧
-  vi₂.matches ctx root = true ∧
-  vi₁.specificity > vi₂.specificity
-
--- ============================================================================
--- § 4: Root-Out Directionality
--- ============================================================================
-
-/-- Root-out ordering: a terminal at position `i` in the morphological
-    structure (0 = root, increasing outward) is inserted at step `i`.
-
-    [bobaljik-2000] argues this is the standard assumption in DM:
-    the root is the first exponent to be inserted, then the innermost
-    inflectional affix, then the next one out, etc.
-
-    The consequence: VI for terminal at position `i` can only be
-    conditioned by the phonological shapes of terminals at positions
-    0..i−1 (already inserted). It cannot look ahead to position i+1. -/
-structure InsertionOrder where
-  /-- Number of terminal positions in the morphological word. -/
-  positions : Nat
-  /-- At each step, which position is being inserted.
-      For root-out: step i inserts position i. -/
-  order : Fin positions → Fin positions
-
-/-- A root-out insertion order: position 0 (root) first, then outward. -/
-def rootOutOrder (n : Nat) : InsertionOrder :=
-  { positions := n
-    order := id }
-
-/-- The constraint that OS-PCSA imposes: the conditioning environment
-    for VI at position `i` can only include positions *inward* of `i`
-    (i.e., positions 0..i−1).
-
-    If the alternation at position `i` is conditioned by the phonological
-    shape of a morpheme at position `i+1` or beyond, it is
-    **outward-sensitive** and problematic for standard root-out DM. -/
-def isInwardConditioned (conditioningPos targetPos : Nat) : Bool :=
-  conditioningPos < targetPos
-
-/-- The Telugu weak alternation is outward-sensitive: the alternation
-    on the *n* head (closer to root) is conditioned by case/agreement
-    suffixes (further from root). This is the key diagnostic that
-    motivates the phonological analysis. -/
-def isOutwardSensitive (conditioningPos targetPos : Nat) : Bool :=
-  conditioningPos ≥ targetPos
-
--- ============================================================================
--- § 5: Verification
--- ============================================================================
-
-/-- In root-out order, position 0 is inserted first. -/
-theorem rootOut_starts_at_root (n : Nat) (h : 0 < n) :
-    (rootOutOrder n).order ⟨0, h⟩ = ⟨0, h⟩ := rfl
-
-/-- Inward conditioning: position 0 can condition position 1. -/
-theorem root_conditions_affix : isInwardConditioned 0 1 = true := rfl
-
-/-- Outward conditioning: position 2 cannot condition position 1
-    under root-out VI (it hasn't been inserted yet). -/
-theorem outer_cannot_condition_inner :
-    isOutwardSensitive 2 1 = true := rfl
-
--- ============================================================================
--- § 6: Feature-Set Vocabulary Items (Subset Principle)
+-- § 3: Feature-Set Vocabulary Items (Subset Principle)
 -- ============================================================================
 
 /-- A feature-set vocabulary item for the Subset Principle.
@@ -224,7 +147,7 @@ theorem elsewhere_always_matches {F E : Type*} [BEq F]
   simp [List.all_nil]
 
 -- ============================================================================
--- § 7: The shared exponence core
+-- § 4: The shared exponence core
 -- ============================================================================
 
 section ExponenceCore

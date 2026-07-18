@@ -259,17 +259,17 @@ Two separate impoverishment rules delete [MASC] in different contexts:
 -/
 
 /-- Impoverishment rule 1: [MASC] → ∅ / [PL]. -/
-def jarawaraImpoverishPL : ImpoverishmentRule where
+def jarawaraImpoverishPL : GenderImpoverishmentRule where
   targetGender := ⟨.masc, .pos⟩
   context := .plural
 
 /-- Impoverishment rule 2: [MASC] → ∅ / [PARTICIPANT]. -/
-def jarawaraImpoverishParticipant : ImpoverishmentRule where
+def jarawaraImpoverishParticipant : GenderImpoverishmentRule where
   targetGender := ⟨.masc, .pos⟩
   context := .participant
 
 /-- Both rules from ex. 63. -/
-def jarawaraImpoverishmentRules : List ImpoverishmentRule :=
+def jarawaraImpoverishmentRules : List GenderImpoverishmentRule :=
   [jarawaraImpoverishPL, jarawaraImpoverishParticipant]
 
 /-- Impoverishment deletes [MASC] when [PL] is active. -/

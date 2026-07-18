@@ -1,6 +1,7 @@
 import Linglib.Syntax.Minimalist.Agree.Basic
 import Linglib.Syntax.Agreement.Paradigm
 import Linglib.Morphology.Exponence.Rule
+import Linglib.Morphology.DM.VocabularyInsertion
 import Mathlib.Data.List.MinMax
 
 /-!
@@ -103,18 +104,7 @@ def spellout (vocab : Vocabulary) (target : FeatureBundle) (ctx : Option Cat) : 
   (bestMatch vocab target ctx).map (·.exponent)
 
 -- ============================================================================
--- § 3: Properties
--- ============================================================================
-
-/-- A vocabulary entry with no features matches any target (Elsewhere entry). -/
-theorem empty_features_matches_any (entry : VocabEntry)
-    (h : entry.features = ⊥) (target : FeatureBundle) :
-    entry.MatchesFeatures target := by
-  have hb : FeatureBundle.toGramFeatures entry.features = [] := by rw [h]; rfl
-  simp only [VocabEntry.MatchesFeatures, hb, List.all_nil]
-
--- ============================================================================
--- § 4: Vocabulary Builders
+-- § 3: Vocabulary Builders
 -- ============================================================================
 
 /-- The φ-feature list of a person-number cell, in the shape `makePersonVocab`
@@ -139,7 +129,7 @@ def makePersonVocab {PN : Type*} (cells : List PN) (toPhi : PN → List PhiFeatu
     , context := ctx }
 
 -- ============================================================================
--- § 5: The shared exponence core
+-- § 4: The shared exponence core
 -- ============================================================================
 
 section ExponenceCore
@@ -169,6 +159,75 @@ theorem VocabEntry.toRule_moreSpecific_of_superset {e e' : VocabEntry}
     · rcases hctx with h2 | h2
       · exact Or.inl (h.trans h2)
       · exact Or.inr (h.trans h2)
+
+/-- Every entry matches its own feature bundle. -/
+theorem VocabEntry.matchesFeatures_self (e : VocabEntry) :
+    e.MatchesFeatures e.features := by
+  rw [VocabEntry.MatchesFeatures, List.all_eq_true]
+  intro ef hef
+  exact List.any_eq_true.mpr ⟨ef, hef, beq_self_eq_true ef⟩
+
+/-- Derived specificity, characterized: `e` is at least as specific as
+`e'` in the shared core iff `e'`'s features are a subset of `e`'s and
+`e'`'s context restriction is compatible. Upgrades
+`toRule_moreSpecific_of_superset` to an iff — over feature bundles the
+intensional superset order IS the derived order, with no faithfulness
+assumption (contrast `Morphology.DM.VI.SpecificityFaithful`, which the
+opaque-predicate engine must stipulate). -/
+theorem VocabEntry.toRule_moreSpecific_iff {e e' : VocabEntry} :
+    e.toRule.MoreSpecific e'.toRule ↔
+      (∀ f ∈ FeatureBundle.toGramFeatures e'.features,
+        f ∈ FeatureBundle.toGramFeatures e.features) ∧
+      (e'.context = none ∨ e'.context = e.context) := by
+  constructor
+  · intro h
+    obtain ⟨hm', hctx'⟩ :=
+      h (c := (e.features, e.context)) ⟨e.matchesFeatures_self, Or.inr rfl⟩
+    refine ⟨?_, hctx'⟩
+    rw [VocabEntry.MatchesFeatures, List.all_eq_true] at hm'
+    intro f hf
+    obtain ⟨tf, htf, hbeq⟩ := List.any_eq_true.mp (hm' f hf)
+    exact (beq_iff_eq.mp hbeq) ▸ htf
+  · exact λ ⟨hf, hc⟩ => toRule_moreSpecific_of_superset hf hc
+
+/-! #### Bridge to the opaque-predicate engine -/
+
+/-- Embed a vocabulary entry into the opaque-predicate engine
+(`Morphology.DM.VI.VocabItem`): the context check is feature matching,
+the root check is the category restriction, and the stipulated rank is
+the feature count. -/
+def VocabEntry.toVocabItem (e : VocabEntry) :
+    Morphology.DM.VI.VocabItem FeatureBundle (Option Cat) where
+  exponent := e.exponent
+  contextMatch := λ t => decide (e.MatchesFeatures t)
+  rootMatch := some (λ c => decide (e.context = none ∨ e.context = c))
+  specificity := (FeatureBundle.toGramFeatures e.features).length
+
+/-- The embedding tracks applicability: the opaque engine's `matches`
+agrees with `Matches`. -/
+theorem VocabEntry.toVocabItem_matches (e : VocabEntry)
+    (t : FeatureBundle) (c : Option Cat) :
+    e.toVocabItem.matches t c = true ↔ e.Matches t c := by
+  simp [Morphology.DM.VI.VocabItem.matches, VocabEntry.toVocabItem,
+    VocabEntry.Matches]
+
+/-- The two engines' shared-core views agree: the embedded item's rule
+applies exactly where the entry's rule does. -/
+theorem VocabEntry.toVocabItem_toRule_applies (e : VocabEntry)
+    (tc : FeatureBundle × Option Cat) :
+    e.toVocabItem.toRule.Applies tc ↔ e.toRule.Applies tc :=
+  e.toVocabItem_matches tc.1 tc.2
+
+/-- Derived specificity transfers along the embedding — the cross-engine
+translation is faithful to the shared core's order. -/
+theorem VocabEntry.toVocabItem_toRule_moreSpecific {e f : VocabEntry} :
+    e.toVocabItem.toRule.MoreSpecific f.toVocabItem.toRule ↔
+      e.toRule.MoreSpecific f.toRule := by
+  constructor <;> intro h c hc
+  · exact (f.toVocabItem_toRule_applies c).mp
+      (h ((e.toVocabItem_toRule_applies c).mpr hc))
+  · exact (f.toVocabItem_toRule_applies c).mpr
+      (h ((e.toVocabItem_toRule_applies c).mp hc))
 
 /-- Under a specificity stipulation faithful to the derived order on
 the matching entries, `bestMatch` returns an Elsewhere winner of the
