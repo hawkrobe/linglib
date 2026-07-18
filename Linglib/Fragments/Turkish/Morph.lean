@@ -4,8 +4,7 @@ import Linglib.Morphology.FusionTypology
 # Turkish Morphological Profile
 [wals-2013] [bickel-nichols-2007]
 
-WALS-derived profile for Turkish (ISO `tur`). B&N 2007 places Turkish in
-the canonical "agglutinating" cell (concatenative + nonflexive + separative);
+WALS-derived profile for Turkish (ISO `tur`). Textbook-consensus classification: Turkish falls in the canonical "agglutinating" cell (concatenative + nonflexive + separative);
 Turkish is the textbook example of rule-governed (vowel-harmony) suffix
 allomorphy with no class-conditioned variation.
 -/
@@ -24,7 +23,7 @@ def morphProfile : MorphProfile :=
 
 example : morphProfile.iso = "tur" ∧ morphProfile.language = "Turkish" := ⟨rfl, rfl⟩
 
-/-- B&N 2007 places Turkish in the canonical "agglutinating" cell. -/
+/-- Textbook-consensus classification: Turkish falls in the canonical "agglutinating" cell. -/
 example : morphProfile.IsAgglutinating := by decide
 
 end Turkish

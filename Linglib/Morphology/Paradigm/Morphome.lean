@@ -24,6 +24,16 @@ instantiation, supplied by the consumer (see `Studies/Herce2023.lean`).
 Systematicity — recurrence of the pattern under more than one exponent or
 allomorph — is a separate criterion the consumer establishes.
 
+Two limitations, per [baerman-2015]'s three-way analysis space for
+syncretism (morphosyntactic identity / underspecification / morphological
+stipulation, p. 146): an **elsewhere** form's fiber is typically also
+nontrivial and non-natural (one specified cell, the default covers the
+unnatural rest — Skou, p. 145), so `IsMorphome` is necessary but not
+sufficient for stipulation-hood; distinguishing the two needs opposition
+structure or the systematicity criterion above. And **directional**
+syncretism (a cell wearing another cell's form "in place of the expected"
+one, p. 142) is invisible to the symmetric kernel.
+
 The vocabulary here is deliberately just "morphome": [herce-2023] rejects
 Round's rhizomorphome ~ metamorphome ~ meromorphome subdivision as needless
 jargon, and "metasyncretism" does not appear in the book.

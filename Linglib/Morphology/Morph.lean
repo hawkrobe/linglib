@@ -6,14 +6,22 @@ import Mathlib.Tactic.DeriveFintype
 
 The form-side carrier of the morphology layer, following
 [haspelmath-2020]'s proposal: a **morph** is a minimal linguistic form —
-a minimal pairing of syntacticosemantic content with a continuous string
-of phonological segments. Morphs are never zero and never discontinuous
+[haspelmath-2020] defines it as a minimal pairing of syntacticosemantic
+content with a continuous string of phonological segments, but the
+carrier stores only the form side, which is what keeps empty and
+superfluous morphs (Cree connective *-t-*, [anderson-2015] p. 19)
+representable. Morphs are never zero and never discontinuous
 (a "circumfix" is a construction containing a prefix and a suffix, not a
 single morph); zero and discontinuity live one level up, in the
-**exponent** — a possibly empty sequence of morphs. Nonconcatenative
-exponence (apophony, reduplication, tone) is a process, not a form, and
-is out of this carrier's scope (`Morphology/MorphWord.lean` and the
-autosegmental machinery cover it).
+**exponent** — a possibly empty sequence of morphs. `[]` means *no
+segmental exponent*, not *unmarked*: a cell whose sole marker is a
+process (North Saami gradation-only genitives, [anderson-2015] p. 22)
+also renders as `[]` here. Nonconcatenative exponence (apophony,
+reduplication, tone, subtraction) is a process, not a form, and is out
+of this carrier's scope — `MorphWord`'s tree constructors cover
+reduplication and conversion, the autosegmental machinery covers tone;
+the rest of the process catalogue ([anderson-2015] pp. 21-24), like
+overlapping morphs (Breton mutation, p. 20), currently has no carrier.
 
 `Morph.Kind` records the attachment classification that descriptive
 notation itself encodes — `X-` prefix, `-X` suffix, `X=` proclitic,
@@ -110,8 +118,9 @@ def Exponent.toString : Exponent → String
 
 /-- The class of the following segment — the commonest conditioning
 environment for selecting among a morph's variant shapes
-(pre-consonantal vs pre-vocalic allomorph pairs; the phonological
-conditioning of [haspelmath-2020] §7). -/
+(pre-consonantal vs pre-vocalic pairs; phonological conditioning in
+[haspelmath-2020]'s sense, which cross-cuts the variant-vs-suppletive
+split of their §§6-8). -/
 inductive Following where
   | consonant | vowel
   deriving DecidableEq, Repr, Fintype

@@ -2,10 +2,12 @@ import Mathlib.Logic.Function.Basic
 
 /-!
 # Paradigm linkage: content paradigms, form paradigms, and correspondence
-[stump-2016]
+[stump-2016] [stump-2006]
 
-The paradigm-linkage hypothesis ([stump-2016] Ch. 7) splits a lexeme's
-realizations into three corresponding paradigms:
+The paradigm-linkage hypothesis ([stump-2016] Ch. 7; the content/form
+paradigm split originates with [stump-2006], introduced in part to
+describe heteroclisis) splits a lexeme's realizations into three
+corresponding paradigms:
 
 * the **content paradigm** — cells `⟨L, σ⟩` pairing a lexeme `L` with a
   morphosyntactic property set `σ`; the interface with syntax and semantics;

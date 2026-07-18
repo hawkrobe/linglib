@@ -4,8 +4,7 @@ import Linglib.Morphology.FusionTypology
 # Korean Morphological Profile
 [wals-2013] [bickel-nichols-2007]
 
-WALS-derived profile for Korean (ISO `kor`). B&N 2007 places Korean
-in the "agglutinating" cell (concatenative + nonflexive + separative).
+WALS-derived profile for Korean (ISO `kor`). Textbook-consensus classification: Korean falls in the "agglutinating" cell (concatenative + nonflexive + separative).
 -/
 
 namespace Korean
@@ -22,7 +21,7 @@ def morphProfile : MorphProfile :=
 
 example : morphProfile.iso = "kor" ∧ morphProfile.language = "Korean" := ⟨rfl, rfl⟩
 
-/-- B&N 2007 places Korean in the "agglutinating" cell. -/
+/-- Textbook-consensus classification: Korean falls in the "agglutinating" cell. -/
 example : morphProfile.IsAgglutinating := by decide
 
 end Korean
