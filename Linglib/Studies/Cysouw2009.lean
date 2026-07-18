@@ -1,6 +1,7 @@
 import Linglib.Features.Person.Decomposition
 import Linglib.Features.Number.Basic
 import Linglib.Fragments.Finnish.Negation
+import Linglib.Morphology.Paradigm.Morphome
 
 /-!
 # Paradigmatic Structure of Person Marking
@@ -64,12 +65,31 @@ structure ParadigmaticStructure where
 instance : BEq ParadigmaticStructure where
   beq a b := a.name == b.name
 
-/-- Two categories are homophonous in a paradigm iff they share morphClass. -/
+/-- The **syncretism** setoid of the paradigm: two categories are related
+iff they share a morpheme class. This is `Morphology.syncretism` (mathlib's
+`Setoid.ker`) applied to `morphClass`, so Cysouw's homophony classes are
+exactly its equivalence classes `s.syncretism.classes`. -/
+def ParadigmaticStructure.syncretism (s : ParadigmaticStructure) : Setoid Category :=
+  Morphology.syncretism s.morphClass
+
+/-- Two categories are homophonous in a paradigm iff they share morphClass —
+the decidable reflection of `s.syncretism` (`homophonous_iff_syncretism`). -/
 def ParadigmaticStructure.homophonous
     (s : ParadigmaticStructure) (c1 c2 : Category) : Bool :=
   s.morphClass c1 == s.morphClass c2
 
-/-- Number of distinct morphemes in the paradigm. -/
+/-- Homophony is the syncretism relation: `homophonous` decides
+`s.syncretism`. -/
+theorem ParadigmaticStructure.homophonous_iff_syncretism
+    (s : ParadigmaticStructure) (c1 c2 : Category) :
+    s.homophonous c1 c2 = true ↔ s.syncretism c1 c2 := by
+  unfold ParadigmaticStructure.homophonous ParadigmaticStructure.syncretism
+    Morphology.syncretism
+  rw [Setoid.ker_def]
+  exact beq_iff_eq
+
+/-- Number of distinct morphemes in the paradigm: the count of syncretism
+classes (`s.syncretism.classes`) among the eight categories. -/
 def ParadigmaticStructure.distinctForms (s : ParadigmaticStructure) : Nat :=
   let classes := Category.all.map s.morphClass
   classes.eraseDups.length
