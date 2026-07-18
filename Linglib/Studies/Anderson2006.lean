@@ -68,11 +68,9 @@ and Heine 1993 (book p. 48ff. via Anderson p. 5):
   doubly marked). Fragment `splitDistribution` corrected to put
   `.agreement` on AUX (matches the gloss `1-AUX 1-2PL-show`).
 - **Cline reattributed to [heine-1993]** (Anderson p. 5
-  explicitly cites Heine 1993:48ff.). Substrate
-  `GramStage.toMorphStatus` projection moved to
-  `Morphology/Grammaticalization.lean`.
+  explicitly cites Heine 1993:48ff.).
 - **`negStrategyStage`** is now `NegStrategy.toGramStage :
-  NegStrategy → Option GramStage` (in `Typology/Negation.lean`), with
+  NegStrategy → Option GramStage` (in `Syntax/Negation.lean`), with
   `.negParticle => none` (not on the verbal cline) — fixes the
   earlier formaliser-introduced collapse of [miestamo-2005]'s
   particle-vs-verb distinction.

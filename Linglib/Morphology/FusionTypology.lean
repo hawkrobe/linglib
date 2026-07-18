@@ -120,7 +120,7 @@ def fromWALS20A : Data.WALS.F20A.FusionType → Option Fusion
   | .tonalConcatenative       => none
   | .isolatingConcatenative   => none
 
-/-- Convert WALS 21A exponence type to the local `Exponence` classification.
+/-- Convert WALS 21A exponence type to the local `CaseExponence` classification.
     Returns `none` for `noCase` (no information about overall exponence). -/
 def fromWALS21A : Data.WALS.F21A.ExponenceType → Option CaseExponence
   | .monoexponentialCase  => some .monoexponential

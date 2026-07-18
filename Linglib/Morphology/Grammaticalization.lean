@@ -1,5 +1,4 @@
 import Mathlib.Order.Nat
-import Linglib.Morphology.Formative
 
 /-!
 # Grammaticalization
@@ -37,8 +36,6 @@ greater morphological boundedness ([lehmann-1985], [hopper-traugott-2003]).
 
 - `GramStage`: stages on the grammaticalization cline
 - `GramStage.boundedness`: numeric encoding of morphological boundedness
-- `GramStage.toMorphStatus`: projection onto `Morphology.MorphStatus`
-- `AVCSource`: diachronic source constructions for auxiliary verb constructions
 
 ## Connections
 
@@ -54,10 +51,6 @@ greater morphological boundedness ([lehmann-1985], [hopper-traugott-2003]).
 -/
 
 namespace Grammaticalization
-
--- ============================================================================
--- §1. The Grammaticalization Cline
--- ============================================================================
 
 /-- Stage on the grammaticalization cline for verbal elements.
     Cline anchored on [heine-1993] for the broad path
@@ -98,56 +91,5 @@ def GramStage.boundedness : GramStage → Nat
 instance : LinearOrder GramStage :=
   LinearOrder.lift' GramStage.boundedness
     (fun a b h => by cases a <;> cases b <;> simp_all [GramStage.boundedness])
-
-/-- Unidirectionality: grammaticalization never reverses. Formalized as:
-    if a language has a marker at stage s₂ that historically derives from
-    stage s₁, then s₁ < s₂. -/
-def isUnidirectional (_s₁ _s₂ : GramStage) (_h : _s₁ < _s₂) : Prop :=
-  ¬(_s₂ < _s₁) -- follows from strict ordering, but makes the claim explicit
-
-theorem unidirectional_of_lt {s₁ s₂ : GramStage} (h : s₁ < s₂) :
-    isUnidirectional s₁ s₂ h :=
-  Nat.not_lt.mpr (Nat.le_of_lt h)
-
-/-- Project a grammaticalization stage onto its canonical
-    `Morphology.MorphStatus` realization. Auxiliaries and full
-    verbs are free words on the cline; clitics map to simple-clitic
-    status; affixes to inflectional-affix status; the zero endpoint
-    has no overt morphological realization. -/
-def GramStage.toMorphStatus : GramStage → Option Morphology.MorphStatus
-  | .fullVerb  => some .freeWord
-  | .auxiliary => some .freeWord
-  | .clitic    => some .simpleClitic
-  | .affix     => some .inflAffix
-  | .zero      => none
-
-/-- The `.affix` stage is strictly more grammaticalized (more
-    morphologically bound) than the `.auxiliary` stage. Used by
-    `Typology/Negation.lean` to compare the cline placement of
-    negative affixes vs negative verbs. -/
-theorem affix_more_bound_than_auxiliary :
-    GramStage.affix.boundedness > GramStage.auxiliary.boundedness := by
-  decide
-
--- ============================================================================
--- §2. Source Constructions
--- ============================================================================
-
-/-- Diachronic source construction from which an AVC grammaticalizes.
-    [anderson-2006] §7, [heine-kuteva-2002]. -/
-inductive AVCSource where
-  /-- Serial verb constructions: two verbs in sequence, one
-      grammaticalizes into an auxiliary. Common in West African, SE Asian. -/
-  | serialVerb
-  /-- Complement-taking verb: matrix verb takes clausal complement,
-      the matrix verb grammaticalizes. Common source for modals. -/
-  | complementTaking
-  /-- Motion verb: 'go'/'come' grammaticalize into future/past markers.
-      Cross-linguistically one of the most common paths. -/
-  | motionVerb
-  /-- Postural verb: 'sit'/'stand'/'lie' grammaticalize into
-      progressive/habitual aspect markers. -/
-  | posturalVerb
-  deriving DecidableEq, Repr
 
 end Grammaticalization

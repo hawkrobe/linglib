@@ -1,6 +1,6 @@
 import Linglib.Fragments.English.Modifiers.Adjectives
 import Linglib.Morphology.Exponence.Containment.Contiguity
-import Linglib.Morphology.DegreeContainment
+import Linglib.Morphology.Paradigm.Degree
 import Mathlib.Tactic.TFAE
 
 /-!
@@ -48,7 +48,7 @@ PCC maps as a finite check.
 namespace Graf2019
 
 open Morphology Morphology.Containment
-open Morphology.DegreeContainment
+open Morphology.Degree
 open English.Modifiers.Adjectives
 
 /-! ### The keystone: four characterizations coincide -/

@@ -1,4 +1,3 @@
-import Linglib.Morphology.RelevanceHierarchy
 import Mathlib.Tactic.TypeStar
 
 /-!
@@ -12,19 +11,18 @@ composition ([stump-2022]). `AffixTemplate` is the position-class species
 content, not settled here.
 
 A word's affix template: the ordered position-class slots of its prefix and
-suffix strings, parameterized by the slot type `Slot`. Instantiating at
-`MorphCategory` gives a language's slot order as Fragment-importable substrate
-that `RespectsRelevanceHierarchy` (in `Morphology/RelevanceHierarchy.lean`) tests against
-[bybee-1985]'s relevance hierarchy — so the order lives once, as Fragment data,
-and study files derive their checks from it rather than re-typing the template.
-Instantiating at a language-specific slot type carries finer position classes:
-`Mayan.template` uses `Mayan.VerbSlot`, with the prefix/suffix split encoding a
-morpheme's position relative to the verb stem.
+suffix strings, parameterized by the slot type `Slot` — so the order lives
+once, as Fragment data, and study files derive their checks from it rather
+than re-typing the template. Instantiating at `MorphCategory` gives a
+language's slot order in relevance-hierarchy vocabulary
+(`AffixTemplate.suffixRespectsRelevance`, in
+`Morphology/RelevanceHierarchy.lean`); a language-specific slot type carries
+finer position classes: `Mayan.template` uses `Mayan.VerbSlot`, with the
+prefix/suffix split encoding a morpheme's position relative to the verb stem.
 
 ## Main definitions
 
 * `Morphology.AffixTemplate` — a word's prefix/suffix slots over an arbitrary slot type.
-* `Morphology.AffixTemplate.suffixRespectsRelevance` — the `MorphCategory` suffix slots are sorted by relevance.
 -/
 
 namespace Morphology
@@ -39,12 +37,5 @@ structure AffixTemplate (Slot : Type*) where
   /-- Suffix slots, ordered stem-outward (innermost suffix first). -/
   suffixSlots : List Slot := []
   deriving Repr, DecidableEq
-
-/-- The template's suffix order respects [bybee-1985]'s relevance hierarchy. -/
-def AffixTemplate.suffixRespectsRelevance (t : AffixTemplate MorphCategory) : Prop :=
-  RespectsRelevanceHierarchy t.suffixSlots
-
-instance (t : AffixTemplate MorphCategory) : Decidable t.suffixRespectsRelevance :=
-  inferInstanceAs (Decidable (RespectsRelevanceHierarchy _))
 
 end Morphology

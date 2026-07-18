@@ -142,9 +142,9 @@ theorem isolating_no_flexivity :
     Georgian, Spanish) are attested in the sample. -/
 theorem exponence_scope_independent :
     (allMorphProfiles.filter (fun p =>
-      decide (p.exponence = .polyexponential ∧ p.bnExponence = some .separative))).length > 0 ∧
+      decide (p.exponence = .polyexponential ∧ p.IsSeparative))).length > 0 ∧
     (allMorphProfiles.filter (fun p =>
-      decide (p.exponence = .monoexponential ∧ p.bnExponence = some .cumulative))).length > 0 := by
+      decide (p.exponence = .monoexponential ∧ p.IsCumulative))).length > 0 := by
   decide
 
 set_option maxRecDepth 2000 in

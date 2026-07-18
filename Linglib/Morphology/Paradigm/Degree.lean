@@ -1,7 +1,7 @@
 import Linglib.Morphology.Paradigm.Contiguity
 
 /-!
-# Degree Containment — Substrate
+# Degree paradigms
 [bobaljik-2012]
 
 Framework-neutral substrate for the three-grade degree hierarchy
@@ -27,29 +27,7 @@ concerns *relative* superlatives. Absolute / elatival superlatives
 hence the containment structure.
 -/
 
-namespace Morphology.DegreeContainment
-
-
-/-! ### Degree grades -/
-
-/-- The three morphological grades of adjectival degree. Structural
-layers: each higher grade's morphosyntactic representation contains the
-lower ones. -/
-inductive DegreeGrade where
-  | pos   -- positive: the bare adjective
-  | cmpr  -- comparative: ADJ + CMPR
-  | sprl  -- superlative: ADJ + CMPR + SPRL
-  deriving DecidableEq, Repr
-
-/-- The degree grade as a position in the 3-grade hierarchy, for
-indexing `Morphology.Containment` machinery. -/
-def DegreeGrade.toFin : DegreeGrade → Fin 3
-  | .pos  => 0
-  | .cmpr => 1
-  | .sprl => 2
-
-/-- Containment rank: POS < CMPR < SPRL. Derived from `toFin`. -/
-def DegreeGrade.rank (g : DegreeGrade) : Nat := g.toFin
+namespace Morphology.Degree
 
 /-! ### DegreePattern -/
 
@@ -71,15 +49,6 @@ structure DegreePattern where
 def DegreePattern.toParadigm (p : DegreePattern) : Paradigm 3 ℕ :=
   ![p.pos, p.cmpr, p.sprl]
 
-@[simp] theorem DegreePattern.toParadigm_zero (p : DegreePattern) :
-    p.toParadigm 0 = p.pos := rfl
-
-@[simp] theorem DegreePattern.toParadigm_one (p : DegreePattern) :
-    p.toParadigm 1 = p.cmpr := rfl
-
-@[simp] theorem DegreePattern.toParadigm_two (p : DegreePattern) :
-    p.toParadigm 2 = p.sprl := rfl
-
 /-- A pattern is contiguous: each form class occupies an interval of
 grades. The generic `Morphology.IsContiguous`, by
 construction. -/
@@ -97,13 +66,6 @@ instance (p : DegreePattern) : Decidable p.ViolatesABA :=
   inferInstanceAs (Decidable (¬ _))
 
 /-! ### Paradigm classification -/
-
-/-- All three grades share the same root (regular paradigm). -/
-def DegreePattern.IsRegular (p : DegreePattern) : Prop :=
-  p.pos = p.cmpr ∧ p.cmpr = p.sprl
-
-instance (p : DegreePattern) : Decidable p.IsRegular :=
-  inferInstanceAs (Decidable (_ ∧ _))
 
 /-- Comparative is suppletive (root differs from positive). -/
 def DegreePattern.CmprSuppletive (p : DegreePattern) : Prop :=
@@ -142,7 +104,6 @@ def aab : DegreePattern := ⟨0, 0, 1⟩
 /-! Smoke tests confirming each named pattern resolves correctly. -/
 
 example : aaa.IsContiguous := by decide
-example : aaa.IsRegular := by decide
 example : abb.IsContiguous := by decide
 example : abb.CmprSuppletive := by decide
 example : abb.SprlSuppletive := by decide
@@ -168,27 +129,24 @@ theorem csg_part1 (p : DegreePattern)
 /-- Classify a 3-grade realization into a `DegreePattern` by grouping
 identical cells: positive root is index 0, fresh roots get fresh
 indices. Connects the realizational engine's output
-(`Morphology.Containment.realize`) to the fragment-level pattern
-vocabulary; see `Studies/Bobaljik2012.lean` for the worked instances. -/
+(`Morphology.Containment.realize`, in
+`Morphology/Exponence/Containment/Selection.lean`) to the
+fragment-level pattern vocabulary; see `Studies/Bobaljik2012.lean` for
+the worked instances. Caveat ([bobaljik-2012] ch. 5 fn. 4): surface-form
+identity cannot distinguish suppletion from readjustment (German
+*hoch – höher – höchst* would misread as ABA), so fragment entries
+record curated patterns rather than applying this to orthographic
+form triples. -/
 def degreeShape {F : Type*} [DecidableEq F] (p : Paradigm 3 F) : DegreePattern :=
   let c : Nat := if p 1 = p 0 then 0 else 1
   ⟨0, c, if p 2 = p 0 then 0 else if p 2 = p 1 then c else c + 1⟩
 
-/-- Derive a `DegreePattern` from three surface forms — `degreeShape`
-on the form triple. Caveat ([bobaljik-2012] ch. 5 fn. 4): surface-form
-identity cannot distinguish suppletion from readjustment (German
-*hoch – höher – höchst* would misread as ABA), so fragment entries
-record curated patterns rather than applying this to orthography. -/
-def patternFromForms (pos cmpr sprl : String) : DegreePattern :=
-  degreeShape ![pos, cmpr, sprl]
+/-! Smoke tests for `degreeShape` covering the attested pattern types. -/
 
-/-! Smoke tests for `degreeShape` and `patternFromForms` covering the
-attested pattern types. -/
-
-example : patternFromForms "tall" "tall" "tall" = aaa := by decide
-example : patternFromForms "A" "B" "B" = abb := by decide
-example : patternFromForms "A" "B" "C" = abc := by decide
+example : degreeShape !["tall", "tall", "tall"] = aaa := by decide
+example : degreeShape !["A", "B", "B"] = abb := by decide
+example : degreeShape !["A", "B", "C"] = abc := by decide
 example : degreeShape ![0, 1, 0] = aba := by decide
 example : degreeShape ![0, 0, 1] = aab := by decide
 
-end Morphology.DegreeContainment
+end Morphology.Degree

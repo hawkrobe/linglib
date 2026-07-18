@@ -1,4 +1,4 @@
-import Linglib.Morphology.DegreeContainment
+import Linglib.Morphology.Paradigm.Degree
 import Linglib.Morphology.Case.Allomorphy
 import Linglib.Syntax.Case.Order
 import Linglib.Morphology.Exponence.Containment.Contiguity
@@ -69,7 +69,7 @@ AD-local vocabulary. (3) remains a substrate-addition TODO.
 
 namespace SmithMoskalEtAl2019
 
-open Morphology.DegreeContainment
+open Morphology.Degree
 open Morphology.Case.Allomorphy
 open Morphology.Containment
 
