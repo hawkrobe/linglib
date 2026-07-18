@@ -1336,6 +1336,7 @@ import Linglib.Morphology.Number
 import Linglib.Morphology.Paradigm.Basic
 import Linglib.Morphology.Paradigm.Complexity
 import Linglib.Morphology.Paradigm.Contiguity
+import Linglib.Morphology.Paradigm.Linkage
 import Linglib.Morphology.RootFamily
 import Linglib.Morphology.TenseAspect
 import Linglib.Morphology.TheorySpace
@@ -2697,6 +2698,7 @@ import Linglib.Studies.Stojkovic2026
 import Linglib.Studies.Storme2026
 import Linglib.Studies.Storment2026
 import Linglib.Studies.Sudo2016
+import Linglib.Studies.Stump2016
 import Linglib.Studies.SumersEtAl2023
 import Linglib.Studies.SuttonFilip2021
 import Linglib.Studies.TaraldsenEtAl2018

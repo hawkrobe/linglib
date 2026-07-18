@@ -2,18 +2,27 @@ import Linglib.Morphology.Paradigm.Basic
 import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
 
 /-!
-# Paradigm complexity: entropy over cell distributions
-[ackerman-malouf-2013] [rathi-hahn-futrell-2026]
+# Paradigm complexity: entropy and implicative structure over cells
+[ackerman-malouf-2013] [bonami-beniamine-2016] [rathi-hahn-futrell-2026]
 
-Entropy-based measures over `ParadigmSystem` cell distributions:
-Shannon entropy of a cell, conditional entropy between cells (the
-integrand of [ackerman-malouf-2013]'s i-complexity), and the derived
-implicative-structure predicates.
+Two views of the Paradigm Cell Filling Problem over a `ParadigmSystem`.
+The **quantitative** layer measures cell distributions: Shannon entropy
+of a cell, conditional entropy between cells (the integrand of
+[ackerman-malouf-2013]'s i-complexity), and the derived
+implicative-structure predicates. The **qualitative** layer is the
+zero-entropy (categorical) case: a set of cells `Predicts` another when
+the forms filling it determine the form filling the target across every
+inflection class — the implicative relation [bonami-beniamine-2016]
+quantify with conditional entropy, here as a plain relation over the
+system's rows. Entropy quantification stays prose-level per repo
+discipline; `Predicts` is its zero-entropy extreme.
 
 ## Main declarations
 
 * `ParadigmSystem.cellEntropy`, `ParadigmSystem.conditionalCellEntropy`
 * `ParadigmSystem.isImplicative`, `ParadigmSystem.isTransparent`
+* `ParadigmSystem.Predicts`, `ParadigmSystem.IsPrincipalPartSet` — the
+  categorical implicative relation and principal-part sets
 
 `iComplexity` (the paper-specific average conditional entropy) and
 `LCECHolds` (the LCEC threshold predicate) live in
@@ -69,5 +78,44 @@ def ParadigmSystem.isImplicative {n : ℕ} {Form : Type*} [DecidableEq Form]
 def ParadigmSystem.isTransparent {n : ℕ} {Form : Type*} [DecidableEq Form]
     (ps : ParadigmSystem n Form) : Prop :=
   ∀ (ci cj : Fin n), ci ≠ cj → ps.isImplicative ci cj
+
+/-! ### Qualitative implicative structure
+
+The categorical (zero-entropy) face of the Paradigm Cell Filling
+Problem [bonami-beniamine-2016]: which sets of known cells determine an
+unknown cell across the inflection classes. -/
+
+/-- A set of cells `S` **predicts** cell `j` when the forms filling `S`
+determine the form filling `j` across the system: any two inflection
+classes agreeing on every cell of `S` also agree at `j`. The
+zero-conditional-entropy case of the implicative relation
+[bonami-beniamine-2016] measure. -/
+def ParadigmSystem.Predicts {n : ℕ} {Form : Type*}
+    (ps : ParadigmSystem n Form) (S : Finset (Fin n)) (j : Fin n) : Prop :=
+  ∀ p ∈ ps.entries, ∀ q ∈ ps.entries,
+    (∀ c ∈ S, p.1 c = q.1 c) → p.1 j = q.1 j
+
+/-- A set of cells is a **principal-part set** when it predicts every cell
+of the system: knowing those forms determines the whole paradigm. -/
+def ParadigmSystem.IsPrincipalPartSet {n : ℕ} {Form : Type*}
+    (ps : ParadigmSystem n Form) (S : Finset (Fin n)) : Prop :=
+  ∀ j, ps.Predicts S j
+
+/-- Prediction is **monotone** in the known cells: enlarging the predictor
+set never destroys a prediction. -/
+theorem ParadigmSystem.Predicts.mono {n : ℕ} {Form : Type*}
+    {ps : ParadigmSystem n Form} {S T : Finset (Fin n)} {j : Fin n}
+    (hST : S ⊆ T) (h : ps.Predicts S j) : ps.Predicts T j :=
+  fun p hp q hq hag => h p hp q hq fun c hc => hag c (hST hc)
+
+/-- A worked case: a two-class system whose first cell is diagnostic. The
+classes differ at cell `0`, so it is a principal-part set — its form
+determines cell `1`. -/
+private def demoSystem : ParadigmSystem 2 String :=
+  { entries := [(![("a"), ("x")], 1 / 2), (![("b"), ("y")], 1 / 2)] }
+
+private theorem demoSystem_principalPart :
+    demoSystem.IsPrincipalPartSet {0} := by
+  intro j; fin_cases j <;> (unfold ParadigmSystem.Predicts; decide)
 
 end Morphology

@@ -2,6 +2,7 @@ import Linglib.Morphology.TheorySpace
 import Linglib.Morphology.MorphRule
 import Linglib.Studies.ZwickyPullum1983
 import Linglib.Morphology.Nanosyntax.Superset
+import Linglib.Morphology.Paradigm.Linkage
 
 -- ============================================================================
 -- § 0b: PFM Substrate (was Morphology/PFM/Core.lean,
@@ -87,6 +88,28 @@ def derive {Feature : Type} [BEq Feature]
   match referrals.findSome? (·.apply pf σ lex) with
   | some form => form
   | none => pf.apply σ lex
+
+/-- PFM's paradigm function is the word form of the [stump-2016] realized
+paradigm under the **canonical** linkage: taking each lexeme as its own single
+stem and the identity property mapping, `PF(⟨lex, σ⟩) = PF(Corr(⟨lex, σ⟩))`
+recovers `pf.apply σ lex`. PFM's realization is thus the mismatch-free case —
+deponency or heteroclisis would require a non-identity `pm` or multiple stems
+(`Morphology/Paradigm/Linkage.lean`, `Studies/Stump2016.lean`). -/
+theorem ParadigmFunction.apply_eq_linkage_realize {Feature : Type} [BEq Feature]
+    (pf : ParadigmFunction Feature) (lex : Lexeme)
+    (σ : MorphPropertySet Feature) :
+    pf.apply σ lex
+      = ((Morphology.Linkage.canonical (Z := Lexeme)
+            (P := MorphPropertySet Feature) id).realize
+          (fun l τ => pf.apply τ l) lex σ).1 :=
+  rfl
+
+/-- The linkage PFM instantiates is canonical ([stump-2016] §7.1): identity
+property mapping and one stem per lexeme. -/
+theorem paradigmFunction_linkage_isCanonical {Feature : Type} :
+    (Morphology.Linkage.canonical (L := Lexeme) (Z := Lexeme)
+      (P := MorphPropertySet Feature) id).IsCanonical :=
+  Morphology.Linkage.canonical_isCanonical _
 
 end Morphology.PFM
 
