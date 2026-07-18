@@ -1301,7 +1301,7 @@ import Linglib.Fragments.Zulu.Plurals
 import Linglib.Morphology.Template
 import Linglib.Morphology.Case.Allomorphy
 import Linglib.Morphology.Case.WALS
-import Linglib.Morphology.Root
+import Linglib.Morphology.Root.Basic
 import Linglib.Morphology.DM.Allosemy
 import Linglib.Morphology.DM.Categorizer
 import Linglib.Morphology.DM.CategorizerSemantics
@@ -1341,7 +1341,7 @@ import Linglib.Morphology.Paradigm.Contiguity
 import Linglib.Morphology.Paradigm.Morphome
 import Linglib.Morphology.Paradigm.OfCells
 import Linglib.Morphology.Paradigm.Linkage
-import Linglib.Morphology.RootFamily
+import Linglib.Morphology.Root.Family
 import Linglib.Morphology.TenseAspect
 import Linglib.Morphology.UsageBased.Network
 import Linglib.Morphology.Word

@@ -1,6 +1,6 @@
 import Linglib.Semantics.Genericity.Subkinds
 import Linglib.Fragments.Dutch.Adjectives
-import Linglib.Morphology.RootFamily
+import Linglib.Morphology.Root.Family
 
 /-!
 # Inflection and Derivation: How Adjectives and Nouns Refer to Abstract Objects

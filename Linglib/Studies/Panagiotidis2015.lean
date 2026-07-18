@@ -1,4 +1,4 @@
-import Linglib.Morphology.RootFamily
+import Linglib.Morphology.Root.Family
 import Linglib.Studies.McNallyDeSwart2011
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Syntax.Minimalist.ExtendedProjection.Properties
