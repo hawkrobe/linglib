@@ -348,7 +348,10 @@ def VerbForm.agreementSlots (f : VerbForm) : Nat :=
 /-- An exponent table: a descriptive agreement paradigm over canonical φ-cells
     (`Agreement.Cell`), mapping each person/number cell to its surface string.
     Per-language `setAExponent`/`setBExponent` populate this; cross-Mayan
-    typology theorems quantify over it. -/
+    typology theorems quantify over it. Discontinuous exponents (person
+    marker plus a separate plural word) are notated with `…` between the
+    parts, e.g. Q'anjob'al `"s-…heb'"`; null exponents use the `∅`
+    notations documented at `ExponentTable.IsThirdSgZero`. -/
 abbrev ExponentTable := Agreement.Paradigm String
 
 /-- Decidable predicate: the third-person singular Set B slot is
@@ -356,7 +359,8 @@ abbrev ExponentTable := Agreement.Paradigm String
     [kaufman-norman-1984] Table 8 (reconstructing to proto-Cholan and
     proto-Mayan), but not strictly pan-Mayan — SJA Mam's default Set B
     `tz'=` surfaces in the 3sg slot per [scott-2023] §3.3.2, so
-    `mayan_p3sg_abs_null` quantifies only over `isStandard = true`. The
+    `CoonMateoPedroPreminger2014.mayan_p3sg_abs_null` quantifies only
+    over `isStandard = true`. The
     predicate is notation-agnostic: `"-∅"` (suffix-notated Set B: Cholan,
     Q'anjob'alan, Tseltal, and Tsotsil — whose system also has a prefixal
     subset, see `Tsotsil.setBLinearity`), `"∅"` (prefixal Set B: Kaqchikel
@@ -399,8 +403,9 @@ def all : List Mayan :=
     the exception: per [scott-2023], San Juan Atitán Mam is morphologically
     tripartite (S, A, P each distinct in case and agreement), with Set B
     3sg surfacing as the default `tz'=` rather than null — so
-    `mayan_p3sg_abs_null` and `mayan_perfective_ergative` quantify only over
-    `isStandard = true`. Whether Mam is "really" tripartite vs
+    `CoonMateoPedroPreminger2014.mayan_p3sg_abs_null` and
+    `CoonMateoPedroPreminger2014.mayan_perfective_ergative` quantify only
+    over `isStandard = true`. Whether Mam is "really" tripartite vs
     ergative-with-neutral-objects is contested (cf. England 1983b vs Scott
     2023; Zavala 2017 §4 calls Ch'orti' the only tripartite Mayan); the
     substrate adopts Scott's analysis, recorded in `Mam/Agreement.lean`. -/

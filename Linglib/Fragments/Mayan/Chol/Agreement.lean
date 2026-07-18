@@ -107,7 +107,6 @@ open Extraction (ExtractionTarget ExtractionMarkingStrategy)
 namespace Chol
 
 open Mayan (ExponentTable)
-open Agreement
 
 /-! ### Argument positions -/
 
@@ -202,8 +201,9 @@ def setBExponent : ExponentTable :=
     Mayan branches (Cholan, Q'anjob'alan, Tseltalan, K'ichean) per
     [kaufman-norman-1984] Table 8 reconstruction. **Not** universally
     pan-Mayan: Mam's default Set B `tz'=` surfaces in the 3sg slot
-    ([scott-2023]), and `Mayan.isStandard` excludes Mam from
-    the relevant cross-Mayan theorem (`mayan_p3sg_abs_null`). -/
+    ([scott-2023]), and `Mayan.isStandard` excludes Mam from the
+    cross-Mayan theorem
+    (`CoonMateoPedroPreminger2014.mayan_p3sg_abs_null`). -/
 theorem p3sg_abs_null : setBExponent.realize (.pn .third .Sing) = some "-∅" := rfl
 
 /-- 3rd person Set A allomorphy: pre-consonantal `i-` vs pre-vocalic

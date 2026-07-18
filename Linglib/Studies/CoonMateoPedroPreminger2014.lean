@@ -625,6 +625,31 @@ theorem mayan_perfective_ergative
     Mayan.caseAt lang .Perf r = Alignment.ergative.assignCase r := by
   cases lang <;> first | rfl | (simp [Mayan.isStandard] at h)
 
+/-- Set B (absolutive) exponent table indexed by Mayan language, routed
+    to the per-language Fragment paradigm — the exponent-side companion
+    of `absPositionOf`. -/
+def setBExponentOf : Mayan → Mayan.ExponentTable
+  | .Chol      => Chol.setBExponent
+  | .Qanjobal  => Qanjobal.setBExponent
+  | .Kaqchikel => Kaqchikel.setBExponent
+  | .Tseltal   => Tseltal.setBExponent
+  | .Tsotsil   => Tsotsil.setBExponent
+  | .Mam       => Mam.setBExponent
+  | .Kiche     => Kiche.setBExponent
+  | .Yukatek   => Yukatek.setBExponent
+
+/-- Null third-singular absolutive across the standard Mayan branches:
+    every registered language with the standard ergative-absolutive base
+    has a morphologically null 3sg Set B slot ([kaufman-norman-1984]
+    Table 8 reconstruction). San Juan Atitán Mam (`isStandard = false`)
+    is the exception — its default `tz'=` surfaces there ([scott-2023]
+    §3.3.2). Grounded in the fragments via `setBExponentOf`; the
+    notation-agnostic null predicate is
+    `Mayan.ExponentTable.IsThirdSgZero`. -/
+theorem mayan_p3sg_abs_null (lang : Mayan) (h : lang.isStandard = true) :
+    (setBExponentOf lang).IsThirdSgZero := by
+  cases lang <;> first | decide | (simp [Mayan.isStandard] at h)
+
 -- ============================================================================
 -- § 12: Person-Conditioned AF (bridge)
 -- ============================================================================
