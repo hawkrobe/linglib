@@ -26,7 +26,7 @@ roots in DM:
    the first categorizer (evidence: multiply derived words like *editorial*,
    *classifieds*, *nationalize*). Voice is the phase head.
 
-## DM Three-Lists Architecture ([marantz-1997], [harley-2014] §5)
+## DM Three-Lists Architecture ([marantz-1997], [harley-2014] §2.4)
 
 - **List 1**: Root terminal nodes — syntactic atoms with opaque indices
 - **List 2**: Vocabulary Items — phonological realizations competing for insertion
