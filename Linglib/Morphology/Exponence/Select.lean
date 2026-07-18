@@ -153,16 +153,21 @@ theorem selectBy_le_of_applies {f : R → α} {v : List R} {c : Ctx} {r s : R}
   (hf r (selectBy_mem h) s hs (selectBy_applies h) hsapp).mpr
     (List.le_of_mem_argmax (mem_applicable.mpr ⟨hs, hsapp⟩) h)
 
-/-- **Soundness**: a contravariant specificity score selects an
-Elsewhere winner. Engines discharge `hf` with their `le_iff` reflection
-lemma. -/
+/-- **Soundness**: a score reflecting specificity contravariantly on
+comparable applicable rules selects an Elsewhere winner. Only the
+conditional (`mpr`) direction is needed — argmax supplies `f s ≤ f r`
+and minimality supplies `s ≤ r`, so `hf` just closes `r ≤ s`.
+Linear-domain engines discharge `hf` from the `mpr` of their `le_iff`;
+`Finset`-support engines, where card `≤` does not imply support `⊆`,
+discharge it via `Finset.eq_of_subset_of_card_le`. -/
 theorem selectBy_isElsewhereWinner {f : R → α} {v : List R} {c : Ctx} {r : R}
     (hf : ∀ r ∈ v, ∀ s ∈ v, RuleLike.Applies (F := F) r c →
-      RuleLike.Applies (F := F) s c → (r ≤ s ↔ f s ≤ f r))
+      RuleLike.Applies (F := F) s c → s ≤ r → f s ≤ f r → r ≤ s)
     (h : selectBy f v c = some r) : IsElsewhereWinner v c r := by
   refine ⟨⟨selectBy_mem h, selectBy_applies h⟩, ?_⟩
-  rintro s ⟨hs, hsapp⟩ -
-  exact selectBy_le_of_applies hf h hs hsapp
+  rintro s ⟨hs, hsapp⟩ hsr
+  exact hf r (selectBy_mem h) s hs (selectBy_applies h) hsapp hsr
+    (List.le_of_mem_argmax (mem_applicable.mpr ⟨hs, hsapp⟩) h)
 
 omit [Preorder R] in
 /-- Contexts with the same applicable rules select the same rule. -/
@@ -181,7 +186,7 @@ def realize (f : R → α) (v : List R) (c : Ctx) : Option F :=
 /-- A realized exponent is genuinely predicted: it is `Realizes`. -/
 theorem realize_realizes {f : R → α} {v : List R} {c : Ctx} {φ : F}
     (hf : ∀ r ∈ v, ∀ s ∈ v, RuleLike.Applies (F := F) r c →
-      RuleLike.Applies (F := F) s c → (r ≤ s ↔ f s ≤ f r))
+      RuleLike.Applies (F := F) s c → s ≤ r → f s ≤ f r → r ≤ s)
     (h : realize f v c = some φ) : Realizes v c φ := by
   rw [realize, Option.map_eq_some_iff] at h
   obtain ⟨r, hr, rfl⟩ := h

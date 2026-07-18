@@ -443,7 +443,12 @@ rule a strictly higher generation probability at every shared form
 (`genProb_lt_of_ssubset`), and a likelihood-maximal rule among a
 vocabulary's generators is an Elsewhere winner
 (`maxGenProb_isElsewhereWinner`) — no nesting or comparability
-assumption needed, because card-minimality forces `⊆`-minimality. -/
+assumption needed, because card-minimality forces `⊆`-minimality. Since
+higher probability is smaller support (`genProb_le_iff_card_le`), this is
+the size principle as a specificity score in the shared core:
+`selectByCard_isElsewhereWinner` runs `Exponence.selectBy` on the
+dualized support cardinality, discharging the core's conditional
+soundness law via `Finset.eq_of_subset_of_card_le`. -/
 
 section ProbabilisticElsewhere
 
@@ -468,6 +473,20 @@ theorem genProb_lt_of_ssubset {s₁ s₂ : Finset Ctx} (h : s₂ ⊂ s₁)
   simp only [genProb, if_pos hc, if_pos hc₁]
   gcongr
 
+/-- Uniform generation probability ranks supports by cardinality at a
+shared form: a rule assigns at least as much probability iff its support
+is no larger. The monotone bridge from maximum-likelihood selection to
+the support-cardinality specificity score — maximizing probability *is*
+minimizing support cardinality. -/
+theorem genProb_le_iff_card_le {s₁ s₂ : Finset Ctx} {c : Ctx}
+    (h₁ : c ∈ s₁) (h₂ : c ∈ s₂) :
+    genProb s₁ c ≤ genProb s₂ c ↔ s₂.card ≤ s₁.card := by
+  have hs₁ : (0 : ℚ) < s₁.card := by exact_mod_cast Finset.card_pos.mpr ⟨c, h₁⟩
+  have hs₂ : (0 : ℚ) < s₂.card := by exact_mod_cast Finset.card_pos.mpr ⟨c, h₂⟩
+  simp only [genProb, if_pos h₁, if_pos h₂]
+  rw [inv_le_inv₀ hs₁ hs₂]
+  exact_mod_cast Iff.rfl
+
 /-- A finitely supported rule: an exponent with a finite set of forms
 it can generate. -/
 structure FinRule (Ctx F : Type*) where
@@ -483,10 +502,48 @@ instance : RuleLike (FinRule Ctx F) Ctx F :=
 
 instance : Preorder (FinRule Ctx F) := RuleLike.toPreorder
 
+instance (c : Ctx) :
+    DecidablePred (fun r : FinRule Ctx F => RuleLike.Applies (F := F) r c) :=
+  fun r => inferInstanceAs (Decidable (c ∈ r.supp))
+
+omit [DecidableEq Ctx] in
+/-- Support cardinality reflects specificity conditionally on the
+finitely supported rules: if `s` is at least as specific as `r` (support
+inclusion) and `r`'s support is no larger, then the two coincide, so `r`
+is at least as specific as `s`. This is the conditional reflection the
+`Finset`-support engine satisfies where the linear-order engines' `iff`
+fails — card `≤` does not imply support `⊆`, but `⊆` plus card `≤` forces
+equality (`Finset.eq_of_subset_of_card_le`). -/
+private theorem finRule_card_reflection {v : List (FinRule Ctx F)} {c : Ctx} :
+    ∀ r ∈ v, ∀ s ∈ v, RuleLike.Applies (F := F) r c →
+      RuleLike.Applies (F := F) s c → s ≤ r →
+      OrderDual.toDual s.supp.card ≤ OrderDual.toDual r.supp.card → r ≤ s :=
+  fun r _ s _ _ _ hsr hcard => by
+    have hsub : s.supp ⊆ r.supp := fun x hx => hsr hx
+    have hle : r.supp.card ≤ s.supp.card := OrderDual.toDual_le_toDual.mp hcard
+    have heq : s.supp = r.supp := Finset.eq_of_subset_of_card_le hsub hle
+    exact fun x hx => show x ∈ s.supp from heq ▸ hx
+
+/-- **The size principle as a specificity score** ([odonnell-2015]
+§5.5.3): selecting the finitely supported rule of least support
+cardinality — dualized so smaller supports win the `argmax` — through
+the shared core's `Exponence.selectBy` yields an Elsewhere winner.
+Minimizing support cardinality *is* maximizing uniform generation
+probability (`genProb_le_iff_card_le`), so this is Elsewhere selection as
+maximum-likelihood inference, on record as a score. -/
+theorem selectByCard_isElsewhereWinner {v : List (FinRule Ctx F)} {c : Ctx}
+    {r : FinRule Ctx F}
+    (h : selectBy (fun s => OrderDual.toDual s.supp.card) v c = some r) :
+    IsElsewhereWinner v c r :=
+  selectBy_isElsewhereWinner finRule_card_reflection h
+
 /-- **Elsewhere selection is maximum-likelihood inference**
 ([odonnell-2015] §5.5.3): a rule maximizing uniform generation
 probability at `c` among a vocabulary's generators is an Elsewhere
-winner of the corresponding vocabulary. -/
+winner of the corresponding vocabulary. Maximizing probability is
+minimizing support cardinality (`genProb_le_iff_card_le`), whence
+card-minimality forces `⊆`-minimality — the same reasoning
+`selectByCard_isElsewhereWinner` routes through the core's score. -/
 theorem maxGenProb_isElsewhereWinner {v : List (FinRule Ctx F)} {c : Ctx}
     {r : FinRule Ctx F} (hrv : r ∈ v) (hrc : c ∈ r.supp)
     (hmax : ∀ s ∈ v, c ∈ s.supp → genProb s.supp c ≤ genProb r.supp c) :
@@ -495,15 +552,8 @@ theorem maxGenProb_isElsewhereWinner {v : List (FinRule Ctx F)} {c : Ctx}
   rintro s ⟨hsv, htc⟩ hle
   have htc' : c ∈ s.supp := htc
   have hsub : s.supp ⊆ r.supp := fun x hx => hle hx
-  have hcard : r.supp.card ≤ s.supp.card := by
-    have hp := hmax s hsv htc'
-    simp only [genProb] at hp
-    rw [if_pos htc', if_pos hrc] at hp
-    have hs₀ : (0 : ℚ) < s.supp.card := by
-      exact_mod_cast Finset.card_pos.mpr ⟨c, htc'⟩
-    have hr₀ : (0 : ℚ) < r.supp.card := by
-      exact_mod_cast Finset.card_pos.mpr ⟨c, hrc⟩
-    exact_mod_cast (inv_le_inv₀ hs₀ hr₀).mp hp
+  have hcard : r.supp.card ≤ s.supp.card :=
+    (genProb_le_iff_card_le htc' hrc).mp (hmax s hsv htc')
   have heq : s.supp = r.supp := Finset.eq_of_subset_of_card_le hsub hcard
   exact fun x hx => show x ∈ s.supp from heq ▸ hx
 
