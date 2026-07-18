@@ -1,4 +1,4 @@
-import Linglib.Morphology.MorphRule
+import Linglib.Morphology.Periphrasis
 
 /-!
 # Jakaltek (Jacaltec) Auxiliary Verb Fragment

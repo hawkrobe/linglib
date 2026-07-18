@@ -1,4 +1,5 @@
-import Linglib.Morphology.MorphRule
+import Linglib.Morphology.Periphrasis
+import Linglib.Morphology.Realization
 import Linglib.Syntax.Negation
 
 /-!

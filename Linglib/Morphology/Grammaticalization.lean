@@ -1,5 +1,5 @@
 import Mathlib.Order.Nat
-import Linglib.Morphology.MorphRule
+import Linglib.Morphology.Formative
 
 /-!
 # Grammaticalization

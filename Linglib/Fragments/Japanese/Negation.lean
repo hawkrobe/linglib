@@ -1,4 +1,4 @@
-import Linglib.Morphology.MorphRule
+import Linglib.Morphology.RelevanceHierarchy
 import Linglib.Syntax.Negation
 
 /-!

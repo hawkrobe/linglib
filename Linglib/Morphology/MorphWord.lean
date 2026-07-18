@@ -1,5 +1,5 @@
 import Linglib.Morphology.Morph
-import Linglib.Morphology.MorphRule
+import Linglib.Morphology.Formative
 
 /-!
 # Morphological Word Structure

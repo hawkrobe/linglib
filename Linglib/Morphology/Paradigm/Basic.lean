@@ -1,4 +1,4 @@
-import Linglib.Morphology.MorphRule
+import Linglib.Morphology.Realization
 import Mathlib.Data.Rat.Defs
 
 /-!

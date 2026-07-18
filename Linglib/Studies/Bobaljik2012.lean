@@ -1,7 +1,6 @@
 import Linglib.Morphology.DegreeContainment
 import Linglib.Morphology.Exponence.Containment.Contiguity
 import Linglib.Morphology.DM.Merger
-import Linglib.Morphology.InflectionRules
 import Linglib.Semantics.Alternatives.Lexical
 import Linglib.Fragments.English.Modifiers.Adjectives
 import Linglib.Fragments.Latin.Adjectives
