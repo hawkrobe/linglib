@@ -3,10 +3,8 @@ import Linglib.Fragments.English.TemporalExpressions
 import Linglib.Studies.Rett2020
 import Linglib.Fragments.Tagalog.TemporalConnectives
 import Linglib.Fragments.Slavic.Serbian.TemporalConnectives
-import Linglib.Processing.SelfPacedReading
 
 open Features (Acceptability)
-open SelfPacedReading (Region)
 
 /-!
 # [alstott-aravind-2026]: On aspectual coercion in *before*- and *after*-clauses
@@ -37,6 +35,33 @@ Key findings:
   may reflect pragmatic vs semantic coercion (§5.3, §7.3)
 
 -/
+
+namespace SelfPacedReading
+
+/-- Offset from a designated critical region ("the effect appeared at
+    verb+1"): `0` is the critical region; positive offsets are spillover
+    regions; negative offsets are precritical regions. `Int` rather than
+    an enum: negative offsets and arithmetic come for free. Formerly the
+    `Processing/SelfPacedReading.lean` paradigm vocabulary, demoted to
+    its sole consumer. -/
+abbrev Region := Int
+
+namespace Region
+
+/-- The designated critical region of the stimulus. -/
+def critical : Region := 0
+
+/-- The `n`-th spillover region (post-critical). -/
+def spillover (n : Nat) : Region := (n : Int)
+
+/-- The `n`-th precritical region (pre-critical). -/
+def precritical (n : Nat) : Region := -(n : Int)
+
+end Region
+
+end SelfPacedReading
+
+open SelfPacedReading (Region)
 
 namespace AlstottAravind2026
 

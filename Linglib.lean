@@ -1342,7 +1342,6 @@ import Linglib.Morphology.TheorySpace
 import Linglib.Morphology.Unification
 import Linglib.Morphology.UsageBased.Network
 import Linglib.Morphology.Word
-import Linglib.Morphology.WugTest
 import Linglib.Phonology.Autosegmental.AR
 import Linglib.Phonology.Autosegmental.Correspondence
 import Linglib.Phonology.Autosegmental.Factors
@@ -1480,7 +1479,6 @@ import Linglib.Processing.Psychophysics.PsychophysicalChoice
 import Linglib.Processing.Psychophysics.Psychophysics
 import Linglib.Processing.Psychophysics.SignalDetection
 import Linglib.Processing.Psychophysics.Thurstone
-import Linglib.Processing.SelfPacedReading
 import Linglib.Processing.VisualWorld
 import Linglib.Semantics.Alternatives.AltMeaning
 import Linglib.Semantics.Alternatives.Competition

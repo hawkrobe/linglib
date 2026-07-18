@@ -4,7 +4,7 @@ import Mathlib.Tactic.NormNum
 import Linglib.Fragments.Japanese.Prosody
 import Linglib.Phonology.Constraints.Lift
 import Linglib.Studies.Steriade1997
-import Linglib.Morphology.WugTest
+import Linglib.Studies.AlbrightHayes2003
 
 /-!
 # Breiss, Katsuda & Kawahara (2026): Token frequency modulates optional paradigm uniformity in Japanese voiced velar nasalisation
@@ -112,7 +112,7 @@ favouring a paradigm-anchored account.
   is only that nasalisation rate is monotonic in the relevant
   log-frequency, with the appropriate sign per channel.
 - The wug-test methodological contract lives in
-  `Morphology/WugTest.lean`; this file consumes that paradigm via the
+  the shared wug vocabulary (in `Studies/AlbrightHayes2003.lean`); this file consumes it via the
   `novel_compounds_show_n2_gradient` discriminator.
 -/
 
@@ -443,7 +443,7 @@ theorem novel_compounds_show_n2_gradient (slope : ℝ) (hSlope : 0 < slope)
   linarith [mul_lt_mul_of_pos_left hfreq hSlope]
 
 -- ============================================================================
--- § 8: Wug paradigm cell — BKK as a `Morphology/WugTest.lean` consumer
+-- § 8: Wug paradigm cell — BKK as a wug-vocabulary consumer
 -- ============================================================================
 
 /-! Experiment 2 of [breiss-katsuda-kawahara-2026] is a wug-style
@@ -455,7 +455,7 @@ frequency-driven modulation must come from the *N2's* lexical
 attestation, not the compound's.
 
 This section wires BKK to the methodological contract in
-`Morphology/WugTest.lean` (anchored on [berko-1958] and
+the shared wug vocabulary (anchored on [berko-1958] and
 [albright-hayes-2003]). The cell type carries:
 
 - a compound (the stimulus),
@@ -510,7 +510,7 @@ end WugBKKCell
 -- ============================================================================
 
 /-! `wugBkkRate` is BKK's per-cell numeric prediction expressed in the
-shape `Morphology/WugTest.lean` requires (`Rate Cell ℝ`). It exhibits
+shape the wug vocabulary requires (`Rate Cell ℝ`). It exhibits
 the N2-frequency gradient on novel cells, satisfying the WugTest
 predicate `NovelShowsFreqGradient` — and hence (by
 `novelGradient_inconsistent_with_invariance`) excluding the UseListed
@@ -573,7 +573,7 @@ def cell_haigan : WugBKKCell where
   n2LogFreq := 0
 
 /-- **Anti-UseListed discriminator (final form).** Wired through
-    `Morphology/WugTest.lean`'s structural impossibility theorem: BKK's
+    the wug vocabulary's structural impossibility theorem: BKK's
     `wugBkkRate` cannot satisfy `NovelInvariantInFrequency` (the
     UseListed prediction). Any account on which novel forms have flat
     PU pressure across N2 frequencies is ruled out by Experiment 2.
