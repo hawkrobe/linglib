@@ -1,4 +1,4 @@
-import Linglib.Morphology.ConsonantalRoot
+import Linglib.Morphology.Root.Basic
 
 /-!
 # Modern Hebrew Consonantal Roots
@@ -67,13 +67,13 @@ def sbr : Root String := ⟨["ʃ", "b", "r"]⟩
 -- ============================================================================
 
 /-- Every Hebrew root in this inventory is triradical. -/
-theorem klj_triradical : klj.triradical = true := rfl
-theorem klt_triradical : klt.triradical = true := rfl
-theorem kll_triradical : kll.triradical = true := rfl
-theorem dmj_triradical : dmj.triradical = true := rfl
-theorem bnj_triradical : bnj.triradical = true := rfl
-theorem ktv_triradical : ktv.triradical = true := rfl
-theorem sbr_triradical : sbr.triradical = true := rfl
+theorem klj_triradical : klj.Triradical := rfl
+theorem klt_triradical : klt.Triradical := rfl
+theorem kll_triradical : kll.Triradical := rfl
+theorem dmj_triradical : dmj.Triradical := rfl
+theorem bnj_triradical : bnj.Triradical := rfl
+theorem ktv_triradical : ktv.Triradical := rfl
+theorem sbr_triradical : sbr.Triradical := rfl
 
 /-- The final segment of √klj is the glide [j] (the QaTaT–QaTa trigger). -/
 theorem klj_final_is_j : klj.finalSegment = some "j" := rfl

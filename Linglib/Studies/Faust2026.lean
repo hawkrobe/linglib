@@ -1,4 +1,4 @@
-import Linglib.Morphology.ConsonantalRoot
+import Linglib.Morphology.Root.Basic
 import Linglib.Phonology.Constraints.Basic
 import Linglib.Phonology.OptimalityTheory.Tableau
 import Linglib.Morphology.DM.Categorizer
@@ -204,7 +204,7 @@ abbrev isRootFinal (m : RootTemplateMatch α) (a : Association) : Prop :=
 abbrev isMisaligned (m : RootTemplateMatch α) : Prop :=
   ∃ a ∈ m.associations,
     a.source = .root ∧
-    m.root.isNonfinal a.rootIndex ∧
+    m.root.IsNonfinal a.rootIndex ∧
     m.template.isFinalSlot a.slotIndex
 
 /-- The list of C-slot indices that are NOT filled by any association.
