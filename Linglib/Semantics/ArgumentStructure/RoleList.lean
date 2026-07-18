@@ -39,8 +39,7 @@ def RoleList.args (r : RoleList) : List EntailmentProfile :=
 
 /-! Named per-class argument profiles. These are the class-level consensus
 rows formerly hand-stored per verb in `EntailmentProfile.lean`; consumers
-(studies, fragments, `Morphology/RootTypology.lean`) reference these or the
-template accessors below. -/
+(studies, fragments) reference these or the template accessors below. -/
 
 /-- Experiencer argument: sentient with respect to the event, without
     volition or causation ([dowty-1991] (38): "the Experiencer is entailed

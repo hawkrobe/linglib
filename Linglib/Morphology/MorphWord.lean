@@ -1,3 +1,4 @@
+import Linglib.Morphology.Morph
 import Linglib.Morphology.MorphRule
 
 /-!
@@ -61,6 +62,14 @@ structure CircumfixExponence where
 def CircumfixExponence.realize (c : CircumfixExponence) : String :=
   c.prefix_ ++ c.stem ++ c.suffix_
 
+/-- A circumfix as a two-morph construction. [haspelmath-2020] (p. 123)
+treats a circumfix not as one discontinuous morph but as a construction
+containing a prefix and a suffix; this realizes that reading as the
+prefix/suffix `Morph`s of `Morphology/Morph.lean` (the stem is not part
+of the exponent). -/
+def CircumfixExponence.toExponent (c : CircumfixExponence) : Exponent :=
+  [Morph.pref c.prefix_, Morph.suff c.suffix_]
+
 /-- A circumfix is discontinuous: its exponents are separated by the stem. -/
 def CircumfixExponence.isDiscontinuous (_c : CircumfixExponence) : Bool := true
 
@@ -104,13 +113,19 @@ open Morphology.Circumfix (CircumfixExponence)
 
 /-- A morpheme: the minimal meaningful unit (Hayes §5.1).
 
-Carries a surface form, an optional gloss, and its morphological status
-(free word, clitic, or affix). -/
+Carries its form as a `Morph` (`Morphology/Morph.lean`), an optional
+gloss, and its morphological `status`. `status` (`MorphStatus`) and
+`morph.kind` (`Morph.Kind`) are two independent axes: `status` grades
+syntactic wordhood (free word / clitic / affix), while `morph.kind`
+records the attachment notation (prefix, suffix, clitic, root). -/
 structure Morpheme where
-  form   : String
+  morph  : Morph
   gloss  : String := ""
   status : MorphStatus := .freeWord
   deriving DecidableEq, Repr
+
+/-- The surface string of a morpheme: its morph's segmental form. -/
+def Morpheme.surface (m : Morpheme) : String := m.morph.form
 
 -- ============================================================================
 -- §2: Reduplication Type
@@ -165,13 +180,13 @@ inductive MorphWord where
 
 /-- Extract the flat surface string from the morphological tree. -/
 def MorphWord.surface : MorphWord → String
-  | .root m => m.form
-  | .prefixed afx base => afx.form ++ base.surface
-  | .suffixed base afx => base.surface ++ afx.form
+  | .root m => m.surface
+  | .prefixed afx base => afx.surface ++ base.surface
+  | .suffixed base afx => base.surface ++ afx.surface
   | .infixed base afx pos =>
     let s := base.surface
-    String.ofList (s.toList.take pos) ++ afx.form ++ String.ofList (s.toList.drop pos)
-  | .circumfixed pre base suf => pre.form ++ base.surface ++ suf.form
+    String.ofList (s.toList.take pos) ++ afx.surface ++ String.ofList (s.toList.drop pos)
+  | .circumfixed pre base suf => pre.surface ++ base.surface ++ suf.surface
   | .compound left right => left.surface ++ right.surface
   | .reduplicated rt base =>
     match rt with
@@ -192,8 +207,8 @@ def MorphWord.morphemes : MorphWord → List Morpheme
   | .suffixed base afx => base.morphemes ++ [afx]
   | .infixed base afx _ => base.morphemes ++ [afx]
   | .circumfixed pre base suf =>
-    ⟨pre.form, pre.gloss, .inflAffix⟩ :: base.morphemes
-      ++ [⟨suf.form, suf.gloss, .inflAffix⟩]
+    ⟨pre.morph, pre.gloss, .inflAffix⟩ :: base.morphemes
+      ++ [⟨suf.morph, suf.gloss, .inflAffix⟩]
   | .compound left right => left.morphemes ++ right.morphemes
   | .reduplicated _ base => base.morphemes
   | .converted base => base.morphemes
@@ -208,18 +223,18 @@ positions (Hayes Chs 6–8). -/
 def MorphWord.boundaryPositions : MorphWord → List Nat
   | .root _ => []
   | .prefixed afx base =>
-    let offset := afx.form.length
+    let offset := afx.surface.length
     offset :: base.boundaryPositions.map (· + offset)
   | .suffixed base afx =>
     let baseLen := base.surface.length
-    base.boundaryPositions ++ [baseLen, baseLen + afx.form.length]
+    base.boundaryPositions ++ [baseLen, baseLen + afx.surface.length]
   | .infixed base afx pos =>
-    let afxLen := afx.form.length
+    let afxLen := afx.surface.length
     let baseBounds := base.boundaryPositions
     let shifted := baseBounds.map (λ b => if b ≥ pos then b + afxLen else b)
     (shifted ++ [pos, pos + afxLen]).mergeSort (· ≤ ·) |>.eraseDups
   | .circumfixed pre base _suf =>
-    let preLen := pre.form.length
+    let preLen := pre.surface.length
     let baseLen := base.surface.length
     preLen :: (base.boundaryPositions.map (· + preLen)
       ++ [preLen + baseLen])
@@ -293,7 +308,7 @@ def MorphWord.depth : MorphWord → Nat
 Returns `none` for non-circumfixed words. -/
 def MorphWord.toCircumfixExponence : MorphWord → Option CircumfixExponence
   | .circumfixed pre base suf =>
-    some { prefix_ := pre.form, suffix_ := suf.form
+    some { prefix_ := pre.surface, suffix_ := suf.surface
          , stem := base.surface }
   | _ => none
 
@@ -336,7 +351,7 @@ theorem root_morphemeCount_one (m : Morpheme) :
 /-- The circumfix bridge extracts the correct prefix, suffix, and stem. -/
 theorem circumfixed_bridge (pre suf : Morpheme) (base : MorphWord) :
     (MorphWord.circumfixed pre base suf).toCircumfixExponence
-      = some { prefix_ := pre.form, suffix_ := suf.form
+      = some { prefix_ := pre.surface, suffix_ := suf.surface
              , stem := base.surface } := by
   simp only [MorphWord.toCircumfixExponence]
 

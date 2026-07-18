@@ -1338,11 +1338,9 @@ import Linglib.Morphology.Paradigm.Complexity
 import Linglib.Morphology.Paradigm.Contiguity
 import Linglib.Morphology.Paradigm.Morphome
 import Linglib.Morphology.Paradigm.OfCells
+import Linglib.Morphology.Paradigm.Linkage
 import Linglib.Morphology.RootFamily
-import Linglib.Morphology.RootTypology
 import Linglib.Morphology.TenseAspect
-import Linglib.Morphology.TheorySpace
-import Linglib.Morphology.Unification
 import Linglib.Morphology.UsageBased.Network
 import Linglib.Morphology.Word
 import Linglib.Phonology.Autosegmental.AR
@@ -1897,6 +1895,7 @@ import Linglib.Semantics.Verb.Denotation
 import Linglib.Semantics.Verb.Distributivity
 import Linglib.Semantics.Verb.Root.Arity
 import Linglib.Semantics.Verb.Root.Basic
+import Linglib.Semantics.Verb.Root.Classification
 import Linglib.Semantics.Verb.Root.Closure
 import Linglib.Semantics.Verb.Root.OutcomeCardinality
 import Linglib.Semantics.Verb.Root.Outcomes
@@ -2700,6 +2699,7 @@ import Linglib.Studies.Stojkovic2026
 import Linglib.Studies.Storme2026
 import Linglib.Studies.Storment2026
 import Linglib.Studies.Sudo2016
+import Linglib.Studies.Stump2016
 import Linglib.Studies.SumersEtAl2023
 import Linglib.Studies.SuttonFilip2021
 import Linglib.Studies.TaraldsenEtAl2018

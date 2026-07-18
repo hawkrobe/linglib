@@ -174,14 +174,14 @@ the verb stem (a free word), the historic-tense exponent `HIST`
 -/
 
 /-- The verb-stem morpheme (a free word), keyed by orthographic form. -/
-private def mStem (s : String) : Morpheme := { form := s, gloss := "" }
+private def mStem (s : String) : Morpheme := { morph := .root s, gloss := "" }
 
 /-- The historic-tense exponent, bearing floating `(d)` and `{L}`. -/
-private def mHist : Morpheme := { form := "d'", gloss := "HIST" }
+private def mHist : Morpheme := { morph := .pref "d'", gloss := "HIST" }
 
 /-- The past-tense impersonal exponent: an empty CV unit at the left
     edge ([laoide-kemp-2026] §6.2, Fig. 5). -/
-private def mImpers : Morpheme := { form := "", gloss := "PST.IMPERS" }
+private def mImpers : Morpheme := { morph := .pref "", gloss := "PST.IMPERS" }
 
 /-! ## §3 Verb stems as `FloatingForm`s
 
