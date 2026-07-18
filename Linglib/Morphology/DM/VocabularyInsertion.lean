@@ -1,5 +1,5 @@
 import Mathlib.Tactic.TypeStar
-import Linglib.Morphology.Exponence.Rule
+import Linglib.Morphology.Exponence.Select
 
 /-!
 # Vocabulary Insertion (Distributed Morphology)

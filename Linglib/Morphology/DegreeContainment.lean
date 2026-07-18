@@ -18,7 +18,7 @@ tallest` (AAA), `good – better – best` (ABB), or `bonus – melior –
 optimus` (ABC); both `*good – better – goodest` (ABA) and `*good –
 gooder – best` (AAB) are unattested. Contiguity excludes only ABA; the
 AAB exclusion and the derivations live in the realizational engine
-(`Morphology/Exponence/Hierarchy.lean`) and are instantiated in
+(`Morphology/Exponence/Containment/Contiguity.lean`) and are instantiated in
 `Studies/Bobaljik2012.lean`.
 
 Scope restriction (cf. [bobaljik-2012] pp. 2, 28): the contiguity claim
@@ -135,7 +135,7 @@ def abc : DegreePattern := ⟨0, 1, 2⟩
 def aba : DegreePattern := ⟨0, 1, 0⟩
 
 /-- *AAB: contiguous, but unattested — excluded by the vocabulary-level
-conditions of `Morphology/Exponence/Hierarchy.lean`
+conditions of `Morphology/Exponence/Containment/Contiguity.lean`
 (`realize_const_of_grounded`), not by contiguity. -/
 def aab : DegreePattern := ⟨0, 0, 1⟩
 

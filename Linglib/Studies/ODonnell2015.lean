@@ -1,5 +1,5 @@
 import Linglib.Morphology.FragmentGrammars.FragmentGrammar
-import Linglib.Morphology.Exponence.Rule
+import Linglib.Morphology.Exponence.Select
 
 /-!
 # O'Donnell 2015: English derivational morphology

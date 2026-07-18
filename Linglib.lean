@@ -1298,7 +1298,7 @@ import Linglib.Fragments.Yoruba.TenseAspect
 import Linglib.Fragments.ZarmaSonrai.Negation
 import Linglib.Fragments.Zulu.Phonology
 import Linglib.Fragments.Zulu.Plurals
-import Linglib.Morphology.AffixTemplate
+import Linglib.Morphology.Template
 import Linglib.Morphology.Case.Allomorphy
 import Linglib.Morphology.Case.WALS
 import Linglib.Morphology.ConsonantalRoot
@@ -1312,8 +1312,11 @@ import Linglib.Morphology.DM.Merger
 import Linglib.Morphology.DM.NominalStructure
 import Linglib.Morphology.DM.VocabSimple
 import Linglib.Morphology.DM.VocabularyInsertion
-import Linglib.Morphology.Exponence.Rule
-import Linglib.Morphology.Exponence.Hierarchy
+import Linglib.Morphology.Exponence.Basic
+import Linglib.Morphology.Exponence.Containment.Contiguity
+import Linglib.Morphology.Exponence.Containment.Defs
+import Linglib.Morphology.Exponence.Containment.Selection
+import Linglib.Morphology.Exponence.Select
 import Linglib.Morphology.DegreeContainment
 import Linglib.Morphology.Derivation
 import Linglib.Morphology.Focus
@@ -1330,7 +1333,6 @@ import Linglib.Morphology.Morph
 import Linglib.Morphology.MorphProfile
 import Linglib.Morphology.MorphRule
 import Linglib.Morphology.MorphWord
-import Linglib.Morphology.Nanosyntax.Superset
 import Linglib.Morphology.Nanosyntax.TreeSpellout
 import Linglib.Morphology.Number
 import Linglib.Morphology.Paradigm.Basic

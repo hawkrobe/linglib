@@ -1,4 +1,4 @@
-import Linglib.Morphology.AffixTemplate
+import Linglib.Morphology.Template
 
 /-!
 # Sesotho Morphological Profile

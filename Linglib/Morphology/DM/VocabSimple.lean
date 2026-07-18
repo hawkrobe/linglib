@@ -1,6 +1,6 @@
 import Linglib.Syntax.Minimalist.Agree.Basic
 import Linglib.Syntax.Agreement.Paradigm
-import Linglib.Morphology.Exponence.Rule
+import Linglib.Morphology.Exponence.Select
 import Linglib.Morphology.DM.VocabularyInsertion
 import Mathlib.Data.List.MinMax
 

@@ -1,6 +1,6 @@
 import Linglib.Morphology.MorphRule
 import Linglib.Studies.ZwickyPullum1983
-import Linglib.Morphology.Nanosyntax.Superset
+import Linglib.Morphology.Exponence.Containment.Contiguity
 import Linglib.Morphology.Paradigm.Linkage
 
 -- ============================================================================

@@ -1,6 +1,6 @@
 import Linglib.Studies.DeganoAloni2025
 import Linglib.Studies.Haspelmath1997
-import Linglib.Morphology.Nanosyntax.Superset
+import Linglib.Morphology.Exponence.Containment.Contiguity
 import Linglib.Syntax.Case.Order
 import Linglib.Studies.Dekier2021
 import Linglib.Fragments.Slavic.Russian.Indefinites
@@ -44,7 +44,7 @@ test case. Key claims:
 
 - `DependenceLogic`: `variation` and `constancy` predicates formalize D&A's
   `var(y,x)` and `dep(y,x)`. `type_vi_contradictory` derives the gap.
-- `Morphology/Nanosyntax/Superset.lean`: `spellout` demonstrates the
+- `Morphology/Exponence/Containment/Contiguity.lean`: `spellout` demonstrates the
   negative result — nanosyntax predicts containment that indefinites lack.
 - `Indefinite`: `IndefinitePronoun` (consensus function-coverage
   + morphological-basis data) and `classifyTriple` for syncretism patterns.

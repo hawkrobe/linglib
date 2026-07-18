@@ -1,7 +1,7 @@
 import Linglib.Morphology.DegreeContainment
 import Linglib.Morphology.Case.Allomorphy
 import Linglib.Syntax.Case.Order
-import Linglib.Morphology.Exponence.Hierarchy
+import Linglib.Morphology.Exponence.Containment.Contiguity
 import Linglib.Morphology.DM.DomainLocality
 
 /-!
@@ -44,7 +44,7 @@ refinement of the Bobaljik 2012 framework:
    codebase, see `Syntax/Minimalist/Phi/Recursion.lean`).
 
 This file formalizes (1) directly: the terminal-adjacent fragment of
-the realizational engine (`Morphology/Exponence/Hierarchy.lean`,
+the realizational engine (`Morphology/Exponence/Containment/Contiguity.lean`,
 [bobaljik-2012]'s structural-adjacency locality) predicts AAB exclusion
 in *every* domain it applies to — `realize_const_of_terminal_adjacent`
 forces the two inner cells to share a root; the empirical data the

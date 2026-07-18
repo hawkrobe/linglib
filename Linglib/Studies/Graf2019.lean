@@ -1,5 +1,5 @@
 import Linglib.Fragments.English.Modifiers.Adjectives
-import Linglib.Morphology.Nanosyntax.Superset
+import Linglib.Morphology.Exponence.Containment.Contiguity
 import Linglib.Morphology.DegreeContainment
 import Mathlib.Tactic.TFAE
 
