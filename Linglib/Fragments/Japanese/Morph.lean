@@ -45,7 +45,7 @@ example : morphProfile.IsAgglutinating := by decide
 
 /-- Japanese verb suffix template, stem-outward ([kaiser-yamamoto-2013], UD
 segmentation). Japanese is strongly suffixing, so there are no prefix slots. -/
-def verbAffixTemplate : AffixTemplate where
+def verbAffixTemplate : AffixTemplate MorphCategory where
   suffixSlots :=
     [ .derivation       -- 1. -su (suru)
     , .valence          -- 2. -(s)ase (causative)
