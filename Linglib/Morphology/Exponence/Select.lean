@@ -34,7 +34,7 @@ per-block winners into the paradigm function ([stump-2001]).
 
 namespace Morphology.Exponence
 
-variable {Ctx F : Type*} {R : Type*} [Preorder R] [RuleLike R Ctx F]
+variable {Ctx F : Type*} {R : Type*} [Preorder R] [Exponence R Ctx F]
 
 /-! ### Elsewhere winners -/
 
@@ -42,13 +42,13 @@ variable {Ctx F : Type*} {R : Type*} [Preorder R] [RuleLike R Ctx F]
 `≤`-minimal applicable member of `v` — no applicable rule in `v` is
 strictly more specific. -/
 def IsElsewhereWinner (v : List R) (c : Ctx) (r : R) : Prop :=
-  Minimal (fun s => s ∈ v ∧ RuleLike.Applies (F := F) s c) r
+  Minimal (fun s => s ∈ v ∧ Exponence.Applies (F := F) s c) r
 
 /-- A winner is at least as specific as any applicable member of the
 vocabulary that is at least as specific as it. -/
 theorem IsElsewhereWinner.le_of_le {v : List R} {c : Ctx} {r s : R}
     (hr : IsElsewhereWinner v c r) (hs : s ∈ v)
-    (happ : RuleLike.Applies (F := F) s c) (h : s ≤ r) : r ≤ s :=
+    (happ : Exponence.Applies (F := F) s c) (h : s ≤ r) : r ≤ s :=
   Minimal.le_of_le hr ⟨hs, happ⟩ h
 
 /-! ### Coherence and uniqueness -/
@@ -68,21 +68,21 @@ order-theoretically). Incomparable competitors are tolerated, where
 [stump-2001]'s Pāṇinian Determinism Hypothesis forbids them. -/
 def Coherent (v : List R) : Prop :=
   ∀ r ∈ v, ∀ s ∈ v, AntisymmRel (· ≤ ·) r s →
-    RuleLike.exponent (F := F) r = RuleLike.exponent (F := F) s
+    Exponence.exponent (F := F) r = Exponence.exponent (F := F) s
 
 /-- Over a coherent vocabulary, comparable winners select the same
 exponent: Elsewhere selection is well defined up to incomparability. -/
 theorem IsElsewhereWinner.exponent_eq {v : List R} {c : Ctx} {r s : R}
     (hv : Coherent v) (hr : IsElsewhereWinner v c r)
     (hs : IsElsewhereWinner v c s) (h : s ≤ r ∨ r ≤ s) :
-    RuleLike.exponent (F := F) r = RuleLike.exponent (F := F) s :=
+    Exponence.exponent (F := F) r = Exponence.exponent (F := F) s :=
   hv r hr.1.1 s hs.1.1 (hr.antisymmRel hs h)
 
 /-- A vocabulary with an applicable rule has an Elsewhere winner —
 proved, where [stump-2001] guarantees existence by stipulating a
 bottom-element Identity Function Default. -/
 theorem exists_isElsewhereWinner {v : List R} {c : Ctx}
-    (h : ∃ r ∈ v, RuleLike.Applies (F := F) r c) : ∃ r, IsElsewhereWinner v c r :=
+    (h : ∃ r ∈ v, Exponence.Applies (F := F) r c) : ∃ r, IsElsewhereWinner v c r :=
   (v.finite_toSet.subset fun _ hr => hr.1).exists_minimal h
 
 /-! ### The prediction relation -/
@@ -90,7 +90,7 @@ theorem exists_isElsewhereWinner {v : List R} {c : Ctx}
 /-- The framework-neutral prediction: `φ` is realized at `c` when some
 Elsewhere winner carries it. -/
 def Realizes (v : List R) (c : Ctx) (φ : F) : Prop :=
-  ∃ r, IsElsewhereWinner v c r ∧ RuleLike.exponent (F := F) r = φ
+  ∃ r, IsElsewhereWinner v c r ∧ Exponence.exponent (F := F) r = φ
 
 /-- Over a coherent vocabulary whose winners are comparable, the
 prediction is unique. -/
@@ -108,15 +108,15 @@ picks the applicable rule of greatest score. Engines whose score is
 minimized (span, tree size, `Finsupp`-support card) pass it through
 `OrderDual α`. -/
 
-variable [∀ c : Ctx, DecidablePred (fun r : R => RuleLike.Applies (F := F) r c)]
+variable [∀ c : Ctx, DecidablePred (fun r : R => Exponence.Applies (F := F) r c)]
 
 /-- The rules of `v` applicable at `c`, in vocabulary order. -/
 def applicable (v : List R) (c : Ctx) : List R :=
-  v.filter (fun r => RuleLike.Applies (F := F) r c)
+  v.filter (fun r => Exponence.Applies (F := F) r c)
 
 omit [Preorder R] in
 @[simp] theorem mem_applicable {v : List R} {c : Ctx} {r : R} :
-    r ∈ applicable v c ↔ r ∈ v ∧ RuleLike.Applies (F := F) r c := by
+    r ∈ applicable v c ↔ r ∈ v ∧ Exponence.Applies (F := F) r c := by
   simp only [applicable, List.mem_filter, decide_eq_true_eq]
 
 variable {α : Type*} [LinearOrder α]
@@ -134,7 +134,7 @@ theorem selectBy_mem {f : R → α} {v : List R} {c : Ctx} {r : R}
 
 omit [Preorder R] in
 theorem selectBy_applies {f : R → α} {v : List R} {c : Ctx} {r : R}
-    (h : selectBy f v c = some r) : RuleLike.Applies (F := F) r c :=
+    (h : selectBy f v c = some r) : Exponence.Applies (F := F) r c :=
   (mem_applicable.mp (List.argmax_mem h)).2
 
 omit [Preorder R] in
@@ -146,10 +146,10 @@ theorem selectBy_eq_none_iff {f : R → α} {v : List R} {c : Ctx} :
 rules, the selection is at least as specific as every applicable rule
 — it is `≤` all of them, no comparability assumed. -/
 theorem selectBy_le_of_applies {f : R → α} {v : List R} {c : Ctx} {r s : R}
-    (hf : ∀ r ∈ v, ∀ s ∈ v, RuleLike.Applies (F := F) r c →
-      RuleLike.Applies (F := F) s c → (r ≤ s ↔ f s ≤ f r))
+    (hf : ∀ r ∈ v, ∀ s ∈ v, Exponence.Applies (F := F) r c →
+      Exponence.Applies (F := F) s c → (r ≤ s ↔ f s ≤ f r))
     (h : selectBy f v c = some r) (hs : s ∈ v)
-    (hsapp : RuleLike.Applies (F := F) s c) : r ≤ s :=
+    (hsapp : Exponence.Applies (F := F) s c) : r ≤ s :=
   (hf r (selectBy_mem h) s hs (selectBy_applies h) hsapp).mpr
     (List.le_of_mem_argmax (mem_applicable.mpr ⟨hs, hsapp⟩) h)
 
@@ -161,8 +161,8 @@ Linear-domain engines discharge `hf` from the `mpr` of their `le_iff`;
 `Finset`-support engines, where card `≤` does not imply support `⊆`,
 discharge it via `Finset.eq_of_subset_of_card_le`. -/
 theorem selectBy_isElsewhereWinner {f : R → α} {v : List R} {c : Ctx} {r : R}
-    (hf : ∀ r ∈ v, ∀ s ∈ v, RuleLike.Applies (F := F) r c →
-      RuleLike.Applies (F := F) s c → s ≤ r → f s ≤ f r → r ≤ s)
+    (hf : ∀ r ∈ v, ∀ s ∈ v, Exponence.Applies (F := F) r c →
+      Exponence.Applies (F := F) s c → s ≤ r → f s ≤ f r → r ≤ s)
     (h : selectBy f v c = some r) : IsElsewhereWinner v c r := by
   refine ⟨⟨selectBy_mem h, selectBy_applies h⟩, ?_⟩
   rintro s ⟨hs, hsapp⟩ hsr
@@ -181,12 +181,12 @@ theorem selectBy_congr {f : R → α} {v : List R} {c c' : Ctx}
 /-- The realized exponent: the score-selected winner's exponent
 (`none` when no rule applies). -/
 def realize (f : R → α) (v : List R) (c : Ctx) : Option F :=
-  (selectBy f v c).map (RuleLike.exponent (F := F))
+  (selectBy f v c).map (Exponence.exponent (F := F))
 
 /-- A realized exponent is genuinely predicted: it is `Realizes`. -/
 theorem realize_realizes {f : R → α} {v : List R} {c : Ctx} {φ : F}
-    (hf : ∀ r ∈ v, ∀ s ∈ v, RuleLike.Applies (F := F) r c →
-      RuleLike.Applies (F := F) s c → s ≤ r → f s ≤ f r → r ≤ s)
+    (hf : ∀ r ∈ v, ∀ s ∈ v, Exponence.Applies (F := F) r c →
+      Exponence.Applies (F := F) s c → s ≤ r → f s ≤ f r → r ≤ s)
     (h : realize f v c = some φ) : Realizes v c φ := by
   rw [realize, Option.map_eq_some_iff] at h
   obtain ⟨r, hr, rfl⟩ := h

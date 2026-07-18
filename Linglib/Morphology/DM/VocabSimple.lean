@@ -134,15 +134,15 @@ def makePersonVocab {PN : Type*} (cells : List PN) (toPhi : PN → List PhiFeatu
 
 section ExponenceCore
 
-open Morphology.Exponence
+open Morphology Morphology.Exponence
 
 /-- A vocabulary entry exposes the shared exponence core interface
-(`Morphology.Exponence.RuleLike`): contexts are (target bundle,
+(`Morphology.Exponence`): contexts are (target bundle,
 syntactic context) pairs, applicability is `Matches`. -/
-instance : RuleLike VocabEntry (FeatureBundle × Option Cat) String :=
+instance : Exponence VocabEntry (FeatureBundle × Option Cat) String :=
   ⟨VocabEntry.exponent, fun e => {tc | e.Matches tc.1 tc.2}⟩
 
-instance : Preorder VocabEntry := RuleLike.toPreorder
+instance : Preorder VocabEntry := Exponence.toPreorder
 
 /-- Derived specificity, unfolded: `e ≤ e'` iff `e'` matches wherever
 `e` does. -/
@@ -225,7 +225,7 @@ theorem VocabEntry.toVocabItem_matches (e : VocabEntry)
 where the entry does. -/
 theorem VocabEntry.toVocabItem_applies (e : VocabEntry)
     (tc : FeatureBundle × Option Cat) :
-    RuleLike.Applies e.toVocabItem tc ↔ RuleLike.Applies e tc :=
+    Exponence.Applies e.toVocabItem tc ↔ Exponence.Applies e tc :=
   e.toVocabItem_matches tc.1 tc.2
 
 /-- Specificity transfers along the embedding — the cross-engine
