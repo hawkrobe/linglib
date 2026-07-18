@@ -1,6 +1,7 @@
 import Linglib.Phonology.Tone.Basic
 import Linglib.Phonology.Tone.Grammatical
 import Linglib.Phonology.Autosegmental.Melody
+import Linglib.Morphology.MorphWord
 
 /-!
 # Poko Tonal Fragment
@@ -25,12 +26,13 @@ a fuller fragment when a second Poko paper arrives.
 * `Poko.Syll.melody` — each stem's lexical melody: tones, TBU, and
   pre-linking ([rolle-2018] §2.1; the floating H of `/M^H/` stems is
   the unlinked element).
-* `Poko.Form` — autosegmental forms (`FloatingForm Syll TRN`).
+* `Poko.Form` — autosegmental forms (`FloatingForm Syll TRN Morpheme`).
 -/
 
 namespace Poko
 
 open Autosegmental
+open Morphology.WordStructure (Morpheme)
 open Tone (TRN)
 
 /-! ### Syllables -/
@@ -74,7 +76,7 @@ def Syll.morpheme : Syll → Morpheme
 /-- Each stem's lexical melody ([mcpherson-lamont-2026] ex. 3): tones
     over the stem's single TBU, with the lexical pre-linking — the H of
     an `/M^H/` stem is the sole unlinked (floating) element. -/
-def Syll.melody (s : Syll) : FloatingForm Syll TRN :=
+def Syll.melody (s : Syll) : FloatingForm Syll TRN Morpheme :=
   match s with
   | .kak => .melody s.morpheme [.M, .H] [s] {(0, 0)}          -- /M^H/
   | .ri  => .melody s.morpheme [.M, .H] [s] {(0, 0)}          -- /M^H/
@@ -87,10 +89,10 @@ def Syll.melody (s : Syll) : FloatingForm Syll TRN :=
 
 /-- The underlying form of a stem sequence: melodies concatenated
     left-to-right. -/
-def word (ss : List Syll) : FloatingForm Syll TRN :=
+def word (ss : List Syll) : FloatingForm Syll TRN Morpheme :=
   .concatInputs (ss.map Syll.melody)
 
-/-- Poko autosegmental forms: syllable backbone, `TRN` tone tier. -/
-abbrev Form := FloatingForm Syll TRN
+/-- Poko autosegmental forms: syllable backbone, `TRN` tone tier, morpheme sponsor. -/
+abbrev Form := FloatingForm Syll TRN Morpheme
 
 end Poko

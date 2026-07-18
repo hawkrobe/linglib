@@ -32,16 +32,16 @@ term, [bye-svenonius-2012]'s programmatic statement; survey:
 
 namespace Autosegmental
 
-variable {S T : Type*}
+variable {S T M : Type*}
 
 namespace FloatingForm
 
-variable (m : Morpheme) (tones : List T) (tbus : List S) (links : Finset Link)
+variable (m : M) (tones : List T) (tbus : List S) (links : Finset Link)
 
 /-- One morpheme's underlying autosegmental contribution ([rolle-2018]
     §2.1 Def 1): `tones` over `tbus`, every element sponsored by `m`,
     pre-linked by `links` in melody-local coordinates; an input state. -/
-def melody : FloatingForm S T :=
+def melody : FloatingForm S T M :=
   mkInput (tbus.map fun s => { seg := s, morpheme := m })
     (tones.map fun t => { value := t, morpheme := m }) links
 
@@ -72,8 +72,8 @@ end FloatingForm
 /-- **Consistency of Exponence** ([zimmermann-2024] §4): GEN never alters
     morphemic affiliation — every one-step candidate carries its input's
     sponsors on both tiers. -/
-theorem FloatingForm.gen_preserves_morphemes [DecidableEq S] [DecidableEq T]
-    (f : FloatingForm S T) : ∀ g ∈ f.gen,
+theorem FloatingForm.gen_preserves_morphemes [DecidableEq S] [DecidableEq T] [DecidableEq M]
+    (f : FloatingForm S T M) : ∀ g ∈ f.gen,
     g.upperMorpheme? = f.upperMorpheme? ∧ g.lowerMorpheme? = f.lowerMorpheme? := by
   intro g hg
   simp only [FloatingForm.gen, Finset.mem_insert, Finset.mem_union, Finset.mem_image,

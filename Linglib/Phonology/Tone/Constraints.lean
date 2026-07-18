@@ -10,9 +10,9 @@ import Linglib.Phonology.Constraints.Defs
 /-!
 # Tonal constraints
 
-OT/HS constraint constructors over the `FloatingForm S TRN` autosegmental
+OT/HS constraint constructors over the `FloatingForm S TRN M` autosegmental
 representation (`Phonology/Autosegmental/Floating.lean`), generic over the segment
-type `S`. Each is a canonical `Constraints.Constraint` — a scalar `· → ℕ` violation
+type `S` and the opaque sponsor type `M`. Each is a canonical `Constraints.Constraint` — a scalar `· → ℕ` violation
 count. Equation numbers below are [mcpherson-lamont-2026]'s.
 
 ## Main definitions
@@ -52,7 +52,7 @@ open Autosegmental
 open Tone (TRN)
 open Constraints
 
-variable {S : Type*} [DecidableEq S] (f : FloatingForm S TRN)
+variable {S M : Type*} [DecidableEq S] [DecidableEq M] (f : FloatingForm S TRN M)
 
 /-! ### Tone-value predicate
 
@@ -72,30 +72,30 @@ abbrev ToneHasValue (k : TierIdx) (t : TRN) : Prop :=
     directional EVAL is recovered as the canonical lex order over this block
     ([lamont-2022b]). `k` is the underlying tone count `f.upper.len`, invariant under
     GEN, so it is a fixed literal per tableau. -/
-def starFloatBlock (k : ℕ) : List (Constraint (FloatingForm S TRN)) :=
+def starFloatBlock (k : ℕ) : List (Constraint (FloatingForm S TRN M)) :=
   (List.range k).map (fun i => fun g => if g.IsFloating i then 1 else 0)
 
 /-- `*FLOAT^←` (right-to-left): `starFloatBlock` laid out in reverse position order. -/
-def starFloatBlockRev (k : ℕ) : List (Constraint (FloatingForm S TRN)) :=
+def starFloatBlockRev (k : ℕ) : List (Constraint (FloatingForm S TRN M)) :=
   (starFloatBlock k).reverse
 
 /-- `*FLOAT (count)`: the parallel/count variant — the total floating-tone count as a
     single scalar constraint (the degree collapse of `starFloatBlock`). -/
-def starFloatCount : Constraint (FloatingForm S TRN) :=
+def starFloatCount : Constraint (FloatingForm S TRN M) :=
   fun f => f.floatIndicator.sum
 
 /-! ### *TAUTDOCK -/
 
 /-- `*TAUTDOCK` (paper, eq. 15, after [wolf-2007]): one violation
     per GEN-inserted tautomorphemic surface link. -/
-def starTautDock : Constraint (FloatingForm S TRN) :=
+def starTautDock : Constraint (FloatingForm S TRN M) :=
   fun f => (f.surfaceLinks.filter (fun l => f.IsInsertedLink l ∧ f.IsTautomorphemic l)).card
 
 /-! ### *CROWD (per-morpheme tone count) -/
 
 /-- The tone indices counting toward morpheme `m`'s tonal mass: surviving
     underlying tones of `m`, plus tones surface-linked to TBUs of `m`. -/
-def tonesForMorpheme (m : Morpheme) : Finset TierIdx :=
+def tonesForMorpheme (m : M) : Finset TierIdx :=
   let ownAlive := (Finset.range f.upper.len).filter fun k =>
     f.IsAlive k ∧ f.upperMorpheme? k = some m
   let docked := (f.surfaceLinks.filter fun l => f.lowerMorpheme? l.snd = some m).image Prod.fst
@@ -104,7 +104,7 @@ def tonesForMorpheme (m : Morpheme) : Finset TierIdx :=
 /-- `*CROWD` (paper eq. 5): one violation per morpheme with more than `threshold`
     tones (default 2), counting its surviving underlying tones plus tones docked onto
     its TBUs from other morphemes. -/
-def starCrowd (threshold : Nat := 2) : Constraint (FloatingForm S TRN) :=
+def starCrowd (threshold : Nat := 2) : Constraint (FloatingForm S TRN M) :=
   fun f => (f.morphemes.filter (fun m => threshold < (tonesForMorpheme f m).card)).card
 
 /-! ### *FALL (falling contours on multi-linked TBUs) -/
@@ -129,7 +129,7 @@ instance decidableHasFall : (ts : List TRN) → Decidable (HasFall ts)
 
 /-- `*FALL` (paper eq. 23): one violation per syllable with a falling contour
     (HM, HL, ML). -/
-def starFall : Constraint (FloatingForm S TRN) :=
+def starFall : Constraint (FloatingForm S TRN M) :=
   fun f => f.countLower (fun i => HasFall (f.tierValues i))
 
 /-! ### *M<L (M-then-L adjacency on the tier) -/
@@ -137,7 +137,7 @@ def starFall : Constraint (FloatingForm S TRN) :=
 /-- `*M<L` (paper eq. 29): one violation per M tone immediately preceding an L on the
     tonal tier — adjacency measured over the surviving (non-deleted) tones in `ulTier`
     order (deletions skip positions). -/
-def starMlessL : Constraint (FloatingForm S TRN) :=
+def starMlessL : Constraint (FloatingForm S TRN M) :=
   fun f =>
     let aliveValues : List TRN :=
       f.aliveTierIdxs.filterMap (fun k => (f.upper.get? k).map TierSpec.value)
@@ -147,32 +147,32 @@ def starMlessL : Constraint (FloatingForm S TRN) :=
 
 /-- `HAVETONE` (paper, eq. 17): one violation per syllable not
     associated to any tone. -/
-def haveTone : Constraint (FloatingForm S TRN) :=
+def haveTone : Constraint (FloatingForm S TRN M) :=
   fun f => f.countLower (fun i => (f.linksTo i).isEmpty = true)
 
 /-! ### Faithfulness — Generic over Tone Value -/
 
 /-- `MAX(T)` (paper, eq. 7c): one violation per underlying tone of
     value `t` deleted by GEN. -/
-def maxTone (t : TRN) : Constraint (FloatingForm S TRN) :=
+def maxTone (t : TRN) : Constraint (FloatingForm S TRN M) :=
   fun f => f.countUpper (fun k => f.IsDeleted k ∧ ToneHasValue f k t)
 
 /-- `DEP(link)/T` (paper, eq. 7a): one violation per surface link
     inserted by GEN whose linked tone has value `t`. -/
-def depLinkTone (t : TRN) : Constraint (FloatingForm S TRN) :=
+def depLinkTone (t : TRN) : Constraint (FloatingForm S TRN M) :=
   fun f => (f.surfaceLinks.filter (fun l => f.IsInsertedLink l ∧ ToneHasValue f l.fst t)).card
 
 /-- `MAX(link)/T` (paper, eq. 7b): one violation per underlying link of
     value `t` deleted by GEN. -/
-def maxLinkTone (t : TRN) : Constraint (FloatingForm S TRN) :=
+def maxLinkTone (t : TRN) : Constraint (FloatingForm S TRN M) :=
   fun f => (f.links.filter (fun l => f.IsDeletedLink l ∧ ToneHasValue f l.fst t)).card
 
 /-- `INTEGRITY` ([mccarthy-prince-1995]; [akinbo-fwangwar-2026]): no input tone has
     multiple output correspondents — here, alive `ulTier` entries sharing tone value `t`
     and morpheme `m`. Spreading (one multi-linked entry) → 0; copying (`n` such entries)
     → `n - 1` violations. -/
-def integrityTone (m : Morpheme) (t : TRN) :
-    Constraint (FloatingForm S TRN) :=
+def integrityTone (m : M) (t : TRN) :
+    Constraint (FloatingForm S TRN M) :=
   fun f => f.countUpper (fun k => f.IsAlive k ∧ f.upperMorpheme? k = some m ∧ ToneHasValue f k t) - 1
 
 end Tone
