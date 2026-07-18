@@ -7,8 +7,10 @@ import Linglib.Morphology.FusionTypology
 WALS-derived profile for Mandarin Chinese (ISO `cmn`). WALS F20A codes
 Mandarin as `isolatingConcatenative`, a mixed type the local 3-way `Fusion`
 enum cannot represent — `walsFusion` returns `none` and the fallback
-`.isolating` is exercised. B&N 2007 flexivity/bnExponence are not stipulated
-because the largely isolating typology renders them inapplicable.
+`.isolating` is exercised. flexivity/bnExponence are left uncoded (`none`)
+here — not because isolating voids them ([bickel-nichols-2007] pp. 186-187
+attest both flexive-isolating and nonflexive-isolating formatives) but
+because no consensus language-level value is stipulated for Mandarin.
 -/
 
 namespace Mandarin

@@ -6,11 +6,11 @@ import Mathlib.Tactic.DeriveFintype
 
 This file formalizes the substrate of Bybee 1985 Ch 5 ("Two Principles in
 a Dynamic Model of Lexical Representation," pp. 111-135). It is a peer-
-framework directory alongside `Morphology/{DM, PFM, WP,
-Nanosyntax, FragmentGrammars}/` — Bybee's network model is *the*
-usage-based competitor to the realisational and generative camps, and the
-audit (4-agent, 0.230.453) flagged its absence as the most important
-architectural gap in linglib's morphology layer.
+framework directory alongside `Morphology/{DM, Nanosyntax,
+FragmentGrammars}/` — Bybee's network model is *the* usage-based
+competitor to the realisational and generative camps. Not to be confused
+with Network Morphology (Corbett & Fraser's DATR-based default-inheritance
+framework), which shares only the word "network".
 
 ## The Two Principles
 
@@ -46,6 +46,10 @@ forms (*don't*, *won't* — Zwicky-Pullum 1983).
 
 ## What this file does NOT cover
 
+- The frequency–connection interaction: Bybee's closeness factor (c) has
+  high-frequency items forming *more distant* connections (autonomy), but
+  `strength` here is monotone in `tokenFreq` and no connection weakens
+  with frequency — the autonomy half of the model is not yet encoded
 - Ch 5 §10 morphological classes as emergent from network connection
   density — deferred to a future `SchemaInduction.lean` sibling
 - Ch 5 §11 productivity from class size + variance — deferred
