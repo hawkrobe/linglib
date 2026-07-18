@@ -598,10 +598,10 @@ core: contexts are grades, applicability is `AppliesAt`. -/
 def ExponenceRule.toRule (it : ExponenceRule n F) : Exponence.Rule (Fin n) F :=
   ⟨it.exponent, it.AppliesAt⟩
 
-/-- Containment specificity is definitionally the derived specificity
-of the shared core. -/
-theorem ExponenceRule.toRule_moreSpecific_iff {it jt : ExponenceRule n F} :
-    it.toRule.MoreSpecific jt.toRule ↔ it.MoreSpecific jt :=
+/-- Containment specificity is definitionally the shared core's
+specificity order. -/
+theorem ExponenceRule.toRule_le_iff {it jt : ExponenceRule n F} :
+    it.toRule ≤ jt.toRule ↔ it.MoreSpecific jt :=
   Iff.rfl
 
 /-- The containment engine's Elsewhere winner is an Elsewhere winner of
@@ -611,10 +611,10 @@ theorem isElsewhereWinner_toRule {v : List (ExponenceRule n F)} {g : Fin n}
     Exponence.IsElsewhereWinner (v.map ExponenceRule.toRule) g it.toRule := by
   obtain ⟨hmem, hmt⟩ := winner_spec h
   obtain ⟨-, -, -, hle⟩ := exists_of_maxThreshold_eq_coe hmt
-  refine ⟨List.mem_map_of_mem hmem, hle, ?_⟩
-  rintro s hs hsapp -
+  refine ⟨⟨List.mem_map_of_mem hmem, hle⟩, ?_⟩
+  rintro s ⟨hs, hsapp⟩ -
   obtain ⟨jt, hjt, rfl⟩ := List.mem_map.mp hs
-  rw [ExponenceRule.toRule_moreSpecific_iff,
+  rw [ExponenceRule.toRule_le_iff,
     ExponenceRule.moreSpecific_iff_threshold_le]
   exact threshold_le_of_maxThreshold_eq_coe hmt hjt hsapp
 

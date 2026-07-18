@@ -143,13 +143,14 @@ def VocabEntry.toRule (e : VocabEntry) : Rule (FeatureBundle × Option Cat) Stri
   ⟨e.exponent, λ tc => e.Matches tc.1 tc.2⟩
 
 /-- Syntactic refinement: a feature-superset entry (with compatible
-context restriction) is at least as specific in the derived order of
-the shared core. -/
-theorem VocabEntry.toRule_moreSpecific_of_superset {e e' : VocabEntry}
+context restriction) is at least as specific in the shared core's
+order. -/
+theorem VocabEntry.toRule_le_of_superset {e e' : VocabEntry}
     (hf : ∀ f ∈ FeatureBundle.toGramFeatures e'.features,
       f ∈ FeatureBundle.toGramFeatures e.features)
     (hc : e'.context = none ∨ e'.context = e.context) :
-    e.toRule.MoreSpecific e'.toRule := by
+    e.toRule ≤ e'.toRule := by
+  rw [Rule.le_iff]
   rintro ⟨t, c⟩ ⟨hm, hctx⟩
   refine ⟨?_, ?_⟩
   · rw [VocabEntry.MatchesFeatures, List.all_eq_true] at hm ⊢
@@ -167,28 +168,29 @@ theorem VocabEntry.matchesFeatures_self (e : VocabEntry) :
   intro ef hef
   exact List.any_eq_true.mpr ⟨ef, hef, beq_self_eq_true ef⟩
 
-/-- Derived specificity, characterized: `e` is at least as specific as
-`e'` in the shared core iff `e'`'s features are a subset of `e`'s and
-`e'`'s context restriction is compatible. Upgrades
-`toRule_moreSpecific_of_superset` to an iff — over feature bundles the
-intensional superset order IS the derived order, with no faithfulness
-assumption (contrast `Morphology.DM.VI.SpecificityFaithful`, which the
-opaque-predicate engine must stipulate). -/
-theorem VocabEntry.toRule_moreSpecific_iff {e e' : VocabEntry} :
-    e.toRule.MoreSpecific e'.toRule ↔
+/-- The shared core's specificity order, characterized: `e ≤ e'` iff
+`e'`'s features are a subset of `e`'s and `e'`'s context restriction is
+compatible. Upgrades `toRule_le_of_superset` to an iff — over feature
+bundles the intensional superset order IS the specificity order, with
+no faithfulness assumption (contrast
+`Morphology.DM.VI.SpecificityFaithful`, which the opaque-predicate
+engine must stipulate). -/
+theorem VocabEntry.toRule_le_iff {e e' : VocabEntry} :
+    e.toRule ≤ e'.toRule ↔
       (∀ f ∈ FeatureBundle.toGramFeatures e'.features,
         f ∈ FeatureBundle.toGramFeatures e.features) ∧
       (e'.context = none ∨ e'.context = e.context) := by
   constructor
   · intro h
     obtain ⟨hm', hctx'⟩ :=
-      h (c := (e.features, e.context)) ⟨e.matchesFeatures_self, Or.inr rfl⟩
+      Rule.le_iff.mp h (c := (e.features, e.context))
+        ⟨e.matchesFeatures_self, Or.inr rfl⟩
     refine ⟨?_, hctx'⟩
     rw [VocabEntry.MatchesFeatures, List.all_eq_true] at hm'
     intro f hf
     obtain ⟨tf, htf, hbeq⟩ := List.any_eq_true.mp (hm' f hf)
     exact (beq_iff_eq.mp hbeq) ▸ htf
-  · exact λ ⟨hf, hc⟩ => toRule_moreSpecific_of_superset hf hc
+  · exact λ ⟨hf, hc⟩ => toRule_le_of_superset hf hc
 
 /-! #### Bridge to the opaque-predicate engine -/
 
@@ -218,11 +220,12 @@ theorem VocabEntry.toVocabItem_toRule_applies (e : VocabEntry)
     e.toVocabItem.toRule.Applies tc ↔ e.toRule.Applies tc :=
   e.toVocabItem_matches tc.1 tc.2
 
-/-- Derived specificity transfers along the embedding — the cross-engine
+/-- Specificity transfers along the embedding — the cross-engine
 translation is faithful to the shared core's order. -/
-theorem VocabEntry.toVocabItem_toRule_moreSpecific {e f : VocabEntry} :
-    e.toVocabItem.toRule.MoreSpecific f.toVocabItem.toRule ↔
-      e.toRule.MoreSpecific f.toRule := by
+theorem VocabEntry.toVocabItem_toRule_le_iff {e f : VocabEntry} :
+    e.toVocabItem.toRule ≤ f.toVocabItem.toRule ↔
+      e.toRule ≤ f.toRule := by
+  simp only [Rule.le_iff]
   constructor <;> intro h c hc
   · exact (f.toVocabItem_toRule_applies c).mp
       (h ((e.toVocabItem_toRule_applies c).mpr hc))
@@ -237,15 +240,15 @@ theorem bestMatch_isElsewhereWinner {vocab : Vocabulary} {target : FeatureBundle
     {ctx : Option Cat} {e : VocabEntry}
     (h : bestMatch vocab target ctx = some e)
     (hfaith : ∀ a ∈ vocab, ∀ b ∈ vocab, a.Matches target ctx →
-      b.Matches target ctx → a.toRule.MoreSpecific b.toRule →
-      ¬ b.toRule.MoreSpecific a.toRule → b.specificity < a.specificity) :
+      b.Matches target ctx → a.toRule ≤ b.toRule →
+      ¬ b.toRule ≤ a.toRule → b.specificity < a.specificity) :
     IsElsewhereWinner (vocab.map VocabEntry.toRule) (target, ctx) e.toRule := by
   have hmem := List.argmax_mem h
   rw [List.mem_filter] at hmem
   obtain ⟨hev, hem⟩ := hmem
   have hematch : e.Matches target ctx := of_decide_eq_true hem
-  refine ⟨List.mem_map_of_mem hev, hematch, ?_⟩
-  rintro s hs happ hspec
+  refine ⟨⟨List.mem_map_of_mem hev, hematch⟩, ?_⟩
+  rintro s ⟨hs, happ⟩ hspec
   obtain ⟨b, hb, rfl⟩ := List.mem_map.mp hs
   by_contra hns
   have hlt : e.specificity < b.specificity :=

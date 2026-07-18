@@ -27,7 +27,7 @@ uses containment as the simpler equivalent formulation.
 - `treeSelect`, `treeSpellout`: Superset Principle + Elsewhere Condition
 - `TreeLexEntry.toRule`, `treeSelect_isElsewhereWinner`: the engine as an
   instance of the shared exponence core — derived specificity is reverse
-  tree containment (`toRule_moreSpecific_iff`), and smallest-tree
+  tree containment (`toRule_le_iff`), and smallest-tree
   selection is an Elsewhere winner with no side conditions
 - `FootConditionMet`: [taraldsen-et-al-2018]'s constraint on backtracking
 - `chain_contains_iff_le`: for right-branching chains, tree containment
@@ -296,13 +296,13 @@ applicability is Superset-Principle matching. -/
 def TreeLexEntry.toRule (e : TreeLexEntry F α) : Rule (NanoTree F) α :=
   ⟨e.exponent, e.Matches⟩
 
-/-- Derived specificity is reverse containment of the stored trees:
+/-- The specificity order is reverse containment of the stored trees:
 `a` is at least as specific as `b` exactly when `b`'s tree contains
 `a`'s. Tree size is therefore a faithful specificity measure
 (`Contains.size_le`), which is what licenses smallest-tree selection. -/
-theorem TreeLexEntry.toRule_moreSpecific_iff {a b : TreeLexEntry F α} :
-    a.toRule.MoreSpecific b.toRule ↔ b.tree.Contains a.tree :=
-  ⟨λ h => h (.refl a.tree), λ h _ hc => h.trans hc⟩
+theorem TreeLexEntry.toRule_le_iff {a b : TreeLexEntry F α} :
+    a.toRule ≤ b.toRule ↔ b.tree.Contains a.tree :=
+  Rule.le_iff.trans ⟨λ h => h (.refl a.tree), λ h _ hc => h.trans hc⟩
 
 /-- Smallest-tree selection is an Elsewhere winner of the shared core,
 with no side conditions: containment is size-antisymmetric
@@ -316,10 +316,10 @@ theorem treeSelect_isElsewhereWinner [DecidableEq F]
   rw [List.mem_filter] at hmem
   obtain ⟨hev, hem⟩ := hmem
   have hematch : e.Matches target := of_decide_eq_true hem
-  refine ⟨List.mem_map_of_mem hev, hematch, ?_⟩
-  rintro s hs happ hspec
+  refine ⟨⟨List.mem_map_of_mem hev, hematch⟩, ?_⟩
+  rintro s ⟨hs, happ⟩ hspec
   obtain ⟨b, hb, rfl⟩ := List.mem_map.mp hs
-  rw [TreeLexEntry.toRule_moreSpecific_iff] at hspec ⊢
+  rw [TreeLexEntry.toRule_le_iff] at hspec ⊢
   have hble : ¬ b.tree.size < e.tree.size :=
     List.not_lt_of_mem_argmin (f := λ e : TreeLexEntry F α => e.tree.size)
       (List.mem_filter.mpr

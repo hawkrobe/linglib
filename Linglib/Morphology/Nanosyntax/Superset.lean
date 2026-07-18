@@ -444,26 +444,26 @@ def ExponenceRule.toSupersetRule (it : ExponenceRule n F) :
     Exponence.Rule (Fin n) F :=
   ⟨it.exponent, it.Matches⟩
 
-/-- Minimize Junk is the derived specificity of the shared core under
-the Superset reading: smaller span = more specific. -/
-theorem ExponenceRule.toSupersetRule_moreSpecific_iff
+/-- Minimize Junk is the shared core's specificity order under the
+Superset reading: smaller span = more specific. -/
+theorem ExponenceRule.toSupersetRule_le_iff
     {it jt : ExponenceRule n F} :
-    it.toSupersetRule.MoreSpecific jt.toSupersetRule ↔ it.spans ≤ jt.spans :=
-  ExponenceRule.matches_imp_iff_spans_le
+    it.toSupersetRule ≤ jt.toSupersetRule ↔ it.spans ≤ jt.spans :=
+  Exponence.Rule.le_iff.trans ExponenceRule.matches_imp_iff_spans_le
 
 /-- **Subset/Superset duality** over context-free vocabularies (the
 nanosyntax idealization): DM-style Subset specificity of `it` over `jt`
 is Superset specificity of `jt` over `it`. With contextual restrictions
 the Subset order compares thresholds, not spans, and the duality is
 only one-directional. -/
-theorem ExponenceRule.toRule_moreSpecific_iff_toSupersetRule
+theorem ExponenceRule.toRule_le_iff_toSupersetRule_le
     {it jt : ExponenceRule n F}
     (hit : it.context = none) (hjt : jt.context = none) :
-    it.toRule.MoreSpecific jt.toRule ↔
-      jt.toSupersetRule.MoreSpecific it.toSupersetRule := by
-  rw [ExponenceRule.toRule_moreSpecific_iff,
+    it.toRule ≤ jt.toRule ↔
+      jt.toSupersetRule ≤ it.toSupersetRule := by
+  rw [ExponenceRule.toRule_le_iff,
     ExponenceRule.moreSpecific_iff_threshold_le,
-    ExponenceRule.toSupersetRule_moreSpecific_iff]
+    ExponenceRule.toSupersetRule_le_iff]
   unfold ExponenceRule.threshold
   rw [hit, hjt]
   simp
@@ -479,10 +479,10 @@ theorem spelloutWinner_isElsewhereWinner {v : List (ExponenceRule n F)}
       it.toSupersetRule := by
   obtain ⟨hmem, hms⟩ := spelloutWinner_spec h
   obtain ⟨-, -, -, hle⟩ := exists_of_minSpan_eq_coe hms
-  refine ⟨List.mem_map_of_mem hmem, hle, ?_⟩
-  rintro s hs hsapp -
+  refine ⟨⟨List.mem_map_of_mem hmem, hle⟩, ?_⟩
+  rintro s ⟨hs, hsapp⟩ -
   obtain ⟨jt, hjt, rfl⟩ := List.mem_map.mp hs
-  rw [ExponenceRule.toSupersetRule_moreSpecific_iff]
+  rw [ExponenceRule.toSupersetRule_le_iff]
   exact le_spans_of_minSpan_eq_coe hms hjt hsapp
 
 end ExponenceCore

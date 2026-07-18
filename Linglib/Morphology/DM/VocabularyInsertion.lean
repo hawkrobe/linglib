@@ -169,8 +169,8 @@ order is not computable, so this engine must stipulate a rank — this
 Prop is the obligation the stipulation incurs, and
 `vocabularyInsert_isElsewhereWinner` is what discharging it buys. -/
 def SpecificityFaithful (rules : List (VocabItem Ctx Root)) : Prop :=
-  ∀ a ∈ rules, ∀ b ∈ rules, a.toRule.MoreSpecific b.toRule →
-    ¬ b.toRule.MoreSpecific a.toRule → b.specificity < a.specificity
+  ∀ a ∈ rules, ∀ b ∈ rules, a.toRule ≤ b.toRule →
+    ¬ b.toRule ≤ a.toRule → b.specificity < a.specificity
 
 private theorem findSome?_pairwise_max {l : List (VocabItem Ctx Root)}
     (hs : l.Pairwise (λ a b => b.specificity ≤ a.specificity))
@@ -219,8 +219,8 @@ theorem vocabularyInsert_isElsewhereWinner {rules : List (VocabItem Ctx Root)}
     exact this.imp (λ hab => by simpa using hab)
   obtain ⟨vi, hvi, hvm, hve, hmax⟩ := findSome?_pairwise_max hsort h
   rw [List.mem_mergeSort] at hvi
-  refine ⟨vi, hvi, hve, List.mem_map_of_mem hvi, hvm, ?_⟩
-  rintro s hs happ hspec
+  refine ⟨vi, hvi, hve, ⟨List.mem_map_of_mem hvi, hvm⟩, ?_⟩
+  rintro s ⟨hs, happ⟩ hspec
   obtain ⟨b, hb, rfl⟩ := List.mem_map.mp hs
   by_contra hns
   have hlt : vi.specificity < b.specificity := hf b hb vi hvi hspec hns
