@@ -1,6 +1,7 @@
 import Linglib.Semantics.Causation.Interpretation
 import Linglib.Semantics.Verb.Basic
-import Linglib.Morphology.MorphRule
+import Linglib.Morphology.Realization
+import Linglib.Morphology.Word
 
 /-! # Verbal Predicate Lexicon Fragment
 

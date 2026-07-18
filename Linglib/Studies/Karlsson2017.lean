@@ -1,6 +1,6 @@
 import Linglib.Features.Case.Basic
 import Linglib.Features.Aktionsart
-import Linglib.Morphology.MorphRule
+import Linglib.Morphology.RelevanceHierarchy
 
 /-!
 # Finnish Case System [karlsson-2017]

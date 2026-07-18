@@ -1,4 +1,5 @@
-import Linglib.Morphology.MorphRule
+import Linglib.Morphology.RelevanceHierarchy
+import Mathlib.Tactic.TypeStar
 
 /-!
 # Templates: word-skeletal morphotactic substrate
@@ -13,7 +14,7 @@ content, not settled here.
 A word's affix template: the ordered position-class slots of its prefix and
 suffix strings, parameterized by the slot type `Slot`. Instantiating at
 `MorphCategory` gives a language's slot order as Fragment-importable substrate
-that `RespectsRelevanceHierarchy` (in `Morphology/MorphRule.lean`) tests against
+that `RespectsRelevanceHierarchy` (in `Morphology/RelevanceHierarchy.lean`) tests against
 [bybee-1985]'s relevance hierarchy — so the order lives once, as Fragment data,
 and study files derive their checks from it rather than re-typing the template.
 Instantiating at a language-specific slot type carries finer position classes:

@@ -1,4 +1,3 @@
-import Linglib.Morphology.MorphRule
 import Linglib.Morphology.Paradigm.Complexity
 import Mathlib.Data.Rat.Defs
 

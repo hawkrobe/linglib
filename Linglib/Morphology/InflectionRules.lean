@@ -1,4 +1,4 @@
-import Linglib.Morphology.MorphRule
+import Linglib.Morphology.Realization
 
 /-!
 # Morphological Exponence Rules
@@ -96,25 +96,6 @@ def pastPartRule (σ : Type) (irregularForm : Option String := none) : MorphRule
   , semEffect := id
   , delegatedSemantics := true }
 
-/-- All tense rules have category `.tense`. -/
-theorem past_category (σ : Type) (irr : Option String) :
-    (pastRule σ irr).category = .tense := rfl
-
-theorem present_category (σ : Type) (irr : Option String) :
-    (presentRule σ irr).category = .tense := rfl
-
-theorem future_category (σ : Type) :
-    (futureRule σ).category = .tense := rfl
-
-theorem periphrasticPast_category (σ : Type) :
-    (periphrasticPastRule σ).category = .tense := rfl
-
-theorem periphrasticFuture_category (σ : Type) :
-    (periphrasticFutureRule σ).category = .tense := rfl
-
-theorem pastPart_category (σ : Type) (irr : Option String) :
-    (pastPartRule σ irr).category = .tense := rfl
-
 end Morphology.Tense
 
 -- ════════════════════════════════════════════════════
@@ -134,9 +115,6 @@ def presPartRule (σ : Type) (irregularForm : Option String := none) : MorphRule
   , featureRule := id
   , semEffect := id
   , delegatedSemantics := true }
-
-theorem presPart_category (σ : Type) (irr : Option String) :
-    (presPartRule σ irr).category = .aspect := rfl
 
 end Morphology.Aspect
 
@@ -238,12 +216,5 @@ def superlativeRule (σ : Type) (irregularForm : Option String := none) : MorphR
   , featureRule := id
   , semEffect := id
   , delegatedSemantics := true }
-
-/-- Both degree rules have category `.degree`. -/
-theorem comparative_category (σ : Type) (irr : Option String) :
-    (comparativeRule σ irr).category = .degree := rfl
-
-theorem superlative_category (σ : Type) (irr : Option String) :
-    (superlativeRule σ irr).category = .degree := rfl
 
 end Morphology.Degree

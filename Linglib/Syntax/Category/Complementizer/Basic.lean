@@ -1,7 +1,7 @@
 import Linglib.Data.UD.Basic
 import Linglib.Features.ClauseForm
 import Linglib.Features.Complementation
-import Linglib.Morphology.MorphRule
+import Linglib.Morphology.Formative
 import Linglib.Morphology.Word
 
 /-!

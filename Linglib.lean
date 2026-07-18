@@ -1320,6 +1320,7 @@ import Linglib.Morphology.Exponence.Select
 import Linglib.Morphology.DegreeContainment
 import Linglib.Morphology.Derivation
 import Linglib.Morphology.Focus
+import Linglib.Morphology.Formative
 import Linglib.Morphology.FragmentGrammars.AdaptorGrammar
 import Linglib.Morphology.FragmentGrammars.CFGFragment
 import Linglib.Morphology.FragmentGrammars.Comparisons
@@ -1331,7 +1332,6 @@ import Linglib.Morphology.Grammaticalization
 import Linglib.Morphology.InflectionRules
 import Linglib.Morphology.Morph
 import Linglib.Morphology.MorphProfile
-import Linglib.Morphology.MorphRule
 import Linglib.Morphology.MorphWord
 import Linglib.Morphology.Nanosyntax.TreeSpellout
 import Linglib.Morphology.Number
@@ -1341,6 +1341,9 @@ import Linglib.Morphology.Paradigm.Contiguity
 import Linglib.Morphology.Paradigm.Morphome
 import Linglib.Morphology.Paradigm.OfCells
 import Linglib.Morphology.Paradigm.Linkage
+import Linglib.Morphology.Periphrasis
+import Linglib.Morphology.Realization
+import Linglib.Morphology.RelevanceHierarchy
 import Linglib.Morphology.Root.Family
 import Linglib.Morphology.TenseAspect
 import Linglib.Morphology.UsageBased.Network

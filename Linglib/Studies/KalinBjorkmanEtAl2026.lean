@@ -1,4 +1,4 @@
-import Linglib.Morphology.MorphRule
+import Linglib.Morphology.Formative
 import Linglib.Studies.ZwickyPullum1983
 import Linglib.Morphology.Exponence.Containment.Contiguity
 import Linglib.Morphology.Paradigm.Linkage
