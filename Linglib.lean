@@ -1326,6 +1326,7 @@ import Linglib.Morphology.FragmentGrammars.FragmentLambda
 import Linglib.Morphology.FragmentGrammars.MultinomialPCFG
 import Linglib.Morphology.Grammaticalization
 import Linglib.Morphology.InflectionRules
+import Linglib.Morphology.Morph
 import Linglib.Morphology.MorphProfile
 import Linglib.Morphology.MorphRule
 import Linglib.Morphology.MorphWord

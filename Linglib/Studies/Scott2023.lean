@@ -182,7 +182,8 @@ open Agreement
     All six cells have specific entries. -/
 def setAVocab : Vocabulary :=
   makePersonVocab Agreement.Cell.pnCells Agreement.Cell.toPhiFeatures
-    (fun c => (setAExponent.realize c).getD "") (some .v)
+    (fun c => (((setAExponent .consonant).realize c).map
+      Morphology.Exponent.toString).getD "") (some .v)
 
 /-- Set B (ABS) vocabulary entries: φ-features on Infl (.T)
     yield the morphological exponent ([scott-2023] Table 3.5).
@@ -192,8 +193,9 @@ def setAVocab : Vocabulary :=
     matches — also catching the blocked-Infl-probe case in transitives. -/
 def setBVocab : Vocabulary :=
   makePersonVocab setBSpecificCells Agreement.Cell.toPhiFeatures
-    (fun c => (setBExponent.realize c).getD "") (some .T) ++
-    [{ features := ⊥, exponent := defaultSetB, context := some .T }]
+    (fun c => ((setBExponent.realize c).map
+      Morphology.Exponent.toString).getD "") (some .T) ++
+    [{ features := ⊥, exponent := Morphology.Exponent.toString defaultSetB, context := some .T }]
 
 /-- Which Minimalist head φ-Agrees with each argument position.
     Ditransitive R/T default to none (not modeled). -/
@@ -268,11 +270,13 @@ theorem setA_spellout_3sg :
     spellout setAVocab voiceFullyAgreed (some .v) = some "t-" := by
   native_decide
 
-/-- Set A spellout for 1SG: Voice with [Person:1, Number:sg] yields A1SG marker. -/
+/-- Set A spellout for 1SG: Voice with [Person:1, Number:sg] yields the
+    A1SG marker (pre-consonantal citation form `n-`; the pre-vocalic
+    variant `w-` lives in the fragment's `.vowel` table). -/
 theorem setA_spellout_1sg :
     let v1sg : FeatureBundle := .ofGramFeatures
       [.valued (.phi (.person .first)), .valued (.phi (.number .singular))]
-    spellout setAVocab v1sg (some .v) = some "n-/w-" := by
+    spellout setAVocab v1sg (some .v) = some "n-" := by
   native_decide
 
 -- ============================================================================

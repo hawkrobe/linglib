@@ -163,7 +163,8 @@ private def cellBundle (c : Agreement.Cell) : FeatureBundle :=
     All six cells have overt exponents. -/
 def setAVocab : Vocabulary :=
   makePersonVocab Agreement.Cell.pnCells Agreement.Cell.toPhiFeatures
-    (fun c => (setAExponent.realize c).getD "") (some .v)
+    (fun c => (((setAExponent .consonant).realize c).map
+      Morphology.Exponent.toString).getD "") (some .v)
 
 /-- Set B as DM Vocabulary entries, contextualized to Infl/T: specific
     entries for the five overt cells, plus the Elsewhere ∅ entry
@@ -172,7 +173,8 @@ def setAVocab : Vocabulary :=
 def setBVocab : Vocabulary :=
   makePersonVocab (Agreement.Cell.pnCells.filter (· != .pn .third .Sing))
     Agreement.Cell.toPhiFeatures
-    (fun c => (setBExponent.realize c).getD "") (some .T) ++
+    (fun c => ((setBExponent.realize c).map
+      Morphology.Exponent.toString).getD "") (some .T) ++
   [{ features := ⊥, exponent := "∅", context := some .T }]
 
 /-- Vocabulary insertion recovers the fragment's paradigms: spelling
@@ -181,8 +183,10 @@ def setBVocab : Vocabulary :=
     specific entries. -/
 theorem spellout_matches_paradigm :
     ∀ c ∈ Agreement.Cell.pnCells,
-      spellout setAVocab (cellBundle c) (some .v) = setAExponent.realize c ∧
-      spellout setBVocab (cellBundle c) (some .T) = setBExponent.realize c := by
+      spellout setAVocab (cellBundle c) (some .v) =
+        ((setAExponent .consonant).realize c).map Morphology.Exponent.toString ∧
+      spellout setBVocab (cellBundle c) (some .T) =
+        (setBExponent.realize c).map Morphology.Exponent.toString := by
   decide
 
 /-! ### Two-probe relativized probing ([bejar-rezac-2003], applied per §4.4) -/
@@ -272,7 +276,8 @@ def afAgreementTarget (subj obj : Agreement.Cell) : Option Agreement.Cell :=
     person restriction is violated: `personRestrictionOk_iff_plc`). -/
 def afMarker (subj obj : Agreement.Cell) : Option String :=
   if PLC Prod.snd ([(.A, subj), (.P, obj)] : List (ArgPosition × Agreement.Cell)) then
-    ((afAgreementTarget subj obj).bind setBExponent.realize) <|>
+    ((afAgreementTarget subj obj).bind
+      (fun t => (setBExponent.realize t).map Morphology.Exponent.toString)) <|>
       spellout setBVocab ⊥ (some .T)
   else none
 

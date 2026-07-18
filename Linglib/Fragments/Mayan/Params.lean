@@ -3,6 +3,7 @@ import Linglib.Data.UD.Basic
 import Linglib.Features.Prominence
 import Linglib.Syntax.Case.Alignment
 import Linglib.Syntax.Agreement.Paradigm
+import Linglib.Morphology.Morph
 import Linglib.Morphology.Word
 
 /-!
@@ -346,31 +347,25 @@ def VerbForm.agreementSlots (f : VerbForm) : Nat :=
 /-! ### Exponent tables -/
 
 /-- An exponent table: a descriptive agreement paradigm over canonical φ-cells
-    (`Agreement.Cell`), mapping each person/number cell to its surface string.
+    (`Agreement.Cell`), mapping each person/number cell to its
+    `Morphology.Exponent` — a possibly empty sequence of `Morphology.Morph`s.
+    Zero exponence is `[]`; a discontinuous realization (person marker plus a
+    separate plural word, e.g. Q'anjob'al *s-…heb'*) is a two-morph exponent.
     Per-language `setAExponent`/`setBExponent` populate this; cross-Mayan
-    typology theorems quantify over it. Discontinuous exponents (person
-    marker plus a separate plural word) are notated with `…` between the
-    parts, e.g. Q'anjob'al `"s-…heb'"`; null exponents use the `∅`
-    notations documented at `ExponentTable.IsThirdSgZero`. -/
-abbrev ExponentTable := Agreement.Paradigm String
+    typology theorems quantify over it. Tables with pre-consonantal vs
+    pre-vocalic variant shapes are `Morphology.Following → ExponentTable`
+    functions, with `.consonant` the citation point. -/
+abbrev ExponentTable := Agreement.Paradigm Morphology.Exponent
 
-/-- Decidable predicate: the third-person singular Set B slot is
-    morphologically null. An invariant of the standard Mayan branches per
+/-- Decidable predicate: the third-person singular Set B slot has zero
+    exponence. An invariant of the standard Mayan branches per
     [kaufman-norman-1984] Table 8 (reconstructing to proto-Cholan and
     proto-Mayan), but not strictly pan-Mayan — SJA Mam's default Set B
     `tz'=` surfaces in the 3sg slot per [scott-2023] §3.3.2, so
     `CoonMateoPedroPreminger2014.mayan_p3sg_abs_null` quantifies only
-    over `isStandard = true`. The
-    predicate is notation-agnostic: `"-∅"` (suffix-notated Set B: Cholan,
-    Q'anjob'alan, Tseltal, and Tsotsil — whose system also has a prefixal
-    subset, see `Tsotsil.setBLinearity`), `"∅"` (prefixal Set B: Kaqchikel
-    and other K'ichean HIGH-ABS), and `"∅-"` all encode "no overt 3sg
-    exponent". The disjunction form is kernel-decidable, unlike a
-    `String.replace` normalization. -/
+    over `isStandard = true`. -/
 def ExponentTable.IsThirdSgZero (e : ExponentTable) : Prop :=
-  e.realize (.pn .third .Sing) = some "-∅" ∨
-  e.realize (.pn .third .Sing) = some "∅" ∨
-  e.realize (.pn .third .Sing) = some "∅-"
+  e.realize (.pn .third .Sing) = some []
 
 instance (e : ExponentTable) : Decidable e.IsThirdSgZero := by
   unfold ExponentTable.IsThirdSgZero; exact inferInstance

@@ -59,18 +59,31 @@ def absPosition : Mayan.ABSPosition := .high
 
 /-! ### Set A (ERG) exponents -/
 
-/-- Set A (ERG) markers ([preminger-2014] table (29)). -/
-def setAExponent : ExponentTable :=
-  [(.pn .first .Sing, "n/w-"), (.pn .second .Sing, "a(w)-"), (.pn .third .Sing, "r(u)/u-"),
-   (.pn .first .Plur, "q(a)-"), (.pn .second .Plur, "i(w)-"), (.pn .third .Plur, "k(i)-")]
+/-- Set A (ERG) markers ([preminger-2014] ex. (29)) by
+    following-segment environment. Preminger's table glosses its
+    parenthesized segments only as "dropped in certain phonological
+    contexts"; the pre-consonantal vs pre-vocalic assignment below is
+    the standard K'ichean reading (cognate with the verified K'iche'
+    paradigm, [mondloch-2017]). 3sg pre-consonantal *ru-* has a
+    dialectal variant *u-* (Preminger's "r(u)/u-"). -/
+def setAExponent : Morphology.Following → ExponentTable
+  | .consonant =>
+    [(.pn .first .Sing, [.pref "n"]), (.pn .second .Sing, [.pref "a"]),
+     (.pn .third .Sing, [.pref "ru"]), (.pn .first .Plur, [.pref "qa"]),
+     (.pn .second .Plur, [.pref "i"]), (.pn .third .Plur, [.pref "ki"])]
+  | .vowel =>
+    [(.pn .first .Sing, [.pref "w"]), (.pn .second .Sing, [.pref "aw"]),
+     (.pn .third .Sing, [.pref "r"]), (.pn .first .Plur, [.pref "q"]),
+     (.pn .second .Plur, [.pref "iw"]), (.pn .third .Plur, [.pref "k"])]
 
 /-! ### Set B (ABS) exponents -/
 
 /-- Set B (ABS) markers; ∅ 3SG doubles as the Elsewhere default
     ([preminger-2014] table (29), Ch. 5). -/
 def setBExponent : ExponentTable :=
-  [(.pn .first .Sing, "in-"), (.pn .second .Sing, "at-"), (.pn .third .Sing, "∅"),
-   (.pn .first .Plur, "oj-"), (.pn .second .Plur, "ix-"), (.pn .third .Plur, "e-")]
+  [(.pn .first .Sing, [.pref "in"]), (.pn .second .Sing, [.pref "at"]),
+   (.pn .third .Sing, []), (.pn .first .Plur, [.pref "oj"]),
+   (.pn .second .Plur, [.pref "ix"]), (.pn .third .Plur, [.pref "e"])]
 
 /-! ### Argument positions -/
 

@@ -81,22 +81,22 @@ abbrev phi (p : Person) (n : Number) : PhiFeatures :=
     These are verbal prefixes (or postverbal particles for formal forms)
     that cross-reference S (intransitive subject) and P (transitive
     object). [mondloch-2017] Lessons 9, 15. -/
-def setBMarker : PhiFeatures → String
-  | ⟨.first,  .singular, .informal⟩ => "in-"
-  | ⟨.second, .singular, .informal⟩ => "at-"
-  | ⟨.third,  .singular, .informal⟩ => "∅"
-  | ⟨.first,  .plural, .informal⟩ => "oj-"
-  | ⟨.second, .plural, .informal⟩ => "ix-"
-  | ⟨.third,  .plural, .informal⟩ => "ee-"
-  | ⟨.second, .singular, .formal⟩   => "la"
-  | ⟨.second, .plural, .formal⟩   => "alaq"
+def setBMarker : PhiFeatures → Morphology.Exponent
+  | ⟨.first,  .singular, .informal⟩ => [.pref "in"]
+  | ⟨.second, .singular, .informal⟩ => [.pref "at"]
+  | ⟨.third,  .singular, .informal⟩ => []
+  | ⟨.first,  .plural, .informal⟩ => [.pref "oj"]
+  | ⟨.second, .plural, .informal⟩ => [.pref "ix"]
+  | ⟨.third,  .plural, .informal⟩ => [.pref "ee"]
+  | ⟨.second, .singular, .formal⟩   => [.free "la"]
+  | ⟨.second, .plural, .formal⟩   => [.free "alaq"]
   -- Non-binary number falls through to plural; formal non-2nd is Ø
   | ⟨.first,  _, .informal⟩ | ⟨.firstInclusive, _, .informal⟩
-  | ⟨.firstExclusive, _, .informal⟩ => "oj-"
-  | ⟨.zero, _, .informal⟩ => "∅"  -- no zero-person cell in the paradigm
-  | ⟨.second, _, .informal⟩   => "ix-"
-  | ⟨.third,  _, .informal⟩   => "ee-"
-  | ⟨_, _, .formal⟩            => "Ø"
+  | ⟨.firstExclusive, _, .informal⟩ => [.pref "oj"]
+  | ⟨.zero, _, .informal⟩ => []  -- no zero-person cell in the paradigm
+  | ⟨.second, _, .informal⟩   => [.pref "ix"]
+  | ⟨.third,  _, .informal⟩   => [.pref "ee"]
+  | ⟨_, _, .formal⟩            => []
 
 /-! ### Set A (ergative) markers -/
 
@@ -104,39 +104,39 @@ def setBMarker : PhiFeatures → String
     These cross-reference A (transitive subject) and are identical to
     possessive pronouns before consonant-initial nouns.
     [mondloch-2017] Lessons 7, 15. -/
-def setAPreC : PhiFeatures → String
-  | ⟨.first,  .singular, .informal⟩ => "nu-/in-"
-  | ⟨.second, .singular, .informal⟩ => "a-"
-  | ⟨.third,  .singular, .informal⟩ => "u-"
-  | ⟨.first,  .plural, .informal⟩ => "qa-"
-  | ⟨.second, .plural, .informal⟩ => "i-"
-  | ⟨.third,  .plural, .informal⟩ => "ki-"
-  | ⟨.second, .singular, .formal⟩   => "la"
-  | ⟨.second, .plural, .formal⟩   => "alaq"
+def setAPreC : PhiFeatures → Morphology.Exponent
+  | ⟨.first,  .singular, .informal⟩ => [.pref "nu"]
+  | ⟨.second, .singular, .informal⟩ => [.pref "a"]
+  | ⟨.third,  .singular, .informal⟩ => [.pref "u"]
+  | ⟨.first,  .plural, .informal⟩ => [.pref "qa"]
+  | ⟨.second, .plural, .informal⟩ => [.pref "i"]
+  | ⟨.third,  .plural, .informal⟩ => [.pref "ki"]
+  | ⟨.second, .singular, .formal⟩   => [.free "la"]
+  | ⟨.second, .plural, .formal⟩   => [.free "alaq"]
   | ⟨.first,  _, .informal⟩ | ⟨.firstInclusive, _, .informal⟩
-  | ⟨.firstExclusive, _, .informal⟩ => "qa-"
-  | ⟨.zero, _, .informal⟩ => "∅"  -- no zero-person cell in the paradigm
-  | ⟨.second, _, .informal⟩   => "i-"
-  | ⟨.third,  _, .informal⟩   => "ki-"
-  | ⟨_, _, .formal⟩            => "Ø"
+  | ⟨.firstExclusive, _, .informal⟩ => [.pref "qa"]
+  | ⟨.zero, _, .informal⟩ => []  -- no zero-person cell in the paradigm
+  | ⟨.second, _, .informal⟩   => [.pref "i"]
+  | ⟨.third,  _, .informal⟩   => [.pref "ki"]
+  | ⟨_, _, .formal⟩            => []
 
 /-- Set A (ergative) markers before vowel-initial roots.
     [mondloch-2017] Lesson 8. -/
-def setAPreV : PhiFeatures → String
-  | ⟨.first,  .singular, .informal⟩ => "w-"
-  | ⟨.second, .singular, .informal⟩ => "aw-"
-  | ⟨.third,  .singular, .informal⟩ => "r-"
-  | ⟨.first,  .plural, .informal⟩ => "q-"
-  | ⟨.second, .plural, .informal⟩ => "iw-"
-  | ⟨.third,  .plural, .informal⟩ => "k-"
-  | ⟨.second, .singular, .formal⟩   => "la"
-  | ⟨.second, .plural, .formal⟩   => "alaq"
+def setAPreV : PhiFeatures → Morphology.Exponent
+  | ⟨.first,  .singular, .informal⟩ => [.pref "w"]
+  | ⟨.second, .singular, .informal⟩ => [.pref "aw"]
+  | ⟨.third,  .singular, .informal⟩ => [.pref "r"]
+  | ⟨.first,  .plural, .informal⟩ => [.pref "q"]
+  | ⟨.second, .plural, .informal⟩ => [.pref "iw"]
+  | ⟨.third,  .plural, .informal⟩ => [.pref "k"]
+  | ⟨.second, .singular, .formal⟩   => [.free "la"]
+  | ⟨.second, .plural, .formal⟩   => [.free "alaq"]
   | ⟨.first,  _, .informal⟩ | ⟨.firstInclusive, _, .informal⟩
-  | ⟨.firstExclusive, _, .informal⟩ => "q-"
-  | ⟨.zero, _, .informal⟩ => "∅"  -- no zero-person cell in the paradigm
-  | ⟨.second, _, .informal⟩   => "iw-"
-  | ⟨.third,  _, .informal⟩   => "k-"
-  | ⟨_, _, .formal⟩            => "Ø"
+  | ⟨.firstExclusive, _, .informal⟩ => [.pref "q"]
+  | ⟨.zero, _, .informal⟩ => []  -- no zero-person cell in the paradigm
+  | ⟨.second, _, .informal⟩   => [.pref "iw"]
+  | ⟨.third,  _, .informal⟩   => [.pref "k"]
+  | ⟨_, _, .formal⟩            => []
 
 /-! ### Morphological positions -/
 
@@ -212,43 +212,45 @@ theorem kiche_not_tripartite :
 /-! ### Set B per-cell verification -/
 
 /-- 1SG absolutive: in- -/
-theorem setB_1sg : setBMarker (phi .first .singular) = "in-" := rfl
+theorem setB_1sg : setBMarker (phi .first .singular) = [.pref "in"] := rfl
 /-- 2SG absolutive: at- -/
-theorem setB_2sg : setBMarker (phi .second .singular) = "at-" := rfl
+theorem setB_2sg : setBMarker (phi .second .singular) = [.pref "at"] := rfl
 /-- 3SG absolutive: ∅ (null morpheme) -/
-theorem setB_3sg : setBMarker (phi .third .singular) = "∅" := rfl
+theorem setB_3sg : setBMarker (phi .third .singular) = [] := rfl
 /-- 1PL absolutive: oj- -/
-theorem setB_1pl : setBMarker (phi .first .plural) = "oj-" := rfl
+theorem setB_1pl : setBMarker (phi .first .plural) = [.pref "oj"] := rfl
 /-- 2PL absolutive: ix- -/
-theorem setB_2pl : setBMarker (phi .second .plural) = "ix-" := rfl
+theorem setB_2pl : setBMarker (phi .second .plural) = [.pref "ix"] := rfl
 /-- 3PL absolutive: ee- -/
-theorem setB_3pl : setBMarker (phi .third .plural) = "ee-" := rfl
+theorem setB_3pl : setBMarker (phi .third .plural) = [.pref "ee"] := rfl
 /-- 2SG.FORM: la (postverbal) -/
-theorem setB_2sg_form : setBMarker ⟨.second, .singular, .formal⟩ = "la" := rfl
+theorem setB_2sg_form : setBMarker ⟨.second, .singular, .formal⟩ = [.free "la"] := rfl
 /-- 2PL.FORM: alaq (postverbal) -/
-theorem setB_2pl_form : setBMarker ⟨.second, .plural, .formal⟩ = "alaq" := rfl
+theorem setB_2pl_form : setBMarker ⟨.second, .plural, .formal⟩ = [.free "alaq"] := rfl
 
 /-! ### Set A per-cell verification -/
 
-/-- 1SG ergative (preC): nu‑ or in‑ -/
-theorem setA_1sg : setAPreC (phi .first .singular) = "nu-/in-" := rfl
+/-- 1SG ergative (preC): nu- (possessive citation form; in- as transitive
+    subject per [mondloch-2017] Lesson 15 — both pre-consonantal, with w-
+    pre-vocalic for both constructions) -/
+theorem setA_1sg : setAPreC (phi .first .singular) = [.pref "nu"] := rfl
 /-- 2SG ergative (preC): a- -/
-theorem setA_2sg : setAPreC (phi .second .singular) = "a-" := rfl
+theorem setA_2sg : setAPreC (phi .second .singular) = [.pref "a"] := rfl
 /-- 3SG ergative (preC): u- -/
-theorem setA_3sg : setAPreC (phi .third .singular) = "u-" := rfl
+theorem setA_3sg : setAPreC (phi .third .singular) = [.pref "u"] := rfl
 /-- 1PL ergative (preC): qa- -/
-theorem setA_1pl : setAPreC (phi .first .plural) = "qa-" := rfl
+theorem setA_1pl : setAPreC (phi .first .plural) = [.pref "qa"] := rfl
 /-- 2PL ergative (preC): i- -/
-theorem setA_2pl : setAPreC (phi .second .plural) = "i-" := rfl
+theorem setA_2pl : setAPreC (phi .second .plural) = [.pref "i"] := rfl
 /-- 3PL ergative (preC): ki- -/
-theorem setA_3pl : setAPreC (phi .third .plural) = "ki-" := rfl
+theorem setA_3pl : setAPreC (phi .third .plural) = [.pref "ki"] := rfl
 
 /-- 1SG ergative (preV): w- -/
-theorem setA_preV_1sg : setAPreV (phi .first .singular) = "w-" := rfl
+theorem setA_preV_1sg : setAPreV (phi .first .singular) = [.pref "w"] := rfl
 /-- 2SG ergative (preV): aw- -/
-theorem setA_preV_2sg : setAPreV (phi .second .singular) = "aw-" := rfl
+theorem setA_preV_2sg : setAPreV (phi .second .singular) = [.pref "aw"] := rfl
 /-- 3SG ergative (preV): r- -/
-theorem setA_preV_3sg : setAPreV (phi .third .singular) = "r-" := rfl
+theorem setA_preV_3sg : setAPreV (phi .third .singular) = [.pref "r"] := rfl
 
 /-! ### Possessives equal Set A -/
 
@@ -259,10 +261,10 @@ theorem setA_preV_3sg : setAPreV (phi .third .singular) = "r-" := rfl
     morphological paradigm. [mondloch-2017] Lesson 15 explicitly
     notes this identity. -/
 theorem possessives_equal_setA :
-    setAPreC (phi .first .plural) = "qa-" ∧
-    setAPreC (phi .second .singular) = "a-" ∧
-    setAPreC (phi .third .singular) = "u-" ∧
-    setAPreC (phi .third .plural) = "ki-" :=
+    setAPreC (phi .first .plural) = [.pref "qa"] ∧
+    setAPreC (phi .second .singular) = [.pref "a"] ∧
+    setAPreC (phi .third .singular) = [.pref "u"] ∧
+    setAPreC (phi .third .plural) = [.pref "ki"] :=
   ⟨rfl, rfl, rfl, rfl⟩
 
 /-! ### Formal markers are postverbal -/
@@ -329,15 +331,24 @@ def setALinearity : MarkerLinearity := .prefixal
 /-- Set B linearity: prefixal (HIGH-ABS K'ichean morphology). -/
 def setBLinearity : MarkerLinearity := .prefixal
 
-/-- Canonical Set A exponent table (pre-consonantal allomorph; informal),
-    keyed on the canonical φ-cell `Agreement.Cell` for cross-Mayan consumption. -/
-def setAExponent : ExponentTable :=
-  [(.pn .first .Sing, setAPreC (phi .first  .singular)),
-   (.pn .second .Sing, setAPreC (phi .second .singular)),
-   (.pn .third .Sing, setAPreC (phi .third  .singular)),
-   (.pn .first .Plur, setAPreC (phi .first  .plural)),
-   (.pn .second .Plur, setAPreC (phi .second .plural)),
-   (.pn .third .Plur, setAPreC (phi .third  .plural))]
+/-- Canonical Set A exponent table (informal) by following-segment
+    environment, keyed on the canonical φ-cell `Agreement.Cell` for
+    cross-Mayan consumption. -/
+def setAExponent : Morphology.Following → ExponentTable
+  | .consonant =>
+    [(.pn .first .Sing, setAPreC (phi .first  .singular)),
+     (.pn .second .Sing, setAPreC (phi .second .singular)),
+     (.pn .third .Sing, setAPreC (phi .third  .singular)),
+     (.pn .first .Plur, setAPreC (phi .first  .plural)),
+     (.pn .second .Plur, setAPreC (phi .second .plural)),
+     (.pn .third .Plur, setAPreC (phi .third  .plural))]
+  | .vowel =>
+    [(.pn .first .Sing, setAPreV (phi .first  .singular)),
+     (.pn .second .Sing, setAPreV (phi .second .singular)),
+     (.pn .third .Sing, setAPreV (phi .third  .singular)),
+     (.pn .first .Plur, setAPreV (phi .first  .plural)),
+     (.pn .second .Plur, setAPreV (phi .second .plural)),
+     (.pn .third .Plur, setAPreV (phi .third  .plural))]
 
 /-- Canonical Set B exponent table (informal) keyed on the canonical φ-cell
     `Agreement.Cell`. -/
@@ -352,6 +363,6 @@ def setBExponent : ExponentTable :=
 /-- 3rd person absolutive is null — invariant across the standard
     Mayan branches per [kaufman-norman-1984] Table 8. **Not**
     pan-Mayan: see Mam exception via `Mayan.isStandard`. -/
-theorem p3sg_abs_null : setBExponent.realize (.pn .third .Sing) = some "∅" := rfl
+theorem p3sg_abs_null : setBExponent.realize (.pn .third .Sing) = some [] := rfl
 
 end Kiche

@@ -16,9 +16,9 @@ England 1992:21, Kaufman 1974) — alongside the Cholan-Tzeltalan branch
 
 ## Main declarations
 
-* `Qanjobal.setAExponentPreC`, `Qanjobal.setAExponentPreV`,
-  `Qanjobal.setBExponent`: Set A pre-consonantal and pre-vocalic
-  ergative allomorphs and the Set B absolutive suffixes
+* `Qanjobal.setAExponent`, `Qanjobal.setBExponent`: Set A ergative
+  markers by following-segment environment (pre-consonantal vs
+  pre-vocalic variant shapes) and the Set B absolutive suffixes
   ([coon-mateo-pedro-preminger-2014] table (13)).
 * `Qanjobal.ArgPosition` with `.case`, `.accCase`: argument positions
   and their canonical-ergative and split (extended-ergative) case,
@@ -83,38 +83,37 @@ def absPosition : Mayan.ABSPosition := .high
 
 /-! ### Person-number paradigm -/
 
-/-- Set A (ergative/possessive) markers: pre-consonantal allomorphs
-    ([coon-mateo-pedro-preminger-2014] table (13)). -/
-def setAExponentPreC : ExponentTable :=
-  [(.pn .first .Sing, "hin-"), (.pn .second .Sing, "ha-"), (.pn .third .Sing, "s-"),
-   (.pn .first .Plur, "ko-"), (.pn .second .Plur, "he-"), (.pn .third .Plur, "s-…heb'")]
-
-/-- Set A (ergative/possessive) markers: pre-vocalic allomorphs
-    ([coon-mateo-pedro-preminger-2014] table (13)). -/
-def setAExponentPreV : ExponentTable :=
-  [(.pn .first .Sing, "w-"), (.pn .second .Sing, "h-"), (.pn .third .Sing, "y-"),
-   (.pn .first .Plur, "j-"), (.pn .second .Plur, "hey-"), (.pn .third .Plur, "y-…heb'")]
-
-/-- Canonical Set A exponent table for cross-Mayan typology. The
-    pre-consonantal allomorph is the citation form; per-context
-    realization uses `setAExponentPreV` before vowels. -/
-abbrev setAExponent : ExponentTable := setAExponentPreC
+/-- Set A (ergative/possessive) markers by following-segment
+    environment ([coon-mateo-pedro-preminger-2014] table (13)). The 3pl
+    cells are discontinuous exponents: person prefix plus the free
+    plural word *heb'*. -/
+def setAExponent : Morphology.Following → ExponentTable
+  | .consonant =>
+    [(.pn .first .Sing, [.pref "hin"]), (.pn .second .Sing, [.pref "ha"]),
+     (.pn .third .Sing, [.pref "s"]), (.pn .first .Plur, [.pref "ko"]),
+     (.pn .second .Plur, [.pref "he"]),
+     (.pn .third .Plur, [.pref "s", .free "heb'"])]
+  | .vowel =>
+    [(.pn .first .Sing, [.pref "w"]), (.pn .second .Sing, [.pref "h"]),
+     (.pn .third .Sing, [.pref "y"]), (.pn .first .Plur, [.pref "j"]),
+     (.pn .second .Plur, [.pref "hey"]),
+     (.pn .third .Plur, [.pref "y", .free "heb'"])]
 
 /-- Set B (absolutive) markers: suffixes
-    ([coon-mateo-pedro-preminger-2014] table (13)). The 3pl cell *heb'*
-    is an independent plural word (null person exponent plus the plural
-    particle), quoted as in the source table; 1pl *-on* is the table's
-    ASCII for *-on̈* [-oŋ]. -/
+    ([coon-mateo-pedro-preminger-2014] table (13)). The 3pl cell is the
+    free plural word *heb'* alone (zero person exponence plus the
+    plural particle); 1pl *-on* is the table's ASCII for *-on̈* [-oŋ]. -/
 def setBExponent : ExponentTable :=
-  [(.pn .first .Sing, "-in"), (.pn .second .Sing, "-ach"), (.pn .third .Sing, "-∅"),
-   (.pn .first .Plur, "-on"), (.pn .second .Plur, "-ex"), (.pn .third .Plur, "heb'")]
+  [(.pn .first .Sing, [.suff "in"]), (.pn .second .Sing, [.suff "ach"]),
+   (.pn .third .Sing, []), (.pn .first .Plur, [.suff "on"]),
+   (.pn .second .Plur, [.suff "ex"]), (.pn .third .Plur, [.free "heb'"])]
 
-/-- 3rd person absolutive is null (∅). -/
-theorem p3sg_abs_null : setBExponent.realize (.pn .third .Sing) = some "-∅" := rfl
+/-- 3rd person absolutive has zero exponence. -/
+theorem p3sg_abs_null : setBExponent.realize (.pn .third .Sing) = some [] := rfl
 
-/-- 3rd person ergative (pre-vocalic) is *y-*, pre-consonantal is *s-*. -/
+/-- 3rd person ergative is *s-* pre-consonantally, *y-* pre-vocalically. -/
 theorem p3sg_erg_allomorphy :
-    setAExponentPreC.realize (.pn .third .Sing) = some "s-" ∧
-    setAExponentPreV.realize (.pn .third .Sing) = some "y-" := ⟨rfl, rfl⟩
+    (setAExponent .consonant).realize (.pn .third .Sing) = some [.pref "s"] ∧
+    (setAExponent .vowel).realize (.pn .third .Sing) = some [.pref "y"] := ⟨rfl, rfl⟩
 
 end Qanjobal
