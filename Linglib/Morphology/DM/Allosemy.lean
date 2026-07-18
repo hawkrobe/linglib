@@ -203,7 +203,7 @@ variable {Sem : Type}
 are `SyntacticContext`s, applicability is `matches`, the exponent is the
 denotation. -/
 instance : Exponence (AllosemicEntry Sem) SyntacticContext Sem :=
-  ⟨AllosemicEntry.denotation, fun e => {c | e.context.matches c = true}⟩
+  ⟨AllosemicEntry.denotation, fun e c => e.context.matches c = true⟩
 
 instance : Preorder (AllosemicEntry Sem) := Exponence.toPreorder
 

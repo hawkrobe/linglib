@@ -434,8 +434,8 @@ support properly includes another's "must assign lower probability to
 each of those forms, on average" (conservation of belief), and
 conditioning preserves the preference. The book quotes
 [kiparsky-1973]'s formulation — prefer `r₂` when
-`Inputs(r₂) ⊂ Inputs(r₁)` — which is the specificity order of
-`Morphology.Exponence.Rule` (applicability-set inclusion).
+`Inputs(r₂) ⊂ Inputs(r₁)` — which is `Morphology.Exponence`'s
+specificity order (applicability-set inclusion, `Exponence.toPreorder`).
 
 Formalized in the uniform-generation case, where the preference is
 pointwise rather than on average: nested supports give the narrower
@@ -498,7 +498,7 @@ structure FinRule (Ctx F : Type*) where
 /-- A finitely supported rule exposes the shared exponence core interface
 (`Morphology.Exponence`): applicability is support membership. -/
 instance : Exponence (FinRule Ctx F) Ctx F :=
-  ⟨FinRule.exponent, fun r => {c | c ∈ r.supp}⟩
+  ⟨FinRule.exponent, fun r c => c ∈ r.supp⟩
 
 instance : Preorder (FinRule Ctx F) := Exponence.toPreorder
 

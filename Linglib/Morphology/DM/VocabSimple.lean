@@ -140,7 +140,7 @@ open Morphology Morphology.Exponence
 (`Morphology.Exponence`): contexts are (target bundle,
 syntactic context) pairs, applicability is `Matches`. -/
 instance : Exponence VocabEntry (FeatureBundle × Option Cat) String :=
-  ⟨VocabEntry.exponent, fun e => {tc | e.Matches tc.1 tc.2}⟩
+  ⟨VocabEntry.exponent, fun e tc => e.Matches tc.1 tc.2⟩
 
 instance : Preorder VocabEntry := Exponence.toPreorder
 
