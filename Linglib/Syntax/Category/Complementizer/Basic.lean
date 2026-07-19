@@ -1,7 +1,7 @@
 import Linglib.Data.UD.Basic
 import Linglib.Features.ClauseForm
 import Linglib.Features.Complementation
-import Linglib.Morphology.Formative
+import Linglib.Features.Formative
 import Linglib.Morphology.Word
 
 /-!
@@ -59,7 +59,7 @@ structure Complementizer where
   /-- Native script form, when distinct. -/
   script : Option String := none
   /-- Morphological attachment. -/
-  position : Option Morphology.FormativePosition := none
+  position : Option Features.FormativePosition := none
   /-- [noonan-2007] type of the clause this morpheme types. -/
   noonanType : Option NoonanCompType := none
   /-- Surface clause form typed. -/

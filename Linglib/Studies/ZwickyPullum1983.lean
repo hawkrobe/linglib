@@ -1,4 +1,4 @@
-import Linglib.Morphology.Formative
+import Linglib.Features.Formative
 import Linglib.Morphology.Realization
 import Linglib.Fragments.English.Auxiliaries
 import Linglib.Core.Logic.Modal.Basic
@@ -26,7 +26,7 @@ English *-n't* scores affix-like on all six.
 
 namespace Morphology.Diagnostics
 
-open Morphology (MorphStatus SelectionDegree)
+open Features (MorphStatus SelectionDegree)
 
 structure CliticAffixProfile where
   morpheme : String
@@ -116,7 +116,7 @@ of inflectional affixes, not clitics.
 namespace ZwickyPullum1983
 
 open Morphology.Diagnostics
-open Morphology (MorphStatus SelectionDegree)
+open Features (MorphStatus SelectionDegree)
 open English.Auxiliaries (AuxEntry)
 
 -- ============================================================================
