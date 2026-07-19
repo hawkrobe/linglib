@@ -1,90 +1,41 @@
-import Linglib.Morphology.Root.Family
+import Linglib.Data.UD.Basic
 import Linglib.Studies.McNallyDeSwart2011
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Syntax.Minimalist.ExtendedProjection.Properties
 
 /-!
-# Categorial Features ↔ Category-Changing Morphology
+# Panagiotidis (2015): categorial features and categorizers
 
-[panagiotidis-2015] [marantz-1997]Connects the theory-side predictions of [panagiotidis-2015] — substantive
-categorial features [N] and [V] hosted on categorizer heads — to the empirical
-data on category-changing morphology in English.
+[panagiotidis-2015] (*Categorial Features*) treats word class as syntax:
+category-neutral roots ([marantz-1997]) enter the derivation by merging with
+a categorizer head (v, n, a) bearing substantive, LF-interpretable categorial
+features — [N] sortal perspective, [V] temporal perspective. Category-changing
+morphology is changing the categorizer.
 
-## What this bridge proves
+## Main declarations
 
-1. **Categorizer–LexCat correspondence**: Each theory-side categorizer (v, n, a)
-   maps to exactly one empirical lexical category (verb, noun, adjective).
+* `RootFamily` — a category-neutral root with its category-stamped surface
+  words; `allFamilies` is the English sample.
+* `producesReferential`, `producesPredicative` — the [N]/[V] interpretive
+  predictions of each categorizer.
+* `MdSBridge` — the §6.7.1 SWITCH-placement diagnostic applied to
+  [mcnally-deswart-2011]'s rivals for Dutch *het rode van X*.
 
-2. **Feature predictions**: The categorial features [N]/[V] on each categorizer
-   correctly predict the interpretive perspective of the resulting category —
-   nouns have sortal perspective ([N]), verbs have temporal perspective ([V]),
-   adjectives have both ([N, V]).
+## Main results
 
-3. **EP well-formedness**: Each categorizer extends its lexical anchor into a
-   well-formed EP (A→a, N→n, V→v).
-
-4. **Categorizer parallelism**: All three categorizers sit at the same F-level
-   (F1 in Grimshaw's system), formalizing Panagiotidis's claim that
-   categorization is a uniform operation across category families.
-
-## Derivational chain
-
-```
-ExtendedProjection/Basic.lean (CategorialFeatures, isCategorizer, categorialFeatures)
-    ↓
-THIS BRIDGE FILE
-    ↓
-Morphology/RootFamily.lean (RootFamily, LexCat)
-```
-
+* `referential_predicative_asymmetry` — nouns [N], verbs [V], adjectives both.
+* `all_families_match_all_categorizers` — every sample root family surfaces
+  in all three categorised classes.
+* `catFamily_from_chomsky`, `catFamily_from_panagiotidis` — [chomsky-1970]'s
+  diacritic [±V, ±N] and Panagiotidis's substantive [N]/[V] induce the same
+  category families.
 -/
 
 namespace Panagiotidis2015
 
 open Minimalist
-open Morphology (LexCat RootFamily)
 
--- ════════════════════════════════════════════════════════════════
--- § 1: Categorizer ↔ LexCat Correspondence
--- ════════════════════════════════════════════════════════════════
-
-/-- Map a Minimalist categorizer to the empirical lexical category
-    of the word it produces. This is the core link between the theory
-    (Cat.v, Cat.n, Cat.a) and the data (LexCat). -/
-def categorizerToLexCat : Cat → Option LexCat
-  | .v => some .verb
-  | .n => some .noun
-  | .a => some .adjective
-  | _  => none
-
-/-- Map an empirical lexical category to its theory-side categorizer. -/
-def lexCatToCategorizer : LexCat → Cat
-  | .verb      => .v
-  | .noun      => .n
-  | .adjective => .a
-
-/-- The mapping is a partial bijection: lexCat → categorizer → lexCat roundtrips. -/
-theorem roundtrip (c : LexCat) :
-    categorizerToLexCat (lexCatToCategorizer c) = some c := by
-  cases c <;> rfl
-
-/-- Every categorizer maps to some LexCat. -/
-theorem categorizers_have_lexcat :
-    categorizerToLexCat .v = some .verb ∧
-    categorizerToLexCat .n = some .noun ∧
-    categorizerToLexCat .a = some .adjective := ⟨rfl, rfl, rfl⟩
-
-/-- Non-categorizers don't map to any LexCat. -/
-theorem non_categorizers_no_lexcat :
-    categorizerToLexCat .V = none ∧
-    categorizerToLexCat .N = none ∧
-    categorizerToLexCat .A = none ∧
-    categorizerToLexCat .T = none ∧
-    categorizerToLexCat .D = none := ⟨rfl, rfl, rfl, rfl, rfl⟩
-
--- ════════════════════════════════════════════════════════════════
--- § 2: Feature Predictions
--- ════════════════════════════════════════════════════════════════
+/-! ### Feature predictions -/
 
 /-- Does a categorizer produce a category with sortal perspective?
     Panagiotidis §4.3: [N] = sortal perspective / referentiality. Items bearing [N] have the capacity to introduce
@@ -124,9 +75,7 @@ theorem referential_predicative_asymmetry :
     (categorialFeatures .a).hasN = true ∧ (categorialFeatures .a).hasV = true := by
   decide
 
--- ════════════════════════════════════════════════════════════════
--- § 3: EP Well-Formedness
--- ════════════════════════════════════════════════════════════════
+/-! ### EP well-formedness -/
 
 /-- Each categorizer forms a well-formed EP with its lexical anchor:
     V→v, N→n, A→a are all category-consistent and F-monotone. -/
@@ -144,9 +93,7 @@ theorem categorization_uniform_fstep :
     fValue .n - fValue .N = 1 ∧
     fValue .a - fValue .A = 1 := by decide
 
--- ════════════════════════════════════════════════════════════════
--- § 4: Categorizer Parallelism
--- ════════════════════════════════════════════════════════════════
+/-! ### Categorizer parallelism -/
 
 /-- All categorizers sit at exactly F1 (in Grimshaw's system), parallel
     across families. Panagiotidis's core claim: v, n, a are structurally
@@ -167,64 +114,67 @@ theorem different_categorizers_different_families :
     catFamily .n ≠ catFamily .a ∧
     catFamily .v ≠ catFamily .a := by decide
 
--- ════════════════════════════════════════════════════════════════
--- § 5: Data–Theory Connection
--- ════════════════════════════════════════════════════════════════
-
 /-! ### English root families ([panagiotidis-2015] §5.2, [marantz-1997])
 
 Standard examples from the Distributed Morphology literature: roots that
 surface as nouns, verbs, and adjectives via different morphological
 processes. -/
 
+/-- A root family ([marantz-1997]): the surface words a single
+category-neutral root projects across lexical categories, each stamped with
+its UD category. The root determines none of them — category comes from the
+categorising environment. -/
+structure RootFamily where
+  /-- A label for the root (approximate; roots are sub-morphemic). -/
+  rootLabel : String
+  /-- The surface forms with their UD categories. -/
+  forms : List (String × UD.UPOS)
+  deriving Repr
+
+/-- The family has a surface form in category `c`. -/
+def RootFamily.HasCategory (rf : RootFamily) (c : UD.UPOS) : Prop :=
+  ∃ f ∈ rf.forms, f.2 = c
+
+instance (rf : RootFamily) (c : UD.UPOS) : Decidable (rf.HasCategory c) :=
+  List.decidableBEx _ rf.forms
+
 /-- √DESTROY: destroy (V), destruction (N), destructive (A) -/
 def destroy : RootFamily := ⟨"DESTROY",
-  [("destroy", .verb), ("destruction", .noun), ("destructive", .adjective)]⟩
+  [("destroy", .VERB), ("destruction", .NOUN), ("destructive", .ADJ)]⟩
 
 /-- √BEAUTY: beautify (V), beauty (N), beautiful (A) -/
 def beauty : RootFamily := ⟨"BEAUTY",
-  [("beautify", .verb), ("beauty", .noun), ("beautiful", .adjective)]⟩
+  [("beautify", .VERB), ("beauty", .NOUN), ("beautiful", .ADJ)]⟩
 
 /-- √CLEAR: clear (V), clarity (N), clear (A) -/
 def clear : RootFamily := ⟨"CLEAR",
-  [("clear", .verb), ("clarity", .noun), ("clear", .adjective)]⟩
+  [("clear", .VERB), ("clarity", .NOUN), ("clear", .ADJ)]⟩
 
 /-- √PRODUCE: produce (V), product/production (N), productive (A) -/
 def produce : RootFamily := ⟨"PRODUCE",
-  [("produce", .verb), ("production", .noun), ("productive", .adjective)]⟩
+  [("produce", .VERB), ("production", .NOUN), ("productive", .ADJ)]⟩
 
 /-- √CREATE: create (V), creation (N), creative (A) -/
 def create : RootFamily := ⟨"CREATE",
-  [("create", .verb), ("creation", .noun), ("creative", .adjective)]⟩
+  [("create", .VERB), ("creation", .NOUN), ("creative", .ADJ)]⟩
 
 /-- √ACT: act (V), action (N), active (A) -/
 def act : RootFamily := ⟨"ACT",
-  [("act", .verb), ("action", .noun), ("active", .adjective)]⟩
+  [("act", .VERB), ("action", .NOUN), ("active", .ADJ)]⟩
 
 /-- All sample root families. -/
 def allFamilies : List RootFamily :=
   [destroy, beauty, clear, produce, create, act]
 
-/-- A root family is predicted to be tricategorial iff categorization by
-    each of v, n, a is possible. Since all three categorizers are available
-    in English, any root can in principle surface in all three categories. -/
-theorem three_categorizers_predict_tricategoriality :
-    isCategorizer .v ∧ isCategorizer .n ∧ isCategorizer .a := by decide
-
-/-- The √DESTROY family's three categories correspond to three categorizers. -/
-theorem destroy_matches_categorizers :
-    destroy.HasCategory .verb ∧ destroy.HasCategory .noun ∧
-    destroy.HasCategory .adjective := by decide
-
-/-- Every root family in the sample has a form for each categorizer's category. -/
+/-- Every root family in the sample has a form for each categorizer's
+category — English makes all three categorizers available, so roots surface
+tricategorially. -/
 theorem all_families_match_all_categorizers :
     ∀ rf ∈ allFamilies,
-      rf.HasCategory .verb ∧ rf.HasCategory .noun ∧ rf.HasCategory .adjective := by
+      rf.HasCategory .VERB ∧ rf.HasCategory .NOUN ∧ rf.HasCategory .ADJ := by
   decide
 
--- ════════════════════════════════════════════════════════════════
--- § 6: Cross-framework bridge to [mcnally-deswart-2011]
--- ════════════════════════════════════════════════════════════════
+/-! ### Cross-framework bridge to [mcnally-deswart-2011] -/
 
 /-! ## Bridge: §6.7.1 modifier-distribution diagnostic ↔ M&deS §2.3 (13)
 
@@ -415,9 +365,7 @@ theorem nominalisation_predicts_referential :
 
 end MdSBridge
 
-/-! ### Categorial features: [chomsky-1970] vs [panagiotidis-2015] (relocated from Minimalist/CategorialFeatures.lean)
-
-[chomsky-1970] [grimshaw-2005] [panagiotidis-2015]
+/-! ### Categorial features: [chomsky-1970] vs [panagiotidis-2015]
 
 Two theories of what makes a noun a noun and a verb a verb:
 
@@ -462,9 +410,7 @@ anchoring (because [V]) and sortal perspective (because [N]). For Chomsky,
 the co-presence of [+V] and [+N] is a notational fact without semantic content.
 -/
 
--- ═══════════════════════════════════════════════════════════════
--- § Internal Structure of Each System
--- ═══════════════════════════════════════════════════════════════
+/-! ### Internal structure of each system -/
 
 /-- In Chomsky's system, every category has at least one positive feature
     except P (which has [-V, -N] = ⟨false, false⟩). -/
@@ -485,9 +431,7 @@ theorem p_same_values :
 theorem adjective_both_features :
     catFeatures .A = ⟨true, true⟩ ∧ categorialFeatures .A = ⟨true, true⟩ := by decide
 
--- ═══════════════════════════════════════════════════════════════
--- § Feature Semantics (Panagiotidis only)
--- ═══════════════════════════════════════════════════════════════
+/-! ### Feature semantics -/
 
 /-- [N] = sortal perspective / referentiality. Every category in the nominal
     EP bears [N] (interpretable on n, uninterpretable on Num/Q/D; §5.8). -/
@@ -517,9 +461,7 @@ theorem a_categorizer_referential_and_predicative :
 theorem p_neither_referential_nor_predicative :
     ¬(categorialFeatures .P).hasN ∧ ¬(categorialFeatures .P).hasV := by decide
 
--- ═══════════════════════════════════════════════════════════════
--- § Categorizers as a Natural Class
--- ═══════════════════════════════════════════════════════════════
+/-! ### Categorizers as a natural class -/
 
 /-- The three categorizers (v, n, a) form a natural class at F1
     (Grimshaw's system). Each bears the interpretable categorial features
@@ -543,9 +485,7 @@ theorem categorizer_features :
     categorialFeatures .n = ⟨true, false⟩ ∧
     categorialFeatures .a = ⟨true, true⟩ := by decide
 
--- ═══════════════════════════════════════════════════════════════
--- § CatFamily as Theory-Neutral Ground
--- ═══════════════════════════════════════════════════════════════
+/-! ### `CatFamily` as theory-neutral ground -/
 
 /-- CatFamily is the theory-neutral representation: it records which
     categories group together without committing to the mechanism.
