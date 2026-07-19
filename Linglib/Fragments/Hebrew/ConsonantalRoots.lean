@@ -1,9 +1,9 @@
-import Linglib.Morphology.Root
+import Linglib.Morphology.Root.Consonantal
 
 /-!
 # Modern Hebrew Consonantal Roots
 
-A small inventory of Modern Hebrew consonantal roots, stored as `Root String`
+A small inventory of Modern Hebrew consonantal roots, stored as `ConsonantalRoot String`
 (IPA-symbol segments). Used by templatic-morphology studies, in particular
 [faust-2026]'s analysis of the QaTaT–QaTa problem and templatic intrusion.
 
@@ -25,13 +25,13 @@ open Morphology
     [kaluj] passive participle. The third radical is the glide [j],
     which fails to associate to the [+c]-specified final C-slot of
     the verbal template ([faust-2026] (4)). -/
-def klj : Root String := ⟨["k", "l", "j"]⟩
+def klj : ConsonantalRoot String := ⟨["k", "l", "j"]⟩
 
 /-- √klt — base of [kalat] PST.3MSG `receive`, [klita] action noun,
     [kalut] passive participle ([faust-2026] (3a)). The full
     triradical control case: every radical surfaces in every form,
     no glide-related issue arises. -/
-def klt : Root String := ⟨["k", "l", "t"]⟩
+def klt : ConsonantalRoot String := ⟨["k", "l", "t"]⟩
 
 /-- √kll — base of [kalal] PST.3MSG `include`, [klila] action noun,
     [kalul] passive participle ([faust-2026] (3b)). The
@@ -39,15 +39,15 @@ def klt : Root String := ⟨["k", "l", "t"]⟩
     root segment, so its association to the template-final C-slot
     does NOT violate \*Misalignment. This is the QaTaT pattern that
     contrasts with the QaTa pattern of (3c) under the same template. -/
-def kll : Root String := ⟨["k", "l", "l"]⟩
+def kll : ConsonantalRoot String := ⟨["k", "l", "l"]⟩
 
 /-- √dmj — base of nominal [dimuj] `simile` and the taQTiL noun
     [tadmit] `(public) image` ([faust-2026] (9b)). -/
-def dmj : Root String := ⟨["d", "m", "j"]⟩
+def dmj : ConsonantalRoot String := ⟨["d", "m", "j"]⟩
 
 /-- √bnj — base of passive participle [banuj] `built` and the
     taQTiL nouns [tavnit] `mold` (and similar). Third radical [j]. -/
-def bnj : Root String := ⟨["b", "n", "j"]⟩
+def bnj : ConsonantalRoot String := ⟨["b", "n", "j"]⟩
 
 -- ============================================================================
 -- § 2: Non-glide-final triradicals (control class)
@@ -56,11 +56,11 @@ def bnj : Root String := ⟨["b", "n", "j"]⟩
 /-- √ktv — base of [katav] PST.3MSG `wrote`, [katuv] passive
     participle `written`. Final radical [v], a true consonant; the
     QaTaT–QaTa problem does not arise. -/
-def ktv : Root String := ⟨["k", "t", "v"]⟩
+def ktv : ConsonantalRoot String := ⟨["k", "t", "v"]⟩
 
 /-- √sbr — base of [ʃavar] PST.3MSG `broke` (Faust uses this in the
     Amharic comparison; Hebrew cognate). -/
-def sbr : Root String := ⟨["ʃ", "b", "r"]⟩
+def sbr : ConsonantalRoot String := ⟨["ʃ", "b", "r"]⟩
 
 -- ============================================================================
 -- § 3: Sanity properties

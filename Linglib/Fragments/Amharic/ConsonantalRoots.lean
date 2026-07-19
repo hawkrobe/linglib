@@ -1,4 +1,4 @@
-import Linglib.Morphology.Root
+import Linglib.Morphology.Root.Consonantal
 import Linglib.Phonology.Constraints.Basic
 
 /-!
@@ -33,23 +33,23 @@ open Morphology
     nominal forms (gerund, INF), the feminine /t/ intrudes — *not* as
     a default consonant but as the n[+gen] exponent ([faust-2026]
     (7)–(8), (11)–(12)). -/
-def fdj : Root String := ⟨["f", "d", "j"]⟩
+def fdj : ConsonantalRoot String := ⟨["f", "d", "j"]⟩
 
 /-- √hid — base of [hed-ä] `go` PFV.3MSG, INF [mäh(i)d].
     A "hollow" root in the standard analysis: the medial radical /i/
     is non-consonantal and merges with the vocalization
     ([faust-2026] (12e), (13c)). -/
-def hid : Root String := ⟨["h", "i", "d"]⟩
+def hid : ConsonantalRoot String := ⟨["h", "i", "d"]⟩
 
 /-- √sma — base of [sämm-a] `hear` PFV.3MSG, INF [mäsmat]
     ([faust-2026] (12c), (13a)). The non-consonantal final radical
     /a/ merges with the vocalization. -/
-def sma : Root String := ⟨["s", "m", "a"]⟩
+def sma : ConsonantalRoot String := ⟨["s", "m", "a"]⟩
 
 /-- √sam — base of [sam-ä] `kiss` PFV.3MSG, INF [mäsam]
     ([faust-2026] (12d), (13b)). The non-consonantal medial
     radical /a/ merges with the vocalization. -/
-def sam : Root String := ⟨["s", "a", "m"]⟩
+def sam : ConsonantalRoot String := ⟨["s", "a", "m"]⟩
 
 -- ============================================================================
 -- § 2: True triradical (control) and Faust's biradical reanalysis
@@ -58,7 +58,7 @@ def sam : Root String := ⟨["s", "a", "m"]⟩
 /-- √sbr — base of [säbbär-ä] `break` PFV.3MSG, INF [mäsbär]
     ([faust-2026] (5a), (12a)). A canonical type-A triradical
     with three distinct surface consonants. -/
-def sbr : Root String := ⟨["s", "b", "r"]⟩
+def sbr : ConsonantalRoot String := ⟨["s", "b", "r"]⟩
 
 /-- √wd — base of [wäddäd-ä] `liked` PFV.3MSG ([faust-2026] (5b),
     page 432). Both [broselow-1984] and [faust-2026] agree
@@ -68,7 +68,7 @@ def sbr : Root String := ⟨["s", "b", "r"]⟩
     OCP at the root level, since /w/ ≠ /d/ — even though it surfaces
     with adjacent identical [d][d] in [wäddäd-ä]. The surface gemination
     is a template-spreading effect, not a root-level identity. -/
-def wd : Root String := ⟨["w", "d"]⟩
+def wd : ConsonantalRoot String := ⟨["w", "d"]⟩
 
 -- ============================================================================
 -- § 3: Sanity properties

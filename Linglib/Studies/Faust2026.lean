@@ -55,7 +55,7 @@ jointly resolves three Semitic puzzles:
 
 This file consumes and exercises the shared infrastructure:
 
-- `Morphology.Root` — polymorphic consonantal-root carrier.
+- `Morphology.ConsonantalRoot` — polymorphic consonantal-root carrier.
 - `Morphology.CVTemplate`, `Morphology.TemplateMatch`
   (`Morphology/Morphotactics/CVTemplate.lean`) — skeletal templates and
   sourced association lines; this file adds the Faust-specific predicates
@@ -138,13 +138,13 @@ open Constraints OptimalityTheory
 variable {α : Type*}
 
 /-- A match with no associations is trivially not misaligned. -/
-theorem not_isMisaligned_empty (r : Root α) (t : CVTemplate) :
+theorem not_isMisaligned_empty (r : ConsonantalRoot α) (t : CVTemplate) :
     ¬ ({ root := r, template := t, associations := [] } :
         TemplateMatch α).isMisaligned := by
   simp [TemplateMatch.isMisaligned]
 
 /-- *Misalignment cannot fire from intruder associations alone. -/
-theorem not_isMisaligned_of_all_intruder (r : Root α) (t : CVTemplate)
+theorem not_isMisaligned_of_all_intruder (r : ConsonantalRoot α) (t : CVTemplate)
     (assocs : List Association)
     (h : ∀ a ∈ assocs, a.source = .affix) :
     ¬ ({ root := r, template := t, associations := assocs } :
@@ -576,26 +576,26 @@ biradicals like √wd — turn out to have *distinct* radicals after all
 (/w/ ≠ /d/), with surface gemination produced by template spreading
 rather than root identity.
 
-The `Root.IsOCPClean` predicate (in `Morphology`) makes this
+The `ConsonantalRoot.IsOCPClean` predicate (in `Morphology`) makes this
 verifiable rather than asserted. -/
 
 /-- [faust-2026] page 432: √wd has no OCP violation at the root
     level — even though [wäddäd-ä] surfaces with adjacent identical
     [d][d], the surface gemination is a template-spreading effect. -/
-theorem amharic_wd_satisfies_root_ocp : Root.IsOCPClean Amharic.wd := by decide
+theorem amharic_wd_satisfies_root_ocp : ConsonantalRoot.IsOCPClean Amharic.wd := by decide
 
 /-- [faust-2026]'s reanalysis: √fdj (the triradical analysis) has
     no OCP violation. -/
-theorem amharic_fdj_satisfies_root_ocp : Root.IsOCPClean Amharic.fdj := by decide
+theorem amharic_fdj_satisfies_root_ocp : ConsonantalRoot.IsOCPClean Amharic.fdj := by decide
 
 /-- And the Hebrew [j]-final root √klj also satisfies the OCP. -/
-theorem hebrew_klj_satisfies_root_ocp : Root.IsOCPClean Hebrew.klj := by decide
+theorem hebrew_klj_satisfies_root_ocp : ConsonantalRoot.IsOCPClean Hebrew.klj := by decide
 
 /-- Sanity: a hypothetical OCP-violating biradical √dd (which
     [broselow-1984] would have posited but [faust-2026]
     rejects) really does violate the OCP under our predicate. -/
 theorem hypothetical_dd_violates_root_ocp :
-    ¬ Root.IsOCPClean (⟨["d", "d"]⟩ : Root String) := by decide
+    ¬ ConsonantalRoot.IsOCPClean (⟨["d", "d"]⟩ : ConsonantalRoot String) := by decide
 
 /-! ### Strict CV hollow roots + NCC ([faust-2026] (12)–(13)) -/
 
