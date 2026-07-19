@@ -79,7 +79,7 @@ theorem mu_is_additive :
 
 /-- The MU particle is bound (enclitic). -/
 theorem mu_is_bound :
-    (allEntries.filter (·.role == .mu)).all (fun e => decide e.kind.IsBound) = true := by
+    (allEntries.filter (·.role == .mu)).all (fun e => e.kind matches .bound ..) = true := by
   decide
 
 end Dargwa.Coordination

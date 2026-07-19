@@ -75,7 +75,7 @@ structure Coordinator where
   gloss : String
   /-- Which Boolean operation it denotes. -/
   role : Coordinator.Role
-  /-- Full attachment kind; the free-vs-bound cut is `Morph.Kind.IsBound`. -/
+  /-- Full attachment kind. -/
   kind : Morphology.Morph.Kind
   /-- Does this morpheme also serve as an additive/focus particle? -/
   alsoAdditive : Bool := false

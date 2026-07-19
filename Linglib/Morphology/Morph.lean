@@ -44,17 +44,6 @@ inductive Morph.Kind where
   | free
   deriving DecidableEq, Repr, Fintype
 
-/-- A morph is **bound** when it attaches on a side of its host, as an affix or
-a clitic. -/
-def Morph.Kind.IsBound : Morph.Kind → Prop
-  | .bound .. => True
-  | .root | .free => False
-
-instance : DecidablePred Morph.Kind.IsBound := fun k =>
-  match k with
-  | .bound .. => .isTrue trivial
-  | .root | .free => .isFalse (fun h => h)
-
 /-- A **morph** is a minimal segmental form with its attachment kind. -/
 structure Morph where
   /-- How the morph attaches. -/
