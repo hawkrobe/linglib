@@ -56,27 +56,27 @@ local notation "IFD" => (identityDefault : Rule Verb (Finset Feat) (Action Strin
 
 /-- Block I: theme-vowel exponence ([bonami-stump-2016]'s Table 17.3). -/
 def blockI : Block Verb String (Finset Feat) :=
-  [ ⟨weak, {pst, pl}, .expo (· ++ "u")⟩,
-    ⟨Finset.univ, {sbjv, prs}, .expo (· ++ "i")⟩,
-    ⟨weak, {}, .expo (· ++ "a")⟩,
+  [ ⟨weak, {pst, pl}, .const (· ++ "u")⟩,
+    ⟨Finset.univ, {sbjv, prs}, .const (· ++ "i")⟩,
+    ⟨weak, {}, .const (· ++ "a")⟩,
     IFD ]
 
 /-- Block II: past-tense exponence. -/
 def blockII : Block Verb String (Finset Feat) :=
-  [ ⟨weak, {pst, sg}, .expo (· ++ "ði")⟩,
-    ⟨weak, {pst, pl}, .expo (· ++ "ðu")⟩,
+  [ ⟨weak, {pst, sg}, .const (· ++ "ði")⟩,
+    ⟨weak, {pst, pl}, .const (· ++ "ðu")⟩,
     IFD ]
 
 /-- Block III: agreement exponence. -/
 def blockIII : Block Verb String (Finset Feat) :=
-  [ ⟨weak4b, {imp, p2, sg}, .expo (· ++ "ðu")⟩,
-    ⟨Finset.univ, {imp, p2, sg}, .expo id⟩,
-    ⟨Finset.univ, {p2, sg}, .expo (· ++ "r")⟩,
-    ⟨Finset.univ, {ind, prs, p3, sg}, .expo (· ++ "r")⟩,
-    ⟨Finset.univ, {p1, pl}, .expo (· ++ "um")⟩,
-    ⟨Finset.univ, {p2, pl}, .expo (· ++ "ið")⟩,
-    ⟨Finset.univ, {ind, prs, p3, pl}, .expo (· ++ "a")⟩,
-    ⟨strong, {ind, pst, p2, sg}, .expo (· ++ "st")⟩,
+  [ ⟨weak4b, {imp, p2, sg}, .const (· ++ "ðu")⟩,
+    ⟨Finset.univ, {imp, p2, sg}, .const id⟩,
+    ⟨Finset.univ, {p2, sg}, .const (· ++ "r")⟩,
+    ⟨Finset.univ, {ind, prs, p3, sg}, .const (· ++ "r")⟩,
+    ⟨Finset.univ, {p1, pl}, .const (· ++ "um")⟩,
+    ⟨Finset.univ, {p2, pl}, .const (· ++ "ið")⟩,
+    ⟨Finset.univ, {ind, prs, p3, pl}, .const (· ++ "a")⟩,
+    ⟨strong, {ind, pst, p2, sg}, .const (· ++ "st")⟩,
     IFD ]
 
 /-- Rules of basic stem choice ([bonami-stump-2016]'s (7)); the `GRÍPA` and
@@ -134,16 +134,16 @@ open Root SF
 
 /-- Block i: ninth-conjugation `-nī` ([bonami-stump-2016]'s (20a)). -/
 def blockNi : Block Root String (Finset SF) :=
-  [ ⟨Finset.univ, {}, .expo (· ++ "nī")⟩ ]
+  [ ⟨Finset.univ, {}, .const (· ++ "nī")⟩ ]
 
 /-- Block ii: subject-agreement `-hi` ([bonami-stump-2016]'s (20b)). -/
 def blockHi : Block Root String (Finset SF) :=
-  [ ⟨Finset.univ, {p2, sg, imp, act}, .expo (· ++ "hi")⟩ ]
+  [ ⟨Finset.univ, {p2, sg, imp, act}, .const (· ++ "hi")⟩ ]
 
 /-- Portmanteau Block [ii,i]: consonant-final `-āna` ([bonami-stump-2016]'s
 (20c)); consonant-finality is carried by the singleton class `{AŚ}`. -/
 def blockAna : Block Root String (Finset SF) :=
-  [ ⟨{as}, {p2, sg, imp, act}, .expo (· ++ "āna")⟩ ]
+  [ ⟨{as}, {p2, sg, imp, act}, .const (· ++ "āna")⟩ ]
 
 /-- The consonant-final root `AŚ` takes the portmanteau `-āna`, overriding the
 `-nī`/`-hi` sequence ([bonami-stump-2016]'s (22)). -/
@@ -179,7 +179,7 @@ def vocToNom (σ : Finset NF) : Finset NF := insert nom (σ.erase voc)
 ([bonami-stump-2016]'s (17)), the referral re-consulting the block at the
 nominative cell. -/
 def caseBlock : Block Noun String (Finset NF) :=
-  [ ⟨Finset.univ, {nom}, .expo (· ++ "e")⟩,
+  [ ⟨Finset.univ, {nom}, .const (· ++ "e")⟩,
     ⟨Finset.univ, {voc}, .referral vocToNom⟩ ]
 
 /-- The vocative dual takes the nominative dual's Block-i exponent: a

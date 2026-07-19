@@ -58,6 +58,12 @@ decides realized **values**, not payload equality.
   evaluation and the block cascade
 * `evalPortmanteau`, `evalPortmanteau_eq_comp_of_not_applies` — portmanteau
   blocks and the Function Composition Default
+* `selectMinimal_append_maximal` — appending a maximal always-applicable rule
+  is elsewhere-only: the mechanism behind `identityDefault` and the FCD
+* `functionCompositionDefault`, `le_functionCompositionDefault`,
+  `evalPortmanteau_eq_functionCompositionDefault` — the FCD as a derived
+  `≤`-maximal rule, and the stipulated portmanteau evaluation equals its
+  appended-block form
 * `Linkage.realize_eq_paradigmFunction` — the PFM2 realization of a linkage's
   block cascade is this paradigm function
 -/
@@ -69,11 +75,22 @@ open Morphology Morphology.Exponence
 variable {L Z P F : Type*}
 
 /-- The payload of a realization rule: a rule of **exponence** carries a form
-operation `f : Z → Z`, a rule of **referral** carries a property-set retargeting
-`P → P` whose block is re-consulted at the retargeted cell. -/
+operation `f : P → Z → Z` that may consult the realized property set, a rule of
+**referral** carries a property-set retargeting `P → P` whose block is
+re-consulted at the retargeted cell. The property argument makes the form
+operation σ-sensitive, as [stump-2020]'s rule format allows (his conditional
+affixation operator for ambifixal classes consults σ), and lets the Function
+Composition Default carry a rule whose action is "evaluate two blocks at the
+current cell". -/
 inductive Action (Z P : Type*)
-  | expo (f : Z → Z)
+  | expo (f : P → Z → Z)
   | referral (retarget : P → P)
+
+/-- A **property-insensitive** rule of exponence: a form operation `f : Z → Z`
+applied regardless of the property set — the special case of `Action.expo`
+before [stump-2020]'s σ-sensitive rule format, and the shape of every exponent
+in [bonami-stump-2016]'s worked fragments. -/
+def Action.const (f : Z → Z) : Action Z P := .expo (fun _ => f)
 
 /-- A realization rule in [bonami-stump-2016]'s format `⟨klass, props, payload⟩`
 (the chapter's `n, X_C, τ → f(X)`), payload-polymorphic à la
@@ -162,7 +179,7 @@ consequences are theorems. -/
 def identityDefault : Rule L P (Action Z P) where
   klass := Finset.univ
   props := ⊥
-  payload := .expo id
+  payload := .const id
 
 omit [DecidableEq L] [DecidableLE P] in
 theorem identityDefault_applies (c : L × P) :
@@ -208,12 +225,12 @@ def evalBlockForm (Lindex : Z → L) (b : Block L Z P) (wσ : Z × P) : Z :=
   match selectMinimal b (Lindex wσ.1, wσ.2) with
   | some r =>
     match r.payload with
-    | .expo f => f wσ.1
+    | .expo f => f wσ.2 wσ.1
     | .referral retarget =>
       match selectMinimal (expoFragment b) (Lindex wσ.1, retarget wσ.2) with
       | some s =>
         match s.payload with
-        | .expo g => g wσ.1
+        | .expo g => g (retarget wσ.2) wσ.1
         | .referral _ => wσ.1
       | none => wσ.1
   | none => wσ.1
@@ -272,6 +289,105 @@ theorem evalPortmanteau_eq_comp_of_not_applies (Lindex : Z → L) (bmn bm bn : B
     (wσ : Z × P) (h : applicable bmn (Lindex wσ.1, wσ.2) = []) :
     evalPortmanteau Lindex bmn bm bn wσ = evalBlock Lindex bm (evalBlock Lindex bn wσ) := by
   simp [evalPortmanteau, h]
+
+/-- Appending a `≤`-maximal always-applicable rule to a block leaves narrowest-rule
+selection unchanged when the block already selects, and picks that rule otherwise:
+a maximal rule is preempted by any genuine competitor and fires only in the
+elsewhere. The mechanism shared by `identityDefault` and
+`functionCompositionDefault`. -/
+theorem selectMinimal_append_maximal {v : List (Rule L P F)} {c : L × P}
+    {top : Rule L P F} (hmax : ∀ r, r ≤ top)
+    (htop : Exponence.Applies (F := F) top c) :
+    selectMinimal (v ++ [top]) c = (selectMinimal v c).or (some top) := by
+  have htop' : c.1 ∈ top.klass ∧ top.props ≤ c.2 := htop
+  have happl : applicable (v ++ [top]) c = applicable v c ++ [top] := by
+    simp [applicable, List.filter_append, htop']
+  have hpred : (fun r : Rule L P F => (applicable (v ++ [top]) c).all (fun s => decide (¬ s < r)))
+      = (fun r : Rule L P F => (applicable v c).all (fun s => decide (¬ s < r))) := by
+    funext r
+    have : ¬ top < r := fun hlt => absurd (hmax r) (not_le_of_gt hlt)
+    rw [happl]; simp [List.all_append, this]
+  have hfold : List.find? (fun r => (applicable v c).all (fun s => decide (¬ s < r)))
+      (applicable v c) = selectMinimal v c := rfl
+  rw [selectMinimal, hpred, happl, List.find?_append, hfold]
+  rcases hs : selectMinimal v c with _ | r
+  · have hnil : applicable v c = [] := selectMinimal_eq_none_iff.mp hs
+    rw [Option.none_or, hnil]
+    simp
+  · rfl
+
+/-! ### The Function Composition Default as a derived rule -/
+
+section FunctionCompositionDefault
+variable [Fintype L] [OrderBot P]
+
+/-- The **Function Composition Default** as a derived rule ([spencer-2013]): the
+rule of a portmanteau block `[m, n]` whose σ-sensitive action evaluates blocks
+`m` then `n` at the current cell. Like `identityDefault` it applies everywhere
+(`klass = univ`, `props = ⊥`) and is `≤`-maximal, so any explicit portmanteau
+rule — being narrower — preempts it by ordinary Pāṇinian narrowness. [spencer-2013]
+observes that an explicit portmanteau rule is by definition more specific than
+the FCD, so ordinary narrowness suffices to order them; this derives what
+`evalPortmanteau` stipulates, the same stipulate-to-derive upgrade
+`identityDefault` gives the Identity Function Default. -/
+def functionCompositionDefault (Lindex : Z → L) (bm bn : Block L Z P) :
+    Rule L P (Action Z P) where
+  klass := Finset.univ
+  props := ⊥
+  payload := .expo (fun σ z => (evalBlock Lindex bm (evalBlock Lindex bn (z, σ))).1)
+
+theorem functionCompositionDefault_applies (Lindex : Z → L) (bm bn : Block L Z P)
+    (c : L × P) : Exponence.Applies (F := Action Z P)
+      (functionCompositionDefault Lindex bm bn) c :=
+  ⟨Finset.mem_univ _, bot_le⟩
+
+/-- The FCD is `≤`-maximal: every rule is at least as narrow, so an explicit
+portmanteau rule always preempts it ([spencer-2013]). Same shape as
+`le_identityDefault`. -/
+theorem le_functionCompositionDefault (Lindex : Z → L) (bm bn : Block L Z P)
+    (r : Rule L P (Action Z P)) : r ≤ functionCompositionDefault Lindex bm bn := by
+  by_cases h : r.klass = Finset.univ
+  · exact Or.inl ⟨h, bot_le⟩
+  · exact Or.inr (Finset.ssubset_univ_iff.mpr h)
+
+/-- **FCD-as-derived-default**: for a portmanteau block `bmn` of rules of
+exponence, the stipulated `evalPortmanteau` equals the block `bmn ++ [fcd]`
+evaluated as an ordinary block. Where a portmanteau rule applies it wins by
+narrowness (`le_functionCompositionDefault`, via `selectMinimal_append_maximal`);
+where none does, the appended FCD fires and evaluates `bm ∘ bn` at the cell. This
+certifies the stipulated Function Composition Default as [stump-2020]'s
+single-block rule-conflation reading of [bonami-stump-2016]'s block-straddling
+device. The exponence-only hypothesis on `bmn` is what a portmanteau block *is*
+in PFM — referral, a separate syncretism device, re-selects over the block's
+`expoFragment`, which the appended (exponence-shaped) FCD would perturb. -/
+theorem evalPortmanteau_eq_functionCompositionDefault (Lindex : Z → L)
+    (bmn bm bn : Block L Z P) (wσ : Z × P)
+    (hbmn : ∀ r ∈ bmn, ∃ f, r.payload = Action.expo f) :
+    evalPortmanteau Lindex bmn bm bn wσ
+      = evalBlock Lindex (bmn ++ [functionCompositionDefault Lindex bm bn]) wσ := by
+  have hsel := selectMinimal_append_maximal (v := bmn)
+    (c := (Lindex wσ.1, wσ.2)) (le_functionCompositionDefault Lindex bm bn)
+    (functionCompositionDefault_applies Lindex bm bn (Lindex wσ.1, wσ.2))
+  unfold evalPortmanteau
+  by_cases h : (applicable bmn (Lindex wσ.1, wσ.2)).isEmpty = true
+  · rw [if_pos h]
+    rw [List.isEmpty_iff] at h
+    rw [selectMinimal_eq_none_iff.mpr h, Option.none_or] at hsel
+    conv_rhs => rw [evalBlock, evalBlockForm, hsel]
+    simp only [functionCompositionDefault, Prod.mk.eta]
+    refine Prod.ext rfl ?_
+    simp only [evalBlock_snd]
+  · rw [if_neg h]
+    rw [List.isEmpty_iff] at h
+    obtain ⟨r, hr⟩ := List.exists_mem_of_ne_nil _ h
+    obtain ⟨r', hr'⟩ := Option.isSome_iff_exists.mp
+      (selectMinimal_isSome_of_exists_applicable
+        ⟨r, (mem_applicable.mp hr).1, (mem_applicable.mp hr).2⟩)
+    obtain ⟨f, hf⟩ := hbmn r' (selectMinimal_mem hr')
+    rw [hr', Option.some_or] at hsel
+    simp only [evalBlock, evalBlockForm, hsel, hr', hf]
+
+end FunctionCompositionDefault
 
 /-- With property-preserving property mapping and PFM1 basic stem choice, the
 PFM2 realization of a paradigm linkage's block cascade ([stump-2016]'s
