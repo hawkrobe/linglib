@@ -4,7 +4,6 @@ import Mathlib.Data.List.Sort
 
 /-!
 # Bybee's relevance hierarchy
-[bybee-1985]
 
 [bybee-1985]'s comparative inventory of verbal inflectional categories,
 ordered by semantic relevance to the stem, and the stem-outward

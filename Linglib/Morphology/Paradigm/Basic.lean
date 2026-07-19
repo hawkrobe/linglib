@@ -2,7 +2,6 @@ import Mathlib.Data.Rat.Defs
 
 /-!
 # Paradigms: forms over ordered cells
-[ackerman-malouf-2013] [bobaljik-2012]
 
 The morphologist's primary observable: a **paradigm** assigns a surface
 form to each of `n` linearly ordered cells. One type serves both

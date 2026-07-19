@@ -1,6 +1,5 @@
 /-!
 # Root families: category-changing morphology
-[marantz-1997]
 
 A root family records the word forms a single (sub-morphemic) root projects
 across lexical categories — the [marantz-1997] uncategorised-roots pattern:

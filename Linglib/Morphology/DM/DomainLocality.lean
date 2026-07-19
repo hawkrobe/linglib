@@ -1,9 +1,7 @@
 import Linglib.Morphology.Paradigm.Contiguity
 
 /-!
-# Domain-Relativized Contiguity
-[moskal-2015a-dissertation] [moskal-2015]
-[smith-moskal-xu-kang-bobaljik-2019]
+# Domain-relativized contiguity
 
 A domain partition assigns each grade of a containment hierarchy a
 *domain tag* — abstractly representing the grade's locality unit

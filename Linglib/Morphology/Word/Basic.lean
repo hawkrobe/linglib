@@ -9,8 +9,7 @@ import Linglib.Features.Number.Capabilities
 import Linglib.Features.Person.Capabilities
 
 /-!
-# Word — the morphosyntactic word (ms-word) token
-[kalin-bjorkman-etal-2026]
+# Word tokens
 
 The surface token: the unit (morpho)syntax treats as a word, approximating the
 ms-word of the ms-word/p-word split ([kalin-bjorkman-etal-2026]; the p-word is
@@ -39,7 +38,7 @@ structure Word where
   cat : UD.UPOS
   /-- The UD morphological features. -/
   features : UD.MorphFeatures := {}
-  deriving Repr
+  deriving Repr, DecidableEq
 
 /-- Convenience constructor for a featureless word (form + category only). -/
 def Word.mk' (form : String) (cat : UD.UPOS) : Word := { form := form, cat := cat }

@@ -2,7 +2,6 @@ import Linglib.Phonology.OCP
 
 /-!
 # Consonantal roots
-[mccarthy-1981] [faust-2026]
 
 A **consonantal root** is an ordered melody of segments stored independently
 of vocalization or template — the nonconcatenative counterpart of a linear

@@ -2,7 +2,6 @@ import Linglib.Morphology.Paradigm.Contiguity
 
 /-!
 # Case paradigms
-[caha-2009] [bobaljik-2012]
 
 Framework-neutral substrate for allomorphy patterns over the four core
 cases (NOM, ACC, GEN, DAT): the n = 4 specialization of

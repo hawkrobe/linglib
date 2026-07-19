@@ -4,7 +4,6 @@ import Mathlib.Logic.Relation
 
 /-!
 # Synthetic and analytic realization: Merger over a containment hierarchy
-[bobaljik-2012]
 
 [bobaljik-2012] ch. 3 treats the synthetic/analytic distinction as
 structural: a grade is realized synthetically when Merger has bundled

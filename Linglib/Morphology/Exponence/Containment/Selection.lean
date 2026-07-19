@@ -6,7 +6,6 @@ import Mathlib.Data.Finset.Max
 
 /-!
 # Containment hierarchies: score selection
-[bobaljik-2012] [starke-2009] [caha-2009] [kiparsky-1973]
 
 Elsewhere insertion and Superset spellout. The DM `winner` maximizes
 `threshold` as an instantiation of the core's `Exponence.selectBy`, so

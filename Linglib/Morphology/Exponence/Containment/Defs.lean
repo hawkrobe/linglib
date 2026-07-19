@@ -4,7 +4,6 @@ import Mathlib.Order.Fin.Basic
 
 /-!
 # Vocabularies over containment hierarchies: rules and specificity
-[bobaljik-2012] [starke-2009] [caha-2009] [kiparsky-1973]
 
 The carrier for the realizational engine of [bobaljik-2012]'s
 comparative-suppletion generalizations, over an arbitrary `n`-grade

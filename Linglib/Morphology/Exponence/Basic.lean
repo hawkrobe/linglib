@@ -3,7 +3,6 @@ import Mathlib.Data.Set.Basic
 
 /-!
 # Rules of exponence
-[kiparsky-1973] [halle-marantz-1993] [stump-2001] [stump-2022]
 
 **Exponence** ([matthews-1991]'s term for the mapping from morphosyntactic
 content to form) is the class every framework engine's carrier implements:

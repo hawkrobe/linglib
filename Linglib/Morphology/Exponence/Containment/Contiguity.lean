@@ -3,7 +3,6 @@ import Linglib.Morphology.Paradigm.Contiguity
 
 /-!
 # Containment hierarchies: contiguity and the suppletion generalizations
-[bobaljik-2012] [starke-2009] [caha-2009] [declercq-vandenwyngaerd-2017]
 
 The *ABA generalization and its refinements, over the score selection of
 `Containment/Selection.lean`. Both engines are *ABA-free (`isContiguous_realize`,

@@ -6,7 +6,6 @@ import Linglib.Syntax.Minimalist.Verbal.Voice
 
 /-!
 # Allosemy: Contextual Meaning Variation of Functional Heads
-[benz-2025] [wood-2023] [kratzer-1996]
 
 [benz-2025] "Structure and Interpretation Across Categories" examines allosemy — the
 meaning-side analog of allomorphy in Distributed Morphology. Where

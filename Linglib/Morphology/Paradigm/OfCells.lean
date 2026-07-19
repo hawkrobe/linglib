@@ -3,7 +3,6 @@ import Linglib.Syntax.Agreement.Paradigm
 
 /-!
 # Agreement tables as ordered-cell paradigms
-[corbett-1998] [bobaljik-2012]
 
 The descriptive agreement table (`Agreement.Paradigm`, keyed by
 person/number/gender cells) and the theoretical ordered-cell object

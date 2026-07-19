@@ -2,7 +2,6 @@ import Mathlib.Data.Set.Function
 
 /-!
 # Paradigm linkage: content paradigms, form paradigms, and correspondence
-[stump-2012-mmm8]
 
 Inflectional morphology relates three levels of representation ([stump-2012-mmm8];
 the book-length apparatus is [stump-2016]): a lexeme's **content paradigm** of

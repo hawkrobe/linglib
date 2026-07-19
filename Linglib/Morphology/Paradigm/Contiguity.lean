@@ -5,7 +5,6 @@ import Mathlib.Data.Finset.Image
 
 /-!
 # Paradigm contiguity: the *ABA generalization
-[bobaljik-2012] [caha-2009] [graf-2019]
 
 Across graded paradigms — degree (positive < comparative < superlative,
 [bobaljik-2012]), case (NOM < ACC < GEN < DAT, [caha-2009]), path roles

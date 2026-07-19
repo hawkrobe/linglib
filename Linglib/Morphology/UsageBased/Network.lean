@@ -1,10 +1,9 @@
 import Mathlib.Tactic.DeriveFintype
 
 /-!
-# Bybee 1985 Ch 5: Dynamic Network Model of Lexical Representation
-[bybee-1985]
+# The dynamic network model
 
-This file formalizes the substrate of Bybee 1985 Ch 5 ("Two Principles in
+The substrate of [bybee-1985] Ch 5 ("Two Principles in
 a Dynamic Model of Lexical Representation," pp. 111-135). It is a peer-
 framework directory alongside `Morphology/{DM, Nanosyntax,
 FragmentGrammars}/` — Bybee's network model is *the* usage-based

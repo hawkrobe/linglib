@@ -4,9 +4,7 @@ import Linglib.Syntax.Minimalist.Features
 import Linglib.Syntax.Minimalist.Verbal.Voice
 
 /-!
-# Categorizing Heads (Distributed Morphology) [harley-2014]
-[embick-2004] [marantz-1997]
-[kramer-2015]
+# Categorizing heads
 
 [harley-2014] "On the identity of roots" addresses three questions about
 roots in DM:

@@ -6,7 +6,6 @@ import Mathlib.Data.List.MinMax
 
 /-!
 # VocabSimple: Minimalist-specific Vocabulary Insertion
-[halle-marantz-1993] [kiparsky-1973] [elkins-torrence-brown-2026]
 
 A concrete Minimalist specialization of Vocabulary Insertion.
 `VocabEntry` carries `features : FeatureBundle` (the Minimalist

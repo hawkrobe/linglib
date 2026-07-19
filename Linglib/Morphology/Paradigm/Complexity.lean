@@ -3,7 +3,6 @@ import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
 
 /-!
 # Paradigm complexity: entropy and implicative structure over cells
-[ackerman-malouf-2013] [bonami-beniamine-2016] [rathi-hahn-futrell-2026]
 
 Two views of the Paradigm Cell Filling Problem over a `ParadigmSystem`.
 The **quantitative** layer measures cell distributions: Shannon entropy

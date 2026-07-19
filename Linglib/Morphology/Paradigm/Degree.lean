@@ -2,7 +2,6 @@ import Linglib.Morphology.Paradigm.Contiguity
 
 /-!
 # Degree paradigms
-[bobaljik-2012]
 
 Framework-neutral substrate for the three-grade degree hierarchy
 (positive, comparative, superlative) and the *ABA generalization over

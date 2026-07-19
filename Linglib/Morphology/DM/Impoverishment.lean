@@ -2,7 +2,6 @@ import Linglib.Syntax.Minimalist.Features
 
 /-!
 # Impoverishment (Distributed Morphology)
-[halle-marantz-1993] [bonet-1991]
 
 Impoverishment is a postsyntactic operation that deletes features from
 a terminal node before Vocabulary Insertion. It is the DM mechanism for
