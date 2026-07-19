@@ -42,7 +42,7 @@ grammatical tones targeting ideophones in Mwaghavul. *Natural Language
 
 ## Substrate
 
-The OT analysis is built on `Autosegmental.FloatingForm Syl TRN Morpheme`
+The OT analysis is built on `Autosegmental.FloatingForm Syl TRN Morph`
 (Goldsmith-style autosegmental representation; built originally for
 [mcpherson-lamont-2026]). Each `ulTier` entry is one
 autosegment; `surfaceLinks` records associations between tier and
@@ -74,7 +74,7 @@ namespace AkinboFwangwar2026
 open OptimalityTheory
 open Constraints
 open Autosegmental
-open Morphology (Morpheme)
+open Morphology (Morph)
 open Tone (TRN)
 open Tone (integrityTone)
 open Mwaghavul
@@ -84,46 +84,46 @@ open Mwaghavul
 -- ============================================================================
 
 /-- The Mwaghavul-instantiated autosegmental form. -/
-abbrev MwaghavulForm := FloatingForm Syl TRN Morpheme
+abbrev MwaghavulForm := FloatingForm Syl TRN Morph
 
 /-- The ideophone root (wùlàʃ in Tableau 24, háŋláyáp in Tableau 25).
     Both single-root tableaux share this morpheme. -/
-def rootMorph : Morpheme := { morph := .root "root" }
+def rootMorph : Morph := .root "root"
 
 /-- The verbaliser. The M-tone verbaliser (Tableau 24) and the M-H
     verbaliser (Tableaux 25/26) share this morpheme — they're suppletive
     allomorphs of the same verbaliser per paper p. 20 eq. (17). -/
-def vbzMorph : Morpheme := { morph := .root "vbz" }
+def vbzMorph : Morph := .root "vbz"
 
 /-- The reduplicant root in pluractional Tableau 26. -/
-def rootRedMorph : Morpheme := { morph := .root "root-red" }
+def rootRedMorph : Morph := .root "root-red"
 
 /-- The base root in pluractional Tableau 26. -/
-def rootBaseMorph : Morpheme := { morph := .root "root-base" }
+def rootBaseMorph : Morph := .root "root-base"
 
 /-- Wrap a Mwaghavul syllable as a TBU of the (single) ideophone root. -/
-def rootSeg (s : Syl) : SegSpec Syl Morpheme := { seg := s, morpheme := rootMorph }
+def rootSeg (s : Syl) : SegSpec Syl Morph := { seg := s, morpheme := rootMorph }
 
 /-- Wrap a syllable as a TBU of the reduplicant (Tableau 26). -/
-def redSeg (s : Syl) : SegSpec Syl Morpheme := { seg := s, morpheme := rootRedMorph }
+def redSeg (s : Syl) : SegSpec Syl Morph := { seg := s, morpheme := rootRedMorph }
 
 /-- Wrap a syllable as a TBU of the base (Tableau 26). -/
-def baseSeg (s : Syl) : SegSpec Syl Morpheme := { seg := s, morpheme := rootBaseMorph }
+def baseSeg (s : Syl) : SegSpec Syl Morph := { seg := s, morpheme := rootBaseMorph }
 
 /-- L tone of the (single) ideophone root. -/
-def rootL : TierSpec TRN Morpheme := { value := TRN.L, morpheme := rootMorph }
+def rootL : TierSpec TRN Morph := { value := TRN.L, morpheme := rootMorph }
 
 /-- M tone of the verbaliser. -/
-def vbzM : TierSpec TRN Morpheme := { value := TRN.M, morpheme := vbzMorph }
+def vbzM : TierSpec TRN Morph := { value := TRN.M, morpheme := vbzMorph }
 
 /-- H tone of the verbaliser. -/
-def vbzH : TierSpec TRN Morpheme := { value := TRN.H, morpheme := vbzMorph }
+def vbzH : TierSpec TRN Morph := { value := TRN.H, morpheme := vbzMorph }
 
 /-- L tone of the reduplicant root (Tableau 26). -/
-def lRed : TierSpec TRN Morpheme := { value := TRN.L, morpheme := rootRedMorph }
+def lRed : TierSpec TRN Morph := { value := TRN.L, morpheme := rootRedMorph }
 
 /-- L tone of the base root (Tableau 26). -/
-def lBase : TierSpec TRN Morpheme := { value := TRN.L, morpheme := rootBaseMorph }
+def lBase : TierSpec TRN Morph := { value := TRN.L, morpheme := rootBaseMorph }
 
 -- ============================================================================
 -- §2: Constraints over `MwaghavulForm`
@@ -142,20 +142,20 @@ def lBase : TierSpec TRN Morpheme := { value := TRN.L, morpheme := rootBaseMorph
 section SingleRoot
 
 /-- Does TBU `i` bear a tone of value `t` from morpheme `m`? -/
-def isGramTbu (t : TRN) (m : Morpheme) (f : MwaghavulForm) (i : SegIdx) : Bool :=
+def isGramTbu (t : TRN) (m : Morph) (f : MwaghavulForm) (i : SegIdx) : Bool :=
   (f.linksTo i).any fun k =>
     (f.upper.get? k).any fun ts => decide (ts.value = t ∧ ts.morpheme = m)
 
 /-- L-ANCHOR-`t`-from-`m`: number of TBUs (in tier order) before the
     leftmost gram-`t`-from-`m` TBU. If no such TBU exists, every TBU
     counts (full TBU count). -/
-def lAnchTone (t : TRN) (m : Morpheme) (f : MwaghavulForm) : Nat :=
+def lAnchTone (t : TRN) (m : Morph) (f : MwaghavulForm) : Nat :=
   match (List.range f.lower.len).findIdx? (isGramTbu t m f) with
   | some i => i
   | none   => f.lower.len
 
 /-- R-ANCHOR-`t`-from-`m`: counted from the right edge. -/
-def rAnchTone (t : TRN) (m : Morpheme) (f : MwaghavulForm) : Nat :=
+def rAnchTone (t : TRN) (m : Morph) (f : MwaghavulForm) : Nat :=
   match (List.range f.lower.len).reverse.findIdx? (isGramTbu t m f) with
   | some i => i
   | none   => f.lower.len
@@ -166,11 +166,11 @@ def maxToneAuto (f : MwaghavulForm) : Nat :=
   f.countUpper f.IsDeleted
 
 /-- L-ANCHOR-Mᵥ as a `Constraint`. -/
-def lAnchToneC (t : TRN) (m : Morpheme) : Constraint MwaghavulForm :=
+def lAnchToneC (t : TRN) (m : Morph) : Constraint MwaghavulForm :=
   lAnchTone t m
 
 /-- R-ANCHOR-Mᵥ as a `Constraint`. -/
-def rAnchToneC (t : TRN) (m : Morpheme) : Constraint MwaghavulForm :=
+def rAnchToneC (t : TRN) (m : Morph) : Constraint MwaghavulForm :=
   rAnchTone t m
 
 /-- MAX-Tone as a `Constraint`. -/
@@ -199,14 +199,14 @@ section PerRoot
 
 /-- A gram-`t`-from-`m` tone is realised on root `rm` iff some TBU of
     `rm` bears one. -/
-def isRealisedOnRoot (t : TRN) (m : Morpheme) (rm : Morpheme)
+def isRealisedOnRoot (t : TRN) (m : Morph) (rm : Morph)
     (f : MwaghavulForm) : Bool :=
   (f.segsOfMorpheme rm).any (isGramTbu t m f)
 
 /-- L-ANCHOR scoped to root `rm`. 0 if `t`-from-`m` not realised on
     `rm` (per paper p. 28: "no violation to the other root morpheme");
     else count TBUs of `rm` before the leftmost gram-`t` TBU of `rm`. -/
-def lAnchTonePerRoot (t : TRN) (m : Morpheme) (rm : Morpheme)
+def lAnchTonePerRoot (t : TRN) (m : Morph) (rm : Morph)
     (f : MwaghavulForm) : Nat :=
   if isRealisedOnRoot t m rm f then
     match (f.segsOfMorpheme rm).findIdx? (isGramTbu t m f) with
@@ -215,7 +215,7 @@ def lAnchTonePerRoot (t : TRN) (m : Morpheme) (rm : Morpheme)
   else 0
 
 /-- R-ANCHOR scoped to root `rm`. -/
-def rAnchTonePerRoot (t : TRN) (m : Morpheme) (rm : Morpheme)
+def rAnchTonePerRoot (t : TRN) (m : Morph) (rm : Morph)
     (f : MwaghavulForm) : Nat :=
   if isRealisedOnRoot t m rm f then
     match (f.segsOfMorpheme rm).reverse.findIdx? (isGramTbu t m f) with
@@ -226,7 +226,7 @@ def rAnchTonePerRoot (t : TRN) (m : Morpheme) (rm : Morpheme)
 /-- L-ANCHOR summed across a list of root morphemes. If the gram tone
     is not realised on ANY of the roots, paper p. 28 assigns one
     violation per TBU of every targeted root (not 0). -/
-def lAnchToneAcrossRoots (t : TRN) (m : Morpheme) (rms : List Morpheme)
+def lAnchToneAcrossRoots (t : TRN) (m : Morph) (rms : List Morph)
     (f : MwaghavulForm) : Nat :=
   if rms.any (fun rm => isRealisedOnRoot t m rm f) then
     rms.foldl (fun acc rm => acc + lAnchTonePerRoot t m rm f) 0
@@ -234,7 +234,7 @@ def lAnchToneAcrossRoots (t : TRN) (m : Morpheme) (rms : List Morpheme)
     rms.foldl (fun acc rm => acc + (f.segsOfMorpheme rm).length) 0
 
 /-- R-ANCHOR summed across a list of root morphemes. -/
-def rAnchToneAcrossRoots (t : TRN) (m : Morpheme) (rms : List Morpheme)
+def rAnchToneAcrossRoots (t : TRN) (m : Morph) (rms : List Morph)
     (f : MwaghavulForm) : Nat :=
   if rms.any (fun rm => isRealisedOnRoot t m rm f) then
     rms.foldl (fun acc rm => acc + rAnchTonePerRoot t m rm f) 0
@@ -242,12 +242,12 @@ def rAnchToneAcrossRoots (t : TRN) (m : Morpheme) (rms : List Morpheme)
     rms.foldl (fun acc rm => acc + (f.segsOfMorpheme rm).length) 0
 
 /-- L-ANCHOR-`t`-from-`m`-across-roots as a `Constraint`. -/
-def lAnchToneCAcross (t : TRN) (m : Morpheme) (rms : List Morpheme) :
+def lAnchToneCAcross (t : TRN) (m : Morph) (rms : List Morph) :
     Constraint MwaghavulForm :=
   lAnchToneAcrossRoots t m rms
 
 /-- R-ANCHOR across roots as a `Constraint`. -/
-def rAnchToneCAcross (t : TRN) (m : Morpheme) (rms : List Morpheme) :
+def rAnchToneCAcross (t : TRN) (m : Morph) (rms : List Morph) :
     Constraint MwaghavulForm :=
   rAnchToneAcrossRoots t m rms
 

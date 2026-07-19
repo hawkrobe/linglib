@@ -103,23 +103,23 @@ def ay_n : ClausePrefixEntry where
 /-- All four clausal prefix entries. -/
 def allPrefixes : List ClausePrefixEntry := [zi, ki, kemzi, ay_n]
 
-/-- The negative circumfix as word structure: the verb stem wrapped by
-*ʔay-* and *-n* (an inflectional circumfixation, [haspelmath-2020]'s
-prefix-plus-suffix construction reading). -/
-def negCircumfix (verbStem : String) : Word.Structure :=
-  .circumfixed ⟨Morph.pref ay_n.form, ay_n.gloss⟩
-    (.root ⟨Morph.free verbStem, ""⟩)
-    ⟨Morph.suff ay_n.suffix_, ay_n.gloss⟩
+/-- The negative circumfix as word structure over glossed morphs: the
+verb stem wrapped by *ʔay-* and *-n* (an inflectional circumfixation,
+[haspelmath-2020]'s prefix-plus-suffix construction reading). -/
+def negCircumfix (verbStem : String) : Word.Structure (Morph × String) :=
+  .circumfixed (Morph.pref ay_n.form, ay_n.gloss)
+    (.root (Morph.free verbStem, ""))
+    (Morph.suff ay_n.suffix_, ay_n.gloss)
     .inflectional
 
 /-- The negative circumfix surfaces correctly. -/
 theorem neg_circumfix_example :
-    (negCircumfix "mäs'ə").surface = "ʔay-mäs'ə-n" := rfl
+    String.join ((negCircumfix "mäs'ə").toList.map (·.1.form)) = "ʔay-mäs'ə-n" := rfl
 
 /-- Discontinuous exponence: the circumfixed structure has no
-morph-sequence projection (`toExponent = none`) — the circumfix is a
-construction, not a morph ([haspelmath-2020]). -/
+payload-sequence projection — the circumfix is a construction, not a
+morph ([haspelmath-2020]). -/
 theorem neg_circumfix_no_exponent (s : String) :
-    (negCircumfix s).toExponent = none := rfl
+    (negCircumfix s).toSequence? = none := rfl
 
 end Tigrinya.ClausePrefixes

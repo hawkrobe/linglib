@@ -26,13 +26,13 @@ a fuller fragment when a second Poko paper arrives.
 * `Poko.Syll.melody` — each stem's lexical melody: tones, TBU, and
   pre-linking ([rolle-2018] §2.1; the floating H of `/M^H/` stems is
   the unlinked element).
-* `Poko.Form` — autosegmental forms (`FloatingForm Syll TRN Morpheme`).
+* `Poko.Form` — autosegmental forms (`FloatingForm Syll TRN Morph`).
 -/
 
 namespace Poko
 
 open Autosegmental
-open Morphology (Morpheme)
+open Morphology (Morph)
 open Tone (TRN)
 
 /-! ### Syllables -/
@@ -63,20 +63,20 @@ inductive Syll
 /-! ### Morphemes and melodies -/
 
 /-- Stable morpheme per stem, keyed by the syllable's surface form. -/
-def Syll.morpheme : Syll → Morpheme
-  | .kak => { morph := .root "kak" }
-  | .ri  => { morph := .root "ri" }
-  | .do  => { morph := .root "do" }
-  | .nan => { morph := .root "nan" }
-  | .na  => { morph := .root "na" }
-  | .ka  => { morph := .root "ka" }
-  | .ili => { morph := .root "ili" }
-  | .ne  => { morph := .root "ne" }
+def Syll.morpheme : Syll → Morph
+  | .kak => .root "kak"
+  | .ri  => .root "ri"
+  | .do  => .root "do"
+  | .nan => .root "nan"
+  | .na  => .root "na"
+  | .ka  => .root "ka"
+  | .ili => .root "ili"
+  | .ne  => .root "ne"
 
 /-- Each stem's lexical melody ([mcpherson-lamont-2026] ex. 3): tones
     over the stem's single TBU, with the lexical pre-linking — the H of
     an `/M^H/` stem is the sole unlinked (floating) element. -/
-def Syll.melody (s : Syll) : FloatingForm Syll TRN Morpheme :=
+def Syll.melody (s : Syll) : FloatingForm Syll TRN Morph :=
   match s with
   | .kak => .melody s.morpheme [.M, .H] [s] {(0, 0)}          -- /M^H/
   | .ri  => .melody s.morpheme [.M, .H] [s] {(0, 0)}          -- /M^H/
@@ -89,10 +89,10 @@ def Syll.melody (s : Syll) : FloatingForm Syll TRN Morpheme :=
 
 /-- The underlying form of a stem sequence: melodies concatenated
     left-to-right. -/
-def word (ss : List Syll) : FloatingForm Syll TRN Morpheme :=
+def word (ss : List Syll) : FloatingForm Syll TRN Morph :=
   .concatInputs (ss.map Syll.melody)
 
 /-- Poko autosegmental forms: syllable backbone, `TRN` tone tier, morpheme sponsor. -/
-abbrev Form := FloatingForm Syll TRN Morpheme
+abbrev Form := FloatingForm Syll TRN Morph
 
 end Poko
