@@ -1,5 +1,4 @@
 import Linglib.Morphology.Morph
-import Linglib.Features.Formative
 
 /-!
 # Word-internal structure
@@ -33,7 +32,6 @@ morphology built it.
 
 namespace Morphology
 
-open Features (MorphStatus AttachmentSide)
 
 -- ============================================================================
 -- §1: Morpheme
@@ -43,15 +41,13 @@ open Features (MorphStatus AttachmentSide)
 [anderson-2015] problematizes the classical definition — this carrier
 keeps it as the descriptive convenience both textbooks use).
 
-Carries its form as a `Morph` (`Morphology/Morph.lean`), an optional
-gloss, and its morphological `status`. `status` (`MorphStatus`) and
-`morph.kind` (`Morph.Kind`) are two independent axes: `status` grades
-syntactic wordhood (free word / clitic / affix), while `morph.kind`
-records the attachment notation (prefix, suffix, clitic, root). -/
+Carries its form as a `Morph` (`Morphology/Morph.lean`) and an optional
+gloss; attachment is `morph.kind`. Finer wordhood classification
+(the [zwicky-pullum-1983] clitic–affix cline) is diagnostic, derived in
+`Studies/ZwickyPullum1983.lean`, not stored here. -/
 structure Morpheme where
   morph  : Morph
   gloss  : String := ""
-  status : MorphStatus := .freeWord
   deriving DecidableEq, Repr
 
 /-- The surface string of a morpheme: its morph's segmental form. -/

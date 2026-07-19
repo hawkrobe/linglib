@@ -107,9 +107,9 @@ def allPrefixes : List ClausePrefixEntry := [zi, ki, kemzi, ay_n]
 *ʔay-* and *-n* (an inflectional circumfixation, [haspelmath-2020]'s
 prefix-plus-suffix construction reading). -/
 def negCircumfix (verbStem : String) : Word.Structure :=
-  .circumfixed ⟨Morph.pref ay_n.form, ay_n.gloss, .inflAffix⟩
-    (.root ⟨Morph.free verbStem, "", .freeWord⟩)
-    ⟨Morph.suff ay_n.suffix_, ay_n.gloss, .inflAffix⟩
+  .circumfixed ⟨Morph.pref ay_n.form, ay_n.gloss⟩
+    (.root ⟨Morph.free verbStem, ""⟩)
+    ⟨Morph.suff ay_n.suffix_, ay_n.gloss⟩
     .inflectional
 
 /-- The negative circumfix surfaces correctly. -/

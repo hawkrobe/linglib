@@ -1,6 +1,5 @@
 import Linglib.Syntax.Category.Auxiliary.Constructions
 import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
-import Linglib.Features.Formative
 import Linglib.Fragments.English.Auxiliaries
 import Linglib.Fragments.Finnish.Negation
 import Linglib.Fragments.Doyayo.AuxiliaryVerbs
