@@ -58,9 +58,10 @@ inductive AffixKind where
 
 /-! ### The structure tree -/
 
-/-- Hierarchical word structure as a tree of morphemes. Each constructor
-is a morphological operation; the tree records derivational history and
-word-internal constituency. -/
+/-- Hierarchical word structure as an operation-typed tree of morphemes:
+each constructor is a word-formation operation with its own arity and
+payload. The tree records derivational history and word-internal
+constituency — what applying the operations as functions would forget. -/
 inductive Word.Structure where
   /-- Leaf node: a single morpheme (free or bound). -/
   | root : Morpheme → Word.Structure
