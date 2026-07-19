@@ -2,7 +2,6 @@ import Linglib.Processing.Memory.InformationalFusion
 import Linglib.Processing.Memory.SurprisalTradeoff
 import Linglib.Studies.AckermanMalouf2013
 import Linglib.Studies.Bybee1985
-import Linglib.Studies.BickelNichols2013
 import Linglib.Morphology.Realization
 import Linglib.Morphology.Paradigm.Complexity
 

@@ -1,15 +1,13 @@
-import Linglib.Morphology.FusionTypology
 import Linglib.Morphology.RelevanceHierarchy
 import Linglib.Morphology.Template
 
 /-!
-# Japanese Morphological Profile
-[wals-2013] [bickel-nichols-2007] [kaiser-yamamoto-2013]
+# Japanese Verb Suffix Template
+[kaiser-yamamoto-2013]
 
-WALS-derived profile for Japanese (ISO `jpn`). Textbook-consensus classification: Japanese falls in the "agglutinating" cell (concatenative + nonflexive + separative).
-
-The verb suffix template (`verbAffixTemplate`) follows [kaiser-yamamoto-2013]
-and the UD segmentation: seven slots, stem-outward.
+The Japanese verb suffix template (`verbAffixTemplate`) follows
+[kaiser-yamamoto-2013] and the UD segmentation: seven slots,
+stem-outward.
 
 | Slot | Category | Morpheme |
 |------|----------|----------|
@@ -25,19 +23,6 @@ and the UD segmentation: seven slots, stem-outward.
 namespace Japanese
 
 open Morphology
-
-/-- Japanese: WALS-derived `MorphProfile` via `MorphProfile.fromWALS`. -/
-def morphProfile : MorphProfile :=
-  .fromWALS "Japanese" "jpn"
-    (fusionFb        := .concatenative)
-    (exponenceFb     := .monoexponential)
-    (flexivity       := some .nonflexive)
-    (bnExponence     := some .separative)
-
-example : morphProfile.iso = "jpn" ∧ morphProfile.language = "Japanese" := ⟨rfl, rfl⟩
-
-/-- Textbook-consensus classification: Japanese falls in the "agglutinating" cell. -/
-example : morphProfile.IsAgglutinating := by decide
 
 /-- Japanese verb suffix template, stem-outward ([kaiser-yamamoto-2013], UD
 segmentation). Japanese is strongly suffixing, so there are no prefix slots. -/
