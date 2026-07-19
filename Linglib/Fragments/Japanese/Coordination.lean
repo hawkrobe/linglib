@@ -56,7 +56,7 @@ namespace Japanese.Coordination
     in WALS Ch 63 (`andIdenticalToWith`). -/
 def to_ : Coordinator :=
   { form := "to", gloss := "and; with"
-  , role := .j, boundness := .bound }
+  , role := .j, kind := .bound .after .clitic }
 
 /-- *mo* (も) — MU particle. Bound, postpositive on each conjunct.
     Conjunction: "Taroo-mo Hanako-mo neta" = "both Taro and Hanako slept".
@@ -67,7 +67,7 @@ def to_ : Coordinator :=
     finite meet (∧) in Boolean algebra. -/
 def mo : Coordinator :=
   { form := "mo", gloss := "also, too; and (MU); every"
-  , role := .mu, boundness := .bound
+  , role := .mu, kind := .bound .after .clitic
   , alsoAdditive := true, alsoQuantifier := true }
 
 /-- *ka* (か) — Disjunction particle. Bound, postpositive.
@@ -78,7 +78,7 @@ def mo : Coordinator :=
     "ka" marks finite joins (∨). -/
 def ka : Coordinator :=
   { form := "ka", gloss := "or; question; some"
-  , role := .disj, boundness := .bound
+  , role := .disj, kind := .bound .after .clitic
   , alsoQuantifier := true }
 
 def allEntries : List Coordinator :=
@@ -90,7 +90,7 @@ def allEntries : List Coordinator :=
 
 /-- All Japanese coordination particles are bound (postpositive). -/
 theorem all_bound :
-    allEntries.all (·.boundness == .bound) = true := by
+    allEntries.all (fun e => decide e.kind.IsBound) = true := by
   decide
 
 /-- The MU particle "mo" also serves as an additive particle. -/

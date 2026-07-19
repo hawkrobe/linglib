@@ -31,7 +31,7 @@ namespace Latin.Coordination
     Also used correlatively: "et A et B" = "both A and B". -/
 def et : Coordinator :=
   { form := "et", gloss := "and"
-  , role := .j, boundness := .free
+  , role := .j, kind := .free
   , correlative := true }
 
 /-- *-que* — enclitic conjunction, MU particle. Bound, postpositive.
@@ -39,7 +39,7 @@ def et : Coordinator :=
     Historically connected to the additive/inclusive particle. -/
 def que : Coordinator :=
   { form := "-que", gloss := "and (enclitic)"
-  , role := .mu, boundness := .bound
+  , role := .mu, kind := .bound .after .clitic
   , alsoAdditive := true
   , note := "postpositive enclitic; archaic/formal register" }
 
@@ -48,7 +48,7 @@ def que : Coordinator :=
     "atque" < *ad-que (lit. "and to that"). -/
 def atque : Coordinator :=
   { form := "atque/ac", gloss := "and also, and moreover"
-  , role := .j, boundness := .free
+  , role := .j, kind := .free
   , note := "ac before consonants; emphatic variant of et" }
 
 /-- *neque* / *nec* — negative coordination.
@@ -56,7 +56,7 @@ def atque : Coordinator :=
     Morphologically ne + -que (negation + MU enclitic). -/
 def neque : Coordinator :=
   { form := "neque/nec", gloss := "and not, neither...nor"
-  , role := .negCoord, boundness := .free
+  , role := .negCoord, kind := .free
   , correlative := true
   , note := "ne + -que; always correlative for 'neither...nor'" }
 
@@ -64,21 +64,21 @@ def neque : Coordinator :=
     "aut A aut B" = "either A or B (but not both)". -/
 def aut : Coordinator :=
   { form := "aut", gloss := "or (exclusive)"
-  , role := .disj, boundness := .free
+  , role := .disj, kind := .free
   , correlative := true }
 
 /-- *vel* — inclusive/weak disjunction.
     "vel A vel B" = "A or B (or both)". -/
 def vel : Coordinator :=
   { form := "vel", gloss := "or (inclusive)"
-  , role := .disj, boundness := .free
+  , role := .disj, kind := .free
   , correlative := true }
 
 /-- *sed* — adversative conjunction.
     "non A sed B" = "not A but B". -/
 def sed : Coordinator :=
   { form := "sed", gloss := "but"
-  , role := .advers, boundness := .free }
+  , role := .advers, kind := .free }
 
 def allEntries : List Coordinator :=
   [et, que, atque, neque, aut, vel, sed]
@@ -89,12 +89,12 @@ def allEntries : List Coordinator :=
 
 /-- Latin has exactly one bound morpheme: -que. -/
 theorem one_bound_morpheme :
-    (allEntries.filter (·.boundness == .bound)).length = 1 := by
+    (allEntries.filter (fun e => decide e.kind.IsBound)).length = 1 := by
   decide
 
 /-- The bound morpheme is the MU particle -que. -/
 theorem bound_is_mu :
-    (allEntries.filter (·.boundness == .bound)).all (·.role == .mu) = true := by
+    (allEntries.filter (fun e => decide e.kind.IsBound)).all (·.role == .mu) = true := by
   decide
 
 /-- Latin has correlative uses of J, disjunction, and negative coordination. -/

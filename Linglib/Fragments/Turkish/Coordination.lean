@@ -23,7 +23,7 @@ namespace Turkish.Coordination
 /-- *ve* — J particle (Arabic loan). Free, prepositive medial. -/
 def ve : Coordinator :=
   { form := "ve", gloss := "and"
-  , role := .j, boundness := .free
+  , role := .j, kind := .free
   , note := "Arabic-origin loan" }
 
 /-- *de* — MU clitic, also additive. Bound enclitic on first word of
@@ -31,7 +31,7 @@ def ve : Coordinator :=
     a marked emphatic variant. -/
 def de : Coordinator :=
   { form := "de", gloss := "also; and (MU)"
-  , role := .mu, boundness := .bound, alsoAdditive := true
+  , role := .mu, kind := .bound .after .clitic, alsoAdditive := true
   , note := "enclitic per Kornfilt 1997; also vowel-harmony variant 'da'" }
 
 def allEntries : List Coordinator := [ve, de]

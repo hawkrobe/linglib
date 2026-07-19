@@ -20,7 +20,7 @@ namespace Lango.Coordination
     Diachronic source: comitative ('with') → coordinator ('and'). -/
 def kede : Coordinator :=
   { form := "kèdè", gloss := "and; with"
-  , role := .j, boundness := .free
+  , role := .j, kind := .free
   , note := "comitative-derived; identical form for 'with' and 'and'" }
 
 def allEntries : List Coordinator := [kede]

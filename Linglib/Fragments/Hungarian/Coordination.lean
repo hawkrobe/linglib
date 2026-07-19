@@ -32,7 +32,7 @@ namespace Hungarian.Coordination
     "Peter es Mari" = "Peter and Mari". -/
 def es : Coordinator :=
   { form := "és", gloss := "and"
-  , role := .j, boundness := .free }
+  , role := .j, kind := .free }
 
 /-- *is* — MU particle / additive focus particle. Free, postpositive.
     Conjunction: "Peter is Mari is" = "both Peter and Mari".
@@ -40,20 +40,20 @@ def es : Coordinator :=
     One of the key pieces of evidence for M&S's MU = additive particle claim. -/
 def is_ : Coordinator :=
   { form := "is", gloss := "also, too; and (MU)"
-  , role := .mu, boundness := .free
+  , role := .mu, kind := .free
   , alsoAdditive := true }
 
 /-- *vagy* — disjunction. Free, prepositive.
     "Peter vagy Mari" = "Peter or Mari". -/
 def vagy : Coordinator :=
   { form := "vagy", gloss := "or"
-  , role := .disj, boundness := .free }
+  , role := .disj, kind := .free }
 
 /-- *de* — adversative conjunction.
     "szep de draga" = "beautiful but expensive". -/
 def de : Coordinator :=
   { form := "de", gloss := "but"
-  , role := .advers, boundness := .free }
+  , role := .advers, kind := .free }
 
 def allEntries : List Coordinator :=
   [es, is_, vagy, de]
@@ -67,7 +67,7 @@ def allEntries : List Coordinator :=
     [bill-etal-2025] speculate this difference may explain why
     Georgian children found MU harder than Hungarian children did. -/
 theorem all_free :
-    allEntries.all (·.boundness == .free) = true := by
+    allEntries.all (fun e => decide (e.kind = .free)) = true := by
   decide
 
 /-- The MU particle *is* also serves as an additive particle. -/

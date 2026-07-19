@@ -20,13 +20,13 @@ namespace HindiUrdu.Coordination
 /-- *aur* — J particle. Free, prepositive medial. -/
 def aur : Coordinator :=
   { form := "aur", gloss := "and"
-  , role := .j, boundness := .free }
+  , role := .j, kind := .free }
 
 /-- *bhii* — MU particle, also additive ('also/too').
     Free, used bisyndetically: "A bhii B bhii". -/
 def bhii : Coordinator :=
   { form := "bhii", gloss := "also, too; and (MU)"
-  , role := .mu, boundness := .free, alsoAdditive := true
+  , role := .mu, kind := .free, alsoAdditive := true
   , correlative := true }
 
 def allEntries : List Coordinator := [aur, bhii]

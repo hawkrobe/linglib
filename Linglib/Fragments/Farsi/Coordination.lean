@@ -17,13 +17,13 @@ namespace Farsi.Coordination
 /-- *va* — J particle (Arabic loan; colloquial enclitic *o*). Free, prepositive. -/
 def va : Coordinator :=
   { form := "va", gloss := "and"
-  , role := .j, boundness := .free
+  , role := .j, kind := .free
   , note := "Arabic-origin loan; colloquial enclitic 'o'" }
 
 /-- *ham* — MU particle, also additive. Free, used bisyndetically. -/
 def ham : Coordinator :=
   { form := "ham", gloss := "also, too; and (MU)"
-  , role := .mu, boundness := .free, alsoAdditive := true
+  , role := .mu, kind := .free, alsoAdditive := true
   , correlative := true }
 
 def allEntries : List Coordinator := [va, ham]

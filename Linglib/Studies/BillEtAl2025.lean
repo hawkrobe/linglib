@@ -580,22 +580,22 @@ theorem ms_universality_challenged :
   refine ⟨?_, ?_, ?_, ?_⟩ <;> native_decide
 
 open Haspelmath2007 (georgian hungarian) in
-open Syntax.Coordination (ConjunctionSystem.muBoundness) in
+open Syntax.Coordination (ConjunctionSystem.muKind) in
 /--
-**The boundness confound.**
+**The bound-status confound.**
 
 Georgian MU (-c) is bound; Hungarian MU (is) is free. Hungarian children
 showed no significant sentence-type effect on either accuracy or replays.
-This raises the possibility that morphological boundness — not the M&S
+This raises the possibility that morphological bound status — not the M&S
 decomposition itself — drives the Georgian difficulty.
 
-If boundness is the real factor, then M&S categories (J, MU, J-MU) are
+If bound status is the real factor, then M&S categories (J, MU, J-MU) are
 not the right level of analysis for acquisition predictions.
 -/
-theorem boundness_confound :
-    -- Georgian MU is bound, Hungarian MU is free
-    georgian.muBoundness = some Morphology.Boundness.bound ∧
-    hungarian.muBoundness = some Morphology.Boundness.free ∧
+theorem bound_status_confound :
+    -- Georgian MU is a bound enclitic, Hungarian MU is free
+    georgian.muKind = some (.bound .after .clitic) ∧
+    hungarian.muKind = some .free ∧
     -- Georgian children found J-MU significantly harder
     georgianChild_j_vs_jmu.significant = true ∧
     -- Hungarian: no significant sentence-type effect on replays

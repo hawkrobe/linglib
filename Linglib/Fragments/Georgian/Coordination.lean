@@ -32,7 +32,7 @@ namespace Georgian.Coordination
     "nino da giorgi" = "Nino and Giorgi". -/
 def da : Coordinator :=
   { form := "da", gloss := "and"
-  , role := .j, boundness := .free }
+  , role := .j, kind := .free }
 
 /-- *-c* — MU particle / additive focus particle. Bound clitic, postpositive.
     Conjunction: "nino-c giorgi-c" = "both Nino and Giorgi".
@@ -40,20 +40,20 @@ def da : Coordinator :=
     The bound status of -c contrasts with Hungarian free "is". -/
 def c_ : Coordinator :=
   { form := "-c", gloss := "also, too; and (MU)"
-  , role := .mu, boundness := .bound
+  , role := .mu, kind := .bound .after .clitic
   , alsoAdditive := true }
 
 /-- *an* — disjunction. Free, prepositive.
     "nino an giorgi" = "Nino or Giorgi". -/
 def an : Coordinator :=
   { form := "an", gloss := "or"
-  , role := .disj, boundness := .free }
+  , role := .disj, kind := .free }
 
 /-- *magram* — adversative conjunction.
     "lamazia magram dzviri" = "beautiful but expensive". -/
 def magram : Coordinator :=
   { form := "magram", gloss := "but"
-  , role := .advers, boundness := .free }
+  , role := .advers, kind := .free }
 
 def allEntries : List Coordinator :=
   [da, c_, an, magram]
@@ -64,12 +64,12 @@ def allEntries : List Coordinator :=
 
 /-- Georgian has exactly one bound morpheme: the MU clitic -c. -/
 theorem one_bound :
-    (allEntries.filter (·.boundness == .bound)).length = 1 := by
+    (allEntries.filter (fun e => decide e.kind.IsBound)).length = 1 := by
   decide
 
 /-- The bound morpheme is the MU particle. -/
 theorem bound_is_mu :
-    (allEntries.filter (·.boundness == .bound)).all (·.role == .mu) = true := by
+    (allEntries.filter (fun e => decide e.kind.IsBound)).all (·.role == .mu) = true := by
   decide
 
 /-- The MU particle -c also serves as an additive particle. -/

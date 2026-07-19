@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Linglib.Data.UD.Basic
 import Linglib.Features.Case.Capabilities
 import Linglib.Features.Number.Capabilities
@@ -8,8 +13,10 @@ import Linglib.Features.Person.Capabilities
 [kalin-bjorkman-etal-2026]
 
 The surface token: the unit that (morpho)syntax treats as a word. Wordhood minimally
-splits into the **ms-word** (this type) and the **p-word** (the prosodic word,
-`Phonology/Prosodic/Word.lean`) — the "one area of robust consensus" on the wordhood
+splits into the **ms-word** (which this type approximates: a CoNLL-U token is an
+orthographic unit, and orthography does not reliably track the ms-word) and the
+**p-word** (the prosodic word, `Phonology/Prosody/Word.lean`) — the "one area of
+robust consensus" on the wordhood
 problem ([kalin-bjorkman-etal-2026] §3.2); we follow the Element in calling ms-words
 simply *words*. The split is descriptive, not a Lexicalist commitment: ms-words are
 "crucial for lexicalist theories" but used descriptively by non-lexicalist ones too
@@ -18,7 +25,7 @@ simply *words*. The split is descriptive, not a Lexicalist commitment: ms-words 
 `Word` completes Morphology's word inventory: `Word.Structure` (`Word/Structure.lean`) is word-*internal* structure,
 `Paradigm/Linkage` carries the word-forming correspondence (stem selection + realization), `Word` is the resulting *token* —
 form + UD category + one `UD.MorphFeatures` bundle, i.e. a CoNLL-U row. The
-ms- vs p-boundness typology relating the two word notions ([kalin-bjorkman-etal-2026]
+ms-word vs p-word typology relating the two word notions ([kalin-bjorkman-etal-2026]
 Table 3) is formalized in `Studies/KalinBjorkmanEtAl2026.lean`.
 
 ## Main declarations
@@ -42,8 +49,11 @@ set_option autoImplicit false
     engine reads it off the token's *own* data; otherwise it lives on the typed lexical
     carrier (`Pronoun`, `NounEntry`, `Verb`, …) or on the consuming framework's own
     structures (e.g. DG subcategorization premises live on `DepTree.frames`, not here).
-    Identity caveat: `BEq` is form + category, so homographs collapse; a CoNLL-U
-    `lemma` field is the known fix, deferred until a consumer needs it. -/
+    Identity caveat: `BEq` is form + category, so homographs collapse — correct
+    surface behavior. Theoretical word identity (which tokens share a lexeme, the
+    Same Verb Problem) is relational and owned by the lexeme layer of
+    `Paradigm/Linkage`; a CoNLL-U `lemma` field would be corpus disambiguation
+    only, added if a corpus consumer needs it. -/
 structure Word where
   form : String
   cat : UD.UPOS

@@ -20,7 +20,7 @@ namespace Hausa
     Diachronic source: comitative ('with') → coordinator ('and'). -/
 def da : Coordinator :=
   { form := "da", gloss := "and; with"
-  , role := .j, boundness := .free
+  , role := .j, kind := .free
   , note := "comitative-derived; identical form for 'with' and 'and'" }
 
 def allEntries : List Coordinator := [da]

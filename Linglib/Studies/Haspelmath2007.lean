@@ -159,7 +159,7 @@ def korean : ConjunctionSystem :=
 def slovenian : ConjunctionSystem :=
   { language := "Slovenian"
   , morphemes :=
-    [ { entry := { form := "in", gloss := "and", role := .j, boundness := .free } } ]
+    [ { entry := { form := "in", gloss := "and", role := .j, kind := .free } } ]
   , strategies := [.jOnly]
   , patterns := [.a_co_b]
   , iso := "slv" }
@@ -215,7 +215,8 @@ def kannada : ConjunctionSystem :=
 def martuthunira : ConjunctionSystem :=
   { language := "Martuthunira"
   , morphemes :=
-    [ { entry := { form := "-thurti", gloss := "and", role := .j, boundness := .bound } } ]
+    -- UNVERIFIED: attachment — postpositive on each coordinand ([dench-1995]); clitic vs affix not stated here
+    [ { entry := { form := "-thurti", gloss := "and", role := .j, kind := .bound .after .clitic } } ]
   , strategies := [.jOnly]
   , patterns := [.a'co_b'co]
   , iso := "vma" }

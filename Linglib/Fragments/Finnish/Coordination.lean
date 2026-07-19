@@ -18,13 +18,13 @@ namespace Finnish.Coordination
 /-- *ja* — J particle. Free, prepositive medial. -/
 def ja : Coordinator :=
   { form := "ja", gloss := "and"
-  , role := .j, boundness := .free }
+  , role := .j, kind := .free }
 
 /-- *-kin* — MU particle, also additive. Bound, postpositive on each
     coordinand for the bisyndetic 'both…and' pattern. -/
 def kin : Coordinator :=
   { form := "-kin", gloss := "also, too; and (MU)"
-  , role := .mu, boundness := .bound, alsoAdditive := true }
+  , role := .mu, kind := .bound .after .clitic, alsoAdditive := true }
 
 def allEntries : List Coordinator := [ja, kin]
 

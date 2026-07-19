@@ -33,7 +33,7 @@ heads are overtly pronounced; the predictions are:
   show triadic exponency; the paper's own sample uses SE Macedonian, Avar,
   Hungarian (none of SE Macedonian / Avar / SerBo-Croatian is encoded here,
   so the formalised claim is restricted to the M&S focus sub-sample).
-* `mu_boundness_asymmetry` — Georgian μ is bound, Hungarian μ is free; [bill-etal-2025]
+* `mu_kind_asymmetry` — Georgian μ is bound, Hungarian μ is free; [bill-etal-2025]
   link this morphological asymmetry to acquisition difficulty.
 
 ## Implementation notes
@@ -88,13 +88,13 @@ theorem all_three_is_rare :
       hasAllThreeStrategies sys ↔ sys.iso = "kat" ∨ sys.iso = "hun" := by
   decide
 
-/-- **MU boundness asymmetry.** Georgian MU (*-c*) is bound; Hungarian MU
-    (*is*) is free. [bill-etal-2025] (with [mitrovic-2021])
+/-- **MU attachment asymmetry.** Georgian MU (*-c*) is a bound enclitic;
+    Hungarian MU (*is*) is free. [bill-etal-2025] (with [mitrovic-2021])
     propose this morphological difference may explain the acquisition
     asymmetry: bound morphemes are harder to segment. -/
-theorem mu_boundness_asymmetry :
-    georgian.muBoundness = some .bound ∧
-    hungarian.muBoundness = some .free := by
+theorem mu_kind_asymmetry :
+    georgian.muKind = some (.bound .after .clitic) ∧
+    hungarian.muKind = some .free := by
   decide
 
 end MitrovicSauerland2016

@@ -44,18 +44,24 @@ inductive Morph.Kind where
   | free
   deriving DecidableEq, Repr, Fintype
 
-/-- Morphological boundness: the coarse two-way cut of the wordhood scale,
-read across domains — acquisition ([clark-2017]: free morphemes are acquired
-more readily than bound ones) and coordination typology
-([mitrovic-sauerland-2016]). `Morph.Kind` refines the cut for morphs (`bound`
-against `root` and `free`); no projection is provided, since a root morph may
-itself be bound and `Kind` does not record it. -/
-inductive Boundness where
-  /-- Independent word (Hungarian *is*, English *and*). -/
-  | free
-  /-- Clitic or suffix (Georgian *-c*, Latin *-que*). -/
-  | bound
-  deriving DecidableEq, Repr, BEq
+/-- A morph is **bound** when its recorded `Kind` is `bound` — attaching on a
+side of its host as an affix or clitic; roots and free forms are not.
+
+This is *morphosyntactic* boundness; prosodic boundness belongs to the prosodic
+word (`Phonology/Prosody`). The coarse two-way cut is read across domains:
+acquisition ([clark-2017]: free morphemes are acquired more readily than bound
+ones) and coordination typology
+([mitrovic-sauerland-2016]). `IsBound` reflects the *recorded* attachment: a
+root morph may itself be bound in a language, but `Kind` does not record it, so
+`(Kind.root).IsBound` is `False` by definition, not by claim. -/
+def Morph.Kind.IsBound : Morph.Kind → Prop
+  | .bound .. => True
+  | .root | .free => False
+
+instance : DecidablePred Morph.Kind.IsBound := fun k =>
+  match k with
+  | .bound .. => .isTrue trivial
+  | .root | .free => .isFalse (fun h => h)
 
 /-- A **morph** is a minimal segmental form with its attachment kind. -/
 structure Morph where
@@ -89,6 +95,11 @@ def root (s : String) : Morph := ⟨.root, s⟩
 def attachment? : Morph → Option Attachment
   | ⟨.bound _ a, _⟩ => some a
   | _ => none
+
+/-- A morph is bound when its `kind` is; roots and free forms are not. -/
+def IsBound (m : Morph) : Prop := m.kind.IsBound
+
+instance : DecidablePred IsBound := fun m => inferInstanceAs (Decidable m.kind.IsBound)
 
 instance : ToString Morph :=
   ⟨fun m => match m.kind with

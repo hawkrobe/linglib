@@ -42,7 +42,7 @@ namespace Dargwa.Coordination
     This is a MU particle. -/
 def ra : Coordinator :=
   { form := "=ra", gloss := "and, also, too; ADD"
-  , role := .mu, boundness := .bound
+  , role := .mu, kind := .bound .after .clitic
   , alsoAdditive := true
   , note := "repeated after each conjunct" }
 
@@ -51,14 +51,14 @@ def ra : Coordinator :=
     With negation: 'neither A nor B'. -/
 def ja : Coordinator :=
   { form := "ja", gloss := "or; neither...nor (with NEG)"
-  , role := .disj, boundness := .free
+  , role := .disj, kind := .free
   , note := "repeated before each disjunct" }
 
 /-- *=nu* — contrastive/causal particle.
     Marks contrast between clauses or causal relation. -/
 def nu : Coordinator :=
   { form := "=nu", gloss := "but; because"
-  , role := .advers, boundness := .bound }
+  , role := .advers, kind := .bound .after .clitic }
 
 def allEntries : List Coordinator := [ra, ja, nu]
 
@@ -79,7 +79,7 @@ theorem mu_is_additive :
 
 /-- The MU particle is bound (enclitic). -/
 theorem mu_is_bound :
-    (allEntries.filter (·.role == .mu)).all (·.boundness == .bound) = true := by
+    (allEntries.filter (·.role == .mu)).all (fun e => decide e.kind.IsBound) = true := by
   decide
 
 end Dargwa.Coordination

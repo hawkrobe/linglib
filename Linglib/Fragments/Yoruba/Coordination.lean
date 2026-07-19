@@ -17,7 +17,7 @@ namespace Yoruba.Coordination
 /-- *àtí* — J particle, used bisyndetically: "àtí A àtí B". Free, prepositive. -/
 def ati : Coordinator :=
   { form := "àtí", gloss := "and"
-  , role := .j, boundness := .free
+  , role := .j, kind := .free
   , correlative := true
   , note := "bisyndetic prepositive (co-A co-B pattern)" }
 
