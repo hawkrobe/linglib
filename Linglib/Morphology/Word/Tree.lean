@@ -11,8 +11,8 @@ import Linglib.Morphology.Morph
 A `Word.Tree M` is an operation-typed tree over the word-formation
 signature: each constructor is one of [booij-2012]'s morphological
 operations, with its own arity and material. Every subtree is a partial
-word; the tree records derivational history and word-internal constituency, which applying the operations as functions
-would forget.
+word; the tree records derivational history and word-internal
+constituency, which applying the operations as functions would forget.
 
 ## Main declarations
 
@@ -44,15 +44,12 @@ namespace Morphology.Word
 
 /-! ### The operation indices -/
 
-/-- The type of a reduplication step — an index on `Word.Tree`'s
-reduplication operation, pending a copying-theory home. -/
+/-- The type of a reduplication step. -/
 inductive Tree.RedupType where
   /-- Copies the entire base (Javanese *omaha* → *omaha-omaha* "various
-  houses", [booij-2012] from Uhlenbeck 1978). -/
+  houses"). -/
   | total
-  /-- Copies a prosodic template (Javanese *tamu* → *tətamu* "to visit",
-  [booij-2012]); the copied material is determined by prosodic shape,
-  which is process-theory content, not tree data. -/
+  /-- Copies a prosodic template (Javanese *tamu* → *tətamu* "to visit"). -/
   | partialCopy
   deriving DecidableEq, Repr
 
@@ -65,30 +62,24 @@ inductive Tree.AffixKind where
 
 /-! ### The tree -/
 
-/-- Hierarchical word structure as an operation-typed tree with material
-in `M`: each constructor is a word-formation operation with its own
-arity and material. The tree records derivational history and
-word-internal constituency. -/
+/-- A tree of word-formation operations over material in `M`. -/
 inductive Tree (M : Type*) where
-  /-- Leaf node: a single element (free or bound). -/
+  /-- A leaf, carrying a single element. -/
   | root : M → Tree M
   /-- Attach an affix before the base. -/
   | prefixed : M → Tree M → optParam Tree.AffixKind .derivational → Tree M
   /-- Attach an affix after the base. -/
   | suffixed : Tree M → M → optParam Tree.AffixKind .derivational → Tree M
-  /-- Insert an affix within the base (Khmu *s⟨m⟩ka:t* "roughen" from
-      *ska:t* "rough", [booij-2012]); the insertion site is prosodically
-      determined and is process-theory content, not tree data. -/
+  /-- Insert an affix within the base (Khmu *s⟨m⟩ka:t* "roughen"). -/
   | infixed : Tree M → M → optParam Tree.AffixKind .derivational → Tree M
-  /-- Wrap the base with a prefix and a suffix.
-      Example: German *Ge-sing-e* "singing" from *sing* ([booij-2012]). -/
+  /-- Wrap the base with a prefix and a suffix (German *Ge-sing-e* "singing"). -/
   | circumfixed : M → Tree M → M → optParam Tree.AffixKind .derivational →
       Tree M
-  /-- Two stems joined. Example: *bottle* + *factory* ([booij-2012]). -/
+  /-- Join two stems (*bottle* + *factory*). -/
   | compound : Tree M → Tree M → Tree M
   /-- Total or partial reduplication. -/
   | reduplicated : Tree.RedupType → Tree M → Tree M
-  /-- Conversion. Example: noun *chain* → verb *to chain* ([booij-2012]). -/
+  /-- Convert without added material (noun *chain* → verb *to chain*). -/
   | converted : Tree M → Tree M
   deriving Repr
 
