@@ -428,11 +428,11 @@ end McPhersonLamont2026
 namespace Autosegmental
 
 open Tone (TBU TRN)
-open Morphology (Morpheme)
+open Morphology (Morph)
 
 /-- Embed a `tonalOverwrite` output into `FloatingForm`: one morpheme `m`, links `(i, i)`. -/
-def FloatingForm.ofTBUList {S : Type*} (host : List (TBU S)) (m : Morpheme) :
-    FloatingForm S TRN Morpheme where
+def FloatingForm.ofTBUList {S : Type*} (host : List (TBU S)) (m : Morph) :
+    FloatingForm S TRN Morph where
   lower := .ofList (host.map (fun tbu => { seg := tbu.seg, morpheme := m }))
   upper := .ofList (host.map (fun tbu => { value := tbu.tone, morpheme := m }))
   links := ((List.range host.length).map (fun i => (i, i))).toFinset
@@ -441,7 +441,7 @@ def FloatingForm.ofTBUList {S : Type*} (host : List (TBU S)) (m : Morpheme) :
 
 /-- Embedded forms carry at most one surface tone per TBU. -/
 theorem FloatingForm.ofTBUList_linksTo_subsingleton {S : Type*}
-    (host : List (TBU S)) (m : Morpheme) (i : SegIdx) :
+    (host : List (TBU S)) (m : Morph) (i : SegIdx) :
     ((FloatingForm.ofTBUList host m).linksTo i).length ≤ 1 := by
   have h_all : ∀ k ∈ (FloatingForm.ofTBUList host m).linksTo i, k = i := by
     intro k hk
@@ -468,13 +468,13 @@ theorem FloatingForm.ofTBUList_linksTo_subsingleton {S : Type*}
 
 /-- A `FloatingForm` with two surface tones on one TBU — unreachable by `ofTBUList`. -/
 theorem FloatingForm.exists_multi_tone_TBU :
-    ∃ f : FloatingForm Unit TRN Morpheme, ∃ i : SegIdx, 2 ≤ (f.linksTo i).length := by
+    ∃ f : FloatingForm Unit TRN Morph, ∃ i : SegIdx, 2 ≤ (f.linksTo i).length := by
   refine ⟨?_, 0, ?_⟩
   · exact
-    { lower := .ofList [{ seg := (), morpheme := { morph := .root "m" } }]
+    { lower := .ofList [{ seg := (), morpheme := Morph.root "m" }]
       upper :=
-        .ofList [{ value := TRN.H, morpheme := { morph := .root "m" } },
-         { value := TRN.L, morpheme := { morph := .root "m" } }]
+        .ofList [{ value := TRN.H, morpheme := Morph.root "m" },
+         { value := TRN.L, morpheme := Morph.root "m" }]
       links := ∅
       deletedTier := ∅
       surfaceLinks := {(0, 0), (1, 0)} }
