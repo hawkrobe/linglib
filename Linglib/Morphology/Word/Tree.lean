@@ -17,8 +17,8 @@ constituency, which applying the operations as functions would forget.
 ## Main declarations
 
 * `Word.Tree` — the operation-typed tree
-* `Word.Tree.toList`, `Word.Tree.toSequence?` — material linearization, and
-  the concatenative fragment's material sequence
+* `Word.Tree.toList`, `Word.Tree.segmentation?` — material linearization, and
+  the segmentation of the concatenative fragment
 * `Word.Tree.base`, `Word.Tree.stem`, `Word.Tree.roots` — [booij-2012]'s
   relational notions
 * `Word.Tree.IsKindCoherent` — attachment kinds match the positions
@@ -107,22 +107,22 @@ def map (f : M → N) : Tree M → Tree N
   | .reduplicated rt base => .reduplicated rt (base.map f)
   | .converted base => .converted (base.map f)
 
-/-- The material sequence of the concatenative fragment; `none` on
-infixation, circumfixation, and reduplication. -/
-def toSequence? : Tree M → Option (List M)
+/-- The segmentation of the word into its material, when concatenative;
+`none` on infixation, circumfixation, and reduplication. -/
+def segmentation? : Tree M → Option (List M)
   | .root m => some [m]
-  | .prefixed afx b => (b.toSequence?).map (afx :: ·)
-  | .suffixed b afx => (b.toSequence?).map (· ++ [afx])
-  | .compound l r => Option.map₂ (· ++ ·) l.toSequence? r.toSequence?
-  | .converted b => b.toSequence?
+  | .prefixed afx b => (b.segmentation?).map (afx :: ·)
+  | .suffixed b afx => (b.segmentation?).map (· ++ [afx])
+  | .compound l r => Option.map₂ (· ++ ·) l.segmentation? r.segmentation?
+  | .converted b => b.segmentation?
   | .infixed .. => none
   | .circumfixed .. => none
   | .reduplicated .. => none
 
 /-- The projection is total exactly on the concatenative fragment: a
 circumfixed word has no material-sequence projection. -/
-@[simp] theorem toSequence?_circumfixed (pre suf : M) (b : Tree M) :
-    (circumfixed pre b suf).toSequence? = none := rfl
+@[simp] theorem segmentation?_circumfixed (pre suf : M) (b : Tree M) :
+    (circumfixed pre b suf).segmentation? = none := rfl
 
 /-! ### Laws -/
 
@@ -140,13 +140,13 @@ theorem toList_map (f : M → N) (t : Tree M) :
 
 /-- The concatenative projection refines linearization: where the material
 sequence exists, it is the linearization. -/
-theorem toList_eq_of_toSequence?_eq_some
-    (h : t.toSequence? = some l) : t.toList = l := by
+theorem toList_eq_of_segmentation?_eq_some
+    (h : t.segmentation? = some l) : t.toList = l := by
   induction t generalizing l with
   | compound _ _ ihl ihr =>
       obtain ⟨_, _, hll, hlr, rfl⟩ := Option.map₂_eq_some_iff.mp h
       simp [toList, ihl hll, ihr hlr]
-  | _ => simp_all [toSequence?, toList] <;> grind
+  | _ => simp_all [segmentation?, toList] <;> grind
 
 /-! ### Structural measures -/
 

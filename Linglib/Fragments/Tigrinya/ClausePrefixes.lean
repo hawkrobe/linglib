@@ -119,7 +119,7 @@ theorem neg_circumfix_example :
 payload-sequence projection — the circumfix is a construction, not a
 morph ([haspelmath-2020]). -/
 theorem neg_circumfix_no_exponent (s : String) :
-    (negCircumfix s).toSequence? = none := rfl
+    (negCircumfix s).segmentation? = none := rfl
 
 /-- The circumfix is kind-coherent once glosses are projected away: *ʔay-* is
 before-bound, *-n* after-bound, and the stem leaf is a free form. -/
