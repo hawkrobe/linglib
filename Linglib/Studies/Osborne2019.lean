@@ -71,7 +71,7 @@ private abbrev gives := English.Predicates.Verbal.give.toWord3sg
 private abbrev kicked := English.Predicates.Verbal.kick.toWordPast
 
 -- Passive "kicked" (past participle + passive valence change)
-private abbrev kicked_pass := English.Predicates.Verbal.kick.toWordPastPart.asPassive
+private abbrev kicked_pass := English.Predicates.Verbal.kick.toWordPassive
 
 /-- "kicked" - transitive verb as a DG lexical entry.
     Features derived from Fragment kick.toWordPast. -/

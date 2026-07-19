@@ -7,6 +7,7 @@ import Linglib.Features.Number.Capabilities
 import Linglib.Features.Person.Capabilities
 import Linglib.Morphology.Word.Basic
 import Linglib.Syntax.Agreement.Target
+import Linglib.Syntax.Binding.Basic
 
 open Morphology (Word)
 

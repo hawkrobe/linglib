@@ -1292,7 +1292,7 @@ import Linglib.Morphology.Root.Basic
 import Linglib.Morphology.Root.Family
 import Linglib.Morphology.UsageBased.Network
 import Linglib.Morphology.Word.Basic
-import Linglib.Morphology.Word.OfParadigm
+import Linglib.Morphology.Paradigm.ToTree
 import Linglib.Morphology.Word.Tree
 import Linglib.Phonology.Autosegmental.AR
 import Linglib.Phonology.Autosegmental.Correspondence

@@ -1,6 +1,6 @@
 import Linglib.Features.MinimalPairs
 
-open Morphology (Word wordsToString)
+open Morphology (Word)
 
 open Features.MinimalPairs
 
@@ -210,8 +210,5 @@ def islandData : List PhenomenonData := [
 -- §3. Sanity checks
 -- ============================================================================
 
-#guard wordsToString [what, did, john, buy] == "what did John buy"
-#guard wordsToString [what, do_, you, wonder, who, bought] == "what do you wonder who bought"
-#guard wordsToString [what, did, john, buy, and_, sell] == "what did John buy and sell"
 
 end Ross1967

@@ -17,27 +17,11 @@ constituency, which applying the operations as functions would forget.
 ## Main declarations
 
 * `Word.Tree` — the operation-typed tree
-* `Word.Tree.toList`, `Word.Tree.IsConcatenative` — material linearization,
-  and the shapes where it is the word's segmentation
+* `Word.Tree.toList`, `Word.Tree.IsConcatenative` — linearization, and the
+  shapes where it is the word's segmentation
 * `Word.Tree.base`, `Word.Tree.stem`, `Word.Tree.roots` — [booij-2012]'s
   relational notions
-* `Word.Tree.IsKindCoherent` — attachment kinds match the positions
-  carrying them
-* `Word.Tree.map` — functorial relabelling of the material
-
-## Implementation notes
-
-`M` plays two roles: generator at the leaves (root and free morphs) and
-label on the affixal operations. An affix is never a subtree, so its
-boundness holds by construction; `toList` flattens both roles onto the
-morph-sequence reading. The tree does not evaluate to surface strings:
-concatenative surface forms are `String.join` over `toList`, and the
-surface effect of the process constructors belongs to the process theories.
-`IsKindCoherent` is a law, not a derivation — the tree is not built from
-the attachment data. The theory layer instantiates `M := Morph`; fragments
-with annotated morphs use richer leaf types. The token (`Morphology.Word`,
-`Word/Basic.lean`) is separate: the token is what syntax sees, the tree is
-how morphology built it.
+* `Word.Tree.IsKindCoherent` — attachment kinds match their positions
 -/
 
 namespace Morphology.Word
