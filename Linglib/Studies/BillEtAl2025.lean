@@ -1,7 +1,7 @@
 import Linglib.Semantics.Intensional.Defs
 import Linglib.Semantics.Intensional.Conjunction
 import Linglib.Semantics.Plurality.Distributivity
-import Linglib.Morphology.Word.Formative
+import Linglib.Morphology.Morph
 import Linglib.Semantics.Coordination.Defs
 import Linglib.Syntax.Coordination
 import Linglib.Studies.Haspelmath2007
