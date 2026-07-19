@@ -1,4 +1,4 @@
-import Linglib.Morphology.Root
+import Linglib.Morphology.Morphotactics.CVTemplate
 import Linglib.Phonology.Constraints.Basic
 import Linglib.Phonology.OptimalityTheory.Tableau
 import Linglib.Morphology.DM.Categorizer
@@ -56,9 +56,10 @@ jointly resolves three Semitic puzzles:
 This file consumes and exercises the shared infrastructure:
 
 - `Morphology.Root` — polymorphic consonantal-root carrier.
-- `Faust2026.Templates` (defined above in this file) — `CVSlot`,
-  `Template`, `Association`, `RootTemplateMatch`, with derived
-  `isMisaligned`, `allCSlotsFilled`, `satisfies`.
+- `Morphology.CVTemplate`, `Morphology.TemplateMatch`
+  (`Morphology/Morphotactics/CVTemplate.lean`) — skeletal templates and
+  sourced association lines; this file adds the Faust-specific predicates
+  `isMisaligned`, `satisfies`, `violatesNCC`, `intrusionLicensed`.
 - `Faust2026.Templates.starMisalign` — the \*Misalignment alignment
   constraint, built via the generic `Constraint.binary` constructor.
 - `OptimalityTheory.adjacentIdentical` — drives the root-level
@@ -71,283 +72,126 @@ are blocked even when they satisfy the template* — visible at the
 type level rather than restated in prose.
 -/
 
+namespace Morphology.TemplateMatch
+
+variable {α : Type*} (m : TemplateMatch α)
+
+/-! ### *Misalignment and intrusion, as predicates on `TemplateMatch` -/
+
+/-- An association line is *root-to-final* iff it comes from the root tier
+and lands at the template-final slot. -/
+abbrev isRootFinal (a : Association) : Prop :=
+  a.source = .root ∧ m.template.isFinalSlot a.slotIndex
+
+/-- *Misalignment* ([faust-2026] (2)): the match has a nonfinal root
+segment associated to the template-final slot. Intruder (affixal)
+associations do not count. -/
+abbrev isMisaligned : Prop :=
+  ∃ a ∈ m.associations,
+    a.source = .root ∧
+    m.root.IsNonfinal a.melodyIndex ∧
+    m.template.isFinalSlot a.slotIndex
+
+/-- The template is *satisfied* iff all C-slots are filled and the result
+is not misaligned. The two requirements are independent — the central point
+of [faust-2026] is that for [j]-final biradicals in Hebrew, one cannot
+satisfy the first without violating the second. -/
+abbrev satisfies : Prop := m.allCSlotsFilled ∧ ¬ m.isMisaligned
+
+/-- The No-Crossing Constraint ([goldsmith-1976]) for right-edge intruders:
+an intruder association at slot `i` crosses a root association at slot
+`j > i`. Right-edge intruders (e.g. the feminine /t/ suffix in Hebrew
+taQTiL and Amharic gerunds) associate inward from the right, so any root
+segment to the right of the intruder forces line-crossing. This explains
+[faust-2026] (13b–c): [t]-intrusion does not fill the medial C[+c] of
+[mäsam]/[mähid] because the final C-slot is *already* filled by the final
+root radical. -/
+abbrev violatesNCC : Prop :=
+  ∃ a ∈ m.associations, a.source = .affix ∧
+    ∃ b ∈ m.associations, b.source = .root ∧ a.slotIndex < b.slotIndex
+
+/-- Does this match contain any intruder (affixal) associations? Intruders
+are sister exponents ([faust-2026] (10), [lowenstamm-2014]) that satisfy
+the template without being root segments; intruder-free matches are licit
+in any morphosyntactic context, intruder-bearing ones require external
+licensing — see `intrusionLicensed`. -/
+abbrev hasIntruder : Prop := ∃ a ∈ m.associations, a.source = .affix
+
+/-- A match is *intrusion-licensed* under an external licensing flag iff
+either the morphosyntactic context licenses an intruding sister bound root
+([lowenstamm-2014]) or the match contains no intruders. For [faust-2026]'s
+analysis the flag is `true` iff the template is realized at an n[+gen]
+head in [kramer-2020]'s sense; verbal templates, whose gender lives on a
+higher Agr head, evaluate to `false` and admit no intrusion. -/
+abbrev intrusionLicensed (licensed : Bool) : Prop :=
+  licensed = true ∨ ¬ m.hasIntruder
+
+end Morphology.TemplateMatch
+
 namespace Faust2026.Templates
 
 open Morphology
 open Constraints OptimalityTheory
 
--- ============================================================================
--- § 1: CV Slots
--- ============================================================================
+/-! ### Basic properties -/
 
-/-- A slot in a CV-skeletal template ([mccarthy-1981], [lowenstamm-1996]):
-
-    - `C`: a bare consonantal timing slot.
-    - `V`: a vowel timing slot.
-    - `Cspec`: a C-slot bearing the [+consonantal] feature, blocking association
-      from glides like /j/ — this is the slot type that triggers the
-      QaTaT–QaTa problem when paired with a [j]-final root
-      ([faust-2026] (4)). -/
-inductive CVSlot where
-  | C
-  | V
-  | Cspec
-  deriving DecidableEq, Repr
-
-namespace CVSlot
-
-/-- Is this slot a C-slot (bare or [+c]-specified)? -/
-def IsC : CVSlot → Prop
-  | .C | .Cspec => True
-  | .V => False
-
-instance : DecidablePred IsC := fun s => by
-  cases s <;> unfold IsC <;> infer_instance
-
-/-- Is this slot a V-slot? -/
-def IsV : CVSlot → Prop
-  | .V => True
-  | _ => False
-
-instance : DecidablePred IsV := fun s => by
-  cases s <;> unfold IsV <;> infer_instance
-
-/-- Does this slot require a [+consonantal] segment? -/
-def RequiresConsonantal : CVSlot → Prop
-  | .Cspec => True
-  | _ => False
-
-instance : DecidablePred RequiresConsonantal := fun s => by
-  cases s <;> unfold RequiresConsonantal <;> infer_instance
-
-end CVSlot
-
--- ============================================================================
--- § 2: Templates
--- ============================================================================
-
-/-- A CV-skeletal template: an ordered sequence of slots. -/
-structure Template where
-  slots : List CVSlot
-  deriving Repr, DecidableEq
-
-namespace Template
-
-/-- The number of slots in the template. -/
-def length (t : Template) : Nat := t.slots.length
-
-/-- The number of C-slots (consonant timing positions). -/
-def cCount (t : Template) : Nat :=
-  (t.slots.filter (fun s => decide (CVSlot.IsC s))).length
-
-/-- Slot `i` is the final slot of the template. -/
-abbrev isFinalSlot (t : Template) (i : Nat) : Prop := i + 1 = t.length
-
-/-- The slot at position `i`, if in range. -/
-def slotAt (t : Template) (i : Nat) : Option CVSlot := t.slots[i]?
-
-end Template
-
--- ============================================================================
--- § 3: Root–Template Association
--- ============================================================================
-
-/-- The morphological source of an association.
-
-    Faust 2026's analysis turns on this distinction: a `.root` association
-    is subject to *Misalignment, an `.intruder` association is not. Intruders
-    are sister exponents (e.g. the feminine [t] in Hebrew taQTiL nouns,
-    [faust-2026] (10)) that satisfy the template without being root
-    segments themselves. -/
-inductive AssocSource where
-  | root
-  | intruder
-  deriving DecidableEq, Repr
-
-/-- A single root-to-slot association line ([mccarthy-1981]).
-
-    `rootIndex` is interpreted relative to the root for `.root` associations,
-    or as an opaque tag for `.intruder` associations (intruder identity is
-    handled at the fragment level — this module is segment-agnostic).
-
-    Defaults to `.root` so that "ordinary" associations stay terse. -/
-structure Association where
-  source : AssocSource := .root
-  rootIndex : Nat
-  slotIndex : Nat
-  deriving DecidableEq, Repr
-
-/-- A root paired with a template and a list of associations.
-
-    Different *candidate* realizations of the same root × template pair are
-    different `RootTemplateMatch` values that share `root` and `template` but
-    differ in `associations`. The Faust 2026 analysis compares such candidates
-    via the derived `isMisaligned` predicate. -/
-structure RootTemplateMatch (α : Type) where
-  root : Root α
-  template : Template
-  associations : List Association
-  deriving Repr, DecidableEq
-
-namespace RootTemplateMatch
-
-variable {α : Type}
-
-/-- An association is a *root-to-final* link iff it comes from the root proper
-    and lands at the template-final slot. -/
-abbrev isRootFinal (m : RootTemplateMatch α) (a : Association) : Prop :=
-  a.source = .root ∧ m.template.isFinalSlot a.slotIndex
-
-/-- *Misalignment* ([faust-2026] (2)): the match has a nonfinal root
-    segment associated to the template-final slot. Intruder associations do
-    not count — see `AssocSource`. -/
-abbrev isMisaligned (m : RootTemplateMatch α) : Prop :=
-  ∃ a ∈ m.associations,
-    a.source = .root ∧
-    m.root.IsNonfinal a.rootIndex ∧
-    m.template.isFinalSlot a.slotIndex
-
-/-- The list of C-slot indices that are NOT filled by any association.
-    Used by hollow-root analyses ([faust-2026] (13)): when the
-    medial radical is non-consonantal, the medial C-slot is unfilled,
-    and the position of the unfilled slot determines whether
-    [t]-intrusion is licensed (final-empty: licit; medial-empty: blocked
-    by the No-Crossing Constraint). -/
-def unfilledCSlots (m : RootTemplateMatch α) : List Nat :=
-  (List.range m.template.length).filter fun i =>
-    match m.template.slotAt i with
-    | some s => decide (CVSlot.IsC s) && !m.associations.any (·.slotIndex == i)
-    | none => false
-
-/-- Every C-slot of the template is filled by *some* association (root or
-    intruder) — equivalently, no C-slot is left unfilled. -/
-abbrev allCSlotsFilled (m : RootTemplateMatch α) : Prop :=
-  m.unfilledCSlots = []
-
-/-- The template is *satisfied* iff all C-slots are filled and the result
-    is not misaligned. The two requirements are independent — the central
-    point of [faust-2026] is that for [j]-final biradicals in Hebrew,
-    one cannot satisfy the first without violating the second. -/
-abbrev satisfies (m : RootTemplateMatch α) : Prop :=
-  m.allCSlotsFilled ∧ ¬ m.isMisaligned
-
-/-- Every association points to an in-range root segment and slot. -/
-abbrev inBounds (m : RootTemplateMatch α) : Prop :=
-  ∀ a ∈ m.associations,
-    a.slotIndex < m.template.length ∧
-    (a.source = .root → a.rootIndex < m.root.arity)
-
-/-- The No-Crossing Constraint ([goldsmith-1976]): an intruder
-    association at slot `i` crosses an existing association at slot `j > i`.
-    Right-edge intruders (e.g. the feminine /t/ suffix in Hebrew taQTiL
-    and Amharic gerunds) associate inward from the right, so any root
-    segment to the right of the intruder forces line-crossing.
-
-    This is the predicate that explains [faust-2026] (13b–c):
-    [t]-intrusion does not fill the medial C[+c] of [mäsam]/[mähid]
-    because the final C-slot is *already* filled by the final root
-    radical, so an intruder at the medial position would have to cross
-    the final root association line. -/
-abbrev violatesNCC (m : RootTemplateMatch α) : Prop :=
-  ∃ a ∈ m.associations, a.source = .intruder ∧
-    ∃ b ∈ m.associations, b.source = .root ∧ a.slotIndex < b.slotIndex
-
-/-- Does this match contain any intruder associations?
-    Templates without intruders are licit in any morphosyntactic context
-    (verbal or nominal); templates with intruders require external
-    licensing — see `intrusionLicensed`. -/
-abbrev hasIntruder (m : RootTemplateMatch α) : Prop :=
-  ∃ a ∈ m.associations, a.source = .intruder
-
-/-- A `RootTemplateMatch` is *intrusion-licensed* under an external
-    licensing predicate iff either (a) the predicate is `true`
-    (the morphosyntactic context licenses an intruding sister bound
-    root, à la [lowenstamm-2014]), or (b) the match contains no
-    intruder associations.
-
-    The licensing predicate is supplied by the morphological theory
-    above — for [faust-2026]'s analysis, it evaluates to `true`
-    iff the template is realized at an `n[+gen]` head in
-    [kramer-2020]'s sense (verbal templates, whose gender lives
-    on a higher Agr head, evaluate to `false` and so admit no
-    intrusion). The predicate is `Bool`-valued (an external licensing
-    flag) rather than a `MorphologicalLocus` enum, keeping the template
-    layer independent of any particular categorizer taxonomy. -/
-abbrev intrusionLicensed (m : RootTemplateMatch α) (licensed : Bool) : Prop :=
-  licensed = true ∨ ¬ m.hasIntruder
-
-end RootTemplateMatch
-
--- ============================================================================
--- § 4: Basic Properties
--- ============================================================================
-
-variable {α : Type}
+variable {α : Type*}
 
 /-- A match with no associations is trivially not misaligned. -/
-theorem not_isMisaligned_empty (r : Root α) (t : Template) :
-    ¬ (RootTemplateMatch.mk r t []).isMisaligned := by
-  simp [RootTemplateMatch.isMisaligned]
+theorem not_isMisaligned_empty (r : Root α) (t : CVTemplate) :
+    ¬ ({ root := r, template := t, associations := [] } :
+        TemplateMatch α).isMisaligned := by
+  simp [TemplateMatch.isMisaligned]
 
 /-- *Misalignment cannot fire from intruder associations alone. -/
-theorem not_isMisaligned_of_all_intruder (r : Root α) (t : Template)
+theorem not_isMisaligned_of_all_intruder (r : Root α) (t : CVTemplate)
     (assocs : List Association)
-    (h : ∀ a ∈ assocs, a.source = .intruder) :
-    ¬ (RootTemplateMatch.mk r t assocs).isMisaligned := by
+    (h : ∀ a ∈ assocs, a.source = .affix) :
+    ¬ ({ root := r, template := t, associations := assocs } :
+        TemplateMatch α).isMisaligned := by
   rintro ⟨a, ha, hroot, _, _⟩
   exact absurd (h a ha) (by rw [hroot]; decide)
 
-/-- The Prop predicates `isMisaligned`, `violatesNCC`, and `satisfies` are
-    now stated directly as the existential / conjunctive characterizations
-    that the squib's argument relies on, so no separate `_iff` lemmas are
-    needed: `satisfies` is by definition `allCSlotsFilled ∧ ¬ isMisaligned`.
-
-    Structural characterization of `intrusionLicensed`: a match passes
-    licensing iff either the external predicate licenses intrusion OR
-    the match is intruder-free. The disjunction is the formal content
-    of the verbal/nominal asymmetry — verbal templates require
-    intruder-free derivations; nominal templates with `n[+gen]` admit
-    either. -/
-theorem intrusionLicensed_iff (m : RootTemplateMatch α) (licensed : Bool) :
+/-- Structural characterization of `intrusionLicensed`: a match passes
+licensing iff either the external predicate licenses intrusion or the
+match is intruder-free — the formal content of the verbal/nominal
+asymmetry. -/
+theorem intrusionLicensed_iff (m : TemplateMatch α) (licensed : Bool) :
     m.intrusionLicensed licensed ↔
       licensed = true ∨ ¬ m.hasIntruder := Iff.rfl
 
 /-- Intruder-free matches are licensed in any morphosyntactic context. -/
-theorem intrusionLicensed_of_no_intruder (m : RootTemplateMatch α)
+theorem intrusionLicensed_of_no_intruder (m : TemplateMatch α)
     (h : ¬ m.hasIntruder) (licensed : Bool) :
     m.intrusionLicensed licensed := Or.inr h
 
 /-- An intruder-bearing match is licensed iff the external predicate is
-    `true` — the contrapositive that delivers the verbal/nominal split. -/
-theorem intrusionLicensed_with_intruder (m : RootTemplateMatch α)
+`true` — the contrapositive that delivers the verbal/nominal split. -/
+theorem intrusionLicensed_with_intruder (m : TemplateMatch α)
     (h : m.hasIntruder) (licensed : Bool) :
     m.intrusionLicensed licensed ↔ licensed = true := by
-  simp [RootTemplateMatch.intrusionLicensed, h]
+  simp [TemplateMatch.intrusionLicensed, h]
 
--- ============================================================================
--- § 5: *Misalignment as an Alignment Constraint
--- ============================================================================
+/-! ### *Misalignment as an alignment constraint -/
 
 /-- The \*Misalignment constraint of [faust-2026] (2): a markedness
-    constraint that fires on `RootTemplateMatch` candidates whose
-    `isMisaligned` predicate holds. Built via the generic `Constraint.binary`
-    constructor from `Constraints`. -/
-def starMisalign {α : Type} : Constraint (RootTemplateMatch α) :=
-  Constraint.binary RootTemplateMatch.isMisaligned
+constraint that fires on `TemplateMatch` candidates whose `isMisaligned`
+predicate holds. Built via the generic `Constraint.binary` constructor. -/
+def starMisalign : Constraint (TemplateMatch α) :=
+  Constraint.binary TemplateMatch.isMisaligned
 
-/-- The FILL constraint ([prince-smolensky-1993]): a markedness
-    constraint penalizing unfilled C-slots in the template. Used by
-    [faust-2026]'s implicit ranking \*Misalign >> FILL: spreading
-    a nonfinal root segment to a final [+c] slot satisfies FILL but
-    violates \*Misalign, and the grammar prefers the FILL-violating
-    candidate. -/
-def fill {α : Type} : Constraint (RootTemplateMatch α) :=
-  Constraint.binary (fun m => ¬ RootTemplateMatch.allCSlotsFilled m)
+/-- The FILL constraint ([prince-smolensky-1993]): a markedness constraint
+penalizing unfilled C-slots. [faust-2026]'s implicit ranking is
+\*Misalign >> FILL: spreading a nonfinal root segment to a final [+c] slot
+satisfies FILL but violates \*Misalign, and the grammar prefers the
+FILL-violating candidate. -/
+def fill : Constraint (TemplateMatch α) :=
+  Constraint.binary (fun m => ¬ TemplateMatch.allCSlotsFilled m)
 
 /-- NoCross ([goldsmith-1976]): a markedness constraint penalizing
-    candidates whose intruder associations cross root associations. -/
-def noCross {α : Type} : Constraint (RootTemplateMatch α) :=
-  Constraint.binary (fun m => RootTemplateMatch.violatesNCC m)
+candidates whose intruder associations cross root associations. -/
+def noCross : Constraint (TemplateMatch α) :=
+  Constraint.binary (fun m => TemplateMatch.violatesNCC m)
 
 end Faust2026.Templates
 
@@ -356,21 +200,19 @@ namespace Faust2026
 open Morphology
 open Faust2026.Templates
 
--- ============================================================================
--- § 1: Hebrew templates ([faust-2026] (1), (3), (9)–(10))
--- ============================================================================
+/-! ### Hebrew templates ([faust-2026] (1), (3), (9)–(10)) -/
 
 /-- The Hebrew PST.3MSG verbal template `CaCaC[+c]` ([faust-2026]
     (1), (3a–c), (4)). Five slots; the final C-slot is [+consonantal],
     blocking association from the glide /j/. -/
-def hebrewPst3msg : Template :=
+def hebrewPst3msg : CVTemplate :=
   ⟨[.C, .V, .C, .V, .Cspec]⟩
 
 /-- The Hebrew passive-participle template `CaCuC` ([faust-2026]
     (3c) discussion). Five slots; the final C-slot is *not*
     [+c]-specified, so the glide /j/ associates to it freely
     (yielding [kaluj], [tʃamuj]). -/
-def hebrewPassPrtcpl : Template :=
+def hebrewPassPrtcpl : CVTemplate :=
   ⟨[.C, .V, .C, .V, .C]⟩
 
 /-- The Hebrew nominal template `taQTiL[+c]` ([faust-2026] (9)–(10)):
@@ -379,31 +221,27 @@ def hebrewPassPrtcpl : Template :=
     the medial `C C` hosts the first two root radicals; the final
     `C[+c]` is the slot that hosts the intruding feminine /t/ in the
     feminine-noun reading ([faust-2026] (10b–c)). -/
-def hebrewTaQTiL : Template :=
+def hebrewTaQTiL : CVTemplate :=
   ⟨[.C, .V, .C, .C, .V, .Cspec]⟩
 
--- ============================================================================
--- § 2: Amharic templates ([faust-2026] (5), (7)–(8), (12)–(13))
--- ============================================================================
+/-! ### Amharic templates ([faust-2026] (5), (7)–(8), (12)–(13)) -/
 
 /-- The Amharic PFV.3MSG verbal template (type-A pattern `CäC.CäC[+c]`,
     [faust-2026] (5), (7)). Six slots `C V C C V C[+c]`; the
     medial geminate `C C` is the position where Amharic spreads its
     second radical, and the final C-slot is [+c]. The verbal -ä
     person-marking suffix attaches outside this template. -/
-def amharicPfv3msg : Template :=
+def amharicPfv3msg : CVTemplate :=
   ⟨[.C, .V, .C, .C, .V, .Cspec]⟩
 
 /-- The Amharic gerund template `CäC.C[+c]-o` ([faust-2026] (8)).
     Five slots: the final `V` hosts the gerund [-o] suffix; the
     penult `C[+c]` is where the [t]-intruder lands when the root is
     [j]-final. -/
-def amharicGrnd : Template :=
+def amharicGrnd : CVTemplate :=
   ⟨[.C, .V, .C, .Cspec, .V]⟩
 
--- ============================================================================
--- § 3: Hebrew QaTaT–QaTa ([faust-2026] (3), (4))
--- ============================================================================
+/-! ### Hebrew QaTaT–QaTa ([faust-2026] (3), (4)) -/
 
 /-! ### The three-way QaTaT–QaTa contrast ([faust-2026] (3))
 
@@ -426,7 +264,7 @@ index* the template-final segment came from. -/
 /-- (3a) [kalat] from √klt: full triradical control case. Every
     root segment associates to a distinct template C-slot; no spreading,
     no misalignment. -/
-def hebrewKlt_kalat : RootTemplateMatch String :=
+def hebrewKlt_kalat : TemplateMatch String :=
   { root := Hebrew.klt
     template := hebrewPst3msg
     associations :=
@@ -437,7 +275,7 @@ def hebrewKlt_kalat : RootTemplateMatch String :=
 /-- (3b) [kalal] from √kll: the *attested* QaTaT pattern. The final
     /l/ at root index 2 associates to template-final C[+c]; this is the
     final-of-final case and \*Misalignment is satisfied. -/
-def hebrewKll_kalal : RootTemplateMatch String :=
+def hebrewKll_kalal : TemplateMatch String :=
   { root := Hebrew.kll
     template := hebrewPst3msg
     associations :=
@@ -450,7 +288,7 @@ def hebrewKll_kalal : RootTemplateMatch String :=
     index 1 is spread to the [+c] template-final slot (template
     index 4). This is the candidate template satisfaction predicts;
     [faust-2026] (4) shows it is ruled out by \*Misalignment. -/
-def hebrewKlj_kalal : RootTemplateMatch String :=
+def hebrewKlj_kalal : TemplateMatch String :=
   { root := Hebrew.klj
     template := hebrewPst3msg
     associations :=
@@ -462,7 +300,7 @@ def hebrewKlj_kalal : RootTemplateMatch String :=
     and /l/ associate; the [+c] template-final slot is left unfilled
     because /j/ cannot satisfy [+c] and spreading /l/ would violate
     \*Misalignment. The grammar tolerates the unfilled C-slot. -/
-def hebrewKlj_kala : RootTemplateMatch String :=
+def hebrewKlj_kala : TemplateMatch String :=
   { root := Hebrew.klj
     template := hebrewPst3msg
     associations := [⟨.root, 0, 0⟩, ⟨.root, 1, 2⟩] }
@@ -471,14 +309,12 @@ def hebrewKlj_kala : RootTemplateMatch String :=
     surfaces because the final C-slot is *not* [+c]-specified, so
     direct association succeeds and no spreading is required —
     \*Misalignment trivially satisfied, all C-slots filled. -/
-def hebrewKlj_kaluj : RootTemplateMatch String :=
+def hebrewKlj_kaluj : TemplateMatch String :=
   { root := Hebrew.klj
     template := hebrewPassPrtcpl
     associations := [⟨.root, 0, 0⟩, ⟨.root, 1, 2⟩, ⟨.root, 2, 4⟩] }
 
--- ============================================================================
--- § 4: Hebrew taQTiL templatic intrusion ([faust-2026] (10))
--- ============================================================================
+/-! ### Hebrew taQTiL templatic intrusion ([faust-2026] (10)) -/
 
 /-- The illicit derivation ([faust-2026] (10a)): √dmj associated
     directly to taQTiL[+c]. The prefix /t/ fills C0 (intruder, since
@@ -486,11 +322,11 @@ def hebrewKlj_kaluj : RootTemplateMatch String :=
     √dmj), the root /d/ and /m/ fill C2 and C3 respectively, and to
     fill the [+c] final slot we attempt to spread /m/ — but /m/ is
     nonfinal in √dmj, so this violates \*Misalignment. -/
-def hebrewDmj_illicit : RootTemplateMatch String :=
+def hebrewDmj_illicit : TemplateMatch String :=
   { root := Hebrew.dmj
     template := hebrewTaQTiL
     associations :=
-      [⟨.intruder, 0, 0⟩,   -- prefix /t/ (template-internal "ta")
+      [⟨.affix, 0, 0⟩,   -- prefix /t/ (template-internal "ta")
        ⟨.root, 0, 2⟩,       -- d → C2
        ⟨.root, 1, 3⟩,       -- m → C3
        ⟨.root, 1, 5⟩] }     -- m → C[+c]5 (spread, NONFINAL → FINAL)
@@ -501,18 +337,16 @@ def hebrewDmj_illicit : RootTemplateMatch String :=
     Both the prefix /t/ at C0 and the suffix /t/ at C5 are *intruder*
     associations (not part of √dmj), so \*Misalignment doesn't fire
     on either; the root /d/ and /m/ occupy nonfinal C-slots. -/
-def hebrewDmj_tadmit : RootTemplateMatch String :=
+def hebrewDmj_tadmit : TemplateMatch String :=
   { root := Hebrew.dmj
     template := hebrewTaQTiL
     associations :=
-      [⟨.intruder, 0, 0⟩,   -- prefix /t/ (template-internal "ta")
+      [⟨.affix, 0, 0⟩,   -- prefix /t/ (template-internal "ta")
        ⟨.root, 0, 2⟩,       -- d → C2
        ⟨.root, 1, 3⟩,       -- m → C3
-       ⟨.intruder, 1, 5⟩] } -- suffix /t/ from √at[+gen] → C[+c]5
+       ⟨.affix, 1, 5⟩] } -- suffix /t/ from √at[+gen] → C[+c]5
 
--- ============================================================================
--- § 5: Amharic /j/-final verbal forms ([faust-2026] (5), (7))
--- ============================================================================
+/-! ### Amharic [j]-final verbal forms ([faust-2026] (5), (7)) -/
 
 /-- Amharic [fädʤ-ä] PFV.3MSG: √fdj in `CäC.CäC[+c]`. Following
     [faust-2026] (7a) with truncation: /f/ → C0, /d/ → C2 (and
@@ -520,7 +354,7 @@ def hebrewDmj_tadmit : RootTemplateMatch String :=
     merges with the preceding /d/ to yield [dʒ], and the penult V
     plus final C[+c] are truncated in the surface form. The unfilled
     final C-slot is precisely what the squib's analysis predicts. -/
-def amharicFdj_pfv : RootTemplateMatch String :=
+def amharicFdj_pfv : TemplateMatch String :=
   { root := Amharic.fdj
     template := amharicPfv3msg
     associations :=
@@ -532,17 +366,15 @@ def amharicFdj_pfv : RootTemplateMatch String :=
     intruder fills the [+c] penult slot, and the final V slot hosts
     the gerund [-o] suffix. Because /t/ is an intruder (not a root
     segment), \*Misalignment does not block it. -/
-def amharicFdj_grnd : RootTemplateMatch String :=
+def amharicFdj_grnd : TemplateMatch String :=
   { root := Amharic.fdj
     template := amharicGrnd
     associations :=
       [⟨.root, 0, 0⟩,        -- f → C0
        ⟨.root, 1, 2⟩,        -- d → C2
-       ⟨.intruder, 0, 3⟩] }  -- /t/ intruder → C[+c]3
+       ⟨.affix, 0, 3⟩] }  -- /t/ intruder → C[+c]3
 
--- ============================================================================
--- § 6: Faust's biradical reanalysis — Amharic [wäddäd-ä] (page 432)
--- ============================================================================
+/-! ### Faust's biradical reanalysis — Amharic [wäddäd-ä] (page 432) -/
 
 /-- Amharic [wäddäd-ä] `liked` PFV.3MSG: √wd is *biradical*
     ([faust-2026] page 432). /w/ → C0; /d/ → C2 (and spreads to
@@ -554,7 +386,7 @@ def amharicFdj_grnd : RootTemplateMatch String :=
     [wäddäd-ä] (biradical, OK) and \*[kalal] (triradical, blocked)
     falls out of \*Misalignment alone, with no need for OCP-violating
     roots. -/
-def amharicWd_pfv : RootTemplateMatch String :=
+def amharicWd_pfv : TemplateMatch String :=
   { root := Amharic.wd
     template := amharicPfv3msg
     associations :=
@@ -563,9 +395,7 @@ def amharicWd_pfv : RootTemplateMatch String :=
        ⟨.root, 1, 3⟩,   -- d → C3 (gemination)
        ⟨.root, 1, 5⟩] } -- d → C[+c]5 (spread, FINAL → FINAL — OK!)
 
--- ============================================================================
--- § 7: Theorems — *Misalignment derives the empirical pattern
--- ============================================================================
+/-! ### Theorems — *Misalignment derives the empirical pattern -/
 
 /-! ### Hebrew QaTaT–QaTa ([faust-2026] (3), (4)) -/
 
@@ -670,9 +500,7 @@ theorem amharic_fdj_grnd_satisfies :
 theorem amharic_wd_satisfies :
     amharicWd_pfv.satisfies := by decide
 
--- ============================================================================
--- § 8: Cross-derivation theorems — the squib's main claims
--- ============================================================================
+/-! ### Cross-derivation theorems — the squib's main claims -/
 
 /-- [faust-2026]'s central observation about Hebrew (4): for the
     same root √klj and template `CaCaC[+c]`, the spreading candidate
@@ -736,9 +564,7 @@ theorem misalignment_predicts_all_cases :
     ¬ amharicWd_pfv.isMisaligned := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;> decide
 
--- ============================================================================
--- § 9: Root-level OCP — Faust's reanalysis vindicates the OCP
--- ============================================================================
+/-! ### Root-level OCP — Faust's reanalysis vindicates the OCP -/
 
 /-! ### Connecting to the OCP infrastructure ([mccarthy-1981])
 
@@ -771,9 +597,7 @@ theorem hebrew_klj_satisfies_root_ocp : Root.IsOCPClean Hebrew.klj := by decide
 theorem hypothetical_dd_violates_root_ocp :
     ¬ Root.IsOCPClean (⟨["d", "d"]⟩ : Root String) := by decide
 
--- ============================================================================
--- § 10: Strict CV hollow roots + NCC ([faust-2026] (12)–(13))
--- ============================================================================
+/-! ### Strict CV hollow roots + NCC ([faust-2026] (12)–(13)) -/
 
 /-! [faust-2026] (11)'s structural diagnosis — that [t]-intrusion
 is the exponent of `n[+gen]` (cf. [kramer-2020]) and unavailable
@@ -809,31 +633,31 @@ No-Crossing Constraint [goldsmith-1976] discriminates by position
 relative to the rest of the association lines.
 
 The infrastructure for this analysis lives in the template section
-defined above in this file: `RootTemplateMatch.unfilledCSlots`,
-`RootTemplateMatch.violatesNCC`, and the `noCross` constraint. -/
+defined above in this file: `TemplateMatch.unfilledCSlots`,
+`TemplateMatch.violatesNCC`, and the `noCross` constraint. -/
 
 /-- Amharic infinitive template (the five CV-skeletal slots after the
     [mä-] infinitive prefix). The final slot is [+c]-specified, which
     is what makes the [t]-intrusion question arise at all. -/
-def amharicInf : Template :=
+def amharicInf : CVTemplate :=
   ⟨[.C, .V, .C, .V, .Cspec]⟩
 
 /-- (13a) [mäsmat] from √sma `hear`: the non-consonantal **final**
     radical /a/ leaves the template-final C-slot unfilled, and right-edge
     [t]-intrusion fills it without crossing any other root line. -/
-def amharicSma_inf : RootTemplateMatch String :=
+def amharicSma_inf : TemplateMatch String :=
   { root := Amharic.sma
     template := amharicInf
     associations :=
       [⟨.root, 0, 0⟩,        -- s → C0
        ⟨.root, 1, 2⟩,        -- m → C2
-       ⟨.intruder, 0, 4⟩] }  -- /t/ → C[+c]4 (right edge: no crossing)
+       ⟨.affix, 0, 4⟩] }  -- /t/ → C[+c]4 (right edge: no crossing)
 
 /-- (13b) [mäsam] from √sam `kiss`: the non-consonantal **medial**
     radical /a/ leaves the *medial* C-slot unfilled, while the third
     radical /m/ fills the final C-slot. The medial position remains
     empty in the surface form. -/
-def amharicSam_inf : RootTemplateMatch String :=
+def amharicSam_inf : TemplateMatch String :=
   { root := Amharic.sam
     template := amharicInf
     associations :=
@@ -843,18 +667,18 @@ def amharicSam_inf : RootTemplateMatch String :=
 /-- Hypothetical [t]-intrusion candidate for √sam: tries to fill the
     medial C-slot from the right. The /m/ at C4 forces line-crossing.
     Demonstrates why intrusion is blocked in (13b). -/
-def amharicSam_inf_intrusion : RootTemplateMatch String :=
+def amharicSam_inf_intrusion : TemplateMatch String :=
   { root := Amharic.sam
     template := amharicInf
     associations :=
       [⟨.root, 0, 0⟩,        -- s → C0
-       ⟨.intruder, 0, 2⟩,    -- /t/ at medial (would cross /m/ at C4)
+       ⟨.affix, 0, 2⟩,    -- /t/ at medial (would cross /m/ at C4)
        ⟨.root, 2, 4⟩] }
 
 /-- (13c) [mähid] from √hid `go`: structurally identical to (13b) —
     non-consonantal medial /i/ leaves the medial C-slot unfilled, /d/
     fills the final C-slot. Same NCC blocking of [t]-intrusion. -/
-def amharicHid_inf : RootTemplateMatch String :=
+def amharicHid_inf : TemplateMatch String :=
   { root := Amharic.hid
     template := amharicInf
     associations :=
@@ -863,12 +687,12 @@ def amharicHid_inf : RootTemplateMatch String :=
 
 /-- Hypothetical [t]-intrusion candidate for √hid: same NCC violation
     as `amharicSam_inf_intrusion`. -/
-def amharicHid_inf_intrusion : RootTemplateMatch String :=
+def amharicHid_inf_intrusion : TemplateMatch String :=
   { root := Amharic.hid
     template := amharicInf
     associations :=
       [⟨.root, 0, 0⟩,
-       ⟨.intruder, 0, 2⟩,
+       ⟨.affix, 0, 2⟩,
        ⟨.root, 2, 4⟩] }
 
 /-! #### Theorems — final-empty licenses intrusion, medial-empty blocks it -/
@@ -923,9 +747,7 @@ theorem hollow_root_intrusion_asymmetry :
     amharicHid_inf.unfilledCSlots = [2] := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> decide
 
--- ============================================================================
--- § 11: Explicit OT tableau — \*Misalign >> FILL ([faust-2026] (4))
--- ============================================================================
+/-! ### Explicit OT tableau — \*Misalign >> FILL ([faust-2026] (4)) -/
 
 /-! ### The QaTaT–QaTa choice as an OT optimization, grounded in §3
 
@@ -933,7 +755,7 @@ The squib's analysis is implicitly an OT ranking argument: the grammar
 chooses the candidate that satisfies \*Misalignment over the candidate
 that satisfies FILL. Sections 7–8 state this ranking via the joint
 `hebrew_klj_misalign_dominates_fill` predicate; here we make it
-explicit by building tableaux **directly over the `RootTemplateMatch`
+explicit by building tableaux **directly over the `TemplateMatch`
 candidates defined in §3**, using the `starMisalign` and `fill`
 constraints from the template section above.
 
@@ -954,9 +776,9 @@ Two demonstrations:
 open Constraints OptimalityTheory
 
 /-- The √klj candidate set: the spreading attempt and the empty-slot
-    actual surface form. Built as the `RootTemplateMatch` values from
+    actual surface form. Built as the `TemplateMatch` values from
     §3 — no enum re-stipulation. -/
-def kljCandidates : List (RootTemplateMatch String) :=
+def kljCandidates : List (TemplateMatch String) :=
   [hebrewKlj_kalal, hebrewKlj_kala]
 
 theorem kljCandidates_ne : kljCandidates ≠ [] := by decide
@@ -964,7 +786,7 @@ theorem kljCandidates_ne : kljCandidates ≠ [] := by decide
 /-- **The empirical ranking** \*Misalign >> FILL selects [kala]: the
     surface form, with an unfilled template-final C-slot, wins because
     \*Misalignment outranks FILL. The verdict follows from the
-    `isMisaligned`/`allCSlotsFilled` computations on the `RootTemplateMatch`
+    `isMisaligned`/`allCSlotsFilled` computations on the `TemplateMatch`
     values — no stipulated violation tables. -/
 theorem kala_wins_under_misalign_over_fill :
     (Tableau.ofRanking kljCandidates [starMisalign, fill] kljCandidates_ne).optimal
@@ -1024,15 +846,15 @@ construct the empty-slot candidate explicitly to populate the tableau. -/
     /d/ and /m/ at C2/C3, with the [+c] final C-slot unfilled.
     Hypothetical (not the empirical winner) — included to exhibit the
     full three-way comparison. -/
-def hebrewDmj_empty : RootTemplateMatch String :=
+def hebrewDmj_empty : TemplateMatch String :=
   { root := Hebrew.dmj
     template := hebrewTaQTiL
     associations :=
-      [⟨.intruder, 0, 0⟩,   -- prefix /t/ (template-internal "ta")
+      [⟨.affix, 0, 0⟩,   -- prefix /t/ (template-internal "ta")
        ⟨.root, 0, 2⟩,       -- d → C2
        ⟨.root, 1, 3⟩] }     -- m → C3 (no association at slot 5)
 
-def taqtilCandidates : List (RootTemplateMatch String) :=
+def taqtilCandidates : List (TemplateMatch String) :=
   [hebrewDmj_illicit, hebrewDmj_empty, hebrewDmj_tadmit]
 
 theorem taqtilCandidates_ne : taqtilCandidates ≠ [] := by decide
@@ -1063,9 +885,7 @@ theorem taqtil_factorial_typology_size_one :
     (factorialOptima taqtilCandidates [starMisalign, fill]
       taqtilCandidates_ne).length = 1 := by decide
 
--- ============================================================================
--- § 12: The verbal/nominal asymmetry, derived from Kramer 2020
--- ============================================================================
+/-! ### The verbal/nominal asymmetry, derived from Kramer 2020 -/
 
 /-! ### Cross-paper bridge — `n[+gen]` licenses intrusion, Agr does not
 
@@ -1088,7 +908,7 @@ claim as a predicate on Kramer's `CatHead`:
 
 Once that predicate is in place, the verbal/nominal asymmetry is no
 longer a docstring stipulation — it falls out by `rfl` from
-`RootTemplateMatch.intrusionLicensed` applied to the per-template
+`TemplateMatch.intrusionLicensed` applied to the per-template
 `CatHead` tags, and breaks if either Faust's morphological claim or
 Kramer's `CatHead` taxonomy changes. -/
 
@@ -1143,7 +963,7 @@ fact, derivable by composing `intrusionLicensed_iff`
 end-of-section `verbal_nominal_asymmetry_from_kramer` bundle are all
 instances of this universal claim. -/
 
-/-- **The Faust+Kramer integration theorem.** A `RootTemplateMatch`
+/-- **The Faust+Kramer integration theorem.** A `TemplateMatch`
     passes intrusion-licensing under a `CatHead` iff either the match
     is intruder-free OR the head is a gender-bearing nominal (n[+gen],
     in [kramer-2020]'s sense).
@@ -1152,7 +972,7 @@ instances of this universal claim. -/
     every per-derivation verdict in §12 reduces to checking which
     disjunct holds for the specific (match, head) pair. -/
 theorem intrusion_wellformed_iff_no_intruder_or_n_with_gen
-    (m : RootTemplateMatch String) (ch : CatHead) :
+    (m : TemplateMatch String) (ch : CatHead) :
     m.intrusionLicensed ch.licensesIntrusion ↔
       ¬ m.hasIntruder ∨ (ch.cat = .n ∧ ch.phi.gender.isSome = true) := by
   rw [intrusionLicensed_iff]
@@ -1169,7 +989,7 @@ theorem intrusion_wellformed_iff_no_intruder_or_n_with_gen
     why every verbal Faust derivation in §3–§6 must be intruder-free
     to be morphologically licensed — the spreading and empty-slot
     strategies are the only options open to v. -/
-theorem v_plain_licenses_iff_no_intruder (m : RootTemplateMatch String) :
+theorem v_plain_licenses_iff_no_intruder (m : TemplateMatch String) :
     m.intrusionLicensed CatHead.v_plain.licensesIntrusion ↔
       ¬ m.hasIntruder := by
   rw [intrusion_wellformed_iff_no_intruder_or_n_with_gen]
@@ -1184,14 +1004,14 @@ theorem v_plain_licenses_iff_no_intruder (m : RootTemplateMatch String) :
     status. This is why intrusion is *available* to nominal templates
     like Hebrew taQTiL and Amharic gerunds/INFs — the Kramer-2020
     structure makes the n[+gen] exponent morphosyntactically present. -/
-theorem n_uFem_licenses_universally (m : RootTemplateMatch String) :
+theorem n_uFem_licenses_universally (m : TemplateMatch String) :
     m.intrusionLicensed CatHead.n_uFem.licensesIntrusion := by
   rw [intrusion_wellformed_iff_no_intruder_or_n_with_gen]
   exact Or.inr ⟨rfl, rfl⟩
 
 /-! #### Per-derivation licensing theorems
 
-For every match, the predicate `RootTemplateMatch.intrusionLicensed`
+For every match, the predicate `TemplateMatch.intrusionLicensed`
 applied to the corresponding template's `CatHead.licensesIntrusion`
 gives the well-formedness verdict. The proofs are `decide` — the
 disjunction reduces by `rfl` once the predicates evaluate. -/
@@ -1264,13 +1084,13 @@ fails morphological licensing. -/
     final slot. Phonologically identical to a nominal intrusion
     candidate, but Agr-locus precludes the n[+gen] exponent
     morphosyntactically. -/
-def hebrewDmj_pst3msg_intrusion : RootTemplateMatch String :=
+def hebrewDmj_pst3msg_intrusion : TemplateMatch String :=
   { root := Hebrew.dmj
     template := hebrewPst3msg
     associations :=
       [⟨.root, 0, 0⟩,        -- d → C0
        ⟨.root, 1, 2⟩,        -- m → C2
-       ⟨.intruder, 0, 4⟩] }  -- /t/ intruder → C[+c]4 — but unlicensed!
+       ⟨.affix, 0, 4⟩] }  -- /t/ intruder → C[+c]4 — but unlicensed!
 
 /-- The hypothetical verbal-intrusion candidate has all C-slots
     filled and is not misaligned: it satisfies the *prosodic*

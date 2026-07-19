@@ -1276,6 +1276,7 @@ import Linglib.Morphology.FragmentGrammars.FragmentGrammar
 import Linglib.Morphology.FragmentGrammars.FragmentLambda
 import Linglib.Morphology.FragmentGrammars.MultinomialPCFG
 import Linglib.Morphology.Morph
+import Linglib.Morphology.Morphotactics.CVTemplate
 import Linglib.Morphology.Morphotactics.RelevanceHierarchy
 import Linglib.Morphology.Morphotactics.Template
 import Linglib.Morphology.Nanosyntax.TreeSpellout
@@ -2452,6 +2453,7 @@ import Linglib.Studies.MartinezVera2026
 import Linglib.Studies.MaticNikolaeva2018
 import Linglib.Studies.Matthewson2013
 import Linglib.Studies.Matthewson2016
+import Linglib.Studies.McCarthy1981
 import Linglib.Studies.McCarthy2005
 import Linglib.Studies.McCarthyPrince1995
 import Linglib.Studies.McCollumEtAl2020
