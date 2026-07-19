@@ -17,8 +17,8 @@ constituency, which applying the operations as functions would forget.
 ## Main declarations
 
 * `Word.Tree` — the operation-typed tree
-* `Word.Tree.toList`, `Word.Tree.segmentation?` — material linearization, and
-  the segmentation of the concatenative fragment
+* `Word.Tree.toList`, `Word.Tree.IsConcatenative` — material linearization,
+  and the shapes where it is the word's segmentation
 * `Word.Tree.base`, `Word.Tree.stem`, `Word.Tree.roots` — [booij-2012]'s
   relational notions
 * `Word.Tree.IsKindCoherent` — attachment kinds match the positions
@@ -107,22 +107,29 @@ def map (f : M → N) : Tree M → Tree N
   | .reduplicated rt base => .reduplicated rt (base.map f)
   | .converted base => .converted (base.map f)
 
-/-- The segmentation of the word into its material, when concatenative;
-`none` on infixation, circumfixation, and reduplication. -/
-def segmentation? : Tree M → Option (List M)
-  | .root m => some [m]
-  | .prefixed afx b => (b.segmentation?).map (afx :: ·)
-  | .suffixed b afx => (b.segmentation?).map (· ++ [afx])
-  | .compound l r => Option.map₂ (· ++ ·) l.segmentation? r.segmentation?
-  | .converted b => b.segmentation?
-  | .infixed .. => none
-  | .circumfixed .. => none
-  | .reduplicated .. => none
+/-- The word is built by concatenation alone. -/
+def IsConcatenative : Tree M → Prop
+  | .root _ => True
+  | .prefixed _ b => b.IsConcatenative
+  | .suffixed b _ => b.IsConcatenative
+  | .compound l r => l.IsConcatenative ∧ r.IsConcatenative
+  | .converted b => b.IsConcatenative
+  | .infixed .. => False
+  | .circumfixed .. => False
+  | .reduplicated .. => False
 
-/-- The projection is total exactly on the concatenative fragment: a
-circumfixed word has no material-sequence projection. -/
-@[simp] theorem segmentation?_circumfixed (pre suf : M) (b : Tree M) :
-    (circumfixed pre b suf).segmentation? = none := rfl
+instance decIsConcatenative : (t : Tree M) → Decidable t.IsConcatenative
+  | .root _ => .isTrue trivial
+  | .prefixed _ b => decIsConcatenative b
+  | .suffixed b _ => decIsConcatenative b
+  | .compound l r =>
+      have := decIsConcatenative l
+      have := decIsConcatenative r
+      inferInstanceAs (Decidable (_ ∧ _))
+  | .converted b => decIsConcatenative b
+  | .infixed .. => .isFalse id
+  | .circumfixed .. => .isFalse id
+  | .reduplicated .. => .isFalse id
 
 /-! ### Laws -/
 
@@ -137,16 +144,6 @@ theorem map_map (f : M → N) (g : N → O) (t : Tree M) :
 theorem toList_map (f : M → N) (t : Tree M) :
     (t.map f).toList = t.toList.map f := by
   induction t <;> simp [map, toList, *]
-
-/-- The concatenative projection refines linearization: where the material
-sequence exists, it is the linearization. -/
-theorem toList_eq_of_segmentation?_eq_some
-    (h : t.segmentation? = some l) : t.toList = l := by
-  induction t generalizing l with
-  | compound _ _ ihl ihr =>
-      obtain ⟨_, _, hll, hlr, rfl⟩ := Option.map₂_eq_some_iff.mp h
-      simp [toList, ihl hll, ihr hlr]
-  | _ => simp_all [segmentation?, toList] <;> grind
 
 /-! ### Structural measures -/
 

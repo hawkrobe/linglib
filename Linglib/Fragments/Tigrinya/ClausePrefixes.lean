@@ -115,11 +115,10 @@ def negCircumfix (verbStem : String) : Word.Tree (Morph × String) :=
 theorem neg_circumfix_example :
     String.join ((negCircumfix "mäs'ə").toList.map (·.1.form)) = "ʔay-mäs'ə-n" := rfl
 
-/-- Discontinuous exponence: the circumfixed structure has no
-payload-sequence projection — the circumfix is a construction, not a
-morph ([haspelmath-2020]). -/
-theorem neg_circumfix_no_exponent (s : String) :
-    (negCircumfix s).segmentation? = none := rfl
+/-- Discontinuous exponence: the circumfixed word is not concatenative —
+the circumfix is a construction, not a morph ([haspelmath-2020]). -/
+theorem neg_circumfix_not_concatenative (s : String) :
+    ¬ (negCircumfix s).IsConcatenative := id
 
 /-- The circumfix is kind-coherent once glosses are projected away: *ʔay-* is
 before-bound, *-n* after-bound, and the stem leaf is a free form. -/
