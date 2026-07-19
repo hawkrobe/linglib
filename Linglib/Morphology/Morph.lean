@@ -6,18 +6,9 @@ import Mathlib.Data.Fintype.Sum
 # Morphs and exponents
 
 A **morph** is a minimal segmental form together with its attachment kind:
-root, prefix, suffix, proclitic, enclitic, or free form ([haspelmath-2020]).
-Morphs are never zero and never discontinuous.
-
-## Implementation notes
-
-[haspelmath-2020] defines a morph as a minimal pairing of content with a
-continuous string of segments; the carrier stores only the form side, so
-empty and superfluous morphs (Cree connective *-t-*, [anderson-2015] p. 19)
-remain representable. Nonconcatenative exponence (apophony, reduplication,
-tone, subtraction) is a process, not a form, and is out of scope here:
-`Word.Structure` covers reduplication and conversion, the autosegmental
-machinery covers tone.
+root, prefix, suffix, proclitic, enclitic, or free form — the form side of
+[haspelmath-2020]'s form–content pairing. Morphs are never zero and never
+discontinuous.
 -/
 
 namespace Morphology
