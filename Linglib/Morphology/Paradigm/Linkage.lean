@@ -1,3 +1,4 @@
+import Linglib.Morphology.Root.System
 import Mathlib.Data.Finset.Prod
 import Mathlib.Data.Finset.Card
 
@@ -418,6 +419,20 @@ theorem canonical_isCanonical (st : L → Z) :
   injective := fun l _ _ hne => by
     simpa [canonical_corr, Finset.disjoint_singleton] using hne
   propertyPreserving := fun _ _ => rfl
+
+/-! ### The root-system view -/
+
+/-- The stem selection as a root system: lexemes as indices, property sets
+as contexts, stems as forms. A lossless embedding — the linkage adds only
+the property mapping `pm` on top of it. -/
+def toSystem (ℓ : Linkage L Z P) : Root.System L P Z := ⟨ℓ.stems⟩
+
+@[simp] theorem toSystem_spellout (ℓ : Linkage L Z P) (l : L) (σ : P) :
+    ℓ.toSystem.spellout l σ = ℓ.stems l σ := rfl
+
+/-- The linkage and its root system agree on univalence. -/
+theorem toSystem_isUnivalent_iff (ℓ : Linkage L Z P) :
+    ℓ.toSystem.IsUnivalent ↔ ℓ.IsUnivalent := Iff.rfl
 
 end Linkage
 
