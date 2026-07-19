@@ -1,5 +1,5 @@
 import Linglib.Morphology.Root.Basic
-import Linglib.Morphology.Root.System
+import Linglib.Morphology.Realization
 import Linglib.Data.UD.Basic
 import Mathlib.Tactic.DeriveFintype
 
@@ -88,7 +88,7 @@ theorem geo_not_root :
 
 The paper's heterosemy claim — *hammer* the instrument and *hammer* the
 action are two sister roots, not one precategorial root — rendered on
-`Morphology.Root.System`: the sister carving (two frame-restricted indices)
+`Morphology.Realization`: the sister carving (two frame-restricted indices)
 and the single-√ carving (one index, allosemous across frames) are
 **hom-incomparable** on the strict tier, so neither analysis reduces to the
 other; and accidental homophones (*bank₁*/*bank₂*) spellout-merge but never
@@ -97,7 +97,7 @@ homophony. -/
 
 section Individuation
 
-open Morphology.Root
+open Morphology Morphology.Realization
 
 /-- The two categorial frames. -/
 inductive Frame | nominal | verbal
@@ -112,26 +112,26 @@ inductive BankSense | riverside | institution
   deriving DecidableEq, Fintype, Repr
 
 /-- The homophone system: identical spellout everywhere, distinct senses. -/
-def bankSisters : Interpreted BankLex Frame String BankSense where
-  spellout := fun _ _ => {"bank"}
+def bankSisters : Realization.Interpreted BankLex Frame String BankSense where
+  realize := fun _ _ => {"bank"}
   interp := fun r _ =>
     match r with | .river => {.riverside} | .money => {.institution}
 
 /-- The merged one-index target for the spellout level. -/
-def bankMerged : System Unit Frame String where
-  spellout := fun _ _ => {"bank"}
+def bankMerged : Realization Unit Frame String where
+  realize := fun _ _ => {"bank"}
 
 /-- At the spellout level the homophones merge: a transport hom exists. -/
 theorem bank_spellout_merger :
-    Nonempty (System.Hom bankSisters.toSystem bankMerged) :=
+    Nonempty (Realization.Hom bankSisters.toRealization bankMerged) :=
   ⟨⟨fun _ => (), fun _ c => c, fun r _ => by cases r <;> rfl⟩⟩
 
 /-- **No strict hom into any target merges the homophones**: identification
 would force their senses to coincide contextwise
-(`Interpreted.Hom.interp_eq_of_onRoot_eq`). Homophony is not identity. -/
+(`Realization.Interpreted.Hom.interp_eq_of_onRoot_eq`). Homophony is not identity. -/
 theorem bank_no_identity {R₂ C₂ : Type*}
-    {T : Interpreted R₂ C₂ String BankSense}
-    (φ : Interpreted.Hom bankSisters T) :
+    {T : Realization.Interpreted R₂ C₂ String BankSense}
+    (φ : Realization.Interpreted.Hom bankSisters T) :
     φ.onRoot .river ≠ φ.onRoot .money := by
   intro h
   have := φ.interp_eq_of_onRoot_eq h .nominal
@@ -151,8 +151,8 @@ inductive Sqrt | hammer
 
 /-- The sister carving: each root licensed only in its own frame, with its
 own sense. -/
-def sisterCarving : Interpreted Sisters Frame String HammerSense where
-  spellout := fun r c =>
+def sisterCarving : Realization.Interpreted Sisters Frame String HammerSense where
+  realize := fun r c =>
     match r, c with
     | .hammerN, .nominal => {"hammer"}
     | .hammerV, .verbal => {"hammer"}
@@ -164,17 +164,18 @@ def sisterCarving : Interpreted Sisters Frame String HammerSense where
     | _, _ => ∅
 
 /-- The single-√ carving: one root licensed in both frames, allosemous. -/
-def sqrtCarving : Interpreted Sqrt Frame String HammerSense where
-  spellout := fun _ _ => {"hammer"}
+def sqrtCarving : Realization.Interpreted Sqrt Frame String HammerSense where
+  realize := fun _ _ => {"hammer"}
   interp := fun _ c =>
     match c with | .nominal => {.instrument} | .verbal => {.action}
 
 /-- No strict hom from the sister carving to the single-√ carving: the
 sisters' licensing gaps (*hammer-the-noun* has no verbal cell) cannot be
 reproduced by the total √. -/
-theorem sisters_to_sqrt_none (φ : Interpreted.Hom sisterCarving sqrtCarving) :
+theorem sisters_to_sqrt_none
+    (φ : Realization.Interpreted.Hom sisterCarving sqrtCarving) :
     False := by
-  have h := φ.spellout_eq .hammerN .verbal
+  have h := φ.realize_eq .hammerN .verbal
   cases hr : φ.onRoot .hammerN
   cases hc : φ.onCtx .verbal <;> rw [hr, hc] at h <;>
     exact absurd h (by decide)
@@ -183,10 +184,11 @@ theorem sisters_to_sqrt_none (φ : Interpreted.Hom sisterCarving sqrtCarving) :
 the total √ must land on one frame-restricted sister, whose single licensed
 cell cannot carry both allosemes. The two carvings are hom-incomparable —
 the rivalry is between genuinely distinct systems. -/
-theorem sqrt_to_sisters_none (φ : Interpreted.Hom sqrtCarving sisterCarving) :
+theorem sqrt_to_sisters_none
+    (φ : Realization.Interpreted.Hom sqrtCarving sisterCarving) :
     False := by
-  have hs₁ := φ.spellout_eq .hammer .nominal
-  have hs₂ := φ.spellout_eq .hammer .verbal
+  have hs₁ := φ.realize_eq .hammer .nominal
+  have hs₂ := φ.realize_eq .hammer .verbal
   have hi₁ := φ.interp_eq .hammer .nominal
   have hi₂ := φ.interp_eq .hammer .verbal
   cases hr : φ.onRoot .hammer <;> cases hc₁ : φ.onCtx .nominal <;>

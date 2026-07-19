@@ -404,21 +404,21 @@ theorem Linkage.realize_eq_paradigmFunction [DecidableEq Z] (ℓ : Linkage L Z P
   exact congrArg ({·})
     (Prod.ext rfl (blocksEval_snd Lindex blocks (stemChoice (l, σ), σ)).symm)
 
-/-- The paradigm function as a root system: lexemes as opaque indices,
+/-- The paradigm function as a realization: lexemes as opaque indices,
 realized at every cell — total and univalent, PFM's stratum. `Lindex` is the
 seed of the lexeme-to-√ coarsening arrow between individuation grains. -/
-def paradigmSystem (Lindex : Z → L) (stemChoice : L × P → Z)
-    (blocks : List (Block L Z P)) : Root.System L P (Z × P) :=
+def paradigmRealization (Lindex : Z → L) (stemChoice : L × P → Z)
+    (blocks : List (Block L Z P)) : Realization L P (Z × P) :=
   ⟨fun l σ => {paradigmFunction Lindex stemChoice blocks (l, σ)}⟩
 
-theorem paradigmSystem_isTotal (Lindex : Z → L) (stemChoice : L × P → Z)
+theorem paradigmRealization_isTotal (Lindex : Z → L) (stemChoice : L × P → Z)
     (blocks : List (Block L Z P)) :
-    (paradigmSystem Lindex stemChoice blocks).IsTotal :=
+    (paradigmRealization Lindex stemChoice blocks).IsTotal :=
   fun _ _ => Finset.singleton_nonempty _
 
-theorem paradigmSystem_isUnivalent (Lindex : Z → L) (stemChoice : L × P → Z)
+theorem paradigmRealization_isUnivalent (Lindex : Z → L) (stemChoice : L × P → Z)
     (blocks : List (Block L Z P)) :
-    (paradigmSystem Lindex stemChoice blocks).IsUnivalent :=
+    (paradigmRealization Lindex stemChoice blocks).IsUnivalent :=
   fun _ _ => (Finset.card_singleton _).le
 
 end Selection

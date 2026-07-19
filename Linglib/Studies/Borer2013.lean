@@ -1,4 +1,4 @@
-import Linglib.Morphology.Root.System
+import Linglib.Morphology.Realization
 import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -9,7 +9,7 @@ Roots as phonological indices realized in categorial frames, with no zero
 categorizer heads: a bare root inserted in a nominal frame is N-equivalent,
 in a verbal frame V-equivalent — categorization by environment, against
 DM's merger with a (possibly null) categorizing head. On
-`Morphology.Root.System` the exoskeletal claim fixes `Ctx` as the frame
+`Morphology.Realization` the exoskeletal claim fixes `Ctx` as the frame
 itself, with no head in it; the DM rival puts a categorizer in `Ctx` — a
 contrast in what instantiates `Ctx`, not in the shared core.
 
@@ -22,7 +22,7 @@ derived, not bare roots in frames.
 
 ## Main results
 
-* `english` — a mini root system over N/V/A frames.
+* `english` — a mini root realization over N/V/A frames.
 * `nv_flexibility` — *chair* and *walk* are licensed in both the nominal and
   verbal frames.
 * `adjective_rigidity` — *red* and *fat* are licensed in no frame beyond the
@@ -34,7 +34,7 @@ derived, not bare roots in frames.
 
 namespace Borer2013
 
-open Morphology.Root
+open Morphology
 
 /-- The three categorial frames. -/
 inductive Frame | nFrame | vFrame | aFrame
@@ -46,8 +46,8 @@ inductive Lex | chair | walk | red | fat | thin | yellow
 
 /-- The mini English system: flexible *chair*/*walk*, frame-bound *red*/*fat*,
 and the listed verbal uses of *thin*/*yellow*. -/
-def english : System Lex Frame String where
-  spellout := fun r c =>
+def english : Realization Lex Frame String where
+  realize := fun r c =>
     match r, c with
     | .chair, .nFrame => {"chair"}
     | .chair, .vFrame => {"chair"}
