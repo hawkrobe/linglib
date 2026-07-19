@@ -41,6 +41,8 @@ injectivity, and deponency and functor-argument reversal property preservation.
   one-stem linkage, canonical on all four axes
 * `Linkage.realize_eq_of_corr_eq` — a shared form correspondent forces a shared
   realization
+* `Linkage.realize_eq_of_corr_eq_lexeme` — the cross-lexeme companion: two
+  lexemes sharing a correspondent share their realization
 -/
 
 namespace Morphology
@@ -158,6 +160,15 @@ def IsVirtual (zτ : Z × P) : Prop := ∀ l σ, ℓ.corr l σ ≠ some zτ
 theorem realize_eq_of_corr_eq (realizeForm : Z → P → W) {l : L} {σ₁ σ₂ : P}
     (h : ℓ.corr l σ₁ = ℓ.corr l σ₂) :
     ℓ.realize realizeForm l σ₁ = ℓ.realize realizeForm l σ₂ := by
+  simp only [realize, h]
+
+/-- A form correspondent shared across two *lexemes* forces a shared realization:
+the cross-lexeme companion of `realize_eq_of_corr_eq`. This is the mechanism
+behind [jackendoff-audring-2020]'s Same Verb solution — homophones with a shared
+morphosyntactic-form pivot inflect alike, however their distinct semantics. -/
+theorem realize_eq_of_corr_eq_lexeme (realizeForm : Z → P → W) {l₁ l₂ : L} {σ : P}
+    (h : ℓ.corr l₁ σ = ℓ.corr l₂ σ) :
+    ℓ.realize realizeForm l₁ σ = ℓ.realize realizeForm l₂ σ := by
   simp only [realize, h]
 
 /-! ### The canonical linkage -/

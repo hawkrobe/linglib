@@ -25,7 +25,11 @@ per-block winners into the paradigm function ([stump-2001]). Since
 exponence within a block (free co-realization variants, Jubba Maay —
 [trommer-zimmermann-2015] p. 60) is outside scope, not merely a
 multi-block composition matter; deterministic symbiotic co-exponence
-composes across blocks as usual.
+composes across blocks as usual. That specificity is itself the Elsewhere
+criterion is not beyond question: [jackendoff-audring-2020] note for the
+overlapping `-ious` allomorph that the overlapped variant is not clearly more
+specific than the plain one, and suggest markedness or non-canonicity may be
+the operative criterion in that single case.
 
 ## Main declarations
 
