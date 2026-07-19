@@ -3338,16 +3338,21 @@ def VerbEntry.toWordPast (v : VerbEntry) : Word :=
     }
   }
 
-/-- Convert a verb entry to a `Word` in past participle form.
-    Retains original valence (for perfects: "has kicked the ball").
-    For passive constructions, compose with `Word.asPassive`:
-    `v.toWordPastPart.asPassive`. -/
+/-- The past participle as a `Word`; original valence retained (perfects:
+    "has kicked the ball"). -/
 def VerbEntry.toWordPastPart (v : VerbEntry) : Word :=
   { form := v.formPastPart
   , cat := .VERB
   , features := {
       verbForm := some .Part
     }
+  }
+
+/-- The passive participle as a `Word`. -/
+def VerbEntry.toWordPassive (v : VerbEntry) : Word :=
+  { form := v.formPastPart
+  , cat := .VERB
+  , features := { verbForm := some .Part, voice := some UD.Voice.Pass }
   }
 
 /-- Convert a verb entry to a `Word` in present participle form. -/

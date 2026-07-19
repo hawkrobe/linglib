@@ -46,6 +46,11 @@ A language (English, …) supplies the classifier; a framework supplies the
 command relation; a study combines them.
 -/
 
+/-- The φ-feature subset (person, number, gender) of a word. -/
+def Morphology.Word.phi (w : Word) : UD.MorphFeatures :=
+  { person := w.features.person, number := w.features.number,
+    gender := w.features.gender }
+
 /-- φ-agreement between two words: their person/number/gender features are
     compatible (an unspecified feature is a wildcard). A reflexive, symmetric
     *tolerance* relation on `Word` (not transitive), decided by the shared

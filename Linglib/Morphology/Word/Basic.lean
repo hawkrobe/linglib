@@ -12,28 +12,15 @@ import Linglib.Features.Person.Capabilities
 # Word — the morphosyntactic word (ms-word) token
 [kalin-bjorkman-etal-2026]
 
-The surface token: the unit that (morpho)syntax treats as a word. Wordhood minimally
-splits into the **ms-word** (which this type approximates: a CoNLL-U token is an
-orthographic unit, and orthography does not reliably track the ms-word) and the
-**p-word** (the prosodic word, `Phonology/Prosody/Word.lean`) — the "one area of
-robust consensus" on the wordhood
-problem ([kalin-bjorkman-etal-2026] §3.2); we follow the Element in calling ms-words
-simply *words*. The split is descriptive, not a Lexicalist commitment: ms-words are
-"crucial for lexicalist theories" but used descriptively by non-lexicalist ones too
-(§3.2.1, §3.3), and this token carries no theory of how words are formed.
-
-`Word` completes Morphology's word inventory: `Word.Tree` (`Word/Tree.lean`) is word-*internal* structure,
-`Paradigm/Linkage` carries the word-forming correspondence (stem selection + realization), `Word` is the resulting *token* —
-form + UD category + one `UD.MorphFeatures` bundle, i.e. a CoNLL-U row. The
-ms-word vs p-word typology relating the two word notions ([kalin-bjorkman-etal-2026]
-Table 3) is formalized in `Studies/KalinBjorkmanEtAl2026.lean`.
+The surface token: the unit (morpho)syntax treats as a word, approximating the
+ms-word of the ms-word/p-word split ([kalin-bjorkman-etal-2026]; the p-word is
+`Phonology/Prosody/Word.lean`). The token carries no theory of how words are
+formed: word-internal structure is `Word/Tree.lean`, the word-forming
+correspondence `Paradigm/Linkage`.
 
 ## Main declarations
 
-* `Word` — the token, with its **admission rule** (see the declaration docstring).
-* `Word.phi` — the φ-feature projection (person/number/gender).
-* `Word.asPassive` — passive variant (voice morphology only; valence effects are
-  `DepTree.frames`-level facts).
+* `Word` — the token
 -/
 
 namespace Morphology
@@ -57,11 +44,6 @@ structure Word where
 /-- Convenience constructor for a featureless word (form + category only). -/
 def Word.mk' (form : String) (cat : UD.UPOS) : Word := { form := form, cat := cat }
 
-/-- The φ-feature subset (person, number, gender) of a word, as a
-    `UD.MorphFeatures` bundle. -/
-def Word.phi (w : Word) : UD.MorphFeatures :=
-  { person := w.features.person, number := w.features.number,
-    gender := w.features.gender }
 
 /-- A word bears the number its UD morphology ingests (`Number.fromUD`). -/
 instance : HasNumber Word := ⟨fun w => w.features.number.bind Number.fromUD⟩
@@ -70,11 +52,6 @@ instance : HasPerson Word := ⟨fun w => w.features.person.map Person.fromUD⟩
 
 instance : HasCase Word := ⟨fun w => w.features.case_.map Case.fromUD⟩
 
-/-- Derive a passive variant: sets voice to passive. The valence change
-    (detransitivization) is a frame-level fact carried by the passive analysis on
-    `DepTree.frames`, not token data. Composes with `VerbEntry.toWordPastPart`. -/
-def Word.asPassive (w : Word) : Word :=
-  { w with features := { w.features with voice := some UD.Voice.Pass } }
 
 instance : BEq Word where
   beq w1 w2 := w1.form == w2.form && w1.cat == w2.cat
@@ -82,8 +59,5 @@ instance : BEq Word where
 instance : ToString Word where
   toString w := w.form
 
-/-- Convert a word list to a readable string. -/
-def wordsToString (ws : List Word) : String :=
-  " ".intercalate (ws.map (·.form))
 
 end Morphology
