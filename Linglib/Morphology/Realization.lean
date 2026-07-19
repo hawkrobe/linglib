@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Mathlib.Data.Finset.Card
+import Mathlib.Data.Finset.Union
 
 /-!
 # Root realizations: indices realized in context
@@ -35,10 +36,18 @@ is present (`Realization.Interpreted`) — never along the core.
 `Hom` merges indices with a context translation that may consult the source
 index; `Realization.Interpreted.Hom` is the strict tier — root-independent context
 translation, interpretation-preserving — on which individuation disputes are
-stated: merged roots must agree contextwise in interpretation
-(`interp_eq_of_onRoot_eq`), so accidental homophones never merge, and
-heterosemy-vs-single-√ rivalries become hom-(non)existence theorems in
-studies.
+stated: merged indices must share their whole profile
+(`Hom.profileEq_of_onRoot_eq`), so strict mergers collapse only exact
+profile-duplicates and `Interpreted.reduce` is terminal among them. The
+individuation rivalries live at the lax tier, where fat-root and sister-root
+presentations subsume each other's data: extensional profiles underdetermine
+individuation, and the discriminators the literature actually uses —
+first-categorization locality ([arad-2005]), the denial that indices are
+linguistic objects, processing evidence — are extra structure on admissible
+mergers that studies supply. The interface localizes the dispute precisely
+because it cannot resolve it. One mild theory-ladenness to note: the strict
+tier's root-independent context translation forces categorial information
+into `Ctx`, quietly encoding the Categorization Assumption.
 
 ## Main declarations
 
@@ -53,6 +62,9 @@ studies.
   the strict, interpretation-preserving tier;
   `Realization.Interpreted.Hom.interp_eq_of_onRoot_eq`.
 * `Realization.Interpreted` — the two-map extension ([marantz-1997]'s List 2 / List 3).
+* `Realization.comp` — Kleisli pipelining; `Interpreted.ProfileEq`,
+  `Interpreted.reduce`, `Hom.profileEq_of_onRoot_eq` — the reduced
+  presentation and the strict-merger bound.
 -/
 
 namespace Morphology
@@ -72,6 +84,16 @@ theorem not_isConstantIn_of_isVariantIn {g : R → Ctx → Finset X} {r : R}
     (h : IsVariantIn g r) : ¬ IsConstantIn g r := by
   obtain ⟨c, c', x, hx, x', hx', hne⟩ := h
   exact fun hc => hne (hc x hx x' hx')
+
+/-- Constancy at an index is subsingletonhood of the index's total image —
+the bridge to mathlib's `Set.Subsingleton` ecosystem. -/
+theorem isConstantIn_iff_subsingleton {g : R → Ctx → Finset X} {r : R} :
+    IsConstantIn g r ↔ {x | ∃ c, x ∈ g r c}.Subsingleton := by
+  constructor
+  · rintro h x ⟨c, hx⟩ x' ⟨c', hx'⟩
+    exact h x hx x' hx'
+  · intro h c c' x hx x' hx'
+    exact h ⟨c, hx⟩ ⟨c', hx'⟩
 
 /-- A **root realization**: an opaque index type realized in context. The
 fiber `realize r c` is empty where `r` is unlicensed, non-singleton at an
@@ -117,6 +139,42 @@ theorem not_isInvariant_of_isSuppletive {r : R} (h : S.IsSuppletive r) :
     ¬ S.IsInvariant r :=
   not_isConstantIn_of_isVariantIn h
 
+/-- Invariance is subsingletonhood of the allomorph set. -/
+theorem isInvariant_iff_subsingleton_exponents {r : R} :
+    S.IsInvariant r ↔ (S.exponents r).Subsingleton :=
+  isConstantIn_iff_subsingleton
+
+/-- Overabundance at an index: some cell offers two forms (*dived*/*dove* in
+one cell, [thornton-2011]-style — cf. `Linkage.HasCellMates`). Cell-internal
+variance, disjoint in kind from suppletion. -/
+def IsOverabundant (r : R) : Prop := ∃ c, 1 < (S.realize r c).card
+
+/-- Suppletion proper: two licensed contexts realized by different fibers
+(√GO: *go*/*went*). An unlicensed cell never witnesses it. -/
+def IsProperlySuppletive (r : R) : Prop :=
+  ∃ c c', (S.realize r c).Nonempty ∧ (S.realize r c').Nonempty ∧
+    S.realize r c ≠ S.realize r c'
+
+/-- The variance decomposition: form variance at an index is overabundance
+or suppletion proper. -/
+theorem isSuppletive_iff {r : R} :
+    S.IsSuppletive r ↔ S.IsOverabundant r ∨ S.IsProperlySuppletive r := by
+  constructor
+  · rintro ⟨c, c', x, hx, x', hx', hne⟩
+    by_cases hfib : S.realize r c = S.realize r c'
+    · exact Or.inl ⟨c, Finset.one_lt_card.mpr ⟨x, hx, x', hfib ▸ hx', hne⟩⟩
+    · exact Or.inr ⟨c, c', ⟨x, hx⟩, ⟨x', hx'⟩, hfib⟩
+  · rintro (⟨c, hc⟩ | ⟨c, c', ⟨x, hx⟩, ⟨x', hx'⟩, hne⟩)
+    · obtain ⟨y, hy, y', hy', hne⟩ := Finset.one_lt_card.mp hc
+      exact ⟨c, c, y, hy, y', hy', hne⟩
+    · by_cases hsub : S.realize r c ⊆ S.realize r c'
+      · have hns : ¬ S.realize r c' ⊆ S.realize r c :=
+          fun h => hne (Finset.Subset.antisymm hsub h)
+        obtain ⟨y, hy, hy'⟩ := Finset.not_subset.mp hns
+        exact ⟨c', c, y, hy, x, hx, fun h => hy' (h ▸ hx)⟩
+      · obtain ⟨y, hy, hy'⟩ := Finset.not_subset.mp hsub
+        exact ⟨c, c', y, hy, x', hx', fun h => hy' (h ▸ hx')⟩
+
 /-- Contextwise identity of realization. -/
 def RealizeEq (r r' : R) : Prop := ∀ c, S.realize r c = S.realize r' c
 
@@ -149,6 +207,13 @@ instance (r : R) : Decidable (S.IsSuppletive r) :=
   inferInstanceAs (Decidable (∃ c c',
     ∃ x ∈ S.realize r c, ∃ x' ∈ S.realize r c', x ≠ x'))
 
+instance (r : R) : Decidable (S.IsOverabundant r) :=
+  inferInstanceAs (Decidable (∃ c, 1 < (S.realize r c).card))
+
+instance (r : R) : Decidable (S.IsProperlySuppletive r) :=
+  inferInstanceAs (Decidable (∃ c c', (S.realize r c).Nonempty ∧
+    (S.realize r c').Nonempty ∧ S.realize r c ≠ S.realize r c'))
+
 instance (r r' : R) : Decidable (S.RealizeEq r r') :=
   inferInstanceAs (Decidable (∀ c : Ctx, S.realize r c = S.realize r' c))
 
@@ -164,6 +229,23 @@ instance : Decidable S.IsUnivalent :=
   inferInstanceAs (Decidable (∀ r c, (S.realize r c).card ≤ 1))
 
 end Decidable
+
+/-- Pipeline composition — Kleisli of `Finset` over a shared context:
+realize through an intermediate inventory. Late-insertion architectures
+factor the grammar's realization as such a composite; PFM's
+stem-choice-then-blocks cascade is another. -/
+def comp {G : Type*} [DecidableEq G] (S : Realization R Ctx F)
+    (T : Realization F Ctx G) : Realization R Ctx G :=
+  ⟨fun r c => (S.realize r c).biUnion (fun f => T.realize f c)⟩
+
+/-- Totality is closed under pipelining. -/
+theorem comp_isTotal {G : Type*} [DecidableEq G] {S : Realization R Ctx F}
+    {T : Realization F Ctx G} (hS : S.IsTotal) (hT : T.IsTotal) :
+    (S.comp T).IsTotal := by
+  intro r c
+  obtain ⟨f, hf⟩ := hS r c
+  obtain ⟨g, hg⟩ := hT f c
+  exact ⟨g, Finset.mem_biUnion.mpr ⟨f, hf, hg⟩⟩
 
 section Hom
 
@@ -323,6 +405,41 @@ def LaxHom.comp {R₃ C₃ : Type*} {S₁ : Interpreted R₁ C₁ F M}
      (f.interp_sub r c).trans (g.interp_sub (f.onRoot r) (f.onCtx c))⟩
 
 end Hom
+
+/-- Contextwise indistinguishability of indices: equal realization and
+interpretation profiles. -/
+def ProfileEq (r r' : R) : Prop :=
+  (∀ c, S.realize r c = S.realize r' c) ∧ (∀ c, S.interp r c = S.interp r' c)
+
+/-- Profile equality as a setoid. -/
+def profileSetoid : Setoid R where
+  r := S.ProfileEq
+  iseqv :=
+    ⟨fun _ => ⟨fun _ => rfl, fun _ => rfl⟩,
+     fun h => ⟨fun c => (h.1 c).symm, fun c => (h.2 c).symm⟩,
+     fun h h' => ⟨fun c => (h.1 c).trans (h'.1 c),
+                  fun c => (h.2 c).trans (h'.2 c)⟩⟩
+
+/-- The reduced presentation: indices are realization-and-interpretation
+profiles. Every system presents its reduction; the strict hom tier is
+change of presentation, and only the lax tier merges beyond profiles. -/
+def reduce : Interpreted (Quotient S.profileSetoid) Ctx F M where
+  realize := Quotient.lift S.realize (fun _ _ h => funext h.1)
+  interp := Quotient.lift S.interp (fun _ _ h => funext h.2)
+
+/-- Reduction is a strict hom: passing to profiles loses nothing. -/
+def reduceHom : Hom S S.reduce :=
+  ⟨Quotient.mk S.profileSetoid, id, fun _ _ => rfl, fun _ _ => rfl⟩
+
+/-- Mergers along any strict hom refine profile equality: `reduce` merges
+as much as the strict tier ever can. Mergers beyond profiles — the *hammer*
+carvings, pattern-bound lexemes into an [arad-2005] root — are necessarily
+lax. -/
+theorem Hom.profileEq_of_onRoot_eq {R₂ C₂ : Type*}
+    {T : Interpreted R₂ C₂ F M} (φ : Hom S T) {r r' : R}
+    (h : φ.onRoot r = φ.onRoot r') : S.ProfileEq r r' :=
+  ⟨fun c => φ.realize_eq_of_onRoot_eq h c,
+   fun c => φ.interp_eq_of_onRoot_eq h c⟩
 
 end Realization.Interpreted
 
