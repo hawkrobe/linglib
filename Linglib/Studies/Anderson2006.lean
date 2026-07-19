@@ -1,7 +1,6 @@
 import Linglib.Syntax.Category.Auxiliary.Constructions
 import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
 import Linglib.Features.Formative
-import Linglib.Morphology.Periphrasis
 import Linglib.Fragments.English.Auxiliaries
 import Linglib.Fragments.Finnish.Negation
 import Linglib.Fragments.Doyayo.AuxiliaryVerbs
@@ -33,8 +32,8 @@ grammaticalization framework.
 2. **Semantic head invariant** (Anderson p. 23, Table 3.1 p. 116):
    the lexical verb is always the semantic head, regardless of where
    inflection sits.
-3. **Typed inflectional distribution**: `InflDistribution` (from
-   `Morphology`) records which `MorphCategory` values each
+3. **Typed inflectional distribution**: `InflDistribution`
+   (study-local) records which `MorphCategory` values each
    element hosts.
 4. **Grammaticalization grounding**: Anderson ch. 7 traces AVCs
    onto Heine 1993's cline (Anderson p. 5: *"According to Heine
@@ -103,6 +102,91 @@ open AuxiliaryVerbs
 open ArgumentStructure.AuxiliarySelection
 open Syntax.Negation (NegStrategy)
 
+/-! ## Inflectional distribution (study-local apparatus)
+
+Demoted from the former `Morphology/Periphrasis.lean` at the
+single-consumer bar: this study is the sole terminal of every
+distribution value. Possessing a distribution is neutral on
+periphrasis-hood ([spencer-popova-2015] pp. 200, 204); the data is the
+raw material for the distributed-exponence criterion. -/
+
+open Morphology (MorphCategory)
+
+/-- Distribution of inflectional categories between the two elements of an
+    auxiliary verb construction. The category vocabulary is
+    `MorphCategory` ([bybee-1985]'s relevance hierarchy); the pattern
+    taxonomy is [anderson-2006]'s AVC classification (see `InflPattern`). -/
+structure InflDistribution where
+  onAux : List MorphCategory
+  onLex : List MorphCategory
+  deriving Repr, DecidableEq
+
+/-- Doyayo lex-headed: AUX carries tonal subject agreement (Anderson
+    p. 120: "partially encodes person of the subject through the tone");
+    LV carries TAM. -/
+def doyayoLexHeadedDist : InflDistribution :=
+  { onAux := [.agreement .subj], onLex := [.tense] }
+
+/-- Doyayo split/doubled (Anderson Ch 5 ex. 129, p. 223): subject doubled
+    on AUX and LV; object only on LV. -/
+def doyayoSplitDoubledDist : InflDistribution :=
+  { onAux := [.agreement .subj]
+  , onLex := [.agreement .subj, .agreement .obj] }
+
+/-- Gorum doubled: both AUX and LV marked for subject agreement, tense,
+    and affectedness (version/voice). -/
+def gorumDist : InflDistribution :=
+  { onAux := [.agreement .subj, .tense, .voice]
+  , onLex := [.agreement .subj, .tense, .voice] }
+
+/-- Hemba split/doubled: agreement doubled, tense on AUX, mood on LV. -/
+def hembaDist : InflDistribution :=
+  { onAux := [.agreement .subj, .tense]
+  , onLex := [.agreement .subj, .mood] }
+
+/-- Jakaltek split: aspect and absolutive (object) agreement on AUX,
+    ergative (subject) agreement on LV. -/
+def jakaltekDist : InflDistribution :=
+  { onAux := [.aspect, .agreement .obj]
+  , onLex := [.agreement .subj] }
+
+/-- Pipil lex-headed: AUX uninflected, LV hosts subject agreement. -/
+def pipilLexHeadedDist : InflDistribution :=
+  { onAux := [], onLex := [.agreement .subj] }
+
+/-- Pipil split/doubled (Anderson Ch 5 ex. 133b, p. 224): subject doubled,
+    object only on LV. -/
+def pipilSplitDoubledDist : InflDistribution :=
+  { onAux := [.agreement .subj]
+  , onLex := [.agreement .subj, .agreement .obj] }
+
+/-- Finnish negative AVC: the negative auxiliary hosts negation, tense,
+    and agreement; the main verb retains stem and aspect (via participle
+    choice). [karlsson-2017] -/
+def finnishNegDist : InflDistribution :=
+  { onAux := [.negation, .tense, .agreement .subj]
+  , onLex := [.stem, .aspect] }
+
+/-- Hemba: agreement doubled, tense split to AUX, mood split to LV —
+    the split/doubled pattern read directly off the distribution. -/
+theorem hemba_split_doubled_shape :
+    hembaDist.onAux.contains (.agreement .subj) = true ∧
+    hembaDist.onLex.contains (.agreement .subj) = true ∧
+    hembaDist.onAux.contains .tense = true ∧
+    hembaDist.onLex.contains .tense = false ∧
+    hembaDist.onAux.contains .mood = false ∧
+    hembaDist.onLex.contains .mood = true := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> decide
+
+/-- The Finnish distribution is consistent with [miestamo-2005]'s
+    constructional A/Fin coding: categories split across the negative
+    auxiliary and the main verb (moved here from the Miestamo file —
+    the cross-paper comparison belongs to the later study). -/
+theorem finnish_split_confirms_constructional :
+    finnishNegDist.onAux.length > 0 ∧ finnishNegDist.onLex.length > 0 ∧
+    Miestamo2005.finnish.asymmetryDimensions.contains .constructional := by
+  refine ⟨?_, ?_, ?_⟩ <;> decide
+
 /-- A cross-linguistic AVC datum. Study-local: the `AuxiliaryVerbs` substrate
     classifies over `InflPattern`; this paper's per-language rows bundle the
     form/distribution/gloss with it. -/
@@ -110,7 +194,7 @@ structure AVCDatum where
   language : String
   form : String
   inflPattern : InflPattern
-  distribution : Option Morphology.InflDistribution := none
+  distribution : Option InflDistribution := none
   gloss : String := ""
   deriving Repr, BEq
 
@@ -143,7 +227,7 @@ def doyayo : AVCDatum :=
   { language := "Doyayo"
   , form := Doyayo.AuxiliaryVerbs.lexHeadedForm
   , inflPattern := .lexHeaded
-  , distribution := some Doyayo.AuxiliaryVerbs.lexHeadedDistribution
+  , distribution := some doyayoLexHeadedDist
   , gloss := Doyayo.AuxiliaryVerbs.lexHeadedGloss }
 
 /-- Doyayo split/doubled (Anderson Ch 5 ex. 129, p. 223).
@@ -154,7 +238,7 @@ def doyayoSplitDoubled : AVCDatum :=
   { language := "Doyayo"
   , form := Doyayo.AuxiliaryVerbs.splitDoubledForm
   , inflPattern := .splitDoubled
-  , distribution := some Doyayo.AuxiliaryVerbs.splitDoubledDistribution
+  , distribution := some doyayoSplitDoubledDist
   , gloss := Doyayo.AuxiliaryVerbs.splitDoubledGloss }
 
 /-- Gorum (doubled): subject + TAM on both AUX and LV.
@@ -163,7 +247,7 @@ def gorum : AVCDatum :=
   { language := "Gorum"
   , form := Gorum.AuxiliaryVerbs.form
   , inflPattern := .doubled
-  , distribution := some Gorum.AuxiliaryVerbs.inflDistribution
+  , distribution := some gorumDist
   , gloss := Gorum.AuxiliaryVerbs.gloss }
 
 /-- Jakaltek (split): absolutive on AUX, ergative on LV.
@@ -172,7 +256,7 @@ def jakaltek : AVCDatum :=
   { language := "Jakaltek"
   , form := Jakaltek.AuxiliaryVerbs.form
   , inflPattern := .split
-  , distribution := some Jakaltek.AuxiliaryVerbs.inflDistribution
+  , distribution := some jakaltekDist
   , gloss := Jakaltek.AuxiliaryVerbs.gloss }
 
 /-- Pipil split/doubled (Anderson Ch 5 ex. 133b, p. 224).
@@ -185,7 +269,7 @@ def pipilSplitDoubled : AVCDatum :=
   { language := "Pipil"
   , form := Pipil.AuxiliaryVerbs.splitDoubledForm
   , inflPattern := .splitDoubled
-  , distribution := some Pipil.AuxiliaryVerbs.splitDoubledDistribution
+  , distribution := some pipilSplitDoubledDist
   , gloss := Pipil.AuxiliaryVerbs.splitDoubledGloss }
 
 /-- Pipil lex-headed (Anderson ch. 3 ex. 49, p. 130; Campbell 1985: 139).
@@ -198,7 +282,7 @@ def pipilLexHeaded : AVCDatum :=
   { language := "Pipil"
   , form := Pipil.AuxiliaryVerbs.lexHeadedForm
   , inflPattern := .lexHeaded
-  , distribution := some Pipil.AuxiliaryVerbs.lexHeadedDistribution
+  , distribution := some pipilLexHeadedDist
   , gloss := Pipil.AuxiliaryVerbs.lexHeadedGloss }
 
 /-- Finnish negative auxiliary *ei* (split): person/number on aux,
@@ -211,7 +295,7 @@ def pipilLexHeaded : AVCDatum :=
     not classified by Anderson in §1.7.2 with a specific pattern label;
     the split classification here follows [karlsson-2017] §19.5
     where the connegative suffix on the LV is the load-bearing diagnostic.
-    The split nature derives from `Finnish.Negation.finnishNegDistribution`:
+    The split nature derives from `finnishNegDist`:
     the negative auxiliary hosts negation, tense, and agreement, while
     the lexical verb retains stem and aspect.
     The 1sg neg-aux form derives from `negParadigm`; see the
@@ -225,7 +309,7 @@ def finnish : AVCDatum :=
     | some f => f.form ++ " lue"
     | none => "en lue"
   , inflPattern := .split
-  , distribution := some Finnish.Negation.finnishNegDistribution
+  , distribution := some finnishNegDist
   , gloss := "Neg-1 read-conneg" }
 
 /-- Hemba split/doubled: subject doubled on both AUX and LV; tense
@@ -235,7 +319,7 @@ def hemba : AVCDatum :=
   { language := "Hemba"
   , form := Hemba.AuxiliaryVerbs.form
   , inflPattern := .splitDoubled
-  , distribution := some Hemba.AuxiliaryVerbs.inflDistribution
+  , distribution := some hembaDist
   , gloss := Hemba.AuxiliaryVerbs.gloss }
 
 /-- All 9 AVC datums (covering all 5 of Anderson's patterns). -/
@@ -277,26 +361,6 @@ theorem pipilLexHeaded_form_from_fragment :
 theorem hemba_form_from_fragment :
     hemba.form = Hemba.AuxiliaryVerbs.form := rfl
 
-theorem doyayo_dist_from_fragment :
-    doyayo.distribution = some Doyayo.AuxiliaryVerbs.lexHeadedDistribution := rfl
-theorem doyayoSplitDoubled_dist_from_fragment :
-    doyayoSplitDoubled.distribution =
-      some Doyayo.AuxiliaryVerbs.splitDoubledDistribution := rfl
-theorem gorum_dist_from_fragment :
-    gorum.distribution = some Gorum.AuxiliaryVerbs.inflDistribution := rfl
-theorem jakaltek_dist_from_fragment :
-    jakaltek.distribution = some Jakaltek.AuxiliaryVerbs.inflDistribution := rfl
-theorem pipilSplitDoubled_dist_from_fragment :
-    pipilSplitDoubled.distribution =
-      some Pipil.AuxiliaryVerbs.splitDoubledDistribution := rfl
-theorem pipilLexHeaded_dist_from_fragment :
-    pipilLexHeaded.distribution =
-      some Pipil.AuxiliaryVerbs.lexHeadedDistribution := rfl
-theorem finnish_dist_from_fragment :
-    finnish.distribution = some Finnish.Negation.finnishNegDistribution := rfl
-theorem hemba_dist_from_fragment :
-    hemba.distribution = some Hemba.AuxiliaryVerbs.inflDistribution := rfl
-
 /-! ## Finnish form construction grounding
 
 The Finnish form construction uses `negParadigm.find?`, which is
@@ -334,7 +398,7 @@ theorem finnish_form_from_paradigm : finnish.form = "en lue" := rfl
     auxiliary hosts some inflectional categories and the lexical
     verb hosts others, with neither element hosting all categories. -/
 theorem finnish_split_from_fragment :
-    let dist := Finnish.Negation.finnishNegDistribution
+    let dist := finnishNegDist
     dist.onAux ≠ [] ∧ dist.onLex ≠ [] := by
   exact ⟨by decide, by decide⟩
 
@@ -358,14 +422,14 @@ theorem five_patterns_attested :
 
 /-- In Gorum's doubled AVC, aux and lex host exactly the same categories. -/
 theorem gorum_doubled_same_categories :
-    let dist := Gorum.AuxiliaryVerbs.inflDistribution
+    let dist := gorumDist
     dist.onAux == dist.onLex = true := by decide
 
 /-- In Doyayo's lex-headed AVC, the auxiliary hosts ONLY tonal subject
     agreement (per Anderson p. 120), and the LV carries TAM. -/
 theorem doyayo_lexHeaded_aux_agreement_only :
-    Doyayo.AuxiliaryVerbs.lexHeadedDistribution.onAux = [.agreement .subj] ∧
-    Doyayo.AuxiliaryVerbs.lexHeadedDistribution.onLex = [.tense] := by
+    doyayoLexHeadedDist.onAux = [.agreement .subj] ∧
+    doyayoLexHeadedDist.onLex = [.tense] := by
   exact ⟨rfl, rfl⟩
 
 /-- **Anderson Ch 5 §5.2 payoff (Doyayo)**: subject agreement is
@@ -374,7 +438,7 @@ theorem doyayo_lexHeaded_aux_agreement_only :
     rather than via the fragile list-length encoding the 0.230.578
     workaround used. -/
 theorem doyayo_splitDoubled_subj_doubled_obj_lex_only :
-    let dist := Doyayo.AuxiliaryVerbs.splitDoubledDistribution
+    let dist := doyayoSplitDoubledDist
     dist.onAux.contains (.agreement .subj) = true ∧
     dist.onLex.contains (.agreement .subj) = true ∧
     dist.onLex.contains (.agreement .obj) = true ∧
@@ -386,7 +450,7 @@ theorem doyayo_splitDoubled_subj_doubled_obj_lex_only :
     The AUX root *yu* itself encodes TAM lexically (no separate
     `.tense` morpheme on AUX). -/
 theorem pipil_splitDoubled_subj_doubled_obj_lex_only :
-    let dist := Pipil.AuxiliaryVerbs.splitDoubledDistribution
+    let dist := pipilSplitDoubledDist
     dist.onAux.contains (.agreement .subj) = true ∧
     dist.onLex.contains (.agreement .subj) = true ∧
     dist.onLex.contains (.agreement .obj) = true ∧
@@ -395,12 +459,12 @@ theorem pipil_splitDoubled_subj_doubled_obj_lex_only :
 
 /-- In Pipil's lex-headed AVC, the auxiliary hosts no inflection. -/
 theorem pipil_lexHeaded_aux_empty :
-    Pipil.AuxiliaryVerbs.lexHeadedDistribution.onAux = [] := rfl
+    pipilLexHeadedDist.onAux = [] := rfl
 
 /-- In Finnish's split AVC, aux and lex host disjoint category types.
     (`.stem` on the lex side is a base, not an inflectional overlap.) -/
 theorem finnish_split_disjoint :
-    let dist := Finnish.Negation.finnishNegDistribution
+    let dist := finnishNegDist
     dist.onAux.all (fun c => !dist.onLex.contains c) = true := by decide
 
 /-- **Anderson Ch 5 abs/erg payoff (Jakaltek)**: with role-typed
@@ -408,7 +472,7 @@ theorem finnish_split_disjoint :
     a category-level distinction (`.agreement .obj` vs `.agreement .subj`),
     not just a within-category meta-comment. -/
 theorem jakaltek_abs_on_aux_erg_on_lex :
-    let dist := Jakaltek.AuxiliaryVerbs.inflDistribution
+    let dist := jakaltekDist
     dist.onAux.contains (.agreement .obj) = true ∧
     dist.onLex.contains (.agreement .subj) = true ∧
     dist.onAux.contains (.agreement .subj) = false ∧
@@ -419,7 +483,7 @@ theorem jakaltek_abs_on_aux_erg_on_lex :
     elements), tense is AUX-only, mood is LV-only. No object agreement
     in this construction. -/
 theorem hemba_splitDoubled_agreement_doubled :
-    let dist := Hemba.AuxiliaryVerbs.inflDistribution
+    let dist := hembaDist
     dist.onAux.contains (.agreement .subj) = true ∧
     dist.onLex.contains (.agreement .subj) = true ∧
     dist.onAux.contains .tense = true ∧

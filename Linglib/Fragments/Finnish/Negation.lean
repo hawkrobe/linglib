@@ -1,4 +1,3 @@
-import Linglib.Morphology.Periphrasis
 import Linglib.Morphology.Realization
 import Linglib.Syntax.Negation
 
@@ -33,7 +32,7 @@ rather than within a synthetic word.
 
 namespace Finnish.Negation
 
-open Morphology (MorphCategory MorphRule InflDistribution)
+open Morphology (MorphCategory MorphRule)
 open Syntax.Negation
 
 /-! ### Marker and system -/
@@ -109,15 +108,6 @@ def negAgreementRule (person : Nat) (number : String) : MorphRule Bool :=
 
 /-! ### Inflection distribution -/
 
-/-- Finnish negative construction inflection distribution.
-
-    The negative auxiliary hosts: negation, tense, agreement.
-    The main verb retains: stem, aspect (via participle choice).
-    Uses the shared `InflDistribution` from `Morphology`:
-    `onAux` = negative auxiliary, `onLex` = main verb. -/
-def finnishNegDistribution : InflDistribution :=
-  { onAux := [.negation, .tense, .agreement .subj]
-  , onLex := [.stem, .aspect] }
 
 /-! ### Verification -/
 

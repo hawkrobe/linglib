@@ -480,13 +480,6 @@ theorem quechua_paradigmatic_only :
 
 /-! ## Fragment cross-validation -/
 
-/-- Finnish Fragment inflection distribution is consistent with
-    constructional A/Fin: categories split across neg aux and main verb. -/
-theorem finnish_split_confirms_constructional :
-    let dist := Finnish.Negation.finnishNegDistribution
-    dist.onAux.length > 0 ∧ dist.onLex.length > 0 ∧
-    finnish.asymmetryDimensions.contains .constructional := by
-  refine ⟨?_, ?_, ?_⟩ <;> decide
 
 /-- Japanese Fragment distribution shows the tense shift from stem to
     suffix that Appendix III codes as constructional replacement

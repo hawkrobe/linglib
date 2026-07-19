@@ -1,4 +1,3 @@
-import Linglib.Morphology.Periphrasis
 
 /-!
 # Gorum Auxiliary Verb Fragment
@@ -14,7 +13,6 @@ Source: Aze 1973, cited in [anderson-2006].
 
 namespace Gorum.AuxiliaryVerbs
 
-open Morphology (InflDistribution MorphCategory)
 
 /-- Primary AVC example form.
     *miŋ ne-gaʔ-ru ne-laʔ-ru*
@@ -35,10 +33,5 @@ def secondaryForm : String := "kula ne-giʔ-sun miŋ ne-butoŋ-tuʔ ne-i-tuʔ"
 def family : String := "South Munda, Austroasiatic"
 def location : String := "India"
 
-/-- Doubled inflection distribution: both AUX and LV are marked for
-    subject agreement, tense, and affectedness (version/voice). -/
-def inflDistribution : InflDistribution :=
-  { onAux := [.agreement .subj, .tense, .voice]
-  , onLex := [.agreement .subj, .tense, .voice] }
 
 end Gorum.AuxiliaryVerbs
