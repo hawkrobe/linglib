@@ -73,17 +73,12 @@ structure Morph where
   form : String
   deriving DecidableEq, Repr
 
-/-- An **exponent**: the possibly empty sequence of morphs realizing a
-paradigm cell. `[]` is zero exponence; a discontinuous realization
-(Q'anjob'al *s-…heb'*) is a two-morph exponent. -/
-abbrev Exponent := List Morph
+namespace Morph
 
 /-- The boundary sign of an attachment: `-` for affixes, `=` for clitics. -/
-def Morph.Attachment.sign : Morph.Attachment → String
+def Attachment.sign : Attachment → String
   | .affix => "-"
   | .clitic => "="
-
-namespace Morph
 
 /-- A prefix morph. -/
 def pref (s : String) : Morph := ⟨.bound .before .affix, s⟩
@@ -117,6 +112,11 @@ def toString (m : Morph) : String :=
   | .root | .free => m.form
 
 end Morph
+
+/-- An **exponent**: the possibly empty sequence of morphs realizing a
+paradigm cell. `[]` is zero exponence; a discontinuous realization
+(Q'anjob'al *s-…heb'*) is a two-morph exponent. -/
+abbrev Exponent := List Morph
 
 /-- Display an exponent in descriptive notation: `∅` for zero exponence,
 `…` linking the parts of a discontinuous realization. -/
