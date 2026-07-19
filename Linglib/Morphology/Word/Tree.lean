@@ -114,7 +114,7 @@ def toSequence? : Tree M → Option (List M)
   | .root m => some [m]
   | .prefixed afx b => (b.toSequence?).map (afx :: ·)
   | .suffixed b afx => (b.toSequence?).map (· ++ [afx])
-  | .compound l r => do pure ((← l.toSequence?) ++ (← r.toSequence?))
+  | .compound l r => Option.map₂ (· ++ ·) l.toSequence? r.toSequence?
   | .converted b => b.toSequence?
   | .infixed .. => none
   | .circumfixed .. => none
@@ -122,8 +122,32 @@ def toSequence? : Tree M → Option (List M)
 
 /-- The projection is total exactly on the concatenative fragment: a
 circumfixed word has no material-sequence projection. -/
-theorem toSequence?_circumfixed (pre suf : M) (b : Tree M) :
+@[simp] theorem toSequence?_circumfixed (pre suf : M) (b : Tree M) :
     (circumfixed pre b suf).toSequence? = none := rfl
+
+/-! ### Laws -/
+
+@[simp] theorem map_id (t : Tree M) : t.map id = t := by
+  induction t <;> simp [map, *]
+
+theorem map_map {N O : Type*} (f : M → N) (g : N → O) (t : Tree M) :
+    (t.map f).map g = t.map (g ∘ f) := by
+  induction t <;> simp [map, *]
+
+/-- Linearization is natural in the material. -/
+theorem toList_map {N : Type*} (f : M → N) (t : Tree M) :
+    (t.map f).toList = t.toList.map f := by
+  induction t <;> simp [map, toList, *]
+
+/-- The concatenative projection refines linearization: where the material
+sequence exists, it is the linearization. -/
+theorem toList_eq_of_toSequence?_eq_some {t : Tree M} {l : List M}
+    (h : t.toSequence? = some l) : t.toList = l := by
+  induction t generalizing l with
+  | compound _ _ ihl ihr =>
+      obtain ⟨_, _, hll, hlr, rfl⟩ := Option.map₂_eq_some_iff.mp h
+      simp [toList, ihl hll, ihr hlr]
+  | _ => simp_all [toSequence?, toList] <;> grind
 
 /-! ### Structural measures -/
 
