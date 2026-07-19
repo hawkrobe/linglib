@@ -1,6 +1,6 @@
 import Mathlib.Tactic.TypeStar
 import Linglib.Morphology.Exponence.Select
-import Linglib.Morphology.Root.System
+import Linglib.Morphology.Realization
 
 /-!
 # Vocabulary Insertion (Distributed Morphology)
@@ -230,20 +230,21 @@ theorem vocabularyInsert_isElsewhereWinner {rules : List (VocabItem Ctx Root)}
 
 end ExponenceCore
 
-/-! ### The root-system view -/
+/-! ### The realization view -/
 
-/-- Vocabulary Insertion as a root system: roots as opaque indices, syntactic
+/-- Vocabulary Insertion as a realization: roots as opaque indices,
+syntactic
 contexts as contexts, `none` as non-licensing — the univalent stratum. -/
-def toSystem {Ctx Root : Type*} (rules : List (VocabItem Ctx Root)) :
-    Morphology.Root.System Root Ctx String :=
+def toRealization {Ctx Root : Type*} (rules : List (VocabItem Ctx Root)) :
+    Morphology.Realization Root Ctx String :=
   ⟨fun r c => match vocabularyInsert rules c r with
     | some f => {f}
     | none => ∅⟩
 
-theorem toSystem_isUnivalent {Ctx Root : Type*}
-    (rules : List (VocabItem Ctx Root)) : (toSystem rules).IsUnivalent :=
+theorem toRealization_isUnivalent {Ctx Root : Type*}
+    (rules : List (VocabItem Ctx Root)) : (toRealization rules).IsUnivalent :=
   fun r c => by
-    simp only [toSystem]
+    simp only [toRealization]
     cases vocabularyInsert rules c r <;> simp
 
 end Morphology.DM.VI

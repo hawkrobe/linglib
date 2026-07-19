@@ -1290,9 +1290,9 @@ import Linglib.Morphology.Paradigm.Function
 import Linglib.Morphology.Paradigm.Linkage
 import Linglib.Morphology.Paradigm.Morphome
 import Linglib.Morphology.Paradigm.OfCells
+import Linglib.Morphology.Realization
 import Linglib.Morphology.Root.Basic
 import Linglib.Morphology.Root.Consonantal
-import Linglib.Morphology.Root.System
 import Linglib.Morphology.Word.Basic
 import Linglib.Morphology.Paradigm.ToTree
 import Linglib.Morphology.Word.Tree
