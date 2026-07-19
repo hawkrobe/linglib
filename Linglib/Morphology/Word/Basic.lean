@@ -39,7 +39,7 @@ structure Word where
   cat : UD.UPOS
   /-- The UD morphological features. -/
   features : UD.MorphFeatures := {}
-  deriving Repr
+  deriving Repr, DecidableEq
 
 /-- Convenience constructor for a featureless word (form + category only). -/
 def Word.mk' (form : String) (cat : UD.UPOS) : Word := { form := form, cat := cat }
