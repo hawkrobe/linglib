@@ -1,6 +1,6 @@
 import Linglib.Syntax.Category.Auxiliary.Constructions
 import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
-import Linglib.Morphology.Formative
+import Linglib.Features.Formative
 import Linglib.Morphology.Periphrasis
 import Linglib.Fragments.English.Auxiliaries
 import Linglib.Fragments.Finnish.Negation
@@ -12,7 +12,7 @@ import Linglib.Fragments.Pipil.AuxiliaryVerbs
 import Linglib.Syntax.Negation
 import Linglib.Studies.Sorace2000
 import Linglib.Studies.Miestamo2005
-import Linglib.Morphology.Grammaticalization
+import Linglib.Features.Grammaticalization
 import Linglib.Features.Aktionsart
 import Linglib.Data.Examples.Anderson2006
 
@@ -39,7 +39,7 @@ grammaticalization framework.
 4. **Grammaticalization grounding**: Anderson ch. 7 traces AVCs
    onto Heine 1993's cline (Anderson p. 5: *"According to Heine
    (1993: 48ff.)..."*). The cline lives in
-   `Morphology/Grammaticalization.lean`, anchored on
+   `Features/Grammaticalization.lean`, anchored on
    [heine-1993] ch. 3.
 
 ## Coverage

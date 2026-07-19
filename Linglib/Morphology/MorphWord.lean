@@ -1,5 +1,5 @@
 import Linglib.Morphology.Morph
-import Linglib.Morphology.Formative
+import Linglib.Features.Formative
 
 /-!
 # Morphological Word Structure
@@ -48,7 +48,7 @@ Examples: German *ge-mach-t*, Tigrinya *ʔay-...-n*, Malay *ke-baik-an*. -/
 
 namespace Morphology.Circumfix
 
-open Morphology (AttachmentSide)
+open Features (AttachmentSide)
 
 /-- Circumfixal exponence: a stem wrapped by a prefix and suffix. -/
 structure CircumfixExponence where
@@ -104,7 +104,7 @@ end Morphology.Circumfix
 
 namespace Morphology.WordStructure
 
-open Morphology (MorphStatus AttachmentSide)
+open Features (MorphStatus AttachmentSide)
 open Morphology.Circumfix (CircumfixExponence)
 
 -- ============================================================================
