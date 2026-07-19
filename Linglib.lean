@@ -1290,7 +1290,6 @@ import Linglib.Morphology.Paradigm.Morphome
 import Linglib.Morphology.Paradigm.OfCells
 import Linglib.Morphology.Root.Basic
 import Linglib.Morphology.Root.Family
-import Linglib.Morphology.UsageBased.Network
 import Linglib.Morphology.Word.Basic
 import Linglib.Morphology.Paradigm.ToTree
 import Linglib.Morphology.Word.Tree
