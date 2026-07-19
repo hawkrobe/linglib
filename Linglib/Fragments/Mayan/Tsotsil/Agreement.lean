@@ -1,4 +1,5 @@
 import Linglib.Fragments.Mayan.Tseltalan
+import Linglib.Phonology.Segmental.Defs
 import Linglib.Features.Reflex
 import Linglib.Syntax.Extraction
 
@@ -87,7 +88,7 @@ def setBLinearity : MarkerLinearity := .either
     possessed noun (GEN) — `j-`/`a-`/`s-` pre-consonantally,
     `k-`/`av-`/`y-` pre-vocalically (same orientation as Tseltal; an
     earlier revision reversed the 1st-person pair). -/
-def setAExponent : Morphology.Following → ExponentTable
+def setAExponent : Phonology.Segment.Class → ExponentTable
   | .consonant =>
     [(.pn .first .Sing, [.pref "j"]), (.pn .second .Sing, [.pref "a"]),
      (.pn .third .Sing, [.pref "s"]), (.pn .first .Plur, [.pref "j"]),

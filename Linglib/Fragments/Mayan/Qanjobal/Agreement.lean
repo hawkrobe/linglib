@@ -1,4 +1,5 @@
 import Linglib.Features.Case.Basic
+import Linglib.Phonology.Segmental.Defs
 import Linglib.Fragments.Mayan.Params
 
 /-!
@@ -87,7 +88,7 @@ def absPosition : Mayan.ABSPosition := .high
     environment ([coon-mateo-pedro-preminger-2014] table (13)). The 3pl
     cells are discontinuous exponents: person prefix plus the free
     plural word *heb'*. -/
-def setAExponent : Morphology.Following → ExponentTable
+def setAExponent : Phonology.Segment.Class → ExponentTable
   | .consonant =>
     [(.pn .first .Sing, [.pref "hin"]), (.pn .second .Sing, [.pref "ha"]),
      (.pn .third .Sing, [.pref "s"]), (.pn .first .Plur, [.pref "ko"]),

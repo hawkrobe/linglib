@@ -183,7 +183,7 @@ open Agreement
 def setAVocab : Vocabulary :=
   makePersonVocab Agreement.Cell.pnCells Agreement.Cell.toPhiFeatures
     (fun c => (((setAExponent .consonant).realize c).map
-      Morphology.Exponent.toString).getD "") (some .v)
+      toString).getD "") (some .v)
 
 /-- Set B (ABS) vocabulary entries: φ-features on Infl (.T)
     yield the morphological exponent ([scott-2023] Table 3.5).
@@ -194,8 +194,8 @@ def setAVocab : Vocabulary :=
 def setBVocab : Vocabulary :=
   makePersonVocab setBSpecificCells Agreement.Cell.toPhiFeatures
     (fun c => ((setBExponent.realize c).map
-      Morphology.Exponent.toString).getD "") (some .T) ++
-    [{ features := ⊥, exponent := Morphology.Exponent.toString defaultSetB, context := some .T }]
+      toString).getD "") (some .T) ++
+    [{ features := ⊥, exponent := toString defaultSetB, context := some .T }]
 
 /-- Which Minimalist head φ-Agrees with each argument position.
     Ditransitive R/T default to none (not modeled). -/

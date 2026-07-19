@@ -218,6 +218,20 @@ def fillFromContext (f : Feature) (ctx : Segment) : Segment :=
 
 end Segment
 
+/-- The coarse two-way classification of a segment, the commonest conditioning
+environment for morph-variant selection (pre-consonantal vs pre-vocalic). -/
+inductive Segment.Class where
+  /-- A consonant. -/
+  | consonant
+  /-- A vowel. -/
+  | vowel
+  deriving DecidableEq, Repr, Fintype
+
+/-- A segment's coarse class: vowels are [+syllabic]; everything else classes
+as a consonant. -/
+def Segment.toClass (s : Segment) : Segment.Class :=
+  if s.IsVowel then .vowel else .consonant
+
 /-! ### Sonority -/
 
 /-- The abstract sonority hierarchy ([clements-1990]): what the synchronic grammar

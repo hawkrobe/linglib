@@ -1,4 +1,5 @@
 import Linglib.Features.Case.Basic
+import Linglib.Phonology.Segmental.Defs
 import Linglib.Data.UD.Basic
 import Linglib.Features.Number.Capabilities
 import Linglib.Features.Prominence
@@ -81,7 +82,7 @@ abbrev phi (p : Person) (n : Number) : PhiFeatures :=
     These are verbal prefixes (or postverbal particles for formal forms)
     that cross-reference S (intransitive subject) and P (transitive
     object). [mondloch-2017] Lessons 9, 15. -/
-def setBMarker : PhiFeatures → Morphology.Exponent
+def setBMarker : PhiFeatures → List Morphology.Morph
   | ⟨.first,  .singular, .informal⟩ => [.pref "in"]
   | ⟨.second, .singular, .informal⟩ => [.pref "at"]
   | ⟨.third,  .singular, .informal⟩ => []
@@ -104,7 +105,7 @@ def setBMarker : PhiFeatures → Morphology.Exponent
     These cross-reference A (transitive subject) and are identical to
     possessive pronouns before consonant-initial nouns.
     [mondloch-2017] Lessons 7, 15. -/
-def setAPreC : PhiFeatures → Morphology.Exponent
+def setAPreC : PhiFeatures → List Morphology.Morph
   | ⟨.first,  .singular, .informal⟩ => [.pref "nu"]
   | ⟨.second, .singular, .informal⟩ => [.pref "a"]
   | ⟨.third,  .singular, .informal⟩ => [.pref "u"]
@@ -122,7 +123,7 @@ def setAPreC : PhiFeatures → Morphology.Exponent
 
 /-- Set A (ergative) markers before vowel-initial roots.
     [mondloch-2017] Lesson 8. -/
-def setAPreV : PhiFeatures → Morphology.Exponent
+def setAPreV : PhiFeatures → List Morphology.Morph
   | ⟨.first,  .singular, .informal⟩ => [.pref "w"]
   | ⟨.second, .singular, .informal⟩ => [.pref "aw"]
   | ⟨.third,  .singular, .informal⟩ => [.pref "r"]
@@ -334,7 +335,7 @@ def setBLinearity : MarkerLinearity := .prefixal
 /-- Canonical Set A exponent table (informal) by following-segment
     environment, keyed on the canonical φ-cell `Agreement.Cell` for
     cross-Mayan consumption. -/
-def setAExponent : Morphology.Following → ExponentTable
+def setAExponent : Phonology.Segment.Class → ExponentTable
   | .consonant =>
     [(.pn .first .Sing, setAPreC (phi .first  .singular)),
      (.pn .second .Sing, setAPreC (phi .second .singular)),
