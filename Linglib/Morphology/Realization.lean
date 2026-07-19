@@ -290,6 +290,37 @@ theorem Hom.realize_eq_of_onRoot_eq {S : Interpreted R₁ C₁ F M}
     S.realize r c = S.realize r' c := by
   rw [φ.realize_eq r c, φ.realize_eq r' c, h]
 
+/-- The lax tier: realization and interpretation are *included* rather than
+matched. Where a strict `Hom` merger asserts identity, a lax merger asserts
+family membership — each source index's forms and readings are among its
+image's. Pattern-bound lexemes lax-merge into a total root without ever
+strict-merging. -/
+structure LaxHom (S : Interpreted R₁ C₁ F M) (T : Interpreted R₂ C₂ F M) where
+  /-- The index translation. -/
+  onRoot : R₁ → R₂
+  /-- The root-independent context translation. -/
+  onCtx : C₁ → C₂
+  /-- Realizations are included. -/
+  realize_sub : ∀ r c, S.realize r c ⊆ T.realize (onRoot r) (onCtx c)
+  /-- Interpretations are included. -/
+  interp_sub : ∀ r c, S.interp r c ⊆ T.interp (onRoot r) (onCtx c)
+
+/-- A strict hom is in particular lax. -/
+def Hom.toLaxHom {S : Interpreted R₁ C₁ F M} {T : Interpreted R₂ C₂ F M}
+    (φ : Hom S T) : LaxHom S T :=
+  ⟨φ.onRoot, φ.onCtx, fun r c => (φ.realize_eq r c).le,
+   fun r c => (φ.interp_eq r c).le⟩
+
+/-- Lax homs compose. -/
+def LaxHom.comp {R₃ C₃ : Type*} {S₁ : Interpreted R₁ C₁ F M}
+    {S₂ : Interpreted R₂ C₂ F M} {S₃ : Interpreted R₃ C₃ F M}
+    (g : LaxHom S₂ S₃) (f : LaxHom S₁ S₂) : LaxHom S₁ S₃ :=
+  ⟨fun r => g.onRoot (f.onRoot r), fun c => g.onCtx (f.onCtx c),
+   fun r c =>
+     (f.realize_sub r c).trans (g.realize_sub (f.onRoot r) (f.onCtx c)),
+   fun r c =>
+     (f.interp_sub r c).trans (g.interp_sub (f.onRoot r) (f.onCtx c))⟩
+
 end Hom
 
 end Realization.Interpreted

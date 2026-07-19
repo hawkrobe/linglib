@@ -199,6 +199,14 @@ theorem sqrt_to_sisters_none
     | exact absurd hs₂ (by decide)
     | exact absurd (hi₁.trans hi₂.symm) (by decide)
 
+/-- The sisters do lax-merge into the single √ (`Realization.Interpreted.LaxHom`):
+each sister's forms and senses are among the √'s. The graded criterion —
+lax-mergeable but not strict-mergeable — is exactly the formal content of
+*family, not identity*: heterosemy. -/
+theorem sisters_lax_merge :
+    Nonempty (Realization.Interpreted.LaxHom sisterCarving sqrtCarving) :=
+  ⟨⟨fun _ => .hammer, id, by decide, by decide⟩⟩
+
 end Individuation
 
 end Haspelmath2025Root
