@@ -178,7 +178,7 @@ def absIntranSInNonFinite : Bool := false
     VA §4.2; the exclusive paradigm with `=l(oj)oñ` is a per-language
     refinement not exposed by the canonical φ-cell substrate) and the
     suffix `-ob` for 3pl. -/
-def setAExponent : Phonology.SegmentClass → ExponentTable
+def setAExponent : Phonology.Segment.Class → ExponentTable
   | .consonant =>
     [(.pn .first .Sing, [.pref "k"]), (.pn .second .Sing, [.pref "a"]),
      (.pn .third .Sing, [.pref "i"]),

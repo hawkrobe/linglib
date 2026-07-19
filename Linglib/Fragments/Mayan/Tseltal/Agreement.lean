@@ -89,7 +89,7 @@ def setBLinearity : MarkerLinearity := .suffixal
     `j-`/`a-`/`s-` pre-consonantally, `k-`/`aw-`/`y-` pre-vocalically
     (person is not distinguished by number in Set A; plural is marked
     by separate suffixes not part of the person marker). -/
-def setAExponent : Phonology.SegmentClass → ExponentTable
+def setAExponent : Phonology.Segment.Class → ExponentTable
   | .consonant =>
     [(.pn .first .Sing, [.pref "j"]), (.pn .second .Sing, [.pref "a"]),
      (.pn .third .Sing, [.pref "s"]), (.pn .first .Plur, [.pref "j"]),

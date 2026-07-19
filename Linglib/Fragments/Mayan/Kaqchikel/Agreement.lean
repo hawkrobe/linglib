@@ -67,7 +67,7 @@ def absPosition : Mayan.ABSPosition := .high
     the standard K'ichean reading (cognate with the verified K'iche'
     paradigm, [mondloch-2017]). 3sg pre-consonantal *ru-* has a
     dialectal variant *u-* (Preminger's "r(u)/u-"). -/
-def setAExponent : Phonology.SegmentClass → ExponentTable
+def setAExponent : Phonology.Segment.Class → ExponentTable
   | .consonant =>
     [(.pn .first .Sing, [.pref "n"]), (.pn .second .Sing, [.pref "a"]),
      (.pn .third .Sing, [.pref "ru"]), (.pn .first .Plur, [.pref "qa"]),

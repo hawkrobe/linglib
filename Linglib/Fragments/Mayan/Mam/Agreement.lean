@@ -78,7 +78,7 @@ open Features.Prominence (ArgumentRole)
     syncretic for 2/3SG, ky- for 2/3PL. Scott: 1SG is the sole Set A
     allomorphy — pre-consonantal `n-`, pre-vocalic `w-` (exx. (28)-(29));
     the other markers do not alternate. -/
-def setAExponent : Phonology.SegmentClass → ExponentTable
+def setAExponent : Phonology.Segment.Class → ExponentTable
   | .consonant =>
     [(.pn .first .Sing, [.pref "n"]), (.pn .second .Sing, [.pref "t"]),
      (.pn .third .Sing, [.pref "t"]), (.pn .first .Plur, [.pref "q"]),

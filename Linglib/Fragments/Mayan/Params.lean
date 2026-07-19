@@ -358,7 +358,7 @@ def VerbForm.agreementSlots (f : VerbForm) : Nat :=
     separate plural word, e.g. Q'anjob'al *s-…heb'*) is a two-morph exponent.
     Per-language `setAExponent`/`setBExponent` populate this; cross-Mayan
     typology theorems quantify over it. Tables with pre-consonantal vs
-    pre-vocalic variant shapes are `Phonology.SegmentClass → ExponentTable`
+    pre-vocalic variant shapes are `Phonology.Segment.Class → ExponentTable`
     functions, with `.consonant` the citation point. -/
 abbrev ExponentTable := Agreement.Paradigm Morphology.Exponent
 

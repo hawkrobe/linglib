@@ -335,7 +335,7 @@ def setBLinearity : MarkerLinearity := .prefixal
 /-- Canonical Set A exponent table (informal) by following-segment
     environment, keyed on the canonical φ-cell `Agreement.Cell` for
     cross-Mayan consumption. -/
-def setAExponent : Phonology.SegmentClass → ExponentTable
+def setAExponent : Phonology.Segment.Class → ExponentTable
   | .consonant =>
     [(.pn .first .Sing, setAPreC (phi .first  .singular)),
      (.pn .second .Sing, setAPreC (phi .second .singular)),

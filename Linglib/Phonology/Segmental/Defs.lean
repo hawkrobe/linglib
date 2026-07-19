@@ -220,7 +220,7 @@ end Segment
 
 /-- The coarse two-way classification of a segment, the commonest conditioning
 environment for morph-variant selection (pre-consonantal vs pre-vocalic). -/
-inductive SegmentClass where
+inductive Segment.Class where
   /-- A consonant. -/
   | consonant
   /-- A vowel. -/
@@ -229,7 +229,7 @@ inductive SegmentClass where
 
 /-- A segment's coarse class: vowels are [+syllabic]; everything else classes
 as a consonant. -/
-def Segment.toSegmentClass (s : Segment) : SegmentClass :=
+def Segment.toClass (s : Segment) : Segment.Class :=
   if s.IsVowel then .vowel else .consonant
 
 /-! ### Sonority -/
