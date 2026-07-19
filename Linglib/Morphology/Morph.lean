@@ -1,4 +1,6 @@
 import Mathlib.Tactic.DeriveFintype
+import Mathlib.Data.Fintype.Sigma
+import Mathlib.Data.Fintype.Sum
 
 /-!
 # Morphs and exponents
@@ -11,7 +13,8 @@ empty exponent, and a discontinuous realization is a multi-morph exponent.
 
 ## Main declarations
 
-* `Morph`, `Morph.Kind` — a segmental form with its attachment kind
+* `Morph`, `Morph.Kind` — a segmental form with its attachment kind,
+  factored as side × attachment for bound morphs
 * `Exponent` — a sequence of morphs; `[]` is zero exponence
 * `Morph.toString`, `Exponent.toString` — descriptive-notation display
   (`X-`, `-X`, `X=`, `=X`; `∅` for zero exponence)
@@ -36,18 +39,28 @@ convention from `Morph.Kind`.
 
 namespace Morphology
 
+/-- The side of its host on which a bound morph attaches. -/
+inductive Morph.Side where
+  /-- Before the host: prefixes and proclitics. -/
+  | before
+  /-- After the host: suffixes and enclitics. -/
+  | after
+  deriving DecidableEq, Repr, Fintype
+
+/-- How tightly a bound morph attaches to its host. -/
+inductive Morph.Attachment where
+  /-- An affix, written with `-`. -/
+  | affix
+  /-- A clitic, written with `=`. -/
+  | clitic
+  deriving DecidableEq, Repr, Fintype
+
 /-- The ways a morph attaches. -/
 inductive Morph.Kind where
+  /-- A bound morph attaches on a side of its host, as an affix or a clitic. -/
+  | bound (side : Morph.Side) (attachment : Morph.Attachment)
   /-- A root is a morph denoting a thing, an action, or a property. -/
   | root
-  /-- A prefix (`X-`). -/
-  | pref
-  /-- A suffix (`-X`). -/
-  | suff
-  /-- A proclitic (`X=`). -/
-  | procl
-  /-- An enclitic (`=X`). -/
-  | encl
   /-- A free non-root morph, such as a particle or an auxiliary. -/
   | free
   deriving DecidableEq, Repr, Fintype
@@ -65,19 +78,24 @@ paradigm cell. `[]` is zero exponence; a discontinuous realization
 (Q'anjob'al *s-…heb'*) is a two-morph exponent. -/
 abbrev Exponent := List Morph
 
+/-- The boundary sign of an attachment: `-` for affixes, `=` for clitics. -/
+def Morph.Attachment.sign : Morph.Attachment → String
+  | .affix => "-"
+  | .clitic => "="
+
 namespace Morph
 
 /-- A prefix morph. -/
-def pref (s : String) : Morph := ⟨.pref, s⟩
+def pref (s : String) : Morph := ⟨.bound .before .affix, s⟩
 
 /-- A suffix morph. -/
-def suff (s : String) : Morph := ⟨.suff, s⟩
+def suff (s : String) : Morph := ⟨.bound .after .affix, s⟩
 
 /-- A proclitic morph. -/
-def procl (s : String) : Morph := ⟨.procl, s⟩
+def procl (s : String) : Morph := ⟨.bound .before .clitic, s⟩
 
 /-- An enclitic morph. -/
-def encl (s : String) : Morph := ⟨.encl, s⟩
+def encl (s : String) : Morph := ⟨.bound .after .clitic, s⟩
 
 /-- A free non-root morph. -/
 def free (s : String) : Morph := ⟨.free, s⟩
@@ -85,25 +103,30 @@ def free (s : String) : Morph := ⟨.free, s⟩
 /-- A root morph. -/
 def root (s : String) : Morph := ⟨.root, s⟩
 
-/-- A morph is an **affix** if it is a prefix or a suffix. -/
-def IsAffix (m : Morph) : Prop := m.kind = .pref ∨ m.kind = .suff
+/-- The attachment of a bound morph; `none` for roots and free forms. -/
+def attachment? : Morph → Option Attachment
+  | ⟨.bound _ a, _⟩ => some a
+  | _ => none
+
+/-- A morph is an **affix** if it is bound as an affix. -/
+def IsAffix (m : Morph) : Prop := m.attachment? = some .affix
 
 instance (m : Morph) : Decidable m.IsAffix :=
-  inferInstanceAs (Decidable (_ ∨ _))
+  inferInstanceAs (Decidable (_ = _))
 
-/-- A morph is a **clitic** if it is a proclitic or an enclitic. -/
-def IsClitic (m : Morph) : Prop := m.kind = .procl ∨ m.kind = .encl
+/-- A morph is a **clitic** if it is bound as a clitic. -/
+def IsClitic (m : Morph) : Prop := m.attachment? = some .clitic
 
 instance (m : Morph) : Decidable m.IsClitic :=
-  inferInstanceAs (Decidable (_ ∨ _))
+  inferInstanceAs (Decidable (_ = _))
 
-/-- Display in descriptive notation: `X-`, `-X`, `X=`, `=X`, bare. -/
-def toString : Morph → String
-  | ⟨.pref, s⟩ => s ++ "-"
-  | ⟨.suff, s⟩ => "-" ++ s
-  | ⟨.procl, s⟩ => s ++ "="
-  | ⟨.encl, s⟩ => "=" ++ s
-  | ⟨.root, s⟩ | ⟨.free, s⟩ => s
+/-- Display in descriptive notation: the attachment's sign on the side of
+the host — `X-`, `-X`, `X=`, `=X` — and bare for roots and free forms. -/
+def toString (m : Morph) : String :=
+  match m.kind with
+  | .bound .before a => m.form ++ a.sign
+  | .bound .after a => a.sign ++ m.form
+  | .root | .free => m.form
 
 end Morph
 
