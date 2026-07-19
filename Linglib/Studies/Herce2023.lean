@@ -2,6 +2,7 @@ import Linglib.Morphology.Paradigm.Morphome
 import Mathlib.Data.Fintype.Prod
 import Mathlib.Data.Fintype.Option
 import Mathlib.Data.Finset.Card
+import Mathlib.Tactic.DeriveFintype
 
 /-!
 # The typological diversity of morphomes
