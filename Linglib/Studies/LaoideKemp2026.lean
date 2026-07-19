@@ -46,7 +46,7 @@ Segment` — the project's floating-autosegmental substrate, which
 [laoide-kemp-2026]'s floating consonants are a named motivating
 consumer of. Three substrate features carry the analysis directly:
 
-* **Morpheme membership** on every tier/backbone element distinguishes
+* **Morph membership** on every tier/backbone element distinguishes
   the historic-tense `(d)`, the verb stem, and the past-tense
   impersonal exponent.
 * The **underlying/surface split** (`links` vs `surfaceLinks`) models
@@ -112,7 +112,7 @@ is modelled as a genuine floating melodic segment (`Segment.dPrime`).
 namespace LaoideKemp2026
 
 open Autosegmental
-open Morphology (Morpheme)
+open Morphology (Morph)
 
 /-! ## §1 Segment inventory and CV skeleton
 
@@ -176,18 +176,18 @@ the verb stem (a free word), the historic-tense exponent `HIST`
 -/
 
 /-- The verb-stem morpheme (a free word), keyed by orthographic form. -/
-private def mStem (s : String) : Morpheme := { morph := .root s, gloss := "" }
+private def mStem (s : String) : Morph := .root s
 
 /-- The historic-tense exponent, bearing floating `(d)` and `{L}`. -/
-private def mHist : Morpheme := { morph := .pref "d'", gloss := "HIST" }
+private def mHist : Morph := .pref "d'"
 
 /-- The past-tense impersonal exponent: an empty CV unit at the left
     edge ([laoide-kemp-2026] §6.2, Fig. 5). -/
-private def mImpers : Morpheme := { morph := .pref "", gloss := "PST.IMPERS" }
+private def mImpers : Morph := .pref ""
 
 /-! ## §3 Verb stems as `FloatingForm`s
 
-A verb stem is a `FloatingForm CVKind Segment Morpheme`: the **upper** tier is
+A verb stem is a `FloatingForm CVKind Segment Morph`: the **upper** tier is
 the segmental melody (`Segment`), the **lower** tier is the CV
 skeleton (`CVKind`), and association lines `(k, j)` link melody
 element `k` to skeleton position `j`. The surface state mirrors the
@@ -195,23 +195,23 @@ underlying state on input (`FloatingForm.mkInput`).
 -/
 
 /-- A melodic tier element bearing morpheme `m`. -/
-private def mel (s : Segment) (m : Morpheme) : TierSpec Segment Morpheme := ⟨s, m⟩
+private def mel (s : Segment) (m : Morph) : TierSpec Segment Morph := ⟨s, m⟩
 
 /-- A skeletal backbone slot bearing morpheme `m`. -/
-private def slot (c : CVKind) (m : Morpheme) : SegSpec CVKind Morpheme := ⟨c, m⟩
+private def slot (c : CVKind) (m : Morph) : SegSpec CVKind Morph := ⟨c, m⟩
 
 /-- Build a single-morpheme verb stem from its CV skeleton, melody,
     and association lines. -/
 private def stemForm (name : String) (skeleton : List CVKind)
     (melody : List Segment) (links : Finset (Nat × Nat)) :
-    FloatingForm CVKind Segment Morpheme :=
+    FloatingForm CVKind Segment Morph :=
   let m := mStem name
   FloatingForm.mkInput (skeleton.map (slot · m)) (melody.map (mel · m)) links
 
 /-- The verb `bog` 'soft', the C-initial example in [laoide-kemp-2026]
     Fig. 1a. Melody = [b, o, g]; skeleton = [C, V, C]; identity
     associations. -/
-def bog : FloatingForm CVKind Segment Morpheme :=
+def bog : FloatingForm CVKind Segment Morph :=
   stemForm "bog" [.C, .V, .C] [.b, .o, .g] {(0, 0), (1, 1), (2, 2)}
 
 /-- The verb `ól` 'drink', the V-initial example in
@@ -219,7 +219,7 @@ def bog : FloatingForm CVKind Segment Morpheme :=
     [C, V, C, V]; the initial C-slot has no melodic association.
     This is the key structural property: the underlying form has an
     empty C-slot at position 0. -/
-def ól : FloatingForm CVKind Segment Morpheme :=
+def ól : FloatingForm CVKind Segment Morph :=
   stemForm "ol" [.C, .V, .C, .V] [.ó, .l] {(0, 1), (1, 2)}
 
 /-- The verb `fág` 'leave', the *f*-initial example in
@@ -227,7 +227,7 @@ def ól : FloatingForm CVKind Segment Morpheme :=
     [C, V, C]; identity associations. Under lenition, the `f`
     segmental content deletes, leaving an empty C₁-slot — exactly
     the configuration that licenses `(d)`-docking. -/
-def fág : FloatingForm CVKind Segment Morpheme :=
+def fág : FloatingForm CVKind Segment Morph :=
   stemForm "fag" [.C, .V, .C] [.f, .á, .g] {(0, 0), (1, 1), (2, 2)}
 
 /-! ## §4 The exponents and morpheme composition
@@ -242,7 +242,7 @@ association lines by the prefix's tier lengths.
 
 /-- The historic-tense exponent: a floating `(d)` melodic segment,
     no skeleton, no associations ([laoide-kemp-2026] Fig. 1). -/
-def historicExponent : FloatingForm CVKind Segment Morpheme where
+def historicExponent : FloatingForm CVKind Segment Morph where
   upper := .ofList [mel .dPrime mHist]
   lower := .empty
   links := ∅
@@ -252,7 +252,7 @@ def historicExponent : FloatingForm CVKind Segment Morpheme where
 /-- The past-tense impersonal exponent: an empty CV unit (`[C, V]`
     skeleton), no melody, no associations ([laoide-kemp-2026] §6.2,
     Fig. 5). -/
-def impersonalExponent : FloatingForm CVKind Segment Morpheme where
+def impersonalExponent : FloatingForm CVKind Segment Morph where
   upper := .empty
   lower := .ofList [slot .C mImpers, slot .V mImpers]
   links := ∅
@@ -261,13 +261,13 @@ def impersonalExponent : FloatingForm CVKind Segment Morpheme where
 
 /-- Prefix the historic-tense exponent onto a stem (Fig. 1): floating
     `(d)` becomes melody index 0; the stem's melody shifts right by one. -/
-def withHist (stem : FloatingForm CVKind Segment Morpheme) : FloatingForm CVKind Segment Morpheme :=
+def withHist (stem : FloatingForm CVKind Segment Morph) : FloatingForm CVKind Segment Morph :=
   historicExponent.hconcat stem
 
 /-- Prefix the empty-CV impersonal exponent onto a stem (Fig. 5): the
     stem's skeleton shifts right by two, so the left edge is an empty
     `C₀V₀` unit. -/
-def withImpers (stem : FloatingForm CVKind Segment Morpheme) : FloatingForm CVKind Segment Morpheme :=
+def withImpers (stem : FloatingForm CVKind Segment Morph) : FloatingForm CVKind Segment Morph :=
   impersonalExponent.hconcat stem
 
 /-! ## §5 Lenition: the `{L}` deletion rule for *f*
@@ -291,14 +291,14 @@ so `{L}` cannot reach it and the *f* stays unmutated.
 
 /-- The melody index of the consonant linked to the leftmost skeletal
     slot (skeleton position 0), if any — the target of `{L}`. -/
-def initialConsonantIdx (f : FloatingForm CVKind Segment Morpheme) : Option Nat :=
+def initialConsonantIdx (f : FloatingForm CVKind Segment Morph) : Option Nat :=
   (List.range f.upper.len).find? (fun k => (k, 0) ∈ f.surfaceLinks)
 
 /-- Apply lenition: if the consonant on the leftmost skeletal slot is
     `f`, delete its melodic content on the surface (leaving the slot
     surface-empty). All other surface effects of lenition (b → v, etc.)
     are out of scope for the *d'* distribution question. -/
-def lenite (f : FloatingForm CVKind Segment Morpheme) : FloatingForm CVKind Segment Morpheme :=
+def lenite (f : FloatingForm CVKind Segment Morph) : FloatingForm CVKind Segment Morph :=
   match initialConsonantIdx f with
   | some k => if (f.upper.get? k).map TierSpec.value = some .f then f.deleteTierElem k else f
   | none   => f
@@ -314,36 +314,36 @@ linking convention.
 -/
 
 /-- Skeleton position `j` is a C-slot. -/
-def isCSlot (f : FloatingForm CVKind Segment Morpheme) (j : Nat) : Prop :=
+def isCSlot (f : FloatingForm CVKind Segment Morph) (j : Nat) : Prop :=
   (f.lower.get? j).map SegSpec.seg = some .C
 
-instance (f : FloatingForm CVKind Segment Morpheme) (j : Nat) : Decidable (isCSlot f j) :=
+instance (f : FloatingForm CVKind Segment Morph) (j : Nat) : Decidable (isCSlot f j) :=
   inferInstanceAs (Decidable (_ = _))
 
 /-- Skeleton position `j` is a V-slot. -/
-def isVSlot (f : FloatingForm CVKind Segment Morpheme) (j : Nat) : Prop :=
+def isVSlot (f : FloatingForm CVKind Segment Morph) (j : Nat) : Prop :=
   (f.lower.get? j).map SegSpec.seg = some .V
 
-instance (f : FloatingForm CVKind Segment Morpheme) (j : Nat) : Decidable (isVSlot f j) :=
+instance (f : FloatingForm CVKind Segment Morph) (j : Nat) : Decidable (isVSlot f j) :=
   inferInstanceAs (Decidable (_ = _))
 
 /-- The configuration that licenses `(d)`-docking, evaluated on the
     surface graph: position 0 is an empty C-slot, position 1 is a
     non-empty V-slot. The structural predicate at the heart of the
     paper's analysis ([laoide-kemp-2026] §4.1). -/
-def dDockable (f : FloatingForm CVKind Segment Morpheme) : Prop :=
+def dDockable (f : FloatingForm CVKind Segment Morph) : Prop :=
   isCSlot f 0 ∧ ¬ f.SurfaceLinkedLower 0 ∧
     isVSlot f 1 ∧ f.SurfaceLinkedLower 1
 
-instance (f : FloatingForm CVKind Segment Morpheme) : Decidable (dDockable f) :=
+instance (f : FloatingForm CVKind Segment Morph) : Decidable (dDockable f) :=
   inferInstanceAs (Decidable (_ ∧ _ ∧ _ ∧ _))
 
 /-- `(d)` surfaces in the historic-tense form `f` iff the post-lenition
     surface form is `(d)`-dockable. [laoide-kemp-2026] §4.1. -/
-def dPrimeSurfaces (f : FloatingForm CVKind Segment Morpheme) : Prop :=
+def dPrimeSurfaces (f : FloatingForm CVKind Segment Morph) : Prop :=
   dDockable (lenite f)
 
-instance (f : FloatingForm CVKind Segment Morpheme) : Decidable (dPrimeSurfaces f) :=
+instance (f : FloatingForm CVKind Segment Morph) : Decidable (dPrimeSurfaces f) :=
   inferInstanceAs (Decidable (dDockable _))
 
 /-! ## §7 Worked examples (paper Figs. 1a, 1b, 1c)
@@ -438,21 +438,21 @@ dissolved). -/
     content of "morphosyntax *concatenates* the floating morpheme"
     ([bermudez-otero-2012]'s strict modularity) — not a non-local
     insertion rule. -/
-theorem withHist_eq_concat (stem : FloatingForm CVKind Segment Morpheme) :
+theorem withHist_eq_concat (stem : FloatingForm CVKind Segment Morph) :
     withHist stem = historicExponent.hconcat stem := rfl
 
 /-- Composing the historic-tense morpheme preserves autosegmental
     well-formedness — a direct consequence of the No-Crossing
     Constraint being morpheme-modular. The floating `(d)` shifts the
     stem's links monotonically, never creating a crossing line. -/
-theorem withHist_isPlanar (stem : FloatingForm CVKind Segment Morpheme)
+theorem withHist_isPlanar (stem : FloatingForm CVKind Segment Morph)
     (hP : IsNonCrossing stem.links) : IsNonCrossing (withHist stem).links := by
   rw [withHist_eq_concat, FloatingForm.hconcat_links]
   simp only [historicExponent, Finset.empty_union]
   exact hP.image_monotone (ρ := (· + 1)) fun _ _ h => Nat.add_le_add_right h 1
 
 /-- A concrete suffix used to probe right-insensitivity. -/
-private def someSuffix : FloatingForm CVKind Segment Morpheme :=
+private def someSuffix : FloatingForm CVKind Segment Morph :=
   stemForm "ma" [.C, .V] [.m, .a] {(0, 0), (1, 1)}
 
 /-- **Left-edge locality (no look-ahead), concrete witness.** Appending
@@ -480,7 +480,7 @@ alone — the formal content of strict modularity (no look-ahead). -/
 /-- Surface-linkedness of skeletal slot `j` on a historic-tense form
     reduces to the stem having an underlying link to `j`: the floating
     `(d)` shifts melody indices only, never skeletal ones. -/
-private theorem isLinkedLower_withHist (X : FloatingForm CVKind Segment Morpheme) (j : Nat) :
+private theorem isLinkedLower_withHist (X : FloatingForm CVKind Segment Morph) (j : Nat) :
     (withHist X).SurfaceLinkedLower j ↔ ∃ a, (a, j) ∈ X.links := by
   have hlinks : (withHist X).surfaceLinks = X.links.image (shiftLink 1 0) := by
     rw [withHist_eq_concat, FloatingForm.hconcat_surfaceLinks]
@@ -503,7 +503,7 @@ private theorem isLinkedLower_withHist (X : FloatingForm CVKind Segment Morpheme
 /-- A link to a low skeletal slot (`j < stem.lower.len`) is unaffected
     by appending a suffix: the suffix's links are shifted to slots
     `≥ stem.lower.len`, never reaching `j`. -/
-private theorem linked_concat_low (stem suffix : FloatingForm CVKind Segment Morpheme) {j : Nat}
+private theorem linked_concat_low (stem suffix : FloatingForm CVKind Segment Morph) {j : Nat}
     (hj : j < stem.lower.len) :
     (∃ a, (a, j) ∈ (stem.hconcat suffix).links) ↔
       ∃ a, (a, j) ∈ stem.links := by
@@ -524,14 +524,14 @@ private theorem linked_concat_low (stem suffix : FloatingForm CVKind Segment Mor
 
 /-- The skeletal (lower) tier of a historic form is the stem's — the
     floating `(d)` contributes no skeletal slot. -/
-private theorem withHist_lower (Y : FloatingForm CVKind Segment Morpheme) :
+private theorem withHist_lower (Y : FloatingForm CVKind Segment Morph) :
     (withHist Y).lower = Y.lower := by
   rw [withHist_eq_concat, FloatingForm.hconcat_lower]
   exact LabeledTuple.empty_concat Y.lower
 
 /-- The melodic (upper) tier of a historic form is `(d)` concatenated with the
     stem's — used to compute upper-tier lengths in the locality proofs. -/
-private theorem withHist_upper (Y : FloatingForm CVKind Segment Morpheme) :
+private theorem withHist_upper (Y : FloatingForm CVKind Segment Morph) :
     (withHist Y).upper = historicExponent.upper.concat Y.upper := by
   rw [withHist_eq_concat, FloatingForm.hconcat_upper]
 
@@ -544,7 +544,7 @@ private theorem withHist_upper (Y : FloatingForm CVKind Segment Morpheme) :
     `dPrimeSurfaces` additionally requires `{L}`-docking to be left-local,
     which holds for in-bounds stems; this is the configuration-level
     statement, on which it rests.) -/
-theorem dDockable_withHist_concat_right (stem suffix : FloatingForm CVKind Segment Morpheme)
+theorem dDockable_withHist_concat_right (stem suffix : FloatingForm CVKind Segment Morph)
     (h2 : 2 ≤ stem.lower.len) :
     dDockable (withHist ((stem.hconcat suffix))) ↔
       dDockable (withHist stem) := by
@@ -578,7 +578,7 @@ range, and `lenite` could target different indices. -/
     present in the suffixed form iff present in the stem's — the
     pointwise (per `(k, j)`) version of `linked_concat_low`, used both
     for `initialConsonantIdx` and after `deleteTierElem`. -/
-private theorem mem_surfaceLinks_concat (stem suffix : FloatingForm CVKind Segment Morpheme)
+private theorem mem_surfaceLinks_concat (stem suffix : FloatingForm CVKind Segment Morph)
     {k j : Nat} (hj : j < stem.lower.len) :
     (k, j) ∈ (withHist ((stem.hconcat suffix))).surfaceLinks ↔
       (k, j) ∈ (withHist stem).surfaceLinks := by
@@ -623,7 +623,7 @@ private theorem find?_range_stable {p : Nat → Bool} {m n : Nat} (hmn : m ≤ n
     the slot-0 search predicate agrees (`mem_surfaceLinks_concat`) and,
     by `InBounds`, the stem's slot-0 links sit inside its own melody
     range, so the longer suffixed search finds no extra match. -/
-private theorem initialConsonantIdx_concat (stem suffix : FloatingForm CVKind Segment Morpheme)
+private theorem initialConsonantIdx_concat (stem suffix : FloatingForm CVKind Segment Morph)
     (h2 : 2 ≤ stem.lower.len) (hib : stem.InBounds) :
     initialConsonantIdx (withHist ((stem.hconcat suffix)))
       = initialConsonantIdx (withHist stem) := by
@@ -660,7 +660,7 @@ private theorem initialConsonantIdx_concat (stem suffix : FloatingForm CVKind Se
 /-- The docking configuration is right-local even after `lenite` deletes
     melody index `k`: `deleteTierElem k` only filters `surfaceLinks` and
     leaves the lower tier, so the slot-0/1 agreement survives. -/
-private theorem dDockable_deleteTierElem_concat (stem suffix : FloatingForm CVKind Segment Morpheme)
+private theorem dDockable_deleteTierElem_concat (stem suffix : FloatingForm CVKind Segment Morph)
     (h2 : 2 ≤ stem.lower.len) (k : Nat) :
     dDockable ((withHist ((stem.hconcat suffix))).deleteTierElem k) ↔
       dDockable ((withHist stem).deleteTierElem k) := by
@@ -700,7 +700,7 @@ private theorem dDockable_deleteTierElem_concat (stem suffix : FloatingForm CVKi
     `InBounds`) are left-local, so the full predicate is too. This is
     the paper's central claim, in full: preverbal *d'* never looks
     rightward past the word it attaches to. -/
-theorem dPrimeSurfaces_withHist_concat_right (stem suffix : FloatingForm CVKind Segment Morpheme)
+theorem dPrimeSurfaces_withHist_concat_right (stem suffix : FloatingForm CVKind Segment Morph)
     (h2 : 2 ≤ stem.lower.len) (hib : stem.InBounds) :
     dPrimeSurfaces (withHist ((stem.hconcat suffix))) ↔
       dPrimeSurfaces (withHist stem) := by
@@ -755,10 +755,10 @@ extensional content (no look-ahead) is fully captured by
     representations: one floating `(d)` melody node, no skeleton, no links. -/
 def historicExponentRep :
     AR (Sigma.fst :
-      ((b : Bool) × TwoTier (TierSpec Segment Morpheme) (SegSpec CVKind Morpheme) b) → Bool) :=
+      ((b : Bool) × TwoTier (TierSpec Segment Morph) (SegSpec CVKind Morph) b) → Bool) :=
   AR.ofData
     (fun b => match b with
-      | true => ([mel .dPrime mHist] : List (TwoTier (TierSpec Segment Morpheme) (SegSpec CVKind Morpheme) true))
+      | true => ([mel .dPrime mHist] : List (TwoTier (TierSpec Segment Morph) (SegSpec CVKind Morph) true))
       | false => [])
     ⊥
 
@@ -770,9 +770,9 @@ open CategoryTheory MonoidalCategory in
     preverbal particle. -/
 def withHistFunctor :
     AR (Sigma.fst :
-        ((b : Bool) × TwoTier (TierSpec Segment Morpheme) (SegSpec CVKind Morpheme) b) → Bool) ⥤
+        ((b : Bool) × TwoTier (TierSpec Segment Morph) (SegSpec CVKind Morph) b) → Bool) ⥤
     AR (Sigma.fst :
-        ((b : Bool) × TwoTier (TierSpec Segment Morpheme) (SegSpec CVKind Morpheme) b) → Bool) :=
+        ((b : Bool) × TwoTier (TierSpec Segment Morph) (SegSpec CVKind Morph) b) → Bool) :=
   tensorLeft historicExponentRep
 
 open CategoryTheory MonoidalCategory in
@@ -780,7 +780,7 @@ open CategoryTheory MonoidalCategory in
     the exponent with the stem. -/
 theorem withHistFunctor_obj
     (X : AR (Sigma.fst :
-        ((b : Bool) × TwoTier (TierSpec Segment Morpheme) (SegSpec CVKind Morpheme) b) → Bool)) :
+        ((b : Bool) × TwoTier (TierSpec Segment Morph) (SegSpec CVKind Morph) b) → Bool)) :
     withHistFunctor.obj X = historicExponentRep ⊗ X := rfl
 
 open CategoryTheory MonoidalCategory in
@@ -792,7 +792,7 @@ open CategoryTheory MonoidalCategory in
     load-bearing rather than decorative. -/
 noncomputable def prefixAssoc
     (X : AR (Sigma.fst :
-        ((b : Bool) × TwoTier (TierSpec Segment Morpheme) (SegSpec CVKind Morpheme) b) → Bool)) :
+        ((b : Bool) × TwoTier (TierSpec Segment Morph) (SegSpec CVKind Morph) b) → Bool)) :
     tensorLeft (historicExponentRep ⊗ X) ≅
       tensorLeft X ⋙ tensorLeft historicExponentRep :=
   tensorLeftTensor historicExponentRep X
@@ -968,7 +968,7 @@ non-modular alternatives:
 * **Readjustment rules triggered by module-transcending
   diacritics** ([harley-noyer-1999]).
 * **Co-phonologies** ([anttila-2002], [inkelas-zoll-2007]).
-* **Morpheme-specific phonological constraints**
+* **Morph-specific phonological constraints**
   ([pater-2000], [pater-2009]).
 
 The autosegmental approach with floating phonologically-defective

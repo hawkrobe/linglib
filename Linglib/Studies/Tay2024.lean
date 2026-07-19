@@ -316,24 +316,22 @@ semantic relation is idiosyncratic and must be listed in the lexicon
 ([tay-2024], Ch. 3 §3.1). -/
 
 /-- Morphological structure of dǎ-sǐ "hit-die". -/
-def dasi_morph : Word.Structure :=
-  .compound (.root { morph := .root "da", gloss := "hit" }) (.root { morph := .root "si", gloss := "die" })
-
-/-- V-V compounds are recognized as compounds by `IsCompound`. -/
-theorem dasi_is_compound : dasi_morph.IsCompound := by decide
+def dasi_morph : Word.Structure Morphology.Morph :=
+  .compound (.root (.root "da")) (.root (.root "si"))
 
 /-- Surface form is concatenation of V1 + V2. -/
-theorem dasi_surface : dasi_morph.surface = "dasi" := rfl
+theorem dasi_surface :
+    String.join (dasi_morph.toList.map Morphology.Morph.form) = "dasi" := rfl
 
-/-- V-V compounds have exactly 2 morphemes. -/
-theorem dasi_morpheme_count : dasi_morph.morphemeCount = 2 := rfl
+/-- V-V compounds have exactly 2 morphs. -/
+theorem dasi_morph_count : dasi_morph.toList.length = 2 := rfl
 
 /-- Morphological structure of kū-lèi "cry-tired" (subject-oriented). -/
-def kulei_morph : Word.Structure :=
-  .compound (.root { morph := .root "ku", gloss := "cry" }) (.root { morph := .root "lei", gloss := "tired" })
+def kulei_morph : Word.Structure Morphology.Morph :=
+  .compound (.root (.root "ku")) (.root (.root "lei"))
 
-theorem kulei_is_compound : kulei_morph.IsCompound := by decide
-theorem kulei_surface : kulei_morph.surface = "kulei" := rfl
+theorem kulei_surface :
+    String.join (kulei_morph.toList.map Morphology.Morph.form) = "kulei" := rfl
 
 -- ════════════════════════════════════════════════════
 -- § 5. Causal Models (V2 BoolSEM)
@@ -516,7 +514,7 @@ theorem vv_compound_architecture :
     -- Tight causation (direct, single edge)
     completesForEffect Dasi.model Valuation.empty .hitting true false .death true ∧
     -- Morphological compound
-    dasi_morph.IsCompound ∧
+    (dasi_morph matches Word.Structure.compound _ _) = true ∧
     -- Subject-oriented resultatives exist (no DOR)
     (allCompounds.any (·.orientation == .subjectOriented)) = true ∧
     -- V-V is opaque, V-de is transparent

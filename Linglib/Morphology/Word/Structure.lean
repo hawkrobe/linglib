@@ -8,13 +8,20 @@ import Linglib.Morphology.Morph
 /-!
 # Word-internal structure
 
-A `Word.Structure` is a tree of morphemes whose constructors are the
-morphological operations: affixation, compounding, reduplication, and
-conversion ([hayes-2009]). Affixation carries an `AffixKind` tag, which
-makes [booij-2012]'s relational notions computable as the accessors
-`base`, `stem`, and `roots`. The partial fold `toExponent` projects
-concatenative structure to a `Morph` sequence.
+A `Word.Structure M` is an operation-typed tree with leaves and affixal
+payloads in `M`: each constructor is a word-formation operation with its
+own arity and payload ([hayes-2009]). The tree records derivational
+history and word-internal constituency — what applying the operations as
+functions would forget. [booij-2012]'s relational notions are the
+accessors `base`, `stem`, and `roots`; `toList` linearizes the payloads
+and `toSequence?` projects the concatenative fragment to its payload
+sequence. The tree does not evaluate to surface strings: concatenative
+surface forms are `String.join` over `toList`, and the surface effect of
+process constructors (infixation, reduplication) belongs to the process
+theories, not to string simulation here.
 
+The theory layer instantiates `M := Morph`; fragments that annotate
+their morphs (glosses) instantiate `M` with their own richer leaf type.
 The token type (`Morphology.Word`, `Word/Basic.lean`) is deliberately
 separate: the token is what syntax sees, the tree is how morphology
 built it.
@@ -22,31 +29,16 @@ built it.
 
 namespace Morphology
 
-/-! ### Morphemes -/
-
-/-- A morpheme: the classical "minimal meaningful unit", kept as the
-descriptive convenience the textbooks use. Carries its form as a `Morph`
-and an optional gloss; attachment is `morph.kind`. Finer wordhood
-classification (the clitic–affix cline) is diagnostic, derived in
-`Studies/ZwickyPullum1983.lean`, not stored here. -/
-structure Morpheme where
-  morph  : Morph
-  gloss  : String := ""
-  deriving DecidableEq, Repr
-
-/-- The surface string of a morpheme: its morph's segmental form. -/
-def Morpheme.surface (m : Morpheme) : String := m.morph.form
-
 /-! ### Reduplication and affix kinds -/
 
 /-- The type of a reduplication step. -/
 inductive RedupType where
   /-- Copies the entire base (Warlpiri *kijikiji* from *kiji*). -/
   | total
-  /-- Copies a prosodic template; the copied material is stored explicitly
-  since it depends on prosodic shape, determined at construction time
-  (Ilokano *ag-tráb-trabáho*, partial copy *trab*). -/
-  | partialCopy (copied : String)
+  /-- Copies a prosodic template (Ilokano *ag-tráb-trabáho*); the copied
+  material is determined by prosodic shape, which is process-theory
+  content, not tree data. -/
+  | partialCopy
   deriving DecidableEq, Repr
 
 /-- Whether an affixation step is inflectional or derivational — the tag
@@ -58,169 +50,86 @@ inductive AffixKind where
 
 /-! ### The structure tree -/
 
-/-- Hierarchical word structure as an operation-typed tree of morphemes:
-each constructor is a word-formation operation with its own arity and
-payload. The tree records derivational history and word-internal
-constituency — what applying the operations as functions would forget. -/
-inductive Word.Structure where
-  /-- Leaf node: a single morpheme (free or bound). -/
-  | root : Morpheme → Word.Structure
-  /-- Attach morpheme before base. -/
-  | prefixed : Morpheme → Word.Structure → optParam AffixKind .derivational → Word.Structure
-  /-- Attach morpheme after base. -/
-  | suffixed : Word.Structure → Morpheme → optParam AffixKind .derivational → Word.Structure
-  /-- Insert morpheme at position `pos` within base's
-      surface form. Example: Tagalog *-um-* in *s⟨um⟩ulat*. -/
-  | infixed : Word.Structure → Morpheme → Nat → optParam AffixKind .derivational → Word.Structure
-  /-- Wrap base with a prefix and suffix.
+/-- Hierarchical word structure as an operation-typed tree with payloads
+in `M`: each constructor is a word-formation operation with its own
+arity and payload. The tree records derivational history and
+word-internal constituency. -/
+inductive Word.Structure (M : Type*) where
+  /-- Leaf node: a single element (free or bound). -/
+  | root : M → Word.Structure M
+  /-- Attach a payload before the base. -/
+  | prefixed : M → Word.Structure M → optParam AffixKind .derivational → Word.Structure M
+  /-- Attach a payload after the base. -/
+  | suffixed : Word.Structure M → M → optParam AffixKind .derivational → Word.Structure M
+  /-- Insert a payload within the base (Tagalog *-um-* in *s⟨um⟩ulat*);
+      the insertion site is prosodically determined and is process-theory
+      content, not tree data. -/
+  | infixed : Word.Structure M → M → optParam AffixKind .derivational → Word.Structure M
+  /-- Wrap the base with a prefix and a suffix.
       Example: German *ge-mach-t*. -/
-  | circumfixed : Morpheme → Word.Structure → Morpheme → optParam AffixKind .derivational → Word.Structure
+  | circumfixed : M → Word.Structure M → M → optParam AffixKind .derivational → Word.Structure M
   /-- Two stems joined. Example: *desk* + *lamp*. -/
-  | compound : Word.Structure → Word.Structure → Word.Structure
+  | compound : Word.Structure M → Word.Structure M → Word.Structure M
   /-- Total or partial reduplication. -/
-  | reduplicated : RedupType → Word.Structure → Word.Structure
+  | reduplicated : RedupType → Word.Structure M → Word.Structure M
   /-- Conversion. Example: noun *telephone* → verb *to telephone*. -/
-  | converted : Word.Structure → Word.Structure
+  | converted : Word.Structure M → Word.Structure M
   deriving Repr
 
 namespace Word.Structure
 
-/-! ### Surface form -/
+variable {M : Type*}
 
-/-- The flat surface string of the morphological tree. -/
-def surface : Word.Structure → String
-  | .root m => m.surface
-  | .prefixed afx base _ => afx.surface ++ base.surface
-  | .suffixed base afx _ => base.surface ++ afx.surface
-  | .infixed base afx pos _ =>
-    let s := base.surface
-    String.ofList (s.toList.take pos) ++ afx.surface ++ String.ofList (s.toList.drop pos)
-  | .circumfixed pre base suf _ => pre.surface ++ base.surface ++ suf.surface
-  | .compound left right => left.surface ++ right.surface
-  | .reduplicated rt base =>
-    match rt with
-    | .total => base.surface ++ base.surface
-    | .partialCopy copied => copied ++ base.surface
-  | .converted base => base.surface
+/-! ### Payload linearization -/
 
-/-- Conversion preserves the surface form. -/
-theorem surface_converted (w : Word.Structure) :
-    (converted w).surface = w.surface := rfl
-
-/-- The surface form of a compound is the concatenation of its parts. -/
-theorem surface_compound (l r : Word.Structure) :
-    (compound l r).surface = l.surface ++ r.surface := rfl
-
-/-- Total reduplication doubles the surface form. -/
-theorem surface_reduplicated_total (w : Word.Structure) :
-    (reduplicated .total w).surface = w.surface ++ w.surface := rfl
-
-/-! ### Morpheme linearization and boundaries -/
-
-/-- Flatten the morphological tree into a list of morphemes. The order
-is left-to-right surface order for concatenative structure; an infix is
-appended after its base's morphemes (its *surface* position is `pos`,
-not its list position), and reduplicative copies contribute no morpheme.
-Morpheme boundaries are implicit: they fall between adjacent elements. -/
-def morphemes : Word.Structure → List Morpheme
+/-- All payloads of the tree in left-to-right surface order for
+concatenative structure; an infix is appended after its base's payloads
+(its surface position is prosodic, not positional), and reduplicative
+copies contribute nothing. -/
+def toList : Word.Structure M → List M
   | .root m => [m]
-  | .prefixed afx base _ => afx :: base.morphemes
-  | .suffixed base afx _ => base.morphemes ++ [afx]
-  | .infixed base afx _ _ => base.morphemes ++ [afx]
-  | .circumfixed pre base suf _ => pre :: base.morphemes ++ [suf]
-  | .compound left right => left.morphemes ++ right.morphemes
-  | .reduplicated _ base => base.morphemes
-  | .converted base => base.morphemes
+  | .prefixed afx base _ => afx :: base.toList
+  | .suffixed base afx _ => base.toList ++ [afx]
+  | .infixed base afx _ => base.toList ++ [afx]
+  | .circumfixed pre base suf _ => pre :: base.toList ++ [suf]
+  | .compound left right => left.toList ++ right.toList
+  | .reduplicated _ base => base.toList
+  | .converted base => base.toList
 
-/-- The number of morphemes in the word. -/
-def morphemeCount (w : Word.Structure) : Nat := w.morphemes.length
+/-- The payload sequence of the concatenative fragment. **Partial**:
+`none` on infixation, circumfixation, and reduplication — discontinuous
+and process morphology are constructions, not payload sequences.
+Conversion is payload-vacuous and projects through. -/
+def toSequence? : Word.Structure M → Option (List M)
+  | .root m => some [m]
+  | .prefixed afx b _ => (b.toSequence?).map (afx :: ·)
+  | .suffixed b afx _ => (b.toSequence?).map (· ++ [afx])
+  | .compound l r => do pure ((← l.toSequence?) ++ (← r.toSequence?))
+  | .converted b => b.toSequence?
+  | .infixed .. => none
+  | .circumfixed .. => none
+  | .reduplicated .. => none
 
-/-- A bare root contains exactly one morpheme. -/
-theorem morphemeCount_root (m : Morpheme) : (root m).morphemeCount = 1 := rfl
+/-- The projection is total exactly on the concatenative fragment: a
+circumfixed word has no payload-sequence projection. -/
+theorem toSequence?_circumfixed (pre suf : M) (b : Word.Structure M)
+    (k : AffixKind) : (circumfixed pre b suf k).toSequence? = none := rfl
 
-/-- Positions of morpheme boundaries in the surface string. Each `Nat`
-is a character offset where one morpheme ends and the next begins;
-phonological rules can reference these positions. -/
-def boundaryPositions : Word.Structure → List Nat
-  | .root _ => []
-  | .prefixed afx base _ =>
-    let offset := afx.surface.length
-    offset :: base.boundaryPositions.map (· + offset)
-  | .suffixed base afx _ =>
-    let baseLen := base.surface.length
-    base.boundaryPositions ++ [baseLen, baseLen + afx.surface.length]
-  | .infixed base afx pos _ =>
-    let afxLen := afx.surface.length
-    let baseBounds := base.boundaryPositions
-    let shifted := baseBounds.map (λ b => if b ≥ pos then b + afxLen else b)
-    (shifted ++ [pos, pos + afxLen]).mergeSort (· ≤ ·) |>.eraseDups
-  | .circumfixed pre base _suf _ =>
-    let preLen := pre.surface.length
-    let baseLen := base.surface.length
-    preLen :: (base.boundaryPositions.map (· + preLen)
-      ++ [preLen + baseLen])
-  | .compound left right =>
-    let leftLen := left.surface.length
-    left.boundaryPositions ++ [leftLen]
-      ++ right.boundaryPositions.map (· + leftLen)
-  | .reduplicated rt base =>
-    match rt with
-    | .total =>
-      let baseLen := base.surface.length
-      base.boundaryPositions ++ [baseLen]
-        ++ base.boundaryPositions.map (· + baseLen)
-    | .partialCopy copied =>
-      let copiedLen := copied.length
-      copiedLen :: base.boundaryPositions.map (· + copiedLen)
-  | .converted base => base.boundaryPositions
-
-/-! ### Structural predicates -/
-
-/-- A word is simple if it is a bare root. -/
-def IsSimple : Word.Structure → Prop
-  | .root _ => True
-  | _ => False
-
-instance : DecidablePred IsSimple := fun w => by
-  cases w <;> unfold IsSimple <;> infer_instance
-
-/-- A word is a compound if its outermost operation joins two stems. -/
-def IsCompound : Word.Structure → Prop
-  | .compound _ _ => True
-  | _ => False
-
-instance : DecidablePred IsCompound := fun w => by
-  cases w <;> unfold IsCompound <;> infer_instance
-
-/-- A word is reduplicated if its outermost operation is reduplication. -/
-def IsReduplicated : Word.Structure → Prop
-  | .reduplicated _ _ => True
-  | _ => False
-
-instance : DecidablePred IsReduplicated := fun w => by
-  cases w <;> unfold IsReduplicated <;> infer_instance
-
-/-- A word is converted if its outermost operation is conversion. -/
-def IsConverted : Word.Structure → Prop
-  | .converted _ => True
-  | _ => False
-
-instance : DecidablePred IsConverted := fun w => by
-  cases w <;> unfold IsConverted <;> infer_instance
+/-! ### Structural measures -/
 
 /-- Morphological depth: the number of operations above the deepest root. -/
-def depth : Word.Structure → Nat
+def depth : Word.Structure M → Nat
   | .root _ => 0
   | .prefixed _ base _ => 1 + base.depth
   | .suffixed base _ _ => 1 + base.depth
-  | .infixed base _ _ _ => 1 + base.depth
+  | .infixed base _ _ => 1 + base.depth
   | .circumfixed _ base _ _ => 1 + base.depth
   | .compound l r => 1 + max l.depth r.depth
   | .reduplicated _ base => 1 + base.depth
   | .converted base => 1 + base.depth
 
 /-- A bare root has depth zero. -/
-theorem depth_root (m : Morpheme) : (root m).depth = 0 := rfl
+theorem depth_root (m : M) : (root m).depth = 0 := rfl
 
 /-! ### Relational accessors
 
@@ -232,11 +141,11 @@ leaves. -/
 /-- The immediate base of the outermost operation: the daughter tree for
 affixation, reduplication, and conversion; `none` for a bare root and
 for compounds (which have two constituents, not a base). -/
-def base : Word.Structure → Option Word.Structure
+def base : Word.Structure M → Option (Word.Structure M)
   | .root _ => none
   | .prefixed _ b _ => some b
   | .suffixed b _ _ => some b
-  | .infixed b _ _ _ => some b
+  | .infixed b _ _ => some b
   | .circumfixed _ b _ _ => some b
   | .compound _ _ => none
   | .reduplicated _ b => some b
@@ -245,58 +154,35 @@ def base : Word.Structure → Option Word.Structure
 /-- The stem: the tree with outer *inflectional* affixation stripped.
 Derivational structure, compounding, reduplication, and conversion are
 part of the stem. -/
-def stem : Word.Structure → Word.Structure
+def stem : Word.Structure M → Word.Structure M
   | .prefixed _ b .inflectional => b.stem
   | .suffixed b _ .inflectional => b.stem
-  | .infixed b _ _ .inflectional => b.stem
+  | .infixed b _ .inflectional => b.stem
   | .circumfixed _ b _ .inflectional => b.stem
   | w => w
 
-/-- The root morphemes: the leaves of the tree. A simplex word has one;
+/-- The root payloads: the leaves of the tree. A simplex word has one;
 a compound has one per constituent. -/
-def roots : Word.Structure → List Morpheme
+def roots : Word.Structure M → List M
   | .root m => [m]
   | .prefixed _ b _ => b.roots
   | .suffixed b _ _ => b.roots
-  | .infixed b _ _ _ => b.roots
+  | .infixed b _ _ => b.roots
   | .circumfixed _ b _ _ => b.roots
   | .compound l r => l.roots ++ r.roots
   | .reduplicated _ b => b.roots
   | .converted b => b.roots
 
 /-- A word with no inflection is its own stem. -/
-theorem stem_root (m : Morpheme) : (root m).stem = root m := rfl
+theorem stem_root (m : M) : (root m).stem = root m := rfl
 
 /-- Stripping inflection strips through stacked inflectional suffixes. -/
-theorem stem_suffixed_infl (b : Word.Structure) (afx : Morpheme) :
+theorem stem_suffixed_infl (b : Word.Structure M) (afx : M) :
     (suffixed b afx .inflectional).stem = b.stem := rfl
 
 /-- Derivational affixation is stem-internal. -/
-theorem stem_suffixed_deriv (b : Word.Structure) (afx : Morpheme) :
+theorem stem_suffixed_deriv (b : Word.Structure M) (afx : M) :
     (suffixed b afx .derivational).stem = suffixed b afx .derivational := rfl
-
-/-! ### The partial fold to morphs -/
-
-/-- Project concatenative word structure to its `Morph` sequence.
-**Partial**: `none` on infixation, circumfixation, and reduplication —
-morphs are continuous and segmental, so discontinuous and process
-morphology are constructions, not morph sequences. Conversion is
-morph-vacuous and projects through. -/
-def toExponent : Word.Structure → Option (List Morph)
-  | .root m => some [m.morph]
-  | .prefixed afx b _ => (b.toExponent).map (afx.morph :: ·)
-  | .suffixed b afx _ => (b.toExponent).map (· ++ [afx.morph])
-  | .compound l r => do pure ((← l.toExponent) ++ (← r.toExponent))
-  | .converted b => b.toExponent
-  | .infixed .. => none
-  | .circumfixed .. => none
-  | .reduplicated .. => none
-
-/-- The fold is total exactly on the concatenative fragment: a
-circumfixed word has no morph-sequence projection. -/
-theorem toExponent_circumfixed (pre suf : Morpheme)
-    (b : Word.Structure) (k : AffixKind) :
-    (circumfixed pre b suf k).toExponent = none := rfl
 
 end Word.Structure
 
