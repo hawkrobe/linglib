@@ -78,21 +78,18 @@ structure MorphScale where
 def MorphScale.toHornScale (ms : MorphScale) : HornScale String :=
   ⟨[ms.positive, ms.comparative, ms.superlative]⟩
 
-/-- Extract a degree scale from a stem's paradigm. -/
-def adjectiveScale {σ : Type} (stem : Stem σ) : Option MorphScale :=
-  let compRule := stem.paradigm.find? (λ r => r.category == .degree && r.value == "comp")
-  let superRule := stem.paradigm.find? (λ r => r.category == .degree && r.value == "super")
-  match compRule, superRule with
+/-- Extract a degree scale from an adjective entry's degree forms. -/
+def adjectiveScale (a : English.Modifiers.Adjectives.AdjModifierEntry) :
+    Option MorphScale :=
+  match a.formComp, a.formSuper with
   | some comp, some super_ =>
-    some { positive := stem.lemma_
-         , comparative := comp.formRule stem.lemma_
-         , superlative := super_.formRule stem.lemma_ }
+    some { positive := a.form, comparative := comp, superlative := super_ }
   | _, _ => none
 
-/-- Paradigm-mates as scalar alternatives, scale order preserved. -/
-def morphologicalAlternatives {σ : Type} (stem : Stem σ) (form : String) :
-    List String :=
-  match adjectiveScale stem with
+/-- Scale-mates as scalar alternatives, scale order preserved. -/
+def morphologicalAlternatives (a : English.Modifiers.Adjectives.AdjModifierEntry)
+    (form : String) : List String :=
+  match adjectiveScale a with
   | none => []
   | some ms =>
     let scale := ms.toHornScale
@@ -432,32 +429,27 @@ below verify the extractor on the English adjective fragment. -/
 
 open Bobaljik2012.ScaleFromParadigm
 
-private def tallStem := tall.toStem Unit
-private def goodStem := good.toStem Unit
-private def expensiveStem := expensive.toStem Unit
-private def deadStem := dead.toStem Unit
-private def pregnantStem := pregnant.toStem Unit
 
 /-- Gradable adjectives produce a scale; non-gradables do not. -/
-theorem tall_scale_exists : (adjectiveScale tallStem).isSome = true := rfl
+theorem tall_scale_exists : (adjectiveScale tall).isSome = true := rfl
 
-theorem dead_no_scale : (adjectiveScale deadStem).isNone = true := rfl
+theorem dead_no_scale : (adjectiveScale dead).isNone = true := rfl
 
-theorem pregnant_no_scale : (adjectiveScale pregnantStem).isNone = true := rfl
+theorem pregnant_no_scale : (adjectiveScale pregnant).isNone = true := rfl
 
 /-- Regular paradigm yields the expected 3-point scale. -/
 theorem tall_scale_members :
-    (adjectiveScale tallStem).map (·.toHornScale.members)
+    (adjectiveScale tall).map (·.toHornScale.members)
     = some ["tall", "taller", "tallest"] := rfl
 
 /-- Suppletive paradigm yields the irregular forms in scale position. -/
 theorem good_scale_members :
-    (adjectiveScale goodStem).map (·.toHornScale.members)
+    (adjectiveScale good).map (·.toHornScale.members)
     = some ["good", "better", "best"] := rfl
 
 /-- Periphrastic paradigm yields multi-word scale members. -/
 theorem expensive_scale_members :
-    (adjectiveScale expensiveStem).map (·.toHornScale.members)
+    (adjectiveScale expensive).map (·.toHornScale.members)
     = some ["expensive", "more expensive", "most expensive"] := rfl
 
 /-! ### Morphological Alternatives -/
@@ -468,15 +460,15 @@ expects. Tests confirm filter-by-equality semantics across the three
 scale positions, plus the empty-list result for non-gradable stems. -/
 
 theorem tall_alternatives :
-    morphologicalAlternatives tallStem "tall" = ["taller", "tallest"] := rfl
+    morphologicalAlternatives tall "tall" = ["taller", "tallest"] := rfl
 
 theorem taller_alternatives :
-    morphologicalAlternatives tallStem "taller" = ["tall", "tallest"] := rfl
+    morphologicalAlternatives tall "taller" = ["tall", "tallest"] := rfl
 
 theorem tallest_alternatives :
-    morphologicalAlternatives tallStem "tallest" = ["tall", "taller"] := rfl
+    morphologicalAlternatives tall "tallest" = ["tall", "taller"] := rfl
 
 theorem dead_no_alternatives :
-    morphologicalAlternatives deadStem "dead" = [] := rfl
+    morphologicalAlternatives dead "dead" = [] := rfl
 
 end Bobaljik2012

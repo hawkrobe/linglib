@@ -12,7 +12,7 @@ The root-namespace `Case` type is the canonical, analytical case
 inventory: the values languages' case systems distinguish. All
 theoretical machinery — Blake's hierarchy (here), Caha containment
 (`Syntax/Case/Order.lean`), syncretism and *ABA
-(`Morphology/Case/Allomorphy.lean`), grammaticalization clines
+(`Morphology/Paradigm/Case.lean`), grammaticalization clines
 (`Features/Case/Grammaticalization.lean`) — operates over this type.
 
 `UD.Case` (`Data/UD/Basic.lean`) is the *realization* vocabulary — what
@@ -263,6 +263,58 @@ example : ¬ IsValidInventory {.nom, .acc, .dat} := by decide
 example : ¬ IsValidInventory {.nom, .acc, .loc} := by decide
 example : ¬ IsValidInventory {.nom, .acc, .abl} := by decide
 example : ¬ IsValidInventory {.nom, .acc, .gen, .loc} := by decide
+
+
+/-! ### Hierarchy adjacency
+
+Adjacency relations on the Blake hierarchy, companions to
+`IsValidInventory`: `HierarchyAdjacent` on canonical ranks,
+`InventoryAdjacent` relativized to a language's inventory. -/
+
+/-- Are two cases adjacent on the hierarchy (same rank or ranks differ
+by 1)? Stated over `Fin.val` so rank arithmetic cannot wrap: the `Fin 7`
+formulation `rank + 1 = rank` made rank-6 NOM "adjacent" to rank-0 VOC
+via mod-7 overflow. -/
+def HierarchyAdjacent (c1 c2 : Case) : Prop :=
+  c1.hierarchyRank = c2.hierarchyRank ∨
+  c1.hierarchyRank.val + 1 = c2.hierarchyRank.val ∨
+  c2.hierarchyRank.val + 1 = c1.hierarchyRank.val
+
+instance : DecidableRel HierarchyAdjacent := λ _ _ =>
+  inferInstanceAs (Decidable (_ ∨ _ ∨ _))
+
+/-- Relaxed adjacency: no case in the inventory falls strictly between
+the two cases on the hierarchy. -/
+def InventoryAdjacent (inv : Finset Case) (c1 c2 : Case) : Prop :=
+  let lo := min c1.hierarchyRank c2.hierarchyRank
+  let hi := max c1.hierarchyRank c2.hierarchyRank
+  ∀ c ∈ inv, c = c1 ∨ c = c2 ∨ c.hierarchyRank ≤ lo ∨ c.hierarchyRank ≥ hi
+
+instance (inv : Finset Case) (c1 c2 : Case) :
+    Decidable (InventoryAdjacent inv c1 c2) := by
+  unfold InventoryAdjacent; infer_instance
+
+/-- Same-tier cases are always adjacent. -/
+theorem same_tier_adjacent (c1 c2 : Case)
+    (h : c1.hierarchyRank = c2.hierarchyRank) :
+    HierarchyAdjacent c1 c2 := Or.inl h
+
+example : HierarchyAdjacent .nom .acc := by decide
+example : HierarchyAdjacent .com .inst := by decide
+example : HierarchyAdjacent .gen .dat := by decide
+
+/-- ERG/INST hierarchy non-adjacency: Blake's known exception, explained
+by historical derivation. -/
+example : ¬ HierarchyAdjacent .erg .inst := by decide
+
+/-- The wraparound regression: NOM (top rank) and VOC (bottom rank) are
+not adjacent. -/
+example : ¬ HierarchyAdjacent .nom .voc := by decide
+
+/-- ERG/INST IS inventory-adjacent in a system with only
+{ERG, ABS, INST}. -/
+example : InventoryAdjacent ({.erg, .abs, .inst} : Finset Case) .erg .inst := by
+  decide
 
 end Case
 

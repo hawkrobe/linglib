@@ -25,7 +25,7 @@ Theory-laden derivations of contiguity (vocabulary insertion under the
 Elsewhere Condition over containment hierarchies) live in
 `Morphology/Exponence/Containment/Contiguity.lean`; the n = 3 degree and n = 4
 case specializations in `Morphology/Paradigm/Degree.lean` and
-`Morphology/Case/Allomorphy.lean`.
+`Morphology/Paradigm/Case.lean`.
 
 ## Main declarations
 

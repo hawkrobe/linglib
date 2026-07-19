@@ -389,15 +389,13 @@ theorem english_expresses_all_types :
 /-! ### Swahili fragment cross-reference (§3) -/
 
 /-- The Swahili reciprocal suffix *-an-* ([nordlinger-2023] ex. 40,
-    citing [dimitriadis-2004]) is formalized as a `MorphRule` in
-    `Swahili.Reciprocals.reciprocalAffix`. The rule realizes
-    valence reduction (transitive → intransitive), matching `rpSwahili`'s
-    `verbalAffix` strategy + `monovalent` valency. -/
+    citing [dimitriadis-2004]): `rpSwahili`'s `verbalAffix` strategy with
+    `monovalent` valency records the valence reduction (transitive →
+    intransitive); the marker itself is `Swahili.Reciprocals.anSuffix`. -/
 theorem rpSwahili_grounded_in_fragment :
     rpSwahili.primaryStrategy = some .verbalAffix ∧
-    rpSwahili.valency = .monovalent ∧
-    Swahili.Reciprocals.reciprocalAffix.category = .valence :=
-  ⟨rfl, rfl, rfl⟩
+    rpSwahili.valency = .monovalent :=
+  ⟨rfl, rfl⟩
 
 /-! ### Polysemous markers beyond the sample (§4.2)
 

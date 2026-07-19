@@ -1,6 +1,6 @@
 import Linglib.Semantics.Causation.Interpretation
 import Linglib.Semantics.Verb.Basic
-import Linglib.Morphology.Realization
+import Linglib.Features.Complementation
 import Linglib.Morphology.Word.Basic
 
 open Morphology (Word)
@@ -3466,46 +3466,6 @@ theorem remember_entails_complement_derived :
 /-- "forget" entails NOT the complement — derived from its builder. -/
 theorem forget_entails_not_complement_derived :
     forget.toVerb.entailsComplement = some false := by decide
-
--- ════════════════════════════════════════════════════
--- § Morphological Stem + Vacuity
--- ════════════════════════════════════════════════════
-
-/-- Convert a `VerbEntry` to a morphological `Stem`.
-
-    All verb inflection is semantically vacuous at the word level:
-    tense/aspect semantics is compositional, handled by
-    `Semantics.Intensional`. The `delegatedSemantics := true` flags make
-    this explicit. -/
-def VerbEntry.toStem {σ : Type} (v : VerbEntry) : Morphology.Stem σ :=
-  { lemma_ := v.form
-  , cat := .VERB
-  , baseFeatures := { verbForm := some .Inf }
-  , baseFrame := some v.complementType
-  , paradigm :=
-    [ { category := .agreement .subj, value := "3sg"
-      , formRule := λ _ => v.form3sg
-      , featureRule := λ f => { f with number := some .Sing
-                                     , person := some .third
-                                     , verbForm := some .Fin }
-      , semEffect := id, delegatedSemantics := true }
-    , { category := .tense, value := "past"
-      , formRule := λ _ => v.formPast
-      , featureRule := λ f => { f with verbForm := some .Fin }
-      , semEffect := id, delegatedSemantics := true }
-    , { category := .tense, value := "pastpart"
-      , formRule := λ _ => v.formPastPart
-      , featureRule := λ f => { f with verbForm := some .Part }
-      , semEffect := id, delegatedSemantics := true }
-    , { category := .aspect, value := "prespart"
-      , formRule := λ _ => v.formPresPart
-      , featureRule := λ f => { f with verbForm := some .Part }
-      , semEffect := id, delegatedSemantics := true }
-    ] }
-
-/-- All verb inflectional rules are semantically vacuous. -/
-theorem VerbEntry.toStem_allVacuous {σ : Type} (v : VerbEntry) :
-    (v.toStem (σ := σ)).paradigm.all (·.delegatedSemantics) = true := rfl
 
 -- ════════════════════════════════════════════════════
 -- § V2 Causative Grounding Theorems (Phase D-D)

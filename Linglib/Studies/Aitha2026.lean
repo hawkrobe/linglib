@@ -1,7 +1,7 @@
 import Linglib.Features.Case.Basic
 import Linglib.Features.Case.Basic
 import Linglib.Syntax.Case.Order
-import Linglib.Morphology.Case.Allomorphy
+import Linglib.Morphology.Paradigm.Case
 import Linglib.Phonology.OptimalityTheory.Tableau
 import Linglib.Phonology.OptimalityTheory.TableauSystem
 import Linglib.Phonology.Prosody.Foot

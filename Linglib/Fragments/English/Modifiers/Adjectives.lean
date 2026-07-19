@@ -20,7 +20,6 @@ Both share scale type and antonym information, but serve different grammatical f
 
 import Linglib.Data.UD.Basic
 import Linglib.Features.PropertyDomain
-import Linglib.Morphology.Realization
 import Linglib.Morphology.Paradigm.Degree
 import Linglib.Semantics.Degree.Adjective
 import Linglib.Morphology.Word.Basic
@@ -334,28 +333,6 @@ def pregnant : AdjModifierEntry :=
 
 def AdjModifierEntry.toWord (a : AdjModifierEntry) : Word :=
   { form := a.form, cat := .ADJ, features := {} }
-
-/-- Convert an adjective entry to a morphological stem with its
-    comparative/superlative paradigm.
-
-    Periphrastic adjectives (e.g., "expensive" → "more expensive")
-    work naturally: the full periphrastic form is stored as the
-    irregular form string. -/
-def AdjModifierEntry.toStem (a : AdjModifierEntry) (σ : Type) : Morphology.Stem σ :=
-  { lemma_ := a.form
-  , cat := .ADJ
-  , baseFeatures := {}
-  , paradigm :=
-      (match a.formComp with
-       | some comp =>
-         [{ category := .degree, value := "comp", formRule := λ _ => comp
-          , featureRule := id, semEffect := id, delegatedSemantics := true }]
-       | none => []) ++
-      (match a.formSuper with
-       | some super_ =>
-         [{ category := .degree, value := "super", formRule := λ _ => super_
-          , featureRule := id, semEffect := id, delegatedSemantics := true }]
-       | none => []) }
 
 -- ============================================================================
 -- All Adjective Modifiers
