@@ -1,4 +1,4 @@
-import Linglib.Morphology.RelevanceHierarchy
+import Linglib.Morphology.Morphotactics.RelevanceHierarchy
 
 /-!
 # [baker-1985]: The Mirror Principle and Morphosyntactic Explanation
