@@ -16,14 +16,14 @@ canonical 厂 *chǎng* to the maximally non-canonical toneless 边 *-bian* and �
 *-ge* (tonelessness diagnosing phonological deficiency in a tone language).
 
 The paper's *-fer* case makes the base definition's formal character exact:
-*-fer* is a morphological core "lacking identifiable meaning", so it fails
-[haspelmath-2025-root]'s contentfulness clause — the roothood judgment is
-"formal-based", not semantic (`fer_core`, `fer_root_not_contentful`).
+*-fer* is a morphological core despite "lacking identifiable meaning" — the
+roothood judgment is "formal-based", not semantic (`fer_core`; the
+contentfulness-gated alternative it contrasts with is
+`Studies/Haspelmath2025Root.lean`).
 
 ## Main results
 
-* `fer_core` / `fer_root_not_contentful` — *-fer* is a core with no root
-  class: the formal and semantic definitions come apart.
+* `fer_core` — *-fer* is a morphological core with no semantic input.
 * `Row`, `Row.violations`, `Row.IsCanonical` — the four-criterion space;
   `space_card`, `tier_card` — Fig. 1's 16 cells and binomial tiers.
 * `chang`, `bu`, `ba`, `xing`, `bian`, `ge` — Mandarin rows with their
@@ -49,11 +49,6 @@ def ferWords : List (List Morph) := [[re, fer], [con, fer]]
 
 /-- *-fer* is a morphological core: it occurs in the primary word *refer*. -/
 theorem fer_core : fer.IsCoreIn ferWords ferWords := by decide
-
-/-- *-fer* is not a root by [haspelmath-2025-root]'s definition (1): it
-denotes no action, object, or property. -/
-theorem fer_root_not_contentful :
-    ¬ fer.IsRootIn ferWords (fun _ => none) := by decide
 
 /-! ### The four criteria and the theoretical space -/
 
