@@ -77,14 +77,13 @@ inductive Tree (M : Type*) where
 
 namespace Tree
 
-variable {M : Type*}
+variable {M N O : Type*} {t : Tree M} {l : List M}
 
 /-! ### Linearization -/
 
-/-- All material of the tree in left-to-right surface order for
-concatenative structure; an infix is appended after its base's material
-(its surface position is prosodic, not positional), and reduplicative
-copies contribute nothing. -/
+/-- The material of the tree, in surface order on the concatenative
+fragment; an infix follows its base and reduplicative copies contribute
+nothing. -/
 def toList : Tree M → List M
   | .root m => [m]
   | .prefixed afx base => afx :: base.toList
@@ -95,8 +94,10 @@ def toList : Tree M → List M
   | .reduplicated _ base => base.toList
   | .converted base => base.toList
 
-/-- Relabel the material of the tree, keeping its shape. -/
-def map {N : Type*} (f : M → N) : Tree M → Tree N
+theorem toList_ne_nil (t : Tree M) : t.toList ≠ [] := by
+  induction t <;> simp_all [toList]
+
+def map (f : M → N) : Tree M → Tree N
   | .root m => .root (f m)
   | .prefixed afx base => .prefixed (f afx) (base.map f)
   | .suffixed base afx => .suffixed (base.map f) (f afx)
@@ -106,10 +107,8 @@ def map {N : Type*} (f : M → N) : Tree M → Tree N
   | .reduplicated rt base => .reduplicated rt (base.map f)
   | .converted base => .converted (base.map f)
 
-/-- The material sequence of the concatenative fragment. **Partial**:
-`none` on infixation, circumfixation, and reduplication — discontinuous
-and process morphology are constructions, not material sequences.
-Conversion adds no material and projects through. -/
+/-- The material sequence of the concatenative fragment; `none` on
+infixation, circumfixation, and reduplication. -/
 def toSequence? : Tree M → Option (List M)
   | .root m => some [m]
   | .prefixed afx b => (b.toSequence?).map (afx :: ·)
@@ -130,18 +129,18 @@ circumfixed word has no material-sequence projection. -/
 @[simp] theorem map_id (t : Tree M) : t.map id = t := by
   induction t <;> simp [map, *]
 
-theorem map_map {N O : Type*} (f : M → N) (g : N → O) (t : Tree M) :
+theorem map_map (f : M → N) (g : N → O) (t : Tree M) :
     (t.map f).map g = t.map (g ∘ f) := by
   induction t <;> simp [map, *]
 
 /-- Linearization is natural in the material. -/
-theorem toList_map {N : Type*} (f : M → N) (t : Tree M) :
+theorem toList_map (f : M → N) (t : Tree M) :
     (t.map f).toList = t.toList.map f := by
   induction t <;> simp [map, toList, *]
 
 /-- The concatenative projection refines linearization: where the material
 sequence exists, it is the linearization. -/
-theorem toList_eq_of_toSequence?_eq_some {t : Tree M} {l : List M}
+theorem toList_eq_of_toSequence?_eq_some
     (h : t.toSequence? = some l) : t.toList = l := by
   induction t generalizing l with
   | compound _ _ ihl ihr =>
