@@ -54,6 +54,17 @@ namespace HahnDegenFutrell2021
 open Processing.MemorySurprisal
 open Morphology (MorphCategory RespectsRelevanceHierarchy)
 
+/-- The template's suffix order respects [bybee-1985]'s relevance
+hierarchy. Study-local: this study's two templates are its only
+consumers (descended from the substrate at the ≥2-consumer bar). -/
+def _root_.Morphology.AffixTemplate.suffixRespectsRelevance
+    (t : Morphology.AffixTemplate MorphCategory) : Prop :=
+  RespectsRelevanceHierarchy t.suffixSlots
+
+instance (t : Morphology.AffixTemplate MorphCategory) :
+    Decidable t.suffixRespectsRelevance :=
+  inferInstanceAs (Decidable (RespectsRelevanceHierarchy _))
+
 -- ============================================================================
 -- §2: Japanese Suffix Template (SI §4.1)
 -- ============================================================================

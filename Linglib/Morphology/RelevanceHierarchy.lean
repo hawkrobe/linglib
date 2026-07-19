@@ -1,4 +1,3 @@
-import Linglib.Morphology.Template
 import Linglib.Syntax.Agreement.Controller
 
 /-!
@@ -10,12 +9,10 @@ verb stem, and the stem-outward order this ranking induces.
 
 ## Main definitions
 
-- `MorphCategory`: the functional categories, with `IsAgreement`.
+- `MorphCategory`: the functional categories.
 - `MorphCategory.peripherality`: a numeric rank realizing the order.
 - `MorphCategory.RelevanceLE`/`RelevanceLT`: the induced order.
 - `RespectsRelevanceHierarchy`: a slot list sorted stem-outward.
-- `AffixTemplate.suffixRespectsRelevance`: a template's suffix slots
-  are sorted by relevance.
 -/
 
 namespace Morphology
@@ -36,9 +33,9 @@ inductive MorphCategory where
   | negation      -- negation markers
   /-- Agreement morphology, parameterized by the grammatical role of
       the controlling NP (`Agreement.Controller`). The role
-      distinction (subj vs obj vs poss vs ...) is what allows Anderson
-      Ch 5 §5.2 split/doubled AVC typology to be Lean-checkable;
-      Bybee 1985's `personAgr / personAgrObj / genderAgr` source
+      distinction (subj vs obj vs poss vs ...) is what allows
+      [anderson-2006]'s split/doubled AVC typology to be Lean-checkable;
+      [bybee-1985]'s `personAgr / personAgrObj / genderAgr` source
       distinctions also round-trip cleanly. -/
   | agreement (controller : Agreement.Controller)
   | nonfinite     -- nonfinite markers, interrogative/relative
@@ -46,19 +43,11 @@ inductive MorphCategory where
   | degree        -- comparative/superlative on adjectives
   deriving Repr, DecidableEq
 
-/-- Predicate testing whether a `MorphCategory` is an agreement category,
-    independent of which `Controller` role parameterizes it. Used for
-    Bybee-style relevance-hierarchy code that doesn't care which role
-    triggers the agreement, only that agreement IS the category. -/
-def MorphCategory.IsAgreement : MorphCategory → Bool
-  | .agreement _ => true
-  | _ => false
-
 /-- Peripherality: numerical embedding of Bybee's relevance hierarchy
 where **higher = farther from stem = less semantically relevant**.
 
 In Bybee's text, "high relevance" means *more* semantically
-integrated with the stem (`[bybee-1985]` Ch 2 §2.1 p. 13). The
+integrated with the stem ([bybee-1985] Ch 2 §2.1 p. 13). The
 substrate uses the *opposite* numerical direction: stem = 0 (most
 relevant), agreement = 8 (least relevant), so that Nat ordering
 mirrors stem-outward linear position in suffixing morphology
@@ -75,15 +64,15 @@ that reads these ranks):
   *continuum*, not a discrete level on the relevance scale.
 - `number` (rank 3): Bybee discusses verbal-number agreement at
   the low end (with person agreement). Noun number is treated
-  separately (Ch 2 §6 cites Greenberg 1963 only, "stem < number
+  separately (Ch 2 §6 cites [greenberg-1963] only, "stem < number
   < case" for nouns). Cross-comparison of noun-number rank with
   verb-aspect rank is an artifact of unifying both onto one scale.
 - `degree` (rank 5): Bybee never discusses adjectival degree
   morphology. Comparative morphology is often *derivational*
-  cross-linguistically (Stassen WALS).
+  cross-linguistically ([stassen-2013]).
 - `negation` (rank 7): Bybee discusses negation as a kind of mood
   (Part II Ch 8 §5), not a separate level. Rank 7 is plausible
-  per Miestamo 2005 cross-linguistic ordering data, but is a
+  per [miestamo-2005] cross-linguistic ordering data, but is a
   linglib extension.
 - `nonfinite` (rank 9): not on Bybee's hierarchy at all (nonfinite
   morphology often changes syntactic category, outside the scope
@@ -159,12 +148,5 @@ def RespectsRelevanceHierarchy (slots : List MorphCategory) : Prop :=
 
 instance : DecidablePred RespectsRelevanceHierarchy := fun _ => by
   unfold RespectsRelevanceHierarchy; exact inferInstance
-
-/-- The template's suffix order respects [bybee-1985]'s relevance hierarchy. -/
-def AffixTemplate.suffixRespectsRelevance (t : AffixTemplate MorphCategory) : Prop :=
-  RespectsRelevanceHierarchy t.suffixSlots
-
-instance (t : AffixTemplate MorphCategory) : Decidable t.suffixRespectsRelevance :=
-  inferInstanceAs (Decidable (RespectsRelevanceHierarchy _))
 
 end Morphology

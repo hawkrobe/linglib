@@ -421,7 +421,7 @@ semantic relevance drives co-occurrence regularity, but they are distinct
 constructs and can in principle diverge.
 
 The substrate's `Morphology.MorphCategory.peripherality` numerically
-encodes Bybee's hierarchy as constants in `MorphRule.lean`. The bridge
+encodes Bybee's hierarchy as constants in `Morphology/RelevanceHierarchy.lean`. The bridge
 `Bybee1985.toMorphCategory : BybeeCategory → MorphCategory` connects the
 paper-typed enum to the substrate.
 [rathi-hahn-futrell-2026]'s reframing makes those constants

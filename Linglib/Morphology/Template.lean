@@ -18,10 +18,9 @@ here.
 A word's affix template: the ordered position-class slots of its prefix and
 suffix strings, parameterized by the slot type `Slot` — so the order lives
 once, as Fragment data, and study files derive their checks from it rather
-than re-typing the template. Instantiating at `MorphCategory` gives a
-language's slot order in relevance-hierarchy vocabulary
-(`AffixTemplate.suffixRespectsRelevance`, in
-`Morphology/RelevanceHierarchy.lean`); a language-specific slot type carries
+than re-typing the template. Instantiating at `MorphCategory`
+(`Morphology/RelevanceHierarchy.lean`) gives a language's slot order in
+relevance-hierarchy vocabulary; a language-specific slot type carries
 finer position classes: `Mayan.template` uses `Mayan.VerbSlot`, with the
 prefix/suffix split encoding a morpheme's position relative to the verb stem.
 
