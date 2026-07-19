@@ -1,6 +1,5 @@
 import Linglib.Semantics.Genericity.Subkinds
 import Linglib.Fragments.Dutch.Adjectives
-import Linglib.Morphology.Root.Family
 
 /-!
 # Inflection and Derivation: How Adjectives and Nouns Refer to Abstract Objects
@@ -57,14 +56,6 @@ paper-specific scaffolding for one analysis.
 
 ## Cross-references
 
-* `Morphology/RootFamily.lean` (`RootFamily`) formalises
-  the [marantz-1997] uncategorised-roots pattern that
-  [mcnally-deswart-2011] §3.1 explicitly invokes: `[[rood]] = red`
-  is an entity-denoting root that *both* the noun `rood_N` and the
-  adjective `rood_A` project from. The Dutch Fragment's `AdjEntry` plays
-  the role of `RootFamily` for the colour and taste sub-paradigms;
-  the connection is documented but not yet bridged formally (a
-  `AdjEntry → RootFamily` adapter is plausible future work).
 * `Studies/Panagiotidis2015.lean` engages this file
   via a *diagnostic-alignment* bridge in its own §6 (`namespace MdSBridge`):
   Panagiotidis's §6.7.1 modifier-distribution diagnostic for SWITCH
@@ -103,65 +94,10 @@ open Dutch.Adjectives (AdjEntry Domain rood wit vreemd gezond leuk dicht)
 
 [mcnally-deswart-2011] (18) posits entity-denoting roots: `[[rood]] =
 red`, `[[zuur]] = acid`. Both nominal and adjectival uses project from the
-same root. The roots themselves are the consensus Dutch lexical entries
-in `Fragments/Dutch/Adjectives.lean`; this file uses those entries as the
-carrier identifying each colour or taste subkind.
-
-The [marantz-1997] uncategorised-roots framework — formalised in
-`Morphology/RootFamily.lean` as `RootFamily` — is the
-substrate for the same idea. Each Dutch `AdjEntry` projects to a
-`RootFamily` whose `forms` list records the three category-stamped surface
-forms (uninflected adjective, inflected adjective per M&deS §3.4, derived
-noun in `-heid`). The adapter `AdjEntry.toRootFamily` below makes the
-connection code-level, not just docstring. -/
-
-end McNallyDeSwart2011
-
-/-- Lift a Dutch `AdjEntry` into a [marantz-1997]-style
-    `RootFamily` (`Morphology/RootFamily.lean`). The
-    uninflected and inflected forms are both adjectival per
-    [mcnally-deswart-2011] §2.3, §3.4 (the inflected form remains
-    adjectival under the het-as-∩ analysis); the `-heid` derivative is a
-    noun. Forms absent from the entry (no inflected variant for the
-    schwa-, -a-, -en- final exception class; no -heid for the same) are
-    omitted from the `forms` list. This adapter exercises the previously
-    unread `.form` and `.formInfl` Fragment fields. Defined in the
-    Fragment's namespace so dot notation `a.toRootFamily` works. -/
-def Dutch.Adjectives.AdjEntry.toRootFamily
-    (a : Dutch.Adjectives.AdjEntry) :
-    Morphology.RootFamily :=
-  let inflForms := match a.formInfl with
-    | none   => []
-    | some s => [(s, Morphology.LexCat.adjective)]
-  let nominalForms := match a.nominalHeid with
-    | none   => []
-    | some s => [(s, Morphology.LexCat.noun)]
-  { rootLabel := a.form
-    forms := (a.form, .adjective) :: inflForms ++ nominalForms }
-
-namespace McNallyDeSwart2011
-
-open Semantics.Kinds.Subkinds (subkindOf disjointness_condition
-  subkindOf_ne mem_subkindOf)
-open Dutch.Adjectives (AdjEntry Domain rood wit vreemd gezond leuk dicht)
-
-/-- The `RootFamily` derived from `rood` records all three Dutch forms
-    (uninflected adj, inflected adj, derived noun). -/
-example : rood.toRootFamily.forms.length = 3 := by decide
-
-/-- Adjectives in the inflection-exception class (e.g., `roze`) project
-    to a single-form `RootFamily` (only the uninflected form), reflecting
-    the morphological gap. -/
-example : Dutch.Adjectives.roze.toRootFamily.forms.length = 1 := by
-  decide
-
-/-- Adjectives spanning category projections always include the
-    uninflected adjectival form. -/
-theorem toRootFamily_includes_uninflected (a : AdjEntry) :
-    (a.form, Morphology.LexCat.adjective)
-      ∈ a.toRootFamily.forms := by
-  unfold Dutch.Adjectives.AdjEntry.toRootFamily
-  cases a.formInfl <;> cases a.nominalHeid <;> simp
+same root — the [marantz-1997] uncategorised-roots pattern. The roots
+themselves are the consensus Dutch lexical entries in
+`Fragments/Dutch/Adjectives.lean`; this file uses those entries as the
+carrier identifying each colour or taste subkind. -/
 
 /-! ## §3.1, §3.2: Shades, colour partition, and Mendia substrate
 

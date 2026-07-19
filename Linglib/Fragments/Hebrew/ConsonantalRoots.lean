@@ -1,4 +1,4 @@
-import Linglib.Morphology.Root.Basic
+import Linglib.Morphology.Root
 
 /-!
 # Modern Hebrew Consonantal Roots

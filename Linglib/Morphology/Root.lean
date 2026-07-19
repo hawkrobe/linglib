@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Linglib.Phonology.OCP
 
 /-!
@@ -18,24 +23,26 @@ tier).
 ## Namespace separation
 
 Three roots coexist, owner-relative: `Morphology.Root` (this file) is the
-*consonantal melody*; `Morphology.RootFamily` records a *category-neutral
-lexical root* with its category-stamped derivatives; `Verb.Root`
-(`Semantics/Verb/Root/`) is the *lexical-semantic* root. No identification
-between them is substrate — homs live in the studies that assert them.
+*consonantal melody*; `Panagiotidis2015.RootFamily` records a
+*category-neutral lexical root* with its category-stamped derivatives;
+`Verb.Root` (`Semantics/Verb/Root/`) is the *lexical-semantic* root. No
+identification between them is substrate — homs live in the studies that
+assert them.
 -/
 
 namespace Morphology
 
 /-- A consonantal root: an ordered list of segments. Polymorphic in the
-    segment type so that fragments may pick the granularity they need
-    (sonority class, IPA symbol, full feature matrix). -/
-structure Root (α : Type) where
+segment type so that fragments may pick the granularity they need (sonority
+class, IPA symbol, full feature matrix). -/
+structure Root (α : Type*) where
+  /-- The root segments, in order. -/
   segments : List α
   deriving Repr, DecidableEq
 
 namespace Root
 
-variable {α : Type}
+variable {α : Type*}
 
 /-- The number of root segments. -/
 def arity (r : Root α) : Nat := r.segments.length

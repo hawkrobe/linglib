@@ -1,4 +1,4 @@
-import Linglib.Morphology.Root.Basic
+import Linglib.Morphology.Root
 import Linglib.Phonology.Constraints.Basic
 
 /-!
