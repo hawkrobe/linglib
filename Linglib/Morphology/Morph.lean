@@ -88,11 +88,6 @@ def attachment? : Morph → Option Attachment
   | ⟨.bound _ a, _⟩ => some a
   | _ => none
 
-/-- A morph is bound when its `kind` is. -/
-def IsBound (m : Morph) : Prop := m.kind.IsBound
-
-instance : DecidablePred IsBound := fun m => inferInstanceAs (Decidable m.kind.IsBound)
-
 instance : ToString Morph :=
   ⟨fun m => match m.kind with
     | .bound .before .affix => m.form ++ "-"
