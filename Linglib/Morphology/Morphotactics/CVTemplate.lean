@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Morphology.Root
+import Linglib.Phonology.Autosegmental.NonCrossing
 
 /-!
 # CV templates and template association
@@ -28,7 +29,17 @@ the representations they manipulate.
 * `Association` — a sourced melody-to-slot association line.
 * `TemplateMatch` — a root, vocalism, and affix matched to a template.
 * `TemplateMatch.spellout` — the surface segments of a match.
-* `TemplateMatch.OrderedOn` — the tier-internal no-crossing condition.
+* `TemplateMatch.OrderedOn` — the tier-internal well-formedness condition.
+* `TemplateMatch.links` — the per-tier link sets, in the coordinates of the
+  autosegmental substrate.
+
+## Main results
+
+* `TemplateMatch.orderedOn_iff` — `OrderedOn` decomposes into the
+  substrate's `Autosegmental.IsNonCrossing` plus [mccarthy-1981]'s
+  prohibition against many-to-one associations (`SlotUnique`), so the
+  list-level representation here interprets into
+  `Phonology/Autosegmental/NonCrossing.lean` rather than duplicating it.
 -/
 
 namespace Morphology
@@ -206,6 +217,64 @@ instance (s : AssocSource) : Decidable (m.OrderedOn s) :=
 theorem spellout_nil (r : Root α) (t : CVTemplate) :
     (TemplateMatch.mk r [] [] t []).spellout = [] := by
   simp [spellout]
+
+/-! ### Interpretation into the autosegmental substrate -/
+
+open Autosegmental
+
+/-- The link set of tier `s`, in the two-layer coordinates of
+`Phonology/Autosegmental/NonCrossing.lean`: one `(melodyIndex, slotIndex)`
+pair per association line from `s`. -/
+def links (s : AssocSource) : Finset (Nat × Nat) :=
+  ((m.associations.filter (·.source == s)).map fun a =>
+    (a.melodyIndex, a.slotIndex)).toFinset
+
+/-- `m.SlotUnique s` asserts that no slot hosts two distinct melody elements
+of tier `s` — [mccarthy-1981]'s prohibition against many-to-one
+associations. -/
+def SlotUnique (s : AssocSource) : Prop :=
+  ∀ a ∈ m.associations, ∀ b ∈ m.associations, a.source = s → b.source = s →
+    a.slotIndex = b.slotIndex → a.melodyIndex = b.melodyIndex
+
+instance (s : AssocSource) : Decidable (m.SlotUnique s) :=
+  inferInstanceAs (Decidable (∀ a ∈ m.associations, ∀ b ∈ m.associations, _))
+
+theorem mem_links (p : Nat × Nat) (s : AssocSource) :
+    p ∈ m.links s ↔
+      ∃ a ∈ m.associations, a.source = s ∧ a.melodyIndex = p.1 ∧ a.slotIndex = p.2 := by
+  simp only [links, List.mem_toFinset, List.mem_map, List.mem_filter, beq_iff_eq]
+  constructor
+  · rintro ⟨a, ⟨ha, hs⟩, rfl⟩
+    exact ⟨a, ha, hs, rfl, rfl⟩
+  · rintro ⟨a, ha, hs, h1, h2⟩
+    exact ⟨a, ⟨ha, hs⟩, by cases p; simp_all⟩
+
+/-- A tier is `OrderedOn` iff its link set is non-crossing in the sense of
+the autosegmental substrate *and* one-to-one per slot: [goldsmith-1976]'s
+No-Crossing Constraint plus [mccarthy-1981]'s prohibition against
+many-to-one associations. -/
+theorem orderedOn_iff (s : AssocSource) :
+    m.OrderedOn s ↔ IsNonCrossing (m.links s) ∧ m.SlotUnique s := by
+  constructor
+  · refine fun h => ⟨isNonCrossing_iff.mpr ?_, fun a ha b hb has hbs hslot => ?_⟩
+    · rintro p hp q hq hlt
+      obtain ⟨a, ha, has, h1, h2⟩ := (m.mem_links p s).mp hp
+      obtain ⟨b, hb, hbs, h3, h4⟩ := (m.mem_links q s).mp hq
+      have := h a ha b hb has hbs (by omega)
+      omega
+    · by_contra hne
+      rcases Nat.lt_or_ge a.melodyIndex b.melodyIndex with hlt | hge
+      · exact absurd (h a ha b hb has hbs hlt) (by omega)
+      · rcases Nat.lt_or_ge b.melodyIndex a.melodyIndex with hlt' | _
+        · exact absurd (h b hb a ha hbs has hlt') (by omega)
+        · omega
+  · rintro ⟨hnc, hu⟩ a ha b hb has hbs hlt
+    have hle := isNonCrossing_iff.mp hnc
+      _ ((m.mem_links (a.melodyIndex, a.slotIndex) s).mpr ⟨a, ha, has, rfl, rfl⟩)
+      _ ((m.mem_links (b.melodyIndex, b.slotIndex) s).mpr ⟨b, hb, hbs, rfl, rfl⟩) hlt
+    rcases Nat.lt_or_eq_of_le hle with hlt' | heq
+    · exact hlt'
+    · exact absurd (hu a ha b hb has hbs heq) (by omega)
 
 end TemplateMatch
 
