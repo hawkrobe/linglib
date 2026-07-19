@@ -40,22 +40,17 @@ namespace Morphology
 
 set_option autoImplicit false
 
-/-- A word: the pure CoNLL-U surface token — surface form, UD category, and UD
-    morphology (one `UD.MorphFeatures` bundle; there is no separate word-level feature
-    record).
-
-    **Admission rule**: a property belongs on `Word` iff a Fragment-free token-level
-    engine reads it off the token's *own* data; otherwise it lives on the typed lexical
-    carrier (`Pronoun`, `NounEntry`, `Verb`, …) or on the consuming framework's own
-    structures (e.g. DG subcategorization premises live on `DepTree.frames`, not here).
-    Identity caveat: `BEq` is form + category, so homographs collapse — correct
-    surface behavior. Theoretical word identity (which tokens share a lexeme, the
-    Same Verb Problem) is relational and owned by the lexeme layer of
-    `Paradigm/Linkage`; a CoNLL-U `lemma` field would be corpus disambiguation
-    only, added if a corpus consumer needs it. -/
+/-- A **word** is a surface token: a form with its UD category and UD
+    morphology, as in a CoNLL-U row. A property belongs here only when a
+    token-level engine reads it off the token's own data. Homographs collapse
+    (`BEq` is form and category); which tokens share a lexeme is relational,
+    carried by `Paradigm/Linkage`. -/
 structure Word where
+  /-- The surface form. -/
   form : String
+  /-- The UD category. -/
   cat : UD.UPOS
+  /-- The UD morphological features. -/
   features : UD.MorphFeatures := {}
   deriving Repr
 
