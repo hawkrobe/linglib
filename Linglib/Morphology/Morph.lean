@@ -16,7 +16,7 @@ empty exponent, and a discontinuous realization is a multi-morph exponent.
 * `Morph`, `Morph.Kind` — a segmental form with its attachment kind,
   factored as side × attachment for bound morphs
 * `Exponent` — a sequence of morphs; `[]` is zero exponence
-* `Morph.toString`, `Exponent.toString` — descriptive-notation display
+* the `ToString Morph` instance, `Exponent.toString` — descriptive-notation display
   (`X-`, `-X`, `X=`, `=X`; `∅` for zero exponence)
 * `Following` — following-segment environment for variant selection
 
@@ -33,8 +33,8 @@ is out of scope here: `Word.Structure` covers reduplication and conversion,
 the autosegmental machinery covers tone.
 
 Boundary notation (`X-`, `-X`, `X=`, `=X`) is display, not data: `Morph.form`
-is bare segmental material, and `Morph.toString` reproduces the descriptive
-convention from `Morph.Kind`.
+is bare segmental material, and the `ToString` instance reproduces the
+descriptive convention from `Morph.Kind`.
 -/
 
 namespace Morphology
@@ -98,31 +98,25 @@ def attachment? : Morph → Option Attachment
   | ⟨.bound _ a, _⟩ => some a
   | _ => none
 
-/-- The boundary sign of an attachment: `-` for affixes, `=` for clitics. -/
-def Attachment.sign : Attachment → String
-  | .affix => "-"
-  | .clitic => "="
-
-/-- Display in descriptive notation: the attachment's sign on the side of
-the host — `X-`, `-X`, `X=`, `=X` — and bare for roots and free forms. -/
-def toString (m : Morph) : String :=
-  match m.kind with
-  | .bound .before a => m.form ++ a.sign
-  | .bound .after a => a.sign ++ m.form
-  | .root | .free => m.form
-
-instance : ToString Morph := ⟨toString⟩
+/-- Descriptive boundary notation: `X-`, `-X`, `X=`, `=X`; bare for roots
+and free forms. -/
+instance : ToString Morph :=
+  ⟨fun m => match m.kind with
+    | .bound .before .affix => m.form ++ "-"
+    | .bound .after .affix => "-" ++ m.form
+    | .bound .before .clitic => m.form ++ "="
+    | .bound .after .clitic => "=" ++ m.form
+    | .root | .free => m.form⟩
 
 end Morph
 
 /-- An **exponent** is the sequence of morphs realizing a paradigm cell. -/
 abbrev Exponent := List Morph
 
-/-- Display an exponent in descriptive notation: `∅` for zero exponence,
-`…` linking the parts of a discontinuous realization. -/
+/-- Descriptive notation for an exponent: `∅` if empty, parts linked by `…`. -/
 def Exponent.toString : Exponent → String
   | [] => "∅"
-  | ms => String.intercalate "…" (ms.map Morph.toString)
+  | ms => String.intercalate "…" (ms.map toString)
 
 /-- The class of the following segment: the commonest phonological
 environment conditioning the choice among a morph's variant shapes
