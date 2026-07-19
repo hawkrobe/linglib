@@ -40,6 +40,7 @@ primitive is a candidate for a future `Core/Order/` lift.
 - `valueFuel`, `Hierarchy.value` — fuel-bounded default/override lookup
 - `Hierarchy.value_eq_of_att`, `Hierarchy.value_eq_parent` — override wins;
   path extension to the parent
+- `Hierarchy.parent_asymm` — no 2-cycle: nodes cannot be each other's parent
 -/
 
 namespace Morphology.Construction
@@ -189,6 +190,15 @@ theorem Hierarchy.value_eq_parent (h : Hierarchy ι) {att : ι → Option β} {n
   simp only [Hierarchy.value, valueFuel, hn]
 
 end Fintype
+
+/-- **No 2-cycle**: in a well-founded hierarchy no two nodes are each other's
+parent. This is the obstruction a single directed inheritance relation hits on
+[jackendoff-audring-2020]'s Objection 10 — a pair whose form and meaning planes
+demand opposite parent orientations cannot both be edges of one acyclic
+hierarchy. -/
+theorem Hierarchy.parent_asymm (h : Hierarchy ι) {a b : ι}
+    (hab : h.parent a = some b) (hba : h.parent b = some a) : False :=
+  h.wf.asymmetric a b hba hab
 
 /-! ### Figure 3.5: default and override
 
