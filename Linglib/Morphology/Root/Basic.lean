@@ -5,36 +5,70 @@ Authors: Robert Hawkins
 -/
 import Linglib.Data.UD.Basic
 import Linglib.Morphology.Morph
+import Mathlib.Data.List.Infix
 
 /-!
 # Roots
 
-[haspelmath-2025-root]'s definition (1): a **root** is a contentful morph —
-a morph denoting an action, an object or a property — that can occur as part
-of a free form without another contentful morph. A root is thus a kind of
-`Morph`, a concrete contiguous form: Semitic consonantal skeletons do not
-fall under the definition (they are `Morphology.ConsonantalRoot`), and the
-abstract acategorial Root of Distributed Morphology is a different object
-again (`Morphology/DM/Root.lean`). The qualifying clause excludes contentful
-affixes (the Japanese causative *-ase*) and neoclassical combining forms
-(*geo-*, *socio-*), which are contentful but never the sole contentful morph
-of a free form.
-
-Formally identical roots with related meanings (*hammer* the instrument,
-*hammer* the action) are heterosemous *sister roots*, not one precategorial
-root — the classification `cls` below assigns each its own class.
+Two definitions of roothood over `Morph`, relative to a fragment's word and
+free-form inventories. The formal one ([bloomfield-1933], the base definition
+of [qin-2025]): a morph is a core iff it occurs in a *primary word* — one with
+no free form as a proper part. The semantic one ([haspelmath-2025-root]'s
+definition (1)): a *contentful* morph — denoting an action, an object or a
+property — occurring in a free form with no other contentful morph. The two
+come apart at meaning-free cores like *-fer* (`Studies/Qin2025.lean`).
+Consonantal skeletons are `ConsonantalRoot`; DM's acategorial root is
+`Morphology/DM/Root.lean`.
 
 ## Main declarations
 
-* `RootClass` — action, object, and property roots.
-* `RootClass.upos` — word classes as comparative concepts: a verb is an
-  action-denoting root, a noun an object-denoting root, an adjective a
-  property-denoting root.
-* `Morph.IsRootIn` — the definition, relative to a fragment's free forms
-  and contentfulness classification.
+* `IsPrimaryWord`, `Morph.IsCoreIn`, `Morph.IsTypicalAffixIn` — the formal
+  layer: primary words, cores, and affixes.
+* `RootClass`, `RootClass.upos` — action, object, and property roots and
+  their word classes.
+* `Morph.IsRootIn` — the semantic layer, relative to a contentfulness
+  classification `cls`.
 -/
 
 namespace Morphology
+
+/-- A word is **primary** ([bloomfield-1933]): no proper contiguous part of
+it is a free form. *cat* and *refer* are primary; *cats* and *blackbirds* are
+secondary. -/
+def IsPrimaryWord (freeForms : List (List Morph)) (w : List Morph) : Prop :=
+  ∀ f ∈ freeForms, f.length < w.length → ¬ f <:+: w
+
+instance (freeForms : List (List Morph)) (w : List Morph) :
+    Decidable (IsPrimaryWord freeForms w) :=
+  inferInstanceAs (Decidable (∀ f ∈ freeForms, _ → _))
+
+/-- A **morphological core** — [qin-2025]'s base definition of a root: a
+morph occurring in some primary word. -/
+def Morph.IsCoreIn (m : Morph) (words freeForms : List (List Morph)) : Prop :=
+  ∃ w ∈ words, IsPrimaryWord freeForms w ∧ m ∈ w
+
+instance (m : Morph) (words freeForms : List (List Morph)) :
+    Decidable (m.IsCoreIn words freeForms) :=
+  inferInstanceAs (Decidable (∃ w ∈ words, _))
+
+/-- A **typical affix** occurs only in secondary words ([bloomfield-1933]):
+*-s* and *-ness* attach to free forms. -/
+def Morph.IsTypicalAffixIn (m : Morph)
+    (words freeForms : List (List Morph)) : Prop :=
+  ∀ w ∈ words, m ∈ w → ¬ IsPrimaryWord freeForms w
+
+/-- A singleton word is primary when the free-form inventory has no empty
+form. -/
+theorem isPrimaryWord_singleton {freeForms : List (List Morph)}
+    (h : [] ∉ freeForms) (m : Morph) : IsPrimaryWord freeForms [m] := by
+  intro f hf hlen _
+  exact h (List.length_eq_zero_iff.mp (Nat.lt_one_iff.mp hlen) ▸ hf)
+
+/-- A free morpheme standing as a word is a morphological core. -/
+theorem Morph.isCoreIn_of_free_word {words freeForms : List (List Morph)}
+    {m : Morph} (hw : [m] ∈ words) (h : [] ∉ freeForms) :
+    m.IsCoreIn words freeForms :=
+  ⟨[m], hw, isPrimaryWord_singleton h m, List.mem_singleton_self m⟩
 
 /-- The three semantic root classes: roots denoting actions, objects, and
 properties. Their prototypical combinations with discourse functions —
@@ -49,9 +83,8 @@ inductive RootClass where
   | property
   deriving DecidableEq, Repr
 
-/-- Word classes as comparative concepts: a verb is an action-denoting
-root, a noun an object-denoting root, an adjective a property-denoting
-root. -/
+/-- Word classes as comparative concepts: a verb is an action-denoting root,
+a noun an object-denoting root, an adjective a property-denoting root. -/
 def RootClass.upos : RootClass → UD.UPOS
   | .action => .VERB
   | .object => .NOUN
