@@ -1,7 +1,7 @@
 import Linglib.Phonology.Tone.Basic
 import Linglib.Phonology.Tone.Grammatical
 import Linglib.Phonology.Autosegmental.Melody
-import Linglib.Morphology.Word.Structure
+import Linglib.Morphology.Word.Tree
 
 /-!
 # Poko Tonal Fragment

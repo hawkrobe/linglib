@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Phonology.Autosegmental.Floating
 import Linglib.Phonology.Autosegmental.Junction
-import Linglib.Morphology.Word.Structure
+import Linglib.Morphology.Word.Tree
 
 /-!
 # Laoide-Kemp (2026): Irish preverbal *d'* as a floating segment

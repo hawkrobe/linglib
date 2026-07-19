@@ -1,5 +1,5 @@
 import Linglib.Syntax.Category.Complementizer.Basic
-import Linglib.Morphology.Word.Structure
+import Linglib.Morphology.Word.Tree
 
 /-!
 # Tigrinya Clausal Prefixes [cacchioli-2025]
@@ -106,20 +106,22 @@ def allPrefixes : List ClausePrefixEntry := [zi, ki, kemzi, ay_n]
 /-- The negative circumfix as word structure over glossed morphs: the
 verb stem wrapped by *ʔay-* and *-n* (an inflectional circumfixation,
 [haspelmath-2020]'s prefix-plus-suffix construction reading). -/
-def negCircumfix (verbStem : String) : Word.Structure (Morph × String) :=
+def negCircumfix (verbStem : String) : Word.Tree (Morph × String) :=
   .circumfixed (Morph.pref ay_n.form, ay_n.gloss)
     (.root (Morph.free verbStem, ""))
     (Morph.suff ay_n.suffix_, ay_n.gloss)
-    .inflectional
 
 /-- The negative circumfix surfaces correctly. -/
 theorem neg_circumfix_example :
     String.join ((negCircumfix "mäs'ə").toList.map (·.1.form)) = "ʔay-mäs'ə-n" := rfl
 
-/-- Discontinuous exponence: the circumfixed structure has no
-payload-sequence projection — the circumfix is a construction, not a
-morph ([haspelmath-2020]). -/
-theorem neg_circumfix_no_exponent (s : String) :
-    (negCircumfix s).toSequence? = none := rfl
+/-- Discontinuous exponence: the circumfixed word is not concatenative —
+the circumfix is a construction, not a morph ([haspelmath-2020]). -/
+theorem neg_circumfix_not_concatenative (s : String) :
+    ¬ (negCircumfix s).IsConcatenative := id
+
+/-- The circumfix is kind-coherent once glosses are projected away: *ʔay-* is
+before-bound, *-n* after-bound, and the stem leaf is a free form. -/
+example : ((negCircumfix "mäs'ə").map Prod.fst).IsKindCoherent := by decide
 
 end Tigrinya.ClausePrefixes
