@@ -1250,6 +1250,10 @@ import Linglib.Fragments.Yoruba.Possession
 import Linglib.Fragments.Yoruba.Relativization
 import Linglib.Fragments.ZarmaSonrai.Negation
 import Linglib.Fragments.Zulu.Phonology
+import Linglib.Morphology.Construction.Inheritance
+import Linglib.Morphology.Construction.Schema
+import Linglib.Morphology.Construction.SameExcept
+import Linglib.Morphology.Construction.Sister
 import Linglib.Morphology.DM.Allosemy
 import Linglib.Morphology.DM.Categorizer
 import Linglib.Morphology.DM.CategorizerSemantics
