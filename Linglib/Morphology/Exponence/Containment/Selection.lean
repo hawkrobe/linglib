@@ -1,8 +1,10 @@
 import Linglib.Morphology.Exponence.Containment.Defs
+import Linglib.Morphology.Exponence.Decomposition
 import Linglib.Morphology.Exponence.Select
 import Linglib.Morphology.Paradigm.Basic
 import Mathlib.Data.List.MinMax
 import Mathlib.Data.Finset.Max
+import Mathlib.Order.Interval.Finset.Fin
 
 /-!
 # Containment hierarchies: score selection
@@ -388,5 +390,71 @@ theorem spelloutWinner_isElsewhereWinner {v : List (SpanRule n F)}
   obtain ⟨jt, hjt, rfl⟩ := List.mem_map.mp hs
   rw [SupersetRule.le_iff]
   exact le_spans_of_minSpan_eq_coe hms hjt hsapp
+
+/-! ### The chain decomposition: containment as feature decomposition
+
+The linear containment engine is the chain instance of the general
+feature-decomposition engine (`Exponence/Decomposition.lean`): decompose the
+grade space `Fin n` by initial segments `chainDecomp i = Finset.Iic i`, and a
+span rule realizing `[0, threshold]` becomes a decomposition rule specified for
+exactly those features. Threshold containment is then Subset containment
+(`applies_toDecomposition`), the specificity orders correspond
+(`SpanRule.toDecomposition_le_iff`), and the Elsewhere winner selected by
+maximizing `threshold` is the same rule the decomposition engine selects by
+maximizing `feats.card = threshold + 1` — an Elsewhere winner of the shared core
+under the decomposition reading (`winner_isElsewhereWinner_toDecomposition`). -/
+
+/-- The chain decomposition of an `n`-grade hierarchy: grade `i` carries the
+initial segment `[0, i]`. -/
+def chainDecomp {n : ℕ} : Fin n → Finset (Fin n) := Finset.Iic
+
+/-- A span rule read as a feature-decomposition rule over `chainDecomp`: its
+threshold becomes the initial-segment feature set `[0, threshold]`, the exponent
+unchanged. -/
+def SpanRule.toDecomposition (it : SpanRule n F) :
+    Decomposition.Rule (Fin n) chainDecomp F :=
+  ⟨Finset.Iic it.threshold, it.exponent⟩
+
+@[simp] theorem SpanRule.toDecomposition_feats {it : SpanRule n F} :
+    it.toDecomposition.feats = Finset.Iic it.threshold := rfl
+
+/-- **Applicability agreement**: threshold containment is Subset containment of
+initial segments. -/
+@[simp] theorem applies_toDecomposition {it : SpanRule n F} {g : Fin n} :
+    Exponence.Applies (F := F) it.toDecomposition g
+      ↔ Exponence.Applies (F := F) it g := by
+  rw [SpanRule.applies_iff]; exact Finset.Iic_subset_Iic
+
+/-- The feature count of a chain rule is one more than its threshold, so
+`feats.card`-maximization is `threshold`-maximization: the two engines optimize
+the same score. -/
+theorem SpanRule.toDecomposition_feats_card {it : SpanRule n F} :
+    it.toDecomposition.feats.card = (it.threshold : ℕ) + 1 := by
+  simp [Fin.card_Iic]
+
+/-- **Specificity agreement**: the chain map reflects the specificity preorder —
+`it` is at least as specific as `jt` under the linear threshold order iff its
+decomposition image is under Subset inclusion. -/
+theorem SpanRule.toDecomposition_le_iff {it jt : SpanRule n F} :
+    it.toDecomposition ≤ jt.toDecomposition ↔ it ≤ jt := by
+  rw [Decomposition.le_iff, SpanRule.le_iff, SpanRule.moreSpecific_iff_threshold_le]
+  simp only [applies_toDecomposition, SpanRule.applies_iff]
+  constructor
+  · intro h; exact h le_rfl
+  · intro h c hg; exact le_trans h hg
+
+/-- **Winner agreement**: the containment Elsewhere winner, read through the
+chain map, is an Elsewhere winner of the shared core under the decomposition
+reading — so `Containment.winner` (maximizing `threshold`) and
+`Decomposition.pattern` (`selectBy feats.card`) pick the same rule. -/
+theorem winner_isElsewhereWinner_toDecomposition {v : List (SpanRule n F)}
+    {g : Fin n} {it : SpanRule n F} (h : winner v g = some it) :
+    Exponence.IsElsewhereWinner (v.map SpanRule.toDecomposition) g it.toDecomposition := by
+  obtain ⟨⟨hmem, happ⟩, hmin⟩ := winner_isElsewhereWinner h
+  refine ⟨⟨List.mem_map_of_mem hmem, applies_toDecomposition.mpr happ⟩, ?_⟩
+  rintro s ⟨hsv, hsapp⟩ hsle
+  obtain ⟨jt, hjt, rfl⟩ := List.mem_map.mp hsv
+  rw [SpanRule.toDecomposition_le_iff] at hsle ⊢
+  exact hmin ⟨hjt, applies_toDecomposition.mp hsapp⟩ hsle
 
 end Morphology.Containment
