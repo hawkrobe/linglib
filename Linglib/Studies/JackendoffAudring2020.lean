@@ -270,17 +270,18 @@ inductive Tense | pres | past
 /-- The paradigm linkage: both `draw` readings select the same stem, so they share
 every correspondent; `ring` and `wring` select distinct stems. -/
 def drawLinkage : Linkage DrawLex DrawStem Tense where
-  stem
-    | .drawPicture, _ => some .drawZ
-    | .drawElicit, _ => some .drawZ
-    | .ring, _ => some .ringZ
-    | .wring, _ => some .wringZ
+  stems
+    | .drawPicture, _ => {.drawZ}
+    | .drawElicit, _ => {.drawZ}
+    | .ring, _ => {.ringZ}
+    | .wring, _ => {.wringZ}
   pm := fun _ σ => σ
 
 /-- **Same Verb**: the two `draw` readings, sharing a form correspondent, realize
 identically at every cell — `drew` is forced, whatever their distinct semantics.
 Instantiates `Linkage.realize_eq_of_corr_eq_lexeme`. -/
-theorem draw_same_verb {W : Type*} (rf : DrawStem → Tense → W) (σ : Tense) :
+theorem draw_same_verb {W : Type*} [DecidableEq W] (rf : DrawStem → Tense → W)
+    (σ : Tense) :
     drawLinkage.realize rf .drawPicture σ = drawLinkage.realize rf .drawElicit σ :=
   drawLinkage.realize_eq_of_corr_eq_lexeme rf rfl
 

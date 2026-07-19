@@ -102,9 +102,9 @@ theorem ParadigmFunction.apply_eq_linkage_realize {Feature : Type} [BEq Feature]
     (σ : MorphPropertySet Feature) :
     ((Morphology.Linkage.canonical (Z := Lexeme)
           (P := MorphPropertySet Feature) id).realize
-        (fun l τ => pf.apply τ l) lex σ).map Prod.fst
-      = some (pf.apply σ lex) :=
-  rfl
+        (fun l τ => pf.apply τ l) lex σ).image Prod.fst
+      = {pf.apply σ lex} := by
+  simp
 
 /-- The linkage PFM instantiates is canonical ([stump-2016] §7.1): identity
 property mapping and one stem per lexeme. -/
