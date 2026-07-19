@@ -1,4 +1,4 @@
-import Linglib.Features.Formative
+import Linglib.Morphology.Word.Formative
 import Linglib.Semantics.Coordination.Defs
 import Linglib.Data.WALS.Features.F56A
 import Linglib.Data.WALS.Features.F63A
@@ -289,7 +289,7 @@ instance (sys : ConjunctionSystem) : Decidable sys.hasBisyndetic := by
   unfold ConjunctionSystem.hasBisyndetic; infer_instance
 
 /-- The boundness of a language's MU particle, if it has one. -/
-def ConjunctionSystem.muBoundness (sys : ConjunctionSystem) : Option Features.Boundness :=
+def ConjunctionSystem.muBoundness (sys : ConjunctionSystem) : Option Morphology.Boundness :=
   (sys.morphemes.find? fun m => m.entry.role == .mu).map (·.entry.boundness)
 
 /-! ### Coordinate-structure symmetry -/

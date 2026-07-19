@@ -1,4 +1,4 @@
-import Linglib.Features.Formative
+import Linglib.Morphology.Word.Formative
 import Linglib.Fragments.English.Auxiliaries
 import Linglib.Core.Logic.Modal.Basic
 import Mathlib.Data.Fin.Basic
@@ -25,7 +25,80 @@ English *-n't* scores affix-like on all six.
 
 namespace Morphology.Diagnostics
 
-open Features (MorphStatus SelectionDegree)
+/-- How restrictive a morpheme is about what it can attach to.
+
+[zwicky-pullum-1983] criterion A: clitics exhibit low selection
+(attach to virtually any word), while affixes exhibit high selection
+(attach only to specific stems or categories). -/
+inductive SelectionDegree where
+  /-- Attaches to words of virtually any category (prepositions, verbs,
+      adjectives, adverbs). Characteristic of simple clitics. -/
+  | low
+  /-- Attaches to words of a single major category (e.g., past tense
+      *-ed* to verbs, plural *-s* to nouns). Characteristic of
+      inflectional affixes. -/
+  | singleCategory
+  /-- Attaches only to a closed list of stems (e.g., *-n't* only to
+      finite auxiliaries). Maximally selective. -/
+  | closedClass
+  deriving DecidableEq, Repr
+
+/-- Affixes are more selective than clitics. -/
+def SelectionDegree.IsHighSelection (s : SelectionDegree) : Prop :=
+  s ≠ .low
+
+instance : DecidablePred SelectionDegree.IsHighSelection := fun s => by
+  unfold SelectionDegree.IsHighSelection; exact inferInstance
+
+/-- Morphological status of a linguistic form: the free-word / clitic /
+affix cline. The clitic–affix boundary is the central question of
+[zwicky-pullum-1983]; the criteria A–F serve to locate a given morpheme
+on this scale, and `CliticAffixProfile.classify` derives the
+classification from a criteria profile. -/
+inductive MorphStatus where
+  /-- Syntactically independent word. -/
+  | freeWord
+  /-- Simple clitic: an optional variant of a full form, occurring in
+      the same sentence positions as that full form — English contracted
+      auxiliaries *'s*, *'ve*, *'d*. ([bickel-nichols-2007] later
+      redefine the class by low selectivity plus phonological dependence,
+      dropping the full-form requirement; on that rival definition,
+      full-form-less items [zwicky-pullum-1983] class as special clitics
+      count as simple.) -/
+  | simpleClitic
+  /-- Special clitic: either no corresponding free word exists (Latin
+      *-que*, English possessive *'s*), or the distribution differs from
+      the free word's (Romance pronominal clitics). -/
+  | specialClitic
+  /-- Inflectional affix: paradigmatic, category-preserving, highly
+      selective, with possible gaps and idiosyncrasies.
+      English *-ed*, *-s*, *-est*, *-n't*. -/
+  | inflAffix
+  /-- Derivational affix: potentially category-changing, often
+      productive but may show lexical restrictions.
+      English *-ness*, *un-*, *-ize*. -/
+  | derivAffix
+  deriving DecidableEq, Repr
+
+/-- Is this an affix (inflectional or derivational)? -/
+def MorphStatus.IsAffix (s : MorphStatus) : Prop :=
+  s = .inflAffix ∨ s = .derivAffix
+
+instance : DecidablePred MorphStatus.IsAffix :=
+  fun _ => inferInstanceAs (Decidable (_ ∨ _))
+
+/-- Is this a clitic (simple or special)? -/
+def MorphStatus.IsClitic (s : MorphStatus) : Prop :=
+  s = .simpleClitic ∨ s = .specialClitic
+
+instance : DecidablePred MorphStatus.IsClitic :=
+  fun _ => inferInstanceAs (Decidable (_ ∨ _))
+
+/-- The coarse boundness of a morph status: free words are free,
+clitics and affixes are bound. -/
+def MorphStatus.boundness : MorphStatus → Morphology.Boundness
+  | .freeWord => .free
+  | _ => .bound
 
 structure CliticAffixProfile where
   morpheme : String
@@ -54,6 +127,11 @@ def CliticAffixProfile.affixScore (p : CliticAffixProfile) : Nat :=
 def CliticAffixProfile.cliticScore (p : CliticAffixProfile) : Nat :=
   6 - p.affixScore
 
+/-- Classification from a criteria profile. The two unanimous poles are
+the paper's: all six affix-like is an inflectional affix, all six
+clitic-like a simple clitic. The middle branch is a conservative default
+beyond the paper — [zwicky-pullum-1983] define special clitics
+distributionally (their §5), not as an intermediate criteria score. -/
 def CliticAffixProfile.classify (p : CliticAffixProfile) : MorphStatus :=
   if p.affixScore == 6 then .inflAffix
   else if p.cliticScore == 6 then .simpleClitic
@@ -115,7 +193,6 @@ of inflectional affixes, not clitics.
 namespace ZwickyPullum1983
 
 open Morphology.Diagnostics
-open Features (MorphStatus SelectionDegree)
 open English.Auxiliaries (AuxEntry)
 
 -- ============================================================================

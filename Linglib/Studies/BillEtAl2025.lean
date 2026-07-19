@@ -1,7 +1,7 @@
 import Linglib.Semantics.Intensional.Defs
 import Linglib.Semantics.Intensional.Conjunction
 import Linglib.Semantics.Plurality.Distributivity
-import Linglib.Features.Formative
+import Linglib.Morphology.Word.Formative
 import Linglib.Semantics.Coordination.Defs
 import Linglib.Syntax.Coordination
 import Linglib.Studies.Haspelmath2007
@@ -594,8 +594,8 @@ not the right level of analysis for acquisition predictions.
 -/
 theorem boundness_confound :
     -- Georgian MU is bound, Hungarian MU is free
-    georgian.muBoundness = some Features.Boundness.bound ∧
-    hungarian.muBoundness = some Features.Boundness.free ∧
+    georgian.muBoundness = some Morphology.Boundness.bound ∧
+    hungarian.muBoundness = some Morphology.Boundness.free ∧
     -- Georgian children found J-MU significantly harder
     georgianChild_j_vs_jmu.significant = true ∧
     -- Hungarian: no significant sentence-type effect on replays

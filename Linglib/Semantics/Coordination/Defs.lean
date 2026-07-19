@@ -1,5 +1,5 @@
 import Mathlib.Order.BooleanAlgebra.Basic
-import Linglib.Features.Formative
+import Linglib.Morphology.Word.Formative
 
 /-!
 # The Coordinator unit — marking + operation
@@ -76,7 +76,7 @@ structure Coordinator where
   /-- Which Boolean operation it denotes. -/
   role : Coordinator.Role
   /-- Free word vs bound clitic/suffix. -/
-  boundness : Features.Boundness
+  boundness : Morphology.Boundness
   /-- Does this morpheme also serve as an additive/focus particle? -/
   alsoAdditive : Bool := false
   /-- Does this morpheme also serve as a quantifier particle?

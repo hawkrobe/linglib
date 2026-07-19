@@ -1,4 +1,3 @@
-import Linglib.Features.Formative
 import Linglib.Morphology.Morphotactics.RelevanceHierarchy
 import Linglib.Morphology.UsageBased.Network
 import Linglib.Fragments.English.Predicates.Verbal
@@ -41,8 +40,8 @@ formalized.
 ## Implementation notes
 
 Out of scope: Ch 1 fusion/allomorphy, Ch 3 paradigm organization, Ch 4's
-lexical-derivational-inflectional continuum (which the discrete `MorphStatus`
-enum cannot express — flagged for future work), and Part II tense/aspect/mood
+lexical-derivational-inflectional continuum (which no discrete status
+enum expresses — flagged for future work), and Part II tense/aspect/mood
 detail (Ch 6-9). `MorphCategory.RelevanceLT` is exercised independently by
 `Studies/HahnDegenFutrell2021Morphology.lean`; the `BybeeCategory` enum and
 `toMorphCategory` bridge feed `Studies/RathiHahnFutrell2026.lean`. The Ch 5

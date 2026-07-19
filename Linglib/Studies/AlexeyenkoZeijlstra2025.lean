@@ -2,7 +2,7 @@ import Linglib.Features.WordOrder
 import Linglib.Features.Number.Basic
 import Linglib.Features.Gender.Basic
 import Linglib.Features.Case.Basic
-import Linglib.Features.Formative
+import Linglib.Studies.ZwickyPullum1983
 import Linglib.Fragments.Slavic.Russian.Agreement
 import Linglib.Fragments.Slavic.Russian.Case
 import Linglib.Fragments.German.Case
@@ -60,7 +60,7 @@ Constraint (Ackema-Neeleman §70) extends the ICP. -/
 
 namespace AlexeyenkoZeijlstra2025
 
-open Features (MorphStatus)
+open Morphology.Diagnostics (MorphStatus)
 
 /-! ## The Attr head and modification routes ([alexeyenko-zeijlstra-2025] §5)
 
