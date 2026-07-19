@@ -234,7 +234,8 @@ theorem or_le (hx : x ≤ z) (hy : y ≤ z) : x.or y ≤ z := by
 
 /-! ### Meets -/
 
-/-- The meet of two slots is their agreement, or `⊥`. -/
+/-- The meet of two slots is their agreement, or `⊥` — the *generalization*
+(anti-unification) of the two, order-dual to the partial join `PartialUnify`. -/
 protected def inf [DecidableEq α] (x y : Flat α) : Flat α :=
   if x = y then x else ⊥
 
