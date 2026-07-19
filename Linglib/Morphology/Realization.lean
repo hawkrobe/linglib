@@ -292,9 +292,10 @@ theorem Hom.realize_eq_of_onRoot_eq {S : Interpreted R₁ C₁ F M}
 
 /-- The lax tier: realization and interpretation are *included* rather than
 matched. Where a strict `Hom` merger asserts identity, a lax merger asserts
-family membership — each source index's forms and readings are among its
-image's. Pattern-bound lexemes lax-merge into a total root without ever
-strict-merging. -/
+subsumption — each source index's forms and readings are among its image's,
+as when a lexeme's listed properties are among its root's Encyclopedia entry
+([arad-2005]). Pattern-bound lexemes lax-merge into a total root without
+ever strict-merging. -/
 structure LaxHom (S : Interpreted R₁ C₁ F M) (T : Interpreted R₂ C₂ F M) where
   /-- The index translation. -/
   onRoot : R₁ → R₂

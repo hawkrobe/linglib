@@ -200,9 +200,12 @@ theorem sqrt_to_sisters_none
     | exact absurd (hi₁.trans hi₂.symm) (by decide)
 
 /-- The sisters do lax-merge into the single √ (`Realization.Interpreted.LaxHom`):
-each sister's forms and senses are among the √'s. The graded criterion —
-lax-mergeable but not strict-mergeable — is exactly the formal content of
-*family, not identity*: heterosemy. -/
+each sister's forms and senses are among the √'s. The lax-not-strict gradient
+characterizes the relation *between the two analyses* — the precategorial
+carving subsumes the sister carving's data without being identical to it. The
+heterosemy view's own positive machinery is different: per (17b), the sisters
+are related by sister schemas ([jackendoff-audring-2020];
+`Morphology/Construction/Sister.lean`), not by a shared realization target. -/
 theorem sisters_lax_merge :
     Nonempty (Realization.Interpreted.LaxHom sisterCarving sqrtCarving) :=
   ⟨⟨fun _ => .hammer, id, by decide, by decide⟩⟩
