@@ -407,4 +407,49 @@ theorem Linkage.realize_eq_paradigmFunction (ℓ : Linkage L Z P) (Lindex : Z �
 
 end Selection
 
+/-! ### Payload functoriality -/
+
+section MapPayload
+variable {F' : Type*}
+
+/-- Relabel a rule's payload, keeping its class and property set. -/
+def Rule.mapPayload (g : F → F') (r : Rule L P F) : Rule L P F' where
+  klass := r.klass
+  props := r.props
+  payload := g r.payload
+
+@[simp] theorem Rule.mapPayload_klass (g : F → F') (r : Rule L P F) :
+    (r.mapPayload g).klass = r.klass := rfl
+
+@[simp] theorem Rule.mapPayload_props (g : F → F') (r : Rule L P F) :
+    (r.mapPayload g).props = r.props := rfl
+
+section
+variable [PartialOrder P]
+
+@[simp] theorem Rule.mapPayload_lt_iff {g : F → F'} {r s : Rule L P F} :
+    r.mapPayload g < s.mapPayload g ↔ r < s := Iff.rfl
+
+end
+
+section
+variable [PartialOrder P] [DecidableEq L] [DecidableLE P]
+
+/-- Applicability and narrowness read only class and props, so narrowest-rule
+selection is blind to a payload relabelling. -/
+theorem selectMinimal_map_payload (g : F → F') (v : List (Rule L P F)) (c : L × P) :
+    selectMinimal (v.map (Rule.mapPayload g)) c
+      = (selectMinimal v c).map (Rule.mapPayload g) := by
+  have hA : applicable (v.map (Rule.mapPayload g)) c
+      = (applicable v c).map (Rule.mapPayload g) := by
+    simp only [applicable, List.filter_map, Function.comp_def, Rule.applies_iff,
+      Rule.mapPayload_klass, Rule.mapPayload_props]
+    rfl
+  rw [selectMinimal, selectMinimal, hA, List.find?_map]
+  simp only [Function.comp_def, List.all_map, Rule.mapPayload_lt_iff]
+
+end
+
+end MapPayload
+
 end Morphology.PFM
