@@ -209,4 +209,66 @@ theorem realize_congr {f : R → α} {v : List R} {c c' : Ctx}
     realize f v c = realize f v c' := by
   rw [realize, realize, selectBy_congr h]
 
+/-! ### Order selection
+
+Where `selectBy` optimizes a linear specificity **score**, `selectMinimal`
+selects directly over the specificity preorder: the first applicable rule that
+no applicable rule strictly undercuts. This is the order-driven dual of
+`selectBy`, for engines whose specificity is a genuine preorder rather than a
+linear score (the PFM narrowness order, `Morphology/Paradigm/Function.lean`,
+where an intensionally finer class/property order has no faithful score). -/
+
+variable [DecidableRel (· < · : R → R → Prop)]
+
+/-- Selection by specificity order: the first applicable rule of `v` at `c`
+that no applicable rule strictly undercuts (`none` when nothing applies). -/
+def selectMinimal (v : List R) (c : Ctx) : Option R :=
+  (applicable v c).find? (fun r => (applicable v c).all (fun s => decide (¬ s < r)))
+
+theorem selectMinimal_mem {v : List R} {c : Ctx} {r : R}
+    (h : selectMinimal v c = some r) : r ∈ v :=
+  (mem_applicable.mp (List.mem_of_find?_eq_some h)).1
+
+theorem selectMinimal_applies {v : List R} {c : Ctx} {r : R}
+    (h : selectMinimal v c = some r) : Exponence.Applies (F := F) r c :=
+  (mem_applicable.mp (List.mem_of_find?_eq_some h)).2
+
+/-- A selected rule is an Elsewhere winner: applicable and `≤`-minimal. The
+all-check discharges minimality — no applicable rule strictly undercuts it. -/
+theorem selectMinimal_isElsewhereWinner {v : List R} {c : Ctx} {r : R}
+    (h : selectMinimal v c = some r) : IsElsewhereWinner v c r := by
+  refine ⟨mem_applicable.mp (List.mem_of_find?_eq_some h), ?_⟩
+  have hall := List.find?_some h
+  rw [List.all_eq_true] at hall
+  rintro s ⟨hsv, hsapp⟩ hsr
+  by_contra hrs
+  have hns := hall s (mem_applicable.mpr ⟨hsv, hsapp⟩)
+  rw [decide_eq_true_eq] at hns
+  exact hns (lt_of_le_not_ge hsr hrs)
+
+/-- A vocabulary with an applicable rule selects one — the order-selection
+counterpart of `exists_isElsewhereWinner`, the winner witnessing `find?`
+succeeds. -/
+theorem selectMinimal_isSome_of_exists_applicable {v : List R} {c : Ctx}
+    (h : ∃ r ∈ v, Exponence.Applies (F := F) r c) : (selectMinimal v c).isSome := by
+  obtain ⟨r, hr⟩ := exists_isElsewhereWinner h
+  rw [Option.isSome_iff_ne_none]
+  intro hnone
+  rw [selectMinimal, List.find?_eq_none] at hnone
+  refine hnone r (mem_applicable.mpr ⟨hr.1.1, hr.1.2⟩) ?_
+  rw [List.all_eq_true]
+  intro s hs
+  rw [decide_eq_true_eq]
+  intro hlt
+  exact absurd (hr.2 (mem_applicable.mp hs) hlt.le) (not_le_of_gt hlt)
+
+theorem selectMinimal_eq_none_iff {v : List R} {c : Ctx} :
+    selectMinimal v c = none ↔ applicable v c = [] := by
+  refine ⟨fun h => ?_, fun h => by rw [selectMinimal, h]; rfl⟩
+  by_contra hne
+  obtain ⟨r, hr⟩ := List.exists_mem_of_ne_nil _ hne
+  have happ := mem_applicable.mp hr
+  have hs := selectMinimal_isSome_of_exists_applicable ⟨r, happ.1, happ.2⟩
+  rw [h] at hs; simp at hs
+
 end Morphology.Exponence

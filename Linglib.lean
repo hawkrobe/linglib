@@ -1281,6 +1281,7 @@ import Linglib.Morphology.Paradigm.Case
 import Linglib.Morphology.Paradigm.Complexity
 import Linglib.Morphology.Paradigm.Contiguity
 import Linglib.Morphology.Paradigm.Degree
+import Linglib.Morphology.Paradigm.Function
 import Linglib.Morphology.Paradigm.Linkage
 import Linglib.Morphology.Paradigm.Morphome
 import Linglib.Morphology.Paradigm.OfCells
@@ -1974,6 +1975,7 @@ import Linglib.Studies.Blutner2000
 import Linglib.Studies.Bobaljik2012
 import Linglib.Studies.Bochnak2015
 import Linglib.Studies.Bohnemeyer2004
+import Linglib.Studies.BonamiStump2016
 import Linglib.Studies.Bondarenko2022
 import Linglib.Studies.BondarenkoElliott2026
 import Linglib.Studies.BonehDoron2013
