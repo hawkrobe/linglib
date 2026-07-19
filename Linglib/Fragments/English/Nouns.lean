@@ -1,6 +1,5 @@
 import Linglib.Data.UD.Basic
 import Linglib.Features.Gender.Basic
-import Linglib.Morphology.InflectionRules
 import Linglib.Semantics.Genericity.NominalMappingParameter
 import Linglib.Features.MassCount
 import Linglib.Morphology.Word
@@ -209,23 +208,6 @@ def NounEntry.toWordPl (n : NounEntry) : Word :=
       number := some .Plur
     }
   }
-
-/-- Convert a `NounEntry` to a morphological `Stem`.
-
-    Countable nouns get a plural rule; irregular plurals (man/men,
-    child/children) use a custom `formRule`. Mass nouns and proper
-    names have empty paradigms. -/
-def NounEntry.toStem {α : Type} (n : NounEntry) : Morphology.Stem (α → Bool) :=
-  { lemma_ := n.formSg
-  , cat := if n.proper then .PROPN else .NOUN
-  , baseFeatures := { number := some .Sing
-                    , person := if n.proper then some .third else none }
-  , paradigm :=
-      if n.countable == .count && !n.proper then
-        let irregForm := n.formPl.bind λ pl =>
-          if pl == n.formSg ++ "s" then none else some pl
-        [Morphology.Number.pluralNounRuleFlat (irregularForm := irregForm)]
-      else [] }
 
 def lookup (form : String) : Option NounEntry :=
   allNouns.find? λ n => n.formSg == form || n.formPl == some form

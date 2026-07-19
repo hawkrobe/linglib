@@ -20,7 +20,7 @@ Both share scale type and antonym information, but serve different grammatical f
 
 import Linglib.Data.UD.Basic
 import Linglib.Features.PropertyDomain
-import Linglib.Morphology.InflectionRules
+import Linglib.Morphology.Realization
 import Linglib.Morphology.Paradigm.Degree
 import Linglib.Semantics.Degree.Adjective
 import Linglib.Morphology.Word
@@ -344,10 +344,14 @@ def AdjModifierEntry.toStem (a : AdjModifierEntry) (σ : Type) : Morphology.Stem
   , baseFeatures := {}
   , paradigm :=
       (match a.formComp with
-       | some comp => [Morphology.Degree.comparativeRule σ (irregularForm := some comp)]
+       | some comp =>
+         [{ category := .degree, value := "comp", formRule := λ _ => comp
+          , featureRule := id, semEffect := id, delegatedSemantics := true }]
        | none => []) ++
       (match a.formSuper with
-       | some super_ => [Morphology.Degree.superlativeRule σ (irregularForm := some super_)]
+       | some super_ =>
+         [{ category := .degree, value := "super", formRule := λ _ => super_
+          , featureRule := id, semEffect := id, delegatedSemantics := true }]
        | none => []) }
 
 -- ============================================================================
