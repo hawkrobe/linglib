@@ -368,7 +368,7 @@ concrete measure, so this stays prose.
 
 **Scope.** The rival-framings above are [jackendoff-audring-2020]'s own claims,
 stated as theirs: that inheritance cannot state horizontal links is contested in
-the DATR literature. `Word.Term`'s ordered constructors and RM's order-free
+the DATR literature. `Word.Tree`'s ordered constructors and RM's order-free
 morphosyntax (§4.7) are latent rivals — a documented stance difference, changing
 nothing. RM independently vindicates the no-zero-morphs analysis (§4.3
 double-coindexation): the past tense and infinitive of `walk` add no phonological

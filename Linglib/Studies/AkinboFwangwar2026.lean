@@ -1,7 +1,7 @@
 import Linglib.Fragments.Mwaghavul.Basic
 import Linglib.Pragmatics.Expressives.Basic
 import Linglib.Morphology.DM.Categorizer
-import Linglib.Morphology.Word.Term
+import Linglib.Morphology.Word.Tree
 import Linglib.Studies.Rolle2018
 import Linglib.Phonology.Autosegmental.Floating
 import Linglib.Phonology.OptimalityTheory.Cophonology

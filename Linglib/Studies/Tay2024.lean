@@ -1,5 +1,5 @@
 import Linglib.Semantics.Causation.Resultatives
-import Linglib.Morphology.Word.Term
+import Linglib.Morphology.Word.Tree
 import Linglib.Studies.GoldbergJackendoff2004
 import Linglib.Fragments.Mandarin.Resultatives
 
@@ -29,7 +29,7 @@ arguments but **none** of V1's.  This predicts:
 3. **Onset Condition**: the CCF must be a V1 participant (agent, subject matter,
    or source); pure causers are ungrammatical — derived from data via
    `CcfRole.isV1Participant`, not stipulated
-4. **V-V morphology**: `Word.Term.compound` captures the binary V1-V2 structure
+4. **V-V morphology**: `Word.Tree.compound` captures the binary V1-V2 structure
 5. **Causal dynamics**: direct CAUSE (single causal law, `completesForEffect`)
 6. **Phase complements**: grammaticalized V2 subset with fixed `CoSType`
    (standard Mandarin grammar, supplementing the thesis's V-V analysis)
@@ -40,7 +40,7 @@ Connects:
 - `Causation.Resultatives`: causal dynamics, CC-selection,
   tightness, cross-linguistic parameters (`ResultativeRealization`,
   `ResultOrientation`, `PhaseComplement`)
-- `Morphology.Word.Term`: `Word.Term.compound` for V-V
+- `Morphology.Word.Tree`: `Word.Tree.compound` for V-V
 - `Mandarin.Resultatives`: compound and phase complement lexical entries
 - `GoldbergJackendoff2004`: English
   data for cross-linguistic contrast
@@ -306,8 +306,8 @@ theorem onset_nonparticipant_implies_ungrammatical :
 
 [tay-2024] proposes that V-V compounds have the morphological structure
 V1-∅-V2: the null affix ∅ inherits all of V2's arguments but none of V1's.
-We capture the binary V1-V2 compound using `Word.Term.compound` from
-`Morphology/Word/Term.lean`.
+We capture the binary V1-V2 compound using `Word.Tree.compound` from
+`Morphology/Word/Tree.lean`.
 
 V-V resultatives are **synthetic** compounds: their components stand in a
 predictable CAUSE relation. This contrasts with root compounds like
@@ -316,7 +316,7 @@ semantic relation is idiosyncratic and must be listed in the lexicon
 ([tay-2024], Ch. 3 §3.1). -/
 
 /-- Morphological structure of dǎ-sǐ "hit-die". -/
-def dasi_morph : Word.Term Morphology.Morph :=
+def dasi_morph : Word.Tree Morphology.Morph :=
   .compound (.root (.root "da")) (.root (.root "si"))
 
 /-- Surface form is concatenation of V1 + V2. -/
@@ -327,7 +327,7 @@ theorem dasi_surface :
 theorem dasi_morph_count : dasi_morph.toList.length = 2 := rfl
 
 /-- Morphological structure of kū-lèi "cry-tired" (subject-oriented). -/
-def kulei_morph : Word.Term Morphology.Morph :=
+def kulei_morph : Word.Tree Morphology.Morph :=
   .compound (.root (.root "ku")) (.root (.root "lei"))
 
 theorem kulei_surface :
@@ -503,7 +503,7 @@ theorem vv_compound_become :
 
 1. V1 denotes causing event, V2 denotes result state
 2. Connected by direct CAUSE (single causal law, tight)
-3. Morphologically realized as `Word.Term.compound` (V1-∅-V2)
+3. Morphologically realized as `Word.Tree.compound` (V1-∅-V2)
 4. Subject-oriented resultatives are productive (no DOR)
 5. V-V is syntactically opaque; V-*de* is transparent
 6. Onset Condition: CCF must be a V1 participant (derived from data)
@@ -514,7 +514,7 @@ theorem vv_compound_architecture :
     -- Tight causation (direct, single edge)
     completesForEffect Dasi.model Valuation.empty .hitting true false .death true ∧
     -- Morphological compound
-    (dasi_morph matches Word.Term.compound _ _) = true ∧
+    (dasi_morph matches Word.Tree.compound _ _) = true ∧
     -- Subject-oriented resultatives exist (no DOR)
     (allCompounds.any (·.orientation == .subjectOriented)) = true ∧
     -- V-V is opaque, V-de is transparent

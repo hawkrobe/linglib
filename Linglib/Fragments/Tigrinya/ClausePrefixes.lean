@@ -1,5 +1,5 @@
 import Linglib.Syntax.Category.Complementizer.Basic
-import Linglib.Morphology.Word.Term
+import Linglib.Morphology.Word.Tree
 
 /-!
 # Tigrinya Clausal Prefixes [cacchioli-2025]
@@ -106,7 +106,7 @@ def allPrefixes : List ClausePrefixEntry := [zi, ki, kemzi, ay_n]
 /-- The negative circumfix as word structure over glossed morphs: the
 verb stem wrapped by *ʔay-* and *-n* (an inflectional circumfixation,
 [haspelmath-2020]'s prefix-plus-suffix construction reading). -/
-def negCircumfix (verbStem : String) : Word.Term (Morph × String) :=
+def negCircumfix (verbStem : String) : Word.Tree (Morph × String) :=
   .circumfixed (Morph.pref ay_n.form, ay_n.gloss)
     (.root (Morph.free verbStem, ""))
     (Morph.suff ay_n.suffix_, ay_n.gloss)

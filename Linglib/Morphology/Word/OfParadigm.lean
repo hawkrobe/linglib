@@ -3,30 +3,30 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Morphology.Word.Term
+import Linglib.Morphology.Word.Tree
 import Linglib.Morphology.Paradigm.Function
 
 /-!
 # The paradigm function realizes word structure
 [bonami-stump-2016] [spencer-2013] [booij-2012]
 
-`Word/Term` is the observation language (word-internal constituency, asserted
+`Word/Tree` is the observation language (word-internal constituency, asserted
 of a fragment's trees) and the PFM engine (`Paradigm/Function.lean`) the prediction
-language (block cascades over payload sequences, whose output is an unanalyzed
+language (block cascades over material sequences, whose output is an unanalyzed
 form). This file makes "the analysis is what the engine did" a theorem: an
-affix-transparent PFM sublanguage whose block fold *emits* a `Word.Term`,
-with `toList_paradigmTerm` proving that tree linearizes to the engine's form
+affix-transparent PFM sublanguage whose block fold *emits* a `Word.Tree`,
+with `toList_paradigmTree` proving that tree linearizes to the engine's form
 — the same move `Linkage.realize_eq_paradigmFunction` made for PFM1↔PFM2.
 
 The `Action.expo` payload is an opaque `P → Z → Z`, so a rule knows its output
 but not its affix. `AffixAction` is the exponence-only refinement that carries the
 affix (`pre`/`suf`), interpreted into `Action` by `toAction`. Every emitted node
-is tagged `.inflectional`, so `stem_paradigmTerm` reads inflection-hood off
+is tagged `.inflectional`, so `stem_paradigmTree` reads inflection-hood off
 engine provenance rather than stipulating it ([spencer-2013]): the whole output is
-inflection above the chosen stem, and `Word.Term.stem` ([booij-2012]) strips
+inflection above the chosen stem, and `Word.Tree.stem` ([booij-2012]) strips
 back to `.root (stemLeaf c)`. When the vocabulary is kind-coherent,
-`paradigmTerm_isKindCoherent` derives that the emitted tree is `IsKindCoherent`
-— the stipulate→derive companion of `stem_paradigmTerm`.
+`paradigmTree_isKindCoherent` derives that the emitted tree is `IsKindCoherent`
+— the stipulate→derive companion of `stem_paradigmTree`.
 
 Honest scope: referrals are excluded by type (no constructor); circumfix and
 portmanteau actions, and the `String.join` corollary at a fragment site, wait for
@@ -38,11 +38,11 @@ their consumers.
   narrowest-rule selection is payload-blind, so it commutes with the relabelling
 * `Word.AffixAction`, `AffixAction.toAction`, `AffixAction.apply` — the
   affix-transparent sublanguage, its engine interpretation, and its tree action
-* `Word.evalBlockTerm`, `Word.paradigmTerm` — the tree-emitting block step and
+* `Word.evalBlockTree`, `Word.paradigmTree` — the tree-emitting block step and
   block cascade
-* `Word.toList_paradigmTerm` — the emitted tree linearizes to the engine form
-* `Word.stem_paradigmTerm` — the emitted tree's stem is the chosen leaf
-* `Word.AffixAction.KindCoherent`, `Word.paradigmTerm_isKindCoherent` — the
+* `Word.toList_paradigmTree` — the emitted tree linearizes to the engine form
+* `Word.stem_paradigmTree` — the emitted tree's stem is the chosen leaf
+* `Word.AffixAction.KindCoherent`, `Word.paradigmTree_isKindCoherent` — the
   vocabulary-coherence hypothesis and the emitted tree's kind-coherence
 -/
 
@@ -108,12 +108,12 @@ payload. The exponence-only refinement of the engine's opaque `Action.expo`
 (`toAction`) — a block of `Rule L P (AffixAction M)` cannot carry a referral, so
 the sublanguage is exponence-only by type. -/
 inductive AffixAction (M : Type*) where
-  /-- Prepend the payload. -/
+  /-- Prepend the affix. -/
   | pre (m : M)
-  /-- Append the payload. -/
+  /-- Append the affix. -/
   | suf (m : M)
 
-/-- Interpret an affix action as an engine payload over payload sequences
+/-- Interpret an affix action as an engine payload over material sequences
 (`Z := List M`): prefixation prepends, suffixation appends. Both are
 property-insensitive, so land in `Action.const` (hence `Action.expo`) — the
 referral branch of `evalBlockForm` is dead for mapped rules. -/
@@ -123,11 +123,11 @@ def AffixAction.toAction : AffixAction M → Action (List M) P
 
 /-- Apply an affix action to a term tree, tagging the node `.inflectional`
 — inflection-hood by engine provenance ([spencer-2013]), not stipulation. -/
-def AffixAction.apply : AffixAction M → Word.Term M → Word.Term M
+def AffixAction.apply : AffixAction M → Word.Tree M → Word.Tree M
   | .pre m, t => .prefixed m t .inflectional
   | .suf m, t => .suffixed t m .inflectional
 
-theorem AffixAction.apply_stem (a : AffixAction M) (t : Word.Term M) :
+theorem AffixAction.apply_stem (a : AffixAction M) (t : Word.Tree M) :
     (a.apply t).stem = t.stem := by cases a <;> rfl
 
 /-! ### Vocabulary kind-coherence -/
@@ -140,9 +140,9 @@ def AffixAction.KindCoherent : AffixAction Morph → Prop
   | .suf m => m.side? = some .after
 
 /-- Applying a kind-coherent affix action preserves kind-coherence: the emitted
-node's payload sits on the side its `Kind` records. -/
+node's affix sits on the side its `Kind` records. -/
 theorem AffixAction.apply_isKindCoherent {a : AffixAction Morph} (ha : a.KindCoherent)
-    {t : Word.Term Morph} (ht : t.IsKindCoherent) : (a.apply t).IsKindCoherent := by
+    {t : Word.Tree Morph} (ht : t.IsKindCoherent) : (a.apply t).IsKindCoherent := by
   cases a with
   | pre m => exact ⟨ha, ht⟩
   | suf m => exact ⟨ha, ht⟩
@@ -155,128 +155,128 @@ variable [PartialOrder P] [DecidableEq L] [DecidableLE P]
 /-- The tree produced by evaluating one block at a term state: apply the
 narrowest applicable rule's affix action, leaving the tree unchanged when nothing
 applies. The tree mirror of `evalBlockForm`. -/
-def evalBlockTerm (LindexZ : List M → L) (b : List (Rule L P (AffixAction M)))
-    (tσ : Word.Term M × P) : Word.Term M :=
+def evalBlockTree (LindexZ : List M → L) (b : List (Rule L P (AffixAction M)))
+    (tσ : Word.Tree M × P) : Word.Tree M :=
   match selectMinimal b (LindexZ tσ.1.toList, tσ.2) with
   | some r => r.payload.apply tσ.1
   | none => tσ.1
 
 /-- Evaluate a block at a term state, keeping the property set — the mirror
 of `evalBlock`. -/
-def evalBlockTermState (LindexZ : List M → L) (b : List (Rule L P (AffixAction M)))
-    (tσ : Word.Term M × P) : Word.Term M × P :=
-  (evalBlockTerm LindexZ b tσ, tσ.2)
+def evalBlockTreeState (LindexZ : List M → L) (b : List (Rule L P (AffixAction M)))
+    (tσ : Word.Tree M × P) : Word.Tree M × P :=
+  (evalBlockTree LindexZ b tσ, tσ.2)
 
 /-- The **tree-emitting paradigm function**: fold the block cascade over
 term states from the stem leaf `.root (stemLeaf c)` — the mirror of
 `paradigmFunction`. -/
-def paradigmTerm (LindexZ : List M → L) (stemLeaf : L × P → M)
+def paradigmTree (LindexZ : List M → L) (stemLeaf : L × P → M)
     (blocks : List (List (Rule L P (AffixAction M)))) (c : L × P) :
-    Word.Term M × P :=
-  blocks.foldl (fun tσ b => evalBlockTermState LindexZ b tσ) (.root (stemLeaf c), c.2)
+    Word.Tree M × P :=
+  blocks.foldl (fun tσ b => evalBlockTreeState LindexZ b tσ) (.root (stemLeaf c), c.2)
 
 /-! ### The agreement theorem -/
 
 /-- One block step commutes: the emitted tree linearizes to the engine's form. -/
-theorem toList_evalBlockTerm (LindexZ : List M → L)
-    (b : List (Rule L P (AffixAction M))) (t : Word.Term M) (σ : P) :
-    (evalBlockTerm LindexZ b (t, σ)).toList
+theorem toList_evalBlockTree (LindexZ : List M → L)
+    (b : List (Rule L P (AffixAction M))) (t : Word.Tree M) (σ : P) :
+    (evalBlockTree LindexZ b (t, σ)).toList
       = evalBlockForm LindexZ (b.map (Rule.mapPayload AffixAction.toAction)) (t.toList, σ) := by
-  simp only [evalBlockTerm, evalBlockForm, selectMinimal_map_payload]
+  simp only [evalBlockTree, evalBlockForm, selectMinimal_map_payload]
   rcases selectMinimal b (LindexZ t.toList, σ) with _ | ⟨rk, rp, rpl⟩
   · rfl
   · cases rpl <;> rfl
 
-theorem toList_foldl_evalBlockTermState (LindexZ : List M → L)
-    (blocks : List (List (Rule L P (AffixAction M)))) (t : Word.Term M) (σ : P) :
-    (blocks.foldl (fun tσ b => evalBlockTermState LindexZ b tσ) (t, σ)).1.toList
+theorem toList_foldl_evalBlockTreeState (LindexZ : List M → L)
+    (blocks : List (List (Rule L P (AffixAction M)))) (t : Word.Tree M) (σ : P) :
+    (blocks.foldl (fun tσ b => evalBlockTreeState LindexZ b tσ) (t, σ)).1.toList
       = ((blocks.map (List.map (Rule.mapPayload AffixAction.toAction))).foldl
           (fun wσ b => evalBlock LindexZ b wσ) (t.toList, σ)).1 := by
   induction blocks generalizing t with
   | nil => rfl
   | cons b bs ih =>
     simp only [List.map_cons, List.foldl_cons]
-    have hstep : ((evalBlockTerm LindexZ b (t, σ)).toList, σ)
+    have hstep : ((evalBlockTree LindexZ b (t, σ)).toList, σ)
         = evalBlock LindexZ (b.map (Rule.mapPayload AffixAction.toAction)) (t.toList, σ) :=
-      Prod.ext (toList_evalBlockTerm LindexZ b t σ) rfl
-    rw [show evalBlockTermState LindexZ b (t, σ) = (evalBlockTerm LindexZ b (t, σ), σ) from rfl,
+      Prod.ext (toList_evalBlockTree LindexZ b t σ) rfl
+    rw [show evalBlockTreeState LindexZ b (t, σ) = (evalBlockTree LindexZ b (t, σ), σ) from rfl,
       ih, hstep]
 
 /-- **The engine output realizes the recorded structure**: the tree emitted by the
 affix-transparent cascade linearizes to the form the PFM engine computes over the
 relabelled blocks. The describe/explain division of labor as a theorem. -/
-theorem toList_paradigmTerm (LindexZ : List M → L) (stemLeaf : L × P → M)
+theorem toList_paradigmTree (LindexZ : List M → L) (stemLeaf : L × P → M)
     (blocks : List (List (Rule L P (AffixAction M)))) (c : L × P) :
-    (paradigmTerm LindexZ stemLeaf blocks c).1.toList
+    (paradigmTree LindexZ stemLeaf blocks c).1.toList
       = (paradigmFunction LindexZ (fun c => [stemLeaf c])
           (blocks.map (List.map (Rule.mapPayload AffixAction.toAction))) c).1 := by
-  rw [paradigmTerm, paradigmFunction, blocksEval]
-  exact toList_foldl_evalBlockTermState LindexZ blocks (.root (stemLeaf c)) c.2
+  rw [paradigmTree, paradigmFunction, blocksEval]
+  exact toList_foldl_evalBlockTreeState LindexZ blocks (.root (stemLeaf c)) c.2
 
 /-! ### Inflection-hood by construction -/
 
-theorem stem_evalBlockTerm (LindexZ : List M → L)
-    (b : List (Rule L P (AffixAction M))) (t : Word.Term M) (σ : P) :
-    (evalBlockTerm LindexZ b (t, σ)).stem = t.stem := by
-  simp only [evalBlockTerm]
+theorem stem_evalBlockTree (LindexZ : List M → L)
+    (b : List (Rule L P (AffixAction M))) (t : Word.Tree M) (σ : P) :
+    (evalBlockTree LindexZ b (t, σ)).stem = t.stem := by
+  simp only [evalBlockTree]
   cases selectMinimal b (LindexZ t.toList, σ) with
   | none => rfl
   | some r => exact AffixAction.apply_stem r.payload t
 
-theorem stem_foldl_evalBlockTermState (LindexZ : List M → L)
-    (blocks : List (List (Rule L P (AffixAction M)))) (t : Word.Term M) (σ : P) :
-    (blocks.foldl (fun tσ b => evalBlockTermState LindexZ b tσ) (t, σ)).1.stem = t.stem := by
+theorem stem_foldl_evalBlockTreeState (LindexZ : List M → L)
+    (blocks : List (List (Rule L P (AffixAction M)))) (t : Word.Tree M) (σ : P) :
+    (blocks.foldl (fun tσ b => evalBlockTreeState LindexZ b tσ) (t, σ)).1.stem = t.stem := by
   induction blocks generalizing t with
   | nil => rfl
   | cons b bs ih =>
     simp only [List.foldl_cons]
-    rw [show evalBlockTermState LindexZ b (t, σ) = (evalBlockTerm LindexZ b (t, σ), σ) from rfl, ih]
-    exact stem_evalBlockTerm LindexZ b t σ
+    rw [show evalBlockTreeState LindexZ b (t, σ) = (evalBlockTree LindexZ b (t, σ), σ) from rfl, ih]
+    exact stem_evalBlockTree LindexZ b t σ
 
 /-- **Inflection-hood by construction** ([spencer-2013], [booij-2012]): every node
 the cascade emits is `.inflectional`, so the emitted word's stem is exactly the
 chosen leaf — the engine's whole output is inflection above the stem. -/
-theorem stem_paradigmTerm (LindexZ : List M → L) (stemLeaf : L × P → M)
+theorem stem_paradigmTree (LindexZ : List M → L) (stemLeaf : L × P → M)
     (blocks : List (List (Rule L P (AffixAction M)))) (c : L × P) :
-    (paradigmTerm LindexZ stemLeaf blocks c).1.stem = .root (stemLeaf c) := by
-  rw [paradigmTerm]
-  exact stem_foldl_evalBlockTermState LindexZ blocks (.root (stemLeaf c)) c.2
+    (paradigmTree LindexZ stemLeaf blocks c).1.stem = .root (stemLeaf c) := by
+  rw [paradigmTree]
+  exact stem_foldl_evalBlockTreeState LindexZ blocks (.root (stemLeaf c)) c.2
 
 /-! ### Kind-coherence by construction -/
 
-theorem evalBlockTerm_isKindCoherent (LindexZ : List Morph → L)
+theorem evalBlockTree_isKindCoherent (LindexZ : List Morph → L)
     (b : List (Rule L P (AffixAction Morph))) (hb : ∀ r ∈ b, r.payload.KindCoherent)
-    (t : Word.Term Morph) (ht : t.IsKindCoherent) (σ : P) :
-    (evalBlockTerm LindexZ b (t, σ)).IsKindCoherent := by
-  simp only [evalBlockTerm]
+    (t : Word.Tree Morph) (ht : t.IsKindCoherent) (σ : P) :
+    (evalBlockTree LindexZ b (t, σ)).IsKindCoherent := by
+  simp only [evalBlockTree]
   cases h : selectMinimal b (LindexZ t.toList, σ) with
   | none => exact ht
   | some r => exact r.payload.apply_isKindCoherent (hb r (selectMinimal_mem h)) ht
 
-theorem foldl_evalBlockTermState_isKindCoherent (LindexZ : List Morph → L) :
-    ∀ (blocks : List (List (Rule L P (AffixAction Morph)))) (t : Word.Term Morph),
+theorem foldl_evalBlockTreeState_isKindCoherent (LindexZ : List Morph → L) :
+    ∀ (blocks : List (List (Rule L P (AffixAction Morph)))) (t : Word.Tree Morph),
       t.IsKindCoherent → ∀ (σ : P),
       (∀ b ∈ blocks, ∀ r ∈ b, r.payload.KindCoherent) →
-      (blocks.foldl (fun tσ b => evalBlockTermState LindexZ b tσ) (t, σ)).1.IsKindCoherent
+      (blocks.foldl (fun tσ b => evalBlockTreeState LindexZ b tσ) (t, σ)).1.IsKindCoherent
   | [], _, ht, _, _ => ht
   | b :: bs, t, ht, σ, hbs => by
     simp only [List.foldl_cons]
-    rw [show evalBlockTermState LindexZ b (t, σ) = (evalBlockTerm LindexZ b (t, σ), σ) from rfl]
-    exact foldl_evalBlockTermState_isKindCoherent LindexZ bs (evalBlockTerm LindexZ b (t, σ))
-      (evalBlockTerm_isKindCoherent LindexZ b (fun r hr => hbs b (by simp) r hr) t ht σ)
+    rw [show evalBlockTreeState LindexZ b (t, σ) = (evalBlockTree LindexZ b (t, σ), σ) from rfl]
+    exact foldl_evalBlockTreeState_isKindCoherent LindexZ bs (evalBlockTree LindexZ b (t, σ))
+      (evalBlockTree_isKindCoherent LindexZ b (fun r hr => hbs b (by simp) r hr) t ht σ)
       σ (fun b' hb' => hbs b' (by simp [hb']))
 
 /-- **Kind-coherence by construction**: when every vocabulary action places its
-payload on the side its `Kind` records and the stem leaf is a root or free form,
+affix on the side its `Kind` records and the stem leaf is a root or free form,
 the emitted tree is `IsKindCoherent`. The stipulate→derive companion of
-`stem_paradigmTerm`: coherence is read off engine provenance, not asserted. -/
-theorem paradigmTerm_isKindCoherent (LindexZ : List Morph → L) (stemLeaf : L × P → Morph)
+`stem_paradigmTree`: coherence is read off engine provenance, not asserted. -/
+theorem paradigmTree_isKindCoherent (LindexZ : List Morph → L) (stemLeaf : L × P → Morph)
     (blocks : List (List (Rule L P (AffixAction Morph)))) (c : L × P)
     (hbs : ∀ b ∈ blocks, ∀ r ∈ b, r.payload.KindCoherent)
     (hstem : (stemLeaf c).kind = .root ∨ (stemLeaf c).kind = .free) :
-    (paradigmTerm LindexZ stemLeaf blocks c).1.IsKindCoherent := by
-  rw [paradigmTerm]
-  exact foldl_evalBlockTermState_isKindCoherent LindexZ blocks (.root (stemLeaf c)) hstem c.2 hbs
+    (paradigmTree LindexZ stemLeaf blocks c).1.IsKindCoherent := by
+  rw [paradigmTree]
+  exact foldl_evalBlockTreeState_isKindCoherent LindexZ blocks (.root (stemLeaf c)) hstem c.2 hbs
 
 end
 
