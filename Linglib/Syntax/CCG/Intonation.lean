@@ -1,6 +1,8 @@
 import Linglib.Syntax.CCG.Basic
 import Linglib.Features.InformationStructure
 import Linglib.Features.Prosody
+import Linglib.Core.Order.PartialUnify
+import Mathlib.Tactic.DeriveFintype
 
 /-!
 # CCG Intonation and Information Structure
@@ -50,18 +52,10 @@ inductive InfoFeature where
   | ρ         -- Rheme
   | unmarked  -- Unspecified
   | φ         -- Phrasal (boundary applied)
-  deriving Repr, DecidableEq, Inhabited
+  deriving Repr, DecidableEq, Inhabited, Fintype
 
-/-- Can two info features unify? -/
-def InfoFeature.unifies : InfoFeature → InfoFeature → Bool
-  | .unmarked, _ => true
-  | _, .unmarked => true
-  | .θ, .θ => true
-  | .ρ, .ρ => true
-  | .φ, .φ => true
-  | _, _ => false
-
-/-- Unify two info features -/
+/-- Unify two info features: the partial join in the subsumption order below
+(`PartialUnify`). -/
 def InfoFeature.unify : InfoFeature → InfoFeature → Option InfoFeature
   | .unmarked, f => some f
   | f, .unmarked => some f
@@ -69,6 +63,62 @@ def InfoFeature.unify : InfoFeature → InfoFeature → Option InfoFeature
   | .ρ, .ρ => some .ρ
   | .φ, .φ => some .φ
   | _, _ => none
+
+/-! ### The information feature as a subsumption order
+
+`unmarked` is Steedman's underspecified feature — the category that "can unify with
+either" theme or rheme — so it is `⊥`; `θ`, `ρ`, `φ` are pairwise-incomparable atoms
+above it. This is the flat order of feature unification ([carpenter-1992]) carried on
+the information feature: `InfoFeature.unify` is its partial join (`PartialUnify`) and
+the total meet is generalization (anti-unification). -/
+
+instance : LE InfoFeature where
+  le a b := a = .unmarked ∨ a = b
+
+theorem InfoFeature.le_def {a b : InfoFeature} :
+    a ≤ b ↔ a = .unmarked ∨ a = b := Iff.rfl
+
+instance (a b : InfoFeature) : Decidable (a ≤ b) :=
+  decidable_of_iff _ InfoFeature.le_def.symm
+
+instance : PartialOrder InfoFeature where
+  le_refl := by decide
+  le_trans := by decide
+  le_antisymm := by decide
+
+instance : OrderBot InfoFeature where
+  bot := .unmarked
+  bot_le := by decide
+
+instance : Min InfoFeature where
+  min a b := if a = b then a else .unmarked
+
+instance : SemilatticeInf InfoFeature :=
+  { (inferInstance : PartialOrder InfoFeature), (inferInstance : Min InfoFeature) with
+    inf := min
+    inf_le_left := by decide
+    inf_le_right := by decide
+    le_inf := by decide }
+
+/-- The two `PartialUnify` axioms in decidable form: a successful unification is the
+least upper bound, and unification succeeds on bounded-above pairs. -/
+private theorem InfoFeature.unify_spec (a b : InfoFeature) :
+    (∀ c, InfoFeature.unify a b = some c →
+        (a ≤ c ∧ b ≤ c) ∧ ∀ u, a ≤ u → b ≤ u → c ≤ u) ∧
+      ((∃ u, a ≤ u ∧ b ≤ u) → (InfoFeature.unify a b).isSome) := by
+  revert a b; decide
+
+instance : PartialUnify InfoFeature where
+  unify := InfoFeature.unify
+  isLUB_of_unify_eq_some {a b c} h := by
+    obtain ⟨⟨hac, hbc⟩, hmin⟩ := (InfoFeature.unify_spec a b).1 c h
+    refine ⟨PartialUnify.mem_upperBounds_pair.mpr ⟨hac, hbc⟩, fun u hu => ?_⟩
+    obtain ⟨hau, hbu⟩ := PartialUnify.mem_upperBounds_pair.mp hu
+    exact hmin u hau hbu
+  isSome_unify_of_bddAbove {a b} h := by
+    obtain ⟨u, hu⟩ := h
+    obtain ⟨hau, hbu⟩ := PartialUnify.mem_upperBounds_pair.mp hu
+    exact (InfoFeature.unify_spec a b).2 ⟨u, hau, hbu⟩
 
 -- Prosodic CCG Categories
 
