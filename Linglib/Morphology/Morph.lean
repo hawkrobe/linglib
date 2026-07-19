@@ -16,8 +16,6 @@ empty exponent, and a discontinuous realization is a multi-morph exponent.
 * `Morph` — a segmental form with its attachment kind, factored as
   side × attachment for bound morphs
 * `Exponent` — a sequence of morphs; `[]` is zero exponence
-* the `ToString Morph` instance, `Exponent.toString` — descriptive-notation display
-  (`X-`, `-X`, `X=`, `=X`; `∅` for zero exponence)
 * `Following` — following-segment environment for variant selection
 
 ## Implementation notes
