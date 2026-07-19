@@ -75,11 +75,6 @@ structure Morph where
 
 namespace Morph
 
-/-- The boundary sign of an attachment: `-` for affixes, `=` for clitics. -/
-def Attachment.sign : Attachment → String
-  | .affix => "-"
-  | .clitic => "="
-
 /-- A prefix morph. -/
 def pref (s : String) : Morph := ⟨.bound .before .affix, s⟩
 
@@ -103,6 +98,11 @@ def attachment? : Morph → Option Attachment
   | ⟨.bound _ a, _⟩ => some a
   | _ => none
 
+/-- The boundary sign of an attachment: `-` for affixes, `=` for clitics. -/
+def Attachment.sign : Attachment → String
+  | .affix => "-"
+  | .clitic => "="
+
 /-- Display in descriptive notation: the attachment's sign on the side of
 the host — `X-`, `-X`, `X=`, `=X` — and bare for roots and free forms. -/
 def toString (m : Morph) : String :=
@@ -110,6 +110,8 @@ def toString (m : Morph) : String :=
   | .bound .before a => m.form ++ a.sign
   | .bound .after a => a.sign ++ m.form
   | .root | .free => m.form
+
+instance : ToString Morph := ⟨toString⟩
 
 end Morph
 
