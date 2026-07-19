@@ -3,7 +3,7 @@ import Mathlib.Data.Fintype.Sigma
 import Mathlib.Data.Fintype.Sum
 
 /-!
-# Morphs and exponents
+# Morphs
 
 A **morph** is a minimal segmental form together with its attachment kind:
 root, prefix, suffix, proclitic, enclitic, or free form — the form side of

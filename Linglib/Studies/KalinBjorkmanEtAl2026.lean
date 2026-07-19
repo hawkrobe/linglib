@@ -100,10 +100,10 @@ deponency or heteroclisis would require a non-identity `pm` or multiple stems
 theorem ParadigmFunction.apply_eq_linkage_realize {Feature : Type} [BEq Feature]
     (pf : ParadigmFunction Feature) (lex : Lexeme)
     (σ : MorphPropertySet Feature) :
-    pf.apply σ lex
-      = ((Morphology.Linkage.canonical (Z := Lexeme)
-            (P := MorphPropertySet Feature) id).realize
-          (fun l τ => pf.apply τ l) lex σ).1 :=
+    ((Morphology.Linkage.canonical (Z := Lexeme)
+          (P := MorphPropertySet Feature) id).realize
+        (fun l τ => pf.apply τ l) lex σ).map Prod.fst
+      = some (pf.apply σ lex) :=
   rfl
 
 /-- The linkage PFM instantiates is canonical ([stump-2016] §7.1): identity

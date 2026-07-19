@@ -1,116 +1,203 @@
-import Mathlib.Logic.Function.Basic
+import Mathlib.Data.Set.Function
 
 /-!
 # Paradigm linkage: content paradigms, form paradigms, and correspondence
-[stump-2016] [stump-2006]
+[stump-2012-mmm8]
 
-The paradigm-linkage hypothesis ([stump-2016] Ch. 7; the content/form
-paradigm split originates with [stump-2006], introduced in part to
-describe heteroclisis) splits a lexeme's realizations into three
-corresponding paradigms:
+Inflectional morphology relates three levels of representation ([stump-2012-mmm8];
+the book-length apparatus is [stump-2016]): a lexeme's **content paradigm** of
+cells `⟨L, σ⟩` pairing a lexeme with a syntacticosemantic property set, a stem's
+**form paradigm** of cells `⟨Z, τ⟩` pairing a stem with a property set it inflects
+for, and the **realized paradigm** of word forms. A content cell is realized by
+being linked to a **form correspondent**, whose realization it shares. The
+correspondence factors into a stem selection `stem : L → P → Option Z` and a
+lexeme-sensitive property mapping `pm : L → P → P`. Both partiality and lexeme
+sensitivity are load-bearing: a gap in the stem specification is the seat of
+defectiveness, and functor-argument reversal computes a form correspondent's
+property set from the lexeme.
 
-* the **content paradigm** — cells `⟨L, σ⟩` pairing a lexeme `L` with a
-  morphosyntactic property set `σ`; the interface with syntax and semantics;
-* the **form paradigm** — cells `⟨Z, τ⟩` pairing a stem `Z` from `L`'s stem
-  set with a property set `τ` for which `Z` inflects; the basis for inflection;
-* the **realized paradigm** — cells `⟨w, τ⟩` pairing a word form `w` with the
-  property set it realizes.
-
-Each content cell is realized by being linked to a **form correspondent** — a
-form cell whose realization it shares. The correspondence function `Corr`
-decomposes (§7.2) as a **stem selection** and a **property mapping** `pm`:
-`Corr(⟨L, σ⟩) = ⟨Stem(⟨L, σ⟩), pm(σ)⟩`, and the paradigm function factors as
-`PF(⟨L, σ⟩) = PF(Corr(⟨L, σ⟩))`. Canonically `pm` is the identity and each
-lexeme has a single stem, so content and form paradigms are isomorphic; the
-book's later chapters catalogue the deviation modes — morphomic properties
-(Ch. 8), defectiveness/overabundance (Ch. 9), syncretism as many-to-one `Corr`
-(Ch. 10), suppletion/heteroclisis (Ch. 11), deponency as a voice-flipping `pm`
-(Ch. 12, formalized in `Studies/Stump2016.lean`), and polyfunctionality
-(Ch. 13).
+Canonical paradigm linkage is the typological extreme against which deviations
+are calibrated, characterized by four independent axes. `IsTotal`: every content
+cell has a form correspondent. `IsStemInvariant`: one stem realizes all of a
+lexeme's cells. `IsInjective`: no two content cells share a form correspondent.
+`IsPropertyPreserving`: a form correspondent carries the content cell's own
+property set. Each named noncanonical phenomenon is the failure of exactly one
+axis — defectiveness negates totality, suppletion stem invariance, syncretism
+injectivity, and deponency and functor-argument reversal property preservation.
 
 ## Main declarations
 
-* `Linkage L Z P` — a lexeme-level linkage: stem selection `Stem` plus
-  property mapping `pm`
-* `Linkage.corr` — the form-correspondence function `Corr = ⟨Stem, pm⟩`
-* `Linkage.realize` — the realized paradigm `PF(⟨L, σ⟩) = PF(Corr(⟨L, σ⟩))`
-* `Linkage.IsCanonical` — cell-level canonical linkage: property-set
-  preservation (`pm = id`, §7.1 (2a)) and stem invariance (§7.1 (2b))
-* `Linkage.canonical` / `canonical_isCanonical` — the canonical one-stem linkage
-* `Linkage.realize_eq_of_corr_eq` — a many-to-one `Corr` forces content-side
-  syncretism (the Ch. 10 deviation mode)
+* `Linkage L Z P` — a lexeme-level linkage: partial stem selection and
+  lexeme-sensitive property mapping
+* `Linkage.corr`, `Linkage.realize` — the form-correspondence function and the
+  realized paradigm, both partial
+* `Linkage.IsTotal`, `IsStemInvariant`, `IsInjective`, `IsPropertyPreserving` —
+  the four axes of canonical linkage; `IsCanonical` conjoins them
+* `Linkage.IsDefective`, `IsSuppletive`, `IsSyncretic`, `IsUnfaithful` — the four
+  deviation predicates, each negating one axis (`IsCanonical.not_isDefective`,
+  …), with `isSyncretic_iff_not_isInjective`
+* `Linkage.IsVirtual` — a form cell no content cell corresponds to
+* `Linkage.canonical` / `canonical_isCanonical` — the total, lexeme-blind,
+  one-stem linkage, canonical on all four axes
+* `Linkage.realize_eq_of_corr_eq` — a shared form correspondent forces a shared
+  realization
 -/
 
 namespace Morphology
 
-/-- A **paradigm linkage** ([stump-2016] §7.2), presented from the vantage of a
-single lexeme: the two components of the form-correspondence function `Corr`.
-`stem` is the stem selection `Stem(⟨L, σ⟩)` picking the stem that realizes a
-content cell; `pm` is the property mapping `σ ↦ τ`. Canonically `pm` is the
-identity and `stem` is constant in the property set (one stem per lexeme). -/
+/-- A **paradigm linkage** ([stump-2012-mmm8]) from the vantage of a single
+lexeme: the two components of the form-correspondence function. `stem` selects
+the stem realizing a content cell, or `none` where the stem specification has a
+gap; `pm` carries a content cell's property set to its form correspondent's, and
+may consult the lexeme. Canonically `stem` is total and constant in the property
+set and `pm` is the identity. -/
 structure Linkage (L Z P : Type*) where
-  /-- Stem selection `Stem(⟨L, σ⟩)`: the stem realizing the content cell. -/
-  stem : L → P → Z
-  /-- The property mapping `pm : σ ↦ τ` carrying a content cell's property set
-  to its form correspondent's. -/
-  pm : P → P
+  /-- The stem realizing a content cell `⟨l, σ⟩`, or `none` where the stem
+  specification has a gap. -/
+  stem : L → P → Option Z
+  /-- The property mapping carrying a content cell's property set to its form
+  correspondent's, consulting the lexeme for functor-argument reversal. -/
+  pm : L → P → P
 
 namespace Linkage
 
 variable {L Z P W : Type*} (ℓ : Linkage L Z P)
 
-/-- The **form-correspondence function** `Corr(⟨L, σ⟩) = ⟨Stem(⟨L, σ⟩), pm(σ)⟩`
-([stump-2016] §7.2): the form cell realizing content cell `⟨l, σ⟩`. -/
-def corr (l : L) (σ : P) : Z × P := (ℓ.stem l σ, ℓ.pm σ)
+/-- The **form correspondent** of a content cell `⟨l, σ⟩`: the stem paired with
+its mapped property set, or `none` where the stem specification has a gap. -/
+def corr (l : L) (σ : P) : Option (Z × P) := (ℓ.stem l σ).map (·, ℓ.pm l σ)
 
-/-- The **realized paradigm** on content cells: `PF(⟨L, σ⟩) = PF(Corr(⟨L, σ⟩))`.
-Given the form-cell realization `realizeForm` (the rules of exponence, `PF` on
-form cells), the content cell `⟨l, σ⟩` realizes as `⟨w, τ⟩` where `⟨Z, τ⟩` is
-its form correspondent and `w` is `Z`'s realization at `τ`. -/
-def realize (realizeForm : Z → P → W) (l : L) (σ : P) : W × P :=
-  (realizeForm (ℓ.corr l σ).1 (ℓ.corr l σ).2, (ℓ.corr l σ).2)
+/-- The **realized paradigm** on content cells: a content cell realizes as its
+form correspondent does. `realizeForm` supplies the form-cell realization; the
+result is `none` exactly where the form correspondent is. -/
+def realize (realizeForm : Z → P → W) (l : L) (σ : P) : Option (W × P) :=
+  (ℓ.corr l σ).map fun zτ => (realizeForm zτ.1 zτ.2, zτ.2)
 
-/-- **Property-set preservation** ([stump-2016] §7.1, canonical characteristic
-(2a)): the property mapping is the identity, so a content cell and its form
-correspondent share a property set. -/
-def IsPropertyPreserving : Prop := ∀ σ, ℓ.pm σ = σ
+/-- **Totality**: every content cell has a form correspondent. Defectiveness is
+the failure. -/
+def IsTotal : Prop := ∀ l σ, (ℓ.stem l σ).isSome
 
-/-- **Stem invariance** ([stump-2016] §7.1, canonical characteristic (2b)): each
-lexeme has a single stem realizing all of its cells. -/
-def IsStemInvariant : Prop := ∀ l, ∃ z, ∀ σ, ℓ.stem l σ = z
+/-- **Stem invariance**: a lexeme's cells that have a stem all share one, so its
+correspondents come from a single form paradigm. Stem suppletion is the failure.
+Independent of totality — undefined cells impose no constraint. -/
+def IsStemInvariant : Prop :=
+  ∀ l ⦃σ₁ σ₂⦄ ⦃z₁ z₂⦄, ℓ.stem l σ₁ = some z₁ → ℓ.stem l σ₂ = some z₂ → z₁ = z₂
 
-/-- **Canonical paradigm linkage** at the cell level ([stump-2016] §7.1):
-property-set preservation together with stem invariance. The remaining
-canonical characteristics — unambiguity and isomorphism within/across syntactic
-categories (2c–e) — quantify over sets of paradigms, not a single linkage. -/
-def IsCanonical : Prop := ℓ.IsPropertyPreserving ∧ ℓ.IsStemInvariant
+/-- **Injectivity**: no two content cells of a lexeme share a form correspondent,
+over the cells that have one. Syncretism is the failure. -/
+def IsInjective : Prop := ∀ l, Set.InjOn (ℓ.corr l) {σ | (ℓ.corr l σ).isSome}
 
-/-- Under property-set preservation, each content cell's form correspondent
-carries the content cell's own property set — the canonical, mismatch-free
-alignment of content and form. -/
-theorem corr_snd_eq_of_propertyPreserving (h : ℓ.IsPropertyPreserving)
-    (l : L) (σ : P) : (ℓ.corr l σ).2 = σ := h σ
+/-- **Property preservation**: a form correspondent carries the content cell's
+own property set. Deponency, functor-argument reversal, and directional
+syncretism are failures. -/
+def IsPropertyPreserving : Prop := ∀ l σ, ℓ.pm l σ = σ
 
-/-- **A many-to-one `Corr` forces content-side syncretism**: content cells with
-a common form correspondent share their realization ([stump-2016] Ch. 10's
-syncretism deviation mode). -/
+/-- **Canonical paradigm linkage** ([stump-2012-mmm8]): all four axes. -/
+def IsCanonical : Prop :=
+  ℓ.IsTotal ∧ ℓ.IsStemInvariant ∧ ℓ.IsInjective ∧ ℓ.IsPropertyPreserving
+
+/-! ### Deviations from canonical linkage
+
+Each noncanonical phenomenon negates exactly one axis. -/
+
+/-- **Defectiveness**: some content cell lacks a form correspondent
+([stump-2012-mmm8] §3.1). Negates totality. -/
+def IsDefective : Prop := ∃ l σ, ℓ.stem l σ = none
+
+/-- **Suppletion**: a lexeme's correspondents draw on more than one stem
+([stump-2012-mmm8] §3.4). Negates stem invariance. -/
+def IsSuppletive : Prop := ¬ ℓ.IsStemInvariant
+
+/-- **Syncretism**: two distinct content cells share a form correspondent
+([stump-2012-mmm8] §3.2). Negates injectivity; the `isSome` requirement excludes
+cells vacuously agreeing at `none`. -/
+def IsSyncretic : Prop :=
+  ∃ l σ₁ σ₂, σ₁ ≠ σ₂ ∧ ℓ.corr l σ₁ = ℓ.corr l σ₂ ∧ (ℓ.corr l σ₁).isSome
+
+/-- **Unfaithfulness**: some content cell's form correspondent carries a
+different property set — deponency and functor-argument reversal
+([stump-2012-mmm8] §3.3). Negates property preservation. -/
+def IsUnfaithful : Prop := ∃ l σ, ℓ.pm l σ ≠ σ
+
+theorem IsCanonical.not_isDefective (h : ℓ.IsCanonical) : ¬ ℓ.IsDefective := by
+  rintro ⟨l, σ, hnone⟩; simpa [hnone] using h.1 l σ
+
+theorem IsCanonical.not_isSuppletive (h : ℓ.IsCanonical) : ¬ ℓ.IsSuppletive :=
+  not_not.mpr h.2.1
+
+theorem IsCanonical.not_isSyncretic (h : ℓ.IsCanonical) : ¬ ℓ.IsSyncretic := by
+  rintro ⟨l, σ₁, σ₂, hne, heq, hsome⟩
+  have hsome₂ : (ℓ.corr l σ₂).isSome = true := by rw [← heq]; exact hsome
+  exact hne (h.2.2.1 l hsome hsome₂ heq)
+
+theorem IsCanonical.not_isUnfaithful (h : ℓ.IsCanonical) : ¬ ℓ.IsUnfaithful := by
+  rintro ⟨l, σ, hne⟩; exact hne (h.2.2.2 l σ)
+
+/-- Syncretism is exactly the failure of injectivity — the one deviation whose
+predicate is not a definitional negation of its axis. -/
+theorem isSyncretic_iff_not_isInjective : ℓ.IsSyncretic ↔ ¬ ℓ.IsInjective := by
+  constructor
+  · rintro ⟨l, σ₁, σ₂, hne, heq, hsome⟩ hinj
+    have hsome₂ : (ℓ.corr l σ₂).isSome = true := by rw [← heq]; exact hsome
+    exact hne (hinj l hsome hsome₂ heq)
+  · intro h
+    simp only [IsInjective, not_forall] at h
+    obtain ⟨l, hl⟩ := h
+    unfold Set.InjOn at hl
+    push Not at hl
+    obtain ⟨σ₁, hσ₁, σ₂, hσ₂, heq, hne⟩ := hl
+    exact ⟨l, σ₁, σ₂, hne, heq, hσ₁⟩
+
+/-- A **virtual cell**: a form cell no content cell corresponds to
+([stump-2012-mmm8] §4). Realization rules still define a value there, which
+language change can release by suppressing a linkage override. -/
+def IsVirtual (zτ : Z × P) : Prop := ∀ l σ, ℓ.corr l σ ≠ some zτ
+
+/-- A shared form correspondent forces a shared realization ([stump-2012-mmm8]
+§3.2): the mechanism of syncretism. -/
 theorem realize_eq_of_corr_eq (realizeForm : Z → P → W) {l : L} {σ₁ σ₂ : P}
     (h : ℓ.corr l σ₁ = ℓ.corr l σ₂) :
     ℓ.realize realizeForm l σ₁ = ℓ.realize realizeForm l σ₂ := by
   simp only [realize, h]
 
-/-- The **canonical one-stem linkage**: the identity property mapping together
-with a designated stem `st l` for each lexeme. -/
+/-! ### The canonical linkage -/
+
+/-- The **canonical one-stem linkage**: a total, lexeme-blind stem selection with
+the identity property mapping. Recovers the pre-deviation content-form
+isomorphism. -/
 def canonical (st : L → Z) : Linkage L Z P where
-  stem := fun l _ => st l
-  pm := id
+  stem := fun l _ => some (st l)
+  pm := fun _ σ => σ
 
-@[simp] theorem canonical_pm (st : L → Z) (σ : P) :
-    (canonical (P := P) st).pm σ = σ := rfl
+@[simp] theorem canonical_stem (st : L → Z) (l : L) (σ : P) :
+    (canonical (P := P) st).stem l σ = some (st l) := rfl
 
+@[simp] theorem canonical_pm (st : L → Z) (l : L) (σ : P) :
+    (canonical (P := P) st).pm l σ = σ := rfl
+
+@[simp] theorem canonical_corr (st : L → Z) (l : L) (σ : P) :
+    (canonical (P := P) st).corr l σ = some (st l, σ) := rfl
+
+@[simp] theorem canonical_realize (st : L → Z) (realizeForm : Z → P → W)
+    (l : L) (σ : P) :
+    (canonical (P := P) st).realize realizeForm l σ = some (realizeForm (st l) σ, σ) :=
+  rfl
+
+@[simp] theorem corr_eq_some {l : L} {σ : P} {zτ : Z × P} :
+    ℓ.corr l σ = some zτ ↔ ∃ z, ℓ.stem l σ = some z ∧ (z, ℓ.pm l σ) = zτ := by
+  simp [corr]
+
+@[simp] theorem corr_isSome (l : L) (σ : P) :
+    (ℓ.corr l σ).isSome = (ℓ.stem l σ).isSome := by
+  simp [corr]
+
+/-- The canonical linkage is canonical on all four axes. -/
 theorem canonical_isCanonical (st : L → Z) :
     (canonical (P := P) st).IsCanonical :=
-  ⟨fun _ => rfl, fun l => ⟨st l, fun _ => rfl⟩⟩
+  ⟨fun _ _ => rfl,
+   fun _ _ _ _ _ h₁ h₂ => (Option.some.inj h₁).symm.trans (Option.some.inj h₂),
+   fun _ _ _ _ _ heq => congrArg Prod.snd (Option.some.inj heq),
+   fun _ _ => rfl⟩
 
 end Linkage
 
