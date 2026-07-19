@@ -1,4 +1,3 @@
-import Linglib.Morphology.Periphrasis
 
 /-!
 # Hemba Auxiliary Verb Fragment
@@ -30,7 +29,6 @@ both elements while tense and mood are split between them.
 
 namespace Hemba.AuxiliaryVerbs
 
-open Morphology (MorphCategory InflDistribution)
 
 /-- Hemba progressive/past AVC form. -/
 def form : String := "tw-a-li tu-tib-a muti"
@@ -38,31 +36,10 @@ def form : String := "tw-a-li tu-tib-a muti"
 /-- Interlinear gloss (Anderson's: `1pl-tns-aux 1pl-cut-fv/ind tree`). -/
 def gloss : String := "1PL-TNS-AUX 1PL-cut-FV/IND tree"
 
-/-- Inflectional distribution: agreement doubled, tense on AUX, mood on LV. -/
-def inflDistribution : InflDistribution :=
-  { onAux := [.agreement .subj, .tense]
-  , onLex := [.agreement .subj, .mood] }
 
 /-! ## Verification -/
 
 theorem form_nonempty : form ≠ "" := by decide
 
-/-- Agreement is doubled: subject agreement appears on both AUX and LV. -/
-theorem agreement_doubled :
-    inflDistribution.onAux.contains (.agreement .subj) = true ∧
-    inflDistribution.onLex.contains (.agreement .subj) = true := by
-  exact ⟨by decide, by decide⟩
-
-/-- Tense is split to AUX only. -/
-theorem tense_on_aux_only :
-    inflDistribution.onAux.contains .tense = true ∧
-    inflDistribution.onLex.contains .tense = false := by
-  exact ⟨by decide, by decide⟩
-
-/-- Mood is split to LV only. -/
-theorem mood_on_lex_only :
-    inflDistribution.onAux.contains .mood = false ∧
-    inflDistribution.onLex.contains .mood = true := by
-  exact ⟨by decide, by decide⟩
 
 end Hemba.AuxiliaryVerbs

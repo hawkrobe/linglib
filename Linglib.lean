@@ -1284,7 +1284,6 @@ import Linglib.Morphology.Paradigm.Degree
 import Linglib.Morphology.Paradigm.Linkage
 import Linglib.Morphology.Paradigm.Morphome
 import Linglib.Morphology.Paradigm.OfCells
-import Linglib.Morphology.Periphrasis
 import Linglib.Morphology.Realization
 import Linglib.Morphology.Root.Basic
 import Linglib.Morphology.Root.Family

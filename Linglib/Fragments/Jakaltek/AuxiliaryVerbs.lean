@@ -1,4 +1,3 @@
-import Linglib.Morphology.Periphrasis
 
 /-!
 # Jakaltek (Jacaltec) Auxiliary Verb Fragment
@@ -15,7 +14,6 @@ Source: Craig 1977, cited in [anderson-2006].
 
 namespace Jakaltek.AuxiliaryVerbs
 
-open Morphology (InflDistribution MorphCategory)
 
 /-- Primary AVC example form.
     *šk-ach w-ila*
@@ -29,13 +27,5 @@ def gloss : String := "COMPL-ABS2 ERG1-see 'I saw you'"
 def family : String := "Mayan"
 def location : String := "Guatemala"
 
-/-- Split inflection distribution: AUX hosts aspect and absolutive
-    agreement (= object in a transitive clause); LV hosts ergative
-    agreement (= subject in a transitive clause). The role-typed
-    `.agreement` constructor surfaces the abs/erg distinction at the
-    substrate level: `.obj` on AUX, `.subj` on LV. -/
-def inflDistribution : InflDistribution :=
-  { onAux := [.aspect, .agreement .obj]
-  , onLex := [.agreement .subj] }
 
 end Jakaltek.AuxiliaryVerbs

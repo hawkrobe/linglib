@@ -1,4 +1,3 @@
-import Linglib.Morphology.Periphrasis
 
 /-!
 # Pipil Auxiliary Verb Fragment
@@ -32,7 +31,6 @@ on BOTH elements. Audit fix: 2026-04-30.
 
 namespace Pipil.AuxiliaryVerbs
 
-open Morphology (InflDistribution MorphCategory)
 
 def family : String := "Uto-Aztecan"
 def location : String := "El Salvador"
@@ -50,9 +48,6 @@ def lexHeadedForm : String := "weli ni-nehnemi wehka"
 
 def lexHeadedGloss : String := "CAP 1-walk far 'I can walk far'"
 
-/-- Lex-headed inflection: AUX uninflected, LV hosts subject agreement. -/
-def lexHeadedDistribution : InflDistribution :=
-  { onAux := [], onLex := [.agreement .subj] }
 
 /-! ## Split/doubled pattern (Anderson 2006 Ch 5 ex. 133a, p. 224) -/
 
@@ -72,14 +67,6 @@ def splitDoubledForm : String := "n-yu ni-mitsin-ilwitia"
 def splitDoubledGloss : String :=
   "1-AUX 1-2PL-show 'I'm going to show you'"
 
-/-- Split/doubled inflection: subject agreement doubled on both AUX
-    and LV; object agreement appears only on LV. The role-typed
-    encoding (subj vs obj) makes the Anderson Ch 5 §5.2 "objects on
-    LV only" generalization directly Lean-checkable: see
-    `Studies/Anderson2006.lean`. -/
-def splitDoubledDistribution : InflDistribution :=
-  { onAux := [.agreement .subj]
-  , onLex := [.agreement .subj, .agreement .obj] }
 
 /-! ## Primary pattern alias
 
@@ -90,6 +77,5 @@ file consumes both. -/
 
 def form : String := splitDoubledForm
 def gloss : String := splitDoubledGloss
-def inflDistribution : InflDistribution := splitDoubledDistribution
 
 end Pipil.AuxiliaryVerbs

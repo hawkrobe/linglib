@@ -1,4 +1,3 @@
-import Linglib.Morphology.Periphrasis
 
 /-!
 # Doyayo Auxiliary Verb Fragment
@@ -28,7 +27,6 @@ Doyayo passages (Anderson cites W&W pp. 55, 77, 217, 221, 222).
 
 namespace Doyayo.AuxiliaryVerbs
 
-open Morphology (InflDistribution MorphCategory)
 
 def family : String := "Adamawa, Niger-Congo"
 def location : String := "Cameroon"
@@ -48,11 +46,6 @@ def lexHeadedForm : String := "mi¹ (gi²) kpel¹-ko¹"
 
 def lexHeadedGloss : String := "I AUX pour-PROX 'I'm going to pour'"
 
-/-- Lex-headed inflection: AUX carries tonal subject agreement (Anderson
-    p. 120: "partially encodes person of the subject through the tone");
-    LV carries TAM. -/
-def lexHeadedDistribution : InflDistribution :=
-  { onAux := [.agreement .subj], onLex := [.tense] }
 
 /-! ## Split/doubled pattern (Anderson 2006, Ch 5 ex. 128-129, pp. 222-223) -/
 
@@ -73,14 +66,6 @@ def splitDoubledForm : String := "hi¹-za¹ hi¹-zaa¹³ hi¹-lɔ-mɔ"
 def splitDoubledGloss : String :=
   "3PL-POT 3PL-come 3PL-bite-2 'they might come bite you'"
 
-/-- Split/doubled inflection: subject agreement doubled on both
-    elements; object agreement appears only on LV. The role-typed
-    encoding (subj vs obj) makes the Anderson Ch 5 §5.2 "objects on
-    LV only" generalization directly Lean-checkable: see
-    `Studies/Anderson2006.lean`. -/
-def splitDoubledDistribution : InflDistribution :=
-  { onAux := [.agreement .subj]
-  , onLex := [.agreement .subj, .agreement .obj] }
 
 /-! ## Primary pattern alias
 
@@ -91,6 +76,5 @@ serialization (Anderson p. 222-223). For consumers needing a single
 
 def form : String := lexHeadedForm
 def gloss : String := lexHeadedGloss
-def inflDistribution : InflDistribution := lexHeadedDistribution
 
 end Doyayo.AuxiliaryVerbs
