@@ -120,16 +120,9 @@ def IsConcatenative : Tree M → Prop
 
 instance decIsConcatenative : (t : Tree M) → Decidable t.IsConcatenative
   | .root _ => .isTrue trivial
-  | .prefixed _ b => decIsConcatenative b
-  | .suffixed b _ => decIsConcatenative b
-  | .compound l r =>
-      have := decIsConcatenative l
-      have := decIsConcatenative r
-      inferInstanceAs (Decidable (_ ∧ _))
-  | .converted b => decIsConcatenative b
-  | .infixed .. => .isFalse id
-  | .circumfixed .. => .isFalse id
-  | .reduplicated .. => .isFalse id
+  | .prefixed _ b | .suffixed b _ | .converted b => decIsConcatenative b
+  | .compound l r => @instDecidableAnd _ _ (decIsConcatenative l) (decIsConcatenative r)
+  | .infixed .. | .circumfixed .. | .reduplicated .. => .isFalse id
 
 /-! ### Laws -/
 
