@@ -113,9 +113,7 @@ def toString (m : Morph) : String :=
 
 end Morph
 
-/-- An **exponent**: the possibly empty sequence of morphs realizing a
-paradigm cell. `[]` is zero exponence; a discontinuous realization
-(Q'anjob'al *s-…heb'*) is a two-morph exponent. -/
+/-- An **exponent** is the sequence of morphs realizing a paradigm cell. -/
 abbrev Exponent := List Morph
 
 /-- Display an exponent in descriptive notation: `∅` for zero exponence,
