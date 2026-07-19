@@ -12,7 +12,12 @@ A `Word.Term M` records the word-internal structure of a word as an
 operation-typed tree with leaves and affixal payloads in `M`: each
 constructor is one of [booij-2012]'s morphological operations —
 affixation, reduplication, conversion, compounding — with its own arity
-and payload. The tree records derivational history and word-internal
+and payload. The terms are the partial words — every subterm is a
+formable word-part. `M` plays two roles: generator at the leaves (root
+and free morphs) and label on the affixal operations — an affix indexes
+a unary operation on terms and is never itself a subterm, so its
+boundness holds by construction; `toList` flattens both roles onto the
+morph-sequence reading. The tree records derivational history and word-internal
 constituency — what applying the operations as functions would forget.
 [booij-2012]'s relational notions are the accessors `base`, `stem`, and
 `roots`; `toList` linearizes the payloads and `toSequence?` projects the
