@@ -140,16 +140,12 @@ theorem toList_map (f : M → N) (t : Tree M) :
 
 /-! ### Structural measures -/
 
-/-- Morphological depth: the number of operations above the deepest root. -/
+/-- The number of operations above the deepest root. -/
 def depth : Tree M → Nat
   | .root _ => 0
-  | .prefixed _ base => 1 + base.depth
-  | .suffixed base _ => 1 + base.depth
-  | .infixed base _ => 1 + base.depth
-  | .circumfixed _ base _ => 1 + base.depth
-  | .compound l r => 1 + max l.depth r.depth
-  | .reduplicated _ base => 1 + base.depth
-  | .converted base => 1 + base.depth
+  | .compound l r => max l.depth r.depth + 1
+  | .prefixed _ b | .suffixed b _ | .infixed b _ | .circumfixed _ b _
+  | .reduplicated _ b | .converted b => b.depth + 1
 
 /-- A bare root has depth zero. -/
 theorem depth_root (m : M) : (root m).depth = 0 := rfl
