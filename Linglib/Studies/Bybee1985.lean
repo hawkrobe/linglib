@@ -1,14 +1,12 @@
 import Linglib.Morphology.Morphotactics.RelevanceHierarchy
-import Linglib.Morphology.UsageBased.Network
-import Linglib.Fragments.English.Predicates.Verbal
 import Mathlib.Tactic.DeriveFintype
 
 /-!
-# Bybee (1985): the relevance hypothesis
+# Bybee (1985): relevance and the dynamic lexicon
 
 [bybee-1985] (*Morphology: A Study of the Relation Between Meaning and Form*,
 Typological Studies in Language 9) tests the **relevance hypothesis** on a
-50-language stratified probability sample (Perkins 1980): a morpheme category
+50-language stratified probability sample ([perkins-1980]): a morpheme category
 whose meaning is more relevant to the verb stem (a) occurs more often as
 inflection cross-linguistically, (b) sits closer to the stem in suffixal
 morphology, and (c) fuses more tightly with it.
@@ -17,7 +15,9 @@ This file formalizes the data behind claims (a) and (b) — the Ch 2 §5 frequen
 surveys and the Ch 2 §6 morpheme-order counts — and grounds the substrate's
 relevance order (`MorphCategory.peripherality`, via `RelevanceLT` / `RelevanceLE`)
 in that evidence. Claim (c), fusion, is qualitative in the source and is not
-formalized.
+formalized. The second half formalizes Ch 5's dynamic network model of the
+lexicon: lexical strength, lexical connection, and the strong-verb frequency
+table.
 
 ## Main definitions
 
@@ -26,16 +26,25 @@ formalized.
 * `orderPairs` — the Ch 2 §6 morpheme-order counts, one `OrderPair` per tested category pair.
 * `toMorphCategory` — the embedding of `BybeeCategory` into the substrate `MorphCategory`.
 * `SurveyedCloser` — the stem-proximity order *derived from* `orderPairs`.
-* `verbToBybeeNetwork` — a verb's Ch 5 paradigm network, derived from a Fragment `VerbEntry`.
+* `LexicalEntry`, `Network` — the Ch 5 dynamic network: entries with token
+  frequency (lexical strength) and typed connections (lexical connection).
+* `Network.HasMorphologicalRelation` — the Ch 5 §5 derived relation: parallel
+  semantic and phonological connections.
+* `strongStillStrong`, `strongRegularized` — the Ch 5 §6 strong-verb frequency
+  table.
 
 ## Main results
 
-* `mood_highest_when_inflectional`, `gender_lowest_when_derivOrInfl` — the frequency predictions.
+* `valence_highest_when_derivOrInfl`, `valence_lowest_when_inflectional` — the
+  relevance and generality frequency predictions.
 * `predicted_outnumbers_counter`, `aspect_categorical_against_tense_and_mood` — the order predictions.
 * `survey_order_iso_relevance` — on the surveyed categories `SurveyedCloser` and the substrate
   `RelevanceLT` coincide via `toMorphCategory`: the hierarchy is the order the §6 survey forces,
   not a stipulated table.
-* `bybeeSurveyedSlots_respects_hierarchy` — closes the loop to `RespectsRelevanceHierarchy`.
+* `bybeeSurveyedOrder_respects_hierarchy` — closes the loop to `RespectsRelevanceHierarchy`.
+* `strong_verbs_higher_frequency_than_regularized` — the Ch 5 §6 diachronic
+  claim: still-Strong verbs have a strictly higher mean token frequency than
+  the regularized ones.
 
 ## Implementation notes
 
@@ -44,9 +53,10 @@ lexical-derivational-inflectional continuum (which no discrete status
 enum expresses — flagged for future work), and Part II tense/aspect/mood
 detail (Ch 6-9). `MorphCategory.RelevanceLT` is exercised independently by
 `Studies/HahnDegenFutrell2021Morphology.lean`; the `BybeeCategory` enum and
-`toMorphCategory` bridge feed `Studies/RathiHahnFutrell2026.lean`. The Ch 5
-network substrate lives in `Morphology/UsageBased/Network.lean`; §5 below uses
-it on the English *eat/ate/eaten* paradigm.
+`toMorphCategory` bridge feed `Studies/RathiHahnFutrell2026.lean`. Not yet
+covered from Ch 5: the frequency-connection interaction (high-frequency items
+form more *distant* connections — the autonomy half of the model), and §10-§11
+schema emergence and productivity from class size.
 -/
 
 namespace Bybee1985
@@ -59,16 +69,29 @@ Bybee's six core categories in relevance order: valence, voice, aspect, tense,
 mood, agreement (number/person/gender are agreement sub-types). -/
 
 /-- Bybee's Ch 2 verbal-inflectional categories, in her relevance order (stem
-first). Object agreement, number, and gender are tracked separately. -/
+first). Constructor docstrings quote the coding definitions of Ch 2 §4. -/
 inductive BybeeCategory where
+  /-- Differences in the number or role of the arguments the verb stem takes. -/
   | valence
+  /-- The perspective from which the situation described by the verb stem is
+  viewed. -/
   | voice
+  /-- The way the internal temporal constituency of the situation is viewed. -/
   | aspect
+  /-- The situation's placement in time, relative to the moment of speech or
+  some other established point. -/
   | tense
+  /-- The way the speaker presents the truth of the proposition: probability,
+  possibility, certainty; evidentials are included under mood. -/
   | mood
+  /-- Concord by number with one or more arguments of the verb. -/
   | numberAgr
+  /-- Concord by person with the subject. -/
   | personAgr
+  /-- Concord by person with the object. -/
   | personAgrObj
+  /-- Concord with arguments by lexical class, assigned arbitrarily or by
+  inherent qualities of the referent. -/
   | genderAgr
   deriving DecidableEq, Repr, Fintype
 
@@ -110,11 +133,12 @@ theorem valence_highest_when_derivOrInfl :
     ∀ c : BybeeCategory, derivOrInflCount50 c ≤ derivOrInflCount50 .valence := by
   decide
 
-/-- Among purely *inflectional* categories, mood is the most frequent (Fig 1,
-68%). Valence's drop from 90% to 6% is Bybee's point that valence-changing
-morphology is almost always derivational. -/
-theorem mood_highest_when_inflectional :
-    ∀ c : BybeeCategory, inflectionalCount50 c ≤ inflectionalCount50 .mood := by
+/-- The generality prediction: restricted to *inflection*, valence is the least
+frequent category (6%, down from 90%) — generality "predicts fewer inflections
+among the most highly relevant categories", because highly relevant morphology
+is rarely obligatory across all stems. -/
+theorem valence_lowest_when_inflectional :
+    ∀ c : BybeeCategory, inflectionalCount50 .valence ≤ inflectionalCount50 c := by
   decide
 
 /-- In the deriv+infl survey (Fig 2), gender agreement is the least frequent
@@ -129,17 +153,22 @@ theorem gender_lowest_when_derivOrInfl :
 Prediction (b): the most relevant categories sit closest to the stem, the least
 relevant furthest. Bybee tests the four most frequent — aspect, tense, mood,
 person — counting, per pair, how many languages place one closer than the other.
-A pair is excluded when the morphemes are portmanteau, on opposite sides of the
-stem, mutually exclusive in one slot, or realized by stem modification. -/
+A language with both categories is untestable when the morphemes are
+portmanteau, on opposite sides of the stem (unless only one is stem-adjacent),
+or mutually exclusive in one slot; a morpheme expressed by stem modification
+counts as closer than one expressed by affixation. -/
 
-/-- A Ch 2 §6 morpheme-order pair: `closer` / `further` are the predicted
-nearer / farther categories, `closerCount` / `furtherCount` the languages
-confirming / contradicting it, and `total` the languages where it is testable. -/
+/-- A Ch 2 §6 morpheme-order pair. -/
 structure OrderPair where
+  /-- The category predicted closer to the stem. -/
   closer : BybeeCategory
+  /-- The category predicted further from the stem. -/
   further : BybeeCategory
+  /-- The languages confirming the predicted order. -/
   closerCount : Nat
+  /-- The languages showing the opposite order. -/
   furtherCount : Nat
+  /-- The languages having both categories, testable or not. -/
   total : Nat
   deriving Repr
 
@@ -182,26 +211,19 @@ theorem aspect_categorical_against_tense_and_mood :
       p.furtherCount = 0 := by
   decide
 
-/-- Mood vs. person is the freest pair: the only one whose
-counterexample-to-total ratio exceeds 1/10. -/
-theorem mood_person_ordering_is_freer :
-    ∀ p ∈ orderPairs,
-      p.total < 10 * p.furtherCount ↔ (p.closer = .mood ∧ p.further = .personAgr) := by
+/-- Mood vs. person is the freest pair — "the ordering of mood and person is
+somewhat freer" — cross-multiplied: every other tested pair has a strictly
+smaller counterexample rate. -/
+theorem mood_person_ordering_is_freest :
+    ∀ p ∈ orderPairs, ∀ q ∈ orderPairs,
+      q.closer = .mood → p.closer ≠ .mood →
+      p.furtherCount * q.total < q.furtherCount * p.total := by
   decide
 
 /-- In every one of the six pairs the predicted direction outnumbers the
 counter-direction (Ch 2 §6 summary). -/
 theorem predicted_outnumbers_counter :
     ∀ p ∈ orderPairs, p.furtherCount < p.closerCount := by
-  decide
-
-/-- Aggregate Ch 2 §6 counts: 125 testable observations, 59 in the predicted
-direction and 8 against (the other 58 are non-relevant under the exclusion
-criteria above). -/
-theorem ch2_section6_aggregate_counts :
-    (orderPairs.map (·.total)).sum = 125 ∧
-    (orderPairs.map (·.closerCount)).sum = 59 ∧
-    (orderPairs.map (·.furtherCount)).sum = 8 := by
   decide
 
 /-! ### Connection to substrate `MorphCategory.peripherality`
@@ -234,15 +256,6 @@ theorem substrate_matches_bybee_hierarchy :
         toMorphCategory) := by
   decide
 
-/-- The Ch 2 §6 morpheme-order data is exactly what `RespectsRelevanceHierarchy`
-predicts: in the substrate relevance order, Bybee's predicted-closer category is
-never less stem-relevant than the predicted-further one, so the order agrees
-with the empirical-majority direction on every tested pair. -/
-theorem orderPairs_consistent_with_substrate :
-    ∀ p ∈ orderPairs,
-      (toMorphCategory p.closer).RelevanceLE (toMorphCategory p.further) := by
-  decide
-
 /-! ### Grounding the hierarchy in the survey
 
 On the four categories Bybee surveyed (aspect, tense, mood, person), the
@@ -257,15 +270,15 @@ predicts `a` closer than `b` and the language counts confirm that direction
 def SurveyedCloser (a b : BybeeCategory) : Prop :=
   ∃ p ∈ orderPairs, p.closer = a ∧ p.further = b ∧ p.furtherCount < p.closerCount
 
-instance : DecidableRel SurveyedCloser := fun _ _ => by
-  unfold SurveyedCloser; exact inferInstance
+instance : DecidableRel SurveyedCloser := fun _ _ =>
+  inferInstanceAs (Decidable (∃ _ ∈ orderPairs, _))
 
 /-- A category is *surveyed* if it appears in any tested Ch 2 §6 pair. -/
 def Surveyed (c : BybeeCategory) : Prop :=
   ∃ p ∈ orderPairs, p.closer = c ∨ p.further = c
 
-instance : DecidablePred Surveyed := fun _ => by
-  unfold Surveyed; exact inferInstance
+instance : DecidablePred Surveyed := fun _ =>
+  inferInstanceAs (Decidable (∃ _ ∈ orderPairs, _))
 
 /-- `SurveyedCloser` is irreflexive: no tested pair ranks a category against
 itself. -/
@@ -286,14 +299,6 @@ theorem surveyedCloser_total : ∀ a b : BybeeCategory,
     Surveyed a → Surveyed b → a ≠ b → SurveyedCloser a b ∨ SurveyedCloser b a := by
   decide
 
-/-- Grounding theorem: whenever the survey places `a` closer than `b`, the
-substrate ranks `a` strictly more stem-relevant — so `toMorphCategory` is
-strictly monotone from the surveyed order into the relevance order. -/
-theorem relevance_honors_survey : ∀ a b : BybeeCategory,
-    SurveyedCloser a b →
-      (toMorphCategory a).RelevanceLT (toMorphCategory b) := by
-  decide
-
 /-- Order isomorphism: on the surveyed categories, `SurveyedCloser` and the
 substrate `RelevanceLT` coincide via `toMorphCategory`. The hierarchy there is
 not merely consistent with Bybee's evidence — it *is* the order the §6 survey
@@ -304,8 +309,8 @@ theorem survey_order_iso_relevance : ∀ a b : BybeeCategory,
   decide
 
 /-- The stem-outward ordering of the surveyed categories — a literal, but
-validated below as fully `SurveyedCloser`-sorted (`bybeeSurveyedOrder_sorted`)
-and exactly the surveyed categories without repeats (`_complete`, `_nodup`). -/
+validated as fully `SurveyedCloser`-sorted (`bybeeSurveyedOrder_sorted`) and
+exhaustive (`bybeeSurveyedOrder_complete`). -/
 def bybeeSurveyedOrder : List BybeeCategory :=
   [.aspect, .tense, .mood, .personAgr]
 
@@ -315,77 +320,123 @@ theorem bybeeSurveyedOrder_sorted : bybeeSurveyedOrder.Pairwise SurveyedCloser :
 theorem bybeeSurveyedOrder_complete : ∀ c : BybeeCategory,
     Surveyed c → c ∈ bybeeSurveyedOrder := by decide
 
-theorem bybeeSurveyedOrder_nodup : bybeeSurveyedOrder.Nodup := by decide
-
-/-- The surveyed order mapped to substrate categories — exposed so consumers
-(`HahnDegenFutrell2021Morphology`, `Karlsson2017`, `RathiHahnFutrell2026`) check
-their slot orders against the survey rather than re-asserting the hierarchy. -/
-def bybeeSurveyedSlots : List MorphCategory :=
-  bybeeSurveyedOrder.map toMorphCategory
-
 /-- The data-derived surveyed order satisfies the substrate predicate, closing
 the loop between Bybee's §6 evidence and `RespectsRelevanceHierarchy`. -/
-theorem bybeeSurveyedSlots_respects_hierarchy :
-    RespectsRelevanceHierarchy bybeeSurveyedSlots := by decide
+theorem bybeeSurveyedOrder_respects_hierarchy :
+    RespectsRelevanceHierarchy (bybeeSurveyedOrder.map toMorphCategory) := by decide
 
-/-! ### Ch 5 dynamic network, derived from the English Fragment
+/-! ### Ch 5: the dynamic network model
 
-Bybee Ch 5 §8 illustrates the network architecture with the Spanish *dormir*
-paradigm. We use English *eat/ate/eaten* and, rather than stipulating
-`LexicalEntry` strings, **derive** the network from `eat : VerbEntry` in
-`Fragments/English/Predicates/Verbal.lean`: changing `eat.formPast` there
-updates the network (CLAUDE.md "derive, don't duplicate"). Token frequencies
-default to 0; Bybee's verified counts (Francis & Kučera 1982) live in
-`Morphology/UsageBased/Network.lean`. -/
+Ch 5 ("Two Principles in a Dynamic Model of Lexical Representation") abandons
+the generative "is it in the lexicon or not?" binary for two gradient, dynamic
+notions. **Lexical strength** (§4): each token of use strengthens an item's
+representation ("etching it with deeper and darker lines each time"), and
+strength declines with disuse. **Lexical connection** (§5): items bear typed
+connections to other items, and parallel semantic and phonological connections
+constitute a *morphological relation*. Bybee's network model is the usage-based
+competitor to the realisational and generative engines in `Morphology/`; not to
+be confused with Network Morphology, the DATR-based default-inheritance
+framework. -/
 
-open Morphology.UsageBased
-open English.Predicates.Verbal
+/-- A stored item in Bybee's Ch 5 lexicon: a form with its token frequency.
+Frequency models lexical strength — each token of use strengthens the
+representation, and strength declines with disuse (§4). Bybee's entries pair
+the form with a meaning; the semantic side of matching is not modeled here. -/
+structure LexicalEntry where
+  /-- The phonological form. -/
+  form : String
+  /-- The token frequency, modeling lexical strength. -/
+  tokenFreq : Nat
+  deriving Repr
 
-/-- A verb's five inflected forms as Bybee `LexicalEntry` instances (token
-frequencies default to 0; the Fragment carries none). -/
-def verbToLexicalEntries (v : VerbEntry) : List (LexicalEntry Unit) :=
-  [⟨v.form, (), 0⟩, ⟨v.form3sg, (), 0⟩, ⟨v.formPast, (), 0⟩,
-   ⟨v.formPastPart, (), 0⟩, ⟨v.formPresPart, (), 0⟩]
+/-- The kind of a connection between lexical entries (Ch 5 §5): shared semantic
+features (*table*~*chair*, *deep*~*shallow*), a shared phonological skeleton
+without shared meaning (the two senses of *crane*), the morphological relation
+(parallel semantic and phonological connections), or identity (§7), the mapping
+of one word onto an existing representation. Bybee orders their strengths:
+purely phonological relations "usually go unnoticed", semantic connections are
+"the strongest and the most important" (*go*~*went* supports *goed*), the
+morphological relation is the strongest relation between distinct forms, and
+"the strongest relations are relations of identity". -/
+inductive ConnectionKind where
+  | semantic
+  | phonological
+  | morphological
+  | identity
+  deriving DecidableEq, Repr
 
-/-- The Bybee network of a verb's paradigm, built from its Fragment `VerbEntry`.
-Every form pair gets a semantic edge (shared meaning) and a phonological edge —
-the latter approximating Bybee's "shared phonological skeleton"; a real
-similarity metric would gate it more selectively. -/
-def verbToBybeeNetwork (v : VerbEntry) : Network Unit :=
-  let entries := verbToLexicalEntries v
-  let forms := entries.map (·.form)
-  let pairs := forms.flatMap (λ a => forms.map (λ b => (a, b)))
-  let connections := pairs.flatMap (λ (a, b) =>
-    if a = b then [] else
-    [⟨a, b, .semantic⟩, ⟨a, b, .phonological⟩])
-  { entries := entries, connections := connections }
+/-- A directed typed edge between two forms in the lexical network. -/
+structure Connection where
+  /-- The source form. -/
+  src : String
+  /-- The target form. -/
+  dst : String
+  /-- The kind of connection. -/
+  kind : ConnectionKind
+  deriving Repr
 
-/-- The network of the English irregular *eat*, derived from the Fragment. -/
-def eatNetwork : Network Unit := verbToBybeeNetwork eat
+/-- A lexical network: entries plus typed connections among them, as in the
+Ch 5 §8 representation of the Spanish *dormir* paradigm, whose three stem
+allomorphs (*dwerm*, *dorm*, *durm-y*) are linked by morphological relations
+across persons, numbers, and tenses. -/
+structure Network where
+  /-- The stored lexical entries. -/
+  entries : List LexicalEntry
+  /-- The typed connections among entries. -/
+  connections : List Connection
+  deriving Repr
 
-/-- Sanity check: *eat*'s past form appears as a network entry, read off
-`eat.formPast` (no string literal), so `decide` tracks that field. -/
-theorem eat_past_in_network :
-    ∃ e ∈ eatNetwork.entries, e.form = eat.formPast := by decide
+/-- `N.IsRelatedBy a b k` asserts that network `N` has a connection of kind `k`
+from form `a` to form `b`. -/
+def Network.IsRelatedBy (N : Network) (a b : String) (k : ConnectionKind) : Prop :=
+  ∃ c ∈ N.connections, c.src = a ∧ c.dst = b ∧ c.kind = k
 
-/-- *eat* and its past form are morphologically related (Ch 5 §5), derived from
-`eat.formPast` rather than a literal.
+/-- `N.HasMorphologicalRelation a b` asserts that `a` and `b` stand in both a
+semantic and a phonological connection — Ch 5 §5: "if two words are related by
+both semantic and phonological connections, then a morphological relation
+exists between them". The relation is derived, not primitive;
+`ConnectionKind.morphological` labels edges already so classified. -/
+def Network.HasMorphologicalRelation (N : Network) (a b : String) : Prop :=
+  N.IsRelatedBy a b .semantic ∧ N.IsRelatedBy a b .phonological
 
-Caveat: `verbToBybeeNetwork` connects *every* paradigm-form pair, so this holds
-for any two distinct forms by construction — there is no shared-skeleton gate
-yet. What the theorems here test is that the network is built from the Fragment
-and that a non-paradigm form is correctly unrelated. -/
-theorem eat_form_related_to_past_form :
-    eatNetwork.HasMorphologicalRelation eat.form eat.formPast := by decide
+/-! ### Ch 5 §6: strong-verb frequencies
 
-/-- *eat* and its past-participle form are likewise related, derived from
-`eat.formPastPart`. -/
-theorem eat_form_related_to_pastPart_form :
-    eatNetwork.HasMorphologicalRelation eat.form eat.formPastPart := by decide
+Bybee's central diachronic claim: high-frequency strong verbs maintain their
+irregularity, low-frequency strong verbs regularize. The table on p. 120 lists
+the modern descendants of the Strong Verbs of classes I, II, and VII in
+[sweet-1882]'s *Anglo-Saxon Primer* with their all-forms token frequencies from
+[francis-kucera-1982]. *Slit* and *beat* now take the zero allomorph of Past
+Tense (Bybee's footnote). -/
 
-/-- Negative test: a form outside *eat*'s paradigm bears no relation to it — the
-relation is not vacuously true of arbitrary string pairs. -/
-theorem eat_unrelated_to_nonparadigm_form :
-    ¬ eatNetwork.HasMorphologicalRelation eat.form "swim" := by decide
+/-- The Strong Verbs that have stayed Strong (p. 120), with all-forms token
+frequencies. -/
+def strongStillStrong : List LexicalEntry := [
+  -- Class I (mean 223)
+  ⟨"drive", 203⟩, ⟨"rise", 199⟩, ⟨"ride", 126⟩, ⟨"write", 561⟩, ⟨"bite", 26⟩,
+  -- Class II (mean 140)
+  ⟨"choose", 177⟩, ⟨"fly", 92⟩, ⟨"shoot", 117⟩, ⟨"lose", 274⟩, ⟨"flee", 40⟩,
+  -- Class VII (mean 515)
+  ⟨"fall", 239⟩, ⟨"hold", 509⟩, ⟨"know", 1473⟩, ⟨"grow", 300⟩, ⟨"blow", 52⟩
+]
+
+/-- The Strong Verbs that have regularized or become Weak (p. 120), with
+all-forms token frequencies. -/
+def strongRegularized : List LexicalEntry := [
+  -- Class I (mean 5)
+  ⟨"bide", 1⟩, ⟨"reap", 5⟩, ⟨"slit", 3⟩, ⟨"sneak", 11⟩,
+  -- Class II (mean 22)
+  ⟨"rue", 0⟩, ⟨"seethe", 0⟩, ⟨"smoke", 26⟩, ⟨"float", 23⟩, ⟨"shove", 16⟩,
+  -- Class VII (mean 21)
+  ⟨"wax", 6⟩, ⟨"weep", 28⟩, ⟨"beat", 66⟩, ⟨"hew", 1⟩, ⟨"leap", 33⟩,
+  ⟨"mow", 1⟩, ⟨"sow", 6⟩, ⟨"flow", 40⟩, ⟨"row", 5⟩
+]
+
+/-- The mean token frequency of the still-Strong verbs strictly exceeds that of
+the regularized ones — irregularity survives where lexical strength is high.
+Stated as the cross-multiplied sum comparison to stay in `Nat`. -/
+theorem strong_verbs_higher_frequency_than_regularized :
+    (strongRegularized.map (·.tokenFreq)).sum * strongStillStrong.length
+    < (strongStillStrong.map (·.tokenFreq)).sum * strongRegularized.length := by
+  decide
 
 end Bybee1985

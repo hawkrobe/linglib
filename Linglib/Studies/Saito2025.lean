@@ -36,7 +36,7 @@ the paper's triphone indexing is not reproduced here, so they get no separate de
 The paper's production matrix `G` (solving `SG = C`) is the substrate's `production`, its
 comprehension matrix `F` (solving `CF = S`) is `comprehension`. The DLM's
 no-stored-entries architecture sits against frequency-channel theories of a stored
-lexicon and [bybee-1985]'s `tokenFreq` (`Morphology/UsageBased/Network.lean`); cf. the
+lexicon and [bybee-1985]'s `tokenFreq` (`Studies/Bybee1985.lean`); cf. the
 channel discrimination in `Studies/BreissKatsudaKawahara2026.lean`.
 -/
 

@@ -71,7 +71,7 @@ theories. Adjacent linglib substrate:
   ([coetzee-pater-2008]), adjudicated in
   `Studies/BreissKatsudaKawahara2026.lean` (§5). All four presuppose a
   stored lexicon to which frequency attaches.
-- `Morphology/UsageBased/Network.lean` ([bybee-1985]):
+- `Studies/Bybee1985.lean` ([bybee-1985]):
   Bybee's dynamic network — typed `LexicalEntry`s with `tokenFreq`
   strength + connection edges. Stores entries.
 
