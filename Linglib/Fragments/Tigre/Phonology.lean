@@ -3,7 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Morphology.Root
+import Linglib.Morphology.Root.Consonantal
 import Linglib.Fragments.Tigrinya.Phonology
 
 /-!
@@ -78,45 +78,45 @@ abbrev Guttural := Tigrinya.Phonology.Guttural
 /-- √mzn — 'weigh'. Tigre. Paper 2-JUSS [ti-mazzɨn] / IMP [mazzɨn]
     (eq. 5a) — non-guttural triradical, control case for the [ɨ]
     epenthesis in initial-cluster position. -/
-def weigh : Root String := ⟨["m", "z", "n"]⟩
+def weigh : ConsonantalRoot String := ⟨["m", "z", "n"]⟩
 
 /-- √fgr — 'leave'. Tigre. Paper PRF-3MSG [fagr-a] / 2-JUSS
     [ti-fgʌr] (eq. 6a, 5b). Non-guttural triradical baseline. -/
-def leave : Root String := ⟨["f", "g", "r"]⟩
+def leave : ConsonantalRoot String := ⟨["f", "g", "r"]⟩
 
 /-- √ħtʕb — 'wash'. Tigre. Paper PRF-3MSG [ħatʔb-a] / 2-JUSS
     [ti-hitʔʕab] (eq. 6b) — the bold [i] in 2-JUSS marks epenthetic
     [ɨ] inserted to license the medial pharyngeal codas. -/
-def wash : Root String := ⟨["ħ", "t", "ʕ", "b"]⟩
+def wash : ConsonantalRoot String := ⟨["ħ", "t", "ʕ", "b"]⟩
 
 /-- √hrb — 'flee'. Tigre. Paper PRF-3MSG [harb-a] / 2-JUSS
     [ti-hirʌb] (eq. 6c), where the bold [i] marks the epenthetic
     [ɨ] licensing the initial guttural. -/
-def flee : Root String := ⟨["h", "r", "b"]⟩
+def flee : ConsonantalRoot String := ⟨["h", "r", "b"]⟩
 
 /-- √knʕ — 'get up'. Tigre. Paper 2-JUSS [ti-kʔnʌʕ] / IMP [kʔɨnʌʕ]
     (eq. 5c). Quadri-radical (k, ʔ, n, ʕ) — illustrates how an
     initial-cluster epenthetic [ɨ] interacts with a final guttural. -/
-def getUp : Root String := ⟨["k", "ʔ", "n", "ʕ"]⟩
+def getUp : ConsonantalRoot String := ⟨["k", "ʔ", "n", "ʕ"]⟩
 
 /-- √fgr — 'whip'. Tigre. Paper 2-IMP.M [(ti-)fʌggɨr] (eq. 12a) —
     the regular Tigre imperfective with medial geminate, baseline
     for eq. (12)'s /CʌGV/ → CGV in Tigre imperfectives discussion. -/
-def whip : Root String := ⟨["f", "g", "r"]⟩
+def whip : ConsonantalRoot String := ⟨["f", "g", "r"]⟩
 
 /-- √sʔl — 'ask'. Tigre. Paper 2-IMP.M [ti-sʔil] (eq. 12b). Same
     root as Tigrinya. The bold [i] marks epenthetic [ɨ]. -/
-def ask : Root String := ⟨["s", "ʔ", "l"]⟩
+def ask : ConsonantalRoot String := ⟨["s", "ʔ", "l"]⟩
 
 /-- √tʔʕn — 'load'. Tigre. Paper 2-IMP.M [ti-tʔʕin] (eq. 12c).
     Quadri-radical (t, ʔ, ʕ, n) with medial pharyngeal /ʕ/. -/
-def load : Root String := ⟨["t", "ʔ", "ʕ", "n"]⟩
+def load : ConsonantalRoot String := ⟨["t", "ʔ", "ʕ", "n"]⟩
 
 /-- √shk — 'uncover'. Tigre. Paper 2-IMP.M [ti-shik] (eq. 12d). -/
-def uncoverTigre : Root String := ⟨["s", "h", "k"]⟩
+def uncoverTigre : ConsonantalRoot String := ⟨["s", "h", "k"]⟩
 
 /-- √sħb — 'pull'. Tigre version of Tigrinya √sħb. Paper Tigre form
     [ti-sħib] from /tisʌħib/ (eq. 26d). -/
-def pull : Root String := ⟨["s", "ħ", "b"]⟩
+def pull : ConsonantalRoot String := ⟨["s", "ħ", "b"]⟩
 
 end Tigre.Phonology

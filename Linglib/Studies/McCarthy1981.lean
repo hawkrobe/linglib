@@ -57,14 +57,14 @@ open Morphology
 /-! ### Roots -/
 
 /-- The citation root ktb "write". -/
-def ktb : Root String := ⟨["k", "t", "b"]⟩
+def ktb : ConsonantalRoot String := ⟨["k", "t", "b"]⟩
 
 /-- The biradical root sm "poison" (surface samam, sammam). -/
-def sm : Root String := ⟨["s", "m"]⟩
+def sm : ConsonantalRoot String := ⟨["s", "m"]⟩
 
 /-- The root qlq, with identical first and third radicals — unremarkable
 for the OCP, which constrains adjacent elements only. -/
-def qlq : Root String := ⟨["q", "l", "q"]⟩
+def qlq : ConsonantalRoot String := ⟨["q", "l", "q"]⟩
 
 /-! ### Templates ((13) and the schema (14a)) -/
 
@@ -165,7 +165,7 @@ left-to-right with the remaining C-slots (spreading onto leftovers),
 Erasure applies if `erase`, and the vocalism associates with the V-slots
 per rule (41). -/
 def assemble (t : CVTemplate) (affixSegs : List String) (affixSlots : List Nat)
-    (erase : Bool) (voc : List String) (r : Root String) : TemplateMatch String :=
+    (erase : Bool) (voc : List String) (r : ConsonantalRoot String) : TemplateMatch String :=
   let affixAssocs := affixSlots.zipIdx.map fun (s, k) => ⟨.affix, k, s⟩
   let rootSlots := t.cSlots.filter (· ∉ affixSlots)
   let rootAssocs := associateLR .root r.arity rootSlots
@@ -184,7 +184,7 @@ inductive Binyan where
 from the infixed w-tier rather than the root tier — the choice point
 distinguishing XIII from XII (his (30)). Given representationally: the
 affix w is doubly linked, the root associates around it. -/
-def formXIII (voc : List String) (r : Root String) : TemplateMatch String :=
+def formXIII (voc : List String) (r : ConsonantalRoot String) : TemplateMatch String :=
   { root := r, vocalism := voc, affix := ["w"], template := ccvccvc,
     associations :=
       [⟨.root, 0, 0⟩, ⟨.root, 1, 1⟩, ⟨.affix, 0, 3⟩, ⟨.affix, 0, 4⟩, ⟨.root, 2, 6⟩] ++
@@ -194,7 +194,7 @@ def formXIII (voc : List String) (r : Root String) : TemplateMatch String :=
 paper's placements — first C-slot(s) for ʔ, t, n, st ((16), (18)), second
 C-slot for the VIII reflexive after the Flop (19), medial and final slots
 for the rare XII–XV affixes (27) — and Erasure for II, V, and XII. -/
-def perfMatch (voc : List String) (r : Root String) : Binyan → TemplateMatch String
+def perfMatch (voc : List String) (r : ConsonantalRoot String) : Binyan → TemplateMatch String
   | .I => assemble cvcvc [] [] false voc r
   | .II => assemble cvccvc [] [] true voc r
   | .III => assemble cvvcvc [] [] false voc r
@@ -315,8 +315,8 @@ theorem attested_roots_ocp_clean : sm.IsOCPClean ∧ qlq.IsOCPClean := by decide
 the root-level OCP — the shapes the theory correctly excludes from the
 lexicon. -/
 theorem geminate_roots_are_biradical :
-    ¬ (⟨["s", "m", "m"]⟩ : Root String).IsOCPClean ∧
-    ¬ (⟨["d", "d", "r", "j"]⟩ : Root String).IsOCPClean := by
+    ¬ (⟨["s", "m", "m"]⟩ : ConsonantalRoot String).IsOCPClean ∧
+    ¬ (⟨["d", "d", "r", "j"]⟩ : ConsonantalRoot String).IsOCPClean := by
   decide
 
 /-! ### Stranding (his (38)) -/
@@ -340,7 +340,7 @@ def binyanList : List Binyan :=
 the fifteen binyan cells, realized by the association pipeline. The root is
 the lexeme index; each cell contributes its template, affix, and Erasure
 setting. -/
-def perfectiveActiveParadigm (r : Root String) : Paradigm 15 (List String) :=
+def perfectiveActiveParadigm (r : ConsonantalRoot String) : Paradigm 15 (List String) :=
   fun i => (perfMatch activeVoc r (binyanList.getD i .I)).spellout
 
 /-- The paradigm of ktb reads off Table 1 cell by cell. -/

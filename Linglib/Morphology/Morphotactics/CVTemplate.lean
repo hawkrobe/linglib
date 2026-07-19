@@ -3,7 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Morphology.Root
+import Linglib.Morphology.Root.Consonantal
 import Linglib.Phonology.Autosegmental.NonCrossing
 
 /-!
@@ -152,7 +152,7 @@ sharing everything but `associations`; gemination is one melody index
 associated to several slots. -/
 structure TemplateMatch (α : Type*) where
   /-- The consonantal root. -/
-  root : Root α
+  root : ConsonantalRoot α
   /-- The vocalic melody. -/
   vocalism : List α := []
   /-- The affixal material. -/
@@ -214,7 +214,7 @@ instance (s : AssocSource) : Decidable (m.OrderedOn s) :=
   inferInstanceAs (Decidable (∀ a ∈ m.associations, ∀ b ∈ m.associations, _))
 
 /-- A match with no associations spells out to nothing. -/
-theorem spellout_nil (r : Root α) (t : CVTemplate) :
+theorem spellout_nil (r : ConsonantalRoot α) (t : CVTemplate) :
     (TemplateMatch.mk r [] [] t []).spellout = [] := by
   simp [spellout]
 

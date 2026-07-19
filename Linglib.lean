@@ -1261,6 +1261,7 @@ import Linglib.Morphology.DM.Fission
 import Linglib.Morphology.DM.Impoverishment
 import Linglib.Morphology.DM.Merger
 import Linglib.Morphology.DM.NominalStructure
+import Linglib.Morphology.DM.Root
 import Linglib.Morphology.DM.VocabSimple
 import Linglib.Morphology.DM.VocabularyInsertion
 import Linglib.Morphology.Exponence.Basic
@@ -1289,7 +1290,8 @@ import Linglib.Morphology.Paradigm.Function
 import Linglib.Morphology.Paradigm.Linkage
 import Linglib.Morphology.Paradigm.Morphome
 import Linglib.Morphology.Paradigm.OfCells
-import Linglib.Morphology.Root
+import Linglib.Morphology.Root.Basic
+import Linglib.Morphology.Root.Consonantal
 import Linglib.Morphology.Word.Basic
 import Linglib.Morphology.Paradigm.ToTree
 import Linglib.Morphology.Word.Tree

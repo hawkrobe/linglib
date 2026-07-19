@@ -3,7 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Morphology.Root
+import Linglib.Morphology.Root.Consonantal
 
 /-!
 # Tigrinya Phonological Inventory and Verbal Roots
@@ -73,7 +73,7 @@ scenarios its analysis treats:
 * roots with weak |I|-final radicals (the bi-morphemic /iIu/ → [ju]
   syneresis case)
 
-Roots are stored as `Morphology.Root String` per the existing
+Roots are stored as `Morphology.ConsonantalRoot String` per the existing
 Hebrew/Amharic pattern.
 -/
 
@@ -222,25 +222,25 @@ end Guttural
 /-- √grf — 'whip'. Triradical, no gutturals. The control case for
     syneresis: paper PRF [gʌrif-e] (eq. 8a), no syncope across V-initial
     suffixes. Used throughout the paper as the non-guttural baseline. -/
-def whip : Root String := ⟨["g", "r", "f"]⟩
+def whip : ConsonantalRoot String := ⟨["g", "r", "f"]⟩
 
 /-- √smʕ — 'hear'. Triradical, final-position pharyngeal /ʕ/. Paper
     DEP.PRF [sʌmaʕ-] (eq. 4b), IMP.M [simaʕ] vs IMP.F [simʕ-i] (eq.
     10c) — syneresis applies when /ʌ/ + /ʕ/ are open-syllable
     adjacent before a vowel-initial suffix. -/
-def hear : Root String := ⟨["s", "m", "ʕ"]⟩
+def hear : ConsonantalRoot String := ⟨["s", "m", "ʕ"]⟩
 
 /-- √sħb — 'pull'. Triradical, medial-position pharyngeal /ħ/. Paper
     DEP.PRF row in eq. 4d shows `saħab` (no hyphen on this row); eq.
     15d shows the variant `sahab- (~ sɨħab-)`. The opaque-syneresis
     case (paper §2.3 eq. 16): /sʌħʌb/ → fusion + lowering → /s_ħab/
     → epenthesis [siħab] or trans-guttural harmony [sahab]. -/
-def pull : Root String := ⟨["s", "ħ", "b"]⟩
+def pull : ConsonantalRoot String := ⟨["s", "ħ", "b"]⟩
 
 /-- √ʔsr — 'arrest'. Triradical, initial-position glottal stop. Paper
     DEP.PRF [ʔasʌr-] (eq. 4c), PRF [ʔasir-] — illustrates how the
     initial guttural interacts with stem vocalization. -/
-def arrest : Root String := ⟨["ʔ", "s", "r"]⟩
+def arrest : ConsonantalRoot String := ⟨["ʔ", "s", "r"]⟩
 
 /-- √stI — 'drink'. Bi-morphemic weak-final root: the third radical is
     the element /I/, which surfaces as [j] before vowels (paper eq.
@@ -249,37 +249,37 @@ def arrest : Root String := ⟨["ʔ", "s", "r"]⟩
     glide surfaces). The parallel motivating the paper's |A|-syneresis
     analysis. The capital "I" in the third position marks it as the
     underlying ET element (not a vowel /i/). -/
-def drink : Root String := ⟨["s", "t", "I"]⟩
+def drink : ConsonantalRoot String := ⟨["s", "t", "I"]⟩
 
 /-- √mhr — 'teach'. Triradical, medial-position glottal /h/. Paper IMP
     [mahar] (eq. 7e); PASS-PRF [ti-mihir] ~ [ti-mɨhir] (eq. 17c) —
     the latter shows the unexpected /CʌGV/ → [CɨGV] pattern of eq.
     (17), where the V-position is retained as epenthetic [ɨ]. -/
-def teach : Root String := ⟨["m", "h", "r"]⟩
+def teach : ConsonantalRoot String := ⟨["m", "h", "r"]⟩
 
 /-- √hrd — 'slaughter'. Triradical, initial /h/. Paper 2-PRF
     [ta-harrid] (eq. 7b) — the initial guttural triggers TGH so the
     prefix vowel surfaces as [a] instead of [i]. -/
-def slaughter : Root String := ⟨["h", "r", "d"]⟩
+def slaughter : ConsonantalRoot String := ⟨["h", "r", "d"]⟩
 
 /-- √hdm — 'escape'. Paper 2-PRF [ta-hadim] (eq. 7c) — same TGH
     pattern as `slaughter`. -/
-def escape : Root String := ⟨["h", "d", "m"]⟩
+def escape : ConsonantalRoot String := ⟨["h", "d", "m"]⟩
 
 /-- √sʔl — 'ask'. Triradical, medial /ʔ/. Paper IMP [saʔal] (eq. 7f)
     + 2-IMPRF [ti-siʔil] / PASS-PRF [tisiʔil ~ ti-sɨʔil] (eq. 17d) —
     the [ɨ] alternant in PASS-PRF is the eq. (17) retention pattern. -/
-def ask : Root String := ⟨["s", "ʔ", "l"]⟩
+def ask : ConsonantalRoot String := ⟨["s", "ʔ", "l"]⟩
 
 /-- √glh — 'uncover'. Triradical, final-position /h/. Paper IMP.M
     [gilah] / IMP.F [gilh-i] (eq. 10d) — final-guttural syneresis case. -/
-def uncover : Root String := ⟨["g", "l", "h"]⟩
+def uncover : ConsonantalRoot String := ⟨["g", "l", "h"]⟩
 
 /-- √nbħ — 'bark'. Triradical, final-position /ħ/. Paper IMP.M
     [niβah] / IMP.F [nibh-i] (eq. 10b) — the IMP.M shows the
     lowering of the underlying /ʌ/ to [a] before the final guttural,
     while IMP.F shows syneresis (the /ʌ/ vacates V₂). -/
-def bark : Root String := ⟨["n", "b", "ħ"]⟩
+def bark : ConsonantalRoot String := ⟨["n", "b", "ħ"]⟩
 
 /-- √brk — 'bless'. Triradical, no guttural. Type-C verb (paper p.
     12, with [a] after first radical throughout the inflection).
@@ -289,6 +289,6 @@ def bark : Root String := ⟨["n", "b", "ħ"]⟩
     /a/ replaced by [ɨ] in the gerund — and the paper notes this is
     NOT phonotactically motivated since *[mibrak] would not pose a
     phonotactic problem (page 12). -/
-def bless : Root String := ⟨["b", "r", "k"]⟩
+def bless : ConsonantalRoot String := ⟨["b", "r", "k"]⟩
 
 end Tigrinya.Phonology
