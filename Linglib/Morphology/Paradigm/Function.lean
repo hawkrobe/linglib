@@ -23,15 +23,19 @@ larger property set, or a properly smaller class. It is **intensional** — for
 same-class rules it collapses to applicability-set inclusion (`applySet_mono`),
 but across classes a smaller class outranks a larger one whatever the property
 sets, so the order is strictly finer than the extensional
-[stump-2016]/[stump-2022] domain-subset order of `Exponence/Basic.lean`.
+[stump-2016]/[stump-2022] domain-subset order of `Exponence/Basic.lean`
+([stump-2020] likewise glosses "narrowest" extensionally, as the smaller
+domain of application).
 
 The **Identity Function Default** — every block has a rule leaving the stem
 unchanged — is assumed as a universal principle in PFM; here it is a definition
 (`identityDefault`) and its consequences are theorems (it is `≤`-maximal, and a
 block containing it always selects). Two implicative devices are kept distinct
 ([bonami-stump-2016]): a **rule of referral** (`Action.referral`) models
-block-confined syncretism, competing inside its block; whole-word syncretism is
-a clause of the paradigm function, outside any block. Overabundance (one cell,
+block-confined syncretism, competing inside its block; whole-word syncretism
+lives a layer up, as a many-to-one property mapping in `Linkage.pm`
+(`Linkage.realize_eq_of_corr_eq`), where [stump-2020] relocates it —
+paradigm-function-level override clauses are not modeled. Overabundance (one cell,
 several forms) is out of scope: the realized paradigm is function-valued, one
 form per cell. Morphophonological metageneralizations (the `-a`-loss and umlaut
 rules of the Icelandic fragment) are phonological substance and live in
@@ -249,15 +253,19 @@ narrowness order. -/
 def stemChoiceOf (sv : List (Rule L P Z)) (default : L → Z) : L × P → Z :=
   fun c => ((selectMinimal sv c).map Rule.payload).getD (default c.1)
 
-/-- A **portmanteau block** `[m, n]` ([bonami-stump-2016]'s (20)–(24)): its rules
-compete with the composition of blocks `m` and `n`; when none applies, the
-**Function Composition Default** falls back to that composition. -/
+/-- A **portmanteau block** `[m, n]` ([bonami-stump-2016]): its rules compete
+with the composition of blocks `m` and `n`; when none applies, the **Function
+Composition Default** falls back to that composition. This is the handbook's
+block-straddling device; [stump-2020] supersedes it with **rule conflation** (a
+portmanteau rule as the conflation of two rules, sitting in a single block and
+winning by ordinary narrowness), the route [stump-2022] develops — kept here as
+the faithfully pre-conflation account. -/
 def evalPortmanteau (Lindex : Z → L) (bmn bm bn : Block L Z P) (wσ : Z × P) : Z × P :=
   if (applicable bmn (Lindex wσ.1, wσ.2)).isEmpty
   then evalBlock Lindex bm (evalBlock Lindex bn wσ)
   else evalBlock Lindex bmn wσ
 
-/-- The **Function Composition Default** ([bonami-stump-2016]'s (24)): where no
+/-- The **Function Composition Default** ([bonami-stump-2016]): where no
 portmanteau rule applies, the portmanteau block is the composition of its
 component blocks. -/
 theorem evalPortmanteau_eq_comp_of_not_applies (Lindex : Z → L) (bmn bm bn : Block L Z P)
