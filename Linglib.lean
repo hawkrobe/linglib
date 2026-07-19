@@ -2647,6 +2647,7 @@ import Linglib.Studies.Stojkovic2026
 import Linglib.Studies.Storme2026
 import Linglib.Studies.Storment2026
 import Linglib.Studies.Sudo2016
+import Linglib.Studies.Stump2012
 import Linglib.Studies.Stump2016
 import Linglib.Studies.Stump2020
 import Linglib.Studies.SumersEtAl2023

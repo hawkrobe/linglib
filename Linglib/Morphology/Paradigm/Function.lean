@@ -395,12 +395,15 @@ PFM2 realization of a paradigm linkage's block cascade ([stump-2016]'s
 form-realization hole filled true by construction. -/
 theorem Linkage.realize_eq_paradigmFunction (ℓ : Linkage L Z P) (Lindex : Z → L)
     (stemChoice : L × P → Z) (blocks : List (Block L Z P)) (l : L) (σ : P)
-    (h : ℓ.IsPropertyPreserving) (hstem : ∀ l σ, ℓ.stem l σ = stemChoice (l, σ)) :
+    (h : ℓ.IsPropertyPreserving)
+    (hstem : ∀ l σ, ℓ.stem l σ = some (stemChoice (l, σ))) :
     ℓ.realize (fun z τ => (blocksEval Lindex blocks (z, τ)).1) l σ
-      = paradigmFunction Lindex stemChoice blocks (l, σ) := by
-  have hpm : ℓ.pm σ = σ := h σ
-  simp only [Linkage.realize, Linkage.corr, hpm, hstem, paradigmFunction]
-  exact Prod.ext rfl (blocksEval_snd Lindex blocks (stemChoice (l, σ), σ)).symm
+      = some (paradigmFunction Lindex stemChoice blocks (l, σ)) := by
+  have hpm : ℓ.pm l σ = σ := h l σ
+  simp only [Linkage.realize, Linkage.corr, hpm, hstem, Option.map_some,
+    paradigmFunction]
+  exact congrArg some
+    (Prod.ext rfl (blocksEval_snd Lindex blocks (stemChoice (l, σ), σ)).symm)
 
 end Selection
 
