@@ -1,6 +1,8 @@
 import Linglib.Processing.Memory.SurprisalTradeoff
 import Linglib.Syntax.DependencyGrammar.Formal.DependencyLength
 
+open Morphology (Word)
+
 /-!
 # Study 1: Artificial Language Learning ([fedzechkina-newport-2012]/2017)
 [fedzechkina-newport-2012] [fedzechkina-newport-2017] [hahn-degen-futrell-2021]
@@ -28,6 +30,7 @@ bias for dependency-length-minimizing (= memory-efficient) orders.
 -/
 
 namespace FedzechkinaEtAl2017
+
 
 open DepGrammar DependencyLength Processing.MemorySurprisal
 

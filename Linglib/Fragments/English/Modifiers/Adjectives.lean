@@ -23,9 +23,12 @@ import Linglib.Features.PropertyDomain
 import Linglib.Morphology.Realization
 import Linglib.Morphology.Paradigm.Degree
 import Linglib.Semantics.Degree.Adjective
-import Linglib.Morphology.Word
+import Linglib.Morphology.Word.Basic
+
+open Morphology (Word)
 
 namespace English.Modifiers.Adjectives
+
 
 open Degree (AntonymRelation)
 open Core.Order (Boundedness)

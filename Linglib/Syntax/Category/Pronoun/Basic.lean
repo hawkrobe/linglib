@@ -7,7 +7,9 @@ import Linglib.Features.Gender.Basic
 import Linglib.Features.Clusivity
 import Linglib.Features.CoreferenceStatus
 import Linglib.Features.Person.Decomposition
-import Linglib.Morphology.Word
+import Linglib.Morphology.Word.Basic
+
+open Morphology (Word)
 
 /-!
 # Pronoun
@@ -72,6 +74,7 @@ inductive Pronoun.Strength where
   deriving DecidableEq, Repr
 
 namespace Pronoun.Strength
+
 
 /-- Numeric embedding into ℕ preserving the deficiency order. -/
 def toNat : Strength → Nat

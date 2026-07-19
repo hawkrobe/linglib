@@ -1,5 +1,6 @@
 import Linglib.Phonology.Constraints.Defs
 
+
 /-!
 # Stratal Optimality Theory
 [kiparsky-2000]
@@ -27,6 +28,7 @@ are *cross-stratum* because strata typically score different candidate types
 -/
 
 namespace OptimalityTheory.Stratal
+
 
 open Constraints
 

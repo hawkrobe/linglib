@@ -1,6 +1,8 @@
 import Linglib.Syntax.ConstructionGrammar.Basic
 import Linglib.Syntax.DependencyGrammar.Formal.Catena
 
+open Morphology (Word)
+
 /-!
 # Catenal Construction
 
@@ -23,6 +25,7 @@ discharged by `decide` over the concrete tree.
 -/
 
 namespace DepGrammar.CatenalConstruction
+
 
 open DepGrammar Catena ConstructionGrammar
 

@@ -1,5 +1,7 @@
 import Linglib.Syntax.DependencyGrammar.Formal.Catena
 
+open Morphology (Word)
+
 /-!
 # Ellipsis as catena-targeting
 
@@ -31,6 +33,7 @@ VP ellipsis already removes a non-projection set of words.
 -/
 
 namespace DepGrammar.Ellipsis
+
 
 open DepGrammar Catena
 

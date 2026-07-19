@@ -2,6 +2,8 @@ import Linglib.Syntax.DependencyGrammar.Formal.Catena
 import Linglib.Syntax.DependencyGrammar.Formal.NonProjective
 import Linglib.Syntax.DependencyGrammar.LongDistance
 
+open Morphology (Word)
+
 /-!
 # Discontinuities as risen catenae
 [osborne-2019] [osborne-gross-2012]
@@ -39,6 +41,7 @@ phrase-structure grammar with a single tree-level predicate.
 -/
 
 namespace DepGrammar.Discontinuity
+
 
 open DepGrammar
 

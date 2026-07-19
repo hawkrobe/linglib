@@ -1,6 +1,8 @@
 import Linglib.Semantics.Verb.Basic
 import Linglib.Syntax.Category.Complementizer.Basic
 
+open Morphology (Word)
+
 /-!
 # Korean Complementizers and Clause-Embedding Verbs
 [bondarenko-2022] [bogal-allbritten-moulton-2018] [kim-min-joo-2009]
@@ -49,6 +51,7 @@ lives in the `Bondarenko2022` Studies file.
 -/
 
 namespace Korean.Complementizers
+
 
 
 -- ════════════════════════════════════════════════════════════════

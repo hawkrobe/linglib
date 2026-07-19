@@ -4,9 +4,12 @@ HPSG formalization: typed feature structures, signs, and phrase structure schema
 -/
 
 import Linglib.Data.UD.Basic
-import Linglib.Morphology.Word
+import Linglib.Morphology.Word.Basic
+
+open Morphology (Word)
 
 namespace HPSG
+
 
 section FeatureStructures
 

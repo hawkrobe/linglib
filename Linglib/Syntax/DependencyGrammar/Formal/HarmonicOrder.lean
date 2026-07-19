@@ -1,5 +1,7 @@
 import Linglib.Syntax.DependencyGrammar.Formal.DependencyLength
 
+open Morphology (Word)
+
 /-!
 # Harmonic Word Order via Dependency Length Minimization
 [dryer-1992] [futrell-gibson-2020] [gibson-2025] [greenberg-1963]
@@ -37,6 +39,7 @@ intervene.
 -/
 
 namespace DepGrammar.HarmonicOrder
+
 
 open DepGrammar DependencyLength
 

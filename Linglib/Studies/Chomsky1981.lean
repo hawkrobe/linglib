@@ -7,6 +7,8 @@ import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.FunctionWords
 import Linglib.Features.MinimalPairs
 
+open Morphology (Word)
+
 /-!
 # Chomsky (1981) — Binding Principles A/B/C [chomsky-1981]
 
@@ -38,6 +40,7 @@ tables.
 -/
 
 namespace Chomsky1981
+
 
 open Features.MinimalPairs
 open Minimalist SyntacticObject

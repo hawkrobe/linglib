@@ -1,5 +1,7 @@
 import Linglib.Data.UD.Basic
-import Linglib.Morphology.Word
+import Linglib.Morphology.Word.Basic
+
+open Morphology (Word)
 
 /-!
 # Quantifier typology — shared enums
@@ -26,6 +28,7 @@ parameter type of the GQT `gqtMeaning` operator.
 set_option autoImplicit false
 
 namespace Quantification.Lexicon
+
 
 inductive QForce where
   | universal

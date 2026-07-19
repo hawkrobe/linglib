@@ -5,6 +5,7 @@ import Linglib.Syntax.Minimalist.Verbal.Applicative
 import Mathlib.Algebra.FreeMonoid.Basic
 import Mathlib.Algebra.Group.TypeTags.Basic
 
+
 /-!
 # Creissels (2025): Transitivity, Valency, and Voice
 [creissels-2025]
@@ -31,6 +32,7 @@ This study file bridges [creissels-2025]'s framework (formalized in
 -/
 
 namespace Creissels2025
+
 
 open Voice
 open Causation.Morphological

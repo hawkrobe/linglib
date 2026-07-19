@@ -2,6 +2,8 @@ import Linglib.Syntax.DependencyGrammar.Coordination
 import Linglib.Syntax.DependencyGrammar.Formal.Catena
 import Linglib.Syntax.DependencyGrammar.Formal.Ellipsis
 
+open Morphology (Word)
+
 /-!
 # Coordination parallelism and sharing
 
@@ -35,6 +37,7 @@ from requiring symmetric (ATB) extraction.
 -/
 
 namespace DepGrammar.CoordinationParallelism
+
 
 open DepGrammar Catena
 

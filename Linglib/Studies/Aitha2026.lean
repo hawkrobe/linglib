@@ -7,6 +7,7 @@ import Linglib.Phonology.OptimalityTheory.TableauSystem
 import Linglib.Phonology.Prosody.Foot
 import Linglib.Morphology.DM.VocabularyInsertion
 import Linglib.Phonology.OptimalityTheory.Stratal
+
 open Morphology.Case.Allomorphy
 
 /-!
@@ -51,6 +52,7 @@ Telugu nouns exhibit two stem alternation patterns:
 -/
 
 namespace Aitha2026
+
 
 open Core Constraints OptimalityTheory Core.Optimization Core.Optimization.Evaluation
 open Morphology.DM.VI

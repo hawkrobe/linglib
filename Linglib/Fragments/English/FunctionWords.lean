@@ -1,5 +1,7 @@
 import Linglib.Data.UD.Basic
-import Linglib.Morphology.Word
+import Linglib.Morphology.Word.Basic
+
+open Morphology (Word)
 
 /-!
 # English Miscellaneous Function Words Fragment
@@ -22,6 +24,7 @@ emerge.
 -/
 
 namespace English.FunctionWords
+
 
 -- ============================================================================
 -- Prepositions

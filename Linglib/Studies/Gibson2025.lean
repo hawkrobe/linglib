@@ -2,7 +2,9 @@ import Linglib.Syntax.DependencyGrammar.Formal.HarmonicOrder
 import Linglib.Data.WALS.Features.F95A
 import Linglib.Data.UD.Basic
 import Linglib.Features.WordOrder
-import Linglib.Morphology.Word
+import Linglib.Morphology.Word.Basic
+
+open Morphology (Word)
 
 /-!
 # Gibson 2025: DLM and the Head-Direction Generalization
@@ -50,6 +52,7 @@ importing this file, so it is not currently wired through.
 -/
 
 namespace Gibson2025
+
 
 open DepGrammar DependencyLength DepGrammar.HarmonicOrder
 

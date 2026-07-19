@@ -15,8 +15,8 @@ simply *words*. The split is descriptive, not a Lexicalist commitment: ms-words 
 "crucial for lexicalist theories" but used descriptively by non-lexicalist ones too
 (§3.2.1, §3.3), and this token carries no theory of how words are formed.
 
-`Word` completes Morphology's word inventory: `MorphWord` is word-*internal* structure,
-`MorphRule`/`Stem` are word-forming *processes*, `Word` is the resulting *token* —
+`Word` completes Morphology's word inventory: `Word.Structure` (`Word/Structure.lean`) is word-*internal* structure,
+`Realization`'s rules and stems are word-forming *processes*, `Word` is the resulting *token* —
 form + UD category + one `UD.MorphFeatures` bundle, i.e. a CoNLL-U row. The
 ms- vs p-boundness typology relating the two word notions ([kalin-bjorkman-etal-2026]
 Table 3) is formalized in `Studies/KalinBjorkmanEtAl2026.lean`.
@@ -29,6 +29,8 @@ Table 3) is formalized in `Studies/KalinBjorkmanEtAl2026.lean`.
 * `Word.asPassive` — passive variant (voice morphology only; valence effects are
   `DepTree.frames`-level facts).
 -/
+
+namespace Morphology
 
 set_option autoImplicit false
 
@@ -125,3 +127,5 @@ instance : ToString Word where
 /-- Convert a word list to a readable string. -/
 def wordsToString (ws : List Word) : String :=
   " ".intercalate (ws.map (·.form))
+
+end Morphology

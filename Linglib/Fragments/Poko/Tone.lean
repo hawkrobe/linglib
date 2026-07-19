@@ -1,7 +1,7 @@
 import Linglib.Phonology.Tone.Basic
 import Linglib.Phonology.Tone.Grammatical
 import Linglib.Phonology.Autosegmental.Melody
-import Linglib.Morphology.MorphWord
+import Linglib.Morphology.Word.Structure
 
 /-!
 # Poko Tonal Fragment
@@ -32,7 +32,7 @@ a fuller fragment when a second Poko paper arrives.
 namespace Poko
 
 open Autosegmental
-open Morphology.WordStructure (Morpheme)
+open Morphology (Morpheme)
 open Tone (TRN)
 
 /-! ### Syllables -/

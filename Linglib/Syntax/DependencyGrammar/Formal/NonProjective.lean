@@ -1,5 +1,7 @@
 import Linglib.Syntax.DependencyGrammar.Dominance
 
+open Morphology (Word)
+
 /-!
 # Mildly non-projective dependency structures
 
@@ -45,6 +47,7 @@ language data.
 -/
 
 namespace DepGrammar
+
 
 /-! ### Arc-crossing detection -/
 

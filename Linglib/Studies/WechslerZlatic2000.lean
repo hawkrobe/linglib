@@ -5,8 +5,10 @@ import Linglib.Features.Case.Capabilities
 import Linglib.Features.Gender.Capabilities
 import Linglib.Features.Number.Capabilities
 import Linglib.Features.Person.Capabilities
-import Linglib.Morphology.Word
+import Linglib.Morphology.Word.Basic
 import Linglib.Syntax.Agreement.Target
+
+open Morphology (Word)
 
 /-!
 # Wechsler & Zlatić 2000: Agreement via the Declension–Concord–Index–Semantics chain
@@ -55,6 +57,7 @@ spell-out function φ (Appendix) is out of scope.
 set_option autoImplicit false
 
 namespace WechslerZlatic2000
+
 
 /-! ### Feature bundles (§3.3)
 

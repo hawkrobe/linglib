@@ -1,6 +1,8 @@
 import Linglib.Syntax.DependencyGrammar.LongDistance
 import Linglib.Syntax.DependencyGrammar.Coordination
 
+open Morphology (Word)
+
 /-!
 # de Marneffe & Nivre 2019: UD enhanced dependencies for English LD and coordination
 [de-marneffe-nivre-2019]
@@ -44,6 +46,7 @@ feature-tagged fixtures if richer parallelism theorems are wanted.
 -/
 
 namespace DeMarneffeNivre2019
+
 
 open DepGrammar DepGrammar.LongDistance DepGrammar.Coordination
 

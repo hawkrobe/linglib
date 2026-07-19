@@ -1,6 +1,8 @@
 import Linglib.Features.Acceptability
 import Linglib.Features.ClauseForm
-import Linglib.Morphology.Word
+import Linglib.Morphology.Word.Basic
+
+open Morphology (Word)
 
 /-!
 # Minimal Pairs — Theory-Neutral Judgment Data Vocabulary
@@ -26,6 +28,7 @@ Judgments use the five-level `Features.Judgment` scale
 -/
 
 namespace Features.MinimalPairs
+
 
 open Features
 

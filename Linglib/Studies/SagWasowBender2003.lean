@@ -2,6 +2,8 @@ import Linglib.Syntax.HPSG.Binding
 import Linglib.Syntax.HPSG.Construction
 import Linglib.Studies.Ross1967
 
+open Morphology (Word)
+
 /-!
 # Sag, Wasow & Bender (2003) — Syntactic Theory: A Formal Introduction
 [sag-wasow-bender-2003] [chomsky-1981] [pollard-sag-1994] [hofmeister-sag-2010]
@@ -24,6 +26,7 @@ Consolidated study of three strands of the HPSG textbook *Syntactic Theory: A Fo
 -/
 
 namespace SagWasowBender2003
+
 
 /-! ### Binding Theory (Ch. 7)
 

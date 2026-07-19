@@ -1,6 +1,8 @@
 import Linglib.Data.UD.Basic
 import Linglib.Features.CoreferenceStatus
-import Linglib.Morphology.Word
+import Linglib.Morphology.Word.Basic
+
+open Morphology (Word)
 
 /-!
 # Binding principles over a command relation
@@ -45,6 +47,7 @@ command relation; a study combines them.
 -/
 
 namespace Binding
+
 
 open Features (BindingClass CoreferenceStatus)
 

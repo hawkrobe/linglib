@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Phonology.Autosegmental.Floating
 import Linglib.Phonology.Autosegmental.Junction
-import Linglib.Morphology.MorphWord
+import Linglib.Morphology.Word.Structure
 
 /-!
 # Laoide-Kemp (2026): Irish preverbal *d'* as a floating segment
@@ -112,7 +112,7 @@ is modelled as a genuine floating melodic segment (`Segment.dPrime`).
 namespace LaoideKemp2026
 
 open Autosegmental
-open Morphology.WordStructure (Morpheme)
+open Morphology (Morpheme)
 
 /-! ## §1 Segment inventory and CV skeleton
 

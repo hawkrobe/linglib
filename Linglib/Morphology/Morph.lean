@@ -18,7 +18,7 @@ segmental exponent*, not *unmarked*: a cell whose sole marker is a
 process (North Saami gradation-only genitives, [anderson-2015] p. 22)
 also renders as `[]` here. Nonconcatenative exponence (apophony,
 reduplication, tone, subtraction) is a process, not a form, and is out
-of this carrier's scope — `MorphWord`'s tree constructors cover
+of this carrier's scope — `Word.Structure`'s tree constructors cover
 reduplication and conversion, the autosegmental machinery covers tone;
 the rest of the process catalogue ([anderson-2015] pp. 21-24), like
 overlapping morphs (Breton mutation, p. 20), currently has no carrier.

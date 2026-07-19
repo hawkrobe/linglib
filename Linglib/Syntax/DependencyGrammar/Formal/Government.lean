@@ -1,5 +1,7 @@
 import Linglib.Syntax.DependencyGrammar.Basic
 
+open Morphology (Word)
+
 /-!
 # Government in Dependency Grammar
 
@@ -37,6 +39,7 @@ share an `xcomp` slot but require different forms (`infinitive` vs.
 -/
 
 namespace DepGrammar.Government
+
 
 open DepGrammar
 

@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 import Linglib.Syntax.HPSG.Description
 import Mathlib.Tactic.DeriveFintype
 
+
 /-!
 # HPSG Binding Theory (Principles A & B) in RSRL, with φ-agreement
 [pollard-sag-1994], [richter-2000], [muller-2024-binding]
@@ -26,6 +27,7 @@ ARG-ST is modeled via `SUBJ`/`OBJ` attributes and `locO` interpreted per model.
 -/
 
 namespace HPSG.RSRL.Binding
+
 
 /-! ### Signature: nom-obj hierarchy, INDEX, φ-features, and the o-command relation -/
 

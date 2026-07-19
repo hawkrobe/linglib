@@ -3,6 +3,8 @@ import Linglib.Studies.ZwickyPullum1983
 import Linglib.Morphology.Exponence.Containment.Contiguity
 import Linglib.Morphology.Paradigm.Linkage
 
+open Morphology (Word)
+
 -- ============================================================================
 -- § 0b: PFM Substrate (was Morphology/PFM/Core.lean,
 --      relocated 0.230.455 — sole consumer is this study file; PFM dir dissolves)
@@ -13,6 +15,7 @@ parallel, process-based, realizational theory used by K-B 2026 §2.2 as
 one of the four positions in the theory space. -/
 
 namespace Morphology.PFM
+
 
 structure MorphPropertySet (Feature : Type) where
   features : List Feature

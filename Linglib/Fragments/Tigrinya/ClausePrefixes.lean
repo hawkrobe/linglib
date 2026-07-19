@@ -1,5 +1,5 @@
 import Linglib.Syntax.Category.Complementizer.Basic
-import Linglib.Morphology.MorphWord
+import Linglib.Morphology.Word.Structure
 
 /-!
 # Tigrinya Clausal Prefixes [cacchioli-2025]
@@ -35,7 +35,7 @@ and lives as the `headCat` projection in `Studies/Cacchioli2025.lean`.
 
 namespace Tigrinya.ClausePrefixes
 
-open Morphology.Circumfix
+open Morphology
 
 /-- Clause types in Tigrinya, determined by the clausal prefix. -/
 inductive TigrinyaClauseType where
@@ -103,15 +103,23 @@ def ay_n : ClausePrefixEntry where
 /-- All four clausal prefix entries. -/
 def allPrefixes : List ClausePrefixEntry := [zi, ki, kemzi, ay_n]
 
-/-- Construct a `CircumfixExponence` from the negative circumfix entry. -/
-def negCircumfix (verbStem : String) : CircumfixExponence where
-  prefix_ := ay_n.form
-  suffix_ := ay_n.suffix_
-  stem := verbStem
-  gloss := ay_n.gloss
+/-- The negative circumfix as word structure: the verb stem wrapped by
+*ʔay-* and *-n* (an inflectional circumfixation, [haspelmath-2020]'s
+prefix-plus-suffix construction reading). -/
+def negCircumfix (verbStem : String) : Word.Structure :=
+  .circumfixed ⟨Morph.pref ay_n.form, ay_n.gloss, .inflAffix⟩
+    (.root ⟨Morph.free verbStem, "", .freeWord⟩)
+    ⟨Morph.suff ay_n.suffix_, ay_n.gloss, .inflAffix⟩
+    .inflectional
 
 /-- The negative circumfix surfaces correctly. -/
 theorem neg_circumfix_example :
-    (negCircumfix "mäs'ə").realize = "ʔay-mäs'ə-n" := rfl
+    (negCircumfix "mäs'ə").surface = "ʔay-mäs'ə-n" := rfl
+
+/-- Discontinuous exponence: the circumfixed structure has no
+morph-sequence projection (`toExponent = none`) — the circumfix is a
+construction, not a morph ([haspelmath-2020]). -/
+theorem neg_circumfix_no_exponent (s : String) :
+    (negCircumfix s).toExponent = none := rfl
 
 end Tigrinya.ClausePrefixes

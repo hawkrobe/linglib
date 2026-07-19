@@ -2,7 +2,9 @@ import Linglib.Data.UD.Basic
 import Linglib.Features.Gender.Basic
 import Linglib.Semantics.Genericity.NominalMappingParameter
 import Linglib.Features.MassCount
-import Linglib.Morphology.Word
+import Linglib.Morphology.Word.Basic
+
+open Morphology (Word)
 
 /-! # English Noun Lexicon Fragment
 
@@ -10,6 +12,7 @@ English NP structure. Bare plurals/mass nouns OK, bare singulars blocked.
 -/
 
 namespace English.Nouns
+
 
 open Semantics.Kinds.NMP (BlockingPrinciple NominalMapping)
 

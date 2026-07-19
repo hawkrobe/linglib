@@ -1,6 +1,8 @@
 import Linglib.Data.UD.Basic
-import Linglib.Morphology.Word
+import Linglib.Morphology.Word.Basic
 import Linglib.Syntax.Reciprocal
+
+open Morphology (Word)
 
 /-!
 # Mandarin Reciprocal Fragment
@@ -18,6 +20,7 @@ not the primary morphosyntactic strategy.
 -/
 
 namespace Mandarin.Reciprocals
+
 
 /-- Compound verb pattern for Mandarin reciprocals.
     The pattern is: V-lái-V-qù (V-come-V-go). -/

@@ -3,6 +3,8 @@ import Linglib.Syntax.DependencyGrammar.Nominal
 import Linglib.Studies.Chomsky1981
 import Linglib.Features.MinimalPairs
 
+open Morphology (Word)
+
 open Features.MinimalPairs
 
 /-!
@@ -17,6 +19,7 @@ complementary distribution, and pronominal disjoint reference.
 -/
 
 namespace Hudson1990
+
 
 open DepGrammar.Coreference
 open DepGrammar.Nominal

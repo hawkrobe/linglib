@@ -4,6 +4,8 @@ import Linglib.Features.Indefinite
 import Linglib.Syntax.Category.Pronoun.Basic
 import Linglib.Syntax.Category.Pronoun.Capabilities
 
+open Morphology (Word)
+
 /-!
 # Indefinite pronouns — the pronominal carrier of the indefinite series
 [haspelmath-1997]
@@ -30,6 +32,7 @@ bridge, syncretism) are typological and live in `Typology/Indefinite.lean`.
 set_option autoImplicit false
 
 namespace Indefinite
+
 
 /-- A single indefinite pronoun — the canonical lexical object, `extends`ing the
     general `Pronoun` (surface `form` + φ-features) with the indefinite-series

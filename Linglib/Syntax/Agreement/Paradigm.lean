@@ -1,8 +1,10 @@
 import Linglib.Data.UD.Basic
 import Linglib.Features.Prominence
-import Linglib.Morphology.Word
+import Linglib.Morphology.Word.Basic
 import Linglib.Features.Number.Capabilities
 import Linglib.Features.Person.Capabilities
+
+open Morphology (Word)
 
 /-!
 # Agreement paradigms — the descriptive realization table
@@ -44,6 +46,7 @@ agreement realization — no parallel person/number enum.
 -/
 
 namespace Agreement
+
 
 /-- An agreement-feature cell: the canonical φ-features that may be realized by
     agreement ([corbett-1998] §2 — person, number, gender; case excluded as
@@ -92,7 +95,7 @@ def Cell.pnCells : List Cell :=
 /-- The φ-cell of a word: its person/number/gender features, as an agreement
     index. The bridge that lets a pronoun (or any controller) drive an agreement
     paradigm in the *same* feature space ([corbett-1998] §1). -/
-def _root_.Word.agrCell (w : Word) : Cell :=
+def _root_.Morphology.Word.agrCell (w : Word) : Cell :=
   { person := w.features.person, number := w.features.number,
     gender := w.features.gender }
 

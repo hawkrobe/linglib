@@ -1,6 +1,8 @@
 import Linglib.Syntax.DependencyGrammar.Formal.Catena
 import Linglib.Syntax.DependencyGrammar.Formal.Discontinuity
 
+open Morphology (Word)
+
 /-!
 # Islands as Constraints on Rising Catenae
 
@@ -33,6 +35,7 @@ extraction that produces a risen catena with non-contiguous yield.
 -/
 
 namespace DepGrammar.Islands
+
 
 open DepGrammar Catena Discontinuity
 
