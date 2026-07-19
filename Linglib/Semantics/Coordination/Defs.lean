@@ -1,5 +1,5 @@
 import Mathlib.Order.BooleanAlgebra.Basic
-import Linglib.Morphology.Word.Formative
+import Linglib.Morphology.Morph
 
 /-!
 # The Coordinator unit — marking + operation

@@ -1,7 +1,6 @@
 import Linglib.Data.UD.Basic
 import Linglib.Features.ClauseForm
 import Linglib.Features.Complementation
-import Linglib.Morphology.Word.Formative
 import Linglib.Morphology.Word.Basic
 
 open Morphology (Word)
@@ -46,6 +45,34 @@ conventions:
   when factivity tracks the verb or the construction — derived in
   Studies, never stored.
 -/
+
+namespace Morphology
+
+/-- Typological position classification for formatives.
+    [bickel-nichols-2007] Table 3.2 (p. 198), flattened: the table crosses
+    five positions (Prae/In/Post/Simul/Detached) with formative types; this
+    enum keeps the positions, promoting circumfixation (the table's common
+    Simul subtype) and endoclisis (an In subtype) to their own cases. It
+    classifies [bickel-nichols-2007]'s *formatives*, which include process
+    modes, not `Morph` values — `simultaneous` has no segmental carrier, so
+    no projection to `Morph.Kind` exists by design. Housed with its sole
+    consumer, `Complementizer.position`; a formative-grain typology arc
+    would re-graduate it to substrate. -/
+inductive FormativePosition where
+  | praefixed     -- formative precedes host
+  | postfixed     -- formative follows host
+  | infixed       -- formative inserted within host
+  | circumfixed   -- formative wraps host
+  /-- Several tokens of one morpheme realized at different places in the
+  word ([bickel-nichols-2007] p. 200, after Hagège) — NOT process
+  morphology: bare ablaut, substitution, and subtraction are In-position
+  formatives, reduplication is Prae/Post, in the source table. -/
+  | simultaneous
+  | detached      -- not attached to its host (may still be phonologically bound)
+  | endoclitic    -- clitic inserted inside a word (Udi, European Portuguese)
+  deriving DecidableEq, Repr
+
+end Morphology
 
 /-- Category of the adjacent projection licensing an affixal
 clause-typer: adnominal (Buryat *-Aːša*) vs adverbal (Buryat *-žA*). -/

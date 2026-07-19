@@ -44,6 +44,19 @@ inductive Morph.Kind where
   | free
   deriving DecidableEq, Repr, Fintype
 
+/-- Morphological boundness: the coarse two-way cut of the wordhood scale,
+read across domains — acquisition ([clark-2017]: free morphemes are acquired
+more readily than bound ones) and coordination typology
+([mitrovic-sauerland-2016]). `Morph.Kind` refines the cut for morphs (`bound`
+against `root` and `free`); no projection is provided, since a root morph may
+itself be bound and `Kind` does not record it. -/
+inductive Boundness where
+  /-- Independent word (Hungarian *is*, English *and*). -/
+  | free
+  /-- Clitic or suffix (Georgian *-c*, Latin *-que*). -/
+  | bound
+  deriving DecidableEq, Repr, BEq
+
 /-- A **morph** is a minimal segmental form with its attachment kind. -/
 structure Morph where
   /-- How the morph attaches. -/

@@ -664,7 +664,6 @@ import Linglib.Features.Dimension
 import Linglib.Features.Empathy
 import Linglib.Features.Evidentiality
 import Linglib.Features.Expressive
-import Linglib.Morphology.Word.Formative
 import Linglib.Features.Gender.Basic
 import Linglib.Features.Gender.Capabilities
 import Linglib.Features.Gender.Decomposition

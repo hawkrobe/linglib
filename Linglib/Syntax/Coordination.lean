@@ -1,4 +1,4 @@
-import Linglib.Morphology.Word.Formative
+import Linglib.Morphology.Morph
 import Linglib.Semantics.Coordination.Defs
 import Linglib.Data.WALS.Features.F56A
 import Linglib.Data.WALS.Features.F63A

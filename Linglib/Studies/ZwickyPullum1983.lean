@@ -1,4 +1,4 @@
-import Linglib.Morphology.Word.Formative
+import Linglib.Morphology.Morph
 import Linglib.Fragments.English.Auxiliaries
 import Linglib.Core.Logic.Modal.Basic
 import Mathlib.Data.Fin.Basic
