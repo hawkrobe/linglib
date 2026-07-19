@@ -38,7 +38,7 @@ inductive Morph.Attachment where
 inductive Morph.Kind where
   /-- A bound morph attaches on a side of its host, as an affix or a clitic. -/
   | bound (side : Morph.Side) (attachment : Morph.Attachment)
-  /-- A root is a morph denoting a thing, an action, or a property. -/
+  /-- A root morph. -/
   | root
   /-- A free non-root morph, such as a particle or an auxiliary. -/
   | free

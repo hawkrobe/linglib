@@ -2542,6 +2542,7 @@ import Linglib.Studies.PullumGazdar1982
 import Linglib.Studies.PurverGinzburg2004
 import Linglib.Studies.Pustejovsky1995
 import Linglib.Studies.Pylkkanen2008
+import Linglib.Studies.Qin2025
 import Linglib.Studies.QingEtAl2025
 import Linglib.Studies.QingFranke2015
 import Linglib.Studies.QingGoodmanLassiter2016

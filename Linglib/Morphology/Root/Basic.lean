@@ -24,6 +24,14 @@ Formally identical roots with related meanings (*hammer* the instrument,
 *hammer* the action) are heterosemous *sister roots*, not one precategorial
 root — the classification `cls` below assigns each its own class.
 
+The semantic anchoring — contentfulness as the differentia of roothood — is
+this proposal's commitment, not cross-camp consensus: [qin-2025]'s base
+definition draws the root line purely formally (participation in primary-word
+formation) and admits meaning-free roots like *-fer* that the present
+definition excludes (`Studies/Qin2025.lean` locates both in a canonicity
+space). The classification parameter `cls` keeps the definition opt-in: a
+fragment that rejects semantic anchoring never instantiates it.
+
 ## Main declarations
 
 * `RootClass` — action, object, and property roots.
