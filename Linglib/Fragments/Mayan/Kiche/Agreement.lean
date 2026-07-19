@@ -1,4 +1,5 @@
 import Linglib.Features.Case.Basic
+import Linglib.Phonology.Segmental.Defs
 import Linglib.Data.UD.Basic
 import Linglib.Features.Number.Capabilities
 import Linglib.Features.Prominence
@@ -334,7 +335,7 @@ def setBLinearity : MarkerLinearity := .prefixal
 /-- Canonical Set A exponent table (informal) by following-segment
     environment, keyed on the canonical φ-cell `Agreement.Cell` for
     cross-Mayan consumption. -/
-def setAExponent : Morphology.Following → ExponentTable
+def setAExponent : Phonology.SegmentClass → ExponentTable
   | .consonant =>
     [(.pn .first .Sing, setAPreC (phi .first  .singular)),
      (.pn .second .Sing, setAPreC (phi .second .singular)),

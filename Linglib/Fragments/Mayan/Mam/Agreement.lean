@@ -1,4 +1,5 @@
 import Linglib.Features.Case.Basic
+import Linglib.Phonology.Segmental.Defs
 import Linglib.Features.Prominence
 import Linglib.Fragments.Mayan.Mam.Pronouns
 import Linglib.Fragments.Mayan.Params
@@ -77,7 +78,7 @@ open Features.Prominence (ArgumentRole)
     syncretic for 2/3SG, ky- for 2/3PL. Scott: 1SG is the sole Set A
     allomorphy — pre-consonantal `n-`, pre-vocalic `w-` (exx. (28)-(29));
     the other markers do not alternate. -/
-def setAExponent : Morphology.Following → ExponentTable
+def setAExponent : Phonology.SegmentClass → ExponentTable
   | .consonant =>
     [(.pn .first .Sing, [.pref "n"]), (.pn .second .Sing, [.pref "t"]),
      (.pn .third .Sing, [.pref "t"]), (.pn .first .Plur, [.pref "q"]),

@@ -1,4 +1,5 @@
 import Linglib.Features.Case.Basic
+import Linglib.Phonology.Segmental.Defs
 import Linglib.Features.Prominence
 import Linglib.Fragments.Mayan.Params
 
@@ -66,7 +67,7 @@ def absPosition : Mayan.ABSPosition := .high
     the standard K'ichean reading (cognate with the verified K'iche'
     paradigm, [mondloch-2017]). 3sg pre-consonantal *ru-* has a
     dialectal variant *u-* (Preminger's "r(u)/u-"). -/
-def setAExponent : Morphology.Following → ExponentTable
+def setAExponent : Phonology.SegmentClass → ExponentTable
   | .consonant =>
     [(.pn .first .Sing, [.pref "n"]), (.pn .second .Sing, [.pref "a"]),
      (.pn .third .Sing, [.pref "ru"]), (.pn .first .Plur, [.pref "qa"]),

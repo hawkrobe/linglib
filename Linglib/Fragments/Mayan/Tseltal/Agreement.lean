@@ -1,4 +1,5 @@
 import Linglib.Fragments.Mayan.Tseltalan
+import Linglib.Phonology.Segmental.Defs
 import Linglib.Features.Reflex
 import Linglib.Syntax.Extraction
 
@@ -88,7 +89,7 @@ def setBLinearity : MarkerLinearity := .suffixal
     `j-`/`a-`/`s-` pre-consonantally, `k-`/`aw-`/`y-` pre-vocalically
     (person is not distinguished by number in Set A; plural is marked
     by separate suffixes not part of the person marker). -/
-def setAExponent : Morphology.Following → ExponentTable
+def setAExponent : Phonology.SegmentClass → ExponentTable
   | .consonant =>
     [(.pn .first .Sing, [.pref "j"]), (.pn .second .Sing, [.pref "a"]),
      (.pn .third .Sing, [.pref "s"]), (.pn .first .Plur, [.pref "j"]),

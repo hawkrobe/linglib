@@ -1,4 +1,5 @@
 import Linglib.Features.Case.Basic
+import Linglib.Phonology.Segmental.Defs
 import Linglib.Features.Prominence
 import Linglib.Fragments.Mayan.Params
 
@@ -52,7 +53,7 @@ def absPosition : Mayan.ABSPosition := .low
     Table 24.8, where the pre-vocalic glide is parenthesized:
     *in(w)-*, *a(w)-*, *u(y)-*). 2pl/3pl are discontinuous: person
     prefix plus the plural suffixes *-e'ex*/*-o'ob'*. -/
-def setAExponent : Morphology.Following → ExponentTable
+def setAExponent : Phonology.SegmentClass → ExponentTable
   | .consonant =>
     [(.pn .first .Sing, [.pref "in"]), (.pn .second .Sing, [.pref "a"]),
      (.pn .third .Sing, [.pref "u"]), (.pn .first .Plur, [.pref "k"]),

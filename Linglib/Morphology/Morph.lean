@@ -16,7 +16,6 @@ empty exponent, and a discontinuous realization is a multi-morph exponent.
 * `Morph` — a segmental form with its attachment kind, factored as
   side × attachment for bound morphs
 * `Exponent` — a sequence of morphs; `[]` is zero exponence
-* `Following` — following-segment environment for variant selection
 
 ## Implementation notes
 
@@ -92,8 +91,6 @@ def attachment? : Morph → Option Attachment
   | ⟨.bound _ a, _⟩ => some a
   | _ => none
 
-/-- Descriptive boundary notation: `X-`, `-X`, `X=`, `=X`; bare for roots
-and free forms. -/
 instance : ToString Morph :=
   ⟨fun m => match m.kind with
     | .bound .before .affix => m.form ++ "-"
@@ -107,19 +104,9 @@ end Morph
 /-- An **exponent** is the sequence of morphs realizing a paradigm cell. -/
 abbrev Exponent := List Morph
 
-/-- Descriptive notation for an exponent: `∅` if empty, parts linked by `…`. -/
-def Exponent.toString : Exponent → String
-  | [] => "∅"
-  | ms => String.intercalate "…" (ms.map ToString.toString)
-
-/-- The class of the following segment: the commonest phonological
-environment conditioning the choice among a morph's variant shapes
-(pre-consonantal vs pre-vocalic). -/
-inductive Following where
-  /-- The next segment is a consonant. -/
-  | consonant
-  /-- The next segment is a vowel. -/
-  | vowel
-  deriving DecidableEq, Repr, Fintype
+instance : ToString Exponent :=
+  ⟨fun
+    | [] => "∅"
+    | ms => String.intercalate "…" (ms.map toString)⟩
 
 end Morphology
