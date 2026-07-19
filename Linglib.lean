@@ -1292,6 +1292,7 @@ import Linglib.Morphology.Paradigm.Morphome
 import Linglib.Morphology.Paradigm.OfCells
 import Linglib.Morphology.Root.Basic
 import Linglib.Morphology.Root.Consonantal
+import Linglib.Morphology.Root.System
 import Linglib.Morphology.Word.Basic
 import Linglib.Morphology.Paradigm.ToTree
 import Linglib.Morphology.Word.Tree
@@ -1987,6 +1988,7 @@ import Linglib.Studies.BonehDoron2013
 import Linglib.Studies.Booij2010
 import Linglib.Studies.Booth2022
 import Linglib.Studies.Borer2005
+import Linglib.Studies.Borer2013
 import Linglib.Studies.Boylan2023
 import Linglib.Studies.BrananErlewine2023
 import Linglib.Studies.Brandom1994
