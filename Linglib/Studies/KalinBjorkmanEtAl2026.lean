@@ -1,4 +1,4 @@
-import Linglib.Morphology.Formative
+import Linglib.Features.Formative
 import Linglib.Studies.ZwickyPullum1983
 import Linglib.Morphology.Exponence.Containment.Contiguity
 import Linglib.Morphology.Paradigm.Linkage
@@ -224,7 +224,7 @@ dimension is orthogonal (determined by prosodic diagnostics). -/
 namespace Morphology.WordhoodBridge
 
 open Morphology.Wordhood
-open Morphology (MorphStatus)
+open Features (MorphStatus)
 open Morphology.Diagnostics (CliticAffixProfile)
 
 /-- Map a morpheme's morphological status to its ms-boundedness. -/
@@ -624,12 +624,12 @@ theorem wordhood_injective (w₁ w₂ : WordhoodProfile)
 This is formalized in `WordhoodBridge`. -/
 
 /-- Affixhood (in MorphStatus) is equivalent to ms-boundedness. -/
-theorem affix_iff_msbound (s : Morphology.MorphStatus) :
+theorem affix_iff_msbound (s : Features.MorphStatus) :
     s.IsAffix ↔ morphStatusToMSBound s = .bound :=
   affix_iff_ms_bound s
 
 /-- Clitichood implies ms-freedom. -/
-theorem clitic_implies_msfree (s : Morphology.MorphStatus)
+theorem clitic_implies_msfree (s : Features.MorphStatus)
     (h : s.IsClitic) : morphStatusToMSBound s = .free :=
   clitic_implies_ms_free s h
 

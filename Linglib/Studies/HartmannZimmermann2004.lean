@@ -8,7 +8,7 @@ import Linglib.Core.Logic.FactorsThroughOn
 import Linglib.Phonology.OptimalityTheory.Tableau
 import Linglib.Phonology.Prosody.Phrase
 import Linglib.Semantics.Focus.Control
-import Linglib.Morphology.Reflex
+import Linglib.Features.Reflex
 import Linglib.Fragments.Tangale.TAM
 import Linglib.Fragments.Tangale.Phonology
 import Linglib.Data.Examples.HartmannZimmermann2004
@@ -32,7 +32,7 @@ audible.
 
 ## Implementation notes
 
-Realisation uses the shared `Morphology.Marking` vocabulary
+Realisation uses the shared `Features.Marking` vocabulary
 (reflex lists; the paper's strategy labels are read off the reflex
 shape in the data linkage). Configurations carry the fragment's
 tense–aspect type directly (`Tangale.TAM`): the perfective rows are
@@ -59,7 +59,7 @@ perceptible.
 
 namespace HartmannZimmermann2004
 
-open Semantics.Focus Morphology Morphology
+open Semantics.Focus Features
 open Constraints (Constraint)
 open OptimalityTheory (Tableau)
 

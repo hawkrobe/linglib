@@ -1,5 +1,5 @@
 import Linglib.Fragments.Mayan.Qanjobal.Agreement
-import Linglib.Morphology.Reflex
+import Linglib.Features.Reflex
 import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Syntax.Extraction
 import Linglib.Fragments.Mayan.Params
@@ -204,7 +204,7 @@ inductive Site where
 /-- 3rd-person agent (subject) extraction switches the verb to AF (the
     suffix *-on*, [coon-mateo-pedro-preminger-2014]); nothing else is
     marked. -/
-def realize : ExtractionTarget → List (Morphology.Reflex Site)
+def realize : ExtractionTarget → List (Features.Reflex Site)
   | .subject => [.morpheme .verb]
   | _ => []
 

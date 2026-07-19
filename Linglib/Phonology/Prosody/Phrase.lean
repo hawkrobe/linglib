@@ -16,7 +16,7 @@ culminativity of prominence — at most one head child per node — the
 structural hook the metrical weak–strong calculus of [buring-2015]
 reads ([buring-2016]). `phrases` reads the φ-constituents off an
 utterance; φ-edges are what demarcative focus reflexes
-(`Morphology.Reflex.boundary`) realize.
+(`Features.Reflex.boundary`) realize.
 -/
 
 namespace Prosody

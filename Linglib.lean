@@ -648,7 +648,6 @@ import Linglib.Features.AnsweringSystem
 import Linglib.Features.Antonymy
 import Linglib.Features.Attitudes
 import Linglib.Features.Basic
-import Linglib.Features.Boundness
 import Linglib.Features.Case.Basic
 import Linglib.Features.Case.Capabilities
 import Linglib.Features.Case.Grammaticalization
@@ -665,6 +664,7 @@ import Linglib.Features.Dimension
 import Linglib.Features.Empathy
 import Linglib.Features.Evidentiality
 import Linglib.Features.Expressive
+import Linglib.Features.Formative
 import Linglib.Features.Gender.Basic
 import Linglib.Features.Gender.Capabilities
 import Linglib.Features.Gender.Decomposition
@@ -672,6 +672,7 @@ import Linglib.Features.Gender.Interp
 import Linglib.Features.Gender.Resolve
 import Linglib.Features.Genericity
 import Linglib.Features.Givenness
+import Linglib.Features.Grammaticalization
 import Linglib.Features.Indefinite
 import Linglib.Features.Individuation
 import Linglib.Features.InformationStructure
@@ -700,6 +701,7 @@ import Linglib.Features.Prominence
 import Linglib.Features.PropertyDomain
 import Linglib.Features.Prosody
 import Linglib.Features.QParticleLayer
+import Linglib.Features.Reflex
 import Linglib.Features.Register
 import Linglib.Features.ScalarDimension
 import Linglib.Features.ScopeTypes
@@ -1281,7 +1283,6 @@ import Linglib.Morphology.Exponence.Containment.Contiguity
 import Linglib.Morphology.Exponence.Containment.Defs
 import Linglib.Morphology.Exponence.Containment.Selection
 import Linglib.Morphology.Exponence.Select
-import Linglib.Morphology.Formative
 import Linglib.Morphology.FragmentGrammars.AdaptorGrammar
 import Linglib.Morphology.FragmentGrammars.CFGFragment
 import Linglib.Morphology.FragmentGrammars.Comparisons
@@ -1290,7 +1291,6 @@ import Linglib.Morphology.FragmentGrammars.FragmentGrammar
 import Linglib.Morphology.FragmentGrammars.FragmentLambda
 import Linglib.Morphology.FragmentGrammars.MultinomialPCFG
 import Linglib.Morphology.FusionTypology
-import Linglib.Morphology.Grammaticalization
 import Linglib.Morphology.InflectionRules
 import Linglib.Morphology.Morph
 import Linglib.Morphology.MorphWord
@@ -1304,7 +1304,6 @@ import Linglib.Morphology.Paradigm.Morphome
 import Linglib.Morphology.Paradigm.OfCells
 import Linglib.Morphology.Periphrasis
 import Linglib.Morphology.Realization
-import Linglib.Morphology.Reflex
 import Linglib.Morphology.RelevanceHierarchy
 import Linglib.Morphology.Root.Basic
 import Linglib.Morphology.Root.Family

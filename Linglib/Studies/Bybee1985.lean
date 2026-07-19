@@ -1,4 +1,4 @@
-import Linglib.Morphology.Formative
+import Linglib.Features.Formative
 import Linglib.Morphology.Realization
 import Linglib.Morphology.UsageBased.Network
 import Linglib.Fragments.English.Predicates.Verbal

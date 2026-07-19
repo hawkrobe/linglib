@@ -13,7 +13,7 @@ position, host selectivity, and syntactic independence.
   and `IsClitic` predicates.
 -/
 
-namespace Morphology
+namespace Features
 
 /-- Side on which a bound morpheme attaches to its host. -/
 inductive AttachmentSide where
@@ -124,4 +124,23 @@ def MorphStatus.IsClitic (s : MorphStatus) : Prop :=
 instance : DecidablePred MorphStatus.IsClitic :=
   fun _ => inferInstanceAs (Decidable (_ ∨ _))
 
-end Morphology
+/-- Morphological boundness: the coarse two-way cut of the wordhood
+scale. A general per-entry morphological feature — relevant to
+acquisition ([clark-2017]: free morphemes are acquired more readily
+than bound ones) and to coordination typology
+([mitrovic-sauerland-2016]), among others. `MorphStatus.boundness`
+derives it from the finer scale. -/
+inductive Boundness where
+  /-- Independent word (Hungarian "is", English "and"). -/
+  | free
+  /-- Clitic or suffix (Georgian "-c", Latin "-que"). -/
+  | bound
+  deriving DecidableEq, Repr, BEq
+
+/-- The coarse boundness of a morph status: free words are free,
+clitics and affixes are bound. -/
+def MorphStatus.boundness : MorphStatus → Boundness
+  | .freeWord => .free
+  | _ => .bound
+
+end Features
