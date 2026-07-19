@@ -1914,6 +1914,7 @@ import Linglib.Studies.AndersonJM2006
 import Linglib.Studies.Angelopoulos2026
 import Linglib.Studies.Anscombe1964
 import Linglib.Studies.Anttila1997
+import Linglib.Studies.Arad2005
 import Linglib.Studies.Ariel2001
 import Linglib.Studies.Arka2013
 import Linglib.Studies.Arnold2026
