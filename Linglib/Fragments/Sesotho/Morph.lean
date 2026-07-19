@@ -1,5 +1,5 @@
-import Linglib.Morphology.RelevanceHierarchy
-import Linglib.Morphology.Template
+import Linglib.Morphology.Morphotactics.RelevanceHierarchy
+import Linglib.Morphology.Morphotactics.Template
 
 /-!
 # Sesotho Morphological Profile

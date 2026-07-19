@@ -1,6 +1,6 @@
 import Linglib.Data.UD.Basic
 import Linglib.Features.Complementation
-import Linglib.Morphology.RelevanceHierarchy
+import Linglib.Morphology.Morphotactics.RelevanceHierarchy
 
 /-!
 # Compositional realization rules

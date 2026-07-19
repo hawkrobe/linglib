@@ -1,4 +1,4 @@
-import Linglib.Morphology.Template
+import Linglib.Morphology.Morphotactics.Template
 
 /-!
 # Turkish Suffix Templates

@@ -2,7 +2,7 @@ import Linglib.Processing.Memory.SurprisalTradeoff
 import Linglib.Fragments.Japanese.Predicates
 import Linglib.Fragments.Japanese.Morph
 import Linglib.Fragments.Sesotho.Morph
-import Linglib.Morphology.RelevanceHierarchy
+import Linglib.Morphology.Morphotactics.RelevanceHierarchy
 import Linglib.Studies.Bybee1985
 
 /-!

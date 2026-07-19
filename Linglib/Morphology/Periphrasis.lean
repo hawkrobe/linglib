@@ -1,4 +1,4 @@
-import Linglib.Morphology.RelevanceHierarchy
+import Linglib.Morphology.Morphotactics.RelevanceHierarchy
 
 /-!
 # Inflectional distribution in auxiliary verb constructions
