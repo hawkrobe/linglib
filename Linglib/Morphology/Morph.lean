@@ -47,8 +47,10 @@ inductive Morph.Kind where
 /-- A morph is **bound** when its recorded `Kind` is `bound` — attaching on a
 side of its host as an affix or clitic; roots and free forms are not.
 
-The coarse two-way cut is read across domains: acquisition ([clark-2017]: free
-morphemes are acquired more readily than bound ones) and coordination typology
+This is *morphosyntactic* boundness; prosodic boundness belongs to the prosodic
+word (`Phonology/Prosody`). The coarse two-way cut is read across domains:
+acquisition ([clark-2017]: free morphemes are acquired more readily than bound
+ones) and coordination typology
 ([mitrovic-sauerland-2016]). `IsBound` reflects the *recorded* attachment: a
 root morph may itself be bound in a language, but `Kind` does not record it, so
 `(Kind.root).IsBound` is `False` by definition, not by claim. -/
