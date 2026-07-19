@@ -207,7 +207,7 @@ theorem ch2_section6_aggregate_counts :
 
 /-! ### Connection to substrate `MorphCategory.peripherality`
 
-`MorphCategory.peripherality` (in `Morphology/MorphRule.lean`) numerically
+`MorphCategory.peripherality` (in `Morphology/RelevanceHierarchy.lean`) numerically
 encodes the hierarchy — lower = closer to stem = more relevant — faithfully to
 Ch 2 §3 for the six core categories. Its extensions (`derivation`, `degree`,
 `negation`, `nonfinite`) are linglib additions, not Bybee's. -/
