@@ -10,7 +10,6 @@ import Linglib.Features.Person.Capabilities
 
 /-!
 # Word — the morphosyntactic word (ms-word) token
-[kalin-bjorkman-etal-2026]
 
 The surface token: the unit (morpho)syntax treats as a word, approximating the
 ms-word of the ms-word/p-word split ([kalin-bjorkman-etal-2026]; the p-word is

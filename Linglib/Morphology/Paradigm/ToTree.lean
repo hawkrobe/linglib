@@ -8,9 +8,9 @@ import Linglib.Morphology.Paradigm.Function
 
 /-!
 # The paradigm function into word trees
-[bonami-stump-2016] [spencer-2013]
 
-The engine's state type `Z` is unconstrained, so the paradigm function runs at
+The engine's state type `Z` is unconstrained ([bonami-stump-2016]'s PFM1,
+`Paradigm/Function.lean`), so the paradigm function runs at
 `Z := Word.Tree M` as readily as at material sequences. An affix-transparent
 vocabulary interprets into both, and `toList` intertwines the two runs
 (`toList_paradigmFunction_tree`); the emitted tree's stem is the chosen leaf
