@@ -90,7 +90,7 @@ def allEntries : List Coordinator :=
 
 /-- All Japanese coordination particles are bound (postpositive). -/
 theorem all_bound :
-    allEntries.all (fun e => decide e.kind.IsBound) = true := by
+    allEntries.all (fun e => e.kind matches .bound ..) = true := by
   decide
 
 /-- The MU particle "mo" also serves as an additive particle. -/

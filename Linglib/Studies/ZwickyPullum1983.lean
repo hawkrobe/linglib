@@ -94,13 +94,6 @@ def MorphStatus.IsClitic (s : MorphStatus) : Prop :=
 instance : DecidablePred MorphStatus.IsClitic :=
   fun _ => inferInstanceAs (Decidable (_ ∨ _))
 
-/-- A morph status is bound unless it is a free word: clitics and affixes
-are bound. -/
-def MorphStatus.IsBound (s : MorphStatus) : Prop := s ≠ .freeWord
-
-instance : DecidablePred MorphStatus.IsBound :=
-  fun _ => inferInstanceAs (Decidable (_ ≠ _))
-
 structure CliticAffixProfile where
   morpheme : String
   selection : SelectionDegree
