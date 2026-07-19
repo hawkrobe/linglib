@@ -108,18 +108,6 @@ def attachment? : Morph → Option Attachment
   | ⟨.bound _ a, _⟩ => some a
   | _ => none
 
-/-- A morph is an **affix** if it is bound as an affix. -/
-def IsAffix (m : Morph) : Prop := m.attachment? = some .affix
-
-instance (m : Morph) : Decidable m.IsAffix :=
-  inferInstanceAs (Decidable (_ = _))
-
-/-- A morph is a **clitic** if it is bound as a clitic. -/
-def IsClitic (m : Morph) : Prop := m.attachment? = some .clitic
-
-instance (m : Morph) : Decidable m.IsClitic :=
-  inferInstanceAs (Decidable (_ = _))
-
 /-- Display in descriptive notation: the attachment's sign on the side of
 the host — `X-`, `-X`, `X=`, `=X` — and bare for roots and free forms. -/
 def toString (m : Morph) : String :=
