@@ -150,105 +150,62 @@ def depth : Tree M → Nat
 /-- A bare root has depth zero. -/
 theorem depth_root (m : M) : (root m).depth = 0 := rfl
 
-/-! ### Relational accessors
+/-! ### Relational accessors -/
 
-Root, stem, and base are *relational* notions over word structure, not
-stored lexical fields: the base is what an operation applied to, the
-stem is the word minus its inflection, roots are the unanalyzable
-leaves. -/
-
-/-- The immediate base of the outermost operation: the daughter tree for
-affixation, reduplication, and conversion; `none` for a bare root and
-for compounds (which have two constituents, not a base). -/
+/-- The daughter the outermost operation applied to; `none` for a bare
+root and for compounds. -/
 def base : Tree M → Option (Tree M)
-  | .root _ => none
-  | .prefixed _ b => some b
-  | .suffixed b _ => some b
-  | .infixed b _ => some b
-  | .circumfixed _ b _ => some b
-  | .compound _ _ => none
-  | .reduplicated _ b => some b
-  | .converted b => some b
+  | .root _ | .compound _ _ => none
+  | .prefixed _ b | .suffixed b _ | .infixed b _ | .circumfixed _ b _
+  | .reduplicated _ b | .converted b => some b
 
-/-- The stem relative to a classification `infl` of the inflectional
-material: the tree with outer affixation by `infl`-material stripped.
-Compounding, reduplication, and conversion are part of the stem. -/
+/-- The tree with outer affixation by `infl`-material stripped. -/
 def stem (infl : M → Bool) : Tree M → Tree M
-  | .prefixed a b => if infl a then b.stem infl else .prefixed a b
-  | .suffixed b a => if infl a then b.stem infl else .suffixed b a
-  | .infixed b a => if infl a then b.stem infl else .infixed b a
-  | .circumfixed pre b suf =>
-      if infl pre && infl suf then b.stem infl else .circumfixed pre b suf
+  | w@(.prefixed a b) => if infl a then b.stem infl else w
+  | w@(.suffixed b a) => if infl a then b.stem infl else w
+  | w@(.infixed b a) => if infl a then b.stem infl else w
+  | w@(.circumfixed pre b suf) => if infl pre && infl suf then b.stem infl else w
   | w => w
 
-/-- The root morphs: the leaves of the tree. A simplex word has one;
-a compound has one per constituent. -/
+/-- The material at the leaves. -/
 def roots : Tree M → List M
   | .root m => [m]
-  | .prefixed _ b => b.roots
-  | .suffixed b _ => b.roots
-  | .infixed b _ => b.roots
-  | .circumfixed _ b _ => b.roots
   | .compound l r => l.roots ++ r.roots
-  | .reduplicated _ b => b.roots
-  | .converted b => b.roots
+  | .prefixed _ b | .suffixed b _ | .infixed b _ | .circumfixed _ b _
+  | .reduplicated _ b | .converted b => b.roots
 
 variable {infl : M → Bool}
 
-/-- A bare root is its own stem. -/
 theorem stem_root (m : M) : (root m).stem infl = root m := rfl
 
-/-- Stripping strips through stacked inflectional suffixes. -/
 theorem stem_suffixed_of_infl {afx : M} (b : Tree M) (h : infl afx) :
     (suffixed b afx).stem infl = b.stem infl := by simp [stem, h]
 
-/-- Non-inflectional affixation is stem-internal. -/
 theorem stem_suffixed_of_not_infl {afx : M} (b : Tree M) (h : ¬ infl afx) :
     (suffixed b afx).stem infl = suffixed b afx := by simp [stem, h]
 
-/-! ### Kind coherence
+/-! ### Kind coherence -/
 
-A `Word.Tree Morph` carries `Morph` material whose `Kind`s could disagree
-with the positions holding them (a `suffixed` node holding a prefix morph).
-`IsKindCoherent` rules that out where `Kind` can speak. -/
-
-/-- **Kind-coherence**: the material's `Kind`s agree with the positions carrying
-them. A `prefixed` affix is bound on the `before` side, a `suffixed` affix
-on the `after` side, a `circumfixed` node wraps a before-bound prefix and an
-after-bound suffix, and every leaf is a root or a free form. Infixation,
-reduplication, conversion, and compounding constrain no kind: `Kind` is
-a segmental-only carrier — it cannot express infixal attachment, and
-compounding joins stems. -/
+/-- The material's `Kind`s agree with their positions — no `suffixed` node
+holds a prefix morph — and every leaf is a root or a free form. -/
 def IsKindCoherent : Tree Morph → Prop
   | .root m => m.kind = .root ∨ m.kind = .free
   | .prefixed m b => m.side? = some .before ∧ b.IsKindCoherent
   | .suffixed b m => m.side? = some .after ∧ b.IsKindCoherent
-  | .infixed b _ => b.IsKindCoherent
   | .circumfixed pre b suf =>
       pre.side? = some .before ∧ suf.side? = some .after ∧ b.IsKindCoherent
   | .compound l r => l.IsKindCoherent ∧ r.IsKindCoherent
-  | .reduplicated _ b => b.IsKindCoherent
-  | .converted b => b.IsKindCoherent
+  | .infixed b _ | .reduplicated _ b | .converted b => b.IsKindCoherent
 
 instance decIsKindCoherent : (t : Tree Morph) → Decidable t.IsKindCoherent
-  | .root m => inferInstanceAs (Decidable (m.kind = .root ∨ m.kind = .free))
-  | .prefixed m b =>
-      have := decIsKindCoherent b
-      inferInstanceAs (Decidable (m.side? = some .before ∧ IsKindCoherent b))
-  | .suffixed b m =>
-      have := decIsKindCoherent b
-      inferInstanceAs (Decidable (m.side? = some .after ∧ IsKindCoherent b))
-  | .infixed b _ => decIsKindCoherent b
+  | .root m => inferInstanceAs (Decidable (_ ∨ _))
+  | .prefixed m b => @instDecidableAnd _ _ inferInstance (decIsKindCoherent b)
+  | .suffixed b m => @instDecidableAnd _ _ inferInstance (decIsKindCoherent b)
   | .circumfixed pre b suf =>
-      have := decIsKindCoherent b
-      inferInstanceAs
-        (Decidable (pre.side? = some .before ∧ suf.side? = some .after ∧ IsKindCoherent b))
-  | .compound l r =>
-      have := decIsKindCoherent l
-      have := decIsKindCoherent r
-      inferInstanceAs (Decidable (IsKindCoherent l ∧ IsKindCoherent r))
-  | .reduplicated _ b => decIsKindCoherent b
-  | .converted b => decIsKindCoherent b
+      @instDecidableAnd _ _ inferInstance
+        (@instDecidableAnd _ _ inferInstance (decIsKindCoherent b))
+  | .compound l r => @instDecidableAnd _ _ (decIsKindCoherent l) (decIsKindCoherent r)
+  | .infixed b _ | .reduplicated _ b | .converted b => decIsKindCoherent b
 
 end Tree
 
