@@ -58,18 +58,17 @@ classification from a criteria profile. -/
 inductive MorphStatus where
   /-- Syntactically independent word. -/
   | freeWord
-  /-- Simple clitic: phonologically bound form that can attach to
-      hosts of virtually any syntactic category.
-      [bickel-nichols-2007]: defined primarily by low selectivity
-      (categorical freedom) + phonological dependence, not necessarily
-      by being a reduced variant of a free word. Many simple clitics
-      have no free-word counterpart (Latin *-que*). English contracted
-      auxiliaries (*'s*, *'ve*, *'d*) are a subcase where a free variant
-      exists. -/
+  /-- Simple clitic: an optional variant of a full form, occurring in
+      the same sentence positions as that full form — English contracted
+      auxiliaries *'s*, *'ve*, *'d*. ([bickel-nichols-2007] later
+      redefine the class by low selectivity plus phonological dependence,
+      dropping the full-form requirement; on that rival definition,
+      full-form-less items [zwicky-pullum-1983] class as special clitics
+      count as simple.) -/
   | simpleClitic
-  /-- Special clitic: either no corresponding free word
-      exists, or the distribution differs from the free word.
-      Romance pronominal clitics, Latin *-que*. -/
+  /-- Special clitic: either no corresponding free word exists (Latin
+      *-que*, English possessive *'s*), or the distribution differs from
+      the free word's (Romance pronominal clitics). -/
   | specialClitic
   /-- Inflectional affix: paradigmatic, category-preserving, highly
       selective, with possible gaps and idiosyncrasies.
@@ -128,6 +127,11 @@ def CliticAffixProfile.affixScore (p : CliticAffixProfile) : Nat :=
 def CliticAffixProfile.cliticScore (p : CliticAffixProfile) : Nat :=
   6 - p.affixScore
 
+/-- Classification from a criteria profile. The two unanimous poles are
+the paper's: all six affix-like is an inflectional affix, all six
+clitic-like a simple clitic. The middle branch is a conservative default
+beyond the paper — [zwicky-pullum-1983] define special clitics
+distributionally (their §5), not as an intermediate criteria score. -/
 def CliticAffixProfile.classify (p : CliticAffixProfile) : MorphStatus :=
   if p.affixScore == 6 then .inflAffix
   else if p.cliticScore == 6 then .simpleClitic
