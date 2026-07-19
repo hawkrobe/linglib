@@ -77,6 +77,11 @@ def attachment? : Morph → Option Attachment
   | ⟨.bound _ a, _⟩ => some a
   | _ => none
 
+/-- The side a bound morph attaches on; `none` for roots and free forms. -/
+def side? : Morph → Option Side
+  | ⟨.bound s _, _⟩ => some s
+  | _ => none
+
 instance : ToString Morph :=
   ⟨fun m => match m.kind with
     | .bound .before .affix => m.form ++ "-"
