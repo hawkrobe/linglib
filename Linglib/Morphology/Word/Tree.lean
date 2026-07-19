@@ -81,6 +81,8 @@ def toList : Tree M → List M
 theorem toList_ne_nil (t : Tree M) : t.toList ≠ [] := by
   induction t <;> simp_all [toList]
 
+/-- Apply a function to the material at every node, preserving the tree's
+shape. -/
 def map (f : M → N) : Tree M → Tree N
   | .root m => .root (f m)
   | .prefixed afx base => .prefixed (f afx) (base.map f)
@@ -91,7 +93,9 @@ def map (f : M → N) : Tree M → Tree N
   | .reduplicated rt base => .reduplicated rt (base.map f)
   | .converted base => .converted (base.map f)
 
-/-- The word is built by concatenation alone. -/
+/-- `IsConcatenative t` asserts that `t` is built by concatenation alone —
+no infixation, circumfixation, or reduplication — so `toList` is the word's
+segmentation. -/
 def IsConcatenative : Tree M → Prop
   | .root _ => True
   | .prefixed _ b => b.IsConcatenative
@@ -170,8 +174,9 @@ theorem stem_suffixed_of_not_infl {afx : M} (b : Tree M) (h : ¬ infl afx) :
 
 /-! ### Kind coherence -/
 
-/-- The material's `Kind`s agree with their positions — no `suffixed` node
-holds a prefix morph — and every leaf is a root or a free form. -/
+/-- `IsKindCoherent t` asserts that the material's `Kind`s agree with their
+positions — no `suffixed` node holds a prefix morph — and every leaf is a
+root or a free form. -/
 def IsKindCoherent : Tree Morph → Prop
   | .root m => m.kind = .root ∨ m.kind = .free
   | .prefixed m b => m.side? = some .before ∧ b.IsKindCoherent
@@ -182,10 +187,10 @@ def IsKindCoherent : Tree Morph → Prop
   | .infixed b _ | .reduplicated _ b | .converted b => b.IsKindCoherent
 
 instance decIsKindCoherent : (t : Tree Morph) → Decidable t.IsKindCoherent
-  | .root m => inferInstanceAs (Decidable (_ ∨ _))
-  | .prefixed m b => @instDecidableAnd _ _ inferInstance (decIsKindCoherent b)
-  | .suffixed b m => @instDecidableAnd _ _ inferInstance (decIsKindCoherent b)
-  | .circumfixed pre b suf =>
+  | .root _ => inferInstanceAs (Decidable (_ ∨ _))
+  | .prefixed _ b => @instDecidableAnd _ _ inferInstance (decIsKindCoherent b)
+  | .suffixed b _ => @instDecidableAnd _ _ inferInstance (decIsKindCoherent b)
+  | .circumfixed _ b _ =>
       @instDecidableAnd _ _ inferInstance
         (@instDecidableAnd _ _ inferInstance (decIsKindCoherent b))
   | .compound l r => @instDecidableAnd _ _ (decIsKindCoherent l) (decIsKindCoherent r)
