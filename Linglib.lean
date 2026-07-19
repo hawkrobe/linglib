@@ -1293,6 +1293,7 @@ import Linglib.Morphology.Root.Basic
 import Linglib.Morphology.Root.Family
 import Linglib.Morphology.UsageBased.Network
 import Linglib.Morphology.Word.Basic
+import Linglib.Morphology.Word.OfParadigm
 import Linglib.Morphology.Word.Structure
 import Linglib.Phonology.Autosegmental.AR
 import Linglib.Phonology.Autosegmental.Correspondence
