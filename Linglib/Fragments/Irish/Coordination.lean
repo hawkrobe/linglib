@@ -23,27 +23,27 @@ namespace Irish.Coordination
     "Sean agus Maire" = "Sean and Maire". -/
 def agus : Coordinator :=
   { form := "agus", gloss := "and"
-  , role := .j, boundness := .free }
+  , role := .j, kind := .free }
 
 /-- *no* — disjunction. Free, prepositive.
     "Sean no Maire" = "Sean or Maire". -/
 def no_ : Coordinator :=
   { form := "nó", gloss := "or"
-  , role := .disj, boundness := .free }
+  , role := .disj, kind := .free }
 
 /-- *na* — negative disjunction / comparative particle.
     "ni Sean na Maire" = "neither Sean nor Maire".
     Also used in comparatives: "nios mo na" = "bigger than". -/
 def na_ : Coordinator :=
   { form := "ná", gloss := "nor, than"
-  , role := .negDisj, boundness := .free
+  , role := .negDisj, kind := .free
   , note := "also comparative particle" }
 
 /-- *ach* — adversative conjunction.
     "Ta se fuar ach tirim" = "It is cold but dry". -/
 def ach : Coordinator :=
   { form := "ach", gloss := "but"
-  , role := .advers, boundness := .free }
+  , role := .advers, kind := .free }
 
 def allEntries : List Coordinator :=
   [agus, no_, na_, ach]
@@ -54,7 +54,7 @@ def allEntries : List Coordinator :=
 
 /-- All Irish coordination morphemes are free (no bound clitics). -/
 theorem all_free :
-    allEntries.all (·.boundness == .free) = true := by
+    allEntries.all (fun e => decide (e.kind = .free)) = true := by
   decide
 
 /-- Irish has exactly one conjunction morpheme (J-only, no MU). -/

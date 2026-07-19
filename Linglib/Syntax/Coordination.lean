@@ -36,8 +36,8 @@ language WALS sample).
 * `SourcedEntry`, `ConjunctionSystem` — per-language structs.
 * `CoordinationProfile` — WALS profile bundle.
 * `ConjunctionSystem.hasStrategy`, `muIsAdditive`, `hasSource`,
-  `hasMonosyndetic`, `hasBisyndetic`, `muBoundness` — `Prop`-valued
-  decidable predicates.
+  `hasMonosyndetic`, `hasBisyndetic` — `Prop`-valued decidable predicates.
+* `ConjunctionSystem.muKind` — the MU particle's `Morph.Kind`, if any.
 
 ## Implementation notes
 
@@ -288,9 +288,9 @@ def ConjunctionSystem.hasBisyndetic (sys : ConjunctionSystem) : Prop :=
 instance (sys : ConjunctionSystem) : Decidable sys.hasBisyndetic := by
   unfold ConjunctionSystem.hasBisyndetic; infer_instance
 
-/-- The boundness of a language's MU particle, if it has one. -/
-def ConjunctionSystem.muBoundness (sys : ConjunctionSystem) : Option Morphology.Boundness :=
-  (sys.morphemes.find? fun m => m.entry.role == .mu).map (·.entry.boundness)
+/-- The `Morph.Kind` of a language's MU particle, if it has one. -/
+def ConjunctionSystem.muKind (sys : ConjunctionSystem) : Option Morphology.Morph.Kind :=
+  (sys.morphemes.find? fun m => m.entry.role == .mu).map (·.entry.kind)
 
 /-! ### Coordinate-structure symmetry -/
 

@@ -21,14 +21,14 @@ namespace Korean.Coordination
 /-- *-(i)rang* — J particle, informal register. Bound, postpositive. -/
 def irang : Coordinator :=
   { form := "-(i)rang", gloss := "and"
-  , role := .j, boundness := .bound
+  , role := .j, kind := .bound .after .clitic
   , note := "informal register; -kwa/-hako are more formal alternatives" }
 
 /-- *-to* — MU particle, additive. Bound, postpositive on each conjunct.
     Doubles as the additive focus particle ("also/too"). -/
 def to_ : Coordinator :=
   { form := "-to", gloss := "also, too; and (MU)"
-  , role := .mu, boundness := .bound, alsoAdditive := true }
+  , role := .mu, kind := .bound .after .clitic, alsoAdditive := true }
 
 def allEntries : List Coordinator := [irang, to_]
 

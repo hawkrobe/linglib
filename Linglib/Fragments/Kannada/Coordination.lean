@@ -20,7 +20,7 @@ namespace Kannada.Coordination
     on each coordinand giving the bisyndetic A-co B-co pattern. -/
 def u : Coordinator :=
   { form := "-u", gloss := "and; also"
-  , role := .mu, boundness := .bound, alsoAdditive := true
+  , role := .mu, kind := .bound .after .clitic, alsoAdditive := true
   , note := "bisyndetic postpositive enclitic; Dravidian additive particle" }
 
 def allEntries : List Coordinator := [u]

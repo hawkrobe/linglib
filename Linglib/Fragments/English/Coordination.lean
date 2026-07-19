@@ -22,25 +22,25 @@ namespace English.Coordination
 /-- *and* — primary conjunction, J particle. Free, prepositive. -/
 def and_ : Coordinator :=
   { form := "and", gloss := "and"
-  , role := .j, boundness := .free
+  , role := .j, kind := .free
   , correlative := true
   , note := "correlative use as 'both…and'" }
 
 /-- *or* — disjunction. Free, prepositive; correlative as 'either…or'. -/
 def or_ : Coordinator :=
   { form := "or", gloss := "or"
-  , role := .disj, boundness := .free
+  , role := .disj, kind := .free
   , correlative := true }
 
 /-- *but* — adversative. Free, prepositive. -/
 def but_ : Coordinator :=
   { form := "but", gloss := "but"
-  , role := .advers, boundness := .free }
+  , role := .advers, kind := .free }
 
 /-- *nor* — negative disjunction; correlative 'neither…nor'. -/
 def nor_ : Coordinator :=
   { form := "nor", gloss := "nor"
-  , role := .negDisj, boundness := .free
+  , role := .negDisj, kind := .free
   , correlative := true }
 
 def allEntries : List Coordinator := [and_, or_, but_, nor_]

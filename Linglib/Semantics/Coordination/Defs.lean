@@ -75,8 +75,8 @@ structure Coordinator where
   gloss : String
   /-- Which Boolean operation it denotes. -/
   role : Coordinator.Role
-  /-- Free word vs bound clitic/suffix. -/
-  boundness : Morphology.Boundness
+  /-- Full attachment kind; the free-vs-bound cut is `Morph.Kind.IsBound`. -/
+  kind : Morphology.Morph.Kind
   /-- Does this morpheme also serve as an additive/focus particle? -/
   alsoAdditive : Bool := false
   /-- Does this morpheme also serve as a quantifier particle?
@@ -87,4 +87,4 @@ structure Coordinator where
   correlative : Bool := false
   /-- Notes on usage or distribution. -/
   note : String := ""
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr

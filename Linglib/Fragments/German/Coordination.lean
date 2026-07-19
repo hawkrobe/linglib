@@ -24,28 +24,28 @@ def und : Coordinator where
   form := "und"
   gloss := "and"
   role := .j
-  boundness := .free
+  kind := .free
 
 /-- *oder* — disjunction. -/
 def oder : Coordinator where
   form := "oder"
   gloss := "or"
   role := .disj
-  boundness := .free
+  kind := .free
 
 /-- *aber* — adversative ("but", contrastive). -/
 def aber : Coordinator where
   form := "aber"
   gloss := "but"
   role := .advers
-  boundness := .free
+  kind := .free
 
 /-- *sondern* — adversative ("but rather", corrective; requires negation). -/
 def sondern : Coordinator where
   form := "sondern"
   gloss := "but.rather"
   role := .advers
-  boundness := .free
+  kind := .free
   note := "corrective; requires negation in first conjunct"
 
 /-- German uses a J-only conjunction strategy. -/

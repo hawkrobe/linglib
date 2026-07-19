@@ -21,7 +21,7 @@ namespace Tibetan.Coordination
     postpositive on the first coordinand giving A-co B pattern. -/
 def dang : Coordinator :=
   { form := "-daŋ", gloss := "and; with"
-  , role := .j, boundness := .bound
+  , role := .j, kind := .bound .after .clitic
   , note := "Classical; comitative-derived; medial postpositive on first conjunct" }
 
 def allEntries : List Coordinator := [dang]
