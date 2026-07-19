@@ -5,7 +5,6 @@ import Mathlib.Data.Fintype.Basic
 
 /-!
 # The PFM1 paradigm function
-[stump-2001] [stump-2016] [bonami-stump-2016] [kiparsky-1973]
 
 The standard Paradigm Function Morphology engine ([bonami-stump-2016]'s
 streamlined PFM1, after [stump-2001]): a paradigm function is a set of

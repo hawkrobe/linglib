@@ -4,7 +4,6 @@ import Mathlib.Data.List.MinMax
 
 /-!
 # Nanosyntax: Tree-Based Spellout
-[taraldsen-et-al-2018] [caha-2009] [starke-2009]
 
 Extension of rank-based Superset spellout
 (`Morphology/Exponence/Containment/Contiguity.lean`) to tree-structured spellout. Implements the Superset Principle (SP) for trees: a lexical

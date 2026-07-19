@@ -4,7 +4,6 @@ import Mathlib.Data.Set.Subsingleton
 
 /-!
 # Morphomes: syncretism classes with no natural characterization
-[herce-2023] [aronoff-1994]
 
 A realization map `p : Cell → F` assigns a form to each paradigm cell. Its
 **syncretism** relation — cells receiving the same form — is exactly

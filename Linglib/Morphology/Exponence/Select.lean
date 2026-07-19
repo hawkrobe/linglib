@@ -6,7 +6,6 @@ import Mathlib.Data.List.MinMax
 
 /-!
 # Elsewhere selection over rules of exponence
-[kiparsky-1973] [halle-marantz-1993] [stump-2001] [caha-2009]
 
 Selection over the specificity preorder of `Morphology/Exponence/Basic.lean`.
 An **Elsewhere winner** is a `≤`-minimal applicable rule; over a coherent

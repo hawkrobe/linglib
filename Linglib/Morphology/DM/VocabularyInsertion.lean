@@ -3,7 +3,6 @@ import Linglib.Morphology.Exponence.Select
 
 /-!
 # Vocabulary Insertion (Distributed Morphology)
-[halle-marantz-1993] [bobaljik-2000]
 
 Vocabulary Insertion is the mechanism by which syntactic terminal nodes
 receive phonological exponents in Distributed Morphology. It is the
