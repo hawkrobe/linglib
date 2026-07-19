@@ -700,6 +700,7 @@ import Linglib.Features.Prominence
 import Linglib.Features.PropertyDomain
 import Linglib.Features.Prosody
 import Linglib.Features.QParticleLayer
+import Linglib.Features.Reflex
 import Linglib.Features.Register
 import Linglib.Features.ScalarDimension
 import Linglib.Features.ScopeTypes
@@ -1304,7 +1305,6 @@ import Linglib.Morphology.Paradigm.Morphome
 import Linglib.Morphology.Paradigm.OfCells
 import Linglib.Morphology.Periphrasis
 import Linglib.Morphology.Realization
-import Linglib.Morphology.Reflex
 import Linglib.Morphology.RelevanceHierarchy
 import Linglib.Morphology.Root.Basic
 import Linglib.Morphology.Root.Family

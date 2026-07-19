@@ -1,4 +1,4 @@
-import Linglib.Morphology.Reflex
+import Linglib.Features.Reflex
 
 /-!
 # Branan and Erlewine 2023: Anti-pied-piping
@@ -34,7 +34,7 @@ anti-pied-piping, stated over the host–focus containment relations of
 
 namespace BrananErlewine2023
 
-open Morphology Morphology
+open Features
 
 /-! ### The clause skeleton -/
 
