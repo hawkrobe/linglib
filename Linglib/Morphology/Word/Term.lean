@@ -8,42 +8,45 @@ import Linglib.Morphology.Morph
 /-!
 # Word-internal structure
 
-A `Word.Term M` records the word-internal structure of a word as an
-operation-typed tree with leaves and affixal payloads in `M`: each
-constructor is one of [booij-2012]'s morphological operations —
-affixation, reduplication, conversion, compounding — with its own arity
-and payload. The terms are the partial words — every subterm is a
-formable word-part. `M` plays two roles: generator at the leaves (root
-and free morphs) and label on the affixal operations — an affix indexes
-a unary operation on terms and is never itself a subterm, so its
+A `Word.Term M` is a term of the word-formation algebra: each constructor is
+one of [booij-2012]'s morphological operations, with its own arity and
+payload. Terms are the partial words; the tree records derivational history
+and word-internal constituency, which applying the operations as functions
+would forget.
+
+## Main declarations
+
+* `Word.Term` — the operation-typed tree
+* `Word.Term.toList`, `Word.Term.toSequence?` — payload linearization, and
+  the concatenative fragment's payload sequence
+* `Word.Term.base`, `Word.Term.stem`, `Word.Term.roots` — [booij-2012]'s
+  relational notions
+* `Word.Term.IsKindCoherent` — payload attachment kinds match the positions
+  carrying them
+* `Word.Term.map` — functorial payload relabelling
+
+## Implementation notes
+
+`M` plays two roles: generator at the leaves (root and free morphs) and
+label on the affixal operations. An affix is never a subterm, so its
 boundness holds by construction; `toList` flattens both roles onto the
-morph-sequence reading. The tree records derivational history and word-internal
-constituency — what applying the operations as functions would forget.
-[booij-2012]'s relational notions are the accessors `base`, `stem`, and
-`roots`; `toList` linearizes the payloads and `toSequence?` projects the
-concatenative fragment to its payload sequence. The tree does not
-evaluate to surface strings: concatenative surface forms are
-`String.join` over `toList`, and the surface effect of process
-constructors (infixation, reduplication) belongs to the process theories,
-not to string simulation here.
-
-`IsKindCoherent` is the coherence law tying an `M := Morph` tree's payload
-`Kind`s to the positions carrying them; the tree is not *derived* from the
-attachment graph, so the law is a separate, decidable predicate.
-
-The theory layer instantiates `M := Morph`; fragments that annotate
-their morphs (glosses) instantiate `M` with their own richer leaf type.
-The token type (`Morphology.Word`, `Word/Basic.lean`) is deliberately
-separate: the token is what syntax sees, the tree is how morphology
-built it.
+morph-sequence reading. The tree does not evaluate to surface strings:
+concatenative surface forms are `String.join` over `toList`, and the
+surface effect of the process constructors belongs to the process theories.
+`IsKindCoherent` is a law, not a derivation — the tree is not built from
+the attachment data. The theory layer instantiates `M := Morph`; fragments
+with annotated morphs use richer leaf types. The token (`Morphology.Word`,
+`Word/Basic.lean`) is separate: the token is what syntax sees, the tree is
+how morphology built it.
 -/
 
 namespace Morphology
 
-/-! ### Reduplication and affix kinds -/
+/-! ### The operation indices -/
 
-/-- The type of a reduplication step. -/
-inductive RedupType where
+/-- The type of a reduplication step — an index on `Word.Term`'s
+reduplication operation, pending a copying-theory home. -/
+inductive Word.Term.RedupType where
   /-- Copies the entire base (Javanese *omaha* → *omaha-omaha* "various
   houses", [booij-2012] from Uhlenbeck 1978). -/
   | total
@@ -55,7 +58,7 @@ inductive RedupType where
 
 /-- Whether an affixation step is inflectional or derivational — the tag
 that makes stems (inflection stripped) computable from the tree. -/
-inductive AffixKind where
+inductive Word.Term.AffixKind where
   | inflectional
   | derivational
   deriving DecidableEq, Repr
@@ -70,20 +73,20 @@ inductive Word.Term (M : Type*) where
   /-- Leaf node: a single element (free or bound). -/
   | root : M → Word.Term M
   /-- Attach a payload before the base. -/
-  | prefixed : M → Word.Term M → optParam AffixKind .derivational → Word.Term M
+  | prefixed : M → Word.Term M → optParam Word.Term.AffixKind .derivational → Word.Term M
   /-- Attach a payload after the base. -/
-  | suffixed : Word.Term M → M → optParam AffixKind .derivational → Word.Term M
+  | suffixed : Word.Term M → M → optParam Word.Term.AffixKind .derivational → Word.Term M
   /-- Insert a payload within the base (Khmu *s⟨m⟩ka:t* "roughen" from
       *ska:t* "rough", [booij-2012]); the insertion site is prosodically
       determined and is process-theory content, not tree data. -/
-  | infixed : Word.Term M → M → optParam AffixKind .derivational → Word.Term M
+  | infixed : Word.Term M → M → optParam Word.Term.AffixKind .derivational → Word.Term M
   /-- Wrap the base with a prefix and a suffix.
       Example: German *Ge-sing-e* "singing" from *sing* ([booij-2012]). -/
-  | circumfixed : M → Word.Term M → M → optParam AffixKind .derivational → Word.Term M
+  | circumfixed : M → Word.Term M → M → optParam Word.Term.AffixKind .derivational → Word.Term M
   /-- Two stems joined. Example: *bottle* + *factory* ([booij-2012]). -/
   | compound : Word.Term M → Word.Term M → Word.Term M
   /-- Total or partial reduplication. -/
-  | reduplicated : RedupType → Word.Term M → Word.Term M
+  | reduplicated : Word.Term.RedupType → Word.Term M → Word.Term M
   /-- Conversion. Example: noun *chain* → verb *to chain* ([booij-2012]). -/
   | converted : Word.Term M → Word.Term M
   deriving Repr
