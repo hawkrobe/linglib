@@ -35,7 +35,7 @@ the seven a-priori possibilities, all attested (their §9, n. 3).
 * `concordAgrees`/`indexAgrees` — target checking through the
   `HasX.Compatible` mixins, with the *deca* paradigm (exs. 41–42)
 * `no_single_phi_bundle_for_deca` — the §3.3 single-bundle "illusion" as
-  a refutation against `Word.Agree`
+  a refutation of the single-bundle view (`phiAgree`)
 * `indexReaders_lowerSet` — the Agreement Hierarchy skeleton over
   `Agreement.Target`, robust to the open predicate position
 
@@ -461,15 +461,22 @@ theorem regular_nouns_mask_the_split (n : Noun) (hn : ConInd n)
   simp only [HasNumber.Compatible, Noun.indexTarget, Noun.concordAt,
     HasNumber.numberOf, hnum]
 
-/-- The single-φ-bundle view (`Word.phi`/`Word.Agree`) cannot host
-    *deca*: its CONCORD-bearing attributive (f.sg) and its INDEX-bearing
-    pronoun (nt.pl) do not `Word.Agree`, so they cannot both copy one
-    fully-valued source bundle. This is §3.3's "illusion", as a
-    refutation against the library's one-bundle primitive — note a
-    *featureless* word would tolerate both (wildcards), so the claim is
-    about the two specified surface forms, not about compatibility. -/
+/-- The **single-φ-bundle view** of agreement the study refutes: one bundle per
+    word, agreement as pairwise compatibility of the `Word.phi` projections
+    (an unspecified feature is a wildcard). -/
+def phiAgree (w₁ w₂ : Word) : Prop := w₁.phi.compatible w₂.phi
+
+instance (w₁ w₂ : Word) : Decidable (phiAgree w₁ w₂) := by
+  unfold phiAgree; infer_instance
+
+/-- The single-φ-bundle view cannot host *deca*: its CONCORD-bearing
+    attributive (f.sg) and its INDEX-bearing pronoun (nt.pl) do not
+    `phiAgree`, so they cannot both copy one fully-valued source bundle.
+    This is §3.3's "illusion" — note a *featureless* word would tolerate
+    both (wildcards), so the claim is about the two specified surface
+    forms, not about compatibility. -/
 theorem no_single_phi_bundle_for_deca :
-    ¬ Word.Agree
+    ¬ phiAgree
         ⟨"dobra", .ADJ, { gender := some .Fem, number := some .Sing }⟩
         ⟨"ona", .PRON, { gender := some .Neut, number := some .Plur }⟩ := by
   decide
