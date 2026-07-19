@@ -1,29 +1,38 @@
-import Linglib.Morphology.Paradigm.Linkage
+import Linglib.Morphology.Paradigm.Function
+import Mathlib.Tactic.DeriveFintype
 
 /-!
-# Stump 2016: Latin deponency as a voice-flipping paradigm linkage
+# Stump 2016: paradigm-linkage deviations — deponency and morphomic tense
 [stump-2016]
 
-Latin deponent verbs are [stump-2016]'s central argument for the
-paradigm-linkage hypothesis (Ch. 12): their active forms "inflect by means of
-the morphology that ordinarily serves to express a verb's passive forms"
-(§12.1). Deponent *cōnārī* 'try' realizes its active content cells —
+Two deviations from the canonical content-to-form isomorphism argued for in
+[stump-2016], run on the paradigm-linkage model of
+`Morphology/Paradigm/Linkage.lean`.
+
+**Latin deponency** (Ch. 12): deponent verbs "inflect by means of the morphology
+that ordinarily serves to express a verb's passive forms" (§12.1). Deponent
+*cōnārī* 'try' realizes its active content cells —
 *cōnor, cōnāris, cōnātur, cōnāmur, cōnāminī, cōnantur* (imperfective present
 indicative, Table 12.2) — with the passive personal endings
 (-or, -ris, -tur, -mur, -minī, -ntur) that a regular verb like *parāre*
 'prepare' uses only for its passive (*paror, parāris, parātur, …*, Table 12.1);
-*cōnārī* lacks passive-meaning forms entirely.
-
-In the paradigm-linkage architecture (`Morphology/Paradigm/Linkage.lean`) this
-is a property mapping that crosses the voice axis. A regular verb is subject to
-the canonical `pmc(σ) = σ ∪ {c}` (property-set preserving on the contentful
-features); a deponent is subject to `pm2c(σ:{active}) = σ[active/passive] ∪ {c}`
+*cōnārī* lacks passive-meaning forms entirely. This is a property mapping that
+crosses the voice axis: a regular verb is subject to the canonical
+`pmc(σ) = σ ∪ {c}`, a deponent to `pm2c(σ:{active}) = σ[active/passive] ∪ {c}`
 (§12.1), replacing active with passive. Abstracting away the inflection-class
-index `c` (which is orthogonal to the voice mismatch), the deponent linkage's
-property mapping flips voice while the regular verb's preserves it. The
-theorems below show *cōnārī*'s linkage deviates from `IsCanonical` on every
-active cell — its form correspondents are all passive — while sharing the
-content-cell space with the regular verb.
+index `c`, the deponent linkage flips voice while the regular verb's preserves
+it — *cōnārī*'s linkage deviates from `IsCanonical` on every active cell.
+
+**Kashmiri morphomic tense** (Ch. 8, pp. 217ff): the recent, indefinite, and
+remote preterites of intransitive Conjugations II and III are realized through
+four morphomic properties 'past a'–'past d' via a non-identity property mapping.
+`WUP` (Conj II) and `WUPH` (Conj III) inflect alike in the 'past b' cells —
+`wupyōs` (indefinite) and `wuphyōs` (recent) — because `pmII` and `pmIII` send
+different tenses to the same morphome. The composition exercises the PFM1 block
+cascade of `Morphology/Paradigm/Function.lean` as the form-cell realization, with
+`pm ≠ id`, so `Linkage.realize_eq_paradigmFunction` (which needs `pm = id`) does
+not apply. Forms are transcribed from Grierson's paradigms as displayed by
+[stump-2016]; block rules are read off the stem+suffix segmentation.
 
 ## Main declarations
 
@@ -36,6 +45,10 @@ content-cell space with the regular verb.
   correspondent is passive (the deponency claim)
 * `depon_vs_regular` — same active content cell: regular → active form,
   deponent → passive form
+* `pmII`, `pmIII`, `linkII`, `linkIII` — the two Kashmiri conjugation linkages,
+  their tense-to-morphome property mappings differing by one morphome
+* `kashmiri_inflect_alike` — WUP's indefinite past and WUPH's recent past share
+  the 'past b' form correspondent, the morphomic content-to-form mismatch
 -/
 
 namespace Stump2016
@@ -132,5 +145,108 @@ theorem depon_vs_regular (σ : Cell) (h : σ.voice = .active) :
     (parareLinkage.corr .parare σ).2.voice = .active ∧
       (conariLinkage.corr .conari σ).2.voice = .passive :=
   ⟨h, rfl⟩
+
+/-! ### Kashmiri morphomic tense (Ch. 8, pp. 217ff) -/
+
+section Kashmiri
+
+open Morphology.Exponence Morphology.PFM
+
+/-- The two intransitive verbs: `WUP` 'burn inside' (Conj II) and `WUPH` 'fly'
+(Conj III). -/
+inductive KVerb | wup | wuph
+  deriving DecidableEq, Fintype
+
+/-- Content tenses (recent, indefinite, remote preterite), morphomic form
+properties ('past a'–'past d'), and 1sg masculine agreement. -/
+inductive KFeat
+  | recentPast | indefPast | remotePast
+  | pastA | pastB | pastC | pastD
+  | p1 | sg | masc
+  deriving DecidableEq, Fintype
+
+open KVerb KFeat
+
+/-- The stem of each verb. -/
+def stemOf : KVerb → String
+  | wup => "wup"
+  | wuph => "wuph"
+
+/-- **Property mapping for Conjugation II** ([stump-2016] Ch. 8): recent →
+'past a', indefinite → 'past b', remote → 'past c'. -/
+def pmII (σ : Finset KFeat) : Finset KFeat :=
+  if recentPast ∈ σ then insert pastA (σ.erase recentPast)
+  else if indefPast ∈ σ then insert pastB (σ.erase indefPast)
+  else if remotePast ∈ σ then insert pastC (σ.erase remotePast)
+  else σ
+
+/-- **Property mapping for Conjugation III** ([stump-2016] Ch. 8): recent →
+'past b', indefinite → 'past c', remote → 'past d'. The one-morphome shift from
+`pmII` is what makes the two conjugations' preterites interleave. -/
+def pmIII (σ : Finset KFeat) : Finset KFeat :=
+  if recentPast ∈ σ then insert pastB (σ.erase recentPast)
+  else if indefPast ∈ σ then insert pastC (σ.erase indefPast)
+  else if remotePast ∈ σ then insert pastD (σ.erase remotePast)
+  else σ
+
+/-- The form paradigm: 1sg masculine exponents for each morphome, read off the
+stem+suffix segmentation (`wupus`, `wupyōs`, `wupyās`, `wuphiyās`). -/
+def formBlock : Block KVerb String (Finset KFeat) :=
+  [ ⟨Finset.univ, {pastA, p1, sg, masc}, .const (· ++ "us")⟩,
+    ⟨Finset.univ, {pastB, p1, sg, masc}, .const (· ++ "yōs")⟩,
+    ⟨Finset.univ, {pastC, p1, sg, masc}, .const (· ++ "yās")⟩,
+    ⟨Finset.univ, {pastD, p1, sg, masc}, .const (· ++ "iyās")⟩,
+    (identityDefault : Rule KVerb (Finset KFeat) (Action String (Finset KFeat))) ]
+
+/-- Realization of a form cell `⟨Z, τ⟩`: the PFM1 paradigm function on the stem
+`Z` at the morphomic property set `τ`. -/
+def realizeForm (z : String) (τ : Finset KFeat) : String :=
+  (paradigmFunction (fun _ => wup) (fun _ => z) [formBlock] (wup, τ)).1
+
+/-- Conjugation II linkage: the single stem, mapped by `pmII`. -/
+def linkII : Linkage KVerb String (Finset KFeat) := ⟨fun l _ => stemOf l, pmII⟩
+
+/-- Conjugation III linkage: the single stem, mapped by `pmIII`. -/
+def linkIII : Linkage KVerb String (Finset KFeat) := ⟨fun l _ => stemOf l, pmIII⟩
+
+/-- WUP recent past ('past a'): `wupus`. -/
+example : linkII.realize realizeForm wup {recentPast, p1, sg, masc}
+    = ("wupus", {pastA, p1, sg, masc}) := by decide
+
+/-- WUP indefinite past ('past b'): `wupyōs`. -/
+example : linkII.realize realizeForm wup {indefPast, p1, sg, masc}
+    = ("wupyōs", {pastB, p1, sg, masc}) := by decide
+
+/-- WUP remote past ('past c'): `wupyās`. -/
+example : linkII.realize realizeForm wup {remotePast, p1, sg, masc}
+    = ("wupyās", {pastC, p1, sg, masc}) := by decide
+
+/-- WUPH recent past ('past b'): `wuphyōs`. -/
+example : linkIII.realize realizeForm wuph {recentPast, p1, sg, masc}
+    = ("wuphyōs", {pastB, p1, sg, masc}) := by decide
+
+/-- WUPH indefinite past ('past c'): `wuphyās`. -/
+example : linkIII.realize realizeForm wuph {indefPast, p1, sg, masc}
+    = ("wuphyās", {pastC, p1, sg, masc}) := by decide
+
+/-- WUPH remote past ('past d'): `wuphiyās`. -/
+example : linkIII.realize realizeForm wuph {remotePast, p1, sg, masc}
+    = ("wuphiyās", {pastD, p1, sg, masc}) := by decide
+
+/-- **The morphomic mediation** ([stump-2016] Ch. 8): WUP's indefinite past and
+WUPH's recent past have the same form correspondent property set — both 'past b',
+1sg masc — even though their tenses differ. This is why they inflect alike
+(`-yōs`), the content-to-form mismatch the paradigm-linkage model captures. -/
+theorem kashmiri_inflect_alike :
+    (linkII.corr wup {indefPast, p1, sg, masc}).2
+      = (linkIII.corr wuph {recentPast, p1, sg, masc}).2 := by decide
+
+/-- The second interleaving: WUP's remote past and WUPH's indefinite past share
+the 'past c' correspondent, inflecting alike (`-yās`). -/
+theorem kashmiri_inflect_alike_pastC :
+    (linkII.corr wup {remotePast, p1, sg, masc}).2
+      = (linkIII.corr wuph {indefPast, p1, sg, masc}).2 := by decide
+
+end Kashmiri
 
 end Stump2016

@@ -2648,6 +2648,7 @@ import Linglib.Studies.Storme2026
 import Linglib.Studies.Storment2026
 import Linglib.Studies.Sudo2016
 import Linglib.Studies.Stump2016
+import Linglib.Studies.Stump2020
 import Linglib.Studies.SumersEtAl2023
 import Linglib.Studies.SuttonFilip2021
 import Linglib.Studies.TaraldsenEtAl2018
