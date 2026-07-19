@@ -1,5 +1,5 @@
 import Linglib.Semantics.Causation.Resultatives
-import Linglib.Morphology.MorphWord
+import Linglib.Morphology.Word.Structure
 import Linglib.Studies.GoldbergJackendoff2004
 import Linglib.Fragments.Mandarin.Resultatives
 
@@ -29,7 +29,7 @@ arguments but **none** of V1's.  This predicts:
 3. **Onset Condition**: the CCF must be a V1 participant (agent, subject matter,
    or source); pure causers are ungrammatical — derived from data via
    `CcfRole.isV1Participant`, not stipulated
-4. **V-V morphology**: `MorphWord.compound` captures the binary V1-V2 structure
+4. **V-V morphology**: `Word.Structure.compound` captures the binary V1-V2 structure
 5. **Causal dynamics**: direct CAUSE (single causal law, `completesForEffect`)
 6. **Phase complements**: grammaticalized V2 subset with fixed `CoSType`
    (standard Mandarin grammar, supplementing the thesis's V-V analysis)
@@ -40,7 +40,7 @@ Connects:
 - `Causation.Resultatives`: causal dynamics, CC-selection,
   tightness, cross-linguistic parameters (`ResultativeRealization`,
   `ResultOrientation`, `PhaseComplement`)
-- `Morphology.Core.WordStructure`: `MorphWord.compound` for V-V
+- `Morphology.Word.Structure`: `Word.Structure.compound` for V-V
 - `Mandarin.Resultatives`: compound and phase complement lexical entries
 - `GoldbergJackendoff2004`: English
   data for cross-linguistic contrast
@@ -51,7 +51,7 @@ namespace Tay2024
 open Intensional (WorldTimeIndex)
 
 open Causation.Resultatives
-open Morphology.WordStructure
+open Morphology
 open Features.ChangeOfState (CoSType priorStatePresup)
 open Mandarin.Resultatives
 
@@ -306,8 +306,8 @@ theorem onset_nonparticipant_implies_ungrammatical :
 
 [tay-2024] proposes that V-V compounds have the morphological structure
 V1-∅-V2: the null affix ∅ inherits all of V2's arguments but none of V1's.
-We capture the binary V1-V2 compound using `MorphWord.compound` from
-`WordStructure.lean`.
+We capture the binary V1-V2 compound using `Word.Structure.compound` from
+`Morphology/Word/Structure.lean`.
 
 V-V resultatives are **synthetic** compounds: their components stand in a
 predictable CAUSE relation. This contrasts with root compounds like
@@ -316,7 +316,7 @@ semantic relation is idiosyncratic and must be listed in the lexicon
 ([tay-2024], Ch. 3 §3.1). -/
 
 /-- Morphological structure of dǎ-sǐ "hit-die". -/
-def dasi_morph : MorphWord :=
+def dasi_morph : Word.Structure :=
   .compound (.root { morph := .root "da", gloss := "hit" }) (.root { morph := .root "si", gloss := "die" })
 
 /-- V-V compounds are recognized as compounds by `IsCompound`. -/
@@ -329,7 +329,7 @@ theorem dasi_surface : dasi_morph.surface = "dasi" := rfl
 theorem dasi_morpheme_count : dasi_morph.morphemeCount = 2 := rfl
 
 /-- Morphological structure of kū-lèi "cry-tired" (subject-oriented). -/
-def kulei_morph : MorphWord :=
+def kulei_morph : Word.Structure :=
   .compound (.root { morph := .root "ku", gloss := "cry" }) (.root { morph := .root "lei", gloss := "tired" })
 
 theorem kulei_is_compound : kulei_morph.IsCompound := by decide
@@ -505,7 +505,7 @@ theorem vv_compound_become :
 
 1. V1 denotes causing event, V2 denotes result state
 2. Connected by direct CAUSE (single causal law, tight)
-3. Morphologically realized as `MorphWord.compound` (V1-∅-V2)
+3. Morphologically realized as `Word.Structure.compound` (V1-∅-V2)
 4. Subject-oriented resultatives are productive (no DOR)
 5. V-V is syntactically opaque; V-*de* is transparent
 6. Onset Condition: CCF must be a V1 participant (derived from data)

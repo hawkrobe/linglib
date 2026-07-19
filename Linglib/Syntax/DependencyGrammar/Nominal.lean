@@ -3,7 +3,9 @@ import Linglib.Features.CoreferenceStatus
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Morphology.Word
+import Linglib.Morphology.Word.Basic
+
+open Morphology (Word)
 
 /-!
 # Shared English test words for DG coreference theories
@@ -23,6 +25,7 @@ so no per-language lexicon classifier is needed.
 -/
 
 namespace DepGrammar.Nominal
+
 
 export Features (BindingClass)
 

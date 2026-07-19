@@ -3,6 +3,8 @@ import Linglib.Syntax.WordGrammar.Inheritance.Basic
 import Linglib.Syntax.WordGrammar.Inheritance.Order
 import Linglib.Syntax.WordGrammar.Network
 
+open Morphology (Word)
+
 /-!
 # Hudson 2010: kinship as an inheritance network [hudson-2010]
 
@@ -37,6 +39,7 @@ identity is by construction at the level of the type `Network`.
 set_option autoImplicit false
 
 namespace Hudson2010
+
 
 open WordGrammar.Inheritance
 

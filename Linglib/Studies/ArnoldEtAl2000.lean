@@ -4,6 +4,8 @@ import Linglib.Core.Optimization.Decoder
 import Linglib.Features.Givenness
 import Linglib.Syntax.DependencyGrammar.Formal.DependencyLength
 
+open Morphology (Word)
+
 /-!
 # Heaviness vs. Newness in Constituent Ordering [arnold-wasow-losongco-ginstrom-2000]
 
@@ -102,6 +104,7 @@ contradicting the paper's findings.
 -/
 
 namespace ArnoldEtAl2000
+
 
 open Constraints Core.Optimization Features
 open DepGrammar DepGrammar.DependencyLength

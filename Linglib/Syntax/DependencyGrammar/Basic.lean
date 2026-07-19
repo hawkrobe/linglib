@@ -1,7 +1,9 @@
 import Mathlib.Data.List.Basic
 import Linglib.Data.UD.Basic
 import Linglib.Features.Complementation
-import Linglib.Morphology.Word
+import Linglib.Morphology.Word.Basic
+
+open Morphology (Word)
 
 /-!
 # Dependency grammar substrate
@@ -32,6 +34,7 @@ Dependencies v2). [hudson-2010], [gibson-2025].
 -/
 
 namespace DepGrammar
+
 
 section ArgumentStructure
 

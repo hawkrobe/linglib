@@ -1,6 +1,8 @@
 import Linglib.Syntax.DependencyGrammar.Coordination
 import Linglib.Syntax.DependencyGrammar.LongDistance
 
+open Morphology (Word)
+
 /-!
 # Enhanced dependencies
 [de-marneffe-nivre-2019]
@@ -31,6 +33,7 @@ are stipulated.
 -/
 
 namespace DepGrammar.EnhancedDependencies
+
 
 open DepGrammar
 

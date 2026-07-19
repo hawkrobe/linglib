@@ -1,5 +1,6 @@
 import Linglib.Phonology.Segmental.Basic
 
+
 /-!
 # Tarifit Consonant Inventory
 [afkir-zellou-2025]
@@ -35,6 +36,7 @@ are from the paper's word list / online appendix.
 -/
 
 namespace Tarifit.Inventory
+
 
 open Phonology
 

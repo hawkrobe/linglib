@@ -5,7 +5,9 @@ import Linglib.Features.Person.Capabilities
 import Linglib.Features.Person.Decomposition
 import Linglib.Semantics.Modality.ModalTypes
 import Linglib.Features.Register
-import Linglib.Morphology.Word
+import Linglib.Morphology.Word.Basic
+
+open Morphology (Word)
 
 /-!
 # English Auxiliaries Lexicon Fragment
@@ -52,6 +54,7 @@ To find every claim made about a particular entry, grep for
 
 
 namespace English.Auxiliaries
+
 
 section Modals
 open Semantics.Modality (ForceFlavor ModalForce ModalFlavor ModalInterpretability ModalFeature)

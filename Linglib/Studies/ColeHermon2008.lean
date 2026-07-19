@@ -9,6 +9,7 @@ import Linglib.Syntax.Minimalist.Linearization.Replay
 import Linglib.Syntax.Minimalist.Movement.Remnant
 import Linglib.Fragments.TobaBatak.Basic
 
+
 /-!
 # VP Raising in a VOS Language [cole-hermon-2008]
 
@@ -56,6 +57,7 @@ empirical generalizations.
 -/
 
 namespace Minimalist
+
 
 /-! ## EPP Parameter (formerly `Core/EPP.lean`)
 

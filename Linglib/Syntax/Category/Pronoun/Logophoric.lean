@@ -2,6 +2,9 @@ import Linglib.Features.Logophoricity
 import Linglib.Syntax.Category.Pronoun.Basic
 import Linglib.Syntax.Category.Pronoun.Capabilities
 
+open Morphology (Word)
+
+
 /-!
 # Logophoric pronouns — the pronominal carrier of perspectival orientation
 [sells-1987]

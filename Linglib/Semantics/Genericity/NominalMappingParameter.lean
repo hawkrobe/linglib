@@ -39,11 +39,14 @@ import Mathlib.Order.UpperLower.Basic
 import Linglib.Data.UD.Basic
 import Linglib.Semantics.Mereology
 import Linglib.Semantics.Intensional.Rigidity
-import Linglib.Morphology.Word
+import Linglib.Morphology.Word.Basic
+
+open Morphology (Word)
 
 
 
 namespace Semantics.Kinds.NMP
+
 
 -- Domain Structure (Link's Semilattice)
 

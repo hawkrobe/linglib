@@ -1,7 +1,9 @@
 import Linglib.Semantics.Causation.Interpretation
 import Linglib.Semantics.Verb.Basic
 import Linglib.Morphology.Realization
-import Linglib.Morphology.Word
+import Linglib.Morphology.Word.Basic
+
+open Morphology (Word)
 
 /-! # Verbal Predicate Lexicon Fragment
 
@@ -15,6 +17,7 @@ and provides smart constructors for regular verbs.
 -/
 
 namespace English.Predicates.Verbal
+
 
 -- Re-export Features verb-entry vocabulary so downstream files that open this
 -- namespace continue to find it. The `Verb`/`ComplementType`/… types now

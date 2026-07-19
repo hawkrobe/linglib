@@ -283,11 +283,12 @@ theorem manipulative_selects_ki :
 
 /-- The negative circumfix surfaces correctly for a sample verb. -/
 theorem neg_circumfix_realize :
-    (negCircumfix "mäs'ə").realize = "ʔay-mäs'ə-n" := rfl
+    (negCircumfix "mäs'ə").surface = "ʔay-mäs'ə-n" := rfl
 
-/-- The negative circumfix gloss is derived from the fragment entry. -/
+/-- The circumfix parts' glosses derive from the fragment entry. -/
 theorem neg_circumfix_from_neg :
-    (negCircumfix "mäs'ə").gloss = ay_n.gloss := rfl
+    ((negCircumfix "mäs'ə").morphemes.map Morphology.Morpheme.gloss)
+      = [ay_n.gloss, "", ay_n.gloss] := rfl
 
 /-- All four prefix heads are in the verbal extended projection. -/
 theorem all_prefixes_verbal :

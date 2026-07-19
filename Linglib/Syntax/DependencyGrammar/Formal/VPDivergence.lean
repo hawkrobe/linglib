@@ -1,5 +1,7 @@
 import Linglib.Syntax.DependencyGrammar.Formal.Catena
 
+open Morphology (Word)
+
 /-!
 # Finite-VP divergence: catena ⊋ constituent
 
@@ -38,6 +40,7 @@ files; this module formalizes only the structural DG-side claim.
 -/
 
 namespace DepGrammar.VPDivergence
+
 
 open DepGrammar DepGrammar.Catena
 

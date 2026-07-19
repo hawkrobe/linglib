@@ -6,6 +6,8 @@ import Linglib.Fragments.English.FunctionWords
 import Linglib.Syntax.WordGrammar.LexicalRules
 import Linglib.Syntax.DependencyGrammar.Formal.Catena
 
+open Morphology (Word)
+
 /-!
 # DG Valency Bridge: [osborne-2019]
 [tesniere-1959]
@@ -39,6 +41,7 @@ grammaticality contrasts ← predictions for the example sentences
 -/
 
 namespace Osborne2019
+
 
 open DepGrammar WordGrammar Catena
 

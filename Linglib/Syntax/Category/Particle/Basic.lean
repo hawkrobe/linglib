@@ -1,6 +1,8 @@
 import Linglib.Syntax.Clause.Context
 import Linglib.Syntax.Clause.Embedding
-import Linglib.Morphology.Word
+import Linglib.Morphology.Word.Basic
+
+open Morphology (Word)
 
 /-!
 # Particle
@@ -105,6 +107,7 @@ structure Particle where
   deriving DecidableEq, Repr
 
 namespace Particle
+
 
 /-- Recorded clause-type distribution status in context `c`, if any. -/
 def status? (p : Particle) (c : Clause.Context) : Option ParticleStatus :=

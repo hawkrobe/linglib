@@ -4,8 +4,10 @@ import Linglib.Features.Prominence
 import Linglib.Syntax.Case.Alignment
 import Linglib.Syntax.Agreement.Paradigm
 import Linglib.Morphology.Morph
-import Linglib.Morphology.Word
+import Linglib.Morphology.Word.Basic
 import Linglib.Morphology.Morphotactics.Template
+
+open Morphology (Word)
 
 /-!
 # Shared Mayan Fragment Infrastructure
@@ -56,6 +58,7 @@ inductive Mayan where
   deriving DecidableEq, Repr
 
 namespace Mayan
+
 
 open Agreement
 

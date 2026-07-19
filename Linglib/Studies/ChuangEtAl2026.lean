@@ -1,6 +1,7 @@
 import Linglib.Processing.Lexical.Discriminative.Defs
 import Linglib.Processing.Lexical.Discriminative.Normed
 
+
 /-!
 # Chuang, Bell, Tseng & Baayen (2026): Word-specific tonal realizations in Mandarin
 [chuang-bell-tseng-baayen-2026] [baayen-2019] [heitmeier-chuang-baayen-2026]
@@ -138,6 +139,7 @@ discrete-segmental and continuous-sub-segmental representations of
 -/
 
 namespace ChuangEtAl2026
+
 
 open Processing.Lexical.Discriminative
 

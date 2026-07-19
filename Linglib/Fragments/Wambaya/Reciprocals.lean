@@ -1,6 +1,8 @@
 import Linglib.Data.UD.Basic
 import Linglib.Syntax.Reciprocal
-import Linglib.Morphology.Word
+import Linglib.Morphology.Word.Basic
+
+open Morphology (Word)
 
 /-!
 # Wambaya Reciprocal Fragment
@@ -20,6 +22,7 @@ WALS Ch 106 classifies Wambaya as "identical to reflexive."
 -/
 
 namespace Wambaya.Reciprocals
+
 
 /-- -ngg- (RR) — reciprocal/reflexive bound morpheme in the auxiliary.
     The gloss value represents the morpheme; surface allomorphs vary

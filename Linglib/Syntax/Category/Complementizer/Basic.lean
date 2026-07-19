@@ -2,7 +2,9 @@ import Linglib.Data.UD.Basic
 import Linglib.Features.ClauseForm
 import Linglib.Features.Complementation
 import Linglib.Features.Formative
-import Linglib.Morphology.Word
+import Linglib.Morphology.Word.Basic
+
+open Morphology (Word)
 
 /-!
 # Complementizer
@@ -75,6 +77,7 @@ structure Complementizer where
   deriving Repr, BEq, DecidableEq
 
 namespace Complementizer
+
 
 /-- Bound (affixal): recorded attachment other than `.detached`. -/
 def IsBound (c : Complementizer) : Prop :=

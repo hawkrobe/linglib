@@ -1,5 +1,7 @@
 import Linglib.Syntax.Category.Complementizer.Basic
 
+open Morphology (Word)
+
 /-!
 # English Complementizers Lexicon Fragment
 
@@ -16,6 +18,7 @@ distinct preposition *to* and the infinitival particle *to* live in
 -/
 
 namespace English.Complementizers
+
 
 /-- An English complementizer entry: the root schema plus the
 English-specific flags. -/

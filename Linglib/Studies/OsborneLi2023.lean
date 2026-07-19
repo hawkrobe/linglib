@@ -2,8 +2,10 @@ import Linglib.Syntax.DependencyGrammar.Basic
 import Linglib.Data.UD.Basic
 import Linglib.Data.Examples.Schema
 import Linglib.Syntax.DependencyGrammar.Coordination
-import Linglib.Morphology.Word
+import Linglib.Morphology.Word.Basic
 import Linglib.Data.Examples.OsborneLi2023
+
+open Morphology (Word)
 
 /-!
 # CRDC: Conjunct Referential Dependency Constraint
@@ -99,6 +101,7 @@ output to `Judgment`. Both are out of scope for this study file.
 -/
 
 namespace OsborneLi2023
+
 
 open DepGrammar
 open DepGrammar.Coordination

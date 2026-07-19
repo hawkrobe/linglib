@@ -1,5 +1,6 @@
 import Linglib.Phonology.Tone.Basic
 
+
 /-!
 # Hyman 2006: Word-prosodic typology
 [hyman-2006]
@@ -45,6 +46,7 @@ Hyman's SA dimension.
 -/
 
 namespace Hyman2006
+
 
 open Tone
 

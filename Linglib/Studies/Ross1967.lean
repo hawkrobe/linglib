@@ -1,5 +1,7 @@
 import Linglib.Features.MinimalPairs
 
+open Morphology (Word wordsToString)
+
 open Features.MinimalPairs
 
 set_option autoImplicit false
@@ -81,6 +83,7 @@ inductive IslandSource where
   deriving Repr, DecidableEq
 
 namespace Ross1967
+
 
 -- ============================================================================
 -- §1. Lexical entries for example sentences

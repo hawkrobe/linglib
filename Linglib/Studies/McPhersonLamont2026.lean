@@ -428,7 +428,7 @@ end McPhersonLamont2026
 namespace Autosegmental
 
 open Tone (TBU TRN)
-open Morphology.WordStructure (Morpheme)
+open Morphology (Morpheme)
 
 /-- Embed a `tonalOverwrite` output into `FloatingForm`: one morpheme `m`, links `(i, i)`. -/
 def FloatingForm.ofTBUList {S : Type*} (host : List (TBU S)) (m : Morpheme) :

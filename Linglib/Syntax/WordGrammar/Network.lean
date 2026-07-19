@@ -3,6 +3,8 @@ import Linglib.Syntax.WordGrammar.Inheritance.Default
 import Linglib.Features.ClauseForm
 import Linglib.Syntax.DependencyGrammar.Basic
 
+open Morphology (Word)
+
 /-!
 # WG Network Integration
 
@@ -25,6 +27,7 @@ treatment of inversion as a word-class subtype rather than a movement rule.
 set_option autoImplicit false
 
 namespace WordGrammar
+
 
 open Features
 open WordGrammar.Inheritance

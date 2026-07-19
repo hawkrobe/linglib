@@ -2,6 +2,9 @@ import Linglib.Features.Deixis
 import Linglib.Syntax.Category.Pronoun.Basic
 import Linglib.Syntax.Category.Pronoun.Capabilities
 
+open Morphology (Word)
+
+
 /-!
 # Demonstrative pronouns — the genuinely deictic carrier
 [patel-grosz-grosz-2017] [moroney-2021]

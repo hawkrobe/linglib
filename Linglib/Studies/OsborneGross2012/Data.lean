@@ -4,6 +4,8 @@ import Linglib.Syntax.ConstructionGrammar.IdiomTypology
 import Linglib.Syntax.ConstructionGrammar.Licensing
 import Linglib.Studies.FillmoreKayOConnor1988
 
+open Morphology (Word)
+
 /-!
 # Osborne & Groß (2012): Constructions Are Catenae — Data
 
@@ -29,6 +31,7 @@ The paper demonstrates catenae across five construction types:
 -/
 
 namespace OsborneGross2012
+
 
 open DepGrammar
 

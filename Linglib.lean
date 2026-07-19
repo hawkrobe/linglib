@@ -1274,7 +1274,6 @@ import Linglib.Morphology.FragmentGrammars.FragmentGrammar
 import Linglib.Morphology.FragmentGrammars.FragmentLambda
 import Linglib.Morphology.FragmentGrammars.MultinomialPCFG
 import Linglib.Morphology.Morph
-import Linglib.Morphology.MorphWord
 import Linglib.Morphology.Morphotactics.RelevanceHierarchy
 import Linglib.Morphology.Morphotactics.Template
 import Linglib.Morphology.Nanosyntax.TreeSpellout
@@ -1290,7 +1289,8 @@ import Linglib.Morphology.Realization
 import Linglib.Morphology.Root.Basic
 import Linglib.Morphology.Root.Family
 import Linglib.Morphology.UsageBased.Network
-import Linglib.Morphology.Word
+import Linglib.Morphology.Word.Basic
+import Linglib.Morphology.Word.Structure
 import Linglib.Phonology.Autosegmental.AR
 import Linglib.Phonology.Autosegmental.Correspondence
 import Linglib.Phonology.Autosegmental.Factors
