@@ -20,11 +20,12 @@ with `toList_paradigmTree` proving that tree linearizes to the engine's form
 
 The `Action.expo` payload is an opaque `P → Z → Z`, so a rule knows its output
 but not its affix. `AffixAction` is the exponence-only refinement that carries the
-affix (`pre`/`suf`), interpreted into `Action` by `toAction`. Every emitted node
-is tagged `.inflectional`, so `stem_paradigmTree` reads inflection-hood off
-engine provenance rather than stipulating it ([spencer-2013]): the whole output is
-inflection above the chosen stem, and `Word.Tree.stem` ([booij-2012]) strips
-back to `.root (stemLeaf c)`. When the vocabulary is kind-coherent,
+affix (`pre`/`suf`), interpreted into `Action` by `toAction`. Inflection-hood is
+engine provenance rather than stipulation ([spencer-2013]): under any
+classification `infl` counting the vocabulary's material as inflectional,
+`stem_paradigmTree` shows the whole output is inflection above the chosen stem —
+`Word.Tree.stem` ([booij-2012]) strips back to `.root (stemLeaf c)`. When the
+vocabulary is kind-coherent,
 `paradigmTree_isKindCoherent` derives that the emitted tree is `IsKindCoherent`
 — the stipulate→derive companion of `stem_paradigmTree`.
 
@@ -121,14 +122,20 @@ def AffixAction.toAction : AffixAction M → Action (List M) P
   | .pre m => .const ([m] ++ ·)
   | .suf m => .const (· ++ [m])
 
-/-- Apply an affix action to a term tree, tagging the node `.inflectional`
-— inflection-hood by engine provenance ([spencer-2013]), not stipulation. -/
-def AffixAction.apply : AffixAction M → Word.Tree M → Word.Tree M
-  | .pre m, t => .prefixed m t .inflectional
-  | .suf m, t => .suffixed t m .inflectional
+/-- The affix an action attaches. -/
+def AffixAction.material : AffixAction M → M
+  | .pre m => m
+  | .suf m => m
 
-theorem AffixAction.apply_stem (a : AffixAction M) (t : Word.Tree M) :
-    (a.apply t).stem = t.stem := by cases a <;> rfl
+/-- Apply an affix action to a term tree. -/
+def AffixAction.apply : AffixAction M → Word.Tree M → Word.Tree M
+  | .pre m, t => .prefixed m t
+  | .suf m, t => .suffixed t m
+
+theorem AffixAction.apply_stem {infl : M → Bool} (a : AffixAction M)
+    (t : Word.Tree M) (h : infl a.material) :
+    (a.apply t).stem infl = t.stem infl := by
+  cases a <;> simp [apply, material] at h ⊢ <;> simp [Word.Tree.stem, h]
 
 /-! ### Vocabulary kind-coherence -/
 
@@ -215,32 +222,40 @@ theorem toList_paradigmTree (LindexZ : List M → L) (stemLeaf : L × P → M)
 
 /-! ### Inflection-hood by construction -/
 
+variable {infl : M → Bool}
+
 theorem stem_evalBlockTree (LindexZ : List M → L)
-    (b : List (Rule L P (AffixAction M))) (t : Word.Tree M) (σ : P) :
-    (evalBlockTree LindexZ b (t, σ)).stem = t.stem := by
+    (b : List (Rule L P (AffixAction M))) (hb : ∀ r ∈ b, infl r.payload.material)
+    (t : Word.Tree M) (σ : P) :
+    (evalBlockTree LindexZ b (t, σ)).stem infl = t.stem infl := by
   simp only [evalBlockTree]
-  cases selectMinimal b (LindexZ t.toList, σ) with
+  cases h : selectMinimal b (LindexZ t.toList, σ) with
   | none => rfl
-  | some r => exact AffixAction.apply_stem r.payload t
+  | some r => exact AffixAction.apply_stem r.payload t (hb r (selectMinimal_mem h))
 
 theorem stem_foldl_evalBlockTreeState (LindexZ : List M → L)
-    (blocks : List (List (Rule L P (AffixAction M)))) (t : Word.Tree M) (σ : P) :
-    (blocks.foldl (fun tσ b => evalBlockTreeState LindexZ b tσ) (t, σ)).1.stem = t.stem := by
+    (blocks : List (List (Rule L P (AffixAction M))))
+    (hbs : ∀ b ∈ blocks, ∀ r ∈ b, infl r.payload.material) (t : Word.Tree M) (σ : P) :
+    (blocks.foldl (fun tσ b => evalBlockTreeState LindexZ b tσ) (t, σ)).1.stem infl
+      = t.stem infl := by
   induction blocks generalizing t with
   | nil => rfl
   | cons b bs ih =>
     simp only [List.foldl_cons]
-    rw [show evalBlockTreeState LindexZ b (t, σ) = (evalBlockTree LindexZ b (t, σ), σ) from rfl, ih]
-    exact stem_evalBlockTree LindexZ b t σ
+    rw [show evalBlockTreeState LindexZ b (t, σ) = (evalBlockTree LindexZ b (t, σ), σ) from rfl,
+      ih (fun b hb => hbs b (List.mem_cons_of_mem _ hb))]
+    exact stem_evalBlockTree LindexZ b (hbs b (List.mem_cons_self ..)) t σ
 
-/-- **Inflection-hood by construction** ([spencer-2013], [booij-2012]): every node
-the cascade emits is `.inflectional`, so the emitted word's stem is exactly the
-chosen leaf — the engine's whole output is inflection above the stem. -/
+/-- **Inflection-hood by engine provenance** ([spencer-2013], [booij-2012]): under
+any classification counting the vocabulary's material as inflectional, the
+emitted word's stem is exactly the chosen leaf — the engine's whole output is
+inflection above the stem. -/
 theorem stem_paradigmTree (LindexZ : List M → L) (stemLeaf : L × P → M)
-    (blocks : List (List (Rule L P (AffixAction M)))) (c : L × P) :
-    (paradigmTree LindexZ stemLeaf blocks c).1.stem = .root (stemLeaf c) := by
+    (blocks : List (List (Rule L P (AffixAction M))))
+    (hbs : ∀ b ∈ blocks, ∀ r ∈ b, infl r.payload.material) (c : L × P) :
+    (paradigmTree LindexZ stemLeaf blocks c).1.stem infl = .root (stemLeaf c) := by
   rw [paradigmTree]
-  exact stem_foldl_evalBlockTreeState LindexZ blocks (.root (stemLeaf c)) c.2
+  exact stem_foldl_evalBlockTreeState LindexZ blocks hbs (.root (stemLeaf c)) c.2
 
 /-! ### Kind-coherence by construction -/
 

@@ -110,7 +110,6 @@ def negCircumfix (verbStem : String) : Word.Tree (Morph × String) :=
   .circumfixed (Morph.pref ay_n.form, ay_n.gloss)
     (.root (Morph.free verbStem, ""))
     (Morph.suff ay_n.suffix_, ay_n.gloss)
-    .inflectional
 
 /-- The negative circumfix surfaces correctly. -/
 theorem neg_circumfix_example :

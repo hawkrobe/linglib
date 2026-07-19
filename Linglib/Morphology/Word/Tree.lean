@@ -42,7 +42,7 @@ how morphology built it.
 
 namespace Morphology.Word
 
-/-! ### The operation indices -/
+/-! ### The reduplication index -/
 
 /-- The type of a reduplication step. -/
 inductive Tree.RedupType where
@@ -53,13 +53,6 @@ inductive Tree.RedupType where
   | partialCopy
   deriving DecidableEq, Repr
 
-/-- Whether an affixation step is inflectional or derivational — the tag
-that makes stems (inflection stripped) computable from the tree. -/
-inductive Tree.AffixKind where
-  | inflectional
-  | derivational
-  deriving DecidableEq, Repr
-
 /-! ### The tree -/
 
 /-- A tree of word-formation operations over material in `M`. -/
@@ -67,14 +60,13 @@ inductive Tree (M : Type*) where
   /-- A leaf, carrying a single element. -/
   | root : M → Tree M
   /-- Attach an affix before the base. -/
-  | prefixed : M → Tree M → optParam Tree.AffixKind .derivational → Tree M
+  | prefixed : M → Tree M → Tree M
   /-- Attach an affix after the base. -/
-  | suffixed : Tree M → M → optParam Tree.AffixKind .derivational → Tree M
+  | suffixed : Tree M → M → Tree M
   /-- Insert an affix within the base (Khmu *s⟨m⟩ka:t* "roughen"). -/
-  | infixed : Tree M → M → optParam Tree.AffixKind .derivational → Tree M
+  | infixed : Tree M → M → Tree M
   /-- Wrap the base with a prefix and a suffix (German *Ge-sing-e* "singing"). -/
-  | circumfixed : M → Tree M → M → optParam Tree.AffixKind .derivational →
-      Tree M
+  | circumfixed : M → Tree M → M → Tree M
   /-- Join two stems (*bottle* + *factory*). -/
   | compound : Tree M → Tree M → Tree M
   /-- Total or partial reduplication. -/
@@ -95,10 +87,10 @@ concatenative structure; an infix is appended after its base's material
 copies contribute nothing. -/
 def toList : Tree M → List M
   | .root m => [m]
-  | .prefixed afx base _ => afx :: base.toList
-  | .suffixed base afx _ => base.toList ++ [afx]
-  | .infixed base afx _ => base.toList ++ [afx]
-  | .circumfixed pre base suf _ => pre :: base.toList ++ [suf]
+  | .prefixed afx base => afx :: base.toList
+  | .suffixed base afx => base.toList ++ [afx]
+  | .infixed base afx => base.toList ++ [afx]
+  | .circumfixed pre base suf => pre :: base.toList ++ [suf]
   | .compound left right => left.toList ++ right.toList
   | .reduplicated _ base => base.toList
   | .converted base => base.toList
@@ -106,10 +98,10 @@ def toList : Tree M → List M
 /-- Relabel the material of the tree, keeping its shape. -/
 def map {N : Type*} (f : M → N) : Tree M → Tree N
   | .root m => .root (f m)
-  | .prefixed afx base k => .prefixed (f afx) (base.map f) k
-  | .suffixed base afx k => .suffixed (base.map f) (f afx) k
-  | .infixed base afx k => .infixed (base.map f) (f afx) k
-  | .circumfixed pre base suf k => .circumfixed (f pre) (base.map f) (f suf) k
+  | .prefixed afx base => .prefixed (f afx) (base.map f)
+  | .suffixed base afx => .suffixed (base.map f) (f afx)
+  | .infixed base afx => .infixed (base.map f) (f afx)
+  | .circumfixed pre base suf => .circumfixed (f pre) (base.map f) (f suf)
   | .compound left right => .compound (left.map f) (right.map f)
   | .reduplicated rt base => .reduplicated rt (base.map f)
   | .converted base => .converted (base.map f)
@@ -120,8 +112,8 @@ and process morphology are constructions, not material sequences.
 Conversion adds no material and projects through. -/
 def toSequence? : Tree M → Option (List M)
   | .root m => some [m]
-  | .prefixed afx b _ => (b.toSequence?).map (afx :: ·)
-  | .suffixed b afx _ => (b.toSequence?).map (· ++ [afx])
+  | .prefixed afx b => (b.toSequence?).map (afx :: ·)
+  | .suffixed b afx => (b.toSequence?).map (· ++ [afx])
   | .compound l r => do pure ((← l.toSequence?) ++ (← r.toSequence?))
   | .converted b => b.toSequence?
   | .infixed .. => none
@@ -130,18 +122,18 @@ def toSequence? : Tree M → Option (List M)
 
 /-- The projection is total exactly on the concatenative fragment: a
 circumfixed word has no material-sequence projection. -/
-theorem toSequence?_circumfixed (pre suf : M) (b : Tree M)
-    (k : AffixKind) : (circumfixed pre b suf k).toSequence? = none := rfl
+theorem toSequence?_circumfixed (pre suf : M) (b : Tree M) :
+    (circumfixed pre b suf).toSequence? = none := rfl
 
 /-! ### Structural measures -/
 
 /-- Morphological depth: the number of operations above the deepest root. -/
 def depth : Tree M → Nat
   | .root _ => 0
-  | .prefixed _ base _ => 1 + base.depth
-  | .suffixed base _ _ => 1 + base.depth
-  | .infixed base _ _ => 1 + base.depth
-  | .circumfixed _ base _ _ => 1 + base.depth
+  | .prefixed _ base => 1 + base.depth
+  | .suffixed base _ => 1 + base.depth
+  | .infixed base _ => 1 + base.depth
+  | .circumfixed _ base _ => 1 + base.depth
   | .compound l r => 1 + max l.depth r.depth
   | .reduplicated _ base => 1 + base.depth
   | .converted base => 1 + base.depth
@@ -161,46 +153,49 @@ affixation, reduplication, and conversion; `none` for a bare root and
 for compounds (which have two constituents, not a base). -/
 def base : Tree M → Option (Tree M)
   | .root _ => none
-  | .prefixed _ b _ => some b
-  | .suffixed b _ _ => some b
-  | .infixed b _ _ => some b
-  | .circumfixed _ b _ _ => some b
+  | .prefixed _ b => some b
+  | .suffixed b _ => some b
+  | .infixed b _ => some b
+  | .circumfixed _ b _ => some b
   | .compound _ _ => none
   | .reduplicated _ b => some b
   | .converted b => some b
 
-/-- The stem: the tree with outer *inflectional* affixation stripped.
-Derivational structure, compounding, reduplication, and conversion are
-part of the stem. -/
-def stem : Tree M → Tree M
-  | .prefixed _ b .inflectional => b.stem
-  | .suffixed b _ .inflectional => b.stem
-  | .infixed b _ .inflectional => b.stem
-  | .circumfixed _ b _ .inflectional => b.stem
+/-- The stem relative to a classification `infl` of the inflectional
+material: the tree with outer affixation by `infl`-material stripped.
+Compounding, reduplication, and conversion are part of the stem. -/
+def stem (infl : M → Bool) : Tree M → Tree M
+  | .prefixed a b => if infl a then b.stem infl else .prefixed a b
+  | .suffixed b a => if infl a then b.stem infl else .suffixed b a
+  | .infixed b a => if infl a then b.stem infl else .infixed b a
+  | .circumfixed pre b suf =>
+      if infl pre && infl suf then b.stem infl else .circumfixed pre b suf
   | w => w
 
 /-- The root morphs: the leaves of the tree. A simplex word has one;
 a compound has one per constituent. -/
 def roots : Tree M → List M
   | .root m => [m]
-  | .prefixed _ b _ => b.roots
-  | .suffixed b _ _ => b.roots
-  | .infixed b _ _ => b.roots
-  | .circumfixed _ b _ _ => b.roots
+  | .prefixed _ b => b.roots
+  | .suffixed b _ => b.roots
+  | .infixed b _ => b.roots
+  | .circumfixed _ b _ => b.roots
   | .compound l r => l.roots ++ r.roots
   | .reduplicated _ b => b.roots
   | .converted b => b.roots
 
-/-- A word with no inflection is its own stem. -/
-theorem stem_root (m : M) : (root m).stem = root m := rfl
+variable {infl : M → Bool}
 
-/-- Stripping inflection strips through stacked inflectional suffixes. -/
-theorem stem_suffixed_infl (b : Tree M) (afx : M) :
-    (suffixed b afx .inflectional).stem = b.stem := rfl
+/-- A bare root is its own stem. -/
+theorem stem_root (m : M) : (root m).stem infl = root m := rfl
 
-/-- Derivational affixation is stem-internal. -/
-theorem stem_suffixed_deriv (b : Tree M) (afx : M) :
-    (suffixed b afx .derivational).stem = suffixed b afx .derivational := rfl
+/-- Stripping strips through stacked inflectional suffixes. -/
+theorem stem_suffixed_of_infl {afx : M} (b : Tree M) (h : infl afx) :
+    (suffixed b afx).stem infl = b.stem infl := by simp [stem, h]
+
+/-- Non-inflectional affixation is stem-internal. -/
+theorem stem_suffixed_of_not_infl {afx : M} (b : Tree M) (h : ¬ infl afx) :
+    (suffixed b afx).stem infl = suffixed b afx := by simp [stem, h]
 
 /-! ### Kind coherence
 
@@ -217,10 +212,10 @@ a segmental-only carrier — it cannot express infixal attachment, and
 compounding joins stems. -/
 def IsKindCoherent : Tree Morph → Prop
   | .root m => m.kind = .root ∨ m.kind = .free
-  | .prefixed m b _ => m.side? = some .before ∧ b.IsKindCoherent
-  | .suffixed b m _ => m.side? = some .after ∧ b.IsKindCoherent
-  | .infixed b _ _ => b.IsKindCoherent
-  | .circumfixed pre b suf _ =>
+  | .prefixed m b => m.side? = some .before ∧ b.IsKindCoherent
+  | .suffixed b m => m.side? = some .after ∧ b.IsKindCoherent
+  | .infixed b _ => b.IsKindCoherent
+  | .circumfixed pre b suf =>
       pre.side? = some .before ∧ suf.side? = some .after ∧ b.IsKindCoherent
   | .compound l r => l.IsKindCoherent ∧ r.IsKindCoherent
   | .reduplicated _ b => b.IsKindCoherent
@@ -228,14 +223,14 @@ def IsKindCoherent : Tree Morph → Prop
 
 instance decIsKindCoherent : (t : Tree Morph) → Decidable t.IsKindCoherent
   | .root m => inferInstanceAs (Decidable (m.kind = .root ∨ m.kind = .free))
-  | .prefixed m b _ =>
+  | .prefixed m b =>
       have := decIsKindCoherent b
       inferInstanceAs (Decidable (m.side? = some .before ∧ IsKindCoherent b))
-  | .suffixed b m _ =>
+  | .suffixed b m =>
       have := decIsKindCoherent b
       inferInstanceAs (Decidable (m.side? = some .after ∧ IsKindCoherent b))
-  | .infixed b _ _ => decIsKindCoherent b
-  | .circumfixed pre b suf _ =>
+  | .infixed b _ => decIsKindCoherent b
+  | .circumfixed pre b suf =>
       have := decIsKindCoherent b
       inferInstanceAs
         (Decidable (pre.side? = some .before ∧ suf.side? = some .after ∧ IsKindCoherent b))
