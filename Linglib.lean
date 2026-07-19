@@ -1273,8 +1273,6 @@ import Linglib.Morphology.FragmentGrammars.DMPCFG
 import Linglib.Morphology.FragmentGrammars.FragmentGrammar
 import Linglib.Morphology.FragmentGrammars.FragmentLambda
 import Linglib.Morphology.FragmentGrammars.MultinomialPCFG
-import Linglib.Morphology.Grammaticalization
-import Linglib.Morphology.InflectionRules
 import Linglib.Morphology.Morph
 import Linglib.Morphology.MorphWord
 import Linglib.Morphology.Nanosyntax.TreeSpellout

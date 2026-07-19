@@ -1,19 +1,21 @@
-import Linglib.Morphology.InflectionRules
 import Linglib.Fragments.English.Tense
 import Linglib.Semantics.Tense.Evidential
 
 /-!
 # [lakoff-1970]: Tense and Its Relation to Participants
-[lakoff-1970] [cumming-2026]
+[lakoff-1970]
 
 [lakoff-1970] argues that tense selection is sensitive to speaker/hearer
 epistemic states, not just temporal ordering: past tense can apply to a
 present-time event that has lost psychological **salience** ("The animal
 you saw WAS a chipmunk" — it still is one), and embedded present survives
 a past matrix when the content is **novel** to the hearer. The
-`TensePerspective` frame extends [cumming-2026]'s `EvidentialFrame` with
-these two participant dimensions; the paper's acceptability judgments
-are collected as `TenseJudgment` data.
+`TensePerspective` frame extends the evidential-tense substrate's
+`EvidentialFrame` (`Semantics/Tense/Evidential.lean`) with these two
+participant dimensions; the paper's acceptability judgments are
+collected as `TenseJudgment` data, and the paper's synthetic vs
+periphrastic form contrast (`TenseFormType`) with its English exemplar
+entries lives here as study-local apparatus.
 
 ## Key Minimal Pairs
 
@@ -30,7 +32,13 @@ are collected as `TenseJudgment` data.
 
 namespace Lakoff1970
 
-open Morphology.Tense
+/-- Morphological form type of a tense: synthetic (inflectional: *walked*)
+    vs periphrastic (auxiliary-based: *used to walk*). Lakoff §1's
+    licensing contrast: only synthetic forms permit false tense. -/
+inductive TenseFormType where
+  | synthetic
+  | periphrastic
+  deriving DecidableEq, Repr, BEq
 
 /-- Acceptability judgment for a tense example. -/
 inductive Acceptability where
@@ -209,10 +217,10 @@ theorem false_periphrastic_ungrammatical :
 open Tense.Evidential
 open Tense
 
-/-- Lakoff's participant-sensitive tense frame. Extends [cumming-2026]'s
+/-- Lakoff's participant-sensitive tense frame. Extends the substrate's
     `EvidentialFrame` (which extends `ReichenbachFrame` with acquisition
     time A) with two psychological dimensions. Lakoff's observations are
-    orthogonal to Cumming's evidential constraint: "false past" arises
+    orthogonal to the evidential constraint: "false past" arises
     even when evidence is downstream (the chipmunk is still there, so
     T ≤ A holds) because the event has lost psychological salience. -/
 structure TensePerspective (Time : Type*) extends EvidentialFrame Time where
@@ -229,7 +237,7 @@ variable {Time : Type*}
     Past example: "The animal you saw WAS a chipmunk" (it still IS one).
     Future example: "That thing WILL be a chipmunk" (it already IS one).
     The licensing condition is the same for both; the surface-form
-    divergence is recorded in the Fragment entries (`formType`). -/
+    divergence is recorded in the perspective entries (`formType`). -/
 def falsePast (f : TensePerspective Time) : Prop :=
   f.eventTime = f.speechTime ∧ ¬(f.speakerSalience = true)
 
@@ -264,7 +272,6 @@ def classifyUse [LinearOrder Time] (gramTense : Finset Ordering)
     (f : TensePerspective Time) : TenseUseType :=
   if Core.Order.holds gramTense f.eventTime f.speechTime then .trueTense else .falseTense
 
-open Morphology.Tense in
 /-- **Periphrastic forms block false tense** (Lakoff §1, ex. 8a vs 9a):
     a false tense use demands a synthetic form; true tense is compatible
     with any form. -/
@@ -272,11 +279,68 @@ def FalseTenseLicensed (use : TenseUseType) (form : TenseFormType) : Prop :=
   use = .falseTense → form = .synthetic
 
 -- ════════════════════════════════════════════════════
--- § 8. Bridge: Fragment and Theory Connections
+-- § 8. English perspective entries
 -- ════════════════════════════════════════════════════
 
-open English.Tense
-open Morphology.Tense
+open English.Tense in
+/-- A tense paradigm entry enriched with Lakoff's perspective dimensions:
+    grammatical tense and morphological form type (synthetic vs
+    periphrastic). Study-local: the classification is this paper's
+    analytical frame over the Fragment's `TAMEEntry` data. -/
+structure TensePerspectiveEntry extends TAMEEntry where
+  /-- The grammatical tense this form realizes -/
+  gramTense : Finset Ordering
+  /-- Synthetic (inflectional) or periphrastic (auxiliary-based) -/
+  formType : TenseFormType
+
+/-- Does this form allow false-tense interpretations?
+    Derived from `formType`: only synthetic forms can. -/
+def TensePerspectiveEntry.allowsFalseTense (e : TensePerspectiveEntry) : Bool :=
+  e.formType == .synthetic
+
+/-- English simple past with perspective: synthetic, allows false past. -/
+def simplePastPerspective : TensePerspectiveEntry where
+  label := "simple past"
+  ep := .downstream
+  up := .past
+  gramTense := _root_.Tense.past
+  formType := .synthetic
+
+/-- English simple present with perspective: synthetic, allows false uses. -/
+def simplePresentPerspective : TensePerspectiveEntry where
+  label := "simple present"
+  ep := .downstream
+  up := .present
+  gramTense := _root_.Tense.present
+  formType := .synthetic
+
+/-- English periphrastic past "used to V": cannot express false past. -/
+def usedTo : TensePerspectiveEntry where
+  label := "used to"
+  ep := .downstream
+  up := .past
+  gramTense := _root_.Tense.past
+  formType := .periphrastic
+
+/-- English periphrastic future "going to V": cannot express false future. -/
+def goingTo : TensePerspectiveEntry where
+  label := "going to"
+  ep := .unconstrained
+  up := .future
+  gramTense := _root_.Tense.future
+  formType := .periphrastic
+
+/-- Synthetic entries allow false tense. -/
+theorem simplePast_allows_false : simplePastPerspective.allowsFalseTense = true := rfl
+theorem simplePresent_allows_false : simplePresentPerspective.allowsFalseTense = true := rfl
+
+/-- Periphrastic entries block false tense. -/
+theorem usedTo_blocks_false : usedTo.allowsFalseTense = false := rfl
+theorem goingTo_blocks_false : goingTo.allowsFalseTense = false := rfl
+
+-- ════════════════════════════════════════════════════
+-- § 9. Bridge: Data and Theory Connections
+-- ════════════════════════════════════════════════════
 
 theorem ex4a_formType :
     ex4a.formType = simplePastPerspective.formType := rfl
@@ -309,8 +373,8 @@ theorem false_past_is_temporally_present (f : TensePerspective Time)
     f.eventTime = f.speechTime :=
   h.1
 
-/-- When `falsePast` holds, the UP present-tense constraint (T = S) of
-    [cumming-2026]'s `UPCondition.present` is satisfied. -/
+/-- When `falsePast` holds, the evidential substrate's present-tense UP
+    constraint (T = S, `UPCondition.present`) is satisfied. -/
 theorem false_past_satisfies_up_present (f : TensePerspective ℤ)
     (h : falsePast f) :
     UPCondition.present.toConstraint f.toEvidentialFrame :=

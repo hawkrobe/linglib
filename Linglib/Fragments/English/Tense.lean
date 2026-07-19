@@ -1,5 +1,4 @@
 import Linglib.Semantics.Tense.Evidential
-import Linglib.Morphology.InflectionRules
 import Linglib.Semantics.Tense.SOT.Decomposition
 
 /-!
@@ -20,12 +19,6 @@ constraints via `EPCondition` and `UPCondition` enums.
 | will have V-ed    | A < T         | S < T         | no         |
 | will now be V-ing | A < T         | T = S         | no         |
 | will (bare)       | (none)        | S < T         | no         |
-
-## Lakoff Perspective Entries (§4)
-
-`TensePerspectiveEntry` extends `TAMEEntry` with the morphological form
-type (synthetic vs periphrastic) and grammatical tense, connecting Cumming's
-evidential constraints to Lakoff's false-tense diagnostic.
 
 -/
 
@@ -93,72 +86,6 @@ def nonfutureEntries : List TAMEEntry :=
   allEntries.filter (decide ·.IsNonfuture)
 
 -- ════════════════════════════════════════════════════
--- § 4. Tense Perspective Entries ([lakoff-1970])
--- ════════════════════════════════════════════════════
-
-open _root_.Tense
-open Morphology.Tense
-
-/-- A tense paradigm entry enriched with Lakoff's perspective dimensions:
-    grammatical tense and morphological form type (synthetic vs periphrastic).
-
-    `allowsFalseTense` is derived: only synthetic forms permit false tense. -/
-structure TensePerspectiveEntry extends TAMEEntry where
-  /-- The grammatical tense this form realizes -/
-  gramTense : Finset Ordering
-  /-- Synthetic (inflectional) or periphrastic (auxiliary-based) -/
-  formType : TenseFormType
-
-/-- Does this form allow false-tense interpretations?
-    Derived from `formType`: only synthetic forms can. -/
-def TensePerspectiveEntry.allowsFalseTense (e : TensePerspectiveEntry) : Bool :=
-  e.formType == .synthetic
-
-/-- English simple past with perspective: synthetic, allows false past. -/
-def simplePastPerspective : TensePerspectiveEntry where
-  label := "simple past"
-  ep := .downstream
-  up := .past
-  gramTense := _root_.Tense.past
-  formType := .synthetic
-
-/-- English simple present with perspective: synthetic, allows false uses. -/
-def simplePresentPerspective : TensePerspectiveEntry where
-  label := "simple present"
-  ep := .downstream
-  up := .present
-  gramTense := _root_.Tense.present
-  formType := .synthetic
-
-/-- English periphrastic past "used to V": cannot express false past. -/
-def usedTo : TensePerspectiveEntry where
-  label := "used to"
-  ep := .downstream
-  up := .past
-  gramTense := _root_.Tense.past
-  formType := .periphrastic
-
-/-- English periphrastic future "going to V": cannot express false future. -/
-def goingTo : TensePerspectiveEntry where
-  label := "going to"
-  ep := .unconstrained
-  up := .future
-  gramTense := _root_.Tense.future
-  formType := .periphrastic
-
--- ════════════════════════════════════════════════════
--- § 5. Perspective Entry Verification
--- ════════════════════════════════════════════════════
-
-/-- Synthetic entries allow false tense. -/
-theorem simplePast_allows_false : simplePastPerspective.allowsFalseTense = true := rfl
-theorem simplePresent_allows_false : simplePresentPerspective.allowsFalseTense = true := rfl
-
-/-- Periphrastic entries block false tense. -/
-theorem usedTo_blocks_false : usedTo.allowsFalseTense = false := rfl
-theorem goingTo_blocks_false : goingTo.allowsFalseTense = false := rfl
-
--- ════════════════════════════════════════════════════
 -- § 6. Kratzer Decomposition ([kratzer-1998])
 -- ════════════════════════════════════════════════════
 
@@ -198,12 +125,5 @@ theorem simplePast_presentPerfect_same_decomposition :
     kratzerSimplePast.tensePronoun = kratzerPresentPerfect.tensePronoun ∧
     kratzerSimplePast.hasPerfect = kratzerPresentPerfect.hasPerfect :=
   ⟨rfl, rfl⟩
-
-/-- The Lakoff `gramTense =.past` records the surface morphology;
-    the Kratzer `constraint =.present` records the underlying tense head.
-    These are DIFFERENT for English simple past — that's Kratzer's point. -/
-theorem lakoff_kratzer_diverge :
-    simplePastPerspective.gramTense = _root_.Tense.past ∧
-    kratzerSimplePast.tensePronoun.constraint = _root_.Tense.present := ⟨rfl, rfl⟩
 
 end English.Tense
