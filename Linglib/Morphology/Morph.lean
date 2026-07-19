@@ -13,8 +13,8 @@ empty exponent, and a discontinuous realization is a multi-morph exponent.
 
 ## Main declarations
 
-* `Morph`, `Morph.Kind` — a segmental form with its attachment kind,
-  factored as side × attachment for bound morphs
+* `Morph` — a segmental form with its attachment kind, factored as
+  side × attachment for bound morphs
 * `Exponent` — a sequence of morphs; `[]` is zero exponence
 * the `ToString Morph` instance, `Exponent.toString` — descriptive-notation display
   (`X-`, `-X`, `X=`, `=X`; `∅` for zero exponence)
@@ -31,10 +31,6 @@ cell whose sole marker is a process (North Saami gradation-only genitives,
 (apophony, reduplication, tone, subtraction) is a process, not a form, and
 is out of scope here: `Word.Structure` covers reduplication and conversion,
 the autosegmental machinery covers tone.
-
-Boundary notation (`X-`, `-X`, `X=`, `=X`) is display, not data: `Morph.form`
-is bare segmental material, and the `ToString` instance reproduces the
-descriptive convention from `Morph.Kind`.
 -/
 
 namespace Morphology
@@ -116,7 +112,7 @@ abbrev Exponent := List Morph
 /-- Descriptive notation for an exponent: `∅` if empty, parts linked by `…`. -/
 def Exponent.toString : Exponent → String
   | [] => "∅"
-  | ms => String.intercalate "…" (ms.map toString)
+  | ms => String.intercalate "…" (ms.map ToString.toString)
 
 /-- The class of the following segment: the commonest phonological
 environment conditioning the choice among a morph's variant shapes
