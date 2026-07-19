@@ -2041,6 +2041,7 @@ import Linglib.Studies.Chierchia2013
 import Linglib.Studies.Chomsky1981
 import Linglib.Studies.Chomsky1995
 import Linglib.Studies.ChowErlewine2022
+import Linglib.Studies.ChristopoulosZompi2023
 import Linglib.Studies.ChuangEtAl2026
 import Linglib.Studies.ChungMascarenhas2024
 import Linglib.Studies.Ciardelli2022
