@@ -7,26 +7,17 @@ import Linglib.Morphology.Morph
 
 /-!
 # Word-internal structure
-[hayes-2009] [booij-2012]
 
-Hierarchical representation of word-internal structure via the
-`Word.Structure` inductive type: a tree of morphemes where affixation,
-compounding, reduplication, and conversion are structural operations —
-the item-and-arrangement tree-of-morphemes lineage ([anderson-2015]
-pp. 28-29), with `reduplicated`/`converted` as process-constructor
-exceptions. Affixation constructors carry an `AffixKind` tag
-(inflectional vs derivational), which is what makes [booij-2012]'s
-relational notions computable as accessors: `base` (the immediate
-daughter), `stem` (the tree with outer inflectional affixation
-stripped), and `roots` (the leaf morphemes). The partial fold
-`toExponent` projects concatenative structure to a `Morph` sequence and
-is undefined on infixation, circumfixation, and reduplication — the
-partiality is [haspelmath-2020]'s thesis that discontinuous and
-process morphology are constructions, not morphs.
+A `Word.Structure` is a tree of morphemes whose constructors are the
+morphological operations: affixation, compounding, reduplication, and
+conversion ([hayes-2009]). Affixation carries an `AffixKind` tag, which
+makes [booij-2012]'s relational notions computable as the accessors
+`base`, `stem`, and `roots`. The partial fold `toExponent` projects
+concatenative structure to a `Morph` sequence.
 
-The token type (`Morphology.Word`, `Word/Basic.lean`) and this tree are
-deliberately separate: the token is what syntax sees, the tree is how
-morphology built it.
+The token type (`Morphology.Word`, `Word/Basic.lean`) is deliberately
+separate: the token is what syntax sees, the tree is how morphology
+built it.
 -/
 
 namespace Morphology
