@@ -164,7 +164,7 @@ private def cellBundle (c : Agreement.Cell) : FeatureBundle :=
 def setAVocab : Vocabulary :=
   makePersonVocab Agreement.Cell.pnCells Agreement.Cell.toPhiFeatures
     (fun c => (((setAExponent .consonant).realize c).map
-      Morphology.Exponent.toString).getD "") (some .v)
+      toString).getD "") (some .v)
 
 /-- Set B as DM Vocabulary entries, contextualized to Infl/T: specific
     entries for the five overt cells, plus the Elsewhere ∅ entry
@@ -174,7 +174,7 @@ def setBVocab : Vocabulary :=
   makePersonVocab (Agreement.Cell.pnCells.filter (· != .pn .third .Sing))
     Agreement.Cell.toPhiFeatures
     (fun c => ((setBExponent.realize c).map
-      Morphology.Exponent.toString).getD "") (some .T) ++
+      toString).getD "") (some .T) ++
   [{ features := ⊥, exponent := "∅", context := some .T }]
 
 /-- Vocabulary insertion recovers the fragment's paradigms: spelling
@@ -184,9 +184,9 @@ def setBVocab : Vocabulary :=
 theorem spellout_matches_paradigm :
     ∀ c ∈ Agreement.Cell.pnCells,
       spellout setAVocab (cellBundle c) (some .v) =
-        ((setAExponent .consonant).realize c).map Morphology.Exponent.toString ∧
+        ((setAExponent .consonant).realize c).map toString ∧
       spellout setBVocab (cellBundle c) (some .T) =
-        (setBExponent.realize c).map Morphology.Exponent.toString := by
+        (setBExponent.realize c).map toString := by
   decide
 
 /-! ### Two-probe relativized probing ([bejar-rezac-2003], applied per §4.4) -/
@@ -277,7 +277,7 @@ def afAgreementTarget (subj obj : Agreement.Cell) : Option Agreement.Cell :=
 def afMarker (subj obj : Agreement.Cell) : Option String :=
   if PLC Prod.snd ([(.A, subj), (.P, obj)] : List (ArgPosition × Agreement.Cell)) then
     ((afAgreementTarget subj obj).bind
-      (fun t => (setBExponent.realize t).map Morphology.Exponent.toString)) <|>
+      (fun t => (setBExponent.realize t).map toString)) <|>
       spellout setBVocab ⊥ (some .T)
   else none
 

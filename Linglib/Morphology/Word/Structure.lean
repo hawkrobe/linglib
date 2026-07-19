@@ -302,12 +302,12 @@ theorem Word.Structure.stem_suffixed_deriv (b : Word.Structure) (afx : Morpheme)
 -- ============================================================================
 
 /-- Project concatenative word structure to its `Morph` sequence
-(`Exponent`). **Partial**: `none` on infixation, circumfixation, and
+(a `Morph` list). **Partial**: `none` on infixation, circumfixation, and
 reduplication — [haspelmath-2020]'s thesis that morphs are continuous
 and segmental, so discontinuous and process morphology are
 constructions, not morph sequences. Conversion is morph-vacuous and
 projects through. -/
-def Word.Structure.toExponent : Word.Structure → Option Exponent
+def Word.Structure.toExponent : Word.Structure → Option (List Morph)
   | .root m => some [m.morph]
   | .prefixed afx b _ => (b.toExponent).map (afx.morph :: ·)
   | .suffixed b afx _ => (b.toExponent).map (· ++ [afx.morph])

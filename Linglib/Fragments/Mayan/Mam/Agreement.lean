@@ -106,7 +106,7 @@ def setBSpecificCells : List Cell :=
 
 /-- The Elsewhere Set B marker, surfacing in transitives when Infl's
     probe is blocked and for 2/3SG intransitive S. -/
-def defaultSetB : Morphology.Exponent := [.procl "tz'"]
+def defaultSetB : List Morphology.Morph := [.procl "tz'"]
 
 /-! ### Argument positions and agreement status -/
 

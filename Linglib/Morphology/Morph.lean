@@ -7,27 +7,17 @@ import Mathlib.Data.Fintype.Sum
 
 A **morph** is a minimal segmental form together with its attachment kind:
 root, prefix, suffix, proclitic, enclitic, or free form ([haspelmath-2020]).
-An **exponent** is a possibly empty sequence of morphs realizing a paradigm
-cell. Morphs are never zero and never discontinuous: zero exponence is the
-empty exponent, and a discontinuous realization is a multi-morph exponent.
-
-## Main declarations
-
-* `Morph` — a segmental form with its attachment kind, factored as
-  side × attachment for bound morphs
-* `Exponent` — a sequence of morphs; `[]` is zero exponence
+Morphs are never zero and never discontinuous.
 
 ## Implementation notes
 
 [haspelmath-2020] defines a morph as a minimal pairing of content with a
 continuous string of segments; the carrier stores only the form side, so
 empty and superfluous morphs (Cree connective *-t-*, [anderson-2015] p. 19)
-remain representable. `[]` means *no segmental exponent*, not *unmarked*: a
-cell whose sole marker is a process (North Saami gradation-only genitives,
-[anderson-2015] p. 22) also renders as `[]`. Nonconcatenative exponence
-(apophony, reduplication, tone, subtraction) is a process, not a form, and
-is out of scope here: `Word.Structure` covers reduplication and conversion,
-the autosegmental machinery covers tone.
+remain representable. Nonconcatenative exponence (apophony, reduplication,
+tone, subtraction) is a process, not a form, and is out of scope here:
+`Word.Structure` covers reduplication and conversion, the autosegmental
+machinery covers tone.
 -/
 
 namespace Morphology
@@ -101,10 +91,7 @@ instance : ToString Morph :=
 
 end Morph
 
-/-- An **exponent** is the sequence of morphs realizing a paradigm cell. -/
-abbrev Exponent := List Morph
-
-instance : ToString Exponent :=
+instance : ToString (List Morph) :=
   ⟨fun
     | [] => "∅"
     | ms => String.intercalate "…" (ms.map toString)⟩

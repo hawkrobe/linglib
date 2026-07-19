@@ -353,14 +353,16 @@ def VerbForm.agreementSlots (f : VerbForm) : Nat :=
 
 /-- An exponent table: a descriptive agreement paradigm over canonical φ-cells
     (`Agreement.Cell`), mapping each person/number cell to its
-    `Morphology.Exponent` — a possibly empty sequence of `Morphology.Morph`s.
+    `List Morphology.Morph` — a possibly empty sequence of `Morphology.Morph`s.
     Zero exponence is `[]`; a discontinuous realization (person marker plus a
     separate plural word, e.g. Q'anjob'al *s-…heb'*) is a two-morph exponent.
-    Per-language `setAExponent`/`setBExponent` populate this; cross-Mayan
-    typology theorems quantify over it. Tables with pre-consonantal vs
-    pre-vocalic variant shapes are `Phonology.Segment.Class → ExponentTable`
-    functions, with `.consonant` the citation point. -/
-abbrev ExponentTable := Agreement.Paradigm Morphology.Exponent
+    `[]` means *no segmental exponent*, not *unmarked*: a cell whose sole
+    marker is a process also renders as `[]`. Per-language
+    `setAExponent`/`setBExponent` populate this; cross-Mayan typology
+    theorems quantify over it. Tables with pre-consonantal vs pre-vocalic
+    variant shapes are `Phonology.Segment.Class → ExponentTable` functions,
+    with `.consonant` the citation point. -/
+abbrev ExponentTable := Agreement.Paradigm (List Morphology.Morph)
 
 /-- Decidable predicate: the third-person singular Set B slot has zero
     exponence. An invariant of the standard Mayan branches per
