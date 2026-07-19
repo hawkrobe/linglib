@@ -1,8 +1,6 @@
 import Linglib.Features.Case.Basic
 import Linglib.Features.Case.Grammaticalization
-import Linglib.Morphology.Case.Allomorphy
 import Linglib.Syntax.Case.Order
-open Morphology.Case.Allomorphy
 
 /-!
 # Finnish Case Inventory [blake-1994]
@@ -75,14 +73,6 @@ theorem allative_extends_to_dative :
 -- § 2: Syncretism
 -- ============================================================================
 
-/-- Finnish NOM/ACC syncretism: the accusative of non-pronominal singular
-    nouns is identical to the nominative.
-    Uses the cross-linguistic pattern from `Morphology.Case.Allomorphy`. -/
-def finnishNomAccSync : Syncretism := nomAccSyncretism
-
-/-- Finnish ABL/INST are not syncretic — ablative (-ltA) and instructive
-    (-n) are distinct forms. Unlike many IE languages where ABL and INST
-    merge, Finnish keeps them separate. -/
 theorem abl_inst_distinct :
     Case.HierarchyAdjacent .abl .inst := by decide
 

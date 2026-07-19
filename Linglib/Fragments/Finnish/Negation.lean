@@ -1,4 +1,4 @@
-import Linglib.Morphology.Realization
+import Linglib.Morphology.Morphotactics.RelevanceHierarchy
 import Linglib.Syntax.Negation
 
 /-!
@@ -32,7 +32,7 @@ rather than within a synthetic word.
 
 namespace Finnish.Negation
 
-open Morphology (MorphCategory MorphRule)
+open Morphology (MorphCategory)
 open Syntax.Negation
 
 /-! ### Marker and system -/
@@ -41,7 +41,8 @@ open Syntax.Negation
     Genuine auxiliary: inflects for person and number (`negParadigm` below
     has the 6 present-tense forms) and bears the agreement and tense
     markers that the lexical verb would otherwise carry. The lexical verb
-    appears in the connegative form (`connegativeRule`). The 6 surface
+    appears in the connegative form (tense-stripped: *e-n osta* 'I don't
+    buy' loses the tense marking *osta-n* 'I buy' carries). The 6 surface
     forms (en/et/ei/emme/ette/eivät) are accessible via `negParadigm`. -/
 def ei : NegMarkerEntry :=
   { form := "ei"
@@ -77,35 +78,6 @@ def negParadigm : List NegForm :=
 
 /-! ### Connegative formation -/
 
-/-- The connegative `MorphRule`: strips tense marking from the main verb,
-    leaving only the bare stem. The negative auxiliary carries tense instead.
-
-    Example: *mene-n* (I go) → *en mene* (I don't go)
-    - neg aux *en* carries 1sg agreement
-    - main verb *mene* is the connegative (bare stem) -/
-def connegativeRule : MorphRule Bool :=
-  { category := .negation
-  , value := "connegative"
-  , formRule := id  -- connegative = bare stem (tense suffix removed)
-  , featureRule := fun f => { f with tense := none }
-  , semEffect := not  -- negation flips truth value
-  , delegatedSemantics := false }
-
-/-- The negative auxiliary's agreement rule: semantically vacuous,
-    carries person/number agreement that would otherwise be on the main verb. -/
-def negAgreementRule (person : Nat) (number : String) : MorphRule Bool :=
-  { category := .agreement .subj
-  , value := s!"{person}{number}"
-  , formRule := fun _ =>
-    match person, number with
-    | 1, "sg" => "en"  | 2, "sg" => "et"  | 3, "sg" => "ei"
-    | 1, "pl" => "emme" | 2, "pl" => "ette" | 3, "pl" => "eivät"
-    | _, _ => "ei"
-  , featureRule := fun f => { f with person := some (if person == 1 then .first
-      else if person == 2 then .second else .third) }
-  , semEffect := id
-  , delegatedSemantics := true }
-
 /-! ### Inflection distribution -/
 
 
@@ -114,11 +86,6 @@ def negAgreementRule (person : Nat) (number : String) : MorphRule Bool :=
 /-- The paradigm has exactly 6 forms (3 persons × 2 numbers). -/
 theorem paradigm_size : negParadigm.length = 6 := by decide
 
-/-- The connegative rule's semantic effect is Boolean negation. -/
-theorem connegative_negates : connegativeRule.semEffect true = false := rfl
-
-/-- Negation (rank 7) hosts agreement (rank 8) on the negative auxiliary —
-    respecting Bybee's hierarchy within the neg aux word. -/
 theorem neg_aux_respects_bybee :
     MorphCategory.RelevanceLT .negation (.agreement .subj) := by decide
 

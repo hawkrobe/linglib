@@ -1250,7 +1250,6 @@ import Linglib.Fragments.Yoruba.Possession
 import Linglib.Fragments.Yoruba.Relativization
 import Linglib.Fragments.ZarmaSonrai.Negation
 import Linglib.Fragments.Zulu.Phonology
-import Linglib.Morphology.Case.Allomorphy
 import Linglib.Morphology.DM.Allosemy
 import Linglib.Morphology.DM.Categorizer
 import Linglib.Morphology.DM.CategorizerSemantics
@@ -1278,13 +1277,13 @@ import Linglib.Morphology.Morphotactics.RelevanceHierarchy
 import Linglib.Morphology.Morphotactics.Template
 import Linglib.Morphology.Nanosyntax.TreeSpellout
 import Linglib.Morphology.Paradigm.Basic
+import Linglib.Morphology.Paradigm.Case
 import Linglib.Morphology.Paradigm.Complexity
 import Linglib.Morphology.Paradigm.Contiguity
 import Linglib.Morphology.Paradigm.Degree
 import Linglib.Morphology.Paradigm.Linkage
 import Linglib.Morphology.Paradigm.Morphome
 import Linglib.Morphology.Paradigm.OfCells
-import Linglib.Morphology.Realization
 import Linglib.Morphology.Root.Basic
 import Linglib.Morphology.Root.Family
 import Linglib.Morphology.UsageBased.Network

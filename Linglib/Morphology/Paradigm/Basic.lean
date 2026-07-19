@@ -1,4 +1,3 @@
-import Linglib.Morphology.Realization
 import Mathlib.Data.Rat.Defs
 
 /-!
@@ -24,8 +23,6 @@ paradigms over graded cells.
   distributions at cells
 * `eComplexity` — count of inflection classes (Ackerman-Malouf
   E-complexity)
-* `fromStems` — derive a `ParadigmSystem n String` from a list of
-  `Stem σ`
 -/
 
 namespace Morphology
@@ -69,20 +66,5 @@ def ParadigmSystem.jointCellDistribution {n : ℕ} {Form : Type*} [DecidableEq F
 def ParadigmSystem.eComplexity {n : ℕ} {Form : Type*}
     (ps : ParadigmSystem n Form) : Nat :=
   ps.entries.length
-
-/-- Extract a `ParadigmSystem n String` from a list of `Stem`s. The
-    `cellExtractor` function maps each stem's generated forms (with their
-    features and base meaning) to a per-cell surface realization.
-    Specialized to `Form := String` since `Stem`'s `allForms` returns
-    `String`-typed surface forms. -/
-def ParadigmSystem.fromStems {σ : Type} (stems : List (Morphology.Stem σ))
-    (baseMeaning : σ) (numCells : ℕ)
-    (cellExtractor : List (String × UD.MorphFeatures × σ) → Fin numCells → String) :
-    ParadigmSystem numCells String :=
-  let allParadigms : List (Paradigm numCells String) := stems.map λ s =>
-    cellExtractor (s.allForms baseMeaning)
-  let total := stems.length
-  let unique := groupBySum (allParadigms.map λ ic => (ic, (1 : ℚ)))
-  { entries := unique.map λ (ic, count) => (ic, count / total) }
 
 end Morphology

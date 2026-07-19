@@ -1,6 +1,4 @@
 import Linglib.Features.Case.Basic
-import Linglib.Morphology.Case.Allomorphy
-open Morphology.Case.Allomorphy
 
 /-!
 # German Case Inventory [blake-1994]
@@ -25,9 +23,5 @@ def caseInventory : Finset Case :=
 
 -- Contiguous on Blake's hierarchy (ranks 6, 6, 5, 4).
 example : Case.IsValidInventory caseInventory := by decide
-
-/-- NOM/ACC syncretism in neuter and feminine.
-    Instantiates the cross-linguistic NOM/ACC pattern from `Morphology.Case.Allomorphy`. -/
-def neuterSyncretism : Syncretism := nomAccSyncretism
 
 end German.Case

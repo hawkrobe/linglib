@@ -1,7 +1,5 @@
 import Linglib.Features.Case.Basic
 import Linglib.Features.Case.Basic
-import Linglib.Morphology.Case.Allomorphy
-open Morphology.Case.Allomorphy
 
 /-!
 # Tamil Case Inventory
@@ -26,11 +24,6 @@ def caseInventory : Finset Case :=
 -- Contiguous on Blake's hierarchy (ranks 6 down to 1).
 example : Case.IsValidInventory caseInventory := by decide
 
-/-- Tamil COM/INST syncretism (-ōṭu covers both functions).
-    Uses the cross-linguistic pattern from `Morphology.Case.Allomorphy`. -/
-def tamilComInstSync : Syncretism := comInstSyncretism
-
-/-- COM/INST are strictly adjacent (ranks 1, 2). -/
 theorem com_inst_adjacent :
     Case.HierarchyAdjacent .com .inst := by decide
 

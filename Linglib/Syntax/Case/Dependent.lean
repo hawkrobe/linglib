@@ -63,7 +63,7 @@ cross-linguistic validation, and competing analyses live in
   licensers as a last-resort response to convergence failure, deriving
   DOM patterns as the surface signature of secondary-licenser activation
 - `Syntax/Case/Order.lean` — the containment hierarchy (a *scoped*
-  `PartialOrder` on `Case`); `Morphology/Case/Allomorphy.lean` — the
+  `PartialOrder` on `Case`); `Morphology/Paradigm/Case.lean` — the
   framework-neutral `AllomorphyPattern` and *ABA substrate; `Studies/
   Caha2009.lean` — the Caha-specific `RespectsCahaContainment`
   predicate that consumes `Case` values

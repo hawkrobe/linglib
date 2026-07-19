@@ -1,8 +1,6 @@
 import Linglib.Features.Case.Basic
 import Linglib.Features.Case.Basic
 import Linglib.Features.Case.Grammaticalization
-import Linglib.Morphology.Case.Allomorphy
-open Morphology.Case.Allomorphy
 
 /-!
 # Latin Case Inventory [blake-1994]
@@ -57,21 +55,9 @@ example : Case.IsValidInventory inventoryWithLocative := by decide
 -- § 2: Syncretism Patterns ([blake-1994], pp. 19–24)
 -- ============================================================================
 
-/-- NOM/ACC syncretism in neuter nouns (2nd, 3rd, 4th declension).
-    Instantiates the cross-linguistic NOM/ACC pattern from `Morphology.Case.Allomorphy`. -/
-def neuterSyncretism : Syncretism := nomAccSyncretism
-
-/-- NOM/ACC is same-tier (both rank 6) — trivially adjacent. -/
 theorem neuter_syncretism_adjacent :
     Case.HierarchyAdjacent .nom .acc := by decide
 
-/-- DAT/ABL syncretism in the plural. -/
-def pluralDatAblSyncretism : Syncretism :=
-  ⟨.dat, .abl, by decide⟩
-
-/-- DAT/ABL are NOT strictly adjacent on the hierarchy (ranks 4, 2) —
-    LOC (rank 3) intervenes. But they ARE inventory-adjacent in the
-    standard 6-case system that lacks LOC. -/
 theorem dat_abl_not_strictly_adjacent :
     ¬ Case.HierarchyAdjacent .dat .abl := by decide
 

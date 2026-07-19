@@ -1,4 +1,3 @@
-import Linglib.Morphology.Realization
 import Linglib.Syntax.Reciprocal
 
 /-!
@@ -17,36 +16,8 @@ The reciprocal affix is distinct from the reflexive prefix "dzi-".
 
 namespace Chichewa.Reciprocals
 
-open Morphology
-
-/-- Chicheŵa reciprocal suffix "-an-" as a morphological rule. -/
-def reciprocalAffix : MorphRule Bool :=
-  { category := .valence
-  , value := "reciprocal"
-  , formRule := fun stem => stem ++ "an"
-  , featureRule := id
-  , valenceRule := fun _ => some ComplementType.none
-  , semEffect := id
-  }
-
-/-- Chicheŵa reflexive prefix "dzi-" (for contrast). -/
-def reflexivePrefix : MorphRule Bool :=
-  { category := .valence
-  , value := "reflexive"
-  , formRule := fun stem => "dzi" ++ stem
-  , featureRule := id
-  , valenceRule := fun _ => some ComplementType.none
-  , semEffect := id
-  }
-
-/-- Reciprocal and reflexive are formally distinct in Chicheŵa. -/
-theorem recip_distinct_from_reflexive :
-    reciprocalAffix.value ≠ reflexivePrefix.value := by decide
-
 open Reciprocal
 
-/-- The reciprocal suffix as a typological marker (distinct from the
-    reflexive *dzi-*). -/
 def anSuffix : Marker :=
   { form := "-an-", strategy := .verbalAffix }
 
