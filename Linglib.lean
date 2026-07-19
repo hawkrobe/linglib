@@ -2258,6 +2258,7 @@ import Linglib.Studies.Haspelmath1997
 import Linglib.Studies.Haspelmath2001
 import Linglib.Studies.Haspelmath2007
 import Linglib.Studies.Haspelmath2021
+import Linglib.Studies.Haspelmath2025Root
 import Linglib.Studies.HaugDalrymple2020
 import Linglib.Studies.HawkinsGweonGoodman2021
 import Linglib.Studies.HayKennedyLevin1999
