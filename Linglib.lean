@@ -1293,6 +1293,7 @@ import Linglib.Morphology.Paradigm.Morphome
 import Linglib.Morphology.Paradigm.OfCells
 import Linglib.Morphology.Realization
 import Linglib.Morphology.Root.Basic
+import Linglib.Morphology.Root.Certificates
 import Linglib.Morphology.Root.Consonantal
 import Linglib.Morphology.Word.Basic
 import Linglib.Morphology.Paradigm.ToTree
