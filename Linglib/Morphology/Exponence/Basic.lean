@@ -22,9 +22,7 @@ flexibility in choosing orders: each engine installs it, or a
 definitionally equal order, on its own carrier.
 
 The class is selection-side only: the phonological substance of exponents
-— additive, transformational, templatic ([trommer-zimmermann-2015]) — is
-opaque in `F` and lives in `Phonology/`. Selection over the specificity
-order (existence, coherence, and the prediction relation) is
+([trommer-zimmermann-2015]) is opaque in `F`. Selection over this order is
 `Morphology/Exponence/Select.lean`.
 
 A typical engine is declared as:
@@ -46,12 +44,9 @@ after which the selection theorems of `Select.lean` apply to `MyRule`.
 namespace Morphology
 
 /-- `Exponence R Ctx F` states that terms of `R` are rules of exponence:
-each carries an exponent in `F` and applies in a class of contexts in
-`Ctx`. This is `SetLike` without injectivity: the projection to
-applicability sets (`applySet`) need not be injective, since distinct
-rules may share a condition while carrying different exponents. The
-primitive is the predicate `Applies`, which is what engines define and
-what decidability instances attach to. -/
+an exponent in `F` and an applicability condition on `Ctx`. This is
+`SetLike` without injectivity: distinct rules may share a condition while
+carrying different exponents. -/
 class Exponence (R : Type*) (Ctx F : outParam Type*) where
   /-- The exponent a rule inserts. -/
   exponent : R → F
@@ -70,10 +65,9 @@ def applySet (r : R) : Set Ctx := {c | Applies (F := F) r c}
   Iff.rfl
 
 /-- The specificity preorder: `r ≤ s` when `r` applies in a subset of the
-contexts `s` applies in. Rules with the same applicability but different
-exponents are equivalent, not equal, so this is only a preorder. This is
-not an instance, for flexibility in choosing orders: each engine installs
-it, or a definitionally equal order, on its own carrier. -/
+contexts `s` applies in. Only a preorder, since rules may share
+applicability without being equal; not an instance, for flexibility in
+choosing orders. -/
 @[reducible] def toPreorder : Preorder R := Preorder.lift (applySet (F := F))
 
 end Exponence
