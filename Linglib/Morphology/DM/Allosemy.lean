@@ -188,10 +188,9 @@ denotation is the exponent, its context's `matches` predicate the
 applicability set. So the very engine that resolves DM's List 2
 (`DM/VocabularyInsertion.lean`) resolves List 3 — LF competition among
 allosemes — with no new machinery. `AllosemicEntry.score` is the
-non-wildcard-field count of the entry's context; `score_reflects` shows
-it reflects the specificity preorder, discharging
-`selectBy_isElsewhereWinner`'s conditional-reflection hypothesis, so
-`selectBy score` is Elsewhere selection (`selectBy_score_isElsewhereWinner`). -/
+non-wildcard-field count of the entry's context; `score_strictAnti` shows
+it is strictly antitone in specificity, so `selectBy score` is Elsewhere
+selection (`selectBy_score_isElsewhereWinner`). -/
 
 section Exponence
 
@@ -207,35 +206,28 @@ instance : Exponence.Rule (AllosemicEntry Sem) SyntacticContext Sem :=
 
 instance : Preorder (AllosemicEntry Sem) := Exponence.toPreorder
 
-instance (c : SyntacticContext) :
-    DecidablePred (fun e : AllosemicEntry Sem => Exponence.Applies e c) :=
-  fun e => inferInstanceAs (Decidable (e.context.matches c = true))
-
 /-- The specificity score of an alloseme: the non-wildcard-field count of
 its conditioning context. -/
 def AllosemicEntry.score (e : AllosemicEntry Sem) : Nat := e.context.specificity
 
-/-- The score reflects the specificity preorder: a strictly broader
-alloseme scores strictly lower, so score selection agrees with the
-applicability order. This is the conditional-reflection hypothesis of
-`selectBy_isElsewhereWinner` in its weak form. -/
-theorem score_reflects {r s : AllosemicEntry Sem} (hsr : s ≤ r)
-    (hscore : AllosemicEntry.score s ≤ AllosemicEntry.score r) : r ≤ s := by
-  have hsub : ∀ q, s.context.matches q = true → r.context.matches q = true := hsr
-  have hle : r.context.specificity ≤ s.context.specificity :=
-    SyntacticContext.specificity_le_of_matches_subset hsub
-  have heq : r.context.specificity = s.context.specificity := le_antisymm hle hscore
-  have : r.context = s.context :=
+/-- The score is strictly antitone in specificity: a strictly broader
+alloseme scores strictly lower. -/
+theorem score_strictAnti : StrictAnti (AllosemicEntry.score (Sem := Sem)) := by
+  intro s r hlt
+  have hsub : ∀ q, s.context.matches q = true → r.context.matches q = true := hlt.le
+  refine lt_of_le_of_ne (SyntacticContext.specificity_le_of_matches_subset hsub)
+    fun heq => not_le_of_gt hlt ?_
+  have hctx : r.context = s.context :=
     SyntacticContext.eq_of_matches_subset_of_specificity_eq hsub heq
   show ∀ q, r.context.matches q = true → s.context.matches q = true
-  rw [this]; exact fun _ h => h
+  rw [hctx]; exact fun _ h => h
 
 /-- Score selection over an alloseme vocabulary is Elsewhere selection:
 the winner is `≤`-minimal among the applicable allosemes. -/
 theorem selectBy_score_isElsewhereWinner {v : List (AllosemicEntry Sem)}
     {c : SyntacticContext} {r : AllosemicEntry Sem}
     (h : selectBy AllosemicEntry.score v c = some r) : IsElsewhereWinner v c r :=
-  selectBy_isElsewhereWinner (fun _ _ _ _ _ _ hsr hscore => score_reflects hsr hscore) h
+  selectBy_isElsewhereWinner (score_strictAnti.strictAntiOn _) h
 
 end Exponence
 

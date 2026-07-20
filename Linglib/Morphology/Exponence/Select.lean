@@ -29,8 +29,6 @@ variable {v : List R} {c c' : Ctx} {r s : R} {φ : E}
 
 /-! ### Score selection -/
 
-variable [∀ c : Ctx, DecidablePred (fun r : R => Applies r c)]
-
 /-- The rules of `v` applicable at `c`, in vocabulary order. -/
 def applicable (v : List R) (c : Ctx) : List R :=
   v.filter (fun r => Applies r c)
@@ -119,31 +117,19 @@ theorem Realizes.eq {ψ : E} (hv : Coherent v)
 
 /-! ### Soundness -/
 
-/-- When the score reflects specificity, the selection is below every
-applicable rule. -/
-theorem selectBy_le_of_applies
-    (hf : ∀ r ∈ v, ∀ s ∈ v, Applies r c →
-      Applies s c → (r ≤ s ↔ f s ≤ f r))
-    (h : selectBy f v c = some r) (hs : s ∈ v)
-    (hsapp : Applies s c) : r ≤ s :=
-  (hf r (selectBy_mem h) s hs (selectBy_applies h) hsapp).mpr
-    (List.le_of_mem_argmax (mem_applicable.mpr ⟨hs, hsapp⟩) h)
-
-/-- When the score reflects specificity on comparable applicable rules,
-`selectBy` returns an Elsewhere winner. -/
+/-- A score strictly antitone on the applicable rules selects an
+Elsewhere winner. -/
 theorem selectBy_isElsewhereWinner
-    (hf : ∀ r ∈ v, ∀ s ∈ v, Applies r c →
-      Applies s c → s ≤ r → f s ≤ f r → r ≤ s)
+    (hf : StrictAntiOn f {r | r ∈ applicable v c})
     (h : selectBy f v c = some r) : IsElsewhereWinner v c r := by
-  refine ⟨⟨selectBy_mem h, selectBy_applies h⟩, ?_⟩
-  rintro s ⟨hs, hsapp⟩ hsr
-  exact hf r (selectBy_mem h) s hs (selectBy_applies h) hsapp hsr
-    (List.le_of_mem_argmax (mem_applicable.mpr ⟨hs, hsapp⟩) h)
+  refine ⟨mem_applicable.mp (List.argmax_mem h), fun s hs hsr => ?_⟩
+  by_contra hrs
+  exact absurd (List.le_of_mem_argmax (mem_applicable.mpr hs) h)
+    (not_le_of_gt (hf (mem_applicable.mpr hs) (List.argmax_mem h)
+      (lt_of_le_not_ge hsr hrs)))
 
 /-- Realized exponents satisfy `Realizes`. -/
-theorem realize_realizes
-    (hf : ∀ r ∈ v, ∀ s ∈ v, Applies r c →
-      Applies s c → s ≤ r → f s ≤ f r → r ≤ s)
+theorem realize_realizes (hf : StrictAntiOn f {r | r ∈ applicable v c})
     (h : realize f v c = some φ) : Realizes v c φ := by
   obtain ⟨r, hr, rfl⟩ := Option.map_eq_some_iff.mp h
   exact ⟨r, selectBy_isElsewhereWinner hf hr, rfl⟩

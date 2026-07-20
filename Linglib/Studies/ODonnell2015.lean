@@ -502,27 +502,19 @@ instance : Exponence.Rule (FinRule Ctx F) Ctx F :=
 
 instance : Preorder (FinRule Ctx F) := Exponence.toPreorder
 
-instance (c : Ctx) :
-    DecidablePred (fun r : FinRule Ctx F => Exponence.Applies r c) :=
-  fun r => inferInstanceAs (Decidable (c ∈ r.supp))
-
 omit [DecidableEq Ctx] in
-/-- Support cardinality reflects specificity conditionally on the
-finitely supported rules: if `s` is at least as specific as `r` (support
-inclusion) and `r`'s support is no larger, then the two coincide, so `r`
-is at least as specific as `s`. This is the conditional reflection the
-`Finset`-support engine satisfies where the linear-order engines' `iff`
-fails — card `≤` does not imply support `⊆`, but `⊆` plus card `≤` forces
-equality (`Finset.eq_of_subset_of_card_le`). -/
-private theorem finRule_card_reflection {v : List (FinRule Ctx F)} {c : Ctx} :
-    ∀ r ∈ v, ∀ s ∈ v, Exponence.Applies r c →
-      Exponence.Applies s c → s ≤ r →
-      OrderDual.toDual s.supp.card ≤ OrderDual.toDual r.supp.card → r ≤ s :=
-  fun r _ s _ _ _ hsr hcard => by
-    have hsub : s.supp ⊆ r.supp := fun x hx => hsr hx
-    have hle : r.supp.card ≤ s.supp.card := OrderDual.toDual_le_toDual.mp hcard
-    have heq : s.supp = r.supp := Finset.eq_of_subset_of_card_le hsub hle
-    exact fun x hx => show x ∈ s.supp from heq ▸ hx
+/-- Dualized support cardinality is strictly antitone in specificity: a
+strictly broader finitely supported rule has strictly larger support
+(card `≤` does not imply support `⊆`, so the score is not an order
+embedding — strict antitonicity is exactly what the `Finset`-support
+engine retains). -/
+private theorem finRule_card_strictAnti :
+    StrictAnti (fun r : FinRule Ctx F => OrderDual.toDual r.supp.card) := by
+  intro s r hlt
+  have hsub : s.supp ⊆ r.supp := fun x hx => hlt.le hx
+  have hns : ¬ r.supp ⊆ s.supp := fun hsub' => not_le_of_gt hlt fun x hx => hsub' hx
+  exact OrderDual.toDual_lt_toDual.mpr
+    (Finset.card_lt_card (lt_of_le_not_ge hsub hns))
 
 /-- **The size principle as a specificity score** ([odonnell-2015]
 §5.5.3): selecting the finitely supported rule of least support
@@ -535,7 +527,7 @@ theorem selectByCard_isElsewhereWinner {v : List (FinRule Ctx F)} {c : Ctx}
     {r : FinRule Ctx F}
     (h : selectBy (fun s => OrderDual.toDual s.supp.card) v c = some r) :
     IsElsewhereWinner v c r :=
-  selectBy_isElsewhereWinner finRule_card_reflection h
+  selectBy_isElsewhereWinner (finRule_card_strictAnti.strictAntiOn _) h
 
 /-- **Elsewhere selection is maximum-likelihood inference**
 ([odonnell-2015] §5.5.3): a rule maximizing uniform generation
