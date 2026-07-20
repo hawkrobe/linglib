@@ -24,10 +24,8 @@ winners: `≤`-minimal applicable rules of exponence ([kiparsky-1973]).
 
 namespace Morphology.Exponence
 
-variable {Ctx E : Type*} {R : Type*} [Preorder R] [Rule R Ctx E]
+variable {Ctx E : Type*} {R : Type*} [Rule R Ctx E]
 variable {v : List R} {c c' : Ctx} {r s : R} {φ : E}
-
-/-! ### Elsewhere winners -/
 
 /-- Two comparable minimal elements of the same predicate are equivalent.
 [UPSTREAM] candidate for `Mathlib/Order/Minimal.lean`. -/
@@ -35,6 +33,11 @@ theorem _root_.Minimal.antisymmRel {α : Type*} [Preorder α] {P : α → Prop} 
     (hx : Minimal P x) (hy : Minimal P y) (h : y ≤ x ∨ x ≤ y) :
     AntisymmRel (· ≤ ·) x y :=
   h.elim (fun h => ⟨hx.le_of_le hy.1 h, h⟩) (fun h => ⟨h, hy.le_of_le hx.1 h⟩)
+
+section
+variable [Preorder R]
+
+/-! ### Elsewhere winners -/
 
 /-- A `≤`-minimal applicable rule of `v` at `c`. -/
 abbrev IsElsewhereWinner (v : List R) (c : Ctx) (r : R) : Prop :=
@@ -71,6 +74,8 @@ theorem Realizes.eq {ψ : E} (hv : Coherent v)
   obtain ⟨s, hs, rfl⟩ := hψ
   exact hr.exponent_eq hv hs (hcmp hr hs)
 
+end
+
 /-! ### Score selection -/
 
 variable [∀ c : Ctx, DecidablePred (fun r : R => Applies r c)]
@@ -79,7 +84,6 @@ variable [∀ c : Ctx, DecidablePred (fun r : R => Applies r c)]
 def applicable (v : List R) (c : Ctx) : List R :=
   v.filter (fun r => Applies r c)
 
-omit [Preorder R] in
 @[simp] theorem mem_applicable :
     r ∈ applicable v c ↔ r ∈ v ∧ Applies r c := by
   simp only [applicable, List.mem_filter, decide_eq_true_eq]
@@ -91,20 +95,35 @@ order; scores to be minimized pass through `OrderDual`. -/
 def selectBy (f : R → α) (v : List R) (c : Ctx) : Option R :=
   (applicable v c).argmax f
 
-omit [Preorder R] in
-theorem selectBy_mem
-    (h : selectBy f v c = some r) : r ∈ v :=
+theorem selectBy_mem (h : selectBy f v c = some r) : r ∈ v :=
   (mem_applicable.mp (List.argmax_mem h)).1
 
-omit [Preorder R] in
-theorem selectBy_applies
-    (h : selectBy f v c = some r) : Applies r c :=
+theorem selectBy_applies (h : selectBy f v c = some r) : Applies r c :=
   (mem_applicable.mp (List.argmax_mem h)).2
 
-omit [Preorder R] in
-theorem selectBy_eq_none_iff :
-    selectBy f v c = none ↔ applicable v c = [] :=
+theorem selectBy_eq_none_iff : selectBy f v c = none ↔ applicable v c = [] :=
   List.argmax_eq_none
+
+/-- Contexts with the same applicable rules select the same rule. -/
+theorem selectBy_congr (h : applicable v c = applicable v c') :
+    selectBy f v c = selectBy f v c' := by
+  rw [selectBy, selectBy, h]
+
+/-- The exponent of the rule selected by `selectBy`. -/
+def realize (f : R → α) (v : List R) (c : Ctx) : Option E :=
+  (selectBy f v c).map exponent
+
+theorem realize_eq_none_iff : realize f v c = none ↔ applicable v c = [] :=
+  Option.map_eq_none_iff.trans selectBy_eq_none_iff
+
+theorem realize_congr (h : applicable v c = applicable v c') :
+    realize f v c = realize f v c' :=
+  congrArg (Option.map exponent) (selectBy_congr h)
+
+/-! ### Soundness -/
+
+section
+variable [Preorder R]
 
 /-- When the score reflects specificity, the selection is below every
 applicable rule. -/
@@ -127,39 +146,13 @@ theorem selectBy_isElsewhereWinner
   exact hf r (selectBy_mem h) s hs (selectBy_applies h) hsapp hsr
     (List.le_of_mem_argmax (mem_applicable.mpr ⟨hs, hsapp⟩) h)
 
-omit [Preorder R] in
-/-- Contexts with the same applicable rules select the same rule. -/
-theorem selectBy_congr
-    (h : applicable v c = applicable v c') :
-    selectBy f v c = selectBy f v c' := by
-  rw [selectBy, selectBy, h]
-
-/-! ### Realization -/
-
-/-- The exponent of the rule selected by `selectBy`. -/
-def realize (f : R → α) (v : List R) (c : Ctx) : Option E :=
-  (selectBy f v c).map (exponent)
-
 /-- Realized exponents satisfy `Realizes`. -/
 theorem realize_realizes
     (hf : ∀ r ∈ v, ∀ s ∈ v, Applies r c →
       Applies s c → s ≤ r → f s ≤ f r → r ≤ s)
     (h : realize f v c = some φ) : Realizes v c φ := by
-  rw [realize, Option.map_eq_some_iff] at h
-  obtain ⟨r, hr, rfl⟩ := h
+  obtain ⟨r, hr, rfl⟩ := Option.map_eq_some_iff.mp h
   exact ⟨r, selectBy_isElsewhereWinner hf hr, rfl⟩
-
-omit [Preorder R] in
-theorem realize_eq_none_iff :
-    realize f v c = none ↔ applicable v c = [] := by
-  rw [realize, Option.map_eq_none_iff]
-  exact selectBy_eq_none_iff
-
-omit [Preorder R] in
-theorem realize_congr
-    (h : applicable v c = applicable v c') :
-    realize f v c = realize f v c' := by
-  rw [realize, realize, selectBy_congr h]
 
 /-! ### Order selection -/
 
@@ -195,5 +188,7 @@ theorem selectMinimal_eq_none_iff :
     selectMinimal v c = none ↔ applicable v c = [] := by
   rw [← Option.not_isSome_iff_eq_none, selectMinimal_isSome_iff]
   simp [applicable, List.filter_eq_nil_iff]
+
+end
 
 end Morphology.Exponence
