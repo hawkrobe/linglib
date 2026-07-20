@@ -64,10 +64,7 @@ def applySet (r : R) : Set Ctx := {c | Applies (F := F) r c}
     c ∈ applySet (F := F) r ↔ Applies (F := F) r c :=
   Iff.rfl
 
-/-- The specificity preorder: `r ≤ s` when `r` applies in a subset of the
-contexts `s` applies in. Only a preorder, since rules may share
-applicability without being equal; not an instance, for flexibility in
-choosing orders. -/
+/-- `r ≤ s` when `r` applies in a subset of the contexts `s` applies in. -/
 @[reducible] def toPreorder : Preorder R := Preorder.lift (applySet (F := F))
 
 end Exponence
