@@ -49,7 +49,7 @@ decides realized **values**, not payload equality.
 
 * `Action`, `Rule` — the payload (exponence or referral) and the
   payload-polymorphic realization rule
-* `Rule`'s `Exponence` and `Preorder` instances — applicability and two-clause
+* `Rule`'s `Exponence.Rule` and `Preorder` instances — applicability and two-clause
   narrowness; `Rule.applies_iff`, `Rule.le_iff`, `Rule.applySet_mono`
 * `identityDefault`, `le_identityDefault`,
   `selectMinimal_isSome_of_mem_identityDefault` — the IFD and its consequences
@@ -109,12 +109,12 @@ variable [PartialOrder P]
 
 /-- Applicability ([bonami-stump-2016]'s rule format): a rule applies to a cell
 `⟨L, σ⟩` when `L` is in its class and its property set is contained in `σ`. -/
-instance : Exponence (Rule L P F) (L × P) F where
+instance : Exponence.Rule (Rule L P F) (L × P) F where
   exponent := Rule.payload
   Applies r c := c.1 ∈ r.klass ∧ r.props ≤ c.2
 
 @[simp] theorem Rule.applies_iff {r : Rule L P F} {c : L × P} :
-    Exponence.Applies (F := F) r c ↔ c.1 ∈ r.klass ∧ r.props ≤ c.2 :=
+    Exponence.Applies r c ↔ c.1 ∈ r.klass ∧ r.props ≤ c.2 :=
   Iff.rfl
 
 /-- Two-clause Pāṇinian narrowness ([stump-2001]) as the carrier's order: `r` is
@@ -142,7 +142,7 @@ collapsing to [stump-2016]'s single-clause domain-subset precedence. Across
 classes the order is strictly intensional (a smaller class outranks a larger one
 whatever the property sets), so a class hypothesis is required. -/
 theorem Rule.applySet_mono {r s : Rule L P F} (hk : r.klass = s.klass) (h : r ≤ s) :
-    Exponence.applySet (F := F) r ⊆ Exponence.applySet (F := F) s := by
+    Exponence.applySet r ⊆ Exponence.applySet s := by
   rcases h with ⟨_, hp⟩ | hlt
   · intro c hc
     rw [Exponence.mem_applySet] at hc ⊢
@@ -157,7 +157,7 @@ section Selection
 variable [PartialOrder P] [DecidableEq L] [DecidableLE P]
 
 instance (c : L × P) :
-    DecidablePred (fun r : Rule L P F => Exponence.Applies (F := F) r c) :=
+    DecidablePred (fun r : Rule L P F => Exponence.Applies r c) :=
   fun r => inferInstanceAs (Decidable (c.1 ∈ r.klass ∧ r.props ≤ c.2))
 
 instance : DecidableLE (Rule L P F) := fun r s =>
@@ -182,7 +182,7 @@ def identityDefault : Rule L P (Action Z P) where
 
 omit [DecidableEq L] [DecidableLE P] in
 theorem identityDefault_applies (c : L × P) :
-    Exponence.Applies (F := Action Z P) (identityDefault (L := L) (Z := Z) (P := P)) c :=
+    Exponence.Applies (identityDefault (L := L) (Z := Z) (P := P)) c :=
   ⟨Finset.mem_univ _, bot_le⟩
 
 omit [DecidableLE P] in
@@ -200,7 +200,7 @@ theorem le_identityDefault (r : Rule L P (Action Z P)) :
 theorem selectMinimal_isSome_of_mem_identityDefault
     {v : List (Rule L P (Action Z P))} {c : L × P}
     (h : identityDefault (Z := Z) (P := P) ∈ v) : (selectMinimal v c).isSome :=
-  selectMinimal_isSome_of_exists_applicable
+  selectMinimal_isSome_iff.mpr
     ⟨identityDefault (P := P), h, identityDefault_applies c⟩
 
 end IdentityDefault
@@ -296,7 +296,7 @@ elsewhere. The mechanism shared by `identityDefault` and
 `functionCompositionDefault`. -/
 theorem selectMinimal_append_maximal {v : List (Rule L P F)} {c : L × P}
     {top : Rule L P F} (hmax : ∀ r, r ≤ top)
-    (htop : Exponence.Applies (F := F) top c) :
+    (htop : Exponence.Applies top c) :
     selectMinimal (v ++ [top]) c = (selectMinimal v c).or (some top) := by
   have htop' : c.1 ∈ top.klass ∧ top.props ≤ c.2 := htop
   have happl : applicable (v ++ [top]) c = applicable v c ++ [top] := by
@@ -336,7 +336,7 @@ def functionCompositionDefault (Lindex : Z → L) (bm bn : Block L Z P) :
   payload := .expo (fun σ z => (evalBlock Lindex bm (evalBlock Lindex bn (z, σ))).1)
 
 theorem functionCompositionDefault_applies (Lindex : Z → L) (bm bn : Block L Z P)
-    (c : L × P) : Exponence.Applies (F := Action Z P)
+    (c : L × P) : Exponence.Applies
       (functionCompositionDefault Lindex bm bn) c :=
   ⟨Finset.mem_univ _, bot_le⟩
 
@@ -380,7 +380,7 @@ theorem evalPortmanteau_eq_functionCompositionDefault (Lindex : Z → L)
     rw [List.isEmpty_iff] at h
     obtain ⟨r, hr⟩ := List.exists_mem_of_ne_nil _ h
     obtain ⟨r', hr'⟩ := Option.isSome_iff_exists.mp
-      (selectMinimal_isSome_of_exists_applicable
+      (selectMinimal_isSome_iff.mpr
         ⟨r, (mem_applicable.mp hr).1, (mem_applicable.mp hr).2⟩)
     obtain ⟨f, hf⟩ := hbmn r' (selectMinimal_mem hr')
     rw [hr', Option.some_or] at hsel

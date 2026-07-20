@@ -24,18 +24,18 @@ winners: `≤`-minimal applicable rules of exponence ([kiparsky-1973]).
 
 namespace Morphology.Exponence
 
-variable {Ctx F : Type*} {R : Type*} [Preorder R] [Exponence R Ctx F]
+variable {Ctx E : Type*} {R : Type*} [Preorder R] [Rule R Ctx E]
 
 /-! ### Elsewhere winners -/
 
 /-- A `≤`-minimal applicable rule of `v` at `c`. -/
 def IsElsewhereWinner (v : List R) (c : Ctx) (r : R) : Prop :=
-  Minimal (fun s => s ∈ v ∧ Exponence.Applies (F := F) s c) r
+  Minimal (fun s => s ∈ v ∧ Applies s c) r
 
 /-- A winner is below every applicable rule that is below it. -/
 theorem IsElsewhereWinner.le_of_le {v : List R} {c : Ctx} {r s : R}
     (hr : IsElsewhereWinner v c r) (hs : s ∈ v)
-    (happ : Exponence.Applies (F := F) s c) (h : s ≤ r) : r ≤ s :=
+    (happ : Applies s c) (h : s ≤ r) : r ≤ s :=
   Minimal.le_of_le hr ⟨hs, happ⟩ h
 
 /-! ### Coherence and uniqueness -/
@@ -51,28 +51,28 @@ theorem IsElsewhereWinner.antisymmRel {v : List R} {c : Ctx} {r s : R}
 /-- A vocabulary is coherent if equivalent rules carry the same exponent. -/
 def Coherent (v : List R) : Prop :=
   ∀ r ∈ v, ∀ s ∈ v, AntisymmRel (· ≤ ·) r s →
-    Exponence.exponent (F := F) r = Exponence.exponent (F := F) s
+    exponent r = exponent s
 
 /-- Comparable winners of a coherent vocabulary carry the same exponent. -/
 theorem IsElsewhereWinner.exponent_eq {v : List R} {c : Ctx} {r s : R}
     (hv : Coherent v) (hr : IsElsewhereWinner v c r)
     (hs : IsElsewhereWinner v c s) (h : s ≤ r ∨ r ≤ s) :
-    Exponence.exponent (F := F) r = Exponence.exponent (F := F) s :=
+    exponent r = exponent s :=
   hv r hr.1.1 s hs.1.1 (hr.antisymmRel hs h)
 
 /-- A vocabulary with an applicable rule has an Elsewhere winner. -/
 theorem exists_isElsewhereWinner {v : List R} {c : Ctx}
-    (h : ∃ r ∈ v, Exponence.Applies (F := F) r c) : ∃ r, IsElsewhereWinner v c r :=
+    (h : ∃ r ∈ v, Applies r c) : ∃ r, IsElsewhereWinner v c r :=
   (v.finite_toSet.subset fun _ hr => hr.1).exists_minimal h
 
 /-! ### The prediction relation -/
 
 /-- `φ` is realized at `c` when some Elsewhere winner carries it. -/
-def Realizes (v : List R) (c : Ctx) (φ : F) : Prop :=
-  ∃ r, IsElsewhereWinner v c r ∧ Exponence.exponent (F := F) r = φ
+def Realizes (v : List R) (c : Ctx) (φ : E) : Prop :=
+  ∃ r, IsElsewhereWinner v c r ∧ exponent r = φ
 
 /-- Over a coherent vocabulary with comparable winners, the prediction is unique. -/
-theorem Realizes.eq {v : List R} {c : Ctx} {φ ψ : F} (hv : Coherent v)
+theorem Realizes.eq {v : List R} {c : Ctx} {φ ψ : E} (hv : Coherent v)
     (hcmp : ∀ ⦃r s⦄, IsElsewhereWinner v c r → IsElsewhereWinner v c s → s ≤ r ∨ r ≤ s)
     (hφ : Realizes v c φ) (hψ : Realizes v c ψ) : φ = ψ := by
   obtain ⟨r, hr, rfl⟩ := hφ
@@ -81,15 +81,15 @@ theorem Realizes.eq {v : List R} {c : Ctx} {φ ψ : F} (hv : Coherent v)
 
 /-! ### Score selection -/
 
-variable [∀ c : Ctx, DecidablePred (fun r : R => Exponence.Applies (F := F) r c)]
+variable [∀ c : Ctx, DecidablePred (fun r : R => Applies r c)]
 
 /-- The rules of `v` applicable at `c`, in vocabulary order. -/
 def applicable (v : List R) (c : Ctx) : List R :=
-  v.filter (fun r => Exponence.Applies (F := F) r c)
+  v.filter (fun r => Applies r c)
 
 omit [Preorder R] in
 @[simp] theorem mem_applicable {v : List R} {c : Ctx} {r : R} :
-    r ∈ applicable v c ↔ r ∈ v ∧ Exponence.Applies (F := F) r c := by
+    r ∈ applicable v c ↔ r ∈ v ∧ Applies r c := by
   simp only [applicable, List.mem_filter, decide_eq_true_eq]
 
 variable {α : Type*} [LinearOrder α]
@@ -106,7 +106,7 @@ theorem selectBy_mem {f : R → α} {v : List R} {c : Ctx} {r : R}
 
 omit [Preorder R] in
 theorem selectBy_applies {f : R → α} {v : List R} {c : Ctx} {r : R}
-    (h : selectBy f v c = some r) : Exponence.Applies (F := F) r c :=
+    (h : selectBy f v c = some r) : Applies r c :=
   (mem_applicable.mp (List.argmax_mem h)).2
 
 omit [Preorder R] in
@@ -117,18 +117,18 @@ theorem selectBy_eq_none_iff {f : R → α} {v : List R} {c : Ctx} :
 /-- When the score reflects specificity, the selection is below every
 applicable rule. -/
 theorem selectBy_le_of_applies {f : R → α} {v : List R} {c : Ctx} {r s : R}
-    (hf : ∀ r ∈ v, ∀ s ∈ v, Exponence.Applies (F := F) r c →
-      Exponence.Applies (F := F) s c → (r ≤ s ↔ f s ≤ f r))
+    (hf : ∀ r ∈ v, ∀ s ∈ v, Applies r c →
+      Applies s c → (r ≤ s ↔ f s ≤ f r))
     (h : selectBy f v c = some r) (hs : s ∈ v)
-    (hsapp : Exponence.Applies (F := F) s c) : r ≤ s :=
+    (hsapp : Applies s c) : r ≤ s :=
   (hf r (selectBy_mem h) s hs (selectBy_applies h) hsapp).mpr
     (List.le_of_mem_argmax (mem_applicable.mpr ⟨hs, hsapp⟩) h)
 
 /-- When the score reflects specificity on comparable applicable rules,
 `selectBy` returns an Elsewhere winner. -/
 theorem selectBy_isElsewhereWinner {f : R → α} {v : List R} {c : Ctx} {r : R}
-    (hf : ∀ r ∈ v, ∀ s ∈ v, Exponence.Applies (F := F) r c →
-      Exponence.Applies (F := F) s c → s ≤ r → f s ≤ f r → r ≤ s)
+    (hf : ∀ r ∈ v, ∀ s ∈ v, Applies r c →
+      Applies s c → s ≤ r → f s ≤ f r → r ≤ s)
     (h : selectBy f v c = some r) : IsElsewhereWinner v c r := by
   refine ⟨⟨selectBy_mem h, selectBy_applies h⟩, ?_⟩
   rintro s ⟨hs, hsapp⟩ hsr
@@ -145,13 +145,13 @@ theorem selectBy_congr {f : R → α} {v : List R} {c c' : Ctx}
 /-! ### Realization -/
 
 /-- The exponent of the rule selected by `selectBy`. -/
-def realize (f : R → α) (v : List R) (c : Ctx) : Option F :=
-  (selectBy f v c).map (Exponence.exponent (F := F))
+def realize (f : R → α) (v : List R) (c : Ctx) : Option E :=
+  (selectBy f v c).map (exponent)
 
 /-- Realized exponents satisfy `Realizes`. -/
-theorem realize_realizes {f : R → α} {v : List R} {c : Ctx} {φ : F}
-    (hf : ∀ r ∈ v, ∀ s ∈ v, Exponence.Applies (F := F) r c →
-      Exponence.Applies (F := F) s c → s ≤ r → f s ≤ f r → r ≤ s)
+theorem realize_realizes {f : R → α} {v : List R} {c : Ctx} {φ : E}
+    (hf : ∀ r ∈ v, ∀ s ∈ v, Applies r c →
+      Applies s c → s ≤ r → f s ≤ f r → r ≤ s)
     (h : realize f v c = some φ) : Realizes v c φ := by
   rw [realize, Option.map_eq_some_iff] at h
   obtain ⟨r, hr, rfl⟩ := h
@@ -182,42 +182,28 @@ theorem selectMinimal_mem {v : List R} {c : Ctx} {r : R}
   (mem_applicable.mp (List.mem_of_find?_eq_some h)).1
 
 theorem selectMinimal_applies {v : List R} {c : Ctx} {r : R}
-    (h : selectMinimal v c = some r) : Exponence.Applies (F := F) r c :=
+    (h : selectMinimal v c = some r) : Applies r c :=
   (mem_applicable.mp (List.mem_of_find?_eq_some h)).2
 
 /-- `selectMinimal` returns an Elsewhere winner. -/
 theorem selectMinimal_isElsewhereWinner {v : List R} {c : Ctx} {r : R}
     (h : selectMinimal v c = some r) : IsElsewhereWinner v c r := by
-  refine ⟨mem_applicable.mp (List.mem_of_find?_eq_some h), ?_⟩
   have hall := List.find?_some h
-  rw [List.all_eq_true] at hall
-  rintro s ⟨hsv, hsapp⟩ hsr
-  by_contra hrs
-  have hns := hall s (mem_applicable.mpr ⟨hsv, hsapp⟩)
-  rw [decide_eq_true_eq] at hns
-  exact hns (lt_of_le_not_ge hsr hrs)
+  simp only [List.all_eq_true, decide_eq_true_eq, mem_applicable] at hall
+  exact ⟨mem_applicable.mp (List.mem_of_find?_eq_some h),
+    fun s hs => not_lt_iff_le_imp_ge.mp (hall s hs)⟩
 
-/-- A vocabulary with an applicable rule selects one. -/
-theorem selectMinimal_isSome_of_exists_applicable {v : List R} {c : Ctx}
-    (h : ∃ r ∈ v, Exponence.Applies (F := F) r c) : (selectMinimal v c).isSome := by
-  obtain ⟨r, hr⟩ := exists_isElsewhereWinner h
-  rw [Option.isSome_iff_ne_none]
-  intro hnone
-  rw [selectMinimal, List.find?_eq_none] at hnone
-  refine hnone r (mem_applicable.mpr ⟨hr.1.1, hr.1.2⟩) ?_
-  rw [List.all_eq_true]
-  intro s hs
-  rw [decide_eq_true_eq]
-  intro hlt
-  exact absurd (hr.2 (mem_applicable.mp hs) hlt.le) (not_le_of_gt hlt)
+/-- `selectMinimal` succeeds iff some rule applies. -/
+theorem selectMinimal_isSome_iff {v : List R} {c : Ctx} :
+    (selectMinimal v c).isSome ↔ ∃ r ∈ v, Applies r c := by
+  rw [selectMinimal, List.find?_isSome]
+  simp only [List.all_eq_true, decide_eq_true_eq, mem_applicable]
+  exact ⟨fun ⟨r, hr, _⟩ => ⟨r, hr⟩, fun h => (exists_isElsewhereWinner h).imp
+    fun w hw => ⟨hw.1, fun s hs => hw.not_lt hs⟩⟩
 
 theorem selectMinimal_eq_none_iff {v : List R} {c : Ctx} :
     selectMinimal v c = none ↔ applicable v c = [] := by
-  refine ⟨fun h => ?_, fun h => by rw [selectMinimal, h]; rfl⟩
-  by_contra hne
-  obtain ⟨r, hr⟩ := List.exists_mem_of_ne_nil _ hne
-  have happ := mem_applicable.mp hr
-  have hs := selectMinimal_isSome_of_exists_applicable ⟨r, happ.1, happ.2⟩
-  rw [h] at hs; simp at hs
+  rw [← Option.not_isSome_iff_eq_none, selectMinimal_isSome_iff]
+  simp [applicable, List.filter_eq_nil_iff]
 
 end Morphology.Exponence
