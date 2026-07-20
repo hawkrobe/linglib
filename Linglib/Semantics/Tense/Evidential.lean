@@ -24,9 +24,9 @@ assertion. Nonfuture tenses (past, present) impose T ≤ A — evidence is
 
 ## Cross-linguistic Data
 
-The paper's Korean and Bulgarian paradigm tables show that Korean (-te, -ney)
-and Bulgarian (-l) tense morphology systematically interacts with evidential
-perspective. Paradigm data is in
+The paper's paradigm tables (17)–(20) and (22) show that Bulgarian (-l),
+Korean (-te, -ney), and English tense morphology systematically interacts
+with evidential perspective. Paradigm data is in
 `Fragments/{English/Tense, Korean/Evidentials, Bulgarian/Evidentials}`;
 verification theorems are in `Studies/Cumming2026.lean`.
 
@@ -78,8 +78,8 @@ structure EvidentialFrame (Time : Type*) extends ReichenbachFrame Time where
 /-! ### EP Constraint Enum -/
 
 /-- Evidential perspective constraint shapes attested across English, Korean,
-    and Bulgarian ([cumming-2026]'s paradigm tables). Each value corresponds
-    to a distinct ordering on T vs A. -/
+    and Bulgarian ([cumming-2026], paradigm tables (17)–(20) and (22)). Each
+    value corresponds to a distinct ordering on T vs A. -/
 inductive EPCondition where
   /-- T ≤ A: evidence downstream of event (English past/progressive, Bulgarian NFUT). -/
   | downstream
@@ -161,8 +161,8 @@ def UPCondition.toConstraint : UPCondition → EvidentialFrame ℤ → Prop
 
 /-- A row in a tense-aspect-mood-evidentiality paradigm table.
     Generalizes [cumming-2026]'s tense-evidential paradigm tables
-    with optional mood and mirativity fields, enabling unified TAME
-    fragment entries. Existing `{ label, ep, up }` constructions still
+    ((17)–(20), (22)) with optional mood and mirativity fields, enabling
+    unified TAME fragment entries. Existing `{ label, ep, up }` constructions still
     work because `mood` and `mirative` have default values (`none`). -/
 structure TAMEEntry where
   /-- Morphological label (e.g., "simple past", "-te PAST") -/

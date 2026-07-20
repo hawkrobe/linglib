@@ -5,7 +5,7 @@ import Linglib.Semantics.Tense.Evidential
 [cumming-2026]
 
 Paradigm entries for Korean tense-evidential morphology from [cumming-2026],
-Tables 18 (-te) and 19 (-ney). Korean is notable for morphologically encoding
+paradigm tables (18) (-te) and (19) (-ney). Korean is notable for morphologically encoding
 evidential perspective independently of utterance perspective.
 
 ## -te vs -ney
@@ -24,7 +24,7 @@ namespace Korean.Evidentials
 open Tense.Evidential
 
 -- ════════════════════════════════════════════════════
--- § 1. Korean -te (Table 18)
+-- § 1. Korean -te (table (18))
 -- ════════════════════════════════════════════════════
 
 /-- Korean -te PAST: T < A (strict downstream), T < S (past). -/
@@ -46,7 +46,7 @@ def teFuture : TAMEEntry where
   up := .unconstrained
 
 -- ════════════════════════════════════════════════════
--- § 2. Korean -ney (Table 19)
+-- § 2. Korean -ney (table (19))
 -- ════════════════════════════════════════════════════
 
 /-- Korean -ney PAST: T < A (strict downstream), T < S (past). -/
