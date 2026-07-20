@@ -30,7 +30,7 @@ namespace English.Tense
 open _root_.Tense.Evidential
 
 -- ════════════════════════════════════════════════════
--- § 1. Table 20: Simple Past, Present Progressive, Future
+-- § 1. table (20): Simple Past, Present Progressive, Future
 -- ════════════════════════════════════════════════════
 
 /-- English simple past: T ≤ A (downstream), T < S (past). -/
@@ -52,7 +52,7 @@ def future : TAMEEntry where
   up := .future
 
 -- ════════════════════════════════════════════════════
--- § 2. Table 22: Will-Forms
+-- § 2. table (22): Will-Forms
 -- ════════════════════════════════════════════════════
 
 /-- English "will have V-ed": A < T (prospective), S < T (future). -/
