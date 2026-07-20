@@ -1,4 +1,5 @@
 import Linglib.Studies.ChristopoulosZompi2023
+import Linglib.Core.Optimization.Evaluation
 import Mathlib.Data.Finset.Powerset
 
 /-!
@@ -21,6 +22,10 @@ the competition.
 
 Main results:
 
+* `mem_eval_iff` / `mem_eval_iff_lexMins` — the strict-domination Eval cut
+  cascade is exactly lexicographic minimization: an Eval survivor is a
+  `LexMinProblem.lexMins` optimum (the shared core `OptimalityTheory.Tableau`
+  aliases), so this Max/Dep competition and phonological OT are one engine.
 * `eastFrisian_pattern` / `malayalam_pattern` — the two minimally compliant
   Russian-doll patterns of §4.1.3: East Frisian 3M (*h-äi, z-äi; h-um, h-ör*)
   puts ABA on ⟨NOM.SG, NOM.PL, ACC.PL⟩ with AAA on ⟨NOM.SG, ACC.SG, ACC.PL⟩;
@@ -110,6 +115,123 @@ instance [DecidableEq F] {rk : List Con} {v : List (Cand F)} {c : ZCell}
     {r : Cand F} : Decidable (Wins rk v c r) :=
   inferInstanceAs (Decidable (eval rk v c = [r]))
 
+/-! ### The shared lexicographic-minimization core
+
+`eval` is the strict-domination filter cascade; the phonology OT engine is
+lexicographic arg-min over a fixed-length violation profile. Its foundation is
+`Core.Optimization.Evaluation.LexMinProblem` — a finite candidate set scored by
+a `Lex (Fin n → ℕ)` profile, exposing the winner set `LexMinProblem.lexMins`;
+`OptimalityTheory.Tableau` is a definitional alias for it (`Tableau := LexMinProblem`,
+`Tableau.optimal := lexMins`). `eval` and this engine are one object, not two
+parallel engines: `mem_eval_iff` characterizes an Eval survivor as a
+lexicographic minimizer of the ranked violation vector, and
+`mem_eval_iff_lexMins` reads that off the `LexMinProblem` whose candidates are
+`v` and whose profile is that vector. So morphological Max/Dep Eval and
+phonological OT provably share the same lexicographic core. -/
+
+section SharedCore
+open Core.Optimization.Evaluation LexMinProblem
+
+/-- The candidate's violation vector at a cell, ordered by the ranking — the
+`List ℕ` reading of the OT `ViolationProfile`. -/
+def rankedViols (rk : List Con) (c : ZCell) (r : Cand F) : List ℕ :=
+  rk.map (fun C => viol C c r)
+
+@[simp] theorem rankedViols_nil (c : ZCell) (r : Cand F) : rankedViols [] c r = [] :=
+  rfl
+
+@[simp] theorem rankedViols_cons (C : Con) (rk : List Con) (c : ZCell) (r : Cand F) :
+    rankedViols (C :: rk) c r = viol C c r :: rankedViols rk c r := rfl
+
+/-- A candidate survives one Eval cut iff it minimises that constraint over the
+field: the cut keeps exactly the constraint's arg-min. -/
+theorem mem_cut_iff {C : Con} {c : ZCell} {v : List (Cand F)} {r : Cand F} :
+    r ∈ cut c v C ↔ r ∈ v ∧ ∀ s ∈ v, viol C c r ≤ viol C c s := by
+  unfold cut
+  cases hm : (v.map (viol C c)).min? with
+  | none =>
+    have hv : v = [] := by simpa using List.min?_eq_none_iff.mp hm
+    subst hv; simp
+  | some m =>
+    obtain ⟨hmem, hmin⟩ := List.min?_eq_some_iff (α := ℕ) |>.mp hm
+    obtain ⟨s₀, hs₀v, hs₀⟩ := List.mem_map.mp hmem
+    rw [List.mem_filter]
+    simp only [decide_eq_true_eq]
+    constructor
+    · rintro ⟨hrv, hrm⟩
+      exact ⟨hrv, fun s hs => hrm ▸ hmin _ (List.mem_map_of_mem hs)⟩
+    · rintro ⟨hrv, hle⟩
+      exact ⟨hrv, le_antisymm ((hle _ hs₀v).trans_eq hs₀)
+        (hmin _ (List.mem_map_of_mem hrv))⟩
+
+/-- **Eval is lexicographic minimization.** A candidate survives the whole cut
+cascade iff its ranked violation vector is lexicographically ≤ every rival's:
+the strict-domination cut sequence computes exactly the lex-min set. -/
+theorem mem_eval_iff {rk : List Con} {v : List (Cand F)} {c : ZCell} {r : Cand F} :
+    r ∈ eval rk v c ↔ r ∈ v ∧ ∀ s ∈ v, LexLE (rankedViols rk c r) (rankedViols rk c s) := by
+  induction rk generalizing v with
+  | nil => simp [eval, LexLE]
+  | cons C rk ih =>
+    rw [show eval (C :: rk) v c = eval rk (cut c v C) c from rfl, ih]
+    constructor
+    · rintro ⟨hrcut, htail⟩
+      obtain ⟨hrv, hrmin⟩ := mem_cut_iff.mp hrcut
+      refine ⟨hrv, fun s hs => ?_⟩
+      rw [rankedViols_cons, rankedViols_cons, lexLE_cons_cons_iff]
+      rcases lt_or_eq_of_le (hrmin s hs) with hlt | heq
+      · exact Or.inl hlt
+      · exact Or.inr ⟨heq, htail s (mem_cut_iff.mpr ⟨hs, fun t ht => heq ▸ hrmin t ht⟩)⟩
+    · rintro ⟨hrv, hcons⟩
+      have hrmin : ∀ s ∈ v, viol C c r ≤ viol C c s := fun s hs => by
+        have := hcons s hs
+        rw [rankedViols_cons, rankedViols_cons, lexLE_cons_cons_iff] at this
+        rcases this with hlt | ⟨heq, _⟩
+        · exact le_of_lt hlt
+        · exact le_of_eq heq
+      refine ⟨mem_cut_iff.mpr ⟨hrv, hrmin⟩, fun s hs => ?_⟩
+      obtain ⟨hsv, hsmin⟩ := mem_cut_iff.mp hs
+      have := hcons s hsv
+      rw [rankedViols_cons, rankedViols_cons, lexLE_cons_cons_iff] at this
+      rcases this with hlt | ⟨_, htail⟩
+      · exact absurd (hsmin r hrv) (not_le_of_gt hlt)
+      · exact htail
+
+private theorem map_eq_ofFn_get {α β : Type*} (l : List α) (f : α → β) :
+    l.map f = List.ofFn (fun i : Fin l.length => f (l.get i)) := by
+  apply List.ext_getElem <;> simp
+
+/-- The ranked violation vector is the fixed-length OT profile spelled out as a
+list. -/
+theorem rankedViols_eq_ofFn (rk : List Con) (c : ZCell) (r : Cand F) :
+    rankedViols rk c r = List.ofFn (fun i : Fin rk.length => viol (rk.get i) c r) :=
+  map_eq_ofFn_get rk (fun C => viol C c r)
+
+/-- The Eval competition as a `LexMinProblem` — the engine `OptimalityTheory.Tableau`
+aliases: candidate set `v`, profile the ranked violation vector (rank position `i`
+reading the `i`-th constraint as a violation count via `lexFinNatOf`). This is a
+phonological OT tableau with morphological Max/Dep constraints. -/
+def zTableau [DecidableEq F] (rk : List Con) (v : List (Cand F)) (c : ZCell)
+    (hv : v ≠ []) : LexMinProblem (Cand F) rk.length where
+  candidates := v.toFinset
+  profile := lexFinNatOf (fun i => viol (rk.get i) c)
+  nonempty := let ⟨x, hx⟩ := List.exists_mem_of_ne_nil v hv; ⟨x, List.mem_toFinset.mpr hx⟩
+
+/-- **Eval and OT are one engine.** An Eval survivor is exactly a lex-minimizer
+of the OT tableau `zTableau`: the morphological Max/Dep competition *is* a
+phonological OT tableau (`LexMinProblem`) over the shared
+lexicographic-minimization core. -/
+theorem mem_eval_iff_lexMins [DecidableEq F] {rk : List Con} {v : List (Cand F)}
+    {c : ZCell} {r : Cand F} (hv : v ≠ []) :
+    r ∈ eval rk v c ↔ r ∈ (zTableau rk v c hv).lexMins := by
+  rw [mem_eval_iff, LexMinProblem.mem_lexMins_iff]
+  simp only [LexMinProblem.IsLexMin]
+  refine and_congr List.mem_toFinset.symm (forall_congr' fun s => ?_)
+  refine imp_congr List.mem_toFinset.symm ?_
+  rw [rankedViols_eq_ofFn, rankedViols_eq_ofFn, lexLE_ofFn]
+  rfl
+
+end SharedCore
+
 /-- The 24 rankings of the four dimension-relativized constraints of the
 case-number paradigm, enumerated (kernel-reducible, unlike
 `List.permutations`). -/
@@ -188,12 +310,20 @@ theorem checkerboard_excluded :
 /-- The vocabulary-general checkerboard exclusion, for any candidate list and
 any ranking of the four relativized constraints.
 
-TODO: formalize the dissertation's W/T/L argument ((170) and §4.1.4's
-continuation): dimension-relativized violation counts factor through the
-dimension components of context and spec, so a constraint's win/tie/lose
-verdict for the NOM.SG winner transfers along the row or column that keeps its
-dimension constant; a case analysis on the leftmost strictly-winning columns
-at NOM.SG and ACC.PL then forces a win at ACC.SG or NOM.PL. -/
+TODO: the shared-core `mem_eval_iff` reduces `Wins` to strict lexicographic
+domination of the ranked violation vector (`eval rk v c = [a]` iff `a`'s vector
+lex-dominates every rival's, strictly since a tying rival would also survive).
+On that footing the dissertation's argument ((170) and §4.1.4's continuation)
+runs: (i) dimension-relativized counts factor through the dimension slice of the
+context (`viol (maxD d)`/`viol (depD d)` at `⟨κ,ν⟩` depend only on the `d`-part
+of `zdecomp`), so each constraint's field-level W/T/L verdict at NOM.SG and
+ACC.PL transfers to the cell sharing its dimension; (ii) `Wins` at a cell is
+equivalent to the leftmost non-tie column of the ranking (over the *original*
+field, cascade-eliminations included) being a strict win; (iii) a three-way case
+analysis on the relative rank of the leftmost strict-win columns at NOM.SG and
+ACC.PL then forces a strict win at ACC.SG or NOM.PL. Step (ii) — the
+column-scan characterization of the filter cascade — is the load-bearing lemma
+still to be formalized. -/
 theorem checkerboard_excluded_general {rk : List Con} {v : List (Cand F)}
     {a : Cand F}
     (hperm : rk.Perm [Con.maxD .kase, Con.maxD .num, Con.depD .kase,
