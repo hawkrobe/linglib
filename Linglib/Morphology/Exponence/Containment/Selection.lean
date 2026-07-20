@@ -223,14 +223,18 @@ theorem realize_eq_none_iff {v : List (SpanRule n F)} {g : Fin n} :
   show (winner v g).map _ = none ↔ _
   cases winner v g <;> simp
 
+/-- The threshold is strictly antitone in specificity. -/
+private theorem threshold_strictAnti {n : ℕ} {F : Type*} :
+    StrictAnti (SpanRule.threshold (n := n) (F := F)) := fun _ _ hlt =>
+  lt_of_not_ge fun hge => not_le_of_gt hlt
+    ((SpanRule.le_iff.trans SpanRule.moreSpecific_iff_threshold_le).mpr hge)
+
 /-- The containment engine's Elsewhere winner is an Elsewhere winner of
 the shared core — an instance of `selectBy_isElsewhereWinner`. -/
 theorem winner_isElsewhereWinner {v : List (SpanRule n F)} {g : Fin n}
     {it : SpanRule n F} (h : winner v g = some it) :
     Exponence.IsElsewhereWinner v g it :=
-  Exponence.selectBy_isElsewhereWinner
-    (fun _ _ _ _ _ _ _ hfs =>
-      (SpanRule.le_iff.trans SpanRule.moreSpecific_iff_threshold_le).mpr hfs) h
+  Exponence.selectBy_isElsewhereWinner (threshold_strictAnti.strictAntiOn _) h
 
 /-! ### Superset reading: Minimize-Junk selection
 
@@ -421,8 +425,8 @@ def SpanRule.toDecomposition (it : SpanRule n F) :
 /-- **Applicability agreement**: threshold containment is Subset containment of
 initial segments. -/
 @[simp] theorem applies_toDecomposition {it : SpanRule n F} {g : Fin n} :
-    Exponence.Applies (F := F) it.toDecomposition g
-      ↔ Exponence.Applies (F := F) it g := by
+    Exponence.Applies it.toDecomposition g
+      ↔ Exponence.Applies it g := by
   rw [SpanRule.applies_iff]; exact Finset.Iic_subset_Iic
 
 /-- The feature count of a chain rule is one more than its threshold, so

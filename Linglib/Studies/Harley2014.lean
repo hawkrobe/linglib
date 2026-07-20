@@ -138,9 +138,9 @@ def vocabulary : List (VocabItem Ctx RootIndex) :=
     sgEntry "weye"  walkRoot, elseEntry "kaate" walkRoot,
     sgEntry "mea"   killRoot, elseEntry "sua"   killRoot ]
 
-instance (c : Ctx × RootIndex) :
-    DecidablePred (fun vi : VocabItem Ctx RootIndex => Morphology.Exponence.Applies vi c) :=
-  fun vi => inferInstanceAs (Decidable (vi.matches c.1 c.2 = true))
+instance : DecidableRel
+    (Morphology.Exponence.Applies : VocabItem Ctx RootIndex → Ctx × RootIndex → Prop) :=
+  fun vi c => inferInstanceAs (Decidable (vi.matches c.1 c.2 = true))
 
 /-- Spell out root `idx` in context `ctx` by Elsewhere competition over
 `vocabulary`, resolved by the shared exponence engine (`Exponence.realize`
@@ -210,7 +210,7 @@ The mirror argument on List 3. A cran-morph (*cahoot*) has an interpretation
 only inside its licensing frame (`in [ [ √ n ] -PL ]`) and — unlike an
 ordinary root — **no Elsewhere interpretation** ([harley-2014] (16)). We
 state this with the allosemy exponence engine (`AllosemicEntry` as an
-`Morphology.Exponence` instance): `selectBy` returns a meaning in the
+`Morphology.Exponence.Rule` instance): `selectBy` returns a meaning in the
 licensed context and `none` outside it. -/
 
 /-- `√548` *cahoot*: a single LF entry, licensed only under `n` (the idiom

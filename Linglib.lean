@@ -1269,6 +1269,7 @@ import Linglib.Morphology.Exponence.Containment.Contiguity
 import Linglib.Morphology.Exponence.Containment.Defs
 import Linglib.Morphology.Exponence.Containment.Selection
 import Linglib.Morphology.Exponence.Decomposition
+import Linglib.Morphology.Exponence.Elsewhere
 import Linglib.Morphology.Exponence.Select
 import Linglib.Morphology.FragmentGrammars.AdaptorGrammar
 import Linglib.Morphology.FragmentGrammars.CFGFragment

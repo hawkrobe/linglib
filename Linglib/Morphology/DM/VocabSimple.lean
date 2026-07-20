@@ -136,9 +136,9 @@ section ExponenceCore
 open Morphology Morphology.Exponence
 
 /-- A vocabulary entry exposes the shared exponence core interface
-(`Morphology.Exponence`): contexts are (target bundle,
+(`Morphology.Exponence.Rule`): contexts are (target bundle,
 syntactic context) pairs, applicability is `Matches`. -/
-instance : Exponence VocabEntry (FeatureBundle × Option Cat) String :=
+instance : Exponence.Rule VocabEntry (FeatureBundle × Option Cat) String :=
   ⟨VocabEntry.exponent, fun e tc => e.Matches tc.1 tc.2⟩
 
 instance : Preorder VocabEntry := Exponence.toPreorder

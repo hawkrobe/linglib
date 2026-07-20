@@ -115,7 +115,7 @@ theorem ncc_aba_generable :
 elsewhere rule. SCC therefore cannot write a Non-Elsewhere Nominative Stem
 (the paper's §3 problem: Doric h-stems, Latvian *pat-*, English *h-*). -/
 theorem scc_nom_forces_empty {r : Rule Case3 scc F}
-    (h : Exponence.Applies (F := F) r .nom) : r.feats = ∅ :=
+    (h : Exponence.Applies r .nom) : r.feats = ∅ :=
   Finset.subset_empty.mp h
 
 /-! ### Table 25: derivations of AAA, ABB, AAB, ABC under WCC

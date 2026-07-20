@@ -269,16 +269,12 @@ instance [DecidableEq F] (entry : TreeLexEntry F α) (target : NanoTree F) :
 open Morphology.Exponence
 
 /-- A tree lexical entry exposes the shared exponence core interface
-(`Morphology.Exponence`): contexts are syntactic targets,
+(`Morphology.Exponence.Rule`): contexts are syntactic targets,
 applicability is Superset-Principle matching. -/
-instance : Exponence (TreeLexEntry F α) (NanoTree F) α :=
+instance : Exponence.Rule (TreeLexEntry F α) (NanoTree F) α :=
   ⟨TreeLexEntry.exponent, fun e t => e.Matches t⟩
 
 instance : Preorder (TreeLexEntry F α) := Exponence.toPreorder
-
-instance [DecidableEq F] (target : NanoTree F) :
-    DecidablePred (fun e : TreeLexEntry F α => Exponence.Applies (F := α) e target) :=
-  fun e => inferInstanceAs (Decidable (e.Matches target))
 
 /-- The specificity order is reverse containment of the stored trees:
 `a` is at least as specific as `b` exactly when `b`'s tree contains
@@ -290,11 +286,29 @@ theorem TreeLexEntry.le_iff {a b : TreeLexEntry F α} :
 
 /-! ### Tree spellout (Elsewhere Condition) -/
 
+/-- Dualized tree size is strictly antitone in specificity: a strictly
+containing entry has a strictly larger tree, since containment is
+size-antisymmetric (`Contains.eq_of_size_le`). -/
+private theorem size_strictAnti :
+    StrictAnti (fun e : TreeLexEntry F α => OrderDual.toDual e.tree.size) := by
+  intro s r hlt
+  have hcon := TreeLexEntry.le_iff.mp hlt.le
+  refine OrderDual.toDual_lt_toDual.mpr (lt_of_le_of_ne hcon.size_le fun heq => ?_)
+  refine not_le_of_gt hlt (TreeLexEntry.le_iff.mpr ?_)
+  rw [hcon.eq_of_size_le heq.ge]
+  exact .refl _
+
+section
+variable [DecidableEq F]
+
+instance : DecidableRel (Applies : TreeLexEntry F α → NanoTree F → Prop) :=
+  fun e t => inferInstanceAs (Decidable (e.Matches t))
+
 /-- The matching entry with the smallest stored tree (first-listed on
     ties): Minimize Junk over tree-generalized Superset matching, as the
     shared core's `Exponence.selectBy` at the tree-size score dualized so
     the smallest tree wins. -/
-def treeSelect [DecidableEq F] (entries : List (TreeLexEntry F α))
+def treeSelect (entries : List (TreeLexEntry F α))
     (target : NanoTree F) : Option (TreeLexEntry F α) :=
   selectBy (fun e => OrderDual.toDual e.tree.size) entries target
 
@@ -305,35 +319,30 @@ def treeSelect [DecidableEq F] (entries : List (TreeLexEntry F α))
     Parallels `Morphology.Containment.spellout`, but the matching
     relation is tree containment instead of rank comparison, and the
     specificity metric is tree size instead of rank. -/
-def treeSpellout [DecidableEq F] (entries : List (TreeLexEntry F α))
+def treeSpellout (entries : List (TreeLexEntry F α))
     (target : NanoTree F) : Option α :=
   (treeSelect entries target).map (·.exponent)
 
-/-- Smallest-tree selection is an Elsewhere winner of the shared core,
-with no side conditions: containment is size-antisymmetric
-(`Contains.eq_of_size_le`), so on comparable matching entries the
-dualized-size score reflects specificity and a size-minimal match is
-maximally specific. An instance of `selectBy_isElsewhereWinner`. -/
-theorem treeSelect_isElsewhereWinner [DecidableEq F]
+/-- Smallest-tree selection is an Elsewhere winner of the shared core:
+the dualized-size score is strictly antitone in specificity
+(`size_strictAnti`), so a size-minimal match is maximally specific. An
+instance of `selectBy_isElsewhereWinner`. -/
+theorem treeSelect_isElsewhereWinner
     {entries : List (TreeLexEntry F α)} {target : NanoTree F}
     {e : TreeLexEntry F α} (h : treeSelect entries target = some e) :
     IsElsewhereWinner entries target e :=
-  selectBy_isElsewhereWinner
-    (fun r _ s _ _ _ hsr hfsr => by
-      rw [TreeLexEntry.le_iff]
-      have hsize : r.tree.size ≤ s.tree.size := OrderDual.toDual_le_toDual.mp hfsr
-      have heq : r.tree = s.tree := (TreeLexEntry.le_iff.mp hsr).eq_of_size_le hsize
-      rw [← heq]
-      exact .refl _) h
+  selectBy_isElsewhereWinner (size_strictAnti.strictAntiOn _) h
 
 /-- The spelled-out exponent is an Elsewhere winner's exponent. -/
-theorem treeSpellout_isElsewhereWinner [DecidableEq F]
+theorem treeSpellout_isElsewhereWinner
     {entries : List (TreeLexEntry F α)} {target : NanoTree F} {x : α}
     (h : treeSpellout entries target = some x) :
     ∃ e ∈ entries, e.exponent = x ∧
       IsElsewhereWinner entries target e := by
   obtain ⟨e, he, rfl⟩ := Option.map_eq_some_iff.mp h
   exact ⟨e, selectBy_mem he, rfl, treeSelect_isElsewhereWinner he⟩
+
+end
 
 /-! ### Foot Condition -/
 
