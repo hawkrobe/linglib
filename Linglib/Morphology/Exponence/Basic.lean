@@ -44,8 +44,7 @@ after which the selection theorems of `Select.lean` apply to `MyRule`.
 namespace Morphology
 
 /-- Terms of `R` are rules of exponence with an exponent in `F` and an
-applicability condition on `Ctx`. This is `SetLike` without injectivity:
-distinct rules may share a condition while carrying different exponents. -/
+applicability condition on `Ctx`. -/
 class Exponence (R : Type*) (Ctx F : outParam Type*) where
   /-- The exponent a rule inserts. -/
   exponent : R → F
