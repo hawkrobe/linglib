@@ -169,21 +169,19 @@ variable [DecidableRel (· < · : R → R → Prop)]
 def selectMinimal (v : List R) (c : Ctx) : Option R :=
   (applicable v c).find? (fun r => (applicable v c).all (fun s => decide (¬ s < r)))
 
-theorem selectMinimal_mem
-    (h : selectMinimal v c = some r) : r ∈ v :=
-  (mem_applicable.mp (List.mem_of_find?_eq_some h)).1
-
-theorem selectMinimal_applies
-    (h : selectMinimal v c = some r) : Applies r c :=
-  (mem_applicable.mp (List.mem_of_find?_eq_some h)).2
-
 /-- `selectMinimal` returns an Elsewhere winner. -/
 theorem selectMinimal_isElsewhereWinner
     (h : selectMinimal v c = some r) : IsElsewhereWinner v c r := by
   have hall := List.find?_some h
   simp only [List.all_eq_true, decide_eq_true_eq, mem_applicable] at hall
-  exact ⟨mem_applicable.mp (List.mem_of_find?_eq_some h),
-    fun s hs => not_lt_iff_le_imp_ge.mp (hall s hs)⟩
+  exact minimal_iff_forall_lt.mpr
+    ⟨mem_applicable.mp (List.mem_of_find?_eq_some h), fun s hlt hs => hall s hs hlt⟩
+
+theorem selectMinimal_mem (h : selectMinimal v c = some r) : r ∈ v :=
+  (selectMinimal_isElsewhereWinner h).prop.1
+
+theorem selectMinimal_applies (h : selectMinimal v c = some r) : Applies r c :=
+  (selectMinimal_isElsewhereWinner h).prop.2
 
 /-- `selectMinimal` succeeds iff some rule applies. -/
 theorem selectMinimal_isSome_iff :
