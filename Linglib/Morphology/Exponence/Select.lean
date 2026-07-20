@@ -5,38 +5,21 @@ import Mathlib.Data.Set.Finite.Basic
 import Mathlib.Data.List.MinMax
 
 /-!
-# Elsewhere selection over rules of exponence
+# Elsewhere selection
 
-This file defines Elsewhere selection over the specificity preorder of
-`Morphology/Exponence/Basic.lean`. An Elsewhere winner is a `≤`-minimal
-applicable rule. Over a coherent vocabulary, comparable winners carry one
-exponent, so the prediction relation `Realizes` is well defined up to
-incomparability.
+This file proves that selection by a specificity score (`selectBy`) and
+selection over the specificity preorder (`selectMinimal`) produce Elsewhere
+winners: `≤`-minimal applicable rules of exponence ([kiparsky-1973]).
 
-`selectBy` computes a winner by maximizing a score `f : R → α` into a
-linear order over the applicable sublist; scores that are minimized enter
-through `OrderDual`. Its soundness law `selectBy_isElsewhereWinner` reduces
-an engine's winner-is-Elsewhere theorem to that engine's score-reflection
-lemma. `selectMinimal` selects directly over the preorder, for engines
-whose specificity has no faithful score.
+## Main definitions
 
-The theory models selection within a single rule block; realizational
-frameworks compose per-block winners into the paradigm function
-([stump-2001]). Optional multiple exponence within a block (Jubba Maay,
-[trommer-zimmermann-2015]) is outside scope, since `Realizes.eq` makes the
-per-block prediction unique. Whether specificity is the Elsewhere criterion
-is itself not beyond question: [jackendoff-audring-2020] suggest markedness
-may operate in the overlapping `-ious` case.
-
-## Main declarations
-
-* `IsElsewhereWinner`, `Coherent`, `exists_isElsewhereWinner` — minimality,
-  coherence, and existence of winners.
-* `Realizes` — the framework-neutral prediction relation.
-* `selectBy`, `realize`, `selectBy_isElsewhereWinner`, `realize_realizes` —
-  score selection and its soundness.
-* `selectMinimal`, `selectMinimal_isElsewhereWinner` — order selection and
-  its soundness.
+* `IsElsewhereWinner`: a `≤`-minimal applicable rule of a vocabulary at a
+  context.
+* `Realizes`: some Elsewhere winner carries the given exponent.
+* `selectBy`, `realize`: the applicable rule of greatest score, and its
+  exponent.
+* `selectMinimal`: the first applicable rule that no applicable rule
+  strictly undercuts.
 -/
 
 namespace Morphology.Exponence
@@ -45,13 +28,11 @@ variable {Ctx F : Type*} {R : Type*} [Preorder R] [Exponence R Ctx F]
 
 /-! ### Elsewhere winners -/
 
-/-- An Elsewhere winner for `v` at `c` is a `≤`-minimal applicable member
-of `v`: no applicable rule in `v` is strictly more specific. -/
+/-- A `≤`-minimal applicable rule of `v` at `c`. -/
 def IsElsewhereWinner (v : List R) (c : Ctx) (r : R) : Prop :=
   Minimal (fun s => s ∈ v ∧ Exponence.Applies (F := F) s c) r
 
-/-- A winner is at least as specific as any applicable member of the
-vocabulary that is at least as specific as it. -/
+/-- A winner is below every applicable rule that is below it. -/
 theorem IsElsewhereWinner.le_of_le {v : List R} {c : Ctx} {r s : R}
     (hr : IsElsewhereWinner v c r) (hs : s ∈ v)
     (happ : Exponence.Applies (F := F) s c) (h : s ≤ r) : r ≤ s :=
@@ -67,25 +48,19 @@ theorem IsElsewhereWinner.antisymmRel {v : List R} {c : Ctx} {r s : R}
   · exact ⟨hr.le_of_le hs.1.1 hs.1.2 h, h⟩
   · exact ⟨h, hs.le_of_le hr.1.1 hr.1.2 h⟩
 
-/-- A vocabulary is coherent if equivalent rules carry the same exponent,
-so that the exponent descends to the antisymmetrization of the specificity
-preorder ([caha-2009]'s antihomophony). Incomparable competitors are
-tolerated, where [stump-2001]'s Pāṇinian Determinism forbids them. -/
+/-- A vocabulary is coherent if equivalent rules carry the same exponent. -/
 def Coherent (v : List R) : Prop :=
   ∀ r ∈ v, ∀ s ∈ v, AntisymmRel (· ≤ ·) r s →
     Exponence.exponent (F := F) r = Exponence.exponent (F := F) s
 
-/-- Over a coherent vocabulary, comparable winners select the same
-exponent: Elsewhere selection is well defined up to incomparability. -/
+/-- Comparable winners of a coherent vocabulary carry the same exponent. -/
 theorem IsElsewhereWinner.exponent_eq {v : List R} {c : Ctx} {r s : R}
     (hv : Coherent v) (hr : IsElsewhereWinner v c r)
     (hs : IsElsewhereWinner v c s) (h : s ≤ r ∨ r ≤ s) :
     Exponence.exponent (F := F) r = Exponence.exponent (F := F) s :=
   hv r hr.1.1 s hs.1.1 (hr.antisymmRel hs h)
 
-/-- A vocabulary with an applicable rule has an Elsewhere winner —
-proved, where [stump-2001] guarantees existence by stipulating a
-bottom-element Identity Function Default. -/
+/-- A vocabulary with an applicable rule has an Elsewhere winner. -/
 theorem exists_isElsewhereWinner {v : List R} {c : Ctx}
     (h : ∃ r ∈ v, Exponence.Applies (F := F) r c) : ∃ r, IsElsewhereWinner v c r :=
   (v.finite_toSet.subset fun _ hr => hr.1).exists_minimal h
@@ -96,8 +71,7 @@ theorem exists_isElsewhereWinner {v : List R} {c : Ctx}
 def Realizes (v : List R) (c : Ctx) (φ : F) : Prop :=
   ∃ r, IsElsewhereWinner v c r ∧ Exponence.exponent (F := F) r = φ
 
-/-- Over a coherent vocabulary whose winners are comparable, the
-prediction is unique. -/
+/-- Over a coherent vocabulary with comparable winners, the prediction is unique. -/
 theorem Realizes.eq {v : List R} {c : Ctx} {φ ψ : F} (hv : Coherent v)
     (hcmp : ∀ ⦃r s⦄, IsElsewhereWinner v c r → IsElsewhereWinner v c s → s ≤ r ∨ r ≤ s)
     (hφ : Realizes v c φ) (hψ : Realizes v c ψ) : φ = ψ := by
@@ -105,11 +79,7 @@ theorem Realizes.eq {v : List R} {c : Ctx} {φ ψ : F} (hv : Coherent v)
   obtain ⟨s, hs, rfl⟩ := hψ
   exact hr.exponent_eq hv hs (hcmp hr hs)
 
-/-! ### Score selection
-
-For a specificity score `f : R → α` into a linear order, `selectBy` picks
-the applicable rule of greatest score. Scores that are minimized (span,
-tree size, support card) pass through `OrderDual α`. -/
+/-! ### Score selection -/
 
 variable [∀ c : Ctx, DecidablePred (fun r : R => Exponence.Applies (F := F) r c)]
 
@@ -124,8 +94,8 @@ omit [Preorder R] in
 
 variable {α : Type*} [LinearOrder α]
 
-/-- The applicable rule of `v` at `c` with greatest score `f`, ties broken
-by vocabulary order, or `none` when nothing applies. -/
+/-- The applicable rule of greatest score `f`, ties broken by vocabulary
+order; scores to be minimized pass through `OrderDual`. -/
 def selectBy (f : R → α) (v : List R) (c : Ctx) : Option R :=
   (applicable v c).argmax f
 
@@ -144,9 +114,8 @@ theorem selectBy_eq_none_iff {f : R → α} {v : List R} {c : Ctx} :
     selectBy f v c = none ↔ applicable v c = [] :=
   List.argmax_eq_none
 
-/-- With the score reflecting specificity contravariantly on applicable
-rules, the selection is at least as specific as every applicable rule
-— it is `≤` all of them, no comparability assumed. -/
+/-- When the score reflects specificity, the selection is below every
+applicable rule. -/
 theorem selectBy_le_of_applies {f : R → α} {v : List R} {c : Ctx} {r s : R}
     (hf : ∀ r ∈ v, ∀ s ∈ v, Exponence.Applies (F := F) r c →
       Exponence.Applies (F := F) s c → (r ≤ s ↔ f s ≤ f r))
@@ -155,10 +124,8 @@ theorem selectBy_le_of_applies {f : R → α} {v : List R} {c : Ctx} {r s : R}
   (hf r (selectBy_mem h) s hs (selectBy_applies h) hsapp).mpr
     (List.le_of_mem_argmax (mem_applicable.mpr ⟨hs, hsapp⟩) h)
 
-/-- A score that reflects specificity contravariantly on comparable
-applicable rules selects an Elsewhere winner. Engines discharge `hf` from
-the `mpr` of their `le_iff`, or via `Finset.eq_of_subset_of_card_le` where
-card `≤` does not imply support `⊆`. -/
+/-- When the score reflects specificity on comparable applicable rules,
+`selectBy` returns an Elsewhere winner. -/
 theorem selectBy_isElsewhereWinner {f : R → α} {v : List R} {c : Ctx} {r : R}
     (hf : ∀ r ∈ v, ∀ s ∈ v, Exponence.Applies (F := F) r c →
       Exponence.Applies (F := F) s c → s ≤ r → f s ≤ f r → r ≤ s)
@@ -177,12 +144,11 @@ theorem selectBy_congr {f : R → α} {v : List R} {c c' : Ctx}
 
 /-! ### Realization -/
 
-/-- The exponent of the score-selected winner, or `none` when no rule
-applies. -/
+/-- The exponent of the rule selected by `selectBy`. -/
 def realize (f : R → α) (v : List R) (c : Ctx) : Option F :=
   (selectBy f v c).map (Exponence.exponent (F := F))
 
-/-- Realized exponents satisfy the prediction relation `Realizes`. -/
+/-- Realized exponents satisfy `Realizes`. -/
 theorem realize_realizes {f : R → α} {v : List R} {c : Ctx} {φ : F}
     (hf : ∀ r ∈ v, ∀ s ∈ v, Exponence.Applies (F := F) r c →
       Exponence.Applies (F := F) s c → s ≤ r → f s ≤ f r → r ≤ s)
@@ -203,17 +169,11 @@ theorem realize_congr {f : R → α} {v : List R} {c c' : Ctx}
     realize f v c = realize f v c' := by
   rw [realize, realize, selectBy_congr h]
 
-/-! ### Order selection
-
-`selectMinimal` selects directly over the specificity preorder: the first
-applicable rule that no applicable rule strictly undercuts. It serves
-engines whose specificity is a genuine preorder with no faithful score,
-such as the PFM narrowness order of `Morphology/Paradigm/Function.lean`. -/
+/-! ### Order selection -/
 
 variable [DecidableRel (· < · : R → R → Prop)]
 
-/-- The first applicable rule of `v` at `c` that no applicable rule
-strictly undercuts, or `none` when nothing applies. -/
+/-- The first applicable rule that no applicable rule strictly undercuts. -/
 def selectMinimal (v : List R) (c : Ctx) : Option R :=
   (applicable v c).find? (fun r => (applicable v c).all (fun s => decide (¬ s < r)))
 
@@ -225,7 +185,7 @@ theorem selectMinimal_applies {v : List R} {c : Ctx} {r : R}
     (h : selectMinimal v c = some r) : Exponence.Applies (F := F) r c :=
   (mem_applicable.mp (List.mem_of_find?_eq_some h)).2
 
-/-- A selected rule is an Elsewhere winner. -/
+/-- `selectMinimal` returns an Elsewhere winner. -/
 theorem selectMinimal_isElsewhereWinner {v : List R} {c : Ctx} {r : R}
     (h : selectMinimal v c = some r) : IsElsewhereWinner v c r := by
   refine ⟨mem_applicable.mp (List.mem_of_find?_eq_some h), ?_⟩
