@@ -62,8 +62,8 @@ instance instExponence : Morphology.Exponence.Rule DiagOp Root String where
   exponent := DiagOp.exponent
   Applies := DiagOp.Applies
 
-instance : Exponence.DecidableApplies DiagOp Root :=
-  fun r op => op.decApplies r
+instance : DecidableRel (Exponence.Applies : DiagOp → Root → Prop) :=
+  fun op r => op.decApplies r
 
 @[simp] theorem applies_iff (op : DiagOp) (r : Root) :
     Exponence.Applies op r ↔ op.Applies r := Iff.rfl

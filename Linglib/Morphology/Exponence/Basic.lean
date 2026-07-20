@@ -28,10 +28,6 @@ class Rule (R : Type*) (Ctx E : outParam Type*) where
 
 export Rule (exponent Applies)
 
-/-- Decidable applicability, making selection computable. -/
-abbrev DecidableApplies (R : Type*) (Ctx : Type*) {E : Type*} [Rule R Ctx E] :=
-  ∀ c : Ctx, DecidablePred (fun r : R => Applies r c)
-
 variable {Ctx E : Type*} {R : Type*} [Rule R Ctx E]
 
 /-- The contexts in which a rule applies. -/

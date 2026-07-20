@@ -50,8 +50,8 @@ variable {Cell F : Type*} {D : Cell → Finset K}
 instance : Exponence.Rule (Rule Cell D F) Cell F :=
   ⟨Rule.exponent, fun r c => r.feats ⊆ D c⟩
 
-instance : Exponence.DecidableApplies (Rule Cell D F) Cell :=
-  fun c r => inferInstanceAs (Decidable (r.feats ⊆ D c))
+instance : DecidableRel (Exponence.Applies : Rule Cell D F → Cell → Prop) :=
+  fun r c => inferInstanceAs (Decidable (r.feats ⊆ D c))
 
 omit [DecidableEq K] in
 @[simp] theorem applies_iff {r : Rule Cell D F} {c : Cell} :

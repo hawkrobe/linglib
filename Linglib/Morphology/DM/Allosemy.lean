@@ -206,6 +206,9 @@ instance : Exponence.Rule (AllosemicEntry Sem) SyntacticContext Sem :=
 
 instance : Preorder (AllosemicEntry Sem) := Exponence.toPreorder
 
+instance : DecidableRel (Applies : AllosemicEntry Sem → SyntacticContext → Prop) :=
+  fun e c => inferInstanceAs (Decidable (e.context.matches c = true))
+
 /-- The specificity score of an alloseme: the non-wildcard-field count of
 its conditioning context. -/
 def AllosemicEntry.score (e : AllosemicEntry Sem) : Nat := e.context.specificity

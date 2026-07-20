@@ -301,8 +301,8 @@ private theorem size_strictAnti :
 section
 variable [DecidableEq F]
 
-instance : DecidableApplies (TreeLexEntry F α) (NanoTree F) :=
-  fun t e => inferInstanceAs (Decidable (e.Matches t))
+instance : DecidableRel (Applies : TreeLexEntry F α → NanoTree F → Prop) :=
+  fun e t => inferInstanceAs (Decidable (e.Matches t))
 
 /-- The matching entry with the smallest stored tree (first-listed on
     ties): Minimize Junk over tree-generalized Superset matching, as the

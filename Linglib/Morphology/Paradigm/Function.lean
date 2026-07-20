@@ -156,8 +156,8 @@ end Narrowness
 section Selection
 variable [PartialOrder P] [DecidableEq L] [DecidableLE P]
 
-instance : Exponence.DecidableApplies (Rule L P F) (L × P) :=
-  fun c r => inferInstanceAs (Decidable (c.1 ∈ r.klass ∧ r.props ≤ c.2))
+instance : DecidableRel (Exponence.Applies : Rule L P F → L × P → Prop) :=
+  fun r c => inferInstanceAs (Decidable (c.1 ∈ r.klass ∧ r.props ≤ c.2))
 
 instance : DecidableLE (Rule L P F) := fun r s =>
   inferInstanceAs (Decidable ((r.klass = s.klass ∧ s.props ≤ r.props) ∨ r.klass ⊂ s.klass))
