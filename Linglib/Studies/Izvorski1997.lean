@@ -30,9 +30,9 @@ The key empirical contrasts establishing (8):
 
 namespace Izvorski1997
 
--- ════════════════════════════════════════════════════
--- § 1. Languages with PE
--- ════════════════════════════════════════════════════
+open Features.Evidentiality
+
+/-! ### Languages with PE -/
 
 /-- Languages exhibiting the Perfect of Evidentiality ([izvorski-1997], fn. 1).
     The paper's body text discusses Bulgarian, Turkish, and Norwegian;
@@ -41,19 +41,13 @@ inductive PELanguage where
   | bulgarian | turkish | norwegian | macedonian | albanian
   deriving DecidableEq, Repr
 
--- ════════════════════════════════════════════════════
--- § 2. Event vs. Must: Same Force, Different Base
--- ════════════════════════════════════════════════════
+/-! ### Event vs. Must: same force, different base -/
 
-/-- Binary evidence basis: Izvorski's central contrast variable.
-    The paper argues that Event and must have the same quantificational
-    force (□) but differ in whether the modal base is restricted to
-    indirect evidence only. -/
-inductive EvidenceBasis where
-  | direct | indirect
-  deriving DecidableEq, Repr
-
-/-- A data point from the Event/must paradigm.
+/-- A data point from the Event/must paradigm. The contrast variable is
+    the coarse evidence source; Izvorski's binary direct/indirect cut is
+    `CoarseSource.IsIndirect`. The paper argues that Event and must have
+    the same quantificational force (□) but differ in whether the modal
+    base is restricted to indirect evidence only.
     The paper's argument (§3, pp. 227–229):
     - (10)–(11): With indirect evidence, both Event and must are felicitous
     - (12)–(13): Event + "I have no evidence" → contradictory;
@@ -62,16 +56,17 @@ inductive EvidenceBasis where
     - Prose (p. 228): With direct evidence (speaker witnessed the event),
       Event is infelicitous; must is fine -/
 structure EvMustDatum where
-  evidenceBasis : EvidenceBasis
+  evidenceBasis : CoarseSource
   evFelicitous : Bool
   mustFelicitous : Bool
   label : String
   deriving Repr, BEq
 
 /-- Indirect evidence context: both Event and must felicitous.
-    Paper (10)–(11): "Knowing how much John likes wine..." -/
+    Paper (10)–(11): "Knowing how much John likes wine..." — inference
+    from general knowledge. -/
 def evMust_indirect : EvMustDatum where
-  evidenceBasis := .indirect
+  evidenceBasis := .inference
   evFelicitous := true
   mustFelicitous := true
   label := "(10)–(11): indirect evidence context"
@@ -88,9 +83,7 @@ def evMust_direct : EvMustDatum where
 /-- All Event/must data points. -/
 def evMustData : List EvMustDatum := [evMust_indirect, evMust_direct]
 
--- ════════════════════════════════════════════════════
--- § 3. Presupposition Diagnostics ((14)–(16))
--- ════════════════════════════════════════════════════
+/-! ### Presupposition diagnostics ((14)–(16)) -/
 
 /-- Standard presupposition diagnostics applied to the evidential. -/
 inductive PresupDiagnostic where
@@ -132,39 +125,31 @@ def presup_denial : PresupDiagnosticDatum where
 def presupData : List PresupDiagnosticDatum :=
   [presup_cancellation, presup_projection, presup_denial]
 
--- ════════════════════════════════════════════════════
--- § 4. Generalizations
--- ════════════════════════════════════════════════════
+/-! ### Generalizations -/
 
-/-- Event requires indirect evidence: felicitous with indirect, infelicitous
-    with direct. This captures (8ii). -/
-def evRequiresIndirect (d : EvMustDatum) : Bool :=
-  match d.evidenceBasis with
-  | .indirect => d.evFelicitous
-  | .direct => !d.evFelicitous
+/-- Event requires indirect evidence: felicitous exactly when the evidence
+    basis is `CoarseSource.IsIndirect`. This captures (8ii). -/
+def EvRequiresIndirect (d : EvMustDatum) : Prop :=
+  d.evFelicitous ↔ d.evidenceBasis.IsIndirect
 
-/-- Must allows both evidence bases — no presupposition on evidence type. -/
-def mustAllowsBoth (d : EvMustDatum) : Bool := d.mustFelicitous
+instance : DecidablePred EvRequiresIndirect := fun _ =>
+  inferInstanceAs (Decidable (_ ↔ _))
 
 /-- All data points satisfy the indirect-evidence generalization. -/
-theorem all_evRequiresIndirect :
-    evMustData.all evRequiresIndirect = true := by native_decide
+theorem all_evRequiresIndirect : ∀ d ∈ evMustData, EvRequiresIndirect d := by
+  decide
 
-/-- All data points satisfy the must-allows-both generalization. -/
-theorem all_mustAllowsBoth :
-    evMustData.all mustAllowsBoth = true := by native_decide
+/-- Must allows both evidence bases — no presupposition on evidence type. -/
+theorem all_mustAllowsBoth : ∀ d ∈ evMustData, d.mustFelicitous := by decide
 
 /-- All diagnostics confirm presupposition status (not implicature). -/
-theorem all_evidentialSurvives :
-    presupData.all (·.evidentialSurvives) = true := by native_decide
+theorem all_evidentialSurvives : ∀ d ∈ presupData, d.evidentialSurvives := by
+  decide
 
--- ════════════════════════════════════════════════════
--- § Bridge: EV Operator and Modal Semantics
--- ════════════════════════════════════════════════════
+/-! ### Bridge: EV operator and modal semantics -/
 
 open Semantics.Modality.Kratzer
 open Semantics.Presupposition
-open Features.Evidentiality
 open Tense.Evidential
 open Bulgarian.Evidentials
 

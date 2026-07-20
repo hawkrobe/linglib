@@ -1,5 +1,3 @@
-import Linglib.Features.Evidentiality
-
 /-!
 # Evidential — lexical structure for evidential markers
 [aikhenvald-2004] [de-haan-2013] [murray-2017]
@@ -9,7 +7,7 @@ The evidential as a lexical object, following the Determiner-API pattern
 universal to all evidential markers — a surface `form`; each specialization
 (`DirectEvidential`, `ReportativeEvidential`, `InferentialEvidential`) adds
 its own structure: an `Exponent` (realization strategy) plus a fine-grained
-feature value drawn from `Features.Evidentiality`.
+source value ([aikhenvald-2004]'s parameter carving).
 
 A language's evidential inventory is a `List Evidential.Entry` (heterogeneous
 across the three kinds) declared in its Fragment. Typological classifications
@@ -23,6 +21,8 @@ a language's WALS cell is a theorem about its declared evidentials.
 * `DirectEvidential`, `ReportativeEvidential`, `InferentialEvidential` —
   the three Aikhenvald-coarse specializations.
 * `Evidential.Exponent` — realization-strategy enum (analysis-neutral).
+* `DirectSource`, `ReportativeSource`, `InferentialBasis` — the
+  [aikhenvald-2004] fine-grained source taxonomies the specializations carry.
 * `Evidential.Entry` — an evidential occurrence in a language's inventory.
 
 ## Implementation notes
@@ -39,10 +39,39 @@ a language's WALS cell is a theorem about its declared evidentials.
 
 set_option autoImplicit false
 
-open Features.Evidentiality
-  (DirectSource ReportativeSource InferentialBasis)
-
 namespace Semantics.Evidential
+
+/-! ### Fine-grained source taxonomies ([aikhenvald-2004]) -/
+
+/-- Sensory channel of a direct (firsthand) evidential. The visual vs
+    non-visual contrast is grammaticalized in many languages
+    (Tuyuca, Tariana, Kashaya); finer distinctions (auditory vs other
+    non-visual sensory) are grammaticalized in some (Kashaya). Languages
+    that don't grammaticalize the contrast use `.unspecified`. -/
+inductive DirectSource where
+  | unspecified
+  | visual
+  | auditory
+  | nonvisualSensory
+  deriving DecidableEq, Repr, Inhabited
+
+/-- Source-identity of a reportative evidential. [aikhenvald-2004]
+    distinguishes hearsay (original speaker not identified) from quotative
+    (specifically named source). -/
+inductive ReportativeSource where
+  | unspecified
+  | unidentified
+  | identified
+  deriving DecidableEq, Repr, Inhabited
+
+/-- Basis of an inferential evidential. [aikhenvald-2004] distinguishes
+    inference `fromResult` (observable consequences) from `fromAssumption`
+    (general knowledge / reasoning). -/
+inductive InferentialBasis where
+  | unspecified
+  | fromResult
+  | fromAssumption
+  deriving DecidableEq, Repr, Inhabited
 
 /-- How an evidential is morphosyntactically realized. Analysis-neutral —
     distinguishes Bulgarian-style TAM-fusion from Cuzco-Quechua-style
@@ -67,6 +96,8 @@ inductive Exponent where
   deriving DecidableEq, Repr
 
 end Semantics.Evidential
+
+open Semantics.Evidential (DirectSource ReportativeSource InferentialBasis)
 
 /-- The base evidential lexical item: only what is universal — a surface
     form. Specializations (`DirectEvidential`, `ReportativeEvidential`,
