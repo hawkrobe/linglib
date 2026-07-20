@@ -36,8 +36,7 @@ theorem _root_.Minimal.antisymmRel {α : Type*} [Preorder α] {P : α → Prop} 
     AntisymmRel (· ≤ ·) x y :=
   h.elim (fun h => ⟨hx.le_of_le hy.1 h, h⟩) (fun h => ⟨h, hy.le_of_le hx.1 h⟩)
 
-/-- A `≤`-minimal applicable rule of `v` at `c`. An abbreviation for `Minimal`,
-so the `Minimal` API (`le_of_le`, `not_lt`, `antisymmRel`, …) applies. -/
+/-- A `≤`-minimal applicable rule of `v` at `c`. -/
 abbrev IsElsewhereWinner (v : List R) (c : Ctx) (r : R) : Prop :=
   Minimal (fun s => s ∈ v ∧ Applies s c) r
 
