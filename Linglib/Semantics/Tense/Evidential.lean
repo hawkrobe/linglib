@@ -24,9 +24,10 @@ assertion. Nonfuture tenses (past, present) impose T ≤ A — evidence is
 
 ## Cross-linguistic Data
 
-The paper's tables (17)–(22) show that Korean (-te, -ney) and Bulgarian (-l)
-tense morphology systematically interacts with evidential perspective. Paradigm
-data is in `Fragments/{English/Tense, Korean/Evidentials, Bulgarian/Evidentials}`;
+The paper's Korean and Bulgarian paradigm tables show that Korean (-te, -ney)
+and Bulgarian (-l) tense morphology systematically interacts with evidential
+perspective. Paradigm data is in
+`Fragments/{English/Tense, Korean/Evidentials, Bulgarian/Evidentials}`;
 verification theorems are in `Studies/Cumming2026.lean`.
 
 ## EP/UP Constraint Enums
@@ -39,8 +40,10 @@ design where paradigm entries stored opaque lambdas.
 ## Connection to Modal Evidentiality
 
 The tense evidential constraint parallels [von-fintel-gillies-2010]
-`kernelMust` presupposition: both require non-direct evidence. (A formal
-bridge between the two phenomena has not been built.)
+`kernelMust` presupposition: both accounts now speak through
+`Semantics.Evidential` (the perspective taxonomy here, the
+`CoarseSource.IsIndirect` restriction in `Studies/VonFintelGillies2010.lean`).
+A frame-level bridge between the two phenomena has not been built.
 
 ## Connection to Semantics.Evidential
 
@@ -75,8 +78,8 @@ structure EvidentialFrame (Time : Type*) extends ReichenbachFrame Time where
 /-! ### EP Constraint Enum -/
 
 /-- Evidential perspective constraint shapes attested across English, Korean,
-    and Bulgarian ([cumming-2026], Tables 17–22). Each value corresponds to a
-    distinct ordering on T vs A. -/
+    and Bulgarian ([cumming-2026]'s paradigm tables). Each value corresponds
+    to a distinct ordering on T vs A. -/
 inductive EPCondition where
   /-- T ≤ A: evidence downstream of event (English past/progressive, Bulgarian NFUT). -/
   | downstream
@@ -128,21 +131,6 @@ def EPCondition.IsNonfuture (e : EPCondition) : Prop :=
 instance : DecidablePred EPCondition.IsNonfuture :=
   fun _ => inferInstanceAs (Decidable (Semantics.Evidential.IsNonfuture _))
 
-@[simp] theorem EPCondition.toEvidentialPerspective_downstream :
-    EPCondition.toEvidentialPerspective .downstream = some .retrospective := rfl
-
-@[simp] theorem EPCondition.toEvidentialPerspective_strictDownstream :
-    EPCondition.toEvidentialPerspective .strictDownstream = some .retrospective := rfl
-
-@[simp] theorem EPCondition.toEvidentialPerspective_contemporaneous :
-    EPCondition.toEvidentialPerspective .contemporaneous = some .contemporaneous := rfl
-
-@[simp] theorem EPCondition.toEvidentialPerspective_prospective :
-    EPCondition.toEvidentialPerspective .prospective = some .prospective := rfl
-
-@[simp] theorem EPCondition.toEvidentialPerspective_unconstrained :
-    EPCondition.toEvidentialPerspective .unconstrained = none := rfl
-
 /-! ### UP Constraint Enum -/
 
 /-- Utterance perspective constraint shapes attested across the three
@@ -172,7 +160,7 @@ def UPCondition.toConstraint : UPCondition → EvidentialFrame ℤ → Prop
 /-! ### Tense-Evidential Paradigm -/
 
 /-- A row in a tense-aspect-mood-evidentiality paradigm table.
-    Generalizes [cumming-2026]'s tense-evidential paradigm (Tables 17–22)
+    Generalizes [cumming-2026]'s tense-evidential paradigm tables
     with optional mood and mirativity fields, enabling unified TAME
     fragment entries. Existing `{ label, ep, up }` constructions still
     work because `mood` and `mirative` have default values (`none`). -/
