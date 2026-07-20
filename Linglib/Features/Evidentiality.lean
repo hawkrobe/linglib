@@ -39,6 +39,15 @@ inductive CoarseSource where
   | inference
   deriving DecidableEq, Repr, Inhabited
 
+/-- A coarse source is *indirect* iff it is not direct observation. The
+    shared contrast variable of indirect-evidential operators:
+    [izvorski-1997]'s EV and [von-fintel-gillies-2010]'s *must* both
+    presuppose an indirect evidence basis. -/
+def CoarseSource.IsIndirect (s : CoarseSource) : Prop := s ≠ .direct
+
+instance : DecidablePred CoarseSource.IsIndirect := fun s =>
+  inferInstanceAs (Decidable (s ≠ .direct))
+
 /-- Evidential perspective: the temporal relation of evidence acquisition
     to the described event. [cumming-2026]'s three evidential
     orientations, named in framework-agnostic terms. -/

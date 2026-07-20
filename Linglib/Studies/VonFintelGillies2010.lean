@@ -1,5 +1,6 @@
 import Linglib.Features.Evidentiality
 import Linglib.Data.Examples.VonFintelGillies2010
+import Linglib.Studies.Izvorski1997
 
 /-!
 # von Fintel & Gillies (2010): *Must* ... Stay! Strong!
@@ -22,11 +23,13 @@ must not directly settle the prejacent.
   classification and its collapse onto the Aikhenvald taxonomy
 - `must_felicitous_iff_indirect`: over the example rows, the modalized
   member of a bare/modal minimal pair is felicitous iff the speaker's
-  evidence is not coarse-direct
+  evidence source `IsIndirect`
 - `cant_patterns_with_must`: the same biconditional restricted to the
   *can't* rows, derived from the previous theorem
 - `must_entails_prejacent`: every minimal pair records prejacent
   entailment — including the infelicitous direct-evidence rows
+- `must_evidence_matches_izvorski_ev`: *must* imposes the same
+  indirect-evidence restriction as [izvorski-1997]'s Bulgarian EV
 -/
 
 namespace VonFintelGillies2010
@@ -34,9 +37,7 @@ namespace VonFintelGillies2010
 open Features.Evidentiality
 open Data.Examples
 
--- ============================================================================
--- § 1  Evidence Types
--- ============================================================================
+/-! ### Evidence types -/
 
 /-- The type of evidence the speaker has for the prejacent. -/
 inductive EvidenceType where
@@ -67,9 +68,7 @@ theorem all_evidence_types_nonfuture (e : EvidenceType) :
     Features.Evidentiality.IsNonfuture e := by
   cases e <;> decide
 
--- ============================================================================
--- § 2  Adapters over the Example Rows
--- ============================================================================
+/-! ### Adapters over the example rows -/
 
 /-- Evidence-type adapter: the row's `evidence` feature as an
     `EvidenceType`. -/
@@ -85,18 +84,16 @@ def evidenceOf (row : LinguisticExample) : Option EvidenceType :=
 def mustPairs : List LinguisticExample :=
   Examples.all.filter (·.feature? "kind" == some "must_pair")
 
--- ============================================================================
--- § 3  The Evidential Restriction
--- ============================================================================
+/-! ### The evidential restriction -/
 
 /-- **Evidential restriction**: a *must*/*can't* sentence is felicitous
-    iff the speaker's evidence is not coarse-direct. Direct perception
+    iff the speaker's evidence source `IsIndirect`. Direct perception
     (exx. 6, 23) blocks the modal; inference — causal (exx. 7, 21, 24, 26)
     or by elimination (ex. 12) — licenses it. -/
 theorem must_felicitous_iff_indirect :
     ∀ row ∈ mustPairs,
       row.judgment = .acceptable ↔
-        (evidenceOf row).map EvidenceType.toCoarseSource ≠ some .direct := by
+        ∀ e ∈ evidenceOf row, e.toCoarseSource.IsIndirect := by
   decide
 
 /-- **Can't patterns with must**: the evidential restriction holds
@@ -105,12 +102,22 @@ theorem must_felicitous_iff_indirect :
 theorem cant_patterns_with_must :
     ∀ row ∈ mustPairs.filter (·.feature? "modal" == some "cant"),
       row.judgment = .acceptable ↔
-        (evidenceOf row).map EvidenceType.toCoarseSource ≠ some .direct :=
+        ∀ e ∈ evidenceOf row, e.toCoarseSource.IsIndirect :=
   fun row hrow => must_felicitous_iff_indirect row (List.mem_filter.mp hrow).1
 
--- ============================================================================
--- § 4  Must is Strong
--- ============================================================================
+/-- ***Must* imposes [izvorski-1997]'s EV restriction**: felicity of the
+    modalized member tracks `CoarseSource.IsIndirect` of the evidence
+    source in VF&G's *must* rows exactly as in Izvorski's Bulgarian EV
+    paradigm — the two epistemic operators presuppose the same coarse
+    indirect-evidence basis. -/
+theorem must_evidence_matches_izvorski_ev :
+    (∀ row ∈ mustPairs,
+      row.judgment = .acceptable ↔
+        ∀ e ∈ evidenceOf row, e.toCoarseSource.IsIndirect) ∧
+    ∀ d ∈ Izvorski1997.evMustData, Izvorski1997.EvRequiresIndirect d :=
+  ⟨must_felicitous_iff_indirect, Izvorski1997.all_evRequiresIndirect⟩
+
+/-! ### Must is strong -/
 
 /-- **Must is strong**: every minimal pair records that the modalized
     sentence entails its prejacent — including the direct-evidence rows
