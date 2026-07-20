@@ -25,8 +25,6 @@ set_option autoImplicit false
 
 namespace Semantics.Evidential
 
-open Features.Evidentiality (DirectSource ReportativeSource InferentialBasis)
-
 /-- A cell in [aikhenvald-2004] Ch 2's paradigm space. Each `Entry`
     covers one cell; `AikhenvaldSystem.fromInventory` then classifies a
     paradigm by inspecting which cells are filled. -/
@@ -55,7 +53,6 @@ def Entry.cell : Entry → Entry.Cell
   | .direct      ⟨_, _, .visual⟩           => .visual
   | .direct      ⟨_, _, .auditory⟩         => .auditory
   | .direct      ⟨_, _, .nonvisualSensory⟩ => .nonvisualSensory
-  | .direct      ⟨_, _, .olfactory⟩        => .nonvisualSensory
   | .inferential ⟨_, _, .unspecified⟩      => .inferred
   | .inferential ⟨_, _, .fromResult⟩       => .inferred
   | .inferential ⟨_, _, .fromAssumption⟩   => .assumed
