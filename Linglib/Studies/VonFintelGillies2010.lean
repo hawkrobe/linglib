@@ -1,4 +1,4 @@
-import Linglib.Features.Evidentiality
+import Linglib.Semantics.Evidential.Source
 import Linglib.Data.Examples.VonFintelGillies2010
 import Linglib.Studies.Izvorski1997
 
@@ -34,7 +34,7 @@ must not directly settle the prejacent.
 
 namespace VonFintelGillies2010
 
-open Features.Evidentiality
+open Semantics.Evidential
 open Data.Examples
 
 /-! ### Evidence types -/
@@ -57,15 +57,15 @@ def EvidenceType.toCoarseSource : EvidenceType → CoarseSource
   | .indirect => .inference
   | .elimination => .inference
 
-/-- VF&G evidence types inherit an evidential perspective via the
-    canonical Aikhenvald source mapping. -/
-instance : HasEvidentialPerspective EvidenceType where
-  toEvidentialPerspective e := toEvidentialPerspective e.toCoarseSource
+/-- VF&G evidence types declare their coarse source; the evidential
+    perspective derives via the canonical source mapping. -/
+instance : HasCoarseSource EvidenceType where
+  toCoarseSource e := some e.toCoarseSource
 
 /-- All VF&G evidence types are nonfuture: their perspective is always
     retrospective or contemporaneous (T ≤ A). -/
 theorem all_evidence_types_nonfuture (e : EvidenceType) :
-    Features.Evidentiality.IsNonfuture e := by
+    Semantics.Evidential.IsNonfuture e := by
   cases e <;> decide
 
 /-! ### Adapters over the example rows -/

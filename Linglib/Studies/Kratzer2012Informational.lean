@@ -1,5 +1,5 @@
 import Linglib.Semantics.Modality.Kratzer.Operators
-import Linglib.Features.Evidentiality
+import Linglib.Semantics.Evidential.Source
 import Mathlib.Data.Fin.Basic
 
 /-!
@@ -27,7 +27,7 @@ namespace Kratzer2012Informational
 abbrev World := Fin 4
 
 open Semantics.Modality.Kratzer
-open Features.Evidentiality
+open Semantics.Evidential
 
 /-! ## Propositions -/
 

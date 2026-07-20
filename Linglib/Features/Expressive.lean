@@ -8,7 +8,7 @@ lexeme as expressive and record which construction class it belongs to; theories
 it a denotation (`Pragmatics.Expressives.TwoDimProp`, an outlook-indexed meaning,
 use-conditional types, …) and are judged on whether they predict its diagnostic behavior.
 
-This is **object-level data** (like `Features.Person`, `Features.Evidentiality`): a tag, not
+This is **object-level data** (like `Features.Person`): a tag, not
 a denotation. It is `Prop`-free and depends on no theory layer, so Fragments may import it
 without pulling in any account of conventional implicature. The diagnostic *fingerprint*
 (`Pragmatics.Expressives.SecondaryMeaningProperties`) and the denotations live one layer up.

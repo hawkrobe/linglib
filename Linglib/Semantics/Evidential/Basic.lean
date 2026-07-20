@@ -1,4 +1,5 @@
 import Linglib.Semantics.Evidential.Defs
+import Linglib.Semantics.Evidential.Source
 
 /-!
 # Evidential — derived properties
@@ -59,5 +60,43 @@ def Entry.cell : Entry → Entry.Cell
   | .reportative ⟨_, _, .unspecified⟩      => .reported
   | .reportative ⟨_, _, .unidentified⟩     => .reported
   | .reportative ⟨_, _, .identified⟩       => .quotative
+
+/-! ### Coarse source and perspective -/
+
+/-- Collapse an Aikhenvald cell to its [willett-1988] coarse source. -/
+def Entry.Cell.toCoarseSource : Entry.Cell → CoarseSource
+  | .firsthand | .visual | .nonvisualSensory | .auditory => .direct
+  | .inferred | .assumed => .inference
+  | .reported | .quotative => .hearsay
+
+/-- The coarse source of an entry: the three `Entry` kinds are exactly the
+    [willett-1988] tripartition. -/
+def Entry.toCoarseSource : Entry → CoarseSource
+  | .direct _      => .direct
+  | .reportative _ => .hearsay
+  | .inferential _ => .inference
+
+/-- The taxonomy tower commutes: collapsing an entry's Aikhenvald cell
+    gives its coarse source. -/
+theorem Entry.cell_toCoarseSource (e : Entry) :
+    e.cell.toCoarseSource = e.toCoarseSource := by
+  cases e with
+  | direct d => obtain ⟨_, _, s⟩ := d; cases s <;> rfl
+  | reportative d => obtain ⟨_, _, s⟩ := d; cases s <;> rfl
+  | inferential d => obtain ⟨_, _, s⟩ := d; cases s <;> rfl
+
+/-- Inventory entries declare their coarse source; the evidential
+    perspective derives via the canonical source mapping. -/
+instance : HasCoarseSource Entry where
+  toCoarseSource e := some e.toCoarseSource
+
+/-- Every inventory entry is nonfuture: all three coarse sources are
+    causally downstream of the described event (T ≤ A) under the
+    canonical mapping. -/
+theorem Entry.isNonfuture (e : Entry) : IsNonfuture e := by
+  cases e with
+  | direct _ => exact .inr rfl
+  | reportative _ => exact .inl rfl
+  | inferential _ => exact .inl rfl
 
 end Semantics.Evidential

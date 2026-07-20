@@ -1,4 +1,4 @@
-import Linglib.Features.Evidentiality
+import Linglib.Semantics.Evidential.Source
 import Linglib.Features.Mirativity
 import Linglib.Semantics.Context.Tower
 
@@ -13,7 +13,7 @@ dimensions to the model-theoretic level (`KContext` / `ContextTower`).
 ## Motivation
 
 [gawne-spronck-2024] identify 10 concept areas forming a coherent epistemic
-domain. Linglib already covers evidential source (`Features/Evidentiality.lean`),
+domain. Linglib already covers evidential source (`Semantics/Evidential/Source.lean`),
 epistemic modality (`Modality/Kernel.lean`), and mirativity (`Features/Mirativity.lean`),
 but these are scattered with no connective tissue. The main gap is **egophoricity** -- the
 dimension of WHO has privileged epistemic access (speaker vs addressee vs third
@@ -37,7 +37,7 @@ extension respectively) and are left for future work.
 
 namespace Semantics.Epistemicity
 
-open Features.Evidentiality
+open Semantics.Evidential
 open Features.Mirativity
 open Semantics.Context
 

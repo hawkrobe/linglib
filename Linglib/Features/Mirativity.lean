@@ -10,7 +10,7 @@ the two categories are often conveyed by overlapping morphology (e.g.,
 Turkish *-mIş*), but they answer distinct questions ("what is the source of
 the evidence?" vs "is the content surprising?").
 
-This module is intentionally separate from `Features.Evidentiality` to reflect
+This module is intentionally separate from `Semantics.Evidential` to reflect
 that independence; bundling structures that combine source, authority, and
 mirativity (e.g. `Semantics.Epistemicity.EpistemicProfile`) import both.
 

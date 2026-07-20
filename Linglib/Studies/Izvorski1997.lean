@@ -1,4 +1,4 @@
-import Linglib.Features.Evidentiality
+import Linglib.Semantics.Evidential.Source
 import Linglib.Semantics.Modality.Kratzer.Operators
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Semantics.Tense.Evidential
@@ -30,7 +30,7 @@ The key empirical contrasts establishing (8):
 
 namespace Izvorski1997
 
-open Features.Evidentiality
+open Semantics.Evidential
 
 /-! ### Languages with PE -/
 

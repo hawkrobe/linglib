@@ -662,7 +662,6 @@ import Linglib.Features.Definiteness
 import Linglib.Features.Deixis
 import Linglib.Features.Dimension
 import Linglib.Features.Empathy
-import Linglib.Features.Evidentiality
 import Linglib.Features.Expressive
 import Linglib.Features.Gender.Basic
 import Linglib.Features.Gender.Capabilities
@@ -1628,6 +1627,7 @@ import Linglib.Semantics.Events.CEM
 import Linglib.Semantics.Evidential.Basic
 import Linglib.Semantics.Evidential.Defs
 import Linglib.Semantics.Evidential.Epistemicity
+import Linglib.Semantics.Evidential.Source
 import Linglib.Semantics.Exhaustification.Chain
 import Linglib.Semantics.Exhaustification.Combinators
 import Linglib.Semantics.Exhaustification.Excluder

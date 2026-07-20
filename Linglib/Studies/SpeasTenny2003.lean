@@ -11,7 +11,7 @@ import Linglib.Semantics.Context.Tower
 import Linglib.Discourse.Roles
 import Linglib.Semantics.Mood.Defs
 import Linglib.Semantics.Evidential.Epistemicity
-import Linglib.Features.Evidentiality
+import Linglib.Semantics.Evidential.Source
 import Linglib.Fragments.English.Pronouns
 import Linglib.Features.Person.Basic
 
@@ -365,11 +365,11 @@ theorem rank_injective : Function.Injective SentienceProjection.rank := by
 abbrev evalPSpecifier : SAPMood → PRole := seatOfKnowledge
 
 /-- The specifier of EvidP hosts the evidence type, mapped to the
-    framework-agnostic `CoarseSource` of `Features/Evidentiality.lean`
+    framework-agnostic `CoarseSource` of `Semantics/Evidential/Source.lean`
     (direct / inference / hearsay). NB this three-way coarsening merges S&T's
     top tier (personal experience) into "direct"; the paper's full evidence
     hierarchy is personal experience ≫ direct ≫ indirect ≫ hearsay (p.327). -/
-abbrev EvidPSpecifier := Features.Evidentiality.CoarseSource
+abbrev EvidPSpecifier := Semantics.Evidential.CoarseSource
 
 /-- **Real bridge to `Semantics/Evidential/Epistemicity.lean`.** The Sentience Domain's
     two specifiers ARE the two main fields of an `EpistemicProfile`:

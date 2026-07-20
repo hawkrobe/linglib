@@ -1,6 +1,6 @@
 import Linglib.Semantics.Context.Tower
 import Linglib.Semantics.Context.Shifts
-import Linglib.Features.Evidentiality
+import Linglib.Semantics.Evidential.Source
 
 /-!
 # Rich Context
@@ -30,7 +30,7 @@ express:
 namespace Semantics.Context
 
 open Semantics.Context (KContext ContextTower ContextShift)
-open Features.Evidentiality
+open Semantics.Evidential
 
 -- ════════════════════════════════════════════════════════════════
 -- § Rich Context

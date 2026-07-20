@@ -1,9 +1,10 @@
 import Mathlib.Data.Set.Insert
 import Linglib.Semantics.Presupposition.ContentLayer
 import Linglib.Semantics.Highlighting
-import Linglib.Features.Evidentiality
+import Linglib.Semantics.Evidential.Source
 import Linglib.Discourse.Roles
 import Linglib.Semantics.Questions.Hamblin
+import Linglib.Studies.Faller2019
 import Linglib.Studies.Hohle1992
 import Linglib.Studies.RomeroHan2004
 
@@ -67,7 +68,7 @@ Three empirical signatures:
 | `Semantics/Composition/Layered` | `BiLayered W` ⟨A, N⟩ pair, three composition rules |
 | `Semantics/Highlighting` | `HighlightingContext`, `Highlighted`, `AddressesQUD` |
 | `Discourse/EvidentialIllocution` | `assert`, `present`, `EvidentialAct`, `raisedPropositions` |
-| `Features/Evidentiality` | `CoarseSource` (`direct`, `hearsay`, `inference`) |
+| `Semantics/Evidential/Source` | `CoarseSource` (`direct`, `hearsay`, `inference`) |
 | `Semantics/Questions/Hamblin` | `Question.polar` for the polar QUD |
 
 ## Methodological note
@@ -85,7 +86,7 @@ namespace MartinezVera2026
 
 open Semantics.ContentLayer (BiLayered)
 open Semantics.Highlighting (HighlightingContext Highlighted AddressesQUD addSalient)
-open Features.Evidentiality (CoarseSource)
+open Semantics.Evidential (CoarseSource)
 open Discourse (DiscourseRole)
 
 variable {W : Type*}
@@ -190,6 +191,23 @@ def IllocutionaryFlavour.ofCoarseSource :
     IllocutionaryFlavour.ofCoarseSource .hearsay = .presentFlavour := rfl
 @[simp] theorem flavour_inference :
     IllocutionaryFlavour.ofCoarseSource .inference = .presentFlavour := rfl
+
+/-- Partial collapse of [faller-2019a]'s commitment-grounds evidence types
+    onto the coarse source taxonomy: reportative and inferential evidence
+    carry a source; adequate evidence and best possible grounds are
+    commitment-strength grades that cross-cut the source taxonomy. -/
+def fallerCoarseSource : Faller2019.EvidenceType → Option CoarseSource
+  | .reportative => some .hearsay
+  | .inferential => some .inference
+  | .adequate => none
+  | .bpg => none
+
+/-- [faller-2019a]'s Cuzco Quechua reportative and the SK reportative
+    `-shka` land on the same coarse source, hence license the same
+    illocutionary flavour: `present`, not `assert`. -/
+theorem faller_reportative_flavour :
+    (fallerCoarseSource .reportative).map IllocutionaryFlavour.ofCoarseSource
+      = some .presentFlavour := rfl
 
 def applyDefault (src : CoarseSource) (s a : DiscourseRole) (β : BiLayered W) :
     EvidentialAct W :=
