@@ -41,7 +41,7 @@ inductive Feat | ind | sbj | imp | pres | past | p1 | p2 | p3 | sg | pl
 
 open Verb Feat
 
-local notation "IFD" => (identityDefault : Rule Verb (Finset Feat) (Action String (Finset Feat)))
+local notation "IFD" => (identityDefault : PFM.Rule Verb (Finset Feat) (Action String (Finset Feat)))
 
 /-- Block I (position i): the past-tense formative `-d-`. -/
 def blockI : Block Verb String (Finset Feat) :=

@@ -197,7 +197,7 @@ def formBlock : Block KVerb String (Finset KFeat) :=
     ⟨Finset.univ, {pastB, p1, sg, masc}, .const (· ++ "yōs")⟩,
     ⟨Finset.univ, {pastC, p1, sg, masc}, .const (· ++ "yās")⟩,
     ⟨Finset.univ, {pastD, p1, sg, masc}, .const (· ++ "iyās")⟩,
-    (identityDefault : Rule KVerb (Finset KFeat) (Action String (Finset KFeat))) ]
+    (identityDefault : PFM.Rule KVerb (Finset KFeat) (Action String (Finset KFeat))) ]
 
 /-- Realization of a form cell `⟨Z, τ⟩`: the PFM1 paradigm function on the stem
 `Z` at the morphomic property set `τ`. -/

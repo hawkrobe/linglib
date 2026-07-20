@@ -61,7 +61,7 @@ open Yukatek.Operators
     applicable operators at `r`, in inventory order — derived from the
     `Morphology.Exponence` selection API, not re-stipulated. -/
 def profile (r : Root) : List String :=
-  (Exponence.applicable (F := String) inventory r).map DiagOp.exponent
+  (Exponence.applicable inventory r).map DiagOp.exponent
 
 /-- A root's predicted salience class: the substrate classifier
     applied to its signature and the fragment's arity assignment. -/

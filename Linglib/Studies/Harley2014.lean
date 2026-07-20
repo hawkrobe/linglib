@@ -210,7 +210,7 @@ The mirror argument on List 3. A cran-morph (*cahoot*) has an interpretation
 only inside its licensing frame (`in [ [ √ n ] -PL ]`) and — unlike an
 ordinary root — **no Elsewhere interpretation** ([harley-2014] (16)). We
 state this with the allosemy exponence engine (`AllosemicEntry` as an
-`Morphology.Exponence` instance): `selectBy` returns a meaning in the
+`Morphology.Exponence.Rule` instance): `selectBy` returns a meaning in the
 licensed context and `none` outside it. -/
 
 /-- `√548` *cahoot*: a single LF entry, licensed only under `n` (the idiom

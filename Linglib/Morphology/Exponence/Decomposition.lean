@@ -47,15 +47,15 @@ structure Rule (Cell : Type*) (D : Cell → Finset K) (F : Type*) where
 
 variable {Cell F : Type*} {D : Cell → Finset K}
 
-instance : Exponence (Rule Cell D F) Cell F :=
+instance : Exponence.Rule (Rule Cell D F) Cell F :=
   ⟨Rule.exponent, fun r c => r.feats ⊆ D c⟩
 
 omit [DecidableEq K] in
 @[simp] theorem applies_iff {r : Rule Cell D F} {c : Cell} :
-    Exponence.Applies (F := F) r c ↔ r.feats ⊆ D c := Iff.rfl
+    Exponence.Applies r c ↔ r.feats ⊆ D c := Iff.rfl
 
 instance (c : Cell) :
-    DecidablePred (fun r : Rule Cell D F => Exponence.Applies (F := F) r c) :=
+    DecidablePred (fun r : Rule Cell D F => Exponence.Applies r c) :=
   fun r => inferInstanceAs (Decidable (r.feats ⊆ D c))
 
 /-- The specificity preorder: applicability-set inclusion, so the engine
@@ -68,7 +68,7 @@ omit [DecidableEq K] in
 /-- Specificity unfolds to applicability-set inclusion: `r ≤ s` iff `r` applies
 wherever `s` does. -/
 theorem le_iff {r s : Rule Cell D F} :
-    r ≤ s ↔ ∀ ⦃c⦄, Exponence.Applies (F := F) r c → Exponence.Applies (F := F) s c :=
+    r ≤ s ↔ ∀ ⦃c⦄, Exponence.Applies r c → Exponence.Applies s c :=
   Iff.rfl
 
 /-- The surface pattern of a vocabulary: at each cell, the exponent of the most

@@ -269,15 +269,15 @@ instance [DecidableEq F] (entry : TreeLexEntry F α) (target : NanoTree F) :
 open Morphology.Exponence
 
 /-- A tree lexical entry exposes the shared exponence core interface
-(`Morphology.Exponence`): contexts are syntactic targets,
+(`Morphology.Exponence.Rule`): contexts are syntactic targets,
 applicability is Superset-Principle matching. -/
-instance : Exponence (TreeLexEntry F α) (NanoTree F) α :=
+instance : Exponence.Rule (TreeLexEntry F α) (NanoTree F) α :=
   ⟨TreeLexEntry.exponent, fun e t => e.Matches t⟩
 
 instance : Preorder (TreeLexEntry F α) := Exponence.toPreorder
 
 instance [DecidableEq F] (target : NanoTree F) :
-    DecidablePred (fun e : TreeLexEntry F α => Exponence.Applies (F := α) e target) :=
+    DecidablePred (fun e : TreeLexEntry F α => Exponence.Applies e target) :=
   fun e => inferInstanceAs (Decidable (e.Matches target))
 
 /-- The specificity order is reverse containment of the stored trees:

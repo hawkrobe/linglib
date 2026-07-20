@@ -9,7 +9,7 @@ The carrier for the realizational engine of [bobaljik-2012]'s
 comparative-suppletion generalizations, over an arbitrary `n`-grade
 containment hierarchy. An `SpanRule` realizes the initial span `[0, spans]`
 of the hierarchy, optionally conditioned on a higher head. One carrier
-carries two `Exponence` views: the **Subset** reading (`SpanRule`,
+carries two `Exponence.Rule` views: the **Subset** reading (`SpanRule`,
 applicability is threshold containment) is DM Elsewhere insertion; the
 **Superset** reading (`SupersetRule`, applicability is constituent
 containment) is nanosyntax spellout, dual à la `OrderDual`.
@@ -131,21 +131,21 @@ instance (v : List (SpanRule n F)) : Decidable (ContextFree v) := by
 
 /-! ### The Subset reading: DM Elsewhere insertion
 
-The containment engine implements `Morphology.Exponence`
+The containment engine implements `Morphology.Exponence.Rule`
 directly: applicability is threshold containment (the upper set
 `Set.Ici threshold`) and derived specificity is threshold comparison. -/
 
-instance : Exponence (SpanRule n F) (Fin n) F :=
+instance : Rule (SpanRule n F) (Fin n) F :=
   ⟨SpanRule.exponent, fun it i => it.threshold ≤ i⟩
 
 instance : Preorder (SpanRule n F) := Exponence.toPreorder
 
-instance (g : Fin n) : DecidablePred (fun it : SpanRule n F => Exponence.Applies (F := F) it g) :=
+instance (g : Fin n) : DecidablePred (fun it : SpanRule n F => Exponence.Applies it g) :=
   fun it => inferInstanceAs (Decidable (it.threshold ≤ g))
 
 /-- Subset applicability is threshold containment. -/
 @[simp] theorem SpanRule.applies_iff {it : SpanRule n F} {g : Fin n} :
-    Exponence.Applies (F := F) it g ↔ it.threshold ≤ g :=
+    Exponence.Applies it g ↔ it.threshold ≤ g :=
   Iff.rfl
 
 /-- Containment specificity is the shared core's specificity order. -/
@@ -159,7 +159,7 @@ One carrier, a dual view: the entry can spell out grade `g` when its
 stored constituent contains `g` (the down-set `Set.Iic spans`), and
 smallest-match selection is Pāṇinian specificity under superset
 matching. A distinct type synonym so the two readings carry different
-`Exponence` instances on one carrier, mirroring `OrderDual`. -/
+`Exponence.Rule` instances on one carrier, mirroring `OrderDual`. -/
 
 /-- The **Superset Principle** ([starke-2009]): an entry can spell out
 grade `g` when the constituent it stores contains grade `g`'s
@@ -188,13 +188,13 @@ grade `g` when its stored constituent contains `g` (the down-set
 `Set.Iic spans`), dually to the Subset reading of `SpanRule`. -/
 def SupersetRule (n : ℕ) (F : Type*) := SpanRule n F
 
-instance : Exponence (SupersetRule n F) (Fin n) F :=
+instance : Rule (SupersetRule n F) (Fin n) F :=
   ⟨SpanRule.exponent, fun it i => i ≤ SpanRule.spans it⟩
 
 instance : Preorder (SupersetRule n F) := Exponence.toPreorder
 
 instance (g : Fin n) :
-    DecidablePred (fun it : SupersetRule n F => Exponence.Applies (F := F) it g) :=
+    DecidablePred (fun it : SupersetRule n F => Exponence.Applies it g) :=
   fun it => inferInstanceAs (Decidable (g ≤ SpanRule.spans it))
 
 /-- Read an exponence rule under the Superset reading. -/
@@ -202,7 +202,7 @@ def SpanRule.superset (it : SpanRule n F) : SupersetRule n F := it
 
 /-- Superset applicability is constituent containment. -/
 @[simp] theorem SupersetRule.applies_iff {it : SupersetRule n F} {g : Fin n} :
-    Exponence.Applies (F := F) it g ↔ g ≤ SpanRule.spans it :=
+    Exponence.Applies it g ↔ g ≤ SpanRule.spans it :=
   Iff.rfl
 
 /-- Minimize Junk is the Superset reading's specificity order: smaller

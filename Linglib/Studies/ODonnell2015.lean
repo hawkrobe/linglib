@@ -434,7 +434,7 @@ support properly includes another's "must assign lower probability to
 each of those forms, on average" (conservation of belief), and
 conditioning preserves the preference. The book quotes
 [kiparsky-1973]'s formulation — prefer `r₂` when
-`Inputs(r₂) ⊂ Inputs(r₁)` — which is `Morphology.Exponence`'s
+`Inputs(r₂) ⊂ Inputs(r₁)` — which is `Morphology.Exponence.Rule`'s
 specificity order (applicability-set inclusion, `Exponence.toPreorder`).
 
 Formalized in the uniform-generation case, where the preference is
@@ -496,14 +496,14 @@ structure FinRule (Ctx F : Type*) where
   supp : Finset Ctx
 
 /-- A finitely supported rule exposes the shared exponence core interface
-(`Morphology.Exponence`): applicability is support membership. -/
-instance : Exponence (FinRule Ctx F) Ctx F :=
+(`Morphology.Exponence.Rule`): applicability is support membership. -/
+instance : Exponence.Rule (FinRule Ctx F) Ctx F :=
   ⟨FinRule.exponent, fun r c => c ∈ r.supp⟩
 
 instance : Preorder (FinRule Ctx F) := Exponence.toPreorder
 
 instance (c : Ctx) :
-    DecidablePred (fun r : FinRule Ctx F => Exponence.Applies (F := F) r c) :=
+    DecidablePred (fun r : FinRule Ctx F => Exponence.Applies r c) :=
   fun r => inferInstanceAs (Decidable (c ∈ r.supp))
 
 omit [DecidableEq Ctx] in
@@ -515,8 +515,8 @@ is at least as specific as `s`. This is the conditional reflection the
 fails — card `≤` does not imply support `⊆`, but `⊆` plus card `≤` forces
 equality (`Finset.eq_of_subset_of_card_le`). -/
 private theorem finRule_card_reflection {v : List (FinRule Ctx F)} {c : Ctx} :
-    ∀ r ∈ v, ∀ s ∈ v, Exponence.Applies (F := F) r c →
-      Exponence.Applies (F := F) s c → s ≤ r →
+    ∀ r ∈ v, ∀ s ∈ v, Exponence.Applies r c →
+      Exponence.Applies s c → s ≤ r →
       OrderDual.toDual s.supp.card ≤ OrderDual.toDual r.supp.card → r ≤ s :=
   fun r _ s _ _ _ hsr hcard => by
     have hsub : s.supp ⊆ r.supp := fun x hx => hsr hx

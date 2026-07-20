@@ -421,8 +421,8 @@ def SpanRule.toDecomposition (it : SpanRule n F) :
 /-- **Applicability agreement**: threshold containment is Subset containment of
 initial segments. -/
 @[simp] theorem applies_toDecomposition {it : SpanRule n F} {g : Fin n} :
-    Exponence.Applies (F := F) it.toDecomposition g
-      ↔ Exponence.Applies (F := F) it g := by
+    Exponence.Applies it.toDecomposition g
+      ↔ Exponence.Applies it g := by
   rw [SpanRule.applies_iff]; exact Finset.Iic_subset_Iic
 
 /-- The feature count of a chain rule is one more than its threshold, so

@@ -39,7 +39,7 @@ and retroactively classifies existing n and Voice types as allosemy.
 
 ## The List-2 / List-3 symmetry, by construction
 
-`AllosemicEntry` is an `Morphology.Exponence` instance
+`AllosemicEntry` is a `Morphology.Exponence.Rule` instance
 (`SyntacticContext.matches` as applicability, denotation as exponent),
 just as `DM.VI.VocabItem` is. So DM's List 2 (form) and List 3 (meaning)
 are resolved by **one** selection engine: `Exponence.selectBy` on the
@@ -202,7 +202,7 @@ variable {Sem : Type}
 /-- An `AllosemicEntry` exposes the shared exponence interface: contexts
 are `SyntacticContext`s, applicability is `matches`, the exponent is the
 denotation. -/
-instance : Exponence (AllosemicEntry Sem) SyntacticContext Sem :=
+instance : Exponence.Rule (AllosemicEntry Sem) SyntacticContext Sem :=
   ⟨AllosemicEntry.denotation, fun e c => e.context.matches c = true⟩
 
 instance : Preorder (AllosemicEntry Sem) := Exponence.toPreorder

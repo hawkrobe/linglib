@@ -52,22 +52,22 @@ open Yukatek.Roots
     (`exponent` is the suffix, `Applies` the structural condition on the
     root's entailments) with bundled decidability so applicability
     profiles compute. Selection/profile machinery comes from the
-    `Morphology.Exponence` class instance below, not re-stipulated. -/
+    `Morphology.Exponence.Rule` class instance below, not re-stipulated. -/
 structure DiagOp where
   exponent : String
   Applies : Root → Prop
   decApplies : DecidablePred Applies
 
-instance instExponence : Exponence DiagOp Root String where
+instance instExponence : Morphology.Exponence.Rule DiagOp Root String where
   exponent := DiagOp.exponent
   Applies := DiagOp.Applies
 
 instance (r : Root) :
-    DecidablePred (fun op : DiagOp => Exponence.Applies (F := String) op r) :=
+    DecidablePred (fun op : DiagOp => Exponence.Applies op r) :=
   fun op => show Decidable (op.Applies r) from op.decApplies r
 
 @[simp] theorem applies_iff (op : DiagOp) (r : Root) :
-    Exponence.Applies (F := String) op r ↔ op.Applies r := Iff.rfl
+    Exponence.Applies op r ↔ op.Applies r := Iff.rfl
 
 /-! ### The four operators -/
 

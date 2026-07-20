@@ -53,7 +53,7 @@ def weak4b : Finset Verb := {aetla}
 /-- Strong conjugation. -/
 def strong : Finset Verb := {gripa, fljuga}
 
-local notation "IFD" => (identityDefault : Rule Verb (Finset Feat) (Action String (Finset Feat)))
+local notation "IFD" => (identityDefault : PFM.Rule Verb (Finset Feat) (Action String (Finset Feat)))
 
 /-- Block I: theme-vowel exponence ([bonami-stump-2016]'s Table 17.3). -/
 def blockI : Block Verb String (Finset Feat) :=
@@ -83,7 +83,7 @@ def blockIII : Block Verb String (Finset Feat) :=
 /-- Rules of basic stem choice ([bonami-stump-2016]'s (7)); the `GRÍPA` and
 `FLJÚGA` alternants list the umlaut/ablaut stems as data, not string
 operations. -/
-def iceStems : List (Rule Verb (Finset Feat) String) :=
+def iceStems : List (PFM.Rule Verb (Finset Feat) String) :=
   [ ⟨{kalla}, {}, "kall"⟩,
     ⟨{aetla}, {}, "ætl"⟩,
     ⟨{gripa}, {ind, pst, sg}, "greip"⟩,

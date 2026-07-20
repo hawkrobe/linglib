@@ -4,41 +4,40 @@ import Mathlib.Data.Set.Basic
 /-!
 # Rules of exponence
 
-This file defines the `Exponence` typeclass, pairing an exponent
-`exponent : R → F` with an applicability condition `Applies : R → Ctx → Prop`
+This file defines the `Exponence.Rule` typeclass, pairing an exponent
+`exponent : R → E` with an applicability condition `Applies : R → Ctx → Prop`
 ([matthews-1991]), and the specificity preorder it induces.
 
 ## Main definitions
 
-* `Exponence`: the exponent-plus-applicability interface.
+* `Exponence.Rule`: the exponent-plus-applicability interface.
 * `Exponence.toPreorder`: the specificity preorder ([kiparsky-1973]'s
   Elsewhere Condition); not an instance — each engine installs it on its
   own carrier.
 -/
 
-namespace Morphology
+namespace Morphology.Exponence
 
-/-- Terms of `R` are rules of exponence with an exponent in `F` and an
-applicability condition on `Ctx`. -/
-class Exponence (R : Type*) (Ctx F : outParam Type*) where
+/-- `Rule R Ctx E` says that `R` is a type of rules of exponence: each rule
+carries an exponent in `E` and applies in a class of contexts in `Ctx`. -/
+class Rule (R : Type*) (Ctx E : outParam Type*) where
   /-- The exponent a rule inserts. -/
-  exponent : R → F
+  exponent : R → E
   /-- The condition on contexts under which a rule applies. -/
   Applies : R → Ctx → Prop
 
-namespace Exponence
+export Rule (exponent Applies)
 
-variable {Ctx F : Type*} {R : Type*} [Exponence R Ctx F]
+variable {Ctx E : Type*} {R : Type*} [Rule R Ctx E]
 
 /-- The contexts in which a rule applies. -/
-def applySet (r : R) : Set Ctx := {c | Applies (F := F) r c}
+def applySet (r : R) : Set Ctx := {c | Applies r c}
 
 @[simp] theorem mem_applySet {r : R} {c : Ctx} :
-    c ∈ applySet (F := F) r ↔ Applies (F := F) r c :=
+    c ∈ applySet r ↔ Applies r c :=
   Iff.rfl
 
 /-- `r ≤ s` when `r` applies in a subset of the contexts `s` applies in. -/
-@[reducible] def toPreorder : Preorder R := Preorder.lift (applySet (F := F))
+@[reducible] def toPreorder : Preorder R := Preorder.lift (applySet (Ctx := Ctx) (E := E))
 
-end Exponence
-end Morphology
+end Morphology.Exponence
