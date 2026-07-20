@@ -61,7 +61,7 @@ number-unspecified).
 namespace Harley2014
 
 open Morphology.DM.VI
-open Morphology.DM.Allosemy (SyntacticContext AllosemicEntry)
+open Morphology.DM.Allosemy (SyntacticContext AllosemicEntry AllosemicHead)
 open Morphology.Exponence (selectBy realize)
 
 /-! ### List 1: roots as abstract indices -/
@@ -235,5 +235,59 @@ theorem cahoot_no_elsewhere :
 distinct `RootIndex` values ([harley-2014] §2.4). Neither the shared
 Elsewhere-form shape nor the shared interpretation-frame identifies them. -/
 example : runRoot ≠ walkRoot ∧ walkRoot ≠ killRoot ∧ runRoot ≠ killRoot := by decide
+
+/-! ### Both individuation-failure arguments on the shared `Realization` carrier
+
+The two negative flanks (§2.1–2.2 phonological, §2.3 semantic) are the
+constancy pair of `Morphology.Realization` at one index: form varies across
+contexts (`IsProperlySuppletive`), meaning does not vary but *gaps* (an
+empty `interp` fiber outside the cran-morph's frame, via
+`AllosemicHead.toInterpreted`). The vocabulary of §2.1 is the List-2 map,
+`cahootLF` the List-3 map.
+
+The form side wraps this file's `insert` — the shared Exponence engine
+(`Exponence.realize`, argmax) — as a `Realization`. `VI.toRealization`
+wraps the equivalent DM `vocabularyInsert`, whose `List.mergeSort` is
+well-founded-recursive and so kernel-opaque; `insert` computes, so the
+fibers reduce and the same theorem lands on the same data. -/
+
+/-- The Hiaki suppletive vocabulary as a `Realization`: index `→` its
+Elsewhere-selected exponent (`insert`) as a singleton fiber, `∅` at an
+unlicensed index — the univalent stratum ([marantz-1997]'s List 2). -/
+def realization : Morphology.Realization RootIndex Ctx String :=
+  ⟨fun r c => match insert c r with | some f => {f} | none => ∅⟩
+
+/-- **Phonological individuation fails, on the carrier** ([harley-2014]
+§2.1–2.2): the Hiaki √322 realizes two nonempty, distinct fibers
+(`vuite` / `tenne`) across two licensed contexts — `IsProperlySuppletive`,
+the exact √GO case the predicate names. A root identified by its form would
+split here. -/
+theorem run_isProperlySuppletive : realization.IsProperlySuppletive runRoot := by
+  have hsg : realization.realize runRoot ⟨.sg, none⟩ = {"vuite"} := by
+    show (match insert ⟨.sg, none⟩ runRoot with
+      | some f => ({f} : Finset String) | none => ∅) = _
+    rw [run_sg]
+  have hpl : realization.realize runRoot ⟨.pl, none⟩ = {"tenne"} := by
+    show (match insert ⟨.pl, none⟩ runRoot with
+      | some f => ({f} : Finset String) | none => ∅) = _
+    rw [run_pl]
+  refine ⟨⟨.sg, none⟩, ⟨.pl, none⟩, hsg ▸ Finset.singleton_nonempty _,
+    hpl ▸ Finset.singleton_nonempty _, ?_⟩
+  rw [hsg, hpl, ne_eq, Finset.singleton_inj]; decide
+
+/-- √548 *cahoot* as a List-3 `Realization.Interpreted` view: one head, the
+cran-morph's single alloseme. -/
+def cahootHead : AllosemicHead String := { morpheme := .n, entries := cahootLF }
+
+/-- **Semantic individuation fails, on the carrier** ([harley-2014] §2.3):
+the cran-morph is interpreted (`a conspiracy`) inside its licensing frame
+but has an empty `interp` fiber elsewhere — the meaning-side analogue of an
+empty realization fiber, a *gap* rather than contextual variation. So this
+is a licensing failure, not an `IsAllosemous` witness: unlike an ordinary
+root (whose meaning would merely vary), a Fodorian atom could not gap. -/
+theorem cahoot_interp_gap :
+    cahootHead.toInterpreted.interp () { belowCat := some .n } = {"a conspiracy"} ∧
+    cahootHead.toInterpreted.interp () { } = ∅ := by
+  refine ⟨?_, ?_⟩ <;> decide
 
 end Harley2014
