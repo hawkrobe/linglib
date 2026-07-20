@@ -1,3 +1,4 @@
+import Linglib.Semantics.Evidential.Source
 import Linglib.Semantics.Modality.Typology
 import Linglib.Semantics.Modality.EventRelativity
 import Linglib.Fragments.Gitksan.Modals
@@ -107,6 +108,23 @@ theorem gitksan_circ_factual :
     backgroundClass anookxw = .factualCircumstantial ∧
     backgroundClass sgi = .factualCircumstantial :=
   ⟨rfl, rfl, rfl⟩
+
+/-- Coarse evidential source of a modal background class in Matthewson's
+    system: factual-evidential modals are inferential, content-evidential
+    modals reportative, and factual circumstantials encode no information
+    source. -/
+def backgroundCoarseSource :
+    BackgroundClass → Option Semantics.Evidential.CoarseSource
+  | .factualEvidential => some .inference
+  | .contentEvidential => some .hearsay
+  | .factualCircumstantial => none
+
+/-- Gitksan ima('a) marks inferential evidence and gat reportative
+    evidence in the shared source taxonomy. -/
+theorem gitksan_sources :
+    backgroundCoarseSource (backgroundClass imaa) = some .inference ∧
+    backgroundCoarseSource (backgroundClass gat) = some .hearsay :=
+  ⟨rfl, rfl⟩
 
 /-- All three background classes are represented in Gitksan. -/
 theorem gitksan_three_way_split :

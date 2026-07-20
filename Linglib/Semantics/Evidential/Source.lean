@@ -1,14 +1,15 @@
 import Mathlib.Tactic.TypeStar
 
 /-!
-# Evidentiality
+# Evidential — coarse source and perspective
 [willett-1988] [aikhenvald-2004] [cumming-2026] [von-fintel-gillies-2010]
 
 Framework-agnostic evidentiality vocabulary: [willett-1988]'s coarse
 three-way source taxonomy, the temporal-orientation classification of
-evidence acquisition, and a typeclass `HasEvidentialPerspective` that lets
-downstream types (semantic constraint enums, paradigm rows, modal evidence
-types) project into the perspective taxonomy uniformly.
+evidence acquisition, and the typeclasses `HasCoarseSource` and
+`HasEvidentialPerspective` that let downstream types (semantic constraint
+enums, paradigm rows, modal evidence types) project into the taxonomies
+uniformly.
 
 In the typologically canonical case, an evidential source — direct
 observation, report, or inference from results — is **causally downstream**
@@ -21,10 +22,10 @@ This module supplies the shared vocabulary consumed by both
 [cumming-2026]'s tense evidentiality (T ≤ A = downstream evidence) and
 [von-fintel-gillies-2010]'s epistemic evidentiality (direct vs indirect).
 [aikhenvald-2004]'s finer six-way parameter carving lives with the
-evidential lexical API at `Semantics/Evidential/`.
+evidential lexical API in the sibling `Defs`/`Basic` files.
 -/
 
-namespace Features.Evidentiality
+namespace Semantics.Evidential
 
 /-- Coarse three-way evidential source classification: [willett-1988]'s
     attested / reported / inferring tripartition. `hearsay` is the umbrella
@@ -89,6 +90,17 @@ instance {α : Type*} [HasEvidentialPerspective α] :
     DecidablePred (@IsNonfuture α _) :=
   fun _ => inferInstanceAs (Decidable (_ ∨ _))
 
+/-- Types that project to a coarse evidential source. The stronger entry
+    point into the vocabulary: declaring a source also yields a
+    perspective, via the canonical source mapping (the low-priority
+    instance below). Types whose evidence classification cross-cuts the
+    source taxonomy project partially (`none` off the shared part). -/
+class HasCoarseSource (α : Type*) where
+  /-- The coarse evidential source of `a`, when defined. -/
+  toCoarseSource : α → Option CoarseSource
+
+export HasCoarseSource (toCoarseSource)
+
 /-! ### Canonical instances -/
 
 /-- The coarse source taxonomy projects to perspective by the canonical
@@ -105,11 +117,19 @@ def CoarseSource.toEvidentialPerspective :
   | .hearsay   => some .retrospective
   | .inference => some .retrospective
 
-instance : HasEvidentialPerspective CoarseSource where
-  toEvidentialPerspective := CoarseSource.toEvidentialPerspective
+instance : HasCoarseSource CoarseSource where
+  toCoarseSource := some
+
+/-- Source-declaring types inherit their perspective through the canonical
+    mapping. Low priority: a type with its own perspective classification
+    keeps it. -/
+instance (priority := 100) {α : Type*} [HasCoarseSource α] :
+    HasEvidentialPerspective α where
+  toEvidentialPerspective a :=
+    (toCoarseSource a).bind CoarseSource.toEvidentialPerspective
 
 /-- The perspective type projects to itself. -/
 instance : HasEvidentialPerspective EvidentialPerspective where
   toEvidentialPerspective := some
 
-end Features.Evidentiality
+end Semantics.Evidential

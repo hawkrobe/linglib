@@ -136,6 +136,24 @@ theorem core_count : coreData.length = 3 := rfl
 theorem triangle_predicts_all :
     coreData.all (fun d => d.evidentialFelicitous == trianglePredicts d) = true := rfl
 
+/-! ### Evidential Perspective -/
+
+open Semantics.Evidential
+
+/-- A datum's evidential perspective is read off temporal overlap:
+    overlapping learning events are contemporaneous, non-overlapping ones
+    retrospective (in Koev's PE data the learning event follows the
+    described event). -/
+instance : HasEvidentialPerspective EvidentialDatum where
+  toEvidentialPerspective d :=
+    match d.temporal with
+    | .overlapping => some .contemporaneous
+    | .nonoverlapping => some .retrospective
+
+/-- All of Koev's spatiotemporal configurations are nonfuture (T ≤ A): the
+    event-interval account agrees with the perspective taxonomy. -/
+theorem coreData_nonfuture : ∀ d ∈ coreData, IsNonfuture d := by decide
+
 /-! ### Bridge: Connecting to Linglib Infrastructure -/
 
 /-! Bridge theorems connecting [koev-2017]'s spatiotemporal distance analysis

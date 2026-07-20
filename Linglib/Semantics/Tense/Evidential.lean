@@ -1,5 +1,5 @@
 import Linglib.Semantics.Tense.Compositional
-import Linglib.Features.Evidentiality
+import Linglib.Semantics.Evidential.Source
 import Linglib.Features.Mirativity
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Semantics.Mood.Defs
@@ -42,13 +42,13 @@ The tense evidential constraint parallels [von-fintel-gillies-2010]
 `kernelMust` presupposition: both require non-direct evidence. (A formal
 bridge between the two phenomena has not been built.)
 
-## Connection to Features.Evidentiality
+## Connection to Semantics.Evidential
 
 `EPCondition` is a `HasEvidentialPerspective` instance: each of the five EP
 constraint shapes maps to (an `Option` of) the canonical `EvidentialPerspective`
-classification in `Features.Evidentiality`. `EPCondition.IsNonfuture` and
+classification in `Semantics.Evidential`. `EPCondition.IsNonfuture` and
 `TAMEEntry.IsNonfuture` are dot-notation aliases for the typeclass-derived
-`Features.Evidentiality.IsNonfuture` predicate.
+`Semantics.Evidential.IsNonfuture` predicate.
 
 -/
 
@@ -58,7 +58,7 @@ namespace Tense.Evidential
 
 open Core.Order
 open Tense
-open Features.Evidentiality
+open Semantics.Evidential
 open Features.Mirativity
 open Semantics.Presupposition
 
@@ -118,15 +118,15 @@ def EPCondition.toEvidentialPerspective : EPCondition → Option EvidentialPersp
 instance : HasEvidentialPerspective EPCondition where
   toEvidentialPerspective := EPCondition.toEvidentialPerspective
 
-/-- Dot-notation alias for the typeclass-derived `Features.Evidentiality.IsNonfuture`
+/-- Dot-notation alias for the typeclass-derived `Semantics.Evidential.IsNonfuture`
     on EP constraint shapes. Downstream, strict downstream, and contemporaneous
     all project to retrospective/contemporaneous; prospective and unconstrained
     do not. -/
 def EPCondition.IsNonfuture (e : EPCondition) : Prop :=
-  Features.Evidentiality.IsNonfuture e
+  Semantics.Evidential.IsNonfuture e
 
 instance : DecidablePred EPCondition.IsNonfuture :=
-  fun _ => inferInstanceAs (Decidable (Features.Evidentiality.IsNonfuture _))
+  fun _ => inferInstanceAs (Decidable (Semantics.Evidential.IsNonfuture _))
 
 @[simp] theorem EPCondition.toEvidentialPerspective_downstream :
     EPCondition.toEvidentialPerspective .downstream = some .retrospective := rfl
@@ -191,13 +191,13 @@ structure TAMEEntry where
 instance : HasEvidentialPerspective TAMEEntry where
   toEvidentialPerspective p := toEvidentialPerspective p.ep
 
-/-- Dot-notation alias for the typeclass-derived `Features.Evidentiality.IsNonfuture`
+/-- Dot-notation alias for the typeclass-derived `Semantics.Evidential.IsNonfuture`
     on TAME paradigm rows. A row is nonfuture iff its EP constraint is. -/
 def TAMEEntry.IsNonfuture (p : TAMEEntry) : Prop :=
-  Features.Evidentiality.IsNonfuture p
+  Semantics.Evidential.IsNonfuture p
 
 instance : DecidablePred TAMEEntry.IsNonfuture :=
-  fun _ => inferInstanceAs (Decidable (Features.Evidentiality.IsNonfuture _))
+  fun _ => inferInstanceAs (Decidable (Semantics.Evidential.IsNonfuture _))
 
 /-- The EP constraint as a predicate over `EvidentialFrame ℤ`. -/
 def TAMEEntry.epConstraint (p : TAMEEntry) :
