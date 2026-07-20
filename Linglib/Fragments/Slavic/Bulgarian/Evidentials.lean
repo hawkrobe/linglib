@@ -5,7 +5,7 @@ import Linglib.Semantics.Tense.Evidential
 [cumming-2026]
 
 Paradigm entries for Bulgarian tense-evidential morphology from [cumming-2026],
-Table 17. The -l participle interacts with tense to encode evidential perspective.
+table (17). The -l participle interacts with tense to encode evidential perspective.
 
 ## Entries
 
