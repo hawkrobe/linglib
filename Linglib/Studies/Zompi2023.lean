@@ -51,7 +51,7 @@ Main results:
 
 namespace Zompi2023
 
-open Morphology ChristopoulosZompi2023
+open Morphology Morphology.Decomposition ChristopoulosZompi2023
 
 /-- The inflectional dimensions the constraints are relativized to. -/
 inductive Dim | kase | num | gen

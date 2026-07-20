@@ -1,4 +1,4 @@
-import Linglib.Morphology.Exponence.Select
+import Linglib.Morphology.Exponence.Decomposition
 import Mathlib.Tactic.DeriveFintype
 import Mathlib.Data.Fintype.Sigma
 
@@ -32,9 +32,9 @@ needs k₁ (fn. 25).
 
 ## Main results
 
-* `noABA` — under any decomposition with `D acc ⊆ D dat` and
-  `D nom ∩ D dat ⊆ D acc`, one rule winning NOM and DAT forces it to win ACC;
-  `noABA_scc` / `noABA_wcc` discharge the hypotheses by `decide`
+* `noABA_scc` / `noABA_wcc` — the generic `Decomposition.noABA` (*ABA excluded
+  under any decomposition nesting the middle cell) discharged for SCC and WCC by
+  `decide` on the order-theoretic hypotheses
 * `ncc_aba_generable` — the two-rule NCC vocabulary generating A B A
 * `scc_nom_forces_empty` — SCC has no non-elsewhere nominative rules
 * `table25_row1` … `table25_row8` — the WCC derivation table
@@ -45,7 +45,7 @@ needs k₁ (fn. 25).
 
 namespace ChristopoulosZompi2023
 
-open Morphology Morphology.Exponence
+open Morphology Morphology.Exponence Morphology.Decomposition
 
 /-- The privative features: k₀–k₃ across the three Case decompositions
 (Tables 1, 2, 24), plus number (s₀ singular, p₀ plural) and gender features
@@ -72,58 +72,15 @@ its own k₀, incomparable to ACC — no k₃. -/
 def wcc : Case3 → Finset K
   | .nom => {.k0} | .acc => {.k1} | .dat => {.k1, .k2}
 
-/-- A rule of exponence over a decomposition `D`: a feature specification and
-an exponent. Applicability is the **Subset Principle** — the rule's features
-are a subset of the cell's. -/
-structure Rule (Cell : Type*) (D : Cell → Finset K) (F : Type*) where
-  /-- The rule's Case (and φ) feature specification. -/
-  feats : Finset K
-  /-- The exponent inserted. -/
-  exponent : F
-  deriving DecidableEq
+variable {F : Type*}
 
-variable {Cell F : Type*} {D : Cell → Finset K}
+/-! ### *ABA
 
-instance : Exponence (Rule Cell D F) Cell F :=
-  ⟨Rule.exponent, fun r c => r.feats ⊆ D c⟩
-
-@[simp] theorem applies_iff {r : Rule Cell D F} {c : Cell} :
-    Exponence.Applies (F := F) r c ↔ r.feats ⊆ D c := Iff.rfl
-
-instance (c : Cell) :
-    DecidablePred (fun r : Rule Cell D F => Exponence.Applies (F := F) r c) :=
-  fun r => inferInstanceAs (Decidable (r.feats ⊆ D c))
-
-/-- The surface pattern of a vocabulary: at each cell, the exponent of the
-most highly specified applicable rule — the paper's DM implementation of the
-Elsewhere Principle, as the shared core's `selectBy` on feature cardinality. -/
-def pattern (v : List (Rule Cell D F)) (c : Cell) : Option F :=
-  (selectBy (fun r : Rule Cell D F => r.feats.card) v c).map Rule.exponent
-
-/-- Strict competition: `r` beats every other applicable rule on feature
-cardinality. -/
-def IsWinner (v : List (Rule Cell D F)) (c : Cell) (r : Rule Cell D F) : Prop :=
-  r ∈ v ∧ r.feats ⊆ D c ∧
-    ∀ s ∈ v, s.feats ⊆ D c → s ≠ r → s.feats.card < r.feats.card
-
-/-! ### *ABA -/
-
-/-- ***ABA, order-theoretically**: whenever ACC-appliers persist to DAT
-(`D acc ⊆ D dat`) and NOM∩DAT-appliers reach ACC (`D nom ∩ D dat ⊆ D acc`), a
-rule winning both NOM and DAT also wins ACC. The two hypotheses are the shared
-profile of SCC and WCC; NCC violates the first via k₃. -/
-theorem noABA {D : Case3 → Finset K} {v : List (Rule Case3 D F)}
-    {A B : Rule Case3 D F}
-    (h1 : D .acc ⊆ D .dat) (h2 : D .nom ∩ D .dat ⊆ D .acc)
-    (hnom : IsWinner v .nom A) (hdat : IsWinner v .dat A)
-    (hacc : IsWinner v .acc B) : B = A := by
-  by_contra hne
-  have hAacc : A.feats ⊆ D .acc := fun k hk =>
-    h2 (Finset.mem_inter.mpr ⟨hnom.2.1 hk, hdat.2.1 hk⟩)
-  have hAB : A.feats.card < B.feats.card :=
-    hacc.2.2 A hnom.1 hAacc (fun h => hne h.symm)
-  have hBdat : B.feats ⊆ D .dat := fun k hk => h1 (hacc.2.1 hk)
-  exact absurd (hdat.2.2 B hacc.1 hBdat hne) (Nat.lt_asymm hAB)
+The generic order-theoretic exclusion is `Decomposition.noABA`: whenever the
+middle cell nests between the outer two, a rule winning both outer cells wins the
+middle, so no distinct B can interrupt an A_A pattern. It discharges for the two
+containment decompositions by `decide` on the hypotheses; NCC violates the
+first (`ncc_aba_generable`). -/
 
 /-- *ABA under Strong Case Containment ([caha-2009],
 [smith-moskal-xu-kang-bobaljik-2019]). -/
