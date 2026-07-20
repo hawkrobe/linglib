@@ -57,7 +57,7 @@ namespace Exponence
 
 variable {Ctx F : Type*} {R : Type*} [Exponence R Ctx F]
 
-/-- The applicability set of a rule: the contexts in which it applies. -/
+/-- The contexts in which a rule applies. -/
 def applySet (r : R) : Set Ctx := {c | Applies (F := F) r c}
 
 @[simp] theorem mem_applySet {r : R} {c : Ctx} :
