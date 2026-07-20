@@ -1,4 +1,5 @@
 import Linglib.Features.Gender.Interp
+import Linglib.Morphology.DM.Root
 import Linglib.Semantics.Verb.Root.Classification
 import Linglib.Syntax.Minimalist.Features
 import Linglib.Syntax.Minimalist.Verbal.Voice
@@ -590,9 +591,19 @@ def GenderImpoverishmentRule.apply (rule : GenderImpoverishmentRule)
 -- ============================================================================
 
 /-- A root that has been merged with a categorizing head, yielding a
-    syntactically projectable unit ([harley-2014] §2). -/
+    syntactically projectable unit ([harley-2014] §2).
+
+    `index` is DM's List-1 individuator — the acategorial atom `DM.Root`,
+    an arbitrary tag carrying no form or meaning. It is what survives
+    (re)categorization (`recategorize_preserves_index`), so it, not the
+    `root` classification, is what makes √HAMMER *one* root across
+    *hammer*/*to hammer*. `root` is the c-selection content (arity,
+    change-type) the categorizer apparatus reads (§3); unrelated roots may
+    share it, so it cannot individuate. -/
 structure CategorizedRoot where
-  /-- The acategorial root (arity, change-type, etc.) -/
+  /-- The acategorial root index — DM's List-1 individuator (`DM.Root`). -/
+  index : DM.Root
+  /-- The acategorial root's c-selection content (arity, change-type, etc.) -/
   root : Classification
   /-- The categorizing head that gives it syntactic category -/
   categorizer : Categorizer
@@ -610,9 +621,9 @@ def CategorizedRoot.category (cr : CategorizedRoot) : Cat :=
     This is the formal content of the claim that √HAMMER can surface as
     either a noun (hammer) or a verb (to hammer) — same root, different
     category, determined entirely by the categorizer ([harley-2014] §2). -/
-theorem same_root_different_category (r : Classification) (c1 c2 : Categorizer)
-    (h : c1 ≠ c2) :
-    (CategorizedRoot.mk r c1).category ≠ (CategorizedRoot.mk r c2).category := by
+theorem same_root_different_category (i : DM.Root) (r : Classification)
+    (c1 c2 : Categorizer) (h : c1 ≠ c2) :
+    (CategorizedRoot.mk i r c1).category ≠ (CategorizedRoot.mk i r c2).category := by
   simp only [CategorizedRoot.category, Categorizer.toCategory]
   cases c1 <;> cases c2 <;> simp_all
 
@@ -637,14 +648,15 @@ theorem same_root_different_category (r : Classification) (c1 c2 : Categorizer)
     3. Hiaki suppletive verbs: suppletive forms are conditioned by the
        root's complement (singular vs. plural object), showing locality
        between root and argument below the categorizer. -/
-theorem complement_selection_at_root_level (r : Classification) (c1 c2 : Categorizer) :
-    (CategorizedRoot.mk r c1).root.arity = (CategorizedRoot.mk r c2).root.arity := rfl
+theorem complement_selection_at_root_level (i : DM.Root) (r : Classification)
+    (c1 c2 : Categorizer) :
+    (CategorizedRoot.mk i r c1).root.arity = (CategorizedRoot.mk i r c2).root.arity := rfl
 
 /-- A theme-selecting root maintains its complement requirement regardless
     of whether it surfaces as a noun, verb, or adjective ([harley-2014] §3). -/
-theorem theme_selecting_root_always_selects (r : Classification) (c : Categorizer)
-    (h : r.arity = .selectsTheme) :
-    (CategorizedRoot.mk r c).root.arity.hasInternalArg = true := by
+theorem theme_selecting_root_always_selects (i : DM.Root) (r : Classification)
+    (c : Categorizer) (h : r.arity = .selectsTheme) :
+    (CategorizedRoot.mk i r c).root.arity.hasInternalArg = true := by
   simp [h, Root.Arity.hasInternalArg]
 
 -- ============================================================================
@@ -685,7 +697,7 @@ def Recategorization.target : Recategorization → Categorizer
 def CategorizedRoot.recategorize (cr : CategorizedRoot)
     (rc : Recategorization) : Option CategorizedRoot :=
   if cr.categorizer = rc.source then
-    some { root := cr.root, categorizer := rc.target }
+    some { index := cr.index, root := cr.root, categorizer := rc.target }
   else
     none
 
@@ -707,15 +719,30 @@ theorem recategorization_changes_category (cr : CategorizedRoot)
   case isTrue => simp only [Option.some.injEq] at h; rw [← h]
   case isFalse => simp at h
 
+/-- The acategorial index survives (re)categorization: the individuating
+    `DM.Root` atom is invariant under `recategorize`, so *shelf* (n) and
+    *to shelve* (v) share one List-1 root ([harley-2014] §2, §4). This is
+    the work DM's own individuator does that the `root` classification
+    cannot — arity/change-type is shared by unrelated roots, the index is
+    not — so it is the index, not the classification, that the derivational
+    history threads unchanged. -/
+theorem recategorize_preserves_index (cr cr' : CategorizedRoot)
+    (rc : Recategorization) (h : cr.recategorize rc = some cr') :
+    cr'.index = cr.index := by
+  unfold CategorizedRoot.recategorize at h
+  split at h
+  case isTrue => simp only [Option.some.injEq] at h; rw [← h]
+  case isFalse => simp at h
+
 /-- A denominal verb and a directly verbal root yield the same syntactic
     category (V), but have different internal structure. √HAMMER + v gives
     V directly; √HAMMER + n + v also gives V but via layered derivation.
     This structural ambiguity is invisible at the category level
     ([harley-2014] §2). -/
-theorem denominal_yields_verbal (r : Classification) :
-    ∃ cr, (CategorizedRoot.mk r .n).recategorize .denominal = some cr ∧
+theorem denominal_yields_verbal (i : DM.Root) (r : Classification) :
+    ∃ cr, (CategorizedRoot.mk i r .n).recategorize .denominal = some cr ∧
           cr.category = Cat.V :=
-  ⟨⟨r, .v⟩, rfl, rfl⟩
+  ⟨⟨i, r, .v⟩, rfl, rfl⟩
 
 /-- Deadjectival derivation (a → v) connects to [embick-2004]'s result-stative
     structure ([AspP AspR [vP DP v_become √ROOT]]): in DM terms, a root first

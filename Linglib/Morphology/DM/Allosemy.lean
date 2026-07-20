@@ -1,6 +1,7 @@
 import Linglib.Morphology.DM.Categorizer
 import Linglib.Morphology.DM.CategorizerSemantics
 import Linglib.Morphology.Exponence.Select
+import Linglib.Morphology.Realization
 import Linglib.Semantics.Verb.Root.Classification
 import Linglib.Syntax.Minimalist.Verbal.Voice
 
@@ -639,5 +640,39 @@ inductive AllomorphyAnalogyPosition where
 
 /-- Benz's position. -/
 def benzPosition : AllomorphyAnalogyPosition := .partialAnalogy
+
+-- ════════════════════════════════════════════════════
+-- § 7. The `Realization.Interpreted` view (List 3 on the shared carrier)
+-- ════════════════════════════════════════════════════
+
+/-! An allosemic head is a List-3 object: a single morpheme whose
+*interpretation* is resolved in context by the shared exponence engine.
+`Realization.Interpreted` is exactly that carrier — an opaque index with a
+contextual `interp` map — so the engine slots in as a view. The form side
+(`realize`) is empty (`Unit`, `∅`): allosemy is meaning-only, the List-2
+form having been resolved separately. Contextual meaning variation — Benz's
+core claim that allosemy is allomorphy's LF analogue — is then literally
+`Realization.Interpreted.IsAllosemous`. -/
+
+open Morphology.Exponence in
+/-- The allosemy engine as a `Realization.Interpreted` view: one abstract
+head (`Unit`) whose contextual interpretation is the alloseme `selectBy`
+picks (a singleton, `∅` at a semantic gap), with an empty List-2 form
+side. -/
+def AllosemicHead.toInterpreted {Sem : Type} (h : AllosemicHead Sem) :
+    Realization.Interpreted Unit SyntacticContext Unit Sem where
+  realize _ _ := ∅
+  interp _ c :=
+    match selectBy AllosemicEntry.score h.entries c with
+    | some e => {e.denotation}
+    | none => ∅
+
+/-- The verbal categorizer's meaning varies with context — eventive under
+an eventive complement, zero elsewhere — so v is `IsAllosemous` on the
+shared carrier: contextual meaning variation as non-constancy of the
+`interp` map ([benz-2025], the LF analogue of allomorphy). -/
+theorem vAllosemic_isAllosemous : vAllosemic.toInterpreted.IsAllosemous () :=
+  ⟨{ complementIsEventive := true }, { complementIsEventive := false },
+   .eventive, by decide, .zero, by decide, by decide⟩
 
 end Morphology.DM.Allosemy
