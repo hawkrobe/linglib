@@ -138,10 +138,6 @@ def vocabulary : List (VocabItem Ctx RootIndex) :=
     sgEntry "weye"  walkRoot, elseEntry "kaate" walkRoot,
     sgEntry "mea"   killRoot, elseEntry "sua"   killRoot ]
 
-instance (c : Ctx × RootIndex) :
-    DecidablePred (fun vi : VocabItem Ctx RootIndex => Morphology.Exponence.Applies vi c) :=
-  fun vi => inferInstanceAs (Decidable (vi.matches c.1 c.2 = true))
-
 /-- Spell out root `idx` in context `ctx` by Elsewhere competition over
 `vocabulary`, resolved by the shared exponence engine (`Exponence.realize`
 on the `VocabItem` specificity score) — the same selection engine as the

@@ -50,13 +50,8 @@ variable {Cell F : Type*} {D : Cell → Finset K}
 instance : Exponence.Rule (Rule Cell D F) Cell F :=
   ⟨Rule.exponent, fun r c => r.feats ⊆ D c⟩
 
-omit [DecidableEq K] in
 @[simp] theorem applies_iff {r : Rule Cell D F} {c : Cell} :
     Exponence.Applies r c ↔ r.feats ⊆ D c := Iff.rfl
-
-instance (c : Cell) :
-    DecidablePred (fun r : Rule Cell D F => Exponence.Applies r c) :=
-  fun r => inferInstanceAs (Decidable (r.feats ⊆ D c))
 
 /-- The specificity preorder: applicability-set inclusion, so the engine
 participates in the shared core's Elsewhere selection theory
@@ -64,7 +59,6 @@ participates in the shared core's Elsewhere selection theory
 preorder — incomparable specifications (No Case Containment) are the point. -/
 instance : Preorder (Rule Cell D F) := Exponence.toPreorder
 
-omit [DecidableEq K] in
 /-- Specificity unfolds to applicability-set inclusion: `r ≤ s` iff `r` applies
 wherever `s` does. -/
 theorem le_iff {r s : Rule Cell D F} :
