@@ -29,6 +29,8 @@ variable {v : List R} {c c' : Ctx} {r s : R} {φ : E}
 
 /-! ### Score selection -/
 
+variable [DecidableApplies R Ctx]
+
 /-- The rules of `v` applicable at `c`, in vocabulary order. -/
 def applicable (v : List R) (c : Ctx) : List R :=
   v.filter (fun r => Applies r c)

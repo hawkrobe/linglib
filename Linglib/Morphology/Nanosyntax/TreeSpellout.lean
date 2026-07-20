@@ -268,9 +268,6 @@ instance [DecidableEq F] (entry : TreeLexEntry F α) (target : NanoTree F) :
 
 open Morphology.Exponence
 
-section
-variable [DecidableEq F]
-
 /-- A tree lexical entry exposes the shared exponence core interface
 (`Morphology.Exponence.Rule`): contexts are syntactic targets,
 applicability is Superset-Principle matching. -/
@@ -288,6 +285,24 @@ theorem TreeLexEntry.le_iff {a b : TreeLexEntry F α} :
   ⟨λ h => h (.refl a.tree), λ h _ hc => h.trans hc⟩
 
 /-! ### Tree spellout (Elsewhere Condition) -/
+
+/-- Dualized tree size is strictly antitone in specificity: a strictly
+containing entry has a strictly larger tree, since containment is
+size-antisymmetric (`Contains.eq_of_size_le`). -/
+private theorem size_strictAnti :
+    StrictAnti (fun e : TreeLexEntry F α => OrderDual.toDual e.tree.size) := by
+  intro s r hlt
+  have hcon := TreeLexEntry.le_iff.mp hlt.le
+  refine OrderDual.toDual_lt_toDual.mpr (lt_of_le_of_ne hcon.size_le fun heq => ?_)
+  refine not_le_of_gt hlt (TreeLexEntry.le_iff.mpr ?_)
+  rw [hcon.eq_of_size_le heq.ge]
+  exact .refl _
+
+section
+variable [DecidableEq F]
+
+instance : DecidableApplies (TreeLexEntry F α) (NanoTree F) :=
+  fun t e => inferInstanceAs (Decidable (e.Matches t))
 
 /-- The matching entry with the smallest stored tree (first-listed on
     ties): Minimize Junk over tree-generalized Superset matching, as the
@@ -307,18 +322,6 @@ def treeSelect (entries : List (TreeLexEntry F α))
 def treeSpellout (entries : List (TreeLexEntry F α))
     (target : NanoTree F) : Option α :=
   (treeSelect entries target).map (·.exponent)
-
-/-- Dualized tree size is strictly antitone in specificity: a strictly
-containing entry has a strictly larger tree, since containment is
-size-antisymmetric (`Contains.eq_of_size_le`). -/
-private theorem size_strictAnti :
-    StrictAnti (fun e : TreeLexEntry F α => OrderDual.toDual e.tree.size) := by
-  intro s r hlt
-  have hcon := TreeLexEntry.le_iff.mp hlt.le
-  refine OrderDual.toDual_lt_toDual.mpr (lt_of_le_of_ne hcon.size_le fun heq => ?_)
-  refine not_le_of_gt hlt (TreeLexEntry.le_iff.mpr ?_)
-  rw [hcon.eq_of_size_le heq.ge]
-  exact .refl _
 
 /-- Smallest-tree selection is an Elsewhere winner of the shared core:
 the dualized-size score is strictly antitone in specificity

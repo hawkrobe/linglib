@@ -25,12 +25,12 @@ class Rule (R : Type*) (Ctx E : outParam Type*) where
   exponent : R → E
   /-- The condition on contexts under which a rule applies. -/
   Applies : R → Ctx → Prop
-  /-- Applicability is decidable, so selection is computable. -/
-  [dec : ∀ c, DecidablePred (Applies · c)]
-
-attribute [instance] Rule.dec
 
 export Rule (exponent Applies)
+
+/-- Decidable applicability, making selection computable. -/
+abbrev DecidableApplies (R : Type*) (Ctx : Type*) {E : Type*} [Rule R Ctx E] :=
+  ∀ c : Ctx, DecidablePred (fun r : R => Applies r c)
 
 variable {Ctx E : Type*} {R : Type*} [Rule R Ctx E]
 

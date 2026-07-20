@@ -502,6 +502,9 @@ instance : Exponence.Rule (FinRule Ctx F) Ctx F :=
 
 instance : Preorder (FinRule Ctx F) := Exponence.toPreorder
 
+instance : Exponence.DecidableApplies (FinRule Ctx F) Ctx :=
+  fun c r => inferInstanceAs (Decidable (c ∈ r.supp))
+
 omit [DecidableEq Ctx] in
 /-- Dualized support cardinality is strictly antitone in specificity: a
 strictly broader finitely supported rule has strictly larger support

@@ -126,8 +126,6 @@ theorem Rule.le_iff {r s : Rule L P F} :
     r ≤ s ↔ (r.klass = s.klass ∧ s.props ≤ r.props) ∨ r.klass ⊂ s.klass :=
   Iff.rfl
 
-variable [DecidableEq L] [DecidableLE P]
-
 /-- Applicability ([bonami-stump-2016]'s rule format): a rule applies to a cell
 `⟨L, σ⟩` when `L` is in its class and its property set is contained in `σ`. -/
 instance : Exponence.Rule (Rule L P F) (L × P) F where
@@ -158,6 +156,9 @@ end Narrowness
 section Selection
 variable [PartialOrder P] [DecidableEq L] [DecidableLE P]
 
+instance : Exponence.DecidableApplies (Rule L P F) (L × P) :=
+  fun c r => inferInstanceAs (Decidable (c.1 ∈ r.klass ∧ r.props ≤ c.2))
+
 instance : DecidableLE (Rule L P F) := fun r s =>
   inferInstanceAs (Decidable ((r.klass = s.klass ∧ s.props ≤ r.props) ∨ r.klass ⊂ s.klass))
 
@@ -178,6 +179,7 @@ def identityDefault : Rule L P (Action Z P) where
   props := ⊥
   payload := .const id
 
+omit [DecidableEq L] [DecidableLE P] in
 theorem identityDefault_applies (c : L × P) :
     Exponence.Applies (identityDefault (L := L) (Z := Z) (P := P)) c :=
   ⟨Finset.mem_univ _, bot_le⟩

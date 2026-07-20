@@ -140,6 +140,9 @@ instance : Rule (SpanRule n F) (Fin n) F :=
 
 instance : Preorder (SpanRule n F) := Exponence.toPreorder
 
+instance : DecidableApplies (SpanRule n F) (Fin n) :=
+  fun g it => inferInstanceAs (Decidable (it.threshold ≤ g))
+
 /-- Subset applicability is threshold containment. -/
 @[simp] theorem SpanRule.applies_iff {it : SpanRule n F} {g : Fin n} :
     Exponence.Applies it g ↔ it.threshold ≤ g :=
@@ -189,6 +192,9 @@ instance : Rule (SupersetRule n F) (Fin n) F :=
   ⟨SpanRule.exponent, fun it i => i ≤ SpanRule.spans it⟩
 
 instance : Preorder (SupersetRule n F) := Exponence.toPreorder
+
+instance : DecidableApplies (SupersetRule n F) (Fin n) :=
+  fun g it => inferInstanceAs (Decidable (g ≤ SpanRule.spans it))
 
 /-- Read an exponence rule under the Superset reading. -/
 def SpanRule.superset (it : SpanRule n F) : SupersetRule n F := it
