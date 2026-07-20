@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Morphology.DM.VocabularyInsertion
 import Linglib.Morphology.DM.Allosemy
+import Linglib.Morphology.Root.Certificates
 
 /-!
 # Harley (2014): roots as abstract indices
@@ -274,6 +275,16 @@ theorem run_isProperlySuppletive : realization.IsProperlySuppletive runRoot := b
   refine ⟨⟨.sg, none⟩, ⟨.pl, none⟩, hsg ▸ Finset.singleton_nonempty _,
     hpl ▸ Finset.singleton_nonempty _, ?_⟩
   rw [hsg, hpl, ne_eq, Finset.singleton_inj]; decide
+
+/-- **√322 is a suppletive-core root, not merely affixally inflected**
+([harley-2014] §2.1): under the monomorphemic-form core extraction (a whole
+exponent is its own core), `vuite`/`tenne` alternate at the core itself — the
+`go`/`went` case of `Morphology.Root.HasSuppletiveCore`, the certificate axis
+that distinguishes true suppletion from `cat`/`cats` inflection. -/
+theorem run_hasSuppletiveCore :
+    Morphology.Root.HasSuppletiveCore realization (fun s => {s}) runRoot :=
+  (Morphology.Root.hasSuppletiveCore_singleton realization runRoot).mpr
+    (realization.isSuppletive_iff.mpr (Or.inr run_isProperlySuppletive))
 
 /-- √548 *cahoot* as a List-3 `Realization.Interpreted` view: one head, the
 cran-morph's single alloseme. -/

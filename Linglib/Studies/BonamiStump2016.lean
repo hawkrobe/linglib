@@ -1,4 +1,5 @@
 import Linglib.Morphology.Paradigm.Function
+import Linglib.Morphology.Root.Certificates
 import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -115,6 +116,19 @@ applicable exponence rule, so the IFD leaves the stem unchanged
 (`gríp`, first singular present indicative of `GRÍPA`). -/
 example : evalBlock (fun _ => gripa) blockI ("gríp", {ind, prs, p1, sg})
     = ("gríp", {ind, prs, p1, sg}) := by decide
+
+/-- **The Icelandic PFM inventory is atomic-total**: as a `Realization`, the
+paradigm function realizes every cell (`paradigmRealization_isTotal`) with a
+single form (`_isUnivalent`), and under the stem projection every cell exposes
+a nonempty core — the lexeme-index stratum certified by
+`Morphology.Root.HasNonemptyCores`. -/
+theorem iceParadigm_hasNonemptyCores :
+    Morphology.Root.HasNonemptyCores
+      (paradigmRealization (fun _ => kalla) (stemChoiceOf iceStems (fun _ => ""))
+        [blockI, blockII, blockIII])
+      (fun w => {w.1}) :=
+  Morphology.Root.hasNonemptyCores_of_extract_nonempty _ _
+    (fun _ => Finset.singleton_nonempty _)
 
 end Icelandic
 
