@@ -1,4 +1,4 @@
-import Linglib.Semantics.Presupposition.OntologicalPreconditions
+import Linglib.Semantics.Presupposition.Aboutness
 import Linglib.Semantics.Aspect.ChangeOfState
 import Linglib.Features.Aktionsart
 import Linglib.Semantics.Presupposition.ProjectiveContent
@@ -31,7 +31,7 @@ non-anaphoric presupposition. *Linguistics and Philosophy* 47(4):703–748.
 ## Connection to Existing Theory
 
 This study file imports and bridges:
-- `OntologicalPreconditions` (EventPhase, entailment classification)
+- `Semantics.Events.Phase` / `Presupposition.Aboutness` (EventPhase, entailment classification)
 - `ChangeOfState.Theory` (CoS presuppositions)
 - `Features.Aktionsart` (Vendler classes, telicity)
 - `ProjectiveContent` (Tonhauser taxonomy: all three verb classes are Class C)
@@ -39,7 +39,7 @@ This study file imports and bridges:
 
 namespace RobertsSimons2024
 
-open Semantics.Presupposition.OntologicalPreconditions
+open Semantics.Presupposition.Aboutness
 open Features.ChangeOfState
 open Features
 open Semantics.Presupposition.ProjectiveContent
