@@ -3,7 +3,7 @@ import Mathlib.Data.Fintype.Basic
 import Mathlib.Data.List.Pairwise
 import Mathlib.Tactic.DeriveFintype
 import Linglib.Semantics.Modality.ModalTypes
-import Linglib.Semantics.Presupposition.Basic
+import Linglib.Semantics.Presupposition.Trivalent
 
 /-!
 # Geurts 2005: Disjunctions as Modals

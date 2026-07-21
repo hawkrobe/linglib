@@ -1,4 +1,4 @@
-import Linglib.Semantics.Presupposition.Basic
+import Linglib.Semantics.Presupposition.Trivalent
 import Linglib.Semantics.Conditionals.Presupposition
 
 /-!

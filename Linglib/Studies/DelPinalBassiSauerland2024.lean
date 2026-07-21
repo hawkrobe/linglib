@@ -1,6 +1,7 @@
 import Linglib.Semantics.Exhaustification.Presuppositional
 import Linglib.Pragmatics.Implicature.Diagnostics
 import Linglib.Semantics.Presupposition.LocalContext
+import Linglib.Semantics.Presupposition.Quantified
 import Linglib.Semantics.Presupposition.BeliefEmbedding
 import Linglib.Semantics.Presupposition.Accommodation
 import Linglib.Studies.BarLevFox2020

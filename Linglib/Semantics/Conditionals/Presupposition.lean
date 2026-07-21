@@ -1,5 +1,5 @@
 import Linglib.Semantics.Conditionals.Basic
-import Linglib.Semantics.Presupposition.Basic
+import Linglib.Semantics.Presupposition.Trivalent
 
 /-!
 # Presuppositional Conditionals: K/P vs K/P*
