@@ -1,4 +1,4 @@
-import Linglib.Semantics.Presupposition.Basic
+import Linglib.Semantics.Presupposition.Trivalent
 import Linglib.Core.Logic.Trivalent
 import Linglib.Semantics.Dynamic.UpdateSemantics.Basic
 import Linglib.Semantics.Dynamic.Partial

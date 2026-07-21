@@ -6,24 +6,15 @@ import Linglib.Discourse.CommonGround
 [stalnaker-1974] [heim-1983] [lewis-1979]
 
 Canonical operations connecting presuppositions (`PartialProp W`) to contexts
-(`ContextSet W`). Before this module, every downstream file that needed
-both reimplemented the same bridge with different names:
+(`ContextSet W`): the shared vocabulary for projection, filtering,
+accommodation, and conceivability.
 
-- `LocalContext.presupFiltered` = `c ⊆ p.presup`
-- `Accommodation.globalAccommodate` = `c ∩ presup`
-- `Accommodation.isInformative` = `¬ c ⊆ presup`
+## Main declarations
 
-This module provides a shared vocabulary so that projection, filtering,
-accommodation, and conceivability are defined once and reused everywhere.
-
-## Core Operations
-
-| Operation | Meaning | Use site |
-|-----------|---------|----------|
-| `presupSatisfied` | presup entailed by context | filtering |
-| `presupSatisfiable` | ∃ world in context with presup | conceivability |
-| `presupProjects` | presup NOT entailed | projection |
-| `accommodate` | restrict context to presup worlds | accommodation |
+* `presupSatisfied` — the context entails the presupposition (filtering).
+* `presupSatisfiable` — some context world satisfies it (conceivability).
+* `presupProjects` — the context does not entail it (projection).
+* `accommodate` — restrict the context to presupposition worlds.
 
 ## Conceivability
 
@@ -40,9 +31,7 @@ open CommonGround
 
 variable {W : Type*}
 
--- ════════════════════════════════════════════════════════════════
--- § 1. Core Operations
--- ════════════════════════════════════════════════════════════════
+/-! ### Core operations -/
 
 /-- A presupposition is **satisfied** (filtered) in context `c` iff the context
     entails it: every world in the context satisfies the presupposition.
@@ -80,9 +69,7 @@ abbrev accommodationInformative (c : ContextSet W) (presup : Set W) : Prop :=
 abbrev accommodationConsistent (c : ContextSet W) (presup : Set W) : Prop :=
   (accommodate c presup).Nonempty
 
--- ════════════════════════════════════════════════════════════════
--- § 2. Theorems
--- ════════════════════════════════════════════════════════════════
+/-! ### Theorems -/
 
 /-- Satisfaction implies satisfiability (when the context is non-empty). -/
 theorem satisfied_implies_satisfiable (c : ContextSet W) (p : PartialProp W)
@@ -121,9 +108,7 @@ theorem accommodate_eq_defined (c : ContextSet W) (p : PartialProp W) (w : W) :
     w ∈ accommodate c p.presup ↔ w ∈ c ∧ PartialProp.defined w p :=
   Iff.rfl
 
--- ════════════════════════════════════════════════════════════════
--- § 3. HasContextSet Generalizations
--- ════════════════════════════════════════════════════════════════
+/-! ### `HasContextSet` generalizations -/
 
 /-- Presupposition satisfied relative to any discourse state with a
     context set. Works with `CommonGround W`, `Commitment.CommitmentSlate W`,
