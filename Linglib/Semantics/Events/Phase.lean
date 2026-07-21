@@ -7,7 +7,7 @@ The modal signature of an event type: the world-conditions that must hold
 *before* the event is possible (`precondition`), at its occurrence, and
 *after* it (`consequence`). Originates with [roberts-simons-2024]'s account
 of non-anaphoric presupposition, where ontological preconditions are what
-project (`Semantics.Presupposition.Aboutness`).
+project (`Semantics.Presupposition.Preconditions`).
 
 Complementary decompositions elsewhere in the event API: `Event` (a
 temporal *token* with runtime and sort), and

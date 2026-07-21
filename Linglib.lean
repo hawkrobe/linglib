@@ -1730,7 +1730,6 @@ import Linglib.Semantics.Possessive.Denotation
 import Linglib.Semantics.Possessive.GQ
 import Linglib.Semantics.Possessive.PronounMixing
 import Linglib.Semantics.Possessive.Relational
-import Linglib.Semantics.Presupposition.Aboutness
 import Linglib.Semantics.Presupposition.Accommodation
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Semantics.Presupposition.BeliefEmbedding
@@ -1739,6 +1738,7 @@ import Linglib.Semantics.Presupposition.Context
 import Linglib.Semantics.Presupposition.Defs
 import Linglib.Semantics.Presupposition.MaximizePresupposition
 import Linglib.Semantics.Presupposition.PhiFeatures
+import Linglib.Semantics.Presupposition.Preconditions
 import Linglib.Semantics.Presupposition.ProjectiveContent
 import Linglib.Semantics.Presupposition.Quantified
 import Linglib.Semantics.Presupposition.TriggerTypology

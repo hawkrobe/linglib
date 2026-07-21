@@ -1,4 +1,4 @@
-import Linglib.Semantics.Presupposition.Aboutness
+import Linglib.Semantics.Presupposition.Preconditions
 import Linglib.Semantics.Aspect.ChangeOfState
 import Linglib.Features.Aktionsart
 import Linglib.Semantics.Presupposition.ProjectiveContent
@@ -31,7 +31,7 @@ non-anaphoric presupposition. *Linguistics and Philosophy* 47(4):703–748.
 ## Connection to Existing Theory
 
 This study file imports and bridges:
-- `Semantics.Events.Phase` / `Presupposition.Aboutness` (EventPhase, entailment classification)
+- `Semantics.Events.Phase` / `Presupposition.Preconditions` (EventPhase, entailment classification)
 - `ChangeOfState.Theory` (CoS presuppositions)
 - `Features.Aktionsart` (Vendler classes, telicity)
 - `ProjectiveContent` (Tonhauser taxonomy: all three verb classes are Class C)
@@ -39,7 +39,7 @@ This study file imports and bridges:
 
 namespace RobertsSimons2024
 
-open Semantics.Presupposition.Aboutness
+open Semantics.Presupposition.Preconditions
 open Features.ChangeOfState
 open Features
 open Semantics.Presupposition.ProjectiveContent
@@ -194,9 +194,9 @@ theorem cos_vendler_telicity_correct (t : CoSType) :
 /-! ### The assertion-only rival
 
 Under an assertion-only view a sentence is just its truth conditions — no
-event reference, no aboutness — so nothing forces affirmative and negative
-to share content, and single-index truth conditions cannot even represent
-a CoS verb. -/
+event reference — so nothing forces affirmative and negative to share
+content, and single-index truth conditions cannot even represent a CoS
+verb. -/
 
 /-- The assertion-only meaning: bare truth conditions. -/
 structure AssertionOnlyMeaning (W : Type*) where
@@ -506,9 +506,9 @@ section Bridges
 variable {W : Type*}
 
 /-- For CoS verbs, EventPhase.precondition agrees with PartialProp.presup.
-    This shows the two representations — the aboutness-based (R&S) and the
-    trivalent (Heim) — agree on *what* projects, even though they disagree
-    on *why* it projects. -/
+    This shows the two representations — the precondition-based (R&S) and
+    the trivalent (Heim) — agree on *what* projects, even though they
+    disagree on *why* it projects. -/
 theorem cos_eventphase_agrees_with_prprop (t : CoSType) (P : W → Prop) :
     (match t with
      | .cessation => stopAsEventPhase P
@@ -577,12 +577,14 @@ variable {W : Type*}
 The paper's argument chains together three structural facts:
 
 1. Events have preconditions and consequences (EventPhase decomposition)
-2. Sentences about events share event reference across polarity (aboutness)
-3. Presupposition = precondition (from aboutness), invariant across polarity
+2. Sentences about events share event reference across polarity
+3. Presupposition = precondition of the referenced event type, invariant
+   across polarity
 
 This chain explains the precondition/consequence asymmetry:
-- Preconditions project because they're tied to event reference (aboutness)
-- Consequences don't project because they're tied to event occurrence (assertion)
+- Preconditions project: tied to event reference, and accommodating them
+  is consistent with both affirming and denying the event (p. 721)
+- Consequences don't project: tied to event occurrence (assertion)
 - Under negation, event reference is preserved but occurrence is denied
 -/
 
