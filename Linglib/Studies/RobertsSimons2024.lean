@@ -44,6 +44,212 @@ open Features.ChangeOfState
 open Features
 open Semantics.Presupposition.ProjectiveContent
 
+variable {W : Type*}
+
+/-! ### Verb classes as event phases
+
+The paper's three verb classes instantiated as `EventPhase`s: CoS
+predicates, factives, and selectional restrictions, each with complement
+truth or prior state as ontological precondition. -/
+
+/-- "Stop P" as an event phase. -/
+def stopAsEventPhase (P : W → Prop) : EventPhase W where
+  precondition := P
+  eventOccurs := P
+  consequence := λ w => ¬ P w
+
+/-- "Start P" as an event phase. -/
+def startAsEventPhase (P : W → Prop) : EventPhase W where
+  precondition := λ w => ¬ P w
+  eventOccurs := λ w => ¬ P w
+  consequence := P
+
+/-- "Continue P" as an event phase. -/
+def continueAsEventPhase (P : W → Prop) : EventPhase W where
+  precondition := P
+  eventOccurs := P
+  consequence := P
+
+/-- Event-phase precondition = the CoS presupposition of
+    `Features.ChangeOfState`, per CoS type. -/
+theorem stop_precondition_is_presup (P : W → Prop) :
+    (stopAsEventPhase P).precondition = priorStatePresup .cessation P := rfl
+
+theorem start_precondition_is_presup (P : W → Prop) :
+    (startAsEventPhase P).precondition = priorStatePresup .inception P := rfl
+
+theorem continue_precondition_is_presup (P : W → Prop) :
+    (continueAsEventPhase P).precondition = priorStatePresup .continuation P := rfl
+
+/-- Event-phase consequence = the CoS assertion, per CoS type. -/
+theorem stop_consequence_is_assertion (P : W → Prop) :
+    (stopAsEventPhase P).consequence = resultStateAssertion .cessation P := rfl
+
+theorem start_consequence_is_assertion (P : W → Prop) :
+    (startAsEventPhase P).consequence = resultStateAssertion .inception P := rfl
+
+theorem continue_consequence_is_assertion (P : W → Prop) :
+    (continueAsEventPhase P).consequence = resultStateAssertion .continuation P := rfl
+
+/-- "Stop P" is telic: state changes from P to ¬P. -/
+theorem stop_is_telic (P : W → Prop) (w : W) (hP : P w) :
+    (stopAsEventPhase P).precondition w ≠ (stopAsEventPhase P).consequence w := by
+  unfold stopAsEventPhase
+  intro h
+  exact (cast h hP) hP
+
+/-- "Start P" is telic: state changes from ¬P to P. -/
+theorem start_is_telic (P : W → Prop) (w : W) (hNotP : ¬ P w) :
+    (startAsEventPhase P).precondition w ≠ (startAsEventPhase P).consequence w := by
+  unfold startAsEventPhase
+  intro h
+  exact hNotP (cast h hNotP)
+
+/-- "Continue P" is atelic: a precondition (prior activity) but no state
+    change ([roberts-simons-2024] p. 734). -/
+theorem continue_is_atelic (P : W → Prop) : (continueAsEventPhase P).isAtelic := by
+  intro w; rfl
+
+/-- "Know C" as an event phase: stative, atelic.
+    Precondition: C is true. The knowing state cannot exist without its object. -/
+def knowAsEventPhase (BEL C : W → Prop) : EventPhase W where
+  precondition := C
+  eventOccurs := λ w => BEL w ∧ C w
+  consequence := C
+
+/-- "Discover C" as an event phase: telic, achievement.
+    Two preconditions: C is true AND the agent was previously ignorant. -/
+def discoverAsEventPhase (IGNORANT C : W → Prop) : EventPhase W where
+  precondition := λ w => C w ∧ IGNORANT w
+  eventOccurs := λ w => C w ∧ ¬ IGNORANT w
+  consequence := λ w => C w ∧ ¬ IGNORANT w
+
+/-- "Regret p" as an event phase: emotive factive. The ontological
+    precondition is *belief*, not truth — factivity arises from a
+    pragmatic default to veridicality ([roberts-simons-2024] p. 731). -/
+def regretAsEventPhase (BEL : W → Prop) : EventPhase W where
+  precondition := BEL
+  eventOccurs := BEL
+  consequence := BEL
+
+/-- Know is atelic: no state change (precondition = consequence). -/
+theorem know_is_atelic (BEL C : W → Prop) : (knowAsEventPhase BEL C).isAtelic := by
+  intro w; rfl
+
+/-- Regret is atelic: the emotive state persists with its grounding belief. -/
+theorem regret_is_atelic (BEL : W → Prop) : (regretAsEventPhase BEL).isAtelic := by
+  intro w; rfl
+
+/-- Discover is telic: state change from ignorant to knowing. -/
+theorem discover_is_telic (IGNORANT C : W → Prop) (w : W)
+    (hC : C w) (hIgn : IGNORANT w) :
+    (discoverAsEventPhase IGNORANT C).precondition w ≠
+    (discoverAsEventPhase IGNORANT C).consequence w := by
+  unfold discoverAsEventPhase
+  intro h
+  have h2 : C w ∧ ¬ IGNORANT w := cast h ⟨hC, hIgn⟩
+  exact h2.2 hIgn
+
+/-- Both know and discover have C as (part of) their precondition: complement
+    truth is ontologically required. -/
+theorem factive_precondition_entails_complement (IGNORANT C : W → Prop) (w : W) :
+    (discoverAsEventPhase IGNORANT C).precondition w → C w := by
+  intro h; exact h.1
+
+/-- Discover's extra precondition (prior ignorance) explains its weaker
+    projection in conditional antecedents ([roberts-simons-2024] §3.2.2). -/
+theorem discover_precondition_requires_ignorance (IGNORANT C : W → Prop) (w : W) :
+    (discoverAsEventPhase IGNORANT C).precondition w → IGNORANT w := by
+  intro h; exact h.2
+
+/-- A selectional restriction as an event phase: the `requirement`
+    ("the robot has feet") is an ontological precondition of the event
+    ("the robot kicked the tree"), confirmed by both §2.1 diagnostics. -/
+def selectionalEventPhase (requirement event : W → Prop) : EventPhase W where
+  precondition := requirement
+  eventOccurs := event
+  consequence := event
+
+/-! ### Aspectual classification -/
+
+/-- Aspectual profile per CoS type: "stop"/"start" are achievements
+    (telic, punctual); "continue" is an activity (atelic, durative). -/
+def cosTypeToAspectualProfile : CoSType → AspectualProfile
+  | .cessation => achievementProfile
+  | .inception => achievementProfile
+  | .continuation => activityProfile
+
+/-- Vendler class per CoS type, derived from the aspectual profile. -/
+def cosTypeToVendlerClass (t : CoSType) : VendlerClass :=
+  (cosTypeToAspectualProfile t).toVendlerClass
+
+/-- The derived Vendler classes carry the right telicity. -/
+theorem cos_vendler_telicity_correct (t : CoSType) :
+    (cosTypeToVendlerClass t).telicity = match t with
+      | .cessation => .telic
+      | .inception => .telic
+      | .continuation => .atelic := by
+  cases t <;> rfl
+
+/-! ### The assertion-only rival
+
+Under an assertion-only view a sentence is just its truth conditions — no
+event reference, no aboutness — so nothing forces affirmative and negative
+to share content, and single-index truth conditions cannot even represent
+a CoS verb. -/
+
+/-- The assertion-only meaning: bare truth conditions. -/
+structure AssertionOnlyMeaning (W : Type*) where
+  truthConditions : W → Prop
+
+/-- Under assertion-only, "stop P" flattens pre-state and post-state into
+    one evaluation point: P ∧ ¬P. -/
+def assertionOnly_stop (P : W → Prop) : AssertionOnlyMeaning W :=
+  { truthConditions := λ w => P w ∧ ¬ P w }
+
+/-- Under assertion-only, "not stop P" is ¬(P ∧ ¬P) — a tautology. -/
+def assertionOnly_notStop (P : W → Prop) : AssertionOnlyMeaning W :=
+  { truthConditions := λ w => ¬(P w ∧ ¬ P w) }
+
+/-- Single-index truth conditions cannot represent CoS verbs: the
+    assertion-only "stop" is contradictory at every world. -/
+theorem assertionOnly_stop_contradictory (P : W → Prop) (w : W) :
+    ¬ (assertionOnly_stop P).truthConditions w :=
+  λ ⟨h, hn⟩ => hn h
+
+/-- Under assertion-only, the negated sentence is true even where P fails,
+    so "John didn't stop smoking" would not require that he smoked: the
+    view has no presupposition. -/
+theorem assertionOnly_no_presupposition (P : W → Prop) (w : W)
+    (_hNotP : ¬ P w) :
+    (assertionOnly_notStop P).truthConditions w :=
+  λ ⟨h, hn⟩ => hn h
+
+/-! ### Pragmatic suppression conditions
+
+Projection of preconditions is a pragmatic *default*, not an invariant
+([roberts-simons-2024] §3.2.1). -/
+
+/-- Contexts that suppress projection of a precondition: in each, pragmatic
+    reasoning makes it implausible that the speaker presumes the
+    precondition true. -/
+inductive SuppressionCondition where
+  /-- Interlocutors know or believe the precondition is false or
+      controversial ([roberts-simons-2024] ex. 23). -/
+  | preconditionKnownFalse
+  /-- Evidence that the speaker does not believe the precondition
+      ([roberts-simons-2024] ex. 24). -/
+  | speakerNonCommitment
+  /-- The precondition is at-issue, i.e. currently under discussion
+      ([roberts-simons-2024] ex. 25). -/
+  | preconditionAtIssue
+  deriving DecidableEq, Repr
+
+/-- Under any suppression condition, precondition content is merely locally
+    entailed, not globally accommodated. -/
+def SuppressionCondition.globalProjection : SuppressionCondition → Bool
+  | _ => false
+
 
 -- ═══════════════════════════════════════════════════════════════════════
 -- §1. Theory Predicts Diagnostic Pattern
