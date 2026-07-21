@@ -31,7 +31,7 @@ non-anaphoric presupposition. *Linguistics and Philosophy* 47(4):703–748.
 ## Connection to Existing Theory
 
 This study file imports and bridges:
-- `Semantics.Events.Phase` / `Presupposition.Preconditions` (EventPhase, entailment classification)
+- `Semantics.Events.Phase` / `Presupposition.Preconditions` (Event.Phase, entailment classification)
 - `ChangeOfState.Theory` (CoS presuppositions)
 - `Features.Aktionsart` (Vendler classes, telicity)
 - `ProjectiveContent` (Tonhauser taxonomy: all three verb classes are Class C)
@@ -48,24 +48,24 @@ variable {W : Type*}
 
 /-! ### Verb classes as event phases
 
-The paper's three verb classes instantiated as `EventPhase`s: CoS
+The paper's three verb classes instantiated as `Event.Phase`s: CoS
 predicates, factives, and selectional restrictions, each with complement
 truth or prior state as ontological precondition. -/
 
 /-- "Stop P" as an event phase. -/
-def stopAsEventPhase (P : W → Prop) : EventPhase W where
+def stopAsEventPhase (P : W → Prop) : Event.Phase W where
   precondition := P
   eventOccurs := P
   consequence := λ w => ¬ P w
 
 /-- "Start P" as an event phase. -/
-def startAsEventPhase (P : W → Prop) : EventPhase W where
+def startAsEventPhase (P : W → Prop) : Event.Phase W where
   precondition := λ w => ¬ P w
   eventOccurs := λ w => ¬ P w
   consequence := P
 
 /-- "Continue P" as an event phase. -/
-def continueAsEventPhase (P : W → Prop) : EventPhase W where
+def continueAsEventPhase (P : W → Prop) : Event.Phase W where
   precondition := P
   eventOccurs := P
   consequence := P
@@ -112,14 +112,14 @@ theorem continue_is_atelic (P : W → Prop) : (continueAsEventPhase P).isAtelic 
 
 /-- "Know C" as an event phase: stative, atelic.
     Precondition: C is true. The knowing state cannot exist without its object. -/
-def knowAsEventPhase (BEL C : W → Prop) : EventPhase W where
+def knowAsEventPhase (BEL C : W → Prop) : Event.Phase W where
   precondition := C
   eventOccurs := λ w => BEL w ∧ C w
   consequence := C
 
 /-- "Discover C" as an event phase: telic, achievement.
     Two preconditions: C is true AND the agent was previously ignorant. -/
-def discoverAsEventPhase (IGNORANT C : W → Prop) : EventPhase W where
+def discoverAsEventPhase (IGNORANT C : W → Prop) : Event.Phase W where
   precondition := λ w => C w ∧ IGNORANT w
   eventOccurs := λ w => C w ∧ ¬ IGNORANT w
   consequence := λ w => C w ∧ ¬ IGNORANT w
@@ -127,7 +127,7 @@ def discoverAsEventPhase (IGNORANT C : W → Prop) : EventPhase W where
 /-- "Regret p" as an event phase: emotive factive. The ontological
     precondition is *belief*, not truth — factivity arises from a
     pragmatic default to veridicality ([roberts-simons-2024] p. 731). -/
-def regretAsEventPhase (BEL : W → Prop) : EventPhase W where
+def regretAsEventPhase (BEL : W → Prop) : Event.Phase W where
   precondition := BEL
   eventOccurs := BEL
   consequence := BEL
@@ -165,7 +165,7 @@ theorem discover_precondition_requires_ignorance (IGNORANT C : W → Prop) (w : 
 /-- A selectional restriction as an event phase: the `requirement`
     ("the robot has feet") is an ontological precondition of the event
     ("the robot kicked the tree"), confirmed by both §2.1 diagnostics. -/
-def selectionalEventPhase (requirement event : W → Prop) : EventPhase W where
+def selectionalEventPhase (requirement event : W → Prop) : Event.Phase W where
   precondition := requirement
   eventOccurs := event
   consequence := event
@@ -497,14 +497,14 @@ end Filtering
 
 
 -- ═══════════════════════════════════════════════════════════════════════
--- §6. Bridge: EventPhase Precondition = PartialProp Presupposition
+-- §6. Bridge: Event.Phase Precondition = PartialProp Presupposition
 -- ═══════════════════════════════════════════════════════════════════════
 
 section Bridges
 
 variable {W : Type*}
 
-/-- For CoS verbs, EventPhase.precondition agrees with PartialProp.presup.
+/-- For CoS verbs, Event.Phase.precondition agrees with PartialProp.presup.
     This shows the two representations — the precondition-based (R&S) and
     the trivalent (Heim) — agree on *what* projects, even though they
     disagree on *why* it projects. -/
@@ -575,7 +575,7 @@ variable {W : Type*}
 
 The paper's argument chains together three structural facts:
 
-1. Events have preconditions and consequences (EventPhase decomposition)
+1. Events have preconditions and consequences (Event.Phase decomposition)
 2. Sentences about events share event reference across polarity
 3. Presupposition = precondition of the referenced event type, invariant
    across polarity

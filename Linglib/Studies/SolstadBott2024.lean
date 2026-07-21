@@ -49,7 +49,7 @@ resolution and symmetric filtering — "a cage of their own".
 * `occasionVerbProfile` vs `factiveProfile` — `cage_of_their_own` proves they
   differ despite sharing Class C.
 * `occasionEventPhase`, `symmetricLocalCtxAntecedent` — the presupposition as an
-  `EventPhase` and the Heim/Schlenker filtering models.
+  `Event.Phase` and the Heim/Schlenker filtering models.
 * `gpp_underpredicts_above_diagonal` — occasion verbs project *above* the GPP
   diagonal (the mirror of [tonhauser-beaver-degen-2018]'s `establish`).
 -/
@@ -169,14 +169,14 @@ theorem distinguished_by_filtering_not_class :
     occasionVerbProfile.contextPolarities ≠ factiveProfile.contextPolarities := by
   decide
 
-/-! ### Occasion-verb presupposition as `EventPhase` -/
+/-! ### Occasion-verb presupposition as `Event.Phase` -/
 
-/-- Model an occasion verb's presupposition as an `EventPhase`. "The judge
+/-- Model an occasion verb's presupposition as an `Event.Phase`. "The judge
     punished Peter": precondition = Peter did something wrong (the occasion);
     eventOccurs = the punishing action; consequence = Peter is punished. The
     precondition projects. -/
 def occasionEventPhase {W : Type*}
-    (occasion engagement outcome : W → Prop) : EventPhase W where
+    (occasion engagement outcome : W → Prop) : Event.Phase W where
   precondition := occasion
   eventOccurs := engagement
   consequence := outcome

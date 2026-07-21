@@ -7,13 +7,13 @@ import Linglib.Semantics.Presupposition.Basic
 [roberts-simons-2024]'s characterization: the projective contents of CoS
 predicates, factives, and selectional restrictions are entailments
 characterizing *ontological preconditions* of the associated event type
-(`EventPhase`), not semantically encoded presuppositions. Projection is
+(`Event.Phase`), not semantically encoded presuppositions. Projection is
 pragmatic — *projection in service of informativity*: accommodating
 preconditions is the safer default because preconditions are consistent
 with both affirming and denying the event, while consequences hold only if
 it occurred.
 
-The account is a hom `EventPhase.toPartialProp`: an event sentence
+The account is a hom `Event.Phase.toPartialProp`: an event sentence
 presupposes the event type's precondition and asserts its result state.
 Negating the sentence is `PartialProp.neg` — internal negation, a hole —
 so preconditions project through negation by `PartialProp.neg_presup`:
@@ -22,7 +22,7 @@ referenced.
 
 ## Main declarations
 
-* `EventPhase.toPartialProp` — the denotation hom; `toPartialProp_neg_presup`
+* `Event.Phase.toPartialProp` — the denotation hom; `toPartialProp_neg_presup`
   is projection through negation.
 * `EntailmentRelation` — precondition vs consequence vs concomitant
   ([roberts-simons-2024] §2.1 diagnostics); only preconditions project by
@@ -34,7 +34,7 @@ cites as proof-of-concept are `Studies/QingGoodmanLassiter2016.lean` and
 `Studies/Warstadt2022.lean`.
 -/
 
-namespace EventPhase
+namespace Event.Phase
 
 open Semantics.Presupposition
 
@@ -43,23 +43,23 @@ variable {W : Type*}
 /-- The [roberts-simons-2024] denotation of an event sentence: presuppose
     the event type's ontological precondition, assert its result state.
     The negated sentence is `(e.toPartialProp).neg`. -/
-def toPartialProp (e : EventPhase W) : PartialProp W where
+def toPartialProp (e : Event.Phase W) : PartialProp W where
   presup := e.precondition
   assertion := e.consequence
 
-@[simp] theorem toPartialProp_presup (e : EventPhase W) :
+@[simp] theorem toPartialProp_presup (e : Event.Phase W) :
     e.toPartialProp.presup = e.precondition := rfl
 
-@[simp] theorem toPartialProp_assertion (e : EventPhase W) :
+@[simp] theorem toPartialProp_assertion (e : Event.Phase W) :
     e.toPartialProp.assertion = e.consequence := rfl
 
 /-- Preconditions project through negation: internal negation is a hole
     (`PartialProp.neg_presup`), and the precondition is carried by the
     presupposition component. -/
-theorem toPartialProp_neg_presup (e : EventPhase W) :
+theorem toPartialProp_neg_presup (e : Event.Phase W) :
     e.toPartialProp.neg.presup = e.precondition := rfl
 
-end EventPhase
+end Event.Phase
 
 namespace Semantics.Presupposition.Preconditions
 
