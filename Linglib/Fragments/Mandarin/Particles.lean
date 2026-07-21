@@ -2,38 +2,28 @@ import Linglib.Semantics.Presupposition.TriggerTypology
 
 /-!
 # Mandarin Presuppositional Particles
-[wang-2025]
 
-Lexical entries for Mandarin presupposition triggers, linking Fragment-level
-lexical data to the NeoGricean trigger typology ([wang-2025] Table 4.1) and
-experimental data ([wang-2025] Experiments 1-3).
+Lexical entries for the Mandarin presupposition triggers studied
+experimentally in [wang-2025]. Entries carry consensus trigger-type
+metadata only; [wang-2025]'s alternative-structure classification and the
+competition analysis built on it live in `Studies/Wang2025.lean`.
 
-## Triggers
-
-| Particle | Gloss      | Trigger Type  | Alt Structure | Alt Form        |
-|----------|------------|---------------|---------------|-----------------|
-| 也 ye    | also       | iterative     | deletion      | ∅               |
-| 又 you   | again      | iterative     | deletion      | ∅               |
-| 仍 reng  | still      | continuative  | deletion      | ∅               |
-| 就 jiu   | only       | cleft         | none          | ∅               |
-| 知道 zhidao | know    | factive       | replacement   | believe (以为)   |
-| 不再 buzai | no longer | changeOfState | replacement   | not (不)         |
-| 开始 kaishi | start   | aspectual     | replacement   | do (做)          |
-| 反而 fan'er | instead | iterative     | replacement   | and (和)         |
-| 而 er    | instead    | iterative     | replacement   | and (和)         |
-| 还 hai   | still      | continuative  | deletion      | ∅               |
-
-## Cross-Module Connections
-
-- `Semantics.Presupposition.TriggerTypology.AltStructure`: alternative classification
-- `Semantics.Presupposition.TriggerTypology.PresupTrigger`: trigger type
-- `Wang2025`: experimental data
-
+| Particle    | Gloss      | Trigger Type  |
+|-------------|------------|---------------|
+| 也 ye       | also       | additive      |
+| 又 you      | again      | iterative     |
+| 仍 reng     | still      | continuative  |
+| 就 jiu      | only       | exclusive     |
+| 知道 zhidao | know       | factive       |
+| 不再 buzai  | no longer  | changeOfState |
+| 开始 kaishi | start      | aspectual     |
+| 反而 fan'er | instead    | contrastive   |
+| 而 er       | instead    | contrastive   |
 -/
 
 namespace Mandarin.Particles
 
-open Semantics.Presupposition.TriggerTypology (PresupTrigger AltStructure PresupTriggerEntry)
+open Semantics.Presupposition.TriggerTypology (PresupTrigger)
 
 /-- Mandarin presupposition triggers studied in [wang-2025] Experiments 1-2. -/
 inductive MandarinTrigger where
@@ -48,10 +38,7 @@ inductive MandarinTrigger where
   | er     -- 而 'instead' (contrastive, weaker)
   deriving DecidableEq, Repr
 
-/--
-A Mandarin presuppositional particle entry.
-Links surface form to trigger type and alternative structure.
--/
+/-- A Mandarin presuppositional particle entry. -/
 structure PresupParticle where
   /-- Chinese character(s) -/
   hanzi : String
@@ -59,25 +46,23 @@ structure PresupParticle where
   pinyin : String
   /-- English gloss -/
   gloss : String
-  /-- Corresponding trigger entry (type + alternative structure) -/
-  triggerEntry : PresupTriggerEntry
+  /-- Trigger type (consensus classification) -/
+  trigger : PresupTrigger
   /-- Link to experimental data trigger identifier -/
   dataTrigger : MandarinTrigger
   deriving Repr
 
-/-- 也 ye 'also' — additive particle, deletion alternative. -/
+/-- 也 ye 'also' — additive particle ([kripke-2009]'s *too*-class). -/
 def ye : PresupParticle :=
   { hanzi := "也", pinyin := "yě", gloss := "also"
-  , triggerEntry := { trigger := .iterative, altStructure := .deletion }
-  , dataTrigger := .ye }
+  , trigger := .additive, dataTrigger := .ye }
 
-/-- 又 you 'again' — repetitive, deletion alternative. -/
+/-- 又 you 'again' — repetitive iterative. -/
 def you : PresupParticle :=
   { hanzi := "又", pinyin := "yòu", gloss := "again"
-  , triggerEntry := { trigger := .iterative, altStructure := .deletion }
-  , dataTrigger := .you }
+  , trigger := .iterative, dataTrigger := .you }
 
-/-- 仍 reng 'still' — continuative, deletion alternative.
+/-- 仍 reng 'still' — continuative.
     Distinct from 又 *you* 'again' (iterative): *reng*'s presupposition is
     *uninterrupted continuation* of P throughout an interval, whereas
     *you* presupposes P-then-not-P-then-P-again. The original encoding
@@ -85,77 +70,40 @@ def you : PresupParticle :=
     `.continuative` was added to `PresupTrigger` to distinguish them. -/
 def reng : PresupParticle :=
   { hanzi := "仍", pinyin := "réng", gloss := "still"
-  , triggerEntry := { trigger := .continuative, altStructure := .deletion }
-  , dataTrigger := .reng }
+  , trigger := .continuative, dataTrigger := .reng }
 
-/-- 就 jiu 'only' — exclusive, NO structural alternative. -/
+/-- 就 jiu 'only' — exclusive; presupposes its prejacent. -/
 def jiu : PresupParticle :=
   { hanzi := "就", pinyin := "jiù", gloss := "only"
-  , triggerEntry := { trigger := .cleft, altStructure := .none }
-  , dataTrigger := .jiu }
+  , trigger := .exclusive, dataTrigger := .jiu }
 
-/-- 知道 zhidao 'know' — factive, replacement alternative (以为 yiwei 'believe'). -/
+/-- 知道 zhidao 'know' — factive (non-factive counterpart: 以为 yiwei 'believe'). -/
 def zhidao : PresupParticle :=
   { hanzi := "知道", pinyin := "zhīdào", gloss := "know"
-  , triggerEntry := { trigger := .factive, altStructure := .replacement, altForm := some "以为" }
-  , dataTrigger := .zhidao }
+  , trigger := .factive, dataTrigger := .zhidao }
 
-/-- 不再 buzai 'no longer' — cessative, replacement alternative (不 bu 'not'). -/
+/-- 不再 buzai 'no longer' — cessative change-of-state. -/
 def buzai : PresupParticle :=
   { hanzi := "不再", pinyin := "bú zài", gloss := "no longer"
-  , triggerEntry := { trigger := .changeOfState, altStructure := .replacement, altForm := some "不" }
-  , dataTrigger := .buzai }
+  , trigger := .changeOfState, dataTrigger := .buzai }
 
-/-- 开始 kaishi 'start' — inchoative, replacement alternative (做 zuo 'do'). -/
+/-- 开始 kaishi 'start' — inchoative aspectual. -/
 def kaishi : PresupParticle :=
   { hanzi := "开始", pinyin := "kāishǐ", gloss := "start"
-  , triggerEntry := { trigger := .aspectual, altStructure := .replacement, altForm := some "做" }
-  , dataTrigger := .kaishi }
+  , trigger := .aspectual, dataTrigger := .kaishi }
 
-/-- 反而 fan'er 'instead' — contrastive, replacement alternative. -/
+/-- 反而 fan'er 'instead' — contrastive. -/
 def faner : PresupParticle :=
   { hanzi := "反而", pinyin := "fǎn'ér", gloss := "instead"
-  , triggerEntry := { trigger := .iterative, altStructure := .replacement, altForm := some "和" }
-  , dataTrigger := .faner }
+  , trigger := .contrastive, dataTrigger := .faner }
 
-/-- 而 er 'instead' — weaker contrastive, replacement alternative. -/
+/-- 而 er 'instead' — weaker contrastive. -/
 def er : PresupParticle :=
   { hanzi := "而", pinyin := "ér", gloss := "instead"
-  , triggerEntry := { trigger := .iterative, altStructure := .replacement, altForm := some "和" }
-  , dataTrigger := .er }
+  , trigger := .contrastive, dataTrigger := .er }
 
 /-- All particles studied in [wang-2025]. -/
 def wang2025Particles : List PresupParticle :=
   [ye, you, reng, jiu, zhidao, buzai, kaishi, faner, er]
-
--- ============================================================================
--- Per-Datum Verification Theorems
--- ============================================================================
-
-/-- ye has deletion alternative structure. -/
-theorem ye_deletion : ye.triggerEntry.altStructure = .deletion := rfl
-
-/-- jiu has no structural alternative. -/
-theorem jiu_no_alt : jiu.triggerEntry.altStructure = .none := rfl
-
-/-- zhidao has replacement alternative. -/
-theorem zhidao_replacement : zhidao.triggerEntry.altStructure = .replacement := rfl
-
-/-- Obligatory triggers (ye, you, reng) all have deletion alternatives. -/
-theorem obligatory_all_deletion :
-    ye.triggerEntry.altStructure = .deletion ∧
-    you.triggerEntry.altStructure = .deletion ∧
-    reng.triggerEntry.altStructure = .deletion := ⟨rfl, rfl, rfl⟩
-
-/-- Blocked trigger (jiu) has no alternative — this is what predicts blocking. -/
-theorem blocked_no_alt :
-    jiu.triggerEntry.altStructure = .none := rfl
-
-/-- ye links to experimental data trigger.ye -/
-theorem ye_data_link : ye.dataTrigger = .ye := rfl
-
-/-- jiu links to experimental data trigger.jiu -/
-theorem jiu_data_link : jiu.dataTrigger = .jiu := rfl
-
 
 end Mandarin.Particles

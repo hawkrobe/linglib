@@ -6,7 +6,6 @@ import Linglib.Semantics.Presupposition.Basic
 import Linglib.Features.Acceptability
 import Linglib.Fragments.Mandarin.Particles
 import Linglib.Pragmatics.Expressives.Basic
-import Linglib.Semantics.Presupposition.TriggerTypology
 
 /-!
 # [wang-2025] Presupposition, Competition, and Coherence
@@ -49,7 +48,7 @@ Presuppositional sentences `S_p` compete with non-presuppositional alternatives
    IC or FP violations.
 
 The ranking IC ≫ FP ≫ MP, together with the trigger's alternative structure
-(Wang's Table 4.1), derives three obligatoriness patterns:
+(`AltStructure`), derives three obligatoriness patterns:
 - **Obligatory** triggers (ye, you, reng): deletion alternatives — MP forces
   use of the trigger when CommonGround fully supports presupposition.
 - **Optional** triggers (buzai, kaishi): replacement alternatives — competitor
@@ -192,7 +191,6 @@ of the speaker-K operator. The Prop-valued canonical version lives in
 `Core.Logic.Modal.AccessRel`; lift via
 `fun a b => R a b = true` to bridge. -/
 abbrev BAccessRel (W : Type*) := W → W → Bool
-open Semantics.Presupposition.TriggerTypology (AltStructure Obligatoriness)
 open Pragmatics.Expressives (TwoDimProp)
 
 /--
@@ -272,6 +270,58 @@ def mpPrefers (cg : ContextSet W) (sp : PartialProp W) : Prop :=
   satisfiesFP cg sp ∧ satisfiesIC sp
 
 
+/-! ### Alternative-structure typology
+
+[wang-2025] classifies each trigger by what non-presuppositional alternative
+it has; the classification, with the constraint ranking, drives the
+obligatoriness predictions below. The cases mirror [katzir-2007]'s
+structural-alternative operations: a `deletion` competitor is
+delete-reachable, a `replacement` competitor substitute-reachable
+(cf. `Semantics.Alternatives.Structural`). -/
+
+/-- How a presupposition trigger relates to its non-presuppositional
+alternative ([wang-2025]'s alternative-structure typology). -/
+inductive AltStructure where
+  /-- Alternative obtained by deleting the trigger (*ye*/also → ∅) -/
+  | deletion
+  /-- Alternative is a specific lexical replacement (*zhidao*/know → *yiwei*/believe) -/
+  | replacement
+  /-- No structural alternative available (*jiu*/only) -/
+  | none
+  deriving DecidableEq, Repr
+
+/-- [wang-2025]'s alternative-structure classification of the Mandarin
+triggers studied in the experiments. -/
+def altStructureOf : MandarinTrigger → AltStructure
+  | .ye => .deletion
+  | .you => .deletion
+  | .reng => .deletion
+  | .jiu => .none
+  | .zhidao => .replacement
+  | .buzai => .replacement
+  | .kaishi => .replacement
+  | .faner => .replacement
+  | .er => .replacement
+
+/--
+Obligatoriness pattern predicted by the alternative-structure typology.
+
+[wang-2025] derives three patterns from the interaction of trigger
+type, alternative structure, and constraint ranking:
+1. Obligatory: trigger must be used when CommonGround supports presupposition
+2. Optional: trigger may or may not be used
+3. Blocked: trigger must NOT be used (mandatorily omitted)
+-/
+inductive Obligatoriness where
+  /-- Trigger is obligatory when presupposition is fully entailed by CommonGround -/
+  | obligatory
+  /-- Trigger is optional (either form is acceptable) -/
+  | optional
+  /-- Trigger is blocked (mandatorily omitted in this context) -/
+  | blocked
+  deriving DecidableEq, Repr
+
+
 -- ============================================================================
 -- Section 2: Obligatoriness Predictions
 -- ============================================================================
@@ -305,7 +355,7 @@ so even when the CommonGround only partially entails the presupposition, the
 presuppositional form is not blocked.
 -/
 theorem deletion_alt_partial_resolution :
-    predictObligatoriness .deletion false true = .optional := rfl
+    predictObligatoriness (altStructureOf .ye) false true = .optional := rfl
 
 /--
 Triggers with no structural alternative are blocked under partial CommonGround.
@@ -315,7 +365,7 @@ when the CommonGround doesn't fully support the presupposition, the presuppositi
 form cannot be used.
 -/
 theorem no_alt_blocked_partial :
-    predictObligatoriness .none false true = .blocked := rfl
+    predictObligatoriness (altStructureOf .jiu) false true = .blocked := rfl
 
 /--
 Full CommonGround support always yields obligatoriness (for any alternative structure).

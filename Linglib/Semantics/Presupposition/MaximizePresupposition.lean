@@ -39,7 +39,8 @@ connects it to existing domain-specific implementations:
    violable constraint ranked below IC (Internal Coherence) and FP
    (Felicity Presupposition). Describes MP's position in the
    constraint hierarchy for presupposition obligatoriness
-   ([wang-2025]). Trigger typology lives in
+   ([wang-2025]). The alternative-structure typology driving it lives in
+   `Studies/Wang2025.lean`; consensus trigger types in
    `Semantics.Presupposition.TriggerTypology`.
 
 ## Core abstraction

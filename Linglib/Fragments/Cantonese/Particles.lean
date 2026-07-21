@@ -19,15 +19,14 @@ trigger movement to matrix AspP_outer — lives in the Studies file.
 
 namespace Cantonese.Particles
 
-open Semantics.Presupposition.TriggerTypology
-  (PresupTrigger AltStructure PresupTriggerEntry)
+open Semantics.Presupposition.TriggerTypology (PresupTrigger)
 
 /-- A Cantonese presuppositional particle entry. -/
 structure PresupParticle where
   hanzi : String
   jyutping : String
   gloss : String
-  triggerEntry : PresupTriggerEntry
+  trigger : PresupTrigger
   notes : String := ""
   deriving Repr
 
@@ -37,7 +36,7 @@ structure PresupParticle where
     for the analysis). -/
 def jau : PresupParticle :=
   { hanzi := "又", jyutping := "jau6", gloss := "again"
-  , triggerEntry := { trigger := .iterative, altStructure := .deletion }
+  , trigger := .iterative
   , notes := "Mandarin you's counterpart; no scope-skipping per Liu&Yip2026" }
 
 /-- 再 *zoi* — preverbal 'again' (iterative, lower position). Cantonese
@@ -45,7 +44,7 @@ def jau : PresupParticle :=
     AspP_inner-associated, paralleling Mandarin *zai*. -/
 def zoi : PresupParticle :=
   { hanzi := "再", jyutping := "zoi3", gloss := "again"
-  , triggerEntry := { trigger := .iterative, altStructure := .deletion }
+  , trigger := .iterative
   , notes := "Mandarin zai's counterpart; AspP_inner-associated per Liu&Yip2026" }
 
 def all : List PresupParticle := [jau, zoi]
@@ -55,12 +54,8 @@ theorem all_membership :
     all.map (·.jyutping) = ["jau6", "zoi3"] := by decide
 
 /-- Both Cantonese preverbal *again*-elements are iterative-class
-    presupposition triggers with deletion alternatives. -/
-theorem both_iterative_deletion :
-    jau.triggerEntry.trigger = .iterative ∧
-    zoi.triggerEntry.trigger = .iterative ∧
-    jau.triggerEntry.altStructure = .deletion ∧
-    zoi.triggerEntry.altStructure = .deletion := by
-  refine ⟨rfl, rfl, rfl, rfl⟩
+    presupposition triggers. -/
+theorem both_iterative :
+    jau.trigger = .iterative ∧ zoi.trigger = .iterative := ⟨rfl, rfl⟩
 
 end Cantonese.Particles
