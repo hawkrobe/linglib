@@ -23,8 +23,8 @@ the modal frame conditions:
 
 This file constructs a concrete 2-world model demonstrating the asymmetry,
 connecting `KnowledgeBeliefFrame` (from `EpistemicLogic.lean`) through
-`localCtxOf` (from `BeliefEmbedding.lean`) to `presupFiltered`
-(from `LocalContext.lean`).
+`localCtxOf` (from `BeliefEmbedding.lean`) to `presupSatisfied`
+(from `Context.lean`).
 
 The *other* half of [heim-1992] — comparative-belief desire
 semantics for `want`/`wish`/`hope` — is at
@@ -40,7 +40,7 @@ open Semantics.Presupposition (PartialProp)
 open CommonGround (ContextSet)
 open Core.Logic.Modal (IsSerial IsEuclidean IsS5Frame IsKD45Frame
   IsBeliefRefinementOf)
-open Semantics.Presupposition.LocalContext (presupFiltered)
+open Semantics.Presupposition.Context (presupSatisfied)
 open Semantics.Presupposition.BeliefEmbedding
 
 /-! ## World Model -/

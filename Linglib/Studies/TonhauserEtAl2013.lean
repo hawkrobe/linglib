@@ -56,7 +56,6 @@ open CommonGround
 open Core.Logic.Modal (AgentAccessRel)
 open Semantics.Presupposition
 open Semantics.Presupposition.Context
-open Semantics.Presupposition.LocalContext
 open Semantics.Presupposition.BeliefEmbedding
 open Semantics.Presupposition.ProjectiveContent
 
@@ -142,7 +141,7 @@ OLE=yes behavior from [schlenker-2009]'s belief local contexts.
 -/
 theorem belief_derives_ole (blc : BeliefLocalCtx W Agent) (p : PartialProp W)
     (h : presupAttributedToHolder blc p) (w_star : W) (hw : blc.globalCtx w_star) :
-    presupFiltered (beliefToLocalCtx blc w_star hw) p :=
+    presupSatisfied (blc.atWorld w_star) p :=
   h w_star hw
 
 -- ════════════════════════════════════════════════════════════════
@@ -247,25 +246,6 @@ theorem expressive_is_classB : ProjectiveTrigger.expressive.toClass = .classB :=
 theorem pronoun_is_classA : ProjectiveTrigger.pronoun_existence.toClass = .classA := rfl
 theorem demonstrative_is_classD :
     ProjectiveTrigger.demonstrative_indication.toClass = .classD := rfl
-
-/-- Schlenker's local context theory derives Tonhauser's taxonomy. -/
-theorem schlenker_derives_tonhauser :
-    (∀ (c : ContextSet W), (initialLocalCtx c).worlds = c) ∧
-    (∀ (blc : BeliefLocalCtx W Agent) (w : W) (h : blc.globalCtx w),
-      (beliefToLocalCtx blc w h).worlds = blc.atWorld w) ∧
-    (∀ (c : ProjectiveClass),
-      c = classFromProperties c.scf c.ole) ∧
-    (ProjectiveClass.classA ≠ ProjectiveClass.classB ∧
-     ProjectiveClass.classA ≠ ProjectiveClass.classC ∧
-     ProjectiveClass.classA ≠ ProjectiveClass.classD ∧
-     ProjectiveClass.classB ≠ ProjectiveClass.classC ∧
-     ProjectiveClass.classB ≠ ProjectiveClass.classD ∧
-     ProjectiveClass.classC ≠ ProjectiveClass.classD) := by
-  refine ⟨Schlenker2009.matrix_local_context_is_global,
-    Schlenker2009.belief_local_context_is_holder_beliefs, ?_, ?_⟩
-  · intro c
-    exact (class_properties_roundtrip c).symm
-  · decide
 
 -- Per-trigger phenomena
 

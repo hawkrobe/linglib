@@ -44,9 +44,7 @@ open Semantics.Presupposition.Context
 
 variable {W : Type*}
 
--- ════════════════════════════════════════════════════════════════
--- § 1. Accommodation Levels
--- ════════════════════════════════════════════════════════════════
+/-! ### Accommodation levels -/
 
 /-- The level at which accommodation occurs.
  [beaver-2001] Ch. 5, [lewis-1979], [heim-1983]. -/
@@ -61,9 +59,7 @@ inductive AccommodationLevel where
  | intermediate (depth : Nat)
  deriving DecidableEq, Repr
 
--- ════════════════════════════════════════════════════════════════
--- § 2. Global Accommodation
--- ════════════════════════════════════════════════════════════════
+/-! ### Global accommodation -/
 
 /-- Global accommodation: update the context to include the presupposition.
  [lewis-1979]: "presupposition P comes into existence."
@@ -72,9 +68,7 @@ inductive AccommodationLevel where
 abbrev globalAccommodate (c : ContextSet W) (presup : Set W) : ContextSet W :=
  accommodate c presup
 
--- ════════════════════════════════════════════════════════════════
--- § 3. Accommodation Constraints
--- ════════════════════════════════════════════════════════════════
+/-! ### Accommodation constraints -/
 
 /-- Trapping: a presupposition with a bound variable cannot be
  accommodated above its binder. [beaver-2001] Ch. 5.3.
@@ -96,26 +90,7 @@ structure AccommodationOK (c : ContextSet W) (presup : Set W) : Prop where
  informative : accommodationInformative c presup
  consistent : accommodationConsistent c presup
 
--- ════════════════════════════════════════════════════════════════
--- § 4. Accommodation Strategies
--- ════════════════════════════════════════════════════════════════
-
-/-- An accommodation strategy determines which level of accommodation
- is preferred. [beaver-2001] Ch. 5.8. -/
-inductive AccommodationStrategy where
- /-- Heim/Lewis: prefer global, fall back to local if global is
- inconsistent. Global preference ≈ projection; local fallback
- ≈ cancellation. [heim-1983], [lewis-1979]. -/
- | heimPreference
- /-- Van der Sandt: DRT-based move-α. Presupposition DRS is moved
- to the highest accessible position that satisfies binding
- constraints. [van-der-sandt-1992]. -/
- | vanDerSandt
- /-- Fauconnier: presupposition floats upward through mental spaces,
- leaving a copy ("shadow") at each intermediate level.
- [beaver-2001] Ch. 5.8.3. -/
- | fauconnierFlotation
- deriving DecidableEq, Repr
+/-! ### The Heim/Lewis strategy -/
 
 /-- Select accommodation level based on the Heim/Lewis strategy.
 
@@ -131,9 +106,7 @@ noncomputable def heimSelect (c : ContextSet W) (presup : Set W) :
  then .global
  else .local
 
--- ════════════════════════════════════════════════════════════════
--- § 5. Key Theorems
--- ════════════════════════════════════════════════════════════════
+/-! ### Key theorems -/
 
 /-- **Heim's observation**: global accommodation preference is equivalent
  to Gazdar's cancellation under threat of inconsistency.
@@ -173,32 +146,5 @@ theorem heim_never_intermediate (c : ContextSet W) (presup : Set W) :
  by_cases h : Set.Nonempty (globalAccommodate c presup)
  · rw [heim_projection_when_consistent c presup h]; exact AccommodationLevel.noConfusion
  · rw [heim_cancellation_equivalence c presup h]; exact AccommodationLevel.noConfusion
-
-/-- Van der Sandt vs. Fauconnier: the key difference is whether
- accommodation leaves shadows at intermediate levels.
-
- - Van der Sandt: presupposition jumps to highest position,
- no trace at intermediate levels.
- - Fauconnier: presupposition floats up, leaving a copy at
- each level it passes through.
-
- [beaver-2001] Ch. 5.8.3: Fauconnier's strategy correctly
- predicts that lexical triggers (factives) must hold at all
- intermediate levels, while anaphoric triggers (definites, 'too')
- only need to hold at the highest level. -/
-inductive TriggerClass where
- /-- Anaphoric/resolution triggers: definites, 'too', 'again'.
- Collect entities from context. Use van der Sandt strategy. -/
- | anaphoric
- /-- Lexical triggers: factives ('know', 'regret').
- Impose conditions on concept application. Use Fauconnier strategy. -/
- | lexical
- deriving DecidableEq, Repr
-
-/-- Select accommodation strategy based on trigger class.
- [beaver-2001] Ch. 5.8, following [zeevat-1992]. -/
-def strategyForTrigger : TriggerClass → AccommodationStrategy
- | .anaphoric => .vanDerSandt
- | .lexical => .fauconnierFlotation
 
 end Semantics.Presupposition.Accommodation

@@ -31,48 +31,31 @@ namespace Schlenker2009
 open CommonGround
 open Semantics.Presupposition
 open Semantics.Presupposition.Context
-open Semantics.Presupposition.LocalContext
 open Semantics.Presupposition.BeliefEmbedding
 open Heim1983
 
 variable {W : Type*} {Agent : Type*}
 
-/-- **Matrix local context = global context.**
-
-In unembedded sentences, the local context is just the global context `c`,
-so a matrix presupposition must be entailed by the context set or project. -/
-theorem matrix_local_context_is_global (c : ContextSet W) :
-    (initialLocalCtx c).worlds = c := rfl
-
-/-- **Local context under belief = attitude holder's beliefs.**
-
-Under "x believes φ", the local context at φ is determined by x's doxastic
-state ([schlenker-2009] §3.1.2). -/
-theorem belief_local_context_is_holder_beliefs
-    (blc : BeliefLocalCtx W Agent) (w_star : W) (h : blc.globalCtx w_star) :
-    (beliefToLocalCtx blc w_star h).worlds = blc.atWorld w_star := rfl
-
 /-- **Negation projects**: "not φ" has the same local context at φ as the
-unembedded sentence, so φ's presupposition projects unless globally
-entailed. -/
+unembedded sentence (the matrix local context being the global context
+itself), so φ's presupposition projects unless globally entailed. -/
 theorem negation_projects (c : ContextSet W) (p : PartialProp W) :
-    presupProjects (localCtxNegation (initialLocalCtx c)) p ↔
-    presupProjects (initialLocalCtx c) p :=
-  (negation_preserves_projection (initialLocalCtx c) p).symm
+    presupProjects (localCtxNegation c) p ↔ presupProjects c p :=
+  Iff.rfl
 
 /-- **Conditionals filter**: in "if φ then ψ", the antecedent's assertion
 enters ψ's local context; when it entails ψ's presupposition, the
 presupposition is filtered. -/
-theorem conditional_filters (c : LocalCtx W) (p q : PartialProp W)
-    (h : ∀ w, c.worlds w → p.assertion w → q.presup w) :
-    presupFiltered (localCtxConsequent c p) q :=
+theorem conditional_filters (c : ContextSet W) (p q : PartialProp W)
+    (h : ∀ w, c w → p.assertion w → q.presup w) :
+    presupSatisfied (localCtxConsequent c p) q :=
   conditional_filters_when_entailed c p q h
 
 /-- "If the king exists, the king is bald": the local context at
 "the king is bald" is `c` + [king exists], which entails the existence
 presupposition, so it is filtered. -/
 theorem king_conditional_filters (c : ContextSet KingWorld) :
-    presupFiltered (localCtxConsequent (initialLocalCtx c) kingExists) kingBald := by
+    presupSatisfied (localCtxConsequent c kingExists) kingBald := by
   intro w hw
   obtain ⟨-, hw_assert⟩ := hw
   cases w with
@@ -83,7 +66,7 @@ theorem king_conditional_filters (c : ContextSet KingWorld) :
 filtering connective agree: both pronounce the conditional
 presuppositionless. -/
 theorem king_accounts_agree (c : ContextSet KingWorld) :
-    presupFiltered (localCtxConsequent (initialLocalCtx c) kingExists) kingBald ∧
+    presupSatisfied (localCtxConsequent c kingExists) kingBald ∧
     ifKingThenBald.presup = (λ _ => True) :=
   ⟨king_conditional_filters c, ifKingThenBald_no_presup⟩
 

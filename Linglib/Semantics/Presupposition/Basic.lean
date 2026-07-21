@@ -1,4 +1,5 @@
 import Linglib.Semantics.Presupposition.Defs
+import Mathlib.Order.Antisymmetrization
 
 /-!
 # Canonical operations on partial propositions
@@ -158,9 +159,10 @@ theorem strawsonEntails_not_trans :
 def strongEntails (p q : PartialProp W) : Prop :=
   ∀ w, p.presup w → p.assertion w → q.presup w ∧ q.assertion w
 
-/-- Strawson equivalence: mutual Strawson entailment. -/
+/-- Strawson equivalence: mutual Strawson entailment
+    (`AntisymmRel` of `strawsonEntails`). -/
 def strawsonEquiv (p q : PartialProp W) : Prop :=
-  strawsonEntails p q ∧ strawsonEntails q p
+  AntisymmRel strawsonEntails p q
 
 /-! ### Negation theorems -/
 

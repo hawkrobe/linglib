@@ -1,59 +1,34 @@
-/-
+import Linglib.Semantics.Presupposition.Context
+import Linglib.Semantics.Modality.EpistemicLogic
+
+/-!
 # Belief Embedding and Local Contexts
 
-Formalizes how presuppositions project under belief predicates, following
-[schlenker-2009] Section 3.1.2. This provides the machinery for deriving
-Obligatory Local Effect (OLE) from [tonhauser-beaver-roberts-simons-2013].
+How presuppositions project under belief predicates, following
+[schlenker-2009] Section 3.1.2: for "agent believes φ" uttered in context C,
+the local context of φ at utterance world w* is C(w*) ∩ Dox_agent(w*), so a
+projecting presupposition must hold throughout the attitude holder's belief
+state. This derives Obligatory Local Effect
+([tonhauser-beaver-roberts-simons-2013]: OLE=yes triggers are attributed to
+the attitude holder).
 
-## Insight
+## Main declarations
 
-When a presupposition trigger appears under a belief predicate, the local
-context is determined by the *attitude holder's* belief state, not the
-global context. This explains OLE.
-
-## The Schlenker Analysis
-
-For "John believes that pp'" uttered in context C:
-- The local context of pp' is: λw* λw(w* ∈ C and w ∈ DoxJ(w*))
-- Where DoxJ(w*) = worlds compatible with John's beliefs at w*
-- Presupposition p projects iff p is NOT entailed by this local context
-- Result: p must be part of John's beliefs (attributed to attitude holder)
-
-## Connection to [tonhauser-beaver-roberts-simons-2013]
-
-OLE = yes (Class A, Class C): Presupposition attributed to attitude holder
-  - Predicted by computing local context from attitude holder's beliefs
-
-OLE = no (Class B, Class D): Presupposition attributed to speaker
-  - These triggers "reset" to speaker's context under embedding
-  - E.g., expressives like "damn" always express speaker's attitude
-
-## Examples
-
-"John believes Mary stopped smoking"
-  - Trigger: stop (Class C, OLE=yes)
-  - Presupposition: Mary used to smoke
-  - Local context: John's belief state
-  - Result: John believes Mary used to smoke (attributed to John)
-
-"John believes that damn cat is outside"
-  - Trigger: damn (Class B, OLE=no)
-  - Expressive content: speaker is annoyed at the cat
-  - Does not shift to John's perspective
-  - Result: Speaker is annoyed (attributed to speaker)
-
+* `BeliefLocalCtx`, `BeliefLocalCtx.atWorld` — Schlenker's
+  λw* λw(w* ∈ C ∧ w ∈ Dox(w*)) local context.
+* `presupAttributedToHolder` — the OLE=yes condition.
+* `localCtxOf`, `knowledge_filtered_implies_belief_filtered` — composition
+  with epistemic-logic frame conditions ([hintikka-1962]).
+* `transparentProjection`, `opaque_implies_transparent_when_reflexive` —
+  the opaque/transparent projection modes of
+  [delpinal-bassi-sauerland-2024] §3.2.
 -/
-
-import Linglib.Semantics.Presupposition.Context
-import Linglib.Semantics.Presupposition.LocalContext
-import Linglib.Semantics.Modality.EpistemicLogic
 
 namespace Semantics.Presupposition.BeliefEmbedding
 
 open Semantics.Presupposition
 open CommonGround
 open Semantics.Presupposition.Context
-open Semantics.Presupposition.LocalContext
 open Core.Logic.Modal (AgentAccessRel IsBeliefRefinementOf)
 
 variable {W : Type*} {Agent : Type*}
@@ -102,13 +77,6 @@ This is Schlenker's λw* λw(w* ∈ C and w ∈ DoxJ(w*))
 -/
 def BeliefLocalCtx.atWorld (blc : BeliefLocalCtx W Agent) (w_star : W) : ContextSet W :=
   λ w => blc.globalCtx w_star ∧ blc.dox blc.agent w_star w
-
-/--
-A presupposition projects globally (to speaker) from under belief
-iff it's not entailed by the belief local context at any global world.
--/
-def presupProjectsFromBelief (blc : BeliefLocalCtx W Agent) (p : PartialProp W) : Prop :=
-  ∃ w_star, blc.globalCtx w_star ∧ ¬ ContextSet.entails (blc.atWorld w_star) p.presup
 
 /--
 A presupposition is attributed to the attitude holder iff it's entailed
@@ -218,58 +186,6 @@ theorem stop_ole_attribution :
   | maryNeverSmoked_johnDoesntBelieve => simp at hw_dox
 
 
-/--
-For OLE=no triggers (Class B and D), the projective content is not computed
-from the attitude holder's beliefs. Instead, it projects directly to the
-speaker's context.
-
-This is modeled by having the local context be the global context, not
-the belief-restricted context.
--/
-def speakerLocalCtx (c : ContextSet W) : LocalCtx W :=
-  { worlds := c
-  , depth := 0 }
-
-/--
-For Class B triggers (expressives, appositives), content projects to speaker.
-
-"John believes that damn cat is outside"
-→ SPEAKER is annoyed at the cat (not John)
-
-The expressive content is evaluated in the speaker's context, ignoring
-the belief embedding.
--/
-def expressiveProjectsToSpeaker (globalCtx : ContextSet W)
-    (expressiverContent : W → Prop) : Prop :=
-  -- The content must be entailed by the global (speaker's) context
-  ContextSet.entails globalCtx expressiverContent
-
-
-/--
-Convert a belief local context to a standard local context.
-
-This shows how the belief embedding fits into the general local context
-framework from LocalContext.lean.
--/
-def beliefToLocalCtx (blc : BeliefLocalCtx W Agent) (w_star : W)
-    (_h : blc.globalCtx w_star) : LocalCtx W :=
-  { worlds := blc.atWorld w_star
-  , depth := 1 }   -- Embedding depth = 1
-
-/--
-The presupposition filtering condition is the same: a presupposition is
-filtered iff it's entailed by the local context.
--/
-theorem belief_filtering_condition (blc : BeliefLocalCtx W Agent) (p : PartialProp W)
-    (w_star : W) (_h : blc.globalCtx w_star) :
-    presupFiltered (beliefToLocalCtx blc w_star _h) p ↔
-    ContextSet.entails (blc.atWorld w_star) p.presup :=
-  Iff.rfl
-
--- ════════════════════════════════════════════════════════════════
--- § Knowledge vs Belief Embedding
--- ════════════════════════════════════════════════════════════════
-
 /-!
 ### Refinement Between Knowledge and Belief Embeddings
 [hintikka-1962]
@@ -312,11 +228,6 @@ theorem knowledge_filtered_implies_belief_filtered
   exact h_know (localCtx_sub_of_refinement Rk Rb ctx i w_star w h_bel)
 
 end Refinement
-
--- ════════════════════════════════════════════════════════════════
--- § Opaque vs Transparent Projection
--- [delpinal-bassi-sauerland-2024] §3.2
--- ════════════════════════════════════════════════════════════════
 
 /-!
 ### Opaque vs Transparent Presupposition Projection

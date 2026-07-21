@@ -1,4 +1,4 @@
-import Linglib.Semantics.Presupposition.LocalContext
+import Linglib.Semantics.Presupposition.Context
 import Linglib.Semantics.Presupposition.OntologicalPreconditions
 import Linglib.Semantics.Presupposition.ProjectiveContent
 import Linglib.Studies.SolstadBott2022
@@ -56,12 +56,12 @@ resolution and symmetric filtering — "a cage of their own".
 
 namespace SolstadBott2024
 
-open Semantics.Presupposition.LocalContext
 open Semantics.Presupposition.OntologicalPreconditions
 open Semantics.Presupposition.ProjectiveContent
 open SolstadBott2022
 open German.Predicates
 open Semantics.Presupposition
+open Semantics.Presupposition.Context
 open CommonGround
 open Core.Order (Rat01)
 open Generalizations.Projectivity
@@ -197,7 +197,7 @@ theorem occasion_presup_projects {W : Type*}
 theorem heim_antecedent_projects {W : Type*}
     (c : ContextSet W) (trigger _consequence : PartialProp W)
     (h : ∃ w, c w ∧ ¬trigger.presup w) :
-    presupProjects (initialLocalCtx c) trigger := by
+    presupProjects c trigger := by
   obtain ⟨w, hw_in, hpresup_false⟩ := h
   intro hfilter
   exact hpresup_false (hfilter hw_in)
@@ -207,16 +207,15 @@ theorem heim_antecedent_projects {W : Type*}
 /-- Symmetric filtering makes the consequent's assertion available to the local
     context at the antecedent. -/
 def symmetricLocalCtxAntecedent {W : Type*}
-    (c : LocalCtx W) (consequent : PartialProp W) : LocalCtx W :=
-  { worlds := ContextSet.update c.worlds consequent.assertion
-  , depth := c.depth }
+    (c : ContextSet W) (consequent : PartialProp W) : ContextSet W :=
+  ContextSet.update c consequent.assertion
 
 /-- When the consequent entails the occasion presupposition, symmetric filtering
     predicts it is filtered. -/
 theorem symmetric_filters_when_consequent_entails {W : Type*}
-    (c : LocalCtx W) (trigger consequent : PartialProp W)
-    (h : ∀ w, c.worlds w → consequent.assertion w → trigger.presup w) :
-    presupFiltered (symmetricLocalCtxAntecedent c consequent) trigger := by
+    (c : ContextSet W) (trigger consequent : PartialProp W)
+    (h : ∀ w, c w → consequent.assertion w → trigger.presup w) :
+    presupSatisfied (symmetricLocalCtxAntecedent c consequent) trigger := by
   intro w hw
   have ⟨hw_in, hcons⟩ := hw
   exact h w hw_in hcons
