@@ -10,7 +10,7 @@ Note: This is distinct from other polarity-like distinctions in the library:
 - `Core.Lexical.UD.Polarity` — morphological feature (`.Pos`/`.Neg`)
 - `NaturalLogic.ContextPolarity` — monotonicity direction (`.upward`/`.downward`)
 - `Rett2015Implicature.Polarity` — adjective markedness
-- `Semantics.Presupposition.OntologicalPreconditions.Polarity` — event assertion (`.affirmed`/`.negated`)
+- `Semantics.Presupposition.Aboutness.EventSentence.polarity` — polarity of the event claim
 -/
 
 namespace Features

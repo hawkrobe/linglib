@@ -1,20 +1,18 @@
-import Mathlib.Tactic.TypeStar
+import Linglib.Semantics.Events.Phase
 import Linglib.Features.Polarity
 
 /-!
-# Ontological preconditions and projection
+# The aboutness account of projection
 
-[roberts-simons-2024]'s event-phase account of non-anaphoric presupposition:
-projective contents are entailments characterizing *ontological
-preconditions* of the event type a sentence is about, and project because
-affirmation and negation share that event reference — not because they are
-semantically encoded presuppositions.
+[roberts-simons-2024]'s mechanism for non-anaphoric presupposition:
+sentences refer to event types (`EventPhase`); event types have inherent
+ontological preconditions; and "John stopped" and "John didn't stop" refer
+to the *same* event type — negation affects the claim about the event, not
+which event is referenced. Preconditions therefore project, because they
+are tied to event reference rather than to the polarity-dependent claim.
 
 ## Main declarations
 
-* `EventPhase` — an event decomposed into precondition, occurrence, and
-  consequence, with `wellFormed` (occurrence entails precondition) and the
-  telicity predicates `isTelic`/`isAtelic`.
 * `EventSentence` — a sentence as event reference (`aboutness`) plus a
   polarity-dependent claim (`assertion`); its `presupposition` is the
   precondition of the referenced event type, so projection through negation
@@ -28,45 +26,11 @@ restrictions), aspectual classification, and suppression conditions live in
 `Studies/RobertsSimons2024.lean`.
 -/
 
-namespace Semantics.Presupposition.OntologicalPreconditions
+namespace Semantics.Presupposition.Aboutness
 
 open Features (Polarity)
 
 variable {W : Type*}
-
-/-- An event decomposed into temporal phases: the state that must hold
-    *before* for the event to be possible, the occurrence itself, and the
-    state that holds *after*. -/
-structure EventPhase (W : Type*) where
-  /-- Precondition: must hold before the event for it to be possible -/
-  precondition : W → Prop
-  /-- The event actually occurs -/
-  eventOccurs : W → Prop
-  /-- Consequence: holds after the event (result state) -/
-  consequence : W → Prop
-
-/-- Well-formed event: the occurrence entails its precondition — the
-    ontological constraint (you can't stop smoking unless you were smoking). -/
-def EventPhase.wellFormed (e : EventPhase W) : Prop :=
-  ∀ w, e.eventOccurs w → e.precondition w
-
-/-- An event is telic if its consequence differs from its precondition at
-    some world (a state change). -/
-def EventPhase.isTelic (e : EventPhase W) : Prop :=
-  ∃ w, e.precondition w ≠ e.consequence w
-
-/-- An event is atelic if precondition and consequence coincide everywhere
-    (the state persists). -/
-def EventPhase.isAtelic (e : EventPhase W) : Prop :=
-  ∀ w, e.precondition w = e.consequence w
-
-/-! ### The aboutness mechanism
-
-Sentences refer to event types; event types have inherent preconditions;
-and "John stopped" and "John didn't stop" refer to the *same* event type —
-negation affects the claim about the event, not which event is referenced.
-Preconditions therefore project, because they are tied to event reference
-rather than to the polarity-dependent claim. -/
 
 /-- A sentence that refers to an event type and makes a polarity-dependent
     claim about it. -/
@@ -133,4 +97,4 @@ def EntailmentRelation.projects : EntailmentRelation → Bool
   | .consequence  => false
   | .concomitant  => false
 
-end Semantics.Presupposition.OntologicalPreconditions
+end Semantics.Presupposition.Aboutness

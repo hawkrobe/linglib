@@ -1,5 +1,5 @@
 import Linglib.Semantics.Presupposition.Context
-import Linglib.Semantics.Presupposition.OntologicalPreconditions
+import Linglib.Semantics.Presupposition.Aboutness
 import Linglib.Semantics.Presupposition.ProjectiveContent
 import Linglib.Studies.SolstadBott2022
 import Linglib.Fragments.German.Predicates
@@ -56,7 +56,7 @@ resolution and symmetric filtering — "a cage of their own".
 
 namespace SolstadBott2024
 
-open Semantics.Presupposition.OntologicalPreconditions
+open Semantics.Presupposition.Aboutness
 open Semantics.Presupposition.ProjectiveContent
 open SolstadBott2022
 open German.Predicates
