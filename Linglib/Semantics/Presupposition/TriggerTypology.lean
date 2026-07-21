@@ -1,59 +1,31 @@
-import Linglib.Semantics.Presupposition.Basic
-import Linglib.Semantics.Entailment.Polarity
-
 /-!
-# Presupposition Trigger Typology
-[wang-2025]
+# Presupposition trigger types
 
-Cross-linguistic typology of presupposition triggers, classifying triggers
-by what non-presuppositional alternative they have. The classification
-follows [wang-2025] Table 4.1 and is consumed by:
-
-- `Studies/Wang2025.lean` — IC ≫ FP ≫ MP
-  constraint-based competition analysis
-- `Fragments/Mandarin/Particles.lean` — Mandarin trigger entries
-
-## Classification
-
-Three patterns of trigger ↔ alternative relationship:
-1. **Deletion alternatives** — trigger can be deleted (ye/also → ∅)
-2. **Replacement alternatives** — specific lexical replacement (zhidao/know → believe)
-3. **No structural alternative** — no available alternative (jiu/only)
-
-The alternative-structure axis predicts obligatoriness:
-- Deletion / replacement → trigger can be optional or obligatory
-- No alternative → trigger is mandatorily omitted under partial CommonGround support
-
-## Relation to MP infrastructure
-
-This file provides the **typology**; the constraint-based formulation of
-Maximize Presupposition lives in `MaximizePresupposition.lean`, and the
-paper-specific IC/FP/MP ranking in `Studies/Wang2025.lean`.
+Classification of presupposition triggers by hosting lexical class, the
+consensus inventory of the projection literature (cf. [zeevat-1992],
+[tonhauser-beaver-roberts-simons-2013]). Fragment lexical entries carry a
+`PresupTrigger` value as theory-neutral metadata; orthogonal classifications
+of the same inventory are the projection classes of
+`Semantics.Presupposition.ProjectiveContent` and the soft/hard distinction in
+`Semantics.Verb`.
 -/
 
 namespace Semantics.Presupposition.TriggerTypology
 
-open Semantics.Presupposition
-open Entailment
-
-/--
-Types of presupposition triggers in natural language.
-
-Each trigger type introduces a characteristic presupposition pattern.
-These are used for alternative generation in SI computation.
--/
+/-- Presupposition trigger classes, by hosting lexical item. -/
 inductive PresupTrigger where
   /-- Definite descriptions: "the X" presupposes X exists and is unique -/
   | definite
   /-- Factive predicates: "know/regret that P" presupposes P -/
   | factive
-  /-- Change-of-state predicates: "stop/start V-ing" presupposes prior state -/
+  /-- Change-of-state predicates: "stop/start V-ing" presuppose a prior state -/
   | changeOfState
   /-- Repetitive iteratives: "again" presupposes a prior occurrence.
       An intervening ¬P interval (P-then-¬P-then-P-again) is presupposed
       only for stative hosts in competition with the continuative;
-      eventive *again* (*John won again*) requires precedence only.
-      English *again*, German *wieder*, Mandarin *you* 又, Cantonese *jau*. -/
+      eventive *again* (*John won again*) requires precedence only
+      (cf. [von-stechow-1996]). English *again*, German *wieder*,
+      Mandarin *you* 又, Cantonese *jau*. -/
   | iterative
   /-- Continuatives: "still" presuppose **uninterrupted** continuation
       of P throughout an interval up to and including the reference time.
@@ -62,107 +34,20 @@ inductive PresupTrigger where
       flip). English *still*, Mandarin *reng* 仍 / *hai* 还,
       Cantonese *zung* 仲. Cf. [ippolito-2007] on *still* vs *again*. -/
   | continuative
+  /-- Additives: "too/also" presuppose that a distinct salient alternative
+      satisfies the predicate — the paradigm anaphoric trigger
+      ([kripke-2009]). English *too*, German *auch*, Mandarin *ye* 也. -/
+  | additive
+  /-- Exclusives: "only P" presupposes its prejacent P.
+      English *only*, Mandarin *jiu* 就. -/
+  | exclusive
+  /-- Contrastives: "instead"-type particles presuppose a contextually
+      salient contrary expectation. Mandarin *fan'er* 反而 / *er* 而. -/
+  | contrastive
   /-- Cleft constructions: "It was X that..." presupposes existence -/
   | cleft
   /-- Aspectual predicates: "finish", "continue" presuppose event structure -/
   | aspectual
   deriving DecidableEq, Repr
-
-/--
-A presupposition trigger occurrence in a sentence.
-
-Records the position and type of trigger, enabling compositional
-presupposition computation and alternative generation.
--/
-structure TriggerOccurrence where
-  /-- Word position in the sentence -/
-  position : Nat
-  /-- Type of trigger -/
-  trigger : PresupTrigger
-  deriving Repr
-
-
-/--
-A derivation extended with presupposition tracking.
-
-Tracks presuppositions through the derivation, enabling:
-- Presupposition projection computation
-- Interaction between presuppositions and SIs
--/
-structure PresupDerivation (W : Type*) where
-  /-- The underlying presuppositional proposition -/
-  meaning : PartialProp W
-  /-- Presupposition triggers in the sentence -/
-  triggers : List TriggerOccurrence
-  /-- Current polarity context -/
-  polarity : ContextPolarity
-  /-- Surface form (optional, for display) -/
-  surface : List String := []
-
-
--- ============================================================================
--- [wang-2025] Table 4.1: Alternative-structure typology
--- ============================================================================
-
-/--
-[wang-2025] Table 4.1: How a presupposition trigger relates to its
-non-presuppositional alternative.
--/
-inductive AltStructure where
-  /-- Alternative is obtained by deleting the trigger (ye/also → ∅, you/again → ∅) -/
-  | deletion
-  /-- Alternative is a specific lexical replacement (zhidao/know → believe) -/
-  | replacement
-  /-- No structural alternative available (jiu/only) -/
-  | none
-  deriving DecidableEq, Repr
-
-/--
-Obligatoriness pattern predicted by the alternative-structure typology.
-
-[wang-2025] derives three patterns from the interaction of trigger
-type, alternative structure, and constraint ranking:
-1. Obligatory: trigger must be used when CommonGround supports presupposition
-2. Optional: trigger may or may not be used
-3. Blocked: trigger must NOT be used (mandatorily omitted)
--/
-inductive Obligatoriness where
-  /-- Trigger is obligatory when presupposition is fully entailed by CommonGround -/
-  | obligatory
-  /-- Trigger is optional (either form is acceptable) -/
-  | optional
-  /-- Trigger is blocked (mandatorily omitted in this context) -/
-  | blocked
-  deriving DecidableEq, Repr
-
-/--
-A presupposition trigger entry with [wang-2025] alternative structure.
-
-Extends the basic trigger type with information about what non-presuppositional
-alternative exists, enabling the constraint-based competition analysis.
--/
-structure PresupTriggerEntry where
-  /-- The trigger type (from existing classification) -/
-  trigger : PresupTrigger
-  /-- Alternative structure (Wang Table 4.1) -/
-  altStructure : AltStructure
-  /-- Lexical form of the alternative (if replacement) -/
-  altForm : Option String := .none
-  deriving Repr
-
-/--
-Assign alternative structure to standard trigger types.
-
-Default mapping based on cross-linguistic generalizations.
-Language-specific entries may override (see Fragments/Mandarin/).
--/
-def PresupTrigger.defaultAltStructure : PresupTrigger → AltStructure
-  | .definite => .replacement     -- "the" → "a"
-  | .factive => .replacement      -- "know" → "believe"
-  | .changeOfState => .replacement -- "stop" → "not do"
-  | .iterative => .deletion       -- "again" → ∅
-  | .continuative => .deletion    -- "still" → ∅ (interval-internal omission)
-  | .cleft => .none               -- no obvious alternative
-  | .aspectual => .replacement    -- "start" → "do"
 
 end Semantics.Presupposition.TriggerTypology
