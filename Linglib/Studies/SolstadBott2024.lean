@@ -185,8 +185,8 @@ def occasionEventPhase {W : Type*}
     punish Peter" still presupposes Peter did something wrong. -/
 theorem occasion_presup_projects {W : Type*}
     (occasion engagement outcome : W → Prop) :
-    (affirmative (occasionEventPhase occasion engagement outcome)).presupposition =
-      (negative (occasionEventPhase occasion engagement outcome)).presupposition := rfl
+    (occasionEventPhase occasion engagement outcome).toPartialProp.neg.presup =
+      (occasionEventPhase occasion engagement outcome).toPartialProp.presup := rfl
 
 /-! ### Asymmetric filtering ([heim-1983]) -/
 

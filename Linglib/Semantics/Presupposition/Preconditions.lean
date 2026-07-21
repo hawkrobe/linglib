@@ -1,5 +1,5 @@
 import Linglib.Semantics.Events.Phase
-import Linglib.Features.Polarity
+import Linglib.Semantics.Presupposition.Basic
 
 /-!
 # The precondition account of non-anaphoric presupposition
@@ -11,16 +11,19 @@ characterizing *ontological preconditions* of the associated event type
 pragmatic — *projection in service of informativity*: accommodating
 preconditions is the safer default because preconditions are consistent
 with both affirming and denying the event, while consequences hold only if
-it occurred. The structural basis is that affirmation and negation share
-event reference: `EventSentence` separates what a sentence is about (its
-event type) from the polarity-dependent claim, so the precondition is
-invariant across polarity (`presupposition_projects`) while assertions flip
-(`assertion_differs`).
+it occurred.
+
+The account is a hom `EventPhase.toPartialProp`: an event sentence
+presupposes the event type's precondition and asserts its result state.
+Negating the sentence is `PartialProp.neg` — internal negation, a hole —
+so preconditions project through negation by `PartialProp.neg_presup`:
+negation affects the claim about the event, not which event type is
+referenced.
 
 ## Main declarations
 
-* `EventSentence` — event reference plus a polarity-dependent claim;
-  `presupposition` is the precondition of the referenced event type.
+* `EventPhase.toPartialProp` — the denotation hom; `toPartialProp_neg_presup`
+  is projection through negation.
 * `EntailmentRelation` — precondition vs consequence vs concomitant
   ([roberts-simons-2024] §2.1 diagnostics); only preconditions project by
   pragmatic default (`projects`).
@@ -31,50 +34,34 @@ cites as proof-of-concept are `Studies/QingGoodmanLassiter2016.lean` and
 `Studies/Warstadt2022.lean`.
 -/
 
-namespace Semantics.Presupposition.Preconditions
+namespace EventPhase
 
-open Features (Polarity)
+open Semantics.Presupposition
 
 variable {W : Type*}
 
-/-- A sentence that refers to an event type and makes a polarity-dependent
-    claim about it. -/
-structure EventSentence (W : Type*) where
-  /-- The event type this sentence is about -/
-  eventType : EventPhase W
-  /-- The polarity of the claim -/
-  polarity : Polarity
+/-- The [roberts-simons-2024] denotation of an event sentence: presuppose
+    the event type's ontological precondition, assert its result state.
+    The negated sentence is `(e.toPartialProp).neg`. -/
+def toPartialProp (e : EventPhase W) : PartialProp W where
+  presup := e.precondition
+  assertion := e.consequence
 
-/-- The claim made: affirmed sentences assert the consequence obtains,
-    negated ones that it doesn't. -/
-def EventSentence.assertion (s : EventSentence W) : W → Prop :=
-  match s.polarity with
-  | .positive => s.eventType.consequence
-  | .negative => λ w => ¬ s.eventType.consequence w
+@[simp] theorem toPartialProp_presup (e : EventPhase W) :
+    e.toPartialProp.presup = e.precondition := rfl
 
-/-- The presupposition is the precondition of the referenced event type —
-    tied to event reference, not to the claim being made. -/
-def EventSentence.presupposition (s : EventSentence W) : W → Prop :=
-  s.eventType.precondition
+@[simp] theorem toPartialProp_assertion (e : EventPhase W) :
+    e.toPartialProp.assertion = e.consequence := rfl
 
-/-- An affirmative sentence about an event type. -/
-def affirmative (e : EventPhase W) : EventSentence W :=
-  { eventType := e, polarity := .positive }
+/-- Preconditions project through negation: internal negation is a hole
+    (`PartialProp.neg_presup`), and the precondition is carried by the
+    presupposition component. -/
+theorem toPartialProp_neg_presup (e : EventPhase W) :
+    e.toPartialProp.neg.presup = e.precondition := rfl
 
-/-- A negative sentence about an event type. -/
-def negative (e : EventPhase W) : EventSentence W :=
-  { eventType := e, polarity := .negative }
+end EventPhase
 
-/-- Presuppositions project through negation: the precondition is derived
-    from event reference, which affirmation and negation share. -/
-theorem presupposition_projects (e : EventPhase W) :
-    (affirmative e).presupposition = (negative e).presupposition := rfl
-
-/-- Assertions flip with polarity while presuppositions stay constant. -/
-theorem assertion_differs (e : EventPhase W) (w : W) :
-    (negative e).assertion w ↔ ¬ (affirmative e).assertion w := Iff.rfl
-
-/-! ### Entailment classification -/
+namespace Semantics.Presupposition.Preconditions
 
 /-- Classification of entailment relations between a sentence and its
     implied content: only preconditions project ([roberts-simons-2024] §2.1

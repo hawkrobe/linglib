@@ -415,9 +415,8 @@ Diagnostics confirm:
 
 /-- Selectional preconditions project through negation.
     "The robot didn't kick the tree" still implies it has feet. -/
-theorem selectional_projects_through_negation (req event : W → Prop) (pol : Features.Polarity) :
-    ({ eventType := selectionalEventPhase req event, polarity := pol } :
-      EventSentence W).presupposition = req := rfl
+theorem selectional_projects_through_negation (req event : W → Prop) :
+    (selectionalEventPhase req event).toPartialProp.neg.presup = req := rfl
 
 /-- Concomitant entailments ("touched the tree") do NOT project as preconditions.
     They are a consequence/mereological part of the event, not a precondition. -/
@@ -594,14 +593,14 @@ This chain explains the precondition/consequence asymmetry:
 theorem stop_end_to_end (P : W → Prop) (w : W) :
     -- (1) Precondition = prior state P
     (stopAsEventPhase P).precondition w = P w ∧
-    -- (2) Presupposition = precondition (from aboutness)
-    (affirmative (stopAsEventPhase P)).presupposition w = P w ∧
-    -- (3) Presupposition invariant across polarity (projection)
-    (affirmative (stopAsEventPhase P)).presupposition w =
-    (negative (stopAsEventPhase P)).presupposition w ∧
-    -- (4) But consequence flips under negation
-    ((negative (stopAsEventPhase P)).assertion w ↔
-    ¬ (affirmative (stopAsEventPhase P)).assertion w) ∧
+    -- (2) Presupposition = precondition
+    (stopAsEventPhase P).toPartialProp.presup w = P w ∧
+    -- (3) Presupposition invariant under negation (projection)
+    (stopAsEventPhase P).toPartialProp.presup w =
+    (stopAsEventPhase P).toPartialProp.neg.presup w ∧
+    -- (4) But the assertion flips under negation
+    ((stopAsEventPhase P).toPartialProp.neg.assertion w ↔
+    ¬ (stopAsEventPhase P).toPartialProp.assertion w) ∧
     -- (5) The precondition projects but the consequence doesn't
     EntailmentRelation.projects .precondition = true ∧
     EntailmentRelation.projects .consequence = false := by
@@ -614,24 +613,24 @@ theorem know_end_to_end (BEL C : W → Prop) (w : W) :
     -- (1) Precondition = complement truth
     (knowAsEventPhase BEL C).precondition w = C w ∧
     -- (2) Presupposition = precondition
-    (affirmative (knowAsEventPhase BEL C)).presupposition w = C w ∧
-    -- (3) Projection: invariant across polarity
-    (affirmative (knowAsEventPhase BEL C)).presupposition w =
-    (negative (knowAsEventPhase BEL C)).presupposition w ∧
+    (knowAsEventPhase BEL C).toPartialProp.presup w = C w ∧
+    -- (3) Projection: invariant under negation
+    (knowAsEventPhase BEL C).toPartialProp.presup w =
+    (knowAsEventPhase BEL C).toPartialProp.neg.presup w ∧
     -- (4) Atelicity: precondition = consequence (stative)
     (knowAsEventPhase BEL C).isAtelic := by
   exact ⟨rfl, rfl, rfl, know_is_atelic BEL C⟩
 
-/-- End-to-end for selectional restrictions: same aboutness mechanism,
-    same projection behavior, same structural explanation. -/
+/-- End-to-end for selectional restrictions: same shared-reference
+    mechanism, same projection behavior, same structural explanation. -/
 theorem selectional_end_to_end (req event : W → Prop) (w : W) :
     -- (1) Precondition = selectional requirement
     (selectionalEventPhase req event).precondition w = req w ∧
     -- (2) Presupposition = precondition
-    (affirmative (selectionalEventPhase req event)).presupposition w = req w ∧
-    -- (3) Projection: invariant across polarity
-    (affirmative (selectionalEventPhase req event)).presupposition w =
-    (negative (selectionalEventPhase req event)).presupposition w := by
+    (selectionalEventPhase req event).toPartialProp.presup w = req w ∧
+    -- (3) Projection: invariant under negation
+    (selectionalEventPhase req event).toPartialProp.presup w =
+    (selectionalEventPhase req event).toPartialProp.neg.presup w := by
   exact ⟨rfl, rfl, rfl⟩
 
 end EndToEnd
