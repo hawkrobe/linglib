@@ -1,7 +1,7 @@
 import Linglib.Semantics.Presupposition.Context
 import Linglib.Core.Logic.Trivalent
 import Linglib.Semantics.Presupposition.Accommodation
-import Linglib.Semantics.Presupposition.LocalContext
+import Linglib.Semantics.Presupposition.Context
 import Linglib.Studies.Beaver2001.ABLE
 import Mathlib.Data.Set.Basic
 
@@ -243,7 +243,7 @@ proposition, keeping only worlds where the proposition holds.
 
 The local context at position q in `p → q` is
 `ContextSet.update c p.assertion` — exactly
-`Semantics.Presupposition.LocalContext.localCtxConsequent`. -/
+`Semantics.Presupposition.Context.localCtxConsequent`. -/
 
 /-- File Change Semantics update ([heim-1983]) IS `ContextSet.update`.
     The context set c updated with proposition p keeps only worlds where
@@ -262,7 +262,7 @@ theorem static_dynamic_agreement (c : ContextSet W)
     (∀ w, c w → (PartialProp.impFilter p q).presup w) ↔
     (∀ w, c w → p.presup w ∧
                 (p.assertion w → q.presup w)) :=
-  Semantics.Presupposition.LocalContext.local_context_matches_impFilter c p q
+  Semantics.Presupposition.Context.local_context_matches_impFilter c p q
 
 -- ══════════════════════════════════════════════════════════
 -- § 5. Accommodation and Cancellation

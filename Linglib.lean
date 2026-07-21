@@ -1735,7 +1735,6 @@ import Linglib.Semantics.Presupposition.BeliefEmbedding
 import Linglib.Semantics.Presupposition.ContentLayer
 import Linglib.Semantics.Presupposition.Context
 import Linglib.Semantics.Presupposition.Defs
-import Linglib.Semantics.Presupposition.LocalContext
 import Linglib.Semantics.Presupposition.MaximizePresupposition
 import Linglib.Semantics.Presupposition.OntologicalPreconditions
 import Linglib.Semantics.Presupposition.PhiFeatures

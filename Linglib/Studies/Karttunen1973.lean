@@ -1,7 +1,7 @@
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Discourse.CommonGround
 import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Semantics.Presupposition.LocalContext
+import Linglib.Semantics.Presupposition.Context
 import Linglib.Semantics.Presupposition.BeliefEmbedding
 
 /-!
@@ -294,7 +294,7 @@ theorem harman_derivation_principles_hold :
     sense, only with regard to a given set of background assumptions."
     This is the genealogical ancestor of CCP local contexts.
 
-    The bridge to local contexts is in `LocalContext.lean`; the theorem
+    The bridge to local contexts is in `Context.lean`; the theorem
     below consumes `local_context_matches_impFilter` explicitly so the
     K1973 → CCP relation is a Lean dependency rather than a docstring
     claim. -/
@@ -308,11 +308,11 @@ theorem k1973_section9_local_context_correspondence
     (c : ContextSet W) (p q : PartialProp W) :
     (∀ w, c w → (PartialProp.impFilter p q).presup w) ↔
     (∀ w, c w → p.presup w ∧ (p.assertion w → q.presup w)) :=
-  Semantics.Presupposition.LocalContext.local_context_matches_impFilter c p q
+  Semantics.Presupposition.Context.local_context_matches_impFilter c p q
 
 /-- K1973 §9's revised rule (13b'): the simple rule (13b) is the X = ∅
     instance. K p. 185 frames (13b) as a degenerate case of the X-set
-    machinery, which is what `LocalContext.lean` makes load-bearing for
+    machinery, which is what `Context.lean` makes load-bearing for
     the general case. -/
 theorem rule13b_is_empty_X_instance (p q : PartialProp W)
     (h : ∀ w, p.assertion w → q.presup w) :

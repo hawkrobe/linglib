@@ -1,6 +1,5 @@
 import Linglib.Semantics.Exhaustification.Presuppositional
 import Linglib.Pragmatics.Implicature.Diagnostics
-import Linglib.Semantics.Presupposition.LocalContext
 import Linglib.Semantics.Presupposition.Quantified
 import Linglib.Semantics.Presupposition.BeliefEmbedding
 import Linglib.Semantics.Presupposition.Accommodation
@@ -46,7 +45,7 @@ open CommonGround (ContextSet)
 open Exhaustification.Presuppositional
 open BarLevFox2020
 open Exhaustification
-open Semantics.Presupposition.LocalContext
+open Semantics.Presupposition.Context (presupSatisfied localCtxSecondDisjunct)
 open Semantics.Presupposition.BeliefEmbedding
 open Semantics.Presupposition.Accommodation
 
@@ -729,7 +728,7 @@ formalized projection infrastructure:
 |---|---|---|
 | Filtering FC (§4) | `localCtxSecondDisjunct` | `local_context_matches_disjFilterLeft` |
 | Presupposed FC (§3) | `transparentProjection` | `negFactive_entails_transparent` |
-| Double prohibition (§2) | `negation_preserves_projection` | definitional (`PartialProp.neg`) |
+| Double prohibition (§2) | `localCtxNegation` | definitional (`PartialProp.neg`) |
 | Quantificational FC (§5.1) | `forallPartial`/`existsPartialUniv`/`negExistsPartial` | universal projection |
 | Non-monotonic FC (§5.2) | universal homogeneity + cardinality | `exactly_one_fc` |
 | Accommodation (§4.4) | `heimSelect` | `accommodation_grounded_in_heim` |
@@ -747,8 +746,8 @@ variable {Agent : Type*}
 theorem filtering_grounded_in_schlenker (c : ContextSet FCWorld)
     (firstDisjunct : PartialProp FCWorld) (w : FCWorld) (hc : c w)
     (hFirst : ¬firstDisjunct.assertion w)
-    (hSchlenkerFiltered : presupFiltered
-      (localCtxSecondDisjunct (initialLocalCtx c) firstDisjunct) pexFC)
+    (hSchlenkerFiltered : presupSatisfied
+      (localCtxSecondDisjunct c firstDisjunct) pexFC)
     (hassert : pexFC.assertion w) :
     permA w ∧ permB w :=
   pex_fc w ⟨hSchlenkerFiltered ⟨hc, hFirst⟩, hassert⟩
