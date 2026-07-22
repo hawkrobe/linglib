@@ -1,6 +1,7 @@
 import Linglib.Pragmatics.NeoGricean.Markedness
 import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Semantics.Degree.Adjective
+import Linglib.Semantics.Degree.Basic
 import Linglib.Semantics.Degree.Defs
 
 /-!
@@ -27,6 +28,9 @@ constructions.
   predictions
 - `asymmetry_requires_polar_invariance`, `manner_requires_marked_and_invariant`:
   polarity asymmetry tracks polar invariance
+- `exact_equative_antonym_invariant`, `comparative_antonym_variant`: the
+  polar-variance classification derived from `Degree.equativeSem` /
+  `Degree.comparativeSem` mutual entailment rather than stipulated
 - `predictions_match_all_data`: the predictions match every judgment datum
 -/
 
@@ -336,6 +340,55 @@ theorem equative_asymmetry_from_mmp :
     ((applyMMP "short" .equative tall_with_morphology short_with_morphology).implicature = some .manner ∧
      (applyMMP "tall" .equative tall_with_morphology short_with_morphology).implicature = none) :=
   λ _ => ⟨rfl, rfl⟩
+
+/-! ### Polar variance grounded in the comparison semantics
+
+[rett-2015] §3.2.3 reduces polar (in)variance to mutual entailment of the
+antonyms' non-evaluative readings (the book's (38)–(42)): the strengthened
+("exactly") equatives of the two antonyms share truth conditions, so a
+truth-conditionally equivalent unmarked alternative exists and the MMP can
+fire; the antonym comparatives exclude each other, so no such alternative
+exists. Degree questions pattern with the equative — both antonyms' true
+answers are the subject's actual measure. This grounds the `.equative` and
+`.comparative` rows of `NeoGricean.Markedness.polarVariance` in
+`Degree.equativeSem` / `Degree.comparativeSem` rather than stipulation. -/
+
+section PolarVarianceGrounding
+
+variable {Entity D : Type*} [LinearOrder D] (μ : Entity → D) (a b : Entity)
+
+/-- "A is exactly as tall as B" and "A is exactly as short as B" are mutually
+entailing: each strengthened equative reduces to `μ a = μ b`. -/
+theorem exact_equative_antonym_invariant :
+    (equativeSem μ a b .positive ∧ ¬ comparativeSem μ a b .positive) ↔
+      (equativeSem μ a b .negative ∧ ¬ comparativeSem μ a b .negative) := by
+  simp only [equativeSem, comparativeSem, ge_iff_le, not_lt]
+  exact and_comm
+
+/-- Both strengthened antonym equatives are the "exactly" reading
+`Degree.equativeStrengthened`. -/
+theorem exact_equative_eq_strengthened :
+    (equativeSem μ a b .positive ∧ ¬ comparativeSem μ a b .positive) ↔
+      equativeStrengthened μ a b := by
+  simp only [equativeSem, comparativeSem, equativeStrengthened, ge_iff_le, not_lt,
+    le_antisymm_iff]
+  exact and_comm
+
+/-- The antonym comparatives exclude each other: "A is taller than B" and
+"A is shorter than B" cannot both hold. -/
+theorem comparative_antonyms_exclusive :
+    comparativeSem μ a b .positive → ¬ comparativeSem μ a b .negative :=
+  λ h => lt_asymm h
+
+/-- Whenever the antonyms could differ (`μ a ≠ μ b`), they do: the antonym
+comparatives have complementary truth conditions, so no truth-conditionally
+equivalent unmarked alternative exists. -/
+theorem comparative_antonym_variant (h : μ a ≠ μ b) :
+    comparativeSem μ a b .positive ↔ ¬ comparativeSem μ a b .negative := by
+  simp only [comparativeSem, not_lt]
+  exact ⟨le_of_lt, λ hle => hle.lt_of_ne h.symm⟩
+
+end PolarVarianceGrounding
 
 /-! ### Lexicon-grounded derivation -/
 
