@@ -20,7 +20,7 @@ as Romance polarity-focus (PF) realization strategies.
 
 1. **A typology of PF-marking strategies** in Italian, French and Spanish
    that carves the inventory differently from the
-   `Features.InformationStructure.Strategy` enum: G&J split
+   `Semantics.Polarity.Marking.Strategy` enum: G&J split
    lexical means (adverbs, affirmative particles, embedded-clause
    structures) from syntactic means (non-focal fronting, cleft family,
    clitic dislocation, *sì che* / *sí que* clefts) — see §1 below for
@@ -278,7 +278,7 @@ This is in tension with the substrate's `Strategy` enum,
 which assigns each entry a single `.polarityReversal` / `.particle` /
 `.verumFocus` strategy class as if it were a fixed form-meaning property.
 The contradiction is recorded at the substrate's def-site
-(`Features/InformationStructure.lean::Strategy` docstring)
+(`Semantics/Polarity/Marking.lean::Strategy` docstring)
 and formalized in `Studies/MaticNikolaeva2018.lean`. -/
 
 /-! ## §5 Surface-class lumping caveat (footnote 11, p. 234)

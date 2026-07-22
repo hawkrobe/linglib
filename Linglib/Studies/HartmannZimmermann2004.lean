@@ -40,7 +40,7 @@ tense–aspect type directly (`Tangale.TAM`): the perfective rows are
 fragment's continuous (preposed *né*, transcribed *n* by the paper),
 with the paradigm restriction in `Config.WF`; `marking_matches_rows`
 pins the identification to the data rows. The *núm* readings use the strong-theory
-`Semantics.Focus.onlyVia`: one string, three contrast-set resolutions.
+`Focus.onlyVia`: one string, three contrast-set resolutions.
 
 The paper's fn. 6 notes the suffix *-i* does not occur with all
 intransitive verbs; `realize` idealises it as the intransitive
@@ -59,7 +59,7 @@ perceptible.
 
 namespace HartmannZimmermann2004
 
-open Semantics.Focus Features
+open Focus Features
 open Constraints (Constraint)
 open OptimalityTheory (Tableau)
 

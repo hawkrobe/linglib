@@ -1,5 +1,4 @@
 import Linglib.Syntax.CCG.Basic
-import Linglib.Features.InformationStructure
 import Linglib.Features.Prosody
 import Linglib.Core.Order.PartialUnify
 import Mathlib.Tactic.DeriveFintype
@@ -33,7 +32,6 @@ Intonation selects among these:
 namespace CCG.Intonation
 
 open CCG
-open Features.InformationStructure
 open Features.Prosody
 
 -- Information Feature
@@ -300,6 +298,24 @@ def ProsodicDeriv.prosodicCat : ProsodicDeriv → Option ProsodicCat
 
 -- Information Structure Extraction
 
+/-- An information-structure analysis as a theme/rheme partition,
+following [steedman-2000]: the theme is what the utterance is about
+(the λ-abstract presupposing a QUD, marked by the L+H* LH% theme tune
+in English per [pierrehumbert-hirschberg-1990]); the rheme is what is
+asserted about it (marked H* LL%). `theme := none` encodes an
+all-rheme (thetic, in [kuroda-1972]'s sense) structure with no theme
+constituent. -/
+structure InfoStructure (P : Type*) where
+  /-- The theme (λ-abstract, presupposed QUD); `none` for all-rheme
+  (thetic) structures. -/
+  theme : Option P
+  /-- The rheme (comment, answer, assertion). -/
+  rheme : P
+  /-- Focused elements (evoking alternatives). -/
+  foci : List P := []
+  /-- Background elements (given). -/
+  background : List P := []
+
 /--
 A prosodic phrase: a derivation with a terminal contour applied.
 -/
@@ -311,44 +327,19 @@ structure ProsodicPhrase where
 /--
 Extract Information Structure from a sequence of prosodic phrases.
 
-The phrase with theme tune (L+H* L H%) becomes the theme.
-The phrase with rheme tune (H* L L%) becomes the rheme.
+The phrase with theme tune (L+H* L H%) becomes the theme; the phrase
+with rheme tune (H* L L%) becomes the rheme. A theme-less utterance is
+all-rheme (`theme := none`). `Option`-typed because an ambiguous or
+ill-formed phrase list yields no coherent partition.
 -/
 def extractInfoStructure (phrases : List ProsodicPhrase)
     : Option (InfoStructure (ProsodicDeriv)) :=
   let themes := phrases.filter (·.tune.isTheme)
   let rhemes := phrases.filter (·.tune.isRheme)
   match themes, rhemes with
-  | [t], [r] => some {
-      theme := ⟨t.deriv⟩
-      rheme := ⟨r.deriv⟩
-    }
-  | [], [r] => some {
-      theme := ⟨r.deriv⟩
-      rheme := ⟨r.deriv⟩
-    }
+  | [t], [r] => some { theme := some t.deriv, rheme := r.deriv }
+  | [], [r] => some { theme := none, rheme := r.deriv }
   | _, _ => none  -- ambiguous or ill-formed
-
--- Total IS extractor for CCG prosodic derivations
-
-/--
-Prosodic CCG derivations have Information Structure. Wraps
-`extractInfoStructure` (`Option`-typed because not every list of
-prosodic phrases yields a coherent Theme/Rheme partition) with a
-default-everything-rheme fallback.
-
-(The previous `instance : HasInfoStructure (List ProsodicPhrase) ProsodicDeriv`
-typeclass shape was deleted in the 0.230.489 cleanup since no caller
-dispatched on the typeclass — see Features/InformationStructure.lean
-for the rationale. Direct calls suffice.)
--/
-def infoStructureTotal (phrases : List ProsodicPhrase) : InfoStructure ProsodicDeriv :=
-  match extractInfoStructure phrases with
-  | some info => info
-  | none => {  -- default: everything is rheme
-      theme := ⟨.lex ⟨"", S, .null⟩⟩
-      rheme := ⟨.lex ⟨"", S, .null⟩⟩
-    }
 
 -- Example: "FRED ate the BEANS"
 

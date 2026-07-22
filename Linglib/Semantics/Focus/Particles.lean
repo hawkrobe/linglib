@@ -28,7 +28,7 @@ presupposition of *even*.
   [bennett-1982], [francescotti-1995], [rooth-1992].
 -/
 
-namespace Semantics.Focus.Particles
+namespace Focus.Particles
 
 variable {World Entity : Type*}
 
@@ -174,4 +174,4 @@ instance {α : Type*} (prejacent : α) (alternatives : List α)
     | .universal => inferInstanceAs (Decidable (_ = _))
     | .most => inferInstanceAs (Decidable (_ > _))
 
-end Semantics.Focus.Particles
+end Focus.Particles

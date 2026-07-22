@@ -1,4 +1,3 @@
-import Linglib.Features.InformationStructure
 import Linglib.Semantics.Intensional.Premise
 import Linglib.Data.UD.Basic
 import Linglib.Semantics.Alternatives.AltMeaning
@@ -39,9 +38,8 @@ Four worlds: Ali sleeps/doesn't × deontic must/free.
 
 namespace TurkHirsch2026
 
-open Features.InformationStructure
 open Alternatives
-open Semantics.Focus.Interpretation (PropFocusValue)
+open Focus.Interpretation (PropFocusValue)
 
 -- ═══════════════════════════════════════════════════════════════════════
 -- §1  World type and propositions

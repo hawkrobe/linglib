@@ -3,7 +3,6 @@ import Linglib.Morphology.DM.NominalStructure
 import Linglib.Syntax.Minimalist.Agree.Basic
 import Linglib.Syntax.Minimalist.Probe.Profile
 import Linglib.Syntax.Binding.SpecificityCondition
-import Linglib.Features.InformationStructure
 import Linglib.Features.WordOrder
 
 /-!
@@ -87,7 +86,7 @@ alongside Tz'utujil, Chickasaw, Sinitic double-unaccusative).
 
 - `NominalPosition` / `PossessionType` from `NominalStructure.lean`
 - `SpecificityCondition` from `Core/SpecificityCondition.lean`
-- `JudgmentType` from `Discourse/InformationStructure.lean`
+- `JudgmentType` — [kuroda-1972]'s categorical/thetic distinction, defined in §9
 - `GramFunction`, `absPosition` from `Fragments/Mayan/Tseltalan.lean`
 - `ABSPosition` from `Fragments/Mayan/Params.lean`
 - `Probe.Profile`, `closestGoalB`, `behindHorizonB` from
@@ -432,7 +431,26 @@ theorem specificity_divergence_on_piedpiping :
 -- § 9: Categorical Judgment (ψ-Subject)
 -- ============================================================================
 
-open Features.InformationStructure
+/-- Judgment type following [kuroda-1972]: categorical judgments have a
+    subject of predication; thetic judgments present an event without
+    one. A&P call the categorical subject *ψ-subject* ("alluding to
+    psychological subject") — the ψ terminology is their coinage, not
+    Kuroda's. -/
+inductive JudgmentType where
+  /-- Subject-predicate; the subject of predication (A&P's ψ-subject)
+      sits in a dedicated position (Spec,TP on A&P's analysis). -/
+  | categorical
+  /-- Event-presenting; no subject of predication. -/
+  | thetic
+  deriving DecidableEq, Repr
+
+/-- Does this judgment type place a ψ-subject (A&P's term for the
+    subject of predication) in a dedicated syntactic position? -/
+def JudgmentType.HasψSubject (j : JudgmentType) : Prop :=
+  j = .categorical
+
+instance (j : JudgmentType) : Decidable j.HasψSubject :=
+  inferInstanceAs (Decidable (j = .categorical))
 
 /-- The grammatical function of a ψ-subject.
     ψ-subjects are always intransitive subjects — they raise from

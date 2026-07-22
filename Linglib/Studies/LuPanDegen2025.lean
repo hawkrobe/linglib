@@ -1,6 +1,6 @@
 import Linglib.Semantics.Questions.Partition.QUD
 import Linglib.Discourse.QUD.Basic
-import Linglib.Features.InformationStructure
+import Linglib.Semantics.Focus.Marking
 import Linglib.Features.Givenness
 import Linglib.Semantics.Focus.ExtractionClash
 import Linglib.Discourse.QUD.AtIssueness
@@ -103,9 +103,9 @@ other; backgrounded constituents resist wh-extraction.
   [roberts-2012], [goldberg-2006].
 -/
 
-open Features.InformationStructure (FocusMark)
+open Focus (Mark)
 open Features (BinaryGivenness)
-open Semantics.Focus.ExtractionClash
+open Focus.ExtractionClash
 open Discourse.AtIssueness
 
 
@@ -389,7 +389,7 @@ theorem extraction_filler_varies
     ¬ (extractionQUD (Manner := Manner) (Content := Content)).r
       ⟨m, c₁⟩ ⟨m, c₂⟩ := hne
 
-open Semantics.Focus.Interpretation in
+open Focus.Interpretation in
 omit [DecidableEq Manner] [DecidableEq Content] in
 /-- **Q-A congruence applied to extraction** ([rooth-1992] (26d)):
 if Q-A congruence holds between the extraction question and the answer's
@@ -428,7 +428,7 @@ theorem extraction_filler_is_focus_alternative
    ⊆ the answer's focus value, then every filler is a focus alternative.
    Focus alternatives are generated at the focused position, so filler = focused.
 4. Foreground = [FoC] in [kratzer-selkirk-2020]'s two-feature system -/
-def extractedFillerStatus : FocusMark := .focused
+def extractedFillerStatus : Mark := .focused
 
 /-- **Extraction from a backgrounded clause creates an IS clash**:
 the extracted filler is [FoC] (derived from `extractedFillerStatus`) but
@@ -474,7 +474,7 @@ def complementStatus (dim : CommDimension) : BinaryGivenness :=
 
 Under manner QUD: verb is foregrounded ([FoC], addresses QUD).
 Under content QUD: verb is non-focused. -/
-def verbFocus (dim : CommDimension) : FocusMark :=
+def verbFocus (dim : CommDimension) : Mark :=
   match dim with
   | .manner  => .focused
   | .content => .nonFocused
@@ -808,11 +808,11 @@ which is the Prince hearer-status `given` value in the new substrate. -/
 theorem backgroundedness_is_given :
     complementStatus .manner = BinaryGivenness.given := rfl
 
-/-- **Foregrounding = FocusMark.focused**: The paper's notion of
+/-- **Foregrounding = Mark.focused**: The paper's notion of
 "foregrounded" maps to Kratzer & Selkirk's [FoC]-marked status,
 which is the binary-focus axis value in the new substrate. -/
 theorem foregrounding_is_focused :
-    verbFocus .manner = FocusMark.focused := rfl
+    verbFocus .manner = Mark.focused := rfl
 
 /-! ## Gradient manner weight: lexical vs. compositional
 

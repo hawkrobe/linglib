@@ -218,7 +218,7 @@ injectivity wholesale, so the bridge is stated intensionally. -/
 
 section OnlyViaBridge
 
-open Semantics.Focus (onlyVia mem_onlyVia)
+open Focus (onlyVia mem_onlyVia)
 
 variable {W ι : Type*}
 

@@ -33,7 +33,7 @@ under parallel backgrounds — data recorded in `distribution`.
 namespace Grubic2015
 
 open Pragmatics.Expressives (TwoDimProp)
-open Semantics.Focus (onlyVia)
+open Focus (onlyVia)
 
 variable {W : Type*}
 

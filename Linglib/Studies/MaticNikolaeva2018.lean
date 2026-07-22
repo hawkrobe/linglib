@@ -37,12 +37,12 @@ paper (`[matic-nikolaeva-2018]`); the cross-framework critique is
 M&N's own claim, not a synthesis the formaliser invented. It lives in
 `Studies/` exactly like every other `Studies/AuthorYear.lean`.
 The contradiction with the substrate is recorded at the substrate's
-def-site (`Features/InformationStructure.lean::Strategy`
+def-site (`Semantics/Polarity/Marking.lean::Strategy`
 docstring) with a back-pointer here.
 
 ## Cross-references
 
-- `Features/InformationStructure.lean::Strategy` — the
+- `Semantics/Polarity/Marking.lean::Strategy` — the
   form-class encoding M&N reject; docstring acknowledges the rejection.
 - `Studies/GarassinoJacob2018.lean` — same volume;
   G&J explicitly endorse M&N (their fn 13).

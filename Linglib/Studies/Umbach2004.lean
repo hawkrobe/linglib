@@ -1,4 +1,3 @@
-import Linglib.Features.InformationStructure
 import Linglib.Discourse.Coherence
 import Linglib.Semantics.Questions.Partition.QUD
 import Linglib.Semantics.Questions.Resolution
@@ -44,7 +43,7 @@ three levels at which "contrast" appears:
 
 ## Connection to existing formalization
 
-- Focus alternatives & FIP: `Semantics.Focus.Interpretation` ([rooth-1992])
+- Focus alternatives & FIP: `Focus.Interpretation` ([rooth-1992])
 - QUD / implicit questions: `Question`, `Question.isPartialAnswer` ([roberts-2012])
 - DTS "but": `DTS.But` ([merin-1999-relevance])
 - Coherence relations: `Discourse.Coherence` ([kehler-2002])
@@ -52,7 +51,6 @@ three levels at which "contrast" appears:
 
 namespace Umbach2004
 
-open Features.InformationStructure
 open Discourse.Coherence
 
 /-! ### Alternative-set well-formedness (§2.2) -/
@@ -229,11 +227,11 @@ integrator (similarity). This is strictly more constraining than FIP alone. -/
     then FIP is satisfied. Umbach's conditions refine, not replace, Rooth. -/
 theorem wellformed_implies_fip_compatible {W : Type}
     (alts : List (Set W)) (integ : Set W)
-    (focusValue : Semantics.Focus.Interpretation.PropFocusValue W)
+    (focusValue : Focus.Interpretation.PropFocusValue W)
     (_hwf : wellFormedAlts alts integ)
     (gamma : Set (Set W))
     (hgamma : ∀ a ∈ alts, a ∈ gamma)
-    (hfip : Semantics.Focus.Interpretation.fip gamma focusValue) :
+    (hfip : Focus.Interpretation.fip gamma focusValue) :
     ∀ a ∈ alts, a ∈ focusValue :=
   fun a ha => hfip (hgamma a ha)
 
