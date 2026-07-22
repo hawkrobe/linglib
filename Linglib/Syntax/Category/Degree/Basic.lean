@@ -1,10 +1,11 @@
 /-!
 # The degree head (Deg)
 
-The functional category Deg heading the adjectival extended projection
-([abney-1987]; refined against Q by [corver-1997]). `Degree.Head` is the
-Deg⁰ inventory — comparison heads per [beck-2011], the *too* ~ *enough*
-pair per [meier-2003].
+This file defines `Degree.Head`, the inventory of the functional category
+Deg that heads the adjectival extended projection ([abney-1987];
+[corver-1997]). The comparison heads are surveyed in [beck-2011]; the
+*too* ~ *enough* pair belongs to the sufficiency-excess literature
+([meier-2003]).
 -/
 
 namespace Degree

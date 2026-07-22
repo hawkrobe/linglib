@@ -58,7 +58,7 @@ namespace Rett2015Implicature
 
 open NeoGricean.Markedness
 open English.Predicates.Adjectival (tall_with_morphology short_with_morphology happy_with_morphology unhappy_with_morphology)
-open Degree (AdjectivalConstruction)
+open Degree (Construction)
 open Degree
 
 
@@ -113,7 +113,7 @@ Manner implicature requires polar INVARIANCE:
   signals something extra (evaluativity)
 - If they have different meanings, no pragmatic competition occurs
 -/
-def mannerImplicatureApplies : AdjectivalConstruction → Bool
+def mannerImplicatureApplies : Construction → Bool
   | c => polarVariance c == .invariant
 
 
@@ -154,7 +154,7 @@ From [rett-2015] Chapter 5:
 Key insight: The asymmetry in equatives/questions comes from MANNER implicature,
 which only applies to marked forms in polar-invariant constructions.
 -/
-def evaluativitySource (c : AdjectivalConstruction) (p : Polarity) : EvaluativityImplicature :=
+def evaluativitySource (c : Construction) (p : Polarity) : EvaluativityImplicature :=
   match c with
   | .positive =>
     -- Both antonyms get evaluativity from Quantity implicature
@@ -188,7 +188,7 @@ Records:
 - The mechanism (Q vs R)
 -/
 structure EvaluativityDerivation where
-  construction : AdjectivalConstruction
+  construction : Construction
   polarity : Polarity
   implicatureType : EvaluativityImplicature
   isEvaluative : Bool
@@ -198,7 +198,7 @@ structure EvaluativityDerivation where
 /--
 Derive evaluativity for a construction + polarity.
 -/
-def deriveEvaluativity (c : AdjectivalConstruction) (p : Polarity) : EvaluativityDerivation :=
+def deriveEvaluativity (c : Construction) (p : Polarity) : EvaluativityDerivation :=
   let implType := evaluativitySource c p
   let isEval := implType != .none
   let mechanism := match implType with
@@ -318,7 +318,7 @@ theorem variant_shows_symmetry_comparative :
 **Theorem: Manner implicature only applies to marked forms in invariant constructions**
 -/
 theorem manner_requires_marked_and_invariant :
-    ∀ c : AdjectivalConstruction, ∀ p : Polarity,
+    ∀ c : Construction, ∀ p : Polarity,
       evaluativitySource c p = .manner →
       (polarVariance c = .invariant ∧ p = .negative) := by
   intro c p h
@@ -342,7 +342,7 @@ This is the same mechanism as scalar implicatures, applied to
 threshold inference.
 -/
 structure QImplicatureDerivation where
-  construction : AdjectivalConstruction
+  construction : Construction
   /-- The utterance is uninformative without evaluativity -/
   uninformativeWithout : Bool
   /-- Evaluativity makes it informative -/
@@ -354,7 +354,7 @@ structure QImplicatureDerivation where
 /--
 Derive Q-implicature for positive constructions.
 -/
-def deriveQImplicature (c : AdjectivalConstruction) : QImplicatureDerivation :=
+def deriveQImplicature (c : Construction) : QImplicatureDerivation :=
   match c with
   | .positive =>
     { construction := c
@@ -385,7 +385,7 @@ Division of Pragmatic Labor applied to "How short is John?":
 5. That something = evaluativity (presupposes shortness)
 -/
 structure RImplicatureDerivation where
-  construction : AdjectivalConstruction
+  construction : Construction
   polarity : Polarity
   /-- Is there an unmarked alternative with same truth conditions? -/
   unmarkedAlternativeExists : Bool
@@ -398,7 +398,7 @@ structure RImplicatureDerivation where
 /--
 Derive R-implicature for equatives/questions.
 -/
-def deriveRImplicature (c : AdjectivalConstruction) (p : Polarity) : RImplicatureDerivation :=
+def deriveRImplicature (c : Construction) (p : Polarity) : RImplicatureDerivation :=
   let isPolarInvariant := polarVariance c == .invariant
   let isMarked := decide p.IsMarked
   { construction := c
@@ -426,7 +426,7 @@ structure MMPDerivation where
   /-- The unmarked alternative (if any) -/
   unmarkedAlternative : Option String
   /-- The construction -/
-  construction : AdjectivalConstruction
+  construction : Construction
   /-- Does MMP apply? (marked form + polar-invariant + alternative exists) -/
   mmpApplies : Bool
   /-- The resulting evaluativity implicature (if any) -/
@@ -447,7 +447,7 @@ When MMP applies, using the marked form implicates evaluativity.
 -/
 def applyMMP
     (adjForm : String)
-    (construction : AdjectivalConstruction)
+    (construction : Construction)
     (adj1 adj2 : GradableAdjWithMorphology) : MMPDerivation :=
   -- Check if this form is marked in the pair
   let isMarked := isMarkedForm adjForm adj1 adj2
@@ -498,7 +498,7 @@ structure LexiconGroundedDerivation where
   /-- The antonym entry with morphology -/
   antonym : GradableAdjWithMorphology
   /-- The construction -/
-  construction : AdjectivalConstruction
+  construction : Construction
   /-- M-alternatives generated (if any) -/
   mAlternatives : Option MAlternativeSet
   /-- MMP derivation -/
@@ -522,7 +522,7 @@ It:
 -/
 def deriveEvaluativityWithLexicon
     (adjForm : String)
-    (construction : AdjectivalConstruction)
+    (construction : Construction)
     (adj1 adj2 : GradableAdjWithMorphology)
     : LexiconGroundedDerivation :=
   -- Find which entry corresponds to the form
@@ -572,7 +572,7 @@ This explains why positive constructions are evaluative for BOTH polarities.
 -/
 structure DegreeTautologyAnalysis where
   /-- The construction type -/
-  construction : AdjectivalConstruction
+  construction : Construction
   /-- Is this a degree tautology without evaluativity? -/
   isTautologyWithout : Bool
   /-- Does Q-implicature resolve the tautology? -/
@@ -584,7 +584,7 @@ structure DegreeTautologyAnalysis where
 /--
 Analyze degree tautology for a construction.
 -/
-def analyzeDegreeTautology (c : AdjectivalConstruction) : DegreeTautologyAnalysis :=
+def analyzeDegreeTautology (c : Construction) : DegreeTautologyAnalysis :=
   match c with
   | .positive =>
     { construction := c

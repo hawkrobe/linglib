@@ -1,17 +1,17 @@
 /-!
-# Adjectival constructions
+# Degree constructions
 
-`AdjectivalConstruction`: the surface constructions whose evaluativity
-[rett-2015] tracks, consumed by evaluativity analyses and markedness
-implicature. The Deg⁰ head inventory is `Degree.Head` in
-`Syntax/Category/Degree`.
+This file defines `Degree.Construction`, the surface forms a
+gradable predicate can appear in — bare positive, comparative, equative,
+measure phrase, and degree question — following the construction inventory
+of [rett-2015]. The Deg⁰ head inventory is defined in
+`Linglib/Syntax/Category/Degree/Basic.lean`.
 -/
 
 namespace Degree
 
-/-- Surface adjectival constructions, as tracked by evaluativity analyses
-and markedness implicature. -/
-inductive AdjectivalConstruction where
+/-- A surface degree construction built on a gradable predicate. -/
+inductive Construction where
   /-- "Kim is tall" — unmarked form. -/
   | positive
   /-- "Kim is taller than Sam". -/
@@ -26,7 +26,7 @@ inductive AdjectivalConstruction where
 
 /-- Bare lowercase construction names for diagnostic messages, distinct
 from `Repr` (which prefixes the namespace). -/
-instance : ToString AdjectivalConstruction where
+instance : ToString Construction where
   toString
     | .positive => "positive"
     | .comparative => "comparative"

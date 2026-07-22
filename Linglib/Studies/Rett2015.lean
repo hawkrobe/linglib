@@ -13,13 +13,13 @@ are evaluative, comparatives are not, equatives show asymmetry.
 
 `EvaluativityStatus`, `EvaluativityDatum`, `EvaluativityPrediction`
 
-`AdjectivalConstruction` is defined in `Semantics/Degree/Defs.lean`.
+`Construction` is defined in `Semantics/Degree/Defs.lean`.
 
 -/
 
 namespace Rett2015.Evaluativity
 
-open Degree (AdjectivalConstruction)
+open Degree (Construction)
 
 -- Evaluativity Judgments
 
@@ -33,7 +33,7 @@ inductive EvaluativityStatus where
 
 /-- Evaluativity judgment datum. -/
 structure EvaluativityDatum where
-  construction : AdjectivalConstruction
+  construction : Construction
   adjective : String
   isPositivePolar : Bool
   exampleSentence : String
