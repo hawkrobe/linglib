@@ -97,7 +97,7 @@ set_option autoImplicit false
 
 namespace TesslerGoodman2022
 
-open Degree (Degree Threshold deg thr allDegrees allThresholds Degree.toNat Threshold.toNat)
+open Degree (Bounded Threshold deg thr allDegrees allThresholds Bounded.toNat Threshold.toNat)
 open Degree (positiveMeaning negativeMeaning)
 
 -- ============================================================================
@@ -105,7 +105,7 @@ open Degree (positiveMeaning negativeMeaning)
 -- ============================================================================
 
 /-- Discretized height: 0 through 10 in discrete steps (11 values). -/
-abbrev Height := Degree 10
+abbrev Height := Bounded 10
 
 /-- Comparison classes: subordinate (the kind itself) or superordinate
     (the general population). -/

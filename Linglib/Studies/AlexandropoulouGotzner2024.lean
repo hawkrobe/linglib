@@ -61,7 +61,7 @@ bridge theorem all live in `AlexandropoulouGotzner2024JoS.lean`.
 namespace AlexandropoulouGotzner2024
 
 open Core.Order (Boundedness)
-open Degree (Degree Threshold deg thr)
+open Degree (Bounded Threshold deg thr)
 open Degree (GradableAdjective ThresholdPair inGapRegion
   positiveMeaning' contraryNegMeaning notContraryNegMeaning)
 open Degree (positiveMeaning notPositiveMeaning)
@@ -104,7 +104,7 @@ def AdjQuadruple.isRelative (q : AdjQuadruple) : Bool :=
 
 /-- 5-degree scale (matching the 1–5 Likert response scales used in the
     Glossa experiments). -/
-abbrev Deg5 := Degree 4
+abbrev Deg5 := Bounded 4
 
 abbrev Thr5 := Threshold 4
 
@@ -126,30 +126,30 @@ def defaultTP : ThresholdPair 4 where
 
 /-- Every degree falls in at least one of {positive, gap, negative}. -/
 theorem three_region_exhaustive {max : Nat}
-    (tp : ThresholdPair max) (d : Degree max) :
+    (tp : ThresholdPair max) (d : Bounded max) :
     positiveMeaning' d tp ∨ inGapRegion d tp ∨ contraryNegMeaning d tp := by
-  by_cases h1 : (tp.pos : Degree max) < d
+  by_cases h1 : (tp.pos : Bounded max) < d
   · exact Or.inl h1
-  · by_cases h2 : d < (tp.neg : Degree max)
+  · by_cases h2 : d < (tp.neg : Bounded max)
     · exact Or.inr (Or.inr h2)
-    · push_neg at h1 h2
+    · push Not at h1 h2
       exact Or.inr (Or.inl ⟨h2, h1⟩)
 
 /-- Gap region excludes the positive region. -/
 theorem gap_not_positive {max : Nat}
-    (tp : ThresholdPair max) (d : Degree max)
+    (tp : ThresholdPair max) (d : Bounded max)
     (h : inGapRegion d tp) : ¬ positiveMeaning' d tp :=
   not_lt.mpr h.2
 
 /-- Gap region excludes the contrary-negative region. -/
 theorem gap_not_negative {max : Nat}
-    (tp : ThresholdPair max) (d : Degree max)
+    (tp : ThresholdPair max) (d : Bounded max)
     (h : inGapRegion d tp) : ¬ contraryNegMeaning d tp :=
   not_lt.mpr h.1
 
 /-- Gap holds iff the degree is neither positive nor contrary-negative. -/
 theorem gap_iff_neither {max : Nat}
-    (tp : ThresholdPair max) (d : Degree max) :
+    (tp : ThresholdPair max) (d : Bounded max) :
     inGapRegion d tp ↔ ¬ positiveMeaning' d tp ∧ ¬ contraryNegMeaning d tp := by
   constructor
   · intro h; exact ⟨gap_not_positive tp d h, gap_not_negative tp d h⟩
@@ -168,14 +168,14 @@ theorem gap_iff_neither {max : Nat}
 /-- Contradictory antonyms exhaust the scale. Delegates to the substrate
     lemma in `Antonymy.lean`. -/
 theorem contradictory_complement {max : Nat}
-    (d : Degree max) (θ : Threshold max) :
+    (d : Bounded max) (θ : Threshold max) :
     positiveMeaning d θ ∨ notPositiveMeaning d θ :=
   Degree.Antonymy.contradictory_exhaustive d θ
 
 /-- `notPositiveMeaning` is the propositional complement of `positiveMeaning`.
     Delegates to the substrate lemma in `Antonymy.lean`. -/
 theorem contradictory_is_complement {max : Nat}
-    (d : Degree max) (θ : Threshold max) :
+    (d : Bounded max) (θ : Threshold max) :
     notPositiveMeaning d θ ↔ ¬ positiveMeaning d θ :=
   Degree.Antonymy.contradictory_is_complement d θ
 

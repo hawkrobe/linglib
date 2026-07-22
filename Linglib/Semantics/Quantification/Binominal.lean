@@ -154,7 +154,7 @@ property of N₂. -/
 
 section EM
 open Degree.Intensification (EvaluativeMeasure intensifiedMeaning)
-open Degree (Degree Threshold Degree.toNat Threshold.toNat)
+open Degree (Bounded Threshold Bounded.toNat Threshold.toNat)
 /-- EM semantics: N₁ as evaluative modifier of a contextual property of N₂.
 
 "a hell of a game" = the game x such that the contextually-salient
@@ -165,14 +165,14 @@ bleached to a pure evaluative function. The `contextualDegree` parameter
 represents the pragmatically-determined property being evaluated. -/
 def emSemantics {Entity : Type} {max : Nat}
     (eval : EvaluativeMeasure max)
-    (contextualDegree : Entity → Degree max)
+    (contextualDegree : Entity → Bounded max)
     (θ_eval : Threshold max)
     (n₂ : Entity → Bool) : Entity → Bool :=
   λ x => n₂ x && (eval.mu (contextualDegree x).toNat > θ_eval.toNat)
 
 /-- EM preserves the N₂ restriction. -/
 theorem em_requires_n₂ {Entity : Type} {max : Nat}
-    (eval : EvaluativeMeasure max) (cdeg : Entity → Degree max)
+    (eval : EvaluativeMeasure max) (cdeg : Entity → Bounded max)
     (θ : Threshold max) (n₂ : Entity → Bool) (x : Entity) :
     emSemantics eval cdeg θ n₂ x = true → n₂ x = true := by
   simp only [emSemantics]
@@ -198,14 +198,14 @@ This directly instantiates [nouwen-2024]'s `intensifiedMeaning`:
 the adjective's positive form AND the evaluative measure must both hold. -/
 def biSemantics {Entity : Type} {max : Nat}
     (eval : EvaluativeMeasure max)
-    (adjDegree : Entity → Degree max)
+    (adjDegree : Entity → Bounded max)
     (θ_adj θ_eval : Threshold max)
     (n₂ : Entity → Bool) : Entity → Bool :=
   λ x => n₂ x && decide (intensifiedMeaning eval (adjDegree x) θ_adj θ_eval)
 
 /-- BI preserves the N₂ restriction. -/
 theorem bi_requires_n₂ {Entity : Type} {max : Nat}
-    (eval : EvaluativeMeasure max) (adjDeg : Entity → Degree max)
+    (eval : EvaluativeMeasure max) (adjDeg : Entity → Bounded max)
     (θ_adj θ_eval : Threshold max) (n₂ : Entity → Bool) (x : Entity) :
     biSemantics eval adjDeg θ_adj θ_eval n₂ x = true → n₂ x = true := by
   simp only [biSemantics]
@@ -218,7 +218,7 @@ where the contextual property is fixed to a specific adjective, and an
 additional threshold (the adjective's standard) is imposed. BI strengthens
 EM by adding the adjective's positive form as a conjunct. -/
 theorem bi_entails_em {Entity : Type} {max : Nat}
-    (eval : EvaluativeMeasure max) (adjDeg : Entity → Degree max)
+    (eval : EvaluativeMeasure max) (adjDeg : Entity → Bounded max)
     (θ_adj θ_eval : Threshold max) (n₂ : Entity → Bool) (x : Entity) :
     biSemantics eval adjDeg θ_adj θ_eval n₂ x = true →
     emSemantics eval adjDeg θ_eval n₂ x = true := by
@@ -243,10 +243,10 @@ Uses `muHorrible 10` as the evaluative measure for *hell*:
 
 section EMBIExample
 open Degree.Intensification (muHorrible EvaluativeMeasure)
-open Degree (Degree deg thr)
+open Degree (Bounded deg thr)
 /-- Quality measure for EM: contextually-determined goodness as a doctor.
 George (9) is an outstanding doctor; Sarah (6) is decent; Floyd (3) is poor. -/
-def doctorQuality : Degree.Person → Degree 10
+def doctorQuality : Degree.Person → Bounded 10
   | .george => deg 9
   | .sarah  => deg 6
   | .floyd  => deg 3
@@ -263,7 +263,7 @@ def hellEval : EvaluativeMeasure 10 := muHorrible 10
 theorem george_hell_of_doctor :
     emSemantics hellEval doctorQuality (thr 3) isDoctorB .george = true := by
   simp only [emSemantics, hellEval, muHorrible, doctorQuality, isDoctorB, isDoctor,
-             Degree.Degree.toNat, Degree.Threshold.toNat]
+             Degree.Bounded.toNat, Degree.Threshold.toNat]
   norm_num
 
 /-- Sarah is not "a hell of a doctor": quality (6) yields
@@ -271,7 +271,7 @@ theorem george_hell_of_doctor :
 theorem sarah_not_hell_of_doctor :
     emSemantics hellEval doctorQuality (thr 3) isDoctorB .sarah = false := by
   simp only [emSemantics, hellEval, muHorrible, doctorQuality, isDoctorB, isDoctor,
-             Degree.Degree.toNat, Degree.Threshold.toNat]
+             Degree.Bounded.toNat, Degree.Threshold.toNat]
   norm_num
 
 /-- George is "a hell of a good doctor": good(9 > 5) ✓ AND
@@ -281,7 +281,7 @@ theorem george_hell_of_good_doctor :
   simp only [biSemantics, hellEval, muHorrible, doctorQuality, isDoctorB, isDoctor,
              Degree.Intensification.intensifiedMeaning,
              Degree.positiveMeaning,
-             Degree.Degree.toNat, Degree.Threshold.toNat,
+             Degree.Bounded.toNat, Degree.Threshold.toNat,
              Bool.and_eq_true, decide_eq_true_eq]
   refine ⟨trivial, ?_, ?_⟩
   · decide
@@ -294,7 +294,7 @@ theorem sarah_not_hell_of_good_doctor :
   simp only [biSemantics, hellEval, muHorrible, doctorQuality, isDoctorB, isDoctor,
              Degree.Intensification.intensifiedMeaning,
              Degree.positiveMeaning,
-             Degree.Degree.toNat, Degree.Threshold.toNat,
+             Degree.Bounded.toNat, Degree.Threshold.toNat,
              Bool.and_eq_false_iff, decide_eq_false_iff_not]
   right
   push Not

@@ -100,11 +100,11 @@ The intensified form is the conjunction (intersection) of:
 2. The evaluative threshold: μ_eval(d) > θ_eval
 -/
 def intensifiedMeaning {max : Nat}
-    (eval : EvaluativeMeasure max) (d : Degree max) (θ_adj θ_eval : Threshold max) : Prop :=
+    (eval : EvaluativeMeasure max) (d : Bounded max) (θ_adj θ_eval : Threshold max) : Prop :=
   positiveMeaning d θ_adj ∧ eval.mu d.toNat > θ_eval.toNat
 
 instance {max : Nat} (eval : EvaluativeMeasure max)
-    (d : Degree max) (θ_adj θ_eval : Threshold max) :
+    (d : Bounded max) (θ_adj θ_eval : Threshold max) :
     Decidable (intensifiedMeaning eval d θ_adj θ_eval) := by
   unfold intensifiedMeaning; infer_instance
 
@@ -118,7 +118,7 @@ This is because the intensified meaning is a conjunction that includes
 the positive meaning as one conjunct.
 -/
 theorem intensified_implies_positive {max : Nat}
-    (eval : EvaluativeMeasure max) (d : Degree max) (θ_adj θ_eval : Threshold max)
+    (eval : EvaluativeMeasure max) (d : Bounded max) (θ_adj θ_eval : Threshold max)
     (h : intensifiedMeaning eval d θ_adj θ_eval) :
     positiveMeaning d θ_adj :=
   h.1
@@ -131,7 +131,7 @@ The horrible measure peaks at extremes: μ(max) ≥ μ(norm).
 Negative-evaluative adjectives assign highest values to extreme degrees.
 -/
 theorem muHorrible_peaks_at_extreme_10 :
-    (muHorrible 10).mu 10 ≥ (muHorrible 10).mu 5 := by simp only [muHorrible, muPleasant]; norm_num
+    (muHorrible 10).mu 10 ≥ (muHorrible 10).mu 5 := by simp only [muHorrible]; norm_num
 
 /--
 The pleasant measure peaks at norm: μ(norm) ≥ μ(max).
@@ -139,7 +139,7 @@ The pleasant measure peaks at norm: μ(norm) ≥ μ(max).
 Positive-evaluative adjectives assign highest values to moderate degrees.
 -/
 theorem muPleasant_peaks_at_norm_10 :
-    (muPleasant 10).mu 5 ≥ (muPleasant 10).mu 10 := by simp only [muHorrible, muPleasant]; norm_num
+    (muPleasant 10).mu 5 ≥ (muPleasant 10).mu 10 := by simp only [muPleasant]; norm_num
 
 /--
 Goldilocks structural theorem: at extreme degrees (d = max),

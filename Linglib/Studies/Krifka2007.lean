@@ -66,7 +66,7 @@ set_option autoImplicit false
 
 namespace Krifka2007
 
-open Degree (Degree Threshold deg thr)
+open Degree (Bounded Threshold deg thr)
 open Degree (ThresholdPair inGapRegion
   positiveMeaning' contraryNegMeaning notContraryNegMeaning contradictoryNeg
   AntonymForm contradictoryDenot_synonymy strengthenedDenot_breaks_synonymy)
@@ -114,11 +114,11 @@ open Constraints OptimalityTheory
     substrate theorem `strengthenedDenot_breaks_synonymy`. -/
 
 -- ════════════════════════════════════════════════════
--- § 4. Concrete Scale: Happy/Unhappy on Degree 4
+-- § 4. Concrete Scale: Happy/Unhappy on Bounded 4
 -- ════════════════════════════════════════════════════
 
 /-- 5-point happiness scale (matching [tessler-franke-2019]'s model). -/
-abbrev HappyDeg := Degree 4
+abbrev HappyDeg := Bounded 4
 
 /-- Contradictory boundary at θ = 2 (the literal semantics). -/
 abbrev happyθ : Threshold 4 := thr 2
@@ -164,7 +164,7 @@ theorem gap_degrees :
     inGapRegion (deg 2 : HappyDeg) happyTP := by
   refine ⟨⟨?_, ?_⟩, ⟨?_, ?_⟩⟩ <;> decide
 
-/-- **Prediction 5**: Degree 0 is "unhappy", degree 4 is "happy". -/
+/-- **Prediction 5**: Bounded 0 is "unhappy", degree 4 is "happy". -/
 theorem extreme_degrees :
     contraryNegMeaning (deg 0 : HappyDeg) happyTP ∧
     positiveMeaning' (deg 4 : HappyDeg) happyTP :=
@@ -211,7 +211,7 @@ theorem interpretation_follows_inner_neg :
   decide
 
 private instance {max : Nat} (tp : ThresholdPair max) (q : AntonymForm)
-    (d : Degree max) : Decidable (AntonymForm.strengthenedDenot tp q d) := by
+    (d : Bounded max) : Decidable (AntonymForm.strengthenedDenot tp q d) := by
   cases q <;> dsimp [AntonymForm.strengthenedDenot] <;> infer_instance
 
 /-- **Transfer equation**: a row is judged equivalent to the bare positive iff
