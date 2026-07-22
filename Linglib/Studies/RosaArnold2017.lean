@@ -60,8 +60,6 @@ dative alternation), Rosa & Arnold (2017) study **form** (pronoun vs name).
 Both are production choices along the same NP weight/reduction dimension.
 -/
 
-set_option autoImplicit false
-
 namespace RosaArnold2017
 
 open Discourse.Coherence

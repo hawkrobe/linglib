@@ -35,8 +35,6 @@ comparison with [sidner-1983] on example (34). Examples use `String`
 entities and the substrate's `Utterance String GrammaticalRole`.
 -/
 
-set_option autoImplicit false
-
 namespace GroszJoshiWeinstein1995
 
 open Discourse.Centering

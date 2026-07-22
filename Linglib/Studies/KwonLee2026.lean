@@ -29,8 +29,6 @@ inequalities. Bridges to [kehler-rohde-2013] (topichood),
 `AccessibilityAssessment` are provided.
 -/
 
-set_option autoImplicit false
-
 namespace KwonLee2026
 
 open Features
