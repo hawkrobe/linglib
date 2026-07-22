@@ -1,6 +1,5 @@
 import Linglib.Pragmatics.NeoGricean.Markedness
 import Linglib.Fragments.English.Predicates.Adjectival
-import Linglib.Studies.Rett2015
 
 /-!
 # Bridge: NeoGricean Alternatives → M-Alternative Verification

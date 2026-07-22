@@ -1,43 +1,16 @@
-import Linglib.Core.Order.Boundedness
-
 /-!
-# Shape enums for degree constructions
-[rett-2015] [beck-2011]
+# Degree constructions
 
-The shared taxonomies of degree morphosyntax: `DegPType` (degree heads) and
-`AdjectivalConstruction` (surface constructions, tracked by evaluativity
-analyses and markedness implicature). Antonym polarity is the spine's
-`Core.Order.ScalePolarity` directly — no local alias.
+This file defines `Degree.Construction`, the surface forms a gradable
+predicate can appear in — bare positive, comparative, equative, measure
+phrase, and degree question ([beck-2011], [rett-2015]). The Deg⁰ head
+inventory is defined in `Linglib/Syntax/Category/Degree/Basic.lean`.
 -/
 
 namespace Degree
 
-open Core.Order (ScalePolarity)
-
-
-/-- The compositional structure of a Degree Phrase (DegP).
-
-In all degree frameworks, DegP is the syntactic locus where degree
-comparison happens. The internal structure varies — Kennedy posits
-`[DegP [Deg -er/as/est] [DegComplement than-clause]]`, Heim posits a
-sentential `-er` operator — but the framework-independent taxonomy is
-captured here. -/
-inductive DegPType where
-  /-- `-er` / *more*. -/
-  | comparative
-  /-- `as...as`. -/
-  | equative
-  /-- `-est` / *most*. -/
-  | superlative
-  /-- *too*. -/
-  | excessive
-  /-- *enough*. -/
-  | sufficiency
-  deriving DecidableEq, Repr
-
-/-- Degree construction type. Used by evaluativity analyses to track which
-surface constructions trigger evaluative readings. -/
-inductive AdjectivalConstruction where
+/-- A surface degree construction built on a gradable predicate. -/
+inductive Construction where
   /-- "Kim is tall" — unmarked form. -/
   | positive
   /-- "Kim is taller than Sam". -/
@@ -48,13 +21,11 @@ inductive AdjectivalConstruction where
   | measurePhrase
   /-- "How tall is Kim?". -/
   | degreeQuestion
-  deriving Repr, DecidableEq
+  deriving DecidableEq, Repr
 
-/-- User-facing rendering, distinct from `Repr` (which prefixes the
-namespace). Consumed by Studies files that string-interpolate construction
-names into diagnostic messages — see e.g.
-`Studies/Rett2015Implicature.lean`. -/
-instance : ToString AdjectivalConstruction where
+/-- Bare lowercase construction names for diagnostic messages, distinct
+from `Repr` (which prefixes the namespace). -/
+instance : ToString Construction where
   toString
     | .positive => "positive"
     | .comparative => "comparative"

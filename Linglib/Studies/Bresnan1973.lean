@@ -1,3 +1,4 @@
+import Linglib.Syntax.Category.Degree.Basic
 import Linglib.Semantics.Degree.Discrete
 import Linglib.Semantics.Degree.Quantifier
 import Linglib.Semantics.Degree.MeasurePhrase
@@ -63,13 +64,13 @@ The existing `Kennedy1999.lean` cites [bresnan-1973] for morphological
 distribution data and phrasal/clausal examples. This file formalizes
 Bresnan's own proposals: the QP structure, the derivation rules, and the
 four introductory puzzles that motivated the analysis. Bridge theorems
-connect the QP inventory to `DegPType` and verify suppletion outputs
+connect the QP inventory to `Head` and verify suppletion outputs
 against Fragment `formComp` entries.
 -/
 
 namespace Bresnan1973
 
-open Degree (DegPType)
+open Degree (Head)
 open Degree (comparativeSem)
 open Core.Order (ScalePolarity Boundedness)
 
@@ -112,11 +113,11 @@ structure QP where
   q : Q
   deriving DecidableEq, Repr
 
-/-! ### Bridge: QP → DegPType -/
+/-! ### Bridge: QP → Head -/
 
 /-- Map Bresnan's QP Det to the modern DegP type classification.
     The Det determines the comparison type; Q determines mass/count. -/
-def Det.toDegPType : Det → DegPType
+def Det.toHead : Det → Head
   | .er    => .comparative
   | .est   => .superlative
   | .as_   => .equative
@@ -127,11 +128,11 @@ def Det.toDegPType : Det → DegPType
   | .any_  => .comparative   -- any + -er in Det
   | .no_   => .comparative   -- no + -er in Det
 
-/-- The modern DegPType inventory is recoverable from Bresnan's Det. -/
-theorem degPType_comparative_from_er : Det.toDegPType .er = .comparative := rfl
-theorem degPType_equative_from_as : Det.toDegPType .as_ = .equative := rfl
-theorem degPType_superlative_from_est : Det.toDegPType .est = .superlative := rfl
-theorem degPType_excessive_from_too : Det.toDegPType .too = .excessive := rfl
+/-- The modern Head inventory is recoverable from Bresnan's Det. -/
+theorem head_comparative_from_er : Det.toHead .er = .comparative := rfl
+theorem head_equative_from_as : Det.toHead .as_ = .equative := rfl
+theorem head_superlative_from_est : Det.toHead .est = .superlative := rfl
+theorem head_excessive_from_too : Det.toHead .too = .excessive := rfl
 
 /-! ### Morphological Derivation -/
 

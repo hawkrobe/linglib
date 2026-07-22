@@ -852,7 +852,7 @@ theorem all_gradable :
 Antonym-pair entries extended with the morphological and scale-pole
 metadata that `NeoGricean.Markedness` computes markedness from.
 Exercised by `Studies/Horn1984.lean`, `Studies/Krifka2007.lean`, and
-`Studies/Rett2015Implicature.lean`. -/
+`Studies/Rett2015.lean`. -/
 
 open NeoGricean.Markedness (GradableAdjWithMorphology simpleMorphology prefixedMorphology)
 

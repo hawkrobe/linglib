@@ -1,6 +1,6 @@
+import Linglib.Studies.Rett2015
 import Linglib.Pragmatics.RSA.Canonical
 import Linglib.Semantics.Degree.Defs
-import Linglib.Studies.Rett2015Implicature
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Prod
 import Mathlib.Analysis.Complex.ExponentialBounds
@@ -73,8 +73,8 @@ The RSA model adds two things the Neo-Gricean account lacks:
 namespace BumfordRett2021
 
 open RSA
-open Rett2015Implicature (Polarity)
-open Degree (AdjectivalConstruction)
+open Rett2015 (Polarity)
+open Degree (Construction)
 
 -- ============================================================================
 -- § 1. World Type: Height × CC Center
@@ -845,7 +845,7 @@ constructions:
 
 [rett-2015]'s Neo-Gricean account (formalized in
 `Pragmatics/Implicature/Evaluativity.lean`) classifies
-constructions categorically using `AdjectivalConstruction` and `Polarity`:
+constructions categorically using `Construction` and `Polarity`:
 - **Positive** (`.positive`): evaluative for both polarities (Q-implicature)
 - **Equative** (`.equative`): evaluative for `.negative` only (Manner/R-implicature)
 - **Comparative** (`.comparative`): NOT evaluative (no applicable implicature)
@@ -865,12 +865,12 @@ def utterancePolarity : Utterance → Option Polarity
   | .null     => none
 
 /-- Construction labels for each simulation, connecting to the
-    `AdjectivalConstruction` type from `Semantics/Degree/Gradability/Construction.lean`. -/
-abbrev posConstruction  : AdjectivalConstruction := .positive
-abbrev eqConstruction   : AdjectivalConstruction := .equative
-abbrev compConstruction : AdjectivalConstruction := .comparative
+    `Construction` type from `Semantics/Degree/Defs.lean`. -/
+abbrev posConstruction  : Construction := .positive
+abbrev eqConstruction   : Construction := .equative
+abbrev compConstruction : Construction := .comparative
 
-open Rett2015Implicature (deriveEvaluativity)
+open Rett2015 (deriveEvaluativity)
 
 /-- Cross-theory agreement: the RSA model and [rett-2015]'s Neo-Gricean
     account agree on the full evaluativity paradigm.

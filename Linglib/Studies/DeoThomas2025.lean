@@ -265,16 +265,16 @@ theorem all_flavors_attested :
 -- E. Construction → Flavor Bridge ([thomas-deo-2020])
 -- ============================================================================
 
-open Degree (AdjectivalConstruction)
+open Degree (Construction)
 
 /-- Derive *just* flavor from adjectival construction type.
     [thomas-deo-2020] predict:
     - comparative + just → precisifying proximity (barely)
     - equative + just → precisifying equality (exactly) -/
-def justFlavorFromConstruction : AdjectivalConstruction → JustFlavor
+def justFlavorFromConstruction : Construction → JustFlavor
   | .comparative => .precisifyingProximity
   | .equative => .precisifyingEquality
-  | _ => .complementExclusion
+  | .positive | .measurePhrase | .degreeQuestion => .complementExclusion
 
 /-- "Fafen is just older than Siri" — comparative + just = proximity. -/
 theorem comparative_yields_proximity :
