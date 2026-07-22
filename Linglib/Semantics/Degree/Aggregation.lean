@@ -35,7 +35,7 @@ reduce to counting aggregation.
 
 namespace Degree.Aggregation
 
-variable {α : Type}
+variable {α : Type*}
 
 /-! ### Counting Aggregation -/
 

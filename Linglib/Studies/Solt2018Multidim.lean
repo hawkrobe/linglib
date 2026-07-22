@@ -1,5 +1,5 @@
 /-!
-# [solt-2018]: Multidimensionality, Subjectivity and Scales
+# [solt-2018-multidim]: Multidimensionality, Subjectivity and Scales
 
 Stephanie Solt (2018). Multidimensionality, Subjectivity and Scales:
 Experimental Evidence. In *The Semantics of Gradability, Vagueness, and

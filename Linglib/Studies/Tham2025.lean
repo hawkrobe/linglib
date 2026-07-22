@@ -645,7 +645,7 @@ theorem all_disturbance_pipeline_licensed :
 /-! **Honesty caveat.** Tham herself does not engage [sassoon-2013]'s
     binding-type typology directly. She cites Sassoon for the *fact* of
     multidimensionality and *respect*-PP diagnostics (Tham pp. 13, 24),
-    and adopts Solt's representation ([solt-2018]) rather than
+    and adopts Solt's representation ([solt-2018-multidim]) rather than
     Sassoon's. The argument below is the formaliser's reconstruction of
     what Tham's data WOULD force on Sassoon's apparatus — a
     cross-paper engagement constructed in linglib, not drawn out by Tham.
@@ -1013,7 +1013,7 @@ theorem cracked_ie_max_vs_tham_lower_bound :
 -- § 18. Cross-paper engagement: Solt 2018 multidim typology
 -- ════════════════════════════════════════════════════
 
-/-! [solt-2018] (the Springer multidim chapter, distinct from the
+/-! [solt-2018-multidim] (the Springer multidim chapter, distinct from the
     SuB proportional-comparatives paper engaged in §16) presents an
     experimental five-class subjectivity typology
     (RelNum/AbsTot/AbsPart/RelNo/Eval, Fig. 1, pp. 5–6). The class
