@@ -274,7 +274,7 @@ open Degree (Construction)
 def justFlavorFromConstruction : Construction → JustFlavor
   | .comparative => .precisifyingProximity
   | .equative => .precisifyingEquality
-  | _ => .complementExclusion
+  | .positive | .measurePhrase | .degreeQuestion => .complementExclusion
 
 /-- "Fafen is just older than Siri" — comparative + just = proximity. -/
 theorem comparative_yields_proximity :
