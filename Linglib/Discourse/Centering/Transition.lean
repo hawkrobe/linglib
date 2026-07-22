@@ -7,7 +7,8 @@ import Mathlib.Order.Nat
 [grosz-joshi-weinstein-1995] [strube-1998] [brennan-friedman-pollard-1987]
 
 The three transition types (continuation / retaining / shifting), their
-classification, and their preference structure: the `LinearOrder` and
+classification, the discourse-level scan (`transitions`, `cbs`,
+`coherenceScore`), and their preference structure: the `LinearOrder` and
 `pairRank` ("Rule 2" of [grosz-joshi-weinstein-1995], stated over
 sequences) and [strube-1998]'s cheap/expensive distinction (`isCheap`).
 `classifyTransitionStrict` is faithful to GJW Def 4;
@@ -47,47 +48,43 @@ theorem retaining_gt_shifting :
 
 /-! ### Strict and Extended Classification -/
 
-variable {E R : Type*}
+variable {E R : Type*} [DecidableEq E]
 
 /-- Internal classifier given both Cbs: equal Cbs continue/retain
     by Cp alignment; unequal Cbs shift. -/
-private def classifyTransitionInternal [DecidableEq E]
+private def classifyTransitionInternal
     (curCb : E) (curCp : Option E) (prevCb : E) : Transition :=
   if prevCb = curCb then
     if curCp = some curCb then .continuation else .retaining
   else .shifting
 
+variable [CfRankerOf E R]
+
 /-- Strict classification (faithful to GJW Def 4): returns `none` in
     the segment-initial case where the prior Cb is undefined. -/
 def classifyTransitionStrict
-    [DecidableEq E] [CfRankerOf E R] {U : Type*} [Realizes U E]
-    (prev : Utterance E R) (cur : U) (curCp : Option E)
-    (prevCb : Option E) : Option Transition :=
+    (prev cur : Utterance E R) (prevCb : Option E) : Option Transition :=
   match cb prev cur, prevCb with
   | none, _      => some .shifting
   | _, none      => none  -- segment-initial: paper Def 4 is silent
-  | some curCb, some pcb => some (classifyTransitionInternal curCb curCp pcb)
+  | some curCb, some pcb => some (classifyTransitionInternal curCb cur.cp pcb)
 
 /-- Extended classification: applies the worked-example convention
     for the segment-initial case (treats missing prior Cb as if equal
     to current Cb). -/
 def classifyTransitionExtended
-    [DecidableEq E] [CfRankerOf E R] {U : Type*} [Realizes U E]
-    (prev : Utterance E R) (cur : U) (curCp : Option E)
-    (prevCb : Option E) : Transition :=
+    (prev cur : Utterance E R) (prevCb : Option E) : Transition :=
   match cb prev cur with
   | none => .shifting
   | some curCb =>
-    classifyTransitionInternal curCb curCp (prevCb.getD curCb)
+    classifyTransitionInternal curCb cur.cp (prevCb.getD curCb)
 
 /-- The two classifications agree whenever the strict variant is
     defined. -/
 theorem extended_eq_strict_when_defined
-    [DecidableEq E] [CfRankerOf E R] {U : Type*} [Realizes U E]
-    (prev : Utterance E R) (cur : U) (curCp : Option E)
-    (prevCb : Option E) (t : Transition)
-    (h : classifyTransitionStrict prev cur curCp prevCb = some t) :
-    classifyTransitionExtended prev cur curCp prevCb = t := by
+    (prev cur : Utterance E R) (prevCb : Option E) (t : Transition)
+    (h : classifyTransitionStrict prev cur prevCb = some t) :
+    classifyTransitionExtended prev cur prevCb = t := by
   unfold classifyTransitionStrict at h
   unfold classifyTransitionExtended
   match hcb : cb prev cur, prevCb with
@@ -102,6 +99,31 @@ theorem extended_eq_strict_when_defined
     simp only [hcb] at h ⊢
     exact Option.some.inj h
 
+/-! ### Discourse-level scan -/
+
+/-- The backward-looking center of each adjacent pair along a discourse. -/
+def cbs : List (Utterance E R) → List (Option E)
+  | u₁ :: u₂ :: rest => cb u₁ u₂ :: cbs (u₂ :: rest)
+  | _ => []
+
+/-- Transition sequence along a discourse from a given prior Cb, threading
+    each pair's Cb as the next pair's prior Cb. -/
+def transitionsFrom (prevCb : Option E) :
+    List (Utterance E R) → List Transition
+  | u₁ :: u₂ :: rest =>
+      classifyTransitionExtended u₁ u₂ prevCb :: transitionsFrom (cb u₁ u₂) (u₂ :: rest)
+  | _ => []
+
+/-- Transition sequence of a discourse segment (segment-initial prior Cb
+    undefined). -/
+def transitions (d : List (Utterance E R)) : List Transition :=
+  transitionsFrom none d
+
+/-- Sum-of-ranks coherence measure over a discourse's transition sequence —
+    the sequence form of "Rule 2" ([grosz-joshi-weinstein-1995]). -/
+def coherenceScore (d : List (Utterance E R)) : Nat :=
+  ((transitions d).map Transition.rank).sum
+
 /-! ### Transition preference -/
 
 /-- Sequence preference ("Rule 2" of [grosz-joshi-weinstein-1995])
@@ -110,12 +132,12 @@ def pairRank (t₁ t₂ : Transition) : Nat := t₁.rank + t₂.rank
 
 /-- A transition is *cheap* ([strube-1998]) if `CB(U_n) = CP(U_{n-1})`:
     the previous utterance's preferred center predicts the current CB. -/
-def isCheap [DecidableEq E] [CfRankerOf E R] {U : Type*} [Realizes U E]
+def isCheap {U : Type*} [Realizes U E]
     (prev : Utterance E R) (cur : U) (prevCp : Option E) : Prop :=
   cb prev cur = prevCp ∧ (cb prev cur).isSome
 
-instance isCheap.decidable [DecidableEq E] [CfRankerOf E R] {U : Type*}
-    [Realizes U E] (prev : Utterance E R) (cur : U) (prevCp : Option E) :
+instance isCheap.decidable {U : Type*} [Realizes U E]
+    (prev : Utterance E R) (cur : U) (prevCp : Option E) :
     Decidable (isCheap prev cur prevCp) :=
   inferInstanceAs (Decidable (cb prev cur = prevCp ∧ (cb prev cur).isSome))
 
