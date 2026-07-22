@@ -172,14 +172,14 @@ def nextMention_subject_pct : Nat := 54
 /-- Goals are more predictable next-mentions than sources. -/
 theorem goals_more_predictable :
     nextMention_goal.percent > (100 - nextMention_goal.percent) := by
-  native_decide
+  decide
 
 /-- Thematic role (goal: 71%) is a stronger next-mention predictor than
     grammatical role (subject: 54%). This supports the paper's core claim
     that predictability driven by thematic roles matters for production. -/
 theorem goal_bias_stronger_than_subj_bias :
     nextMention_goal.percent > nextMention_subject_pct := by
-  native_decide
+  decide
 
 -- ════════════════════════════════════════════════════
 -- § 4. Key Contrasts
@@ -191,22 +191,22 @@ theorem goal_bias_stronger_than_subj_bias :
     Exp 3: 33 vs 10 (nonsubject, same-gender — strongest interaction cell). -/
 theorem exp1_goal_gt_source_subj :
     exp1_goal_subj_diff.percent > exp1_source_subj_diff.percent := by
-  native_decide
+  decide
 
 theorem exp2_goal_gt_source_nonsub :
     exp2_goal_nonsub_diff.percent > exp2_source_nonsub_diff.percent := by
-  native_decide
+  decide
 
 /-- Exp 3 strongest cell: nonsubject same-gender shows 33% vs 10%. -/
 theorem exp3_goal_gt_source_nonsub_same :
     exp3_goal_nonsub_same.percent > exp3_source_nonsub_same.percent := by
-  native_decide
+  decide
 
 /-- Subject > Nonsubject in pronoun rate (orthogonal to thematic role).
     Exp 1: 64 vs 31 for goals. -/
 theorem exp1_subj_gt_nonsub :
     exp1_goal_subj_diff.percent > exp1_goal_nonsub_diff.percent := by
-  native_decide
+  decide
 
 -- ════════════════════════════════════════════════════
 -- § 5. Coherence Relation Interaction (Exp 2)
@@ -237,7 +237,7 @@ def other_interaction : CoherenceInteraction :=
 theorem coherence_amplifies_goal_bias :
     occasionResult_interaction.goalSourceBeta >
     other_interaction.goalSourceBeta := by
-  native_decide
+  decide
 
 -- ════════════════════════════════════════════════════
 -- § 6. Kehler & Rohde Two-Component Model
@@ -320,12 +320,12 @@ theorem result_is_cause_effect :
 theorem pronoun_more_reduced :
     AccessibilityLevel.unstressedPron.rank >
     AccessibilityLevel.fullName.rank := by
-  native_decide
+  decide
 
 theorem pronoun_at_most_as_heavy :
     AccessibilityLevel.typicalWeight .unstressedPron ≤
     AccessibilityLevel.typicalWeight .fullName := by
-  native_decide
+  decide
 
 -- ════════════════════════════════════════════════════
 -- § 10. Cross-Study Bridge: [arnold-wasow-losongco-ginstrom-2000]
@@ -346,7 +346,7 @@ open ArnoldEtAl2000 Constraints
 theorem goal_more_reduced_than_source :
     (transferNextMention .goal).predictedForm.rank >
     (transferNextMention .source).predictedForm.rank := by
-  native_decide
+  decide
 
 /-- [arnold-wasow-losongco-ginstrom-2000] show that heaviness and
     newness BOTH independently predict ordering. [rosa-arnold-2017]
@@ -376,7 +376,7 @@ theorem dual_path_to_ordering :
     -- Path 2 (newness) independently predicts in Arnold et al.'s MaxEnt model
     harmonyDominates con (gW 0 1)
       (newThemeContrast, .themeLast) (newThemeContrast, .goalLast) := by
-  refine ⟨by decide, by native_decide, ?_, ?_⟩
+  refine ⟨by decide, by decide, ?_, ?_⟩
   · -- Path 1: heaviness alone, goal heavier than theme → goal-last more probable
     exact heavy_goal_predicts_goalLast
   · -- Path 2: newness alone, theme new + goal given → theme-last more probable
@@ -401,8 +401,7 @@ open KehlerRohde2013
     syntactic construction.
 
     **Substrate-level explanation**:
-    `KehlerRohde2013.cb_topichood_dissociation_under_voice` (§12 of
-    `Studies/KehlerRohde2013.lean`) exhibits the
+    `KehlerRohde2013.cb_topichood_dissociation_under_voice` exhibits the
     structural reason: under Kameyama's GR ranker, Centering's `cb` is
     voice-blind, so any pronominalization gradient between active and
     passive subjects must be carried by a signal external to `cb` —
@@ -414,7 +413,7 @@ theorem independence_violated_bridges_to_KR :
     -- Rosa & Arnold: goals get more pronouns than sources (same position)
     exp1_goal_subj_diff.percent > exp1_source_subj_diff.percent := by
   refine ⟨by norm_num [pronPassiveSubj, pronActiveSubj], ?_⟩
-  native_decide
+  decide
 
 /-- K&R's Table 2 shows that Occasion and Result are Goal-biased
     (18% and 8% Source respectively). This study's Exp 2 coherence

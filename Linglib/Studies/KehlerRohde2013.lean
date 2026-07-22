@@ -4,6 +4,7 @@ import Linglib.Discourse.Coherence
 import Linglib.Data.UD.Basic
 import Linglib.Discourse.Centering.Rule1
 import Linglib.Discourse.Centering.Instances.GrammaticalRole
+import Linglib.Features.Accessibility
 
 /-!
 # Pronoun interpretation: coherence vs. centering [kehler-rohde-2013]
@@ -24,6 +25,9 @@ experiments with transfer-of-possession and implicit-causality verbs.
 * `topichood`, `TopichoodLevel`: voice and surface position to topichood, the
   centering-driven likelihood term.
 * `bayesianPrediction`: Bayesian inversion to `P(Subject | pronoun)` (Eq. (13)).
+* `NextMentionModel.toBias`: coarsening of the prior to the two-point
+  `Features.NextMentionBias`, with `expectancy_reversed_under_voice` refuting the
+  expectancy hypothesis the substrate's `predictedForm` encodes.
 * `cb_topichood_dissociation_under_voice`: Centering's backward-looking center is
   voice-blind where `topichood` is voice-sensitive.
 
@@ -441,6 +445,47 @@ theorem eq13_active_exceeds_passive :
   norm_num [bayesianPrediction, nmActiveNoPron, nmPassiveNoPron,
     pronActiveSubj, pronActiveNonSubj, pronPassiveSubj, pronPassiveNonSubj]
 
+/-! ### Expectancy coarsening -/
+
+/-- Coarsen a next-mention rate (a percentage) to the two-point
+    `Features.NextMentionBias` by thresholding at 50%. -/
+def biasOfRate (p : ℚ) : Features.NextMentionBias :=
+  if 50 < p then .high else .low
+
+/-- The Bayesian prior coarsened to the two-point substrate bias:
+    `Features.NextMentionBias` is the sign of `sourceBias − 50`. -/
+def NextMentionModel.toBias (m : NextMentionModel) : Features.NextMentionBias :=
+  biasOfRate m.sourceBias
+
+/-- The "Why?" mixture coarsens to `.high` (Source-biased). -/
+theorem whyModel_toBias : whyModel.toBias = .high := by
+  simp only [NextMentionModel.toBias, biasOfRate, NextMentionModel.sourceBias,
+    whyModel, sharedBias, CoherenceRelation.all, List.foldl_cons, List.foldl_nil]
+  norm_num
+
+/-- The "What next?" mixture coarsens to `.low` (Goal-biased). -/
+theorem whatNextModel_toBias : whatNextModel.toBias = .low := by
+  simp only [NextMentionModel.toBias, biasOfRate, NextMentionModel.sourceBias,
+    whatNextModel, sharedBias, CoherenceRelation.all, List.foldl_cons, List.foldl_nil]
+  norm_num
+
+/-- **Expectancy refuted at the voice manipulation.** Thresholding the
+    no-pronoun next-mention rates (Table 7, passive) gives the by-phrase
+    referent a `.high` bias and the passive subject a `.low` bias, so the
+    expectancy hypothesis — encoded in the substrate as
+    `Features.NextMentionBias.predictedForm` — predicts the by-phrase
+    referent surfaces in the *more reduced* form. The observed
+    pronominalization rates (Table 9) run the other way: 23% for the
+    by-phrase vs. 87% for the subject. Production tracks topichood
+    (`topichood_monotone`), not next-mention bias. -/
+theorem expectancy_reversed_under_voice :
+    (biasOfRate nmPassiveNoPron).predictedForm.rank >
+      (biasOfRate (100 - nmPassiveNoPron)).predictedForm.rank ∧
+    pronPassiveNonSubj < pronPassiveSubj := by
+  refine ⟨?_, by norm_num [pronPassiveNonSubj, pronPassiveSubj]⟩
+  norm_num [biasOfRate, nmPassiveNoPron, Features.NextMentionBias.predictedForm,
+    Features.AccessibilityLevel.rank]
+
 /-! ### Coherence–referent bridge -/
 
 /-- The two Goal-biased CRs (Occasion, Result) both focus on what happens *after*
@@ -479,9 +524,7 @@ is invariant under voice — both `(Amanda, SUBJ) (Brittany, OBJ)` and
 `(Amanda, SUBJ) (Brittany, OTHER-by-phrase)` make Amanda the most-preferred Cf —
 yet `topichood` distinguishes them (passive subject `.strong`, active subject
 `.default_`). The voice-induced pronominalization gradient (87% vs. 62%) lives in
-the topichood signal, not the CB signal; this dissociation is the structural
-reason `RosaArnold2017.independence_violated_bridges_to_KR` finds the Independence
-Hypothesis empirically violatable. -/
+the topichood signal, not the CB signal. -/
 
 section CenteringBridge
 
