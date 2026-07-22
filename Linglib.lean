@@ -619,6 +619,7 @@ import Linglib.Data.WALS.Features.F98A
 import Linglib.Data.WALS.Features.F99A
 import Linglib.Data.WALS.Features.F9A
 import Linglib.Data.WALS.Languages
+import Linglib.Discourse.Accessibility
 import Linglib.Discourse.Centering.Basic
 import Linglib.Discourse.Centering.Defs
 import Linglib.Discourse.Centering.Instances.GrammaticalRole
@@ -640,7 +641,6 @@ import Linglib.Discourse.QUD.Issue
 import Linglib.Discourse.Roles
 import Linglib.Discourse.SpeechAct
 import Linglib.Features.Acceptability
-import Linglib.Features.Accessibility
 import Linglib.Features.Agreement
 import Linglib.Features.Aktionsart
 import Linglib.Features.AnsweringSystem

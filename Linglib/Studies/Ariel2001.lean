@@ -1,4 +1,4 @@
-import Linglib.Features.Accessibility
+import Linglib.Discourse.Accessibility
 import Linglib.Syntax.Category.Pronoun.Basic
 import Linglib.Features.Givenness
 
@@ -20,10 +20,10 @@ of multiple factors.
 
 ## The Accessibility Marking Scale
 
-The 18-level `AccessibilityLevel` type (defined in `Features/Accessibility.lean`)
-encodes Ariel's ordering. This study file adds the three form-function criteria
-(informativity, rigidity, attenuation), the multi-factor accessibility assessment,
-and comparisons with competing theories.
+The 18-level `AccessibilityLevel` type and its three form-function criteria
+(informativity, rigidity, attenuation) live in `Discourse/Accessibility.lean`.
+This study file adds the multi-factor accessibility assessment and
+comparisons with competing theories.
 
 ## Form-Function Criteria
 
@@ -51,74 +51,11 @@ more comprehensive than Centering Theory (which handles only the pronoun/full-NP
 distinction, not the full range of referring expressions).
 -/
 
-set_option autoImplicit false
-
--- Extend the Features namespace with study-specific form-function criteria.
--- This enables dot notation (e.g., AccessibilityLevel.zero.informativity).
-namespace Features
-
-/-- Informativity: approximate lexical content, encoded as an ordinal
-    ranking (0–4). Anti-correlated with accessibility (more informative
-    → lower rank). Values are illustrative, encoding the relative ordering
-    described in [ariel-2001] (p. 32), not exact content-word counts. -/
-def AccessibilityLevel.informativity : AccessibilityLevel → Nat
-  | .fullNameMod                              => 4
-  | .fullName | .longDefDescription           => 3
-  | .shortDefDescription | .distalDemMod
-  | .proxDemMod                               => 2
-  | .lastName | .firstName | .distalDemNP
-  | .proxDemNP | .distalDem | .proxDem
-  | .stressedPronGesture | .stressedPron
-  | .unstressedPron                           => 1
-  | .cliticizedPron | .verbalAgreement | .zero => 0
-
-/-- Rigidity: the ability to uniquely pick out a referent from
-    form alone, independent of context. Anti-correlated with
-    accessibility (more rigid → lower accessibility).
-
-    Proper names are rigid designators (Kripke): they pick out
-    the same individual regardless of context. Definite descriptions
-    are descriptive but context-dependent. Pronouns and zeros
-    carry only person/number/gender features and are maximally
-    non-rigid. -/
-def AccessibilityLevel.rigidity : AccessibilityLevel → Nat
-  | .fullNameMod | .fullName | .lastName | .firstName  => 2
-  | .longDefDescription | .shortDefDescription
-  | .distalDemMod | .proxDemMod
-  | .distalDemNP | .proxDemNP                          => 1
-  | .distalDem | .proxDem
-  | .stressedPronGesture | .stressedPron | .unstressedPron
-  | .cliticizedPron | .verbalAgreement | .zero          => 0
-
-/-- Attenuation: degree of phonological reduction.
-    Positively correlated with accessibility. 0 = full, 5 = zero.
-    Cliticized pronouns are shortened free pronouns ([ariel-2001] note 6);
-    verbal agreement inflections are bound morphemes, more reduced
-    still; zero has no phonological material. -/
-def AccessibilityLevel.attenuation : AccessibilityLevel → Nat
-  | .fullNameMod | .fullName | .longDefDescription
-  | .shortDefDescription | .lastName | .firstName
-  | .distalDemMod | .proxDemMod                     => 0
-  | .distalDemNP | .proxDemNP | .distalDem | .proxDem
-  | .stressedPronGesture | .stressedPron              => 1
-  | .unstressedPron                                   => 2
-  | .cliticizedPron                                   => 3
-  | .verbalAgreement                                  => 4
-  | .zero                                             => 5
-
-def AccessibilityLevel.all : List AccessibilityLevel :=
-  [.fullNameMod, .fullName, .longDefDescription, .shortDefDescription,
-   .lastName, .firstName, .distalDemMod, .proxDemMod,
-   .distalDemNP, .proxDemNP, .distalDem, .proxDem,
-   .stressedPronGesture, .stressedPron, .unstressedPron,
-   .cliticizedPron, .verbalAgreement, .zero]
-
-end Features
-
 namespace Ariel2001
 
 open Features.Prominence (DefinitenessLevel)
-open Features
+open Features (GivennessStatus)
+open Discourse
 
 -- ════════════════════════════════════════════════════
 -- § 1. Form-Function Criteria
@@ -182,7 +119,7 @@ def maximallyAccessible : AccessibilityAssessment := ⟨0, 2, 0, 2⟩
 def minimallyAccessible : AccessibilityAssessment := ⟨5, 0, 3, 0⟩
 
 theorem maximal_gt_minimal :
-    maximallyAccessible.score > minimallyAccessible.score := by native_decide
+    maximallyAccessible.score > minimallyAccessible.score := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 3. Non-Equivalence with DefinitenessLevel
@@ -198,8 +135,8 @@ theorem maximal_gt_minimal :
     (more informative) but more prominent (higher on the DOM hierarchy). -/
 theorem coarsening_not_monotone :
     AccessibilityLevel.fullName.rank < AccessibilityLevel.longDefDescription.rank ∧
-    AccessibilityLevel.fullName.toDefLevel.rank >
-      AccessibilityLevel.longDefDescription.toDefLevel.rank := by
+    AccessibilityLevel.fullName.toDefinitenessLevel.rank >
+      AccessibilityLevel.longDefDescription.toDefinitenessLevel.rank := by
   decide
 
 -- ════════════════════════════════════════════════════
@@ -227,24 +164,19 @@ theorem strengthToAccessibility_antitone {a b : Strength}
 
 /-- All three pronoun strengths coarsen to the same definiteness level. -/
 theorem strength_coarsening_agrees :
-    (strengthToAccessibility .strong).toDefLevel = DefinitenessLevel.personalPronoun ∧
-    (strengthToAccessibility .weak).toDefLevel = DefinitenessLevel.personalPronoun ∧
-    (strengthToAccessibility .clitic).toDefLevel = DefinitenessLevel.personalPronoun :=
+    (strengthToAccessibility .strong).toDefinitenessLevel = DefinitenessLevel.personalPronoun ∧
+    (strengthToAccessibility .weak).toDefinitenessLevel = DefinitenessLevel.personalPronoun ∧
+    (strengthToAccessibility .clitic).toDefinitenessLevel = DefinitenessLevel.personalPronoun :=
   ⟨rfl, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
 -- § 5. Givenness Hierarchy ([gundel-hedberg-zacharski-1993])
 -- ════════════════════════════════════════════════════
 
--- `GivennessStatus`, `GivennessStatus.rank`, and the Ariel-specific
--- `GivennessStatus.toAccessibility` projection were promoted to the
--- substrate layer (`Features/Givenness.lean`,
--- `Features/Accessibility.lean`) so Centering and other substrate
--- consumers can import them. The theorems below consume the promoted
--- projection.
-
-open Features.Prominence (DefinitenessLevel)
-open Features
+-- `GivennessStatus`, `GivennessStatus.rank`, and the
+-- `GivennessStatus.toAccessibility` projection live in the substrate
+-- layer (`Features/Givenness.lean`, `Discourse/Accessibility.lean`);
+-- the theorems below consume the substrate projection.
 
 /-- The Givenness→Accessibility mapping IS monotone: higher givenness
     status maps to higher or equal accessibility rank. The Givenness
@@ -255,7 +187,7 @@ theorem givenness_coarsening_monotone :
     all.all (λ a => all.all (λ b =>
       if a.rank > b.rank then
         a.toAccessibility.rank ≥ b.toAccessibility.rank
-      else true)) = true := by native_decide
+      else true)) = true := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 6. Ariel's Critique: Coarsening Loses Distinctions
@@ -270,10 +202,10 @@ theorem givenness_coarsening_monotone :
     pattern." -/
 theorem givenness_collapses_pronominal_distinctions :
     -- All four are "in focus" on the Givenness Hierarchy (all pronominal)
-    AccessibilityLevel.unstressedPron.toDefLevel = .personalPronoun ∧
-    AccessibilityLevel.cliticizedPron.toDefLevel = .personalPronoun ∧
-    AccessibilityLevel.verbalAgreement.toDefLevel = .personalPronoun ∧
-    AccessibilityLevel.zero.toDefLevel = .personalPronoun ∧
+    AccessibilityLevel.unstressedPron.toDefinitenessLevel = .personalPronoun ∧
+    AccessibilityLevel.cliticizedPron.toDefinitenessLevel = .personalPronoun ∧
+    AccessibilityLevel.verbalAgreement.toDefinitenessLevel = .personalPronoun ∧
+    AccessibilityLevel.zero.toDefinitenessLevel = .personalPronoun ∧
     -- Yet they have four distinct accessibility ranks
     AccessibilityLevel.zero.rank > AccessibilityLevel.verbalAgreement.rank ∧
     AccessibilityLevel.verbalAgreement.rank > AccessibilityLevel.cliticizedPron.rank ∧

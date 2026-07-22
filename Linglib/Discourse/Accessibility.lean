@@ -7,23 +7,21 @@ import Mathlib.Tactic.DeriveFintype
 
 `AccessibilityLevel`: the 18-tier Accessibility Marking Scale of [ariel-1990],
 reproduced in [ariel-2001]'s overview (least accessible `fullNameMod` to most
-accessible `zero`), with `rank` (and the `LinearOrder` it induces), the
-coarsening `toDefLevel` to `Prominence.DefinitenessLevel`, and the
+accessible `zero`), with `rank` (and the `LinearOrder` it induces), the three
+form-function criteria (`informativity`, `rigidity`, `attenuation`), the
+coarsening `toDefinitenessLevel` to `Prominence.DefinitenessLevel`, and the
 form-correlate bridge `GivennessStatus.toAccessibility`.
 
 Accessibility and definiteness are **non-monotonically** related (full
 names are less accessible than definite descriptions, yet first/last names
 are more accessible; names are also more prominent for DOM), so they are
-separate types and `toDefLevel` is many-to-one and non-monotone.
+separate types and `toDefinitenessLevel` is many-to-one and non-monotone.
 
 Sibling of `Features/Givenness.lean` (GHZ-6): this classifies *forms*,
-`GivennessStatus` classifies *entities*. Also here: `NextMentionBias` and a
-`typicalWeight` NP-weight correlate ([arnold-wasow-losongco-ginstrom-2000]).
+`GivennessStatus` classifies *entities*. Also here: `NextMentionBias`.
 -/
 
-set_option autoImplicit false
-
-namespace Features
+namespace Discourse
 
 open Features.Prominence (DefinitenessLevel)
 
@@ -99,11 +97,61 @@ instance : LinearOrder AccessibilityLevel :=
   LinearOrder.lift' AccessibilityLevel.rank
     (fun a b h => by cases a <;> cases b <;> simp_all [AccessibilityLevel.rank])
 
+/-! ### Form-function criteria -/
+
+/-- Informativity: approximate lexical content, encoded as an ordinal
+    ranking (0–4). Anti-correlated with accessibility (more informative
+    → lower rank). Values are illustrative, encoding the relative ordering
+    described in [ariel-2001], not exact content-word counts. -/
+def AccessibilityLevel.informativity : AccessibilityLevel → Nat
+  | .fullNameMod                              => 4
+  | .fullName | .longDefDescription           => 3
+  | .shortDefDescription | .distalDemMod
+  | .proxDemMod                               => 2
+  | .lastName | .firstName | .distalDemNP
+  | .proxDemNP | .distalDem | .proxDem
+  | .stressedPronGesture | .stressedPron
+  | .unstressedPron                           => 1
+  | .cliticizedPron | .verbalAgreement | .zero => 0
+
+/-- Rigidity: the ability to uniquely pick out a referent from
+    form alone, independent of context. Anti-correlated with
+    accessibility. Proper names are rigid designators; definite
+    descriptions are descriptive but context-dependent; pronouns and
+    zeros carry only person/number/gender features and are maximally
+    non-rigid. -/
+def AccessibilityLevel.rigidity : AccessibilityLevel → Nat
+  | .fullNameMod | .fullName | .lastName | .firstName  => 2
+  | .longDefDescription | .shortDefDescription
+  | .distalDemMod | .proxDemMod
+  | .distalDemNP | .proxDemNP                          => 1
+  | .distalDem | .proxDem
+  | .stressedPronGesture | .stressedPron | .unstressedPron
+  | .cliticizedPron | .verbalAgreement | .zero          => 0
+
+/-- Attenuation: degree of phonological reduction, positively correlated
+    with accessibility (0 = full, 5 = zero). Cliticized pronouns are
+    shortened free pronouns; verbal agreement inflections are bound
+    morphemes, more reduced still; zero has no phonological material
+    ([ariel-2001]). -/
+def AccessibilityLevel.attenuation : AccessibilityLevel → Nat
+  | .fullNameMod | .fullName | .longDefDescription
+  | .shortDefDescription | .lastName | .firstName
+  | .distalDemMod | .proxDemMod                     => 0
+  | .distalDemNP | .proxDemNP | .distalDem | .proxDem
+  | .stressedPronGesture | .stressedPron              => 1
+  | .unstressedPron                                   => 2
+  | .cliticizedPron                                   => 3
+  | .verbalAgreement                                  => 4
+  | .zero                                             => 5
+
+/-! ### Definiteness coarsening -/
+
 /-- Coarsening: each accessibility level maps to one of the 5
     `DefinitenessLevel` categories used for differential argument marking.
     This is a many-to-one, **non-monotone** mapping — names are less
     accessible than definite descriptions but more prominent for DOM. -/
-def AccessibilityLevel.toDefLevel : AccessibilityLevel → DefinitenessLevel
+def AccessibilityLevel.toDefinitenessLevel : AccessibilityLevel → DefinitenessLevel
   | .fullNameMod | .fullName | .lastName | .firstName  => .properName
   | .longDefDescription | .shortDefDescription
   | .distalDemMod | .proxDemMod | .distalDemNP
@@ -134,22 +182,6 @@ def NextMentionBias.predictedForm : NextMentionBias → AccessibilityLevel
   | .high => .unstressedPron
   | .low  => .fullName
 
-/-! ### Weight bridge -/
-
-/-- Approximate word count of a typical instance of each form: the NP-weight
-    correlate of reduction ([arnold-wasow-losongco-ginstrom-2000]), connecting
-    form choice to constituent ordering (heavy-NP shift). -/
-def AccessibilityLevel.typicalWeight : AccessibilityLevel → Nat
-  | .fullNameMod | .longDefDescription        => 4
-  | .distalDemMod | .proxDemMod               => 3
-  | .fullName | .shortDefDescription
-  | .distalDemNP | .proxDemNP                 => 2
-  | .lastName | .firstName
-  | .distalDem | .proxDem
-  | .stressedPronGesture | .stressedPron
-  | .unstressedPron | .cliticizedPron         => 1
-  | .verbalAgreement | .zero                  => 0
-
 /-! ### Givenness projection -/
 
 /-- Prototypical accessibility level for each givenness status. The four
@@ -161,7 +193,8 @@ def AccessibilityLevel.typicalWeight : AccessibilityLevel → Nat
     form identity. [ariel-2001] criticizes the givenness hierarchy (no
     evidence for scalar distinctions below its top statuses) rather than
     endorsing such a projection. -/
-def GivennessStatus.toAccessibility : GivennessStatus → AccessibilityLevel
+def _root_.Features.GivennessStatus.toAccessibility :
+    Features.GivennessStatus → AccessibilityLevel
   | .inFocus              => .unstressedPron
   | .activated            => .proxDem
   | .familiar             => .distalDemNP
@@ -169,4 +202,4 @@ def GivennessStatus.toAccessibility : GivennessStatus → AccessibilityLevel
   | .referential          => .longDefDescription
   | .typeIdentifiable     => .fullNameMod
 
-end Features
+end Discourse

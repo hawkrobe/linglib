@@ -1,6 +1,6 @@
 import Linglib.Semantics.ArgumentStructure.Linking
 import Linglib.Discourse.Coherence
-import Linglib.Features.Accessibility
+import Linglib.Discourse.Accessibility
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Studies.ArnoldEtAl2000
 import Linglib.Studies.KehlerRohde2013
@@ -63,7 +63,7 @@ Both are production choices along the same NP weight/reduction dimension.
 namespace RosaArnold2017
 
 open Discourse.Coherence
-open Features
+open Discourse
 open Features.Prominence
 
 -- ════════════════════════════════════════════════════
@@ -303,6 +303,20 @@ theorem result_is_cause_effect :
 -- ════════════════════════════════════════════════════
 -- § 9. Production–Ordering Bridge
 -- ════════════════════════════════════════════════════
+
+/-- Approximate word count of a typical instance of each form: the NP-weight
+    correlate of reduction ([arnold-wasow-losongco-ginstrom-2000]), connecting
+    form choice to constituent ordering (heavy-NP shift). -/
+def _root_.Discourse.AccessibilityLevel.typicalWeight :
+    Discourse.AccessibilityLevel → Nat
+  | .fullNameMod | .longDefDescription        => 4
+  | .distalDemMod | .proxDemMod               => 3
+  | .fullName | .shortDefDescription
+  | .distalDemNP | .proxDemNP                 => 2
+  | .lastName | .firstName | .distalDem | .proxDem
+  | .stressedPronGesture | .stressedPron
+  | .unstressedPron | .cliticizedPron         => 1
+  | .verbalAgreement | .zero                  => 0
 
 /-- The same transfer verb "give" is studied for both referential form
     ([rosa-arnold-2017]) and constituent ordering

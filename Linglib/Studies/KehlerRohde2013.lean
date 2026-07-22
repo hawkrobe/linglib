@@ -4,7 +4,7 @@ import Linglib.Discourse.Coherence
 import Linglib.Data.UD.Basic
 import Linglib.Discourse.Centering.Pronominalization
 import Linglib.Discourse.Centering.Instances.GrammaticalRole
-import Linglib.Features.Accessibility
+import Linglib.Discourse.Accessibility
 
 /-!
 # Pronoun interpretation: coherence vs. centering [kehler-rohde-2013]
@@ -26,7 +26,7 @@ experiments with transfer-of-possession and implicit-causality verbs.
   centering-driven likelihood term.
 * `bayesianPrediction`: Bayesian inversion to `P(Subject | pronoun)` (Eq. (13)).
 * `NextMentionModel.toBias`: coarsening of the prior to the two-point
-  `Features.NextMentionBias`, with `expectancy_reversed_under_voice` refuting the
+  `Discourse.NextMentionBias`, with `expectancy_reversed_under_voice` refuting the
   expectancy hypothesis the substrate's `predictedForm` encodes.
 * `cb_topichood_dissociation_under_voice`: Centering's backward-looking center is
   voice-blind where `topichood` is voice-sensitive.
@@ -448,13 +448,13 @@ theorem eq13_active_exceeds_passive :
 /-! ### Expectancy coarsening -/
 
 /-- Coarsen a next-mention rate (a percentage) to the two-point
-    `Features.NextMentionBias` by thresholding at 50%. -/
-def biasOfRate (p : ℚ) : Features.NextMentionBias :=
+    `Discourse.NextMentionBias` by thresholding at 50%. -/
+def biasOfRate (p : ℚ) : Discourse.NextMentionBias :=
   if 50 < p then .high else .low
 
 /-- The Bayesian prior coarsened to the two-point substrate bias:
-    `Features.NextMentionBias` is the sign of `sourceBias − 50`. -/
-def NextMentionModel.toBias (m : NextMentionModel) : Features.NextMentionBias :=
+    `Discourse.NextMentionBias` is the sign of `sourceBias − 50`. -/
+def NextMentionModel.toBias (m : NextMentionModel) : Discourse.NextMentionBias :=
   biasOfRate m.sourceBias
 
 /-- The "Why?" mixture coarsens to `.high` (Source-biased). -/
@@ -473,7 +473,7 @@ theorem whatNextModel_toBias : whatNextModel.toBias = .low := by
     no-pronoun next-mention rates (Table 7, passive) gives the by-phrase
     referent a `.high` bias and the passive subject a `.low` bias, so the
     expectancy hypothesis — encoded in the substrate as
-    `Features.NextMentionBias.predictedForm` — predicts the by-phrase
+    `Discourse.NextMentionBias.predictedForm` — predicts the by-phrase
     referent surfaces in the *more reduced* form. The observed
     pronominalization rates (Table 9) run the other way: 23% for the
     by-phrase vs. 87% for the subject. Production tracks topichood
@@ -483,8 +483,8 @@ theorem expectancy_reversed_under_voice :
       (biasOfRate (100 - nmPassiveNoPron)).predictedForm.rank ∧
     pronPassiveNonSubj < pronPassiveSubj := by
   refine ⟨?_, by norm_num [pronPassiveNonSubj, pronPassiveSubj]⟩
-  norm_num [biasOfRate, nmPassiveNoPron, Features.NextMentionBias.predictedForm,
-    Features.AccessibilityLevel.rank]
+  norm_num [biasOfRate, nmPassiveNoPron, Discourse.NextMentionBias.predictedForm,
+    Discourse.AccessibilityLevel.rank]
 
 /-! ### Coherence–referent bridge -/
 
