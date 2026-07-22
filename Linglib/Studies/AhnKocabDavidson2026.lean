@@ -48,7 +48,7 @@ set_option autoImplicit false
 
 namespace AhnKocabDavidson2026
 
-open Features (AccessibilityLevel)
+open Discourse (AccessibilityLevel)
 open Pragmatics.GriceanMaxims
 open Pragmatics.Expressives (TwoDimProp)
 

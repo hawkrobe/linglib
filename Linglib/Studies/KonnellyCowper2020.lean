@@ -1,7 +1,6 @@
 import Linglib.Morphology.DM.Categorizer
 import Linglib.Morphology.DM.VocabularyInsertion
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
-import Linglib.Features.Accessibility
 import Linglib.Fragments.English.Pronouns
 
 /-!

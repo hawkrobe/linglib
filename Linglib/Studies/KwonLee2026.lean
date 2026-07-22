@@ -3,7 +3,7 @@ import Mathlib.Tactic.NormNum
 import Linglib.Discourse.Centering.Basic
 import Linglib.Discourse.Centering.Pronominalization
 import Linglib.Discourse.Centering.Instances.GrammaticalRole
-import Linglib.Features.Accessibility
+import Linglib.Discourse.Accessibility
 import Linglib.Studies.Ariel2001
 import Linglib.Studies.KehlerRohde2013
 import Linglib.Fragments.Korean.Pronouns
@@ -31,7 +31,7 @@ inequalities. Bridges to [kehler-rohde-2013] (topichood),
 
 namespace KwonLee2026
 
-open Features
+open Discourse
 
 -- ════════════════════════════════════════════════════
 -- § 1. Korean Referential Forms
