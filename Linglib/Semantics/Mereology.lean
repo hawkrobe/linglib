@@ -235,9 +235,9 @@ def IsSumHom.toSupHom {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
   map_sup' := hf.map_sup
 
 /-- Every Mathlib `SupHom` satisfies `IsSumHom`. -/
-@[reducible] def SupHom.toIsSumHom {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
-    (f : SupHom α β) : IsSumHom f.toFun where
-  map_sup := f.map_sup'
+theorem SupHom.toIsSumHom {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
+    (f : SupHom α β) : IsSumHom f.toFun :=
+  ⟨f.map_sup'⟩
 
 /-- Sum homomorphisms are order-preserving (monotone).
     If x ≤ y then f(x) ≤ f(y). -/
@@ -525,7 +525,7 @@ def gHomogeneous {α : Type*} [PartialOrder α] (P : α → Prop) : Prop :=
     a fortiori every proper part has a P-part (itself). -/
 theorem div_implies_gHomogeneous {α : Type*} [PartialOrder α]
     {P : α → Prop} (hDiv : DIV P) : gHomogeneous P :=
-  fun x y hPx hlt => ⟨y, le_refl y, hDiv (le_of_lt hlt) hPx⟩
+  fun _ y hPx hlt => ⟨y, le_refl y, hDiv (le_of_lt hlt) hPx⟩
 
 def FakeMass {α : Type*} [SemilatticeSup α] (P : α → Prop) : Prop :=
   CUM P ∧ ¬ gHomogeneous P
@@ -583,7 +583,7 @@ theorem overlapPred_union_of_maxDisjoint_ne {D₁ D₂ P : Set α}
   obtain ⟨x, hx₂, hx₁⟩ | ⟨x, hx₁, hx₂⟩ :
       (∃ x, x ∈ D₂ ∧ x ∉ D₁) ∨ (∃ x, x ∈ D₁ ∧ x ∉ D₂) := by
     by_contra hcon
-    push_neg at hcon
+    push Not at hcon
     exact hne (Set.Subset.antisymm hcon.2 hcon.1)
   · exact overlapPred_mono ov
       (Set.insert_subset_iff.mpr ⟨Or.inr hx₂, fun a ha => Or.inl ha⟩)
@@ -599,7 +599,7 @@ theorem overlapPred_nullSchema {D₁ D₂ P : Set α}
     (h₁ : IsMaxDisjointIn ov D₁ P) (h₂ : IsMaxDisjointIn ov D₂ P)
     (hne : D₁ ≠ D₂) : OverlapPred ov (nullSchema ov P) :=
   overlapPred_mono ov
-    (Set.union_subset (fun a ha => ⟨D₁, h₁, ha⟩) (fun a ha => ⟨D₂, h₂, ha⟩))
+    (Set.union_subset (fun _ ha => ⟨D₁, h₁, ha⟩) (fun _ ha => ⟨D₂, h₂, ha⟩))
     (overlapPred_union_of_maxDisjoint_ne ov h₁ h₂ hne)
 
 /-- A disjoint predicate is its own unique perspective: the null schema
@@ -695,7 +695,7 @@ class MereoDim {α β : Type*} [PartialOrder α] [PartialOrder β]
   /-- The underlying strict monotonicity proof. -/
   toStrictMono : StrictMono d
 
-@[reducible] def MereoDim.ofInjSumHom {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
+theorem MereoDim.ofInjSumHom {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
     {f : α → β} [hf : IsSumHom f] (hinj : Function.Injective f) : MereoDim f :=
   ⟨hf.strictMono_of_injective hinj⟩
 
@@ -734,7 +734,7 @@ variable {Source Inter Measure : Type*}
     {f : Source → Inter} {μ : Inter → Measure}
 
 /-- The composed map is a MereoDim. -/
-@[reducible] def composed (dc : DimensionChain f μ) : MereoDim (μ ∘ f) :=
+theorem composed (dc : DimensionChain f μ) : MereoDim (μ ∘ f) :=
   MereoDim.comp dc.leg₂ dc.leg₁
 
 theorem cum_measure_unbounded {α : Type*} [SemilatticeSup α]

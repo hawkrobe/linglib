@@ -601,12 +601,10 @@ def ingFieldSCM : IndexicalField INGVariant SocialDimension where
 theorem ingFieldSCM_signs_match_ingField :
     (∀ d : SocialDimension, ingFieldSCM.association .velar d ≥ 0) ∧
     (∀ d : SocialDimension, ingFieldSCM.association .apical d ≤ 0) := by
-  constructor <;> intro d <;> cases d <;> native_decide
+  constructor <;> intro d <;> cases d <;> decide
 
 /-- The (ING) field grounded in the SCM property space via
-    `fromIndexicalField`. This is the same bridge used by
-    [beltrama-schwarz-2024] and [beltrama-solt-burnett-2022]
-    for round/precise number variants. -/
+    `fromIndexicalField`. -/
 def ingGroundedField : GroundedField INGVariant scmSpace :=
   fromIndexicalField ingFieldSCM
 

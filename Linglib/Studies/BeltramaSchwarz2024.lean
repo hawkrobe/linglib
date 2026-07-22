@@ -3,7 +3,7 @@ import Linglib.Semantics.Quantification.Numerals.Precision
 import Linglib.Pragmatics.SocialMeaning.IndexicalField
 import Linglib.Pragmatics.SocialMeaning.SCM
 import Linglib.Pragmatics.SocialMeaning.EckertMontague
-import Linglib.Studies.BeltramaSoltBurnett2022
+import Linglib.Studies.BeltramaSoltBurnett2023
 import Linglib.Data.Examples.BeltramaSchwarz2024
 import Mathlib.Data.Sign.Defs
 import Mathlib.Tactic.NormNum
@@ -284,8 +284,8 @@ theorem roundness_gates_persona :
 /-- [beltrama-solt-burnett-2023]'s round stimulus (50) is the same kind of
     object: a round numeral whose precision resolution is under study. -/
 theorem bsb_stim_also_round :
-    impreciseReadingAvailable BeltramaSoltBurnett2022.stimRound :=
-  div10_enables_imprecision BeltramaSoltBurnett2022.stimRound (by decide)
+    impreciseReadingAvailable BeltramaSoltBurnett2023.stimRound :=
+  div10_enables_imprecision BeltramaSoltBurnett2023.stimRound (by decide)
 
 /-! ### Speaker-modulated halo
 

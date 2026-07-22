@@ -76,7 +76,7 @@ noncomputable instance instIsSumHomσ (Loc Time : Type*) [LinearOrder Time]
 
 /-- σ with injectivity is a MereoDim: the spatial dimension is a
     mereological morphism, enabling QUA pullback through spatial paths. -/
-def σ_mereoDim {Loc Time : Type*} [LinearOrder Time]
+theorem σ_mereoDim {Loc Time : Type*} [LinearOrder Time]
     [Event.Mereology Time] [ClassicalMereology (Event Time)]
     [SemilatticeSup (Path Loc)] [st : Trace Loc Time]
     (hinj : Function.Injective st.σ) :
