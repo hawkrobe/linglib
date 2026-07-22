@@ -200,7 +200,7 @@ The two-threshold model for contrary antonyms: the general threshold semantics o
 through a `ThresholdPair`'s two poles. -/
 
 section TwoThreshold
-variable {max : Nat} (d : Degree max)
+variable {max : Nat} (d : Bounded max)
 
 /-- Contradictory negation *not happy* — `d ≤ θ` (`Degree.notPositiveMeaning`). -/
 abbrev contradictoryNeg (θ : Threshold max) : Prop := Degree.notPositiveMeaning d θ
@@ -210,7 +210,7 @@ abbrev contraryNeg (θ_neg : Threshold max) : Prop := Degree.negativeMeaning d �
 
 /-- The gap region: `d` is neither positive nor negative (`neg ≤ d ≤ pos`). -/
 abbrev inGapRegion (tp : ThresholdPair max) : Prop :=
-  (tp.neg : Degree max) ≤ d ∧ d ≤ (tp.pos : Degree max)
+  (tp.neg : Bounded max) ≤ d ∧ d ≤ (tp.pos : Bounded max)
 
 /-- Positive form *happy* at the pair's upper threshold — `d > pos`. -/
 abbrev positiveMeaning' (tp : ThresholdPair max) : Prop :=
@@ -222,7 +222,7 @@ abbrev contraryNegMeaning (tp : ThresholdPair max) : Prop :=
 
 /-- *not unhappy* — the complement of the negative form (`neg ≤ d`). -/
 abbrev notContraryNegMeaning (tp : ThresholdPair max) : Prop :=
-  (tp.neg : Degree max) ≤ d
+  (tp.neg : Bounded max) ≤ d
 
 end TwoThreshold
 
@@ -427,27 +427,27 @@ def predictedBinding : Degree.PositiveStandard → DimensionBindingType
 
 /-! ### Degree–PolarMeasure bridge
 
-`Degree max` has `LinearOrder` and `BoundedOrder` (from `Core.MeasurementScale`), so the
+`Bounded max` has `LinearOrder` and `BoundedOrder` (from `Core.MeasurementScale`), so the
 abstract theorems in `MeasurementScale.lean` apply directly to concrete RSA degree
 computations. -/
 
-def adjMeasure {max : Nat} {W : Type*} (μ : W → Degree max)
-    (entry : GradableAdjective) : PolarMeasure (Degree max) W :=
+def adjMeasure {max : Nat} {W : Type*} (μ : W → Bounded max)
+    (entry : GradableAdjective) : PolarMeasure (Bounded max) W :=
   PolarMeasure.adjective μ entry.scaleType
 
-theorem closedAdj_licensed {max : Nat} {W : Type*} (μ : W → Degree max)
+theorem closedAdj_licensed {max : Nat} {W : Type*} (μ : W → Bounded max)
     (entry : GradableAdjective) (h : entry.scaleType = .closed) :
     (adjMeasure μ entry).IsLicensed := by
   simp [adjMeasure, PolarMeasure.adjective,
         PolarMeasure.IsLicensed, Boundedness.IsLicensed, h]
 
-theorem openAdj_blocked {max : Nat} {W : Type*} (μ : W → Degree max)
+theorem openAdj_blocked {max : Nat} {W : Type*} (μ : W → Bounded max)
     (entry : GradableAdjective) (h : entry.scaleType = .open_) :
     ¬ (adjMeasure μ entry).IsLicensed := by
   simp [adjMeasure, PolarMeasure.adjective,
         PolarMeasure.IsLicensed, Boundedness.IsLicensed, h]
 
-theorem degree_measure_is_id {max : Nat} {W : Type*} (μ : W → Degree max) :
+theorem degree_measure_is_id {max : Nat} {W : Type*} (μ : W → Bounded max) :
     (PolarMeasure.numeral μ).μ = μ :=
   rfl
 

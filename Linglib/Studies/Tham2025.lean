@@ -487,7 +487,7 @@ theorem scratch_adj_verb_scale_agree :
 
 /-- Disturbance adjectives are licensed for degree modification by the
     Kennedy pipeline, just like *full* and *clean*. -/
-theorem cracked_licensed {max : Nat} {W : Type*} (μ : W → Degree.Degree max) :
+theorem cracked_licensed {max : Nat} {W : Type*} (μ : W → Degree.Bounded max) :
     (adjMeasure μ Adjectival.cracked).IsLicensed :=
   closedAdj_licensed μ Adjectival.cracked rfl
 theorem cracked_pipeline_licensed :
@@ -624,7 +624,7 @@ theorem crack_refutes_strict_hkl_matrix :
     `Boundedness` level — both are `.closed`, hence both license degree
     modification. -/
 theorem cracked_licensing_converges_with_kennedy2007
-    {max : Nat} {W : Type*} (μ : W → Degree.Degree max) :
+    {max : Nat} {W : Type*} (μ : W → Degree.Bounded max) :
     (adjMeasure μ Adjectival.cracked).IsLicensed ↔
     (adjMeasure μ Adjectival.full).IsLicensed :=
   iff_of_true (closedAdj_licensed μ Adjectival.cracked rfl)

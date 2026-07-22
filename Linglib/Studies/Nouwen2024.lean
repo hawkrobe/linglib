@@ -580,11 +580,11 @@ end Nouwen2024.Intensifiers
 
 namespace RSA.Nouwen2024
 
--- Local scale: n=6 (Degree 6 = Fin 7, Threshold 6 = Fin 6). Norm = 3.
+-- Local scale: n=6 (Bounded 6 = Fin 7, Threshold 6 = Fin 6). Norm = 3.
 
 instance : NeZero (6 : Nat) := ⟨by omega⟩
 
-abbrev Height := Degree.Degree 6
+abbrev Height := Degree.Bounded 6
 abbrev Threshold := Degree.Threshold 6
 
 open Degree (deg thr)
@@ -677,7 +677,7 @@ private lemma muHorrible_eq (h : Height) :
     (Degree.Intensification.muHorrible 6).mu h.toNat =
     (muHorrible h : ℚ) := by
   unfold Degree.Intensification.muHorrible muHorrible
-  fin_cases h <;> simp [Degree.Degree.toNat] <;> norm_num
+  fin_cases h <;> simp [Degree.Bounded.toNat] <;> norm_num
 
 /--
 The local horribly_warm meaning agrees with theory-layer `intensifiedMeaning`
@@ -696,7 +696,7 @@ private lemma muPleasant_eq (h : Height) :
     (Degree.Intensification.muPleasant 6).mu h.toNat =
     (muPleasant h : ℚ) := by
   unfold Degree.Intensification.muPleasant muPleasant
-  fin_cases h <;> simp [Degree.Degree.toNat] <;> norm_num
+  fin_cases h <;> simp [Degree.Bounded.toNat] <;> norm_num
 
 /--
 The local pleasantly_warm meaning agrees with theory-layer `intensifiedMeaning`
@@ -1569,9 +1569,9 @@ drops strictly; the speaker value `gval` rises strictly (informativity). -/
 theorem evalMass_one_lt_zero : evalMass 1 < evalMass 0 := by
   refine ENNReal.tsum_lt_tsum (i := deg 2) (evalMass_ne_top 1) (fun h => ?_) ?_
   · fin_cases h <;>
-      simp [evalLex, evalMeaning, muHorrible, validToThreshold, Degree.Degree.toNat,
+      simp [evalLex, evalMeaning, muHorrible, validToThreshold, Degree.Bounded.toNat,
         Degree.Threshold.toNat]
-  · simp only [evalLex, evalMeaning, muHorrible, validToThreshold, Degree.Degree.toNat,
+  · simp only [evalLex, evalMeaning, muHorrible, validToThreshold, Degree.Bounded.toNat,
       Degree.Threshold.toNat, deg]
     norm_num
     exact pos_iff_ne_zero.mpr (heightPriorPMF_pos _)

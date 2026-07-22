@@ -43,7 +43,7 @@ is the existential dual of supervaluation. See
 
 namespace Fine1975
 
-open Degree (Degree Threshold Degree.toNat Threshold.toNat)
+open Degree (Bounded Threshold Bounded.toNat Threshold.toNat)
 open Degree (ThresholdPair inGapRegion)
 open Semantics.Supervaluation (SpecSpace superTrue definitely indefinite)
 
@@ -57,8 +57,8 @@ def mkSpec {max : Nat} (S : Finset (Threshold max)) (hne : S.Nonempty) :
   ⟨S, hne⟩
 
 /-- Supervaluation of a degree predicate: fix a degree, vary the threshold. -/
-def superTrueAt {max : Nat} (meaning : Degree max → Threshold max → Prop)
-    [∀ d θ, Decidable (meaning d θ)] (d : Degree max)
+def superTrueAt {max : Nat} (meaning : Bounded max → Threshold max → Prop)
+    [∀ d θ, Decidable (meaning d θ)] (d : Bounded max)
     (S : SpecSpace (Threshold max)) : Trivalent :=
   superTrue (meaning d) S
 
@@ -72,7 +72,7 @@ def superTrueAt {max : Nat} (meaning : Degree max → Threshold max → Prop)
     This captures Fine's internal penumbral connection: if Herbert is
     to be bald, then so is the man with fewer hairs (p. 276). -/
 theorem comparative_entailment {max : Nat}
-    (d₁ d₂ : Degree max) (S : SpecSpace (Threshold max))
+    (d₁ d₂ : Bounded max) (S : SpecSpace (Threshold max))
     (hgt : d₂.toNat < d₁.toNat)
     (hd₂ : superTrueAt (fun d θ => d.toNat > θ.toNat) d₂ S = Trivalent.true) :
     superTrueAt (fun d θ => d.toNat > θ.toNat) d₁ S = Trivalent.true := by
@@ -93,7 +93,7 @@ theorem comparative_entailment {max : Nat}
 
 /-- The tolerance premise fails at any threshold separating d from d'. -/
 theorem tolerance_fails_at_boundary {max : Nat}
-    (d d' : Degree max) (θ : Threshold max)
+    (d d' : Bounded max) (θ : Threshold max)
     (hd : d.toNat > θ.toNat) (hd' : ¬(d'.toNat > θ.toNat)) :
     ¬(d.toNat > θ.toNat → d'.toNat > θ.toNat) :=
   fun h => hd' (h hd)
@@ -113,21 +113,21 @@ theorem tolerance_fails_at_boundary {max : Nat}
     determines both predicates, creating the penumbral connection. -/
 
 /-- Pink: degree above the boundary (on a single color dimension). -/
-def isPink {max : Nat} (d : Degree max) (θ : Threshold max) : Prop :=
+def isPink {max : Nat} (d : Bounded max) (θ : Threshold max) : Prop :=
   d.toNat > θ.toNat
 
-instance {max : Nat} (d : Degree max) (θ : Threshold max) :
+instance {max : Nat} (d : Bounded max) (θ : Threshold max) :
     Decidable (isPink d θ) := by unfold isPink; infer_instance
 
 /-- Red: degree at or below the boundary (complementary to pink). -/
-def isRed {max : Nat} (d : Degree max) (θ : Threshold max) : Prop :=
+def isRed {max : Nat} (d : Bounded max) (θ : Threshold max) : Prop :=
   d.toNat ≤ θ.toNat
 
-instance {max : Nat} (d : Degree max) (θ : Threshold max) :
+instance {max : Nat} (d : Bounded max) (θ : Threshold max) :
     Decidable (isRed d θ) := by unfold isRed; infer_instance
 
 /-- Pink and red are complementary: nothing can be both. -/
-theorem pink_red_complementary {max : Nat} (d : Degree max) (θ : Threshold max) :
+theorem pink_red_complementary {max : Nat} (d : Bounded max) (θ : Threshold max) :
     ¬ (isPink d θ ∧ isRed d θ) := by
   unfold isPink isRed
   intro ⟨h1, h2⟩
@@ -140,7 +140,7 @@ theorem pink_red_complementary {max : Nat} (d : Degree max) (θ : Threshold max)
     This is Fine's central argument for supervaluationism over
     truth-functional three-valued logic (p. 269-270). In Strong Kleene
     logic, `indet ∧ indet = indet`; supervaluation gives `false`. -/
-theorem pink_and_red_superFalse {max : Nat} (d : Degree max)
+theorem pink_and_red_superFalse {max : Nat} (d : Bounded max)
     (S : SpecSpace (Threshold max)) :
     superTrue (fun θ => isPink d θ ∧ isRed d θ) S = Trivalent.false :=
   (Semantics.Supervaluation.superTrue_false_iff _ S).mpr
@@ -167,19 +167,19 @@ def specOfPair {max : Nat} (tp : ThresholdPair max) : SpecSpace (Threshold max) 
   ⟨{tp.neg, tp.pos}, ⟨tp.neg, Finset.mem_insert_self _ _⟩⟩
 
 /-- Extract Nat-level upper bound from `inGapRegion`. -/
-theorem inGapRegion_le_pos {max : Nat} (d : Degree max) (tp : ThresholdPair max)
+theorem inGapRegion_le_pos {max : Nat} (d : Bounded max) (tp : ThresholdPair max)
     (h : inGapRegion d tp) : d.toNat ≤ tp.pos.toNat :=
   h.2
 
 /-- Extract Nat-level lower bound from `inGapRegion`. -/
-theorem inGapRegion_ge_neg {max : Nat} (d : Degree max) (tp : ThresholdPair max)
+theorem inGapRegion_ge_neg {max : Nat} (d : Bounded max) (tp : ThresholdPair max)
     (h : inGapRegion d tp) : tp.neg.toNat ≤ d.toNat :=
   h.1
 
 /-- When a degree is strictly inside the gap, the positive-meaning
     predicate disagrees across the two thresholds: true at the negative
     threshold, false at the positive. -/
-theorem gap_implies_disagreement {max : Nat} (d : Degree max) (tp : ThresholdPair max)
+theorem gap_implies_disagreement {max : Nat} (d : Bounded max) (tp : ThresholdPair max)
     (h_in : inGapRegion d tp) (h_strict : tp.neg.toNat < d.toNat) :
     d.toNat > tp.neg.toNat ∧ ¬ d.toNat > tp.pos.toNat := by
   refine ⟨h_strict, ?_⟩

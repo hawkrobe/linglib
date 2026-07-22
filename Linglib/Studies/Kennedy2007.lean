@@ -552,22 +552,22 @@ open Core.Order
 /-! #### Fragment → PolarMeasure licensing -/
 
 /-- "tall" (open scale) → PolarMeasure blocks degree modification. -/
-theorem tall_blocks_completely {max : Nat} {W : Type*} (μ : W → Degree max) :
+theorem tall_blocks_completely {max : Nat} {W : Type*} (μ : W → Bounded max) :
     ¬ (adjMeasure μ tall).IsLicensed :=
   openAdj_blocked μ tall rfl
 
 /-- "full" (closed scale) → PolarMeasure licenses degree modification. -/
-theorem full_licenses_completely {max : Nat} {W : Type*} (μ : W → Degree max) :
+theorem full_licenses_completely {max : Nat} {W : Type*} (μ : W → Bounded max) :
     (adjMeasure μ full).IsLicensed :=
   closedAdj_licensed μ full rfl
 
 /-- "wet" (closed scale) → PolarMeasure licenses. -/
-theorem wet_licensed {max : Nat} {W : Type*} (μ : W → Degree max) :
+theorem wet_licensed {max : Nat} {W : Type*} (μ : W → Bounded max) :
     (adjMeasure μ wet).IsLicensed :=
   closedAdj_licensed μ wet rfl
 
 /-- "dry" (closed scale) → PolarMeasure licenses. -/
-theorem dry_licensed {max : Nat} {W : Type*} (μ : W → Degree max) :
+theorem dry_licensed {max : Nat} {W : Type*} (μ : W → Bounded max) :
     (adjMeasure μ dry).IsLicensed :=
   closedAdj_licensed μ dry rfl
 
@@ -576,7 +576,7 @@ theorem dry_licensed {max : Nat} {W : Type*} (μ : W → Degree max) :
 /-- The closure puzzle is predicted by PolarMeasure:
     closed-scale adjectives license "completely", open-scale ones don't.
     Matches `closurePuzzle.worksWithClosed` / `.worksWithOpen`. -/
-theorem closurePuzzle_predicted {max : Nat} {W : Type*} (μ : W → Degree max) :
+theorem closurePuzzle_predicted {max : Nat} {W : Type*} (μ : W → Bounded max) :
     ((adjMeasure μ full).IsLicensed ↔ closurePuzzle.worksWithClosed = true) ∧
     ((adjMeasure μ tall).IsLicensed ↔ closurePuzzle.worksWithOpen = true) :=
   ⟨iff_of_true (closedAdj_licensed μ full rfl) rfl,
@@ -584,7 +584,7 @@ theorem closurePuzzle_predicted {max : Nat} {W : Type*} (μ : W → Degree max) 
 
 /-- "completely" works with AGA-max (closed) but not RGA (open).
     `adjMeasure` licensing matches `completelyModifier` fields. -/
-theorem completely_distribution {max : Nat} {W : Type*} (μ : W → Degree max) :
+theorem completely_distribution {max : Nat} {W : Type*} (μ : W → Bounded max) :
     ((adjMeasure μ full).IsLicensed ↔ completelyModifier.worksWithAGAMax = true) ∧
     ((adjMeasure μ tall).IsLicensed ↔ completelyModifier.worksWithRGA = true) :=
   ⟨iff_of_true (closedAdj_licensed μ full rfl) rfl,
@@ -609,7 +609,7 @@ theorem adj_pipeline_dry :
     LicensingPipeline.IsLicensed dry.scaleType := trivial
 
 /-- Pipeline agrees with PolarMeasure for all four test adjectives. -/
-theorem pipeline_agrees_with_measure {max : Nat} {W : Type*} (μ : W → Degree max) :
+theorem pipeline_agrees_with_measure {max : Nat} {W : Type*} (μ : W → Bounded max) :
     (LicensingPipeline.IsLicensed tall.scaleType ↔ (adjMeasure μ tall).IsLicensed) ∧
     (LicensingPipeline.IsLicensed full.scaleType ↔ (adjMeasure μ full).IsLicensed) ∧
     (LicensingPipeline.IsLicensed wet.scaleType ↔ (adjMeasure μ wet).IsLicensed) ∧

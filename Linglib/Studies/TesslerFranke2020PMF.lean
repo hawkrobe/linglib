@@ -31,14 +31,14 @@ set_option autoImplicit false
 namespace TesslerFranke2020.PMF
 
 open scoped ENNReal
-open Degree (Degree Threshold deg thr)
+open Degree (Bounded Threshold deg thr)
 open Features (NegationType)
 open Degree (positiveMeaning negativeMeaning)
 
 /-! ## §0. Domain types -/
 
 /-- Happiness degree: 0 (miserable) to 4 (ecstatic). -/
-abbrev HappinessDeg := Degree 4
+abbrev HappinessDeg := Bounded 4
 
 instance : NeZero (4 : Nat) := ⟨by omega⟩
 
