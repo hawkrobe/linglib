@@ -645,7 +645,7 @@ def crossCategoryData : List CrossCategoryDatum :=
     λd₂ [p □→ A⁰(x, d₂ − d₁)]. Here d₂ is the actual degree and
     d₁ is the excess; the counterfactual threshold is d₂ − d₁.
 
-    This is `DegPType.excessive` from `Degree.Defs` — the degree
+    This is `DegreeHead.excessive` from `Degree.Defs` — the degree
     construction where the differential measures the excess over a
     counterfactual threshold. Von Stechow's analysis shows that
     *too* and *-er* share the same additive structure (R4),
@@ -655,7 +655,7 @@ structure TooCounterfactualDatum where
   sentence : String
   differential : String
   counterfactualBase : String
-  degPType : Degree.DegPType
+  degreeHead : Degree.DegreeHead
   deriving Repr
 
 def tooData : List TooCounterfactualDatum :=
@@ -670,7 +670,7 @@ def tooData : List TooCounterfactualDatum :=
   ]
 
 -- All *too* data entries are of the excessive DegP type.
-#guard tooData.all (·.degPType == .excessive)
+#guard tooData.all (·.degreeHead == .excessive)
 
 /-- Concrete instantiation: a pack weighing 80 kg with a liftable
     threshold of 30 kg is at least 50 kg too heavy (80 ≥ 50 + 30). -/

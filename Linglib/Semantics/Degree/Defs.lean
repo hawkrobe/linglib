@@ -1,28 +1,19 @@
-import Linglib.Core.Order.Boundedness
-
 /-!
 # Shape enums for degree constructions
-[rett-2015] [beck-2011]
 
-The shared taxonomies of degree morphosyntax: `DegPType` (degree heads) and
-`AdjectivalConstruction` (surface constructions, tracked by evaluativity
-analyses and markedness implicature). Antonym polarity is the spine's
-`Core.Order.ScalePolarity` directly — no local alias.
+The shared taxonomies of degree morphosyntax: `DegreeHead` (the Deg⁰
+inventory — comparison heads per [beck-2011], the *too* ~ *enough* pair per
+[meier-2003]) and `AdjectivalConstruction` (the surface constructions whose
+evaluativity [rett-2015] tracks).
 -/
 
 namespace Degree
 
-open Core.Order (ScalePolarity)
-
-
-/-- The compositional structure of a Degree Phrase (DegP).
-
-In all degree frameworks, DegP is the syntactic locus where degree
-comparison happens. The internal structure varies — Kennedy posits
-`[DegP [Deg -er/as/est] [DegComplement than-clause]]`, Heim posits a
-sentential `-er` operator — but the framework-independent taxonomy is
-captured here. -/
-inductive DegPType where
+/-- The degree-head (Deg⁰) inventory of a Degree Phrase. The phrase's
+internal structure is framework-dependent — [kennedy-1999] posits a
+than-clause complement to Deg, [heim-2000] a scopal degree operator — but
+the head inventory itself is framework-independent. -/
+inductive DegreeHead where
   /-- `-er` / *more*. -/
   | comparative
   /-- `as...as`. -/
@@ -35,8 +26,8 @@ inductive DegPType where
   | sufficiency
   deriving DecidableEq, Repr
 
-/-- Degree construction type. Used by evaluativity analyses to track which
-surface constructions trigger evaluative readings. -/
+/-- Surface adjectival constructions, as tracked by evaluativity analyses
+and markedness implicature. -/
 inductive AdjectivalConstruction where
   /-- "Kim is tall" — unmarked form. -/
   | positive
@@ -48,12 +39,10 @@ inductive AdjectivalConstruction where
   | measurePhrase
   /-- "How tall is Kim?". -/
   | degreeQuestion
-  deriving Repr, DecidableEq
+  deriving DecidableEq, Repr
 
-/-- User-facing rendering, distinct from `Repr` (which prefixes the
-namespace). Consumed by Studies files that string-interpolate construction
-names into diagnostic messages — see e.g.
-`Studies/Rett2015Implicature.lean`. -/
+/-- Bare lowercase construction names for diagnostic messages, distinct
+from `Repr` (which prefixes the namespace). -/
 instance : ToString AdjectivalConstruction where
   toString
     | .positive => "positive"

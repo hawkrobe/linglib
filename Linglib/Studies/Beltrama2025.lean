@@ -411,10 +411,10 @@ theorem mpa_good_same_valence :
     mpaValence = goodValence := rfl
 
 -- ============================================================================
--- § 12. Integration: DegPType.sufficiency (*enough* parallel)
+-- § 12. Integration: DegreeHead.sufficiency (*enough* parallel)
 -- ============================================================================
 
-open Degree (DegPType)
+open Degree (DegreeHead)
 
 /-- MPAs encode the same necessity component as *enough*
     ([beltrama-2025] §5.3; Nadathur 2023): the minimum degree
@@ -424,7 +424,7 @@ open Degree (DegPType)
     Both introduce a functional standard via a circumstantial modal base.
     The key difference: *enough* takes an overt complement clause while
     MPAs get their purpose from context (action-guidance). -/
-def enoughParallel : DegPType := .sufficiency
+def enoughParallel : DegreeHead := .sufficiency
 
 -- ============================================================================
 -- § 13. Integration: IE Divergence for Evaluative Predicates
