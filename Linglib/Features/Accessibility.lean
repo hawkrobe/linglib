@@ -5,12 +5,11 @@ import Mathlib.Tactic.DeriveFintype
 /-!
 # Accessibility — Ariel's referential-form scale
 
-`AccessibilityLevel`: a fine-grained (18-tier) reconstruction of
-[ariel-2001]'s Accessibility Marking Scale (least accessible `fullNameMod`
-to most accessible `zero`), with `rank`, the coarsening `toDefLevel` to
-`Prominence.DefinitenessLevel`, and the GHZ bridge `GivennessStatus.toAccessibility`.
-The tier order follows Ariel; the `verbalAgreement`/`zero` split refines
-her single "Extremely High Accessibility Markers" tier.
+`AccessibilityLevel`: the 18-tier Accessibility Marking Scale of [ariel-1990],
+reproduced in [ariel-2001]'s overview (least accessible `fullNameMod` to most
+accessible `zero`), with `rank` (and the `LinearOrder` it induces), the
+coarsening `toDefLevel` to `Prominence.DefinitenessLevel`, and the
+form-correlate bridge `GivennessStatus.toAccessibility`.
 
 Accessibility and definiteness are **non-monotonically** related (full
 names are less accessible than definite descriptions, yet first/last names
@@ -30,30 +29,47 @@ open Features.Prominence (DefinitenessLevel)
 
 /-! ### Accessibility marking scale -/
 
-/-- [ariel-2001]'s Accessibility Marking Scale: a fine-grained ordering
-    of referential form types from least to most accessible.
-
-    Each constructor represents a class of referring expressions.
-    Speakers use more reduced forms for more accessible referents. -/
+/-- The Accessibility Marking Scale of [ariel-1990], as printed in
+    [ariel-2001]: classes of referring expressions ordered from least to
+    most accessible. Speakers use more reduced forms for more accessible
+    referents. -/
 inductive AccessibilityLevel where
-  | fullNameMod          -- "the former governor of Alaska, Sarah Palin"
-  | fullName             -- "Sarah Palin"
-  | longDefDescription   -- "the former governor of Alaska"
-  | shortDefDescription  -- "the governor"
-  | lastName             -- "Palin"
-  | firstName            -- "Sarah"
-  | distalDemMod         -- "that tall woman over there"
-  | proxDemMod           -- "this tall woman"
-  | distalDemNP          -- "that woman"
-  | proxDemNP            -- "this woman"
-  | distalDem            -- "that"
-  | proxDem              -- "this"
-  | stressedPronGesture  -- "SHE" [+pointing]
-  | stressedPron         -- "SHE"
-  | unstressedPron       -- "she"
-  | cliticizedPron       -- "'er", "-la"
-  | verbalAgreement      -- person inflection on the verb
-  | zero                 -- ∅ (pro-drop)
+  /-- "the former governor of Alaska, Sarah Palin" -/
+  | fullNameMod
+  /-- "Sarah Palin" -/
+  | fullName
+  /-- "the former governor of Alaska" -/
+  | longDefDescription
+  /-- "the governor" -/
+  | shortDefDescription
+  /-- "Palin" -/
+  | lastName
+  /-- "Sarah" -/
+  | firstName
+  /-- "that tall woman over there" -/
+  | distalDemMod
+  /-- "this tall woman" -/
+  | proxDemMod
+  /-- "that woman" -/
+  | distalDemNP
+  /-- "this woman" -/
+  | proxDemNP
+  /-- "that" -/
+  | distalDem
+  /-- "this" -/
+  | proxDem
+  /-- "SHE" with a pointing gesture -/
+  | stressedPronGesture
+  /-- "SHE" -/
+  | stressedPron
+  /-- "she" -/
+  | unstressedPron
+  /-- "'er", "-la" -/
+  | cliticizedPron
+  /-- person inflection on the verb -/
+  | verbalAgreement
+  /-- ∅ (pro-drop) -/
+  | zero
   deriving DecidableEq, Repr, Fintype, Inhabited
 
 /-- Numeric rank: 0 (lowest accessibility) to 17 (highest).
@@ -78,6 +94,11 @@ def AccessibilityLevel.rank : AccessibilityLevel → Nat
   | .verbalAgreement     => 16
   | .zero                => 17
 
+/-- `fullNameMod < ⋯ < zero` (ordered by accessibility rank). -/
+instance : LinearOrder AccessibilityLevel :=
+  LinearOrder.lift' AccessibilityLevel.rank
+    (fun a b h => by cases a <;> cases b <;> simp_all [AccessibilityLevel.rank])
+
 /-- Coarsening: each accessibility level maps to one of the 5
     `DefinitenessLevel` categories used for differential argument marking.
     This is a many-to-one, **non-monotone** mapping — names are less
@@ -90,80 +111,56 @@ def AccessibilityLevel.toDefLevel : AccessibilityLevel → DefinitenessLevel
   | .stressedPronGesture | .stressedPron | .unstressedPron
   | .cliticizedPron | .verbalAgreement | .zero          => .personalPronoun
 
-/-- An unstressed pronoun is more reduced than a full name. -/
-theorem pronoun_more_reduced_than_name :
-    AccessibilityLevel.unstressedPron.rank > AccessibilityLevel.fullName.rank := by
-  decide
-
 /-! ### Next-mention bias -/
 
 /-- Next-mention bias: how likely a discourse referent is to be
     mentioned again in the subsequent utterance. Driven by thematic
     roles, coherence relations, and discourse structure. -/
 inductive NextMentionBias where
-  | high     -- referent is expected to be mentioned next
-  | low      -- referent is not expected to be mentioned next
+  /-- Referent is expected to be mentioned next. -/
+  | high
+  /-- Referent is not expected to be mentioned next. -/
+  | low
   deriving DecidableEq, Repr
 
-/-- Accessibility prediction: high next-mention bias licenses reduced
-    referential form (unstressed pronoun); low bias requires full form
-    (full name).
+/-- Prototype form choice for a next-mention bias: high bias → unstressed
+    pronoun; low bias → full name.
 
-    This is the monotone link at the heart of [ariel-2001]'s
-    Accessibility Marking Scale: more accessible referents → more
-    reduced forms. The same relationship underlies the Probabilistic
-    Reduction Hypothesis (more predictable → shorter/more reduced). -/
+    This encodes the expectancy hypothesis — next-mention predictability
+    drives form reduction — which [rosa-arnold-2017] defends and
+    [kehler-rohde-2013] rejects (production there tracks topichood, with
+    next-mention probability affecting interpretation only). -/
 def NextMentionBias.predictedForm : NextMentionBias → AccessibilityLevel
   | .high => .unstressedPron
   | .low  => .fullName
 
-/-- The predicted form for high-bias referents is more reduced than
-    for low-bias referents. -/
-theorem high_bias_more_reduced :
-    (NextMentionBias.high.predictedForm).rank >
-    (NextMentionBias.low.predictedForm).rank := by
-  decide
-
 /-! ### Weight bridge -/
 
-/-- NP weight correlate: reduced referential forms are lighter.
-    Approximate number of words in a typical instance of each form.
-    This connects form selection to constituent ordering (heavy NP
-    shift, DLM).
-
-    The same choice that makes a referent "more reduced" also makes
-    it "lighter", linking [ariel-2001]'s accessibility hierarchy
-    to [arnold-wasow-losongco-ginstrom-2000]'s heaviness effects. -/
+/-- Approximate word count of a typical instance of each form: the NP-weight
+    correlate of reduction ([arnold-wasow-losongco-ginstrom-2000]), connecting
+    form choice to constituent ordering (heavy-NP shift). -/
 def AccessibilityLevel.typicalWeight : AccessibilityLevel → Nat
-  | .fullNameMod                              => 4  -- "the former governor of Alaska, Sarah Palin"
-  | .longDefDescription                       => 4  -- "the former governor of Alaska"
-  | .distalDemMod | .proxDemMod               => 3  -- "that tall woman over there"
-  | .fullName                                 => 2  -- "Sarah Palin"
-  | .shortDefDescription                      => 2  -- "the governor"
-  | .distalDemNP | .proxDemNP                 => 2  -- "that woman"
-  | .lastName | .firstName                    => 1  -- "Palin", "Sarah"
-  | .distalDem | .proxDem                     => 1  -- "that", "this"
+  | .fullNameMod | .longDefDescription        => 4
+  | .distalDemMod | .proxDemMod               => 3
+  | .fullName | .shortDefDescription
+  | .distalDemNP | .proxDemNP                 => 2
+  | .lastName | .firstName
+  | .distalDem | .proxDem
   | .stressedPronGesture | .stressedPron
-  | .unstressedPron | .cliticizedPron         => 1  -- "SHE", "she", "'er"
-  | .verbalAgreement                          => 0  -- bound morpheme
-  | .zero                                     => 0  -- ∅
-
-/-- Pronouns are at most as heavy as definite descriptions. -/
-theorem pronoun_lightest :
-    AccessibilityLevel.typicalWeight .unstressedPron ≤
-    AccessibilityLevel.typicalWeight .shortDefDescription := by
-  decide
+  | .unstressedPron | .cliticizedPron         => 1
+  | .verbalAgreement | .zero                  => 0
 
 /-! ### Givenness projection -/
 
-/-- Ariel's GHZ→AccessibilityLevel projection ([ariel-2001]): the
-    prototypical accessibility level for each givenness status.
-
-    Caveat: GHZ's lower statuses (`referential` = "indefinite this N",
-    `typeIdentifiable` = "a N") are **indefinite**, which do not appear
-    on Ariel's accessibility-marking scale (Given/definite forms); the
-    mapping for these two is by approximate accessibility degree, not
-    by form identity. -/
+/-- Prototypical accessibility level for each givenness status. The four
+    definite rows are [gundel-hedberg-zacharski-1993]'s own form correlates
+    (unstressed pronoun, bare demonstrative, demonstrative NP, definite
+    description); the two **indefinite** statuses (`referential` =
+    "indefinite this N", `typeIdentifiable` = "a N") have no form on the
+    accessibility scale, so their rows are editorial rank-alignment, not
+    form identity. [ariel-2001] criticizes the givenness hierarchy (no
+    evidence for scalar distinctions below its top statuses) rather than
+    endorsing such a projection. -/
 def GivennessStatus.toAccessibility : GivennessStatus → AccessibilityLevel
   | .inFocus              => .unstressedPron
   | .activated            => .proxDem
