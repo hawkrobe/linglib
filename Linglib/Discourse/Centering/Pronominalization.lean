@@ -14,8 +14,7 @@ the repeated-name penalty) is its consequent and so implies it.
 
 namespace Discourse.Centering
 
-variable {E R U : Type*} [DecidableEq E] [CfRankerOf E R]
-  [Realizes U E] [Pronominalizes U E]
+variable {E R U : Type*} [CfRankerOf E R] [Realizes U E] [Pronominalizes U E]
 
 /-- The backward-looking center of `cur` (after `prev`), if defined, is
     realized by a pronoun — [gordon-grosz-gilliom-1993]'s unconditional

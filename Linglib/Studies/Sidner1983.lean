@@ -117,7 +117,7 @@ inductive SentenceForm where
 /-- A noun-phrase slot in a sentence. Carries the entity, its
     thematic position, its syntactic position (agent or non-agent),
     and whether the surface form is pronominal. -/
-structure Phrase (E : Type) where
+structure Phrase (E : Type*) where
   entity : E
   thematic : ThematicSlot
   position : Position
@@ -128,7 +128,7 @@ structure Phrase (E : Type) where
     The simplification mirrors the GJW substrate's
     `Discourse.Centering.Utterance`: we elide the syntactic tree and
     keep the slots that the focusing algorithm actually consults. -/
-structure Sentence (E : Type) where
+structure Sentence (E : Type*) where
   form : SentenceForm
   phrases : List (Phrase E)
   deriving Repr
@@ -148,7 +148,7 @@ structure Sentence (E : Type) where
     The two slots are *independently* updated and queried — this is
     the architectural point that distinguishes Sidner from
     [grosz-joshi-weinstein-1995]'s single-Cb account. -/
-structure FocusState (E : Type) where
+structure FocusState (E : Type*) where
   discourseFocus : Option E
   actorFocus : Option E
   deriving Repr, DecidableEq
@@ -156,7 +156,7 @@ structure FocusState (E : Type) where
 namespace FocusState
 
 /-- The empty focus state, used as the discourse-initial state. -/
-def empty {E : Type} : FocusState E := ⟨none, none⟩
+def empty {E : Type*} : FocusState E := ⟨none, none⟩
 
 end FocusState
 
@@ -172,7 +172,7 @@ end FocusState
     * Otherwise: the phrase with minimal DEF rank
       (`theme > other-non-agent > agent > verbPhrase`). Implemented
       via `List.argmin` from mathlib. -/
-def expectedDiscourseFocus {E : Type} (s : Sentence E) : Option E :=
+def expectedDiscourseFocus {E : Type*} (s : Sentence E) : Option E :=
   match s.form with
   | .isaOrThereInsertion =>
     (s.phrases.find? (fun p => p.position = .agent)).map (·.entity)
@@ -184,7 +184,7 @@ def expectedDiscourseFocus {E : Type} (s : Sentence E) : Option E :=
     realizing `e`, and `p`'s thematic rank is at most every other
     phrase's. (The "at most" — vs. "less than" — is `argmin`'s
     tie-breaking convention: ties are resolved by surface order.) -/
-theorem expectedDiscourseFocus_normal_le {E : Type}
+theorem expectedDiscourseFocus_normal_le {E : Type*}
     {s : Sentence E} {e : E} (hform : s.form = .normal)
     (h : expectedDiscourseFocus s = some e) :
     ∃ p ∈ s.phrases, p.entity = e ∧
@@ -199,7 +199,7 @@ theorem expectedDiscourseFocus_normal_le {E : Type}
 /-- The expected actor focus, by the analogous algorithm to the
     discourse-focus one but selecting the agent ([sidner-1983]
     §5.2.3 p. 287, second algorithm sketch). -/
-def expectedActorFocus {E : Type} (s : Sentence E) : Option E :=
+def expectedActorFocus {E : Type*} (s : Sentence E) : Option E :=
   (s.phrases.find? (fun p => p.position = .agent)).map (·.entity)
 
 /-- Update the focus state after a sentence. The discourse focus moves
@@ -211,7 +211,7 @@ def expectedActorFocus {E : Type} (s : Sentence E) : Option E :=
     ([sidner-1983] §5.2.6 pp. 292-294). It captures the
     discourse-initial step and the basic "movement on each new
     sentence" pattern, sufficient for the (34) example. -/
-def updateState {E : Type} (state : FocusState E) (s : Sentence E) :
+def updateState {E : Type*} (state : FocusState E) (s : Sentence E) :
     FocusState E :=
   { discourseFocus := (expectedDiscourseFocus s).orElse (fun _ => state.discourseFocus)
     actorFocus := (expectedActorFocus s).orElse (fun _ => state.actorFocus) }
@@ -233,7 +233,7 @@ def updateState {E : Type} (state : FocusState E) (s : Sentence E) :
     discourse focus. The function takes a `Position` directly (the
     pronoun's syntactic slot) rather than a full `Phrase`, since the
     pronoun's putative entity is exactly the answer being computed. -/
-def resolvePronounAt {E : Type} (state : FocusState E) (pos : Position) :
+def resolvePronounAt {E : Type*} (state : FocusState E) (pos : Position) :
     Option E :=
   match pos with
   | .agent => state.actorFocus

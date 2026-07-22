@@ -86,64 +86,43 @@ def d : Utt :=
 
 end D2
 
-/-! ### Per-pair transition predictions
+/-! ### Transition predictions
 
-    For each adjacent pair, the Cb (computed from the prior utterance)
-    and the transition type follow from the substrate definitions. -/
+    The Cb and transition sequences of both discourses follow from the
+    substrate's discourse-level scan. -/
 
-/-- Discourse 1 (a→b): John continues as Cb. -/
-theorem d1_a_to_b_cb : cb D1.a D1.b = some "John" := by decide
+/-- Discourse 1: John is the Cb throughout. -/
+theorem d1_cbs :
+    cbs [D1.a, D1.b, D1.c, D1.d] = [some "John", some "John", some "John"] := by
+  decide
 
-theorem d1_a_to_b_continuation :
-    classifyTransitionExtended D1.a D1.b D1.b.cp none = .continuation := by decide
+/-- Discourse 1 is all continuations. -/
+theorem d1_transitions :
+    transitions [D1.a, D1.b, D1.c, D1.d] =
+      [.continuation, .continuation, .continuation] := by decide
 
-/-- Discourse 1 (b→c): John continues. -/
-theorem d1_b_to_c_continuation :
-    classifyTransitionExtended D1.b D1.c D1.c.cp (cb D1.a D1.b) = .continuation := by decide
+/-- Discourse 2: the Cb is also John throughout. At (a→b), both John and
+    the store are realized in `D2.b` and John outranks the store in
+    `Cf(D2.a)` (subject > object). -/
+theorem d2_cbs :
+    cbs [D2.a, D2.b, D2.c, D2.d] = [some "John", some "John", some "John"] := by
+  decide
 
-/-- Discourse 1 (c→d): John continues. -/
-theorem d1_c_to_d_continuation :
-    classifyTransitionExtended D1.c D1.d D1.d.cp (cb D1.b D1.c) = .continuation := by decide
+/-- Discourse 2 is `retain, continue, retain`: at (a→b) and (c→d) the
+    store is `Cp` while John stays Cb. (The paper's prose describes the
+    flips informally as changes of "aboutness"; under the formal
+    definitions the Cb remains John throughout, and the incoherence
+    surfaces as retains rather than shifts.) -/
+theorem d2_transitions :
+    transitions [D2.a, D2.b, D2.c, D2.d] =
+      [.retaining, .continuation, .retaining] := by decide
 
-/-- Discourse 2 (a→b): both John and the store are realized in `D2.b`,
-    and John outranks the store in `Cf(D2.a)` (subject > object), so the
-    Cb is John; but `Cp(D2.b) = "store"` (not John), so this is a
-    *retain* — already a less coherent transition than Discourse 1's
-    continuation. -/
-theorem d2_a_to_b_cb : cb D2.a D2.b = some "John" := by decide
-
-theorem d2_a_to_b_retaining :
-    classifyTransitionExtended D2.a D2.b D2.b.cp none = .retaining := by decide
-
-/-- Discourse 2 (b→c): John re-emerges as Cb (it was object in D2.b);
-    in D2.c, John is also `Cp` — so this would be a continuation.
-    Rule 1 is also fine here. -/
-theorem d2_b_to_c_cb : cb D2.b D2.c = some "John" := by decide
-
-theorem d2_b_to_c_continuation :
-    classifyTransitionExtended D2.b D2.c D2.c.cp (cb D2.a D2.b) = .continuation := by decide
-
-/-- Discourse 2 (c→d): John remains Cb (was subject in D2.c, object
-    in D2.d), but `Cp(D2.d) = "store"`. RETAIN, not continuation. -/
-theorem d2_c_to_d_retaining :
-    classifyTransitionExtended D2.c D2.d D2.d.cp (cb D2.b D2.c) = .retaining := by decide
-
-/-- **The coherence contrast (paper §2)**: Discourse 1's transition
-    pattern is all continuations; Discourse 2's pattern is
-    `retain, continue, retain` — a mix of weaker transitions. The sum
-    of `Transition.rank`s is a coarse but theory-aligned coherence
-    measure. (The paper's prose describes Discourse 2's flips
-    informally as changes of "aboutness"; under the formal definitions
-    the Cb remains John throughout, and the incoherence surfaces as
-    retains rather than shifts.) -/
-def d1_score : Nat :=
-  Transition.continuation.rank + Transition.continuation.rank
-    + Transition.continuation.rank
-def d2_score : Nat :=
-  Transition.retaining.rank + Transition.continuation.rank
-    + Transition.retaining.rank
-
-theorem discourse1_more_coherent_than_discourse2 : d1_score > d2_score := by decide
+/-- **The coherence contrast (paper §2)**: Discourse 1's all-continuation
+    sequence outscores Discourse 2's mixed sequence under the
+    sum-of-ranks measure (the sequence form of Rule 2). -/
+theorem discourse1_more_coherent_than_discourse2 :
+    coherenceScore [D1.a, D1.b, D1.c, D1.d] >
+      coherenceScore [D2.a, D2.b, D2.c, D2.d] := by decide
 
 /-! ### Discourses (15)-(16): Rule 1 violation and shift repair (paper §7) -/
 
@@ -204,14 +183,15 @@ def d : Utt :=
 
 end D16
 
-/-- The intervening (16c) shifts the center from John to Mike. -/
-theorem d16_b_to_c_cb : cb D16.b D16.c = some "Mike" := by decide
+/-- The intervening (16c) shifts the center from John to Mike, who then
+    stays Cb through (16d). -/
+theorem d16_cbs :
+    cbs [D16.a, D16.b, D16.c, D16.d] =
+      [some "John", some "Mike", some "Mike"] := by decide
 
-theorem d16_b_to_c_shifting :
-    classifyTransitionExtended D16.b D16.c D16.c.cp (cb D16.a D16.b) = .shifting := by
-  decide
-
-theorem d16_c_to_d_cb : cb D16.c D16.d = some "Mike" := by decide
+theorem d16_transitions :
+    transitions [D16.a, D16.b, D16.c, D16.d] =
+      [.continuation, .shifting, .continuation] := by decide
 
 /-- After the shift, (16d)'s pronoun realizes the new Cb Mike — Rule 1
     is satisfied exactly where (15c) violated it. -/
@@ -323,16 +303,11 @@ def e : Utt :=
 
 end D20
 
-/-- The paper-stipulated transition labels b→c, c→d, d→e:
-    CONTINUE, RETAIN, SHIFT. -/
-theorem discourse20_b_to_c_continuation :
-    classifyTransitionExtended D20.b D20.c D20.c.cp (cb D20.a D20.b) = .continuation := by decide
-
-theorem discourse20_c_to_d_retaining :
-    classifyTransitionExtended D20.c D20.d D20.d.cp (cb D20.b D20.c) = .retaining := by decide
-
-theorem discourse20_d_to_e_shifting :
-    classifyTransitionExtended D20.d D20.e D20.e.cp (cb D20.c D20.d) = .shifting := by decide
+/-- The paper-annotated transition labels b→c, c→d, d→e — CONTINUE,
+    RETAIN, SHIFT — preceded by an unannotated a→b continuation. -/
+theorem discourse20_transitions :
+    transitions [D20.a, D20.b, D20.c, D20.d, D20.e] =
+      [.continuation, .continuation, .retaining, .shifting] := by decide
 
 /-- Rule 1 holds throughout Discourse 20 (the paper's claim). -/
 theorem discourse20_rule1_a_b : PronominalizationConstraint D20.a D20.b := by decide
@@ -408,13 +383,13 @@ theorem d34_cb_c_carl : cb D34.b D34.c_he_is_carl = some "Carl" := by decide
 /-- Jeff-resolution: Cb stable (Jeff → Jeff), but the matrix "I"
     becomes the new Cp, so this is a RETAIN, not a CONTINUE. -/
 theorem d34_jeff_retaining :
-    classifyTransitionExtended D34.b D34.c_he_is_jeff D34.c_he_is_jeff.cp
-      (cb D34.a D34.b) = .retaining := by decide
+    classifyTransitionExtended D34.b D34.c_he_is_jeff (cb D34.a D34.b) =
+      .retaining := by decide
 
 /-- Carl-resolution: Cb shifts from Jeff to Carl. -/
 theorem d34_carl_shift :
-    classifyTransitionExtended D34.b D34.c_he_is_carl D34.c_he_is_carl.cp
-      (cb D34.a D34.b) = .shifting := by decide
+    classifyTransitionExtended D34.b D34.c_he_is_carl (cb D34.a D34.b) =
+      .shifting := by decide
 
 /-- **GJW prediction for (34c)**: by Rule 2 (RETAIN outranks SHIFT
     here), the Jeff-resolution is preferred. Returns `Option String`:
@@ -432,10 +407,8 @@ theorem d34_carl_shift :
     1995 as published. The headline disagreement theorem is honest
     about this gap — see its docstring. -/
 def gjwPredictedHe : Option String :=
-  let jeffTrans := classifyTransitionExtended D34.b D34.c_he_is_jeff
-                     D34.c_he_is_jeff.cp (cb D34.a D34.b)
-  let carlTrans := classifyTransitionExtended D34.b D34.c_he_is_carl
-                     D34.c_he_is_carl.cp (cb D34.a D34.b)
+  let jeffTrans := classifyTransitionExtended D34.b D34.c_he_is_jeff (cb D34.a D34.b)
+  let carlTrans := classifyTransitionExtended D34.b D34.c_he_is_carl (cb D34.a D34.b)
   if jeffTrans.rank > carlTrans.rank then some "Jeff"
   else if carlTrans.rank > jeffTrans.rank then some "Carl"
   else none
