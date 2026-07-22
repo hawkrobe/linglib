@@ -29,7 +29,7 @@ polar-variant ones (positives, comparatives, measure phrases).
 English worked entries (`tall_with_morphology`, …) live in
 `Fragments/English/Predicates/Adjectival.lean`; the studies exercising
 them are `Studies/Horn1984.lean`, `Studies/Krifka2007.lean`, and
-`Studies/Rett2015Implicature.lean`.
+`Studies/Rett2015.lean`.
 -/
 
 namespace NeoGricean.Markedness
@@ -150,7 +150,7 @@ M-alternatives differ in form cost, not truth conditions, so they exist
 only where antonyms are truth-conditionally equivalent: polar-invariant
 constructions ([rett-2015]). -/
 
-open Degree (AdjectivalConstruction)
+open Degree (Construction)
 
 /-- Polar variance: whether antonyms differ in truth conditions in a
 given construction ("taller than" vs "shorter than") or coincide
@@ -163,7 +163,7 @@ inductive PolarVariance where
 /-- Polar variance by adjectival construction ([rett-2015]): positives,
 comparatives, and measure phrases are polar-variant; equatives and
 degree questions are polar-invariant. -/
-def polarVariance : AdjectivalConstruction → PolarVariance
+def polarVariance : Construction → PolarVariance
   | .positive => .variant
   | .comparative => .variant
   | .equative => .invariant
@@ -182,7 +182,7 @@ structure MAlternativeSet where
   /-- The cost difference between forms -/
   costDifference : ℚ
   /-- Construction where they're equivalent -/
-  construction : AdjectivalConstruction
+  construction : Construction
   deriving Repr
 
 instance : BEq MAlternativeSet where
@@ -193,7 +193,7 @@ instance : BEq MAlternativeSet where
 when the construction is polar-invariant and markedness is decidable
 for the pair. -/
 def generateMAlternatives (adj1 adj2 : GradableAdjWithMorphology)
-    (construction : AdjectivalConstruction) : Option MAlternativeSet :=
+    (construction : Construction) : Option MAlternativeSet :=
   if polarVariance construction != .invariant then
     none
   else
@@ -213,7 +213,7 @@ def generateMAlternatives (adj1 adj2 : GradableAdjWithMorphology)
 def isMarkedInMAlternatives
     (form : String)
     (adj1 adj2 : GradableAdjWithMorphology)
-    (construction : AdjectivalConstruction) : Bool :=
+    (construction : Construction) : Bool :=
   match generateMAlternatives adj1 adj2 construction with
   | none => false
   | some mAlt => mAlt.marked == form
@@ -222,7 +222,7 @@ def isMarkedInMAlternatives
 def getMAlternative
     (form : String)
     (adj1 adj2 : GradableAdjWithMorphology)
-    (construction : AdjectivalConstruction) : Option String :=
+    (construction : Construction) : Option String :=
   match generateMAlternatives adj1 adj2 construction with
   | none => none
   | some mAlt =>

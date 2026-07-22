@@ -22,7 +22,7 @@ at coarser grains (`just_rules_out`, "just taller than" ≈ "barely").
 namespace ThomasDeo2020
 
 open Degree.Granularity
-open Degree (AdjectivalConstruction)
+open Degree (Construction)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Formal Grounding
@@ -66,7 +66,7 @@ inductive Cancellability where
 /-- A granularity-specific datum: example + construction + cancellability. -/
 structure GranularityDatum where
   sentence : String
-  construction : AdjectivalConstruction
+  construction : Construction
   cancellability : Cancellability
   paraphrase : String
   exampleNum : Nat  -- paper example number

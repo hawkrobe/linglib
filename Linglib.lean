@@ -2563,7 +2563,6 @@ import Linglib.Studies.RathiHahnFutrell2026
 import Linglib.Studies.ReesReksnesRohde2026
 import Linglib.Studies.Reinhart1976
 import Linglib.Studies.Rett2015
-import Linglib.Studies.Rett2015Implicature
 import Linglib.Studies.Rett2020
 import Linglib.Studies.Rett2026
 import Linglib.Studies.RitchieSchiller2024
@@ -2789,6 +2788,7 @@ import Linglib.Syntax.Category.Adposition.Spatial
 import Linglib.Syntax.Category.Auxiliary.Basic
 import Linglib.Syntax.Category.Auxiliary.Constructions
 import Linglib.Syntax.Category.Complementizer.Basic
+import Linglib.Syntax.Category.Degree.Basic
 import Linglib.Syntax.Category.Determiner.Basic
 import Linglib.Syntax.Category.ExpressiveModifier
 import Linglib.Syntax.Category.Numeral.Basic
