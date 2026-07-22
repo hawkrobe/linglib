@@ -675,10 +675,13 @@ theorem cb_is_prior_subject :
 theorem null_realization_satisfies_rule1 :
     Rule1GJW95 uttIntro uttNullContinuation := by decide
 
-/-- Step 3: the null pronoun is the top of the Korean-form linear order
-    (`fullNP_lt_overt`, `overt_lt_nullPro`). -/
-theorem nullPro_top_form : ∀ f : KoreanRefForm, f ≤ .nullPro := by
-  intro f; cases f <;> decide
+/-- Step 3: the null pronoun is the top of the Korean-form linear order,
+    stated as an `OrderTop` instance so `le_top` is available. -/
+instance : OrderTop KoreanRefForm where
+  top := .nullPro
+  le_top f := by cases f <;> decide
+
+@[simp] theorem top_eq_nullPro : (⊤ : KoreanRefForm) = .nullPro := rfl
 
 /-- **Centering predicts the null-subject preference**: combining Rule 1
     with Korean's accessibility-scale calibration, the 71% subject bias

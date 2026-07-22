@@ -41,7 +41,7 @@ open Discourse.Centering
 
 /-- Utterance abbreviation specialized to the GJW use case
     (`String` entities, grammatical-role-ranked Cf). -/
-abbrev Utt : Type := Utterance String GrammaticalRole
+abbrev Utt := Utterance String GrammaticalRole
 
 /-! ### Discourses (1)-(2): the coherence contrast (paper §2) -/
 
@@ -212,11 +212,11 @@ theorem d16_b_to_c_shifting :
     classifyTransitionExtended D16.b D16.c D16.c.cp (cb D16.a D16.b) = .shifting := by
   decide
 
+theorem d16_c_to_d_cb : cb D16.c D16.d = some "Mike" := by decide
+
 /-- After the shift, (16d)'s pronoun realizes the new Cb Mike — Rule 1
     is satisfied exactly where (15c) violated it. -/
-theorem d16_c_to_d_satisfies_rule1 :
-    cb D16.c D16.d = some "Mike" ∧ Rule1GJW95 D16.c D16.d :=
-  ⟨by decide, by decide⟩
+theorem d16_c_to_d_satisfies_rule1 : Rule1GJW95 D16.c D16.d := by decide
 
 /-! ### Discourses (7)-(10): Cf ranking and Rule 1 (paper §5) -/
 
@@ -278,8 +278,7 @@ theorem d7_to_10_share_cb :
     cb D7_10.b D7_10.c7  = some "Susan" ∧
     cb D7_10.b D7_10.c8  = some "Susan" ∧
     cb D7_10.b D7_10.c9  = some "Susan" ∧
-    cb D7_10.b D7_10.c10 = some "Susan" := by
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> decide
+    cb D7_10.b D7_10.c10 = some "Susan" := by decide
 
 /-- Variant 7 satisfies Rule 1 (Susan as Cb pronominalized). -/
 theorem d7_satisfies_rule1 :
@@ -296,18 +295,10 @@ theorem d9_violates_rule1 :
 
 /-- **Variant 10 violates Rule 1**: Betsy is pronominalized but Cb
     (Susan) is realized as a proper name. The paper calls this case
-    "completely unacceptable". -/
+    "completely unacceptable"; the Rule-1 split (7, 8 satisfy; 9, 10
+    violate) tracks the paper's acceptability ordering. -/
 theorem d10_violates_rule1 :
     ¬ Rule1GJW95 D7_10.b D7_10.c10 := by decide
-
-/-- The Rule-1 split (`d7,8 OK` vs `d9,10 violate`) tracks the paper's
-    acceptability ordering: variants 7 and 8 are acceptable, 9 and 10
-    are degraded. The framework predicts this directly from Rule 1
-    plus the subject>object Cf ranking. -/
-theorem rule1_distinguishes_variants_7_8_from_9_10 :
-    (Rule1GJW95 D7_10.b D7_10.c7 ∧ Rule1GJW95 D7_10.b D7_10.c8) ∧
-    (¬ Rule1GJW95 D7_10.b D7_10.c9 ∧ ¬ Rule1GJW95 D7_10.b D7_10.c10) := by
-  refine ⟨⟨?_, ?_⟩, ⟨?_, ?_⟩⟩ <;> decide
 
 /-! ### Discourse (20): CONTINUE / RETAIN / SHIFT (paper §7) -/
 
