@@ -2789,6 +2789,7 @@ import Linglib.Syntax.Category.Adposition.Spatial
 import Linglib.Syntax.Category.Auxiliary.Basic
 import Linglib.Syntax.Category.Auxiliary.Constructions
 import Linglib.Syntax.Category.Complementizer.Basic
+import Linglib.Syntax.Category.Degree.Basic
 import Linglib.Syntax.Category.Determiner.Basic
 import Linglib.Syntax.Category.ExpressiveModifier
 import Linglib.Syntax.Category.Numeral.Basic

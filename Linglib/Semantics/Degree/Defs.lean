@@ -1,30 +1,13 @@
 /-!
-# Shape enums for degree constructions
+# Adjectival constructions
 
-The shared taxonomies of degree morphosyntax: `DegreeHead` (the Deg⁰
-inventory — comparison heads per [beck-2011], the *too* ~ *enough* pair per
-[meier-2003]) and `AdjectivalConstruction` (the surface constructions whose
-evaluativity [rett-2015] tracks).
+`AdjectivalConstruction`: the surface constructions whose evaluativity
+[rett-2015] tracks, consumed by evaluativity analyses and markedness
+implicature. The Deg⁰ head inventory is `Degree.Head` in
+`Syntax/Category/Degree`.
 -/
 
 namespace Degree
-
-/-- The degree-head (Deg⁰) inventory of a Degree Phrase. The phrase's
-internal structure is framework-dependent — [kennedy-1999] posits a
-than-clause complement to Deg, [heim-2000] a scopal degree operator — but
-the head inventory itself is framework-independent. -/
-inductive DegreeHead where
-  /-- `-er` / *more*. -/
-  | comparative
-  /-- `as...as`. -/
-  | equative
-  /-- `-est` / *most*. -/
-  | superlative
-  /-- *too*. -/
-  | excessive
-  /-- *enough*. -/
-  | sufficiency
-  deriving DecidableEq, Repr
 
 /-- Surface adjectival constructions, as tracked by evaluativity analyses
 and markedness implicature. -/

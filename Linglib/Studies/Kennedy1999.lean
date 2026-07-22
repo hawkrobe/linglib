@@ -1,3 +1,4 @@
+import Linglib.Syntax.Category.Degree.Basic
 import Linglib.Semantics.Degree.Quantifier
 import Linglib.Semantics.Degree.Discrete
 
@@ -220,12 +221,12 @@ theorem equative_antonymy_extent {Entity D : Type*} [LinearOrder D]
     who treats -er as a sentential operator rather than a DegP head.
     Both agree that degree binding is syntactic.
 
-    Note: the degree head inventory matches `Degree.DegreeHead`
+    Note: the degree head inventory matches `Degree.Head`
     from `Degree/Defs.lean`, which is the current consensus enumeration.
     This historical structure records Kennedy's specific proposal that
     these heads project a full DegP phrase. -/
 structure HistoricalDegP where
-  head : Degree.DegreeHead
+  head : Degree.Head
   adjective : String
   deriving Repr
 
