@@ -17,14 +17,16 @@ with *only* ((26a), (30b)), the contrasting-phrases rule (14), and the
 argument that focus *constrains* rather than *fixes* the domain of
 *only* (the *Recognitions* example (7)).
 
-The question-answer model adapts the paper's §2.4 paradigm — "Who cut
-Bill down to size?" / "[Mary]F cut Bill down to size" (23) — to a
-four-world Fred/Mary × beans/rice model; the *only* model is the §2.1
-introduction scenario (Mary introduced Bill and Tom to Sue). Focus
-values are computed, not stipulated: the `interp` engine that computes
-ordinary values at `M = Id` computes O/A-values at `M = AltMeaning`,
-grounding the stipulated Hamblin sets, and the lexicon's surface forms
-are checked against the English fragment entries.
+The question-answer model is the paper's §2.4 paradigm — "Who cut Bill
+down to size?" answered by *[Mary]F cut Bill down to size* (23), with
+the alternative answers of (24) — in a four-world model crossing
+subjects {Mary, Monique} with objects {Bill, Björn}. The *only* model
+is the §2.1 introduction scenario (Mary introduced Bill and Tom to
+Sue). Focus values are computed, not stipulated: the `interp` engine
+that computes ordinary values at `M = Id` computes O/A-values at
+`M = AltMeaning`, grounding the stipulated Hamblin sets, and the
+lexicon's surface forms are checked against the English fragment
+entries.
 -/
 
 namespace Rooth1992
@@ -34,46 +36,46 @@ open Focus.Interpretation (fip PropFocusValue qaCongruent qaCongruentWeak)
 
 /-! ### The question-answer world model -/
 
-/-- Worlds crossing subject (Fred/Mary) × object (beans/rice).
-    Sufficient to distinguish subject-focus from object-focus
-    alternative sets. -/
+/-- Worlds crossing cutter (Mary/Monique) × cuttee (Bill/Björn),
+    after the answer columns of [rooth-1992] (24). Sufficient to
+    distinguish subject-focus from object-focus alternative sets. -/
 inductive QAWorld where
-  | fredBeans | fredRice | maryBeans | maryRice
+  | maryBill | maryBjorn | moniqueBill | moniqueBjorn
   deriving DecidableEq, Repr
 
 open QAWorld
 
-/-- "Fred ate the beans" — true exactly at the world `fredBeans`. -/
-def fredAteBeans : Set QAWorld := {fredBeans}
+/-- "Mary cut Bill down to size" — true exactly at `maryBill`. -/
+def maryCutBill : Set QAWorld := {maryBill}
 
-/-- "Mary ate the beans" — true exactly at the world `maryBeans`. -/
-def maryAteBeans : Set QAWorld := {maryBeans}
+/-- "Monique cut Bill down to size" — true exactly at `moniqueBill`. -/
+def moniqueCutBill : Set QAWorld := {moniqueBill}
 
-/-- "Fred ate the rice" — true exactly at the world `fredRice`. -/
-def fredAteRice  : Set QAWorld := {fredRice}
+/-- "Mary cut Björn down to size" — true exactly at `maryBjorn`. -/
+def maryCutBjorn : Set QAWorld := {maryBjorn}
 
 /-! ### Alternative meanings -/
 
-/-- Focused *[FRED]F* in *FRED ate the beans* — the model's analogue of
-    the focused answer *[Mary]F cut Bill down to size* ((23Aa) of
-    [rooth-1992] §2.4): O-value = "Fred"; A-value = {"Fred", "Mary"}. -/
+/-- Focused *[MARY]F* in the answer *[Mary]F cut Bill down to size*
+    ((23Aa) of [rooth-1992] §2.4): O-value = "Mary";
+    A-value = {"Mary", "Monique"}. -/
 def altSubjectFocused : AltMeaning String :=
-  { oValue := "Fred", aValue := ["Fred", "Mary"] }
+  { oValue := "Mary", aValue := ["Mary", "Monique"] }
 
-/-- Non-focused "ate the beans": singleton A-value. Exercises
+/-- Non-focused "cut Bill down to size": singleton A-value. Exercises
     `AltMeaning.unfeatured`. -/
 def altPredicateUnfeatured : AltMeaning String :=
-  AltMeaning.unfeatured "ate the beans"
+  AltMeaning.unfeatured "cut Bill down to size"
 
 /-- Unfeatured O-value equals the input. -/
 theorem unfeatured_preserves_oValue :
-    altPredicateUnfeatured.oValue = "ate the beans" := rfl
+    altPredicateUnfeatured.oValue = "cut Bill down to size" := rfl
 
 /-- Unfeatured A-value is a singleton containing the O-value — "the
     focus semantic value of a focus-free phrase is the unit set of its
     ordinary semantic value" ([rooth-1992] (42)). -/
 theorem unfeatured_singleton_aValue :
-    altPredicateUnfeatured.aValue = ["ate the beans"] := rfl
+    altPredicateUnfeatured.aValue = ["cut Bill down to size"] := rfl
 
 /-! ### Question-answer congruence and the FIP
 
@@ -83,52 +85,53 @@ the §2.4 question-answer paradigm): in a Q-A pair ⟨ψ, α⟩,
 of the focus semantic value of the answer. The FIP (27) schematizes
 this as Γ ⊆ ⟦α⟧f with Γ resolved to the question denotation. -/
 
-/-- "Who ate the beans?" — Hamblin question with subject alternatives,
-    the analogue of the paper's (25a) value for "Who cut Bill down to
-    size?". -/
-def q_whoAteBeans : PropFocusValue QAWorld :=
-  {fredAteBeans, maryAteBeans}
+/-- "Who cut Bill down to size?" ((23Qa)) — Hamblin question with
+    subject alternatives, the (25a) value restricted to the model's
+    individuals. -/
+def q_whoCutBill : PropFocusValue QAWorld :=
+  {maryCutBill, moniqueCutBill}
 
-/-- Focus value of *[FRED]F ate the beans* — same subject
-    alternatives. -/
+/-- Focus value of *[MARY]F cut Bill down to size* ((23Aa)) — same
+    subject alternatives. -/
 def fv_subjectFocus : PropFocusValue QAWorld :=
-  {fredAteBeans, maryAteBeans}
+  {maryCutBill, moniqueCutBill}
 
-/-- Focus value of *Fred ate the [BEANS]F* — object alternatives
-    (varies object, not subject). -/
+/-- Focus value of *Mary cut [BILL]F down to size* ((23Ab)) — object
+    alternatives (varies object, not subject). -/
 def fv_objectFocus : PropFocusValue QAWorld :=
-  {fredAteBeans, fredAteRice}
+  {maryCutBill, maryCutBjorn}
 
 /-- Q-A congruence: subject focus value = question denotation. -/
 theorem qa_subject_focus_congruent :
-    qaCongruent fv_subjectFocus q_whoAteBeans := rfl
+    qaCongruent fv_subjectFocus q_whoCutBill := rfl
 
 /-- The FIP holds for subject focus: question alternatives ⊆ focus
     value — trivially, since the sets are equal. -/
 theorem fip_congruent :
-    fip q_whoAteBeans fv_subjectFocus :=
+    fip q_whoCutBill fv_subjectFocus :=
   fun _ h => h
 
-/-- "maryAteBeans" is in the question alternatives... -/
-theorem maryAteBeans_in_question :
-    maryAteBeans ∈ q_whoAteBeans := Or.inr rfl
+/-- "moniqueCutBill" is in the question alternatives... -/
+theorem moniqueCutBill_in_question :
+    moniqueCutBill ∈ q_whoCutBill := Or.inr rfl
 
 /-- ...but it is NOT in the object-focus alternative set... -/
-theorem maryAteBeans_not_in_objectFocus :
-    maryAteBeans ∉ fv_objectFocus := by
-  simp [fv_objectFocus, maryAteBeans, fredAteBeans, fredAteRice]
+theorem moniqueCutBill_not_in_objectFocus :
+    moniqueCutBill ∉ fv_objectFocus := by
+  simp [fv_objectFocus, moniqueCutBill, maryCutBill, maryCutBjorn]
 
-/-- ...so the FIP fails for object focus, explaining why "#Fred ate the
-    BEANS" is not a congruent answer to "Who ate the beans?" -/
+/-- ...so the FIP fails for object focus: (23Ab) is linked to (23Qa)
+    only by a dotted (inappropriate) line in the paper's (23). -/
 theorem fip_fails_object_focus :
-    ¬ fip q_whoAteBeans fv_objectFocus :=
-  fun h => maryAteBeans_not_in_objectFocus (h maryAteBeans_in_question)
+    ¬ fip q_whoCutBill fv_objectFocus :=
+  fun h => moniqueCutBill_not_in_objectFocus (h moniqueCutBill_in_question)
 
 /-! ### The question as focus antecedent -/
 
-/-- 'Who ate the beans?' as a focus antecedent (`Focus.Antecedent`):
-    the anaphoric source of the squiggle's contrast set. -/
-def qaAntecedent : Focus.Antecedent QAWorld := .question q_whoAteBeans
+/-- 'Who cut Bill down to size?' as a focus antecedent
+    (`Focus.Antecedent`): the anaphoric source of the squiggle's
+    contrast set. -/
+def qaAntecedent : Focus.Antecedent QAWorld := .question q_whoCutBill
 
 /-- Question antecedents license the new-information use. -/
 theorem qaAntecedent_use : qaAntecedent.use = .newInfo := rfl
@@ -145,20 +148,20 @@ theorem qaAntecedent_rejects_objectFocus :
 /-- The question antecedent *fully* resolves against the subject-focus
     meaning: all three clauses of the squiggle presupposition
     ([rooth-1992] (40) set case), not just the FIP — the contrast set
-    contains the ordinary value `fredAteBeans` and the distinct
-    alternative `maryAteBeans`. -/
+    contains the ordinary value `maryCutBill` and the distinct
+    alternative `moniqueCutBill`. -/
 theorem qaAntecedent_resolves :
-    qaAntecedent.Resolves fredAteBeans fv_subjectFocus :=
+    qaAntecedent.Resolves maryCutBill fv_subjectFocus :=
   ⟨fip_congruent, Or.inl rfl,
-    maryAteBeans, Or.inr rfl,
-    fun h => by simp [maryAteBeans, fredAteBeans] at h⟩
+    moniqueCutBill, Or.inr rfl,
+    fun h => by simp [moniqueCutBill, maryCutBill] at h⟩
 
 /-- A focus-free answer cannot resolve any antecedent: its focus value
     is the unit set of its ordinary value ((42)), defeating the
     contrast clause — "the argument must contain a focus". -/
 theorem focusFree_answer_cannot_resolve (Γ : PropFocusValue QAWorld) :
-    ¬ Focus.SquiggleSet fredAteBeans {fredAteBeans} Γ :=
-  Focus.not_squiggleSet_singleton fredAteBeans Γ
+    ¬ Focus.SquiggleSet maryCutBill {maryCutBill} Γ :=
+  Focus.not_squiggleSet_singleton maryCutBill Γ
 
 /-- Contrasting phrases ([rooth-1992] (14), on the symmetric-contrast
     joke opening (11)): construe α as contrasting with β if
@@ -297,26 +300,28 @@ theorem only_focus_determines_meaning :
 
 /-! ### Data rows
 
-The rows (`Data/Examples/Rooth1992.json`) record that "FRED ate the
-beans" is congruent and "#Fred ate the BEANS" is incongruent with "Who
-ate the beans?", and that focus determines what *only* excludes. The
-theory explains both: subject focus produces a focus value equal to
-the question denotation (`fip_congruent`), object focus one that
-excludes a question alternative (`fip_fails_object_focus`); and the
-FIP constrains the domain `C` of *only*, so different focus positions
-yield different exclusion domains. -/
+The rows (`Data/Examples/Rooth1992.json`) record the paper's (23):
+"MARY cut Bill down to size" is congruent and "#Mary cut BILL down to
+size" incongruent with "Who cut Bill down to size?", and focus
+determines what *only* excludes ((3a)/(3b)). The theory explains both:
+subject focus produces a focus value equal to the question denotation
+(`fip_congruent`), object focus one that excludes a question
+alternative (`fip_fails_object_focus`); and the FIP constrains the
+domain `C` of *only*, so different focus positions yield different
+exclusion domains. -/
 
 /-- The FIP prediction for a row, read off its `focus` feature: subject
-    focus ("Fred") evokes the subject-alternative focus value, object
-    focus ("beans") the object-alternative one. -/
+    focus ("Mary") evokes the subject-alternative focus value, object
+    focus ("Bill") the object-alternative one. -/
 def fipPrediction (row : Data.Examples.LinguisticExample) : Prop :=
   match row.feature? "focus" with
-  | some "Fred"  => fip q_whoAteBeans fv_subjectFocus
-  | some "beans" => fip q_whoAteBeans fv_objectFocus
+  | some "Mary" => fip q_whoCutBill fv_subjectFocus
+  | some "Bill" => fip q_whoCutBill fv_objectFocus
   | _ => False
 
 /-- **Transfer**: a Q-A row is acceptable iff its focus value satisfies
-    the FIP against "Who ate the beans?" ([rooth-1992] (26d)). -/
+    the FIP against "Who cut Bill down to size?"
+    ([rooth-1992] (26d)). -/
 theorem qa_acceptable_iff_fip :
     ∀ row ∈ Examples.all,
       row.feature? "fip_application" = some "qaCongruence" →
@@ -352,7 +357,9 @@ theorem bridge_only_association :
 
 The propositions above were hand-defined. Here they are derived
 compositionally: entity denotations + a world-indexed verb meaning are
-combined via Heim & Kratzer's `interp`, run once per world. -/
+combined via Heim & Kratzer's `interp`, run once per world. The
+particle-verb *cut … down to size* is treated as a single transitive
+lexical item keyed "cut". -/
 
 open Intensional
 open Semantics.Montague (Lexicon)
@@ -361,45 +368,45 @@ open Semantics.Composition.Tree
 
 /-- Entity domain for the focus model. -/
 inductive E where
-  | fred | mary | beans | rice
+  | mary | monique | bill | bjorn
   deriving DecidableEq, Repr
 
-/-- World-indexed verb semantics for "ate".
-    `ateInWorld w obj subj` follows Montague's argument order
+/-- World-indexed verb semantics for "cut (down to size)".
+    `cutInWorld w obj subj` follows Montague's argument order
     (object first, then subject). -/
-def ateInWorld (w : QAWorld) : Denot E Unit (.e ⇒ .e ⇒ .t) :=
+def cutInWorld (w : QAWorld) : Denot E Unit (.e ⇒ .e ⇒ .t) :=
   fun obj subj => match w, subj, obj with
-  | .fredBeans, .fred, .beans => True
-  | .fredRice,  .fred, .rice  => True
-  | .maryBeans, .mary, .beans => True
-  | .maryRice,  .mary, .rice  => True
+  | .maryBill,     .mary,    .bill  => True
+  | .maryBjorn,    .mary,    .bjorn => True
+  | .moniqueBill,  .monique, .bill  => True
+  | .moniqueBjorn, .monique, .bjorn => True
   | _, _, _ => False
 
 /-- Montague lexicon parameterized by world.
     Maps surface forms to typed denotations. -/
 def focusLex (w : QAWorld) : Lexicon E Unit := fun word =>
   match word with
-  | "Fred"  => some ⟨.e, E.fred⟩
-  | "Mary"  => some ⟨.e, E.mary⟩
-  | "ate"   => some ⟨.e ⇒ .e ⇒ .t, ateInWorld w⟩
-  | "beans" => some ⟨.e, E.beans⟩
-  | "rice"  => some ⟨.e, E.rice⟩
+  | "Mary"    => some ⟨.e, E.mary⟩
+  | "Monique" => some ⟨.e, E.monique⟩
+  | "cut"     => some ⟨.e ⇒ .e ⇒ .t, cutInWorld w⟩
+  | "Bill"    => some ⟨.e, E.bill⟩
+  | "Björn"   => some ⟨.e, E.bjorn⟩
   | _ => none
 
-/-- Syntax tree: [S [NP Fred] [VP [V ate] [NP beans]]] -/
-def tree_fredAteBeans : Tree Unit String :=
-  .bin (.leaf "Fred") (.bin (.leaf "ate") (.leaf "beans"))
+/-- Syntax tree: [S [NP Mary] [VP [V cut] [NP Bill]]] -/
+def tree_maryCutBill : Tree Unit String :=
+  .bin (.leaf "Mary") (.bin (.leaf "cut") (.leaf "Bill"))
 
-/-- Syntax tree: [S [NP Mary] [VP [V ate] [NP beans]]] -/
-def tree_maryAteBeans : Tree Unit String :=
-  .bin (.leaf "Mary") (.bin (.leaf "ate") (.leaf "beans"))
+/-- Syntax tree: [S [NP Monique] [VP [V cut] [NP Bill]]] -/
+def tree_moniqueCutBill : Tree Unit String :=
+  .bin (.leaf "Monique") (.bin (.leaf "cut") (.leaf "Bill"))
 
-/-- Syntax tree: [S [NP Fred] [VP [V ate] [NP rice]]] -/
-def tree_fredAteRice : Tree Unit String :=
-  .bin (.leaf "Fred") (.bin (.leaf "ate") (.leaf "rice"))
+/-- Syntax tree: [S [NP Mary] [VP [V cut] [NP Björn]]] -/
+def tree_maryCutBjorn : Tree Unit String :=
+  .bin (.leaf "Mary") (.bin (.leaf "cut") (.leaf "Björn"))
 
 /-- Default assignment for binding-free trees. -/
-private def g₀ : Core.Assignment E := λ _ => E.fred
+private def g₀ : Core.Assignment E := λ _ => E.mary
 
 /-- Extract the Prop truth value from a tree interpretation.
     Returns `none` if the tree is uninterpretable or has non-`t` type. -/
@@ -410,38 +417,38 @@ def treeResult (lex : Lexicon E Unit) (t : Tree Unit String) : Option Prop :=
 
 /-! ### Grounding the stipulated propositions -/
 
-/-- Compositionally derived "Fred ate beans" proposition. -/
-def fredAteBeans_comp : QAWorld → Prop :=
-  fun w => (treeResult (focusLex w) tree_fredAteBeans).getD False
+/-- Compositionally derived "Mary cut Bill" proposition. -/
+def maryCutBill_comp : QAWorld → Prop :=
+  fun w => (treeResult (focusLex w) tree_maryCutBill).getD False
 
-/-- Compositionally derived "Mary ate beans" proposition. -/
-def maryAteBeans_comp : QAWorld → Prop :=
-  fun w => (treeResult (focusLex w) tree_maryAteBeans).getD False
+/-- Compositionally derived "Monique cut Bill" proposition. -/
+def moniqueCutBill_comp : QAWorld → Prop :=
+  fun w => (treeResult (focusLex w) tree_moniqueCutBill).getD False
 
-/-- Compositionally derived "Fred ate rice" proposition. -/
-def fredAteRice_comp : QAWorld → Prop :=
-  fun w => (treeResult (focusLex w) tree_fredAteRice).getD False
+/-- Compositionally derived "Mary cut Björn" proposition. -/
+def maryCutBjorn_comp : QAWorld → Prop :=
+  fun w => (treeResult (focusLex w) tree_maryCutBjorn).getD False
 
 /-- Direct function application matches tree interpretation. -/
 theorem direct_eq_interp (w : QAWorld) :
-    treeResult (focusLex w) tree_fredAteBeans =
-    some (ateInWorld w E.beans E.fred) := by
+    treeResult (focusLex w) tree_maryCutBill =
+    some (cutInWorld w E.bill E.mary) := by
   cases w <;> rfl
 
-/-- Grounding: compositional "Fred ate beans" agrees with the
+/-- Grounding: compositional "Mary cut Bill" agrees with the
     hand-defined proposition at each world. -/
-theorem comp_grounds_fredAteBeans :
-    fredAteBeans_comp = fun w => ateInWorld w E.beans E.fred := by
+theorem comp_grounds_maryCutBill :
+    maryCutBill_comp = fun w => cutInWorld w E.bill E.mary := by
   funext w; cases w <;> rfl
 
-/-- Grounding: compositional "Mary ate beans" = direct application. -/
-theorem comp_grounds_maryAteBeans :
-    maryAteBeans_comp = fun w => ateInWorld w E.beans E.mary := by
+/-- Grounding: compositional "Monique cut Bill" = direct application. -/
+theorem comp_grounds_moniqueCutBill :
+    moniqueCutBill_comp = fun w => cutInWorld w E.bill E.monique := by
   funext w; cases w <;> rfl
 
-/-- Grounding: compositional "Fred ate rice" = direct application. -/
-theorem comp_grounds_fredAteRice :
-    fredAteRice_comp = fun w => ateInWorld w E.rice E.fred := by
+/-- Grounding: compositional "Mary cut Björn" = direct application. -/
+theorem comp_grounds_maryCutBjorn :
+    maryCutBjorn_comp = fun w => cutInWorld w E.bjorn E.mary := by
   funext w; cases w <;> rfl
 
 /-! ### The focus dimension through the engine
@@ -457,11 +464,11 @@ application. -/
 instance (E W : Type) : PredAbs AltMeaning E W := ⟨none⟩
 
 /-- The focus lexicon at `M = AltMeaning`: every entry `pure`-lifts
-    except focused *[Fred]F*, whose entry carries the subject
+    except focused *[Mary]F*, whose entry carries the subject
     alternatives. -/
 def focusLexF (w : QAWorld) : Lexicon E Unit AltMeaning := fun word =>
   match word with
-  | "Fred" => some ⟨.e, (⟨E.fred, [E.fred, E.mary]⟩ : AltMeaning _)⟩
+  | "Mary" => some ⟨.e, (⟨E.mary, [E.mary, E.monique]⟩ : AltMeaning _)⟩
   | w' => Lexicon.lift AltMeaning (focusLex w) w'
 
 /-- Focus-dimension tree interpretation. -/
@@ -472,31 +479,31 @@ def treeResultF (lex : Lexicon E Unit AltMeaning) (t : Tree Unit String) :
   | _ => none
 
 /-- The engine at `M = AltMeaning` computes the two-dimensional meaning
-    of *[FRED]F ate the beans*: the O-value is the ordinary
+    of *[MARY]F cut Bill down to size*: the O-value is the ordinary
     interpretation and the A-value is the subject-alternative family —
     the focus value is computed, not stipulated. -/
-theorem treeResultF_fredAteBeans (w : QAWorld) :
-    treeResultF (focusLexF w) tree_fredAteBeans =
-      some ⟨ateInWorld w E.beans E.fred,
-            [ateInWorld w E.beans E.fred, ateInWorld w E.beans E.mary]⟩ := by
+theorem treeResultF_maryCutBill (w : QAWorld) :
+    treeResultF (focusLexF w) tree_maryCutBill =
+      some ⟨cutInWorld w E.bill E.mary,
+            [cutInWorld w E.bill E.mary, cutInWorld w E.bill E.monique]⟩ := by
   cases w <;> rfl
 
 /-- O-projection through the engine: mapping `oValue` over the
     `AltMeaning` run recovers the `Id` run. -/
 theorem treeResultF_oValue (w : QAWorld) :
-    (treeResultF (focusLexF w) tree_fredAteBeans).map (·.oValue) =
-      treeResult (focusLex w) tree_fredAteBeans := by
+    (treeResultF (focusLexF w) tree_maryCutBill).map (·.oValue) =
+      treeResult (focusLex w) tree_maryCutBill := by
   cases w <;> rfl
 
 /-- The stipulated `fv_subjectFocus` is exactly the engine's computed
     alternative family, read as proposition sets. -/
 theorem fv_subjectFocus_computed :
     fv_subjectFocus =
-      {{w | ateInWorld w E.beans E.fred}, {w | ateInWorld w E.beans E.mary}} := by
-  have h1 : ({w | ateInWorld w E.beans E.fred} : Set QAWorld) = fredAteBeans := by
-    ext w; cases w <;> simp [ateInWorld, fredAteBeans]
-  have h2 : ({w | ateInWorld w E.beans E.mary} : Set QAWorld) = maryAteBeans := by
-    ext w; cases w <;> simp [ateInWorld, maryAteBeans]
+      {{w | cutInWorld w E.bill E.mary}, {w | cutInWorld w E.bill E.monique}} := by
+  have h1 : ({w | cutInWorld w E.bill E.mary} : Set QAWorld) = maryCutBill := by
+    ext w; cases w <;> simp [cutInWorld, maryCutBill]
+  have h2 : ({w | cutInWorld w E.bill E.monique} : Set QAWorld) = moniqueCutBill := by
+    ext w; cases w <;> simp [cutInWorld, moniqueCutBill]
   rw [h1, h2]
   rfl
 
@@ -509,40 +516,34 @@ surface forms feed the compositional lexicon. -/
 section FragmentNouns
 open English.Nouns
 
-/-- Fred is a proper name in the English fragment. -/
-theorem fragment_fred_proper : fred.proper = true := rfl
-
 /-- Mary is a proper name in the English fragment. -/
 theorem fragment_mary_proper : mary.proper = true := rfl
 
-/-- "bean" is countable in the English fragment. -/
-theorem fragment_bean_countable : bean.countable = .count := rfl
+/-- Bill is a proper name in the English fragment. -/
+theorem fragment_bill_proper : bill.proper = true := rfl
 
 /-- Fragment surface forms feed the Montague lexicon.
     The form field of each fragment entry matches a lexicon key. -/
-theorem fragment_fred_in_lexicon :
-    (focusLex .fredBeans fred.formSg).isSome = true := rfl
-
 theorem fragment_mary_in_lexicon :
-    (focusLex .fredBeans mary.formSg).isSome = true := rfl
+    (focusLex .maryBill mary.formSg).isSome = true := rfl
 
-theorem fragment_bean_pl_in_lexicon :
-    (focusLex .fredBeans (bean.formPl.getD "")).isSome = true := rfl
+theorem fragment_bill_in_lexicon :
+    (focusLex .maryBill bill.formSg).isSome = true := rfl
 
 end FragmentNouns
 
 section FragmentVerbs
 open English.Predicates.Verbal
 
-/-- "eat" is transitive (NP complement). -/
-theorem fragment_eat_transitive : eat.complementType = .np := rfl
+/-- "cut" is transitive (NP frame). -/
+theorem fragment_cut_transitive : cut.frames = [.np] := rfl
 
-/-- "eat" has past tense "ate" matching the lexicon entry. -/
-theorem fragment_eat_past_form : eat.formPast = "ate" := rfl
+/-- "cut" has (irregular) past tense "cut" matching the lexicon key. -/
+theorem fragment_cut_past_form : cut.formPast = "cut" := rfl
 
-/-- The past form of "eat" is in the Montague lexicon. -/
-theorem fragment_eat_past_in_lexicon :
-    (focusLex .fredBeans eat.formPast).isSome = true := rfl
+/-- The past form of "cut" is in the Montague lexicon. -/
+theorem fragment_cut_past_in_lexicon :
+    (focusLex .maryBill cut.formPast).isSome = true := rfl
 
 end FragmentVerbs
 
@@ -552,8 +553,8 @@ end FragmentVerbs
     the same truth values as the hand-defined propositions used to
     build the Hamblin question. -/
 theorem endToEnd_question_grounded :
-    (∀ w, treeResult (focusLex w) tree_fredAteBeans = some (ateInWorld w E.beans E.fred)) ∧
-    (∀ w, treeResult (focusLex w) tree_maryAteBeans = some (ateInWorld w E.beans E.mary)) :=
+    (∀ w, treeResult (focusLex w) tree_maryCutBill = some (cutInWorld w E.bill E.mary)) ∧
+    (∀ w, treeResult (focusLex w) tree_moniqueCutBill = some (cutInWorld w E.bill E.monique)) :=
   ⟨fun w => by cases w <;> rfl, fun w => by cases w <;> rfl⟩
 
 end Rooth1992

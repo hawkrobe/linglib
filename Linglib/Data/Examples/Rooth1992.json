@@ -1,7 +1,10 @@
 [
   {
     "id": "rooth1992_only_bill",
-    "source": {"bibkey": "rooth-1992", "paperLabel": "UNVERIFIED §2.1 — only with focus on the direct object"},
+    "source": {
+      "bibkey": "rooth-1992",
+      "paperLabel": "(3a), p. 77"
+    },
     "language": "stan1293",
     "primaryText": "Mary only introduced BILL to Sue",
     "discourseSegments": [],
@@ -10,21 +13,42 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "Mary introduced Bill to Sue", "judgment": "acceptable"},
-      {"form": "Mary introduced John to Sue", "judgment": "acceptable"},
-      {"form": "Mary introduced Tom to Sue", "judgment": "acceptable"},
-      {"form": "Mary introduced Fred to Sue", "judgment": "acceptable"}
+      {
+        "form": "Mary introduced Bill to Sue",
+        "judgment": "acceptable"
+      },
+      {
+        "form": "Mary introduced John to Sue",
+        "judgment": "acceptable"
+      },
+      {
+        "form": "Mary introduced Tom to Sue",
+        "judgment": "acceptable"
+      },
+      {
+        "form": "Mary introduced Fred to Sue",
+        "judgment": "acceptable"
+      }
     ],
     "readings": [],
     "paperFeatures": [
-      ["focus", "Bill"],
-      ["fip_application", "focusingAdverb"]
+      [
+        "focus",
+        "Bill"
+      ],
+      [
+        "fip_application",
+        "focusingAdverb"
+      ]
     ],
     "comment": "Migrated from Phenomena/Focus/Basic.lean roothOnlyBill. Focus on 'Bill' makes only quantify over alternative introducees: Bill is the only person Mary introduced to Sue. The alternatives field carries the Roothian focus-alternative set {introduce(m,x,s) : x in {Bill, John, Tom, Fred}} as substituted prejacents; the alternative individuals beyond Bill are illustrative, not verified against the paper."
   },
   {
     "id": "rooth1992_only_sue",
-    "source": {"bibkey": "rooth-1992", "paperLabel": "UNVERIFIED §2.1 — only with focus on the recipient"},
+    "source": {
+      "bibkey": "rooth-1992",
+      "paperLabel": "(3b), p. 77"
+    },
     "language": "stan1293",
     "primaryText": "Mary only introduced Bill to SUE",
     "discourseSegments": [],
@@ -33,62 +57,114 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "Mary introduced Bill to Sue", "judgment": "acceptable"},
-      {"form": "Mary introduced Bill to Jane", "judgment": "acceptable"},
-      {"form": "Mary introduced Bill to Ann", "judgment": "acceptable"},
-      {"form": "Mary introduced Bill to Beth", "judgment": "acceptable"}
+      {
+        "form": "Mary introduced Bill to Sue",
+        "judgment": "acceptable"
+      },
+      {
+        "form": "Mary introduced Bill to Jane",
+        "judgment": "acceptable"
+      },
+      {
+        "form": "Mary introduced Bill to Ann",
+        "judgment": "acceptable"
+      },
+      {
+        "form": "Mary introduced Bill to Beth",
+        "judgment": "acceptable"
+      }
     ],
     "readings": [],
     "paperFeatures": [
-      ["focus", "Sue"],
-      ["fip_application", "focusingAdverb"]
+      [
+        "focus",
+        "Sue"
+      ],
+      [
+        "fip_application",
+        "focusingAdverb"
+      ]
     ],
     "comment": "Migrated from Phenomena/Focus/Basic.lean roothOnlySue. Same string as rooth1992_only_bill modulo focus position: focus on 'Sue' makes only exclude alternative recipients instead of alternative introducees. The alternatives field carries the Roothian focus-alternative set {introduce(m,b,y) : y in {Sue, Jane, Ann, Beth}}; the alternative individuals beyond Sue are illustrative, not verified against the paper."
   },
   {
     "id": "rooth1992_qa_congruent",
-    "source": {"bibkey": "rooth-1992", "paperLabel": "UNVERIFIED §4 — congruent answer (subject focus)"},
+    "source": {
+      "bibkey": "rooth-1992",
+      "paperLabel": "(23Qa)/(23Aa), p. 84"
+    },
     "language": "stan1293",
-    "primaryText": "FRED ate the beans",
+    "primaryText": "MARY cut Bill down to size",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "FRED ate the beans",
-    "context": "Who ate the beans?",
+    "translation": "MARY cut Bill down to size",
+    "context": "Who cut Bill down to size?",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "FRED ate the beans", "judgment": "acceptable"},
-      {"form": "MARY ate the beans", "judgment": "acceptable"},
-      {"form": "BILL ate the beans", "judgment": "acceptable"},
-      {"form": "SUE ate the beans", "judgment": "acceptable"}
+      {
+        "form": "MARY cut Bill down to size",
+        "judgment": "acceptable"
+      },
+      {
+        "form": "MONIQUE cut Bill down to size",
+        "judgment": "acceptable"
+      },
+      {
+        "form": "MICHIKO cut Bill down to size",
+        "judgment": "acceptable"
+      }
     ],
     "readings": [],
     "paperFeatures": [
-      ["focus", "Fred"],
-      ["fip_application", "qaCongruence"]
+      [
+        "focus",
+        "Mary"
+      ],
+      [
+        "fip_application",
+        "qaCongruence"
+      ]
     ],
-    "comment": "Migrated from Phenomena/Focus/Basic.lean qaCongruent. Subject focus matches the wh-position of the question, so the answer is congruent. The alternatives field carries the subject-varying focus-alternative set, each member a congruent answer to the question."
+    "comment": "Rooth's (23): the solid line links (23Qa) to the subject-focus answer (23Aa). Subject focus matches the wh-position, so the answer is congruent. The alternatives field carries the subject-varying focus-alternative set from the left column of (24), each member a congruent answer to (23Qa)."
   },
   {
     "id": "rooth1992_qa_incongruent",
-    "source": {"bibkey": "rooth-1992", "paperLabel": "UNVERIFIED §4 — incongruent answer (object focus)"},
+    "source": {
+      "bibkey": "rooth-1992",
+      "paperLabel": "(23Ab) as answer to (23Qa), p. 84"
+    },
     "language": "stan1293",
-    "primaryText": "#Fred ate the BEANS",
+    "primaryText": "#Mary cut BILL down to size",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Fred ate the BEANS",
-    "context": "Who ate the beans?",
+    "translation": "Mary cut BILL down to size",
+    "context": "Who cut Bill down to size?",
     "judgment": "unacceptable",
     "alternatives": [
-      {"form": "#Fred ate the BEANS", "judgment": "unacceptable"},
-      {"form": "#Fred ate the RICE", "judgment": "unacceptable"},
-      {"form": "#Fred ate the PASTA", "judgment": "unacceptable"},
-      {"form": "#Fred ate the SALAD", "judgment": "unacceptable"}
+      {
+        "form": "#Mary cut BILL down to size",
+        "judgment": "unacceptable"
+      },
+      {
+        "form": "#Mary cut BJÖRN down to size",
+        "judgment": "unacceptable"
+      },
+      {
+        "form": "#Mary cut BORIS down to size",
+        "judgment": "unacceptable"
+      }
     ],
     "readings": [],
     "paperFeatures": [
-      ["focus", "beans"],
-      ["fip_application", "qaCongruence"]
+      [
+        "focus",
+        "Bill"
+      ],
+      [
+        "fip_application",
+        "qaCongruence"
+      ]
     ],
-    "comment": "Migrated from Phenomena/Focus/Basic.lean qaIncongruent. Object focus does not match the wh-position of the question, so the answer is infelicitous (#). The alternatives field carries the object-varying focus-alternative set; in this context every member is equally incongruent."
+    "comment": "Rooth's (23): the dotted line marks (23Ab) as an inappropriate answer to (23Qa). Object focus does not match the wh-position, so the answer is infelicitous (#). The alternatives field carries the object-varying set from the right column of (24); in this context every member is equally incongruent."
   }
 ]
