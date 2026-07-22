@@ -28,17 +28,11 @@ of retentions, which are preferred over sequences of shifts; the
 pair-of-utterances restriction is [brennan-friedman-pollard-1987]'s
 variant, per the paper's own footnote).
 
-The key empirical contrast is between Discourses 1 and 2 (§ 1 below):
-same propositional content, different transition pattern, different
-perceived coherence. The framework predicts the difference.
-
-This file consumes the substrate types and operators from
-`Discourse/Centering/{Defs,Basic,Transition,Rule1,Rule2}.lean`
-plus the `GrammaticalRole` Cf-ranker instance from
-`Instances/GrammaticalRole.lean`. Per linglib's import-don't-restipulate
-discipline, no Centering primitives are redefined here — the file's
-contribution is the empirical-example anchor for the substrate plus
-the § 5 comparison with [sidner-1983].
+The empirical anchors are the paper's own discourses: the (1)/(2)
+coherence contrast, the (15)/(16) Rule-1 violation and repair, the
+(7)-(10) hamster variants, the (20) transition showcase, and the §9
+comparison with [sidner-1983] on example (34). Examples use `String`
+entities and the substrate's `Utterance String GrammaticalRole`.
 -/
 
 set_option autoImplicit false
@@ -47,16 +41,11 @@ namespace GroszJoshiWeinstein1995
 
 open Discourse.Centering
 
-/-! Throughout, examples use `String` entities for readability and
-    `Utterance String GrammaticalRole` from the substrate. -/
-
 /-- Utterance abbreviation specialized to the GJW use case
     (`String` entities, grammatical-role-ranked Cf). -/
 abbrev Utt : Type := Utterance String GrammaticalRole
 
--- ════════════════════════════════════════════════════
--- § 1. Discourse 1 vs Discourse 2: the coherence contrast (paper §2)
--- ════════════════════════════════════════════════════
+/-! ### Discourses (1)-(2): the coherence contrast (paper §2) -/
 
 namespace D1
 
@@ -159,9 +148,7 @@ def d2_score : Nat :=
 
 theorem discourse1_more_coherent_than_discourse2 : d1_score > d2_score := by decide
 
--- ════════════════════════════════════════════════════
--- § 2. Discourses 15-16: Rule 1 violation and shift repair (paper §7)
--- ════════════════════════════════════════════════════
+/-! ### Discourses (15)-(16): Rule 1 violation and shift repair (paper §7) -/
 
 namespace D15
 
@@ -233,9 +220,7 @@ theorem d16_c_to_d_satisfies_rule1 :
     cb D16.c D16.d = some "Mike" ∧ Rule1GJW95 D16.c D16.d :=
   ⟨by decide, by decide⟩
 
--- ════════════════════════════════════════════════════
--- § 3. Discourses 7-10: Cf ranking + Rule 1 interaction
--- ════════════════════════════════════════════════════
+/-! ### Discourses (7)-(10): Cf ranking and Rule 1 (paper §5) -/
 
 /-! [grosz-joshi-weinstein-1995] §5 examples (7)-(10). All four
     variants share utterances (a) and (b); they differ only in (c)'s
@@ -326,9 +311,7 @@ theorem rule1_distinguishes_variants_7_8_from_9_10 :
     (¬ Rule1GJW95 D7_10.b D7_10.c9 ∧ ¬ Rule1GJW95 D7_10.b D7_10.c10) := by
   refine ⟨⟨?_, ?_⟩, ⟨?_, ?_⟩⟩ <;> decide
 
--- ════════════════════════════════════════════════════
--- § 4. Discourse 20: full CONTINUE / RETAIN / SHIFT pattern (paper §7)
--- ════════════════════════════════════════════════════
+/-! ### Discourse (20): CONTINUE / RETAIN / SHIFT (paper §7) -/
 
 namespace D20
 
@@ -369,9 +352,7 @@ theorem discourse20_rule1_b_c : Rule1GJW95 D20.b D20.c := by decide
 theorem discourse20_rule1_c_d : Rule1GJW95 D20.c D20.d := by decide
 theorem discourse20_rule1_d_e : Rule1GJW95 D20.d D20.e := by decide
 
--- ════════════════════════════════════════════════════
--- § 5. Comparison with [sidner-1983]: example (34)
--- ════════════════════════════════════════════════════
+/-! ### Comparison with [sidner-1983]: example (34) (paper §9) -/
 
 /-! This section mechanizes the Sidner-comparison the paper makes in
     its own §9 (p. 222) — the example is Sidner's own, cited from her
@@ -481,9 +462,8 @@ theorem gjw_prefers_jeff : gjwPredictedHe = some "Jeff" := by decide
     GJW's Rule-2 preference (with the caveat above that GJW themselves
     don't claim uniqueness): RETAIN > SHIFT under Rule 2 ⇒ Jeff.
 
-    Stated constructively (mathlib idiom): each side commits to a
-    *named* prediction; the inequality follows by transparent
-    `decide` from the witnesses. -/
+    Each side commits to a *named* prediction; the inequality follows
+    by `decide` from the witnesses. -/
 theorem sidner_gjw_disagree_on_d34c :
     Sidner1983.D34.sidnerPredictedHe ≠ gjwPredictedHe := by
   rw [Sidner1983.D34.sidner_predicts_carl, gjw_prefers_jeff]
