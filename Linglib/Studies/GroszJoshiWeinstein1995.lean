@@ -3,15 +3,11 @@ import Linglib.Discourse.Centering.Transition
 import Linglib.Discourse.Centering.Rule1
 import Linglib.Discourse.Centering.Rule2
 import Linglib.Discourse.Centering.Instances.GrammaticalRole
-import Linglib.Features.Accessibility
 import Linglib.Studies.Sidner1983
-import Linglib.Studies.Ariel2001
-import Linglib.Studies.KehlerRohde2013
-import Linglib.Studies.KwonLee2026
 
 /-!
 # [grosz-joshi-weinstein-1995]: Centering Theory
-[kameyama-1986] [gordon-grosz-gilliom-1993] [kehler-rohde-2013] [sidner-1983]
+[kameyama-1986] [gordon-grosz-gilliom-1993] [sidner-1983]
 
 Centering: A Framework for Modeling the Local Coherence of Discourse.
 *Computational Linguistics* 21(2): 203–225.
@@ -27,38 +23,27 @@ that Cb is the most-highly-ranked Cf.
 Two normative rules govern coherent discourse: **Rule 1**
 (pronominalization constraint — if any Cf element is pronominalized
 in the next utterance, the Cb must be); **Rule 2** (transition
-preference — continuations preferred over retentions, retentions
-over shifts).
+preference — *sequences* of continuations preferred over sequences
+of retentions, which are preferred over sequences of shifts; the
+pair-of-utterances restriction is [brennan-friedman-pollard-1987]'s
+variant, per the paper's own footnote).
 
-The key empirical contrast is between Discourses 1 and 2 (§ 4 below):
-same propositional content, different transition pattern, different
-perceived coherence. The framework predicts the difference.
-
-This file consumes the substrate types and operators from
-`Discourse/Centering/{Defs,Basic,Transition,Rule1,Rule2}.lean`
-plus the `GrammaticalRole` Cf-ranker instance from
-`Instances/GrammaticalRole.lean`. Per linglib's import-don't-restipulate
-discipline, no Centering primitives are redefined here — the file's
-contribution is the empirical-example anchor for the substrate plus
-the §8 comparison with [sidner-1983].
+The empirical anchors are the paper's own discourses: the (1)/(2)
+coherence contrast, the (15)/(16) Rule-1 violation and repair, the
+(7)-(10) hamster variants, the (20) transition showcase, and the §9
+comparison with [sidner-1983] on example (34). Examples use `String`
+entities and the substrate's `Utterance String GrammaticalRole`.
 -/
-
-set_option autoImplicit false
 
 namespace GroszJoshiWeinstein1995
 
 open Discourse.Centering
 
-/-! Throughout, examples use `String` entities for readability and
-    `Utterance String GrammaticalRole` from the substrate. -/
-
 /-- Utterance abbreviation specialized to the GJW use case
     (`String` entities, grammatical-role-ranked Cf). -/
-abbrev Utt : Type := Utterance String GrammaticalRole
+abbrev Utt := Utterance String GrammaticalRole
 
--- ════════════════════════════════════════════════════
--- § 1. Discourse 1 vs Discourse 2: the coherence contrast (paper §2)
--- ════════════════════════════════════════════════════
+/-! ### Discourses (1)-(2): the coherence contrast (paper §2) -/
 
 namespace D1
 
@@ -121,10 +106,11 @@ theorem d1_b_to_c_continuation :
 theorem d1_c_to_d_continuation :
     classifyTransitionExtended D1.c D1.d D1.d.cp (cb D1.b D1.c) = .continuation := by decide
 
-/-- Discourse 2 (a→b): the Cb is John (the only entity in `Cf(D2.a)`
-    that is realized in `D2.b`), but `Cp(D2.b) = "store"` (not John),
-    so this is a *retain* — already a less coherent transition than
-    Discourse 1's continuation. -/
+/-- Discourse 2 (a→b): both John and the store are realized in `D2.b`,
+    and John outranks the store in `Cf(D2.a)` (subject > object), so the
+    Cb is John; but `Cp(D2.b) = "store"` (not John), so this is a
+    *retain* — already a less coherent transition than Discourse 1's
+    continuation. -/
 theorem d2_a_to_b_cb : cb D2.a D2.b = some "John" := by decide
 
 theorem d2_a_to_b_retaining :
@@ -147,7 +133,10 @@ theorem d2_c_to_d_retaining :
     pattern is all continuations; Discourse 2's pattern is
     `retain, continue, retain` — a mix of weaker transitions. The sum
     of `Transition.rank`s is a coarse but theory-aligned coherence
-    measure. -/
+    measure. (The paper's prose describes Discourse 2's flips
+    informally as changes of "aboutness"; under the formal definitions
+    the Cb remains John throughout, and the incoherence surfaces as
+    retains rather than shifts.) -/
 def d1_score : Nat :=
   Transition.continuation.rank + Transition.continuation.rank
     + Transition.continuation.rank
@@ -157,9 +146,7 @@ def d2_score : Nat :=
 
 theorem discourse1_more_coherent_than_discourse2 : d1_score > d2_score := by decide
 
--- ════════════════════════════════════════════════════
--- § 2. Discourse 15: Rule 1 violation
--- ════════════════════════════════════════════════════
+/-! ### Discourses (15)-(16): Rule 1 violation and shift repair (paper §7) -/
 
 namespace D15
 
@@ -191,9 +178,47 @@ theorem discourse15_violates_rule1 :
 theorem d15_a_to_b_satisfies_rule1 :
     Rule1GJW95 D15.a D15.b := by decide
 
--- ════════════════════════════════════════════════════
--- § 3. Discourses 7-10: Cf ranking + Rule 1 interaction
--- ════════════════════════════════════════════════════
+/-! Discourse (16) is the paper's minimal repair of (15): the same
+    John–Mike sequence with an intervening utterance that shifts the
+    center to Mike, "making the full sequence coherent" — Rule 1
+    "operates independently of the type of centering transition." (The
+    paper's footnote tempers the contrast: per
+    [gordon-grosz-gilliom-1993], (16d) without the intervening (c) is
+    not as bad as (15c).) -/
+
+namespace D16
+
+/-- (16a) John has been acting quite odd. -/
+def a : Utt := ⟨[⟨"John", .subject, false⟩]⟩
+
+/-- (16b) He called up Mike yesterday. ("He" = John.) -/
+def b : Utt :=
+  ⟨[⟨"John", .subject, true⟩, ⟨"Mike", .object, false⟩]⟩
+
+/-- (16c) Mike was studying for his driver's test. Mike is the only
+    `Cf(16b)` element realized here, so the center shifts to Mike. -/
+def c : Utt := ⟨[⟨"Mike", .subject, false⟩]⟩
+
+/-- (16d) He was annoyed by John's call. ("He" = Mike.) -/
+def d : Utt :=
+  ⟨[⟨"Mike", .subject, true⟩, ⟨"John", .other, false⟩]⟩
+
+end D16
+
+/-- The intervening (16c) shifts the center from John to Mike. -/
+theorem d16_b_to_c_cb : cb D16.b D16.c = some "Mike" := by decide
+
+theorem d16_b_to_c_shifting :
+    classifyTransitionExtended D16.b D16.c D16.c.cp (cb D16.a D16.b) = .shifting := by
+  decide
+
+theorem d16_c_to_d_cb : cb D16.c D16.d = some "Mike" := by decide
+
+/-- After the shift, (16d)'s pronoun realizes the new Cb Mike — Rule 1
+    is satisfied exactly where (15c) violated it. -/
+theorem d16_c_to_d_satisfies_rule1 : Rule1GJW95 D16.c D16.d := by decide
+
+/-! ### Discourses (7)-(10): Cf ranking and Rule 1 (paper §5) -/
 
 /-! [grosz-joshi-weinstein-1995] §5 examples (7)-(10). All four
     variants share utterances (a) and (b); they differ only in (c)'s
@@ -253,8 +278,7 @@ theorem d7_to_10_share_cb :
     cb D7_10.b D7_10.c7  = some "Susan" ∧
     cb D7_10.b D7_10.c8  = some "Susan" ∧
     cb D7_10.b D7_10.c9  = some "Susan" ∧
-    cb D7_10.b D7_10.c10 = some "Susan" := by
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> decide
+    cb D7_10.b D7_10.c10 = some "Susan" := by decide
 
 /-- Variant 7 satisfies Rule 1 (Susan as Cb pronominalized). -/
 theorem d7_satisfies_rule1 :
@@ -271,22 +295,12 @@ theorem d9_violates_rule1 :
 
 /-- **Variant 10 violates Rule 1**: Betsy is pronominalized but Cb
     (Susan) is realized as a proper name. The paper calls this case
-    "completely unacceptable". -/
+    "completely unacceptable"; the Rule-1 split (7, 8 satisfy; 9, 10
+    violate) tracks the paper's acceptability ordering. -/
 theorem d10_violates_rule1 :
     ¬ Rule1GJW95 D7_10.b D7_10.c10 := by decide
 
-/-- The Rule-1 split (`d7,8 OK` vs `d9,10 violate`) tracks the paper's
-    acceptability ordering: variants 7 and 8 are acceptable, 9 and 10
-    are degraded. The framework predicts this directly from Rule 1
-    plus the subject>object Cf ranking. -/
-theorem rule1_distinguishes_variants_7_8_from_9_10 :
-    (Rule1GJW95 D7_10.b D7_10.c7 ∧ Rule1GJW95 D7_10.b D7_10.c8) ∧
-    (¬ Rule1GJW95 D7_10.b D7_10.c9 ∧ ¬ Rule1GJW95 D7_10.b D7_10.c10) := by
-  refine ⟨⟨?_, ?_⟩, ⟨?_, ?_⟩⟩ <;> decide
-
--- ════════════════════════════════════════════════════
--- § 4. Discourse 20: full CONTINUE / RETAIN / SHIFT pattern
--- ════════════════════════════════════════════════════
+/-! ### Discourse (20): CONTINUE / RETAIN / SHIFT (paper §7) -/
 
 namespace D20
 
@@ -296,7 +310,7 @@ def a : Utt := ⟨[⟨"John", .subject, false⟩]⟩
 /-- (20b) He cannot find anyone to take over his responsibilities. -/
 def b : Utt := ⟨[⟨"John", .subject, true⟩]⟩
 
-/-- (20c) He called up Mike yesterday. -/
+/-- (20c) He called up Mike yesterday to work out a plan. -/
 def c : Utt :=
   ⟨[⟨"John", .subject, true⟩, ⟨"Mike", .object, false⟩]⟩
 
@@ -327,106 +341,11 @@ theorem discourse20_rule1_b_c : Rule1GJW95 D20.b D20.c := by decide
 theorem discourse20_rule1_c_d : Rule1GJW95 D20.c D20.d := by decide
 theorem discourse20_rule1_d_e : Rule1GJW95 D20.d D20.e := by decide
 
--- ════════════════════════════════════════════════════
--- § 5. Bridge to [kehler-rohde-2013] (Topichood)
--- ════════════════════════════════════════════════════
-
-/-- Centering's "highest-ranked Cf element" — the `Cp` (preferred
-    center) — corresponds to [kehler-rohde-2013]'s **topichood**
-    side of the Bayesian decomposition: the production component
-    P(pronoun | referent) is conditioned on whether the referent is
-    the topic. The Cp of an active-clause subject is precisely the
-    `default_` topichood level in [kehler-rohde-2013]'s scheme. -/
-def cpTopichood : KehlerRohde2013.TopichoodLevel :=
-  KehlerRohde2013.topichood .Act true
-
-theorem cp_is_default_topichood : cpTopichood = .default_ := rfl
-
--- ════════════════════════════════════════════════════
--- § 6. Bridge to [kwon-lee-2026] (Korean Pronouns)
--- ════════════════════════════════════════════════════
-
-/-! [kwon-lee-2026]'s Korean Exp 3 finding (null pronouns
-    strongly prefer subject antecedents) is **predicted** by Centering
-    Theory:
-
-    1. Subject is the highest-ranked Cf element (Kameyama 1986).
-    2. The subject of `U_n` typically becomes the Cb of `U_{n+1}`.
-    3. By Rule 1, the Cb is preferentially realized by a pronoun.
-    4. In Korean, the highest-accessibility marker (most preferred
-       pronominal form) is the *null* pronoun ([ariel-2001]).
-
-    Composing: subject → Cb → pronoun → null in Korean.
-
-    The derivation is anchored on a concrete two-utterance Korean
-    continuation pattern: utterance (a) introduces a subject-marked
-    referent; utterance (b) refers back to it with a null pronoun. -/
-
-namespace KoreanContinuation
-
-/-- (a) Mary often took Tom to the sea. — adapted from
-    [kwon-lee-2026] Exp 3 stimulus pattern. -/
-def utt_a : Utt :=
-  ⟨[⟨"Mary", .subject, false⟩, ⟨"Tom", .object, false⟩,
-    ⟨"sea", .other, false⟩]⟩
-
-/-- (b) [pro] achieved the dream of becoming a sea navigator.
-    Korean null subject; the realization is pronominal (the empty
-    category counts as pronominal in the Centering sense). -/
-def utt_b_null : Utt :=
-  ⟨[⟨"Mary", .subject, true⟩]⟩
-
-end KoreanContinuation
-
-/-- Step 1 of the derivation: in canonical Korean SVO, the Cb of the
-    second utterance is the prior-utterance subject. -/
-theorem korean_cb_is_prior_subject :
-    cb KoreanContinuation.utt_a KoreanContinuation.utt_b_null = some "Mary" := by
-  decide
-
-/-- Step 2: realizing the Cb pronominally satisfies Rule 1
-    (the null subject in Korean counts as pronominal). -/
-theorem korean_null_realization_satisfies_rule1 :
-    Rule1GJW95 KoreanContinuation.utt_a KoreanContinuation.utt_b_null := by
-  decide
-
-/-- Step 3: among Korean's three referential forms, the null pronoun is
-    the most accessible (top of the Korean-form linear order, derived
-    from `Ariel2001.AccessibilityLevel.rank` in `KwonLee2026`). -/
-theorem korean_null_is_top_form :
-    ∀ f : KwonLee2026.KoreanRefForm,
-      f ≤ KwonLee2026.KoreanRefForm.nullPro := by
-  intro f; cases f <;> decide
-
-/-- **Centering predicts Korean's null-subject preference**: combining
-    Rule 1 with Korean's accessibility-scale calibration. The 71%
-    empirical subject bias for null pronouns ([kwon-lee-2026] Exp
-    3) is the predicted consequence of this composition. -/
-theorem korean_subject_bias_for_null_exceeds_chance :
-    KwonLee2026.exp3_pro.subjectPercent > 50 := by decide
-
--- ════════════════════════════════════════════════════
--- § 7. Bridge to [ariel-2001] (Accessibility Marking)
--- ════════════════════════════════════════════════════
-
-open Features
-
-/-- Centering's Cb (the "currently centered" entity) corresponds to a
-    high-accessibility referent on [ariel-2001]'s scale. Rule 1
-    predicts that the Cb's realization should use a high-accessibility
-    marker — typically a pronoun. -/
-def cbExpectedAccessibility : AccessibilityLevel := .unstressedPron
-
-theorem cb_marker_is_high_accessibility :
-    cbExpectedAccessibility.rank ≥ AccessibilityLevel.shortDefDescription.rank := by
-  decide
-
--- ════════════════════════════════════════════════════
--- § 8. Comparison with [sidner-1983]: example (34)
--- ════════════════════════════════════════════════════
+/-! ### Comparison with [sidner-1983]: example (34) (paper §9) -/
 
 /-! This section mechanizes the Sidner-comparison the paper makes in
-    its own §9 (p. 222), on the discourse:
+    its own §9 (p. 222) — the example is Sidner's own, cited from her
+    1979 dissertation — on the discourse:
 
     (34) a. I haven't seen Jeff for several days.
          b. Carl thinks he's studying for his exams,
@@ -532,9 +451,8 @@ theorem gjw_prefers_jeff : gjwPredictedHe = some "Jeff" := by decide
     GJW's Rule-2 preference (with the caveat above that GJW themselves
     don't claim uniqueness): RETAIN > SHIFT under Rule 2 ⇒ Jeff.
 
-    Stated constructively (mathlib idiom): each side commits to a
-    *named* prediction; the inequality follows by transparent
-    `decide` from the witnesses. -/
+    Each side commits to a *named* prediction; the inequality follows
+    by `decide` from the witnesses. -/
 theorem sidner_gjw_disagree_on_d34c :
     Sidner1983.D34.sidnerPredictedHe ≠ gjwPredictedHe := by
   rw [Sidner1983.D34.sidner_predicts_carl, gjw_prefers_jeff]
