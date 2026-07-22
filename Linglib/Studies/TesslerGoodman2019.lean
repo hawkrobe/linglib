@@ -101,7 +101,7 @@ set_option autoImplicit false
 
 namespace TesslerGoodman2019
 
-open Degree (Degree Threshold deg thr allDegrees allThresholds Degree.toNat Threshold.toNat)
+open Degree (Bounded Threshold deg thr allDegrees allThresholds Bounded.toNat Threshold.toNat)
 open Degree (positiveMeaning)
 
 -- ============================================================================
@@ -110,7 +110,7 @@ open Degree (positiveMeaning)
 
 /-- Discretized prevalence: 0%, 5%, ..., 100% (21 values).
     Structurally identical to [lassiter-goodman-2017]'s Height. -/
-abbrev Prevalence := Degree 20
+abbrev Prevalence := Bounded 20
 
 instance : NeZero (20 : Nat) := ⟨by omega⟩
 
@@ -404,20 +404,20 @@ theorem generic_zero_false :
 /-- The bimodal "lays eggs" prior peaks at zero prevalence. -/
 theorem laysEggs_peaks_at_zero :
     laysEggsPrior (prevPct 0) > laysEggsPrior (prevPct 50) := by
-  norm_num [laysEggsPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+  norm_num [laysEggsPrior, mixturePrior, betaWeight, betaTotal, Bounded.toNat,
     List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil]
 
 /-- The unimodal "is female" prior peaks at 50%. -/
 theorem isFemale_peaks_at_50 :
     isFemalePrior (prevPct 50) > isFemalePrior (prevPct 0) := by
-  norm_num [isFemalePrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+  norm_num [isFemalePrior, mixturePrior, betaWeight, betaTotal, Bounded.toNat,
     List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil]
 
-/-- Expand a sum over `Degree 20` (≃ `Fin 21`) into a `Fin 21` sum, so that
+/-- Expand a sum over `Bounded 20` (≃ `Fin 21`) into a `Fin 21` sum, so that
     concrete prior expectations evaluate by `Fin.sum_univ_succ` + `norm_num`. -/
-private theorem sum_degree20 {M : Type*} [AddCommMonoid M] (f : Degree 20 → M) :
+private theorem sum_degree20 {M : Type*} [AddCommMonoid M] (f : Bounded 20 → M) :
     ∑ w, f w = ∑ i : Fin 21, f ⟨i⟩ :=
-  (Equiv.sum_comp ⟨(⟨·⟩), Degree.value, fun _ => rfl, fun ⟨_⟩ => rfl⟩ f).symm
+  (Equiv.sum_comp ⟨(⟨·⟩), Bounded.value, fun _ => rfl, fun ⟨_⟩ => rfl⟩ f).symm
 
 -- ============================================================================
 -- § 7. Endorsement Predictions (S1 — the paper's primary model)
@@ -504,7 +504,7 @@ theorem endorsement_iff_exceeds_expected
       ENNReal.ofReal_lt_ofReal_iff_of_nonneg (by positivity),
       expectedBin, gt_iff_lt, ← div_eq_mul_inv, ← div_eq_mul_inv,
       div_lt_div_iff₀ (by positivity) hSgen, div_lt_iff₀ hZ]
-  -- `thresholdCount .generic` is `Degree.toNat`; unify so the atoms match `expectedBin`.
+  -- `thresholdCount .generic` is `Bounded.toNat`; unify so the atoms match `expectedBin`.
   simp only [thresholdCount]
   constructor <;> intro h <;> nlinarith
 
@@ -553,7 +553,7 @@ A prior invariant under bin-reflection `k ↦ 20 − k` has its mean at the cent
 (50% prevalence). This makes the "robins are female" borderline a *theorem about
 symmetry* rather than a numerical coincidence. -/
 
-/-- The bin-reflection `k ↦ 20 − k` as a permutation of `Prevalence`. `Degree 20`
+/-- The bin-reflection `k ↦ 20 − k` as a permutation of `Prevalence`. `Bounded 20`
     wraps `Fin 21`, so reflect `Fin.rev` on the underlying `.value` field. -/
 private def reflectPrev : Equiv.Perm Prevalence where
   toFun k := ⟨Fin.rev k.value⟩
@@ -609,11 +609,11 @@ theorem bark_endorsed :
   have hp := priorR_nonneg_of barkPrior (mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _)
   have hpp : 0 < priorR barkPrior (prevPct 95) := by
     simp only [priorR]
-    norm_num [barkPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+    norm_num [barkPrior, mixturePrior, betaWeight, betaTotal, Bounded.toNat,
       List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil]
   have hZ : 0 < ∑ w : Prevalence, priorR barkPrior w := by
     rw [sum_degree20]
-    norm_num [priorR, barkPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+    norm_num [priorR, barkPrior, mixturePrior, betaWeight, betaTotal, Bounded.toNat,
       List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
       Fin.sum_univ_succ, Fin.sum_univ_zero]
   rw [endorsement_iff_exceeds_expected (priorR barkPrior) hp
@@ -621,7 +621,7 @@ theorem bark_endorsed :
       (prevPct 95) hpp hZ]
   unfold expectedBin
   rw [gt_iff_lt, div_lt_iff₀ hZ, sum_degree20, sum_degree20]
-  norm_num [priorR, barkPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+  norm_num [priorR, barkPrior, mixturePrior, betaWeight, betaTotal, Bounded.toNat,
     List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
     Fin.sum_univ_succ, Fin.sum_univ_zero]
 
@@ -635,11 +635,11 @@ theorem laysEggs_endorsed :
   have hp := priorR_nonneg_of laysEggsPrior (mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _)
   have hpp : 0 < priorR laysEggsPrior (prevPct 50) := by
     simp only [priorR]
-    norm_num [laysEggsPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+    norm_num [laysEggsPrior, mixturePrior, betaWeight, betaTotal, Bounded.toNat,
       List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil]
   have hZ : 0 < ∑ w : Prevalence, priorR laysEggsPrior w := by
     rw [sum_degree20]
-    norm_num [priorR, laysEggsPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+    norm_num [priorR, laysEggsPrior, mixturePrior, betaWeight, betaTotal, Bounded.toNat,
       List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
       Fin.sum_univ_succ, Fin.sum_univ_zero]
   rw [endorsement_iff_exceeds_expected (priorR laysEggsPrior) hp
@@ -647,7 +647,7 @@ theorem laysEggs_endorsed :
       (prevPct 50) hpp hZ]
   unfold expectedBin
   rw [gt_iff_lt, div_lt_iff₀ hZ, sum_degree20, sum_degree20]
-  norm_num [priorR, laysEggsPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+  norm_num [priorR, laysEggsPrior, mixturePrior, betaWeight, betaTotal, Bounded.toNat,
     List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
     Fin.sum_univ_succ, Fin.sum_univ_zero]
 
@@ -662,11 +662,11 @@ theorem malaria_endorsed :
   have hp := priorR_nonneg_of carriesMalariaPrior (mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _)
   have hpp : 0 < priorR carriesMalariaPrior (prevPct 10) := by
     simp only [priorR]
-    norm_num [carriesMalariaPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+    norm_num [carriesMalariaPrior, mixturePrior, betaWeight, betaTotal, Bounded.toNat,
       List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil]
   have hZ : 0 < ∑ w : Prevalence, priorR carriesMalariaPrior w := by
     rw [sum_degree20]
-    norm_num [priorR, carriesMalariaPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+    norm_num [priorR, carriesMalariaPrior, mixturePrior, betaWeight, betaTotal, Bounded.toNat,
       List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
       Fin.sum_univ_succ, Fin.sum_univ_zero]
   rw [endorsement_iff_exceeds_expected (priorR carriesMalariaPrior) hp
@@ -674,7 +674,7 @@ theorem malaria_endorsed :
       (prevPct 10) hpp hZ]
   unfold expectedBin
   rw [gt_iff_lt, div_lt_iff₀ hZ, sum_degree20, sum_degree20]
-  norm_num [priorR, carriesMalariaPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+  norm_num [priorR, carriesMalariaPrior, mixturePrior, betaWeight, betaTotal, Bounded.toNat,
     List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
     Fin.sum_univ_succ, Fin.sum_univ_zero]
 
@@ -689,11 +689,11 @@ theorem spots_not_endorsed :
   have hp := priorR_nonneg_of haveSpotsPrior (mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _)
   have hpp : 0 < priorR haveSpotsPrior (prevPct 10) := by
     simp only [priorR]
-    norm_num [haveSpotsPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+    norm_num [haveSpotsPrior, mixturePrior, betaWeight, betaTotal, Bounded.toNat,
       List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil]
   have hZ : 0 < ∑ w : Prevalence, priorR haveSpotsPrior w := by
     rw [sum_degree20]
-    norm_num [priorR, haveSpotsPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+    norm_num [priorR, haveSpotsPrior, mixturePrior, betaWeight, betaTotal, Bounded.toNat,
       List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
       Fin.sum_univ_succ, Fin.sum_univ_zero]
   rw [endorsement_iff_exceeds_expected (priorR haveSpotsPrior) hp
@@ -701,7 +701,7 @@ theorem spots_not_endorsed :
       (prevPct 10) hpp hZ, not_lt]
   unfold expectedBin
   rw [le_div_iff₀ hZ, sum_degree20, sum_degree20]
-  norm_num [priorR, haveSpotsPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+  norm_num [priorR, haveSpotsPrior, mixturePrior, betaWeight, betaTotal, Bounded.toNat,
     List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
     Fin.sum_univ_succ, Fin.sum_univ_zero]
 
@@ -716,11 +716,11 @@ theorem dontEatPeople_not_endorsed :
   have hp := priorR_nonneg_of dontEatPeoplePrior (mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _)
   have hpp : 0 < priorR dontEatPeoplePrior (prevPct 80) := by
     simp only [priorR]
-    norm_num [dontEatPeoplePrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+    norm_num [dontEatPeoplePrior, mixturePrior, betaWeight, betaTotal, Bounded.toNat,
       List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil]
   have hZ : 0 < ∑ w : Prevalence, priorR dontEatPeoplePrior w := by
     rw [sum_degree20]
-    norm_num [priorR, dontEatPeoplePrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+    norm_num [priorR, dontEatPeoplePrior, mixturePrior, betaWeight, betaTotal, Bounded.toNat,
       List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
       Fin.sum_univ_succ, Fin.sum_univ_zero]
   rw [endorsement_iff_exceeds_expected (priorR dontEatPeoplePrior) hp
@@ -728,7 +728,7 @@ theorem dontEatPeople_not_endorsed :
       (prevPct 80) hpp hZ, not_lt]
   unfold expectedBin
   rw [le_div_iff₀ hZ, sum_degree20, sum_degree20]
-  norm_num [priorR, dontEatPeoplePrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+  norm_num [priorR, dontEatPeoplePrior, mixturePrior, betaWeight, betaTotal, Bounded.toNat,
     List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
     Fin.sum_univ_succ, Fin.sum_univ_zero]
 
@@ -745,14 +745,14 @@ theorem isFemale_borderline :
   have hp := priorR_nonneg_of isFemalePrior (mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _)
   have hpp : 0 < priorR isFemalePrior (prevPct 50) := by
     simp only [priorR]
-    norm_num [isFemalePrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+    norm_num [isFemalePrior, mixturePrior, betaWeight, betaTotal, Bounded.toNat,
       List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil]
   have hZ : 0 < ∑ w : Prevalence, priorR isFemalePrior w :=
     Finset.sum_pos' (fun i _ => hp i) ⟨prevPct 50, Finset.mem_univ _, hpp⟩
   rw [endorsement_iff_exceeds_expected (priorR isFemalePrior) hp
       (meaningE_generic_ne_zero _ hp (prevPct 50) hpp (by decide)) (meaningE_silent_ne_zero _ hp hZ)
       (prevPct 50) hpp hZ, not_lt, expectedBin_of_symmetric isFemalePrior_symm hZ]
-  norm_num [Degree.toNat]
+  norm_num [Bounded.toNat]
 
 
 -- ============================================================================
@@ -942,11 +942,11 @@ theorem runs_endorsed_at_high_freq :
   have hp := priorR_nonneg_of runsPrior (mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _)
   have hpp : 0 < priorR runsPrior (prevPct 75) := by
     simp only [priorR]
-    norm_num [runsPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+    norm_num [runsPrior, mixturePrior, betaWeight, betaTotal, Bounded.toNat,
       List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil]
   have hZ : 0 < ∑ w : Prevalence, priorR runsPrior w := by
     rw [sum_degree20]
-    norm_num [priorR, runsPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+    norm_num [priorR, runsPrior, mixturePrior, betaWeight, betaTotal, Bounded.toNat,
       List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
       Fin.sum_univ_succ, Fin.sum_univ_zero]
   rw [endorsement_iff_exceeds_expected (priorR runsPrior) hp
@@ -954,7 +954,7 @@ theorem runs_endorsed_at_high_freq :
       (prevPct 75) hpp hZ]
   unfold expectedBin
   rw [gt_iff_lt, div_lt_iff₀ hZ, sum_degree20, sum_degree20]
-  norm_num [priorR, runsPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+  norm_num [priorR, runsPrior, mixturePrior, betaWeight, betaTotal, Bounded.toNat,
     List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
     Fin.sum_univ_succ, Fin.sum_univ_zero]
 
@@ -966,11 +966,11 @@ theorem climbs_mountains_endorsed_at_low_freq :
   have hp := priorR_nonneg_of climbsMountainsPrior (mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _)
   have hpp : 0 < priorR climbsMountainsPrior (prevPct 25) := by
     simp only [priorR]
-    norm_num [climbsMountainsPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+    norm_num [climbsMountainsPrior, mixturePrior, betaWeight, betaTotal, Bounded.toNat,
       List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil]
   have hZ : 0 < ∑ w : Prevalence, priorR climbsMountainsPrior w := by
     rw [sum_degree20]
-    norm_num [priorR, climbsMountainsPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+    norm_num [priorR, climbsMountainsPrior, mixturePrior, betaWeight, betaTotal, Bounded.toNat,
       List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
       Fin.sum_univ_succ, Fin.sum_univ_zero]
   rw [endorsement_iff_exceeds_expected (priorR climbsMountainsPrior) hp
@@ -978,7 +978,7 @@ theorem climbs_mountains_endorsed_at_low_freq :
       (prevPct 25) hpp hZ]
   unfold expectedBin
   rw [gt_iff_lt, div_lt_iff₀ hZ, sum_degree20, sum_degree20]
-  norm_num [priorR, climbsMountainsPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+  norm_num [priorR, climbsMountainsPrior, mixturePrior, betaWeight, betaTotal, Bounded.toNat,
     List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
     Fin.sum_univ_succ, Fin.sum_univ_zero]
 
@@ -990,11 +990,11 @@ theorem drinks_coffee_not_endorsed_at_low_freq :
   have hp := priorR_nonneg_of drinksCoffeePrior (mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _)
   have hpp : 0 < priorR drinksCoffeePrior (prevPct 25) := by
     simp only [priorR]
-    norm_num [drinksCoffeePrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+    norm_num [drinksCoffeePrior, mixturePrior, betaWeight, betaTotal, Bounded.toNat,
       List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil]
   have hZ : 0 < ∑ w : Prevalence, priorR drinksCoffeePrior w := by
     rw [sum_degree20]
-    norm_num [priorR, drinksCoffeePrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+    norm_num [priorR, drinksCoffeePrior, mixturePrior, betaWeight, betaTotal, Bounded.toNat,
       List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
       Fin.sum_univ_succ, Fin.sum_univ_zero]
   rw [endorsement_iff_exceeds_expected (priorR drinksCoffeePrior) hp
@@ -1002,7 +1002,7 @@ theorem drinks_coffee_not_endorsed_at_low_freq :
       (prevPct 25) hpp hZ, not_lt]
   unfold expectedBin
   rw [le_div_iff₀ hZ, sum_degree20, sum_degree20]
-  norm_num [priorR, drinksCoffeePrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+  norm_num [priorR, drinksCoffeePrior, mixturePrior, betaWeight, betaTotal, Bounded.toNat,
     List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
     Fin.sum_univ_succ, Fin.sum_univ_zero]
 
@@ -1074,11 +1074,11 @@ theorem rareWeak_endorsed_at_20pct :
   have hp := priorR_nonneg_of rareWeakPrior (mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _)
   have hpp : 0 < priorR rareWeakPrior (prevPct 20) := by
     simp only [priorR]
-    norm_num [rareWeakPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+    norm_num [rareWeakPrior, mixturePrior, betaWeight, betaTotal, Bounded.toNat,
       List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil]
   have hZ : 0 < ∑ w : Prevalence, priorR rareWeakPrior w := by
     rw [sum_degree20]
-    norm_num [priorR, rareWeakPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+    norm_num [priorR, rareWeakPrior, mixturePrior, betaWeight, betaTotal, Bounded.toNat,
       List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
       Fin.sum_univ_succ, Fin.sum_univ_zero]
   rw [endorsement_iff_exceeds_expected (priorR rareWeakPrior) hp
@@ -1086,7 +1086,7 @@ theorem rareWeak_endorsed_at_20pct :
       (prevPct 20) hpp hZ]
   unfold expectedBin
   rw [gt_iff_lt, div_lt_iff₀ hZ, sum_degree20, sum_degree20]
-  norm_num [priorR, rareWeakPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+  norm_num [priorR, rareWeakPrior, mixturePrior, betaWeight, betaTotal, Bounded.toNat,
     List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
     Fin.sum_univ_succ, Fin.sum_univ_zero]
 
@@ -1099,11 +1099,11 @@ theorem commonStrong_not_endorsed_at_20pct :
   have hp := priorR_nonneg_of commonStrongPrior (mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _)
   have hpp : 0 < priorR commonStrongPrior (prevPct 20) := by
     simp only [priorR]
-    norm_num [commonStrongPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+    norm_num [commonStrongPrior, mixturePrior, betaWeight, betaTotal, Bounded.toNat,
       List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil]
   have hZ : 0 < ∑ w : Prevalence, priorR commonStrongPrior w := by
     rw [sum_degree20]
-    norm_num [priorR, commonStrongPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+    norm_num [priorR, commonStrongPrior, mixturePrior, betaWeight, betaTotal, Bounded.toNat,
       List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
       Fin.sum_univ_succ, Fin.sum_univ_zero]
   rw [endorsement_iff_exceeds_expected (priorR commonStrongPrior) hp
@@ -1111,7 +1111,7 @@ theorem commonStrong_not_endorsed_at_20pct :
       (prevPct 20) hpp hZ, not_lt]
   unfold expectedBin
   rw [le_div_iff₀ hZ, sum_degree20, sum_degree20]
-  norm_num [priorR, commonStrongPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+  norm_num [priorR, commonStrongPrior, mixturePrior, betaWeight, betaTotal, Bounded.toNat,
     List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
     Fin.sum_univ_succ, Fin.sum_univ_zero]
 
@@ -1123,11 +1123,11 @@ theorem rareWeak_endorsed_at_70pct :
   have hp := priorR_nonneg_of rareWeakPrior (mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _)
   have hpp : 0 < priorR rareWeakPrior (prevPct 70) := by
     simp only [priorR]
-    norm_num [rareWeakPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+    norm_num [rareWeakPrior, mixturePrior, betaWeight, betaTotal, Bounded.toNat,
       List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil]
   have hZ : 0 < ∑ w : Prevalence, priorR rareWeakPrior w := by
     rw [sum_degree20]
-    norm_num [priorR, rareWeakPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+    norm_num [priorR, rareWeakPrior, mixturePrior, betaWeight, betaTotal, Bounded.toNat,
       List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
       Fin.sum_univ_succ, Fin.sum_univ_zero]
   rw [endorsement_iff_exceeds_expected (priorR rareWeakPrior) hp
@@ -1135,7 +1135,7 @@ theorem rareWeak_endorsed_at_70pct :
       (prevPct 70) hpp hZ]
   unfold expectedBin
   rw [gt_iff_lt, div_lt_iff₀ hZ, sum_degree20, sum_degree20]
-  norm_num [priorR, rareWeakPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+  norm_num [priorR, rareWeakPrior, mixturePrior, betaWeight, betaTotal, Bounded.toNat,
     List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
     Fin.sum_univ_succ, Fin.sum_univ_zero]
 
@@ -1151,11 +1151,11 @@ theorem commonStrong_not_endorsed_at_50pct :
   have hp := priorR_nonneg_of commonStrongPrior (mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _)
   have hpp : 0 < priorR commonStrongPrior (prevPct 50) := by
     simp only [priorR]
-    norm_num [commonStrongPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+    norm_num [commonStrongPrior, mixturePrior, betaWeight, betaTotal, Bounded.toNat,
       List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil]
   have hZ : 0 < ∑ w : Prevalence, priorR commonStrongPrior w := by
     rw [sum_degree20]
-    norm_num [priorR, commonStrongPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+    norm_num [priorR, commonStrongPrior, mixturePrior, betaWeight, betaTotal, Bounded.toNat,
       List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
       Fin.sum_univ_succ, Fin.sum_univ_zero]
   rw [endorsement_iff_exceeds_expected (priorR commonStrongPrior) hp
@@ -1163,7 +1163,7 @@ theorem commonStrong_not_endorsed_at_50pct :
       (prevPct 50) hpp hZ, not_lt]
   unfold expectedBin
   rw [le_div_iff₀ hZ, sum_degree20, sum_degree20]
-  norm_num [priorR, commonStrongPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+  norm_num [priorR, commonStrongPrior, mixturePrior, betaWeight, betaTotal, Bounded.toNat,
     List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
     Fin.sum_univ_succ, Fin.sum_univ_zero]
 
@@ -1177,11 +1177,11 @@ theorem rareStrong_not_endorsed_at_20pct :
   have hp := priorR_nonneg_of rareStrongPrior (mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _)
   have hpp : 0 < priorR rareStrongPrior (prevPct 20) := by
     simp only [priorR]
-    norm_num [rareStrongPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+    norm_num [rareStrongPrior, mixturePrior, betaWeight, betaTotal, Bounded.toNat,
       List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil]
   have hZ : 0 < ∑ w : Prevalence, priorR rareStrongPrior w := by
     rw [sum_degree20]
-    norm_num [priorR, rareStrongPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+    norm_num [priorR, rareStrongPrior, mixturePrior, betaWeight, betaTotal, Bounded.toNat,
       List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
       Fin.sum_univ_succ, Fin.sum_univ_zero]
   rw [endorsement_iff_exceeds_expected (priorR rareStrongPrior) hp
@@ -1189,7 +1189,7 @@ theorem rareStrong_not_endorsed_at_20pct :
       (prevPct 20) hpp hZ, not_lt]
   unfold expectedBin
   rw [le_div_iff₀ hZ, sum_degree20, sum_degree20]
-  norm_num [priorR, rareStrongPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+  norm_num [priorR, rareStrongPrior, mixturePrior, betaWeight, betaTotal, Bounded.toNat,
     List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
     Fin.sum_univ_succ, Fin.sum_univ_zero]
 
@@ -1201,11 +1201,11 @@ theorem rareStrong_endorsed_at_70pct :
   have hp := priorR_nonneg_of rareStrongPrior (mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _)
   have hpp : 0 < priorR rareStrongPrior (prevPct 70) := by
     simp only [priorR]
-    norm_num [rareStrongPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+    norm_num [rareStrongPrior, mixturePrior, betaWeight, betaTotal, Bounded.toNat,
       List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil]
   have hZ : 0 < ∑ w : Prevalence, priorR rareStrongPrior w := by
     rw [sum_degree20]
-    norm_num [priorR, rareStrongPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+    norm_num [priorR, rareStrongPrior, mixturePrior, betaWeight, betaTotal, Bounded.toNat,
       List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
       Fin.sum_univ_succ, Fin.sum_univ_zero]
   rw [endorsement_iff_exceeds_expected (priorR rareStrongPrior) hp
@@ -1213,7 +1213,7 @@ theorem rareStrong_endorsed_at_70pct :
       (prevPct 70) hpp hZ]
   unfold expectedBin
   rw [gt_iff_lt, div_lt_iff₀ hZ, sum_degree20, sum_degree20]
-  norm_num [priorR, rareStrongPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+  norm_num [priorR, rareStrongPrior, mixturePrior, betaWeight, betaTotal, Bounded.toNat,
     List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
     Fin.sum_univ_succ, Fin.sum_univ_zero]
 
@@ -1227,11 +1227,11 @@ theorem commonWeak_endorsed_at_70pct :
   have hp := priorR_nonneg_of commonWeakPrior (mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _)
   have hpp : 0 < priorR commonWeakPrior (prevPct 70) := by
     simp only [priorR]
-    norm_num [commonWeakPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+    norm_num [commonWeakPrior, mixturePrior, betaWeight, betaTotal, Bounded.toNat,
       List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil]
   have hZ : 0 < ∑ w : Prevalence, priorR commonWeakPrior w := by
     rw [sum_degree20]
-    norm_num [priorR, commonWeakPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+    norm_num [priorR, commonWeakPrior, mixturePrior, betaWeight, betaTotal, Bounded.toNat,
       List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
       Fin.sum_univ_succ, Fin.sum_univ_zero]
   rw [endorsement_iff_exceeds_expected (priorR commonWeakPrior) hp
@@ -1239,7 +1239,7 @@ theorem commonWeak_endorsed_at_70pct :
       (prevPct 70) hpp hZ]
   unfold expectedBin
   rw [gt_iff_lt, div_lt_iff₀ hZ, sum_degree20, sum_degree20]
-  norm_num [priorR, commonWeakPrior, mixturePrior, betaWeight, betaTotal, Degree.toNat,
+  norm_num [priorR, commonWeakPrior, mixturePrior, betaWeight, betaTotal, Bounded.toNat,
     List.range_succ, List.range_zero, List.foldl_cons, List.foldl_nil,
     Fin.sum_univ_succ, Fin.sum_univ_zero]
 

@@ -79,7 +79,7 @@ derivation of the predictions from first principles.
 
 namespace AlexandropoulouGotzner2024JoS
 
-open Degree (Degree Threshold)
+open Degree (Bounded Threshold)
 open Features (NegationType Asymmetry)
 open Degree (GradableAdjective ThresholdPair positiveMeaning'
   contraryNegMeaning notContraryNegMeaning AntonymForm
@@ -226,7 +226,7 @@ theorem krifka_agrees_with_horn_where_committed :
     after the substrate's `def`-to-`abbrev` migration on
     `Theory.lean::contradictoryNeg`. -/
 theorem ag_negative_strengthening_eq_krifka {max : Nat}
-    (d : Degree max) (tp : ThresholdPair max) :
+    (d : Bounded max) (tp : ThresholdPair max) :
     notPositiveMeaning d tp.pos ↔
     AntonymForm.strengthenedDenot tp .notPositive d :=
   Iff.rfl
@@ -236,7 +236,7 @@ theorem ag_negative_strengthening_eq_krifka {max : Nat}
     negative / not-negative) coincides with Krifka 2007's `strengthenedQuad`
     output on the corresponding form. -/
 theorem ag_quadruplet_eq_krifka_strengthened {max : Nat}
-    (d : Degree max) (tp : ThresholdPair max) :
+    (d : Bounded max) (tp : ThresholdPair max) :
     (positiveMeaning' d tp ↔ AntonymForm.strengthenedDenot tp .positive d) ∧
     (notPositiveMeaning d tp.pos ↔ AntonymForm.strengthenedDenot tp .notPositive d) ∧
     (contraryNegMeaning d tp ↔ AntonymForm.strengthenedDenot tp .negative d) ∧

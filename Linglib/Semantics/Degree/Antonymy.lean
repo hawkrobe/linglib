@@ -38,7 +38,7 @@ namespace Degree.Antonymy
 /-- Contradictory negation is the propositional complement of positive meaning.
     Both compute threshold comparisons: `d ≤ ↑θ` vs `↑θ < d`. -/
 @[simp] theorem contradictory_is_complement {max : Nat}
-    (d : Degree max) (θ : Threshold max) :
+    (d : Bounded max) (θ : Threshold max) :
     contradictoryNeg d θ ↔ ¬ positiveMeaning d θ := by
   simp only [contradictoryNeg, notPositiveMeaning, positiveMeaning,
     Core.Order.Comparison.mem_over, Core.Order.Comparison.rel, id_eq, not_lt]
@@ -49,14 +49,14 @@ namespace Degree.Antonymy
     contradictory, then "not unhappy" and "happy" are synonymous —
     the puzzle that motivates pragmatic strengthening. -/
 theorem contradictory_dne {max : Nat}
-    (d : Degree max) (θ : Threshold max) :
+    (d : Bounded max) (θ : Threshold max) :
     ¬ contradictoryNeg d θ ↔ positiveMeaning d θ := by
   rw [contradictory_is_complement, not_not]
 
 /-- Under contradictory semantics, the scale is exhaustively partitioned:
     every degree is either positive or in the antonym region, with no gap. -/
 theorem contradictory_exhaustive {max : Nat}
-    (d : Degree max) (θ : Threshold max) :
+    (d : Bounded max) (θ : Threshold max) :
     positiveMeaning d θ ∨ contradictoryNeg d θ := by
   by_cases h : positiveMeaning d θ
   · exact Or.inl h
@@ -67,7 +67,7 @@ theorem contradictory_exhaustive {max : Nat}
 /-- The gap region is exactly "not unhappy" ∧ "not happy": degrees that escape
     the contrary negative without reaching the positive threshold. -/
 @[simp] theorem gap_iff_not_neg_and_not_pos {max : Nat}
-    (d : Degree max) (tp : ThresholdPair max) :
+    (d : Bounded max) (tp : ThresholdPair max) :
     inGapRegion d tp ↔ notContraryNegMeaning d tp ∧ ¬ positiveMeaning' d tp := by
   simp only [inGapRegion, notContraryNegMeaning, positiveMeaning',
              Degree.positiveMeaning, Core.Order.Comparison.mem_over,
@@ -77,8 +77,8 @@ theorem contradictory_exhaustive {max : Nat}
     "not unhappy" but NOT "happy" — double negation through contrary fails.
     Witness: the negative threshold itself (as a degree). -/
 theorem contrary_gap_exists {max : Nat} (tp : ThresholdPair max)
-    (h : (tp.neg : Degree max) < (tp.pos : Degree max)) :
-    ∃ d : Degree max, notContraryNegMeaning d tp ∧ ¬ positiveMeaning' d tp := by
+    (h : (tp.neg : Bounded max) < (tp.pos : Bounded max)) :
+    ∃ d : Bounded max, notContraryNegMeaning d tp ∧ ¬ positiveMeaning' d tp := by
   refine ⟨↑tp.neg, le_refl _, ?_⟩
   simp only [positiveMeaning', Degree.positiveMeaning,
     Core.Order.Comparison.mem_over, Core.Order.Comparison.rel, id_eq, not_lt]
@@ -86,8 +86,8 @@ theorem contrary_gap_exists {max : Nat} (tp : ThresholdPair max)
 
 /-- The gap region is nonempty when θ_neg < θ_pos. -/
 theorem gap_nonempty {max : Nat} (tp : ThresholdPair max)
-    (h : (tp.neg : Degree max) < (tp.pos : Degree max)) :
-    ∃ d : Degree max, inGapRegion d tp := by
+    (h : (tp.neg : Bounded max) < (tp.pos : Bounded max)) :
+    ∃ d : Bounded max, inGapRegion d tp := by
   obtain ⟨d, h1, h2⟩ := contrary_gap_exists tp h
   exact ⟨d, (gap_iff_not_neg_and_not_pos d tp).mpr ⟨h1, h2⟩⟩
 
@@ -153,7 +153,7 @@ theorem AntonymForm.complexity_strictMono :
     This is the literal-semantic position [krifka-2007b] attributes to
     antonyms before pragmatic strengthening. -/
 abbrev AntonymForm.contradictoryDenot {max : Nat} (θ : Threshold max)
-    (q : AntonymForm) (d : Degree max) : Prop :=
+    (q : AntonymForm) (d : Bounded max) : Prop :=
   match q with
   | .positive    => positiveMeaning d θ      -- d > θ
   | .notPositive => ¬ positiveMeaning d θ    -- d ≤ θ
@@ -167,7 +167,7 @@ abbrev AntonymForm.contradictoryDenot {max : Nat} (θ : Threshold max)
     effective-semantic position post-pragmatic-strengthening (Krifka 2007 §4)
     or the lexically-encoded position (Alexandropoulou-Gotzner 2024). -/
 abbrev AntonymForm.strengthenedDenot {max : Nat} (tp : ThresholdPair max)
-    (q : AntonymForm) (d : Degree max) : Prop :=
+    (q : AntonymForm) (d : Bounded max) : Prop :=
   match q with
   | .positive    => positiveMeaning' d tp        -- d > tp.pos
   | .notPositive => contradictoryNeg d tp.pos    -- d ≤ tp.pos
@@ -183,7 +183,7 @@ abbrev AntonymForm.strengthenedDenot {max : Nat} (tp : ThresholdPair max)
     the formal puzzle [krifka-2007b] solves pragmatically: literal
     contradictory semantics predicts *not unhappy* ≡ *happy*. -/
 theorem contradictoryDenot_synonymy {max : Nat}
-    (θ : Threshold max) (d : Degree max) :
+    (θ : Threshold max) (d : Bounded max) :
     (AntonymForm.contradictoryDenot θ .negative d ↔
      AntonymForm.contradictoryDenot θ .notPositive d) ∧
     (AntonymForm.contradictoryDenot θ .notNegative d ↔
@@ -195,8 +195,8 @@ theorem contradictoryDenot_synonymy {max : Nat}
     degree (the negative threshold itself) where *not unhappy* holds but
     *happy* does not. This is the witness for the polarity asymmetry. -/
 theorem strengthenedDenot_breaks_synonymy {max : Nat} (tp : ThresholdPair max)
-    (h : (tp.neg : Degree max) < (tp.pos : Degree max)) :
-    ∃ d : Degree max,
+    (h : (tp.neg : Bounded max) < (tp.pos : Bounded max)) :
+    ∃ d : Bounded max,
       AntonymForm.strengthenedDenot tp .notNegative d ∧
       ¬ AntonymForm.strengthenedDenot tp .positive d :=
   Antonymy.contrary_gap_exists tp h
@@ -214,7 +214,7 @@ complementary in the Boolean algebra `Degree → Prop` — forced (it is `IsComp
 `contradictoryDenot_synonymy` (DNE collapse) is a corollary. -/
 theorem isContradictory_contradictoryDenot {max : Nat} (θ : Threshold max) :
     IsContradictory
-      (fun d : Degree max => AntonymForm.contradictoryDenot θ .positive d)
+      (fun d : Bounded max => AntonymForm.contradictoryDenot θ .positive d)
       (fun d => AntonymForm.contradictoryDenot θ .negative d) :=
   isCompl_compl
 
@@ -224,9 +224,9 @@ open Aristotelian in
 (`Disjoint`) but, by the gap `[tp.neg, tp.pos]`, not jointly exhaustive
 (`¬ Codisjoint` — `contrary_gap_exists` is the witness). -/
 theorem isContrary_strengthenedDenot {max : Nat} (tp : ThresholdPair max)
-    (h : (tp.neg : Degree max) < (tp.pos : Degree max)) :
+    (h : (tp.neg : Bounded max) < (tp.pos : Bounded max)) :
     IsContrary
-      (fun d : Degree max => AntonymForm.strengthenedDenot tp .positive d)
+      (fun d : Bounded max => AntonymForm.strengthenedDenot tp .positive d)
       (fun d => AntonymForm.strengthenedDenot tp .negative d) := by
   refine ⟨?_, ?_⟩
   · rw [disjoint_iff]

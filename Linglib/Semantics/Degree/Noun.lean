@@ -23,19 +23,19 @@ degree scale. The full denotation is:
 
 namespace Degree
 
--- The file works on the 0–10 carrier `Degree 10` from `Discrete.lean`.
+-- The file works on the 0–10 carrier `Bounded 10` from `Discrete.lean`.
 
 /-- d0 is the minimum degree (from BoundedOrder). -/
-theorem d0_is_minimum : ∀ d : Degree 10, deg 0 ≤ d := λ d => bot_le (a := d)
+theorem d0_is_minimum : ∀ d : Bounded 10, deg 0 ≤ d := λ d => bot_le (a := d)
 
 
 /-- A gradable noun maps individuals to degrees: ⟦idiot⟧ = λx.ιd[x is d-idiotic]. -/
 structure GradableNoun (Entity : Type) where
   name : String
   /-- The measure function: entity -> degree. -/
-  measure : Entity → Degree 10
+  measure : Entity → Bounded 10
   /-- The contextual standard for this predicate. -/
-  standard : Degree 10
+  standard : Bounded 10
 
 /-- Apply POS to a gradable noun: λx. standard(g) < g(x).
 
@@ -53,34 +53,34 @@ inductive SizePolarity where
   deriving Repr, DecidableEq
 
 /-- Big: maps degrees to their "bigness" (identity on the degree scale). -/
-def bigness (d : Degree 10) : Degree 10 := d
+def bigness (d : Bounded 10) : Bounded 10 := d
 
 /-- Small: inverted ordering (0 maximally small, 10 minimally small). -/
-def smallness (d : Degree 10) : Degree 10 :=
-  Degree.Degree.ofNat 10 (10 - d.toNat)
+def smallness (d : Bounded 10) : Bounded 10 :=
+  Degree.Bounded.ofNat 10 (10 - d.toNat)
 
 /-- Standard for "big" (contextual, typically middling). -/
-def bigStandard : Degree 10 := deg 5
+def bigStandard : Bounded 10 := deg 5
 
 /-- Standard for "small" (contextual). -/
-def smallStandard : Degree 10 := deg 5
+def smallStandard : Bounded 10 := deg 5
 
 /-- POS applied to size adjective: λd. standard(size) ≤ size(d). -/
-def posBig (d : Degree 10) : Bool := bigStandard ≤ bigness d
-def posSmall (d : Degree 10) : Bool := smallStandard ≤ smallness d
+def posBig (d : Bounded 10) : Bool := bigStandard ≤ bigness d
+def posSmall (d : Bounded 10) : Bool := smallStandard ≤ smallness d
 
 
 section MEASN
 
 /-- Find minimum degree satisfying a predicate. -/
-def minDegree (p : Degree 10 → Bool) : Option (Degree 10) :=
+def minDegree (p : Bounded 10 → Bool) : Option (Bounded 10) :=
   (Degree.allDegrees 10).find? p
 
 /-- Simplified MEAS_N: ⟦MEAS_N⟧(g)(m)(x) = [min{d : m(d)} ≤ g(x)] ∧ [standard(g) ≤ g(x)].
     Full version (Morzycki eq. 76) has min over {d : d ∈ scale(g) ∧ m(d)}. -/
 def measN {E : Type}
     (noun : GradableNoun E)
-    (sizeAdj : Degree 10 → Bool)  -- The [POS size-adj] predicate on degrees
+    (sizeAdj : Bounded 10 → Bool)  -- The [POS size-adj] predicate on degrees
     : E → Bool :=
   λ x =>
     match minDegree sizeAdj with
@@ -89,7 +89,7 @@ def measN {E : Type}
 
 
 /-- Example: an "idiot" gradable noun with standard at d3. -/
-def idiotNoun {E : Type} (measure : E → Degree 10) : GradableNoun E :=
+def idiotNoun {E : Type} (measure : E → Bounded 10) : GradableNoun E :=
   { name := "idiot"
   , measure := measure
   , standard := deg 3
@@ -105,16 +105,16 @@ def smallIdiot {E : Type} (noun : GradableNoun E) : E → Bool :=
 
 
 /-- Minimum degree satisfying "big" is d5. -/
-theorem min_big_is_d5 : minDegree posBig = some ((deg 5 : Degree 10)) := by decide
+theorem min_big_is_d5 : minDegree posBig = some ((deg 5 : Bounded 10)) := by decide
 
 /-- Minimum degree satisfying "small" is d0 (the scale minimum). -/
-theorem min_small_is_d0 : minDegree posSmall = some ((deg 0 : Degree 10)) := by decide
+theorem min_small_is_d0 : minDegree posSmall = some ((deg 0 : Bounded 10)) := by decide
 
 /-- d0 always satisfies smallness because it is maximally small. -/
 theorem d0_satisfies_small : posSmall (deg 0) = true := by decide
 
 /-- d0 is the unique minimum for smallness. -/
-theorem d0_is_min_for_small : ∀ d : Degree 10, posSmall d → deg 0 ≤ d := by
+theorem d0_is_min_for_small : ∀ d : Bounded 10, posSmall d → deg 0 ≤ d := by
   intro d _
   exact d0_is_minimum d
 
@@ -151,7 +151,7 @@ inductive Person where
   deriving Repr, DecidableEq
 
 /-- George: d8, Sarah: d4, Floyd: d1. -/
-def idiocyMeasure : Person → Degree 10
+def idiocyMeasure : Person → Bounded 10
   | .george => deg 8
   | .sarah => deg 4
   | .floyd => deg 1
