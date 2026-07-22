@@ -322,7 +322,7 @@ theorem standard_ieAdmits (g : GradableAdjective)
   | none => simp [ieAdmits]
   | some d =>
     cases hb : d.boundedness <;> cases hl : g.isLowerEndpoint <;>
-      simp [ieAdmits, interpretiveEconomy, hd, hb, hl]
+      simp [ieAdmits, interpretiveEconomy, hb]
 
 /-- Kennedy's adjective class — derived from `standard`, not stored; `.nonGradable`
     exactly when there is no `dimension` ([kennedy-2007], [kennedy-mcnally-2005]). -/

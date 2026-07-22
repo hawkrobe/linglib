@@ -48,7 +48,7 @@ tolerance modifier:
 
 -/
 
-namespace BeltramaSoltBurnett2022
+namespace BeltramaSoltBurnett2023
 
 open SocialMeaning.IndexicalField
 open SocialMeaning.SCM
@@ -459,4 +459,4 @@ theorem underspecified_indexes_nothing :
     bsbGroundedField.indexedProperties .underspecified = ∅ := by
   decide
 
-end BeltramaSoltBurnett2022
+end BeltramaSoltBurnett2023
