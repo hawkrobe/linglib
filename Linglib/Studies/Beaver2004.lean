@@ -1,5 +1,5 @@
 import Linglib.Discourse.Centering.Basic
-import Linglib.Discourse.Centering.Rule1
+import Linglib.Discourse.Centering.Pronominalization
 import Linglib.Discourse.Centering.Instances.GrammaticalRole
 import Linglib.Phonology.Constraints.Defs
 import Linglib.Phonology.OptimalityTheory.Tableau
@@ -37,7 +37,7 @@ constraints are LITERAL RESTATEMENTS of existing Centering primitives
 
 | Beaver constraint | Beaver's source                              | Our definition |
 |-------------------|----------------------------------------------|----------------|
-| **PRO-TOP**       | "essentially the effect of Centering's Rule 1" (his p. 15-16) | via **`Rule1Gordon`** from `Centering/Rule1.lean` (NOT `Rule1GJW95`) |
+| **PRO-TOP**       | "essentially the effect of Centering's Rule 1" (his p. 15-16) | via **`CbPronominalized`** from `Centering/Pronominalization.lean` (NOT `PronominalizationConstraint`) |
 | **COHERE**        | "the conditions used in BFP to specify transition types" (his p. 17) | via `cb` (topic stability test) |
 | **ALIGN**         | same | via `cb` + `cp` (topic in preferred-center position) |
 | **AGREE**         | binding theory (his p. 14)                   | NEW (substrate-gap-flagged: `Realization` lacks number/gender features) |
@@ -128,7 +128,7 @@ structure Candidate (E : Type) (R : Type) where
       be derived from `Features.GivennessStatus`.
       Queued.) -/
   famDefOK : Bool
-  deriving Repr
+  deriving Repr, DecidableEq
 
 -- ════════════════════════════════════════════════════
 -- § 2. The 6 COT constraints (deep reuse where applicable)
@@ -156,27 +156,27 @@ def disjoint : Constraint (Candidate E R) :=
 /-- **PRO-TOP** ([beaver-2004] §3.2, "essentially the effect of
     Centering's Rule 1"): "The topic is pronominalized."
 
-    **Reused from `Rule1Gordon`** (the *unconditional* Rule 1 variant
-    from `Centering/Rule1.lean`, after [gordon-grosz-gilliom-1993]).
+    **Reused from `CbPronominalized`** (the *unconditional* Rule 1 variant
+    from `Centering/Pronominalization.lean`, after [gordon-grosz-gilliom-1993]).
     Beaver §3.2 explicitly REMOVES the if-clause: in OT, PRO-TOP
     has no antecedent — the topic should be pronominalized, full
     stop. Defeasibility is encoded by PRO-TOP's lower ranking
     position (3rd of 6), not by a propositional if-clause.
 
-    **Important**: an EARLIER version of this file used `Rule1GJW95`
+    **Important**: an EARLIER version of this file used `PronominalizationConstraint`
     (the *conditional* Rule 1: "if any pronoun, then CB
     pronominalized"). That was the WRONG reuse — Beaver §3.2 ("if
     there are no pronouns, then all candidate interpretations will
     be equally bad as far as PRO-TOP is concerned") explicitly
     states all interpretations VIOLATE PRO-TOP when no pronoun
-    realizes the topic. With the conditional `Rule1GJW95`, all
+    realizes the topic. With the conditional `PronominalizationConstraint`, all
     pronoun-free interpretations would *satisfy* PRO-TOP — the
-    opposite of Beaver's intent. `Rule1Gordon` (which fires
+    opposite of Beaver's intent. `CbPronominalized` (which fires
     unconditionally when CB exists and isn't pronominalized) is
     the correct restatement. -/
 def proTop [DecidableEq E] [CfRankerOf E R]
     (prev : Utterance E R) : Constraint (Candidate E R) :=
-  Constraint.binary (fun c => ¬ Rule1Gordon prev c.utt)
+  Constraint.binary (fun c => ¬ CbPronominalized prev c.utt)
 
 /-- **FAM-DEF** (Beaver §3.2 p. 15, "Heim 1982"): "Each definite NP is
     familiar."
@@ -510,7 +510,7 @@ theorem beaver_demoted_ranking_picks_bound_reading :
     > definites, then both do, and in this case they resolve anaphors
     > identically.
 
-    With our **deep-reuse design** (PRO-TOP via Rule1GJW95, COHERE via
+    With our **deep-reuse design** (PRO-TOP via `CbPronominalized`, COHERE via
     cb, ALIGN via cb+cp), this theorem is partly STRUCTURAL:
 
     - The COT-side `proTop` constraint IS BFP's Rule 1 by definition.
@@ -524,14 +524,11 @@ theorem beaver_demoted_ranking_picks_bound_reading :
 
     The structural correspondence makes the COT-vs-BFP equivalence
     mechanically apparent for the 3 reused constraints (PRO-TOP / COHERE
-    / ALIGN are LITERALLY defined via `Rule1Gordon` / `cb` / `cb`+`cp`,
-    so any "iff" theorem connecting them to the substrate is a
-    one-line `unfold` — i.e., the canonical naCanBridge anti-pattern
-    CLAUDE.md forbids). We previously had `proTop_iff_rule1Gordon_fails`,
-    `cohere_iff_cb_diverges`, `align_iff_cb_neq_cp` theorems here;
-    they were correctly flagged by audit as encoding-conclusions-as-
-    definitions. The 3 novel constraints don't change BFP's predictions
-    on Beaver's worked examples (verified by `decide` per-example). -/
+    / ALIGN are LITERALLY defined via `CbPronominalized` / `cb` / `cb`+`cp`,
+    so no bridge theorems are needed — the connection is true by
+    construction). The 3 novel constraints don't change BFP's
+    predictions on Beaver's worked examples (verified by `decide`
+    per-example). -/
 
 -- ════════════════════════════════════════════════════
 -- § 6. ViolationProfile comparison — OT lex-min actually fires
@@ -544,14 +541,11 @@ theorem beaver_demoted_ranking_picks_bound_reading :
     canonical COT ranking and verify the lex-ordering picks `l=i`.
 
     A full `Tableau` construction would also work (and is what
-    mathlib-style would prefer), but currently `Utterance E R`
-    lacks `DecidableEq` in the substrate (deriving only `Repr`),
-    so `Finset (Candidate E R)` synthesis is blocked. The
-    `ViolationProfile` comparison gives the same kernel-checked OT
-    witness without requiring `Finset` machinery. Adding
-    `DecidableEq` to the `Realization` / `Utterance` structures'
-    deriving block (substrate change) would unblock the full
-    `Tableau.optimal = {cand_l_eq_i}` form; queued for follow-up. -/
+    mathlib-style would prefer): the substrate `Utterance E R`
+    derives `DecidableEq`, and `Candidate` now does too, so the
+    `Tableau.optimal = {cand_l_eq_i}` form is unblocked; queued for
+    follow-up. The `ViolationProfile` comparison gives the same
+    kernel-checked OT witness without requiring `Finset` machinery. -/
 
 /-- Beaver tableau (13) line 1: ViolationProfile of `cand_l_eq_i`
     under the canonical COT ranking. -/
@@ -585,7 +579,7 @@ theorem d12_lex_picks_l_eq_i :
       Sidner's actor focus. Out-of-scope for this commit (Beaver §4.3
       cross-linguistic constraints not formalized), but flagged.
 
-    - **`Centering/Rule2.lean::Rule2Strube1998Cheap`** (cheap iff
+    - **`Centering/Transition.lean::isCheap`** (cheap iff
       `cb prev cur = priorCp`). Beaver's ALIGN at the *previous*
       utterance position structurally encodes the same predicate —
       see hidden-agreement theorem below.
@@ -595,7 +589,7 @@ theorem d12_lex_picks_l_eq_i :
       in `KehlerRohde2013.lean`, not here. Future-work. -/
 
 /-- **Hidden agreement: ALIGN ≈ Strube 1998 cheap (structurally)**.
-    Strube's "cheap" predicate (`Rule2Strube1998Preferred`) tests
+    Strube's "cheap" predicate (`isCheap`) tests
     `cb prev cur = priorCp ∧ cb is some` — the previous-Cp predicts
     the current-CB. ALIGN at the *current* utterance tests the
     analogous within-utterance condition: `cb prev cur = current-cp`.

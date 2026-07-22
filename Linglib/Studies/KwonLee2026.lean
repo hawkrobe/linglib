@@ -1,7 +1,7 @@
 import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.NormNum
 import Linglib.Discourse.Centering.Basic
-import Linglib.Discourse.Centering.Rule1
+import Linglib.Discourse.Centering.Pronominalization
 import Linglib.Discourse.Centering.Instances.GrammaticalRole
 import Linglib.Features.Accessibility
 import Linglib.Studies.Ariel2001
@@ -673,7 +673,7 @@ theorem cb_is_prior_subject :
 
 /-- Step 2: realizing the Cb with the null pronoun satisfies Rule 1. -/
 theorem null_realization_satisfies_rule1 :
-    Rule1GJW95 uttIntro uttNullContinuation := by decide
+    PronominalizationConstraint uttIntro uttNullContinuation := by decide
 
 /-- Step 3: the null pronoun is the top of the Korean-form linear order,
     stated as an `OrderTop` instance so `le_top` is available. -/

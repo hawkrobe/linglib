@@ -1,6 +1,5 @@
 import Linglib.Discourse.Centering.Basic
-import Linglib.Discourse.Centering.Rule1
-import Linglib.Discourse.Centering.Rule2
+import Linglib.Discourse.Centering.Pronominalization
 import Linglib.Discourse.Centering.Transition
 import Linglib.Discourse.Coherence
 import Linglib.Discourse.Centering.Instances.GrammaticalRole
@@ -99,7 +98,7 @@ type-changing axes, not the bookkeeping ones" recommendation.
 - **The `CenteringConfig` bundled record.** Per the mathlib audit,
   PSDH's "8 parameters" map onto typeclass instances + variant
   predicates, not a `CenteringConfig` structure. The fact that
-  "GJW95 = `[CfRanker GrammaticalRole]` + `Rule1GJW95` + `pairRank`"
+  "GJW95 = `[CfRanker GrammaticalRole]` + `PronominalizationConstraint` + `pairRank`"
   is documented in prose, not as a structure-typed value. (Mathlib
   precedent: `Mathlib.Analysis.Calculus` has `FDeriv`/`Deriv`/
   `HasDerivAt`/`HasFDerivAt`/`lineDeriv` as separate definitions
@@ -120,8 +119,6 @@ Strube-Hahn's 3-tier information-status ranker (HEARER-OLD > MEDIATED
 > HEARER-NEW) as a `CfRanker` instance. `ofGivenness` projects GHZ's
 6-tier `GivennessStatus` onto the Strube-Hahn tiers.
 -/
-
-set_option autoImplicit false
 
 namespace Discourse.Centering
 
@@ -186,8 +183,6 @@ PSDH §5.3.2's decomposition of GJW's Constraint 1 into CB Uniqueness
 (at most one CB) and Entity Continuity (at least one CB). Strong C1 =
 their conjunction (exactly one CB).
 -/
-
-set_option autoImplicit false
 namespace Discourse.Centering
 variable {E R : Type*}
 /-! ### CB Uniqueness, Entity Continuity, Strong C1 -/
@@ -233,8 +228,6 @@ theorem strong_implies_uniqueness [DecidableEq E] [CfRankerOf E R] {U : Type*}
   omega
 end Discourse.Centering
 
-
-set_option autoImplicit false
 
 namespace PoesioEtAl2004
 
@@ -546,7 +539,7 @@ theorem is_ranker_picks_hearerOld_as_cp :
     `Studies/Beaver2004.lean`.
 
     Three of Beaver's six constraints are LITERAL RESTATEMENTS of
-    existing Centering primitives (PRO-TOP via `Rule1GJW95`,
+    existing Centering primitives (PRO-TOP via `CbPronominalized`,
     COHERE via `cb`, ALIGN via `cb`+`cp`); see Beaver2004.lean §2.
     The deep-reuse design makes Theorem (20) partly structural — the
     OT-vs-BFP equivalence on those 3 clauses follows by definition. -/

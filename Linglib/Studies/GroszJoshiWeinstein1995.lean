@@ -1,7 +1,6 @@
 import Linglib.Discourse.Centering.Basic
 import Linglib.Discourse.Centering.Transition
-import Linglib.Discourse.Centering.Rule1
-import Linglib.Discourse.Centering.Rule2
+import Linglib.Discourse.Centering.Pronominalization
 import Linglib.Discourse.Centering.Instances.GrammaticalRole
 import Linglib.Studies.Sidner1983
 
@@ -170,13 +169,13 @@ theorem d15_b_to_c_cb : cb D15.b D15.c = some "John" := by decide
 /-- **Rule 1 violation**: in (15c), Mike is pronominalized but the Cb
     John is realized as a proper name. The paper's diagnosis. -/
 theorem discourse15_violates_rule1 :
-    ¬ Rule1GJW95 D15.b D15.c := by decide
+    ¬ PronominalizationConstraint D15.b D15.c := by decide
 
 /-- The (a→b) pair of the same discourse satisfies Rule 1 (the only
     Cf element from (a) is John, who is pronominalized in (b) — the Cb
     is also pronominalized). The violation is local to the (b→c) step. -/
 theorem d15_a_to_b_satisfies_rule1 :
-    Rule1GJW95 D15.a D15.b := by decide
+    PronominalizationConstraint D15.a D15.b := by decide
 
 /-! Discourse (16) is the paper's minimal repair of (15): the same
     John–Mike sequence with an intervening utterance that shifts the
@@ -216,7 +215,7 @@ theorem d16_c_to_d_cb : cb D16.c D16.d = some "Mike" := by decide
 
 /-- After the shift, (16d)'s pronoun realizes the new Cb Mike — Rule 1
     is satisfied exactly where (15c) violated it. -/
-theorem d16_c_to_d_satisfies_rule1 : Rule1GJW95 D16.c D16.d := by decide
+theorem d16_c_to_d_satisfies_rule1 : PronominalizationConstraint D16.c D16.d := by decide
 
 /-! ### Discourses (7)-(10): Cf ranking and Rule 1 (paper §5) -/
 
@@ -282,23 +281,23 @@ theorem d7_to_10_share_cb :
 
 /-- Variant 7 satisfies Rule 1 (Susan as Cb pronominalized). -/
 theorem d7_satisfies_rule1 :
-    Rule1GJW95 D7_10.b D7_10.c7 := by decide
+    PronominalizationConstraint D7_10.b D7_10.c7 := by decide
 
 /-- Variant 8 satisfies Rule 1 (Susan as Cb pronominalized via "her"). -/
 theorem d8_satisfies_rule1 :
-    Rule1GJW95 D7_10.b D7_10.c8 := by decide
+    PronominalizationConstraint D7_10.b D7_10.c8 := by decide
 
 /-- **Variant 9 violates Rule 1**: Betsy is pronominalized but Cb
     (Susan) is realized as a proper name. -/
 theorem d9_violates_rule1 :
-    ¬ Rule1GJW95 D7_10.b D7_10.c9 := by decide
+    ¬ PronominalizationConstraint D7_10.b D7_10.c9 := by decide
 
 /-- **Variant 10 violates Rule 1**: Betsy is pronominalized but Cb
     (Susan) is realized as a proper name. The paper calls this case
     "completely unacceptable"; the Rule-1 split (7, 8 satisfy; 9, 10
     violate) tracks the paper's acceptability ordering. -/
 theorem d10_violates_rule1 :
-    ¬ Rule1GJW95 D7_10.b D7_10.c10 := by decide
+    ¬ PronominalizationConstraint D7_10.b D7_10.c10 := by decide
 
 /-! ### Discourse (20): CONTINUE / RETAIN / SHIFT (paper §7) -/
 
@@ -336,10 +335,10 @@ theorem discourse20_d_to_e_shifting :
     classifyTransitionExtended D20.d D20.e D20.e.cp (cb D20.c D20.d) = .shifting := by decide
 
 /-- Rule 1 holds throughout Discourse 20 (the paper's claim). -/
-theorem discourse20_rule1_a_b : Rule1GJW95 D20.a D20.b := by decide
-theorem discourse20_rule1_b_c : Rule1GJW95 D20.b D20.c := by decide
-theorem discourse20_rule1_c_d : Rule1GJW95 D20.c D20.d := by decide
-theorem discourse20_rule1_d_e : Rule1GJW95 D20.d D20.e := by decide
+theorem discourse20_rule1_a_b : PronominalizationConstraint D20.a D20.b := by decide
+theorem discourse20_rule1_b_c : PronominalizationConstraint D20.b D20.c := by decide
+theorem discourse20_rule1_c_d : PronominalizationConstraint D20.c D20.d := by decide
+theorem discourse20_rule1_d_e : PronominalizationConstraint D20.d D20.e := by decide
 
 /-! ### Comparison with [sidner-1983]: example (34) (paper §9) -/
 
