@@ -1,6 +1,6 @@
+import Linglib.Studies.Rett2015
 import Linglib.Pragmatics.RSA.Canonical
 import Linglib.Semantics.Degree.Defs
-import Linglib.Studies.Rett2015Implicature
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Prod
 import Mathlib.Analysis.Complex.ExponentialBounds
@@ -73,7 +73,7 @@ The RSA model adds two things the Neo-Gricean account lacks:
 namespace BumfordRett2021
 
 open RSA
-open Rett2015Implicature (Polarity)
+open Rett2015 (Polarity)
 open Degree (Construction)
 
 -- ============================================================================
@@ -870,7 +870,7 @@ abbrev posConstruction  : Construction := .positive
 abbrev eqConstruction   : Construction := .equative
 abbrev compConstruction : Construction := .comparative
 
-open Rett2015Implicature (deriveEvaluativity)
+open Rett2015 (deriveEvaluativity)
 
 /-- Cross-theory agreement: the RSA model and [rett-2015]'s Neo-Gricean
     account agree on the full evaluativity paradigm.

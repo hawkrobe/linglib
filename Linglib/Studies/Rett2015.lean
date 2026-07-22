@@ -1,29 +1,61 @@
-import Mathlib.Data.Rat.Defs
+import Linglib.Pragmatics.NeoGricean.Markedness
+import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Semantics.Degree.Adjective
 import Linglib.Semantics.Degree.Defs
 
 /-!
-# Evaluativity: Empirical Patterns
-[rett-2015] [lassiter-goodman-2017] [tessler-franke-2019]
+# Rett (2015): evaluativity as implicature
+[rett-2015] [horn-1984] [bierwisch-1989] [kennedy-2007]
 
-Evaluativity distribution across adjectival constructions. Positive constructions
-are evaluative, comparatives are not, equatives show asymmetry.
+This file formalizes [rett-2015]: the empirical distribution of evaluativity
+across degree constructions (the book's Table 3.1) and its Neo-Gricean
+derivation (Chapters 3–5) — a Quantity implicature strengthens otherwise
+tautological positive constructions, and the Marked Meaning Principle
+([horn-1984]) derives evaluativity for marked antonyms in polar-invariant
+constructions.
 
 ## Main definitions
 
-`EvaluativityStatus`, `EvaluativityDatum`, `EvaluativityPrediction`
+- `EvaluativityDatum` / `allEvaluativityData`: the Table 3.1 judgment data
+- `evaluativitySource` / `deriveEvaluativity`: the implicature-based derivation
+- `applyMMP` / `deriveEvaluativityWithLexicon`: the lexicon-grounded pipeline
 
-`Construction` is defined in `Semantics/Degree/Defs.lean`.
+## Main results
 
+- `rett_positive_evaluative`, `rett_comparative_non_evaluative`,
+  `rett_equative_asymmetry`, `rett_question_asymmetry`: the distribution
+  predictions
+- `asymmetry_requires_polar_invariance`, `manner_requires_marked_and_invariant`:
+  polarity asymmetry tracks polar invariance
+- `predictions_match_all_data`: the predictions match every judgment datum
 -/
 
-namespace Rett2015.Evaluativity
+namespace Rett2015
 
+open NeoGricean.Markedness
+open English.Predicates.Adjectival
+  (tall_with_morphology short_with_morphology happy_with_morphology
+    unhappy_with_morphology)
 open Degree (Construction)
+open Degree
 
--- Evaluativity Judgments
+/-! ### Judgment data (Table 3.1)
 
-/-- Evaluativity status. -/
+Evaluativity by construction and antonym polarity:
+
+|                  | Positive-polar (tall) | Negative-polar (short) |
+|------------------|-----------------------|------------------------|
+| Positive         | evaluative            | evaluative             |
+| Comparative      | non-evaluative        | non-evaluative         |
+| Equative         | non-evaluative        | evaluative             |
+| Measure Phrase   | non-evaluative        | *ungrammatical         |
+| Degree Question  | non-evaluative        | evaluative             |
+
+The measure-phrase restriction to positive-polar adjectives is
+[schwarzschild-2005]'s interval-boundedness effect ([kennedy-mcnally-2005]).
+-/
+
+/-- Evaluativity status of a construction-adjective pair. -/
 inductive EvaluativityStatus where
   | evaluative
   | nonEvaluative
@@ -31,7 +63,7 @@ inductive EvaluativityStatus where
   | ungrammatical
   deriving Repr, DecidableEq
 
-/-- Evaluativity judgment datum. -/
+/-- An evaluativity judgment for one construction-adjective pair. -/
 structure EvaluativityDatum where
   construction : Construction
   adjective : String
@@ -42,7 +74,6 @@ structure EvaluativityDatum where
   notes : String := ""
   deriving Repr
 
-
 def positive_tall : EvaluativityDatum :=
   { construction := .positive
   , adjective := "tall"
@@ -50,7 +81,6 @@ def positive_tall : EvaluativityDatum :=
   , exampleSentence := "Adam is tall."
   , status := .evaluative
   , presupposition := some "Adam's height exceeds the standard for tallness"
-  , notes := "Positive construction with unmarked adjective"
   }
 
 def positive_short : EvaluativityDatum :=
@@ -60,20 +90,7 @@ def positive_short : EvaluativityDatum :=
   , exampleSentence := "Adam is short."
   , status := .evaluative
   , presupposition := some "Adam's height is below the standard for shortness"
-  , notes := "Positive construction with marked adjective"
   }
-
-
-/-!
-## Comparatives
-
-Comparatives are NEVER evaluative, regardless of adjective polarity.
-
-"Adam is taller than Doug" does NOT presuppose either is tall.
-"Adam is shorter than Doug" does NOT presuppose either is short.
-
-This is a key contrast with positive constructions.
--/
 
 def comparative_tall : EvaluativityDatum :=
   { construction := .comparative
@@ -81,7 +98,6 @@ def comparative_tall : EvaluativityDatum :=
   , isPositivePolar := true
   , exampleSentence := "Adam is taller than Doug."
   , status := .nonEvaluative
-  , presupposition := none
   , notes := "True even if both Adam and Doug are short"
   }
 
@@ -91,33 +107,8 @@ def comparative_short : EvaluativityDatum :=
   , isPositivePolar := false
   , exampleSentence := "Adam is shorter than Doug."
   , status := .nonEvaluative
-  , presupposition := none
   , notes := "True even if both Adam and Doug are tall"
   }
-
-/--
-Comparatives entail their equative counterpart but not vice versa.
-
-"Adam is taller than Doug" → "Adam is as tall as Doug"
-"Adam is as tall as Doug" ↛ "Adam is taller than Doug"
--/
-def comparative_entails_equative : String :=
-  "Adam is taller than Doug → Adam is as tall as Doug"
-
-
-/-!
-## Equatives
-
-Equatives show an ASYMMETRY based on adjective polarity:
-
-- "Adam is as tall as Doug" → NOT evaluative
-- "Adam is as short as Doug" → evaluative (presupposes both are short)
-
-This asymmetry is evidence for a marked/unmarked distinction,
-but the effect emerges from pragmatic competition, not lexical stipulation.
-
-Source: [rett-2015], [bierwisch-1989]
--/
 
 def equative_tall : EvaluativityDatum :=
   { construction := .equative
@@ -125,8 +116,6 @@ def equative_tall : EvaluativityDatum :=
   , isPositivePolar := true
   , exampleSentence := "Adam is as tall as Doug."
   , status := .nonEvaluative
-  , presupposition := none
-  , notes := "No presupposition that either is tall"
   }
 
 def equative_short : EvaluativityDatum :=
@@ -136,23 +125,7 @@ def equative_short : EvaluativityDatum :=
   , exampleSentence := "Adam is as short as Doug."
   , status := .evaluative
   , presupposition := some "Both Adam and Doug are short"
-  , notes := "KEY ASYMMETRY: marked adjective triggers evaluativity"
   }
-
-
-/-!
-## Measure Phrase Constructions
-
-Measure phrases are NOT evaluative - they specify exact degrees.
-
-"Adam is 6ft tall" does NOT presuppose Adam is tall.
-
-However, measure phrases are RESTRICTED to positive-polar adjectives:
-- "Adam is 6ft tall" ✓
-- *"Adam is 4ft short" ✗
-
-Source: [schwarzschild-2005], [kennedy-mcnally-2005]
--/
 
 def mp_tall : EvaluativityDatum :=
   { construction := .measurePhrase
@@ -160,8 +133,6 @@ def mp_tall : EvaluativityDatum :=
   , isPositivePolar := true
   , exampleSentence := "Adam is 6ft tall."
   , status := .nonEvaluative
-  , presupposition := none
-  , notes := "Specifies degree without evaluativity"
   }
 
 def mp_short : EvaluativityDatum :=
@@ -170,24 +141,8 @@ def mp_short : EvaluativityDatum :=
   , isPositivePolar := false
   , exampleSentence := "*Adam is 4ft short."
   , status := .ungrammatical
-  , presupposition := none
   , notes := "MPs don't combine with negative-polar adjectives"
   }
-
-
-/-!
-## Degree Questions
-
-Degree questions show a similar asymmetry to equatives:
-
-- "How tall is Adam?" → neutral (no presupposition)
-- "How short is Adam?" → presupposes Adam is short
-
-The unmarked form is used for neutral information-seeking.
-The marked form presupposes the property holds.
-
-Source: [rett-2015]
--/
 
 def question_tall : EvaluativityDatum :=
   { construction := .degreeQuestion
@@ -195,8 +150,6 @@ def question_tall : EvaluativityDatum :=
   , isPositivePolar := true
   , exampleSentence := "How tall is Adam?"
   , status := .nonEvaluative
-  , presupposition := none
-  , notes := "Neutral question - doesn't presuppose tall or short"
   }
 
 def question_short : EvaluativityDatum :=
@@ -206,11 +159,9 @@ def question_short : EvaluativityDatum :=
   , exampleSentence := "How short is Adam?"
   , status := .evaluative
   , presupposition := some "Adam is short"
-  , notes := "Marked question - presupposes shortness"
   }
 
--- Summary Data
-
+/-- The pooled Table 3.1 judgment data. -/
 def allEvaluativityData : List EvaluativityDatum :=
   [ positive_tall, positive_short
   , comparative_tall, comparative_short
@@ -219,125 +170,361 @@ def allEvaluativityData : List EvaluativityDatum :=
   , question_tall, question_short
   ]
 
-/--
-Summary table: Evaluativity by construction and polarity.
+/-! ### Polarity and implicature types -/
 
-|                  | Positive-polar (tall) | Negative-polar (short) |
-|------------------|----------------------|------------------------|
-| Positive         | evaluative           | evaluative             |
-| Comparative      | non-evaluative       | non-evaluative         |
-| Equative         | non-evaluative       | EVALUATIVE             |
-| Measure Phrase   | non-evaluative       | *ungrammatical         |
-| Degree Question  | non-evaluative       | EVALUATIVE             |
+/-- Antonym polarity: positive-polar adjectives (*tall*, *happy*) are
+unmarked; negative-polar ones (*short*, *unhappy*) are marked
+([bierwisch-1989], [kennedy-2007]). -/
+inductive Polarity where
+  | positive
+  | negative
+  deriving Repr, DecidableEq
 
-The asymmetries in equatives and questions are the key evidence
-for the marked/unmarked distinction.
--/
-def evaluativitySummary : String :=
-"
-|                  | Positive-polar (tall) | Negative-polar (short) |
-|------------------|----------------------|------------------------|
-| Positive         | evaluative           | evaluative             |
-| Comparative      | non-evaluative       | non-evaluative         |
-| Equative         | non-evaluative       | EVALUATIVE             |
-| Measure Phrase   | non-evaluative       | *ungrammatical         |
-| Degree Question  | non-evaluative       | EVALUATIVE             |
-"
+/-- Negative-polar adjectives are the marked members of their pairs. -/
+def Polarity.IsMarked (p : Polarity) : Prop :=
+  p = .negative
 
--- Theoretical Predictions
+instance : DecidablePred Polarity.IsMarked :=
+  fun _ => inferInstanceAs (Decidable (_ = _))
 
-/-!
-## Theoretical Predictions
+/-- The implicature route deriving evaluativity: Quantity (uninformativity
+avoidance, [rett-2015] Chapter 3's degree tautology) or Manner (marked-form
+use, the Marked Meaning Principle of Chapter 5). -/
+inductive EvaluativityImplicature where
+  | quantity
+  | manner
+  | none
+  deriving Repr, DecidableEq
 
-A theory of evaluativity should derive:
+/-! ### The implicature-based derivation -/
 
-1. **Positive constructions are evaluative**
-   - This falls out of threshold semantics + pragmatic inference (RSA)
-   - Listener infers threshold jointly with degree
+/-- The implicature route deriving evaluativity for each construction and
+polarity: positives are strengthened by Quantity for both antonyms;
+equatives and degree questions get Manner-derived evaluativity for the
+marked antonym only; comparatives and measure phrases get none. -/
+def evaluativitySource (c : Construction) (p : Polarity) : EvaluativityImplicature :=
+  match c with
+  | .positive => .quantity
+  | .comparative => .none
+  | .equative | .degreeQuestion =>
+    match p with
+    | .positive => .none
+    | .negative => .manner
+  | .measurePhrase => .none
 
-2. **Comparatives are non-evaluative**
-   - The comparative morpheme (-er) binds the degree argument
-   - No free threshold to infer
-
-3. **Equative asymmetry**
-   - "as tall as" and "as short as" are semantically equivalent
-   - But pragmatic competition makes "as short as" marked
-   - Using marked form implicates evaluativity
-
-4. **MP restriction to positive adjectives**
-   - [schwarzschild-2005]: MPs measure "gaps" (bounded intervals)
-   - Negative adjectives have unbounded intervals
-   - *"4ft short" would measure an infinite interval
-
-5. **Question asymmetry**
-   - Parallel to equative: marked form presupposes property
-   - "How short?" is only felicitous if shortness is salient
--/
-
-/--
-Predictions a pragmatic (RSA-style) theory should derive.
--/
-structure EvaluativityPrediction where
-  name : String
-  claim : String
-  mechanism : String
+/-- The evaluativity prediction for one construction-polarity pair. -/
+structure EvaluativityDerivation where
+  construction : Construction
+  polarity : Polarity
+  implicatureType : EvaluativityImplicature
+  isEvaluative : Bool
   deriving Repr
 
-def prediction_positive : EvaluativityPrediction :=
-  { name := "Positive evaluativity"
-  , claim := "Positive constructions are evaluative"
-  , mechanism := "Threshold inference: listener jointly infers degree and standard"
+/-- Derive evaluativity for a construction and polarity. -/
+def deriveEvaluativity (c : Construction) (p : Polarity) : EvaluativityDerivation :=
+  let implType := evaluativitySource c p
+  { construction := c
+  , polarity := p
+  , implicatureType := implType
+  , isEvaluative := implType != .none
   }
 
-def prediction_comparative : EvaluativityPrediction :=
-  { name := "Comparative non-evaluativity"
-  , claim := "Comparatives are not evaluative"
-  , mechanism := "Degree argument is bound by -er, no free threshold"
+theorem positive_both_evaluative :
+    (deriveEvaluativity .positive .positive).isEvaluative = true ∧
+    (deriveEvaluativity .positive .negative).isEvaluative = true :=
+  ⟨rfl, rfl⟩
+
+theorem comparative_never_evaluative :
+    (deriveEvaluativity .comparative .positive).isEvaluative = false ∧
+    (deriveEvaluativity .comparative .negative).isEvaluative = false :=
+  ⟨rfl, rfl⟩
+
+theorem equative_asymmetry :
+    (deriveEvaluativity .equative .positive).isEvaluative = false ∧
+    (deriveEvaluativity .equative .negative).isEvaluative = true :=
+  ⟨rfl, rfl⟩
+
+theorem question_asymmetry :
+    (deriveEvaluativity .degreeQuestion .positive).isEvaluative = false ∧
+    (deriveEvaluativity .degreeQuestion .negative).isEvaluative = true :=
+  ⟨rfl, rfl⟩
+
+/-- Polar-invariant constructions show polarity asymmetry. -/
+theorem invariant_shows_asymmetry_equative :
+    (deriveEvaluativity .equative .positive).isEvaluative ≠
+    (deriveEvaluativity .equative .negative).isEvaluative := by decide
+
+theorem invariant_shows_asymmetry_question :
+    (deriveEvaluativity .degreeQuestion .positive).isEvaluative ≠
+    (deriveEvaluativity .degreeQuestion .negative).isEvaluative := by decide
+
+/-- Polar-variant constructions show no polarity asymmetry. -/
+theorem variant_shows_symmetry_positive :
+    (deriveEvaluativity .positive .positive).isEvaluative =
+    (deriveEvaluativity .positive .negative).isEvaluative :=
+  rfl
+
+theorem variant_shows_symmetry_comparative :
+    (deriveEvaluativity .comparative .positive).isEvaluative =
+    (deriveEvaluativity .comparative .negative).isEvaluative :=
+  rfl
+
+/-- Manner-derived evaluativity requires a polar-invariant construction and
+the marked antonym. -/
+theorem manner_requires_marked_and_invariant :
+    ∀ c : Construction, ∀ p : Polarity,
+      evaluativitySource c p = .manner →
+      (polarVariance c = .invariant ∧ p = .negative) := by
+  intro c p h
+  cases c <;> cases p <;> simp [evaluativitySource, polarVariance] at h ⊢
+
+/-! ### The Marked Meaning Principle -/
+
+/-- The result of applying the Marked Meaning Principle to an adjective form
+in a construction. -/
+structure MMPDerivation where
+  adjForm : String
+  unmarkedAlternative : Option String
+  construction : Construction
+  mmpApplies : Bool
+  implicature : Option EvaluativityImplicature
+  deriving Repr
+
+/-- Apply the Marked Meaning Principle: the marked member of an antonym
+pair, used in a polar-invariant construction where an unmarked alternative
+exists, implicates evaluativity ([rett-2015] Chapter 5, after
+[horn-1984]'s Division of Pragmatic Labor). -/
+def applyMMP (adjForm : String) (construction : Construction)
+    (adj1 adj2 : GradableAdjWithMorphology) : MMPDerivation :=
+  let isMarked := isMarkedForm adjForm adj1 adj2
+  let isPolarInvariant := polarVariance construction == .invariant
+  let unmarkedAlt := if isMarked then
+      if adjForm == adj1.form then some adj2.form else some adj1.form
+    else none
+  let mmpApplies := isMarked && isPolarInvariant && unmarkedAlt.isSome
+  { adjForm := adjForm
+  , unmarkedAlternative := unmarkedAlt
+  , construction := construction
+  , mmpApplies := mmpApplies
+  , implicature := if mmpApplies then some .manner else none
   }
 
-def prediction_equative_asymmetry : EvaluativityPrediction :=
-  { name := "Equative asymmetry"
-  , claim := "'as short as' is evaluative, 'as tall as' is not"
-  , mechanism := "Pragmatic competition: marked form implicates evaluativity"
+theorem mmp_requires_invariance_equative :
+    (applyMMP "short" .equative tall_with_morphology short_with_morphology).mmpApplies = true →
+    polarVariance .equative = .invariant := λ _ => rfl
+
+theorem mmp_requires_invariance_question :
+    (applyMMP "short" .degreeQuestion tall_with_morphology short_with_morphology).mmpApplies = true →
+    polarVariance .degreeQuestion = .invariant := λ _ => rfl
+
+theorem mmp_not_in_comparative :
+    (applyMMP "short" .comparative tall_with_morphology short_with_morphology).mmpApplies = false :=
+  rfl
+
+theorem mmp_applies_short_equative :
+    (applyMMP "short" .equative tall_with_morphology short_with_morphology).mmpApplies = true :=
+  rfl
+
+theorem mmp_not_for_tall_equative :
+    (applyMMP "tall" .equative tall_with_morphology short_with_morphology).mmpApplies = false :=
+  rfl
+
+/-- The equative asymmetry emerges from the MMP plus markedness. -/
+theorem equative_asymmetry_from_mmp :
+    (isMarkedForm "short" tall_with_morphology short_with_morphology) ∧
+    (polarVariance .equative = .invariant) →
+    ((applyMMP "short" .equative tall_with_morphology short_with_morphology).implicature = some .manner ∧
+     (applyMMP "tall" .equative tall_with_morphology short_with_morphology).implicature = none) :=
+  λ _ => ⟨rfl, rfl⟩
+
+/-! ### Lexicon-grounded derivation -/
+
+/-- An evaluativity derivation grounded in lexical morphology: markedness is
+computed from the adjective entries rather than stipulated. -/
+structure LexiconGroundedDerivation where
+  adjective : GradableAdjWithMorphology
+  antonym : GradableAdjWithMorphology
+  construction : Construction
+  mAlternatives : Option MAlternativeSet
+  mmpDerivation : MMPDerivation
+  isEvaluative : Bool
+  source : EvaluativityImplicature
+  deriving Repr
+
+/-- Derive evaluativity from lexical entries: compute markedness from
+morphology, generate M-alternatives, and apply the Quantity route
+(positives) or the MMP route (equatives and degree questions). -/
+def deriveEvaluativityWithLexicon (adjForm : String) (construction : Construction)
+    (adj1 adj2 : GradableAdjWithMorphology) : LexiconGroundedDerivation :=
+  let (adj, ant) := if adj1.form == adjForm then (adj1, adj2) else (adj2, adj1)
+  let mAlts := generateMAlternatives adj1 adj2 construction
+  let mmp := applyMMP adjForm construction adj1 adj2
+  let (isEval, source) := match construction with
+    | .positive => (true, EvaluativityImplicature.quantity)
+    | .equative | .degreeQuestion =>
+      if mmp.mmpApplies then (true, EvaluativityImplicature.manner)
+      else (false, EvaluativityImplicature.none)
+    | .comparative | .measurePhrase => (false, EvaluativityImplicature.none)
+  { adjective := adj
+  , antonym := ant
+  , construction := construction
+  , mAlternatives := mAlts
+  , mmpDerivation := mmp
+  , isEvaluative := isEval
+  , source := source
   }
 
-def prediction_mp_restriction : EvaluativityPrediction :=
-  { name := "MP restriction"
-  , claim := "MPs only combine with positive-polar adjectives"
-  , mechanism := "MPs measure bounded intervals; negative scales are unbounded"
-  }
+theorem grounded_matches_simple_tall_positive :
+    (deriveEvaluativityWithLexicon "tall" .positive
+      tall_with_morphology short_with_morphology).isEvaluative =
+    (deriveEvaluativity .positive .positive).isEvaluative :=
+  rfl
 
-def prediction_question_asymmetry : EvaluativityPrediction :=
-  { name := "Question asymmetry"
-  , claim := "'How short?' presupposes shortness, 'How tall?' is neutral"
-  , mechanism := "Parallel to equative: marked form presupposes property"
-  }
+theorem grounded_matches_simple_short_equative :
+    (deriveEvaluativityWithLexicon "short" .equative
+      tall_with_morphology short_with_morphology).isEvaluative =
+    (deriveEvaluativity .equative .negative).isEvaluative :=
+  rfl
 
-def allPredictions : List EvaluativityPrediction :=
-  [ prediction_positive
-  , prediction_comparative
-  , prediction_equative_asymmetry
-  , prediction_mp_restriction
-  , prediction_question_asymmetry
-  ]
+/-! ### Core predictions -/
 
--- Connection to Other Phenomena
+/-- Positive constructions are evaluative for both antonyms, via Quantity
+implicature (the degree tautology of [rett-2015] Chapter 3). -/
+theorem rett_positive_evaluative :
+    (deriveEvaluativity .positive .positive).isEvaluative = true ∧
+    (deriveEvaluativity .positive .negative).isEvaluative = true ∧
+    (deriveEvaluativity .positive .positive).implicatureType = .quantity ∧
+    (deriveEvaluativity .positive .negative).implicatureType = .quantity :=
+  ⟨rfl, rfl, rfl, rfl⟩
 
-/-!
-## Connections
+/-- Comparatives are never evaluative: the comparative morpheme binds the
+degree argument, leaving no threshold to infer. -/
+theorem rett_comparative_non_evaluative :
+    (deriveEvaluativity .comparative .positive).isEvaluative = false ∧
+    (deriveEvaluativity .comparative .negative).isEvaluative = false ∧
+    (deriveEvaluativity .comparative .positive).implicatureType = .none ∧
+    (deriveEvaluativity .comparative .negative).implicatureType = .none :=
+  ⟨rfl, rfl, rfl, rfl⟩
 
-**To FlexibleNegation**:
-- "not unhappy" ≠ "happy" involves evaluativity
-- "unhappy" is evaluative (degree below θ_neg)
-- "not unhappy" covers gap + positive region
+/-- Equatives show polarity asymmetry: only the marked antonym is
+evaluative, via the MMP. -/
+theorem rett_equative_asymmetry :
+    (deriveEvaluativity .equative .positive).isEvaluative = false ∧
+    (deriveEvaluativity .equative .negative).isEvaluative = true ∧
+    (deriveEvaluativity .equative .positive).implicatureType = .none ∧
+    (deriveEvaluativity .equative .negative).implicatureType = .manner :=
+  ⟨rfl, rfl, rfl, rfl⟩
 
-**To Scalar Implicatures**:
-- Evaluativity in equatives may be a manner implicature
-- Using costly marked form signals something extra
+/-- Degree questions show the same asymmetry as equatives. -/
+theorem rett_question_asymmetry :
+    (deriveEvaluativity .degreeQuestion .positive).isEvaluative = false ∧
+    (deriveEvaluativity .degreeQuestion .negative).isEvaluative = true ∧
+    (deriveEvaluativity .degreeQuestion .positive).implicatureType = .none ∧
+    (deriveEvaluativity .degreeQuestion .negative).implicatureType = .manner :=
+  ⟨rfl, rfl, rfl, rfl⟩
 
-**To Threshold Semantics**:
-- Positive construction evaluativity derives from threshold inference
-- RSA listener infers threshold jointly with degree
--/
+/-- Polarity asymmetry appears exactly in the polar-invariant constructions:
+the MMP requires an unmarked alternative with the same truth conditions. -/
+theorem asymmetry_requires_polar_invariance :
+    (polarVariance .equative = .invariant ∧
+     (deriveEvaluativity .equative .positive).isEvaluative ≠
+     (deriveEvaluativity .equative .negative).isEvaluative) ∧
+    (polarVariance .degreeQuestion = .invariant ∧
+     (deriveEvaluativity .degreeQuestion .positive).isEvaluative ≠
+     (deriveEvaluativity .degreeQuestion .negative).isEvaluative) ∧
+    (polarVariance .comparative = .variant ∧
+     (deriveEvaluativity .comparative .positive).isEvaluative =
+     (deriveEvaluativity .comparative .negative).isEvaluative) := by
+  decide
 
-end Rett2015.Evaluativity
+theorem polar_invariance_enables_m_alternatives :
+    polarVariance .equative = .invariant ∧
+    polarVariance .degreeQuestion = .invariant ∧
+    polarVariance .comparative = .variant ∧
+    polarVariance .positive = .variant :=
+  ⟨rfl, rfl, rfl, rfl⟩
+
+theorem q_implicature_for_positive :
+    evaluativitySource .positive .positive = .quantity ∧
+    evaluativitySource .positive .negative = .quantity :=
+  ⟨rfl, rfl⟩
+
+theorem mmp_for_marked_in_invariant :
+    evaluativitySource .equative .negative = .manner ∧
+    evaluativitySource .degreeQuestion .negative = .manner ∧
+    evaluativitySource .equative .positive = .none ∧
+    evaluativitySource .degreeQuestion .positive = .none :=
+  ⟨rfl, rfl, rfl, rfl⟩
+
+theorem no_mechanism_for_comparative :
+    evaluativitySource .comparative .positive = .none ∧
+    evaluativitySource .comparative .negative = .none :=
+  ⟨rfl, rfl⟩
+
+/-- The marked form, not the unmarked one, triggers the MMP. -/
+theorem marked_triggers_mmp :
+    isMarkedForm "short" tall_with_morphology short_with_morphology = true ∧
+    isMarkedForm "tall" tall_with_morphology short_with_morphology = false ∧
+    (applyMMP "short" .equative tall_with_morphology short_with_morphology).mmpApplies = true ∧
+    (applyMMP "tall" .equative tall_with_morphology short_with_morphology).mmpApplies = false := by
+  decide
+
+/-- Marked forms cost more to produce ([horn-1984]). -/
+theorem marked_costs_more :
+    productionCost "short" tall_with_morphology short_with_morphology >
+    productionCost "tall" tall_with_morphology short_with_morphology := by
+  have hs : isMarkedForm "short" tall_with_morphology short_with_morphology = true := by decide
+  have ht : isMarkedForm "tall" tall_with_morphology short_with_morphology = false := by decide
+  simp [productionCost, hs, ht, costDifference]
+
+/-- Morphological complexity determines markedness for *happy* ~ *unhappy*. -/
+theorem morphological_markedness :
+    isMarkedForm "unhappy" happy_with_morphology unhappy_with_morphology = true ∧
+    isMarkedForm "happy" happy_with_morphology unhappy_with_morphology = false := by
+  decide
+
+/-- The full derivation chain for "as short as": negative pole → marked →
+polar-invariant equative → MMP → manner implicature → evaluative. -/
+theorem complete_derivation_as_short_as :
+    short_with_morphology.isPositivePole = false ∧
+    isMarkedForm "short" tall_with_morphology short_with_morphology = true ∧
+    polarVariance .equative = .invariant ∧
+    (applyMMP "short" .equative tall_with_morphology short_with_morphology).mmpApplies = true ∧
+    (applyMMP "short" .equative tall_with_morphology short_with_morphology).implicature = some .manner ∧
+    (deriveEvaluativityWithLexicon "short" .equative
+      tall_with_morphology short_with_morphology).isEvaluative = true := by
+  decide
+
+/-- The full derivation chain for "as tall as": unmarked form → MMP does not
+apply → no implicature → non-evaluative. -/
+theorem complete_derivation_as_tall_as :
+    tall_with_morphology.isPositivePole = true ∧
+    isMarkedForm "tall" tall_with_morphology short_with_morphology = false ∧
+    polarVariance .equative = .invariant ∧
+    (applyMMP "tall" .equative tall_with_morphology short_with_morphology).mmpApplies = false ∧
+    (applyMMP "tall" .equative tall_with_morphology short_with_morphology).implicature = none ∧
+    (deriveEvaluativityWithLexicon "tall" .equative
+      tall_with_morphology short_with_morphology).isEvaluative = false := by
+  decide
+
+/-! ### Predictions match the judgment data -/
+
+/-- A derivation's prediction agrees with a judgment datum. -/
+def predictionMatches (d : EvaluativityDerivation) (datum : EvaluativityDatum) : Bool :=
+  match datum.status with
+  | .ungrammatical => true
+  | .markedOnly => d.polarity == .negative && d.isEvaluative
+  | .evaluative => d.isEvaluative
+  | .nonEvaluative => !d.isEvaluative
+
+/-- Every Table 3.1 judgment is matched by the implicature-based
+derivation. -/
+theorem predictions_match_all_data :
+    allEvaluativityData.all (λ datum =>
+      predictionMatches
+        (deriveEvaluativity datum.construction
+          (if datum.isPositivePolar then .positive else .negative))
+        datum) = true := by
+  decide
+
+end Rett2015

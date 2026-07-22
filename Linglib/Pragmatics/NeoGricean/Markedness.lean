@@ -29,7 +29,7 @@ polar-variant ones (positives, comparatives, measure phrases).
 English worked entries (`tall_with_morphology`, …) live in
 `Fragments/English/Predicates/Adjectival.lean`; the studies exercising
 them are `Studies/Horn1984.lean`, `Studies/Krifka2007.lean`, and
-`Studies/Rett2015Implicature.lean`.
+`Studies/Rett2015.lean`.
 -/
 
 namespace NeoGricean.Markedness

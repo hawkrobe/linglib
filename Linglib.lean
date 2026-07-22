@@ -2563,7 +2563,6 @@ import Linglib.Studies.RathiHahnFutrell2026
 import Linglib.Studies.ReesReksnesRohde2026
 import Linglib.Studies.Reinhart1976
 import Linglib.Studies.Rett2015
-import Linglib.Studies.Rett2015Implicature
 import Linglib.Studies.Rett2020
 import Linglib.Studies.Rett2026
 import Linglib.Studies.RitchieSchiller2024
