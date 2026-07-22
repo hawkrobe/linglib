@@ -2,7 +2,7 @@ import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.NormNum
 import Linglib.Discourse.Coherence
 import Linglib.Data.UD.Basic
-import Linglib.Discourse.Centering.Rule1
+import Linglib.Discourse.Centering.Pronominalization
 import Linglib.Discourse.Centering.Instances.GrammaticalRole
 import Linglib.Features.Accessibility
 
@@ -518,7 +518,7 @@ theorem contiguity_class_splits :
 
 [kehler-rohde-2013] is the Bayesian–Centering reconciliation paper, so this
 section grounds the file's `topichood`/`bayesianPrediction` apparatus in the
-`Discourse/Centering/` substrate (`cb`, `cp`, `Rule1Gordon`). Under the standard
+`Discourse/Centering/` substrate (`cb`, `cp`, `CbPronominalized`). Under the standard
 grammatical-role Cf ranking (`SUBJECT > OBJECT > OTHER`, [kameyama-1986]), the CB
 is invariant under voice — both `(Amanda, SUBJ) (Brittany, OBJ)` and
 `(Amanda, SUBJ) (Brittany, OTHER-by-phrase)` make Amanda the most-preferred Cf —
@@ -588,11 +588,11 @@ theorem cb_topichood_dissociation_under_voice :
     utterances, passive-subject ones pronominalize 87% of the time vs. 62% for
     active (Table 9). -/
 theorem rule1_gordon_satisfied_both_voices :
-    Rule1Gordon prevAmandaActive curActive ∧
-    Rule1Gordon prevAmandaActive curPassive := by decide
+    CbPronominalized prevAmandaActive curActive ∧
+    CbPronominalized prevAmandaActive curPassive := by decide
 
 /-- Centering as the qualitative skeleton of KR2013's likelihood: where
-    `Rule1Gordon` says "the CB should be pronominalized" (Bool), the likelihood
+    `CbPronominalized` says "the CB should be pronominalized" (yes/no), the likelihood
     `P(pronoun | referent)` says "at a rate proportional to topichood" (gradient).
     The 87% / 62% / ~24% rates (Table 9) monotonically track the
     `.strong` / `.default_` / `.low` levels (`topichood_monotone`). -/

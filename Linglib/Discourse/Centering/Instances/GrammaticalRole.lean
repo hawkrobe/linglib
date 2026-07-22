@@ -16,8 +16,6 @@ over [sidner-1979]'s focus-based proposal; the
 provide independent empirical support.
 -/
 
-set_option autoImplicit false
-
 namespace Discourse.Centering
 
 /-- Grammatical role used to rank Cf elements ([kameyama-1986],
