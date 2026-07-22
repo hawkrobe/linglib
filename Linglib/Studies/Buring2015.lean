@@ -27,7 +27,7 @@ morphosyntactic extension of [assmann-etal-2023].
 namespace Buring2015
 
 open Alternatives
-open Semantics.Focus (weakBanned strongAllowed licensedFocusValue)
+open Focus (weakBanned strongAllowed licensedFocusValue)
 
 /-- Transitive-verb meanings. -/
 inductive Rel where

@@ -1,4 +1,3 @@
-import Linglib.Features.InformationStructure
 import Linglib.Semantics.Alternatives.AltMeaning
 import Linglib.Semantics.Focus.Interpretation
 import Linglib.Semantics.Focus.Control
@@ -48,9 +47,6 @@ Fragments/English/Nouns ──▷ Montague Lexicon ──▷ Tree
 ## What's exercised
 
 - `AltMeaning`, `AltMeaning.unfeatured` — O/A-value computation (§3)
-- `Focus`, `Background` — focus/background partition (§4)
-- `Theme`, `Rheme`, `InfoStructure` — information structure analysis (§5)
-- `FocusedSentence.infoStructure` — IS extractor (§5b; previously a `HasInfoStructure` instance)
 - `fipPrediction` — row adapter over `Data/Examples/Rooth1992.json` (§8)
 - `Tree`, `interp` — compositional derivation (§10–§11)
 - `Derivation` — derivation bundles (§13)
@@ -60,9 +56,8 @@ Fragments/English/Nouns ──▷ Montague Lexicon ──▷ Tree
 
 namespace Rooth1992
 
-open Features.InformationStructure
 open Alternatives
-open Semantics.Focus.Interpretation (fip PropFocusValue qaCongruent qaCongruentWeak)
+open Focus.Interpretation (fip PropFocusValue qaCongruent qaCongruentWeak)
 
 -- ═══════════════════════════════════════════════════════════════════════
 -- §1  Q-A Congruence World Model
@@ -112,93 +107,6 @@ theorem unfeatured_preserves_oValue :
     Non-focused expressions evoke no alternatives ([rooth-1992] §1). -/
 theorem unfeatured_singleton_aValue :
     altPredicateUnfeatured.aValue = ["ate the beans"] := rfl
-
--- ═══════════════════════════════════════════════════════════════════════
--- §4  Focus and Background Partition
--- ═══════════════════════════════════════════════════════════════════════
-
-/-- Focus partition of "FRED ate the beans": Fred is focused,
-    evoking {Fred, Mary} as alternatives (Rooth §2.4, ex. 25a). -/
-def qaFocus : Focus String :=
-  { focused := "Fred"
-  , alternatives := ["Fred", "Mary"] }
-
-/-- Background of "FRED ate the beans": the non-focused material. -/
-def qaBackground : Background String :=
-  { elements := ["ate", "the", "beans"] }
-
--- ═══════════════════════════════════════════════════════════════════════
--- §5  Theme, Rheme, InfoStructure
--- ═══════════════════════════════════════════════════════════════════════
-
-/-- Theme: the QUD presupposition "_ ate the beans" (λ-abstract).
-    Rooth §2.4: in a Q-A pair, the theme corresponds to the
-    question's content. -/
-def qaTheme : Theme String :=
-  { content := "λx. x ate the beans" }
-
-/-- Rheme: the answer "Fred". -/
-def qaRheme : Rheme String :=
-  { content := "Fred" }
-
-/-- Full information structure of "FRED ate the beans"
-    in response to "Who ate the beans?" -/
-def qaInfo : InfoStructure String :=
-  { theme := qaTheme
-  , rheme := qaRheme
-  , foci := ["Fred"]
-  , background := ["ate", "the", "beans"] }
-
-/-- Theme carries the presupposed content. -/
-theorem qa_theme_content :
-    qaInfo.theme.content = "λx. x ate the beans" := rfl
-
-/-- Rheme carries the asserted answer. -/
-theorem qa_rheme_content :
-    qaInfo.rheme.content = "Fred" := rfl
-
-/-- Focus list matches the focused element. -/
-theorem qa_foci_match :
-    qaInfo.foci = [qaFocus.focused] := rfl
-
-/-- Background list matches the background elements. -/
-theorem qa_background_match :
-    qaInfo.background = qaBackground.elements := rfl
-
--- ═══════════════════════════════════════════════════════════════════════
--- §5b  FocusedSentence → InfoStructure
--- ═══════════════════════════════════════════════════════════════════════
-
-/-- Minimal derivation type for exercising the IS partition.
-    Pairs a focused constituent with background material. -/
-structure FocusedSentence where
-  focusedWord : String
-  backgroundWords : List String
-  deriving Repr
-
-/-- A FocusedSentence determines an InfoStructure.
-
-    (Previously a `HasInfoStructure FocusedSentence String` instance —
-    the typeclass shape was deleted in the 0.230.489 cleanup since no
-    caller dispatched on it.) -/
-def FocusedSentence.infoStructure (s : FocusedSentence) : InfoStructure String :=
-  { theme := { content := "background" }
-  , rheme := { content := s.focusedWord }
-  , foci := [s.focusedWord]
-  , background := s.backgroundWords }
-
-def fredSentence : FocusedSentence :=
-  { focusedWord := "Fred"
-  , backgroundWords := ["ate", "the", "beans"] }
-
-/-- The extractor correctly puts the focused word in `foci`. -/
-theorem infoStructure_extracts_focus :
-    fredSentence.infoStructure.foci = ["Fred"] := rfl
-
-/-- The extractor correctly puts background words in `background`. -/
-theorem infoStructure_extracts_background :
-    fredSentence.infoStructure.background =
-      ["ate", "the", "beans"] := rfl
 
 -- ═══════════════════════════════════════════════════════════════════════
 -- §6  Q-A Congruence: FIP at the Propositional Level
@@ -275,9 +183,9 @@ theorem fip_fails_object_focus :
 -- ───────────────────────────────────────────────────────────────────
 
 /-- 'Who ate the beans?' as a focus antecedent
-    (`Semantics.Focus.Antecedent`): the anaphoric source of the
+    (`Focus.Antecedent`): the anaphoric source of the
     squiggle's contrast set. -/
-def qaAntecedent : Semantics.Focus.Antecedent QAWorld := .question q_whoAteBeans
+def qaAntecedent : Focus.Antecedent QAWorld := .question q_whoAteBeans
 
 /-- Question antecedents license the new-information use. -/
 theorem qaAntecedent_use : qaAntecedent.use = .newInfo := rfl
@@ -307,15 +215,15 @@ theorem qaAntecedent_resolves :
     is the unit set `{fredAteBeans}`, defeating the contrast clause —
     "the argument must contain a focus". -/
 theorem focusFree_answer_cannot_resolve (Γ : PropFocusValue QAWorld) :
-    ¬ Semantics.Focus.SquiggleSet fredAteBeans {fredAteBeans} Γ :=
-  Semantics.Focus.not_squiggleSet_singleton fredAteBeans Γ
+    ¬ Focus.SquiggleSet fredAteBeans {fredAteBeans} Γ :=
+  Focus.not_squiggleSet_singleton fredAteBeans Γ
 
 /-- Contrasting phrases (Rooth's symmetric-contrast joke opening, his
     rule construing α as contrasting with β via ⟦β⟧ᵒ ∈ ⟦α⟧f): *Canadian
     farmer*'s ordinary value is a member of *[American]F farmer*'s focus
     value distinct from its ordinary value. -/
 theorem farmer_contrast :
-    Semantics.Focus.SquiggleInd "American farmer"
+    Focus.SquiggleInd "American farmer"
       ({"American farmer", "Canadian farmer"} : Set String)
       "Canadian farmer" :=
   ⟨Or.inr rfl, by decide⟩
@@ -350,7 +258,7 @@ def trivialR : Set RWorld := Set.univ
     satisfiable: true where Mary read without understanding. -/
 theorem restricted_only_satisfiable :
     RWorld.readOnly ∈
-      Semantics.Focus.onlyVia {reading, grasping} reading := by
+      Focus.onlyVia {reading, grasping} reading := by
   intro q hq hw
   rcases hq with rfl | rfl
   · rfl
@@ -360,12 +268,12 @@ theorem restricted_only_satisfiable :
     included), *only READ* is unsatisfiable — direct association
     over-generates exclusions. -/
 theorem direct_only_unsatisfiable :
-    Semantics.Focus.onlyVia {reading, grasping, trivialR} reading = ∅ := by
+    Focus.onlyVia {reading, grasping, trivialR} reading = ∅ := by
   have hne : trivialR ≠ reading := fun h =>
     (by simp [reading] : RWorld.neither ∉ reading)
       (h ▸ Set.mem_univ RWorld.neither)
   ext w
-  simp only [Semantics.Focus.mem_onlyVia, Set.mem_empty_iff_false, iff_false]
+  simp only [Focus.mem_onlyVia, Set.mem_empty_iff_false, iff_false]
   exact fun hw => hne (hw trivialR (by simp) (Set.mem_univ w))
 
 private def readingB : RWorld → Bool
@@ -382,7 +290,7 @@ private def trivialB : RWorld → Bool := fun _ => true
     model. No pragmatic narrowing is possible — the list is fixed in
     the lexical entry, which is the strong theory's objection. -/
 theorem traditional_only_unsatisfiable (w : RWorld) :
-    (Semantics.Focus.Particles.TraditionalOnly.mk
+    (Focus.Particles.TraditionalOnly.mk
       readingB [graspingB, trivialB]).assertion w = false := by
   cases w <;> rfl
 

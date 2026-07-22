@@ -1,6 +1,7 @@
 import Linglib.Studies.Ross1967
 import Linglib.Studies.Adger2025
 import Linglib.Features.Givenness
+import Linglib.Semantics.Focus.Marking
 import Linglib.Semantics.Focus.ExtractionClash
 
 /-!
@@ -63,8 +64,8 @@ inductive ExtractionPosition where
   deriving DecidableEq, Repr
 
 open Features (BinaryGivenness)
-open Features.InformationStructure (FocusMark)
-open Semantics.Focus.ExtractionClash
+open Focus (Mark)
+open Focus.ExtractionClash
 
 namespace CartnerEtAl2026
 
@@ -87,7 +88,7 @@ Pre-Krifka versions of this file collapsed both into one
 
 /-- Focus marking of the filler in each construction.
 [abeille-et-al-2020], §2; [winckel-et-al-2025]. -/
-def fillerFocus : FGDConstruction → FocusMark
+def fillerFocus : FGDConstruction → Mark
   | .whQuestion     => .focused      -- wh-phrase is focused (at-issue)
   | .relativeClause => .nonFocused   -- RC head is given/presupposed
   | .topicalization => .nonFocused   -- topic is discourse-old
@@ -143,7 +144,7 @@ instance (c : FGDConstruction) : Decidable (fbcPredictsIsland c) :=
 Across all three constructions in [cartner-et-al-2026]'s
 materials, subjects are non-focused — the experimental design holds
 the governor's focus marking constant while varying the filler's. -/
-def subjectFocus : FGDConstruction → FocusMark
+def subjectFocus : FGDConstruction → Mark
   | .whQuestion     => .nonFocused
   | .relativeClause => .nonFocused
   | .topicalization => .nonFocused
@@ -156,13 +157,13 @@ def subjectFocus : FGDConstruction → FocusMark
 [winckel-et-al-2025] state this as gradient (greater focus
 difference → more degraded dependency), but in [cartner-et-al-2026]'s
 materials both filler and governor are coded as binary focus marks
-(`FocusMark`), so the gradient version reduces to: filler is focused
+(`Mark`), so the gradient version reduces to: filler is focused
 AND governor is not. Modelling the gradient case requires a richer
-focus-prominence type than the binary `FocusMark`; deferred. -/
-def fbcRevisedViolation (filler governor : FocusMark) : Prop :=
+focus-prominence type than the binary `Mark`; deferred. -/
+def fbcRevisedViolation (filler governor : Mark) : Prop :=
   filler = .focused ∧ governor = .nonFocused
 
-instance (a b : FocusMark) : Decidable (fbcRevisedViolation a b) :=
+instance (a b : Mark) : Decidable (fbcRevisedViolation a b) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
 /-- Revised FBC predicts a subject island effect for a given construction

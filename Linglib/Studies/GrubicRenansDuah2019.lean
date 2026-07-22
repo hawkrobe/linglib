@@ -26,13 +26,13 @@ exhaustivity, so *also* finds its anaphoric antecedent
 ((36b)/(37b)); negating the marked constructions targets the
 prejacent and removes it ((36a)/(37a), the `#also` judgments). Their
 §4 contrast findings (Akan/Ga contrastive, Ngamo felicitous all-new)
-connect to the `Semantics.Focus.Use` layer and are left as a TODO.
+connect to the `Focus.Use` layer and are left as a TODO.
 -/
 
 namespace GrubicRenansDuah2019
 
 open Pragmatics.Expressives (TwoDimProp)
-open Semantics.Focus (onlyVia)
+open Focus (onlyVia)
 
 /-- Who Njelu phoned ((36)). -/
 structure CallWorld where
@@ -44,7 +44,7 @@ def calledSama : Set CallWorld := {w | w.sama}
 def calledHawwa : Set CallWorld := {w | w.hawwa}
 
 /-- The alternative phoning propositions. -/
-def alts : Semantics.Focus.Interpretation.PropFocusValue CallWorld :=
+def alts : Focus.Interpretation.PropFocusValue CallWorld :=
   {calledSama, calledHawwa}
 
 /-- Exhaustivity of the prejacent over the alternatives — the

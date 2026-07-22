@@ -38,9 +38,9 @@ via `Antecedent.ofQuestion` and `Question.alt`, with
 move) is deferred.
 -/
 
-namespace Semantics.Focus
+namespace Focus
 
-open Semantics.Focus.Interpretation (fip PropFocusValue qaCongruentWeak)
+open Focus.Interpretation (fip PropFocusValue qaCongruentWeak)
 
 variable {W : Type*}
 
@@ -428,4 +428,4 @@ theorem ofQuestion_which_eq_whAntecedent (D : Type*) [Nonempty D] :
       whAntecedent D :=
   congrArg Antecedent.question (alt_which_singleton D)
 
-end Semantics.Focus
+end Focus

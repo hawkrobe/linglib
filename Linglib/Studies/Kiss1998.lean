@@ -301,14 +301,14 @@ theorem minimal_pair_distinct_types :
 
 The hat/coat model of the paper's own test sentences ((8), (12)–(15)).
 Identificational focus is the prejacent exhaustified over the resolved
-alternatives — covert obligatory `Semantics.Focus.onlyVia` — while
+alternatives — covert obligatory `Focus.onlyVia` — while
 information focus is the bare prejacent. Szabolcsi's coordination test
 and Farkas's dialogue test come out as theorems, and position
 *determines* whether exhaustification applies: the like-for-like
 counterpart of `HartmannZimmermann2007.exhAnswer_eq`, where
 exhaustification is strategy-blind. -/
 
-open Semantics.Focus (onlyVia)
+open Focus (onlyVia)
 
 /-- Worlds tracking what Mary picked for herself. -/
 inductive HatWorld where
@@ -321,7 +321,7 @@ def pickedHat : Set HatWorld := {.hatOnly, .both}
 def pickedCoat : Set HatWorld := {.coatOnly, .both}
 
 /-- The resolved atomic alternatives for the picking scenario. -/
-def hatAlts : Semantics.Focus.Interpretation.PropFocusValue HatWorld :=
+def hatAlts : Focus.Interpretation.PropFocusValue HatWorld :=
   {pickedHat, pickedCoat}
 
 /-- Identificational focus: the prejacent exhaustified over the

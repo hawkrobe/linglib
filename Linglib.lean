@@ -673,7 +673,6 @@ import Linglib.Features.Givenness
 import Linglib.Features.Grammaticalization
 import Linglib.Features.Indefinite
 import Linglib.Features.Individuation
-import Linglib.Features.InformationStructure
 import Linglib.Features.LicensingContext
 import Linglib.Features.Logophoricity
 import Linglib.Features.MassCount
@@ -1648,6 +1647,7 @@ import Linglib.Semantics.Exhaustification.Trivalent
 import Linglib.Semantics.Focus.Control
 import Linglib.Semantics.Focus.ExtractionClash
 import Linglib.Semantics.Focus.Interpretation
+import Linglib.Semantics.Focus.Marking
 import Linglib.Semantics.Focus.Particles
 import Linglib.Semantics.Focus.Unalternatives
 import Linglib.Semantics.Genericity.Basic

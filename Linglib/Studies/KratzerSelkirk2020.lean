@@ -1,4 +1,4 @@
-import Linglib.Features.InformationStructure
+import Linglib.Semantics.Focus.Marking
 import Linglib.Features.Prosody
 import Linglib.Pragmatics.Expressives.Basic
 import Linglib.Semantics.Presupposition.Basic
@@ -40,7 +40,7 @@ discourse salience), with no separate feature for newness.
   [beaver-2007], [katz-selkirk-2011], [hartmann-zimmermann-2007].
 -/
 
-open Features.InformationStructure
+open Focus (Mark)
 open Alternatives
 open Features.Prosody
 open Pragmatics.Expressives
@@ -282,11 +282,11 @@ variable ℭ — one on *only*, one on the ~ operator that comes with
 
 /-- Semantics of *only* with explicit contrast set (their (56)):
 `λp λw. ∀q ((q ∈ ℭ ∧ q(w)) → q = p)` — the strong-theory
-`Semantics.Focus.onlyVia` at the list-supplied contrast set, so the
+`Focus.onlyVia` at the list-supplied contrast set, so the
 `onlyVia` lemmas (antitonicity, squiggle-resolved exclusion) apply. -/
 def onlySemantics (contrastSet : List (W → Prop)) (prejacent : W → Prop) :
     Set W :=
-  Semantics.Focus.onlyVia {q | q ∈ contrastSet} prejacent
+  Focus.onlyVia {q | q ∈ contrastSet} prejacent
 
 /-! ## [G] containing [FoC] requires alternatives consumption
 
@@ -431,13 +431,13 @@ def beaverEtAl2007_sid : SOFDatum := {
     K&S (36): Phonetic evidence distinguishing [FoC] from newness.
 
     The K&S contrast here is FOCUS marking on otherwise-new material;
-    "new" in their (36) means "non-focused new". `FocusMark` (binary
+    "new" in their (36) means "non-focused new". `Mark` (binary
     focused vs non-focused) captures the relevant axis directly. -/
 structure ProsodicTripleDatum where
   /-- First post-verbal phrase focus marking -/
-  firstFocus : FocusMark
+  firstFocus : Mark
   /-- Second post-verbal phrase focus marking -/
-  secondFocus : FocusMark
+  secondFocus : Mark
   /-- Description of the pitch pattern -/
   pitchPattern : String
   /-- Source -/
@@ -561,11 +561,11 @@ cells, which is where the accommodation caveat does its work. -/
 /-- The K&S inventory over H&Z's pragmatic-use taxonomy: the
 contrastive family is [FoC]; new-information focus is mere newness —
 no feature at all. -/
-def IsFoCus : Semantics.Focus.Use → Prop
+def IsFoCus : Focus.Use → Prop
   | .newInfo => False
   | _        => True
 
-instance (u : Semantics.Focus.Use) : Decidable (IsFoCus u) := by
+instance (u : Focus.Use) : Decidable (IsFoCus u) := by
   cases u <;> simp [IsFoCus] <;> infer_instance
 
 /-- The fn. 21 reinterpretation of Hausa: ex-situ realisation ↔

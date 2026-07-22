@@ -78,7 +78,7 @@ contradicting the paper's findings.
 - `Features.BinaryGivenness` — discourse-status partition. The paper
   collapses [prince-1981]'s three-way given/inferable/new into
   two categories (inferable → given). Focus marking is on a separate
-  axis (`Features.InformationStructure.Focus`) and not consumed here.
+  axis (`Focus.Mark`) and not consumed here.
 - `Syntax.DependencyGrammar.Formal.DependencyLength` —
   Dependency Locality ([futrell-gibson-2020]) provides the
   *positive* derivation of the heaviness signal: §9 below shows
@@ -540,8 +540,8 @@ the direction `*NEW-FIRST` operationalizes.
 
 Unlike the DLM/heaviness bridge, this is an *implication* rather than a
 biconditional. Focus marking lives on its own axis
-(`Features.InformationStructure.Focus`) and would enter UID via a
-separate Focus-parameterized cost, not by extending this givenness
+(`Focus.Mark`) and would enter UID via a
+separate focus-parameterized cost, not by extending this givenness
 surprisal. Whenever `newDiff p > 0`, UID strictly prefers the same
 ordering as `*NEW-FIRST`. -/
 

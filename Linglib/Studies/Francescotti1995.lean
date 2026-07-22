@@ -30,7 +30,7 @@ only Francescotti's "most" threshold gives the correct predictions for both.
 
 namespace Francescotti1995
 
-open Semantics.Focus.Particles (EvenThreshold evenPresupWith)
+open Focus.Particles (EvenThreshold evenPresupWith)
 
 /-! ### Francescotti's threshold -/
 

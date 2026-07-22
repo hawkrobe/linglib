@@ -58,7 +58,7 @@ situ" — only the categorical no-determination claim is a theorem.
 namespace HartmannZimmermann2007
 
 open Hausa
-open Semantics.Focus Features
+open Focus Features
 
 /-! ## What is focused (§2.2.2) -/
 
@@ -135,7 +135,7 @@ across the four uses: exhaustification consumes the resolved contrast
 set and prejacent, never the strategy — the §3.2.5 point that
 exhaustive readings are available in both positions. -/
 theorem exhAnswer_eq (u : Use) : exhAnswer u = {Alt.ans} := by
-  have key : onlyVia ({{Alt.ans}, {Alt.alt}} : Semantics.Focus.Interpretation.PropFocusValue Alt)
+  have key : onlyVia ({{Alt.ans}, {Alt.alt}} : Focus.Interpretation.PropFocusValue Alt)
       {Alt.ans} = {Alt.ans} := by
     ext w
     constructor
@@ -156,7 +156,7 @@ theorem exhAnswer_eq (u : Use) : exhAnswer u = {Alt.ans} := by
 /-! ## The 8-cell empirical matrix (§3.2)
 
 Each cell's pragmatic type is *computed* from its controlling context:
-the constructors take a `Semantics.Focus.Antecedent`, not a tag. -/
+the constructors take a `Focus.Antecedent`, not a tag. -/
 
 private def mkExSituUtt (pac : PAC) (g : Gender) (sg hasStab : Bool)
     (h : pac.tam.HasRelativeForm → pac.mode = .relative)

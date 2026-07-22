@@ -70,8 +70,8 @@ none yet formalized in linglib):
 **Information-structural conditioning bracketed.** Bantu VS order is
 paradigmatically focus / discourse-newness conditioned (Buell 2005,
 Zerbian 2006). Pietraszko 2026 treats the optionality as syntactic.
-`Linglib/Features/InformationStructure.lean` exists but is not consumed
-by this file.
+Binary focus marking (`Semantics/Focus/Marking.lean`) exists but is not
+consumed by this file.
 
 **Deferrals** (next-session candidates):
 - §4 hyperraising-to-VP (ex 73-76) — multi-clause derivations.

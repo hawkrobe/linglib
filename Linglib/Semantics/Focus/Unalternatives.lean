@@ -37,7 +37,7 @@ the metrical structure derives the focus value that F-marking
 stipulates (`Antecedent.Admits.of_licensed`).
 -/
 
-namespace Semantics.Focus
+namespace Focus
 
 /-! ### Morphosyntactic focal marking -/
 
@@ -124,4 +124,4 @@ theorem Antecedent.Admits.of_licensed {a : Antecedent W}
 
 end Prosodic
 
-end Semantics.Focus
+end Focus

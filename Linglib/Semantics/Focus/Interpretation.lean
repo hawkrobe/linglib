@@ -1,4 +1,3 @@
-import Linglib.Features.InformationStructure
 import Mathlib.Data.Set.Basic
 
 /-!
@@ -14,9 +13,8 @@ question denotations; the anaphoric squiggle machinery lives in
 * [rooth-1992].
 -/
 
-open Features.InformationStructure
 
-namespace Semantics.Focus.Interpretation
+namespace Focus.Interpretation
 
 variable {W : Type*}
 
@@ -38,4 +36,4 @@ focus value. -/
 def qaCongruentWeak (answerFocus question : PropFocusValue W) : Prop :=
   question ⊆ answerFocus
 
-end Semantics.Focus.Interpretation
+end Focus.Interpretation

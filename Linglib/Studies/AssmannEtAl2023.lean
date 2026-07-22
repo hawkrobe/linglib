@@ -38,7 +38,7 @@ fn. 18.
 
 namespace AssmannEtAl2023
 
-open Semantics.Focus (Usable)
+open Focus (Usable)
 
 
 /-! ## The constituent skeleton of the case studies -/

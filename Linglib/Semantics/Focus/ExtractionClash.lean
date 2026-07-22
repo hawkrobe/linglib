@@ -1,5 +1,5 @@
 import Linglib.Features.Givenness
-import Linglib.Features.InformationStructure
+import Linglib.Semantics.Focus.Marking
 
 /-!
 # Information-structural extraction clash
@@ -7,13 +7,12 @@ import Linglib.Features.InformationStructure
 `extractionISClash`: a focused filler extracted from a given/backgrounded
 domain clashes — the filler addresses the QUD while the domain is
 QUD-invisible ([erteschik-shir-1973], [abeille-et-al-2020]). Predicate
-over the `Features/` axes `(FocusMark, BinaryGivenness)`.
+over the marking axes `(Mark, BinaryGivenness)`.
 -/
 
-namespace Semantics.Focus.ExtractionClash
+namespace Focus.ExtractionClash
 
 open Features (BinaryGivenness)
-open Features.InformationStructure (FocusMark)
 
 /-- Two propositions are semantically independent iff neither entails the other.
     [umbach-2004] §2.2: required for alternatives in focus, coordination,
@@ -44,7 +43,7 @@ def wellFormedAlts {W : Type*} (alts : List (Set W)) (integ : Set W) : Prop :=
     discourse status (QUD-invisible).
 
     The two parameters are independent Krifka axes — filler focus
-    marking (`FocusMark`, the binary focus axis) and domain givenness
+    marking (`Mark`, the binary focus axis) and domain givenness
     (`BinaryGivenness`, the Prince hearer-status axis).
 
     Use sites:
@@ -53,11 +52,11 @@ def wellFormedAlts {W : Type*} (alts : List (Set W)) (integ : Set W) : Prop :=
     - Subject islands: `extractionISClash (fillerFocus c) (subjectGivenness c)`
       (filler focus and domain givenness both vary by construction)
     - General FBC: same shape, varying both arguments. -/
-def extractionISClash (filler : FocusMark) (domain : BinaryGivenness) :
+def extractionISClash (filler : Mark) (domain : BinaryGivenness) :
     Prop :=
   filler = .focused ∧ domain = .given
 
-instance (f : FocusMark) (d : BinaryGivenness) :
+instance (f : Mark) (d : BinaryGivenness) :
     Decidable (extractionISClash f d) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
@@ -75,4 +74,4 @@ theorem extractionISClash_focused_new :
 theorem extractionISClash_nonFocused_given :
     ¬ extractionISClash .nonFocused .given := by decide
 
-end Semantics.Focus.ExtractionClash
+end Focus.ExtractionClash
