@@ -17,8 +17,9 @@ categorical view of givenness.
 * `BinaryGivenness` — `given | new`, the GHZ coarsening
   (`GivennessStatus.toBinary`) at the identifiable/indefinite boundary
   ([lambrecht-1994] identifiability). Not [prince-1992]'s hearer-old/new
-  binary (which cross-cuts identifiability), nor [schwarzschild-1999]
-  entailment-givenness (`isGiven` in `Studies/KratzerSelkirk2020.lean`);
+  binary (which cross-cuts identifiability), nor alternatives-based
+  givenness (`Alternatives.AltMeaning.Given`; [schwarzschild-1999]
+  A-givenness = `isAGiven` in `Studies/KratzerSelkirk2020.lean`);
   a consumer meaning another axis (e.g. discourse-status) should say so.
 
 Sibling GHZ-6 coarsenings/scales: Ariel's 18-tier

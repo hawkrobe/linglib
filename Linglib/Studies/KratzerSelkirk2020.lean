@@ -17,8 +17,8 @@ discourse salience), with no separate feature for newness.
 
 * `ISFeature`: `FoC` and `G` constructors.
 * `applyFoC`, `applyG`: feature contributions to an `AltMeaning`.
-* `isGiven`, `isAGiven`: K&S givenness and Schwarzschild A-givenness on
-  alternative sets.
+* `isAGiven`: Schwarzschild A-givenness on alternative sets. K&S
+  givenness (their (46)) is the substrate's `AltMeaning.Given`.
 * `Contrast`, `ContrastOperator`: contrast representation and the K&S
   ~ operator that collapses alternatives.
 * `onlySemantics`: the K&S analysis of *only*.
@@ -102,25 +102,6 @@ particles German "ja", "doch"). It places a condition on the discourse context,
 not on truth conditions.
 -/
 
-/-- An expression α is Given with respect to discourse referent a iff
-    its A-value is {a} (a singleton containing just the referent).
-
-    K&S (46): α is Given w.r.t. a in C iff ⟦α⟧_{A,C} = {a}.
-
-    Intuitively: the alternatives set has collapsed to a single salient entity,
-    meaning there's nothing to contrast — the content is already "in the air". -/
-def isGiven {α : Type*} [DecidableEq α] (aValue : List α) (referent : α) : Prop :=
-  match aValue with
-  | [a] => a = referent
-  | _ => False
-
-instance instDecidableIsGiven {α : Type*} [DecidableEq α] (aValue : List α) (referent : α) :
-    Decidable (isGiven aValue referent) :=
-  match aValue with
-  | [a] => (inferInstance : Decidable (a = referent))
-  | [] => (inferInstance : Decidable False)
-  | _ :: _ :: _ => (inferInstance : Decidable False)
-
 /-- Apply [G] to a meaning: both values unchanged, but adds a definedness
     condition (the expression must be Given w.r.t. some discourse referent).
 
@@ -145,20 +126,18 @@ the A-value conditions:
 No semantic domain is both maximal and a singleton (assuming |D_τ| > 1). -/
 
 /-- [FoC] and [G] are mutually exclusive: no constituent can satisfy both
-    the [FoC] A-value condition (full domain) and the [G] A-value condition
-    (singleton) simultaneously, when the domain has more than one element.
-
-    Stated in K&S §8 prose immediately preceding (58): "It follows that no
-    constituents can be both [G]-marked and [FoC]-marked." Distinct from (58)
-    itself, which states the [G]-can-contain-[FoC]-only-with-consumption
+    the [FoC] A-value condition (the full domain `D_τ`) and the [G] A-value
+    condition (`AltMeaning.Given`, a singleton) when the domain has two
+    distinct elements — "assuming that no semantic domain is a singleton
+    set" (K&S §8 prose immediately preceding (58): "It follows that no
+    constituents can be both [G]-marked and [FoC]-marked"). Distinct from
+    (58) itself, which states the [G]-can-contain-[FoC]-only-with-consumption
     consequence. -/
-theorem foc_g_exclusion {α : Type*} [DecidableEq α] (domain : List α) (referent : α)
-    (h_domain : domain.length > 1) :
-    ¬ isGiven domain referent := by
-  match domain, h_domain with
-  | [], h => simp at h
-  | [_], h => simp at h
-  | _ :: _ :: _, _ => intro h; simp only [isGiven] at h
+theorem foc_g_exclusion {α : Type*} {m : AltMeaning α} {a b : α}
+    (ha : a ∈ m.aSet) (hb : b ∈ m.aSet) (hab : a ≠ b) (referent : α) :
+    ¬ m.Given referent := fun h => by
+  rw [h] at ha hb
+  exact hab (ha.trans hb.symm)
 
 variable {W : Type*} {Entity : Type*}
 
@@ -302,17 +281,9 @@ This explains Second Occurrence Focus: in "the fáculty only quote
 inside a [G]-marked VP. This is possible because *only* + ~ consume
 the alternatives before they reach the VP level. -/
 
-/-- After ~ consumption, the result A-value is a singleton,
-    which is the precondition for [G]-marking. -/
-theorem consumed_alts_enable_g {α : Type*} [DecidableEq α]
-    (op : ContrastOperator α) :
-    isGiven op.result.aValue op.meaning.oValue := by
-  show isGiven [op.meaning.oValue] op.meaning.oValue
-  unfold isGiven
-  rfl
-
-/-- The ~-consumed result is Given with respect to the ordinary value —
-the `AltMeaning.Given` form of `consumed_alts_enable_g` (their (46)). -/
+/-- After ~ consumption the result is Given (their (46)) with respect to
+    the ordinary value: the A-value has collapsed to the singleton
+    {O-value}, which is the precondition for [G]-marking. -/
 theorem consumed_alts_given {α : Type*} (op : ContrastOperator α) :
     op.result.Given op.meaning.oValue := by
   show op.result.aSet = {op.meaning.oValue}
@@ -511,29 +482,21 @@ K&S's condition is STRONGER (singleton vs membership). The old A-Givenness
 condition was too weak — Schwarzschild noted it was trivially satisfiable
 for universal quantifiers (every cat is a complainer → trivially A-Given). -/
 
-/-- Schwarzschild's A-Givenness: some referent is in the alternatives set. -/
-def isAGiven {α : Type*} (aValue : List α) (referent : α) : Prop :=
-  referent ∈ aValue
+/-- Schwarzschild's A-Givenness: the referent is in the alternatives set. -/
+def isAGiven {α : Type*} (m : AltMeaning α) (referent : α) : Prop :=
+  referent ∈ m.aSet
 
-instance instDecidableIsAGiven {α : Type*} [DecidableEq α] (aValue : List α) (referent : α) :
-    Decidable (isAGiven aValue referent) :=
-  inferInstanceAs (Decidable (referent ∈ aValue))
+instance instDecidableIsAGiven {α : Type*} [DecidableEq α] (m : AltMeaning α) (referent : α) :
+    Decidable (isAGiven m referent) :=
+  decidable_of_iff _ AltMeaning.mem_aSet.symm
 
-/-- K&S Givenness entails Schwarzschild A-Givenness.
-    If the alternatives set is a singleton {a}, then certainly a ∈ alternatives. -/
-theorem givenness_entails_aGivenness {α : Type*} [DecidableEq α]
-    (aValue : List α) (referent : α)
-    (h : isGiven aValue referent) :
-    isAGiven aValue referent := by
-  cases aValue with
-  | nil => simp only [isGiven] at h
-  | cons a tl =>
-    cases tl with
-    | nil =>
-      simp only [isGiven] at h
-      simp only [isAGiven, List.mem_cons, List.not_mem_nil, or_false]
-      exact h.symm
-    | cons _ _ => simp only [isGiven] at h
+/-- K&S Givenness entails Schwarzschild A-Givenness ("our Givenness
+    falls out as a special case of A-Givenness", their §3): if the
+    alternatives set is the singleton {a}, then a is a member of it. -/
+theorem givenness_entails_aGivenness {α : Type*} {m : AltMeaning α} {referent : α}
+    (h : m.Given referent) :
+    isAGiven m referent := by
+  rw [isAGiven, h]; rfl
 
 /-- The converse fails: A-Givenness does NOT entail K&S Givenness.
     A non-singleton alternatives set can satisfy A-Givenness but not Givenness.
@@ -541,9 +504,11 @@ theorem givenness_entails_aGivenness {α : Type*} [DecidableEq α]
     This is the Schwarzschild overgeneration problem (K&S fn. 14):
     "Every cat is a complainer" is trivially A-Given because ∃P[every P
     is a complainer] is always true. K&S's singleton condition avoids this. -/
-theorem aGivenness_not_sufficient : ∃ (aValue : List Nat) (referent : Nat),
-    isAGiven aValue referent ∧ ¬ isGiven aValue referent := by
-  exact ⟨[1, 2], 1, by decide, by decide⟩
+theorem aGivenness_not_sufficient : ∃ (m : AltMeaning Nat) (referent : Nat),
+    isAGiven m referent ∧ ¬ m.Given referent := by
+  refine ⟨⟨1, [1, 2]⟩, 1, by decide, fun h => ?_⟩
+  have h2 : (2 : ℕ) ∈ ({1} : Set ℕ) := h ▸ AltMeaning.mem_aSet.mpr (by decide)
+  simp at h2
 
 /-! ## Hausa in situ vs ex situ (their fn. 21)
 
