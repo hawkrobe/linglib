@@ -12,7 +12,10 @@ three causal-model measures rather than a categorical sufficiency or
 necessity condition — SUF, Pearl's probability of sufficiency
 ([pearl-2019], `Causation.SEM.probSufficiency`); INT, the causer's degree
 of intention (after [halpern-kleiman-weiner-2018], normalized to [0,1]);
-and ALT, the number of alternative actions available to the causee.
+and ALT, the number of alternative actions available to the causee. All
+three are computed from an explicit structural causal model, continuing
+the SCM causative-verbs program of
+[cao-geiger-kreiss-icard-gerstenberg-2023].
 
 ## Main results
 
@@ -29,6 +32,9 @@ and ALT, the number of alternative actions available to the causee.
   dispatch (`Causative.toSemantics`) assigns *make* and *force* literally
   identical truth conditions, yet their graded interaction profiles
   differ — the graded data cut where the categorical semantics cannot.
+- `probSufficiency_empty_eq_one_of_make`: the hub denotation for *make*
+  entails maximal SUF at the vacuous context — the categorical semantics
+  is strictly stronger than SUF = 1.
 - `ProbabilisticExample`: a Bernoulli-mechanism SEM witnessing that
   `probSufficiency` requires no determinism.
 
@@ -145,6 +151,24 @@ theorem make_force_same_semantics_different_profiles
     Causative.toSemantics M .make = Causative.toSemantics M .force ∧
     interactionProfile .make ≠ interactionProfile .force :=
   ⟨rfl, by decide⟩
+
+/-- The hub denotation for *make* entails maximal SUF at the vacuous
+    context: whenever `Causative.toSemantics M .make` holds (both clauses
+    of [nadathur-lauer-2020]'s definition (23), over the strict
+    development), Pearl's probability of sufficiency is 1. The converse
+    fails — the eager development fills undetermined exogenous vertices
+    from their mechanisms, so SUF can be 1 without strict entailment: the
+    categorical *make* semantics is strictly stronger than maximal graded
+    SUF. -/
+theorem probSufficiency_empty_eq_one_of_make
+    {V : Type*} [Fintype V] [DecidableEq V]
+    (M : BoolSEM V) [CausalGraph.IsDAG M.graph] [Causation.SEM.IsDeterministic M]
+    (c e : V)
+    (h : Causative.toSemantics M .make Valuation.empty c true e true) :
+    probSufficiency M Valuation.empty c true e true = 1 := by
+  rw [probSufficiency_empty_eq_deterministicSuf]
+  unfold deterministicSuf
+  exact if_pos (Causation.SEM.causallySufficient_of_causallyEntails h.2)
 
 /-! ### Probabilistic example: genuinely fractional SUF
 
