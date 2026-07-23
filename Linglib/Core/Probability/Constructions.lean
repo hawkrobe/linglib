@@ -125,17 +125,6 @@ noncomputable def mix (r : ℝ≥0) (hr : r ≤ 1) (p q : PMF α) : PMF α :=
   ext a
   simp
 
-/-- The Bernoulli distribution on `Bool` as a mixture of point masses —
-the PMF-side replacement for mathlib's deprecated `PMF.bernoulli` (whose
-`Measure` successor `ProbabilityTheory.bernoulliMeasure` has the same
-point-mass-mixture shape). -/
-noncomputable def bernoulliMix (r : ℝ≥0) (hr : r ≤ 1) : PMF Bool :=
-  mix r hr (pure false) (pure true)
-
-@[simp] theorem bernoulliMix_apply (r : ℝ≥0) (hr : r ≤ 1) (b : Bool) :
-    bernoulliMix r hr b = if b then (r : ℝ≥0∞) else 1 - r := by
-  cases b <;> simp [bernoulliMix]
-
 /-- The mixture in ℝ: `(1 − r)·p + r·q` pointwise. -/
 theorem toRealFn_mix (r : ℝ≥0) (hr : r ≤ 1) (p q : PMF α) (a : α) :
     (mix r hr p q).toRealFn a = (1 - r) * p.toRealFn a + r * q.toRealFn a := by

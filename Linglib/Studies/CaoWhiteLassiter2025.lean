@@ -253,7 +253,7 @@ theorem make_force_same_semantics_different_judgments
 
 /-! ### A probabilistic example
 
-A 2-vertex SEM whose `effect` mechanism is `PMF.bernoulliMix p` —
+A 2-vertex SEM whose `effect` mechanism is a `p`-weighted coin —
 genuinely probabilistic, not Dirac. Demonstrates that `probSufficiency`
 accepts non-deterministic SEMs (no `IsDeterministic` constraint). -/
 
@@ -268,10 +268,11 @@ inductive V | cause | effect
 def graph : CausalGraph V := ⟨fun | .cause => ∅ | .effect => {.cause}⟩
 
 /-- The probabilistic mechanism for `effect`, ignoring its parent and
-    returning `PMF.bernoulliMix p` — genuinely non-Dirac when `p ∉ {0, 1}`. -/
+    returning `true` with probability `p` — genuinely non-Dirac when
+    `p ∉ {0, 1}`. -/
 noncomputable def effectMech (p : ℝ≥0) (h : p ≤ 1) :
     Mechanism graph (fun _ => Bool) .effect :=
-  ⟨fun _ => PMF.bernoulliMix p h⟩
+  ⟨fun _ => PMF.mix p h (PMF.pure false) (PMF.pure true)⟩
 
 /-- A genuinely probabilistic SEM (not `IsDeterministic` for `p ∉ {0,1}`). -/
 noncomputable def model (p : ℝ≥0) (h : p ≤ 1) : BoolSEM V :=

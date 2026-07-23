@@ -384,22 +384,20 @@ inductive Reaction where
 /-- The paper's layered mixture: clarify with probability `q`, otherwise
 act according to the behavioral policy. -/
 noncomputable def layered (q : ℝ≥0) (hq : q ≤ 1) (pol : PMF Response) : PMF Reaction :=
-  (PMF.bernoulliMix q hq).bind fun ask => if ask then PMF.pure .cq else pol.map .act
+  PMF.mix q hq (pol.map .act) (PMF.pure .cq)
 
 theorem layered_apply_cq (q : ℝ≥0) (hq : q ≤ 1) (pol : PMF Response) :
     layered q hq pol .cq = q := by
-  rw [layered, PMF.bind_apply, tsum_bool]
-  simp [PMF.bernoulliMix_apply, PMF.map_apply,
+  simp [layered, PMF.map_apply,
     show ∀ r : Response, Reaction.cq ≠ .act r from fun r => by simp]
 
 theorem layered_apply_act (q : ℝ≥0) (hq : q ≤ 1) (pol : PMF Response) (r : Response) :
     layered q hq pol (.act r) = (1 - (q : ℝ≥0∞)) * pol r := by
-  rw [layered, PMF.bind_apply, tsum_bool]
   have hmap : pol.map Reaction.act (.act r) = pol r := by
     rw [PMF.map_apply]
     simp only [Reaction.act.injEq]
     exact (tsum_eq_single r fun r' hne => if_neg fun h => hne h.symm).trans (if_pos rfl)
-  simp [PMF.bernoulliMix_apply, hmap]
+  simp [layered, hmap]
 
 /-- The full reaction policy at condition `(ε, δ)`: gate by the logistic of
 the expected regret, then act by the softmax policy. -/
