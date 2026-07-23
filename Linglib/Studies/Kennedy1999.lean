@@ -24,9 +24,6 @@ the measure-phrase restriction of §3.1.8–§3.1.9. Kennedy's account defines
 comparison exactly when the compared extents are of the same sort on a shared
 scale; `comparison_defined_iff` and `measurePhrase_positive_iff` check the
 predicted judgment patterns row by row.
-
-Pending relocation to their own study files: subcomparative typology
-([bhatt-pancheva-2004]) and equative data ([kennedy-2007], [rett-2020]).
 -/
 
 namespace Kennedy1999
@@ -109,82 +106,6 @@ def exampleDegPs : List HistoricalDegP :=
   , { head := .superlative, adjective := "tall" }    -- "tallest"
   , { head := .excessive, adjective := "expensive" } -- "too expensive"
   , { head := .sufficiency, adjective := "old" }     -- "old enough"
-  ]
-
-/-! ### Subcomparative typology (pending relocation, [bhatt-pancheva-2004]) -/
-
-/-- Cross-linguistic availability of clausal subcomparatives. -/
-structure SubcomparativeTypologyDatum where
-  language : String
-  available : Bool
-  note : String := ""
-  deriving Repr
-
-def subcomparativeTypology : List SubcomparativeTypologyDatum :=
-  [ { language := "English", available := true }
-  , { language := "German", available := true }
-  , { language := "French", available := true }
-  , { language := "Japanese", available := false
-    , note := "No clausal comparatives of this type" }
-  , { language := "Mandarin", available := false
-    , note := "Exceed-type comparatives don't support subcomparatives" }
-  ]
-
-/-! ### Equative construction data (pending relocation, [kennedy-2007], [rett-2020]) -/
-
-/-- An equative judgment with its available readings ("at_least",
-"exactly", "strict_less"). -/
-structure EquativeJudgment where
-  sentence : String
-  judgment : Features.Judgment
-  availableReadings : List String
-  note : String := ""
-  deriving Repr
-
-def equativeExamples : List EquativeJudgment :=
-  [ { sentence := "Kim is as tall as Lee"
-    , judgment := .acceptable
-    , availableReadings := ["at_least", "exactly"] }
-  , { sentence := "Kim is as tall as Lee, if not taller"
-    , judgment := .acceptable
-    , availableReadings := ["at_least"]
-    , note := "'if not taller' cancels the exactly implicature" }
-  , { sentence := "Kim is not as tall as Lee"
-    , judgment := .acceptable
-    , availableReadings := ["strict_less"]
-    , note := "negated equative = strict inequality" }
-  , { sentence := "Kim ran as fast as Lee"
-    , judgment := .acceptable
-    , availableReadings := ["at_least", "exactly"]
-    , note := "adverbial equative" }
-  ]
-
-/-- Equative encoding strategy ([rett-2020]). -/
-inductive EquativeStrategy where
-  | parameterMarker
-  | reach
-  | similative
-  | exceed
-  deriving DecidableEq, Repr
-
-/-- A language's equative strategy with an example form. -/
-structure EquativeTypologyDatum where
-  language : String
-  strategy : EquativeStrategy
-  exampleForm : String
-  deriving Repr
-
-def equativeTypology : List EquativeTypologyDatum :=
-  [ { language := "English", strategy := .parameterMarker
-    , exampleForm := "as tall as" }
-  , { language := "German", strategy := .parameterMarker
-    , exampleForm := "so groß wie" }
-  , { language := "French", strategy := .similative
-    , exampleForm := "aussi grand que" }
-  , { language := "Mandarin", strategy := .exceed
-    , exampleForm := "跟...一样高 (gēn...yíyàng gāo)" }
-  , { language := "Japanese", strategy := .exceed
-    , exampleForm := "...と同じぐらい高い (...to onaji gurai takai)" }
   ]
 
 end Kennedy1999

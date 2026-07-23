@@ -183,7 +183,7 @@ theorem not_crossExtentInclusion (μ : Entity → D) (a b : Entity) :
 end Extent
 
 /-! ### Strengthened, negated, and extent-theoretic equatives
-[kennedy-2007] [rett-2020] [schwarzschild-2008] [thomas-deo-2020]
+[kennedy-2007] [rett-2020-equatives] [schwarzschild-2008] [thomas-deo-2020]
 
 The literal equative is "at least as" (`equativeSem .positive`); the "exactly
 as" reading is derived by scalar implicature (choosing *as tall as* over the

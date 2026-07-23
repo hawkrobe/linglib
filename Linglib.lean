@@ -1958,6 +1958,7 @@ import Linglib.Studies.BeaversKoontzGarboden2020
 import Linglib.Studies.BeaversUdayana2022
 import Linglib.Studies.BeaversZubair2013
 import Linglib.Studies.Beck2001
+import Linglib.Studies.BeckOdaSugisaki2004
 import Linglib.Studies.BeckerEtAl2025
 import Linglib.Studies.BeckmanPierrehumbert1986
 import Linglib.Studies.BejarRezac2003
@@ -2563,6 +2564,7 @@ import Linglib.Studies.ReesReksnesRohde2026
 import Linglib.Studies.Reinhart1976
 import Linglib.Studies.Rett2015
 import Linglib.Studies.Rett2020
+import Linglib.Studies.Rett2020Equatives
 import Linglib.Studies.Rett2026
 import Linglib.Studies.RitchieSchiller2024
 import Linglib.Studies.Roberts2012
@@ -2927,3 +2929,4 @@ import Linglib.Syntax.WordGrammar.Inheritance.Order
 import Linglib.Syntax.WordGrammar.LexicalRules
 import Linglib.Syntax.WordGrammar.Network
 import Linglib.Data.Examples.Kennedy1999
+import Linglib.Data.Examples.BeckOdaSugisaki2004
