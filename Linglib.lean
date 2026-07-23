@@ -2930,3 +2930,4 @@ import Linglib.Syntax.WordGrammar.Network
 import Linglib.Data.Examples.Kennedy1999
 import Linglib.Data.Examples.BeckOdaSugisaki2004
 import Linglib.Data.Examples.Lassiter2025
+import Linglib.Data.Examples.CaoWhiteLassiter2025
