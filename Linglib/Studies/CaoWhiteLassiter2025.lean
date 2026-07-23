@@ -43,7 +43,8 @@ open scoped ENNReal NNReal
 The paper's mechanism for agent moves (§2.1.1): the highest-utility
 move — minimax over the game tree, with terminal utility
 `Winner × (EmptySpace + 1)` — is taken with probability `ρ + (1−ρ)/n`,
-every other available move with `(1−ρ)/n` (`softOptimalPolicy_apply`).
+every other available move with `(1−ρ)/n` (`softOptimalPolicy_apply_best`,
+`softOptimalPolicy_apply_of_ne`).
 The skill parameter `ρ` interpolates between a uniformly random player
 ("assume that the players are infants", `softOptimalPolicy_zero`) — the
 limiting case under which the paper's worked SUF contrast between
@@ -58,12 +59,14 @@ variable {A : Type*} [Fintype A] [Nonempty A]
 noncomputable def softOptimalPolicy (best : A) (ρ : ℝ≥0) (hρ : ρ ≤ 1) : PMF A :=
   PMF.mix ρ hρ (PMF.uniformOfFintype A) (PMF.pure best)
 
-@[simp] theorem softOptimalPolicy_apply [DecidableEq A] (best : A) (ρ : ℝ≥0) (hρ : ρ ≤ 1)
-    (a : A) :
-    softOptimalPolicy best ρ hρ a =
-      (if a = best then (ρ : ℝ≥0∞) else 0) + (1 - ρ : ℝ≥0) / Fintype.card A := by
-  simp [softOptimalPolicy, PMF.pure_apply, PMF.uniformOfFintype_apply, mul_ite, mul_one,
-    mul_zero, div_eq_mul_inv, add_comm]
+@[simp] theorem softOptimalPolicy_apply_best (best : A) (ρ : ℝ≥0) (hρ : ρ ≤ 1) :
+    softOptimalPolicy best ρ hρ best = ρ + (1 - ρ : ℝ≥0) / Fintype.card A := by
+  simp [softOptimalPolicy, div_eq_mul_inv, add_comm]
+
+@[simp] theorem softOptimalPolicy_apply_of_ne (best : A) (ρ : ℝ≥0) (hρ : ρ ≤ 1) {a : A}
+    (h : a ≠ best) :
+    softOptimalPolicy best ρ hρ a = (1 - ρ : ℝ≥0) / Fintype.card A := by
+  simp [softOptimalPolicy, PMF.pure_apply_of_ne _ _ h, div_eq_mul_inv]
 
 theorem softOptimalPolicy_zero (best : A) :
     softOptimalPolicy best 0 zero_le_one = PMF.uniformOfFintype A :=
