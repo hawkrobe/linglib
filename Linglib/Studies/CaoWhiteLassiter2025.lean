@@ -47,18 +47,19 @@ and every other available move with `(1−ρ)/n`. The skill parameter ρ
 interpolates between a random player (`ρ = 0`, "a less skilled player")
 and a professional (`ρ = 1`). -/
 
+section
+variable {A : Type*} [Fintype A] [Nonempty A]
+
 /-- The soft-optimality policy of a player of skill `ρ` mixes optimal
     play with uniform noise: the highest-utility move `best` with
     probability `ρ`, otherwise a uniform random move (§2.1.1 of
     [cao-white-lassiter-2025]). -/
-noncomputable def softOptimalPolicy {A : Type*} [Fintype A] [Nonempty A]
-    (best : A) (ρ : ℝ≥0) (hρ : ρ ≤ 1) : PMF A :=
+noncomputable def softOptimalPolicy (best : A) (ρ : ℝ≥0) (hρ : ρ ≤ 1) : PMF A :=
   PMF.mix ρ hρ (PMF.uniformOfFintype A) (PMF.pure best)
 
 /-- The paper's arithmetic form of the policy: the best move carries
     `ρ + (1 − ρ)/n`, every other available move `(1 − ρ)/n`. -/
-theorem softOptimalPolicy_apply {A : Type*} [Fintype A] [DecidableEq A] [Nonempty A]
-    (best : A) (ρ : ℝ≥0) (hρ : ρ ≤ 1) (a : A) :
+theorem softOptimalPolicy_apply [DecidableEq A] (best : A) (ρ : ℝ≥0) (hρ : ρ ≤ 1) (a : A) :
     softOptimalPolicy best ρ hρ a =
       (if a = best then (ρ : ℝ≥0∞) else 0) + (1 - ρ : ℝ≥0) / Fintype.card A := by
   simp [softOptimalPolicy, PMF.pure_apply, PMF.uniformOfFintype_apply, mul_ite, mul_one,
@@ -67,30 +68,35 @@ theorem softOptimalPolicy_apply {A : Type*} [Fintype A] [DecidableEq A] [Nonempt
 /-- At `ρ = 0` the soft-optimality policy is the uniform random player —
     the paper's limiting case ("assume that the players are infants"),
     under which its worked SUF contrast between contexts collapses. -/
-theorem softOptimalPolicy_zero {A : Type*} [Fintype A] [Nonempty A] (best : A) :
+theorem softOptimalPolicy_zero (best : A) :
     softOptimalPolicy best 0 zero_le_one = PMF.uniformOfFintype A :=
   PMF.mix_zero _ _
 
 /-- At `ρ = 1` the soft-optimality policy is the deterministic
     professional — a Dirac on the highest-utility move. -/
-theorem softOptimalPolicy_one {A : Type*} [Fintype A] [Nonempty A] (best : A) :
+theorem softOptimalPolicy_one (best : A) :
     softOptimalPolicy best 1 le_rfl = PMF.pure best :=
   PMF.mix_one _ _
 
+end
+
 /-! ### The ALT measure -/
+
+section
+variable {A : Type*} [Fintype A]
 
 /-- `altCount p taken` is the number of alternative actions available to
     the causee — the support of the action distribution `p`, excluding
     the action actually taken. This is the ALT measure of
     [cao-white-lassiter-2025] (§2.2; `ALT(Y₁) = 5` at its fig. 2a board
     state). -/
-noncomputable def altCount {A : Type*} (p : PMF A) (taken : A) : ℕ :=
+noncomputable def altCount (p : PMF A) (taken : A) : ℕ :=
   (p.support \ {taken}).ncard
 
 /-- `ALT = 0` says exactly that the causee could not have done
     otherwise — every action other than the one taken has probability
     zero. -/
-theorem altCount_eq_zero_iff {A : Type*} [Fintype A] (p : PMF A) (taken : A) :
+theorem altCount_eq_zero_iff (p : PMF A) (taken : A) :
     altCount p taken = 0 ↔ ∀ a ≠ taken, p a = 0 := by
   rw [altCount, Set.ncard_eq_zero (Set.toFinite _), Set.sdiff_eq_empty]
   constructor
@@ -120,13 +126,11 @@ any `w : A → ℝ≥0`; the paper's instantiation is `w = e^u`. -/
     [cao-white-lassiter-2025] (§2.3). Here `pr a′` is the model
     probability that the agent takes `a′` and the goal results, and `w`
     is the action weight (exponentiated utility, in the paper). -/
-noncomputable def intentionDegree {A : Type*} [Fintype A]
-    (pr : A → ℝ≥0∞) (w : A → ℝ≥0) (a : A) : ℝ≥0∞ :=
+noncomputable def intentionDegree (pr : A → ℝ≥0∞) (w : A → ℝ≥0) (a : A) : ℝ≥0∞ :=
   (pr a * w a) / ∑ a', pr a' * w a'
 
 /-- INT never exceeds 1. -/
-theorem intentionDegree_le_one {A : Type*} [Fintype A]
-    (pr : A → ℝ≥0∞) (w : A → ℝ≥0) (a : A) :
+theorem intentionDegree_le_one (pr : A → ℝ≥0∞) (w : A → ℝ≥0) (a : A) :
     intentionDegree pr w a ≤ 1 :=
   ENNReal.div_le_of_le_mul <| by
     rw [one_mul]
@@ -147,7 +151,7 @@ noncomputable def modelIntention {V : Type*} {α : V → Type*}
 
 /-- If every non-taken action has zero probability and the taken
     action's goal-weighted mass is nonzero and finite, its INT is 1. -/
-theorem intentionDegree_eq_one_of_no_alternatives {A : Type*} [Fintype A]
+theorem intentionDegree_eq_one_of_no_alternatives
     (pr : A → ℝ≥0∞) (w : A → ℝ≥0) (taken : A)
     (halt : ∀ a ≠ taken, pr a = 0)
     (h0 : pr taken * w taken ≠ 0) (hfin : pr taken ≠ ⊤) :
@@ -164,7 +168,7 @@ theorem intentionDegree_eq_one_of_no_alternatives {A : Type*} [Fintype A]
     alternative-possibilities principle ([frankfurt-1969], via
     [halpern-kleiman-weiner-2018]) behind the paper's *made*/*forced*
     contrast in its example (8). -/
-theorem intentionDegree_eq_one_of_altCount_eq_zero {A : Type*} [Fintype A]
+theorem intentionDegree_eq_one_of_altCount_eq_zero
     (p : PMF A) (pr : A → ℝ≥0∞) (w : A → ℝ≥0) (taken : A)
     (hle : ∀ a, pr a ≤ p a) (halt : altCount p taken = 0)
     (h0 : pr taken * w taken ≠ 0) :
@@ -173,6 +177,8 @@ theorem intentionDegree_eq_one_of_altCount_eq_zero {A : Type*} [Fintype A]
     (fun a ha => le_antisymm ((altCount_eq_zero_iff p taken).mp halt a ha ▸ hle a) zero_le)
     h0
     (((hle taken).trans (p.coe_le_one taken)).trans_lt ENNReal.one_lt_top).ne
+
+end
 
 /-! ### Deterministic limit
 
@@ -183,13 +189,14 @@ sufficiency (their definition (23)): with nothing observed, Pearl's
 counterfactual degenerates to the bare interventional development of
 `cause := true`. -/
 
+section
+variable {V : Type*} [Fintype V] [DecidableEq V] (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
+  [IsDeterministic M]
+
 /-- SUF in the deterministic limit — the {0,1} indicator, over a
     `BoolSEM`, of [nadathur-lauer-2020]'s causal sufficiency (their
     definition (23), `causallySufficient`). -/
-noncomputable def deterministicSuf {V : Type*} [Fintype V] [DecidableEq V]
-    (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
-    [IsDeterministic M]
-    (background : Valuation (fun _ : V => Bool))
+noncomputable def deterministicSuf (background : Valuation (fun _ : V => Bool))
     (cause effect : V) : ENNReal :=
   if BoolSEM.causallySufficient M background cause effect then 1 else 0
 
@@ -198,9 +205,7 @@ noncomputable def deterministicSuf {V : Type*} [Fintype V] [DecidableEq V]
     `deterministicSuf` — i.e. to [nadathur-lauer-2020]'s causal
     sufficiency. This makes "interventional = counterfactual at a
     vacuous context" a theorem rather than a conflation. -/
-theorem probSufficiency_empty_eq_deterministicSuf {V : Type*} [Fintype V] [DecidableEq V]
-    (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
-    [IsDeterministic M] (c e : V) :
+theorem probSufficiency_empty_eq_deterministicSuf (c e : V) :
     probSufficiency M Valuation.empty c true e true
       = deterministicSuf M Valuation.empty c e := by
   rw [probSufficiency_eq_indicator_of_deterministic, cfSeed_empty]
@@ -217,15 +222,14 @@ theorem probSufficiency_empty_eq_deterministicSuf {V : Type*} [Fintype V] [Decid
     fails, since the eager development fills undetermined exogenous
     vertices from their mechanisms; the categorical *make* semantics is
     strictly stronger than maximal graded SUF. -/
-theorem probSufficiency_empty_eq_one_of_make
-    {V : Type*} [Fintype V] [DecidableEq V]
-    (M : BoolSEM V) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
-    (c e : V)
+theorem probSufficiency_empty_eq_one_of_make (c e : V)
     (h : Causative.toSemantics M .make Valuation.empty c true e true) :
     probSufficiency M Valuation.empty c true e true = 1 := by
   rw [probSufficiency_empty_eq_deterministicSuf]
   unfold deterministicSuf
   exact if_pos (causallySufficient_of_causallyEntails h.2)
+
+end
 
 /-! ### The paper's judgment data
 
@@ -267,15 +271,17 @@ inductive V | cause | effect
 
 def graph : CausalGraph V := ⟨fun | .cause => ∅ | .effect => {.cause}⟩
 
+variable (p : ℝ≥0) (h : p ≤ 1)
+
 /-- The probabilistic mechanism for `effect`, ignoring its parent and
     returning `true` with probability `p` — genuinely non-Dirac when
     `p ∉ {0, 1}`. -/
-noncomputable def effectMech (p : ℝ≥0) (h : p ≤ 1) :
+noncomputable def effectMech :
     Mechanism graph (fun _ => Bool) .effect :=
   ⟨fun _ => PMF.mix p h (PMF.pure false) (PMF.pure true)⟩
 
 /-- A genuinely probabilistic SEM (not `IsDeterministic` for `p ∉ {0,1}`). -/
-noncomputable def model (p : ℝ≥0) (h : p ≤ 1) : BoolSEM V :=
+noncomputable def model : BoolSEM V :=
   { graph := graph
     mech := fun
       | .cause => const (G := graph) false
@@ -293,13 +299,13 @@ def timeIndex : CausalGraph.TimeIndex graph where
 
 instance : CausalGraph.IsDAG graph := timeIndex.isDAG
 
-instance (p : ℝ≥0) (h : p ≤ 1) : CausalGraph.IsDAG (model p h).graph :=
+instance : CausalGraph.IsDAG (model p h).graph :=
   inferInstanceAs (CausalGraph.IsDAG graph)
 
 /-- `probSufficiency` accepts this SEM despite it NOT being
     `IsDeterministic` — exactly the [cao-white-lassiter-2025]
     requirement that SUF be a real probability. -/
-noncomputable example (p : ℝ≥0) (h : p ≤ 1) : ENNReal :=
+noncomputable example : ENNReal :=
   probSufficiency (model p h) Valuation.empty .cause true .effect true
 
 end ProbabilisticExample
