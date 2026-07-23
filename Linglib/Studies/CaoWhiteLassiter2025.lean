@@ -110,7 +110,14 @@ weighted by exponentiated utility `u′ = e^u` — the exponential serving
 only to make the weights strictly positive. Here `pr a′` is the joint
 probability that the agent takes `a′` and the goal results, and the
 weight is abstracted to any `w : A → ℝ≥0` (the paper's instantiation is
-`w = e^u`); `modelIntention` below instantiates `pr` over a `SEM`. -/
+`w = e^u`); `modelIntention` below instantiates `pr` over a `SEM`. INT
+is the normalized goal-weighted action distribution evaluated at the
+taken action (`intentionDegree_eq_normalize`), and an action without
+alternatives is trivially intentional
+(`intentionDegree_eq_one_of_altCount_eq_zero`) — the
+alternative-possibilities principle of [frankfurt-1969], via
+[halpern-kleiman-weiner-2018], behind the paper's *made*/*forced*
+contrast in its example (8). -/
 
 variable (pr : A → ℝ≥0∞) (w : A → ℝ≥0) (a : A)
 
@@ -124,6 +131,14 @@ theorem intentionDegree_le_one : intentionDegree pr w a ≤ 1 :=
     simpa using Finset.single_le_sum (f := fun a' => pr a' * w a') (fun _ _ => zero_le)
       (Finset.mem_univ a)
 
+/-- With nonzero finite total mass, INT is mathlib's `PMF.normalize` of
+    the goal-weighted masses, evaluated at the taken action — the
+    `PMF.reweight`/`PMF.posterior` family of `Core/Probability/Posterior`. -/
+theorem intentionDegree_eq_normalize (h0 : (∑' a', pr a' * w a') ≠ 0)
+    (htop : (∑' a', pr a' * w a') ≠ ∞) :
+    intentionDegree pr w a = PMF.normalize (fun a' => pr a' * w a') h0 htop a := by
+  rw [intentionDegree, PMF.normalize_apply, div_eq_mul_inv, tsum_fintype]
+
 theorem intentionDegree_eq_one_of_no_alternatives
     (h : ∀ a ≠ taken, pr a = 0) (h0 : pr taken ≠ 0) (hw : w taken ≠ 0)
     (htop : pr taken ≠ ∞) :
@@ -133,10 +148,6 @@ theorem intentionDegree_eq_one_of_no_alternatives
   exact ENNReal.div_self (mul_ne_zero h0 (ENNReal.coe_ne_zero.mpr hw))
     (ENNReal.mul_ne_top htop ENNReal.coe_ne_top)
 
-/-- An action without alternatives is trivially intentional — the
-    alternative-possibilities principle ([frankfurt-1969], via
-    [halpern-kleiman-weiner-2018]) behind the paper's *made*/*forced*
-    contrast in its example (8). -/
 theorem intentionDegree_eq_one_of_altCount_eq_zero
     (hle : pr ≤ ⇑p) (h : altCount p taken = 0) (h0 : pr taken ≠ 0) (hw : w taken ≠ 0) :
     intentionDegree pr w taken = 1 :=
