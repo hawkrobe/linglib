@@ -3,7 +3,7 @@ import Mathlib.Data.Finset.Card
 import Mathlib.Data.Fintype.Basic
 
 /-!
-# CausalGraph: Bare Directed Graph over a Vertex Type (V2)
+# CausalGraph: Bare Directed Graph over a Vertex Type
 
 A `CausalGraph V` is the underlying DAG topology of a structural causal
 model: just `parents : V → Finset V`. No mechanisms, no value types, no

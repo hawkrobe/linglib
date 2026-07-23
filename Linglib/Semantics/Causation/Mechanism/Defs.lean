@@ -3,7 +3,7 @@ import Linglib.Semantics.Causation.Valuation
 import Mathlib.Probability.ProbabilityMassFunction.Monad
 
 /-!
-# Mechanism: PMF-Valued Structural Equation per Vertex (V2)
+# Mechanism: PMF-Valued Structural Equation per Vertex
 
 A `Mechanism G α v` is the structural equation at vertex `v`: it takes
 a value assignment to `v`'s parents and returns a `PMF (α v)` — a

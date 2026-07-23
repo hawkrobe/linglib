@@ -40,9 +40,7 @@ open Causation.Psych (CausalSource)
 open Core.Order (SimilarityOrdering)
 open Semantics.Conditionals.Counterfactual (universalCounterfactual)
 
--- ════════════════════════════════════════════════════
--- § 1. PsychCausalLink
--- ════════════════════════════════════════════════════
+/-! ### PsychCausalLink -/
 
 /-- A causal link between two eventualities in psych verb semantics.
 
@@ -61,9 +59,7 @@ structure PsychCausalLink (Time : Type*) [LinearOrder Time] where
   /-- Temporal constraint on the runtimes of cause and effect -/
   temporalConstraint : NonemptyInterval Time → NonemptyInterval Time → Prop
 
--- ════════════════════════════════════════════════════
--- § 2. Eventive and Maintenance Links
--- ════════════════════════════════════════════════════
+/-! ### Eventive and Maintenance Links -/
 
 /-- Eventive causation: an external percept/event CAUSES a change of
     mental state. The cause temporally precedes the effect.
@@ -95,9 +91,7 @@ def maintenanceLink (Time : Type*) [LinearOrder Time] : PsychCausalLink Time :=
     involvesTransition := false
     temporalConstraint := NonemptyInterval.overlaps }
 
--- ════════════════════════════════════════════════════
--- § 3. CausalSource → PsychCausalLink
--- ════════════════════════════════════════════════════
+/-! ### CausalSource → PsychCausalLink -/
 
 /-- Ground `CausalSource` (a two-constructor enum) in the richer
     `PsychCausalLink` structure. External source = eventive causation;
@@ -107,9 +101,7 @@ def CausalSource.toLink (Time : Type*) [LinearOrder Time] :
   | .external => eventiveLink Time
   | .internal => maintenanceLink Time
 
--- ════════════════════════════════════════════════════
--- § 4. Temporal Theorems
--- ════════════════════════════════════════════════════
+/-! ### Temporal Theorems -/
 
 /-- Maintenance is temporally symmetric: if cause overlaps effect,
     effect overlaps cause. Delegates to `NonemptyInterval.overlaps_symm`. -/
@@ -137,9 +129,7 @@ theorem precedes_excludes_overlap {Time : Type*} [LinearOrder Time]
     ¬ (maintenanceLink Time).temporalConstraint i₁ i₂ :=
   NonemptyInterval.precedes_not_overlaps h
 
--- ════════════════════════════════════════════════════
--- § 5. Event Sort Properties
--- ════════════════════════════════════════════════════
+/-! ### Event Sort Properties -/
 
 /-- Maintenance relates two states ([kim-2024] property (a)). -/
 theorem maintenance_both_states {Time : Type*} [LinearOrder Time] :
@@ -167,9 +157,7 @@ theorem flavors_differ_on_all_dimensions {Time : Type*} [LinearOrder Time] :
     (maintenanceLink Time).involvesTransition = false :=
   ⟨rfl, rfl, rfl, rfl⟩
 
--- ════════════════════════════════════════════════════
--- § 6. Counterfactual Predicates
--- ════════════════════════════════════════════════════
+/-! ### Counterfactual Predicates -/
 
 /-- Counterfactual dependence: in the closest worlds where the cause
     doesn't hold, the effect doesn't hold either.
@@ -238,9 +226,7 @@ theorem dependent_excludes_persistent {W : Type*} [DecidableEq W] [Fintype W]
   obtain ⟨x, hx⟩ := hNonempty
   exact (hDep x hx) (hall x hx)
 
--- ════════════════════════════════════════════════════
--- § 7. [kim-2024]: Three Properties of Maintenance
--- ════════════════════════════════════════════════════
+/-! ### [kim-2024]: Three Properties of Maintenance -/
 
 /-- The three defining properties of maintenance causation from
     [kim-2024], formalized using existing infrastructure:

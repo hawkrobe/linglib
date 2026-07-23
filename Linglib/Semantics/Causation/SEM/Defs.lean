@@ -3,7 +3,7 @@ import Linglib.Semantics.Causation.Mechanism.Defs
 import Linglib.Semantics.Causation.Valuation
 
 /-!
-# SEM: Bundled Structural Equation Model (V2)
+# SEM: Bundled Structural Equation Model
 
 A `SEM V α` is a `CausalGraph V` together with a `Mechanism` for every
 vertex. Replaces the old `CausalDynamics` (which conflated the implicit

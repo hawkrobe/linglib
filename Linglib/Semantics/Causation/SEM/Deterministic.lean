@@ -98,9 +98,7 @@ noncomputable def developDet (M : SEM V α) [CausalGraph.IsDAG M.graph]
     [SEM.IsDeterministic M] (s : Valuation α) : Valuation α :=
   fun v => some (developDetVtx M s v)
 
--- ════════════════════════════════════════════════════
--- § Structural unfolding lemmas
--- ════════════════════════════════════════════════════
+/-! ### Structural unfolding lemmas -/
 
 /-- Step lemma: one layer of `WellFounded.fix_eq` unfolding. Use with
     `rw` to open `developDetVtx M s v` in proofs. -/
@@ -146,9 +144,7 @@ theorem developDet_hasValue_iff (M : SEM V α) [CausalGraph.IsDAG M.graph]
     (M.developDet s).hasValue v x ↔ developDetVtx M s v = x :=
   Option.some_inj
 
--- ════════════════════════════════════════════════════
--- § Partial development (strict T_D dynamics)
--- ════════════════════════════════════════════════════
+/-! ### Partial development (strict T_D dynamics) -/
 
 /-! The strict Schulz/Nadathur development relation T_D ([schulz-2011];
     [nadathur-2023-implicatives] Defs 4–5) never assigns values to
@@ -268,9 +264,7 @@ theorem developDetVtx_eq_of_developDetVtx?_eq_some
 
 end PartialDevelopment
 
--- ════════════════════════════════════════════════════
--- § Fuel mirror (computable, kernel-reducible)
--- ════════════════════════════════════════════════════
+/-! ### Fuel mirror (computable, kernel-reducible) -/
 
 /-- Fuel-indexed computable mirror of `developDetVtx?`. Structural
     recursion on fuel, so concrete claims reduce in the kernel and

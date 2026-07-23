@@ -80,9 +80,7 @@ def CausalSource.isEventive : CausalSource → Bool
   | .external => true
   | .internal => false
 
--- ════════════════════════════════════════════════════
--- § Stimulus Subtype ([pesetsky-1995])
--- ════════════════════════════════════════════════════
+/-! ### Stimulus Subtype ([pesetsky-1995]) -/
 
 /-- [pesetsky-1995]'s subdivision of the stimulus role.
 
@@ -121,9 +119,7 @@ def StimulusType.conflictsWithCause : StimulusType → Bool
   | .target        => false
   | .subjectMatter => true
 
--- ════════════════════════════════════════════════════
--- § CausalSource → StimulusType Derivation
--- ════════════════════════════════════════════════════
+/-! ### CausalSource → StimulusType Derivation -/
 
 /-- Derive stimulus subtype from causal source.
 

@@ -4,7 +4,7 @@ import Linglib.Semantics.Causation.SEM.Bool
 import Linglib.Semantics.Causation.SEM.Deterministic
 
 /-!
-# SEM: Causal Counterfactual Predicates (V2)
+# SEM: Causal Counterfactual Predicates
 
 Polymorphic counterfactual predicates over a `SEM V α`, plus `BoolSEM`-flavored
 aliases for legacy SBH-style binary semantics.
@@ -54,9 +54,7 @@ namespace Causation.SEM
 variable {V : Type*} {α : V → Type*}
 variable [Fintype V] [DecidableEq V] [DecidableValuation α]
 
--- ════════════════════════════════════════════════════
--- § Polymorphic counterfactual predicates
--- ════════════════════════════════════════════════════
+/-! ### Polymorphic counterfactual predicates -/
 
 /-- After developing the SEM against `s`, vertex `v` has the value `x`.
 
@@ -89,9 +87,7 @@ noncomputable instance (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterminist
     Decidable (causallySufficient M s cause xC effect xE) :=
   Classical.dec _
 
--- ════════════════════════════════════════════════════
--- § Basic API lemmas (polymorphic)
--- ════════════════════════════════════════════════════
+/-! ### Basic API lemmas (polymorphic) -/
 
 omit [Fintype V] [DecidableEq V] [DecidableValuation α] in
 /-- `developsToValue` unfolds to `(developDet M s).hasValue v x`. -/
@@ -123,9 +119,7 @@ noncomputable instance (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterminist
     Decidable (manipulates M s cause xC1 xC2 effect) :=
   Classical.dec _
 
--- ════════════════════════════════════════════════════
--- § Unified counterfactual primitive (PMF-canonical)
--- ════════════════════════════════════════════════════
+/-! ### Unified counterfactual primitive (PMF-canonical) -/
 
 /-! Pearl-style counterfactual simulation via Lassiter's RRR heuristic
     ([lassiter-2017-probabilistic-language]): "Rewind to the
@@ -200,9 +194,7 @@ noncomputable def counterfactualSimulate
     PMF (Valuation α) :=
   develop M (cfSeed M observed antecedent xAnt)
 
--- ════════════════════════════════════════════════════
--- § Derived graded predicates (B&G 2025 W/H/S, etc.)
--- ════════════════════════════════════════════════════
+/-! ### Derived graded predicates (B&G 2025 W/H/S, etc.) -/
 
 /-- **Whether-causation** ([beller-gerstenberg-2025] Eq 1):
     `W(A → e) = P(e' ≠ e | s, remove(A))`. Probability that the counterfactual
@@ -260,9 +252,7 @@ noncomputable def probSufficiency
     (effect : V) (xE : α effect) : ENNReal :=
   probOfValue (counterfactualSimulate M observed cause xC) effect xE
 
--- ════════════════════════════════════════════════════
--- § Bridge theorems: deterministic collapse
--- ════════════════════════════════════════════════════
+/-! ### Bridge theorems: deterministic collapse -/
 
 /-- Bridge: under `IsDeterministic`, `counterfactualSimulate` is the Dirac
     of the per-vertex counterfactual valuation `developDet M (cfSeed ...)`.
@@ -310,9 +300,7 @@ theorem probSufficiency_eq_indicator_of_deterministic
 
 end Causation.SEM
 
--- ════════════════════════════════════════════════════
--- § BoolSEM specializations (legacy SBH-style binary semantics)
--- ════════════════════════════════════════════════════
+/-! ### BoolSEM specializations (legacy SBH-style binary semantics) -/
 
 namespace Causation.BoolSEM
 
@@ -359,9 +347,7 @@ removed: they leaked the vertex list and fuel into theorem statements, and
 their negations asserted facts about an iteration trace rather than the
 causal notion. -/
 
--- ════════════════════════════════════════════════════
--- § Bridges: manipulates from developDetOn computation
--- ════════════════════════════════════════════════════
+/-! ### Bridges: manipulates from developDetOn computation -/
 
 omit [Fintype V] in
 /-- **Positive `manipulates` bridge**: if `developDetOn` produces different
@@ -465,7 +451,7 @@ theorem causallyEntails_unique [DecidableEq V] {M : SEM V α}
 def isConsistentSuper [DecidableEq V] [DecidableValuation α] (M : SEM V α)
     [CausalGraph.IsDAG M.graph] [IsDeterministic M]
     (base s' : Valuation α) : Prop :=
-  base.le s' ∧
+  base ≤ s' ∧
   ∀ (x : V) (xv : α x), base.get x = none → s'.get x = some xv →
     ∀ yv : α x, yv ≠ xv → ¬ causallyEntails M base x yv
 
@@ -546,12 +532,12 @@ theorem causallyEntails_mono [DecidableEq V] [DecidableValuation α]
     this definition makes that reading explicit. -/
 def IsExogenousSettlement [DecidableValuation α] (M : SEM V α)
     (base s' : Valuation α) : Prop :=
-  base.le s' ∧
+  base ≤ s' ∧
   ∀ v : V, base.get v = none → (s'.get v).isSome → M.graph.parents v = ∅
 
 /-- Information order, executable characterization. -/
 theorem Valuation.le_iff_forall [DecidableValuation α] {s₁ s₂ : Valuation α} :
-    s₁.le s₂ ↔ ∀ v : V, (s₁.get v).isSome → s₁.get v = s₂.get v := by
+    s₁ ≤ s₂ ↔ ∀ v : V, (s₁.get v).isSome → s₁.get v = s₂.get v := by
   constructor
   · intro h v hv
     obtain ⟨x, hx⟩ := Option.isSome_iff_exists.mp hv
@@ -561,7 +547,7 @@ theorem Valuation.le_iff_forall [DecidableValuation α] {s₁ s₂ : Valuation �
     rw [hx] at this; exact this.symm
 
 instance [DecidableEq V] [Fintype V] [DecidableValuation α] (s₁ s₂ : Valuation α) :
-    Decidable (s₁.le s₂) :=
+    Decidable (s₁ ≤ s₂) :=
   decidable_of_iff _ Valuation.le_iff_forall.symm
 
 instance [DecidableEq V] [Fintype V] [DecidableValuation α] (M : SEM V α)
@@ -575,7 +561,7 @@ theorem IsExogenousSettlement.of_extend [DecidableEq V] [DecidableValuation α]
     (hexo : M.graph.parents p = ∅) (hp : s.get p = none)
     (h : IsExogenousSettlement M (s.extend p xP) s') :
     IsExogenousSettlement M s s' := by
-  refine ⟨Valuation.le_trans (Valuation.le_extend xP hp) h.1, fun v hv hsv => ?_⟩
+  refine ⟨(Valuation.le_extend xP hp).trans h.1, fun v hv hsv => ?_⟩
   by_cases hvp : v = p
   · subst hvp; exact hexo
   · exact h.2 v (by rw [Valuation.extend_get_ne hvp]; exact hv) hsv
@@ -671,9 +657,7 @@ noncomputable instance [DecidableEq V] [DecidableValuation α]
     (s : Valuation α) (cause : V) (xC : α cause) (effect : V) (xE : α effect) :
     Decidable (causallyNecessary M s cause xC effect xE) := Classical.dec _
 
--- ════════════════════════════════════════════════════
--- § Executable Def 10b (fuel form) and decidability
--- ════════════════════════════════════════════════════
+/-! ### Executable Def 10b (fuel form) and decidability -/
 
 /-- Executable mirror of `causallyNecessary` at fuel `n`: every
     `causallyEntails` clause replaced by its `developDetVtxFuel` form.

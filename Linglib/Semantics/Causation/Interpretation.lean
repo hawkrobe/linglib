@@ -41,9 +41,7 @@ mapping exists; both dispatches coexist as named functions and the
 disagreement is theorem-provable.
 -/
 
--- ════════════════════════════════════════════════════
--- § Methods on `Features.Causative`
--- ════════════════════════════════════════════════════
+/-! ### Methods on `Features.Causative` -/
 
 /-! Methods on `Features.Causative` that depend on heavy semantic
 machinery (`Causation.SEM`, `CausalGraph`, the `Necessity`/
@@ -83,9 +81,7 @@ noncomputable def toSemantics {V : Type*} {α : V → Type*}
 
 end Features.Causative
 
--- ════════════════════════════════════════════════════
--- § Derivation theorems (substrate-independent)
--- ════════════════════════════════════════════════════
+/-! ### Derivation theorems (substrate-independent) -/
 
 namespace Causation.Interpretation
 
@@ -102,9 +98,7 @@ theorem make_enable_distinguished_by_permissivity :
     Causative.make.isPermissive = false ∧
     Causative.enable.isPermissive = true := ⟨rfl, rfl⟩
 
--- ════════════════════════════════════════════════════
--- § Bridge to CC-Selection
--- ════════════════════════════════════════════════════
+/-! ### Bridge to CC-Selection -/
 
 /-! `Causative` encodes force-dynamic mechanisms; `CCSelectionMode`
 ([baglini-bar-asher-siegal-2025]) encodes which element of a causal
