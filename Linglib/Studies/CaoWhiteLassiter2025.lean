@@ -68,12 +68,10 @@ noncomputable def softOptimalPolicy : PMF A :=
   simp [softOptimalPolicy, PMF.pure_apply_of_ne _ _ h, div_eq_mul_inv]
 
 theorem softOptimalPolicy_zero :
-    softOptimalPolicy best 0 zero_le_one = PMF.uniformOfFintype A :=
-  PMF.mix_zero _ _
+    softOptimalPolicy best 0 zero_le_one = PMF.uniformOfFintype A := PMF.mix_zero _ _
 
 theorem softOptimalPolicy_one :
-    softOptimalPolicy best 1 le_rfl = PMF.pure best :=
-  PMF.mix_one _ _
+    softOptimalPolicy best 1 le_rfl = PMF.pure best := PMF.mix_one _ _
 
 end
 
