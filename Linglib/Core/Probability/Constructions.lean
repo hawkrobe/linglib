@@ -104,16 +104,26 @@ theorem sum_toRealFn_eq_one [Fintype α] (p : PMF α) :
 
 /-! ### Convex mixture -/
 
-/-- Convex combination of two PMFs at rate `r`: draw a Bernoulli-`r` coin,
-then sample `q` on heads and `p` on tails. Normalization is free from
-`bind` — no `Fintype`, no sum proof. -/
+/-- Convex combination of two PMFs at rate `r`: sample `q` with
+probability `r` and `p` otherwise. No `Fintype` needed — `ENNReal`
+summability is unconditional. -/
 noncomputable def mix (r : ℝ≥0) (hr : r ≤ 1) (p q : PMF α) : PMF α :=
-  (bernoulli r hr).bind fun b => bif b then q else p
+  ⟨fun a => (1 - r) * p a + r * q a, ENNReal.summable.hasSum_iff.mpr (by
+    rw [ENNReal.tsum_add, ENNReal.tsum_mul_left, ENNReal.tsum_mul_left, p.tsum_coe,
+      q.tsum_coe, mul_one, mul_one, tsub_add_cancel_of_le (by exact_mod_cast hr)])⟩
 
 @[simp] theorem mix_apply (r : ℝ≥0) (hr : r ≤ 1) (p q : PMF α) (a : α) :
-    mix r hr p q a = (1 - r) * p a + r * q a := by
-  rw [mix, bind_apply, tsum_bool]
-  simp [bernoulli_apply, mul_comm]
+    mix r hr p q a = (1 - r) * p a + r * q a := rfl
+
+/-- A rate-`0` mixture is its first component. -/
+@[simp] theorem mix_zero (p q : PMF α) : mix (0 : ℝ≥0) zero_le_one p q = p := by
+  ext a
+  simp
+
+/-- A rate-`1` mixture is its second component. -/
+@[simp] theorem mix_one (p q : PMF α) : mix (1 : ℝ≥0) le_rfl p q = q := by
+  ext a
+  simp
 
 /-- The mixture in ℝ: `(1 − r)·p + r·q` pointwise. -/
 theorem toRealFn_mix (r : ℝ≥0) (hr : r ≤ 1) (p q : PMF α) (a : α) :

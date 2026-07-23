@@ -1,162 +1,102 @@
 import Mathlib.Data.NNReal.Basic
 import Mathlib.Data.Set.Card
-import Mathlib.Probability.ProbabilityMassFunction.Constructions
+import Mathlib.Probability.Distributions.Uniform
+import Linglib.Core.Probability.Constructions
 import Linglib.Data.Examples.CaoWhiteLassiter2025
 import Linglib.Semantics.Causation.Interpretation
 import Linglib.Semantics.Causation.SEM.Counterfactual
 
 /-!
 # Cao, White & Lassiter 2025: graded causative verb semantics
-[cao-white-lassiter-2025]
 
-*Cause*, *make*, and *force* as graded causatives: a semantics built
-around threshold values on continuous scales, where the scales are three
-measures defined within a single structural causal model — SUF, Pearl's
-probability of sufficiency ([pearl-2019],
-`Causation.SEM.probSufficiency`); INT, a simplified
-[halpern-kleiman-weiner-2018] degree of intention (`intentionDegree`);
-and ALT, the number of alternative actions available to the causee
-(`altCount`). The paper's models are time-indexed (`TimeIndex`, its
-definition 1), with the agents' mechanisms derived from utilities by a
-soft-optimality policy of skill ρ (`softOptimalPolicy`) — continuing the
-SCM causative-verbs program of [cao-geiger-kreiss-icard-gerstenberg-2023].
+This file formalizes the graded-causative analysis of English *cause*,
+*make*, and *force* from [cao-white-lassiter-2025]. On that account,
+acceptability tracks three measures defined in one structural causal
+model: Pearl's probability of sufficiency ([pearl-2019],
+`Causation.SEM.probSufficiency`), a simplified
+[halpern-kleiman-weiner-2018] degree of intention (`intentionDegree`),
+and the number of alternative actions available to the causee
+(`altCount`). The models are time-indexed (`CausalGraph.TimeIndex`),
+and their agents play a soft-optimality policy (`softOptimalPolicy`).
+The model apparatus is shared with
+[cao-geiger-kreiss-icard-gerstenberg-2023].
 
-## Main declarations
+The paper's in-text judgments (its examples (3)–(11)) are stored as rows
+in `Data/Examples/CaoWhiteLassiter2025.json`. Regression estimates
+remain in prose; no single measure reliably determines verb choice, and
+each verb's per-verb model has a distinct set of reliable interaction
+terms.
 
-- `TimeIndex`: definition 1's parents-immediately-precede-children
-  timestep certificate; yields acyclicity (`TimeIndex.isDAG`).
-- `softOptimalPolicy`: the highest-utility move with probability
-  `ρ + (1−ρ)/n`, others `(1−ρ)/n`. At `ρ = 0` it is the uniform random
-  player (`softOptimalPolicy_zero_apply`) — the paper's own limiting case
-  under which its worked SUF contrast collapses; at `ρ = 1` the
-  deterministic professional (`softOptimalPolicy_one`).
-- `altCount` (§2.2): alternatives available to the causee, excluding the
-  action taken.
-- `intentionDegree` (§2.3): the goal-weighted share of the taken action
-  among goal-conducive alternatives.
-  `intentionDegree_eq_one_of_altCount_eq_zero`: no alternatives
-  trivialize intention — the [frankfurt-1969] alternative-possibilities
-  principle behind the paper's *made*/*forced* contrast (its example 8).
-- `probSufficiency_empty_eq_deterministicSuf` and
-  `probSufficiency_empty_eq_one_of_make`: SUF grounded, at the
-  deterministic/vacuous-context limit, in [nadathur-lauer-2020]'s
-  categorical sufficiency (their definition (23)).
-- `make_force_same_semantics_different_judgments`: the force-dynamic
-  dispatch collapses *make* and *force*; the paper's minimal pair (8)
-  (rows in `Data.Examples.CaoWhiteLassiter2025`) pulls them apart.
+## References
 
-The paper's in-text judgment data — non-interchangeability triplets,
-gym-gradability triplets, the could-have-done-otherwise pair, the
-intent-denial continuations, the *make*/*let* sufficiency pair — are
-typed rows in `Data/Examples/CaoWhiteLassiter2025.json`.
-
-## Experimental summary (prose; analysis outputs are not Lean content)
-
-Tic-tac-toe three-frame stimuli annotated with model-derived ALT, INT,
-SUF; Bayesian logistic regressions on accurate/inaccurate judgments.
-Model I main effects: SUF residualized on ALT +1.19, INT +0.54, ALT
-−0.82 (the −0.81 SUF∼ALT anticorrelation motivates residualization);
-*made* uniquely carries a reliable positive SUF×INT interaction in
-model I (0.45, CI [0.02, 0.87]). Per-verb models: *cause* reliable in
-SUF×ALT (+), INT×ALT (+), SUF×INT×ALT (−); *made* in SUF×ALT (+),
-SUF×INT×ALT (−); *forced* only in SUF×INT×ALT (−) — each verb a distinct
-reliability profile, and no single measure determines verb choice.
+* [A. Cao, A. S. White, D. Lassiter,
+  *Cause, make, and force as graded causatives*][cao-white-lassiter-2025]
 -/
 
 namespace CaoWhiteLassiter2025
 
-open Causation (BoolSEM CausalGraph Valuation Mechanism SEM DecidableValuation)
-open Causation.Mechanism (const)
-open Causation.SEM (probSufficiency probSufficiency_eq_indicator_of_deterministic cfSeed
-  cfSeed_empty develop)
-open Features
+open Causation Causation.Mechanism Causation.SEM Features
 open scoped ENNReal NNReal
-
-/-! ### Time-indexed causal models
-
-Definition 1 of [cao-white-lassiter-2025]: exogenous and endogenous
-variables carry timesteps, and every parent *immediately precedes* its
-child. The timestep function is a strengthened form of the depth
-certificate `CausalGraph.IsDAG.of_depth` consumes. -/
-
-/-- A **time index** for a causal graph (definition 1 of
-    [cao-white-lassiter-2025]): a timestep assignment on which each parent
-    sits exactly one step before its children. -/
-structure TimeIndex {V : Type*} (G : CausalGraph V) where
-  /-- The timestep of each variable. -/
-  time : V → ℕ
-  /-- Parents immediately precede their children. -/
-  parent_succ : ∀ {u v : V}, u ∈ G.parents v → time u + 1 = time v
-
-/-- A time index certifies acyclicity. -/
-theorem TimeIndex.isDAG {V : Type*} {G : CausalGraph V} (ti : TimeIndex G) :
-    CausalGraph.IsDAG G :=
-  CausalGraph.IsDAG.of_depth G ti.time fun h => by have := ti.parent_succ h; omega
 
 /-! ### Soft-optimality policy
 
-The paper's mechanisms for agent moves (§2.1.1): the highest-utility
-move — computed by minimax over the game tree, with terminal utility
-`Winner × (EmptySpace + 1)` — is taken with probability `ρ + (1−ρ)/n`
-and every other available move with `(1−ρ)/n`. The skill parameter ρ
-interpolates between a random player (`ρ = 0`, "a less skilled player")
-and a professional (`ρ = 1`). -/
+The paper's mechanism for agent moves (§2.1.1): the highest-utility
+move — minimax over the game tree, with terminal utility
+`Winner × (EmptySpace + 1)` — is taken with probability `ρ + (1−ρ)/n`,
+every other available move with `(1−ρ)/n` (`softOptimalPolicy_apply_best`,
+`softOptimalPolicy_apply_of_ne`).
+The skill parameter `ρ` interpolates between a uniformly random player
+("assume that the players are infants", `softOptimalPolicy_zero`) — the
+limiting case under which the paper's worked SUF contrast between
+contexts collapses — and a deterministic professional
+(`softOptimalPolicy_one`). -/
 
-/-- **Soft-optimality policy** (§2.1.1 of [cao-white-lassiter-2025]): the
-    highest-utility move `best` with probability `ρ + (1−ρ)/n`, every
-    other move with `(1−ρ)/n`, over the `n` available moves. -/
-noncomputable def softOptimalPolicy {A : Type*} [Fintype A] [DecidableEq A] [Nonempty A]
-    (best : A) (ρ : ℝ≥0) (hρ : ρ ≤ 1) : PMF A :=
-  PMF.ofFintype
-    (fun a => (if a = best then (ρ : ℝ≥0∞) else 0) + (1 - ρ : ℝ≥0) / Fintype.card A)
-    (by
-      have hn0 : (Fintype.card A : ℝ≥0∞) ≠ 0 := by
-        exact_mod_cast Fintype.card_ne_zero
-      rw [Finset.sum_add_distrib, Finset.sum_ite_eq' Finset.univ best (fun _ => (ρ : ℝ≥0∞)),
-        Finset.sum_const, Finset.card_univ, nsmul_eq_mul,
-        ENNReal.mul_div_cancel hn0 (ENNReal.natCast_ne_top _)]
-      simp only [Finset.mem_univ, if_true]
-      rw [← ENNReal.coe_add, add_tsub_cancel_of_le hρ, ENNReal.coe_one])
+section
+variable {A : Type*} [Fintype A] [Nonempty A] (best : A) (ρ : ℝ≥0) (hρ : ρ ≤ 1)
 
-/-- At `ρ = 0` the soft-optimality policy is the uniform random player —
-    the paper's limiting case ("assume that the players are infants"),
-    under which its worked SUF contrast between contexts collapses. -/
-theorem softOptimalPolicy_zero_apply {A : Type*} [Fintype A] [DecidableEq A] [Nonempty A]
-    (best : A) (a : A) :
-    softOptimalPolicy best 0 zero_le_one a = (Fintype.card A : ℝ≥0∞)⁻¹ := by
-  simp [softOptimalPolicy]
+/-- The move distribution of a player of skill `ρ`: the highest-utility
+    move `best` with probability `ρ`, otherwise a uniform random move. -/
+noncomputable def softOptimalPolicy : PMF A :=
+  PMF.mix ρ hρ (PMF.uniformOfFintype A) (PMF.pure best)
 
-/-- At `ρ = 1` the soft-optimality policy is the deterministic
-    professional: a Dirac on the highest-utility move. -/
-theorem softOptimalPolicy_one {A : Type*} [Fintype A] [DecidableEq A] [Nonempty A]
-    (best : A) :
-    softOptimalPolicy best 1 le_rfl = PMF.pure best := by
-  ext a
-  simp [softOptimalPolicy, PMF.pure_apply]
+@[simp] theorem softOptimalPolicy_apply_best :
+    softOptimalPolicy best ρ hρ best = ρ + (1 - ρ : ℝ≥0) / Fintype.card A := by
+  simp [softOptimalPolicy, div_eq_mul_inv, add_comm]
 
-/-! ### ALT: alternatives available to the causee -/
+@[simp] theorem softOptimalPolicy_apply_of_ne {a : A} (h : a ≠ best) :
+    softOptimalPolicy best ρ hρ a = (1 - ρ : ℝ≥0) / Fintype.card A := by
+  simp [softOptimalPolicy, PMF.pure_apply_of_ne _ _ h, div_eq_mul_inv]
 
-/-- **ALT** (§2.2 of [cao-white-lassiter-2025]): the number of alternative
-    actions available to the causee, *excluding the action actually
-    taken* — the support of the causee's action distribution minus
-    `taken` (`ALT(Y₁) = 5` at the paper's fig. 2a board state). -/
-noncomputable def altCount {A : Type*} (p : PMF A) (taken : A) : ℕ :=
+theorem softOptimalPolicy_zero :
+    softOptimalPolicy best 0 zero_le_one = PMF.uniformOfFintype A := PMF.mix_zero _ _
+
+theorem softOptimalPolicy_one :
+    softOptimalPolicy best 1 le_rfl = PMF.pure best := PMF.mix_one _ _
+
+end
+
+/-! ### The ALT measure
+
+ALT (§2.2 of [cao-white-lassiter-2025]) counts the alternative actions
+available to the causee, excluding the action actually taken —
+`ALT(Y₁) = 5` at the paper's fig. 2a board state. `ALT = 0` is the
+Frankfurt-style could-not-have-done-otherwise configuration
+(`altCount_eq_zero_iff`). -/
+
+section
+variable {A : Type*} [Fintype A] (p : PMF A) (taken : A)
+
+/-- The number of alternative actions available to the causee: the
+    support of the action distribution, less the action taken. -/
+noncomputable def altCount : ℕ :=
   (p.support \ {taken}).ncard
 
-/-- `ALT = 0` says exactly that the causee could not have done otherwise:
-    every action other than the one taken has probability zero. -/
-theorem altCount_eq_zero_iff {A : Type*} [Fintype A] (p : PMF A) (taken : A) :
-    altCount p taken = 0 ↔ ∀ a ≠ taken, p a = 0 := by
-  rw [altCount, Set.ncard_eq_zero (Set.toFinite _), Set.sdiff_eq_empty]
-  constructor
-  · intro hsub a hne
-    by_contra hpa
-    exact hne (hsub ((p.mem_support_iff a).mpr hpa))
-  · intro h a ha
-    by_contra hne
-    exact (p.mem_support_iff a).mp ha (h a (by simpa using hne))
+theorem altCount_eq_zero_iff : altCount p taken = 0 ↔ ∀ a ≠ taken, p a = 0 := by
+  rw [altCount, Set.ncard_eq_zero (Set.toFinite _), Set.sdiff_eq_empty,
+    Set.subset_singleton_iff]
+  exact forall_congr' fun b => not_imp_comm
 
-/-! ### INT: degree of intention
+/-! ### The INT measure
 
 The paper's §2.3 displayed equation, a simplified
 [halpern-kleiman-weiner-2018] degree of intention:
@@ -167,29 +107,60 @@ The paper's §2.3 displayed equation, a simplified
 desired outcome, normalized by the probability of all alternative
 actions that would have resulted in the same outcome", with each term
 weighted by exponentiated utility `u′ = e^u` — the exponential serving
-only to make the weights strictly positive. We abstract the weight to
-any `w : A → ℝ≥0`; the paper's instantiation is `w = e^u`. -/
+only to make the weights strictly positive. Here `pr a′` is the joint
+probability that the agent takes `a′` and the goal results, and the
+weight is abstracted to any `w : A → ℝ≥0` (the paper's instantiation is
+`w = e^u`); `modelIntention` below instantiates `pr` over a `SEM`. INT
+is the normalized goal-weighted action distribution evaluated at the
+taken action (`intentionDegree_eq_normalize`), and an action without
+alternatives is trivially intentional
+(`intentionDegree_eq_one_of_altCount_eq_zero`) — the
+alternative-possibilities principle of [frankfurt-1969], via
+[halpern-kleiman-weiner-2018], behind the paper's *made*/*forced*
+contrast in its example (8). -/
 
-/-- **INT** (§2.3 of [cao-white-lassiter-2025]): the goal-weighted share
-    of action `a` among all goal-conducive alternatives. `pr a′` is the
-    model probability that the agent takes `a′` and the goal results;
-    `w` is the (paper: exponentiated-utility) action weight. -/
-noncomputable def intentionDegree {A : Type*} [Fintype A]
-    (pr : A → ℝ≥0∞) (w : A → ℝ≥0) (a : A) : ℝ≥0∞ :=
+variable (pr : A → ℝ≥0∞) (w : A → ℝ≥0) (a : A)
+
+/-- The goal-weighted share of action `a` among all goal-conducive
+    alternatives. -/
+noncomputable def intentionDegree : ℝ≥0∞ :=
   (pr a * w a) / ∑ a', pr a' * w a'
 
-/-- INT is a proper degree: at most 1. -/
-theorem intentionDegree_le_one {A : Type*} [Fintype A]
-    (pr : A → ℝ≥0∞) (w : A → ℝ≥0) (a : A) :
-    intentionDegree pr w a ≤ 1 :=
+theorem intentionDegree_le_one : intentionDegree pr w a ≤ 1 :=
   ENNReal.div_le_of_le_mul <| by
-    rw [one_mul]
-    exact Finset.single_le_sum (f := fun a' => pr a' * w a') (fun _ _ => zero_le)
+    simpa using Finset.single_le_sum (f := fun a' => pr a' * w a') (fun _ _ => zero_le)
       (Finset.mem_univ a)
 
-/-- `intentionDegree` over a `SEM`: `pr a′` is the probability, under the
-    development of the context, that the action vertex takes value `a′`
-    and the goal event holds — the paper's `Pr((M,u⃗) ⊨ A = a⃗′ ∧ G = g⃗)`. -/
+/-- With nonzero finite total mass, INT is mathlib's `PMF.normalize` of
+    the goal-weighted masses, evaluated at the taken action — the
+    `PMF.reweight`/`PMF.posterior` family of `Core/Probability/Posterior`. -/
+theorem intentionDegree_eq_normalize (h0 : (∑' a', pr a' * w a') ≠ 0)
+    (htop : (∑' a', pr a' * w a') ≠ ∞) :
+    intentionDegree pr w a = PMF.normalize (fun a' => pr a' * w a') h0 htop a := by
+  rw [intentionDegree, PMF.normalize_apply, div_eq_mul_inv, tsum_fintype]
+
+theorem intentionDegree_eq_one_of_no_alternatives
+    (h : ∀ a ≠ taken, pr a = 0) (h0 : pr taken ≠ 0) (hw : w taken ≠ 0)
+    (htop : pr taken ≠ ∞) :
+    intentionDegree pr w taken = 1 := by
+  rw [intentionDegree, Finset.sum_eq_single_of_mem taken (Finset.mem_univ taken)
+    fun a _ ha => by rw [h a ha, zero_mul]]
+  exact ENNReal.div_self (mul_ne_zero h0 (ENNReal.coe_ne_zero.mpr hw))
+    (ENNReal.mul_ne_top htop ENNReal.coe_ne_top)
+
+theorem intentionDegree_eq_one_of_altCount_eq_zero
+    (hle : pr ≤ ⇑p) (h : altCount p taken = 0) (h0 : pr taken ≠ 0) (hw : w taken ≠ 0) :
+    intentionDegree pr w taken = 1 :=
+  intentionDegree_eq_one_of_no_alternatives taken pr w
+    (fun a ha => le_zero_iff.mp ((altCount_eq_zero_iff p taken).mp h a ha ▸ hle a))
+    h0 hw (ne_top_of_le_ne_top (p.apply_ne_top taken) (hle taken))
+
+end
+
+/-- The paper's INT over a `SEM` instantiates `intentionDegree` with
+    `pr a′` the probability, under the development of the context, that
+    the action vertex takes value `a′` and the goal event holds — the
+    paper's `Pr((M,u⃗) ⊨ A = a⃗′ ∧ G = g⃗)`. -/
 noncomputable def modelIntention {V : Type*} {α : V → Type*}
     [Fintype V] [DecidableEq V] [DecidableValuation α]
     (M : SEM V α) [CausalGraph.IsDAG M.graph] (ctx : Valuation α)
@@ -198,36 +169,6 @@ noncomputable def modelIntention {V : Type*} {α : V → Type*}
   intentionDegree
     (fun a' => (develop M ctx).probOfSet {s | s.hasValue act a' ∧ s ∈ goal}) w a
 
-/-- **No alternatives trivialize intention**: if every non-taken action
-    has zero probability and the taken action's goal-weighted mass is
-    nonzero and finite, its INT is 1. -/
-theorem intentionDegree_eq_one_of_no_alternatives {A : Type*} [Fintype A]
-    (pr : A → ℝ≥0∞) (w : A → ℝ≥0) (taken : A)
-    (halt : ∀ a ≠ taken, pr a = 0)
-    (h0 : pr taken * w taken ≠ 0) (hfin : pr taken ≠ ⊤) :
-    intentionDegree pr w taken = 1 := by
-  rw [intentionDegree,
-    Finset.sum_eq_single taken (fun a _ ha => by rw [halt a ha, zero_mul])
-      (fun h => absurd (Finset.mem_univ _) h)]
-  exact ENNReal.div_self h0 (ENNReal.mul_ne_top hfin ENNReal.coe_ne_top)
-
-/-- **The ALT–INT bridge** ([frankfurt-1969] alternative possibilities,
-    via [halpern-kleiman-weiner-2018]: an action taken when the agent
-    could not do otherwise is never — here: trivially — intentional): if
-    the causee's action distribution `p` leaves no alternatives
-    (`altCount = 0`) then the taken action's INT degenerates to 1, for
-    any joint action-and-goal weights `pr` dominated by `p`. Grounds the
-    paper's *made*/*forced* contrast in its example (8). -/
-theorem intentionDegree_eq_one_of_altCount_eq_zero {A : Type*} [Fintype A]
-    (p : PMF A) (pr : A → ℝ≥0∞) (w : A → ℝ≥0) (taken : A)
-    (hle : ∀ a, pr a ≤ p a) (halt : altCount p taken = 0)
-    (h0 : pr taken * w taken ≠ 0) :
-    intentionDegree pr w taken = 1 :=
-  intentionDegree_eq_one_of_no_alternatives pr w taken
-    (fun a ha => le_antisymm ((altCount_eq_zero_iff p taken).mp halt a ha ▸ hle a) zero_le)
-    h0
-    (((hle taken).trans (p.coe_le_one taken)).trans_lt ENNReal.one_lt_top).ne
-
 /-! ### Deterministic limit
 
 In the deterministic limit, SUF collapses to a {0,1} indicator
@@ -235,52 +176,44 @@ In the deterministic limit, SUF collapses to a {0,1} indicator
 vacuous (empty) context this is exactly [nadathur-lauer-2020]'s causal
 sufficiency (their definition (23)): with nothing observed, Pearl's
 counterfactual degenerates to the bare interventional development of
-`cause := true`. -/
+`cause := true`, and "interventional = counterfactual at a vacuous
+context" is a theorem (`probSufficiency_empty_eq_deterministicSuf`)
+rather than a conflation. -/
 
-/-- Deterministic SUF as a {0,1} indicator over a `BoolSEM`:
-    [nadathur-lauer-2020]'s causal sufficiency (their definition (23)),
-    `causallySufficient`. -/
-noncomputable def deterministicSuf {V : Type*} [Fintype V] [DecidableEq V]
-    (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
-    [Causation.SEM.IsDeterministic M]
-    (background : Valuation (fun _ : V => Bool))
+section
+variable {V : Type*} [Fintype V] [DecidableEq V] (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
+  [IsDeterministic M]
+
+/-- The {0,1} indicator of categorical causal sufficiency
+    (`causallySufficient`). -/
+noncomputable def deterministicSuf (background : Valuation (fun _ : V => Bool))
     (cause effect : V) : ENNReal :=
-  if Causation.BoolSEM.causallySufficient M background cause effect then 1 else 0
+  if BoolSEM.causallySufficient M background cause effect then 1 else 0
 
-/-- **Grounding theorem**: at the empty context (vacuous abduction), the
-    counterfactual `probSufficiency` reduces to the deterministic {0,1}
-    indicator `deterministicSuf` — i.e. to [nadathur-lauer-2020]'s causal
-    sufficiency. Makes "interventional = counterfactual at a vacuous
-    context" a theorem rather than a conflation. -/
-theorem probSufficiency_empty_eq_deterministicSuf {V : Type*} [Fintype V] [DecidableEq V]
-    (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
-    [Causation.SEM.IsDeterministic M] (c e : V) :
-    probSufficiency M Valuation.empty c true e true
-      = deterministicSuf M Valuation.empty c e := by
+variable (c e : V)
+
+theorem probSufficiency_empty_eq_deterministicSuf :
+    BoolSEM.probSufficiency M Valuation.empty c e = deterministicSuf M Valuation.empty c e := by
+  unfold BoolSEM.probSufficiency
   rw [probSufficiency_eq_indicator_of_deterministic, cfSeed_empty]
-  unfold deterministicSuf Causation.BoolSEM.causallySufficient
-    Causation.SEM.causallySufficient Causation.SEM.developsToValue
-  by_cases h :
-      (M.developDet ((Valuation.empty (α := fun _ : V => Bool)).extend c true)).hasValue e true <;>
-    simp [h]
+  unfold deterministicSuf
+  congr 1
 
 /-- The hub denotation for *make* entails maximal SUF at the vacuous
-    context: whenever `Causative.toSemantics M .make` holds (both clauses
-    of [nadathur-lauer-2020]'s definition (23), over the strict
+    context — whenever `Causative.toSemantics M .make` holds (both
+    clauses of [nadathur-lauer-2020]'s definition (23), over the strict
     development), Pearl's probability of sufficiency is 1. The converse
-    fails — the eager development fills undetermined exogenous vertices
-    from their mechanisms, so SUF can be 1 without strict entailment: the
-    categorical *make* semantics is strictly stronger than maximal graded
-    SUF. -/
+    fails, since the eager development fills undetermined exogenous
+    vertices from their mechanisms; the categorical *make* semantics is
+    strictly stronger than maximal graded SUF. -/
 theorem probSufficiency_empty_eq_one_of_make
-    {V : Type*} [Fintype V] [DecidableEq V]
-    (M : BoolSEM V) [CausalGraph.IsDAG M.graph] [Causation.SEM.IsDeterministic M]
-    (c e : V)
     (h : Causative.toSemantics M .make Valuation.empty c true e true) :
-    probSufficiency M Valuation.empty c true e true = 1 := by
+    BoolSEM.probSufficiency M Valuation.empty c e = 1 := by
   rw [probSufficiency_empty_eq_deterministicSuf]
   unfold deterministicSuf
-  exact if_pos (Causation.SEM.causallySufficient_of_causallyEntails h.2)
+  exact if_pos (causallySufficient_of_causallyEntails h.2)
+
+end
 
 /-! ### The paper's judgment data
 
@@ -291,24 +224,24 @@ could-have-done-otherwise pair, the intent-denial continuations, and the
 *make*/*let* sufficiency pair. Regression results stay in the module
 docstring: analysis outputs are not Lean content. -/
 
-/-- [nadathur-lauer-2020]'s force-dynamic dispatch gives *make* and
-    *force* literally identical truth conditions, but the paper's minimal
-    pair (8) — same frame, a could-have-done-otherwise continuation —
-    pulls them apart: *made* tolerates the continuation, *forced* resists
-    it. The graded ALT/INT measures cut where the categorical semantics
-    cannot (`intentionDegree_eq_one_of_altCount_eq_zero`). -/
+/-- The force-dynamic dispatch of [nadathur-lauer-2020] gives *make* and
+    *force* identical truth conditions, but the paper's minimal pair (8)
+    — same frame, a could-have-done-otherwise continuation — pulls them
+    apart; *made* tolerates the continuation, *forced* resists it. The
+    ALT/INT measures register the difference
+    (`intentionDegree_eq_one_of_altCount_eq_zero`). -/
 theorem make_force_same_semantics_different_judgments
     {V : Type*} {α : V → Type*} [Fintype V] [DecidableEq V] [DecidableValuation α]
     [∀ v, Fintype (α v)] (M : SEM V α) [CausalGraph.IsDAG M.graph]
-    [Causation.SEM.IsDeterministic M] :
+    [IsDeterministic M] :
     Causative.toSemantics M .make = Causative.toSemantics M .force ∧
     Examples.cwl2025_ex8a.judgment = .acceptable ∧
     Examples.cwl2025_ex8b.judgment = .questionable :=
   ⟨rfl, rfl, rfl⟩
 
-/-! ### Probabilistic example: genuinely fractional SUF
+/-! ### A probabilistic example
 
-A 2-vertex SEM whose `effect` mechanism is `PMF.bernoulli p` —
+A 2-vertex SEM whose `effect` mechanism is a `p`-weighted coin —
 genuinely probabilistic, not Dirac. Demonstrates that `probSufficiency`
 accepts non-deterministic SEMs (no `IsDeterministic` constraint). -/
 
@@ -316,28 +249,31 @@ namespace ProbabilisticExample
 
 open scoped NNReal
 
-/-- A 2-vertex SEM: `cause` (root) and `effect` (one parent: cause). -/
+/-- A 2-vertex SEM with root `cause` and child `effect`. -/
 inductive V | cause | effect
   deriving DecidableEq, Fintype, Repr
 
 def graph : CausalGraph V := ⟨fun | .cause => ∅ | .effect => {.cause}⟩
 
-/-- The probabilistic mechanism for `effect`: ignores parent value,
-    returns `Bernoulli(p)` directly. Genuinely non-Dirac when `p ∉ {0, 1}`. -/
-noncomputable def effectMech (p : ℝ≥0) (h : p ≤ 1) :
+variable (p : ℝ≥0) (h : p ≤ 1)
+
+/-- The probabilistic mechanism for `effect`, ignoring its parent and
+    returning `true` with probability `p` — genuinely non-Dirac when
+    `p ∉ {0, 1}`. -/
+noncomputable def effectMech :
     Mechanism graph (fun _ => Bool) .effect :=
-  ⟨fun _ => PMF.bernoulli p h⟩
+  ⟨fun _ => PMF.mix p h (PMF.pure false) (PMF.pure true)⟩
 
 /-- A genuinely probabilistic SEM (not `IsDeterministic` for `p ∉ {0,1}`). -/
-noncomputable def model (p : ℝ≥0) (h : p ≤ 1) : BoolSEM V :=
+noncomputable def model : BoolSEM V :=
   { graph := graph
     mech := fun
       | .cause => const (G := graph) false
       | .effect => effectMech p h }
 
 /-- The 2-vertex graph is time-indexed in the sense of the paper's
-    definition 1: `cause` at step 0, `effect` at step 1. -/
-def timeIndex : TimeIndex graph where
+    definition 1, with `cause` at step 0 and `effect` at step 1. -/
+def timeIndex : CausalGraph.TimeIndex graph where
   time := fun | .cause => 0 | .effect => 1
   parent_succ := by
     intro u v h
@@ -347,14 +283,14 @@ def timeIndex : TimeIndex graph where
 
 instance : CausalGraph.IsDAG graph := timeIndex.isDAG
 
-instance (p : ℝ≥0) (h : p ≤ 1) : CausalGraph.IsDAG (model p h).graph :=
+instance : CausalGraph.IsDAG (model p h).graph :=
   inferInstanceAs (CausalGraph.IsDAG graph)
 
 /-- `probSufficiency` accepts this SEM despite it NOT being
     `IsDeterministic` — exactly the [cao-white-lassiter-2025]
     requirement that SUF be a real probability. -/
-noncomputable example (p : ℝ≥0) (h : p ≤ 1) : ENNReal :=
-  probSufficiency (model p h) Valuation.empty .cause true .effect true
+noncomputable example : ENNReal :=
+  BoolSEM.probSufficiency (model p h) Valuation.empty .cause .effect
 
 end ProbabilisticExample
 

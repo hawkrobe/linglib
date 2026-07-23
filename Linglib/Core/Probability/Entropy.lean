@@ -101,8 +101,9 @@ theorem entropy_nonneg (p : PMF α) : 0 ≤ p.entropy := by
     anti-drift — if mathlib changes `binEntropy` semantics the equivalence
     becomes provably false.
 
-    TODO: stated in a follow-up. Requires `PMF.bernoulli` (mathlib has it
-    over `ℝ≥0`; needs ℝ-coercion + arithmetic identities `negMulLog x =
+    TODO: stated in a follow-up. Requires a Bernoulli coin (a
+    `PMF.mix` of point masses) over `ℝ≥0`; needs ℝ-coercion +
+    arithmetic identities `negMulLog x =
     x · log x⁻¹` for the Bernoulli case). ~20 LOC. -/
 example : True := trivial  -- placeholder; see TODO above
 
