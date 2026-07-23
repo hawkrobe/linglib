@@ -52,27 +52,26 @@ contexts collapses — and a deterministic professional
 (`softOptimalPolicy_one`). -/
 
 section
-variable {A : Type*} [Fintype A] [Nonempty A]
+variable {A : Type*} [Fintype A] [Nonempty A] (best : A) (ρ : ℝ≥0) (hρ : ρ ≤ 1)
 
 /-- The move distribution of a player of skill `ρ`: the highest-utility
     move `best` with probability `ρ`, otherwise a uniform random move. -/
-noncomputable def softOptimalPolicy (best : A) (ρ : ℝ≥0) (hρ : ρ ≤ 1) : PMF A :=
+noncomputable def softOptimalPolicy : PMF A :=
   PMF.mix ρ hρ (PMF.uniformOfFintype A) (PMF.pure best)
 
-@[simp] theorem softOptimalPolicy_apply_best (best : A) (ρ : ℝ≥0) (hρ : ρ ≤ 1) :
+@[simp] theorem softOptimalPolicy_apply_best :
     softOptimalPolicy best ρ hρ best = ρ + (1 - ρ : ℝ≥0) / Fintype.card A := by
   simp [softOptimalPolicy, div_eq_mul_inv, add_comm]
 
-@[simp] theorem softOptimalPolicy_apply_of_ne (best : A) (ρ : ℝ≥0) (hρ : ρ ≤ 1) {a : A}
-    (h : a ≠ best) :
+@[simp] theorem softOptimalPolicy_apply_of_ne {a : A} (h : a ≠ best) :
     softOptimalPolicy best ρ hρ a = (1 - ρ : ℝ≥0) / Fintype.card A := by
   simp [softOptimalPolicy, PMF.pure_apply_of_ne _ _ h, div_eq_mul_inv]
 
-theorem softOptimalPolicy_zero (best : A) :
+theorem softOptimalPolicy_zero :
     softOptimalPolicy best 0 zero_le_one = PMF.uniformOfFintype A :=
   PMF.mix_zero _ _
 
-theorem softOptimalPolicy_one (best : A) :
+theorem softOptimalPolicy_one :
     softOptimalPolicy best 1 le_rfl = PMF.pure best :=
   PMF.mix_one _ _
 
@@ -81,20 +80,20 @@ end
 /-! ### The ALT measure -/
 
 section
-variable {A : Type*} [Fintype A]
+variable {A : Type*} [Fintype A] (p : PMF A) (pr : A → ℝ≥0∞) (w : A → ℝ≥0) (a taken : A)
 
 /-- `altCount p taken` is the number of alternative actions available to
     the causee — the support of the action distribution `p`, excluding
     the action actually taken. This is the ALT measure of
     [cao-white-lassiter-2025] (§2.2; `ALT(Y₁) = 5` at its fig. 2a board
     state). -/
-noncomputable def altCount (p : PMF A) (taken : A) : ℕ :=
+noncomputable def altCount : ℕ :=
   (p.support \ {taken}).ncard
 
 /-- `ALT = 0` says exactly that the causee could not have done
     otherwise — every action other than the one taken has probability
     zero. -/
-theorem altCount_eq_zero_iff (p : PMF A) (taken : A) :
+theorem altCount_eq_zero_iff :
     altCount p taken = 0 ↔ ∀ a ≠ taken, p a = 0 := by
   rw [altCount, Set.ncard_eq_zero (Set.toFinite _), Set.sdiff_eq_empty]
   constructor
@@ -124,11 +123,11 @@ any `w : A → ℝ≥0`; the paper's instantiation is `w = e^u`. -/
     [cao-white-lassiter-2025] (§2.3). Here `pr a′` is the model
     probability that the agent takes `a′` and the goal results, and `w`
     is the action weight (exponentiated utility, in the paper). -/
-noncomputable def intentionDegree (pr : A → ℝ≥0∞) (w : A → ℝ≥0) (a : A) : ℝ≥0∞ :=
+noncomputable def intentionDegree : ℝ≥0∞ :=
   (pr a * w a) / ∑ a', pr a' * w a'
 
 /-- INT never exceeds 1. -/
-theorem intentionDegree_le_one (pr : A → ℝ≥0∞) (w : A → ℝ≥0) (a : A) :
+theorem intentionDegree_le_one :
     intentionDegree pr w a ≤ 1 :=
   ENNReal.div_le_of_le_mul <| by
     rw [one_mul]
@@ -150,7 +149,6 @@ noncomputable def modelIntention {V : Type*} {α : V → Type*}
 /-- If every non-taken action has zero probability and the taken
     action's goal-weighted mass is nonzero and finite, its INT is 1. -/
 theorem intentionDegree_eq_one_of_no_alternatives
-    (pr : A → ℝ≥0∞) (w : A → ℝ≥0) (taken : A)
     (halt : ∀ a ≠ taken, pr a = 0)
     (h0 : pr taken * w taken ≠ 0) (hfin : pr taken ≠ ⊤) :
     intentionDegree pr w taken = 1 := by
@@ -167,7 +165,6 @@ theorem intentionDegree_eq_one_of_no_alternatives
     [halpern-kleiman-weiner-2018]) behind the paper's *made*/*forced*
     contrast in its example (8). -/
 theorem intentionDegree_eq_one_of_altCount_eq_zero
-    (p : PMF A) (pr : A → ℝ≥0∞) (w : A → ℝ≥0) (taken : A)
     (hle : ∀ a, pr a ≤ p a) (halt : altCount p taken = 0)
     (h0 : pr taken * w taken ≠ 0) :
     intentionDegree pr w taken = 1 :=
@@ -198,12 +195,14 @@ noncomputable def deterministicSuf (background : Valuation (fun _ : V => Bool))
     (cause effect : V) : ENNReal :=
   if BoolSEM.causallySufficient M background cause effect then 1 else 0
 
+variable (c e : V)
+
 /-- At the empty context (vacuous abduction), the counterfactual
     `probSufficiency` reduces to the deterministic {0,1} indicator
     `deterministicSuf` — i.e. to [nadathur-lauer-2020]'s causal
     sufficiency. This makes "interventional = counterfactual at a
     vacuous context" a theorem rather than a conflation. -/
-theorem probSufficiency_empty_eq_deterministicSuf (c e : V) :
+theorem probSufficiency_empty_eq_deterministicSuf :
     probSufficiency M Valuation.empty c true e true
       = deterministicSuf M Valuation.empty c e := by
   rw [probSufficiency_eq_indicator_of_deterministic, cfSeed_empty]
@@ -220,7 +219,7 @@ theorem probSufficiency_empty_eq_deterministicSuf (c e : V) :
     fails, since the eager development fills undetermined exogenous
     vertices from their mechanisms; the categorical *make* semantics is
     strictly stronger than maximal graded SUF. -/
-theorem probSufficiency_empty_eq_one_of_make (c e : V)
+theorem probSufficiency_empty_eq_one_of_make
     (h : Causative.toSemantics M .make Valuation.empty c true e true) :
     probSufficiency M Valuation.empty c true e true = 1 := by
   rw [probSufficiency_empty_eq_deterministicSuf]
