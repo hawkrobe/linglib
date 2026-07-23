@@ -327,6 +327,12 @@ abbrev manipulates (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
     [SEM.IsDeterministic M] (s : Valuation (fun _ : V => Bool)) (cause effect : V) : Prop :=
   SEM.manipulates M s cause true false effect
 
+/-- `BoolSEM`-flavored `probSufficiency`: the counterfactual probability
+    that intervening `cause := true` yields `effect = true`. -/
+noncomputable abbrev probSufficiency (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
+    (s : Valuation (fun _ : V => Bool)) (cause effect : V) : ENNReal :=
+  SEM.probSufficiency M s cause true effect true
+
 /-- **Direct causal connection**: `cause` is a parent of `effect` in
     the SEM's graph. Pure structural predicate (no `developDet`); fully
     decidable structurally via `Finset.decidableMem`. -/

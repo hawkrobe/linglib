@@ -193,8 +193,8 @@ noncomputable def deterministicSuf (background : Valuation (fun _ : V => Bool))
 variable (c e : V)
 
 theorem probSufficiency_empty_eq_deterministicSuf :
-    probSufficiency M Valuation.empty c true e true
-      = deterministicSuf M Valuation.empty c e := by
+    BoolSEM.probSufficiency M Valuation.empty c e = deterministicSuf M Valuation.empty c e := by
+  unfold BoolSEM.probSufficiency
   rw [probSufficiency_eq_indicator_of_deterministic, cfSeed_empty]
   unfold deterministicSuf
   congr 1
@@ -208,7 +208,7 @@ theorem probSufficiency_empty_eq_deterministicSuf :
     strictly stronger than maximal graded SUF. -/
 theorem probSufficiency_empty_eq_one_of_make
     (h : Causative.toSemantics M .make Valuation.empty c true e true) :
-    probSufficiency M Valuation.empty c true e true = 1 := by
+    BoolSEM.probSufficiency M Valuation.empty c e = 1 := by
   rw [probSufficiency_empty_eq_deterministicSuf]
   unfold deterministicSuf
   exact if_pos (causallySufficient_of_causallyEntails h.2)
@@ -290,7 +290,7 @@ instance : CausalGraph.IsDAG (model p h).graph :=
     `IsDeterministic` — exactly the [cao-white-lassiter-2025]
     requirement that SUF be a real probability. -/
 noncomputable example : ENNReal :=
-  probSufficiency (model p h) Valuation.empty .cause true .effect true
+  BoolSEM.probSufficiency (model p h) Valuation.empty .cause .effect
 
 end ProbabilisticExample
 
