@@ -154,11 +154,12 @@ noncomputable instance (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterminist
     prediction (and contradicting "Rewind, Revise, Re-run" without
     selective regeneration). -/
 
+omit [Fintype V] [DecidableValuation α] in
 /-- **Counterfactual seed** ([lassiter-2017-probabilistic-language] RRR): the partial valuation that
     `counterfactualSimulate` feeds to `develop`. Sets `antecedent := xAnt`,
     leaves descendants of antecedent undetermined (to be regenerated),
     preserves `observed` values for causally-independent vertices. -/
-noncomputable def cfSeed [DecidableEq V]
+noncomputable def cfSeed
     (M : SEM V α) (observed : Valuation α)
     (antecedent : V) (xAnt : α antecedent) : Valuation α := fun v =>
   if h : v = antecedent then some (h ▸ xAnt)
@@ -166,6 +167,18 @@ noncomputable def cfSeed [DecidableEq V]
     haveI : Decidable (M.graph.IsStrictAncestor antecedent v) := Classical.dec _
     if M.graph.IsStrictAncestor antecedent v then none
     else observed.get v
+
+omit [Fintype V] [DecidableValuation α] in
+/-- At the empty context, `cfSeed` reduces to a plain `extend`: with nothing
+    observed, abduction preserves nothing and the counterfactual seed merely
+    sets the antecedent. -/
+theorem cfSeed_empty (M : SEM V α) (antecedent : V) (xAnt : α antecedent) :
+    cfSeed M Valuation.empty antecedent xAnt =
+      (Valuation.empty (α := α)).extend antecedent xAnt := by
+  funext v
+  by_cases h : v = antecedent
+  · subst h; simp [cfSeed, Valuation.extend]
+  · simp [cfSeed, Valuation.extend, Valuation.empty, h]
 
 /-- **Pearl 3-step counterfactual via Lassiter RRR**, PMF-valued. Given
     actually-observed `observed` and a counterfactual intervention
@@ -178,12 +191,10 @@ noncomputable def cfSeed [DecidableEq V]
     Subsumes (with appropriate derived predicates):
     - `whetherCause` ([beller-gerstenberg-2025] Eq 1, graded)
     - `sufficientCause` ([beller-gerstenberg-2025] Eq 3, graded)
-    - `CaoWhiteLassiter2025.probSufficiency` — [cao-white-lassiter-2025]'s
-      SUF, i.e. Pearl's probability of sufficiency ([pearl-2019]): the
-      counterfactual probability of the effect under intervening the cause,
-      via abduction–action–prediction (not plain interventional probability)
+    - `probSufficiency` — Pearl's probability of sufficiency ([pearl-2019]),
+      the SUF measure of [cao-white-lassiter-2025] (graded)
     - Lassiter probabilistic counterfactuals with overt probability operators -/
-noncomputable def counterfactualSimulate [Fintype V] [DecidableEq V] [DecidableValuation α]
+noncomputable def counterfactualSimulate
     (M : SEM V α) [CausalGraph.IsDAG M.graph]
     (observed : Valuation α) (antecedent : V) (xAnt : α antecedent) :
     PMF (Valuation α) :=
@@ -202,7 +213,7 @@ noncomputable def counterfactualSimulate [Fintype V] [DecidableEq V] [DecidableV
 
     For deterministic SEMs, collapses to a {0,1} indicator (see
     `whetherCause_eq_indicator_of_deterministic`). -/
-noncomputable def whetherCause [Fintype V] [DecidableEq V] [DecidableValuation α]
+noncomputable def whetherCause
     (M : SEM V α) [CausalGraph.IsDAG M.graph]
     (observed : Valuation α) (antecedent : V) (xAnt_alt : α antecedent)
     (effect : V) (xEff_actual : α effect) : ENNReal :=
@@ -221,11 +232,27 @@ noncomputable def whetherCause [Fintype V] [DecidableEq V] [DecidableValuation �
     siblings of `antecedent` set to their absent values. The substrate
     doesn't currently provide a `removeAlternatives` constructor; callers
     build it explicitly via `s.extend altᵢ xAbsentᵢ` chains. -/
-noncomputable def sufficientCause [Fintype V] [DecidableEq V] [DecidableValuation α]
+noncomputable def sufficientCause
     (M : SEM V α) [CausalGraph.IsDAG M.graph]
     (alternativesRemoved : Valuation α) (antecedent : V) (xAnt_alt : α antecedent)
     (effect : V) (xEff_actual : α effect) : ENNReal :=
   whetherCause M alternativesRemoved antecedent xAnt_alt effect xEff_actual
+
+/-- **Probability of sufficiency** ([pearl-2019]), the SUF measure of
+    [cao-white-lassiter-2025]: the counterfactual probability that
+    intervening `cause := xC` yields `effect = xE`, evaluated against the
+    factual context `observed` — Pearl's three-step
+    abduction–action–prediction, via `counterfactualSimulate`.
+
+    Distinct from plain interventional probability `P(effect | do(cause))`:
+    causally-independent parents of `effect` recorded in `observed` are
+    *preserved* rather than re-sampled — the oxygen-vs-match contrast
+    [pearl-2019] uses to motivate the measure. -/
+noncomputable def probSufficiency
+    (M : SEM V α) [CausalGraph.IsDAG M.graph]
+    (observed : Valuation α) (cause : V) (xC : α cause)
+    (effect : V) (xE : α effect) : ENNReal :=
+  (counterfactualSimulate M observed cause xC).probOfSet {v | v.hasValue effect xE}
 
 -- ════════════════════════════════════════════════════
 -- § Bridge theorems: deterministic collapse
@@ -259,6 +286,21 @@ theorem whetherCause_eq_indicator_of_deterministic
   simp only [PMF.probOfSet, PMF.toOuterMeasure_pure_apply, Set.mem_setOf_eq]
   by_cases h : (M.developDet (cfSeed M observed antecedent xAnt_alt)).hasValue effect xEff_actual <;>
     simp [h]
+
+/-- Bridge: under `IsDeterministic`, `probSufficiency` collapses to the {0,1}
+    indicator of whether the counterfactual development hits `effect = xE` —
+    the deterministic limit in which [cao-white-lassiter-2025]'s graded SUF
+    recovers a categorical sufficiency judgment. -/
+theorem probSufficiency_eq_indicator_of_deterministic
+    (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+    (observed : Valuation α) (cause : V) (xC : α cause)
+    (effect : V) (xE : α effect) :
+    probSufficiency M observed cause xC effect xE =
+      if (M.developDet (cfSeed M observed cause xC)).hasValue effect xE then 1 else 0 := by
+  unfold probSufficiency
+  rw [counterfactualSimulate_eq_pure_of_deterministic]
+  simp only [PMF.probOfSet, PMF.toOuterMeasure_pure_apply, Set.mem_setOf_eq]
+  by_cases h : (M.developDet (cfSeed M observed cause xC)).hasValue effect xE <;> simp [h]
 
 end Causation.SEM
 
