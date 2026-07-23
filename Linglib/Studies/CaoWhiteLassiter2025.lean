@@ -91,8 +91,7 @@ variable {A : Type*} [Fintype A] (p : PMF A) (taken : A)
 noncomputable def altCount : ℕ :=
   (p.support \ {taken}).ncard
 
-theorem altCount_eq_zero_iff :
-    altCount p taken = 0 ↔ ∀ a ≠ taken, p a = 0 := by
+theorem altCount_eq_zero_iff : altCount p taken = 0 ↔ ∀ a ≠ taken, p a = 0 := by
   rw [altCount, Set.ncard_eq_zero (Set.toFinite _), Set.sdiff_eq_empty,
     Set.subset_singleton_iff]
   exact forall_congr' fun b => not_imp_comm
@@ -108,26 +107,46 @@ The paper's §2.3 displayed equation, a simplified
 desired outcome, normalized by the probability of all alternative
 actions that would have resulted in the same outcome", with each term
 weighted by exponentiated utility `u′ = e^u` — the exponential serving
-only to make the weights strictly positive. We abstract the weight to
-any `w : A → ℝ≥0`; the paper's instantiation is `w = e^u`. -/
+only to make the weights strictly positive. Here `pr a′` is the joint
+probability that the agent takes `a′` and the goal results, and the
+weight is abstracted to any `w : A → ℝ≥0` (the paper's instantiation is
+`w = e^u`); `modelIntention` below instantiates `pr` over a `SEM`. -/
 
 variable (pr : A → ℝ≥0∞) (w : A → ℝ≥0) (a : A)
 
-/-- `intentionDegree pr w a` is the goal-weighted share of action `a`
-    among all goal-conducive alternatives — the INT measure of
-    [cao-white-lassiter-2025] (§2.3). Here `pr a′` is the model
-    probability that the agent takes `a′` and the goal results, and `w`
-    is the action weight (exponentiated utility, in the paper). -/
+/-- The goal-weighted share of action `a` among all goal-conducive
+    alternatives. -/
 noncomputable def intentionDegree : ℝ≥0∞ :=
   (pr a * w a) / ∑ a', pr a' * w a'
 
-/-- INT never exceeds 1. -/
-theorem intentionDegree_le_one :
-    intentionDegree pr w a ≤ 1 :=
+theorem intentionDegree_le_one : intentionDegree pr w a ≤ 1 :=
   ENNReal.div_le_of_le_mul <| by
-    rw [one_mul]
-    exact Finset.single_le_sum (f := fun a' => pr a' * w a') (fun _ _ => zero_le)
+    simpa using Finset.single_le_sum (f := fun a' => pr a' * w a') (fun _ _ => zero_le)
       (Finset.mem_univ a)
+
+theorem intentionDegree_eq_one_of_no_alternatives
+    (halt : ∀ a ≠ taken, pr a = 0)
+    (h0 : pr taken * w taken ≠ 0) (hfin : pr taken ≠ ∞) :
+    intentionDegree pr w taken = 1 := by
+  rw [intentionDegree,
+    Finset.sum_eq_single taken (fun a _ ha => by rw [halt a ha, zero_mul])
+      (fun h => absurd (Finset.mem_univ _) h)]
+  exact ENNReal.div_self h0 (ENNReal.mul_ne_top hfin ENNReal.coe_ne_top)
+
+/-- An action without alternatives is trivially intentional — the
+    alternative-possibilities principle ([frankfurt-1969], via
+    [halpern-kleiman-weiner-2018]) behind the paper's *made*/*forced*
+    contrast in its example (8). -/
+theorem intentionDegree_eq_one_of_altCount_eq_zero
+    (hle : ∀ a, pr a ≤ p a) (halt : altCount p taken = 0)
+    (h0 : pr taken * w taken ≠ 0) :
+    intentionDegree pr w taken = 1 :=
+  intentionDegree_eq_one_of_no_alternatives taken pr w
+    (fun a ha => le_zero_iff.mp ((altCount_eq_zero_iff p taken).mp halt a ha ▸ hle a))
+    h0
+    (((hle taken).trans (p.coe_le_one taken)).trans_lt ENNReal.one_lt_top).ne
+
+end
 
 /-- The paper's INT over a `SEM` instantiates `intentionDegree` with
     `pr a′` the probability, under the development of the context, that
@@ -140,35 +159,6 @@ noncomputable def modelIntention {V : Type*} {α : V → Type*}
     (a : α act) : ℝ≥0∞ :=
   intentionDegree
     (fun a' => (develop M ctx).probOfSet {s | s.hasValue act a' ∧ s ∈ goal}) w a
-
-/-- If every non-taken action has zero probability and the taken
-    action's goal-weighted mass is nonzero and finite, its INT is 1. -/
-theorem intentionDegree_eq_one_of_no_alternatives
-    (halt : ∀ a ≠ taken, pr a = 0)
-    (h0 : pr taken * w taken ≠ 0) (hfin : pr taken ≠ ⊤) :
-    intentionDegree pr w taken = 1 := by
-  rw [intentionDegree,
-    Finset.sum_eq_single taken (fun a _ ha => by rw [halt a ha, zero_mul])
-      (fun h => absurd (Finset.mem_univ _) h)]
-  exact ENNReal.div_self h0 (ENNReal.mul_ne_top hfin ENNReal.coe_ne_top)
-
-/-- An action without alternatives is trivially intentional. If the
-    causee's action distribution `p` leaves no alternatives
-    (`altCount = 0`), the taken action's INT degenerates to 1 for any
-    joint action-and-goal weights `pr` dominated by `p` — the
-    alternative-possibilities principle ([frankfurt-1969], via
-    [halpern-kleiman-weiner-2018]) behind the paper's *made*/*forced*
-    contrast in its example (8). -/
-theorem intentionDegree_eq_one_of_altCount_eq_zero
-    (hle : ∀ a, pr a ≤ p a) (halt : altCount p taken = 0)
-    (h0 : pr taken * w taken ≠ 0) :
-    intentionDegree pr w taken = 1 :=
-  intentionDegree_eq_one_of_no_alternatives taken pr w
-    (fun a ha => le_antisymm ((altCount_eq_zero_iff p taken).mp halt a ha ▸ hle a) zero_le)
-    h0
-    (((hle taken).trans (p.coe_le_one taken)).trans_lt ENNReal.one_lt_top).ne
-
-end
 
 /-! ### Deterministic limit
 
