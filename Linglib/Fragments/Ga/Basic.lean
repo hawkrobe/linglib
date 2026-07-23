@@ -1,112 +1,104 @@
 import Linglib.Features.Number.Basic
-import Linglib.Features.Gender.Basic
-import Linglib.Features.Person.Decomposition
+import Linglib.Features.Person.Basic
 
 /-!
 # Gã Fragment
 [allotey-2021]
 
 Language data for Gã (ISO: gaa), a Kwa (Niger-Congo) language spoken in
-Greater Accra, Ghana. The data here covers what is needed to formalize
-the obligatory control facts in [allotey-2021]: pronoun paradigm,
-TAM marking, complementizer inventory, and embedded clause typology.
+Greater Accra, Ghana, covering what [allotey-2021] ("Overt Pronouns of
+Infinitival Predicates of Gã") needs for the obligatory-control facts:
+pronoun paradigm, TAM marking, complementizer inventory, and embedded
+clause typology.
 
 ## Coverage
 
-- Pronoun paradigm (subject proclitics, person × number)
-- TAM prefixes (future, progressive, perfect) and irrealis tone
+- Subject proclitics (person × number; the paper's Table 3)
+- TAM prefixes (future, progressive, perfective) and the irrealis
+  marker `á`, realized in embedded control clauses as high tone on
+  the subject pronoun
 - Complementizer inventory (`akɛ`, `kɛji`, `ni`) with finite vs.
-  irrealis distinction; `ni` is recorded as optionally-overt because
-  [allotey-2021] ex 34 shows it dropping in some controlled
-  clauses while ex 35–38 show it obligatorily present
+  irrealis distinction; `ni` is optionally overt with some
+  control verbs (*tao* 'want', [allotey-2021] ex 34) and
+  obligatory with others (*hiɛ-kã-nɔ* 'hope', ex 35)
 - Embedded clause typology (three-way: `finiteAke`, `finiteKeji`,
   `irrealisNi`)
-- Pro-drop / overt-subject profile
+- Pro-drop profile
 
 ## Identifier policy
 
 Lean 4 does not accept the IPA characters `ɛ` (U+025B) or `ŋ` (U+014B)
-as identifier characters. Constructor and definition names use the
-plain Latin orthography (`ake`, `keji`, `nye`, `kpleno`, `kpang`),
-while the IPA form is preserved in the corresponding `String` value.
+as identifier characters. Constructor and definition names use plain
+Latin orthography (`ake`, `keji`, `nye`), while the IPA form is
+preserved in the corresponding `String` value.
 
 ## What is NOT covered (deliberately)
 
-Verbal negation morphology and the V-to-T raising claim. Both rely on
-independent morphological argumentation ([pollock-1989]'s
-diagnostic requires a free Neg head; Gã `-ee` and `-ko` appear
-suffixal) that is orthogonal to the OC story.
+The verb-movement/negation-placement diagnostic ([allotey-2021]'s fifth
+non-finiteness argument, after [pollock-1989]: finite verbs raise past
+the suffixal negation `-ee`, `-ko`, while irrealis embedded clauses show
+a free preverbal negator `ka`, her exx 120–125). Formalizing the raising
+argument needs phrase-structure substrate beyond this fragment's
+clause-typology schema; the finiteness split it diagnoses is already
+carried by `ClauseProperties.unrestrictedTAM`.
 -/
 
 namespace Ga
 
--- ════════════════════════════════════════════════════════════════
--- § 1: Person and Number
--- ════════════════════════════════════════════════════════════════
+/-! ### Pronoun paradigm -/
 
-inductive Person where | first | second | third
-  deriving DecidableEq, Repr
-
-/-- Ga's three-way person in the canonical inventory. -/
-def Person.toPerson : Person → _root_.Person
-  | .first => .first
-  | .second => .second
-  | .third => .third
-
-inductive Number where | sg | pl
-  deriving DecidableEq, Repr
-
-/-- Ga's two-value system in the canonical inventory. -/
-def Number.toNumber : Number → _root_.Number
-  | .sg => .singular
-  | .pl => .plural
-
--- ════════════════════════════════════════════════════════════════
--- § 2: Pronoun Paradigm
--- ════════════════════════════════════════════════════════════════
-
-/-- Subject proclitic forms.
+/-- Subject proclitic forms (plain subjective series, [allotey-2021]
+    Table 3), on the canonical person/number inventory; `none` for cells
+    outside Gã's 3 × 2 paradigm. Not covered: the clipped past-tense 1SG
+    variant *ĩ* and the impersonal subject pronoun *a*.
 
     Gã subject pronouns are proclitics on the inflected verb. In
-    [allotey-2021]'s OC examples, the embedded subject of a
-    controlled `ni`-clause is realized as an overt subject proclitic
-    (e.g., `e-` for 3SG controllees) — the embedded subject position
-    cannot be silent. -/
-def subjectProclitic : Person → Number → String
-  | .first,  .sg => "mi"
-  | .second, .sg => "o"
-  | .third,  .sg => "e"
-  | .first,  .pl => "wɔ"
-  | .second, .pl => "nyɛ"
-  | .third,  .pl => "amɛ"
+    [allotey-2021]'s OC examples, the embedded subject of a controlled
+    `ni`-clause is realized as an overt subject proclitic (ex 3a: `e-` for
+    a 3SG controllee) — the embedded subject position cannot be silent.
+    Merged with the irrealis marker `á` the 1SG proclitic surfaces as the
+    portmanteau *má* (ex 34) rather than plain *mi*. -/
+def subjectProclitic : Person → Number → Option String
+  | .first,  .singular => some "mi"
+  | .second, .singular => some "o"
+  | .third,  .singular => some "e"
+  | .first,  .plural   => some "wɔ"
+  | .second, .plural   => some "nyɛ"
+  | .third,  .plural   => some "amɛ"
+  | _,       _         => none
 
--- ════════════════════════════════════════════════════════════════
--- § 3: TAM Marking
--- ════════════════════════════════════════════════════════════════
+/-! ### TAM marking -/
 
-/-- Prefixal TAM categories of the Gã verb.
+/-- Prefixal TAM categories of the Gã verb (bare root = default past).
 
-    [allotey-2021] uses the future, progressive, and perfect
-    prefixes to argue that embedded clauses introduced by `akɛ` and
-    `kɛji` allow the full TAM paradigm (finite), while clauses
-    introduced by `ni` are restricted to irrealis (no future,
-    progressive, or perfect prefix). -/
+    [allotey-2021] uses the future, progressive, and perfective prefixes
+    to argue that embedded clauses introduced by `akɛ` and `kɛji` allow
+    the full TAM paradigm (finite), while clauses introduced by `ni`
+    prohibit tense/aspect marking of any kind and are restricted to
+    irrealis (her exx 119, tense-restriction diagnostic). -/
 inductive TAM where
-  /-- Future prefix `baa-` -/
+  /-- Future prefix `baa-` (historically the ingressive deictic `bà`
+      plus the irrealis marker `á`) -/
   | future
   /-- Progressive prefix `mii-` -/
   | progressive
-  /-- Perfect prefix `é-` (high tone) -/
-  | perfect
-  /-- Irrealis: no overt prefix; marked by stem high tone (`á`) -/
+  /-- Perfective prefix `é-` (high tone) -/
+  | perfective
+  /-- Irrealis marker `á`: no independent verbal prefix in embedded
+      control clauses; realized as high tone on the subject pronoun
+      (portmanteau *má* for 1SG). True subjunctives double it — high
+      tone on pronoun AND verb ([allotey-2021] Table 4). -/
   | irrealis
   deriving DecidableEq, Repr
 
-def TAM.exponent : TAM → String
-  | .future      => "baa-"
-  | .progressive => "mii-"
-  | .perfect     => "é-"
-  | .irrealis    => "á"
+/-- Segmental exponent of a TAM category; `none` for the irrealis, whose
+    marking in embedded control clauses is tonal (on the subject
+    pronoun) rather than prefixal. -/
+def TAM.exponent : TAM → Option String
+  | .future      => some "baa-"
+  | .progressive => some "mii-"
+  | .perfective  => some "é-"
+  | .irrealis    => none
 
 /-- Whether this TAM is part of the unrestricted (finite) paradigm.
 
@@ -117,9 +109,7 @@ def TAM.isFinite : TAM → Bool
   | .irrealis => false
   | _         => true
 
--- ════════════════════════════════════════════════════════════════
--- § 4: Complementizers
--- ════════════════════════════════════════════════════════════════
+/-! ### Complementizers -/
 
 /-- The three complementizers [allotey-2021] discusses. -/
 inductive Complementizer where
@@ -129,9 +119,11 @@ inductive Complementizer where
   /-- `kɛji` — finite complementizer for conditional and
       conditional-like complements -/
   | keji
-  /-- `ni` — irrealis complementizer; introduces controlled clauses.
-      Allotey ex 34 shows `ni` is optional in some controlled clauses
-      while ex 35–38 show it obligatorily present. -/
+  /-- `ni` — irrealis complementizer; introduces controlled clauses
+      (a weak CP: no focus fronting, no independent tense,
+      [allotey-2021] exx 107–109). Optionally overt with some control
+      verbs (*tao* 'want', ex 34) and obligatory with others
+      (*hiɛ-kã-nɔ* 'hope', ex 35). -/
   | ni
   deriving DecidableEq, Repr
 
@@ -145,9 +137,7 @@ def Complementizer.isFinite : Complementizer → Bool
   | .ni   => false
   | _     => true
 
--- ════════════════════════════════════════════════════════════════
--- § 5: Embedded Clause Typology
--- ════════════════════════════════════════════════════════════════
+/-! ### Embedded clause typology -/
 
 /-- Three embedded clause types in Gã, distinguished by complementizer
     and TAM properties ([allotey-2021]).
@@ -161,9 +151,9 @@ inductive EmbeddedClauseType where
   /-- Finite `kɛji`-clause: full TAM, free subject reference, no OC -/
   | finiteKeji
   /-- Irrealis `ni`-clause: irrealis only, obligatory coreference, OC.
-      The complementizer `ni` itself may be optional (Allotey ex 34) or
-      obligatory (ex 35–38) depending on the matrix verb; the irrealis
-      tone marking and OC behavior are constant. -/
+      The complementizer `ni` itself may be optional or obligatory
+      depending on the matrix verb; the irrealis tone marking and OC
+      behavior are constant. -/
   | irrealisNi
   deriving DecidableEq, Repr
 
@@ -193,20 +183,10 @@ theorem complementizer_isFinite_eq_finiteFlag (c : EmbeddedClauseType) :
     (clauseComplementizer c).isFinite = (clauseProperties c).finiteComplementizer := by
   cases c <;> rfl
 
--- ════════════════════════════════════════════════════════════════
--- § 6: Typological Profile
--- ════════════════════════════════════════════════════════════════
+/-! ### Typological profile -/
 
 /-- Gã does NOT allow null pronominal subjects in matrix clauses:
     every clause requires an overt subject proclitic ([allotey-2021]). -/
 def allowsProDrop : Bool := false
-
-/-- Gã has SVO basic order. -/
-def basicWordOrder : String := "SVO"
-
-/-- Controlled subjects in `irrealisNi` clauses must be OVERT proclitics
-    ([allotey-2021]'s central empirical observation). Null PRO is
-    ungrammatical in this position. -/
-def controlledSubjectMustBeOvert : Bool := true
 
 end Ga

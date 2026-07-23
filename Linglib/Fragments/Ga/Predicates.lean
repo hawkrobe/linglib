@@ -1,30 +1,15 @@
 import Linglib.Fragments.Ga.Basic
-import Linglib.Studies.Landau2015
 
 /-!
 # Gã Complement-Taking Predicates
 [allotey-2021]
 
 Inventory of Gã verbs that take embedded clausal complements, classified
-by the clause type they select and (where the semantic class is clear)
-their [landau-2015] predicate class.
-
-All entries here are attested in [allotey-2021]'s example data
-(the only verb-list source). The single exception is `kee` 'say', which
-the paper uses in passing as the standard `akɛ`-clause exemplar but
-does not pull out as part of its CTP inventory; it is kept because
-without at least one finite-complement verb the OC-vs-non-OC contrast
-cannot be exhibited end-to-end. The docstring on `kee` records this.
-
-## Coverage
-
-- Subject-control verbs selecting irrealis `ni`-clauses: `tao` 'want',
-  `nye` 'manage/be.able', `kpleno` 'agree', `kpang` 'plan',
-  `hiekpano` 'forget' (Allotey ex 37–38)
-- Object-control verbs selecting irrealis `ni`-clauses: `kenya` 'urge',
-  `dai` 'force', `laka` 'persuade', `wa` 'help'
-- Finite-clause verb selecting `akɛ`-clauses: `kee` 'say' (standard
-  exemplar; see note above)
+by the clause type they select and (for `ni`-clause selectors) whether
+they induce subject or object control. All entries are attested in
+[allotey-2021]'s example data, cited by example number. `kee` 'say' is
+the standard `akɛ`-clause exemplar the paper uses throughout (exx 47–49)
+rather than a member of its control-predicate inventory.
 
 ## Identifier policy
 
@@ -34,132 +19,94 @@ See `Fragments/Ga/Basic.lean` for rationale.
 
 namespace Ga
 
-open Landau2015 (LandauPredicateClass ControlTier)
-
-/-- Whether a Gã CTP induces subject control or object control over the
-    embedded `ni`-clause subject. `none` for finite-complement verbs
-    that are not control verbs. -/
+/-- Which matrix argument controls the embedded `ni`-clause subject. -/
 inductive Control where
-  | subjectControl
-  | objectControl
-  | noneControl
+  | subject
+  | object
   deriving DecidableEq, Repr
 
-/-- A Gã complement-taking predicate.
-
-    The Landau predicate class is recorded for verbs whose semantic
-    classification is clear; for verbs like `wa` 'help' (no clean fit
-    in any of Landau's eight classes), it is left as `none` —
-    paralleling the treatment of English `try` in
-    `Landau2015.try_unclassifiable`. -/
+/-- A Gã complement-taking predicate: form, gloss, selected embedded
+    clause type, and (for `ni`-clause selectors) its control type;
+    `none` for finite-complement verbs that are not control verbs. -/
 structure CTP where
-  form         : String
-  gloss        : String
-  selects      : EmbeddedClauseType
-  control      : Control
-  landauClass  : Option LandauPredicateClass
+  form    : String
+  gloss   : String
+  selects : EmbeddedClauseType
+  control : Option Control
   deriving Repr, DecidableEq
 
-/-- The control tier induced by a Gã CTP, derived from its Landau class.
-    Returns `none` for unclassifiable verbs and finite-complement verbs. -/
-def CTP.controlTier (c : CTP) : Option ControlTier :=
-  c.landauClass.map (·.controlTier)
+/-! ### Subject-control verbs (irrealis `ni`-clause) -/
 
--- ════════════════════════════════════════════════════════════════
--- § 1: Subject-Control Verbs (irrealis `ni`-clause)
--- ════════════════════════════════════════════════════════════════
+/-- 'want' — subject control; `ni` optionally overt
+    ([allotey-2021] ex 34: *Mi-i tao (ni) ma na bo* 'I want to see you'). -/
+def tao : CTP := ⟨"tao", "want", .irrealisNi, some .subject⟩
 
-/-- 'want' — desiderative, subject control. Logophoric tier. -/
-def tao : CTP :=
-  ⟨"tao", "want", .irrealisNi, .subjectControl, some .desiderative⟩
+/-- 'hope' (lit. 'face-place-upon') — subject control; `ni` obligatory
+    ([allotey-2021] ex 35: *Mi hiɛ-kã-nɔ ni ma ya skul gbi ko*
+    'I hope to go to school one day'). -/
+def hiekano : CTP := ⟨"hiɛ-kã-nɔ", "hope", .irrealisNi, some .subject⟩
 
-/-- 'agree' — desiderative, subject control. Logophoric tier. -/
-def kpleno : CTP :=
-  ⟨"kplɛnɔ", "agree", .irrealisNi, .subjectControl, some .desiderative⟩
+/-- 'forget' (lit. 'face-stop-upon') — subject control; `ni` obligatory
+    ([allotey-2021] exx 37–38: *O hiɛ-kpa-nɔ ni o kɔ aspaatere lɛ*
+    'You forgot to pick up the shoe'). -/
+def hiekpano : CTP := ⟨"hiɛ-kpa-nɔ", "forget", .irrealisNi, some .subject⟩
 
-/-- 'plan' — desiderative, subject control. Logophoric tier. -/
-def kpang : CTP :=
-  ⟨"kpaŋ", "plan", .irrealisNi, .subjectControl, some .desiderative⟩
+/-- 'try' (lit. 'squeeze-my-face') — subject control; `ni` obligatory
+    ([allotey-2021] ex 36: 'I tried to close the door'). -/
+def miamihie : CTP := ⟨"mia-mi-hiɛ", "try", .irrealisNi, some .subject⟩
 
-/-- 'forget' — implicative (negative), subject control. Predicative tier.
-    Allotey ex 37–38: *e-hiɛ-kpa-nɔ akɛ è-fee shi̇kpɔ̃ɔ̃ lε* 'he forgot
-    to do that work'. Like English `forget` ([karttunen-1971]):
-    failure entails the complement. -/
-def hiekpano : CTP :=
-  ⟨"hiɛ-kpa-nɔ", "forget", .irrealisNi, .subjectControl, some .implicative⟩
+/-- 'remember' — subject control ([allotey-2021] ex 43: *Mi kai ni ma he
+    wolo* 'I remembered to buy a book'). With `akɛ` instead of `ni` the
+    complement is finite 'remember that' (ex 89a); implicative in the
+    control use, so the embedded irrealis marker is suppressed
+    (*mi*, not *má*; the paper's §5.2.3 asymmetry). -/
+def kai : CTP := ⟨"kai", "remember", .irrealisNi, some .subject⟩
 
-/-- 'manage / be able to' — implicative (modal-flavored), subject control.
-    Predicative tier. Allotey treats it as a modal/implicative verb;
-    the semantics parallels English `manage`. -/
-def nye : CTP :=
-  ⟨"nyɛ", "manage", .irrealisNi, .subjectControl, some .implicative⟩
+/-- 'manage / be able to' — subject control; `ni` optionally overt
+    ([allotey-2021] ex 39: 'The children managed to buy a home').
+    Implicative like `kai`: the embedded irrealis marker is suppressed
+    (ex 89b *mi/\*má*). -/
+def nye : CTP := ⟨"nyɛ", "manage", .irrealisNi, some .subject⟩
 
--- ════════════════════════════════════════════════════════════════
--- § 2: Object-Control Verbs (irrealis `ni`-clause)
--- ════════════════════════════════════════════════════════════════
+/-- 'agree' — subject control ([allotey-2021] ex 52; ex 89c shows the
+    embedded irrealis marker obligatory: *\*mi/má*). With `akɛ` it takes
+    a finite subjunctive complement instead ('agree that…', ex 105). -/
+def kpleno : CTP := ⟨"kplɛnɔ", "agree", .irrealisNi, some .subject⟩
 
-/-- 'urge' — desiderative, object control. Logophoric tier. -/
-def kenya : CTP :=
-  ⟨"kenya", "urge", .irrealisNi, .objectControl, some .desiderative⟩
+/-- 'plan / decide' — subject control ([allotey-2021] exx 89d, 106; the
+    embedded irrealis marker is obligatory, and only `ni` — never `akɛ`
+    or `kɛji` — introduces the complement). -/
+def kpang : CTP := ⟨"kpaŋ", "plan", .irrealisNi, some .subject⟩
 
-/-- 'persuade' — desiderative, object control. Logophoric tier. -/
-def laka : CTP :=
-  ⟨"laka", "persuade", .irrealisNi, .objectControl, some .desiderative⟩
+/-! ### Object-control verbs (irrealis `ni`-clause) -/
 
-/-- 'force' — implicative causative, object control. Predicative tier.
-    Treated like English `force` per [landau-2015]'s (4a):
-    coercive causatives pattern as implicatives. -/
-def dai : CTP :=
-  ⟨"dai", "force", .irrealisNi, .objectControl, some .implicative⟩
+/-- 'help' — object control ([allotey-2021] ex 54: *Mi wa Ama ni e-ya
+    skul* 'I helped Ama to go to school'). -/
+def wa : CTP := ⟨"wa", "help", .irrealisNi, some .object⟩
 
-/-- 'help' — object control. Landau class left unspecified
-    (`help` does not fit any of Landau's eight classes cleanly). -/
-def wa : CTP :=
-  ⟨"wa", "help", .irrealisNi, .objectControl, none⟩
+/-- 'urge / encourage' — object control ([allotey-2021] ex 55). -/
+def kenya : CTP := ⟨"kenya", "urge", .irrealisNi, some .object⟩
 
--- ════════════════════════════════════════════════════════════════
--- § 3: Finite-Complement Verb (`akɛ`-clause)
--- ════════════════════════════════════════════════════════════════
+/-- 'force' — object control ([allotey-2021] ex 56). -/
+def dai : CTP := ⟨"dai", "force", .irrealisNi, some .object⟩
 
-/-- 'say' — utterance verb, finite `akɛ`-clause.
+/-- 'persuade / coax / deceive' (context-dependent, the paper's fn 4) —
+    object control ([allotey-2021] exx 57–58). -/
+def laka : CTP := ⟨"laka", "persuade", .irrealisNi, some .object⟩
 
-    Not pulled out as a CTP entry by [allotey-2021], but used in
-    passing as the canonical example of an `akɛ`-clause selector
-    (the cross-Kwa standard utterance verb). Kept here so that the
-    library can exhibit the OC-vs-non-OC contrast end-to-end. -/
-def kee : CTP :=
-  ⟨"kɛɛ", "say", .finiteAke, .noneControl, some .propositional⟩
+/-- 'ask' — object control ([allotey-2021] ex 59: 'I asked Ayele to
+    tell me a story'). -/
+def bi : CTP := ⟨"bi", "ask", .irrealisNi, some .object⟩
 
--- ════════════════════════════════════════════════════════════════
--- § 4: Per-Verb Verification Theorems
--- ════════════════════════════════════════════════════════════════
+/-! ### Finite-complement verbs (`akɛ`- and `kɛji`-clauses) -/
 
--- Subject-control verbs select irrealis `ni`-clauses.
-theorem tao_irrealisNi      : tao.selects      = .irrealisNi := rfl
-theorem hiekpano_irrealisNi : hiekpano.selects = .irrealisNi := rfl
-theorem nye_irrealisNi      : nye.selects      = .irrealisNi := rfl
-theorem kpleno_irrealisNi   : kpleno.selects   = .irrealisNi := rfl
-theorem kpang_irrealisNi    : kpang.selects    = .irrealisNi := rfl
+/-- 'say' — utterance verb, finite `akɛ`-clause ([allotey-2021]
+    exx 47–49: *Jojo kɛɛ akɛ …* 'Jojo said that …'). -/
+def kee : CTP := ⟨"kɛɛ", "say", .finiteAke, none⟩
 
--- Object-control verbs select irrealis `ni`-clauses.
-theorem kenya_irrealisNi : kenya.selects = .irrealisNi := rfl
-theorem laka_irrealisNi  : laka.selects  = .irrealisNi := rfl
-theorem dai_irrealisNi   : dai.selects   = .irrealisNi := rfl
-theorem wa_irrealisNi    : wa.selects    = .irrealisNi := rfl
-
--- Finite-complement verb selects `akɛ`-clauses.
-theorem kee_finiteAke : kee.selects = .finiteAke := rfl
-
--- Landau control tier: implicative verbs are predicative, desiderative
--- verbs are logophoric. Direct application of `LandauPredicateClass.controlTier`.
-theorem hiekpano_predicative : hiekpano.controlTier = some .predicative := rfl
-theorem nye_predicative      : nye.controlTier      = some .predicative := rfl
-theorem dai_predicative      : dai.controlTier      = some .predicative := rfl
-
-theorem tao_logophoric    : tao.controlTier    = some .logophoric := rfl
-theorem kpleno_logophoric : kpleno.controlTier = some .logophoric := rfl
-theorem kpang_logophoric  : kpang.controlTier  = some .logophoric := rfl
-theorem kenya_logophoric  : kenya.controlTier  = some .logophoric := rfl
-theorem laka_logophoric   : laka.controlTier   = some .logophoric := rfl
+/-- 'know' — selects a finite `kɛji`-clause for if/whether complements
+    ([allotey-2021] exx 104, 108: 'know if they will be coming',
+    'doesn't know whether you or he bought the book'). -/
+def le : CTP := ⟨"le", "know", .finiteKeji, none⟩
 
 end Ga
