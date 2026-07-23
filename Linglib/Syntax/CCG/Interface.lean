@@ -1,7 +1,7 @@
 import Linglib.Syntax.CCG.Basic
 import Linglib.Semantics.Intensional.Defs
 import Linglib.Semantics.Intensional.Conjunction
-import Linglib.Semantics.Coordination.Basic
+import Linglib.Semantics.Composition.CoordinatorOp
 import Linglib.Semantics.Composition.Combinator
 
 /-!

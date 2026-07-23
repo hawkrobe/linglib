@@ -1,8 +1,8 @@
 import Linglib.Syntax.Minimalist.Phase.Basic
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
-import Linglib.Semantics.Negation.Expletive
-import Linglib.Semantics.Negation.CzechNegation
-import Linglib.Semantics.Negation.Defs
+import Linglib.Semantics.Polarity.ExpletiveNegation
+import Linglib.Semantics.Polarity.CzechNegation
+import Linglib.Semantics.Polarity.Negation
 import Linglib.Semantics.Polarity.Item
 import Mathlib.Data.Fintype.Basic
 

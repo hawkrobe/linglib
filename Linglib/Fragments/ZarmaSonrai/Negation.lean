@@ -1,5 +1,5 @@
 import Linglib.Syntax.Negation
-import Linglib.Semantics.Negation.Expletive
+import Linglib.Semantics.Polarity.ExpletiveNegation
 
 /-!
 # Zarma-Sonrai: Negation and Expletive Negation Markers

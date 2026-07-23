@@ -420,7 +420,7 @@ noncomputable instance [DecidableEq V] (M : SEM V α) [CausalGraph.IsDAG M.graph
 theorem causallyEntails_iff_fuel [DecidableEq V] (M : SEM V α)
     [CausalGraph.IsDAG M.graph] [IsDeterministic M]
     (r : CausalGraph.Ranking M.graph)
-    {n : ℕ} {v : V} (hn : r.rank v < n) (s : Valuation α) (x : α v) :
+    {n : ℕ} {v : V} (hn : r v < n) (s : Valuation α) (x : α v) :
     causallyEntails M s v x ↔ developDetVtxFuel M s n v = some x := by
   rw [causallyEntails, ← developDetVtxFuel_eq_developDetVtx? M r s hn]
 
@@ -475,7 +475,7 @@ theorem causallyEntails_mono [DecidableEq V] [DecidableValuation α]
     {s s' : Valuation α} (hcons : isConsistentSuper M s s')
     {v : V} {x : α v} (h : causallyEntails M s v x) :
     causallyEntails M s' v x := by
-  induction v using (CausalGraph.IsDAG.wf (G := M.graph)).induction with
+  induction v using (IsWellFounded.wf (r := M.graph.IsStrictAncestor)).induction with
   | _ v ih =>
     cases hs'v : s'.get v with
     | some z =>
@@ -690,7 +690,7 @@ instance [Fintype V] [DecidableEq V] [DecidableValuation α] [∀ v, Fintype (α
 theorem causallyNecessary_iff_fuel [Fintype V] [DecidableEq V] [DecidableValuation α]
     (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
     (r : CausalGraph.Ranking M.graph)
-    {n : ℕ} (hn : ∀ v : V, r.rank v < n)
+    {n : ℕ} (hn : ∀ v : V, r v < n)
     (s : Valuation α) (cause : V) (xC : α cause) (effect : V) (xE : α effect) :
     causallyNecessary M s cause xC effect xE ↔
       causallyNecessaryFuel M n s cause xC effect xE := by

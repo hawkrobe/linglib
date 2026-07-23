@@ -24,6 +24,12 @@ structure CausalGraph (V : Type*) where
   /-- The set of parents of each vertex. -/
   parents : V → Finset V
 
+/- `CausalGraph` deliberately carries `Finset`-valued parents rather than
+mathlib's Prop-adjacency `Digraph`: mechanisms, `ready`, `developDet`,
+and the study `decide` proofs all enumerate parents computationally. The
+Prop-adjacency view, if a consumer ever needs mathlib's `Digraph` API,
+is `⟨(· ∈ ·.parents ·)⟩`. -/
+
 namespace CausalGraph
 
 variable {V : Type*}

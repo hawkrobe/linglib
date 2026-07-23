@@ -1,6 +1,6 @@
 import Mathlib.Data.Set.Insert
 import Linglib.Semantics.Presupposition.ContentLayer
-import Linglib.Semantics.Highlighting
+import Linglib.Semantics.Questions.Highlighting
 import Linglib.Semantics.Evidential.Source
 import Linglib.Discourse.Roles
 import Linglib.Semantics.Questions.Hamblin

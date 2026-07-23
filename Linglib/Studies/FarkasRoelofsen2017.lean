@@ -1,7 +1,7 @@
 import Linglib.Discourse.Commitment.Table
 import Linglib.Discourse.Commitment.SourceMarked
 import Linglib.Discourse.Commitment.Space
-import Linglib.Semantics.Highlighting
+import Linglib.Semantics.Questions.Highlighting
 
 /-!
 # Farkas & Roelofsen (2017): Division of Labor in Declaratives and Interrogatives

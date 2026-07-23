@@ -4,8 +4,8 @@ import Linglib.Semantics.Intensional.WorldTimeIndex
 import Linglib.Core.Order.Relation
 import Linglib.Semantics.Tense.Defs
 import Linglib.Semantics.Tense.Reichenbach
-import Linglib.Semantics.Context.Tower
-import Linglib.Semantics.Context.Shifts
+import Linglib.Semantics.Reference.Context.Tower
+import Linglib.Semantics.Reference.Context.Shifts
 
 /-!
 # Unified Tense Pronoun Architecture

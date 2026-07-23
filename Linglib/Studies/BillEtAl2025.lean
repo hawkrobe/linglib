@@ -2,7 +2,7 @@ import Linglib.Semantics.Intensional.Defs
 import Linglib.Semantics.Intensional.Conjunction
 import Linglib.Semantics.Plurality.Distributivity
 import Linglib.Morphology.Morph
-import Linglib.Semantics.Coordination.Defs
+import Linglib.Syntax.Category.Coordinator
 import Linglib.Syntax.Coordination
 import Linglib.Studies.Haspelmath2007
 import Linglib.Studies.MitrovicSauerland2016

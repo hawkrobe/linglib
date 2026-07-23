@@ -1,4 +1,4 @@
-import Linglib.Semantics.Coordination.Defs
+import Linglib.Syntax.Category.Coordinator
 
 /-!
 # Hausa Coordination Morphemes

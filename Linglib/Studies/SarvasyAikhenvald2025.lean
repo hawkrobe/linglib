@@ -3,8 +3,8 @@ import Linglib.Fragments.Nungon.MedialVerbs
 import Linglib.Fragments.Manambu.MedialVerbs
 import Linglib.Fragments.Korean.MedialVerbs
 import Linglib.Fragments.Turkish.MedialVerbs
-import Linglib.Semantics.Context.Tower
-import Linglib.Semantics.Context.Shifts
+import Linglib.Semantics.Reference.Context.Tower
+import Linglib.Semantics.Reference.Context.Shifts
 
 /-!
 # Clause Chaining

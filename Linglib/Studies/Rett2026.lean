@@ -1,7 +1,7 @@
 import Linglib.Semantics.Degree.Basic
 import Linglib.Semantics.Tense.TemporalConnectives
 import Linglib.Studies.JinKoenig2021
-import Linglib.Semantics.Negation.Expletive
+import Linglib.Semantics.Polarity.ExpletiveNegation
 import Linglib.Fragments.English.Modifiers.Adjectives
 import Linglib.Fragments.Italian.Negation
 import Linglib.Fragments.Italian.PolarityItems

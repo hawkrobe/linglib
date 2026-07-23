@@ -1,7 +1,7 @@
 import Linglib.Data.Examples.Schema
 import Linglib.Semantics.Aspect.Boundedness
-import Linglib.Semantics.Context.Basic
-import Linglib.Semantics.Context.Tower
+import Linglib.Semantics.Reference.Context.Basic
+import Linglib.Semantics.Reference.Context.Tower
 import Linglib.Semantics.Tense.Basic
 import Linglib.Semantics.Tense.Domain
 import Linglib.Semantics.Tense.Orientation
