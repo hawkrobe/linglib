@@ -6,7 +6,7 @@ import Linglib.Core.Order.Boundedness
 
 /-!
 # Degree comparison: the point-standard core
-[rett-2026] [schwarzschild-2008] [von-stechow-1984] [hoeksema-1983]
+[kennedy-1999] [rett-2026] [schwarzschild-2008] [von-stechow-1984] [hoeksema-1983]
 
 Comparative semantics shared across all degree frameworks: the binary
 `comparativeSem` / `equativeSem`, antonymy as scale reversal, and
@@ -38,6 +38,9 @@ consumers in `Studies/Hoeksema1983.lean`.
   with the unique-witness collapse `maxComparative_unique`.
 * `taller_shorter_antonymy` — antonymy is argument swap plus direction reversal.
 * `comparative_iff_Iic_ssubset` — comparison as extent inclusion ([kennedy-1999]).
+* `antonymy_biconditional` / `not_crossExtentInclusion` — the antonymy
+  biconditional derived from extent complementarity, and cross-polar anomaly
+  as unsatisfiable extent inclusion ([kennedy-1999]).
 -/
 
 namespace Degree
@@ -50,8 +53,9 @@ open Core.Order (ScalePolarity Comparison maxOnScale maxOnScale_singleton maxOnS
 section Direct
 variable {Entity : Type*} {α : Type*} [Preorder α]
 
-/-- Comparative semantics ([rett-2026], [schwarzschild-2008]): "A is Adj-er
-than B" iff `μ a` exceeds `μ b` on the directed scale. Only `[Preorder α]`
+/-- Comparative semantics over a measure function ([kennedy-1999];
+[rett-2026], [schwarzschild-2008]): "A is Adj-er than B" iff `μ a` exceeds
+`μ b` on the directed scale. Only `[Preorder α]`
 — connectedness-agnostic background orderings (CSW confidence states)
 are in scope. -/
 def comparativeSem (μ : Entity → α) (a b : Entity) (dir : ScalePolarity) : Prop :=
@@ -124,9 +128,19 @@ end Boundary
 Kennedy's positive/negative extents are `Set.Iic (μ x)` / `Set.Ioi (μ x)`
 directly ([kennedy-1999]); the binary comparator equals strict extent
 inclusion, and antonymy follows from extent complementarity rather than
-being stipulated. -/
+being stipulated. Boundary convention: the paper's eqs (30)–(31) define both
+extents with `≤` (a cover); the strict `Ioi` here is a strict partition, and
+the antonymy biconditional (eq (54)) is convention-independent. -/
 
 section Extent
+
+/-- Cross-polar inclusion: one entity's positive extent inside another's
+negative extent — the LF a cross-polar equative ("as tall as Lee is short")
+would assign ([kennedy-1999]). -/
+def crossExtentInclusion {Entity D : Type*} [Preorder D]
+    (μ : Entity → D) (a b : Entity) : Prop :=
+  Set.Iic (μ a) ⊆ Set.Ioi (μ b)
+
 variable {Entity D : Type*} [LinearOrder D]
 
 /-- Bridge: the atomic S-comparative `Comparison.gt.overSet μ {μ b}` coincides with
@@ -148,6 +162,23 @@ theorem comparative_iff_Iic_ssubset (μ : Entity → D) (a b : Entity) :
 theorem comparative_iff_Ioi_ssubset (μ : Entity → D) (a b : Entity) :
     comparativeSem μ a b .positive ↔ Set.Ioi (μ a) ⊂ Set.Ioi (μ b) :=
   Set.Ioi_ssubset_Ioi_iff.symm
+
+/-- Antonymy biconditional ([kennedy-1999] eq (54)): "A is taller than B" iff
+"B is shorter than A", derived from extent complementarity. -/
+theorem antonymy_biconditional (μ : Entity → D) (a b : Entity) :
+    Set.Iic (μ b) ⊂ Set.Iic (μ a) ↔ Set.Ioi (μ a) ⊂ Set.Ioi (μ b) :=
+  (comparative_iff_Iic_ssubset μ a b).symm.trans (comparative_iff_Ioi_ssubset μ a b)
+
+/-- Weak-inclusion antonymy: the Galois-antitone face of the biconditional. -/
+theorem extent_galois_antitone (μ : Entity → D) (a b : Entity) :
+    Set.Iic (μ a) ⊆ Set.Iic (μ b) ↔ Set.Ioi (μ b) ⊆ Set.Ioi (μ a) :=
+  Set.Iic_subset_Iic.trans Set.Ioi_subset_Ioi_iff.symm
+
+/-- Cross-polar inclusion never holds on a linear order — the lattice-algebraic
+shadow of [kennedy-1999]'s sortal cross-polar anomaly argument (§3.1.7). -/
+theorem not_crossExtentInclusion (μ : Entity → D) (a b : Entity) :
+    ¬ crossExtentInclusion μ a b :=
+  fun h => absurd (h (min_le_left (μ a) (μ b))) (not_lt.mpr (min_le_right _ _))
 
 end Extent
 
@@ -186,6 +217,12 @@ iff every degree B has (`Set.Iic (μ b)`), A also has. -/
 theorem equativeSem_iff_Iic_subset [LinearOrder D] (μ : Entity → D) (a b : Entity) :
     equativeSem μ a b .positive ↔ Set.Iic (μ b) ⊆ Set.Iic (μ a) :=
   Set.Iic_subset_Iic.symm
+
+/-- Equative antonymy on negative extents: "A is as tall as B" iff "B is as
+short as A" (`Set.Ioi` inclusion in the reversed direction). -/
+theorem equativeSem_iff_Ioi_subset [LinearOrder D] (μ : Entity → D) (a b : Entity) :
+    equativeSem μ a b .positive ↔ Set.Ioi (μ a) ⊆ Set.Ioi (μ b) :=
+  (equativeSem_iff_Iic_subset μ a b).trans (extent_galois_antitone μ b a)
 
 /-- Negated equative as strict extent inclusion: B has strictly more degrees
 than A. -/

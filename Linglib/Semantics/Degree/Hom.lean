@@ -9,7 +9,7 @@ import Linglib.Semantics.Degree.Measure.Dimensioned
 
 /-!
 # Morphisms between gradability representations
-[kamp-1975] [klein-1980] [kennedy-2007] [scontras-2014] [bale-schwarz-2022]
+[kamp-1975] [klein-1980] [kennedy-1999] [kennedy-2007] [scontras-2014] [bale-schwarz-2022]
 
 The maps between the three framework objects for gradable predicates,
 with their faithfulness theorems — the degree-semantic analogue of the
@@ -18,7 +18,7 @@ representation maps in `Phonology/Autosegmental` (AR ↔ tone strings):
 ```
 Klein (Delineation)          — most general
   ↑ measureDelineation
-Kennedy (threshold degrees)  — specialization: single linear scale
+Kennedy (measure functions)  — specialization: single linear scale
   ↑ DimensionedMeasure.apply
 Scontras / Bale & Schwarz (typed measurement)
 ```
@@ -64,8 +64,8 @@ bare degree function by the `DimensionedMeasure.apply` projection
 ([scontras-2014]'s insight that measure terms and CARD are one
 degree-assigning operation), and any degree function `μ` over a linear
 order induces a Klein delineation via `Degree.Delineation.measureDelineation`
-— the embedding of [kennedy-2007]-style degree semantics into
-[klein-1980]'s framework. The embedding is faithful
+— the embedding of measure-function degree semantics ([kennedy-1999],
+developed in [kennedy-2007]) into [klein-1980]'s framework. The embedding is faithful
 (`ordering_iff_degree`: Klein's ordering under the induced delineation
 is exactly degree comparison) and lands in the monotone, linear
 fragment (`measureDelineation_monotone`, `measureDelineation_is_linear`).
