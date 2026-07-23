@@ -15,9 +15,10 @@ model: Pearl's probability of sufficiency ([pearl-2019],
 `Causation.SEM.probSufficiency`), a simplified
 [halpern-kleiman-weiner-2018] degree of intention (`intentionDegree`),
 and the number of alternative actions available to the causee
-(`altCount`). The models are time-indexed (`TimeIndex`), and their
-agents play a soft-optimality policy (`softOptimalPolicy`). The model
-apparatus is shared with [cao-geiger-kreiss-icard-gerstenberg-2023].
+(`altCount`). The models are time-indexed (`CausalGraph.TimeIndex`),
+and their agents play a soft-optimality policy (`softOptimalPolicy`).
+The model apparatus is shared with
+[cao-geiger-kreiss-icard-gerstenberg-2023].
 
 The paper's in-text judgments (its examples (3)–(11)) are stored as rows
 in `Data/Examples/CaoWhiteLassiter2025.json`. Regression estimates
@@ -35,27 +36,6 @@ namespace CaoWhiteLassiter2025
 
 open Causation Causation.Mechanism Causation.SEM Features
 open scoped ENNReal NNReal
-
-/-! ### Time-indexed causal models
-
-Definition 1 of [cao-white-lassiter-2025]: exogenous and endogenous
-variables carry timesteps, and every parent *immediately precedes* its
-child. The timestep function is a strengthened form of the depth
-certificate `CausalGraph.IsDAG.of_depth` consumes. -/
-
-/-- A time index for a causal graph is a timestep assignment on which
-    each parent sits exactly one step before its children — definition 1
-    of [cao-white-lassiter-2025]. -/
-structure TimeIndex {V : Type*} (G : CausalGraph V) where
-  /-- The timestep of each variable. -/
-  time : V → ℕ
-  /-- Parents immediately precede their children. -/
-  parent_succ : ∀ {u v : V}, u ∈ G.parents v → time u + 1 = time v
-
-/-- A time index certifies acyclicity. -/
-theorem TimeIndex.isDAG {V : Type*} {G : CausalGraph V} (ti : TimeIndex G) :
-    CausalGraph.IsDAG G :=
-  CausalGraph.IsDAG.of_depth G ti.time fun h => by have := ti.parent_succ h; omega
 
 /-! ### Soft-optimality policy
 
@@ -304,7 +284,7 @@ noncomputable def model (p : ℝ≥0) (h : p ≤ 1) : BoolSEM V :=
 
 /-- The 2-vertex graph is time-indexed in the sense of the paper's
     definition 1, with `cause` at step 0 and `effect` at step 1. -/
-def timeIndex : TimeIndex graph where
+def timeIndex : CausalGraph.TimeIndex graph where
   time := fun | .cause => 0 | .effect => 1
   parent_succ := by
     intro u v h

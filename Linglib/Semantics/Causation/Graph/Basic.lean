@@ -14,6 +14,11 @@ well-founded fixpoint induction).
 The ancestor relation uses `Relation.ReflTransGen` directly (no
 intermediate adapter); consumers can use mathlib's existing API for
 reflexive-transitive closures.
+
+Acyclicity certificates come bundled as `Ranking` (parents rank strictly
+below children) and its strict-successor refinement `TimeIndex` (parents
+immediately precede children, the time-indexed causal models of
+[cao-white-lassiter-2025]); `IsDAG.of_depth` passes the loose form.
 -/
 
 namespace Causation.CausalGraph
@@ -62,24 +67,55 @@ class IsDAG (G : CausalGraph V) : Prop where
   /-- The strict-ancestor relation has no infinite descending chain. -/
   wf : WellFounded G.IsStrictAncestor
 
-/-- **Depth-based IsDAG construction**: a graph is acyclic if every edge
-    strictly decreases some `ℕ`-valued depth function (parent depth <
-    child depth). Reuses `Subrelation.wf` over `InvImage Nat.lt depth`,
-    which is well-founded by `Nat`'s standard wellfoundedness.
+/-- A ranking of a causal graph is a `ℕ`-valued measure on which every
+    parent ranks strictly below its children — the bundled form of the
+    depth certificate consumed by `IsDAG.of_depth` and, per model, by the
+    fuel bridges (`causallyEntails_iff_fuel`, `causallyNecessary_iff_fuel`). -/
+structure Ranking (G : CausalGraph V) where
+  /-- The rank of each vertex. -/
+  rank : V → ℕ
+  /-- Parents rank strictly below their children. -/
+  parent_lt : ∀ {u v : V}, u ∈ G.parents v → rank u < rank v
+
+/-- A ranking certifies acyclicity: ranks strictly increase along the
+    strict-ancestor relation, so the relation embeds in `Nat.lt`.
 
     The standard mathlib pattern for proving wellfoundedness of finite
     inductive relations: define a measure into `ℕ`, show the relation
     decreases it, conclude. -/
-theorem IsDAG.of_depth (G : CausalGraph V) (depth : V → ℕ)
-    (hdepth : ∀ {u v : V}, u ∈ G.parents v → depth u < depth v) :
-    IsDAG G where
+theorem Ranking.isDAG {G : CausalGraph V} (r : Ranking G) : IsDAG G where
   wf := by
-    have hsub : ∀ u v, G.IsStrictAncestor u v → depth u < depth v := by
+    have hsub : ∀ u v, G.IsStrictAncestor u v → r.rank u < r.rank v := by
       intro u v huv
       induction huv with
-      | single hp => exact hdepth hp
-      | tail _ hp ih => exact lt_trans ih (hdepth hp)
+      | single hp => exact r.parent_lt hp
+      | tail _ hp ih => exact lt_trans ih (r.parent_lt hp)
     exact Subrelation.wf (fun {a b} => hsub a b)
-      (InvImage.wf depth Nat.lt_wfRel.wf)
+      (InvImage.wf r.rank Nat.lt_wfRel.wf)
+
+/-- A graph is acyclic if every edge strictly decreases some `ℕ`-valued
+    depth function — `Ranking.isDAG` with the certificate passed loose. -/
+theorem IsDAG.of_depth (G : CausalGraph V) (depth : V → ℕ)
+    (hdepth : ∀ {u v : V}, u ∈ G.parents v → depth u < depth v) :
+    IsDAG G :=
+  Ranking.isDAG ⟨depth, hdepth⟩
+
+/-- A time index for a causal graph is a timestep assignment on which
+    each parent sits exactly one step before its children — the
+    time-indexed causal models of [cao-white-lassiter-2025]
+    (their definition 1) and [cao-geiger-kreiss-icard-gerstenberg-2023]. -/
+structure TimeIndex (G : CausalGraph V) where
+  /-- The timestep of each variable. -/
+  time : V → ℕ
+  /-- Parents immediately precede their children. -/
+  parent_succ : ∀ {u v : V}, u ∈ G.parents v → time u + 1 = time v
+
+/-- The ranking underlying a time index. -/
+def TimeIndex.toRanking {G : CausalGraph V} (ti : TimeIndex G) : Ranking G :=
+  ⟨ti.time, fun h => by have := ti.parent_succ h; omega⟩
+
+/-- A time index certifies acyclicity. -/
+theorem TimeIndex.isDAG {G : CausalGraph V} (ti : TimeIndex G) : IsDAG G :=
+  ti.toRanking.isDAG
 
 end Causation.CausalGraph
