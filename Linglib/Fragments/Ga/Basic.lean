@@ -13,13 +13,14 @@ clause typology.
 
 ## Coverage
 
-- Subject proclitics (person × number)
-- TAM prefixes (future, progressive, perfect) and the irrealis,
-  realized as high tone on the embedded-clause subject pronoun
+- Subject proclitics (person × number; the paper's Table 3)
+- TAM prefixes (future, progressive, perfective) and the irrealis
+  marker `á`, realized in embedded control clauses as high tone on
+  the subject pronoun
 - Complementizer inventory (`akɛ`, `kɛji`, `ni`) with finite vs.
   irrealis distinction; `ni` is optionally overt with some
-  control verbs (e.g. *tao* 'want', [allotey-2021] ex 2a) and
-  obligatory with others (*hiɛ-ka-nɔ* 'hope', ex 16)
+  control verbs (*tao* 'want', [allotey-2021] ex 34) and
+  obligatory with others (*hiɛ-kã-nɔ* 'hope', ex 35)
 - Embedded clause typology (three-way: `finiteAke`, `finiteKeji`,
   `irrealisNi`)
 - Pro-drop profile
@@ -33,25 +34,30 @@ preserved in the corresponding `String` value.
 
 ## What is NOT covered (deliberately)
 
-Verbal negation morphology and the V-to-T raising claim. Both rely on
-independent morphological argumentation ([pollock-1989]'s
-diagnostic requires a free Neg head; Gã `-ee` and `-ko` appear
-suffixal) that is orthogonal to the OC story.
+The verb-movement/negation-placement diagnostic ([allotey-2021]'s fifth
+non-finiteness argument, after [pollock-1989]: finite verbs raise past
+the suffixal negation `-ee`, `-ko`, while irrealis embedded clauses show
+a free preverbal negator `ka`, her exx 120–125). Formalizing the raising
+argument needs phrase-structure substrate beyond this fragment's
+clause-typology schema; the finiteness split it diagnoses is already
+carried by `ClauseProperties.unrestrictedTAM`.
 -/
 
 namespace Ga
 
 /-! ### Pronoun paradigm -/
 
-/-- Subject proclitic forms (plain series), on the canonical person/number
-    inventory; `none` for cells outside Gã's 3 × 2 paradigm.
+/-- Subject proclitic forms (plain subjective series, [allotey-2021]
+    Table 3), on the canonical person/number inventory; `none` for cells
+    outside Gã's 3 × 2 paradigm. Not covered: the clipped past-tense 1SG
+    variant *ĩ* and the impersonal subject pronoun *a*.
 
     Gã subject pronouns are proclitics on the inflected verb. In
     [allotey-2021]'s OC examples, the embedded subject of a controlled
     `ni`-clause is realized as an overt subject proclitic (ex 3a: `e-` for
     a 3SG controllee) — the embedded subject position cannot be silent.
-    Under irrealis high tone the 1SG proclitic surfaces as *ma* (ex 2a)
-    rather than plain *mi*. -/
+    Merged with the irrealis marker `á` the 1SG proclitic surfaces as the
+    portmanteau *má* (ex 34) rather than plain *mi*. -/
 def subjectProclitic : Person → Number → Option String
   | .first,  .singular => some "mi"
   | .second, .singular => some "o"
@@ -63,30 +69,35 @@ def subjectProclitic : Person → Number → Option String
 
 /-! ### TAM marking -/
 
-/-- Prefixal TAM categories of the Gã verb.
+/-- Prefixal TAM categories of the Gã verb (bare root = default past).
 
-    [allotey-2021] uses the future, progressive, and perfect prefixes to
-    argue that embedded clauses introduced by `akɛ` and `kɛji` allow the
-    full TAM paradigm (finite), while clauses introduced by `ni` prohibit
-    tense/aspect marking of any kind and are restricted to irrealis. -/
+    [allotey-2021] uses the future, progressive, and perfective prefixes
+    to argue that embedded clauses introduced by `akɛ` and `kɛji` allow
+    the full TAM paradigm (finite), while clauses introduced by `ni`
+    prohibit tense/aspect marking of any kind and are restricted to
+    irrealis (her exx 119, tense-restriction diagnostic). -/
 inductive TAM where
-  /-- Future prefix `baa-` -/
+  /-- Future prefix `baa-` (historically the ingressive deictic `bà`
+      plus the irrealis marker `á`) -/
   | future
   /-- Progressive prefix `mii-` -/
   | progressive
-  /-- Perfect prefix `é-` (high tone) -/
-  | perfect
-  /-- Irrealis: no verbal prefix; realized as high tone on the
-      embedded-clause subject pronoun ([allotey-2021]) -/
+  /-- Perfective prefix `é-` (high tone) -/
+  | perfective
+  /-- Irrealis marker `á`: no independent verbal prefix in embedded
+      control clauses; realized as high tone on the subject pronoun
+      (portmanteau *má* for 1SG). True subjunctives double it — high
+      tone on pronoun AND verb ([allotey-2021] Table 4). -/
   | irrealis
   deriving DecidableEq, Repr
 
 /-- Segmental exponent of a TAM category; `none` for the irrealis, whose
-    marking is tonal (on the subject pronoun) rather than prefixal. -/
+    marking in embedded control clauses is tonal (on the subject
+    pronoun) rather than prefixal. -/
 def TAM.exponent : TAM → Option String
   | .future      => some "baa-"
   | .progressive => some "mii-"
-  | .perfect     => some "é-"
+  | .perfective  => some "é-"
   | .irrealis    => none
 
 /-- Whether this TAM is part of the unrestricted (finite) paradigm.
@@ -108,10 +119,11 @@ inductive Complementizer where
   /-- `kɛji` — finite complementizer for conditional and
       conditional-like complements -/
   | keji
-  /-- `ni` — irrealis complementizer; introduces controlled clauses.
-      Optionally overt with some control verbs (*tao* 'want',
-      [allotey-2021] ex 2a) and obligatory with others
-      (*hiɛ-ka-nɔ* 'hope', ex 16). -/
+  /-- `ni` — irrealis complementizer; introduces controlled clauses
+      (a weak CP: no focus fronting, no independent tense,
+      [allotey-2021] exx 107–109). Optionally overt with some control
+      verbs (*tao* 'want', ex 34) and obligatory with others
+      (*hiɛ-kã-nɔ* 'hope', ex 35). -/
   | ni
   deriving DecidableEq, Repr
 

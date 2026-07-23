@@ -14,45 +14,60 @@ control over the embedded subject of irrealis `ni`-clauses, where the
 controlled subject is realized as an OVERT subject proclitic — null PRO
 is ungrammatical. Under the [kratzer-2009] / [safir-2014] /
 [landau-2015] minimal pronoun framework, Gã simply lacks a null
-vocabulary item for the controlled subject position.
+vocabulary item for the controlled subject position; Allotey's own
+explanation for the overtness is morphophonological — PRO must be
+lexicalized to provide a segmental host for the obligatory irrealis
+high tone of the embedded clause.
 
-[allotey-2021] weighs two analyses of overt infinitival subjects — the
-Long Distance Agree (LDA) Hypothesis of [szabolcsi-2009] and the
-Movement Theory of Control (the derivation she illustrates from
-[satik-2019]) — and adopts LDA: her analysis puts the matrix subject in
-a Long-Distance relation with the embedded pronoun subject. The minimal
-pronoun framework and LDA are compatible — LDA is the syntactic
-mechanism that values the unvalued φ-features of the minimal pronoun in
-the embedded subject position. We wire both perspectives in below.
+[allotey-2021] weighs three analyses of overt infinitival subjects: the
+Long Distance Agree (LDA) Hypothesis of [szabolcsi-2009], the Movement
+Theory of Control, and the left-periphery-bound-pronoun analysis of
+[satik-2019] (whose Ewe overt-PRO evidence she builds on). She adopts
+LDA — the matrix subject values the embedded pronoun in person and
+number across the `ni` C head — and rejects the other two: MTC predicts
+an embedded lexical-DP copy that is ungrammatical, and Ewe-style LPBP
+cannot capture the φ-covariance of the Gã pronoun. The minimal pronoun
+framework and LDA are compatible — LDA is the syntactic mechanism that
+values the unvalued φ-features of the minimal pronoun in the embedded
+subject position. We wire both perspectives in below.
 
 ## Core Contributions
 
 1. **Three-way clause typology** distinguished by complementizer:
    `akɛ`-clauses (finite declarative), `kɛji`-clauses (finite
-   conditional), `ni`-clauses (irrealis, OC).
-2. **OC over an overt subject**: irrealis `ni`-clauses show the OC
-   signature despite carrying an overt subject proclitic.
+   conditional/interrogative), `ni`-clauses (irrealis, OC; a weak CP).
+2. **OC over an overt subject**: irrealis `ni`-clauses show the full
+   [landau-2013] OC signature (her Table 2) despite carrying an overt
+   subject proclitic, which she argues is a subject in Spec TP, not an
+   agreement marker.
 3. **Subject and object control** are both attested with `ni`-clause
-   complements (subject-control: `tao` 'want' ex 2a, `hiɛ-ka-nɔ` 'hope'
-   ex 16).
-4. **Irrealis ≠ subjunctive**: Allotey argues that the high-tone marker
-   on the embedded-clause subject pronoun is irrealis, not subjunctive
-   (against the subjunctive classification in the Gã descriptive
-   literature, [dakubu-2004], [campbell-2017]): it does not show the
-   obviation that defines subjunctives (formalized below).
-5. **Long Distance Agree analysis**: the embedded overt pronoun is a
-   minimal pronoun whose φ-features are valued by LDA from the matrix
-   controller ([szabolcsi-2009]).
+   complements (subject-control: `tao` 'want' ex 34, `hiɛ-kã-nɔ` 'hope'
+   ex 35, `hiɛ-kpa-nɔ` 'forget' exx 37–38; object-control exx 54–59).
+4. **Irrealis ≠ subjunctive**: Gã has BOTH a true subjunctive (irrealis
+   marker doubled: high tone on pronoun and verb) and an irrealis
+   marker `á` (high tone on the embedded pronoun only). The embedded
+   control clauses carry the latter, against the subjunctive
+   classification in the Gã descriptive literature ([dakubu-2004],
+   [campbell-2017]): they force coreference where subjunctives show
+   obviation (her exx 90–92, formalized below).
+5. **Non-finiteness of `ni`-clauses**, by five diagnostics: CP-head
+   selection, subject tonal asymmetries, NPI licensing across the
+   clause boundary, tense restrictions, and negation placement.
+6. **Long Distance Agree analysis**: the embedded overt pronoun is
+   valued by LDA from the matrix controller ([szabolcsi-2009]).
 
 ## Out of scope
 
-The paper also discusses Gã verbal negation and an analogy to French
-V-movement past `pas` ([pollock-1989]). That analogy depends on
-treating Gã `-ee` and `-ko` as a free Neg head (Pollock's diagnostic
-crucially relies on negation occupying a fixed structural position
-rather than being a verbal suffix). The morphological argument that
-would license that step is outside Allotey's data, so we do not
-formalize the V-to-T claim here.
+The verb-movement/negation-placement diagnostic (her fifth
+non-finiteness argument, after [pollock-1989]: finite verbs raise past
+suffixal `-ee`/`-ko` negation while irrealis clauses show free
+preverbal `ka`, exx 120–125) — formalizing the raising argument needs
+phrase-structure substrate; the finiteness split it diagnoses is
+already carried by the clause typology. Also unformalized: the §5.2.3
+implicative asymmetry (implicative `kai` 'remember' and `nyɛ` 'manage'
+suppress the embedded irrealis marker that non-implicative `kplɛnɔ`
+'agree' and `kpaŋ` 'plan' require) — a natural future refinement once
+the fragment carries an implicativity classification.
 -/
 
 namespace Allotey2021
@@ -96,12 +111,12 @@ theorem oc_determined_by_clause_type (c : CTP) :
 /-- [allotey-2021] argues the high-tone marker on the embedded-clause
     pronoun is **irrealis**, not subjunctive (against the subjunctive
     classification of the Gã descriptive literature, [dakubu-2004],
-    [campbell-2017]). Her diagnostic is obviation: Romance subjunctives
-    force the embedded subject to be DISJOINT from the matrix subject,
-    while Gã `ni`-clauses force coreference — the opposite. The fragment
-    encodes only the coreference dimension, so we record the Gã half:
-    `irrealisNi` requires a coreferential subject, which no obviative
-    subjunctive allows. -/
+    [campbell-2017]). One diagnostic is obviation (her exx 90–92):
+    Romance subjunctives force the embedded subject to be DISJOINT from
+    the matrix subject, while Gã `ni`-clauses force coreference — the
+    opposite. The fragment encodes only the coreference dimension, so we
+    record the Gã half: `irrealisNi` requires a coreferential subject,
+    which no obviative subjunctive allows. -/
 theorem irrealisNi_forces_coreference :
     (clauseProperties .irrealisNi).noncoreferentialSubject = false := rfl
 
