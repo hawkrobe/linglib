@@ -46,9 +46,9 @@ def markerLicenses (row : LinguisticExample) : Option Bool :=
   (markerOf row).map (fun m => m.markerType == .both || !bareContent row)
 
 /-- **Transfer equation**: every marker-diagnostic row is acceptable iff the
-    marker typology licenses it — PC-compatible nara/wenn yield acceptable
-    bare LNCs, HC-only -ra/falls yield degraded ones, and modal content
-    rescues falls (ex. 22). -/
+    marker typology licenses it — PC-compatible nara/wenn are acceptable as
+    the main complementizer of a bare LNC (exx. 18, 23), HC-only -ra and
+    falls are not (exx. 19, 24). -/
 theorem acceptable_iff_marker_licenses :
     ∀ row ∈ Examples.all, markerOf row ≠ none →
       (row.judgment = .acceptable ↔ markerLicenses row = some true) := by
