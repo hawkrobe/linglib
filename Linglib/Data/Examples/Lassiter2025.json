@@ -1,8 +1,8 @@
 [
   {
-    "id": "cwl2025_gibbard",
+    "id": "lass2025_gibbard",
     "source": {"bibkey": "gibbard-1981", "paperLabel": "UNVERIFIED"},
-    "reportedIn": {"bibkey": "cao-white-lassiter-2025", "paperLabel": "UNVERIFIED (4)"},
+    "reportedIn": {"bibkey": "lassiter-2025", "paperLabel": "(4)"},
     "language": "stan1293",
     "primaryText": "If Kripke was there if Strawson was, Anscomb was there",
     "glossedTokens": [],
@@ -19,8 +19,8 @@
     "comment": "Gibbard's classic left-nested conditional, odd out of the blue."
   },
   {
-    "id": "cwl2025_ex11",
-    "source": {"bibkey": "cao-white-lassiter-2025", "paperLabel": "UNVERIFIED (11)"},
+    "id": "lass2025_ex11",
+    "source": {"bibkey": "lassiter-2025", "paperLabel": "UNVERIFIED (11)"},
     "language": "stan1293",
     "primaryText": "If the fish will die if you don't change the water, you should change the water",
     "glossedTokens": [],
@@ -37,8 +37,8 @@
     "comment": "Decontextualized bare LNC is marginal."
   },
   {
-    "id": "cwl2025_ex12",
-    "source": {"bibkey": "cao-white-lassiter-2025", "paperLabel": "UNVERIFIED (12)"},
+    "id": "lass2025_ex12",
+    "source": {"bibkey": "lassiter-2025", "paperLabel": "UNVERIFIED (12)"},
     "language": "stan1293",
     "primaryText": "If the fish will die if you don't change the water, you should change the water",
     "glossedTokens": [],
@@ -55,8 +55,8 @@
     "comment": "Same LNC as (11), good with a discourse anchor for the inner conditional."
   },
   {
-    "id": "cwl2025_ex13",
-    "source": {"bibkey": "cao-white-lassiter-2025", "paperLabel": "UNVERIFIED (13)"},
+    "id": "lass2025_ex13",
+    "source": {"bibkey": "lassiter-2025", "paperLabel": "UNVERIFIED (13)"},
     "language": "stan1293",
     "primaryText": "If this phone will break if you drop it, you'd better be careful",
     "glossedTokens": [],
@@ -73,8 +73,8 @@
     "comment": "Contextualized LNC echoing a prior warning."
   },
   {
-    "id": "cwl2025_ex14",
-    "source": {"bibkey": "cao-white-lassiter-2025", "paperLabel": "UNVERIFIED (14)"},
+    "id": "lass2025_ex14",
+    "source": {"bibkey": "lassiter-2025", "paperLabel": "UNVERIFIED (14)"},
     "language": "stan1293",
     "primaryText": "Given that the fish will die if you don't change the water, you should change the water",
     "glossedTokens": [],
@@ -91,8 +91,8 @@
     "comment": "'Given that' paraphrase of (12) confirms the premise-conditional reading."
   },
   {
-    "id": "cwl2025_ex15",
-    "source": {"bibkey": "cao-white-lassiter-2025", "paperLabel": "UNVERIFIED (15)"},
+    "id": "lass2025_ex15",
+    "source": {"bibkey": "lassiter-2025", "paperLabel": "UNVERIFIED (15)"},
     "language": "nucl1643",
     "primaryText": "Strawson-ga kite-ita nara Kripke-ga kite-ita nara, Anscomb-ga kite-ita",
     "glossedTokens": [],
@@ -110,8 +110,8 @@
     "comment": "Japanese nara can mark premise conditionals, so the LNC is acceptable."
   },
   {
-    "id": "cwl2025_ex16",
-    "source": {"bibkey": "cao-white-lassiter-2025", "paperLabel": "UNVERIFIED (16)"},
+    "id": "lass2025_ex16",
+    "source": {"bibkey": "lassiter-2025", "paperLabel": "UNVERIFIED (16)"},
     "language": "nucl1643",
     "primaryText": "Strawson-ga kite-ita-ra Kripke-ga kite-ita-ra, Anscomb-ga kite-ita",
     "glossedTokens": [],
@@ -129,8 +129,8 @@
     "comment": "Japanese -ra is HC-only, so the LNC is blocked."
   },
   {
-    "id": "cwl2025_ex17",
-    "source": {"bibkey": "cao-white-lassiter-2025", "paperLabel": "UNVERIFIED (17)"},
+    "id": "lass2025_ex17",
+    "source": {"bibkey": "lassiter-2025", "paperLabel": "UNVERIFIED (17)"},
     "language": "nucl1643",
     "primaryText": "Sou nara, Anscomb-mo kite-ita",
     "glossedTokens": [],
@@ -148,8 +148,8 @@
     "comment": "'Sou nara' ('if so') echoes A's conditional assertion."
   },
   {
-    "id": "cwl2025_ex20",
-    "source": {"bibkey": "cao-white-lassiter-2025", "paperLabel": "UNVERIFIED (20)"},
+    "id": "lass2025_ex20",
+    "source": {"bibkey": "lassiter-2025", "paperLabel": "UNVERIFIED (20)"},
     "language": "stan1295",
     "primaryText": "Wenn Strawson da war, wenn Kripke da war, war Anscomb da",
     "glossedTokens": [],
@@ -167,8 +167,8 @@
     "comment": "German wenn can mark premise conditionals, so the LNC is acceptable."
   },
   {
-    "id": "cwl2025_ex21",
-    "source": {"bibkey": "cao-white-lassiter-2025", "paperLabel": "UNVERIFIED (21)"},
+    "id": "lass2025_ex21",
+    "source": {"bibkey": "lassiter-2025", "paperLabel": "UNVERIFIED (21)"},
     "language": "stan1295",
     "primaryText": "Falls Strawson da war, falls Kripke da war, war Anscomb da",
     "glossedTokens": [],
@@ -186,8 +186,8 @@
     "comment": "German falls is HC-only, so the LNC is degraded."
   },
   {
-    "id": "cwl2025_ex22",
-    "source": {"bibkey": "cao-white-lassiter-2025", "paperLabel": "UNVERIFIED (22)"},
+    "id": "lass2025_ex22",
+    "source": {"bibkey": "lassiter-2025", "paperLabel": "UNVERIFIED (22)"},
     "language": "stan1295",
     "primaryText": "Falls der Fisch sterben würde, falls du das Wasser nicht wechselst, solltest du es wechseln",
     "glossedTokens": [],
@@ -205,8 +205,8 @@
     "comment": "Modal content allows an HC reading, rescuing falls in an LNC."
   },
   {
-    "id": "cwl2025_ex29",
-    "source": {"bibkey": "cao-white-lassiter-2025", "paperLabel": "UNVERIFIED (29)"},
+    "id": "lass2025_ex29",
+    "source": {"bibkey": "lassiter-2025", "paperLabel": "UNVERIFIED (29)"},
     "language": "stan1293",
     "primaryText": "If John helped someone if asked, we're in good shape",
     "glossedTokens": [],
@@ -224,8 +224,8 @@
     "comment": "PPI 'someone' licensed in the embedded consequent (B position)."
   },
   {
-    "id": "cwl2025_ex30",
-    "source": {"bibkey": "cao-white-lassiter-2025", "paperLabel": "UNVERIFIED (30)"},
+    "id": "lass2025_ex30",
+    "source": {"bibkey": "lassiter-2025", "paperLabel": "UNVERIFIED (30)"},
     "language": "stan1293",
     "primaryText": "If John helped anyone if asked, we're in good shape",
     "glossedTokens": [],
@@ -243,8 +243,8 @@
     "comment": "NPI 'anyone' blocked in the embedded consequent (PC does not license NPIs)."
   },
   {
-    "id": "cwl2025_ex31",
-    "source": {"bibkey": "cao-white-lassiter-2025", "paperLabel": "UNVERIFIED (31)"},
+    "id": "lass2025_ex31",
+    "source": {"bibkey": "lassiter-2025", "paperLabel": "UNVERIFIED (31)"},
     "language": "stan1293",
     "primaryText": "If Mary talked to someone if prompted, the experiment succeeded",
     "glossedTokens": [],
@@ -262,8 +262,8 @@
     "comment": "PPI 'someone' fine in the embedded consequent."
   },
   {
-    "id": "cwl2025_ex32",
-    "source": {"bibkey": "cao-white-lassiter-2025", "paperLabel": "UNVERIFIED (32)"},
+    "id": "lass2025_ex32",
+    "source": {"bibkey": "lassiter-2025", "paperLabel": "UNVERIFIED (32)"},
     "language": "stan1293",
     "primaryText": "If Mary talked to anyone if prompted, the experiment succeeded",
     "glossedTokens": [],
@@ -281,8 +281,8 @@
     "comment": "NPI 'anyone' blocked in the embedded consequent."
   },
   {
-    "id": "cwl2025_ex33",
-    "source": {"bibkey": "cao-white-lassiter-2025", "paperLabel": "UNVERIFIED (33)"},
+    "id": "lass2025_ex33",
+    "source": {"bibkey": "lassiter-2025", "paperLabel": "UNVERIFIED (33)"},
     "language": "stan1293",
     "primaryText": "If you're hungry and if you want some food, there are biscuits",
     "glossedTokens": [],
@@ -299,8 +299,8 @@
     "comment": "Regular hypothetical conditionals can coordinate."
   },
   {
-    "id": "cwl2025_ex34",
-    "source": {"bibkey": "cao-white-lassiter-2025", "paperLabel": "UNVERIFIED (34)"},
+    "id": "lass2025_ex34",
+    "source": {"bibkey": "lassiter-2025", "paperLabel": "UNVERIFIED (34)"},
     "language": "stan1293",
     "primaryText": "If Mary left if John did and if Sue is upset, we have a problem",
     "glossedTokens": [],
@@ -317,8 +317,8 @@
     "comment": "LNC (premise conditional) resists coordination with a regular conditional."
   },
   {
-    "id": "cwl2025_ex35",
-    "source": {"bibkey": "cao-white-lassiter-2025", "paperLabel": "UNVERIFIED (35)"},
+    "id": "lass2025_ex35",
+    "source": {"bibkey": "lassiter-2025", "paperLabel": "UNVERIFIED (35)"},
     "language": "stan1293",
     "primaryText": "If the fish will die if you don't change the water and if you care about the fish, change the water",
     "glossedTokens": [],
@@ -335,8 +335,8 @@
     "comment": "Coordination constraint persists even with discourse support."
   },
   {
-    "id": "cwl2025_ex36",
-    "source": {"bibkey": "cao-white-lassiter-2025", "paperLabel": "UNVERIFIED (36)"},
+    "id": "lass2025_ex36",
+    "source": {"bibkey": "lassiter-2025", "paperLabel": "UNVERIFIED (36)"},
     "language": "stan1293",
     "primaryText": "Only if you leave will I stay",
     "glossedTokens": [],
@@ -353,8 +353,8 @@
     "comment": "Regular hypothetical conditional allows only + subject-aux inversion."
   },
   {
-    "id": "cwl2025_ex37",
-    "source": {"bibkey": "cao-white-lassiter-2025", "paperLabel": "UNVERIFIED (37)"},
+    "id": "lass2025_ex37",
+    "source": {"bibkey": "lassiter-2025", "paperLabel": "UNVERIFIED (37)"},
     "language": "stan1293",
     "primaryText": "Only if Mary left if John did will we have a problem",
     "glossedTokens": [],
@@ -371,8 +371,8 @@
     "comment": "LNC (premise conditional) blocks only + subject-aux inversion."
   },
   {
-    "id": "cwl2025_ex38",
-    "source": {"bibkey": "cao-white-lassiter-2025", "paperLabel": "UNVERIFIED (38)"},
+    "id": "lass2025_ex38",
+    "source": {"bibkey": "lassiter-2025", "paperLabel": "UNVERIFIED (38)"},
     "language": "stan1293",
     "primaryText": "We will have a problem only if Mary left if John did",
     "glossedTokens": [],
@@ -389,8 +389,8 @@
     "comment": "Same LNC fine without inversion."
   },
   {
-    "id": "cwl2025_ex40",
-    "source": {"bibkey": "cao-white-lassiter-2025", "paperLabel": "UNVERIFIED (40)"},
+    "id": "lass2025_ex40",
+    "source": {"bibkey": "lassiter-2025", "paperLabel": "UNVERIFIED (40)"},
     "language": "stan1293",
     "primaryText": "If the fish would die if you didn't change the water, you should change it",
     "glossedTokens": [],
@@ -407,8 +407,8 @@
     "comment": "Modal 'would' in the inner conditional allows an HC reading without discourse support."
   },
   {
-    "id": "cwl2025_ex41",
-    "source": {"bibkey": "cao-white-lassiter-2025", "paperLabel": "UNVERIFIED (41)"},
+    "id": "lass2025_ex41",
+    "source": {"bibkey": "lassiter-2025", "paperLabel": "UNVERIFIED (41)"},
     "language": "stan1293",
     "primaryText": "If a car usually starts if you turn the key, it's probably reliable",
     "glossedTokens": [],
@@ -425,8 +425,8 @@
     "comment": "Quantificational adverb 'usually' provides object-level content."
   },
   {
-    "id": "cwl2025_ex42",
-    "source": {"bibkey": "cao-white-lassiter-2025", "paperLabel": "UNVERIFIED (42)"},
+    "id": "lass2025_ex42",
+    "source": {"bibkey": "lassiter-2025", "paperLabel": "UNVERIFIED (42)"},
     "language": "stan1293",
     "primaryText": "If dogs bark if provoked, we should keep them away from the children",
     "glossedTokens": [],
@@ -443,8 +443,8 @@
     "comment": "Generic interpretation allows an HC reading."
   },
   {
-    "id": "cwl2025_ex43",
-    "source": {"bibkey": "cao-white-lassiter-2025", "paperLabel": "UNVERIFIED (43)"},
+    "id": "lass2025_ex43",
+    "source": {"bibkey": "lassiter-2025", "paperLabel": "UNVERIFIED (43)"},
     "language": "stan1293",
     "primaryText": "If John cries if scolded, we shouldn't be too hard on him",
     "glossedTokens": [],

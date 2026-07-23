@@ -1,22 +1,22 @@
 import Linglib.Data.Examples.Schema
 
 /-!
-# `CaoWhiteLassiter2025` — typed example data
+# `Lassiter2025` — typed example data
 
-Auto-generated from `Linglib/Data/Examples/CaoWhiteLassiter2025.json` by
+Auto-generated from `Linglib/Data/Examples/Lassiter2025.json` by
 `scripts/gen_examples.py`. Do not edit by hand; edit the JSON and re-run
 the generator. Consumers (the paper's study file, test-suite hubs) import
-this module; declarations live in `namespace CaoWhiteLassiter2025.Examples`.
+this module; declarations live in `namespace Lassiter2025.Examples`.
 -/
 
-namespace CaoWhiteLassiter2025.Examples
+namespace Lassiter2025.Examples
 
 open Data.Examples
 
-def cwl2025_gibbard : LinguisticExample :=
-  { id := "cwl2025_gibbard"
+def lass2025_gibbard : LinguisticExample :=
+  { id := "lass2025_gibbard"
     source := ⟨"gibbard-1981", "UNVERIFIED"⟩
-    reportedIn := some ⟨"cao-white-lassiter-2025", "UNVERIFIED (4)"⟩
+    reportedIn := some ⟨"lassiter-2025", "(4)"⟩
     language := "stan1293"
     primaryText := "If Kripke was there if Strawson was, Anscomb was there"
     discourseSegments := []
@@ -31,9 +31,9 @@ def cwl2025_gibbard : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
-def cwl2025_ex11 : LinguisticExample :=
-  { id := "cwl2025_ex11"
-    source := ⟨"cao-white-lassiter-2025", "UNVERIFIED (11)"⟩
+def lass2025_ex11 : LinguisticExample :=
+  { id := "lass2025_ex11"
+    source := ⟨"lassiter-2025", "UNVERIFIED (11)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "If the fish will die if you don't change the water, you should change the water"
@@ -49,9 +49,9 @@ def cwl2025_ex11 : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
-def cwl2025_ex12 : LinguisticExample :=
-  { id := "cwl2025_ex12"
-    source := ⟨"cao-white-lassiter-2025", "UNVERIFIED (12)"⟩
+def lass2025_ex12 : LinguisticExample :=
+  { id := "lass2025_ex12"
+    source := ⟨"lassiter-2025", "UNVERIFIED (12)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "If the fish will die if you don't change the water, you should change the water"
@@ -67,9 +67,9 @@ def cwl2025_ex12 : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
-def cwl2025_ex13 : LinguisticExample :=
-  { id := "cwl2025_ex13"
-    source := ⟨"cao-white-lassiter-2025", "UNVERIFIED (13)"⟩
+def lass2025_ex13 : LinguisticExample :=
+  { id := "lass2025_ex13"
+    source := ⟨"lassiter-2025", "UNVERIFIED (13)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "If this phone will break if you drop it, you'd better be careful"
@@ -85,9 +85,9 @@ def cwl2025_ex13 : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
-def cwl2025_ex14 : LinguisticExample :=
-  { id := "cwl2025_ex14"
-    source := ⟨"cao-white-lassiter-2025", "UNVERIFIED (14)"⟩
+def lass2025_ex14 : LinguisticExample :=
+  { id := "lass2025_ex14"
+    source := ⟨"lassiter-2025", "UNVERIFIED (14)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Given that the fish will die if you don't change the water, you should change the water"
@@ -103,9 +103,9 @@ def cwl2025_ex14 : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
-def cwl2025_ex15 : LinguisticExample :=
-  { id := "cwl2025_ex15"
-    source := ⟨"cao-white-lassiter-2025", "UNVERIFIED (15)"⟩
+def lass2025_ex15 : LinguisticExample :=
+  { id := "lass2025_ex15"
+    source := ⟨"lassiter-2025", "UNVERIFIED (15)"⟩
     reportedIn := none
     language := "nucl1643"
     primaryText := "Strawson-ga kite-ita nara Kripke-ga kite-ita nara, Anscomb-ga kite-ita"
@@ -121,9 +121,9 @@ def cwl2025_ex15 : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
-def cwl2025_ex16 : LinguisticExample :=
-  { id := "cwl2025_ex16"
-    source := ⟨"cao-white-lassiter-2025", "UNVERIFIED (16)"⟩
+def lass2025_ex16 : LinguisticExample :=
+  { id := "lass2025_ex16"
+    source := ⟨"lassiter-2025", "UNVERIFIED (16)"⟩
     reportedIn := none
     language := "nucl1643"
     primaryText := "Strawson-ga kite-ita-ra Kripke-ga kite-ita-ra, Anscomb-ga kite-ita"
@@ -139,9 +139,9 @@ def cwl2025_ex16 : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
-def cwl2025_ex17 : LinguisticExample :=
-  { id := "cwl2025_ex17"
-    source := ⟨"cao-white-lassiter-2025", "UNVERIFIED (17)"⟩
+def lass2025_ex17 : LinguisticExample :=
+  { id := "lass2025_ex17"
+    source := ⟨"lassiter-2025", "UNVERIFIED (17)"⟩
     reportedIn := none
     language := "nucl1643"
     primaryText := "Sou nara, Anscomb-mo kite-ita"
@@ -157,9 +157,9 @@ def cwl2025_ex17 : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
-def cwl2025_ex20 : LinguisticExample :=
-  { id := "cwl2025_ex20"
-    source := ⟨"cao-white-lassiter-2025", "UNVERIFIED (20)"⟩
+def lass2025_ex20 : LinguisticExample :=
+  { id := "lass2025_ex20"
+    source := ⟨"lassiter-2025", "UNVERIFIED (20)"⟩
     reportedIn := none
     language := "stan1295"
     primaryText := "Wenn Strawson da war, wenn Kripke da war, war Anscomb da"
@@ -175,9 +175,9 @@ def cwl2025_ex20 : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
-def cwl2025_ex21 : LinguisticExample :=
-  { id := "cwl2025_ex21"
-    source := ⟨"cao-white-lassiter-2025", "UNVERIFIED (21)"⟩
+def lass2025_ex21 : LinguisticExample :=
+  { id := "lass2025_ex21"
+    source := ⟨"lassiter-2025", "UNVERIFIED (21)"⟩
     reportedIn := none
     language := "stan1295"
     primaryText := "Falls Strawson da war, falls Kripke da war, war Anscomb da"
@@ -193,9 +193,9 @@ def cwl2025_ex21 : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
-def cwl2025_ex22 : LinguisticExample :=
-  { id := "cwl2025_ex22"
-    source := ⟨"cao-white-lassiter-2025", "UNVERIFIED (22)"⟩
+def lass2025_ex22 : LinguisticExample :=
+  { id := "lass2025_ex22"
+    source := ⟨"lassiter-2025", "UNVERIFIED (22)"⟩
     reportedIn := none
     language := "stan1295"
     primaryText := "Falls der Fisch sterben würde, falls du das Wasser nicht wechselst, solltest du es wechseln"
@@ -211,9 +211,9 @@ def cwl2025_ex22 : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
-def cwl2025_ex29 : LinguisticExample :=
-  { id := "cwl2025_ex29"
-    source := ⟨"cao-white-lassiter-2025", "UNVERIFIED (29)"⟩
+def lass2025_ex29 : LinguisticExample :=
+  { id := "lass2025_ex29"
+    source := ⟨"lassiter-2025", "UNVERIFIED (29)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "If John helped someone if asked, we're in good shape"
@@ -229,9 +229,9 @@ def cwl2025_ex29 : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
-def cwl2025_ex30 : LinguisticExample :=
-  { id := "cwl2025_ex30"
-    source := ⟨"cao-white-lassiter-2025", "UNVERIFIED (30)"⟩
+def lass2025_ex30 : LinguisticExample :=
+  { id := "lass2025_ex30"
+    source := ⟨"lassiter-2025", "UNVERIFIED (30)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "If John helped anyone if asked, we're in good shape"
@@ -247,9 +247,9 @@ def cwl2025_ex30 : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
-def cwl2025_ex31 : LinguisticExample :=
-  { id := "cwl2025_ex31"
-    source := ⟨"cao-white-lassiter-2025", "UNVERIFIED (31)"⟩
+def lass2025_ex31 : LinguisticExample :=
+  { id := "lass2025_ex31"
+    source := ⟨"lassiter-2025", "UNVERIFIED (31)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "If Mary talked to someone if prompted, the experiment succeeded"
@@ -265,9 +265,9 @@ def cwl2025_ex31 : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
-def cwl2025_ex32 : LinguisticExample :=
-  { id := "cwl2025_ex32"
-    source := ⟨"cao-white-lassiter-2025", "UNVERIFIED (32)"⟩
+def lass2025_ex32 : LinguisticExample :=
+  { id := "lass2025_ex32"
+    source := ⟨"lassiter-2025", "UNVERIFIED (32)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "If Mary talked to anyone if prompted, the experiment succeeded"
@@ -283,9 +283,9 @@ def cwl2025_ex32 : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
-def cwl2025_ex33 : LinguisticExample :=
-  { id := "cwl2025_ex33"
-    source := ⟨"cao-white-lassiter-2025", "UNVERIFIED (33)"⟩
+def lass2025_ex33 : LinguisticExample :=
+  { id := "lass2025_ex33"
+    source := ⟨"lassiter-2025", "UNVERIFIED (33)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "If you're hungry and if you want some food, there are biscuits"
@@ -301,9 +301,9 @@ def cwl2025_ex33 : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
-def cwl2025_ex34 : LinguisticExample :=
-  { id := "cwl2025_ex34"
-    source := ⟨"cao-white-lassiter-2025", "UNVERIFIED (34)"⟩
+def lass2025_ex34 : LinguisticExample :=
+  { id := "lass2025_ex34"
+    source := ⟨"lassiter-2025", "UNVERIFIED (34)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "If Mary left if John did and if Sue is upset, we have a problem"
@@ -319,9 +319,9 @@ def cwl2025_ex34 : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
-def cwl2025_ex35 : LinguisticExample :=
-  { id := "cwl2025_ex35"
-    source := ⟨"cao-white-lassiter-2025", "UNVERIFIED (35)"⟩
+def lass2025_ex35 : LinguisticExample :=
+  { id := "lass2025_ex35"
+    source := ⟨"lassiter-2025", "UNVERIFIED (35)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "If the fish will die if you don't change the water and if you care about the fish, change the water"
@@ -337,9 +337,9 @@ def cwl2025_ex35 : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
-def cwl2025_ex36 : LinguisticExample :=
-  { id := "cwl2025_ex36"
-    source := ⟨"cao-white-lassiter-2025", "UNVERIFIED (36)"⟩
+def lass2025_ex36 : LinguisticExample :=
+  { id := "lass2025_ex36"
+    source := ⟨"lassiter-2025", "UNVERIFIED (36)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Only if you leave will I stay"
@@ -355,9 +355,9 @@ def cwl2025_ex36 : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
-def cwl2025_ex37 : LinguisticExample :=
-  { id := "cwl2025_ex37"
-    source := ⟨"cao-white-lassiter-2025", "UNVERIFIED (37)"⟩
+def lass2025_ex37 : LinguisticExample :=
+  { id := "lass2025_ex37"
+    source := ⟨"lassiter-2025", "UNVERIFIED (37)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Only if Mary left if John did will we have a problem"
@@ -373,9 +373,9 @@ def cwl2025_ex37 : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
-def cwl2025_ex38 : LinguisticExample :=
-  { id := "cwl2025_ex38"
-    source := ⟨"cao-white-lassiter-2025", "UNVERIFIED (38)"⟩
+def lass2025_ex38 : LinguisticExample :=
+  { id := "lass2025_ex38"
+    source := ⟨"lassiter-2025", "UNVERIFIED (38)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "We will have a problem only if Mary left if John did"
@@ -391,9 +391,9 @@ def cwl2025_ex38 : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
-def cwl2025_ex40 : LinguisticExample :=
-  { id := "cwl2025_ex40"
-    source := ⟨"cao-white-lassiter-2025", "UNVERIFIED (40)"⟩
+def lass2025_ex40 : LinguisticExample :=
+  { id := "lass2025_ex40"
+    source := ⟨"lassiter-2025", "UNVERIFIED (40)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "If the fish would die if you didn't change the water, you should change it"
@@ -409,9 +409,9 @@ def cwl2025_ex40 : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
-def cwl2025_ex41 : LinguisticExample :=
-  { id := "cwl2025_ex41"
-    source := ⟨"cao-white-lassiter-2025", "UNVERIFIED (41)"⟩
+def lass2025_ex41 : LinguisticExample :=
+  { id := "lass2025_ex41"
+    source := ⟨"lassiter-2025", "UNVERIFIED (41)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "If a car usually starts if you turn the key, it's probably reliable"
@@ -427,9 +427,9 @@ def cwl2025_ex41 : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
-def cwl2025_ex42 : LinguisticExample :=
-  { id := "cwl2025_ex42"
-    source := ⟨"cao-white-lassiter-2025", "UNVERIFIED (42)"⟩
+def lass2025_ex42 : LinguisticExample :=
+  { id := "lass2025_ex42"
+    source := ⟨"lassiter-2025", "UNVERIFIED (42)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "If dogs bark if provoked, we should keep them away from the children"
@@ -445,9 +445,9 @@ def cwl2025_ex42 : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
-def cwl2025_ex43 : LinguisticExample :=
-  { id := "cwl2025_ex43"
-    source := ⟨"cao-white-lassiter-2025", "UNVERIFIED (43)"⟩
+def lass2025_ex43 : LinguisticExample :=
+  { id := "lass2025_ex43"
+    source := ⟨"lassiter-2025", "UNVERIFIED (43)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "If John cries if scolded, we shouldn't be too hard on him"
@@ -463,6 +463,6 @@ def cwl2025_ex43 : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
-def all : List LinguisticExample := [cwl2025_gibbard, cwl2025_ex11, cwl2025_ex12, cwl2025_ex13, cwl2025_ex14, cwl2025_ex15, cwl2025_ex16, cwl2025_ex17, cwl2025_ex20, cwl2025_ex21, cwl2025_ex22, cwl2025_ex29, cwl2025_ex30, cwl2025_ex31, cwl2025_ex32, cwl2025_ex33, cwl2025_ex34, cwl2025_ex35, cwl2025_ex36, cwl2025_ex37, cwl2025_ex38, cwl2025_ex40, cwl2025_ex41, cwl2025_ex42, cwl2025_ex43]
+def all : List LinguisticExample := [lass2025_gibbard, lass2025_ex11, lass2025_ex12, lass2025_ex13, lass2025_ex14, lass2025_ex15, lass2025_ex16, lass2025_ex17, lass2025_ex20, lass2025_ex21, lass2025_ex22, lass2025_ex29, lass2025_ex30, lass2025_ex31, lass2025_ex32, lass2025_ex33, lass2025_ex34, lass2025_ex35, lass2025_ex36, lass2025_ex37, lass2025_ex38, lass2025_ex40, lass2025_ex41, lass2025_ex42, lass2025_ex43]
 
-end CaoWhiteLassiter2025.Examples
+end Lassiter2025.Examples

@@ -322,7 +322,6 @@ import Linglib.Data.Examples.ArreguiKusumoto1998
 import Linglib.Data.Examples.BeltramaSchwarz2024
 import Linglib.Data.Examples.BergenGoodman2015
 import Linglib.Data.Examples.Bondarenko2022
-import Linglib.Data.Examples.CaoWhiteLassiter2025
 import Linglib.Data.Examples.Charlow2014
 import Linglib.Data.Examples.ChatzikyriakidisEtAl2025
 import Linglib.Data.Examples.ChungMascarenhas2024
@@ -2930,3 +2929,4 @@ import Linglib.Syntax.WordGrammar.LexicalRules
 import Linglib.Syntax.WordGrammar.Network
 import Linglib.Data.Examples.Kennedy1999
 import Linglib.Data.Examples.BeckOdaSugisaki2004
+import Linglib.Data.Examples.Lassiter2025
