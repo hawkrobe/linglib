@@ -60,8 +60,7 @@ clausal" claim, the `so → such` transformation.
 
 ## Connection to Kennedy 1999
 
-The existing `Kennedy1999.lean` cites [bresnan-1973] for morphological
-distribution data and phrasal/clausal examples. This file formalizes
+This file formalizes
 Bresnan's own proposals: the QP structure, the derivation rules, and the
 four introductory puzzles that motivated the analysis. Bridge theorems
 connect the QP inventory to `Head` and verify suppletion outputs
@@ -310,8 +309,8 @@ def puzzleC : List PuzzleDatum :=
     modifiers (`*How short is he? — five feet short`), so the QP identity
     condition in the clause cannot be satisfied.
 
-    Bridge: this connects to `measurePhrase_positive_only` in `Kennedy1999.lean`
-    and `AdmitsMeasurePhrase` in `MeasurePhrase.lean`. -/
+    Bridge: this connects to `Kennedy1999.measurePhraseAbsoluteRows` and
+    `AdmitsMeasurePhrase` in `MeasurePhrase.lean`. -/
 def puzzleD : List PuzzleDatum :=
   [ { sentence := "Mary is more than six feet tall"
     , acceptable := true
@@ -452,7 +451,7 @@ def measurePhraseConstraintData : List MeasurePhraseConstraintDatum :=
     correlates with positive polarity.
 
     This is the formal content behind puzzle (D) and connects to
-    `measurePhrase_positive_only` in `Kennedy1999.lean`. -/
+    `Kennedy1999.measurePhraseAbsoluteRows`. -/
 theorem measurePhrase_polarity_correlation :
     ∀ d ∈ measurePhraseConstraintData,
       d.polarity = .negative → d.measurePhraseOk = false := by

@@ -1,7 +1,6 @@
 import Linglib.Semantics.Degree.Basic
 import Mathlib.Order.Interval.Basic
 import Linglib.Studies.VonStechow1984
-import Linglib.Studies.Kennedy1999
 
 /-!
 # Büring 2007: Cross-Polar Nomalies
@@ -55,7 +54,7 @@ disambiguate the two, favoring Analysis 1.
   connecting to [kennedy-1999]'s extent algebra in `Degree`.
 - **Cross-polar anomaly = algebraic impossibility**: same-dimension
   cross-polar comparison requires `crossExtentInclusion`, which
-  `crossExtent_always_false` proves is impossible on any linear order.
+  `Degree.not_crossExtentInclusion` proves is impossible on any linear order.
 - **Cross-polar nomaly = subcomparative**: different-dimension comparison
   is `subcomparative` from [schwarzschild-wilkinson-2002].
 - **Klein limitation bridge**: [von-stechow-1984]'s Klein limitation 3
@@ -99,9 +98,8 @@ theorem little_reverses_comparison {Entity α : Type*} [LinearOrder α]
     comparativeSem μ a b .positive ↔ comparativeSem μ b a .negative :=
   taller_shorter_antonymy μ a b
 
-open Degree (comparativeSem taller_shorter_antonymy)
-open Degree (subcomparative)
-open Kennedy1999 (crossExtentInclusion crossExtent_always_false)
+open Degree (comparativeSem taller_shorter_antonymy subcomparative
+  crossExtentInclusion not_crossExtentInclusion)
 
 /-- Schwarzschild-style positive interval `[⊥, μ x]` — the bundled
     (`NonemptyInterval`) face of `Set.Iic (μ x)`. -/
@@ -140,7 +138,7 @@ theorem little_positive_to_negative {Entity D : Type*}
     with a negative extent on the same dimension.
 
     "?*John is shorter than Mary is tall" requires Iic(μ Mary) ⊆
-    Ioi(μ John), but `crossExtent_always_false` from
+    Ioi(μ John), but `Degree.not_crossExtentInclusion` from
     [kennedy-1999]'s extent algebra proves this is impossible on
     any linear order: the boundary degree μ(a) belongs to the positive
     extent but not the negative one, so the inclusion always fails.
@@ -153,7 +151,7 @@ theorem little_positive_to_negative {Entity D : Type*}
 theorem crossPolar_anomaly_impossible {Entity D : Type*} [LinearOrder D]
     (μ : Entity → D) (a b : Entity) :
     ¬ crossExtentInclusion μ a b :=
-  crossExtent_always_false μ a b
+  not_crossExtentInclusion μ a b
 
 /-! ### Cross-Polar Pattern (Data) -/
 
