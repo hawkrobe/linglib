@@ -34,7 +34,7 @@ The shared structure is supervaluation over specification points.
 
 ## Contents
 
-- §1 **Trivalent Sentence Denotations**: `SentenceTV`, `posExt`/`negExt`/`gapExt`,
+- §1 **Trivalent Sentence Denotations**: `TrivalentProp`, `posExt`/`negExt`/`gapExt`,
    `isHomogeneous`, `isBivalent`.
 - §2 **Supervaluation as Homogeneity Source**: `supervaluationTV` via `SpecSpace`.
 - §3 **Homogeneity Removal**: `removeGap = Trivalent.metaAssert ∘ ·` lifted pointwise;
@@ -64,25 +64,25 @@ variable {W : Type*}
 
 /-- A trivalent sentence denotation: maps worlds to truth values.
     This is the general type for any sentence that may exhibit homogeneity. -/
-abbrev SentenceTV (W : Type*) := W → Trivalent
+abbrev TrivalentProp (W : Type*) := W → Trivalent
 
 /-- Positive extension: worlds where the sentence is true. -/
-def posExt (S : SentenceTV W) : Set W := {w | S w = .true}
+def posExt (S : TrivalentProp W) : Set W := {w | S w = .true}
 
 /-- Negative extension: worlds where the sentence is false. -/
-def negExt (S : SentenceTV W) : Set W := {w | S w = .false}
+def negExt (S : TrivalentProp W) : Set W := {w | S w = .false}
 
 /-- Extension gap: worlds where the sentence is neither true nor false. -/
-def gapExt (S : SentenceTV W) : Set W := {w | S w = .indet}
+def gapExt (S : TrivalentProp W) : Set W := {w | S w = .indet}
 
 /-- The three extensions partition the world space. -/
-theorem extensions_partition (S : SentenceTV W) (w : W) :
+theorem extensions_partition (S : TrivalentProp W) (w : W) :
     w ∈ posExt S ∨ w ∈ negExt S ∨ w ∈ gapExt S := by
   simp only [posExt, negExt, gapExt, Set.mem_setOf_eq]
   cases S w <;> simp
 
 /-- The positive and negative extensions are disjoint. -/
-theorem posExt_negExt_disjoint (S : SentenceTV W) :
+theorem posExt_negExt_disjoint (S : TrivalentProp W) :
     posExt S ∩ negExt S = ∅ := by
   ext w; simp only [posExt, negExt, Set.mem_inter_iff, Set.mem_setOf_eq,
     Set.mem_empty_iff_false]
@@ -90,22 +90,22 @@ theorem posExt_negExt_disjoint (S : SentenceTV W) :
 
 /-- A sentence is homogeneous if its extension gap is non-empty.
     The gap is what enables non-maximal readings. -/
-def isHomogeneous (S : SentenceTV W) : Prop := gapExt S ≠ ∅
+def isHomogeneous (S : TrivalentProp W) : Prop := gapExt S ≠ ∅
 
 /-- A sentence is bivalent if it has no extension gap.
     `all`, `necessarily`, and `completely` make sentences bivalent. -/
-def isBivalent (S : SentenceTV W) : Prop :=
+def isBivalent (S : TrivalentProp W) : Prop :=
   ∀ w, S w = .true ∨ S w = .false
 
 /-- A single gap-world witnesses homogeneity. -/
-theorem isHomogeneous_of_gap (S : SentenceTV W) (w : W) (h : S w = .indet) :
+theorem isHomogeneous_of_gap (S : TrivalentProp W) (w : W) (h : S w = .indet) :
     isHomogeneous S := by
   intro he; rw [Set.eq_empty_iff_forall_notMem] at he
   exact he w h
 
 /-- Bivalence and homogeneity are complementary:
     a sentence is bivalent iff it has no extension gap. -/
-theorem isBivalent_iff_not_homogeneous (S : SentenceTV W) :
+theorem isBivalent_iff_not_homogeneous (S : TrivalentProp W) :
     isBivalent S ↔ ¬isHomogeneous S := by
   constructor
   · intro hbiv hhom
@@ -140,7 +140,7 @@ theorem isBivalent_iff_not_homogeneous (S : SentenceTV W) :
     `eval w` gives the Prop predicate over spec points at world `w`,
     and `space w` gives the spec space at world `w`. -/
 def supervaluationTV {Spec W : Type*} (eval : W → Spec → Prop)
-    [∀ w s, Decidable (eval w s)] (space : W → SpecSpace Spec) : SentenceTV W :=
+    [∀ w s, Decidable (eval w s)] (space : W → SpecSpace Spec) : TrivalentProp W :=
   λ w => superTrue (eval w) (space w)
 
 /-- A supervaluation sentence is true iff the predicate holds at all specs. -/
@@ -187,28 +187,28 @@ theorem supervaluationTV_gap_iff {Spec W : Type*} (eval : W → Spec → Prop)
 /-- Remove homogeneity: collapse gap into negative extension.
     Defined as `Trivalent.metaAssert` lifted pointwise — see `Trivalent.lean`
     for the underlying assertion operator. -/
-def removeGap (S : SentenceTV W) : SentenceTV W :=
+def removeGap (S : TrivalentProp W) : TrivalentProp W :=
   λ w => Trivalent.metaAssert (S w)
 
 /-- Removal produces a bivalent sentence. -/
-theorem removeGap_bivalent (S : SentenceTV W) :
+theorem removeGap_bivalent (S : TrivalentProp W) :
     isBivalent (removeGap S) := by
   intro w; simp only [removeGap]; cases S w <;> simp
 
 /-- Removal preserves the positive extension. -/
-theorem removeGap_posExt_eq (S : SentenceTV W) :
+theorem removeGap_posExt_eq (S : TrivalentProp W) :
     posExt (removeGap S) = posExt S := by
   ext w; simp only [posExt, removeGap, Set.mem_setOf_eq]
   cases S w <;> simp
 
 /-- Removal absorbs the gap into the negative extension. -/
-theorem removeGap_negExt_eq (S : SentenceTV W) :
+theorem removeGap_negExt_eq (S : TrivalentProp W) :
     negExt (removeGap S) = negExt S ∪ gapExt S := by
   ext w; simp only [removeGap, negExt, gapExt, Set.mem_setOf_eq, Set.mem_union]
   cases S w <;> simp
 
 /-- Removed sentences are never homogeneous. -/
-theorem removeGap_not_homogeneous (S : SentenceTV W) :
+theorem removeGap_not_homogeneous (S : TrivalentProp W) :
     ¬isHomogeneous (removeGap S) := by
   intro h; apply h; ext w
   simp only [gapExt, removeGap, Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false]
@@ -235,15 +235,15 @@ theorem removeGap_not_homogeneous (S : SentenceTV W) :
     This weakens the standard maxim of quality: a speaker need not assert
     something literally true, only something equivalent to something true
     for current purposes. -/
-def sufficientlyTrue (q : QUD W) (S : SentenceTV W) (w : W) : Prop :=
+def sufficientlyTrue (q : QUD W) (S : TrivalentProp W) (w : W) : Prop :=
   ∃ w', q.r w w' ∧ S w' = .true
 
-instance sufficientlyTrue.instDecidable [Fintype W] (q : QUD W) (S : SentenceTV W) (w : W) :
+instance sufficientlyTrue.instDecidable [Fintype W] (q : QUD W) (S : TrivalentProp W) (w : W) :
     Decidable (sufficientlyTrue q S w) :=
   inferInstanceAs (Decidable (∃ w', q.r w w' ∧ S w' = .true))
 
 /-- Literal truth implies sufficient truth (for any issue). -/
-theorem literal_imp_sufficient (q : QUD W) (S : SentenceTV W) (w : W)
+theorem literal_imp_sufficient (q : QUD W) (S : TrivalentProp W) (w : W)
     (h : S w = .true) : sufficientlyTrue q S w :=
   ⟨w, q.iseqv.refl w, h⟩
 
@@ -252,25 +252,25 @@ theorem literal_imp_sufficient (q : QUD W) (S : SentenceTV W) (w : W)
 
     Gap-worlds are invisible: a cell containing true-worlds and gap-worlds
     is fine. Only a cell straddling the true/false boundary is problematic. -/
-def addressesIssue (q : QUD W) (S : SentenceTV W) : Prop :=
+def addressesIssue (q : QUD W) (S : TrivalentProp W) : Prop :=
   ¬∃ w₁ w₂, q.r w₁ w₂ ∧ S w₁ = .true ∧ S w₂ = .false
 
-instance addressesIssue.instDecidable [Fintype W] (q : QUD W) (S : SentenceTV W) :
+instance addressesIssue.instDecidable [Fintype W] (q : QUD W) (S : TrivalentProp W) :
     Decidable (addressesIssue q S) :=
   inferInstanceAs (Decidable (¬∃ w₁ w₂, q.r w₁ w₂ ∧ S w₁ = .true ∧ S w₂ = .false))
 
 /-- A sentence may be used at w iff: (1) S is not false at w,
     (2) S is sufficiently true at w, and (3) S addresses the issue. -/
-def usable (q : QUD W) (S : SentenceTV W) (w : W) : Prop :=
+def usable (q : QUD W) (S : TrivalentProp W) (w : W) : Prop :=
   S w ≠ .false ∧ sufficientlyTrue q S w ∧ addressesIssue q S
 
-instance usable.instDecidable [Fintype W] (q : QUD W) (S : SentenceTV W) (w : W) :
+instance usable.instDecidable [Fintype W] (q : QUD W) (S : TrivalentProp W) (w : W) :
     Decidable (usable q S w) :=
   inferInstanceAs (Decidable (S w ≠ .false ∧ sufficientlyTrue q S w ∧ addressesIssue q S))
 
 /-- For bivalent sentences, usability reduces to literal truth + addressing.
     Sufficient Trivalent adds nothing because there are no gap-worlds. -/
-theorem bivalent_usable_iff_true (q : QUD W) (S : SentenceTV W)
+theorem bivalent_usable_iff_true (q : QUD W) (S : TrivalentProp W)
     (hbiv : isBivalent S) (w : W) :
     usable q S w ↔ S w = .true ∧ addressesIssue q S := by
   constructor
@@ -332,11 +332,11 @@ theorem exact_stronglyRelevantSet_eq [BEq W] [LawfulBEq W]
     The hearer infers not that S is literally true, but that the actual world
     is indistinguishable (relative to current purposes) from one where S is
     literally true. -/
-def communicatedContent (q : QUD W) (S : SentenceTV W) : Set W :=
+def communicatedContent (q : QUD W) (S : TrivalentProp W) : Set W :=
   {w | sufficientlyTrue q S w}
 
 /-- Literal truth is always communicated. -/
-theorem posExt_subset_communicated (q : QUD W) (S : SentenceTV W) :
+theorem posExt_subset_communicated (q : QUD W) (S : TrivalentProp W) :
     posExt S ⊆ communicatedContent q S :=
   λ _ hw => literal_imp_sufficient q S _ hw
 
@@ -345,7 +345,7 @@ theorem posExt_subset_communicated (q : QUD W) (S : SentenceTV W) :
 
     This is the key consequence of gap removal: `all`/`necessarily`/`completely`
     force literal truth to be communicated. -/
-theorem bivalent_communicated_eq_posExt (q : QUD W) (S : SentenceTV W)
+theorem bivalent_communicated_eq_posExt (q : QUD W) (S : TrivalentProp W)
     (hbiv : isBivalent S) (hAddr : addressesIssue q S) :
     communicatedContent q S = posExt S := by
   ext w
@@ -366,7 +366,7 @@ theorem bivalent_communicated_eq_posExt (q : QUD W) (S : SentenceTV W)
     non-maximal use. The finite model in `Kriz2016`
     demonstrates this: `coarseQ` communicates `smithNeutral` but `fineQ`
     does not. -/
-theorem communicatedContent_antitone (q q' : QUD W) (S : SentenceTV W)
+theorem communicatedContent_antitone (q q' : QUD W) (S : TrivalentProp W)
     (hRef : ∀ w₁ w₂, q'.r w₁ w₂ → q.r w₁ w₂) :
     communicatedContent q' S ⊆ communicatedContent q S :=
   fun _ ⟨w', hEq, hTrue⟩ => ⟨w', hRef _ _ hEq, hTrue⟩
@@ -374,7 +374,7 @@ theorem communicatedContent_antitone (q q' : QUD W) (S : SentenceTV W)
 /-- Extract the Bool truth predicate from a bivalent sentence.
     Used to bridge between the trivalent Addressing constraint and
     bivalent strong-relevance filtering (Križ & Spector 2021). -/
-def bivalentPred (S : SentenceTV W) : W → Bool :=
+def bivalentPred (S : TrivalentProp W) : W → Bool :=
   λ w => S w == .true
 
 -- ════════════════════════════════════════════════════════════════════════════
@@ -411,7 +411,7 @@ variable {W : Type*} [DecidableEq W]
     two formalizations use different input representations (Finset vs
     SimilarityOrdering) but compute the same three-valued truth value. -/
 def conditionalTV (closestPWorlds : W → Finset W) (Q : W → Prop) [DecidablePred Q] :
-    SentenceTV W :=
+    TrivalentProp W :=
   λ w =>
     let pWorlds := closestPWorlds w
     if h : pWorlds.Nonempty then
@@ -422,7 +422,7 @@ def conditionalTV (closestPWorlds : W → Finset W) (Q : W → Prop) [DecidableP
     Defined as gap removal on the bare conditional: `necessarily` collapses
     the homogeneity gap, just as `all` does for plurals. -/
 def strictConditionalTV (closestPWorlds : W → Finset W) (Q : W → Prop) [DecidablePred Q] :
-    SentenceTV W :=
+    TrivalentProp W :=
   removeGap (conditionalTV closestPWorlds Q)
 
 omit [DecidableEq W] in
@@ -581,7 +581,7 @@ variable {W : Type*}
 /-- Any bivalent sentence (one whose gap has been removed) forces literal
     truth for usability. This is the general form of the headline result:
     homogeneity removers prevent non-maximal use. -/
-theorem removed_prevents_nonmax (q : QUD W) (S : SentenceTV W) (w : W)
+theorem removed_prevents_nonmax (q : QUD W) (S : TrivalentProp W) (w : W)
     (h : usable q (removeGap S) w) : removeGap S w = .true := by
   cases hbiv : (removeGap S w) with
   | true => rfl
@@ -592,7 +592,7 @@ theorem removed_prevents_nonmax (q : QUD W) (S : SentenceTV W) (w : W)
 
 /-- The gap enables non-maximal use: if S is gapped at w and w's cell
     contains a true-world, then S is usable at w (assuming addressing). -/
-theorem gap_enables_nonmax (q : QUD W) (S : SentenceTV W) (w w' : W)
+theorem gap_enables_nonmax (q : QUD W) (S : TrivalentProp W) (w w' : W)
     (hGap : S w = .indet)
     (hEquiv : q.r w w')
     (hTrue : S w' = .true)
@@ -601,7 +601,7 @@ theorem gap_enables_nonmax (q : QUD W) (S : SentenceTV W) (w w' : W)
   ⟨by simp [hGap], ⟨w', hEquiv, hTrue⟩, hAddr⟩
 
 /-- Gap-worlds are never false, so they satisfy the first usability condition. -/
-theorem gap_not_false (S : SentenceTV W) (w : W) (h : S w = .indet) :
+theorem gap_not_false (S : TrivalentProp W) (w : W) (h : S w = .indet) :
     S w ≠ .false := by simp [h]
 
 /-- Unmentionability of exceptions ([kriz-2016] §4.1): when `S` is used
@@ -609,7 +609,7 @@ theorem gap_not_false (S : SentenceTV W) (w : W) (h : S w = .indet) :
     but false wherever `S` is literally true — cannot address the same issue.
     `w`'s cell contains a literally-true world (by `sufficientlyTrue`), and
     `E` straddles the true/false boundary between `w` and that world. -/
-theorem exception_unaddressable (q : QUD W) (S E : SentenceTV W) (w : W)
+theorem exception_unaddressable (q : QUD W) (S E : TrivalentProp W) (w : W)
     (hUse : usable q S w) (hEw : E w = .true)
     (hEfalse : ∀ w', S w' = .true → E w' = .false) :
     ¬ addressesIssue q E := by

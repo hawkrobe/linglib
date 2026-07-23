@@ -1,6 +1,6 @@
 import Linglib.Core.Logic.Duality
 import Linglib.Core.Logic.Trivalent
-import Linglib.Semantics.Plurality.Homogeneity.Basic
+import Linglib.Semantics.Homogeneity.Basic
 import Linglib.Semantics.Plurality.Basic
 import Linglib.Semantics.Plurality.Cover
 import Linglib.Semantics.Plurality.Implicature
@@ -72,7 +72,7 @@ open Semantics.Homogeneity (isStronglyRelevantProp stronglyRelevantSet
 open Semantics.Plurality
 open Semantics.Plurality.Implicature (existPL)
 
-variable {Atom W : Type*} [DecidableEq Atom]
+variable {Atom W : Type*}
 
 /-! ### Trivalent truth values -/
 
@@ -195,6 +195,10 @@ def fullCandidateSet (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
     (x : Finset Atom) : Set (W → Prop) :=
   { p | ∃ z ∈ x.powerset, z.Nonempty ∧ p = candidateProp P z }
 
+section ToleranceFiltered
+
+variable [DecidableEq Atom]
+
 /-- Candidate set filtered by a tolerance relation. With identity tolerance
     only the maximal candidate survives; with trivial tolerance every
     nonempty sub-plurality candidate is included. -/
@@ -240,6 +244,8 @@ theorem fullCandidateSet_eq_candidateSet_trivial (P : Atom → W → Prop)
 /-- Identity tolerance is just plurality equality. -/
 theorem identity_tolerant_iff_eq (x z : Finset Atom) :
     Tolerance.identity.rel z x ↔ z = x := Iff.rfl
+
+end ToleranceFiltered
 
 /-! ### _root_.Trivalent-on-all ↔ trivalent semantics
 
@@ -524,7 +530,7 @@ in `fullCandidateSet`. -/
     to a candidate in `fullCandidateSet P x`. The cover relation
     constrains how parts join to `x`; the candidate function lifts
     each part to its sub-plurality-universal proposition. -/
-theorem mem_fullCandidateSet_of_cover_cell
+theorem mem_fullCandidateSet_of_cover_cell [DecidableEq Atom]
     (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
     (x : Finset Atom) {parts : Finset (Finset Atom)} {hne : parts.Nonempty}
     (hCover : Semantics.Plurality.Cover.IsFinCover parts hne x)

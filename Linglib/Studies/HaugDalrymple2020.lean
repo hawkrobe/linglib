@@ -3,7 +3,7 @@ import Linglib.Semantics.Dynamic.PPCDRT.Defs
 import Linglib.Semantics.Dynamic.PPCDRT.Anaphora
 import Linglib.Semantics.Dynamic.PPCDRT.Cumulativity
 import Linglib.Semantics.Plurality.Cumulativity
-import Linglib.Semantics.Plurality.Homogeneity.Basic
+import Linglib.Semantics.Homogeneity.Basic
 import Linglib.Semantics.Supervaluation.Basic
 import Linglib.Core.Logic.Trivalent
 
@@ -547,7 +547,7 @@ theorem quantifiedReciprocalTV_iff_supervaluation
     simp [hdEval, hdSpec, hm, hr]
 
 /-! **Sibling parallel — Križ 2016 plural homogeneity.**
-    `Studies/Kriz2016.lean`'s `barePluralTV_eq_superTrue` reduces plural
+    `Semantics.Homogeneity.barePlural_eq_superTrue` reduces plural
     homogeneity to `superTrue` over **atoms in the plurality** as
     specification points; the bridge above reduces the H&D §5 reciprocal
     gap to `superTrue` over **precisifications of the reciprocal's

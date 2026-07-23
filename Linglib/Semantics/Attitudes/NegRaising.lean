@@ -1,6 +1,6 @@
 import Linglib.Semantics.Attitudes.Doxastic
 import Linglib.Core.Logic.Aristotelian.Square
-import Linglib.Semantics.Plurality.Homogeneity.Decided
+import Linglib.Semantics.Homogeneity.Decided
 
 /-!
 # Neg-Raising as O→E Pragmatic Strengthening

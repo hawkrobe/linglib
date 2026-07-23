@@ -1,23 +1,19 @@
 import Linglib.Data.Examples.Kriz2015
 import Linglib.Data.Generalizations.HomogeneityGap
 import Linglib.Studies.Magri2014
-import Linglib.Semantics.Plurality.Homogeneity.Basic
-import Linglib.Semantics.Plurality.Distributivity
-import Linglib.Semantics.Plurality.Trivalent
+import Linglib.Semantics.Homogeneity.Plural
 
 /-!
 # Križ (2016): homogeneity, non-maximality, and *all*
 
-This file is the plural instantiation of the homogeneity substrate in
-`Semantics.Homogeneity`, after [kriz-2016]: plural predication is trivalent
-(`barePluralTV`, atoms as specification points), *all* is gap removal
-(`allPluralTV`), and non-maximal readings arise pragmatically when a coarse
-issue puts a gap-world in the same cell as a literally-true world (`usable`).
-A five-world finite model checks the predictions end-to-end, including the
+This file verifies [kriz-2016]'s predictions against a finite model, using
+the homogeneity substrate in `Semantics.Homogeneity` and its plural
+instantiation (`barePlural`, `allPlural` — both originating with this
+paper). A five-world model checks the predictions end-to-end, including the
 §4.2 sensitivity to what an exception does instead and the §4.1
 unmentionability of exceptions. Closing sections connect the analysis to the
-typed data in `Data.Examples.Kriz2015`, to supervaluation ([fine-1975]), and
-to [magri-2014]'s rival gap derivation.
+typed data in `Data.Examples.Kriz2015` and to [magri-2014]'s rival gap
+derivation.
 
 ## Implementation notes
 
@@ -38,112 +34,7 @@ unaddressed, as in the paper.
 
 namespace Kriz2016
 
-open Semantics.Plurality
-open Semantics.Plurality.Distributivity
-open Semantics.Plurality.Trivalent
 open Semantics.Homogeneity
-
-variable {Atom W : Type*} [DecidableEq Atom]
-variable (P : Atom → W → Prop) [∀ a w, Decidable (P a w)] (x : Finset Atom)
-
-/-! ### Plural predication as sentence extension -/
-
-/-- The bare plural sentence "the Xs are P" as a trivalent sentence. -/
-def barePluralTV : SentenceTV W :=
-  λ w => pluralTruthValue P x w
-
-/-- The *all*-sentence "all the Xs are P". Per §3.1, *all*'s semantic
-    contribution is gap removal, so the semantics is derived from the bare
-    plural via `removeGap` rather than stipulated. -/
-def allPluralTV : SentenceTV W :=
-  removeGap (barePluralTV P x)
-
-omit [DecidableEq Atom] in
-/-- *all* eliminates the extension gap. -/
-theorem all_no_gap : gapExt (allPluralTV P x) = ∅ := by
-  by_contra h
-  exact removeGap_not_homogeneous (barePluralTV P x) h
-
-omit [DecidableEq Atom] in
-/-- An *all*-sentence is never homogeneous. -/
-theorem all_not_homogeneous : ¬isHomogeneous (allPluralTV P x) :=
-  removeGap_not_homogeneous (barePluralTV P x)
-
-omit [DecidableEq Atom] in
-/-- The bare plural and the *all*-sentence are true in the same worlds. -/
-theorem all_posExt_eq : posExt (allPluralTV P x) = posExt (barePluralTV P x) :=
-  removeGap_posExt_eq (barePluralTV P x)
-
-omit [DecidableEq Atom] in
-/-- *all* absorbs the gap into the negative extension. -/
-theorem all_negExt_eq :
-    negExt (barePluralTV P x) ∪ gapExt (barePluralTV P x) =
-    negExt (allPluralTV P x) :=
-  (removeGap_negExt_eq (barePluralTV P x)).symm
-
-/-! ### The effect of *all* -/
-
-omit [DecidableEq Atom] in
-/-- *all*-sentences are bivalent. -/
-theorem all_bivalent : isBivalent (allPluralTV P x) :=
-  removeGap_bivalent (barePluralTV P x)
-
-/-- Gap removal on a plural sentence is true iff all atoms satisfy `P`.
-    Cf. `KrizSpector2021.removeGap_iff_forallH`. -/
-theorem removeGap_plural_true_iff (w : W) :
-    removeGap (fun w => pluralTruthValue P x w) w = .true ↔
-    allSatisfy P x w := by
-  rw [← pluralTruthValue_eq_true_iff]; simp only [removeGap]
-  generalize pluralTruthValue P x w = t
-  cases t <;> simp
-
-/-- `bivalentPred` of an *all*-sentence is true iff `allSatisfy` holds.
-    Cf. `KrizSpector2021.all_addressing_iff_relevant`. -/
-theorem bivalentPred_allPluralTV_eq_allSatisfy (w : W) :
-    bivalentPred (allPluralTV P x) w = true ↔ allSatisfy P x w := by
-  simp only [bivalentPred, beq_iff_eq, allPluralTV]
-  exact removeGap_plural_true_iff P x w
-
-/-- If an *all*-sentence is usable at `w`, all atoms satisfy `P` at `w`:
-    bivalence turns usability's not-false clause into literal truth.
-    Cf. `all_blocked_by_wide_issue` for the complementary Addressing
-    direction. -/
-theorem all_prevents_nonmax (q : QUD W) (w : W)
-    (h : usable q (allPluralTV P x) w) : allSatisfy P x w := by
-  have hTrue : allPluralTV P x w = .true :=
-    ((bivalent_usable_iff_true q _ (all_bivalent P x) w).mp h).1
-  have hBareTrue : barePluralTV P x w = .true := by
-    have hMem : w ∈ posExt (allPluralTV P x) := hTrue
-    rw [all_posExt_eq P x] at hMem
-    exact hMem
-  exact (pluralTruthValue_eq_true_iff P x w).mp hBareTrue
-
-/-- An *all*-sentence cannot address a "wide" issue — one with a cell
-    straddling the *all*/not-*all* boundary (§3.4). -/
-theorem all_blocked_by_wide_issue (q : QUD W)
-    (hWide : ∃ w₁ w₂, q.r w₁ w₂ ∧ allSatisfy P x w₁ ∧ ¬ allSatisfy P x w₂) :
-    ¬ addressesIssue q (allPluralTV P x) := by
-  intro hAddr
-  obtain ⟨w₁, w₂, hEq, h1, h2⟩ := hWide
-  have h1' : allPluralTV P x w₁ = .true :=
-    (removeGap_plural_true_iff P x w₁).mpr h1
-  have h2' : allPluralTV P x w₂ = .false := by
-    cases all_bivalent P x w₂ with
-    | inl h =>
-      have hAll : allSatisfy P x w₂ :=
-        (removeGap_plural_true_iff P x w₂).mp h
-      exact absurd hAll h2
-    | inr h => exact h
-  exact hAddr ⟨w₁, w₂, hEq, h1', h2'⟩
-
-/-- A usable *all*-sentence leaves no exceptions to mention: "#Although all
-    the professors smiled, Smith didn't" is contradictory. The bare-plural
-    unmentionability result proper (§4.1) is `smith_exception_unaddressable`
-    below. -/
-theorem all_exceptions_unmentionable (q : QUD W) (w : W) (a : Atom) (ha : a ∈ x)
-    (h : usable q (allPluralTV P x) w) : P a w := by
-  have := all_prevents_nonmax P x q w h
-  exact this a ha
 
 /-! ### Finite model
 
@@ -224,53 +115,53 @@ def fineQ : QUD ProfWorld := QUD.ofDecEq id
 /-! #### Trivalent values at each world -/
 
 theorem bare_allSmiled :
-    barePluralTV smiled profs .allSmiled = .true := by decide
+    barePlural smiled profs .allSmiled = .true := by decide
 
 theorem bare_smithNeutral :
-    barePluralTV smiled profs .smithNeutral = .indet := by decide
+    barePlural smiled profs .smithNeutral = .indet := by decide
 
 theorem bare_onlyLeeSmiled :
-    barePluralTV smiled profs .onlyLeeSmiled = .indet := by decide
+    barePlural smiled profs .onlyLeeSmiled = .indet := by decide
 
 theorem bare_noneSmiled :
-    barePluralTV smiled profs .noneSmiled = .false := by decide
+    barePlural smiled profs .noneSmiled = .false := by decide
 
 /-- The bare plural about the professors is homogeneous: `smithNeutral` is in
     the gap. -/
 theorem bare_profs_homogeneous :
-    isHomogeneous (barePluralTV smiled profs) :=
-  isHomogeneous_of_gap (barePluralTV smiled profs) .smithNeutral (by decide)
+    isHomogeneous (barePlural smiled profs) :=
+  isHomogeneous_of_gap (barePlural smiled profs) .smithNeutral (by decide)
 
 /-! #### End-to-end predictions -/
 
 /-- The bare plural is usable at `smithNeutral` under the coarse QUD: the
     non-maximal reading. -/
 theorem smithNeutral_usable_coarse :
-    usable coarseQ (barePluralTV smiled profs) .smithNeutral := by decide
+    usable coarseQ (barePlural smiled profs) .smithNeutral := by decide
 
 /-- The bare plural is not usable at `smithNeutral` under the fine QUD. -/
 theorem smithNeutral_not_usable_fine :
-    ¬usable fineQ (barePluralTV smiled profs) .smithNeutral := by decide
+    ¬usable fineQ (barePlural smiled profs) .smithNeutral := by decide
 
 /-- The *all*-sentence is not usable at `smithNeutral` under any QUD. -/
 theorem all_not_usable_smithNeutral (q : QUD ProfWorld)
-    (h : usable q (allPluralTV smiled profs) .smithNeutral) : False :=
-  absurd (all_prevents_nonmax smiled profs q .smithNeutral h) (by decide)
+    (h : usable q (allPlural smiled profs) .smithNeutral) : False :=
+  absurd (allPlural_prevents_nonmax smiled profs q .smithNeutral h) (by decide)
 
 /-- Wherever the *all*-sentence is usable, Smith smiled. -/
 theorem smith_exception_unmentionable (q : QUD ProfWorld) (w : ProfWorld)
-    (h : usable q (allPluralTV smiled profs) w) :
+    (h : usable q (allPlural smiled profs) w) :
     smiled .smith w :=
-  all_exceptions_unmentionable smiled profs q w .smith (by decide) h
+  allPlural_exceptions_unmentionable smiled profs q w .smith (by decide) h
 
 /-- The coarse QUD communicates the gap-world `smithNeutral`. -/
 theorem coarse_communicates_gap :
-    .smithNeutral ∈ communicatedContent coarseQ (barePluralTV smiled profs) :=
+    .smithNeutral ∈ communicatedContent coarseQ (barePlural smiled profs) :=
   ⟨.allSmiled, by decide, by decide⟩
 
 /-- The fine QUD does not communicate `smithNeutral`. -/
 theorem fine_does_not_communicate_gap :
-    .smithNeutral ∉ communicatedContent fineQ (barePluralTV smiled profs) := by
+    .smithNeutral ∉ communicatedContent fineQ (barePlural smiled profs) := by
   intro ⟨w', hEq, hTrue⟩
   revert hEq hTrue; cases w' <;> decide
 
@@ -284,14 +175,14 @@ non-maximal use requires a cell containing both a true-world and the
 gap-world, and the exception-mentioning continuation straddles it. -/
 
 /-- "Smith didn't smile", the exception-mentioning continuation. -/
-def smithDidntSmile : SentenceTV ProfWorld :=
+def smithDidntSmile : TrivalentProp ProfWorld :=
   λ w => if smiled .smith w then .false else .true
 
 /-- Under the coarse issue licensing the non-maximal use at `smithNeutral`,
     "…but Smith didn't" cannot address the issue (§4.1). -/
 theorem smith_exception_unaddressable :
     ¬ addressesIssue coarseQ smithDidntSmile :=
-  exception_unaddressable coarseQ (barePluralTV smiled profs) smithDidntSmile
+  exception_unaddressable coarseQ (barePlural smiled profs) smithDidntSmile
     .smithNeutral smithNeutral_usable_coarse (by decide) (by decide)
 
 /-! #### What exceptions do (§4.2)
@@ -304,19 +195,19 @@ the other — a contrast unavailable to accounts without an issue parameter
 (restricted reference, alternative geometry). -/
 
 theorem bare_smithAngry :
-    barePluralTV smiled profs .smithAngry = .indet := by decide
+    barePlural smiled profs .smithAngry = .indet := by decide
 
 /-- The bare plural is not usable at `smithAngry` under the coarse QUD:
     `smithAngry` shares its cell with `onlyLeeSmiled`, and neither is in the
     positive extension. -/
 theorem bare_smithAngry_not_usable_coarse :
-    ¬ usable coarseQ (barePluralTV smiled profs) .smithAngry := by decide
+    ¬ usable coarseQ (barePlural smiled profs) .smithAngry := by decide
 
 /-- The §4.2 contrast: same sentence, same QUD, opposite usability at the
     two gap-worlds. -/
 theorem bare_usable_neutral_not_angry :
-    usable coarseQ (barePluralTV smiled profs) .smithNeutral ∧
-    ¬ usable coarseQ (barePluralTV smiled profs) .smithAngry :=
+    usable coarseQ (barePlural smiled profs) .smithNeutral ∧
+    ¬ usable coarseQ (barePlural smiled profs) .smithAngry :=
   ⟨smithNeutral_usable_coarse, bare_smithAngry_not_usable_coarse⟩
 
 end FiniteModel
@@ -346,39 +237,8 @@ open Generalizations.HomogeneityGap in
     the value the positive gap row observes. -/
 theorem model_matches_gap_row :
     (fromExample Kriz2015.Examples.switches_pos_gap).map (·.observed) =
-      some (barePluralTV smiled profs .smithNeutral) := by
+      some (barePlural smiled profs .smithNeutral) := by
   decide
-
-/-! ### Supervaluation
-
-Plural predication is supervaluation ([fine-1975]) with atoms as
-specification points — the same shape as thresholds for vague predicates,
-closest worlds for conditionals (`selectional_eq_dist`), and restrictor
-precisifications for reciprocals
-(`HaugDalrymple2020.quantifiedReciprocalTV_iff_supervaluation`). -/
-
-open Semantics.Supervaluation (SpecSpace superTrue)
-
-omit [DecidableEq Atom] in
-/-- The bare plural at `w` equals `superTrue` with atoms as specification
-    points and `P(·, w)` as the evaluation function. -/
-theorem barePluralTV_eq_superTrue (hne : x.Nonempty) (w : W) :
-    barePluralTV P x w = superTrue (fun a => P a w) ⟨x, hne⟩ := by
-  simp only [barePluralTV, pluralTruthValue]
-  rw [Semantics.Supervaluation.superTrue_eq_dist]
-
-omit [DecidableEq Atom] in
-/-- A homogeneity gap is supervaluation indefiniteness. -/
-theorem homogeneity_gap_is_indefiniteness (hne : x.Nonempty) (w : W)
-    (hgap : barePluralTV P x w = .indet) :
-    superTrue (fun a => P a w) ⟨x, hne⟩ = Trivalent.indet := by
-  rw [← barePluralTV_eq_superTrue P x hne w]; exact hgap
-
-omit [DecidableEq Atom] in
-/-- An *all*-sentence is never indefinite. -/
-theorem all_removes_supervaluation_gap (w : W) :
-    allPluralTV P x w ≠ .indet := by
-  rcases all_bivalent P x w with h | h <;> simp [h]
 
 /-! ### Conjunction overgeneration (§6.2)
 
@@ -430,13 +290,13 @@ def someWentPartition : ConjWorld → ConjPartition
 def coarseConjQ : QUD ConjWorld := QUD.ofDecEq someWentPartition
 
 theorem conj_dorasMissing_gap :
-    barePluralTV wentThere threeCoworkers .dorasMissing = .indet := by decide
+    barePlural wentThere threeCoworkers .dorasMissing = .indet := by decide
 
 /-- Modelled as a plural over {Bert, Claire, Dora}, the conjunction is
     predicted usable at the gap-world `dorasMissing` under the coarse issue —
     the overgenerated non-maximal reading. -/
 theorem conj_modeled_as_plural_predicts_nonmax :
-    usable coarseConjQ (barePluralTV wentThere threeCoworkers) .dorasMissing := by
+    usable coarseConjQ (barePlural wentThere threeCoworkers) .dorasMissing := by
   decide
 
 end ConjunctionOvergeneration
@@ -479,8 +339,8 @@ theorem magri_2of3_gap_is_bivalent_false :
     accounts assign the gap incompatible statuses. -/
 theorem kriz_vs_magri_alternative_geometry :
     doubleExh .mystery (fromPredicate smiled profs .smithNeutral) = false ∧
-    barePluralTV smiled profs .smithNeutral = .indet ∧
-    usable coarseQ (barePluralTV smiled profs) .smithNeutral :=
+    barePlural smiled profs .smithNeutral = .indet ∧
+    usable coarseQ (barePlural smiled profs) .smithNeutral :=
   ⟨fromPredicate_smithNeutral.symm ▸ magri_2of3_gap_is_bivalent_false,
    bare_smithNeutral, smithNeutral_usable_coarse⟩
 

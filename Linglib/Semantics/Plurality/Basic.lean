@@ -36,7 +36,7 @@ theoretical accounts (`Distributivity`, `Trivalent`, `Implicature`,
 
 namespace Semantics.Plurality
 
-variable {Atom W : Type*} [DecidableEq Atom]
+variable {Atom W : Type*}
 
 /-! ### Tolerance relations -/
 
@@ -63,19 +63,21 @@ instance Tolerance.instDecidableRel {Atom : Type*} [DecidableEq Atom]
 
 namespace Tolerance
 
+variable [DecidableEq Atom]
+
 /-- Identity tolerance: only `x ⪯ x` (forces maximal reading). -/
 def identity : Tolerance Atom where
   rel x y := x = y
   decRel x y := decEq x y
   refl _ := rfl
-  sub x y h := h ▸ Finset.Subset.refl x
+  sub x _ h := h ▸ Finset.Subset.refl x
 
 /-- Trivial tolerance: any sub-plurality is tolerated (allows existential
     reading). [kriz-spector-2021] call this the *trivial* tolerance
     — the relation is just sub-pluralityhood, with no further restriction. -/
 def trivial : Tolerance Atom where
   rel x y := x ⊆ y
-  decRel x y := Finset.decidableDforallFinset
+  decRel _ _ := Finset.decidableDforallFinset
   refl _ := Finset.Subset.refl _
   sub _ _ h := h
 

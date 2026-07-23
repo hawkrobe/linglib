@@ -1,7 +1,7 @@
 import Linglib.Semantics.Modality.Directive
 import Linglib.Fragments.English.Auxiliaries
 import Linglib.Studies.Rubinstein2014
-import Linglib.Semantics.Plurality.Homogeneity.Decided
+import Linglib.Semantics.Homogeneity.Decided
 import Mathlib.Data.Fin.Basic
 
 /-!

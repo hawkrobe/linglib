@@ -2,7 +2,7 @@ import Linglib.Semantics.Exhaustification.Operators.Basic
 import Linglib.Semantics.Exhaustification.Operators.InnocentInclusion
 import Linglib.Semantics.Plurality.Implicature
 import Linglib.Data.Generalizations.HomogeneityGap
-import Linglib.Studies.Kriz2016
+import Linglib.Semantics.Homogeneity.Plural
 import Linglib.Studies.Magri2014
 import Mathlib.Data.Set.Basic
 
@@ -867,7 +867,7 @@ theorem positive_negative_asymmetry :
 
 /-! The §11 prose comparison is upgraded here to a kernel-checked divergence
 theorem: lift the BarLev `Set HomWorld` predicates into Bool-valued versions,
-instantiate Križ's `barePluralTV` over them, and demonstrate that at the
+instantiate Križ's `barePlural` over them, and demonstrate that at the
 gap-world `onlyKelly`:
 
 - Križ's bare-plural is `.indet` (gap), and its Strong-Kleene negation is
@@ -883,14 +883,14 @@ of the §11 polarities-symmetric vs. polarities-asymmetric disagreement. -/
 /-- At `onlyKelly`, Križ's bare-plural denotation of "the kids laughed" is
     a homogeneity gap (.indet) — Kelly laughed, Jane didn't. -/
 theorem kriz_bare_kids_onlyKelly_gap :
-    Kriz2016.barePluralTV laughed theKids
+    Semantics.Homogeneity.barePlural laughed theKids
       .onlyKelly = .indet := by decide
 
 /-- Križ's Strong-Kleene negation of a gap is also a gap. So the negation
     "the kids didn't laugh" at `onlyKelly` is `.indet` under Križ. -/
 theorem kriz_neg_bare_kids_onlyKelly_gap :
     Trivalent.neg
-      (Kriz2016.barePluralTV laughed theKids
+      (Semantics.Homogeneity.barePlural laughed theKids
         .onlyKelly) = .indet := by
   rw [kriz_bare_kids_onlyKelly_gap]; decide
 
@@ -916,7 +916,7 @@ theorem barlev_neg_someLaughed_onlyKelly_false :
     in prose. -/
 theorem kriz_vs_barlev_negative_nonmax :
     Trivalent.neg
-      (Kriz2016.barePluralTV laughed theKids
+      (Semantics.Homogeneity.barePlural laughed theKids
         .onlyKelly) = .indet ∧
     ¬ ¬ someLaughed .onlyKelly :=
   ⟨kriz_neg_bare_kids_onlyKelly_gap, barlev_neg_someLaughed_onlyKelly_false⟩
