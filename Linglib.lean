@@ -1527,6 +1527,7 @@ import Linglib.Semantics.Classifier.TypeN
 import Linglib.Semantics.Composition.Combinator
 import Linglib.Semantics.Composition.Continuation
 import Linglib.Semantics.Composition.Coordination
+import Linglib.Semantics.Composition.CoordinatorOp
 import Linglib.Semantics.Composition.LexEntry
 import Linglib.Semantics.Composition.Model
 import Linglib.Semantics.Composition.Reduction
@@ -1551,8 +1552,6 @@ import Linglib.Semantics.Conditionals.SelectionFunction
 import Linglib.Semantics.Conditionals.Stalnaker
 import Linglib.Semantics.Conditionals.Sweetser
 import Linglib.Semantics.Conditionals.WillConditional
-import Linglib.Semantics.Coordination.Basic
-import Linglib.Semantics.Coordination.Defs
 import Linglib.Semantics.Definiteness.Basic
 import Linglib.Semantics.Definiteness.Description
 import Linglib.Semantics.Definiteness.DeterminerDenotation
@@ -2790,6 +2789,7 @@ import Linglib.Syntax.Category.Adposition.Spatial
 import Linglib.Syntax.Category.Auxiliary.Basic
 import Linglib.Syntax.Category.Auxiliary.Constructions
 import Linglib.Syntax.Category.Complementizer.Basic
+import Linglib.Syntax.Category.Coordinator
 import Linglib.Syntax.Category.Degree.Basic
 import Linglib.Syntax.Category.Determiner.Basic
 import Linglib.Syntax.Category.ExpressiveModifier

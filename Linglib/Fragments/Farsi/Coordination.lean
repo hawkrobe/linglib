@@ -1,4 +1,4 @@
-import Linglib.Semantics.Coordination.Defs
+import Linglib.Syntax.Category.Coordinator
 
 /-!
 # Persian (Farsi) Coordination Morphemes
