@@ -1,13 +1,13 @@
-import Linglib.Data.Examples.CaoWhiteLassiter2025
+import Linglib.Data.Examples.Lassiter2025
 import Linglib.Fragments.Japanese.Conditionals
 import Linglib.Fragments.German.Conditionals
 
 /-!
 # Left-Nested Conditionals: Bridge
-[lassiter-2025] [cao-white-lassiter-2025]
+[lassiter-2025]
 
-Connects the LNC data from [cao-white-lassiter-2025]
-(`Data/Examples/CaoWhiteLassiter2025.json`) to the conditional marker
+Connects the LNC data from [lassiter-2025]
+(`Data/Examples/Lassiter2025.json`) to the conditional marker
 typology in `Fragments/{Language}/Conditionals.lean`.
 
 ## Main declarations
@@ -22,7 +22,6 @@ typology in `Fragments/{Language}/Conditionals.lean`.
 namespace Lassiter2025
 
 open Data.Examples
-open CaoWhiteLassiter2025
 open Semantics.Conditionals (ConditionalMarker ConditionalMarkerType)
 
 /-- Marker adapter: the Fragment entry for the row's conditional marker. -/
