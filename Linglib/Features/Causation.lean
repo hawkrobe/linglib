@@ -96,20 +96,18 @@ inductive Causative where
 
 namespace Causative
 
-/-- Does this variant assert causal sufficiency (N&L Def 23)?
+/-- Does this variant assert causal sufficiency ([nadathur-lauer-2020]'s
+    definition (23))?
 
-    DERIVED: true for variants whose `toSemantics` maps to `causallySufficient`.
-
-    UNVERIFIED: Nadathur & Lauer Def 23 reference cited from memory. -/
+    DERIVED: true for variants whose `toSemantics` maps to `causallySufficient`. -/
 def assertsSufficiency : Causative → Bool
   | .make | .force | .enable => true
   | .cause | .prevent => false
 
-/-- Does this variant assert causal necessity (N&L Def 24)?
+/-- Does this variant assert causal necessity ([nadathur-lauer-2020]'s
+    definition (24))?
 
-    DERIVED: true only for `.cause`, whose `toSemantics` maps to `causeSem`.
-
-    UNVERIFIED: Nadathur & Lauer Def 24 reference cited from memory. -/
+    DERIVED: true only for `.cause`, whose `toSemantics` maps to `causeSem`. -/
 def assertsNecessity : Causative → Bool
   | .cause => true
   | _ => false
