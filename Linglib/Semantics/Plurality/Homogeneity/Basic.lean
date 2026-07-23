@@ -97,6 +97,12 @@ def isHomogeneous (S : SentenceTV W) : Prop := gapExt S ≠ ∅
 def isBivalent (S : SentenceTV W) : Prop :=
   ∀ w, S w = .true ∨ S w = .false
 
+/-- A single gap-world witnesses homogeneity. -/
+theorem isHomogeneous_of_gap (S : SentenceTV W) (w : W) (h : S w = .indet) :
+    isHomogeneous S := by
+  intro he; rw [Set.eq_empty_iff_forall_notMem] at he
+  exact he w h
+
 /-- Bivalence and homogeneity are complementary:
     a sentence is bivalent iff it has no extension gap. -/
 theorem isBivalent_iff_not_homogeneous (S : SentenceTV W) :
@@ -232,6 +238,10 @@ theorem removeGap_not_homogeneous (S : SentenceTV W) :
 def sufficientlyTrue (q : QUD W) (S : SentenceTV W) (w : W) : Prop :=
   ∃ w', q.r w w' ∧ S w' = .true
 
+instance sufficientlyTrue.instDecidable [Fintype W] (q : QUD W) (S : SentenceTV W) (w : W) :
+    Decidable (sufficientlyTrue q S w) :=
+  inferInstanceAs (Decidable (∃ w', q.r w w' ∧ S w' = .true))
+
 /-- Literal truth implies sufficient truth (for any issue). -/
 theorem literal_imp_sufficient (q : QUD W) (S : SentenceTV W) (w : W)
     (h : S w = .true) : sufficientlyTrue q S w :=
@@ -245,10 +255,18 @@ theorem literal_imp_sufficient (q : QUD W) (S : SentenceTV W) (w : W)
 def addressesIssue (q : QUD W) (S : SentenceTV W) : Prop :=
   ¬∃ w₁ w₂, q.r w₁ w₂ ∧ S w₁ = .true ∧ S w₂ = .false
 
+instance addressesIssue.instDecidable [Fintype W] (q : QUD W) (S : SentenceTV W) :
+    Decidable (addressesIssue q S) :=
+  inferInstanceAs (Decidable (¬∃ w₁ w₂, q.r w₁ w₂ ∧ S w₁ = .true ∧ S w₂ = .false))
+
 /-- A sentence may be used at w iff: (1) S is not false at w,
     (2) S is sufficiently true at w, and (3) S addresses the issue. -/
 def usable (q : QUD W) (S : SentenceTV W) (w : W) : Prop :=
   S w ≠ .false ∧ sufficientlyTrue q S w ∧ addressesIssue q S
+
+instance usable.instDecidable [Fintype W] (q : QUD W) (S : SentenceTV W) (w : W) :
+    Decidable (usable q S w) :=
+  inferInstanceAs (Decidable (S w ≠ .false ∧ sufficientlyTrue q S w ∧ addressesIssue q S))
 
 /-- For bivalent sentences, usability reduces to literal truth + addressing.
     Sufficient Trivalent adds nothing because there are no gap-worlds. -/
@@ -529,7 +547,7 @@ theorem generalisedTV_distributive_reduction
         exact hnone y hy.1 (hPb y hy.2)
       rw [if_neg hNoWitness, if_pos hnone]
     · -- Mixed: both return .indet
-      push_neg at hnone
+      push Not at hnone
       obtain ⟨x, hxa, hpx⟩ := hnone
       have hOv : overlaps a {x} := by
         unfold overlaps
@@ -585,6 +603,18 @@ theorem gap_enables_nonmax (q : QUD W) (S : SentenceTV W) (w w' : W)
 /-- Gap-worlds are never false, so they satisfy the first usability condition. -/
 theorem gap_not_false (S : SentenceTV W) (w : W) (h : S w = .indet) :
     S w ≠ .false := by simp [h]
+
+/-- Unmentionability of exceptions ([kriz-2016] §4.1): when `S` is used
+    at `w` under issue `q`, an exception-mentioning sentence `E` — true at `w`
+    but false wherever `S` is literally true — cannot address the same issue.
+    `w`'s cell contains a literally-true world (by `sufficientlyTrue`), and
+    `E` straddles the true/false boundary between `w` and that world. -/
+theorem exception_unaddressable (q : QUD W) (S E : SentenceTV W) (w : W)
+    (hUse : usable q S w) (hEw : E w = .true)
+    (hEfalse : ∀ w', S w' = .true → E w' = .false) :
+    ¬ addressesIssue q E := by
+  obtain ⟨-, ⟨w', hEq, hTrue⟩, -⟩ := hUse
+  exact λ hAddr => hAddr ⟨w, w', hEq, hEw, hEfalse w' hTrue⟩
 
 end CrossDomain
 

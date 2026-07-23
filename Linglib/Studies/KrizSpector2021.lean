@@ -157,7 +157,8 @@ characterizations:
 All three agree: they are three views of the same trivalent denotation. -/
 
 /-- The ∀H characterization of `all` agrees with `allSatisfy`, which agrees
-    with `allPluralTV_eq_removeGap`. This closes the triangle:
+    with `Kriz2016.allPluralTV` (= `removeGap` on the bare plural, by
+    definition). This closes the triangle:
     ∀H ↔ allSatisfy ↔ removeGap(barePluralTV). -/
 theorem forallH_triangle [Fintype Atom] (P : Atom → W → Prop)
     [∀ a w, Decidable (P a w)] (x : Finset Atom) (w : W) :
@@ -170,9 +171,9 @@ theorem forallH_triangle [Fintype Atom] (P : Atom → W → Prop)
     understood either as gap removal or as universal H-quantification —
     they are provably the same. -/
 theorem removeGap_iff_forallH [Fintype Atom] (P : Atom → W → Prop)
-    [∀ a w, Decidable (P a w)] (x : Finset Atom) (w : W) (hne : x.Nonempty) :
+    [∀ a w, Decidable (P a w)] (x : Finset Atom) (w : W) :
     removeGap (fun w => pluralTruthValue P x w) w = .true ↔ allViaForallH P x w :=
-  (removeGap_plural_true_iff P x hne w).trans (forallH_triangle P x w).symm
+  (removeGap_plural_true_iff P x w).trans (forallH_triangle P x w).symm
 
 -- ============================================================================
 -- Section 5: Non-Monotonic Context Finite Model

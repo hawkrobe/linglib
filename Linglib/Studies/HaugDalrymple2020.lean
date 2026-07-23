@@ -546,31 +546,13 @@ theorem quantifiedReciprocalTV_iff_supervaluation
   by_cases hm : m <;> by_cases hr : r <;>
     simp [hdEval, hdSpec, hm, hr]
 
-/-- **Sibling parallel — Križ 2016 plural homogeneity.**
-    `Studies/Kriz2016.lean`'s `barePluralTV_eq_superTrue`
-    proves `barePluralTV P x w = superTrue (fun a => P a w) ⟨x, hne⟩` —
-    plural homogeneity reduces to `superTrue` over **atoms in the
-    plurality** as specification points. The bridge above shows the H&D
-    §5 reciprocal gap reduces to `superTrue` over **precisifications of
-    the reciprocal's restrictor** ({maximalSet, referenceSet}). Both
-    instances share the supervaluationist shape; only the spec-space sort
-    differs. The Križ2016 §7 docstring explicitly enumerates this as one
-    of five linglib instances of the same pattern (Fine/Križ/dist/
-    selectional/H&D), making the H&D ↔ Križ structural agreement
-    grep-able from either end.
-
-    This theorem is the Lean-level smoke test: H&D's gap agrees with the
-    image of `superTrue` evaluated at the H&D spec-eval pair, exactly as
-    Križ's gap agrees with `superTrue` at the atomic-spec pair. -/
-theorem hd_and_kriz_share_supervaluationist_shape
-    (m r : Prop) [Decidable m] [Decidable r] :
-    quantifiedReciprocalTV m r =
-    Semantics.Supervaluation.superTrue (hdEval m r) hdSpec ∧
-    -- The Križ side is `barePluralTV_eq_superTrue` over atoms; we don't
-    -- restate it here, but the parallel is exhibited by the shared use
-    -- of `Semantics.Supervaluation.superTrue`.
-    True :=
-  ⟨quantifiedReciprocalTV_iff_supervaluation m r, trivial⟩
+/-! **Sibling parallel — Križ 2016 plural homogeneity.**
+    `Studies/Kriz2016.lean`'s `barePluralTV_eq_superTrue` reduces plural
+    homogeneity to `superTrue` over **atoms in the plurality** as
+    specification points; the bridge above reduces the H&D §5 reciprocal
+    gap to `superTrue` over **precisifications of the reciprocal's
+    restrictor** ({maximalSet, referenceSet}). Both instances share the
+    supervaluationist shape; only the spec-space sort differs. -/
 
 -- ════════════════════════════════════════════════════════════════
 -- § 10: §6 Maximize Anaphora (paper eq 127–128)
