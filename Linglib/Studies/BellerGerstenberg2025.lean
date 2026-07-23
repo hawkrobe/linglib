@@ -751,11 +751,12 @@ def bgDepth : BGVar → ℕ
   | .intermediate => 1
   | .effect => 2
 
-instance soloGraph_isDAG : CausalGraph.IsDAG soloGraph :=
-  CausalGraph.IsDAG.of_depth soloGraph bgDepth (by
-    intro u v h
-    cases v <;> simp [soloGraph, CausalGraph.parents] at h <;>
-      subst h <;> decide)
+/-- The ranking certificate for the solo graph, consumed by the `IsDAG`
+    instance and the fuel bridges. -/
+def soloRanking : CausalGraph.Ranking soloGraph :=
+  ⟨bgDepth, fun {u v} h => by revert h; cases u <;> cases v <;> decide⟩
+
+instance soloGraph_isDAG : CausalGraph.IsDAG soloGraph := soloRanking.isDAG
 
 instance overdetGraph_isDAG : CausalGraph.IsDAG overdetGraph :=
   CausalGraph.IsDAG.of_depth overdetGraph bgDepth (by
@@ -856,22 +857,17 @@ open Causation.ProductionDependence (causationType)
 open Causation Causation.SEM
 open Causation.BoolSEM (causallySufficient causallyNecessary hasDirectLaw)
 
-private lemma bgDepth_lt_solo :
-    ∀ {u v : BGVar}, u ∈ soloGraph.parents v → bgDepth u < bgDepth v := by
-  intro u v h; revert h; cases u <;> cases v <;> decide
-
 private lemma solo_entails_iff {s : Valuation (fun _ : BGVar => Bool)}
     {v : BGVar} {x : Bool} :
     SEM.causallyEntails soloModel s v x ↔
       SEM.developDetVtxFuel soloModel s 3 v = some x :=
-  SEM.causallyEntails_iff_fuel soloModel bgDepth bgDepth_lt_solo
-    (by cases v <;> decide) s x
+  SEM.causallyEntails_iff_fuel soloModel soloRanking (by cases v <;> decide) s x
 
 private lemma solo_necessary_iff {bg : Valuation (fun _ : BGVar => Bool)}
     {c e : BGVar} :
     causallyNecessary soloModel bg c e ↔
       SEM.causallyNecessaryFuel soloModel 3 bg c true e true :=
-  SEM.causallyNecessary_iff_fuel soloModel bgDepth bgDepth_lt_solo
+  SEM.causallyNecessary_iff_fuel soloModel soloRanking
     (by intro v; cases v <;> decide) bg c true e true
 
 set_option maxRecDepth 100000 in

@@ -92,8 +92,9 @@ def depth : V → ℕ := fun | .P => 0 | .D => 0 | .L => 0 | .G => 1 | .F => 2
 private lemma depth_lt : ∀ {u v : V}, u ∈ graph.parents v → depth u < depth v := by
   intro u v h; revert h; cases u <;> cases v <;> decide
 
-instance : CausalGraph.IsDAG graph :=
-  CausalGraph.IsDAG.of_depth graph depth (fun h => depth_lt h)
+private def ranking : CausalGraph.Ranking graph := ⟨depth, depth_lt⟩
+
+instance : CausalGraph.IsDAG graph := ranking.isDAG
 
 /-- Fire dynamics: G := D (inflammability tracks drought); F := G ∧ P ∧ L
     (fire ignites only when grass inflammable, power on, line touching). -/
@@ -128,7 +129,7 @@ noncomputable def s_b1 : Valuation (fun _ : V => Bool) := s_b.extend .L true
 private lemma entails_iff {s : Valuation (fun _ : V => Bool)} {v : V} {x : Bool} :
     SEM.causallyEntails fireSEM s v x ↔
       SEM.developDetVtxFuel fireSEM s 3 v = some x :=
-  SEM.causallyEntails_iff_fuel fireSEM depth depth_lt (by cases v <;> decide) s x
+  SEM.causallyEntails_iff_fuel fireSEM ranking (by cases v <;> decide) s x
 
 /-- (31a) `#Restoring power made the field catch fire.` Make-side: P=true
     is NOT sufficient for F=true relative to s_b. With L undetermined,
@@ -171,8 +172,9 @@ def depth : V → ℕ := fun | .Vis => 0 | .Tr => 0 | .Rn => 0 | .Bk => 1 | .Bs 
 private lemma depth_lt : ∀ {u v : V}, u ∈ graph.parents v → depth u < depth v := by
   intro u v h; revert h; cases u <;> cases v <;> decide
 
-instance : CausalGraph.IsDAG graph :=
-  CausalGraph.IsDAG.of_depth graph depth (fun h => depth_lt h)
+private def ranking : CausalGraph.Ranking graph := ⟨depth, depth_lt⟩
+
+instance : CausalGraph.IsDAG graph := ranking.isDAG
 
 /-- Bus dynamics: Bk := Vis ∧ Tr (bike taken when Ava visits AND trains);
     Bs := Rn ∨ Bk (bus taken when rain OR bike gone). The OR for Bs
@@ -208,12 +210,12 @@ noncomputable def s_b : Valuation (fun _ : V => Bool) :=
 private lemma entails_iff {s : Valuation (fun _ : V => Bool)} {v : V} {x : Bool} :
     SEM.causallyEntails busSEM s v x ↔
       SEM.developDetVtxFuel busSEM s 3 v = some x :=
-  SEM.causallyEntails_iff_fuel busSEM depth depth_lt (by cases v <;> decide) s x
+  SEM.causallyEntails_iff_fuel busSEM ranking (by cases v <;> decide) s x
 
 private lemma necessary_iff {s : Valuation (fun _ : V => Bool)} {c e : V} :
     BoolSEM.causallyNecessary busSEM s c e ↔
       SEM.causallyNecessaryFuel busSEM 3 s c true e true :=
-  SEM.causallyNecessary_iff_fuel busSEM depth depth_lt
+  SEM.causallyNecessary_iff_fuel busSEM ranking
     (by intro v; cases v <;> decide) s c true e true
 
 /-- (33a) `Ava's training made Lia take the bus to work.` Make-side:
@@ -262,8 +264,9 @@ def depth : V → ℕ := fun | .Q => 0 | .S => 0 | .L => 1
 private lemma depth_lt : ∀ {u v : V}, u ∈ graph.parents v → depth u < depth v := by
   intro u v h; revert h; cases u <;> cases v <;> decide
 
-instance : CausalGraph.IsDAG graph :=
-  CausalGraph.IsDAG.of_depth graph depth (fun h => depth_lt h)
+private def ranking : CausalGraph.Ranking graph := ⟨depth, depth_lt⟩
+
+instance : CausalGraph.IsDAG graph := ranking.isDAG
 
 /-- Lighthouse dynamics: L := Q ∧ S (collapse requires both
     earthquake-induced foundation damage AND extreme storms). -/
@@ -301,7 +304,7 @@ def validBackgroundFor (idx : V → Nat) (t : Nat)
 private lemma entails_iff {s : Valuation (fun _ : V => Bool)} {v : V} {x : Bool} :
     SEM.causallyEntails lighthouseSEM s v x ↔
       developDetVtxFuel lighthouseSEM s 2 v = some x :=
-  SEM.causallyEntails_iff_fuel lighthouseSEM depth depth_lt (by cases v <;> decide) s x
+  SEM.causallyEntails_iff_fuel lighthouseSEM ranking (by cases v <;> decide) s x
 
 /-- (35d) `The storms made the tower collapse.` Felicitous: with
     background fixing Q=true (the earlier necessary cause), S=true
@@ -409,8 +412,9 @@ def depth : V → ℕ := fun | .WD => 0 | .G => 0 | .D => 1
 private lemma depth_lt : ∀ {u v : V}, u ∈ graph.parents v → depth u < depth v := by
   intro u v h; revert h; cases u <;> cases v <;> decide
 
-instance : CausalGraph.IsDAG graph :=
-  CausalGraph.IsDAG.of_depth graph depth (fun h => depth_lt h)
+private def ranking : CausalGraph.Ranking graph := ⟨depth, depth_lt⟩
+
+instance : CausalGraph.IsDAG graph := ranking.isDAG
 
 /-- Permission dynamics (Fig 5): D := W_D ∧ G. Both desire AND
     permission needed for dancing. -/
@@ -444,7 +448,7 @@ def intentions : IntentionMap V := fun
 private lemma entails_iff {s : Valuation (fun _ : V => Bool)} {v : V} {x : Bool} :
     SEM.causallyEntails permissionSEM s v x ↔
       developDetVtxFuel permissionSEM s 2 v = some x :=
-  SEM.causallyEntails_iff_fuel permissionSEM depth depth_lt (by cases v <;> decide) s x
+  SEM.causallyEntails_iff_fuel permissionSEM ranking (by cases v <;> decide) s x
 
 /-- Bare sufficiency holds: G:=true is sufficient for D=true given W_D=true. -/
 theorem permission_makeSem :
@@ -507,8 +511,9 @@ def depth : V → ℕ := fun | .WD => 0 | .G => 0 | .D => 1
 private lemma depth_lt : ∀ {u v : V}, u ∈ graph.parents v → depth u < depth v := by
   intro u v h; revert h; cases u <;> cases v <;> decide
 
-instance : CausalGraph.IsDAG graph :=
-  CausalGraph.IsDAG.of_depth graph depth (fun h => depth_lt h)
+private def ranking : CausalGraph.Ranking graph := ⟨depth, depth_lt⟩
+
+instance : CausalGraph.IsDAG graph := ranking.isDAG
 
 /-- Command dynamics (Fig 6): D := W_D ∨ G. Either authority alone OR
     independent desire suffices for dancing. -/
@@ -536,7 +541,7 @@ def intentions : IntentionMap V := fun
 private lemma entails_iff {s : Valuation (fun _ : V => Bool)} {v : V} {x : Bool} :
     SEM.causallyEntails commandSEM s v x ↔
       developDetVtxFuel commandSEM s 2 v = some x :=
-  SEM.causallyEntails_iff_fuel commandSEM depth depth_lt (by cases v <;> decide) s x
+  SEM.causallyEntails_iff_fuel commandSEM ranking (by cases v <;> decide) s x
 
 /-- (41) context: the children are independently eager (W_D = 1). -/
 noncomputable def bgEager : Valuation (fun _ : V => Bool) :=
@@ -604,8 +609,9 @@ def depth : V → ℕ := fun | .G => 0 | .WD => 1 | .D => 2
 private lemma depth_lt : ∀ {u v : V}, u ∈ graph.parents v → depth u < depth v := by
   intro u v h; revert h; cases u <;> cases v <;> decide
 
-instance : CausalGraph.IsDAG graph :=
-  CausalGraph.IsDAG.of_depth graph depth (fun h => depth_lt h)
+private def ranking : CausalGraph.Ranking graph := ⟨depth, depth_lt⟩
+
+instance : CausalGraph.IsDAG graph := ranking.isDAG
 
 /-- Persuasion dynamics (Fig 7): W_D := G (Gurung's action shapes
     desires); D := W_D (children dance iff they want to). -/
@@ -631,7 +637,7 @@ def intentions : IntentionMap V := fun
 private lemma entails_iff {s : Valuation (fun _ : V => Bool)} {v : V} {x : Bool} :
     SEM.causallyEntails persuasionSEM s v x ↔
       developDetVtxFuel persuasionSEM s 3 v = some x :=
-  SEM.causallyEntails_iff_fuel persuasionSEM depth depth_lt (by cases v <;> decide) s x
+  SEM.causallyEntails_iff_fuel persuasionSEM ranking (by cases v <;> decide) s x
 
 /-- Bare sufficiency: G:=true forces W_D=true forces D=true. -/
 theorem persuasion_makeSem :

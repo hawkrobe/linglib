@@ -294,9 +294,8 @@ variable (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
     supplies to `CausalGraph.IsDAG.of_depth`), the fuel mirror computes
     the strict fixed point. Soundness and completeness in one equation. -/
 theorem developDetVtxFuel_eq_developDetVtx?
-    (rank : V → ℕ) (hrank : ∀ {u v : V}, u ∈ M.graph.parents v → rank u < rank v)
-    (s : Valuation α) :
-    ∀ {n : ℕ} {v : V}, rank v < n →
+    (r : CausalGraph.Ranking M.graph) (s : Valuation α) :
+    ∀ {n : ℕ} {v : V}, r.rank v < n →
       developDetVtxFuel M s n v = developDetVtx? M s v := by
   intro n
   induction n with
@@ -320,7 +319,7 @@ theorem developDetVtxFuel_eq_developDetVtx?
       · simp [hPar]
       · have hpt : ∀ u : M.graph.parents v,
             developDetVtxFuel M s n u.val = developDetVtx? M s u.val :=
-          fun u => ih (by have := hrank u.property; omega)
+          fun u => ih (by have := r.parent_lt u.property; omega)
         simp only [hPar, if_false]
         by_cases hAll : ∀ u : M.graph.parents v, (developDetVtx? M s u.val).isSome
         · have hAll' : ∀ u : M.graph.parents v,
@@ -336,13 +335,13 @@ theorem developDetVtxFuel_eq_developDetVtx?
 
 /-- Transfer a concrete fuel computation to the canonical strict fixed
     point. The usual study idiom:
-    `developDetVtx?_eq_of_fuel M rank (by intro u v h; revert h; decide) (by omega) (by decide)`. -/
+    `developDetVtx?_eq_of_fuel M ⟨rank, by intro u v h; revert h; decide⟩ (by omega) (by decide)`. -/
 theorem developDetVtx?_eq_of_fuel
-    (rank : V → ℕ) (hrank : ∀ {u v : V}, u ∈ M.graph.parents v → rank u < rank v)
-    {s : Valuation α} {n : ℕ} {v : V} {o : Option (α v)} (hn : rank v < n)
+    (r : CausalGraph.Ranking M.graph)
+    {s : Valuation α} {n : ℕ} {v : V} {o : Option (α v)} (hn : r.rank v < n)
     (h : developDetVtxFuel M s n v = o) :
     developDetVtx? M s v = o :=
-  (developDetVtxFuel_eq_developDetVtx? M rank hrank s hn).symm.trans h
+  (developDetVtxFuel_eq_developDetVtx? M r s hn).symm.trans h
 
 end FuelBridge
 

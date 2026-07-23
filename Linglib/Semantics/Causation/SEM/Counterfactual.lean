@@ -37,8 +37,9 @@ The canonical predicates are noncomputable (`WellFounded.fix`); `Decidable`
 instances on them are `Classical.dec` and do **not** support `decide`.
 Concrete claims go through the fuel bridge instead: `causallyEntails_iff_fuel`
 and `causallyNecessary_iff_fuel` rewrite to the kernel-reducible
-`developDetVtxFuel` / `causallyNecessaryFuel` forms given a per-model rank
-certificate (the depth function already supplied to `IsDAG.of_depth`), after
+`developDetVtxFuel` / `causallyNecessaryFuel` forms given a per-model
+`CausalGraph.Ranking` (the same certificate that yields `IsDAG` via
+`Ranking.isDAG`), after
 which `decide` evaluates them — including the Def 10b supersituation
 quantifiers, which range over the finite valuation space. Study idiom:
 
@@ -418,10 +419,10 @@ noncomputable instance [DecidableEq V] (M : SEM V α) [CausalGraph.IsDAG M.graph
     `(causallyEntails_iff_fuel M rank @hrank hn s v x).mpr (by decide)`. -/
 theorem causallyEntails_iff_fuel [DecidableEq V] (M : SEM V α)
     [CausalGraph.IsDAG M.graph] [IsDeterministic M]
-    (rank : V → ℕ) (hrank : ∀ {u v : V}, u ∈ M.graph.parents v → rank u < rank v)
-    {n : ℕ} {v : V} (hn : rank v < n) (s : Valuation α) (x : α v) :
+    (r : CausalGraph.Ranking M.graph)
+    {n : ℕ} {v : V} (hn : r.rank v < n) (s : Valuation α) (x : α v) :
     causallyEntails M s v x ↔ developDetVtxFuel M s n v = some x := by
-  rw [causallyEntails, ← developDetVtxFuel_eq_developDetVtx? M rank hrank s hn]
+  rw [causallyEntails, ← developDetVtxFuel_eq_developDetVtx? M r s hn]
 
 /-- Strict causal entailment of the extended background implies the bare
     eager-total sufficiency predicate (`causallySufficient`): the partial
@@ -688,14 +689,14 @@ instance [Fintype V] [DecidableEq V] [DecidableValuation α] [∀ v, Fintype (α
     `(causallyNecessary_iff_fuel M rank @hrank hn s …).mpr (by decide)`. -/
 theorem causallyNecessary_iff_fuel [Fintype V] [DecidableEq V] [DecidableValuation α]
     (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
-    (rank : V → ℕ) (hrank : ∀ {u v : V}, u ∈ M.graph.parents v → rank u < rank v)
-    {n : ℕ} (hn : ∀ v : V, rank v < n)
+    (r : CausalGraph.Ranking M.graph)
+    {n : ℕ} (hn : ∀ v : V, r.rank v < n)
     (s : Valuation α) (cause : V) (xC : α cause) (effect : V) (xE : α effect) :
     causallyNecessary M s cause xC effect xE ↔
       causallyNecessaryFuel M n s cause xC effect xE := by
   have hpt : ∀ (t : Valuation α) (v : V) (x : α v),
       causallyEntails M t v x ↔ developDetVtxFuel M t n v = some x :=
-    fun t v x => causallyEntails_iff_fuel M rank @hrank (hn v) t x
+    fun t v x => causallyEntails_iff_fuel M r (hn v) t x
   unfold causallyNecessary causallyNecessary.precondition
     causallyNecessary.achievable causallyNecessary.noAlternative
     causallyNecessaryFuel
