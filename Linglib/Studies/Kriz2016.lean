@@ -6,89 +6,34 @@ import Linglib.Semantics.Plurality.Distributivity
 import Linglib.Semantics.Plurality.Trivalent
 
 /-!
-# Križ (2016): Homogeneity, Non-Maximality, and All — Plural Instantiation
-[kriz-2015] [kriz-2016] [fine-1975]
+# Križ (2016): homogeneity, non-maximality, and *all*
 
-Homogeneity, Non-Maximality, and All. Journal of Semantics 33(3): 493-539.
+This file is the plural instantiation of the homogeneity substrate in
+`Semantics.Homogeneity`, after [kriz-2016]: plural predication is trivalent
+(`barePluralTV`, atoms as specification points), *all* is gap removal
+(`allPluralTV`), and non-maximal readings arise pragmatically when a coarse
+issue puts a gap-world in the same cell as a literally-true world (`usable`).
+A five-world finite model checks the predictions end-to-end, including the
+§4.2 sensitivity to what an exception does instead and the §4.1
+unmentionability of exceptions. Closing sections connect the analysis to the
+typed data in `Data.Examples.Kriz2015`, to supervaluation ([fine-1975]), and
+to [magri-2014]'s rival gap derivation.
 
-This file is the **plural instantiation** of the general homogeneity substrate
-in `Semantics.Homogeneity`. It connects [kriz-2016]'s
-plural-definite analysis (atoms as specification points; `all` as gap remover)
-to the substrate operators (`removeGap`, `addressesIssue`, `usable`,
-`communicatedContent`).
+## Implementation notes
 
-## Related literature engaged
+`QUD W` is the substrate partition type, not the [roberts-1996] QUD-stack:
+§4.5 of the paper argues (examples (39)-(40)) that the current issue is an
+overarching, not directly manipulable, property of the discourse, so
+`coarseQ`/`fineQ` below are pedagogical constructions. Following §4.4, the
+gap is trivalent but not presuppositional (contra [gajewski-2005]). The §4.6
+numeral puzzle (*the ten professors smiled* resists non-maximality) is left
+unaddressed, as in the paper.
 
-[lasersohn-1999] (the "townspeople asleep" original observation; the *although*
-exception diagnostic, traced there to [kroch-1974]),
-[brisson-1998] (the term "non-maximality"),
-[schwarz-2013] (processing evidence that maximal is the default reading),
-[malamud-2012] (decision-theoretic precursor with issue partitions,
-criticised in the paper's Appendix A.3),
-[spector-2013] (embedded-plural projection),
-[kriz-chemla-2015] (companion experimental data),
-[magri-2014] (alternative gap-derivation via double EXH — engaged by the
-paper itself; see the divergence section below),
-[cobreros-etal-2012] (Tolerant/Classical/Strict trivalence, discussed in the
-paper's Appendix A.2 via Burnett's adaptation),
-[gajewski-2005] (homogeneity-as-presupposition view, rejected in §4.4),
-[roberts-1996] (QUD-stack tradition the §4.5 caveat distinguishes from).
+## References
 
-## Core contributions
-
-Non-maximal readings of plural definites ("The professors smiled" true even if
-Smith didn't) arise from the interaction of two independent components:
-
-1. **Homogeneity** (semantic): plural predication yields a three-valued truth
-   value — true (all satisfy), false (none satisfy), or gap (some but not all).
-
-2. **Weakened Quality** (pragmatic): the maxim of quality is weakened to "say
-   only what is true enough for current purposes," where "current purposes"
-   are formalized as an issue (partition of possible worlds).
-
-The semantic effect of `all` is to remove the extension gap, making positive
-and negative extensions complementary. This prevents non-maximal readings
-because the pragmatic mechanism (Sufficient Trivalent + Addressing) has no gap
-to exploit. The §4.1 unmentionability of exceptions follows from the same
-machinery: an exception-mentioning continuation cannot address any issue
-under which the bare plural was used non-maximally
-(`Semantics.Homogeneity.exception_unaddressable`, instantiated below).
-
-## §4.4 caveat — homogeneity is NOT a presupposition
-
-[kriz-2016] §4.4 argues against the [gajewski-2005] (and Schwarzschild
-1994, Löbner 2000) view that the homogeneity gap is a presupposition. Križ's
-arguments include local accommodation behaviour and projection from conditional
-antecedents differing from standard presupposition behaviour. This file
-adopts the trivalent-but-not-presuppositional reading: gap-worlds are
-"between" true and false, not undefined-in-the-presupposition sense.
-
-## §4.5 caveat — current issue ≠ immediate-last QUD
-
-The variable name `QUD W` here is a substrate convenience and is NOT the
-[roberts-1996] QUD-stack notion. [kriz-2016] §4.5 is explicit
-(examples (39)-(40)) that identifying the current issue with the
-immediate-last question on the stack makes wrong predictions. Križ instead
-treats the current issue as referring to overarching goals of participants,
-underdetermined by linguistic material and not directly manipulable. The
-`coarseQ`/`fineQ` partitions in our finite model are pedagogical constructions;
-they are NOT meant as a commitment to the manipulable-QUD theory the paper
-rejects.
-
-## §4.6 puzzle — numerals block non-maximality
-
-[kriz-2016] §4.6 flags as unsolved that "the ten professors smiled" cannot
-get non-maximal readings, even though "the professors smiled" can (French,
-per the paper's (43a-b), patterns differently). We do not address this
-puzzle here.
-
-## Finite model
-
-A concrete 5-world model demonstrates end-to-end predictions: "the professors
-smiled" is usable at a gap-world (smithNeutral) under a coarse issue but not
-under a fine one, AND not at a gap-world (smithAngry) where Smith's anger is
-issue-relevant — capturing [kriz-2016] §4.2's distinctive prediction.
-Adding "all" blocks non-maximal use entirely.
+* [M. Križ, *Homogeneity, Non-Maximality, and All*][kriz-2016]
+* [M. Križ, *Aspects of Homogeneity in the Semantics of Natural Language*][kriz-2015]
+* [K. Fine, *Vagueness, Truth and Logic*][fine-1975]
 -/
 
 namespace Kriz2016
@@ -107,54 +52,44 @@ variable (P : Atom → W → Prop) [∀ a w, Decidable (P a w)] (x : Finset Atom
 def barePluralTV : SentenceTV W :=
   λ w => pluralTruthValue P x w
 
-/-- The `all`-sentence "all the Xs are P". Per [kriz-2016] §3.1,
-    `all`'s semantic contribution IS gap removal — it adds nothing on top
-    of the bare plural's universal truth conditions, only collapses the gap
-    into the negative extension. So we *derive* `allPluralTV` from the bare
-    plural via `removeGap`, rather than stipulating its semantics. Bivalence
-    and the truth-conditional behavior then follow from substrate lemmas. -/
+/-- The *all*-sentence "all the Xs are P". Per §3.1, *all*'s semantic
+    contribution is gap removal, so the semantics is derived from the bare
+    plural via `removeGap` rather than stipulated. -/
 def allPluralTV : SentenceTV W :=
   removeGap (barePluralTV P x)
 
 omit [DecidableEq Atom] in
-/-- `all` eliminates the extension gap. Direct consequence of
-`removeGap_not_homogeneous` from the substrate. -/
+/-- *all* eliminates the extension gap. -/
 theorem all_no_gap : gapExt (allPluralTV P x) = ∅ := by
   by_contra h
   exact removeGap_not_homogeneous (barePluralTV P x) h
 
 omit [DecidableEq Atom] in
-/-- `all` removes homogeneity: the `all`-sentence is never homogeneous.
-Direct consequence of substrate `removeGap_not_homogeneous`. -/
+/-- An *all*-sentence is never homogeneous. -/
 theorem all_not_homogeneous : ¬isHomogeneous (allPluralTV P x) :=
   removeGap_not_homogeneous (barePluralTV P x)
 
 omit [DecidableEq Atom] in
-/-- Positive extensions agree: bare plural and `all`-sentence are true
-in the same worlds. Substrate consequence of `removeGap_posExt_eq`. -/
+/-- The bare plural and the *all*-sentence are true in the same worlds. -/
 theorem all_posExt_eq : posExt (allPluralTV P x) = posExt (barePluralTV P x) :=
   removeGap_posExt_eq (barePluralTV P x)
 
 omit [DecidableEq Atom] in
-/-- `all` absorbs the gap into the negative extension: the negative extension
-of the `all`-sentence equals the union of the bare plural's negative extension
-and gap. Substrate consequence of `removeGap_negExt_eq`. -/
+/-- *all* absorbs the gap into the negative extension. -/
 theorem all_negExt_eq :
     negExt (barePluralTV P x) ∪ gapExt (barePluralTV P x) =
     negExt (allPluralTV P x) :=
   (removeGap_negExt_eq (barePluralTV P x)).symm
 
-/-! ### The effect of `all` -/
+/-! ### The effect of *all* -/
 
 omit [DecidableEq Atom] in
-/-- `all`-sentences are bivalent. Substrate consequence of `removeGap_bivalent`. -/
+/-- *all*-sentences are bivalent. -/
 theorem all_bivalent : isBivalent (allPluralTV P x) :=
   removeGap_bivalent (barePluralTV P x)
 
-/-- Gap removal on a plural sentence is true iff all atoms satisfy P.
-    Substrate-side bridge between `removeGap` and the `allSatisfy` predicate.
-    Used by `all_blocked_by_wide_issue` and downstream consumers
-    (`KrizSpector2021.removeGap_iff_forallH`). -/
+/-- Gap removal on a plural sentence is true iff all atoms satisfy `P`.
+    Cf. `KrizSpector2021.removeGap_iff_forallH`. -/
 theorem removeGap_plural_true_iff (w : W) :
     removeGap (fun w => pluralTruthValue P x w) w = .true ↔
     allSatisfy P x w := by
@@ -162,45 +97,29 @@ theorem removeGap_plural_true_iff (w : W) :
   generalize pluralTruthValue P x w = t
   cases t <;> simp
 
-/-- `bivalentPred` of an `all`-sentence is true iff `allSatisfy` holds.
-    Bridge between the trivalent encoding of `allPluralTV` and the Prop-valued
-    `allSatisfy` predicate K&S 2021's strong-relevance machinery works on.
-    Used by `KrizSpector2021.all_addressing_iff_relevant`. -/
+/-- `bivalentPred` of an *all*-sentence is true iff `allSatisfy` holds.
+    Cf. `KrizSpector2021.all_addressing_iff_relevant`. -/
 theorem bivalentPred_allPluralTV_eq_allSatisfy (w : W) :
     bivalentPred (allPluralTV P x) w = true ↔ allSatisfy P x w := by
   simp only [bivalentPred, beq_iff_eq, allPluralTV]
   exact removeGap_plural_true_iff P x w
 
-/-- `all` prevents non-maximal use: if an `all`-sentence is usable at w,
-then all atoms literally satisfy P at w.
-
-The proof factors through the substrate: by `removeGap_bivalent` and
-usability's `S w ≠ .false` clause, the all-sentence is literally true at w;
-by `removeGap_posExt_eq`, the bare plural is also literally true at w; by
-`pluralTruthValue_eq_true_iff`, all atoms satisfy P. The `addressesIssue`
-clause of `usable` does no work in *this* direction — it's what blocks
-`all`-sentences from being USED at all in wide-issue contexts (see
-`all_blocked_by_wide_issue`). -/
+/-- If an *all*-sentence is usable at `w`, all atoms satisfy `P` at `w`:
+    bivalence turns usability's not-false clause into literal truth.
+    Cf. `all_blocked_by_wide_issue` for the complementary Addressing
+    direction. -/
 theorem all_prevents_nonmax (q : QUD W) (w : W)
     (h : usable q (allPluralTV P x) w) : allSatisfy P x w := by
-  -- bivalence + not-false ⇒ true
   have hTrue : allPluralTV P x w = .true :=
     ((bivalent_usable_iff_true q _ (all_bivalent P x) w).mp h).1
-  -- removeGap preserves positive extension ⇒ bare plural is also true
   have hBareTrue : barePluralTV P x w = .true := by
     have hMem : w ∈ posExt (allPluralTV P x) := hTrue
     rw [all_posExt_eq P x] at hMem
     exact hMem
   exact (pluralTruthValue_eq_true_iff P x w).mp hBareTrue
 
-/-- `all`-sentences cannot be used in "wide" issues — issues whose cells
-straddle the `all`/`not-all` boundary. This is the complementary work
-done by `addressesIssue`: while bivalence forces literal truth
-(`all_prevents_nonmax`), addressing forces relevance — the `all`-sentence
-can only be uttered at all if every QUD cell agrees on whether `allSatisfy`
-holds. This is the [kriz-2016] §3.4 wide-issue blocking that completes
-the picture: bivalence alone does not derive Križ's headline finding;
-Addressing also has to do work, in this complementary direction. -/
+/-- An *all*-sentence cannot address a "wide" issue — one with a cell
+    straddling the *all*/not-*all* boundary (§3.4). -/
 theorem all_blocked_by_wide_issue (q : QUD W)
     (hWide : ∃ w₁ w₂, q.r w₁ w₂ ∧ allSatisfy P x w₁ ∧ ¬ allSatisfy P x w₂) :
     ¬ addressesIssue q (allPluralTV P x) := by
@@ -217,13 +136,10 @@ theorem all_blocked_by_wide_issue (q : QUD W)
     | inr h => exact h
   exact hAddr ⟨w₁, w₂, hEq, h1', h2'⟩
 
-/-- The `all`-side complement of §4.1: if the `all`-sentence is usable
-at w, there are no exceptions at all. "#Although all the professors
-smiled, Smith didn't" is contradictory — `all` forces literal truth, so any
-exception makes the sentence false, and false sentences cannot be used.
-Križ's §4.1 unmentionability result proper concerns the *bare* plural and
-is `Semantics.Homogeneity.exception_unaddressable`, instantiated at
-`smith_exception_unaddressable` below. -/
+/-- A usable *all*-sentence leaves no exceptions to mention: "#Although all
+    the professors smiled, Smith didn't" is contradictory. The bare-plural
+    unmentionability result proper (§4.1) is `smith_exception_unaddressable`
+    below. -/
 theorem all_exceptions_unmentionable (q : QUD W) (w : W) (a : Atom) (ha : a ∈ x)
     (h : usable q (allPluralTV P x) w) : P a w := by
   have := all_prevents_nonmax P x q w h
@@ -231,8 +147,7 @@ theorem all_exceptions_unmentionable (q : QUD W) (w : W) (a : Atom) (ha : a ∈ 
 
 /-! ### Finite model
 
-A concrete 5-world model demonstrates the theory's predictions end-to-end.
-Three professors attend Sue's talk; the predicate is "smiled."
+Three professors attend Sue's talk; the predicate is "smiled".
 
 | World          | Smith | Jones | Lee | Bare plural | All   |
 |----------------|-------|-------|-----|-------------|-------|
@@ -242,26 +157,16 @@ Three professors attend Sue's talk; the predicate is "smiled."
 | onlyLeeSmiled  | ✗     | ✗     | ✓   | GAP         | false |
 | noneSmiled     | ✗     | ✗     | ✗   | FALSE       | false |
 
-`smithNeutral` and `smithAngry` agree on who smiled; they differ in what
-Smith does instead, which the coarse QUD is sensitive to (§4.2).
-
-Two QUDs:
-- **Coarse** ("Was the talk well-received?"): groups allSmiled ≈ smithNeutral
-- **Fine** ("Did every professor smile?"): each world in its own cell
-
-Predictions:
-- Bare plural usable at smithNeutral under coarse QUD (non-maximal reading)
-- Bare plural NOT usable at smithNeutral under fine QUD (maximal only)
-- `all`-sentence never usable at smithNeutral (forces literal truth)
--/
+`smithNeutral` and `smithAngry` agree on who smiled but differ in what Smith
+does instead, which the coarse QUD ("Was the talk well-received?") is
+sensitive to (§4.2); the fine QUD ("Did every professor smile?") separates
+all worlds. -/
 
 section FiniteModel
 
-/-- Worlds in the 5-world finite model. The split between `smithNeutral` and
-    `smithAngry` captures [kriz-2016] §4.2: in both worlds Smith fails
-    to smile, but his behavior differs in QUD-relevance. Smith looking neutral
-    is irrelevant to "was the talk well-received"; Smith looking visibly angry
-    is relevant (it pulls reception down). -/
+/-- Worlds of the five-world model. In both `smithNeutral` and `smithAngry`
+    Smith fails to smile; the worlds differ in whether his demeanour is
+    relevant to the coarse issue (§4.2). -/
 inductive ProfWorld where
   | allSmiled
   | smithNeutral   -- Smith neutral expression (irrelevant exception)
@@ -274,9 +179,7 @@ inductive Prof where
   | smith | jones | lee
   deriving DecidableEq, Repr, Fintype
 
-/-- Did this professor smile in this world? Note that Smith fails to smile
-    in BOTH `smithNeutral` and `smithAngry`; the worlds differ only in what
-    Smith does instead, which matters to QUD relevance (§4.2). -/
+/-- Which professor smiled in which world. -/
 def smiled : Prof → ProfWorld → Prop
   | .smith, .allSmiled      => True
   | .smith, .smithNeutral   => False
@@ -300,10 +203,8 @@ instance smiled.instDecidable : ∀ p w, Decidable (smiled p w) := by
 /-- All three professors. -/
 def profs : Finset Prof := Finset.univ
 
-/-- Reception grade for the coarse QUD. Per [kriz-2016] §4.2,
-    Smith's anger pulls reception down to `mixed`; Smith's neutrality leaves
-    it `positive`. This single QUD captures Križ's distinctive prediction
-    that *what Smith does instead* of smiling matters. -/
+/-- Reception grades for the coarse QUD: Smith's anger pulls reception down
+    to `mixed`, his neutrality leaves it `positive` (§4.2). -/
 inductive Reception where | positive | mixed | negative
   deriving DecidableEq
 
@@ -314,12 +215,10 @@ def receptionGrade : ProfWorld → Reception
   | .onlyLeeSmiled => .mixed
   | .noneSmiled => .negative
 
-/-- Coarse QUD: "Was Sue's talk well-received?"
-Groups allSmiled with smithNeutral (both = positive reception). -/
+/-- Coarse QUD: "Was Sue's talk well-received?" -/
 def coarseQ : QUD ProfWorld := QUD.ofDecEq receptionGrade
 
-/-- Fine QUD: "Did every professor smile?"
-Each world is its own cell. -/
+/-- Fine QUD: "Did every professor smile?" -/
 def fineQ : QUD ProfWorld := QUD.ofDecEq id
 
 /-! #### Trivalent values at each world -/
@@ -336,47 +235,40 @@ theorem bare_onlyLeeSmiled :
 theorem bare_noneSmiled :
     barePluralTV smiled profs .noneSmiled = .false := by decide
 
-/-- The bare plural sentence about the professors IS homogeneous —
-smithNeutral is in the extension gap. Substrate `isHomogeneous_of_gap`. -/
+/-- The bare plural about the professors is homogeneous: `smithNeutral` is in
+    the gap. -/
 theorem bare_profs_homogeneous :
     isHomogeneous (barePluralTV smiled profs) :=
   isHomogeneous_of_gap (barePluralTV smiled profs) .smithNeutral (by decide)
 
 /-! #### End-to-end predictions -/
 
-/-- The bare plural IS usable at smithNeutral under the coarse QUD.
-Smith's failure to smile is irrelevant to whether the talk was well-received,
-so the sentence is "true enough." -/
+/-- The bare plural is usable at `smithNeutral` under the coarse QUD: the
+    non-maximal reading. -/
 theorem smithNeutral_usable_coarse :
     usable coarseQ (barePluralTV smiled profs) .smithNeutral := by decide
 
-/-- The bare plural is NOT usable at smithNeutral under the fine QUD.
-The fine QUD distinguishes allSmiled from smithNeutral, so there is no
-literally-true world in smithNeutral's cell. -/
+/-- The bare plural is not usable at `smithNeutral` under the fine QUD. -/
 theorem smithNeutral_not_usable_fine :
     ¬usable fineQ (barePluralTV smiled profs) .smithNeutral := by decide
 
-/-- The `all`-sentence is never usable at smithNeutral (under any QUD),
-because Smith didn't smile. Concrete instance of `all_prevents_nonmax`. -/
+/-- The *all*-sentence is not usable at `smithNeutral` under any QUD. -/
 theorem all_not_usable_smithNeutral (q : QUD ProfWorld)
     (h : usable q (allPluralTV smiled profs) .smithNeutral) : False :=
   absurd (all_prevents_nonmax smiled profs q .smithNeutral h) (by decide)
 
-/-- Concrete instance of `all_exceptions_unmentionable`: Smith's exception
-cannot be mentioned because Smith did smile in every world where the
-`all`-sentence is usable. -/
+/-- Wherever the *all*-sentence is usable, Smith smiled. -/
 theorem smith_exception_unmentionable (q : QUD ProfWorld) (w : ProfWorld)
     (h : usable q (allPluralTV smiled profs) w) :
     smiled .smith w :=
   all_exceptions_unmentionable smiled profs q w .smith (by decide) h
 
-/-- Communicated content under the coarse QUD includes the gap-world
-smithNeutral — the non-maximal reading is communicated. -/
+/-- The coarse QUD communicates the gap-world `smithNeutral`. -/
 theorem coarse_communicates_gap :
     .smithNeutral ∈ communicatedContent coarseQ (barePluralTV smiled profs) :=
   ⟨.allSmiled, by decide, by decide⟩
 
-/-- Communicated content under the fine QUD does NOT include smithNeutral. -/
+/-- The fine QUD does not communicate `smithNeutral`. -/
 theorem fine_does_not_communicate_gap :
     .smithNeutral ∉ communicatedContent fineQ (barePluralTV smiled profs) := by
   intro ⟨w', hEq, hTrue⟩
@@ -384,25 +276,19 @@ theorem fine_does_not_communicate_gap :
 
 /-! #### Unmentionability of exceptions (§4.1)
 
-[kriz-2016] §4.1's striking observation is about the *bare* plural:
 "#The professors smiled, but one of them didn't" is infelicitous even where
-the non-maximal reading is licensed (the paper's (25a-b), with the *although*
-diagnostic traced to [kroch-1974] via [lasersohn-1999]). The derivation is
-pure Addressing: non-maximal use requires a cell containing both a
-literally-true world and the gap-world, and the exception-mentioning
-continuation is true at the latter but false at the former — so it straddles
-that cell and cannot address the issue. The general form is the substrate's
-`exception_unaddressable`; here is the concrete instance. -/
+the non-maximal reading is licensed — the paper's (25a-b), with the
+*although* diagnostic traced to [kroch-1974] via [lasersohn-1999]. The
+derivation is pure Addressing (the substrate's `exception_unaddressable`):
+non-maximal use requires a cell containing both a true-world and the
+gap-world, and the exception-mentioning continuation straddles it. -/
 
-/-- "Smith didn't smile" — the exception-mentioning continuation, as a
-    (bivalent) trivalent sentence. -/
+/-- "Smith didn't smile", the exception-mentioning continuation. -/
 def smithDidntSmile : SentenceTV ProfWorld :=
   λ w => if smiled .smith w then .false else .true
 
-/-- §4.1 unmentionability, bare-plural version: under the coarse issue that
-licenses the non-maximal use of "the professors smiled" at `smithNeutral`,
-the continuation "…but Smith didn't" cannot address the issue. Instance of
-`Semantics.Homogeneity.exception_unaddressable`. -/
+/-- Under the coarse issue licensing the non-maximal use at `smithNeutral`,
+    "…but Smith didn't" cannot address the issue (§4.1). -/
 theorem smith_exception_unaddressable :
     ¬ addressesIssue coarseQ smithDidntSmile :=
   exception_unaddressable coarseQ (barePluralTV smiled profs) smithDidntSmile
@@ -410,36 +296,24 @@ theorem smith_exception_unaddressable :
 
 /-! #### What exceptions do (§4.2)
 
-[kriz-2016] §4.2 makes a distinctive prediction beyond the basic
-homogeneity-gap analysis: it matters not only *whether* an exception is
-tolerated but also *what the exception does instead*. Smith looking
-neutral is irrelevant to whether the talk was well-received; Smith looking
-visibly angry IS relevant. The model captures this by placing
-`smithNeutral` and `smithAngry` in different cells of `coarseQ`
-(positive vs. mixed reception).
-
-This is a competing-theory differentiator: theories that locate
-non-maximality in restricted reference (Brisson) or alternative geometry
-(Magri) cannot easily express that *what Smith does instead* changes
-the judgment, because they don't have an issue parameter that interacts
-with individual behavior. -/
+Whether an exception is tolerated depends on what it does instead: Smith
+looking neutral is irrelevant to reception, Smith looking angry is not. The
+model places `smithNeutral` and `smithAngry` in different `coarseQ` cells,
+so the same sentence under the same QUD is usable at one gap-world and not
+the other — a contrast unavailable to accounts without an issue parameter
+(restricted reference, alternative geometry). -/
 
 theorem bare_smithAngry :
     barePluralTV smiled profs .smithAngry = .indet := by decide
 
-/-- §4.2 distinctive prediction: bare plural is NOT usable at `smithAngry`
-under the coarse QUD, even though it IS usable at `smithNeutral` under the
-same QUD. The difference is which cell each world inhabits: smithNeutral
-shares its cell with allSmiled (positive reception); smithAngry sits in
-the `mixed` cell with onlyLeeSmiled, neither of which is in the bare
-plural's positive extension. -/
+/-- The bare plural is not usable at `smithAngry` under the coarse QUD:
+    `smithAngry` shares its cell with `onlyLeeSmiled`, and neither is in the
+    positive extension. -/
 theorem bare_smithAngry_not_usable_coarse :
     ¬ usable coarseQ (barePluralTV smiled profs) .smithAngry := by decide
 
-/-- The §4.2 contrast: the SAME bare plural sentence under the SAME QUD is
-usable at one gap-world and not at another, depending on what the exception
-does. Theories of non-maximality lacking an issue/cell parameter cannot
-express this contrast. -/
+/-- The §4.2 contrast: same sentence, same QUD, opposite usability at the
+    two gap-worlds. -/
 theorem bare_usable_neutral_not_angry :
     usable coarseQ (barePluralTV smiled profs) .smithNeutral ∧
     ¬ usable coarseQ (barePluralTV smiled profs) .smithAngry :=
@@ -447,22 +321,19 @@ theorem bare_usable_neutral_not_angry :
 
 end FiniteModel
 
-/-! ### Connection to the typed switches data
+/-! ### The typed switches data
 
-The finite model captures the same pattern as the typed switches data in
-`Data.Examples.Kriz2015`. "Oh no, the switches are on!" is acceptable under
-the existential issue (fire risk from any switch — the all/some distinction
-is irrelevant) and unacceptable under the universal issue (fire risk only
-if all are on), corresponding to `smithNeutral_usable_coarse` vs
-`smithNeutral_not_usable_fine`; the "all the switches" variant is
-unacceptable even in the permissive context, corresponding to
-`all_not_usable_smithNeutral`. The gap rows lift to `.indet` observations
-in the cross-paper `Generalizations.HomogeneityGap` pool — the value
-`barePluralTV` assigns at the model's gap-world (`bare_smithNeutral`). -/
+The switches items of `Data.Examples.Kriz2015` show the model's pattern in
+the wild: "Oh no, the switches are on!" is acceptable under the existential
+issue and unacceptable under the universal one (cf.
+`smithNeutral_usable_coarse` vs `smithNeutral_not_usable_fine`), and the
+*all* variant is unacceptable even in the permissive context (cf.
+`all_not_usable_smithNeutral`). The gap rows lift to `.indet` observations
+in the pooled `Generalizations.HomogeneityGap` data. -/
 
 open Generalizations.HomogeneityGap in
-/-- Both switches gap rows (positive and negated) observe the trivalent gap
-value `.indet`: the gap is symmetric under negation. -/
+/-- Both switches gap rows (positive and negated) observe `.indet`: the gap
+    is symmetric under negation. -/
 theorem switches_gap_observed_indet :
     (fromExample Kriz2015.Examples.switches_pos_gap).map (·.observed) =
       some .indet ∧
@@ -471,84 +342,53 @@ theorem switches_gap_observed_indet :
   decide
 
 open Generalizations.HomogeneityGap in
-/-- The finite model matches the data: the bare plural's truth value at the
-gap-world `smithNeutral` is exactly the value the positive gap row observes. -/
+/-- The model matches the data: the bare plural's value at the gap-world is
+    the value the positive gap row observes. -/
 theorem model_matches_gap_row :
     (fromExample Kriz2015.Examples.switches_pos_gap).map (·.observed) =
       some (barePluralTV smiled profs .smithNeutral) := by
   decide
 
-/-! ### Connection to the supervaluation framework
+/-! ### Supervaluation
 
-Plural predication is an instance of supervaluation ([fine-1975]).
-Each atom in the plurality is a specification point: the predicate is
-super-true iff satisfied by all atoms, super-false iff by none, and
-indefinite when some-but-not-all satisfy it (the homogeneity gap).
-
-This unifies several independent literatures, each contributing a
-different specification-space sort:
-
-- [fine-1975]: varying the *threshold* for vague predicates
-- [kriz-2016]: varying the *atom* for plural predicates
-- `dist` in `Trivalent`: a third implementation of the same pattern
-  over `List Bool`
-- `selectional_eq_dist` in `Counterfactual.lean`: closest worlds
-- [haug-dalrymple-2020] §5 (paper eq 109): varying the
-  *precisification of the reciprocal's restrictor* (maximal-set vs
-  reference-set) for quantified-antecedent reciprocals — see
-  `Studies/HaugDalrymple2020.lean`'s
-  `quantifiedReciprocalTV_iff_supervaluation`. -/
+Plural predication is supervaluation ([fine-1975]) with atoms as
+specification points — the same shape as thresholds for vague predicates,
+closest worlds for conditionals (`selectional_eq_dist`), and restrictor
+precisifications for reciprocals
+(`HaugDalrymple2020.quantifiedReciprocalTV_iff_supervaluation`). -/
 
 open Semantics.Supervaluation (SpecSpace superTrue)
 
 omit [DecidableEq Atom] in
-/-- **Plural predication = supervaluation over atoms.** The bare plural
-    "the Xs are P" at world w has the same truth value as `superTrue`
-    with atoms as specification points and `P(·,w)` as the evaluation
-    function.
-
-    This is the structural identity connecting homogeneity gaps to
-    vagueness gaps: both arise from disagreement across specification
-    points (atoms vs thresholds vs comparison classes). -/
+/-- The bare plural at `w` equals `superTrue` with atoms as specification
+    points and `P(·, w)` as the evaluation function. -/
 theorem barePluralTV_eq_superTrue (hne : x.Nonempty) (w : W) :
     barePluralTV P x w = superTrue (fun a => P a w) ⟨x, hne⟩ := by
   simp only [barePluralTV, pluralTruthValue]
   rw [Semantics.Supervaluation.superTrue_eq_dist]
 
 omit [DecidableEq Atom] in
-/-- Corollary: homogeneity (gap existence) is exactly supervaluation
-    indefiniteness. If the bare plural is gapped at w, then `superTrue`
-    returns `.indet` — witnesses exist on both sides. -/
+/-- A homogeneity gap is supervaluation indefiniteness. -/
 theorem homogeneity_gap_is_indefiniteness (hne : x.Nonempty) (w : W)
     (hgap : barePluralTV P x w = .indet) :
     superTrue (fun a => P a w) ⟨x, hne⟩ = Trivalent.indet := by
   rw [← barePluralTV_eq_superTrue P x hne w]; exact hgap
 
 omit [DecidableEq Atom] in
-/-- Corollary: `all` removes homogeneity by collapsing the specification
-    space to a single point (the universal check). This corresponds to
-    Fine's fidelity theorem: singleton specification spaces are classical. -/
+/-- An *all*-sentence is never indefinite. -/
 theorem all_removes_supervaluation_gap (w : W) :
     allPluralTV P x w ≠ .indet := by
   rcases all_bivalent P x w with h | h <;> simp [h]
 
 /-! ### Conjunction overgeneration (§6.2)
 
-[kriz-2016] §6.2 notes that conjunctions of proper names exhibit
-homogeneity (citing Szabolcsi & Haddican 2004 and [magri-2014]) yet
-generally resist non-maximal readings — a potential problem for the claimed
-correlation between homogeneity and non-maximality. If we model "Bert,
-Claire and Dora went there" as a plural-style supervaluation over atoms
-{Bert, Claire, Dora}, `gap_enables_nonmax` predicts non-maximal use at a
-gap-world that's QUD-equivalent to a true-world; empirically such readings
-are at best very rare. Križ's own response is informal: mentioning an
-individual in a conjunction prompts the hearer to accommodate a finer
-current issue, relative to which no non-maximal reading of the conjunction
-survives (he also suggests team credit may itself be non-maximality, which
-would make rare counterexamples expected). No formalization of the
-accommodation step is offered; `conj_modeled_as_plural_predicts_nonmax`
-makes the overgenerated prediction of the accommodation-free plural-style
-model kernel-visible. -/
+Conjunctions of proper names are homogeneous (Szabolcsi & Haddican 2004,
+[magri-2014]) yet generally resist non-maximal readings. Modelled as a
+plural over its conjunct atoms, the machinery predicts non-maximal use at a
+gap-world (`conj_modeled_as_plural_predicts_nonmax`); the paper's informal
+response is that mentioning an individual prompts accommodation of a finer
+issue on which no non-maximal reading survives, an accommodation step not
+formalized here or in the paper. -/
 
 section ConjunctionOvergeneration
 
@@ -577,8 +417,7 @@ instance wentThere.instDecidable : ∀ a w, Decidable (wentThere a w) := by
 
 def threeCoworkers : Finset ConjAtom := Finset.univ
 
-/-- Coarse "did anyone go?" issue: groups all worlds where someone went
-into a single cell, vs. the noneWent cell. -/
+/-- Cells of the coarse "did anyone go?" issue. -/
 inductive ConjPartition where | someWent | noneWent
   deriving DecidableEq
 
@@ -593,43 +432,27 @@ def coarseConjQ : QUD ConjWorld := QUD.ofDecEq someWentPartition
 theorem conj_dorasMissing_gap :
     barePluralTV wentThere threeCoworkers .dorasMissing = .indet := by decide
 
-/-- Lean prediction: if we model the conjunction "Bert, Claire and Dora went"
-as a plural over {Bert, Claire, Dora}, Križ's machinery predicts usability
-at the gap-world `dorasMissing` (where Dora missed but the others went),
-under the coarse "did someone go?" issue. -/
+/-- Modelled as a plural over {Bert, Claire, Dora}, the conjunction is
+    predicted usable at the gap-world `dorasMissing` under the coarse issue —
+    the overgenerated non-maximal reading. -/
 theorem conj_modeled_as_plural_predicts_nonmax :
     usable coarseConjQ (barePluralTV wentThere threeCoworkers) .dorasMissing := by
   decide
 
 end ConjunctionOvergeneration
 
-/-! ### Križ vs Magri: the gap's value (cross-framework divergence)
+/-! ### Križ vs Magri on the gap's value
 
-[magri-2014] derives homogeneity from double-strengthening on
-alternative geometry (`MYSTERY`/`WEAK`/`STRONG` roles, Horn-mate structure).
-Magri's `doubleExh .mystery` on a gap scenario is FALSE (theorem
-`Magri2014.gap_positive_false`). This is bivalent-FALSE: the gap is
-collapsed to the negative extension by the alternative-exhaustification
-machinery, before any pragmatics applies.
-
-[kriz-2016]'s `barePluralTV` on the same gap pattern returns `.indet`
-(homogeneity gap), and the gap is then PRAGMATICALLY recoverable via
-`gap_enables_nonmax` under a coarse QUD. This is the central Križ vs.
-Magri disagreement: Magri puts the gap-collapse INSIDE the semantics
-(via doubleExh); Križ keeps the gap and lets pragmatics (sufficient truth +
-addressing) decide whether non-maximal use is licensed.
-
-Empirically Križ has the upper hand: non-maximal readings DO occur (see the
-finite model's `smithNeutral_usable_coarse`). Under Magri's bivalent-FALSE,
-the sentence at the gap is unutterable in standard Gricean terms (false
-sentences violate Quality); to recover non-maximal readings, Magri needs
-additional downstream pragmatic machinery beyond what the alternative-
-geometry account itself provides.
-
-Both operators are run on the SAME input: `Magri2014.fromPredicate`
-translates the finite model's `(smiled, profs, smithNeutral)` into Magri's
-count abstraction, so the divergence is carried by the types, not asserted
-in prose. -/
+[magri-2014] derives homogeneity from double exhaustification over
+alternative geometry: on a gap scenario, `doubleExh .mystery` is
+bivalent-false (`Magri2014.gap_positive_false`) — the gap collapses inside
+the semantics. For Križ the same input is `.indet`, and the gap is
+pragmatically recoverable under a coarse issue (`gap_enables_nonmax`). A
+false sentence is unutterable on standard Gricean terms, so Magri's account
+needs additional pragmatic machinery to license the non-maximal uses the
+finite model exhibits. `Magri2014.fromPredicate` translates the model's
+`(smiled, profs, smithNeutral)` into Magri's count abstraction, so both
+operators run on the same input. -/
 
 section MagriDivergence
 
@@ -639,36 +462,21 @@ open Magri2014
 def magriGapScenario : Scenario :=
   { total := 3, satisfying := 2, valid := by omega }
 
-/-- The Magri-side reading of the finite model's gap world: counting
-    satisfiers of `smiled` over `profs` at `smithNeutral` yields exactly
-    the 2-of-3 scenario. This is what makes the divergence below a
-    same-input comparison. -/
+/-- Counting satisfiers of `smiled` at `smithNeutral` yields the 2-of-3
+    scenario: the divergence below is a same-input comparison. -/
 theorem fromPredicate_smithNeutral :
     fromPredicate smiled profs .smithNeutral = magriGapScenario := rfl
 
 theorem magriGapScenario_isGap : isGap magriGapScenario = true := by decide
 
-/-- Magri's `doubleExh .mystery` returns FALSE on a 2-of-3 gap. This is the
-    bivalent-FALSE assignment: the gap is collapsed semantically. -/
+/-- Magri's `doubleExh .mystery` is false on a 2-of-3 gap. -/
 theorem magri_2of3_gap_is_bivalent_false :
     doubleExh .mystery magriGapScenario = false :=
   gap_positive_false magriGapScenario magriGapScenario_isGap
 
-/-- **Križ vs. Magri formal divergence on the gap's status**.
-
-    On the SAME input — the finite model's gap-world, read by Magri through
-    `fromPredicate` and by Križ through `barePluralTV`:
-    - **Magri**: `doubleExh .mystery` returns FALSE — the gap is collapsed
-      semantically by alternative-exhaustification, pre-pragmatics. False
-      sentences are unutterable (violate Quality).
-    - **Križ**: `barePluralTV` returns INDET (`bare_smithNeutral`), and the
-      bare plural IS USABLE under a coarse QUD (`smithNeutral_usable_coarse`).
-      The gap is preserved and pragmatically recoverable.
-
-    Both predictions cannot be right about the empirical fact that
-    non-maximal readings exist for plural definites at gap-worlds; the
-    theorem packages the disagreement as a kernel-checked conjunction over
-    a shared input. -/
+/-- On the same input, Magri's operator returns false while Križ's returns
+    `.indet` and the sentence is usable under the coarse issue: the two
+    accounts assign the gap incompatible statuses. -/
 theorem kriz_vs_magri_alternative_geometry :
     doubleExh .mystery (fromPredicate smiled profs .smithNeutral) = false ∧
     barePluralTV smiled profs .smithNeutral = .indet ∧
