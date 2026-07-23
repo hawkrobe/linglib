@@ -176,35 +176,28 @@ In the deterministic limit, SUF collapses to a {0,1} indicator
 vacuous (empty) context this is exactly [nadathur-lauer-2020]'s causal
 sufficiency (their definition (23)): with nothing observed, Pearl's
 counterfactual degenerates to the bare interventional development of
-`cause := true`. -/
+`cause := true`, and "interventional = counterfactual at a vacuous
+context" is a theorem (`probSufficiency_empty_eq_deterministicSuf`)
+rather than a conflation. -/
 
 section
 variable {V : Type*} [Fintype V] [DecidableEq V] (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
   [IsDeterministic M]
 
-/-- SUF in the deterministic limit — the {0,1} indicator, over a
-    `BoolSEM`, of [nadathur-lauer-2020]'s causal sufficiency (their
-    definition (23), `causallySufficient`). -/
+/-- The {0,1} indicator of categorical causal sufficiency
+    (`causallySufficient`). -/
 noncomputable def deterministicSuf (background : Valuation (fun _ : V => Bool))
     (cause effect : V) : ENNReal :=
   if BoolSEM.causallySufficient M background cause effect then 1 else 0
 
 variable (c e : V)
 
-/-- At the empty context (vacuous abduction), the counterfactual
-    `probSufficiency` reduces to the deterministic {0,1} indicator
-    `deterministicSuf` — i.e. to [nadathur-lauer-2020]'s causal
-    sufficiency. This makes "interventional = counterfactual at a
-    vacuous context" a theorem rather than a conflation. -/
 theorem probSufficiency_empty_eq_deterministicSuf :
     probSufficiency M Valuation.empty c true e true
       = deterministicSuf M Valuation.empty c e := by
   rw [probSufficiency_eq_indicator_of_deterministic, cfSeed_empty]
-  unfold deterministicSuf BoolSEM.causallySufficient SEM.causallySufficient
-    SEM.developsToValue
-  by_cases h :
-      (M.developDet ((Valuation.empty (α := fun _ : V => Bool)).extend c true)).hasValue e true <;>
-    simp [h]
+  unfold deterministicSuf
+  congr 1
 
 /-- The hub denotation for *make* entails maximal SUF at the vacuous
     context — whenever `Causative.toSemantics M .make` holds (both
