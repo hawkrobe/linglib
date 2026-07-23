@@ -3,7 +3,7 @@ import Linglib.Core.Logic.Trivalent
 import Linglib.Data.Examples.AghaJeretic2022
 import Linglib.Data.Generalizations.HomogeneityGap
 import Linglib.Semantics.Modality.Directive
-import Linglib.Semantics.Plurality.Homogeneity.Decided
+import Linglib.Semantics.Homogeneity.Decided
 import Linglib.Semantics.Plurality.Distributivity
 import Linglib.Fragments.English.Auxiliaries
 import Linglib.Fragments.Javanese.Modals

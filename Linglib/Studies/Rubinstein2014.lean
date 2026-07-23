@@ -1,7 +1,7 @@
 import Linglib.Studies.Narrog2010
 import Linglib.Semantics.Modality.Kratzer.Flavor
 import Linglib.Semantics.Modality.Directive
-import Linglib.Semantics.Plurality.Homogeneity.Decided
+import Linglib.Semantics.Homogeneity.Decided
 import Linglib.Fragments.English.Auxiliaries
 import Linglib.Data.Examples.Rubinstein2014
 import Mathlib.Data.Fin.Basic

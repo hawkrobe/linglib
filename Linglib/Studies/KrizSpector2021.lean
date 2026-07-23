@@ -1,5 +1,5 @@
 import Linglib.Semantics.Plurality.Trivalent
-import Linglib.Studies.Kriz2016
+import Linglib.Semantics.Homogeneity.Plural
 
 /-!
 # Križ & Spector (2021): Interpreting Plural Predication
@@ -37,12 +37,10 @@ showing they agree on the bivalent fragment.
 namespace KrizSpector2021
 
 open Semantics.Plurality
-open Semantics.Plurality.Distributivity
 open Semantics.Plurality.Trivalent
 open Semantics.Homogeneity
-open Kriz2016
 
-variable {Atom W : Type*} [DecidableEq Atom]
+variable {Atom W : Type*}
 
 -- ============================================================================
 -- Section 1: Addressing ↔ Strong Relevance for Bivalent Sentences
@@ -64,7 +62,7 @@ no gap to break the dichotomy).
 
 `bivalentPred S : W → Bool` is wrapped as `(· = true) : W → Prop` to feed the
 Prop-typed `isStronglyRelevantProp`. -/
-theorem bivalent_addressing_iff_stronglyRelevant (q : QUD W) (S : SentenceTV W)
+theorem bivalent_addressing_iff_stronglyRelevant (q : QUD W) (S : TrivalentProp W)
     (hbiv : isBivalent S) :
     addressesIssue q S ↔ isStronglyRelevantProp q (fun w => bivalentPred S w = true) := by
   constructor
@@ -102,18 +100,18 @@ address the issue, so `all` cannot be used non-maximally. -/
 This bridges Križ 2016's pragmatic mechanism (Addressing) to K&S 2021's
 filtering mechanism (strong relevance) for the specific case of universal
 quantification over pluralities. After the [kriz-2016] §3.1 refactor
-that derives `allPluralTV` from `removeGap`, the bridge becomes a
-pointwise-equivalence result via `bivalentPred_allPluralTV_eq_allSatisfy`. -/
+that derives `allPlural` from `removeGap`, the bridge becomes a
+pointwise-equivalence result via `bivalentPred_allPlural_eq_allSatisfy`. -/
 theorem all_addressing_iff_relevant (q : QUD W) (P : Atom → W → Prop)
     [∀ a w, Decidable (P a w)] (x : Finset Atom) :
-    addressesIssue q (allPluralTV P x) ↔
+    addressesIssue q (allPlural P x) ↔
     isStronglyRelevantProp q (allSatisfy P x) := by
-  rw [bivalent_addressing_iff_stronglyRelevant q _ (all_bivalent P x)]
+  rw [bivalent_addressing_iff_stronglyRelevant q _ (allPlural_bivalent P x)]
   refine ⟨fun h w₁ w₂ hEquiv => ?_, fun h w₁ w₂ hEquiv => ?_⟩
-  · exact ((bivalentPred_allPluralTV_eq_allSatisfy P x w₁).symm.trans
-           (h w₁ w₂ hEquiv)).trans (bivalentPred_allPluralTV_eq_allSatisfy P x w₂)
-  · exact ((bivalentPred_allPluralTV_eq_allSatisfy P x w₁).trans
-           (h w₁ w₂ hEquiv)).trans (bivalentPred_allPluralTV_eq_allSatisfy P x w₂).symm
+  · exact ((bivalentPred_allPlural_eq_allSatisfy P x w₁).symm.trans
+           (h w₁ w₂ hEquiv)).trans (bivalentPred_allPlural_eq_allSatisfy P x w₂)
+  · exact ((bivalentPred_allPlural_eq_allSatisfy P x w₁).trans
+           (h w₁ w₂ hEquiv)).trans (bivalentPred_allPlural_eq_allSatisfy P x w₂).symm
 
 -- ============================================================================
 -- Section 3: Candidate Conjunction = Trivalent Semantics (General Bridge)
@@ -157,8 +155,9 @@ characterizations:
 All three agree: they are three views of the same trivalent denotation. -/
 
 /-- The ∀H characterization of `all` agrees with `allSatisfy`, which agrees
-    with `allPluralTV_eq_removeGap`. This closes the triangle:
-    ∀H ↔ allSatisfy ↔ removeGap(barePluralTV). -/
+    with `Kriz2016.allPlural` (= `removeGap` on the bare plural, by
+    definition). This closes the triangle:
+    ∀H ↔ allSatisfy ↔ removeGap(barePlural). -/
 theorem forallH_triangle [Fintype Atom] (P : Atom → W → Prop)
     [∀ a w, Decidable (P a w)] (x : Finset Atom) (w : W) :
     allViaForallH P x w ↔ allSatisfy P x w :=
@@ -169,10 +168,10 @@ theorem forallH_triangle [Fintype Atom] (P : Atom → W → Prop)
     deeper derivation (`∀H`). The semantic contribution of `all` can be
     understood either as gap removal or as universal H-quantification —
     they are provably the same. -/
-theorem removeGap_iff_forallH [Fintype Atom] (P : Atom → W → Prop)
-    [∀ a w, Decidable (P a w)] (x : Finset Atom) (w : W) (hne : x.Nonempty) :
+theorem allPlural_iff_forallH [Fintype Atom] (P : Atom → W → Prop)
+    [∀ a w, Decidable (P a w)] (x : Finset Atom) (w : W) :
     removeGap (fun w => pluralTruthValue P x w) w = .true ↔ allViaForallH P x w :=
-  (removeGap_plural_true_iff P x hne w).trans (forallH_triangle P x w).symm
+  (allPlural_eq_true_iff P x w).trans (forallH_triangle P x w).symm
 
 -- ============================================================================
 -- Section 5: Non-Monotonic Context Finite Model
@@ -308,7 +307,7 @@ open Semantics.Homogeneity (generalisedTV generalisedTV_true_of_holds)
     This captures [kriz-spector-2021] §3.3: "The soldiers of my brigade
     didn't surround the castle" is undefined (not false) when the brigade
     participated with other soldiers in surrounding the castle. -/
-theorem upward_homogeneity_gap
+theorem upward_homogeneity_gap [DecidableEq Atom]
     (P : Finset Atom → Prop) [DecidablePred P]
     (domain : Finset (Finset Atom))
     (x : Finset Atom)
