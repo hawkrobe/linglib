@@ -397,7 +397,7 @@ private lemma singleStepAtDet_le (s : Valuation α) (v : V) :
       · rw [Valuation.hasValue, Valuation.extend_get_ne hwv]; exact hwx
     · rw [singleStepAtDet_skip_not_ready M s v hR]; exact hwx
 
-omit [DecidableEq V] in
+omit [DecidableEq V] [DecidableValuation α] in
 /-- `Valuation.le` is transitive. -/
 private lemma Valuation.le_trans {s₁ s₂ s₃ : Valuation α}
     (h₁₂ : s₁.le s₂) (h₂₃ : s₂.le s₃) : s₁.le s₃ :=
@@ -422,7 +422,7 @@ private lemma developDetOn_le (s : Valuation α) (vs : List V) (n : ℕ) :
     rw [developDetOn_succ]
     exact Valuation.le_trans (stepOnceDetOn_le M s vs) (ih (stepOnceDetOn M vs s))
 
-omit [DecidableEq V] [IsDeterministic M] in
+omit [DecidableEq V] [DecidableValuation α] [IsDeterministic M] in
 /-- `ready` is monotone in the valuation: extending a valuation only
     determines more parents, preserving readiness. -/
 private lemma ready_mono {s s' : Valuation α} (hLe : s.le s') (v : V)
@@ -516,7 +516,7 @@ omit [IsDeterministic M] in
 private def undetCount [Fintype V] (s : Valuation α) : ℕ :=
   (Finset.univ.filter (fun v => (s.get v).isNone = true)).card
 
-omit [IsDeterministic M] in
+omit [DecidableValuation α] [IsDeterministic M] in
 /-- Pointwise progress at any vertex strictly decreases `undetCount`. -/
 private lemma undetCount_lt_of_progress [Fintype V]
     {s s' : Valuation α} (hLe : s.le s') (v : V)
