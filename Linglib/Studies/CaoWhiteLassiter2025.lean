@@ -128,9 +128,8 @@ theorem intentionDegree_eq_one_of_no_alternatives
     (halt : ∀ a ≠ taken, pr a = 0)
     (h0 : pr taken * w taken ≠ 0) (hfin : pr taken ≠ ∞) :
     intentionDegree pr w taken = 1 := by
-  rw [intentionDegree,
-    Finset.sum_eq_single taken (fun a _ ha => by rw [halt a ha, zero_mul])
-      (fun h => absurd (Finset.mem_univ _) h)]
+  rw [intentionDegree, Finset.sum_eq_single_of_mem taken (Finset.mem_univ taken)
+    fun a _ ha => by rw [halt a ha, zero_mul]]
   exact ENNReal.div_self h0 (ENNReal.mul_ne_top hfin ENNReal.coe_ne_top)
 
 /-- An action without alternatives is trivially intentional — the
@@ -143,8 +142,7 @@ theorem intentionDegree_eq_one_of_altCount_eq_zero
     intentionDegree pr w taken = 1 :=
   intentionDegree_eq_one_of_no_alternatives taken pr w
     (fun a ha => le_zero_iff.mp ((altCount_eq_zero_iff p taken).mp halt a ha ▸ hle a))
-    h0
-    (((hle taken).trans (p.coe_le_one taken)).trans_lt ENNReal.one_lt_top).ne
+    h0 (ne_top_of_le_ne_top (p.apply_ne_top taken) (hle taken))
 
 end
 
