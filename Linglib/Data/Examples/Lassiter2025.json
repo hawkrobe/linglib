@@ -1,13 +1,13 @@
 [
   {
     "id": "lass2025_gibbard",
-    "source": {"bibkey": "gibbard-1981", "paperLabel": "UNVERIFIED"},
+    "source": {"bibkey": "gibbard-1981", "paperLabel": "p. 235"},
     "reportedIn": {"bibkey": "lassiter-2025", "paperLabel": "(4)"},
     "language": "stan1293",
-    "primaryText": "If Kripke was there if Strawson was, Anscomb was there",
+    "primaryText": "If Kripke was there if Strawson was, then Anscomb was there",
     "glossedTokens": [],
-    "translation": "If Kripke was there if Strawson was, Anscomb was there",
-    "context": "",
+    "translation": "If Kripke was there if Strawson was, then Anscomb was there",
+    "context": "Said of a conference the addressee doesn't know much about.",
     "judgment": "unacceptable",
     "paperFeatures": [
       ["is_lnc", "true"],
@@ -16,106 +16,134 @@
       ["interpretation", "PC"],
       ["diagnostic", "discourse_anchoring"]
     ],
-    "comment": "Gibbard's classic left-nested conditional, odd out of the blue."
+    "comment": "Gibbard's classic bare LNC, odd out of the blue (quoted with example number changed)."
   },
   {
-    "id": "lass2025_ex11",
-    "source": {"bibkey": "lassiter-2025", "paperLabel": "UNVERIFIED (11)"},
+    "id": "lass2025_ex6",
+    "source": {"bibkey": "iatridou-1991", "paperLabel": "p. 93"},
+    "reportedIn": {"bibkey": "lassiter-2025", "paperLabel": "(6)"},
     "language": "stan1293",
-    "primaryText": "If the fish will die if you don't change the water, you should change the water",
+    "primaryText": "If he is so unhappy, he should leave",
     "glossedTokens": [],
-    "translation": "If the fish will die if you don't change the water, you should change the water",
-    "context": "",
-    "judgment": "marginal",
-    "paperFeatures": [
-      ["is_lnc", "true"],
-      ["content", "bare"],
-      ["has_context", "false"],
-      ["interpretation", "PC"],
-      ["diagnostic", "discourse_anchoring"]
-    ],
-    "comment": "Decontextualized bare LNC is marginal."
-  },
-  {
-    "id": "lass2025_ex12",
-    "source": {"bibkey": "lassiter-2025", "paperLabel": "UNVERIFIED (12)"},
-    "language": "stan1293",
-    "primaryText": "If the fish will die if you don't change the water, you should change the water",
-    "glossedTokens": [],
-    "translation": "If the fish will die if you don't change the water, you should change the water",
-    "context": "The pet store owner tells you 'The fish will die if you don't change the water regularly.'",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      ["is_lnc", "true"],
-      ["content", "bare"],
-      ["has_context", "true"],
-      ["interpretation", "PC"],
-      ["diagnostic", "discourse_anchoring"]
-    ],
-    "comment": "Same LNC as (11), good with a discourse anchor for the inner conditional."
-  },
-  {
-    "id": "lass2025_ex13",
-    "source": {"bibkey": "lassiter-2025", "paperLabel": "UNVERIFIED (13)"},
-    "language": "stan1293",
-    "primaryText": "If this phone will break if you drop it, you'd better be careful",
-    "glossedTokens": [],
-    "translation": "If this phone will break if you drop it, you'd better be careful",
-    "context": "Someone just told you 'This phone will break if you drop it.'",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      ["is_lnc", "true"],
-      ["content", "bare"],
-      ["has_context", "true"],
-      ["interpretation", "PC"],
-      ["diagnostic", "discourse_anchoring"]
-    ],
-    "comment": "Contextualized LNC echoing a prior warning."
-  },
-  {
-    "id": "lass2025_ex14",
-    "source": {"bibkey": "lassiter-2025", "paperLabel": "UNVERIFIED (14)"},
-    "language": "stan1293",
-    "primaryText": "Given that the fish will die if you don't change the water, you should change the water",
-    "glossedTokens": [],
-    "translation": "Given that the fish will die if you don't change the water, you should change the water",
-    "context": "Pet store advice established.",
+    "translation": "If he is so unhappy, he should leave",
+    "context": "Alf: Bill is unhappy here.",
     "judgment": "acceptable",
     "paperFeatures": [
       ["is_lnc", "false"],
       ["content", "bare"],
       ["has_context", "true"],
       ["interpretation", "PC"],
-      ["diagnostic", "given_that_paraphrase"]
+      ["diagnostic", "discourse_anchoring"],
+      ["polarity_item", "ppi"]
     ],
-    "comment": "'Given that' paraphrase of (12) confirms the premise-conditional reading."
+    "comment": "PC echo of Alf's assertion, without the antecedent-uncertainty implication of HCs; anaphoric 'so' forces the PC reading."
   },
   {
-    "id": "lass2025_ex15",
-    "source": {"bibkey": "lassiter-2025", "paperLabel": "UNVERIFIED (15)"},
-    "language": "nucl1643",
-    "primaryText": "Strawson-ga kite-ita nara Kripke-ga kite-ita nara, Anscomb-ga kite-ita",
+    "id": "lass2025_ex11",
+    "source": {"bibkey": "lassiter-2025", "paperLabel": "(11)"},
+    "language": "stan1293",
+    "primaryText": "If Kripke was there if Strawson was, then Anscomb was there too",
     "glossedTokens": [],
-    "translation": "If Kripke came if Strawson came, Anscomb came",
-    "context": "Prior discourse: 'Strawson-ga kite-ita nara Kripke-ga kite-ita.'",
+    "translation": "If Kripke was there if Strawson was, then Anscomb was there too",
+    "context": "Alf: Kripke was there if Strawson was.",
     "judgment": "acceptable",
     "paperFeatures": [
       ["is_lnc", "true"],
       ["content", "bare"],
       ["has_context", "true"],
       ["interpretation", "PC"],
+      ["diagnostic", "discourse_anchoring"]
+    ],
+    "comment": "Gibbard's LNC improves dramatically when the antecedent echoes a previous assertion; a residual hint of oddity is attributed to an inference confound removed in (12)."
+  },
+  {
+    "id": "lass2025_ex12",
+    "source": {"bibkey": "lassiter-2025", "paperLabel": "(12)"},
+    "language": "stan1293",
+    "primaryText": "Aha. If Mary came if John did, they are friends",
+    "glossedTokens": [],
+    "translation": "Aha. If Mary came if John did, they are friends",
+    "context": "Neither Alf nor Barbara was at the party. Alf: Mary came to the party if John did.",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["is_lnc", "true"],
+      ["content", "bare"],
+      ["has_context", "true"],
+      ["interpretation", "PC"],
+      ["diagnostic", "discourse_anchoring"]
+    ],
+    "comment": "Echoic LNC where the consequent is clearly inferable from the echoed conditional."
+  },
+  {
+    "id": "lass2025_ex13",
+    "source": {"bibkey": "lassiter-2025", "paperLabel": "(13)"},
+    "language": "stan1293",
+    "primaryText": "If you'll cancel the camping trip if it rains, you're not from Scotland",
+    "glossedTokens": [],
+    "translation": "If you'll cancel the camping trip if it rains, you're not from Scotland",
+    "context": "Carl: We'll cancel the camping trip if it rains.",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["is_lnc", "true"],
+      ["content", "bare"],
+      ["has_context", "true"],
+      ["interpretation", "PC"],
+      ["diagnostic", "discourse_anchoring"]
+    ],
+    "comment": "Draws an inference from Carl's expressed plan without doubting it."
+  },
+  {
+    "id": "lass2025_ex14",
+    "source": {"bibkey": "lassiter-2025", "paperLabel": "(14)"},
+    "language": "stan1293",
+    "primaryText": "Given that/Since you'll cancel the camping trip if it rains, you're not from Scotland",
+    "glossedTokens": [],
+    "translation": "Given that/Since you'll cancel the camping trip if it rains, you're not from Scotland",
+    "context": "Carl: We'll cancel the camping trip if it rains.",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["is_lnc", "true"],
+      ["content", "bare"],
+      ["has_context", "true"],
+      ["interpretation", "PC"],
+      ["diagnostic", "given_that_paraphrase"]
+    ],
+    "comment": "Presuppositional 'given that'/'since' conveys approximately the same thought as the PC (13)."
+  },
+  {
+    "id": "lass2025_ex18",
+    "source": {"bibkey": "lassiter-2025", "paperLabel": "(18)"},
+    "language": "nucl1643",
+    "primaryText": "Moshi meari-ga kita-{nara/ra} jon-ga kita-nara karera-wa tomodati-da",
+    "glossedTokens": [
+      ["Moshi", "if"], ["meari-ga", "Mary-NOM"], ["kita-{nara/ra}", "came-{NARA/RA}"],
+      ["jon-ga", "John-NOM"], ["kita-nara", "came-NARA"], ["karera-wa", "they-TOP"],
+      ["tomodati-da", "friends-COP"]
+    ],
+    "translation": "If Mary came if John did, they are friends",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["is_lnc", "true"],
+      ["content", "bare"],
+      ["has_context", "false"],
+      ["interpretation", "PC"],
       ["diagnostic", "marker"],
       ["marker", "nara"]
     ],
-    "comment": "Japanese nara can mark premise conditionals, so the LNC is acceptable."
+    "comment": "The main complementizer of a bare LNC can only be PC-compatible nara; the embedded conditional allows either marker."
   },
   {
-    "id": "lass2025_ex16",
-    "source": {"bibkey": "lassiter-2025", "paperLabel": "UNVERIFIED (16)"},
+    "id": "lass2025_ex19",
+    "source": {"bibkey": "lassiter-2025", "paperLabel": "(19)"},
     "language": "nucl1643",
-    "primaryText": "Strawson-ga kite-ita-ra Kripke-ga kite-ita-ra, Anscomb-ga kite-ita",
-    "glossedTokens": [],
-    "translation": "If Kripke came if Strawson came, Anscomb came",
+    "primaryText": "Moshi meari-ga kita-{nara/ra} jon-ga kita-ra karera-wa tomodati-da",
+    "glossedTokens": [
+      ["Moshi", "if"], ["meari-ga", "Mary-NOM"], ["kita-{nara/ra}", "came-{NARA/RA}"],
+      ["jon-ga", "John-NOM"], ["kita-ra", "came-RA"], ["karera-wa", "they-TOP"],
+      ["tomodati-da", "friends-COP"]
+    ],
+    "translation": "Intended: 'If Mary came if John did, they are friends'",
     "context": "",
     "judgment": "unacceptable",
     "paperFeatures": [
@@ -126,55 +154,44 @@
       ["diagnostic", "marker"],
       ["marker", "ra"]
     ],
-    "comment": "Japanese -ra is HC-only, so the LNC is blocked."
+    "comment": "HC-only -ra is impossible as the main complementizer of a bare LNC."
   },
   {
-    "id": "lass2025_ex17",
-    "source": {"bibkey": "lassiter-2025", "paperLabel": "UNVERIFIED (17)"},
-    "language": "nucl1643",
-    "primaryText": "Sou nara, Anscomb-mo kite-ita",
-    "glossedTokens": [],
-    "translation": "If so, Anscomb also came",
-    "context": "A: 'Strawson-ga kite-ita nara Kripke-ga kite-ita.'",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      ["is_lnc", "true"],
-      ["content", "bare"],
-      ["has_context", "true"],
-      ["interpretation", "PC"],
-      ["diagnostic", "marker"],
-      ["marker", "nara"]
-    ],
-    "comment": "'Sou nara' ('if so') echoes A's conditional assertion."
-  },
-  {
-    "id": "lass2025_ex20",
-    "source": {"bibkey": "lassiter-2025", "paperLabel": "UNVERIFIED (20)"},
+    "id": "lass2025_ex23",
+    "source": {"bibkey": "lassiter-2025", "paperLabel": "(23)"},
     "language": "stan1295",
-    "primaryText": "Wenn Strawson da war, wenn Kripke da war, war Anscomb da",
-    "glossedTokens": [],
-    "translation": "If Kripke was there if Strawson was, Anscomb was there",
-    "context": "Prior discourse: 'Wenn Strawson da war, war Kripke da.'",
+    "primaryText": "Wenn ihr das Spiel absagt, {wenn/falls} es regnet, seid ihr keine echten Göttinger",
+    "glossedTokens": [
+      ["Wenn", "WENN"], ["ihr", "you"], ["das", "the"], ["Spiel", "game"], ["absagt", "cancel"],
+      ["{wenn/falls}", "WENN/FALLS"], ["es", "it"], ["regnet", "rains"], ["seid", "are"],
+      ["ihr", "you"], ["keine", "no"], ["echten", "true"], ["Göttinger", "Göttinger"]
+    ],
+    "translation": "If you cancel the picnic if it rains, you aren't real Göttingers",
+    "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
       ["is_lnc", "true"],
       ["content", "bare"],
-      ["has_context", "true"],
+      ["has_context", "false"],
       ["interpretation", "PC"],
       ["diagnostic", "marker"],
       ["marker", "wenn"]
     ],
-    "comment": "German wenn can mark premise conditionals, so the LNC is acceptable."
+    "comment": "General-purpose wenn is acceptable as the main complementizer of a LNC; the embedded conditional allows either marker."
   },
   {
-    "id": "lass2025_ex21",
-    "source": {"bibkey": "lassiter-2025", "paperLabel": "UNVERIFIED (21)"},
+    "id": "lass2025_ex24",
+    "source": {"bibkey": "lassiter-2025", "paperLabel": "(24)"},
     "language": "stan1295",
-    "primaryText": "Falls Strawson da war, falls Kripke da war, war Anscomb da",
-    "glossedTokens": [],
-    "translation": "If Kripke was there if Strawson was, Anscomb was there",
+    "primaryText": "Falls ihr das Spiel absagt, {wenn/falls} es regnet, seid ihr keine echten Göttinger",
+    "glossedTokens": [
+      ["Falls", "FALLS"], ["ihr", "you"], ["das", "the"], ["Spiel", "game"], ["absagt", "cancel"],
+      ["{wenn/falls}", "WENN/FALLS"], ["es", "it"], ["regnet", "rains"], ["seid", "are"],
+      ["ihr", "you"], ["keine", "no"], ["echten", "true"], ["Göttinger", "Göttinger"]
+    ],
+    "translation": "Intended: 'If you cancel the picnic if it rains, you aren't real Göttingers'",
     "context": "",
-    "judgment": "marginal",
+    "judgment": "unacceptable",
     "paperFeatures": [
       ["is_lnc", "true"],
       ["content", "bare"],
@@ -183,164 +200,145 @@
       ["diagnostic", "marker"],
       ["marker", "falls"]
     ],
-    "comment": "German falls is HC-only, so the LNC is degraded."
-  },
-  {
-    "id": "lass2025_ex22",
-    "source": {"bibkey": "lassiter-2025", "paperLabel": "UNVERIFIED (22)"},
-    "language": "stan1295",
-    "primaryText": "Falls der Fisch sterben würde, falls du das Wasser nicht wechselst, solltest du es wechseln",
-    "glossedTokens": [],
-    "translation": "If the fish would die if you don't change the water, you should change it",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      ["is_lnc", "true"],
-      ["content", "modal"],
-      ["has_context", "false"],
-      ["interpretation", "HC"],
-      ["diagnostic", "marker"],
-      ["marker", "falls"]
-    ],
-    "comment": "Modal content allows an HC reading, rescuing falls in an LNC."
+    "comment": "HC-only falls is impossible as the main complementizer of a bare LNC."
   },
   {
     "id": "lass2025_ex29",
-    "source": {"bibkey": "lassiter-2025", "paperLabel": "UNVERIFIED (29)"},
+    "source": {"bibkey": "lassiter-2025", "paperLabel": "(29)"},
     "language": "stan1293",
-    "primaryText": "If John helped someone if asked, we're in good shape",
+    "primaryText": "If Mary was rather pleased if Bill was involved, her expectations are too low",
     "glossedTokens": [],
-    "translation": "If John helped someone if asked, we're in good shape",
-    "context": "Prior discourse: 'Did John help someone if asked?'",
+    "translation": "If Mary was rather pleased if Bill was involved, her expectations are too low",
+    "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
       ["is_lnc", "true"],
       ["content", "bare"],
-      ["has_context", "true"],
+      ["has_context", "false"],
       ["interpretation", "PC"],
       ["diagnostic", "polarity"],
       ["polarity_item", "ppi"]
     ],
-    "comment": "PPI 'someone' licensed in the embedded consequent (B position)."
+    "comment": "PPI in the consequent of the embedded conditional is fine — most naturally read as an echoic PC."
   },
   {
     "id": "lass2025_ex30",
-    "source": {"bibkey": "lassiter-2025", "paperLabel": "UNVERIFIED (30)"},
+    "source": {"bibkey": "lassiter-2025", "paperLabel": "(30)"},
     "language": "stan1293",
-    "primaryText": "If John helped anyone if asked, we're in good shape",
+    "primaryText": "If Mary lifted a finger if Bill was involved, the job got done",
     "glossedTokens": [],
-    "translation": "If John helped anyone if asked, we're in good shape",
+    "translation": "If Mary lifted a finger if Bill was involved, the job got done",
     "context": "",
     "judgment": "unacceptable",
     "paperFeatures": [
       ["is_lnc", "true"],
       ["content", "bare"],
       ["has_context", "false"],
-      ["interpretation", "PC"],
+      ["interpretation", "blocked"],
       ["diagnostic", "polarity"],
       ["polarity_item", "npi"]
     ],
-    "comment": "NPI 'anyone' blocked in the embedded consequent (PC does not license NPIs)."
+    "comment": "NPI in the consequent of the embedded conditional is quite odd — it attempts to echo (31), which is unacceptable on its own."
   },
   {
     "id": "lass2025_ex31",
-    "source": {"bibkey": "lassiter-2025", "paperLabel": "UNVERIFIED (31)"},
+    "source": {"bibkey": "lassiter-2025", "paperLabel": "(31)"},
     "language": "stan1293",
-    "primaryText": "If Mary talked to someone if prompted, the experiment succeeded",
+    "primaryText": "Mary lifted a finger if Bill was involved",
     "glossedTokens": [],
-    "translation": "If Mary talked to someone if prompted, the experiment succeeded",
-    "context": "Prior experimental expectation.",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      ["is_lnc", "true"],
-      ["content", "bare"],
-      ["has_context", "true"],
-      ["interpretation", "PC"],
-      ["diagnostic", "polarity"],
-      ["polarity_item", "ppi"]
-    ],
-    "comment": "PPI 'someone' fine in the embedded consequent."
-  },
-  {
-    "id": "lass2025_ex32",
-    "source": {"bibkey": "lassiter-2025", "paperLabel": "UNVERIFIED (32)"},
-    "language": "stan1293",
-    "primaryText": "If Mary talked to anyone if prompted, the experiment succeeded",
-    "glossedTokens": [],
-    "translation": "If Mary talked to anyone if prompted, the experiment succeeded",
+    "translation": "Mary lifted a finger if Bill was involved",
     "context": "",
     "judgment": "unacceptable",
-    "paperFeatures": [
-      ["is_lnc", "true"],
-      ["content", "bare"],
-      ["has_context", "false"],
-      ["interpretation", "PC"],
-      ["diagnostic", "polarity"],
-      ["polarity_item", "npi"]
-    ],
-    "comment": "NPI 'anyone' blocked in the embedded consequent."
-  },
-  {
-    "id": "lass2025_ex33",
-    "source": {"bibkey": "lassiter-2025", "paperLabel": "UNVERIFIED (33)"},
-    "language": "stan1293",
-    "primaryText": "If you're hungry and if you want some food, there are biscuits",
-    "glossedTokens": [],
-    "translation": "If you're hungry and if you want some food, there are biscuits",
-    "context": "",
-    "judgment": "acceptable",
     "paperFeatures": [
       ["is_lnc", "false"],
       ["content", "bare"],
       ["has_context", "false"],
-      ["interpretation", "HC"],
-      ["diagnostic", "coordination"]
+      ["interpretation", "blocked"],
+      ["diagnostic", "polarity"],
+      ["polarity_item", "npi"]
     ],
-    "comment": "Regular hypothetical conditionals can coordinate."
+    "comment": "NPI in the consequent of a simple conditional is unlicensed; the echo target of (30)."
   },
   {
-    "id": "lass2025_ex34",
-    "source": {"bibkey": "lassiter-2025", "paperLabel": "UNVERIFIED (34)"},
+    "id": "lass2025_ex32b",
+    "source": {"bibkey": "lassiter-2025", "paperLabel": "(32b)"},
     "language": "stan1293",
-    "primaryText": "If Mary left if John did and if Sue is upset, we have a problem",
+    "primaryText": "If Mary was pleased if Bill lifted a finger to help, her expectations are too low",
     "glossedTokens": [],
-    "translation": "If Mary left if John did and if Sue is upset, we have a problem",
+    "translation": "If Mary was pleased if Bill lifted a finger to help, her expectations are too low",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "paperFeatures": [
       ["is_lnc", "true"],
       ["content", "bare"],
       ["has_context", "false"],
       ["interpretation", "PC"],
+      ["diagnostic", "polarity"],
+      ["polarity_item", "npi"]
+    ],
+    "comment": "NPI acceptable in the antecedent of the embedded conditional, which can echo an HC with an NPI in its own antecedent (32a)."
+  },
+  {
+    "id": "lass2025_ex33",
+    "source": {"bibkey": "lassiter-2025", "paperLabel": "(33)"},
+    "language": "stan1293",
+    "primaryText": "If Bill is so unhappy, and if Mary loses her job, they'll be in trouble",
+    "glossedTokens": [],
+    "translation": "If Bill is so unhappy, and if Mary loses her job, they'll be in trouble",
+    "context": "Ed and Fran have no idea whether Mary's job is at risk. Ed: Bill is very unhappy here.",
+    "judgment": "unacceptable",
+    "paperFeatures": [
+      ["is_lnc", "false"],
+      ["content", "bare"],
+      ["has_context", "true"],
+      ["interpretation", "blocked"],
       ["diagnostic", "coordination"]
     ],
-    "comment": "LNC (premise conditional) resists coordination with a regular conditional."
+    "comment": "Coordinated antecedents cannot mix PC and HC interpretations (Haegeman & Schönenberger 2023: p.284ff.)."
+  },
+  {
+    "id": "lass2025_ex34",
+    "source": {"bibkey": "lassiter-2025", "paperLabel": "(34)"},
+    "language": "stan1293",
+    "primaryText": "If John came if Mary did, and if the food was bad, it was a lousy party",
+    "glossedTokens": [],
+    "translation": "If John came if Mary did, and if the food was bad, it was a lousy party",
+    "context": "Alf: John came to the party if Mary did. Barbara: The food wasn't very good.",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["is_lnc", "true"],
+      ["content", "bare"],
+      ["has_context", "true"],
+      ["interpretation", "PC"],
+      ["diagnostic", "coordination"]
+    ],
+    "comment": "Conjoined-antecedent LNC is acceptable when both conjuncts can be PCs in context."
   },
   {
     "id": "lass2025_ex35",
-    "source": {"bibkey": "lassiter-2025", "paperLabel": "UNVERIFIED (35)"},
+    "source": {"bibkey": "lassiter-2025", "paperLabel": "(35)"},
     "language": "stan1293",
-    "primaryText": "If the fish will die if you don't change the water and if you care about the fish, change the water",
+    "primaryText": "If John came if Mary did, and if the food was bad, it was a lousy party",
     "glossedTokens": [],
-    "translation": "If the fish will die if you don't change the water and if you care about the fish, change the water",
-    "context": "Pet store context.",
+    "translation": "If John came if Mary did, and if the food was bad, it was a lousy party",
+    "context": "Alf: John came to the party if Mary did. Barbara: I have no idea about the food — sometimes it's great, sometimes it's terrible.",
     "judgment": "marginal",
     "paperFeatures": [
       ["is_lnc", "true"],
       ["content", "bare"],
       ["has_context", "true"],
-      ["interpretation", "PC"],
+      ["interpretation", "blocked"],
       ["diagnostic", "coordination"]
     ],
-    "comment": "Coordination constraint persists even with discourse support."
+    "comment": "Same LNC degraded ('??') when the context favors an HC reading of the simple conjunct."
   },
   {
     "id": "lass2025_ex36",
-    "source": {"bibkey": "lassiter-2025", "paperLabel": "UNVERIFIED (36)"},
+    "source": {"bibkey": "lassiter-2025", "paperLabel": "(36)"},
     "language": "stan1293",
-    "primaryText": "Only if you leave will I stay",
+    "primaryText": "Only if you have the courage to follow your heart will you succeed on the path of love",
     "glossedTokens": [],
-    "translation": "Only if you leave will I stay",
+    "translation": "Only if you have the courage to follow your heart will you succeed on the path of love",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -350,15 +348,51 @@
       ["interpretation", "HC"],
       ["diagnostic", "only_inversion"]
     ],
-    "comment": "Regular hypothetical conditional allows only + subject-aux inversion."
+    "comment": "HCs allow subject-aux inversion triggered by initial 'only' (Haegeman & Schönenberger 2023: p.288)."
   },
   {
-    "id": "lass2025_ex37",
-    "source": {"bibkey": "lassiter-2025", "paperLabel": "UNVERIFIED (37)"},
+    "id": "lass2025_ex37b",
+    "source": {"bibkey": "lassiter-2025", "paperLabel": "(37b)"},
     "language": "stan1293",
-    "primaryText": "Only if Mary left if John did will we have a problem",
+    "primaryText": "Only if the chocolate manufacturers are pleased are they not satisfied",
     "glossedTokens": [],
-    "translation": "Only if Mary left if John did will we have a problem",
+    "translation": "Only if the chocolate manufacturers are pleased are they not satisfied",
+    "context": "The chocolate manufacturers looked with pleasure at the statistics. If the chocolate manufacturers are pleased, they are not satisfied.",
+    "judgment": "unacceptable",
+    "paperFeatures": [
+      ["is_lnc", "false"],
+      ["content", "bare"],
+      ["has_context", "true"],
+      ["interpretation", "blocked"],
+      ["diagnostic", "only_inversion"]
+    ],
+    "comment": "The context forces a PC reading; 'only' + inversion removes the PC interpretation and the HC reading is nonsensical."
+  },
+  {
+    "id": "lass2025_ex38a",
+    "source": {"bibkey": "lassiter-2025", "paperLabel": "(38a)"},
+    "language": "stan1293",
+    "primaryText": "If Mary was distressed if Bill left, Sue will be annoyed",
+    "glossedTokens": [],
+    "translation": "If Mary was distressed if Bill left, Sue will be annoyed",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["is_lnc", "true"],
+      ["content", "bare"],
+      ["has_context", "false"],
+      ["interpretation", "PC"],
+      ["diagnostic", "only_inversion"]
+    ],
+    "comment": "Plain LNC counterpart of (38b)."
+  },
+  {
+    "id": "lass2025_ex38b",
+    "source": {"bibkey": "lassiter-2025", "paperLabel": "(38b)"},
+    "language": "stan1293",
+    "primaryText": "Only if Mary was distressed if Bill left will Sue be annoyed",
+    "glossedTokens": [],
+    "translation": "Only if Mary was distressed if Bill left will Sue be annoyed",
     "context": "",
     "judgment": "unacceptable",
     "paperFeatures": [
@@ -368,69 +402,69 @@
       ["interpretation", "blocked"],
       ["diagnostic", "only_inversion"]
     ],
-    "comment": "LNC (premise conditional) blocks only + subject-aux inversion."
+    "comment": "LNCs are unacceptable with initial 'only' and inversion, as predicted if they are PC-only."
   },
   {
-    "id": "lass2025_ex38",
-    "source": {"bibkey": "lassiter-2025", "paperLabel": "UNVERIFIED (38)"},
+    "id": "lass2025_ex39b",
+    "source": {"bibkey": "lassiter-2025", "paperLabel": "(39b)"},
     "language": "stan1293",
-    "primaryText": "We will have a problem only if Mary left if John did",
+    "primaryText": "Only if the game is canceled if it rains are the organizers too nervous",
     "glossedTokens": [],
-    "translation": "We will have a problem only if Mary left if John did",
-    "context": "Prior discourse: 'I think Mary left if John did.'",
-    "judgment": "acceptable",
+    "translation": "Only if the game is canceled if it rains are the organizers too nervous",
+    "context": "",
+    "judgment": "unacceptable",
     "paperFeatures": [
       ["is_lnc", "true"],
       ["content", "bare"],
-      ["has_context", "true"],
-      ["interpretation", "PC"],
+      ["has_context", "false"],
+      ["interpretation", "blocked"],
       ["diagnostic", "only_inversion"]
     ],
-    "comment": "Same LNC fine without inversion."
+    "comment": "Second only-inversion LNC; the plain counterpart (39a) is acceptable."
   },
   {
     "id": "lass2025_ex40",
-    "source": {"bibkey": "lassiter-2025", "paperLabel": "UNVERIFIED (40)"},
+    "source": {"bibkey": "lassiter-2025", "paperLabel": "(40)"},
     "language": "stan1293",
-    "primaryText": "If the fish would die if you didn't change the water, you should change it",
+    "primaryText": "If the boss rarely yells at employees if they make a mistake, I'm going to be happier working here",
     "glossedTokens": [],
-    "translation": "If the fish would die if you didn't change the water, you should change it",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      ["is_lnc", "true"],
-      ["content", "modal"],
-      ["has_context", "false"],
-      ["interpretation", "HC"],
-      ["diagnostic", "content_exception"]
-    ],
-    "comment": "Modal 'would' in the inner conditional allows an HC reading without discourse support."
-  },
-  {
-    "id": "lass2025_ex41",
-    "source": {"bibkey": "lassiter-2025", "paperLabel": "UNVERIFIED (41)"},
-    "language": "stan1293",
-    "primaryText": "If a car usually starts if you turn the key, it's probably reliable",
-    "glossedTokens": [],
-    "translation": "If a car usually starts if you turn the key, it's probably reliable",
-    "context": "",
+    "translation": "If the boss rarely yells at employees if they make a mistake, I'm going to be happier working here",
+    "context": "I don't know how things work in my new workplace, but I hope people are kinder than in my previous one.",
     "judgment": "acceptable",
     "paperFeatures": [
       ["is_lnc", "true"],
       ["content", "quantAdv"],
-      ["has_context", "false"],
-      ["interpretation", "ambiguous"],
+      ["has_context", "true"],
+      ["interpretation", "HC"],
       ["diagnostic", "content_exception"]
     ],
-    "comment": "Quantificational adverb 'usually' provides object-level content."
+    "comment": "Adverb of quantification in the embedded conditional makes an HC construal available."
+  },
+  {
+    "id": "lass2025_ex41",
+    "source": {"bibkey": "lassiter-2025", "paperLabel": "(41)"},
+    "language": "stan1293",
+    "primaryText": "If Bill is obliged to stop writing if the timer has gone off, he's breaking the rules by continuing",
+    "glossedTokens": [],
+    "translation": "If Bill is obliged to stop writing if the timer has gone off, he's breaking the rules by continuing",
+    "context": "I don't know what the rules of this test are, but it seems like something's not right here.",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["is_lnc", "true"],
+      ["content", "modal"],
+      ["has_context", "true"],
+      ["interpretation", "HC"],
+      ["diagnostic", "content_exception"]
+    ],
+    "comment": "Modal in the embedded conditional makes an HC construal available."
   },
   {
     "id": "lass2025_ex42",
-    "source": {"bibkey": "lassiter-2025", "paperLabel": "UNVERIFIED (42)"},
+    "source": {"bibkey": "lassiter-2025", "paperLabel": "(42)"},
     "language": "stan1293",
-    "primaryText": "If dogs bark if provoked, we should keep them away from the children",
+    "primaryText": "If a female bear attacks if a human approaches, she has cubs",
     "glossedTokens": [],
-    "translation": "If dogs bark if provoked, we should keep them away from the children",
+    "translation": "If a female bear attacks if a human approaches, she has cubs",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -440,24 +474,42 @@
       ["interpretation", "HC"],
       ["diagnostic", "content_exception"]
     ],
-    "comment": "Generic interpretation allows an HC reading."
+    "comment": "Generic/habitual construal of the embedded conditional makes an HC construal available."
   },
   {
-    "id": "lass2025_ex43",
-    "source": {"bibkey": "lassiter-2025", "paperLabel": "UNVERIFIED (43)"},
+    "id": "lass2025_ex43a",
+    "source": {"bibkey": "lassiter-2025", "paperLabel": "(43a)"},
     "language": "stan1293",
-    "primaryText": "If John cries if scolded, we shouldn't be too hard on him",
+    "primaryText": "If this switch will fail if it is submerged in water, it will be discarded",
     "glossedTokens": [],
-    "translation": "If John cries if scolded, we shouldn't be too hard on him",
+    "translation": "If this switch will fail if it is submerged in water, it will be discarded",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["is_lnc", "true"],
+      ["content", "modal"],
+      ["has_context", "false"],
+      ["interpretation", "HC"],
+      ["diagnostic", "content_exception"]
+    ],
+    "comment": "From Kaufmann 2009: p.18, as cited by Lassiter; 'will' is a modal describing a disposition of the switch."
+  },
+  {
+    "id": "lass2025_ex43b",
+    "source": {"bibkey": "lassiter-2025", "paperLabel": "(43b)"},
+    "language": "stan1293",
+    "primaryText": "If this material becomes soft if it gets hot, it is not suited for our purposes",
+    "glossedTokens": [],
+    "translation": "If this material becomes soft if it gets hot, it is not suited for our purposes",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
       ["is_lnc", "true"],
       ["content", "generic"],
       ["has_context", "false"],
-      ["interpretation", "ambiguous"],
+      ["interpretation", "HC"],
       ["diagnostic", "content_exception"]
     ],
-    "comment": "Habitual reading allows an HC interpretation."
+    "comment": "From Douven 2016, as cited by Lassiter; generic interpretation of the material's tendency (cf. Lassiter & Baratgin 2021)."
   }
 ]
