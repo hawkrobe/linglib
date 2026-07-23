@@ -1,0 +1,406 @@
+[
+  {
+    "id": "cwl2025_ex3a",
+    "source": {"bibkey": "cao-white-lassiter-2025", "paperLabel": "(3a)"},
+    "language": "stan1293",
+    "primaryText": "A CAT [...] caused himself [to] look as much as possible like a doctor...",
+    "glossedTokens": [],
+    "translation": "A CAT [...] caused himself [to] look as much as possible like a doctor...",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["verb", "cause"],
+      ["dimension", "interchangeability"],
+      ["pair", "fables_cat"],
+      ["attested", "true"]
+    ],
+    "comment": "Attested (Aesop's Fables, Project Gutenberg), modified; [] marks insertion/deletion/replacement."
+  },
+  {
+    "id": "cwl2025_ex3b",
+    "source": {"bibkey": "cao-white-lassiter-2025", "paperLabel": "(3b)"},
+    "language": "stan1293",
+    "primaryText": "A CAT [...] made himself look as much as possible like a doctor...",
+    "glossedTokens": [],
+    "translation": "A CAT [...] made himself look as much as possible like a doctor...",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["verb", "make"],
+      ["dimension", "interchangeability"],
+      ["pair", "fables_cat"],
+      ["attested", "true"]
+    ],
+    "comment": "The attested variant of the (3) triplet."
+  },
+  {
+    "id": "cwl2025_ex3c",
+    "source": {"bibkey": "cao-white-lassiter-2025", "paperLabel": "(3c)"},
+    "language": "stan1293",
+    "primaryText": "A CAT [...] forced himself [to] look as much as possible like a doctor...",
+    "glossedTokens": [],
+    "translation": "A CAT [...] forced himself [to] look as much as possible like a doctor...",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["verb", "force"],
+      ["dimension", "interchangeability"],
+      ["pair", "fables_cat"],
+      ["attested", "true"]
+    ],
+    "comment": "Attested-modified; all three verbs acceptable in this frame."
+  },
+  {
+    "id": "cwl2025_ex4a",
+    "source": {"bibkey": "cao-white-lassiter-2025", "paperLabel": "(4a)"},
+    "language": "stan1293",
+    "primaryText": "He caused cancer in one woman.",
+    "glossedTokens": [],
+    "translation": "He caused cancer in one woman.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["verb", "cause"],
+      ["dimension", "interchangeability"],
+      ["pair", "cancer"],
+      ["attested", "true"]
+    ],
+    "comment": "Attested (COCA SPOK: THE FIVE 5:00 PM EST; 2013)."
+  },
+  {
+    "id": "cwl2025_ex4b",
+    "source": {"bibkey": "cao-white-lassiter-2025", "paperLabel": "(4b)"},
+    "language": "stan1293",
+    "primaryText": "He made cancer [happen] in one woman.",
+    "glossedTokens": [],
+    "translation": "He made cancer [happen] in one woman.",
+    "context": "",
+    "judgment": "unacceptable",
+    "paperFeatures": [
+      ["verb", "make"],
+      ["dimension", "interchangeability"],
+      ["pair", "cancer"]
+    ],
+    "comment": "Starred: make does not substitute for cause in this frame."
+  },
+  {
+    "id": "cwl2025_ex4c",
+    "source": {"bibkey": "cao-white-lassiter-2025", "paperLabel": "(4c)"},
+    "language": "stan1293",
+    "primaryText": "He forced cancer [to happen] in one woman.",
+    "glossedTokens": [],
+    "translation": "He forced cancer [to happen] in one woman.",
+    "context": "",
+    "judgment": "unacceptable",
+    "paperFeatures": [
+      ["verb", "force"],
+      ["dimension", "interchangeability"],
+      ["pair", "cancer"]
+    ],
+    "comment": "Starred: force does not substitute for cause in this frame."
+  },
+  {
+    "id": "cwl2025_ex5a",
+    "source": {"bibkey": "cao-white-lassiter-2025", "paperLabel": "(5a)"},
+    "language": "stan1293",
+    "primaryText": "I caused Martha to go to the gym by mentioning how the habit has helped me.",
+    "glossedTokens": [],
+    "translation": "I caused Martha to go to the gym by mentioning how the habit has helped me.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["verb", "cause"],
+      ["dimension", "gradability"],
+      ["pair", "gym_mention"]
+    ],
+    "comment": "Mild causing event: only cause is acceptable."
+  },
+  {
+    "id": "cwl2025_ex5b",
+    "source": {"bibkey": "cao-white-lassiter-2025", "paperLabel": "(5b)"},
+    "language": "stan1293",
+    "primaryText": "I made Martha go to the gym by mentioning how the habit has helped me.",
+    "glossedTokens": [],
+    "translation": "I made Martha go to the gym by mentioning how the habit has helped me.",
+    "context": "",
+    "judgment": "unacceptable",
+    "paperFeatures": [
+      ["verb", "make"],
+      ["dimension", "gradability"],
+      ["pair", "gym_mention"]
+    ],
+    "comment": "Starred."
+  },
+  {
+    "id": "cwl2025_ex5c",
+    "source": {"bibkey": "cao-white-lassiter-2025", "paperLabel": "(5c)"},
+    "language": "stan1293",
+    "primaryText": "I forced Martha to go to the gym by mentioning how the habit has helped me.",
+    "glossedTokens": [],
+    "translation": "I forced Martha to go to the gym by mentioning how the habit has helped me.",
+    "context": "",
+    "judgment": "unacceptable",
+    "paperFeatures": [
+      ["verb", "force"],
+      ["dimension", "gradability"],
+      ["pair", "gym_mention"]
+    ],
+    "comment": "Starred."
+  },
+  {
+    "id": "cwl2025_ex6a",
+    "source": {"bibkey": "cao-white-lassiter-2025", "paperLabel": "(6a)"},
+    "language": "stan1293",
+    "primaryText": "I caused Martha to go to the gym by criticizing her physical appearance.",
+    "glossedTokens": [],
+    "translation": "I caused Martha to go to the gym by criticizing her physical appearance.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["verb", "cause"],
+      ["dimension", "gradability"],
+      ["pair", "gym_criticize"]
+    ],
+    "comment": "Intermediate causing event: cause fine, make questionable, force out."
+  },
+  {
+    "id": "cwl2025_ex6b",
+    "source": {"bibkey": "cao-white-lassiter-2025", "paperLabel": "(6b)"},
+    "language": "stan1293",
+    "primaryText": "I made Martha go to the gym by criticizing her physical appearance.",
+    "glossedTokens": [],
+    "translation": "I made Martha go to the gym by criticizing her physical appearance.",
+    "context": "",
+    "judgment": "questionable",
+    "paperFeatures": [
+      ["verb", "make"],
+      ["dimension", "gradability"],
+      ["pair", "gym_criticize"]
+    ],
+    "comment": "Single-? diacritic in the paper."
+  },
+  {
+    "id": "cwl2025_ex6c",
+    "source": {"bibkey": "cao-white-lassiter-2025", "paperLabel": "(6c)"},
+    "language": "stan1293",
+    "primaryText": "I forced Martha to go to the gym by criticizing her physical appearance.",
+    "glossedTokens": [],
+    "translation": "I forced Martha to go to the gym by criticizing her physical appearance.",
+    "context": "",
+    "judgment": "unacceptable",
+    "paperFeatures": [
+      ["verb", "force"],
+      ["dimension", "gradability"],
+      ["pair", "gym_criticize"]
+    ],
+    "comment": "Starred."
+  },
+  {
+    "id": "cwl2025_ex7a",
+    "source": {"bibkey": "cao-white-lassiter-2025", "paperLabel": "(7a)"},
+    "language": "stan1293",
+    "primaryText": "I caused Martha to go to the gym by holding her child hostage.",
+    "glossedTokens": [],
+    "translation": "I caused Martha to go to the gym by holding her child hostage.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["verb", "cause"],
+      ["dimension", "gradability"],
+      ["pair", "gym_hostage"]
+    ],
+    "comment": "Drastic causing event (removes safe alternatives): all three verbs acceptable."
+  },
+  {
+    "id": "cwl2025_ex7b",
+    "source": {"bibkey": "cao-white-lassiter-2025", "paperLabel": "(7b)"},
+    "language": "stan1293",
+    "primaryText": "I made Martha go to the gym by holding her child hostage.",
+    "glossedTokens": [],
+    "translation": "I made Martha go to the gym by holding her child hostage.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["verb", "make"],
+      ["dimension", "gradability"],
+      ["pair", "gym_hostage"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "cwl2025_ex7c",
+    "source": {"bibkey": "cao-white-lassiter-2025", "paperLabel": "(7c)"},
+    "language": "stan1293",
+    "primaryText": "I forced Martha to go to the gym by holding her child hostage.",
+    "glossedTokens": [],
+    "translation": "I forced Martha to go to the gym by holding her child hostage.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["verb", "force"],
+      ["dimension", "gradability"],
+      ["pair", "gym_hostage"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "cwl2025_ex8a",
+    "source": {"bibkey": "cao-white-lassiter-2025", "paperLabel": "(8a)"},
+    "language": "stan1293",
+    "primaryText": "The child was made to get into the car, although she could've chosen to do otherwise.",
+    "glossedTokens": [],
+    "translation": "The child was made to get into the car, although she could've chosen to do otherwise.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["verb", "make"],
+      ["dimension", "alternatives"],
+      ["pair", "car"]
+    ],
+    "comment": "Halpern & Kleiman-Weiner: an action taken when the agent could not do otherwise is never intentional; make tolerates the could-have-done-otherwise continuation."
+  },
+  {
+    "id": "cwl2025_ex8b",
+    "source": {"bibkey": "cao-white-lassiter-2025", "paperLabel": "(8b)"},
+    "language": "stan1293",
+    "primaryText": "The child was forced to get into the car, although she could've chosen to do otherwise.",
+    "glossedTokens": [],
+    "translation": "The child was forced to get into the car, although she could've chosen to do otherwise.",
+    "context": "",
+    "judgment": "questionable",
+    "paperFeatures": [
+      ["verb", "force"],
+      ["dimension", "alternatives"],
+      ["pair", "car"]
+    ],
+    "comment": "Single-? diacritic: force resists the continuation asserting available alternatives."
+  },
+  {
+    "id": "cwl2025_ex9a",
+    "source": {"bibkey": "cao-white-lassiter-2025", "paperLabel": "(9a)"},
+    "language": "stan1293",
+    "primaryText": "John caused the children to dance, but he didn't intend for the children to dance.",
+    "glossedTokens": [],
+    "translation": "John caused the children to dance, but he didn't intend for the children to dance.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["verb", "cause"],
+      ["dimension", "intention"],
+      ["pair", "dance_intent"]
+    ],
+    "comment": "Paper's prose: easiest to imagine a situation where (9a) is true; no diacritics given on (9) — the judgment scale here transcribes the easiest/more difficult/most difficult ordering."
+  },
+  {
+    "id": "cwl2025_ex9b",
+    "source": {"bibkey": "cao-white-lassiter-2025", "paperLabel": "(9b)"},
+    "language": "stan1293",
+    "primaryText": "John made the children dance, but he didn't intend for the children to dance.",
+    "glossedTokens": [],
+    "translation": "John made the children dance, but he didn't intend for the children to dance.",
+    "context": "",
+    "judgment": "marginal",
+    "paperFeatures": [
+      ["verb", "make"],
+      ["dimension", "intention"],
+      ["pair", "dance_intent"]
+    ],
+    "comment": "Paper's prose: 'perhaps a bit more difficult to imagine'; diacritic assigned from prose ordering."
+  },
+  {
+    "id": "cwl2025_ex9c",
+    "source": {"bibkey": "cao-white-lassiter-2025", "paperLabel": "(9c)"},
+    "language": "stan1293",
+    "primaryText": "John forced the children to dance, but he didn't intend for the children to dance.",
+    "glossedTokens": [],
+    "translation": "John forced the children to dance, but he didn't intend for the children to dance.",
+    "context": "",
+    "judgment": "questionable",
+    "paperFeatures": [
+      ["verb", "force"],
+      ["dimension", "intention"],
+      ["pair", "dance_intent"]
+    ],
+    "comment": "Paper's prose: 'most difficult to imagine'; diacritic assigned from prose ordering."
+  },
+  {
+    "id": "cwl2025_ex10a",
+    "source": {"bibkey": "cao-white-lassiter-2025", "paperLabel": "(10a)"},
+    "language": "stan1293",
+    "primaryText": "John accidentally caused the children to dance. He didn't intend for the children to dance.",
+    "glossedTokens": [],
+    "translation": "John accidentally caused the children to dance. He didn't intend for the children to dance.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["verb", "cause"],
+      ["dimension", "intention"],
+      ["pair", "dance_accident"]
+    ],
+    "comment": "Hedging with accidentally improves the no-intent continuation for all three verbs."
+  },
+  {
+    "id": "cwl2025_ex10b",
+    "source": {"bibkey": "cao-white-lassiter-2025", "paperLabel": "(10b)"},
+    "language": "stan1293",
+    "primaryText": "John accidentally made the children dance. He didn't intend for the children to dance.",
+    "glossedTokens": [],
+    "translation": "John accidentally made the children dance. He didn't intend for the children to dance.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["verb", "make"],
+      ["dimension", "intention"],
+      ["pair", "dance_accident"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "cwl2025_ex10c",
+    "source": {"bibkey": "cao-white-lassiter-2025", "paperLabel": "(10c)"},
+    "language": "stan1293",
+    "primaryText": "John accidentally forced the children to dance. He didn't intend for the children to dance.",
+    "glossedTokens": [],
+    "translation": "John accidentally forced the children to dance. He didn't intend for the children to dance.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["verb", "force"],
+      ["dimension", "intention"],
+      ["pair", "dance_accident"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "cwl2025_ex11a",
+    "source": {"bibkey": "cao-white-lassiter-2025", "paperLabel": "(11a)"},
+    "language": "stan1293",
+    "primaryText": "The pirate made the prisoner walk down the plank.",
+    "glossedTokens": [],
+    "translation": "The pirate made the prisoner walk down the plank.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["verb", "make"],
+      ["dimension", "sufficiency"],
+      ["pair", "plank"]
+    ],
+    "comment": "We can say with certainty that the prisoner walks down the plank — make conveys sufficiency of the causing action."
+  },
+  {
+    "id": "cwl2025_ex11b",
+    "source": {"bibkey": "cao-white-lassiter-2025", "paperLabel": "(11b)"},
+    "language": "stan1293",
+    "primaryText": "The pirate let the prisoner walk down the plank.",
+    "glossedTokens": [],
+    "translation": "The pirate let the prisoner walk down the plank.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["verb", "let"],
+      ["dimension", "sufficiency"],
+      ["pair", "plank"]
+    ],
+    "comment": "The result is not guaranteed under let — the contrast motivating SUF as a graded measure."
+  }
+]
