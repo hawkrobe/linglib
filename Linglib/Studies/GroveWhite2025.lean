@@ -3,6 +3,7 @@ import Linglib.Semantics.Probabilistic.ParamPred
 import Linglib.Studies.DegenTonhauser2022
 import Linglib.Studies.ScontrasTonhauser2025
 import Linglib.Core.Order.Rat01
+import Linglib.Core.Probability.Constructions
 
 /-!
 # [grove-white-2025]
@@ -158,23 +159,23 @@ theorem Rat01.toNNReal_val (τ : Rat01) : ((Rat01.toNNReal τ : ℝ≥0) : ℝ) 
     intrinsic to the type rather than threaded as side hypotheses. This is
     the τ-vertex of the discrete-factivity DAG (definition (13), p. 20).
 
-    Built from mathlib's `PMF.bernoulli` (a `PMF Bool`) by relabeling
+    Built from mathlib's `PMF.bernoulliMix` (a `PMF Bool`) by relabeling
     `true ↦ .factive`, `false ↦ .nonfactive`. -/
 noncomputable def factivityPrior (τ : Rat01) : PMF FactivityReading :=
-  (PMF.bernoulli (Rat01.toNNReal τ) (Rat01.toNNReal_le_one τ)).map
+  (PMF.bernoulliMix (Rat01.toNNReal τ) (Rat01.toNNReal_le_one τ)).map
     (fun b => bif b then .factive else .nonfactive)
 
 @[simp] theorem factivityPrior_apply_factive (τ : Rat01) :
     (factivityPrior τ) FactivityReading.factive
       = ((Rat01.toNNReal τ : ℝ≥0) : ℝ≥0∞) := by
   unfold factivityPrior
-  simp [PMF.map_apply, PMF.bernoulli_apply]
+  simp [PMF.map_apply, PMF.bernoulliMix_apply]
 
 @[simp] theorem factivityPrior_apply_nonfactive (τ : Rat01) :
     (factivityPrior τ) FactivityReading.nonfactive
       = (((1 : ℝ≥0) - Rat01.toNNReal τ : ℝ≥0) : ℝ≥0∞) := by
   unfold factivityPrior
-  simp [PMF.map_apply, PMF.bernoulli_apply]
+  simp [PMF.map_apply, PMF.bernoulliMix_apply]
 
 end Prior
 

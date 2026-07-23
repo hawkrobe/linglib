@@ -1,7 +1,7 @@
 import Mathlib.Data.NNReal.Basic
 import Mathlib.Data.Set.Card
 import Mathlib.Probability.Distributions.Uniform
-import Linglib.Core.Probability.Finite
+import Linglib.Core.Probability.Constructions
 import Linglib.Data.Examples.CaoWhiteLassiter2025
 import Linglib.Semantics.Causation.Interpretation
 import Linglib.Semantics.Causation.SEM.Counterfactual
@@ -53,7 +53,7 @@ and a professional (`ρ = 1`). -/
     [cao-white-lassiter-2025]). -/
 noncomputable def softOptimalPolicy {A : Type*} [Fintype A] [Nonempty A]
     (best : A) (ρ : ℝ≥0) (hρ : ρ ≤ 1) : PMF A :=
-  PMF.mix ρ hρ (PMF.pure best) (PMF.uniformOfFintype A)
+  PMF.mix ρ hρ (PMF.uniformOfFintype A) (PMF.pure best)
 
 /-- The paper's arithmetic form of the policy: the best move carries
     `ρ + (1 − ρ)/n`, every other available move `(1 − ρ)/n`. -/
@@ -62,7 +62,7 @@ theorem softOptimalPolicy_apply {A : Type*} [Fintype A] [DecidableEq A] [Nonempt
     softOptimalPolicy best ρ hρ a =
       (if a = best then (ρ : ℝ≥0∞) else 0) + (1 - ρ : ℝ≥0) / Fintype.card A := by
   simp [softOptimalPolicy, PMF.pure_apply, PMF.uniformOfFintype_apply, mul_ite, mul_one,
-    mul_zero, div_eq_mul_inv]
+    mul_zero, div_eq_mul_inv, add_comm]
 
 /-- At `ρ = 0` the soft-optimality policy is the uniform random player —
     the paper's limiting case ("assume that the players are infants"),
@@ -253,7 +253,7 @@ theorem make_force_same_semantics_different_judgments
 
 /-! ### A probabilistic example
 
-A 2-vertex SEM whose `effect` mechanism is `PMF.bernoulli p` —
+A 2-vertex SEM whose `effect` mechanism is `PMF.bernoulliMix p` —
 genuinely probabilistic, not Dirac. Demonstrates that `probSufficiency`
 accepts non-deterministic SEMs (no `IsDeterministic` constraint). -/
 
@@ -268,10 +268,10 @@ inductive V | cause | effect
 def graph : CausalGraph V := ⟨fun | .cause => ∅ | .effect => {.cause}⟩
 
 /-- The probabilistic mechanism for `effect`, ignoring its parent and
-    returning `Bernoulli(p)` — genuinely non-Dirac when `p ∉ {0, 1}`. -/
+    returning `PMF.bernoulliMix p` — genuinely non-Dirac when `p ∉ {0, 1}`. -/
 noncomputable def effectMech (p : ℝ≥0) (h : p ≤ 1) :
     Mechanism graph (fun _ => Bool) .effect :=
-  ⟨fun _ => PMF.bernoulli p h⟩
+  ⟨fun _ => PMF.bernoulliMix p h⟩
 
 /-- A genuinely probabilistic SEM (not `IsDeterministic` for `p ∉ {0,1}`). -/
 noncomputable def model (p : ℝ≥0) (h : p ≤ 1) : BoolSEM V :=

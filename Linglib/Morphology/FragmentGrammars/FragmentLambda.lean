@@ -1,5 +1,6 @@
 import Mathlib.Probability.ProbabilityMassFunction.Constructions
 import Linglib.Core.Probability.Posterior
+import Linglib.Core.Probability.Constructions
 import Linglib.Morphology.FragmentGrammars.FragmentGrammar
 
 /-!
@@ -13,7 +14,7 @@ from that density. The architecture follows the macro-expansion of
 mapping each Church construct to a Lean component:
 
 - `(PYmem a b _)` ⤳ `pypDraw` over `PYPState` with `PYM := StateT _ PMF`.
-- `(if (delay? args) (delay body) body)` ⤳ `PMF.bernoulli` halt-coin per
+- `(if (delay? args) (delay body) body)` ⤳ `PMF.bernoulliMix` halt-coin per
   §3.1.8 (p. 92).
 - The `(delay body)` thunks ⤳ `LazyTree.fragment` constructor.
 
@@ -510,7 +511,7 @@ noncomputable def stochasticLazyUnfoldDepth
     ℕ → α → PMF (LazyTree α β R)
   | 0,     x => PMF.pure (.fragment x)
   | n + 1, x => do
-      let coin ← PMF.bernoulli (recurseProb x) (recurseProb_le x)
+      let coin ← PMF.bernoulliMix (recurseProb x) (recurseProb_le x)
       if coin then do
         let ⟨rule, rhs⟩ ← recurse x
         let kids ← rhs.mapM (fun
@@ -549,7 +550,7 @@ private noncomputable def fragmentLambdaStep [Inhabited β]
     (recurseProb_le : ∀ x, recurseProb x ≤ 1)
     (recur : α → PYM α (LazyTree α β R) (LazyTree α β R)) :
     α → PYM α (LazyTree α β R) (LazyTree α β R) := fun y => do
-  let coin ← PYM.liftBase (PMF.bernoulli (recurseProb y) (recurseProb_le y))
+  let coin ← PYM.liftBase (PMF.bernoulliMix (recurseProb y) (recurseProb_le y))
   if coin then do
     let ⟨rule, rhs⟩ ← PYM.liftBase (recurse y)
     let kids ← rhs.mapM (fun

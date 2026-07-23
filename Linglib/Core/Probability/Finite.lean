@@ -35,7 +35,7 @@ namespace PMF
 
 variable {α : Type*} [Fintype α]
 
-open scoped ENNReal NNReal
+open scoped ENNReal
 open BigOperators
 
 /-- Probability mass of a set under a finite-fintype PMF, named to match
@@ -241,35 +241,5 @@ theorem condExpect_add (p : PMF α) (A : Set α) (f g : α → ℝ≥0∞) :
 theorem condExpect_zero (p : PMF α) (A : Set α) : p.condExpect A 0 = 0 := by
   unfold condExpect
   simp [Set.indicator]
-
-/-! ### Mixtures
-
-Convex combination of two distributions. `[UPSTREAM]` candidate: mathlib's
-`PMF` has no mixture combinator. -/
-
-omit [Fintype α] in
-/-- The `w`-weighted mixture of two distributions samples from `p` with
-    probability `w` and from `q` otherwise. -/
-noncomputable def mix (w : ℝ≥0) (hw : w ≤ 1) (p q : PMF α) : PMF α :=
-  ⟨fun a => w * p a + (1 - w : ℝ≥0) * q a, ENNReal.summable.hasSum_iff.mpr (by
-    rw [ENNReal.tsum_add, ENNReal.tsum_mul_left, ENNReal.tsum_mul_left, p.tsum_coe,
-      q.tsum_coe, mul_one, mul_one, ← ENNReal.coe_add, add_tsub_cancel_of_le hw,
-      ENNReal.coe_one])⟩
-
-omit [Fintype α] in
-@[simp] theorem mix_apply (w : ℝ≥0) (hw : w ≤ 1) (p q : PMF α) (a : α) :
-    mix w hw p q a = w * p a + (1 - w : ℝ≥0) * q a := rfl
-
-omit [Fintype α] in
-/-- A `0`-weighted mixture is its second component. -/
-@[simp] theorem mix_zero (p q : PMF α) : mix (0 : ℝ≥0) zero_le_one p q = q := by
-  ext a
-  simp
-
-omit [Fintype α] in
-/-- A `1`-weighted mixture is its first component. -/
-@[simp] theorem mix_one (p q : PMF α) : mix (1 : ℝ≥0) le_rfl p q = p := by
-  ext a
-  simp
 
 end PMF
