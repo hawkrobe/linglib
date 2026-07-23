@@ -3,7 +3,7 @@ import Linglib.Semantics.Evidential.Source
 import Linglib.Features.Mirativity
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Semantics.Mood.Defs
-import Linglib.Semantics.Context.Shifts
+import Linglib.Semantics.Reference.Context.Shifts
 
 /-!
 # Tense and Evidence

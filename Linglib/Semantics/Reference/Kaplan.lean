@@ -16,8 +16,8 @@ indexicals and the theory of singular propositions ([almog-2014], Ch 2).
 -/
 
 import Linglib.Semantics.Reference.Basic
-import Linglib.Semantics.Context.Tower
-import Linglib.Semantics.Context.Shifts
+import Linglib.Semantics.Reference.Context.Tower
+import Linglib.Semantics.Reference.Context.Shifts
 
 namespace Semantics.Reference.Kaplan
 

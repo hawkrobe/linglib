@@ -1,7 +1,7 @@
 import Linglib.Semantics.Intensional.Rigidity
 import Linglib.Core.Logic.Assignment
 import Linglib.Semantics.Tense.Pronoun
-import Linglib.Semantics.Context.Tower
+import Linglib.Semantics.Reference.Context.Tower
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.FunctionWords

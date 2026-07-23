@@ -7,7 +7,7 @@ import Linglib.Syntax.Minimalist.SyntacticObject.Build
 import Linglib.Syntax.Minimalist.SyntacticObject.Selection
 import Linglib.Syntax.Minimalist.Phase.Basic
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
-import Linglib.Semantics.Context.Tower
+import Linglib.Semantics.Reference.Context.Tower
 import Linglib.Discourse.Roles
 import Linglib.Semantics.Mood.Defs
 import Linglib.Semantics.Evidential.Epistemicity

@@ -20,7 +20,7 @@ demonstrative has no content.
 
 -/
 
-import Linglib.Semantics.Context.Basic
+import Linglib.Semantics.Reference.Context.Basic
 import Linglib.Semantics.Reference.Basic
 import Linglib.Semantics.Reference.KaplanLD
 import Linglib.Semantics.Reference.Nominal

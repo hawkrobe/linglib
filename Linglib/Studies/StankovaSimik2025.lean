@@ -1,5 +1,5 @@
 import Linglib.Fragments.Slavic.Czech.Particles
-import Linglib.Semantics.Negation.CzechNegation
+import Linglib.Semantics.Polarity.CzechNegation
 
 /-!
 # Negation in Czech polar questions (Staňková & Šimík 2025)

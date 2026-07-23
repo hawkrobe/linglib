@@ -20,7 +20,7 @@ and metatheorems.
 
 -/
 
-import Linglib.Semantics.Context.Basic
+import Linglib.Semantics.Reference.Context.Basic
 import Linglib.Semantics.Intensional.Rigidity
 import Linglib.Semantics.Reference.Basic
 

@@ -1,7 +1,7 @@
-import Linglib.Semantics.Iconic.Basic
+import Linglib.Semantics.Iconicity
 import Linglib.Semantics.Reference.Monsters
 import Linglib.Fragments.ASL.Classifiers
-import Linglib.Semantics.Context.Shifts
+import Linglib.Semantics.Reference.Context.Shifts
 import Mathlib.Data.Rat.Defs
 
 /-!

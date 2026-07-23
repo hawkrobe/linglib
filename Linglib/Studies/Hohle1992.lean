@@ -1,5 +1,5 @@
 import Linglib.Semantics.Presupposition.ContentLayer
-import Linglib.Semantics.Highlighting
+import Linglib.Semantics.Questions.Highlighting
 
 /-!
 # Höhle (1992): *Verum-Fokus im Deutschen*

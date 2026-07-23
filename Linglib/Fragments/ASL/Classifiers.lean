@@ -1,4 +1,4 @@
-import Linglib.Semantics.Iconic.Basic
+import Linglib.Semantics.Iconicity
 
 /-!
 # ASL Classifier Predicates
