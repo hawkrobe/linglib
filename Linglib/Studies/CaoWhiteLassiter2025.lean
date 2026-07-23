@@ -33,11 +33,7 @@ terms.
 
 namespace CaoWhiteLassiter2025
 
-open Causation (BoolSEM CausalGraph Valuation Mechanism SEM DecidableValuation)
-open Causation.Mechanism (const)
-open Causation.SEM (probSufficiency probSufficiency_eq_indicator_of_deterministic cfSeed
-  cfSeed_empty develop)
-open Features
+open Causation Causation.Mechanism Causation.SEM Features
 open scoped ENNReal NNReal
 
 /-! ### Time-indexed causal models
@@ -214,10 +210,10 @@ counterfactual degenerates to the bare interventional development of
     definition (23), `causallySufficient`). -/
 noncomputable def deterministicSuf {V : Type*} [Fintype V] [DecidableEq V]
     (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
-    [Causation.SEM.IsDeterministic M]
+    [IsDeterministic M]
     (background : Valuation (fun _ : V => Bool))
     (cause effect : V) : ENNReal :=
-  if Causation.BoolSEM.causallySufficient M background cause effect then 1 else 0
+  if BoolSEM.causallySufficient M background cause effect then 1 else 0
 
 /-- At the empty context (vacuous abduction), the counterfactual
     `probSufficiency` reduces to the deterministic {0,1} indicator
@@ -226,12 +222,12 @@ noncomputable def deterministicSuf {V : Type*} [Fintype V] [DecidableEq V]
     vacuous context" a theorem rather than a conflation. -/
 theorem probSufficiency_empty_eq_deterministicSuf {V : Type*} [Fintype V] [DecidableEq V]
     (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
-    [Causation.SEM.IsDeterministic M] (c e : V) :
+    [IsDeterministic M] (c e : V) :
     probSufficiency M Valuation.empty c true e true
       = deterministicSuf M Valuation.empty c e := by
   rw [probSufficiency_eq_indicator_of_deterministic, cfSeed_empty]
-  unfold deterministicSuf Causation.BoolSEM.causallySufficient
-    Causation.SEM.causallySufficient Causation.SEM.developsToValue
+  unfold deterministicSuf BoolSEM.causallySufficient SEM.causallySufficient
+    SEM.developsToValue
   by_cases h :
       (M.developDet ((Valuation.empty (α := fun _ : V => Bool)).extend c true)).hasValue e true <;>
     simp [h]
@@ -245,13 +241,13 @@ theorem probSufficiency_empty_eq_deterministicSuf {V : Type*} [Fintype V] [Decid
     strictly stronger than maximal graded SUF. -/
 theorem probSufficiency_empty_eq_one_of_make
     {V : Type*} [Fintype V] [DecidableEq V]
-    (M : BoolSEM V) [CausalGraph.IsDAG M.graph] [Causation.SEM.IsDeterministic M]
+    (M : BoolSEM V) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
     (c e : V)
     (h : Causative.toSemantics M .make Valuation.empty c true e true) :
     probSufficiency M Valuation.empty c true e true = 1 := by
   rw [probSufficiency_empty_eq_deterministicSuf]
   unfold deterministicSuf
-  exact if_pos (Causation.SEM.causallySufficient_of_causallyEntails h.2)
+  exact if_pos (causallySufficient_of_causallyEntails h.2)
 
 /-! ### The paper's judgment data
 
@@ -271,7 +267,7 @@ docstring: analysis outputs are not Lean content. -/
 theorem make_force_same_semantics_different_judgments
     {V : Type*} {α : V → Type*} [Fintype V] [DecidableEq V] [DecidableValuation α]
     [∀ v, Fintype (α v)] (M : SEM V α) [CausalGraph.IsDAG M.graph]
-    [Causation.SEM.IsDeterministic M] :
+    [IsDeterministic M] :
     Causative.toSemantics M .make = Causative.toSemantics M .force ∧
     Examples.cwl2025_ex8a.judgment = .acceptable ∧
     Examples.cwl2025_ex8b.judgment = .questionable :=
