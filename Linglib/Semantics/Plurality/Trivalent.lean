@@ -1,6 +1,6 @@
 import Linglib.Core.Logic.Duality
 import Linglib.Core.Logic.Trivalent
-import Linglib.Semantics.Homogeneity.Basic
+import Linglib.Semantics.Homogeneity.Usable
 import Linglib.Semantics.Plurality.Basic
 import Linglib.Semantics.Plurality.Cover
 import Linglib.Semantics.Plurality.Implicature
@@ -44,7 +44,7 @@ made kernel-checked in `malamud_strictly_weaker_when_mixed`.
 ## Implementation notes
 
 Strong relevance (constancy on QUD cells) is defined at the substrate level
-in `Semantics/Plurality/Homogeneity/Basic.lean` as
+in `Semantics/Homogeneity/Usable.lean` as
 `Semantics.Homogeneity.isStronglyRelevantProp` and re-exported here.
 The bivalent bridge to [kriz-2016]'s `addressesIssue` is proved in
 `Studies/KrizSpector2021.lean`.

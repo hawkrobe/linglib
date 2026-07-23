@@ -3,7 +3,6 @@ import Linglib.Semantics.Dynamic.PPCDRT.Defs
 import Linglib.Semantics.Dynamic.PPCDRT.Anaphora
 import Linglib.Semantics.Dynamic.PPCDRT.Cumulativity
 import Linglib.Semantics.Plurality.Cumulativity
-import Linglib.Semantics.Homogeneity.Basic
 import Linglib.Semantics.Supervaluation.Basic
 import Linglib.Core.Logic.Trivalent
 
@@ -32,7 +31,7 @@ the PPCDRT substrate (`Semantics/Dynamic/PPCDRT/`):
 | §4.4    | Multiple reciprocals                   | Two-reciprocal witness     |
 | §4.5    | Subgroup readings (forks, gravity)     | Weak-vs-strong contrast    |
 | §4.6    | Collective antecedents                 | Distinctness neutralization |
-| §5      | Quantified antecedents + truth-value gap | `Trivalent` via `removeGap` |
+| §5      | Quantified antecedents + truth-value gap | `Trivalent` via `Prop3.metaAssert` |
 | §6      | Maximize Anaphora as a principle       | `R_u` |
 | §6.2    | Multi-reciprocal pairwise prediction   | `R_u` over two reciprocals |
 | §6.3    | MA interacting with scope              | Tracy/Matty/Chris case     |
@@ -48,8 +47,7 @@ the §5.2 empirical-fit table; the §7 typological excursus.
 
 - [champollion-bumford-henderson-2019] for the §5 supervaluationist
   truth-value-gap analysis — realised via
-  `Semantics/Plurality/Homogeneity/Basic.lean`'s `removeGap` /
-  `Trivalent.metaAssert`.
+  `Trivalent.Prop3.metaAssert`.
 - [kriz-2015] for the homogeneity background; same substrate.
 - [langendoen-1978] for the reciprocity-as-cumulativity link —
   realised via `PPCDRT/Cumulativity.lean`'s
@@ -489,7 +487,7 @@ theorem collective_groupIdentity_no_distinct :
 
     Here we encode the truth-value gap directly via `Trivalent`, exploiting
     the existing `Semantics/Plurality/Homogeneity/Basic.lean` substrate
-    (`removeGap`, `Trivalent.metaAssert`). -/
+    (`Trivalent.Prop3.metaAssert`). -/
 
 /-- The truth value of a quantified-antecedent reciprocal sentence,
     given its truth on the maximal-set reading and on the reference-set

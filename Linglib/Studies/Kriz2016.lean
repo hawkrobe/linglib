@@ -175,7 +175,7 @@ non-maximal use requires a cell containing both a true-world and the
 gap-world, and the exception-mentioning continuation straddles it. -/
 
 /-- "Smith didn't smile", the exception-mentioning continuation. -/
-def smithDidntSmile : TrivalentProp ProfWorld :=
+def smithDidntSmile : Trivalent.Prop3 ProfWorld :=
   λ w => if smiled .smith w then .false else .true
 
 /-- Under the coarse issue licensing the non-maximal use at `smithNeutral`,

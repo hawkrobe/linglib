@@ -790,7 +790,7 @@ non-maximality.
 
 Empirically, an `all`-quantified sentence is judged clearly false in
 the gap scenario where its bare-definite counterpart is neither true
-nor false ([kriz-2015]). [kriz-2016]'s `removeGap` derives the same
+nor false ([kriz-2015]). [kriz-2016]'s gap removal (`Prop3.metaAssert`) derives the same
 prediction by collapsing the truth-value gap into the negative
 extension — a different mechanism, same empirical effect.
 -/
@@ -824,7 +824,7 @@ exploitable. The two accounts differ in:
 | Universal reading | implicature (Exh^{IE+II}) | semantic (true extension) |
 | Non-maximality | pruning alternatives | pragmatic gap exploitation |
 | Positive/negative | **asymmetric** | symmetric |
-| "All" removes gap | eliminates C variable | collapses gap (removeGap) |
+| "All" removes gap | eliminates C variable | collapses gap (metaAssert) |
 
 ### Key Distinguishing Prediction: Asymmetry
 

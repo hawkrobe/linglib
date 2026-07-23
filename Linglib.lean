@@ -1653,9 +1653,12 @@ import Linglib.Semantics.Genericity.MeaningPreservation
 import Linglib.Semantics.Genericity.NominalMappingParameter
 import Linglib.Semantics.Genericity.SortedOntology
 import Linglib.Semantics.Genericity.Subkinds
-import Linglib.Semantics.Homogeneity.Basic
+import Linglib.Semantics.Homogeneity.Collective
+import Linglib.Semantics.Homogeneity.Conditional
 import Linglib.Semantics.Homogeneity.Decided
+import Linglib.Semantics.Homogeneity.Defs
 import Linglib.Semantics.Homogeneity.Plural
+import Linglib.Semantics.Homogeneity.Usable
 import Linglib.Semantics.Iconicity
 import Linglib.Semantics.Intensional.Algebra
 import Linglib.Semantics.Intensional.CategoryType
