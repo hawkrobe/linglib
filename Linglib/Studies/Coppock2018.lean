@@ -3,7 +3,7 @@ import Mathlib.Data.Setoid.Basic
 import Mathlib.Order.BooleanSubalgebra
 import Mathlib.Order.Hom.CompleteLattice
 import Linglib.Core.Logic.Modal.Defs
-import Linglib.Core.Logic.Trivalent
+import Linglib.Core.Logic.Trivalent.Prop3
 import Linglib.Semantics.Presupposition.Basic
 
 /-!

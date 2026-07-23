@@ -1,6 +1,6 @@
 import Linglib.Semantics.Exhaustification.InnocentExclusion
 import Linglib.Semantics.Exhaustification.Trivalent
-import Linglib.Core.Logic.Trivalent
+import Linglib.Core.Logic.Trivalent.Prop3
 import Linglib.Semantics.Presupposition.Basic
 import Mathlib.Tactic.DeriveFintype
 

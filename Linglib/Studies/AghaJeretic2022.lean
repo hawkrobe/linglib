@@ -1,5 +1,5 @@
 import Linglib.Core.Logic.Duality
-import Linglib.Core.Logic.Trivalent
+import Linglib.Core.Logic.Trivalent.Basic
 import Linglib.Data.Examples.AghaJeretic2022
 import Linglib.Data.Generalizations.HomogeneityGap
 import Linglib.Semantics.Modality.Directive

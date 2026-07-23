@@ -4,7 +4,7 @@ import Linglib.Semantics.Dynamic.PPCDRT.Anaphora
 import Linglib.Semantics.Dynamic.PPCDRT.Cumulativity
 import Linglib.Semantics.Plurality.Cumulativity
 import Linglib.Semantics.Supervaluation.Basic
-import Linglib.Core.Logic.Trivalent
+import Linglib.Core.Logic.Trivalent.Prop3
 
 /-!
 # Haug & Dalrymple (2020) [haug-dalrymple-2020]
