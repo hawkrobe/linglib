@@ -40,40 +40,35 @@ open scoped ENNReal NNReal
 
 /-! ### Soft-optimality policy
 
-The paper's mechanisms for agent moves (§2.1.1): the highest-utility
-move — computed by minimax over the game tree, with terminal utility
-`Winner × (EmptySpace + 1)` — is taken with probability `ρ + (1−ρ)/n`
-and every other available move with `(1−ρ)/n`. The skill parameter ρ
-interpolates between a random player (`ρ = 0`, "a less skilled player")
-and a professional (`ρ = 1`). -/
+The paper's mechanism for agent moves (§2.1.1): the highest-utility
+move — minimax over the game tree, with terminal utility
+`Winner × (EmptySpace + 1)` — is taken with probability `ρ + (1−ρ)/n`,
+every other available move with `(1−ρ)/n` (`softOptimalPolicy_apply`).
+The skill parameter `ρ` interpolates between a uniformly random player
+("assume that the players are infants", `softOptimalPolicy_zero`) — the
+limiting case under which the paper's worked SUF contrast between
+contexts collapses — and a deterministic professional
+(`softOptimalPolicy_one`). -/
 
 section
 variable {A : Type*} [Fintype A] [Nonempty A]
 
-/-- The soft-optimality policy of a player of skill `ρ` mixes optimal
-    play with uniform noise: the highest-utility move `best` with
-    probability `ρ`, otherwise a uniform random move (§2.1.1 of
-    [cao-white-lassiter-2025]). -/
+/-- The move distribution of a player of skill `ρ`: the highest-utility
+    move `best` with probability `ρ`, otherwise a uniform random move. -/
 noncomputable def softOptimalPolicy (best : A) (ρ : ℝ≥0) (hρ : ρ ≤ 1) : PMF A :=
   PMF.mix ρ hρ (PMF.uniformOfFintype A) (PMF.pure best)
 
-/-- The paper's arithmetic form of the policy: the best move carries
-    `ρ + (1 − ρ)/n`, every other available move `(1 − ρ)/n`. -/
-theorem softOptimalPolicy_apply [DecidableEq A] (best : A) (ρ : ℝ≥0) (hρ : ρ ≤ 1) (a : A) :
+@[simp] theorem softOptimalPolicy_apply [DecidableEq A] (best : A) (ρ : ℝ≥0) (hρ : ρ ≤ 1)
+    (a : A) :
     softOptimalPolicy best ρ hρ a =
       (if a = best then (ρ : ℝ≥0∞) else 0) + (1 - ρ : ℝ≥0) / Fintype.card A := by
   simp [softOptimalPolicy, PMF.pure_apply, PMF.uniformOfFintype_apply, mul_ite, mul_one,
     mul_zero, div_eq_mul_inv, add_comm]
 
-/-- At `ρ = 0` the soft-optimality policy is the uniform random player —
-    the paper's limiting case ("assume that the players are infants"),
-    under which its worked SUF contrast between contexts collapses. -/
 theorem softOptimalPolicy_zero (best : A) :
     softOptimalPolicy best 0 zero_le_one = PMF.uniformOfFintype A :=
   PMF.mix_zero _ _
 
-/-- At `ρ = 1` the soft-optimality policy is the deterministic
-    professional — a Dirac on the highest-utility move. -/
 theorem softOptimalPolicy_one (best : A) :
     softOptimalPolicy best 1 le_rfl = PMF.pure best :=
   PMF.mix_one _ _
