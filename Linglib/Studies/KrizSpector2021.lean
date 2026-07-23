@@ -1,4 +1,5 @@
 import Linglib.Semantics.Plurality.Trivalent
+import Linglib.Semantics.Homogeneity.Collective
 import Linglib.Semantics.Homogeneity.Plural
 
 /-!
@@ -39,6 +40,7 @@ namespace KrizSpector2021
 open Semantics.Plurality
 open Semantics.Plurality.Trivalent
 open Semantics.Homogeneity
+open _root_.Trivalent (Prop3)
 
 variable {Atom W : Type*}
 
@@ -62,8 +64,8 @@ no gap to break the dichotomy).
 
 `bivalentPred S : W → Bool` is wrapped as `(· = true) : W → Prop` to feed the
 Prop-typed `isStronglyRelevantProp`. -/
-theorem bivalent_addressing_iff_stronglyRelevant (q : QUD W) (S : TrivalentProp W)
-    (hbiv : isBivalent S) :
+theorem bivalent_addressing_iff_stronglyRelevant (q : QUD W) (S : Prop3 W)
+    (hbiv : S.isBivalent) :
     addressesIssue q S ↔ isStronglyRelevantProp q (fun w => bivalentPred S w = true) := by
   constructor
   · -- Addressing → strong relevance
@@ -99,14 +101,14 @@ address the issue, so `all` cannot be used non-maximally. -/
 
 This bridges Križ 2016's pragmatic mechanism (Addressing) to K&S 2021's
 filtering mechanism (strong relevance) for the specific case of universal
-quantification over pluralities. After the [kriz-2016] §3.1 refactor
-that derives `allPlural` from `removeGap`, the bridge becomes a
-pointwise-equivalence result via `bivalentPred_allPlural_eq_allSatisfy`. -/
+quantification over pluralities. Since `allPlural` is meta-assertion of the
+bare plural by definition, the bridge is a pointwise-equivalence result via
+`bivalentPred_allPlural_eq_allSatisfy`. -/
 theorem all_addressing_iff_relevant (q : QUD W) (P : Atom → W → Prop)
     [∀ a w, Decidable (P a w)] (x : Finset Atom) :
     addressesIssue q (allPlural P x) ↔
     isStronglyRelevantProp q (allSatisfy P x) := by
-  rw [bivalent_addressing_iff_stronglyRelevant q _ (allPlural_bivalent P x)]
+  rw [bivalent_addressing_iff_stronglyRelevant q _ (isBivalent_allPlural P x)]
   refine ⟨fun h w₁ w₂ hEquiv => ?_, fun h w₁ w₂ hEquiv => ?_⟩
   · exact ((bivalentPred_allPlural_eq_allSatisfy P x w₁).symm.trans
            (h w₁ w₂ hEquiv)).trans (bivalentPred_allPlural_eq_allSatisfy P x w₂)
@@ -155,22 +157,21 @@ characterizations:
 All three agree: they are three views of the same trivalent denotation. -/
 
 /-- The ∀H characterization of `all` agrees with `allSatisfy`, which agrees
-    with `Kriz2016.allPlural` (= `removeGap` on the bare plural, by
-    definition). This closes the triangle:
-    ∀H ↔ allSatisfy ↔ removeGap(barePlural). -/
+    with `allPlural` (meta-assertion of the bare plural, by definition).
+    This closes the triangle: ∀H ↔ allSatisfy ↔ allPlural. -/
 theorem forallH_triangle [Fintype Atom] (P : Atom → W → Prop)
     [∀ a w, Decidable (P a w)] (x : Finset Atom) (w : W) :
     allViaForallH P x w ↔ allSatisfy P x w :=
   allViaForallH_iff_allSatisfy P x w
 
-/-- The full bridge: `removeGap` on bare plural truth = `allViaForallH`.
-    This formally connects Križ 2016's mechanism (`removeGap`) to K&S 2021's
+/-- The full bridge: the *all*-sentence is true iff `allViaForallH` holds.
+    This formally connects Križ 2016's mechanism (gap removal) to K&S 2021's
     deeper derivation (`∀H`). The semantic contribution of `all` can be
     understood either as gap removal or as universal H-quantification —
     they are provably the same. -/
 theorem allPlural_iff_forallH [Fintype Atom] (P : Atom → W → Prop)
     [∀ a w, Decidable (P a w)] (x : Finset Atom) (w : W) :
-    removeGap (fun w => pluralTruthValue P x w) w = .true ↔ allViaForallH P x w :=
+    allPlural P x w = .true ↔ allViaForallH P x w :=
   (allPlural_eq_true_iff P x w).trans (forallH_triangle P x w).symm
 
 -- ============================================================================
@@ -294,11 +295,11 @@ a predicate is true of a super-plurality containing x but not of x itself.
 For example, "The soldiers of my brigade didn't surround the castle" is
 false if the brigade *together with other soldiers* surrounded the castle.
 
-The existing `generalisedTV` in `Homogeneity.lean` captures this via the
+The existing `generalisedTruthValue` in `Homogeneity/Collective.lean` captures this via the
 `overlaps` relation. Here we prove the connection: when an overlapping
 super-plurality satisfies P, the sentence about x is gapped, not false. -/
 
-open Semantics.Homogeneity (generalisedTV generalisedTV_true_of_holds)
+open Semantics.Homogeneity (generalisedTruthValue generalisedTruthValue_eq_true)
 
 /-- Upward homogeneity: if P is false of x but true of some overlapping
     super-plurality in the domain, then the generalised truth value is GAP,
@@ -315,9 +316,9 @@ theorem upward_homogeneity_gap [DecidableEq Atom]
     (b : Finset Atom) (hb : b ∈ domain)
     (hov : Semantics.Homogeneity.overlaps x b)
     (hPb : P b) :
-    generalisedTV P domain x = .indet := by
+    generalisedTruthValue P domain x = .indet := by
   have hex : ∃ b ∈ domain, Semantics.Homogeneity.overlaps x b ∧ P b :=
     ⟨b, hb, hov, hPb⟩
-  simp [generalisedTV, if_neg hPx, if_pos hex]
+  simp [generalisedTruthValue, if_neg hPx, if_pos hex]
 
 end KrizSpector2021

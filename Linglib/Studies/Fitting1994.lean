@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Trivalent
+import Linglib.Core.Logic.Trivalent.Bilattice
 import Linglib.Core.Logic.Bilattice.Basic
 
 /-!

@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Trivalent
+import Linglib.Core.Logic.Trivalent.Prop3
 import Mathlib.Data.Part
 
 /-!

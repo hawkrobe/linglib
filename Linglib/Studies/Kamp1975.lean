@@ -1,5 +1,5 @@
 import Linglib.Semantics.Modification.Classification
-import Linglib.Core.Logic.Trivalent
+import Linglib.Core.Logic.Trivalent.Basic
 import Mathlib.Data.Set.Basic
 import Mathlib.Algebra.Order.Ring.Rat
 import Mathlib.Algebra.Order.BigOperators.Group.Finset

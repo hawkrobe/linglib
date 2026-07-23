@@ -1,5 +1,5 @@
 import Linglib.Semantics.Exhaustification.InnocentExclusion
-import Linglib.Core.Logic.Trivalent
+import Linglib.Core.Logic.Trivalent.Prop3
 import Mathlib.Tactic.DeriveFintype
 
 /-!

@@ -1,5 +1,5 @@
 import Linglib.Semantics.Presupposition.Trivalent
-import Linglib.Core.Logic.Trivalent
+import Linglib.Core.Logic.Trivalent.Prop3
 import Linglib.Semantics.Dynamic.UpdateSemantics.Basic
 import Linglib.Semantics.Dynamic.Partial
 import Linglib.Studies.Geurts2005

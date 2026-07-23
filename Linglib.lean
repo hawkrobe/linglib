@@ -198,7 +198,9 @@ import Linglib.Core.Logic.Team.Definability
 import Linglib.Core.Logic.Temporal.Basic
 import Linglib.Core.Logic.Temporal.Defs
 import Linglib.Core.Logic.Temporal.Soundness
-import Linglib.Core.Logic.Trivalent
+import Linglib.Core.Logic.Trivalent.Basic
+import Linglib.Core.Logic.Trivalent.Bilattice
+import Linglib.Core.Logic.Trivalent.Prop3
 import Linglib.Core.Logic.TweetyNixon
 import Linglib.Core.ModelTheory.Trivalent
 import Linglib.Core.Optimization.Decoder
@@ -1653,9 +1655,12 @@ import Linglib.Semantics.Genericity.MeaningPreservation
 import Linglib.Semantics.Genericity.NominalMappingParameter
 import Linglib.Semantics.Genericity.SortedOntology
 import Linglib.Semantics.Genericity.Subkinds
-import Linglib.Semantics.Homogeneity.Basic
+import Linglib.Semantics.Homogeneity.Collective
+import Linglib.Semantics.Homogeneity.Conditional
 import Linglib.Semantics.Homogeneity.Decided
+import Linglib.Semantics.Homogeneity.Defs
 import Linglib.Semantics.Homogeneity.Plural
+import Linglib.Semantics.Homogeneity.Usable
 import Linglib.Semantics.Iconicity
 import Linglib.Semantics.Intensional.Algebra
 import Linglib.Semantics.Intensional.CategoryType

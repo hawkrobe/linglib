@@ -1,5 +1,5 @@
 import Linglib.Semantics.Supervaluation.Basic
-import Linglib.Core.Logic.Trivalent
+import Linglib.Core.Logic.Trivalent.Basic
 import Linglib.Core.Logic.Consequence
 import Linglib.Core.ModelTheory.Trivalent
 import Linglib.Core.Logic.Modal.Basic

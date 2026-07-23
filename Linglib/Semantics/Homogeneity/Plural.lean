@@ -1,5 +1,6 @@
-import Linglib.Semantics.Homogeneity.Basic
+import Linglib.Semantics.Homogeneity.Usable
 import Linglib.Semantics.Plurality.Trivalent
+import Linglib.Semantics.Supervaluation.Basic
 
 /-!
 # Homogeneity: the plural instantiation
@@ -13,8 +14,8 @@ Originates with [kriz-2016]; consumed by `Studies/Kriz2016.lean`,
 
 ## Main definitions
 
-* `barePlural`: the bare plural sentence as a `TrivalentProp`.
-* `allPlural`: the *all*-sentence, `removeGap` applied to `barePlural`.
+* `barePlural`: the bare plural sentence as a `Prop3`.
+* `allPlural`: the *all*-sentence, `Prop3.metaAssert` of `barePlural`.
 
 ## Main results
 
@@ -31,6 +32,7 @@ Originates with [kriz-2016]; consumed by `Studies/Kriz2016.lean`,
 
 namespace Semantics.Homogeneity
 
+open Trivalent (Prop3)
 open Semantics.Plurality
 open Semantics.Plurality.Trivalent
 
@@ -38,42 +40,41 @@ variable {Atom W : Type*} (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
   (x : Finset Atom)
 
 /-- The bare plural sentence "the Xs are P" as a trivalent sentence. -/
-def barePlural : TrivalentProp W :=
+def barePlural : Prop3 W :=
   λ w => pluralTruthValue P x w
 
 /-- The *all*-sentence "all the Xs are P". Per [kriz-2016] §3.1, *all*'s
     semantic contribution is gap removal, so the semantics is derived from
-    the bare plural via `removeGap` rather than stipulated. -/
-def allPlural : TrivalentProp W :=
-  removeGap (barePlural P x)
+    the bare plural via `Prop3.metaAssert` rather than stipulated. -/
+def allPlural : Prop3 W :=
+  (barePlural P x).metaAssert
 
 /-- *all* eliminates the extension gap. -/
-theorem allPlural_gapExt : gapExt (allPlural P x) = ∅ := by
-  by_contra h
-  exact removeGap_not_homogeneous (barePlural P x) h
+theorem gapExt_allPlural : (allPlural P x).gapExt = ∅ :=
+  Trivalent.Prop3.gapExt_metaAssert _
 
 /-- An *all*-sentence is never homogeneous. -/
-theorem allPlural_not_homogeneous : ¬isHomogeneous (allPlural P x) :=
-  removeGap_not_homogeneous (barePlural P x)
+theorem not_isHomogeneous_allPlural : ¬isHomogeneous (allPlural P x) :=
+  not_isHomogeneous_metaAssert _
 
 /-- The bare plural and the *all*-sentence are true in the same worlds. -/
-theorem allPlural_posExt : posExt (allPlural P x) = posExt (barePlural P x) :=
-  removeGap_posExt_eq (barePlural P x)
+theorem posExt_allPlural : (allPlural P x).posExt = (barePlural P x).posExt :=
+  Trivalent.Prop3.posExt_metaAssert _
 
 /-- *all* absorbs the gap into the negative extension. -/
-theorem allPlural_negExt :
-    negExt (allPlural P x) = negExt (barePlural P x) ∪ gapExt (barePlural P x) :=
-  removeGap_negExt_eq (barePlural P x)
+theorem negExt_allPlural :
+    (allPlural P x).negExt = (barePlural P x).negExt ∪ (barePlural P x).gapExt :=
+  Trivalent.Prop3.negExt_metaAssert _
 
 /-- *all*-sentences are bivalent. -/
-theorem allPlural_bivalent : isBivalent (allPlural P x) :=
-  removeGap_bivalent (barePlural P x)
+theorem isBivalent_allPlural : (allPlural P x).isBivalent :=
+  Trivalent.Prop3.isBivalent_metaAssert _
 
 /-- An *all*-sentence is true iff all atoms satisfy `P`. -/
 theorem allPlural_eq_true_iff (w : W) :
     allPlural P x w = .true ↔ allSatisfy P x w := by
   rw [← pluralTruthValue_eq_true_iff]
-  simp only [allPlural, barePlural, removeGap]
+  simp only [allPlural, barePlural, Trivalent.Prop3.metaAssert_apply]
   generalize pluralTruthValue P x w = t
   cases t <;> simp
 
@@ -89,10 +90,9 @@ theorem bivalentPred_allPlural_eq_allSatisfy (w : W) :
     Cf. `allPlural_blocked_by_wide_issue` for the complementary Addressing
     direction. -/
 theorem allPlural_prevents_nonmax (q : QUD W) (w : W)
-    (h : usable q (allPlural P x) w) : allSatisfy P x w := by
-  have hTrue : allPlural P x w = .true :=
-    ((bivalent_usable_iff_true q _ (allPlural_bivalent P x) w).mp h).1
-  exact (allPlural_eq_true_iff P x w).mp hTrue
+    (h : usable q (allPlural P x) w) : allSatisfy P x w :=
+  (allPlural_eq_true_iff P x w).mp
+    (((usable_iff_of_isBivalent (isBivalent_allPlural P x) q w).mp h).1)
 
 /-- An *all*-sentence cannot address a "wide" issue — one with a cell
     straddling the *all*/not-*all* boundary ([kriz-2016] §3.4). -/
@@ -102,7 +102,7 @@ theorem allPlural_blocked_by_wide_issue (q : QUD W)
   intro hAddr
   obtain ⟨w₁, w₂, hEq, h1, h2⟩ := hWide
   have h2' : allPlural P x w₂ = .false := by
-    cases allPlural_bivalent P x w₂ with
+    cases isBivalent_allPlural P x w₂ with
     | inl h => exact absurd ((allPlural_eq_true_iff P x w₂).mp h) h2
     | inr h => exact h
   exact hAddr ⟨w₁, w₂, hEq, (allPlural_eq_true_iff P x w₁).mpr h1, h2'⟩
@@ -126,6 +126,6 @@ theorem barePlural_eq_superTrue (hne : x.Nonempty) (w : W) :
 
 /-- An *all*-sentence is never indefinite. -/
 theorem allPlural_ne_indet (w : W) : allPlural P x w ≠ .indet := by
-  rcases allPlural_bivalent P x w with h | h <;> simp [h]
+  rcases isBivalent_allPlural P x w with h | h <;> simp [h]
 
 end Semantics.Homogeneity
