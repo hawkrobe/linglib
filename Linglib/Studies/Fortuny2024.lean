@@ -1,5 +1,5 @@
 import Linglib.Syntax.Tree.Cat
-import Linglib.Semantics.Coordination.Defs
+import Linglib.Syntax.Category.Coordinator
 
 /-!
 # [fortuny-2024] — Deducing the Coordinand Constraint

@@ -1,5 +1,5 @@
 import Linglib.Studies.Santorio2018
-import Linglib.Semantics.Coordination.Defs
+import Linglib.Syntax.Category.Coordinator
 
 /-!
 # Alonso-Ovalle 2009 — "Counterfactuals, correlatives, and disjunction"

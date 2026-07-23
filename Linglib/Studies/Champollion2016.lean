@@ -1,4 +1,4 @@
-import Linglib.Semantics.Coordination.Basic
+import Linglib.Semantics.Composition.CoordinatorOp
 import Linglib.Semantics.Plurality.Algebra
 
 /-!
