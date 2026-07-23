@@ -125,24 +125,24 @@ theorem intentionDegree_le_one : intentionDegree pr w a ≤ 1 :=
       (Finset.mem_univ a)
 
 theorem intentionDegree_eq_one_of_no_alternatives
-    (halt : ∀ a ≠ taken, pr a = 0)
-    (h0 : pr taken * w taken ≠ 0) (hfin : pr taken ≠ ∞) :
+    (h : ∀ a ≠ taken, pr a = 0) (h0 : pr taken ≠ 0) (hw : w taken ≠ 0)
+    (htop : pr taken ≠ ∞) :
     intentionDegree pr w taken = 1 := by
   rw [intentionDegree, Finset.sum_eq_single_of_mem taken (Finset.mem_univ taken)
-    fun a _ ha => by rw [halt a ha, zero_mul]]
-  exact ENNReal.div_self h0 (ENNReal.mul_ne_top hfin ENNReal.coe_ne_top)
+    fun a _ ha => by rw [h a ha, zero_mul]]
+  exact ENNReal.div_self (mul_ne_zero h0 (ENNReal.coe_ne_zero.mpr hw))
+    (ENNReal.mul_ne_top htop ENNReal.coe_ne_top)
 
 /-- An action without alternatives is trivially intentional — the
     alternative-possibilities principle ([frankfurt-1969], via
     [halpern-kleiman-weiner-2018]) behind the paper's *made*/*forced*
     contrast in its example (8). -/
 theorem intentionDegree_eq_one_of_altCount_eq_zero
-    (hle : ∀ a, pr a ≤ p a) (halt : altCount p taken = 0)
-    (h0 : pr taken * w taken ≠ 0) :
+    (hle : pr ≤ ⇑p) (h : altCount p taken = 0) (h0 : pr taken ≠ 0) (hw : w taken ≠ 0) :
     intentionDegree pr w taken = 1 :=
   intentionDegree_eq_one_of_no_alternatives taken pr w
-    (fun a ha => le_zero_iff.mp ((altCount_eq_zero_iff p taken).mp halt a ha ▸ hle a))
-    h0 (ne_top_of_le_ne_top (p.apply_ne_top taken) (hle taken))
+    (fun a ha => le_zero_iff.mp ((altCount_eq_zero_iff p taken).mp h a ha ▸ hle a))
+    h0 hw (ne_top_of_le_ne_top (p.apply_ne_top taken) (hle taken))
 
 end
 
