@@ -1,5 +1,5 @@
-import Linglib.Semantics.Context.Tower
-import Linglib.Semantics.Context.Shifts
+import Linglib.Semantics.Reference.Context.Tower
+import Linglib.Semantics.Reference.Context.Shifts
 import Linglib.Semantics.Evidential.Source
 
 /-!

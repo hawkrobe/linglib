@@ -1,6 +1,6 @@
 import Linglib.Syntax.Category.Particle.Capabilities
 import Linglib.Fragments.Slavic.Czech.Particles
-import Linglib.Semantics.Negation.CzechNegation
+import Linglib.Semantics.Polarity.CzechNegation
 import Linglib.Studies.StankovaSimik2025
 import Linglib.Semantics.Questions.Bias
 import Linglib.Data.Examples.Stankova2026

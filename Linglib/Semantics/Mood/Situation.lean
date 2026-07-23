@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Semantics.Modality.HistoricalAlternatives
-import Linglib.Semantics.Context.Shifts
+import Linglib.Semantics.Reference.Context.Shifts
 
 /-!
 # Situation-level mood operators

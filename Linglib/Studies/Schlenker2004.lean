@@ -1,6 +1,6 @@
 import Linglib.Studies.Abusch1997
-import Linglib.Semantics.Context.Tower
-import Linglib.Semantics.Context.Shifts
+import Linglib.Semantics.Reference.Context.Tower
+import Linglib.Semantics.Reference.Context.Shifts
 import Linglib.Data.Examples.Schema
 import Linglib.Data.Examples.Schlenker2004
 

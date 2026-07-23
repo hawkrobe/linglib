@@ -1,6 +1,6 @@
 import Linglib.Semantics.Reference.FreeIndirectDiscourse
-import Linglib.Semantics.Context.Tower
-import Linglib.Semantics.Context.Shifts
+import Linglib.Semantics.Reference.Context.Tower
+import Linglib.Semantics.Reference.Context.Shifts
 import Linglib.Semantics.Tense.DeRe
 import Linglib.Data.Examples.Schema
 import Linglib.Data.Examples.AnandNevins2004

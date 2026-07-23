@@ -1,5 +1,5 @@
 import Linglib.Data.UD.Basic
-import Linglib.Semantics.Negation.CzechNegation
+import Linglib.Semantics.Polarity.CzechNegation
 
 /-!
 # Czech Determiners
