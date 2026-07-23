@@ -2,10 +2,9 @@ import Linglib.Syntax.Minimalist.MinimalPronoun
 import Linglib.Fragments.Ga.Predicates
 import Linglib.Syntax.NullSubject
 import Linglib.Studies.Landau2015
-import Linglib.Features.Complementation
 
 /-!
-# Allotey (2021): Overt Pronouns of Infinitival Predicates in Gã
+# Allotey (2021): Overt Pronouns of Infinitival Predicates of Gã
 [allotey-2021]
 
 Western Papers in Linguistics / Cahiers linguistiques de Western 4.
@@ -13,17 +12,18 @@ Western Papers in Linguistics / Cahiers linguistiques de Western 4.
 Gã (Kwa, Niger-Congo; spoken in Greater Accra, Ghana) shows obligatory
 control over the embedded subject of irrealis `ni`-clauses, where the
 controlled subject is realized as an OVERT subject proclitic — null PRO
-is ungrammatical. This is the same pattern [ostrove-2026] analyzes
-for SMPM and [sulemana-2021] analyzes for Büli, and falls under the
-[kratzer-2009] / [safir-2014] / [landau-2015] minimal
-pronoun framework: Gã simply lacks a null vocabulary item for the
-controlled subject position.
+is ungrammatical. Under the [kratzer-2009] / [safir-2014] /
+[landau-2015] minimal pronoun framework, Gã simply lacks a null
+vocabulary item for the controlled subject position.
 
-[allotey-2021] herself adopts [szabolcsi-2009]'s Long Distance
-Agree (LDA) Hypothesis (building on [satik-2019]). The minimal
+[allotey-2021] weighs two analyses of overt infinitival subjects — the
+Long Distance Agree (LDA) Hypothesis of [szabolcsi-2009] and the
+Movement Theory of Control (the derivation she illustrates from
+[satik-2019]) — and adopts LDA: her analysis puts the matrix subject in
+a Long-Distance relation with the embedded pronoun subject. The minimal
 pronoun framework and LDA are compatible — LDA is the syntactic
-mechanism that values the unvalued φ-features of the minimal pronoun
-in the embedded subject position. We wire both perspectives in below.
+mechanism that values the unvalued φ-features of the minimal pronoun in
+the embedded subject position. We wire both perspectives in below.
 
 ## Core Contributions
 
@@ -33,18 +33,16 @@ in the embedded subject position. We wire both perspectives in below.
 2. **OC over an overt subject**: irrealis `ni`-clauses show the OC
    signature despite carrying an overt subject proclitic.
 3. **Subject and object control** are both attested with `ni`-clause
-   complements (subject-control: `tao` 'want', `hiɛ-kpa-nɔ` 'forget';
-   object-control: `kenya` 'urge', `dai` 'force').
-4. **Irrealis ≠ subjunctive**: Allotey argues against
-   [dakubu-2004] and [campbell-2017], who classify the
-   high-tone marker as subjunctive. The diagnostic she offers
-   (controlled-clause obviation) is formalized below.
+   complements (subject-control: `tao` 'want' ex 2a, `hiɛ-ka-nɔ` 'hope'
+   ex 16).
+4. **Irrealis ≠ subjunctive**: Allotey argues that the high-tone marker
+   on the embedded-clause subject pronoun is irrealis, not subjunctive
+   (against the subjunctive classification in the Gã descriptive
+   literature, [dakubu-2004], [campbell-2017]): it does not show the
+   obviation that defines subjunctives (formalized below).
 5. **Long Distance Agree analysis**: the embedded overt pronoun is a
    minimal pronoun whose φ-features are valued by LDA from the matrix
-   controller ([szabolcsi-2009], [satik-2019]).
-6. **Cross-linguistic pattern**: Gã joins SMPM and Büli as a third
-   language with obligatory pronominal copy control under the
-   [ostrove-2026] typology.
+   controller ([szabolcsi-2009]).
 
 ## Out of scope
 
@@ -64,29 +62,9 @@ open Landau2015
 open NullSubject (ProDropProfile)
 open Ga (EmbeddedClauseType clauseProperties clauseComplementizer
                    complementizer_isFinite_eq_finiteFlag
-                   Complementizer Control CTP)
+                   Complementizer CTP)
 
--- ════════════════════════════════════════════════════════════════
--- § 1: Clause Type Verification
--- ════════════════════════════════════════════════════════════════
-
-theorem finiteAke_unrestricted_tam :
-    (clauseProperties .finiteAke).unrestrictedTAM = true := rfl
-theorem finiteKeji_unrestricted_tam :
-    (clauseProperties .finiteKeji).unrestrictedTAM = true := rfl
-theorem irrealisNi_restricted_tam :
-    (clauseProperties .irrealisNi).unrestrictedTAM = false := rfl
-
-theorem finiteAke_allows_noncoreferential :
-    (clauseProperties .finiteAke).noncoreferentialSubject = true := rfl
-theorem finiteKeji_allows_noncoreferential :
-    (clauseProperties .finiteKeji).noncoreferentialSubject = true := rfl
-theorem irrealisNi_no_noncoreferential :
-    (clauseProperties .irrealisNi).noncoreferentialSubject = false := rfl
-
--- ════════════════════════════════════════════════════════════════
--- § 2: OC Diagnostics — derived from clauseProperties
--- ════════════════════════════════════════════════════════════════
+/-! ### OC diagnostics — derived from clause properties -/
 
 /-- OC signature derived from clause properties.
 
@@ -101,50 +79,33 @@ theorem irrealisNi_no_noncoreferential :
 def gaOCSignature (c : EmbeddedClauseType) : OCSignature :=
   if (clauseProperties c).noncoreferentialSubject then ocNone else ocFull
 
-theorem irrealisNi_is_OC :
-    (gaOCSignature .irrealisNi).isOC = true := rfl
-
-theorem finiteAke_not_OC :
-    (gaOCSignature .finiteAke).isOC = false := rfl
-
-theorem finiteKeji_not_OC :
-    (gaOCSignature .finiteKeji).isOC = false := rfl
-
 /-- The general derivation: lack of noncoreferential subjects iff OC. -/
 theorem oc_iff_no_noncoreferential (c : EmbeddedClauseType) :
     (gaOCSignature c).isOC = !(clauseProperties c).noncoreferentialSubject := by
   cases c <;> rfl
 
--- ════════════════════════════════════════════════════════════════
--- § 3: Irrealis vs. Subjunctive Diagnostic
--- ════════════════════════════════════════════════════════════════
+/-- Universal: every Gã CTP whose complement is `irrealisNi` shows OC,
+    and every CTP whose complement is finite does not. The clause type
+    determines OC, regardless of the verb's own control type. -/
+theorem oc_determined_by_clause_type (c : CTP) :
+    (gaOCSignature c.selects).isOC = !(clauseComplementizer c.selects).isFinite := by
+  cases h : c.selects <;> rfl
 
-/-- A clause type passes the **subjunctive diagnostic** iff it permits
-    a noncoreferential embedded subject. Romance subjunctives display
-    obviation effects (the embedded subject must NOT corefer with the
-    matrix subject) — i.e., they license noncoreference. An irrealis
-    OC clause license the opposite: obligatory coreference.
+/-! ### Irrealis vs. subjunctive -/
 
-    [allotey-2021] argues that the high-tone marker on Gã verbs
-    is **irrealis**, not subjunctive (contra [dakubu-2004],
-    [campbell-2017]). The diagnostic below confirms her claim
-    on the noncoreference test: `irrealisNi` fails the subjunctive
-    diagnostic. -/
-def isSubjunctiveLike (c : EmbeddedClauseType) : Bool :=
-  (clauseProperties c).noncoreferentialSubject
+/-- [allotey-2021] argues the high-tone marker on the embedded-clause
+    pronoun is **irrealis**, not subjunctive (against the subjunctive
+    classification of the Gã descriptive literature, [dakubu-2004],
+    [campbell-2017]). Her diagnostic is obviation: Romance subjunctives
+    force the embedded subject to be DISJOINT from the matrix subject,
+    while Gã `ni`-clauses force coreference — the opposite. The fragment
+    encodes only the coreference dimension, so we record the Gã half:
+    `irrealisNi` requires a coreferential subject, which no obviative
+    subjunctive allows. -/
+theorem irrealisNi_forces_coreference :
+    (clauseProperties .irrealisNi).noncoreferentialSubject = false := rfl
 
-theorem irrealisNi_not_subjunctive :
-    isSubjunctiveLike .irrealisNi = false := rfl
-
-theorem finiteAke_subjunctive_test_passes :
-    isSubjunctiveLike .finiteAke = true := rfl
-
-theorem finiteKeji_subjunctive_test_passes :
-    isSubjunctiveLike .finiteKeji = true := rfl
-
--- ════════════════════════════════════════════════════════════════
--- § 4: Landau Bridge
--- ════════════════════════════════════════════════════════════════
+/-! ### Landau bridge -/
 
 /-- Map Gã clause types to [landau-2004]'s finiteness scale.
 
@@ -171,12 +132,10 @@ def gaToLandau : EmbeddedClauseType → LandauClauseClass
 def gaAgr (c : EmbeddedClauseType) : Bool :=
   (clauseProperties c).finiteComplementizer
 
-/-- Cross-check: `gaAgr` agrees with the complementizer's finiteness flag,
-    via `complementizer_isFinite_eq_finiteFlag`. -/
+/-- Cross-check: `gaAgr` agrees with the complementizer's finiteness flag. -/
 theorem gaAgr_eq_complementizer_isFinite (c : EmbeddedClauseType) :
-    gaAgr c = (clauseComplementizer c).isFinite := by
-  unfold gaAgr
-  rw [complementizer_isFinite_eq_finiteFlag]
+    gaAgr c = (clauseComplementizer c).isFinite :=
+  (complementizer_isFinite_eq_finiteFlag c).symm
 
 /-- The Landau classification predicts Gã control properties for all
     three clause types, taking Agr status into account. -/
@@ -184,40 +143,7 @@ theorem landau_predicts_control (c : EmbeddedClauseType) :
     (gaOCSignature c).isOC = (gaToLandau c).hasOCWithAgr (gaAgr c) := by
   cases c <;> rfl
 
--- ════════════════════════════════════════════════════════════════
--- § 5: Per-Verb Control Verification
--- ════════════════════════════════════════════════════════════════
-
-open Ga (tao kpleno kpang hiekpano nye kenya laka dai wa kee)
-
-/-- Each subject-control verb selects an `irrealisNi` clause whose
-    OC signature is the full one. -/
-theorem tao_OC      : (gaOCSignature tao.selects).isOC      = true := rfl
-theorem hiekpano_OC : (gaOCSignature hiekpano.selects).isOC = true := rfl
-theorem nye_OC      : (gaOCSignature nye.selects).isOC      = true := rfl
-theorem kpleno_OC   : (gaOCSignature kpleno.selects).isOC   = true := rfl
-theorem kpang_OC    : (gaOCSignature kpang.selects).isOC    = true := rfl
-
-/-- Each object-control verb selects an `irrealisNi` clause whose
-    OC signature is the full one. -/
-theorem kenya_OC : (gaOCSignature kenya.selects).isOC = true := rfl
-theorem laka_OC  : (gaOCSignature laka.selects).isOC  = true := rfl
-theorem dai_OC   : (gaOCSignature dai.selects).isOC   = true := rfl
-theorem wa_OC    : (gaOCSignature wa.selects).isOC    = true := rfl
-
-/-- The finite-complement verb does not show OC. -/
-theorem kee_no_OC : (gaOCSignature kee.selects).isOC = false := rfl
-
-/-- Universal: every Gã CTP whose complement is `irrealisNi` shows OC,
-    and every CTP whose complement is finite does not. The clause type
-    determines OC, regardless of the verb's own control flavor. -/
-theorem oc_determined_by_clause_type (c : CTP) :
-    (gaOCSignature c.selects).isOC = !(clauseComplementizer c.selects).isFinite := by
-  cases h : c.selects <;> rfl
-
--- ════════════════════════════════════════════════════════════════
--- § 6: Long-Distance Agree Analysis (Allotey's syntactic mechanism)
--- ════════════════════════════════════════════════════════════════
+/-! ### Long-Distance Agree analysis (Allotey's syntactic mechanism) -/
 
 /-- Long Distance Agree configuration ([szabolcsi-2009]): a matrix probe
     values an embedded goal's unvalued φ across a non-defective C. Folded
@@ -243,7 +169,7 @@ def LDAConfig.licenses (cfg : LDAConfig) : Bool :=
 /-- [allotey-2021]'s syntactic analysis: the embedded overt
     pronoun in a controlled `ni`-clause is a minimal pronoun whose
     unvalued φ-features are valued by Long Distance Agree from the
-    matrix controller ([szabolcsi-2009], [satik-2019]).
+    matrix controller ([szabolcsi-2009]).
 
     The probe (matrix v/T) has valued φ; the goal (embedded D[uφ])
     has unvalued φ; the intervening `ni` C head is non-defective for
@@ -256,24 +182,11 @@ def gaLDAConfig : LDAConfig where
 theorem ga_satisfies_LDA :
     LDAConfig.licenses gaLDAConfig = true := rfl
 
-/-- Bridge: the LDA configuration is exactly what's required to value
-    the φ-features of a minimal pronoun in the embedded subject position.
-    This is the syntactic mechanism that complements the morphological
-    minimal-pronoun analysis (Section 7). -/
-theorem ga_LDA_implies_OC :
-    LDAConfig.licenses gaLDAConfig = true →
-    (gaOCSignature .irrealisNi).isOC = true := by
-  intro _; rfl
-
--- ════════════════════════════════════════════════════════════════
--- § 7: Minimal Pronoun Inventory
--- ════════════════════════════════════════════════════════════════
+/-! ### Minimal pronoun inventory -/
 
 open PronForm
 
-/-- Gã vocabulary items.
-
-    Like SMPM and Büli: lacks a null allomorph for controlled subjects.
+/-- Gã vocabulary items: no null allomorph for controlled subjects.
     The controlled subject of an `irrealisNi` clause surfaces as the
     elsewhere (pronoun) form — i.e., the same subject proclitic used
     for referential pronouns. -/
@@ -291,17 +204,16 @@ theorem ga_overt_pro :
 theorem ga_has_reflexive :
     gaInventory.realize .locallyBound = .reflexive := rfl
 
--- ════════════════════════════════════════════════════════════════
--- § 8: Pro-Drop / Overt-PRO Universal ([ostrove-2026] 54)
--- ════════════════════════════════════════════════════════════════
+/-! ### Pro-drop / overt-PRO universal -/
 
 /-- Gã profile derived from fragment data and inventory. -/
 def gaProfile : ProDropProfile :=
   { allowsProDrop := Ga.allowsProDrop
   , hasOvertPRO   := decide gaInventory.hasOvertPRO }
 
-/-- Gã satisfies the implicational universal — overt PRO + non-*pro*-drop
-    means the consequent is true. -/
+/-- Gã satisfies the pro-drop/overt-PRO implicational universal
+    (`ProDropProfile.Satisfies`) — overt PRO + non-*pro*-drop means the
+    consequent is true. -/
 theorem ga_satisfies_universal : gaProfile.Satisfies := by decide
 
 /-- Contrapositive concretization: were Gã *pro*-drop, it could not have
@@ -311,31 +223,5 @@ theorem ga_prodrop_would_exclude_overt_pro
     (h : gaProfile.allowsProDrop = true) :
     gaProfile.hasOvertPRO = false :=
   ProDropProfile.prodrop_excludes_overt_pro gaProfile ga_satisfies_universal h
-
--- ════════════════════════════════════════════════════════════════
--- § 9: Noonan Complementation Bridge
--- ════════════════════════════════════════════════════════════════
-
-/-- Map Gã clause types to [noonan-2007]'s complement typology.
-
-    All three Gã clause types are "balanced" in Noonan's sense: they
-    are inflected for TAM and carry overt subject morphology. There is
-    no "deranked" (infinitival/nominalized/participial) complement
-    type in Gã.
-
-    - `finiteAke` → indicative (full TAM, free reference)
-    - `finiteKeji` → indicative (full TAM, free reference; conditional flavor)
-    - `irrealisNi` → subjunctive (irrealis only, obligatory coreference)
-
-    Note: Noonan's `subjunctive` category is the typological-typology
-    label for "finite irrealis-marked complement"; it is *not* the
-    generative-grammar subjunctive Allotey is arguing against
-    (cf. `irrealisNi_not_subjunctive` above). The Noonan label and the
-    Dakubu/Campbell label happen to share a word but track different
-    properties. -/
-def gaToNoonan : EmbeddedClauseType → NoonanCompType
-  | .finiteAke  => .indicative
-  | .finiteKeji => .indicative
-  | .irrealisNi => .subjunctive
 
 end Allotey2021
