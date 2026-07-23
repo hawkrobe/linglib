@@ -70,8 +70,9 @@ def depth : V → ℕ := fun
 private lemma depth_lt : ∀ {u v : V}, u ∈ graph.parents v → depth u < depth v := by
   intro u v h; revert h; cases u <;> cases v <;> decide
 
-instance : CausalGraph.IsDAG graph :=
-  CausalGraph.IsDAG.of_depth graph depth (fun h => depth_lt h)
+private def ranking : CausalGraph.Ranking graph := ⟨depth, depth_lt⟩
+
+instance : CausalGraph.IsDAG graph := ranking.isDAG
 
 /-- Dreyfus SEM, with the negative `¬BRK` precondition encoded directly in
     the COM mechanism. -/
@@ -114,12 +115,12 @@ theorem dare_semantics_via_manageSem :
 private lemma entails_iff {s : Valuation (fun _ : V => Bool)} {v : V} {x : Bool} :
     SEM.causallyEntails dreyfusSEM s v x ↔
       developDetVtxFuel dreyfusSEM s 4 v = some x :=
-  SEM.causallyEntails_iff_fuel dreyfusSEM depth depth_lt (by cases v <;> decide) s x
+  SEM.causallyEntails_iff_fuel dreyfusSEM ranking (by cases v <;> decide) s x
 
 private lemma necessary_iff {s : Valuation (fun _ : V => Bool)} {c e : V} :
     Implicative.necessityPresup dreyfusSEM s c true e true ↔
       SEM.causallyNecessaryFuel dreyfusSEM 4 s c true e true :=
-  SEM.causallyNecessary_iff_fuel dreyfusSEM depth depth_lt
+  SEM.causallyNecessary_iff_fuel dreyfusSEM ranking
     (by intro v; cases v <;> decide) s c true e true
 
 /-- Sufficiency presupposition (32iii) for (34a): NRV is causally
