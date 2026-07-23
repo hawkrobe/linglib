@@ -1,7 +1,7 @@
 import Linglib.Semantics.Causation.Mechanism.Defs
 
 /-!
-# Mechanism.deterministic: Deterministic-as-Dirac Constructor (V2)
+# Mechanism.deterministic: Deterministic-as-Dirac Constructor
 
 The deterministic mechanism induced by an honest function over parents
 is built as a Dirac PMF — the exact mathlib pattern from

@@ -77,9 +77,7 @@ open Verb
 open Causation.Psych (CausalSource)
 open ArgumentStructure (Agentivity)
 
--- ════════════════════════════════════════════════════
--- § 1. Causer Type ([hafeez-2025], [comrie-1989])
--- ════════════════════════════════════════════════════
+/-! ### Causer Type ([hafeez-2025], [comrie-1989]) -/
 
 /-- Causer type distinguished by intentionality and ontological category.
 
@@ -108,9 +106,7 @@ inductive CauseeAffecteeType where
   | inanimate           -- InanCEAF: no volition
   deriving DecidableEq, Repr
 
--- ════════════════════════════════════════════════════
--- § 2. Agentivity Degree ([hafeez-2025] Ch. 7)
--- ════════════════════════════════════════════════════
+/-! ### Agentivity Degree ([hafeez-2025] Ch. 7) -/
 
 /-- Degree of agentivity, decomposed from intentionality × control.
 
@@ -136,9 +132,7 @@ def CauseeAffecteeType.hasInducedAgentivity : CauseeAffecteeType → Bool
   | .controllingHuman => true
   | _                 => false
 
--- ════════════════════════════════════════════════════
--- § 3. Mediation ([comrie-1989], directness chapter)
--- ════════════════════════════════════════════════════
+/-! ### Mediation ([comrie-1989], directness chapter) -/
 
 /-- Directness of causal mediation between causer and result.
 
@@ -158,9 +152,7 @@ def Mediation.rank : Mediation → Nat
   | .direct   => 0
   | .indirect => 1
 
--- ════════════════════════════════════════════════════
--- § 4. Causative Complexity ([comrie-1989], morphological typology)
--- ════════════════════════════════════════════════════
+/-! ### Causative Complexity ([comrie-1989], morphological typology) -/
 
 /-- Morphological complexity of a causative construction.
 
@@ -198,9 +190,7 @@ instance : LinearOrder CausativeComplexity :=
   LinearOrder.lift' CausativeComplexity.toNat
     (fun a b h => by cases a <;> cases b <;> simp_all [CausativeComplexity.toNat])
 
--- ════════════════════════════════════════════════════
--- § 5. Causative Construction
--- ════════════════════════════════════════════════════
+/-! ### Causative Construction -/
 
 /-- A causative construction bundles morphological complexity with
     semantic parameters that govern its use.
@@ -218,9 +208,7 @@ structure CausativeConstruction where
   causeeRestriction : Option CauseeAffecteeType
   deriving DecidableEq, Repr
 
--- ════════════════════════════════════════════════════
--- § 6. Semantic Prototype
--- ════════════════════════════════════════════════════
+/-! ### Semantic Prototype -/
 
 /-- A semantic prototype specifies the combination of semantic variables
     under which a construction receives its peak acceptability rating or
@@ -247,9 +235,7 @@ structure SemanticPrototype where
   requiresMediation : Option Bool
   deriving DecidableEq, Repr
 
--- ════════════════════════════════════════════════════
--- § 7. Comrie's Generalization
--- ════════════════════════════════════════════════════
+/-! ### Comrie's Generalization -/
 
 /-- **Comrie's monotonicity** ([comrie-1989]): within a single
     language, if construction A is morphologically more compact than
@@ -261,9 +247,7 @@ structure SemanticPrototype where
 def comrie_monotone (c1 c2 : CausativeConstruction) : Prop :=
   c1.complexity < c2.complexity → c1.mediation.rank ≤ c2.mediation.rank
 
--- ════════════════════════════════════════════════════
--- § 7b. Causee Marking Hierarchy ([comrie-1989], Ch 8)
--- ════════════════════════════════════════════════════
+/-! ### Causee Marking Hierarchy ([comrie-1989], Ch 8) -/
 
 /-- Grammatical relation slots available for causee assignment,
     ordered from highest to lowest on the hierarchy.
@@ -311,9 +295,7 @@ theorem causee_demotion_monotone :
     (causeeDemotion v2.val).rank ≤ (causeeDemotion v1.val).rank := by
   decide
 
--- ════════════════════════════════════════════════════
--- § 8. Bridges to Existing Infrastructure
--- ════════════════════════════════════════════════════
+/-! ### Bridges to Existing Infrastructure -/
 
 /-- All causer types are "external" in [kim-2024]'s sense.
 
@@ -340,9 +322,7 @@ def CauserType.toAgentivity : CauserType → Agentivity
   | .accidentalHuman  => .mk false true true false  -- S+I (sentient but not volitional)
   | .naturalForce     => .mk false false true false  -- I only
 
--- ════════════════════════════════════════════════════
--- § 9. Bridge Theorems
--- ════════════════════════════════════════════════════
+/-! ### Bridge Theorems -/
 
 /-- Intentional human causers have maximal agentivity among causer types. -/
 theorem intentional_max_agentivity :
@@ -384,9 +364,7 @@ theorem inanimate_no_induced :
 theorem physImpact_no_induced :
     CauseeAffecteeType.hasInducedAgentivity .physImpactHuman = false := rfl
 
--- ════════════════════════════════════════════════════
--- § 10. Intransitivization Type ([krejci-2012])
--- ════════════════════════════════════════════════════
+/-! ### Intransitivization Type ([krejci-2012]) -/
 
 /-- How an alternating verb forms its intransitive variant.
 

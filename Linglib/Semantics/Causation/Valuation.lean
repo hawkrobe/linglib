@@ -3,7 +3,7 @@ import Mathlib.Data.Fintype.Basic
 import Mathlib.Data.List.Basic
 
 /-!
-# Valuation: Pi-Typed Partial Variable Assignment (V2)
+# Valuation: Pi-Typed Partial Variable Assignment
 
 Replaces the old `Situation` (which fixed `Variable → Option Bool`).
 A `Valuation α` is a Π-type partial valuation where each vertex `v`
@@ -60,38 +60,29 @@ def extend [DecidableEq V] (s : Valuation α) (v : V) (x : α v) :
 def remove [DecidableEq V] (s : Valuation α) (v : V) : Valuation α := fun w =>
   if w = v then none else s w
 
-/-- Information ordering: every value defined in `s₁` matches in `s₂`. -/
-def le (s₁ s₂ : Valuation α) : Prop :=
-  ∀ v x, s₁.hasValue v x → s₂.hasValue v x
-
-theorem le_refl (s : Valuation α) : s.le s :=
-  fun _ _ h => h
-
-theorem le_trans {s₁ s₂ s₃ : Valuation α}
-    (h₁ : s₁.le s₂) (h₂ : s₂.le s₃) : s₁.le s₃ :=
-  fun v x h => h₂ v x (h₁ v x h)
-
-theorem le_antisymm {s₁ s₂ : Valuation α}
-    (h₁ : s₁.le s₂) (h₂ : s₂.le s₁) : s₁ = s₂ := by
-  funext v
-  show s₁.get v = s₂.get v
-  cases h : s₁.get v with
-  | some x => exact (h₁ v x h).symm
-  | none =>
-      cases h' : s₂.get v with
-      | none => rfl
-      | some y =>
-          have hy : s₁.get v = some y := h₂ v y h'
-          rw [h] at hy
-          simp at hy
-
-/-- The information order is a partial order (mathlib `Finset`-style
-    instance; `s₁.le s₂` and `s₁ ≤ s₂` are definitionally equal). -/
+/-- The information order: `s₁ ≤ s₂` iff every value determined in `s₁`
+    is determined identically in `s₂`. -/
 instance : PartialOrder (Valuation α) where
-  le s₁ s₂ := s₁.le s₂
-  le_refl := le_refl
-  le_trans _ _ _ := le_trans
-  le_antisymm _ _ := le_antisymm
+  le s₁ s₂ := ∀ v x, s₁.hasValue v x → s₂.hasValue v x
+  le_refl _ _ _ h := h
+  le_trans _ _ _ h₁ h₂ v x h := h₂ v x (h₁ v x h)
+  le_antisymm s₁ s₂ h₁ h₂ := by
+    funext v
+    show s₁.get v = s₂.get v
+    cases h : s₁.get v with
+    | some x => exact (h₁ v x h).symm
+    | none =>
+        cases h' : s₂.get v with
+        | none => rfl
+        | some y =>
+            have hy : s₁.get v = some y := h₂ v y h'
+            rw [h] at hy
+            simp at hy
+
+/-- The information order unfolds to pointwise preservation of
+    determined values. -/
+theorem le_def {s₁ s₂ : Valuation α} :
+    s₁ ≤ s₂ ↔ ∀ v x, s₁.hasValue v x → s₂.hasValue v x := Iff.rfl
 
 @[simp] theorem extend_get_same [DecidableEq V]
     (s : Valuation α) (v : V) (x : α v) :
@@ -105,7 +96,7 @@ theorem extend_get_ne [DecidableEq V]
 
 /-- Extending at an undetermined vertex only adds information. -/
 theorem le_extend [DecidableEq V] {s : Valuation α}
-    {v : V} (x : α v) (h : s.get v = none) : s.le (s.extend v x) := by
+    {v : V} (x : α v) (h : s.get v = none) : s ≤ s.extend v x := by
   intro w y hw
   by_cases hwv : w = v
   · subst hwv; rw [Valuation.hasValue, h] at hw; exact absurd hw (by simp)

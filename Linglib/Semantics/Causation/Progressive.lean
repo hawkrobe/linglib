@@ -38,9 +38,7 @@ namespace Causation.Progressive
 open Intensional (WorldTimeIndex)
 open Causation Causation.Mechanism Causation.SEM
 
--- ════════════════════════════════════════════════════
--- § 1. Causal Process (V2)
--- ════════════════════════════════════════════════════
+/-! ### Causal Process -/
 
 /-- A causal process for telic predicates, parameterized over a vertex type `V`.
 
@@ -66,9 +64,7 @@ namespace CausalProcess
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
--- ════════════════════════════════════════════════════
--- § 2. Progressive vs Perfective Semantics
--- ════════════════════════════════════════════════════
+/-! ### Progressive vs Perfective Semantics -/
 
 /-- Type-level sufficiency: the causal trajectory from initiator to
     result exists. The progressive asserts this — no commitment to the
@@ -117,9 +113,7 @@ noncomputable instance (proc : CausalProcess V)
 
 end CausalProcess
 
--- ════════════════════════════════════════════════════
--- § 3. Imperfective Paradox: maryOpening
--- ════════════════════════════════════════════════════
+/-! ### Imperfective Paradox: maryOpening -/
 
 /-! Example: "Mary was opening the door" / "Mary opened the door."
     Simple model: Mary's action → door opens. -/
@@ -179,9 +173,7 @@ theorem perfective_entails_progressive {V : Type*} [Fintype V] [DecidableEq V]
     (h : proc.perfectiveTrue) :
     proc.progressiveTrue := h.1
 
--- ════════════════════════════════════════════════════
--- § 4. Imperfective Paradox: overdetermination witness
--- ════════════════════════════════════════════════════
+/-! ### Imperfective Paradox: overdetermination witness -/
 
 /-! Witness for `progressive ∧ ¬ perfective`: an overdetermination model
     where the type-level process exists but the actual outcome would
@@ -246,9 +238,7 @@ theorem progressive_not_entails_perfective :
     overdetProc.progressiveTrue ∧ ¬ overdetProc.perfectiveTrue :=
   ⟨overdet_progressive, overdet_not_perfective⟩
 
--- ════════════════════════════════════════════════════
--- § 5. Type-level = development under inertia (Dowty 1979)
--- ════════════════════════════════════════════════════
+/-! ### Type-level = development under inertia (Dowty 1979) -/
 
 /-- [dowty-1979]: the progressive is true iff the outcome holds in
     all inertia worlds (normal continuations). The causal model account
@@ -262,9 +252,7 @@ theorem typeLevelHolds_is_develop {V : Type*} [Fintype V] [DecidableEq V]
       (proc.enablingConditions.extend proc.initiator true)).hasValue proc.result true :=
   Iff.rfl
 
--- ════════════════════════════════════════════════════
--- § 6. Bridge to Temporal Decomposition
--- ════════════════════════════════════════════════════
+/-! ### Bridge to Temporal Decomposition -/
 
 /-- A causally grounded telic event: bridges `CausalProcess` (causal
     explanation) with `SubeventPhases` (temporal realization).

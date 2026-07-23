@@ -4,7 +4,7 @@ import Mathlib.Order.RelClasses
 import Mathlib.Logic.Relation
 
 /-!
-# CausalGraph: Acyclicity, Ancestor Relation (V2)
+# CausalGraph: Acyclicity, Ancestor Relation
 
 `IsDAG` is a `Prop` mixin class on `CausalGraph V` (mirroring
 `IsMarkovKernel` from `Mathlib/Probability/Kernel/Defs.lean`): required

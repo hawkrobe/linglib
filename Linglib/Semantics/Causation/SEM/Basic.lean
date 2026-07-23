@@ -5,7 +5,7 @@ import Mathlib.Logic.Function.Iterate
 import Mathlib.Probability.ProbabilityMassFunction.Constructions
 
 /-!
-# SEM: Forward Propagation, Intervention, Fixpoint (V2)
+# SEM: Forward Propagation, Intervention, Fixpoint
 
 - **`intervene`** (Pearl `do(v := x)`): replace the mechanism for `v`
   with `Mechanism.const x`.
@@ -46,9 +46,7 @@ namespace Causation.SEM
 
 variable {V : Type*} {α : V → Type*}
 
--- ════════════════════════════════════════════════════
--- § Intervention (Pearl do(v := x))
--- ════════════════════════════════════════════════════
+/-! ### Intervention (Pearl do(v := x)) -/
 
 /-- **Pearl's `do(v := x)` intervention**: replace the mechanism for `v`
     with the constant Dirac-PMF mechanism returning `x`. Other vertices'
@@ -89,9 +87,7 @@ noncomputable instance [DecidableEq V] (M : SEM V α) [IsDeterministic M]
     · simp [intervene, h]
       exact IsDeterministic.mech_det w
 
--- ════════════════════════════════════════════════════
--- § Forward propagation: ready, parentAssignment
--- ════════════════════════════════════════════════════
+/-! ### Forward propagation: ready, parentAssignment -/
 
 /-- A vertex is **ready** in a valuation when all its parents have
     determined values. Required precondition for firing the mechanism. -/
@@ -108,9 +104,7 @@ def parentAssignment (M : SEM V α) (s : Valuation α) (v : V)
     (h : ready M s v) : ∀ u : M.graph.parents v, α u.val :=
   fun u => (s.get u.val).get (h u.val u.property)
 
--- ════════════════════════════════════════════════════
--- § Forward propagation: singleStepAtDet + stepOnceDetOn (computable)
--- ════════════════════════════════════════════════════
+/-! ### Forward propagation: singleStepAtDet + stepOnceDetOn (computable) -/
 
 /-- Per-vertex step of `stepOnceDet`. Computable. Three structural cases
     surfaced via simp lemmas (`singleStepAtDet_extend`, `_skip_determined`,
@@ -166,9 +160,7 @@ def stepOnceDetOn [DecidableEq V] [DecidableValuation α]
     (M : SEM V α) [IsDeterministic M] (v : V) (vs : List V) (s : Valuation α) :
     stepOnceDetOn M (v :: vs) s = stepOnceDetOn M vs (singleStepAtDet M s v) := rfl
 
--- ════════════════════════════════════════════════════
--- § Computational specialization: developDetOn (explicit list)
--- ════════════════════════════════════════════════════
+/-! ### Computational specialization: developDetOn (explicit list) -/
 
 /-! The canonical `developDet` (per-vertex, via `IsDAG.wf.fix`) lives in
     `PerVertex.lean`. Below is the **computational specialization**:
@@ -213,9 +205,7 @@ theorem developDetOn_succ [DecidableEq V] [DecidableValuation α]
     developDetOn M vs (n + 1) s = developDetOn M vs n (stepOnceDetOn M vs s) := by
   simp [developDetOn, Function.iterate_succ_apply]
 
--- ════════════════════════════════════════════════════
--- § Bridge: developDetOn ↦ developDet (soundness)
--- ════════════════════════════════════════════════════
+/-! ### Bridge: developDetOn ↦ developDet (soundness) -/
 
 /-! Soundness bridge connecting the iteration form (`developDetOn`,
     computable, `decide`-friendly) to the canonical per-vertex form
@@ -240,7 +230,7 @@ theorem developDetOn_succ [DecidableEq V] [DecidableValuation α]
 private def isConsistentDev [DecidableEq V] [DecidableValuation α]
     (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
     (s s' : Valuation α) : Prop :=
-  s.le s' ∧ ∀ v x, s'.get v = some x → developDetVtx M s v = x
+  s ≤ s' ∧ ∀ v x, s'.get v = some x → developDetVtx M s v = x
 
 /-- The starting valuation is consistent with itself. -/
 private lemma isConsistentDev_self [DecidableEq V] [DecidableValuation α]
@@ -286,7 +276,7 @@ private lemma isConsistentDev_singleStepAtDet [DecidableEq V] [DecidableValuatio
         -- hReadyU : (s'.get u.val).isSome
         exact hCons u.val ((s'.get u.val).get hReadyU) (Option.some_get hReadyU).symm |>.symm
       refine ⟨?_, ?_⟩
-      · -- s.le (s'.extend v newVal)
+      · -- s ≤ s'.extend v newVal
         intro w x hwx
         have h1 : s'.hasValue w x := hLe w x hwx
         by_cases hwv : w = v
@@ -358,9 +348,7 @@ theorem developDet_hasValue_of_developDetOn_hasValue [DecidableEq V] [DecidableV
   rw [developDet_hasValue_iff]
   exact developDetVtx_of_developDetOn_hasValue h
 
--- ════════════════════════════════════════════════════
--- § Bridge: developDet ↦ developDetOn (completeness)
--- ════════════════════════════════════════════════════
+/-! ### Bridge: developDet ↦ developDetOn (completeness) -/
 
 /-! Completeness counterpart to the soundness bridge above. For a
     `Fintype V + IsDAG + IsDeterministic` SEM, `Fintype.card V`
@@ -368,7 +356,7 @@ theorem developDet_hasValue_of_developDetOn_hasValue [DecidableEq V] [DecidableV
     `V` produce the canonical answer at every vertex.
 
     Proof outline:
-    1. Monotonicity: `s.le (singleStepAtDet M s v)`, etc.
+    1. Monotonicity: `s ≤ singleStepAtDet M s v`, etc.
     2. Single-step progress: undetermined+ready ⇒ determined after step.
     3. IsDAG min: nonempty undetermined set has a `WellFounded.has_min`
        member whose strict ancestors (and so parents) are all determined,
@@ -383,7 +371,7 @@ variable (M : SEM V α) [IsDeterministic M]
 
 /-- `singleStepAtDet` only extends the valuation. -/
 private lemma singleStepAtDet_le (s : Valuation α) (v : V) :
-    s.le (singleStepAtDet M s v) := by
+    s ≤ singleStepAtDet M s v := by
   intro w x hwx
   by_cases hSome : (s.get v).isSome
   · rw [singleStepAtDet_skip_determined M s v hSome]; exact hwx
@@ -397,35 +385,29 @@ private lemma singleStepAtDet_le (s : Valuation α) (v : V) :
       · rw [Valuation.hasValue, Valuation.extend_get_ne hwv]; exact hwx
     · rw [singleStepAtDet_skip_not_ready M s v hR]; exact hwx
 
-omit [DecidableEq V] [DecidableValuation α] in
-/-- `Valuation.le` is transitive. -/
-private lemma Valuation.le_trans {s₁ s₂ s₃ : Valuation α}
-    (h₁₂ : s₁.le s₂) (h₂₃ : s₂.le s₃) : s₁.le s₃ :=
-  fun w x hwx => h₂₃ w x (h₁₂ w x hwx)
-
 /-- `stepOnceDetOn` only extends the valuation. -/
 private lemma stepOnceDetOn_le (s : Valuation α) (vs : List V) :
-    s.le (stepOnceDetOn M vs s) := by
+    s ≤ stepOnceDetOn M vs s := by
   unfold stepOnceDetOn
   induction vs generalizing s with
   | nil => intro w x h; exact h
   | cons v vs ih =>
     simp only [List.foldl_cons]
-    exact Valuation.le_trans (singleStepAtDet_le M s v) (ih (singleStepAtDet M s v))
+    exact (singleStepAtDet_le M s v).trans (ih (singleStepAtDet M s v))
 
 /-- `developDetOn` only extends the valuation. -/
 private lemma developDetOn_le (s : Valuation α) (vs : List V) (n : ℕ) :
-    s.le (developDetOn M vs n s) := by
+    s ≤ developDetOn M vs n s := by
   induction n generalizing s with
   | zero => intro w x h; exact h
   | succ n ih =>
     rw [developDetOn_succ]
-    exact Valuation.le_trans (stepOnceDetOn_le M s vs) (ih (stepOnceDetOn M vs s))
+    exact (stepOnceDetOn_le M s vs).trans (ih (stepOnceDetOn M vs s))
 
 omit [DecidableEq V] [DecidableValuation α] [IsDeterministic M] in
 /-- `ready` is monotone in the valuation: extending a valuation only
     determines more parents, preserving readiness. -/
-private lemma ready_mono {s s' : Valuation α} (hLe : s.le s') (v : V)
+private lemma ready_mono {s s' : Valuation α} (hLe : s ≤ s') (v : V)
     (hR : ready M s v) : ready M s' v := by
   intro u hu
   have hSome : (s.get u).isSome := hR u hu
@@ -519,7 +501,7 @@ private def undetCount [Fintype V] (s : Valuation α) : ℕ :=
 omit [DecidableValuation α] [IsDeterministic M] in
 /-- Pointwise progress at any vertex strictly decreases `undetCount`. -/
 private lemma undetCount_lt_of_progress [Fintype V]
-    {s s' : Valuation α} (hLe : s.le s') (v : V)
+    {s s' : Valuation α} (hLe : s ≤ s') (v : V)
     (hN : (s.get v).isNone) (hS : (s'.get v).isSome) :
     undetCount s' < undetCount s := by
   unfold undetCount
@@ -744,9 +726,7 @@ theorem developDet_intervene_eq_developDet_extend
         funext u
         exact ih u.val (Relation.TransGen.single u.property)
 
--- ════════════════════════════════════════════════════
--- § PMF-valued forward propagation (canonical)
--- ════════════════════════════════════════════════════
+/-! ### PMF-valued forward propagation (canonical) -/
 
 /-! Mathlib pattern: `develop` is PMF-valued unconditionally — the
 mathematical object that doesn't presuppose deterministic mechanisms.

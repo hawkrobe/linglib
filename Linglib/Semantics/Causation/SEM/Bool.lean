@@ -1,7 +1,7 @@
 import Linglib.Semantics.Causation.SEM.Defs
 
 /-!
-# BoolSEM: Legacy Binary-Substrate Convenience Alias (V2)
+# BoolSEM: Legacy Binary-Substrate Convenience Alias
 
 `BoolSEM V := SEM V (fun _ => Bool)`. Convenience for consumers that
 work in the SBH 2009 deterministic-binary substrate (the special case

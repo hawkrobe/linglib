@@ -45,9 +45,7 @@ open Features (Implicative)
 open Features
 open Causation (SEM CausalGraph Valuation DecidableValuation)
 
--- ════════════════════════════════════════════════════
--- § Prerequisite Types ([nadathur-2023-implicatives])
--- ════════════════════════════════════════════════════
+/-! ### Prerequisite Types ([nadathur-2023-implicatives]) -/
 
 /-- Lexically-specified prerequisite types for implicative verbs.
 
@@ -70,9 +68,7 @@ def Prerequisite.isSpecific : Prerequisite → Bool
   | .unspecified => false
   | _ => true
 
--- ════════════════════════════════════════════════════
--- § V2 Polymorphic Semantics
--- ════════════════════════════════════════════════════
+/-! ### V2 Polymorphic Semantics -/
 
 /-- V2 manage-sem ([nadathur-2023-implicatives] Definition 10a with the
     Definition 10 preamble, over the strict T_D development):
@@ -124,9 +120,7 @@ abbrev necessityPresup {V : Type*} {α : V → Type*}
     (complement : V) (xC : α complement) : Prop :=
   SEM.causallyNecessary M background prerequisite xP complement xC
 
--- ════════════════════════════════════════════════════
--- § Characteristic entailments (Facts B–C)
--- ════════════════════════════════════════════════════
+/-! ### Characteristic entailments (Facts B–C) -/
 
 /-! [nadathur-2023-implicatives] (pp. 316–317) takes Facts A–C as the
 class-level data any account of implicatives must derive. On the
@@ -211,7 +205,7 @@ theorem complement_iff_prerequisite
           rw [SEM.causallyEntails, SEM.developDetVtx?_exogenous M hgp hexo] at hEntP
           simp at hEntP
     -- s' consistently extends background + prerequisite
-    have hle : (background.extend p xP).le s' := by
+    have hle : background.extend p xP ≤ s' := by
       intro v x hv
       by_cases hvp : v = p
       · subst hvp
@@ -255,9 +249,7 @@ theorem twoWay_entailment_profile
 
 end CharacteristicEntailments
 
--- ════════════════════════════════════════════════════
--- § Directionality
--- ════════════════════════════════════════════════════
+/-! ### Directionality -/
 
 /-- Directionality of complement entailment ([nadathur-2023-implicatives]).
 
@@ -268,9 +260,7 @@ inductive Directionality where
   | twoWay
   deriving DecidableEq, Repr
 
--- ════════════════════════════════════════════════════
--- § ImplicativeClass
--- ════════════════════════════════════════════════════
+/-! ### ImplicativeClass -/
 
 /-- The full lexical signature of an implicative verb ([nadathur-2023-implicatives]). -/
 structure ImplicativeClass where
@@ -358,9 +348,7 @@ theorem specific_vs_bleached :
 
 end Causation.Implicative
 
--- ════════════════════════════════════════════════════
--- § `Features.Implicative.toSemantics` dispatch (V2 polymorphic)
--- ════════════════════════════════════════════════════
+/-! ### `Features.Implicative.toSemantics` dispatch (V2 polymorphic) -/
 
 /-! Lives here rather than in `Features/Causation.lean` because the
 dispatch needs `Causation.SEM` + the `Implicative.manageSem`/`failSem`
