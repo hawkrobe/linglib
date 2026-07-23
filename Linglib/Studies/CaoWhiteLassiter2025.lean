@@ -75,32 +75,27 @@ theorem softOptimalPolicy_one :
 
 end
 
-/-! ### The ALT measure -/
+/-! ### The ALT measure
+
+ALT (§2.2 of [cao-white-lassiter-2025]) counts the alternative actions
+available to the causee, excluding the action actually taken —
+`ALT(Y₁) = 5` at the paper's fig. 2a board state. `ALT = 0` is the
+Frankfurt-style could-not-have-done-otherwise configuration
+(`altCount_eq_zero_iff`). -/
 
 section
-variable {A : Type*} [Fintype A] (p : PMF A) (pr : A → ℝ≥0∞) (w : A → ℝ≥0) (a taken : A)
+variable {A : Type*} [Fintype A] (p : PMF A) (taken : A)
 
-/-- `altCount p taken` is the number of alternative actions available to
-    the causee — the support of the action distribution `p`, excluding
-    the action actually taken. This is the ALT measure of
-    [cao-white-lassiter-2025] (§2.2; `ALT(Y₁) = 5` at its fig. 2a board
-    state). -/
+/-- The number of alternative actions available to the causee: the
+    support of the action distribution, less the action taken. -/
 noncomputable def altCount : ℕ :=
   (p.support \ {taken}).ncard
 
-/-- `ALT = 0` says exactly that the causee could not have done
-    otherwise — every action other than the one taken has probability
-    zero. -/
 theorem altCount_eq_zero_iff :
     altCount p taken = 0 ↔ ∀ a ≠ taken, p a = 0 := by
-  rw [altCount, Set.ncard_eq_zero (Set.toFinite _), Set.sdiff_eq_empty]
-  constructor
-  · intro hsub a hne
-    by_contra hpa
-    exact hne (hsub ((p.mem_support_iff a).mpr hpa))
-  · intro h a ha
-    by_contra hne
-    exact (p.mem_support_iff a).mp ha (h a (by simpa using hne))
+  rw [altCount, Set.ncard_eq_zero (Set.toFinite _), Set.sdiff_eq_empty,
+    Set.subset_singleton_iff]
+  exact forall_congr' fun b => not_imp_comm
 
 /-! ### The INT measure
 
@@ -115,6 +110,8 @@ actions that would have resulted in the same outcome", with each term
 weighted by exponentiated utility `u′ = e^u` — the exponential serving
 only to make the weights strictly positive. We abstract the weight to
 any `w : A → ℝ≥0`; the paper's instantiation is `w = e^u`. -/
+
+variable (pr : A → ℝ≥0∞) (w : A → ℝ≥0) (a : A)
 
 /-- `intentionDegree pr w a` is the goal-weighted share of action `a`
     among all goal-conducive alternatives — the INT measure of
@@ -166,7 +163,7 @@ theorem intentionDegree_eq_one_of_altCount_eq_zero
     (hle : ∀ a, pr a ≤ p a) (halt : altCount p taken = 0)
     (h0 : pr taken * w taken ≠ 0) :
     intentionDegree pr w taken = 1 :=
-  intentionDegree_eq_one_of_no_alternatives pr w taken
+  intentionDegree_eq_one_of_no_alternatives taken pr w
     (fun a ha => le_antisymm ((altCount_eq_zero_iff p taken).mp halt a ha ▸ hle a) zero_le)
     h0
     (((hle taken).trans (p.coe_le_one taken)).trans_lt ENNReal.one_lt_top).ne
