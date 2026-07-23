@@ -1,6 +1,7 @@
 import Mathlib.Data.NNReal.Basic
 import Mathlib.Data.Set.Card
-import Mathlib.Probability.ProbabilityMassFunction.Constructions
+import Mathlib.Probability.Distributions.Uniform
+import Linglib.Core.Probability.Finite
 import Linglib.Data.Examples.CaoWhiteLassiter2025
 import Linglib.Semantics.Causation.Interpretation
 import Linglib.Semantics.Causation.SEM.Counterfactual
@@ -46,38 +47,35 @@ and every other available move with `(1−ρ)/n`. The skill parameter ρ
 interpolates between a random player (`ρ = 0`, "a less skilled player")
 and a professional (`ρ = 1`). -/
 
-/-- The soft-optimality policy of a player of skill `ρ` takes the
-    highest-utility move `best` with probability `ρ + (1−ρ)/n` and each
-    of the other `n − 1` available moves with probability `(1−ρ)/n`
-    (§2.1.1 of [cao-white-lassiter-2025]). -/
-noncomputable def softOptimalPolicy {A : Type*} [Fintype A] [DecidableEq A] [Nonempty A]
+/-- The soft-optimality policy of a player of skill `ρ` mixes optimal
+    play with uniform noise: the highest-utility move `best` with
+    probability `ρ`, otherwise a uniform random move (§2.1.1 of
+    [cao-white-lassiter-2025]). -/
+noncomputable def softOptimalPolicy {A : Type*} [Fintype A] [Nonempty A]
     (best : A) (ρ : ℝ≥0) (hρ : ρ ≤ 1) : PMF A :=
-  PMF.ofFintype
-    (fun a => (if a = best then (ρ : ℝ≥0∞) else 0) + (1 - ρ : ℝ≥0) / Fintype.card A)
-    (by
-      have hn0 : (Fintype.card A : ℝ≥0∞) ≠ 0 := by
-        exact_mod_cast Fintype.card_ne_zero
-      rw [Finset.sum_add_distrib, Finset.sum_ite_eq' Finset.univ best (fun _ => (ρ : ℝ≥0∞)),
-        Finset.sum_const, Finset.card_univ, nsmul_eq_mul,
-        ENNReal.mul_div_cancel hn0 (ENNReal.natCast_ne_top _)]
-      simp only [Finset.mem_univ, if_true]
-      rw [← ENNReal.coe_add, add_tsub_cancel_of_le hρ, ENNReal.coe_one])
+  PMF.mix ρ hρ (PMF.pure best) (PMF.uniformOfFintype A)
+
+/-- The paper's arithmetic form of the policy: the best move carries
+    `ρ + (1 − ρ)/n`, every other available move `(1 − ρ)/n`. -/
+theorem softOptimalPolicy_apply {A : Type*} [Fintype A] [DecidableEq A] [Nonempty A]
+    (best : A) (ρ : ℝ≥0) (hρ : ρ ≤ 1) (a : A) :
+    softOptimalPolicy best ρ hρ a =
+      (if a = best then (ρ : ℝ≥0∞) else 0) + (1 - ρ : ℝ≥0) / Fintype.card A := by
+  simp [softOptimalPolicy, PMF.pure_apply, PMF.uniformOfFintype_apply, mul_ite, mul_one,
+    mul_zero, div_eq_mul_inv]
 
 /-- At `ρ = 0` the soft-optimality policy is the uniform random player —
     the paper's limiting case ("assume that the players are infants"),
     under which its worked SUF contrast between contexts collapses. -/
-theorem softOptimalPolicy_zero_apply {A : Type*} [Fintype A] [DecidableEq A] [Nonempty A]
-    (best : A) (a : A) :
-    softOptimalPolicy best 0 zero_le_one a = (Fintype.card A : ℝ≥0∞)⁻¹ := by
-  simp [softOptimalPolicy]
+theorem softOptimalPolicy_zero {A : Type*} [Fintype A] [Nonempty A] (best : A) :
+    softOptimalPolicy best 0 zero_le_one = PMF.uniformOfFintype A :=
+  PMF.mix_zero _ _
 
 /-- At `ρ = 1` the soft-optimality policy is the deterministic
     professional — a Dirac on the highest-utility move. -/
-theorem softOptimalPolicy_one {A : Type*} [Fintype A] [DecidableEq A] [Nonempty A]
-    (best : A) :
-    softOptimalPolicy best 1 le_rfl = PMF.pure best := by
-  ext a
-  simp [softOptimalPolicy, PMF.pure_apply]
+theorem softOptimalPolicy_one {A : Type*} [Fintype A] [Nonempty A] (best : A) :
+    softOptimalPolicy best 1 le_rfl = PMF.pure best :=
+  PMF.mix_one _ _
 
 /-! ### The ALT measure -/
 
