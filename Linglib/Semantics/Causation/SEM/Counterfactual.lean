@@ -238,11 +238,17 @@ noncomputable def sufficientCause
     (effect : V) (xEff_actual : α effect) : ENNReal :=
   whetherCause M alternativesRemoved antecedent xAnt_alt effect xEff_actual
 
+omit [Fintype V] [DecidableEq V] [DecidableValuation α] in
+/-- The single-vertex marginal of a distribution over valuations: the
+    probability that vertex `v` carries value `x`. -/
+noncomputable def probOfValue (d : PMF (Valuation α)) (v : V) (x : α v) : ENNReal :=
+  d.probOfSet {s | s.hasValue v x}
+
 /-- **Probability of sufficiency** ([pearl-2019]), the SUF measure of
     [cao-white-lassiter-2025]: the counterfactual probability that
     intervening `cause := xC` yields `effect = xE`, evaluated against the
-    factual context `observed` — Pearl's three-step
-    abduction–action–prediction, via `counterfactualSimulate`.
+    factual context `observed` — the `effect = xE` marginal of Pearl's
+    three-step abduction–action–prediction, via `counterfactualSimulate`.
 
     Distinct from plain interventional probability `P(effect | do(cause))`:
     causally-independent parents of `effect` recorded in `observed` are
@@ -252,7 +258,7 @@ noncomputable def probSufficiency
     (M : SEM V α) [CausalGraph.IsDAG M.graph]
     (observed : Valuation α) (cause : V) (xC : α cause)
     (effect : V) (xE : α effect) : ENNReal :=
-  (counterfactualSimulate M observed cause xC).probOfSet {v | v.hasValue effect xE}
+  probOfValue (counterfactualSimulate M observed cause xC) effect xE
 
 -- ════════════════════════════════════════════════════
 -- § Bridge theorems: deterministic collapse
@@ -297,7 +303,7 @@ theorem probSufficiency_eq_indicator_of_deterministic
     (effect : V) (xE : α effect) :
     probSufficiency M observed cause xC effect xE =
       if (M.developDet (cfSeed M observed cause xC)).hasValue effect xE then 1 else 0 := by
-  unfold probSufficiency
+  unfold probSufficiency probOfValue
   rw [counterfactualSimulate_eq_pure_of_deterministic]
   simp only [PMF.probOfSet, PMF.toOuterMeasure_pure_apply, Set.mem_setOf_eq]
   by_cases h : (M.developDet (cfSeed M observed cause xC)).hasValue effect xE <;> simp [h]
