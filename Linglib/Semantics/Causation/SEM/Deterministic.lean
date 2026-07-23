@@ -242,7 +242,7 @@ theorem developDetVtx?_inner_none {s : Valuation α} {v : V}
 theorem developDetVtx_eq_of_developDetVtx?_eq_some
     {s : Valuation α} {v : V} {x : α v}
     (h : developDetVtx? M s v = some x) : developDetVtx M s v = x := by
-  induction v using (CausalGraph.IsDAG.wf (G := M.graph)).induction with
+  induction v using (IsWellFounded.wf (r := M.graph.IsStrictAncestor)).induction with
   | _ v ih =>
     rw [developDetVtx?_unfold] at h
     rw [developDetVtx_unfold]
@@ -295,7 +295,7 @@ variable (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
     the strict fixed point. Soundness and completeness in one equation. -/
 theorem developDetVtxFuel_eq_developDetVtx?
     (r : CausalGraph.Ranking M.graph) (s : Valuation α) :
-    ∀ {n : ℕ} {v : V}, r.rank v < n →
+    ∀ {n : ℕ} {v : V}, r v < n →
       developDetVtxFuel M s n v = developDetVtx? M s v := by
   intro n
   induction n with
@@ -319,7 +319,7 @@ theorem developDetVtxFuel_eq_developDetVtx?
       · simp [hPar]
       · have hpt : ∀ u : M.graph.parents v,
             developDetVtxFuel M s n u.val = developDetVtx? M s u.val :=
-          fun u => ih (by have := r.parent_lt u.property; omega)
+          fun u => ih (by have := r.map_rel u.property; omega)
         simp only [hPar, if_false]
         by_cases hAll : ∀ u : M.graph.parents v, (developDetVtx? M s u.val).isSome
         · have hAll' : ∀ u : M.graph.parents v,
@@ -338,7 +338,7 @@ theorem developDetVtxFuel_eq_developDetVtx?
     `developDetVtx?_eq_of_fuel M ⟨rank, by intro u v h; revert h; decide⟩ (by omega) (by decide)`. -/
 theorem developDetVtx?_eq_of_fuel
     (r : CausalGraph.Ranking M.graph)
-    {s : Valuation α} {n : ℕ} {v : V} {o : Option (α v)} (hn : r.rank v < n)
+    {s : Valuation α} {n : ℕ} {v : V} {o : Option (α v)} (hn : r v < n)
     (h : developDetVtxFuel M s n v = o) :
     developDetVtx? M s v = o :=
   (developDetVtxFuel_eq_developDetVtx? M r s hn).symm.trans h

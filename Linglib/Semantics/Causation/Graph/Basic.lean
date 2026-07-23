@@ -52,46 +52,26 @@ instance IsStrictAncestor.decidable [Fintype V] [DecidableEq V] (G : CausalGraph
   Relation.ReflTransGen.decidable_TransGen_of_fintype_step G.children
     (fun a b => by simp [G.mem_children_iff]) u v
 
-/-- **Acyclicity mixin**: the strict-ancestor relation is well-founded —
-    no infinite chain of parents. Required by `topologicalOrder`,
-    `develop` fixpoint, and well-founded recursion over the parent
-    relation.
+/-- **Acyclicity**: the strict-ancestor relation is well-founded — no
+    infinite chain of parents. An `abbrev` for mathlib's `IsWellFounded`
+    class, so its API (`IsWellFounded.wf`, induction, `fix`) applies
+    directly; required by the `develop` fixpoint and well-founded
+    recursion over the parent relation. -/
+abbrev IsDAG (G : CausalGraph V) : Prop :=
+  IsWellFounded V G.IsStrictAncestor
 
-    Mathlib analogue: `IsMarkovKernel` from
-    `Mathlib.Probability.Kernel.Defs` — a `Prop` class on a value of a
-    structure, marking a property consumers may require.
+/-- A ranking of a causal graph is a relation homomorphism from the
+    parent relation into `<` on `ℕ` — mathlib's `RelHom`, so the bundled
+    form of the depth certificate consumed by `IsDAG.of_depth` and, per
+    model, by the fuel bridges. -/
+abbrev Ranking (G : CausalGraph V) : Type _ :=
+  (· ∈ G.parents ·) →r ((· < ·) : ℕ → ℕ → Prop)
 
-    A `Std.Irrefl` instance for `IsStrictAncestor` follows from
-    well-foundedness; deferred until a consumer needs it. -/
-class IsDAG (G : CausalGraph V) : Prop where
-  /-- The strict-ancestor relation has no infinite descending chain. -/
-  wf : WellFounded G.IsStrictAncestor
-
-/-- A ranking of a causal graph is a `ℕ`-valued measure on which every
-    parent ranks strictly below its children — the bundled form of the
-    depth certificate consumed by `IsDAG.of_depth` and, per model, by the
-    fuel bridges (`causallyEntails_iff_fuel`, `causallyNecessary_iff_fuel`). -/
-structure Ranking (G : CausalGraph V) where
-  /-- The rank of each vertex. -/
-  rank : V → ℕ
-  /-- Parents rank strictly below their children. -/
-  parent_lt : ∀ {u v : V}, u ∈ G.parents v → rank u < rank v
-
-/-- A ranking certifies acyclicity: ranks strictly increase along the
-    strict-ancestor relation, so the relation embeds in `Nat.lt`.
-
-    The standard mathlib pattern for proving wellfoundedness of finite
-    inductive relations: define a measure into `ℕ`, show the relation
-    decreases it, conclude. -/
-theorem Ranking.isDAG {G : CausalGraph V} (r : Ranking G) : IsDAG G where
-  wf := by
-    have hsub : ∀ u v, G.IsStrictAncestor u v → r.rank u < r.rank v := by
-      intro u v huv
-      induction huv with
-      | single hp => exact r.parent_lt hp
-      | tail _ hp ih => exact lt_trans ih (r.parent_lt hp)
-    exact Subrelation.wf (fun {a b} => hsub a b)
-      (InvImage.wf r.rank Nat.lt_wfRel.wf)
+/-- A ranking certifies acyclicity: well-foundedness transfers along the
+    homomorphism (`RelHomClass.wellFounded`) and lifts to the transitive
+    closure (`WellFounded.transGen`). -/
+theorem Ranking.isDAG {G : CausalGraph V} (r : Ranking G) : IsDAG G :=
+  ⟨(RelHomClass.wellFounded r wellFounded_lt).transGen⟩
 
 /-- A graph is acyclic if every edge strictly decreases some `ℕ`-valued
     depth function — `Ranking.isDAG` with the certificate passed loose. -/
