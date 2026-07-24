@@ -100,15 +100,13 @@ theorem stateAfter_append (s : σ) (xs ys : List α) :
 /-- Output coordinate `i` of the run is the step output at the state reached after the
 first `i` input symbols. -/
 theorem getElem?_runFrom (s : σ) (xs : List α) (i : ℕ) :
-    (T.runFrom s xs)[i]?
-      = xs[i]?.map fun x => (T.step (T.stateAfter s (xs.take i)) x).2 := by
+    (T.runFrom s xs)[i]? = xs[i]?.map fun x => (T.step (T.stateAfter s (xs.take i)) x).2 := by
   induction xs generalizing s i <;> cases i <;> simp [*]
 
 /-- Output coordinate `i` of `T.run` is the step output at the state reached after the
 first `i` input symbols. -/
 theorem getElem?_run (xs : List α) (i : ℕ) :
-    (T.run xs)[i]?
-      = xs[i]?.map fun x => (T.step (T.stateAfter T.initial (xs.take i)) x).2 :=
+    (T.run xs)[i]? = xs[i]?.map fun x => (T.step (T.stateAfter T.initial (xs.take i)) x).2 :=
   T.getElem?_runFrom T.initial xs i
 
 /-! ### Flag machines
@@ -145,8 +143,7 @@ theorem getElem?_ofFlag_run (xs : List α) (i : ℕ) :
 /-- Each coordinate of a flag machine run right-to-left sees the flag over its strict
 suffix. -/
 theorem getElem?_ofFlag_runRight (xs : List α) (i : ℕ) :
-    ((ofFlag p out).runRight xs)[i]?
-      = xs[i]?.map fun a => out ((xs.drop (i + 1)).any p) a := by
+    ((ofFlag p out).runRight xs)[i]? = xs[i]?.map fun a => out ((xs.drop (i + 1)).any p) a := by
   unfold runRight
   by_cases hi : i < xs.length
   · rw [List.getElem?_reverse (by simpa using hi),
