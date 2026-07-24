@@ -63,18 +63,15 @@ namespace Subregular
 
 variable {σ α β : Type*}
 
-/-- An SFST (*subsequential finite-state transducer*) is a set of states (`σ`), a
-starting state (`start`), a transition function (`step`), an output function emitting
-a block of output symbols per input symbol (`output`), and a state-final output
-emitted at the end of the input (`finalOutput`) [mohri-1997]. `step` is total, so the
-machine computes a total function `List α → List β`. -/
+/-- A subsequential finite-state transducer (SFST) is a set of states (`σ`), a
+starting state (`start`), a transition function (`step`), a per-symbol output
+function (`output`) and a state-final output (`finalOutput`). -/
 structure SFST (σ α β : Type*) where
   /-- Starting state. -/
   start : σ
   /-- Transition function. -/
   step : σ → α → σ
-  /-- Output function: the block of output symbols emitted on reading an input symbol
-  in a state. -/
+  /-- The block of output symbols emitted on reading an input symbol in a state. -/
   output : σ → α → List β
   /-- Output emitted on terminating in a state. -/
   finalOutput : σ → List β
