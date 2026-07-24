@@ -3,6 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
+import Mathlib.Data.Fintype.EquivFin
 import Mathlib.Data.List.Basic
 import Mathlib.Logic.Equiv.Defs
 import Linglib.Core.Data.List.Fold
@@ -17,7 +18,7 @@ output at the state reached after the length-`i` input prefix (`Mealy.getElem?_r
 so the output is prefix-determined at every coordinate.
 
 Note that this definition allows for machines with infinite states; a `Fintype`
-instance must be supplied for true finite-state machines.
+instance must be supplied for the finite-state class `IsMealyComputable`.
 
 ## Main definitions
 
@@ -25,6 +26,7 @@ instance must be supplied for true finite-state machines.
 * `Mealy.run`, `Mealy.runRight`: the left-to-right and right-to-left passes
 * `Mealy.ofFlag`: the one-bit machine tracking whether an earlier symbol satisfies `p`
 * `Mealy.reindex`: lifts an equivalence on states to an equivalence on machines
+* `IsMealyComputable f`: `f` is computed by some finite-state `Mealy`
 
 ## Main theorems
 
@@ -33,8 +35,26 @@ instance must be supplied for true finite-state machines.
 * `Mealy.getElem?_ofFlag_run`, `Mealy.getElem?_ofFlag_runRight`: each coordinate of a
   flag machine sees the flag over its strict prefix (its strict suffix, for the
   right-to-left pass)
+* `isMealyComputable_iff`: the universe-polymorphic characterization
+* `isMealyComputable_of_stateSummary`: the sufficiency half of Myhill–Nerode — a
+  finite left-congruent state summary determining the output yields a machine
+
+## Implementation notes
+
+For length-preserving functions the Mealy-computable class coincides with the
+letter-to-letter restriction of the *subsequential* functions [mohri-1997], since
+length preservation forces a subsequential machine's state-final output to be empty.
 
 [UPSTREAM] candidate: `Mathlib.Computability.Mealy`.
+
+## TODO
+
+* The full Myhill–Nerode characterization [choffrut-1977] in the style of
+  `Mathlib.Computability.MyhillNerode`: define the residual map of a length-preserving
+  function, build the canonical machine on `Set.range` of residuals, and prove
+  `IsMealyComputable f ↔ (Set.range f.residual).Finite`.
+* Composition closure (state-product machine) and the right-scan mirror via reverse
+  conjugation.
 -/
 
 namespace Subregular
@@ -191,5 +211,70 @@ def reindex (g : σ ≃ τ) : Mealy σ α β ≃ Mealy τ α β where
   funext xs; simp [run]
 
 end Mealy
+
+/-! ### The Mealy-computable class -/
+
+/-- The class of functions computed by a finite-state `Mealy` machine. -/
+def IsMealyComputable (f : List α → List β) : Prop :=
+  ∃ (σ : Type) (_ : Fintype σ) (T : Mealy σ α β), T.run = f
+
+/-- `f` is Mealy-computable if and only if it is computed by a finite-state `Mealy`
+machine. This is more general than using the definition of `IsMealyComputable`
+directly, as the state type `σ` is universe-polymorphic. -/
+theorem isMealyComputable_iff.{v} {f : List α → List β} :
+    IsMealyComputable f
+      ↔ ∃ (σ : Type v) (_ : Fintype σ) (T : Mealy σ α β), T.run = f :=
+  ⟨fun ⟨σ, _, T, h⟩ => ⟨ULift σ, inferInstance, Mealy.reindex Equiv.ulift.symm T,
+    h ▸ T.run_reindex _⟩,
+   fun ⟨σ, _, T, h⟩ => ⟨Fin (Fintype.card σ), inferInstance,
+    Mealy.reindex (Fintype.equivFin σ) T, h ▸ T.run_reindex _⟩⟩
+
+/-- Every finite-state `Mealy` computes a Mealy-computable function. -/
+theorem Mealy.isMealyComputable {σ : Type*} [Fintype σ] (T : Mealy σ α β) :
+    IsMealyComputable T.run :=
+  isMealyComputable_iff.mpr ⟨σ, inferInstance, T, rfl⟩
+
+/-! ### Myhill–Nerode: the sufficiency direction
+
+`f` is Mealy-computable as soon as it admits a *finite-state, left-congruent summary
+that determines its output*. The finite `state` plays the role of the
+prefix-congruence's quotient; `δ`/`out` are the induced transition and output. (The
+natural Nerode congruence, when of finite index, is one such summary — that
+instantiation, and the necessity direction, are the TODO above.) -/
+
+/-- A length-preserving `f` with a finite `state : List α → σ` that is left-congruent
+(`hδ`) and determines `f`'s output at each position (`hout`) is Mealy-computable — the
+sufficiency half of Myhill–Nerode. -/
+theorem isMealyComputable_of_stateSummary
+    {f : List α → List β} {σ : Type} [Fintype σ]
+    (state : List α → σ) (δ : σ → α → σ) (out : σ → α → β)
+    (hδ : ∀ u x, state (u ++ [x]) = δ (state u) x)
+    (hout : ∀ u x w, (f (u ++ x :: w))[u.length]? = some (out (state u) x))
+    (hlen : ∀ xs, (f xs).length = xs.length) :
+    IsMealyComputable f := by
+  refine ⟨σ, inferInstance, ⟨state [], fun s x => (δ s x, out s x)⟩, ?_⟩
+  set T : Mealy σ α β := ⟨state [], fun s x => (δ s x, out s x)⟩
+  have hstate : ∀ ps : List α, T.stateAfter T.initial ps = state ps := by
+    intro ps
+    induction ps using List.reverseRecOn with
+    | nil => rfl
+    | append_singleton ps x ih => rw [T.stateAfter_append, ih, hδ]; rfl
+  funext xs
+  apply List.ext_getElem?
+  intro i
+  rw [T.getElem?_run xs i, hstate]
+  rcases lt_or_ge i xs.length with hi | hi
+  · have key := hout (xs.take i) xs[i] (xs.drop (i + 1))
+    rw [List.length_take_of_le hi.le, ← List.drop_eq_getElem_cons hi,
+      List.take_append_drop] at key
+    rw [List.getElem?_eq_getElem hi, Option.map_some, key]
+  · rw [List.getElem?_eq_none hi, List.getElem?_eq_none ((hlen xs).le.trans hi),
+      Option.map_none]
+
+/-- The identity is Mealy-computable, via a one-state summary. -/
+theorem isMealyComputable_id : IsMealyComputable (id : List α → List α) :=
+  isMealyComputable_of_stateSummary
+    (fun _ => ()) (fun _ _ => ()) (fun _ x => x)
+    (fun _ _ => rfl) (fun _ _ _ => by simp) (fun _ => rfl)
 
 end Subregular
