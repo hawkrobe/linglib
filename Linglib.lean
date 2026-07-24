@@ -1556,7 +1556,6 @@ import Linglib.Semantics.Conditionals.WillConditional
 import Linglib.Semantics.Definiteness.Basic
 import Linglib.Semantics.Definiteness.Description
 import Linglib.Semantics.Definiteness.DeterminerDenotation
-import Linglib.Semantics.Definiteness.DeterminerLicensing
 import Linglib.Semantics.Definiteness.Interpret
 import Linglib.Semantics.Definiteness.Maximality
 import Linglib.Semantics.Degree.Adjective
