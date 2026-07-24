@@ -63,7 +63,9 @@ residuals is in `Core/Computability/MyhillNerode.lean`.
 * Moore machines (state-determined output) and the Mealy–Moore equivalence: same
   states one way, `σ × β` states the other, so the computable classes coincide.
 * The graph view: the zipped graph of a Mealy-computable map is a regular language
-  over `α × β` (the synchronous rational relations).
+  over `α × β` (the synchronous rational relations). Residuals of the map correspond
+  to left quotients of the graph, so this would derive `isMealyComputable_iff_residual`
+  from the language Myhill–Nerode theorem.
 -/
 
 namespace Subregular
