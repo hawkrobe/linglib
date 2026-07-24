@@ -188,73 +188,57 @@ theorem landau_predicts_control (c : EmbeddedClauseType) :
 
 /-! ### Long-Distance Agree analysis (Allotey's syntactic mechanism) -/
 
-/-- Long Distance Agree configuration ([szabolcsi-2009]): a matrix probe
-    values an embedded goal's unvalued φ across a non-defective C. The
-    contentful dimension is `cIsDefectiveBlocker` — cross-clausal
-    locality, derived from the shared `Minimalist.Probe` search kernel
-    by `licenses_iff_agree` below (the same kernel
-    `Studies/Halpert2019.lean` runs defective intervention through). -/
-structure LDAConfig where
-  /-- The probe (matrix v/T/Asp) carries valued φ-features. -/
-  probeHasValuedPhi : Bool
-  /-- The goal (embedded D head) carries unvalued φ-features. -/
-  goalHasUnvaluedPhi : Bool
-  /-- The intervening C head blocks LDA (is defective for it);
-      `false` means transparent and LDA proceeds. -/
-  cIsDefectiveBlocker : Bool
-  deriving DecidableEq, Repr
+/-- Whether a complementizer blocks Long Distance Agree
+    ([szabolcsi-2009]): the finite complementizers `akɛ`/`kɛji` head
+    strong CPs — independent tense, focus fronting ([allotey-2021]
+    exx 107–109) — and are phase-like blockers for cross-clausal
+    φ-Agree; the weak-CP `ni` is transparent. Derived from the
+    fragment's finiteness split, not stipulated. -/
+def _root_.Ga.Complementizer.blocksLDA (c : Complementizer) : Bool :=
+  c.isFinite
 
-/-- LDA is licensed iff probe and goal have the right feature profile and
-    the intervening C is non-blocking. -/
-def LDAConfig.licenses (cfg : LDAConfig) : Bool :=
-  cfg.probeHasValuedPhi && cfg.goalHasUnvaluedPhi && !cfg.cIsDefectiveBlocker
-
-/-- [allotey-2021]'s syntactic analysis: the embedded overt
-    pronoun in a controlled `ni`-clause is a minimal pronoun whose
-    unvalued φ-features are valued by Long Distance Agree from the
-    matrix controller ([szabolcsi-2009]).
-
-    The probe (matrix v/T) has valued φ; the goal (embedded D[uφ])
-    has unvalued φ; the intervening `ni` C head is non-defective for
-    LDA, so the dependency crosses a clause boundary. -/
-def gaLDAConfig : LDAConfig where
-  probeHasValuedPhi   := true
-  goalHasUnvaluedPhi  := true
-  cIsDefectiveBlocker := false
-
-theorem ga_satisfies_LDA :
-    LDAConfig.licenses gaLDAConfig = true := rfl
-
-/-- The two positions the matrix φ-probe searches in the LDA
-    configuration, in structural order: the intervening C head, then
-    the embedded subject pronoun. -/
+/-- The two positions the matrix φ-probe searches, in structural order:
+    the C head, then the embedded subject pronoun. -/
 inductive LDAGoal where
   | complementizer
   | embeddedSubject
   deriving DecidableEq, Repr
 
-/-- The LDA configuration as a `Minimalist.Probe`: a blocking C head is
-    a visible-but-inactive goal — it halts the search without valuing
-    (defective intervention, `Probe.agree_eq_none_of_inactive`); the
-    embedded subject is visible iff it carries unvalued φ and valuable
-    iff the probe has valued φ to transmit. -/
-def LDAConfig.probe (cfg : LDAConfig) : Minimalist.Probe LDAGoal where
+/-- The matrix φ-probe searching into a `c`-headed embedded clause: a
+    blocking C is a visible-but-inactive goal — it halts the search
+    without valuing (defective intervention,
+    `Probe.agree_eq_none_of_inactive`, the same kernel
+    `Studies/Halpert2019.lean` runs); the embedded minimal pronoun
+    D[uφ] is a visible, valuable goal. -/
+def ldaProbe (c : Complementizer) : Minimalist.Probe LDAGoal where
   vis
-    | .complementizer => cfg.cIsDefectiveBlocker
-    | .embeddedSubject => cfg.goalHasUnvaluedPhi
+    | .complementizer => c.blocksLDA
+    | .embeddedSubject => true
   act
     | .complementizer => false
-    | .embeddedSubject => cfg.probeHasValuedPhi
+    | .embeddedSubject => true
 
-/-- `LDAConfig.licenses` is not a stipulation: it coincides with the
-    canonical relativized search reaching the embedded subject across
-    the C head. -/
-theorem LDAConfig.licenses_iff_agree (cfg : LDAConfig) :
-    cfg.licenses = true ↔
-      cfg.probe.agree [.complementizer, .embeddedSubject]
-        = some .embeddedSubject := by
-  rcases cfg with ⟨p, g, c⟩
-  cases p <;> cases g <;> cases c <;> decide
+/-- LDA into a `c`-headed clause: the matrix probe's search reaches the
+    embedded subject. -/
+def ldaReaches (c : Complementizer) : Bool :=
+  (ldaProbe c).agree [.complementizer, .embeddedSubject]
+    == some .embeddedSubject
+
+/-- LDA reaches the embedded subject exactly across a non-finite (weak)
+    C head: it crosses `ni` — [allotey-2021]'s analysis, the matrix
+    controller valuing the embedded minimal pronoun's φ — and is
+    blocked by strong-CP `akɛ`/`kɛji`, whose subjects are accordingly
+    free. -/
+theorem ldaReaches_eq_not_isFinite (c : Complementizer) :
+    ldaReaches c = !c.isFinite := by
+  cases c <;> rfl
+
+/-- The LDA mechanism aligns with the OC facts: the matrix probe
+    reaches the embedded subject in exactly the clause types showing
+    the OC signature. -/
+theorem lda_reaches_iff_oc (c : EmbeddedClauseType) :
+    ldaReaches (clauseComplementizer c) = (gaOCSignature c).isOC := by
+  cases c <;> rfl
 
 /-! ### Against the Movement Theory of Control -/
 
