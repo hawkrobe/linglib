@@ -163,22 +163,21 @@ theorem getElem?_run (xs : List α) (i : ℕ) :
 
 section Comp
 
-variable {γ σ' : Type*}
+variable {γ σ' : Type*} (T₂ : Mealy σ' β γ) (T₁ : Mealy σ α β)
 
 /-- `T₂.comp T₁` feeds the outputs of `T₁` to `T₂` — the cascade connection of
 [holcombe-1982] — computing `T₂.run ∘ T₁.run` (`run_comp`). -/
 @[simps]
-def comp (T₂ : Mealy σ' β γ) (T₁ : Mealy σ α β) : Mealy (σ' × σ) α γ where
+def comp : Mealy (σ' × σ) α γ where
   initial := (T₂.initial, T₁.initial)
   step p a := (T₂.step p.1 (T₁.output p.2 a), T₁.step p.2 a)
   output p a := T₂.output p.1 (T₁.output p.2 a)
 
-@[simp] theorem runFrom_comp (T₂ : Mealy σ' β γ) (T₁ : Mealy σ α β) (p : σ' × σ)
-    (xs : List α) : (T₂.comp T₁).runFrom p xs = T₂.runFrom p.1 (T₁.runFrom p.2 xs) := by
+@[simp] theorem runFrom_comp (p : σ' × σ) (xs : List α) :
+    (T₂.comp T₁).runFrom p xs = T₂.runFrom p.1 (T₁.runFrom p.2 xs) := by
   induction xs generalizing p <;> simp [*]
 
-@[simp] theorem run_comp (T₂ : Mealy σ' β γ) (T₁ : Mealy σ α β) :
-    (T₂.comp T₁).run = T₂.run ∘ T₁.run := by
+@[simp] theorem run_comp : (T₂.comp T₁).run = T₂.run ∘ T₁.run := by
   funext xs; simp [run, Function.comp]
 
 end Comp
