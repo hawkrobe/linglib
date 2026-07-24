@@ -45,7 +45,7 @@ the SOE conflicting with common knowledge (§8.7).
 
 ## Connection to Existing Infrastructure
 
-1. **`ViewpointAspectB`** (`Tense/Aspect/Core.lean`): imperfective/perfective
+1. **`Perfectivity`** (`Tense/Aspect/Core.lean`): imperfective/perfective
    distinction. The `IMPF` operator formalizes the same TT⊂TSit relation
    that Del Prete uses as the starting point for his f-exp analysis.
 
@@ -61,7 +61,7 @@ the SOE conflicting with common knowledge (§8.7).
 
 namespace DelPrete2013
 
-open Semantics.Aspect (ViewpointAspectB)
+open Semantics.Aspect (Perfectivity)
 
 -- ═══ Reading Types ═══
 
@@ -121,7 +121,7 @@ inductive SOEStatus where
 structure ItalianDatum where
   italian : String
   gloss : String
-  aspect : ViewpointAspectB
+  aspect : Perfectivity
   objectType : ObjectType
   habOK : Bool     -- HAB reading available?
   progOK : Bool    -- PROG reading available?
@@ -451,7 +451,7 @@ theorem twostep_soe_oddness :
     [del-prete-2013] takes this as given — the chapter's contribution
     is analyzing HOW the Imperfetto gives rise to HAB readings via IMPF's
     forward expansion and event plurality. -/
-def permitsHabitualReading : ViewpointAspectB → Bool
+def permitsHabitualReading : Perfectivity → Bool
   | .imperfective => true
   | .perfective => false
 

@@ -52,7 +52,7 @@ Status marking encodes both viewpoint aspect and modal assertiveness
 namespace Yukatek
 
 open Verb
-open Semantics.Aspect (ViewpointAspectB)
+open Semantics.Aspect (Perfectivity)
 open ArgumentStructure.EventStructure (EventType InternalExternalCause)
 open Mayan (MarkerSet)
 
@@ -98,7 +98,7 @@ inductive StatusCategory where
   deriving DecidableEq, Repr
 
 /-- Aspectual value of a status category (the imperative has none). -/
-def StatusCategory.viewpointAspect : StatusCategory → Option ViewpointAspectB
+def StatusCategory.viewpointAspect : StatusCategory → Option Perfectivity
   | .completive => some .perfective
   | .subjunctive => some .perfective
   | .incompletive => some .imperfective

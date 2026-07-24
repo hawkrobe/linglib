@@ -99,7 +99,7 @@ def defaultER (f : ReichenbachFrame T) : Prop :=
 /-- Perfective: E ⊆ R (event contained in reference).
     Simplified to E = R for point-based times.
     TODO: proper interval-based perfective/imperfective distinction
-    lives in `Semantics/Aspect/Basic.lean` (`ViewpointAspectB`). -/
+    lives in `Semantics/Aspect/Basic.lean` (`Perfectivity`). -/
 def isPerfective (f : ReichenbachFrame T) : Prop :=
   f.eventTime = f.referenceTime
 

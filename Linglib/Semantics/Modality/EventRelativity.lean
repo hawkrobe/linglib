@@ -578,7 +578,7 @@ existential quantification that performs the binding. -/
 viewpoint (perfective or imperfective). The two viewpoints differ
 in temporal containment (τ(e) ⊆ t vs t ⊂ τ(e)) but both bind
 the same event variable — the VP event. -/
-inductive ViewpointAspectB' where
+inductive Perfectivity' where
   | perfective
   | imperfective
   deriving DecidableEq, Repr
@@ -586,17 +586,17 @@ inductive ViewpointAspectB' where
 /-- Aspect always binds the modal's event variable to the VP event.
 This is WHY low modals have `defaultBinder = .vpEvent`: the
 structural source of that binding is aspect's ∃e quantification. -/
-def ViewpointAspectB'.bindsTo : ViewpointAspectB' → EventBinder
+def Perfectivity'.bindsTo : Perfectivity' → EventBinder
   | .perfective => .vpEvent
   | .imperfective => .vpEvent
 
-theorem aspect_always_binds_vp (asp : ViewpointAspectB') :
+theorem aspect_always_binds_vp (asp : Perfectivity') :
     asp.bindsTo = .vpEvent := by cases asp <;> rfl
 
 /-- Aspect binding entails the low-modal flavor restriction:
 since aspect binds to VP events, and VP events lack content,
 aspect-bound modals cannot be epistemic. -/
-theorem aspect_bound_no_epistemic (asp : ViewpointAspectB') :
+theorem aspect_bound_no_epistemic (asp : Perfectivity') :
     asp.bindsTo.canProjectEpistemic = false := by cases asp <;> rfl
 
 

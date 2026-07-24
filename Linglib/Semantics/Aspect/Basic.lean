@@ -94,33 +94,32 @@ inductive ViewpointType where
   | neutral       -- Smith 1997: initial endpoint + internal stages visible, F(e) not visible
   deriving DecidableEq, Repr, Inhabited
 
-/-- Bool-level viewpoint aspect, capturing the perfective/imperfective distinction
-    without the full interval-based `Event Time → Prop`/`IntervalPred` machinery.
-
-    Used by `Modal/Ability.lean` and the actuality-inference consumers
-    (`Modality/ActualityEntailments.lean`, `Studies/Hacquard2006.lean`)
-    where the key insight is simply
-    "perfective requires actualization, imperfective doesn't." -/
-inductive ViewpointAspectB where
+/-- The perfective / imperfective opposition — viewpoint aspect at its
+    coarsest, without the interval-based `Event Time → Prop`/`IntervalPred`
+    machinery of Klein's full classification (`ViewpointType`). The right
+    granularity where the key fact is simply "perfective requires
+    actualization, imperfective doesn't", or where the opposition is
+    lexically encoded (`Verb.Stem`). -/
+inductive Perfectivity where
   | perfective
   | imperfective
   deriving DecidableEq, Repr, Inhabited
 
 /-- Project `ViewpointType` to the coarser perfective/imperfective distinction.
     Returns `none` for `perfect` and `prospective` (neither is simply perf/impf). -/
-def ViewpointType.toBoolAspect : ViewpointType → Option ViewpointAspectB
+def ViewpointType.toPerfectivity : ViewpointType → Option Perfectivity
   | .perfective => some .perfective
   | .imperfective => some .imperfective
   | .perfect | .prospective | .neutral => none
 
-/-- Embed `ViewpointAspectB` back into Klein's full classification. -/
-def ViewpointAspectB.toKleinViewpoint : ViewpointAspectB → ViewpointType
+/-- Embed `Perfectivity` back into Klein's full classification. -/
+def Perfectivity.toKleinViewpoint : Perfectivity → ViewpointType
   | .perfective => .perfective
   | .imperfective => .imperfective
 
 /-- Roundtrip: embedding then projecting is the identity. -/
-theorem toBoolAspect_toKleinViewpoint (a : ViewpointAspectB) :
-    a.toKleinViewpoint.toBoolAspect = some a := by cases a <;> rfl
+theorem toPerfectivity_toKleinViewpoint (a : Perfectivity) :
+    a.toKleinViewpoint.toPerfectivity = some a := by cases a <;> rfl
 
 /-- The TT↔TSit interval relation for each viewpoint ([klein-1994]: 108). -/
 def ViewpointType.ttTSitRelation {Time : Type*} [LinearOrder Time]

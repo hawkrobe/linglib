@@ -1118,7 +1118,7 @@ import Linglib.Fragments.Slavic.Belarusian.Case
 import Linglib.Fragments.Slavic.Bulgarian.Evidentiality
 import Linglib.Fragments.Slavic.Bulgarian.Evidentials
 import Linglib.Fragments.Slavic.Bulgarian.QuestionParticles
-import Linglib.Fragments.Slavic.Bulgarian.VerbalPrefixes
+import Linglib.Fragments.Slavic.Bulgarian.Verbs
 import Linglib.Fragments.Slavic.Case
 import Linglib.Fragments.Slavic.Cassubian.Case
 import Linglib.Fragments.Slavic.Czech.Case
@@ -1128,10 +1128,9 @@ import Linglib.Fragments.Slavic.Czech.Particles
 import Linglib.Fragments.Slavic.Czech.PolarityItems
 import Linglib.Fragments.Slavic.Czech.Reciprocals
 import Linglib.Fragments.Slavic.Macedonian.QuestionParticles
-import Linglib.Fragments.Slavic.Params
 import Linglib.Fragments.Slavic.Polish.Case
 import Linglib.Fragments.Slavic.Polish.QuestionParticles
-import Linglib.Fragments.Slavic.Polish.VerbalPrefixes
+import Linglib.Fragments.Slavic.Polish.Verbs
 import Linglib.Fragments.Slavic.Russian.Adposition
 import Linglib.Fragments.Slavic.Russian.Agreement
 import Linglib.Fragments.Slavic.Russian.Case
@@ -1146,7 +1145,7 @@ import Linglib.Fragments.Slavic.Russian.QuestionParticles
 import Linglib.Fragments.Slavic.Russian.Reciprocals
 import Linglib.Fragments.Slavic.Russian.Relativization
 import Linglib.Fragments.Slavic.Russian.TemporalDeictic
-import Linglib.Fragments.Slavic.Russian.VerbalPrefixes
+import Linglib.Fragments.Slavic.Russian.Verbs
 import Linglib.Fragments.Slavic.Russian.WordOrder
 import Linglib.Fragments.Slavic.Serbian.Case
 import Linglib.Fragments.Slavic.Serbian.QuestionParticles
@@ -1870,6 +1869,7 @@ import Linglib.Semantics.Verb.Root.Template
 import Linglib.Semantics.Verb.Root.Typology
 import Linglib.Semantics.Verb.RootContent
 import Linglib.Semantics.Verb.Smuggling
+import Linglib.Semantics.Verb.Stem
 import Linglib.Studies.AbneyKeshet2025
 import Linglib.Studies.AbramskySadrzadeh2014
 import Linglib.Studies.Abusch1997
@@ -2322,8 +2322,10 @@ import Linglib.Studies.IoninMatushansky2006
 import Linglib.Studies.IppolitoKissWilliams2022
 import Linglib.Studies.IppolitoKissWilliams2025
 import Linglib.Studies.Israel2001
+import Linglib.Studies.Istratkova2004
 import Linglib.Studies.ItoMester2009
 import Linglib.Studies.Izvorski1997
+import Linglib.Studies.Jablonska2004
 import Linglib.Studies.JackendoffAudring2020
 import Linglib.Studies.Jaeger2007
 import Linglib.Studies.Jaeger2014
@@ -2679,6 +2681,7 @@ import Linglib.Studies.Stump2020
 import Linglib.Studies.Sudo2016
 import Linglib.Studies.SumersEtAl2023
 import Linglib.Studies.SuttonFilip2021
+import Linglib.Studies.Svenonius2004
 import Linglib.Studies.TaraldsenEtAl2018
 import Linglib.Studies.Tay2024
 import Linglib.Studies.TenWolde2023
@@ -2937,3 +2940,6 @@ import Linglib.Syntax.WordGrammar.Inheritance.Default
 import Linglib.Syntax.WordGrammar.Inheritance.Order
 import Linglib.Syntax.WordGrammar.LexicalRules
 import Linglib.Syntax.WordGrammar.Network
+import Linglib.Data.Examples.Svenonius2004
+import Linglib.Data.Examples.Istratkova2004
+import Linglib.Data.Examples.Jablonska2004

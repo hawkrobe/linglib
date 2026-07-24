@@ -41,7 +41,7 @@ the simple past tense form, the periphrastic *used to*, and *would*.
   B&D's central claim is that HAB is a modalized *existential* over event sums,
   structurally distinct from `everyOn`'s universal form; its force is recorded
   by `habConfig.force = .existential`.
-- `Aspect/Basic.lean`: `ViewpointAspectB` — the `aspectCompatibility`
+- `Aspect/Basic.lean`: `Perfectivity` — the `aspectCompatibility`
   bridge connects B&D's Table (41) to the aspectual infrastructure.
 - `DelPrete2013.lean`: Del Prete's Same-Object Effect (SOE) is the Italian
   analogue of the same-object readings in B&D's exx. (4b), (6b), (7b).
@@ -54,7 +54,7 @@ open Intensional (WorldTimeIndex)
 
 open Quantification
 open Semantics.Genericity (Situation traditionalGEN)
-open Semantics.Aspect (ViewpointAspectB)
+open Semantics.Aspect (Perfectivity)
 
 -- ═══ Operator Distinction ═══
 
@@ -154,14 +154,14 @@ def requiresActualization : HabitualForm → Bool
   | .usedTo => true
   | .would => false
 
--- ═══ Bridge to ViewpointAspectB ═══
+-- ═══ Bridge to Perfectivity ═══
 
 /-- Which viewpoint aspects each habitual form is compatible with,
-    connecting B&D's Table (41) to `ViewpointAspectB` in `Aspect/Core.lean`.
+    connecting B&D's Table (41) to `Perfectivity` in `Aspect/Core.lean`.
 
     The simple form admits both imperfective and perfective; the
     periphrastic forms are imperfective only. -/
-def aspectCompatibility : HabitualForm → ViewpointAspectB → Bool
+def aspectCompatibility : HabitualForm → Perfectivity → Bool
   | .simpleForm, _ => true                 -- both aspects
   | .usedTo, .imperfective => true
   | .usedTo, .perfective => false

@@ -42,7 +42,7 @@ structure AspectReadingEntry where
   /-- Description of the aspect form -/
   aspectLabel : String
   /-- Viewpoint aspect category -/
-  aspect : ViewpointAspectB
+  aspect : Perfectivity
   /-- Whether the aspect forces a bounded (telic/culminating) reading -/
   culminating : Bool
   /-- Resulting reading of the temporal clause -/
