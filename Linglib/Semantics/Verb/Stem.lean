@@ -22,12 +22,12 @@ namespace Verb
 open Semantics.Aspect (Perfectivity)
 
 /-- A verb-stem lexical entry: citation form, lexically encoded
-    viewpoint aspect (the dictionary-consensus value), and gloss. -/
+    perfectivity (the dictionary-consensus value), and gloss. -/
 structure Stem where
   /-- Citation form. -/
   form   : String
-  /-- Viewpoint aspect (dictionary-consensus value). -/
-  aspect : Perfectivity
+  /-- Perfectivity (dictionary-consensus value). -/
+  perfectivity : Perfectivity
   /-- English gloss. -/
   gloss  : String
   deriving DecidableEq, Repr

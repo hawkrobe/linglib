@@ -121,7 +121,7 @@ theorem pairsTable_stems_homogeneous
     value her aspectless analysis reinterprets as default behaviour. -/
 theorem homogeneous_imperfective
     (s : Stem) (hs : s ∈ homogeneousSimplexes) :
-    s.aspect = Perfectivity.imperfective := by
+    s.perfectivity = Perfectivity.imperfective := by
   fin_cases hs <;> rfl
 
 /-- Her hyphen segmentation equals each analysis' decomposition (all
