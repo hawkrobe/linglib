@@ -56,7 +56,7 @@ variable {σ α β : Type*}
 /-- View a synchronous transducer as a block `SFST`: singleton outputs, empty flush. -/
 def Mealy.toSFST (T : Mealy σ α β) : SFST α β σ where
   start := T.initial
-  step s x := ((T.step s x).1, [(T.step s x).2])
+  step s x := (T.step s x, [T.output s x])
   finalOutput _ := []
 
 @[simp] theorem Mealy.toSFST_runFrom (T : Mealy σ α β) (s : σ) (xs : List α) :
@@ -65,7 +65,7 @@ def Mealy.toSFST (T : Mealy σ α β) : SFST α β σ where
   | nil => rfl
   | cons x xs ih =>
     rw [SFST.runFrom_cons, Mealy.runFrom_cons,
-      show T.toSFST.step s x = ((T.step s x).1, [(T.step s x).2]) from rfl, ih]
+      show T.toSFST.step s x = (T.step s x, [T.output s x]) from rfl, ih]
     rfl
 
 @[simp] theorem Mealy.toSFST_run (T : Mealy σ α β) : T.toSFST.run = T.run :=
@@ -119,8 +119,8 @@ theorem IsBimachineWeaklyDeterministic.of_mealyComputable {f : List α → List 
     (h : IsMealyComputable f) : IsBimachineWeaklyDeterministic f := by
   obtain ⟨σ, _, T, rfl⟩ := h
   set B : Bimachine σ Unit α α :=
-    { lInit := T.initial, lStep := fun l a => (T.step l a).1,
-      rInit := (), rStep := fun _ _ => (), out := fun l a _ => (T.step l a).2 } with hB
+    { lInit := T.initial, lStep := T.step,
+      rInit := (), rStep := fun _ _ => (), out := fun l a _ => T.output l a } with hB
   have hrun : B.run = T.run := by
     funext xs
     apply List.ext_getElem?
@@ -128,7 +128,7 @@ theorem IsBimachineWeaklyDeterministic.of_mealyComputable {f : List α → List 
     rw [Bimachine.run_getElem?, T.getElem?_run]
     rfl
   have hni : B.IsNonInteracting :=
-    ⟨fun l a => (T.step l a).2, fun _ a => a, fun l a r => (unite_default_right _ _).symm⟩
+    ⟨T.output, fun _ a => a, fun l a r => (unite_default_right _ _).symm⟩
   exact hrun ▸ isBimachineWeaklyDeterministic B hni
 
 /-- **Weakly deterministic ⊆ regular.** A non-interacting bimachine is a bimachine. -/
@@ -236,8 +236,9 @@ def ISLRule.toMealy {α β : Type*} {k : ℕ} [Fintype α] (r : ISLRule k α β)
     (hs : ∀ w x, (r.windowOutput w x).length = 1) :
     Mealy {l : List α // l.length ≤ k - 1} α β where
   initial := ⟨[], Nat.zero_le _⟩
-  step w x := (⟨(w.val ++ [x]).rtake (k - 1), List.length_rtake_le _ _⟩,
-    (r.windowOutput w.val x).head (by have := hs w.val x; exact List.ne_nil_of_length_pos (by omega)))
+  step w x := ⟨(w.val ++ [x]).rtake (k - 1), List.length_rtake_le _ _⟩
+  output w x := (r.windowOutput w.val x).head
+    (by have := hs w.val x; exact List.ne_nil_of_length_pos (by omega))
 
 theorem ISLRule.toMealy_run_eq_apply {α β : Type*} {k : ℕ} [Fintype α] (r : ISLRule k α β)
     (hs : ∀ w x, (r.windowOutput w x).length = 1) : (r.toMealy hs).run = r.apply := by
@@ -266,8 +267,9 @@ def OSLRule.toMealy {α β : Type*} {k : ℕ} (r : OSLRule k α β)
     (hs : ∀ w x, (r.windowOutput w x).length = 1) :
     Mealy {l : List β // l.length ≤ k - 1} α β where
   initial := ⟨[], Nat.zero_le _⟩
-  step w x := (⟨(w.val ++ r.windowOutput w.val x).rtake (k - 1), List.length_rtake_le _ _⟩,
-    (r.windowOutput w.val x).head (by have := hs w.val x; exact List.ne_nil_of_length_pos (by omega)))
+  step w x := ⟨(w.val ++ r.windowOutput w.val x).rtake (k - 1), List.length_rtake_le _ _⟩
+  output w x := (r.windowOutput w.val x).head
+    (by have := hs w.val x; exact List.ne_nil_of_length_pos (by omega))
 
 theorem OSLRule.toMealy_run_eq_apply {α β : Type*} {k : ℕ} [Fintype β] (r : OSLRule k α β)
     (hs : ∀ w x, (r.windowOutput w x).length = 1) : (r.toMealy hs).run = r.apply := by
