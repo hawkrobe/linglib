@@ -3,6 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
+import Mathlib.Computability.DFA
 import Mathlib.Data.Fintype.EquivFin
 import Mathlib.Data.List.Basic
 import Mathlib.Logic.Equiv.Defs
@@ -27,6 +28,7 @@ instance must be supplied for the finite-state class `IsMealyComputable`.
 * `Mealy.ofFlag`: the one-bit machine tracking whether an earlier symbol satisfies `p`
 * `Mealy.reindex`: lifts an equivalence on states to an equivalence on machines
 * `IsMealyComputable f`: `f` is computed by some finite-state `Mealy`
+* `DFA.comapMealy`: pulls an acceptor back along a transducer
 
 ## Main theorems
 
@@ -38,6 +40,8 @@ instance must be supplied for the finite-state class `IsMealyComputable`.
 * `isMealyComputable_iff`: the universe-polymorphic characterization
 * `isMealyComputable_of_stateSummary`: the sufficiency half of Myhill–Nerode — a
   finite left-congruent state summary determining the output yields a machine
+* `IsMealyComputable.isRegular_preimage`: Mealy-computable maps pull back regular
+  languages
 
 ## Implementation notes
 
@@ -276,5 +280,41 @@ theorem isMealyComputable_id : IsMealyComputable (id : List α → List α) :=
   isMealyComputable_of_stateSummary
     (fun _ => ()) (fun _ _ => ()) (fun _ x => x)
     (fun _ _ => rfl) (fun _ _ _ => by simp) (fun _ => rfl)
+
+/-! ### Pulling back acceptors -/
+
+section ComapMealy
+
+variable {τ : Type*} (M : DFA β τ) (T : Mealy σ α β)
+
+/-- `M.comapMealy T` pulls the acceptor `M` back along the transducer `T`: the product
+machine runs `T` and feeds its output symbols to `M`, so it accepts `x` if and only if
+`M` accepts `T.run x`. -/
+@[simps]
+def _root_.DFA.comapMealy : DFA α (σ × τ) where
+  step p a := ((T.step p.1 a).1, M.step p.2 (T.step p.1 a).2)
+  start := (T.initial, M.start)
+  accept := {p | p.2 ∈ M.accept}
+
+@[simp] theorem _root_.DFA.evalFrom_comapMealy (p : σ × τ) (xs : List α) :
+    (M.comapMealy T).evalFrom p xs
+      = (T.stateAfter p.1 xs, M.evalFrom p.2 (T.runFrom p.1 xs)) := by
+  induction xs generalizing p <;> simp [*]
+
+@[simp] theorem _root_.DFA.accepts_comapMealy :
+    (M.comapMealy T).accepts = T.run ⁻¹' M.accepts := by
+  ext xs
+  simp [DFA.mem_accepts, DFA.eval, Mealy.run]
+  rfl
+
+end ComapMealy
+
+/-- Mealy-computable maps pull back regular languages (`DFA.comapMealy`). -/
+theorem IsMealyComputable.isRegular_preimage {f : List α → List β}
+    (hf : IsMealyComputable f) {L : Language β} (hL : L.IsRegular) :
+    Language.IsRegular (f ⁻¹' L) := by
+  obtain ⟨σ, _, T, rfl⟩ := hf
+  obtain ⟨τ, _, M, rfl⟩ := hL
+  exact ⟨σ × τ, inferInstance, M.comapMealy T, M.accepts_comapMealy T⟩
 
 end Subregular
