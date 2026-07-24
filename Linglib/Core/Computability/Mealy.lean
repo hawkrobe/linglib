@@ -102,12 +102,7 @@ first `i` input symbols. -/
 theorem getElem?_runFrom (s : σ) (xs : List α) (i : ℕ) :
     (T.runFrom s xs)[i]?
       = xs[i]?.map fun x => (T.step (T.stateAfter s (xs.take i)) x).2 := by
-  induction xs generalizing s i with
-  | nil => simp
-  | cons x xs ih =>
-    cases i with
-    | zero => simp
-    | succ j => simp [ih, List.take_succ_cons]
+  induction xs generalizing s i <;> cases i <;> simp [*]
 
 /-- Output coordinate `i` of `T.run` is the step output at the state reached after the
 first `i` input symbols. -/
