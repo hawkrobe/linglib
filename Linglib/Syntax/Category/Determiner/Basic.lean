@@ -31,8 +31,8 @@ localized to a single declaration.
 * `Determiner.Entry` — a determiner occurrence in a language's inventory.
 * `Determiner.markingStrategy` — derives the [moroney-2021] 4-cell typology
   from a declared `List Determiner.Entry`.
-* `Determiner.licenses` — lexical availability: the declared inventory carries
-  a form for a given `DescriptionKind`.
+* `Determiner.Realizes` — morphological realization: the declared inventory
+  carries a form for a given `DescriptionKind`.
 
 ## Implementation notes
 
@@ -189,7 +189,7 @@ def markingStrategy (ds : List Entry) : DefMarkingStrategy :=
 def articleType (ds : List Entry) : ArticleType :=
   strategyToArticleType (markingStrategy ds)
 
-/-! ### Kind predicates over an inventory (for licensing) -/
+/-! ### Kind predicates over an inventory (for realization) -/
 
 /-- The occurrence is an indefinite article. -/
 def Entry.IsIndefiniteArticle : Entry → Prop
@@ -215,19 +215,22 @@ def Entry.IsPossessive : Entry → Prop
 instance : DecidablePred Entry.IsPossessive := fun e => by
   cases e <;> unfold Entry.IsPossessive <;> infer_instance
 
-/-! ### Licensing: lexical availability of description kinds -/
+/-! ### Realization: which description kinds the inventory has forms for -/
 
-/-- Does the declared determiner set have the surface form needed to realize a
-given kind of nominal description? Bare nominals are always licensed; unique and
-anaphoric definites need a determiner exponing the corresponding presupposition
-type (`MarksPresup`); indefinite/demonstrative/possessive need a determiner of
-that kind.
+/-- Morphological realization: the declared determiner inventory contains a
+form for the given kind of nominal description. Bare nominals need no
+determiner, so `.bare` is vacuously realized; unique and anaphoric definites
+need a determiner exponing the corresponding presupposition type
+(`MarksPresup`); indefinite/demonstrative/possessive need a determiner of that
+kind.
 
-`licenses` is *availability* — the inventory carries a form for this kind — not
-*choice*: which licensed form a context selects (type-shift blocking, Index!,
-Maximize Presupposition) is downstream pragmatics ([jenks-2018]'s competition
-principle, `Studies/Jenks2018.lean`). -/
-def licenses (ds : List Entry) : DescriptionKind → Prop
+This is inventory data, not syntactic licensing — no structural relation
+between a licensor and licensee is modeled — and not expressibility or
+felicity: a kind can be *expressed* without a determiner realizing it (Shan
+anaphoric definites surface as bare nouns, [moroney-2021]), and which realized
+form a context *selects* (type-shift blocking, Index!, Maximize Presupposition)
+is downstream pragmatics ([jenks-2018], `Studies/Jenks2018.lean`). -/
+def Realizes (ds : List Entry) : DescriptionKind → Prop
   | .bare          => True
   | .indefinite    => ∃ e ∈ ds, e.IsIndefiniteArticle
   | .unique        => MarksPresup ds .uniqueness
@@ -235,14 +238,14 @@ def licenses (ds : List Entry) : DescriptionKind → Prop
   | .demonstrative => ∃ e ∈ ds, e.IsDemonstrative
   | .possessive    => ∃ e ∈ ds, e.IsPossessive
 
-instance (ds : List Entry) : DecidablePred (licenses ds) := fun k => by
-  cases k <;> unfold licenses <;> infer_instance
+instance (ds : List Entry) : DecidablePred (Realizes ds) := fun k => by
+  cases k <;> unfold Realizes <;> infer_instance
 
-/-- Licensing an article strength's kind is exactly marking that strength: the
+/-- Realizing an article strength's kind is exactly marking that strength: the
 description-kind pipeline (`DefPresupType.toKind`) and the inventory pipeline
 (`MarksPresup`) coincide by construction. -/
-theorem licenses_toKind (ds : List Entry) (p : DefPresupType) :
-    licenses ds p.toKind ↔ MarksPresup ds p := by
+theorem realizes_toKind (ds : List Entry) (p : DefPresupType) :
+    Realizes ds p.toKind ↔ MarksPresup ds p := by
   cases p <;> exact Iff.rfl
 
 /-! ### Cell coverage: the derivation reproduces all four Moroney cells -/

@@ -41,8 +41,8 @@ def demonstrativePresupType : DefPresupType := .familiarity
 
 /-- The kinds of nominal description an inventory can realize — the Frame-free
 skeleton of `Semantics.Definiteness.Description` (one case per constructor,
-payload erased). Lexical-availability questions (licensing, marking typology)
-depend only on this kind, so they are stated over it rather than over the
+payload erased). Inventory questions (realization, marking typology) depend
+only on this kind, so they are stated over it rather than over the
 entity/index-parameterized `Description`. -/
 inductive DescriptionKind where
   | bare

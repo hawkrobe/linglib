@@ -661,8 +661,8 @@ records the morphological inventory directly (the `Article`/`Demonstrative`/
 
 This section verifies that the determiner-derived classifications agree
 with the parameters used in §7 for all four languages, and connects the
-licensing predicate `Determiner.licenses` to Moroney's central empirical
-finding: Shan licenses anaphoric definiteness without any anaphoric article. -/
+realization predicate `Determiner.Realizes` to Moroney's central empirical
+finding: Shan expresses anaphoric definiteness without any anaphoric article. -/
 
 open Intensional
 open Intensional.Variables
@@ -698,39 +698,39 @@ theorem mandarin_in_markedAnaphoric :
   Mandarin.Definiteness.marking
 
 /-- Moroney's central observation, stated against the determiner set:
-    Shan has *no* determiner that licenses the anaphoric kind, yet
+    Shan has *no* determiner realizing the anaphoric kind, yet
     expresses anaphoric definiteness through bare nouns and optional
-    demonstratives. The licensing predicate makes this morphologically
-    visible — `.anaphoric` is not licensed (no determiner expones a
+    demonstratives. The realization predicate makes this morphologically
+    visible — `.anaphoric` has no realizing form (no determiner expones a
     familiarity use). -/
-theorem shan_anaphoric_not_licensed_via_article :
-    ¬ Determiner.licenses shanDets .anaphoric := by
+theorem shan_anaphoric_not_realized_via_article :
+    ¬ Determiner.Realizes shanDets .anaphoric := by
   decide
 
-/-- Bare nominals are licensed for Shan (and every language) — this is the
-    morphological substrate for Moroney's analysis: Shan's anaphoric
-    definites surface as bare nouns. -/
-theorem shan_bare_licensed : Determiner.licenses shanDets .bare := trivial
+/-- Bare nominals need no determiner (realized in Shan and every language) —
+    this is the morphological substrate for Moroney's analysis: Shan's
+    anaphoric definites surface as bare nouns. -/
+theorem shan_bare_realized : Determiner.Realizes shanDets .bare := trivial
 
-/-- Demonstratives are licensed in Shan (the *nâj*/*nân* paradigm).
-    Combined with `shan_bare_licensed`, this gives the morphological
+/-- Shan realizes the demonstrative kind (the *nâj*/*nân* paradigm).
+    Combined with `shan_bare_realized`, this gives the morphological
     inventory of strategies Shan deploys for definite reference. -/
-theorem shan_demonstrative_licensed :
-    Determiner.licenses shanDets .demonstrative := by
+theorem shan_demonstrative_realized :
+    Determiner.Realizes shanDets .demonstrative := by
   decide
 
-/-- English licenses `.anaphoric` via the syncretic *the* (which expones a
+/-- English realizes `.anaphoric` via the syncretic *the* (which expones a
     familiarity use), *without* an independent strong article. Contrasts with
-    Shan (no licensing form at all) and German (independent strong form). -/
-theorem english_anaphoric_licensed_via_syncretism :
-    Determiner.licenses englishDets .anaphoric := by
+    Shan (no realizing form at all) and German (independent strong form). -/
+theorem english_anaphoric_realized_via_syncretism :
+    Determiner.Realizes englishDets .anaphoric := by
   decide
 
-/-- German licenses `.anaphoric` via its independent strong article (no
+/-- German realizes `.anaphoric` via its independent strong article (no
     syncretism). The unique vs anaphoric distinction is morphologically
     marked. -/
-theorem german_anaphoric_licensed_via_strong_article :
-    Determiner.licenses germanDets .anaphoric := by
+theorem german_anaphoric_realized_via_strong_article :
+    Determiner.Realizes germanDets .anaphoric := by
   decide
 
 /-- The English and Mandarin determiner sets both collapse to
