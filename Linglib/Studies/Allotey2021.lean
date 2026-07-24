@@ -3,6 +3,7 @@ import Linglib.Fragments.Ga.Predicates
 import Linglib.Syntax.NullSubject
 import Linglib.Syntax.Control.Basic
 import Linglib.Syntax.Control.CopyControl
+import Linglib.Syntax.Minimalist.Probe.Basic
 
 /-!
 # Allotey (2021): Overt Pronouns of Infinitival Predicates of Gã
@@ -123,6 +124,30 @@ theorem oc_determined_by_clause_type (c : CTP) :
 theorem irrealisNi_forces_coreference :
     (clauseProperties .irrealisNi).noncoreferentialSubject = false := rfl
 
+/-! ### The irrealis marker under implicative verbs -/
+
+/-- [allotey-2021] §5.2.3: the irrealis marker `á` on the embedded
+    pronoun is absent under positive implicative verbs — their
+    complements are entailed realized ([karttunen-1971]), incompatible
+    with irrealis marking — and present otherwise. Rows record (verb,
+    whether the embedded pronoun carries the marker): *kai* 'remember'
+    and *nyɛ* 'manage' suppress it (exx 89a–b, *mi/\*má*), *kplɛnɔ*
+    'agree' and *kpaŋ* 'plan' require it (exx 89c–d, *\*mi/má*), and
+    negative-implicative *hiɛ-kpa-nɔ* 'forget' — whose complement is
+    entailed UNrealized — carries it (exx 102–103, *ó/é*). -/
+def irrealisMarkerData : List (Ga.CTP × Bool) :=
+  [ (Ga.kai,      false)
+  , (Ga.nye,      false)
+  , (Ga.kpleno,   true)
+  , (Ga.kpang,    true)
+  , (Ga.hiekpano, true) ]
+
+/-- The marker's distribution follows from the fragment's implicativity
+    classification: the embedded irrealis marker appears exactly on the
+    complements of non-positive-implicative verbs. -/
+theorem irrealis_marker_iff_not_positive_implicative :
+    ∀ p ∈ irrealisMarkerData, p.2 = !p.1.positiveImplicative := by decide
+
 /-! ### Landau bridge -/
 
 /-- Map Gã clause types to [landau-2004]'s finiteness scale.
@@ -164,11 +189,11 @@ theorem landau_predicts_control (c : EmbeddedClauseType) :
 /-! ### Long-Distance Agree analysis (Allotey's syntactic mechanism) -/
 
 /-- Long Distance Agree configuration ([szabolcsi-2009]): a matrix probe
-    values an embedded goal's unvalued φ across a non-defective C. Folded
-    in from the former single-consumer `Minimalist/LongDistanceAgree.lean`.
-    The contentful dimension is `cIsDefectiveBlocker` — the cross-clausal
-    locality that the `Probe`/defective-intervention vocabulary
-    (`Studies/Halpert2019.lean`) derives rather than stipulates. -/
+    values an embedded goal's unvalued φ across a non-defective C. The
+    contentful dimension is `cIsDefectiveBlocker` — cross-clausal
+    locality, derived from the shared `Minimalist.Probe` search kernel
+    by `licenses_iff_agree` below (the same kernel
+    `Studies/Halpert2019.lean` runs defective intervention through). -/
 structure LDAConfig where
   /-- The probe (matrix v/T/Asp) carries valued φ-features. -/
   probeHasValuedPhi : Bool
@@ -199,6 +224,37 @@ def gaLDAConfig : LDAConfig where
 
 theorem ga_satisfies_LDA :
     LDAConfig.licenses gaLDAConfig = true := rfl
+
+/-- The two positions the matrix φ-probe searches in the LDA
+    configuration, in structural order: the intervening C head, then
+    the embedded subject pronoun. -/
+inductive LDAGoal where
+  | complementizer
+  | embeddedSubject
+  deriving DecidableEq, Repr
+
+/-- The LDA configuration as a `Minimalist.Probe`: a blocking C head is
+    a visible-but-inactive goal — it halts the search without valuing
+    (defective intervention, `Probe.agree_eq_none_of_inactive`); the
+    embedded subject is visible iff it carries unvalued φ and valuable
+    iff the probe has valued φ to transmit. -/
+def LDAConfig.probe (cfg : LDAConfig) : Minimalist.Probe LDAGoal where
+  vis
+    | .complementizer => cfg.cIsDefectiveBlocker
+    | .embeddedSubject => cfg.goalHasUnvaluedPhi
+  act
+    | .complementizer => false
+    | .embeddedSubject => cfg.probeHasValuedPhi
+
+/-- `LDAConfig.licenses` is not a stipulation: it coincides with the
+    canonical relativized search reaching the embedded subject across
+    the C head. -/
+theorem LDAConfig.licenses_iff_agree (cfg : LDAConfig) :
+    cfg.licenses = true ↔
+      cfg.probe.agree [.complementizer, .embeddedSubject]
+        = some .embeddedSubject := by
+  rcases cfg with ⟨p, g, c⟩
+  cases p <;> cases g <;> cases c <;> decide
 
 /-! ### Against the Movement Theory of Control -/
 

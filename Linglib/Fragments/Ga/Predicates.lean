@@ -26,87 +26,97 @@ inductive Control where
   deriving DecidableEq, Repr
 
 /-- A Gã complement-taking predicate: form, gloss, selected embedded
-    clause type, and (for `ni`-clause selectors) its control type;
-    `none` for finite-complement verbs that are not control verbs. -/
+    clause type, (for `ni`-clause selectors) its control type — `none`
+    for finite-complement verbs that are not control verbs — and its
+    positive-implicativity ([karttunen-1971]: does the matrix assertion
+    entail the complement event was realized?). Positive implicativity
+    has a grammatical reflex in Gã: it suppresses the embedded irrealis
+    marker ([allotey-2021]'s asymmetry, formalized in
+    `Studies/Allotey2021.lean`). -/
 structure CTP where
   form    : String
   gloss   : String
   selects : EmbeddedClauseType
   control : Option Control
+  /-- Positive (Karttunen) implicative: the complement is entailed
+      realized. `false` for negative implicatives (*forget*) and
+      non-implicatives alike. -/
+  positiveImplicative : Bool
   deriving Repr, DecidableEq
 
 /-! ### Subject-control verbs (irrealis `ni`-clause) -/
 
 /-- 'want' — subject control; `ni` optionally overt
     ([allotey-2021] ex 34: *Mi-i tao (ni) ma na bo* 'I want to see you'). -/
-def tao : CTP := ⟨"tao", "want", .irrealisNi, some .subject⟩
+def tao : CTP := ⟨"tao", "want", .irrealisNi, some .subject, false⟩
 
 /-- 'hope' (lit. 'face-place-upon') — subject control; `ni` obligatory
     ([allotey-2021] ex 35: *Mi hiɛ-kã-nɔ ni ma ya skul gbi ko*
     'I hope to go to school one day'). -/
-def hiekano : CTP := ⟨"hiɛ-kã-nɔ", "hope", .irrealisNi, some .subject⟩
+def hiekano : CTP := ⟨"hiɛ-kã-nɔ", "hope", .irrealisNi, some .subject, false⟩
 
 /-- 'forget' (lit. 'face-stop-upon') — subject control; `ni` obligatory
     ([allotey-2021] exx 37–38: *O hiɛ-kpa-nɔ ni o kɔ aspaatere lɛ*
     'You forgot to pick up the shoe'). -/
-def hiekpano : CTP := ⟨"hiɛ-kpa-nɔ", "forget", .irrealisNi, some .subject⟩
+def hiekpano : CTP := ⟨"hiɛ-kpa-nɔ", "forget", .irrealisNi, some .subject, false⟩
 
 /-- 'try' (lit. 'squeeze-my-face') — subject control; `ni` obligatory
     ([allotey-2021] ex 36: 'I tried to close the door'). -/
-def miamihie : CTP := ⟨"mia-mi-hiɛ", "try", .irrealisNi, some .subject⟩
+def miamihie : CTP := ⟨"mia-mi-hiɛ", "try", .irrealisNi, some .subject, false⟩
 
 /-- 'remember' — subject control ([allotey-2021] ex 43: *Mi kai ni ma he
     wolo* 'I remembered to buy a book'). With `akɛ` instead of `ni` the
     complement is finite 'remember that' (ex 89a); implicative in the
     control use, so the embedded irrealis marker is suppressed
     (*mi*, not *má*; the paper's §5.2.3 asymmetry). -/
-def kai : CTP := ⟨"kai", "remember", .irrealisNi, some .subject⟩
+def kai : CTP := ⟨"kai", "remember", .irrealisNi, some .subject, true⟩
 
 /-- 'manage / be able to' — subject control; `ni` optionally overt
     ([allotey-2021] ex 39: 'The children managed to buy a home').
     Implicative like `kai`: the embedded irrealis marker is suppressed
     (ex 89b *mi/\*má*). -/
-def nye : CTP := ⟨"nyɛ", "manage", .irrealisNi, some .subject⟩
+def nye : CTP := ⟨"nyɛ", "manage", .irrealisNi, some .subject, true⟩
 
 /-- 'agree' — subject control ([allotey-2021] ex 52; ex 89c shows the
     embedded irrealis marker obligatory: *\*mi/má*). With `akɛ` it takes
     a finite subjunctive complement instead ('agree that…', ex 105). -/
-def kpleno : CTP := ⟨"kplɛnɔ", "agree", .irrealisNi, some .subject⟩
+def kpleno : CTP := ⟨"kplɛnɔ", "agree", .irrealisNi, some .subject, false⟩
 
 /-- 'plan / decide' — subject control ([allotey-2021] exx 89d, 106; the
     embedded irrealis marker is obligatory, and only `ni` — never `akɛ`
     or `kɛji` — introduces the complement). -/
-def kpang : CTP := ⟨"kpaŋ", "plan", .irrealisNi, some .subject⟩
+def kpang : CTP := ⟨"kpaŋ", "plan", .irrealisNi, some .subject, false⟩
 
 /-! ### Object-control verbs (irrealis `ni`-clause) -/
 
 /-- 'help' — object control ([allotey-2021] ex 54: *Mi wa Ama ni e-ya
     skul* 'I helped Ama to go to school'). -/
-def wa : CTP := ⟨"wa", "help", .irrealisNi, some .object⟩
+def wa : CTP := ⟨"wa", "help", .irrealisNi, some .object, false⟩
 
 /-- 'urge / encourage' — object control ([allotey-2021] ex 55). -/
-def kenya : CTP := ⟨"kenya", "urge", .irrealisNi, some .object⟩
+def kenya : CTP := ⟨"kenya", "urge", .irrealisNi, some .object, false⟩
 
-/-- 'force' — object control ([allotey-2021] ex 56). -/
-def dai : CTP := ⟨"dai", "force", .irrealisNi, some .object⟩
+/-- 'force' — object control ([allotey-2021] ex 56); coercive
+    causatives are positive implicatives ([karttunen-1971]). -/
+def dai : CTP := ⟨"dai", "force", .irrealisNi, some .object, true⟩
 
 /-- 'persuade / coax / deceive' (context-dependent, the paper's fn 4) —
     object control ([allotey-2021] exx 57–58). -/
-def laka : CTP := ⟨"laka", "persuade", .irrealisNi, some .object⟩
+def laka : CTP := ⟨"laka", "persuade", .irrealisNi, some .object, false⟩
 
 /-- 'ask' — object control ([allotey-2021] ex 59: 'I asked Ayele to
     tell me a story'). -/
-def bi : CTP := ⟨"bi", "ask", .irrealisNi, some .object⟩
+def bi : CTP := ⟨"bi", "ask", .irrealisNi, some .object, false⟩
 
 /-! ### Finite-complement verbs (`akɛ`- and `kɛji`-clauses) -/
 
 /-- 'say' — utterance verb, finite `akɛ`-clause ([allotey-2021]
     exx 47–49: *Jojo kɛɛ akɛ …* 'Jojo said that …'). -/
-def kee : CTP := ⟨"kɛɛ", "say", .finiteAke, none⟩
+def kee : CTP := ⟨"kɛɛ", "say", .finiteAke, none, false⟩
 
 /-- 'know' — selects a finite `kɛji`-clause for if/whether complements
     ([allotey-2021] exx 104, 108: 'know if they will be coming',
     'doesn't know whether you or he bought the book'). -/
-def le : CTP := ⟨"le", "know", .finiteKeji, none⟩
+def le : CTP := ⟨"le", "know", .finiteKeji, none, false⟩
 
 end Ga
