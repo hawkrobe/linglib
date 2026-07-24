@@ -123,12 +123,7 @@ theorem getElem?_run (xs : List α) (i : ℕ) :
     (T.run xs)[i]? = xs[i]?.map fun x => (T.step (T.stateAfter T.initial (xs.take i)) x).2 :=
   T.getElem?_runFrom T.initial xs i
 
-/-! ### Flag machines
-
-The recurring one-sided-trigger shape: the state is the one-bit "some earlier symbol
-satisfies `p`" flag, so `stateAfter` computes `List.any` and each output cell sees the
-flag over its strict prefix. Under the right-to-left pass `runRight`, the cell sees the
-flag over its strict suffix (`getElem?_ofFlag_runRight`). -/
+/-! ### Flag machines -/
 
 variable (p : α → Bool) (out : Bool → α → β)
 
