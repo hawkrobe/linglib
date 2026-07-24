@@ -1,3 +1,4 @@
+import Linglib.Data.Examples.Jablonska2004
 import Linglib.Studies.Svenonius2004
 
 /-!
@@ -5,115 +6,77 @@ import Linglib.Studies.Svenonius2004
 
 [jablonska-2004] specialises the lexical / superlexical distinction of
 [svenonius-2004] to Polish. Her central claim: the interpretation of
-superlexical *po-* (delimitative vs distributive vs inchoative Degree
-Achievement) is **verbalizer-sensitive** — it depends on the embedded
-verbalizer suffix, with a common semantic denominator across the
-readings. Her fn. 2 notes that *na-* patterns with *po-* in its ability
-to stack (to occur in Asp3), the zone above the Secondary Imperfective.
-
-Entries use the shared carrier `Svenonius2004.PrefixedVerb`.
+superlexical *po-* (delimitative vs distributive vs inceptive) is
+**verbalizer-sensitive** — it depends on the embedded verbalizer, with a
+common semantic denominator across the readings. Her fn. 2 notes that
+*na-* patterns with *po-* in its ability to stack (to occur in Asp3).
 
 ## Main definitions
 
-* `inventory` — six canonical Polish entries covering the
-  lexical / superlexical split (Polish orthography with diacritics).
+* `analyses` — her classified examples: delimitative *po-* on a stative
+  (fn. 21), inceptive *po-* on a psych stative ((54a)), inceptive *za-*
+  on a low -ej- verbalizer stem ((53)).
 
 ## Main results
 
-* `stemAspect_imperfective_of_isSuperlexical` — [svenonius-2004]'s
-  diagnostic (56c) (§4.1) verified across the inventory.
+* `po_same_form_different_readings` — the same fragment morph *po-*
+  carries different superlexical readings across analyses: the
+  verbalizer-sensitivity datum.
+* `stemAspect_imperfective_of_isSuperlexical` — all her superlexical
+  derivations sit on imperfective stems, consistent with
+  [svenonius-2004]'s diagnostic (56c).
 -/
 
 namespace Jablonska2004
 
 open Semantics.Aspect (ViewpointAspectB)
-open Svenonius2004 (PrefixedVerb)
+open Svenonius2004 (Analysis WellStacked)
+open Polish.Verbs
 
-/-! ### Lexical entries -/
+/-- fn. 21: *po-siedzieć* 'sit for a while' — delimitative *po-* on the
+    stative *siedzieć* (contra Młynarczyk's claim that delimitative
+    *po-* avoids statives). -/
+def aFn21 : Analysis :=
+  ⟨Examples.fn21, siedziec, [(po, .superlexical .delimitative)]⟩
 
-/-- *na-pisać* 'write (to completion)' — *na-* as the standard
-    perfectivizer of *pisać*, classified lexical in the
-    [svenonius-2004] framework (pure perfectivizers pattern with
-    low, R-head prefixes). [jablonska-2004]'s own fn. 2 diverges,
-    grouping *na-* with *po-* as Asp3-stackable. Built on the
-    imperfective stem *pisać*. -/
-def napisac : PrefixedVerb where
-  stem          := "pisać"
-  stemAspect    := some .imperfective
-  prefixes      := [("na", .lexical)]
-  baseGloss     := "write"
-  prefixedGloss := "write (to completion)"
+/-- (54a) *po-kochać* 'start loving' — *po-* fixing the left boundary
+    of a state: an inceptive reading of the same prefix. -/
+def a54a : Analysis :=
+  ⟨Examples.ex_54a, kochac, [(po, .superlexical .inceptive)]⟩
 
-/-- *wy-pisać* 'write out, copy out' — lexical *wy-* (spatial 'out',
-    Polish counterpart of Russian *vy-*). Built on the imperfective
-    stem *pisać*. -/
-def wypisac : PrefixedVerb where
-  stem          := "pisać"
-  stemAspect    := some .imperfective
-  prefixes      := [("wy", .lexical)]
-  baseGloss     := "write"
-  prefixedGloss := "write out, copy out"
+/-- (53) *za-jaśnieć* 'start being bright' — inceptive *za-* on a low
+    -ej- verbalizer stem; the reading is inchoation of a state, not of
+    a becoming. -/
+def a53 : Analysis :=
+  ⟨Examples.ex_53, jasniec, [(za, .superlexical .inceptive)]⟩
 
-/-- *przy-nieść* 'bring (carry to)' — lexical *przy-* (allative,
-    Polish counterpart of Russian *pri-*). Built on the imperfective
-    determinate-motion stem *nieść*. -/
-def przyniesc : PrefixedVerb where
-  stem          := "nieść"
-  stemAspect    := some .imperfective
-  prefixes      := [("przy", .lexical)]
-  baseGloss     := "carry"
-  prefixedGloss := "bring (carry to)"
+/-- All analyses of this study. -/
+def analyses : List Analysis := [aFn21, a54a, a53]
 
-/-! ### Superlexical entries -/
+/-! ### Results -/
 
-/-- *za-śpiewać* 'start singing' — superlexical *za-* INCP (Polish
-    counterpart of Russian *za-* on the inceptive reading). Built on
-    the imperfective stem *śpiewać*. -/
-def zaspiewacInceptive : PrefixedVerb where
-  stem          := "śpiewać"
-  stemAspect    := some .imperfective
-  prefixes      := [("za", .superlexical .inceptive)]
-  baseGloss     := "sing"
-  prefixedGloss := "start singing"
+/-- The verbalizer-sensitivity datum: `aFn21` and `a54a` carry the same
+    fragment morph *po-* with different superlexical readings
+    (delimitative on the plain stative, inceptive on the psych
+    stative). -/
+theorem po_same_form_different_readings :
+    aFn21.prefixes.map (·.1) = a54a.prefixes.map (·.1) ∧
+      aFn21.prefixes.map (·.2) ≠ a54a.prefixes.map (·.2) := by
+  exact ⟨rfl, by decide⟩
 
-/-- *po-siedzieć* 'sit for a while' — superlexical *po-* DLMT.
-    [jablonska-2004]'s central topic: with imperfective high
-    verbalizers *po-* gives the delimitative reading shown here.
-    Built on the imperfective stem *siedzieć*. -/
-def posiedziec : PrefixedVerb where
-  stem          := "siedzieć"
-  stemAspect    := some .imperfective
-  prefixes      := [("po", .superlexical .delimitative)]
-  baseGloss     := "sit"
-  prefixedGloss := "sit for a while"
-
-/-- *prze-czytać* 'read through, read completely' — superlexical
-    *prze-* CMPL (completive 'through, all the way'; cf. Bulgarian
-    *iz-*, [svenonius-2004]'s canonical completive). Built on the
-    imperfective stem *czytać*. -/
-def przeczytac : PrefixedVerb where
-  stem          := "czytać"
-  stemAspect    := some .imperfective
-  prefixes      := [("prze", .superlexical .completive)]
-  baseGloss     := "read"
-  prefixedGloss := "read through, read completely"
-
-/-- The canonical inventory: 3 lexical, 3 superlexical. -/
-def inventory : List PrefixedVerb :=
-  [napisac, wypisac, przyniesc, zaspiewacInceptive, posiedziec, przeczytac]
-
-/-! ### Properties -/
-
--- The derived form matches the attested orthographic word.
-example : przeczytac.form = "przeczytać" := rfl
-
-/-- [svenonius-2004]'s diagnostic (56c) (§4.1): superlexical entries
-    select imperfective stems. (Every Polish entry here, lexical
-    included, has an imperfective stem, so the hypothesis is unused.) -/
+/-- All her superlexical derivations sit on imperfective stems,
+    consistent with [svenonius-2004]'s diagnostic (56c). -/
 theorem stemAspect_imperfective_of_isSuperlexical
-    (e : PrefixedVerb) (he : e ∈ inventory)
-    (_hs : ∃ p ∈ e.prefixes, p.2.IsSuperlexical) :
-    e.stemAspect = some ViewpointAspectB.imperfective := by
-  fin_cases he <;> rfl
+    (a : Analysis) (ha : a ∈ analyses) :
+    a.stem.aspect = some ViewpointAspectB.imperfective := by
+  fin_cases ha <;> rfl
+
+/-- The citation-form analyses match her hyphen segmentation ((53)
+    *za-jaś-ni-e-ć* is segmented down to verbalizer suffixes and is
+    excluded). -/
+theorem analyses_match_segmentation
+    (a : Analysis) (ha : a ∈ [aFn21, a54a]) :
+    a.MatchesSegmentation := by
+  fin_cases ha <;> decide
 
 end Jablonska2004

@@ -1,3 +1,4 @@
+import Linglib.Data.Examples.Istratkova2004
 import Linglib.Studies.Svenonius2004
 
 /-!
@@ -5,163 +6,107 @@ import Linglib.Studies.Svenonius2004
 
 [istratkova-2004] documents the Bulgarian-distinctive feature of
 **multiple prefixation**: up to seven prefixes can stack on a single
-verbal root, with superlexical prefixes systematically appearing outside
-lexical ones and outer prefixes taking scope over inner ones. Prefixes
-attach to both perfective and imperfective stems — they don't uniformly
-mark perfectivity — and the large class of simplex *homogeneous* verbs
-(her ex. (2): *misl'a* 'think', *piša* 'write', *četa* 'read', ...) has
-no perfective counterparts and "remains aspectless", behaving as
-imperfective only by default; such stems carry `stemAspect := none`.
+verbal root, with superlexical prefixes systematically outside lexical
+ones and outer prefixes taking scope over inner ones. Prefixes attach to
+both perfective and imperfective stems, and the large class of simplex
+*homogeneous* verbs (her ex. (2)) has no perfective counterparts and
+"remains aspectless" — the fragment stems these analyses are built on
+carry `aspect := none`.
 
 Her *po-* taxonomy distinguishes three superlexical *po-*'s:
 delimitative ('for a while', which does not stack), distributive
 (occurring only after *iz-*), and attenuative ('to a low degree', the
-one that stacks over other superlexicals). [svenonius-2004]'s §1 ex. (3)
-glosses the *po-* of *po-na-razkaža* as DLMT; on her own taxonomy it is
-the attenuative *po-* (her (23c) *po-na-prodam* 'sell a few things'),
-and the entries below follow her labels.
-
-Entries use the shared carrier `Svenonius2004.PrefixedVerb`; multi-prefix
-verbs are entries whose `prefixes` list has more than one element, and
-their word-formation trees and forms are derived.
+one that stacks over other superlexicals). Where [svenonius-2004]'s (3a)
+glosses stacked *po-* as DLMT, the analyses here follow her own labels
+(attenuative in `a23c`, distributive after *iz-* in `a22b`).
 
 ## Main definitions
 
-* `inventory` — eight entries: four single-prefix lexical, two
-  single-prefix superlexical, two multi-prefix.
+* `analyses` — her classified examples: the (1)/(3) single-prefix
+  derivations on homogeneous simplexes, and the (22b)/(23c) stacks on
+  *pro-dam* 'sell'.
 
 ## Main results
 
-* `inventory_wellStacked` — every entry satisfies
-  `Svenonius2004.WellStacked`: no lexical prefix appears outside a
-  superlexical one, the structural invariant of her stacking data.
+* `analyses_wellStacked` — every stack keeps superlexicals outside
+  lexicals (`Svenonius2004.WellStacked`).
+* `pairsTable_stems_aspectless` — the (1)/(3)-table derivations attach
+  to aspectless homogeneous stems, her quantization claim.
+* `analyses_match_segmentation` — her hyphen segmentation equals each
+  analysis' prefix-stem decomposition (all rows are citation forms).
 -/
 
 namespace Istratkova2004
 
-open Svenonius2004 (PrefixedVerb WellStacked)
+open Svenonius2004 (Analysis WellStacked)
+open Bulgarian.Verbs
 
-/-! ### Single-prefix lexical entries
+/-! ### Single-prefix analyses (her (1)/(3) tables) -/
 
-Citation forms are first-person singular present, as in the paper
-(Bulgarian has no infinitive). -/
+/-- (1a) *za-piša* 'put down in writing' — lexical *za-* on *piša*. -/
+def a1a : Analysis := ⟨Examples.ex_1a, pisha, [(za, .lexical)]⟩
 
-/-- *za-piša* 'write down, note' — lexical *za-* on the homogeneous
-    simplex *piša* 'write' ([istratkova-2004] exx. (1a), (2f)). -/
-def zapisa : PrefixedVerb where
-  stem          := "piša"
-  stemAspect    := none
-  prefixes      := [("za", .lexical)]
-  baseGloss     := "write"
-  prefixedGloss := "write down"
+/-- (3a) *iz-misl'a* 'make up (a story)' — lexical *iz-* (idiosyncratic
+    meaning shift) on *misl'a*. -/
+def a3a : Analysis := ⟨Examples.ex_3a, misla, [(iz, .lexical)]⟩
 
-/-- *iz-misl'a* 'make up (a story)' — lexical *iz-* with idiosyncratic
-    meaning shift on the homogeneous simplex *misl'a* 'think'
-    ([istratkova-2004] exx. (3a), (2a)). -/
-def izmisla : PrefixedVerb where
-  stem          := "misl'a"
-  stemAspect    := none
-  prefixes      := [("iz", .lexical)]
-  baseGloss     := "think"
-  prefixedGloss := "make up (a story)"
+/-- (3b) *za-običam* 'start to love' — superlexical inceptive *za-*. -/
+def a3b : Analysis := ⟨Examples.ex_3b, obicham, [(za, .superlexical .inceptive)]⟩
 
-/-- *po-znam* 'guess' — lexical *po-* on the homogeneous simplex *znam*
-    'know' ([istratkova-2004] exx. (3c), (2c)). The fully idiosyncratic
-    meaning is [svenonius-2004]'s own lexicality diagnostic; her ex. (3)
-    lists the perfective-imperfective pair without a superlexical
-    label. -/
-def poznam : PrefixedVerb where
-  stem          := "znam"
-  stemAspect    := none
-  prefixes      := [("po", .lexical)]
-  baseGloss     := "know"
-  prefixedGloss := "guess"
+/-- (3c) *po-znam* 'guess' — lexical *po-*: the fully idiosyncratic
+    meaning is [svenonius-2004]'s own lexicality diagnostic (56e); her
+    table assigns no superlexical label. -/
+def a3c : Analysis := ⟨Examples.ex_3c, znam, [(po, .lexical)]⟩
 
-/-- *pro-četa* 'read completely' — lexical (quantizing) *pro-* on the
-    homogeneous simplex *četa* 'read' ([istratkova-2004] exx. (3i),
-    (2h)). *pro-* is not in her superlexical inventory; the prefixed
-    form is the default perfectivization of *četa*. -/
-def procheta : PrefixedVerb where
-  stem          := "četa"
-  stemAspect    := none
-  prefixes      := [("pro", .lexical)]
-  baseGloss     := "read"
-  prefixedGloss := "read completely"
+/-- (3d) *za-blest'a* 'start to glitter' — superlexical inceptive
+    *za-*. -/
+def a3d : Analysis := ⟨Examples.ex_3d, blesta, [(za, .superlexical .inceptive)]⟩
 
-/-! ### Single-prefix superlexical entries -/
+/-- (3i) *pro-četa* 'read completely' — lexical (quantizing) *pro-*:
+    not in her superlexical inventory; the default perfectivization of
+    *četa*. -/
+def a3i : Analysis := ⟨Examples.ex_3i, cheta, [(pro, .lexical)]⟩
 
-/-- *za-blest'a* 'start to glitter' — superlexical *za-* INCP ('to
-    begin' in her prefix taxonomy) on the homogeneous simplex *blest'a*
-    'glitter' ([istratkova-2004] exx. (3d), (2d)). -/
-def zablesta : PrefixedVerb where
-  stem          := "blest'a"
-  stemAspect    := none
-  prefixes      := [("za", .superlexical .inceptive)]
-  baseGloss     := "glitter"
-  prefixedGloss := "start to glitter"
+/-! ### Multi-prefix analyses (her §4 stacking data) -/
 
-/-- *za-običam* 'start to love' — superlexical *za-* INCP on the
-    homogeneous simplex *običam* 'love' ([istratkova-2004] exx. (3b),
-    (2b)). -/
-def zaobicham : PrefixedVerb where
-  stem          := "običam"
-  stemAspect    := none
-  prefixes      := [("za", .superlexical .inceptive)]
-  baseGloss     := "love"
-  prefixedGloss := "start to love"
+/-- (22b) *iz-po-na-pro-dam* — completive *iz-*, distributive *po-*
+    (her distributive *po-* occurs only after *iz-*), cumulative *na-*,
+    all outside lexical *pro-* on *dam*. -/
+def a22b : Analysis :=
+  ⟨Examples.ex_22b, dam,
+    [(iz, .superlexical .completive), (po, .superlexical .distributive),
+     (na, .superlexical .cumulative), (pro, .lexical)]⟩
 
-/-! ### Multi-prefix entries
+/-- (23c) *po-na-pro-dam* 'sell a few things' — attenuative *po-* over
+    cumulative *na-* over lexical *pro-*: the stacking *po-* is her
+    attenuative one (contrast [svenonius-2004]'s DLMT gloss of (3a)). -/
+def a23c : Analysis :=
+  ⟨Examples.ex_23c, dam,
+    [(po, .superlexical .attenuative), (na, .superlexical .cumulative),
+     (pro, .lexical)]⟩
 
-The distinctive Bulgarian feature: superlexical prefixes stack outside
-each other (and outside any lexical prefix), outermost taking widest
-scope. The stem *razkaža* 'narrate' (etymologically *raz-kaža*
-'around-say') is itself quantized and perfective. -/
+/-- All analyses of this study. -/
+def analyses : List Analysis := [a1a, a3a, a3b, a3c, a3d, a3i, a22b, a23c]
 
-/-- *po-na-razkaža* 'tell a little of many' — attenuative *po-* over
-    cumulative *na-* ([istratkova-2004] §4; cited as ex. (3a) by
-    [svenonius-2004] p. 206, who glosses the *po-* DLMT — on her
-    taxonomy the stacking *po-* is attenuative, cf. her (23c)). -/
-def ponarazkaza : PrefixedVerb where
-  stem          := "razkaža"
-  stemAspect    := some .perfective
-  prefixes      :=
-    [("po", .superlexical .attenuative),
-     ("na", .superlexical .cumulative)]
-  baseGloss     := "narrate"
-  prefixedGloss := "tell a little of many"
+/-! ### Results -/
 
-/-- *iz-po-na-pre-razkaža* 'renarrate completely one by one, of many' —
-    a four-superlexical stack: completive *iz-*, distributive *po-*
-    (the *po-* occurring after *iz-* in her taxonomy), cumulative
-    *na-*, repetitive *pre-* ([svenonius-2004] §1 ex. (3e), from her
-    data). -/
-def izponaprerazkaza : PrefixedVerb where
-  stem          := "razkaža"
-  stemAspect    := some .perfective
-  prefixes      :=
-    [("iz", .superlexical .completive),
-     ("po", .superlexical .distributive),
-     ("na", .superlexical .cumulative),
-     ("pre", .superlexical .repetitive)]
-  baseGloss     := "narrate"
-  prefixedGloss := "renarrate completely one by one, of many"
+/-- Every analysis is well-stacked: superlexicals outside lexicals. -/
+theorem analyses_wellStacked (a : Analysis) (ha : a ∈ analyses) :
+    WellStacked a.prefixes := by
+  fin_cases ha <;> decide
 
-/-- The canonical inventory: 4 single-lex + 2 single-superlex + 2
-    multi-prefix. -/
-def inventory : List PrefixedVerb :=
-  [zapisa, izmisla, poznam, procheta, zablesta, zaobicham,
-   ponarazkaza, izponaprerazkaza]
+/-- The (1)/(3)-table derivations attach to aspectless homogeneous
+    stems (her ex. (2) class): prefixation quantizes them, after which
+    they come in perfective-imperfective pairs. -/
+theorem pairsTable_stems_aspectless
+    (a : Analysis) (ha : a ∈ [a1a, a3a, a3b, a3c, a3d, a3i]) :
+    a.stem.aspect = none := by
+  fin_cases ha <;> rfl
 
-/-! ### Properties -/
-
--- The derived form matches the attested orthographic word.
-example : izponaprerazkaza.form = "izponaprerazkaža" := rfl
-
-/-- Every inventory entry is well-stacked: superlexical prefixes sit
-    outside lexical ones, never the reverse. -/
-theorem inventory_wellStacked
-    (e : PrefixedVerb) (he : e ∈ inventory) :
-    WellStacked e.prefixes := by
-  fin_cases he <;> decide
+/-- Her hyphen segmentation equals each analysis' decomposition (all
+    rows are 1sg-present citation forms). -/
+theorem analyses_match_segmentation (a : Analysis) (ha : a ∈ analyses) :
+    a.MatchesSegmentation := by
+  fin_cases ha <;> decide
 
 end Istratkova2004

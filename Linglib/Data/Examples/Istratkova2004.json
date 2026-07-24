@@ -1,0 +1,152 @@
+[
+  {
+    "id": "istratkova2004_1a",
+    "source": {"bibkey": "istratkova-2004", "paperLabel": "(1a)"},
+    "language": "bulg1262",
+    "primaryText": "za-piša",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "put down in writing",
+    "context": "Lexical za- on the simplex homogeneous verb piša 'write' (her (2f)); the derived verb is perfective, paired with secondary imperfective za-pis-va-m.",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "za-pis-va-m", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Her (1) derivational-pattern table; citation forms are 1sg present (Bulgarian has no infinitive).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "istratkova2004_3a",
+    "source": {"bibkey": "istratkova-2004", "paperLabel": "(3a)"},
+    "language": "bulg1262",
+    "primaryText": "iz-misl'a",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "make up (a story)",
+    "context": "Lexical iz- with idiosyncratic meaning shift on the homogeneous simplex misl'a 'think' (her (2a)); paired with secondary imperfective iz-misl'-a-m.",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "iz-misl'-a-m", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Her (3) pairs table: prefixation quantizes a homogeneous verb, which then comes in a perfective-imperfective pair.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "istratkova2004_3b",
+    "source": {"bibkey": "istratkova-2004", "paperLabel": "(3b)"},
+    "language": "bulg1262",
+    "primaryText": "za-običam",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "start to love",
+    "context": "Inceptive za- ('to begin' in her prefix taxonomy) on the homogeneous simplex običam 'love' (her (2b)); paired with za-obič-va-m.",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "za-obič-va-m", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Compositional inceptive reading — a superlexical use of za-.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "istratkova2004_3c",
+    "source": {"bibkey": "istratkova-2004", "paperLabel": "(3c)"},
+    "language": "bulg1262",
+    "primaryText": "po-znam",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "guess",
+    "context": "po- on the homogeneous simplex znam 'know' (her (2c)) with fully idiosyncratic meaning; paired with po-zna-va-m.",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "po-zna-va-m", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "The idiosyncratic meaning ('know' to 'guess') fits Svenonius's lexicality diagnostic (his (56e)); her table assigns no superlexical label.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "istratkova2004_3d",
+    "source": {"bibkey": "istratkova-2004", "paperLabel": "(3d)"},
+    "language": "bulg1262",
+    "primaryText": "za-blest'a",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "start to glitter",
+    "context": "Inceptive za- on the homogeneous simplex blest'a 'glitter' (her (2d)); paired with za-blet'-ava-m.",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "za-blet'-ava-m", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Compositional inceptive reading — a superlexical use of za-.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "istratkova2004_3i",
+    "source": {"bibkey": "istratkova-2004", "paperLabel": "(3i)"},
+    "language": "bulg1262",
+    "primaryText": "pro-četa",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "read completely",
+    "context": "pro- on the homogeneous simplex četa 'read' (her (2h)), yielding the default perfectivization; paired with pro-čit-a-m.",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "pro-čit-a-m", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "pro- is not in her superlexical prefix inventory — a lexical (quantizing) prefix.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "istratkova2004_22b",
+    "source": {"bibkey": "istratkova-2004", "paperLabel": "(22b)"},
+    "language": "bulg1262",
+    "primaryText": "iz-po-na-pro-dam",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "completely sell (a lot) one by one",
+    "context": "Three superlexical prefixes (completive iz-, distributive po-, cumulative na-) stacked outside the lexical pro- on dam 'give' (pro-dam 'sell').",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "The po- here is her distributive po-, which only occurs after iz-.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "istratkova2004_23c",
+    "source": {"bibkey": "istratkova-2004", "paperLabel": "(23c)"},
+    "language": "bulg1262",
+    "primaryText": "po-na-pro-dam",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "sell a few things",
+    "context": "Attenuative po- over cumulative na- over lexical pro- on dam 'give': po- modifies the meaning of na- so that the verb means selling a few.",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "na-pro-dam", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Her (23c) pair na-pro-dam 'sell a lot' vs po-na-prodam 'sell a few things': the stacking po- over na- is the attenuative po-.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  }
+]

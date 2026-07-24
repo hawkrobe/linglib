@@ -1118,6 +1118,7 @@ import Linglib.Fragments.Slavic.Belarusian.Case
 import Linglib.Fragments.Slavic.Bulgarian.Evidentiality
 import Linglib.Fragments.Slavic.Bulgarian.Evidentials
 import Linglib.Fragments.Slavic.Bulgarian.QuestionParticles
+import Linglib.Fragments.Slavic.Bulgarian.Verbs
 import Linglib.Fragments.Slavic.Case
 import Linglib.Fragments.Slavic.Cassubian.Case
 import Linglib.Fragments.Slavic.Czech.Case
@@ -1127,8 +1128,10 @@ import Linglib.Fragments.Slavic.Czech.Particles
 import Linglib.Fragments.Slavic.Czech.PolarityItems
 import Linglib.Fragments.Slavic.Czech.Reciprocals
 import Linglib.Fragments.Slavic.Macedonian.QuestionParticles
+import Linglib.Fragments.Slavic.Params
 import Linglib.Fragments.Slavic.Polish.Case
 import Linglib.Fragments.Slavic.Polish.QuestionParticles
+import Linglib.Fragments.Slavic.Polish.Verbs
 import Linglib.Fragments.Slavic.Russian.Adposition
 import Linglib.Fragments.Slavic.Russian.Agreement
 import Linglib.Fragments.Slavic.Russian.Case
@@ -1143,6 +1146,7 @@ import Linglib.Fragments.Slavic.Russian.QuestionParticles
 import Linglib.Fragments.Slavic.Russian.Reciprocals
 import Linglib.Fragments.Slavic.Russian.Relativization
 import Linglib.Fragments.Slavic.Russian.TemporalDeictic
+import Linglib.Fragments.Slavic.Russian.Verbs
 import Linglib.Fragments.Slavic.Russian.WordOrder
 import Linglib.Fragments.Slavic.Serbian.Case
 import Linglib.Fragments.Slavic.Serbian.QuestionParticles
@@ -2936,3 +2940,6 @@ import Linglib.Syntax.WordGrammar.Inheritance.Default
 import Linglib.Syntax.WordGrammar.Inheritance.Order
 import Linglib.Syntax.WordGrammar.LexicalRules
 import Linglib.Syntax.WordGrammar.Network
+import Linglib.Data.Examples.Svenonius2004
+import Linglib.Data.Examples.Istratkova2004
+import Linglib.Data.Examples.Jablonska2004

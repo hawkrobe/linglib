@@ -1,6 +1,9 @@
 import Mathlib.Tactic.FinCases
+import Linglib.Data.Examples.Svenonius2004
+import Linglib.Fragments.Slavic.Russian.Verbs
+import Linglib.Fragments.Slavic.Polish.Verbs
+import Linglib.Fragments.Slavic.Bulgarian.Verbs
 import Linglib.Morphology.Word.Tree
-import Linglib.Semantics.Aspect.Basic
 
 /-!
 # Svenonius (2004): Slavic Prefixes Inside and Outside VP
@@ -9,52 +12,55 @@ import Linglib.Semantics.Aspect.Basic
 prefixes are R-heads inside VP (resultative, particle-like, connecting to
 [dendikken-1995]'s treatment of Germanic verb particles), while
 **superlexical** prefixes are Asp-heads outside VP (aspectual operators).
-The same prefix string can realise either class — his §1 exx. (1a)/(1c)
-use Russian *za-* both ways. The classification is contested rather than
-consensus: [romanova-2004] documents diagnostic mismatches, and Tatevosov's
-later work posits an intermediate class.
+The same prefix realises either class — his §1 exx. (1a)/(1c) use Russian
+*za-* both ways, on the shared fragment morph `Russian.Verbs.za`.
+The classification is contested rather than consensus: [romanova-2004]
+documents diagnostic mismatches, and Tatevosov's later work posits an
+intermediate class.
 
-The syntactic height cut named here is the same one
-`Minimalist.AspFlavor` (outer vs inner aspect, Travis/Cinque) carries for
-Sinitic split-aspect; the types are kept separate because the commitments
-differ (lexical = resultative R-head, not merely inner-Asp host).
+The syntactic height cut named here is the same one `Minimalist.AspFlavor`
+(outer vs inner aspect, Travis/Cinque) carries for Sinitic split-aspect;
+the types are kept separate because the commitments differ (lexical =
+resultative R-head, not merely inner-Asp host).
 
-A prefixed verb is carried as a stem plus a surface-ordered list of
-classified prefixes; its word-formation tree (`Morphology.Word.Tree`) and
-orthographic form are **derived**, so concatenative and kind-coherent
-structure holds by construction. Stem aspect reuses
-`Semantics.Aspect.ViewpointAspectB` (`none` = aspectless stems, cf.
-[istratkova-2004]'s homogeneous simplex class).
+Data flow: attested examples live in `Data.Examples.Svenonius2004`
+(generated from JSON); prefix morphs and stems are fragment entries; an
+`Analysis` pairs an example with a stem and a classified prefix sequence —
+the classification is this paper's analytical act, applied to shared data,
+never a fragment field.
 
 ## Main definitions
 
-* `SuperlexicalSubtype` — a selection of the superlexical Aktionsart
-  subtypes recurring in the paper's §4 and in [istratkova-2004]; not a
-  closed inventory (the Bulgarian ordering in his (57) also lists
-  excessive *raz-*).
-* `PrefixClass` — `lexical` or `superlexical _`, with the
-  `IsSuperlexical` predicate.
-* `PrefixedVerb` — the shared carrier (also used by
-  `Studies/Istratkova2004.lean` and `Studies/Jablonska2004.lean`), with
-  derived `tree` and `form`.
-* `WellStacked` — no lexical prefix outside a superlexical one (§1:
-  "the superlexical prefix always appears outside the lexical prefix").
-* `Russian.inventory` — six canonical Russian entries.
+* `SuperlexicalSubtype`, `PrefixClass`, `PrefixClass.IsSuperlexical` — a
+  selection of superlexical Aktionsart subtypes (his §4, and
+  [istratkova-2004]'s taxonomy; not a closed set), and the two-way class.
+* `Analysis` — an attested example, its fragment stem, and its classified
+  prefix sequence (outermost first), with derived word-formation `tree`.
+* `WellStacked` — no lexical prefix outside a superlexical one (§1: "the
+  superlexical prefix always appears outside the lexical prefix").
+* `analyses` — this paper's classified examples (Russian, one Polish, two
+  Bulgarian stacks cited from [istratkova-2004]).
 
 ## Main results
 
-* `tree_isConcatenative`, `tree_isKindCoherent` — every derived tree is
-  concatenative and kind-coherent, by construction.
-* `Russian.stemAspect_imperfective_of_isSuperlexical` — the paper's
-  diagnostic (56c) (§4.1): superlexical prefixes select imperfective
-  stems.
+* `analyses_wellStacked` / `reverse_4a_not_wellStacked` — the stacking
+  generalization holds across the analyses, and the attested ungrammatical
+  reversal (4b) *vy-po-brasyvatj* violates it.
+* `stemAspect_imperfective_of_isSuperlexical` — diagnostic (56c) (§4.1)
+  over the Russian analyses: superlexical prefixes select imperfective
+  stems. (Russian-scoped: his Bulgarian stacks attach to the quantized
+  perfective *razkaža*, per [istratkova-2004].)
+* `analyses_match_segmentation` — for citation-form examples, the paper's
+  hyphen segmentation equals the analysis' prefix-stem decomposition.
 -/
 
 namespace Svenonius2004
 
+open Data.Examples (LinguisticExample)
 open Morphology (Morph)
 open Morphology.Word (Tree)
 open Semantics.Aspect (ViewpointAspectB)
+open Slavic (VerbStem)
 
 /-- Aspectual subtypes of the superlexical class — the labels recurring
     in [svenonius-2004] §4 (his Bulgarian ordering (57)) and in
@@ -91,62 +97,11 @@ instance : DecidablePred IsSuperlexical
 
 end PrefixClass
 
-/-- A prefixed-verb lexical entry: a stem plus a surface-ordered
-    (outermost-first) list of classified prefixes. The word-formation
-    tree and orthographic form are derived (`tree`, `form`), not
-    stipulated. -/
-structure PrefixedVerb where
-  /-- Bare verb stem (citation form). -/
-  stem          : String
-  /-- Viewpoint aspect of the bare stem; `none` for aspectless stems
-      ([istratkova-2004]'s homogeneous simplex class). -/
-  stemAspect    : Option ViewpointAspectB
-  /-- Classified prefixes in surface order, outermost first. -/
-  prefixes      : List (String × PrefixClass)
-  /-- Gloss of the bare stem. -/
-  baseGloss     : String
-  /-- Gloss of the prefixed verb. -/
-  prefixedGloss : String
-
-namespace PrefixedVerb
-
-/-- The word-formation tree: the prefixes folded, innermost-last, over
-    the root. -/
-def tree (e : PrefixedVerb) : Tree Morph :=
-  e.prefixes.foldr (fun p t => .prefixed (Morph.pref p.1) t)
-    (.root (Morph.root e.stem))
-
-/-- The orthographic form: the concatenation of the prefix morphs and
-    the stem. Inventories deliberately avoid voicing-assimilation
-    prefixes (*iz-*, *raz-*, *voz-*, *bez-*) whose surface form is not
-    the plain concatenation. -/
-def form (e : PrefixedVerb) : String :=
-  String.join (e.tree.toList.map Morph.form)
-
-/-- Every derived tree is concatenative: prefixation only. -/
-theorem tree_isConcatenative (e : PrefixedVerb) :
-    e.tree.IsConcatenative := by
-  unfold tree
-  induction e.prefixes with
-  | nil => trivial
-  | cons p ps ih => exact ih
-
-/-- Every derived tree is kind-coherent: prefix morphs on `prefixed`
-    nodes, a root morph at the leaf. -/
-theorem tree_isKindCoherent (e : PrefixedVerb) :
-    e.tree.IsKindCoherent := by
-  unfold tree
-  induction e.prefixes with
-  | nil => exact Or.inl rfl
-  | cons p ps ih => exact ⟨rfl, ih⟩
-
-end PrefixedVerb
-
-/-- A prefix sequence (surface order, outermost first) is well-stacked
-    when no lexical prefix appears outside a superlexical one —
-    [svenonius-2004] §1: "the superlexical prefix always appears
+/-- A classified prefix sequence (surface order, outermost first) is
+    *well-stacked* when no lexical prefix appears outside a superlexical
+    one — [svenonius-2004] §1: "the superlexical prefix always appears
     outside the lexical prefix". -/
-def WellStacked (prefixes : List (String × PrefixClass)) : Prop :=
+def WellStacked (prefixes : List (Morph × PrefixClass)) : Prop :=
   prefixes.Pairwise fun outer inner =>
     inner.2.IsSuperlexical → outer.2.IsSuperlexical
 
@@ -154,95 +109,147 @@ instance : DecidablePred WellStacked := fun prefixes =>
   inferInstanceAs (Decidable (prefixes.Pairwise fun outer inner =>
     inner.2.IsSuperlexical → outer.2.IsSuperlexical))
 
-/-! ### Russian inventory
+/-- An analysis of an attested example: the fragment stem it is built on
+    and its prefix sequence (outermost first), each prefix a fragment
+    morph paired with this paper's class assignment. -/
+structure Analysis where
+  /-- The attested example (from `Data.Examples`). -/
+  ex       : LinguisticExample
+  /-- The fragment verb-stem entry. -/
+  stem     : VerbStem
+  /-- Classified fragment prefix morphs, outermost first. -/
+  prefixes : List (Morph × PrefixClass)
 
-Latin transliteration with `'` for the soft-sign infinitive ending. -/
+namespace Analysis
 
-namespace Russian
+/-- The word-formation tree: the prefix morphs folded, innermost-last,
+    over the stem root. -/
+def tree (a : Analysis) : Tree Morph :=
+  a.prefixes.foldr (fun p t => .prefixed p.1 t)
+    (.root (Morph.root a.stem.form))
 
-/-- *za-brosit'* 'kick into / throw into' — lexical *za-*
-    ([svenonius-2004] §1 ex. (1a), transparently resultative spatial).
-    Built on the perfective stem *brosit'*. -/
-def zabrosit : PrefixedVerb where
-  stem          := "brosit'"
-  stemAspect    := some .perfective
-  prefixes      := [("za", .lexical)]
-  baseGloss     := "throw"
-  prefixedGloss := "throw into, kick into"
+/-- Every analysis tree is concatenative: prefixation only. -/
+theorem tree_isConcatenative (a : Analysis) : a.tree.IsConcatenative := by
+  unfold tree
+  induction a.prefixes with
+  | nil => trivial
+  | cons p ps ih => exact ih
 
-/-- *vy-brosit'* 'throw out' — lexical *vy-* (English *out* analogue;
-    [svenonius-2004] ex. (4a) uses the secondary imperfective
-    *vy-brasyvatj*). Built on the perfective stem *brosit'*. -/
-def vybrosit : PrefixedVerb where
-  stem          := "brosit'"
-  stemAspect    := some .perfective
-  prefixes      := [("vy", .lexical)]
-  baseGloss     := "throw"
-  prefixedGloss := "throw out"
+/-- The example's hyphen-segmented text equals the analysis'
+    decomposition into prefix forms plus stem. Applicable to
+    citation-form examples (not sentence examples or inflected tokens). -/
+def MatchesSegmentation (a : Analysis) : Prop :=
+  a.ex.primaryText =
+    String.intercalate "-" (a.prefixes.map (·.1.form) ++ [a.stem.form])
 
-/-- *pri-nesti* 'bring (carry to)' — lexical *pri-* (allative). The
-    lex classification of *pri-* is from the broader Slavicist
-    literature ([romanova-2004]; [babko-malaya-2003]) — [svenonius-2004]
-    does not work *pri-* as an example. Built on the imperfective
-    determinate-motion stem *nesti*. -/
-def prinesti : PrefixedVerb where
-  stem          := "nesti"
-  stemAspect    := some .imperfective
-  prefixes      := [("pri", .lexical)]
-  baseGloss     := "carry"
-  prefixedGloss := "bring (carry to)"
+instance : DecidablePred MatchesSegmentation := fun _ =>
+  decEq _ _
 
-/-- *za-brosat'* 'start throwing' — superlexical *za-* INCP
-    ([svenonius-2004] §1 ex. (1c)). Minimal pair with `zabrosit` on the
-    same morpheme but different class. Built on the imperfective stem
-    *brosat'*. Stress distinguishes it from the homographic
-    *zabrosát'* 'pelt (with)'. -/
-def zabrosatInceptive : PrefixedVerb where
-  stem          := "brosat'"
-  stemAspect    := some .imperfective
-  prefixes      := [("za", .superlexical .inceptive)]
-  baseGloss     := "throw"
-  prefixedGloss := "start throwing"
+end Analysis
 
-/-- *po-sidet'* 'sit for a while' — superlexical *po-* DLMT (canonical
-    delimitative; [svenonius-2004] (57c) labels Bulgarian *po-* DLMT).
-    Built on the imperfective stem *sidet'*. -/
-def posidet : PrefixedVerb where
-  stem          := "sidet'"
-  stemAspect    := some .imperfective
-  prefixes      := [("po", .superlexical .delimitative)]
-  baseGloss     := "sit"
-  prefixedGloss := "sit for a while"
+/-! ### The paper's analyses
 
-/-- *do-pisat'* 'finish writing' — superlexical *do-* CMPL. Note:
-    *do-* is the standard Russian completive in the broader Slavicist
-    literature; [svenonius-2004] §4 takes Bulgarian *iz-* as the
-    canonical completive instead. Built on the imperfective stem
-    *pisat'*. -/
-def dopisat : PrefixedVerb where
-  stem          := "pisat'"
-  stemAspect    := some .imperfective
-  prefixes      := [("do", .superlexical .completive)]
-  baseGloss     := "write"
-  prefixedGloss := "finish writing"
+Russian from §1 and §4.1; the Polish (4c) and the Bulgarian stacks (3a),
+(3e) as he classifies them (for (3a) [istratkova-2004]'s own finer
+taxonomy diverges — her attenuative *po-* — see
+`Studies/Istratkova2004.lean`). -/
 
-/-- The canonical inventory: three lexical entries plus three
-    superlexical entries (with the `zabrosit` / `zabrosatInceptive`
-    minimal pair on *za-*). -/
-def inventory : List PrefixedVerb :=
-  [zabrosit, vybrosit, prinesti, zabrosatInceptive, posidet, dopisat]
+section Russian
+open Russian.Verbs
 
--- The derived form matches the attested orthographic word.
-example : zabrosit.form = "zabrosit'" := rfl
+/-- (1a) *za-brosil* — lexical spatial *za-* on perfective *brositj*. -/
+def a1a : Analysis := ⟨Examples.ex_1a, brosit, [(za, .lexical)]⟩
 
-/-- [svenonius-2004]'s diagnostic (56c) (§4.1): a superlexical entry
-    has an imperfective bare stem. Lexical entries are unconstrained. -/
-theorem stemAspect_imperfective_of_isSuperlexical
-    (e : PrefixedVerb) (he : e ∈ inventory)
-    (hs : ∃ p ∈ e.prefixes, p.2.IsSuperlexical) :
-    e.stemAspect = some ViewpointAspectB.imperfective := by
-  fin_cases he <;> first | rfl | exact absurd hs (by decide)
+/-- (1b) *za-brosil* 'gave up' — the same lexical *za-*, idiomatic. -/
+def a1b : Analysis := ⟨Examples.ex_1b, brosit, [(za, .lexical)]⟩
+
+/-- (1c) *za-brosal* — superlexical inceptive *za-* on imperfective
+    *brosatj*: the minimal pair with `a1a` on the same fragment morph. -/
+def a1c : Analysis := ⟨Examples.ex_1c, brosat, [(za, .superlexical .inceptive)]⟩
+
+/-- (4a) *po-vy-brasyvatj* — superlexical distributive *po-* outside
+    lexical *vy-* on the secondary-imperfective stem. -/
+def a4a : Analysis :=
+  ⟨Examples.ex_4a, brasyvat, [(po, .superlexical .distributive), (vy, .lexical)]⟩
+
+/-- (58) discussion: *za-kuritj* — superlexical inceptive *za-*. -/
+def a58za : Analysis := ⟨Examples.ex_58za, kurit, [(za, .superlexical .inceptive)]⟩
+
+/-- (58) discussion: *po-čitatj* — superlexical attenuative *po-*. -/
+def a58po : Analysis := ⟨Examples.ex_58po, chitat, [(po, .superlexical .attenuative)]⟩
+
+/-- The Russian analyses. -/
+def russianAnalyses : List Analysis := [a1a, a1b, a1c, a4a, a58za, a58po]
 
 end Russian
+
+section Polish
+open Polish.Verbs
+
+/-- (4c) *po-w-chodzili* — superlexical distributive *po-* outside
+    lexical *w-* (Polish counterpart of `a4a`). -/
+def a4c : Analysis :=
+  ⟨Examples.ex_4c, chodzic, [(po, .superlexical .distributive), (w, .lexical)]⟩
+
+end Polish
+
+section Bulgarian
+open Bulgarian.Verbs
+
+/-- (3a) *po-na-razkaža* — his gloss DLMT-CMLT on perfective *razkaža*. -/
+def a3a : Analysis :=
+  ⟨Examples.ex_3a, razkazha,
+    [(po, .superlexical .delimitative), (na, .superlexical .cumulative)]⟩
+
+/-- (3e) *iz-po-na-pre-razkaža* — his gloss CMPL-DSTR-CMLT-RPET, the
+    deepest stack he cites from [istratkova-2004]. -/
+def a3e : Analysis :=
+  ⟨Examples.ex_3e, razkazha,
+    [(iz, .superlexical .completive), (po, .superlexical .distributive),
+     (na, .superlexical .cumulative), (pre, .superlexical .repetitive)]⟩
+
+end Bulgarian
+
+/-- All analyses of this study. -/
+def analyses : List Analysis :=
+  [a1a, a1b, a1c, a4a, a58za, a58po, a4c, a3a, a3e]
+
+/-! ### Results -/
+
+/-- Every analysis is well-stacked. -/
+theorem analyses_wellStacked (a : Analysis) (ha : a ∈ analyses) :
+    WellStacked a.prefixes := by
+  fin_cases ha <;> decide
+
+/-- The attested ungrammatical reversal (4b) *vy-po-brasyvatj*
+    (recorded as the `alternatives` of (4a)) violates well-stackedness:
+    it would put the lexical prefix outside the superlexical one. -/
+theorem reverse_4a_not_wellStacked : ¬ WellStacked a4a.prefixes.reverse := by
+  decide
+
+/-- Likewise the Polish reversal (4d) *w-po-chodzili*. -/
+theorem reverse_4c_not_wellStacked : ¬ WellStacked a4c.prefixes.reverse := by
+  decide
+
+/-- Diagnostic (56c) (§4.1) over the Russian analyses: a superlexically
+    prefixed verb is built on an imperfective stem. Russian-scoped:
+    his Bulgarian stacks attach to the quantized perfective *razkaža*
+    ([istratkova-2004]), so (56c) is not a Bulgarian diagnostic. -/
+theorem stemAspect_imperfective_of_isSuperlexical
+    (a : Analysis) (ha : a ∈ russianAnalyses)
+    (hs : ∃ p ∈ a.prefixes, p.2.IsSuperlexical) :
+    a.stem.aspect = some ViewpointAspectB.imperfective := by
+  fin_cases ha <;> first | rfl | exact absurd hs (by decide)
+
+/-- For the citation-form examples, the paper's hyphen segmentation
+    equals the analysis' decomposition. (Sentence examples (1a)-(1c)
+    and the inflected Polish token (4c) are excluded.) -/
+theorem analyses_match_segmentation
+    (a : Analysis) (ha : a ∈ [a4a, a58za, a58po, a3a, a3e]) :
+    a.MatchesSegmentation := by
+  fin_cases ha <;> decide
+
+-- Every analysis tree is kind-coherent (prefix morphs over a root morph).
+example : ∀ a ∈ analyses, a.tree.IsKindCoherent := by decide
 
 end Svenonius2004

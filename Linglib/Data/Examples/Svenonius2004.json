@@ -1,0 +1,186 @@
+[
+  {
+    "id": "svenonius2004_1a",
+    "source": {"bibkey": "svenonius-2004", "paperLabel": "(1a)"},
+    "language": "russ1263",
+    "primaryText": "Helder za-brosil mjač v vorota angličan.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Helder", "Helder"], ["za-brosil", "into-threw"], ["mjač", "ball"], ["v", "in"],
+      ["vorota", "goal"], ["angličan", "English"]
+    ],
+    "translation": "Helder kicked the ball into the English goal.",
+    "context": "Spatial-resultative za-: the goal is the endpoint of the ball's path.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "First member of the (1a)/(1c) minimal pair on za-: transparently spatial (lexical) use.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "svenonius2004_1b",
+    "source": {"bibkey": "svenonius-2004", "paperLabel": "(1b)"},
+    "language": "russ1263",
+    "primaryText": "David sovsem za-brosil futbol.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["David", "David"], ["sovsem", "completely"], ["za-brosil", "into-threw"],
+      ["futbol", "soccer"]
+    ],
+    "translation": "David completely gave up soccer.",
+    "context": "Idiomatic use of the same lexical za- as in the spatial (1a): idiosyncratic meaning is available to lexical prefixes.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Lexical za- with idiomatic meaning 'give up' — lexical idiosyncrasy contrasts with the systematic meanings of superlexicals (his (56e)).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "svenonius2004_1c",
+    "source": {"bibkey": "svenonius-2004", "paperLabel": "(1c)"},
+    "language": "russ1263",
+    "primaryText": "Ricardo nervno za-brosal mjač.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ricardo", "Ricardo"], ["nervno", "nervously"], ["za-brosal", "incp-threw"],
+      ["mjač", "ball"]
+    ],
+    "translation": "Ricardo began to nervously throw the ball.",
+    "context": "Inceptive (superlexical) za- on the imperfective stem brosat', versus the lexical za- of (1a)/(1b) on perfective brosit'.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Second member of the (1a)/(1c) minimal pair: same prefix form, superlexical inceptive class.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "svenonius2004_4a",
+    "source": {"bibkey": "svenonius-2004", "paperLabel": "(4a)"},
+    "language": "russ1263",
+    "primaryText": "po-vy-brasyvatj",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["po-vy-brasyvatj", "dstr-out-throw"]
+    ],
+    "translation": "throw out one by one",
+    "context": "Superlexical distributive po- stacked outside lexical vy- on the secondary-imperfective stem brasyvatj.",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "vy-po-brasyvatj", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "His (4a) with the reversed order (4b) *vy-po-brasyvatj: the superlexical prefix always appears outside the lexical prefix.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "svenonius2004_4c",
+    "source": {"bibkey": "svenonius-2004", "paperLabel": "(4c)"},
+    "language": "poli1260",
+    "primaryText": "po-w-chodzili",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["po-w-chodzili", "dstr-in-walk"]
+    ],
+    "translation": "walk in one by one",
+    "context": "Polish counterpart of (4a): superlexical distributive po- outside lexical w-.",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "w-po-chodzili", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Attributed by Svenonius to Jabłońska 2004; not locatable as a numbered example in her paper. Reversed order (4d) *w-po-chodzili is ungrammatical.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "svenonius2004_3a",
+    "source": {"bibkey": "istratkova-2004", "paperLabel": "§4 (kaža table)"},
+    "reportedIn": {"bibkey": "svenonius-2004", "paperLabel": "(3a)"},
+    "language": "bulg1262",
+    "primaryText": "po-na-razkaža",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["po-na-razkaža", "dlmt-cmlt-narrate"]
+    ],
+    "translation": "tell a little of many",
+    "context": "Two superlexical prefixes stacked on the quantized perfective stem razkaža 'narrate'.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Svenonius glosses the outer po- DLMT; on Istratkova's own taxonomy the po- that stacks over na- is her attenuative po- (her (23c)), her delimitative po- does not stack.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "svenonius2004_3e",
+    "source": {"bibkey": "istratkova-2004", "paperLabel": "§4 (kaža table)"},
+    "reportedIn": {"bibkey": "svenonius-2004", "paperLabel": "(3e)"},
+    "language": "bulg1262",
+    "primaryText": "iz-po-na-pre-razkaža",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["iz-po-na-pre-razkaža", "cmpl-dstr-cmlt-rpet-narrate"]
+    ],
+    "translation": "renarrate completely one by one, of many",
+    "context": "Four superlexical prefixes stacked on the quantized perfective stem razkaža 'narrate'.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "The deepest razkaža stack Svenonius cites from Istratkova's data; the po- after iz- is her distributive po-.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "svenonius2004_58za",
+    "source": {"bibkey": "svenonius-2004", "paperLabel": "§4.1 (58) discussion"},
+    "language": "russ1263",
+    "primaryText": "za-kuritj",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["za-kuritj", "incp-smoke"]
+    ],
+    "translation": "start smoking",
+    "context": "Inceptive za- almost never forms secondary imperfectives in Russian.",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "za-kurivatj", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Datum for his (58a-i): inceptive za- blocks secondary imperfectivization, consistent with attachment above the SI position.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "svenonius2004_58po",
+    "source": {"bibkey": "svenonius-2004", "paperLabel": "§4.1 (58) discussion"},
+    "language": "russ1263",
+    "primaryText": "po-čitatj",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["po-čitatj", "atten-read"]
+    ],
+    "translation": "read for a little while",
+    "context": "Attenuative po- generally resists secondary imperfectivization but sometimes allows it.",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "po-čityvatj", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Datum for his (58b): attenuative po- sometimes allows the secondary imperfective (po-čityvatj), unlike inceptive za-.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  }
+]
