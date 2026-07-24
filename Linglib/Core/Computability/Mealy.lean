@@ -56,9 +56,8 @@ namespace Mealy
 variable (T : Mealy σ α β)
 
 /-- State reached after consuming a prefix. -/
-def stateAfter : σ → List α → σ
-  | s, [] => s
-  | s, x :: xs => stateAfter (T.step s x).1 xs
+def stateAfter (s : σ) : List α → σ :=
+  List.foldl (fun s x => (T.step s x).1) s
 
 /-- Run from a state: one output symbol per input symbol. -/
 def runFrom : σ → List α → List β
@@ -76,10 +75,8 @@ def run : List α → List β := T.runFrom T.initial
     T.stateAfter s (x :: xs) = T.stateAfter (T.step s x).1 xs := rfl
 
 theorem stateAfter_append (s : σ) (xs ys : List α) :
-    T.stateAfter s (xs ++ ys) = T.stateAfter (T.stateAfter s xs) ys := by
-  induction xs generalizing s with
-  | nil => rfl
-  | cons x xs ih => simp [ih]
+    T.stateAfter s (xs ++ ys) = T.stateAfter (T.stateAfter s xs) ys :=
+  List.foldl_append
 
 /-- The run is length-preserving (one output symbol per input symbol). -/
 theorem runFrom_length (s : σ) (xs : List α) :
