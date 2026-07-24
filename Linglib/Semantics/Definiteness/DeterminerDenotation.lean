@@ -1,5 +1,5 @@
 import Linglib.Semantics.Definiteness.Interpret
-import Linglib.Semantics.Definiteness.DeterminerLicensing
+import Linglib.Syntax.Category.Determiner.Basic
 import Linglib.Semantics.Reference.Nominal
 import Linglib.Semantics.Possessive.Basic
 
@@ -34,6 +34,8 @@ deictic feature projects: deixis filters the referent but never selects it
   `PersonalPronoun.phiPresup`'s `speaker`/`addressee`).
 * `DemonstrativeDeterminer.denote` — the demonstrative's `NominalDenot`
   (previously deferred in the lexical file's implementation notes).
+* `Article.toDescriptions` — an article's possible descriptions, the image of
+  its admissible [schwarz-2009] strengths under `Description.ofPresupType`.
 * `Article.denotations` — an article's possible `NominalDenot`s, the image of
   `Article.toDescriptions` under `Description.denote`; a syncretic article
   (English *the*) denotes both the weak and the strong description.
@@ -133,7 +135,27 @@ theorem DemonstrativeDeterminer.denote_selector_congr
   rw [DemonstrativeDeterminer.denote_selector_eq_anaphoric,
       DemonstrativeDeterminer.denote_selector_eq_anaphoric]
 
-/-! ### The article's denotations -/
+/-! ### The article's descriptions and denotations -/
+
+/-- An article's possible (definite-description) denotations: the image of its
+admissible [schwarz-2009] strengths (`Article.presupTypes`) under
+`Description.ofPresupType`. A syncretic article (English *the*) denotes both
+the weak and the strong description, not a single one. -/
+def _root_.Article.toDescriptions (a : Article)
+    (R : DenotGS E W .et) (idx : Nat) : List (Description E W) :=
+  a.presupTypes.map (Description.ofPresupType · R idx)
+
+/-- An article licenses the kind of each of its own possible descriptions:
+the denotation pipeline (`ofPresupType`) and the inventory pipeline
+(`Determiner.licenses`) coincide through `kind_ofPresupType` and
+`licenses_toKind`. -/
+theorem _root_.Determiner.licenses_of_mem_toDescriptions (a : Article)
+    (R : DenotGS E W .et) (idx : Nat) (k : Description E W)
+    (hk : k ∈ a.toDescriptions R idx) :
+    Determiner.licenses [.article a] k.kind := by
+  obtain ⟨p, hp, rfl⟩ := List.mem_map.mp hk
+  rw [Description.kind_ofPresupType, Determiner.licenses_toKind]
+  exact (Article.mem_presupTypes_iff_marksPresup a p).mp hp
 
 /-- An article's possible denotations: the `NominalDenot`s of its admissible
 descriptions (`Article.toDescriptions`). A syncretic article (English *the*)
@@ -144,16 +166,16 @@ noncomputable def _root_.Article.denotations (a : Article)
     List (NominalDenot (Assignment E × SitAssignment W) PUnit E) :=
   (a.toDescriptions R idx).map Description.denote
 
-/-- Every denotation of an article arises from a description the article
-licenses — the denotational pipeline and the licensing pipeline agree. -/
+/-- Every denotation of an article arises from a description whose kind the
+article licenses — the denotational pipeline and the licensing pipeline agree. -/
 theorem Article.denotations_licensed (a : Article)
     (R : DenotGS E W .et) (idx : Nat)
     (nd : NominalDenot (Assignment E × SitAssignment W) PUnit E)
     (h : nd ∈ a.denotations R idx) :
     ∃ k : Description E W,
-      Determiner.licenses [.article a] k ∧ nd = k.denote := by
+      Determiner.licenses [.article a] k.kind ∧ nd = k.denote := by
   obtain ⟨k, hk, rfl⟩ := List.mem_map.mp h
-  exact ⟨k, Determiner.licenses_mem_toDescriptions a R idx k hk, rfl⟩
+  exact ⟨k, Determiner.licenses_of_mem_toDescriptions a R idx k hk, rfl⟩
 
 /-! ### The possessive determiner's denotation -/
 
@@ -183,12 +205,12 @@ theorem Possessive.denote_selector (p : Possessive)
     (p.denote R possessor rel).selector (g, gs) w =
       interpret (.possessive R possessor rel) g gs := rfl
 
-/-- A possessive determiner licenses its own denotation — the denotational
-pipeline and the licensing pipeline agree, parallel to
+/-- A possessive determiner licenses the kind of its own denotation — the
+denotational pipeline and the licensing pipeline agree, parallel to
 `Article.denotations_licensed`. -/
 theorem Possessive.denote_licensed (p : Possessive)
     (R : DenotGS E W .et) (possessor : DenotGS E W .e) (rel : DenotGS E W .eet) :
-    Determiner.licenses [.possessive p] (Description.possessive R possessor rel) :=
+    Determiner.licenses [.possessive p] (Description.possessive R possessor rel).kind :=
   ⟨.possessive p, List.mem_singleton_self _, trivial⟩
 
 /-! ### Unification with the possessive carrier API

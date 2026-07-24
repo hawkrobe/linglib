@@ -6,7 +6,6 @@ import Linglib.Semantics.Genericity.MeaningPreservation
 import Linglib.Semantics.Classifier.Basic
 import Linglib.Studies.Schwarz2009
 import Linglib.Syntax.Category.Determiner.Basic
-import Linglib.Semantics.Definiteness.DeterminerLicensing
 import Linglib.Fragments.Mandarin.Definiteness
 import Linglib.Fragments.Cantonese.Definiteness
 
@@ -111,27 +110,21 @@ variable {E W : Type}
     `yueliang sheng shang lai le` 'the moon has risen';
     `Hufei he-wan-le tang` 'Hufei finished the soup';
     `Gou yao guo malu` 'the dog wants to cross the road'). -/
-theorem bare_licensed (R : DenotGS E W .et) :
-    Determiner.licenses (E := E) (W := W) mandarinDets (.bare R) := trivial
+theorem bare_licensed : Determiner.licenses mandarinDets .bare := trivial
 
-/-- The anaphoric kind (`.anaphoric R d`) is licensed in Mandarin via
-    the demonstrative paradigm (paper §3.2: anaphoric definites surface
-    as Dem-Clf-N constructions). The licensing holds because the
-    demonstrative obligatorily expones a familiarity (anaphoric) use, so
+/-- The anaphoric kind is licensed in Mandarin via the demonstrative
+    paradigm (paper §3.2: anaphoric definites surface as Dem-Clf-N
+    constructions). The licensing holds because the demonstrative
+    obligatorily expones a familiarity (anaphoric) use, so
     `Determiner.MarksPresup mandarinDets .familiarity`. -/
-theorem anaphoric_licensed (R : DenotGS E W .et) (d : Nat) :
-    Determiner.licenses (E := E) (W := W) mandarinDets (.anaphoric R d) := by
-  show Determiner.MarksPresup mandarinDets .familiarity
+theorem anaphoric_licensed : Determiner.licenses mandarinDets .anaphoric := by
   decide
 
 /-- Mandarin demonstratives are licensed (the *na*/*zhe* paradigm —
     paper fn. 8: speakers prefer *na* 'that' to *zhe* 'this' in most
     simple anaphoric environments). -/
-theorem demonstrative_licensed
-    (R : DenotGS E W .et) (deictic : Features.Deixis.Feature) (sIdx d : Nat) :
-    Determiner.licenses (E := E) (W := W) mandarinDets
-      (.demonstrative R deictic sIdx d) := by
-  show ∃ e ∈ mandarinDets, Determiner.Entry.IsDemonstrative e
+theorem demonstrative_licensed :
+    Determiner.licenses mandarinDets .demonstrative := by
   decide
 
 /-- A Mandarin bare definite and its `.unique` counterpart over the

@@ -37,6 +37,30 @@ inductive DefPresupType where
 layer. [schwarz-2013] §5.5 and [patel-grosz-grosz-2017]. -/
 def demonstrativePresupType : DefPresupType := .familiarity
 
+/-! ### Description kinds -/
+
+/-- The kinds of nominal description an inventory can realize — the Frame-free
+skeleton of `Semantics.Definiteness.Description` (one case per constructor,
+payload erased). Lexical-availability questions (licensing, marking typology)
+depend only on this kind, so they are stated over it rather than over the
+entity/index-parameterized `Description`. -/
+inductive DescriptionKind where
+  | bare
+  | indefinite
+  | unique
+  | anaphoric
+  | demonstrative
+  | possessive
+  deriving DecidableEq, Repr
+
+/-- The description kind realizing a [schwarz-2009] article strength: the weak
+article (uniqueness) realizes `unique`, the strong article (familiarity)
+realizes `anaphoric`. The Frame-free counterpart of
+`Semantics.Definiteness.Description.ofPresupType`. -/
+def DefPresupType.toKind : DefPresupType → DescriptionKind
+  | .uniqueness  => .unique
+  | .familiarity => .anaphoric
+
 -- ============================================================================
 -- §2: Article Types ([schwarz-2009])
 -- ============================================================================

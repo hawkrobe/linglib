@@ -31,12 +31,14 @@ localized to a single declaration.
 * `Determiner.Entry` — a determiner occurrence in a language's inventory.
 * `Determiner.markingStrategy` — derives the [moroney-2021] 4-cell typology
   from a declared `List Determiner.Entry`.
+* `Determiner.licenses` — lexical availability: the declared inventory carries
+  a form for a given `DescriptionKind`.
 
 ## Implementation notes
 
 An `Article`'s admissible [schwarz-2009] strengths are `Article.presupTypes`
 (Frame-free, read off `uses`); its denotation is `Article.toDescriptions`
-(`Semantics/Definiteness/DeterminerLicensing.lean`, Frame-aware) — the set of `Description`s
+(`Semantics/Definiteness/DeterminerDenotation.lean`, Frame-aware) — the set of `Description`s
 those strengths admit via `Description.ofPresupType`, so a syncretic article like
 English *the* denotes *both* the weak and the strong description.
 (`Semantics/Quantification`), and the `Possessive` possession relation remain
@@ -46,7 +48,7 @@ This file stays the Frame-free lexical/typological layer.
 
 open Features.Definiteness
   (DefPresupType DefiniteUseType DefMarkingStrategy Definiteness ArticleType
-   useTypeToPresupType strategyToArticleType)
+   DescriptionKind useTypeToPresupType strategyToArticleType)
 
 namespace Determiner
 
@@ -213,6 +215,36 @@ def Entry.IsPossessive : Entry → Prop
 instance : DecidablePred Entry.IsPossessive := fun e => by
   cases e <;> unfold Entry.IsPossessive <;> infer_instance
 
+/-! ### Licensing: lexical availability of description kinds -/
+
+/-- Does the declared determiner set have the surface form needed to realize a
+given kind of nominal description? Bare nominals are always licensed; unique and
+anaphoric definites need a determiner exponing the corresponding presupposition
+type (`MarksPresup`); indefinite/demonstrative/possessive need a determiner of
+that kind.
+
+`licenses` is *availability* — the inventory carries a form for this kind — not
+*choice*: which licensed form a context selects (type-shift blocking, Index!,
+Maximize Presupposition) is downstream pragmatics ([jenks-2018]'s competition
+principle, `Studies/Jenks2018.lean`). -/
+def licenses (ds : List Entry) : DescriptionKind → Prop
+  | .bare          => True
+  | .indefinite    => ∃ e ∈ ds, e.IsIndefiniteArticle
+  | .unique        => MarksPresup ds .uniqueness
+  | .anaphoric     => MarksPresup ds .familiarity
+  | .demonstrative => ∃ e ∈ ds, e.IsDemonstrative
+  | .possessive    => ∃ e ∈ ds, e.IsPossessive
+
+instance (ds : List Entry) : DecidablePred (licenses ds) := fun k => by
+  cases k <;> unfold licenses <;> infer_instance
+
+/-- Licensing an article strength's kind is exactly marking that strength: the
+description-kind pipeline (`DefPresupType.toKind`) and the inventory pipeline
+(`MarksPresup`) coincide by construction. -/
+theorem licenses_toKind (ds : List Entry) (p : DefPresupType) :
+    licenses ds p.toKind ↔ MarksPresup ds p := by
+  cases p <;> exact Iff.rfl
+
 /-! ### Cell coverage: the derivation reproduces all four Moroney cells -/
 
 /-- English: one definite article covering both presupposition types + an
@@ -263,7 +295,7 @@ The [schwarz-2009] presupposition types an article *can* express — its
 admissible readings, read off `uses`. A syncretic article (English *the*) admits
 both; a weak- or strong-only article admits one. The image of these under
 `Description.ofPresupType` is the article's set of possible denotations
-(`Article.toDescriptions`, in `DeterminerLicensing.lean`). -/
+(`Article.toDescriptions`, in `DeterminerDenotation.lean`). -/
 
 /-- The [schwarz-2009] strengths an article admits, read off its `uses` (as a
 list — `DefPresupType` is binary, so its content is the membership-closure). -/

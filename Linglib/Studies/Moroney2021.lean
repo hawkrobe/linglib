@@ -1,7 +1,6 @@
 import Linglib.Features.Definiteness
 import Linglib.Semantics.Mereology
 import Linglib.Syntax.Category.Determiner.Basic
-import Linglib.Semantics.Definiteness.DeterminerLicensing
 import Linglib.Semantics.Definiteness.Description
 import Linglib.Semantics.Definiteness.Interpret
 import Linglib.Semantics.Genericity.MeaningPreservation
@@ -699,49 +698,39 @@ theorem mandarin_in_markedAnaphoric :
   Mandarin.Definiteness.marking
 
 /-- Moroney's central observation, stated against the determiner set:
-    Shan has *no* determiner that licenses an `.anaphoric` `Description`,
-    yet expresses anaphoric definiteness through bare nouns and optional
+    Shan has *no* determiner that licenses the anaphoric kind, yet
+    expresses anaphoric definiteness through bare nouns and optional
     demonstratives. The licensing predicate makes this morphologically
     visible — `.anaphoric` is not licensed (no determiner expones a
     familiarity use). -/
-theorem shan_anaphoric_not_licensed_via_article {E W : Type}
-    (R : DenotGS E W .et) (d : Nat) :
-    ¬ Determiner.licenses (E := E) (W := W) shanDets (.anaphoric R d) := by
-  show ¬ Determiner.MarksPresup shanDets .familiarity
+theorem shan_anaphoric_not_licensed_via_article :
+    ¬ Determiner.licenses shanDets .anaphoric := by
   decide
 
 /-- Bare nominals are licensed for Shan (and every language) — this is the
     morphological substrate for Moroney's analysis: Shan's anaphoric
     definites surface as bare nouns. -/
-theorem shan_bare_licensed {E W : Type} (R : DenotGS E W .et) :
-    Determiner.licenses (E := E) (W := W) shanDets (.bare R) := trivial
+theorem shan_bare_licensed : Determiner.licenses shanDets .bare := trivial
 
 /-- Demonstratives are licensed in Shan (the *nâj*/*nân* paradigm).
     Combined with `shan_bare_licensed`, this gives the morphological
     inventory of strategies Shan deploys for definite reference. -/
-theorem shan_demonstrative_licensed {E W : Type}
-    (R : DenotGS E W .et) (deictic : Features.Deixis.Feature) (sIdx d : Nat) :
-    Determiner.licenses (E := E) (W := W) shanDets
-      (.demonstrative R deictic sIdx d) := by
-  show ∃ e ∈ shanDets, Determiner.Entry.IsDemonstrative e
+theorem shan_demonstrative_licensed :
+    Determiner.licenses shanDets .demonstrative := by
   decide
 
 /-- English licenses `.anaphoric` via the syncretic *the* (which expones a
     familiarity use), *without* an independent strong article. Contrasts with
     Shan (no licensing form at all) and German (independent strong form). -/
-theorem english_anaphoric_licensed_via_syncretism {E W : Type}
-    (R : DenotGS E W .et) (d : Nat) :
-    Determiner.licenses (E := E) (W := W) englishDets (.anaphoric R d) := by
-  show Determiner.MarksPresup englishDets .familiarity
+theorem english_anaphoric_licensed_via_syncretism :
+    Determiner.licenses englishDets .anaphoric := by
   decide
 
 /-- German licenses `.anaphoric` via its independent strong article (no
     syncretism). The unique vs anaphoric distinction is morphologically
     marked. -/
-theorem german_anaphoric_licensed_via_strong_article {E W : Type}
-    (R : DenotGS E W .et) (d : Nat) :
-    Determiner.licenses (E := E) (W := W) germanDets (.anaphoric R d) := by
-  show Determiner.MarksPresup germanDets .familiarity
+theorem german_anaphoric_licensed_via_strong_article :
+    Determiner.licenses germanDets .anaphoric := by
   decide
 
 /-- The English and Mandarin determiner sets both collapse to

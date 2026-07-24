@@ -79,8 +79,11 @@ inductive Description (E W : Type) where
       unique, or anaphoric — is selected by the language's covert type-shift
       hierarchy ([chierchia-1998], [dayal-2004]). -/
   | bare (restrictor : DenotGS E W .et)
-  /-- Indefinite (∃). Introduces a new discourse referent and presupposes
-      nothing about prior discourse. Heim (1982)/Kamp novelty. -/
+  /-- Overt-article indefinite (∃): a *marked* indefinite (English *a*).
+      Introduces a new discourse referent and presupposes nothing about prior
+      discourse ([heim-1982]/Kamp novelty). Article-less languages express
+      indefinite readings through `bare` (the type-shift hierarchy selects ∃),
+      not this constructor. -/
   | indefinite (restrictor : DenotGS E W .et)
   /-- Coppock–Beaver weak/uniqueness definite (Sharvy/Križ maximal). The
       restrictor is evaluated at the resource situation pointed to by the
@@ -113,6 +116,17 @@ inductive Description (E W : Type) where
 namespace Description
 
 variable {E W : Type}
+
+/-- The Frame-free kind of a description: its constructor with payload erased
+    (`Features.Definiteness.DescriptionKind`). Lexical-availability questions
+    (`Determiner.licenses`, marking typology) depend only on this. -/
+def kind : Description E W → Features.Definiteness.DescriptionKind
+  | .bare _           => .bare
+  | .indefinite _     => .indefinite
+  | .unique _ _       => .unique
+  | .anaphoric _ _    => .anaphoric
+  | .demonstrative .. => .demonstrative
+  | .possessive ..    => .possessive
 
 /-- Is this a definite description (in the broad sense — uniqueness,
     familiarity, demonstrative, or possessive)? -/
@@ -190,6 +204,14 @@ def ofPresupType (p : Features.Definiteness.DefPresupType)
 theorem expectedPresupType_ofPresupType
     (p : Features.Definiteness.DefPresupType) (R : DenotGS E W .et) (idx : Nat) :
     (ofPresupType p R idx).expectedPresupType = some p := by
+  cases p <;> rfl
+
+/-- `ofPresupType` constructs the description whose kind is the strength's kind
+    (`DefPresupType.toKind`) — the Frame-aware and Frame-free realization maps
+    agree. -/
+theorem kind_ofPresupType
+    (p : Features.Definiteness.DefPresupType) (R : DenotGS E W .et) (idx : Nat) :
+    (ofPresupType p R idx).kind = p.toKind := by
   cases p <;> rfl
 
 end Description
