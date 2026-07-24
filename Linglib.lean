@@ -68,6 +68,7 @@ import Linglib.Core.Computability.ContextFreeGrammar.Tree
 import Linglib.Core.Computability.ContextFreeGrammar.Weighted
 import Linglib.Core.Computability.Lens
 import Linglib.Core.Computability.Mealy
+import Linglib.Core.Computability.MyhillNerode
 import Linglib.Core.Computability.NonContextFree.AmBnCmDn
 import Linglib.Core.Computability.NonContextFree.AnBnCn
 import Linglib.Core.Computability.NonContextFree.AnBnCnDn
