@@ -43,7 +43,7 @@ glosses stacked *po-* as DLMT, the analyses here follow her own labels
 
 namespace Istratkova2004
 
-open Semantics.Aspect (ViewpointAspectB)
+open Semantics.Aspect (Perfectivity)
 open Verb (Stem)
 open Svenonius2004 (Analysis WellStacked)
 open Bulgarian.Verbs
@@ -121,7 +121,7 @@ theorem pairsTable_stems_homogeneous
     value her aspectless analysis reinterprets as default behaviour. -/
 theorem homogeneous_imperfective
     (s : Stem) (hs : s ∈ homogeneousSimplexes) :
-    s.aspect = ViewpointAspectB.imperfective := by
+    s.aspect = Perfectivity.imperfective := by
   fin_cases hs <;> rfl
 
 /-- Her hyphen segmentation equals each analysis' decomposition (all

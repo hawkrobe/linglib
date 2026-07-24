@@ -19,7 +19,7 @@ semantics beyond its gloss.
 
 namespace Verb
 
-open Semantics.Aspect (ViewpointAspectB)
+open Semantics.Aspect (Perfectivity)
 
 /-- A verb-stem lexical entry: citation form, lexically encoded
     viewpoint aspect (the dictionary-consensus value), and gloss. -/
@@ -27,7 +27,7 @@ structure Stem where
   /-- Citation form. -/
   form   : String
   /-- Viewpoint aspect (dictionary-consensus value). -/
-  aspect : ViewpointAspectB
+  aspect : Perfectivity
   /-- English gloss. -/
   gloss  : String
   deriving DecidableEq, Repr

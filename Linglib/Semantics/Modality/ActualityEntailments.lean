@@ -50,7 +50,7 @@ from the aspect-scope licensing here would tie the two accounts together.
 namespace Semantics.Modality.ActualityEntailments
 
 open Semantics.Modality.EventRelativity
-open Semantics.Aspect (ViewpointAspectB)
+open Semantics.Aspect (Perfectivity)
 
 
 -- ════════════════════════════════════════════════════
@@ -100,7 +100,7 @@ Only root + perfective yields an actuality entailment:
 | root (below Asp) | IMPF | ✗ | Asp > Mod: IMPF doesn't force completion |
 | epistemic (above Asp) | PFV | ✗ | Mod > Asp: PFV in accessible worlds only |
 | epistemic (above Asp) | IMPF | ✗ | Mod > Asp: no completion | -/
-def actualityEntailmentPredicted (pos : ModalPosition) (asp : ViewpointAspectB) : Bool :=
+def actualityEntailmentPredicted (pos : ModalPosition) (asp : Perfectivity) : Bool :=
   match pos, asp with
   | .belowAsp, .perfective => true
   | _, _ => false
@@ -127,7 +127,7 @@ theorem only_root_perfective :
 
 /-- The prediction aligns with the aspect scope story: AE holds
 exactly when aspect scopes over the modal AND aspect is perfective. -/
-theorem ae_iff_aspect_over_modal_pfv (pos : ModalPosition) (asp : ViewpointAspectB) :
+theorem ae_iff_aspect_over_modal_pfv (pos : ModalPosition) (asp : Perfectivity) :
     actualityEntailmentPredicted pos asp =
       (toAspectScope pos == .aspectOverModal && asp == .perfective) := by
   cases pos <;> cases asp <;> rfl

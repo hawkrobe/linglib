@@ -45,7 +45,7 @@ linking-relevant property. Two classes of counterevidence:
 namespace Bohnemeyer2004
 
 open ArgumentStructure.EventStructure (EventType InternalExternalCause Template)
-open Semantics.Aspect (ViewpointAspectB)
+open Semantics.Aspect (Perfectivity)
 open Mayan (MarkerSet)
 open Yukatek
 
@@ -97,7 +97,7 @@ theorem marker_respects_outranks {a b : CausalChainPosition} (h : Outranks a b) 
     - Perfective viewpoints align with the final (caused) subevent or the
       chain as a whole → the lowest-ranking role (`tail`) is the default →
       ergative pattern. -/
-def linkingDefault : ViewpointAspectB → CausalChainPosition
+def linkingDefault : Perfectivity → CausalChainPosition
   | .imperfective => .head
   | .perfective => .tail
 
@@ -109,7 +109,7 @@ def linkingDefault : ViewpointAspectB → CausalChainPosition
 
     - Head default (imperfective): S patterns with A → set-A
     - Tail default (perfective): S patterns with U → set-B -/
-def sMarkerFromViewpoint (v : ViewpointAspectB) : MarkerSet :=
+def sMarkerFromViewpoint (v : Perfectivity) : MarkerSet :=
   (linkingDefault v).marker
 
 /-! ### Linking by viewpoint derives the split

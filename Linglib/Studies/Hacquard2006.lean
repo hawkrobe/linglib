@@ -296,7 +296,7 @@ complement, while those with **imperfective** aspect do not.
 
 namespace Hacquard2006.ActualityInferences
 
-open Semantics.Aspect (ViewpointAspectB)
+open Semantics.Aspect (Perfectivity)
 
 /-- A single cross-linguistic data point for actuality inferences. -/
 structure ActualityDatum where
@@ -305,7 +305,7 @@ structure ActualityDatum where
   /-- The modal form in that language -/
   modalForm : String
   /-- Viewpoint aspect of the sentence -/
-  aspect : ViewpointAspectB
+  aspect : Perfectivity
   /-- Does the complement entailment hold? -/
   complementEntailed : Bool
   /-- Example sentence gloss -/

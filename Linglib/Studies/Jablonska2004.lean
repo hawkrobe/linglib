@@ -29,7 +29,7 @@ common semantic denominator across the readings. Her fn. 2 notes that
 
 namespace Jablonska2004
 
-open Semantics.Aspect (ViewpointAspectB)
+open Semantics.Aspect (Perfectivity)
 open Svenonius2004 (Analysis WellStacked)
 open Polish.Verbs
 
@@ -68,7 +68,7 @@ theorem po_same_form_different_readings :
     consistent with [svenonius-2004]'s diagnostic (56c). -/
 theorem stemAspect_imperfective_of_isSuperlexical
     (a : Analysis) (ha : a ∈ analyses) :
-    a.stem.aspect = ViewpointAspectB.imperfective := by
+    a.stem.aspect = Perfectivity.imperfective := by
   fin_cases ha <;> rfl
 
 /-- The citation-form analyses match her hyphen segmentation ((53)

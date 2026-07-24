@@ -59,7 +59,7 @@ namespace Svenonius2004
 open Data.Examples (LinguisticExample)
 open Morphology (Morph)
 open Morphology.Word (Tree)
-open Semantics.Aspect (ViewpointAspectB)
+open Semantics.Aspect (Perfectivity)
 open Verb (Stem)
 
 /-- Aspectual subtypes of the superlexical class — the labels recurring
@@ -238,7 +238,7 @@ theorem reverse_4c_not_wellStacked : ¬ WellStacked a4c.prefixes.reverse := by
 theorem stemAspect_imperfective_of_isSuperlexical
     (a : Analysis) (ha : a ∈ russianAnalyses)
     (hs : ∃ p ∈ a.prefixes, p.2.IsSuperlexical) :
-    a.stem.aspect = ViewpointAspectB.imperfective := by
+    a.stem.aspect = Perfectivity.imperfective := by
   fin_cases ha <;> first | rfl | exact absurd hs (by decide)
 
 /-- For the citation-form examples, the paper's hyphen segmentation

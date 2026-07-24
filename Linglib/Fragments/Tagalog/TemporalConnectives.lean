@@ -38,7 +38,7 @@ structure AspectReadingEntry where
   /-- Description of the aspect form -/
   aspectLabel : String
   /-- Viewpoint aspect category -/
-  aspect : ViewpointAspectB
+  aspect : Perfectivity
   /-- Whether this is the culminating (AIA) or non-culminating (NEUT) variant -/
   culminating : Bool
   /-- Resulting reading of the temporal clause -/
