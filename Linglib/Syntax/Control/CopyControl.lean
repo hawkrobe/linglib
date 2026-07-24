@@ -15,8 +15,8 @@ Substrate for the overt-PRO studies (`Studies/Ostrove2026.lean`,
 - `Control.CopyControlType` / `Control.copyControlProfile`: the four
   copy-control types and their distinguishing properties
 - `Control.Derivation`: base-generation vs. movement, with the
-  predictions (`predictsExemptWithQuantifiedController`,
-  `predictsEmbeddedLexicalCopy`) that separate them empirically
+  diagnostic prediction table (`Derivation.predicts`) and the unique
+  derivation an observation supports (`Derivation.supportedBy`)
 - `Control.ExemptAnaphorProfile`: per-language exempt-anaphor facts
 -/
 
@@ -89,20 +89,43 @@ inductive Derivation where
   | movement
   deriving DecidableEq, Repr
 
-/-- Movement predicts exempt anaphors are UNAVAILABLE with quantified
-    controllers (the embedded copy IS the quantifier); base-generation
-    predicts they ARE available (the embedded element is a genuine
-    pronoun). -/
-def Derivation.predictsExemptWithQuantifiedController : Derivation → Bool
-  | .baseGeneration => true
-  | .movement       => false
+namespace Derivation
 
-/-- Under movement the overt embedded element is a copy of the
-    controller, so a lexical-DP controller predicts a lexical-DP
-    embedded copy; under base-generation the embedded element is an
-    independent pronoun and a lexical DP is not expected. -/
-def Derivation.predictsEmbeddedLexicalCopy : Derivation → Bool
-  | .baseGeneration => false
-  | .movement       => true
+/-- Observable diagnostics that separate the two derivations. -/
+inductive Diagnostic where
+  /-- Is an exempt anaphor available with a quantified controller? -/
+  | exemptAnaphorWithQuantifiedController
+  /-- Can the pronounced embedded element be a lexical-DP copy of the
+      controller? -/
+  | embeddedLexicalCopy
+  deriving DecidableEq, Repr
+
+/-- What each derivation predicts for each diagnostic. Under movement
+    the embedded element is a copy of the controller: a quantified
+    controller leaves no pronoun to antecede an exempt anaphor, and a
+    lexical-DP controller should reappear as a lexical-DP copy. Under
+    base-generation the embedded element is an independent pronoun. -/
+def predicts : Derivation → Diagnostic → Bool
+  | .baseGeneration, .exemptAnaphorWithQuantifiedController => true
+  | .baseGeneration, .embeddedLexicalCopy                   => false
+  | .movement,       .exemptAnaphorWithQuantifiedController => false
+  | .movement,       .embeddedLexicalCopy                   => true
+
+/-- The unique derivation consistent with an observed diagnostic value. -/
+def supportedBy (d : Diagnostic) (obs : Bool) : Derivation :=
+  if Derivation.baseGeneration.predicts d = obs then .baseGeneration else .movement
+
+/-- The supported derivation predicts the observation. -/
+@[simp] theorem predicts_supportedBy (d : Diagnostic) (obs : Bool) :
+    (supportedBy d obs).predicts d = obs := by
+  cases d <;> cases obs <;> rfl
+
+/-- Only the supported derivation predicts the observation: every
+    diagnostic discriminates between the two derivations. -/
+theorem eq_supportedBy_of_predicts {dv : Derivation} {d : Diagnostic}
+    {obs : Bool} (h : dv.predicts d = obs) : dv = supportedBy d obs := by
+  cases dv <;> cases d <;> subst h <;> rfl
+
+end Derivation
 
 end Control

@@ -86,8 +86,12 @@ theorem irrealis_marker_iff_not_positive_implicative :
 /-! ### Landau bridge
 
 `ni`-clauses are C-subjunctives on [landau-2004]'s finiteness scale;
-`akɛ`/`kɛji`-clauses are fully finite. Gã has no F-subjunctive: no
-tensed-but-controlled clause class. -/
+`akɛ`/`kɛji`-clauses are fully finite. Gã has no F-subjunctive — no
+tensed-but-controlled clause class — so the entire control system rides
+on the single finiteness bit: OC status, LDA reachability, and Agr are
+each `isFinite` up to negation. Contrast SMPM
+(`Studies/Ostrove2026.lean`), whose tensed subjunctives pull TAM
+restriction and noncoreference apart. -/
 
 def gaToLandau : EmbeddedClauseType → Control.ClauseClass
   | .irrealisNi => .cSubjunctive
@@ -153,23 +157,20 @@ theorem lda_reaches_iff_oc (c : EmbeddedClauseType) :
 §3.6.2: under movement ([hornstein-1999]) the pronounced embedded
 element is a copy of the matrix DP, predicting an embedded lexical DP
 where Gã allows only a pronoun (exx 42b, 64) — so control is
-base-generated, the pole `Ostrove2026.smpm_supports_basegeneration`
+base-generated (refuting movement is free:
+`Derivation.eq_supportedBy_of_predicts` says the supported derivation
+is unique). The pole `Ostrove2026.smpm_supports_basegeneration`
 reaches via exempt anaphors. -/
-
-def gaControlDerivation : Derivation := .baseGeneration
 
 /-- Gã forbids embedded lexical-DP copies (exx 42b, 64). -/
 def gaEmbeddedLexicalCopyAvailable : Bool := false
 
-/-- The observed ban matches base-generation's prediction. -/
-theorem ga_supports_basegeneration :
-    gaEmbeddedLexicalCopyAvailable
-      = Derivation.predictsEmbeddedLexicalCopy gaControlDerivation := rfl
+/-- The derivation the lexical-copy observation supports. -/
+def gaControlDerivation : Derivation :=
+  Derivation.supportedBy .embeddedLexicalCopy gaEmbeddedLexicalCopyAvailable
 
-/-- The observed ban refutes movement's prediction. -/
-theorem ga_refutes_movement :
-    gaEmbeddedLexicalCopyAvailable
-      ≠ Derivation.predictsEmbeddedLexicalCopy .movement := by decide
+theorem ga_supports_basegeneration :
+    gaControlDerivation = .baseGeneration := rfl
 
 /-! ### Minimal pronoun inventory
 
