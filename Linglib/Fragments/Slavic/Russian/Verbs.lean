@@ -31,19 +31,19 @@ def po : Morph := .pref "po"
 /-! ### Verb stems -/
 
 /-- *brositj* 'throw' (perfective). -/
-def brosit : VerbStem := ⟨"brositj", some .perfective, "throw"⟩
+def brosit : VerbStem := ⟨"brositj", .perfective, "throw"⟩
 
 /-- *brosatj* 'throw' (imperfective). -/
-def brosat : VerbStem := ⟨"brosatj", some .imperfective, "throw"⟩
+def brosat : VerbStem := ⟨"brosatj", .imperfective, "throw"⟩
 
 /-- *brasyvatj* — the secondary-imperfective stem of *brositj* /
     *brosatj*, host of further prefixation in [svenonius-2004] ex. (4a). -/
-def brasyvat : VerbStem := ⟨"brasyvatj", some .imperfective, "throw"⟩
+def brasyvat : VerbStem := ⟨"brasyvatj", .imperfective, "throw"⟩
 
 /-- *kuritj* 'smoke' (imperfective). -/
-def kurit : VerbStem := ⟨"kuritj", some .imperfective, "smoke"⟩
+def kurit : VerbStem := ⟨"kuritj", .imperfective, "smoke"⟩
 
 /-- *čitatj* 'read' (imperfective). -/
-def chitat : VerbStem := ⟨"čitatj", some .imperfective, "read"⟩
+def chitat : VerbStem := ⟨"čitatj", .imperfective, "read"⟩
 
 end Russian.Verbs

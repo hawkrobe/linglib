@@ -10,8 +10,10 @@ verbal root, with superlexical prefixes systematically outside lexical
 ones and outer prefixes taking scope over inner ones. Prefixes attach to
 both perfective and imperfective stems, and the large class of simplex
 *homogeneous* verbs (her ex. (2)) has no perfective counterparts and
-"remains aspectless" — the fragment stems these analyses are built on
-carry `aspect := none`.
+"remains aspectless", behaving as imperfective only by default — her
+analytical reclassification of the dictionary-imperfective simplexes,
+encoded as the study-level `homogeneousSimplexes` class (the fragment
+records the consensus imperfective value).
 
 Her *po-* taxonomy distinguishes three superlexical *po-*'s:
 delimitative ('for a while', which does not stack), distributive
@@ -22,6 +24,8 @@ glosses stacked *po-* as DLMT, the analyses here follow her own labels
 
 ## Main definitions
 
+* `homogeneousSimplexes` — her ex. (2) class: the simplexes she analyses
+  as aspectless (imperfective only by default).
 * `analyses` — her classified examples: the (1)/(3) single-prefix
   derivations on homogeneous simplexes, and the (22b)/(23c) stacks on
   *pro-dam* 'sell'.
@@ -30,16 +34,26 @@ glosses stacked *po-* as DLMT, the analyses here follow her own labels
 
 * `analyses_wellStacked` — every stack keeps superlexicals outside
   lexicals (`Svenonius2004.WellStacked`).
-* `pairsTable_stems_aspectless` — the (1)/(3)-table derivations attach
-  to aspectless homogeneous stems, her quantization claim.
+* `pairsTable_stems_homogeneous` — the (1)/(3)-table derivations attach
+  to her homogeneous class, her quantization claim; per
+  `homogeneous_imperfective` that class is dictionary-imperfective.
 * `analyses_match_segmentation` — her hyphen segmentation equals each
   analysis' prefix-stem decomposition (all rows are citation forms).
 -/
 
 namespace Istratkova2004
 
+open Semantics.Aspect (ViewpointAspectB)
+open Slavic (VerbStem)
 open Svenonius2004 (Analysis WellStacked)
 open Bulgarian.Verbs
+
+/-- Her ex. (2) class: the simplex homogeneous verbs, which she analyses
+    as aspectless — with no perfective counterparts, imperfective only
+    by default. An analytical reclassification of fragment stems, so it
+    lives here rather than as a fragment field. -/
+def homogeneousSimplexes : List VerbStem :=
+  [pisha, misla, znam, blesta, obicham, cheta]
 
 /-! ### Single-prefix analyses (her (1)/(3) tables) -/
 
@@ -95,13 +109,20 @@ theorem analyses_wellStacked (a : Analysis) (ha : a ∈ analyses) :
     WellStacked a.prefixes := by
   fin_cases ha <;> decide
 
-/-- The (1)/(3)-table derivations attach to aspectless homogeneous
-    stems (her ex. (2) class): prefixation quantizes them, after which
-    they come in perfective-imperfective pairs. -/
-theorem pairsTable_stems_aspectless
+/-- The (1)/(3)-table derivations attach to her homogeneous class:
+    prefixation quantizes these verbs, after which they come in
+    perfective-imperfective pairs. -/
+theorem pairsTable_stems_homogeneous
     (a : Analysis) (ha : a ∈ [a1a, a3a, a3b, a3c, a3d, a3i]) :
-    a.stem.aspect = none := by
-  fin_cases ha <;> rfl
+    a.stem ∈ homogeneousSimplexes := by
+  fin_cases ha <;> decide
+
+/-- The homogeneous class is dictionary-imperfective — the consensus
+    value her aspectless analysis reinterprets as default behaviour. -/
+theorem homogeneous_imperfective
+    (s : VerbStem) (hs : s ∈ homogeneousSimplexes) :
+    s.aspect = ViewpointAspectB.imperfective := by
+  fin_cases hs <;> rfl
 
 /-- Her hyphen segmentation equals each analysis' decomposition (all
     rows are 1sg-present citation forms). -/

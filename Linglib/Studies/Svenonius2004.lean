@@ -238,7 +238,7 @@ theorem reverse_4c_not_wellStacked : ¬ WellStacked a4c.prefixes.reverse := by
 theorem stemAspect_imperfective_of_isSuperlexical
     (a : Analysis) (ha : a ∈ russianAnalyses)
     (hs : ∃ p ∈ a.prefixes, p.2.IsSuperlexical) :
-    a.stem.aspect = some ViewpointAspectB.imperfective := by
+    a.stem.aspect = ViewpointAspectB.imperfective := by
   fin_cases ha <;> first | rfl | exact absurd hs (by decide)
 
 /-- For the citation-form examples, the paper's hyphen segmentation

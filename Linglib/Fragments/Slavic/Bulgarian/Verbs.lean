@@ -6,10 +6,10 @@ import Linglib.Fragments.Slavic.Params
 
 Prefix morphs and verb-stem entries for the Bulgarian multiple-
 prefixation data of [istratkova-2004]. Citation forms are first-person
-singular present (Bulgarian has no infinitive). Simplex homogeneous
-verbs (her ex. (2)) carry `aspect := none`: they have no perfective
-counterparts and behave as imperfective only by default. Analytical
-classification of prefix occurrences lives in
+singular present (Bulgarian has no infinitive). Aspect values are the
+dictionary-consensus ones; her analytical reclassification of the
+simplex imperfectives as aspectless homogeneous verbs (her ex. (2)),
+like the classification of prefix occurrences, lives in
 `Studies/Istratkova2004.lean`.
 -/
 
@@ -37,35 +37,32 @@ def na : Morph := .pref "na"
 /-- The prefix *pre-*. -/
 def pre : Morph := .pref "pre"
 
-/-! ### Verb stems
+/-! ### Verb stems -/
 
-The aspectless entries are [istratkova-2004]'s homogeneous simplex
-class (her ex. (2)). -/
+/-- *piša* 'write' (imperfective simplex). -/
+def pisha : VerbStem := ⟨"piša", .imperfective, "write"⟩
 
-/-- *piša* 'write' (aspectless homogeneous simplex). -/
-def pisha : VerbStem := ⟨"piša", none, "write"⟩
+/-- *misl'a* 'think' (imperfective simplex). -/
+def misla : VerbStem := ⟨"misl'a", .imperfective, "think"⟩
 
-/-- *misl'a* 'think' (aspectless homogeneous simplex). -/
-def misla : VerbStem := ⟨"misl'a", none, "think"⟩
+/-- *znam* 'know' (imperfective simplex). -/
+def znam : VerbStem := ⟨"znam", .imperfective, "know"⟩
 
-/-- *znam* 'know' (aspectless homogeneous simplex). -/
-def znam : VerbStem := ⟨"znam", none, "know"⟩
+/-- *blest'a* 'glitter' (imperfective simplex). -/
+def blesta : VerbStem := ⟨"blest'a", .imperfective, "glitter"⟩
 
-/-- *blest'a* 'glitter' (aspectless homogeneous simplex). -/
-def blesta : VerbStem := ⟨"blest'a", none, "glitter"⟩
+/-- *običam* 'love' (imperfective simplex). -/
+def obicham : VerbStem := ⟨"običam", .imperfective, "love"⟩
 
-/-- *običam* 'love' (aspectless homogeneous simplex). -/
-def obicham : VerbStem := ⟨"običam", none, "love"⟩
+/-- *četa* 'read' (imperfective simplex). -/
+def cheta : VerbStem := ⟨"četa", .imperfective, "read"⟩
 
-/-- *četa* 'read' (aspectless homogeneous simplex). -/
-def cheta : VerbStem := ⟨"četa", none, "read"⟩
+/-- *razkaža* 'narrate' (perfective; etymologically *raz-kaža*
+    'around-say'). -/
+def razkazha : VerbStem := ⟨"razkaža", .perfective, "narrate"⟩
 
-/-- *razkaža* 'narrate' (quantized perfective; etymologically
-    *raz-kaža* 'around-say'). -/
-def razkazha : VerbStem := ⟨"razkaža", some .perfective, "narrate"⟩
-
-/-- *dam* 'give' (simplex quantized perfective; host of *pro-dam*
-    'sell' and its prefix stacks). -/
-def dam : VerbStem := ⟨"dam", some .perfective, "give"⟩
+/-- *dam* 'give' (perfective simplex; host of *pro-dam* 'sell' and
+    its prefix stacks). -/
+def dam : VerbStem := ⟨"dam", .perfective, "give"⟩
 
 end Bulgarian.Verbs

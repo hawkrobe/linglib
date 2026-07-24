@@ -29,15 +29,15 @@ def w : Morph := .pref "w"
 /-! ### Verb stems -/
 
 /-- *siedzieć* 'sit' (imperfective, stative). -/
-def siedziec : VerbStem := ⟨"siedzieć", some .imperfective, "sit"⟩
+def siedziec : VerbStem := ⟨"siedzieć", .imperfective, "sit"⟩
 
 /-- *kochać* 'love' (imperfective, stative). -/
-def kochac : VerbStem := ⟨"kochać", some .imperfective, "love"⟩
+def kochac : VerbStem := ⟨"kochać", .imperfective, "love"⟩
 
 /-- *jaśnieć* 'be bright' (imperfective, low -ej- verbalizer stem). -/
-def jasniec : VerbStem := ⟨"jaśnieć", some .imperfective, "be bright"⟩
+def jasniec : VerbStem := ⟨"jaśnieć", .imperfective, "be bright"⟩
 
 /-- *chodzić* 'walk' (imperfective, non-directed motion). -/
-def chodzic : VerbStem := ⟨"chodzić", some .imperfective, "walk"⟩
+def chodzic : VerbStem := ⟨"chodzić", .imperfective, "walk"⟩
 
 end Polish.Verbs

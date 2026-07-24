@@ -5,10 +5,11 @@ import Linglib.Semantics.Aspect.Basic
 
 Theory-light schema shared across the Slavic verbal-prefix fragments
 (Russian, Polish, Bulgarian): the `VerbStem` lexical-entry type, with
-aspect reused from `Semantics.Aspect.ViewpointAspectB`. `aspect := none`
-encodes aspectless stems — Bulgarian's homogeneous simplex verbs, which
-have no perfective counterparts and behave as imperfective only by
-default ([istratkova-2004]).
+aspect reused from `Semantics.Aspect.ViewpointAspectB`. The aspect field
+records the dictionary-consensus value; analytical reinterpretations of
+it (e.g. [istratkova-2004]'s claim that Bulgarian homogeneous simplexes
+are aspectless, imperfective only by default) are study-level
+classifications, not fragment data.
 
 Prefixes need no schema of their own: a Slavic verbal prefix is a
 `Morphology.Morph` (`Morph.pref`), and fragments deliberately record
@@ -22,12 +23,12 @@ namespace Slavic
 open Semantics.Aspect (ViewpointAspectB)
 
 /-- A Slavic verb-stem lexical entry: citation form, viewpoint aspect
-    (`none` = aspectless homogeneous simplex), and gloss. -/
+    (the dictionary-consensus value), and gloss. -/
 structure VerbStem where
   /-- Citation form. -/
   form   : String
-  /-- Viewpoint aspect; `none` for aspectless stems. -/
-  aspect : Option ViewpointAspectB
+  /-- Viewpoint aspect (dictionary-consensus value). -/
+  aspect : ViewpointAspectB
   /-- English gloss. -/
   gloss  : String
   deriving DecidableEq, Repr
