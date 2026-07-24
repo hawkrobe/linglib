@@ -34,7 +34,7 @@ The contributions are made *true by construction* on shared substrate:
   pick the same referent exactly when the indexed entity is the unique satisfier —
   off that, DEM is anaphoric in a way PER is not. Both denote via
   `Description.ofPresupType`, with the strength round-tripping through
-  `expectedPresupType` (`Description.expectedPresupType_ofPresupType`); the
+  the Frame-free kind (`Description.kind_ofPresupType`, `DescriptionKind.presupType_toKind`); the
   off-uniqueness **divergence** — DEM and PER picking *different* referents — is
   `der_er_can_diverge`, reusing [schwarz-2009] §8's two-satisfier scenario.
 * The **two-series ↔ two-article** correlation (§4) is read off the determiner

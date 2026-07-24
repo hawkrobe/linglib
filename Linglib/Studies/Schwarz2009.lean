@@ -37,7 +37,7 @@ The split is operationalized in the Core layer by:
   `.anaphoric` (strong) constructors, with different argument shapes
   (`.unique` carries a *situation* index for resource-situation binding;
   `.anaphoric` carries a *discourse* index for antecedent lookup).
-- **`Semantics.Definiteness.Description.expectedPresupType`** — projects each kind
+- **`Features.Definiteness.DescriptionKind.presupType`** — projects each kind
   to the [schwarz-2009] presupposition type it expresses.
 - **`Semantics.Definiteness.Determiner`** — the declared determiner set records the
   morphological inventory; `Determiner.Inventory.IsSyncretic` is the predicate that
@@ -96,25 +96,21 @@ theorem presup_types_exhaustive :
 
 variable {E W : Type}
 
-/-- The weak article (`.unique` in the Core sum type) projects to the
-    uniqueness presupposition. -/
-theorem unique_is_uniqueness (R : DenotGS E W .et) (sIdx : Nat) :
-    (Description.unique R sIdx).expectedPresupType = some .uniqueness := rfl
+/-- The weak article (the `unique` kind) projects to the uniqueness
+    presupposition. -/
+theorem unique_is_uniqueness :
+    DescriptionKind.unique.presupType = some .uniqueness := rfl
 
-/-- The strong article (`.anaphoric` in the Core sum type) projects to the
-    familiarity presupposition. -/
-theorem anaphoric_is_familiarity (R : DenotGS E W .et) (d : Nat) :
-    (Description.anaphoric R d).expectedPresupType = some .familiarity := rfl
+/-- The strong article (the `anaphoric` kind) projects to the familiarity
+    presupposition. -/
+theorem anaphoric_is_familiarity :
+    DescriptionKind.anaphoric.presupType = some .familiarity := rfl
 
 /-- The two articles project to distinct presupposition types — the
     central [schwarz-2009] contrast at the type level. -/
-theorem unique_anaphoric_presup_distinct
-    (R : DenotGS E W .et) (sIdx d : Nat) :
-    (Description.unique R sIdx).expectedPresupType ≠
-      (Description.anaphoric R d).expectedPresupType := by
-  rw [unique_is_uniqueness, anaphoric_is_familiarity]
-  intro h
-  exact two_presup_types_distinct (Option.some_inj.mp h)
+theorem unique_anaphoric_presup_distinct :
+    DescriptionKind.unique.presupType ≠ DescriptionKind.anaphoric.presupType := by
+  decide
 
 -- ════════════════════════════════════════════════════════════════
 -- §3: Different argument shapes — situation vs discourse binding
@@ -148,14 +144,13 @@ theorem strong_article_consults_entity_assignment
       (letI := Classical.dec (R g gs (g d))
        if R g gs (g d) then some (g d) else none) := rfl
 
-/-- The classifier `usesSituationPronoun` correctly flags the weak article
-    as a structural binder of the resource situation; the strong article
-    is not. This is the structural correlate of the [schwarz-2009]
+/-- The classifier `DescriptionKind.UsesSituationPronoun` correctly flags the
+    weak article as a structural binder of the resource situation; the strong
+    article is not. This is the structural correlate of the [schwarz-2009]
     claim that uniqueness is *situational* and familiarity is *anaphoric*. -/
-theorem situation_binding_classifies_articles
-    (R : DenotGS E W .et) (sIdx d : Nat) :
-    (Description.unique R sIdx).usesSituationPronoun = true ∧
-    (Description.anaphoric R d).usesSituationPronoun = false := ⟨rfl, rfl⟩
+theorem situation_binding_classifies_articles :
+    DescriptionKind.unique.UsesSituationPronoun ∧
+    ¬ DescriptionKind.anaphoric.UsesSituationPronoun := by decide
 
 -- ════════════════════════════════════════════════════════════════
 -- §4: Morphological correlate — German bipartite vs English syncretic
@@ -253,7 +248,7 @@ Table 4.4 for the parallel pattern with anaphoric definites):
     article forms.
 
     The article system (`articleSystem`) is *derived* from the language's
-    fragment-level `determiners`, not stipulated independently — the
+    fragment-level `Determiners.inventory`, not stipulated independently — the
     declared `Determiner.Entry` list is the single source of truth. -/
 structure DonkeyArticleDatum where
   language : String
@@ -262,31 +257,31 @@ structure DonkeyArticleDatum where
   form : String
   /-- Declared determiner set (single source of truth from which
       `articleSystem` is derived). -/
-  determiners : Determiner.Inventory
+  inventory : Determiner.Inventory
 
-/-- Schwarz `ArticleType` classification, derived from `determiners`. -/
+/-- Schwarz `ArticleType` classification, derived from `inventory`. -/
 def DonkeyArticleDatum.articleSystem (d : DonkeyArticleDatum) : ArticleType :=
-  d.determiners.articleType
+  d.inventory.articleType
 
 def germanDonkey : DonkeyArticleDatum :=
   { language := "German", isoCode := "deu"
     form := "strong article (von dem)"
-    determiners := German.Determiners.inventory }
+    inventory := German.Determiners.inventory }
 
 def thaiDonkey : DonkeyArticleDatum :=
   { language := "Thai", isoCode := "tha"
     form := "demonstrative"
-    determiners := Thai.Determiners.inventory }
+    inventory := Thai.Determiners.inventory }
 
 def mandarinDonkey : DonkeyArticleDatum :=
   { language := "Mandarin", isoCode := "cmn"
     form := "demonstrative"
-    determiners := Mandarin.Determiners.inventory }
+    inventory := Mandarin.Determiners.inventory }
 
 def shanDonkey : DonkeyArticleDatum :=
   { language := "Shan", isoCode := "shn"
     form := "bare noun"
-    determiners := Shan.Determiners.inventory }
+    inventory := Shan.Determiners.inventory }
 
 /-- All cross-linguistic donkey article data. -/
 def donkeyArticleData : List DonkeyArticleDatum :=

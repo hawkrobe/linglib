@@ -149,7 +149,7 @@ def _root_.Article.toDescriptions (a : Article)
 the denotation pipeline (`ofPresupType`) and the inventory pipeline
 (`Determiner.Inventory.Realizes`) coincide through `kind_ofPresupType` and
 `realizes_toKind`. -/
-theorem _root_.Determiner.realizes_of_mem_toDescriptions (a : Article)
+theorem _root_.Article.realizes_of_mem_toDescriptions (a : Article)
     (R : DenotGS E W .et) (idx : Nat) (k : Description E W)
     (hk : k ∈ a.toDescriptions R idx) :
     Determiner.Inventory.Realizes [.article a] k.kind := by
@@ -175,7 +175,7 @@ theorem Article.denotations_realized (a : Article)
     ∃ k : Description E W,
       Determiner.Inventory.Realizes [.article a] k.kind ∧ nd = k.denote := by
   obtain ⟨k, hk, rfl⟩ := List.mem_map.mp h
-  exact ⟨k, Determiner.realizes_of_mem_toDescriptions a R idx k hk, rfl⟩
+  exact ⟨k, Article.realizes_of_mem_toDescriptions a R idx k hk, rfl⟩
 
 /-! ### The possessive determiner's denotation -/
 
