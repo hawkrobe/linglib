@@ -421,15 +421,14 @@ theorem smpm_no_quantified_exempt :
     This matches the base-generation prediction. -/
 def smpmExemptAvailableWithQuantifiedController : Bool := true
 
-theorem movement_incorrectly_predicts :
-    Derivation.predictsExemptWithQuantifiedController .movement = false := rfl
-
-theorem basegeneration_correctly_predicts :
-    Derivation.predictsExemptWithQuantifiedController .baseGeneration = true := rfl
+/-- The derivation the exempt-anaphor observation supports
+    (`Derivation.eq_supportedBy_of_predicts`: it is the only one). -/
+def smpmControlDerivation : Derivation :=
+  Derivation.supportedBy .exemptAnaphorWithQuantifiedController
+    smpmExemptAvailableWithQuantifiedController
 
 theorem smpm_supports_basegeneration :
-    smpmExemptAvailableWithQuantifiedController
-    = Derivation.predictsExemptWithQuantifiedController .baseGeneration := rfl
+    smpmControlDerivation = .baseGeneration := rfl
 
 -- ════════════════════════════════════════════════════════════════
 -- § 10: Implicational Universal (54)
