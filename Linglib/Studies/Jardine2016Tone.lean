@@ -154,12 +154,12 @@ def resolveRight : Mealy Bool Mark TBU :=
   .ofFlag (· == .H) fun r a =>
     match a with | .H => .H | .O => .O | .Q => if r then .H else .O
 
-/-- The right pass as a right-to-left string function: reverse, run, reverse. -/
-def resolve (x : List Mark) : List TBU := (resolveRight.run x.reverse).reverse
+/-- The right pass as a right-to-left string function (`Mealy.runRight`). -/
+def resolve (x : List Mark) : List TBU := resolveRight.runRight x
 
 private theorem markLeft_run_H_iff (w : List TBU) (j : ℕ) :
     (markLeft.run w)[j]? = some Mark.H ↔ w[j]? = some TBU.H := by
-  rw [markLeft, Mealy.ofFlag_run_getElem?]
+  rw [markLeft, Mealy.getElem?_ofFlag_run]
   cases hv : w[j]? with
   | none => simp
   | some a => cases a <;> simp [ite_eq_iff]
@@ -169,9 +169,9 @@ theorem utp_eq_resolve_mark (w : List TBU) : utp.map w = resolve (markLeft.run w
   have hmark : ∀ i : ℕ, Mark.H ∈ (markLeft.run w).drop (i + 1) ↔ TBU.H ∈ w.drop (i + 1) :=
     fun i => by simp only [List.mem_drop_iff, markLeft_run_H_iff]
   refine List.ext_getElem? fun i => ?_
-  rw [utp.map_getElem?, resolve, resolveRight, Mealy.ofFlag_run_reverse_getElem?]
+  rw [utp.map_getElem?, resolve, resolveRight, Mealy.getElem?_ofFlag_runRight]
   simp only [List.any_beq', List.contains_eq_mem, decide_eq_decide.mpr (hmark i)]
-  rw [markLeft, Mealy.ofFlag_run_getElem?, Option.map_map]
+  rw [markLeft, Mealy.getElem?_ofFlag_run, Option.map_map]
   simp only [List.any_beq', List.contains_eq_mem]
   cases ha : w[i]? with
   | none => rfl
@@ -193,7 +193,7 @@ theorem utp_markup_decomposition :
     funext utp_eq_resolve_mark⟩
   rw [isRightSubsequential_iff_left_reverse]
   have heq : (fun xs : List Mark => (resolve xs.reverse).reverse) = resolveRight.run := by
-    funext xs; rw [resolve, List.reverse_reverse, List.reverse_reverse]
+    funext xs; simp [resolve]
   exact heq ▸ resolveRight.isLetterLeftSubsequential.isLeftSubsequential
 
 /-! ### The autosegmental grounding ((40), §4.4)

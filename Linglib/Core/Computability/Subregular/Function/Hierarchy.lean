@@ -81,14 +81,6 @@ variable {α : Type*} [DecidableEq α]
 private theorem unite_default_right (cL a : α) : unite cL a a = cL := by
   unfold unite; split_ifs <;> simp_all
 
-omit [DecidableEq α] in
-private theorem mealy_stateAfter_eq_foldl {σ : Type*} (T : Mealy σ α α)
-    (s : σ) (pre : List α) :
-    T.stateAfter s pre = pre.foldl (fun l a => (T.step l a).1) s := by
-  induction pre generalizing s with
-  | nil => rfl
-  | cons x xs ih => simp only [Mealy.stateAfter, List.foldl_cons, ih]
-
 /-- **Subsequential ⊆ weakly deterministic.** A synchronous left-subsequential function is
 computed by a non-interacting bimachine: the left automaton *is* the transducer, the right
 automaton is trivial, so the cell output is a one-sided rule (`ωR` is the identity). -/
@@ -102,12 +94,8 @@ theorem IsBimachineWeaklyDeterministic.of_letterLeftSubsequential {f : List α �
     funext xs
     apply List.ext_getElem?
     intro i
-    rw [Bimachine.run_getElem?]
-    show (xs[i]?).map
-        (fun a => (T.step ((xs.take i).foldl (fun l a => (T.step l a).1) T.initial) a).2)
-      = (T.run xs)[i]?
-    rw [show T.run xs = T.runFrom T.initial xs from rfl, T.runFrom_getElem?,
-        mealy_stateAfter_eq_foldl]
+    rw [Bimachine.run_getElem?, T.getElem?_run]
+    rfl
   have hni : B.IsNonInteracting :=
     ⟨fun l a => (T.step l a).2, fun _ a => a, fun l a r => (unite_default_right _ _).symm⟩
   exact hrun ▸ isBimachineWeaklyDeterministic B hni

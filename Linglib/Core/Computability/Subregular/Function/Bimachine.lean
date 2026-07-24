@@ -99,7 +99,7 @@ theorem run_getElem? (x : List α) (i : ℕ) :
 variable {L' R' : Type*}
 
 /-- Transfer a bimachine along state-space equivalences `L ≃ L'` and `R ≃ R'`,
-preserving `run`. Mirrors `SFST.transferEquiv`/`Mealy.transferEquiv`; the use case is
+preserving `run`. Mirrors `SFST.transferEquiv`/`Mealy.reindex`; the use case is
 bringing `Type*` finite states down to `Fin (Fintype.card ·) : Type 0` so a
 universe-polymorphic machine can witness the `Type 0`-state existentials of
 `IsBimachineComputable`/`IsBimachineWeaklyDeterministic`. -/
