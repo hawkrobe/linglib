@@ -61,6 +61,62 @@ def DefPresupType.toKind : DefPresupType → DescriptionKind
   | .uniqueness  => .unique
   | .familiarity => .anaphoric
 
+namespace DescriptionKind
+
+/-- The kind is a definite description (in the broad sense — uniqueness,
+familiarity, demonstrative, or possessive). -/
+def IsDefinite : DescriptionKind → Prop
+  | .bare | .indefinite => False
+  | .unique | .anaphoric | .demonstrative | .possessive => True
+
+instance : DecidablePred IsDefinite := fun k => by
+  cases k <;> unfold IsDefinite <;> infer_instance
+
+/-- The kind requires a discourse antecedent: anaphoric and demonstrative do;
+unique, possessive, bare, and indefinite do not. -/
+def IsAnaphoric : DescriptionKind → Prop
+  | .anaphoric | .demonstrative => True
+  | _ => False
+
+instance : DecidablePred IsAnaphoric := fun k => by
+  cases k <;> unfold IsAnaphoric <;> infer_instance
+
+/-- The kind binds a structural situation pronoun: Coppock–Beaver uniqueness
+and demonstratives do (resource situation for maximality and the deictic
+check); the other kinds do not. -/
+def UsesSituationPronoun : DescriptionKind → Prop
+  | .unique | .demonstrative => True
+  | _ => False
+
+instance : DecidablePred UsesSituationPronoun := fun k => by
+  cases k <;> unfold UsesSituationPronoun <;> infer_instance
+
+/-- The [schwarz-2009]–[schwarz-2013] presupposition type a kind expresses,
+where applicable. Bare and indefinite return `none` because they are not (in
+themselves) definites. -/
+def presupType : DescriptionKind → Option DefPresupType
+  | .bare | .indefinite         => none
+  | .unique | .possessive       => some .uniqueness
+  | .anaphoric | .demonstrative => some .familiarity
+
+/-- Definites are exactly the kinds with a presupposition type. -/
+theorem isDefinite_iff_presupType_isSome (k : DescriptionKind) :
+    k.IsDefinite ↔ k.presupType.isSome = true := by
+  cases k <;> simp [IsDefinite, presupType]
+
+/-- Anaphoric kinds all carry the familiarity presupposition type. -/
+theorem IsAnaphoric.presupType_familiarity {k : DescriptionKind}
+    (h : k.IsAnaphoric) : k.presupType = some .familiarity := by
+  cases k <;> simp_all [IsAnaphoric, presupType]
+
+/-- `toKind` recovers its strength through `presupType`: the round-trip of
+`DefPresupType.toKind`. -/
+theorem presupType_toKind (p : DefPresupType) :
+    p.toKind.presupType = some p := by
+  cases p <;> rfl
+
+end DescriptionKind
+
 -- ============================================================================
 -- §2: Article Types ([schwarz-2009])
 -- ============================================================================

@@ -56,7 +56,8 @@ unified `Denot E W` machinery rather than ad-hoc `E → Bool` predicates.
   Shan/English/Latin/German fragments share the same enum.
 
 - **No semantic interpretation here.** This file only declares the type and
-  a handful of classification predicates. The interpretation function lives
+  its Frame-free `kind` projection (classification predicates live on
+  `Features.Definiteness.DescriptionKind`). The interpretation function lives
   in `Semantics/Definiteness/Interpret.lean`.
 -/
 
@@ -110,7 +111,7 @@ inductive Description (E W : Type) where
       (relation : DenotGS E W .eet)
 
 -- ════════════════════════════════════════════════════════════════
--- § Classification Predicates (derivable, no semantics yet)
+-- § The Frame-free kind and the strength section
 -- ════════════════════════════════════════════════════════════════
 
 namespace Description
@@ -128,68 +129,12 @@ def kind : Description E W → Features.Definiteness.DescriptionKind
   | .demonstrative .. => .demonstrative
   | .possessive ..    => .possessive
 
-/-- Is this a definite description (in the broad sense — uniqueness,
-    familiarity, demonstrative, or possessive)? -/
-def isDefinite : Description E W → Prop
-  | .bare _              => False
-  | .indefinite _        => False
-  | .unique _ _          => True
-  | .anaphoric _ _       => True
-  | .demonstrative ..    => True
-  | .possessive ..       => True
-
-instance : DecidablePred (@isDefinite E W) := fun n => by
-  cases n <;> unfold isDefinite <;> infer_instance
-
-/-- Does this description require a discourse antecedent? Anaphoric and
-    demonstrative do; unique/possessive/bare/indefinite do not. -/
-def isAnaphoric : Description E W → Prop
-  | .anaphoric _ _       => True
-  | .demonstrative ..    => True
-  | _                    => False
-
-instance : DecidablePred (@isAnaphoric E W) := fun n => by
-  cases n <;> unfold isAnaphoric <;> infer_instance
-
-/-- Does this description bind a structural situation pronoun? Coppock–Beaver
-    uniqueness and demonstratives do (resource situation for maximality and
-    deictic check); the other constructors do not. -/
-def usesSituationPronoun : Description E W → Bool
-  | .unique _ _          => true
-  | .demonstrative ..    => true
-  | _                    => false
-
-/-- Map each `Description` flavor to the [schwarz-2009]–[schwarz-2013]
-    presupposition type it expresses, where applicable. Bare and indefinite
-    return `none` because they are not (in themselves) definites. -/
-def expectedPresupType :
-    Description E W → Option Features.Definiteness.DefPresupType
-  | .bare _              => none
-  | .indefinite _        => none
-  | .unique _ _          => some .uniqueness
-  | .anaphoric _ _       => some .familiarity
-  | .demonstrative ..    => some .familiarity
-  | .possessive ..       => some .uniqueness
-
-/-- Definites are exactly those flavors with a non-`none` expected
-    presupposition type. By construction. -/
-theorem isDefinite_iff_expectedPresup_some (n : Description E W) :
-    n.isDefinite ↔ n.expectedPresupType.isSome = true := by
-  cases n <;> simp [isDefinite, expectedPresupType]
-
-/-- Anaphoric flavors all carry the familiarity presupposition type. -/
-theorem isAnaphoric_implies_familiarity (n : Description E W)
-    (h : n.isAnaphoric) :
-    n.expectedPresupType = some .familiarity := by
-  cases n <;> simp [isAnaphoric] at h
-  all_goals rfl
-
 /-- The definite description for a [schwarz-2009] presupposition type: the
     **weak** article (uniqueness) is `unique`, the **strong** article (familiarity)
-    is `anaphoric`. A section of `expectedPresupType` over the two article
-    strengths, so any item carrying a `DefPresupType` — a determiner, a definite,
+    is `anaphoric`. Any item carrying a `DefPresupType` — a determiner, a definite,
     or (per [patel-grosz-grosz-2017]) a personal/demonstrative pronoun —
-    denotes by `ofPresupType` and recovers its strength via `expectedPresupType`.
+    denotes by `ofPresupType` and recovers its strength through the Frame-free
+    kind (`kind_ofPresupType` + `DescriptionKind.presupType_toKind`).
 
     `idx` is the strong article's anaphoric/discourse index; for the weak article
     it fills the situation-pronoun slot, which `interpret` discards
@@ -199,12 +144,6 @@ def ofPresupType (p : Features.Definiteness.DefPresupType)
   match p with
   | .uniqueness  => .unique restrictor idx
   | .familiarity => .anaphoric restrictor idx
-
-/-- `ofPresupType` is a section of `expectedPresupType`: the strength round-trips. -/
-theorem expectedPresupType_ofPresupType
-    (p : Features.Definiteness.DefPresupType) (R : DenotGS E W .et) (idx : Nat) :
-    (ofPresupType p R idx).expectedPresupType = some p := by
-  cases p <;> rfl
 
 /-- `ofPresupType` constructs the description whose kind is the strength's kind
     (`DefPresupType.toKind`) — the Frame-aware and Frame-free realization maps
