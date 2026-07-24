@@ -1,0 +1,108 @@
+/-!
+# Copy Control and Control Derivation
+
+Copy control ([polinsky-potsdam-2006]): the subject of a control clause
+is a phonologically overt copy of its controller. The typology of copy
+types, the movement vs. base-generation opposition for deriving
+obligatory control, and the exempt-anaphor apparatus
+([pollard-sag-1992]) that adjudicates between them.
+
+Substrate for the overt-PRO studies (`Studies/Ostrove2026.lean`,
+`Studies/Allotey2021.lean`).
+
+## Main definitions
+
+- `Control.CopyControlType` / `Control.copyControlProfile`: the four
+  copy-control types and their distinguishing properties
+- `Control.Derivation`: base-generation vs. movement, with the
+  predictions (`predictsExemptWithQuantifiedController`,
+  `predictsEmbeddedLexicalCopy`) that separate them empirically
+- `Control.ExemptAnaphorProfile`: per-language exempt-anaphor facts
+-/
+
+namespace Control
+
+/-! ### Copy control typology -/
+
+/-- Types of copy control ([polinsky-potsdam-2006]), distinguished by
+    the nature of the overt copy and its distribution. -/
+inductive CopyControlType where
+  /-- Full copy: PRO is a full DP copy of the controller.
+      Attested in San Lucas Quiaviní Zapotec, Copala Triqui. -/
+  | fullCopy
+  /-- Logophoric pronominal: PRO is a pronoun, occurs only in
+      attitude reports. Attested in Gengbe, Mandarin. -/
+  | logophoricPronominal
+  /-- Scope-sensitive pronominal: PRO is a pronoun, triggered by
+      scope-taking operators (focus). Attested in Italian, Hungarian,
+      European Portuguese. -/
+  | scopeSensitivePronominal
+  /-- Obligatory pronominal: PRO is an overt pronoun in all control
+      contexts, showing the full OC signature. Attested in SMPM
+      ([ostrove-2026]), Gã ([allotey-2021]), Büli ([sulemana-2021]). -/
+  | obligatoryPronominal
+  deriving DecidableEq, Repr
+
+/-- Properties distinguishing copy control types. -/
+structure CopyControlProfile where
+  controlType : CopyControlType
+  /-- Does the copy show the full OC signature (bound variable, exhaustive)? -/
+  showsOC : Bool
+  /-- Is the copy restricted to attitude report contexts? -/
+  attitudeOnly : Bool
+  /-- Does the copy require a scope-taking operator (focus, only)? -/
+  requiresScopeOperator : Bool
+  /-- Can the copy bear focus? -/
+  copyCanBearFocus : Bool
+  deriving DecidableEq, Repr
+
+/-- Profile for each copy control type. -/
+def copyControlProfile : CopyControlType → CopyControlProfile
+  | .fullCopy                 => ⟨.fullCopy,                 false, false, false, true⟩
+  | .logophoricPronominal     => ⟨.logophoricPronominal,     false, true,  false, true⟩
+  | .scopeSensitivePronominal => ⟨.scopeSensitivePronominal, false, false, true,  true⟩
+  | .obligatoryPronominal     => ⟨.obligatoryPronominal,     true,  false, false, false⟩
+
+/-! ### Exempt anaphors -/
+
+/-- Exempt anaphors ([pollard-sag-1992]): reflexive forms used outside
+    their canonical binding (Condition A) domain. Key constraint: exempt
+    anaphors cannot have quantified antecedents. -/
+structure ExemptAnaphorProfile where
+  /-- Exempt anaphors available in this language -/
+  hasExemptAnaphors : Bool
+  /-- Can exempt anaphors have quantified antecedents? -/
+  allowsQuantifiedAntecedent : Bool
+  deriving DecidableEq, Repr
+
+/-! ### Control derivation -/
+
+/-- The two analyses of obligatory control derivation. -/
+inductive Derivation where
+  /-- Controller base-generated in matrix; PRO base-generated in the
+      embedded clause. Two distinct syntactic positions, linked by
+      variable binding. -/
+  | baseGeneration
+  /-- Controller enters the derivation in embedded subject position and
+      moves to the matrix position ([hornstein-1999]-style Movement
+      Theory of Control). One DP, two copies. -/
+  | movement
+  deriving DecidableEq, Repr
+
+/-- Movement predicts exempt anaphors are UNAVAILABLE with quantified
+    controllers (the embedded copy IS the quantifier); base-generation
+    predicts they ARE available (the embedded element is a genuine
+    pronoun). -/
+def Derivation.predictsExemptWithQuantifiedController : Derivation → Bool
+  | .baseGeneration => true
+  | .movement       => false
+
+/-- Under movement the overt embedded element is a copy of the
+    controller, so a lexical-DP controller predicts a lexical-DP
+    embedded copy; under base-generation the embedded element is an
+    independent pronoun and a lexical DP is not expected. -/
+def Derivation.predictsEmbeddedLexicalCopy : Derivation → Bool
+  | .baseGeneration => false
+  | .movement       => true
+
+end Control

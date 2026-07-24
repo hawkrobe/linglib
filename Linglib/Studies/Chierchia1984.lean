@@ -574,7 +574,7 @@ precisely on attitude verbs. -/
 open Landau2015
 
 /-- Map Chierchia's control classes to Landau's control tiers. -/
-def chierchiaToLandauTier : ChierchiaControlClass → Landau2015.ControlTier
+def chierchiaToLandauTier : ChierchiaControlClass → Control.Tier
   | .obligatory     => .predicative
   | .semiObligatory => .predicative
   | .prominence     => .logophoric
@@ -593,7 +593,7 @@ theorem cp_requires_syntactic_controller (c : ChierchiaControlClass)
     (h : c.hasCP = true) :
     (chierchiaToLandauTier c).requiresSyntacticController = true := by
   cases c <;> simp_all [ChierchiaControlClass.hasCP,
-    chierchiaToLandauTier, Landau2015.ControlTier.requiresSyntacticController]
+    chierchiaToLandauTier, Control.Tier.requiresSyntacticController]
 
 -- ── Per-verb cross-system consistency ──
 
