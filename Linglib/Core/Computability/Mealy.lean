@@ -24,7 +24,7 @@ instance must be supplied for true finite-state machines.
 * `Mealy σ α β`: transducer with states `σ`, input alphabet `α`, output alphabet `β`
 * `Mealy.run`, `Mealy.runRight`: the left-to-right and right-to-left passes
 * `Mealy.ofFlag`: the one-bit machine tracking whether an earlier symbol satisfies `p`
-* `Mealy.transferEquiv`: transport of a machine along a state equivalence
+* `Mealy.reindex`: lifts an equivalence on states to an equivalence on machines
 
 ## Main theorems
 
@@ -160,32 +160,40 @@ theorem getElem?_ofFlag_runRight (xs : List α) (i : ℕ) :
   | nil => simp
   | cons x xs ih => cases i <;> simp [*]
 
-/-! ### Transport along a state equivalence -/
+/-! ### Reindexing states -/
 
 variable {τ : Type*}
 
-/-- `T.transferEquiv e` transports `T` along the state equivalence `e`, preserving
-`run`. The use case is bringing a `Type*` finite state down to
-`Fin (Fintype.card σ) : Type 0` so a universe-polymorphic machine can witness a
-`Type 0`-state existential. -/
-def transferEquiv (e : σ ≃ τ) : Mealy τ α β where
-  initial := e T.initial
-  step t x := (e (T.step (e.symm t) x).1, (T.step (e.symm t) x).2)
+/-- Lifts an equivalence on states to an equivalence on Mealy machines. -/
+@[simps apply_initial apply_step]
+def reindex (g : σ ≃ τ) : Mealy σ α β ≃ Mealy τ α β where
+  toFun T := {
+    initial := g T.initial
+    step := fun t x => (g (T.step (g.symm t) x).1, (T.step (g.symm t) x).2)
+  }
+  invFun T := {
+    initial := g.symm T.initial
+    step := fun s x => (g.symm (T.step (g s) x).1, (T.step (g s) x).2)
+  }
+  left_inv T := by simp
+  right_inv T := by simp
 
-theorem transferEquiv_runFrom (e : σ ≃ τ) (s : σ) (xs : List α) :
-    (T.transferEquiv e).runFrom (e s) xs = T.runFrom s xs := by
-  induction xs generalizing s with
-  | nil => rfl
-  | cons x xs ih =>
-    show (T.step (e.symm (e s)) x).2
-            :: (T.transferEquiv e).runFrom (e (T.step (e.symm (e s)) x).1) xs
-         = (T.step s x).2 :: T.runFrom (T.step s x).1 xs
-    rw [e.symm_apply_apply, ih]
+@[simp] theorem reindex_refl : reindex (Equiv.refl σ) T = T := rfl
 
-/-- The transferred machine computes the same string function. -/
-@[simp] theorem transferEquiv_run (e : σ ≃ τ) :
-    (T.transferEquiv e).run = T.run := by
-  funext xs; exact T.transferEquiv_runFrom e T.initial xs
+@[simp] theorem symm_reindex (g : σ ≃ τ) :
+    (reindex (α := α) (β := β) g).symm = reindex g.symm := rfl
+
+@[simp] theorem stateAfter_reindex (g : σ ≃ τ) (t : τ) (xs : List α) :
+    (reindex g T).stateAfter t xs = g (T.stateAfter (g.symm t) xs) := by
+  induction xs generalizing t <;> simp [*]
+
+@[simp] theorem runFrom_reindex (g : σ ≃ τ) (t : τ) (xs : List α) :
+    (reindex g T).runFrom t xs = T.runFrom (g.symm t) xs := by
+  induction xs generalizing t <;> simp [*]
+
+/-- The reindexed machine computes the same string function. -/
+@[simp] theorem run_reindex (g : σ ≃ τ) : (reindex g T).run = T.run := by
+  funext xs; simp [run]
 
 end Mealy
 

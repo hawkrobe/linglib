@@ -59,13 +59,13 @@ def IsLetterLeftSubsequential (f : List α → List β) : Prop :=
 
 /-- Every finite-state `Mealy` witnesses `IsLetterLeftSubsequential` for its `run`.
 The state `σ` is accepted at arbitrary `Type*` and brought down to
-`Fin (Fintype.card σ) : Type 0` via `transferEquiv` and `Fintype.equivFin`, so
+`Fin (Fintype.card σ) : Type 0` via `Mealy.reindex` and `Fintype.equivFin`, so
 bounded-window states at the alphabet's universe can witness the predicate (mirrors
 `SFST.isLeftSubsequential`). -/
 theorem Mealy.isLetterLeftSubsequential {σ : Type*} [Fintype σ]
     (T : Mealy σ α β) : IsLetterLeftSubsequential T.run :=
-  ⟨Fin (Fintype.card σ), inferInstance, T.transferEquiv (Fintype.equivFin σ),
-   T.transferEquiv_run _⟩
+  ⟨Fin (Fintype.card σ), inferInstance, Mealy.reindex (Fintype.equivFin σ) T,
+   T.run_reindex _⟩
 
 /-- A letter-left-subsequential map is left-determined at every coordinate — output `i`
 depends only on the prefix `{k | k ≤ i}`. (The *block* `IsLeftSubsequential` lacks
