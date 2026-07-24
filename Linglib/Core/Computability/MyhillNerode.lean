@@ -30,7 +30,8 @@ sequential machine of [holcombe-1982]).
 * `isMealyComputable_iff_residual`: `f` is Mealy-computable if and only if it is
   length-preserving, prefix-preserving, and `Set.range (residual f)` is finite
 
-[UPSTREAM] candidate: alongside `Mathlib.Computability.MyhillNerode`.
+[UPSTREAM] candidate: `Mathlib.Computability.MyhillNerode` (as a Mealy section of the
+existing file, with `residual` beside `Language.leftQuotient`).
 -/
 
 namespace Subregular
