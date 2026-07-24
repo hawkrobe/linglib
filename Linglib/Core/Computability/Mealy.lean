@@ -39,8 +39,6 @@ instance must be supplied for the finite-state class `IsMealyComputable`.
   flag machine sees the flag over its strict prefix (its strict suffix, for the
   right-to-left pass)
 * `isMealyComputable_iff`: the universe-polymorphic characterization
-* `isMealyComputable_of_stateSummary`: the sufficiency half of Myhill–Nerode — a
-  finite left-congruent state summary determining the output yields a machine
 * `IsMealyComputable.comp`: closure under composition
 * `IsMealyComputable.isRegular_preimage`: Mealy-computable maps pull back regular
   languages
@@ -55,19 +53,19 @@ empty.
 
 [UPSTREAM] candidate: `Mathlib.Computability.Mealy`.
 
+The Myhill–Nerode characterization of the Mealy-computable functions by their
+residuals is in `Core/Computability/MyhillNerode.lean`.
+
 ## TODO
 
-* The full Myhill–Nerode characterization [choffrut-1977] in the style of
-  `Mathlib.Computability.MyhillNerode`: define the residual map of a length-preserving
-  function, build the canonical machine on `Set.range` of residuals (the minimal
-  sequential machine of [holcombe-1982], unique up to isomorphism), and prove
-  `IsMealyComputable f ↔ (Set.range f.residual).Finite`.
 * Mealy machine homomorphisms [holcombe-1982], with `reindex` as the isomorphism case.
 * The right-scan mirror via reverse conjugation.
 * Moore machines (state-determined output) and the Mealy–Moore equivalence: same
   states one way, `σ × β` states the other, so the computable classes coincide.
 * The graph view: the zipped graph of a Mealy-computable map is a regular language
-  over `α × β` (the synchronous rational relations).
+  over `α × β` (the synchronous rational relations). Residuals of the map correspond
+  to left quotients of the graph, so this would derive `isMealyComputable_iff_residual`
+  from the language Myhill–Nerode theorem.
 -/
 
 namespace Subregular
@@ -93,8 +91,7 @@ namespace Mealy
 variable (T : Mealy σ α β)
 
 /-- `T.stateAfter s x` is the state reached from `s` after consuming the input `x`. -/
-def stateAfter (s : σ) : List α → σ :=
-  List.foldl T.step s
+def stateAfter (s : σ) : List α → σ := List.foldl T.step s
 
 /-- `T.runFrom s x` runs `T` on the input `x` starting from the state `s`, emitting one
 output symbol per input symbol. -/
@@ -105,8 +102,7 @@ def runFrom : σ → List α → List β
 /-- `T.run x` runs `T` on the input `x` starting from the state `T.initial`. -/
 def run : List α → List β := T.runFrom T.initial
 
-/-- `T.runRight x` runs `T` right-to-left: reverse the input, run, reverse the
-output. -/
+/-- `T.runRight x` runs `T` right-to-left on the input `x`. -/
 def runRight (xs : List α) : List β := (T.run xs.reverse).reverse
 
 @[simp] theorem runFrom_nil (s : σ) : T.runFrom s [] = [] := rfl
@@ -262,6 +258,13 @@ end Mealy
 def IsMealyComputable (f : List α → List β) : Prop :=
   ∃ (σ : Type) (_ : Fintype σ) (T : Mealy σ α β), T.run = f
 
+/-- Every finite-state `Mealy` computes a Mealy-computable function, whatever the
+universe of its state type. -/
+theorem Mealy.isMealyComputable {σ : Type*} [Fintype σ] (T : Mealy σ α β) :
+    IsMealyComputable T.run :=
+  ⟨Fin (Fintype.card σ), inferInstance, Mealy.reindex (Fintype.equivFin σ) T,
+   T.run_reindex _⟩
+
 /-- `f` is Mealy-computable if and only if it is computed by a finite-state `Mealy`
 machine. This is more general than using the definition of `IsMealyComputable`
 directly, as the state type `σ` is universe-polymorphic. -/
@@ -270,56 +273,7 @@ theorem isMealyComputable_iff.{v} {f : List α → List β} :
       ↔ ∃ (σ : Type v) (_ : Fintype σ) (T : Mealy σ α β), T.run = f :=
   ⟨fun ⟨σ, _, T, h⟩ => ⟨ULift σ, inferInstance, Mealy.reindex Equiv.ulift.symm T,
     h ▸ T.run_reindex _⟩,
-   fun ⟨σ, _, T, h⟩ => ⟨Fin (Fintype.card σ), inferInstance,
-    Mealy.reindex (Fintype.equivFin σ) T, h ▸ T.run_reindex _⟩⟩
-
-/-- Every finite-state `Mealy` computes a Mealy-computable function. -/
-theorem Mealy.isMealyComputable {σ : Type*} [Fintype σ] (T : Mealy σ α β) :
-    IsMealyComputable T.run :=
-  isMealyComputable_iff.mpr ⟨σ, inferInstance, T, rfl⟩
-
-/-! ### Myhill–Nerode: the sufficiency direction
-
-`f` is Mealy-computable as soon as it admits a *finite-state, left-congruent summary
-that determines its output*. The finite `state` plays the role of the
-prefix-congruence's quotient; `δ`/`out` are the induced transition and output. (The
-natural Nerode congruence, when of finite index, is one such summary — that
-instantiation, and the necessity direction, are the TODO above.) -/
-
-/-- A length-preserving `f` with a finite `state : List α → σ` that is left-congruent
-(`hδ`) and determines `f`'s output at each position (`hout`) is Mealy-computable — the
-sufficiency half of Myhill–Nerode. -/
-theorem isMealyComputable_of_stateSummary
-    {f : List α → List β} {σ : Type} [Fintype σ]
-    (state : List α → σ) (δ : σ → α → σ) (out : σ → α → β)
-    (hδ : ∀ u x, state (u ++ [x]) = δ (state u) x)
-    (hout : ∀ u x w, (f (u ++ x :: w))[u.length]? = some (out (state u) x))
-    (hlen : ∀ xs, (f xs).length = xs.length) :
-    IsMealyComputable f := by
-  refine ⟨σ, inferInstance, ⟨state [], δ, out⟩, ?_⟩
-  set T : Mealy σ α β := ⟨state [], δ, out⟩
-  have hstate : ∀ ps : List α, T.stateAfter T.initial ps = state ps := by
-    intro ps
-    induction ps using List.reverseRecOn with
-    | nil => rfl
-    | append_singleton ps x ih => rw [T.stateAfter_append, ih, hδ]; rfl
-  funext xs
-  apply List.ext_getElem?
-  intro i
-  rw [T.getElem?_run xs i, hstate]
-  rcases lt_or_ge i xs.length with hi | hi
-  · have key := hout (xs.take i) xs[i] (xs.drop (i + 1))
-    rw [List.length_take_of_le hi.le, ← List.drop_eq_getElem_cons hi,
-      List.take_append_drop] at key
-    rw [List.getElem?_eq_getElem hi, Option.map_some, key]
-  · rw [List.getElem?_eq_none hi, List.getElem?_eq_none ((hlen xs).le.trans hi),
-      Option.map_none]
-
-/-- The identity is Mealy-computable, via a one-state summary. -/
-theorem isMealyComputable_id : IsMealyComputable (id : List α → List α) :=
-  isMealyComputable_of_stateSummary
-    (fun _ => ()) (fun _ _ => ()) (fun _ x => x)
-    (fun _ _ => rfl) (fun _ _ _ => by simp) (fun _ => rfl)
+   fun ⟨_, _, T, h⟩ => h ▸ T.isMealyComputable⟩
 
 /-- Mealy-computable functions are closed under composition (`Mealy.comp`). -/
 theorem IsMealyComputable.comp {γ : Type*} {g : List β → List γ} {f : List α → List β}
