@@ -654,32 +654,15 @@ theorem shan_clf_is_atomization {α : Type*} [PartialOrder α]
 -- §14: Integration with the Semantics.Definiteness API
 -- ============================================================================
 
-/-! The §1–§7 derivation works at the level of `DefMarkingParams` (three
-booleans). The declared `Determiner.Entry` list is the upstream object — it
-records the morphological inventory directly (the `Article`/`Demonstrative`/
-`Possessive` occurrences) and *derives* the `DefMarkingParams` reading.
-
-This section verifies that the determiner-derived classifications agree
-with the parameters used in §7 for all four languages, and connects the
-realization predicate `Determiner.Inventory.Realizes` to Moroney's central empirical
-finding: Shan expresses anaphoric definiteness without any anaphoric article. -/
+/-! The declared `{Lang}.Determiners.inventory` is the canonical upstream
+object — §7's `derive_all_languages` computes each language's Moroney cell
+from it. This section connects the realization predicate
+`Determiner.Inventory.Realizes` to Moroney's central empirical finding: Shan
+expresses anaphoric definiteness without any anaphoric article. -/
 
 open Intensional
 open Intensional.Variables
 open Semantics.Definiteness (Description)
-
-/-- Inventory-derived strategies match §7's `derive_all_languages` for the
-    four Table 4.4 languages. The inventory subsumes the params layer
-    (the §7 `*Params` defs are now `inv.toMarkingParams` projections, so
-    the agreement theorem that previously lived here is `rfl`-tautological
-    and has been removed). -/
-theorem inventory_derives_all_languages :
-    English.Determiners.inventory.markingStrategy = .generallyMarked ∧
-    German.Determiners.inventory.markingStrategy = .bipartite ∧
-    Thai.Determiners.inventory.markingStrategy = .markedAnaphoric ∧
-    Shan.Determiners.inventory.markingStrategy = .unmarked :=
-  ⟨English.Determiners.marking, German.Definiteness.marking,
-   Thai.Definiteness.marking, Shan.Definiteness.marking⟩
 
 /-- Mandarin is in `.markedAnaphoric` — same cell as Thai. (Not part of
     Moroney's Table 4.4 but anchors the Jenks 2018 typological backdrop.) -/

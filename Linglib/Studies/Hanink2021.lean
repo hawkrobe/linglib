@@ -39,7 +39,7 @@ We additionally verify:
    extensions under different `gs`.
 2. **Index-record discipline** — the surface interpretation function
    ignores the index (it just records *which* pronoun is bound, the
-   `gs` does the work), but the `usesSituationPronoun` classifier
+   `gs` does the work), but the `DescriptionKind.UsesSituationPronoun` classifier
    correctly flags `unique` and `demonstrative` as the binders.
 3. **Anaphoric vs. unique split** — anaphoric definites consult the
    *entity* assignment (the antecedent index), so the situation
@@ -52,6 +52,7 @@ namespace Hanink2021
 open Intensional
 open Intensional.Variables
 open Semantics.Definiteness
+open Features.Definiteness (DescriptionKind)
 
 -- ════════════════════════════════════════════════════════════════
 -- §1: A two-room frame for the resource-situation diagnostic
@@ -164,18 +165,16 @@ theorem unique_index_does_not_alter_referent_directly :
       = interpret (E := Item) (W := Room) (.unique tableAtSit0 7) g₀ gsKitchen :=
   interpret_unique_index_irrelevant _ _ _ _ _
 
-/-- Among `Description` constructors, exactly `unique` and
-    `demonstrative` are flagged as binding a structural situation
-    pronoun. Anaphoric definites do not — they consult the entity
-    assignment for an antecedent, not the situation assignment. -/
-theorem situation_binders_classified
-    (R : DenotGS Item Room .et) (deictic : Features.Deixis.Feature) (sIdx d : Nat) :
-    (Description.unique R sIdx).usesSituationPronoun = true ∧
-    (Description.demonstrative R deictic sIdx d).usesSituationPronoun = true ∧
-    (Description.anaphoric R d).usesSituationPronoun = false ∧
-    (Description.bare R).usesSituationPronoun = false ∧
-    (Description.indefinite R).usesSituationPronoun = false := by
-  refine ⟨rfl, rfl, rfl, rfl, rfl⟩
+/-- Among description kinds, exactly `unique` and `demonstrative` are
+    flagged as binding a structural situation pronoun. Anaphoric definites
+    do not — they consult the entity assignment for an antecedent, not the
+    situation assignment. -/
+theorem situation_binders_classified :
+    DescriptionKind.unique.UsesSituationPronoun ∧
+    DescriptionKind.demonstrative.UsesSituationPronoun ∧
+    ¬ DescriptionKind.anaphoric.UsesSituationPronoun ∧
+    ¬ DescriptionKind.bare.UsesSituationPronoun ∧
+    ¬ DescriptionKind.indefinite.UsesSituationPronoun := by decide
 
 -- ════════════════════════════════════════════════════════════════
 -- §5: Anaphoric vs. unique — orthogonal binding

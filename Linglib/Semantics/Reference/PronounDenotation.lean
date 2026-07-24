@@ -129,7 +129,7 @@ PER (*er*) the **weak** article (`Description.ofPresupType .uniqueness` = `.uniq
 "DEM" (*der*) the **strong** article (`…ofPresupType .familiarity` = `.anaphoric`,
 the weak description plus an anaphoric index). PG&G's "DEM = PER + index" is the
 weak/strong refinement `Semantics.Definiteness.interpret_anaphoric_eq_unique_of_existsUnique`;
-the strength round-trips through `expectedPresupType`. The extra layer is that index,
+the strength round-trips through `DescriptionKind.presupType`. The extra layer is that index,
 **not** spatial deixis (footnote 1) — *der* is a strong *personal* pronoun, not a
 separate type; genuine deictic demonstratives are `Description.demonstrative`.
 
