@@ -27,6 +27,7 @@ what makes the dependency-footprint view coincide with the machine view.
 
 ## Main theorems
 
+* `isLetterLeftSubsequential_iff`: the universe-polymorphic characterization
 * `IsLetterLeftSubsequential.leftDetermined`, `.isRightMyopic`:
   letter-left-subsequential functions are prefix-determined, hence right-myopic
 * `isLetterLeftSubsequential_of_stateSummary`: the sufficiency half of Myhill–Nerode —
@@ -42,9 +43,10 @@ the parallel with the block class `IsLeftSubsequential`.
 
 ## TODO
 
-* Instantiate `isLetterLeftSubsequential_of_stateSummary` at the natural Nerode prefix
-  congruence, and prove the necessity direction: a letter-left-subsequential function
-  has a prefix congruence of finite index [choffrut-1977].
+* The full Myhill–Nerode characterization [choffrut-1977] in the style of
+  `Mathlib.Computability.MyhillNerode`: define the residual map of a length-preserving
+  function, build the canonical machine on `Set.range` of residuals, and prove
+  `IsLetterLeftSubsequential f ↔ (Set.range f.residual).Finite`.
 * Composition closure (state-product machine) and the right-scan mirror
   `IsLetterRightSubsequential` via reverse conjugation.
 -/
@@ -57,15 +59,22 @@ variable {α β : Type*}
 def IsLetterLeftSubsequential (f : List α → List β) : Prop :=
   ∃ (σ : Type) (_ : Fintype σ) (T : Mealy σ α β), T.run = f
 
-/-- Every finite-state `Mealy` witnesses `IsLetterLeftSubsequential` for its `run`.
-The state `σ` is accepted at arbitrary `Type*` and brought down to
-`Fin (Fintype.card σ) : Type 0` via `Mealy.reindex` and `Fintype.equivFin`, so
-bounded-window states at the alphabet's universe can witness the predicate (mirrors
+/-- `f` is letter-left-subsequential if and only if it is computed by a finite-state
+`Mealy` machine. This is more general than using the definition of
+`IsLetterLeftSubsequential` directly, as the state type `σ` is universe-polymorphic. -/
+theorem isLetterLeftSubsequential_iff.{v} {f : List α → List β} :
+    IsLetterLeftSubsequential f
+      ↔ ∃ (σ : Type v) (_ : Fintype σ) (T : Mealy σ α β), T.run = f :=
+  ⟨fun ⟨σ, _, T, h⟩ => ⟨ULift σ, inferInstance, Mealy.reindex Equiv.ulift.symm T,
+    h ▸ T.run_reindex _⟩,
+   fun ⟨σ, _, T, h⟩ => ⟨Fin (Fintype.card σ), inferInstance,
+    Mealy.reindex (Fintype.equivFin σ) T, h ▸ T.run_reindex _⟩⟩
+
+/-- Every finite-state `Mealy` computes a letter-left-subsequential function (mirrors
 `SFST.isLeftSubsequential`). -/
 theorem Mealy.isLetterLeftSubsequential {σ : Type*} [Fintype σ]
     (T : Mealy σ α β) : IsLetterLeftSubsequential T.run :=
-  ⟨Fin (Fintype.card σ), inferInstance, Mealy.reindex (Fintype.equivFin σ) T,
-   T.run_reindex _⟩
+  isLetterLeftSubsequential_iff.mpr ⟨σ, inferInstance, T, rfl⟩
 
 /-- A letter-left-subsequential map is left-determined at every coordinate — output `i`
 depends only on the prefix `{k | k ≤ i}`. (The *block* `IsLeftSubsequential` lacks
@@ -74,8 +83,9 @@ theorem IsLetterLeftSubsequential.leftDetermined {f : List α → List β}
     (hf : IsLetterLeftSubsequential f) (i : ℕ) : LeftDetermined f i := by
   obtain ⟨σ, _, T, rfl⟩ := hf
   intro u v hlen hag
-  rw [T.getElem?_run u, T.getElem?_run v, hag i (Set.mem_setOf.mpr le_rfl),
-    take_eq_of_agree fun k hk => hag k (Set.mem_setOf.mpr hk.le)]
+  simp only [Set.mem_setOf_eq] at hag
+  rw [T.getElem?_run u, T.getElem?_run v, hag i le_rfl,
+    take_eq_of_agree fun k hk => hag k hk.le]
 
 /-- A synchronous left-subsequential map is right-myopic: it has no look-ahead. -/
 theorem IsLetterLeftSubsequential.isRightMyopic {f : List α → List β}
@@ -116,11 +126,11 @@ theorem isLetterLeftSubsequential_of_stateSummary
     rw [List.length_take_of_le hi.le, ← List.drop_eq_getElem_cons hi,
       List.take_append_drop] at key
     rw [List.getElem?_eq_getElem hi, Option.map_some, key]
-  · rw [List.getElem?_eq_none hi, List.getElem?_eq_none (by rw [hlen]; exact hi)]
-    simp
+  · rw [List.getElem?_eq_none hi, List.getElem?_eq_none ((hlen xs).le.trans hi),
+      Option.map_none]
 
-/-- Non-vacuity: the identity is letter-left-subsequential via a one-state summary. -/
-example : IsLetterLeftSubsequential (id : List α → List α) :=
+/-- The identity is letter-left-subsequential, via a one-state summary. -/
+theorem isLetterLeftSubsequential_id : IsLetterLeftSubsequential (id : List α → List α) :=
   isLetterLeftSubsequential_of_stateSummary
     (fun _ => ()) (fun _ _ => ()) (fun _ x => x)
     (fun _ _ => rfl) (fun _ _ _ => by simp) (fun _ => rfl)
