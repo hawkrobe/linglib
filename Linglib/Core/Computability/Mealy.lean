@@ -12,7 +12,7 @@ import Mathlib.Logic.Equiv.Defs
 A Mealy machine [mealy-1955] is a deterministic transducer which reads its input left to
 right and emits exactly one output symbol per input symbol, so the function it computes
 is length-preserving by construction. Output coordinate `i` of the run is the step
-output at the state reached after the length-`i` input prefix (`Mealy.run_getElem?`),
+output at the state reached after the length-`i` input prefix (`Mealy.getElem?_run`),
 so the output is prefix-determined at every coordinate.
 
 Note that this definition allows for machines with infinite states; a `Fintype`
@@ -21,17 +21,17 @@ instance must be supplied for true finite-state machines.
 ## Main definitions
 
 * `Mealy σ α β`: transducer with states `σ`, input alphabet `α`, output alphabet `β`
-* `Mealy.run`: the function `List α → List β` computed by the machine
+* `Mealy.run`, `Mealy.runRight`: the left-to-right and right-to-left passes
 * `Mealy.ofFlag`: the one-bit machine tracking whether an earlier symbol satisfies `p`
 * `Mealy.transferEquiv`: transport of a machine along a state equivalence
 
 ## Main theorems
 
-* `Mealy.run_getElem?`: output coordinate `i` is the step output at the state reached
+* `Mealy.getElem?_run`: output coordinate `i` is the step output at the state reached
   after the length-`i` input prefix
-* `Mealy.ofFlag_run_getElem?`, `Mealy.ofFlag_run_reverse_getElem?`: each coordinate of
-  a flag machine sees the flag over its strict prefix (its strict suffix, when the
-  machine is run right to left)
+* `Mealy.getElem?_ofFlag_run`, `Mealy.getElem?_ofFlag_runRight`: each coordinate of a
+  flag machine sees the flag over its strict prefix (its strict suffix, for the
+  right-to-left pass)
 
 [UPSTREAM] candidate: `Mathlib.Computability.Mealy`.
 -/
@@ -55,17 +55,22 @@ namespace Mealy
 
 variable (T : Mealy σ α β)
 
-/-- State reached after consuming a prefix. -/
+/-- `T.stateAfter s x` is the state reached from `s` after consuming the input `x`. -/
 def stateAfter (s : σ) : List α → σ :=
   List.foldl (fun s x => (T.step s x).1) s
 
-/-- Run from a state: one output symbol per input symbol. -/
+/-- `T.runFrom s x` runs `T` on the input `x` starting from the state `s`, emitting one
+output symbol per input symbol. -/
 def runFrom : σ → List α → List β
   | _, [] => []
   | s, x :: xs => (T.step s x).2 :: runFrom (T.step s x).1 xs
 
-/-- Run from the initial state. -/
+/-- `T.run x` runs `T` on the input `x` starting from the state `T.initial`. -/
 def run : List α → List β := T.runFrom T.initial
+
+/-- `T.runRight x` runs `T` right-to-left: reverse the input, run, reverse the
+output. -/
+def runRight (xs : List α) : List β := (T.run xs.reverse).reverse
 
 @[simp] theorem runFrom_nil (s : σ) : T.runFrom s [] = [] := rfl
 @[simp] theorem runFrom_cons (s : σ) (x : α) (xs : List α) :
@@ -86,11 +91,17 @@ theorem stateAfter_append (s : σ) (xs ys : List α) :
 @[simp] theorem length_run (xs : List α) :
     (T.run xs).length = xs.length := T.length_runFrom T.initial xs
 
-/-- **The coordinate characterization**: output `i` is the step output at
-`(state after the prefix [0..i-1], input i)`. -/
-theorem runFrom_getElem? (s : σ) (xs : List α) (i : ℕ) :
+@[simp] theorem length_runRight (xs : List α) :
+    (T.runRight xs).length = xs.length := by simp [runRight]
+
+@[simp] theorem runRight_reverse (xs : List α) :
+    T.runRight xs.reverse = (T.run xs).reverse := by simp [runRight]
+
+/-- Output coordinate `i` of the run is the step output at the state reached after the
+first `i` input symbols. -/
+theorem getElem?_runFrom (s : σ) (xs : List α) (i : ℕ) :
     (T.runFrom s xs)[i]?
-      = (xs[i]?).map (fun x => (T.step (T.stateAfter s (xs.take i)) x).2) := by
+      = xs[i]?.map fun x => (T.step (T.stateAfter s (xs.take i)) x).2 := by
   induction xs generalizing s i with
   | nil => simp
   | cons x xs ih =>
@@ -98,18 +109,19 @@ theorem runFrom_getElem? (s : σ) (xs : List α) (i : ℕ) :
     | zero => simp
     | succ j => simp [ih, List.take_succ_cons]
 
-/-- The coordinate characterization from the initial state. -/
-theorem run_getElem? (xs : List α) (i : ℕ) :
+/-- Output coordinate `i` of `T.run` is the step output at the state reached after the
+first `i` input symbols. -/
+theorem getElem?_run (xs : List α) (i : ℕ) :
     (T.run xs)[i]?
-      = (xs[i]?).map (fun x => (T.step (T.stateAfter T.initial (xs.take i)) x).2) :=
-  T.runFrom_getElem? T.initial xs i
+      = xs[i]?.map fun x => (T.step (T.stateAfter T.initial (xs.take i)) x).2 :=
+  T.getElem?_runFrom T.initial xs i
 
 /-! ### Flag machines
 
 The recurring one-sided-trigger shape: the state is the one-bit "some earlier symbol
 satisfies `p`" flag, so `stateAfter` computes `List.any` and each output cell sees the
-flag over its strict prefix. Scanned right-to-left (reverse, run, reverse), the cell
-sees the flag over its strict suffix (`ofFlag_run_reverse_getElem?`). -/
+flag over its strict prefix. Under the right-to-left pass `runRight`, the cell sees the
+flag over its strict suffix (`getElem?_ofFlag_runRight`). -/
 
 variable (p : α → Bool) (out : Bool → α → β)
 
@@ -130,18 +142,20 @@ def ofFlag : Mealy Bool α β where
   | nil => simp
   | cons x xs ih => simp [ih, Bool.or_assoc]
 
-theorem ofFlag_run_getElem? (xs : List α) (i : ℕ) :
+/-- Each coordinate of a flag machine sees the flag over its strict prefix. -/
+theorem getElem?_ofFlag_run (xs : List α) (i : ℕ) :
     ((ofFlag p out).run xs)[i]? = xs[i]?.map fun a => out ((xs.take i).any p) a := by
-  simp [run_getElem?]
+  simp [getElem?_run]
 
-/-- Coordinates of a flag machine scanned right-to-left: cell `i` sees the flag over its
-strict suffix. -/
-theorem ofFlag_run_reverse_getElem? (xs : List α) (i : ℕ) :
-    (((ofFlag p out).run xs.reverse).reverse)[i]?
+/-- Each coordinate of a flag machine run right-to-left sees the flag over its strict
+suffix. -/
+theorem getElem?_ofFlag_runRight (xs : List α) (i : ℕ) :
+    ((ofFlag p out).runRight xs)[i]?
       = xs[i]?.map fun a => out ((xs.drop (i + 1)).any p) a := by
+  unfold runRight
   by_cases hi : i < xs.length
   · rw [List.getElem?_reverse (by simpa using hi),
-      (ofFlag p out).length_run, List.length_reverse, ofFlag_run_getElem?,
+      (ofFlag p out).length_run, List.length_reverse, getElem?_ofFlag_run,
       List.getElem?_reverse (by omega),
       show xs.length - 1 - (xs.length - 1 - i) = i from by omega,
       List.take_reverse, show xs.length - (xs.length - 1 - i) = i + 1 from by omega,
@@ -153,9 +167,10 @@ theorem ofFlag_run_reverse_getElem? (xs : List α) (i : ℕ) :
 
 variable {τ : Type*}
 
-/-- Transfer a `Mealy` along a state-space equivalence `σ ≃ τ`, preserving `run`. The
-use case is bringing a `Type*` finite state down to `Fin (Fintype.card σ) : Type 0` so
-a universe-polymorphic machine can witness a `Type 0`-state existential. -/
+/-- `T.transferEquiv e` transports `T` along the state equivalence `e`, preserving
+`run`. The use case is bringing a `Type*` finite state down to
+`Fin (Fintype.card σ) : Type 0` so a universe-polymorphic machine can witness a
+`Type 0`-state existential. -/
 def transferEquiv (e : σ ≃ τ) : Mealy τ α β where
   initial := e T.initial
   step t x := (e (T.step (e.symm t) x).1, (T.step (e.symm t) x).2)

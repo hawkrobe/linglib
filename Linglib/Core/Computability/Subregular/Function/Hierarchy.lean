@@ -94,7 +94,7 @@ theorem IsBimachineWeaklyDeterministic.of_letterLeftSubsequential {f : List α �
     funext xs
     apply List.ext_getElem?
     intro i
-    rw [Bimachine.run_getElem?, T.run_getElem?]
+    rw [Bimachine.run_getElem?, T.getElem?_run]
     rfl
   have hni : B.IsNonInteracting :=
     ⟨fun l a => (T.step l a).2, fun _ a => a, fun l a r => (unite_default_right _ _).symm⟩

@@ -57,27 +57,27 @@ variable {α β : Type*}
 def IsLetterLeftSubsequential (f : List α → List β) : Prop :=
   ∃ (σ : Type) (_ : Fintype σ) (T : Mealy σ α β), T.run = f
 
-/-- **Constructor lemma**: every finite-state `Mealy` witnesses
-`IsLetterLeftSubsequential` for its `run`. The state `σ` is accepted at arbitrary
-`Type*` and brought down to `Fin (Fintype.card σ) : Type 0` via `transferEquiv` and
-`Fintype.equivFin`, so bounded-window states at the alphabet's universe can witness
-the predicate (mirrors `SFST.isLeftSubsequential`). -/
+/-- Every finite-state `Mealy` witnesses `IsLetterLeftSubsequential` for its `run`.
+The state `σ` is accepted at arbitrary `Type*` and brought down to
+`Fin (Fintype.card σ) : Type 0` via `transferEquiv` and `Fintype.equivFin`, so
+bounded-window states at the alphabet's universe can witness the predicate (mirrors
+`SFST.isLeftSubsequential`). -/
 theorem Mealy.isLetterLeftSubsequential {σ : Type*} [Fintype σ]
     (T : Mealy σ α β) : IsLetterLeftSubsequential T.run :=
   ⟨Fin (Fintype.card σ), inferInstance, T.transferEquiv (Fintype.equivFin σ),
    T.transferEquiv_run _⟩
 
-/-- **Forward footprint bridge.** A letter-left-subsequential map is left-determined at
-every coordinate — output `i` depends only on the prefix `{k | k ≤ i}`. (The *block*
-`IsLeftSubsequential` lacks this, by delayed output.) -/
+/-- A letter-left-subsequential map is left-determined at every coordinate — output `i`
+depends only on the prefix `{k | k ≤ i}`. (The *block* `IsLeftSubsequential` lacks
+this, by delayed output.) -/
 theorem IsLetterLeftSubsequential.leftDetermined {f : List α → List β}
     (hf : IsLetterLeftSubsequential f) (i : ℕ) : LeftDetermined f i := by
   obtain ⟨σ, _, T, rfl⟩ := hf
   intro u v hlen hag
-  rw [T.run_getElem? u, T.run_getElem? v, hag i (Set.mem_setOf.mpr le_rfl),
+  rw [T.getElem?_run u, T.getElem?_run v, hag i (Set.mem_setOf.mpr le_rfl),
     take_eq_of_agree fun k hk => hag k (Set.mem_setOf.mpr hk.le)]
 
-/-- A synchronous left-subsequential map is **right-myopic** — it has no look-ahead. -/
+/-- A synchronous left-subsequential map is right-myopic: it has no look-ahead. -/
 theorem IsLetterLeftSubsequential.isRightMyopic {f : List α → List β}
     (hf : IsLetterLeftSubsequential f) : IsMyopicTowards f .right :=
   IsMyopicTowards.right_of_leftDetermined hf.leftDetermined
@@ -90,9 +90,9 @@ prefix-congruence's quotient; `δ`/`out` are the induced transition and output. 
 natural Nerode congruence, when of finite index, is one such summary — that
 instantiation, and the necessity direction, are the TODO above.) -/
 
-/-- **Myhill–Nerode, sufficiency.** A length-preserving `f` with a finite
-`state : List α → σ` that is left-congruent (`hδ`) and determines `f`'s output at each
-position (`hout`) is letter-left-subsequential. -/
+/-- A length-preserving `f` with a finite `state : List α → σ` that is left-congruent
+(`hδ`) and determines `f`'s output at each position (`hout`) is
+letter-left-subsequential — the sufficiency half of Myhill–Nerode. -/
 theorem isLetterLeftSubsequential_of_stateSummary
     {f : List α → List β} {σ : Type} [Fintype σ]
     (state : List α → σ) (δ : σ → α → σ) (out : σ → α → β)
@@ -110,7 +110,7 @@ theorem isLetterLeftSubsequential_of_stateSummary
   funext xs
   apply List.ext_getElem?
   intro i
-  rw [T.run_getElem? xs i, hstate]
+  rw [T.getElem?_run xs i, hstate]
   rcases lt_or_ge i xs.length with hi | hi
   · have key := hout (xs.take i) xs[i] (xs.drop (i + 1))
     rw [List.length_take_of_le hi.le, ← List.drop_eq_getElem_cons hi,
