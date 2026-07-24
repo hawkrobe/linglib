@@ -1,4 +1,5 @@
 import Mathlib.Tactic.FinCases
+import Linglib.Morphology.Word.Tree
 import Linglib.Semantics.Aspect.Basic
 
 /-!
@@ -18,7 +19,12 @@ The syntactic height cut named here is the same one
 Sinitic split-aspect; the types are kept separate because the commitments
 differ (lexical = resultative R-head, not merely inner-Asp host).
 
-Stem aspect reuses `Semantics.Aspect.ViewpointAspectB`.
+A prefixed verb is carried as a stem plus a surface-ordered list of
+classified prefixes; its word-formation tree (`Morphology.Word.Tree`) and
+orthographic form are **derived**, so concatenative and kind-coherent
+structure holds by construction. Stem aspect reuses
+`Semantics.Aspect.ViewpointAspectB` (`none` = aspectless stems, cf.
+[istratkova-2004]'s homogeneous simplex class).
 
 ## Main definitions
 
@@ -28,14 +34,17 @@ Stem aspect reuses `Semantics.Aspect.ViewpointAspectB`.
   excessive *raz-*).
 * `PrefixClass` — `lexical` or `superlexical _`, with the
   `IsSuperlexical` predicate.
-* `PrefixedVerbEntry` — a single-prefix prefixed-verb lexical entry
-  (shared with `Studies/Jablonska2004.lean` for Polish).
+* `PrefixedVerb` — the shared carrier (also used by
+  `Studies/Istratkova2004.lean` and `Studies/Jablonska2004.lean`), with
+  derived `tree` and `form`.
+* `WellStacked` — no lexical prefix outside a superlexical one (§1:
+  "the superlexical prefix always appears outside the lexical prefix").
 * `Russian.inventory` — six canonical Russian entries.
 
 ## Main results
 
-* `Russian.inventory_transparent_concat` — every entry's `prefixedForm`
-  is the literal concatenation `morpheme ++ bareStem`.
+* `tree_isConcatenative`, `tree_isKindCoherent` — every derived tree is
+  concatenative and kind-coherent, by construction.
 * `Russian.stemAspect_imperfective_of_isSuperlexical` — the paper's
   diagnostic (56c) (§4.1): superlexical prefixes select imperfective
   stems.
@@ -43,6 +52,8 @@ Stem aspect reuses `Semantics.Aspect.ViewpointAspectB`.
 
 namespace Svenonius2004
 
+open Morphology (Morph)
+open Morphology.Word (Tree)
 open Semantics.Aspect (ViewpointAspectB)
 
 /-- Aspectual subtypes of the superlexical class — the labels recurring
@@ -80,32 +91,68 @@ instance : DecidablePred IsSuperlexical
 
 end PrefixClass
 
-/-- A single-prefix prefixed-verb lexical entry. -/
-structure PrefixedVerbEntry where
+/-- A prefixed-verb lexical entry: a stem plus a surface-ordered
+    (outermost-first) list of classified prefixes. The word-formation
+    tree and orthographic form are derived (`tree`, `form`), not
+    stipulated. -/
+structure PrefixedVerb where
   /-- Bare verb stem (citation form). -/
-  bareStem      : String
-  /-- Viewpoint aspect of the bare stem. -/
-  stemAspect    : ViewpointAspectB
-  /-- The prefix morpheme. -/
-  morpheme      : String
-  /-- The prefixed perfective citation form. -/
-  prefixedForm  : String
-  /-- [svenonius-2004] class. -/
-  prefixClass   : PrefixClass
+  stem          : String
+  /-- Viewpoint aspect of the bare stem; `none` for aspectless stems
+      ([istratkova-2004]'s homogeneous simplex class). -/
+  stemAspect    : Option ViewpointAspectB
+  /-- Classified prefixes in surface order, outermost first. -/
+  prefixes      : List (String × PrefixClass)
   /-- Gloss of the bare stem. -/
   baseGloss     : String
-  /-- Gloss of the prefixed perfective. -/
+  /-- Gloss of the prefixed verb. -/
   prefixedGloss : String
 
-/-- An entry's `prefixedForm` is the literal concatenation of its
-    `morpheme` and `bareStem`. Inventories deliberately avoid
-    voicing-assimilation prefixes (*iz-*, *raz-*, *voz-*, *bez-*)
-    where this would fail. -/
-def IsTransparentConcat (e : PrefixedVerbEntry) : Prop :=
-  e.prefixedForm = e.morpheme ++ e.bareStem
+namespace PrefixedVerb
 
-instance : DecidablePred IsTransparentConcat :=
-  fun e => decEq e.prefixedForm (e.morpheme ++ e.bareStem)
+/-- The word-formation tree: the prefixes folded, innermost-last, over
+    the root. -/
+def tree (e : PrefixedVerb) : Tree Morph :=
+  e.prefixes.foldr (fun p t => .prefixed (Morph.pref p.1) t)
+    (.root (Morph.root e.stem))
+
+/-- The orthographic form: the concatenation of the prefix morphs and
+    the stem. Inventories deliberately avoid voicing-assimilation
+    prefixes (*iz-*, *raz-*, *voz-*, *bez-*) whose surface form is not
+    the plain concatenation. -/
+def form (e : PrefixedVerb) : String :=
+  String.join (e.tree.toList.map Morph.form)
+
+/-- Every derived tree is concatenative: prefixation only. -/
+theorem tree_isConcatenative (e : PrefixedVerb) :
+    e.tree.IsConcatenative := by
+  unfold tree
+  induction e.prefixes with
+  | nil => trivial
+  | cons p ps ih => exact ih
+
+/-- Every derived tree is kind-coherent: prefix morphs on `prefixed`
+    nodes, a root morph at the leaf. -/
+theorem tree_isKindCoherent (e : PrefixedVerb) :
+    e.tree.IsKindCoherent := by
+  unfold tree
+  induction e.prefixes with
+  | nil => exact Or.inl rfl
+  | cons p ps ih => exact ⟨rfl, ih⟩
+
+end PrefixedVerb
+
+/-- A prefix sequence (surface order, outermost first) is well-stacked
+    when no lexical prefix appears outside a superlexical one —
+    [svenonius-2004] §1: "the superlexical prefix always appears
+    outside the lexical prefix". -/
+def WellStacked (prefixes : List (String × PrefixClass)) : Prop :=
+  prefixes.Pairwise fun outer inner =>
+    inner.2.IsSuperlexical → outer.2.IsSuperlexical
+
+instance : DecidablePred WellStacked := fun prefixes =>
+  inferInstanceAs (Decidable (prefixes.Pairwise fun outer inner =>
+    inner.2.IsSuperlexical → outer.2.IsSuperlexical))
 
 /-! ### Russian inventory
 
@@ -116,24 +163,20 @@ namespace Russian
 /-- *za-brosit'* 'kick into / throw into' — lexical *za-*
     ([svenonius-2004] §1 ex. (1a), transparently resultative spatial).
     Built on the perfective stem *brosit'*. -/
-def zabrosit : PrefixedVerbEntry where
-  bareStem      := "brosit'"
-  stemAspect    := .perfective
-  morpheme      := "za"
-  prefixedForm  := "zabrosit'"
-  prefixClass   := .lexical
+def zabrosit : PrefixedVerb where
+  stem          := "brosit'"
+  stemAspect    := some .perfective
+  prefixes      := [("za", .lexical)]
   baseGloss     := "throw"
   prefixedGloss := "throw into, kick into"
 
 /-- *vy-brosit'* 'throw out' — lexical *vy-* (English *out* analogue;
     [svenonius-2004] ex. (4a) uses the secondary imperfective
     *vy-brasyvatj*). Built on the perfective stem *brosit'*. -/
-def vybrosit : PrefixedVerbEntry where
-  bareStem      := "brosit'"
-  stemAspect    := .perfective
-  morpheme      := "vy"
-  prefixedForm  := "vybrosit'"
-  prefixClass   := .lexical
+def vybrosit : PrefixedVerb where
+  stem          := "brosit'"
+  stemAspect    := some .perfective
+  prefixes      := [("vy", .lexical)]
   baseGloss     := "throw"
   prefixedGloss := "throw out"
 
@@ -142,38 +185,32 @@ def vybrosit : PrefixedVerbEntry where
     literature ([romanova-2004]; [babko-malaya-2003]) — [svenonius-2004]
     does not work *pri-* as an example. Built on the imperfective
     determinate-motion stem *nesti*. -/
-def prinesti : PrefixedVerbEntry where
-  bareStem      := "nesti"
-  stemAspect    := .imperfective
-  morpheme      := "pri"
-  prefixedForm  := "prinesti"
-  prefixClass   := .lexical
+def prinesti : PrefixedVerb where
+  stem          := "nesti"
+  stemAspect    := some .imperfective
+  prefixes      := [("pri", .lexical)]
   baseGloss     := "carry"
   prefixedGloss := "bring (carry to)"
 
 /-- *za-brosat'* 'start throwing' — superlexical *za-* INCP
     ([svenonius-2004] §1 ex. (1c)). Minimal pair with `zabrosit` on the
-    same morpheme but different `prefixClass`. Built on the imperfective
-    stem *brosat'*. Stress distinguishes it from the homographic
+    same morpheme but different class. Built on the imperfective stem
+    *brosat'*. Stress distinguishes it from the homographic
     *zabrosát'* 'pelt (with)'. -/
-def zabrosatInceptive : PrefixedVerbEntry where
-  bareStem      := "brosat'"
-  stemAspect    := .imperfective
-  morpheme      := "za"
-  prefixedForm  := "zabrosat'"
-  prefixClass   := .superlexical .inceptive
+def zabrosatInceptive : PrefixedVerb where
+  stem          := "brosat'"
+  stemAspect    := some .imperfective
+  prefixes      := [("za", .superlexical .inceptive)]
   baseGloss     := "throw"
   prefixedGloss := "start throwing"
 
 /-- *po-sidet'* 'sit for a while' — superlexical *po-* DLMT (canonical
     delimitative; [svenonius-2004] (57c) labels Bulgarian *po-* DLMT).
     Built on the imperfective stem *sidet'*. -/
-def posidet : PrefixedVerbEntry where
-  bareStem      := "sidet'"
-  stemAspect    := .imperfective
-  morpheme      := "po"
-  prefixedForm  := "posidet'"
-  prefixClass   := .superlexical .delimitative
+def posidet : PrefixedVerb where
+  stem          := "sidet'"
+  stemAspect    := some .imperfective
+  prefixes      := [("po", .superlexical .delimitative)]
   baseGloss     := "sit"
   prefixedGloss := "sit for a while"
 
@@ -182,33 +219,28 @@ def posidet : PrefixedVerbEntry where
     literature; [svenonius-2004] §4 takes Bulgarian *iz-* as the
     canonical completive instead. Built on the imperfective stem
     *pisat'*. -/
-def dopisat : PrefixedVerbEntry where
-  bareStem      := "pisat'"
-  stemAspect    := .imperfective
-  morpheme      := "do"
-  prefixedForm  := "dopisat'"
-  prefixClass   := .superlexical .completive
+def dopisat : PrefixedVerb where
+  stem          := "pisat'"
+  stemAspect    := some .imperfective
+  prefixes      := [("do", .superlexical .completive)]
   baseGloss     := "write"
   prefixedGloss := "finish writing"
 
 /-- The canonical inventory: three lexical entries plus three
     superlexical entries (with the `zabrosit` / `zabrosatInceptive`
     minimal pair on *za-*). -/
-def inventory : List PrefixedVerbEntry :=
+def inventory : List PrefixedVerb :=
   [zabrosit, vybrosit, prinesti, zabrosatInceptive, posidet, dopisat]
 
-/-- Every entry in `inventory` is a transparent concatenation. -/
-theorem inventory_transparent_concat
-    (e : PrefixedVerbEntry) (he : e ∈ inventory) :
-    IsTransparentConcat e := by
-  fin_cases he <;> rfl
+-- The derived form matches the attested orthographic word.
+example : zabrosit.form = "zabrosit'" := rfl
 
 /-- [svenonius-2004]'s diagnostic (56c) (§4.1): a superlexical entry
     has an imperfective bare stem. Lexical entries are unconstrained. -/
 theorem stemAspect_imperfective_of_isSuperlexical
-    (e : PrefixedVerbEntry) (he : e ∈ inventory)
-    (hs : e.prefixClass.IsSuperlexical) :
-    e.stemAspect = ViewpointAspectB.imperfective := by
+    (e : PrefixedVerb) (he : e ∈ inventory)
+    (hs : ∃ p ∈ e.prefixes, p.2.IsSuperlexical) :
+    e.stemAspect = some ViewpointAspectB.imperfective := by
   fin_cases he <;> first | rfl | exact absurd hs (by decide)
 
 end Russian
