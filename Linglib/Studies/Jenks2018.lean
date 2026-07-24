@@ -100,31 +100,31 @@ theorem mandarin_cantonese_distinct_cells :
   rw [mandarin_jenks_cell, cantonese_jenks_cell]; decide
 
 -- ════════════════════════════════════════════════════════════════
--- §2: Inventory-Licensing Predictions (paper §3)
+-- §2: Inventory-Realization Predictions (paper §3)
 -- ════════════════════════════════════════════════════════════════
 
 variable {E W : Type}
 
-/-- Bare N is universally licensed by the article inventory; in
+/-- Bare N needs no determiner, so every inventory realizes it; in
     Mandarin it serves unique definites (paper §3.1 examples 10–11:
     `yueliang sheng shang lai le` 'the moon has risen';
     `Hufei he-wan-le tang` 'Hufei finished the soup';
     `Gou yao guo malu` 'the dog wants to cross the road'). -/
-theorem bare_licensed : Determiner.licenses mandarinDets .bare := trivial
+theorem bare_realized : Determiner.Realizes mandarinDets .bare := trivial
 
-/-- The anaphoric kind is licensed in Mandarin via the demonstrative
+/-- The anaphoric kind is realized in Mandarin via the demonstrative
     paradigm (paper §3.2: anaphoric definites surface as Dem-Clf-N
-    constructions). The licensing holds because the demonstrative
+    constructions). The realization holds because the demonstrative
     obligatorily expones a familiarity (anaphoric) use, so
     `Determiner.MarksPresup mandarinDets .familiarity`. -/
-theorem anaphoric_licensed : Determiner.licenses mandarinDets .anaphoric := by
+theorem anaphoric_realized : Determiner.Realizes mandarinDets .anaphoric := by
   decide
 
-/-- Mandarin demonstratives are licensed (the *na*/*zhe* paradigm —
+/-- Mandarin realizes the demonstrative kind (the *na*/*zhe* paradigm —
     paper fn. 8: speakers prefer *na* 'that' to *zhe* 'this' in most
     simple anaphoric environments). -/
-theorem demonstrative_licensed :
-    Determiner.licenses mandarinDets .demonstrative := by
+theorem demonstrative_realized :
+    Determiner.Realizes mandarinDets .demonstrative := by
   decide
 
 /-- A Mandarin bare definite and its `.unique` counterpart over the
