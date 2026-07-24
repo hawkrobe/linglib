@@ -9,12 +9,12 @@ import Linglib.Core.Computability.Subregular.Function.SideDeterminacy
 /-!
 # Synchronous (letter) left-subsequential functions
 
-A `Mealy` machine is a deterministic left-to-right transducer emitting exactly one
-output symbol per input symbol — the synchronous case, length-preserving by
+A `Mealy` machine [mealy-1955] is a deterministic left-to-right transducer emitting
+exactly one output symbol per input symbol — the synchronous case, length-preserving by
 construction. Its output coordinate `i` is a function of the input prefix `[0..i]`, so
 the class is cleanly characterised by the `OutputDependsOn` footprint
 (`SideDeterminacy.lean`): `IsLetterLeftSubsequential f → ∀ i, LeftDetermined f i`, hence
-right-myopic.
+right-myopic (no look-ahead).
 
 This is the characterisation the *block* `IsLeftSubsequential` (`Subsequential.lean`)
 lacks: a length-preserving block transducer can delay output (emit `[]` then `[x,y]`),
@@ -25,18 +25,35 @@ machine view.
 ## Main definitions
 
 * `Mealy` — synchronous one-symbol-per-step transducer; `run` is length-preserving.
+* `Mealy.ofFlag` — the one-bit machine tracking "some earlier symbol satisfies `p`".
+* `Mealy.transferEquiv` — transport along a state equivalence, preserving `run`.
 * `IsLetterLeftSubsequential` — computed by a finite-state `Mealy`.
 
 ## Main results
 
-* `Mealy.runFrom_getElem?` — output `i` is `(step (state-after-prefix) (input i)).2`.
+* `Mealy.run_getElem?` — output `i` is `(step (state-after-prefix) (input i)).2`.
 * `IsLetterLeftSubsequential.leftDetermined` / `.isRightMyopic` — synchronous
   left-subsequential maps are prefix-determined, hence right-myopic.
+* `isLetterLeftSubsequential_of_stateSummary` — Myhill–Nerode, sufficiency direction:
+  a finite left-congruent state summary determining the output yields a `Mealy`.
 
-## Todo
+## Implementation notes
 
-* The Myhill–Nerode *converse*: `(∀ i, LeftDetermined f i) ∧ finite prefix-congruence ⟹
-  IsLetterLeftSubsequential f` (build the transducer from the prefix-congruence quotient).
+In the transducer literature [mohri-1997] *subsequential* machines carry a state-final
+output emitted at end of input; `Mealy` has none, so strictly it computes the
+letter-to-letter *sequential* class. Length preservation forces the final output empty,
+so the two classes coincide here; the name keeps the parallel with the block
+`IsLeftSubsequential`.
+
+[UPSTREAM] candidate (the `Mealy` API): `Mathlib.Computability.Mealy`.
+
+## TODO
+
+* Instantiate `isLetterLeftSubsequential_of_stateSummary` at the natural Nerode prefix
+  congruence, and prove the necessity direction: a letter-left-subsequential function
+  has a finite-index prefix congruence [choffrut-1977].
+* Composition closure (state-product `Mealy`) and the right-scan mirror
+  `IsLetterRightSubsequential` via reverse conjugation.
 -/
 
 namespace Subregular
@@ -71,6 +88,12 @@ def run (T : Mealy σ α β) : List α → List β := T.runFrom T.initial
 @[simp] theorem stateAfter_cons (T : Mealy σ α β) (s : σ) (x : α) (xs : List α) :
     T.stateAfter s (x :: xs) = T.stateAfter (T.step s x).1 xs := rfl
 
+theorem stateAfter_append (T : Mealy σ α β) (s : σ) (xs ys : List α) :
+    T.stateAfter s (xs ++ ys) = T.stateAfter (T.stateAfter s xs) ys := by
+  induction xs generalizing s with
+  | nil => rfl
+  | cons x xs ih => simp [ih]
+
 /-- The run is length-preserving (one output symbol per input symbol). -/
 theorem runFrom_length (T : Mealy σ α β) (s : σ) (xs : List α) :
     (T.runFrom s xs).length = xs.length := by
@@ -93,6 +116,12 @@ theorem runFrom_getElem? (T : Mealy σ α β) (s : σ) (xs : List α) (i : ℕ) 
     | zero => simp
     | succ j => simp [ih, List.take_succ_cons]
 
+/-- The coordinate characterization from the initial state. -/
+theorem run_getElem? (T : Mealy σ α β) (xs : List α) (i : ℕ) :
+    (T.run xs)[i]?
+      = (xs[i]?).map (fun x => (T.step (T.stateAfter T.initial (xs.take i)) x).2) :=
+  T.runFrom_getElem? T.initial xs i
+
 /-! ### Flag machines
 
 The recurring one-sided-trigger shape (the `Mealy` counterpart of `Bimachine.ofFlags`):
@@ -107,23 +136,21 @@ def ofFlag (p : α → Bool) (out : Bool → α → β) : Mealy Bool α β where
   initial := false
   step b a := (b || p a, out b a)
 
+@[simp] theorem ofFlag_initial (p : α → Bool) (out : Bool → α → β) :
+    (ofFlag p out).initial = false := rfl
+
+@[simp] theorem ofFlag_step (p : α → Bool) (out : Bool → α → β) (b : Bool) (a : α) :
+    (ofFlag p out).step b a = (b || p a, out b a) := rfl
+
 @[simp] theorem ofFlag_stateAfter (p : α → Bool) (out : Bool → α → β) (b : Bool)
     (xs : List α) : (ofFlag p out).stateAfter b xs = (b || xs.any p) := by
   induction xs generalizing b with
   | nil => simp
-  | cons x xs ih =>
-    rw [stateAfter_cons, show ((ofFlag p out).step b x).1 = (b || p x) from rfl, ih]
-    simp [Bool.or_assoc]
+  | cons x xs ih => simp [ih, Bool.or_assoc]
 
 theorem ofFlag_run_getElem? (p : α → Bool) (out : Bool → α → β) (xs : List α) (i : ℕ) :
     ((ofFlag p out).run xs)[i]? = xs[i]?.map fun a => out ((xs.take i).any p) a := by
-  rw [show (ofFlag p out).run xs = (ofFlag p out).runFrom (ofFlag p out).initial xs from rfl,
-    runFrom_getElem?]
-  cases xs[i]? with
-  | none => rfl
-  | some a =>
-    rw [ofFlag_stateAfter, show (ofFlag p out).initial = false from rfl, Bool.false_or]
-    rfl
+  simp [run_getElem?]
 
 /-- Coordinates of a flag machine scanned right-to-left: cell `i` sees the flag over its
 strict suffix. -/
@@ -192,24 +219,22 @@ theorem IsLetterLeftSubsequential.leftDetermined {f : List α → List β}
   have hi : u[i]? = v[i]? := hag i (by simp)
   have htake : u.take i = v.take i :=
     take_eq_of_agree fun k hk => hag k (by simp only [Set.mem_setOf_eq]; omega)
-  show (T.runFrom T.initial u)[i]? = (T.runFrom T.initial v)[i]?
-  rw [Mealy.runFrom_getElem? T T.initial u i,
-      Mealy.runFrom_getElem? T T.initial v i, hi, htake]
+  rw [T.run_getElem? u, T.run_getElem? v, hi, htake]
 
 /-- A synchronous left-subsequential map is **right-myopic** — it has no look-ahead. -/
 theorem IsLetterLeftSubsequential.isRightMyopic {f : List α → List β}
     (hf : IsLetterLeftSubsequential f) : IsMyopicTowards f .right :=
   IsMyopicTowards.right_of_leftDetermined hf.leftDetermined
 
-/-! ### Myhill–Nerode converse
+/-! ### Myhill–Nerode: the sufficiency direction
 
 `f` is letter-left-subsequential as soon as it admits a *finite-state, left-congruent
-summary that determines its output* — the constructive direction of Myhill–Nerode. The
-finite `state` plays the role of the prefix-congruence's quotient; `δ`/`out` are the
-induced transition and output. (The natural Nerode congruence, when of finite index, is
-one such summary — that instantiation is the Todo above.) -/
+summary that determines its output*. The finite `state` plays the role of the
+prefix-congruence's quotient; `δ`/`out` are the induced transition and output. (The
+natural Nerode congruence, when of finite index, is one such summary — that
+instantiation, and the necessity direction, are the TODO above.) -/
 
-/-- **Myhill–Nerode converse (constructive).** A length-preserving `f` with a finite
+/-- **Myhill–Nerode, sufficiency.** A length-preserving `f` with a finite
 `state : List α → σ` that is left-congruent (`hδ`) and determines `f`'s output at each
 position (`hout`) is letter-left-subsequential. -/
 theorem isLetterLeftSubsequential_of_stateSummary
@@ -221,22 +246,15 @@ theorem isLetterLeftSubsequential_of_stateSummary
     IsLetterLeftSubsequential f := by
   refine ⟨σ, inferInstance, { initial := state [], step := fun s x => (δ s x, out s x) }, ?_⟩
   set T : Mealy σ α β := { initial := state [], step := fun s x => (δ s x, out s x) }
-  have hstate : ∀ (p₀ ps : List α), T.stateAfter (state p₀) ps = state (p₀ ++ ps) := by
-    intro p₀ ps
-    induction ps generalizing p₀ with
-    | nil => simp
-    | cons x xs ih =>
-      rw [Mealy.stateAfter_cons]
-      show T.stateAfter (δ (state p₀) x) xs = state (p₀ ++ x :: xs)
-      rw [← hδ p₀ x, ih (p₀ ++ [x])]
-      simp
+  have hstate : ∀ ps : List α, T.stateAfter T.initial ps = state ps := by
+    intro ps
+    induction ps using List.reverseRecOn with
+    | nil => rfl
+    | append_singleton ps x ih => rw [T.stateAfter_append, ih, hδ]; rfl
   funext xs
   apply List.ext_getElem?
   intro i
-  show (T.runFrom T.initial xs)[i]? = (f xs)[i]?
-  rw [Mealy.runFrom_getElem? T T.initial xs i]
-  show (xs[i]?).map (fun x => out (T.stateAfter (state []) (xs.take i)) x) = (f xs)[i]?
-  rw [hstate [] (xs.take i), List.nil_append]
+  rw [T.run_getElem? xs i, hstate]
   rcases lt_or_ge i xs.length with hi | hi
   · have hdecomp : xs.take i ++ xs[i] :: xs.drop (i + 1) = xs := by
       rw [← List.drop_eq_getElem_cons hi, List.take_append_drop]

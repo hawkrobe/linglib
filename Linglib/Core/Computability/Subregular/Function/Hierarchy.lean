@@ -106,8 +106,7 @@ theorem IsBimachineWeaklyDeterministic.of_letterLeftSubsequential {f : List α �
     show (xs[i]?).map
         (fun a => (T.step ((xs.take i).foldl (fun l a => (T.step l a).1) T.initial) a).2)
       = (T.run xs)[i]?
-    rw [show T.run xs = T.runFrom T.initial xs from rfl, T.runFrom_getElem?,
-        mealy_stateAfter_eq_foldl]
+    rw [T.run_getElem?, mealy_stateAfter_eq_foldl]
   have hni : B.IsNonInteracting :=
     ⟨fun l a => (T.step l a).2, fun _ a => a, fun l a r => (unite_default_right _ _).symm⟩
   exact hrun ▸ isBimachineWeaklyDeterministic B hni
