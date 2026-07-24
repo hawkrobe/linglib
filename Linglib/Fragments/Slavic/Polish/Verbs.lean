@@ -1,5 +1,5 @@
 import Linglib.Morphology.Morph
-import Linglib.Fragments.Slavic.Params
+import Linglib.Semantics.Verb.Stem
 
 /-!
 # Polish Verbal Lexicon
@@ -13,7 +13,8 @@ central analytical question and lives in `Studies/Jablonska2004.lean`.
 
 namespace Polish.Verbs
 
-open Morphology Slavic
+open Morphology
+open Verb (Stem)
 
 /-! ### Prefixes -/
 
@@ -29,15 +30,15 @@ def w : Morph := .pref "w"
 /-! ### Verb stems -/
 
 /-- *siedzieć* 'sit' (imperfective, stative). -/
-def siedziec : VerbStem := ⟨"siedzieć", .imperfective, "sit"⟩
+def siedziec : Stem := ⟨"siedzieć", .imperfective, "sit"⟩
 
 /-- *kochać* 'love' (imperfective, stative). -/
-def kochac : VerbStem := ⟨"kochać", .imperfective, "love"⟩
+def kochac : Stem := ⟨"kochać", .imperfective, "love"⟩
 
 /-- *jaśnieć* 'be bright' (imperfective, low -ej- verbalizer stem). -/
-def jasniec : VerbStem := ⟨"jaśnieć", .imperfective, "be bright"⟩
+def jasniec : Stem := ⟨"jaśnieć", .imperfective, "be bright"⟩
 
 /-- *chodzić* 'walk' (imperfective, non-directed motion). -/
-def chodzic : VerbStem := ⟨"chodzić", .imperfective, "walk"⟩
+def chodzic : Stem := ⟨"chodzić", .imperfective, "walk"⟩
 
 end Polish.Verbs

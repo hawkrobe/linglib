@@ -1,5 +1,5 @@
 import Linglib.Morphology.Morph
-import Linglib.Fragments.Slavic.Params
+import Linglib.Semantics.Verb.Stem
 
 /-!
 # Bulgarian Verbal Lexicon
@@ -15,7 +15,8 @@ like the classification of prefix occurrences, lives in
 
 namespace Bulgarian.Verbs
 
-open Morphology Slavic
+open Morphology
+open Verb (Stem)
 
 /-! ### Prefixes -/
 
@@ -40,29 +41,29 @@ def pre : Morph := .pref "pre"
 /-! ### Verb stems -/
 
 /-- *piša* 'write' (imperfective simplex). -/
-def pisha : VerbStem := ⟨"piša", .imperfective, "write"⟩
+def pisha : Stem := ⟨"piša", .imperfective, "write"⟩
 
 /-- *misl'a* 'think' (imperfective simplex). -/
-def misla : VerbStem := ⟨"misl'a", .imperfective, "think"⟩
+def misla : Stem := ⟨"misl'a", .imperfective, "think"⟩
 
 /-- *znam* 'know' (imperfective simplex). -/
-def znam : VerbStem := ⟨"znam", .imperfective, "know"⟩
+def znam : Stem := ⟨"znam", .imperfective, "know"⟩
 
 /-- *blest'a* 'glitter' (imperfective simplex). -/
-def blesta : VerbStem := ⟨"blest'a", .imperfective, "glitter"⟩
+def blesta : Stem := ⟨"blest'a", .imperfective, "glitter"⟩
 
 /-- *običam* 'love' (imperfective simplex). -/
-def obicham : VerbStem := ⟨"običam", .imperfective, "love"⟩
+def obicham : Stem := ⟨"običam", .imperfective, "love"⟩
 
 /-- *četa* 'read' (imperfective simplex). -/
-def cheta : VerbStem := ⟨"četa", .imperfective, "read"⟩
+def cheta : Stem := ⟨"četa", .imperfective, "read"⟩
 
 /-- *razkaža* 'narrate' (perfective; etymologically *raz-kaža*
     'around-say'). -/
-def razkazha : VerbStem := ⟨"razkaža", .perfective, "narrate"⟩
+def razkazha : Stem := ⟨"razkaža", .perfective, "narrate"⟩
 
 /-- *dam* 'give' (perfective simplex; host of *pro-dam* 'sell' and
     its prefix stacks). -/
-def dam : VerbStem := ⟨"dam", .perfective, "give"⟩
+def dam : Stem := ⟨"dam", .perfective, "give"⟩
 
 end Bulgarian.Verbs

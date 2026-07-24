@@ -60,7 +60,7 @@ open Data.Examples (LinguisticExample)
 open Morphology (Morph)
 open Morphology.Word (Tree)
 open Semantics.Aspect (ViewpointAspectB)
-open Slavic (VerbStem)
+open Verb (Stem)
 
 /-- Aspectual subtypes of the superlexical class — the labels recurring
     in [svenonius-2004] §4 (his Bulgarian ordering (57)) and in
@@ -116,7 +116,7 @@ structure Analysis where
   /-- The attested example (from `Data.Examples`). -/
   ex       : LinguisticExample
   /-- The fragment verb-stem entry. -/
-  stem     : VerbStem
+  stem     : Stem
   /-- Classified fragment prefix morphs, outermost first. -/
   prefixes : List (Morph × PrefixClass)
 

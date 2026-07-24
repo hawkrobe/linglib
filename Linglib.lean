@@ -1128,7 +1128,6 @@ import Linglib.Fragments.Slavic.Czech.Particles
 import Linglib.Fragments.Slavic.Czech.PolarityItems
 import Linglib.Fragments.Slavic.Czech.Reciprocals
 import Linglib.Fragments.Slavic.Macedonian.QuestionParticles
-import Linglib.Fragments.Slavic.Params
 import Linglib.Fragments.Slavic.Polish.Case
 import Linglib.Fragments.Slavic.Polish.QuestionParticles
 import Linglib.Fragments.Slavic.Polish.Verbs
@@ -1870,6 +1869,7 @@ import Linglib.Semantics.Verb.Root.Template
 import Linglib.Semantics.Verb.Root.Typology
 import Linglib.Semantics.Verb.RootContent
 import Linglib.Semantics.Verb.Smuggling
+import Linglib.Semantics.Verb.Stem
 import Linglib.Studies.AbneyKeshet2025
 import Linglib.Studies.AbramskySadrzadeh2014
 import Linglib.Studies.Abusch1997

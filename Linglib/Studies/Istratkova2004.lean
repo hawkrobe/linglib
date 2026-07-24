@@ -44,7 +44,7 @@ glosses stacked *po-* as DLMT, the analyses here follow her own labels
 namespace Istratkova2004
 
 open Semantics.Aspect (ViewpointAspectB)
-open Slavic (VerbStem)
+open Verb (Stem)
 open Svenonius2004 (Analysis WellStacked)
 open Bulgarian.Verbs
 
@@ -52,7 +52,7 @@ open Bulgarian.Verbs
     as aspectless — with no perfective counterparts, imperfective only
     by default. An analytical reclassification of fragment stems, so it
     lives here rather than as a fragment field. -/
-def homogeneousSimplexes : List VerbStem :=
+def homogeneousSimplexes : List Stem :=
   [pisha, misla, znam, blesta, obicham, cheta]
 
 /-! ### Single-prefix analyses (her (1)/(3) tables) -/
@@ -120,7 +120,7 @@ theorem pairsTable_stems_homogeneous
 /-- The homogeneous class is dictionary-imperfective — the consensus
     value her aspectless analysis reinterprets as default behaviour. -/
 theorem homogeneous_imperfective
-    (s : VerbStem) (hs : s ∈ homogeneousSimplexes) :
+    (s : Stem) (hs : s ∈ homogeneousSimplexes) :
     s.aspect = ViewpointAspectB.imperfective := by
   fin_cases hs <;> rfl
 

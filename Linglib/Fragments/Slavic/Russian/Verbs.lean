@@ -1,5 +1,5 @@
 import Linglib.Morphology.Morph
-import Linglib.Fragments.Slavic.Params
+import Linglib.Semantics.Verb.Stem
 
 /-!
 # Russian Verbal Lexicon
@@ -15,7 +15,8 @@ Transliteration follows [svenonius-2004] (*j* for palatalization, as in
 
 namespace Russian.Verbs
 
-open Morphology Slavic
+open Morphology
+open Verb (Stem)
 
 /-! ### Prefixes -/
 
@@ -31,19 +32,19 @@ def po : Morph := .pref "po"
 /-! ### Verb stems -/
 
 /-- *brositj* 'throw' (perfective). -/
-def brosit : VerbStem := ⟨"brositj", .perfective, "throw"⟩
+def brosit : Stem := ⟨"brositj", .perfective, "throw"⟩
 
 /-- *brosatj* 'throw' (imperfective). -/
-def brosat : VerbStem := ⟨"brosatj", .imperfective, "throw"⟩
+def brosat : Stem := ⟨"brosatj", .imperfective, "throw"⟩
 
 /-- *brasyvatj* — the secondary-imperfective stem of *brositj* /
     *brosatj*, host of further prefixation in [svenonius-2004] ex. (4a). -/
-def brasyvat : VerbStem := ⟨"brasyvatj", .imperfective, "throw"⟩
+def brasyvat : Stem := ⟨"brasyvatj", .imperfective, "throw"⟩
 
 /-- *kuritj* 'smoke' (imperfective). -/
-def kurit : VerbStem := ⟨"kuritj", .imperfective, "smoke"⟩
+def kurit : Stem := ⟨"kuritj", .imperfective, "smoke"⟩
 
 /-- *čitatj* 'read' (imperfective). -/
-def chitat : VerbStem := ⟨"čitatj", .imperfective, "read"⟩
+def chitat : Stem := ⟨"čitatj", .imperfective, "read"⟩
 
 end Russian.Verbs
