@@ -25,6 +25,7 @@ instance must be supplied for the finite-state class `IsMealyComputable`.
 
 * `Mealy σ α β`: transducer with states `σ`, input alphabet `α`, output alphabet `β`
 * `Mealy.run`, `Mealy.runRight`: the left-to-right and right-to-left passes
+* `Mealy.comp`: the cascade connection, computing the composite function
 * `Mealy.ofFlag`: the one-bit machine tracking whether an earlier symbol satisfies `p`
 * `Mealy.reindex`: lifts an equivalence on states to an equivalence on machines
 * `IsMealyComputable f`: `f` is computed by some finite-state `Mealy`
@@ -40,14 +41,17 @@ instance must be supplied for the finite-state class `IsMealyComputable`.
 * `isMealyComputable_iff`: the universe-polymorphic characterization
 * `isMealyComputable_of_stateSummary`: the sufficiency half of Myhill–Nerode — a
   finite left-congruent state summary determining the output yields a machine
+* `IsMealyComputable.comp`: closure under composition
 * `IsMealyComputable.isRegular_preimage`: Mealy-computable maps pull back regular
   languages
 
 ## Implementation notes
 
-For length-preserving functions the Mealy-computable class coincides with the
-letter-to-letter restriction of the *subsequential* functions [mohri-1997], since
-length preservation forces a subsequential machine's state-final output to be empty.
+The functions computed by Mealy machines are the *sequential functions* of algebraic
+automata theory [holcombe-1982]. For length-preserving functions the class coincides
+with the letter-to-letter restriction of the *subsequential* functions [mohri-1997],
+since length preservation forces a subsequential machine's state-final output to be
+empty.
 
 [UPSTREAM] candidate: `Mathlib.Computability.Mealy`.
 
@@ -55,10 +59,11 @@ length preservation forces a subsequential machine's state-final output to be em
 
 * The full Myhill–Nerode characterization [choffrut-1977] in the style of
   `Mathlib.Computability.MyhillNerode`: define the residual map of a length-preserving
-  function, build the canonical machine on `Set.range` of residuals, and prove
+  function, build the canonical machine on `Set.range` of residuals (the minimal
+  sequential machine of [holcombe-1982], unique up to isomorphism), and prove
   `IsMealyComputable f ↔ (Set.range f.residual).Finite`.
-* Composition closure (state-product machine) and the right-scan mirror via reverse
-  conjugation.
+* Mealy machine homomorphisms [holcombe-1982], with `reindex` as the isomorphism case.
+* The right-scan mirror via reverse conjugation.
 * Moore machines (state-determined output) and the Mealy–Moore equivalence: same
   states one way, `σ × β` states the other, so the computable classes coincide.
 * The graph view: the zipped graph of a Mealy-computable map is a regular language
@@ -153,6 +158,30 @@ first `i` input symbols. -/
 theorem getElem?_run (xs : List α) (i : ℕ) :
     (T.run xs)[i]? = xs[i]?.map (T.output (T.stateAfter T.initial (xs.take i))) :=
   T.getElem?_runFrom T.initial xs i
+
+/-! ### Composition -/
+
+section Comp
+
+variable {γ σ' : Type*}
+
+/-- `T₂.comp T₁` feeds the outputs of `T₁` to `T₂` — the cascade connection of
+[holcombe-1982] — computing `T₂.run ∘ T₁.run` (`run_comp`). -/
+@[simps]
+def comp (T₂ : Mealy σ' β γ) (T₁ : Mealy σ α β) : Mealy (σ' × σ) α γ where
+  initial := (T₂.initial, T₁.initial)
+  step p a := (T₂.step p.1 (T₁.output p.2 a), T₁.step p.2 a)
+  output p a := T₂.output p.1 (T₁.output p.2 a)
+
+@[simp] theorem runFrom_comp (T₂ : Mealy σ' β γ) (T₁ : Mealy σ α β) (p : σ' × σ)
+    (xs : List α) : (T₂.comp T₁).runFrom p xs = T₂.runFrom p.1 (T₁.runFrom p.2 xs) := by
+  induction xs generalizing p <;> simp [*]
+
+@[simp] theorem run_comp (T₂ : Mealy σ' β γ) (T₁ : Mealy σ α β) :
+    (T₂.comp T₁).run = T₂.run ∘ T₁.run := by
+  funext xs; simp [run, Function.comp]
+
+end Comp
 
 /-! ### Flag machines -/
 
@@ -292,6 +321,14 @@ theorem isMealyComputable_id : IsMealyComputable (id : List α → List α) :=
   isMealyComputable_of_stateSummary
     (fun _ => ()) (fun _ _ => ()) (fun _ x => x)
     (fun _ _ => rfl) (fun _ _ _ => by simp) (fun _ => rfl)
+
+/-- Mealy-computable functions are closed under composition (`Mealy.comp`). -/
+theorem IsMealyComputable.comp {γ : Type*} {g : List β → List γ} {f : List α → List β}
+    (hg : IsMealyComputable g) (hf : IsMealyComputable f) :
+    IsMealyComputable (g ∘ f) := by
+  obtain ⟨σ₂, _, T₂, rfl⟩ := hg
+  obtain ⟨σ₁, _, T₁, rfl⟩ := hf
+  exact ⟨σ₂ × σ₁, inferInstance, T₂.comp T₁, T₂.run_comp T₁⟩
 
 /-! ### Pulling back acceptors -/
 
