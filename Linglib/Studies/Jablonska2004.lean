@@ -22,7 +22,7 @@ common semantic denominator across the readings. Her fn. 2 notes that
 * `po_same_form_different_readings` — the same fragment morph *po-*
   carries different superlexical readings across analyses: the
   verbalizer-sensitivity datum.
-* `stemPerfectivity_imperfective_of_isSuperlexical` — all her superlexical
+* `superlexical_selects_imperfective` — all her superlexical
   derivations sit on imperfective stems, consistent with
   [svenonius-2004]'s diagnostic (56c).
 -/
@@ -66,7 +66,7 @@ theorem po_same_form_different_readings :
 
 /-- All her superlexical derivations sit on imperfective stems,
     consistent with [svenonius-2004]'s diagnostic (56c). -/
-theorem stemPerfectivity_imperfective_of_isSuperlexical
+theorem superlexical_selects_imperfective
     (a : Analysis) (ha : a ∈ analyses) :
     a.stem.perfectivity = Perfectivity.imperfective := by
   fin_cases ha <;> rfl

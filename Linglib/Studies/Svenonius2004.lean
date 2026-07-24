@@ -46,7 +46,7 @@ never a fragment field.
 * `analyses_wellStacked` / `reverse_4a_not_wellStacked` — the stacking
   generalization holds across the analyses, and the attested ungrammatical
   reversal (4b) *vy-po-brasyvatj* violates it.
-* `stemPerfectivity_imperfective_of_isSuperlexical` — diagnostic (56c) (§4.1)
+* `superlexical_selects_imperfective` — diagnostic (56c) (§4.1)
   over the Russian analyses: superlexical prefixes select imperfective
   stems. (Russian-scoped: his Bulgarian stacks attach to the quantized
   perfective *razkaža*, per [istratkova-2004].)
@@ -235,7 +235,7 @@ theorem reverse_4c_not_wellStacked : ¬ WellStacked a4c.prefixes.reverse := by
     prefixed verb is built on an imperfective stem. Russian-scoped:
     his Bulgarian stacks attach to the quantized perfective *razkaža*
     ([istratkova-2004]), so (56c) is not a Bulgarian diagnostic. -/
-theorem stemPerfectivity_imperfective_of_isSuperlexical
+theorem superlexical_selects_imperfective
     (a : Analysis) (ha : a ∈ russianAnalyses)
     (hs : ∃ p ∈ a.prefixes, p.2.IsSuperlexical) :
     a.stem.perfectivity = Perfectivity.imperfective := by
