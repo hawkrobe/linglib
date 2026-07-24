@@ -4,196 +4,54 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Mathlib.Data.Fintype.EquivFin
+import Linglib.Core.Computability.Mealy
 import Linglib.Core.Computability.Subregular.Function.SideDeterminacy
 
 /-!
 # Synchronous (letter) left-subsequential functions
 
-A `Mealy` machine [mealy-1955] is a deterministic left-to-right transducer emitting
-exactly one output symbol per input symbol — the synchronous case, length-preserving by
-construction. Its output coordinate `i` is a function of the input prefix `[0..i]`, so
-the class is cleanly characterised by the `OutputDependsOn` footprint
-(`SideDeterminacy.lean`): `IsLetterLeftSubsequential f → ∀ i, LeftDetermined f i`, hence
-right-myopic (no look-ahead).
+`IsLetterLeftSubsequential f` states that `f` is computed by a finite-state `Mealy`
+machine. Output coordinate `i` of such a function depends only on the input prefix
+`[0..i]`, so the class is characterized by its dependency footprint
+(`OutputDependsOn`): letter-left-subsequential functions are prefix-determined at
+every coordinate, hence have no look-ahead.
 
-This is the characterisation the *block* `IsLeftSubsequential` (`Subsequential.lean`)
-lacks: a length-preserving block transducer can delay output (emit `[]` then `[x,y]`),
-so output coordinate `0` depends on input position `1` — not prefix-determined. The
-synchronous restriction is what makes the dependency-footprint view line up with the
-machine view.
+The *block* class `IsLeftSubsequential` lacks this characterization: a
+length-preserving block transducer can delay output (emit `[]` then `[x, y]`), so its
+output coordinate `0` can depend on input position `1`. The synchronous restriction is
+what makes the dependency-footprint view coincide with the machine view.
 
 ## Main definitions
 
-* `Mealy` — synchronous one-symbol-per-step transducer; `run` is length-preserving.
-* `Mealy.ofFlag` — the one-bit machine tracking "some earlier symbol satisfies `p`".
-* `Mealy.transferEquiv` — transport along a state equivalence, preserving `run`.
-* `IsLetterLeftSubsequential` — computed by a finite-state `Mealy`.
+* `IsLetterLeftSubsequential f`: `f` is computed by some finite-state `Mealy`
 
-## Main results
+## Main theorems
 
-* `Mealy.run_getElem?` — output `i` is `(step (state-after-prefix) (input i)).2`.
-* `IsLetterLeftSubsequential.leftDetermined` / `.isRightMyopic` — synchronous
-  left-subsequential maps are prefix-determined, hence right-myopic.
-* `isLetterLeftSubsequential_of_stateSummary` — Myhill–Nerode, sufficiency direction:
-  a finite left-congruent state summary determining the output yields a `Mealy`.
+* `IsLetterLeftSubsequential.leftDetermined`, `.isRightMyopic`:
+  letter-left-subsequential functions are prefix-determined, hence right-myopic
+* `isLetterLeftSubsequential_of_stateSummary`: the sufficiency half of Myhill–Nerode —
+  a finite left-congruent state summary determining the output yields a machine
 
 ## Implementation notes
 
-In the transducer literature [mohri-1997] *subsequential* machines carry a state-final
-output emitted at end of input; `Mealy` has none, so strictly it computes the
-letter-to-letter *sequential* class. Length preservation forces the final output empty,
-so the two classes coincide here; the name keeps the parallel with the block
-`IsLeftSubsequential`.
-
-[UPSTREAM] candidate (the `Mealy` API): `Mathlib.Computability.Mealy`.
+In the transducer literature [mohri-1997] a *subsequential* machine additionally
+carries a state-final output emitted at the end of the input; `Mealy` has none, so
+strictly it computes the letter-to-letter *sequential* class. Length preservation
+forces the final output to be empty, so the two classes coincide here; the name keeps
+the parallel with the block class `IsLeftSubsequential`.
 
 ## TODO
 
 * Instantiate `isLetterLeftSubsequential_of_stateSummary` at the natural Nerode prefix
   congruence, and prove the necessity direction: a letter-left-subsequential function
-  has a finite-index prefix congruence [choffrut-1977].
-* Composition closure (state-product `Mealy`) and the right-scan mirror
+  has a prefix congruence of finite index [choffrut-1977].
+* Composition closure (state-product machine) and the right-scan mirror
   `IsLetterRightSubsequential` via reverse conjugation.
 -/
 
 namespace Subregular
 
-variable {σ α β : Type*}
-
-/-- A synchronous letter-to-letter left-to-right transducer: exactly one output symbol
-per input symbol (length-preserving by construction). -/
-structure Mealy (σ α β : Type*) where
-  initial : σ
-  step : σ → α → σ × β
-
-namespace Mealy
-
-/-- State reached after consuming a prefix. -/
-def stateAfter (T : Mealy σ α β) : σ → List α → σ
-  | s, [] => s
-  | s, x :: xs => T.stateAfter (T.step s x).1 xs
-
-/-- Run from a state: one output symbol per input symbol. -/
-def runFrom (T : Mealy σ α β) : σ → List α → List β
-  | _, [] => []
-  | s, x :: xs => (T.step s x).2 :: T.runFrom (T.step s x).1 xs
-
-/-- Run from the initial state. -/
-def run (T : Mealy σ α β) : List α → List β := T.runFrom T.initial
-
-@[simp] theorem runFrom_nil (T : Mealy σ α β) (s : σ) : T.runFrom s [] = [] := rfl
-@[simp] theorem runFrom_cons (T : Mealy σ α β) (s : σ) (x : α) (xs : List α) :
-    T.runFrom s (x :: xs) = (T.step s x).2 :: T.runFrom (T.step s x).1 xs := rfl
-@[simp] theorem stateAfter_nil (T : Mealy σ α β) (s : σ) : T.stateAfter s [] = s := rfl
-@[simp] theorem stateAfter_cons (T : Mealy σ α β) (s : σ) (x : α) (xs : List α) :
-    T.stateAfter s (x :: xs) = T.stateAfter (T.step s x).1 xs := rfl
-
-theorem stateAfter_append (T : Mealy σ α β) (s : σ) (xs ys : List α) :
-    T.stateAfter s (xs ++ ys) = T.stateAfter (T.stateAfter s xs) ys := by
-  induction xs generalizing s with
-  | nil => rfl
-  | cons x xs ih => simp [ih]
-
-/-- The run is length-preserving (one output symbol per input symbol). -/
-theorem runFrom_length (T : Mealy σ α β) (s : σ) (xs : List α) :
-    (T.runFrom s xs).length = xs.length := by
-  induction xs generalizing s with
-  | nil => rfl
-  | cons x xs ih => simp [ih]
-
-theorem run_length (T : Mealy σ α β) (xs : List α) :
-    (T.run xs).length = xs.length := T.runFrom_length T.initial xs
-
-/-- **The coordinate characterization**: output `i` is the step output at
-`(state after the prefix [0..i-1], input i)`. -/
-theorem runFrom_getElem? (T : Mealy σ α β) (s : σ) (xs : List α) (i : ℕ) :
-    (T.runFrom s xs)[i]?
-      = (xs[i]?).map (fun x => (T.step (T.stateAfter s (xs.take i)) x).2) := by
-  induction xs generalizing s i with
-  | nil => simp
-  | cons x xs ih =>
-    cases i with
-    | zero => simp
-    | succ j => simp [ih, List.take_succ_cons]
-
-/-- The coordinate characterization from the initial state. -/
-theorem run_getElem? (T : Mealy σ α β) (xs : List α) (i : ℕ) :
-    (T.run xs)[i]?
-      = (xs[i]?).map (fun x => (T.step (T.stateAfter T.initial (xs.take i)) x).2) :=
-  T.runFrom_getElem? T.initial xs i
-
-/-! ### Flag machines
-
-The recurring one-sided-trigger shape (the `Mealy` counterpart of `Bimachine.ofFlags`):
-the state is the one-bit "some earlier symbol satisfies `p`" flag, so `stateAfter`
-computes `List.any` and each output cell sees the flag over its strict prefix. Scanned
-right-to-left (reverse, run, reverse), the cell sees the flag over its strict suffix
-(`ofFlag_run_reverse_getElem?`). -/
-
-/-- The Mealy machine whose state is the monotone flag "a symbol satisfying `p` has
-occurred". -/
-def ofFlag (p : α → Bool) (out : Bool → α → β) : Mealy Bool α β where
-  initial := false
-  step b a := (b || p a, out b a)
-
-@[simp] theorem ofFlag_initial (p : α → Bool) (out : Bool → α → β) :
-    (ofFlag p out).initial = false := rfl
-
-@[simp] theorem ofFlag_step (p : α → Bool) (out : Bool → α → β) (b : Bool) (a : α) :
-    (ofFlag p out).step b a = (b || p a, out b a) := rfl
-
-@[simp] theorem ofFlag_stateAfter (p : α → Bool) (out : Bool → α → β) (b : Bool)
-    (xs : List α) : (ofFlag p out).stateAfter b xs = (b || xs.any p) := by
-  induction xs generalizing b with
-  | nil => simp
-  | cons x xs ih => simp [ih, Bool.or_assoc]
-
-theorem ofFlag_run_getElem? (p : α → Bool) (out : Bool → α → β) (xs : List α) (i : ℕ) :
-    ((ofFlag p out).run xs)[i]? = xs[i]?.map fun a => out ((xs.take i).any p) a := by
-  simp [run_getElem?]
-
-/-- Coordinates of a flag machine scanned right-to-left: cell `i` sees the flag over its
-strict suffix. -/
-theorem ofFlag_run_reverse_getElem? (p : α → Bool) (out : Bool → α → β) (xs : List α)
-    (i : ℕ) :
-    (((ofFlag p out).run xs.reverse).reverse)[i]?
-      = xs[i]?.map fun a => out ((xs.drop (i + 1)).any p) a := by
-  by_cases hi : i < xs.length
-  · rw [List.getElem?_reverse (by rw [(ofFlag p out).run_length]; simpa using hi),
-      (ofFlag p out).run_length, List.length_reverse, ofFlag_run_getElem?,
-      List.getElem?_reverse (by omega),
-      show xs.length - 1 - (xs.length - 1 - i) = i from by omega,
-      List.take_reverse, show xs.length - (xs.length - 1 - i) = i + 1 from by omega,
-      List.any_reverse]
-  · rw [List.getElem?_eq_none
-        (by rw [List.length_reverse, (ofFlag p out).run_length, List.length_reverse]; omega),
-      List.getElem?_eq_none (le_of_not_gt hi), Option.map_none]
-
-/-- Transfer a `Mealy` along a state-space equivalence `σ ≃ τ`, preserving `run`.
-Mirrors `SFST.transferEquiv`; the use case is bringing a `Type*` finite state down to
-`Fin (Fintype.card σ) : Type 0` so a universe-polymorphic machine can witness the
-`Type 0`-state existential of `IsLetterLeftSubsequential`. -/
-def transferEquiv {τ : Type*} (T : Mealy σ α β) (e : σ ≃ τ) : Mealy τ α β where
-  initial := e T.initial
-  step t x := (e (T.step (e.symm t) x).1, (T.step (e.symm t) x).2)
-
-theorem transferEquiv_runFrom {τ : Type*} (T : Mealy σ α β) (e : σ ≃ τ)
-    (s : σ) (xs : List α) :
-    (T.transferEquiv e).runFrom (e s) xs = T.runFrom s xs := by
-  induction xs generalizing s with
-  | nil => rfl
-  | cons x xs ih =>
-    show (T.step (e.symm (e s)) x).2
-            :: (T.transferEquiv e).runFrom (e (T.step (e.symm (e s)) x).1) xs
-         = (T.step s x).2 :: T.runFrom (T.step s x).1 xs
-    rw [e.symm_apply_apply, ih]
-
-/-- The transferred machine computes the same string function. -/
-@[simp] theorem transferEquiv_run {τ : Type*} (T : Mealy σ α β) (e : σ ≃ τ) :
-    (T.transferEquiv e).run = T.run := by
-  funext xs; exact T.transferEquiv_runFrom e T.initial xs
-
-end Mealy
+variable {α β : Type*}
 
 /-- The synchronous left-subsequential class: computed by a finite-state `Mealy`. -/
 def IsLetterLeftSubsequential (f : List α → List β) : Prop :=
@@ -202,9 +60,9 @@ def IsLetterLeftSubsequential (f : List α → List β) : Prop :=
 /-- **Constructor lemma**: every finite-state `Mealy` witnesses
 `IsLetterLeftSubsequential` for its `run`. The state `σ` is accepted at arbitrary
 `Type*` and brought down to `Fin (Fintype.card σ) : Type 0` via `transferEquiv` and
-`Fintype.equivFin`, so bounded-window ISL/OSL states at the alphabet's universe can
-witness the predicate (mirrors `SFST.isLeftSubsequential`). -/
-theorem Mealy.isLetterLeftSubsequential {σ : Type*} [Fintype σ] {α β : Type*}
+`Fintype.equivFin`, so bounded-window states at the alphabet's universe can witness
+the predicate (mirrors `SFST.isLeftSubsequential`). -/
+theorem Mealy.isLetterLeftSubsequential {σ : Type*} [Fintype σ]
     (T : Mealy σ α β) : IsLetterLeftSubsequential T.run :=
   ⟨Fin (Fintype.card σ), inferInstance, T.transferEquiv (Fintype.equivFin σ),
    T.transferEquiv_run _⟩
@@ -216,10 +74,8 @@ theorem IsLetterLeftSubsequential.leftDetermined {f : List α → List β}
     (hf : IsLetterLeftSubsequential f) (i : ℕ) : LeftDetermined f i := by
   obtain ⟨σ, _, T, rfl⟩ := hf
   intro u v hlen hag
-  have hi : u[i]? = v[i]? := hag i (by simp)
-  have htake : u.take i = v.take i :=
-    take_eq_of_agree fun k hk => hag k (by simp only [Set.mem_setOf_eq]; omega)
-  rw [T.run_getElem? u, T.run_getElem? v, hi, htake]
+  rw [T.run_getElem? u, T.run_getElem? v, hag i (Set.mem_setOf.mpr le_rfl),
+    take_eq_of_agree fun k hk => hag k (Set.mem_setOf.mpr hk.le)]
 
 /-- A synchronous left-subsequential map is **right-myopic** — it has no look-ahead. -/
 theorem IsLetterLeftSubsequential.isRightMyopic {f : List α → List β}
@@ -244,8 +100,8 @@ theorem isLetterLeftSubsequential_of_stateSummary
     (hout : ∀ u x w, (f (u ++ x :: w))[u.length]? = some (out (state u) x))
     (hlen : ∀ xs, (f xs).length = xs.length) :
     IsLetterLeftSubsequential f := by
-  refine ⟨σ, inferInstance, { initial := state [], step := fun s x => (δ s x, out s x) }, ?_⟩
-  set T : Mealy σ α β := { initial := state [], step := fun s x => (δ s x, out s x) }
+  refine ⟨σ, inferInstance, ⟨state [], fun s x => (δ s x, out s x)⟩, ?_⟩
+  set T : Mealy σ α β := ⟨state [], fun s x => (δ s x, out s x)⟩
   have hstate : ∀ ps : List α, T.stateAfter T.initial ps = state ps := by
     intro ps
     induction ps using List.reverseRecOn with
@@ -256,11 +112,9 @@ theorem isLetterLeftSubsequential_of_stateSummary
   intro i
   rw [T.run_getElem? xs i, hstate]
   rcases lt_or_ge i xs.length with hi | hi
-  · have hdecomp : xs.take i ++ xs[i] :: xs.drop (i + 1) = xs := by
-      rw [← List.drop_eq_getElem_cons hi, List.take_append_drop]
-    have htlen : (xs.take i).length = i := by rw [List.length_take, Nat.min_eq_left hi.le]
-    have key := hout (xs.take i) (xs[i]) (xs.drop (i + 1))
-    rw [htlen, hdecomp] at key
+  · have key := hout (xs.take i) xs[i] (xs.drop (i + 1))
+    rw [List.length_take_of_le hi.le, ← List.drop_eq_getElem_cons hi,
+      List.take_append_drop] at key
     rw [List.getElem?_eq_getElem hi, Option.map_some, key]
   · rw [List.getElem?_eq_none hi, List.getElem?_eq_none (by rw [hlen]; exact hi)]
     simp
@@ -269,6 +123,6 @@ theorem isLetterLeftSubsequential_of_stateSummary
 example : IsLetterLeftSubsequential (id : List α → List α) :=
   isLetterLeftSubsequential_of_stateSummary
     (fun _ => ()) (fun _ _ => ()) (fun _ x => x)
-    (fun _ _ => rfl) (fun u x w => by simp) (fun _ => rfl)
+    (fun _ _ => rfl) (fun _ _ _ => by simp) (fun _ => rfl)
 
 end Subregular
