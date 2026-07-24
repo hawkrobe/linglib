@@ -5,37 +5,40 @@ Authors: Robert Hawkins
 -/
 import Linglib.Core.Computability.Subregular.Function.ISL
 import Linglib.Core.Computability.Subregular.Function.OSL
-import Linglib.Core.Computability.Subregular.Function.LetterSubsequential
+import Linglib.Core.Computability.Mealy
+import Linglib.Core.Computability.Subregular.Function.SideDeterminacy
 import Linglib.Core.Computability.Subregular.Function.Bimachine
 
 /-!
 # The subregular function hierarchy
 
 Inclusions among the directionality classes of `Core/Computability/Subregular/Function/`,
-assembled from the strictly-local, synchronous-subsequential (`LetterSubsequential`) and
-bimachine (`Bimachine`) substrate:
+assembled from the strictly-local, synchronous (`Mealy`) and bimachine (`Bimachine`)
+substrate:
 
-  `single-symbol ISL/OSL ⊆ IsLetterLeftSubsequential ⊆ IsBimachineWeaklyDeterministic ⊆ IsBimachineComputable`
+  `single-symbol ISL/OSL ⊆ IsMealyComputable ⊆ IsBimachineWeaklyDeterministic ⊆ IsBimachineComputable`
 
 A left-subsequential transducer is the degenerate bimachine whose right automaton is
 trivial, so its cell output is a *one-sided* rule — non-interacting.
 
 ## Main results
 
-* `IsBimachineWeaklyDeterministic.of_letterLeftSubsequential` — subsequential ⊆ WD.
+* `IsBimachineWeaklyDeterministic.of_mealyComputable` — subsequential ⊆ WD.
 * `IsBimachineComputable.of_weaklyDeterministic` — WD ⊆ regular.
 * `weaklyDeterministic_strict_subset_regular` — WD ⊊ regular is *proper*: the conjunctive
   change `conjBM` (a target raised iff a trigger occurs on both sides) is bimachine-computable
   but `RequiresBothSides`.
-* `isLetterLeftSubsequential_of_ISLRule` / `_of_OSLRule` — single-symbol ISL/OSL ⊆
+* `isMealyComputable_of_ISLRule` / `_of_OSLRule` — single-symbol ISL/OSL ⊆
   subsequential (the bounded window as a `Mealy` state); `.of_ISLRule` / `.of_OSLRule`
   extend the chain to WD.
+* `IsMealyComputable.leftDetermined` / `.isRightMyopic` — synchronous maps are
+  prefix-determined at every coordinate, hence right-myopic.
 
 ## TODO
 
 * subsequential ⊊ WD is also proper, but a witness is not yet formalized here: a genuinely
   two-sided union is `IsUnboundedCircumambient`, hence not right-myopic
-  (`IsLetterLeftSubsequential.isRightMyopic`), hence not left-subsequential, yet weakly
+  (`IsMealyComputable.isRightMyopic`), hence not left-subsequential, yet weakly
   deterministic.
 -/
 
@@ -53,7 +56,7 @@ variable {σ α β : Type*}
 /-- View a synchronous transducer as a block `SFST`: singleton outputs, empty flush. -/
 def Mealy.toSFST (T : Mealy σ α β) : SFST α β σ where
   start := T.initial
-  step s x := ((T.step s x).1, [(T.step s x).2])
+  step s x := (T.step s x, [T.output s x])
   finalOutput _ := []
 
 @[simp] theorem Mealy.toSFST_runFrom (T : Mealy σ α β) (s : σ) (xs : List α) :
@@ -62,19 +65,47 @@ def Mealy.toSFST (T : Mealy σ α β) : SFST α β σ where
   | nil => rfl
   | cons x xs ih =>
     rw [SFST.runFrom_cons, Mealy.runFrom_cons,
-      show T.toSFST.step s x = ((T.step s x).1, [(T.step s x).2]) from rfl, ih]
+      show T.toSFST.step s x = (T.step s x, [T.output s x]) from rfl, ih]
     rfl
 
 @[simp] theorem Mealy.toSFST_run (T : Mealy σ α β) : T.toSFST.run = T.run :=
   funext fun xs => T.toSFST_runFrom T.initial xs
 
-/-- A letter-left-subsequential function is left-subsequential: synchronous ⊆ block. -/
-theorem IsLetterLeftSubsequential.isLeftSubsequential {f : List α → List β}
-    (hf : IsLetterLeftSubsequential f) : IsLeftSubsequential f := by
+/-- A Mealy-computable function is left-subsequential: synchronous ⊆ block. -/
+theorem IsMealyComputable.isLeftSubsequential {f : List α → List β}
+    (hf : IsMealyComputable f) : IsLeftSubsequential f := by
   obtain ⟨σ, _, T, rfl⟩ := hf
   exact T.toSFST_run ▸ T.toSFST.isLeftSubsequential
 
 end MealyBlock
+
+/-! ### Mealy-computable maps have no look-ahead
+
+Output coordinate `i` of a synchronous machine depends only on the input prefix
+`[0..i]`. The *block* class `IsLeftSubsequential` lacks this: a length-preserving block
+transducer can delay output (emit `[]` then `[x, y]`), so its output coordinate `0` can
+depend on input position `1`. -/
+
+section Footprint
+
+variable {α β : Type*}
+
+/-- A Mealy-computable map is left-determined at every coordinate — output `i` depends
+only on the prefix `{k | k ≤ i}`. -/
+theorem IsMealyComputable.leftDetermined {f : List α → List β}
+    (hf : IsMealyComputable f) (i : ℕ) : LeftDetermined f i := by
+  obtain ⟨σ, _, T, rfl⟩ := hf
+  intro u v hlen hag
+  simp only [Set.mem_setOf_eq] at hag
+  rw [T.getElem?_run u, T.getElem?_run v, hag i le_rfl,
+    take_eq_of_agree fun k hk => hag k hk.le]
+
+/-- A Mealy-computable map is right-myopic: it has no look-ahead. -/
+theorem IsMealyComputable.isRightMyopic {f : List α → List β}
+    (hf : IsMealyComputable f) : IsMyopicTowards f .right :=
+  IsMyopicTowards.right_of_leftDetermined hf.leftDetermined
+
+end Footprint
 
 variable {α : Type*} [DecidableEq α]
 
@@ -84,12 +115,12 @@ private theorem unite_default_right (cL a : α) : unite cL a a = cL := by
 /-- **Subsequential ⊆ weakly deterministic.** A synchronous left-subsequential function is
 computed by a non-interacting bimachine: the left automaton *is* the transducer, the right
 automaton is trivial, so the cell output is a one-sided rule (`ωR` is the identity). -/
-theorem IsBimachineWeaklyDeterministic.of_letterLeftSubsequential {f : List α → List α}
-    (h : IsLetterLeftSubsequential f) : IsBimachineWeaklyDeterministic f := by
+theorem IsBimachineWeaklyDeterministic.of_mealyComputable {f : List α → List α}
+    (h : IsMealyComputable f) : IsBimachineWeaklyDeterministic f := by
   obtain ⟨σ, _, T, rfl⟩ := h
   set B : Bimachine σ Unit α α :=
-    { lInit := T.initial, lStep := fun l a => (T.step l a).1,
-      rInit := (), rStep := fun _ _ => (), out := fun l a _ => (T.step l a).2 } with hB
+    { lInit := T.initial, lStep := T.step,
+      rInit := (), rStep := fun _ _ => (), out := fun l a _ => T.output l a } with hB
   have hrun : B.run = T.run := by
     funext xs
     apply List.ext_getElem?
@@ -97,7 +128,7 @@ theorem IsBimachineWeaklyDeterministic.of_letterLeftSubsequential {f : List α �
     rw [Bimachine.run_getElem?, T.getElem?_run]
     rfl
   have hni : B.IsNonInteracting :=
-    ⟨fun l a => (T.step l a).2, fun _ a => a, fun l a r => (unite_default_right _ _).symm⟩
+    ⟨T.output, fun _ a => a, fun l a r => (unite_default_right _ _).symm⟩
   exact hrun ▸ isBimachineWeaklyDeterministic B hni
 
 /-- **Weakly deterministic ⊆ regular.** A non-interacting bimachine is a bimachine. -/
@@ -205,8 +236,9 @@ def ISLRule.toMealy {α β : Type*} {k : ℕ} [Fintype α] (r : ISLRule k α β)
     (hs : ∀ w x, (r.windowOutput w x).length = 1) :
     Mealy {l : List α // l.length ≤ k - 1} α β where
   initial := ⟨[], Nat.zero_le _⟩
-  step w x := (⟨(w.val ++ [x]).rtake (k - 1), List.length_rtake_le _ _⟩,
-    (r.windowOutput w.val x).head (by have := hs w.val x; exact List.ne_nil_of_length_pos (by omega)))
+  step w x := ⟨(w.val ++ [x]).rtake (k - 1), List.length_rtake_le _ _⟩
+  output w x := (r.windowOutput w.val x).head
+    (by have := hs w.val x; exact List.ne_nil_of_length_pos (by omega))
 
 theorem ISLRule.toMealy_run_eq_apply {α β : Type*} {k : ℕ} [Fintype α] (r : ISLRule k α β)
     (hs : ∀ w x, (r.windowOutput w x).length = 1) : (r.toMealy hs).run = r.apply := by
@@ -225,9 +257,9 @@ theorem ISLRule.toMealy_run_eq_apply {α β : Type*} {k : ℕ} [Fintype α] (r :
     exact congrArg (a :: ·) (ih _)
 
 /-- **Single-symbol left-ISL ⊆ left-subsequential.** -/
-theorem isLetterLeftSubsequential_of_ISLRule {α β : Type*} {k : ℕ} [Fintype α] (r : ISLRule k α β)
-    (hs : ∀ w x, (r.windowOutput w x).length = 1) : IsLetterLeftSubsequential r.apply :=
-  by rw [← r.toMealy_run_eq_apply hs]; exact (r.toMealy hs).isLetterLeftSubsequential
+theorem isMealyComputable_of_ISLRule {α β : Type*} {k : ℕ} [Fintype α] (r : ISLRule k α β)
+    (hs : ∀ w x, (r.windowOutput w x).length = 1) : IsMealyComputable r.apply :=
+  by rw [← r.toMealy_run_eq_apply hs]; exact (r.toMealy hs).isMealyComputable
 
 /-- A length-preserving (single-symbol) left-OSL rule as a synchronous transducer: the
 bounded output window is the state. -/
@@ -235,8 +267,9 @@ def OSLRule.toMealy {α β : Type*} {k : ℕ} (r : OSLRule k α β)
     (hs : ∀ w x, (r.windowOutput w x).length = 1) :
     Mealy {l : List β // l.length ≤ k - 1} α β where
   initial := ⟨[], Nat.zero_le _⟩
-  step w x := (⟨(w.val ++ r.windowOutput w.val x).rtake (k - 1), List.length_rtake_le _ _⟩,
-    (r.windowOutput w.val x).head (by have := hs w.val x; exact List.ne_nil_of_length_pos (by omega)))
+  step w x := ⟨(w.val ++ r.windowOutput w.val x).rtake (k - 1), List.length_rtake_le _ _⟩
+  output w x := (r.windowOutput w.val x).head
+    (by have := hs w.val x; exact List.ne_nil_of_length_pos (by omega))
 
 theorem OSLRule.toMealy_run_eq_apply {α β : Type*} {k : ℕ} [Fintype β] (r : OSLRule k α β)
     (hs : ∀ w x, (r.windowOutput w x).length = 1) : (r.toMealy hs).run = r.apply := by
@@ -255,20 +288,20 @@ theorem OSLRule.toMealy_run_eq_apply {α β : Type*} {k : ℕ} [Fintype β] (r :
     exact congrArg (a :: ·) (ih _)
 
 /-- **Single-symbol left-OSL ⊆ left-subsequential.** -/
-theorem isLetterLeftSubsequential_of_OSLRule {α β : Type*} {k : ℕ} [Fintype β] (r : OSLRule k α β)
-    (hs : ∀ w x, (r.windowOutput w x).length = 1) : IsLetterLeftSubsequential r.apply :=
-  by rw [← r.toMealy_run_eq_apply hs]; exact (r.toMealy hs).isLetterLeftSubsequential
+theorem isMealyComputable_of_OSLRule {α β : Type*} {k : ℕ} [Fintype β] (r : OSLRule k α β)
+    (hs : ∀ w x, (r.windowOutput w x).length = 1) : IsMealyComputable r.apply :=
+  by rw [← r.toMealy_run_eq_apply hs]; exact (r.toMealy hs).isMealyComputable
 
 /-- **Single-symbol left-ISL ⊆ WD** — extends the lattice down through subsequential. -/
 theorem IsBimachineWeaklyDeterministic.of_ISLRule {α : Type*} {k : ℕ} [Fintype α] [DecidableEq α]
     (r : ISLRule k α α) (hs : ∀ w x, (r.windowOutput w x).length = 1) :
     IsBimachineWeaklyDeterministic r.apply :=
-  .of_letterLeftSubsequential (isLetterLeftSubsequential_of_ISLRule r hs)
+  .of_mealyComputable (isMealyComputable_of_ISLRule r hs)
 
 /-- **Single-symbol left-OSL ⊆ WD**. -/
 theorem IsBimachineWeaklyDeterministic.of_OSLRule {α : Type*} {k : ℕ} [Fintype α] [DecidableEq α]
     (r : OSLRule k α α) (hs : ∀ w x, (r.windowOutput w x).length = 1) :
     IsBimachineWeaklyDeterministic r.apply :=
-  .of_letterLeftSubsequential (isLetterLeftSubsequential_of_OSLRule r hs)
+  .of_mealyComputable (isMealyComputable_of_OSLRule r hs)
 
 end Subregular

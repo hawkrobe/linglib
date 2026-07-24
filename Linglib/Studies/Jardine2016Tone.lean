@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Core.Computability.Subregular.Function.Subsequential
 import Linglib.Core.Computability.Subregular.Function.SideDeterminacy
-import Linglib.Core.Computability.Subregular.Function.LetterSubsequential
+import Linglib.Core.Computability.Mealy
 import Linglib.Core.Computability.Subregular.Function.Bimachine
 import Linglib.Core.Computability.Subregular.Function.Hierarchy
 import Linglib.Phonology.Autosegmental.OCP
@@ -189,12 +189,12 @@ right-subsequential map after a left-subsequential map. -/
 theorem utp_markup_decomposition :
     IsLeftSubsequential markLeft.run ∧ IsRightSubsequential resolve
       ∧ utp.map = resolve ∘ markLeft.run := by
-  refine ⟨markLeft.isLetterLeftSubsequential.isLeftSubsequential, ?_,
+  refine ⟨markLeft.isMealyComputable.isLeftSubsequential, ?_,
     funext utp_eq_resolve_mark⟩
   rw [isRightSubsequential_iff_left_reverse]
   have heq : (fun xs : List Mark => (resolve xs.reverse).reverse) = resolveRight.run := by
     funext xs; simp [resolve]
-  exact heq ▸ resolveRight.isLetterLeftSubsequential.isLeftSubsequential
+  exact heq ▸ resolveRight.isMealyComputable.isLeftSubsequential
 
 /-! ### The autosegmental grounding ((40), §4.4)
 
