@@ -15,9 +15,8 @@ is length-preserving by construction. Output coordinate `i` of the run is the st
 output at the state reached after the length-`i` input prefix (`Mealy.run_getElem?`),
 so the output is prefix-determined at every coordinate.
 
-Note that this definition allows for machines with infinite states; the finite-state
-class `IsLetterLeftSubsequential` (`LetterSubsequential.lean`) supplies a `Fintype`
-instance.
+Note that this definition allows for machines with infinite states; a `Fintype`
+instance must be supplied for true finite-state machines.
 
 ## Main definitions
 
