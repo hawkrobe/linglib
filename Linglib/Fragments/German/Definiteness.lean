@@ -17,7 +17,7 @@ namespace German.Definiteness
 /-- German: *distinct* weak (uniqueness, e.g. contracted *im*) and strong
     (anaphoric, *dem*) definite articles; indefinite *ein-*; demonstratives;
     possessives. The unique vs anaphoric distinction is morphologically marked. -/
-def determiners : List Determiner.Entry :=
+def _root_.German.Determiners.inventory : Determiner.Inventory :=
   [ .article { form := "im/weak", definiteness := .definite, exponent := .dedicatedMorpheme,
                uses := [.immediateSituation, .largerSituation] },
     .article { form := "dem/strong", definiteness := .definite, exponent := .dedicatedMorpheme,
@@ -27,6 +27,6 @@ def determiners : List Determiner.Entry :=
     .possessive { form := "mein" } ]
 
 /-- German's inventory derives the `.bipartite` Moroney cell. -/
-theorem marking : Determiner.markingStrategy determiners = .bipartite := by decide
+theorem marking : Determiners.inventory.markingStrategy = .bipartite := by decide
 
 end German.Definiteness

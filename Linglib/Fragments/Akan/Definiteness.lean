@@ -14,13 +14,13 @@ namespace Akan.Definiteness
 
 /-- Akan: strong definite article *nó* (anaphoric/familiarity); weak uniqueness
     is bare (no weak article); indefinite *bí*. -/
-def determiners : List Determiner.Entry :=
+def _root_.Akan.Determiners.inventory : Determiner.Inventory :=
   [ .article { form := "nó", definiteness := .definite, exponent := .dedicatedMorpheme,
                uses := [.anaphoric, .donkey] },
     .article { form := "bí", definiteness := .indefinite, exponent := .dedicatedMorpheme } ]
 
 /-- Akan derives the `.markedAnaphoric` Moroney cell (only the anaphoric
     definite is marked; uniqueness is bare). -/
-theorem marking : Determiner.markingStrategy determiners = .markedAnaphoric := by decide
+theorem marking : Determiners.inventory.markingStrategy = .markedAnaphoric := by decide
 
 end Akan.Definiteness

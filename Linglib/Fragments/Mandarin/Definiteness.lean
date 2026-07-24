@@ -16,11 +16,11 @@ namespace Mandarin.Definiteness
 /-- Mandarin: no overt articles; the demonstrative (*nà* 'that') obligatorily
     expones anaphoric definites; uniqueness is bare (no determiner);
     possessives via *de*. -/
-def determiners : List Determiner.Entry :=
+def _root_.Mandarin.Determiners.inventory : Determiner.Inventory :=
   [ .demonstrative { form := "na", deictic := .distal, definiteUses := [.anaphoric] },
     .possessive { form := "de" } ]
 
 /-- Mandarin's inventory derives the `.markedAnaphoric` Moroney cell. -/
-theorem marking : Determiner.markingStrategy determiners = .markedAnaphoric := by decide
+theorem marking : Determiners.inventory.markingStrategy = .markedAnaphoric := by decide
 
 end Mandarin.Definiteness

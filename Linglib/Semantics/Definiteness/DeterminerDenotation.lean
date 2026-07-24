@@ -147,14 +147,14 @@ def _root_.Article.toDescriptions (a : Article)
 
 /-- An article realizes the kind of each of its own possible descriptions:
 the denotation pipeline (`ofPresupType`) and the inventory pipeline
-(`Determiner.Realizes`) coincide through `kind_ofPresupType` and
+(`Determiner.Inventory.Realizes`) coincide through `kind_ofPresupType` and
 `realizes_toKind`. -/
 theorem _root_.Determiner.realizes_of_mem_toDescriptions (a : Article)
     (R : DenotGS E W .et) (idx : Nat) (k : Description E W)
     (hk : k ∈ a.toDescriptions R idx) :
-    Determiner.Realizes [.article a] k.kind := by
+    Determiner.Inventory.Realizes [.article a] k.kind := by
   obtain ⟨p, hp, rfl⟩ := List.mem_map.mp hk
-  rw [Description.kind_ofPresupType, Determiner.realizes_toKind]
+  rw [Description.kind_ofPresupType, Determiner.Inventory.realizes_toKind]
   exact (Article.mem_presupTypes_iff_marksPresup a p).mp hp
 
 /-- An article's possible denotations: the `NominalDenot`s of its admissible
@@ -173,7 +173,7 @@ theorem Article.denotations_realized (a : Article)
     (nd : NominalDenot (Assignment E × SitAssignment W) PUnit E)
     (h : nd ∈ a.denotations R idx) :
     ∃ k : Description E W,
-      Determiner.Realizes [.article a] k.kind ∧ nd = k.denote := by
+      Determiner.Inventory.Realizes [.article a] k.kind ∧ nd = k.denote := by
   obtain ⟨k, hk, rfl⟩ := List.mem_map.mp h
   exact ⟨k, Determiner.realizes_of_mem_toDescriptions a R idx k hk, rfl⟩
 
@@ -210,7 +210,7 @@ denotational pipeline and the inventory pipeline agree, parallel to
 `Article.denotations_realized`. -/
 theorem Possessive.denote_realized (p : Possessive)
     (R : DenotGS E W .et) (possessor : DenotGS E W .e) (rel : DenotGS E W .eet) :
-    Determiner.Realizes [.possessive p] (Description.possessive R possessor rel).kind :=
+    Determiner.Inventory.Realizes [.possessive p] (Description.possessive R possessor rel).kind :=
   ⟨.possessive p, List.mem_singleton_self _, trivial⟩
 
 /-! ### Unification with the possessive carrier API

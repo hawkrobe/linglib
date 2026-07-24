@@ -119,7 +119,7 @@ variable {E W : Type}
 
 /-- The Frame-free kind of a description: its constructor with payload erased
     (`Features.Definiteness.DescriptionKind`). Inventory questions
-    (`Determiner.Realizes`, marking typology) depend only on this. -/
+    (`Determiner.Inventory.Realizes`, marking typology) depend only on this. -/
 def kind : Description E W → Features.Definiteness.DescriptionKind
   | .bare _           => .bare
   | .indefinite _     => .indefinite

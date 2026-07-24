@@ -128,6 +128,12 @@ def these : DemonstrativeDeterminer := { form := "these", deictic := .proximal }
 /-- "those" — distal demonstrative determiner, plural. -/
 def those : DemonstrativeDeterminer := { form := "those", deictic := .distal }
 
+/-- "my" — first-person possessive determiner. -/
+def my : Possessive := { form := "my" }
+
+/-- "your" — second-person possessive determiner. -/
+def your : Possessive := { form := "your" }
+
 /-! ## Numerical Determiners
 [barwise-cooper-1981] [van-de-pol-etal-2023]
 
@@ -253,10 +259,17 @@ def allArticles : List Article := [the, a, an]
 /-- All demonstrative-determiner entries. -/
 def allDemonstratives : List DemonstrativeDeterminer := [this, that, these, those]
 
-/-- The full inventory as a heterogeneous `List Determiner.Entry`
+/-- All possessive-determiner entries. -/
+def allPossessives : List Possessive := [my, your]
+
+/-- The full inventory as a heterogeneous `Determiner.Inventory`
     (the per-language form a Fragment declares). -/
-def inventory : List Determiner.Entry :=
+def inventory : Determiner.Inventory :=
   allArticles.map .article ++ allDemonstratives.map .demonstrative ++
-    allQuantifiers.map .quantifier
+    allQuantifiers.map .quantifier ++ allPossessives.map .possessive
+
+/-- English's inventory derives the `.generallyMarked` [moroney-2021] cell: the
+    syncretic *the* covers both [schwarz-2009] use types. -/
+theorem marking : inventory.markingStrategy = .generallyMarked := by decide
 
 end English.Determiners

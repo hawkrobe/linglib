@@ -57,15 +57,15 @@ def blocking : NMP.BlockingPrinciple :=
     so bare nouns can express both unique and anaphoric definiteness. The
     declared determiner set is the canonical upstream object from which both
     `DefMarkingStrategy` (Moroney cell) and `ArticleType` (Schwarz cell) are
-    derived — see `Determiner.markingStrategy` / `Determiner.articleType`. -/
-def determiners : List Determiner.Entry :=
+    derived — see `Determiner.Inventory.markingStrategy` / `Determiner.Inventory.articleType`. -/
+def _root_.Shan.Determiners.inventory : Determiner.Inventory :=
   [ .demonstrative { form := "nâj", deictic := .proximal, definiteUses := [] },
     .demonstrative { form := "nân", deictic := .distal, definiteUses := [] },
     .possessive { form := "POSS" } ]
 
 /-- Shan's determiner set projects to the `.unmarked` Moroney cell. -/
 theorem marking :
-    Determiner.markingStrategy determiners = .unmarked := by decide
+    Determiners.inventory.markingStrategy = .unmarked := by decide
 
 -- ============================================================================
 -- §2: Type-Shift Contexts

@@ -15,12 +15,12 @@ namespace Thai.Definiteness
 /-- Thai [jenks-2015]: same definite-marking pattern as Mandarin — the
     demonstrative (*nán* 'that') obligatorily expones anaphoric definites;
     uniqueness is bare; possessives via *khɔ̌ɔng*. -/
-def determiners : List Determiner.Entry :=
+def _root_.Thai.Determiners.inventory : Determiner.Inventory :=
   [ .demonstrative { form := "nan", deictic := .distal, definiteUses := [.anaphoric] },
     .possessive { form := "khong" } ]
 
 /-- Thai's inventory derives the `.markedAnaphoric` Moroney cell — same cell as
     Mandarin (same definite-marking pattern). -/
-theorem marking : Determiner.markingStrategy determiners = .markedAnaphoric := by decide
+theorem marking : Determiners.inventory.markingStrategy = .markedAnaphoric := by decide
 
 end Thai.Definiteness

@@ -38,7 +38,7 @@ The contributions are made *true by construction* on shared substrate:
   off-uniqueness **divergence** — DEM and PER picking *different* referents — is
   `der_er_can_diverge`, reusing [schwarz-2009] §8's two-satisfier scenario.
 * The **two-series ↔ two-article** correlation (§4) is read off the determiner
-  inventory (`Determiner.articleType`) and the lexicalized strong series, not
+  inventory (`Determiner.Inventory.articleType`) and the lexicalized strong series, not
   stipulated.
 
 ## Implementation notes
@@ -94,7 +94,7 @@ structure PronounSystem where
   language : String
   weak : List PersonalPronoun
   strong : List PersonalPronoun
-  determiners : List Determiner.Entry
+  determiners : Determiner.Inventory
   licensing : List DEMLicensingContext
 
 namespace PronounSystem
@@ -114,7 +114,7 @@ def german : PronounSystem :=
   { language := "German"
     weak := [er, sie, es]
     strong := [der, die, das]
-    determiners := German.Definiteness.determiners
+    determiners := German.Determiners.inventory
     licensing := [.emotivity, .disambiguation, .register] }
 
 /-! ### The contributions, derived -/
@@ -127,16 +127,16 @@ theorem german_lexicalizes_strong : german.LexicalizesStrong := by decide
     derived from the determiner inventory, matching its weak/strong pronoun series
     ([patel-grosz-grosz-2017] §4). -/
 theorem german_weakAndStrong :
-    Determiner.articleType german.determiners = .weakAndStrong := by decide
+    german.determiners.articleType = .weakAndStrong := by decide
 
 /-- The [schwarz-2009]/[schwarz-2013] weak/strong typology meets PG&G's
     two-series claim: German's two distinct article forms (deriving `.bipartite`)
     correspond to its lexicalized strong series and the `.weakAndStrong` article
     type — all derived from the determiner inventory + the strong forms. -/
 theorem schwarz_pgg_german_consistent :
-    Determiner.markingStrategy German.Definiteness.determiners = .bipartite ∧
+    German.Determiners.inventory.markingStrategy = .bipartite ∧
     german.LexicalizesStrong ∧
-    Determiner.articleType german.determiners = .weakAndStrong :=
+    german.determiners.articleType = .weakAndStrong :=
   ⟨German.Definiteness.marking, german_lexicalizes_strong, german_weakAndStrong⟩
 
 /-! ### The empirical payoff: the two series can diverge -/
