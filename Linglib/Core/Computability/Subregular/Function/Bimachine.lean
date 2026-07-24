@@ -98,53 +98,43 @@ theorem run_getElem? (x : List α) (i : ℕ) :
 
 variable {L' R' : Type*}
 
-/-- Transfer a bimachine along state-space equivalences `L ≃ L'` and `R ≃ R'`,
-preserving `run`. Mirrors `SFST.transferEquiv`/`Mealy.reindex`; the use case is
-bringing `Type*` finite states down to `Fin (Fintype.card ·) : Type 0` so a
-universe-polymorphic machine can witness the `Type 0`-state existentials of
-`IsBimachineComputable`/`IsBimachineWeaklyDeterministic`. -/
-def transferEquiv (eL : L ≃ L') (eR : R ≃ R') :
-    Bimachine L' R' α β where
-  lInit := eL B.lInit
-  lStep l a := eL (B.lStep (eL.symm l) a)
-  rInit := eR B.rInit
-  rStep r a := eR (B.rStep (eR.symm r) a)
-  out l a r := B.out (eL.symm l) a (eR.symm r)
+/-- Lifts equivalences on the two state spaces to an equivalence on bimachines. -/
+@[simps apply_lInit apply_lStep apply_rInit apply_rStep apply_out]
+def reindex (eL : L ≃ L') (eR : R ≃ R') : Bimachine L R α β ≃ Bimachine L' R' α β where
+  toFun B := {
+    lInit := eL B.lInit
+    lStep := fun l a => eL (B.lStep (eL.symm l) a)
+    rInit := eR B.rInit
+    rStep := fun r a => eR (B.rStep (eR.symm r) a)
+    out := fun l a r => B.out (eL.symm l) a (eR.symm r)
+  }
+  invFun B := {
+    lInit := eL.symm B.lInit
+    lStep := fun l a => eL.symm (B.lStep (eL l) a)
+    rInit := eR.symm B.rInit
+    rStep := fun r a => eR.symm (B.rStep (eR r) a)
+    out := fun l a r => B.out (eL l) a (eR r)
+  }
+  left_inv B := by simp
+  right_inv B := by simp
 
-theorem transferEquiv_lState_from (eL : L ≃ L') (eR : R ≃ R')
-    (l : L) (pre : List α) :
-    pre.foldl (B.transferEquiv eL eR).lStep (eL l) = eL (pre.foldl B.lStep l) :=
-  List.foldl_hom eL fun y x => by simp [transferEquiv]
+@[simp] theorem lState_reindex (eL : L ≃ L') (eR : R ≃ R') (pre : List α) :
+    (reindex eL eR B).lState pre = eL (B.lState pre) :=
+  List.foldl_hom eL fun y x => by simp
 
-theorem transferEquiv_rState_from (eL : L ≃ L') (eR : R ≃ R')
-    (r : R) (suf : List α) :
-    suf.foldr (fun a r => (B.transferEquiv eL eR).rStep r a) (eR r)
-      = eR (suf.foldr (fun a r => B.rStep r a) r) :=
-  List.foldr_hom eR fun x y => by simp [transferEquiv]
+@[simp] theorem rState_reindex (eL : L ≃ L') (eR : R ≃ R') (suf : List α) :
+    (reindex eL eR B).rState suf = eR (B.rState suf) :=
+  List.foldr_hom eR fun x y => by simp
 
-theorem transferEquiv_lState (eL : L ≃ L') (eR : R ≃ R')
-    (pre : List α) : (B.transferEquiv eL eR).lState pre = eL (B.lState pre) :=
-  transferEquiv_lState_from B eL eR B.lInit pre
-
-theorem transferEquiv_rState (eL : L ≃ L') (eR : R ≃ R')
-    (suf : List α) : (B.transferEquiv eL eR).rState suf = eR (B.rState suf) :=
-  transferEquiv_rState_from B eL eR B.rInit suf
-
-theorem transferEquiv_runAux (eL : L ≃ L') (eR : R ≃ R')
+@[simp] theorem runAux_reindex (eL : L ≃ L') (eR : R ≃ R')
     (l : L) (xs : List α) :
-    (B.transferEquiv eL eR).runAux (eL l) xs = B.runAux l xs := by
-  induction xs generalizing l with
-  | nil => rfl
-  | cons x xs ih =>
-    rw [runAux_cons, runAux_cons]
-    show B.out (eL.symm (eL l)) x (eR.symm ((B.transferEquiv eL eR).rState xs)) ::
-        (B.transferEquiv eL eR).runAux (eL (B.lStep (eL.symm (eL l)) x)) xs = _
-    rw [eL.symm_apply_apply, transferEquiv_rState, eR.symm_apply_apply, ih]
+    (reindex eL eR B).runAux (eL l) xs = B.runAux l xs := by
+  induction xs generalizing l <;> simp [*]
 
-/-- The transferred bimachine computes the same string function. -/
-@[simp] theorem transferEquiv_run (eL : L ≃ L') (eR : R ≃ R') :
-    (B.transferEquiv eL eR).run = B.run := by
-  funext xs; exact transferEquiv_runAux B eL eR B.lInit xs
+/-- The reindexed bimachine computes the same string function. -/
+@[simp] theorem run_reindex (eL : L ≃ L') (eR : R ≃ R') :
+    (reindex eL eR B).run = B.run := by
+  funext xs; simp [run]
 
 /-! ### Flag bimachines
 
@@ -190,12 +180,12 @@ def IsBimachineComputable (f : List α → List β) : Prop :=
 
 /-- **Constructor lemma**: every finite-state bimachine witnesses `IsBimachineComputable`
 for its `run`. States are accepted at arbitrary `Type*` and brought down to
-`Fin (Fintype.card ·) : Type 0` via `transferEquiv` + `Fintype.equivFin`, so consumers stop
+`Fin (Fintype.card ·) : Type 0` via `reindex` + `Fintype.equivFin`, so consumers stop
 spelling the `∃ (L R : Type)` quadruple. Mirrors `SFST.isLeftSubsequential`. -/
 theorem isBimachineComputable {L R : Type*} [Fintype L] [Fintype R] {α β : Type*}
     (B : Bimachine L R α β) : IsBimachineComputable B.run :=
   ⟨Fin (Fintype.card L), Fin (Fintype.card R), inferInstance, inferInstance,
-    B.transferEquiv (Fintype.equivFin L) (Fintype.equivFin R), B.transferEquiv_run _ _⟩
+    Bimachine.reindex (Fintype.equivFin L) (Fintype.equivFin R) B, B.run_reindex _ _⟩
 
 section TwoSidedWitness
 
@@ -349,7 +339,7 @@ theorem isBimachineWeaklyDeterministic {L R : Type*} [Fintype L] [Fintype R]
     IsBimachineWeaklyDeterministic B.run := by
   obtain ⟨ωL, ωR, hω⟩ := h
   refine ⟨Fin (Fintype.card L), Fin (Fintype.card R), inferInstance, inferInstance,
-    B.transferEquiv (Fintype.equivFin L) (Fintype.equivFin R), B.transferEquiv_run _ _,
+    Bimachine.reindex (Fintype.equivFin L) (Fintype.equivFin R) B, B.run_reindex _ _,
     fun l a => ωL ((Fintype.equivFin L).symm l) a,
     fun r a => ωR ((Fintype.equivFin R).symm r) a, ?_⟩
   intro l a r

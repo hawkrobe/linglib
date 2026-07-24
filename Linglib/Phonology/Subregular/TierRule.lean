@@ -242,20 +242,18 @@ def lastContextOf (r : TierRule α) (xs : List α) : Option α :=
 
 /-- SFST witness for the identity-tier, left-side `applyToString`:
 state tracks the last `targetIsContext`-matching input segment. -/
-def toIdTierSFST (r : TierRule α) : SFST α (Option Bool) (Option α) where
+def toIdTierSFST (r : TierRule α) : SFST (Option α) α (Option Bool) where
   start := none
-  step st s :=
-    let newSt := if r.targetIsContext s then some s else st
-    (newSt, [predictFromCtx r st])
+  step st s := if r.targetIsContext s then some s else st
+  output st _ := [predictFromCtx r st]
   finalOutput _ := []
 
 /-- The SFST's state after one step matches the running `lastContextOf`. -/
-@[simp] lemma toIdTierSFST_step_fst (r : TierRule α) (st : Option α) (s : α) :
-    ((r.toIdTierSFST.step st s).1)
-      = if r.targetIsContext s then some s else st := rfl
+@[simp] lemma toIdTierSFST_step (r : TierRule α) (st : Option α) (s : α) :
+    r.toIdTierSFST.step st s = if r.targetIsContext s then some s else st := rfl
 
-@[simp] lemma toIdTierSFST_step_snd (r : TierRule α) (st : Option α) (s : α) :
-    ((r.toIdTierSFST.step st s).2) = [predictFromCtx r st] := rfl
+@[simp] lemma toIdTierSFST_output (r : TierRule α) (st : Option α) (s : α) :
+    r.toIdTierSFST.output st s = [predictFromCtx r st] := rfl
 
 /-- `lastContextOf` extends by one step: appending a single segment to
 the past updates the running last-context exactly as the SFST step
@@ -289,15 +287,11 @@ lemma toIdTierSFST_runFrom_eq_applyToStringAux (r : TierRule α)
   induction input generalizing past with
   | nil => rfl
   | cons x xs ih =>
-    show (r.toIdTierSFST.step (r.lastContextOf past) x).2
-            ++ r.toIdTierSFST.runFrom (r.toIdTierSFST.step _ x).1 xs
-         = r.applyAt past :: applyToString.applyToStringAux r xs (past ++ [x])
-    rw [toIdTierSFST_step_snd, toIdTierSFST_step_fst]
+    rw [SFST.runFrom_cons, toIdTierSFST_output, toIdTierSFST_step]
     rw [show (if r.targetIsContext x then some x else r.lastContextOf past)
           = r.lastContextOf (past ++ [x]) from
         (r.lastContextOf_append_singleton past x).symm]
-    rw [ih (past ++ [x])]
-    rw [r.applyAt_eq_predictFromCtx h_id h_side]
+    rw [ih (past ++ [x]), ← r.applyAt_eq_predictFromCtx h_id h_side]
     rfl
 
 /-- **Identity-tier left-side TierRules reify to Left-Subsequential

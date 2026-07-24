@@ -198,14 +198,20 @@ def rightwardATR_osl : OSLRule 2 Seg Seg where
 active. Demonstrates that the rule has both an OSL representation
 (above) and a Subsequential representation (here) — the latter being
 the umbrella class. -/
-def rightwardATR : SFST Seg Seg Bool where
+def rightwardATR : SFST Bool Seg Seg where
   start := false
   step spreading s :=
     match s with
-    | .a => (false, [.a])
-    | .dom => (true, [.recH])
-    | .recH => (true, [.recH])
-    | .recL => if spreading then (true, [.recH]) else (false, [.recL])
+    | .a => false
+    | .dom => true
+    | .recH => true
+    | .recL => spreading
+  output spreading s :=
+    match s with
+    | .a => [.a]
+    | .dom => [.recH]
+    | .recH => [.recH]
+    | .recL => if spreading then [.recH] else [.recL]
   finalOutput _ := []
 
 -- ============================================================================
@@ -405,10 +411,13 @@ Covariation (both languages) and interaction (Tutrugbu only) come apart. -/
 theorem maasai_not_requiresBothSides : ¬ RequiresBothSides maasai := fun h =>
   not_isBimachineWeaklyDeterministic_of_requiresBothSides h maasai_weaklyDeterministic
 
-/-- **Strictness witness `subsequential ⊊ WD`**: Maasai is weakly deterministic yet *not*
-left-subsequential. A synchronous left-subsequential map is right-myopic
+/-- Strictness witness `synchronous ⊊ WD`: Maasai is weakly deterministic yet not
+Mealy-computable. A Mealy-computable map is right-myopic
 (`IsMealyComputable.isRightMyopic`), but Maasai's bidirectional spread is not
-(`maasai_isUnboundedCircumambient`). -/
+(`maasai_isUnboundedCircumambient`). The stronger `¬ IsLeftSubsequential maasai` (the
+*block* class) is not yet formalized: a block transducer can delay output, so it
+needs the bounded-delay route (`IsLeftSubsequential.bounded_delay`) rather than the
+myopia shortcut — see the TODO in `Function/Hierarchy.lean`. -/
 theorem maasai_not_mealyComputable : ¬ IsMealyComputable maasai := fun h =>
   maasai_isUnboundedCircumambient.not_myopic .right h.isRightMyopic
 

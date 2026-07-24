@@ -54,19 +54,17 @@ section MealyBlock
 variable {σ α β : Type*}
 
 /-- View a synchronous transducer as a block `SFST`: singleton outputs, empty flush. -/
-def Mealy.toSFST (T : Mealy σ α β) : SFST α β σ where
+def Mealy.toSFST (T : Mealy σ α β) : SFST σ α β where
   start := T.initial
-  step s x := (T.step s x, [T.output s x])
+  step := T.step
+  output s x := [T.output s x]
   finalOutput _ := []
 
 @[simp] theorem Mealy.toSFST_runFrom (T : Mealy σ α β) (s : σ) (xs : List α) :
     T.toSFST.runFrom s xs = T.runFrom s xs := by
   induction xs generalizing s with
   | nil => rfl
-  | cons x xs ih =>
-    rw [SFST.runFrom_cons, Mealy.runFrom_cons,
-      show T.toSFST.step s x = (T.step s x, [T.output s x]) from rfl, ih]
-    rfl
+  | cons x xs ih => rw [SFST.runFrom_cons, Mealy.runFrom_cons, ih]; rfl
 
 @[simp] theorem Mealy.toSFST_run (T : Mealy σ α β) : T.toSFST.run = T.run :=
   funext fun xs => T.toSFST_runFrom T.initial xs

@@ -179,17 +179,12 @@ is finite precisely when the output alphabet is. -/
 
 /-- Construction: every Left-OSL rule induces an SFST whose state is the
 output window — a list of output symbols of length at most `k − 1` —
-and whose `finalOutput` is empty.
-
-The `windowOutput` call is repeated in the two tuple components rather
-than `let`-bound so that `(step ow x).2` reduces definitionally to
-`r.windowOutput ow x` for the proof of `toFinSFST_run_eq_apply`. -/
+and whose `finalOutput` is empty. -/
 def OSLRule.toFinSFST {k : ℕ} (r : OSLRule k α β) :
-    SFST α β {l : List β // l.length ≤ k - 1} where
+    SFST {l : List β // l.length ≤ k - 1} α β where
   start := ⟨[], Nat.zero_le _⟩
-  step w x :=
-    (⟨(w.val ++ r.windowOutput w.val x).rtake (k - 1), List.length_rtake_le _ _⟩,
-     r.windowOutput w.val x)
+  step w x := ⟨(w.val ++ r.windowOutput w.val x).rtake (k - 1), List.length_rtake_le _ _⟩
+  output w x := r.windowOutput w.val x
   finalOutput _ := []
 
 /-- The SFST induced by an OSL rule computes the same string function. -/
@@ -204,13 +199,7 @@ theorem OSLRule.toFinSFST_run_eq_apply {k : ℕ} (r : OSLRule k α β) :
   induction input generalizing w with
   | nil => rfl
   | cons x xs ih =>
-    change r.windowOutput w.val x
-              ++ SFST.runFrom r.toFinSFST
-                  ⟨(w.val ++ r.windowOutput w.val x).rtake (k - 1),
-                   List.length_rtake_le _ _⟩ xs
-         = r.windowOutput w.val x
-              ++ OSLRule.applyAux r
-                  ((w.val ++ r.windowOutput w.val x).rtake (k - 1)) xs
+    rw [SFST.runFrom_cons]
     exact congrArg _ (ih _)
 
 /-- **Left-OSL ⊆ Left-Subsequential** (over a finite output alphabet).

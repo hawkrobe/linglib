@@ -274,11 +274,10 @@ and whose `finalOutput` is empty. The state is manifestly finite via
 `fintypeListLengthLE`, witnessing ISL ⊆ Subsequential under the source
 literature's finite-state assumption. -/
 def ISLRule.toFinSFST {k : ℕ} [Fintype α] (r : ISLRule k α β) :
-    SFST α β {l : List α // l.length ≤ k - 1} where
+    SFST {l : List α // l.length ≤ k - 1} α β where
   start := ⟨[], Nat.zero_le _⟩
-  step w x :=
-    (⟨(w.val ++ [x]).rtake (k - 1), List.length_rtake_le _ _⟩,
-     r.windowOutput w.val x)
+  step w x := ⟨(w.val ++ [x]).rtake (k - 1), List.length_rtake_le _ _⟩
+  output w x := r.windowOutput w.val x
   finalOutput _ := []
 
 /-- The finite-state SFST induced by an ISL rule computes the same
@@ -294,11 +293,7 @@ theorem ISLRule.toFinSFST_run_eq_apply {k : ℕ} [Fintype α] (r : ISLRule k α 
   induction input generalizing w with
   | nil => rfl
   | cons x xs ih =>
-    change r.windowOutput w.val x
-              ++ SFST.runFrom r.toFinSFST
-                  ⟨(w.val ++ [x]).rtake (k - 1), List.length_rtake_le _ _⟩ xs
-         = r.windowOutput w.val x
-              ++ ISLRule.applyAux r ((w.val ++ [x]).rtake (k - 1)) xs
+    rw [SFST.runFrom_cons]
     exact congrArg _ (ih _)
 
 /-- **Left-ISL ⊆ Left-Subsequential** (over a finite input alphabet).
