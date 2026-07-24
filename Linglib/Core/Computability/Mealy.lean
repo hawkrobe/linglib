@@ -84,6 +84,10 @@ theorem stateAfter_append (s : σ) (xs ys : List α) :
     T.stateAfter s (xs ++ ys) = T.stateAfter (T.stateAfter s xs) ys :=
   List.foldl_append
 
+theorem runFrom_append (s : σ) (xs ys : List α) :
+    T.runFrom s (xs ++ ys) = T.runFrom s xs ++ T.runFrom (T.stateAfter s xs) ys := by
+  induction xs generalizing s <;> simp [*]
+
 /-- The run is length-preserving (one output symbol per input symbol). -/
 @[simp] theorem length_runFrom (s : σ) (xs : List α) :
     (T.runFrom s xs).length = xs.length := by
@@ -97,6 +101,15 @@ theorem stateAfter_append (s : σ) (xs ys : List α) :
 
 @[simp] theorem runRight_reverse (xs : List α) :
     T.runRight xs.reverse = (T.run xs).reverse := by simp [runRight]
+
+@[simp] theorem runRight_nil : T.runRight [] = [] := rfl
+
+/-- The right-to-left pass emits the head output at the state reached over the entire
+reversed tail: the right scan reads the future. -/
+@[simp] theorem runRight_cons (x : α) (xs : List α) :
+    T.runRight (x :: xs)
+      = (T.step (T.stateAfter T.initial xs.reverse) x).2 :: T.runRight xs := by
+  simp [runRight, run, runFrom_append]
 
 /-- Output coordinate `i` of the run is the step output at the state reached after the
 first `i` input symbols. -/
@@ -143,16 +156,9 @@ theorem getElem?_ofFlag_run (xs : List α) (i : ℕ) :
 suffix. -/
 theorem getElem?_ofFlag_runRight (xs : List α) (i : ℕ) :
     ((ofFlag p out).runRight xs)[i]? = xs[i]?.map fun a => out ((xs.drop (i + 1)).any p) a := by
-  unfold runRight
-  by_cases hi : i < xs.length
-  · rw [List.getElem?_reverse (by simpa using hi),
-      (ofFlag p out).length_run, List.length_reverse, getElem?_ofFlag_run,
-      List.getElem?_reverse (by omega),
-      show xs.length - 1 - (xs.length - 1 - i) = i from by omega,
-      List.take_reverse, show xs.length - (xs.length - 1 - i) = i + 1 from by omega,
-      List.any_reverse]
-  · rw [List.getElem?_eq_none (by simpa using hi),
-      List.getElem?_eq_none (Nat.le_of_not_lt hi), Option.map_none]
+  induction xs generalizing i with
+  | nil => simp
+  | cons x xs ih => cases i <;> simp [*]
 
 /-! ### Transport along a state equivalence -/
 
