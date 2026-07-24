@@ -79,14 +79,12 @@ theorem stateAfter_append (s : σ) (xs ys : List α) :
   List.foldl_append
 
 /-- The run is length-preserving (one output symbol per input symbol). -/
-theorem runFrom_length (s : σ) (xs : List α) :
+@[simp] theorem length_runFrom (s : σ) (xs : List α) :
     (T.runFrom s xs).length = xs.length := by
-  induction xs generalizing s with
-  | nil => rfl
-  | cons x xs ih => simp [ih]
+  induction xs generalizing s <;> simp [*]
 
-theorem run_length (xs : List α) :
-    (T.run xs).length = xs.length := T.runFrom_length T.initial xs
+@[simp] theorem length_run (xs : List α) :
+    (T.run xs).length = xs.length := T.length_runFrom T.initial xs
 
 /-- **The coordinate characterization**: output `i` is the step output at
 `(state after the prefix [0..i-1], input i)`. -/
@@ -142,14 +140,13 @@ theorem ofFlag_run_reverse_getElem? (xs : List α) (i : ℕ) :
     (((ofFlag p out).run xs.reverse).reverse)[i]?
       = xs[i]?.map fun a => out ((xs.drop (i + 1)).any p) a := by
   by_cases hi : i < xs.length
-  · rw [List.getElem?_reverse (by rw [(ofFlag p out).run_length]; simpa using hi),
-      (ofFlag p out).run_length, List.length_reverse, ofFlag_run_getElem?,
+  · rw [List.getElem?_reverse (by simpa using hi),
+      (ofFlag p out).length_run, List.length_reverse, ofFlag_run_getElem?,
       List.getElem?_reverse (by omega),
       show xs.length - 1 - (xs.length - 1 - i) = i from by omega,
       List.take_reverse, show xs.length - (xs.length - 1 - i) = i + 1 from by omega,
       List.any_reverse]
-  · rw [List.getElem?_eq_none
-        (by rw [List.length_reverse, (ofFlag p out).run_length, List.length_reverse]; omega),
+  · rw [List.getElem?_eq_none (by simp; omega),
       List.getElem?_eq_none (Nat.le_of_not_lt hi), Option.map_none]
 
 /-! ### Transport along a state equivalence -/
