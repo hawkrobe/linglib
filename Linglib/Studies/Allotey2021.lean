@@ -1,7 +1,8 @@
 import Linglib.Syntax.Minimalist.MinimalPronoun
 import Linglib.Fragments.Ga.Predicates
 import Linglib.Syntax.NullSubject
-import Linglib.Studies.Landau2015
+import Linglib.Syntax.Control.Basic
+import Linglib.Syntax.Control.CopyControl
 
 /-!
 # Allotey (2021): Overt Pronouns of Infinitival Predicates of Gã
@@ -73,7 +74,7 @@ the fragment carries an implicativity classification.
 namespace Allotey2021
 
 open Minimalist.MinimalPronoun
-open Landau2015
+open Control
 open NullSubject (ProDropProfile)
 open Ga (EmbeddedClauseType clauseProperties clauseComplementizer
                    complementizer_isFinite_eq_finiteFlag
@@ -89,15 +90,17 @@ open Ga (EmbeddedClauseType clauseProperties clauseComplementizer
     `irrealisNi` falls in the former group.
 
     This is *derived* from `clauseProperties.noncoreferentialSubject`
-    rather than stipulated per clause — changing the noncoreferential
-    flag in `Fragments/Ga/Basic.lean` automatically propagates here. -/
+    via `OCSignature.ofNoncoreferential` (shared with
+    `Ostrove2026.smpmOCSignature`) rather than stipulated per clause —
+    changing the noncoreferential flag in `Fragments/Ga/Basic.lean`
+    automatically propagates here. -/
 def gaOCSignature (c : EmbeddedClauseType) : OCSignature :=
-  if (clauseProperties c).noncoreferentialSubject then ocNone else ocFull
+  .ofNoncoreferential (clauseProperties c).noncoreferentialSubject
 
 /-- The general derivation: lack of noncoreferential subjects iff OC. -/
 theorem oc_iff_no_noncoreferential (c : EmbeddedClauseType) :
-    (gaOCSignature c).isOC = !(clauseProperties c).noncoreferentialSubject := by
-  cases c <;> rfl
+    (gaOCSignature c).isOC = !(clauseProperties c).noncoreferentialSubject :=
+  OCSignature.ofNoncoreferential_isOC _
 
 /-- Universal: every Gã CTP whose complement is `irrealisNi` shows OC,
     and every CTP whose complement is finite does not. The clause type
@@ -133,7 +136,7 @@ theorem irrealisNi_forces_coreference :
     Gã has no F-subjunctive correspondent: there is no morphologically
     distinct tensed-but-controlled clause class — `ni`-clauses are all
     irrealis and OC; `akɛ`/`kɛji`-clauses are all finite and non-OC. -/
-def gaToLandau : EmbeddedClauseType → LandauClauseClass
+def gaToLandau : EmbeddedClauseType → Control.ClauseClass
   | .irrealisNi => .cSubjunctive
   | .finiteAke  => .finite
   | .finiteKeji => .finite
@@ -196,6 +199,26 @@ def gaLDAConfig : LDAConfig where
 
 theorem ga_satisfies_LDA :
     LDAConfig.licenses gaLDAConfig = true := rfl
+
+/-! ### Against the Movement Theory of Control -/
+
+/-- [allotey-2021] §3.6.2 rejects [hornstein-1999]'s Movement Theory of
+    Control for Gã: under movement the pronounced embedded element is a
+    copy of the matrix DP, so a lexical-DP controller predicts a
+    lexical-DP embedded copy — but Gã forbids lexical DPs in the
+    controlled position (her exx 42b, 64). The LDA analysis
+    base-generates the minimal pronoun instead. Same pole as SMPM
+    (`Ostrove2026.smpm_supports_basegeneration`, via exempt anaphors). -/
+def gaControlDerivation : Derivation := .baseGeneration
+
+/-- Gã forbids embedded lexical-DP copies (exx 42b, 64). -/
+def gaEmbeddedLexicalCopyAvailable : Bool := false
+
+/-- The Gã ban on embedded lexical DPs matches base-generation and
+    refutes movement. -/
+theorem ga_supports_basegeneration :
+    gaEmbeddedLexicalCopyAvailable
+      = Derivation.predictsEmbeddedLexicalCopy gaControlDerivation := rfl
 
 /-! ### Minimal pronoun inventory -/
 

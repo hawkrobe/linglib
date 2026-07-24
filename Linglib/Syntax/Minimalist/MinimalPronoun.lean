@@ -175,4 +175,44 @@ def ocNone : OCSignature where
 def OCSignature.isOC (sig : OCSignature) : Bool :=
   sig.controllerCodependent && sig.boundVariable
 
+/-- OC signature determined by whether a clause type licenses
+    noncoreferential embedded subjects: free reference means no OC;
+    obligatory coreference forces the full [landau-2013] signature.
+    The shared derivation behind the per-language OC tables of
+    [ostrove-2026] (SMPM) and [allotey-2021] (Gã). -/
+def OCSignature.ofNoncoreferential (noncoreferential : Bool) : OCSignature :=
+  if noncoreferential then ocNone else ocFull
+
+@[simp] theorem OCSignature.ofNoncoreferential_isOC (b : Bool) :
+    (ofNoncoreferential b).isOC = !b := by cases b <;> rfl
+
+-- ════════════════════════════════════════════════════════════════
+-- § 5: Cross-Linguistic BVA Syncretism
+-- ════════════════════════════════════════════════════════════════
+
+/-- Cross-linguistic syncretism among BVA forms: whether each BVA
+    context uses the same form as the referential (free) pronoun.
+    Used by [ostrove-2026]'s syncretism typology and grounded in the
+    minimal pronoun approach of [kratzer-2009] and [safir-2014]. -/
+structure BVASyncretism where
+  language : String
+  /-- Is the reflexive form identical to the referential pronoun? -/
+  reflexiveEqReferential : Bool
+  /-- Is the controlled subject form identical to the referential pronoun? -/
+  controlledEqReferential : Bool
+  /-- Is the bound variable pronoun identical to the referential pronoun? -/
+  boundVarEqReferential : Bool
+  deriving DecidableEq, Repr
+
+/-- Derive syncretism from a vocabulary item inventory: a context is
+    syncretic with the referential pronoun iff its realized form equals
+    the elsewhere (pronoun) form — no context-specific vocabulary item
+    overrides the default. -/
+def syncretismFromInventory {Form : Type} [BEq Form]
+    (inv : MinPronInventory Form) (lang : String := "") : BVASyncretism where
+  language := lang
+  reflexiveEqReferential := inv.realize .locallyBound == inv.elsewhere
+  controlledEqReferential := inv.realize .controlledSubject == inv.elsewhere
+  boundVarEqReferential := inv.realize .boundVariable == inv.elsewhere
+
 end Minimalist.MinimalPronoun

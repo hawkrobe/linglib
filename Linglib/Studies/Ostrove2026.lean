@@ -2,7 +2,9 @@ import Linglib.Syntax.Minimalist.MinimalPronoun
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Fragments.Mixtec.SMPM.Basic
 import Linglib.Syntax.NullSubject
-import Linglib.Studies.Landau2015
+import Linglib.Syntax.Control.Basic
+import Linglib.Syntax.Control.CopyControl
+import Linglib.Studies.Allotey2021
 import Linglib.Features.Complementation
 
 /-!
@@ -58,7 +60,7 @@ infinitival classification.
 namespace Ostrove2026
 
 open Minimalist.MinimalPronoun
-open Landau2015
+open Control
 open Minimalist (InfinitivalTenseClass)
 open Mixtec.SMPM (EmbeddedClauseType clauseProperties)
 open NullSubject (ProDropProfile)
@@ -93,7 +95,10 @@ theorem finite_no_restructuring :
 -- § 2: OC Diagnostics (§4)
 -- ════════════════════════════════════════════════════════════════
 
-/-- OC signature for each SMPM clause type.
+/-- OC signature for each SMPM clause type, derived from
+    `clauseProperties.noncoreferentialSubject` via
+    `OCSignature.ofNoncoreferential` — the same derivation
+    `Allotey2021.gaOCSignature` uses for Gã.
 
     Untensed subjunctives show the full OC signature (§4):
     - Sloppy-only under VPE (33)
@@ -104,10 +109,8 @@ theorem finite_no_restructuring :
     these properties: they allow strict readings under VPE (30, 32),
     nonexhaustive binding (tensed subj., fn. 16), and non-local
     antecedents (43, 45). -/
-def smpmOCSignature : EmbeddedClauseType → OCSignature
-  | .untensedSubjunctive => ocFull
-  | .tensedSubjunctive   => ocNone
-  | .finiteEmbedded      => ocNone
+def smpmOCSignature (c : EmbeddedClauseType) : OCSignature :=
+  .ofNoncoreferential (clauseProperties c).noncoreferentialSubject
 
 theorem untensed_is_OC :
     (smpmOCSignature .untensedSubjunctive).isOC = true := rfl
@@ -172,7 +175,7 @@ theorem wurmbrand_propositional_no_correspondent :
     | C-subjunctive   | untensed subjunctive   | Yes |
     | F-subjunctive   | tensed subjunctive     | No  |
     | finite          | finite embedded        | No  | -/
-def landauToSMPM : LandauClauseClass → EmbeddedClauseType
+def landauToSMPM : Control.ClauseClass → EmbeddedClauseType
   | .cSubjunctive => .untensedSubjunctive
   | .fSubjunctive => .tensedSubjunctive
   | .finite       => .finiteEmbedded
@@ -188,7 +191,7 @@ def landauToSMPM : LandauClauseClass → EmbeddedClauseType
     [+Agr] blocks logophoric control. This is why SMPM tensed subjunctives
     (F-subjunctives with [+Agr]) show no OC despite structurally permitting
     logophoric control. -/
-def smpmLandauAgr : LandauClauseClass → Bool
+def smpmLandauAgr : Control.ClauseClass → Bool
   | .cSubjunctive => false
   | .fSubjunctive => true
   | .finite       => true
@@ -199,7 +202,7 @@ def smpmLandauAgr : LandauClauseClass → Bool
     - C-subjunctive [−Agr]: predicative OC (Agr-independent) → OC ✓
     - F-subjunctive [+Agr]: logophoric OC blocked by Agr → no OC ✓
     - Finite [+Agr]: no control tier → no OC ✓ -/
-theorem landau_predicts_control (c : LandauClauseClass) :
+theorem landau_predicts_control (c : Control.ClauseClass) :
     (smpmOCSignature (landauToSMPM c)).isOC = c.hasOCWithAgr (smpmLandauAgr c) := by
   cases c <;> rfl
 
@@ -419,14 +422,14 @@ theorem smpm_no_quantified_exempt :
 def smpmExemptAvailableWithQuantifiedController : Bool := true
 
 theorem movement_incorrectly_predicts :
-    predictsExemptWithQuantifiedController .movement = false := rfl
+    Derivation.predictsExemptWithQuantifiedController .movement = false := rfl
 
 theorem basegeneration_correctly_predicts :
-    predictsExemptWithQuantifiedController .baseGeneration = true := rfl
+    Derivation.predictsExemptWithQuantifiedController .baseGeneration = true := rfl
 
 theorem smpm_supports_basegeneration :
     smpmExemptAvailableWithQuantifiedController
-    = predictsExemptWithQuantifiedController .baseGeneration := rfl
+    = Derivation.predictsExemptWithQuantifiedController .baseGeneration := rfl
 
 -- ════════════════════════════════════════════════════════════════
 -- § 10: Implicational Universal (54)
@@ -527,5 +530,51 @@ theorem utterance_is_realis :
 
 theorem propAttitude_is_realis :
     ctpRealityStatus .propAttitude = .realis := rfl
+
+-- ════════════════════════════════════════════════════════════════
+-- § 12: Gã Joins the Typology ([allotey-2021])
+-- ════════════════════════════════════════════════════════════════
+
+/-! [ostrove-2026] groups SMPM with Gã ([allotey-2021]) and Büli
+    ([sulemana-2021]) as obligatory-pronominal copy control languages.
+    The Gã fragment and study predate this paper, so the cross-language
+    bridges live here (chronology: the later paper draws the
+    comparison), consuming `Studies/Allotey2021.lean`. -/
+
+/-- Gã instantiates obligatory pronominal copy control: the controlled
+    subject of an irrealis `ni`-clause is always an overt subject
+    proclitic showing the full OC signature ([allotey-2021]). -/
+def gaCopyControlType : CopyControlType := .obligatoryPronominal
+
+theorem ga_shows_oc :
+    (copyControlProfile gaCopyControlType).showsOC = true := rfl
+
+/-- Gã and SMPM occupy the same copy-control cell. -/
+theorem ga_same_copy_type_as_smpm :
+    gaCopyControlType = smpmCopyControlType := rfl
+
+/-- Gã syncretism row, derived from the Allotey2021 inventory:
+    reflexive ×, controlled =, bound variable = . -/
+def gaSyncretism : BVASyncretism :=
+  syncretismFromInventory Allotey2021.gaInventory "Gã"
+
+/-- Gã patterns with SMPM in the syncretism typology: distinct
+    reflexive, but controlled subjects and bound variables syncretic
+    with the referential pronoun. -/
+theorem ga_syncretism_matches_smpm :
+    (gaSyncretism.reflexiveEqReferential,
+     gaSyncretism.controlledEqReferential,
+     gaSyncretism.boundVarEqReferential)
+    = (smpmSyncretism.reflexiveEqReferential,
+       smpmSyncretism.controlledEqReferential,
+       smpmSyncretism.boundVarEqReferential) := rfl
+
+/-- Gã lands in the same cell of the pro-drop/overt-PRO typology as
+    SMPM and Büli: overt PRO, no *pro*-drop. -/
+theorem ga_classified :
+    Allotey2021.gaProfile.classify = .overtPRONoProDrop := by decide
+
+theorem ga_same_cell_as_smpm :
+    Allotey2021.gaProfile.classify = smpmProfile.classify := by decide
 
 end Ostrove2026
