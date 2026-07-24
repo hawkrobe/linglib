@@ -180,6 +180,9 @@ def reindex (g : σ ≃ τ) : SFST σ α β ≃ SFST τ α β where
 @[simp] theorem run_reindex (g : σ ≃ τ) : (reindex g T).run = T.run := by
   funext xs; simp [run]
 
+@[simp] theorem runRight_reindex (g : σ ≃ τ) : (reindex g T).runRight = T.runRight := by
+  funext xs; simp [runRight]
+
 /-! ### Composition -/
 
 section Comp
@@ -212,12 +215,12 @@ end SFST
 
 The witness-style predicates follow mathlib's `Language.IsRegular` shape: the state
 space `σ` is existentially quantified at `Type` with a `Fintype σ` instance, while the
-alphabets `α β` are universe-polymorphic at `Type*`. Constructor lemmas
-(`SFST.isLeftSubsequential`, `SFST.isRightSubsequential`) hide the existential shape,
-and downstream ISL/OSL inclusion theorems use a bounded-window finite state to witness
-the predicate (`Function/{ISL,OSL}.lean`). -/
+alphabets `α β` are universe-polymorphic at `Type*`. The constructor lemmas carry the
+universe down-transfer and the `_iff` lemmas restate the existential at any universe;
+downstream ISL/OSL inclusion theorems use a bounded-window finite state to witness the
+predicate. -/
 
-variable {α β γ : Type*}
+variable {α β γ : Type*} {f : List α → List β} {g : List β → List γ}
 
 /-- A function `f : List α → List β` is *left-subsequential* if some SFST with a
 finite state space computes it via left-to-right scan [mohri-1997]. -/
@@ -236,10 +239,10 @@ def IsSubsequential (d : Direction) (f : List α → List β) : Prop :=
   | .left => IsLeftSubsequential f
   | .right => IsRightSubsequential f
 
-@[simp] theorem isSubsequential_left (f : List α → List β) :
+@[simp] theorem isSubsequential_left :
     IsSubsequential .left f ↔ IsLeftSubsequential f := Iff.rfl
 
-@[simp] theorem isSubsequential_right (f : List α → List β) :
+@[simp] theorem isSubsequential_right :
     IsSubsequential .right f ↔ IsRightSubsequential f := Iff.rfl
 
 /-- Every finite-state SFST computes a left-subsequential function, whatever the
@@ -252,26 +255,41 @@ theorem SFST.isLeftSubsequential {σ : Type*} [Fintype σ] (T : SFST σ α β) :
 /-- Every finite-state SFST computes a right-subsequential function via `runRight`. -/
 theorem SFST.isRightSubsequential {σ : Type*} [Fintype σ] (T : SFST σ α β) :
     IsRightSubsequential T.runRight :=
-  ⟨Fin (Fintype.card σ), inferInstance, SFST.reindex (Fintype.equivFin σ) T, by
-    funext xs; simp [SFST.runRight]⟩
+  ⟨Fin (Fintype.card σ), inferInstance,
+    SFST.reindex (Fintype.equivFin σ) T, T.runRight_reindex _⟩
+
+/-- `f` is left-subsequential if and only if it is computed by a finite-state SFST.
+This is more general than using the definition of `IsLeftSubsequential` directly, as
+the state type `σ` is universe-polymorphic. -/
+theorem isLeftSubsequential_iff.{v} :
+    IsLeftSubsequential f
+      ↔ ∃ (σ : Type v) (_ : Fintype σ) (T : SFST σ α β), T.run = f :=
+  ⟨fun ⟨σ, _, T, h⟩ => ⟨ULift σ, inferInstance, SFST.reindex Equiv.ulift.symm T,
+    h ▸ T.run_reindex _⟩,
+   fun ⟨_, _, T, h⟩ => h ▸ T.isLeftSubsequential⟩
+
+/-- `f` is right-subsequential if and only if some finite-state SFST computes it via
+`runRight`, with the state type universe-polymorphic. -/
+theorem isRightSubsequential_iff.{v} :
+    IsRightSubsequential f
+      ↔ ∃ (σ : Type v) (_ : Fintype σ) (T : SFST σ α β), T.runRight = f :=
+  ⟨fun ⟨σ, _, T, h⟩ => ⟨ULift σ, inferInstance, SFST.reindex Equiv.ulift.symm T,
+    h ▸ T.runRight_reindex _⟩,
+   fun ⟨_, _, T, h⟩ => h ▸ T.isRightSubsequential⟩
 
 /-- A function is right-subsequential iff its reverse-conjugate is left-subsequential:
 the two classes are isomorphic via the involution `f ↦ List.reverse ∘ f ∘ List.reverse`. -/
-theorem isRightSubsequential_iff_left_reverse (f : List α → List β) :
+theorem isRightSubsequential_iff_left_reverse :
     IsRightSubsequential f
-      ↔ IsLeftSubsequential (fun xs => (f xs.reverse).reverse) := by
-  constructor
-  · rintro ⟨σ, _, T, rfl⟩
-    exact ⟨σ, inferInstance, T, by funext xs; simp [SFST.runRight]⟩
-  · rintro ⟨σ, _, T, hT⟩
-    exact ⟨σ, inferInstance, T, by funext xs; simp [SFST.runRight, hT]⟩
+      ↔ IsLeftSubsequential (fun xs => (f xs.reverse).reverse) :=
+  ⟨fun ⟨σ, _, T, hT⟩ => ⟨σ, inferInstance, T, by funext xs; simp [← hT]⟩,
+   fun ⟨σ, _, T, hT⟩ => ⟨σ, inferInstance, T, by funext xs; simp [SFST.runRight, hT]⟩⟩
 
 /-- A left-subsequential function has bounded delay: on any input `u` it has already
 emitted a prefix of `f u` shared with `f (u ++ v)` for every continuation `v`,
 withholding at most the longest state-final output — the necessity direction of the
 characterization of [choffrut-1977]. -/
-theorem IsLeftSubsequential.bounded_delay {f : List α → List β}
-    (hf : IsLeftSubsequential f) :
+theorem IsLeftSubsequential.bounded_delay (hf : IsLeftSubsequential f) :
     ∃ N : ℕ, ∀ u v : List α, ∃ p su sv : List β,
       f u = p ++ su ∧ f (u ++ v) = p ++ sv ∧ su.length ≤ N := by
   obtain ⟨σ, _, T, rfl⟩ := hf
@@ -284,7 +302,7 @@ theorem IsLeftSubsequential.bounded_delay {f : List α → List β}
 disagree more than `N` positions before the end of `f u`: the working form of
 `bounded_delay` for impossibility proofs (e.g. unbounded tonal plateauing,
 [jardine-2016]). -/
-theorem not_isLeftSubsequential_of_diverging {f : List α → List β}
+theorem not_isLeftSubsequential_of_diverging
     (h : ∀ N, ∃ (u v : List α) (i : ℕ),
       i + N < (f u).length ∧ (f u)[i]? ≠ (f (u ++ v))[i]?) :
     ¬ IsLeftSubsequential f := by
@@ -301,30 +319,24 @@ theorem not_isLeftSubsequential_of_diverging {f : List α → List β}
 
 /-- Left-subsequential functions are closed under composition, by the classical
 product construction [schutzenberger-1977] (`SFST.comp`). -/
-theorem IsLeftSubsequential.comp
-    {g : List β → List γ} (hg : IsLeftSubsequential g)
-    {f : List α → List β} (hf : IsLeftSubsequential f) :
-    IsLeftSubsequential (g ∘ f) := by
+theorem IsLeftSubsequential.comp (hg : IsLeftSubsequential g)
+    (hf : IsLeftSubsequential f) : IsLeftSubsequential (g ∘ f) := by
   obtain ⟨σ₁, _, T₁, rfl⟩ := hf
   obtain ⟨σ₂, _, T₂, rfl⟩ := hg
   exact ⟨σ₂ × σ₁, inferInstance, T₂.comp T₁, T₂.run_comp T₁⟩
 
 /-- Right-subsequential closure under composition, derived from the left counterpart
 via `isRightSubsequential_iff_left_reverse`. -/
-theorem IsRightSubsequential.comp
-    {g : List β → List γ} (hg : IsRightSubsequential g)
-    {f : List α → List β} (hf : IsRightSubsequential f) :
-    IsRightSubsequential (g ∘ f) := by
+theorem IsRightSubsequential.comp (hg : IsRightSubsequential g)
+    (hf : IsRightSubsequential f) : IsRightSubsequential (g ∘ f) := by
   rw [isRightSubsequential_iff_left_reverse] at hg hf ⊢
   simpa [Function.comp_def, List.reverse_reverse] using hg.comp hf
 
 /-- Subsequential functions are closed under composition in either scan direction. -/
-theorem IsSubsequential.comp {d : Direction}
-    {g : List β → List γ} (hg : IsSubsequential d g)
-    {f : List α → List β} (hf : IsSubsequential d f) :
-    IsSubsequential d (g ∘ f) := by
-  cases d with
-  | left => exact IsLeftSubsequential.comp hg hf
-  | right => exact IsRightSubsequential.comp hg hf
+theorem IsSubsequential.comp {d : Direction} (hg : IsSubsequential d g)
+    (hf : IsSubsequential d f) : IsSubsequential d (g ∘ f) :=
+  match d, hg, hf with
+  | .left, hg, hf => IsLeftSubsequential.comp hg hf
+  | .right, hg, hf => IsRightSubsequential.comp hg hf
 
 end Subregular
