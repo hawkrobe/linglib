@@ -13,13 +13,13 @@ namespace Hausa
 
 /-- Hausa: weak suffixal *-n* (uniqueness) and strong *ɗîn* (anaphoric) —
     two morphologically distinct definite forms. -/
-def determiners : List Determiner.Entry :=
+def _root_.Hausa.Determiners.inventory : Determiner.Inventory :=
   [ .article { form := "-n", definiteness := .definite, exponent := .dedicatedMorpheme,
                uses := [.immediateSituation, .largerSituation] },
     .article { form := "ɗîn", definiteness := .definite, exponent := .dedicatedMorpheme,
                uses := [.anaphoric, .donkey] } ]
 
 /-- Hausa derives the `.bipartite` Moroney cell. -/
-theorem marking : Determiner.markingStrategy determiners = .bipartite := by decide
+theorem marking : Determiners.inventory.markingStrategy = .bipartite := by decide
 
 end Hausa

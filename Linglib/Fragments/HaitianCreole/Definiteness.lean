@@ -15,12 +15,12 @@ namespace HaitianCreole.Definiteness
 
 /-- Haitian Creole: a single definite *la* covering both uniqueness and
     anaphoric uses (no weak/strong split). -/
-def determiners : List Determiner.Entry :=
+def _root_.HaitianCreole.Determiners.inventory : Determiner.Inventory :=
   [ .article { form := "la", definiteness := .definite, exponent := .dedicatedMorpheme,
                uses := [.immediateSituation, .largerSituation, .anaphoric, .donkey] } ]
 
 /-- Haitian Creole derives the `.generallyMarked` Moroney cell (one syncretic
     form). -/
-theorem marking : Determiner.markingStrategy determiners = .generallyMarked := by decide
+theorem marking : Determiners.inventory.markingStrategy = .generallyMarked := by decide
 
 end HaitianCreole.Definiteness

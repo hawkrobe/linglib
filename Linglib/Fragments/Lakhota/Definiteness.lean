@@ -14,13 +14,13 @@ namespace Lakhota.Definiteness
 
 /-- Lakhota: weak *kiŋ* (situational uniqueness) and strong *k'uŋ*
     (anaphoric) — two morphologically distinct definite articles. -/
-def determiners : List Determiner.Entry :=
+def _root_.Lakhota.Determiners.inventory : Determiner.Inventory :=
   [ .article { form := "kiŋ", definiteness := .definite, exponent := .dedicatedMorpheme,
                uses := [.immediateSituation, .largerSituation] },
     .article { form := "k'uŋ", definiteness := .definite, exponent := .dedicatedMorpheme,
                uses := [.anaphoric, .donkey] } ]
 
 /-- Lakhota derives the `.bipartite` Moroney cell. -/
-theorem marking : Determiner.markingStrategy determiners = .bipartite := by decide
+theorem marking : Determiners.inventory.markingStrategy = .bipartite := by decide
 
 end Lakhota.Definiteness

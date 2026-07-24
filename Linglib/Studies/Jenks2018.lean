@@ -24,7 +24,7 @@ selects between them.
 
 The substrate already operationalizes the inventory layer:
 `Semantics.Definiteness.Description.{unique,anaphoric}` are ι and ι^x;
-`Semantics.Definiteness.Determiner.markingStrategy` derives the four-cell
+`Semantics.Definiteness.Determiner.Inventory.markingStrategy` derives the four-cell
 typology directly named after Jenks 2018 in `Features.Definiteness`.
 The Mandarin Fragment commits `marking := .markedAnaphoric`.
 This file focuses on what is distinctly Jenks: the typological
@@ -41,8 +41,6 @@ open Intensional
 open Intensional.Variables
 open Semantics.Definiteness
 
-abbrev mandarinDets := Mandarin.Definiteness.determiners
-abbrev cantoneseDets := Cantonese.Definiteness.determiners
 
 -- ════════════════════════════════════════════════════════════════
 -- §1: The Jenks Four-Cell Typology and Mandarin's Cell
@@ -78,25 +76,25 @@ theorem jenks_attested_distinct :
 /-- Mandarin's determiner set derives `.markedAnaphoric` — its
     Jenks (2018) Table 2 cell. -/
 theorem mandarin_jenks_cell :
-    Determiner.markingStrategy mandarinDets = .markedAnaphoric :=
+    Mandarin.Determiners.inventory.markingStrategy = .markedAnaphoric :=
   Mandarin.Definiteness.marking
 
 /-- Mandarin's strategy is in the Jenks-attested set. -/
 theorem mandarin_attested :
-    Determiner.markingStrategy mandarinDets ∈ jenksAttestedStrategies := by
+    Mandarin.Determiners.inventory.markingStrategy ∈ jenksAttestedStrategies := by
   rw [mandarin_jenks_cell]; decide
 
 /-- Cantonese's determiner set derives `.generallyMarked` — paper §6
     (Table 1, Table 2): [Clf-N] is an ambiguous definite like English *the*,
     covering both unique and anaphoric environments. -/
 theorem cantonese_jenks_cell :
-    Determiner.markingStrategy cantoneseDets = .generallyMarked :=
+    Cantonese.Determiners.inventory.markingStrategy = .generallyMarked :=
   Cantonese.Definiteness.marking
 
 /-- Mandarin and Cantonese instantiate distinct Jenks cells — the
     central typological contrast of paper §6. -/
 theorem mandarin_cantonese_distinct_cells :
-    Determiner.markingStrategy mandarinDets ≠ Determiner.markingStrategy cantoneseDets := by
+    Mandarin.Determiners.inventory.markingStrategy ≠ Cantonese.Determiners.inventory.markingStrategy := by
   rw [mandarin_jenks_cell, cantonese_jenks_cell]; decide
 
 -- ════════════════════════════════════════════════════════════════
@@ -110,21 +108,21 @@ variable {E W : Type}
     `yueliang sheng shang lai le` 'the moon has risen';
     `Hufei he-wan-le tang` 'Hufei finished the soup';
     `Gou yao guo malu` 'the dog wants to cross the road'). -/
-theorem bare_realized : Determiner.Realizes mandarinDets .bare := trivial
+theorem bare_realized : Mandarin.Determiners.inventory.Realizes .bare := trivial
 
 /-- The anaphoric kind is realized in Mandarin via the demonstrative
     paradigm (paper §3.2: anaphoric definites surface as Dem-Clf-N
     constructions). The realization holds because the demonstrative
     obligatorily expones a familiarity (anaphoric) use, so
-    `Determiner.MarksPresup mandarinDets .familiarity`. -/
-theorem anaphoric_realized : Determiner.Realizes mandarinDets .anaphoric := by
+    `Mandarin.Determiners.inventory.MarksPresup .familiarity`. -/
+theorem anaphoric_realized : Mandarin.Determiners.inventory.Realizes .anaphoric := by
   decide
 
 /-- Mandarin realizes the demonstrative kind (the *na*/*zhe* paradigm —
     paper fn. 8: speakers prefer *na* 'that' to *zhe* 'this' in most
     simple anaphoric environments). -/
 theorem demonstrative_realized :
-    Determiner.Realizes mandarinDets .demonstrative := by
+    Mandarin.Determiners.inventory.Realizes .demonstrative := by
   decide
 
 /-- A Mandarin bare definite and its `.unique` counterpart over the

@@ -276,7 +276,7 @@ namespace AikhenvaldSystem
 
 /-- Derive [aikhenvald-2004]'s paradigm system-type letter from a
     declared inventory by inspecting which cells of her paradigm space are
-    covered. Mirrors `Determiner.markingStrategy`'s derivation pattern.
+    covered. Mirrors `Determiner.Inventory.markingStrategy`'s derivation pattern.
     Returns `none` for inventories whose cell pattern doesn't fit any
     standard A–D letter; per-paper editorial overrides for such cases
     live in the relevant `Studies/AuthorYear.lean`. -/

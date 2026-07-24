@@ -2,8 +2,8 @@ import Linglib.Features.Definiteness
 import Linglib.Syntax.Category.Determiner.Basic
 import Linglib.Semantics.Definiteness.Description
 import Linglib.Semantics.Definiteness.Interpret
+import Linglib.Fragments.English.Determiners
 import Linglib.Fragments.German.Definiteness
-import Linglib.Fragments.English.Definiteness
 import Linglib.Fragments.Thai.Definiteness
 import Linglib.Fragments.Mandarin.Definiteness
 import Linglib.Fragments.Shan.Definiteness
@@ -40,7 +40,7 @@ The split is operationalized in the Core layer by:
 - **`Semantics.Definiteness.Description.expectedPresupType`** — projects each kind
   to the [schwarz-2009] presupposition type it expresses.
 - **`Semantics.Definiteness.Determiner`** — the declared determiner set records the
-  morphological inventory; `Determiner.IsSyncretic` is the predicate that
+  morphological inventory; `Determiner.Inventory.IsSyncretic` is the predicate that
   distinguishes English-style syncretism from German-style bipartition.
 
 We verify:
@@ -163,29 +163,29 @@ theorem situation_binding_classifies_articles
 
 /-! [schwarz-2009] reads the two-article distinction off German
 morphology. English collapses both into *the*; the contrast is masked at
-the surface but recoverable via `Determiner.IsSyncretic`. -/
+the surface but recoverable via `Determiner.Inventory.IsSyncretic`. -/
 
 /-- German has both articles overtly, with no syncretism — the structural
     [schwarz-2009] contrast is morphologically visible. -/
 theorem german_two_articles :
-    Determiner.MarksPresup German.Definiteness.determiners .uniqueness ∧
-    Determiner.MarksPresup German.Definiteness.determiners .familiarity ∧
-    ¬ Determiner.IsSyncretic German.Definiteness.determiners := by decide
+    German.Determiners.inventory.MarksPresup .uniqueness ∧
+    German.Determiners.inventory.MarksPresup .familiarity ∧
+    ¬ German.Determiners.inventory.IsSyncretic := by decide
 
 /-- English has both articles, but they are syncretic — *the* covers both.
     The [schwarz-2009] contrast is real but morphologically invisible. -/
 theorem english_syncretic_articles :
-    Determiner.MarksPresup English.Definiteness.determiners .uniqueness ∧
-    Determiner.MarksPresup English.Definiteness.determiners .familiarity ∧
-    Determiner.IsSyncretic English.Definiteness.determiners := by decide
+    English.Determiners.inventory.MarksPresup .uniqueness ∧
+    English.Determiners.inventory.MarksPresup .familiarity ∧
+    English.Determiners.inventory.IsSyncretic := by decide
 
 /-- The morphological discriminator: German is `.bipartite` (two distinct
     forms), English is `.generallyMarked` (one syncretic form). Both
     distinguish the same semantic types — the surface morphology differs. -/
 theorem strategy_split :
-    Determiner.markingStrategy German.Definiteness.determiners = .bipartite ∧
-    Determiner.markingStrategy English.Definiteness.determiners = .generallyMarked :=
-  ⟨German.Definiteness.marking, English.Definiteness.marking⟩
+    German.Determiners.inventory.markingStrategy = .bipartite ∧
+    English.Determiners.inventory.markingStrategy = .generallyMarked :=
+  ⟨German.Definiteness.marking, English.Determiners.marking⟩
 
 /-- The number of morphologically distinguished presupposition types
     differs across the two languages, even though the underlying
@@ -196,9 +196,9 @@ theorem strategy_split :
     the article system. -/
 theorem morphological_distinction_count :
     (articleTypeToDistinguishedPresup
-      (Determiner.articleType German.Definiteness.determiners)).length = 2 ∧
+      (German.Determiners.inventory.articleType)).length = 2 ∧
     (articleTypeToDistinguishedPresup
-      (Determiner.articleType English.Definiteness.determiners)).length = 1
+      (English.Determiners.inventory.articleType)).length = 1
   := by decide
 
 -- ════════════════════════════════════════════════════════════════
@@ -262,31 +262,31 @@ structure DonkeyArticleDatum where
   form : String
   /-- Declared determiner set (single source of truth from which
       `articleSystem` is derived). -/
-  determiners : List Determiner.Entry
+  determiners : Determiner.Inventory
 
 /-- Schwarz `ArticleType` classification, derived from `determiners`. -/
 def DonkeyArticleDatum.articleSystem (d : DonkeyArticleDatum) : ArticleType :=
-  Determiner.articleType d.determiners
+  d.determiners.articleType
 
 def germanDonkey : DonkeyArticleDatum :=
   { language := "German", isoCode := "deu"
     form := "strong article (von dem)"
-    determiners := German.Definiteness.determiners }
+    determiners := German.Determiners.inventory }
 
 def thaiDonkey : DonkeyArticleDatum :=
   { language := "Thai", isoCode := "tha"
     form := "demonstrative"
-    determiners := Thai.Definiteness.determiners }
+    determiners := Thai.Determiners.inventory }
 
 def mandarinDonkey : DonkeyArticleDatum :=
   { language := "Mandarin", isoCode := "cmn"
     form := "demonstrative"
-    determiners := Mandarin.Definiteness.determiners }
+    determiners := Mandarin.Determiners.inventory }
 
 def shanDonkey : DonkeyArticleDatum :=
   { language := "Shan", isoCode := "shn"
     form := "bare noun"
-    determiners := Shan.Definiteness.determiners }
+    determiners := Shan.Determiners.inventory }
 
 /-- All cross-linguistic donkey article data. -/
 def donkeyArticleData : List DonkeyArticleDatum :=

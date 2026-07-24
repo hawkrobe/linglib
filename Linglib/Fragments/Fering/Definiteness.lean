@@ -14,13 +14,13 @@ namespace Fering.Definiteness
 
 /-- Fering: weak A-form *a/at* (uniqueness) and strong D-form *di/det*
     (anaphoric) — two morphologically distinct definite articles. -/
-def determiners : List Determiner.Entry :=
+def _root_.Fering.Determiners.inventory : Determiner.Inventory :=
   [ .article { form := "a", definiteness := .definite, exponent := .dedicatedMorpheme,
                uses := [.immediateSituation, .largerSituation] },
     .article { form := "di", definiteness := .definite, exponent := .dedicatedMorpheme,
                uses := [.anaphoric, .donkey] } ]
 
 /-- Fering derives the `.bipartite` Moroney cell. -/
-theorem marking : Determiner.markingStrategy determiners = .bipartite := by decide
+theorem marking : Determiners.inventory.markingStrategy = .bipartite := by decide
 
 end Fering.Definiteness

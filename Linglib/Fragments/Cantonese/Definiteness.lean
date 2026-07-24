@@ -20,7 +20,7 @@ namespace Cantonese.Definiteness
     `Article`, and a demonstrative paradigm. The indefinite is a first-class
     `Article` (exponed by the numeral-classifier construction), not an absent
     `hasIndefinite`. -/
-def determiners : List Determiner.Entry :=
+def _root_.Cantonese.Determiners.inventory : Determiner.Inventory :=
   [ .article { form := "Clf-N", definiteness := .definite, exponent := .classifierPhrase,
                uses := [.immediateSituation, .largerSituation, .anaphoric, .donkey] },
     .article { form := "jat-Clf-N", definiteness := .indefinite, exponent := .numeralClassifier },
@@ -29,7 +29,7 @@ def determiners : List Determiner.Entry :=
 /-- Cantonese's determiner set derives the `.generallyMarked` strategy
     ([jenks-2018] Table 2): one definite form (the classifier phrase)
     covers both presupposition types. -/
-theorem marking : Determiner.markingStrategy determiners = .generallyMarked := by
+theorem marking : Determiners.inventory.markingStrategy = .generallyMarked := by
   decide
 
 end Cantonese.Definiteness

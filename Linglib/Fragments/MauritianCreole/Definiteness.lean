@@ -14,11 +14,11 @@ namespace MauritianCreole.Definiteness
 
 /-- Mauritian Creole: post-nominal strong definite *la* (anaphoric/familiarity);
     weak uniqueness is bare (no weak article). -/
-def determiners : List Determiner.Entry :=
+def _root_.MauritianCreole.Determiners.inventory : Determiner.Inventory :=
   [ .article { form := "la", definiteness := .definite, exponent := .dedicatedMorpheme,
                uses := [.anaphoric, .donkey] } ]
 
 /-- Mauritian Creole derives the `.markedAnaphoric` Moroney cell. -/
-theorem marking : Determiner.markingStrategy determiners = .markedAnaphoric := by decide
+theorem marking : Determiners.inventory.markingStrategy = .markedAnaphoric := by decide
 
 end MauritianCreole.Definiteness

@@ -234,7 +234,7 @@ inductive DefMarkingStrategy where
 and `.markedAnaphoric` both map to `.weakOnly`.
 
 Per-language strategy values are *not* stipulated here — they are derived
-from each language's declared determiner set via `Determiner.markingStrategy`.
+from each language's declared determiner set via `Determiner.Inventory.markingStrategy`.
 This function records only the cross-typology coarsening relation (Moroney's
 4-cell strategy → Schwarz's 3-cell `ArticleType`). -/
 def strategyToArticleType : DefMarkingStrategy → ArticleType
