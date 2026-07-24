@@ -59,6 +59,10 @@ length preservation forces a subsequential machine's state-final output to be em
   `IsMealyComputable f ↔ (Set.range f.residual).Finite`.
 * Composition closure (state-product machine) and the right-scan mirror via reverse
   conjugation.
+* Moore machines (state-determined output) and the Mealy–Moore equivalence: same
+  states one way, `σ × β` states the other, so the computable classes coincide.
+* The graph view: the zipped graph of a Mealy-computable map is a regular language
+  over `α × β` (the synchronous rational relations).
 -/
 
 namespace Subregular
@@ -75,6 +79,9 @@ structure Mealy (σ α β : Type*) where
   /-- Transition function from a state and an input symbol to the successor state and
   the emitted output symbol. -/
   step : σ → α → σ × β
+
+instance [Inhabited σ] [Inhabited β] : Inhabited (Mealy σ α β) :=
+  ⟨⟨default, fun _ _ => default⟩⟩
 
 namespace Mealy
 
