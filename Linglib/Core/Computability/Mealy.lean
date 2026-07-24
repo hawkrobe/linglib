@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 import Mathlib.Data.List.Basic
 import Mathlib.Logic.Equiv.Defs
+import Linglib.Core.Data.List.Fold
 
 /-!
 # Mealy machines
@@ -131,9 +132,7 @@ def ofFlag : Mealy Bool α β where
 
 @[simp] theorem ofFlag_stateAfter (b : Bool) (xs : List α) :
     (ofFlag p out).stateAfter b xs = (b || xs.any p) := by
-  induction xs generalizing b with
-  | nil => simp
-  | cons x xs ih => simp [ih, Bool.or_assoc]
+  simp [stateAfter, List.foldl_or]
 
 /-- Each coordinate of a flag machine sees the flag over its strict prefix. -/
 theorem getElem?_ofFlag_run (xs : List α) (i : ℕ) :
@@ -152,7 +151,7 @@ theorem getElem?_ofFlag_runRight (xs : List α) (i : ℕ) :
       show xs.length - 1 - (xs.length - 1 - i) = i from by omega,
       List.take_reverse, show xs.length - (xs.length - 1 - i) = i + 1 from by omega,
       List.any_reverse]
-  · rw [List.getElem?_eq_none (by simp; omega),
+  · rw [List.getElem?_eq_none (by simpa using hi),
       List.getElem?_eq_none (Nat.le_of_not_lt hi), Option.map_none]
 
 /-! ### Transport along a state equivalence -/
