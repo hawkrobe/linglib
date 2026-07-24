@@ -6,305 +6,260 @@ Authors: Robert Hawkins
 import Mathlib.Data.List.Basic
 import Mathlib.Data.Fintype.Prod
 import Mathlib.Data.Finset.Lattice.Fold
-import Linglib.Core.Computability.Subregular.Function.Direction
+import Linglib.Core.Computability.Subregular.Function.Defs
 
 /-!
-# Subsequential Functions and Finite-State Transducers
+# Subsequential functions and finite-state transducers
 
 A function `f : List α → List β` is *subsequential* when it is computed by a
-deterministic finite-state transducer with state-based final output
-[mohri-1997]. Subsequential functions form a proper subclass of the rational
-functions (the functional regular relations).
+deterministic finite-state transducer with state-final output [schutzenberger-1977]
+[mohri-1997]. Subsequential functions form a proper subclass of the rational functions
+(the functional regular relations).
 
-The class has *left* and *right* variants according to scan direction; the two
-are isomorphic under input/output reversal (`f` is right-subsequential iff
+The class has *left* and *right* variants according to scan direction; the two are
+isomorphic under input/output reversal (`f` is right-subsequential iff
 `List.reverse ∘ f ∘ List.reverse` is left-subsequential).
 
 ## Main definitions
 
-* `SFST α β σ`: a deterministic FST with states `σ`, input alphabet `α`,
-  output alphabet `β`, a total output-emitting transition, and a state-indexed
-  `finalOutput` emitted on termination.
-* `SFST.run`, `SFST.runRight`: the left-to-right and right-to-left passes.
-* `IsLeftSubsequential f`, `IsRightSubsequential f`: `f` is computed by some
-  finite-state `SFST` scanning in that direction.
-* `IsSubsequential d f`: direction-parameterised umbrella over the two.
+* `SFST σ α β`: transducer with states `σ`, input alphabet `α`, output alphabet `β`,
+  and a state-final output emitted at the end of the input
+* `SFST.run`, `SFST.runRight`: the left-to-right and right-to-left passes
+* `SFST.comp`: the product machine, computing the composite function
+* `SFST.reindex`: lifts an equivalence on states to an equivalence on machines
+* `IsLeftSubsequential f`, `IsRightSubsequential f`, `IsSubsequential d f`: `f` is
+  computed by some finite-state `SFST` scanning in the given direction
 
 ## Main theorems
 
-* `IsLeftSubsequential.comp`, `IsRightSubsequential.comp`, `IsSubsequential.comp`:
-  subsequential functions are closed under composition (Schützenberger–Choffrut,
-  [mohri-1997]) — the fact that makes the weakly-deterministic class well-defined.
-* `isRightSubsequential_iff_left_reverse`: the left and right classes are
-  isomorphic via reverse-conjugation.
+* `IsLeftSubsequential.comp` (and the right/direction variants): subsequential
+  functions are closed under composition, by the classical product construction
+  [schutzenberger-1977]
+* `isRightSubsequential_iff_left_reverse`: the left and right classes are isomorphic
+  via reverse-conjugation
+* `IsLeftSubsequential.bounded_delay`: a left-subsequential function withholds at most
+  a bounded suffix — the necessity direction of the characterization of
+  [choffrut-1977]
 
 ## Implementation notes
 
-`SFST` models the *total* subsequential functions: `step` is total, so `run`
-is a total function on `List α`. Partial subsequential functions can be encoded
-by adding a sink state.
+`SFST` models the *total* subsequential functions: `step` is total and every input is
+accepted, so `run` is a total function. This restricts the literature's class — a sink
+state does not recover partiality, since out-of-domain inputs still emit output — so
+the classification predicates below are about total functions only. On empty input
+`run` emits `finalOutput start` alone; the initial-output component of [mohri-1997] is
+omitted.
 
 ## TODO
 
-* Finite-state minimisation, canonical forms, and SFST equivalence (Choffrut,
-  [mohri-1997]).
+* The characterization of [choffrut-1977]: `f` is subsequential iff it has bounded
+  variation and finitely many residual (tail) functions; onward canonical forms and
+  minimization. Only the necessity direction (`bounded_delay`) is here.
 * Two-way subsequential functions (two-way deterministic transducers).
 * p-subsequential functions [mohri-1997] (multiple outputs per input).
 -/
 
 namespace Subregular
 
-/-- A *subsequential finite-state transducer*: a deterministic FST with state
-space `σ`, input alphabet `α`, output alphabet `β`, and state-final outputs
-[mohri-1997]. The transition `step` is total, so the machine computes a total
-function `List α → List β`. -/
-structure SFST (α β σ : Type*) where
+variable {σ α β : Type*}
+
+/-- An SFST (*subsequential finite-state transducer*) is a set of states (`σ`), a
+starting state (`start`), a transition function (`step`), an output function emitting
+a block of output symbols per input symbol (`output`), and a state-final output
+emitted at the end of the input (`finalOutput`) [mohri-1997]. `step` is total, so the
+machine computes a total function `List α → List β`. -/
+structure SFST (σ α β : Type*) where
   /-- Starting state. -/
   start : σ
-  /-- Total deterministic transition: move to a next state and emit a
-  (possibly empty) output block. -/
-  step : σ → α → σ × List β
-  /-- Output emitted on terminating in a given state. -/
+  /-- Transition function. -/
+  step : σ → α → σ
+  /-- Output function: the block of output symbols emitted on reading an input symbol
+  in a state. -/
+  output : σ → α → List β
+  /-- Output emitted on terminating in a state. -/
   finalOutput : σ → List β
 
+instance [Inhabited σ] : Inhabited (SFST σ α β) :=
+  ⟨⟨default, fun s _ => s, fun _ _ => [], fun _ => []⟩⟩
+
 namespace SFST
 
-variable {σ α β : Type*} (T : SFST α β σ)
+variable (T : SFST σ α β)
 
-/-- `T.runFrom s x` runs `T` from state `s`, concatenating each step's output
-block and finally `T.finalOutput` of the terminating state. -/
-def runFrom : σ → List α → List β
-  | s, [] => T.finalOutput s
-  | s, x :: xs => (T.step s x).2 ++ runFrom (T.step s x).1 xs
+/-- `T.stateAfter s x` is the state reached from `s` after consuming the input `x`. -/
+def stateAfter (s : σ) : List α → σ := List.foldl T.step s
 
-/-- `T.run x` runs `T` from its start state; the left-subsequential function
-`T` denotes. -/
+/-- `T.emitted s x` is the output emitted while consuming the input `x` from the
+state `s`, without the final flush. -/
+def emitted : σ → List α → List β
+  | _, [] => []
+  | s, x :: xs => T.output s x ++ emitted (T.step s x) xs
+
+/-- `T.runFrom s x` runs `T` on the input `x` from the state `s`: the emitted output
+followed by the final flush. -/
+def runFrom (s : σ) (xs : List α) : List β :=
+  T.emitted s xs ++ T.finalOutput (T.stateAfter s xs)
+
+/-- `T.run x` runs `T` on the input `x` from the state `T.start`. -/
 def run : List α → List β := T.runFrom T.start
 
-/-- `T.runRight x` runs `T` right-to-left: reverse the input, run, reverse the
-output. -/
-def runRight (input : List α) : List β := (T.run input.reverse).reverse
+/-- `T.runRight x` runs `T` right-to-left on the input `x`. -/
+def runRight (xs : List α) : List β := (T.run xs.reverse).reverse
 
-@[simp] lemma runFrom_nil (s : σ) : T.runFrom s [] = T.finalOutput s := rfl
+@[simp] theorem stateAfter_nil (s : σ) : T.stateAfter s [] = s := rfl
+@[simp] theorem stateAfter_cons (s : σ) (x : α) (xs : List α) :
+    T.stateAfter s (x :: xs) = T.stateAfter (T.step s x) xs := rfl
+@[simp] theorem emitted_nil (s : σ) : T.emitted s [] = [] := rfl
+@[simp] theorem emitted_cons (s : σ) (x : α) (xs : List α) :
+    T.emitted s (x :: xs) = T.output s x ++ T.emitted (T.step s x) xs := rfl
 
-@[simp] lemma runFrom_cons (s : σ) (x : α) (xs : List α) :
-    T.runFrom s (x :: xs) = (T.step s x).2 ++ T.runFrom (T.step s x).1 xs := rfl
+@[simp] theorem runFrom_nil (s : σ) : T.runFrom s [] = T.finalOutput s := rfl
 
-@[simp] lemma run_nil : T.run [] = T.finalOutput T.start := rfl
+@[simp] theorem runFrom_cons (s : σ) (x : α) (xs : List α) :
+    T.runFrom s (x :: xs) = T.output s x ++ T.runFrom (T.step s x) xs := by
+  simp [runFrom]
 
-@[simp] lemma runRight_nil : T.runRight [] = (T.finalOutput T.start).reverse := rfl
+@[simp] theorem run_nil : T.run [] = T.finalOutput T.start := rfl
 
-/-- `T.runOnList s x` walks `T` from `s` without the final flush: the terminating
-state with the concatenated per-step outputs. Building block for `compose`. -/
-def runOnList : σ → List α → σ × List β
-  | s, [] => (s, [])
-  | s, x :: xs =>
-    let (s', out) := T.step s x
-    Prod.map id (out ++ ·) (runOnList s' xs)
+@[simp] theorem runRight_nil : T.runRight [] = (T.finalOutput T.start).reverse := rfl
 
-@[simp] lemma runOnList_nil (s : σ) : T.runOnList s [] = (s, []) := rfl
+@[simp] theorem runRight_reverse (xs : List α) :
+    T.runRight xs.reverse = (T.run xs).reverse := by simp [runRight]
 
-@[simp] lemma runOnList_cons (s : σ) (x : α) (xs : List α) :
-    T.runOnList s (x :: xs) =
-      ((T.runOnList (T.step s x).1 xs).1,
-       (T.step s x).2 ++ (T.runOnList (T.step s x).1 xs).2) := rfl
+theorem stateAfter_append (s : σ) (xs ys : List α) :
+    T.stateAfter s (xs ++ ys) = T.stateAfter (T.stateAfter s xs) ys :=
+  List.foldl_append
 
-/-- The relationship between `runFrom` and `runOnList`: `runFrom` is
-`runOnList` followed by appending the final-state output. -/
-lemma runFrom_eq_runOnList (s : σ) (xs : List α) :
-    T.runFrom s xs =
-      (T.runOnList s xs).2 ++ T.finalOutput (T.runOnList s xs).1 := by
-  induction xs generalizing s with
+theorem emitted_append (s : σ) (xs ys : List α) :
+    T.emitted s (xs ++ ys) = T.emitted s xs ++ T.emitted (T.stateAfter s xs) ys := by
+  induction xs generalizing s <;> simp [*]
+
+/-- Running on `xs ++ ys` emits the output over `xs`, then runs on `ys` from the
+reached state. -/
+theorem runFrom_append (s : σ) (xs ys : List α) :
+    T.runFrom s (xs ++ ys) = T.emitted s xs ++ T.runFrom (T.stateAfter s xs) ys := by
+  simp [runFrom, emitted_append, stateAfter_append]
+
+/-! ### Reindexing states -/
+
+variable {τ : Type*}
+
+/-- Lifts an equivalence on states to an equivalence on subsequential transducers. -/
+@[simps apply_start apply_step apply_output apply_finalOutput]
+def reindex (g : σ ≃ τ) : SFST σ α β ≃ SFST τ α β where
+  toFun T := {
+    start := g T.start
+    step := fun t x => g (T.step (g.symm t) x)
+    output := fun t x => T.output (g.symm t) x
+    finalOutput := fun t => T.finalOutput (g.symm t)
+  }
+  invFun T := {
+    start := g.symm T.start
+    step := fun s x => g.symm (T.step (g s) x)
+    output := fun s x => T.output (g s) x
+    finalOutput := fun s => T.finalOutput (g s)
+  }
+  left_inv T := by simp
+  right_inv T := by simp
+
+@[simp] theorem reindex_refl : reindex (Equiv.refl σ) T = T := rfl
+
+@[simp] theorem symm_reindex (g : σ ≃ τ) :
+    (reindex (α := α) (β := β) g).symm = reindex g.symm := rfl
+
+@[simp] theorem stateAfter_reindex (g : σ ≃ τ) (t : τ) (xs : List α) :
+    (reindex g T).stateAfter t xs = g (T.stateAfter (g.symm t) xs) := by
+  induction xs generalizing t <;> simp [*]
+
+@[simp] theorem emitted_reindex (g : σ ≃ τ) (t : τ) (xs : List α) :
+    (reindex g T).emitted t xs = T.emitted (g.symm t) xs := by
+  induction xs generalizing t <;> simp [*]
+
+@[simp] theorem runFrom_reindex (g : σ ≃ τ) (t : τ) (xs : List α) :
+    (reindex g T).runFrom t xs = T.runFrom (g.symm t) xs := by
+  simp [runFrom]
+
+/-- The reindexed machine computes the same string function. -/
+@[simp] theorem run_reindex (g : σ ≃ τ) : (reindex g T).run = T.run := by
+  funext xs; simp [run]
+
+/-! ### Composition -/
+
+section Comp
+
+variable {γ σ' : Type*} (T₂ : SFST σ' β γ) (T₁ : SFST σ α β)
+
+/-- `T₂.comp T₁` feeds each output block of `T₁` to `T₂` — the classical product
+construction [schutzenberger-1977] — computing `T₂.run ∘ T₁.run` (`run_comp`). -/
+@[simps]
+def comp : SFST (σ' × σ) α γ where
+  start := (T₂.start, T₁.start)
+  step p x := (T₂.stateAfter p.1 (T₁.output p.2 x), T₁.step p.2 x)
+  output p x := T₂.emitted p.1 (T₁.output p.2 x)
+  finalOutput p := T₂.runFrom p.1 (T₁.finalOutput p.2)
+
+@[simp] theorem runFrom_comp (p : σ' × σ) (xs : List α) :
+    (T₂.comp T₁).runFrom p xs = T₂.runFrom p.1 (T₁.runFrom p.2 xs) := by
+  induction xs generalizing p with
   | nil => simp
-  | cons x xs ih =>
-    simp only [runFrom_cons, runOnList_cons]
-    rw [ih]
-    rw [List.append_assoc]
+  | cons x xs ih => simp [ih, runFrom_append]
 
-/-- `runOnList` distributes over input concatenation: walking on `xs ++ ys`
-equals walking on `xs` then on `ys` from the resulting state, with
-outputs concatenated. -/
-lemma runOnList_append (s : σ) (xs ys : List α) :
-    T.runOnList s (xs ++ ys) =
-      ((T.runOnList (T.runOnList s xs).1 ys).1,
-       (T.runOnList s xs).2 ++ (T.runOnList (T.runOnList s xs).1 ys).2) := by
-  induction xs generalizing s with
-  | nil => simp
-  | cons x xs ih =>
-    simp only [List.cons_append, runOnList_cons, ih]
-    rw [List.append_assoc]
+@[simp] theorem run_comp : (T₂.comp T₁).run = T₂.run ∘ T₁.run := by
+  funext xs; simp [run, Function.comp]
 
-/-- `runFrom` distributes over input concatenation: walking on `xs ++ ys`
-equals walking the prefix via `runOnList` (no final emission yet), then
-running `runFrom` from the resulting state on `ys` (which DOES include
-the final emission). -/
-lemma runFrom_append (s : σ) (xs ys : List α) :
-    T.runFrom s (xs ++ ys) =
-      (T.runOnList s xs).2 ++ T.runFrom (T.runOnList s xs).1 ys := by
-  induction xs generalizing s with
-  | nil => simp
-  | cons x xs ih =>
-    simp only [List.cons_append, runFrom_cons, runOnList_cons, ih]
-    rw [List.append_assoc]
-
-end SFST
-
-/-! ### State-space transfer
-
-Transferring an SFST along a state-space equivalence preserves its
-`run` function. The headline use case is bringing a universe-polymorphic
-state down to `Fin n` (universe `Type 0`) via `Fintype.equivFin`, which
-lets the universe-polymorphic constructions in `ISL.lean` / `OSL.lean`
-witness the `Type 0`-state existential of `IsLeftSubsequential` /
-`IsRightSubsequential`. -/
-
-namespace SFST
-
-variable {σ τ α β : Type*} (T : SFST α β σ)
-
-/-- Transfer an SFST along a state-space equivalence `σ ≃ τ`. Replaces
-each state-valued field with the corresponding `τ`-valued one via the
-equivalence. -/
-def transferEquiv (e : σ ≃ τ) : SFST α β τ where
-  start := e T.start
-  step t x :=
-    let (s', out) := T.step (e.symm t) x
-    (e s', out)
-  finalOutput t := T.finalOutput (e.symm t)
-
-lemma transferEquiv_runFrom (e : σ ≃ τ)
-    (s : σ) (xs : List α) :
-    (T.transferEquiv e).runFrom (e s) xs = T.runFrom s xs := by
-  induction xs generalizing s with
-  | nil =>
-    show T.finalOutput (e.symm (e s)) = T.finalOutput s
-    rw [e.symm_apply_apply]
-  | cons x xs ih =>
-    show (T.step (e.symm (e s)) x).2
-            ++ (T.transferEquiv e).runFrom (e (T.step (e.symm (e s)) x).1) xs
-         = (T.step s x).2 ++ T.runFrom (T.step s x).1 xs
-    rw [e.symm_apply_apply, ih]
-
-/-- The transferred SFST computes the same string function as the original. -/
-@[simp] theorem transferEquiv_run (e : σ ≃ τ) :
-    (T.transferEquiv e).run = T.run := by
-  funext xs
-  show (T.transferEquiv e).runFrom (e T.start) xs = T.runFrom T.start xs
-  exact T.transferEquiv_runFrom e _ _
-
-end SFST
-
-/-! ### Composition
-
-Subsequential functions are closed under composition ([mohri-1997],
-back to Schützenberger and Choffrut). This is the load-bearing fact
-that makes the weakly-deterministic class (compositions of two
-subsequentials) well-defined.
-
-Construction: the *product SFST* with state `σ_f × σ_g` threads both
-machines, where the consumer FST `T_g` walks over each output block
-emitted by the producer FST `T_f`. -/
-
-namespace SFST
-
-variable {σf σg α β γ : Type*}
-
-/-- Compose two SFSTs: `T_f : SFST α β σ_f` and `T_g : SFST β γ σ_g`
-yield an SFST with state `σ_f × σ_g` whose `run` computes `T_g.run ∘ T_f.run`.
-
-State threading: each input symbol triggers one `T_f` step (which may
-emit a multi-symbol β block); `T_g` then walks through that block via
-`runOnList`, advancing its state. The combined `finalOutput` runs
-`T_f.finalOutput` through `T_g` (including `T_g`'s own final flush). -/
-def compose (Tg : SFST β γ σg) (Tf : SFST α β σf) : SFST α γ (σf × σg) where
-  start := (Tf.start, Tg.start)
-  step s x :=
-    let (sf', block) := Tf.step s.1 x
-    let (sg', out) := Tg.runOnList s.2 block
-    ((sf', sg'), out)
-  finalOutput s :=
-    let (sg', out) := Tg.runOnList s.2 (Tf.finalOutput s.1)
-    out ++ Tg.finalOutput sg'
-
-/-- `compose`'s `runFrom` agrees with sequential `runFrom`s: the product
-SFST `compose Tg Tf` walks `Tf` over the input from `s.1`, threading
-each emitted block through `Tg` from `s.2`. -/
-theorem compose_runFrom (Tg : SFST β γ σg) (Tf : SFST α β σf)
-    (s : σf × σg) (xs : List α) :
-    (Tg.compose Tf).runFrom s xs = Tg.runFrom s.2 (Tf.runFrom s.1 xs) := by
-  induction xs generalizing s with
-  | nil => simp [SFST.compose, SFST.runFrom_eq_runOnList]
-  | cons x xs ih => rw [SFST.runFrom_cons, SFST.runFrom_cons, SFST.runFrom_append, ih]; rfl
+end Comp
 
 end SFST
 
 /-! ### Subsequential classification predicates
 
-The witness-style predicates below follow mathlib's `Language.IsRegular`
-shape: the state space `σ` is existentially quantified at `Type` with a
-`Fintype σ` instance, while the alphabets `α β` are universe-polymorphic
-at `Type*`. The `Fintype` constraint matches the source literature
-([mohri-1997]), where every SFST has finitely many states by definition,
-and also lets the universe parameter for state collapse cleanly without
-`universe` declarations or `ULift` coercions.
-
-Constructor lemmas (`SFST.isLeftSubsequential`, `SFST.isRightSubsequential`
-below) hide the existential-over-types shape so future redesigns
-(e.g. to a Myhill–Nerode finite-index characterization with σ ≃ Fin n)
-won't touch consumer sites. Downstream ISL/OSL inclusion theorems take
-`[Fintype α]` / `[Fintype β]` and use a bounded-window finite state to
-witness the predicate (`Function/{ISL,OSL}.lean`). -/
+The witness-style predicates follow mathlib's `Language.IsRegular` shape: the state
+space `σ` is existentially quantified at `Type` with a `Fintype σ` instance, while the
+alphabets `α β` are universe-polymorphic at `Type*`. Constructor lemmas
+(`SFST.isLeftSubsequential`, `SFST.isRightSubsequential`) hide the existential shape,
+and downstream ISL/OSL inclusion theorems use a bounded-window finite state to witness
+the predicate (`Function/{ISL,OSL}.lean`). -/
 
 variable {α β γ : Type*}
 
-/-- A function `f : List α → List β` is *left-subsequential* iff some
-SFST with a finite state space computes it via left-to-right scan. The
-`Fintype σ` constraint matches the source literature [mohri-1997]. -/
+/-- A function `f : List α → List β` is *left-subsequential* if some SFST with a
+finite state space computes it via left-to-right scan [mohri-1997]. -/
 def IsLeftSubsequential (f : List α → List β) : Prop :=
-  ∃ σ : Type, ∃ _ : Fintype σ, ∃ T : SFST α β σ, T.run = f
+  ∃ σ : Type, ∃ _ : Fintype σ, ∃ T : SFST σ α β, T.run = f
 
-/-- A function `f : List α → List β` is *right-subsequential* iff some
-SFST with a finite state space computes it via right-to-left scan
-(`runRight`). -/
+/-- A function `f : List α → List β` is *right-subsequential* if some SFST with a
+finite state space computes it via right-to-left scan (`runRight`). -/
 def IsRightSubsequential (f : List α → List β) : Prop :=
-  ∃ σ : Type, ∃ _ : Fintype σ, ∃ T : SFST α β σ, T.runRight = f
+  ∃ σ : Type, ∃ _ : Fintype σ, ∃ T : SFST σ α β, T.runRight = f
 
-/-- A function `f : List α → List β` is *subsequential in direction `d`*
-iff some finite-state SFST computes it via the corresponding scan
-direction. Direction-parameterised umbrella; concrete claims should
-typically use one of `IsLeftSubsequential` / `IsRightSubsequential`
-directly for clarity. -/
+/-- A function `f : List α → List β` is *subsequential in direction `d`* if some
+finite-state SFST computes it via the corresponding scan direction. -/
 def IsSubsequential (d : Direction) (f : List α → List β) : Prop :=
   match d with
   | .left => IsLeftSubsequential f
   | .right => IsRightSubsequential f
 
-@[simp] lemma isSubsequential_left (f : List α → List β) :
+@[simp] theorem isSubsequential_left (f : List α → List β) :
     IsSubsequential .left f ↔ IsLeftSubsequential f := Iff.rfl
 
-@[simp] lemma isSubsequential_right (f : List α → List β) :
+@[simp] theorem isSubsequential_right (f : List α → List β) :
     IsSubsequential .right f ↔ IsRightSubsequential f := Iff.rfl
 
-/-- Every finite-state SFST witnesses `IsLeftSubsequential` for its `run`.
-Consumers use `T.isLeftSubsequential` instead of building the existential
-quadruple, so a redesign of `IsLeftSubsequential` touches only this lemma. The
-arbitrary-`Type*` state is brought down to `Fin (Fintype.card σ)` via
-`SFST.transferEquiv` and `Fintype.equivFin`. -/
-theorem SFST.isLeftSubsequential {σ : Type*} [Fintype σ] (T : SFST α β σ) :
+/-- Every finite-state SFST computes a left-subsequential function, whatever the
+universe of its state type. -/
+theorem SFST.isLeftSubsequential {σ : Type*} [Fintype σ] (T : SFST σ α β) :
     IsLeftSubsequential T.run :=
   ⟨Fin (Fintype.card σ), inferInstance,
-    T.transferEquiv (Fintype.equivFin σ), T.transferEquiv_run _⟩
+    SFST.reindex (Fintype.equivFin σ) T, T.run_reindex _⟩
 
-/-- Every finite-state SFST witnesses `IsRightSubsequential` for its `runRight`.
-See `SFST.isLeftSubsequential` for rationale. -/
-theorem SFST.isRightSubsequential {σ : Type*} [Fintype σ] (T : SFST α β σ) :
+/-- Every finite-state SFST computes a right-subsequential function via `runRight`. -/
+theorem SFST.isRightSubsequential {σ : Type*} [Fintype σ] (T : SFST σ α β) :
     IsRightSubsequential T.runRight :=
-  ⟨Fin (Fintype.card σ), inferInstance, T.transferEquiv (Fintype.equivFin σ), by
+  ⟨Fin (Fintype.card σ), inferInstance, SFST.reindex (Fintype.equivFin σ) T, by
     funext xs; simp [SFST.runRight]⟩
 
-/-- A function is Right-Subsequential iff its reverse-conjugate is
-Left-Subsequential: the two classes are isomorphic via the involution
-`f ↦ List.reverse ∘ f ∘ List.reverse`. -/
+/-- A function is right-subsequential iff its reverse-conjugate is left-subsequential:
+the two classes are isomorphic via the involution `f ↦ List.reverse ∘ f ∘ List.reverse`. -/
 theorem isRightSubsequential_iff_left_reverse (f : List α → List β) :
     IsRightSubsequential f
       ↔ IsLeftSubsequential (fun xs => (f xs.reverse).reverse) := by
@@ -314,18 +269,18 @@ theorem isRightSubsequential_iff_left_reverse (f : List α → List β) :
   · rintro ⟨σ, _, T, hT⟩
     exact ⟨σ, inferInstance, T, by funext xs; simp [SFST.runRight, hT]⟩
 
-/-- A left-subsequential function has bounded delay ([mohri-1997]): on any input `u` it
-has already emitted a prefix of `f u` shared with `f (u ++ v)` for every continuation
-`v`, withholding at most the longest state-final output. -/
+/-- A left-subsequential function has bounded delay: on any input `u` it has already
+emitted a prefix of `f u` shared with `f (u ++ v)` for every continuation `v`,
+withholding at most the longest state-final output — the necessity direction of the
+characterization of [choffrut-1977]. -/
 theorem IsLeftSubsequential.bounded_delay {f : List α → List β}
     (hf : IsLeftSubsequential f) :
     ∃ N : ℕ, ∀ u v : List α, ∃ p su sv : List β,
       f u = p ++ su ∧ f (u ++ v) = p ++ sv ∧ su.length ≤ N := by
   obtain ⟨σ, _, T, rfl⟩ := hf
   exact ⟨Finset.univ.sup fun s => (T.finalOutput s).length, fun u v =>
-    ⟨(T.runOnList T.start u).2, T.finalOutput (T.runOnList T.start u).1,
-      T.runFrom (T.runOnList T.start u).1 v, T.runFrom_eq_runOnList T.start u,
-      T.runFrom_append T.start u v,
+    ⟨T.emitted T.start u, T.finalOutput (T.stateAfter T.start u),
+      T.runFrom (T.stateAfter T.start u) v, rfl, T.runFrom_append T.start u v,
       Finset.le_sup (f := fun s => (T.finalOutput s).length) (Finset.mem_univ _)⟩⟩
 
 /-- `f` is not left-subsequential if for every `N` some images `f u` and `f (u ++ v)`
@@ -347,24 +302,18 @@ theorem not_isLeftSubsequential_of_diverging {f : List α → List β}
   rw [hu, huv, List.getElem?_append_left hip, List.getElem?_append_left hip] at hne
   exact hne rfl
 
-/-- Subsequential functions are closed under composition ([mohri-1997],
-originally Schützenberger and Choffrut) — the load-bearing fact that makes
-the weakly-deterministic class (composition of two subsequential functions
-reading from opposite directions) well-defined. The product state `σf × σg`
-inherits `Fintype` from `Mathlib.Data.Fintype.Prod`. -/
+/-- Left-subsequential functions are closed under composition, by the classical
+product construction [schutzenberger-1977] (`SFST.comp`). -/
 theorem IsLeftSubsequential.comp
     {g : List β → List γ} (hg : IsLeftSubsequential g)
     {f : List α → List β} (hf : IsLeftSubsequential f) :
     IsLeftSubsequential (g ∘ f) := by
-  obtain ⟨σf, _, Tf, rfl⟩ := hf
-  obtain ⟨σg, _, Tg, rfl⟩ := hg
-  refine ⟨σf × σg, inferInstance, Tg.compose Tf, funext fun xs => ?_⟩
-  show (Tg.compose Tf).runFrom (Tf.start, Tg.start) xs = Tg.run (Tf.run xs)
-  rw [SFST.compose_runFrom]; rfl
+  obtain ⟨σ₁, _, T₁, rfl⟩ := hf
+  obtain ⟨σ₂, _, T₂, rfl⟩ := hg
+  exact ⟨σ₂ × σ₁, inferInstance, T₂.comp T₁, T₂.run_comp T₁⟩
 
-/-- Right-Subsequential closure under composition, derived from the Left-
-counterpart via `isRightSubsequential_iff_left_reverse`: the reverse-conjugate
-of a composition is the composition of reverse-conjugates. -/
+/-- Right-subsequential closure under composition, derived from the left counterpart
+via `isRightSubsequential_iff_left_reverse`. -/
 theorem IsRightSubsequential.comp
     {g : List β → List γ} (hg : IsRightSubsequential g)
     {f : List α → List β} (hf : IsRightSubsequential f) :
@@ -372,9 +321,7 @@ theorem IsRightSubsequential.comp
   rw [isRightSubsequential_iff_left_reverse] at hg hf ⊢
   simpa [Function.comp_def, List.reverse_reverse] using hg.comp hf
 
-/-- Direction-parameterised composition closure: both Left- and
-Right-Subsequential functions are closed under composition. Delegates to
-`IsLeftSubsequential.comp` / `IsRightSubsequential.comp`. -/
+/-- Subsequential functions are closed under composition in either scan direction. -/
 theorem IsSubsequential.comp {d : Direction}
     {g : List β → List γ} (hg : IsSubsequential d g)
     {f : List α → List β} (hf : IsSubsequential d f) :
