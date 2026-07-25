@@ -48,6 +48,14 @@ isomorphic under input/output reversal (`f` is right-subsequential iff
 
 ## Implementation notes
 
+The name follows [choffrut-1977] and [mohri-1997]: *sequential* for a deterministic
+transducer with no state-final output, *subsequential* once one is added. The usage is
+contested — [sakarovitch-2009] calls this class simply *sequential* (reserving *pure
+sequential* for the empty-final-output case) and flags his own terminology as
+unconventional, quoting [bruyere-reutenauer-1999] that "the word sub-sequential is
+unfortunate". We keep the Choffrut spelling, so `Mealy` computes the *pure sequential*
+length-preserving functions and `SFST` the subsequential ones.
+
 `SFST` models the *total* subsequential functions: `step` is total and every input is
 accepted, so `run` is a total function. This restricts the literature's class — a sink
 state does not recover partiality, since out-of-domain inputs still emit output — so

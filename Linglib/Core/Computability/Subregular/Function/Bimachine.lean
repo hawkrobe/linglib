@@ -11,15 +11,20 @@ import Linglib.Core.Data.List.Fold
 /-!
 # Bimachines and weak determinism
 
-A `Bimachine` (Schützenberger; [mohri-1997]) computes a letter-to-letter string function
-using **both** directions of context: a left automaton scans `→` and assigns a left state
-to each position, a right automaton scans `←` and assigns a right state, and the output at
-position `i` is `out (leftState before i) (input i) (rightState after i)`.
+A `Bimachine` ([eilenberg-1974]; [mohri-1997]) computes a letter-to-letter string
+function using **both** directions of context: a left automaton scans `→` and assigns a
+left state to each position, a right automaton scans `←` and assigns a right state, and
+the output at position `i` is `out (leftState before i) (input i) (rightState after i)`.
+Bimachines are exactly the transducers of the semi-monomial representations, so by the
+decomposition theorem of [elgot-mezei-1965] they compute the rational functions — every
+one factors as a left-to-right scan followed by a right-to-left one.
 
 A bimachine over a single alphabet is **non-interacting** when its output is a *union of
 one-sided change-rules over the identity*: each side may add its own change, but neither
 can suppress the other's. `IsBimachineWeaklyDeterministic` is computability by such a
-bimachine — the weakly-deterministic functions.
+bimachine. Note that non-interaction is an extra restriction on the Elgot–Mezei
+factorization, not a consequence of it: the two scans are always available, and the
+condition is that neither suppresses the other.
 
 ## Main results
 
