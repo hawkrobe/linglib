@@ -278,23 +278,24 @@ structure NonInteraction (B : Bimachine L R α α) where
 non-interacting decomposition (`NonInteraction`) of its cell output. -/
 def IsNonInteracting (B : Bimachine L R α α) : Prop := Nonempty B.NonInteraction
 
-variable {B : Bimachine L R α α}
+variable {L' R' : Type*} {B : Bimachine L R α α} (w : B.NonInteraction) {l : L} {a : α}
+  {r : R}
 
 /-- A firing left rule alone determines the output. -/
-theorem NonInteraction.output_eq_ruleL (w : B.NonInteraction) {l : L} {a : α} {r : R}
-    (hL : w.ruleL l a ≠ a) : B.output l a r = w.ruleL l a :=
+theorem NonInteraction.output_eq_ruleL (hL : w.ruleL l a ≠ a) :
+    B.output l a r = w.ruleL l a :=
   (w.output_eq l a r).trans (unite_of_left_ne hL _)
 
 /-- A firing right rule alone determines the output — order-independence of the union
 is what silences the left state. -/
-theorem NonInteraction.output_eq_ruleR (w : B.NonInteraction) {l : L} {a : α} {r : R}
-    (hR : w.ruleR r a ≠ a) : B.output l a r = w.ruleR r a :=
+theorem NonInteraction.output_eq_ruleR (hR : w.ruleR r a ≠ a) :
+    B.output l a r = w.ruleR r a :=
   (w.output_eq l a r).trans ((w.unite_comm l a r).trans (unite_of_left_ne hR _))
 
 /-- At every cell whose output differs from the input symbol, a decomposed bimachine is
 one-sided: the change is the left rule's alone or the right rule's alone. -/
-theorem NonInteraction.oneSidedAt_of_change (w : B.NonInteraction) {l : L} {a : α}
-    {r : R} (hne : B.output l a r ≠ a) : B.OneSidedAt l a r := by
+theorem NonInteraction.oneSidedAt_of_change (w : B.NonInteraction)
+    (hne : B.output l a r ≠ a) : B.OneSidedAt l a r := by
   by_cases hL : w.ruleL l a = a
   · have hR : w.ruleR r a ≠ a := fun hR =>
       hne ((w.output_eq l a r).trans (unite_eq_self_iff.mpr ⟨hL, hR⟩))
@@ -303,28 +304,28 @@ theorem NonInteraction.oneSidedAt_of_change (w : B.NonInteraction) {l : L} {a : 
 
 /-- At every cell whose output differs from the input symbol, a non-interacting
 bimachine is one-sided. -/
-theorem IsNonInteracting.oneSidedAt_of_change (h : B.IsNonInteracting) {l : L} {a : α}
-    {r : R} (hne : B.output l a r ≠ a) : B.OneSidedAt l a r :=
+theorem IsNonInteracting.oneSidedAt_of_change (h : B.IsNonInteracting)
+    (hne : B.output l a r ≠ a) : B.OneSidedAt l a r :=
   h.elim fun w => w.oneSidedAt_of_change hne
 
 /-- Transports a decomposition along state reindexing: the rules compose with
 `eL.symm` and `eR.symm`. -/
-def NonInteraction.reindex {L' R' : Type*} (w : B.NonInteraction) (eL : L ≃ L')
-    (eR : R ≃ R') : (Bimachine.reindex eL eR B).NonInteraction where
+def NonInteraction.reindex (eL : L ≃ L') (eR : R ≃ R') :
+    (Bimachine.reindex eL eR B).NonInteraction where
   ruleL l a := w.ruleL (eL.symm l) a
   ruleR r a := w.ruleR (eR.symm r) a
   unite_comm _ a _ := w.unite_comm _ a _
   output_eq _ a _ := w.output_eq _ a _
 
 /-- Non-interaction transports along state reindexing. -/
-theorem IsNonInteracting.reindex {L' R' : Type*} (h : B.IsNonInteracting) (eL : L ≃ L')
-    (eR : R ≃ R') : (Bimachine.reindex eL eR B).IsNonInteracting :=
+theorem IsNonInteracting.reindex (h : B.IsNonInteracting) (eL : L ≃ L') (eR : R ≃ R') :
+    (Bimachine.reindex eL eR B).IsNonInteracting :=
   h.map (·.reindex eL eR)
 
 /-- A word whose run leaves target `i` unchanged has both of its change-proposals inert
 there. -/
-theorem NonInteraction.inert_of_reverting (w : B.NonInteraction) {u : List α} {i : ℕ}
-    {a : α} (hsym : u[i]? = some a) (hrev : (B.run u)[i]? = u[i]?) :
+theorem NonInteraction.inert_of_reverting {u : List α} {i : ℕ} (hsym : u[i]? = some a)
+    (hrev : (B.run u)[i]? = u[i]?) :
     w.ruleL (B.lState (u.take i)) a = a ∧ w.ruleR (B.rState (u.drop (i + 1))) a = a := by
   refine unite_eq_self_iff.mp (Option.some_injective _ (Eq.symm ?_))
   rw [← hsym, ← hrev, B.getElem?_run, hsym, Option.map_some, w.output_eq]
@@ -498,24 +499,21 @@ private theorem conjBM_flankWord {x y : ConjSym} {n k : ℕ} (h0 : 0 < k) (hk : 
     any_drop_flankWord (by decide) (by omega) (by omega)]
   simp
 
-/-- The conjunctive change requires both sides: with a mark on each flank the medial
-symbol flips, and demoting either mark alone reverts it — the three-map template
-(`RequiresBothSides.of_flanks`) applied to a `d`-margined flank word. -/
-theorem conjBM.requiresBothSides : RequiresBothSides conjBM.run :=
-  .of_flanks (fill := .neutral) (on := .flipped) (xOn := .mark) (yOn := .mark)
-    (xOff := .neutral) (yOff := .neutral) (n := fun d => 2 * d + 1) (t := fun d => d + 1)
-    (by decide) (fun d => ⟨by omega, by omega⟩)
-    (fun d => by rw [conjBM_flankWord (by omega) (by omega)]; rfl)
-    (fun d => by rw [conjBM_flankWord (by omega) (by omega)]; rfl)
-    (fun d => by rw [conjBM_flankWord (by omega) (by omega)]; rfl)
-
-/-- The non-interacting class is proper inside the bimachine-computable functions —
-`conjBM` is computed by a bimachine, but by no non-interacting one. -/
+/-- The non-interacting class is proper inside the bimachine-computable functions:
+`conjBM` is computed by a bimachine, but — with a mark on each flank the medial symbol
+flips, and demoting either mark alone reverts it — it requires both sides
+(`RequiresBothSides.of_flanks`), so no non-interacting bimachine computes it. -/
 theorem setOf_isNonInteractingBimachineComputable_ssubset :
     {f : List ConjSym → List ConjSym | IsNonInteractingBimachineComputable f} ⊂
       {f | IsBimachineComputable f} :=
+  have key : RequiresBothSides conjBM.run :=
+    .of_flanks (fill := .neutral) (on := .flipped) (xOn := .mark) (yOn := .mark)
+      (xOff := .neutral) (yOff := .neutral) (n := fun d => 2 * d + 1)
+      (t := fun d => d + 1) (by decide) (fun d => ⟨by omega, by omega⟩)
+      (fun d => conjBM_flankWord (by omega) (by omega))
+      (fun d => conjBM_flankWord (by omega) (by omega))
+      (fun d => conjBM_flankWord (by omega) (by omega))
   ⟨fun _ h => IsBimachineComputable.of_nonInteracting h,
-   fun h => conjBM.requiresBothSides.not_isNonInteractingBimachineComputable
-     (h conjBM.isBimachineComputable)⟩
+   fun h => key.not_isNonInteractingBimachineComputable (h conjBM.isBimachineComputable)⟩
 
 end Subregular
