@@ -12,34 +12,34 @@ import Linglib.Core.Computability.Subregular.Function.Bimachine
 /-!
 # The subregular function hierarchy
 
-Inclusions among the directionality classes of `Core/Computability/Subregular/Function/`,
-assembled from the strictly-local, synchronous (`Mealy`) and bimachine (`Bimachine`)
-substrate:
+Inclusions among the directionality classes of the transducer substrate — strictly local
+(`ISLRule`, `OSLRule`), synchronous (`Mealy`) and bimachine (`Bimachine`):
 
   `single-symbol ISL/OSL ⊆ IsMealyComputable ⊆ IsBimachineWeaklyDeterministic ⊆ IsBimachineComputable`
 
-A left-subsequential transducer is the degenerate bimachine whose right automaton is
-trivial, so its cell output is a *one-sided* rule — non-interacting.
+A synchronous transducer is the degenerate bimachine whose right automaton is trivial, so
+its cell output is a *one-sided* rule — non-interacting.
 
-## Main results
+## Main theorems
 
-* `IsBimachineWeaklyDeterministic.of_mealyComputable` — subsequential ⊆ WD.
-* `IsBimachineComputable.of_weaklyDeterministic` — WD ⊆ regular.
-* `weaklyDeterministic_strict_subset_regular` — WD ⊊ regular is *proper*: the conjunctive
-  change `conjBM` (a target raised iff a trigger occurs on both sides) is bimachine-computable
-  but `RequiresBothSides`.
-* `isMealyComputable_of_ISLRule` / `_of_OSLRule` — single-symbol ISL/OSL ⊆
-  subsequential (the bounded window as a `Mealy` state); `.of_ISLRule` / `.of_OSLRule`
-  extend the chain to WD.
-* `IsMealyComputable.leftDetermined` / `.isRightMyopic` — synchronous maps are
-  prefix-determined at every coordinate, hence right-myopic.
+* `IsBimachineWeaklyDeterministic.of_mealyComputable`: synchronous ⊆ weakly deterministic
+* `IsBimachineComputable.of_weaklyDeterministic`: weakly deterministic ⊆ regular
+* `weaklyDeterministic_strict_subset_regular`: that inclusion is proper, witnessed by the
+  conjunctive change `conjBM`, which is bimachine-computable but `RequiresBothSides`
+* `isMealyComputable_of_ISLRule`, `isMealyComputable_of_OSLRule`: the single-symbol
+  (length-preserving) fragment of the strictly-local classes is synchronous
+* `SFST.toMealy`, `Mealy.toSFST`: singleton-output block transducers and synchronous
+  machines are interchangeable, giving `IsMealyComputable.isLeftSubsequential`
+* `IsMealyComputable.leftDetermined`, `IsMealyComputable.isRightMyopic`: a synchronous map
+  is prefix-determined at every coordinate, hence has no look-ahead
 
 ## TODO
 
-* subsequential ⊊ WD is also proper, but a witness is not yet formalized here: a genuinely
-  two-sided union is `IsUnboundedCircumambient`, hence not right-myopic
-  (`IsMealyComputable.isRightMyopic`), hence not left-subsequential, yet weakly
-  deterministic.
+* `IsLeftSubsequential ⊊ IsBimachineWeaklyDeterministic`. No witness is formalized here.
+  Note that non-myopia refutes only *synchronous* computability, via
+  `IsMealyComputable.isRightMyopic`: a block transducer may delay its output, so its
+  coordinate `i` is not fixed by the prefix, and excluding one takes the bounded-delay
+  route (`IsLeftSubsequential.bounded_delay`) instead.
 -/
 
 namespace Subregular
@@ -68,6 +68,38 @@ def Mealy.toSFST (T : Mealy σ α β) : SFST σ α β where
 
 @[simp] theorem Mealy.toSFST_run (T : Mealy σ α β) : T.toSFST.run = T.run :=
   funext fun xs => T.toSFST_runFrom T.initial xs
+
+/-- View a block transducer emitting exactly one symbol per input symbol as a synchronous
+machine: the singleton output block is the emitted letter. -/
+@[simps]
+def SFST.toMealy (T : SFST σ α β) (hs : ∀ s x, (T.output s x).length = 1) : Mealy σ α β where
+  initial := T.start
+  step := T.step
+  output s x := (T.output s x).head (List.ne_nil_of_length_pos (by rw [hs]; omega))
+
+@[simp] theorem Mealy.toMealy_toSFST (T : Mealy σ α β) :
+    T.toSFST.toMealy (fun _ _ => rfl) = T := rfl
+
+@[simp] theorem SFST.toMealy_runFrom (T : SFST σ α β) (hs : ∀ s x, (T.output s x).length = 1)
+    (hf : ∀ s, T.finalOutput s = []) (s : σ) (xs : List α) :
+    (T.toMealy hs).runFrom s xs = T.runFrom s xs := by
+  induction xs generalizing s with
+  | nil => simp [hf]
+  | cons x xs ih =>
+    obtain ⟨a, ha⟩ := List.length_eq_one_iff.mp (hs s x)
+    simp only [Mealy.runFrom_cons, SFST.runFrom_cons, toMealy_output, toMealy_step, ih, ha,
+      List.head_cons, List.singleton_append]
+
+@[simp] theorem SFST.toMealy_run (T : SFST σ α β) (hs : ∀ s x, (T.output s x).length = 1)
+    (hf : ∀ s, T.finalOutput s = []) : (T.toMealy hs).run = T.run :=
+  funext fun xs => T.toMealy_runFrom hs hf T.start xs
+
+/-- A finite block transducer with singleton outputs and no final flush computes a
+Mealy-computable function: block ∩ length-preserving ⊆ synchronous. -/
+theorem SFST.isMealyComputable [Fintype σ] (T : SFST σ α β)
+    (hs : ∀ s x, (T.output s x).length = 1) (hf : ∀ s, T.finalOutput s = []) :
+    IsMealyComputable T.run :=
+  T.toMealy_run hs hf ▸ (T.toMealy hs).isMealyComputable
 
 /-- A Mealy-computable function is left-subsequential: synchronous ⊆ block. -/
 theorem IsMealyComputable.isLeftSubsequential {f : List α → List β}
@@ -110,9 +142,9 @@ variable {α : Type*} [DecidableEq α]
 private theorem unite_default_right (cL a : α) : unite cL a a = cL := by
   unfold unite; split_ifs <;> simp_all
 
-/-- **Subsequential ⊆ weakly deterministic.** A synchronous left-subsequential function is
-computed by a non-interacting bimachine: the left automaton *is* the transducer, the right
-automaton is trivial, so the cell output is a one-sided rule (`ωR` is the identity). -/
+/-- **Synchronous ⊆ weakly deterministic.** A Mealy-computable function is computed by a
+non-interacting bimachine: the left automaton *is* the transducer, the right automaton is
+trivial, so the cell output is a one-sided rule (`ωR` is the identity). -/
 theorem IsBimachineWeaklyDeterministic.of_mealyComputable {f : List α → List α}
     (h : IsMealyComputable f) : IsBimachineWeaklyDeterministic f := by
   obtain ⟨σ, _, T, rfl⟩ := h
@@ -137,82 +169,44 @@ theorem IsBimachineComputable.of_weaklyDeterministic {f : List α → List α}
 
 /-! ### Strictness: WD ⊊ regular
 
-A *conjunctive* change — a target raised iff a trigger occurs on **both** sides — is
+A *conjunctive* change — a symbol flipped iff a mark occurs on **both** sides — is
 bimachine-computable but `RequiresBothSides`, so no non-interacting bimachine computes
 it. -/
 
-/-- Toy alphabet for the conjunctive-change witness: a trigger, a recessive target, and
-its raised form. -/
-inductive ConjSym | trig | tgt | raised
+/-- Toy alphabet for the conjunctive witness: a `mark`, a `neutral` symbol, and the
+`flipped` form the neutral symbol takes when both sides are marked. -/
+inductive ConjSym | mark | neutral | flipped
   deriving DecidableEq, Repr
 
-instance : Fintype ConjSym := ⟨{.trig, .tgt, .raised}, fun x => by cases x <;> simp⟩
+instance : Fintype ConjSym := ⟨{.mark, .neutral, .flipped}, fun x => by cases x <;> simp⟩
 
-/-- A target raises iff a trigger occurs on **both** sides — a flag bimachine
-(`Bimachine.ofFlags`) tracking a trigger on each side, whose cell genuinely needs both
+/-- A neutral symbol flips iff a `mark` occurs on **both** sides — a flag bimachine
+(`Bimachine.ofFlags`) tracking a mark on each side, whose cell genuinely needs both
 flags (`l && r`). -/
 def conjBM : Bimachine Bool Bool ConjSym ConjSym :=
-  .ofFlags (· == .trig) (· == .trig) fun l s r => if (l && r) && s == .tgt then .raised else s
+  .ofFlags (· == .mark) (· == .mark) fun l s r =>
+    if (l && r) && s == .neutral then .flipped else s
 
-/-- Output of `conjBM` at a `.tgt` position: `.raised` iff a trigger appears on both the
-left prefix and the right suffix, else `.tgt`. -/
-private theorem conjBM_run_at {w : List ConjSym} {i : ℕ} (h : w[i]? = some .tgt) :
-    (conjBM.run w)[i]?
-      = some (if (w.take i).any (· == .trig) && (w.drop (i + 1)).any (· == .trig)
-          then .raised else .tgt) := by
-  rw [conjBM, Bimachine.ofFlags_run_getElem?, h]; simp
-
-/-- Witness word at distance `d`: a medial `.tgt` flanked by `d` neutral fillers and a
-`.trig` on each end. The two perturbations replace one end's `.trig` with a filler. -/
-def conjBase (d : ℕ) : List ConjSym :=
-  .trig :: List.replicate d .raised ++ .tgt :: List.replicate d .raised ++ [.trig]
-
-private theorem conjBase_getElem_tgt (d : ℕ) : (conjBase d)[d + 1]? = some .tgt := by
-  simp [conjBase]
-
-private theorem conjBase_take (d : ℕ) :
-    (conjBase d).take (d + 1) = .trig :: List.replicate d .raised := by
-  simp [conjBase]
-
-private theorem conjBase_drop (d : ℕ) :
-    (conjBase d).drop (d + 2) = List.replicate d .raised ++ [.trig] := by
-  simp only [conjBase, List.drop_append, List.length_cons, List.length_replicate]
-  simp only [show d + 2 - (d + 1) = 1 from by omega]
+/-- Inside the filler run of a flank word, `conjBM` flips the neutral symbol exactly when
+both flanks are marks. -/
+private theorem conjBM_flankWord {x y : ConjSym} {n k : ℕ} (h0 : 0 < k) (hk : k ≤ n) :
+    (conjBM.run (flankWord x .neutral y n))[k]?
+      = some (if x == .mark && y == .mark then .flipped else .neutral) := by
+  rw [conjBM, Bimachine.ofFlags_run_getElem?, flankWord_getElem?_mid h0 hk,
+    any_take_flankWord (by decide) h0 (by omega),
+    any_drop_flankWord (by decide) (by omega) (by omega)]
   simp
 
-/-- The conjunctive spread requires both sides: the base raises a medial target (a trigger
-on each side), but flipping either far trigger to a filler reverts it. The perturbations are
-`List.set`s of the base, so they agree with it off the flipped index (`getElem?_set_ne`),
-and the reverting cell output is read off via `conjBM_run_at`. -/
-theorem conjBM_requiresBothSides : RequiresBothSides conjBM.run := by
-  intro d
-  refine ⟨conjBase d, d + 1, by simp [conjBase], ?_, fun s => ?_⟩
-  -- base changes: both sides carry a trigger, so the medial `tgt` raises (`.raised ≠ .tgt`)
-  · rw [conjBM_run_at (conjBase_getElem_tgt d), conjBase_take, conjBase_drop, conjBase_getElem_tgt]
-    simp [List.any_cons, List.any_replicate, List.any_append]
-  match s with
-  | .left =>
-    -- the left perturbation empties the prefix of triggers (`take.any = false`)
-    refine ⟨(conjBase d).set 0 .raised,
-      ⟨by simp [conjBase], fun k hk => (List.getElem?_set_ne (by omega)).symm⟩,
-      by rw [List.getElem?_set_ne (by omega)], ?_⟩
-    have h : ((conjBase d).set 0 .raised)[d + 1]? = some .tgt := by
-      rw [List.getElem?_set_ne (by omega : (0 : ℕ) ≠ d + 1)]; exact conjBase_getElem_tgt d
-    have htake : ((conjBase d).set 0 .raised).take (d + 1) = List.replicate (d + 1) .raised := by
-      rw [List.take_set, conjBase_take]; simp [List.set_cons_zero, List.replicate_succ]
-    rw [conjBM_run_at h, h, htake]; simp [List.any_replicate]
-  | .right =>
-    -- the right perturbation empties the suffix of triggers (`drop.any = false`)
-    refine ⟨(conjBase d).set (2 * d + 2) .raised,
-      ⟨by simp [conjBase], fun k hk => (List.getElem?_set_ne (by omega)).symm⟩,
-      by rw [List.getElem?_set_ne (by omega)], ?_⟩
-    have h : ((conjBase d).set (2 * d + 2) .raised)[d + 1]? = some .tgt := by
-      rw [List.getElem?_set_ne (by omega : 2 * d + 2 ≠ d + 1)]; exact conjBase_getElem_tgt d
-    have hdrop : ((conjBase d).set (2 * d + 2) .raised).drop (d + 2) = List.replicate (d + 1) .raised := by
-      rw [show (2 * d + 2 : ℕ) = d + 2 + d from by omega, ← List.set_drop, conjBase_drop,
-          List.set_append_right d ConjSym.raised (by simp)]
-      simp [List.replicate_succ']
-    rw [conjBM_run_at h, h, hdrop]; simp [List.any_replicate]
+/-- The conjunctive change requires both sides: with a mark on each flank the medial
+symbol flips, and demoting either mark alone reverts it — the three-map template
+(`RequiresBothSides.of_flanks`) applied to a `d`-margined flank word. -/
+theorem conjBM_requiresBothSides : RequiresBothSides conjBM.run :=
+  .of_flanks (fill := .neutral) (on := .flipped) (xOn := .mark) (yOn := .mark)
+    (xOff := .neutral) (yOff := .neutral) (n := fun d => 2 * d + 1) (t := fun d => d + 1)
+    (by decide) (fun d => ⟨by omega, by omega⟩)
+    (fun d => by rw [conjBM_flankWord (by omega) (by omega)]; rfl)
+    (fun d => by rw [conjBM_flankWord (by omega) (by omega)]; rfl)
+    (fun d => by rw [conjBM_flankWord (by omega) (by omega)]; rfl)
 
 theorem weaklyDeterministic_strict_subset_regular :
     ∃ f : List ConjSym → List ConjSym,
@@ -220,77 +214,27 @@ theorem weaklyDeterministic_strict_subset_regular :
   ⟨conjBM.run, isBimachineComputable conjBM,
    not_isBimachineWeaklyDeterministic_of_requiresBothSides conjBM_requiresBothSides⟩
 
-/-! ### The strictly-local lower end: single-symbol ISL/OSL ⊆ subsequential
+/-! ### The strictly-local lower end: single-symbol ISL/OSL ⊆ synchronous
 
 The ISL/OSL classes are block-output (length-changing) in general, so they sit outside the
 length-preserving lattice. Their **single-symbol** (length-preserving) fragment embeds: the
-same bounded window that makes `toFinSFST` finite-state serves as a `Mealy` state, with
-the lone output symbol as the letter. This extends the chain to
-`single-symbol ISL/OSL ⊆ subsequential ⊆ WD ⊆ regular`. -/
+bounded window that makes `toFinSFST` finite-state serves as the `Mealy` state, with the
+lone output symbol as the letter. This extends the chain to
+`single-symbol ISL/OSL ⊆ synchronous ⊆ WD ⊆ regular`. -/
 
-/-- A length-preserving (single-symbol) left-ISL rule as a synchronous transducer: the
-bounded input window is the state, the lone output symbol the letter. -/
-def ISLRule.toMealy {α β : Type*} {k : ℕ} [Fintype α] (r : ISLRule k α β)
-    (hs : ∀ w x, (r.windowOutput w x).length = 1) :
-    Mealy {l : List α // l.length ≤ k - 1} α β where
-  initial := ⟨[], Nat.zero_le _⟩
-  step w x := ⟨(w.val ++ [x]).rtake (k - 1), List.length_rtake_le _ _⟩
-  output w x := (r.windowOutput w.val x).head
-    (by have := hs w.val x; exact List.ne_nil_of_length_pos (by omega))
-
-theorem ISLRule.toMealy_run_eq_apply {α β : Type*} {k : ℕ} [Fintype α] (r : ISLRule k α β)
-    (hs : ∀ w x, (r.windowOutput w x).length = 1) : (r.toMealy hs).run = r.apply := by
-  rw [← r.toFinSFST_run_eq_apply]
-  funext input
-  suffices h : ∀ w : {l : List α // l.length ≤ k - 1},
-      Mealy.runFrom (r.toMealy hs) w input = SFST.runFrom r.toFinSFST w input from h _
-  intro w
-  induction input generalizing w with
-  | nil => rfl
-  | cons x xs ih =>
-    simp only [Mealy.runFrom_cons, SFST.runFrom_cons, ISLRule.toMealy,
-      ISLRule.toFinSFST]
-    obtain ⟨a, ha⟩ := List.length_eq_one_iff.mp (hs w.val x)
-    simp only [ha, List.head_cons, List.singleton_append]
-    exact congrArg (a :: ·) (ih _)
-
-/-- **Single-symbol left-ISL ⊆ left-subsequential.** -/
+/-- **Single-symbol left-ISL ⊆ synchronous**: the bounded input window that makes
+`ISLRule.toFinSFST` finite-state is already the `Mealy` state. -/
 theorem isMealyComputable_of_ISLRule {α β : Type*} {k : ℕ} [Fintype α] (r : ISLRule k α β)
     (hs : ∀ w x, (r.windowOutput w x).length = 1) : IsMealyComputable r.apply :=
-  by rw [← r.toMealy_run_eq_apply hs]; exact (r.toMealy hs).isMealyComputable
+  r.toFinSFST_run_eq_apply ▸ r.toFinSFST.isMealyComputable (fun w x => hs w.val x) fun _ => rfl
 
-/-- A length-preserving (single-symbol) left-OSL rule as a synchronous transducer: the
-bounded output window is the state. -/
-def OSLRule.toMealy {α β : Type*} {k : ℕ} (r : OSLRule k α β)
-    (hs : ∀ w x, (r.windowOutput w x).length = 1) :
-    Mealy {l : List β // l.length ≤ k - 1} α β where
-  initial := ⟨[], Nat.zero_le _⟩
-  step w x := ⟨(w.val ++ r.windowOutput w.val x).rtake (k - 1), List.length_rtake_le _ _⟩
-  output w x := (r.windowOutput w.val x).head
-    (by have := hs w.val x; exact List.ne_nil_of_length_pos (by omega))
-
-theorem OSLRule.toMealy_run_eq_apply {α β : Type*} {k : ℕ} [Fintype β] (r : OSLRule k α β)
-    (hs : ∀ w x, (r.windowOutput w x).length = 1) : (r.toMealy hs).run = r.apply := by
-  rw [← r.toFinSFST_run_eq_apply]
-  funext input
-  suffices h : ∀ w : {l : List β // l.length ≤ k - 1},
-      Mealy.runFrom (r.toMealy hs) w input = SFST.runFrom r.toFinSFST w input from h _
-  intro w
-  induction input generalizing w with
-  | nil => rfl
-  | cons x xs ih =>
-    simp only [Mealy.runFrom_cons, SFST.runFrom_cons, OSLRule.toMealy,
-      OSLRule.toFinSFST]
-    obtain ⟨a, ha⟩ := List.length_eq_one_iff.mp (hs w.val x)
-    simp only [ha, List.head_cons, List.singleton_append]
-    exact congrArg (a :: ·) (ih _)
-
-/-- **Single-symbol left-OSL ⊆ left-subsequential.** -/
+/-- **Single-symbol left-OSL ⊆ synchronous**, with the bounded output window as the state. -/
 theorem isMealyComputable_of_OSLRule {α β : Type*} {k : ℕ} [Fintype β] (r : OSLRule k α β)
     (hs : ∀ w x, (r.windowOutput w x).length = 1) : IsMealyComputable r.apply :=
-  by rw [← r.toMealy_run_eq_apply hs]; exact (r.toMealy hs).isMealyComputable
+  r.toFinSFST_run_eq_apply ▸ r.toFinSFST.isMealyComputable (fun w x => hs w.val x) fun _ => rfl
 
-/-- **Single-symbol left-ISL ⊆ WD** — extends the lattice down through subsequential. -/
+/-- **Single-symbol left-ISL ⊆ WD** — extends the lattice down through the synchronous
+class. -/
 theorem IsBimachineWeaklyDeterministic.of_ISLRule {α : Type*} {k : ℕ} [Fintype α] [DecidableEq α]
     (r : ISLRule k α α) (hs : ∀ w x, (r.windowOutput w x).length = 1) :
     IsBimachineWeaklyDeterministic r.apply :=
