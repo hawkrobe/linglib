@@ -346,21 +346,26 @@ def OneSidedAt (B : Bimachine L R α β) (l : L) (a : α) (r : R) : Prop :=
 
 variable {B : Bimachine L R α α}
 
+/-- A firing left rule alone determines the output. -/
+theorem NonInteraction.output_eq_ruleL (w : B.NonInteraction) {l : L} {a : α} {r : R}
+    (hL : w.ruleL l a ≠ a) : B.output l a r = w.ruleL l a :=
+  (w.output_eq l a r).trans (unite_of_left_ne hL _)
+
+/-- A firing right rule alone determines the output — order-independence of the union
+is what silences the left state. -/
+theorem NonInteraction.output_eq_ruleR (w : B.NonInteraction) {l : L} {a : α} {r : R}
+    (hR : w.ruleR r a ≠ a) : B.output l a r = w.ruleR r a :=
+  (w.output_eq l a r).trans ((w.unite_comm l a r).trans (unite_of_left_ne hR _))
+
 /-- At every cell whose output differs from the input symbol, a decomposed bimachine is
-one-sided: the change is the left rule's alone or the right rule's alone.
-Order-independence of the union is what makes the firing side's value independent of
-the other side's state. -/
+one-sided: the change is the left rule's alone or the right rule's alone. -/
 theorem NonInteraction.oneSidedAt_of_change (w : B.NonInteraction) {l : L} {a : α}
     {r : R} (hne : B.output l a r ≠ a) : B.OneSidedAt l a r := by
   by_cases hL : w.ruleL l a = a
   · have hR : w.ruleR r a ≠ a := fun hR =>
-      hne (by simp only [w.output_eq, hL, hR, unite_left_self])
-    refine .inr fun l' => ?_
-    by_cases hL' : w.ruleL l' a = a
-    · simp only [w.output_eq, hL, hL', unite_left_self]
-    · simp only [w.output_eq, hL, unite_left_self, unite_of_left_ne hL']
-      exact unite_comm_iff.mp (w.unite_comm l' a r) hL' hR
-  · exact .inl fun r' => by simp only [w.output_eq, unite_of_left_ne hL]
+      hne ((w.output_eq l a r).trans (unite_eq_self_iff.mpr ⟨hL, hR⟩))
+    exact .inr fun l' => (w.output_eq_ruleR hR).trans (w.output_eq_ruleR hR).symm
+  · exact .inl fun r' => (w.output_eq_ruleL hL).trans (w.output_eq_ruleL hL).symm
 
 /-- At every cell whose output differs from the input symbol, a non-interacting
 bimachine is one-sided. -/
