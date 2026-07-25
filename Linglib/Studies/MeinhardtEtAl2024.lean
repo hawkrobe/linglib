@@ -3,13 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
+import Linglib.Core.Computability.Mealy
 import Linglib.Core.Computability.Subregular.Function.ISL
 import Linglib.Core.Computability.Subregular.Function.OSL
 import Linglib.Core.Computability.Subregular.Function.Subsequential
-import Linglib.Core.Computability.Mealy
-import Linglib.Core.Computability.Subregular.Function.Bimachine
-import Linglib.Core.Computability.Subregular.Function.OSL
-import Linglib.Core.Computability.Subregular.Function.SideDeterminacy
+import Linglib.Core.Computability.Subregular.Function.Dependence
 import Linglib.Core.Computability.Subregular.Function.Bimachine
 
 /-!
@@ -420,12 +418,12 @@ theorem maasai_not_requiresBothSides : ¬ RequiresBothSides maasai := fun h =>
 
 /-- Strictness witness `synchronous ⊊ WD`: Maasai is weakly deterministic yet not
 Mealy-computable. A Mealy-computable map is right-myopic
-(`IsMealyComputable.isRightMyopic`), but Maasai's bidirectional spread is not
+(`IsMealyComputable.boundedDependence_right`), but Maasai's bidirectional spread is not
 (`maasai_twoSidedUnboundedDependence`). The stronger `¬ IsLeftSubsequential maasai` (the
 *block* class) is not yet formalized: a block transducer can delay output, so it
 needs the bounded-delay route (`IsLeftSubsequential.bounded_delay`) rather than the
 myopia shortcut — see the TODO in `Function/Bimachine.lean`. -/
 theorem maasai_not_mealyComputable : ¬ IsMealyComputable maasai := fun h =>
-  maasai_twoSidedUnboundedDependence.not_myopic .right h.isRightMyopic
+  maasai_twoSidedUnboundedDependence.not_boundedDependence .right h.boundedDependence_right
 
 end MeinhardtEtAl2024

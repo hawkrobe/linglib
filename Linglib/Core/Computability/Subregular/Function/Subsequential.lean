@@ -386,8 +386,8 @@ theorem IsLeftSubsequential.exists_getElem?_append_eq (hf : IsLeftSubsequential 
   omega
 
 /-- `f` is not left-subsequential if for every `N` some images `f u` and `f (u ++ v)`
-disagree more than `N` positions before the end of `f u` (e.g. unbounded tonal
-plateauing, [jardine-2016]). -/
+disagree more than `N` positions before the end of `f u` — the contrapositive of
+`bounded_delay`, since no bound on the withheld suffix can then exist. -/
 theorem not_isLeftSubsequential_of_diverging
     (h : ∀ N, ∃ (u v : List α) (i : ℕ),
       i + N < (f u).length ∧ (f u)[i]? ≠ (f (u ++ v))[i]?) :

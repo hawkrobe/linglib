@@ -10,7 +10,7 @@ import Mathlib.Logic.Basic
 
 The orientation of a left-to-right vs right-to-left scan, shared by the transducer
 machines and the side-determinacy predicates of `Core/Computability/Subregular/Function/`.
-Extracted to its own leaf so the footprint-predicate file (`SideDeterminacy.lean`) does
+Extracted to its own leaf so the footprint-predicate file (`Dependence.lean`) does
 not have to depend on the transducer machine file just to name a `left`/`right` tag.
 -/
 
