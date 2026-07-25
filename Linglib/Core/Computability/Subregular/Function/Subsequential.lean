@@ -137,6 +137,15 @@ theorem runFrom_append (s : σ) (xs ys : List α) :
     T.runFrom s (xs ++ ys) = T.emitted s xs ++ T.runFrom (T.stateAfter s xs) ys := by
   simp [runFrom, emitted_append, stateAfter_append]
 
+/-- Coordinates within the emitted prefix are stable under extending the input. -/
+theorem getElem?_run_append (u v : List α) {i : ℕ}
+    (hi : i < (T.emitted T.start u).length) :
+    (T.run u)[i]? = (T.run (u ++ v))[i]? := by
+  simp only [run]
+  rw [runFrom_append]
+  unfold runFrom
+  rw [List.getElem?_append_left hi, List.getElem?_append_left hi]
+
 /-! ### Reindexing states -/
 
 variable {τ : Type*}
@@ -292,24 +301,29 @@ theorem IsLeftSubsequential.bounded_delay (hf : IsLeftSubsequential f) :
       T.runFrom (T.stateAfter T.start u) v, rfl, T.runFrom_append T.start u v,
       Finset.le_sup (f := fun s => (T.finalOutput s).length) (Finset.mem_univ _)⟩⟩
 
+/-- The coordinate form of `bounded_delay`: coordinates of `f u` more than `N`
+positions before its end are stable under extending the input. -/
+theorem IsLeftSubsequential.exists_getElem?_append_eq (hf : IsLeftSubsequential f) :
+    ∃ N : ℕ, ∀ u v i, i + N < (f u).length → (f u)[i]? = (f (u ++ v))[i]? := by
+  obtain ⟨σ, _, T, rfl⟩ := hf
+  refine ⟨Finset.univ.sup fun s => (T.finalOutput s).length,
+    fun u v i hi => T.getElem?_run_append u v ?_⟩
+  have hN := Finset.le_sup (f := fun s => (T.finalOutput s).length)
+    (Finset.mem_univ (T.stateAfter T.start u))
+  simp only [SFST.run, SFST.runFrom, List.length_append] at hi
+  omega
+
 /-- `f` is not left-subsequential if for every `N` some images `f u` and `f (u ++ v)`
-disagree more than `N` positions before the end of `f u`: the working form of
-`bounded_delay` for impossibility proofs (e.g. unbounded tonal plateauing,
-[jardine-2016]). -/
+disagree more than `N` positions before the end of `f u` (e.g. unbounded tonal
+plateauing, [jardine-2016]). -/
 theorem not_isLeftSubsequential_of_diverging
     (h : ∀ N, ∃ (u v : List α) (i : ℕ),
       i + N < (f u).length ∧ (f u)[i]? ≠ (f (u ++ v))[i]?) :
     ¬ IsLeftSubsequential f := by
   intro hf
-  obtain ⟨N, hN⟩ := hf.bounded_delay
+  obtain ⟨N, hN⟩ := hf.exists_getElem?_append_eq
   obtain ⟨u, v, i, hi, hne⟩ := h N
-  obtain ⟨p, su, sv, hu, huv, hsu⟩ := hN u v
-  have hip : i < p.length := by
-    have := congrArg List.length hu
-    rw [List.length_append] at this
-    omega
-  rw [hu, huv, List.getElem?_append_left hip, List.getElem?_append_left hip] at hne
-  exact hne rfl
+  exact hne (hN u v i hi)
 
 /-- Left-subsequential functions are closed under composition, by the classical
 product construction [schutzenberger-1977] (`SFST.comp`). -/
