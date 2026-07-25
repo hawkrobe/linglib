@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 import Mathlib.Data.Fintype.EquivFin
 import Linglib.Core.Computability.Mealy
-import Linglib.Core.Computability.Subregular.Function.SideDeterminacy
+import Linglib.Core.Computability.Subregular.Function.Dependence
 import Linglib.Core.Data.List.Fold
 
 /-!
@@ -40,7 +40,7 @@ bimachine — the weakly-deterministic functions.
 
 * `IsLeftSubsequential ⊊ IsBimachineWeaklyDeterministic`. No witness is formalized here.
   Note that non-myopia refutes only *synchronous* computability, via
-  `IsMealyComputable.isRightMyopic`: a block transducer may delay its output, so its
+  `IsMealyComputable.boundedDependence_right`: a block transducer may delay its output, so its
   coordinate `i` is not fixed by the prefix, and excluding one takes the bounded-delay
   route (`IsLeftSubsequential.bounded_delay`) instead.
 -/
@@ -208,9 +208,8 @@ variable {α : Type*} {x fill y a : α} {n k : ℕ} {p : α → Bool}
 
 The recurring witness family for two-sided unboundedness: a target buried in a filler
 run, with independently editable flanks. `RequiresBothSides.of_flanks` packages the
-whole assembly — a map is excluded by exhibiting only the images of the base and the
-two single-flank perturbations at the target. This is the three-map method of
-[yolyan-2025] §5.3, as an object. -/
+whole assembly — a map is excluded by exhibiting only three images, those of the base
+and of the two single-flank perturbations, at the target coordinate. -/
 
 /-- A flank-controlled word: `x`, then `n` copies of `fill`, then `y`. -/
 def flankWord (x fill y : α) (n : ℕ) : List α := x :: (List.replicate n fill ++ [y])

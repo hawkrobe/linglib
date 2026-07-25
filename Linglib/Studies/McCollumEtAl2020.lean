@@ -3,7 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Computability.Subregular.Function.SideDeterminacy
+import Linglib.Core.Computability.Subregular.Function.Dependence
 import Linglib.Core.Computability.Subregular.Function.Bimachine
 
 /-!
@@ -39,7 +39,7 @@ is myopic; Tutrugbu is the segmental case the myopic-side replies do not dissolv
 `Seg` is a toy alphabet (prefix vowels ±high × ±ATR-surface; root ±ATR). `tutrugbuATR`
 implements the conditional-blocking rule faithfully; the paper's exx. (3)-(8) are
 decide-checked as stimulus contrasts. `tutrugbu_twoSidedUnboundedDependence` and
-`tutrugbu_nonmyopic` connect it to the substrate predicates in `SideDeterminacy.lean`,
+`tutrugbu_nonmyopic` connect it to the substrate predicates in `Dependence.lean`,
 and `tutrugbu_requiresBothSides` is the circumambience proper — both sides needed at
 once, which the two-sided dependence alone does not give.
 
@@ -291,8 +291,8 @@ theorem tutrugbu_twoSidedUnboundedDependence : TwoSidedUnboundedDependence tutru
 ([mccollum-bakovic-mai-meinhardt-2020]; [wilson-2006]). A segmental counterexample to
 the myopia generalisation defended by [kimper-2012] and [mascaro-2019], on the
 nonmyopic side argued by [walker-2010]. -/
-theorem tutrugbu_nonmyopic (s : Direction) : ¬ IsMyopicTowards tutrugbuATR s :=
-  tutrugbu_twoSidedUnboundedDependence.not_myopic s
+theorem tutrugbu_nonmyopic (s : Direction) : ¬ BoundedDependence tutrugbuATR s :=
+  tutrugbu_twoSidedUnboundedDependence.not_boundedDependence s
 
 /-- The input symbol at the target index is the recessive `.vLo` (for any initial and
 root): the prefix sequence places a `[−high]` vowel there. -/

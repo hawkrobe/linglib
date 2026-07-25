@@ -9,14 +9,14 @@ import Linglib.Core.Computability.Mealy
 import Linglib.Core.Computability.Subregular.Function.Defs
 
 /-!
-# Side-determinacy: myopia and two-sided dependence
+# How far an output coordinate depends on its input
 
-Locality predicates on string functions for the function-level subregular hierarchy.
-The kernel `OutputDependsOn f i K` says output coordinate `i` of `f` is fixed by the
-input positions in `K`. Two notions are instances:
+Dependence predicates on string functions. The kernel `OutputDependsOn f i K` says
+output coordinate `i` of `f` is fixed by the input positions in `K`. Two notions are
+instances:
 
-* **Myopia** (the "no look-ahead" condition): a side's influence on the output is
-  *bounded*.
+* **Bounded dependence** on a side: that side's influence on the output reaches only a
+  bounded distance, so a transducer scanning from it needs no unbounded context.
 * **Two-sided unbounded dependence**: some target is swayed from *either* side,
   arbitrarily far away — each side alone suffices to change it.
 
@@ -25,14 +25,15 @@ input positions in `K`. Two notions are instances:
 * `OutputDependsOn` — output coord `i` determined by input positions in `K`.
 * `UnboundedDependence f s` — for every distance `d`, some output flips under a
   perturbation strictly beyond `d` on side `s`.
-* `IsMyopicTowards f s` — the negation: dependence on side `s` is bounded.
+* `BoundedDependence f s` — the negation: dependence on side `s` is bounded.
 * `TwoSidedUnboundedDependence` — co-located form: for every `d`, ONE base word with a
   target that flips under a far-left perturbation and under a far-right one.
 
 ## Main theorems
 
-* `Mealy.isRightMyopic`, `IsMealyComputable.isRightMyopic` — a synchronous machine is
-  prefix-determined at every coordinate, hence has no rightward look-ahead.
+* `Mealy.boundedDependence_right`, `IsMealyComputable.boundedDependence_right` — a
+  sequential machine is prefix-determined at every coordinate, so nothing to its right
+  influences it.
 
 ## Implementation notes
 
@@ -111,8 +112,9 @@ def UnboundedDependence (f : List α → List β) : Direction → Prop
   | .right => ∀ d, ∃ (u v : List α) (i : ℕ), u.length = v.length ∧ i < u.length ∧
                 AgreeUpto u v (i + d) ∧ (f u)[i]? ≠ (f v)[i]?
 
-/-- **Myopia towards `s`**: dependence on side `s` is bounded. -/
-def IsMyopicTowards (f : List α → List β) (s : Direction) : Prop :=
+/-- Dependence on side `s` is bounded: no target is swayed from arbitrarily far away on
+that side. -/
+def BoundedDependence (f : List α → List β) (s : Direction) : Prop :=
   ¬ UnboundedDependence f s
 
 /-- An equal-length variant of `base` differing only beyond the `d`-margin of target
@@ -147,50 +149,51 @@ theorem TwoSidedUnboundedDependence.right {f : List α → List β}
   obtain ⟨uR, ⟨hlen, hag⟩, hne⟩ := hw .right
   exact ⟨base, uR, i, hlen.symm, hi, hag, hne⟩
 
-/-- A map with two-sided unbounded dependence is myopic towards neither side, since it
-exhibits unbounded dependence on each. -/
-theorem TwoSidedUnboundedDependence.not_myopic {f : List α → List β}
-    (h : TwoSidedUnboundedDependence f) (s : Direction) : ¬ IsMyopicTowards f s := by
+/-- A map with two-sided unbounded dependence has bounded dependence on neither side,
+since it exhibits unbounded dependence on each. -/
+theorem TwoSidedUnboundedDependence.not_boundedDependence {f : List α → List β}
+    (h : TwoSidedUnboundedDependence f) (s : Direction) : ¬ BoundedDependence f s := by
   cases s with
   | left => exact not_not_intro h.left
   | right => exact not_not_intro h.right
 
-/-- `f` is non-myopic towards `s` exactly when it has unbounded dependence there
-(`IsMyopicTowards` is by definition the negation of `UnboundedDependence`). -/
-@[simp] theorem not_isMyopicTowards_iff {f : List α → List β} {s : Direction} :
-    ¬ IsMyopicTowards f s ↔ UnboundedDependence f s := not_not
+/-- `f` fails bounded dependence towards `s` exactly when it has unbounded dependence there
+(`BoundedDependence` is by definition the negation of `UnboundedDependence`). -/
+@[simp] theorem not_boundedDependence_iff {f : List α → List β} {s : Direction} :
+    ¬ BoundedDependence f s ↔ UnboundedDependence f s := not_not
 
 /-- Output coordinate `i` is fixed by the prefix `{k | k ≤ i}`, the footprint shape of a
 left-to-right transducer. -/
 def LeftDetermined (f : List α → List β) (i : ℕ) : Prop := OutputDependsOn f i {k | k ≤ i}
 
-/-- A map whose every output coordinate is fixed by its prefix `{k | k ≤ i}` has no
-rightward look-ahead. -/
-theorem IsMyopicTowards.right_of_leftDetermined {f : List α → List β}
-    (h : ∀ i, LeftDetermined f i) : IsMyopicTowards f .right := by
+/-- A map whose every output coordinate is fixed by its prefix `{k | k ≤ i}` depends
+boundedly on the right — trivially so, since nothing to the right matters at all. -/
+theorem BoundedDependence.right_of_leftDetermined {f : List α → List β}
+    (h : ∀ i, LeftDetermined f i) : BoundedDependence f .right := by
   intro hunb
   obtain ⟨u, v, i, hlen, _, hag, hne⟩ := hunb 0
   exact hne (h i u v hlen fun k hk => hag k (by simp only [Set.mem_setOf_eq] at hk; omega))
 
 /-- A map whose every output coordinate is fixed by the input's *strict* prefix
-`{k | k < i}` has no rightward look-ahead; the canonical left-to-right scan has this
-shape. The strict hypothesis is the stronger one, so this follows by `OutputDependsOn.mono`. -/
-theorem IsMyopicTowards.right_of_prefixDetermined {f : List α → List β}
-    (h : ∀ i, OutputDependsOn f i {k | k < i}) : IsMyopicTowards f .right :=
-  IsMyopicTowards.right_of_leftDetermined fun i => (h i).mono fun _ hk => Nat.le_of_lt hk
+`{k | k < i}` depends boundedly on the right; the canonical left-to-right scan has this
+shape. The strict hypothesis is the stronger one, so this follows by
+`OutputDependsOn.mono`. -/
+theorem BoundedDependence.right_of_prefixDetermined {f : List α → List β}
+    (h : ∀ i, OutputDependsOn f i {k | k < i}) : BoundedDependence f .right :=
+  BoundedDependence.right_of_leftDetermined fun i => (h i).mono fun _ hk => Nat.le_of_lt hk
 
-/-! ### Synchronous machines have no look-ahead
+/-! ### Sequential machines do not depend on the right
 
 Output coordinate `i` of a `Mealy` machine is fixed by the input prefix `[0..i]`, so the
-synchronous class is myopic towards the right. Block transducers need not be: one that
-delays output, emitting `[]` and then `[x, y]`, has its coordinate `0` depend on input
-position `1`. -/
+sequential class depends boundedly on the right. Machines emitting blocks need not: one
+that delays output, emitting `[]` and then `[x, y]`, has its coordinate `0` depend on
+input position `1`. -/
 
 section Synchronous
 
 variable {σ : Type*}
 
-/-- A synchronous machine is left-determined at every coordinate: output `i` depends only
+/-- A sequential machine is left-determined at every coordinate: output `i` depends only
 on the input prefix `{k | k ≤ i}`. -/
 theorem Mealy.leftDetermined (T : Mealy σ α β) (i : ℕ) : LeftDetermined T.run i := by
   intro u v hlen hag
@@ -198,9 +201,9 @@ theorem Mealy.leftDetermined (T : Mealy σ α β) (i : ℕ) : LeftDetermined T.r
   rw [T.getElem?_run u, T.getElem?_run v, hag i le_rfl,
     take_eq_of_agree fun k hk => hag k hk.le]
 
-/-- A synchronous machine is right-myopic: it has no look-ahead. -/
-theorem Mealy.isRightMyopic (T : Mealy σ α β) : IsMyopicTowards T.run .right :=
-  IsMyopicTowards.right_of_leftDetermined T.leftDetermined
+/-- A sequential machine's output never depends on input to its right. -/
+theorem Mealy.boundedDependence_right (T : Mealy σ α β) : BoundedDependence T.run .right :=
+  BoundedDependence.right_of_leftDetermined T.leftDetermined
 
 /-- A Mealy-computable map is left-determined at every coordinate. -/
 theorem IsMealyComputable.leftDetermined {f : List α → List β}
@@ -208,10 +211,10 @@ theorem IsMealyComputable.leftDetermined {f : List α → List β}
   obtain ⟨σ, _, T, rfl⟩ := hf
   exact T.leftDetermined i
 
-/-- A Mealy-computable map is right-myopic: it has no look-ahead. -/
-theorem IsMealyComputable.isRightMyopic {f : List α → List β}
-    (hf : IsMealyComputable f) : IsMyopicTowards f .right :=
-  IsMyopicTowards.right_of_leftDetermined hf.leftDetermined
+/-- A Mealy-computable map's output never depends on input to its right. -/
+theorem IsMealyComputable.boundedDependence_right {f : List α → List β}
+    (hf : IsMealyComputable f) : BoundedDependence f .right :=
+  BoundedDependence.right_of_leftDetermined hf.leftDetermined
 
 end Synchronous
 

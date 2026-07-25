@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.Computability.Subregular.Logic.QFLogic
-import Linglib.Core.Computability.Subregular.Function.SideDeterminacy
+import Linglib.Core.Computability.Subregular.Function.Dependence
 import Mathlib.Data.Finset.Basic
 
 /-!

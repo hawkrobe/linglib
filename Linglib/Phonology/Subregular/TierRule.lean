@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 import Mathlib.Data.Fintype.Option
 import Linglib.Core.Computability.TierProjection
 import Linglib.Core.Computability.Subregular.Function.Subsequential
-import Linglib.Core.Computability.Subregular.Function.SideDeterminacy
+import Linglib.Core.Computability.Subregular.Function.Dependence
 
 /-!
 # TierProjection-based rules (`TierRule`)
@@ -340,8 +340,8 @@ theorem applyToString_prefixDetermined (r : TierRule α) (i : ℕ) :
 /-- **The tier-rule prediction mechanism is right-myopic** — it has no look-ahead.
 Consequently no tier-rule-based prediction (the formal core of a `Harmony.System`) can
 compute a *non-myopic* harmony, such as an unbounded-circumambient pattern. -/
-theorem applyToString_isRightMyopic (r : TierRule α) :
-    IsMyopicTowards r.applyToString .right :=
-  IsMyopicTowards.right_of_prefixDetermined (applyToString_prefixDetermined r)
+theorem applyToString_boundedDependence_right (r : TierRule α) :
+    BoundedDependence r.applyToString .right :=
+  BoundedDependence.right_of_prefixDetermined (applyToString_prefixDetermined r)
 
 end Subregular.TierRule
