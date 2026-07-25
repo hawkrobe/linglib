@@ -32,7 +32,7 @@ ISL ⊊ OSL ⊊ Subsequential.
 * `isRightOutputStrictlyLocal_iff_left_reverse` — Right-OSL is the
   reverse-conjugate of Left-OSL.
 * `isLeftOutputStrictlyLocal_left_subsequential` — Left-OSL ⊆
-  Left-Subsequential, via `OSLRule.toSFST`.
+  Left-Subsequential, via `OSLRule.toFinSFST`.
 
 ## Implementation notes
 
@@ -43,10 +43,6 @@ OSL window is over **already-emitted output** — each step truncates
 `outputWindow ++ windowOutput outputWindow x` to the last `k - 1`
 symbols before recursing. The `k` parameter is a type-level annotation;
 window-length truncation in `applyAux` is what enforces it semantically.
-
-`OSLRule.toSFST` deliberately repeats `r.windowOutput outputWindow x`
-in the two tuple components of `step` rather than `let`-binding it, so
-that `(step ow x).2` reduces definitionally for `toSFST_run_eq_apply`.
 -/
 
 namespace Subregular

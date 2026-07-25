@@ -38,12 +38,13 @@ is myopic; Tutrugbu is the segmental case the myopic-side replies do not dissolv
 
 `Seg` is a toy alphabet (prefix vowels ±high × ±ATR-surface; root ±ATR). `tutrugbuATR`
 implements the conditional-blocking rule faithfully; the paper's exx. (3)-(8) are
-decide-checked as stimulus contrasts. `tutrugbu_isUnboundedCircumambient` and
-`tutrugbu_nonmyopic` connect it to the substrate predicates in `SideDeterminacy.lean`.
+decide-checked as stimulus contrasts. `tutrugbu_isUnboundedSemiambient` and
+`tutrugbu_nonmyopic` connect it to the substrate predicates in `SideDeterminacy.lean`,
+and `tutrugbu_requiresBothSides` is the circumambience proper — both sides needed at
+once, which semiambience alone does not give.
 
 The machine-level classification (circumambient ⟹ non-deterministic, *not* weakly
-deterministic) needs bimachine substrate and is deferred; the co-located
-circumambience proved here is exactly what that argument consumes.
+deterministic) is what that witness feeds.
 -/
 
 namespace McCollumEtAl2020
@@ -247,12 +248,13 @@ theorem baseR_get_target (d : ℕ) : (tutrugbuATR (baseR d))[d + 1]? = some .vLo
   rw [tutrugbuATR_baseR]
   simp [baseR, pre]
 
-/-- **Tutrugbu ATR harmony is unbounded circumambient**
-([mccollum-bakovic-mai-meinhardt-2020] §3, def. 13). At the medial target (index
-`d+1`): the base harmonises it ([+ATR]); flipping the initial-σ height `d` syllables
-to the left blocks it; flipping the root `d` syllables to the right removes the
-trigger — both from the one base word. -/
-theorem tutrugbu_isUnboundedCircumambient : IsUnboundedCircumambient tutrugbuATR := by
+/-- **Tutrugbu ATR harmony is unbounded semiambient**
+([mccollum-bakovic-mai-meinhardt-2020] §3, def. 13) — the weaker two-sided diagnostic;
+full circumambience is `tutrugbu_requiresBothSides`. At the medial target (index `d+1`):
+the base harmonises it ([+ATR]); flipping the initial-σ height `d` syllables to the left
+blocks it; flipping the root `d` syllables to the right removes the trigger — both from
+the one base word. -/
+theorem tutrugbu_isUnboundedSemiambient : IsUnboundedSemiambient tutrugbuATR := by
   intro d
   refine ⟨base d, d + 1, ?_, fun s => ?_⟩
   · -- the target is in-domain: d + 1 < (base d).length  (= 2d+3)
@@ -290,7 +292,7 @@ theorem tutrugbu_isUnboundedCircumambient : IsUnboundedCircumambient tutrugbuATR
 the myopia generalisation defended by [kimper-2012] and [mascaro-2019], on the
 nonmyopic side argued by [walker-2010]. -/
 theorem tutrugbu_nonmyopic (s : Direction) : ¬ IsMyopicTowards tutrugbuATR s :=
-  tutrugbu_isUnboundedCircumambient.not_myopic s
+  tutrugbu_isUnboundedSemiambient.not_myopic s
 
 /-- The input symbol at the target index is the recessive `.vLo` (for any initial and
 root): the prefix sequence places a `[−high]` vowel there. -/
