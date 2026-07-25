@@ -32,8 +32,9 @@ restriction on the Elgot–Mezei factorization, not a consequence of it.
 * `Bimachine L R α β`: machine with left states `L`, right states `R`, alphabets `α`, `β`
 * `Bimachine.run`: the computed function
 * `IsBimachineComputable f`: `f` is computed by some finite bimachine
-* `Bimachine.IsNonInteracting`: the cell output is an order-independent union of
-  one-sided change-rules over the identity
+* `Bimachine.NonInteraction`, `Bimachine.IsNonInteracting`: a decomposition of the
+  cell output as an order-independent union of one-sided change-rules over the
+  identity, and its existence
 * `IsNonInteractingBimachineComputable f`: `f` is computed by some non-interacting
   finite bimachine
 
@@ -321,56 +322,73 @@ inert. -/
 @[simp] theorem unite_eq_self_iff {cL cR a : α} : unite cL cR a = a ↔ cL = a ∧ cR = a := by
   grind [unite]
 
-/-- A bimachine over a single alphabet is non-interacting when its cell output is an
-order-independent union of one-sided change-rules over the identity default — `ωL` and
-`ωR` each propose a change for their side, the output takes whichever fires, and the
-union commutes (`unite_comm_iff`: the proposals agree wherever both fire). Neither side
-can *suppress* the other's change; that suppression is exactly what interaction would
-require. -/
-def IsNonInteracting (B : Bimachine L R α α) : Prop :=
-  ∃ (ωL : L → α → α) (ωR : R → α → α),
-    (∀ l a r, unite (ωL l a) (ωR r a) a = unite (ωR r a) (ωL l a) a) ∧
-    ∀ l a r, B.output l a r = unite (ωL l a) (ωR r a) a
+/-- A non-interacting decomposition of a bimachine: a change-rule per side over the
+identity default, whose union is order-independent and produces the cell output. -/
+structure NonInteraction (B : Bimachine L R α α) where
+  /-- The change the left context proposes for the current symbol. -/
+  ruleL : L → α → α
+  /-- The change the right context proposes for the current symbol. -/
+  ruleR : R → α → α
+  /-- The union of the two proposals is order-independent (`unite_comm_iff`: they agree
+  wherever both fire), so neither side can suppress the other's change. -/
+  unite_comm : ∀ l a r, unite (ruleL l a) (ruleR r a) a = unite (ruleR r a) (ruleL l a) a
+  /-- The cell output is the union of the two proposals. -/
+  output_eq : ∀ l a r, B.output l a r = unite (ruleL l a) (ruleR r a) a
+
+/-- A bimachine over a single alphabet is non-interacting when it admits a
+non-interacting decomposition (`NonInteraction`) of its cell output. -/
+def IsNonInteracting (B : Bimachine L R α α) : Prop := Nonempty B.NonInteraction
 
 /-- The output at a cell is determined by one side alone: fixing the input symbol and
 one context state already fixes it. -/
 def OneSidedAt (B : Bimachine L R α β) (l : L) (a : α) (r : R) : Prop :=
   (∀ r', B.output l a r' = B.output l a r) ∨ (∀ l', B.output l' a r = B.output l a r)
 
-/-- At every cell whose output differs from the input symbol, a non-interacting
-bimachine is one-sided: the change is the left rule's alone or the right rule's alone.
+variable {B : Bimachine L R α α}
+
+/-- At every cell whose output differs from the input symbol, a decomposed bimachine is
+one-sided: the change is the left rule's alone or the right rule's alone.
 Order-independence of the union is what makes the firing side's value independent of
 the other side's state. -/
-theorem IsNonInteracting.oneSidedAt_of_change {B : Bimachine L R α α}
-    (h : B.IsNonInteracting) {l : L} {a : α} {r : R} (hne : B.output l a r ≠ a) :
-    B.OneSidedAt l a r := by
-  obtain ⟨ωL, ωR, hcomm, hω⟩ := h
-  by_cases hL : ωL l a = a
-  · have hR : ωR r a ≠ a := fun hR => hne (by simp only [hω, hL, hR, unite_left_self])
+theorem NonInteraction.oneSidedAt_of_change (w : B.NonInteraction) {l : L} {a : α}
+    {r : R} (hne : B.output l a r ≠ a) : B.OneSidedAt l a r := by
+  by_cases hL : w.ruleL l a = a
+  · have hR : w.ruleR r a ≠ a := fun hR =>
+      hne (by simp only [w.output_eq, hL, hR, unite_left_self])
     refine .inr fun l' => ?_
-    by_cases hL' : ωL l' a = a
-    · simp only [hω, hL, hL', unite_left_self]
-    · simp only [hω, hL, unite_left_self, unite_of_left_ne hL']
-      exact unite_comm_iff.mp (hcomm l' a r) hL' hR
-  · exact .inl fun r' => by simp only [hω, unite_of_left_ne hL]
+    by_cases hL' : w.ruleL l' a = a
+    · simp only [w.output_eq, hL, hL', unite_left_self]
+    · simp only [w.output_eq, hL, unite_left_self, unite_of_left_ne hL']
+      exact unite_comm_iff.mp (w.unite_comm l' a r) hL' hR
+  · exact .inl fun r' => by simp only [w.output_eq, unite_of_left_ne hL]
 
-/-- Non-interaction transports along state reindexing: the one-sided rules compose
-with `eL.symm` and `eR.symm`. -/
-theorem IsNonInteracting.reindex {L' R' : Type*} {B : Bimachine L R α α}
-    (h : B.IsNonInteracting) (eL : L ≃ L') (eR : R ≃ R') :
-    (Bimachine.reindex eL eR B).IsNonInteracting :=
-  have ⟨ωL, ωR, hcomm, hω⟩ := h
-  ⟨fun l a => ωL (eL.symm l) a, fun r a => ωR (eR.symm r) a,
-   fun _ a _ => hcomm _ a _, fun _ a _ => hω _ a _⟩
+/-- At every cell whose output differs from the input symbol, a non-interacting
+bimachine is one-sided. -/
+theorem IsNonInteracting.oneSidedAt_of_change (h : B.IsNonInteracting) {l : L} {a : α}
+    {r : R} (hne : B.output l a r ≠ a) : B.OneSidedAt l a r :=
+  h.elim fun w => w.oneSidedAt_of_change hne
 
-/-- Under a non-interacting cell decomposition, a word whose run leaves target `i`
-unchanged has both of its change-proposals inert there. -/
-theorem inert_of_reverting {B : Bimachine L R α α} {ωL : L → α → α} {ωR : R → α → α}
-    (hω : ∀ l a r, B.output l a r = unite (ωL l a) (ωR r a) a) {u : List α} {i : ℕ} {a : α}
-    (hsym : u[i]? = some a) (hrev : (B.run u)[i]? = u[i]?) :
-    ωL (B.lState (u.take i)) a = a ∧ ωR (B.rState (u.drop (i + 1))) a = a := by
+/-- Transports a decomposition along state reindexing: the rules compose with
+`eL.symm` and `eR.symm`. -/
+def NonInteraction.reindex {L' R' : Type*} (w : B.NonInteraction) (eL : L ≃ L')
+    (eR : R ≃ R') : (Bimachine.reindex eL eR B).NonInteraction where
+  ruleL l a := w.ruleL (eL.symm l) a
+  ruleR r a := w.ruleR (eR.symm r) a
+  unite_comm _ a _ := w.unite_comm _ a _
+  output_eq _ a _ := w.output_eq _ a _
+
+/-- Non-interaction transports along state reindexing. -/
+theorem IsNonInteracting.reindex {L' R' : Type*} (h : B.IsNonInteracting) (eL : L ≃ L')
+    (eR : R ≃ R') : (Bimachine.reindex eL eR B).IsNonInteracting :=
+  h.map (·.reindex eL eR)
+
+/-- A word whose run leaves target `i` unchanged has both of its change-proposals inert
+there. -/
+theorem NonInteraction.inert_of_reverting (w : B.NonInteraction) {u : List α} {i : ℕ}
+    {a : α} (hsym : u[i]? = some a) (hrev : (B.run u)[i]? = u[i]?) :
+    w.ruleL (B.lState (u.take i)) a = a ∧ w.ruleR (B.rState (u.drop (i + 1))) a = a := by
   refine unite_eq_self_iff.mp (Option.some_injective _ (Eq.symm ?_))
-  rw [← hsym, ← hrev, B.getElem?_run, hsym, Option.map_some, hω]
+  rw [← hsym, ← hrev, B.getElem?_run, hsym, Option.map_some, w.output_eq]
 
 end Bimachine
 
@@ -418,9 +436,9 @@ theorem IsNonInteractingBimachineComputable.of_mealyComputable {f : List α → 
     (h : IsMealyComputable f) : IsNonInteractingBimachineComputable f :=
   have ⟨_, _, T, hT⟩ := h
   hT ▸ T.toBimachine_run ▸ T.toBimachine.isNonInteractingBimachineComputable
-    ⟨T.output, fun _ a => a,
-     fun _ a _ => (Bimachine.unite_right_self _ a).trans (Bimachine.unite_left_self _ a).symm,
-     fun _ a _ => (Bimachine.unite_right_self _ a).symm⟩
+    ⟨⟨T.output, fun _ a => a,
+      fun _ a _ => (Bimachine.unite_right_self _ a).trans (Bimachine.unite_left_self _ a).symm,
+      fun _ a _ => (Bimachine.unite_right_self _ a).symm⟩⟩
 
 /-- A map that requires both sides is computed by no non-interacting bimachine. At the
 witness the base changes but each far perturbation reverts: the right perturbation
@@ -428,7 +446,7 @@ keeps the left state, forcing `ωL` inert at this cell; the left perturbation ke
 right state, forcing `ωR` inert; yet the base needs one of them to fire. -/
 theorem RequiresBothSides.not_isNonInteractingBimachineComputable {f : List α → List α}
     (hf : RequiresBothSides f) : ¬ IsNonInteractingBimachineComputable f := by
-  rintro ⟨L, _, R, _, B, rfl, ωL, ωR, -, hω⟩
+  rintro ⟨L, _, R, _, B, rfl, ⟨w⟩⟩
   obtain ⟨base, i, hi, hchange, hw⟩ := hf 0
   obtain ⟨uL, ⟨-, hLag⟩, hLsym, hLrev⟩ := hw .left
   obtain ⟨uR, ⟨-, hRag⟩, hRsym, hRrev⟩ := hw .right
@@ -436,10 +454,10 @@ theorem RequiresBothSides.not_isNonInteractingBimachineComputable {f : List α �
   -- decompose the base's cell, retarget each side's state to the perturbation that
   -- shares it, and silence both rules by `inert_of_reverting`
   apply hchange
-  rw [B.getElem?_run, List.getElem?_eq_getElem hi, Option.map_some, hω,
+  rw [B.getElem?_run, List.getElem?_eq_getElem hi, Option.map_some, w.output_eq,
     hRag.take_eq (by omega), hLag.drop_eq (by omega),
-    (Bimachine.inert_of_reverting hω (hRsym.trans (List.getElem?_eq_getElem hi)) hRrev).1,
-    (Bimachine.inert_of_reverting hω (hLsym.trans (List.getElem?_eq_getElem hi)) hLrev).2,
+    (w.inert_of_reverting (hRsym.trans (List.getElem?_eq_getElem hi)) hRrev).1,
+    (w.inert_of_reverting (hLsym.trans (List.getElem?_eq_getElem hi)) hLrev).2,
     Bimachine.unite_right_self]
 
 end NonInteraction

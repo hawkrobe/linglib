@@ -322,9 +322,9 @@ def maasaiBM : Bimachine Bool Bool Seg Seg :=
 
 /-- `maasaiBM`'s cell output is a `unite` of one-sided raise-rules. -/
 theorem maasaiBM_isNonInteracting : maasaiBM.IsNonInteracting :=
-  ⟨fun l s => if l && s == .recL then .recH else s,
-   fun r s => if r && s == .recL then .recH else s,
-   by decide, by intro l s r; cases s <;> cases l <;> cases r <;> rfl⟩
+  ⟨⟨fun l s => if l && s == .recL then .recH else s,
+    fun r s => if r && s == .recL then .recH else s,
+    by decide, by intro l s r; cases s <;> cases l <;> cases r <;> rfl⟩⟩
 
 private theorem hasDom_split (xs : List Seg) (i : ℕ) (hi : i < xs.length) :
     hasDom xs = (hasDom (xs.take i) || hasDom (xs.drop (i + 1)) || (xs[i] == .dom)) := by
