@@ -351,7 +351,8 @@ theorem tutrugbu_requiresBothSides : RequiresBothSides tutrugbuATR := by
 non-deterministic regular power, above the weakly-deterministic upper bound of
 [heinz-lai-2013]. The capstone: the conjunctive blocking (`tutrugbu_requiresBothSides`)
 cannot be a union of one-sided rules, so no non-interacting bimachine computes it. -/
-theorem tutrugbu_not_weaklyDeterministic : ¬ IsBimachineWeaklyDeterministic tutrugbuATR :=
-  not_isBimachineWeaklyDeterministic_of_requiresBothSides tutrugbu_requiresBothSides
+theorem tutrugbu_not_weaklyDeterministic :
+    ¬ IsNonInteractingBimachineComputable tutrugbuATR :=
+  tutrugbu_requiresBothSides.not_isNonInteractingBimachineComputable
 
 end McCollumEtAl2020

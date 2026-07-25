@@ -320,7 +320,8 @@ def maasaiBM : Bimachine Bool Bool Seg Seg where
 /-- `maasaiBM`'s cell output is a `unite` of one-sided raise-rules. -/
 theorem maasaiBM_isNonInteracting : maasaiBM.IsNonInteracting :=
   ⟨fun l s => if l && s == .recL then .recH else s,
-   fun r s => if r && s == .recL then .recH else s, by
+   fun r s => if r && s == .recL then .recH else s,
+   fun l r s => by cases s <;> cases l <;> cases r <;> simp_all, by
     intro l s r; cases s <;> cases l <;> cases r <;> rfl⟩
 
 /-- The left state after a prefix is exactly "a dominant occurs in it". -/
@@ -376,8 +377,8 @@ theorem maasaiBM_run : maasaiBM.run = maasai := by
 
 /-- **Maasai ATR harmony is weakly deterministic** ([meinhardt-mai-bakovic-mccollum-2024]):
 the bidirectional dominant-recessive spread is a non-interacting bimachine. -/
-theorem maasai_weaklyDeterministic : IsBimachineWeaklyDeterministic maasai :=
-  maasaiBM_run ▸ maasaiBM.isBimachineWeaklyDeterministic maasaiBM_isNonInteracting
+theorem maasai_weaklyDeterministic : IsNonInteractingBimachineComputable maasai :=
+  maasaiBM_run ▸ maasaiBM.isNonInteractingBimachineComputable maasaiBM_isNonInteracting
 
 /-- **Maasai has two-sided unbounded dependence** — at every distance, a medial
 recessive's ATR flips under a dominant placed far to the left *or* far to the right,
@@ -414,7 +415,7 @@ theorem maasai_twoSidedUnboundedDependence : TwoSidedUnboundedDependence maasai 
 /-- Hence Maasai does **not** require both sides — it escapes the teeth, unlike Tutrugbu.
 Covariation (both languages) and interaction (Tutrugbu only) come apart. -/
 theorem maasai_not_requiresBothSides : ¬ RequiresBothSides maasai := fun h =>
-  not_isBimachineWeaklyDeterministic_of_requiresBothSides h maasai_weaklyDeterministic
+  h.not_isNonInteractingBimachineComputable maasai_weaklyDeterministic
 
 /-- Strictness witness `synchronous ⊊ WD`: Maasai is weakly deterministic yet not
 Mealy-computable. A Mealy-computable map is right-myopic

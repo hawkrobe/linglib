@@ -51,12 +51,12 @@ by ever-longer words. The co-located `TwoSidedUnboundedDependence` keeps both
 perturbations on a single shared base, so any computing automaton hits one context
 where neither side alone fixes the output.
 
-`TwoSidedUnboundedDependence` is *not* the weak-determinism boundary: a map can satisfy
-it yet be weakly deterministic (a two-sided *union* is perturbed at one output by either
-side, but neither side alone reverts it). The not-weakly-deterministic classification is
-driven by the strictly stronger `RequiresBothSides`, where perturbing either far side
-reverts the target to the identity — the sufficient condition every published exclusion
-proof instantiates ([yolyan-2025] §5.3).
+`TwoSidedUnboundedDependence` is *not* the non-interaction boundary: a map can satisfy
+it yet be computed by a non-interacting bimachine (a two-sided *union* is perturbed at
+one output by either side, but neither side alone reverts it). Exclusion from the
+non-interacting class is driven by the strictly stronger `RequiresBothSides`, where
+perturbing either far side reverts the target to the identity — the sufficient
+condition every published exclusion proof instantiates ([yolyan-2025] §5.3).
 
 The name is deliberately descriptive rather than borrowed. Being changeable from either
 side is compatible with every individual output coordinate still being fixed by a single

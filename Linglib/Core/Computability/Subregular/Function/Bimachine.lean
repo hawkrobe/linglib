@@ -10,7 +10,7 @@ import Linglib.Core.Computability.Subregular.Function.Dependence
 import Linglib.Core.Data.List.Fold
 
 /-!
-# Bimachines and weak determinism
+# Bimachines and non-interaction
 
 A `Bimachine` ([schutzenberger-1961]; [eilenberg-1974]) computes a letter-to-letter
 string function using **both** directions of context: a left automaton scans `→` and
@@ -24,11 +24,12 @@ letter-to-letter restriction here computes the total length-preserving regular
 functions.
 
 A bimachine over a single alphabet is **non-interacting** when its output is a *union
-of one-sided change-rules over the identity*: each side may add its own change, but
-neither can suppress the other's. `IsBimachineWeaklyDeterministic` is computability by
-such a bimachine. Non-interaction is an extra restriction on the Elgot–Mezei
-factorization, not a consequence of it: the two scans are always available, and the
-condition is that neither suppresses the other.
+of conflict-free one-sided change-rules over the identity*: each side may add its own
+change, the two sides agree wherever both fire, and neither can suppress the other's
+change. `IsNonInteractingBimachineComputable` is computability by such a bimachine.
+Non-interaction is an extra restriction on the Elgot–Mezei factorization, not a
+consequence of it: the two scans are always available, and the condition is that
+neither suppresses the other.
 
 ## Main definitions
 
@@ -38,31 +39,37 @@ condition is that neither suppresses the other.
 * `Bimachine.ofFlags`: the bimachine whose side states are one-bit occurrence flags.
 * `Mealy.toBimachine`: a sequential machine as a bimachine with trivial right automaton.
 * `IsBimachineComputable`: computability by a finite bimachine.
-* `Bimachine.IsNonInteracting`: the cell output is a union of one-sided change-rules
-  over the identity (`Bimachine.unite`).
-* `IsBimachineWeaklyDeterministic`: computability by a non-interacting finite bimachine.
+* `Bimachine.IsNonInteracting`: the cell output is a union of conflict-free one-sided
+  change-rules over the identity (`Bimachine.unite`).
+* `IsNonInteractingBimachineComputable`: computability by a non-interacting finite
+  bimachine.
 
 ## Main theorems
 
 * `Bimachine.getElem?_run`: output `i` is
   `output (lState (x.take i)) (x i) (rState (x.drop (i+1)))`.
-* `not_isBimachineWeaklyDeterministic_of_requiresBothSides`: a map that
-  `RequiresBothSides` is not weakly deterministic — the far perturbations force both
-  one-sided rules inert at the witness cell while the base needs one to fire.
-* `setOf_isBimachineWeaklyDeterministic_ssubset`: the inclusion in the
+* `Bimachine.IsNonInteracting.oneSidedAt_of_change`: at every cell whose output
+  differs from the input symbol, a non-interacting bimachine is one-sided.
+* `RequiresBothSides.not_isNonInteractingBimachineComputable`: a map whose target needs
+  both sides at once is computed by no non-interacting bimachine — the far
+  perturbations force both one-sided rules inert at the witness cell while the base
+  needs one to fire.
+* `setOf_isNonInteractingBimachineComputable_ssubset`: the inclusion in the
   bimachine-computable functions is proper, witnessed by the conjunctive flag
   bimachine `conjBM`.
-* `IsBimachineWeaklyDeterministic.of_mealyComputable`: `IsMealyComputable` sits inside
-  weak determinism.
+* `IsNonInteractingBimachineComputable.of_mealyComputable`: `IsMealyComputable` sits
+  inside the non-interacting class.
 
 ## Implementation notes
 
 Only the left state is threaded through the run (`Bimachine.runFrom`); the recursion
 reads each tail's right state on the spot, so no threaded right-state function is
 needed. The class existentials pin state types at `Type 0`; the universe-polymorphic
-`isBimachineComputable_iff` and `isBimachineWeaklyDeterministic_iff` recover
+`isBimachineComputable_iff` and `isNonInteractingBimachineComputable_iff` recover
 generality. The identification of `IsBimachineComputable` with the total
 length-preserving regular functions is classical and not formalized here.
+
+[UPSTREAM] candidate: `Mathlib.Computability.Bimachine`.
 -/
 
 namespace Subregular
@@ -295,6 +302,8 @@ theorem IsBimachineComputable.of_mealyComputable {f : List α → List β}
   obtain ⟨σ, _, T, rfl⟩ := h
   exact T.toBimachine_run ▸ T.toBimachine.isBimachineComputable
 
+/-! ### Non-interacting bimachines -/
+
 section NonInteraction
 
 variable [DecidableEq α]
@@ -303,8 +312,8 @@ namespace Bimachine
 
 /-- Combine two one-sided change proposals over the identity default `a`: take the left
 rule's change if it fires (`≠ a`), else whatever the right rule proposes. The tie-break
-is asymmetric — when both rules fire with different values the left wins — but every
-use below is symmetric: the exclusion theorem only uses the both-inert direction. -/
+is asymmetric — when both rules fire the left wins — but inert under the
+conflict-freedom `IsNonInteracting` requires. -/
 def unite (cL cR a : α) : α := if cL = a then cR else cL
 
 /-- With the right proposal inert, the union is whatever the left one proposes. -/
@@ -315,17 +324,45 @@ def unite (cL cR a : α) : α := if cL = a then cR else cL
 @[simp] theorem unite_left_self (cR a : α) : unite a cR a = cR := by
   simp [unite]
 
+/-- A firing left proposal wins. -/
+theorem unite_of_left_ne {cL a : α} (h : cL ≠ a) (cR : α) : unite cL cR a = cL := if_neg h
+
 /-- The combined value is the default exactly when *both* one-sided proposals are
 inert. -/
 @[simp] theorem unite_eq_self_iff {cL cR a : α} : unite cL cR a = a ↔ cL = a ∧ cR = a := by
   unfold unite; split_ifs <;> simp_all
 
-/-- **Non-interaction**: the cell output is a *union of one-sided change-rules over the
-identity default* — `ωL`/`ωR` each propose a change for their side, and the output takes
-whichever fires, else leaves the symbol unchanged. Neither side can *suppress* the other's
-change; that asymmetry is exactly what interaction would require. -/
+/-- **Non-interaction**: the cell output is a *union of conflict-free one-sided
+change-rules over the identity default* — `ωL`/`ωR` each propose a change for their
+side, the two agree wherever both fire, and the output takes whichever fires, else
+leaves the symbol unchanged. Neither side can *suppress* the other's change; that
+asymmetry is exactly what interaction would require. -/
 def IsNonInteracting (B : Bimachine L R α α) : Prop :=
-  ∃ (ωL : L → α → α) (ωR : R → α → α), ∀ l a r, B.output l a r = unite (ωL l a) (ωR r a) a
+  ∃ (ωL : L → α → α) (ωR : R → α → α),
+    (∀ l r a, ωL l a ≠ a → ωR r a ≠ a → ωL l a = ωR r a) ∧
+    ∀ l a r, B.output l a r = unite (ωL l a) (ωR r a) a
+
+/-- The output at a cell is determined by one side alone: fixing the input symbol and
+one context state already fixes it. -/
+def OneSidedAt (B : Bimachine L R α β) (l : L) (a : α) (r : R) : Prop :=
+  (∀ r', B.output l a r' = B.output l a r) ∨ (∀ l', B.output l' a r = B.output l a r)
+
+/-- At every cell whose output differs from the input symbol, a non-interacting
+bimachine is one-sided: the change is the left rule's alone or the right rule's alone.
+Conflict-freedom is what makes the firing side's value independent of the other side's
+state. -/
+theorem IsNonInteracting.oneSidedAt_of_change {B : Bimachine L R α α}
+    (h : B.IsNonInteracting) {l : L} {a : α} {r : R} (hne : B.output l a r ≠ a) :
+    B.OneSidedAt l a r := by
+  obtain ⟨ωL, ωR, hcf, hω⟩ := h
+  by_cases hL : ωL l a = a
+  · have hR : ωR r a ≠ a := fun hR => hne (by simp only [hω, hL, hR, unite_left_self])
+    refine .inr fun l' => ?_
+    by_cases hL' : ωL l' a = a
+    · simp only [hω, hL, hL', unite_left_self]
+    · simp only [hω, hL, unite_left_self, unite_of_left_ne hL']
+      exact hcf l' r a hL' hR
+  · exact .inl fun r' => by simp only [hω, unite_of_left_ne hL]
 
 /-- Under a non-interacting cell decomposition, a word whose run leaves target `i`
 unchanged has both of its change-proposals inert there. -/
@@ -338,66 +375,70 @@ theorem inert_of_reverting {B : Bimachine L R α α} {ωL : L → α → α} {ω
 
 end Bimachine
 
-/-- **Weak determinism**: computability by a non-interacting finite bimachine. -/
-def IsBimachineWeaklyDeterministic (f : List α → List α) : Prop :=
+/-- Computability by a non-interacting finite bimachine. -/
+def IsNonInteractingBimachineComputable (f : List α → List α) : Prop :=
   ∃ (L R : Type) (_ : Fintype L) (_ : Fintype R) (B : Bimachine L R α α),
     B.run = f ∧ B.IsNonInteracting
 
-/-- A weakly deterministic function is bimachine-computable, a non-interacting bimachine
-being in particular a bimachine. -/
-theorem IsBimachineComputable.of_weaklyDeterministic {f : List α → List α}
-    (h : IsBimachineWeaklyDeterministic f) : IsBimachineComputable f := by
+/-- A function computed by a non-interacting bimachine is in particular
+bimachine-computable. -/
+theorem IsBimachineComputable.of_nonInteracting {f : List α → List α}
+    (h : IsNonInteractingBimachineComputable f) : IsBimachineComputable f := by
   obtain ⟨L, R, _, _, B, rfl, _⟩ := h
   exact B.isBimachineComputable
 
-/-- A non-interacting finite-state bimachine witnesses `IsBimachineWeaklyDeterministic`
-for its `run`, whatever the universes of its state types: the one-sided rules survive
-the state-space transfer by composing with `e.symm`. -/
-theorem Bimachine.isBimachineWeaklyDeterministic {L R : Type*} [Fintype L] [Fintype R]
-    (B : Bimachine L R α α) (h : B.IsNonInteracting) :
-    IsBimachineWeaklyDeterministic B.run := by
-  obtain ⟨ωL, ωR, hω⟩ := h
+/-- A non-interacting finite-state bimachine witnesses
+`IsNonInteractingBimachineComputable` for its `run`, whatever the universes of its
+state types: the one-sided rules survive the state-space transfer by composing with
+`e.symm`. -/
+theorem Bimachine.isNonInteractingBimachineComputable {L R : Type*} [Fintype L]
+    [Fintype R] (B : Bimachine L R α α) (h : B.IsNonInteracting) :
+    IsNonInteractingBimachineComputable B.run := by
+  obtain ⟨ωL, ωR, hcf, hω⟩ := h
   exact ⟨Fin (Fintype.card L), Fin (Fintype.card R), inferInstance, inferInstance,
     Bimachine.reindex (Fintype.equivFin L) (Fintype.equivFin R) B, B.run_reindex _ _,
     fun l a => ωL ((Fintype.equivFin L).symm l) a,
-    fun r a => ωR ((Fintype.equivFin R).symm r) a, fun l a r => hω _ a _⟩
+    fun r a => ωR ((Fintype.equivFin R).symm r) a,
+    fun l r a hL hR => hcf _ _ a hL hR, fun l a r => hω _ a _⟩
 
-/-- `f` is weakly deterministic if and only if it is computed by a non-interacting
-finite bimachine with state types in any universes. -/
-theorem isBimachineWeaklyDeterministic_iff.{v, w} {f : List α → List α} :
-    IsBimachineWeaklyDeterministic f
+/-- `f` is computed by a non-interacting finite bimachine if and only if it is computed
+by one with state types in any universes. -/
+theorem isNonInteractingBimachineComputable_iff.{v, w} {f : List α → List α} :
+    IsNonInteractingBimachineComputable f
       ↔ ∃ (L : Type v) (R : Type w) (_ : Fintype L) (_ : Fintype R)
           (B : Bimachine L R α α), B.run = f ∧ B.IsNonInteracting := by
   constructor
-  · rintro ⟨L, R, _, _, B, rfl, ωL, ωR, hω⟩
+  · rintro ⟨L, R, _, _, B, rfl, ωL, ωR, hcf, hω⟩
     exact ⟨ULift L, ULift R, inferInstance, inferInstance,
       Bimachine.reindex Equiv.ulift.symm Equiv.ulift.symm B, B.run_reindex _ _,
       fun l a => ωL (Equiv.ulift.symm.symm l) a, fun r a => ωR (Equiv.ulift.symm.symm r) a,
-      fun l a r => hω _ a _⟩
+      fun l r a hL hR => hcf _ _ a hL hR, fun l a r => hω _ a _⟩
   · rintro ⟨L, R, _, _, B, rfl, h⟩
-    exact B.isBimachineWeaklyDeterministic h
+    exact B.isNonInteractingBimachineComputable h
 
-/-- Weakly deterministic functions are length-preserving. -/
-theorem IsBimachineWeaklyDeterministic.length_eq {f : List α → List α}
-    (h : IsBimachineWeaklyDeterministic f) (x : List α) : (f x).length = x.length :=
-  (IsBimachineComputable.of_weaklyDeterministic h).length_eq x
+/-- Functions computed by non-interacting bimachines are length-preserving. -/
+theorem IsNonInteractingBimachineComputable.length_eq {f : List α → List α}
+    (h : IsNonInteractingBimachineComputable f) (x : List α) : (f x).length = x.length :=
+  (IsBimachineComputable.of_nonInteracting h).length_eq x
 
-/-- A Mealy-computable function is weakly deterministic: the bimachine view
-(`Mealy.toBimachine`) has a trivial right automaton, so the cell output is a one-sided
-rule with `ωR` the identity. -/
-theorem IsBimachineWeaklyDeterministic.of_mealyComputable {f : List α → List α}
-    (h : IsMealyComputable f) : IsBimachineWeaklyDeterministic f := by
+/-- A Mealy-computable function is computed by a non-interacting bimachine: the
+bimachine view (`Mealy.toBimachine`) has a trivial right automaton, so the cell output
+is a one-sided rule with `ωR` the identity. -/
+theorem IsNonInteractingBimachineComputable.of_mealyComputable {f : List α → List α}
+    (h : IsMealyComputable f) : IsNonInteractingBimachineComputable f := by
   obtain ⟨σ, _, T, rfl⟩ := h
-  exact T.toBimachine_run ▸ T.toBimachine.isBimachineWeaklyDeterministic
-    ⟨T.output, fun _ a => a, fun l a r => (Bimachine.unite_right_self _ _).symm⟩
+  exact T.toBimachine_run ▸ T.toBimachine.isNonInteractingBimachineComputable
+    ⟨T.output, fun _ a => a, fun _ _ a _ h => absurd rfl h,
+     fun l a r => (Bimachine.unite_right_self _ _).symm⟩
 
-/-- **Unbounded interaction ⟹ not weakly deterministic.** At the witness, the base changes
-but each far perturbation reverts: the right perturbation keeps the left state, forcing `ωL`
-inert at this cell; the left perturbation keeps the right state, forcing `ωR` inert; yet the
-base needs one of them to fire — no union of one-sided rules can produce the change. -/
-theorem not_isBimachineWeaklyDeterministic_of_requiresBothSides {f : List α → List α}
-    (hf : RequiresBothSides f) : ¬ IsBimachineWeaklyDeterministic f := by
-  rintro ⟨L, R, _, _, B, rfl, ωL, ωR, hω⟩
+/-- **Unbounded interaction ⟹ interacting.** At the witness, the base changes but each
+far perturbation reverts: the right perturbation keeps the left state, forcing `ωL`
+inert at this cell; the left perturbation keeps the right state, forcing `ωR` inert; yet
+the base needs one of them to fire — no union of one-sided rules can produce the
+change. -/
+theorem RequiresBothSides.not_isNonInteractingBimachineComputable {f : List α → List α}
+    (hf : RequiresBothSides f) : ¬ IsNonInteractingBimachineComputable f := by
+  rintro ⟨L, R, _, _, B, rfl, ωL, ωR, -, hω⟩
   obtain ⟨base, i, hi, hchange, hw⟩ := hf 0
   obtain ⟨uL, ⟨-, hLag⟩, hLsym, hLrev⟩ := hw .left
   obtain ⟨uR, ⟨-, hRag⟩, hRsym, hRrev⟩ := hw .right
@@ -413,7 +454,7 @@ theorem not_isBimachineWeaklyDeterministic_of_requiresBothSides {f : List α →
 
 end NonInteraction
 
-/-! ### Strictness: weakly deterministic ⊊ bimachine-computable
+/-! ### Strictness: non-interacting ⊊ bimachine-computable
 
 A *conjunctive* change — a symbol flipped iff a mark occurs on **both** sides — is
 bimachine-computable but `RequiresBothSides`, so no non-interacting bimachine computes
@@ -452,14 +493,13 @@ theorem conjBM.requiresBothSides : RequiresBothSides conjBM.run :=
     (fun d => by rw [conjBM_flankWord (by omega) (by omega)]; rfl)
     (fun d => by rw [conjBM_flankWord (by omega) (by omega)]; rfl)
 
-/-- **The weakly deterministic functions are a proper subclass** of the
-bimachine-computable ones: `conjBM` is computed by a bimachine, but by no
-non-interacting one. -/
-theorem setOf_isBimachineWeaklyDeterministic_ssubset :
-    {f : List ConjSym → List ConjSym | IsBimachineWeaklyDeterministic f} ⊂
+/-- **The non-interacting class is a proper subclass** of the bimachine-computable
+functions: `conjBM` is computed by a bimachine, but by no non-interacting one. -/
+theorem setOf_isNonInteractingBimachineComputable_ssubset :
+    {f : List ConjSym → List ConjSym | IsNonInteractingBimachineComputable f} ⊂
       {f | IsBimachineComputable f} :=
-  ⟨fun _ h => IsBimachineComputable.of_weaklyDeterministic h,
-   fun h => not_isBimachineWeaklyDeterministic_of_requiresBothSides
-     conjBM.requiresBothSides (h conjBM.isBimachineComputable)⟩
+  ⟨fun _ h => IsBimachineComputable.of_nonInteracting h,
+   fun h => conjBM.requiresBothSides.not_isNonInteractingBimachineComputable
+     (h conjBM.isBimachineComputable)⟩
 
 end Subregular

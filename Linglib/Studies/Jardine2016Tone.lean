@@ -38,7 +38,7 @@ The map itself and its plateau/circumambience API live in `Phonology/Tone/Platea
 * `utp_not_isSubsequential` — the central theorem (§4.2, online appendix): no
   deterministic FST computes UTP in either direction, via
   `IsLeftSubsequential.bounded_delay` and the reversal symmetry `utp.map_reverse`.
-* `utp_not_isBimachineWeaklyDeterministic` — §5.2, via `RequiresBothSides`: no union of
+* `utp_not_weaklyDeterministic` — §5.2, via `RequiresBothSides`: no union of
   one-sided rules expresses UTP's conjunctive trigger.
 * `utp_markup_decomposition` — (43): with the mark `?`, UTP is right-subsequential after
   left-subsequential; weak determinism forbids exactly this enlargement.
@@ -131,8 +131,8 @@ Under the non-interacting-bimachine rendering of [heinz-lai-2013]'s weak determi
 expresses. -/
 
 /-- UTP is not weakly deterministic (§5.2). -/
-theorem utp_not_isBimachineWeaklyDeterministic : ¬ IsBimachineWeaklyDeterministic utp.map :=
-  not_isBimachineWeaklyDeterministic_of_requiresBothSides utp.requiresBothSides
+theorem utp_not_weaklyDeterministic : ¬ IsNonInteractingBimachineComputable utp.map :=
+  utp.requiresBothSides.not_isNonInteractingBimachineComputable
 
 /-! ### The (43) mark-up decomposition
 
@@ -237,7 +237,7 @@ subsequential in either direction nor weakly deterministic, the bound segmental
 phonology respects. -/
 theorem utp_fullyRegular :
     IsBimachineComputable utp.map ∧ (∀ d, ¬ IsSubsequential d utp.map)
-      ∧ ¬ IsBimachineWeaklyDeterministic utp.map :=
-  ⟨utp_isBimachineComputable, utp_not_isSubsequential, utp_not_isBimachineWeaklyDeterministic⟩
+      ∧ ¬ IsNonInteractingBimachineComputable utp.map :=
+  ⟨utp_isBimachineComputable, utp_not_isSubsequential, utp_not_weaklyDeterministic⟩
 
 end Jardine2016Tone
