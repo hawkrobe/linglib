@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 import Linglib.Core.Computability.Subregular.Function.ISL
 import Linglib.Core.Computability.Subregular.Function.OSL
 import Linglib.Core.Computability.Mealy
+import Linglib.Core.Computability.Subregular.Function.Subsequential
 import Linglib.Core.Computability.Subregular.Function.SideDeterminacy
 import Linglib.Core.Computability.Subregular.Function.Bimachine
 
@@ -118,17 +119,25 @@ depend on input position `1`. -/
 
 section Footprint
 
-variable {α β : Type*}
+variable {σ α β : Type*}
 
-/-- A Mealy-computable map is left-determined at every coordinate — output `i` depends
-only on the prefix `{k | k ≤ i}`. -/
-theorem IsMealyComputable.leftDetermined {f : List α → List β}
-    (hf : IsMealyComputable f) (i : ℕ) : LeftDetermined f i := by
-  obtain ⟨σ, _, T, rfl⟩ := hf
+/-- A synchronous machine is left-determined at every coordinate — output `i` depends only
+on the prefix `{k | k ≤ i}`. Finiteness is irrelevant, so this is stated for the machine. -/
+theorem Mealy.leftDetermined (T : Mealy σ α β) (i : ℕ) : LeftDetermined T.run i := by
   intro u v hlen hag
   simp only [Set.mem_setOf_eq] at hag
   rw [T.getElem?_run u, T.getElem?_run v, hag i le_rfl,
     take_eq_of_agree fun k hk => hag k hk.le]
+
+/-- A synchronous machine is right-myopic: it has no look-ahead. -/
+theorem Mealy.isRightMyopic (T : Mealy σ α β) : IsMyopicTowards T.run .right :=
+  IsMyopicTowards.right_of_leftDetermined T.leftDetermined
+
+/-- A Mealy-computable map is left-determined at every coordinate. -/
+theorem IsMealyComputable.leftDetermined {f : List α → List β}
+    (hf : IsMealyComputable f) (i : ℕ) : LeftDetermined f i := by
+  obtain ⟨σ, _, T, rfl⟩ := hf
+  exact T.leftDetermined i
 
 /-- A Mealy-computable map is right-myopic: it has no look-ahead. -/
 theorem IsMealyComputable.isRightMyopic {f : List α → List β}
