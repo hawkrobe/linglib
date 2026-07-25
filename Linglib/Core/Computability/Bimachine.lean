@@ -4,7 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Mathlib.Data.Fintype.EquivFin
-import Mathlib.Tactic.DeriveFintype
 import Linglib.Core.Computability.Mealy
 import Linglib.Core.Data.Fintype.Transfer
 import Linglib.Core.Computability.Subregular.Function.Dependence
@@ -473,47 +472,36 @@ end
 
 /-! ### Strictness: non-interacting ⊊ bimachine-computable
 
-A *conjunctive* change — a symbol flipped iff a mark occurs on **both** sides — is
-bimachine-computable but `RequiresBothSides`, so no non-interacting bimachine computes
+A *conjunctive* change — a symbol raised iff a mark occurs on **both** sides — is
+bimachine-computable but requires both sides, so no non-interacting bimachine computes
 it. -/
 
-/-- The three-symbol alphabet for the conjunctive witness — a `mark`, a `neutral`
-symbol, and the `flipped` form the neutral symbol takes when both sides are marked. -/
-inductive ConjSym | mark | neutral | flipped
-  deriving DecidableEq, Repr, Fintype
+/-- The conjunctive flag bimachine: a `false` cell is raised exactly when a `true`
+occurs on both sides. -/
+def conjBM : Bimachine Bool Bool Bool Bool := .ofFlags id id fun l s r => s || (l && r)
 
-/-- A neutral symbol flips iff a `mark` occurs on **both** sides — a flag bimachine
-(`ofFlags`) tracking a mark on each side, whose cell genuinely needs both flags
-(`l && r`). -/
-def conjBM : Bimachine Bool Bool ConjSym ConjSym :=
-  .ofFlags (· == .mark) (· == .mark) fun l s r =>
-    if (l && r) && s == .neutral then .flipped else s
+/-- In the middle of a `d`-margined flank word, `conjBM` computes the conjunction of
+the two flanks. -/
+private theorem conjBM_run_mid (x y : Bool) (d : ℕ) :
+    (conjBM.run (flankWord x false y (2 * d + 1)))[d + 1]? = some (x && y) := by
+  rw [conjBM, Bimachine.getElem?_ofFlags_run, getElem?_flankWord_mid (by omega) (by omega),
+    any_take_flankWord rfl (by omega) (by omega), any_drop_flankWord rfl (by omega) (by omega)]
+  rfl
 
-/-- Inside the filler run of a flank word, `conjBM` flips the neutral symbol exactly when
-both flanks are marks. -/
-private theorem conjBM_flankWord {x y : ConjSym} {n k : ℕ} (h0 : 0 < k) (hk : k ≤ n) :
-    (conjBM.run (flankWord x .neutral y n))[k]?
-      = some (if x == .mark && y == .mark then .flipped else .neutral) := by
-  rw [conjBM, Bimachine.getElem?_ofFlags_run, getElem?_flankWord_mid h0 hk,
-    any_take_flankWord (by decide) h0 (by omega),
-    any_drop_flankWord (by decide) (by omega) (by omega)]
-  simp
+/-- The conjunctive change requires both sides: with a mark on each flank the medial
+cell is raised, and demoting either mark alone reverts it — the three-map template, one
+map per argument. -/
+theorem conjBM.requiresBothSides : RequiresBothSides conjBM.run :=
+  .of_flanks (by decide) (fun d => ⟨by omega, by omega⟩) (conjBM_run_mid true true)
+    (conjBM_run_mid false true) (conjBM_run_mid true false)
 
-/-- The non-interacting class is proper inside the bimachine-computable functions:
-`conjBM` is computed by a bimachine, but — with a mark on each flank the medial symbol
-flips, and demoting either mark alone reverts it — it requires both sides
-(`RequiresBothSides.of_flanks`), so no non-interacting bimachine computes it. -/
+/-- The non-interacting class is proper inside the bimachine-computable functions —
+`conjBM` is computed by a bimachine, but by no non-interacting one. -/
 theorem setOf_isNonInteractingBimachineComputable_ssubset :
-    {f : List ConjSym → List ConjSym | IsNonInteractingBimachineComputable f} ⊂
+    {f : List Bool → List Bool | IsNonInteractingBimachineComputable f} ⊂
       {f | IsBimachineComputable f} :=
-  have key : RequiresBothSides conjBM.run :=
-    .of_flanks (fill := .neutral) (on := .flipped) (xOn := .mark) (yOn := .mark)
-      (xOff := .neutral) (yOff := .neutral) (n := fun d => 2 * d + 1)
-      (t := fun d => d + 1) (by decide) (fun d => ⟨by omega, by omega⟩)
-      (fun d => conjBM_flankWord (by omega) (by omega))
-      (fun d => conjBM_flankWord (by omega) (by omega))
-      (fun d => conjBM_flankWord (by omega) (by omega))
   ⟨fun _ h => IsBimachineComputable.of_nonInteracting h,
-   fun h => key.not_isNonInteractingBimachineComputable (h conjBM.isBimachineComputable)⟩
+   fun h => conjBM.requiresBothSides.not_isNonInteractingBimachineComputable
+     (h conjBM.isBimachineComputable)⟩
 
 end Subregular
