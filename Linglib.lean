@@ -76,8 +76,8 @@ import Linglib.Core.Computability.NonContextFree.BlockWitness
 import Linglib.Core.Computability.NonRegular.AnBn
 import Linglib.Core.Computability.StarFree
 import Linglib.Core.Computability.Subregular.Function.Bimachine
-import Linglib.Core.Computability.Subregular.Function.Dependence
 import Linglib.Core.Computability.Subregular.Function.Defs
+import Linglib.Core.Computability.Subregular.Function.Dependence
 import Linglib.Core.Computability.Subregular.Function.ISL
 import Linglib.Core.Computability.Subregular.Function.OSL
 import Linglib.Core.Computability.Subregular.Function.Subsequential

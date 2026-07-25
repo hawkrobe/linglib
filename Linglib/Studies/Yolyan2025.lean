@@ -320,9 +320,9 @@ theorem bemba_requiresBothSides : RequiresBothSides bemba.map :=
     (t := fun d => d + 3) (by decide) (fun d => ⟨by omega, by omega⟩)
     (fun d => bemba.map_getElem?_hi_iff.mpr bembaSurfaces_bw_HL)
     (fun d => bemba.map_getElem?_lo_iff.mpr
-      ⟨by rw [flankWord_length]; omega, not_bembaSurfaces_bw_LL⟩)
+      ⟨by rw [length_flankWord]; omega, not_bembaSurfaces_bw_LL⟩)
     (fun d => bemba.map_getElem?_lo_iff.mpr
-      ⟨by rw [flankWord_length]; omega, not_bembaSurfaces_bw_HH⟩)
+      ⟨by rw [length_flankWord]; omega, not_bembaSurfaces_bw_HH⟩)
 
 /-- **Prop. 5.4**: Bemba high-tone spreading is not weakly deterministic. -/
 theorem bemba_not_bmrsWeaklyDeterministic : ¬ IsBmrsWeaklyDeterministic bemba.map :=

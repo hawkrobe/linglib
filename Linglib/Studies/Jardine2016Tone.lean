@@ -7,8 +7,6 @@ import Linglib.Core.Computability.Subregular.Function.Subsequential
 import Linglib.Core.Computability.Subregular.Function.Dependence
 import Linglib.Core.Computability.Mealy
 import Linglib.Core.Computability.Subregular.Function.Bimachine
-import Linglib.Core.Computability.Subregular.Function.Bimachine
-import Linglib.Core.Computability.Subregular.Function.Subsequential
 import Linglib.Phonology.Autosegmental.OCP
 import Linglib.Phonology.Autosegmental.Junction
 import Linglib.Phonology.Tone.Basic
@@ -77,7 +75,7 @@ def utpBM : Bimachine Bool Bool TBU TBU :=
 theorem utpBM_run : utpBM.run = utp.map := by
   funext w
   refine List.ext_getElem? fun i => ?_
-  rw [utpBM, Bimachine.ofFlags_run_getElem?, utp.map_getElem?]
+  rw [utpBM, Bimachine.getElem?_ofFlags_run, utp.map_getElem?]
   cases h : w[i]? with
   | none => rfl
   | some a =>
@@ -92,7 +90,7 @@ theorem utpBM_run : utpBM.run = utp.map := by
 
 /-- UTP is regular (§4.2): computable by a finite bimachine. -/
 theorem utp_isBimachineComputable : IsBimachineComputable utp.map :=
-  utpBM_run ▸ isBimachineComputable utpBM
+  utpBM_run ▸ utpBM.isBimachineComputable
 
 /-! ### UTP is not subsequential
 

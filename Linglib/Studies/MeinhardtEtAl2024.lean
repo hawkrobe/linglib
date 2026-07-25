@@ -315,7 +315,7 @@ def maasaiBM : Bimachine Bool Bool Seg Seg where
   lStep l s := l || (s == .dom)
   rInit := false
   rStep r s := r || (s == .dom)
-  out l s r := if (l || r) && s == .recL then .recH else s
+  output l s r := if (l || r) && s == .recL then .recH else s
 
 /-- `maasaiBM`'s cell output is a `unite` of one-sided raise-rules. -/
 theorem maasaiBM_isNonInteracting : maasaiBM.IsNonInteracting :=
@@ -352,7 +352,7 @@ private theorem hasDom_split (xs : List Seg) (i : ℕ) (hi : i < xs.length) :
     cases (xs[i] == Seg.dom) <;> rfl
 
 private theorem maasaiBM_cell_eq (xs : List Seg) (i : ℕ) (hi : i < xs.length) :
-    maasaiBM.out (maasaiBM.lState (xs.take i)) xs[i] (maasaiBM.rState (xs.drop (i + 1)))
+    maasaiBM.output (maasaiBM.lState (xs.take i)) xs[i] (maasaiBM.rState (xs.drop (i + 1)))
     = if hasDom xs && xs[i] == .recL then .recH else xs[i] := by
   rw [maasaiBM_lState, maasaiBM_rState, hasDom_split xs i hi]
   show (if (((xs.take i).any (· == .dom) || (xs.drop (i + 1)).any (· == .dom)) && xs[i] == .recL)
@@ -366,7 +366,7 @@ theorem maasaiBM_run : maasaiBM.run = maasai := by
   funext xs
   apply List.ext_getElem?
   intro i
-  rw [maasaiBM.run_getElem?]
+  rw [maasaiBM.getElem?_run]
   rcases lt_or_ge i xs.length with hi | hi
   · rw [List.getElem?_eq_getElem hi, Option.map_some, maasaiBM_cell_eq xs i hi]
     simp only [maasai, List.getElem?_map, List.getElem?_eq_getElem hi, Option.map_some, hasDom]
@@ -377,7 +377,7 @@ theorem maasaiBM_run : maasaiBM.run = maasai := by
 /-- **Maasai ATR harmony is weakly deterministic** ([meinhardt-mai-bakovic-mccollum-2024]):
 the bidirectional dominant-recessive spread is a non-interacting bimachine. -/
 theorem maasai_weaklyDeterministic : IsBimachineWeaklyDeterministic maasai :=
-  maasaiBM_run ▸ isBimachineWeaklyDeterministic maasaiBM maasaiBM_isNonInteracting
+  maasaiBM_run ▸ maasaiBM.isBimachineWeaklyDeterministic maasaiBM_isNonInteracting
 
 /-- **Maasai has two-sided unbounded dependence** — at every distance, a medial
 recessive's ATR flips under a dominant placed far to the left *or* far to the right,

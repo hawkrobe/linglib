@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Mathlib.Data.Fintype.EquivFin
+import Mathlib.Tactic.DeriveFintype
 import Linglib.Core.Computability.Mealy
 import Linglib.Core.Computability.Subregular.Function.Dependence
 import Linglib.Core.Data.List.Fold
@@ -11,144 +12,181 @@ import Linglib.Core.Data.List.Fold
 /-!
 # Bimachines and weak determinism
 
-A `Bimachine` ([eilenberg-1974]; [mohri-1997]) computes a letter-to-letter string
-function using **both** directions of context: a left automaton scans `→` and assigns a
-left state to each position, a right automaton scans `←` and assigns a right state, and
-the output at position `i` is `out (leftState before i) (input i) (rightState after i)`.
-Bimachines are exactly the transducers of the semi-monomial representations, so by the
-decomposition theorem of [elgot-mezei-1965] they compute the rational functions — every
-one factors as a left-to-right scan followed by a right-to-left one.
+A `Bimachine` ([schutzenberger-1961]; [eilenberg-1974]) computes a letter-to-letter
+string function using **both** directions of context: a left automaton scans `→` and
+assigns a left state to each position, a right automaton scans `←` and assigns a right
+state, and output `i` is `output (lState (x.take i)) (x i) (rState (x.drop (i+1)))`.
+Word-output bimachines compute exactly the rational functions — the decomposition
+theorem of [elgot-mezei-1965] factors every one as a left-to-right scan followed by a
+right-to-left one, and bimachines are the transducers of the semi-monomial
+representations of [schutzenberger-1976] (see the notes of [sakarovitch-2009]). The
+letter-to-letter restriction here computes the total length-preserving regular
+functions.
 
-A bimachine over a single alphabet is **non-interacting** when its output is a *union of
-one-sided change-rules over the identity*: each side may add its own change, but neither
-can suppress the other's. `IsBimachineWeaklyDeterministic` is computability by such a
-bimachine. Note that non-interaction is an extra restriction on the Elgot–Mezei
+A bimachine over a single alphabet is **non-interacting** when its output is a *union
+of one-sided change-rules over the identity*: each side may add its own change, but
+neither can suppress the other's. `IsBimachineWeaklyDeterministic` is computability by
+such a bimachine. Non-interaction is an extra restriction on the Elgot–Mezei
 factorization, not a consequence of it: the two scans are always available, and the
 condition is that neither suppresses the other.
 
-## Main results
+## Main definitions
 
-* `Bimachine.run_getElem?` — output `i` is `out (lState (x.take i)) (x i) (rState (x.drop (i+1)))`.
-* `not_isBimachineWeaklyDeterministic_of_requiresBothSides` — a map with an unbounded
-  *interaction* (`RequiresBothSides`: the target is changed, yet perturbing either far side
-  reverts it) is **not** weakly deterministic. The far perturbations force both one-sided
-  rules inert at the witness cell while the base needs one to fire — no union of one-sided
-  rules can produce the change. A conjunctive change satisfies it; a two-sided union does
-  not.
-* `weaklyDeterministic_strict_subset_regular` — the inclusion is proper, witnessed by the
-  conjunctive flag bimachine `conjBM`.
-* `IsBimachineWeaklyDeterministic.of_mealyComputable` — a synchronous machine is the
-  degenerate bimachine with a trivial right automaton, so `IsMealyComputable` sits inside
+* `Bimachine`: two contradirectional automata and a cell output reading both states.
+* `Bimachine.run`: the computed function; `Bimachine.reindex` transports machines
+  along state equivalences.
+* `Bimachine.ofFlags`: the bimachine whose side states are one-bit occurrence flags.
+* `Mealy.toBimachine`: a sequential machine as a bimachine with trivial right automaton.
+* `IsBimachineComputable`: computability by a finite bimachine.
+* `Bimachine.IsNonInteracting`: the cell output is a union of one-sided change-rules
+  over the identity (`Bimachine.unite`).
+* `IsBimachineWeaklyDeterministic`: computability by a non-interacting finite bimachine.
+
+## Main theorems
+
+* `Bimachine.getElem?_run`: output `i` is
+  `output (lState (x.take i)) (x i) (rState (x.drop (i+1)))`.
+* `not_isBimachineWeaklyDeterministic_of_requiresBothSides`: a map that
+  `RequiresBothSides` is not weakly deterministic — the far perturbations force both
+  one-sided rules inert at the witness cell while the base needs one to fire.
+* `setOf_isBimachineWeaklyDeterministic_ssubset`: the inclusion in the
+  bimachine-computable functions is proper, witnessed by the conjunctive flag
+  bimachine `conjBM`.
+* `IsBimachineWeaklyDeterministic.of_mealyComputable`: `IsMealyComputable` sits inside
   weak determinism.
 
-## TODO
+## Implementation notes
 
-* `IsLeftSubsequential ⊊ IsBimachineWeaklyDeterministic`. No witness is formalized here.
-  Note that non-myopia refutes only *synchronous* computability, via
-  `IsMealyComputable.boundedDependence_right`: a block transducer may delay its output, so its
-  coordinate `i` is not fixed by the prefix, and excluding one takes the bounded-delay
-  route (`IsLeftSubsequential.bounded_delay`) instead.
+Only the left state is threaded through the run (`Bimachine.runFrom`); the recursion
+reads each tail's right state on the spot, so no threaded right-state function is
+needed. The class existentials pin state types at `Type 0`; the universe-polymorphic
+`isBimachineComputable_iff` and `isBimachineWeaklyDeterministic_iff` recover
+generality. The identification of `IsBimachineComputable` with the total
+length-preserving regular functions is classical and not formalized here.
 -/
 
 namespace Subregular
 
 variable {L R α β : Type*}
 
-/-- A bimachine: a left automaton (`lInit`/`lStep`, scanning `→`), a right automaton
-(`rInit`/`rStep`, scanning `←` over the suffix), and a cell output `out` reading both
-context states and the current symbol. -/
+/-- A bimachine: a left automaton scanning left to right, a right automaton scanning
+right to left, and a cell output reading both context states and the current symbol. -/
 structure Bimachine (L R α β : Type*) where
+  /-- Starting state of the left automaton. -/
   lInit : L
+  /-- Transition of the left automaton, scanning left to right. -/
   lStep : L → α → L
+  /-- Starting state of the right automaton. -/
   rInit : R
+  /-- Transition of the right automaton, scanning right to left. -/
   rStep : R → α → R
-  out : L → α → R → β
+  /-- Cell output: the symbol emitted from the two context states and the input
+  symbol. -/
+  output : L → α → R → β
+
+instance [Inhabited L] [Inhabited R] [Inhabited β] : Inhabited (Bimachine L R α β) :=
+  ⟨⟨default, fun _ _ => default, default, fun _ _ => default, fun _ _ _ => default⟩⟩
 
 namespace Bimachine
 
 variable (B : Bimachine L R α β)
 
-/-- Left state after scanning a prefix left-to-right. -/
-def lState (pre : List α) : L := pre.foldl B.lStep B.lInit
+/-- `B.lStateAfter l pre` is the left state reached from `l` after scanning `pre`. -/
+def lStateAfter (l : L) : List α → L := List.foldl B.lStep l
+
+/-- Left state after scanning a prefix left-to-right from the start state. -/
+def lState : List α → L := B.lStateAfter B.lInit
+
 /-- Right state after scanning a suffix right-to-left. -/
 def rState (suf : List α) : R := suf.foldr (fun a r => B.rStep r a) B.rInit
 
-theorem lState_nil : B.lState [] = B.lInit := rfl
-theorem rState_nil : B.rState [] = B.rInit := rfl
+@[simp] theorem lStateAfter_nil (l : L) : B.lStateAfter l [] = l := rfl
+@[simp] theorem lStateAfter_cons (l : L) (x : α) (xs : List α) :
+    B.lStateAfter l (x :: xs) = B.lStateAfter (B.lStep l x) xs := rfl
+@[simp] theorem lState_nil : B.lState [] = B.lInit := rfl
+@[simp] theorem rState_nil : B.rState [] = B.rInit := rfl
+@[simp] theorem rState_cons (x : α) (xs : List α) :
+    B.rState (x :: xs) = B.rStep (B.rState xs) x := rfl
 
-/-- Run threading the left state; each tail's right state is read on the spot. -/
-def runAux (B : Bimachine L R α β) : L → List α → List β
+/-- `B.runFrom l x` runs `B` on `x` threading the left state from `l`; each tail's
+right state is read on the spot. -/
+def runFrom : L → List α → List β
   | _, [] => []
-  | l, x :: xs => B.out l x (B.rState xs) :: B.runAux (B.lStep l x) xs
+  | l, x :: xs => B.output l x (B.rState xs) :: runFrom (B.lStep l x) xs
 
 /-- The computed function. -/
-def run (x : List α) : List β := B.runAux B.lInit x
+def run : List α → List β := B.runFrom B.lInit
 
-@[simp] theorem runAux_nil (l : L) : B.runAux l [] = [] := rfl
-@[simp] theorem runAux_cons (l : L) (x : α) (xs : List α) :
-    B.runAux l (x :: xs) = B.out l x (B.rState xs) :: B.runAux (B.lStep l x) xs := rfl
+@[simp] theorem runFrom_nil (l : L) : B.runFrom l [] = [] := rfl
+@[simp] theorem runFrom_cons (l : L) (x : α) (xs : List α) :
+    B.runFrom l (x :: xs) = B.output l x (B.rState xs) :: B.runFrom (B.lStep l x) xs := rfl
 
-theorem runAux_length (l : L) (xs : List α) :
-    (B.runAux l xs).length = xs.length := by
-  induction xs generalizing l with
-  | nil => rfl
-  | cons x xs ih => simp [ih]
+/-- The run is length-preserving (one output symbol per input symbol). -/
+@[simp] theorem length_runFrom (l : L) (xs : List α) :
+    (B.runFrom l xs).length = xs.length := by
+  induction xs generalizing l <;> simp [*]
 
-theorem run_length (x : List α) : (B.run x).length = x.length :=
-  B.runAux_length B.lInit x
+@[simp] theorem length_run (xs : List α) : (B.run xs).length = xs.length :=
+  B.length_runFrom B.lInit xs
 
-/-- **Coordinate characterization** (threaded form). -/
-theorem runAux_getElem? (l : L) (xs : List α) (i : ℕ) :
-    (B.runAux l xs)[i]?
-      = (xs[i]?).map (fun a => B.out ((xs.take i).foldl B.lStep l) a (B.rState (xs.drop (i + 1)))) := by
-  induction xs generalizing l i with
-  | nil => simp
-  | cons x xs ih =>
-    cases i with
-    | zero => simp
-    | succ j => simp [ih, List.take_succ_cons]
+/-- Output coordinate `i` reads the left state after the length-`i` prefix and the
+right state of the strict suffix. -/
+theorem getElem?_runFrom (l : L) (xs : List α) (i : ℕ) :
+    (B.runFrom l xs)[i]? = xs[i]?.map fun a =>
+      B.output (B.lStateAfter l (xs.take i)) a (B.rState (xs.drop (i + 1))) := by
+  induction xs generalizing l i <;> cases i <;> simp [*]
 
-/-- **Coordinate characterization**: output `i` is `out (lState (x.take i)) (x i)
-(rState (x.drop (i+1)))`. -/
-theorem run_getElem? (x : List α) (i : ℕ) :
-    (B.run x)[i]?
-      = (x[i]?).map (fun a => B.out (B.lState (x.take i)) a (B.rState (x.drop (i + 1)))) := by
-  rw [run, runAux_getElem?]; rfl
+/-- **Coordinate characterization**: output `i` is
+`output (lState (x.take i)) (x i) (rState (x.drop (i+1)))`. -/
+theorem getElem?_run (x : List α) (i : ℕ) :
+    (B.run x)[i]? = x[i]?.map fun a =>
+      B.output (B.lState (x.take i)) a (B.rState (x.drop (i + 1))) :=
+  B.getElem?_runFrom B.lInit x i
+
+/-! ### Reindexing states -/
 
 variable {L' R' : Type*}
 
 /-- Lifts equivalences on the two state spaces to an equivalence on bimachines. -/
-@[simps apply_lInit apply_lStep apply_rInit apply_rStep apply_out]
+@[simps apply_lInit apply_lStep apply_rInit apply_rStep apply_output]
 def reindex (eL : L ≃ L') (eR : R ≃ R') : Bimachine L R α β ≃ Bimachine L' R' α β where
   toFun B := {
     lInit := eL B.lInit
     lStep := fun l a => eL (B.lStep (eL.symm l) a)
     rInit := eR B.rInit
     rStep := fun r a => eR (B.rStep (eR.symm r) a)
-    out := fun l a r => B.out (eL.symm l) a (eR.symm r)
+    output := fun l a r => B.output (eL.symm l) a (eR.symm r)
   }
   invFun B := {
     lInit := eL.symm B.lInit
     lStep := fun l a => eL.symm (B.lStep (eL l) a)
     rInit := eR.symm B.rInit
     rStep := fun r a => eR.symm (B.rStep (eR r) a)
-    out := fun l a r => B.out (eL l) a (eR r)
+    output := fun l a r => B.output (eL l) a (eR r)
   }
   left_inv B := by simp
   right_inv B := by simp
 
+@[simp] theorem reindex_refl : reindex (Equiv.refl L) (Equiv.refl R) B = B := rfl
+
+@[simp] theorem symm_reindex (eL : L ≃ L') (eR : R ≃ R') :
+    (reindex (α := α) (β := β) eL eR).symm = reindex eL.symm eR.symm := rfl
+
+@[simp] theorem lStateAfter_reindex (eL : L ≃ L') (eR : R ≃ R') (l' : L') (pre : List α) :
+    (reindex eL eR B).lStateAfter l' pre = eL (B.lStateAfter (eL.symm l') pre) := by
+  induction pre generalizing l' <;> simp [*]
+
 @[simp] theorem lState_reindex (eL : L ≃ L') (eR : R ≃ R') (pre : List α) :
-    (reindex eL eR B).lState pre = eL (B.lState pre) :=
-  List.foldl_hom eL fun y x => by simp
+    (reindex eL eR B).lState pre = eL (B.lState pre) := by
+  simp [lState]
 
 @[simp] theorem rState_reindex (eL : L ≃ L') (eR : R ≃ R') (suf : List α) :
     (reindex eL eR B).rState suf = eR (B.rState suf) :=
   List.foldr_hom eR fun x y => by simp
 
-@[simp] theorem runAux_reindex (eL : L ≃ L') (eR : R ≃ R')
-    (l : L) (xs : List α) :
-    (reindex eL eR B).runAux (eL l) xs = B.runAux l xs := by
-  induction xs generalizing l <;> simp [*]
+@[simp] theorem runFrom_reindex (eL : L ≃ L') (eR : R ≃ R') (l' : L') (xs : List α) :
+    (reindex eL eR B).runFrom l' xs = B.runFrom (eL.symm l') xs := by
+  induction xs generalizing l' <;> simp [*]
 
 /-- The reindexed bimachine computes the same string function. -/
 @[simp] theorem run_reindex (eL : L ≃ L') (eR : R ≃ R') :
@@ -170,44 +208,96 @@ def ofFlags : Bimachine Bool Bool α β where
   lStep l a := l || pL a
   rInit := false
   rStep r a := r || pR a
-  out := out
+  output := out
 
-@[simp] theorem ofFlags_lState (xs : List α) : (ofFlags pL pR out).lState xs = xs.any pL := by
-  simp [lState, ofFlags, List.foldl_or]
+@[simp] theorem ofFlags_lInit : (ofFlags pL pR out).lInit = false := rfl
+@[simp] theorem ofFlags_lStep (l : Bool) (a : α) :
+    (ofFlags pL pR out).lStep l a = (l || pL a) := rfl
+@[simp] theorem ofFlags_rInit : (ofFlags pL pR out).rInit = false := rfl
+@[simp] theorem ofFlags_rStep (r : Bool) (a : α) :
+    (ofFlags pL pR out).rStep r a = (r || pR a) := rfl
+@[simp] theorem ofFlags_output : (ofFlags pL pR out).output = out := rfl
 
-@[simp] theorem ofFlags_rState (xs : List α) : (ofFlags pL pR out).rState xs = xs.any pR := by
-  show xs.foldr (fun a r => r || pR a) false = _
-  induction xs <;> simp_all [Bool.or_comm]
+@[simp] theorem ofFlags_lState (xs : List α) : (ofFlags pL pR out).lState xs = xs.any pL :=
+  List.foldl_or pL false xs
+
+@[simp] theorem ofFlags_rState (xs : List α) : (ofFlags pL pR out).rState xs = xs.any pR :=
+  List.foldr_or pR false xs
 
 /-- Coordinate characterization of a flag bimachine: output `i` sees the input symbol and
 the two window-`any` flags. -/
-theorem ofFlags_run_getElem?
-    (x : List α) (i : ℕ) :
+theorem getElem?_ofFlags_run (x : List α) (i : ℕ) :
     ((ofFlags pL pR out).run x)[i]?
-      = (x[i]?).map fun a => out ((x.take i).any pL) a ((x.drop (i + 1)).any pR) := by
-  simp only [run_getElem?, ofFlags_lState, ofFlags_rState]
-  rfl
+      = x[i]?.map fun a => out ((x.take i).any pL) a ((x.drop (i + 1)).any pR) := by
+  simp [getElem?_run]
 
 end Bimachine
 
-/-! ### Weak determinism -/
+/-! ### Sequential machines as bimachines -/
 
-/-- Computability by a finite bimachine (the length-preserving regular functions). -/
+section ToBimachine
+
+variable {σ : Type*}
+
+/-- A sequential machine as the bimachine whose left automaton does all the work and
+whose right automaton is trivial. -/
+@[simps]
+def Mealy.toBimachine (T : Mealy σ α β) : Bimachine σ Unit α β where
+  lInit := T.initial
+  lStep := T.step
+  rInit := ()
+  rStep _ _ := ()
+  output l a _ := T.output l a
+
+@[simp] theorem Mealy.toBimachine_runFrom (T : Mealy σ α β) (s : σ) (xs : List α) :
+    T.toBimachine.runFrom s xs = T.runFrom s xs := by
+  induction xs generalizing s <;> simp [*]
+
+/-- The bimachine view computes the same string function. -/
+@[simp] theorem Mealy.toBimachine_run (T : Mealy σ α β) : T.toBimachine.run = T.run :=
+  funext fun xs => T.toBimachine_runFrom T.initial xs
+
+end ToBimachine
+
+/-! ### The bimachine-computable class -/
+
+/-- Computability by a finite bimachine — the total length-preserving regular
+functions (the identification is classical; see the module docstring). -/
 def IsBimachineComputable (f : List α → List β) : Prop :=
   ∃ (L R : Type) (_ : Fintype L) (_ : Fintype R) (B : Bimachine L R α β), B.run = f
 
-/-- **Constructor lemma**: every finite-state bimachine witnesses `IsBimachineComputable`
-for its `run`. States are accepted at arbitrary `Type*` and brought down to
-`Fin (Fintype.card ·) : Type 0` via `reindex` + `Fintype.equivFin`, so consumers stop
-spelling the `∃ (L R : Type)` quadruple. Mirrors `SFST.isLeftSubsequential`. -/
-theorem isBimachineComputable {L R : Type*} [Fintype L] [Fintype R] {α β : Type*}
+/-- Every finite-state bimachine computes a bimachine-computable function, whatever
+the universes of its state types. -/
+theorem Bimachine.isBimachineComputable {L R : Type*} [Fintype L] [Fintype R]
     (B : Bimachine L R α β) : IsBimachineComputable B.run :=
   ⟨Fin (Fintype.card L), Fin (Fintype.card R), inferInstance, inferInstance,
     Bimachine.reindex (Fintype.equivFin L) (Fintype.equivFin R) B, B.run_reindex _ _⟩
 
+/-- `f` is bimachine-computable if and only if it is computed by a finite bimachine
+with state types in any universes. -/
+theorem isBimachineComputable_iff.{v, w} {f : List α → List β} :
+    IsBimachineComputable f
+      ↔ ∃ (L : Type v) (R : Type w) (_ : Fintype L) (_ : Fintype R)
+          (B : Bimachine L R α β), B.run = f :=
+  ⟨fun ⟨L, R, _, _, B, h⟩ => ⟨ULift L, ULift R, inferInstance, inferInstance,
+      Bimachine.reindex Equiv.ulift.symm Equiv.ulift.symm B, h ▸ B.run_reindex _ _⟩,
+   fun ⟨_, _, _, _, B, h⟩ => h ▸ B.isBimachineComputable⟩
+
+/-- Bimachine-computable functions are length-preserving. -/
+theorem IsBimachineComputable.length_eq {f : List α → List β}
+    (h : IsBimachineComputable f) (x : List α) : (f x).length = x.length := by
+  obtain ⟨L, R, _, _, B, rfl⟩ := h
+  exact B.length_run x
+
+/-- A Mealy-computable function is bimachine-computable (`Mealy.toBimachine`). -/
+theorem IsBimachineComputable.of_mealyComputable {f : List α → List β}
+    (h : IsMealyComputable f) : IsBimachineComputable f := by
+  obtain ⟨σ, _, T, rfl⟩ := h
+  exact T.toBimachine_run ▸ T.toBimachine.isBimachineComputable
+
 section TwoSidedWitness
 
-variable {α : Type*} {x fill y a : α} {n k : ℕ} {p : α → Bool}
+variable {x fill y a : α} {n k : ℕ} {p : α → Bool}
 
 /-! ### The flank-witness template
 
@@ -219,50 +309,46 @@ and of the two single-flank perturbations, at the target coordinate. -/
 /-- A flank-controlled word: `x`, then `n` copies of `fill`, then `y`. -/
 def flankWord (x fill y : α) (n : ℕ) : List α := x :: (List.replicate n fill ++ [y])
 
-@[simp] theorem flankWord_length :
+@[simp] theorem length_flankWord :
     (flankWord x fill y n).length = n + 2 := by
   simp [flankWord]
 
-theorem flankWord_getElem? :
+theorem getElem?_flankWord :
     (flankWord x fill y n)[k]? = if k = 0 then some x else if k = n + 1 then some y
       else if k < n + 2 then some fill else none := by
   simp only [flankWord, List.getElem?_cons, List.getElem?_append, List.getElem?_replicate,
     List.length_replicate, List.getElem?_nil]
   split_ifs <;> first | rfl | omega
 
-@[simp] theorem flankWord_getElem?_zero :
+@[simp] theorem getElem?_flankWord_zero :
     (flankWord x fill y n)[0]? = some x := rfl
 
-@[simp] theorem flankWord_getElem?_last :
+@[simp] theorem getElem?_flankWord_last :
     (flankWord x fill y n)[n + 1]? = some y := by
-  rw [flankWord_getElem?]
-  split_ifs <;> first | rfl | exact ‹False›.elim | omega
+  rw [getElem?_flankWord]; simp
 
-theorem flankWord_getElem?_mid (h₁ : 0 < k) (h₂ : k ≤ n) :
+theorem getElem?_flankWord_mid (h₁ : 0 < k) (h₂ : k ≤ n) :
     (flankWord x fill y n)[k]? = some fill := by
-  rw [flankWord_getElem?]
+  rw [getElem?_flankWord]
   split_ifs <;> first | rfl | exact ‹False›.elim | omega
 
 /-- A non-filler value sits only on a flank. -/
-theorem flankWord_getElem?_eq_some_iff {j : ℕ} (hfill : fill ≠ a) :
+theorem getElem?_flankWord_eq_some_iff {j : ℕ} (hfill : fill ≠ a) :
     (flankWord x fill y n)[j]? = some a ↔ j = 0 ∧ x = a ∨ j = n + 1 ∧ y = a := by
-  rw [flankWord_getElem?]
+  rw [getElem?_flankWord]
   split_ifs <;> simp_all
 
 /-- A window reaching at most the filler run hits `a` iff the left flank is `a`. -/
 theorem exists_le_flankWord_eq_some_iff (hfill : fill ≠ a) (hk : k ≤ n) :
     (∃ j ≤ k, (flankWord x fill y n)[j]? = some a) ↔ x = a := by
-  simp [flankWord_getElem?_eq_some_iff hfill, and_or_left, exists_or,
+  simp [getElem?_flankWord_eq_some_iff hfill, and_or_left, exists_or,
     eq_false (by omega : ¬ (n + 1 ≤ k))]
 
 /-- A window past the left flank hits `a` iff the right flank is `a`. -/
 theorem exists_ge_flankWord_eq_some_iff (hfill : fill ≠ a) (h0 : 0 < k)
     (hk : k ≤ n + 1) : (∃ j ≥ k, (flankWord x fill y n)[j]? = some a) ↔ y = a := by
-  simp only [flankWord_getElem?_eq_some_iff hfill]
-  constructor
-  · rintro ⟨j, hj, ⟨rfl, hx⟩ | ⟨rfl, hy⟩⟩
-    exacts [absurd hj (by omega), hy]
-  · exact fun h => ⟨n + 1, hk, .inr ⟨rfl, h⟩⟩
+  simp [getElem?_flankWord_eq_some_iff hfill, and_or_left, exists_or,
+    eq_false (by omega : ¬ (k ≤ 0)), hk]
 
 /-- A flag over a window reaching at most the filler run reads the left flank — the
 `ofFlags` counterpart of `exists_le_flankWord_eq_some_iff`. -/
@@ -284,14 +370,12 @@ theorem any_drop_flankWord (hfill : p fill = false) (h0 : 0 < k) (hk : k ≤ n +
 /-- Flank words differing only on the left agree off position `0`. -/
 theorem flankWord_congr_left {x' : α} (h : k ≠ 0) :
     (flankWord x fill y n)[k]? = (flankWord x' fill y n)[k]? := by
-  rw [flankWord_getElem?, flankWord_getElem?]
-  split_ifs <;> first | rfl | exact ‹False›.elim | omega
+  simp only [getElem?_flankWord, if_neg h]
 
 /-- Flank words differing only on the right agree off the last position. -/
 theorem flankWord_congr_right {y' : α} (h : k ≠ n + 1) :
     (flankWord x fill y n)[k]? = (flankWord x fill y' n)[k]? := by
-  rw [flankWord_getElem?, flankWord_getElem?]
-  split_ifs <;> rfl
+  simp only [getElem?_flankWord, if_neg h]
 
 /-- `f` requires both sides: some target changes under `f`, yet perturbing either far
 side reverts it to the identity. Unlike `TwoSidedUnboundedDependence`, a two-sided union
@@ -314,8 +398,8 @@ theorem RequiresBothSides.of_flanks {f : List α → List α}
   intro d
   obtain ⟨hm₁, hm₂⟩ := hmargin d
   have hmid : ∀ x y : α, (flankWord x fill y (n d))[t d]? = some fill := fun x y =>
-    flankWord_getElem?_mid (by omega) (by omega)
-  refine ⟨flankWord xOn fill yOn (n d), t d, by rw [flankWord_length]; omega,
+    getElem?_flankWord_mid (by omega) (by omega)
+  refine ⟨flankWord xOn fill yOn (n d), t d, by rw [length_flankWord]; omega,
     by rw [hchange, hmid]; simpa using hne, fun s => ?_⟩
   match s with
   | .left =>
@@ -341,26 +425,46 @@ end TwoSidedWitness
 
 section NonInteraction
 
-variable {L R α : Type*} [DecidableEq α]
+variable [DecidableEq α]
+
+namespace Bimachine
 
 /-- Combine two one-sided change proposals over the identity default `a`: take the left
-rule's change if it fires (`≠ a`), else the right rule's, else leave the symbol. -/
-def unite (cL cR a : α) : α := if cL = a then (if cR = a then a else cR) else cL
+rule's change if it fires (`≠ a`), else whatever the right rule proposes. The tie-break
+is asymmetric — when both rules fire with different values the left wins — but every
+use below is symmetric: the exclusion theorem only uses the both-inert direction. -/
+def unite (cL cR a : α) : α := if cL = a then cR else cL
 
 /-- With the right proposal inert, the union is whatever the left one proposes. -/
 @[simp] theorem unite_right_self (cL a : α) : unite cL a a = cL := by
-  unfold unite; split_ifs <;> simp_all
+  unfold unite; split_ifs with h <;> simp [h]
 
-/-- A combined value equal to the default forces *both* one-sided proposals to be inert. -/
-theorem unite_eq_default {cL cR a : α} (h : unite cL cR a = a) : cL = a ∧ cR = a := by
-  unfold unite at h; split_ifs at h with h1 h2 <;> simp_all
+/-- With the left proposal inert, the union is whatever the right one proposes. -/
+@[simp] theorem unite_left_self (cR a : α) : unite a cR a = cR := by
+  simp [unite]
+
+/-- The combined value is the default exactly when *both* one-sided proposals are
+inert. -/
+@[simp] theorem unite_eq_self_iff {cL cR a : α} : unite cL cR a = a ↔ cL = a ∧ cR = a := by
+  unfold unite; split_ifs <;> simp_all
 
 /-- **Non-interaction**: the cell output is a *union of one-sided change-rules over the
 identity default* — `ωL`/`ωR` each propose a change for their side, and the output takes
 whichever fires, else leaves the symbol unchanged. Neither side can *suppress* the other's
 change; that asymmetry is exactly what interaction would require. -/
-def Bimachine.IsNonInteracting (B : Bimachine L R α α) : Prop :=
-  ∃ (ωL : L → α → α) (ωR : R → α → α), ∀ l a r, B.out l a r = unite (ωL l a) (ωR r a) a
+def IsNonInteracting (B : Bimachine L R α α) : Prop :=
+  ∃ (ωL : L → α → α) (ωR : R → α → α), ∀ l a r, B.output l a r = unite (ωL l a) (ωR r a) a
+
+/-- Under a non-interacting cell decomposition, a word whose run leaves target `i`
+unchanged has both of its change-proposals inert there. -/
+theorem inert_of_reverting {B : Bimachine L R α α} {ωL : L → α → α} {ωR : R → α → α}
+    (hω : ∀ l a r, B.output l a r = unite (ωL l a) (ωR r a) a) {u : List α} {i : ℕ} {a : α}
+    (hsym : u[i]? = some a) (hrev : (B.run u)[i]? = u[i]?) :
+    ωL (B.lState (u.take i)) a = a ∧ ωR (B.rState (u.drop (i + 1))) a = a := by
+  refine unite_eq_self_iff.mp (Option.some_injective _ (Eq.symm ?_))
+  rw [← hsym, ← hrev, B.getElem?_run, hsym, Option.map_some, hω]
+
+end Bimachine
 
 /-- **Weak determinism**: computability by a non-interacting finite bimachine. -/
 def IsBimachineWeaklyDeterministic (f : List α → List α) : Prop :=
@@ -372,46 +476,48 @@ being in particular a bimachine. -/
 theorem IsBimachineComputable.of_weaklyDeterministic {f : List α → List α}
     (h : IsBimachineWeaklyDeterministic f) : IsBimachineComputable f := by
   obtain ⟨L, R, _, _, B, rfl, _⟩ := h
-  exact isBimachineComputable B
+  exact B.isBimachineComputable
 
-/-- **Constructor lemma**: a non-interacting finite-state bimachine witnesses
-`IsBimachineWeaklyDeterministic` for its `run`. The one-sided rules survive the
-state-space transfer by composing with `e.symm`. -/
-theorem isBimachineWeaklyDeterministic {L R : Type*} [Fintype L] [Fintype R]
+/-- A non-interacting finite-state bimachine witnesses `IsBimachineWeaklyDeterministic`
+for its `run`, whatever the universes of its state types: the one-sided rules survive
+the state-space transfer by composing with `e.symm`. -/
+theorem Bimachine.isBimachineWeaklyDeterministic {L R : Type*} [Fintype L] [Fintype R]
     (B : Bimachine L R α α) (h : B.IsNonInteracting) :
     IsBimachineWeaklyDeterministic B.run := by
   obtain ⟨ωL, ωR, hω⟩ := h
-  refine ⟨Fin (Fintype.card L), Fin (Fintype.card R), inferInstance, inferInstance,
+  exact ⟨Fin (Fintype.card L), Fin (Fintype.card R), inferInstance, inferInstance,
     Bimachine.reindex (Fintype.equivFin L) (Fintype.equivFin R) B, B.run_reindex _ _,
     fun l a => ωL ((Fintype.equivFin L).symm l) a,
-    fun r a => ωR ((Fintype.equivFin R).symm r) a, ?_⟩
-  intro l a r
-  show B.out _ a _ = _
-  rw [hω]
+    fun r a => ωR ((Fintype.equivFin R).symm r) a, fun l a r => hω _ a _⟩
 
-/-- A Mealy-computable function is weakly deterministic. The transducer serves as the left
-automaton of a bimachine whose right automaton is trivial, so the cell output is a
-one-sided rule with `ωR` the identity. -/
+/-- `f` is weakly deterministic if and only if it is computed by a non-interacting
+finite bimachine with state types in any universes. -/
+theorem isBimachineWeaklyDeterministic_iff.{v, w} {f : List α → List α} :
+    IsBimachineWeaklyDeterministic f
+      ↔ ∃ (L : Type v) (R : Type w) (_ : Fintype L) (_ : Fintype R)
+          (B : Bimachine L R α α), B.run = f ∧ B.IsNonInteracting := by
+  constructor
+  · rintro ⟨L, R, _, _, B, rfl, ωL, ωR, hω⟩
+    exact ⟨ULift L, ULift R, inferInstance, inferInstance,
+      Bimachine.reindex Equiv.ulift.symm Equiv.ulift.symm B, B.run_reindex _ _,
+      fun l a => ωL (Equiv.ulift.symm.symm l) a, fun r a => ωR (Equiv.ulift.symm.symm r) a,
+      fun l a r => hω _ a _⟩
+  · rintro ⟨L, R, _, _, B, rfl, h⟩
+    exact B.isBimachineWeaklyDeterministic h
+
+/-- Weakly deterministic functions are length-preserving. -/
+theorem IsBimachineWeaklyDeterministic.length_eq {f : List α → List α}
+    (h : IsBimachineWeaklyDeterministic f) (x : List α) : (f x).length = x.length :=
+  (IsBimachineComputable.of_weaklyDeterministic h).length_eq x
+
+/-- A Mealy-computable function is weakly deterministic: the bimachine view
+(`Mealy.toBimachine`) has a trivial right automaton, so the cell output is a one-sided
+rule with `ωR` the identity. -/
 theorem IsBimachineWeaklyDeterministic.of_mealyComputable {f : List α → List α}
     (h : IsMealyComputable f) : IsBimachineWeaklyDeterministic f := by
   obtain ⟨σ, _, T, rfl⟩ := h
-  let B : Bimachine σ Unit α α :=
-    { lInit := T.initial, lStep := T.step,
-      rInit := (), rStep := fun _ _ => (), out := fun l a _ => T.output l a }
-  have hrun : B.run = T.run :=
-    funext fun xs => List.ext_getElem? fun i => by
-      rw [Bimachine.run_getElem?, T.getElem?_run]; rfl
-  exact hrun ▸ isBimachineWeaklyDeterministic B
-    ⟨T.output, fun _ a => a, fun l a r => (unite_right_self _ _).symm⟩
-
-/-- Under a non-interacting cell decomposition, a word whose run leaves target `i`
-unchanged has both of its change-proposals inert there. -/
-theorem inert_of_reverting {B : Bimachine L R α α} {ωL : L → α → α} {ωR : R → α → α}
-    (hω : ∀ l a r, B.out l a r = unite (ωL l a) (ωR r a) a) {u : List α} {i : ℕ} {a : α}
-    (hsym : u[i]? = some a) (hrev : (B.run u)[i]? = u[i]?) :
-    ωL (B.lState (u.take i)) a = a ∧ ωR (B.rState (u.drop (i + 1))) a = a := by
-  refine unite_eq_default (Option.some_injective _ (Eq.symm ?_))
-  rw [← hsym, ← hrev, B.run_getElem?, hsym, Option.map_some, hω]
+  exact T.toBimachine_run ▸ T.toBimachine.isBimachineWeaklyDeterministic
+    ⟨T.output, fun _ a => a, fun l a r => (Bimachine.unite_right_self _ _).symm⟩
 
 /-- **Unbounded interaction ⟹ not weakly deterministic.** At the witness, the base changes
 but each far perturbation reverts: the right perturbation keeps the left state, forcing `ωL`
@@ -420,18 +526,18 @@ base needs one of them to fire — no union of one-sided rules can produce the c
 theorem not_isBimachineWeaklyDeterministic_of_requiresBothSides {f : List α → List α}
     (hf : RequiresBothSides f) : ¬ IsBimachineWeaklyDeterministic f := by
   rintro ⟨L, R, _, _, B, rfl, ωL, ωR, hω⟩
-  obtain ⟨base, i, hi, hspread, hw⟩ := hf 0
+  obtain ⟨base, i, hi, hchange, hw⟩ := hf 0
   obtain ⟨uL, ⟨-, hLag⟩, hLsym, hLrev⟩ := hw .left
   obtain ⟨uR, ⟨-, hRag⟩, hRsym, hRrev⟩ := hw .right
   simp only [Nat.sub_zero, Nat.add_zero] at hLag hRag
   -- decompose the base's cell, retarget each side's state to the perturbation that
   -- shares it, and silence both rules by `inert_of_reverting`
-  apply hspread
-  rw [B.run_getElem?, List.getElem?_eq_getElem hi, Option.map_some, hω,
+  apply hchange
+  rw [B.getElem?_run, List.getElem?_eq_getElem hi, Option.map_some, hω,
     hRag.take_eq (by omega), hLag.drop_eq (by omega),
-    (inert_of_reverting hω (hRsym.trans (List.getElem?_eq_getElem hi)) hRrev).1,
-    (inert_of_reverting hω (hLsym.trans (List.getElem?_eq_getElem hi)) hLrev).2,
-    unite_right_self]
+    (Bimachine.inert_of_reverting hω (hRsym.trans (List.getElem?_eq_getElem hi)) hRrev).1,
+    (Bimachine.inert_of_reverting hω (hLsym.trans (List.getElem?_eq_getElem hi)) hLrev).2,
+    Bimachine.unite_right_self]
 
 end NonInteraction
 
@@ -444,9 +550,7 @@ it. -/
 /-- Toy alphabet for the conjunctive witness: a `mark`, a `neutral` symbol, and the
 `flipped` form the neutral symbol takes when both sides are marked. -/
 inductive ConjSym | mark | neutral | flipped
-  deriving DecidableEq, Repr
-
-instance : Fintype ConjSym := ⟨{.mark, .neutral, .flipped}, fun x => by cases x <;> simp⟩
+  deriving DecidableEq, Repr, Fintype
 
 /-- A neutral symbol flips iff a `mark` occurs on **both** sides — a flag bimachine
 (`ofFlags`) tracking a mark on each side, whose cell genuinely needs both flags
@@ -460,7 +564,7 @@ both flanks are marks. -/
 private theorem conjBM_flankWord {x y : ConjSym} {n k : ℕ} (h0 : 0 < k) (hk : k ≤ n) :
     (conjBM.run (flankWord x .neutral y n))[k]?
       = some (if x == .mark && y == .mark then .flipped else .neutral) := by
-  rw [conjBM, Bimachine.ofFlags_run_getElem?, flankWord_getElem?_mid h0 hk,
+  rw [conjBM, Bimachine.getElem?_ofFlags_run, getElem?_flankWord_mid h0 hk,
     any_take_flankWord (by decide) h0 (by omega),
     any_drop_flankWord (by decide) (by omega) (by omega)]
   simp
@@ -468,7 +572,7 @@ private theorem conjBM_flankWord {x y : ConjSym} {n k : ℕ} (h0 : 0 < k) (hk : 
 /-- The conjunctive change requires both sides: with a mark on each flank the medial
 symbol flips, and demoting either mark alone reverts it — the three-map template
 (`RequiresBothSides.of_flanks`) applied to a `d`-margined flank word. -/
-theorem conjBM_requiresBothSides : RequiresBothSides conjBM.run :=
+theorem conjBM.requiresBothSides : RequiresBothSides conjBM.run :=
   .of_flanks (fill := .neutral) (on := .flipped) (xOn := .mark) (yOn := .mark)
     (xOff := .neutral) (yOff := .neutral) (n := fun d => 2 * d + 1) (t := fun d => d + 1)
     (by decide) (fun d => ⟨by omega, by omega⟩)
@@ -476,12 +580,14 @@ theorem conjBM_requiresBothSides : RequiresBothSides conjBM.run :=
     (fun d => by rw [conjBM_flankWord (by omega) (by omega)]; rfl)
     (fun d => by rw [conjBM_flankWord (by omega) (by omega)]; rfl)
 
-/-- **The weakly deterministic functions are a proper subclass**: `conjBM` is computed by
-a bimachine, but by no non-interacting one. -/
-theorem weaklyDeterministic_strict_subset_regular :
-    ∃ f : List ConjSym → List ConjSym,
-      IsBimachineComputable f ∧ ¬ IsBimachineWeaklyDeterministic f :=
-  ⟨conjBM.run, isBimachineComputable conjBM,
-   not_isBimachineWeaklyDeterministic_of_requiresBothSides conjBM_requiresBothSides⟩
+/-- **The weakly deterministic functions are a proper subclass** of the
+bimachine-computable ones: `conjBM` is computed by a bimachine, but by no
+non-interacting one. -/
+theorem setOf_isBimachineWeaklyDeterministic_ssubset :
+    {f : List ConjSym → List ConjSym | IsBimachineWeaklyDeterministic f} ⊂
+      {f | IsBimachineComputable f} :=
+  ⟨fun _ h => IsBimachineComputable.of_weaklyDeterministic h,
+   fun h => not_isBimachineWeaklyDeterministic_of_requiresBothSides
+     conjBM.requiresBothSides (h conjBM.isBimachineComputable)⟩
 
 end Subregular

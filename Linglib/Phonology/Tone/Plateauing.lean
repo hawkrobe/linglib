@@ -358,7 +358,7 @@ variable {w : List TBU} {i j k : ℕ}
 theorem utp.surfaces_iff :
     utp.Surfaces w i ↔ (∃ j ≤ i, w[j]? = some .H) ∧ ∃ j ≥ i, w[j]? = some .H := by
   rw [utp.surfaces_def, List.mem_take_iff, List.mem_drop_iff]
-  simp [Nat.lt_succ_iff]
+  simp
 
 /-- The surfacing set is convex: the windows only widen. -/
 theorem _root_.Tone.Surfacing.Surfaces.of_le_of_le (hi : utp.Surfaces w i)
