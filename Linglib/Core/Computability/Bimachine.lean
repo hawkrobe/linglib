@@ -250,8 +250,8 @@ end ToBimachine
 
 /-! ### The bimachine-computable class -/
 
-/-- Computability by a finite bimachine — the total length-preserving regular
-functions (the identification is classical; see the module docstring). -/
+/-- Computability by a finite bimachine — classically, the total length-preserving
+regular functions. -/
 def IsBimachineComputable (f : List α → List β) : Prop :=
   ∃ (L R : Type) (_ : Fintype L) (_ : Fintype R) (B : Bimachine L R α β), B.run = f
 
@@ -274,15 +274,15 @@ theorem isBimachineComputable_iff.{v, w} {f : List α → List β} :
 
 /-- Bimachine-computable functions are length-preserving. -/
 theorem IsBimachineComputable.length_eq {f : List α → List β}
-    (h : IsBimachineComputable f) (x : List α) : (f x).length = x.length := by
-  obtain ⟨L, R, _, _, B, rfl⟩ := h
-  exact B.length_run x
+    (h : IsBimachineComputable f) (x : List α) : (f x).length = x.length :=
+  have ⟨_, _, _, _, B, hB⟩ := h
+  hB ▸ B.length_run x
 
 /-- A Mealy-computable function is bimachine-computable (`Mealy.toBimachine`). -/
 theorem IsBimachineComputable.of_mealyComputable {f : List α → List β}
-    (h : IsMealyComputable f) : IsBimachineComputable f := by
-  obtain ⟨σ, _, T, rfl⟩ := h
-  exact T.toBimachine_run ▸ T.toBimachine.isBimachineComputable
+    (h : IsMealyComputable f) : IsBimachineComputable f :=
+  have ⟨_, _, T, hT⟩ := h
+  hT ▸ T.toBimachine_run ▸ T.toBimachine.isBimachineComputable
 
 /-! ### Non-interacting bimachines -/
 
@@ -346,6 +346,15 @@ theorem IsNonInteracting.oneSidedAt_of_change {B : Bimachine L R α α}
       exact hcf l' r a hL' hR
   · exact .inl fun r' => by simp only [hω, unite_of_left_ne hL]
 
+/-- Non-interaction transports along state reindexing: the one-sided rules compose
+with `eL.symm` and `eR.symm`. -/
+theorem IsNonInteracting.reindex {L' R' : Type*} {B : Bimachine L R α α}
+    (h : B.IsNonInteracting) (eL : L ≃ L') (eR : R ≃ R') :
+    (Bimachine.reindex eL eR B).IsNonInteracting :=
+  have ⟨ωL, ωR, hcf, hω⟩ := h
+  ⟨fun l a => ωL (eL.symm l) a, fun r a => ωR (eR.symm r) a,
+   fun _ _ a hL hR => hcf _ _ a hL hR, fun _ a _ => hω _ a _⟩
+
 /-- Under a non-interacting cell decomposition, a word whose run leaves target `i`
 unchanged has both of its change-proposals inert there. -/
 theorem inert_of_reverting {B : Bimachine L R α α} {ωL : L → α → α} {ωR : R → α → α}
@@ -365,23 +374,19 @@ def IsNonInteractingBimachineComputable (f : List α → List α) : Prop :=
 /-- A function computed by a non-interacting bimachine is in particular
 bimachine-computable. -/
 theorem IsBimachineComputable.of_nonInteracting {f : List α → List α}
-    (h : IsNonInteractingBimachineComputable f) : IsBimachineComputable f := by
-  obtain ⟨L, R, _, _, B, rfl, _⟩ := h
-  exact B.isBimachineComputable
+    (h : IsNonInteractingBimachineComputable f) : IsBimachineComputable f :=
+  have ⟨_, _, _, _, B, hB, _⟩ := h
+  hB ▸ B.isBimachineComputable
 
 /-- A non-interacting finite-state bimachine witnesses
 `IsNonInteractingBimachineComputable` for its `run`, whatever the universes of its
-state types: the one-sided rules survive the state-space transfer by composing with
-`e.symm`. -/
+state types (`IsNonInteracting.reindex`). -/
 theorem Bimachine.isNonInteractingBimachineComputable {L R : Type*} [Fintype L]
     [Fintype R] (B : Bimachine L R α α) (h : B.IsNonInteracting) :
-    IsNonInteractingBimachineComputable B.run := by
-  obtain ⟨ωL, ωR, hcf, hω⟩ := h
-  exact ⟨Fin (Fintype.card L), Fin (Fintype.card R), inferInstance, inferInstance,
+    IsNonInteractingBimachineComputable B.run :=
+  ⟨Fin (Fintype.card L), Fin (Fintype.card R), inferInstance, inferInstance,
     Bimachine.reindex (Fintype.equivFin L) (Fintype.equivFin R) B, B.run_reindex _ _,
-    fun l a => ωL ((Fintype.equivFin L).symm l) a,
-    fun r a => ωR ((Fintype.equivFin R).symm r) a,
-    fun l r a hL hR => hcf _ _ a hL hR, fun l a r => hω _ a _⟩
+    h.reindex _ _⟩
 
 /-- `f` is computed by a non-interacting finite bimachine if and only if it is computed
 by one with state types in any universes. -/
@@ -390,11 +395,10 @@ theorem isNonInteractingBimachineComputable_iff.{v, w} {f : List α → List α}
       ↔ ∃ (L : Type v) (R : Type w) (_ : Fintype L) (_ : Fintype R)
           (B : Bimachine L R α α), B.run = f ∧ B.IsNonInteracting := by
   constructor
-  · rintro ⟨L, R, _, _, B, rfl, ωL, ωR, hcf, hω⟩
+  · rintro ⟨L, R, _, _, B, rfl, h⟩
     exact ⟨ULift L, ULift R, inferInstance, inferInstance,
       Bimachine.reindex Equiv.ulift.symm Equiv.ulift.symm B, B.run_reindex _ _,
-      fun l a => ωL (Equiv.ulift.symm.symm l) a, fun r a => ωR (Equiv.ulift.symm.symm r) a,
-      fun l r a hL hR => hcf _ _ a hL hR, fun l a r => hω _ a _⟩
+      h.reindex _ _⟩
   · rintro ⟨L, R, _, _, B, rfl, h⟩
     exact B.isNonInteractingBimachineComputable h
 
@@ -407,11 +411,11 @@ theorem IsNonInteractingBimachineComputable.length_eq {f : List α → List α}
 bimachine view (`Mealy.toBimachine`) has a trivial right automaton, so the cell output
 is a one-sided rule with `ωR` the identity. -/
 theorem IsNonInteractingBimachineComputable.of_mealyComputable {f : List α → List α}
-    (h : IsMealyComputable f) : IsNonInteractingBimachineComputable f := by
-  obtain ⟨σ, _, T, rfl⟩ := h
-  exact T.toBimachine_run ▸ T.toBimachine.isNonInteractingBimachineComputable
-    ⟨T.output, fun _ a => a, fun _ _ a _ h => absurd rfl h,
-     fun l a r => (Bimachine.unite_right_self _ _).symm⟩
+    (h : IsMealyComputable f) : IsNonInteractingBimachineComputable f :=
+  have ⟨_, _, T, hT⟩ := h
+  hT ▸ T.toBimachine_run ▸ T.toBimachine.isNonInteractingBimachineComputable
+    ⟨T.output, fun _ a => a, fun _ _ _ _ h => absurd rfl h,
+     fun _ a _ => (Bimachine.unite_right_self _ a).symm⟩
 
 /-- A map that requires both sides is computed by no non-interacting bimachine. At the
 witness the base changes but each far perturbation reverts: the right perturbation
