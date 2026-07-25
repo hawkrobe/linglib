@@ -7,6 +7,7 @@ import Mathlib.Data.List.Basic
 import Mathlib.Data.Fintype.Prod
 import Mathlib.Data.Finset.Lattice.Fold
 import Linglib.Core.Computability.Mealy
+import Linglib.Core.Data.Fintype.Transfer
 import Linglib.Core.Computability.Subregular.Function.Defs
 
 /-!
@@ -313,18 +314,36 @@ def IsSubsequential (d : Direction) (f : List α → List β) : Prop :=
 @[simp] theorem isSubsequential_right :
     IsSubsequential .right f ↔ IsRightSubsequential f := Iff.rfl
 
+/-- `f` is left-subsequential if and only if it is computed by a finite-state SFST.
+This is more general than using the definition of `IsLeftSubsequential` directly, as
+the state type `σ` is universe-polymorphic. -/
+theorem isLeftSubsequential_iff.{v} :
+    IsLeftSubsequential f
+      ↔ ∃ (σ : Type v) (_ : Fintype σ) (T : SFST σ α β), T.run = f :=
+  exists_fintype_congr
+    (fun e ⟨T, hT⟩ => ⟨SFST.reindex e T, (T.run_reindex e).trans hT⟩)
+    (fun e ⟨T, hT⟩ => ⟨SFST.reindex e T, (T.run_reindex e).trans hT⟩)
+
+/-- `f` is right-subsequential if and only if it is computed via `runRight` by a
+finite-state SFST. This is more general than using the definition of
+`IsRightSubsequential` directly, as the state type `σ` is universe-polymorphic. -/
+theorem isRightSubsequential_iff.{v} :
+    IsRightSubsequential f
+      ↔ ∃ (σ : Type v) (_ : Fintype σ) (T : SFST σ α β), T.runRight = f :=
+  exists_fintype_congr
+    (fun e ⟨T, hT⟩ => ⟨SFST.reindex e T, (T.runRight_reindex e).trans hT⟩)
+    (fun e ⟨T, hT⟩ => ⟨SFST.reindex e T, (T.runRight_reindex e).trans hT⟩)
+
 /-- Every finite-state SFST computes a left-subsequential function, whatever the
 universe of its state type. -/
 theorem SFST.isLeftSubsequential {σ : Type*} [Fintype σ] (T : SFST σ α β) :
     IsLeftSubsequential T.run :=
-  ⟨Fin (Fintype.card σ), inferInstance,
-    SFST.reindex (Fintype.equivFin σ) T, T.run_reindex _⟩
+  isLeftSubsequential_iff.mpr ⟨σ, inferInstance, T, rfl⟩
 
 /-- Every finite-state SFST computes a right-subsequential function via `runRight`. -/
 theorem SFST.isRightSubsequential {σ : Type*} [Fintype σ] (T : SFST σ α β) :
     IsRightSubsequential T.runRight :=
-  ⟨Fin (Fintype.card σ), inferInstance,
-    SFST.reindex (Fintype.equivFin σ) T, T.runRight_reindex _⟩
+  isRightSubsequential_iff.mpr ⟨σ, inferInstance, T, rfl⟩
 
 /-- Every finite-state SFST emitting one symbol per input symbol and flushing nothing at
 the end computes a Mealy-computable function. -/
@@ -339,26 +358,6 @@ theorem IsMealyComputable.isLeftSubsequential (hf : IsMealyComputable f) :
     IsLeftSubsequential f := by
   obtain ⟨σ, _, T, rfl⟩ := hf
   exact T.toSFST_run ▸ T.toSFST.isLeftSubsequential
-
-/-- `f` is left-subsequential if and only if it is computed by a finite-state SFST.
-This is more general than using the definition of `IsLeftSubsequential` directly, as
-the state type `σ` is universe-polymorphic. -/
-theorem isLeftSubsequential_iff.{v} :
-    IsLeftSubsequential f
-      ↔ ∃ (σ : Type v) (_ : Fintype σ) (T : SFST σ α β), T.run = f :=
-  ⟨fun ⟨σ, _, T, h⟩ => ⟨ULift σ, inferInstance, SFST.reindex Equiv.ulift.symm T,
-    h ▸ T.run_reindex _⟩,
-   fun ⟨_, _, T, h⟩ => h ▸ T.isLeftSubsequential⟩
-
-/-- `f` is right-subsequential if and only if it is computed via `runRight` by a
-finite-state SFST. This is more general than using the definition of
-`IsRightSubsequential` directly, as the state type `σ` is universe-polymorphic. -/
-theorem isRightSubsequential_iff.{v} :
-    IsRightSubsequential f
-      ↔ ∃ (σ : Type v) (_ : Fintype σ) (T : SFST σ α β), T.runRight = f :=
-  ⟨fun ⟨σ, _, T, h⟩ => ⟨ULift σ, inferInstance, SFST.reindex Equiv.ulift.symm T,
-    h ▸ T.runRight_reindex _⟩,
-   fun ⟨_, _, T, h⟩ => h ▸ T.isRightSubsequential⟩
 
 /-- A function is right-subsequential iff its reverse-conjugate is left-subsequential:
 the two classes are isomorphic via the involution `f ↦ List.reverse ∘ f ∘ List.reverse`. -/

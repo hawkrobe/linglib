@@ -107,6 +107,7 @@ import Linglib.Core.Computability.Variety.Correspondence
 import Linglib.Core.Computability.Variety.Langs
 import Linglib.Core.Data.Fin.Tuple.Basic
 import Linglib.Core.Data.Fintype.Sets
+import Linglib.Core.Data.Fintype.Transfer
 import Linglib.Core.Data.List.Bookend
 import Linglib.Core.Data.List.Chain
 import Linglib.Core.Data.List.Destutter

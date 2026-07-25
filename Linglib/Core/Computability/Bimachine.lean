@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 import Mathlib.Data.Fintype.EquivFin
 import Mathlib.Tactic.DeriveFintype
 import Linglib.Core.Computability.Mealy
+import Linglib.Core.Data.Fintype.Transfer
 import Linglib.Core.Computability.Subregular.Function.Dependence
 import Linglib.Core.Data.List.Fold
 
@@ -253,24 +254,24 @@ end ToBimachine
 /-- Computability by a finite bimachine — classically, the total length-preserving
 regular functions. -/
 def IsBimachineComputable (f : List α → List β) : Prop :=
-  ∃ (L R : Type) (_ : Fintype L) (_ : Fintype R) (B : Bimachine L R α β), B.run = f
-
-/-- Every finite-state bimachine computes a bimachine-computable function, whatever
-the universes of its state types. -/
-theorem Bimachine.isBimachineComputable {L R : Type*} [Fintype L] [Fintype R]
-    (B : Bimachine L R α β) : IsBimachineComputable B.run :=
-  ⟨Fin (Fintype.card L), Fin (Fintype.card R), inferInstance, inferInstance,
-    Bimachine.reindex (Fintype.equivFin L) (Fintype.equivFin R) B, B.run_reindex _ _⟩
+  ∃ (L : Type) (_ : Fintype L) (R : Type) (_ : Fintype R) (B : Bimachine L R α β),
+    B.run = f
 
 /-- `f` is bimachine-computable if and only if it is computed by a finite bimachine
 with state types in any universes. -/
 theorem isBimachineComputable_iff.{v, w} {f : List α → List β} :
     IsBimachineComputable f
-      ↔ ∃ (L : Type v) (R : Type w) (_ : Fintype L) (_ : Fintype R)
+      ↔ ∃ (L : Type v) (_ : Fintype L) (R : Type w) (_ : Fintype R)
           (B : Bimachine L R α β), B.run = f :=
-  ⟨fun ⟨L, R, _, _, B, h⟩ => ⟨ULift L, ULift R, inferInstance, inferInstance,
-      Bimachine.reindex Equiv.ulift.symm Equiv.ulift.symm B, h ▸ B.run_reindex _ _⟩,
-   fun ⟨_, _, _, _, B, h⟩ => h ▸ B.isBimachineComputable⟩
+  exists_fintype₂_congr
+    (fun eL eR ⟨B, hB⟩ => ⟨.reindex eL eR B, (B.run_reindex eL eR).trans hB⟩)
+    (fun eL eR ⟨B, hB⟩ => ⟨.reindex eL eR B, (B.run_reindex eL eR).trans hB⟩)
+
+/-- Every finite-state bimachine computes a bimachine-computable function, whatever
+the universes of its state types. -/
+theorem Bimachine.isBimachineComputable {L R : Type*} [Fintype L] [Fintype R]
+    (B : Bimachine L R α β) : IsBimachineComputable B.run :=
+  isBimachineComputable_iff.mpr ⟨L, inferInstance, R, inferInstance, B, rfl⟩
 
 /-- Bimachine-computable functions are length-preserving. -/
 theorem IsBimachineComputable.length_eq {f : List α → List β}
@@ -368,7 +369,7 @@ end Bimachine
 
 /-- Computability by a non-interacting finite bimachine. -/
 def IsNonInteractingBimachineComputable (f : List α → List α) : Prop :=
-  ∃ (L R : Type) (_ : Fintype L) (_ : Fintype R) (B : Bimachine L R α α),
+  ∃ (L : Type) (_ : Fintype L) (R : Type) (_ : Fintype R) (B : Bimachine L R α α),
     B.run = f ∧ B.IsNonInteracting
 
 /-- A function computed by a non-interacting bimachine is in particular
@@ -378,29 +379,25 @@ theorem IsBimachineComputable.of_nonInteracting {f : List α → List α}
   have ⟨_, _, _, _, B, hB, _⟩ := h
   hB ▸ B.isBimachineComputable
 
+/-- `f` is computed by a non-interacting finite bimachine if and only if it is computed
+by one with state types in any universes. -/
+theorem isNonInteractingBimachineComputable_iff.{v, w} {f : List α → List α} :
+    IsNonInteractingBimachineComputable f
+      ↔ ∃ (L : Type v) (_ : Fintype L) (R : Type w) (_ : Fintype R)
+          (B : Bimachine L R α α), B.run = f ∧ B.IsNonInteracting :=
+  exists_fintype₂_congr
+    (fun eL eR ⟨B, hB, h⟩ =>
+      ⟨.reindex eL eR B, (B.run_reindex eL eR).trans hB, h.reindex eL eR⟩)
+    (fun eL eR ⟨B, hB, h⟩ =>
+      ⟨.reindex eL eR B, (B.run_reindex eL eR).trans hB, h.reindex eL eR⟩)
+
 /-- A non-interacting finite-state bimachine witnesses
 `IsNonInteractingBimachineComputable` for its `run`, whatever the universes of its
 state types (`IsNonInteracting.reindex`). -/
 theorem Bimachine.isNonInteractingBimachineComputable {L R : Type*} [Fintype L]
     [Fintype R] (B : Bimachine L R α α) (h : B.IsNonInteracting) :
     IsNonInteractingBimachineComputable B.run :=
-  ⟨Fin (Fintype.card L), Fin (Fintype.card R), inferInstance, inferInstance,
-    Bimachine.reindex (Fintype.equivFin L) (Fintype.equivFin R) B, B.run_reindex _ _,
-    h.reindex _ _⟩
-
-/-- `f` is computed by a non-interacting finite bimachine if and only if it is computed
-by one with state types in any universes. -/
-theorem isNonInteractingBimachineComputable_iff.{v, w} {f : List α → List α} :
-    IsNonInteractingBimachineComputable f
-      ↔ ∃ (L : Type v) (R : Type w) (_ : Fintype L) (_ : Fintype R)
-          (B : Bimachine L R α α), B.run = f ∧ B.IsNonInteracting := by
-  constructor
-  · rintro ⟨L, R, _, _, B, rfl, h⟩
-    exact ⟨ULift L, ULift R, inferInstance, inferInstance,
-      Bimachine.reindex Equiv.ulift.symm Equiv.ulift.symm B, B.run_reindex _ _,
-      h.reindex _ _⟩
-  · rintro ⟨L, R, _, _, B, rfl, h⟩
-    exact B.isNonInteractingBimachineComputable h
+  isNonInteractingBimachineComputable_iff.mpr ⟨L, inferInstance, R, inferInstance, B, rfl, h⟩
 
 /-- Functions computed by non-interacting bimachines are length-preserving. -/
 theorem IsNonInteractingBimachineComputable.length_eq {f : List α → List α}
@@ -423,7 +420,7 @@ keeps the left state, forcing `ωL` inert at this cell; the left perturbation ke
 right state, forcing `ωR` inert; yet the base needs one of them to fire. -/
 theorem RequiresBothSides.not_isNonInteractingBimachineComputable {f : List α → List α}
     (hf : RequiresBothSides f) : ¬ IsNonInteractingBimachineComputable f := by
-  rintro ⟨L, R, _, _, B, rfl, ωL, ωR, -, hω⟩
+  rintro ⟨L, _, R, _, B, rfl, ωL, ωR, -, hω⟩
   obtain ⟨base, i, hi, hchange, hw⟩ := hf 0
   obtain ⟨uL, ⟨-, hLag⟩, hLsym, hLrev⟩ := hw .left
   obtain ⟨uR, ⟨-, hRag⟩, hRsym, hRrev⟩ := hw .right
