@@ -27,14 +27,14 @@ class. Their thesis:
 * **Bidirectional** iterative ATR harmony in Maasai and Turkana (Eastern
   Nilotic) is *attested* and **WD** — a composition of two subsequential
   FSTs reading from opposite directions, where the two passes do not
-  interact in the technical sense the paper formalises (§5).
+  interact in the technical sense the paper formalises (§4.2).
 * Hypothetical *unbounded-circumambient* "sour grapes" patterns
   ([wilson-2003]; [wilson-2006]) are *unattested* and
   **non-deterministic** — the inner and outer passes interact, placing
   the function strictly above WD in the hierarchy (Fig. 1).
 * The original Heinz-Lai 2013 WD definition was too permissive,
   admitting some unattested patterns; Meinhardt et al. patch it by
-  formalising the *interaction* condition explicitly (§§5–6).
+  formalising the *interaction* condition explicitly (§4).
 
 ## Maasai dominant/recessive harmony (paper §3.1, p. 1203)
 
@@ -65,8 +65,9 @@ Per CLAUDE.md "stimulus contrasts" discipline for Studies files:
    formaliser-invented alphabet from the previous version of this file
    (which conflated [+ATR] with the spreading trigger) is replaced.
 2. Encodes the **rightward [+ATR] spreading** half of Maasai harmony
-   as both a `SFST` and an `OSLRule`. Per paper §5.4 (p. 45), single-
-   direction iterative spreading is **Output-Strictly-Local** — the
+   as both a `SFST` and an `OSLRule`. Single-direction iterative
+   spreading is **Output-Strictly-Local** ([chandlee-eyraud-heinz-2015],
+   the result [meinhardt-mai-bakovic-mccollum-2024] builds on) — the
    output decision at each position depends on whether the immediately
    preceding **output** symbol is +ATR. The OSL classification is
    tighter than Left-Subsequential and is what the paper actually
@@ -181,10 +182,10 @@ phonological maps). Rule logic:
   (spread continues).
 * Current input is `recL` otherwise → emit `recL` (no spread to here).
 
-Per paper §5.4 (p. 45): single-direction iterative spreading patterns
-are OSL but not ISL, because the output decision genuinely depends on
-the *output* history (how spread has propagated) rather than the *input*
-history alone. -/
+Single-direction iterative spreading patterns are OSL but not ISL
+([chandlee-eyraud-heinz-2015]), because the output decision genuinely
+depends on the *output* history (how spread has propagated) rather than
+the *input* history alone. -/
 def rightwardATR_osl : OSLRule 2 Seg Seg where
   windowOutput outputWindow currentInput :=
     match currentInput, outputWindow with
@@ -260,8 +261,9 @@ example : rightwardATR.run [.dom, .recL, .a, .recL]
 -- ============================================================================
 
 /-- **Rightward [+ATR] spreading is Left-Output-Strictly-Local**
-([chandlee-eyraud-heinz-2015]; [meinhardt-mai-bakovic-mccollum-2024]
-§5.4). Witness: the OSL rule `rightwardATR_osl` defined above.
+([chandlee-eyraud-heinz-2015], the result
+[meinhardt-mai-bakovic-mccollum-2024] builds on). Witness: the OSL rule
+`rightwardATR_osl` defined above.
 
 This is the **tighter** classification per the paper — single-direction
 iterative spreading patterns are properly contained in OSL, strictly
