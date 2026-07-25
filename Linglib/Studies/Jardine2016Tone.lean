@@ -27,7 +27,7 @@ representation (§4.1: `H` a H-toned TBU, `O` the paper's Ø).
 
 The map itself and its plateau/circumambience API live in `Phonology/Tone/Plateauing`
 (the rule set (36) as `utp.map_toneless`/`utp.map_single`/`utp.map_plateau`; definition (2) as
-`utp.isUnboundedSemiambient`); this file keeps the paper's theorems about it.
+`utp.twoSidedUnboundedDependence`); this file keeps the paper's theorems about it.
 
 ## Main definitions
 

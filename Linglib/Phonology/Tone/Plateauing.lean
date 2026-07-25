@@ -28,7 +28,7 @@ derived `utp.surfaces_def`. The map is `utp.map`, the surfacing set `plateau`.
 The map is the flagship *unbounded circumambient* process: whether a position changes
 depends on unboundedly distant material on **both** sides, in the strong witness form
 `utp.requiresBothSides` — perturbing either far side alone reverts the change — with
-the weaker `utp.isUnboundedSemiambient` as a corollary, which
+the weaker `utp.twoSidedUnboundedDependence` as a corollary, which
 feeds the weak-determinism exclusion theorems of `Studies/Jardine2016Tone` (bimachine
 rendering) and `Studies/Yolyan2025` (BMRS rendering).
 
@@ -559,10 +559,9 @@ conjunction, so deleting either flanking H reverts the plateau target. -/
 theorem utp.requiresBothSides : RequiresBothSides utp.map :=
   utp.requiresBothSides_of_surfaces_iff fun _ _ => utp.surfaces_iff
 
-/-- UTP is unbounded semiambient, a corollary of its circumambience: whether a position
-changes depends on
-unboundedly distant material on both sides. -/
-theorem utp.isUnboundedSemiambient : IsUnboundedSemiambient utp.map :=
-  utp.requiresBothSides.isUnboundedSemiambient
+/-- UTP has two-sided unbounded dependence, a corollary of its circumambience: whether a
+position changes depends on unboundedly distant material on both sides. -/
+theorem utp.twoSidedUnboundedDependence : TwoSidedUnboundedDependence utp.map :=
+  utp.requiresBothSides.twoSidedUnboundedDependence
 
 end Tone.Plateauing
