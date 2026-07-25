@@ -330,7 +330,9 @@ variable {L R α : Type*} [DecidableEq α]
 rule's change if it fires (`≠ a`), else the right rule's, else leave the symbol. -/
 def unite (cL cR a : α) : α := if cL = a then (if cR = a then a else cR) else cL
 
-@[simp] theorem unite_self (a : α) : unite a a a = a := by simp [unite]
+/-- With the right proposal inert, the union is whatever the left one proposes. -/
+@[simp] theorem unite_right_self (cL a : α) : unite cL a a = cL := by
+  unfold unite; split_ifs <;> simp_all
 
 /-- A combined value equal to the default forces *both* one-sided proposals to be inert. -/
 theorem unite_eq_default {cL cR a : α} (h : unite cL cR a = a) : cL = a ∧ cR = a := by
@@ -390,7 +392,7 @@ theorem not_isBimachineWeaklyDeterministic_of_requiresBothSides {f : List α →
     hRag.take_eq (by omega), hLag.drop_eq (by omega),
     (inert_of_reverting hω (hRsym.trans (List.getElem?_eq_getElem hi)) hRrev).1,
     (inert_of_reverting hω (hLsym.trans (List.getElem?_eq_getElem hi)) hLrev).2,
-    unite_self]
+    unite_right_self]
 
 end NonInteraction
 

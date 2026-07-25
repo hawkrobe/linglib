@@ -148,27 +148,20 @@ end Footprint
 
 variable {α : Type*} [DecidableEq α]
 
-private theorem unite_default_right (cL a : α) : unite cL a a = cL := by
-  unfold unite; split_ifs <;> simp_all
-
 /-- **Synchronous ⊆ weakly deterministic.** A Mealy-computable function is computed by a
 non-interacting bimachine: the left automaton *is* the transducer, the right automaton is
 trivial, so the cell output is a one-sided rule (`ωR` is the identity). -/
 theorem IsBimachineWeaklyDeterministic.of_mealyComputable {f : List α → List α}
     (h : IsMealyComputable f) : IsBimachineWeaklyDeterministic f := by
   obtain ⟨σ, _, T, rfl⟩ := h
-  set B : Bimachine σ Unit α α :=
+  let B : Bimachine σ Unit α α :=
     { lInit := T.initial, lStep := T.step,
-      rInit := (), rStep := fun _ _ => (), out := fun l a _ => T.output l a } with hB
-  have hrun : B.run = T.run := by
-    funext xs
-    apply List.ext_getElem?
-    intro i
-    rw [Bimachine.run_getElem?, T.getElem?_run]
-    rfl
-  have hni : B.IsNonInteracting :=
-    ⟨T.output, fun _ a => a, fun l a r => (unite_default_right _ _).symm⟩
-  exact hrun ▸ isBimachineWeaklyDeterministic B hni
+      rInit := (), rStep := fun _ _ => (), out := fun l a _ => T.output l a }
+  have hrun : B.run = T.run :=
+    funext fun xs => List.ext_getElem? fun i => by
+      rw [Bimachine.run_getElem?, T.getElem?_run]; rfl
+  exact hrun ▸ isBimachineWeaklyDeterministic B
+    ⟨T.output, fun _ a => a, fun l a r => (unite_right_self _ _).symm⟩
 
 /-- **Weakly deterministic ⊆ regular.** A non-interacting bimachine is a bimachine. -/
 theorem IsBimachineComputable.of_weaklyDeterministic {f : List α → List α}
