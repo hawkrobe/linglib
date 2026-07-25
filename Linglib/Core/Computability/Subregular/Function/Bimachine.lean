@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Mathlib.Data.Fintype.EquivFin
+import Linglib.Core.Computability.Mealy
 import Linglib.Core.Computability.Subregular.Function.SideDeterminacy
 import Linglib.Core.Data.List.Fold
 
@@ -31,6 +32,17 @@ bimachine — the weakly-deterministic functions.
   not.
 * `weaklyDeterministic_strict_subset_regular` — the inclusion is proper, witnessed by the
   conjunctive flag bimachine `conjBM`.
+* `IsBimachineWeaklyDeterministic.of_mealyComputable` — a synchronous machine is the
+  degenerate bimachine with a trivial right automaton, so `IsMealyComputable` sits inside
+  weak determinism.
+
+## TODO
+
+* `IsLeftSubsequential ⊊ IsBimachineWeaklyDeterministic`. No witness is formalized here.
+  Note that non-myopia refutes only *synchronous* computability, via
+  `IsMealyComputable.isRightMyopic`: a block transducer may delay its output, so its
+  coordinate `i` is not fixed by the prefix, and excluding one takes the bounded-delay
+  route (`IsLeftSubsequential.bounded_delay`) instead.
 -/
 
 namespace Subregular
@@ -351,6 +363,13 @@ def IsBimachineWeaklyDeterministic (f : List α → List α) : Prop :=
   ∃ (L R : Type) (_ : Fintype L) (_ : Fintype R) (B : Bimachine L R α α),
     B.run = f ∧ B.IsNonInteracting
 
+/-- A weakly deterministic function is bimachine-computable, a non-interacting bimachine
+being in particular a bimachine. -/
+theorem IsBimachineComputable.of_weaklyDeterministic {f : List α → List α}
+    (h : IsBimachineWeaklyDeterministic f) : IsBimachineComputable f := by
+  obtain ⟨L, R, _, _, B, rfl, _⟩ := h
+  exact isBimachineComputable B
+
 /-- **Constructor lemma**: a non-interacting finite-state bimachine witnesses
 `IsBimachineWeaklyDeterministic` for its `run`. The one-sided rules survive the
 state-space transfer by composing with `e.symm`. -/
@@ -365,6 +384,21 @@ theorem isBimachineWeaklyDeterministic {L R : Type*} [Fintype L] [Fintype R]
   intro l a r
   show B.out _ a _ = _
   rw [hω]
+
+/-- A Mealy-computable function is weakly deterministic. The transducer serves as the left
+automaton of a bimachine whose right automaton is trivial, so the cell output is a
+one-sided rule with `ωR` the identity. -/
+theorem IsBimachineWeaklyDeterministic.of_mealyComputable {f : List α → List α}
+    (h : IsMealyComputable f) : IsBimachineWeaklyDeterministic f := by
+  obtain ⟨σ, _, T, rfl⟩ := h
+  let B : Bimachine σ Unit α α :=
+    { lInit := T.initial, lStep := T.step,
+      rInit := (), rStep := fun _ _ => (), out := fun l a _ => T.output l a }
+  have hrun : B.run = T.run :=
+    funext fun xs => List.ext_getElem? fun i => by
+      rw [Bimachine.run_getElem?, T.getElem?_run]; rfl
+  exact hrun ▸ isBimachineWeaklyDeterministic B
+    ⟨T.output, fun _ a => a, fun l a r => (unite_right_self _ _).symm⟩
 
 /-- Under a non-interacting cell decomposition, a word whose run leaves target `i`
 unchanged has both of its change-proposals inert there. -/

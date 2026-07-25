@@ -7,7 +7,8 @@ import Linglib.Core.Computability.Subregular.Function.ISL
 import Linglib.Core.Computability.Subregular.Function.OSL
 import Linglib.Core.Computability.Subregular.Function.Subsequential
 import Linglib.Core.Computability.Mealy
-import Linglib.Core.Computability.Subregular.Function.Hierarchy
+import Linglib.Core.Computability.Subregular.Function.Bimachine
+import Linglib.Core.Computability.Subregular.Function.OSL
 import Linglib.Core.Computability.Subregular.Function.SideDeterminacy
 import Linglib.Core.Computability.Subregular.Function.Bimachine
 
@@ -278,8 +279,9 @@ theorem rightwardATR_isLeftSubsequential :
     IsLeftSubsequential rightwardATR.run :=
   rightwardATR.isLeftSubsequential
 
-/-- Since OSL ⊆ Left-Subsequential (`Function/Hierarchy.lean`), the OSL
-classification automatically lifts. -/
+/-- Since OSL ⊆ Left-Subsequential
+(`isLeftOutputStrictlyLocal_left_subsequential`), the OSL classification
+automatically lifts. -/
 theorem rightwardATR_osl_isLeftSubsequential :
     IsLeftSubsequential rightwardATR_osl.apply :=
   isLeftOutputStrictlyLocal_left_subsequential
@@ -420,7 +422,7 @@ Mealy-computable. A Mealy-computable map is right-myopic
 (`maasai_isUnboundedSemiambient`). The stronger `¬ IsLeftSubsequential maasai` (the
 *block* class) is not yet formalized: a block transducer can delay output, so it
 needs the bounded-delay route (`IsLeftSubsequential.bounded_delay`) rather than the
-myopia shortcut — see the TODO in `Function/Hierarchy.lean`. -/
+myopia shortcut — see the TODO in `Function/Bimachine.lean`. -/
 theorem maasai_not_mealyComputable : ¬ IsMealyComputable maasai := fun h =>
   maasai_isUnboundedSemiambient.not_myopic .right h.isRightMyopic
 

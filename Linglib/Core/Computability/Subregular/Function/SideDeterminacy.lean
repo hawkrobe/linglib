@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 import Mathlib.Data.List.Basic
 import Mathlib.Data.Set.Basic
+import Linglib.Core.Computability.Mealy
 import Linglib.Core.Computability.Subregular.Function.Defs
 
 /-!
@@ -27,6 +28,11 @@ input positions in `K`. Two notions are instances:
 * `IsMyopicTowards f s` — the negation: dependence on side `s` is bounded.
 * `IsUnboundedSemiambient` — co-located form: for every `d`, ONE base word with a
   target that flips under a far-left perturbation and under a far-right one.
+
+## Main theorems
+
+* `Mealy.isRightMyopic`, `IsMealyComputable.isRightMyopic` — a synchronous machine is
+  prefix-determined at every coordinate, hence has no rightward look-ahead.
 
 ## Implementation notes
 
@@ -169,5 +175,41 @@ theorem IsMyopicTowards.right_of_leftDetermined {f : List α → List β}
   intro hunb
   obtain ⟨u, v, i, hlen, _, hag, hne⟩ := hunb 0
   exact hne (h i u v hlen fun k hk => hag k (by simp only [Set.mem_setOf_eq] at hk; omega))
+
+/-! ### Synchronous machines have no look-ahead
+
+Output coordinate `i` of a `Mealy` machine is fixed by the input prefix `[0..i]`, so the
+synchronous class is myopic towards the right. Block transducers need not be: one that
+delays output, emitting `[]` and then `[x, y]`, has its coordinate `0` depend on input
+position `1`. -/
+
+section Synchronous
+
+variable {σ : Type*}
+
+/-- A synchronous machine is left-determined at every coordinate: output `i` depends only
+on the input prefix `{k | k ≤ i}`. -/
+theorem Mealy.leftDetermined (T : Mealy σ α β) (i : ℕ) : LeftDetermined T.run i := by
+  intro u v hlen hag
+  simp only [Set.mem_setOf_eq] at hag
+  rw [T.getElem?_run u, T.getElem?_run v, hag i le_rfl,
+    take_eq_of_agree fun k hk => hag k hk.le]
+
+/-- A synchronous machine is right-myopic: it has no look-ahead. -/
+theorem Mealy.isRightMyopic (T : Mealy σ α β) : IsMyopicTowards T.run .right :=
+  IsMyopicTowards.right_of_leftDetermined T.leftDetermined
+
+/-- A Mealy-computable map is left-determined at every coordinate. -/
+theorem IsMealyComputable.leftDetermined {f : List α → List β}
+    (hf : IsMealyComputable f) (i : ℕ) : LeftDetermined f i := by
+  obtain ⟨σ, _, T, rfl⟩ := hf
+  exact T.leftDetermined i
+
+/-- A Mealy-computable map is right-myopic: it has no look-ahead. -/
+theorem IsMealyComputable.isRightMyopic {f : List α → List β}
+    (hf : IsMealyComputable f) : IsMyopicTowards f .right :=
+  IsMyopicTowards.right_of_leftDetermined hf.leftDetermined
+
+end Synchronous
 
 end Subregular
