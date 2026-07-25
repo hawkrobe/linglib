@@ -218,12 +218,12 @@ variable {α β γ : Type*} {f : List α → List β} {g : List β → List γ}
 /-- A function `f : List α → List β` is *left-subsequential* if some SFST with a
 finite state space computes it via left-to-right scan [mohri-1997]. -/
 def IsLeftSubsequential (f : List α → List β) : Prop :=
-  ∃ σ : Type, ∃ _ : Fintype σ, ∃ T : SFST σ α β, T.run = f
+  ∃ (σ : Type) (_ : Fintype σ) (T : SFST σ α β), T.run = f
 
 /-- A function `f : List α → List β` is *right-subsequential* if some SFST with a
 finite state space computes it via right-to-left scan (`runRight`). -/
 def IsRightSubsequential (f : List α → List β) : Prop :=
-  ∃ σ : Type, ∃ _ : Fintype σ, ∃ T : SFST σ α β, T.runRight = f
+  ∃ (σ : Type) (_ : Fintype σ) (T : SFST σ α β), T.runRight = f
 
 /-- A function `f : List α → List β` is *subsequential in direction `d`* if some
 finite-state SFST computes it via the corresponding scan direction. -/
@@ -261,8 +261,9 @@ theorem isLeftSubsequential_iff.{v} :
     h ▸ T.run_reindex _⟩,
    fun ⟨_, _, T, h⟩ => h ▸ T.isLeftSubsequential⟩
 
-/-- `f` is right-subsequential if and only if some finite-state SFST computes it via
-`runRight`, with the state type universe-polymorphic. -/
+/-- `f` is right-subsequential if and only if it is computed via `runRight` by a
+finite-state SFST. This is more general than using the definition of
+`IsRightSubsequential` directly, as the state type `σ` is universe-polymorphic. -/
 theorem isRightSubsequential_iff.{v} :
     IsRightSubsequential f
       ↔ ∃ (σ : Type v) (_ : Fintype σ) (T : SFST σ α β), T.runRight = f :=
