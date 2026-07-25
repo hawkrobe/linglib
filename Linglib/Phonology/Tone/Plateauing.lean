@@ -554,7 +554,7 @@ example : utp.map [.H, .O, .O, .H] = [.H, .H, .H, .H] := by decide
 Whether the target surfaces is controlled by unboundedly distant flanks: instantiate
 the flank-witness template with `2d+2` toneless TBUs between the flanks. -/
 
-/-- UTP requires both sides ([heinz-lai-2013]): its trigger is the two-sided window
+/-- UTP requires both sides ([jardine-2016]): its trigger is the two-sided window
 conjunction, so deleting either flanking H reverts the plateau target. -/
 theorem utp.requiresBothSides : RequiresBothSides utp.map :=
   utp.requiresBothSides_of_surfaces_iff fun _ _ => utp.surfaces_iff

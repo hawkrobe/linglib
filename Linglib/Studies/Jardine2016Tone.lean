@@ -50,9 +50,6 @@ The map itself and its plateau/circumambience API live in `Phonology/Tone/Platea
 * `utp_fullyRegular` — §7: UTP is regular but neither subsequential nor weakly
   deterministic.
 
-Contrast `Studies/MeinhardtEtAl2024`: Maasai ATR spreading is unbounded *semiambient*
-yet weakly deterministic; UTP's `RequiresBothSides` — circumambience proper — pushes it
-above that bound.
 -/
 
 namespace Jardine2016Tone
