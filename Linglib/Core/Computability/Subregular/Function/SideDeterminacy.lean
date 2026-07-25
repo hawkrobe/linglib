@@ -9,7 +9,7 @@ import Linglib.Core.Computability.Mealy
 import Linglib.Core.Computability.Subregular.Function.Defs
 
 /-!
-# Side-determinacy: myopia and unbounded semiambience
+# Side-determinacy: myopia and two-sided dependence
 
 Locality predicates on string functions for the function-level subregular hierarchy.
 The kernel `OutputDependsOn f i K` says output coordinate `i` of `f` is fixed by the
@@ -17,8 +17,8 @@ input positions in `K`. Two notions are instances:
 
 * **Myopia** (the "no look-ahead" condition): a side's influence on the output is
   *bounded*.
-* **Unbounded semiambience**: some target is swayed from *either* side, arbitrarily far
-  away — each side alone suffices, so no *one* side determines the target.
+* **Two-sided unbounded dependence**: some target is swayed from *either* side,
+  arbitrarily far away — each side alone suffices to change it.
 
 ## Main definitions
 
@@ -26,7 +26,7 @@ input positions in `K`. Two notions are instances:
 * `UnboundedDependence f s` — for every distance `d`, some output flips under a
   perturbation strictly beyond `d` on side `s`.
 * `IsMyopicTowards f s` — the negation: dependence on side `s` is bounded.
-* `IsUnboundedSemiambient` — co-located form: for every `d`, ONE base word with a
+* `TwoSidedUnboundedDependence` — co-located form: for every `d`, ONE base word with a
   target that flips under a far-left perturbation and under a far-right one.
 
 ## Main theorems
@@ -39,16 +39,21 @@ input positions in `K`. Two notions are instances:
 The predicates are **distance-based** (`∀ d, ∃ word + target`), not fixed-index. A
 fixed target index has only finitely many positions to its left, so a fixed-index
 "unbounded left dependence" is unsatisfiable; the unbounded distance must be witnessed
-by ever-longer words. The co-located `IsUnboundedSemiambient` keeps both
+by ever-longer words. The co-located `TwoSidedUnboundedDependence` keeps both
 perturbations on a single shared base, so any computing automaton hits one context
 where neither side alone fixes the output.
 
-Semiambience is *not* the weak-determinism boundary: a map can be
-`IsUnboundedSemiambient` yet weakly deterministic (a two-sided *union* is perturbed at
-one output by either side, but neither side alone reverts it). The
-not-weakly-deterministic classification is driven by the strictly stronger
-`RequiresBothSides` (in `Bimachine.lean`), where perturbing either far side reverts
-the target to the identity — *both* sides are needed at once, which is the boundary.
+`TwoSidedUnboundedDependence` is *not* the weak-determinism boundary: a map can satisfy
+it yet be weakly deterministic (a two-sided *union* is perturbed at one output by either
+side, but neither side alone reverts it). The not-weakly-deterministic classification is
+driven by the strictly stronger `RequiresBothSides` (in `Bimachine.lean`), where
+perturbing either far side reverts the target to the identity — *both* sides are needed
+at once, which is the boundary.
+
+The name is deliberately descriptive rather than borrowed. Being changeable from either
+side is compatible with every individual output coordinate still being fixed by a single
+side, so this predicate separates neither of the two standard classes on its own: it is
+implied by needing both sides at once, and is also satisfied by maps that never do.
 -/
 
 namespace Subregular
@@ -118,34 +123,34 @@ def IsFarPerturbation (base u : List α) (i d : ℕ) (s : Direction) : Prop :=
     | .left => AgreeFrom base u (i - d)
     | .right => AgreeUpto base u (i + d)
 
-/-- **Unbounded semiambience**, co-located: for every `d`, one base word with a target
-`i` whose output flips under a far perturbation on either side. Co-location keeps both
-flips on a single base (one automaton context). Each side alone sways the target, so
+/-- Two-sided unbounded dependence, co-located: for every `d`, one base word with a
+target `i` whose output flips under a far perturbation on either side. Co-location keeps
+both flips on a single base (one automaton context). Each side alone sways the target, so
 this is weaker than needing both at once (`RequiresBothSides`). -/
-def IsUnboundedSemiambient (f : List α → List β) : Prop :=
+def TwoSidedUnboundedDependence (f : List α → List β) : Prop :=
   ∀ d, ∃ (base : List α) (i : ℕ), i < base.length ∧
     ∀ s, ∃ u, IsFarPerturbation base u i d s ∧ (f base)[i]? ≠ (f u)[i]?
 
-/-- Co-located semiambience yields unbounded dependence on the left. -/
-theorem IsUnboundedSemiambient.left {f : List α → List β}
-    (h : IsUnboundedSemiambient f) : UnboundedDependence f .left := by
+/-- Co-located two-sided dependence yields unbounded dependence on the left. -/
+theorem TwoSidedUnboundedDependence.left {f : List α → List β}
+    (h : TwoSidedUnboundedDependence f) : UnboundedDependence f .left := by
   intro d
   obtain ⟨base, i, hi, hw⟩ := h d
   obtain ⟨uL, ⟨hlen, hag⟩, hne⟩ := hw .left
   exact ⟨base, uL, i, hlen.symm, hi, hag, hne⟩
 
 /-- …and on the right. -/
-theorem IsUnboundedSemiambient.right {f : List α → List β}
-    (h : IsUnboundedSemiambient f) : UnboundedDependence f .right := by
+theorem TwoSidedUnboundedDependence.right {f : List α → List β}
+    (h : TwoSidedUnboundedDependence f) : UnboundedDependence f .right := by
   intro d
   obtain ⟨base, i, hi, hw⟩ := h d
   obtain ⟨uR, ⟨hlen, hag⟩, hne⟩ := hw .right
   exact ⟨base, uR, i, hlen.symm, hi, hag, hne⟩
 
-/-- **Semiambient ⟹ not myopic** (either side): a real consequence, since semiambience
-exhibits unbounded dependence on each side. -/
-theorem IsUnboundedSemiambient.not_myopic {f : List α → List β}
-    (h : IsUnboundedSemiambient f) (s : Direction) : ¬ IsMyopicTowards f s := by
+/-- A map with two-sided unbounded dependence is myopic towards neither side, since it
+exhibits unbounded dependence on each. -/
+theorem TwoSidedUnboundedDependence.not_myopic {f : List α → List β}
+    (h : TwoSidedUnboundedDependence f) (s : Direction) : ¬ IsMyopicTowards f s := by
   cases s with
   | left => exact not_not_intro h.left
   | right => exact not_not_intro h.right
