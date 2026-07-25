@@ -40,6 +40,8 @@ isomorphic under input/output reversal (`f` is right-subsequential iff
   [schutzenberger-1977]
 * `isRightSubsequential_iff_left_reverse`: the left and right classes are isomorphic
   via reverse-conjugation
+* `IsMealyComputable.isLeftSubsequential`, `SFST.isMealyComputable`: the synchronous
+  class sits inside the block class, and a singleton-output SFST falls back into it
 * `IsLeftSubsequential.bounded_delay`: a left-subsequential function withholds at most
   a bounded suffix — the necessity direction of the characterization of
   [choffrut-1977]
@@ -260,7 +262,7 @@ def SFST.toMealy (T : SFST σ α β) (hs : ∀ s x, (T.output s x).length = 1) :
 @[simp] theorem Mealy.toMealy_toSFST (T : Mealy σ α β) :
     T.toSFST.toMealy (fun _ _ => rfl) = T := rfl
 
-@[simp] theorem SFST.toMealy_runFrom (T : SFST σ α β) (hs : ∀ s x, (T.output s x).length = 1)
+theorem SFST.toMealy_runFrom (T : SFST σ α β) (hs : ∀ s x, (T.output s x).length = 1)
     (hf : ∀ s, T.finalOutput s = []) (s : σ) (xs : List α) :
     (T.toMealy hs).runFrom s xs = T.runFrom s xs := by
   induction xs generalizing s with
@@ -270,16 +272,9 @@ def SFST.toMealy (T : SFST σ α β) (hs : ∀ s x, (T.output s x).length = 1) :
     simp only [Mealy.runFrom_cons, SFST.runFrom_cons, toMealy_output, toMealy_step, ih, ha,
       List.head_cons, List.singleton_append]
 
-@[simp] theorem SFST.toMealy_run (T : SFST σ α β) (hs : ∀ s x, (T.output s x).length = 1)
+theorem SFST.toMealy_run (T : SFST σ α β) (hs : ∀ s x, (T.output s x).length = 1)
     (hf : ∀ s, T.finalOutput s = []) : (T.toMealy hs).run = T.run :=
   funext fun xs => T.toMealy_runFrom hs hf T.start xs
-
-/-- A finite block transducer with singleton outputs and no final flush computes a
-Mealy-computable function: block ∩ length-preserving ⊆ synchronous. -/
-theorem SFST.isMealyComputable [Fintype σ] (T : SFST σ α β)
-    (hs : ∀ s x, (T.output s x).length = 1) (hf : ∀ s, T.finalOutput s = []) :
-    IsMealyComputable T.run :=
-  T.toMealy_run hs hf ▸ (T.toMealy hs).isMealyComputable
 
 end Synchronous
 
@@ -322,6 +317,20 @@ theorem SFST.isRightSubsequential {σ : Type*} [Fintype σ] (T : SFST σ α β) 
     IsRightSubsequential T.runRight :=
   ⟨Fin (Fintype.card σ), inferInstance,
     SFST.reindex (Fintype.equivFin σ) T, T.runRight_reindex _⟩
+
+/-- Every finite-state SFST emitting one symbol per input symbol and flushing nothing at
+the end computes a Mealy-computable function. -/
+theorem SFST.isMealyComputable {σ : Type*} [Fintype σ] (T : SFST σ α β)
+    (hs : ∀ s x, (T.output s x).length = 1) (hf : ∀ s, T.finalOutput s = []) :
+    IsMealyComputable T.run :=
+  T.toMealy_run hs hf ▸ (T.toMealy hs).isMealyComputable
+
+/-- A Mealy-computable function is left-subsequential, since `Mealy.toSFST` presents a
+synchronous machine as a block transducer emitting singleton blocks. -/
+theorem IsMealyComputable.isLeftSubsequential (hf : IsMealyComputable f) :
+    IsLeftSubsequential f := by
+  obtain ⟨σ, _, T, rfl⟩ := hf
+  exact T.toSFST_run ▸ T.toSFST.isLeftSubsequential
 
 /-- `f` is left-subsequential if and only if it is computed by a finite-state SFST.
 This is more general than using the definition of `IsLeftSubsequential` directly, as

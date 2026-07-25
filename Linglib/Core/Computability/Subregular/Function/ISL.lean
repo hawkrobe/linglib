@@ -306,6 +306,12 @@ theorem isLeftInputStrictlyLocal_left_subsequential {k : ℕ} [Fintype α]
   have heq : r.toFinSFST.run = f := r.toFinSFST_run_eq_apply.trans hr
   exact heq ▸ r.toFinSFST.isLeftSubsequential
 
+/-- A single-symbol left-ISL rule is Mealy-computable. The bounded input window that makes
+`ISLRule.toFinSFST` finite-state is already the synchronous state. -/
+theorem isMealyComputable_of_ISLRule {k : ℕ} [Fintype α] (r : ISLRule k α β)
+    (hs : ∀ w x, (r.windowOutput w x).length = 1) : IsMealyComputable r.apply :=
+  r.toFinSFST_run_eq_apply ▸ r.toFinSFST.isMealyComputable (fun w x => hs w.val x) fun _ => rfl
+
 /-- **Right-ISL ⊆ Right-Subsequential**, derived from the Left- side via
 the reverse-conjugation lemmas. The Right-ISL ↔ Left-ISL and
 Right-Subseq ↔ Left-Subseq isomorphisms commute. -/

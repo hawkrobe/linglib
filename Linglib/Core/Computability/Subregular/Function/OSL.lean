@@ -208,6 +208,12 @@ theorem isLeftOutputStrictlyLocal_left_subsequential {k : ℕ} [Fintype β]
   have heq : r.toFinSFST.run = f := r.toFinSFST_run_eq_apply.trans hr
   exact heq ▸ r.toFinSFST.isLeftSubsequential
 
+/-- A single-symbol left-OSL rule is Mealy-computable, with the bounded output window as
+the synchronous state. -/
+theorem isMealyComputable_of_OSLRule {k : ℕ} [Fintype β] (r : OSLRule k α β)
+    (hs : ∀ w x, (r.windowOutput w x).length = 1) : IsMealyComputable r.apply :=
+  r.toFinSFST_run_eq_apply ▸ r.toFinSFST.isMealyComputable (fun w x => hs w.val x) fun _ => rfl
+
 /-- **Right-OSL ⊆ Right-Subsequential**, derived from the Left- side via
 the reverse-conjugation lemmas. The Right-OSL ↔ Left-OSL and
 Right-Subseq ↔ Left-Subseq isomorphisms commute. -/
