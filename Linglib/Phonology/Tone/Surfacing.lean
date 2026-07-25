@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.List.TakeDrop
-import Linglib.Core.Computability.Subregular.Function.Bimachine
+import Linglib.Core.Computability.Subregular.Function.Dependence
 
 /-!
 # Tonal surfacing processes
@@ -104,7 +104,7 @@ theorem requiresBothSides_of_flanks {xOn yOn xOff yOff : α} {n t : ℕ → ℕ}
     (hoffR : ∀ d, ¬ P.Surfaces (flankWord xOn P.lo yOff (n d)) (t d)) :
     RequiresBothSides P.map :=
   have hlen : ∀ d, t d < (flankWord xOn P.lo yOff (n d)).length := fun d => by
-    rw [flankWord_length]
+    rw [length_flankWord]
     have := hmargin d
     omega
   RequiresBothSides.of_flanks P.hi_ne_lo hmargin

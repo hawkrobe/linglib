@@ -8,8 +8,8 @@ import Mathlib.Data.List.Basic
 /-!
 # Folds over Boolean accumulation
 
-A left fold that ors in a predicate computes `any`, from any starting accumulator.
-Candidate for `Mathlib/Data/List/Basic.lean`.
+A fold that ors in a predicate computes `any`, from any starting accumulator and in
+either direction. Candidate for `Mathlib/Data/List/Basic.lean`.
 -/
 
 namespace List
@@ -19,5 +19,11 @@ theorem foldl_or {α : Type*} (p : α → Bool) (acc : Bool) (l : List α) :
   induction l generalizing acc with
   | nil => simp
   | cons x xs ih => simp [ih, Bool.or_assoc]
+
+theorem foldr_or {α : Type*} (p : α → Bool) (acc : Bool) (l : List α) :
+    l.foldr (fun a r => r || p a) acc = (acc || l.any p) := by
+  induction l with
+  | nil => simp
+  | cons x xs ih => rw [foldr_cons, ih, any_cons]; ac_rfl
 
 end List

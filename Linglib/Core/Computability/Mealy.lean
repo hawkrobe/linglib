@@ -7,6 +7,7 @@ import Mathlib.Computability.DFA
 import Mathlib.Data.Fintype.EquivFin
 import Mathlib.Data.List.Basic
 import Mathlib.Logic.Equiv.Defs
+import Linglib.Core.Data.Fintype.Transfer
 import Linglib.Core.Data.List.Fold
 
 /-!
@@ -258,22 +259,21 @@ end Mealy
 def IsMealyComputable (f : List α → List β) : Prop :=
   ∃ (σ : Type) (_ : Fintype σ) (T : Mealy σ α β), T.run = f
 
-/-- Every finite-state `Mealy` computes a Mealy-computable function, whatever the
-universe of its state type. -/
-theorem Mealy.isMealyComputable {σ : Type*} [Fintype σ] (T : Mealy σ α β) :
-    IsMealyComputable T.run :=
-  ⟨Fin (Fintype.card σ), inferInstance, Mealy.reindex (Fintype.equivFin σ) T,
-   T.run_reindex _⟩
-
 /-- `f` is Mealy-computable if and only if it is computed by a finite-state `Mealy`
 machine. This is more general than using the definition of `IsMealyComputable`
 directly, as the state type `σ` is universe-polymorphic. -/
 theorem isMealyComputable_iff.{v} {f : List α → List β} :
     IsMealyComputable f
       ↔ ∃ (σ : Type v) (_ : Fintype σ) (T : Mealy σ α β), T.run = f :=
-  ⟨fun ⟨σ, _, T, h⟩ => ⟨ULift σ, inferInstance, Mealy.reindex Equiv.ulift.symm T,
-    h ▸ T.run_reindex _⟩,
-   fun ⟨_, _, T, h⟩ => h ▸ T.isMealyComputable⟩
+  exists_fintype_congr
+    (fun e ⟨T, hT⟩ => ⟨Mealy.reindex e T, (T.run_reindex e).trans hT⟩)
+    (fun e ⟨T, hT⟩ => ⟨Mealy.reindex e T, (T.run_reindex e).trans hT⟩)
+
+/-- Every finite-state `Mealy` computes a Mealy-computable function, whatever the
+universe of its state type. -/
+theorem Mealy.isMealyComputable {σ : Type*} [Fintype σ] (T : Mealy σ α β) :
+    IsMealyComputable T.run :=
+  isMealyComputable_iff.mpr ⟨σ, inferInstance, T, rfl⟩
 
 /-- Mealy-computable functions are closed under composition (`Mealy.comp`). -/
 theorem IsMealyComputable.comp {γ : Type*} {g : List β → List γ} {f : List α → List β}

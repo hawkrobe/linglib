@@ -60,6 +60,7 @@ import Linglib.Core.CategoryTheory.Monoidal.LabeledTuple
 import Linglib.Core.Combinatorics.Antimatroid
 import Linglib.Core.Combinatorics.RootedTree.Aut
 import Linglib.Core.Combinatorics.RootedTree.ContractUnary
+import Linglib.Core.Computability.Bimachine
 import Linglib.Core.Computability.ContextFreeGrammar.Closure
 import Linglib.Core.Computability.ContextFreeGrammar.InterRegular
 import Linglib.Core.Computability.ContextFreeGrammar.Map
@@ -75,9 +76,8 @@ import Linglib.Core.Computability.NonContextFree.AnBnCnDn
 import Linglib.Core.Computability.NonContextFree.BlockWitness
 import Linglib.Core.Computability.NonRegular.AnBn
 import Linglib.Core.Computability.StarFree
-import Linglib.Core.Computability.Subregular.Function.Bimachine
-import Linglib.Core.Computability.Subregular.Function.Dependence
 import Linglib.Core.Computability.Subregular.Function.Defs
+import Linglib.Core.Computability.Subregular.Function.Dependence
 import Linglib.Core.Computability.Subregular.Function.ISL
 import Linglib.Core.Computability.Subregular.Function.OSL
 import Linglib.Core.Computability.Subregular.Function.Subsequential
@@ -107,6 +107,7 @@ import Linglib.Core.Computability.Variety.Correspondence
 import Linglib.Core.Computability.Variety.Langs
 import Linglib.Core.Data.Fin.Tuple.Basic
 import Linglib.Core.Data.Fintype.Sets
+import Linglib.Core.Data.Fintype.Transfer
 import Linglib.Core.Data.List.Bookend
 import Linglib.Core.Data.List.Chain
 import Linglib.Core.Data.List.Destutter

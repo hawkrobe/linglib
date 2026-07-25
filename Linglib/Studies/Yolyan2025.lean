@@ -1,4 +1,4 @@
-import Linglib.Core.Computability.Subregular.Function.Bimachine
+import Linglib.Core.Computability.Bimachine
 import Linglib.Core.Computability.Subregular.Logic.BMRS
 import Linglib.Phonology.Tone.Plateauing
 import Linglib.Studies.McCollumEtAl2020
@@ -17,7 +17,7 @@ combined-head-space construction.
 The engine is `not_isBmrsWeaklyDeterministic_of_requiresBothSides`: the paper's §5.3
 template (Thms. 5.2–5.5), consuming the same `Subregular.RequiresBothSides` witness
 that excludes the *bimachine* rendering of weak determinism
-(`not_isBimachineWeaklyDeterministic_of_requiresBothSides`). Whether the two
+(`RequiresBothSides.not_isNonInteractingBimachineComputable`). Whether the two
 definitions coincide is the paper's own open question (§6.3, against
 [meinhardt-mai-bakovic-mccollum-2024]); feeding both exclusions one witness object
 states it structurally without resolving it. The proof here streamlines the paper's:
@@ -206,8 +206,8 @@ theorem sourGrapes_not_bmrsWeaklyDeterministic :
 exclusions consume one object, which is the sharpest formal statement available of the
 paper's §6.3 open question (are the two definitions equivalent?). -/
 theorem sourGrapes_not_bimachineWeaklyDeterministic :
-    ¬ IsBimachineWeaklyDeterministic sourGrapes :=
-  not_isBimachineWeaklyDeterministic_of_requiresBothSides sourGrapes_requiresBothSides
+    ¬ IsNonInteractingBimachineComputable sourGrapes :=
+  sourGrapes_requiresBothSides.not_isNonInteractingBimachineComputable
 
 /-! ### The library's unbounded-circumambient maps, through the same template -/
 
@@ -320,9 +320,9 @@ theorem bemba_requiresBothSides : RequiresBothSides bemba.map :=
     (t := fun d => d + 3) (by decide) (fun d => ⟨by omega, by omega⟩)
     (fun d => bemba.map_getElem?_hi_iff.mpr bembaSurfaces_bw_HL)
     (fun d => bemba.map_getElem?_lo_iff.mpr
-      ⟨by rw [flankWord_length]; omega, not_bembaSurfaces_bw_LL⟩)
+      ⟨by rw [length_flankWord]; omega, not_bembaSurfaces_bw_LL⟩)
     (fun d => bemba.map_getElem?_lo_iff.mpr
-      ⟨by rw [flankWord_length]; omega, not_bembaSurfaces_bw_HH⟩)
+      ⟨by rw [length_flankWord]; omega, not_bembaSurfaces_bw_HH⟩)
 
 /-- **Prop. 5.4**: Bemba high-tone spreading is not weakly deterministic. -/
 theorem bemba_not_bmrsWeaklyDeterministic : ¬ IsBmrsWeaklyDeterministic bemba.map :=
@@ -330,8 +330,8 @@ theorem bemba_not_bmrsWeaklyDeterministic : ¬ IsBmrsWeaklyDeterministic bemba.m
 
 /-- The bimachine twin, off the same witness. -/
 theorem bemba_not_bimachineWeaklyDeterministic :
-    ¬ IsBimachineWeaklyDeterministic bemba.map :=
-  not_isBimachineWeaklyDeterministic_of_requiresBothSides bemba_requiresBothSides
+    ¬ IsNonInteractingBimachineComputable bemba.map :=
+  bemba_requiresBothSides.not_isNonInteractingBimachineComputable
 
 /-! ### The positive side: LHOL stress as a simultaneous application (§5.2)
 

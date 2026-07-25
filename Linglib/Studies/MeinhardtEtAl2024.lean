@@ -8,7 +8,7 @@ import Linglib.Core.Computability.Subregular.Function.ISL
 import Linglib.Core.Computability.Subregular.Function.OSL
 import Linglib.Core.Computability.Subregular.Function.Subsequential
 import Linglib.Core.Computability.Subregular.Function.Dependence
-import Linglib.Core.Computability.Subregular.Function.Bimachine
+import Linglib.Core.Computability.Bimachine
 
 /-!
 # Meinhardt, Mai, Baković & McCollum (2024): ATR Harmony Subregular Classification
@@ -315,13 +315,13 @@ def maasaiBM : Bimachine Bool Bool Seg Seg where
   lStep l s := l || (s == .dom)
   rInit := false
   rStep r s := r || (s == .dom)
-  out l s r := if (l || r) && s == .recL then .recH else s
+  output l s r := if (l || r) && s == .recL then .recH else s
 
 /-- `maasaiBM`'s cell output is a `unite` of one-sided raise-rules. -/
 theorem maasaiBM_isNonInteracting : maasaiBM.IsNonInteracting :=
   ⟨fun l s => if l && s == .recL then .recH else s,
-   fun r s => if r && s == .recL then .recH else s, by
-    intro l s r; cases s <;> cases l <;> cases r <;> rfl⟩
+   fun r s => if r && s == .recL then .recH else s,
+   by decide, by intro l s r; cases s <;> cases l <;> cases r <;> rfl⟩
 
 /-- The left state after a prefix is exactly "a dominant occurs in it". -/
 theorem maasaiBM_lState (xs : List Seg) : maasaiBM.lState xs = xs.any (· == .dom) := by
@@ -352,7 +352,7 @@ private theorem hasDom_split (xs : List Seg) (i : ℕ) (hi : i < xs.length) :
     cases (xs[i] == Seg.dom) <;> rfl
 
 private theorem maasaiBM_cell_eq (xs : List Seg) (i : ℕ) (hi : i < xs.length) :
-    maasaiBM.out (maasaiBM.lState (xs.take i)) xs[i] (maasaiBM.rState (xs.drop (i + 1)))
+    maasaiBM.output (maasaiBM.lState (xs.take i)) xs[i] (maasaiBM.rState (xs.drop (i + 1)))
     = if hasDom xs && xs[i] == .recL then .recH else xs[i] := by
   rw [maasaiBM_lState, maasaiBM_rState, hasDom_split xs i hi]
   show (if (((xs.take i).any (· == .dom) || (xs.drop (i + 1)).any (· == .dom)) && xs[i] == .recL)
@@ -366,7 +366,7 @@ theorem maasaiBM_run : maasaiBM.run = maasai := by
   funext xs
   apply List.ext_getElem?
   intro i
-  rw [maasaiBM.run_getElem?]
+  rw [maasaiBM.getElem?_run]
   rcases lt_or_ge i xs.length with hi | hi
   · rw [List.getElem?_eq_getElem hi, Option.map_some, maasaiBM_cell_eq xs i hi]
     simp only [maasai, List.getElem?_map, List.getElem?_eq_getElem hi, Option.map_some, hasDom]
@@ -376,8 +376,8 @@ theorem maasaiBM_run : maasaiBM.run = maasai := by
 
 /-- **Maasai ATR harmony is weakly deterministic** ([meinhardt-mai-bakovic-mccollum-2024]):
 the bidirectional dominant-recessive spread is a non-interacting bimachine. -/
-theorem maasai_weaklyDeterministic : IsBimachineWeaklyDeterministic maasai :=
-  maasaiBM_run ▸ isBimachineWeaklyDeterministic maasaiBM maasaiBM_isNonInteracting
+theorem maasai_weaklyDeterministic : IsNonInteractingBimachineComputable maasai :=
+  maasaiBM_run ▸ maasaiBM.isNonInteractingBimachineComputable maasaiBM_isNonInteracting
 
 /-- **Maasai has two-sided unbounded dependence** — at every distance, a medial
 recessive's ATR flips under a dominant placed far to the left *or* far to the right,
@@ -414,7 +414,7 @@ theorem maasai_twoSidedUnboundedDependence : TwoSidedUnboundedDependence maasai 
 /-- Hence Maasai does **not** require both sides — it escapes the teeth, unlike Tutrugbu.
 Covariation (both languages) and interaction (Tutrugbu only) come apart. -/
 theorem maasai_not_requiresBothSides : ¬ RequiresBothSides maasai := fun h =>
-  not_isBimachineWeaklyDeterministic_of_requiresBothSides h maasai_weaklyDeterministic
+  h.not_isNonInteractingBimachineComputable maasai_weaklyDeterministic
 
 /-- Strictness witness `synchronous ⊊ WD`: Maasai is weakly deterministic yet not
 Mealy-computable. A Mealy-computable map is right-myopic
