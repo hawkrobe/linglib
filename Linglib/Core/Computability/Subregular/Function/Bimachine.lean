@@ -277,7 +277,7 @@ theorem flankWord_congr_right {y' : α} (h : k ≠ n + 1) :
   split_ifs <;> rfl
 
 /-- `f` requires both sides: some target changes under `f`, yet perturbing either far
-side reverts it to the identity. Unlike `IsUnboundedCircumambient`, a two-sided union
+side reverts it to the identity. Unlike `IsUnboundedSemiambient`, a two-sided union
 never satisfies this — removing one trigger leaves the other, so the output stays
 changed. -/
 def RequiresBothSides (f : List α → List α) : Prop :=
@@ -310,11 +310,11 @@ theorem RequiresBothSides.of_flanks {f : List α → List α}
       ⟨by simp, fun k hk => flankWord_congr_right (by omega)⟩, by rw [hmid, hmid],
       by rw [hrevR, hmid]⟩
 
-/-- Requiring both sides strengthens unbounded circumambience: a reverted target is in
-particular a flipped one. The converse fails (a two-sided union is circumambient but
+/-- Requiring both sides strengthens unbounded semiambience: a reverted target is in
+particular a flipped one. The converse fails (a two-sided union is semiambient but
 reverts under neither side alone). -/
-theorem RequiresBothSides.isUnboundedCircumambient {f : List α → List α}
-    (hf : RequiresBothSides f) : IsUnboundedCircumambient f := fun d =>
+theorem RequiresBothSides.isUnboundedSemiambient {f : List α → List α}
+    (hf : RequiresBothSides f) : IsUnboundedSemiambient f := fun d =>
   have ⟨base, i, hi, hchange, hw⟩ := hf d
   ⟨base, i, hi, fun s =>
     have ⟨u, hp, hsym, hrev⟩ := hw s

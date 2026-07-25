@@ -75,9 +75,9 @@ Per CLAUDE.md "stimulus contrasts" discipline for Studies files:
    ex 1a-ii from the paper (encoded in the toy alphabet).
 4. Proves the **bidirectional** dominant-recessive map `maasai` is
    **weakly deterministic** (`maasai_weaklyDeterministic`) via a
-   non-interacting bimachine, yet unbounded-circumambient *as
-   covariation* (`maasai_isUnboundedCircumambient`) — the same predicate
-   Tutrugbu satisfies — while *not* `RequiresBothSides`
+   non-interacting bimachine, and unbounded *semiambient*
+   (`maasai_isUnboundedSemiambient`) — a predicate Tutrugbu also
+   satisfies — while *not* `RequiresBothSides`
    (`maasai_not_requiresBothSides`). That asymmetry is the WD/ND boundary
    [meinhardt-mai-bakovic-mccollum-2024] draws.
 
@@ -291,10 +291,10 @@ to `recH` iff the word contains a dominant vowel anywhere (`maasai`). This is a 
 of two independent spreading passes, so it is **weakly deterministic**
 ([meinhardt-mai-bakovic-mccollum-2024], unbounded *semiambient*): the bimachine `maasaiBM`
 tracks a dominant seen on each side and its output is literally a `unite` of one-sided
-rules. Yet — like Tutrugbu — a recessive's surface ATR co-varies with information
-unboundedly far on either side, so `maasai` *also* satisfies `IsUnboundedCircumambient`.
-The contrast is exactly the WD/ND boundary the paper draws: both maps are circumambient
-*as covariation*, but only Tutrugbu `RequiresBothSides` (suppression/conjunction). -/
+rules. A recessive's surface ATR still co-varies with information unboundedly far on
+either side, so `maasai` satisfies `IsUnboundedSemiambient` — as does Tutrugbu. The
+contrast is exactly the WD/ND boundary the paper draws: only Tutrugbu is *circumambient*,
+needing both sides at once (`RequiresBothSides`), which Maasai never does. -/
 
 open Subregular
 
@@ -377,11 +377,12 @@ the bidirectional dominant-recessive spread is a non-interacting bimachine. -/
 theorem maasai_weaklyDeterministic : IsBimachineWeaklyDeterministic maasai :=
   maasaiBM_run ▸ isBimachineWeaklyDeterministic maasaiBM maasaiBM_isNonInteracting
 
-/-- **Maasai is unbounded-circumambient *as covariation*** — at every distance, a medial
-recessive's ATR flips under a dominant placed far to the left *or* far to the right. The
-same predicate Tutrugbu satisfies (`tutrugbu_isUnboundedCircumambient`); the difference is
-that Maasai does *not* `RequiresBothSides`. -/
-theorem maasai_isUnboundedCircumambient : IsUnboundedCircumambient maasai := by
+/-- **Maasai is unbounded semiambient** — at every distance, a medial recessive's ATR
+flips under a dominant placed far to the left *or* far to the right, each side alone
+sufficing. Tutrugbu satisfies this too (`tutrugbu_isUnboundedSemiambient`); the
+difference is that Maasai does *not* `RequiresBothSides`, so it stays weakly
+deterministic. -/
+theorem maasai_isUnboundedSemiambient : IsUnboundedSemiambient maasai := by
   intro d
   refine ⟨List.replicate (2 * d + 3) .recL, d + 1, by simp; omega, fun s => ?_⟩
   match s with
@@ -414,11 +415,11 @@ theorem maasai_not_requiresBothSides : ¬ RequiresBothSides maasai := fun h =>
 /-- Strictness witness `synchronous ⊊ WD`: Maasai is weakly deterministic yet not
 Mealy-computable. A Mealy-computable map is right-myopic
 (`IsMealyComputable.isRightMyopic`), but Maasai's bidirectional spread is not
-(`maasai_isUnboundedCircumambient`). The stronger `¬ IsLeftSubsequential maasai` (the
+(`maasai_isUnboundedSemiambient`). The stronger `¬ IsLeftSubsequential maasai` (the
 *block* class) is not yet formalized: a block transducer can delay output, so it
 needs the bounded-delay route (`IsLeftSubsequential.bounded_delay`) rather than the
 myopia shortcut — see the TODO in `Function/Hierarchy.lean`. -/
 theorem maasai_not_mealyComputable : ¬ IsMealyComputable maasai := fun h =>
-  maasai_isUnboundedCircumambient.not_myopic .right h.isRightMyopic
+  maasai_isUnboundedSemiambient.not_myopic .right h.isRightMyopic
 
 end MeinhardtEtAl2024

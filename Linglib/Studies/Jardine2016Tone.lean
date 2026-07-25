@@ -26,7 +26,7 @@ representation (§4.1: `H` a H-toned TBU, `O` the paper's Ø).
 
 The map itself and its plateau/circumambience API live in `Phonology/Tone/Plateauing`
 (the rule set (36) as `utp.map_toneless`/`utp.map_single`/`utp.map_plateau`; definition (2) as
-`utp.isUnboundedCircumambient`); this file keeps the paper's theorems about it.
+`utp.isUnboundedSemiambient`); this file keeps the paper's theorems about it.
 
 ## Main definitions
 
@@ -51,8 +51,9 @@ The map itself and its plateau/circumambience API live in `Phonology/Tone/Platea
 * `utp_fullyRegular` — §7: UTP is regular but neither subsequential nor weakly
   deterministic.
 
-Contrast `Studies/MeinhardtEtAl2024`: ATR spreading is circumambient as covariation yet
-weakly deterministic; UTP's `RequiresBothSides` pushes it above that bound.
+Contrast `Studies/MeinhardtEtAl2024`: Maasai ATR spreading is unbounded *semiambient*
+yet weakly deterministic; UTP's `RequiresBothSides` — circumambience proper — pushes it
+above that bound.
 -/
 
 namespace Jardine2016Tone
