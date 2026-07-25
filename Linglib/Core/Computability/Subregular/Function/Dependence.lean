@@ -239,6 +239,22 @@ theorem exists_ge_flankWord_eq_some_iff (hfill : fill ≠ a) (h0 : 0 < k)
   simp [getElem?_flankWord_eq_some_iff hfill, and_or_left, exists_or,
     eq_false (by omega : ¬ (k ≤ 0)), hk]
 
+/-- A window reaching at most the filler run contains `a` iff the left flank is `a`. -/
+theorem mem_take_flankWord_iff (hfill : fill ≠ a) (h0 : 0 < k) (hk : k ≤ n + 1) :
+    a ∈ (flankWord x fill y n).take k ↔ x = a := by
+  obtain ⟨j, rfl⟩ : ∃ j, k = j + 1 := ⟨k - 1, by omega⟩
+  rw [flankWord, List.take_succ_cons, List.take_append_of_le_length (by simp; omega),
+    List.take_replicate]
+  simp [List.mem_replicate, eq_comm, hfill]
+
+/-- A window past the left flank contains `a` iff the right flank is `a`. -/
+theorem mem_drop_flankWord_iff (hfill : fill ≠ a) (h0 : 0 < k) (hk : k ≤ n + 1) :
+    a ∈ (flankWord x fill y n).drop k ↔ y = a := by
+  obtain ⟨j, rfl⟩ : ∃ j, k = j + 1 := ⟨k - 1, by omega⟩
+  rw [flankWord, List.drop_succ_cons, List.drop_append_of_le_length (by simp; omega),
+    List.drop_replicate]
+  simp [List.mem_replicate, eq_comm, hfill]
+
 /-- A flag over a window reaching at most the filler run reads the left flank — the
 `ofFlags` counterpart of `exists_le_flankWord_eq_some_iff`. -/
 theorem any_take_flankWord (hfill : p fill = false) (h0 : 0 < k) (hk : k ≤ n + 1) :

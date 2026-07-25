@@ -301,10 +301,11 @@ theorem pre_get_target (init : Seg) (d : ℕ) : (pre init d)[d + 1]? = some .vLo
   rw [List.getElem?_append_right (by simp)]
   simp
 
-/-- **Tutrugbu ATR harmony requires both sides** ([meinhardt-mai-bakovic-mccollum-2024]
-Def. 2): at the medial target the base spreads ([+ATR]), but flipping the initial height
-to the far left *or* the root ATR to the far right reverts it to its [−ATR] input — the
-suppression structure no union of one-sided rules can produce. -/
+/-- **Tutrugbu ATR harmony requires both sides** — the strong witness form of the
+paper's unbounded circumambience (its def. 13): at the medial target the base spreads
+([+ATR]), but flipping the initial height to the far left *or* the root ATR to the far
+right reverts it to its [−ATR] input — the suppression structure no union of one-sided
+rules can produce. -/
 theorem tutrugbu_requiresBothSides : RequiresBothSides tutrugbuATR := by
   intro d
   have hpl : (pre Seg.vLo d).length = 2 * d + 2 := by

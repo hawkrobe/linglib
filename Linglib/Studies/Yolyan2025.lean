@@ -18,9 +18,9 @@ The engine is `not_isBmrsWeaklyDeterministic_of_requiresBothSides`: the paper's 
 template (Thms. 5.2–5.5), consuming the same `Subregular.RequiresBothSides` witness
 that excludes the *bimachine* rendering of weak determinism
 (`RequiresBothSides.not_isNonInteractingBimachineComputable`). Whether the two
-definitions coincide is the paper's own open question (§6.3, against
-[meinhardt-mai-bakovic-mccollum-2024]); feeding both exclusions one witness object
-states it structurally without resolving it. The proof here streamlines the paper's:
+definitions coincide is the paper's own open question (§6.1, on the μ-conserving
+proposal of [meinhardt-mai-bakovic-mccollum-2024]); feeding both exclusions one witness
+object states it structurally without resolving it. The proof here streamlines the paper's:
 on either perturbation the input value is unchanged, so ⊙ collapses to conjunction and
 *both* one-sided outputs are forced true; each transports to the base word by one-sided
 locality (`Eval.congr_agreeUpto`/`congr_agreeFrom`), and recombining forces the base
@@ -28,7 +28,9 @@ unchanged — no case-split through Prop. 4.2 needed. Only the `d = 0` instance 
 witness is used: one-sidedness is global, not window-bounded.
 
 Instances: Sour Grapes harmony (Thm. 5.2 — the first proof of the [heinz-lai-2013]
-conjecture, via [padgett-1995]/[wilson-2003]'s pathology), and — through the shared
+conjecture under the paper's Def. 5.1; under the original definition the conjecture is
+false, [lamont-ohara-smith-2019] Thm. 3.1 — via [padgett-1995]/[wilson-2003]'s
+pathology), and — through the shared
 witnesses already in the library — Tutrugbu ATR harmony (Prop. 5.5,
 [mccollum-bakovic-mai-meinhardt-2020]), Luganda unbounded tonal plateauing
 ([jardine-2016]), and Copperbelt Bemba high-tone spreading (Prop. 5.4), the latter
@@ -133,49 +135,20 @@ def sourGrapes (w : List SG) : List SG :=
   w.mapIdx fun i σ =>
     if σ = .minus ∧ .plus ∈ w.take i ∧ .blk ∉ w.drop i then .plus else σ
 
-/-- The witness family: a mutable middle flanked by `d`-margins, with an editable head
-(trigger site) and tail (blocker site). -/
-private def sg (u v : SG) (d : ℕ) : List SG :=
-  u :: (List.replicate (2 * d + 1) .minus ++ [v])
-
-private theorem sg_length {u v : SG} {d : ℕ} : (sg u v d).length = 2 * d + 3 := by
-  simp [sg]
-
-private theorem sg_getElem? {u v : SG} {d k : ℕ} :
-    (sg u v d)[k]? = if k = 0 then some u else if k = 2 * d + 2 then some v
-      else if k < 2 * d + 2 then some .minus else none := by
-  rcases k with _ | k
-  · rfl
-  · simp only [sg, List.getElem?_cons_succ, List.getElem?_append, List.getElem?_replicate,
-      List.length_replicate, List.getElem?_cons, List.getElem?_nil]
-    split_ifs <;> first | rfl | omega | (exfalso; omega)
-
-/-- The head is the only trigger site: `+` precedes the middle iff the head is `+`. -/
-private theorem sg_plus_mem_take {u v : SG} {d : ℕ} :
-    .plus ∈ (sg u v d).take (d + 1) ↔ u = .plus := by
-  rw [sg, List.take_succ_cons, List.take_append_of_le_length (by simp; omega),
-    List.take_replicate]
-  simp [eq_comm, List.mem_replicate]
-
-/-- The tail is the only blocker site: `⊟` follows the middle iff the tail is `⊟`. -/
-private theorem sg_blk_mem_drop {u v : SG} {d : ℕ} :
-    .blk ∈ (sg u v d).drop (d + 1) ↔ v = .blk := by
-  rw [sg, List.drop_succ_cons, List.drop_append_of_le_length (by simp; omega),
-    List.drop_replicate]
-  simp [eq_comm, List.mem_replicate]
-
-/-- The middle of the witness: spreads iff the head triggers and the tail is clear. -/
-private theorem sourGrapes_sg_mid {u v : SG} {d : ℕ} :
-    (sourGrapes (sg u v d))[d + 1]? =
+/-- The middle of the flank witness spreads iff the head triggers and the tail is
+clear. -/
+private theorem sourGrapes_flankWord_mid {u v : SG} {d : ℕ} :
+    (sourGrapes (flankWord u .minus v (2 * d + 1)))[d + 1]? =
       some (if u = .plus ∧ v ≠ .blk then .plus else .minus) := by
-  have hmid : (sg u v d)[d + 1]? = some .minus := by
-    rw [sg_getElem?]
-    split_ifs <;> first | rfl | omega | (exfalso; omega)
-  rw [sourGrapes, List.getElem?_mapIdx, hmid, Option.map_some]
+  rw [sourGrapes, List.getElem?_mapIdx, getElem?_flankWord_mid (by omega) (by omega),
+    Option.map_some]
   by_cases h : u = .plus ∧ v ≠ .blk
-  · rw [if_pos h, if_pos ⟨rfl, sg_plus_mem_take.mpr h.1, fun hb => h.2 (sg_blk_mem_drop.mp hb)⟩]
+  · rw [if_pos h, if_pos ⟨rfl,
+      (mem_take_flankWord_iff (by decide) (by omega) (by omega)).mpr h.1,
+      fun hb => h.2 ((mem_drop_flankWord_iff (by decide) (by omega) (by omega)).mp hb)⟩]
   · rw [if_neg h, if_neg fun ⟨_, ht, hd⟩ =>
-      h ⟨sg_plus_mem_take.mp ht, fun hv => hd (sg_blk_mem_drop.mpr hv)⟩]
+      h ⟨(mem_take_flankWord_iff (by decide) (by omega) (by omega)).mp ht,
+        fun hv => hd ((mem_drop_flankWord_iff (by decide) (by omega) (by omega)).mpr hv)⟩]
 
 /-- Sour Grapes requires both sides: the middle of `+ −…− −` spreads, but neither the
 triggerless `− −…− −` (far-left perturbation) nor the blocked `+ −…− ⊟` (far-right)
@@ -184,27 +157,20 @@ theorem sourGrapes_requiresBothSides : RequiresBothSides sourGrapes :=
   RequiresBothSides.of_flanks (fill := SG.minus) (on := SG.plus) (xOn := SG.plus)
     (yOn := SG.minus) (xOff := SG.minus) (yOff := SG.blk) (n := fun d => 2 * d + 1)
     (t := fun d => d + 1) (by decide) (fun d => ⟨by omega, by omega⟩)
-    (fun d => by
-      rw [show flankWord SG.plus SG.minus SG.minus (2 * d + 1) = sg .plus .minus d from
-        rfl, sourGrapes_sg_mid]
-      simp)
-    (fun d => by
-      rw [show flankWord SG.minus SG.minus SG.minus (2 * d + 1) = sg .minus .minus d from
-        rfl, sourGrapes_sg_mid]
-      simp)
-    (fun d => by
-      rw [show flankWord SG.plus SG.minus SG.blk (2 * d + 1) = sg .plus .blk d from
-        rfl, sourGrapes_sg_mid]
-      simp)
+    (fun d => by rw [sourGrapes_flankWord_mid]; simp)
+    (fun d => by rw [sourGrapes_flankWord_mid]; simp)
+    (fun d => by rw [sourGrapes_flankWord_mid]; simp)
 
-/-- **Thm. 5.2** — the first proof of the [heinz-lai-2013] conjecture. -/
+/-- **Thm. 5.2** — the first proof of the [heinz-lai-2013] conjecture, under the
+paper's Def. 5.1 (under the original definition it is false,
+[lamont-ohara-smith-2019] Thm. 3.1). -/
 theorem sourGrapes_not_bmrsWeaklyDeterministic :
     ¬ IsBmrsWeaklyDeterministic sourGrapes :=
   not_isBmrsWeaklyDeterministic_of_requiresBothSides sourGrapes_requiresBothSides
 
 /-- The same witness excludes the *bimachine* rendering of weak determinism — the two
 exclusions consume one object, which is the sharpest formal statement available of the
-paper's §6.3 open question (are the two definitions equivalent?). -/
+paper's §6.1 open question (are the two definitions equivalent?). -/
 theorem sourGrapes_not_bimachineWeaklyDeterministic :
     ¬ IsNonInteractingBimachineComputable sourGrapes :=
   sourGrapes_requiresBothSides.not_isNonInteractingBimachineComputable
@@ -260,69 +226,48 @@ def bemba : Tone.Surfacing BTone where
   surfaces_of_hi h := ⟨(List.getElem?_eq_some_iff.mp h).1, .inl h⟩
   decSurfaces _ _ := inferInstance
 
-/-- The witness family: flanks `x`, `y` around a toneless fill wide enough that the
-bounded two-TBU spread never reaches the middle. -/
-private def bw (x y : BTone) (d : ℕ) : List BTone :=
-  x :: (List.replicate (2 * d + 4) .L ++ [y])
-
-private theorem bw_length {x y : BTone} {d : ℕ} : (bw x y d).length = 2 * d + 6 := by
-  simp [bw]
-
-private theorem bw_getElem? {x y : BTone} {d k : ℕ} :
-    (bw x y d)[k]? = if k = 0 then some x else if k = 2 * d + 5 then some y
-      else if k < 2 * d + 5 then some .L else none := by
-  rcases k with _ | k
-  · rfl
-  · simp only [bw, List.getElem?_cons_succ, List.getElem?_append, List.getElem?_replicate,
-      List.length_replicate, List.getElem?_cons, List.getElem?_nil]
-    split_ifs <;> first | rfl | exact ‹False›.elim | omega
-
-/-- In the lone-trigger word, the middle surfaces: the initial H is the last H, so the
-unbounded spread reaches it. -/
-private theorem bembaSurfaces_bw_HL {d : ℕ} : bembaSurfaces (bw .H .L d) (d + 3) := by
-  refine ⟨by rw [bw_length]; omega, .inr (.inr ⟨0, by omega, ?_, fun k hk hkH => ?_⟩)⟩
-  · rw [bw_getElem?]
-    split_ifs <;> first | rfl | omega
-  · rw [bw_length] at hk
-    rw [bw_getElem?] at hkH
-    split_ifs at hkH <;> first | omega | exact BTone.noConfusion (Option.some.inj hkH)
+/-- In the lone-trigger flank word, the middle surfaces: the initial H is the last H,
+so the unbounded spread reaches it. -/
+private theorem bembaSurfaces_flankWord_HL {d : ℕ} :
+    bembaSurfaces (flankWord .H .L .L (2 * d + 4)) (d + 3) := by
+  refine ⟨by rw [length_flankWord]; omega,
+    .inr (.inr ⟨0, by omega, getElem?_flankWord_zero, fun k hk hkH => ?_⟩)⟩
+  rw [length_flankWord] at hk
+  rw [getElem?_flankWord] at hkH
+  split_ifs at hkH <;> first | omega | exact BTone.noConfusion (Option.some.inj hkH)
 
 /-- With a second H at the end, the middle does not surface: the bounded spread stops
 two TBUs in, and the unbounded spread now belongs to the final H. -/
-private theorem not_bembaSurfaces_bw_HH {d : ℕ} : ¬ bembaSurfaces (bw .H .H d) (d + 3) := by
+private theorem not_bembaSurfaces_flankWord_HH {d : ℕ} :
+    ¬ bembaSurfaces (flankWord .H .L .H (2 * d + 4)) (d + 3) := by
   rintro ⟨-, h | ⟨j, hj, hjH, hspread⟩ | ⟨j, hj, hjH, hlast⟩⟩
-  · rw [bw_getElem?] at h
+  · rw [getElem?_flankWord] at h
     split_ifs at h <;> first | omega | exact BTone.noConfusion (Option.some.inj h)
-  · rw [bw_getElem?] at hjH
+  · rw [getElem?_flankWord] at hjH
     split_ifs at hjH <;> first | omega | exact BTone.noConfusion (Option.some.inj hjH)
   · have hj0 : j = 0 := by
-      rw [bw_getElem?] at hjH
+      rw [getElem?_flankWord] at hjH
       split_ifs at hjH <;> first | omega | exact BTone.noConfusion (Option.some.inj hjH)
-    have := hlast (2 * d + 5) (by rw [bw_length]; omega) (by
-      rw [bw_getElem?]
-      split_ifs <;> first | rfl | omega)
+    have := hlast (2 * d + 5) (by rw [length_flankWord]; omega) getElem?_flankWord_last
     omega
 
 /-- With no trigger at all, the middle does not surface. -/
-private theorem not_bembaSurfaces_bw_LL {d : ℕ} : ¬ bembaSurfaces (bw .L .L d) (d + 3) := by
-  have hnoH : ∀ k, (bw .L .L d)[k]? ≠ some BTone.H := fun k => by
-    rw [bw_getElem?]
+private theorem not_bembaSurfaces_flankWord_LL {d : ℕ} :
+    ¬ bembaSurfaces (flankWord .L .L .L (2 * d + 4)) (d + 3) := by
+  have hnoH : ∀ k, (flankWord BTone.L .L .L (2 * d + 4))[k]? ≠ some BTone.H := fun k => by
+    rw [getElem?_flankWord]
     split_ifs <;> first | exact fun h => BTone.noConfusion (Option.some.inj h) | simp
   rintro ⟨-, h | ⟨j, -, hjH, -⟩ | ⟨j, -, hjH, -⟩⟩
   exacts [hnoH _ h, hnoH _ hjH, hnoH _ hjH]
 
 /-- Bemba spreading requires both sides: the middle of `H L…L L` spreads (unbounded, no
 blocker), but neither the triggerless far-left flip nor the far-right H (which bounds
-the spread to two TBUs) changes it. -/
+the spread to two TBUs) changes it — `Tone.Surfacing`'s flank template, from the three
+surfacing facts alone. -/
 theorem bemba_requiresBothSides : RequiresBothSides bemba.map :=
-  RequiresBothSides.of_flanks (fill := BTone.L) (on := BTone.H) (xOn := BTone.H)
-    (yOn := BTone.L) (xOff := BTone.L) (yOff := BTone.H) (n := fun d => 2 * d + 4)
-    (t := fun d => d + 3) (by decide) (fun d => ⟨by omega, by omega⟩)
-    (fun d => bemba.map_getElem?_hi_iff.mpr bembaSurfaces_bw_HL)
-    (fun d => bemba.map_getElem?_lo_iff.mpr
-      ⟨by rw [length_flankWord]; omega, not_bembaSurfaces_bw_LL⟩)
-    (fun d => bemba.map_getElem?_lo_iff.mpr
-      ⟨by rw [length_flankWord]; omega, not_bembaSurfaces_bw_HH⟩)
+  bemba.requiresBothSides_of_flanks (n := fun d => 2 * d + 4) (t := fun d => d + 3)
+    (fun d => ⟨by omega, by omega⟩) (fun d => bembaSurfaces_flankWord_HL)
+    (fun d => not_bembaSurfaces_flankWord_LL) (fun d => not_bembaSurfaces_flankWord_HH)
 
 /-- **Prop. 5.4**: Bemba high-tone spreading is not weakly deterministic. -/
 theorem bemba_not_bmrsWeaklyDeterministic : ¬ IsBmrsWeaklyDeterministic bemba.map :=
