@@ -262,7 +262,7 @@ def SFST.toMealy (T : SFST σ α β) (hs : ∀ s x, (T.output s x).length = 1) :
 @[simp] theorem Mealy.toMealy_toSFST (T : Mealy σ α β) :
     T.toSFST.toMealy (fun _ _ => rfl) = T := rfl
 
-@[simp] theorem SFST.toMealy_runFrom (T : SFST σ α β) (hs : ∀ s x, (T.output s x).length = 1)
+theorem SFST.toMealy_runFrom (T : SFST σ α β) (hs : ∀ s x, (T.output s x).length = 1)
     (hf : ∀ s, T.finalOutput s = []) (s : σ) (xs : List α) :
     (T.toMealy hs).runFrom s xs = T.runFrom s xs := by
   induction xs generalizing s with
@@ -272,7 +272,7 @@ def SFST.toMealy (T : SFST σ α β) (hs : ∀ s x, (T.output s x).length = 1) :
     simp only [Mealy.runFrom_cons, SFST.runFrom_cons, toMealy_output, toMealy_step, ih, ha,
       List.head_cons, List.singleton_append]
 
-@[simp] theorem SFST.toMealy_run (T : SFST σ α β) (hs : ∀ s x, (T.output s x).length = 1)
+theorem SFST.toMealy_run (T : SFST σ α β) (hs : ∀ s x, (T.output s x).length = 1)
     (hf : ∀ s, T.finalOutput s = []) : (T.toMealy hs).run = T.run :=
   funext fun xs => T.toMealy_runFrom hs hf T.start xs
 
