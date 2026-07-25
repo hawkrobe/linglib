@@ -321,8 +321,7 @@ def maasaiBM : Bimachine Bool Bool Seg Seg where
 theorem maasaiBM_isNonInteracting : maasaiBM.IsNonInteracting :=
   ⟨fun l s => if l && s == .recL then .recH else s,
    fun r s => if r && s == .recL then .recH else s,
-   fun l r s => by cases s <;> cases l <;> cases r <;> simp_all, by
-    intro l s r; cases s <;> cases l <;> cases r <;> rfl⟩
+   by decide, by intro l s r; cases s <;> cases l <;> cases r <;> rfl⟩
 
 /-- The left state after a prefix is exactly "a dominant occurs in it". -/
 theorem maasaiBM_lState (xs : List Seg) : maasaiBM.lState xs = xs.any (· == .dom) := by
