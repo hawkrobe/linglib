@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.Computability.Subregular.Function.Dependence
-import Linglib.Core.Computability.Subregular.Function.Bimachine
+import Linglib.Core.Computability.Bimachine
 
 /-!
 # McCollum, Baković, Mai & Meinhardt (2020): Tutrugbu ATR harmony is circumambient

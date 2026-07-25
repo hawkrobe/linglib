@@ -12,62 +12,46 @@ import Linglib.Core.Data.List.Fold
 /-!
 # Bimachines and non-interaction
 
-A `Bimachine` ([schutzenberger-1961]; [eilenberg-1974]) computes a letter-to-letter
-string function using **both** directions of context: a left automaton scans `→` and
-assigns a left state to each position, a right automaton scans `←` and assigns a right
-state, and output `i` is `output (lState (x.take i)) (x i) (rState (x.drop (i+1)))`.
-Word-output bimachines compute exactly the rational functions — the decomposition
-theorem of [elgot-mezei-1965] factors every one as a left-to-right scan followed by a
-right-to-left one, and bimachines are the transducers of the semi-monomial
-representations of [schutzenberger-1976] (see the notes of [sakarovitch-2009]). The
-letter-to-letter restriction here computes the total length-preserving regular
-functions.
+A `Bimachine` ([schutzenberger-1961]; [eilenberg-1974]) reads its input in both
+directions: a left automaton scans `→`, a right automaton scans `←`, and output `i` is
+`output (lState (x.take i)) (x i) (rState (x.drop (i+1)))`. Word-output bimachines
+compute exactly the rational functions ([elgot-mezei-1965]; they are the transducers of
+[schutzenberger-1976]'s semi-monomial representations, see [sakarovitch-2009]); the
+letter-to-letter machines here compute the total length-preserving ones.
 
-A bimachine over a single alphabet is **non-interacting** when its output is a *union
-of conflict-free one-sided change-rules over the identity*: each side may add its own
-change, the two sides agree wherever both fire, and neither can suppress the other's
-change. `IsNonInteractingBimachineComputable` is computability by such a bimachine.
-Non-interaction is an extra restriction on the Elgot–Mezei factorization, not a
-consequence of it: the two scans are always available, and the condition is that
-neither suppresses the other.
+A bimachine over a single alphabet is **non-interacting** when its output is a union of
+conflict-free one-sided change-rules over the identity: each side may add its own
+change, the sides agree wherever both fire, and neither can suppress the other's.
+`IsNonInteractingBimachineComputable` is computability by such a bimachine — an extra
+restriction on the Elgot–Mezei factorization, not a consequence of it.
 
 ## Main definitions
 
-* `Bimachine`: two contradirectional automata and a cell output reading both states.
-* `Bimachine.run`: the computed function; `Bimachine.reindex` transports machines
-  along state equivalences.
-* `Bimachine.ofFlags`: the bimachine whose side states are one-bit occurrence flags.
-* `Mealy.toBimachine`: a sequential machine as a bimachine with trivial right automaton.
-* `IsBimachineComputable`: computability by a finite bimachine.
-* `Bimachine.IsNonInteracting`: the cell output is a union of conflict-free one-sided
-  change-rules over the identity (`Bimachine.unite`).
-* `IsNonInteractingBimachineComputable`: computability by a non-interacting finite
-  bimachine.
+* `Bimachine L R α β`: machine with left states `L`, right states `R`, alphabets `α`, `β`
+* `Bimachine.run`: the computed function
+* `IsBimachineComputable f`: `f` is computed by some finite bimachine
+* `Bimachine.IsNonInteracting`: the cell output is a conflict-free union of one-sided
+  change-rules over the identity
+* `IsNonInteractingBimachineComputable f`: `f` is computed by some non-interacting
+  finite bimachine
 
 ## Main theorems
 
 * `Bimachine.getElem?_run`: output `i` is
-  `output (lState (x.take i)) (x i) (rState (x.drop (i+1)))`.
-* `Bimachine.IsNonInteracting.oneSidedAt_of_change`: at every cell whose output
-  differs from the input symbol, a non-interacting bimachine is one-sided.
+  `output (lState (x.take i)) (x i) (rState (x.drop (i+1)))`
 * `RequiresBothSides.not_isNonInteractingBimachineComputable`: a map whose target needs
-  both sides at once is computed by no non-interacting bimachine — the far
-  perturbations force both one-sided rules inert at the witness cell while the base
-  needs one to fire.
-* `setOf_isNonInteractingBimachineComputable_ssubset`: the inclusion in the
-  bimachine-computable functions is proper, witnessed by the conjunctive flag
-  bimachine `conjBM`.
-* `IsNonInteractingBimachineComputable.of_mealyComputable`: `IsMealyComputable` sits
-  inside the non-interacting class.
+  both sides at once is computed by no non-interacting bimachine
+* `setOf_isNonInteractingBimachineComputable_ssubset`: the non-interacting class is
+  proper inside the bimachine-computable functions
 
 ## Implementation notes
 
 Only the left state is threaded through the run (`Bimachine.runFrom`); the recursion
-reads each tail's right state on the spot, so no threaded right-state function is
-needed. The class existentials pin state types at `Type 0`; the universe-polymorphic
-`isBimachineComputable_iff` and `isNonInteractingBimachineComputable_iff` recover
-generality. The identification of `IsBimachineComputable` with the total
-length-preserving regular functions is classical and not formalized here.
+reads each tail's right state on the spot. The class existentials pin state types at
+`Type 0`; the universe-polymorphic `isBimachineComputable_iff` and
+`isNonInteractingBimachineComputable_iff` recover generality. The identification of
+`IsBimachineComputable` with the total length-preserving regular functions is classical
+and not formalized here.
 
 [UPSTREAM] candidate: `Mathlib.Computability.Bimachine`.
 -/
@@ -76,7 +60,7 @@ namespace Subregular
 
 variable {L R α β : Type*}
 
-/-- A bimachine: a left automaton scanning left to right, a right automaton scanning
+/-- A bimachine is a left automaton scanning left to right, a right automaton scanning
 right to left, and a cell output reading both context states and the current symbol. -/
 structure Bimachine (L R α β : Type*) where
   /-- Starting state of the left automaton. -/
@@ -87,8 +71,7 @@ structure Bimachine (L R α β : Type*) where
   rInit : R
   /-- Transition of the right automaton, scanning right to left. -/
   rStep : R → α → R
-  /-- Cell output: the symbol emitted from the two context states and the input
-  symbol. -/
+  /-- The symbol emitted from the two context states and the current input symbol. -/
   output : L → α → R → β
 
 instance [Inhabited L] [Inhabited R] [Inhabited β] : Inhabited (Bimachine L R α β) :=
@@ -143,8 +126,7 @@ theorem getElem?_runFrom (l : L) (xs : List α) (i : ℕ) :
       B.output (B.lStateAfter l (xs.take i)) a (B.rState (xs.drop (i + 1))) := by
   induction xs generalizing l i <;> cases i <;> simp [*]
 
-/-- **Coordinate characterization**: output `i` is
-`output (lState (x.take i)) (x i) (rState (x.drop (i+1)))`. -/
+/-- Output `i` is `output (lState (x.take i)) (x i) (rState (x.drop (i+1)))`. -/
 theorem getElem?_run (x : List α) (i : ℕ) :
     (B.run x)[i]? = x[i]?.map fun a =>
       B.output (B.lState (x.take i)) a (B.rState (x.drop (i + 1))) :=
@@ -231,8 +213,8 @@ def ofFlags : Bimachine Bool Bool α β where
 @[simp] theorem ofFlags_rState (xs : List α) : (ofFlags pL pR out).rState xs = xs.any pR :=
   List.foldr_or pR false xs
 
-/-- Coordinate characterization of a flag bimachine: output `i` sees the input symbol and
-the two window-`any` flags. -/
+/-- Output `i` of a flag bimachine sees the input symbol and the two window-`any`
+flags. -/
 theorem getElem?_ofFlags_run (x : List α) (i : ℕ) :
     ((ofFlags pL pR out).run x)[i]?
       = x[i]?.map fun a => out ((x.take i).any pL) a ((x.drop (i + 1)).any pR) := by
@@ -310,10 +292,10 @@ variable [DecidableEq α]
 
 namespace Bimachine
 
-/-- Combine two one-sided change proposals over the identity default `a`: take the left
-rule's change if it fires (`≠ a`), else whatever the right rule proposes. The tie-break
-is asymmetric — when both rules fire the left wins — but inert under the
-conflict-freedom `IsNonInteracting` requires. -/
+/-- `unite cL cR a` takes the left proposal if it fires (`≠ a`), else the right one —
+the union of two change proposals over the identity default `a`. The tie-break is
+asymmetric (when both fire the left wins) but inert under the conflict-freedom
+`IsNonInteracting` requires. -/
 def unite (cL cR a : α) : α := if cL = a then cR else cL
 
 /-- With the right proposal inert, the union is whatever the left one proposes. -/
@@ -332,11 +314,11 @@ inert. -/
 @[simp] theorem unite_eq_self_iff {cL cR a : α} : unite cL cR a = a ↔ cL = a ∧ cR = a := by
   unfold unite; split_ifs <;> simp_all
 
-/-- **Non-interaction**: the cell output is a *union of conflict-free one-sided
-change-rules over the identity default* — `ωL`/`ωR` each propose a change for their
-side, the two agree wherever both fire, and the output takes whichever fires, else
-leaves the symbol unchanged. Neither side can *suppress* the other's change; that
-asymmetry is exactly what interaction would require. -/
+/-- A bimachine over a single alphabet is non-interacting when its cell output is a
+union of conflict-free one-sided change-rules over the identity default — `ωL` and `ωR`
+each propose a change for their side, the two agree wherever both fire, and the output
+takes whichever fires, else leaves the symbol unchanged. Neither side can *suppress*
+the other's change; that suppression is exactly what interaction would require. -/
 def IsNonInteracting (B : Bimachine L R α α) : Prop :=
   ∃ (ωL : L → α → α) (ωR : R → α → α),
     (∀ l r a, ωL l a ≠ a → ωR r a ≠ a → ωL l a = ωR r a) ∧
@@ -431,11 +413,10 @@ theorem IsNonInteractingBimachineComputable.of_mealyComputable {f : List α → 
     ⟨T.output, fun _ a => a, fun _ _ a _ h => absurd rfl h,
      fun l a r => (Bimachine.unite_right_self _ _).symm⟩
 
-/-- **Unbounded interaction ⟹ interacting.** At the witness, the base changes but each
-far perturbation reverts: the right perturbation keeps the left state, forcing `ωL`
-inert at this cell; the left perturbation keeps the right state, forcing `ωR` inert; yet
-the base needs one of them to fire — no union of one-sided rules can produce the
-change. -/
+/-- A map that requires both sides is computed by no non-interacting bimachine. At the
+witness the base changes but each far perturbation reverts: the right perturbation
+keeps the left state, forcing `ωL` inert at this cell; the left perturbation keeps the
+right state, forcing `ωR` inert; yet the base needs one of them to fire. -/
 theorem RequiresBothSides.not_isNonInteractingBimachineComputable {f : List α → List α}
     (hf : RequiresBothSides f) : ¬ IsNonInteractingBimachineComputable f := by
   rintro ⟨L, R, _, _, B, rfl, ωL, ωR, -, hω⟩
@@ -460,8 +441,8 @@ A *conjunctive* change — a symbol flipped iff a mark occurs on **both** sides 
 bimachine-computable but `RequiresBothSides`, so no non-interacting bimachine computes
 it. -/
 
-/-- Toy alphabet for the conjunctive witness: a `mark`, a `neutral` symbol, and the
-`flipped` form the neutral symbol takes when both sides are marked. -/
+/-- The three-symbol alphabet for the conjunctive witness — a `mark`, a `neutral`
+symbol, and the `flipped` form the neutral symbol takes when both sides are marked. -/
 inductive ConjSym | mark | neutral | flipped
   deriving DecidableEq, Repr, Fintype
 
@@ -493,8 +474,8 @@ theorem conjBM.requiresBothSides : RequiresBothSides conjBM.run :=
     (fun d => by rw [conjBM_flankWord (by omega) (by omega)]; rfl)
     (fun d => by rw [conjBM_flankWord (by omega) (by omega)]; rfl)
 
-/-- **The non-interacting class is a proper subclass** of the bimachine-computable
-functions: `conjBM` is computed by a bimachine, but by no non-interacting one. -/
+/-- The non-interacting class is proper inside the bimachine-computable functions —
+`conjBM` is computed by a bimachine, but by no non-interacting one. -/
 theorem setOf_isNonInteractingBimachineComputable_ssubset :
     {f : List ConjSym → List ConjSym | IsNonInteractingBimachineComputable f} ⊂
       {f | IsBimachineComputable f} :=

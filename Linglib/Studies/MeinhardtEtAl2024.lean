@@ -8,7 +8,7 @@ import Linglib.Core.Computability.Subregular.Function.ISL
 import Linglib.Core.Computability.Subregular.Function.OSL
 import Linglib.Core.Computability.Subregular.Function.Subsequential
 import Linglib.Core.Computability.Subregular.Function.Dependence
-import Linglib.Core.Computability.Subregular.Function.Bimachine
+import Linglib.Core.Computability.Bimachine
 
 /-!
 # Meinhardt, Mai, Baković & McCollum (2024): ATR Harmony Subregular Classification

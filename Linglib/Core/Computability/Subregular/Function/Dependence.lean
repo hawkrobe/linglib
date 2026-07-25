@@ -124,9 +124,9 @@ theorem AgreeFrom.drop_eq {u v : List α} {j : ℕ} (h : AgreeFrom u v j) {i : �
     (hij : j ≤ i) : u.drop i = v.drop i :=
   drop_eq_of_agree fun k hk => h k (by omega)
 
-/-- **Unbounded dependence on side `s`**: for every distance `d`, some target output
-position flips under a perturbation strictly beyond `d` on side `s` (the perturbed
-input agrees on the near window + the whole opposite side). -/
+/-- `f` depends unboundedly on side `s` when for every distance `d` some target output
+position flips under a perturbation strictly beyond `d` on that side (the perturbed
+input agrees on the near window and the whole opposite side). -/
 def UnboundedDependence (f : List α → List β) : Direction → Prop
   | .left  => ∀ d, ∃ (u v : List α) (i : ℕ), u.length = v.length ∧ i < u.length ∧
                 AgreeFrom u v (i - d) ∧ (f u)[i]? ≠ (f v)[i]?
@@ -146,10 +146,10 @@ def IsFarPerturbation (base u : List α) (i d : ℕ) (s : Direction) : Prop :=
     | .left => AgreeFrom base u (i - d)
     | .right => AgreeUpto base u (i + d)
 
-/-- Two-sided unbounded dependence, co-located: for every `d`, one base word with a
-target `i` whose output flips under a far perturbation on either side. Co-location keeps
-both flips on a single base (one automaton context). Each side alone sways the target, so
-this is weaker than needing both at once (`RequiresBothSides`). -/
+/-- For every `d`, one base word carries a target whose output flips under a far
+perturbation on either side. Co-location keeps both flips on a single base (one
+automaton context); each side alone sways the target, so this is weaker than needing
+both at once (`RequiresBothSides`). -/
 def TwoSidedUnboundedDependence (f : List α → List β) : Prop :=
   ∀ d, ∃ (base : List α) (i : ℕ), i < base.length ∧
     ∀ s, ∃ u, IsFarPerturbation base u i d s ∧ (f base)[i]? ≠ (f u)[i]?
@@ -194,7 +194,8 @@ run, with independently editable flanks. `RequiresBothSides.of_flanks` packages 
 whole assembly — a map is excluded by exhibiting only three images, those of the base
 and of the two single-flank perturbations, at the target coordinate. -/
 
-/-- A flank-controlled word: `x`, then `n` copies of `fill`, then `y`. -/
+/-- The word `x`, then `n` copies of `fill`, then `y` — a target buried in a filler
+run, with independently editable flanks. -/
 def flankWord (x fill y : α) (n : ℕ) : List α := x :: (List.replicate n fill ++ [y])
 
 @[simp] theorem length_flankWord :
@@ -265,17 +266,17 @@ theorem flankWord_congr_right {y' : α} (h : k ≠ n + 1) :
     (flankWord x fill y n)[k]? = (flankWord x fill y' n)[k]? := by
   simp only [getElem?_flankWord, if_neg h]
 
-/-- `f` requires both sides: some target changes under `f`, yet perturbing either far
-side reverts it to the identity. Unlike `TwoSidedUnboundedDependence`, a two-sided union
-never satisfies this — removing one trigger leaves the other, so the output stays
+/-- `f` requires both sides when some target changes under `f` yet perturbing either
+far side reverts it to the identity. Unlike `TwoSidedUnboundedDependence`, a two-sided
+union never satisfies this — removing one trigger leaves the other, so the output stays
 changed. -/
 def RequiresBothSides (f : List α → List α) : Prop :=
   ∀ d, ∃ (base : List α) (i : ℕ), i < base.length ∧ (f base)[i]? ≠ base[i]? ∧
     ∀ s, ∃ u, IsFarPerturbation base u i d s ∧ u[i]? = base[i]? ∧ (f u)[i]? = u[i]?
 
-/-- **The three-map template** of [yolyan-2025] §5.3: a `d`-indexed family of flank
-words whose target sits `d`-far from both flanks, changed to `on` in the base and
-reverted by flipping either flank alone, requires both sides. -/
+/-- A `d`-indexed family of flank words whose target sits `d`-far from both flanks,
+changed to `on` in the base and reverted by flipping either flank alone, requires both
+sides — the three-map template of [yolyan-2025] §5.3. -/
 theorem RequiresBothSides.of_flanks {f : List α → List α}
     {fill on xOn yOn xOff yOff : α} {n t : ℕ → ℕ} (hne : on ≠ fill)
     (hmargin : ∀ d, d < t d ∧ t d + d < n d + 1)

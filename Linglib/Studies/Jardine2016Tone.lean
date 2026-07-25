@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 import Linglib.Core.Computability.Subregular.Function.Subsequential
 import Linglib.Core.Computability.Subregular.Function.Dependence
 import Linglib.Core.Computability.Mealy
-import Linglib.Core.Computability.Subregular.Function.Bimachine
+import Linglib.Core.Computability.Bimachine
 import Linglib.Phonology.Autosegmental.OCP
 import Linglib.Phonology.Autosegmental.Junction
 import Linglib.Phonology.Tone.Basic
