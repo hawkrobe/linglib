@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 import Mathlib.Data.List.Basic
 import Mathlib.Data.Fintype.Prod
 import Mathlib.Data.Finset.Lattice.Fold
+import Linglib.Core.Computability.Mealy
 import Linglib.Core.Computability.Subregular.Function.Defs
 
 /-!
@@ -27,6 +28,8 @@ isomorphic under input/output reversal (`f` is right-subsequential iff
 * `SFST.run`, `SFST.runRight`: the left-to-right and right-to-left passes
 * `SFST.comp`: the product machine, computing the composite function
 * `SFST.reindex`: lifts an equivalence on states to an equivalence on machines
+* `Mealy.toSFST`, `SFST.toMealy`: the synchronous and block machine views of each
+  other, mutually inverse on singleton-output transducers with no final flush
 * `IsLeftSubsequential f`, `IsRightSubsequential f`, `IsSubsequential d f`: `f` is
   computed by some finite-state `SFST` scanning in the given direction
 
@@ -219,6 +222,66 @@ def comp : SFST (σ' × σ) α γ where
 end Comp
 
 end SFST
+
+/-! ### Synchronous machines as block transducers
+
+A `Mealy` machine is an `SFST` emitting singleton blocks with an empty final flush; a
+block transducer of that shape is a `Mealy` machine. The two views are mutually
+inverse. -/
+
+section Synchronous
+
+variable {σ α β : Type*}
+
+/-- View a synchronous transducer as a block `SFST`: singleton outputs, empty flush. -/
+def Mealy.toSFST (T : Mealy σ α β) : SFST σ α β where
+  start := T.initial
+  step := T.step
+  output s x := [T.output s x]
+  finalOutput _ := []
+
+@[simp] theorem Mealy.toSFST_runFrom (T : Mealy σ α β) (s : σ) (xs : List α) :
+    T.toSFST.runFrom s xs = T.runFrom s xs := by
+  induction xs generalizing s with
+  | nil => rfl
+  | cons x xs ih => rw [SFST.runFrom_cons, Mealy.runFrom_cons, ih]; rfl
+
+@[simp] theorem Mealy.toSFST_run (T : Mealy σ α β) : T.toSFST.run = T.run :=
+  funext fun xs => T.toSFST_runFrom T.initial xs
+
+/-- View a block transducer emitting exactly one symbol per input symbol as a synchronous
+machine: the singleton output block is the emitted letter. -/
+@[simps]
+def SFST.toMealy (T : SFST σ α β) (hs : ∀ s x, (T.output s x).length = 1) : Mealy σ α β where
+  initial := T.start
+  step := T.step
+  output s x := (T.output s x).head (List.ne_nil_of_length_pos (by rw [hs]; omega))
+
+@[simp] theorem Mealy.toMealy_toSFST (T : Mealy σ α β) :
+    T.toSFST.toMealy (fun _ _ => rfl) = T := rfl
+
+@[simp] theorem SFST.toMealy_runFrom (T : SFST σ α β) (hs : ∀ s x, (T.output s x).length = 1)
+    (hf : ∀ s, T.finalOutput s = []) (s : σ) (xs : List α) :
+    (T.toMealy hs).runFrom s xs = T.runFrom s xs := by
+  induction xs generalizing s with
+  | nil => simp [hf]
+  | cons x xs ih =>
+    obtain ⟨a, ha⟩ := List.length_eq_one_iff.mp (hs s x)
+    simp only [Mealy.runFrom_cons, SFST.runFrom_cons, toMealy_output, toMealy_step, ih, ha,
+      List.head_cons, List.singleton_append]
+
+@[simp] theorem SFST.toMealy_run (T : SFST σ α β) (hs : ∀ s x, (T.output s x).length = 1)
+    (hf : ∀ s, T.finalOutput s = []) : (T.toMealy hs).run = T.run :=
+  funext fun xs => T.toMealy_runFrom hs hf T.start xs
+
+/-- A finite block transducer with singleton outputs and no final flush computes a
+Mealy-computable function: block ∩ length-preserving ⊆ synchronous. -/
+theorem SFST.isMealyComputable [Fintype σ] (T : SFST σ α β)
+    (hs : ∀ s x, (T.output s x).length = 1) (hf : ∀ s, T.finalOutput s = []) :
+    IsMealyComputable T.run :=
+  T.toMealy_run hs hf ▸ (T.toMealy hs).isMealyComputable
+
+end Synchronous
 
 /-! ### Subsequential classification predicates -/
 

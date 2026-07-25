@@ -33,7 +33,7 @@ function-level subregular hierarchy.
 * `isRightInputStrictlyLocal_iff_left_reverse` — the right class is the
   reverse-conjugate of the left class.
 * `isLeftInputStrictlyLocal_left_subsequential` — every Left-ISL
-  function is Left-Subsequential, witnessed by `ISLRule.toSFST`.
+  function is Left-Subsequential, witnessed by `ISLRule.toFinSFST`.
 * `flatMap_isLeftInputStrictlyLocal_one`,
   `filterMap_isLeftInputStrictlyLocal_one` — letterwise homomorphisms and
   erasing (tier) projections are the `k = 1` specialisation.

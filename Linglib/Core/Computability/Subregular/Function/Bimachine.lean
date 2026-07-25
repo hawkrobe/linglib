@@ -29,6 +29,8 @@ bimachine — the weakly-deterministic functions.
   rules inert at the witness cell while the base needs one to fire — no union of one-sided
   rules can produce the change. A conjunctive change satisfies it; a two-sided union does
   not.
+* `weaklyDeterministic_strict_subset_regular` — the inclusion is proper, witnessed by the
+  conjunctive flag bimachine `conjBM`.
 -/
 
 namespace Subregular
@@ -140,8 +142,7 @@ def reindex (eL : L ≃ L') (eR : R ≃ R') : Bimachine L R α β ≃ Bimachine 
 
 The recurring two-sided-trigger shape: each side's automaton is the one-bit "some symbol
 on my side satisfies `p`" flag, so `lState`/`rState` compute `List.any` and the cell sees
-exactly the two flags. Conjunctive spreads (`conjBM` in `Hierarchy.lean`) and unbounded
-tonal plateauing ([jardine-2016]) are instances. -/
+exactly the two flags. The conjunctive witness `conjBM` below is an instance. -/
 
 variable (pL pR : α → Bool) (out : Bool → α → Bool → β)
 
@@ -395,5 +396,54 @@ theorem not_isBimachineWeaklyDeterministic_of_requiresBothSides {f : List α →
     unite_right_self]
 
 end NonInteraction
+
+/-! ### Strictness: weakly deterministic ⊊ bimachine-computable
+
+A *conjunctive* change — a symbol flipped iff a mark occurs on **both** sides — is
+bimachine-computable but `RequiresBothSides`, so no non-interacting bimachine computes
+it. -/
+
+/-- Toy alphabet for the conjunctive witness: a `mark`, a `neutral` symbol, and the
+`flipped` form the neutral symbol takes when both sides are marked. -/
+inductive ConjSym | mark | neutral | flipped
+  deriving DecidableEq, Repr
+
+instance : Fintype ConjSym := ⟨{.mark, .neutral, .flipped}, fun x => by cases x <;> simp⟩
+
+/-- A neutral symbol flips iff a `mark` occurs on **both** sides — a flag bimachine
+(`ofFlags`) tracking a mark on each side, whose cell genuinely needs both flags
+(`l && r`). -/
+def conjBM : Bimachine Bool Bool ConjSym ConjSym :=
+  .ofFlags (· == .mark) (· == .mark) fun l s r =>
+    if (l && r) && s == .neutral then .flipped else s
+
+/-- Inside the filler run of a flank word, `conjBM` flips the neutral symbol exactly when
+both flanks are marks. -/
+private theorem conjBM_flankWord {x y : ConjSym} {n k : ℕ} (h0 : 0 < k) (hk : k ≤ n) :
+    (conjBM.run (flankWord x .neutral y n))[k]?
+      = some (if x == .mark && y == .mark then .flipped else .neutral) := by
+  rw [conjBM, Bimachine.ofFlags_run_getElem?, flankWord_getElem?_mid h0 hk,
+    any_take_flankWord (by decide) h0 (by omega),
+    any_drop_flankWord (by decide) (by omega) (by omega)]
+  simp
+
+/-- The conjunctive change requires both sides: with a mark on each flank the medial
+symbol flips, and demoting either mark alone reverts it — the three-map template
+(`RequiresBothSides.of_flanks`) applied to a `d`-margined flank word. -/
+theorem conjBM_requiresBothSides : RequiresBothSides conjBM.run :=
+  .of_flanks (fill := .neutral) (on := .flipped) (xOn := .mark) (yOn := .mark)
+    (xOff := .neutral) (yOff := .neutral) (n := fun d => 2 * d + 1) (t := fun d => d + 1)
+    (by decide) (fun d => ⟨by omega, by omega⟩)
+    (fun d => by rw [conjBM_flankWord (by omega) (by omega)]; rfl)
+    (fun d => by rw [conjBM_flankWord (by omega) (by omega)]; rfl)
+    (fun d => by rw [conjBM_flankWord (by omega) (by omega)]; rfl)
+
+/-- **The weakly deterministic functions are a proper subclass**: `conjBM` is computed by
+a bimachine, but by no non-interacting one. -/
+theorem weaklyDeterministic_strict_subset_regular :
+    ∃ f : List ConjSym → List ConjSym,
+      IsBimachineComputable f ∧ ¬ IsBimachineWeaklyDeterministic f :=
+  ⟨conjBM.run, isBimachineComputable conjBM,
+   not_isBimachineWeaklyDeterministic_of_requiresBothSides conjBM_requiresBothSides⟩
 
 end Subregular
