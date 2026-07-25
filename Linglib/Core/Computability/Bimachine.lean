@@ -337,24 +337,24 @@ end Bimachine
 
 section ToBimachine
 
-variable {σ : Type*}
+variable {σ : Type*} (T : Mealy σ α β)
 
 /-- A sequential machine as the bimachine whose left automaton does all the work and
 whose right automaton is trivial. -/
 @[simps]
-def Mealy.toBimachine (T : Mealy σ α β) : Bimachine σ Unit α β where
+def Mealy.toBimachine : Bimachine σ Unit α β where
   lInit := T.initial
   lStep := T.step
   rInit := ()
   rStep _ _ := ()
   output l a _ := T.output l a
 
-@[simp] theorem Mealy.toBimachine_runFrom (T : Mealy σ α β) (s : σ) (xs : List α) :
+@[simp] theorem Mealy.toBimachine_runFrom (s : σ) (xs : List α) :
     T.toBimachine.runFrom s xs = T.runFrom s xs := by
   induction xs generalizing s <;> simp [*]
 
 /-- The bimachine view computes the same string function. -/
-@[simp] theorem Mealy.toBimachine_run (T : Mealy σ α β) : T.toBimachine.run = T.run :=
+@[simp] theorem Mealy.toBimachine_run : T.toBimachine.run = T.run :=
   funext fun xs => T.toBimachine_runFrom T.initial xs
 
 end ToBimachine
