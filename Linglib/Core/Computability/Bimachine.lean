@@ -482,7 +482,7 @@ def conjBM : Bimachine Bool Bool Bool Bool := .ofFlags id id fun l s r => s || (
 
 /-- In the middle of a `d`-margined flank word, `conjBM` computes the conjunction of
 the two flanks. -/
-private theorem conjBM_run_mid (x y : Bool) (d : ℕ) :
+theorem conjBM.run_flankWord_mid (x y : Bool) (d : ℕ) :
     (conjBM.run (flankWord x false y (2 * d + 1)))[d + 1]? = some (x && y) := by
   rw [conjBM, Bimachine.getElem?_ofFlags_run, getElem?_flankWord_mid (by omega) (by omega),
     any_take_flankWord rfl (by omega) (by omega), any_drop_flankWord rfl (by omega) (by omega)]
@@ -492,8 +492,9 @@ private theorem conjBM_run_mid (x y : Bool) (d : ℕ) :
 cell is raised, and demoting either mark alone reverts it — the three-map template, one
 map per argument. -/
 theorem conjBM.requiresBothSides : RequiresBothSides conjBM.run :=
-  .of_flanks (by decide) (fun d => ⟨by omega, by omega⟩) (conjBM_run_mid true true)
-    (conjBM_run_mid false true) (conjBM_run_mid true false)
+  .of_flanks (by decide) (fun d => ⟨by omega, by omega⟩)
+    (conjBM.run_flankWord_mid true true) (conjBM.run_flankWord_mid false true)
+    (conjBM.run_flankWord_mid true false)
 
 /-- The non-interacting class is proper inside the bimachine-computable functions —
 `conjBM` is computed by a bimachine, but by no non-interacting one. -/
