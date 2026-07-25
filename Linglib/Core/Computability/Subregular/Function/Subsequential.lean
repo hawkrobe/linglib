@@ -44,8 +44,7 @@ isomorphic under input/output reversal (`f` is right-subsequential iff
 * `IsMealyComputable.isLeftSubsequential`, `SFST.isMealyComputable`: the synchronous
   class sits inside the block class, and a singleton-output SFST falls back into it
 * `IsLeftSubsequential.bounded_delay`: a left-subsequential function withholds at most
-  a bounded suffix — the necessity direction of the characterization of
-  [choffrut-1977]
+  a bounded suffix, since it can only be sitting on a state-final output
 
 ## Implementation notes
 
@@ -66,9 +65,13 @@ omitted.
 
 ## TODO
 
-* The characterization of [choffrut-1977]: `f` is subsequential iff it has bounded
-  variation and finitely many residual (tail) functions; onward canonical forms and
-  minimization. Only the necessity direction (`bounded_delay`) is here.
+* The characterization of [choffrut-1977]: a rational function is subsequential iff it
+  has *bounded variation* — for every `l` there is an `L` with `d (f x) (f y) ≤ L`
+  whenever `d x y ≤ l`, for the prefix distance `d x y = |x⁻¹y|` taken in the free group
+  — which is decidable on a transducer realizing it via the twinning condition. Neither
+  bounded variation nor twinning is formalized here; `bounded_delay` is a much weaker
+  consequence of subsequentiality, not this characterization.
+* Onward canonical forms and minimization.
 * Two-way subsequential functions (two-way deterministic transducers).
 * p-subsequential functions [mohri-1997] (multiple outputs per input).
 -/
@@ -369,8 +372,9 @@ theorem isRightSubsequential_iff_left_reverse :
 
 /-- A left-subsequential function has bounded delay: on any input `u` it has already
 emitted a prefix of `f u` shared with `f (u ++ v)` for every continuation `v`,
-withholding at most the longest state-final output — the necessity direction of the
-characterization of [choffrut-1977]. -/
+withholding at most the longest state-final output. This is immediate from having a
+state-final output at all, and is much weaker than [choffrut-1977]'s bounded-variation
+characterization — it compares `u` only with its own extensions. -/
 theorem IsLeftSubsequential.bounded_delay (hf : IsLeftSubsequential f) :
     ∃ N : ℕ, ∀ u v : List α, ∃ p su sv : List β,
       f u = p ++ su ∧ f (u ++ v) = p ++ sv ∧ su.length ≤ N := by

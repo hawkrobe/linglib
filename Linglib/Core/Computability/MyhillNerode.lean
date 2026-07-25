@@ -16,8 +16,8 @@ in the style of `Mathlib.Computability.MyhillNerode` (which treats the language 
 Given `f : List α → List β` and a word `u`, the *residual* of `f` by `u` is the
 function `v ↦ (f (u ++ v)).drop u.length` — what `f` appends after reading `u`. A
 function is Mealy-computable if and only if it is length-preserving,
-prefix-preserving, and has finitely many residuals ([choffrut-1977]; the minimal
-sequential machine of [holcombe-1982]).
+prefix-preserving, and has finitely many residuals — the Myhill–Nerode argument for the
+minimal sequential machine of [holcombe-1982].
 
 ## Main definitions
 
