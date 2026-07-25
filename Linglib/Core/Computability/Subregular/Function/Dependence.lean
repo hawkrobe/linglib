@@ -7,6 +7,7 @@ import Mathlib.Data.List.Basic
 import Mathlib.Data.Set.Basic
 import Linglib.Core.Computability.Mealy
 import Linglib.Core.Computability.Subregular.Function.Defs
+import Linglib.Core.Logic.FactorsThroughOn
 
 /-!
 # How far an output coordinate depends on its input
@@ -22,7 +23,9 @@ instances:
 
 ## Main definitions
 
-* `OutputDependsOn` — output coord `i` determined by input positions in `K`.
+* `OutputDependsOn` — output coord `i` determined by input positions in `K`, equivalently
+  a factor-through of the input's restriction to `K`
+  (`outputDependsOn_iff_factorsThroughOn`).
 * `UnboundedDependence f s` — for every distance `d`, some output flips under a
   perturbation strictly beyond `d` on side `s`.
 * `BoundedDependence f s` — the negation: dependence on side `s` is bounded.
@@ -71,6 +74,20 @@ def OutputDependsOn (f : List α → List β) (i : ℕ) (K : Set ℕ) : Prop :=
 theorem OutputDependsOn.mono {f : List α → List β} {i : ℕ} {K K' : Set ℕ}
     (hKK' : K ⊆ K') (h : OutputDependsOn f i K) : OutputDependsOn f i K' :=
   fun u v hl hag => h u v hl fun k hk => hag k (hKK' hk)
+
+/-- `OutputDependsOn` is a factor-through condition: coordinate `i` of the output factors
+through the restriction of the input to `K`, on each set of inputs of a fixed length.
+This is the same shape the language side uses for its locality classes, which are stated
+directly as `Function.FactorsThrough` of membership through a bounded window. -/
+theorem outputDependsOn_iff_factorsThroughOn {f : List α → List β} {i : ℕ} {K : Set ℕ} :
+    OutputDependsOn f i K ↔
+      ∀ n, Function.FactorsThroughOn (fun u => (f u)[i]?)
+        (fun u : List α => K.restrict fun k => u[k]?) {u : List α | u.length = n} := by
+  constructor
+  · intro h n u v hu hv hres
+    exact h u v (hu.trans hv.symm) fun k hk => congrFun hres ⟨k, hk⟩
+  · intro h u v hlen hag
+    exact h u.length (rfl : u.length = u.length) hlen.symm (funext fun k => hag k.1 k.2)
 
 /-- `u` and `v` agree at every index `≥ j`. -/
 def AgreeFrom (u v : List α) (j : ℕ) : Prop := ∀ k, j ≤ k → u[k]? = v[k]?
