@@ -211,14 +211,7 @@ end Comp
 
 end SFST
 
-/-! ### Subsequential classification predicates
-
-The witness-style predicates follow mathlib's `Language.IsRegular` shape: the state
-space `σ` is existentially quantified at `Type` with a `Fintype σ` instance, while the
-alphabets `α β` are universe-polymorphic at `Type*`. The constructor lemmas carry the
-universe down-transfer and the `_iff` lemmas restate the existential at any universe;
-downstream ISL/OSL inclusion theorems use a bounded-window finite state to witness the
-predicate. -/
+/-! ### Subsequential classification predicates -/
 
 variable {α β γ : Type*} {f : List α → List β} {g : List β → List γ}
 
