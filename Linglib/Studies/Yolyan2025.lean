@@ -156,7 +156,7 @@ changes it. -/
 theorem sourGrapes_requiresBothSides : RequiresBothSides sourGrapes :=
   RequiresBothSides.of_flanks (fill := SG.minus) (on := SG.plus) (xOn := SG.plus)
     (yOn := SG.minus) (xOff := SG.minus) (yOff := SG.blk) (n := fun d => 2 * d + 1)
-    (t := fun d => d + 1) (by decide) (fun d => ⟨by omega, by omega⟩)
+    (t := fun d => d + 1) (by decide) (fun d => by omega) (fun d => by omega)
     (fun d => by rw [sourGrapes_flankWord_mid]; simp)
     (fun d => by rw [sourGrapes_flankWord_mid]; simp)
     (fun d => by rw [sourGrapes_flankWord_mid]; simp)
@@ -266,7 +266,7 @@ the spread to two TBUs) changes it — `Tone.Surfacing`'s flank template, from t
 surfacing facts alone. -/
 theorem bemba_requiresBothSides : RequiresBothSides bemba.map :=
   bemba.requiresBothSides_of_flanks (n := fun d => 2 * d + 4) (t := fun d => d + 3)
-    (fun d => ⟨by omega, by omega⟩) (fun d => bembaSurfaces_flankWord_HL)
+    (fun d => by omega) (fun d => by omega) (fun d => bembaSurfaces_flankWord_HL)
     (fun d => not_bembaSurfaces_flankWord_LL) (fun d => not_bembaSurfaces_flankWord_HH)
 
 /-- **Prop. 5.4**: Bemba high-tone spreading is not weakly deterministic. -/

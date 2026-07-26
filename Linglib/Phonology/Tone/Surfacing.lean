@@ -98,16 +98,16 @@ open Subregular in
 a `d`-margined target in a flank word is switched on by the base flanks and off by
 either single flip requires both sides — supply only the three surfacing facts. -/
 theorem requiresBothSides_of_flanks {xOn yOn xOff yOff : α} {n t : ℕ → ℕ}
-    (hmargin : ∀ d, d < t d ∧ t d + d < n d + 1)
+    (ht : ∀ d, d < t d) (hn : ∀ d, t d + d ≤ n d)
     (hon : ∀ d, P.Surfaces (flankWord xOn P.lo yOn (n d)) (t d))
     (hoffL : ∀ d, ¬ P.Surfaces (flankWord xOff P.lo yOn (n d)) (t d))
     (hoffR : ∀ d, ¬ P.Surfaces (flankWord xOn P.lo yOff (n d)) (t d)) :
     RequiresBothSides P.map :=
   have hlen : ∀ d, t d < (flankWord xOn P.lo yOff (n d)).length := fun d => by
     rw [length_flankWord]
-    have := hmargin d
+    have := hn d
     omega
-  RequiresBothSides.of_flanks P.hi_ne_lo hmargin
+  RequiresBothSides.of_flanks P.hi_ne_lo ht hn
     (fun d => P.map_getElem?_hi_iff.mpr (hon d))
     (fun d => P.map_getElem?_lo_iff.mpr ⟨by simpa using hlen d, hoffL d⟩)
     (fun d => P.map_getElem?_lo_iff.mpr ⟨hlen d, hoffR d⟩)
@@ -120,7 +120,7 @@ theorem requiresBothSides_of_surfaces_iff
     (hiff : ∀ w i, P.Surfaces w i ↔ P.hi ∈ w.take (i + 1) ∧ P.hi ∈ w.drop i) :
     RequiresBothSides P.map :=
   P.requiresBothSides_of_flanks (xOn := P.hi) (yOn := P.hi) (xOff := P.lo) (yOff := P.lo)
-    (n := fun d => 2 * d + 2) (t := fun d => d + 1) (fun d => ⟨by omega, by omega⟩)
+    (n := fun d => 2 * d + 2) (t := fun d => d + 1) (fun d => by omega) (fun d => by omega)
     (fun d => (hiff _ _).mpr
       ⟨(mem_take_flankWord_iff P.hi_ne_lo.symm (by omega)).mpr rfl,
         (mem_drop_flankWord_iff P.hi_ne_lo.symm (by omega)).mpr rfl⟩)

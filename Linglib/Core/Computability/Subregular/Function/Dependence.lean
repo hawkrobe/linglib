@@ -203,43 +203,41 @@ theorem any_drop_flankWord (hfill : p fill = false) (hk : k ≤ n) :
   rw [drop_flankWord hk]
   simp [hfill]
 
-/-- Flank words differing only on the left agree off position `0`. -/
-theorem flankWord_congr_left {x' : α} (h : k ≠ 0) :
-    (flankWord x fill y n)[k]? = (flankWord x' fill y n)[k]? := by
-  simp only [getElem?_flankWord, if_neg h]
+/-- Changing only the left flank perturbs beyond the `d`-margin of a target past it. -/
+theorem IsFarPerturbation.flankWord_left {i d : ℕ} (x' : α) (h : d < i) :
+    IsFarPerturbation (flankWord x fill y n) (flankWord x' fill y n) i d .left :=
+  ⟨by simp, fun k (hk : _ ≤ k) => by
+    simp only [getElem?_flankWord, if_neg (show k ≠ 0 by omega)]⟩
 
-/-- Flank words differing only on the right agree off the last position. -/
-theorem flankWord_congr_right {y' : α} (h : k ≠ n + 1) :
-    (flankWord x fill y n)[k]? = (flankWord x fill y' n)[k]? := by
-  simp only [getElem?_flankWord, if_neg h]
+/-- Changing only the right flank perturbs beyond the `d`-margin of a target
+`d`-clear of the last position. -/
+theorem IsFarPerturbation.flankWord_right {i d : ℕ} (y' : α) (h : i + d ≤ n) :
+    IsFarPerturbation (flankWord x fill y n) (flankWord x fill y' n) i d .right :=
+  ⟨by simp, fun k (hk : k ≤ _) => by
+    simp only [getElem?_flankWord, if_neg (show k ≠ n + 1 by omega)]⟩
 
 /-- A `d`-indexed family of flank words whose target sits `d`-far from both flanks,
 changed to `on` in the base and reverted by flipping either flank alone, requires both
 sides. -/
 theorem RequiresBothSides.of_flanks {f : List α → List α}
     {fill on xOn yOn xOff yOff : α} {n t : ℕ → ℕ} (hne : on ≠ fill)
-    (hmargin : ∀ d, d < t d ∧ t d + d < n d + 1)
+    (ht : ∀ d, d < t d) (hn : ∀ d, t d + d ≤ n d)
     (hchange : ∀ d, (f (flankWord xOn fill yOn (n d)))[t d]? = some on)
     (hrevL : ∀ d, (f (flankWord xOff fill yOn (n d)))[t d]? = some fill)
     (hrevR : ∀ d, (f (flankWord xOn fill yOff (n d)))[t d]? = some fill) :
     RequiresBothSides f := by
   intro d
-  obtain ⟨hm₁, hm₂⟩ := hmargin d
-  have hmid : ∀ x y : α, (flankWord x fill y (n d))[t d]? = some fill := fun x y =>
+  have h₁ := ht d
+  have h₂ := hn d
+  have hmid : ∀ x y : α, (flankWord x fill y (n d))[t d]? = some fill := fun _ _ =>
     getElem?_flankWord_mid (by omega) (by omega)
   refine ⟨flankWord xOn fill yOn (n d), t d, by rw [length_flankWord]; omega,
     by rw [hchange, hmid]; simpa using hne, fun s => ?_⟩
   match s with
-  | .left =>
-    exact ⟨flankWord xOff fill yOn (n d),
-      ⟨by simp, fun k (hk : t d - d ≤ k) => flankWord_congr_left (by omega)⟩,
-      by rw [hmid, hmid],
-      by rw [hrevL, hmid]⟩
-  | .right =>
-    exact ⟨flankWord xOn fill yOff (n d),
-      ⟨by simp, fun k (hk : k ≤ t d + d) => flankWord_congr_right (by omega)⟩,
-      by rw [hmid, hmid],
-      by rw [hrevR, hmid]⟩
+  | .left => exact ⟨_, .flankWord_left xOff (by omega),
+      (hmid _ _).trans (hmid _ _).symm, (hrevL d).trans (hmid _ _).symm⟩
+  | .right => exact ⟨_, .flankWord_right yOff (by omega),
+      (hmid _ _).trans (hmid _ _).symm, (hrevR d).trans (hmid _ _).symm⟩
 
 end FlankWitness
 

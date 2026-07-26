@@ -492,7 +492,7 @@ theorem conjBM.run_flankWord_mid (x y : Bool) (d : ℕ) :
 cell is raised, and demoting either mark alone reverts it — the three-map template, one
 map per argument. -/
 theorem conjBM.requiresBothSides : RequiresBothSides conjBM.run :=
-  .of_flanks (by decide) (fun d => ⟨by omega, by omega⟩)
+  .of_flanks (by decide) (fun d => by omega) (fun d => by omega)
     (conjBM.run_flankWord_mid true true) (conjBM.run_flankWord_mid false true)
     (conjBM.run_flankWord_mid true false)
 
