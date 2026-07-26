@@ -32,7 +32,7 @@ between two independently editable flanks.
 ## Main theorems
 
 * `RequiresBothSides.of_flanks`: the three-map witness template — a map is excluded
-  by three images at the target coordinate
+  by three target-cell observations
 * `IsLeftSubsequential.boundedDependence_right`: a length-preserving left-subsequential
   function depends boundedly on the right
 * `Mealy.leftDetermined`, `Mealy.boundedDependence_right`: a sequential machine is
@@ -132,8 +132,8 @@ variable {x fill y a : α} {n k : ℕ} {p : α → Bool}
 
 The recurring witness family for two-sided unboundedness: a target buried in a filler
 run, with independently editable flanks. `RequiresBothSides.of_flanks` packages the
-whole assembly — a map is excluded by exhibiting only three images, those of the base
-and of the two single-flank perturbations, at the target coordinate. -/
+whole assembly — a map is excluded by three target-cell observations: the base image
+leaves the filler, and either single-flank perturbation restores it. -/
 
 /-- The word `x`, then `n` copies of `fill`, then `y`. -/
 def flankWord (x fill y : α) (n : ℕ) : List α := x :: (List.replicate n fill ++ [y])
@@ -215,26 +215,24 @@ theorem IsFarPerturbation.flankWord_right {i d : ℕ} (y' : α) (h : i + d ≤ n
   ⟨by simp, fun k hk => by grind [getElem?_flankWord]⟩
 
 /-- A `d`-indexed family of flank words whose target sits `d`-far from both flanks,
-changed to `on` in the base and reverted by flipping either flank alone, requires both
-sides. -/
+changed in the base and reverted by flipping either flank alone, requires both sides. -/
 theorem RequiresBothSides.of_flanks {f : List α → List α}
-    {fill on xOn yOn xOff yOff : α} {n t : ℕ → ℕ} (hne : on ≠ fill)
+    {fill xOn yOn xOff yOff : α} {n t : ℕ → ℕ}
     (ht : ∀ d, d < t d) (hn : ∀ d, t d + d ≤ n d)
-    (hchange : ∀ d, (f (flankWord xOn fill yOn (n d)))[t d]? = some on)
+    (hchange : ∀ d, (f (flankWord xOn fill yOn (n d)))[t d]? ≠ some fill)
     (hrevL : ∀ d, (f (flankWord xOff fill yOn (n d)))[t d]? = some fill)
     (hrevR : ∀ d, (f (flankWord xOn fill yOff (n d)))[t d]? = some fill) :
     RequiresBothSides f := by
   intro d
-  have h₁ := ht d
-  have h₂ := hn d
+  have h₁ := ht d; have h₂ := hn d
   have hmid : ∀ x y : α, (flankWord x fill y (n d))[t d]? = some fill := fun _ _ =>
     getElem?_flankWord_mid (by omega) (by omega)
   refine ⟨flankWord xOn fill yOn (n d), t d, by rw [length_flankWord]; omega,
-    by rw [hchange, hmid]; simpa using hne, fun s => ?_⟩
+    fun h => hchange d (h.trans (hmid _ _)), fun s => ?_⟩
   match s with
-  | .left => exact ⟨_, .flankWord_left xOff (by omega),
+  | .left => exact ⟨_, .flankWord_left xOff (ht d),
       (hmid _ _).trans (hmid _ _).symm, (hrevL d).trans (hmid _ _).symm⟩
-  | .right => exact ⟨_, .flankWord_right yOff (by omega),
+  | .right => exact ⟨_, .flankWord_right yOff (hn d),
       (hmid _ _).trans (hmid _ _).symm, (hrevR d).trans (hmid _ _).symm⟩
 
 end FlankWitness

@@ -107,8 +107,8 @@ theorem requiresBothSides_of_flanks {xOn yOn xOff yOff : α} {n t : ℕ → ℕ}
     rw [length_flankWord]
     have := hn d
     omega
-  RequiresBothSides.of_flanks P.hi_ne_lo ht hn
-    (fun d => P.map_getElem?_hi_iff.mpr (hon d))
+  RequiresBothSides.of_flanks ht hn
+    (fun d => (P.map_getElem?_hi_iff.mpr (hon d)).trans_ne (by simpa using P.hi_ne_lo))
     (fun d => P.map_getElem?_lo_iff.mpr ⟨by simpa using hlen d, hoffL d⟩)
     (fun d => P.map_getElem?_lo_iff.mpr ⟨hlen d, hoffR d⟩)
 

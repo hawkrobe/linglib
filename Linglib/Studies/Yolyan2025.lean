@@ -154,9 +154,9 @@ private theorem sourGrapes_flankWord_mid {u v : SG} {d : ℕ} :
 triggerless `− −…− −` (far-left perturbation) nor the blocked `+ −…− ⊟` (far-right)
 changes it. -/
 theorem sourGrapes_requiresBothSides : RequiresBothSides sourGrapes :=
-  RequiresBothSides.of_flanks (fill := SG.minus) (on := SG.plus) (xOn := SG.plus)
+  RequiresBothSides.of_flanks (fill := SG.minus) (xOn := SG.plus)
     (yOn := SG.minus) (xOff := SG.minus) (yOff := SG.blk) (n := fun d => 2 * d + 1)
-    (t := fun d => d + 1) (by decide) (fun d => by omega) (fun d => by omega)
+    (t := fun d => d + 1) (fun d => by omega) (fun d => by omega)
     (fun d => by rw [sourGrapes_flankWord_mid]; simp)
     (fun d => by rw [sourGrapes_flankWord_mid]; simp)
     (fun d => by rw [sourGrapes_flankWord_mid]; simp)
