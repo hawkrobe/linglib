@@ -5,8 +5,8 @@ Authors: Robert Hawkins
 -/
 import Linglib.Core.Algebra.IdempotentPower
 import Linglib.Core.Computability.SyntacticMonoid
-import Linglib.Core.Computability.Subregular.Language.Algebra.Equations
-import Linglib.Core.Computability.Subregular.Language.Definite
+import Linglib.Core.Computability.Variety.Equations
+import Linglib.Core.Computability.Definite
 import Mathlib.Data.Fintype.Pigeonhole
 import Mathlib.SetTheory.Cardinal.Finite
 
@@ -62,7 +62,7 @@ regular, by `IsRegular.finite_syntacticMonoid`).
   Pin's `𝒦`-iff.
 * `Language.isFiniteOrCofinite_iff_satisfies_pinCofiniteEquation` —
   Pin's `𝒩`-iff (additionally requires `[Finite α]`; the
-  language-level reverse direction in `Subregular/Language/Definite.lean` does
+  language-level reverse direction in `Core/Computability/Definite.lean` does
   not hold for infinite alphabets).
 * `Language.exists_isGeneralizedDefinite_iff_satisfies_pinGeneralizedDefiniteEquation` —
   Pin's `ℒℐ`-iff. The reverse direction uses the same prefix-pigeonhole
@@ -556,7 +556,7 @@ def pinCofiniteEquation (L : Language α) [Finite L.syntacticMonoid] : Prop :=
 language's syntactic monoid satisfies the conjunction of Pin's D and K
 omega-power equations. Composes the substrate lemma
 `IsFiniteOrCofinite.exists_isDefinite_and_isReverseDefinite` (in
-`Subregular/Language/Definite.lean`) with the Pin D and Pin K iff theorems. -/
+`Core/Computability/Definite.lean`) with the Pin D and Pin K iff theorems. -/
 theorem IsFiniteOrCofinite.satisfies_pinCofiniteEquation
     {L : Language α} [Finite L.syntacticMonoid]
     (h : IsFiniteOrCofinite L) : pinCofiniteEquation L := by
@@ -570,7 +570,7 @@ Pin's D and K equations, then it is finite-or-cofinite.
 
 Requires `[Finite α]` because the language-level reverse direction
 (`isFiniteOrCofinite_of_isDefinite_and_isReverseDefinite` in
-`Subregular/Language/Definite.lean`) needs it: with infinite α, words of
+`Core/Computability/Definite.lean`) needs it: with infinite α, words of
 bounded length need not form a finite set. -/
 theorem isFiniteOrCofinite_of_satisfies_pinCofiniteEquation [Finite α]
     {L : Language α} [Finite L.syntacticMonoid]

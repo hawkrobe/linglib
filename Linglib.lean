@@ -81,12 +81,12 @@ import Linglib.Core.Computability.Subregular.Function.Dependence
 import Linglib.Core.Computability.Subregular.Function.ISL
 import Linglib.Core.Computability.Subregular.Function.OSL
 import Linglib.Core.Computability.Subregular.Function.Subsequential
-import Linglib.Core.Computability.Subregular.Language.Algebra.Equations
-import Linglib.Core.Computability.Subregular.Language.Algebra.Pin
+import Linglib.Core.Computability.Variety.Equations
+import Linglib.Core.Computability.Variety.Pin
 import Linglib.Core.Computability.Subregular.Language.Aperiodicity
 import Linglib.Core.Computability.Subregular.Language.Boundary
 import Linglib.Core.Computability.Subregular.Language.ContainsFactor
-import Linglib.Core.Computability.Subregular.Language.Definite
+import Linglib.Core.Computability.Definite
 import Linglib.Core.Computability.Subregular.Language.ForbiddenPairs
 import Linglib.Core.Computability.Subregular.Language.Multitier
 import Linglib.Core.Computability.Subregular.Language.PiecewiseTestable
