@@ -7,7 +7,6 @@ import Mathlib.Data.List.Basic
 import Mathlib.Data.Set.Basic
 import Linglib.Core.Computability.Subregular.Function.Subsequential
 import Linglib.Core.Data.List.EqOn
-import Linglib.Core.Logic.FactorsThroughOn
 
 /-!
 # Dependence predicates for string functions
@@ -35,8 +34,8 @@ between two independently editable flanks.
 
 ## Main theorems
 
-* `outputDependsOn_iff_factorsThroughOn`: dependence on `K` is a factor-through of the
-  input's restriction to `K`
+* `outputDependsOn_iff_factorsThrough`: dependence on `K` is a factor-through of the
+  input's length and restriction to `K`
 * `RequiresBothSides.of_flanks`: the three-map witness template — a map is excluded
   by three images at the target coordinate
 * `IsLeftSubsequential.boundedDependence_right`: a length-preserving left-subsequential
@@ -57,7 +56,7 @@ namespace Subregular
 
 open Set
 
-variable {α β : Type*}
+variable {α β : Type*} {f : List α → List β}
 
 /-! ### The dependence lattice -/
 
@@ -67,23 +66,22 @@ def OutputDependsOn (f : List α → List β) (i : ℕ) (K : Set ℕ) : Prop :=
   ∀ ⦃u v : List α⦄, u.length = v.length → EqOn (u[·]?) (v[·]?) K →
     (f u)[i]? = (f v)[i]?
 
-theorem OutputDependsOn.mono {f : List α → List β} {i : ℕ} {K K' : Set ℕ}
+theorem OutputDependsOn.mono {i : ℕ} {K K' : Set ℕ}
     (hKK' : K ⊆ K') (h : OutputDependsOn f i K) : OutputDependsOn f i K' :=
   fun _ _ hl hag => h hl (hag.mono hKK')
 
-/-- `OutputDependsOn` is a factor-through condition: coordinate `i` of the output factors
-through the restriction of the input to `K`, on each set of inputs of a fixed length.
-This is the same shape the language side uses for its locality classes, which are stated
-directly as `Function.FactorsThrough` of membership through a bounded window. -/
-theorem outputDependsOn_iff_factorsThroughOn {f : List α → List β} {i : ℕ} {K : Set ℕ} :
+/-- Coordinate `i` of the output factors through the input's length and its
+restriction to `K`. -/
+theorem outputDependsOn_iff_factorsThrough {i : ℕ} {K : Set ℕ} :
     OutputDependsOn f i K ↔
-      ∀ n, Function.FactorsThroughOn (fun u => (f u)[i]?)
-        (fun u : List α => K.restrict fun k => u[k]?) {u : List α | u.length = n} := by
+      Function.FactorsThrough (fun u => (f u)[i]?)
+        (fun u : List α => (u.length, K.restrict (u[·]?))) := by
   constructor
-  · intro h n u v hu hv hres
-    exact h (hu.trans hv.symm) fun k hk => congrFun hres ⟨k, hk⟩
+  · intro h u v huv
+    rw [Prod.mk.injEq] at huv
+    exact h huv.1 fun k hk => congrFun huv.2 ⟨k, hk⟩
   · intro h u v hlen hag
-    exact h u.length (rfl : u.length = u.length) hlen.symm (funext fun k => hag k.2)
+    exact h (Prod.ext hlen (funext fun k => hag k.2))
 
 /-- Output coordinate `i` is fixed by the prefix `{k | k ≤ i}`, the footprint shape of a
 left-to-right transducer. -/
@@ -110,13 +108,13 @@ def BoundedDependence (f : List α → List β) (s : Direction) : Prop :=
 
 /-- `f` fails bounded dependence towards `s` exactly when it has unbounded dependence there
 (`BoundedDependence` is by definition the negation of `UnboundedDependence`). -/
-@[simp] theorem not_boundedDependence_iff {f : List α → List β} {s : Direction} :
+@[simp] theorem not_boundedDependence_iff {s : Direction} :
     ¬ BoundedDependence f s ↔ UnboundedDependence f s := not_not
 
 /-- A map whose every output coordinate is fixed by its prefix `{k | k ≤ i}` depends
 boundedly on the right — trivially so, since nothing to the right matters at all. -/
-theorem BoundedDependence.right_of_leftDetermined {f : List α → List β}
-    (h : ∀ i, LeftDetermined f i) : BoundedDependence f .right := by
+theorem BoundedDependence.right_of_leftDetermined (h : ∀ i, LeftDetermined f i) :
+    BoundedDependence f .right := by
   rintro hunb
   obtain ⟨u, v, i, hi, ⟨hlen, hag⟩, hne⟩ := hunb 0
   exact hne (h i hlen.symm (hag.mono (Iic_subset_Iic.mpr (by omega))))
@@ -124,7 +122,7 @@ theorem BoundedDependence.right_of_leftDetermined {f : List α → List β}
 /-- A map whose every output coordinate is fixed by the input's *strict* prefix
 `{k | k < i}` depends boundedly on the right; the strict hypothesis is the stronger
 one, so this follows by `OutputDependsOn.mono`. -/
-theorem BoundedDependence.right_of_prefixDetermined {f : List α → List β}
+theorem BoundedDependence.right_of_prefixDetermined
     (h : ∀ i, OutputDependsOn f i (Iio i)) : BoundedDependence f .right :=
   BoundedDependence.right_of_leftDetermined fun i => (h i).mono Iio_subset_Iic_self
 
@@ -137,7 +135,7 @@ def TwoSidedUnboundedDependence (f : List α → List β) : Prop :=
     ∀ s, ∃ u, IsFarPerturbation base u i d s ∧ (f base)[i]? ≠ (f u)[i]?
 
 /-- Co-located two-sided dependence yields unbounded dependence on either side. -/
-theorem TwoSidedUnboundedDependence.unboundedDependence {f : List α → List β}
+theorem TwoSidedUnboundedDependence.unboundedDependence
     (h : TwoSidedUnboundedDependence f) (s : Direction) : UnboundedDependence f s :=
   fun d =>
     have ⟨base, i, hi, hw⟩ := h d
@@ -145,7 +143,7 @@ theorem TwoSidedUnboundedDependence.unboundedDependence {f : List α → List β
     ⟨base, u, i, hi, hp, hne⟩
 
 /-- A map with two-sided unbounded dependence has bounded dependence on neither side. -/
-theorem TwoSidedUnboundedDependence.not_boundedDependence {f : List α → List β}
+theorem TwoSidedUnboundedDependence.not_boundedDependence
     (h : TwoSidedUnboundedDependence f) (s : Direction) : ¬ BoundedDependence f s :=
   not_not_intro (h.unboundedDependence s)
 
@@ -317,7 +315,7 @@ variable {σ : Type*}
 
 /-- A length-preserving left-subsequential function depends boundedly on the right:
 bounded delay bounds dependence. -/
-theorem IsLeftSubsequential.boundedDependence_right {f : List α → List β}
+theorem IsLeftSubsequential.boundedDependence_right
     (hlen : ∀ w, (f w).length = w.length) (hf : IsLeftSubsequential f) :
     BoundedDependence f .right := by
   obtain ⟨N, hN⟩ := hf.exists_getElem?_append_eq
