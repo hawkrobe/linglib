@@ -335,7 +335,7 @@ theorem applyToString_prefixDetermined (r : TierRule α) (i : ℕ) :
     OutputDependsOn r.applyToString i {k | k < i} := by
   intro u v hlen hag
   rw [applyToString_getElem?, applyToString_getElem?, hlen,
-    take_eq_of_agree fun k hk => hag k hk]
+    List.take_eq_of_agree fun k hk => hag k hk]
 
 /-- **The tier-rule prediction mechanism is right-myopic** — it has no look-ahead.
 Consequently no tier-rule-based prediction (the formal core of a `Harmony.System`) can

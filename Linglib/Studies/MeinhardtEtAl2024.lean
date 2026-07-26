@@ -380,7 +380,7 @@ theorem maasai_twoSidedUnboundedDependence : TwoSidedUnboundedDependence maasai 
   match s with
   | .left =>
     refine ⟨(List.replicate (2 * d + 3) .recL).set 0 .dom,
-      ⟨by simp, fun k _ => by rw [List.getElem?_set_ne (by omega)]⟩, ?_⟩
+      ⟨by simp, fun k (hk : _ ≤ k) => by rw [List.getElem?_set_ne (by omega)]⟩, ?_⟩
     simp only [maasai]
     rw [List.getElem?_map, List.getElem?_map, List.getElem?_set_ne (by omega : 0 ≠ d + 1)]
     have hd : hasDom ((List.replicate (2 * d + 3) .recL).set 0 .dom) = true := by
@@ -390,7 +390,7 @@ theorem maasai_twoSidedUnboundedDependence : TwoSidedUnboundedDependence maasai 
     simp [hd, hb, (by omega : d + 1 < 2 * d + 3)]
   | .right =>
     refine ⟨(List.replicate (2 * d + 3) .recL).set (2 * d + 2) .dom,
-      ⟨by simp, fun k _ => by rw [List.getElem?_set_ne (by omega)]⟩, ?_⟩
+      ⟨by simp, fun k (hk : k ≤ _) => by rw [List.getElem?_set_ne (by omega)]⟩, ?_⟩
     simp only [maasai]
     rw [List.getElem?_map, List.getElem?_map, List.getElem?_set_ne (by omega : 2 * d + 2 ≠ d + 1)]
     have hd : hasDom ((List.replicate (2 * d + 3) .recL).set (2 * d + 2) .dom) = true := by

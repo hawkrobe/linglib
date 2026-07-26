@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.Computability.Subregular.Logic.QFLogic
-import Linglib.Core.Computability.Subregular.Function.Dependence
+import Linglib.Core.Data.List.Agree
 import Mathlib.Data.Finset.Basic
 
 /-!
@@ -48,7 +48,7 @@ derives nothing. `evalFuel` is its computable face, related by `eval_iff_evalFue
 
 namespace Subregular.Logic.BMRS
 
-open Subregular (AgreeUpto AgreeFrom)
+open List (AgreeUpto AgreeFrom)
 
 variable {α F : Type*}
 
