@@ -10,62 +10,45 @@ import Linglib.Core.Computability.Subregular.Function.Defs
 import Linglib.Core.Logic.FactorsThroughOn
 
 /-!
-# How far an output coordinate depends on its input
+# Dependence predicates for string functions
 
-Dependence predicates on string functions. The kernel `OutputDependsOn f i K` says
-output coordinate `i` of `f` is fixed by the input positions in `K`. Two notions are
-instances:
-
-* **Bounded dependence** on a side: that side's influence on the output reaches only a
-  bounded distance, so a transducer scanning from it needs no unbounded context.
-* **Two-sided unbounded dependence**: some target is swayed from *either* side,
-  arbitrarily far away — each side alone suffices to change it.
+`OutputDependsOn f i K` states that output coordinate `i` of the string function `f`
+is determined by the input positions in `K`: equal-length inputs agreeing on `K` agree
+at output `i`. `UnboundedDependence f s` says that input beyond any distance bound on
+side `s` can still flip an output of `f`, and `BoundedDependence` is its negation.
+`TwoSidedUnboundedDependence` and the stronger `RequiresBothSides` place a single
+target under the influence of both sides at once, and `flankWord` is the witness
+family instantiating them: a target buried in a filler run between two independently
+editable flanks.
 
 ## Main definitions
 
-* `OutputDependsOn` — output coord `i` determined by input positions in `K`, equivalently
-  a factor-through of the input's restriction to `K`
-  (`outputDependsOn_iff_factorsThroughOn`).
-* `UnboundedDependence f s` — for every distance `d`, some output flips under a
-  perturbation strictly beyond `d` on side `s`.
-* `BoundedDependence f s` — the negation: dependence on side `s` is bounded.
-* `TwoSidedUnboundedDependence` — co-located form: for every `d`, ONE base word with a
-  target that flips under a far-left perturbation and under a far-right one.
-* `RequiresBothSides` — strengthening: the target *changes* in the base, and perturbing
-  either far side reverts it to the identity.
-* `flankWord` — the witness family instantiating it: a target buried in a filler run
-  with independently editable flanks (`RequiresBothSides.of_flanks`).
+* `OutputDependsOn f i K`: output coordinate `i` is fixed by the input positions in `K`
+* `UnboundedDependence f s`, `BoundedDependence f s`: whether input arbitrarily far
+  away on side `s` can flip an output
+* `TwoSidedUnboundedDependence f`: for every `d`, one base word carries a target
+  flipped by far perturbations on either side
+* `RequiresBothSides f`: the target is changed, and either far perturbation alone
+  reverts it
+* `flankWord x fill y n`: a target buried in a filler run with editable flanks
 
 ## Main theorems
 
-* `Mealy.boundedDependence_right`, `IsMealyComputable.boundedDependence_right` — a
-  sequential machine is prefix-determined at every coordinate, so nothing to its right
-  influences it.
+* `outputDependsOn_iff_factorsThroughOn`: dependence on `K` is a factor-through of the
+  input's restriction to `K`
+* `RequiresBothSides.of_flanks`: the three-map witness template of [yolyan-2025] §5.3
+* `Mealy.boundedDependence_right`, `IsMealyComputable.boundedDependence_right`: a
+  sequential machine is prefix-determined at every coordinate, so nothing to its
+  right influences it
 
 ## Implementation notes
 
-The predicates are **distance-based** (`∀ d, ∃ word + target`), not fixed-index. A
-fixed target index has only finitely many positions to its left, so a fixed-index
-"unbounded left dependence" is unsatisfiable; the unbounded distance must be witnessed
-by ever-longer words. The co-located `TwoSidedUnboundedDependence` keeps both
-perturbations on a single shared base, so any computing automaton hits one context
-where neither side alone fixes the output.
-
-`TwoSidedUnboundedDependence` is *not* the non-interaction boundary: a map can satisfy
-it yet be computed by a non-interacting bimachine (a two-sided *union* is perturbed at
-one output by either side, but neither side alone reverts it). Exclusion from the
-non-interacting class is driven by the strictly stronger `RequiresBothSides`, where
-perturbing either far side reverts the target to the identity — the sufficient
-condition every published exclusion proof instantiates ([yolyan-2025] §5.3).
-
-The name is deliberately descriptive rather than borrowed. Being changeable from either
-side is compatible with every individual output coordinate still being fixed by a single
-side, so this predicate separates neither of the two standard classes on its own: it is
-implied by needing both sides at once, and is also satisfied by maps that never do.
+The unboundedness predicates are distance-based (`∀ d, ∃ word + target`) rather than
+fixed-index: a fixed target has only finitely many positions to its left, so a
+fixed-index unbounded left dependence would be unsatisfiable.
 -/
 
 namespace Subregular
-
 
 variable {α β : Type*}
 
@@ -133,8 +116,8 @@ def UnboundedDependence (f : List α → List β) : Direction → Prop
   | .right => ∀ d, ∃ (u v : List α) (i : ℕ), u.length = v.length ∧ i < u.length ∧
                 AgreeUpto u v (i + d) ∧ (f u)[i]? ≠ (f v)[i]?
 
-/-- Dependence on side `s` is bounded: no target is swayed from arbitrarily far away on
-that side. -/
+/-- Dependence on side `s` is bounded: no output flips under perturbations arbitrarily
+far away on that side. -/
 def BoundedDependence (f : List α → List β) (s : Direction) : Prop :=
   ¬ UnboundedDependence f s
 
@@ -148,7 +131,7 @@ def IsFarPerturbation (base u : List α) (i d : ℕ) (s : Direction) : Prop :=
 
 /-- For every `d`, one base word carries a target whose output flips under a far
 perturbation on either side. Co-location keeps both flips on a single base (one
-automaton context); each side alone sways the target, so this is weaker than needing
+automaton context); each side alone flips the target, so this is weaker than needing
 both at once (`RequiresBothSides`). -/
 def TwoSidedUnboundedDependence (f : List α → List β) : Prop :=
   ∀ d, ∃ (base : List α) (i : ℕ), i < base.length ∧
