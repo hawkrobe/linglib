@@ -23,7 +23,7 @@ proposal of [meinhardt-mai-bakovic-mccollum-2024]); feeding both exclusions one 
 object states it structurally without resolving it. The proof here streamlines the paper's:
 on either perturbation the input value is unchanged, so ⊙ collapses to conjunction and
 *both* one-sided outputs are forced true; each transports to the base word by one-sided
-locality (`Eval.congr_agreeUpto`/`congr_agreeFrom`), and recombining forces the base
+locality (`Eval.congr_eqOn_Iic`/`congr_eqOn_Ici`), and recombining forces the base
 unchanged — no case-split through Prop. 4.2 needed. Only the `d = 0` instance of the
 witness is used: one-sidedness is global, not window-bounded.
 
@@ -112,9 +112,9 @@ theorem not_isBmrsWeaklyDeterministic_of_requiresBothSides {f : List α → List
     exact ⟨hcomb.1 ▸ hevL, hcomb.2 ▸ hevR⟩
   -- transport each one-sided output to the base word and recombine
   have hevL : Eval PL base i (.call (outL σ) x) true :=
-    hRboth.1.congr_agreeUpto hPL hRlen trivial fun k hk => (hRag k hk).symm
+    hRboth.1.congr_eqOn_Iic hPL hRlen trivial hRag.symm
   have hevR : Eval PR base i (.call (outR σ) x) true :=
-    hLboth.2.congr_agreeFrom hPR hLlen trivial fun k hk => (hLag k hk).symm
+    hLboth.2.congr_eqOn_Ici hPR hLlen trivial hLag.symm
   exact hchange ((((hm base).2 i hi σ).mpr
     ⟨true, true, hevL, hevR, by rw [decide_eq_true hbase]; rfl⟩).trans hbase.symm)
 
@@ -144,19 +144,19 @@ private theorem sourGrapes_flankWord_mid {u v : SG} {d : ℕ} :
     Option.map_some]
   by_cases h : u = .plus ∧ v ≠ .blk
   · rw [if_pos h, if_pos ⟨rfl,
-      (mem_take_flankWord_iff (by decide) (by omega) (by omega)).mpr h.1,
-      fun hb => h.2 ((mem_drop_flankWord_iff (by decide) (by omega) (by omega)).mp hb)⟩]
+      (mem_take_flankWord_iff (by decide) (by omega)).mpr h.1,
+      fun hb => h.2 ((mem_drop_flankWord_iff (by decide) (by omega)).mp hb)⟩]
   · rw [if_neg h, if_neg fun ⟨_, ht, hd⟩ =>
-      h ⟨(mem_take_flankWord_iff (by decide) (by omega) (by omega)).mp ht,
-        fun hv => hd ((mem_drop_flankWord_iff (by decide) (by omega) (by omega)).mpr hv)⟩]
+      h ⟨(mem_take_flankWord_iff (by decide) (by omega)).mp ht,
+        fun hv => hd ((mem_drop_flankWord_iff (by decide) (by omega)).mpr hv)⟩]
 
 /-- Sour Grapes requires both sides: the middle of `+ −…− −` spreads, but neither the
 triggerless `− −…− −` (far-left perturbation) nor the blocked `+ −…− ⊟` (far-right)
 changes it. -/
 theorem sourGrapes_requiresBothSides : RequiresBothSides sourGrapes :=
-  RequiresBothSides.of_flanks (fill := SG.minus) (on := SG.plus) (xOn := SG.plus)
+  RequiresBothSides.of_flanks (fill := SG.minus) (xOn := SG.plus)
     (yOn := SG.minus) (xOff := SG.minus) (yOff := SG.blk) (n := fun d => 2 * d + 1)
-    (t := fun d => d + 1) (by decide) (fun d => ⟨by omega, by omega⟩)
+    (t := fun d => d + 1) (fun d => by omega) (fun d => by omega)
     (fun d => by rw [sourGrapes_flankWord_mid]; simp)
     (fun d => by rw [sourGrapes_flankWord_mid]; simp)
     (fun d => by rw [sourGrapes_flankWord_mid]; simp)
@@ -266,7 +266,7 @@ the spread to two TBUs) changes it — `Tone.Surfacing`'s flank template, from t
 surfacing facts alone. -/
 theorem bemba_requiresBothSides : RequiresBothSides bemba.map :=
   bemba.requiresBothSides_of_flanks (n := fun d => 2 * d + 4) (t := fun d => d + 3)
-    (fun d => ⟨by omega, by omega⟩) (fun d => bembaSurfaces_flankWord_HL)
+    (fun d => by omega) (fun d => by omega) (fun d => bembaSurfaces_flankWord_HL)
     (fun d => not_bembaSurfaces_flankWord_LL) (fun d => not_bembaSurfaces_flankWord_HH)
 
 /-- **Prop. 5.4**: Bemba high-tone spreading is not weakly deterministic. -/

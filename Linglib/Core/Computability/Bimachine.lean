@@ -481,16 +481,16 @@ the two flanks. -/
 theorem conjBM.run_flankWord_mid (x y : Bool) (d : ℕ) :
     (conjBM.run (flankWord x false y (2 * d + 1)))[d + 1]? = some (x && y) := by
   rw [conjBM, Bimachine.getElem?_ofFlags_run, getElem?_flankWord_mid (by omega) (by omega),
-    any_take_flankWord rfl (by omega) (by omega), any_drop_flankWord rfl (by omega) (by omega)]
+    any_take_flankWord rfl (by omega), any_drop_flankWord rfl (by omega)]
   rfl
 
 /-- The conjunctive change requires both sides: with a mark on each flank the medial
 cell is raised, and demoting either mark alone reverts it — the three-map template, one
 map per argument. -/
 theorem conjBM.requiresBothSides : RequiresBothSides conjBM.run :=
-  .of_flanks (by decide) (fun d => ⟨by omega, by omega⟩)
-    (conjBM.run_flankWord_mid true true) (conjBM.run_flankWord_mid false true)
-    (conjBM.run_flankWord_mid true false)
+  .of_flanks (fun d => by omega) (fun d => by omega)
+    (fun d => by rw [conjBM.run_flankWord_mid]; decide)
+    (conjBM.run_flankWord_mid false true) (conjBM.run_flankWord_mid true false)
 
 /-- The non-interacting class is proper inside the bimachine-computable functions —
 `conjBM` is computed by a bimachine, but by no non-interacting one. -/

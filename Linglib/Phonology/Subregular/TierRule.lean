@@ -7,6 +7,7 @@ import Mathlib.Data.Fintype.Option
 import Linglib.Core.Computability.TierProjection
 import Linglib.Core.Computability.Subregular.Function.Subsequential
 import Linglib.Core.Computability.Subregular.Function.Dependence
+import Linglib.Core.Data.List.DependsOn
 
 /-!
 # TierProjection-based rules (`TierRule`)
@@ -332,10 +333,10 @@ theorem applyToString_getElem? (r : TierRule α) (u : List α) (i : ℕ) :
 /-- `applyToString` is **prefix-determined**: its `i`-th output is fixed by the input's
 strict prefix `{k | k < i}`. -/
 theorem applyToString_prefixDetermined (r : TierRule α) (i : ℕ) :
-    OutputDependsOn r.applyToString i {k | k < i} := by
+    OutputDependsOn r.applyToString i (Set.Iio i) := by
   intro u v hlen hag
   rw [applyToString_getElem?, applyToString_getElem?, hlen,
-    take_eq_of_agree fun k hk => hag k hk]
+    List.take_eq_of_agree fun k hk => hag.getElem?_eq (Set.mem_Iio.mpr hk)]
 
 /-- **The tier-rule prediction mechanism is right-myopic** — it has no look-ahead.
 Consequently no tier-rule-based prediction (the formal core of a `Harmony.System`) can

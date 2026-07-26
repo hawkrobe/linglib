@@ -5,183 +5,124 @@ Authors: Robert Hawkins
 -/
 import Mathlib.Data.List.Basic
 import Mathlib.Data.Set.Basic
-import Linglib.Core.Computability.Mealy
-import Linglib.Core.Computability.Subregular.Function.Defs
-import Linglib.Core.Logic.FactorsThroughOn
+import Linglib.Core.Computability.Subregular.Function.Subsequential
+import Linglib.Core.Data.List.DependsOn
+import Linglib.Core.Data.List.EqOn
 
 /-!
-# How far an output coordinate depends on its input
+# Side dependence for string functions
 
-Dependence predicates on string functions. The kernel `OutputDependsOn f i K` says
-output coordinate `i` of `f` is fixed by the input positions in `K`. Two notions are
-instances:
-
-* **Bounded dependence** on a side: that side's influence on the output reaches only a
-  bounded distance, so a transducer scanning from it needs no unbounded context.
-* **Two-sided unbounded dependence**: some target is swayed from *either* side,
-  arbitrarily far away — each side alone suffices to change it.
+A lattice of side-dependence predicates over `OutputDependsOn`:
+`UnboundedDependence f s` says that input beyond any distance bound on side `s` can
+still flip an output, `TwoSidedUnboundedDependence` places one target under the
+influence of both sides, and `RequiresBothSides` demands both sides at once.
+`flankWord` is the witness family instantiating them: a target buried in a filler run
+between two independently editable flanks.
 
 ## Main definitions
 
-* `OutputDependsOn` — output coord `i` determined by input positions in `K`, equivalently
-  a factor-through of the input's restriction to `K`
-  (`outputDependsOn_iff_factorsThroughOn`).
-* `UnboundedDependence f s` — for every distance `d`, some output flips under a
-  perturbation strictly beyond `d` on side `s`.
-* `BoundedDependence f s` — the negation: dependence on side `s` is bounded.
-* `TwoSidedUnboundedDependence` — co-located form: for every `d`, ONE base word with a
-  target that flips under a far-left perturbation and under a far-right one.
-* `RequiresBothSides` — strengthening: the target *changes* in the base, and perturbing
-  either far side reverts it to the identity.
-* `flankWord` — the witness family instantiating it: a target buried in a filler run
-  with independently editable flanks (`RequiresBothSides.of_flanks`).
+* `UnboundedDependence f s`, `BoundedDependence f s`: whether input arbitrarily far
+  away on side `s` can flip an output
+* `TwoSidedUnboundedDependence f`: for every `d`, one base word carries a target
+  flipped by far perturbations on either side
+* `RequiresBothSides f`: the target is changed, and either far perturbation alone
+  reverts it
+* `flankWord x fill y n`: a target buried in a filler run with editable flanks
 
 ## Main theorems
 
-* `Mealy.boundedDependence_right`, `IsMealyComputable.boundedDependence_right` — a
-  sequential machine is prefix-determined at every coordinate, so nothing to its right
-  influences it.
+* `RequiresBothSides.of_flanks`: the three-map witness template — a map is excluded
+  by three target-cell observations
+* `IsLeftSubsequential.boundedDependence_right`: a length-preserving left-subsequential
+  function depends boundedly on the right
+* `Mealy.leftDetermined`, `Mealy.boundedDependence_right`: a sequential machine is
+  prefix-determined at every coordinate
 
 ## Implementation notes
 
-The predicates are **distance-based** (`∀ d, ∃ word + target`), not fixed-index. A
-fixed target index has only finitely many positions to its left, so a fixed-index
-"unbounded left dependence" is unsatisfiable; the unbounded distance must be witnessed
-by ever-longer words. The co-located `TwoSidedUnboundedDependence` keeps both
-perturbations on a single shared base, so any computing automaton hits one context
-where neither side alone fixes the output.
-
-`TwoSidedUnboundedDependence` is *not* the non-interaction boundary: a map can satisfy
-it yet be computed by a non-interacting bimachine (a two-sided *union* is perturbed at
-one output by either side, but neither side alone reverts it). Exclusion from the
-non-interacting class is driven by the strictly stronger `RequiresBothSides`, where
-perturbing either far side reverts the target to the identity — the sufficient
-condition every published exclusion proof instantiates ([yolyan-2025] §5.3).
-
-The name is deliberately descriptive rather than borrowed. Being changeable from either
-side is compatible with every individual output coordinate still being fixed by a single
-side, so this predicate separates neither of the two standard classes on its own: it is
-implied by needing both sides at once, and is also satisfied by maps that never do.
+The unboundedness predicates are distance-based (`∀ d, ∃ word + target`) rather than
+fixed-index: a fixed target has only finitely many positions to its left, so a
+fixed-index unbounded left dependence would be unsatisfiable.
 -/
 
 namespace Subregular
 
+open Set
 
-variable {α β : Type*}
+variable {α β : Type*} {f : List α → List β}
 
-/-- Output coordinate `i` of `f` is determined by the input positions in `K`:
-equal-length inputs agreeing on `K` agree at output `i`. Monotone in `K`. -/
-def OutputDependsOn (f : List α → List β) (i : ℕ) (K : Set ℕ) : Prop :=
-  ∀ u v : List α, u.length = v.length →
-    (∀ k ∈ K, u[k]? = v[k]?) → (f u)[i]? = (f v)[i]?
-
-theorem OutputDependsOn.mono {f : List α → List β} {i : ℕ} {K K' : Set ℕ}
-    (hKK' : K ⊆ K') (h : OutputDependsOn f i K) : OutputDependsOn f i K' :=
-  fun u v hl hag => h u v hl fun k hk => hag k (hKK' hk)
-
-/-- `OutputDependsOn` is a factor-through condition: coordinate `i` of the output factors
-through the restriction of the input to `K`, on each set of inputs of a fixed length.
-This is the same shape the language side uses for its locality classes, which are stated
-directly as `Function.FactorsThrough` of membership through a bounded window. -/
-theorem outputDependsOn_iff_factorsThroughOn {f : List α → List β} {i : ℕ} {K : Set ℕ} :
-    OutputDependsOn f i K ↔
-      ∀ n, Function.FactorsThroughOn (fun u => (f u)[i]?)
-        (fun u : List α => K.restrict fun k => u[k]?) {u : List α | u.length = n} := by
-  constructor
-  · intro h n u v hu hv hres
-    exact h u v (hu.trans hv.symm) fun k hk => congrFun hres ⟨k, hk⟩
-  · intro h u v hlen hag
-    exact h u.length (rfl : u.length = u.length) hlen.symm (funext fun k => hag k.1 k.2)
-
-/-- `u` and `v` agree at every index `≥ j`. -/
-def AgreeFrom (u v : List α) (j : ℕ) : Prop := ∀ k, j ≤ k → u[k]? = v[k]?
-/-- `u` and `v` agree at every index `≤ j`. -/
-def AgreeUpto (u v : List α) (j : ℕ) : Prop := ∀ k, k ≤ j → u[k]? = v[k]?
-
-/-- Prefixes agreeing below `i` have equal `i`-truncations. -/
-theorem take_eq_of_agree {u v : List α} {i : ℕ} (h : ∀ k, k < i → u[k]? = v[k]?) :
-    u.take i = v.take i := by
-  apply List.ext_getElem?
-  intro k
-  rcases lt_or_ge k i with hk | hk
-  · simpa only [List.getElem?_take_of_lt hk] using h k hk
-  · simp [List.getElem?_take_eq_none hk]
-
-/-- Lists agreeing from `i` upward have equal `i`-suffixes. -/
-theorem drop_eq_of_agree {u v : List α} {i : ℕ} (h : ∀ k, i ≤ k → u[k]? = v[k]?) :
-    u.drop i = v.drop i := by
-  apply List.ext_getElem?
-  intro k
-  simpa only [List.getElem?_drop] using h (i + k) (Nat.le_add_right i k)
-
-/-- Agreement up to `j` transports truncations: `h.take_eq` for `h : AgreeUpto u v j`. -/
-theorem AgreeUpto.take_eq {u v : List α} {j : ℕ} (h : AgreeUpto u v j) {i : ℕ}
-    (hij : i ≤ j + 1) : u.take i = v.take i :=
-  take_eq_of_agree fun k hk => h k (by omega)
-
-/-- Agreement from `j` transports suffixes: `h.drop_eq` for `h : AgreeFrom u v j`. -/
-theorem AgreeFrom.drop_eq {u v : List α} {j : ℕ} (h : AgreeFrom u v j) {i : ℕ}
-    (hij : j ≤ i) : u.drop i = v.drop i :=
-  drop_eq_of_agree fun k hk => h k (by omega)
-
-/-- `f` depends unboundedly on side `s` when for every distance `d` some target output
-position flips under a perturbation strictly beyond `d` on that side (the perturbed
-input agrees on the near window and the whole opposite side). -/
-def UnboundedDependence (f : List α → List β) : Direction → Prop
-  | .left  => ∀ d, ∃ (u v : List α) (i : ℕ), u.length = v.length ∧ i < u.length ∧
-                AgreeFrom u v (i - d) ∧ (f u)[i]? ≠ (f v)[i]?
-  | .right => ∀ d, ∃ (u v : List α) (i : ℕ), u.length = v.length ∧ i < u.length ∧
-                AgreeUpto u v (i + d) ∧ (f u)[i]? ≠ (f v)[i]?
-
-/-- Dependence on side `s` is bounded: no target is swayed from arbitrarily far away on
-that side. -/
-def BoundedDependence (f : List α → List β) (s : Direction) : Prop :=
-  ¬ UnboundedDependence f s
+/-! ### The dependence lattice -/
 
 /-- An equal-length variant of `base` differing only beyond the `d`-margin of target
-`i` on side `s` — the far perturbation of the two-sided diagnostics. -/
+`i` on side `s`. -/
 def IsFarPerturbation (base u : List α) (i d : ℕ) (s : Direction) : Prop :=
   u.length = base.length ∧
     match s with
-    | .left => AgreeFrom base u (i - d)
-    | .right => AgreeUpto base u (i + d)
+    | .left => EqOn (base[·]?) (u[·]?) (Ici (i - d))
+    | .right => EqOn (base[·]?) (u[·]?) (Iic (i + d))
+
+/-- `f` depends unboundedly on side `s` when for every distance `d` some target output
+position flips under a far perturbation on that side. -/
+def UnboundedDependence (f : List α → List β) (s : Direction) : Prop :=
+  ∀ d, ∃ (u v : List α) (i : ℕ), i < u.length ∧ IsFarPerturbation u v i d s ∧
+    (f u)[i]? ≠ (f v)[i]?
+
+/-- Dependence on side `s` is bounded: no output flips under perturbations arbitrarily
+far away on that side. -/
+def BoundedDependence (f : List α → List β) (s : Direction) : Prop :=
+  ¬ UnboundedDependence f s
+
+/-- `f` fails bounded dependence towards `s` exactly when it has unbounded dependence
+there. -/
+@[simp] theorem not_boundedDependence_iff {s : Direction} :
+    ¬ BoundedDependence f s ↔ UnboundedDependence f s := not_not
+
+/-- A map whose every output coordinate is fixed by its prefix `Set.Iic i` depends
+boundedly on the right. -/
+theorem BoundedDependence.right_of_leftDetermined (h : ∀ i, LeftDetermined f i) :
+    BoundedDependence f .right := by
+  rintro hunb
+  obtain ⟨u, v, i, hi, ⟨hlen, hag⟩, hne⟩ := hunb 0
+  exact hne (h i hlen.symm (hag.mono (Iic_subset_Iic.mpr (by omega))))
+
+/-- A map whose every output coordinate is fixed by the input's strict prefix
+`Set.Iio i` depends boundedly on the right. -/
+theorem BoundedDependence.right_of_prefixDetermined
+    (h : ∀ i, OutputDependsOn f i (Iio i)) : BoundedDependence f .right :=
+  BoundedDependence.right_of_leftDetermined fun i => (h i).mono Iio_subset_Iic_self
 
 /-- For every `d`, one base word carries a target whose output flips under a far
-perturbation on either side. Co-location keeps both flips on a single base (one
-automaton context); each side alone sways the target, so this is weaker than needing
-both at once (`RequiresBothSides`). -/
+perturbation on either side. -/
 def TwoSidedUnboundedDependence (f : List α → List β) : Prop :=
   ∀ d, ∃ (base : List α) (i : ℕ), i < base.length ∧
     ∀ s, ∃ u, IsFarPerturbation base u i d s ∧ (f base)[i]? ≠ (f u)[i]?
 
-/-- Co-located two-sided dependence yields unbounded dependence on the left. -/
-theorem TwoSidedUnboundedDependence.left {f : List α → List β}
-    (h : TwoSidedUnboundedDependence f) : UnboundedDependence f .left := by
-  intro d
-  obtain ⟨base, i, hi, hw⟩ := h d
-  obtain ⟨uL, ⟨hlen, hag⟩, hne⟩ := hw .left
-  exact ⟨base, uL, i, hlen.symm, hi, hag, hne⟩
+/-- Co-located two-sided dependence yields unbounded dependence on either side. -/
+theorem TwoSidedUnboundedDependence.unboundedDependence
+    (h : TwoSidedUnboundedDependence f) (s : Direction) : UnboundedDependence f s :=
+  fun d =>
+    have ⟨base, i, hi, hw⟩ := h d
+    have ⟨u, hp, hne⟩ := hw s
+    ⟨base, u, i, hi, hp, hne⟩
 
-/-- …and on the right. -/
-theorem TwoSidedUnboundedDependence.right {f : List α → List β}
-    (h : TwoSidedUnboundedDependence f) : UnboundedDependence f .right := by
-  intro d
-  obtain ⟨base, i, hi, hw⟩ := h d
-  obtain ⟨uR, ⟨hlen, hag⟩, hne⟩ := hw .right
-  exact ⟨base, uR, i, hlen.symm, hi, hag, hne⟩
+/-- A map with two-sided unbounded dependence has bounded dependence on neither side. -/
+theorem TwoSidedUnboundedDependence.not_boundedDependence
+    (h : TwoSidedUnboundedDependence f) (s : Direction) : ¬ BoundedDependence f s :=
+  not_not_intro (h.unboundedDependence s)
 
-/-- A map with two-sided unbounded dependence has bounded dependence on neither side,
-since it exhibits unbounded dependence on each. -/
-theorem TwoSidedUnboundedDependence.not_boundedDependence {f : List α → List β}
-    (h : TwoSidedUnboundedDependence f) (s : Direction) : ¬ BoundedDependence f s := by
-  cases s with
-  | left => exact not_not_intro h.left
-  | right => exact not_not_intro h.right
+/-- `f` requires both sides when some target changes under `f` yet perturbing either
+far side reverts it to the identity. -/
+def RequiresBothSides (f : List α → List α) : Prop :=
+  ∀ d, ∃ (base : List α) (i : ℕ), i < base.length ∧ (f base)[i]? ≠ base[i]? ∧
+    ∀ s, ∃ u, IsFarPerturbation base u i d s ∧ u[i]? = base[i]? ∧ (f u)[i]? = u[i]?
 
-/-- `f` fails bounded dependence towards `s` exactly when it has unbounded dependence there
-(`BoundedDependence` is by definition the negation of `UnboundedDependence`). -/
-@[simp] theorem not_boundedDependence_iff {f : List α → List β} {s : Direction} :
-    ¬ BoundedDependence f s ↔ UnboundedDependence f s := not_not
+/-- Requiring both sides strengthens two-sided unbounded dependence. -/
+theorem RequiresBothSides.twoSidedUnboundedDependence {f : List α → List α}
+    (hf : RequiresBothSides f) : TwoSidedUnboundedDependence f := fun d =>
+  have ⟨base, i, hi, hchange, hw⟩ := hf d
+  ⟨base, i, hi, fun s =>
+    have ⟨u, hp, hsym, hrev⟩ := hw s
+    ⟨u, hp, fun h => hchange (h.trans (hrev.trans hsym))⟩⟩
 
 section FlankWitness
 
@@ -191,11 +132,10 @@ variable {x fill y a : α} {n k : ℕ} {p : α → Bool}
 
 The recurring witness family for two-sided unboundedness: a target buried in a filler
 run, with independently editable flanks. `RequiresBothSides.of_flanks` packages the
-whole assembly — a map is excluded by exhibiting only three images, those of the base
-and of the two single-flank perturbations, at the target coordinate. -/
+whole assembly — a map is excluded by three target-cell observations: the base image
+leaves the filler, and either single-flank perturbation restores it. -/
 
-/-- The word `x`, then `n` copies of `fill`, then `y` — a target buried in a filler
-run, with independently editable flanks. -/
+/-- The word `x`, then `n` copies of `fill`, then `y`. -/
 def flankWord (x fill y : α) (n : ℕ) : List α := x :: (List.replicate n fill ++ [y])
 
 @[simp] theorem length_flankWord :
@@ -227,145 +167,112 @@ theorem getElem?_flankWord_eq_some_iff {j : ℕ} (hfill : fill ≠ a) :
   rw [getElem?_flankWord]
   split_ifs <;> simp_all
 
-/-- A window reaching at most the filler run hits `a` iff the left flank is `a`. -/
-theorem exists_le_flankWord_eq_some_iff (hfill : fill ≠ a) (hk : k ≤ n) :
-    (∃ j ≤ k, (flankWord x fill y n)[j]? = some a) ↔ x = a := by
-  simp [getElem?_flankWord_eq_some_iff hfill, and_or_left, exists_or,
-    eq_false (by omega : ¬ (n + 1 ≤ k))]
+/-- The window up to the filler run is the left flank and part of the run. -/
+theorem take_flankWord (hk : k ≤ n) :
+    (flankWord x fill y n).take (k + 1) = x :: List.replicate k fill := by
+  rw [flankWord, List.take_succ_cons, List.take_append_of_le_length (by simp; omega),
+    List.take_replicate, Nat.min_eq_left hk]
 
-/-- A window past the left flank hits `a` iff the right flank is `a`. -/
-theorem exists_ge_flankWord_eq_some_iff (hfill : fill ≠ a) (h0 : 0 < k)
-    (hk : k ≤ n + 1) : (∃ j ≥ k, (flankWord x fill y n)[j]? = some a) ↔ y = a := by
-  simp [getElem?_flankWord_eq_some_iff hfill, and_or_left, exists_or,
-    eq_false (by omega : ¬ (k ≤ 0)), hk]
+/-- The window past the left flank is the rest of the run and the right flank. -/
+theorem drop_flankWord (hk : k ≤ n) :
+    (flankWord x fill y n).drop (k + 1) = List.replicate (n - k) fill ++ [y] := by
+  rw [flankWord, List.drop_succ_cons, List.drop_append_of_le_length (by simp; omega),
+    List.drop_replicate]
 
 /-- A window reaching at most the filler run contains `a` iff the left flank is `a`. -/
-theorem mem_take_flankWord_iff (hfill : fill ≠ a) (h0 : 0 < k) (hk : k ≤ n + 1) :
-    a ∈ (flankWord x fill y n).take k ↔ x = a := by
-  obtain ⟨j, rfl⟩ : ∃ j, k = j + 1 := ⟨k - 1, by omega⟩
-  rw [flankWord, List.take_succ_cons, List.take_append_of_le_length (by simp; omega),
-    List.take_replicate]
+theorem mem_take_flankWord_iff (hfill : fill ≠ a) (hk : k ≤ n) :
+    a ∈ (flankWord x fill y n).take (k + 1) ↔ x = a := by
+  rw [take_flankWord hk]
   simp [List.mem_replicate, eq_comm, hfill]
 
 /-- A window past the left flank contains `a` iff the right flank is `a`. -/
-theorem mem_drop_flankWord_iff (hfill : fill ≠ a) (h0 : 0 < k) (hk : k ≤ n + 1) :
-    a ∈ (flankWord x fill y n).drop k ↔ y = a := by
-  obtain ⟨j, rfl⟩ : ∃ j, k = j + 1 := ⟨k - 1, by omega⟩
-  rw [flankWord, List.drop_succ_cons, List.drop_append_of_le_length (by simp; omega),
-    List.drop_replicate]
+theorem mem_drop_flankWord_iff (hfill : fill ≠ a) (hk : k ≤ n) :
+    a ∈ (flankWord x fill y n).drop (k + 1) ↔ y = a := by
+  rw [drop_flankWord hk]
   simp [List.mem_replicate, eq_comm, hfill]
 
-/-- A flag over a window reaching at most the filler run reads the left flank — the
-`ofFlags` counterpart of `exists_le_flankWord_eq_some_iff`. -/
-theorem any_take_flankWord (hfill : p fill = false) (h0 : 0 < k) (hk : k ≤ n + 1) :
-    ((flankWord x fill y n).take k).any p = p x := by
-  obtain ⟨j, rfl⟩ : ∃ j, k = j + 1 := ⟨k - 1, by omega⟩
-  rw [flankWord, List.take_succ_cons, List.take_append_of_le_length (by simp; omega),
-    List.take_replicate]
+/-- A flag over a window reaching at most the filler run reads the left flank. -/
+theorem any_take_flankWord (hfill : p fill = false) (hk : k ≤ n) :
+    ((flankWord x fill y n).take (k + 1)).any p = p x := by
+  rw [take_flankWord hk]
   simp [hfill]
 
 /-- A flag over a window past the left flank reads the right flank. -/
-theorem any_drop_flankWord (hfill : p fill = false) (h0 : 0 < k) (hk : k ≤ n + 1) :
-    ((flankWord x fill y n).drop k).any p = p y := by
-  obtain ⟨j, rfl⟩ : ∃ j, k = j + 1 := ⟨k - 1, by omega⟩
-  rw [flankWord, List.drop_succ_cons, List.drop_append_of_le_length (by simp; omega),
-    List.drop_replicate]
+theorem any_drop_flankWord (hfill : p fill = false) (hk : k ≤ n) :
+    ((flankWord x fill y n).drop (k + 1)).any p = p y := by
+  rw [drop_flankWord hk]
   simp [hfill]
 
-/-- Flank words differing only on the left agree off position `0`. -/
-theorem flankWord_congr_left {x' : α} (h : k ≠ 0) :
-    (flankWord x fill y n)[k]? = (flankWord x' fill y n)[k]? := by
-  simp only [getElem?_flankWord, if_neg h]
+/-- Changing only the left flank perturbs beyond the `d`-margin of a target past it. -/
+theorem IsFarPerturbation.flankWord_left {i d : ℕ} (x' : α) (h : d < i) :
+    IsFarPerturbation (flankWord x fill y n) (flankWord x' fill y n) i d .left :=
+  ⟨by simp, fun k hk => by grind [getElem?_flankWord]⟩
 
-/-- Flank words differing only on the right agree off the last position. -/
-theorem flankWord_congr_right {y' : α} (h : k ≠ n + 1) :
-    (flankWord x fill y n)[k]? = (flankWord x fill y' n)[k]? := by
-  simp only [getElem?_flankWord, if_neg h]
-
-/-- `f` requires both sides when some target changes under `f` yet perturbing either
-far side reverts it to the identity. Unlike `TwoSidedUnboundedDependence`, a two-sided
-union never satisfies this — removing one trigger leaves the other, so the output stays
-changed. -/
-def RequiresBothSides (f : List α → List α) : Prop :=
-  ∀ d, ∃ (base : List α) (i : ℕ), i < base.length ∧ (f base)[i]? ≠ base[i]? ∧
-    ∀ s, ∃ u, IsFarPerturbation base u i d s ∧ u[i]? = base[i]? ∧ (f u)[i]? = u[i]?
+/-- Changing only the right flank perturbs beyond the `d`-margin of a target
+`d`-clear of the last position. -/
+theorem IsFarPerturbation.flankWord_right {i d : ℕ} (y' : α) (h : i + d ≤ n) :
+    IsFarPerturbation (flankWord x fill y n) (flankWord x fill y' n) i d .right :=
+  ⟨by simp, fun k hk => by grind [getElem?_flankWord]⟩
 
 /-- A `d`-indexed family of flank words whose target sits `d`-far from both flanks,
-changed to `on` in the base and reverted by flipping either flank alone, requires both
-sides — the three-map template of [yolyan-2025] §5.3. -/
+changed in the base and reverted by flipping either flank alone, requires both sides. -/
 theorem RequiresBothSides.of_flanks {f : List α → List α}
-    {fill on xOn yOn xOff yOff : α} {n t : ℕ → ℕ} (hne : on ≠ fill)
-    (hmargin : ∀ d, d < t d ∧ t d + d < n d + 1)
-    (hchange : ∀ d, (f (flankWord xOn fill yOn (n d)))[t d]? = some on)
+    {fill xOn yOn xOff yOff : α} {n t : ℕ → ℕ}
+    (ht : ∀ d, d < t d) (hn : ∀ d, t d + d ≤ n d)
+    (hchange : ∀ d, (f (flankWord xOn fill yOn (n d)))[t d]? ≠ some fill)
     (hrevL : ∀ d, (f (flankWord xOff fill yOn (n d)))[t d]? = some fill)
     (hrevR : ∀ d, (f (flankWord xOn fill yOff (n d)))[t d]? = some fill) :
     RequiresBothSides f := by
   intro d
-  obtain ⟨hm₁, hm₂⟩ := hmargin d
-  have hmid : ∀ x y : α, (flankWord x fill y (n d))[t d]? = some fill := fun x y =>
+  have h₁ := ht d; have h₂ := hn d
+  have hmid : ∀ x y : α, (flankWord x fill y (n d))[t d]? = some fill := fun _ _ =>
     getElem?_flankWord_mid (by omega) (by omega)
   refine ⟨flankWord xOn fill yOn (n d), t d, by rw [length_flankWord]; omega,
-    by rw [hchange, hmid]; simpa using hne, fun s => ?_⟩
+    fun h => hchange d (h.trans (hmid _ _)), fun s => ?_⟩
   match s with
-  | .left =>
-    exact ⟨flankWord xOff fill yOn (n d),
-      ⟨by simp, fun k hk => flankWord_congr_left (by omega)⟩, by rw [hmid, hmid],
-      by rw [hrevL, hmid]⟩
-  | .right =>
-    exact ⟨flankWord xOn fill yOff (n d),
-      ⟨by simp, fun k hk => flankWord_congr_right (by omega)⟩, by rw [hmid, hmid],
-      by rw [hrevR, hmid]⟩
-
-/-- Requiring both sides strengthens two-sided unbounded dependence: a reverted target is
-in particular a flipped one. The converse fails (a two-sided union has the dependence but
-reverts under neither side alone). -/
-theorem RequiresBothSides.twoSidedUnboundedDependence {f : List α → List α}
-    (hf : RequiresBothSides f) : TwoSidedUnboundedDependence f := fun d =>
-  have ⟨base, i, hi, hchange, hw⟩ := hf d
-  ⟨base, i, hi, fun s =>
-    have ⟨u, hp, hsym, hrev⟩ := hw s
-    ⟨u, hp, fun h => hchange (h.trans (hrev.trans hsym))⟩⟩
+  | .left => exact ⟨_, .flankWord_left xOff (ht d),
+      (hmid _ _).trans (hmid _ _).symm, (hrevL d).trans (hmid _ _).symm⟩
+  | .right => exact ⟨_, .flankWord_right yOff (hn d),
+      (hmid _ _).trans (hmid _ _).symm, (hrevR d).trans (hmid _ _).symm⟩
 
 end FlankWitness
 
-/-- Output coordinate `i` is fixed by the prefix `{k | k ≤ i}`, the footprint shape of a
-left-to-right transducer. -/
-def LeftDetermined (f : List α → List β) (i : ℕ) : Prop := OutputDependsOn f i {k | k ≤ i}
+/-! ### Machines bound dependence
 
-/-- A map whose every output coordinate is fixed by its prefix `{k | k ≤ i}` depends
-boundedly on the right — trivially so, since nothing to the right matters at all. -/
-theorem BoundedDependence.right_of_leftDetermined {f : List α → List β}
-    (h : ∀ i, LeftDetermined f i) : BoundedDependence f .right := by
-  intro hunb
-  obtain ⟨u, v, i, hlen, _, hag, hne⟩ := hunb 0
-  exact hne (h i u v hlen fun k hk => hag k (by simp only [Set.mem_setOf_eq] at hk; omega))
+A length-preserving left-subsequential function depends boundedly on the right: the
+delay bound of `IsLeftSubsequential.exists_getElem?_append_eq` is the dependence bound.
+Sequential machines are the zero-delay case — prefix-determined at every coordinate
+(`Mealy.leftDetermined`), which is strictly stronger than bounded right dependence. -/
 
-/-- A map whose every output coordinate is fixed by the input's *strict* prefix
-`{k | k < i}` depends boundedly on the right; the canonical left-to-right scan has this
-shape. The strict hypothesis is the stronger one, so this follows by
-`OutputDependsOn.mono`. -/
-theorem BoundedDependence.right_of_prefixDetermined {f : List α → List β}
-    (h : ∀ i, OutputDependsOn f i {k | k < i}) : BoundedDependence f .right :=
-  BoundedDependence.right_of_leftDetermined fun i => (h i).mono fun _ hk => Nat.le_of_lt hk
-
-/-! ### Sequential machines do not depend on the right
-
-Output coordinate `i` of a `Mealy` machine is fixed by the input prefix `[0..i]`, so the
-sequential class depends boundedly on the right. Machines emitting blocks need not: one
-that delays output, emitting `[]` and then `[x, y]`, has its coordinate `0` depend on
-input position `1`. -/
-
-section Synchronous
+section Machines
 
 variable {σ : Type*}
 
-/-- A sequential machine is left-determined at every coordinate: output `i` depends only
-on the input prefix `{k | k ≤ i}`. -/
+/-- A length-preserving left-subsequential function depends boundedly on the right. -/
+theorem IsLeftSubsequential.boundedDependence_right
+    (hlen : ∀ w, (f w).length = w.length) (hf : IsLeftSubsequential f) :
+    BoundedDependence f .right := by
+  obtain ⟨N, hN⟩ := hf.exists_getElem?_append_eq
+  rintro hunb
+  obtain ⟨u, v, i, hi, ⟨hl, hag⟩, hne⟩ := hunb N
+  rcases lt_or_ge u.length (i + N + 1) with hle | hlt
+  · exact hne (congrArg (·[i]?) (congrArg f (List.ext_getElem? fun k => by
+      rcases lt_or_ge k (i + N + 1) with hk | hk
+      · exact hag.getElem?_eq (mem_Iic.mpr (by omega))
+      · rw [List.getElem?_eq_none (by omega), List.getElem?_eq_none (by omega)])))
+  · have hp : u.take (i + N + 1) = v.take (i + N + 1) := hag.take_eq (by omega)
+    have key : ∀ w : List α, w.length = u.length →
+        (f (w.take (i + N + 1)))[i]? = (f w)[i]? := fun w hw => by
+      conv_rhs => rw [← List.take_append_drop (i + N + 1) w]
+      exact hN _ _ i (by rw [hlen, List.length_take]; omega)
+    rw [← key u rfl, hp, key v hl] at hne
+    exact hne rfl
+
+/-- A sequential machine is left-determined at every coordinate. -/
 theorem Mealy.leftDetermined (T : Mealy σ α β) (i : ℕ) : LeftDetermined T.run i := by
   intro u v hlen hag
-  simp only [Set.mem_setOf_eq] at hag
-  rw [T.getElem?_run u, T.getElem?_run v, hag i le_rfl,
-    take_eq_of_agree fun k hk => hag k hk.le]
+  rw [T.getElem?_run u, T.getElem?_run v, hag.getElem?_eq (mem_Iic.mpr le_rfl),
+    List.take_eq_of_agree fun k hk => hag.getElem?_eq (mem_Iic.mpr hk.le)]
 
 /-- A sequential machine's output never depends on input to its right. -/
 theorem Mealy.boundedDependence_right (T : Mealy σ α β) : BoundedDependence T.run .right :=
@@ -382,6 +289,6 @@ theorem IsMealyComputable.boundedDependence_right {f : List α → List β}
     (hf : IsMealyComputable f) : BoundedDependence f .right :=
   BoundedDependence.right_of_leftDetermined hf.leftDetermined
 
-end Synchronous
+end Machines
 
 end Subregular
