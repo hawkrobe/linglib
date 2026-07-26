@@ -332,7 +332,7 @@ theorem applyToString_getElem? (r : TierRule α) (u : List α) (i : ℕ) :
 /-- `applyToString` is **prefix-determined**: its `i`-th output is fixed by the input's
 strict prefix `{k | k < i}`. -/
 theorem applyToString_prefixDetermined (r : TierRule α) (i : ℕ) :
-    DependsOn (fun w => (r.applyToString w)[i]?) (Set.Iio i) := by
+    List.DependsOn (fun w => (r.applyToString w)[i]?) (Set.Iio i) := by
   intro u v hlen hag
   show (r.applyToString u)[i]? = (r.applyToString v)[i]?
   rw [applyToString_getElem?, applyToString_getElem?, hlen,

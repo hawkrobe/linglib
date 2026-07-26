@@ -4,20 +4,13 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Mathlib.Data.List.Basic
-import Mathlib.Data.Set.Restrict
 import Linglib.Core.Computability.Subregular.Function.Subsequential
 import Linglib.Core.Data.List.EqOn
 
 /-!
 # Side dependence for string functions
 
-`DependsOn g K` states that `g : List α → γ` is determined by the input positions in
-`K`: equal-length inputs agreeing on `K` have equal images. It is the
-length-stratified sibling of `Function.DependsOn`, with the same congruence form as
-primary definition and the same factor-through characterization
-(`dependsOn_iff_factorsThrough`).
-
-A lattice of side-dependence predicates sits over it: `BoundedDependence f s` says a
+A lattice of side-dependence predicates over `List.DependsOn`: `BoundedDependence f s` says a
 single margin caps the influence of side `s` at every output coordinate,
 `TwoSidedUnboundedDependence` places one target under the influence of both sides,
 and `RequiresBothSides` demands both sides at once. `flankWord` is the witness family
@@ -26,7 +19,6 @@ independently editable flanks.
 
 ## Main definitions
 
-* `DependsOn g K`: `g` is determined by the input positions in `K`
 * `LeftDetermined f i`: output coordinate `i` is fixed by the prefix `Set.Iic i`
 * `BoundedDependence f s`, `UnboundedDependence f s`: whether one margin caps the
   influence of side `s` at every output coordinate
@@ -51,7 +43,7 @@ independently editable flanks.
 The coordinate predicates index the output coordinate and the input window
 separately, which is informative for length-preserving functions; for block-emitting
 transducers the two drift apart. `BoundedDependence` is the positive primitive; `unboundedDependence_iff` recovers
-the margin-indexed witness form, and unpacking `¬ DependsOn` yields word-pair
+the margin-indexed witness form, and unpacking `¬ List.DependsOn` yields word-pair
 witnesses. The forms are margin-indexed rather than fixed-index because a fixed
 target has only finitely many positions to its left.
 The predicates place no in-range guard on target coordinates: for length-preserving
@@ -62,35 +54,13 @@ namespace Subregular
 
 open Set
 
-variable {α β γ : Type*} {f : List α → List β} {g : List α → γ}
+variable {α β : Type*} {f : List α → List β}
 
-/-! ### Window dependence -/
-
-/-- `g` is determined by the input positions in `K`: equal-length inputs agreeing on
-`K` have equal images. The length-stratified sibling of `Function.DependsOn`. -/
-def DependsOn (g : List α → γ) (K : Set ℕ) : Prop :=
-  ∀ ⦃u v : List α⦄, u.length = v.length → EqOn (u[·]?) (v[·]?) K → g u = g v
-
-theorem DependsOn.mono {K K' : Set ℕ} (hKK' : K ⊆ K') (h : DependsOn g K) :
-    DependsOn g K' :=
-  fun _ _ hl hag => h hl (hag.mono hKK')
-
-/-- `g` factors through the input's length and its restriction to `K`. -/
-theorem dependsOn_iff_factorsThrough {K : Set ℕ} :
-    DependsOn g K ↔
-      Function.FactorsThrough g (fun u : List α => (u.length, K.restrict (u[·]?))) := by
-  constructor
-  · intro h u v huv
-    rw [Prod.mk.injEq] at huv
-    exact h huv.1 fun k hk => congrFun huv.2 ⟨k, hk⟩
-  · intro h u v hlen hag
-    exact h (Prod.ext hlen (funext fun k => hag k.2))
+/-! ### The dependence lattice -/
 
 /-- Output coordinate `i` is fixed by the prefix `Set.Iic i`. -/
 def LeftDetermined (f : List α → List β) (i : ℕ) : Prop :=
-  DependsOn (fun u => (f u)[i]?) (Iic i)
-
-/-! ### The dependence lattice -/
+  List.DependsOn (fun u => (f u)[i]?) (Iic i)
 
 /-- An equal-length variant of `base` differing only beyond the `d`-margin of target
 `i` on side `s`. -/
@@ -100,7 +70,7 @@ def IsFarPerturbation (base u : List α) (i d : ℕ) (s : Direction) : Prop :=
 /-- `f` depends boundedly on side `s`: a single margin caps, at every output
 coordinate, how far input on side `s` can matter. -/
 def BoundedDependence (f : List α → List β) (s : Direction) : Prop :=
-  ∃ N, ∀ i, DependsOn (fun u => (f u)[i]?) (s.window i N)
+  ∃ N, ∀ i, List.DependsOn (fun u => (f u)[i]?) (s.window i N)
 
 /-- `f` depends unboundedly on side `s`. -/
 def UnboundedDependence (f : List α → List β) (s : Direction) : Prop :=
@@ -115,7 +85,7 @@ bounded. -/
 coordinate. -/
 theorem unboundedDependence_iff {s : Direction} :
     UnboundedDependence f s ↔
-      ∀ N, ∃ i, ¬ DependsOn (fun u => (f u)[i]?) (s.window i N) := by
+      ∀ N, ∃ i, ¬ List.DependsOn (fun u => (f u)[i]?) (s.window i N) := by
   simp [UnboundedDependence, BoundedDependence]
 
 /-- A map whose every output coordinate is fixed by its prefix `Set.Iic i` depends
@@ -126,7 +96,7 @@ theorem BoundedDependence.right_of_leftDetermined (h : ∀ i, LeftDetermined f i
 /-- A map whose every output coordinate is fixed by the input's strict prefix
 `Set.Iio i` depends boundedly on the right. -/
 theorem BoundedDependence.right_of_prefixDetermined
-    (h : ∀ i, DependsOn (fun u => (f u)[i]?) (Iio i)) : BoundedDependence f .right :=
+    (h : ∀ i, List.DependsOn (fun u => (f u)[i]?) (Iio i)) : BoundedDependence f .right :=
   BoundedDependence.right_of_leftDetermined fun i => (h i).mono Iio_subset_Iic_self
 
 /-- For every `d`, one base word carries a target whose output flips under a far
