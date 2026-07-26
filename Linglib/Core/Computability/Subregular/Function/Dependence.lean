@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 import Mathlib.Data.List.Basic
 import Mathlib.Data.Set.Basic
 import Linglib.Core.Computability.Subregular.Function.Subsequential
-import Linglib.Core.Data.List.Agree
+import Linglib.Core.Data.List.EqOn
 import Linglib.Core.Logic.FactorsThroughOn
 
 /-!
@@ -55,7 +55,7 @@ length-preserving functions; for block-emitting transducers the two drift apart.
 
 namespace Subregular
 
-open List (AgreeOn AgreeFrom AgreeUpto)
+open Set
 
 variable {α β : Type*}
 
@@ -64,11 +64,12 @@ variable {α β : Type*}
 /-- Output coordinate `i` of `f` is determined by the input positions in `K`:
 equal-length inputs agreeing on `K` agree at output `i`. Monotone in `K`. -/
 def OutputDependsOn (f : List α → List β) (i : ℕ) (K : Set ℕ) : Prop :=
-  ∀ u v : List α, u.length = v.length → AgreeOn u v K → (f u)[i]? = (f v)[i]?
+  ∀ ⦃u v : List α⦄, u.length = v.length → EqOn (u[·]?) (v[·]?) K →
+    (f u)[i]? = (f v)[i]?
 
 theorem OutputDependsOn.mono {f : List α → List β} {i : ℕ} {K K' : Set ℕ}
     (hKK' : K ⊆ K') (h : OutputDependsOn f i K) : OutputDependsOn f i K' :=
-  fun u v hl hag => h u v hl (hag.mono hKK')
+  fun _ _ hl hag => h hl (hag.mono hKK')
 
 /-- `OutputDependsOn` is a factor-through condition: coordinate `i` of the output factors
 through the restriction of the input to `K`, on each set of inputs of a fixed length.
@@ -80,21 +81,21 @@ theorem outputDependsOn_iff_factorsThroughOn {f : List α → List β} {i : ℕ}
         (fun u : List α => K.restrict fun k => u[k]?) {u : List α | u.length = n} := by
   constructor
   · intro h n u v hu hv hres
-    exact h u v (hu.trans hv.symm) fun k hk => congrFun hres ⟨k, hk⟩
+    exact h (hu.trans hv.symm) fun k hk => congrFun hres ⟨k, hk⟩
   · intro h u v hlen hag
-    exact h u.length (rfl : u.length = u.length) hlen.symm (funext fun k => hag k.1 k.2)
+    exact h u.length (rfl : u.length = u.length) hlen.symm (funext fun k => hag k.2)
 
 /-- Output coordinate `i` is fixed by the prefix `{k | k ≤ i}`, the footprint shape of a
 left-to-right transducer. -/
-def LeftDetermined (f : List α → List β) (i : ℕ) : Prop := OutputDependsOn f i {k | k ≤ i}
+def LeftDetermined (f : List α → List β) (i : ℕ) : Prop := OutputDependsOn f i (Iic i)
 
 /-- An equal-length variant of `base` differing only beyond the `d`-margin of target
 `i` on side `s` — the far perturbation of the two-sided diagnostics. -/
 def IsFarPerturbation (base u : List α) (i d : ℕ) (s : Direction) : Prop :=
   u.length = base.length ∧
     match s with
-    | .left => AgreeFrom base u (i - d)
-    | .right => AgreeUpto base u (i + d)
+    | .left => EqOn (base[·]?) (u[·]?) (Ici (i - d))
+    | .right => EqOn (base[·]?) (u[·]?) (Iic (i + d))
 
 /-- `f` depends unboundedly on side `s` when for every distance `d` some target output
 position flips under a far perturbation on that side. -/
@@ -118,14 +119,14 @@ theorem BoundedDependence.right_of_leftDetermined {f : List α → List β}
     (h : ∀ i, LeftDetermined f i) : BoundedDependence f .right := by
   rintro hunb
   obtain ⟨u, v, i, hi, ⟨hlen, hag⟩, hne⟩ := hunb 0
-  exact hne (h i u v hlen.symm fun k hk => hag k (show k ≤ i + 0 by simpa using hk))
+  exact hne (h i hlen.symm (hag.mono (Iic_subset_Iic.mpr (by omega))))
 
 /-- A map whose every output coordinate is fixed by the input's *strict* prefix
 `{k | k < i}` depends boundedly on the right; the strict hypothesis is the stronger
 one, so this follows by `OutputDependsOn.mono`. -/
 theorem BoundedDependence.right_of_prefixDetermined {f : List α → List β}
-    (h : ∀ i, OutputDependsOn f i {k | k < i}) : BoundedDependence f .right :=
-  BoundedDependence.right_of_leftDetermined fun i => (h i).mono fun _ hk => Nat.le_of_lt hk
+    (h : ∀ i, OutputDependsOn f i (Iio i)) : BoundedDependence f .right :=
+  BoundedDependence.right_of_leftDetermined fun i => (h i).mono Iio_subset_Iic_self
 
 /-- For every `d`, one base word carries a target whose output flips under a far
 perturbation on either side. Co-location keeps both flips on a single base (one
@@ -325,7 +326,7 @@ theorem IsLeftSubsequential.boundedDependence_right {f : List α → List β}
   rcases lt_or_ge u.length (i + N + 1) with hle | hlt
   · exact hne (congrArg (·[i]?) (congrArg f (List.ext_getElem? fun k => by
       rcases lt_or_ge k (i + N + 1) with hk | hk
-      · exact hag k (show k ≤ i + N by omega)
+      · exact hag.getElem?_eq (mem_Iic.mpr (by omega))
       · rw [List.getElem?_eq_none (by omega), List.getElem?_eq_none (by omega)])))
   · have hp : u.take (i + N + 1) = v.take (i + N + 1) := hag.take_eq (by omega)
     have key : ∀ w : List α, w.length = u.length →
@@ -339,8 +340,8 @@ theorem IsLeftSubsequential.boundedDependence_right {f : List α → List β}
 on the input prefix `{k | k ≤ i}`. -/
 theorem Mealy.leftDetermined (T : Mealy σ α β) (i : ℕ) : LeftDetermined T.run i := by
   intro u v hlen hag
-  rw [T.getElem?_run u, T.getElem?_run v, hag i (show i ≤ i from le_rfl),
-    List.take_eq_of_agree fun k hk => hag k (show k ≤ i from hk.le)]
+  rw [T.getElem?_run u, T.getElem?_run v, hag.getElem?_eq (mem_Iic.mpr le_rfl),
+    List.take_eq_of_agree fun k hk => hag.getElem?_eq (mem_Iic.mpr hk.le)]
 
 /-- A sequential machine's output never depends on input to its right. -/
 theorem Mealy.boundedDependence_right (T : Mealy σ α β) : BoundedDependence T.run .right :=

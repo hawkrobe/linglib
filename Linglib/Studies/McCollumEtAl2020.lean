@@ -265,9 +265,9 @@ theorem tutrugbu_twoSidedUnboundedDependence : TwoSidedUnboundedDependence tutru
     refine ⟨baseL d, ⟨?_, ?_⟩, ?_⟩
     · simp only [baseL, base, pre, List.length_cons, List.length_append,
         List.length_replicate, List.length_nil]
-    · -- AgreeFrom (base d) (baseL d) 1: they share the tail from index 1
+    · -- agreement on `Ici 1`: they share the tail from index 1
       intro k hk
-      simp only [Set.mem_setOf_eq] at hk
+      simp only [Set.mem_Ici] at hk
       cases k with
       | zero => omega
       | succ k' =>
@@ -277,12 +277,13 @@ theorem tutrugbu_twoSidedUnboundedDependence : TwoSidedUnboundedDependence tutru
     refine ⟨baseR d, ⟨?_, ?_⟩, ?_⟩
     · simp only [baseR, base, pre, List.length_cons, List.length_append,
         List.length_replicate, List.length_nil]
-    · -- AgreeUpto (base d) (baseR d) ((d+1)+d): differ only at the root index
+    · -- agreement on `Iic ((d+1)+d)`: they differ only at the root index
       intro k hk
-      simp only [Set.mem_setOf_eq] at hk
+      simp only [Set.mem_Iic] at hk
       have hpre_len : (pre Seg.vLo d).length = 2 * d + 2 := by
         simp only [pre, List.length_cons, List.length_append, List.length_replicate]
         omega
+      show (base d)[k]? = (baseR d)[k]?
       rw [show base d = pre Seg.vLo d ++ [.rP] from rfl,
           show baseR d = pre Seg.vLo d ++ [.rM] from rfl,
           List.getElem?_append_left (by omega : k < (pre Seg.vLo d).length),
@@ -333,7 +334,7 @@ theorem tutrugbu_requiresBothSides : RequiresBothSides tutrugbuATR := by
     · simp only [baseL, base, pre, List.length_cons, List.length_append,
         List.length_replicate, List.length_nil]
     · intro k hk
-      simp only [Set.mem_setOf_eq] at hk
+      simp only [Set.mem_Ici] at hk
       cases k with
       | zero => omega
       | succ k' => simp only [base, baseL, pre, List.cons_append, List.getElem?_cons_succ]
@@ -344,7 +345,8 @@ theorem tutrugbu_requiresBothSides : RequiresBothSides tutrugbuATR := by
     · simp only [baseR, base, pre, List.length_cons, List.length_append,
         List.length_replicate, List.length_nil]
     · intro k hk
-      simp only [Set.mem_setOf_eq] at hk
+      simp only [Set.mem_Iic] at hk
+      show (base d)[k]? = (baseR d)[k]?
       rw [show base d = pre Seg.vLo d ++ [.rP] from rfl,
           show baseR d = pre Seg.vLo d ++ [.rM] from rfl,
           List.getElem?_append_left (by omega : k < (pre Seg.vLo d).length),

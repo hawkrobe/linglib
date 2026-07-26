@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.Computability.Subregular.Logic.QFLogic
-import Linglib.Core.Data.List.Agree
+import Linglib.Core.Data.List.EqOn
 import Mathlib.Data.Finset.Basic
 
 /-!
@@ -38,7 +38,7 @@ derives nothing. `evalFuel` is its computable face, related by `eval_iff_evalFue
 
 * `Eval.deterministic` — an expression has at most one value.
 * `eval_iff_evalFuel` — adequacy of the fuel evaluator.
-* `Eval.congr_agreeUpto` / `Eval.congr_agreeFrom` — **one-sided locality**: a
+* `Eval.congr_eqOn_Iic` / `Eval.congr_eqOn_Ici` — **one-sided locality**: a
   backward program evaluated at `i` reads only positions `≤ i`, so equal-length words
   agreeing there evaluate identically (dually for forward). The engine of
   [yolyan-2025]'s negative results (Thm. 5.2–5.5).
@@ -48,7 +48,7 @@ derives nothing. `evalFuel` is its computable face, related by `eval_iff_evalFue
 
 namespace Subregular.Logic.BMRS
 
-open List (AgreeUpto AgreeFrom)
+open Set (EqOn Iic Ici mem_Iic mem_Ici)
 
 variable {α F : Type*}
 
@@ -424,9 +424,9 @@ theorem tden_congr (hlen : w.length = w'.length) :
 
 /-- **One-sided locality (left)**: a successor-free program evaluated at `i` reads only
 positions `≤ i`, so equal-length words agreeing up to `i` evaluate identically. -/
-theorem Eval.congr_agreeUpto (hP : P.Backward) (hlen : w.length = w'.length)
+theorem Eval.congr_eqOn_Iic (hP : P.Backward) (hlen : w.length = w'.length)
     (h : Eval P w i e b) :
-    e.Backward → AgreeUpto w w' i → Eval P w' i e b := by
+    e.Backward → EqOn (w[·]?) (w'[·]?) (Iic i) → Eval P w' i e b := by
   induction h with
   | tru => exact fun _ _ => .tru
   | fls => exact fun _ _ => .fls
@@ -440,13 +440,13 @@ theorem Eval.congr_agreeUpto (hP : P.Backward) (hlen : w.length = w'.length)
     exact fun _ _ => Eval.final_false ((tden_congr hlen _).symm.trans h) (hlen ▸ hv)
   | label_true h hl has =>
     exact fun he hag => Eval.label_true ((tden_congr hlen _).symm.trans h)
-      (hag _ (tden_le_of_backward he h) ▸ hl) has
+      (hag.getElem?_eq (mem_Iic.mpr (tden_le_of_backward he h)) ▸ hl) has
   | label_false h hl has =>
     exact fun he hag => Eval.label_false ((tden_congr hlen _).symm.trans h)
-      (hag _ (tden_le_of_backward he h) ▸ hl) has
+      (hag.getElem?_eq (mem_Iic.mpr (tden_le_of_backward he h)) ▸ hl) has
   | call h he' ih =>
     exact fun he hag => Eval.call ((tden_congr hlen _).symm.trans h)
-      (ih (hP _) fun k hk => hag k (hk.trans (tden_le_of_backward he h)))
+      (ih (hP _) (hag.mono (Set.Iic_subset_Iic.mpr (tden_le_of_backward he h))))
   | ite_true hc h₁ ihc ih₁ =>
     exact fun he hag => Eval.ite_true (ihc he.1 hag) (ih₁ he.2.1 hag)
   | ite_false hc h₂ ihc ih₂ =>
@@ -454,9 +454,9 @@ theorem Eval.congr_agreeUpto (hP : P.Backward) (hlen : w.length = w'.length)
 
 /-- **One-sided locality (right)**: a predecessor-free program evaluated at `i` reads
 only positions `≥ i`, so equal-length words agreeing from `i` on evaluate identically. -/
-theorem Eval.congr_agreeFrom (hP : P.Forward) (hlen : w.length = w'.length)
+theorem Eval.congr_eqOn_Ici (hP : P.Forward) (hlen : w.length = w'.length)
     (h : Eval P w i e b) :
-    e.Forward → AgreeFrom w w' i → Eval P w' i e b := by
+    e.Forward → EqOn (w[·]?) (w'[·]?) (Ici i) → Eval P w' i e b := by
   induction h with
   | tru => exact fun _ _ => .tru
   | fls => exact fun _ _ => .fls
@@ -470,13 +470,13 @@ theorem Eval.congr_agreeFrom (hP : P.Forward) (hlen : w.length = w'.length)
     exact fun _ _ => Eval.final_false ((tden_congr hlen _).symm.trans h) (hlen ▸ hv)
   | label_true h hl has =>
     exact fun he hag => Eval.label_true ((tden_congr hlen _).symm.trans h)
-      (hag _ (le_tden_of_forward he h) ▸ hl) has
+      (hag.getElem?_eq (mem_Ici.mpr (le_tden_of_forward he h)) ▸ hl) has
   | label_false h hl has =>
     exact fun he hag => Eval.label_false ((tden_congr hlen _).symm.trans h)
-      (hag _ (le_tden_of_forward he h) ▸ hl) has
+      (hag.getElem?_eq (mem_Ici.mpr (le_tden_of_forward he h)) ▸ hl) has
   | call h he' ih =>
     exact fun he hag => Eval.call ((tden_congr hlen _).symm.trans h)
-      (ih (hP _) fun k hk => hag k ((le_tden_of_forward he h).trans hk))
+      (ih (hP _) (hag.mono (Set.Ici_subset_Ici.mpr (le_tden_of_forward he h))))
   | ite_true hc h₁ ihc ih₁ =>
     exact fun he hag => Eval.ite_true (ihc he.1 hag) (ih₁ he.2.1 hag)
   | ite_false hc h₂ ihc ih₂ =>

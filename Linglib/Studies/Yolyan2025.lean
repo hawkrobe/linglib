@@ -23,7 +23,7 @@ proposal of [meinhardt-mai-bakovic-mccollum-2024]); feeding both exclusions one 
 object states it structurally without resolving it. The proof here streamlines the paper's:
 on either perturbation the input value is unchanged, so ⊙ collapses to conjunction and
 *both* one-sided outputs are forced true; each transports to the base word by one-sided
-locality (`Eval.congr_agreeUpto`/`congr_agreeFrom`), and recombining forces the base
+locality (`Eval.congr_eqOn_Iic`/`congr_eqOn_Ici`), and recombining forces the base
 unchanged — no case-split through Prop. 4.2 needed. Only the `d = 0` instance of the
 witness is used: one-sidedness is global, not window-bounded.
 
@@ -112,9 +112,9 @@ theorem not_isBmrsWeaklyDeterministic_of_requiresBothSides {f : List α → List
     exact ⟨hcomb.1 ▸ hevL, hcomb.2 ▸ hevR⟩
   -- transport each one-sided output to the base word and recombine
   have hevL : Eval PL base i (.call (outL σ) x) true :=
-    hRboth.1.congr_agreeUpto hPL hRlen trivial fun k hk => (hRag k hk).symm
+    hRboth.1.congr_eqOn_Iic hPL hRlen trivial hRag.symm
   have hevR : Eval PR base i (.call (outR σ) x) true :=
-    hLboth.2.congr_agreeFrom hPR hLlen trivial fun k hk => (hLag k hk).symm
+    hLboth.2.congr_eqOn_Ici hPR hLlen trivial hLag.symm
   exact hchange ((((hm base).2 i hi σ).mpr
     ⟨true, true, hevL, hevR, by rw [decide_eq_true hbase]; rfl⟩).trans hbase.symm)
 
