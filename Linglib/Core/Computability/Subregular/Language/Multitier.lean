@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 import Linglib.Core.Computability.Subregular.Language.TierStrictlyLocal
 import Linglib.Core.Computability.Subregular.Language.StrictlyPiecewise
 import Linglib.Core.Computability.Subregular.Language.PiecewiseTestable
-import Linglib.Core.Computability.Subregular.Language.Definite
+import Linglib.Core.Computability.Definite
 import Mathlib.Computability.Language
 import Mathlib.Order.BooleanSubalgebra
 import Linglib.Core.Data.List.Factors

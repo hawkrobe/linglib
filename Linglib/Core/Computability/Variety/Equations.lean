@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 import Mathlib.Logic.Function.Basic
 import Linglib.Core.Algebra.Group.Idempotent
 import Linglib.Core.Computability.SyntacticMonoid
-import Linglib.Core.Computability.Subregular.Language.Definite
+import Linglib.Core.Computability.Definite
 import Linglib.Core.Data.List.DropRight
 
 /-!
