@@ -456,13 +456,13 @@ theorem RequiresBothSides.not_isNonInteractingBimachineComputable {f : List α �
     (hf : RequiresBothSides f) : ¬ IsNonInteractingBimachineComputable f := by
   rintro ⟨L, _, R, _, B, rfl, ⟨w⟩⟩
   obtain ⟨base, i, hi, hchange, hw⟩ := hf 0
-  obtain ⟨uL, ⟨-, hLag⟩, hLsym, hLrev⟩ := hw .left
-  obtain ⟨uR, ⟨-, hRag⟩, hRsym, hRrev⟩ := hw .right
+  choose u hpert hsym hrev using hw
   have hbase : base[i]? = some base[i] := List.getElem?_eq_getElem hi
   apply hchange
-  rw [w.getElem?_run_eq_iff hbase, hRag.take_eq (by omega), hLag.drop_eq (by omega)]
-  exact ⟨((w.getElem?_run_eq_iff (hRsym.trans hbase)).mp hRrev).1,
-    ((w.getElem?_run_eq_iff (hLsym.trans hbase)).mp hLrev).2⟩
+  rw [w.getElem?_run_eq_iff hbase, (hpert .right).2.take_eq (by omega),
+    (hpert .left).2.drop_eq (by omega)]
+  exact ⟨((w.getElem?_run_eq_iff ((hsym .right).trans hbase)).mp (hrev .right)).1,
+    ((w.getElem?_run_eq_iff ((hsym .left).trans hbase)).mp (hrev .left)).2⟩
 
 end
 
