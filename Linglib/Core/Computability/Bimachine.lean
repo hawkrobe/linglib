@@ -321,13 +321,13 @@ theorem IsNonInteracting.reindex (h : B.IsNonInteracting) (eL : L ≃ L') (eR : 
     (Bimachine.reindex eL eR B).IsNonInteracting :=
   h.map (·.reindex eL eR)
 
-/-- A word whose run leaves target `i` unchanged has both of its change-proposals inert
-there. -/
-theorem NonInteraction.inert_of_reverting {u : List α} {i : ℕ} (hsym : u[i]? = some a)
-    (hrev : (B.run u)[i]? = u[i]?) :
-    w.ruleL (B.lState (u.take i)) a = a ∧ w.ruleR (B.rState (u.drop (i + 1))) a = a := by
-  refine unite_eq_self_iff.mp (Option.some_injective _ (Eq.symm ?_))
-  rw [← hsym, ← hrev, B.getElem?_run, hsym, Option.map_some, w.output_eq]
+/-- A decomposed bimachine fixes cell `i` exactly when both change-proposals are inert
+at its two context states. -/
+theorem NonInteraction.getElem?_run_eq_iff {u : List α} {i : ℕ} (hsym : u[i]? = some a) :
+    (B.run u)[i]? = u[i]? ↔
+      w.ruleL (B.lState (u.take i)) a = a ∧ w.ruleR (B.rState (u.drop (i + 1))) a = a := by
+  rw [B.getElem?_run, hsym, Option.map_some, Option.some_inj, w.output_eq,
+    unite_eq_self_iff]
 
 end
 
@@ -450,23 +450,19 @@ theorem IsNonInteractingBimachineComputable.of_mealyComputable {f : List α → 
 
 /-- A map that requires both sides is computed by no non-interacting bimachine. At the
 witness the base changes but each far perturbation reverts: the right perturbation
-keeps the left state, forcing `ωL` inert at this cell; the left perturbation keeps the
-right state, forcing `ωR` inert; yet the base needs one of them to fire. -/
+shares the left window, silencing `ruleL` at this cell; the left perturbation shares
+the right window, silencing `ruleR`; yet the base needs one of them to fire. -/
 theorem RequiresBothSides.not_isNonInteractingBimachineComputable {f : List α → List α}
     (hf : RequiresBothSides f) : ¬ IsNonInteractingBimachineComputable f := by
   rintro ⟨L, _, R, _, B, rfl, ⟨w⟩⟩
   obtain ⟨base, i, hi, hchange, hw⟩ := hf 0
   obtain ⟨uL, ⟨-, hLag⟩, hLsym, hLrev⟩ := hw .left
   obtain ⟨uR, ⟨-, hRag⟩, hRsym, hRrev⟩ := hw .right
-  simp only [Nat.sub_zero, Nat.add_zero] at hLag hRag
-  -- decompose the base's cell, retarget each side's state to the perturbation that
-  -- shares it, and silence both rules by `inert_of_reverting`
+  have hbase : base[i]? = some base[i] := List.getElem?_eq_getElem hi
   apply hchange
-  rw [B.getElem?_run, List.getElem?_eq_getElem hi, Option.map_some, w.output_eq,
-    hRag.take_eq (by omega), hLag.drop_eq (by omega),
-    (w.inert_of_reverting (hRsym.trans (List.getElem?_eq_getElem hi)) hRrev).1,
-    (w.inert_of_reverting (hLsym.trans (List.getElem?_eq_getElem hi)) hLrev).2,
-    Bimachine.unite_right_self]
+  rw [w.getElem?_run_eq_iff hbase, hRag.take_eq (by omega), hLag.drop_eq (by omega)]
+  exact ⟨((w.getElem?_run_eq_iff (hRsym.trans hbase)).mp hRrev).1,
+    ((w.getElem?_run_eq_iff (hLsym.trans hbase)).mp hLrev).2⟩
 
 end
 
