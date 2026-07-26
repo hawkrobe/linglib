@@ -7,7 +7,6 @@ import Mathlib.Data.Fintype.Option
 import Linglib.Core.Computability.TierProjection
 import Linglib.Core.Computability.Subregular.Function.Subsequential
 import Linglib.Core.Computability.Subregular.Function.Dependence
-import Linglib.Core.Data.List.DependsOn
 
 /-!
 # TierProjection-based rules (`TierRule`)
@@ -333,8 +332,9 @@ theorem applyToString_getElem? (r : TierRule α) (u : List α) (i : ℕ) :
 /-- `applyToString` is **prefix-determined**: its `i`-th output is fixed by the input's
 strict prefix `{k | k < i}`. -/
 theorem applyToString_prefixDetermined (r : TierRule α) (i : ℕ) :
-    OutputDependsOn r.applyToString i (Set.Iio i) := by
+    List.DependsOn (fun w => (r.applyToString w)[i]?) (Set.Iio i) := by
   intro u v hlen hag
+  show (r.applyToString u)[i]? = (r.applyToString v)[i]?
   rw [applyToString_getElem?, applyToString_getElem?, hlen,
     List.take_eq_of_agree fun k hk => hag.getElem?_eq (Set.mem_Iio.mpr hk)]
 
