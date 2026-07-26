@@ -287,20 +287,13 @@ theorem IsLeftSubsequential.boundedDependence_right
     (hlen : ∀ w, (f w).length = w.length) (hf : IsLeftSubsequential f) :
     BoundedDependence f .right := by
   obtain ⟨N, hN⟩ := hf.exists_getElem?_append_eq
-  refine ⟨N, fun i => ?_⟩
-  rw [Direction.window_right]
-  intro u v hl hag
-  rcases lt_or_ge u.length (i + N + 1) with hle | hlt
-  · exact congrArg (·[i]?) (congrArg f (List.ext_getElem? fun k => by
-      rcases lt_or_ge k (i + N + 1) with hk | hk
-      · exact hag.getElem?_eq (mem_Iic.mpr (by omega))
-      · rw [List.getElem?_eq_none (by omega), List.getElem?_eq_none (by omega)]))
-  · have hp : u.take (i + N + 1) = v.take (i + N + 1) := hag.take_eq (by omega)
-    have key : ∀ w : List α, w.length = u.length →
-        (f (w.take (i + N + 1)))[i]? = (f w)[i]? := fun w hw => by
-      conv_rhs => rw [← List.take_append_drop (i + N + 1) w]
+  refine ⟨N, fun i u v _ hag => ?_⟩
+  have key : ∀ w : List α, (f (w.take (i + N + 1)))[i]? = (f w)[i]? := fun w => by
+    rcases lt_or_ge w.length (i + N + 1) with h | h
+    · rw [List.take_of_length_le h.le]
+    · conv_rhs => rw [← List.take_append_drop (i + N + 1) w]
       exact hN _ _ i (by rw [hlen, List.length_take]; omega)
-    rw [← key u rfl, hp, key v hl.symm]
+  rw [← key u, ← key v, hag.take_eq (by omega)]
 
 /-- A sequential machine is left-determined at every coordinate. -/
 theorem Mealy.leftDetermined (T : Mealy σ α β) (i : ℕ) : LeftDetermined T.run i := by
