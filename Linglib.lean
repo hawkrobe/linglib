@@ -110,6 +110,7 @@ import Linglib.Core.Data.Fintype.Sets
 import Linglib.Core.Data.Fintype.Transfer
 import Linglib.Core.Data.List.Bookend
 import Linglib.Core.Data.List.Chain
+import Linglib.Core.Data.List.DependsOn
 import Linglib.Core.Data.List.Destutter
 import Linglib.Core.Data.List.EqOn
 import Linglib.Core.Data.List.DropRight
