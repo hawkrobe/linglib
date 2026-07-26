@@ -267,7 +267,7 @@ theorem tutrugbu_twoSidedUnboundedDependence : TwoSidedUnboundedDependence tutru
         List.length_replicate, List.length_nil]
     · -- agreement on `Ici 1`: they share the tail from index 1
       intro k hk
-      simp only [Set.mem_Ici] at hk
+      simp only [Direction.window_left, Set.mem_Ici] at hk
       cases k with
       | zero => omega
       | succ k' =>
@@ -279,7 +279,7 @@ theorem tutrugbu_twoSidedUnboundedDependence : TwoSidedUnboundedDependence tutru
         List.length_replicate, List.length_nil]
     · -- agreement on `Iic ((d+1)+d)`: they differ only at the root index
       intro k hk
-      simp only [Set.mem_Iic] at hk
+      simp only [Direction.window_right, Set.mem_Iic] at hk
       have hpre_len : (pre Seg.vLo d).length = 2 * d + 2 := by
         simp only [pre, List.length_cons, List.length_append, List.length_replicate]
         omega
@@ -294,8 +294,8 @@ theorem tutrugbu_twoSidedUnboundedDependence : TwoSidedUnboundedDependence tutru
 ([mccollum-bakovic-mai-meinhardt-2020]; [wilson-2006]). A segmental counterexample to
 the myopia generalisation defended by [kimper-2012] and [mascaro-2019], on the
 nonmyopic side argued by [walker-2010]. -/
-theorem tutrugbu_nonmyopic (s : Direction) : ¬ BoundedDependence tutrugbuATR s :=
-  tutrugbu_twoSidedUnboundedDependence.not_boundedDependence s
+theorem tutrugbu_nonmyopic (s : Direction) : UnboundedDependence tutrugbuATR s :=
+  tutrugbu_twoSidedUnboundedDependence.unboundedDependence s
 
 /-- The input symbol at the target index is the recessive `.vLo` (for any initial and
 root): the prefix sequence places a `[−high]` vowel there. -/
@@ -334,7 +334,7 @@ theorem tutrugbu_requiresBothSides : RequiresBothSides tutrugbuATR := by
     · simp only [baseL, base, pre, List.length_cons, List.length_append,
         List.length_replicate, List.length_nil]
     · intro k hk
-      simp only [Set.mem_Ici] at hk
+      simp only [Direction.window_left, Set.mem_Ici] at hk
       cases k with
       | zero => omega
       | succ k' => simp only [base, baseL, pre, List.cons_append, List.getElem?_cons_succ]
@@ -345,7 +345,7 @@ theorem tutrugbu_requiresBothSides : RequiresBothSides tutrugbuATR := by
     · simp only [baseR, base, pre, List.length_cons, List.length_append,
         List.length_replicate, List.length_nil]
     · intro k hk
-      simp only [Set.mem_Iic] at hk
+      simp only [Direction.window_right, Set.mem_Iic] at hk
       show (base d)[k]? = (baseR d)[k]?
       rw [show base d = pre Seg.vLo d ++ [.rP] from rfl,
           show baseR d = pre Seg.vLo d ++ [.rM] from rfl,

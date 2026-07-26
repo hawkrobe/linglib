@@ -413,6 +413,6 @@ witness (their Thms. 6 and 7). A Mealy-computable map is right-myopic
 maasai` (the *block* class) — a block transducer can delay output, so it needs the
 bounded-delay route (`IsLeftSubsequential.bounded_delay`), not the myopia shortcut. -/
 theorem maasai_not_mealyComputable : ¬ IsMealyComputable maasai := fun h =>
-  maasai_twoSidedUnboundedDependence.not_boundedDependence .right h.boundedDependence_right
+  maasai_twoSidedUnboundedDependence.unboundedDependence .right h.boundedDependence_right
 
 end MeinhardtEtAl2024

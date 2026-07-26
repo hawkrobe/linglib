@@ -17,19 +17,19 @@ at output `i`. It is the length-stratified sibling of `Function.DependsOn`, with
 same congruence form as primary definition and the same factor-through
 characterization (`outputDependsOn_iff_factorsThrough`).
 
-A lattice of side-dependence predicates sits over it:
-`UnboundedDependence f s` says that input beyond any distance bound on side `s` can
-still flip an output, `TwoSidedUnboundedDependence` places one target under the
-influence of both sides, and `RequiresBothSides` demands both sides at once.
-`flankWord` is the witness family instantiating them: a target buried in a filler run
-between two independently editable flanks.
+A lattice of side-dependence predicates sits over it: `BoundedDependence f s` says a
+single margin caps the influence of side `s` at every output coordinate,
+`TwoSidedUnboundedDependence` places one target under the influence of both sides,
+and `RequiresBothSides` demands both sides at once. `flankWord` is the witness family
+instantiating the negative side: a target buried in a filler run between two
+independently editable flanks.
 
 ## Main definitions
 
 * `OutputDependsOn f i K`: output coordinate `i` is determined by input positions `K`
 * `LeftDetermined f i`: output coordinate `i` is fixed by the prefix `Set.Iic i`
-* `UnboundedDependence f s`, `BoundedDependence f s`: whether input arbitrarily far
-  away on side `s` can flip an output
+* `BoundedDependence f s`, `UnboundedDependence f s`: whether one margin caps the
+  influence of side `s` at every output coordinate
 * `TwoSidedUnboundedDependence f`: for every `d`, one base word carries a target
   flipped by far perturbations on either side
 * `RequiresBothSides f`: the target is changed, and either far perturbation alone
@@ -38,6 +38,7 @@ between two independently editable flanks.
 
 ## Main theorems
 
+* `unboundedDependence_iff`: the margin-indexed witness form of unbounded dependence
 * `RequiresBothSides.of_flanks`: the three-map witness template — a map is excluded
   by three target-cell observations
 * `IsLeftSubsequential.boundedDependence_right`: a length-preserving left-subsequential
@@ -49,9 +50,11 @@ between two independently editable flanks.
 
 The output coordinate and the input window are indexed separately, which is
 informative for length-preserving functions; for block-emitting transducers the two
-drift apart. The unboundedness predicates are distance-based (`∀ d, ∃ word + target`)
-rather than fixed-index: a fixed target has only finitely many positions to its left,
-so a fixed-index unbounded left dependence would be unsatisfiable.
+drift apart. `BoundedDependence` is the positive primitive; `unboundedDependence_iff`
+recovers the witness form, margin-indexed (`∀ d, ∃ word + target`) rather than
+fixed-index because a fixed target has only finitely many positions to its left.
+The predicates place no in-range guard on target coordinates: for length-preserving
+maps an out-of-range coordinate is `none` on both sides of any perturbation.
 -/
 
 namespace Subregular
@@ -90,37 +93,54 @@ def LeftDetermined (f : List α → List β) (i : ℕ) : Prop := OutputDependsOn
 
 /-! ### The dependence lattice -/
 
+/-- The input positions not `d`-far from target `i` on side `s`. -/
+def Direction.window : Direction → ℕ → ℕ → Set ℕ
+  | .left, i, d => Ici (i - d)
+  | .right, i, d => Iic (i + d)
+
+@[simp, grind =] theorem Direction.window_left {i d : ℕ} :
+    Direction.left.window i d = Ici (i - d) := rfl
+
+@[simp, grind =] theorem Direction.window_right {i d : ℕ} :
+    Direction.right.window i d = Iic (i + d) := rfl
+
 /-- An equal-length variant of `base` differing only beyond the `d`-margin of target
 `i` on side `s`. -/
 def IsFarPerturbation (base u : List α) (i d : ℕ) (s : Direction) : Prop :=
-  u.length = base.length ∧
-    match s with
-    | .left => EqOn (base[·]?) (u[·]?) (Ici (i - d))
-    | .right => EqOn (base[·]?) (u[·]?) (Iic (i + d))
+  u.length = base.length ∧ EqOn (base[·]?) (u[·]?) (s.window i d)
 
-/-- `f` depends unboundedly on side `s` when for every distance `d` some target output
-position flips under a far perturbation on that side. -/
-def UnboundedDependence (f : List α → List β) (s : Direction) : Prop :=
-  ∀ d, ∃ (u v : List α) (i : ℕ), i < u.length ∧ IsFarPerturbation u v i d s ∧
-    (f u)[i]? ≠ (f v)[i]?
-
-/-- Dependence on side `s` is bounded: no output flips under perturbations arbitrarily
-far away on that side. -/
+/-- `f` depends boundedly on side `s`: a single margin caps, at every output
+coordinate, how far input on side `s` can matter. -/
 def BoundedDependence (f : List α → List β) (s : Direction) : Prop :=
-  ¬ UnboundedDependence f s
+  ∃ N, ∀ i, OutputDependsOn f i (s.window i N)
 
-/-- `f` fails bounded dependence towards `s` exactly when it has unbounded dependence
-there. -/
-@[simp] theorem not_boundedDependence_iff {s : Direction} :
-    ¬ BoundedDependence f s ↔ UnboundedDependence f s := not_not
+/-- `f` depends unboundedly on side `s`. -/
+def UnboundedDependence (f : List α → List β) (s : Direction) : Prop :=
+  ¬ BoundedDependence f s
+
+/-- `f` fails unbounded dependence on side `s` exactly when its dependence there is
+bounded. -/
+@[simp] theorem not_unboundedDependence_iff {s : Direction} :
+    ¬ UnboundedDependence f s ↔ BoundedDependence f s := not_not
+
+/-- Unbounded dependence in witness form: at every margin `d`, some far perturbation
+on side `s` flips some output coordinate. -/
+theorem unboundedDependence_iff {s : Direction} :
+    UnboundedDependence f s ↔ ∀ d, ∃ (u v : List α) (i : ℕ),
+      IsFarPerturbation u v i d s ∧ (f u)[i]? ≠ (f v)[i]? := by
+  constructor
+  · intro h d
+    by_contra hc
+    exact h ⟨d, fun i u v hl hag => Classical.byContradiction fun hne =>
+      hc ⟨u, v, i, ⟨hl.symm, hag⟩, hne⟩⟩
+  · rintro h ⟨N, hN⟩
+    obtain ⟨u, v, i, ⟨hl, hag⟩, hne⟩ := h N
+    exact hne (hN i hl.symm hag)
 
 /-- A map whose every output coordinate is fixed by its prefix `Set.Iic i` depends
 boundedly on the right. -/
 theorem BoundedDependence.right_of_leftDetermined (h : ∀ i, LeftDetermined f i) :
-    BoundedDependence f .right := by
-  rintro hunb
-  obtain ⟨u, v, i, hi, ⟨hlen, hag⟩, hne⟩ := hunb 0
-  exact hne (h i hlen.symm (hag.mono (Iic_subset_Iic.mpr (by omega))))
+    BoundedDependence f .right := ⟨0, h⟩
 
 /-- A map whose every output coordinate is fixed by the input's strict prefix
 `Set.Iio i` depends boundedly on the right. -/
@@ -137,15 +157,10 @@ def TwoSidedUnboundedDependence (f : List α → List β) : Prop :=
 /-- Co-located two-sided dependence yields unbounded dependence on either side. -/
 theorem TwoSidedUnboundedDependence.unboundedDependence
     (h : TwoSidedUnboundedDependence f) (s : Direction) : UnboundedDependence f s :=
-  fun d =>
-    have ⟨base, i, hi, hw⟩ := h d
+  unboundedDependence_iff.mpr fun d =>
+    have ⟨base, i, _, hw⟩ := h d
     have ⟨u, hp, hne⟩ := hw s
-    ⟨base, u, i, hi, hp, hne⟩
-
-/-- A map with two-sided unbounded dependence has bounded dependence on neither side. -/
-theorem TwoSidedUnboundedDependence.not_boundedDependence
-    (h : TwoSidedUnboundedDependence f) (s : Direction) : ¬ BoundedDependence f s :=
-  not_not_intro (h.unboundedDependence s)
+    ⟨base, u, i, hp, hne⟩
 
 /-- `f` requires both sides when some target changes under `f` yet perturbing either
 far side reverts it to the identity. -/
@@ -290,20 +305,20 @@ theorem IsLeftSubsequential.boundedDependence_right
     (hlen : ∀ w, (f w).length = w.length) (hf : IsLeftSubsequential f) :
     BoundedDependence f .right := by
   obtain ⟨N, hN⟩ := hf.exists_getElem?_append_eq
-  rintro hunb
-  obtain ⟨u, v, i, hi, ⟨hl, hag⟩, hne⟩ := hunb N
+  refine ⟨N, fun i => ?_⟩
+  rw [Direction.window_right]
+  intro u v hl hag
   rcases lt_or_ge u.length (i + N + 1) with hle | hlt
-  · exact hne (congrArg (·[i]?) (congrArg f (List.ext_getElem? fun k => by
+  · exact congrArg (·[i]?) (congrArg f (List.ext_getElem? fun k => by
       rcases lt_or_ge k (i + N + 1) with hk | hk
       · exact hag.getElem?_eq (mem_Iic.mpr (by omega))
-      · rw [List.getElem?_eq_none (by omega), List.getElem?_eq_none (by omega)])))
+      · rw [List.getElem?_eq_none (by omega), List.getElem?_eq_none (by omega)]))
   · have hp : u.take (i + N + 1) = v.take (i + N + 1) := hag.take_eq (by omega)
     have key : ∀ w : List α, w.length = u.length →
         (f (w.take (i + N + 1)))[i]? = (f w)[i]? := fun w hw => by
       conv_rhs => rw [← List.take_append_drop (i + N + 1) w]
       exact hN _ _ i (by rw [hlen, List.length_take]; omega)
-    rw [← key u rfl, hp, key v hl] at hne
-    exact hne rfl
+    rw [← key u rfl, hp, key v hl.symm]
 
 /-- A sequential machine is left-determined at every coordinate. -/
 theorem Mealy.leftDetermined (T : Mealy σ α β) (i : ℕ) : LeftDetermined T.run i := by
