@@ -7,7 +7,6 @@ import Mathlib.Data.Fintype.Option
 import Linglib.Core.Computability.TierProjection
 import Linglib.Core.Computability.Subregular.Function.Subsequential
 import Linglib.Core.Computability.Subregular.Function.Dependence
-import Linglib.Core.Data.List.DependsOn
 
 /-!
 # TierProjection-based rules (`TierRule`)
