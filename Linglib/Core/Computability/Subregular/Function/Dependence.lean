@@ -206,15 +206,13 @@ theorem any_drop_flankWord (hfill : p fill = false) (hk : k ≤ n) :
 /-- Changing only the left flank perturbs beyond the `d`-margin of a target past it. -/
 theorem IsFarPerturbation.flankWord_left {i d : ℕ} (x' : α) (h : d < i) :
     IsFarPerturbation (flankWord x fill y n) (flankWord x' fill y n) i d .left :=
-  ⟨by simp, fun k (hk : _ ≤ k) => by
-    simp only [getElem?_flankWord, if_neg (show k ≠ 0 by omega)]⟩
+  ⟨by simp, fun k hk => by grind [getElem?_flankWord]⟩
 
 /-- Changing only the right flank perturbs beyond the `d`-margin of a target
 `d`-clear of the last position. -/
 theorem IsFarPerturbation.flankWord_right {i d : ℕ} (y' : α) (h : i + d ≤ n) :
     IsFarPerturbation (flankWord x fill y n) (flankWord x fill y' n) i d .right :=
-  ⟨by simp, fun k (hk : k ≤ _) => by
-    simp only [getElem?_flankWord, if_neg (show k ≠ n + 1 by omega)]⟩
+  ⟨by simp, fun k hk => by grind [getElem?_flankWord]⟩
 
 /-- A `d`-indexed family of flank words whose target sits `d`-far from both flanks,
 changed to `on` in the base and reverted by flipping either flank alone, requires both
