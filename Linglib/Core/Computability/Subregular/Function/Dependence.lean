@@ -38,7 +38,7 @@ independently editable flanks.
 
 ## Main theorems
 
-* `unboundedDependence_iff`: the margin-indexed witness form of unbounded dependence
+* `unboundedDependence_iff`: every margin fails at some output coordinate
 * `RequiresBothSides.of_flanks`: the three-map witness template — a map is excluded
   by three target-cell observations
 * `IsLeftSubsequential.boundedDependence_right`: a length-preserving left-subsequential
@@ -50,9 +50,10 @@ independently editable flanks.
 
 The output coordinate and the input window are indexed separately, which is
 informative for length-preserving functions; for block-emitting transducers the two
-drift apart. `BoundedDependence` is the positive primitive; `unboundedDependence_iff`
-recovers the witness form, margin-indexed (`∀ d, ∃ word + target`) rather than
-fixed-index because a fixed target has only finitely many positions to its left.
+drift apart. `BoundedDependence` is the positive primitive; `unboundedDependence_iff` recovers
+the margin-indexed witness form, and unpacking `¬ OutputDependsOn` yields word-pair
+witnesses. The forms are margin-indexed rather than fixed-index because a fixed
+target has only finitely many positions to its left.
 The predicates place no in-range guard on target coordinates: for length-preserving
 maps an out-of-range coordinate is `none` on both sides of any perturbation.
 -/
@@ -93,17 +94,6 @@ def LeftDetermined (f : List α → List β) (i : ℕ) : Prop := OutputDependsOn
 
 /-! ### The dependence lattice -/
 
-/-- The input positions not `d`-far from target `i` on side `s`. -/
-def Direction.window : Direction → ℕ → ℕ → Set ℕ
-  | .left, i, d => Ici (i - d)
-  | .right, i, d => Iic (i + d)
-
-@[simp, grind =] theorem Direction.window_left {i d : ℕ} :
-    Direction.left.window i d = Ici (i - d) := rfl
-
-@[simp, grind =] theorem Direction.window_right {i d : ℕ} :
-    Direction.right.window i d = Iic (i + d) := rfl
-
 /-- An equal-length variant of `base` differing only beyond the `d`-margin of target
 `i` on side `s`. -/
 def IsFarPerturbation (base u : List α) (i d : ℕ) (s : Direction) : Prop :=
@@ -123,19 +113,11 @@ bounded. -/
 @[simp] theorem not_unboundedDependence_iff {s : Direction} :
     ¬ UnboundedDependence f s ↔ BoundedDependence f s := not_not
 
-/-- Unbounded dependence in witness form: at every margin `d`, some far perturbation
-on side `s` flips some output coordinate. -/
+/-- Unbounded dependence coordinate-wise: every margin fails at some output
+coordinate. -/
 theorem unboundedDependence_iff {s : Direction} :
-    UnboundedDependence f s ↔ ∀ d, ∃ (u v : List α) (i : ℕ),
-      IsFarPerturbation u v i d s ∧ (f u)[i]? ≠ (f v)[i]? := by
-  constructor
-  · intro h d
-    by_contra hc
-    exact h ⟨d, fun i u v hl hag => Classical.byContradiction fun hne =>
-      hc ⟨u, v, i, ⟨hl.symm, hag⟩, hne⟩⟩
-  · rintro h ⟨N, hN⟩
-    obtain ⟨u, v, i, ⟨hl, hag⟩, hne⟩ := h N
-    exact hne (hN i hl.symm hag)
+    UnboundedDependence f s ↔ ∀ N, ∃ i, ¬ OutputDependsOn f i (s.window i N) := by
+  simp [UnboundedDependence, BoundedDependence]
 
 /-- A map whose every output coordinate is fixed by its prefix `Set.Iic i` depends
 boundedly on the right. -/
@@ -157,10 +139,10 @@ def TwoSidedUnboundedDependence (f : List α → List β) : Prop :=
 /-- Co-located two-sided dependence yields unbounded dependence on either side. -/
 theorem TwoSidedUnboundedDependence.unboundedDependence
     (h : TwoSidedUnboundedDependence f) (s : Direction) : UnboundedDependence f s :=
-  unboundedDependence_iff.mpr fun d =>
-    have ⟨base, i, _, hw⟩ := h d
-    have ⟨u, hp, hne⟩ := hw s
-    ⟨base, u, i, hp, hne⟩
+  unboundedDependence_iff.mpr fun N =>
+    have ⟨_, i, _, hw⟩ := h N
+    have ⟨_, ⟨hlen, hag⟩, hne⟩ := hw s
+    ⟨i, fun hOD => hne (hOD hlen.symm hag)⟩
 
 /-- `f` requires both sides when some target changes under `f` yet perturbing either
 far side reverts it to the identity. -/
