@@ -179,44 +179,28 @@ theorem drop_flankWord (hk : k ≤ n) :
   rw [flankWord, List.drop_succ_cons, List.drop_append_of_le_length (by simp; omega),
     List.drop_replicate]
 
-/-- A window reaching at most the filler run hits `a` iff the left flank is `a`. -/
-theorem exists_le_flankWord_eq_some_iff (hfill : fill ≠ a) (hk : k ≤ n) :
-    (∃ j ≤ k, (flankWord x fill y n)[j]? = some a) ↔ x = a := by
-  simp [getElem?_flankWord_eq_some_iff hfill, and_or_left, exists_or,
-    eq_false (by omega : ¬ (n + 1 ≤ k))]
-
-/-- A window past the left flank hits `a` iff the right flank is `a`. -/
-theorem exists_ge_flankWord_eq_some_iff (hfill : fill ≠ a) (h0 : 0 < k)
-    (hk : k ≤ n + 1) : (∃ j ≥ k, (flankWord x fill y n)[j]? = some a) ↔ y = a := by
-  simp [getElem?_flankWord_eq_some_iff hfill, and_or_left, exists_or,
-    eq_false (by omega : ¬ (k ≤ 0)), hk]
-
 /-- A window reaching at most the filler run contains `a` iff the left flank is `a`. -/
-theorem mem_take_flankWord_iff (hfill : fill ≠ a) (h0 : 0 < k) (hk : k ≤ n + 1) :
-    a ∈ (flankWord x fill y n).take k ↔ x = a := by
-  obtain ⟨j, rfl⟩ : ∃ j, k = j + 1 := ⟨k - 1, by omega⟩
-  rw [take_flankWord (by omega)]
+theorem mem_take_flankWord_iff (hfill : fill ≠ a) (hk : k ≤ n) :
+    a ∈ (flankWord x fill y n).take (k + 1) ↔ x = a := by
+  rw [take_flankWord hk]
   simp [List.mem_replicate, eq_comm, hfill]
 
 /-- A window past the left flank contains `a` iff the right flank is `a`. -/
-theorem mem_drop_flankWord_iff (hfill : fill ≠ a) (h0 : 0 < k) (hk : k ≤ n + 1) :
-    a ∈ (flankWord x fill y n).drop k ↔ y = a := by
-  obtain ⟨j, rfl⟩ : ∃ j, k = j + 1 := ⟨k - 1, by omega⟩
-  rw [drop_flankWord (by omega)]
+theorem mem_drop_flankWord_iff (hfill : fill ≠ a) (hk : k ≤ n) :
+    a ∈ (flankWord x fill y n).drop (k + 1) ↔ y = a := by
+  rw [drop_flankWord hk]
   simp [List.mem_replicate, eq_comm, hfill]
 
 /-- A flag over a window reaching at most the filler run reads the left flank. -/
-theorem any_take_flankWord (hfill : p fill = false) (h0 : 0 < k) (hk : k ≤ n + 1) :
-    ((flankWord x fill y n).take k).any p = p x := by
-  obtain ⟨j, rfl⟩ : ∃ j, k = j + 1 := ⟨k - 1, by omega⟩
-  rw [take_flankWord (by omega)]
+theorem any_take_flankWord (hfill : p fill = false) (hk : k ≤ n) :
+    ((flankWord x fill y n).take (k + 1)).any p = p x := by
+  rw [take_flankWord hk]
   simp [hfill]
 
 /-- A flag over a window past the left flank reads the right flank. -/
-theorem any_drop_flankWord (hfill : p fill = false) (h0 : 0 < k) (hk : k ≤ n + 1) :
-    ((flankWord x fill y n).drop k).any p = p y := by
-  obtain ⟨j, rfl⟩ : ∃ j, k = j + 1 := ⟨k - 1, by omega⟩
-  rw [drop_flankWord (by omega)]
+theorem any_drop_flankWord (hfill : p fill = false) (hk : k ≤ n) :
+    ((flankWord x fill y n).drop (k + 1)).any p = p y := by
+  rw [drop_flankWord hk]
   simp [hfill]
 
 /-- Flank words differing only on the left agree off position `0`. -/

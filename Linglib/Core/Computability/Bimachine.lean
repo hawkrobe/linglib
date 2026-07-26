@@ -485,7 +485,7 @@ the two flanks. -/
 theorem conjBM.run_flankWord_mid (x y : Bool) (d : ℕ) :
     (conjBM.run (flankWord x false y (2 * d + 1)))[d + 1]? = some (x && y) := by
   rw [conjBM, Bimachine.getElem?_ofFlags_run, getElem?_flankWord_mid (by omega) (by omega),
-    any_take_flankWord rfl (by omega) (by omega), any_drop_flankWord rfl (by omega) (by omega)]
+    any_take_flankWord rfl (by omega), any_drop_flankWord rfl (by omega)]
   rfl
 
 /-- The conjunctive change requires both sides: with a mark on each flank the medial

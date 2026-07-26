@@ -557,7 +557,7 @@ the flank-witness template with `2d+2` toneless TBUs between the flanks. -/
 /-- UTP requires both sides ([jardine-2016]): its trigger is the two-sided window
 conjunction, so deleting either flanking H reverts the plateau target. -/
 theorem utp.requiresBothSides : RequiresBothSides utp.map :=
-  utp.requiresBothSides_of_surfaces_iff fun _ _ => utp.surfaces_iff
+  utp.requiresBothSides_of_surfaces_iff fun _ _ => utp.surfaces_def
 
 /-- UTP has two-sided unbounded dependence, a corollary of its circumambience: whether a
 position changes depends on unboundedly distant material on both sides. -/

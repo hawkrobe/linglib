@@ -144,11 +144,11 @@ private theorem sourGrapes_flankWord_mid {u v : SG} {d : ℕ} :
     Option.map_some]
   by_cases h : u = .plus ∧ v ≠ .blk
   · rw [if_pos h, if_pos ⟨rfl,
-      (mem_take_flankWord_iff (by decide) (by omega) (by omega)).mpr h.1,
-      fun hb => h.2 ((mem_drop_flankWord_iff (by decide) (by omega) (by omega)).mp hb)⟩]
+      (mem_take_flankWord_iff (by decide) (by omega)).mpr h.1,
+      fun hb => h.2 ((mem_drop_flankWord_iff (by decide) (by omega)).mp hb)⟩]
   · rw [if_neg h, if_neg fun ⟨_, ht, hd⟩ =>
-      h ⟨(mem_take_flankWord_iff (by decide) (by omega) (by omega)).mp ht,
-        fun hv => hd ((mem_drop_flankWord_iff (by decide) (by omega) (by omega)).mpr hv)⟩]
+      h ⟨(mem_take_flankWord_iff (by decide) (by omega)).mp ht,
+        fun hv => hd ((mem_drop_flankWord_iff (by decide) (by omega)).mpr hv)⟩]
 
 /-- Sour Grapes requires both sides: the middle of `+ −…− −` spreads, but neither the
 triggerless `− −…− −` (far-left perturbation) nor the blocked `+ −…− ⊟` (far-right)

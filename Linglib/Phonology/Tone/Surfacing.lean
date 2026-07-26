@@ -117,18 +117,17 @@ open Subregular in
 marked tone exactly where one occurrence lies at-or-before and one at-or-after needs
 unboundedly distant information on both sides — the flank witness family is generic. -/
 theorem requiresBothSides_of_surfaces_iff
-    (hiff : ∀ w i, P.Surfaces w i
-      ↔ (∃ j ≤ i, w[j]? = some P.hi) ∧ ∃ j ≥ i, w[j]? = some P.hi) :
+    (hiff : ∀ w i, P.Surfaces w i ↔ P.hi ∈ w.take (i + 1) ∧ P.hi ∈ w.drop i) :
     RequiresBothSides P.map :=
   P.requiresBothSides_of_flanks (xOn := P.hi) (yOn := P.hi) (xOff := P.lo) (yOff := P.lo)
     (n := fun d => 2 * d + 2) (t := fun d => d + 1) (fun d => ⟨by omega, by omega⟩)
     (fun d => (hiff _ _).mpr
-      ⟨(exists_le_flankWord_eq_some_iff P.hi_ne_lo.symm (by omega)).mpr rfl,
-        (exists_ge_flankWord_eq_some_iff P.hi_ne_lo.symm (by omega) (by omega)).mpr rfl⟩)
-    (fun d hs => absurd ((exists_le_flankWord_eq_some_iff P.hi_ne_lo.symm (by omega)).mp
+      ⟨(mem_take_flankWord_iff P.hi_ne_lo.symm (by omega)).mpr rfl,
+        (mem_drop_flankWord_iff P.hi_ne_lo.symm (by omega)).mpr rfl⟩)
+    (fun d hs => absurd ((mem_take_flankWord_iff P.hi_ne_lo.symm (by omega)).mp
       ((hiff _ _).mp hs).1) P.hi_ne_lo.symm)
-    (fun d hs => absurd ((exists_ge_flankWord_eq_some_iff P.hi_ne_lo.symm (by omega)
-      (by omega)).mp ((hiff _ _).mp hs).2) P.hi_ne_lo.symm)
+    (fun d hs => absurd ((mem_drop_flankWord_iff P.hi_ne_lo.symm (by omega)).mp
+      ((hiff _ _).mp hs).2) P.hi_ne_lo.symm)
 
 /-! ### The surfacing set -/
 
