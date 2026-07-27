@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Mathlib.Data.List.Basic
+import Linglib.Core.Computability.Bimachine
 import Linglib.Core.Computability.Subsequential
 import Linglib.Core.Data.List.EqOn
 
@@ -37,6 +38,10 @@ independently editable flanks.
   function depends boundedly on the right
 * `Mealy.leftDetermined`, `Mealy.boundedDependence_right`: a sequential machine is
   prefix-determined at every coordinate
+* `RequiresBothSides.not_isNonInteractingBimachineComputable`: a map whose target needs
+  both sides at once is computed by no non-interacting bimachine
+* `setOf_isNonInteractingBimachineComputable_ssubset`: the non-interacting class is
+  proper inside the bimachine-computable functions
 
 ## Implementation notes
 
@@ -286,6 +291,63 @@ theorem IsMealyComputable.leftDetermined {f : List α → List β}
 theorem IsMealyComputable.boundedDependence_right {f : List α → List β}
     (hf : IsMealyComputable f) : BoundedDependence f .right :=
   BoundedDependence.right_of_leftDetermined hf.leftDetermined
+
+/-! ### Non-interacting bimachines
+
+A map that requires both sides escapes the non-interacting bimachines, and the
+conjunctive flag bimachine shows the non-interacting class is proper. -/
+
+/-- A map that requires both sides is computed by no non-interacting bimachine. At the
+witness the base changes but each far perturbation reverts: the right perturbation
+shares the left window, silencing `ruleL` at this cell; the left perturbation shares
+the right window, silencing `ruleR`; yet the base needs one of them to fire. -/
+theorem RequiresBothSides.not_isNonInteractingBimachineComputable [DecidableEq α]
+    {f : List α → List α}
+    (hf : RequiresBothSides f) : ¬ IsNonInteractingBimachineComputable f := by
+  rintro ⟨L, _, R, _, B, rfl, ⟨w⟩⟩
+  obtain ⟨base, i, hi, hchange, hw⟩ := hf 0
+  choose u hpert hsym hrev using hw
+  have hbase : base[i]? = some base[i] := List.getElem?_eq_getElem hi
+  apply hchange
+  rw [w.getElem?_run_eq_iff hbase, (hpert .right).2.take_eq (by omega),
+    (hpert .left).2.drop_eq (by omega)]
+  exact ⟨((w.getElem?_run_eq_iff ((hsym .right).trans hbase)).mp (hrev .right)).1,
+    ((w.getElem?_run_eq_iff ((hsym .left).trans hbase)).mp (hrev .left)).2⟩
+
+/-! ### Strictness: non-interacting ⊊ bimachine-computable
+
+A *conjunctive* change — a symbol raised iff a mark occurs on **both** sides — is
+bimachine-computable but requires both sides, so no non-interacting bimachine computes
+it. -/
+
+/-- The conjunctive flag bimachine: a `false` cell is raised exactly when a `true`
+occurs on both sides. -/
+def conjBM : Bimachine Bool Bool Bool Bool := .ofFlags id id fun l s r => s || (l && r)
+
+/-- In the middle of a `d`-margined flank word, `conjBM` computes the conjunction of
+the two flanks. -/
+theorem conjBM.run_flankWord_mid (x y : Bool) (d : ℕ) :
+    (conjBM.run (flankWord x false y (2 * d + 1)))[d + 1]? = some (x && y) := by
+  rw [conjBM, Bimachine.getElem?_ofFlags_run, getElem?_flankWord_mid (by omega) (by omega),
+    any_take_flankWord rfl (by omega), any_drop_flankWord rfl (by omega)]
+  rfl
+
+/-- The conjunctive change requires both sides: with a mark on each flank the medial
+cell is raised, and demoting either mark alone reverts it — the three-map template, one
+map per argument. -/
+theorem conjBM.requiresBothSides : RequiresBothSides conjBM.run :=
+  .of_flanks (fun d => by omega) (fun d => by omega)
+    (fun d => by rw [conjBM.run_flankWord_mid]; decide)
+    (conjBM.run_flankWord_mid false true) (conjBM.run_flankWord_mid true false)
+
+/-- The non-interacting class is proper inside the bimachine-computable functions —
+`conjBM` is computed by a bimachine, but by no non-interacting one. -/
+theorem setOf_isNonInteractingBimachineComputable_ssubset :
+    {f : List Bool → List Bool | IsNonInteractingBimachineComputable f} ⊂
+      {f | IsBimachineComputable f} :=
+  ⟨fun _ h => IsBimachineComputable.of_nonInteracting h,
+   fun h => conjBM.requiresBothSides.not_isNonInteractingBimachineComputable
+     (h conjBM.isBimachineComputable)⟩
 
 end Machines
 

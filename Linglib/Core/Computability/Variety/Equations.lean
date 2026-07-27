@@ -12,8 +12,8 @@ import Linglib.Core.Data.List.DropRight
 /-!
 # Equational characterizations of the definite subregular classes
 
-[lambert-2026] characterizes base classes of subregular languages by equations on
-the syntactic semigroup. This file gives the finite-`k` forms for the **definite**
+The definite subregular classes are characterized by equations on the syntactic
+semigroup ([perles-rabin-shamir-1963] [pin-mfa]). This file gives the finite-`k` forms for the **definite**
 (`𝒟`), **reverse-definite** (`𝒦`), and **generalized definite** (`ℒℐ`) classes; the
 classical ω-power forms in `Pin.lean` are derived from them.
 
@@ -30,14 +30,14 @@ classical ω-power forms in `Pin.lean` are derived from them.
 * `Language.isDefinite_iff_satisfies_kDefiniteEquation`,
   `Language.isReverseDefinite_iff_satisfies_kReverseDefiniteEquation`,
   `Language.isGeneralizedDefinite_iff_satisfies_kGeneralizedDefiniteEquation`
-  ([lambert-2026]) — each class equals the languages whose
-  syntactic monoid satisfies the corresponding equation.
+  — each class equals the languages whose syntactic monoid satisfies the
+  corresponding equation.
 
 ## Implementation notes
 
 The `xᵢ` range over length-`k` **letter sequences** (`αs : List α`), not arbitrary
 monoid elements: the latter is strictly weaker, ignoring `L`-trivial letters (e.g.
-`(a|b)*` over `{a, b, c}` would spuriously qualify). [lambert-2026] works in the
+`(a|b)*` over `{a, b, c}` would spuriously qualify). The classical form works in the
 syntactic *semigroup* (no empty word); we keep mathlib's `Con (FreeMonoid α)` monoid
 and recover the characterization through this letter-sequence quantification.
 -/

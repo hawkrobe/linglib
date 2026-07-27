@@ -2,6 +2,8 @@
 Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
+
+[UPSTREAM] candidate: `Mathlib.Computability.TransitionMonoid`.
 -/
 import Mathlib.Algebra.FreeMonoid.Basic
 import Mathlib.Algebra.Group.End

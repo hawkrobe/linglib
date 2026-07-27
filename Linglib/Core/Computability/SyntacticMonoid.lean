@@ -2,6 +2,10 @@
 Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
+
+[UPSTREAM] candidate: `Mathlib.Computability.SyntacticMonoid`, extending
+`Mathlib.Computability.MyhillNerode`'s residual program to the two-sided
+congruence.
 -/
 import Linglib.Core.Computability.TransitionMonoid
 

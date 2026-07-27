@@ -2,6 +2,8 @@
 Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
+
+[UPSTREAM] candidate: `Mathlib.Computability.Definite`.
 -/
 import Mathlib.Computability.Language
 import Mathlib.Logic.Function.Basic
@@ -15,10 +17,10 @@ import Mathlib.Data.Set.Finite.List
 # Definite languages
 
 A language `L` is **`k`-definite** when membership is decided by the last `k`
-symbols of a word [rogers-pullum-2011] [lambert-2022]: any two words sharing their
+symbols of a word [perles-rabin-shamir-1963]: any two words sharing their
 length-`k` suffix are L-equivalent. **Reverse `k`-definite** (`RD_k`) is the dual
-through the length-`k` prefix, and **generalized `k`-definite** (Lambert's `ℒℐ_k`)
-tests prefix and suffix jointly [lambert-2026].
+through the length-`k` prefix, and **generalized `k`-definite** (`ℒℐ_k`)
+tests prefix and suffix jointly ([pin-mfa]).
 
 ## Main definitions
 
@@ -132,8 +134,8 @@ the length-`k` prefix. -/
 def IsReverseDefinite (L : Language α) (k : ℕ) : Prop :=
   Function.FactorsThrough (· ∈ L) (Edge.left.takeAt k)
 
-/-- A language is **generalized `k`-definite** (Lambert's ℒℐ_k): membership factors
-through the joint length-`k` prefix and suffix [lambert-2026]. -/
+/-- A language is **generalized `k`-definite** (ℒℐ_k): membership factors through
+the joint length-`k` prefix and suffix. -/
 def IsGeneralizedDefinite (L : Language α) (k : ℕ) : Prop :=
   Function.FactorsThrough (· ∈ L) (fun w => (Edge.left.takeAt k w, Edge.right.takeAt k w))
 
