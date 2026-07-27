@@ -64,6 +64,18 @@ def ofForbidden (forbidden : Set (Augmented α)) : SLGrammar α := forbiddenᶜ
       ↔ ∀ f ∈ List.kFactors k (boundary k w), f ∉ forbidden :=
   Iff.rfl
 
+/-- Membership in an SL language, position-indexed: every window over
+`[1 - k, w.length)` is permitted. -/
+theorem mem_language_iff_window {k : ℕ} {G : SLGrammar α} {w : List α} (hk : 1 ≤ k) :
+    w ∈ G.language k ↔ ∀ i : ℤ, 1 - k ≤ i → i < w.length → List.window k w i ∈ G := by
+  rw [mem_language]
+  constructor
+  · intro h i h1 h2
+    exact h _ ((mem_kFactors_boundary_iff hk).mpr ⟨i, h1, h2, rfl⟩)
+  · intro h f hf
+    obtain ⟨i, h1, h2, rfl⟩ := (mem_kFactors_boundary_iff hk).mp hf
+    exact h i h1 h2
+
 /-! ### Count-vector characterisation
 
 Membership in a forbidden-factor SL language is a zero-test of a single
