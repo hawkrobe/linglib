@@ -61,7 +61,7 @@ guttural/dorsal OCPs.
   grammar) can match three specific Table IV bins with three
   pairwise-distinct O/E values. This is the **necessary-consequence**
   formalisation of the design-boundary claim in
-  `Core/Computability/Subregular/Language/ForbiddenPairs.lean`. FPB's actual
+  `Subregular.TSLGrammar.ofForbiddenPairs`. FPB's actual
   argument is stronger — it compares R² fits across nine bins
   (Categorical 0.70 vs Natural Classes 0.75 per Table V p. 207) — but
   full R² formalisation requires the lexical corpus and is deferred.
@@ -106,7 +106,7 @@ guttural/dorsal OCPs.
 
 ## Connection to `ForbiddenPairs.lean`'s design boundary
 
-`Linglib/Core/Computability/Subregular/Language/ForbiddenPairs.lean` (the
+`Subregular.TSLGrammar.ofForbiddenPairs` (the
 substrate file for tier-based strictly 2-local grammars defined by
 forbidden-pair relations) cites FPB in its design-boundary section as
 the empirical motivation for "single-tier TSL_2 cannot capture gradient

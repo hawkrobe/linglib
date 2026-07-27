@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.Computability.StarFree
-import Linglib.Core.Computability.Subregular.Language.Aperiodicity
+import Linglib.Core.Computability.Aperiodicity
 
 /-!
 # Containing (and avoiding) a fixed factor is star-free

@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Computability.Language
-import Linglib.Core.Computability.Subregular.Language.Boundary
+import Linglib.Core.Computability.Boundary
 import Linglib.Core.Data.List.Factors
 
 /-!

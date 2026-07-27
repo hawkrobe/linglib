@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Phonology.Subregular.Sibilant
 import Linglib.Phonology.Subregular.Agree
-import Linglib.Core.Computability.Subregular.Language.StrictlyPiecewise
+import Linglib.Core.Computability.StrictlyPiecewise
 import Linglib.Phonology.Subregular.Multitier
 
 /-!
@@ -92,7 +92,7 @@ The TSL_2 description here characterizes the **stringset** of Navajo
 sibilant harmony — the language that the harmony filter accepts. The
 **function** that maps an underlying form to its surface realization
 admits a separate subregular classification per
-`Core/Computability/Subregular/Function/`: long-distance consonant
+the subregular function classes: long-distance consonant
 agreement is generally **Tier-Subsequential** (not ISL or OSL — those
 require a *contiguous* k-window), and per [hansson-2010]'s
 strictly-anticipatory directionality argument it is specifically

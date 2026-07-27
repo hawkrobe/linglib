@@ -26,7 +26,7 @@ non-tier `Subregular.LocalRewrite.Rule` schema in
 `Phonology/Subregular/LocalRewrite.lean` is the right substrate
 when the alternation does not factor through a tier projection.
 The function-level subregular classification of D2L outputs lives in
-`Core/Computability/Subregular/Function/`: tier-mediated dissimilation
+the subregular function classes: tier-mediated dissimilation
 rules of the form Belth converges to are Tier-Subsequential
 ([aksenova-rawski-graf-heinz-2020]). For Latin -alis / -aris
 allomorphy ([belth-2026] §5.3, rule 54), the rule D2L converges
@@ -299,7 +299,7 @@ theorem latinDissimRule_tolerated_on_examples :
 -- ============================================================================
 
 /-- The consonant tier projection equals the canonical
-    `tierProject` from the TSL formalism in `Core/Computability/Subregular/`.
+    `tierProject` from the TSL formalism in the subregular layer.
     By construction both reduce to `List.filter` on the `[+cons]` predicate,
     so the autosegmental and language-theoretic tiers coincide. This
     grounds Belth's tier in the TSL_k subregular hierarchy. -/

@@ -1,4 +1,4 @@
-import Linglib.Core.Computability.Subregular.Logic.Transduction
+import Linglib.Core.Computability.Transduction
 import Linglib.Phonology.Subregular.ISL
 
 /-!

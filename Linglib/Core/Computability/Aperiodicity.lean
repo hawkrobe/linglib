@@ -9,8 +9,8 @@ import Mathlib.Data.List.Basic
 import Mathlib.Data.Set.Finite.List
 import Linglib.Core.Computability.TransitionMonoid
 import Linglib.Core.Computability.StarFree
-import Linglib.Core.Computability.Subregular.Language.StrictlyLocal
-import Linglib.Core.Computability.Subregular.Language.StrictlyPiecewise
+import Linglib.Core.Computability.StrictlyLocal
+import Linglib.Core.Computability.StrictlyPiecewise
 
 /-!
 # The subregular hierarchy is star-free (aperiodicity)

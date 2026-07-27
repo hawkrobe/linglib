@@ -36,14 +36,14 @@ against the input, not the partially-rewritten output ([chomsky-halle-1968],
 insertion, metathesis, coalescence, and alpha-notation agreement variables are
 not expressible, and application is neither iterative/directional nor cyclic.
 Iterative spreading lies in the strictly larger Output Strictly Local class
-(`Core/Computability/Subregular/Function/OSL.lean`).
+(`Subregular.OSLRule`).
 
 ## Todo
 
 * Prove `Rule.apply` is a `k`-Left-ISL function with
   `k = r.leftContext.length + r.rightContext.length + 1`, exhibiting an `ISLRule`
   over `List Segment` with word boundaries internalised
-  (cf. `Core/Computability/Subregular/Function/ISL.lean`).
+  (cf. `Subregular.ISLRule`).
 -/
 
 namespace Subregular.LocalRewrite
