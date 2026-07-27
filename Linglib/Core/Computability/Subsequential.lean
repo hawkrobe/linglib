@@ -26,15 +26,18 @@ isomorphic under input/output reversal (`f` is right-subsequential iff
 
 ## Main definitions
 
-* `SFST σ α β`: transducer with states `σ`, input alphabet `α`, output alphabet `β`,
+* `SubsequentialTransducer σ α β`: transducer with states `σ`, input alphabet `α`, output alphabet
+  `β`,
   and a state-final output emitted at the end of the input
-* `SFST.run`, `SFST.runRight`: the left-to-right and right-to-left passes
-* `SFST.comp`: the product machine, computing the composite function
-* `SFST.reindex`: lifts an equivalence on states to an equivalence on machines
-* `Mealy.toSFST`, `SFST.toMealy`: the synchronous and block machine views of each
+* `SubsequentialTransducer.run`, `SubsequentialTransducer.runRight`: the left-to-right and
+  right-to-left passes
+* `SubsequentialTransducer.comp`: the product machine, computing the composite function
+* `SubsequentialTransducer.reindex`: lifts an equivalence on states to an equivalence on machines
+* `Mealy.toSubsequentialTransducer`, `SubsequentialTransducer.toMealy`: the synchronous and block
+  machine views of each
   other, mutually inverse on singleton-output transducers with no final flush
 * `IsLeftSubsequential f`, `IsRightSubsequential f`, `IsSubsequential d f`: `f` is
-  computed by some finite-state `SFST` scanning in the given direction
+  computed by some finite-state `SubsequentialTransducer` scanning in the given direction
 
 ## Main theorems
 
@@ -43,8 +46,10 @@ isomorphic under input/output reversal (`f` is right-subsequential iff
   [schutzenberger-1977]
 * `isRightSubsequential_iff_left_reverse`: the left and right classes are isomorphic
   via reverse-conjugation
-* `IsMealyComputable.isLeftSubsequential`, `SFST.isMealyComputable`: the synchronous
-  class sits inside the block class, and a singleton-output SFST falls back into it
+* `IsMealyComputable.isLeftSubsequential`, `SubsequentialTransducer.isMealyComputable`: the
+  synchronous
+  class sits inside the block class, and a singleton-output SubsequentialTransducer falls back into
+  it
 * `IsLeftSubsequential.bounded_delay`: a left-subsequential function withholds at most
   a bounded suffix, since it can only be sitting on a state-final output
 
@@ -56,9 +61,10 @@ contested — [sakarovitch-2009] calls this class simply *sequential* (reserving
 sequential* for the empty-final-output case) and flags his own terminology as
 unconventional, quoting [bruyere-reutenauer-1999] that "the word sub-sequential is
 unfortunate". We keep the Choffrut spelling, so `Mealy` computes the *pure sequential*
-length-preserving functions and `SFST` the subsequential ones.
+length-preserving functions and `SubsequentialTransducer` the subsequential ones.
 
-`SFST` models the *total* subsequential functions: `step` is total and every input is
+`SubsequentialTransducer` models the *total* subsequential functions: `step` is total and every
+input is
 accepted, so `run` is a total function. This restricts the literature's class — a sink
 state does not recover partiality, since out-of-domain inputs still emit output — so
 the classification predicates below are about total functions only. On empty input
@@ -82,10 +88,10 @@ namespace Subregular
 
 variable {σ α β : Type*}
 
-/-- A subsequential finite-state transducer (SFST) is a set of states (`σ`), a
+/-- A subsequential finite-state transducer (SubsequentialTransducer) is a set of states (`σ`), a
 starting state (`start`), a transition function (`step`), a per-symbol output
 function (`output`) and a state-final output (`finalOutput`). -/
-structure SFST (σ α β : Type*) where
+structure SubsequentialTransducer (σ α β : Type*) where
   /-- Starting state. -/
   start : σ
   /-- Transition function. -/
@@ -95,12 +101,12 @@ structure SFST (σ α β : Type*) where
   /-- Output emitted on terminating in a state. -/
   finalOutput : σ → List β
 
-instance [Inhabited σ] : Inhabited (SFST σ α β) :=
+instance [Inhabited σ] : Inhabited (SubsequentialTransducer σ α β) :=
   ⟨⟨default, fun s _ => s, fun _ _ => [], fun _ => []⟩⟩
 
-namespace SFST
+namespace SubsequentialTransducer
 
-variable (T : SFST σ α β)
+variable (T : SubsequentialTransducer σ α β)
 
 /-- `T.stateAfter s x` is the state reached from `s` after consuming the input `x`. -/
 def stateAfter (s : σ) : List α → σ := List.foldl T.step s
@@ -171,7 +177,7 @@ variable {τ : Type*}
 
 /-- Lifts an equivalence on states to an equivalence on subsequential transducers. -/
 @[simps apply_start apply_step apply_output apply_finalOutput]
-def reindex (g : σ ≃ τ) : SFST σ α β ≃ SFST τ α β where
+def reindex (g : σ ≃ τ) : SubsequentialTransducer σ α β ≃ SubsequentialTransducer τ α β where
   toFun T := {
     start := g T.start
     step := fun t x => g (T.step (g.symm t) x)
@@ -215,12 +221,12 @@ def reindex (g : σ ≃ τ) : SFST σ α β ≃ SFST τ α β where
 
 section Comp
 
-variable {γ σ' : Type*} (T₂ : SFST σ' β γ) (T₁ : SFST σ α β)
+variable {γ σ' : Type*} (T₂ : SubsequentialTransducer σ' β γ) (T₁ : SubsequentialTransducer σ α β)
 
 /-- `T₂.comp T₁` feeds each output block of `T₁` to `T₂` — the classical product
 construction [schutzenberger-1977] — computing `T₂.run ∘ T₁.run` (`run_comp`). -/
 @[simps]
-def comp : SFST (σ' × σ) α γ where
+def comp : SubsequentialTransducer (σ' × σ) α γ where
   start := (T₂.start, T₁.start)
   step p x := (T₂.stateAfter p.1 (T₁.output p.2 x), T₁.step p.2 x)
   output p x := T₂.emitted p.1 (T₁.output p.2 x)
@@ -237,11 +243,12 @@ def comp : SFST (σ' × σ) α γ where
 
 end Comp
 
-end SFST
+end SubsequentialTransducer
 
 /-! ### Synchronous machines as block transducers
 
-A `Mealy` machine is an `SFST` emitting singleton blocks with an empty final flush; a
+A `Mealy` machine is a `SubsequentialTransducer` emitting singleton blocks with an empty final
+flush; a
 block transducer of that shape is a `Mealy` machine. The two views are mutually
 inverse. -/
 
@@ -249,44 +256,50 @@ section Synchronous
 
 variable {σ α β : Type*}
 
-/-- View a synchronous transducer as a block `SFST`: singleton outputs, empty flush. -/
-def Mealy.toSFST (T : Mealy σ α β) : SFST σ α β where
+/-- View a synchronous transducer as a block `SubsequentialTransducer`: singleton outputs, empty
+flush. -/
+def Mealy.toSubsequentialTransducer (T : Mealy σ α β) : SubsequentialTransducer σ α β where
   start := T.initial
   step := T.step
   output s x := [T.output s x]
   finalOutput _ := []
 
-@[simp] theorem Mealy.toSFST_runFrom (T : Mealy σ α β) (s : σ) (xs : List α) :
-    T.toSFST.runFrom s xs = T.runFrom s xs := by
+@[simp] theorem Mealy.toSubsequentialTransducer_runFrom (T : Mealy σ α β) (s : σ) (xs : List α) :
+    T.toSubsequentialTransducer.runFrom s xs = T.runFrom s xs := by
   induction xs generalizing s with
   | nil => rfl
-  | cons x xs ih => rw [SFST.runFrom_cons, Mealy.runFrom_cons, ih]; rfl
+  | cons x xs ih => rw [SubsequentialTransducer.runFrom_cons, Mealy.runFrom_cons, ih]; rfl
 
-@[simp] theorem Mealy.toSFST_run (T : Mealy σ α β) : T.toSFST.run = T.run :=
-  funext fun xs => T.toSFST_runFrom T.initial xs
+@[simp] theorem Mealy.toSubsequentialTransducer_run (T : Mealy σ α β) :
+    T.toSubsequentialTransducer.run = T.run :=
+  funext fun xs => T.toSubsequentialTransducer_runFrom T.initial xs
 
 /-- View a block transducer emitting exactly one symbol per input symbol as a synchronous
 machine: the singleton output block is the emitted letter. -/
 @[simps]
-def SFST.toMealy (T : SFST σ α β) (hs : ∀ s x, (T.output s x).length = 1) : Mealy σ α β where
+def SubsequentialTransducer.toMealy (T : SubsequentialTransducer σ α β)
+    (hs : ∀ s x, (T.output s x).length = 1) : Mealy σ α β where
   initial := T.start
   step := T.step
   output s x := (T.output s x).head (List.ne_nil_of_length_pos (by rw [hs]; omega))
 
-@[simp] theorem Mealy.toMealy_toSFST (T : Mealy σ α β) :
-    T.toSFST.toMealy (fun _ _ => rfl) = T := rfl
+@[simp] theorem Mealy.toMealy_toSubsequentialTransducer (T : Mealy σ α β) :
+    T.toSubsequentialTransducer.toMealy (fun _ _ => rfl) = T := rfl
 
-theorem SFST.toMealy_runFrom (T : SFST σ α β) (hs : ∀ s x, (T.output s x).length = 1)
+theorem SubsequentialTransducer.toMealy_runFrom (T : SubsequentialTransducer σ α β)
+    (hs : ∀ s x, (T.output s x).length = 1)
     (hf : ∀ s, T.finalOutput s = []) (s : σ) (xs : List α) :
     (T.toMealy hs).runFrom s xs = T.runFrom s xs := by
   induction xs generalizing s with
   | nil => simp [hf]
   | cons x xs ih =>
     obtain ⟨a, ha⟩ := List.length_eq_one_iff.mp (hs s x)
-    simp only [Mealy.runFrom_cons, SFST.runFrom_cons, toMealy_output, toMealy_step, ih, ha,
+    simp only [Mealy.runFrom_cons, SubsequentialTransducer.runFrom_cons, toMealy_output,
+    toMealy_step, ih, ha,
       List.head_cons, List.singleton_append]
 
-theorem SFST.toMealy_run (T : SFST σ α β) (hs : ∀ s x, (T.output s x).length = 1)
+theorem SubsequentialTransducer.toMealy_run (T : SubsequentialTransducer σ α β)
+    (hs : ∀ s x, (T.output s x).length = 1)
     (hf : ∀ s, T.finalOutput s = []) : (T.toMealy hs).run = T.run :=
   funext fun xs => T.toMealy_runFrom hs hf T.start xs
 
@@ -296,18 +309,18 @@ end Synchronous
 
 variable {α β γ : Type*} {f : List α → List β} {g : List β → List γ}
 
-/-- A function `f : List α → List β` is *left-subsequential* if some SFST with a
+/-- A function `f : List α → List β` is *left-subsequential* if some SubsequentialTransducer with a
 finite state space computes it via left-to-right scan [mohri-1997]. -/
 def IsLeftSubsequential (f : List α → List β) : Prop :=
-  ∃ (σ : Type) (_ : Fintype σ) (T : SFST σ α β), T.run = f
+  ∃ (σ : Type) (_ : Fintype σ) (T : SubsequentialTransducer σ α β), T.run = f
 
-/-- A function `f : List α → List β` is *right-subsequential* if some SFST with a
+/-- A function `f : List α → List β` is *right-subsequential* if some SubsequentialTransducer with a
 finite state space computes it via right-to-left scan (`runRight`). -/
 def IsRightSubsequential (f : List α → List β) : Prop :=
-  ∃ (σ : Type) (_ : Fintype σ) (T : SFST σ α β), T.runRight = f
+  ∃ (σ : Type) (_ : Fintype σ) (T : SubsequentialTransducer σ α β), T.runRight = f
 
 /-- A function `f : List α → List β` is *subsequential in direction `d`* if some
-finite-state SFST computes it via the corresponding scan direction. -/
+finite-state SubsequentialTransducer computes it via the corresponding scan direction. -/
 def IsSubsequential (d : Direction) (f : List α → List β) : Prop :=
   match d with
   | .left => IsLeftSubsequential f
@@ -319,50 +332,57 @@ def IsSubsequential (d : Direction) (f : List α → List β) : Prop :=
 @[simp] theorem isSubsequential_right :
     IsSubsequential .right f ↔ IsRightSubsequential f := Iff.rfl
 
-/-- `f` is left-subsequential if and only if it is computed by a finite-state SFST.
+/-- `f` is left-subsequential if and only if it is computed by a finite-state
+SubsequentialTransducer.
 This is more general than using the definition of `IsLeftSubsequential` directly, as
 the state type `σ` is universe-polymorphic. -/
 theorem isLeftSubsequential_iff.{v} :
     IsLeftSubsequential f
-      ↔ ∃ (σ : Type v) (_ : Fintype σ) (T : SFST σ α β), T.run = f :=
+      ↔ ∃ (σ : Type v) (_ : Fintype σ) (T : SubsequentialTransducer σ α β), T.run = f :=
   exists_fintype_congr
-    (fun e ⟨T, hT⟩ => ⟨SFST.reindex e T, (T.run_reindex e).trans hT⟩)
-    (fun e ⟨T, hT⟩ => ⟨SFST.reindex e T, (T.run_reindex e).trans hT⟩)
+    (fun e ⟨T, hT⟩ => ⟨SubsequentialTransducer.reindex e T, (T.run_reindex e).trans hT⟩)
+    (fun e ⟨T, hT⟩ => ⟨SubsequentialTransducer.reindex e T, (T.run_reindex e).trans hT⟩)
 
 /-- `f` is right-subsequential if and only if it is computed via `runRight` by a
-finite-state SFST. This is more general than using the definition of
+finite-state SubsequentialTransducer. This is more general than using the definition of
 `IsRightSubsequential` directly, as the state type `σ` is universe-polymorphic. -/
 theorem isRightSubsequential_iff.{v} :
     IsRightSubsequential f
-      ↔ ∃ (σ : Type v) (_ : Fintype σ) (T : SFST σ α β), T.runRight = f :=
+      ↔ ∃ (σ : Type v) (_ : Fintype σ) (T : SubsequentialTransducer σ α β), T.runRight = f :=
   exists_fintype_congr
-    (fun e ⟨T, hT⟩ => ⟨SFST.reindex e T, (T.runRight_reindex e).trans hT⟩)
-    (fun e ⟨T, hT⟩ => ⟨SFST.reindex e T, (T.runRight_reindex e).trans hT⟩)
+    (fun e ⟨T, hT⟩ => ⟨SubsequentialTransducer.reindex e T, (T.runRight_reindex e).trans hT⟩)
+    (fun e ⟨T, hT⟩ => ⟨SubsequentialTransducer.reindex e T, (T.runRight_reindex e).trans hT⟩)
 
-/-- Every finite-state SFST computes a left-subsequential function, whatever the
+/-- Every finite-state SubsequentialTransducer computes a left-subsequential function, whatever the
 universe of its state type. -/
-theorem SFST.isLeftSubsequential {σ : Type*} [Fintype σ] (T : SFST σ α β) :
+theorem SubsequentialTransducer.isLeftSubsequential {σ : Type*} [Fintype σ]
+    (T : SubsequentialTransducer σ α β) :
     IsLeftSubsequential T.run :=
   isLeftSubsequential_iff.mpr ⟨σ, inferInstance, T, rfl⟩
 
-/-- Every finite-state SFST computes a right-subsequential function via `runRight`. -/
-theorem SFST.isRightSubsequential {σ : Type*} [Fintype σ] (T : SFST σ α β) :
+/-- Every finite-state SubsequentialTransducer computes a right-subsequential function via
+`runRight`. -/
+theorem SubsequentialTransducer.isRightSubsequential {σ : Type*} [Fintype σ]
+    (T : SubsequentialTransducer σ α β) :
     IsRightSubsequential T.runRight :=
   isRightSubsequential_iff.mpr ⟨σ, inferInstance, T, rfl⟩
 
-/-- Every finite-state SFST emitting one symbol per input symbol and flushing nothing at
+/-- Every finite-state SubsequentialTransducer emitting one symbol per input symbol and flushing
+nothing at
 the end computes a Mealy-computable function. -/
-theorem SFST.isMealyComputable {σ : Type*} [Fintype σ] (T : SFST σ α β)
+theorem SubsequentialTransducer.isMealyComputable {σ : Type*} [Fintype σ]
+    (T : SubsequentialTransducer σ α β)
     (hs : ∀ s x, (T.output s x).length = 1) (hf : ∀ s, T.finalOutput s = []) :
     IsMealyComputable T.run :=
   T.toMealy_run hs hf ▸ (T.toMealy hs).isMealyComputable
 
-/-- A Mealy-computable function is left-subsequential, since `Mealy.toSFST` presents a
+/-- A Mealy-computable function is left-subsequential, since `Mealy.toSubsequentialTransducer`
+presents a
 synchronous machine as a block transducer emitting singleton blocks. -/
 theorem IsMealyComputable.isLeftSubsequential (hf : IsMealyComputable f) :
     IsLeftSubsequential f := by
   obtain ⟨σ, _, T, rfl⟩ := hf
-  exact T.toSFST_run ▸ T.toSFST.isLeftSubsequential
+  exact T.toSubsequentialTransducer_run ▸ T.toSubsequentialTransducer.isLeftSubsequential
 
 /-- A function is right-subsequential iff its reverse-conjugate is left-subsequential:
 the two classes are isomorphic via the involution `f ↦ List.reverse ∘ f ∘ List.reverse`. -/
@@ -370,7 +390,8 @@ theorem isRightSubsequential_iff_left_reverse :
     IsRightSubsequential f
       ↔ IsLeftSubsequential (fun xs => (f xs.reverse).reverse) :=
   ⟨fun ⟨σ, _, T, hT⟩ => ⟨σ, inferInstance, T, by funext xs; simp [← hT]⟩,
-   fun ⟨σ, _, T, hT⟩ => ⟨σ, inferInstance, T, by funext xs; simp [SFST.runRight, hT]⟩⟩
+   fun ⟨σ, _, T, hT⟩ => ⟨σ, inferInstance, T, by funext xs; simp [SubsequentialTransducer.runRight,
+   hT]⟩⟩
 
 /-- A left-subsequential function has bounded delay: on any input `u` it has already
 emitted a prefix of `f u` shared with `f (u ++ v)` for every continuation `v`,
@@ -395,7 +416,7 @@ theorem IsLeftSubsequential.exists_getElem?_append_eq (hf : IsLeftSubsequential 
     fun u v i hi => T.getElem?_run_append u v ?_⟩
   have hN := Finset.le_sup (f := fun s => (T.finalOutput s).length)
     (Finset.mem_univ (T.stateAfter T.start u))
-  simp only [SFST.run, SFST.runFrom, List.length_append] at hi
+  simp only [SubsequentialTransducer.run, SubsequentialTransducer.runFrom, List.length_append] at hi
   omega
 
 /-- `f` is not left-subsequential if for every `N` some images `f u` and `f (u ++ v)`
@@ -411,7 +432,7 @@ theorem not_isLeftSubsequential_of_diverging
   exact hne (hN u v i hi)
 
 /-- Left-subsequential functions are closed under composition, by the classical
-product construction [schutzenberger-1977] (`SFST.comp`). -/
+product construction [schutzenberger-1977] (`SubsequentialTransducer.comp`). -/
 theorem IsLeftSubsequential.comp (hg : IsLeftSubsequential g)
     (hf : IsLeftSubsequential f) : IsLeftSubsequential (g ∘ f) := by
   obtain ⟨σ₁, _, T₁, rfl⟩ := hf

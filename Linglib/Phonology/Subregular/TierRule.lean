@@ -213,7 +213,7 @@ per [aksenova-rawski-graf-heinz-2020]:
   Heinz-Rawski-Tanner 2011 tier-strictly-local family applied to
   function classes).
 
-The non-trivial-tier classification is **deferred** (the SFST witness
+The non-trivial-tier classification is **deferred** (the SubsequentialTransducer witness
 needs to thread the tier projection's state alongside the
 predicate-evaluation state); the identity-tier case is discharged below.
 Land the general witness here once a Studies file consumes it. -/
@@ -223,7 +223,7 @@ namespace Subregular.TierRule
 variable {α : Type*}
 
 /-- The prediction function shared by `applyAt` (under identity tier +
-left side) and the SFST construction: given an "accumulated last
+left side) and the SubsequentialTransducer construction: given an "accumulated last
 context" option, compute the feature value the rule predicts. -/
 def predictFromCtx (r : TierRule α) : Option α → Option Bool
   | none => r.default
@@ -235,28 +235,29 @@ def predictFromCtx (r : TierRule α) : Option α → Option Bool
                       | .disagree => !v)
 
 /-- The `last context-matching segment` of a list as `Option α`. State
-representation for the SFST below: the last input segment so far that
+representation for the SubsequentialTransducer below: the last input segment so far that
 satisfies `targetIsContext`. -/
 def lastContextOf (r : TierRule α) (xs : List α) : Option α :=
   (xs.filter (fun x => decide (r.targetIsContext x))).getLast?
 
-/-- SFST witness for the identity-tier, left-side `applyToString`:
+/-- SubsequentialTransducer witness for the identity-tier, left-side `applyToString`:
 state tracks the last `targetIsContext`-matching input segment. -/
-def toIdTierSFST (r : TierRule α) : SFST (Option α) α (Option Bool) where
+def toIdTierSubsequentialTransducer (r : TierRule α) :
+    SubsequentialTransducer (Option α) α (Option Bool) where
   start := none
   step st s := if r.targetIsContext s then some s else st
   output st _ := [predictFromCtx r st]
   finalOutput _ := []
 
-/-- The SFST's state after one step matches the running `lastContextOf`. -/
-@[simp] lemma toIdTierSFST_step (r : TierRule α) (st : Option α) (s : α) :
-    r.toIdTierSFST.step st s = if r.targetIsContext s then some s else st := rfl
+/-- The SubsequentialTransducer's state after one step matches the running `lastContextOf`. -/
+@[simp] lemma toIdTierSubsequentialTransducer_step (r : TierRule α) (st : Option α) (s : α) :
+    r.toIdTierSubsequentialTransducer.step st s = if r.targetIsContext s then some s else st := rfl
 
-@[simp] lemma toIdTierSFST_output (r : TierRule α) (st : Option α) (s : α) :
-    r.toIdTierSFST.output st s = [predictFromCtx r st] := rfl
+@[simp] lemma toIdTierSubsequentialTransducer_output (r : TierRule α) (st : Option α) (s : α) :
+    r.toIdTierSubsequentialTransducer.output st s = [predictFromCtx r st] := rfl
 
 /-- `lastContextOf` extends by one step: appending a single segment to
-the past updates the running last-context exactly as the SFST step
+the past updates the running last-context exactly as the SubsequentialTransducer step
 does. -/
 lemma lastContextOf_append_singleton (r : TierRule α) (past : List α) (x : α) :
     r.lastContextOf (past ++ [x])
@@ -276,18 +277,20 @@ lemma applyAt_eq_predictFromCtx (r : TierRule α)
   unfold applyAt predictFromCtx lastContextOf
   exact id_tier_left_is_strict_local r h_id h_side past
 
-/-- **The SFST computes `applyToString`.** Generalised over the SFST's
+/-- **The SubsequentialTransducer computes `applyToString`.** Generalised over the
+SubsequentialTransducer's
 starting state (which represents the lastContextOf of some virtual
 past) and the corresponding past. -/
-lemma toIdTierSFST_runFrom_eq_applyToStringAux (r : TierRule α)
+lemma toIdTierSubsequentialTransducer_runFrom_eq_applyToStringAux (r : TierRule α)
     (h_id : r.tier = TierProjection.id) (h_side : r.side = .left)
     (past : List α) (input : List α) :
-    r.toIdTierSFST.runFrom (r.lastContextOf past) input
+    r.toIdTierSubsequentialTransducer.runFrom (r.lastContextOf past) input
       = applyToString.applyToStringAux r input past := by
   induction input generalizing past with
   | nil => rfl
   | cons x xs ih =>
-    rw [SFST.runFrom_cons, toIdTierSFST_output, toIdTierSFST_step]
+    rw [SubsequentialTransducer.runFrom_cons, toIdTierSubsequentialTransducer_output,
+    toIdTierSubsequentialTransducer_step]
     rw [show (if r.targetIsContext x then some x else r.lastContextOf past)
           = r.lastContextOf (past ++ [x]) from
         (r.lastContextOf_append_singleton past x).symm]
@@ -296,17 +299,18 @@ lemma toIdTierSFST_runFrom_eq_applyToStringAux (r : TierRule α)
 
 /-- **Identity-tier left-side TierRules reify to Left-Subsequential
 functions.** Closes audit D6 with a real witness construction (not a
-sorry): the SFST has state `Option α` (last-context-matching segment
+sorry): the SubsequentialTransducer has state `Option α` (last-context-matching segment
 seen) and emits the rule's prediction at each step. -/
 theorem applyToString_isLeftSubsequential_of_id_tier [Fintype α]
     (r : TierRule α) (h_id : r.tier = TierProjection.id) (h_side : r.side = .left) :
     IsLeftSubsequential r.applyToString := by
-  have h_run : r.toIdTierSFST.run = r.applyToString := by
+  have h_run : r.toIdTierSubsequentialTransducer.run = r.applyToString := by
     funext input
-    show r.toIdTierSFST.runFrom none input = applyToString.applyToStringAux r input []
+    show r.toIdTierSubsequentialTransducer.runFrom none input =
+      applyToString.applyToStringAux r input []
     -- `none = lastContextOf []` definitionally
-    exact r.toIdTierSFST_runFrom_eq_applyToStringAux h_id h_side [] input
-  exact h_run ▸ r.toIdTierSFST.isLeftSubsequential
+    exact r.toIdTierSubsequentialTransducer_runFrom_eq_applyToStringAux h_id h_side [] input
+  exact h_run ▸ r.toIdTierSubsequentialTransducer.isLeftSubsequential
 
 /-! ### Myopia: the tier-rule prediction has no look-ahead -/
 

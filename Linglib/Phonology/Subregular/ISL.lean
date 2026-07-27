@@ -33,7 +33,7 @@ function-level subregular hierarchy.
 * `isRightInputStrictlyLocal_iff_left_reverse`: the right class is the
   reverse-conjugate of the left class.
 * `isLeftInputStrictlyLocal_left_subsequential`: every Left-ISL
-  function is Left-Subsequential, witnessed by `ISLRule.toFinSFST`.
+  function is Left-Subsequential, witnessed by `ISLRule.toFinSubsequentialTransducer`.
 * `flatMap_isLeftInputStrictlyLocal_one`,
   `filterMap_isLeftInputStrictlyLocal_one` — letterwise homomorphisms and
   erasing (tier) projections are the `k = 1` specialisation.
@@ -54,7 +54,7 @@ variable {α β : Type*}
 /-- The "list of length at most `n`" subtype is finite when `α` is. The
 witness is a surjection from `Σ m : Fin (n + 1), List.Vector α m` (which
 has a `Fintype` instance via `Mathlib.Data.Fintype.{Sigma,Vector}`). Used
-to give ISL/OSL projections into SFST a manifestly-finite state space
+to give ISL/OSL projections into SubsequentialTransducer a manifestly-finite state space
 (matching [mohri-1997]'s finite-state assumption). Uses `classical`
 to discharge the `DecidableEq` side condition without imposing it on
 consumers (matches mathlib pattern for finite types over `Fintype α`). -/
@@ -259,41 +259,43 @@ theorem filterMap_isLeftInputStrictlyLocal_one (g : α → Option β) :
 
 /-! ### ISL ⊆ Subsequential
 
-`ISLRule.toFinSFST` projects an ISL rule into a finite-state SFST whose
+`ISLRule.toFinSubsequentialTransducer` projects an ISL rule into a finite-state
+SubsequentialTransducer whose
 state space is the bounded input window `{l : List α // l.length ≤ k - 1}`.
 The `[Fintype α]` constraint matches the source literature [mohri-1997]:
 every subsequential model has a finite alphabet and finite state by
 definition. The inclusion theorem
 rides on the run-equality. Co-located on the source side because the
-dependency direction (SFST in `Subsequential.lean`; ISL projects into
+dependency direction (SubsequentialTransducer in `Subsequential.lean`; ISL projects into
 it) forces both construction and cast into this file. -/
 
-/-- Construction: every ISL rule induces a **finite-state** SFST whose
+/-- Construction: every ISL rule induces a **finite-state** SubsequentialTransducer whose
 state is the bounded input window `{l : List α // l.length ≤ k - 1}`,
 and whose `finalOutput` is empty. The state is manifestly finite via
 `fintypeListLengthLE`, witnessing ISL ⊆ Subsequential under the source
 literature's finite-state assumption. -/
-def ISLRule.toFinSFST {k : ℕ} [Fintype α] (r : ISLRule k α β) :
-    SFST {l : List α // l.length ≤ k - 1} α β where
+def ISLRule.toFinSubsequentialTransducer {k : ℕ} [Fintype α] (r : ISLRule k α β) :
+    SubsequentialTransducer {l : List α // l.length ≤ k - 1} α β where
   start := ⟨[], Nat.zero_le _⟩
   step w x := ⟨(w.val ++ [x]).rtake (k - 1), List.length_rtake_le _ _⟩
   output w x := r.windowOutput w.val x
   finalOutput _ := []
 
-/-- The finite-state SFST induced by an ISL rule computes the same
+/-- The finite-state SubsequentialTransducer induced by an ISL rule computes the same
 string function. -/
-theorem ISLRule.toFinSFST_run_eq_apply {k : ℕ} [Fintype α] (r : ISLRule k α β) :
-    r.toFinSFST.run = r.apply := by
+theorem ISLRule.toFinSubsequentialTransducer_run_eq_apply {k : ℕ} [Fintype α] (r : ISLRule k α β) :
+    r.toFinSubsequentialTransducer.run = r.apply := by
   funext input
-  show SFST.runFrom r.toFinSFST ⟨[], Nat.zero_le _⟩ input
+  show SubsequentialTransducer.runFrom r.toFinSubsequentialTransducer ⟨[], Nat.zero_le _⟩ input
     = ISLRule.applyAux r [] input
   suffices h : ∀ (w : {l : List α // l.length ≤ k - 1}),
-      SFST.runFrom r.toFinSFST w input = ISLRule.applyAux r w.val input from h _
+      SubsequentialTransducer.runFrom r.toFinSubsequentialTransducer w input = ISLRule.applyAux r
+      w.val input from h _
   intro w
   induction input generalizing w with
   | nil => rfl
   | cons x xs ih =>
-    rw [SFST.runFrom_cons]
+    rw [SubsequentialTransducer.runFrom_cons]
     exact congrArg _ (ih _)
 
 /-- **Left-ISL ⊆ Left-Subsequential** (over a finite input alphabet).
@@ -303,14 +305,16 @@ theorem isLeftInputStrictlyLocal_left_subsequential {k : ℕ} [Fintype α]
     {f : List α → List β} (h : IsLeftInputStrictlyLocal k f) :
     IsLeftSubsequential f := by
   obtain ⟨r, hr⟩ := h
-  have heq : r.toFinSFST.run = f := r.toFinSFST_run_eq_apply.trans hr
-  exact heq ▸ r.toFinSFST.isLeftSubsequential
+  have heq : r.toFinSubsequentialTransducer.run = f :=
+    r.toFinSubsequentialTransducer_run_eq_apply.trans hr
+  exact heq ▸ r.toFinSubsequentialTransducer.isLeftSubsequential
 
 /-- A single-symbol left-ISL rule is Mealy-computable. The bounded input window that makes
-`ISLRule.toFinSFST` finite-state is already the synchronous state. -/
+`ISLRule.toFinSubsequentialTransducer` finite-state is already the synchronous state. -/
 theorem isMealyComputable_of_ISLRule {k : ℕ} [Fintype α] (r : ISLRule k α β)
     (hs : ∀ w x, (r.windowOutput w x).length = 1) : IsMealyComputable r.apply :=
-  r.toFinSFST_run_eq_apply ▸ r.toFinSFST.isMealyComputable (fun w x => hs w.val x) fun _ => rfl
+  r.toFinSubsequentialTransducer_run_eq_apply ▸ r.toFinSubsequentialTransducer.isMealyComputable
+  (fun w x => hs w.val x) fun _ => rfl
 
 /-- **Right-ISL ⊆ Right-Subsequential**, derived from the Left- side via
 the reverse-conjugation lemmas. The Right-ISL ↔ Left-ISL and
