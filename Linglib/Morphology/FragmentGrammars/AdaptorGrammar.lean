@@ -167,14 +167,14 @@ ag(X, Y; A) = ∏_{A ∈ V} [DMPCFG-factor on X^A] · [PYP-factor on Y^A]
 Inherits the DMPCFG part from `DMPCFG.lhsFactor` (via `extends`);
 adds the PYP factor per LHS.
 -/
-noncomputable def corpusProbGivenTables (D : Multiset (CFGTree T G.NT))
+noncomputable def corpusProbGivenTables (D : Multiset (DerivationTree T G.NT))
     (Y : TableAssignment G) : ℝ :=
   ∏ a ∈ G.rules.image (·.input),
     M.toDMPCFG.lhsFactor a D * M.pypFactor a Y
 
 /-- AG corpus probability is nonnegative on any table assignment.
     Each per-LHS factor is `[DMPCFG-positive] · [PYP-nonneg]`. -/
-theorem corpusProbGivenTables_nonneg (D : Multiset (CFGTree T G.NT))
+theorem corpusProbGivenTables_nonneg (D : Multiset (DerivationTree T G.NT))
     (Y : TableAssignment G) : 0 ≤ M.corpusProbGivenTables D Y := by
   unfold corpusProbGivenTables
   apply Finset.prod_nonneg
@@ -196,7 +196,7 @@ def emptyTables (G : ContextFreeGrammar T) : TableAssignment G :=
     `DMPCFG.lhsFactor a 0 · PitmanYor.partitionProb (empty) = 1 · 1`. -/
 @[simp]
 theorem corpusProbGivenTables_empty :
-    M.corpusProbGivenTables (0 : Multiset (CFGTree T G.NT)) (emptyTables G) = 1 := by
+    M.corpusProbGivenTables (0 : Multiset (DerivationTree T G.NT)) (emptyTables G) = 1 := by
   unfold corpusProbGivenTables
   apply Finset.prod_eq_one
   intro a ha
@@ -240,7 +240,7 @@ estimation. -/
     `MultinomialPCFG`. The PYP component does not contribute — see the
     section docstring above. -/
 noncomputable def posteriorMAP [∀ a : G.NT, Nonempty (G.RulesWithLHS a)]
-    (D : Multiset (CFGTree T G.NT)) : MultinomialPCFG G :=
+    (D : Multiset (DerivationTree T G.NT)) : MultinomialPCFG G :=
   M.toDMPCFG.posteriorMAP D
 
 /-- **Coherence.** AG's posterior-MAP MultinomialPCFG agrees with
@@ -248,7 +248,7 @@ noncomputable def posteriorMAP [∀ a : G.NT, Nonempty (G.RulesWithLHS a)]
     `rfl` — AG's rule-weight inference IS DMPCFG's rule-weight
     inference. The "prior tower" claim made formal at this layer. -/
 theorem posteriorMAP_eq_toDMPCFG [∀ a : G.NT, Nonempty (G.RulesWithLHS a)]
-    (D : Multiset (CFGTree T G.NT)) :
+    (D : Multiset (DerivationTree T G.NT)) :
     M.posteriorMAP D = M.toDMPCFG.posteriorMAP D := rfl
 
 /-! ## Conjugacy decomposition (mirror of DMPCFG)
@@ -263,7 +263,7 @@ layer too. -/
 /-- AG's posterior update: bump the underlying DMPCFG's pseudo-counts
     by the corpus rule counts (Dirichlet conjugacy on the DMPCFG
     component), leave PYP table state unchanged. -/
-noncomputable def posterior (D : Multiset (CFGTree T G.NT)) : AdaptorGrammar G :=
+noncomputable def posterior (D : Multiset (DerivationTree T G.NT)) : AdaptorGrammar G :=
   { M with toDMPCFG := M.toDMPCFG.posterior D }
 
 /-- AG's mode in `MultinomialPCFG`-space: the mode of the underlying
@@ -279,7 +279,7 @@ theorem posterior_zero : M.posterior 0 = M := by
   ext1 <;> simp [posterior, DMPCFG.posterior_zero]
 
 /-- Incrementality at the AG layer (delegated to `DMPCFG.posterior_add`). -/
-theorem posterior_add (D₁ D₂ : Multiset (CFGTree T G.NT)) :
+theorem posterior_add (D₁ D₂ : Multiset (DerivationTree T G.NT)) :
     M.posterior (D₁ + D₂) = (M.posterior D₁).posterior D₂ := by
   ext1 <;> simp [posterior, DMPCFG.posterior_add]
 
@@ -287,7 +287,7 @@ theorem posterior_add (D₁ D₂ : Multiset (CFGTree T G.NT)) :
     mode ∘ posterior`, holding by `rfl` because both AG operations
     delegate through DMPCFG's. -/
 theorem posteriorMAP_eq_mode_posterior [∀ a : G.NT, Nonempty (G.RulesWithLHS a)]
-    (D : Multiset (CFGTree T G.NT)) :
+    (D : Multiset (DerivationTree T G.NT)) :
     M.posteriorMAP D = (M.posterior D).mode :=
   M.toDMPCFG.posteriorMAP_eq_mode_posterior D
 

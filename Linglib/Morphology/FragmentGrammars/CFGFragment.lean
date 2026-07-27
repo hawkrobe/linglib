@@ -14,7 +14,7 @@ full derivation tree into fragments stored in memoized Pitman–Yor
 tables.
 
 This file provides the partial-tree data type and the embedding from
-`CFGTree` (which represents complete derivations only).
+`DerivationTree` (which represents complete derivations only).
 
 ## Main definitions
 
@@ -27,13 +27,13 @@ This file provides the partial-tree data type and the embedding from
   slots.
 - `CFGFragment.ofCFGTree` — embedding of complete derivations.
 
-## Relation to `CFGTree`
+## Relation to `DerivationTree`
 
-`CFGTree T N` is a derivation tree where every leaf carries a
+`DerivationTree T N` is a derivation tree where every leaf carries a
 terminal `T`. `CFGFragment T N` allows leaves to carry either a
-terminal `T` or an open nonterminal `N`. Every `CFGTree` embeds as
+terminal `T` or an open nonterminal `N`. Every `DerivationTree` embeds as
 a complete `CFGFragment` via `ofCFGTree`; the inverse projection
-(complete fragment → `CFGTree`) and the round-trip theorems are
+(complete fragment → `DerivationTree`) and the round-trip theorems are
 deferred to a Phase 3 file when fragment-grammar composition needs
 them.
 
@@ -99,21 +99,21 @@ def isCompleteList : List (CFGFragment T N) → Bool
 end
 
 mutual
-/-- Embed a `CFGTree` (which has only terminal leaves) as a complete
+/-- Embed a `DerivationTree` (which has only terminal leaves) as a complete
     `CFGFragment`. -/
-def ofCFGTree : CFGTree T N → CFGFragment T N
+def ofCFGTree : DerivationTree T N → CFGFragment T N
   | .leaf t => .leaf (.terminal t)
   | .node nt cs => CFGFragment.node nt (ofCFGTreeList cs)
 
 /-- Pointwise lift of `ofCFGTree` to lists. -/
-def ofCFGTreeList : List (CFGTree T N) → List (CFGFragment T N)
+def ofCFGTreeList : List (DerivationTree T N) → List (CFGFragment T N)
   | [] => []
   | t :: ts => ofCFGTree t :: ofCFGTreeList ts
 end
 
 mutual
 /-- `ofCFGTree` always produces a complete fragment. -/
-theorem ofCFGTree_isComplete (t : CFGTree T N) :
+theorem ofCFGTree_isComplete (t : DerivationTree T N) :
     (ofCFGTree t).isComplete = true := by
   match t with
   | .leaf _ => rfl
@@ -122,7 +122,7 @@ theorem ofCFGTree_isComplete (t : CFGTree T N) :
     exact ofCFGTreeList_isCompleteList cs
 
 /-- List version of `ofCFGTree_isComplete`. -/
-theorem ofCFGTreeList_isCompleteList (ts : List (CFGTree T N)) :
+theorem ofCFGTreeList_isCompleteList (ts : List (DerivationTree T N)) :
     isCompleteList (ofCFGTreeList ts) = true := by
   match ts with
   | [] => rfl
@@ -134,28 +134,28 @@ end
 
 mutual
 /-- Yields agree under the `ofCFGTree` embedding. -/
-theorem yieldT_ofCFGTree (t : CFGTree T N) :
+theorem yieldT_ofCFGTree (t : DerivationTree T N) :
     (ofCFGTree t).yieldT = t.yield := by
   match t with
   | .leaf _ => rfl
   | .node _ cs =>
-    show yieldTList (ofCFGTreeList cs) = CFGTree.yieldList cs
+    show yieldTList (ofCFGTreeList cs) = DerivationTree.yieldList cs
     exact yieldTList_ofCFGTreeList cs
 
 /-- List version of `yieldT_ofCFGTree`. -/
-theorem yieldTList_ofCFGTreeList (ts : List (CFGTree T N)) :
-    yieldTList (ofCFGTreeList ts) = CFGTree.yieldList ts := by
+theorem yieldTList_ofCFGTreeList (ts : List (DerivationTree T N)) :
+    yieldTList (ofCFGTreeList ts) = DerivationTree.yieldList ts := by
   match ts with
   | [] => rfl
   | t :: rest =>
     show (ofCFGTree t).yieldT ++ yieldTList (ofCFGTreeList rest) =
-         t.yield ++ CFGTree.yieldList rest
+         t.yield ++ DerivationTree.yieldList rest
     rw [yieldT_ofCFGTree t, yieldTList_ofCFGTreeList rest]
 end
 
 mutual
 /-- The embedding produces no open slots. -/
-theorem yieldNT_ofCFGTree (t : CFGTree T N) :
+theorem yieldNT_ofCFGTree (t : DerivationTree T N) :
     (ofCFGTree t).yieldNT = [] := by
   match t with
   | .leaf _ => rfl
@@ -164,7 +164,7 @@ theorem yieldNT_ofCFGTree (t : CFGTree T N) :
     exact yieldNTList_ofCFGTreeList cs
 
 /-- List version of `yieldNT_ofCFGTree`. -/
-theorem yieldNTList_ofCFGTreeList (ts : List (CFGTree T N)) :
+theorem yieldNTList_ofCFGTreeList (ts : List (DerivationTree T N)) :
     yieldNTList (ofCFGTreeList ts) = [] := by
   match ts with
   | [] => rfl

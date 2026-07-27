@@ -15,8 +15,8 @@ The CFL pumping property (`HasCFLPumpingProperty`) is defined over mathlib's
 
 The proof follows the standard textbook argument via derivation trees:
 
-1. **`exists_valid_tree`** ✓ (in `CFGTree.lean`)
-2. **`yield_length_le_of_height`** ✓ (in `CFGTree.lean`)
+1. **`exists_valid_tree`** ✓ (in `DerivationTree.lean`)
+2. **`yield_length_le_of_height`** ✓ (in `DerivationTree.lean`)
 3. **`pumping_from_tall_tree`** ✓: pigeonhole + subtree replacement +
    `validFor_derives`
 -/
@@ -45,7 +45,7 @@ private theorem flatten_replicate_succ_right {T : Type*} (l : List T) (n : Nat) 
 
 set_option maxHeartbeats 800000 in
 theorem pumping_from_tall_tree {T : Type*} (g : ContextFreeGrammar T)
-    (t : CFGTree T g.NT) (ht : t.ValidFor g)
+    (t : DerivationTree T g.NT) (ht : t.ValidFor g)
     (hroot : t.rootSymbol = .nonterminal g.initial)
     (hyield_long : t.yield.length ≥ g.pumpingConstant) :
     ∃ u v x y z : List T,
@@ -57,7 +57,7 @@ theorem pumping_from_tall_tree {T : Type*} (g : ContextFreeGrammar T)
   classical
   -- Step 1: Pick min-size valid tree with same yield and root
   obtain ⟨t_min, ht_min_v, ht_min_y, ht_min_r, ht_min_minimal⟩ :=
-    CFGTree.exists_min_size_tree t ht
+    DerivationTree.exists_min_size_tree t ht
   -- Step 2: Establish t_min.height > g.rules.card
   have htmin_tall : t_min.height > g.rules.card := by
     by_contra hle
@@ -73,7 +73,7 @@ theorem pumping_from_tall_tree {T : Type*} (g : ContextFreeGrammar T)
     omega
   -- Step 3: Max-descent path of length t_min.height - 1
   obtain ⟨p, hp_len, hpath⟩ :=
-    CFGTree.exists_pos_max_descent t_min (t_min.height - 1) (by omega)
+    DerivationTree.exists_pos_max_descent t_min (t_min.height - 1) (by omega)
   -- Step 4: Restricted pigeonhole. Use Finset.range (#rules + 1) with shift.
   -- offset = p.length - #rules. Indices in [offset, offset + #rules].
   have hoffset_le : p.length - g.rules.card + g.rules.card = p.length := by omega
@@ -88,13 +88,13 @@ theorem pumping_from_tall_tree {T : Type*} (g : ContextFreeGrammar T)
     match sub, hsub_h_ge with
     | .node nt children, _ => exact ⟨nt, children, hsub_at⟩
   let f : Nat → ContextFreeRule T g.NT := fun k =>
-    (CFGTree.ruleAt? t_min (p.take (k + offset))).getD ⟨g.initial, []⟩
+    (DerivationTree.ruleAt? t_min (p.take (k + offset))).getD ⟨g.initial, []⟩
   have hf_in : ∀ k ∈ Finset.range (g.rules.card + 1), f k ∈ g.rules := by
     intro k hk
     simp at hk
     have hk_off_le : k + offset ≤ p.length := by simp [offset]; omega
     obtain ⟨nt, children, hsub_k⟩ := hroot_at (k + offset) hk_off_le
-    obtain ⟨hrule_eq, hrule_in⟩ := CFGTree.ruleAt?_mem_rules t_min ht_min_v
+    obtain ⟨hrule_eq, hrule_in⟩ := DerivationTree.ruleAt?_mem_rules t_min ht_min_v
       (p.take (k + offset)) nt children hsub_k
     show f k ∈ g.rules
     simp only [f, hrule_eq, Option.getD_some]
@@ -120,26 +120,26 @@ theorem pumping_from_tall_tree {T : Type*} (g : ContextFreeGrammar T)
   -- Get the subtrees and rules at i, j
   obtain ⟨nt_o, ch_o, hsub_o⟩ := hroot_at i hi_le
   obtain ⟨nt_i, ch_i, hsub_i⟩ := hroot_at j hj_le
-  obtain ⟨hrule_o, hrule_o_in⟩ := CFGTree.ruleAt?_mem_rules t_min ht_min_v
+  obtain ⟨hrule_o, hrule_o_in⟩ := DerivationTree.ruleAt?_mem_rules t_min ht_min_v
     (p.take i) nt_o ch_o hsub_o
-  obtain ⟨hrule_i, hrule_i_in⟩ := CFGTree.ruleAt?_mem_rules t_min ht_min_v
+  obtain ⟨hrule_i, hrule_i_in⟩ := DerivationTree.ruleAt?_mem_rules t_min ht_min_v
     (p.take j) nt_i ch_i hsub_i
-  have hfa : f a = ⟨nt_o, ch_o.map CFGTree.rootSymbol⟩ := by
-    change (CFGTree.ruleAt? t_min (p.take i)).getD _ = _
+  have hfa : f a = ⟨nt_o, ch_o.map DerivationTree.rootSymbol⟩ := by
+    change (DerivationTree.ruleAt? t_min (p.take i)).getD _ = _
     rw [hrule_o]; rfl
-  have hfb : f b = ⟨nt_i, ch_i.map CFGTree.rootSymbol⟩ := by
-    change (CFGTree.ruleAt? t_min (p.take j)).getD _ = _
+  have hfb : f b = ⟨nt_i, ch_i.map DerivationTree.rootSymbol⟩ := by
+    change (DerivationTree.ruleAt? t_min (p.take j)).getD _ = _
     rw [hrule_i]; rfl
   have hroot_eq : nt_o = nt_i := by
-    have hh : (⟨nt_o, ch_o.map CFGTree.rootSymbol⟩ : ContextFreeRule T g.NT) =
-        ⟨nt_i, ch_i.map CFGTree.rootSymbol⟩ := by rw [← hfa, ← hfb, hfeq]
+    have hh : (⟨nt_o, ch_o.map DerivationTree.rootSymbol⟩ : ContextFreeRule T g.NT) =
+        ⟨nt_i, ch_i.map DerivationTree.rootSymbol⟩ := by rw [← hfa, ← hfb, hfeq]
     exact ContextFreeRule.mk.injEq _ _ _ _ |>.mp hh |>.1
   -- t_outer = .node nt_o ch_o, t_inner = .node nt_i ch_i
   -- t_outer has same root nonterminal as t_inner
-  set t_outer : CFGTree T g.NT := .node nt_o ch_o with ht_outer_def
-  set t_inner : CFGTree T g.NT := .node nt_i ch_i with ht_inner_def
+  set t_outer : DerivationTree T g.NT := .node nt_o ch_o with ht_outer_def
+  set t_inner : DerivationTree T g.NT := .node nt_i ch_i with ht_inner_def
   have hroot_o_eq_i : t_outer.rootSymbol = t_inner.rootSymbol := by
-    show CFGTree.rootSymbol (.node nt_o ch_o) = CFGTree.rootSymbol (.node nt_i ch_i)
+    show DerivationTree.rootSymbol (.node nt_o ch_o) = DerivationTree.rootSymbol (.node nt_i ch_i)
     show Symbol.nonterminal nt_o = Symbol.nonterminal nt_i
     rw [hroot_eq]
   -- Bound on t_outer.height
@@ -160,14 +160,14 @@ theorem pumping_from_tall_tree {T : Type*} (g : ContextFreeGrammar T)
     show t_min.subtreeAt? (p.take i ++ (p.take j).drop i) = _
     rw [← hsubtree_path_eq]; exact hsub_i
   have hsub_inner_in_outer : t_outer.subtreeAt? p_inner_rel = some t_inner := by
-    rw [CFGTree.subtreeAt?_append] at hp_inner_compose
+    rw [DerivationTree.subtreeAt?_append] at hp_inner_compose
     rw [show t_min.subtreeAt? p_outer = some t_outer from hsub_o] at hp_inner_compose
     simpa using hp_inner_compose
   -- Step 6: Yield decomposition
   obtain ⟨u, z, hyield_t, hreplace_t⟩ :=
-    CFGTree.yield_replaceAt_decomp t_min p_outer t_outer hsub_o
+    DerivationTree.yield_replaceAt_decomp t_min p_outer t_outer hsub_o
   obtain ⟨v, y, hyield_outer, hreplace_outer⟩ :=
-    CFGTree.yield_replaceAt_decomp t_outer p_inner_rel t_inner hsub_inner_in_outer
+    DerivationTree.yield_replaceAt_decomp t_outer p_inner_rel t_inner hsub_inner_in_outer
   -- x := t_inner.yield
   let x := t_inner.yield
   -- t.yield = u ++ v ++ x ++ y ++ z (via t_min)
@@ -182,7 +182,7 @@ theorem pumping_from_tall_tree {T : Type*} (g : ContextFreeGrammar T)
       rw [hyield_outer]
     rw [← ht_outer_yield_eq]
     have hbound := yield_length_le_of_height g t_outer
-      (CFGTree.subtreeAt?_validFor t_min ht_min_v p_outer t_outer hsub_o)
+      (DerivationTree.subtreeAt?_validFor t_min ht_min_v p_outer t_outer hsub_o)
     have hpow_le : g.maxBranch ^ t_outer.height ≤ g.maxBranch ^ (g.rules.card + 1) :=
       Nat.pow_le_pow_right (by have := g.maxBranch_ge_two; omega) ht_outer_h_le
     unfold ContextFreeGrammar.pumpingConstant
@@ -204,20 +204,20 @@ theorem pumping_from_tall_tree {T : Type*} (g : ContextFreeGrammar T)
       show (t_min.replaceAt p_outer t_inner).yield = t_min.yield
       rw [hreplace_t t_inner, hyield_t, ht_outer_yield_eq_inner]
     have hvalid_replaced : t_replaced.ValidFor g := by
-      apply CFGTree.validFor_replaceAt t_min p_outer t_outer t_inner hsub_o
+      apply DerivationTree.validFor_replaceAt t_min p_outer t_outer t_inner hsub_o
         hroot_o_eq_i.symm ht_min_v
-      exact CFGTree.subtreeAt?_validFor t_min ht_min_v _ _ hp_inner_compose
+      exact DerivationTree.subtreeAt?_validFor t_min ht_min_v _ _ hp_inner_compose
     have hroot_replaced : t_replaced.rootSymbol = t_min.rootSymbol := by
       show (t_min.replaceAt p_outer t_inner).rootSymbol = t_min.rootSymbol
       cases hp_outer_eq : p_outer with
       | nil =>
         have hto_eq_tmin : t_outer = t_min := by
           have h0 : t_min.subtreeAt? [] = some t_outer := by rw [← hp_outer_eq]; exact hsub_o
-          simp [CFGTree.subtreeAt?] at h0; exact h0.symm
-        simp [CFGTree.replaceAt]
+          simp [DerivationTree.subtreeAt?] at h0; exact h0.symm
+        simp [DerivationTree.replaceAt]
         rw [← hroot_o_eq_i, ← hto_eq_tmin]
       | cons hh tt =>
-        exact CFGTree.rootSymbol_replaceAt_cons t_min hh tt t_inner
+        exact DerivationTree.rootSymbol_replaceAt_cons t_min hh tt t_inner
     -- size strict decrease
     have hsize_lt : t_replaced.size < t_min.size := by
       have hi_size_lt : t_inner.size < t_outer.size := by
@@ -236,8 +236,8 @@ theorem pumping_from_tall_tree {T : Type*} (g : ContextFreeGrammar T)
           · exact ⟨a, b, rfl⟩
         have hsub' : t_outer.subtreeAt? (idx :: rest) = some t_inner := by
           rw [← hp_eq]; exact hsub_inner_in_outer
-        exact CFGTree.size_subtreeAt?_lt_of_cons t_outer idx rest t_inner hsub'
-      exact CFGTree.size_replaceAt_lt t_min p_outer t_outer t_inner hsub_o hi_size_lt
+        exact DerivationTree.size_subtreeAt?_lt_of_cons t_outer idx rest t_inner hsub'
+      exact DerivationTree.size_replaceAt_lt t_min p_outer t_outer t_inner hsub_o hi_size_lt
     -- Apply minimality
     have := ht_min_minimal t_replaced hvalid_replaced
       (by rw [hyield_replaced]; exact ht_min_y)
@@ -246,12 +246,12 @@ theorem pumping_from_tall_tree {T : Type*} (g : ContextFreeGrammar T)
   -- Step 9: Pumping iteration
   refine ⟨u, v, x, y, z, hyield_decomp, hvxy_bound, hvy_pos, ?_⟩
   -- For ∀ i, prove the pumped string is in g.language
-  -- Define pumpInner : Nat → CFGTree, with yield = v^i ++ x ++ y^i
+  -- Define pumpInner : Nat → DerivationTree, with yield = v^i ++ x ++ y^i
   intro k
   -- pumpInner k: replace t_inner with itself k times (giving v^k ++ x ++ y^k yield in t_outer's slot)
   -- Then graft into t_min at p_outer.
   -- For brevity, define recursively and prove by induction.
-  let pumpInner : Nat → CFGTree T g.NT := fun n => Nat.rec t_inner
+  let pumpInner : Nat → DerivationTree T g.NT := fun n => Nat.rec t_inner
     (fun _ prev => t_outer.replaceAt p_inner_rel prev) n
   have hpump_yield : ∀ n, (pumpInner n).yield =
       List.flatten (List.replicate n v) ++ x ++ List.flatten (List.replicate n y) := by
@@ -273,23 +273,23 @@ theorem pumping_from_tall_tree {T : Type*} (g : ContextFreeGrammar T)
       show (t_outer.replaceAt p_inner_rel (pumpInner m)).rootSymbol = _
       cases hp_rel_eq : p_inner_rel with
       | nil =>
-        simp [CFGTree.replaceAt]
+        simp [DerivationTree.replaceAt]
         exact ih
       | cons hh tt =>
-        exact (CFGTree.rootSymbol_replaceAt_cons t_outer hh tt (pumpInner m)).trans hroot_o_eq_i
+        exact (DerivationTree.rootSymbol_replaceAt_cons t_outer hh tt (pumpInner m)).trans hroot_o_eq_i
   have hpump_valid : ∀ n, (pumpInner n).ValidFor g := by
     intro n
     induction n with
     | zero =>
       show t_inner.ValidFor g
-      exact CFGTree.subtreeAt?_validFor t_min ht_min_v _ _ hp_inner_compose
+      exact DerivationTree.subtreeAt?_validFor t_min ht_min_v _ _ hp_inner_compose
     | succ m ih =>
       show (t_outer.replaceAt p_inner_rel (pumpInner m)).ValidFor g
-      apply CFGTree.validFor_replaceAt t_outer p_inner_rel t_inner (pumpInner m)
+      apply DerivationTree.validFor_replaceAt t_outer p_inner_rel t_inner (pumpInner m)
         hsub_inner_in_outer
       · -- (pumpInner m).rootSymbol = t_inner.rootSymbol
         exact hpump_root m
-      · exact CFGTree.subtreeAt?_validFor t_min ht_min_v _ _ hsub_o
+      · exact DerivationTree.subtreeAt?_validFor t_min ht_min_v _ _ hsub_o
       · exact ih
   -- Final pumped tree
   let final := t_min.replaceAt p_outer (pumpInner k)
@@ -299,7 +299,7 @@ theorem pumping_from_tall_tree {T : Type*} (g : ContextFreeGrammar T)
     rw [hreplace_t (pumpInner k), hpump_yield k]
     simp [List.append_assoc]
   have hfinal_valid : final.ValidFor g := by
-    apply CFGTree.validFor_replaceAt t_min p_outer t_outer (pumpInner k) hsub_o
+    apply DerivationTree.validFor_replaceAt t_min p_outer t_outer (pumpInner k) hsub_o
     · exact (hpump_root k).trans hroot_o_eq_i.symm
     · exact ht_min_v
     · exact hpump_valid k
@@ -309,17 +309,17 @@ theorem pumping_from_tall_tree {T : Type*} (g : ContextFreeGrammar T)
     | nil =>
       have hto_eq_tmin : t_outer = t_min := by
         have h0 : t_min.subtreeAt? [] = some t_outer := by rw [← hp_outer_eq]; exact hsub_o
-        simp [CFGTree.subtreeAt?] at h0; exact h0.symm
-      simp [CFGTree.replaceAt]
+        simp [DerivationTree.subtreeAt?] at h0; exact h0.symm
+      simp [DerivationTree.replaceAt]
       rw [hpump_root k, ← hroot_o_eq_i, hto_eq_tmin, ht_min_r, hroot]
     | cons hh tt =>
-      exact (CFGTree.rootSymbol_replaceAt_cons t_min hh tt (pumpInner k)).trans
+      exact (DerivationTree.rootSymbol_replaceAt_cons t_min hh tt (pumpInner k)).trans
         (by rw [ht_min_r, hroot])
   -- Conclude: final.yield ∈ g.language
   show (u ++ List.flatten (List.replicate k v) ++ x ++
         List.flatten (List.replicate k y) ++ z) ∈ g.language
   rw [← hfinal_yield]
-  have h := CFGTree.validFor_derives final hfinal_valid
+  have h := DerivationTree.validFor_derives final hfinal_valid
   rw [hfinal_root] at h
   exact h
 

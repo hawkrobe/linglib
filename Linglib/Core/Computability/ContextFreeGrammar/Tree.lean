@@ -5,53 +5,53 @@ import Linglib.Core.Order.Branching
 /-!
 # Derivation Trees for Context-Free Grammars
 
-`CFGTree T N` is a derivation tree whose leaves hold terminal symbols of type `T`
+`DerivationTree T N` is a derivation tree whose leaves hold terminal symbols of type `T`
 and whose internal nodes hold a nonterminal of type `N` together with a list of
 children. The file provides:
 
-- `ValidFor g` — validity: every internal node matches a production rule in `g`
-- `yield` / `yieldList` — terminal frontier (left-to-right)
-- `subtreeAt?` / `replaceAt` — position-based subtree access and replacement
-- `validFor_derives` — soundness: a valid tree derives its yield from its root
-- Tree existence (`exists_valid_tree`) and height–yield bounds
-- Size measure, minimality, pigeonhole on derivation paths
+* `ValidFor g`: validity — every internal node matches a production rule in `g`.
+* `yield` / `yieldList`: the terminal frontier, left-to-right.
+* `subtreeAt?` / `replaceAt`: position-based subtree access and replacement.
+* `validFor_derives`: soundness — a valid tree derives its yield from its root.
+* `exists_valid_tree`: tree existence, with height–yield bounds.
+* `size`: the size measure, with minimality and a pigeonhole on derivation paths.
 -/
 /-- A derivation tree for a context-free grammar.
     Leaves hold terminal symbols; internal nodes hold a nonterminal
     and a list of children (matching a production rule's RHS). -/
-inductive CFGTree (T N : Type*) where
-  | leaf (t : T) : CFGTree T N
-  | node (nt : N) (children : List (CFGTree T N)) : CFGTree T N
+inductive DerivationTree (T N : Type*) where
+  | leaf (t : T) : DerivationTree T N
+  | node (nt : N) (children : List (DerivationTree T N)) : DerivationTree T N
 
-namespace CFGTree
+namespace DerivationTree
 
 variable {T N : Type*}
 
 /-- The root symbol of a subtree. -/
-def rootSymbol : CFGTree T N → Symbol T N
+def rootSymbol : DerivationTree T N → Symbol T N
   | .leaf t => .terminal t
   | .node nt _ => .nonterminal nt
 
 mutual
 /-- The terminal frontier (yield) of a derivation tree, read left to right. -/
-def yield : CFGTree T N → List T
+def yield : DerivationTree T N → List T
   | .leaf t => [t]
   | .node _ children => yieldList children
 
 /-- Concatenate yields of a list of subtrees. -/
-def yieldList : List (CFGTree T N) → List T
+def yieldList : List (DerivationTree T N) → List T
   | [] => []
   | t :: ts => t.yield ++ yieldList ts
 end
 
 mutual
 /-- The height: 0 for leaves, 1 + max child height for nodes. -/
-def height : CFGTree T N → Nat
+def height : DerivationTree T N → Nat
   | .leaf _ => 0
   | .node _ children => 1 + heightMax children
 
 /-- Maximum height among a list of subtrees. -/
-def heightMax : List (CFGTree T N) → Nat
+def heightMax : List (DerivationTree T N) → Nat
   | [] => 0
   | t :: ts => max t.height (heightMax ts)
 end
@@ -59,9 +59,9 @@ end
 /-- A derivation tree is valid for a CFG if every internal node (A, children)
     corresponds to a rule A → [rootSymbol c₁, ..., rootSymbol cₖ], and all
     children are themselves valid. -/
-inductive ValidFor (g : ContextFreeGrammar T) : CFGTree T g.NT → Prop where
+inductive ValidFor (g : ContextFreeGrammar T) : DerivationTree T g.NT → Prop where
   | leaf (t : T) : ValidFor g (.leaf t)
-  | node (nt : g.NT) (children : List (CFGTree T g.NT))
+  | node (nt : g.NT) (children : List (DerivationTree T g.NT))
     (hrule : ⟨nt, children.map rootSymbol⟩ ∈ g.rules)
     (hchildren : ∀ c ∈ children, ValidFor g c) :
     ValidFor g (.node nt children)
@@ -78,14 +78,14 @@ mutual
     used by any weighted-CFG analysis (PCFG corpus probability,
     Dirichlet posterior, etc.). -/
 def ruleCount (r : ContextFreeRule T N) :
-    CFGTree T N → ℕ
+    DerivationTree T N → ℕ
   | .leaf _ => 0
   | .node nt cs =>
       (if r = ⟨nt, cs.map rootSymbol⟩ then 1 else 0) + ruleCountList r cs
 
 /-- List version of `ruleCount` (mutual companion). -/
 def ruleCountList (r : ContextFreeRule T N) :
-    List (CFGTree T N) → ℕ
+    List (DerivationTree T N) → ℕ
   | [] => 0
   | t :: ts => ruleCount r t + ruleCountList r ts
 end
@@ -93,39 +93,39 @@ end
 /-- Total number of times rule `r` is used across a corpus `D` of
     derivation trees. -/
 def corpusRuleCount (r : ContextFreeRule T N)
-    (D : Multiset (CFGTree T N)) : ℕ :=
+    (D : Multiset (DerivationTree T N)) : ℕ :=
   (D.map (ruleCount r)).sum
 
 /-- Empty corpus contributes no rule applications. -/
 @[simp]
 theorem corpusRuleCount_zero (r : ContextFreeRule T N) :
-    corpusRuleCount r (0 : Multiset (CFGTree T N)) = 0 := by
+    corpusRuleCount r (0 : Multiset (DerivationTree T N)) = 0 := by
   simp [corpusRuleCount]
 
 /-- Corpus rule counts add over disjoint corpora — `corpusRuleCount`
     is a `Multiset` sum over `ruleCount`, which respects multiset
     addition by `Multiset.map_add` + `Multiset.sum_add`. -/
 theorem corpusRuleCount_add (r : ContextFreeRule T N)
-    (D₁ D₂ : Multiset (CFGTree T N)) :
+    (D₁ D₂ : Multiset (DerivationTree T N)) :
     corpusRuleCount r (D₁ + D₂) = corpusRuleCount r D₁ + corpusRuleCount r D₂ := by
   unfold corpusRuleCount
   rw [Multiset.map_add, Multiset.sum_add]
 
 end RuleCount
 
-end CFGTree
+end DerivationTree
 
 -- ============================================================================
 -- CFL Pumping Lemma — Helper Lemmas
 -- ============================================================================
 
-private theorem CFGTree.height_le_heightMax {T N : Type*}
-    {t : CFGTree T N} {ts : List (CFGTree T N)}
-    (ht : t ∈ ts) : t.height ≤ CFGTree.heightMax ts := by
+private theorem DerivationTree.height_le_heightMax {T N : Type*}
+    {t : DerivationTree T N} {ts : List (DerivationTree T N)}
+    (ht : t ∈ ts) : t.height ≤ DerivationTree.heightMax ts := by
   induction ts with
   | nil => simp at ht
   | cons s ss ih =>
-    simp only [CFGTree.heightMax]
+    simp only [DerivationTree.heightMax]
     rcases List.mem_cons.mp ht with rfl | h
     · exact le_max_left _ _
     · exact le_trans (ih h) (le_max_right _ _)
@@ -190,24 +190,24 @@ private theorem ContextFreeGrammar.maxBranch_ge_output {T : Type*} (g : ContextF
     ⟨r, Multiset.mem_toList.mpr (Finset.mem_val.mpr hr), rfl⟩
 
 /-- Sum of children's yields is at most `|children| * b ^ heightMax`. -/
-private theorem CFGTree.yieldList_le {T N : Type*} (b : Nat) (_hb : b ≥ 2)
-    (ts : List (CFGTree T N))
+private theorem DerivationTree.yieldList_le {T N : Type*} (b : Nat) (_hb : b ≥ 2)
+    (ts : List (DerivationTree T N))
     (hbound : ∀ c ∈ ts, c.yield.length ≤ b ^ c.height) :
-    (CFGTree.yieldList ts).length ≤ ts.length * b ^ CFGTree.heightMax ts := by
+    (DerivationTree.yieldList ts).length ≤ ts.length * b ^ DerivationTree.heightMax ts := by
   induction ts with
-  | nil => simp [CFGTree.yieldList, CFGTree.heightMax]
+  | nil => simp [DerivationTree.yieldList, DerivationTree.heightMax]
   | cons t rest ih =>
-    simp only [CFGTree.yieldList, List.length_append, List.length_cons, CFGTree.heightMax]
+    simp only [DerivationTree.yieldList, List.length_append, List.length_cons, DerivationTree.heightMax]
     have ht := hbound t (List.mem_cons_self ..)
     have hrest := ih (fun c hc => hbound c (List.mem_cons_of_mem t hc))
-    have hle_t : b ^ t.height ≤ b ^ (max t.height (CFGTree.heightMax rest)) :=
+    have hle_t : b ^ t.height ≤ b ^ (max t.height (DerivationTree.heightMax rest)) :=
       Nat.pow_le_pow_right (by omega) (le_max_left _ _)
-    have hle_rest : b ^ (CFGTree.heightMax rest) ≤
-        b ^ (max t.height (CFGTree.heightMax rest)) :=
+    have hle_rest : b ^ (DerivationTree.heightMax rest) ≤
+        b ^ (max t.height (DerivationTree.heightMax rest)) :=
       Nat.pow_le_pow_right (by omega) (le_max_right _ _)
-    set p := b ^ (max t.height (CFGTree.heightMax rest))
+    set p := b ^ (max t.height (DerivationTree.heightMax rest))
     have h1 : t.yield.length ≤ p := le_trans ht hle_t
-    have h2 : (CFGTree.yieldList rest).length ≤ rest.length * p :=
+    have h2 : (DerivationTree.yieldList rest).length ≤ rest.length * p :=
       le_trans hrest (Nat.mul_le_mul_left _ hle_rest)
     have h3 : (rest.length + 1) * p = p + rest.length * p := by
       rw [Nat.add_mul, Nat.one_mul, Nat.add_comm]
@@ -313,19 +313,19 @@ private theorem Derives.of_terminal {t : T} {v : List (Symbol T g.NT)}
 
 /-- The yield of a list of leaves is the original list of terminals. -/
 private theorem yieldList_leaves (w : List T) :
-    CFGTree.yieldList (w.map (CFGTree.leaf : T → CFGTree T g.NT)) = w := by
+    DerivationTree.yieldList (w.map (DerivationTree.leaf : T → DerivationTree T g.NT)) = w := by
   induction w with
   | nil => rfl
   | cons t ts ih =>
-    simp only [List.map_cons, CFGTree.yieldList, CFGTree.yield, List.singleton_append, ih]
+    simp only [List.map_cons, DerivationTree.yieldList, DerivationTree.yield, List.singleton_append, ih]
 
 /-- `yieldList` distributes over list concatenation. -/
-private theorem yieldList_append {N : Type*} (xs ys : List (CFGTree T N)) :
-    CFGTree.yieldList (xs ++ ys) = CFGTree.yieldList xs ++ CFGTree.yieldList ys := by
+private theorem yieldList_append {N : Type*} (xs ys : List (DerivationTree T N)) :
+    DerivationTree.yieldList (xs ++ ys) = DerivationTree.yieldList xs ++ DerivationTree.yieldList ys := by
   induction xs with
-  | nil => simp [CFGTree.yieldList]
+  | nil => simp [DerivationTree.yieldList]
   | cons x xs ih =>
-    simp only [List.cons_append, CFGTree.yieldList, ih, List.append_assoc]
+    simp only [List.cons_append, DerivationTree.yieldList, ih, List.append_assoc]
 
 set_option maxHeartbeats 800000 in
 /-- **Forest existence.** For any sentential form `sf` deriving a terminal string `w`,
@@ -333,14 +333,14 @@ set_option maxHeartbeats 800000 in
     concatenated yields equal `w`. -/
 private theorem forest_exists {sf : List (Symbol T g.NT)} {w : List T}
     (h : g.Derives sf (w.map Symbol.terminal)) :
-    ∃ trees : List (CFGTree T g.NT),
-      trees.map CFGTree.rootSymbol = sf ∧
+    ∃ trees : List (DerivationTree T g.NT),
+      trees.map DerivationTree.rootSymbol = sf ∧
       (∀ t ∈ trees, t.ValidFor g) ∧
-      CFGTree.yieldList trees = w := by
+      DerivationTree.yieldList trees = w := by
   induction h using Relation.ReflTransGen.head_induction_on with
   | refl =>
-    refine ⟨w.map (CFGTree.leaf : T → CFGTree T g.NT), ?_, ?_, ?_⟩
-    · simp [List.map_map, Function.comp_def, CFGTree.rootSymbol]
+    refine ⟨w.map (DerivationTree.leaf : T → DerivationTree T g.NT), ?_, ?_, ?_⟩
+    · simp [List.map_map, Function.comp_def, DerivationTree.rootSymbol]
     · intro t ht
       simp only [List.mem_map] at ht
       obtain ⟨_, _, rfl⟩ := ht
@@ -355,28 +355,28 @@ private theorem forest_exists {sf : List (Symbol T g.NT)} {w : List T}
     let prefix' := forest_c.take pLen
     let middle := (forest_c.drop pLen).take outLen
     let suffix := forest_c.drop (pLen + outLen)
-    let new_node : CFGTree T g.NT := .node r.input middle
+    let new_node : DerivationTree T g.NT := .node r.input middle
     let new_forest := prefix' ++ [new_node] ++ suffix
-    have hprefix_root : prefix'.map CFGTree.rootSymbol = p := by
-      have h1 : (forest_c.take pLen).map CFGTree.rootSymbol =
-          (forest_c.map CFGTree.rootSymbol).take pLen := by rw [List.map_take]
+    have hprefix_root : prefix'.map DerivationTree.rootSymbol = p := by
+      have h1 : (forest_c.take pLen).map DerivationTree.rootSymbol =
+          (forest_c.map DerivationTree.rootSymbol).take pLen := by rw [List.map_take]
       rw [show prefix' = forest_c.take pLen from rfl, h1, hroot, hc]
       simp [pLen]
-    have hmiddle_root : middle.map CFGTree.rootSymbol = r.output := by
-      have h1 : ((forest_c.drop pLen).take outLen).map CFGTree.rootSymbol =
-          ((forest_c.map CFGTree.rootSymbol).drop pLen).take outLen := by
+    have hmiddle_root : middle.map DerivationTree.rootSymbol = r.output := by
+      have h1 : ((forest_c.drop pLen).take outLen).map DerivationTree.rootSymbol =
+          ((forest_c.map DerivationTree.rootSymbol).drop pLen).take outLen := by
         rw [List.map_take, List.map_drop]
       rw [show middle = (forest_c.drop pLen).take outLen from rfl, h1, hroot, hc]
       simp [pLen, outLen, List.append_assoc]
-    have hsuffix_root : suffix.map CFGTree.rootSymbol = q := by
-      have h1 : (forest_c.drop (pLen + outLen)).map CFGTree.rootSymbol =
-          (forest_c.map CFGTree.rootSymbol).drop (pLen + outLen) := by
+    have hsuffix_root : suffix.map DerivationTree.rootSymbol = q := by
+      have h1 : (forest_c.drop (pLen + outLen)).map DerivationTree.rootSymbol =
+          (forest_c.map DerivationTree.rootSymbol).drop (pLen + outLen) := by
         rw [List.map_drop]
       rw [show suffix = forest_c.drop (pLen + outLen) from rfl, h1, hroot, hc]
       simp [pLen, outLen, List.append_assoc]
     refine ⟨new_forest, ?_, ?_, ?_⟩
     · rw [hsf]
-      show (prefix' ++ [new_node] ++ suffix).map CFGTree.rootSymbol =
+      show (prefix' ++ [new_node] ++ suffix).map DerivationTree.rootSymbol =
            p ++ [Symbol.nonterminal r.input] ++ q
       simp only [List.map_append, List.map_cons, List.map_nil]
       rw [hprefix_root, hsuffix_root]
@@ -395,7 +395,7 @@ private theorem forest_exists {sf : List (Symbol T g.NT)} {w : List T}
             exact List.mem_of_mem_drop this
           exact hvalid c this
       · exact hvalid t (List.mem_of_mem_drop ht)
-    · show CFGTree.yieldList new_forest = w
+    · show DerivationTree.yieldList new_forest = w
       have h_decomp : forest_c = prefix' ++ middle ++ suffix := by
         show forest_c = forest_c.take pLen ++ (forest_c.drop pLen).take outLen ++
                         forest_c.drop (pLen + outLen)
@@ -403,14 +403,14 @@ private theorem forest_exists {sf : List (Symbol T g.NT)} {w : List T}
                         ← List.take_append_drop outLen (forest_c.drop pLen),
                         List.drop_drop]
         rw [List.append_assoc]
-      have hy_orig : CFGTree.yieldList (prefix' ++ middle ++ suffix) = w := by
+      have hy_orig : DerivationTree.yieldList (prefix' ++ middle ++ suffix) = w := by
         rw [← h_decomp]; exact hyield
       rw [yieldList_append, yieldList_append] at hy_orig
-      show CFGTree.yieldList (prefix' ++ [new_node] ++ suffix) = w
+      show DerivationTree.yieldList (prefix' ++ [new_node] ++ suffix) = w
       rw [yieldList_append, yieldList_append]
-      have h_node_yield : CFGTree.yieldList [new_node] = CFGTree.yieldList middle := by
-        show CFGTree.yieldList [new_node] = CFGTree.yieldList middle
-        simp [CFGTree.yieldList, CFGTree.yield, new_node]
+      have h_node_yield : DerivationTree.yieldList [new_node] = DerivationTree.yieldList middle := by
+        show DerivationTree.yieldList [new_node] = DerivationTree.yieldList middle
+        simp [DerivationTree.yieldList, DerivationTree.yield, new_node]
       rw [h_node_yield]
       exact hy_orig
 
@@ -426,7 +426,7 @@ end ContextFreeGrammar
     the rewritten nonterminal back into a single node tree. -/
 theorem exists_valid_tree {T : Type*} (g : ContextFreeGrammar T)
     (w : List T) (hw : w ∈ g.language) :
-    ∃ t : CFGTree T g.NT,
+    ∃ t : DerivationTree T g.NT,
       t.ValidFor g ∧ t.yield = w ∧ t.rootSymbol = .nonterminal g.initial := by
   have hd : g.Derives [Symbol.nonterminal g.initial] (w.map Symbol.terminal) := hw
   obtain ⟨trees, hroot, hvalid, hyield⟩ := ContextFreeGrammar.forest_exists hd
@@ -437,10 +437,10 @@ theorem exists_valid_tree {T : Type*} (g : ContextFreeGrammar T)
   | [t], _ =>
     refine ⟨t, ?_, ?_, ?_⟩
     · exact hvalid t (List.mem_singleton.mpr rfl)
-    · have hy : CFGTree.yieldList [t] = w := hyield
-      simp only [CFGTree.yieldList, List.append_nil] at hy
+    · have hy : DerivationTree.yieldList [t] = w := hyield
+      simp only [DerivationTree.yieldList, List.append_nil] at hy
       exact hy
-    · have hr : [t].map CFGTree.rootSymbol = [Symbol.nonterminal g.initial] := hroot
+    · have hr : [t].map DerivationTree.rootSymbol = [Symbol.nonterminal g.initial] := hroot
       simp at hr; exact hr
 
 set_option maxHeartbeats 400000 in
@@ -451,25 +451,25 @@ set_option maxHeartbeats 400000 in
     1 = b⁰ leaves. A node with children c₁...cₖ (k ≤ b) has
     |yield| = Σᵢ |yield(cᵢ)| ≤ k · b^(max heights) ≤ b · b^(h-1) = b^h. -/
 theorem yield_length_le_of_height {T : Type*} (g : ContextFreeGrammar T)
-    (t : CFGTree T g.NT) (ht : t.ValidFor g) :
+    (t : DerivationTree T g.NT) (ht : t.ValidFor g) :
     t.yield.length ≤ g.maxBranch ^ t.height := by
   match t, ht with
-  | .leaf _, _ => simp [CFGTree.yield, CFGTree.height]
+  | .leaf _, _ => simp [DerivationTree.yield, DerivationTree.height]
   | .node nt children, .node _ _ hrule hvalid =>
-    simp only [CFGTree.yield, CFGTree.height]
+    simp only [DerivationTree.yield, DerivationTree.height]
     have hchildren_bound : ∀ c ∈ children, c.yield.length ≤ g.maxBranch ^ c.height :=
       fun c hc => yield_length_le_of_height g c (hvalid c hc)
-    have hlist := CFGTree.yieldList_le g.maxBranch g.maxBranch_ge_two children hchildren_bound
+    have hlist := DerivationTree.yieldList_le g.maxBranch g.maxBranch_ge_two children hchildren_bound
     have hlen : children.length ≤ g.maxBranch := by
-      have heq : children.length = (children.map CFGTree.rootSymbol).length := by simp
+      have heq : children.length = (children.map DerivationTree.rootSymbol).length := by simp
       rw [heq]
-      show (children.map CFGTree.rootSymbol).length ≤ g.maxBranch
-      have : (children.map CFGTree.rootSymbol).length =
-          (ContextFreeRule.mk nt (children.map CFGTree.rootSymbol)).output.length := rfl
+      show (children.map DerivationTree.rootSymbol).length ≤ g.maxBranch
+      have : (children.map DerivationTree.rootSymbol).length =
+          (ContextFreeRule.mk nt (children.map DerivationTree.rootSymbol)).output.length := rfl
       rw [this]
-      exact g.maxBranch_ge_output ⟨nt, children.map CFGTree.rootSymbol⟩ hrule
+      exact g.maxBranch_ge_output ⟨nt, children.map DerivationTree.rootSymbol⟩ hrule
     set b := g.maxBranch
-    set hm := CFGTree.heightMax children
+    set hm := DerivationTree.heightMax children
     have h1 : children.length * b ^ hm ≤ b * b ^ hm := Nat.mul_le_mul_right _ hlen
     have h2 : b * b ^ hm = b ^ (1 + hm) := by
       rw [show 1 + hm = hm + 1 from by omega, Nat.pow_succ']
@@ -479,7 +479,7 @@ termination_by sizeOf t
 -- Pumping Infrastructure: Position-based Subtree Access
 -- ============================================================================
 
-namespace CFGTree
+namespace DerivationTree
 
 variable {T N : Type*}
 
@@ -487,7 +487,7 @@ variable {T N : Type*}
 abbrev Pos := List Nat
 
 /-- Subtree at a given position. Returns `none` if the path is invalid. -/
-def subtreeAt? : CFGTree T N → Pos → Option (CFGTree T N)
+def subtreeAt? : DerivationTree T N → Pos → Option (DerivationTree T N)
   | t, [] => some t
   | .leaf _, _ :: _ => none
   | .node _ children, i :: rest =>
@@ -495,7 +495,7 @@ def subtreeAt? : CFGTree T N → Pos → Option (CFGTree T N)
 
 /-- Replace the subtree at a given position. If the path is invalid, returns the
     original tree unchanged. -/
-def replaceAt : CFGTree T N → Pos → CFGTree T N → CFGTree T N
+def replaceAt : DerivationTree T N → Pos → DerivationTree T N → DerivationTree T N
   | _, [], new => new
   | .leaf t, _ :: _, _ => .leaf t
   | .node nt children, i :: rest, new =>
@@ -505,8 +505,8 @@ def replaceAt : CFGTree T N → Pos → CFGTree T N → CFGTree T N
       .node nt children
 
 /-- Replacing a subtree at a non-root position preserves the root symbol. -/
-theorem rootSymbol_replaceAt_cons (t : CFGTree T N) (i : Nat) (rest : Pos)
-    (new : CFGTree T N) :
+theorem rootSymbol_replaceAt_cons (t : DerivationTree T N) (i : Nat) (rest : Pos)
+    (new : DerivationTree T N) :
     (t.replaceAt (i :: rest) new).rootSymbol = t.rootSymbol := by
   match t with
   | .leaf _ => rfl
@@ -517,11 +517,11 @@ theorem rootSymbol_replaceAt_cons (t : CFGTree T N) (i : Nat) (rest : Pos)
 
 /-- Yield decomposition: replacing a subtree at position `p` produces yield
     `pre ++ new.yield ++ post`, where `pre`/`post` are the surrounding context. -/
-theorem yield_replaceAt_decomp (t : CFGTree T N) (p : Pos) (sub : CFGTree T N)
+theorem yield_replaceAt_decomp (t : DerivationTree T N) (p : Pos) (sub : DerivationTree T N)
     (h : t.subtreeAt? p = some sub) :
     ∃ pre post : List T,
       t.yield = pre ++ sub.yield ++ post ∧
-      ∀ new : CFGTree T N, (t.replaceAt p new).yield = pre ++ new.yield ++ post := by
+      ∀ new : DerivationTree T N, (t.replaceAt p new).yield = pre ++ new.yield ++ post := by
   induction p generalizing t with
   | nil =>
     simp [subtreeAt?] at h
@@ -548,7 +548,7 @@ theorem yield_replaceAt_decomp (t : CFGTree T N) (p : Pos) (sub : CFGTree T N)
             _ = children.take i ++ children[i] :: children.drop (i+1) := by
                 congr 1; exact List.drop_eq_getElem_cons hi_lt
             _ = children.take i ++ child :: children.drop (i+1) := by rw [hget]
-        have hsplit_set : ∀ new : CFGTree T N,
+        have hsplit_set : ∀ new : DerivationTree T N,
             children.set i new = children.take i ++ new :: children.drop (i+1) := by
           intro new
           clear hsplit_orig hget hi h hyield_inner hreplace_inner ih
@@ -591,7 +591,7 @@ theorem yield_replaceAt_decomp (t : CFGTree T N) (p : Pos) (sub : CFGTree T N)
 
 /-- Replacing a subtree of the same root symbol preserves validity. -/
 theorem validFor_replaceAt {g : ContextFreeGrammar T}
-    (t : CFGTree T g.NT) (p : Pos) (sub new : CFGTree T g.NT)
+    (t : DerivationTree T g.NT) (p : Pos) (sub new : DerivationTree T g.NT)
     (h : t.subtreeAt? p = some sub)
     (hroot : new.rootSymbol = sub.rootSymbol)
     (ht_valid : t.ValidFor g) (hnew_valid : new.ValidFor g) :
@@ -651,9 +651,9 @@ theorem validFor_replaceAt {g : ContextFreeGrammar T}
             · subst hc_eq; exact hchild_replace_valid
 
 /-- Among a nonempty list of trees, there is one with maximum height. -/
-private theorem exists_max_height (c : CFGTree T N) (cs : List (CFGTree T N)) :
-    ∃ c_max ∈ (c :: cs : List (CFGTree T N)),
-      ∀ c' ∈ (c :: cs : List (CFGTree T N)), c'.height ≤ c_max.height := by
+private theorem exists_max_height (c : DerivationTree T N) (cs : List (DerivationTree T N)) :
+    ∃ c_max ∈ (c :: cs : List (DerivationTree T N)),
+      ∀ c' ∈ (c :: cs : List (DerivationTree T N)), c'.height ≤ c_max.height := by
   induction cs generalizing c with
   | nil =>
     refine ⟨c, List.mem_singleton.mpr rfl, ?_⟩
@@ -688,8 +688,8 @@ private theorem exists_max_height (c : CFGTree T N) (cs : List (CFGTree T N)) :
 -- ============================================================================
 
 /-- For a max-height list, find the max-height element. -/
-private theorem exists_max_height_child (c : CFGTree T N) (cs : List (CFGTree T N)) :
-    ∃ c_max ∈ (c :: cs : List (CFGTree T N)),
+private theorem exists_max_height_child (c : DerivationTree T N) (cs : List (DerivationTree T N)) :
+    ∃ c_max ∈ (c :: cs : List (DerivationTree T N)),
       c_max.height = heightMax (c :: cs) := by
   induction cs generalizing c with
   | nil => exact ⟨c, by simp, by simp [heightMax]⟩
@@ -726,7 +726,7 @@ private theorem exists_max_height_child (c : CFGTree T N) (cs : List (CFGTree T 
 
 /-- For a tree of height ≥ k+1, there exists a position list of length k
     such that the subtree at that position has height ≥ 1 (i.e., is a `.node`). -/
-theorem exists_pos_of_height (t : CFGTree T N) (k : Nat) (h : t.height ≥ k + 1) :
+theorem exists_pos_of_height (t : DerivationTree T N) (k : Nat) (h : t.height ≥ k + 1) :
     ∃ p : Pos, p.length = k ∧ ∃ sub, t.subtreeAt? p = some sub ∧ sub.height ≥ 1 := by
   induction k generalizing t with
   | zero => exact ⟨[], rfl, t, rfl, h⟩
@@ -751,7 +751,7 @@ theorem exists_pos_of_height (t : CFGTree T N) (k : Nat) (h : t.height ≥ k + 1
 
 /-- Stronger: extract a max-descent path of length k, with subtree at depth i
     having height = t.height - i. -/
-theorem exists_pos_max_descent (t : CFGTree T N) (k : Nat) (h : t.height ≥ k + 1) :
+theorem exists_pos_max_descent (t : DerivationTree T N) (k : Nat) (h : t.height ≥ k + 1) :
     ∃ p : Pos, p.length = k ∧
       ∀ i, i ≤ k → ∃ sub, t.subtreeAt? (p.take i) = some sub ∧ sub.height = t.height - i := by
   induction k generalizing t with
@@ -796,7 +796,7 @@ theorem exists_pos_max_descent (t : CFGTree T N) (k : Nat) (h : t.height ≥ k +
             omega
 
 /-- subtreeAt? splits along path concatenation. -/
-theorem subtreeAt?_append (t : CFGTree T N) (p1 p2 : Pos) :
+theorem subtreeAt?_append (t : DerivationTree T N) (p1 p2 : Pos) :
     t.subtreeAt? (p1 ++ p2) = (t.subtreeAt? p1).bind (·.subtreeAt? p2) := by
   induction p1 generalizing t with
   | nil => simp [subtreeAt?]
@@ -810,7 +810,7 @@ theorem subtreeAt?_append (t : CFGTree T N) (p1 p2 : Pos) :
       · simp [ih]
 
 /-- For a valid tree and a path that descends, each prefix subtree is a `.node`. -/
-theorem spine_node_at_prefix (t : CFGTree T N) (p : Pos) (sub : CFGTree T N)
+theorem spine_node_at_prefix (t : DerivationTree T N) (p : Pos) (sub : DerivationTree T N)
     (hsub : t.subtreeAt? p = some sub) (hsub_h : sub.height ≥ 1)
     (k : Nat) (hk : k < p.length + 1) :
     ∃ nt children, t.subtreeAt? (p.take k) = some (.node nt children) := by
@@ -842,8 +842,8 @@ theorem spine_node_at_prefix (t : CFGTree T N) (p : Pos) (sub : CFGTree T N)
           exact ih child hsub k' hk'
 
 /-- Validity propagates through subtreeAt?. -/
-theorem subtreeAt?_validFor {g : ContextFreeGrammar T} (t : CFGTree T g.NT)
-    (ht : t.ValidFor g) (p : Pos) (sub : CFGTree T g.NT)
+theorem subtreeAt?_validFor {g : ContextFreeGrammar T} (t : DerivationTree T g.NT)
+    (ht : t.ValidFor g) (p : Pos) (sub : DerivationTree T g.NT)
     (hsub : t.subtreeAt? p = some sub) : sub.ValidFor g := by
   induction p generalizing t with
   | nil => simp [subtreeAt?] at hsub; subst hsub; exact ht
@@ -866,21 +866,21 @@ theorem subtreeAt?_validFor {g : ContextFreeGrammar T} (t : CFGTree T g.NT)
           exact ih child (hchildren child hchild_in) hsub
 
 /-- Extract the rule used at a position (option-valued). -/
-def ruleAt? {g : ContextFreeGrammar T} (t : CFGTree T g.NT) (p : Pos) :
+def ruleAt? {g : ContextFreeGrammar T} (t : DerivationTree T g.NT) (p : Pos) :
     Option (ContextFreeRule T g.NT) :=
   match t.subtreeAt? p with
   | some (.node nt children) => some ⟨nt, children.map rootSymbol⟩
   | _ => none
 
 /-- For a valid tree at a `.node` subtree, ruleAt? returns the matching rule in g.rules. -/
-theorem ruleAt?_mem_rules {g : ContextFreeGrammar T} (t : CFGTree T g.NT)
-    (ht : t.ValidFor g) (p : Pos) (nt : g.NT) (children : List (CFGTree T g.NT))
+theorem ruleAt?_mem_rules {g : ContextFreeGrammar T} (t : DerivationTree T g.NT)
+    (ht : t.ValidFor g) (p : Pos) (nt : g.NT) (children : List (DerivationTree T g.NT))
     (hsub : t.subtreeAt? p = some (.node nt children)) :
     ruleAt? t p = some ⟨nt, children.map rootSymbol⟩ ∧
     ⟨nt, children.map rootSymbol⟩ ∈ g.rules := by
   refine ⟨?_, ?_⟩
   · simp [ruleAt?, hsub]
-  · have hsub_valid : (CFGTree.node nt children).ValidFor g :=
+  · have hsub_valid : (DerivationTree.node nt children).ValidFor g :=
       subtreeAt?_validFor t ht p (.node nt children) hsub
     match hsub_valid with
     | .node _ _ hrule _ => exact hrule
@@ -890,21 +890,21 @@ theorem ruleAt?_mem_rules {g : ContextFreeGrammar T} (t : CFGTree T g.NT)
 -- ============================================================================
 
 mutual
-def size : CFGTree T N → Nat
+def size : DerivationTree T N → Nat
   | .leaf _ => 1
   | .node _ children => 1 + sizeList children
 
-def sizeList : List (CFGTree T N) → Nat
+def sizeList : List (DerivationTree T N) → Nat
   | [] => 0
   | t :: ts => t.size + sizeList ts
 end
 
-theorem size_pos (t : CFGTree T N) : t.size ≥ 1 := by
+theorem size_pos (t : DerivationTree T N) : t.size ≥ 1 := by
   match t with
   | .leaf _ => simp [size]
   | .node _ _ => simp [size]
 
-theorem sizeList_le_of_mem {t : CFGTree T N} {ts : List (CFGTree T N)} (h : t ∈ ts) :
+theorem sizeList_le_of_mem {t : DerivationTree T N} {ts : List (DerivationTree T N)} (h : t ∈ ts) :
     t.size ≤ sizeList ts := by
   induction ts with
   | nil => simp at h
@@ -914,7 +914,7 @@ theorem sizeList_le_of_mem {t : CFGTree T N} {ts : List (CFGTree T N)} (h : t �
     · omega
     · have := ih h; omega
 
-theorem size_subtreeAt?_le (t : CFGTree T N) (p : Pos) (sub : CFGTree T N)
+theorem size_subtreeAt?_le (t : DerivationTree T N) (p : Pos) (sub : DerivationTree T N)
     (h : t.subtreeAt? p = some sub) : sub.size ≤ t.size := by
   induction p generalizing t with
   | nil =>
@@ -934,8 +934,8 @@ theorem size_subtreeAt?_le (t : CFGTree T N) (p : Pos) (sub : CFGTree T N)
         have := sizeList_le_of_mem (hget ▸ List.getElem_mem hi_lt)
         simp [size]; omega
 
-theorem size_subtreeAt?_lt_of_cons (t : CFGTree T N) (i : Nat) (rest : Pos)
-    (sub : CFGTree T N) (h : t.subtreeAt? (i :: rest) = some sub) :
+theorem size_subtreeAt?_lt_of_cons (t : DerivationTree T N) (i : Nat) (rest : Pos)
+    (sub : DerivationTree T N) (h : t.subtreeAt? (i :: rest) = some sub) :
     sub.size < t.size := by
   match t with
   | .leaf _ => simp [subtreeAt?] at h
@@ -950,7 +950,7 @@ theorem size_subtreeAt?_lt_of_cons (t : CFGTree T N) (i : Nat) (rest : Pos)
       have := sizeList_le_of_mem (hget ▸ List.getElem_mem hi_lt)
       simp [size]; omega
 
-theorem sizeList_set (l : List (CFGTree T N)) (i : Nat) (x : CFGTree T N) (hi : i < l.length) :
+theorem sizeList_set (l : List (DerivationTree T N)) (i : Nat) (x : DerivationTree T N) (hi : i < l.length) :
     sizeList (l.set i x) + l[i].size = sizeList l + x.size := by
   induction l generalizing i with
   | nil => simp at hi
@@ -965,7 +965,7 @@ theorem sizeList_set (l : List (CFGTree T N)) (i : Nat) (x : CFGTree T N) (hi : 
       omega
 
 /-- Replacing a subtree with a strictly smaller one gives a strictly smaller tree. -/
-theorem size_replaceAt_lt (t : CFGTree T N) (p : Pos) (sub new : CFGTree T N)
+theorem size_replaceAt_lt (t : DerivationTree T N) (p : Pos) (sub new : DerivationTree T N)
     (h : t.subtreeAt? p = some sub) (hlt : new.size < sub.size) :
     (t.replaceAt p new).size < t.size := by
   induction p generalizing t with
@@ -995,17 +995,17 @@ theorem size_replaceAt_lt (t : CFGTree T N) (p : Pos) (sub new : CFGTree T N)
         omega
 
 /-- Existence of minimum-size valid tree with given yield and root. -/
-theorem exists_min_size_tree {g : ContextFreeGrammar T} (t : CFGTree T g.NT) (ht : t.ValidFor g) :
-    ∃ t_min : CFGTree T g.NT,
+theorem exists_min_size_tree {g : ContextFreeGrammar T} (t : DerivationTree T g.NT) (ht : t.ValidFor g) :
+    ∃ t_min : DerivationTree T g.NT,
       t_min.ValidFor g ∧
       t_min.yield = t.yield ∧
       t_min.rootSymbol = t.rootSymbol ∧
-      ∀ t' : CFGTree T g.NT,
+      ∀ t' : DerivationTree T g.NT,
         t'.ValidFor g → t'.yield = t.yield →
         t'.rootSymbol = t.rootSymbol →
         t_min.size ≤ t'.size := by
   classical
-  let P : Nat → Prop := fun n => ∃ t' : CFGTree T g.NT,
+  let P : Nat → Prop := fun n => ∃ t' : DerivationTree T g.NT,
     t'.ValidFor g ∧ t'.yield = t.yield ∧ t'.rootSymbol = t.rootSymbol ∧ t'.size = n
   have hP_ne : ∃ n, P n := ⟨t.size, t, ht, rfl, rfl, rfl⟩
   obtain ⟨t_min, ht_min_v, ht_min_y, ht_min_r, ht_min_s⟩ := Nat.find_spec hP_ne
@@ -1017,8 +1017,8 @@ theorem exists_min_size_tree {g : ContextFreeGrammar T} (t : CFGTree T g.NT) (ht
 
 /-- Pigeonhole: along a long-enough valid path, two prefixes have same root nonterminal. -/
 theorem exists_repeat_root {g : ContextFreeGrammar T}
-    (t : CFGTree T g.NT) (ht : t.ValidFor g)
-    (p : Pos) (sub : CFGTree T g.NT)
+    (t : DerivationTree T g.NT) (ht : t.ValidFor g)
+    (p : Pos) (sub : DerivationTree T g.NT)
     (hsub : t.subtreeAt? p = some sub) (hsub_h : sub.height ≥ 1)
     (hlen : p.length ≥ g.rules.card) :
     ∃ i j : Nat, i < j ∧ j ≤ p.length ∧
@@ -1076,63 +1076,63 @@ theorem exists_repeat_root {g : ContextFreeGrammar T}
 -- ============================================================================
 
 private theorem derives_yieldList {T : Type*} {g : ContextFreeGrammar T}
-    (ts : List (CFGTree T g.NT))
+    (ts : List (DerivationTree T g.NT))
     (hvalid : ∀ t ∈ ts, g.Derives [t.rootSymbol] (t.yield.map Symbol.terminal)) :
-    g.Derives (ts.map CFGTree.rootSymbol) ((CFGTree.yieldList ts).map Symbol.terminal) := by
+    g.Derives (ts.map DerivationTree.rootSymbol) ((DerivationTree.yieldList ts).map Symbol.terminal) := by
   induction ts with
   | nil => exact Relation.ReflTransGen.refl
   | cons c cs ih =>
-    simp only [List.map_cons, CFGTree.yieldList, List.map_append]
-    show g.Derives ([c.rootSymbol] ++ cs.map CFGTree.rootSymbol)
-      (c.yield.map Symbol.terminal ++ (CFGTree.yieldList cs).map Symbol.terminal)
+    simp only [List.map_cons, DerivationTree.yieldList, List.map_append]
+    show g.Derives ([c.rootSymbol] ++ cs.map DerivationTree.rootSymbol)
+      (c.yield.map Symbol.terminal ++ (DerivationTree.yieldList cs).map Symbol.terminal)
     exact ((hvalid c (List.mem_cons_self ..)).append_right _).trans
       ((ih (fun t ht => hvalid t (List.mem_cons_of_mem _ ht))).append_left _)
 
 theorem validFor_derives {T : Type*} {g : ContextFreeGrammar T}
-    (t : CFGTree T g.NT) (ht : t.ValidFor g) :
+    (t : DerivationTree T g.NT) (ht : t.ValidFor g) :
     g.Derives [t.rootSymbol] (t.yield.map Symbol.terminal) := by
   match t, ht with
   | .leaf _, _ => exact Relation.ReflTransGen.refl
   | .node nt children, .node _ _ hrule hchildren =>
     exact (ContextFreeGrammar.Produces.single
-      ⟨⟨nt, children.map CFGTree.rootSymbol⟩, hrule,
+      ⟨⟨nt, children.map DerivationTree.rootSymbol⟩, hrule,
        ContextFreeRule.Rewrites.input_output⟩).trans
       (derives_yieldList children (fun c hc => validFor_derives c (hchildren c hc)))
 termination_by t
 
-end CFGTree
+end DerivationTree
 
 /-! ### Rose-tree interface instances
 
-`CFGTree.Pos` is the Gorn address — exactly
+`DerivationTree.Pos` is the Gorn address — exactly
 `Core.Order.TreePath.toList` — so the generic
 `Core.Order.Branching.subtreeAt` walks the same positions as
 `subtreeAt?`. The structural `size`/`height`/`yield` above remain the
 kernel-computable specializations of the generic API. -/
 
-namespace CFGTree
+namespace DerivationTree
 
 variable {T N : Type*}
 
-instance : Core.Order.Branching (CFGTree T N) where
+instance : Core.Order.Branching (DerivationTree T N) where
   children
     | .leaf _ => []
     | .node _ cs => cs
 
 @[simp] theorem branching_children_leaf (t : T) :
-    Core.Order.Branching.children (CFGTree.leaf (N := N) t) = [] := rfl
+    Core.Order.Branching.children (DerivationTree.leaf (N := N) t) = [] := rfl
 
-@[simp] theorem branching_children_node (nt : N) (cs : List (CFGTree T N)) :
-    Core.Order.Branching.children (CFGTree.node nt cs) = cs := rfl
+@[simp] theorem branching_children_node (nt : N) (cs : List (DerivationTree T N)) :
+    Core.Order.Branching.children (DerivationTree.node nt cs) = cs := rfl
 
-instance : Core.Order.IsFiniteBranching (CFGTree T N) :=
+instance : Core.Order.IsFiniteBranching (DerivationTree T N) :=
   .ofMeasure sizeOf fun {c t} hc => by
     cases t with
     | leaf _ => simp at hc
     | node nt cs =>
       simp only [branching_children_node] at hc
       have := List.sizeOf_lt_of_mem hc
-      simp only [CFGTree.node.sizeOf_spec]
+      simp only [DerivationTree.node.sizeOf_spec]
       omega
 
-end CFGTree
+end DerivationTree
