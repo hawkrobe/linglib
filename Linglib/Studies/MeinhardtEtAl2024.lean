@@ -7,7 +7,7 @@ import Linglib.Core.Computability.Mealy
 import Linglib.Core.Computability.Subregular.Function.ISL
 import Linglib.Core.Computability.Subregular.Function.OSL
 import Linglib.Core.Computability.Subsequential
-import Linglib.Core.Computability.Subregular.Function.Dependence
+import Linglib.Core.Computability.Dependence
 import Linglib.Core.Computability.Bimachine
 
 /-!
@@ -373,7 +373,7 @@ each side alone sufficing. Tutrugbu satisfies this too
 (`tutrugbu_twoSidedUnboundedDependence`); the difference is that Maasai does *not*
 `RequiresBothSides`, so it stays weakly deterministic. The paper's positive
 classification of Maasai as unbounded *semiambient* — every target fixed by information
-from at most one side — is the stronger claim, and is not formalized here. -/
+from at most one side — is the stronger claim, `maasai_semiambient`. -/
 theorem maasai_twoSidedUnboundedDependence : TwoSidedUnboundedDependence maasai := by
   refine .of_flanks (fill := Seg.recL) (xOn := Seg.recL) (yOn := Seg.recL)
     (xOff := Seg.dom) (yOff := Seg.dom)
@@ -389,6 +389,11 @@ theorem maasai_twoSidedUnboundedDependence : TwoSidedUnboundedDependence maasai 
       getElem?_flankWord_mid (show 0 < d + 1 by omega) (show d + 1 ≤ 2 * d + 1 by omega),
       hb, hp, hp']
     decide
+
+/-- **Maasai is semiambient** — the paper's positive classification: every harmonised
+cell is licensed by one side alone, the far dominant that triggers it. -/
+theorem maasai_semiambient : OneSidedChanges maasai :=
+  maasai_weaklyDeterministic.oneSidedChanges
 
 /-- Hence Maasai does **not** require both sides — it escapes the teeth, unlike Tutrugbu.
 Covariation (both languages) and interaction (Tutrugbu only) come apart. -/

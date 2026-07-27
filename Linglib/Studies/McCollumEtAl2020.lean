@@ -3,7 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Computability.Subregular.Function.Dependence
+import Linglib.Core.Computability.Dependence
 import Linglib.Core.Computability.Bimachine
 
 /-!
@@ -316,6 +316,12 @@ the myopia generalisation defended by [kimper-2012] and [mascaro-2019], on the
 nonmyopic side argued by [walker-2010]. -/
 theorem tutrugbu_nonmyopic (s : Direction) : UnboundedDependence tutrugbuATR s :=
   tutrugbu_twoSidedUnboundedDependence.unboundedDependence s
+
+/-- **Tutrugbu is not semiambient** — where Maasai's changes are each licensed by one
+side (`MeinhardtEtAl2024.maasai_semiambient`), Tutrugbu's harmonisation cell cannot
+be: the trigger sits on one side and the blocker on the other. -/
+theorem tutrugbu_not_semiambient : ¬ OneSidedChanges tutrugbuATR :=
+  tutrugbu_requiresBothSides.not_oneSidedChanges
 
 /-- **Tutrugbu ATR harmony is not weakly deterministic** — it needs the full
 non-deterministic regular power, above the weakly-deterministic upper bound of

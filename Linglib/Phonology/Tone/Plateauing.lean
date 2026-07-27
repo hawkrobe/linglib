@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 import Mathlib.Data.Finset.Max
 import Mathlib.Order.Interval.Finset.Nat
 import Linglib.Core.Data.List.TakeDrop
-import Linglib.Core.Computability.Subregular.Function.Dependence
+import Linglib.Core.Computability.Dependence
 import Linglib.Phonology.Autosegmental.OCP
 import Linglib.Phonology.Autosegmental.Junction
 import Linglib.Phonology.Autosegmental.Hull

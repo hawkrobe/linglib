@@ -27,6 +27,8 @@ independently editable flanks.
   flipped by far perturbations on either side
 * `RequiresBothSides f`: the target is changed, and either far perturbation alone
   reverts it
+* `OneSidedChanges f`: every changed cell is determined by one side of its input
+  alone
 * `flankWord x fill y n`: a target buried in a filler run with editable flanks
 
 ## Main theorems
@@ -34,6 +36,8 @@ independently editable flanks.
 * `unboundedDependence_iff`: every margin fails at some output coordinate
 * `RequiresBothSides.of_flanks`: the three-map witness template — a map is excluded
   by three target-cell observations
+* `IsNonInteractingBimachineComputable.oneSidedChanges`: a non-interacting bimachine
+  changes each cell from one side
 * `IsLeftSubsequential.boundedDependence_right`: a length-preserving left-subsequential
   function depends boundedly on the right
 * `Mealy.leftDetermined`, `Mealy.boundedDependence_right`: a sequential machine is
@@ -53,6 +57,9 @@ witnesses. The forms are margin-indexed rather than fixed-index because a fixed
 target has only finitely many positions to its left.
 The predicates place no in-range guard on target coordinates: for length-preserving
 maps an out-of-range coordinate is `none` on both sides of any perturbation.
+
+[UPSTREAM] candidate: `Mathlib.Computability.Dependence`, the window-dependence
+companion of the transducer files.
 -/
 
 namespace Subregular
@@ -123,6 +130,20 @@ far side reverts it to the identity. -/
 def RequiresBothSides (f : List α → List α) : Prop :=
   ∀ d, ∃ (base : List α) (i : ℕ), i < base.length ∧ (f base)[i]? ≠ base[i]? ∧
     ∀ s, ∃ u, IsFarPerturbation base u i d s ∧ u[i]? = base[i]? ∧ (f u)[i]? = u[i]?
+
+/-- Every changed cell is determined by the input on one side of it alone — which
+side may vary from cell to cell. -/
+def OneSidedChanges (f : List α → List α) : Prop :=
+  ∀ (w : List α) (i : ℕ), (f w)[i]? ≠ w[i]? →
+    ∃ s : Direction, List.DependsAt (fun u => (f u)[i]?) (s.window i 0) w
+
+/-- A map that requires both sides has a change no single side determines. -/
+theorem RequiresBothSides.not_oneSidedChanges {f : List α → List α}
+    (hf : RequiresBothSides f) : ¬ OneSidedChanges f := fun hs =>
+  have ⟨base, i, _, hchange, hw⟩ := hf 0
+  have ⟨s, hdet⟩ := hs base i hchange
+  have ⟨_, ⟨hlen, hag⟩, hsym, hrev⟩ := hw s
+  hchange ((hdet hlen.symm hag).trans (hrev.trans hsym))
 
 /-- Requiring both sides strengthens two-sided unbounded dependence. -/
 theorem RequiresBothSides.twoSidedUnboundedDependence {f : List α → List α}
@@ -355,6 +376,32 @@ theorem conjBM.requiresBothSides : RequiresBothSides conjBM.run :=
   .of_flanks (fun d => by omega) (fun d => by omega)
     (fun d => by rw [conjBM.run_flankWord_mid]; decide)
     (conjBM.run_flankWord_mid false true) (conjBM.run_flankWord_mid true false)
+
+/-- Changed cells of a non-interacting bimachine's run are each determined by a
+single side, `OneSidedAt` transported to words. -/
+theorem IsNonInteractingBimachineComputable.oneSidedChanges [DecidableEq α]
+    {f : List α → List α} (hf : IsNonInteractingBimachineComputable f) :
+    OneSidedChanges f := by
+  obtain ⟨L, _, R, _, B, rfl, hni⟩ := hf
+  intro xs i hchange
+  rcases lt_or_ge i xs.length with hi | hi
+  · have ha : xs[i]? = some xs[i] := List.getElem?_eq_getElem hi
+    have hcell : B.output (B.lState (xs.take i)) xs[i] (B.rState (xs.drop (i + 1)))
+        ≠ xs[i] :=
+      fun h => hchange (by rw [B.getElem?_run, ha, Option.map_some, h])
+    rcases hni.oneSidedAt_of_change hcell with hR | hL
+    · refine ⟨.right, fun v hlen hag => ?_⟩
+      have hv : v[i]? = some xs[i] := (hag.getElem?_eq (by simp)).symm.trans ha
+      show (B.run xs)[i]? = (B.run v)[i]?
+      rw [B.getElem?_run, B.getElem?_run, ha, hv, Option.map_some, Option.map_some,
+        ← hag.take_eq (by omega), hR (B.rState (v.drop (i + 1)))]
+    · refine ⟨.left, fun v hlen hag => ?_⟩
+      have hv : v[i]? = some xs[i] := (hag.getElem?_eq (by simp)).symm.trans ha
+      show (B.run xs)[i]? = (B.run v)[i]?
+      rw [B.getElem?_run, B.getElem?_run, ha, hv, Option.map_some, Option.map_some,
+        ← hag.drop_eq (by omega), hL (B.lState (v.take i))]
+  · exact absurd (by rw [List.getElem?_eq_none (by simpa using hi),
+      List.getElem?_eq_none hi]) hchange
 
 /-- The non-interacting class is proper inside the bimachine-computable functions —
 `conjBM` is computed by a bimachine, but by no non-interacting one. -/

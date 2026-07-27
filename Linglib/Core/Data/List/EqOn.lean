@@ -50,6 +50,15 @@ def DependsOn (g : List α → γ) (K : Set ℕ) : Prop :=
 theorem DependsOn.mono (hKK' : K ⊆ K') (h : DependsOn g K) : DependsOn g K' :=
   fun _ _ hl hag => h hl (hag.mono hKK')
 
+/-- `g` is determined at `w` by the positions in `K`: any equal-length list agreeing
+with `w` on `K` has the same image. The pointwise form of `List.DependsOn`. -/
+def DependsAt (g : List α → γ) (K : Set ℕ) (w : List α) : Prop :=
+  ∀ ⦃v : List α⦄, w.length = v.length → Set.EqOn (w[·]?) (v[·]?) K → g w = g v
+
+/-- Window dependence is pointwise dependence everywhere. -/
+theorem dependsOn_iff_forall_dependsAt {g : List α → γ} {K : Set ℕ} :
+    DependsOn g K ↔ ∀ w, DependsAt g K w := Iff.rfl
+
 /-- `g` factors through the input's length and its restriction to `K`. -/
 theorem dependsOn_iff_factorsThrough :
     DependsOn g K ↔

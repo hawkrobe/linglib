@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 import Mathlib.Data.Fintype.Option
 import Linglib.Core.Computability.Subregular.Language.TierProjection
 import Linglib.Core.Computability.Subsequential
-import Linglib.Core.Computability.Subregular.Function.Dependence
+import Linglib.Core.Computability.Dependence
 
 /-!
 # TierProjection-based rules (`TierRule`)
