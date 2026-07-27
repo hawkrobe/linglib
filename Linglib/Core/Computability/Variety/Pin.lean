@@ -33,7 +33,7 @@ counterexample motivating the non-empty-`w` restriction).
 
 ## Why omega-power and not finite-`k`?
 
-[lambert-2026] Props 53/57 (in `Equations.lean`) give **finite-`k`**
+`Equations.lean` gives **finite-`k`**
 characterizations parameterized by the suffix/prefix length `k`. Pin's
 forms are the **unbounded** versions: a single `k`-free equation in
 the syntactic monoid characterizes membership in the variety. The
@@ -96,7 +96,6 @@ fork that substrate here; consume it from mathlib when it merges.
 * [perles-rabin-shamir-1963] (the original definite/reverse-definite/
   generalized-definite hierarchy).
 * [mcnaughton-papert-1971] (variety theory of finite monoids).
-* [lambert-2026] §6.2 (finite-`k` companion in `Equations.lean`).
 -/
 
 open Subregular
@@ -337,7 +336,7 @@ theorem exists_isDefinite_iff_satisfies_pinDefiniteEquation
 -- ============================================================================
 
 /-- **Pin's algebraic equation for reverse-definite languages**
-([lambert-2026] Prop 57 limit; [almeida-1995]):
+([almeida-1995]):
 `∀ s : L.syntacticMonoid, ∀ w : List α, w ≠ [] → [w]^ω · s = [w]^ω`.
 
 Mirror of `pinDefiniteEquation` with right-multiplication instead of
@@ -546,7 +545,7 @@ theorem exists_isReverseDefinite_iff_satisfies_pinReverseDefiniteEquation
 -- ============================================================================
 
 /-- **Pin's algebraic equation for co/finite languages**
-([lambert-2026] Prop 59; [almeida-1995]): `𝒩 = ⟦sx^ω = x^ω = x^ω s⟧`.
+([almeida-1995]): `𝒩 = ⟦sx^ω = x^ω = x^ω s⟧`.
 The conjunction of D's left-absorbing equation and K's right-absorbing
 equation. -/
 def pinCofiniteEquation (L : Language α) [Finite L.syntacticMonoid] : Prop :=
@@ -594,7 +593,7 @@ theorem isFiniteOrCofinite_iff_satisfies_pinCofiniteEquation [Finite α]
 -- ============================================================================
 
 /-- **Pin's algebraic equation for generalized-definite languages**
-([lambert-2026] Prop 58 limit, simplified form; [straubing-1985]):
+([straubing-1985]):
 `ℒℐ = ⟦x^ω · s · x^ω = x^ω⟧`. Sandwiching `s` between two copies of
 the same omega-power absorbs `s`.
 

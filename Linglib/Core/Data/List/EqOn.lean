@@ -2,6 +2,10 @@
 Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
+
+[UPSTREAM] candidate: `Mathlib.Data.List.DependsOn`, beside
+`Mathlib.Logic.Function.DependsOn`, whose design this mirrors one
+length-stratification down.
 -/
 import Mathlib.Data.Set.Function
 import Mathlib.Data.Set.Restrict

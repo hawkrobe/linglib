@@ -2,6 +2,11 @@
 Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
+
+[UPSTREAM] candidate: `Mathlib.Computability.Variety.Langs` — a new topic
+directory (mathlib has no variety theory; `TuringMachine/`, `AkraBazzi/` are the
+topic-subdirectory precedent), over `Mathlib.Algebra.Group.Pseudovariety` as the
+monoid-side substrate.
 -/
 import Linglib.Core.Computability.SyntacticMonoid
 import Linglib.Core.Algebra.Group.Pseudovariety
