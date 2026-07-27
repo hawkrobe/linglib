@@ -8,6 +8,7 @@ import Linglib.Core.Algebra.Group.Aperiodic
 import Linglib.Core.Algebra.Group.Idempotent
 import Linglib.Core.Algebra.Group.Pseudovariety
 import Linglib.Core.Algebra.IdempotentPower
+import Linglib.Core.Algebra.Semigroup.IdempotentPower
 import Linglib.Core.Algebra.Order.ToIntervalMod
 import Linglib.Core.Algebra.PreLie.GuinOudom
 import Linglib.Core.Algebra.PreLie.OudomGuinCirc
