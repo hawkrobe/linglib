@@ -24,6 +24,14 @@ permitted `k`-factors, and `w ∈ L` iff every `k`-factor of `boundary k w` lies
 * `Subregular.SLGrammar.ofForbidden` — the grammar of a forbidden-factor set (its
   complement).
 * `Language.IsStrictlyLocal L k` — `L` is strictly `k`-local.
+* `Language.SuffixSubstitutionClosed L k` — members sharing a length-`(k − 1)` window
+  admit suffix crossover.
+
+## Main results
+
+* `Language.IsStrictlyLocal.suffixSubstitutionClosed` — strictly local languages are
+  closed under suffix substitution (the classical characterization's easy direction;
+  the converse, by stitching a witness through the canonical grammar, is TODO).
 -/
 
 namespace Subregular
@@ -98,5 +106,50 @@ width `k`. Witness-style, mirroring `Language.IsRegular`/`Language.IsContextFree
 ("L is regular iff some DFA accepts L"). -/
 def IsStrictlyLocal (L : Language α) (k : ℕ) : Prop :=
   ∃ G : SLGrammar α, G.language k = L
+
+/-! ### Suffix substitution closure -/
+
+/-- `L` is closed under **suffix substitution** at width `k`: two members sharing a
+length-`(k − 1)` window admit the crossover of their suffixes at it. -/
+def SuffixSubstitutionClosed (L : Language α) (k : ℕ) : Prop :=
+  ∀ u₁ v₁ u₂ v₂ x : List α, x.length = k - 1 →
+    u₁ ++ x ++ v₁ ∈ L → u₂ ++ x ++ v₂ ∈ L → u₁ ++ x ++ v₂ ∈ L
+
+/-- A strictly local language is closed under suffix substitution: every `k`-factor of
+the crossover lies in the shared left part — a factor of the first member — or in the
+shared window-and-right part — a factor of the second. -/
+theorem IsStrictlyLocal.suffixSubstitutionClosed {L : Language α} {k : ℕ}
+    (h : L.IsStrictlyLocal k) : L.SuffixSubstitutionClosed k := by
+  obtain ⟨G, rfl⟩ := h
+  intro u₁ v₁ u₂ v₂ x hx h₁ h₂ f hf
+  rw [List.mem_kFactors] at hf
+  obtain ⟨⟨s, t, hst⟩, hlen⟩ := hf
+  have hPfx : ∀ v : List α, (List.replicate (k - 1) none ++ (u₁ ++ x).map some)
+      <+: boundary k (u₁ ++ x ++ v) := fun v =>
+    ⟨v.map some ++ List.replicate (k - 1) none, by simp [boundary, List.append_assoc]⟩
+  have hSfx : ∀ u : List α, ((x ++ v₂).map some ++ List.replicate (k - 1) none)
+      <:+ boundary k (u ++ x ++ v₂) := fun u =>
+    ⟨List.replicate (k - 1) none ++ u.map some, by simp [boundary, List.append_assoc]⟩
+  rcases le_or_gt (s.length + k) (k - 1 + (u₁.length + x.length)) with hcase | hcase
+  · apply h₁
+    rw [List.mem_kFactors]
+    refine ⟨List.IsInfix.trans ?_ (hPfx v₁).isInfix, hlen⟩
+    have hsf : s ++ f <+: List.replicate (k - 1) none ++ (u₁ ++ x).map some := by
+      refine List.prefix_of_prefix_length_le
+        ⟨t, by simpa [List.append_assoc] using hst⟩ (hPfx v₂) ?_
+      simp only [List.length_append, List.length_replicate, List.length_map, hlen]
+      omega
+    exact (List.suffix_append s f).isInfix.trans hsf.isInfix
+  · apply h₂
+    rw [List.mem_kFactors]
+    refine ⟨List.IsInfix.trans ?_ (hSfx u₂).isInfix, hlen⟩
+    have hft : f ++ t <:+ (x ++ v₂).map some ++ List.replicate (k - 1) none := by
+      refine List.suffix_of_suffix_length_le
+        ⟨s, by simpa [List.append_assoc] using hst⟩ (hSfx u₁) ?_
+      have hL := congrArg List.length hst
+      simp only [List.length_append, length_boundary, hlen] at hL
+      simp only [List.length_append, List.length_map, List.length_replicate, hlen]
+      omega
+    exact (List.prefix_append f t).isInfix.trans hft.isInfix
 
 end Language
