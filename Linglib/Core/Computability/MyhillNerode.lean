@@ -24,8 +24,8 @@ criterion for sequential functions ([eilenberg-1974] [holcombe-1982]). A
 function is bimachine-computable if and only if it is length-preserving with finitely
 many residuals and finitely many coresiduals: residual classes are the left states,
 coresidual classes the right states, and the two-step exchange through representatives
-makes the cell output well-defined — the two-sided Nerode criterion for the bimachines
-of [eilenberg-1974].
+makes the cell output well-defined — the length-preserving stratum of the canonical
+bimachine of [reutenauer-schutzenberger-1991], surveyed in [filiot-reynier-2016].
 
 ## Main definitions
 
