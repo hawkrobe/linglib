@@ -14,7 +14,7 @@ The single generic bridge connecting Optimality-theoretic forbidden-pair
 markedness constraints (`mkForbidPairsOnTier`, defined in
 `OptimalityTheory/Constraints.lean`) to tier-based strictly 2-local
 languages (`TSLGrammar.ofForbiddenPairs`, defined in
-`Core/Computability/Subregular/Language/ForbiddenPairs.lean`).
+`Subregular.TSLGrammar.ofForbiddenPairs`).
 
 A candidate's `mkForbidPairsOnTier` score is zero iff its raw string
 belongs to the corresponding TSL_2 language — for any choice of

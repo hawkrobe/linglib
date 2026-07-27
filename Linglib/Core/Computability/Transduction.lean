@@ -1,4 +1,4 @@
-import Linglib.Core.Computability.Subregular.Logic.QFLogic
+import Linglib.Core.Computability.QFLogic
 
 /-!
 # Logical transductions

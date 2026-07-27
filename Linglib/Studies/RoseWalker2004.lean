@@ -40,7 +40,7 @@ operate at different levels and are not in competition for the same
 explanatory work.
 
 The function-level subregular substrate at
-`Core/Computability/Subregular/Function/` provides a separate axis of
+the subregular function classes provides a separate axis of
 classification for the *map* (UR → SR) rather than the stringset; LDCA
 maps are typically Tier-Subsequential (specifically Right-Tier-Subsequential
 per [hansson-2010]'s anticipatory directionality argument). We

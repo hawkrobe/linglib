@@ -202,7 +202,7 @@ end Subregular
 
 The `TierRule.applyToString` reification produces a string-to-string
 function classifiable in the function-level subregular hierarchy
-(`Core/Computability/Subregular/Function/`). The expected classification
+(the subregular function classes). The expected classification
 per [aksenova-rawski-graf-heinz-2020]:
 
 * Identity-tier `TierRule`s → **Left-Subsequential** (the trivial-tier

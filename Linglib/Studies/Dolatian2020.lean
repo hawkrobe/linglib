@@ -1,5 +1,5 @@
 import Mathlib.Data.List.Basic
-import Linglib.Core.Computability.Subregular.Logic.Transduction
+import Linglib.Core.Computability.Transduction
 
 /-!
 # Dolatian 2020: pre-inflectional vowel reduction and the Prosodic Stem

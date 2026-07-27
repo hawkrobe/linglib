@@ -40,7 +40,7 @@ any type signature; the linguistic interpretation lives entirely in the
 `Phonology/` and `Studies/` consumers. The subregular projection
 `Subregular.tierProject` (`List.filter`) and its monoid-hom packaging
 `Subregular.tierProjectHom`, both in
-`Core/Computability/Subregular/Language/`, are the single-alphabet `byClass`
+the subregular language classes, are the single-alphabet `byClass`
 specialization of this morphism; unifying the three onto this keystone (so they
 coincide by `rfl`) is a follow-up.
 

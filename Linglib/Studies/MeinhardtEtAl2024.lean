@@ -14,7 +14,7 @@ import Linglib.Core.Computability.Bimachine
 # Meinhardt, Mai, Baković & McCollum (2024): ATR Harmony Subregular Classification
 
 Worked example using the function-level subregular substrate
-(`Core/Computability/Subregular/Function/`) to classify a fragment of
+(the subregular function classes) to classify a fragment of
 Eastern Nilotic ATR harmony per [meinhardt-mai-bakovic-mccollum-2024].
 
 ## The paper

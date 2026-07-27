@@ -1,4 +1,4 @@
-import Linglib.Core.Computability.Subregular.Logic.WordModel
+import Linglib.Core.Computability.WordModel
 
 /-!
 # Quantifier-free logic over word models

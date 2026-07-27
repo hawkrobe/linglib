@@ -16,7 +16,7 @@ so as soon as one is a fixed point it *is* the least fixed point
 a monotone chain can rise at most `Fintype.card` times (`OrderHom.iterate_bot_fixed`).
 
 Together these give the computable face of Knaster–Tarski used by the recursive-scheme
-and modal-μ semantics (`Core/Computability/Subregular/Logic/`): compute `f^[k] ⊥`,
+and modal-μ semantics (the quantifier-free logic layer): compute `f^[k] ⊥`,
 check one more application, conclude `lfp`.
 -/
 
