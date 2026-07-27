@@ -338,23 +338,18 @@ private theorem hasDom_split (xs : List Seg) (i : ℕ) (hi : i < xs.length) :
     cases (xs[i] == Seg.dom) <;> rfl
 
 private theorem maasaiBM_cell_eq (xs : List Seg) (i : ℕ) (hi : i < xs.length) :
-    maasaiBM.output (maasaiBM.lState (xs.take i)) xs[i] (maasaiBM.rState (xs.drop (i + 1)))
+    (if (((xs.take i).any (· == .dom) || (xs.drop (i + 1)).any (· == .dom))
+        && xs[i] == .recL) then Seg.recH else xs[i])
     = if hasDom xs && xs[i] == .recL then .recH else xs[i] := by
-  simp only [maasaiBM, Bimachine.ofFlags_lState, Bimachine.ofFlags_rState,
-    Bimachine.ofFlags_output]
   rw [hasDom_split xs i hi]
-  show (if (((xs.take i).any (· == .dom) || (xs.drop (i + 1)).any (· == .dom)) && xs[i] == .recL)
-      then .recH else xs[i]) =
-    (if (((xs.take i).any (· == .dom) || (xs.drop (i + 1)).any (· == .dom) || (xs[i] == .dom))
-      && xs[i] == .recL) then .recH else xs[i])
-  cases xs[i] <;> simp
+  cases xs[i] <;> simp [hasDom]
 
 /-- The bimachine computes `maasai`. -/
 theorem maasaiBM_run : maasaiBM.run = maasai := by
   funext xs
   apply List.ext_getElem?
   intro i
-  rw [maasaiBM.getElem?_run]
+  rw [maasaiBM, Bimachine.getElem?_ofFlags_run]
   rcases lt_or_ge i xs.length with hi | hi
   · rw [List.getElem?_eq_getElem hi, Option.map_some, maasaiBM_cell_eq xs i hi]
     simp only [maasai, List.getElem?_map, List.getElem?_eq_getElem hi, Option.map_some, hasDom]
