@@ -11,15 +11,13 @@ import Linglib.Core.Computability.TransitionMonoid
 import Linglib.Core.Computability.StarFree
 import Linglib.Core.Computability.Subregular.Language.StrictlyLocal
 import Linglib.Core.Computability.Subregular.Language.StrictlyPiecewise
-import Linglib.Core.Computability.Subregular.Language.TierStrictlyLocal
 
 /-!
 # The subregular hierarchy is star-free (aperiodicity)
 
-Over a finite alphabet, each of the local classes `SL_k`, `TSL_k`, `SP_k` is star-free:
+Over a finite alphabet, both of the local classes `SL_k` and `SP_k` are star-free:
 
 * `Language.IsStrictlyLocal.isStarFree`: `SL_k ⊆ SF`;
-* `Language.IsTierStrictlyLocal.isStarFree`: `TSL_k ⊆ SF`;
 * `Language.IsStrictlyPiecewise.isStarFree`: `SP_k ⊆ SF`.
 
 These are the **"subregular hierarchy ⊆ star-free"** results: each class is recognised by a
@@ -27,7 +25,7 @@ finite scanner whose transition monoid (`DFA.transitionMonoid`) is *aperiodic*, 
 by Schützenberger's theorem ([schutzenberger-1965] [mcnaughton-papert-1971]). They are gathered
 here — rather than in per-class `…StarFree.lean` files (which read like construction objects, à
 la mathlib's `TMToPartrec`), and rather than folded into the foundational `StrictlyLocal` /
-`StrictlyPiecewise` / `TierStrictlyLocal` definition files (which would drag the heavy
+`StrictlyPiecewise` definition files (which would drag the heavy
 `StarFree` / `TransitionMonoid` imports onto every consumer of those light files). One
 topic-noun file isolates the heavy imports.
 
@@ -38,11 +36,6 @@ topic-noun file isolates the heavy imports.
   (its alive state depends only on the last `k - 1` symbols), so its transition monoid is
   aperiodic (`x ^ k = x ^ (k-1)`). Boundary markers `noneᵏ⁻¹` fold into the start window and
   acceptance set. ([mcnaughton-papert-1971] [heinz-rawal-tanner-2011])
-* **TSL.** A TSL language is the preimage `tierProject T ⁻¹' (permitted.language k)` under tier
-  erasure, which is `List.filter` and hence a monoid hom `Subregular.tierProjectHom`. The
-  permitted-factor language is `SL_k`, star-free by `IsStrictlyLocal.isStarFree`, and
-  star-freeness is closed under inverse homomorphism (`Language.IsStarFree.comap`), so
-  `TSL_k ⊆ SF`. ([heinz-rawal-tanner-2011])
 * **SP.** The recognizer is the **subsequence scanner** remembering the *profile* of
   length-`≤ k-1` subsequences seen so far, plus an absorbing dead state. Subsequences are blind
   to position, so no boundary augmentation is needed; any length-`≤ k` subsequence selects
@@ -57,8 +50,7 @@ regular.
 The SL and SP scanners share scaffolding *names* (`scanDFA`, `scanHom`, `evalFrom_none`,
 `isStarFree_of_language_succ`, …). Since `private` is module-scoped, each class's scaffolding is
 walled off in its own namespace — `Subregular.SL` and `Subregular.SP` — so the colliding names
-become distinct full names. The TSL helper `tierProjectHom` (which other modules may consume)
-stays public in `Subregular`.
+become distinct full names.
 -/
 
 open List
@@ -596,22 +588,6 @@ private theorem isStarFree_of_language_succ (L : Language α) [Finite α]
 
 end Subregular.SP
 
-namespace Subregular
-
-variable {α : Type*} (T : α → Prop) [DecidablePred T]
-
-/-- **Tier erasure as a monoid hom** `FreeMonoid α →* FreeMonoid α`: the `byClass T`
-specialization of the keystone bundled hom `TierProjection.applyHom`. The monoid-hom laws
-are inherited from `applyHom` rather than re-proved, since `tierProject T` is by definition
-`TierProjection.apply (TierProjection.byClass T)`. -/
-def tierProjectHom : FreeMonoid α →* FreeMonoid α :=
-  TierProjection.applyHom (TierProjection.byClass T)
-
-@[simp] lemma tierProjectHom_apply (w : FreeMonoid α) :
-    tierProjectHom T w = tierProject T w := rfl
-
-end Subregular
-
 namespace Language
 
 variable {α : Type*} [Finite α]
@@ -637,19 +613,6 @@ theorem IsStrictlyLocal.isStarFree {L : Language α} {k : ℕ} (h : L.IsStrictly
     · simp only [hg, if_false, Set.mem_empty_iff_false, iff_false, not_forall]
       exact ⟨[], List.nil_infix, rfl, hg⟩
   · exact SL.isStarFree_of_language_succ G n L hG
-
-/-- **Tier-based strictly local languages are star-free** ([heinz-rawal-tanner-2011]). Over a
-finite alphabet, a TSL language is the inverse image of an `SL_k` language under the
-tier-erasure homomorphism, and star-freeness is closed under inverse homomorphism
-(`IsStarFree.comap`), so `TSL_k ⊆ SF`. -/
-theorem IsTierStrictlyLocal.isStarFree {k : ℕ} {L : Language α} (h : IsTierStrictlyLocal k L) :
-    L.IsStarFree := by
-  obtain ⟨G, rfl⟩ := h
-  have hsf : (G.permitted.language k).IsStarFree :=
-    IsStrictlyLocal.isStarFree ⟨G.permitted, rfl⟩
-  have := hsf.comap (tierProjectHom G.tier)
-  rwa [show {w : List α | tierProjectHom G.tier (FreeMonoid.ofList w)
-      ∈ G.permitted.language k} = G.lang from rfl] at this
 
 /-- **Strictly piecewise languages are star-free** ([heinz-rogers-2010]
 [mcnaughton-papert-1971]). Over a finite alphabet, the subsequence scanner remembering the

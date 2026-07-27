@@ -4,7 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.Computability.Subregular.Language.StrictlyLocal
-import Linglib.Core.Computability.Subregular.Language.TierProjection
+import Linglib.Core.Computability.Subregular.Language.Aperiodicity
+import Linglib.Phonology.Subregular.TierProjection
 import Mathlib.Data.List.Basic
 import Mathlib.Computability.Language
 import Linglib.Core.Data.List.Factors
@@ -109,5 +110,44 @@ theorem IsStrictlyLocal.toIsTierStrictlyLocal {k : ℕ} {L : Language α}
     (h : L.IsStrictlyLocal k) : IsTierStrictlyLocal k L := by
   obtain ⟨G, rfl⟩ := h
   exact ⟨{ tier := fun _ => True, permitted := G }, by ext w; simp⟩
+
+/-! ### Tier erasure as a monoid hom, and star-freeness -/
+
+end Language
+
+namespace Subregular
+
+variable (T : α → Prop) [DecidablePred T]
+
+/-- **Tier erasure as a monoid hom** `FreeMonoid α →* FreeMonoid α`: the `byClass T`
+specialization of the keystone bundled hom `TierProjection.applyHom`. The monoid-hom laws
+are inherited from `applyHom` rather than re-proved, since `tierProject T` is by definition
+`TierProjection.apply (TierProjection.byClass T)`. -/
+def tierProjectHom : FreeMonoid α →* FreeMonoid α :=
+  TierProjection.applyHom (TierProjection.byClass T)
+
+@[simp] lemma tierProjectHom_apply (w : FreeMonoid α) :
+    tierProjectHom T w = tierProject T w := rfl
+
+end Subregular
+
+namespace Language
+
+open Subregular
+
+variable [Finite α]
+
+/-- **Tier-based strictly local languages are star-free** ([heinz-rawal-tanner-2011]). Over a
+finite alphabet, a TSL language is the inverse image of an `SL_k` language under the
+tier-erasure homomorphism, and star-freeness is closed under inverse homomorphism
+(`IsStarFree.comap`), so `TSL_k ⊆ SF`. -/
+theorem IsTierStrictlyLocal.isStarFree {k : ℕ} {L : Language α} (h : IsTierStrictlyLocal k L) :
+    L.IsStarFree := by
+  obtain ⟨G, rfl⟩ := h
+  have hsf : (G.permitted.language k).IsStarFree :=
+    IsStrictlyLocal.isStarFree ⟨G.permitted, rfl⟩
+  have := hsf.comap (tierProjectHom G.tier)
+  rwa [show {w : List α | tierProjectHom G.tier (FreeMonoid.ofList w)
+      ∈ G.permitted.language k} = G.lang from rfl] at this
 
 end Language

@@ -4,9 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Phonology.Subregular.ForbidPairs
-import Linglib.Core.Computability.Subregular.Language.TierProjection
+import Linglib.Phonology.Subregular.TierProjection
 import Linglib.Phonology.OCP
-import Linglib.Core.Computability.Subregular.Function.ISL
+import Linglib.Phonology.Subregular.ISL
 
 /-!
 # OCP (Obligatory Contour Principle) ↔ TSL_2 — the identity instance
