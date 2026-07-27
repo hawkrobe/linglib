@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.Computability.Mealy
-import Linglib.Core.Computability.Subregular.Function.ISL
+import Linglib.Phonology.Subregular.ISL
 import Linglib.Phonology.Subregular.OSL
 import Linglib.Core.Computability.Subsequential
 import Linglib.Core.Computability.Dependence

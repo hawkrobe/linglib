@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Phonology.Constraints.Basic
 import Linglib.Phonology.OptimalityTheory.Tableau
-import Linglib.Core.Computability.Subregular.Language.ForbiddenPairs
+import Linglib.Phonology.Subregular.ForbiddenPairs
 
 /-!
 # Bridge: Forbidden-Pair Markedness ↔ TSL_2

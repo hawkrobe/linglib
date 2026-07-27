@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.Computability.Lens
-import Linglib.Core.Computability.Subregular.Language.ForbiddenPairs
+import Linglib.Phonology.Subregular.ForbiddenPairs
 import Linglib.Phonology.Harmony.Basic
 import Linglib.Phonology.Segmental.Basic
 import Linglib.Phonology.Subregular.TierRule

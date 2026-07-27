@@ -7,7 +7,7 @@ import Linglib.Phonology.Tone.Grammatical
 import Linglib.Phonology.OptimalityTheory.Correspondence
 import Linglib.Phonology.Constraints.Defs
 import Linglib.Phonology.OptimalityTheory.Tableau
-import Linglib.Core.Computability.Subregular.Language.TierProjection
+import Linglib.Phonology.Subregular.TierProjection
 
 /-!
 # Rolle 2018 — Grammatical tone: CoP-scope and Matrix-Basemap Correspondence

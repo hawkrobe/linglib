@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.Linarith
-import Linglib.Core.Computability.Subregular.Language.ForbiddenPairs
+import Linglib.Phonology.Subregular.ForbiddenPairs
 import Linglib.Phonology.Subregular.Multitier
 
 /-!
