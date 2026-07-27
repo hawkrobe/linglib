@@ -169,7 +169,7 @@ The AG part is inherited from `AdaptorGrammar.corpusProbGivenTables`
 binomial factors.
 -/
 noncomputable def corpusProbGivenStorage
-    (D : Multiset (CFGTree T G.NT))
+    (D : Multiset (DerivationTree T G.NT))
     (Y : AdaptorGrammar.TableAssignment G)
     (Z : HaltCounts G) : ℝ :=
   M.toAdaptorGrammar.corpusProbGivenTables D Y *
@@ -202,7 +202,7 @@ theorem fgFactor_pos (r : ContextFreeRule T G.NT) (i : ℕ) (z : ℕ × ℕ) :
 
 /-- FG corpus probability is nonnegative on any storage assignment. -/
 theorem corpusProbGivenStorage_nonneg
-    (D : Multiset (CFGTree T G.NT))
+    (D : Multiset (DerivationTree T G.NT))
     (Y : AdaptorGrammar.TableAssignment G)
     (Z : HaltCounts G) : 0 ≤ M.corpusProbGivenStorage D Y Z := by
   unfold corpusProbGivenStorage
@@ -243,7 +243,7 @@ theorem fgFactor_zero (r : ContextFreeRule T G.NT) (i : ℕ) :
     product is `1`. -/
 @[simp]
 theorem corpusProbGivenStorage_empty :
-    M.corpusProbGivenStorage (0 : Multiset (CFGTree T G.NT))
+    M.corpusProbGivenStorage (0 : Multiset (DerivationTree T G.NT))
       (AdaptorGrammar.emptyTables G) (emptyHaltCounts G) = 1 := by
   unfold corpusProbGivenStorage
   rw [show M.toAdaptorGrammar.corpusProbGivenTables 0 (AdaptorGrammar.emptyTables G) = 1
@@ -277,7 +277,7 @@ is the architectural payoff: the family-of-priors structure
     The beta-binomial halt prior contributes a multiplicative factor
     to corpus probability but does not alter rule-weight inference. -/
 noncomputable def posteriorMAP [∀ a : G.NT, Nonempty (G.RulesWithLHS a)]
-    (D : Multiset (CFGTree T G.NT)) : MultinomialPCFG G :=
+    (D : Multiset (DerivationTree T G.NT)) : MultinomialPCFG G :=
   M.toAdaptorGrammar.posteriorMAP D
 
 /-- **Coherence (one step).** FG's posterior-MAP agrees with AG's
@@ -285,7 +285,7 @@ noncomputable def posteriorMAP [∀ a : G.NT, Nonempty (G.RulesWithLHS a)]
     of AG; rule-weight inference is unchanged. -/
 theorem posteriorMAP_eq_toAdaptorGrammar
     [∀ a : G.NT, Nonempty (G.RulesWithLHS a)]
-    (D : Multiset (CFGTree T G.NT)) :
+    (D : Multiset (DerivationTree T G.NT)) :
     M.posteriorMAP D = M.toAdaptorGrammar.posteriorMAP D := rfl
 
 /-- **Coherence (two steps).** FG's posterior-MAP agrees with the
@@ -293,7 +293,7 @@ theorem posteriorMAP_eq_toAdaptorGrammar
     three collapses to a single canonical MultinomialPCFG by `rfl`. -/
 theorem posteriorMAP_eq_toDMPCFG
     [∀ a : G.NT, Nonempty (G.RulesWithLHS a)]
-    (D : Multiset (CFGTree T G.NT)) :
+    (D : Multiset (DerivationTree T G.NT)) :
     M.posteriorMAP D = M.toAdaptorGrammar.toDMPCFG.posteriorMAP D := rfl
 
 /-! ## Conjugacy decomposition (mirror of AG / DMPCFG)
@@ -307,7 +307,7 @@ extends-chain is structurally orthogonal to rule-weight inference). -/
 
 /-- FG's posterior update: bump the underlying AG/DMPCFG, leave
     halt-prior pseudo-counts unchanged. -/
-noncomputable def posterior (D : Multiset (CFGTree T G.NT)) : FragmentGrammar G :=
+noncomputable def posterior (D : Multiset (DerivationTree T G.NT)) : FragmentGrammar G :=
   { M with toAdaptorGrammar := M.toAdaptorGrammar.posterior D }
 
 /-- FG's mode in `MultinomialPCFG`-space: delegates through AG to
@@ -322,7 +322,7 @@ theorem posterior_zero : M.posterior 0 = M := by
   ext1 <;> simp [posterior, AdaptorGrammar.posterior_zero]
 
 /-- Incrementality at the FG layer. -/
-theorem posterior_add (D₁ D₂ : Multiset (CFGTree T G.NT)) :
+theorem posterior_add (D₁ D₂ : Multiset (DerivationTree T G.NT)) :
     M.posterior (D₁ + D₂) = (M.posterior D₁).posterior D₂ := by
   ext1 <;> simp [posterior, AdaptorGrammar.posterior_add]
 
@@ -330,7 +330,7 @@ theorem posterior_add (D₁ D₂ : Multiset (CFGTree T G.NT)) :
     mode ∘ posterior`, holding by `rfl` because all FG operations
     delegate through DMPCFG. -/
 theorem posteriorMAP_eq_mode_posterior [∀ a : G.NT, Nonempty (G.RulesWithLHS a)]
-    (D : Multiset (CFGTree T G.NT)) :
+    (D : Multiset (DerivationTree T G.NT)) :
     M.posteriorMAP D = (M.posterior D).mode :=
   M.toAdaptorGrammar.toDMPCFG.posteriorMAP_eq_mode_posterior D
 

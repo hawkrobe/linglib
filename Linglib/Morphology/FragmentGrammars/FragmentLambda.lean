@@ -730,13 +730,13 @@ end
     (x : α) (r : R) (i : ℕ) :
     (LazyTree.fragment x : LazyTree α β R).collectHaltCounts r i = (0, 0) := rfl
 
--- Project a `LazyTree α β R` to a `CFGTree β α`. Returns `none` if the tree
--- contains any `.fragment` leaf (incomplete sub-derivation, no CFGTree image).
--- The rule field on `.branch` is dropped — CFGTree records derivations,
+-- Project a `LazyTree α β R` to a `DerivationTree β α`. Returns `none` if the tree
+-- contains any `.fragment` leaf (incomplete sub-derivation, no DerivationTree image).
+-- The rule field on `.branch` is dropped — DerivationTree records derivations,
 -- not which rule produced them.
 mutual
 /-- See module note above on `toCFGTree?` semantics. -/
-def toCFGTree? {α β R : Type} : LazyTree α β R → Option (CFGTree β α)
+def toCFGTree? {α β R : Type} : LazyTree α β R → Option (DerivationTree β α)
   | .terminal t      => some (.leaf t)
   | .fragment _      => none
   | .branch _ x kids =>
@@ -746,7 +746,7 @@ def toCFGTree? {α β R : Type} : LazyTree α β R → Option (CFGTree β α)
 
 /-- List-recursion helper for `toCFGTree?`. -/
 def toCFGTreesList {α β R : Type} :
-    List (LazyTree α β R) → Option (List (CFGTree β α))
+    List (LazyTree α β R) → Option (List (DerivationTree β α))
   | []      => some []
   | k :: ks =>
     match toCFGTree? k with
@@ -762,7 +762,7 @@ end
 
 @[simp] theorem toCFGTree?_fragment {α β R : Type} (x : α) :
     (LazyTree.fragment x : LazyTree α β R).toCFGTree?
-      = (none : Option (CFGTree β α)) := rfl
+      = (none : Option (DerivationTree β α)) := rfl
 
 end LazyTree
 
@@ -821,13 +821,13 @@ def slotToFinpartition {D : Type} (s : PYPSlot D) :
 table assignment + per-(rule, position) halt counts. -/
 abbrev CorpusCounts (T : Type) [DecidableEq T] (G : ContextFreeGrammar T)
     [DecidableEq G.NT] : Type :=
-  Multiset (CFGTree T G.NT) × AdaptorGrammar.TableAssignment G ×
+  Multiset (DerivationTree T G.NT) × AdaptorGrammar.TableAssignment G ×
   FragmentGrammar.HaltCounts G
 
 /-- Extract corpus-counts triple `(D, Y, Z)` from a completed sample.
 Maps a `LazyTree` (with PYP final state) into `CorpusCounts T G`:
 
-- `D : Multiset (CFGTree T G.NT)` — the underlying derivation trees
+- `D : Multiset (DerivationTree T G.NT)` — the underlying derivation trees
 - `Y : AdaptorGrammar.TableAssignment G` — table-level reuse counts
 - `Z : FragmentGrammar.HaltCounts G` — recurse/halt counts per (rule, position)
 
@@ -843,14 +843,14 @@ Maps a `LazyTree` (with PYP final state) into `CorpusCounts T G`:
   branch in `slotToFinpartition` is only reached for non-wellformed
   slots (impossible by sampler invariant; future work proves it).
 - `D` is real (via `LazyTree.toCFGTree?`): if the tree projects to a complete
-  `CFGTree` (no fragment-leaves), `D` is the singleton multiset of that
+  `DerivationTree` (no fragment-leaves), `D` is the singleton multiset of that
   derivation; otherwise (`.fragment` somewhere in the tree) `D` is empty —
   incomplete samples contribute no derivation. -/
 noncomputable def samplesToCorpusCounts
     (tree : LazyTree G.NT T (ContextFreeRule T G.NT))
     (finalState : PYPState G.NT (LazyTree G.NT T (ContextFreeRule T G.NT))) :
     CorpusCounts T G :=
-  (tree.toCFGTree?.elim 0 ({·} : CFGTree T G.NT → Multiset _),
+  (tree.toCFGTree?.elim 0 ({·} : DerivationTree T G.NT → Multiset _),
    fun A => slotToFinpartition (finalState.slots A),
    fun r i => tree.collectHaltCounts r i)
 

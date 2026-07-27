@@ -194,14 +194,14 @@ mutual
     instantiates, leaves contribute `1`. Invalid rules (those not in
     `G.rules`) contribute `0` via `ruleProb`'s default. -/
 noncomputable def derivProb (W : MultinomialPCFG G) :
-    CFGTree T G.NT → ℝ≥0∞
+    DerivationTree T G.NT → ℝ≥0∞
   | .leaf _ => 1
   | .node nt cs =>
-      W.ruleProb ⟨nt, cs.map CFGTree.rootSymbol⟩ * derivProbList W cs
+      W.ruleProb ⟨nt, cs.map DerivationTree.rootSymbol⟩ * derivProbList W cs
 
 /-- Product of derivation probabilities over a list of subtrees. -/
 noncomputable def derivProbList (W : MultinomialPCFG G) :
-    List (CFGTree T G.NT) → ℝ≥0∞
+    List (DerivationTree T G.NT) → ℝ≥0∞
   | [] => 1
   | t :: ts => derivProb W t * derivProbList W ts
 end
@@ -215,13 +215,13 @@ but deferred (`corpusProb_eq_prod_pow_count`) until `derivRuleCount`
 is extracted from `DMPCFG` to a shared substrate file.
 -/
 noncomputable def corpusProb (W : MultinomialPCFG G)
-    (D : Multiset (CFGTree T G.NT)) : ℝ≥0∞ :=
+    (D : Multiset (DerivationTree T G.NT)) : ℝ≥0∞ :=
   (D.map W.derivProb).prod
 
 /-- The empty corpus has probability `1` — the empty product. -/
 @[simp]
 theorem corpusProb_zero (W : MultinomialPCFG G) :
-    W.corpusProb (0 : Multiset (CFGTree T G.NT)) = 1 := by
+    W.corpusProb (0 : Multiset (DerivationTree T G.NT)) = 1 := by
   unfold corpusProb
   rw [Multiset.map_zero, Multiset.prod_zero]
 
@@ -238,7 +238,7 @@ the analogous theorem for `DMPCFG.corpusProb` *fails* (because the
 Pólya factor couples derivations through shared rule counts).
 -/
 theorem corpusProb_add (W : MultinomialPCFG G)
-    (D₁ D₂ : Multiset (CFGTree T G.NT)) :
+    (D₁ D₂ : Multiset (DerivationTree T G.NT)) :
     W.corpusProb (D₁ + D₂) = W.corpusProb D₁ * W.corpusProb D₂ := by
   unfold corpusProb
   rw [Multiset.map_add, Multiset.prod_add]
@@ -297,16 +297,16 @@ For valid trees the two coincide.
 
 **Status: stated, sorried.** Proof requires (1) per-tree count-form
 `derivProb t = ∏_{r ∈ G.rules} ruleProb r ^ ruleCount r t` for valid
-`t`, by mutual induction on `CFGTree`/`derivProb`'s mutual structure;
+`t`, by mutual induction on `DerivationTree`/`derivProb`'s mutual structure;
 then (2) Multiset induction on `D` using `corpusProb_add` +
 `corpusRuleCount_add` + `Finset.prod_pow_add`. The mutual induction
 in (1) is the hard part — Lean's auto-generated `derivProb.induct`
 needs careful handling. Architecture is in place; mechanical proof
 deferred to a focused session. -/
 theorem corpusProb_eq_prod_pow_count (W : MultinomialPCFG G)
-    (D : Multiset (CFGTree T G.NT)) (h : ∀ t ∈ D, t.ValidFor G) :
+    (D : Multiset (DerivationTree T G.NT)) (h : ∀ t ∈ D, t.ValidFor G) :
     W.corpusProb D =
-      ∏ r ∈ G.rules, (W.ruleProb r) ^ (CFGTree.corpusRuleCount r D) := by
+      ∏ r ∈ G.rules, (W.ruleProb r) ^ (DerivationTree.corpusRuleCount r D) := by
   -- TODO: prove via per-tree count-form + Multiset induction
   sorry
 

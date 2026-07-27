@@ -73,7 +73,7 @@ theorem dmpcfg_corpus_strictly_couples
     {T : Type} [DecidableEq T] :
     ∃ (G : ContextFreeGrammar T) (_ : DecidableEq G.NT)
       (_ : ∀ a : G.NT, Nonempty (G.RulesWithLHS a))
-      (M : DMPCFG G) (D : Multiset (CFGTree T G.NT)),
+      (M : DMPCFG G) (D : Multiset (DerivationTree T G.NT)),
       ENNReal.ofReal (M.corpusProb D) ≠ (M.posteriorMAP D).corpusProb D := by
   -- TODO: concrete 2-rule grammar + 2-derivation corpus + numeric inequality.
   -- Architecture is in place; only the witness construction is deferred.

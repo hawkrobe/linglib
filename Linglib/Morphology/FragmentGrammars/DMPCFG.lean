@@ -49,9 +49,9 @@ of derivations, not a draw from the unlabeled-count distribution.)
 ## Main definitions
 
 - `DMPCFG G` — per-rule Dirichlet pseudo-counts.
-- Rule application counts (`CFGTree.ruleCount`,
-  `CFGTree.corpusRuleCount`) are CFGTree-level operations in
-  `Core/Computability/CFGTree.lean`; opened into this namespace.
+- Rule application counts (`DerivationTree.ruleCount`,
+  `DerivationTree.corpusRuleCount`) are DerivationTree-level operations in
+  `Core/Computability/DerivationTree.lean`; opened into this namespace.
 - `DMPCFG.lhsUrn` — per-LHS `PolyaUrn` over the subtype of rules
   with that LHS.
 - `DMPCFG.lhsCounts` — per-LHS corpus counts as a function on the
@@ -100,7 +100,7 @@ namespace DMPCFG
 
 variable {T : Type} [DecidableEq T] {G : ContextFreeGrammar T} [DecidableEq G.NT]
 
-open CFGTree (corpusRuleCount corpusRuleCount_zero corpusRuleCount_add)
+open DerivationTree (corpusRuleCount corpusRuleCount_zero corpusRuleCount_add)
 
 variable (M : DMPCFG G)
 
@@ -114,7 +114,7 @@ noncomputable def lhsUrn (a : G.NT) :
   pseudo_pos := fun ⟨r, hr⟩ => M.pseudo_pos r (Finset.mem_filter.mp hr).1
 
 /-- Per-LHS corpus rule-count vector as a function on the subtype. -/
-def lhsCounts (a : G.NT) (D : Multiset (CFGTree T G.NT)) :
+def lhsCounts (a : G.NT) (D : Multiset (DerivationTree T G.NT)) :
     G.RulesWithLHS a → ℕ :=
   fun ⟨r, _⟩ => corpusRuleCount r D
 
@@ -126,7 +126,7 @@ of the corpus rule-counts under the per-LHS pseudo-counts.
   Γ(Σ π_i^A) / Γ(Σ π_i^A + Σ x_i^A)  ·  ∏_i Γ(π_i^A + x_i^A) / Γ(π_i^A) .
 ```
 -/
-noncomputable def lhsFactor (a : G.NT) (D : Multiset (CFGTree T G.NT)) : ℝ :=
+noncomputable def lhsFactor (a : G.NT) (D : Multiset (DerivationTree T G.NT)) : ℝ :=
   (M.lhsUrn a).seqProb (lhsCounts a D)
 
 /--
@@ -135,7 +135,7 @@ over LHSs that appear in the grammar of the per-LHS Pólya factor.
 LHSs with no rules in `G` contribute trivially (empty image term)
 so the product is over `G.rules.image (·.input)`.
 -/
-noncomputable def corpusProb (D : Multiset (CFGTree T G.NT)) : ℝ :=
+noncomputable def corpusProb (D : Multiset (DerivationTree T G.NT)) : ℝ :=
   ∏ a ∈ G.rules.image (·.input), M.lhsFactor a D
 
 omit [DecidableEq T] in
@@ -149,12 +149,12 @@ theorem nonempty_rulesWithLHS_of_mem_image {a : G.NT}
 /-- The per-LHS factor is strictly positive when the LHS has rules.
     Direct corollary of `PolyaUrn.seqProb_pos`. -/
 theorem lhsFactor_pos {a : G.NT} (ha : a ∈ G.rules.image (·.input))
-    (D : Multiset (CFGTree T G.NT)) : 0 < M.lhsFactor a D := by
+    (D : Multiset (DerivationTree T G.NT)) : 0 < M.lhsFactor a D := by
   haveI := nonempty_rulesWithLHS_of_mem_image ha
   exact (M.lhsUrn a).seqProb_pos _
 
 /-- DMPCFG corpus probabilities are nonnegative (in fact, positive). -/
-theorem corpusProb_nonneg (D : Multiset (CFGTree T G.NT)) :
+theorem corpusProb_nonneg (D : Multiset (DerivationTree T G.NT)) :
     0 ≤ M.corpusProb D := by
   unfold corpusProb
   apply Finset.prod_nonneg
@@ -164,7 +164,7 @@ theorem corpusProb_nonneg (D : Multiset (CFGTree T G.NT)) :
 /-- Per-LHS counts vanish on the empty corpus. -/
 @[simp]
 theorem lhsCounts_zero (a : G.NT) :
-    lhsCounts (G := G) a (0 : Multiset (CFGTree T G.NT)) = fun _ => 0 := by
+    lhsCounts (G := G) a (0 : Multiset (DerivationTree T G.NT)) = fun _ => 0 := by
   funext ⟨r, _⟩
   simp [lhsCounts]
 
@@ -172,7 +172,7 @@ theorem lhsCounts_zero (a : G.NT) :
     per-LHS Pólya factor is `seqProb` on the all-zero count
     vector, which equals 1 by `PolyaUrn.seqProb_zero`. -/
 @[simp]
-theorem corpusProb_zero : M.corpusProb (0 : Multiset (CFGTree T G.NT)) = 1 := by
+theorem corpusProb_zero : M.corpusProb (0 : Multiset (DerivationTree T G.NT)) = 1 := by
   unfold corpusProb
   apply Finset.prod_eq_one
   intro a ha
@@ -202,7 +202,7 @@ in practice `r ∈ G.rules` makes the denominator positive — see
 `mapWeight_denom_pos`).
 -/
 noncomputable def mapWeight (r : ContextFreeRule T G.NT)
-    (D : Multiset (CFGTree T G.NT)) : ℝ :=
+    (D : Multiset (DerivationTree T G.NT)) : ℝ :=
   (M.pseudo r + (corpusRuleCount r D : ℝ)) /
     ∑ r' ∈ G.rules.filter (·.input = r.input),
       (M.pseudo r' + (corpusRuleCount r' D : ℝ))
@@ -218,7 +218,7 @@ noncomputable def mapWeight (r : ContextFreeRule T G.NT)
     once for their grammar+LHS pair, or `haveI` the witness locally. -/
 theorem mapWeight_denom_pos {a : G.NT}
     [hne : Nonempty (G.RulesWithLHS a)]
-    (D : Multiset (CFGTree T G.NT)) :
+    (D : Multiset (DerivationTree T G.NT)) :
     0 < ∑ r' ∈ G.rules.filter (·.input = a),
         (M.pseudo r' + (corpusRuleCount r' D : ℝ)) := by
   obtain ⟨⟨r₀, hr₀_in⟩⟩ := hne
@@ -238,7 +238,7 @@ theorem mapWeight_denom_pos {a : G.NT}
     bucket). The `Nonempty` instance for `RulesWithLHS r.input` is
     synthesised internally from `hr`. -/
 theorem mapWeight_pos {r : ContextFreeRule T G.NT} (hr : r ∈ G.rules)
-    (D : Multiset (CFGTree T G.NT)) : 0 < M.mapWeight r D := by
+    (D : Multiset (DerivationTree T G.NT)) : 0 < M.mapWeight r D := by
   unfold mapWeight
   apply div_pos
   · have h1 : 0 < M.pseudo r := M.pseudo_pos r hr
@@ -250,7 +250,7 @@ theorem mapWeight_pos {r : ContextFreeRule T G.NT} (hr : r ∈ G.rules)
 
 /-- Corollary: `mapWeight` is nonnegative for rules in `G`. -/
 theorem mapWeight_nonneg {r : ContextFreeRule T G.NT} (hr : r ∈ G.rules)
-    (D : Multiset (CFGTree T G.NT)) : 0 ≤ M.mapWeight r D :=
+    (D : Multiset (DerivationTree T G.NT)) : 0 ≤ M.mapWeight r D :=
   (M.mapWeight_pos hr D).le
 
 /-- Empty-corpus reduction: `mapWeight` collapses to the prior
@@ -258,7 +258,7 @@ theorem mapWeight_nonneg {r : ContextFreeRule T G.NT} (hr : r ∈ G.rules)
     The Dirichlet posterior with no data IS the prior. -/
 @[simp]
 theorem mapWeight_zero (r : ContextFreeRule T G.NT) :
-    M.mapWeight r (0 : Multiset (CFGTree T G.NT)) =
+    M.mapWeight r (0 : Multiset (DerivationTree T G.NT)) =
       M.pseudo r / ∑ r' ∈ G.rules.filter (·.input = r.input), M.pseudo r' := by
   unfold mapWeight
   simp [corpusRuleCount_zero]
@@ -272,7 +272,7 @@ theorem mapWeight_zero (r : ContextFreeRule T G.NT) :
 theorem mapWeight_lt_mapWeight_iff_of_same_lhs
     {r r' : ContextFreeRule T G.NT} (hr'_in : r' ∈ G.rules)
     (h_lhs : r.input = r'.input)
-    {D : Multiset (CFGTree T G.NT)} :
+    {D : Multiset (DerivationTree T G.NT)} :
     M.mapWeight r D < M.mapWeight r' D ↔
       M.pseudo r + (corpusRuleCount r D : ℝ) <
         M.pseudo r' + (corpusRuleCount r' D : ℝ) := by
@@ -289,7 +289,7 @@ theorem mapWeight_lt_mapWeight_iff_of_same_lhs
 theorem mapWeight_lt_mapWeight_of_same_lhs
     {r r' : ContextFreeRule T G.NT} (hr'_in : r' ∈ G.rules)
     (h_lhs : r.input = r'.input)
-    {D : Multiset (CFGTree T G.NT)}
+    {D : Multiset (DerivationTree T G.NT)}
     (h_num : M.pseudo r + (corpusRuleCount r D : ℝ) <
              M.pseudo r' + (corpusRuleCount r' D : ℝ)) :
     M.mapWeight r D < M.mapWeight r' D :=
@@ -303,7 +303,7 @@ theorem mapWeight_lt_mapWeight_of_same_lhs
     posterior mass function. -/
 theorem mapWeight_sum_eq_one_of_lhs {a : G.NT}
     [Nonempty (G.RulesWithLHS a)]
-    (D : Multiset (CFGTree T G.NT)) :
+    (D : Multiset (DerivationTree T G.NT)) :
     ∑ r ∈ G.rules.filter (·.input = a), M.mapWeight r D = 1 := by
   have hdenom_pos := M.mapWeight_denom_pos (a := a) D
   have h_rewrite : ∀ r ∈ G.rules.filter (·.input = a),
@@ -338,7 +338,7 @@ than a follow-up theorem. -/
     `ENNReal.ofReal (M.mapWeight r D)` — see `mapWeightPMF_apply`. -/
 noncomputable def mapWeightPMF {a : G.NT}
     [Nonempty (G.RulesWithLHS a)]
-    (D : Multiset (CFGTree T G.NT)) :
+    (D : Multiset (DerivationTree T G.NT)) :
     PMF (G.RulesWithLHS a) :=
   PMF.ofFintype
     (fun x => ENNReal.ofReal (M.mapWeight x.1 D))
@@ -362,7 +362,7 @@ noncomputable def mapWeightPMF {a : G.NT}
 @[simp]
 theorem mapWeightPMF_apply {a : G.NT}
     [Nonempty (G.RulesWithLHS a)]
-    (D : Multiset (CFGTree T G.NT)) (r : G.RulesWithLHS a) :
+    (D : Multiset (DerivationTree T G.NT)) (r : G.RulesWithLHS a) :
     M.mapWeightPMF D r = ENNReal.ofReal (M.mapWeight r.1 D) := rfl
 
 /-- PMF comparison lemma: at a shared LHS, the per-LHS posterior
@@ -375,7 +375,7 @@ theorem mapWeightPMF_apply {a : G.NT}
 theorem mapWeightPMF_lt_iff {a : G.NT}
     [Nonempty (G.RulesWithLHS a)]
     (r₁ r₂ : G.RulesWithLHS a)
-    (D : Multiset (CFGTree T G.NT)) :
+    (D : Multiset (DerivationTree T G.NT)) :
     M.mapWeightPMF D r₁ < M.mapWeightPMF D r₂ ↔
       M.pseudo r₁.1 + (corpusRuleCount r₁.1 D : ℝ) <
         M.pseudo r₂.1 + (corpusRuleCount r₂.1 D : ℝ) := by
@@ -419,7 +419,7 @@ boundary collapse. -/
     Returns `0/0 = 0` (Lean convention) outside the well-defined
     regime; theorems carry the well-definedness hypothesis. -/
 noncomputable def posteriorMode (M : DMPCFG G)
-    (r : ContextFreeRule T G.NT) (D : Multiset (CFGTree T G.NT)) : ℝ :=
+    (r : ContextFreeRule T G.NT) (D : Multiset (DerivationTree T G.NT)) : ℝ :=
   (M.pseudo r + (corpusRuleCount r D : ℝ) - 1) /
     ∑ r' ∈ G.rules.filter (·.input = r.input),
       (M.pseudo r' + (corpusRuleCount r' D : ℝ) - 1)
@@ -428,14 +428,14 @@ noncomputable def posteriorMode (M : DMPCFG G)
     bucket exceeds 1 in the posterior. Equivalent to "the Dirichlet
     posterior has its mode strictly in the simplex interior." -/
 def PosteriorModeWellDefined (M : DMPCFG G) (a : G.NT)
-    (D : Multiset (CFGTree T G.NT)) : Prop :=
+    (D : Multiset (DerivationTree T G.NT)) : Prop :=
   ∀ r ∈ G.rules.filter (·.input = a), 1 < M.pseudo r + (corpusRuleCount r D : ℝ)
 
 /-- The mode denominator is positive when the well-definedness
     condition holds. Each summand exceeds 0 by hypothesis. -/
 theorem posteriorMode_denom_pos {a : G.NT}
     [hne : Nonempty (G.RulesWithLHS a)]
-    (D : Multiset (CFGTree T G.NT))
+    (D : Multiset (DerivationTree T G.NT))
     (h : M.PosteriorModeWellDefined a D) :
     0 < ∑ r' ∈ G.rules.filter (·.input = a),
         (M.pseudo r' + (corpusRuleCount r' D : ℝ) - 1) := by
@@ -452,7 +452,7 @@ theorem posteriorMode_denom_pos {a : G.NT}
     well-definedness condition holds. The numerator and denominator
     are both positive. -/
 theorem posteriorMode_pos {r : ContextFreeRule T G.NT} (hr : r ∈ G.rules)
-    (D : Multiset (CFGTree T G.NT))
+    (D : Multiset (DerivationTree T G.NT))
     (h : M.PosteriorModeWellDefined r.input D) :
     0 < M.posteriorMode r D := by
   unfold posteriorMode
@@ -471,7 +471,7 @@ theorem posteriorMode_pos {r : ContextFreeRule T G.NT} (hr : r ∈ G.rules)
 theorem posteriorMode_lt_iff_of_same_lhs
     {r r' : ContextFreeRule T G.NT} (hr'_in : r' ∈ G.rules)
     (h_lhs : r.input = r'.input)
-    {D : Multiset (CFGTree T G.NT)}
+    {D : Multiset (DerivationTree T G.NT)}
     (h_wd : M.PosteriorModeWellDefined r'.input D) :
     M.posteriorMode r D < M.posteriorMode r' D ↔
       M.pseudo r + (corpusRuleCount r D : ℝ) <
@@ -494,7 +494,7 @@ theorem posteriorMode_lt_iff_of_same_lhs
     productivity-ranking claims." -/
 theorem mapWeight_lt_iff_posteriorMode_lt {r r' : ContextFreeRule T G.NT}
     (hr'_in : r' ∈ G.rules) (h_lhs : r.input = r'.input)
-    {D : Multiset (CFGTree T G.NT)}
+    {D : Multiset (DerivationTree T G.NT)}
     (h_wd : M.PosteriorModeWellDefined r'.input D) :
     M.mapWeight r D < M.mapWeight r' D ↔
       M.posteriorMode r D < M.posteriorMode r' D := by
@@ -525,7 +525,7 @@ kind of object than a point in weight space. The two relate via this
     `MultinomialPCFG` itself): the construction can't deliver a
     multinomial PCFG over a grammar with empty LHS buckets. -/
 noncomputable def posteriorMAP [∀ a : G.NT, Nonempty (G.RulesWithLHS a)]
-    (D : Multiset (CFGTree T G.NT)) : MultinomialPCFG G :=
+    (D : Multiset (DerivationTree T G.NT)) : MultinomialPCFG G :=
   ⟨fun a => M.mapWeightPMF (a := a) D⟩
 
 /-- The posterior MAP `MultinomialPCFG`'s per-LHS PMF unfolds to
@@ -534,7 +534,7 @@ noncomputable def posteriorMAP [∀ a : G.NT, Nonempty (G.RulesWithLHS a)]
     bridge demo use direct application without `rw`), and tagging
     `simp` risks loops in unfamiliar simp contexts. -/
 theorem posteriorMAP_rulePMF [∀ a : G.NT, Nonempty (G.RulesWithLHS a)]
-    (D : Multiset (CFGTree T G.NT)) (a : G.NT) :
+    (D : Multiset (DerivationTree T G.NT)) (a : G.NT) :
     (M.posteriorMAP D).rulePMF a = M.mapWeightPMF D := rfl
 
 /-! ## Conjugacy decomposition: posterior + mode
@@ -557,7 +557,7 @@ an unspoken consequence. -/
 /-- The Dirichlet-conjugate posterior update: given a corpus, bump
     each rule's Dirichlet pseudo-count by that rule's corpus count.
     Stays inside the `DMPCFG` type — that's the point of conjugacy. -/
-noncomputable def posterior (D : Multiset (CFGTree T G.NT)) : DMPCFG G where
+noncomputable def posterior (D : Multiset (DerivationTree T G.NT)) : DMPCFG G where
   pseudo r := M.pseudo r + (corpusRuleCount r D : ℝ)
   pseudo_pos r hr := by
     have h1 : 0 < M.pseudo r := M.pseudo_pos r hr
@@ -576,7 +576,7 @@ theorem posterior_zero : M.posterior 0 = M := by
     sequentially with `D₁` then `D₂`. Bayesian update is associative
     over disjoint data — the actual content of "the prior commutes
     with corpus aggregation." Follows from `corpusRuleCount_add`. -/
-theorem posterior_add (D₁ D₂ : Multiset (CFGTree T G.NT)) :
+theorem posterior_add (D₁ D₂ : Multiset (DerivationTree T G.NT)) :
     M.posterior (D₁ + D₂) = (M.posterior D₁).posterior D₂ := by
   ext r
   show M.pseudo r + ((corpusRuleCount r (D₁ + D₂) : ℕ) : ℝ) =
@@ -601,7 +601,7 @@ noncomputable def mode [∀ a : G.NT, Nonempty (G.RulesWithLHS a)] :
     projection). The Bayesian-MAP estimator stops being a primitive
     and becomes a derived composition. -/
 theorem posteriorMAP_eq_mode_posterior [∀ a : G.NT, Nonempty (G.RulesWithLHS a)]
-    (D : Multiset (CFGTree T G.NT)) :
+    (D : Multiset (DerivationTree T G.NT)) :
     M.posteriorMAP D = (M.posterior D).mode := by
   show M.posteriorMAP D = (M.posterior D).posteriorMAP 0
   apply MultinomialPCFG.ext

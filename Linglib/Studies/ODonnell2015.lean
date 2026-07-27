@@ -343,19 +343,19 @@ theorem dmpcfgFromObserved_pseudo_respects_productivity
     than +1, so the conclusion holds for realistic data; the
     hypothesis is the abstract minimum that suffices. -/
 theorem dmpcfgFromObserved_mapWeightPMF_lt_of_count_gap
-    (D : Multiset (CFGTree Sym SuffixNT))
-    (h : CFGTree.corpusRuleCount (N := SuffixNT) rNess D + 1 <
-         CFGTree.corpusRuleCount (N := SuffixNT) rIon D) :
+    (D : Multiset (DerivationTree Sym SuffixNT))
+    (h : DerivationTree.corpusRuleCount (N := SuffixNT) rNess D + 1 <
+         DerivationTree.corpusRuleCount (N := SuffixNT) rIon D) :
     dmpcfgFromObserved.mapWeightPMF D nNess <
         dmpcfgFromObserved.mapWeightPMF D nIon := by
   rw [DMPCFG.mapWeightPMF_lt_iff]
   show pseudoVal rNess +
-        (CFGTree.corpusRuleCount (N := SuffixNT) rNess D : ℝ) <
+        (DerivationTree.corpusRuleCount (N := SuffixNT) rNess D : ℝ) <
       pseudoVal rIon +
-        (CFGTree.corpusRuleCount (N := SuffixNT) rIon D : ℝ)
+        (DerivationTree.corpusRuleCount (N := SuffixNT) rIon D : ℝ)
   rw [pseudoVal_rNess, pseudoVal_rIon]
-  have h' : (CFGTree.corpusRuleCount (N := SuffixNT) rNess D : ℝ) + 1 <
-            (CFGTree.corpusRuleCount (N := SuffixNT) rIon D : ℝ) := by
+  have h' : (DerivationTree.corpusRuleCount (N := SuffixNT) rNess D : ℝ) + 1 <
+            (DerivationTree.corpusRuleCount (N := SuffixNT) rIon D : ℝ) := by
     exact_mod_cast h
   linarith
 
@@ -372,9 +372,9 @@ theorem dmpcfgFromObserved_mapWeightPMF_prior_lt :
     dmpcfgFromObserved.mapWeightPMF 0 nIon <
       dmpcfgFromObserved.mapWeightPMF 0 nNess := by
   rw [DMPCFG.mapWeightPMF_lt_iff]
-  show pseudoVal rIon + (CFGTree.corpusRuleCount (N := SuffixNT) rIon 0 : ℝ) <
-       pseudoVal rNess + (CFGTree.corpusRuleCount (N := SuffixNT) rNess 0 : ℝ)
-  rw [CFGTree.corpusRuleCount_zero, CFGTree.corpusRuleCount_zero,
+  show pseudoVal rIon + (DerivationTree.corpusRuleCount (N := SuffixNT) rIon 0 : ℝ) <
+       pseudoVal rNess + (DerivationTree.corpusRuleCount (N := SuffixNT) rNess 0 : ℝ)
+  rw [DerivationTree.corpusRuleCount_zero, DerivationTree.corpusRuleCount_zero,
       pseudoVal_rIon, pseudoVal_rNess]
   norm_num
 
@@ -412,9 +412,9 @@ theorem dmpcfgFromObserved_posteriorMAP_prior_lt :
     Fragment Grammars — gives a different posterior structure that
     doesn't collapse productivity into raw frequency. -/
 theorem dmpcfgFromObserved_mapWeightPMF_prior_and_posterior_disagree
-    (D : Multiset (CFGTree Sym SuffixNT))
-    (h : CFGTree.corpusRuleCount (N := SuffixNT) rNess D + 1 <
-         CFGTree.corpusRuleCount (N := SuffixNT) rIon D) :
+    (D : Multiset (DerivationTree Sym SuffixNT))
+    (h : DerivationTree.corpusRuleCount (N := SuffixNT) rNess D + 1 <
+         DerivationTree.corpusRuleCount (N := SuffixNT) rIon D) :
     -- Prior: ness > ion at empty corpus
     (dmpcfgFromObserved.mapWeightPMF 0 nIon <
       dmpcfgFromObserved.mapWeightPMF 0 nNess) ∧
