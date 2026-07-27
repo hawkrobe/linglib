@@ -4,11 +4,10 @@ import Linglib.Core.Computability.Subregular.Function.ISL
 /-!
 # The locality bridge: quantifier-free ⟹ strictly local
 
-The load-bearing subregular result ([chandlee-2014], [chandlee-jardine-2019]): a quantifier-free
-logical transduction whose guards look only at a *bounded* context is **strictly local**. Here we
-prove the left-directed half against `Subregular`'s
-`IsLeftInputStrictlyLocal`: a transduction whose guards are *backward* (built from the variable
-and predecessors, no successor) with predecessor depth `≤ r` is `IsLeftInputStrictlyLocal (r + 1)`.
+A quantifier-free logical transduction whose guards look only at a *bounded* context is
+**strictly local**. Proved here in the left-directed half: a transduction whose guards are
+*backward* (built from the variable and predecessors, no successor) with predecessor depth `≤ r`
+is `IsLeftInputStrictlyLocal (r + 1)`.
 
 The mathematical crux is `Term.eval_backward`: a backward term of predecessor depth `j`, evaluated
 at position `n`, reads exactly position `n - j` (or falls off the left edge). Hence the truth of a
@@ -268,9 +267,9 @@ private theorem Transduction.applyAux_toISLRule_eq [DecidableEq α] {r : ℕ} {T
     congr 1
     rw [Transduction.emitAt_local hT hp, hw2]
 
-/-- **Locality bridge** (left half), [chandlee-2014], [chandlee-jardine-2019]: a transduction whose
-guards look only backward with predecessor depth `≤ r` is `(r+1)`-Left-Input-Strictly-Local — its
-output depends on a bounded left window, the defining property of strict locality. -/
+/-- **Locality bridge** (left half): a transduction whose guards look only backward with
+predecessor depth `≤ r` is `(r+1)`-Left-Input-Strictly-Local — its output depends on a bounded
+left window, the defining property of strict locality. -/
 theorem Transduction.leftLocal_isLeftISL [DecidableEq α] {r : ℕ} {T : Transduction α β}
     (hT : T.LeftLocal r) : IsLeftInputStrictlyLocal (r + 1) T.apply := by
   refine ⟨T.toISLRule r, ?_⟩

@@ -9,10 +9,15 @@ import Linglib.Studies.McCollumEtAl2020
 [yolyan-2025]: weakly deterministic functions are those expressible as the
 *simultaneous application* `P^L ⊙ P^R` of a backward and a forward BMRS program
 (Def. 5.1) — a definition inside the program formalism, which for the first time makes
-*non*-membership provable. `IsBmrsWeaklyDeterministic` renders it via the value-level
-⊙ of `Logic/BMRS.lean`: `SimulModels` asks each output symbol to be the ⊙-combination
-of the two programs' output predicates against the input (Defs. 4.1/4.3), sparing the
-combined-head-space construction.
+*non*-membership provable. The ambient formalism is the Boolean monadic recursive
+schemes of [bhaskar-jardine-chandlee-oakden-2020] (`Subregular.Logic.BMRS`), whose
+one-sided fragments `BMRSᵖ`/`BMRSˢ` characterize the left- and right-subsequential
+functions; [bhaskar-chandlee-jardine-2023] extends the characterization and
+[chandlee-jardine-2021] applies it to phonological modelling.
+`IsBmrsWeaklyDeterministic` renders Def. 5.1 via the value-level ⊙ below:
+`SimulModels` asks each output symbol to be the ⊙-combination of the two programs'
+output predicates against the input (Defs. 4.1/4.3), sparing the combined-head-space
+construction.
 
 The engine is `not_isBmrsWeaklyDeterministic_of_requiresBothSides`: the paper's §5.3
 template (Thms. 5.2–5.5), consuming the same `Subregular.RequiresBothSides` witness
@@ -50,6 +55,59 @@ open Subregular Subregular.Logic Subregular.Logic.BMRS
 private abbrev x : Term Unit := .var ()
 
 variable {α : Type*} [DecidableEq α]
+
+/-! ### Simultaneous application, at the value level
+
+[yolyan-2025] Def. 4.1 (⊙) and Def. 6.5 (⊘) act per input position on the input value
+and the two programs' output values; the program-level operators lift these pointwise.
+Stating the algebra (Prop. 4.4) on values keeps it a finite `Bool` computation and
+spares the combined-head-space transport. -/
+
+/-- Simultaneous application ⊙ on values (Def. 4.1): a change survives iff either
+program makes it. -/
+def combine (pin a b : Bool) : Bool := if pin then a && b else a || b
+
+/-- Conjunctive simultaneous application ⊘ on values (Def. 6.5): a change survives iff
+both programs make it. -/
+def combineC (pin a b : Bool) : Bool := if pin then a || b else a && b
+
+/-- On a true input, ⊙ is conjunction. -/
+@[simp] theorem combine_true (a b : Bool) : combine true a b = (a && b) := rfl
+
+/-- On a false input, ⊙ is disjunction — the collapse behind (5.15): with no underlying
+stress the ⊙ of the two stress programs is their disjunction. -/
+@[simp] theorem combine_false (a b : Bool) : combine false a b = (a || b) := rfl
+
+/-- On a true input, ⊘ is disjunction. -/
+@[simp] theorem combineC_true (a b : Bool) : combineC true a b = (a || b) := rfl
+
+/-- On a false input, ⊘ is conjunction — the conjunctive licensing of §6.3. -/
+@[simp] theorem combineC_false (a b : Bool) : combineC false a b = (a && b) := rfl
+
+/-- A ⊙-value differs from the input iff one of the components does (Prop. 4.2): the
+changes of the simultaneous application are the union of the changes. -/
+theorem combine_ne_iff (pin a b : Bool) :
+    combine pin a b ≠ pin ↔ a ≠ pin ∨ b ≠ pin := by decide +revert
+
+theorem combine_comm (pin a b : Bool) : combine pin a b = combine pin b a := by
+  decide +revert
+
+theorem combine_assoc (pin a b c : Bool) :
+    combine pin (combine pin a b) c = combine pin a (combine pin b c) := by decide +revert
+
+/-- The input itself is a ⊙-identity (Prop. 4.4(iii)). -/
+theorem combine_id (pin a : Bool) : combine pin a pin = a := by decide +revert
+
+/-- ⊘ is the De Morgan dual of ⊙: negate the two output values, not the input. -/
+theorem combineC_eq_not_combine (pin a b : Bool) :
+    combineC pin a b = !combine pin (!a) (!b) := by decide +revert
+
+theorem combineC_comm (pin a b : Bool) : combineC pin a b = combineC pin b a := by
+  decide +revert
+
+theorem combineC_assoc (pin a b c : Bool) :
+    combineC pin (combineC pin a b) c = combineC pin a (combineC pin b c) := by
+  decide +revert
 
 /-! ### Weak determinism as simultaneous application (Defs. 4.1, 4.3, 5.1) -/
 
