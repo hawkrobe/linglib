@@ -18,18 +18,18 @@ permitted `k`-factors, and `w ∈ L` iff every `k`-factor of `boundary k w` lies
 
 ## Main definitions
 
-* `Subregular.SLGrammar α` — a grammar is just a set of permitted factors over
+* `Subregular.SLGrammar α`: a grammar is just a set of permitted factors over
   `Augmented α`; the locality width `k` is supplied to `language`, not baked in.
-* `Subregular.SLGrammar.language k` — the `Language α` it generates at width `k`.
-* `Subregular.SLGrammar.ofForbidden` — the grammar of a forbidden-factor set (its
+* `Subregular.SLGrammar.language k`: the `Language α` it generates at width `k`.
+* `Subregular.SLGrammar.ofForbidden`: the grammar of a forbidden-factor set (its
   complement).
-* `Language.IsStrictlyLocal L k` — `L` is strictly `k`-local.
-* `Language.SuffixSubstitutionClosed L k` — members sharing a length-`(k − 1)` window
+* `Language.IsStrictlyLocal L k`: `L` is strictly `k`-local.
+* `Language.SuffixSubstitutionClosed L k`: members sharing a length-`(k − 1)` window
   admit suffix crossover.
 
 ## Main results
 
-* `Language.isStrictlyLocal_iff_suffixSubstitutionClosed` — for `k ≥ 2`, strict
+* `Language.isStrictlyLocal_iff_suffixSubstitutionClosed`: for `k ≥ 2`, strict
   `k`-locality is exactly closure under suffix substitution: the crossover's factors
   split into the two members' shared parts, and conversely the canonical grammar of
   licensed factors regenerates the language by stitching a member window-by-window.

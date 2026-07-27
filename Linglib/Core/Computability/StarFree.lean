@@ -25,14 +25,14 @@ keystone (`Monoid.Pseudovariety.langs_*`) rather than hand-written syntactic-mon
 
 ## Main definitions
 
-* `Language.IsStarFree` — `Monoid.aperiodicVariety.langs`; equivalently regular with an aperiodic
+* `Language.IsStarFree`: `Monoid.aperiodicVariety.langs`; equivalently regular with an aperiodic
   syntactic monoid (`isStarFree_iff`).
 
 ## Main results
 
-* `Language.IsStarFree.compl` / `.inter` / `.union` — boolean closure.
-* `Language.IsStarFree.of_recognizes` — recognized by a finite aperiodic monoid ⟹ star-free.
-* `Language.IsStarFree.comap` — closure under inverse homomorphism.
+* `Language.IsStarFree.compl` / `.inter` / `.union`: boolean closure.
+* `Language.IsStarFree.of_recognizes`: recognized by a finite aperiodic monoid ⟹ star-free.
+* `Language.IsStarFree.comap`: closure under inverse homomorphism.
 -/
 
 namespace Language

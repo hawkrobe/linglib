@@ -19,12 +19,12 @@ carrying blocking/transparency [mcmullin-2016]) are other choices of `R`.
 
 ## Main definitions
 
-* `Subregular.TSLGrammar.ofForbiddenPairs R p` — the TSL_2 grammar above.
-* `Subregular.countAdjacent R xs` — count of `R`-related adjacent pairs in `xs`.
+* `Subregular.TSLGrammar.ofForbiddenPairs R p`: the TSL_2 grammar above.
+* `Subregular.countAdjacent R xs`: count of `R`-related adjacent pairs in `xs`.
 
 ## Main results
 
-* `Subregular.mem_ofForbiddenPairs_lang_iff_filter_isChain` — membership reduces
+* `Subregular.mem_ofForbiddenPairs_lang_iff_filter_isChain`: membership reduces
   to an `IsChain (¬ R · ·)` check on the tier-projected string.
 
 ## Implementation notes

@@ -18,9 +18,9 @@ import Linglib.Core.Computability.Subregular.Language.TierStrictlyLocal
 
 Over a finite alphabet, each of the local classes `SL_k`, `TSL_k`, `SP_k` is star-free:
 
-* `Language.IsStrictlyLocal.isStarFree` — `SL_k ⊆ SF`;
-* `Language.IsTierStrictlyLocal.isStarFree` — `TSL_k ⊆ SF`;
-* `Language.IsStrictlyPiecewise.isStarFree` — `SP_k ⊆ SF`.
+* `Language.IsStrictlyLocal.isStarFree`: `SL_k ⊆ SF`;
+* `Language.IsTierStrictlyLocal.isStarFree`: `TSL_k ⊆ SF`;
+* `Language.IsStrictlyPiecewise.isStarFree`: `SP_k ⊆ SF`.
 
 These are the **"subregular hierarchy ⊆ star-free"** results: each class is recognised by a
 finite scanner whose transition monoid (`DFA.transitionMonoid`) is *aperiodic*, hence star-free

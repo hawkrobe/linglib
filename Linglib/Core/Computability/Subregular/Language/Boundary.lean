@@ -19,16 +19,16 @@ the hierarchy quantifies over are a generic list combinator and live in
 
 ## Main definitions
 
-* `Subregular.Augmented α` — the boundary-augmented alphabet `List (Option α)`,
+* `Subregular.Augmented α`: the boundary-augmented alphabet `List (Option α)`,
   with `none` the boundary marker.
-* `Subregular.boundary k w` — `w` injected into `Augmented α` and padded with
+* `Subregular.boundary k w`: `w` injected into `Augmented α` and padded with
   `k - 1` boundary markers on each side.
-* `Subregular.IsBoundaryVacuous R` — `R` holds whenever either argument is the
+* `Subregular.IsBoundaryVacuous R`: `R` holds whenever either argument is the
   boundary marker `none`.
 
 ## Main results
 
-* `Subregular.IsBoundaryVacuous.isChain_boundary_two_iff` — boundary padding does
+* `Subregular.IsBoundaryVacuous.isChain_boundary_two_iff`: boundary padding does
   not change `IsChain`-membership for a boundary-vacuous relation.
 
 ## Implementation notes

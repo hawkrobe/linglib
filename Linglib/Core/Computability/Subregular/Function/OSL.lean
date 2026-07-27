@@ -18,20 +18,20 @@ ISL ⊊ OSL ⊊ Subsequential.
 
 ## Main definitions
 
-* `OSLRule k α β` — a `k`-OSL rule: a window-based output function
+* `OSLRule k α β`: a `k`-OSL rule: a window-based output function
   `List β → α → List β` consuming the (k - 1)-symbol output context
   plus the current input symbol and emitting an output block.
-* `OSLRule.apply` — the induced string function, threading the output
+* `OSLRule.apply`: the induced string function, threading the output
   window left-to-right.
-* `IsLeftOutputStrictlyLocal k f`, `IsRightOutputStrictlyLocal k f` —
+* `IsLeftOutputStrictlyLocal k f`, `IsRightOutputStrictlyLocal k f`:
   witness predicates for each scan direction.
-* `IsOutputStrictlyLocal d k f` — direction-parameterised umbrella.
+* `IsOutputStrictlyLocal d k f`: direction-parameterised umbrella.
 
 ## Main results
 
-* `isRightOutputStrictlyLocal_iff_left_reverse` — Right-OSL is the
+* `isRightOutputStrictlyLocal_iff_left_reverse`: Right-OSL is the
   reverse-conjugate of Left-OSL.
-* `isLeftOutputStrictlyLocal_left_subsequential` — Left-OSL ⊆
+* `isLeftOutputStrictlyLocal_left_subsequential`: Left-OSL ⊆
   Left-Subsequential, via `OSLRule.toFinSFST`.
 
 ## Implementation notes

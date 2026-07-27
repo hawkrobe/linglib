@@ -16,10 +16,10 @@ with `Subregular`'s string functions (`Subregular.IsInputStrictlyLocal`, `SFST`)
 
 ## Main definitions
 
-* `Subregular.Logic.WordModel` — a string over `α`, viewed as `⟨D, label, succ⟩`.
-* `WordModel.label?` — the unary label (symbol) at a position, `none` off the edge.
-* `WordModel.Mem` — domain membership of a position.
-* `WordModel.succ?` / `WordModel.pred?` — successor/predecessor as partial functions.
+* `Subregular.Logic.WordModel`: a string over `α`, viewed as `⟨D, label, succ⟩`.
+* `WordModel.label?`: the unary label (symbol) at a position, `none` off the edge.
+* `WordModel.Mem`: domain membership of a position.
+* `WordModel.succ?` / `WordModel.pred?`: successor/predecessor as partial functions.
 
 ## Implementation notes
 

@@ -10,7 +10,7 @@ Nonterminals are unchanged.
 
 ## Main definitions
 
-* `Language.stringMap f : Language T →+* Language T'` — image under the string
+* `Language.stringMap f : Language T →+* Language T'`: image under the string
   homomorphism. Since `List α = FreeMonoid α`, the action `List.flatMap f` is the
   free-monoid lift `FreeMonoid.lift f`; bundled as a semiring hom mirroring mathlib's
   `Language.map`, of which the letter-to-letter case is the special case
@@ -18,9 +18,9 @@ Nonterminals are unchanged.
 
 ## Main theorems
 
-* `Language.IsContextFree.stringMap` — context-free languages are closed under
+* `Language.IsContextFree.stringMap`: context-free languages are closed under
   string homomorphism.
-* `ContextFreeGrammar.applyHom_language` — the grammar construction realizes `stringMap`.
+* `ContextFreeGrammar.applyHom_language`: the grammar construction realizes `stringMap`.
 
 [hopcroft-motwani-ullman-2000] (homomorphism-closure construction).
 -/

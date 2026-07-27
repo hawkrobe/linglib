@@ -21,19 +21,19 @@ tier projection.
 
 ## Main definitions
 
-* `IsTierBased 𝒞` — preimages of `𝒞`-languages under a Boolean tier projection.
-* `IsBTC 𝒞` — the multitier closure: the `BooleanSubalgebra.closure` of the
+* `IsTierBased 𝒞`: preimages of `𝒞`-languages under a Boolean tier projection.
+* `IsBTC 𝒞`: the multitier closure: the `BooleanSubalgebra.closure` of the
   tier-projected family, with injections `IsBTC.base`/`of_class` and closure
   operations `IsBTC.inter`/`union`/`compl`.
-* `IsBTSL`/`IsBTSP`/`IsBTD`/`IsBTK`/`IsBTLI`/`IsBTN` — its six specializations
+* `IsBTSL`/`IsBTSP`/`IsBTD`/`IsBTK`/`IsBTLI`/`IsBTN`: its six specializations
   (strictly local, strictly piecewise, definite, reverse definite, generalized
   definite, finite-or-cofinite).
-* `IsBTC.Indist` — tier-indistinguishability, the congruence behind membership refutation.
+* `IsBTC.Indist`: tier-indistinguishability, the congruence behind membership refutation.
 
 ## Main results
 
-* `IsBTC.mono` — monotonicity in the base class.
-* `IsBTC.mem_iff_of_indist` and `not_isBTC_of_indist` — membership respects
+* `IsBTC.mono`: monotonicity in the base class.
+* `IsBTC.mem_iff_of_indist` and `not_isBTC_of_indist`: membership respects
   tier-indistinguishability, yielding the standard non-membership argument.
 
 ## Implementation notes

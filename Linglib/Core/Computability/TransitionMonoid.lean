@@ -25,9 +25,9 @@ A word `w` acts on a state `s` of `M : DFA α σ` by `s ↦ M.evalFrom s w`. Rea
 (`evalFrom_of_append`) makes this a *right* action — an anti-homomorphism into `Function.End σ` — so
 as a `MonoidHom` its target is the opposite monoid `(Function.End σ)ᵐᵒᵖ`.
 
-* `DFA.transitionHom M : FreeMonoid α →* (Function.End σ)ᵐᵒᵖ` — the transition action.
-* `DFA.transitionMonoid M : Submonoid (Function.End σ)ᵐᵒᵖ` — its range, the transition monoid.
-* `DFA.transitionMonoidEquiv M` — the first iso theorem: `(Con.ker M.transitionHom).Quotient ≃*`
+* `DFA.transitionHom M : FreeMonoid α →* (Function.End σ)ᵐᵒᵖ`: the transition action.
+* `DFA.transitionMonoid M : Submonoid (Function.End σ)ᵐᵒᵖ`: its range, the transition monoid.
+* `DFA.transitionMonoidEquiv M`: the first iso theorem: `(Con.ker M.transitionHom).Quotient ≃*`
   the transition monoid.
 * `Finite (Function.End σ)` / `Finite M.transitionMonoid` instances (these do not auto-synthesize
   from `Finite σ`, so we register them here once).

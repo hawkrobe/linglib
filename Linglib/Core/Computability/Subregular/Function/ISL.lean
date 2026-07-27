@@ -19,20 +19,20 @@ function-level subregular hierarchy.
 
 ## Main definitions
 
-* `ISLRule k α β` — a `k`-ISL rule: a window-based output function
+* `ISLRule k α β`: a `k`-ISL rule: a window-based output function
   `List α → α → List β` consuming the `k - 1`-symbol left context plus
   the current input symbol and emitting an output block.
-* `ISLRule.apply` — the induced string function `List α → List β`.
-* `IsLeftInputStrictlyLocal k f`, `IsRightInputStrictlyLocal k f` —
+* `ISLRule.apply`: the induced string function `List α → List β`.
+* `IsLeftInputStrictlyLocal k f`, `IsRightInputStrictlyLocal k f`:
   witness predicates: there exists an `ISLRule k α β` whose `apply`
   computes `f` (resp. via right-to-left scan).
-* `IsInputStrictlyLocal d k f` — direction-parameterised umbrella.
+* `IsInputStrictlyLocal d k f`: direction-parameterised umbrella.
 
 ## Main results
 
-* `isRightInputStrictlyLocal_iff_left_reverse` — the right class is the
+* `isRightInputStrictlyLocal_iff_left_reverse`: the right class is the
   reverse-conjugate of the left class.
-* `isLeftInputStrictlyLocal_left_subsequential` — every Left-ISL
+* `isLeftInputStrictlyLocal_left_subsequential`: every Left-ISL
   function is Left-Subsequential, witnessed by `ISLRule.toFinSFST`.
 * `flatMap_isLeftInputStrictlyLocal_one`,
   `filterMap_isLeftInputStrictlyLocal_one` — letterwise homomorphisms and

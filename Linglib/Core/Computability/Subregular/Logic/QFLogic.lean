@@ -13,10 +13,10 @@ precise: a QF-definable transduction with bounded guards is input-strictly-local
 
 ## Main definitions
 
-* `Subregular.Logic.Term` — QF terms (`var`, `succ`, `pred`); `Term.eval` interprets them.
-* `Subregular.Logic.Atom` / `QF` — atomic and quantifier-free formulas.
-* `Atom.Realize` / `QF.Realize` — satisfaction in a word model under an assignment, decidable.
-* `QF.initial` / `QF.final` — edge positions, derived from definedness of `pred`/`succ`.
+* `Subregular.Logic.Term`: QF terms (`var`, `succ`, `pred`); `Term.eval` interprets them.
+* `Subregular.Logic.Atom` / `QF`: atomic and quantifier-free formulas.
+* `Atom.Realize` / `QF.Realize`: satisfaction in a word model under an assignment, decidable.
+* `QF.initial` / `QF.final`: edge positions, derived from definedness of `pred`/`succ`.
 
 ## Implementation notes
 

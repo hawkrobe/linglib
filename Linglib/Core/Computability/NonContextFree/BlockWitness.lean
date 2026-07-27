@@ -16,16 +16,16 @@ share this substrate: `anbncndn`, `anbnc`, and `ambncmdn`.
 ## API
 
 **Structure and counting:**
-* `BlockWitness symbols p` — the witness construction.
-* `length_eq`, `length_take` — size arithmetic.
-* `split_at` — clean decomposition at any block boundary.
-* `filter_count` — counts of in-alphabet symbols (each = `p`, by `Nodup`).
-* `mem_iff` — membership characterization.
+* `BlockWitness symbols p`: the witness construction.
+* `length_eq`, `length_take`: size arithmetic.
+* `split_at`: clean decomposition at any block boundary.
+* `filter_count`: counts of in-alphabet symbols (each = `p`, by `Nodup`).
+* `mem_iff`: membership characterization.
 
 **Position bridge and adjacency:**
-* `getElem?_eq` — the foundational position-to-symbol bridge:
+* `getElem?_eq`: the foundational position-to-symbol bridge:
   `(BlockWitness symbols p)[i]? = symbols[i / p]?`.
-* `not_both_in_vxy` — the **adjacency lemma**: in any decomposition
+* `not_both_in_vxy`: the **adjacency lemma**: in any decomposition
   `BlockWitness symbols p = u ++ vxy ++ z` with `|vxy| ≤ p`, two symbols
   at block-index distance `≥ 2` cannot both appear in `vxy`. Used by every
   per-alphabet `not_X_and_Y_in_vxy` consumer in `NonContextFree.lean` as a
