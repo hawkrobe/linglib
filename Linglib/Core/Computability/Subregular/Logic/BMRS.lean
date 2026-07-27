@@ -10,40 +10,33 @@ import Mathlib.Data.Finset.Basic
 /-!
 # Boolean Monadic Recursive Schemes
 
-BMRS ([bhaskar-jardine-chandlee-oakden-2020]; [bhaskar-chandlee-jardine-2023];
-phonological modelling in [chandlee-jardine-2021]): programs of mutually recursive
-Boolean-valued unary predicates over word models, built from `if…then…else`, the
-edge tests `initial`/`final` (the literature's `min`/`max`), input class tests, and
-recursive calls. Terms are the
+A **Boolean monadic recursive scheme** is a program of mutually recursive Boolean-valued
+unary predicates over word models, built from `if…then…else`, the edge tests
+`initial`/`final` (`min`/`max`), input class tests, and recursive calls. Terms are the
 quantifier-free terms of `Logic/QFLogic.lean` at a single index variable.
 
-Two symbol types dissolve the literature's `sig(P)` bookkeeping: input labels `α` get
-the lookup rule, rule heads `F` get the unfolding rule, and a `Program` is a total map
+Two symbol types dissolve the usual signature bookkeeping: input labels `α` get the
+lookup rule, rule heads `F` get the unfolding rule, and a `Program` is a total map
 `F → Expr α F`.
 
-Semantics is the derivation system of [yolyan-comer-2026] (Fig. 6–7), an inductive
-judgment `Eval` — faithful to partiality: a non-halting program (`f := g, g := f`)
-derives nothing. `evalFuel` is its computable face, related by `eval_iff_evalFuel`.
+Evaluation is an inductive judgment `Eval`, faithful to partiality: a non-halting
+program (`f := g, g := f`) derives nothing. `evalFuel` is its computable face, related
+by `eval_iff_evalFuel`.
 
 ## Main definitions
 
 * `BMRS.Expr`, `BMRS.Program` — syntax; `BMRS.tden` — term denotation at an index.
 * `BMRS.Eval` — the derivation system; `BMRS.evalFuel` — the fuel-bounded evaluator.
-* `Expr.Backward` / `Program.Backward` (dually `Forward`) — the one-sided fragments
-  `BMRSᵖ` / `BMRSˢ` of [bhaskar-jardine-chandlee-oakden-2020].
-* `BMRS.combine` / `BMRS.combineC` — the value combinators of simultaneous application
-  (⊙, [yolyan-2025] Def. 4.1) and its conjunctive dual (⊘, Def. 6.5).
+* `Expr.Backward` / `Program.Backward` (dually `Forward`) — the one-sided fragments,
+  in which every term reads only backwards (dually, forwards) from its index.
 
 ## Main results
 
 * `Eval.deterministic` — an expression has at most one value.
 * `eval_iff_evalFuel` — adequacy of the fuel evaluator.
-* `Eval.congr_eqOn_Iic` / `Eval.congr_eqOn_Ici` — **one-sided locality**: a
-  backward program evaluated at `i` reads only positions `≤ i`, so equal-length words
-  agreeing there evaluate identically (dually for forward). The engine of
-  [yolyan-2025]'s negative results (Thm. 5.2–5.5).
-* `combine_comm`, `combine_assoc`, `combine_id` — the ⊙-algebra
-  ([yolyan-2025] Prop. 4.4), extensionally at the value level.
+* `Eval.congr_eqOn_Iic` / `Eval.congr_eqOn_Ici` — **one-sided locality**: a backward
+  program evaluated at `i` reads only positions `≤ i`, so equal-length words agreeing
+  there evaluate identically (dually for forward).
 -/
 
 namespace Subregular.Logic.BMRS
@@ -72,13 +65,13 @@ inductive Expr (α F : Type*) where
 /-- A BMRS program: one defining expression per rule head. -/
 abbrev Program (α F : Type*) := F → Expr α F
 
-/-- Conjunction as `if…then…else` ([yolyan-2025] (3.6)). -/
+/-- Conjunction as `if…then…else`. -/
 def Expr.and (e₁ e₂ : Expr α F) : Expr α F := .ite e₁ e₂ .fls
 
-/-- Disjunction as `if…then…else` ([yolyan-2025] (3.7)). -/
+/-- Disjunction as `if…then…else`. -/
 def Expr.or (e₁ e₂ : Expr α F) : Expr α F := .ite e₁ .tru e₂
 
-/-- Negation as `if…then…else` ([yolyan-2025] (3.8)). -/
+/-- Negation as `if…then…else`. -/
 def Expr.not (e : Expr α F) : Expr α F := .ite e .fls .tru
 
 /-- Substitute a term for the variable throughout an expression: `e.subst u` is
@@ -196,9 +189,8 @@ end TermDenotation
 
 /-! ### The derivation system -/
 
-/-- The derivation system for BMRS expressions ([yolyan-comer-2026] Fig. 7):
-`Eval P w i e b` is `w, i ⊢_P e → b`. Partial by design: a non-halting program
-derives nothing. -/
+/-- The derivation system for BMRS expressions: `Eval P w i e b` is `w, i ⊢_P e → b`.
+Partial by design: a non-halting program derives nothing. -/
 inductive Eval (P : Program α F) (w : WordModel α) : ℕ → Expr α F → Bool → Prop
   | tru {i} : Eval P w i .tru true
   | fls {i} : Eval P w i .fls false
@@ -390,11 +382,10 @@ theorem Eval.subst (hu : tden w i u = some v) (h : Eval P w v e b) :
 
 /-! ### One-sided fragments and locality
 
-`BMRSᵖ`-programs (successor-free) compute left-subsequentially, `BMRSˢ`-programs
-(predecessor-free) right-subsequentially ([bhaskar-jardine-chandlee-oakden-2020]). The
-locality lemmas below are what those inclusions rest on and are the engine of
-[yolyan-2025]'s negative results: the flags of a one-sided program cannot see across
-the target. Equal length is load-bearing — `min`/`max` atoms read `w.length`. -/
+Successor-free programs compute left-subsequentially, predecessor-free programs
+right-subsequentially. The locality lemmas below are what those inclusions rest on:
+the flags of a one-sided program cannot see past their index. Equal length is
+load-bearing — `min`/`max` atoms read `w.length`. -/
 
 /-- Backward terms only move left. -/
 theorem tden_le_of_backward :
@@ -481,60 +472,5 @@ theorem Eval.congr_eqOn_Ici (hP : P.Forward) (hlen : w.length = w'.length)
     exact fun he hag => Eval.ite_true (ihc he.1 hag) (ih₁ he.2.1 hag)
   | ite_false hc h₂ ihc ih₂ =>
     exact fun he hag => Eval.ite_false (ihc he.1 hag) (ih₂ he.2.2 hag)
-
-/-! ### Simultaneous application, at the value level
-
-[yolyan-2025] Def. 4.1 (⊙) and Def. 6.5 (⊘) act per input position on the input value
-and the two programs' output values; the program-level operators lift these pointwise.
-Stating the algebra ([yolyan-2025] Prop. 4.4) on values keeps it a finite `Bool`
-computation and spares the combined-head-space transport. -/
-
-/-- Simultaneous application ⊙ on values ([yolyan-2025] Def. 4.1): a change survives
-iff either program makes it. -/
-def combine (pin a b : Bool) : Bool := if pin then a && b else a || b
-
-/-- Conjunctive simultaneous application ⊘ on values ([yolyan-2025] Def. 6.5): a change
-survives iff both programs make it. -/
-def combineC (pin a b : Bool) : Bool := if pin then a || b else a && b
-
-/-- On a true input, ⊙ is conjunction. -/
-@[simp] theorem combine_true (a b : Bool) : combine true a b = (a && b) := rfl
-
-/-- On a false input, ⊙ is disjunction — the collapse behind [yolyan-2025] (5.15):
-with no underlying stress the ⊙ of the two stress programs is their disjunction. -/
-@[simp] theorem combine_false (a b : Bool) : combine false a b = (a || b) := rfl
-
-/-- On a true input, ⊘ is disjunction. -/
-@[simp] theorem combineC_true (a b : Bool) : combineC true a b = (a || b) := rfl
-
-/-- On a false input, ⊘ is conjunction — the conjunctive licensing of
-[yolyan-2025] §6.3. -/
-@[simp] theorem combineC_false (a b : Bool) : combineC false a b = (a && b) := rfl
-
-/-- A ⊙-value differs from the input iff one of the components does
-([yolyan-2025] Prop. 4.2): the changes of the simultaneous application are the union
-of the changes. -/
-theorem combine_ne_iff (pin a b : Bool) :
-    combine pin a b ≠ pin ↔ a ≠ pin ∨ b ≠ pin := by decide +revert
-
-theorem combine_comm (pin a b : Bool) : combine pin a b = combine pin b a := by
-  decide +revert
-
-theorem combine_assoc (pin a b c : Bool) :
-    combine pin (combine pin a b) c = combine pin a (combine pin b c) := by decide +revert
-
-/-- The input itself is a ⊙-identity ([yolyan-2025] Prop. 4.4(iii)). -/
-theorem combine_id (pin a : Bool) : combine pin a pin = a := by decide +revert
-
-/-- ⊘ is the De Morgan dual of ⊙: negate the two output values, not the input. -/
-theorem combineC_eq_not_combine (pin a b : Bool) :
-    combineC pin a b = !combine pin (!a) (!b) := by decide +revert
-
-theorem combineC_comm (pin a b : Bool) : combineC pin a b = combineC pin b a := by
-  decide +revert
-
-theorem combineC_assoc (pin a b c : Bool) :
-    combineC pin (combineC pin a b) c = combineC pin a (combineC pin b c) := by
-  decide +revert
 
 end Subregular.Logic.BMRS

@@ -8,9 +8,8 @@ by applying the successor/predecessor partial functions; formulas are boolean co
 atomic label/equality/definedness tests. Because successor is a *function*, a QF term reaches a
 *bounded* neighbourhood of its variable with no quantifiers — the syntactic counterpart of
 strict locality (an existential like `∃w,y[succ w x ∧ succ x y ∧ …]` collapses to the
-quantifier-free `… (pred x) ∧ … (succ x)`). The locality bridge (`Logic/LocalityBridge.lean`)
-makes this precise: QF-definable transductions are exactly the Input-Strictly-Local functions of
-`Subregular` ([chandlee-2014], [chandlee-jardine-2019]).
+quantifier-free `… (pred x) ∧ … (succ x)`). `Transduction.leftLocal_isLeftISL` makes this
+precise: a QF-definable transduction with bounded guards is input-strictly-local.
 
 ## Main definitions
 
@@ -23,7 +22,9 @@ makes this precise: QF-definable transductions are exactly the Input-Strictly-Lo
 
 `Realize` is `Prop`-valued (mathlib's model-theory idiom) with a derived `Decidable` instance,
 so worked examples close by `decide`. A `Term` evaluates to `Option ℕ`, `none` once it falls off
-an edge; atoms over an undefined term are false.
+an edge; atoms over an undefined term are false. That partiality is why this is a standalone
+syntax rather than a `FirstOrder.Language`: `succ`/`pred` are partial on a finite word, whereas a
+mathlib `Structure` interprets function symbols totally.
 -/
 
 namespace Subregular.Logic
