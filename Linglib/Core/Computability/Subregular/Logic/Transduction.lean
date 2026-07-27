@@ -15,7 +15,8 @@ deletion, and insertion. Non-order-preserving maps (reordering via an explicit s
 are the non-local extension and are deliberately out of scope here.
 
 Composition of transductions (`applyComp`) models an iterated derivation: each step is a local
-transduction; the composite is a regular function (closed under composition in `SFST`) though not
+transduction; the composite is a regular function (closed under composition in
+`SubsequentialTransducer`) though not
 in general itself quantifier-free.
 
 ## Main definitions
@@ -62,7 +63,8 @@ def apply (T : Transduction α β) (w : WordModel α) : WordModel β :=
 @[simp] theorem apply_nil (T : Transduction α β) : T.apply [] = [] := rfl
 
 /-- Composition of transductions — one cyclic derivation step after another. The composite is a
-regular function (closed under composition in `SFST`), though not in general quantifier-free. -/
+regular function (closed under composition in `SubsequentialTransducer`), though not in general
+quantifier-free. -/
 def applyComp (T₂ : Transduction β γ) (T₁ : Transduction α β) [DecidableEq β]
     (w : WordModel α) : WordModel γ :=
   T₂.apply (T₁.apply w)

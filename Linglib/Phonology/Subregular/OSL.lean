@@ -32,7 +32,7 @@ ISL ⊊ OSL ⊊ Subsequential.
 * `isRightOutputStrictlyLocal_iff_left_reverse`: Right-OSL is the
   reverse-conjugate of Left-OSL.
 * `isLeftOutputStrictlyLocal_left_subsequential`: Left-OSL ⊆
-  Left-Subsequential, via `OSLRule.toFinSFST`.
+  Left-Subsequential, via `OSLRule.toFinSubsequentialTransducer`.
 
 ## Implementation notes
 
@@ -161,40 +161,42 @@ theorem isRightOutputStrictlyLocal_iff_left_reverse {k : ℕ}
 
 /-! ### OSL ⊆ Subsequential
 
-`OSLRule.toFinSFST` projects an OSL rule into an SFST whose state is
+`OSLRule.toFinSubsequentialTransducer` projects an OSL rule into a SubsequentialTransducer whose
+state is
 the bounded output window (length ≤ k − 1). The inclusion rides on the
 run-equality plus the `Fintype` instance for the bounded-window subtype
 (reusing `Subregular.fintypeListLengthLE`). Co-located on the source
-side because the dependency direction (`Subregular.SFST`; OSL projects
+side because the dependency direction (`Subregular.SubsequentialTransducer`; OSL projects
 into it) forces both construction and cast into this file.
 
 The output alphabet `[Fintype β]` constraint matches [mohri-1997]'s
 finite-alphabet assumption — the state space (a bounded output window)
 is finite precisely when the output alphabet is. -/
 
-/-- Construction: every Left-OSL rule induces an SFST whose state is the
+/-- Construction: every Left-OSL rule induces a SubsequentialTransducer whose state is the
 output window — a list of output symbols of length at most `k − 1` —
 and whose `finalOutput` is empty. -/
-def OSLRule.toFinSFST {k : ℕ} (r : OSLRule k α β) :
-    SFST {l : List β // l.length ≤ k - 1} α β where
+def OSLRule.toFinSubsequentialTransducer {k : ℕ} (r : OSLRule k α β) :
+    SubsequentialTransducer {l : List β // l.length ≤ k - 1} α β where
   start := ⟨[], Nat.zero_le _⟩
   step w x := ⟨(w.val ++ r.windowOutput w.val x).rtake (k - 1), List.length_rtake_le _ _⟩
   output w x := r.windowOutput w.val x
   finalOutput _ := []
 
-/-- The SFST induced by an OSL rule computes the same string function. -/
-theorem OSLRule.toFinSFST_run_eq_apply {k : ℕ} (r : OSLRule k α β) :
-    r.toFinSFST.run = r.apply := by
+/-- The SubsequentialTransducer induced by an OSL rule computes the same string function. -/
+theorem OSLRule.toFinSubsequentialTransducer_run_eq_apply {k : ℕ} (r : OSLRule k α β) :
+    r.toFinSubsequentialTransducer.run = r.apply := by
   funext input
-  show SFST.runFrom r.toFinSFST ⟨[], Nat.zero_le _⟩ input
+  show SubsequentialTransducer.runFrom r.toFinSubsequentialTransducer ⟨[], Nat.zero_le _⟩ input
          = OSLRule.applyAux r [] input
   suffices h : ∀ w : {l : List β // l.length ≤ k - 1},
-      SFST.runFrom r.toFinSFST w input = OSLRule.applyAux r w.val input from h _
+      SubsequentialTransducer.runFrom r.toFinSubsequentialTransducer w input = OSLRule.applyAux r
+      w.val input from h _
   intro w
   induction input generalizing w with
   | nil => rfl
   | cons x xs ih =>
-    rw [SFST.runFrom_cons]
+    rw [SubsequentialTransducer.runFrom_cons]
     exact congrArg _ (ih _)
 
 /-- **Left-OSL ⊆ Left-Subsequential** (over a finite output alphabet).
@@ -204,14 +206,16 @@ theorem isLeftOutputStrictlyLocal_left_subsequential {k : ℕ} [Fintype β]
     {f : List α → List β} (h : IsLeftOutputStrictlyLocal k f) :
     IsLeftSubsequential f := by
   obtain ⟨r, hr⟩ := h
-  have heq : r.toFinSFST.run = f := r.toFinSFST_run_eq_apply.trans hr
-  exact heq ▸ r.toFinSFST.isLeftSubsequential
+  have heq : r.toFinSubsequentialTransducer.run = f :=
+    r.toFinSubsequentialTransducer_run_eq_apply.trans hr
+  exact heq ▸ r.toFinSubsequentialTransducer.isLeftSubsequential
 
 /-- A single-symbol left-OSL rule is Mealy-computable, with the bounded output window as
 the synchronous state. -/
 theorem isMealyComputable_of_OSLRule {k : ℕ} [Fintype β] (r : OSLRule k α β)
     (hs : ∀ w x, (r.windowOutput w x).length = 1) : IsMealyComputable r.apply :=
-  r.toFinSFST_run_eq_apply ▸ r.toFinSFST.isMealyComputable (fun w x => hs w.val x) fun _ => rfl
+  r.toFinSubsequentialTransducer_run_eq_apply ▸ r.toFinSubsequentialTransducer.isMealyComputable
+  (fun w x => hs w.val x) fun _ => rfl
 
 /-- **Right-OSL ⊆ Right-Subsequential**, derived from the Left- side via
 the reverse-conjugation lemmas. The Right-OSL ↔ Left-OSL and

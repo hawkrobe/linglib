@@ -69,7 +69,7 @@ Per CLAUDE.md "stimulus contrasts" discipline for Studies files:
    formaliser-invented alphabet from the previous version of this file
    (which conflated [+ATR] with the spreading trigger) is replaced.
 2. Encodes the **rightward [+ATR] spreading** half of Maasai harmony
-   as both a `SFST` and an `OSLRule`. Single-direction iterative
+   as both a `SubsequentialTransducer` and an `OSLRule`. Single-direction iterative
    spreading is **Output-Strictly-Local** ([chandlee-eyraud-heinz-2015],
    the result [meinhardt-mai-bakovic-mccollum-2024] builds on) — the
    output decision at each position depends on whether the immediately
@@ -201,11 +201,11 @@ def rightwardATR_osl : OSLRule 2 Seg Seg where
     | .recL, .recH :: _ => [.recH]
     | .recL, _ => [.recL]
 
-/-- Equivalent SFST for the same map: state tracks whether spread is
+/-- Equivalent SubsequentialTransducer for the same map: state tracks whether spread is
 active. Demonstrates that the rule has both an OSL representation
 (above) and a Subsequential representation (here) — the latter being
 the umbrella class. -/
-def rightwardATR : SFST Bool Seg Seg where
+def rightwardATR : SubsequentialTransducer Bool Seg Seg where
   start := false
   step spreading s :=
     match s with
@@ -256,7 +256,7 @@ example : rightwardATR.run [.recL, .recL] = [.recL, .recL] := by decide
 
 example : rightwardATR_osl.apply [.recL, .recL] = [.recL, .recL] := by decide
 
-/-- **Two SFSTs / OSL rules agree** on the encoded examples. (Full
+/-- **Two SubsequentialTransducers / OSL rules agree** on the encoded examples. (Full
 extensional equivalence on all inputs would require a separate
 induction; this is the expected agreement on paper-cited cases.) -/
 example : rightwardATR.run [.dom, .recL, .a, .recL]
@@ -279,7 +279,7 @@ theorem rightwardATR_osl_isLeftOutputStrictlyLocal :
   rightwardATR_osl.isLeftOutputStrictlyLocal_apply
 
 /-- **Rightward [+ATR] spreading is also Left-Subsequential** (a weaker
-claim than OSL but the umbrella class). Witness: the SFST. -/
+claim than OSL but the umbrella class). Witness: the SubsequentialTransducer. -/
 theorem rightwardATR_isLeftSubsequential :
     IsLeftSubsequential rightwardATR.run :=
   rightwardATR.isLeftSubsequential

@@ -12,7 +12,7 @@ closure of successor and is not part of the quantifier-free fragment.
 The carrier is `List α` itself: a string *is* its word model. This is deliberately where
 mathlib stops — it has strings (`List`/`FreeMonoid`) and automata (`DFA`, `MyhillNerode`)
 but no model-theoretic word structure — and it keeps the logic layer directly composable
-with `Subregular`'s string functions (`Subregular.IsInputStrictlyLocal`, `SFST`).
+with `Subregular`'s string functions (`Subregular.IsInputStrictlyLocal`, `SubsequentialTransducer`).
 
 ## Main definitions
 
