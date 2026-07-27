@@ -5,7 +5,7 @@ import Linglib.Phonology.Subregular.OCP
 import Linglib.Studies.Yang2016
 import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
 import Linglib.Core.Computability.Subregular.Language.TierStrictlyLocal
-import Linglib.Core.Computability.Subregular.Language.Multitier
+import Linglib.Phonology.Subregular.Multitier
 
 /-!
 # Belth (2026): A Learning-Based Account of Phonological Tiers [belth-2026]

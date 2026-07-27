@@ -1,4 +1,4 @@
-import Linglib.Core.Computability.Subregular.Logic.BMRS
+import Linglib.Phonology.Subregular.BMRS
 import Linglib.Core.Order.IterateFixedPoint
 import Mathlib.Tactic.IntervalCases
 

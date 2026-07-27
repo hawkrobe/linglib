@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.Linarith
 import Linglib.Core.Computability.Subregular.Language.ForbiddenPairs
-import Linglib.Core.Computability.Subregular.Language.Multitier
+import Linglib.Phonology.Subregular.Multitier
 
 /-!
 # Frisch, Pierrehumbert & Broe (2004) [frisch-pierrehumbert-broe-2004]

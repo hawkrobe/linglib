@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 import Linglib.Phonology.Subregular.Sibilant
 import Linglib.Phonology.Subregular.Agree
 import Linglib.Core.Computability.Subregular.Language.StrictlyPiecewise
-import Linglib.Core.Computability.Subregular.Language.Multitier
+import Linglib.Phonology.Subregular.Multitier
 
 /-!
 # Hansson (2010) [hansson-2010]

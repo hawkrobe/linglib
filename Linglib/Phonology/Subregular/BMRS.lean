@@ -10,10 +10,13 @@ import Mathlib.Data.Finset.Basic
 /-!
 # Boolean Monadic Recursive Schemes
 
-A **Boolean monadic recursive scheme** is a program of mutually recursive Boolean-valued
-unary predicates over word models, built from `if…then…else`, the edge tests
-`initial`/`final` (`min`/`max`), input class tests, and recursive calls. Terms are the
-quantifier-free terms of `Logic/QFLogic.lean` at a single index variable.
+A **Boolean monadic recursive scheme** ([bhaskar-jardine-chandlee-oakden-2020]) is a program of
+mutually recursive Boolean-valued unary predicates over word models, built from `if…then…else`,
+the edge tests `initial`/`final` (`min`/`max`), input class tests, and recursive calls. Its
+one-sided fragments characterize the left- and right-subsequential functions;
+[bhaskar-chandlee-jardine-2023] extends the characterization and [chandlee-jardine-2021] applies
+it to phonological modelling. Terms are the quantifier-free terms of `Subregular.Logic.Term` at a
+single index variable.
 
 Two symbol types dissolve the usual signature bookkeeping: input labels `α` get the
 lookup rule, rule heads `F` get the unfolding rule, and a `Program` is a total map
@@ -53,7 +56,7 @@ variable {α F : Type*}
 input **class tests** `label` (the lookup rule; a `Finset` of symbols, so featural
 predicates like V or N over a segment alphabet are single atoms — a symbol test is the
 singleton case), rule-head calls `call` (the unfolding rule), and `if…then…else`.
-Terms are the single-variable quantifier-free terms of `Logic/QFLogic.lean`. -/
+Terms are the single-variable quantifier-free terms of `Subregular.Logic.Term`. -/
 inductive Expr (α F : Type*) where
   | tru
   | fls
