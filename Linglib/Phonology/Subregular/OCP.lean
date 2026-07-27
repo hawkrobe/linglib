@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Phonology.Subregular.ForbidPairs
-import Linglib.Core.Computability.TierProjection
+import Linglib.Core.Computability.Subregular.Language.TierProjection
 import Linglib.Phonology.OCP
 import Linglib.Core.Computability.Subregular.Function.ISL
 

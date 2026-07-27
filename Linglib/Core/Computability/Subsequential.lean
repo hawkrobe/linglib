@@ -8,7 +8,7 @@ import Mathlib.Data.Fintype.Prod
 import Mathlib.Data.Finset.Lattice.Fold
 import Linglib.Core.Computability.Mealy
 import Linglib.Core.Data.Fintype.Transfer
-import Linglib.Core.Computability.Subregular.Function.Defs
+import Linglib.Core.Computability.Direction
 
 /-!
 # Subsequential functions and finite-state transducers

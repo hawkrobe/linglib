@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.Computability.Subregular.Function.ISL
-import Linglib.Core.Computability.Subregular.Function.Subsequential
+import Linglib.Core.Computability.Subsequential
 
 /-!
 # Output Strictly Local (OSL) Functions

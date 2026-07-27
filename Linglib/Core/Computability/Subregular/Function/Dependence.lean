@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Mathlib.Data.List.Basic
-import Linglib.Core.Computability.Subregular.Function.Subsequential
+import Linglib.Core.Computability.Subsequential
 import Linglib.Core.Data.List.EqOn
 
 /-!

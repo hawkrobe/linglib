@@ -76,11 +76,11 @@ import Linglib.Core.Computability.NonContextFree.AnBnCnDn
 import Linglib.Core.Computability.NonContextFree.BlockWitness
 import Linglib.Core.Computability.NonRegular.AnBn
 import Linglib.Core.Computability.StarFree
-import Linglib.Core.Computability.Subregular.Function.Defs
+import Linglib.Core.Computability.Direction
 import Linglib.Core.Computability.Subregular.Function.Dependence
 import Linglib.Core.Computability.Subregular.Function.ISL
 import Linglib.Core.Computability.Subregular.Function.OSL
-import Linglib.Core.Computability.Subregular.Function.Subsequential
+import Linglib.Core.Computability.Subsequential
 import Linglib.Core.Computability.Variety.Equations
 import Linglib.Core.Computability.Variety.Pin
 import Linglib.Core.Computability.Subregular.Language.Aperiodicity
@@ -101,7 +101,7 @@ import Linglib.Core.Computability.Subregular.Logic.Transduction
 import Linglib.Core.Computability.Subregular.Logic.TreeModel
 import Linglib.Core.Computability.Subregular.Logic.WordModel
 import Linglib.Core.Computability.SyntacticMonoid
-import Linglib.Core.Computability.TierProjection
+import Linglib.Core.Computability.Subregular.Language.TierProjection
 import Linglib.Core.Computability.TransitionMonoid
 import Linglib.Core.Computability.Variety.Correspondence
 import Linglib.Core.Computability.Variety.Langs
