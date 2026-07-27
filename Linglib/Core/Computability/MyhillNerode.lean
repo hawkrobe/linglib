@@ -38,7 +38,7 @@ bimachine of [reutenauer-schutzenberger-1991], surveyed in [filiot-reynier-2016]
   determining the output yields a machine
 * `isMealyComputable_iff_residual`: `f` is Mealy-computable if and only if it is
   length-preserving, prefix-preserving, and `Set.range (residual f)` is finite
-* `isBimachineComputable_iff_residual`: `f` is bimachine-computable if and only if it
+* `isLengthPreservingBimachineComputable_iff_residual`: `f` is bimachine-computable if and only if it
   is length-preserving and both `Set.range (residual f)` and
   `Set.range (coresidual f)` are finite
 
@@ -206,55 +206,55 @@ theorem Bimachine.rState_append (u y : List α) :
     B.rState (u ++ y) = Bimachine.rState {B with rInit := B.rState y} u := by
   simp [Bimachine.rState, List.foldr_append]
 
-/-- Dropping a scanned prefix of a bimachine run reseeds the left state. -/
-theorem Bimachine.drop_runFrom_append (l : L) (x v : List α) :
+/-- Dropping a scanned prefix of a letter-to-letter bimachine run reseeds the left
+state. -/
+theorem Bimachine.drop_runFrom_append (w : B.LetterToLetter) (l : L) (x v : List α) :
     (B.runFrom l (x ++ v)).drop x.length = B.runFrom (B.lStateAfter l x) v := by
   induction x generalizing l with
   | nil => rfl
-  | cons a x ih => simpa using ih (B.lStep l a)
+  | cons a x ih => simpa [w.output_eq] using ih (B.lStep l a)
 
 /-- Taking the unscanned prefix of a bimachine run reseeds the right state. -/
-theorem Bimachine.take_runFrom_append (l : L) (u y : List α) :
+theorem Bimachine.take_runFrom_append (w : B.LetterToLetter) (l : L) (u y : List α) :
     (B.runFrom l (u ++ y)).take u.length
       = Bimachine.runFrom {B with rInit := B.rState y} l u := by
   induction u generalizing l with
   | nil => rfl
   | cons a u ih =>
-    show B.output l a (B.rState (u ++ y))
-        :: (B.runFrom (B.lStep l a) (u ++ y)).take u.length = _
-    rw [ih (B.lStep l a), B.rState_append u y]
-    rfl
+    rw [List.cons_append, B.runFrom_cons, w.output_eq, List.singleton_append,
+      List.length_cons, List.take_succ_cons, ih (B.lStep l a), B.rState_append u y]
+    simp [w.output_eq]
 
 /-- Residuals of a bimachine's run reseed the left automaton. -/
-theorem Bimachine.residual_run (x : List α) :
+theorem Bimachine.residual_run (w : B.LetterToLetter) (x : List α) :
     residual B.run x = B.runFrom (B.lState x) :=
-  funext fun v => B.drop_runFrom_append B.lInit x v
+  funext fun v => B.drop_runFrom_append w B.lInit x v
 
 /-- Coresiduals of a bimachine's run reseed the right automaton. -/
-theorem Bimachine.coresidual_run (y : List α) :
+theorem Bimachine.coresidual_run (w : B.LetterToLetter) (y : List α) :
     coresidual B.run y = Bimachine.run {B with rInit := B.rState y} :=
-  funext fun u => B.take_runFrom_append B.lInit u y
+  funext fun u => B.take_runFrom_append w B.lInit u y
 
 /-! ### Necessity -/
 
-theorem IsBimachineComputable.finite_range_residual {f : List α → List β}
-    (hf : IsBimachineComputable f) : (Set.range (residual f)).Finite := by
-  obtain ⟨L, _, R, _, B, rfl⟩ := hf
+theorem IsLengthPreservingBimachineComputable.finite_range_residual {f : List α → List β}
+    (hf : IsLengthPreservingBimachineComputable f) : (Set.range (residual f)).Finite := by
+  obtain ⟨L, _, R, _, B, ⟨w⟩, rfl⟩ := hf
   exact Set.Finite.subset (Set.finite_range B.runFrom)
-    (Set.range_subset_iff.mpr fun x => ⟨_, (B.residual_run x).symm⟩)
+    (Set.range_subset_iff.mpr fun x => ⟨_, (B.residual_run w x).symm⟩)
 
-theorem IsBimachineComputable.finite_range_coresidual {f : List α → List β}
-    (hf : IsBimachineComputable f) : (Set.range (coresidual f)).Finite := by
-  obtain ⟨L, _, R, _, B, rfl⟩ := hf
+theorem IsLengthPreservingBimachineComputable.finite_range_coresidual {f : List α → List β}
+    (hf : IsLengthPreservingBimachineComputable f) : (Set.range (coresidual f)).Finite := by
+  obtain ⟨L, _, R, _, B, ⟨w⟩, rfl⟩ := hf
   exact Set.Finite.subset (Set.finite_range fun r : R => Bimachine.run {B with rInit := r})
-    (Set.range_subset_iff.mpr fun y => ⟨B.rState y, (B.coresidual_run y).symm⟩)
+    (Set.range_subset_iff.mpr fun y => ⟨B.rState y, (B.coresidual_run w y).symm⟩)
 
 /-! ### Sufficiency -/
 
 /-- A length-preserving `f` with finite left and right summaries, congruent in their
 respective scan directions and jointly determining each output cell, is
 bimachine-computable. -/
-theorem isBimachineComputable_of_stateSummaries
+theorem isLengthPreservingBimachineComputable_of_stateSummaries
     {f : List α → List β} {L R : Type*} [Fintype L] [Fintype R]
     (stateL : List α → L) (δL : L → α → L) (stateR : List α → R) (δR : R → α → R)
     (out : L → α → R → β)
@@ -262,10 +262,10 @@ theorem isBimachineComputable_of_stateSummaries
     (hδR : ∀ x w, stateR (x :: w) = δR (stateR w) x)
     (hout : ∀ u x w, (f (u ++ x :: w))[u.length]? = some (out (stateL u) x (stateR w)))
     (hlen : ∀ xs, (f xs).length = xs.length) :
-    IsBimachineComputable f := by
-  refine isBimachineComputable_iff.mpr ⟨L, inferInstance, R, inferInstance,
-    ⟨stateL [], δL, stateR [], δR, out⟩, ?_⟩
-  set B : Bimachine L R α β := ⟨stateL [], δL, stateR [], δR, out⟩
+    IsLengthPreservingBimachineComputable f := by
+  refine isLengthPreservingBimachineComputable_iff.mpr ⟨L, inferInstance, R, inferInstance,
+    ⟨stateL [], δL, stateR [], δR, fun l a r => [out l a r]⟩, ⟨⟨out, fun _ _ _ => rfl⟩⟩, ?_⟩
+  set B : Bimachine L R α β := ⟨stateL [], δL, stateR [], δR, fun l a r => [out l a r]⟩
   have hL : ∀ ps : List α, B.lState ps = stateL ps := by
     intro ps
     induction ps using List.reverseRecOn with
@@ -281,7 +281,7 @@ theorem isBimachineComputable_of_stateSummaries
   funext xs
   apply List.ext_getElem?
   intro i
-  rw [B.getElem?_run xs i]
+  rw [(⟨out, fun _ _ _ => rfl⟩ : B.LetterToLetter).getElem?_run xs i]
   simp only [hL, hR]
   rcases lt_or_ge i xs.length with hi | hi
   · have key := hout (xs.take i) xs[i] (xs.drop (i + 1))
@@ -295,16 +295,16 @@ theorem isBimachineComputable_of_stateSummaries
 bimachine-computable: residual classes are the left states, coresidual classes the
 right states, and the cell output is read off representatives — well-defined by
 exchanging one context at a time. -/
-theorem isBimachineComputable_of_residual {f : List α → List β}
+theorem isLengthPreservingBimachineComputable_of_residual {f : List α → List β}
     (hlen : ∀ xs, (f xs).length = xs.length)
     (hfinL : (Set.range (residual f)).Finite)
     (hfinR : (Set.range (coresidual f)).Finite) :
-    IsBimachineComputable f := by
+    IsLengthPreservingBimachineComputable f := by
   have := hfinL.fintype
   have := hfinR.fintype
   choose repL hrepL using fun r : Set.range (residual f) => r.prop
   choose repR hrepR using fun s : Set.range (coresidual f) => s.prop
-  refine isBimachineComputable_of_stateSummaries
+  refine isLengthPreservingBimachineComputable_of_stateSummaries
     (fun u => ⟨residual f u, Set.mem_range_self u⟩)
     (fun r x => ⟨fun v => (r.val (x :: v)).drop 1, by
       obtain ⟨u, hu⟩ := r.prop
@@ -339,11 +339,11 @@ end Bimachine
 /-- **Myhill–Nerode for bimachines**: a function is bimachine-computable if and only
 if it is length-preserving with finitely many residuals and finitely many
 coresiduals. -/
-theorem isBimachineComputable_iff_residual {f : List α → List β} :
-    IsBimachineComputable f
+theorem isLengthPreservingBimachineComputable_iff_residual {f : List α → List β} :
+    IsLengthPreservingBimachineComputable f
       ↔ (∀ xs, (f xs).length = xs.length) ∧ (Set.range (residual f)).Finite
         ∧ (Set.range (coresidual f)).Finite :=
   ⟨fun hf => ⟨hf.length_eq, hf.finite_range_residual, hf.finite_range_coresidual⟩,
-   fun h => isBimachineComputable_of_residual h.1 h.2.1 h.2.2⟩
+   fun h => isLengthPreservingBimachineComputable_of_residual h.1 h.2.1 h.2.2⟩
 
 end Subregular

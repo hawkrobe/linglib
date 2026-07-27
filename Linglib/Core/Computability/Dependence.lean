@@ -382,25 +382,29 @@ single side, `OneSidedAt` transported to words. -/
 theorem IsNonInteractingBimachineComputable.oneSidedChanges [DecidableEq α]
     {f : List α → List α} (hf : IsNonInteractingBimachineComputable f) :
     OneSidedChanges f := by
-  obtain ⟨L, _, R, _, B, rfl, hni⟩ := hf
+  obtain ⟨L, _, R, _, B, rfl, ⟨wni⟩⟩ := hf
+  have hni : B.IsNonInteracting := ⟨wni⟩
+  set w := wni.letterToLetter with hw
   intro xs i hchange
   rcases lt_or_ge i xs.length with hi | hi
   · have ha : xs[i]? = some xs[i] := List.getElem?_eq_getElem hi
-    have hcell : B.output (B.lState (xs.take i)) xs[i] (B.rState (xs.drop (i + 1)))
+    have hcell : w.cell (B.lState (xs.take i)) xs[i] (B.rState (xs.drop (i + 1)))
         ≠ xs[i] :=
-      fun h => hchange (by rw [B.getElem?_run, ha, Option.map_some, h])
-    rcases hni.oneSidedAt_of_change hcell with hR | hL
+      fun h => hchange (by rw [w.getElem?_run, ha, Option.map_some, h])
+    have hout : B.output (B.lState (xs.take i)) xs[i] (B.rState (xs.drop (i + 1)))
+        ≠ [xs[i]] := by rw [w.output_eq]; simpa using hcell
+    rcases hni.oneSidedAt_of_change hout with hR | hL
     · refine ⟨.right, fun v hlen hag => ?_⟩
       have hv : v[i]? = some xs[i] := (hag.getElem?_eq (by simp)).symm.trans ha
       show (B.run xs)[i]? = (B.run v)[i]?
-      rw [B.getElem?_run, B.getElem?_run, ha, hv, Option.map_some, Option.map_some,
-        ← hag.take_eq (by omega), hR (B.rState (v.drop (i + 1)))]
+      rw [w.getElem?_run, w.getElem?_run, ha, hv, Option.map_some, Option.map_some,
+        ← hag.take_eq (by omega), w.cell_inj.mpr (hR (B.rState (v.drop (i + 1))))]
     · refine ⟨.left, fun v hlen hag => ?_⟩
       have hv : v[i]? = some xs[i] := (hag.getElem?_eq (by simp)).symm.trans ha
       show (B.run xs)[i]? = (B.run v)[i]?
-      rw [B.getElem?_run, B.getElem?_run, ha, hv, Option.map_some, Option.map_some,
-        ← hag.drop_eq (by omega), hL (B.lState (v.take i))]
-  · exact absurd (by rw [List.getElem?_eq_none (by simpa using hi),
+      rw [w.getElem?_run, w.getElem?_run, ha, hv, Option.map_some, Option.map_some,
+        ← hag.drop_eq (by omega), w.cell_inj.mpr (hL (B.lState (v.take i)))]
+  · exact absurd (by rw [List.getElem?_eq_none (by simpa [w.length_run] using hi),
       List.getElem?_eq_none hi]) hchange
 
 /-- The non-interacting class is proper inside the bimachine-computable functions —

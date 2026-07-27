@@ -68,11 +68,11 @@ structure Bimachine (L R α β : Type*) where
   rInit : R
   /-- Transition of the right automaton, scanning right to left. -/
   rStep : R → α → R
-  /-- The symbol emitted from the two context states and the current input symbol. -/
-  output : L → α → R → β
+  /-- The word emitted from the two context states and the current input symbol. -/
+  output : L → α → R → List β
 
-instance [Inhabited L] [Inhabited R] [Inhabited β] : Inhabited (Bimachine L R α β) :=
-  ⟨⟨default, fun _ _ => default, default, fun _ _ => default, fun _ _ _ => default⟩⟩
+instance [Inhabited L] [Inhabited R] : Inhabited (Bimachine L R α β) :=
+  ⟨⟨default, fun _ _ => default, default, fun _ _ => default, fun _ _ _ => []⟩⟩
 
 namespace Bimachine
 
@@ -99,35 +99,60 @@ def rState (suf : List α) : R := suf.foldr (fun a r => B.rStep r a) B.rInit
 right state is read on the spot. -/
 def runFrom : L → List α → List β
   | _, [] => []
-  | l, x :: xs => B.output l x (B.rState xs) :: runFrom (B.lStep l x) xs
+  | l, x :: xs => B.output l x (B.rState xs) ++ runFrom (B.lStep l x) xs
 
 /-- The computed function. -/
 def run : List α → List β := B.runFrom B.lInit
 
 @[simp] theorem runFrom_nil (l : L) : B.runFrom l [] = [] := rfl
 @[simp] theorem runFrom_cons (l : L) (x : α) (xs : List α) :
-    B.runFrom l (x :: xs) = B.output l x (B.rState xs) :: B.runFrom (B.lStep l x) xs := rfl
+    B.runFrom l (x :: xs) = B.output l x (B.rState xs) ++ B.runFrom (B.lStep l x) xs := rfl
 
-/-- The run is length-preserving (one output symbol per input symbol). -/
-@[simp] theorem length_runFrom (l : L) (xs : List α) :
+/-! ### Letter-to-letter bimachines
+
+A cell of a general bimachine emits a word, so the run is a concatenation and output
+positions need not track input positions. A **letter-to-letter** bimachine emits exactly
+one symbol per cell ([sakarovitch-2009] §IV.6); the function it computes is then
+*length-preserving*, and the positional description below holds. -/
+
+/-- A witness that `B` is *letter-to-letter*: every cell emits exactly one symbol, named
+by `cell`. -/
+structure LetterToLetter (B : Bimachine L R α β) where
+  /-- The single symbol emitted at a cell. -/
+  cell : L → α → R → β
+  /-- Every cell emits exactly that one symbol. -/
+  output_eq : ∀ l a r, B.output l a r = [cell l a r]
+
+/-- `B` is letter-to-letter when it admits a `LetterToLetter` witness. -/
+def IsLetterToLetter (B : Bimachine L R α β) : Prop := Nonempty B.LetterToLetter
+
+namespace LetterToLetter
+
+variable {B}
+
+/-- The run of a letter-to-letter bimachine has the length of its input. -/
+@[simp] theorem length_runFrom (w : B.LetterToLetter) (l : L) (xs : List α) :
     (B.runFrom l xs).length = xs.length := by
-  induction xs generalizing l <;> simp [*]
+  induction xs generalizing l <;> simp [w.output_eq, *]
 
-@[simp] theorem length_run (xs : List α) : (B.run xs).length = xs.length :=
-  B.length_runFrom B.lInit xs
+@[simp] theorem length_run (w : B.LetterToLetter) (xs : List α) :
+    (B.run xs).length = xs.length :=
+  w.length_runFrom B.lInit xs
 
 /-- Output coordinate `i` reads the left state after the length-`i` prefix and the
 right state of the strict suffix. -/
-theorem getElem?_runFrom (l : L) (xs : List α) (i : ℕ) :
+theorem getElem?_runFrom (w : B.LetterToLetter) (l : L) (xs : List α) (i : ℕ) :
     (B.runFrom l xs)[i]? = xs[i]?.map fun a =>
-      B.output (B.lStateAfter l (xs.take i)) a (B.rState (xs.drop (i + 1))) := by
-  induction xs generalizing l i <;> cases i <;> simp [*]
+      w.cell (B.lStateAfter l (xs.take i)) a (B.rState (xs.drop (i + 1))) := by
+  induction xs generalizing l i <;> cases i <;> simp [w.output_eq, *]
 
-/-- Output `i` is `output (lState (x.take i)) (x i) (rState (x.drop (i+1)))`. -/
-theorem getElem?_run (x : List α) (i : ℕ) :
+/-- Output `i` is `cell (lState (x.take i)) (x i) (rState (x.drop (i+1)))`. -/
+theorem getElem?_run (w : B.LetterToLetter) (x : List α) (i : ℕ) :
     (B.run x)[i]? = x[i]?.map fun a =>
-      B.output (B.lState (x.take i)) a (B.rState (x.drop (i + 1))) :=
-  B.getElem?_runFrom B.lInit x i
+      w.cell (B.lState (x.take i)) a (B.rState (x.drop (i + 1))) :=
+  w.getElem?_runFrom B.lInit x i
+
+end LetterToLetter
 
 /-! ### Reindexing states -/
 
@@ -179,6 +204,17 @@ def reindex (eL : L ≃ L') (eR : R ≃ R') : Bimachine L R α β ≃ Bimachine 
     (reindex eL eR B).run = B.run := by
   funext xs; simp [run]
 
+/-- Cells agree exactly when the underlying word-valued outputs do. -/
+theorem LetterToLetter.cell_inj {B : Bimachine L R α β} (w : B.LetterToLetter)
+    {l l' : L} {a a' : α} {r r' : R} :
+    w.cell l a r = w.cell l' a' r' ↔ B.output l a r = B.output l' a' r' := by
+  rw [w.output_eq, w.output_eq]; simp
+
+/-- Letter-to-letter-ness transports along state reindexing. -/
+def LetterToLetter.reindex {L' R' : Type*} {B : Bimachine L R α β} (w : B.LetterToLetter)
+    (eL : L ≃ L') (eR : R ≃ R') : (Bimachine.reindex eL eR B).LetterToLetter :=
+  ⟨fun l a r => w.cell (eL.symm l) a (eR.symm r), fun _ _ _ => w.output_eq _ _ _⟩
+
 /-! ### Flag bimachines
 
 The recurring two-sided-trigger shape: each side's automaton is the one-bit "some symbol
@@ -194,7 +230,7 @@ def ofFlags : Bimachine Bool Bool α β where
   lStep l a := l || pL a
   rInit := false
   rStep r a := r || pR a
-  output := out
+  output l a r := [out l a r]
 
 @[simp] theorem ofFlags_lInit : (ofFlags pL pR out).lInit = false := rfl
 @[simp] theorem ofFlags_lStep (l : Bool) (a : α) :
@@ -202,7 +238,11 @@ def ofFlags : Bimachine Bool Bool α β where
 @[simp] theorem ofFlags_rInit : (ofFlags pL pR out).rInit = false := rfl
 @[simp] theorem ofFlags_rStep (r : Bool) (a : α) :
     (ofFlags pL pR out).rStep r a = (r || pR a) := rfl
-@[simp] theorem ofFlags_output : (ofFlags pL pR out).output = out := rfl
+@[simp] theorem ofFlags_output (l : Bool) (a : α) (r : Bool) :
+    (ofFlags pL pR out).output l a r = [out l a r] := rfl
+
+/-- A flag bimachine is letter-to-letter, with `out` as its cell. -/
+def ofFlags_letterToLetter : (ofFlags pL pR out).LetterToLetter := ⟨out, fun _ _ _ => rfl⟩
 
 @[simp] theorem ofFlags_lState (xs : List α) : (ofFlags pL pR out).lState xs = xs.any pL :=
   List.foldl_or pL false xs
@@ -215,7 +255,7 @@ flags. -/
 theorem getElem?_ofFlags_run (x : List α) (i : ℕ) :
     ((ofFlags pL pR out).run x)[i]?
       = x[i]?.map fun a => out ((x.take i).any pL) a ((x.drop (i + 1)).any pR) := by
-  simp [getElem?_run]
+  simp [(ofFlags_letterToLetter pL pR out).getElem?_run, ofFlags_letterToLetter]
 
 /-! ### Non-interacting decompositions -/
 
@@ -266,7 +306,7 @@ structure NonInteraction (B : Bimachine L R α α) where
   wherever both fire), so neither side can suppress the other's change. -/
   unite_comm : ∀ l a r, unite (ruleL l a) (ruleR r a) a = unite (ruleR r a) (ruleL l a) a
   /-- The cell output is the union of the two proposals. -/
-  output_eq : ∀ l a r, B.output l a r = unite (ruleL l a) (ruleR r a) a
+  output_eq : ∀ l a r, B.output l a r = [unite (ruleL l a) (ruleR r a) a]
 
 /-- A bimachine over a single alphabet is non-interacting when it admits a
 non-interacting decomposition (`NonInteraction`) of its cell output. -/
@@ -275,31 +315,35 @@ def IsNonInteracting (B : Bimachine L R α α) : Prop := Nonempty B.NonInteracti
 variable {L' R' : Type*} {B : Bimachine L R α α} (w : B.NonInteraction) {l : L} {a : α}
   {r : R}
 
+/-- A non-interacting decomposition exhibits the bimachine as letter-to-letter. -/
+def NonInteraction.letterToLetter : B.LetterToLetter :=
+  ⟨fun l a r => unite (w.ruleL l a) (w.ruleR r a) a, w.output_eq⟩
+
 /-- A firing left rule alone determines the output. -/
 theorem NonInteraction.output_eq_ruleL (hL : w.ruleL l a ≠ a) :
-    B.output l a r = w.ruleL l a :=
-  (w.output_eq l a r).trans (unite_of_left_ne hL _)
+    B.output l a r = [w.ruleL l a] :=
+  (w.output_eq l a r).trans (by rw [unite_of_left_ne hL])
 
 /-- A firing right rule alone determines the output — order-independence of the union
 is what silences the left state. -/
 theorem NonInteraction.output_eq_ruleR (hR : w.ruleR r a ≠ a) :
-    B.output l a r = w.ruleR r a :=
-  (w.output_eq l a r).trans ((w.unite_comm l a r).trans (unite_of_left_ne hR _))
+    B.output l a r = [w.ruleR r a] :=
+  (w.output_eq l a r).trans (by rw [w.unite_comm l a r, unite_of_left_ne hR])
 
 /-- At every cell whose output differs from the input symbol, a decomposed bimachine is
 one-sided: the change is the left rule's alone or the right rule's alone. -/
 theorem NonInteraction.oneSidedAt_of_change (w : B.NonInteraction)
-    (hne : B.output l a r ≠ a) : B.OneSidedAt l a r := by
+    (hne : B.output l a r ≠ [a]) : B.OneSidedAt l a r := by
   by_cases hL : w.ruleL l a = a
   · have hR : w.ruleR r a ≠ a := fun hR =>
-      hne ((w.output_eq l a r).trans (unite_eq_self_iff.mpr ⟨hL, hR⟩))
+      hne ((w.output_eq l a r).trans (by rw [unite_eq_self_iff.mpr ⟨hL, hR⟩]))
     exact .inr fun l' => (w.output_eq_ruleR hR).trans (w.output_eq_ruleR hR).symm
   · exact .inl fun r' => (w.output_eq_ruleL hL).trans (w.output_eq_ruleL hL).symm
 
 /-- At every cell whose output differs from the input symbol, a non-interacting
 bimachine is one-sided. -/
 theorem IsNonInteracting.oneSidedAt_of_change (h : B.IsNonInteracting)
-    (hne : B.output l a r ≠ a) : B.OneSidedAt l a r :=
+    (hne : B.output l a r ≠ [a]) : B.OneSidedAt l a r :=
   h.elim fun w => w.oneSidedAt_of_change hne
 
 /-- Transports a decomposition along state reindexing: the rules compose with
@@ -321,8 +365,8 @@ at its two context states. -/
 theorem NonInteraction.getElem?_run_eq_iff {u : List α} {i : ℕ} (hsym : u[i]? = some a) :
     (B.run u)[i]? = u[i]? ↔
       w.ruleL (B.lState (u.take i)) a = a ∧ w.ruleR (B.rState (u.drop (i + 1))) a = a := by
-  rw [B.getElem?_run, hsym, Option.map_some, Option.some_inj, w.output_eq,
-    unite_eq_self_iff]
+  rw [w.letterToLetter.getElem?_run u i, hsym, Option.map_some, Option.some_inj]
+  exact unite_eq_self_iff
 
 end
 
@@ -342,7 +386,7 @@ def Mealy.toBimachine : Bimachine σ Unit α β where
   lStep := T.step
   rInit := ()
   rStep _ _ := ()
-  output l a _ := T.output l a
+  output l a _ := [T.output l a]
 
 @[simp] theorem Mealy.toBimachine_runFrom (s : σ) (xs : List α) :
     T.toBimachine.runFrom s xs = T.runFrom s xs := by
@@ -378,11 +422,35 @@ theorem Bimachine.isBimachineComputable {L R : Type*} [Fintype L] [Fintype R]
     (B : Bimachine L R α β) : IsBimachineComputable B.run :=
   isBimachineComputable_iff.mpr ⟨L, inferInstance, R, inferInstance, B, rfl⟩
 
-/-- Bimachine-computable functions are length-preserving. -/
-theorem IsBimachineComputable.length_eq {f : List α → List β}
-    (h : IsBimachineComputable f) (x : List α) : (f x).length = x.length :=
-  have ⟨_, _, _, _, B, hB⟩ := h
-  hB ▸ B.length_run x
+/-- Computability by a finite **letter-to-letter** bimachine: the total
+length-preserving rational functions. -/
+def IsLengthPreservingBimachineComputable (f : List α → List β) : Prop :=
+  ∃ (L : Type) (_ : Fintype L) (R : Type) (_ : Fintype R) (B : Bimachine L R α β),
+    B.IsLetterToLetter ∧ B.run = f
+
+/-- `f` is computed by a finite letter-to-letter bimachine iff it is computed by one with
+state types in any universes. -/
+theorem isLengthPreservingBimachineComputable_iff.{v, w} {f : List α → List β} :
+    IsLengthPreservingBimachineComputable f
+      ↔ ∃ (L : Type v) (_ : Fintype L) (R : Type w) (_ : Fintype R)
+          (B : Bimachine L R α β), B.IsLetterToLetter ∧ B.run = f :=
+  exists_fintype₂_congr
+    (fun eL eR ⟨B, ⟨w⟩, hB⟩ =>
+      ⟨.reindex eL eR B, ⟨w.reindex eL eR⟩, (B.run_reindex eL eR).trans hB⟩)
+    (fun eL eR ⟨B, ⟨w⟩, hB⟩ =>
+      ⟨.reindex eL eR B, ⟨w.reindex eL eR⟩, (B.run_reindex eL eR).trans hB⟩)
+
+/-- A length-preserving bimachine-computable function is bimachine-computable. -/
+theorem IsBimachineComputable.of_lengthPreserving {f : List α → List β}
+    (h : IsLengthPreservingBimachineComputable f) : IsBimachineComputable f :=
+  have ⟨L, _, R, _, B, _, hB⟩ := h
+  ⟨L, ‹_›, R, ‹_›, B, hB⟩
+
+/-- Functions computed by letter-to-letter bimachines are length-preserving. -/
+theorem IsLengthPreservingBimachineComputable.length_eq {f : List α → List β}
+    (h : IsLengthPreservingBimachineComputable f) (x : List α) : (f x).length = x.length :=
+  have ⟨_, _, _, _, _, ⟨w⟩, hB⟩ := h
+  hB ▸ w.length_run x
 
 /-- A Mealy-computable function is bimachine-computable (`Mealy.toBimachine`). -/
 theorem IsBimachineComputable.of_mealyComputable {f : List α → List β}
@@ -430,7 +498,8 @@ theorem IsBimachineComputable.of_nonInteracting {f : List α → List α}
 /-- Functions computed by non-interacting bimachines are length-preserving. -/
 theorem IsNonInteractingBimachineComputable.length_eq {f : List α → List α}
     (h : IsNonInteractingBimachineComputable f) (x : List α) : (f x).length = x.length :=
-  (IsBimachineComputable.of_nonInteracting h).length_eq x
+  have ⟨_, _, _, _, _, hB, ⟨w⟩⟩ := h
+  hB ▸ w.letterToLetter.length_run x
 /-- A Mealy-computable function is computed by a non-interacting bimachine: the
 bimachine view (`Mealy.toBimachine`) has a trivial right automaton, so the cell output
 is a one-sided rule with `ωR` the identity. -/
@@ -440,7 +509,7 @@ theorem IsNonInteractingBimachineComputable.of_mealyComputable {f : List α → 
   hT ▸ T.toBimachine_run ▸ T.toBimachine.isNonInteractingBimachineComputable
     ⟨⟨T.output, fun _ a => a,
       fun _ a _ => (Bimachine.unite_right_self _ a).trans (Bimachine.unite_left_self _ a).symm,
-      fun _ a _ => (Bimachine.unite_right_self _ a).symm⟩⟩
+      fun _ a _ => by simp⟩⟩
 
 end
 
