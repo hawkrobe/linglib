@@ -100,7 +100,7 @@ theorem filter_count [DecidableEq α]
       simp [ht_notin]
     · have hbeq : (t == s) = false := by
         rw [beq_eq_false_iff_ne]; exact fun h => hst h.symm
-      simp only [hbeq, List.length_nil, List.mem_cons]
+      simp only [hbeq, List.mem_cons]
       have : ¬ (s = t) := hst
       simp [this]
 
@@ -142,7 +142,7 @@ theorem getElem?_eq {symbols : List α} {p : Nat} (hp : 0 < p) (i : Nat) :
         rw [List.length_replicate]; exact hi
       rw [List.getElem?_append_left hi_len, List.getElem?_replicate]
       have hp_ne : p ≠ 0 := Nat.pos_iff_ne_zero.mp hp
-      simp [hp_ne, hi]
+      simp [hi]
       have hdiv : i / p = 0 := Nat.div_eq_of_lt hi
       rw [hdiv]; rfl
     · -- i ≥ p; look up in the rest
