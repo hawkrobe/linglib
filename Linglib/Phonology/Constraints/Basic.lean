@@ -4,8 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Phonology.Constraints.Defs
-import Linglib.Core.Computability.Subregular.Language.TierProjection
-import Linglib.Core.Computability.Subregular.Language.ForbiddenPairs
+import Linglib.Phonology.Subregular.TierProjection
+import Linglib.Phonology.Subregular.ForbiddenPairs
 
 /-!
 # Tier-based markedness constraint library

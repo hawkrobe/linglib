@@ -1,5 +1,5 @@
 import Linglib.Core.Computability.Subregular.Logic.Transduction
-import Linglib.Core.Computability.Subregular.Function.ISL
+import Linglib.Phonology.Subregular.ISL
 
 /-!
 # The locality bridge: quantifier-free ⟹ strictly local

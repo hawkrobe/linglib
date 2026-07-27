@@ -4,7 +4,7 @@ import Linglib.Phonology.OptimalityTheory.Tableau
 import Linglib.Phonology.Subregular.OCP
 import Linglib.Studies.Yang2016
 import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
-import Linglib.Core.Computability.Subregular.Language.TierStrictlyLocal
+import Linglib.Phonology.Subregular.TierStrictlyLocal
 import Linglib.Phonology.Subregular.Multitier
 
 /-!

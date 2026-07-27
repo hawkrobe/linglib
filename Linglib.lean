@@ -78,7 +78,6 @@ import Linglib.Core.Computability.NonRegular.AnBn
 import Linglib.Core.Computability.StarFree
 import Linglib.Core.Computability.Direction
 import Linglib.Core.Computability.Dependence
-import Linglib.Core.Computability.Subregular.Function.ISL
 import Linglib.Core.Computability.Subsequential
 import Linglib.Core.Computability.Variety.Equations
 import Linglib.Core.Computability.Variety.Pin
@@ -86,16 +85,13 @@ import Linglib.Core.Computability.Subregular.Language.Aperiodicity
 import Linglib.Core.Computability.Subregular.Language.Boundary
 import Linglib.Core.Computability.Subregular.Language.ContainsFactor
 import Linglib.Core.Computability.Definite
-import Linglib.Core.Computability.Subregular.Language.ForbiddenPairs
 import Linglib.Core.Computability.Subregular.Language.PiecewiseTestable
 import Linglib.Core.Computability.Subregular.Language.StrictlyLocal
 import Linglib.Core.Computability.Subregular.Language.StrictlyPiecewise
-import Linglib.Core.Computability.Subregular.Language.TierStrictlyLocal
 import Linglib.Core.Computability.Subregular.Logic.QFLogic
 import Linglib.Core.Computability.Subregular.Logic.Transduction
 import Linglib.Core.Computability.Subregular.Logic.WordModel
 import Linglib.Core.Computability.SyntacticMonoid
-import Linglib.Core.Computability.Subregular.Language.TierProjection
 import Linglib.Core.Computability.TransitionMonoid
 import Linglib.Core.Computability.Variety.Correspondence
 import Linglib.Core.Computability.Variety.Langs
@@ -1346,7 +1342,9 @@ import Linglib.Phonology.Prosody.Word
 import Linglib.Phonology.Subregular.Agree
 import Linglib.Phonology.Subregular.BMRS
 import Linglib.Phonology.Subregular.ForbidPairs
+import Linglib.Phonology.Subregular.ForbiddenPairs
 import Linglib.Phonology.Subregular.Harmony
+import Linglib.Phonology.Subregular.ISL
 import Linglib.Phonology.Subregular.LocalRewrite
 import Linglib.Phonology.Subregular.LocalityBridge
 import Linglib.Phonology.Subregular.Multitier
@@ -1354,7 +1352,9 @@ import Linglib.Phonology.Subregular.OCP
 import Linglib.Phonology.Subregular.OSL
 import Linglib.Phonology.Subregular.OTBound
 import Linglib.Phonology.Subregular.Sibilant
+import Linglib.Phonology.Subregular.TierProjection
 import Linglib.Phonology.Subregular.TierRule
+import Linglib.Phonology.Subregular.TierStrictlyLocal
 import Linglib.Phonology.Segmental.Basic
 import Linglib.Phonology.Segmental.Defs
 import Linglib.Phonology.Segmental.ElementTheory
