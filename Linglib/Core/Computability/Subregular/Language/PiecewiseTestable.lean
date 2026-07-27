@@ -17,12 +17,12 @@ piecewise analogue of locally testable over strictly local.
 
 ## Main definitions
 
-* `subseqSet k w` — the subsequences of `w` of length `≤ k`.
-* `Language.IsPiecewiseTestable L k` — `Function.FactorsThrough (· ∈ L) (subseqSet k)`.
+* `subseqSet k w`: the subsequences of `w` of length `≤ k`.
+* `Language.IsPiecewiseTestable L k`: `Function.FactorsThrough (· ∈ L) (subseqSet k)`.
 
 ## Main results
 
-* `Language.IsStrictlyPiecewise.toIsPiecewiseTestable` — `SP_k ⊆ PT_k`.
+* `Language.IsStrictlyPiecewise.toIsPiecewiseTestable`: `SP_k ⊆ PT_k`.
 * Closure under complement comes from `Function.FactorsThrough.comp_left`.
 -/
 

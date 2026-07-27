@@ -17,11 +17,11 @@ long-distance co-occurrence via subsequences — so no boundary augmentation is 
 
 ## Main definitions
 
-* `Subregular.SPGrammar α` — a set of permitted subsequences; the width `k` is
+* `Subregular.SPGrammar α`: a set of permitted subsequences; the width `k` is
   supplied to `language`, not baked into the carrier.
-* `Subregular.SPGrammar.language k` — the `Language α` it generates: every length-`k`
+* `Subregular.SPGrammar.language k`: the `Language α` it generates: every length-`k`
   subsequence of `w` must be permitted.
-* `Language.IsStrictlyPiecewise L k` — `L` is strictly `k`-piecewise.
+* `Language.IsStrictlyPiecewise L k`: `L` is strictly `k`-piecewise.
 
 ## Implementation notes
 

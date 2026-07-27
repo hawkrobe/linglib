@@ -25,18 +25,18 @@ alphabet rather than the `ThreeSymbol`/`FourSymbol` alphabets there.
 
 ## Main definitions
 
-* `AB` — the two-symbol alphabet `{a, b}`.
-* `IsBalanced w` — decidable predicate: `w = aⁿbⁿ` for `n = w.length / 2`.
-* `balancedAB : Language AB` — `{ w | IsBalanced w }`.
+* `AB`: the two-symbol alphabet `{a, b}`.
+* `IsBalanced w`: decidable predicate: `w = aⁿbⁿ` for `n = w.length / 2`.
+* `balancedAB : Language AB`: `{ w | IsBalanced w }`.
 
 ## Main results
 
-* `replicate_a_append_replicate_b_isBalanced` — witness side.
-* `replicate_a_append_replicate_b_not_isBalanced` — anti-witness via
+* `replicate_a_append_replicate_b_isBalanced`: witness side.
+* `replicate_a_append_replicate_b_not_isBalanced`: anti-witness via
   letter-counting on both sides of the supposed decomposition.
-* `leftQuotient_replicate_a_injective` — Myhill–Nerode separator: the
+* `leftQuotient_replicate_a_injective`: Myhill–Nerode separator: the
   test word `bⁿ` distinguishes left quotients by `aⁿ` for distinct `n`.
-* `balancedAB_not_isRegular` — the headline non-regularity theorem,
+* `balancedAB_not_isRegular`: the headline non-regularity theorem,
   composing the injectivity with `Set.infinite_of_injective_forall_mem`
   + `Language.IsRegular.finite_range_leftQuotient`.
 

@@ -25,16 +25,18 @@ by `eval_iff_evalFuel`.
 
 ## Main definitions
 
-* `BMRS.Expr`, `BMRS.Program` — syntax; `BMRS.tden` — term denotation at an index.
-* `BMRS.Eval` — the derivation system; `BMRS.evalFuel` — the fuel-bounded evaluator.
-* `Expr.Backward` / `Program.Backward` (dually `Forward`) — the one-sided fragments,
+* `BMRS.Expr`, `BMRS.Program`: syntax.
+* `BMRS.tden`: term denotation at an index.
+* `BMRS.Eval`: the derivation system.
+* `BMRS.evalFuel`: the fuel-bounded evaluator.
+* `Expr.Backward` / `Program.Backward` (dually `Forward`): the one-sided fragments,
   in which every term reads only backwards (dually, forwards) from its index.
 
 ## Main results
 
-* `Eval.deterministic` — an expression has at most one value.
-* `eval_iff_evalFuel` — adequacy of the fuel evaluator.
-* `Eval.congr_eqOn_Iic` / `Eval.congr_eqOn_Ici` — **one-sided locality**: a backward
+* `Eval.deterministic`: an expression has at most one value.
+* `eval_iff_evalFuel`: adequacy of the fuel evaluator.
+* `Eval.congr_eqOn_Iic` / `Eval.congr_eqOn_Ici`: **one-sided locality**: a backward
   program evaluated at `i` reads only positions `≤ i`, so equal-length words agreeing
   there evaluate identically (dually for forward).
 -/

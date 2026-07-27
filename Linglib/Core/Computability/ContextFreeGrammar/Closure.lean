@@ -19,11 +19,11 @@ This file owns the contrapositive corollaries that consume both.
 The contrapositive corollaries (the *useful* direction for non-CF arguments)
 ARE proved here:
 
-* `Language.not_isContextFree_of_stringMap_not` — if a homomorphic image is
+* `Language.not_isContextFree_of_stringMap_not`: if a homomorphic image is
   not context-free, neither is the source.
-* `Language.not_isContextFree_of_inter_regular_not` — if `L ∩ R` is not
+* `Language.not_isContextFree_of_inter_regular_not`: if `L ∩ R` is not
   context-free for some regular `R`, neither is `L`.
-* `Language.not_isContextFree_via_witness` — the packaged [shieber-1985]
+* `Language.not_isContextFree_via_witness`: the packaged [shieber-1985]
   proof schema: argue `L` is non-CF by mapping it through a homomorphism,
   intersecting with a regular filter, and exhibiting a non-CF witness in
   the result. Used by Swiss German non-CF (Shieber 1985), Dutch non-CF

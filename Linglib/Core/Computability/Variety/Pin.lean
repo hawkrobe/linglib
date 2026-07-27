@@ -46,25 +46,25 @@ form used throughout algebraic automata theory.
 
 ## Main definitions
 
-* `Language.pinDefiniteEquation L` — `s · [w]^ω = [w]^ω`.
-* `Language.pinReverseDefiniteEquation L` — `[w]^ω · s = [w]^ω`.
-* `Language.pinCofiniteEquation L` — conjunction of the above two.
-* `Language.pinGeneralizedDefiniteEquation L` — `[w]^ω · s · [w]^ω = [w]^ω`.
+* `Language.pinDefiniteEquation L`: `s · [w]^ω = [w]^ω`.
+* `Language.pinReverseDefiniteEquation L`: `[w]^ω · s = [w]^ω`.
+* `Language.pinCofiniteEquation L`: conjunction of the above two.
+* `Language.pinGeneralizedDefiniteEquation L`: `[w]^ω · s · [w]^ω = [w]^ω`.
 
 All four require `[Finite L.syntacticMonoid]` (equivalent to `L` being
 regular, by `IsRegular.finite_syntacticMonoid`).
 
 ## Main results
 
-* `Language.exists_isDefinite_iff_satisfies_pinDefiniteEquation` —
+* `Language.exists_isDefinite_iff_satisfies_pinDefiniteEquation`:
   Pin's `𝒟`-iff.
-* `Language.exists_isReverseDefinite_iff_satisfies_pinReverseDefiniteEquation` —
+* `Language.exists_isReverseDefinite_iff_satisfies_pinReverseDefiniteEquation`:
   Pin's `𝒦`-iff.
-* `Language.isFiniteOrCofinite_iff_satisfies_pinCofiniteEquation` —
+* `Language.isFiniteOrCofinite_iff_satisfies_pinCofiniteEquation`:
   Pin's `𝒩`-iff (additionally requires `[Finite α]`; the
   language-level reverse direction in `Core/Computability/Definite.lean` does
   not hold for infinite alphabets).
-* `Language.exists_isGeneralizedDefinite_iff_satisfies_pinGeneralizedDefiniteEquation` —
+* `Language.exists_isGeneralizedDefinite_iff_satisfies_pinGeneralizedDefiniteEquation`:
   Pin's `ℒℐ`-iff. The reverse direction uses the same prefix-pigeonhole
   template as `𝒟`/`𝒦`, replacing one-sided absorption with the LI
   sandwich identity (`sandwich_absorbing_of_pin_pigeonhole`).

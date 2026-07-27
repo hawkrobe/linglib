@@ -24,17 +24,17 @@ tests prefix and suffix jointly ([pin-mfa]).
 
 ## Main definitions
 
-* `Subregular.Edge` and `Subregular.Edge.takeAt` — a string edge and its length-`k`
+* `Subregular.Edge` and `Subregular.Edge.takeAt`: a string edge and its length-`k`
   substring (`right` = suffix, `left` = prefix).
 * `Language.IsDefinite`, `Language.IsReverseDefinite`, `Language.IsGeneralizedDefinite`
   — membership factoring through the suffix, prefix, and joint edge projections.
-* `Language.IsFiniteOrCofinite` — Lambert's `𝒩`: `L` or its complement is finite.
+* `Language.IsFiniteOrCofinite`: Lambert's `𝒩`: `L` or its complement is finite.
 
 ## Main theorems
 
 * `Language.IsDefinite.toIsGeneralizedDefinite` and
   `Language.IsReverseDefinite.toIsGeneralizedDefinite` — `D_k, RD_k ⊆ ℒℐ_k`.
-* `Language.isFiniteOrCofinite_iff_exists_isDefinite_and_isReverseDefinite` — over a
+* `Language.isFiniteOrCofinite_iff_exists_isDefinite_and_isReverseDefinite`: over a
   finite alphabet, `𝒩 = 𝒟 ∩ 𝒦` [pin-mfa]: a language is finite-or-cofinite iff it
   is definite and reverse-definite.
 -/

@@ -27,8 +27,8 @@ Star-free = `FO[<]`-definable = counter-free ([schutzenberger-1965] [mcnaughton-
 
 ## Main results
 
-* `Language.isStarFree_containsFactor` — `{x | c <:+: x}` is star-free, `α` arbitrary.
-* `Language.isStarFree_avoidsFactor` — `{x | ¬ c <:+: x}` is star-free, `α` arbitrary.
+* `Language.isStarFree_containsFactor`: `{x | c <:+: x}` is star-free, `α` arbitrary.
+* `Language.isStarFree_avoidsFactor`: `{x | ¬ c <:+: x}` is star-free, `α` arbitrary.
 -/
 
 open Subregular

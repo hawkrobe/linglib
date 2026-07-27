@@ -24,14 +24,14 @@ fields of `V`.
 
 ## Main definitions
 
-* `Monoid.Pseudovariety.langs` — the languages whose syntactic monoid lies in `V`.
+* `Monoid.Pseudovariety.langs`: the languages whose syntactic monoid lies in `V`.
 
 ## Main results
 
-* `Monoid.Pseudovariety.langs_of_recognizes` — a language recognized by a finite monoid in `V` is in
+* `Monoid.Pseudovariety.langs_of_recognizes`: a language recognized by a finite monoid in `V` is in
   `V.langs` (the engine).
-* `langs_compl` / `langs_inf` / `langs_sup` / `langs_univ` / `langs_bot` — boolean closure.
-* `langs_comap` — closure under inverse homomorphism.
+* `langs_compl` / `langs_inf` / `langs_sup` / `langs_univ` / `langs_bot`: boolean closure.
+* `langs_comap`: closure under inverse homomorphism.
 -/
 
 universe u

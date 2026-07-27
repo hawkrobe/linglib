@@ -15,13 +15,13 @@ backward guard at `n` depends only on the `r + 1` symbols ending at `n` — the 
 
 ## Main definitions
 
-* `Term.Backward` / `Term.pdepth` — successor-free terms and their predecessor depth.
-* `Atom.Backward` / `QF.Backward` / `Transduction.LeftLocal` — the bounded-left-context classes.
+* `Term.Backward` / `Term.pdepth`: successor-free terms and their predecessor depth.
+* `Atom.Backward` / `QF.Backward` / `Transduction.LeftLocal`: the bounded-left-context classes.
 
 ## Main results
 
-* `Term.eval_backward` — a backward term of depth `j` at position `n` evaluates to `n - j`.
-* `Transduction.leftLocal_isLeftISL` — a backward-bounded (radius `r`) transduction is
+* `Term.eval_backward`: a backward term of depth `j` at position `n` evaluates to `n - j`.
+* `Transduction.leftLocal_isLeftISL`: a backward-bounded (radius `r`) transduction is
   `(r+1)`-Left-Input-Strictly-Local.
 -/
 

@@ -20,9 +20,9 @@ in general itself quantifier-free.
 
 ## Main definitions
 
-* `Subregular.Logic.Transduction` — copy count + per-copy guarded output clauses.
-* `Transduction.apply` — run a transduction, producing the output string (computable).
-* `Transduction.applyComp` — composition of two transductions (one cyclic derivation step on top
+* `Subregular.Logic.Transduction`: copy count + per-copy guarded output clauses.
+* `Transduction.apply`: run a transduction, producing the output string (computable).
+* `Transduction.applyComp`: composition of two transductions (one cyclic derivation step on top
   of another).
 
 ## Implementation notes
