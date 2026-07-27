@@ -19,12 +19,13 @@ Given `f : List α → List β` and a word `u`, the *residual* of `f` by `u` is 
 function `v ↦ (f (u ++ v)).drop u.length` — what `f` appends after reading `u` — and
 the *coresidual* of `f` by a suffix `y` is `u ↦ (f (u ++ y)).take u.length` — what `f`
 emits before reaching `y`. A function is Mealy-computable if and only if it is
-length-preserving, prefix-preserving, and has finitely many residuals — the
-Myhill–Nerode argument for the minimal sequential machine of [holcombe-1982]. A
+length-preserving, prefix-preserving, and has finitely many residuals — the Nerode
+criterion for sequential functions ([eilenberg-1974] [holcombe-1982]). A
 function is bimachine-computable if and only if it is length-preserving with finitely
 many residuals and finitely many coresiduals: residual classes are the left states,
 coresidual classes the right states, and the two-step exchange through representatives
-makes the cell output well-defined — the canonical bimachine of [eilenberg-1974].
+makes the cell output well-defined — the two-sided Nerode criterion for the bimachines
+of [eilenberg-1974].
 
 ## Main definitions
 
