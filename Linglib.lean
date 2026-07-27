@@ -80,7 +80,7 @@ import Linglib.Core.Computability.Direction
 import Linglib.Core.Computability.Dependence
 import Linglib.Core.Computability.Subsequential
 import Linglib.Core.Computability.Variety.Equations
-import Linglib.Core.Computability.Variety.Pin
+import Linglib.Core.Computability.Variety.OmegaEquations
 import Linglib.Core.Computability.Subregular.Language.Aperiodicity
 import Linglib.Core.Computability.Subregular.Language.Boundary
 import Linglib.Core.Computability.Subregular.Language.ContainsFactor
