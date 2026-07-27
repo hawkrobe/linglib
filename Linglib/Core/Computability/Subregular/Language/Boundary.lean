@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.Data.List.Chain
-import Linglib.Core.Dynamics.SymbolicDynamics.Word
+import Linglib.Core.Data.List.Config
 import Linglib.Core.Data.List.Factors
 
 /-!

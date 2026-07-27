@@ -7,22 +7,16 @@ import Mathlib.Data.List.Basic
 import Mathlib.Data.List.OfFn
 
 /-!
-# Words as configurations of the full shift
+# Words as blank-padded indexed families
 
-A finite word `w : List α` determines a configuration of the full shift
-`ℤ → Option α` — the vocabulary of `Mathlib.Dynamics.SymbolicDynamics`: letters on
-`[0, w.length)`, blank (`none`) elsewhere (`List.config`). Its width-`k` window at
-`i` (`List.window`) is the restriction to `[i, i + k)`, a finite pattern. Facts about
-factors of boundary-augmented words become position-indexed facts about
-configurations, where alignment is carried by the index: a window entry is a letter
-or a blank according to a single interval test, so occurrence pinning is interval
-arithmetic. The topological layer (cylinders, subshifts) stays in
-`Mathlib.Dynamics.SymbolicDynamics.Basic`; this file is the combinatorial word case.
+`List.config` reads a word as a two-sided indexed family `ℤ → Option α`: letters on
+`[0, w.length)`, blank (`none`) elsewhere; `List.window k w i` is its width-`k` slice
+at `i`. Position-indexed statements about words replace factor-of-augmented-word
+bookkeeping: a window entry is a letter or a blank according to a single interval
+test, so occurrence pinning is interval arithmetic.
 
-[UPSTREAM] candidate: `Mathlib.Dynamics.SymbolicDynamics.Word`, a sibling of
-`Basic.lean`: finite words as the finitely-supported points of the full shift over
-`Option α` at `G = ℤ`, the first bridge between `Mathlib.Computability` languages
-and subshifts.
+[UPSTREAM] candidate: `Mathlib.Data.List`, on the `List.toFinsupp` precedent — a list
+as an indexed family with a default.
 -/
 
 namespace List
