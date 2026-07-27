@@ -222,6 +222,22 @@ theorem IsFarPerturbation.flankWord_right {i d : ℕ} (y' : α) (h : i + d ≤ n
     IsFarPerturbation (flankWord x fill y n) (flankWord x fill y' n) i d .right :=
   ⟨by simp, fun k hk => by grind [getElem?_flankWord]⟩
 
+/-- A `d`-indexed family of flank words whose target's image flips under changing
+either flank alone has two-sided unbounded dependence. -/
+theorem TwoSidedUnboundedDependence.of_flanks {fill xOn yOn xOff yOff : α}
+    {n t : ℕ → ℕ} (ht : ∀ d, d < t d) (hn : ∀ d, t d + d ≤ n d)
+    (hL : ∀ d, (f (flankWord xOn fill yOn (n d)))[t d]?
+      ≠ (f (flankWord xOff fill yOn (n d)))[t d]?)
+    (hR : ∀ d, (f (flankWord xOn fill yOn (n d)))[t d]?
+      ≠ (f (flankWord xOn fill yOff (n d)))[t d]?) :
+    TwoSidedUnboundedDependence f := by
+  intro d
+  have h₁ := ht d; have h₂ := hn d
+  refine ⟨flankWord xOn fill yOn (n d), t d, by rw [length_flankWord]; omega, fun s => ?_⟩
+  match s with
+  | .left => exact ⟨_, .flankWord_left xOff (ht d), hL d⟩
+  | .right => exact ⟨_, .flankWord_right yOff (hn d), hR d⟩
+
 /-- A `d`-indexed family of flank words whose target sits `d`-far from both flanks,
 changed in the base and reverted by flipping either flank alone, requires both sides. -/
 theorem RequiresBothSides.of_flanks {f : List α → List α}

@@ -248,55 +248,6 @@ theorem baseR_get_target (d : ℕ) : (tutrugbuATR (baseR d))[d + 1]? = some .vLo
   rw [tutrugbuATR_baseR]
   simp [baseR, pre]
 
-/-- **Tutrugbu ATR harmony has two-sided unbounded dependence** — the weaker diagnostic;
-its circumambience proper ([mccollum-bakovic-mai-meinhardt-2020] §3, def. 13) is
-`tutrugbu_requiresBothSides`. At the medial target (index `d+1`):
-the base harmonises it ([+ATR]); flipping the initial-σ height `d` syllables to the left
-blocks it; flipping the root `d` syllables to the right removes the trigger — both from
-the one base word. -/
-theorem tutrugbu_twoSidedUnboundedDependence : TwoSidedUnboundedDependence tutrugbuATR := by
-  intro d
-  refine ⟨base d, d + 1, ?_, fun s => ?_⟩
-  · -- the target is in-domain: d + 1 < (base d).length  (= 2d+3)
-    simp only [base, pre, List.length_cons, List.length_append, List.length_replicate,
-      List.length_nil]; omega
-  match s with
-  | .left =>
-    refine ⟨baseL d, ⟨?_, ?_⟩, ?_⟩
-    · simp only [baseL, base, pre, List.length_cons, List.length_append,
-        List.length_replicate, List.length_nil]
-    · -- agreement on `Ici 1`: they share the tail from index 1
-      intro k hk
-      simp only [Direction.window_left, Set.mem_Ici] at hk
-      cases k with
-      | zero => omega
-      | succ k' =>
-        simp only [base, baseL, pre, List.cons_append, List.getElem?_cons_succ]
-    · rw [base_get_target, baseL_get_target]; decide
-  | .right =>
-    refine ⟨baseR d, ⟨?_, ?_⟩, ?_⟩
-    · simp only [baseR, base, pre, List.length_cons, List.length_append,
-        List.length_replicate, List.length_nil]
-    · -- agreement on `Iic ((d+1)+d)`: they differ only at the root index
-      intro k hk
-      simp only [Direction.window_right, Set.mem_Iic] at hk
-      have hpre_len : (pre Seg.vLo d).length = 2 * d + 2 := by
-        simp only [pre, List.length_cons, List.length_append, List.length_replicate]
-        omega
-      show (base d)[k]? = (baseR d)[k]?
-      rw [show base d = pre Seg.vLo d ++ [.rP] from rfl,
-          show baseR d = pre Seg.vLo d ++ [.rM] from rfl,
-          List.getElem?_append_left (by omega : k < (pre Seg.vLo d).length),
-          List.getElem?_append_left (by omega : k < (pre Seg.vLo d).length)]
-    · rw [base_get_target, baseR_get_target]; decide
-
-/-- **Tutrugbu ATR harmony is non-myopic** — the attested "variation on sour grapes"
-([mccollum-bakovic-mai-meinhardt-2020]; [wilson-2006]). A segmental counterexample to
-the myopia generalisation defended by [kimper-2012] and [mascaro-2019], on the
-nonmyopic side argued by [walker-2010]. -/
-theorem tutrugbu_nonmyopic (s : Direction) : UnboundedDependence tutrugbuATR s :=
-  tutrugbu_twoSidedUnboundedDependence.unboundedDependence s
-
 /-- The input symbol at the target index is the recessive `.vLo` (for any initial and
 root): the prefix sequence places a `[−high]` vowel there. -/
 theorem pre_get_target (init : Seg) (d : ℕ) : (pre init d)[d + 1]? = some .vLo := by
@@ -353,6 +304,18 @@ theorem tutrugbu_requiresBothSides : RequiresBothSides tutrugbuATR := by
           List.getElem?_append_left (by omega : k < (pre Seg.vLo d).length)]
     · rw [hRin, hbin]
     · rw [baseR_get_target, hRin]
+
+/-- **Tutrugbu ATR harmony has two-sided unbounded dependence** — the weaker
+diagnostic, derived from the requires-both-sides witness. -/
+theorem tutrugbu_twoSidedUnboundedDependence : TwoSidedUnboundedDependence tutrugbuATR :=
+  tutrugbu_requiresBothSides.twoSidedUnboundedDependence
+
+/-- **Tutrugbu ATR harmony is non-myopic** — the attested "variation on sour grapes"
+([mccollum-bakovic-mai-meinhardt-2020]; [wilson-2006]). A segmental counterexample to
+the myopia generalisation defended by [kimper-2012] and [mascaro-2019], on the
+nonmyopic side argued by [walker-2010]. -/
+theorem tutrugbu_nonmyopic (s : Direction) : UnboundedDependence tutrugbuATR s :=
+  tutrugbu_twoSidedUnboundedDependence.unboundedDependence s
 
 /-- **Tutrugbu ATR harmony is not weakly deterministic** — it needs the full
 non-deterministic regular power, above the weakly-deterministic upper bound of
