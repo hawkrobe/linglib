@@ -7,7 +7,7 @@ import Linglib.Core.Computability.Mealy
 import Linglib.Core.Computability.Subregular.Function.ISL
 import Linglib.Core.Computability.Subregular.Function.OSL
 import Linglib.Core.Computability.Subsequential
-import Linglib.Core.Computability.Subregular.Function.Dependence
+import Linglib.Core.Computability.Dependence
 import Linglib.Core.Computability.Bimachine
 
 /-!
@@ -373,31 +373,27 @@ each side alone sufficing. Tutrugbu satisfies this too
 (`tutrugbu_twoSidedUnboundedDependence`); the difference is that Maasai does *not*
 `RequiresBothSides`, so it stays weakly deterministic. The paper's positive
 classification of Maasai as unbounded *semiambient* — every target fixed by information
-from at most one side — is the stronger claim, and is not formalized here. -/
+from at most one side — is the stronger claim, `maasai_semiambient`. -/
 theorem maasai_twoSidedUnboundedDependence : TwoSidedUnboundedDependence maasai := by
-  intro d
-  refine ⟨List.replicate (2 * d + 3) .recL, d + 1, by simp; omega, fun s => ?_⟩
-  match s with
-  | .left =>
-    refine ⟨(List.replicate (2 * d + 3) .recL).set 0 .dom,
-      ⟨by simp, fun k (hk : _ ≤ k) => (List.getElem?_set_ne (by omega)).symm⟩, ?_⟩
-    simp only [maasai]
-    rw [List.getElem?_map, List.getElem?_map, List.getElem?_set_ne (by omega : 0 ≠ d + 1)]
-    have hd : hasDom ((List.replicate (2 * d + 3) .recL).set 0 .dom) = true := by
-      simp only [hasDom, List.any_eq_true]
-      exact ⟨Seg.dom, List.mem_set (by simp) Seg.dom, rfl⟩
-    have hb : hasDom (List.replicate (2 * d + 3) .recL) = false := by simp [hasDom]
-    simp [hd, hb, (by omega : d + 1 < 2 * d + 3)]
-  | .right =>
-    refine ⟨(List.replicate (2 * d + 3) .recL).set (2 * d + 2) .dom,
-      ⟨by simp, fun k (hk : k ≤ _) => (List.getElem?_set_ne (by omega)).symm⟩, ?_⟩
-    simp only [maasai]
-    rw [List.getElem?_map, List.getElem?_map, List.getElem?_set_ne (by omega : 2 * d + 2 ≠ d + 1)]
-    have hd : hasDom ((List.replicate (2 * d + 3) .recL).set (2 * d + 2) .dom) = true := by
-      simp only [hasDom, List.any_eq_true]
-      exact ⟨Seg.dom, List.mem_set (by simp) Seg.dom, rfl⟩
-    have hb : hasDom (List.replicate (2 * d + 3) .recL) = false := by simp [hasDom]
-    simp [hd, hb, (by omega : d + 1 < 2 * d + 3)]
+  refine .of_flanks (fill := Seg.recL) (xOn := Seg.recL) (yOn := Seg.recL)
+    (xOff := Seg.dom) (yOff := Seg.dom)
+    (n := fun d => 2 * d + 1) (t := fun d => d + 1)
+    (fun d => by omega) (fun d => by omega) (fun d => ?_) (fun d => ?_) <;>
+  · have hb : hasDom (flankWord Seg.recL Seg.recL Seg.recL (2 * d + 1)) = false := by
+      simp [hasDom, flankWord]
+    have hp : ∀ y, hasDom (flankWord Seg.dom Seg.recL y (2 * d + 1)) = true := fun y => by
+      simp [hasDom, flankWord]
+    have hp' : ∀ x, hasDom (flankWord x Seg.recL Seg.dom (2 * d + 1)) = true := fun x => by
+      simp [hasDom, flankWord]
+    simp only [maasai, List.getElem?_map,
+      getElem?_flankWord_mid (show 0 < d + 1 by omega) (show d + 1 ≤ 2 * d + 1 by omega),
+      hb, hp, hp']
+    decide
+
+/-- **Maasai is semiambient** — the paper's positive classification: every harmonised
+cell is licensed by one side alone, the far dominant that triggers it. -/
+theorem maasai_semiambient : OneSidedChanges maasai :=
+  maasai_weaklyDeterministic.oneSidedChanges
 
 /-- Hence Maasai does **not** require both sides — it escapes the teeth, unlike Tutrugbu.
 Covariation (both languages) and interaction (Tutrugbu only) come apart. -/
@@ -409,10 +405,17 @@ Mealy-computable — the length-preserving-stratum reading of [heinz-lai-2013]'s
 `LSF, RSF ⊆ WD` corollary being strict, with `maasai` as their own dominant-recessive
 witness (their Thms. 6 and 7). A Mealy-computable map is right-myopic
 (`IsMealyComputable.boundedDependence_right`), but Maasai's bidirectional spread is not
-(`maasai_twoSidedUnboundedDependence`). TODO: the stronger `¬ IsLeftSubsequential
-maasai` (the *block* class) — a block transducer can delay output, so it needs the
-bounded-delay route (`IsLeftSubsequential.bounded_delay`), not the myopia shortcut. -/
+(`maasai_twoSidedUnboundedDependence`); the block-class exclusion is
+`maasai_not_leftSubsequential`. -/
 theorem maasai_not_mealyComputable : ¬ IsMealyComputable maasai := fun h =>
   maasai_twoSidedUnboundedDependence.unboundedDependence .right h.boundedDependence_right
+
+/-- **Maasai is not left-subsequential** — the *block* class is excluded too: `maasai`
+is length-preserving, so a left-subsequential computer's delay bound would cap its
+right dependence (`IsLeftSubsequential.boundedDependence_right`), but the spread's
+right dependence is unbounded. -/
+theorem maasai_not_leftSubsequential : ¬ IsLeftSubsequential maasai := fun h =>
+  maasai_twoSidedUnboundedDependence.unboundedDependence .right
+    (h.boundedDependence_right fun xs => by simp [maasai])
 
 end MeinhardtEtAl2024
