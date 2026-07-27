@@ -1,5 +1,5 @@
 import Linglib.Core.Computability.Bimachine
-import Linglib.Core.Computability.Subregular.Logic.BMRS
+import Linglib.Phonology.Subregular.BMRS
 import Linglib.Phonology.Tone.Plateauing
 import Linglib.Studies.McCollumEtAl2020
 

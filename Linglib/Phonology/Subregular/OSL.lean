@@ -37,7 +37,7 @@ ISL ⊊ OSL ⊊ Subsequential.
 ## Implementation notes
 
 The witness style `IsX k f := ∃ r : OSLRule k α β, r.apply = f` mirrors
-`IsLeftInputStrictlyLocal` in `ISL.lean`. Unlike ISL, whose window is
+`Subregular.IsLeftInputStrictlyLocal`. Unlike ISL, whose window is
 over input symbols and threads independently of what was emitted, the
 OSL window is over **already-emitted output** — each step truncates
 `outputWindow ++ windowOutput outputWindow x` to the last `k - 1`
@@ -164,10 +164,9 @@ theorem isRightOutputStrictlyLocal_iff_left_reverse {k : ℕ}
 `OSLRule.toFinSFST` projects an OSL rule into an SFST whose state is
 the bounded output window (length ≤ k − 1). The inclusion rides on the
 run-equality plus the `Fintype` instance for the bounded-window subtype
-(reusing `fintypeListLengthLE` from `ISL.lean`). Co-located on the
-source side because the dependency direction (SFST in
-`Subsequential.lean`; OSL projects into it) forces both construction
-and cast into this file.
+(reusing `Subregular.fintypeListLengthLE`). Co-located on the source
+side because the dependency direction (`Subregular.SFST`; OSL projects
+into it) forces both construction and cast into this file.
 
 The output alphabet `[Fintype β]` constraint matches [mohri-1997]'s
 finite-alphabet assumption — the state space (a bounded output window)

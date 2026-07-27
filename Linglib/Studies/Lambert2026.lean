@@ -7,7 +7,7 @@ import Linglib.Core.Computability.Definite
 import Linglib.Core.Computability.Subregular.Language.PiecewiseTestable
 import Linglib.Core.Data.List.Bookend
 import Linglib.Core.Computability.Subregular.Language.TierStrictlyLocal
-import Linglib.Core.Computability.Subregular.Language.Multitier
+import Linglib.Phonology.Subregular.Multitier
 import Linglib.Core.Computability.Subregular.Language.ForbiddenPairs
 import Linglib.Phonology.Subregular.Sibilant
 import Linglib.Phonology.Subregular.Agree

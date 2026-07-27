@@ -39,7 +39,7 @@ private theorem pred?_pos {w : WordModel α} {m : ℕ} (h0 : 0 < m) (hm : m ≤ 
 
 /-! ### Backward terms
 
-`Term.Backward` and `Term.pdepth` live with the `Term` API in `Logic/QFLogic.lean`. -/
+`Term.Backward` and `Term.pdepth` live with the `Subregular.Logic.Term` API. -/
 
 namespace Term
 

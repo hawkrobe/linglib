@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Core.Computability.Mealy
 import Linglib.Core.Computability.Subregular.Function.ISL
-import Linglib.Core.Computability.Subregular.Function.OSL
+import Linglib.Phonology.Subregular.OSL
 import Linglib.Core.Computability.Subsequential
 import Linglib.Core.Computability.Dependence
 import Linglib.Core.Computability.Bimachine

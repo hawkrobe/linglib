@@ -8,7 +8,7 @@ import Linglib.Core.Computability.Subregular.Language.ForbiddenPairs
 import Linglib.Phonology.Harmony.Basic
 import Linglib.Phonology.Segmental.Basic
 import Linglib.Phonology.Subregular.TierRule
-import Linglib.Core.Computability.Subregular.Function.OSL
+import Linglib.Phonology.Subregular.OSL
 
 /-!
 # Harmony systems
