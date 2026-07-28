@@ -26,4 +26,7 @@ def toList (u : FreeSemigroup α) : List α := u.head :: u.tail
 @[simp] theorem toList_mul (u v : FreeSemigroup α) :
     (u * v).toList = u.toList ++ v.toList := rfl
 
+/-- The free semigroup is the *nonempty* words. -/
+@[simp] theorem toList_ne_nil (u : FreeSemigroup α) : u.toList ≠ [] := List.cons_ne_nil _ _
+
 end FreeSemigroup
