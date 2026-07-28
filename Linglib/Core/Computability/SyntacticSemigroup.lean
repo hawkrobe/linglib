@@ -36,9 +36,9 @@ triviality; stating them on `FreeSemigroup α` is what avoids the collapse.
 
 ## Implementation notes
 
-The projection is built by hand rather than with `Con.mk'`, which mathlib provides only as
-`M →* c.Quotient` for `[Monoid M]`; there is no `MulHom`-valued projection for a `Con` over a plain
-`Mul`. `FreeSemigroup.toList` is likewise absent from mathlib.
+The projection is `Con.mkMulHom`, mathlib's `MulHom`-valued quotient map for a `Con` over a plain
+`Mul` (the monoid-valued `Con.mk'` would not apply). `FreeSemigroup.toList` is absent from mathlib
+and is supplied here.
 -/
 
 namespace FreeSemigroup
@@ -110,9 +110,8 @@ instance : Semigroup (syntacticSemigroup L) :=
   inferInstanceAs (Semigroup (syntacticSemigroupCon L).Quotient)
 
 /-- The canonical projection sending a nonempty word to its syntactic class. -/
-def toSyntacticSemigroup : FreeSemigroup α →ₙ* L.syntacticSemigroup where
-  toFun := (syntacticSemigroupCon L).toQuotient
-  map_mul' _ _ := rfl
+def toSyntacticSemigroup : FreeSemigroup α →ₙ* L.syntacticSemigroup :=
+  Con.mkMulHom (syntacticSemigroupCon L)
 
 theorem toSyntacticSemigroup_eq_iff {u v : FreeSemigroup α} :
     L.toSyntacticSemigroup u = L.toSyntacticSemigroup v ↔ L.syntacticSemigroupCon u v :=
