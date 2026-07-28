@@ -112,4 +112,53 @@ theorem langs_comap {β : Type u} {Lb : Language β} (h : V.langs Lb)
   refine ⟨fun hw => ⟨φ (FreeMonoid.ofList w), rfl, hw⟩, fun ⟨u, hu, hmem⟩ => ?_⟩
   exact (mem_iff_of_syntacticCon ((toSyntacticMonoid_eq_iff (L := Lb)).mp hu)).mp hmem
 
+/-! ### Closure under quotients
+
+Eilenberg's fourth axiom for a variety of languages ([eilenberg-1976] VII.3.3, stated there for
+letters; [pin-mfa] Ch. XIII §3 states it for words, equivalently). The syntactic congruence of a
+quotient is coarser than that of the language, so the syntactic monoid of the quotient is a
+quotient of the original's. -/
+
+/-- The **right quotient** `L u⁻¹`: the words that land in `L` when `u` is appended. The left
+quotient is mathlib's `Language.leftQuotient`. -/
+def _root_.Language.rightQuotient (L : Language α) (u : List α) : Language α := {w | w ++ u ∈ L}
+
+@[simp] theorem _root_.Language.mem_rightQuotient {L : Language α} {u w : List α} :
+    w ∈ L.rightQuotient u ↔ w ++ u ∈ L := Iff.rfl
+
+/-- Syntactic equivalence for `L` implies it for any left quotient of `L`: prepend `u` to the
+left context. -/
+theorem _root_.Language.syntacticCon_le_leftQuotient (L : Language α) (u : List α) :
+    L.syntacticCon ≤ (L.leftQuotient u).syntacticCon := fun {p q} h x y => by
+  have := h (u ++ x) y
+  simpa [Language.mem_leftQuotient, List.append_assoc] using this
+
+/-- Syntactic equivalence for `L` implies it for any right quotient of `L`: append `u` to the
+right context. -/
+theorem _root_.Language.syntacticCon_le_rightQuotient (L : Language α) (u : List α) :
+    L.syntacticCon ≤ (L.rightQuotient u).syntacticCon := fun {p q} h x y => by
+  have := h x (y ++ u)
+  simpa [Language.mem_rightQuotient, List.append_assoc] using this
+
+variable {V}
+
+/-- A coarser syntactic congruence keeps the language in `V.langs`. -/
+private theorem langs_of_syntacticCon_le {M : Language α} (h : V.langs L)
+    (hle : L.syntacticCon ≤ M.syntacticCon) : V.langs M := by
+  haveI : Finite L.syntacticMonoid := finite_syntacticMonoid h.1
+  haveI : Finite L.syntacticCon.Quotient := inferInstanceAs (Finite L.syntacticMonoid)
+  have hsurj : Function.Surjective (Con.map L.syntacticCon M.syntacticCon hle) :=
+    Con.lift_surjective_of_surjective _ Con.mk'_surjective
+  haveI : Finite M.syntacticMonoid := .of_surjective _ hsurj
+  haveI : Finite M.syntacticCon.Quotient := inferInstanceAs (Finite M.syntacticMonoid)
+  exact ⟨isRegular_of_finite_syntacticMonoid ‹_›, V.quot hsurj h.2⟩
+
+/-- **Closure under left quotient** — Eilenberg's axiom VII.3.3. -/
+theorem langs_leftQuotient (h : V.langs L) (u : List α) : V.langs (L.leftQuotient u) :=
+  langs_of_syntacticCon_le h (L.syntacticCon_le_leftQuotient u)
+
+/-- **Closure under right quotient** — Eilenberg's axiom VII.3.3. -/
+theorem langs_rightQuotient (h : V.langs L) (u : List α) : V.langs (L.rightQuotient u) :=
+  langs_of_syntacticCon_le h (L.syntacticCon_le_rightQuotient u)
+
 end Monoid.Pseudovariety
