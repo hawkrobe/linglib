@@ -15,22 +15,23 @@ import Mathlib.GroupTheory.Congruence.Hom
 Mathlib's `Con` API for quotient homomorphisms — `Con.lift`, `Con.kerLift`, `Con.map` and the
 isomorphism theorems — lives in `section MulOneClass` and is `MonoidHom`-valued. Its `section Mul`
 provides only `Con.mkMulHom`, `Con.ker`, `Con.mapGen`, `Con.mapOfSurjective` and
-`Con.correspondence`. This file supplies the `MulHom`-valued lift, kernel lift and map, which is
-what a quotient argument over a bare `Semigroup` needs.
+`Con.correspondence`. This file adds the `MulHom`-valued lift, together with its universal
+property, the kernel lift, and the map induced by a coarsening.
 
 Homomorphisms are *consumed* through `MulHomClass` and *produced* as concrete `→ₙ*`, following
-`Con.ker` and `Con.mapOfSurjective`.
+`Con.ker` and `Con.mapOfSurjective`. The cost of consuming through `MulHomClass` is that the
+universal-property statements coerce the argument, as in `liftMulHom_comp_mkMulHom`.
 
 ## Main definitions
 
 * `Con.liftMulHom`: the homomorphism induced on the quotient by one constant on the classes.
-* `Con.kerLiftMulHom`: the injective homomorphism induced by `f` on the quotient by its kernel.
-* `Con.mapMulHom`: the surjection `c.Quotient →ₙ* d.Quotient` induced by `c ≤ d`.
+* `Con.kerLiftMulHom`: the homomorphism induced by `f` on the quotient by its kernel.
+* `Con.mapMulHom`: the homomorphism `c.Quotient →ₙ* d.Quotient` induced by `c ≤ d`.
 
 ## Main results
 
-* `Con.kerLiftMulHom_injective`: the kernel lift is injective — the divisor half of the first
-  isomorphism theorem, which is what closure-under-quotient arguments actually consume.
+* `Con.mulHom_ext`, `Con.liftMulHom_unique`: the universal property of the quotient.
+* `Con.kerLiftMulHom_injective`: the kernel lift is injective.
 -/
 
 variable {M N : Type*} [Mul M] [Mul N] {F : Type*} [FunLike F M N] [MulHomClass F M N]
@@ -49,12 +50,36 @@ def liftMulHom (f : F) (H : c ≤ Con.ker f) : c.Quotient →ₙ* N where
 @[simp] theorem liftMulHom_coe (f : F) (H : c ≤ Con.ker f) (x : M) :
     c.liftMulHom f H (x : c.Quotient) = f x := rfl
 
+@[simp] theorem liftMulHom_comp_mkMulHom (f : F) (H : c ≤ Con.ker f) :
+    (c.liftMulHom f H).comp (mkMulHom c) = (f : M →ₙ* N) := rfl
+
+/-- The quotient map is surjective. -/
+theorem mkMulHom_surjective : Function.Surjective (mkMulHom c) := Quotient.mk''_surjective
+
+variable {c} in
 theorem liftMulHom_surjective_of_surjective {f : F} (H : c ≤ Con.ker f)
     (hf : Function.Surjective f) : Function.Surjective (c.liftMulHom f H) := fun y =>
   have ⟨w, hw⟩ := hf y
   ⟨(w : c.Quotient), hw⟩
 
-variable {c}
+/-- Every homomorphism out of the quotient is the lift of its restriction. -/
+theorem liftMulHom_apply_mkMulHom (f : c.Quotient →ₙ* N) :
+    (c.liftMulHom (f.comp (mkMulHom c)) fun _ _ h => congrArg f (c.eq.2 h)) = f := by
+  ext x; rcases x with ⟨⟩; rfl
+
+/-- **Extensionality for homomorphisms out of a congruence quotient**: they agree as soon as they
+agree on the quotient map. -/
+@[ext] theorem mulHom_ext {f g : c.Quotient →ₙ* N}
+    (h : f.comp (mkMulHom c) = g.comp (mkMulHom c)) : f = g := by
+  rw [← liftMulHom_apply_mkMulHom c f, ← liftMulHom_apply_mkMulHom c g]; congr 1
+
+theorem liftMulHom_funext (f g : c.Quotient →ₙ* N) (h : ∀ a : M, f a = g a) : f = g :=
+  mulHom_ext c <| DFunLike.ext _ _ h
+
+/-- **The universal property**: the lift is the unique homomorphism restricting to `f`. -/
+theorem liftMulHom_unique {f : F} (H : c ≤ Con.ker f) (g : c.Quotient →ₙ* N)
+    (Hg : g.comp (mkMulHom c) = (f : M →ₙ* N)) : g = c.liftMulHom f H :=
+  mulHom_ext c (Hg.trans (liftMulHom_comp_mkMulHom c f H).symm)
 
 /-- The homomorphism induced by `f` on the quotient by its kernel. -/
 def kerLiftMulHom (f : F) : (Con.ker f).Quotient →ₙ* N := liftMulHom _ f le_rfl
@@ -62,18 +87,15 @@ def kerLiftMulHom (f : F) : (Con.ker f).Quotient →ₙ* N := liftMulHom _ f le_
 @[simp] theorem kerLiftMulHom_coe (f : F) (x : M) :
     kerLiftMulHom f (x : (Con.ker f).Quotient) = f x := rfl
 
-/-- **The kernel lift is injective.** This is the half of the first isomorphism theorem that
-quotient arguments consume: it exhibits `(ker f).Quotient` as a sub-object of `N`. -/
-theorem kerLiftMulHom_injective (f : F) : Function.Injective (kerLiftMulHom f) := by
-  rintro ⟨x⟩ ⟨y⟩ h
-  exact Con.eq _ |>.2 <| (Con.ker_rel f).2 h
+/-- The kernel lift is injective: it exhibits `(ker f).Quotient` as a sub-object of `N`, which is
+what closure-under-quotient arguments consume. -/
+theorem kerLiftMulHom_injective (f : F) : Function.Injective (kerLiftMulHom f) := fun x y =>
+  Con.induction_on₂ x y fun _ _ => (Con.ker f).eq.2
 
 theorem kerLiftMulHom_surjective_of_surjective {f : F} (hf : Function.Surjective f) :
-    Function.Surjective (kerLiftMulHom f) := liftMulHom_surjective_of_surjective _ le_rfl hf
+    Function.Surjective (kerLiftMulHom f) := liftMulHom_surjective_of_surjective le_rfl hf
 
-variable (c)
-
-/-- The surjection of quotients induced by a coarsening `c ≤ d`. -/
+/-- The homomorphism of quotients induced by a coarsening `c ≤ d`. -/
 def mapMulHom (d : Con M) (h : c ≤ d) : c.Quotient →ₙ* d.Quotient :=
   c.liftMulHom (d.mkMulHom) (by rw [Con.ker_mkMulHom_eq]; exact h)
 
@@ -81,7 +103,7 @@ def mapMulHom (d : Con M) (h : c ≤ d) : c.Quotient →ₙ* d.Quotient :=
     c.mapMulHom d h (x : c.Quotient) = (x : d.Quotient) := rfl
 
 theorem mapMulHom_surjective (d : Con M) (h : c ≤ d) :
-    Function.Surjective (c.mapMulHom d h) := fun x => by
-  rcases x with ⟨x⟩; exact ⟨(x : c.Quotient), rfl⟩
+    Function.Surjective (c.mapMulHom d h) :=
+  liftMulHom_surjective_of_surjective _ d.mkMulHom_surjective
 
 end Con

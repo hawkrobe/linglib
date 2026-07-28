@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 [UPSTREAM] candidate: `Mathlib.Computability.SyntacticSemigroup`.
 -/
 import Linglib.Core.Computability.SyntacticMonoid
+import Linglib.Core.GroupTheory.Congruence.Hom
 import Linglib.Core.Algebra.Free
 
 /-!
@@ -70,7 +71,7 @@ theorem toSyntacticSemigroup_eq_iff {u v : FreeSemigroup α} :
   Con.eq _
 
 theorem toSyntacticSemigroup_surjective : Function.Surjective L.toSyntacticSemigroup :=
-  fun s => Quotient.exists_rep s
+  Con.mkMulHom_surjective _
 
 /-! ### Relation to the syntactic monoid -/
 
@@ -83,7 +84,6 @@ def syntacticSemigroupToMonoid : L.syntacticSemigroup →ₙ* L.syntacticMonoid 
 
 @[simp] theorem syntacticSemigroupToMonoid_apply (u : FreeSemigroup α) :
     L.syntacticSemigroupToMonoid (L.toSyntacticSemigroup u) = L.syntacticClass u.toList := rfl
-
 
 theorem syntacticSemigroupToMonoid_injective :
     Function.Injective L.syntacticSemigroupToMonoid := by
@@ -102,9 +102,7 @@ theorem finite_syntacticSemigroup (h : L.IsRegular) : Finite L.syntacticSemigrou
   inferInstance
 
 /-- The syntactic congruence is complement-invariant, as on the monoid side. -/
-theorem syntacticSemigroupCon_compl : Lᶜ.syntacticSemigroupCon = L.syntacticSemigroupCon := by
-  ext u v
-  simp only [syntacticSemigroupCon_iff, SyntacticEquiv]
-  exact ⟨fun h x y => not_iff_not.mp (h x y), fun h x y => not_iff_not.mpr (h x y)⟩
+theorem syntacticSemigroupCon_compl : Lᶜ.syntacticSemigroupCon = L.syntacticSemigroupCon :=
+  Con.ext fun _ _ => SyntacticEquiv.compl_iff
 
 end Language

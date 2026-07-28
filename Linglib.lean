@@ -127,6 +127,7 @@ import Linglib.Core.Data.RoseTree.Nonplanar
 import Linglib.Core.Data.RoseTree.Perm
 import Linglib.Core.Data.RoseTree.Traversable
 import Linglib.Core.Data.Setoid.Basic
+import Linglib.Core.GroupTheory.Congruence.Hom
 import Linglib.Core.InformationTheory.KullbackLeibler.Basic
 import Linglib.Core.InformationTheory.KullbackLeibler.Cond
 import Linglib.Core.InformationTheory.MutualInformation
@@ -154,7 +155,6 @@ import Linglib.Core.Logic.Bilattice.Representation
 import Linglib.Core.Logic.Consequence
 import Linglib.Core.Logic.CylindricAlgebra
 import Linglib.Core.Logic.Duality
-import Linglib.Core.GroupTheory.Congruence.Hom
 import Linglib.Core.Logic.FactorsThroughOn
 import Linglib.Core.Logic.FirstOrder.Binders
 import Linglib.Core.Logic.FirstOrder.Comparative
