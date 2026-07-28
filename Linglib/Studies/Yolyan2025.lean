@@ -114,7 +114,7 @@ theorem combineC_assoc (pin a b c : Bool) :
 /-- The value of the ⊙-combined output predicate for `σ` at `i` ([yolyan-2025]
 Def. 4.1): the two programs' output values combined against the input value. -/
 def SimulEval {L R : Type} (PL : Program α L) (PR : Program α R) (hL : L) (hR : R)
-    (w : WordModel α) (i : ℕ) (σ : α) (b : Bool) : Prop :=
+    (w : List α) (i : ℕ) (σ : α) (b : Bool) : Prop :=
   ∃ bL bR, Eval PL w i (.call hL x) bL ∧ Eval PR w i (.call hR x) bR ∧
     b = combine (decide (w[i]? = some σ)) bL bR
 
@@ -123,7 +123,7 @@ length-preserving maps of §5): each output symbol is the one whose ⊙-combined
 predicate holds. -/
 def SimulModels {L R : Type} (PL : Program α L) (PR : Program α R)
     (outL : α → L) (outR : α → R) (f : List α → List α) : Prop :=
-  ∀ w : WordModel α, (f w).length = w.length ∧
+  ∀ w : List α, (f w).length = w.length ∧
     ∀ i < w.length, ∀ σ : α,
       ((f w)[i]? = some σ ↔ SimulEval PL PR (outL σ) (outR σ) w i σ true)
 

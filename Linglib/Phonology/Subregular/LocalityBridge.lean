@@ -29,13 +29,13 @@ namespace Subregular.Logic
 
 variable {α β V : Type*}
 
-private theorem pred?_zero (w : WordModel α) : w.pred? 0 = none := rfl
+private theorem pred?_zero (w : List α) : pred? w 0 = none := rfl
 
-private theorem pred?_pos {w : WordModel α} {m : ℕ} (h0 : 0 < m) (hm : m ≤ w.length) :
-    w.pred? m = some (m - 1) := by
+private theorem pred?_pos {w : List α} {m : ℕ} (h0 : 0 < m) (hm : m ≤ w.length) :
+    pred? w m = some (m - 1) := by
   obtain ⟨m', rfl⟩ := Nat.exists_eq_succ_of_ne_zero (show m ≠ 0 by omega)
   have hm' : m' < w.length := by omega
-  simp [WordModel.pred?, hm']
+  simp [pred?, hm']
 
 /-! ### Backward terms
 
@@ -45,12 +45,12 @@ namespace Term
 
 /-- A backward term of predecessor depth `j`, evaluated at position `n` (in range), reads exactly
 position `n - j` — defined iff `j ≤ n`. -/
-theorem eval_backward {w : WordModel α} {n : ℕ} (hn : n < w.length) :
+theorem eval_backward {w : List α} {n : ℕ} (hn : n < w.length) :
     ∀ {t : Term (Fin 1)}, t.Backward →
       t.eval w (fun _ => n) = if t.pdepth ≤ n then some (n - t.pdepth) else none := by
   intro t ht
   induction t with
-  | var v => simp [eval, pdepth, WordModel.Mem, hn]
+  | var v => simp [eval, pdepth, hn]
   | succ t _ => exact absurd ht (by simp [Backward])
   | pred t ih =>
       simp only [Backward] at ht
@@ -104,9 +104,9 @@ threaded by `applyAux` stays exactly that bounded left context. -/
 truth value at `(w, n)` and `(w', n')` whenever their bounded left contexts (the labels at offsets
 `0 … r`, and which of those offsets stay in range) agree. -/
 private theorem Atom.realize_eq_of_agree [DecidableEq α] {r : ℕ} {a : Atom α (Fin 1)}
-    (ha : a.BackBounded r) {w w' : WordModel α} {n n' : ℕ}
+    (ha : a.BackBounded r) {w w' : List α} {n n' : ℕ}
     (hn : n < w.length) (hn' : n' < w'.length)
-    (hlbl : ∀ j ≤ r, w.label? (n - j) = w'.label? (n' - j))
+    (hlbl : ∀ j ≤ r, w[n - j]? = w'[n' - j]?)
     (hedge : ∀ j ≤ r, (j ≤ n ↔ j ≤ n')) :
     a.Realize w (fun _ => n) ↔ a.Realize w' (fun _ => n') := by
   cases a with
@@ -146,9 +146,9 @@ private theorem Atom.realize_eq_of_agree [DecidableEq α] {r : ℕ} {a : Atom α
 /-- A backward-bounded quantifier-free formula reads only the `r + 1` symbols ending at its
 position — the boolean-combination lift of `Atom.realize_eq_of_agree`. -/
 private theorem QF.realize_eq_of_agree [DecidableEq α] {r : ℕ}
-    {w w' : WordModel α} {n n' : ℕ}
+    {w w' : List α} {n n' : ℕ}
     (hn : n < w.length) (hn' : n' < w'.length)
-    (hlbl : ∀ j ≤ r, w.label? (n - j) = w'.label? (n' - j))
+    (hlbl : ∀ j ≤ r, w[n - j]? = w'[n' - j]?)
     (hedge : ∀ j ≤ r, (j ≤ n ↔ j ≤ n')) :
     ∀ {φ : QF α (Fin 1)}, φ.BackBounded r →
       (φ.Realize w (fun _ => n) ↔ φ.Realize w' (fun _ => n')) := by
@@ -177,9 +177,9 @@ private theorem findSome?_congr {γ δ : Type*} {f g : γ → Option δ} :
 /-- A left-local transduction emits the same block at positions whose bounded left contexts agree:
 every clause guard is backward-bounded, so its firing is determined by that context. -/
 private theorem Transduction.emitAt_eq_of_agree [DecidableEq α] {r : ℕ} {T : Transduction α β}
-    (hT : T.LeftLocal r) {w w' : WordModel α} {n n' : ℕ}
+    (hT : T.LeftLocal r) {w w' : List α} {n n' : ℕ}
     (hn : n < w.length) (hn' : n' < w'.length)
-    (hlbl : ∀ j ≤ r, w.label? (n - j) = w'.label? (n' - j))
+    (hlbl : ∀ j ≤ r, w[n - j]? = w'[n' - j]?)
     (hedge : ∀ j ≤ r, (j ≤ n ↔ j ≤ n')) :
     T.emitAt w n = T.emitAt w' n' := by
   unfold Transduction.emitAt
@@ -195,13 +195,12 @@ private theorem Transduction.emitAt_eq_of_agree [DecidableEq α] {r : ℕ} {T : 
 /-- The block a left-local transduction emits at position `p` depends only on the `r + 1` input
 symbols ending at `p`: it equals the block emitted at the last position of that window. -/
 private theorem Transduction.emitAt_local [DecidableEq α] {r : ℕ} {T : Transduction α β}
-    (hT : T.LeftLocal r) {input : WordModel α} {p : ℕ} (hp : p < input.length) :
+    (hT : T.LeftLocal r) {input : List α} {p : ℕ} (hp : p < input.length) :
     T.emitAt input p = T.emitAt ((input.take (p + 1)).rtake (r + 1)) (min r p) := by
   apply Transduction.emitAt_eq_of_agree hT hp
   · rw [List.length_rtake, List.length_take]; omega
   · intro j hj
     have hlen : (input.take (p + 1)).length = p + 1 := by rw [List.length_take]; omega
-    simp only [WordModel.label?_eq_getElem?]
     rw [show (input.take (p + 1)).rtake (r + 1)
           = (input.take (p + 1)).drop ((input.take (p + 1)).length - (r + 1)) from rfl,
         List.getElem?_drop, hlen, List.getElem?_take, if_pos (by omega)]
@@ -234,8 +233,8 @@ private theorem Transduction.windowOutput_toISLRule [DecidableEq α] {r : ℕ} (
 sequence over the input positions `p, p+1, …`. The induction maintains that the threaded window
 stays exactly the `r`-symbol left context. -/
 private theorem Transduction.applyAux_toISLRule_eq [DecidableEq α] {r : ℕ} {T : Transduction α β}
-    (hT : T.LeftLocal r) (input : WordModel α) :
-    ∀ (s : WordModel α) (p : ℕ), input = input.take p ++ s → p = (input.take p).length →
+    (hT : T.LeftLocal r) (input : List α) :
+    ∀ (s : List α) (p : ℕ), input = input.take p ++ s → p = (input.take p).length →
       ISLRule.applyAux (T.toISLRule r) ((input.take p).rtake r) s
         = (List.range' p s.length).flatMap (T.emitAt input) := by
   intro s

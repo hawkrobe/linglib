@@ -1,4 +1,4 @@
-import Linglib.Core.Computability.WordModel
+import Mathlib.Data.List.Basic
 
 /-!
 # Quantifier-free logic over word models
@@ -29,6 +29,49 @@ mathlib `Structure` interprets function symbols totally.
 
 namespace Subregular.Logic
 
+/-! ### Positions of a word
+
+A word is read model-theoretically as a finite linear order of positions carrying unary labels.
+Positions are natural numbers with `w[n]?` as the label, following mathlib's `getElem?` rather than
+a `Fin w.length` index: the comparisons below are between *two* words of equal length, which `Fin`
+would force through `Fin.cast` transport. Successor and predecessor are partial — falling off an
+edge is the semantics, not an artifact — so they land in `Option ℕ`. -/
+
+variable {α : Type*}
+
+/-- Successor as a partial function: the position after `n`, defined iff it is in range. -/
+def succ? (w : List α) (n : ℕ) : Option ℕ :=
+  if n + 1 < w.length then some (n + 1) else none
+
+/-- Predecessor as a partial function: the position before `n`, defined iff `n > 0`. -/
+def pred? (w : List α) : ℕ → Option ℕ
+  | 0 => none
+  | n + 1 => if n < w.length then some n else none
+
+theorem succ?_eq_some_iff {w : List α} {n m : ℕ} :
+    succ? w n = some m ↔ m = n + 1 ∧ n + 1 < w.length := by
+  unfold succ?
+  split <;> simp_all
+  all_goals omega
+
+theorem pred?_eq_some_iff {w : List α} {n m : ℕ} :
+    pred? w n = some m ↔ n = m + 1 ∧ m < w.length := by
+  cases n with
+  | zero => simp [pred?]
+  | succ k =>
+    unfold pred?
+    split <;> simp_all
+    all_goals omega
+
+/-- The successor structure depends only on the length. -/
+theorem succ?_congr {w w' : List α} (h : w.length = w'.length) : succ? w = succ? w' := by
+  funext n; simp [succ?, h]
+
+/-- The predecessor structure depends only on the length. -/
+theorem pred?_congr {w w' : List α} (h : w.length = w'.length) : pred? w = pred? w' := by
+  funext n; cases n <;> simp [pred?, h]
+
+
 variable {α V : Type*}
 
 /-- Quantifier-free **terms**: a variable, or the successor/predecessor of a term. The
@@ -43,10 +86,10 @@ namespace Term
 
 /-- Interpret a term in a word model under an assignment `ρ` of variables to positions;
 `none` if it falls off an edge. -/
-def eval (w : WordModel α) (ρ : V → ℕ) : Term V → Option ℕ
-  | .var v  => if w.Mem (ρ v) then some (ρ v) else none
-  | .succ t => (eval w ρ t).bind w.succ?
-  | .pred t => (eval w ρ t).bind w.pred?
+def eval (w : List α) (ρ : V → ℕ) : Term V → Option ℕ
+  | .var v  => if ρ v < w.length then some (ρ v) else none
+  | .succ t => (eval w ρ t).bind (succ? w)
+  | .pred t => (eval w ρ t).bind (pred? w)
 
 end Term
 
@@ -111,16 +154,16 @@ inductive QF (α V : Type*) where
 variable [DecidableEq α]
 
 /-- Satisfaction of an atom in `w` under assignment `ρ`. -/
-def Atom.Realize (w : WordModel α) (ρ : V → ℕ) : Atom α V → Prop
-  | .label a t => (t.eval w ρ).bind w.label? = some a
+def Atom.Realize (w : List α) (ρ : V → ℕ) : Atom α V → Prop
+  | .label a t => (t.eval w ρ).bind (w[·]?) = some a
   | .eq t₁ t₂  => t₁.eval w ρ = t₂.eval w ρ ∧ t₁.eval w ρ ≠ none
   | .defined t => t.eval w ρ ≠ none
 
-instance (w : WordModel α) (ρ : V → ℕ) (a : Atom α V) : Decidable (a.Realize w ρ) := by
+instance (w : List α) (ρ : V → ℕ) (a : Atom α V) : Decidable (a.Realize w ρ) := by
   cases a <;> unfold Atom.Realize <;> infer_instance
 
 /-- Satisfaction of a quantifier-free formula in `w` under assignment `ρ`. -/
-def QF.Realize (w : WordModel α) (ρ : V → ℕ) : QF α V → Prop
+def QF.Realize (w : List α) (ρ : V → ℕ) : QF α V → Prop
   | .atom a   => a.Realize w ρ
   | .tru      => True
   | .fls      => False
@@ -128,7 +171,7 @@ def QF.Realize (w : WordModel α) (ρ : V → ℕ) : QF α V → Prop
   | .conj φ ψ => φ.Realize w ρ ∧ ψ.Realize w ρ
   | .disj φ ψ => φ.Realize w ρ ∨ ψ.Realize w ρ
 
-instance QF.instDecidableRealize (w : WordModel α) (ρ : V → ℕ) :
+instance QF.instDecidableRealize (w : List α) (ρ : V → ℕ) :
     (φ : QF α V) → Decidable (φ.Realize w ρ)
   | .atom a   => inferInstanceAs (Decidable (a.Realize w ρ))
   | .tru      => isTrue trivial
@@ -156,7 +199,7 @@ terms, with no existential. -/
 private def flankedByA : QF Sym Unit :=
   .conj (.atom (.label .a (.pred (.var ())))) (.atom (.label .a (.succ (.var ()))))
 
-private def aba : WordModel Sym := [Sym.a, Sym.b, Sym.a]
+private def aba : List Sym := [Sym.a, Sym.b, Sym.a]
 
 -- Position 1 (the `b`) is flanked by `a`s; position 0 is not (no predecessor).
 example : flankedByA.Realize aba (fun _ => 1) := by decide
