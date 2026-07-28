@@ -42,13 +42,6 @@ def langs (L : Language α) : Prop := L.IsRegular ∧ V.mem L.syntacticSemigroup
 
 theorem langs_def : V.langs L ↔ L.IsRegular ∧ V.mem L.syntacticSemigroup := Iff.rfl
 
-theorem langs.isRegular (h : V.langs L) : L.IsRegular := h.1
-
-/-- A language in `V.langs` has a finite syntactic semigroup. -/
-theorem finite_syntacticSemigroup (h : V.langs L) : Finite L.syntacticSemigroup :=
-  haveI := finite_syntacticMonoid h.1
-  inferInstance
-
 /-- **Closure under complement** — immediate from complement-invariance of the syntactic
 congruence (`Language.syntacticSemigroupCon_compl`). -/
 theorem langs_compl (h : V.langs L) : V.langs Lᶜ := by

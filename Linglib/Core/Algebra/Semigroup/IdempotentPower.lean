@@ -29,6 +29,20 @@ themselves coerced, and `WithOne.coe_inj` transfers idempotency back.
   idempotent to an idempotent — the form the pseudovariety quotient-closure proof consumes.
 -/
 
+namespace WithOne
+
+variable {S : Type*} [Semigroup S]
+
+/-- `WithOne S` is `Option S`, so it inherits finiteness. -/
+instance instFinite [Finite S] : Finite (WithOne S) := inferInstanceAs (Finite (Option S))
+
+/-- Idempotency is detected by the coercion into `WithOne`. -/
+@[simp] theorem isIdempotentElem_coe {e : S} :
+    IsIdempotentElem ((e : WithOne S)) ↔ IsIdempotentElem e := by
+  rw [IsIdempotentElem, ← WithOne.coe_mul, WithOne.coe_inj]; rfl
+
+end WithOne
+
 namespace Semigroup
 
 variable {S T : Type*} [Semigroup S] [Semigroup T]
@@ -40,15 +54,6 @@ theorem exists_coe_pow (x : S) : ∀ n : ℕ, 0 < n → ∃ y : S, (x : WithOne 
     obtain ⟨y, hy⟩ := exists_coe_pow x (n + 1) n.succ_pos
     exact ⟨x * y, by rw [pow_succ', hy, ← WithOne.coe_mul]⟩
 
-/-- `WithOne S` is `Option S`, so it inherits finiteness. -/
-instance instFiniteWithOne [Finite S] : Finite (WithOne S) := inferInstanceAs (Finite (Option S))
-
-/-- Idempotency transfers across the coercion into `WithOne`. -/
-theorem isIdempotentElem_coe {e : S} (h : IsIdempotentElem e) :
-    IsIdempotentElem ((e : WithOne S)) := by
-  rw [IsIdempotentElem, ← WithOne.coe_mul, WithOne.coe_inj]
-  exact h
-
 variable [Finite S]
 
 /-- **Every element of a finite semigroup has an idempotent positive power.** -/
@@ -56,9 +61,7 @@ theorem exists_pos_pow_isIdempotent (x : S) :
     ∃ (n : ℕ) (e : S), 0 < n ∧ (x : WithOne S) ^ n = e ∧ IsIdempotentElem e := by
   obtain ⟨n, hn, hidem⟩ := Monoid.exists_pos_pow_isIdempotent (x : WithOne S)
   obtain ⟨e, he⟩ := exists_coe_pow x n hn
-  refine ⟨n, e, hn, he, ?_⟩
-  rw [IsIdempotentElem, ← WithOne.coe_inj, WithOne.coe_mul, ← he]
-  exact hidem
+  exact ⟨n, e, hn, he, WithOne.isIdempotentElem_coe.1 (he ▸ hidem)⟩
 
 /-- A surjective homomorphism lifts an idempotent to an idempotent: replace a preimage by an
 idempotent power of it, which the homomorphism still sends to the (idempotent) target. -/
@@ -71,6 +74,6 @@ theorem exists_isIdempotentElem_map_eq {f : S →ₙ* T} (hf : Function.Surjecti
     rw [map_pow, WithOne.mapMulHom_coe]
   rw [he, WithOne.mapMulHom_coe] at hmap
   obtain ⟨m, rfl⟩ : ∃ m, n = m + 1 := ⟨n - 1, by omega⟩
-  rwa [(isIdempotentElem_coe he').pow_succ_eq, WithOne.coe_inj] at hmap
+  rwa [(WithOne.isIdempotentElem_coe.2 he').pow_succ_eq, WithOne.coe_inj] at hmap
 
 end Semigroup

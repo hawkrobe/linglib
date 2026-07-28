@@ -92,23 +92,18 @@ languages. -/
 def IsLocallyTrivial (S : Type*) [Semigroup S] : Prop :=
   ∀ e : S, IsIdempotentElem e → ∀ s : S, e * s * e = e
 
-/-- The image of an idempotent is idempotent. -/
-private theorem isIdempotentElem_map {e : S} (he : IsIdempotentElem e) (f : S →ₙ* T) :
-    IsIdempotentElem (f e) := by
-  rw [IsIdempotentElem, ← map_mul, he]
-
 /-! ### Closure properties -/
 
 theorem IsDefinite.of_injective {f : S →ₙ* T} (hf : Function.Injective f) (h : IsDefinite T) :
-    IsDefinite S := fun e he s => hf <| by rw [map_mul, h (f e) (isIdempotentElem_map he f) (f s)]
+    IsDefinite S := fun e he s => hf <| by rw [map_mul, h (f e) (he.map f) (f s)]
 
 theorem IsReverseDefinite.of_injective {f : S →ₙ* T} (hf : Function.Injective f)
     (h : IsReverseDefinite T) : IsReverseDefinite S := fun e he s => hf <| by
-  rw [map_mul, h (f e) (isIdempotentElem_map he f) (f s)]
+  rw [map_mul, h (f e) (he.map f) (f s)]
 
 theorem IsLocallyTrivial.of_injective {f : S →ₙ* T} (hf : Function.Injective f)
     (h : IsLocallyTrivial T) : IsLocallyTrivial S := fun e he s => hf <| by
-  rw [map_mul, map_mul, h (f e) (isIdempotentElem_map he f) (f s)]
+  rw [map_mul, map_mul, h (f e) (he.map f) (f s)]
 
 theorem IsDefinite.prod (hS : IsDefinite S) (hT : IsDefinite T) : IsDefinite (S × T) := by
   rintro ⟨e₁, e₂⟩ he ⟨s₁, s₂⟩
@@ -123,6 +118,11 @@ theorem IsLocallyTrivial.prod (hS : IsLocallyTrivial S) (hT : IsLocallyTrivial T
     IsLocallyTrivial (S × T) := by
   rintro ⟨e₁, e₂⟩ he ⟨s₁, s₂⟩
   exact Prod.ext (hS e₁ (congrArg Prod.fst he) s₁) (hT e₂ (congrArg Prod.snd he) s₂)
+
+/-- **`D` collapses over monoids**: a definite monoid is trivial, since the condition applied to
+the idempotent `1` gives `s = s * 1 = 1`. This is why `D`, `K` and `LI` are semigroup varieties. -/
+theorem IsDefinite.subsingleton {M : Type*} [Monoid M] (h : IsDefinite M) : Subsingleton M :=
+  ⟨fun a b => by rw [← mul_one a, h 1 .one a, ← mul_one b, h 1 .one b]⟩
 
 /-- A definite semigroup is locally trivial: apply `Se = e` at the element `e * s`. -/
 theorem IsDefinite.isLocallyTrivial (h : IsDefinite S) : IsLocallyTrivial S :=

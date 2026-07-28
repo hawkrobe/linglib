@@ -18,12 +18,12 @@ the classes `D`, `K`, `LI`, `N` are varieties of *semigroups*, not of monoids. O
 those classes collapse, since the definite condition applied to the idempotent `1` forces
 triviality; stating them on `FreeSemigroup α` is what avoids the collapse.
 
-`Language.SyntacticEquiv` is the underlying two-sided context relation, shared with
-`Language.syntacticCon`: the two congruences differ only in the monoid they live on.
+`Language.SyntacticEquiv` is the underlying two-sided context relation, defined with
+`Language.syntacticCon`: both congruences are that one relation read on their own carrier, and
+share its multiplicativity lemma `SyntacticEquiv.append`.
 
 ## Main definitions
 
-* `Language.SyntacticEquiv`: two words are equivalent when no two-sided context separates them.
 * `Language.syntacticSemigroupCon`: the syntactic congruence on `FreeSemigroup α`.
 * `Language.syntacticSemigroup`: the quotient semigroup.
 * `Language.toSyntacticSemigroup`: the projection, as a `MulHom`.
@@ -31,8 +31,8 @@ triviality; stating them on `FreeSemigroup α` is what avoids the collapse.
 
 ## Main results
 
-* `Language.syntacticSemigroupClass_eq_iff`: two nonempty words share a class exactly when no
-  two-sided context separates them.
+* `Language.syntacticSemigroupToMonoid_injective`: the syntactic semigroup embeds in the
+  syntactic monoid.
 
 ## Implementation notes
 
@@ -67,37 +67,12 @@ namespace Language
 
 variable {α : Type*} (L : Language α)
 
-/-- Two words are **syntactically equivalent** for `L` when no two-sided context distinguishes
-them as `L`-members. This is the relation underlying both syntactic congruences. -/
-def SyntacticEquiv (u v : List α) : Prop := ∀ x y : List α, x ++ u ++ y ∈ L ↔ x ++ v ++ y ∈ L
-
-variable {L} in
-theorem SyntacticEquiv.refl (u : List α) : L.SyntacticEquiv u u := fun _ _ => Iff.rfl
-
-variable {L} in
-theorem SyntacticEquiv.symm {u v : List α} (h : L.SyntacticEquiv u v) : L.SyntacticEquiv v u :=
-  fun x y => (h x y).symm
-
-variable {L} in
-theorem SyntacticEquiv.trans {u v w : List α} (h : L.SyntacticEquiv u v)
-    (h' : L.SyntacticEquiv v w) : L.SyntacticEquiv u w := fun x y => (h x y).trans (h' x y)
-
-variable {L} in
-/-- Syntactically equivalent words agree on membership: take the empty context. -/
-theorem mem_iff_of_syntacticEquiv {u v : List α} (h : L.SyntacticEquiv u v) : u ∈ L ↔ v ∈ L := by
-  have := h [] []
-  simpa using this
-
 /-- The **syntactic congruence** on the free semigroup: the syntactic equivalence of the
 underlying nonempty words. -/
 def syntacticSemigroupCon : Con (FreeSemigroup α) where
   r u v := L.SyntacticEquiv u.toList v.toList
   iseqv := ⟨fun _ => .refl _, .symm, .trans⟩
-  mul' {a b c d} hab hcd x y := by
-    have h1 := hab x (c.toList ++ y)
-    have h2 := hcd (x ++ b.toList) y
-    simp only [FreeSemigroup.toList_mul, ← List.append_assoc] at h1 h2 ⊢
-    exact h1.trans h2
+  mul' hab hcd := hab.append hcd
 
 theorem syntacticSemigroupCon_iff {u v : FreeSemigroup α} :
     L.syntacticSemigroupCon u v ↔ L.SyntacticEquiv u.toList v.toList := Iff.rfl
@@ -120,33 +95,18 @@ theorem toSyntacticSemigroup_eq_iff {u v : FreeSemigroup α} :
 theorem toSyntacticSemigroup_surjective : Function.Surjective L.toSyntacticSemigroup :=
   fun s => Quotient.exists_rep s
 
-/-- The syntactic class of a nonempty word. -/
-def syntacticSemigroupClass (u : FreeSemigroup α) : L.syntacticSemigroup :=
-  L.toSyntacticSemigroup u
-
-@[simp] theorem syntacticSemigroupClass_mul (u v : FreeSemigroup α) :
-    L.syntacticSemigroupClass (u * v)
-      = L.syntacticSemigroupClass u * L.syntacticSemigroupClass v := rfl
-
-variable {L} in
-/-- Two nonempty words share a syntactic class exactly when no two-sided context distinguishes
-them as `L`-members. -/
-theorem syntacticSemigroupClass_eq_iff {u v : FreeSemigroup α} :
-    L.syntacticSemigroupClass u = L.syntacticSemigroupClass v
-      ↔ ∀ x y : List α, x ++ u.toList ++ y ∈ L ↔ x ++ v.toList ++ y ∈ L :=
-  toSyntacticSemigroup_eq_iff L
-
 /-! ### Relation to the syntactic monoid -/
 
 /-- The syntactic semigroup embeds into the syntactic monoid: a nonempty word is sent to its
-class in the monoid. Eilenberg's `M_A` adjoins an identity to `S_A`, so this is injective. -/
+class in the monoid. It is injective because both quotients are by the same context relation. -/
 def syntacticSemigroupToMonoid : L.syntacticSemigroup →ₙ* L.syntacticMonoid where
   toFun := Quotient.lift (fun u : FreeSemigroup α => L.syntacticClass u.toList)
     fun _ _ h => syntacticClass_eq_iff.mpr h
   map_mul' := by rintro ⟨u⟩ ⟨v⟩; exact L.syntacticClass_append u.toList v.toList
 
 @[simp] theorem syntacticSemigroupToMonoid_apply (u : FreeSemigroup α) :
-    L.syntacticSemigroupToMonoid (L.syntacticSemigroupClass u) = L.syntacticClass u.toList := rfl
+    L.syntacticSemigroupToMonoid (L.toSyntacticSemigroup u) = L.syntacticClass u.toList := rfl
+
 
 theorem syntacticSemigroupToMonoid_injective :
     Function.Injective L.syntacticSemigroupToMonoid := by
@@ -158,6 +118,11 @@ monoid. -/
 instance instFiniteSyntacticSemigroup [Finite L.syntacticMonoid] :
     Finite L.syntacticSemigroup :=
   .of_injective _ L.syntacticSemigroupToMonoid_injective
+
+/-- A regular language has a finite syntactic semigroup. -/
+theorem finite_syntacticSemigroup (h : L.IsRegular) : Finite L.syntacticSemigroup :=
+  haveI := finite_syntacticMonoid h
+  inferInstance
 
 /-- The syntactic congruence is complement-invariant, as on the monoid side. -/
 theorem syntacticSemigroupCon_compl : Lᶜ.syntacticSemigroupCon = L.syntacticSemigroupCon := by
