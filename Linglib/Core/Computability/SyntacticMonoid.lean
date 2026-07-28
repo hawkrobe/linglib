@@ -98,6 +98,7 @@ theorem syntacticCon_iff {u v : FreeMonoid α} :
   Iff.rfl
 
 variable {L} in
+
 /-- Words congruent under the syntactic congruence agree on membership of `L`: `L` is saturated by
 `syntacticCon L` (take the empty two-sided context). -/
 theorem mem_iff_of_syntacticCon {u v : FreeMonoid α} (h : L.syntacticCon u v) :
@@ -133,6 +134,7 @@ theorem syntacticClass_surjective : Function.Surjective L.syntacticClass := fun 
   exact ⟨u.toList, congrArg L.toSyntacticMonoid (FreeMonoid.ofList_toList u)⟩
 
 variable {L} in
+
 /-- Word-level form of `syntacticCon_iff`: two words share a syntactic class iff no two-sided
 context distinguishes them as `L`-members. -/
 theorem syntacticClass_eq_iff {u v : List α} : L.syntacticClass u = L.syntacticClass v ↔
@@ -140,12 +142,14 @@ theorem syntacticClass_eq_iff {u v : List α} : L.syntacticClass u = L.syntactic
   simp only [syntacticClass, toSyntacticMonoid_eq_iff, syntacticCon_iff, FreeMonoid.toList_ofList]
 
 variable {L} in
+
 /-- `L` is saturated by syntactic class: equal class implies equal membership. -/
 theorem mem_iff_of_syntacticClass_eq {u v : List α}
     (h : L.syntacticClass u = L.syntacticClass v) : u ∈ L ↔ v ∈ L := by
   simpa using syntacticClass_eq_iff.mp h [] []
 
 variable {L} in
+
 /-- **Reverse duality**: a syntactic-class equality in `L.reverse` is the same as the
 reversed-word equality in `L`. The syntactic monoid of `L.reverse` is `L`'s, opposite. -/
 theorem syntacticClass_reverse_eq_iff {u v : List α} :
@@ -263,10 +267,6 @@ syntactic monoid (e.g. `Language.IsStarFree`, and `Monoid.Pseudovariety.langs` i
 theorem syntacticCon_compl (L : Language α) : Lᶜ.syntacticCon = L.syntacticCon :=
   Con.ext fun _ _ => SyntacticEquiv.compl_iff
 
-/-- The syntactic monoid is complement-invariant. -/
-theorem syntacticMonoid_compl (L : Language α) : Lᶜ.syntacticMonoid = L.syntacticMonoid := by
-  unfold syntacticMonoid; rw [syntacticCon_compl]
-
 /-- The meet of the two syntactic congruences refines that of the intersection: if no `L`-context
 and no `M`-context distinguishes `u` from `v`, then no `(L ⊓ M)`-context does either. -/
 theorem inf_syntacticCon_le_syntacticCon_inf (L M : Language α) :
@@ -284,5 +284,12 @@ theorem ker_prod_toSyntacticMonoid (L M : Language α) :
   Con.ext fun u v => by
     rw [Con.ker_apply, MonoidHom.prod_apply, MonoidHom.prod_apply, Prod.ext_iff,
       toSyntacticMonoid_eq_iff, toSyntacticMonoid_eq_iff, Con.inf_iff_and]
+
+/-- The **right quotient** `L u⁻¹`: the words that land in `L` when `u` is appended. The left
+quotient is mathlib's `Language.leftQuotient`. -/
+def rightQuotient (L : Language α) (u : List α) : Language α := {w | w ++ u ∈ L}
+
+@[simp] theorem mem_rightQuotient {L : Language α} {u w : List α} :
+    w ∈ L.rightQuotient u ↔ w ++ u ∈ L := Iff.rfl
 
 end Language

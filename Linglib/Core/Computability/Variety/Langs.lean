@@ -46,7 +46,6 @@ variable (V : Pseudovariety.{u}) {α : Type u} {L : Language α}
 language-side operator of the Eilenberg correspondence. -/
 def langs (L : Language α) : Prop := L.IsRegular ∧ V.mem L.syntacticMonoid
 
-
 /-- **Engine.** A language recognized by a finite monoid in `V` lies in `V.langs`: the syntactic
 monoid is a quotient of a submonoid of the recognizer, hence in `V`. Generalizes
 `Language.IsStarFree.of_recognizes`. -/
@@ -118,13 +117,6 @@ Eilenberg's fourth axiom for a variety of languages ([eilenberg-1976] VII.3.3, s
 letters; [pin-mfa] Ch. XIII §3 states it for words, equivalently). The syntactic congruence of a
 quotient is coarser than that of the language, so the syntactic monoid of the quotient is a
 quotient of the original's. -/
-
-/-- The **right quotient** `L u⁻¹`: the words that land in `L` when `u` is appended. The left
-quotient is mathlib's `Language.leftQuotient`. -/
-def _root_.Language.rightQuotient (L : Language α) (u : List α) : Language α := {w | w ++ u ∈ L}
-
-@[simp] theorem _root_.Language.mem_rightQuotient {L : Language α} {u w : List α} :
-    w ∈ L.rightQuotient u ↔ w ++ u ∈ L := Iff.rfl
 
 /-- Syntactic equivalence for `L` implies it for any left quotient of `L`: prepend `u` to the
 left context. -/

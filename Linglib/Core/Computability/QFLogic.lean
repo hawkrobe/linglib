@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Mathlib.Data.List.Basic
 
 /-!
@@ -8,8 +13,8 @@ by applying the successor/predecessor partial functions; formulas are boolean co
 atomic label/equality/definedness tests. Because successor is a *function*, a QF term reaches a
 *bounded* neighbourhood of its variable with no quantifiers — the syntactic counterpart of
 strict locality (an existential like `∃w,y[succ w x ∧ succ x y ∧ …]` collapses to the
-quantifier-free `… (pred x) ∧ … (succ x)`). `Transduction.leftLocal_isLeftISL` makes this
-precise: a QF-definable transduction with bounded guards is input-strictly-local.
+quantifier-free `… (pred x) ∧ … (succ x)`). A QF-definable transduction whose guards have
+bounded predecessor depth therefore depends only on a bounded left window.
 
 ## Main definitions
 
@@ -71,8 +76,7 @@ theorem succ?_congr {w w' : List α} (h : w.length = w'.length) : succ? w = succ
 theorem pred?_congr {w w' : List α} (h : w.length = w'.length) : pred? w = pred? w' := by
   funext n; cases n <;> simp [pred?, h]
 
-
-variable {α V : Type*}
+variable {V : Type*}
 
 /-- Quantifier-free **terms**: a variable, or the successor/predecessor of a term. The
 `succ`/`pred` chains give bounded-window reach without quantifiers. -/
@@ -177,8 +181,10 @@ instance QF.instDecidableRealize (w : List α) (ρ : V → ℕ) :
   | .tru      => isTrue trivial
   | .fls      => isFalse not_false
   | .neg φ    => @instDecidableNot _ (QF.instDecidableRealize w ρ φ)
-  | .conj φ ψ => @instDecidableAnd _ _ (QF.instDecidableRealize w ρ φ) (QF.instDecidableRealize w ρ ψ)
-  | .disj φ ψ => @instDecidableOr _ _ (QF.instDecidableRealize w ρ φ) (QF.instDecidableRealize w ρ ψ)
+  | .conj φ ψ =>
+      @instDecidableAnd _ _ (QF.instDecidableRealize w ρ φ) (QF.instDecidableRealize w ρ ψ)
+  | .disj φ ψ =>
+      @instDecidableOr _ _ (QF.instDecidableRealize w ρ φ) (QF.instDecidableRealize w ρ ψ)
 
 /-- `t` is an initial position: in-domain with no predecessor. -/
 def QF.initial (t : Term V) : QF α V :=
