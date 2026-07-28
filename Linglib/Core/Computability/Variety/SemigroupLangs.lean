@@ -42,7 +42,6 @@ variable (V : Pseudovariety.{u}) {α : Type u} {L : Language α}
 `+`-variety side of the Eilenberg correspondence. -/
 def langs (L : Language α) : Prop := L.IsRegular ∧ V.mem L.syntacticSemigroup
 
-theorem langs_def : V.langs L ↔ L.IsRegular ∧ V.mem L.syntacticSemigroup := Iff.rfl
 
 /-- **Closure under complement** — immediate from complement-invariance of the syntactic
 congruence (`Language.syntacticSemigroupCon_compl`). -/
