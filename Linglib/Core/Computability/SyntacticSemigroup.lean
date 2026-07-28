@@ -137,4 +137,33 @@ theorem syntacticSemigroupClass_eq_iff {u v : FreeSemigroup α} :
       ↔ ∀ x y : List α, x ++ u.toList ++ y ∈ L ↔ x ++ v.toList ++ y ∈ L :=
   toSyntacticSemigroup_eq_iff L
 
+/-! ### Relation to the syntactic monoid -/
+
+/-- The syntactic semigroup embeds into the syntactic monoid: a nonempty word is sent to its
+class in the monoid. Eilenberg's `M_A` adjoins an identity to `S_A`, so this is injective. -/
+def syntacticSemigroupToMonoid : L.syntacticSemigroup →ₙ* L.syntacticMonoid where
+  toFun := Quotient.lift (fun u : FreeSemigroup α => L.syntacticClass u.toList)
+    fun _ _ h => syntacticClass_eq_iff.mpr h
+  map_mul' := by rintro ⟨u⟩ ⟨v⟩; exact L.syntacticClass_append u.toList v.toList
+
+@[simp] theorem syntacticSemigroupToMonoid_apply (u : FreeSemigroup α) :
+    L.syntacticSemigroupToMonoid (L.syntacticSemigroupClass u) = L.syntacticClass u.toList := rfl
+
+theorem syntacticSemigroupToMonoid_injective :
+    Function.Injective L.syntacticSemigroupToMonoid := by
+  rintro ⟨u⟩ ⟨v⟩ h
+  exact Quotient.sound (syntacticClass_eq_iff.mp h)
+
+/-- A regular language has a finite syntactic semigroup, since it embeds in the syntactic
+monoid. -/
+instance instFiniteSyntacticSemigroup [Finite L.syntacticMonoid] :
+    Finite L.syntacticSemigroup :=
+  .of_injective _ L.syntacticSemigroupToMonoid_injective
+
+/-- The syntactic congruence is complement-invariant, as on the monoid side. -/
+theorem syntacticSemigroupCon_compl : Lᶜ.syntacticSemigroupCon = L.syntacticSemigroupCon := by
+  ext u v
+  simp only [syntacticSemigroupCon_iff, SyntacticEquiv]
+  exact ⟨fun h x y => not_iff_not.mp (h x y), fun h x y => not_iff_not.mpr (h x y)⟩
+
 end Language
