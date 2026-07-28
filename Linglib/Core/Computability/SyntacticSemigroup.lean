@@ -7,6 +7,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Core.Computability.SyntacticMonoid
 import Linglib.Core.Algebra.Free
+import Mathlib.Data.Fintype.Option
 
 /-!
 # The syntactic semigroup of a language
@@ -106,5 +107,26 @@ theorem syntacticSemigroupCon_compl : Lᶜ.syntacticSemigroupCon = L.syntacticSe
   ext u v
   simp only [syntacticSemigroupCon_iff, SyntacticEquiv]
   exact ⟨fun h x y => not_iff_not.mp (h x y), fun h x y => not_iff_not.mpr (h x y)⟩
+
+/-- Conversely, a finite syntactic semigroup forces a finite syntactic monoid: the monoid is
+covered by the semigroup together with the identity, which is Eilenberg's `M_A = S_A ∪ {1}`. -/
+theorem finite_syntacticMonoid_of_finite_syntacticSemigroup [Finite L.syntacticSemigroup] :
+    Finite L.syntacticMonoid := by
+  refine .of_surjective (β := L.syntacticMonoid)
+    (Option.elim · 1 L.syntacticSemigroupToMonoid) fun m => ?_
+  obtain ⟨w, rfl⟩ := L.syntacticClass_surjective m
+  match w with
+  | [] => exact ⟨none, L.syntacticClass_nil.symm⟩
+  | c :: w => exact ⟨some (L.toSyntacticSemigroup ⟨c, w⟩), rfl⟩
+
+/-- **Myhill–Nerode, semigroup form**: a language is regular exactly when its syntactic semigroup
+is finite. -/
+theorem isRegular_iff_finite_syntacticSemigroup :
+    L.IsRegular ↔ Finite L.syntacticSemigroup :=
+  ⟨fun h => haveI := finite_syntacticMonoid h; inferInstance,
+   fun _ => isRegular_of_finite_syntacticMonoid L.finite_syntacticMonoid_of_finite_syntacticSemigroup⟩
+
+theorem isRegular_of_finite_syntacticSemigroup (h : Finite L.syntacticSemigroup) : L.IsRegular :=
+  L.isRegular_iff_finite_syntacticSemigroup.2 h
 
 end Language
