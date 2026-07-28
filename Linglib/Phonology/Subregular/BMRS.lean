@@ -131,23 +131,23 @@ def Program.Forward (P : Program α F) : Prop := ∀ f, (P f).Forward
 /-! ### Term denotation -/
 
 /-- Denotation of a BMRS term at index `i` (the judgment `w, i ⊢ T → v`). -/
-def tden (w : WordModel α) (i : ℕ) (t : Term Unit) : Option ℕ := t.eval w fun _ => i
+def tden (w : List α) (i : ℕ) (t : Term Unit) : Option ℕ := t.eval w fun _ => i
 
 section TermDenotation
 
-variable {w : WordModel α} {i v : ℕ} {t u : Term Unit}
+variable {w : List α} {i v : ℕ} {t u : Term Unit}
 
 @[simp] theorem tden_succ :
-    tden w i t.succ = (tden w i t).bind w.succ? := rfl
+    tden w i t.succ = (tden w i t).bind (succ? w) := rfl
 
 @[simp] theorem tden_pred :
-    tden w i t.pred = (tden w i t).bind w.pred? := rfl
+    tden w i t.pred = (tden w i t).bind (pred? w) := rfl
 
 theorem tden_var_eq_some_iff : tden w i (.var ()) = some v ↔ v = i ∧ i < w.length := by
   rw [tden, Term.eval]
   split
-  · simp_all [WordModel.mem_iff, eq_comm]
-  · simp_all [WordModel.mem_iff]
+  · simp_all [eq_comm]
+  · simp_all
 
 /-- Term denotations are in-domain. -/
 theorem tden_lt : ∀ {t : Term Unit} {v : ℕ}, tden w i t = some v → v < w.length
@@ -156,28 +156,28 @@ theorem tden_lt : ∀ {t : Term Unit} {v : ℕ}, tden w i t = some v → v < w.l
     exact hlt
   | .succ t, _, h => by
     obtain ⟨u, -, hu⟩ := Option.bind_eq_some_iff.mp h
-    obtain ⟨rfl, hlt⟩ := WordModel.succ?_eq_some_iff.mp hu
+    obtain ⟨rfl, hlt⟩ := succ?_eq_some_iff.mp hu
     exact hlt
   | .pred t, _, h => by
     obtain ⟨u, -, hu⟩ := Option.bind_eq_some_iff.mp h
-    exact (WordModel.pred?_eq_some_iff.mp hu).2
+    exact (pred?_eq_some_iff.mp hu).2
 
 /-- The variable denotes its own in-domain position. -/
 @[simp] theorem tden_var (h : i < w.length) : tden w i (.var ()) = some i := if_pos h
 
 /-- A one-step successor term denotes the successor position. -/
-@[simp] theorem tden_succ_var : tden w i ((Term.var ()).succ) = w.succ? i := by
+@[simp] theorem tden_succ_var : tden w i ((Term.var ()).succ) = succ? w i := by
   rcases lt_or_ge i w.length with h | h
   · rw [tden_succ, tden_var h, Option.bind_some]
-  · rw [tden_succ, tden, Term.eval, if_neg (by simpa [WordModel.Mem] using h),
+  · rw [tden_succ, tden, Term.eval, if_neg (by simpa using h),
       Option.bind_none, eq_comm, Option.eq_none_iff_forall_ne_some]
     intro m hm
-    have := (WordModel.succ?_eq_some_iff.mp hm).2
+    have := (succ?_eq_some_iff.mp hm).2
     omega
 
 /-- A one-step predecessor term denotes the predecessor position (in-domain: off the
 right edge `pred?` is still defined at `w.length` but the variable is not). -/
-theorem tden_pred_var (h : i < w.length) : tden w i ((Term.var ()).pred) = w.pred? i := by
+theorem tden_pred_var (h : i < w.length) : tden w i ((Term.var ()).pred) = pred? w i := by
   rw [tden_pred, tden_var h, Option.bind_some]
 
 /-- Composed terms denote sequenced denotations. -/
@@ -196,7 +196,7 @@ end TermDenotation
 
 /-- The derivation system for BMRS expressions: `Eval P w i e b` is `w, i ⊢_P e → b`.
 Partial by design: a non-halting program derives nothing. -/
-inductive Eval (P : Program α F) (w : WordModel α) : ℕ → Expr α F → Bool → Prop
+inductive Eval (P : Program α F) (w : List α) : ℕ → Expr α F → Bool → Prop
   | tru {i} : Eval P w i .tru true
   | fls {i} : Eval P w i .fls false
   | initial_true {i t} (h : tden w i t = some 0) : Eval P w i (.initial t) true
@@ -216,7 +216,7 @@ inductive Eval (P : Program α F) (w : WordModel α) : ℕ → Expr α F → Boo
   | ite_false {i c e₁ e₂ b} (hc : Eval P w i c false) (h₂ : Eval P w i e₂ b) :
       Eval P w i (.ite c e₁ e₂) b
 
-variable {P : Program α F} {w w' : WordModel α} {i v n m : ℕ} {t u : Term Unit}
+variable {P : Program α F} {w w' : List α} {i v n m : ℕ} {t u : Term Unit}
   {e : Expr α F} {b b' : Bool}
 
 /-- Boolean-form introduction for the edge test: the value is the comparison. -/
@@ -257,13 +257,13 @@ theorem Eval.deterministic (h : Eval P w i e b) (h' : Eval P w i e b') : b = b' 
   | _ => cases h' <;> simp_all
 
 /-- A program is **total on `w`** when every rule head is defined at every position. -/
-def Program.TotalOn (P : Program α F) (w : WordModel α) : Prop :=
+def Program.TotalOn (P : Program α F) (w : List α) : Prop :=
   ∀ f, ∀ i < w.length, ∃ b, Eval P w i (.call f (.var ())) b
 
 /-! ### The fuel evaluator -/
 
 /-- Fuel-bounded evaluator: the computable face of `Eval`. -/
-def evalFuel [DecidableEq α] (P : Program α F) (w : WordModel α) :
+def evalFuel [DecidableEq α] (P : Program α F) (w : List α) :
     ℕ → ℕ → Expr α F → Option Bool
   | 0, _, _ => none
   | _ + 1, _, .tru => some true
@@ -398,7 +398,7 @@ theorem tden_le_of_backward :
   | .var _, _, v, h => (tden_var_eq_some_iff.mp h).1.le
   | .pred t, ht, v, h => by
     obtain ⟨u, hu, huv⟩ := Option.bind_eq_some_iff.mp h
-    obtain ⟨rfl, -⟩ := WordModel.pred?_eq_some_iff.mp huv
+    obtain ⟨rfl, -⟩ := pred?_eq_some_iff.mp huv
     exact Nat.le_of_succ_le (tden_le_of_backward (t := t) ht hu)
 
 /-- Forward terms only move right. -/
@@ -407,16 +407,16 @@ theorem le_tden_of_forward :
   | .var _, _, v, h => (tden_var_eq_some_iff.mp h).1.ge
   | .succ t, ht, v, h => by
     obtain ⟨u, hu, huv⟩ := Option.bind_eq_some_iff.mp h
-    obtain ⟨rfl, -⟩ := WordModel.succ?_eq_some_iff.mp huv
+    obtain ⟨rfl, -⟩ := succ?_eq_some_iff.mp huv
     exact (le_tden_of_forward (t := t) ht hu).trans (Nat.le_succ u)
 
 /-- Term denotations read only the length, so they transport across equal-length
 words. -/
 theorem tden_congr (hlen : w.length = w'.length) :
     ∀ t : Term Unit, tden w i t = tden w' i t
-  | .var _ => by simp [tden, Term.eval, WordModel.Mem, hlen]
-  | .succ t => by rw [tden_succ, tden_succ, tden_congr hlen t, WordModel.succ?_congr hlen]
-  | .pred t => by rw [tden_pred, tden_pred, tden_congr hlen t, WordModel.pred?_congr hlen]
+  | .var _ => by simp [tden, Term.eval, hlen]
+  | .succ t => by rw [tden_succ, tden_succ, tden_congr hlen t, succ?_congr hlen]
+  | .pred t => by rw [tden_pred, tden_pred, tden_congr hlen t, pred?_congr hlen]
 
 /-- **One-sided locality (left)**: a successor-free program evaluated at `i` reads only
 positions `≤ i`, so equal-length words agreeing up to `i` evaluate identically. -/

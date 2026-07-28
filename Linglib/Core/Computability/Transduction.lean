@@ -52,12 +52,12 @@ variable [DecidableEq α]
 
 /-- The output symbols emitted at input position `n` (one per copy whose guard fires, in copy
 order). -/
-def emitAt (T : Transduction α β) (w : WordModel α) (n : ℕ) : List β :=
+def emitAt (T : Transduction α β) (w : List α) (n : ℕ) : List β :=
   (List.finRange T.copies).filterMap fun c =>
     (T.clause c).findSome? fun cl => if cl.1.Realize w (fun _ => n) then some cl.2 else none
 
 /-- Run the transduction: emit, left to right, the licensed copies of every input position. -/
-def apply (T : Transduction α β) (w : WordModel α) : WordModel β :=
+def apply (T : Transduction α β) (w : List α) : List β :=
   (List.range w.length).flatMap (T.emitAt w)
 
 @[simp] theorem apply_nil (T : Transduction α β) : T.apply [] = [] := rfl
@@ -66,7 +66,7 @@ def apply (T : Transduction α β) (w : WordModel α) : WordModel β :=
 regular function (closed under composition in `SubsequentialTransducer`), though not in general
 quantifier-free. -/
 def applyComp (T₂ : Transduction β γ) (T₁ : Transduction α β) [DecidableEq β]
-    (w : WordModel α) : WordModel γ :=
+    (w : List α) : List γ :=
   T₂.apply (T₁.apply w)
 
 end Transduction

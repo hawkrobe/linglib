@@ -64,7 +64,7 @@ inductive Formula (α : Type*) (n : ℕ) where
 
 /-- Satisfaction at a pointed word `(w, i)` under a valuation `U` of the recursion
 variables. -/
-def Formula.Realize (w : WordModel α) (U : Fin n → Set ℕ) : ℕ → Formula α n → Prop
+def Formula.Realize (w : List α) (U : Fin n → Set ℕ) : ℕ → Formula α n → Prop
   | _, .tru => True
   | _, .fls => False
   | i, .initial => i = 0
@@ -74,12 +74,12 @@ def Formula.Realize (w : WordModel α) (U : Fin n → Set ℕ) : ℕ → Formula
   | i, .var X => i ∈ U X
   | i, .and φ ψ => φ.Realize w U i ∧ ψ.Realize w U i
   | i, .or φ ψ => φ.Realize w U i ∨ ψ.Realize w U i
-  | i, .dia φ => ∃ j, w.succ? i = some j ∧ φ.Realize w U j
-  | i, .bdia φ => ∃ j, w.pred? i = some j ∧ φ.Realize w U j
+  | i, .dia φ => ∃ j, succ? w i = some j ∧ φ.Realize w U j
+  | i, .bdia φ => ∃ j, pred? w i = some j ∧ φ.Realize w U j
 
 section RealizeSimp
 
-variable {w : WordModel α} {U : Fin n → Set ℕ} {i : ℕ} {s : Finset α} {φ ψ : Formula α n}
+variable {w : List α} {U : Fin n → Set ℕ} {i : ℕ} {s : Finset α} {φ ψ : Formula α n}
 
 @[simp] theorem Formula.realize_tru : (Formula.tru : Formula α n).Realize w U i := trivial
 
@@ -108,14 +108,14 @@ variable {w : WordModel α} {U : Fin n → Set ℕ} {i : ℕ} {s : Finset α} {�
     (φ.or ψ).Realize w U i ↔ φ.Realize w U i ∨ ψ.Realize w U i := .rfl
 
 @[simp] theorem Formula.realize_dia :
-    φ.dia.Realize w U i ↔ ∃ j, w.succ? i = some j ∧ φ.Realize w U j := .rfl
+    φ.dia.Realize w U i ↔ ∃ j, succ? w i = some j ∧ φ.Realize w U j := .rfl
 
 @[simp] theorem Formula.realize_bdia :
-    φ.bdia.Realize w U i ↔ ∃ j, w.pred? i = some j ∧ φ.Realize w U j := .rfl
+    φ.bdia.Realize w U i ↔ ∃ j, pred? w i = some j ∧ φ.Realize w U j := .rfl
 
 end RealizeSimp
 
-instance Formula.instDecidableRealize [DecidableEq α] (w : WordModel α)
+instance Formula.instDecidableRealize [DecidableEq α] (w : List α)
     (U : Fin n → Set ℕ) [∀ X, DecidablePred (· ∈ U X)] :
     ∀ (i : ℕ) (φ : Formula α n), Decidable (φ.Realize w U i)
   | _, .tru => .isTrue trivial
@@ -130,13 +130,13 @@ instance Formula.instDecidableRealize [DecidableEq α] (w : WordModel α)
   | i, .or φ ψ =>
       @instDecidableOr _ _ (instDecidableRealize w U i φ) (instDecidableRealize w U i ψ)
   | i, .dia φ =>
-      match h : w.succ? i with
+      match h : succ? w i with
       | none => .isFalse (by simp [Formula.realize_dia, h])
       | some j =>
           @decidable_of_iff _ _ (by simp [Formula.realize_dia, h])
             (instDecidableRealize w U j φ)
   | i, .bdia φ =>
-      match h : w.pred? i with
+      match h : pred? w i with
       | none => .isFalse (by simp [Formula.realize_bdia, h])
       | some j =>
           @decidable_of_iff _ _ (by simp [Formula.realize_bdia, h])
@@ -144,7 +144,7 @@ instance Formula.instDecidableRealize [DecidableEq α] (w : WordModel α)
 
 /-- Satisfaction is monotone in the valuation: recursion variables occur only
 positively. -/
-theorem Formula.Realize.mono {w : WordModel α} {U V : Fin n → Set ℕ} (hUV : U ≤ V) :
+theorem Formula.Realize.mono {w : List α} {U V : Fin n → Set ℕ} (hUV : U ≤ V) :
     ∀ {φ : Formula α n} {i : ℕ}, φ.Realize w U i → φ.Realize w V i
   | .tru, _, h => h
   | .fls, _, h => h
@@ -168,7 +168,7 @@ structure System (α : Type*) (n : ℕ) where
 
 namespace System
 
-variable (χ : System α n) (w : WordModel α)
+variable (χ : System α n) (w : List α)
 
 /-- The monotone operator a system induces on valuations (the paper's `F_w^χ`). -/
 def op : (Fin n → Set ℕ) →o (Fin n → Set ℕ) where
@@ -223,10 +223,10 @@ def vow : Finset Seg := {.a, .o, .e}
 def stop : Finset Seg := {.t}
 
 /-- /naote/, the Fig. 4 input. -/
-def naote : WordModel Seg := [.n, .a, .o, .t, .e]
+def naote : List Seg := [.n, .a, .o, .t, .e]
 
 /-- /bæn/, the vowel-nasalization input. -/
-def baen : WordModel Seg := [.b, .a, .n]
+def baen : List Seg := [.b, .a, .n]
 
 /-! ### Vowel nasalization ((2)–(4)): a vowel nasalizes before a nasal -/
 
@@ -262,11 +262,11 @@ theorem nasalizationChi_sat : ∀ i, nasalizationChi.Sat baen i ↔ i = 1 ∨ i 
   simp only [System.Sat]
   rw [← nasalizationChi.op_sem baen]
   match i with
-  | 0 | 1 | 2 => simp [System.mem_op, nasalizationChi, vow, nas, baen, WordModel.succ?]
+  | 0 | 1 | 2 => simp [System.mem_op, nasalizationChi, vow, nas, baen, succ?]
   | k + 3 =>
     have hnone : baen[k + 3]? = none := List.getElem?_eq_none (by simp [baen])
     simp [System.mem_op, nasalizationChi, vow, nas, hnone,
-      WordModel.succ?_eq_some_iff]
+      succ?_eq_some_iff]
 
 /-! ### Warao nasal spreading ((5)–(7)): nasality spreads rightward until a stop -/
 
@@ -310,7 +310,7 @@ theorem warao_op_le : waraoChi.op naote waraoU ≤ waraoU := by
     have : i = 0 := by
       interval_cases i <;> simp_all [nas, naote]
     simp [this]
-  · rw [WordModel.pred?_eq_some_iff] at hj
+  · rw [pred?_eq_some_iff] at hj
     obtain ⟨rfl, hjlen⟩ := hj
     have hj3 : j < 3 := hj3
     rcases Nat.lt_or_ge j 2 with h2 | h2
@@ -384,7 +384,7 @@ def System.trProgram (χ : System α n) : Program α (Fin n) := fun X => tr (χ.
 /-- **Remark 7** (compositionality of the translation): wherever rule-head calls agree
 with the recursion variables, `tr φ` evaluates to the truth value of `φ`. Thm. 8's
 SCC induction discharges the hypothesis for directed systems. -/
-theorem eval_tr [DecidableEq α] {P : Program α (Fin n)} {w : WordModel α}
+theorem eval_tr [DecidableEq α] {P : Program α (Fin n)} {w : List α}
     {U : Fin n → Set ℕ} [∀ X, DecidablePred (· ∈ U X)]
     (hcall : ∀ X, ∀ j < w.length, Eval P w j (.call X x) (decide (j ∈ U X)))
     (φ : Formula α n) :
@@ -457,30 +457,30 @@ theorem eval_tr [DecidableEq α] {P : Program α (Fin n)} {w : WordModel α}
     intro i hi
     by_cases h : i + 1 = w.length
     · rw [decide_eq_false (by
-        simp only [Formula.realize_dia, WordModel.succ?_eq_some_iff]
+        simp only [Formula.realize_dia, succ?_eq_some_iff]
         rintro ⟨j, ⟨rfl, hj⟩, -⟩
         omega)]
       exact .ite_true (.final_true (by rw [tden_var hi]; congr 1; omega)) .fls
     · have hsucc : i + 1 < w.length := by omega
       rw [show decide (φ.dia.Realize w U i) = decide (φ.Realize w U (i + 1)) from
-        decide_eq_decide.mpr (by simp [WordModel.succ?_eq_some_iff, hsucc])]
+        decide_eq_decide.mpr (by simp [succ?_eq_some_iff, hsucc])]
       exact .ite_false (.final_false (tden_var hi) (by omega))
-        (Eval.subst (by rw [tden_succ_var, WordModel.succ?, if_pos hsucc]) (ih hsucc))
+        (Eval.subst (by rw [tden_succ_var, succ?, if_pos hsucc]) (ih hsucc))
   | bdia φ ih =>
     intro i hi
     by_cases h : i = 0
     · subst h
       rw [decide_eq_false (by
-        simp only [Formula.realize_bdia, WordModel.pred?_eq_some_iff]
+        simp only [Formula.realize_bdia, pred?_eq_some_iff]
         rintro ⟨j, ⟨hj, -⟩, -⟩
         omega)]
       exact .ite_true (.initial_true (by rw [tden_var hi])) .fls
     · obtain ⟨j, rfl⟩ : ∃ j, i = j + 1 := ⟨i - 1, by omega⟩
       have hj : j < w.length := by omega
       rw [show decide (φ.bdia.Realize w U (j + 1)) = decide (φ.Realize w U j) from
-        decide_eq_decide.mpr (by simp [WordModel.pred?_eq_some_iff, hj])]
+        decide_eq_decide.mpr (by simp [pred?_eq_some_iff, hj])]
       exact .ite_false (.initial_false (tden_var hi) (by omega))
-        (Eval.subst (by rw [tden_pred_var hi]; simp [WordModel.pred?, hj]) (ih hj))
+        (Eval.subst (by rw [tden_pred_var hi]; simp [pred?, hj]) (ih hj))
 
 /-- Remark 7 run end-to-end on Warao: the translated program agrees with the modal
 semantics on /naote/ (`waraoU = waraoChi.sem naote` by `warao_sem`), the rule-head
