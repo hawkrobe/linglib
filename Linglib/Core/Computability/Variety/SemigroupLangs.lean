@@ -113,4 +113,49 @@ theorem langs_sup {M : Language α} (hL : V.langs L) (hM : V.langs M) : V.langs 
   rw [show L ⊔ M = (Lᶜ ⊓ Mᶜ)ᶜ by rw [compl_inf, compl_compl, compl_compl]]
   exact V.langs_compl (V.langs_inf (V.langs_compl hL) (V.langs_compl hM))
 
+/-- **Engine.** A language recognized by a finite semigroup in `V` lies in `V.langs`: the
+syntactic semigroup is a quotient of a subsemigroup of the recognizer. -/
+theorem langs_of_recognizes {T : Type u} [Semigroup T] [Finite T] (hT : V.mem T)
+    (η : FreeSemigroup α →ₙ* T) (P : Set T)
+    (hL : ∀ w : FreeSemigroup α, w.toList ∈ L ↔ η w ∈ P) : V.langs L := by
+  have hle : Con.ker η ≤ L.syntacticSemigroupCon :=
+    L.ker_le_syntacticSemigroupCon_of_recognizes ⟨P, hL⟩
+  haveI : Finite (Con.ker η).Quotient := .of_injective _ (Con.kerLiftMulHom_injective η)
+  have hkerMem : V.mem (Con.ker η).Quotient := V.sub (Con.kerLiftMulHom_injective η) hT
+  have hsurj := Con.mapMulHom_surjective (Con.ker η) L.syntacticSemigroupCon hle
+  haveI : Finite L.syntacticSemigroup := .of_surjective _ hsurj
+  haveI : Finite L.syntacticSemigroupCon.Quotient :=
+    inferInstanceAs (Finite L.syntacticSemigroup)
+  exact ⟨L.isRegular_of_finite_syntacticSemigroup ‹_›, V.quot hsurj hkerMem⟩
+
+/-- **The full language** — recognized by the trivial semigroup, which is in every
+pseudovariety. -/
+theorem langs_univ : V.langs (⊤ : Language α) := by
+  refine V.langs_of_recognizes (T := PUnit.{u + 1}) V.memUnit
+    { toFun := fun _ => PUnit.unit, map_mul' := fun _ _ => rfl } Set.univ ?_
+  intro _
+  exact iff_of_true trivial (Set.mem_univ _)
+
+/-- **The empty language** — `⊥ = ⊤ᶜ`. -/
+theorem langs_bot : V.langs (⊥ : Language α) := by
+  simpa using V.langs_compl V.langs_univ
+
+/-- **Closure under inverse homomorphism** — Eilenberg's fourth axiom, on the `+` side. The
+morphism is between free *semigroups*: [eilenberg-1976] VII, Exercise 3.7 shows that the
+`*`-variety form of this axiom decomposes into a non-erasing morphism condition, and a free
+semigroup has no erasing morphisms. -/
+theorem langs_comap {β : Type u} {Lb : Language β} (h : V.langs Lb)
+    (φ : FreeSemigroup α →ₙ* FreeSemigroup β) :
+    V.langs {w : List α | ∃ u : FreeSemigroup α, u.toList = w ∧ (φ u).toList ∈ Lb} := by
+  haveI : Finite Lb.syntacticMonoid := finite_syntacticMonoid h.1
+  refine V.langs_of_recognizes h.2 (Lb.toSyntacticSemigroup.comp φ)
+    {m | ∃ u : FreeSemigroup β, Lb.toSyntacticSemigroup u = m ∧ u.toList ∈ Lb} ?_
+  intro w
+  constructor
+  · rintro ⟨u, hu, hmem⟩
+    obtain rfl : u = w := FreeSemigroup.toList_injective hu
+    exact ⟨φ u, rfl, hmem⟩
+  · rintro ⟨v, hv, hmem⟩
+    exact ⟨w, rfl, (mem_iff_of_syntacticEquiv (Lb.toSyntacticSemigroup_eq_iff.mp hv)).mp hmem⟩
+
 end Semigroup.Pseudovariety

@@ -161,4 +161,43 @@ theorem syntacticSemigroupCon_insert_nil (L : Language α) :
         (FreeSemigroup.toList_ne_nil w)
     exact forall_congr' fun x => forall_congr' fun y => iff_congr (h x u y) (h x v y)
 
+/-! ### Recognition by a finite semigroup
+
+The monoid notion `Language.Recognizes` is the set equation `L = φ ⁻¹' S`. That cannot be stated
+here: `η ⁻¹' P` is a set of `FreeSemigroup α`, whereas a `Language α` is a set of `List α`. The
+pointwise form below says the same thing about nonempty words, and says nothing about `[]` — which
+is right, since the syntactic semigroup does not see it (`syntacticSemigroupCon_insert_nil`). -/
+
+/-- `η` **recognizes** `L` when membership of a nonempty word is decided by its image. -/
+def RecognizesSemigroup {T : Type*} [Semigroup T] (η : FreeSemigroup α →ₙ* T)
+    (L : Language α) : Prop :=
+  ∃ P : Set T, ∀ w : FreeSemigroup α, w.toList ∈ L ↔ η w ∈ P
+
+/-- A nonempty word in a two-sided context, as an element of the free semigroup. The four cases
+are needed because an empty context contributes no factor to multiply through. -/
+private def ctx (x : List α) (u : FreeSemigroup α) (y : List α) : FreeSemigroup α :=
+  match x, y with
+  | [], [] => u
+  | [], c :: y => u * ⟨c, y⟩
+  | a :: x, [] => ⟨a, x⟩ * u
+  | a :: x, c :: y => ⟨a, x⟩ * u * ⟨c, y⟩
+
+private theorem toList_ctx (x : List α) (u : FreeSemigroup α) (y : List α) :
+    (ctx x u y).toList = x ++ u.toList ++ y := by
+  cases x <;> cases y <;> simp [ctx, FreeSemigroup.toList]
+
+private theorem map_ctx {T : Type*} [Semigroup T] (η : FreeSemigroup α →ₙ* T)
+    {u v : FreeSemigroup α} (h : η u = η v) (x y : List α) :
+    η (ctx x u y) = η (ctx x v y) := by
+  cases x <;> cases y <;> simp [ctx, map_mul, h]
+
+/-- A recognizing hom's kernel lies below `syntacticSemigroupCon L`, the coarsest such
+congruence. -/
+theorem ker_le_syntacticSemigroupCon_of_recognizes {T : Type*} [Semigroup T]
+    {η : FreeSemigroup α →ₙ* T} (hrec : L.RecognizesSemigroup η) :
+    Con.ker η ≤ L.syntacticSemigroupCon := by
+  obtain ⟨P, hP⟩ := hrec
+  intro u v huv x y
+  rw [← toList_ctx x u y, ← toList_ctx x v y, hP, hP, map_ctx η huv]
+
 end Language
