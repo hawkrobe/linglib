@@ -3,6 +3,7 @@
 /-
 A Lean 4 library for formal linguistics, covering semantics, pragmatics,
 and their interfaces. See README.md for documentation links.
+import Linglib.Core.Algebra.Free
 import Linglib.Core.Algebra.FreeMonoid.Destutter
 import Linglib.Core.Algebra.Group.Aperiodic
 import Linglib.Core.Algebra.Group.Idempotent
@@ -51,6 +52,8 @@ import Linglib.Core.Algebra.RootedTree.PreLie.OudomGuinBridgePairing
 import Linglib.Core.Algebra.RootedTree.PreLie.Path
 import Linglib.Core.Algebra.RotaBaxter
 import Linglib.Core.Algebra.RotaBaxterLaurent
+import Linglib.Core.Algebra.Semigroup.IdempotentPower
+import Linglib.Core.Algebra.Semigroup.Pseudovariety
 import Linglib.Core.Analysis.Convex.Function
 import Linglib.Core.Analysis.LeastSquares
 import Linglib.Core.Analysis.SpecialFunctions.Log.NegMulLog
@@ -95,6 +98,7 @@ import Linglib.Core.Computability.Variety.Correspondence
 import Linglib.Core.Computability.Variety.Equations
 import Linglib.Core.Computability.Variety.Langs
 import Linglib.Core.Computability.Variety.OmegaEquations
+import Linglib.Core.Computability.Variety.SemigroupLangs
 import Linglib.Core.Computability.WordModel
 import Linglib.Core.Data.Fin.Tuple.Basic
 import Linglib.Core.Data.Fintype.Sets
