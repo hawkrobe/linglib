@@ -55,11 +55,8 @@ theorem langs_of_recognizes {N : Type u} [Monoid N] [Finite N] (hN : V.mem N)
     (η : FreeMonoid α →* N) (P : Set N)
     (hL : ∀ w : List α, w ∈ L ↔ η (FreeMonoid.ofList w) ∈ P) : V.langs L := by
   have hle : Con.ker η ≤ L.syntacticCon := ker_le_syntacticCon_of_recognizes ⟨P, Set.ext hL⟩
-  haveI : Finite (Con.ker η).Quotient :=
-    Finite.of_equiv _ (Con.quotientKerEquivRange η).symm.toEquiv
-  have hkerMem : V.mem (Con.ker η).Quotient :=
-    V.mem_of_mulEquiv (Con.quotientKerEquivRange η).symm
-      (V.sub (MonoidHom.mrange η).subtype_injective hN)
+  haveI : Finite (Con.ker η).Quotient := .of_injective _ (Con.kerLift_injective η)
+  have hkerMem : V.mem (Con.ker η).Quotient := V.sub (Con.kerLift_injective η) hN
   have hsurj : Function.Surjective (Con.map (Con.ker η) L.syntacticCon hle) :=
     Con.lift_surjective_of_surjective _ Con.mk'_surjective
   haveI : Finite L.syntacticMonoid := Finite.of_surjective _ hsurj
@@ -80,11 +77,8 @@ theorem langs_inf {M : Language α} (hL : V.langs L) (hM : V.langs M) : V.langs 
   haveI : Finite L.syntacticMonoid := finite_syntacticMonoid hL.1
   haveI : Finite M.syntacticMonoid := finite_syntacticMonoid hM.1
   have hprod : V.mem (L.syntacticMonoid × M.syntacticMonoid) := V.prod hL.2 hM.2
-  have hrange : V.mem (MonoidHom.mrange φ) := V.sub (MonoidHom.mrange φ).subtype_injective hprod
-  haveI : Finite (Con.ker φ).Quotient :=
-    Finite.of_equiv _ (Con.quotientKerEquivRange φ).symm.toEquiv
-  have hker : V.mem (Con.ker φ).Quotient :=
-    V.mem_of_mulEquiv (Con.quotientKerEquivRange φ).symm hrange
+  haveI : Finite (Con.ker φ).Quotient := .of_injective _ (Con.kerLift_injective φ)
+  have hker : V.mem (Con.ker φ).Quotient := V.sub (Con.kerLift_injective φ) hprod
   have hle : Con.ker φ ≤ (L ⊓ M).syntacticCon := by
     rw [hφ, ker_prod_toSyntacticMonoid]; exact inf_syntacticCon_le_syntacticCon_inf L M
   haveI : Finite (L ⊓ M).syntacticMonoid := finite_syntacticMonoid (hL.1.inf hM.1)

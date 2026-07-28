@@ -154,6 +154,7 @@ import Linglib.Core.Logic.Bilattice.Representation
 import Linglib.Core.Logic.Consequence
 import Linglib.Core.Logic.CylindricAlgebra
 import Linglib.Core.Logic.Duality
+import Linglib.Core.GroupTheory.Congruence.Hom
 import Linglib.Core.Logic.FactorsThroughOn
 import Linglib.Core.Logic.FirstOrder.Binders
 import Linglib.Core.Logic.FirstOrder.Comparative
