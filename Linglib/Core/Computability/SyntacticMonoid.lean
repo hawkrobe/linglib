@@ -50,17 +50,43 @@ variable {α : Type*} (L : Language α)
 
 /-! ### The syntactic congruence and monoid -/
 
+/-- Two words are **syntactically equivalent** for `L` when no two-sided context distinguishes
+them as `L`-members. Both syntactic congruences — on `FreeMonoid α` here and on `FreeSemigroup α`
+in `Language.syntacticSemigroupCon` — are this one relation, read on their respective carriers. -/
+def SyntacticEquiv (u v : List α) : Prop := ∀ x y : List α, x ++ u ++ y ∈ L ↔ x ++ v ++ y ∈ L
+
+variable {L}
+
+@[refl] theorem SyntacticEquiv.refl (u : List α) : L.SyntacticEquiv u u := fun _ _ => Iff.rfl
+
+@[symm] theorem SyntacticEquiv.symm {u v : List α} (h : L.SyntacticEquiv u v) :
+    L.SyntacticEquiv v u := fun x y => (h x y).symm
+
+@[trans] theorem SyntacticEquiv.trans {u v w : List α} (h : L.SyntacticEquiv u v)
+    (h' : L.SyntacticEquiv v w) : L.SyntacticEquiv u w := fun x y => (h x y).trans (h' x y)
+
+/-- Syntactic equivalence is a congruence for concatenation — the multiplicativity step shared by
+both syntactic congruences. -/
+theorem SyntacticEquiv.append {u u' v v' : List α} (h : L.SyntacticEquiv u u')
+    (h' : L.SyntacticEquiv v v') : L.SyntacticEquiv (u ++ v) (u' ++ v') := fun x y => by
+  have h1 := h x (v ++ y)
+  have h2 := h' (x ++ u') y
+  simp only [← List.append_assoc] at h1 h2 ⊢
+  exact h1.trans h2
+
+/-- Syntactically equivalent words agree on membership: take the empty context. -/
+theorem mem_iff_of_syntacticEquiv {u v : List α} (h : L.SyntacticEquiv u v) : u ∈ L ↔ v ∈ L := by
+  have := h [] []
+  simpa using this
+
+variable (L)
+
 /-- The *syntactic congruence* of `L`: two words are congruent when no two-sided context
 distinguishes them as `L`-members. -/
 def syntacticCon : Con (FreeMonoid α) where
-  r u v := ∀ x y : List α, x ++ u.toList ++ y ∈ L ↔ x ++ v.toList ++ y ∈ L
-  iseqv :=
-    ⟨fun _ _ _ => Iff.rfl, fun h x y => (h x y).symm, fun h h' x y => (h x y).trans (h' x y)⟩
-  mul' {a b c d} hab hcd x y := by
-    have h1 := hab x (c.toList ++ y)
-    have h2 := hcd (x ++ b.toList) y
-    simp only [FreeMonoid.toList_mul, ← List.append_assoc] at h1 h2 ⊢
-    exact h1.trans h2
+  r u v := L.SyntacticEquiv u.toList v.toList
+  iseqv := ⟨fun _ => .refl _, .symm, .trans⟩
+  mul' hab hcd := hab.append hcd
 
 /-- The syntactic congruence is two-sided context equivalence — by definition. -/
 theorem syntacticCon_iff {u v : FreeMonoid α} :
