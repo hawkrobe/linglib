@@ -60,4 +60,22 @@ theorem rtake_append_of_le_length {n : ℕ} (l₁ l₂ : List α) (h : n ≤ l�
   rw [rdrop_eq_reverse_drop_reverse, rtake_eq_reverse_take_reverse, ← reverse_append,
     take_append_drop, reverse_reverse]
 
+/-- Taking a suffix of a suffix takes the shorter of the two. -/
+theorem rtake_rtake (m n : ℕ) (l : List α) : (l.rtake n).rtake m = l.rtake (min m n) := by
+  simp [rtake_eq_reverse_take_reverse, take_take]
+
+/-- A suffix long enough to swallow `l₂` splits as a suffix of `l₁` followed by `l₂`. -/
+theorem rtake_append_of_length_le {n : ℕ} (l₁ l₂ : List α) (h : l₂.length ≤ n) :
+    (l₁ ++ l₂).rtake n = l₁.rtake (n - l₂.length) ++ l₂ := by
+  simp [rtake_eq_reverse_take_reverse, take_append, take_of_length_le, h]
+
+/-- A middle block of length `≥ n` screens off everything to its left: the last `n` symbols
+of `a ++ u ++ y` do not depend on `a`. -/
+theorem rtake_append_append_of_le_length {n : ℕ} (a u y : List α) (h : n ≤ u.length) :
+    (a ++ u ++ y).rtake n = (u ++ y).rtake n := by
+  rcases le_or_gt n y.length with hy | hy
+  · rw [rtake_append_of_le_length (a ++ u) y hy, rtake_append_of_le_length u y hy]
+  · rw [rtake_append_of_length_le _ _ hy.le, rtake_append_of_length_le _ _ hy.le,
+      rtake_append_of_le_length a u (show n - y.length ≤ u.length by omega)]
+
 end List

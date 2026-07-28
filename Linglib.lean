@@ -98,6 +98,7 @@ import Linglib.Core.Computability.Variety.Correspondence
 import Linglib.Core.Computability.Variety.Equations
 import Linglib.Core.Computability.Variety.Langs
 import Linglib.Core.Computability.Variety.OmegaEquations
+import Linglib.Core.Computability.Variety.Definite
 import Linglib.Core.Computability.Variety.SemigroupLangs
 import Linglib.Core.Data.Fin.Tuple.Basic
 import Linglib.Core.Data.Fintype.Sets
