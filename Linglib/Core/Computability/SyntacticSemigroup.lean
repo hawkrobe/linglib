@@ -28,6 +28,7 @@ share its multiplicativity lemma `SyntacticEquiv.append`.
 ## Main definitions
 
 * `Language.syntacticSemigroupCon`: the syntactic congruence on `FreeSemigroup α`.
+* `Language.RecognizesSemigroup`: recognition of a language by a homomorphism to a semigroup.
 * `Language.syntacticSemigroup`: the quotient semigroup.
 * `Language.toSyntacticSemigroup`: the projection, as a `MulHom`.
 
@@ -35,6 +36,11 @@ share its multiplicativity lemma `SyntacticEquiv.append`.
 
 * `Language.syntacticSemigroupToMonoid_injective`: the syntactic semigroup embeds in the
   syntactic monoid.
+* `Language.isRegular_iff_finite_syntacticSemigroup`: Myhill–Nerode in semigroup form.
+* `Language.ker_le_syntacticSemigroupCon_of_recognizes`: the syntactic congruence is the coarsest
+  one recognizing `L`.
+* `Language.syntacticSemigroupCon_insert_nil`: the syntactic semigroup does not see the empty
+  word.
 
 ## Implementation notes
 
@@ -98,6 +104,12 @@ instance instFiniteSyntacticSemigroup [Finite L.syntacticMonoid] :
     Finite L.syntacticSemigroup :=
   .of_injective _ L.syntacticSemigroupToMonoid_injective
 
+/-- The quotient presentation of the syntactic semigroup inherits finiteness, so the closure
+proofs need not restate it. -/
+instance instFiniteSyntacticSemigroupConQuotient [Finite L.syntacticMonoid] :
+    Finite (syntacticSemigroupCon L).Quotient :=
+  inferInstanceAs (Finite L.syntacticSemigroup)
+
 /-- A regular language has a finite syntactic semigroup. -/
 theorem finite_syntacticSemigroup (h : L.IsRegular) : Finite L.syntacticSemigroup :=
   haveI := finite_syntacticMonoid h
@@ -122,11 +134,13 @@ theorem finite_syntacticMonoid_of_finite_syntacticSemigroup [Finite L.syntacticS
 is finite. -/
 theorem isRegular_iff_finite_syntacticSemigroup :
     L.IsRegular ↔ Finite L.syntacticSemigroup :=
-  ⟨fun h => haveI := finite_syntacticMonoid h; inferInstance,
-   fun _ => isRegular_of_finite_syntacticMonoid L.finite_syntacticMonoid_of_finite_syntacticSemigroup⟩
+  ⟨L.finite_syntacticSemigroup,
+   fun _ =>
+     isRegular_of_finite_syntacticMonoid L.finite_syntacticMonoid_of_finite_syntacticSemigroup⟩
 
 theorem isRegular_of_finite_syntacticSemigroup (h : Finite L.syntacticSemigroup) : L.IsRegular :=
   L.isRegular_iff_finite_syntacticSemigroup.2 h
+
 /-! ### Meets of syntactic congruences -/
 
 /-- Words indistinguishable for both `L` and `M` are indistinguishable for `L ⊓ M`. -/
@@ -150,7 +164,7 @@ theorem ker_prod_toSyntacticSemigroup (L M : Language α) :
 nonempty words, so adjoining `[]` to a language leaves it unchanged. This is the `+`-variety
 semantics working as intended ([eilenberg-1976] indexes varieties of sets on `Σ⁺`), and it is why
 `Semigroup.Pseudovariety.langs` cannot distinguish `L` from `insert [] L`. -/
-theorem syntacticSemigroupCon_insert_nil (L : Language α) :
+theorem syntacticSemigroupCon_insert_nil :
     (insert [] L).syntacticSemigroupCon = L.syntacticSemigroupCon :=
   Con.ext fun u v => by
     have h : ∀ (x : List α) (w : FreeSemigroup α) (y : List α),
@@ -199,5 +213,23 @@ theorem ker_le_syntacticSemigroupCon_of_recognizes {T : Type*} [Semigroup T]
   obtain ⟨P, hP⟩ := hrec
   intro u v huv x y
   rw [← toList_ctx x u y, ← toList_ctx x v y, hP, hP, map_ctx η huv]
+
+/-- Conversely, a hom whose kernel refines the syntactic congruence recognizes `L`: take the
+image of `L`'s nonempty words. -/
+theorem recognizesSemigroup_of_ker_le {T : Type*} [Semigroup T] {η : FreeSemigroup α →ₙ* T}
+    (h : Con.ker η ≤ L.syntacticSemigroupCon) : L.RecognizesSemigroup η :=
+  ⟨η '' {u | u.toList ∈ L}, fun w =>
+    ⟨fun hw => ⟨w, hw, rfl⟩, fun ⟨_, hu, hη⟩ =>
+      (mem_iff_of_syntacticEquiv (h ((Con.ker_rel η).mpr hη))).mp hu⟩⟩
+
+/-- Recognition is exactly refinement of the syntactic congruence. -/
+theorem recognizesSemigroup_iff_ker_le {T : Type*} [Semigroup T] {η : FreeSemigroup α →ₙ* T} :
+    L.RecognizesSemigroup η ↔ Con.ker η ≤ L.syntacticSemigroupCon :=
+  ⟨L.ker_le_syntacticSemigroupCon_of_recognizes, L.recognizesSemigroup_of_ker_le⟩
+
+/-- The syntactic projection recognizes its own language. -/
+theorem recognizesSemigroup_toSyntacticSemigroup :
+    L.RecognizesSemigroup L.toSyntacticSemigroup :=
+  L.recognizesSemigroup_of_ker_le fun {_ _} h => (Con.eq _).mp ((Con.ker_rel _).mp h)
 
 end Language
