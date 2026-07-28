@@ -67,6 +67,10 @@ variable {L}
 
 /-- Syntactic equivalence is a congruence for concatenation — the multiplicativity step shared by
 both syntactic congruences. -/
+theorem SyntacticEquiv.compl_iff {u v : List α} :
+    Lᶜ.SyntacticEquiv u v ↔ L.SyntacticEquiv u v :=
+  forall_congr' fun _ => forall_congr' fun _ => not_iff_not
+
 theorem SyntacticEquiv.append {u u' v v' : List α} (h : L.SyntacticEquiv u u')
     (h' : L.SyntacticEquiv v v') : L.SyntacticEquiv (u ++ v) (u' ++ v') := fun x y => by
   have h1 := h x (v ++ y)
@@ -97,10 +101,7 @@ variable {L} in
 /-- Words congruent under the syntactic congruence agree on membership of `L`: `L` is saturated by
 `syntacticCon L` (take the empty two-sided context). -/
 theorem mem_iff_of_syntacticCon {u v : FreeMonoid α} (h : L.syntacticCon u v) :
-    u ∈ L ↔ v ∈ L := by
-  have := h [] []
-  simp only [List.nil_append, List.append_nil] at this
-  exact this
+    u ∈ L ↔ v ∈ L := mem_iff_of_syntacticEquiv h
 
 /-- The *syntactic monoid* of `L`: the quotient of `FreeMonoid α` by the syntactic congruence. -/
 def syntacticMonoid : Type _ := (syntacticCon L).Quotient
@@ -260,9 +261,7 @@ syntactic monoid (e.g. `Language.IsStarFree`, and `Monoid.Pseudovariety.langs` i
 /-- The syntactic congruence is complement-invariant: a two-sided context distinguishes `u` from
 `v` for `L` exactly when it does for `Lᶜ`. -/
 theorem syntacticCon_compl (L : Language α) : Lᶜ.syntacticCon = L.syntacticCon :=
-  Con.ext fun u v => by
-    rw [syntacticCon_iff, syntacticCon_iff]
-    exact forall_congr' fun _ => forall_congr' fun _ => not_iff_not
+  Con.ext fun _ _ => SyntacticEquiv.compl_iff
 
 /-- The syntactic monoid is complement-invariant. -/
 theorem syntacticMonoid_compl (L : Language α) : Lᶜ.syntacticMonoid = L.syntacticMonoid := by

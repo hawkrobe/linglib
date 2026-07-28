@@ -46,7 +46,6 @@ variable (V : Pseudovariety.{u}) {α : Type u} {L : Language α}
 language-side operator of the Eilenberg correspondence. -/
 def langs (L : Language α) : Prop := L.IsRegular ∧ V.mem L.syntacticMonoid
 
-theorem langs_def : V.langs L ↔ L.IsRegular ∧ V.mem L.syntacticMonoid := Iff.rfl
 
 /-- **Engine.** A language recognized by a finite monoid in `V` lies in `V.langs`: the syntactic
 monoid is a quotient of a submonoid of the recognizer, hence in `V`. Generalizes
