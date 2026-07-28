@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 [UPSTREAM] candidate: `Mathlib.Computability.SyntacticSemigroup`.
 -/
 import Linglib.Core.Computability.SyntacticMonoid
-import Mathlib.Algebra.Free
+import Linglib.Core.Algebra.Free
 
 /-!
 # The syntactic semigroup of a language
@@ -27,7 +27,6 @@ share its multiplicativity lemma `SyntacticEquiv.append`.
 * `Language.syntacticSemigroupCon`: the syntactic congruence on `FreeSemigroup α`.
 * `Language.syntacticSemigroup`: the quotient semigroup.
 * `Language.toSyntacticSemigroup`: the projection, as a `MulHom`.
-* `FreeSemigroup.toList`: the nonempty word underlying a free-semigroup element.
 
 ## Main results
 
@@ -38,30 +37,8 @@ share its multiplicativity lemma `SyntacticEquiv.append`.
 
 The projection is `Con.mkMulHom`, mathlib's `MulHom`-valued quotient map for a `Con` over a plain
 `Mul` (the monoid-valued `Con.mk'` would not apply). `FreeSemigroup.toList` is absent from mathlib
-and is supplied here.
+and is supplied by `Linglib.Core.Algebra.Free`.
 -/
-
-namespace FreeSemigroup
-
-variable {α : Type*}
-
-/-- The nonempty word underlying a free-semigroup element. -/
-def toList (u : FreeSemigroup α) : List α := u.head :: u.tail
-
-@[simp] theorem toList_of (a : α) : (of a).toList = [a] := rfl
-
-@[simp] theorem toList_mul (u v : FreeSemigroup α) :
-    (u * v).toList = u.toList ++ v.toList := rfl
-
-@[simp] theorem toList_ne_nil (u : FreeSemigroup α) : u.toList ≠ [] := List.cons_ne_nil _ _
-
-@[simp] theorem length_toList (u : FreeSemigroup α) : u.toList.length = u.length := rfl
-
-theorem toList_injective : Function.Injective (toList (α := α)) := by
-  rintro ⟨a, s⟩ ⟨b, t⟩ h
-  simpa [toList, and_comm] using h
-
-end FreeSemigroup
 
 namespace Language
 

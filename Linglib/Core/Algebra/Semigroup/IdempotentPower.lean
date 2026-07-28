@@ -23,8 +23,7 @@ themselves coerced, and `WithOne.coe_inj` transfers idempotency back.
 
 ## Main results
 
-* `Semigroup.exists_pos_pow_isIdempotent`: every element has an idempotent positive power, given
-  as an element of `S` together with the exponent realizing it in `WithOne S`.
+* `Semigroup.exists_isIdempotentElem`: a finite nonempty semigroup contains an idempotent.
 * `Semigroup.exists_isIdempotentElem_map_eq`: a surjective homomorphism onto a semigroup lifts an
   idempotent to an idempotent — the form the pseudovariety quotient-closure proof consumes.
 -/
@@ -41,12 +40,6 @@ instance instFinite [Finite S] : Finite (WithOne S) := inferInstanceAs (Finite (
     IsIdempotentElem ((e : WithOne S)) ↔ IsIdempotentElem e := by
   rw [IsIdempotentElem, ← WithOne.coe_mul, WithOne.coe_inj]; rfl
 
-end WithOne
-
-namespace Semigroup
-
-variable {S T : Type*} [Semigroup S] [Semigroup T]
-
 /-- A positive power of a coerced element of `WithOne S` is itself coerced. -/
 theorem exists_coe_pow (x : S) : ∀ n : ℕ, 0 < n → ∃ y : S, (x : WithOne S) ^ n = y
   | 1, _ => ⟨x, pow_one _⟩
@@ -54,21 +47,35 @@ theorem exists_coe_pow (x : S) : ∀ n : ℕ, 0 < n → ∃ y : S, (x : WithOne 
     obtain ⟨y, hy⟩ := exists_coe_pow x (n + 1) n.succ_pos
     exact ⟨x * y, by rw [pow_succ', hy, ← WithOne.coe_mul]⟩
 
+end WithOne
+
+namespace Semigroup
+
+variable {S T : Type*} [Semigroup S] [Semigroup T]
+
 variable [Finite S]
 
-/-- **Every element of a finite semigroup has an idempotent positive power.** -/
-theorem exists_pos_pow_isIdempotent (x : S) :
+/-- Every element has an idempotent positive power, with the exponent realized in `WithOne S`.
+The `WithOne` shape is the proof device; `exists_isIdempotentElem` and
+`exists_isIdempotentElem_map_eq` are the statements consumers want. -/
+private theorem exists_pos_pow_isIdempotentElem_coe (x : S) :
     ∃ (n : ℕ) (e : S), 0 < n ∧ (x : WithOne S) ^ n = e ∧ IsIdempotentElem e := by
   obtain ⟨n, hn, hidem⟩ := Monoid.exists_pos_pow_isIdempotent (x : WithOne S)
-  obtain ⟨e, he⟩ := exists_coe_pow x n hn
+  obtain ⟨e, he⟩ := WithOne.exists_coe_pow x n hn
   exact ⟨n, e, hn, he, WithOne.isIdempotentElem_coe.1 (he ▸ hidem)⟩
+
+/-- **A finite nonempty semigroup contains an idempotent.** -/
+theorem exists_isIdempotentElem [Nonempty S] : ∃ e : S, IsIdempotentElem e :=
+  have ⟨x⟩ := ‹Nonempty S›
+  have ⟨_, e, _, _, he⟩ := exists_pos_pow_isIdempotentElem_coe x
+  ⟨e, he⟩
 
 /-- A surjective homomorphism lifts an idempotent to an idempotent: replace a preimage by an
 idempotent power of it, which the homomorphism still sends to the (idempotent) target. -/
 theorem exists_isIdempotentElem_map_eq {f : S →ₙ* T} (hf : Function.Surjective f) {e' : T}
     (he' : IsIdempotentElem e') : ∃ e : S, IsIdempotentElem e ∧ f e = e' := by
   obtain ⟨x, rfl⟩ := hf e'
-  obtain ⟨n, e, hn, he, hidem⟩ := exists_pos_pow_isIdempotent x
+  obtain ⟨n, e, hn, he, hidem⟩ := exists_pos_pow_isIdempotentElem_coe x
   refine ⟨e, hidem, ?_⟩
   have hmap : (WithOne.mapMulHom f) ((x : WithOne S) ^ n) = ((f x : T) : WithOne T) ^ n := by
     rw [map_pow, WithOne.mapMulHom_coe]
