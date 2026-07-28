@@ -42,7 +42,6 @@ variable (V : Pseudovariety.{u}) {α : Type u} {L : Language α}
 `+`-variety side of the Eilenberg correspondence. -/
 def langs (L : Language α) : Prop := L.IsRegular ∧ V.mem L.syntacticSemigroup
 
-
 /-- **Closure under complement** — immediate from complement-invariance of the syntactic
 congruence (`Language.syntacticSemigroupCon_compl`). -/
 theorem langs_compl (h : V.langs L) : V.langs Lᶜ := by
@@ -90,5 +89,28 @@ theorem langs_leftQuotient (h : V.langs L) (u : List α) : V.langs (L.leftQuotie
 /-- **Closure under right quotient** — Eilenberg's axiom VII.3.3. -/
 theorem langs_rightQuotient (h : V.langs L) (u : List α) : V.langs (L.rightQuotient u) :=
   langs_of_syntacticSemigroupCon_le h (L.syntacticSemigroupCon_le_rightQuotient u)
+/-- **Closure under intersection** — the syntactic semigroup of `L ⊓ M` is a quotient of a
+subsemigroup of `L.syntacticSemigroup × M.syntacticSemigroup`, which is in `V` by
+`prod`/`sub`/`quot`. -/
+theorem langs_inf {M : Language α} (hL : V.langs L) (hM : V.langs M) : V.langs (L ⊓ M) := by
+  refine ⟨hL.1.inf hM.1, ?_⟩
+  haveI : Finite L.syntacticMonoid := finite_syntacticMonoid hL.1
+  haveI : Finite M.syntacticMonoid := finite_syntacticMonoid hM.1
+  haveI : Finite (L ⊓ M).syntacticMonoid := finite_syntacticMonoid (hL.1.inf hM.1)
+  set φ := L.toSyntacticSemigroup.prod M.toSyntacticSemigroup with hφ
+  haveI : Finite (Con.ker φ).Quotient := .of_injective _ (Con.kerLiftMulHom_injective φ)
+  have hker : V.mem (Con.ker φ).Quotient :=
+    V.sub (Con.kerLiftMulHom_injective φ) (V.prod hL.2 hM.2)
+  have hle : Con.ker φ ≤ (L ⊓ M).syntacticSemigroupCon := by
+    rw [hφ, ker_prod_toSyntacticSemigroup]
+    exact inf_syntacticSemigroupCon_le_syntacticSemigroupCon_inf L M
+  haveI : Finite (L ⊓ M).syntacticSemigroupCon.Quotient :=
+    inferInstanceAs (Finite (L ⊓ M).syntacticSemigroup)
+  exact V.quot (Con.mapMulHom_surjective _ _ hle) hker
+
+/-- **Closure under union** — by De Morgan, `L ⊔ M = (Lᶜ ⊓ Mᶜ)ᶜ`. -/
+theorem langs_sup {M : Language α} (hL : V.langs L) (hM : V.langs M) : V.langs (L ⊔ M) := by
+  rw [show L ⊔ M = (Lᶜ ⊓ Mᶜ)ᶜ by rw [compl_inf, compl_compl, compl_compl]]
+  exact V.langs_compl (V.langs_inf (V.langs_compl hL) (V.langs_compl hM))
 
 end Semigroup.Pseudovariety
