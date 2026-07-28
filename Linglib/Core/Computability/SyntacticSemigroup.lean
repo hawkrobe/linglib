@@ -5,9 +5,10 @@ Authors: Robert Hawkins
 
 [UPSTREAM] candidate: `Mathlib.Computability.SyntacticSemigroup`.
 -/
+import Linglib.Core.Algebra.Free
 import Linglib.Core.Computability.SyntacticMonoid
 import Linglib.Core.GroupTheory.Congruence.Hom
-import Linglib.Core.Algebra.Free
+import Mathlib.Algebra.Group.Prod
 import Mathlib.Data.Fintype.Option
 
 /-!
@@ -126,5 +127,38 @@ theorem isRegular_iff_finite_syntacticSemigroup :
 
 theorem isRegular_of_finite_syntacticSemigroup (h : Finite L.syntacticSemigroup) : L.IsRegular :=
   L.isRegular_iff_finite_syntacticSemigroup.2 h
+/-! ### Meets of syntactic congruences -/
+
+/-- Words indistinguishable for both `L` and `M` are indistinguishable for `L ⊓ M`. -/
+theorem inf_syntacticSemigroupCon_le_syntacticSemigroupCon_inf (L M : Language α) :
+    L.syntacticSemigroupCon ⊓ M.syntacticSemigroupCon ≤ (L ⊓ M).syntacticSemigroupCon := by
+  rw [Con.le_def]
+  intro u v huv x y
+  rw [Con.inf_iff_and, syntacticSemigroupCon_iff, syntacticSemigroupCon_iff] at huv
+  exact and_congr (huv.1 x y) (huv.2 x y)
+
+/-- The kernel of the pairing of the two syntactic morphisms is the meet of the two syntactic
+congruences. -/
+theorem ker_prod_toSyntacticSemigroup (L M : Language α) :
+    Con.ker (L.toSyntacticSemigroup.prod M.toSyntacticSemigroup) =
+      L.syntacticSemigroupCon ⊓ M.syntacticSemigroupCon :=
+  Con.ext fun u v => by
+    rw [Con.ker_rel, MulHom.prod_apply, MulHom.prod_apply, Prod.ext_iff,
+      toSyntacticSemigroup_eq_iff, toSyntacticSemigroup_eq_iff, Con.inf_iff_and]
+
+/-- **The syntactic semigroup does not see the empty word.** Its congruence quantifies only over
+nonempty words, so adjoining `[]` to a language leaves it unchanged. This is the `+`-variety
+semantics working as intended ([eilenberg-1976] indexes varieties of sets on `Σ⁺`), and it is why
+`Semigroup.Pseudovariety.langs` cannot distinguish `L` from `insert [] L`. -/
+theorem syntacticSemigroupCon_insert_nil (L : Language α) :
+    (insert [] L).syntacticSemigroupCon = L.syntacticSemigroupCon :=
+  Con.ext fun u v => by
+    have h : ∀ (x : List α) (w : FreeSemigroup α) (y : List α),
+        x ++ w.toList ++ y ∈ insert [] L ↔ x ++ w.toList ++ y ∈ L := fun x w y => by
+      refine (Set.mem_insert_iff).trans (or_iff_right ?_)
+      intro hnil
+      exact absurd (List.append_eq_nil_iff.mp (List.append_eq_nil_iff.mp hnil).1).2
+        (FreeSemigroup.toList_ne_nil w)
+    exact forall_congr' fun x => forall_congr' fun y => iff_congr (h x u y) (h x v y)
 
 end Language
