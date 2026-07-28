@@ -29,4 +29,8 @@ def toList (u : FreeSemigroup α) : List α := u.head :: u.tail
 /-- The free semigroup is the *nonempty* words. -/
 @[simp] theorem toList_ne_nil (u : FreeSemigroup α) : u.toList ≠ [] := List.cons_ne_nil _ _
 
+theorem toList_injective : Function.Injective (toList (α := α)) := by
+  rintro ⟨a, s⟩ ⟨b, t⟩ h
+  simpa [toList, and_comm] using h
+
 end FreeSemigroup
