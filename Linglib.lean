@@ -5,6 +5,7 @@ A Lean 4 library for formal linguistics, covering semantics, pragmatics,
 and their interfaces. See README.md for documentation links.
 import Linglib.Core.Algebra.Free
 import Linglib.Core.Algebra.FreeMonoid.Destutter
+import Linglib.Core.Algebra.FreeMonoid.FreeSemigroup
 import Linglib.Core.Algebra.Group.Aperiodic
 import Linglib.Core.Algebra.Group.End
 import Linglib.Core.Algebra.Group.Idempotent
@@ -92,6 +93,7 @@ import Linglib.Core.Computability.StarFree
 import Linglib.Core.Computability.StrictlyLocal
 import Linglib.Core.Computability.StrictlyPiecewise
 import Linglib.Core.Computability.Subsequential
+import Linglib.Core.Computability.SyntacticCon
 import Linglib.Core.Computability.SyntacticMonoid
 import Linglib.Core.Computability.SyntacticSemigroup
 import Linglib.Core.Computability.Transduction
