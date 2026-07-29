@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 [UPSTREAM] candidate: `Mathlib.Algebra.Free`. Upstreaming requires `@[to_additive]` with a
 `FreeAddSemigroup.toList` counterpart, as every declaration in that file is additivized.
 -/
-import Mathlib.Algebra.Free
+import Mathlib.Algebra.FreeMonoid.FreeSemigroup
 
 /-!
 # The word underlying a free-semigroup element
@@ -29,8 +29,18 @@ def toList (u : FreeSemigroup α) : List α := u.head :: u.tail
 /-- The free semigroup is the *nonempty* words. -/
 @[simp] theorem toList_ne_nil (u : FreeSemigroup α) : u.toList ≠ [] := List.cons_ne_nil _ _
 
+theorem toFreeMonoid_eq_ofList (u : FreeSemigroup α) :
+    toFreeMonoid u = FreeMonoid.ofList u.toList := by
+  cases u; exact toFreeMonoid_mk_eq_cons _ _
+
 theorem toList_injective : Function.Injective (toList (α := α)) := by
   rintro ⟨a, s⟩ ⟨b, t⟩ h
   simpa [toList, and_comm] using h
+
+/-- Every word is empty or comes from the free semigroup — the free-level `M_A = S_A ∪ {1}`. -/
+theorem eq_nil_or_exists_toList (w : List α) : w = [] ∨ ∃ u : FreeSemigroup α, u.toList = w := by
+  rcases eq_one_or_toFreeMonoid (FreeMonoid.ofList w) with h | ⟨u, hu⟩
+  · exact Or.inl (FreeMonoid.ofList.injective (h.trans FreeMonoid.ofList_nil.symm))
+  · exact Or.inr ⟨u, by simpa [toFreeMonoid_eq_ofList] using hu⟩
 
 end FreeSemigroup
