@@ -70,20 +70,14 @@ theorem mem_iff_of_syntacticEquiv (h : L.SyntacticEquiv u v) : u ∈ L ↔ v ∈
     L.SyntacticEquiv u w := fun x y => (h x y).trans (h' x y)
 
 theorem SyntacticEquiv.append (h : L.SyntacticEquiv u u') (h' : L.SyntacticEquiv v v') :
-    L.SyntacticEquiv (u ++ v) (u' ++ v') := fun x y => by
-  have h1 := h x (v ++ y)
-  have h2 := h' (x ++ u') y
-  simp only [← List.append_assoc] at h1 h2 ⊢
-  exact h1.trans h2
+    L.SyntacticEquiv (u ++ v) (u' ++ v') := by grind [SyntacticEquiv]
 
 theorem SyntacticEquiv.compl_iff : Lᶜ.SyntacticEquiv u v ↔ L.SyntacticEquiv u v :=
   forall_congr' fun _ => forall_congr' fun _ => not_iff_not
 
 theorem SyntacticEquiv.reverse_iff :
     L.reverse.SyntacticEquiv u v ↔ L.SyntacticEquiv u.reverse v.reverse := by
-  refine ⟨fun h x y => ?_, fun h x y => ?_⟩ <;>
-    simpa only [mem_reverse, List.reverse_append, List.reverse_reverse, List.append_assoc] using
-      h y.reverse x.reverse
+  refine ⟨fun h x y => ?_, fun h x y => ?_⟩ <;> simpa using h y.reverse x.reverse
 
 end
 
@@ -155,7 +149,7 @@ theorem ker_le_syntacticCon_of_recognizes {M : Type*} [Monoid M] {φ : FreeMonoi
   obtain ⟨S, rfl⟩ := hrec
   change ∀ x y : FreeMonoid α, x * u * y ∈ φ ⁻¹' S ↔ x * v * y ∈ φ ⁻¹' S
   intro x y
-  simp only [Set.mem_preimage, map_mul, Con.ker_apply.mp huv]
+  simp [Con.ker_apply.mp huv]
 
 theorem recognizes_of_ker_le_syntacticCon {M : Type*} [Monoid M] {φ : FreeMonoid α →* M}
     (h : Con.ker φ ≤ syntacticCon L) : Recognizes φ L := by
@@ -193,8 +187,7 @@ theorem syntacticCon_eq_ker_transitionHom : L.syntacticCon = Con.ker L.toDFA.tra
     refine Subtype.ext ?_
     rw [evalFrom_toDFA, evalFrom_toDFA, ← hx, ← leftQuotient_append, ← leftQuotient_append]
     exact Set.ext fun y => h x y
-  · simpa only [accepts_toDFA] using
-      ker_le_syntacticCon_of_recognizes (recognizes_transitionHom L.toDFA)
+  · simpa using ker_le_syntacticCon_of_recognizes (recognizes_transitionHom L.toDFA)
 
 /-! ### Regularity implies a finite syntactic monoid -/
 
