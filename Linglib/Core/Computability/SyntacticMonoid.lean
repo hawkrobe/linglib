@@ -176,8 +176,7 @@ theorem recognizes_transitionHom {σ : Type*} (M : DFA α σ) :
 
 @[simp] theorem evalFrom_toDFA (s : Set.range L.leftQuotient) (w : List α) :
     (L.toDFA.evalFrom s w).val = s.val.leftQuotient w := by
-  induction w using List.reverseRecOn <;>
-    simp_all [DFA.evalFrom_append_singleton, step_toDFA, leftQuotient_append]
+  induction w using List.reverseRecOn <;> simp_all [leftQuotient_append]
 
 /-- The intrinsic syntactic congruence is the kernel of the minimal DFA's transition action. -/
 theorem syntacticCon_eq_ker_transitionHom : L.syntacticCon = Con.ker L.toDFA.transitionHom := by
