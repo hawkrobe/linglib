@@ -121,21 +121,17 @@ def syntacticClass (w : List α) : L.syntacticMonoid := L.toSyntacticMonoid (Fre
 theorem syntacticClass_surjective : Function.Surjective L.syntacticClass :=
   Con.mk'_surjective.comp FreeMonoid.ofList.surjective
 
-variable {L}
+variable {L} {u v : List α}
 
-/-- Two words share a syntactic class iff no two-sided context distinguishes them as `L`-members,
-the word-level form of `syntacticCon_iff`. -/
-theorem syntacticClass_eq_iff {u v : List α} : L.syntacticClass u = L.syntacticClass v ↔
-    ∀ x y, x ++ u ++ y ∈ L ↔ x ++ v ++ y ∈ L := by
-  simp only [syntacticClass, toSyntacticMonoid_eq_iff, syntacticCon_iff, FreeMonoid.toList_ofList]
+theorem syntacticClass_eq_iff : L.syntacticClass u = L.syntacticClass v ↔ L.SyntacticEquiv u v :=
+  L.toSyntacticMonoid_eq_iff
 
-theorem mem_iff_of_syntacticClass_eq {u v : List α}
-    (h : L.syntacticClass u = L.syntacticClass v) : u ∈ L ↔ v ∈ L :=
-  mem_iff_of_syntacticEquiv (syntacticClass_eq_iff.mp h)
+theorem mem_iff_of_syntacticClass_eq (h : L.syntacticClass u = L.syntacticClass v) :
+    u ∈ L ↔ v ∈ L := mem_iff_of_syntacticEquiv (syntacticClass_eq_iff.mp h)
 
-/-- **Reverse duality**: a syntactic-class equality in `L.reverse` is the same as the
-reversed-word equality in `L`. The syntactic monoid of `L.reverse` is `L`'s, opposite. -/
-theorem syntacticClass_reverse_eq_iff {u v : List α} :
+/-- **Reverse duality**: a syntactic-class equality in `L.reverse` is the reversed-word equality
+in `L`. -/
+theorem syntacticClass_reverse_eq_iff :
     L.reverse.syntacticClass u = L.reverse.syntacticClass v ↔
       L.syntacticClass u.reverse = L.syntacticClass v.reverse := by
   rw [syntacticClass_eq_iff, syntacticClass_eq_iff]
