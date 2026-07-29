@@ -54,34 +54,35 @@ variable {α : Type*} (L : Language α)
 them as `L`-members. -/
 def SyntacticEquiv (u v : List α) : Prop := ∀ x y : List α, x ++ u ++ y ∈ L ↔ x ++ v ++ y ∈ L
 
-variable {L}
+section
+
+variable {L} {u u' v v' w : List α}
 
 @[refl] theorem SyntacticEquiv.refl (u : List α) : L.SyntacticEquiv u u := fun _ _ => Iff.rfl
 
-@[symm] theorem SyntacticEquiv.symm {u v : List α} (h : L.SyntacticEquiv u v) :
-    L.SyntacticEquiv v u := fun x y => (h x y).symm
+@[symm] theorem SyntacticEquiv.symm (h : L.SyntacticEquiv u v) : L.SyntacticEquiv v u :=
+  fun x y => (h x y).symm
 
-@[trans] theorem SyntacticEquiv.trans {u v w : List α} (h : L.SyntacticEquiv u v)
-    (h' : L.SyntacticEquiv v w) : L.SyntacticEquiv u w := fun x y => (h x y).trans (h' x y)
+@[trans] theorem SyntacticEquiv.trans (h : L.SyntacticEquiv u v) (h' : L.SyntacticEquiv v w) :
+    L.SyntacticEquiv u w := fun x y => (h x y).trans (h' x y)
 
-theorem SyntacticEquiv.compl_iff {u v : List α} :
-    Lᶜ.SyntacticEquiv u v ↔ L.SyntacticEquiv u v :=
+theorem SyntacticEquiv.compl_iff : Lᶜ.SyntacticEquiv u v ↔ L.SyntacticEquiv u v :=
   forall_congr' fun _ => forall_congr' fun _ => not_iff_not
 
 /-- Syntactic equivalence is a congruence for concatenation — the multiplicativity step shared by
 both syntactic congruences. -/
-theorem SyntacticEquiv.append {u u' v v' : List α} (h : L.SyntacticEquiv u u')
-    (h' : L.SyntacticEquiv v v') : L.SyntacticEquiv (u ++ v) (u' ++ v') := fun x y => by
+theorem SyntacticEquiv.append (h : L.SyntacticEquiv u u') (h' : L.SyntacticEquiv v v') :
+    L.SyntacticEquiv (u ++ v) (u' ++ v') := fun x y => by
   have h1 := h x (v ++ y)
   have h2 := h' (x ++ u') y
   simp only [← List.append_assoc] at h1 h2 ⊢
   exact h1.trans h2
 
 /-- Syntactically equivalent words agree on membership: take the empty context. -/
-theorem mem_iff_of_syntacticEquiv {u v : List α} (h : L.SyntacticEquiv u v) : u ∈ L ↔ v ∈ L := by
+theorem mem_iff_of_syntacticEquiv (h : L.SyntacticEquiv u v) : u ∈ L ↔ v ∈ L := by
   simpa using h [] []
 
-variable (L)
+end
 
 /-- The *syntactic congruence* of `L` identifies two words when no two-sided context distinguishes
 them as `L`-members. -/
