@@ -142,8 +142,12 @@ theorem syntacticClass_reverse_eq_iff :
 def Recognizes {M : Type*} [Monoid M] (φ : FreeMonoid α →* M) (L : Language α) : Prop :=
   ∃ S : Set M, L = φ ⁻¹' S
 
-theorem ker_le_syntacticCon_of_recognizes {M : Type*} [Monoid M] {φ : FreeMonoid α →* M}
-    (hrec : Recognizes φ L) : Con.ker φ ≤ syntacticCon L := by
+section
+
+variable {M : Type*} [Monoid M] {φ : FreeMonoid α →* M}
+
+theorem ker_le_syntacticCon_of_recognizes (hrec : Recognizes φ L) :
+    Con.ker φ ≤ syntacticCon L := by
   intro u v huv
   rw [syntacticCon_iff]
   obtain ⟨S, rfl⟩ := hrec
@@ -151,17 +155,19 @@ theorem ker_le_syntacticCon_of_recognizes {M : Type*} [Monoid M] {φ : FreeMonoi
   intro x y
   simp [Con.ker_apply.mp huv]
 
-theorem recognizes_of_ker_le_syntacticCon {M : Type*} [Monoid M] {φ : FreeMonoid α →* M}
-    (h : Con.ker φ ≤ syntacticCon L) : Recognizes φ L := by
+theorem recognizes_of_ker_le_syntacticCon (h : Con.ker φ ≤ syntacticCon L) :
+    Recognizes φ L := by
   refine ⟨φ '' L, Set.ext fun w => ⟨fun hw => ⟨w, hw, rfl⟩, ?_⟩⟩
   rintro ⟨u, hu, hφ⟩
   exact (mem_iff_of_syntacticEquiv (h (Con.ker_apply.mpr hφ))).mp hu
 
 /-- **Universal property of the syntactic monoid**: a hom recognizes `L` exactly when its
 kernel refines the syntactic congruence. -/
-theorem recognizes_iff_ker_le_syntacticCon {M : Type*} [Monoid M] {φ : FreeMonoid α →* M} :
+theorem recognizes_iff_ker_le_syntacticCon :
     Recognizes φ L ↔ Con.ker φ ≤ syntacticCon L :=
   ⟨ker_le_syntacticCon_of_recognizes, recognizes_of_ker_le_syntacticCon⟩
+
+end
 
 theorem recognizes_toSyntacticMonoid : Recognizes L.toSyntacticMonoid L :=
   recognizes_of_ker_le_syntacticCon (Con.mk'_ker _).le
