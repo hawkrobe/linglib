@@ -151,14 +151,12 @@ theorem ker_le_syntacticCon_of_recognizes (hrec : Recognizes φ L) :
   obtain ⟨S, rfl⟩ := hrec
   intro u v huv
   change ∀ x y : FreeMonoid α, x * u * y ∈ φ ⁻¹' S ↔ x * v * y ∈ φ ⁻¹' S
-  intro x y
   simp [Con.ker_apply.mp huv]
 
 theorem recognizes_of_ker_le_syntacticCon (h : Con.ker φ ≤ syntacticCon L) :
-    Recognizes φ L := by
-  refine ⟨φ '' L, Set.ext fun w => ⟨fun hw => ⟨w, hw, rfl⟩, ?_⟩⟩
-  rintro ⟨u, hu, hφ⟩
-  exact (mem_iff_of_syntacticEquiv (h (Con.ker_apply.mpr hφ))).mp hu
+    Recognizes φ L :=
+  ⟨φ '' L, (Set.subset_preimage_image φ L).antisymm
+    fun _ ⟨_, hu, hφ⟩ => (mem_iff_of_syntacticEquiv (h (Con.ker_apply.mpr hφ))).mp hu⟩
 
 theorem recognizes_iff_ker_le_syntacticCon :
     Recognizes φ L ↔ Con.ker φ ≤ syntacticCon L :=
