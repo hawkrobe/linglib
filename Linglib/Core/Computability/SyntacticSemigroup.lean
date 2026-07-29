@@ -8,7 +8,6 @@ Authors: Robert Hawkins
 import Linglib.Core.Algebra.Free
 import Linglib.Core.Computability.SyntacticMonoid
 import Linglib.Core.GroupTheory.Congruence.Hom
-import Mathlib.Algebra.Group.Prod
 import Mathlib.Data.Fintype.Option
 
 /-!
@@ -44,8 +43,13 @@ idempotent `1` forces triviality; stating them on `FreeSemigroup α` is what avo
 ## Implementation notes
 
 The projection is `Con.mkMulHom`, mathlib's `MulHom`-valued quotient map for a `Con` over a plain
-`Mul` (the monoid-valued `Con.mk'` would not apply). `FreeSemigroup.toList` is absent from mathlib
-and is supplied by `Linglib.Core.Algebra.Free`.
+`Mul` (the monoid-valued `Con.mk'` would not apply).
+
+Words are carried to `List α` by `FreeSemigroup.toList` from `Linglib.Core.Algebra.Free`, which is
+structural (`head :: tail`). Mathlib's `FreeSemigroup.toFreeMonoid` is the same map bundled as a
+`→ₙ*`, but built by the universal property, so the two are equal only propositionally
+(`FreeSemigroup.toFreeMonoid_mk_eq_cons`); adopting it would replace this file's `rfl` proofs with
+rewrites.
 -/
 
 namespace Language
@@ -104,13 +108,6 @@ instance instFiniteSyntacticSemigroup [Finite L.syntacticMonoid] :
     Finite L.syntacticSemigroup :=
   .of_injective _ L.syntacticSemigroupToMonoid_injective
 
-theorem finite_syntacticSemigroup (h : L.IsRegular) : Finite L.syntacticSemigroup :=
-  haveI := IsRegular.finite_syntacticMonoid h
-  inferInstance
-
-theorem syntacticSemigroupCon_compl : Lᶜ.syntacticSemigroupCon = L.syntacticSemigroupCon :=
-  Con.ext fun _ _ => SyntacticEquiv.compl_iff
-
 /-- Conversely, a finite syntactic semigroup forces a finite syntactic monoid: the monoid is
 covered by the semigroup together with the identity, which is Eilenberg's `M_A = S_A ∪ {1}`. -/
 theorem finite_syntacticMonoid_of_finite_syntacticSemigroup [Finite L.syntacticSemigroup] :
@@ -122,18 +119,30 @@ theorem finite_syntacticMonoid_of_finite_syntacticSemigroup [Finite L.syntacticS
   | [] => exact ⟨none, L.syntacticClass_nil.symm⟩
   | c :: w => exact ⟨some (L.toSyntacticSemigroup ⟨c, w⟩), rfl⟩
 
-/-- **Myhill–Nerode, semigroup form**: a language is regular exactly when its syntactic semigroup
-is finite. -/
+/-! ### Myhill–Nerode -/
+
+section
+
+variable {L}
+
+theorem IsRegular.finite_syntacticSemigroup (h : L.IsRegular) : Finite L.syntacticSemigroup :=
+  haveI := IsRegular.finite_syntacticMonoid h
+  inferInstance
+
+theorem IsRegular.of_finite_syntacticSemigroup (h : Finite L.syntacticSemigroup) : L.IsRegular :=
+  IsRegular.of_finite_syntacticMonoid L.finite_syntacticMonoid_of_finite_syntacticSemigroup
+
+/-- `L` is regular iff `L.syntacticSemigroup` is finite. -/
 theorem isRegular_iff_finite_syntacticSemigroup :
     L.IsRegular ↔ Finite L.syntacticSemigroup :=
-  ⟨L.finite_syntacticSemigroup,
-   fun _ =>
-     IsRegular.of_finite_syntacticMonoid L.finite_syntacticMonoid_of_finite_syntacticSemigroup⟩
+  ⟨IsRegular.finite_syntacticSemigroup, IsRegular.of_finite_syntacticSemigroup⟩
 
-theorem isRegular_of_finite_syntacticSemigroup (h : Finite L.syntacticSemigroup) : L.IsRegular :=
-  L.isRegular_iff_finite_syntacticSemigroup.2 h
+end
 
-/-! ### Meets of syntactic congruences -/
+/-! ### Boolean combinations -/
+
+theorem syntacticSemigroupCon_compl : Lᶜ.syntacticSemigroupCon = L.syntacticSemigroupCon :=
+  Con.ext fun _ _ => SyntacticEquiv.compl_iff
 
 section
 
@@ -154,7 +163,7 @@ end
 /-- **The syntactic semigroup does not see the empty word.** Its congruence quantifies only over
 nonempty words, so adjoining `[]` to a language leaves it unchanged. This is the `+`-variety
 semantics working as intended ([eilenberg-1976] indexes varieties of sets on `Σ⁺`), and it is why
-`Semigroup.Pseudovariety.langs` cannot distinguish `L` from `insert [] L`. -/
+no pseudovariety of semigroups can distinguish `L` from `insert [] L`. -/
 theorem syntacticSemigroupCon_insert_nil :
     (insert [] L).syntacticSemigroupCon = L.syntacticSemigroupCon :=
   Con.ext fun u v => by
@@ -166,7 +175,7 @@ theorem syntacticSemigroupCon_insert_nil :
         (FreeSemigroup.toList_ne_nil w)
     exact forall_congr' fun x => forall_congr' fun y => iff_congr (h x u y) (h x v y)
 
-/-! ### Recognition by a finite semigroup
+/-! ### Recognition by a semigroup
 
 The monoid notion `Language.Recognizes` is the set equation `L = φ ⁻¹' S`. That cannot be stated
 here: `η ⁻¹' P` is a set of `FreeSemigroup α`, whereas a `Language α` is a set of `List α`. The
