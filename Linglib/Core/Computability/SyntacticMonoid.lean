@@ -169,8 +169,7 @@ theorem recognizes_toSyntacticMonoid : Recognizes L.toSyntacticMonoid L :=
 
 /-! ### Connection to the minimal DFA -/
 
-/-- A DFA's transition action recognizes the language it accepts: the accepting words are those
-whose transformation carries the start state into `M.accept`. -/
+/-- A DFA's transition action recognizes the language it accepts. -/
 theorem recognizes_transitionHom {σ : Type*} (M : DFA α σ) :
     Recognizes M.transitionHom M.accepts :=
   ⟨{t | t.unop M.start ∈ M.accept}, rfl⟩
@@ -180,8 +179,7 @@ theorem recognizes_transitionHom {σ : Type*} (M : DFA α σ) :
   induction w using List.reverseRecOn <;>
     simp_all [DFA.evalFrom_append_singleton, step_toDFA, leftQuotient_append]
 
-/-- The intrinsic syntactic congruence is the kernel of the minimal DFA's transition action — the
-two-sided context definition agrees with the transition-monoid quotient. -/
+/-- The intrinsic syntactic congruence is the kernel of the minimal DFA's transition action. -/
 theorem syntacticCon_eq_ker_transitionHom : L.syntacticCon = Con.ker L.toDFA.transitionHom := by
   refine le_antisymm (fun {u v} h => L.toDFA.transitionHom_eq_iff.mpr fun s => ?_) ?_
   · obtain ⟨x, hx⟩ := s.2
@@ -190,7 +188,7 @@ theorem syntacticCon_eq_ker_transitionHom : L.syntacticCon = Con.ker L.toDFA.tra
     exact Set.ext fun y => h x y
   · simpa using ker_le_syntacticCon_of_recognizes (recognizes_transitionHom L.toDFA)
 
-/-! ### Regularity implies a finite syntactic monoid -/
+/-! ### Myhill–Nerode -/
 
 /-- A regular language has a finite syntactic monoid (forward Myhill–Nerode). -/
 theorem IsRegular.finite_syntacticMonoid (h : L.IsRegular) : Finite L.syntacticMonoid := by
@@ -198,8 +196,6 @@ theorem IsRegular.finite_syntacticMonoid (h : L.IsRegular) : Finite L.syntacticM
   show Finite (syntacticCon L).Quotient
   rw [syntacticCon_eq_ker_transitionHom]
   exact Finite.of_equiv _ (DFA.transitionMonoidEquiv L.toDFA).symm.toEquiv
-
-/-! ### A finite syntactic monoid implies regularity -/
 
 /-- A language with finite syntactic monoid is regular (reverse Myhill–Nerode). The left-quotient
 map factors through the syntactic monoid, so a finite quotient forces finitely many left
