@@ -192,7 +192,7 @@ theorem syntacticCon_eq_ker_transitionHom : L.syntacticCon = Con.ker L.toDFA.tra
 
 /-- A regular language has a finite syntactic monoid (forward Myhill–Nerode). -/
 theorem IsRegular.finite_syntacticMonoid (h : L.IsRegular) : Finite L.syntacticMonoid := by
-  have : Finite (Set.range L.leftQuotient) := h.finite_range_leftQuotient.to_subtype
+  haveI := h.finite_range_leftQuotient.to_subtype
   show Finite (syntacticCon L).Quotient
   rw [syntacticCon_eq_ker_transitionHom]
   exact Finite.of_equiv _ (DFA.transitionMonoidEquiv L.toDFA).symm.toEquiv
@@ -201,15 +201,10 @@ theorem IsRegular.finite_syntacticMonoid (h : L.IsRegular) : Finite L.syntacticM
 map factors through the syntactic monoid, so a finite quotient forces finitely many left
 quotients. -/
 theorem IsRegular.of_finite_syntacticMonoid (h : Finite L.syntacticMonoid) : L.IsRegular := by
-  apply Language.IsRegular.of_finite_range_leftQuotient
-  have factor : ∀ u v : FreeMonoid α, L.syntacticCon u v →
-      L.leftQuotient u.toList = L.leftQuotient v.toList := by
-    intro u v huv
-    ext y; rw [mem_leftQuotient, mem_leftQuotient]; exact huv [] y
-  let g : L.syntacticMonoid → Language α := Quot.lift (fun w => L.leftQuotient w.toList) factor
-  refine (Set.finite_range g).subset ?_
-  rintro _ ⟨x, rfl⟩
-  exact ⟨Quot.mk _ (FreeMonoid.ofList x), rfl⟩
+  refine Language.IsRegular.of_finite_range_leftQuotient ?_
+  let g : L.syntacticMonoid → Language α :=
+    Quot.lift (fun w => L.leftQuotient w.toList) fun _ _ huv => Set.ext (huv [])
+  exact (Set.finite_range g).subset fun _ ⟨x, hx⟩ => ⟨Quot.mk _ (FreeMonoid.ofList x), hx⟩
 
 /-- Myhill–Nerode (syntactic-monoid form): `L` is regular iff `L.syntacticMonoid` is finite. -/
 theorem isRegular_iff_finite_syntacticMonoid : L.IsRegular ↔ Finite L.syntacticMonoid :=
