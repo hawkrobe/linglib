@@ -32,7 +32,15 @@ reverse-definite case mirrors this through the left edge.
 * `Language.IsDefinite.langs`, `Language.IsReverseDefinite.langs`: membership in the language
   varieties of **D** and **K**.
 
-The converse inclusions, and the joint two-edge class **LI**, are not yet formalised.
+The converse directions are already available in `Variety.OmegaEquations`, which algebraizes the
+same classes — plus **LI** and **N** — as omega-power equations on the syntactic *monoid* rather
+than as pseudovariety membership of the syntactic *semigroup*
+(`Language.exists_isDefinite_iff_satisfies_omegaDefiniteEquation` and its siblings). Relating the
+two presentations, which would give `langs` iffs for all four classes, is not done yet.
+
+What this file adds over that one is regularity: the omega-power theorems all take
+`[Finite L.syntacticMonoid]` as a hypothesis, whereas `IsDefinite.isRegular` derives it from a
+finite alphabet.
 -/
 
 namespace Language
