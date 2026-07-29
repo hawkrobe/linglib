@@ -190,23 +190,19 @@ theorem syntacticCon_eq_ker_transitionHom : L.syntacticCon = Con.ker L.toDFA.tra
 
 /-! ### Myhill–Nerode -/
 
-/-- A regular language has a finite syntactic monoid (forward Myhill–Nerode). -/
 theorem IsRegular.finite_syntacticMonoid (h : L.IsRegular) : Finite L.syntacticMonoid := by
   haveI := h.finite_range_leftQuotient.to_subtype
   show Finite (syntacticCon L).Quotient
   rw [syntacticCon_eq_ker_transitionHom]
   exact Finite.of_equiv _ (DFA.transitionMonoidEquiv L.toDFA).symm.toEquiv
 
-/-- A language with finite syntactic monoid is regular (reverse Myhill–Nerode). The left-quotient
-map factors through the syntactic monoid, so a finite quotient forces finitely many left
-quotients. -/
 theorem IsRegular.of_finite_syntacticMonoid (h : Finite L.syntacticMonoid) : L.IsRegular := by
   refine Language.IsRegular.of_finite_range_leftQuotient ?_
   let g : L.syntacticMonoid → Language α :=
     Quot.lift (fun w => L.leftQuotient w.toList) fun _ _ huv => Set.ext (huv [])
   exact (Set.finite_range g).subset fun _ ⟨x, hx⟩ => ⟨Quot.mk _ (FreeMonoid.ofList x), hx⟩
 
-/-- Myhill–Nerode (syntactic-monoid form): `L` is regular iff `L.syntacticMonoid` is finite. -/
+/-- **Myhill–Nerode**, syntactic-monoid form: `L` is regular iff `L.syntacticMonoid` is finite. -/
 theorem isRegular_iff_finite_syntacticMonoid : L.IsRegular ↔ Finite L.syntacticMonoid :=
   ⟨IsRegular.finite_syntacticMonoid, IsRegular.of_finite_syntacticMonoid⟩
 
