@@ -3,13 +3,12 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 
-[UPSTREAM] candidate: `Mathlib.Computability.TransitionMonoid`. The two `Finite` instances belong
-further upstream, in `Mathlib.Algebra.Group.End` and `Mathlib.Algebra.Group.Opposite`.
+[UPSTREAM] candidate: `Mathlib.Computability.TransitionMonoid`.
 -/
+import Linglib.Core.Algebra.Group.End
+import Linglib.Core.Algebra.Opposites
 import Mathlib.Algebra.FreeMonoid.Basic
-import Mathlib.Algebra.Group.End
 import Mathlib.Computability.DFA
-import Mathlib.Data.Finite.Prod
 import Mathlib.GroupTheory.Congruence.Basic
 import Mathlib.GroupTheory.Congruence.Hom
 
@@ -33,13 +32,6 @@ so as a `MonoidHom` its target is the opposite monoid `(Function.End σ)ᵐᵒ�
 -/
 
 universe u v
-
-/-- `Function.End α` is a plain `def`, so `Finite` does not see through it to `α → α`. -/
-instance Function.End.instFinite {α : Type*} [Finite α] : Finite (Function.End α) :=
-  inferInstanceAs (Finite (α → α))
-
-instance MulOpposite.instFinite {α : Type*} [Finite α] : Finite αᵐᵒᵖ :=
-  Finite.of_equiv α MulOpposite.opEquiv
 
 namespace DFA
 
