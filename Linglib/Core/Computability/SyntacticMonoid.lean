@@ -88,13 +88,17 @@ def syntacticCon : Con (FreeMonoid α) where
   iseqv := ⟨fun _ => .refl _, .symm, .trans⟩
   mul' hab hcd := hab.append hcd
 
-theorem syntacticCon_iff {u v : FreeMonoid α} :
+section
+
+variable {u v : FreeMonoid α}
+
+theorem syntacticCon_iff :
     L.syntacticCon u v ↔ ∀ x y, x ++ u.toList ++ y ∈ L ↔ x ++ v.toList ++ y ∈ L :=
   Iff.rfl
 
 variable {L} in
-theorem mem_iff_of_syntacticCon {u v : FreeMonoid α} (h : L.syntacticCon u v) :
-    u ∈ L ↔ v ∈ L := mem_iff_of_syntacticEquiv h
+theorem mem_iff_of_syntacticCon (h : L.syntacticCon u v) : u ∈ L ↔ v ∈ L :=
+  mem_iff_of_syntacticEquiv h
 
 /-- The *syntactic monoid* of `L` is the quotient of `FreeMonoid α` by the syntactic congruence. -/
 abbrev syntacticMonoid : Type _ := (syntacticCon L).Quotient
@@ -102,14 +106,15 @@ abbrev syntacticMonoid : Type _ := (syntacticCon L).Quotient
 /-- The canonical projection sending each word to its syntactic class; the underlying `Con.mk'`. -/
 def toSyntacticMonoid : FreeMonoid α →* L.syntacticMonoid := (syntacticCon L).mk'
 
-theorem toSyntacticMonoid_eq_iff {u v : FreeMonoid α} :
+theorem toSyntacticMonoid_eq_iff :
     L.toSyntacticMonoid u = L.toSyntacticMonoid v ↔ L.syntacticCon u v :=
   Con.eq _
 
+end
+
 /-! ### The syntactic class of a word -/
 
-/-- The *syntactic class* of a word `w` is its image in the syntactic monoid — the literature's
-`η(w)`, applied to a `List α` rather than a bundled `FreeMonoid α`. -/
+/-- The *syntactic class* of a word `w` is its image in the syntactic monoid. -/
 def syntacticClass (w : List α) : L.syntacticMonoid := L.toSyntacticMonoid (FreeMonoid.ofList w)
 
 @[simp] theorem syntacticClass_nil : L.syntacticClass [] = 1 := map_one _
