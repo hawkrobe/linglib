@@ -58,6 +58,9 @@ section
 
 variable {L} {u u' v v' w : List α}
 
+theorem mem_iff_of_syntacticEquiv (h : L.SyntacticEquiv u v) : u ∈ L ↔ v ∈ L := by
+  simpa using h [] []
+
 @[refl] theorem SyntacticEquiv.refl (u : List α) : L.SyntacticEquiv u u := fun _ _ => Iff.rfl
 
 @[symm] theorem SyntacticEquiv.symm (h : L.SyntacticEquiv u v) : L.SyntacticEquiv v u :=
@@ -72,9 +75,6 @@ theorem SyntacticEquiv.append (h : L.SyntacticEquiv u u') (h' : L.SyntacticEquiv
   have h2 := h' (x ++ u') y
   simp only [← List.append_assoc] at h1 h2 ⊢
   exact h1.trans h2
-
-theorem mem_iff_of_syntacticEquiv (h : L.SyntacticEquiv u v) : u ∈ L ↔ v ∈ L := by
-  simpa using h [] []
 
 theorem SyntacticEquiv.compl_iff : Lᶜ.SyntacticEquiv u v ↔ L.SyntacticEquiv u v :=
   forall_congr' fun _ => forall_congr' fun _ => not_iff_not
