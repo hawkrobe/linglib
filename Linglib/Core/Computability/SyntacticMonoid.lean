@@ -33,8 +33,8 @@ of states.
 
 ## Main theorems
 
-- `Language.recognizes_iff_ker_le_syntacticCon`: the universal property — a hom recognizes `L`
-  exactly when its kernel refines the syntactic congruence
+- `Language.recognizes_iff_ker_le_syntacticCon`: the syntactic congruence is the coarsest
+  congruence saturating `L` — a hom recognizes `L` exactly when its kernel refines it
 - `Language.syntacticCon_eq_ker_transitionHom`: the intrinsic congruence is the kernel of the
   transition action of `L.toDFA`
 - `Language.isRegular_iff_finite_syntacticMonoid`: the Myhill–Nerode theorem in monoid form
@@ -160,8 +160,6 @@ theorem recognizes_of_ker_le_syntacticCon (h : Con.ker φ ≤ syntacticCon L) :
   rintro ⟨u, hu, hφ⟩
   exact (mem_iff_of_syntacticEquiv (h (Con.ker_apply.mpr hφ))).mp hu
 
-/-- **Universal property of the syntactic monoid**: a hom recognizes `L` exactly when its
-kernel refines the syntactic congruence. -/
 theorem recognizes_iff_ker_le_syntacticCon :
     Recognizes φ L ↔ Con.ker φ ≤ syntacticCon L :=
   ⟨ker_le_syntacticCon_of_recognizes, recognizes_of_ker_le_syntacticCon⟩
