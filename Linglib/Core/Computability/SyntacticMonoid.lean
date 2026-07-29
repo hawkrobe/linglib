@@ -96,10 +96,6 @@ theorem syntacticCon_iff :
     L.syntacticCon u v ↔ ∀ x y, x ++ u.toList ++ y ∈ L ↔ x ++ v.toList ++ y ∈ L :=
   Iff.rfl
 
-variable {L} in
-theorem mem_iff_of_syntacticCon (h : L.syntacticCon u v) : u ∈ L ↔ v ∈ L :=
-  mem_iff_of_syntacticEquiv h
-
 /-- The *syntactic monoid* of `L` is the quotient of `FreeMonoid α` by the syntactic congruence. -/
 abbrev syntacticMonoid : Type _ := (syntacticCon L).Quotient
 
@@ -109,6 +105,11 @@ def toSyntacticMonoid : FreeMonoid α →* L.syntacticMonoid := (syntacticCon L)
 theorem toSyntacticMonoid_eq_iff :
     L.toSyntacticMonoid u = L.toSyntacticMonoid v ↔ L.syntacticCon u v :=
   Con.eq _
+
+variable {L}
+
+theorem mem_iff_of_syntacticCon (h : L.syntacticCon u v) : u ∈ L ↔ v ∈ L :=
+  mem_iff_of_syntacticEquiv h
 
 end
 
@@ -150,12 +151,10 @@ theorem syntacticClass_reverse_eq_iff {u v : List α} :
 
 /-! ### Universal property -/
 
-/-- `φ` *recognizes* `L` when `L` is a union of `φ`-fibres, i.e. `L = φ ⁻¹' S` for some
-`S ⊆ M`. -/
+/-- `φ` *recognizes* `L` when `L` is a union of `φ`-fibres. -/
 def Recognizes {M : Type*} [Monoid M] (φ : FreeMonoid α →* M) (L : Language α) : Prop :=
   ∃ S : Set M, L = φ ⁻¹' S
 
-/-- An `L`-recognizing hom's kernel lies below `syntacticCon L`, the coarsest such congruence. -/
 theorem ker_le_syntacticCon_of_recognizes {M : Type*} [Monoid M] {φ : FreeMonoid α →* M}
     (hrec : Recognizes φ L) : Con.ker φ ≤ syntacticCon L := by
   intro u v huv
@@ -172,8 +171,7 @@ theorem recognizes_of_ker_le_syntacticCon {M : Type*} [Monoid M] {φ : FreeMonoi
   exact (mem_iff_of_syntacticCon (h (Con.ker_apply.mpr hφ))).mp hu
 
 /-- **Universal property of the syntactic monoid**: a hom recognizes `L` exactly when its
-kernel refines the syntactic congruence — `syntacticCon L` is the coarsest `L`-recognizing
-congruence, so every recognizer factors through `toSyntacticMonoid`. -/
+kernel refines the syntactic congruence. -/
 theorem recognizes_iff_ker_le_syntacticCon {M : Type*} [Monoid M] {φ : FreeMonoid α →* M} :
     Recognizes φ L ↔ Con.ker φ ≤ syntacticCon L :=
   ⟨ker_le_syntacticCon_of_recognizes, recognizes_of_ker_le_syntacticCon⟩
