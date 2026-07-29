@@ -99,7 +99,7 @@ theorem syntacticCon_iff :
 /-- The *syntactic monoid* of `L` is the quotient of `FreeMonoid α` by the syntactic congruence. -/
 abbrev syntacticMonoid : Type _ := (syntacticCon L).Quotient
 
-/-- The canonical projection sending each word to its syntactic class; the underlying `Con.mk'`. -/
+/-- The *syntactic morphism* of `L` projects `FreeMonoid α` onto the syntactic monoid. -/
 def toSyntacticMonoid : FreeMonoid α →* L.syntacticMonoid := (syntacticCon L).mk'
 
 theorem toSyntacticMonoid_eq_iff :
