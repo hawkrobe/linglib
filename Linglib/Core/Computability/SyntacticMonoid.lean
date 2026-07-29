@@ -208,17 +208,23 @@ theorem isRegular_iff_finite_syntacticMonoid : L.IsRegular ↔ Finite L.syntacti
 
 /-! ### Boolean combinations -/
 
-theorem syntacticCon_compl (L : Language α) : Lᶜ.syntacticCon = L.syntacticCon :=
+section
+
+variable (L M : Language α)
+
+theorem syntacticCon_compl : Lᶜ.syntacticCon = L.syntacticCon :=
   Con.ext fun _ _ => SyntacticEquiv.compl_iff
 
-theorem inf_syntacticCon_le_syntacticCon_inf (L M : Language α) :
+theorem inf_syntacticCon_le_syntacticCon_inf :
     L.syntacticCon ⊓ M.syntacticCon ≤ (L ⊓ M).syntacticCon :=
   fun {_ _} huv x y => and_congr (huv.1 x y) (huv.2 x y)
 
-theorem ker_prod_toSyntacticMonoid (L M : Language α) :
+theorem ker_prod_toSyntacticMonoid :
     Con.ker (L.toSyntacticMonoid.prod M.toSyntacticMonoid) =
       L.syntacticCon ⊓ M.syntacticCon :=
   Con.ext fun _ _ => by simp [Prod.ext_iff, toSyntacticMonoid_eq_iff, Con.inf_iff_and]
+
+end
 
 /-! ### Right quotient -/
 
