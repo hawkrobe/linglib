@@ -109,7 +109,7 @@ theorem langs_comap {β : Type u} {Lb : Language β} (h : V.langs Lb)
   refine V.langs_of_recognizes h.2 (Lb.toSyntacticMonoid.comp φ)
     {m | ∃ u : FreeMonoid β, Lb.toSyntacticMonoid u = m ∧ u ∈ Lb} fun w => ?_
   refine ⟨fun hw => ⟨φ (FreeMonoid.ofList w), rfl, hw⟩, fun ⟨u, hu, hmem⟩ => ?_⟩
-  exact (mem_iff_of_syntacticCon ((toSyntacticMonoid_eq_iff (L := Lb)).mp hu)).mp hmem
+  exact (mem_iff_of_syntacticEquiv ((toSyntacticMonoid_eq_iff (L := Lb)).mp hu)).mp hmem
 
 /-! ### Closure under quotients
 

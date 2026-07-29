@@ -81,16 +81,16 @@ theorem mem_iff_of_syntacticEquiv (h : L.SyntacticEquiv u v) : u ∈ L ↔ v ∈
 
 end
 
+section
+
+variable {u v : FreeMonoid α}
+
 /-- The *syntactic congruence* of `L` identifies two words when no two-sided context distinguishes
 them as `L`-members. -/
 def syntacticCon : Con (FreeMonoid α) where
   r u v := L.SyntacticEquiv u.toList v.toList
   iseqv := ⟨fun _ => .refl _, .symm, .trans⟩
   mul' hab hcd := hab.append hcd
-
-section
-
-variable {u v : FreeMonoid α}
 
 theorem syntacticCon_iff :
     L.syntacticCon u v ↔ ∀ x y, x ++ u.toList ++ y ∈ L ↔ x ++ v.toList ++ y ∈ L :=
@@ -105,11 +105,6 @@ def toSyntacticMonoid : FreeMonoid α →* L.syntacticMonoid := (syntacticCon L)
 theorem toSyntacticMonoid_eq_iff :
     L.toSyntacticMonoid u = L.toSyntacticMonoid v ↔ L.syntacticCon u v :=
   Con.eq _
-
-variable {L}
-
-theorem mem_iff_of_syntacticCon (h : L.syntacticCon u v) : u ∈ L ↔ v ∈ L :=
-  mem_iff_of_syntacticEquiv h
 
 end
 
@@ -168,7 +163,7 @@ theorem recognizes_of_ker_le_syntacticCon {M : Type*} [Monoid M] {φ : FreeMonoi
     (h : Con.ker φ ≤ syntacticCon L) : Recognizes φ L := by
   refine ⟨φ '' L, Set.ext fun w => ⟨fun hw => ⟨w, hw, rfl⟩, ?_⟩⟩
   rintro ⟨u, hu, hφ⟩
-  exact (mem_iff_of_syntacticCon (h (Con.ker_apply.mpr hφ))).mp hu
+  exact (mem_iff_of_syntacticEquiv (h (Con.ker_apply.mpr hφ))).mp hu
 
 /-- **Universal property of the syntactic monoid**: a hom recognizes `L` exactly when its
 kernel refines the syntactic congruence. -/
