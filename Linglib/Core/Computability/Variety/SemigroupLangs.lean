@@ -76,7 +76,7 @@ variable {V}
 /-- A coarser syntactic congruence keeps the language in `V.langs`. -/
 private theorem langs_of_syntacticSemigroupCon_le {M : Language α} (h : V.langs L)
     (hle : L.syntacticSemigroupCon ≤ M.syntacticSemigroupCon) : V.langs M := by
-  haveI : Finite L.syntacticMonoid := finite_syntacticMonoid h.1
+  haveI : Finite L.syntacticMonoid := IsRegular.finite_syntacticMonoid h.1
   have hsurj : Function.Surjective
       (Con.mapMulHom L.syntacticSemigroupCon M.syntacticSemigroupCon hle) :=
     Con.mapMulHom_surjective _ _ hle
@@ -99,9 +99,9 @@ subsemigroup of `L.syntacticSemigroup × M.syntacticSemigroup`, which is in `V` 
 `prod`/`sub`/`quot`. -/
 theorem langs_inf {M : Language α} (hL : V.langs L) (hM : V.langs M) : V.langs (L ⊓ M) := by
   refine ⟨hL.1.inf hM.1, ?_⟩
-  haveI : Finite L.syntacticMonoid := finite_syntacticMonoid hL.1
-  haveI : Finite M.syntacticMonoid := finite_syntacticMonoid hM.1
-  haveI : Finite (L ⊓ M).syntacticMonoid := finite_syntacticMonoid (hL.1.inf hM.1)
+  haveI : Finite L.syntacticMonoid := IsRegular.finite_syntacticMonoid hL.1
+  haveI : Finite M.syntacticMonoid := IsRegular.finite_syntacticMonoid hM.1
+  haveI : Finite (L ⊓ M).syntacticMonoid := IsRegular.finite_syntacticMonoid (hL.1.inf hM.1)
   set φ := L.toSyntacticSemigroup.prod M.toSyntacticSemigroup with hφ
   haveI : Finite (Con.ker φ).Quotient := .of_injective _ (Con.kerLiftMulHom_injective φ)
   have hker : V.mem (Con.ker φ).Quotient :=
@@ -149,7 +149,7 @@ semigroup has no erasing morphisms. -/
 theorem langs_comap {β : Type u} {Lb : Language β} (h : V.langs Lb)
     (φ : FreeSemigroup α →ₙ* FreeSemigroup β) :
     V.langs {w : List α | ∃ u : FreeSemigroup α, u.toList = w ∧ (φ u).toList ∈ Lb} := by
-  haveI : Finite Lb.syntacticMonoid := finite_syntacticMonoid h.1
+  haveI : Finite Lb.syntacticMonoid := IsRegular.finite_syntacticMonoid h.1
   refine V.langs_of_recognizes h.2 (Lb.toSyntacticSemigroup.comp φ)
     {m | ∃ u : FreeSemigroup β, Lb.toSyntacticSemigroup u = m ∧ u.toList ∈ Lb} ?_
   intro w

@@ -65,10 +65,7 @@ theorem syntacticSemigroupCon_iff {u v : FreeSemigroup α} :
 
 /-- The **syntactic semigroup** of `L`: the quotient of `FreeSemigroup α` by the syntactic
 congruence. -/
-def syntacticSemigroup : Type _ := (syntacticSemigroupCon L).Quotient
-
-instance : Semigroup (syntacticSemigroup L) :=
-  inferInstanceAs (Semigroup (syntacticSemigroupCon L).Quotient)
+abbrev syntacticSemigroup : Type _ := (syntacticSemigroupCon L).Quotient
 
 /-- The canonical projection sending a nonempty word to its syntactic class. -/
 def toSyntacticSemigroup : FreeSemigroup α →ₙ* L.syntacticSemigroup :=
@@ -104,15 +101,9 @@ instance instFiniteSyntacticSemigroup [Finite L.syntacticMonoid] :
     Finite L.syntacticSemigroup :=
   .of_injective _ L.syntacticSemigroupToMonoid_injective
 
-/-- The quotient presentation of the syntactic semigroup inherits finiteness, so the closure
-proofs need not restate it. -/
-instance instFiniteSyntacticSemigroupConQuotient [Finite L.syntacticMonoid] :
-    Finite (syntacticSemigroupCon L).Quotient :=
-  inferInstanceAs (Finite L.syntacticSemigroup)
-
 /-- A regular language has a finite syntactic semigroup. -/
 theorem finite_syntacticSemigroup (h : L.IsRegular) : Finite L.syntacticSemigroup :=
-  haveI := finite_syntacticMonoid h
+  haveI := IsRegular.finite_syntacticMonoid h
   inferInstance
 
 /-- The syntactic congruence is complement-invariant, as on the monoid side. -/
@@ -136,7 +127,7 @@ theorem isRegular_iff_finite_syntacticSemigroup :
     L.IsRegular ↔ Finite L.syntacticSemigroup :=
   ⟨L.finite_syntacticSemigroup,
    fun _ =>
-     isRegular_of_finite_syntacticMonoid L.finite_syntacticMonoid_of_finite_syntacticSemigroup⟩
+     IsRegular.of_finite_syntacticMonoid L.finite_syntacticMonoid_of_finite_syntacticSemigroup⟩
 
 theorem isRegular_of_finite_syntacticSemigroup (h : Finite L.syntacticSemigroup) : L.IsRegular :=
   L.isRegular_iff_finite_syntacticSemigroup.2 h
