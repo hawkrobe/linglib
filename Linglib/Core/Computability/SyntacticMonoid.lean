@@ -148,9 +148,8 @@ variable {M : Type*} [Monoid M] {φ : FreeMonoid α →* M}
 
 theorem ker_le_syntacticCon_of_recognizes (hrec : Recognizes φ L) :
     Con.ker φ ≤ syntacticCon L := by
-  intro u v huv
-  rw [syntacticCon_iff]
   obtain ⟨S, rfl⟩ := hrec
+  intro u v huv
   change ∀ x y : FreeMonoid α, x * u * y ∈ φ ⁻¹' S ↔ x * v * y ∈ φ ⁻¹' S
   intro x y
   simp [Con.ker_apply.mp huv]
