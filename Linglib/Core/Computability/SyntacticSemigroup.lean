@@ -15,11 +15,14 @@ import Mathlib.Data.Fintype.Option
 # The syntactic semigroup of a language
 
 The *syntactic semigroup* of `L : Language α` is the quotient of the free semigroup `FreeSemigroup
-α` — the nonempty words — by the syntactic congruence. It is the primary algebraic invariant of a
-language ([eilenberg-1976]): the syntactic monoid is obtained from it by adjoining an identity, and
-the classes `D`, `K`, `LI`, `N` are varieties of *semigroups*, not of monoids. Over the free monoid
-those classes collapse, since the definite condition applied to the idempotent `1` forces
-triviality; stating them on `FreeSemigroup α` is what avoids the collapse.
+α` — the nonempty words — by the syntactic congruence. It is the same congruence as
+`Language.syntacticCon`, read on `FreeSemigroup α` instead of `FreeMonoid α`; the two quotients are
+related by `M_A = S_A ∪ {1}` ([eilenberg-1976]), a union that is disjoint exactly when no nonempty
+word is equivalent to the empty one.
+
+It is the primary invariant for varieties: `D`, `K`, `LI` and `N` are varieties of *semigroups*,
+not of monoids. Over the free monoid they collapse, since the definite condition applied to the
+idempotent `1` forces triviality; stating them on `FreeSemigroup α` is what avoids the collapse.
 
 ## Main definitions
 
