@@ -66,9 +66,6 @@ variable {L} {u u' v v' w : List α}
 @[trans] theorem SyntacticEquiv.trans (h : L.SyntacticEquiv u v) (h' : L.SyntacticEquiv v w) :
     L.SyntacticEquiv u w := fun x y => (h x y).trans (h' x y)
 
-theorem SyntacticEquiv.compl_iff : Lᶜ.SyntacticEquiv u v ↔ L.SyntacticEquiv u v :=
-  forall_congr' fun _ => forall_congr' fun _ => not_iff_not
-
 theorem SyntacticEquiv.append (h : L.SyntacticEquiv u u') (h' : L.SyntacticEquiv v v') :
     L.SyntacticEquiv (u ++ v) (u' ++ v') := fun x y => by
   have h1 := h x (v ++ y)
@@ -78,6 +75,9 @@ theorem SyntacticEquiv.append (h : L.SyntacticEquiv u u') (h' : L.SyntacticEquiv
 
 theorem mem_iff_of_syntacticEquiv (h : L.SyntacticEquiv u v) : u ∈ L ↔ v ∈ L := by
   simpa using h [] []
+
+theorem SyntacticEquiv.compl_iff : Lᶜ.SyntacticEquiv u v ↔ L.SyntacticEquiv u v :=
+  forall_congr' fun _ => forall_congr' fun _ => not_iff_not
 
 end
 
