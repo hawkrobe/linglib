@@ -18,13 +18,10 @@ The *syntactic monoid* of a language `L : Language α` is the quotient of the fr
 `FreeMonoid α` by the *syntactic congruence*: two words are identified when no two-sided context
 distinguishes them as `L`-members, `∀ x y, x ++ u ++ y ∈ L ↔ x ++ v ++ y ∈ L`.
 
-The syntactic congruence is defined directly as this two-sided context equivalence, and identified
-with the kernel of the minimal DFA's transition action (the *transition monoid* of `L.toDFA`, see
-`Linglib.Core.Computability.TransitionMonoid`) via `Language.syntacticCon_eq_ker_transitionHom`.
-This is the two-sided refinement of `Mathlib.Computability.MyhillNerode`, which builds the one-sided
-right-Nerode quotient (`Language.leftQuotient`) and proves regularity ↔ finitely many left
-quotients. It carries a *monoid* structure rather than just a set of states, and its Myhill–Nerode
-theorem reads `L.IsRegular ↔ Finite L.syntacticMonoid`.
+It is the coarsest congruence saturating `L`, so every recognizing homomorphism factors through it,
+and it is finite exactly when `L` is regular. This is the two-sided refinement of the one-sided
+right-Nerode quotient `Language.leftQuotient`, carrying a monoid structure rather than a bare set
+of states.
 
 ## Main definitions
 
