@@ -180,12 +180,13 @@ theorem recognizes_transitionHom {σ : Type*} (M : DFA α σ) :
 
 /-- The intrinsic syntactic congruence is the kernel of the minimal DFA's transition action. -/
 theorem syntacticCon_eq_ker_transitionHom : L.syntacticCon = Con.ker L.toDFA.transitionHom := by
-  refine le_antisymm (fun {u v} h => L.toDFA.transitionHom_eq_iff.mpr fun s => ?_) ?_
-  · obtain ⟨x, hx⟩ := s.2
-    refine Subtype.ext ?_
-    rw [evalFrom_toDFA, evalFrom_toDFA, ← hx, ← leftQuotient_append, ← leftQuotient_append]
-    exact Set.ext fun y => h x y
-  · simpa using ker_le_syntacticCon_of_recognizes (recognizes_transitionHom L.toDFA)
+  refine le_antisymm ?_ (by simpa using
+    ker_le_syntacticCon_of_recognizes (recognizes_transitionHom L.toDFA))
+  intro u v h
+  refine L.toDFA.transitionHom_eq_iff.mpr fun s => ?_
+  obtain ⟨x, hx⟩ := s.2
+  simp only [Subtype.ext_iff, evalFrom_toDFA, ← hx, ← leftQuotient_append]
+  exact Set.ext (h x)
 
 /-! ### Myhill–Nerode -/
 
