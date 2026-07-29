@@ -28,22 +28,23 @@ theorem reads `L.IsRegular ↔ Finite L.syntacticMonoid`.
 
 ## Main definitions
 
-* `Language.syntacticCon L : Con (FreeMonoid α)`: the syntactic congruence (two-sided context
-  equivalence).
-* `Language.syntacticMonoid L`: the quotient monoid `(syntacticCon L).Quotient`.
-* `Language.toSyntacticMonoid L`: the projection `FreeMonoid α →* L.syntacticMonoid`.
-* `Language.syntacticClass L w`: the syntactic class of a word `w : List α`.
-* `Language.Recognizes φ L`: `φ` recognizes `L`, i.e. `L` is a union of `φ`-fibres.
+- `Language.syntacticCon`: the syntactic congruence, two-sided context equivalence
+- `Language.syntacticMonoid`: the quotient monoid `(syntacticCon L).Quotient`
+- `Language.toSyntacticMonoid`: the projection `FreeMonoid α →* L.syntacticMonoid`
+- `Language.syntacticClass`: the syntactic class of a word
+- `Language.Recognizes`: `φ` recognizes `L`, i.e. `L` is a union of `φ`-fibres
 
-## Main results
+## Main theorems
 
-* `Language.syntacticClass_eq_iff`: two words share a syntactic class iff no two-sided context
-  distinguishes them, `∀ x y, x ++ u ++ y ∈ L ↔ x ++ v ++ y ∈ L`.
-* `Language.syntacticCon_eq_ker_transitionHom`: the intrinsic congruence is the kernel of the
-  transition action of `L.toDFA`.
-* `Language.ker_le_syntacticCon_of_recognizes`: the syntactic congruence is the coarsest congruence
-  recognizing `L`, so every recognizing hom factors through `toSyntacticMonoid` via `Con.lift`.
-* `Language.isRegular_iff_finite_syntacticMonoid`: the Myhill–Nerode theorem in monoid form.
+- `Language.recognizes_iff_ker_le_syntacticCon`: the universal property — a hom recognizes `L`
+  exactly when its kernel refines the syntactic congruence
+- `Language.syntacticCon_eq_ker_transitionHom`: the intrinsic congruence is the kernel of the
+  transition action of `L.toDFA`
+- `Language.isRegular_iff_finite_syntacticMonoid`: the Myhill–Nerode theorem in monoid form
+
+## References
+
+* [pin-mfa]
 -/
 
 namespace Language
@@ -100,7 +101,6 @@ theorem syntacticCon_iff {u v : FreeMonoid α} :
   Iff.rfl
 
 variable {L} in
-
 /-- Words congruent under the syntactic congruence agree on membership of `L`: `L` is saturated by
 `syntacticCon L` (take the empty two-sided context). -/
 theorem mem_iff_of_syntacticCon {u v : FreeMonoid α} (h : L.syntacticCon u v) :
@@ -114,7 +114,6 @@ instance : Monoid (syntacticMonoid L) := inferInstanceAs (Monoid (syntacticCon L
 /-- The canonical projection sending each word to its syntactic class; the underlying `Con.mk'`. -/
 def toSyntacticMonoid : FreeMonoid α →* L.syntacticMonoid := (syntacticCon L).mk'
 
-/-- The syntactic projection identifies two words iff they are syntactically congruent. -/
 theorem toSyntacticMonoid_eq_iff {u v : FreeMonoid α} :
     L.toSyntacticMonoid u = L.toSyntacticMonoid v ↔ L.syntacticCon u v :=
   Con.eq _
@@ -136,7 +135,6 @@ theorem syntacticClass_surjective : Function.Surjective L.syntacticClass := fun 
   exact ⟨u.toList, congrArg L.toSyntacticMonoid (FreeMonoid.ofList_toList u)⟩
 
 variable {L} in
-
 /-- Word-level form of `syntacticCon_iff`: two words share a syntactic class iff no two-sided
 context distinguishes them as `L`-members. -/
 theorem syntacticClass_eq_iff {u v : List α} : L.syntacticClass u = L.syntacticClass v ↔
@@ -144,14 +142,11 @@ theorem syntacticClass_eq_iff {u v : List α} : L.syntacticClass u = L.syntactic
   simp only [syntacticClass, toSyntacticMonoid_eq_iff, syntacticCon_iff, FreeMonoid.toList_ofList]
 
 variable {L} in
-
-/-- `L` is saturated by syntactic class: equal class implies equal membership. -/
 theorem mem_iff_of_syntacticClass_eq {u v : List α}
     (h : L.syntacticClass u = L.syntacticClass v) : u ∈ L ↔ v ∈ L := by
   simpa using syntacticClass_eq_iff.mp h [] []
 
 variable {L} in
-
 /-- **Reverse duality**: a syntactic-class equality in `L.reverse` is the same as the
 reversed-word equality in `L`. The syntactic monoid of `L.reverse` is `L`'s, opposite. -/
 theorem syntacticClass_reverse_eq_iff {u v : List α} :
