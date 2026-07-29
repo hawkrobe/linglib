@@ -7,6 +7,8 @@ Authors: Robert Hawkins
 `Mathlib.Computability.MyhillNerode`'s residual program to the two-sided
 congruence.
 -/
+import Mathlib.Computability.MyhillNerode
+import Mathlib.Data.Set.Finite.Range
 import Linglib.Core.Computability.TransitionMonoid
 
 /-!
