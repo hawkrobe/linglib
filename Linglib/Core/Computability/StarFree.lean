@@ -95,7 +95,7 @@ theorem IsStarFree.comap {α β : Type*} {L : Language β} (h : L.IsStarFree)
   refine IsStarFree.of_recognizes (M := L.syntacticMonoid) h.2 (L.toSyntacticMonoid.comp φ)
     {m | ∃ u : FreeMonoid β, L.toSyntacticMonoid u = m ∧ u ∈ L} fun w => ?_
   refine ⟨fun hw => ⟨φ (FreeMonoid.ofList w), rfl, hw⟩, fun ⟨u, hu, hmem⟩ => ?_⟩
-  exact (mem_iff_of_syntacticCon ((toSyntacticMonoid_eq_iff (L := L)).mp hu)).mp hmem
+  exact (mem_iff_of_syntacticEquiv ((toSyntacticMonoid_eq_iff (L := L)).mp hu)).mp hmem
 
 /-- **The full language is star-free** — recognized by the trivial monoid. -/
 theorem isStarFree_univ : IsStarFree (Set.univ : Language α) :=
