@@ -17,11 +17,17 @@ import Mathlib.GroupTheory.Congruence.Hom
 
 The *transition monoid* of an automaton is the monoid of state-transformations induced by input
 words — foundational algebraic automata theory (syntactic monoid, Schützenberger's theorem,
-Eilenberg variety theory), currently absent from mathlib.
+Eilenberg variety theory), currently absent from mathlib. Following [pin-mfa], it is defined as the
+range of the morphism carrying a word to the transformation it induces on the states.
 
 A word `w` acts on a state `s` of `M : DFA α σ` by `s ↦ M.evalFrom s w`. Reading `u` then `v`
-(`evalFrom_of_append`) makes this a *right* action — an anti-homomorphism into `Function.End σ` —
-so as a `MonoidHom` its target is the opposite monoid `(Function.End σ)ᵐᵒᵖ`.
+(`evalFrom_of_append`) makes this a *right* action, written `q · u` in the literature. Since
+`Function.End` composes on the left, that is an anti-homomorphism, so as a `MonoidHom` the target
+is the opposite monoid `(Function.End σ)ᵐᵒᵖ`.
+
+One convention differs: [pin-mfa] takes automata to be partial, so its transition monoid sits in
+the monoid of *partial* transformations. Mathlib's `DFA` has a total `step`, making the induced
+transformations total, so `Function.End σ` is the right target here.
 
 ## Main definitions
 
