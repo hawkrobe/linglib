@@ -157,7 +157,7 @@ theorem eilenberg_galoisConnection :
   · -- `langToVariety 𝒱 ≤ V` ⟹ `𝒱 ≤ varietyToLang V`.
     intro hle α L h𝒱L
     have hreg : L.IsRegular := 𝒱.regular h𝒱L
-    haveI : Finite L.syntacticMonoid := Language.finite_syntacticMonoid hreg
+    haveI : Finite L.syntacticMonoid := Language.IsRegular.finite_syntacticMonoid hreg
     have hgen : (langToVariety 𝒱).mem L.syntacticMonoid :=
       Pseudovariety.subset_generated ⟨α, L, h𝒱L, ⟨MulEquiv.refl _⟩⟩
     exact ⟨hreg, hle L.syntacticMonoid hgen⟩
@@ -167,7 +167,7 @@ theorem eilenberg_galoisConnection :
     intro N _ _ hSN
     obtain ⟨α, L, h𝒱L, ⟨e⟩⟩ := hSN
     have hVmem : V.mem L.syntacticMonoid := (hle α L h𝒱L).2
-    haveI : Finite L.syntacticMonoid := Language.finite_syntacticMonoid (𝒱.regular h𝒱L)
+    haveI : Finite L.syntacticMonoid := Language.IsRegular.finite_syntacticMonoid (𝒱.regular h𝒱L)
     haveI : Finite N := Finite.of_equiv _ e.symm.toEquiv
     exact V.mem_of_mulEquiv e.symm hVmem
 
@@ -262,7 +262,7 @@ theorem mem_langToVariety_varietyToLang (V : Pseudovariety.{u}) {M : Type u} [Mo
   -- Each fibre language lies in `V.langs`, recognized by the finite monoid `M ∈ V`.
   have hlangs : ∀ m, V.langs (Lm m) := fun m => V.langs_of_recognizes hM φ {m} (fun _ => Iff.rfl)
   haveI : ∀ m, Finite (Lm m).syntacticMonoid := fun m =>
-    Language.finite_syntacticMonoid (hlangs m).1
+    Language.IsRegular.finite_syntacticMonoid (hlangs m).1
   -- Each fibre's syntactic monoid is a generator, hence in any `W` containing the generators.
   intro W hW
   have hWsyn : ∀ m, W.mem (Lm m).syntacticMonoid := fun m =>

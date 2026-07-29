@@ -83,7 +83,7 @@ theorem IsStarFree.of_recognizes {M : Type*} [Monoid M] [Finite M]
     Finite.of_equiv _ (Con.quotientKerEquivRange η).symm.toEquiv
   have hsurj : Function.Surjective (Con.map (Con.ker η) L.syntacticCon hle) :=
     Con.lift_surjective_of_surjective _ Con.mk'_surjective
-  exact ⟨isRegular_of_finite_syntacticMonoid (Finite.of_surjective _ hsurj),
+  exact ⟨IsRegular.of_finite_syntacticMonoid (Finite.of_surjective _ hsurj),
     hker.of_surjective hsurj⟩
 
 /-- **Star-free languages are closed under inverse homomorphism.** The engine for transferring a
@@ -91,7 +91,7 @@ star-free upper bound across a string-rewriting projection (e.g. tier erasure: `
 theorem IsStarFree.comap {α β : Type*} {L : Language β} (h : L.IsStarFree)
     (φ : FreeMonoid α →* FreeMonoid β) :
     Language.IsStarFree {w : List α | φ (FreeMonoid.ofList w) ∈ L} := by
-  have : Finite L.syntacticMonoid := finite_syntacticMonoid h.1
+  have : Finite L.syntacticMonoid := IsRegular.finite_syntacticMonoid h.1
   refine IsStarFree.of_recognizes (M := L.syntacticMonoid) h.2 (L.toSyntacticMonoid.comp φ)
     {m | ∃ u : FreeMonoid β, L.toSyntacticMonoid u = m ∧ u ∈ L} fun w => ?_
   refine ⟨fun hw => ⟨φ (FreeMonoid.ofList w), rfl, hw⟩, fun ⟨u, hu, hmem⟩ => ?_⟩
