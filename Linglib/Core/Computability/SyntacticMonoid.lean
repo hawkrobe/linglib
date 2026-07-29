@@ -91,14 +91,11 @@ def syntacticCon : Con (FreeMonoid α) where
   iseqv := ⟨fun _ => .refl _, .symm, .trans⟩
   mul' hab hcd := hab.append hcd
 
-/-- The syntactic congruence is two-sided context equivalence — by definition. -/
 theorem syntacticCon_iff {u v : FreeMonoid α} :
     L.syntacticCon u v ↔ ∀ x y, x ++ u.toList ++ y ∈ L ↔ x ++ v.toList ++ y ∈ L :=
   Iff.rfl
 
 variable {L} in
-/-- Words congruent under the syntactic congruence agree on membership of `L`: `L` is saturated by
-`syntacticCon L` (take the empty two-sided context). -/
 theorem mem_iff_of_syntacticCon {u v : FreeMonoid α} (h : L.syntacticCon u v) :
     u ∈ L ↔ v ∈ L := mem_iff_of_syntacticEquiv h
 
@@ -181,7 +178,6 @@ theorem recognizes_iff_ker_le_syntacticCon {M : Type*} [Monoid M] {φ : FreeMono
     Recognizes φ L ↔ Con.ker φ ≤ syntacticCon L :=
   ⟨ker_le_syntacticCon_of_recognizes, recognizes_of_ker_le_syntacticCon⟩
 
-/-- The syntactic morphism is itself an `L`-recognizer (the canonical one). -/
 theorem recognizes_toSyntacticMonoid : Recognizes L.toSyntacticMonoid L :=
   recognizes_of_ker_le_syntacticCon (Con.mk'_ker _).le
 
@@ -193,8 +189,6 @@ theorem recognizes_transitionHom {σ : Type*} (M : DFA α σ) :
     Recognizes M.transitionHom M.accepts :=
   ⟨{t | t.unop M.start ∈ M.accept}, rfl⟩
 
-/-- Evaluating the minimal DFA `L.toDFA` from a quotient state `s` along `w` lands on the left
-quotient of `s` by `w`. -/
 @[simp] theorem evalFrom_toDFA (s : Set.range L.leftQuotient) (w : List α) :
     (L.toDFA.evalFrom s w).val = s.val.leftQuotient w := by
   induction w using List.reverseRecOn <;>
