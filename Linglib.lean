@@ -131,6 +131,7 @@ import Linglib.Core.Data.RoseTree.Perm
 import Linglib.Core.Data.RoseTree.Traversable
 import Linglib.Core.Data.Setoid.Basic
 import Linglib.Core.GroupTheory.Congruence.Hom
+import Linglib.Core.GroupTheory.Congruence.Syntactic
 import Linglib.Core.InformationTheory.KullbackLeibler.Basic
 import Linglib.Core.InformationTheory.KullbackLeibler.Cond
 import Linglib.Core.InformationTheory.MutualInformation
