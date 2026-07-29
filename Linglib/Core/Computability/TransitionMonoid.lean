@@ -15,26 +15,26 @@ import Mathlib.GroupTheory.Congruence.Hom
 /-!
 # The transition monoid of a DFA
 
-The *transition monoid* of an automaton is the monoid of state-transformations induced by input
-words — foundational algebraic automata theory (syntactic monoid, Schützenberger's theorem,
-Eilenberg variety theory), currently absent from mathlib. Following [pin-mfa], it is defined as the
-range of the morphism carrying a word to the transformation it induces on the states.
-
-A word `w` acts on a state `s` of `M : DFA α σ` by `s ↦ M.evalFrom s w`. Reading `u` then `v`
-(`evalFrom_of_append`) makes this a *right* action, written `q · u` in the literature. Since
-`Function.End` composes on the left, that is an anti-homomorphism, so as a `MonoidHom` the target
-is the opposite monoid `(Function.End σ)ᵐᵒᵖ`.
-
-One convention differs: [pin-mfa] takes automata to be partial, so its transition monoid sits in
-the monoid of *partial* transformations. Mathlib's `DFA` has a total `step`, making the induced
-transformations total, so `Function.End σ` is the right target here.
+Each word induces a transformation of the states of a DFA, and reading one word after another
+composes these transformations. The monoid they generate is the *transition monoid*, the basic
+algebraic invariant of an automaton [pin-mfa].
 
 ## Main definitions
 
-* `DFA.transitionHom`: the transition action `FreeMonoid α →* (Function.End σ)ᵐᵒᵖ`.
-* `DFA.transitionMonoid`: its range, a `Submonoid (Function.End σ)ᵐᵒᵖ`.
-* `DFA.transitionMonoidEquiv`: the first isomorphism theorem, presenting the transition monoid as
-  `(Con.ker M.transitionHom).Quotient`.
+- `DFA.transitionHom`: the monoid homomorphism sending a word to the transformation it induces
+- `DFA.transitionMonoid`: the transition monoid, the range of `DFA.transitionHom`
+- `DFA.transitionMonoidEquiv`: the transition monoid as a quotient of `FreeMonoid α`
+
+## Implementation notes
+
+A word `w` acts on a state `s` by `s ↦ M.evalFrom s w`, and `evalFrom_of_append` makes this a
+*right* action, written `q · u` in the literature. Since `Function.End` composes on the left, that
+is an anti-homomorphism, so the target of `DFA.transitionHom` is the opposite monoid
+`(Function.End σ)ᵐᵒᵖ`.
+
+[pin-mfa] takes automata to be partial, so its transition monoid sits in the monoid of *partial*
+transformations. `DFA` has a total `step`, so the transformations here are total and the target is
+`Function.End σ`.
 -/
 
 universe u v
@@ -43,7 +43,7 @@ namespace DFA
 
 variable {α : Type u} {σ : Type v} (M : DFA α σ)
 
-/-- The transition action of `M`: word `w` sends state `s` to `M.evalFrom s w`. -/
+/-- `M.transitionHom w` is the transformation of states induced by the word `w`. -/
 def transitionHom : FreeMonoid α →* (Function.End σ)ᵐᵒᵖ where
   toFun w := MulOpposite.op fun s => M.evalFrom s w.toList
   map_one' := rfl
@@ -54,20 +54,20 @@ def transitionHom : FreeMonoid α →* (Function.End σ)ᵐᵒᵖ where
 theorem unop_transitionHom_apply (w : FreeMonoid α) (s : σ) :
     (M.transitionHom w).unop s = M.evalFrom s w.toList := rfl
 
-/-- Two words induce the same transition iff `evalFrom` agrees from every state. -/
 theorem transitionHom_eq_iff {u v : FreeMonoid α} : M.transitionHom u = M.transitionHom v ↔
     ∀ s : σ, M.evalFrom s u.toList = M.evalFrom s v.toList :=
   MulOpposite.unop_inj.symm.trans funext_iff
 
-/-- The transition monoid of `M`: the range of its transition action. -/
+/-- `M.transitionMonoid` is the monoid of transformations of the states of `M` induced by words. -/
 def transitionMonoid : Submonoid (Function.End σ)ᵐᵒᵖ := MonoidHom.mrange M.transitionHom
 
-/-- First isomorphism theorem: the transition monoid as a quotient of `FreeMonoid α`. -/
+/-- `M.transitionMonoidEquiv` presents the transition monoid as a quotient of `FreeMonoid α`, by
+the first isomorphism theorem. -/
 noncomputable def transitionMonoidEquiv :
     (Con.ker M.transitionHom).Quotient ≃* M.transitionMonoid :=
   Con.quotientKerEquivRange _
 
-instance instFiniteTransitionMonoid [Finite σ] : Finite (transitionMonoid M) :=
+instance instFiniteTransitionMonoid [Finite σ] : Finite M.transitionMonoid :=
   inferInstanceAs (Finite (MonoidHom.mrange M.transitionHom))
 
 end DFA
