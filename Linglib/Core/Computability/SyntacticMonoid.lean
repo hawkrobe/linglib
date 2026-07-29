@@ -202,35 +202,27 @@ theorem IsRegular.of_finite_syntacticMonoid (h : Finite L.syntacticMonoid) : L.I
     Quot.lift (fun w => L.leftQuotient w.toList) fun _ _ huv => Set.ext (huv [])
   exact (Set.finite_range g).subset fun _ ⟨x, hx⟩ => ⟨Quot.mk _ (FreeMonoid.ofList x), hx⟩
 
-/-- **Myhill–Nerode**, syntactic-monoid form: `L` is regular iff `L.syntacticMonoid` is finite. -/
+/-- `L` is regular iff `L.syntacticMonoid` is finite. -/
 theorem isRegular_iff_finite_syntacticMonoid : L.IsRegular ↔ Finite L.syntacticMonoid :=
   ⟨IsRegular.finite_syntacticMonoid, IsRegular.of_finite_syntacticMonoid⟩
 
-/-! ### Complement- and intersection-invariance
+/-! ### Boolean combinations -/
 
-Generic syntactic-monoid facts about boolean combinations, used by any class defined through the
-syntactic monoid (e.g. `Language.IsStarFree`, and `Monoid.Pseudovariety.langs` in general). -/
-
-/-- The syntactic congruence is complement-invariant: a two-sided context distinguishes `u` from
-`v` for `L` exactly when it does for `Lᶜ`. -/
 theorem syntacticCon_compl (L : Language α) : Lᶜ.syntacticCon = L.syntacticCon :=
   Con.ext fun _ _ => SyntacticEquiv.compl_iff
 
-/-- The meet of the two syntactic congruences refines that of the intersection: if no `L`-context
-and no `M`-context distinguishes `u` from `v`, then no `(L ⊓ M)`-context does either. -/
 theorem inf_syntacticCon_le_syntacticCon_inf (L M : Language α) :
     L.syntacticCon ⊓ M.syntacticCon ≤ (L ⊓ M).syntacticCon :=
   fun {_ _} huv x y => and_congr (huv.1 x y) (huv.2 x y)
 
-/-- The kernel of the pairing of the two syntactic morphisms is exactly the meet of the two
-syntactic congruences (a word's class in the product is the pair of its classes). -/
 theorem ker_prod_toSyntacticMonoid (L M : Language α) :
     Con.ker (L.toSyntacticMonoid.prod M.toSyntacticMonoid) =
       L.syntacticCon ⊓ M.syntacticCon :=
   Con.ext fun _ _ => by simp [Prod.ext_iff, toSyntacticMonoid_eq_iff, Con.inf_iff_and]
 
-/-- The **right quotient** `L u⁻¹` is the set of words that land in `L` when `u` is appended. The
-left quotient is mathlib's `Language.leftQuotient`. -/
+/-! ### Right quotient -/
+
+/-- The *right quotient* `L u⁻¹` is the set of words that land in `L` when `u` is appended. -/
 def rightQuotient (L : Language α) (u : List α) : Language α := {w | w ++ u ∈ L}
 
 @[simp] theorem mem_rightQuotient {L : Language α} {u w : List α} :
