@@ -76,7 +76,6 @@ theorem SyntacticEquiv.append (h : L.SyntacticEquiv u u') (h' : L.SyntacticEquiv
   simp only [← List.append_assoc] at h1 h2 ⊢
   exact h1.trans h2
 
-/-- Syntactically equivalent words agree on membership: take the empty context. -/
 theorem mem_iff_of_syntacticEquiv (h : L.SyntacticEquiv u v) : u ∈ L ↔ v ∈ L := by
   simpa using h [] []
 
@@ -161,8 +160,6 @@ theorem ker_le_syntacticCon_of_recognizes {M : Type*} [Monoid M] {φ : FreeMonoi
   intro x y
   simp only [Set.mem_preimage, map_mul, Con.ker_apply.mp huv]
 
-/-- Conversely, any hom whose kernel refines `syntacticCon L` recognizes `L`
-(witness `S = φ '' L`). -/
 theorem recognizes_of_ker_le_syntacticCon {M : Type*} [Monoid M] {φ : FreeMonoid α →* M}
     (h : Con.ker φ ≤ syntacticCon L) : Recognizes φ L := by
   refine ⟨φ '' L, Set.ext fun w => ⟨fun hw => ⟨w, hw, rfl⟩, ?_⟩⟩
