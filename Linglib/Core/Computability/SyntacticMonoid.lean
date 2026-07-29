@@ -51,8 +51,7 @@ variable {α : Type*} (L : Language α)
 /-! ### The syntactic congruence and monoid -/
 
 /-- Two words are **syntactically equivalent** for `L` when no two-sided context distinguishes
-them as `L`-members. Both syntactic congruences — on `FreeMonoid α` here and on `FreeSemigroup α`
-in `Language.syntacticSemigroupCon` — are this one relation, read on their respective carriers. -/
+them as `L`-members. -/
 def SyntacticEquiv (u v : List α) : Prop := ∀ x y : List α, x ++ u ++ y ∈ L ↔ x ++ v ++ y ∈ L
 
 variable {L}
@@ -131,19 +130,18 @@ theorem syntacticClass_surjective : Function.Surjective L.syntacticClass := fun 
   obtain ⟨u, rfl⟩ := Quotient.exists_rep s
   exact ⟨u.toList, congrArg L.toSyntacticMonoid (FreeMonoid.ofList_toList u)⟩
 
-variable {L} in
+variable {L}
+
 /-- Word-level form of `syntacticCon_iff`: two words share a syntactic class iff no two-sided
 context distinguishes them as `L`-members. -/
 theorem syntacticClass_eq_iff {u v : List α} : L.syntacticClass u = L.syntacticClass v ↔
     ∀ x y, x ++ u ++ y ∈ L ↔ x ++ v ++ y ∈ L := by
   simp only [syntacticClass, toSyntacticMonoid_eq_iff, syntacticCon_iff, FreeMonoid.toList_ofList]
 
-variable {L} in
 theorem mem_iff_of_syntacticClass_eq {u v : List α}
     (h : L.syntacticClass u = L.syntacticClass v) : u ∈ L ↔ v ∈ L := by
   simpa using syntacticClass_eq_iff.mp h [] []
 
-variable {L} in
 /-- **Reverse duality**: a syntactic-class equality in `L.reverse` is the same as the
 reversed-word equality in `L`. The syntactic monoid of `L.reverse` is `L`'s, opposite. -/
 theorem syntacticClass_reverse_eq_iff {u v : List α} :
@@ -156,8 +154,6 @@ theorem syntacticClass_reverse_eq_iff {u v : List α} :
         List.append_assoc] using this
 
 /-! ### Universal property -/
-
-variable {L}
 
 /-- `φ` *recognizes* `L` when `L` is a union of `φ`-fibres, i.e. `L = φ ⁻¹' S` for some
 `S ⊆ M`. -/
