@@ -83,8 +83,8 @@ theorem mem_iff_of_syntacticEquiv {u v : List α} (h : L.SyntacticEquiv u v) : u
 
 variable (L)
 
-/-- The *syntactic congruence* of `L`: two words are congruent when no two-sided context
-distinguishes them as `L`-members. -/
+/-- The *syntactic congruence* of `L` identifies two words when no two-sided context distinguishes
+them as `L`-members. -/
 def syntacticCon : Con (FreeMonoid α) where
   r u v := L.SyntacticEquiv u.toList v.toList
   iseqv := ⟨fun _ => .refl _, .symm, .trans⟩
@@ -101,7 +101,7 @@ variable {L} in
 theorem mem_iff_of_syntacticCon {u v : FreeMonoid α} (h : L.syntacticCon u v) :
     u ∈ L ↔ v ∈ L := mem_iff_of_syntacticEquiv h
 
-/-- The *syntactic monoid* of `L`: the quotient of `FreeMonoid α` by the syntactic congruence. -/
+/-- The *syntactic monoid* of `L` is the quotient of `FreeMonoid α` by the syntactic congruence. -/
 abbrev syntacticMonoid : Type _ := (syntacticCon L).Quotient
 
 /-- The canonical projection sending each word to its syntactic class; the underlying `Con.mk'`. -/
@@ -113,8 +113,8 @@ theorem toSyntacticMonoid_eq_iff {u v : FreeMonoid α} :
 
 /-! ### The syntactic class of a word -/
 
-/-- The *syntactic class* of a word `w`: its image in the syntactic monoid (the literature's
-`η(w)`, applied to a `List α` rather than a bundled `FreeMonoid α`). -/
+/-- The *syntactic class* of a word `w` is its image in the syntactic monoid — the literature's
+`η(w)`, applied to a `List α` rather than a bundled `FreeMonoid α`. -/
 def syntacticClass (w : List α) : L.syntacticMonoid := L.toSyntacticMonoid (FreeMonoid.ofList w)
 
 @[simp] theorem syntacticClass_nil : L.syntacticClass [] = 1 := map_one _
@@ -127,8 +127,8 @@ theorem syntacticClass_surjective : Function.Surjective L.syntacticClass :=
 
 variable {L}
 
-/-- Word-level form of `syntacticCon_iff`: two words share a syntactic class iff no two-sided
-context distinguishes them as `L`-members. -/
+/-- Two words share a syntactic class iff no two-sided context distinguishes them as `L`-members,
+the word-level form of `syntacticCon_iff`. -/
 theorem syntacticClass_eq_iff {u v : List α} : L.syntacticClass u = L.syntacticClass v ↔
     ∀ x y, x ++ u ++ y ∈ L ↔ x ++ v ++ y ∈ L := by
   simp only [syntacticClass, toSyntacticMonoid_eq_iff, syntacticCon_iff, FreeMonoid.toList_ofList]
@@ -262,8 +262,8 @@ theorem ker_prod_toSyntacticMonoid (L M : Language α) :
       L.syntacticCon ⊓ M.syntacticCon :=
   Con.ext fun _ _ => by simp [Prod.ext_iff, toSyntacticMonoid_eq_iff, Con.inf_iff_and]
 
-/-- The **right quotient** `L u⁻¹`: the words that land in `L` when `u` is appended. The left
-quotient is mathlib's `Language.leftQuotient`. -/
+/-- The **right quotient** `L u⁻¹` is the set of words that land in `L` when `u` is appended. The
+left quotient is mathlib's `Language.leftQuotient`. -/
 def rightQuotient (L : Language α) (u : List α) : Language α := {w | w ++ u ∈ L}
 
 @[simp] theorem mem_rightQuotient {L : Language α} {u w : List α} :
