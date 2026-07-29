@@ -81,7 +81,7 @@ private theorem langs_of_syntacticSemigroupCon_le {M : Language α} (h : V.langs
       (Con.mapMulHom L.syntacticSemigroupCon M.syntacticSemigroupCon hle) :=
     Con.mapMulHom_surjective _ _ hle
   haveI : Finite M.syntacticSemigroup := .of_surjective _ hsurj
-  exact ⟨M.isRegular_of_finite_syntacticSemigroup ‹Finite M.syntacticSemigroup›,
+  exact ⟨IsRegular.of_finite_syntacticSemigroup ‹Finite M.syntacticSemigroup›,
     V.quot hsurj h.2⟩
 
 /-- **Closure under left quotient** — Eilenberg's axiom VII.3.3. -/
@@ -129,7 +129,7 @@ theorem langs_of_recognizes {T : Type u} [Semigroup T] [Finite T] (hT : V.mem T)
   have hkerMem : V.mem (Con.ker η).Quotient := V.sub (Con.kerLiftMulHom_injective η) hT
   have hsurj := Con.mapMulHom_surjective (Con.ker η) L.syntacticSemigroupCon hle
   haveI : Finite L.syntacticSemigroup := .of_surjective _ hsurj
-  exact ⟨L.isRegular_of_finite_syntacticSemigroup ‹_›, V.quot hsurj hkerMem⟩
+  exact ⟨IsRegular.of_finite_syntacticSemigroup ‹_›, V.quot hsurj hkerMem⟩
 
 /-- **The full language** — recognized by the trivial semigroup, which is in every
 pseudovariety. -/
