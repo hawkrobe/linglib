@@ -79,6 +79,12 @@ theorem SyntacticEquiv.append (h : L.SyntacticEquiv u u') (h' : L.SyntacticEquiv
 theorem SyntacticEquiv.compl_iff : Lᶜ.SyntacticEquiv u v ↔ L.SyntacticEquiv u v :=
   forall_congr' fun _ => forall_congr' fun _ => not_iff_not
 
+theorem SyntacticEquiv.reverse_iff :
+    L.reverse.SyntacticEquiv u v ↔ L.SyntacticEquiv u.reverse v.reverse := by
+  refine ⟨fun h x y => ?_, fun h x y => ?_⟩ <;>
+    simpa only [mem_reverse, List.reverse_append, List.reverse_reverse, List.append_assoc] using
+      h y.reverse x.reverse
+
 end
 
 section
@@ -133,12 +139,8 @@ theorem mem_iff_of_syntacticClass_eq (h : L.syntacticClass u = L.syntacticClass 
 in `L`. -/
 theorem syntacticClass_reverse_eq_iff :
     L.reverse.syntacticClass u = L.reverse.syntacticClass v ↔
-      L.syntacticClass u.reverse = L.syntacticClass v.reverse := by
-  rw [syntacticClass_eq_iff, syntacticClass_eq_iff]
-  refine ⟨fun h x y => ?_, fun h x y => ?_⟩ <;>
-    · have := h y.reverse x.reverse
-      simpa only [Language.mem_reverse, List.reverse_append, List.reverse_reverse,
-        List.append_assoc] using this
+      L.syntacticClass u.reverse = L.syntacticClass v.reverse :=
+  syntacticClass_eq_iff.trans (SyntacticEquiv.reverse_iff.trans syntacticClass_eq_iff.symm)
 
 /-! ### Universal property -/
 
