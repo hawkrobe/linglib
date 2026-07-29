@@ -58,7 +58,7 @@ theorem langs_of_recognizes {N : Type u} [Monoid N] [Finite N] (hN : V.mem N)
   have hsurj : Function.Surjective (Con.map (Con.ker η) L.syntacticCon hle) :=
     Con.lift_surjective_of_surjective _ Con.mk'_surjective
   haveI : Finite L.syntacticMonoid := Finite.of_surjective _ hsurj
-  exact ⟨isRegular_of_finite_syntacticMonoid ‹_›, V.quot hsurj hkerMem⟩
+  exact ⟨IsRegular.of_finite_syntacticMonoid ‹_›, V.quot hsurj hkerMem⟩
 
 /-- **Closure under complement** — immediate from complement-invariance of the syntactic monoid. -/
 theorem langs_compl (h : V.langs L) : V.langs Lᶜ := by
@@ -72,14 +72,14 @@ of `L.syntacticMonoid × M.syntacticMonoid`, which is in `V` by `prod`/`sub`/`qu
 theorem langs_inf {M : Language α} (hL : V.langs L) (hM : V.langs M) : V.langs (L ⊓ M) := by
   refine ⟨hL.1.inf hM.1, ?_⟩
   set φ := L.toSyntacticMonoid.prod M.toSyntacticMonoid with hφ
-  haveI : Finite L.syntacticMonoid := finite_syntacticMonoid hL.1
-  haveI : Finite M.syntacticMonoid := finite_syntacticMonoid hM.1
+  haveI : Finite L.syntacticMonoid := IsRegular.finite_syntacticMonoid hL.1
+  haveI : Finite M.syntacticMonoid := IsRegular.finite_syntacticMonoid hM.1
   have hprod : V.mem (L.syntacticMonoid × M.syntacticMonoid) := V.prod hL.2 hM.2
   haveI : Finite (Con.ker φ).Quotient := .of_injective _ (Con.kerLift_injective φ)
   have hker : V.mem (Con.ker φ).Quotient := V.sub (Con.kerLift_injective φ) hprod
   have hle : Con.ker φ ≤ (L ⊓ M).syntacticCon := by
     rw [hφ, ker_prod_toSyntacticMonoid]; exact inf_syntacticCon_le_syntacticCon_inf L M
-  haveI : Finite (L ⊓ M).syntacticMonoid := finite_syntacticMonoid (hL.1.inf hM.1)
+  haveI : Finite (L ⊓ M).syntacticMonoid := IsRegular.finite_syntacticMonoid (hL.1.inf hM.1)
   exact V.quot (f := Con.map (Con.ker φ) _ hle)
     (Con.lift_surjective_of_surjective _ Con.mk'_surjective) hker
 
@@ -105,7 +105,7 @@ recognizer is `Lb.toSyntacticMonoid.comp φ` into the finite `Lb.syntacticMonoid
 theorem langs_comap {β : Type u} {Lb : Language β} (h : V.langs Lb)
     (φ : FreeMonoid α →* FreeMonoid β) :
     V.langs {w : List α | φ (FreeMonoid.ofList w) ∈ Lb} := by
-  haveI : Finite Lb.syntacticMonoid := finite_syntacticMonoid h.1
+  haveI : Finite Lb.syntacticMonoid := IsRegular.finite_syntacticMonoid h.1
   refine V.langs_of_recognizes h.2 (Lb.toSyntacticMonoid.comp φ)
     {m | ∃ u : FreeMonoid β, Lb.toSyntacticMonoid u = m ∧ u ∈ Lb} fun w => ?_
   refine ⟨fun hw => ⟨φ (FreeMonoid.ofList w), rfl, hw⟩, fun ⟨u, hu, hmem⟩ => ?_⟩
@@ -137,13 +137,11 @@ variable {V}
 /-- A coarser syntactic congruence keeps the language in `V.langs`. -/
 private theorem langs_of_syntacticCon_le {M : Language α} (h : V.langs L)
     (hle : L.syntacticCon ≤ M.syntacticCon) : V.langs M := by
-  haveI : Finite L.syntacticMonoid := finite_syntacticMonoid h.1
-  haveI : Finite L.syntacticCon.Quotient := inferInstanceAs (Finite L.syntacticMonoid)
+  haveI : Finite L.syntacticMonoid := IsRegular.finite_syntacticMonoid h.1
   have hsurj : Function.Surjective (Con.map L.syntacticCon M.syntacticCon hle) :=
     Con.lift_surjective_of_surjective _ Con.mk'_surjective
   haveI : Finite M.syntacticMonoid := .of_surjective _ hsurj
-  haveI : Finite M.syntacticCon.Quotient := inferInstanceAs (Finite M.syntacticMonoid)
-  exact ⟨isRegular_of_finite_syntacticMonoid ‹_›, V.quot hsurj h.2⟩
+  exact ⟨IsRegular.of_finite_syntacticMonoid ‹_›, V.quot hsurj h.2⟩
 
 /-- **Closure under left quotient** — Eilenberg's axiom VII.3.3. -/
 theorem langs_leftQuotient (h : V.langs L) (u : List α) : V.langs (L.leftQuotient u) :=
