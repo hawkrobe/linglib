@@ -6,7 +6,7 @@ import Mathlib.Tactic.IntervalCases
 # Yolyan & Comer 2026: Phonological Processes as Modal Transductions
 
 [yolyan-comer-2026]: total BMRS — the Boolean monadic recursive schemes of
-[bhaskar-jardine-chandlee-oakden-2020], rendered by `Subregular.Logic.BMRS` — is
+[bhaskar-jardine-chandlee-oakden-2020], rendered by `Subregular.BMRS` — is
 expressively equivalent to the modal μ-calculus on words (Thm. 2), giving an
 alternative proof that order-preserving BMRS captures the rational functions. `Formula`/`System` render the paper's §4 vectorial presentation of
 [kozen-1983]'s μ-calculus over word models — a finite system of equations `Xⱼ = θⱼ`
@@ -31,7 +31,7 @@ shape of Thm. 8's induction.
 
 namespace YolyanComer2026
 
-open Subregular.Logic Subregular.Logic.BMRS
+open Subregular Subregular.BMRS
 
 variable {α : Type*} {n : ℕ}
 
@@ -200,7 +200,7 @@ def Sat (i : ℕ) : Prop := i ∈ χ.sem w χ.out
 end System
 
 /-- The single BMRS index variable. -/
-private abbrev x : Term Unit := .var ()
+private abbrev x : Term := .var
 
 /-! ### Segments and feature classes
 
@@ -403,35 +403,35 @@ theorem eval_tr [DecidableEq α] {P : Program α (Fin n)} {w : List α}
     by_cases h : i = 0
     · subst h
       rw [decide_eq_true (Formula.realize_initial.mpr rfl)]
-      exact .initial_true (by rw [tden_var hi])
+      exact .initial_true (by rw [Term.eval_var hi])
     · rw [decide_eq_false (h ∘ Formula.realize_initial.mp)]
-      exact .initial_false (tden_var hi) (by omega)
+      exact .initial_false (Term.eval_var hi) (by omega)
   | final =>
     intro i hi
     by_cases h : i + 1 = w.length
     · rw [decide_eq_true (Formula.realize_final.mpr h)]
-      exact .final_true (by rw [tden_var hi]; congr 1; omega)
+      exact .final_true (by rw [Term.eval_var hi]; congr 1; omega)
     · rw [decide_eq_false (h ∘ Formula.realize_final.mp)]
-      exact .final_false (tden_var hi) (by omega)
+      exact .final_false (Term.eval_var hi) (by omega)
   | label s =>
     intro i hi
     by_cases h : ∃ a ∈ s, w[i]? = some a
     · rw [decide_eq_true (Formula.realize_label.mpr h)]
       obtain ⟨a, has, ha⟩ := h
-      exact .label_true (tden_var hi) ha has
+      exact .label_true (Term.eval_var hi) ha has
     · rw [decide_eq_false (h ∘ Formula.realize_label.mp)]
       have hw : w[i]? = some (w[i]'hi) := List.getElem?_eq_getElem hi
-      exact .label_false (tden_var hi) hw fun has => h ⟨_, has, hw⟩
+      exact .label_false (Term.eval_var hi) hw fun has => h ⟨_, has, hw⟩
   | nlabel s =>
     intro i hi
     by_cases h : ∃ a ∈ s, w[i]? = some a
     · obtain ⟨a, has, ha⟩ := h
       rw [decide_eq_false fun hall => hall a has ha]
-      exact .ite_true (.label_true (tden_var hi) ha has) .fls
+      exact .ite_true (.label_true (Term.eval_var hi) ha has) .fls
     · rw [decide_eq_true (p := (Formula.nlabel s).Realize w U i)
         fun a has ha => h ⟨a, has, ha⟩]
       have hw : w[i]? = some (w[i]'hi) := List.getElem?_eq_getElem hi
-      exact .ite_false (.label_false (tden_var hi) hw fun has => h ⟨_, has, hw⟩) .tru
+      exact .ite_false (.label_false (Term.eval_var hi) hw fun has => h ⟨_, has, hw⟩) .tru
   | var X =>
     intro i hi
     have h := hcall X i hi
@@ -460,12 +460,12 @@ theorem eval_tr [DecidableEq α] {P : Program α (Fin n)} {w : List α}
         simp only [Formula.realize_dia, succ?_eq_some_iff]
         rintro ⟨j, ⟨rfl, hj⟩, -⟩
         omega)]
-      exact .ite_true (.final_true (by rw [tden_var hi]; congr 1; omega)) .fls
+      exact .ite_true (.final_true (by rw [Term.eval_var hi]; congr 1; omega)) .fls
     · have hsucc : i + 1 < w.length := by omega
       rw [show decide (φ.dia.Realize w U i) = decide (φ.Realize w U (i + 1)) from
         decide_eq_decide.mpr (by simp [succ?_eq_some_iff, hsucc])]
-      exact .ite_false (.final_false (tden_var hi) (by omega))
-        (Eval.subst (by rw [tden_succ_var, succ?, if_pos hsucc]) (ih hsucc))
+      exact .ite_false (.final_false (Term.eval_var hi) (by omega))
+        (Eval.subst (by rw [Term.eval_succ_var, succ?, if_pos hsucc]) (ih hsucc))
   | bdia φ ih =>
     intro i hi
     by_cases h : i = 0
@@ -474,13 +474,13 @@ theorem eval_tr [DecidableEq α] {P : Program α (Fin n)} {w : List α}
         simp only [Formula.realize_bdia, pred?_eq_some_iff]
         rintro ⟨j, ⟨hj, -⟩, -⟩
         omega)]
-      exact .ite_true (.initial_true (by rw [tden_var hi])) .fls
+      exact .ite_true (.initial_true (by rw [Term.eval_var hi])) .fls
     · obtain ⟨j, rfl⟩ : ∃ j, i = j + 1 := ⟨i - 1, by omega⟩
       have hj : j < w.length := by omega
       rw [show decide (φ.bdia.Realize w U (j + 1)) = decide (φ.Realize w U j) from
         decide_eq_decide.mpr (by simp [pred?_eq_some_iff, hj])]
-      exact .ite_false (.initial_false (tden_var hi) (by omega))
-        (Eval.subst (by rw [tden_pred_var hi]; simp [pred?, hj]) (ih hj))
+      exact .ite_false (.initial_false (Term.eval_var hi) (by omega))
+        (Eval.subst (by rw [Term.eval_pred_var hi]; simp [pred?, hj]) (ih hj))
 
 /-- Remark 7 run end-to-end on Warao: the translated program agrees with the modal
 semantics on /naote/ (`waraoU = waraoChi.sem naote` by `warao_sem`), the rule-head

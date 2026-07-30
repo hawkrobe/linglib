@@ -10,7 +10,7 @@ import Linglib.Studies.McCollumEtAl2020
 *simultaneous application* `P^L ⊙ P^R` of a backward and a forward BMRS program
 (Def. 5.1) — a definition inside the program formalism, which for the first time makes
 *non*-membership provable. The ambient formalism is the Boolean monadic recursive
-schemes of [bhaskar-jardine-chandlee-oakden-2020] (`Subregular.Logic.BMRS`), whose
+schemes of [bhaskar-jardine-chandlee-oakden-2020] (`Subregular.BMRS`), whose
 one-sided fragments `BMRSᵖ`/`BMRSˢ` characterize the left- and right-subsequential
 functions; [bhaskar-chandlee-jardine-2023] extends the characterization and
 [chandlee-jardine-2021] applies it to phonological modelling.
@@ -49,10 +49,10 @@ one-sided licensing conditions.
 
 namespace Yolyan2025
 
-open Subregular Subregular.Logic Subregular.Logic.BMRS
+open Subregular Subregular.BMRS
 
 /-- The single BMRS index variable. -/
-private abbrev x : Term Unit := .var ()
+private abbrev x : Term := .var
 
 variable {α : Type*} [DecidableEq α]
 

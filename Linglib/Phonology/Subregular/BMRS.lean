@@ -3,7 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Computability.QFLogic
+import Linglib.Phonology.Subregular.QF
 import Linglib.Core.Data.List.EqOn
 import Mathlib.Data.Finset.Basic
 
@@ -11,12 +11,11 @@ import Mathlib.Data.Finset.Basic
 # Boolean Monadic Recursive Schemes
 
 A **Boolean monadic recursive scheme** ([bhaskar-jardine-chandlee-oakden-2020]) is a program of
-mutually recursive Boolean-valued unary predicates over word models, built from `if…then…else`,
-the edge tests `initial`/`final` (`min`/`max`), input class tests, and recursive calls. Its
+mutually recursive Boolean-valued unary predicates over words, built from `if…then…else`, the
+edge tests `initial`/`final` (`min`/`max`), input class tests, and recursive calls. Its
 one-sided fragments characterize the left- and right-subsequential functions;
 [bhaskar-chandlee-jardine-2023] extends the characterization and [chandlee-jardine-2021] applies
-it to phonological modelling. Terms are the quantifier-free terms of `Subregular.Logic.Term` at a
-single index variable.
+it to phonological modelling. Terms are the position walks of `Subregular.Term`.
 
 Two symbol types dissolve the usual signature bookkeeping: input labels `α` get the
 lookup rule, rule heads `F` get the unfolding rule, and a `Program` is a total map
@@ -29,7 +28,6 @@ by `eval_iff_evalFuel`.
 ## Main definitions
 
 * `BMRS.Expr`, `BMRS.Program`: syntax.
-* `BMRS.tden`: term denotation at an index.
 * `BMRS.Eval`: the derivation system.
 * `BMRS.evalFuel`: the fuel-bounded evaluator.
 * `Expr.Backward` / `Program.Backward` (dually `Forward`): the one-sided fragments,
@@ -44,7 +42,7 @@ by `eval_iff_evalFuel`.
   there evaluate identically (dually for forward).
 -/
 
-namespace Subregular.Logic.BMRS
+namespace Subregular.BMRS
 
 open Set (EqOn Iic Ici mem_Iic mem_Ici)
 
@@ -56,14 +54,14 @@ variable {α F : Type*}
 input **class tests** `label` (the lookup rule; a `Finset` of symbols, so featural
 predicates like V or N over a segment alphabet are single atoms — a symbol test is the
 singleton case), rule-head calls `call` (the unfolding rule), and `if…then…else`.
-Terms are the single-variable quantifier-free terms of `Subregular.Logic.Term`. -/
+Terms are the position walks of `Subregular.Term`. -/
 inductive Expr (α F : Type*) where
   | tru
   | fls
-  | initial (t : Term Unit)
-  | final (t : Term Unit)
-  | label (s : Finset α) (t : Term Unit)
-  | call (f : F) (t : Term Unit)
+  | initial (t : Term)
+  | final (t : Term)
+  | label (s : Finset α) (t : Term)
+  | call (f : F) (t : Term)
   | ite (c e₁ e₂ : Expr α F)
   deriving DecidableEq
 
@@ -81,7 +79,7 @@ def Expr.not (e : Expr α F) : Expr α F := .ite e .fls .tru
 
 /-- Substitute a term for the variable throughout an expression: `e.subst u` is
 `e[u/x]`, the operation the μ-calculus translation writes `tr(φ)[s(x)]`. -/
-def Expr.subst : Expr α F → Term Unit → Expr α F
+def Expr.subst : Expr α F → Term → Expr α F
   | .tru, _ => .tru
   | .fls, _ => .fls
   | .initial t, u => .initial (t.comp u)
@@ -128,70 +126,6 @@ def Program.Backward (P : Program α F) : Prop := ∀ f, (P f).Backward
 /-- `BMRSˢ`: every rule body is forward. -/
 def Program.Forward (P : Program α F) : Prop := ∀ f, (P f).Forward
 
-/-! ### Term denotation -/
-
-/-- Denotation of a BMRS term at index `i` (the judgment `w, i ⊢ T → v`). -/
-def tden (w : List α) (i : ℕ) (t : Term Unit) : Option ℕ := t.eval w fun _ => i
-
-section TermDenotation
-
-variable {w : List α} {i v : ℕ} {t u : Term Unit}
-
-@[simp] theorem tden_succ :
-    tden w i t.succ = (tden w i t).bind (succ? w) := rfl
-
-@[simp] theorem tden_pred :
-    tden w i t.pred = (tden w i t).bind (pred? w) := rfl
-
-theorem tden_var_eq_some_iff : tden w i (.var ()) = some v ↔ v = i ∧ i < w.length := by
-  rw [tden, Term.eval]
-  split
-  · simp_all [eq_comm]
-  · simp_all
-
-/-- Term denotations are in-domain. -/
-theorem tden_lt : ∀ {t : Term Unit} {v : ℕ}, tden w i t = some v → v < w.length
-  | .var _, _, h => by
-    obtain ⟨rfl, hlt⟩ := tden_var_eq_some_iff.mp h
-    exact hlt
-  | .succ t, _, h => by
-    obtain ⟨u, -, hu⟩ := Option.bind_eq_some_iff.mp h
-    obtain ⟨rfl, hlt⟩ := succ?_eq_some_iff.mp hu
-    exact hlt
-  | .pred t, _, h => by
-    obtain ⟨u, -, hu⟩ := Option.bind_eq_some_iff.mp h
-    exact (pred?_eq_some_iff.mp hu).2
-
-/-- The variable denotes its own in-domain position. -/
-@[simp] theorem tden_var (h : i < w.length) : tden w i (.var ()) = some i := if_pos h
-
-/-- A one-step successor term denotes the successor position. -/
-@[simp] theorem tden_succ_var : tden w i ((Term.var ()).succ) = succ? w i := by
-  rcases lt_or_ge i w.length with h | h
-  · rw [tden_succ, tden_var h, Option.bind_some]
-  · rw [tden_succ, tden, Term.eval, if_neg (by simpa using h),
-      Option.bind_none, eq_comm, Option.eq_none_iff_forall_ne_some]
-    intro m hm
-    have := (succ?_eq_some_iff.mp hm).2
-    omega
-
-/-- A one-step predecessor term denotes the predecessor position (in-domain: off the
-right edge `pred?` is still defined at `w.length` but the variable is not). -/
-theorem tden_pred_var (h : i < w.length) : tden w i ((Term.var ()).pred) = pred? w i := by
-  rw [tden_pred, tden_var h, Option.bind_some]
-
-/-- Composed terms denote sequenced denotations. -/
-theorem tden_comp :
-    ∀ t u : Term Unit, tden w i (t.comp u) = (tden w i u).bind fun v => tden w v t
-  | .var _, u => by
-    cases hu : tden w i u with
-    | none => simp [Term.comp, hu]
-    | some v => simp [Term.comp, hu, tden_var (tden_lt hu)]
-  | .succ t, u => by simp only [Term.comp, tden_succ, tden_comp t u, Option.bind_assoc]
-  | .pred t, u => by simp only [Term.comp, tden_pred, tden_comp t u, Option.bind_assoc]
-
-end TermDenotation
-
 /-! ### The derivation system -/
 
 /-- The derivation system for BMRS expressions: `Eval P w i e b` is `w, i ⊢_P e → b`.
@@ -199,43 +133,43 @@ Partial by design: a non-halting program derives nothing. -/
 inductive Eval (P : Program α F) (w : List α) : ℕ → Expr α F → Bool → Prop
   | tru {i} : Eval P w i .tru true
   | fls {i} : Eval P w i .fls false
-  | initial_true {i t} (h : tden w i t = some 0) : Eval P w i (.initial t) true
-  | initial_false {i t v} (h : tden w i t = some v) (hv : 0 < v) :
+  | initial_true {i t} (h : t.eval w i = some 0) : Eval P w i (.initial t) true
+  | initial_false {i t v} (h : t.eval w i = some v) (hv : 0 < v) :
       Eval P w i (.initial t) false
-  | final_true {i t} (h : tden w i t = some (w.length - 1)) : Eval P w i (.final t) true
-  | final_false {i t v} (h : tden w i t = some v) (hv : v < w.length - 1) :
+  | final_true {i t} (h : t.eval w i = some (w.length - 1)) : Eval P w i (.final t) true
+  | final_false {i t v} (h : t.eval w i = some v) (hv : v < w.length - 1) :
       Eval P w i (.final t) false
-  | label_true {i s t v a} (h : tden w i t = some v) (hl : w[v]? = some a) (has : a ∈ s) :
+  | label_true {i s t v a} (h : t.eval w i = some v) (hl : w[v]? = some a) (has : a ∈ s) :
       Eval P w i (.label s t) true
-  | label_false {i s t v a} (h : tden w i t = some v) (hl : w[v]? = some a) (has : a ∉ s) :
+  | label_false {i s t v a} (h : t.eval w i = some v) (hl : w[v]? = some a) (has : a ∉ s) :
       Eval P w i (.label s t) false
-  | call {i f t v b} (h : tden w i t = some v) (he : Eval P w v (P f) b) :
+  | call {i f t v b} (h : t.eval w i = some v) (he : Eval P w v (P f) b) :
       Eval P w i (.call f t) b
   | ite_true {i c e₁ e₂ b} (hc : Eval P w i c true) (h₁ : Eval P w i e₁ b) :
       Eval P w i (.ite c e₁ e₂) b
   | ite_false {i c e₁ e₂ b} (hc : Eval P w i c false) (h₂ : Eval P w i e₂ b) :
       Eval P w i (.ite c e₁ e₂) b
 
-variable {P : Program α F} {w w' : List α} {i v n m : ℕ} {t u : Term Unit}
+variable {P : Program α F} {w w' : List α} {i v n m : ℕ} {t u : Term}
   {e : Expr α F} {b b' : Bool}
 
 /-- Boolean-form introduction for the edge test: the value is the comparison. -/
-theorem Eval.initial (h : tden w i t = some v) : Eval P w i (.initial t) (v == 0) := by
+theorem Eval.initial (h : t.eval w i = some v) : Eval P w i (.initial t) (v == 0) := by
   rcases Nat.eq_zero_or_pos v with rfl | hv
   · exact .initial_true h
   · rw [beq_eq_false_iff_ne.mpr (by omega)]
     exact .initial_false h hv
 
 /-- Boolean-form introduction for the final test. -/
-theorem Eval.final (h : tden w i t = some v) : Eval P w i (.final t) (v == w.length - 1) := by
+theorem Eval.final (h : t.eval w i = some v) : Eval P w i (.final t) (v == w.length - 1) := by
   rcases eq_or_ne v (w.length - 1) with rfl | hne
   · rw [beq_self_eq_true]
     exact .final_true h
   · rw [beq_eq_false_iff_ne.mpr hne]
-    exact .final_false h (by have := tden_lt h; omega)
+    exact .final_false h (by have := Term.eval_lt h; omega)
 
 /-- Boolean-form introduction for the class test. -/
-theorem Eval.label [DecidableEq α] {s : Finset α} {a : α} (h : tden w i t = some v)
+theorem Eval.label [DecidableEq α] {s : Finset α} {a : α} (h : t.eval w i = some v)
     (hl : w[v]? = some a) : Eval P w i (.label s t) (decide (a ∈ s)) := by
   by_cases has : a ∈ s
   · rw [decide_eq_true has]
@@ -258,7 +192,7 @@ theorem Eval.deterministic (h : Eval P w i e b) (h' : Eval P w i e b') : b = b' 
 
 /-- A program is **total on `w`** when every rule head is defined at every position. -/
 def Program.TotalOn (P : Program α F) (w : List α) : Prop :=
-  ∀ f, ∀ i < w.length, ∃ b, Eval P w i (.call f (.var ())) b
+  ∀ f, ∀ i < w.length, ∃ b, Eval P w i (.call f .var) b
 
 /-! ### The fuel evaluator -/
 
@@ -268,10 +202,10 @@ def evalFuel [DecidableEq α] (P : Program α F) (w : List α) :
   | 0, _, _ => none
   | _ + 1, _, .tru => some true
   | _ + 1, _, .fls => some false
-  | _ + 1, i, .initial t => (tden w i t).map (· == 0)
-  | _ + 1, i, .final t => (tden w i t).map (· == w.length - 1)
-  | _ + 1, i, .label s t => (tden w i t).bind fun v => (w[v]?).map fun a => decide (a ∈ s)
-  | fuel + 1, i, .call f t => (tden w i t).bind fun v => evalFuel P w fuel v (P f)
+  | _ + 1, i, .initial t => (t.eval w i).map (· == 0)
+  | _ + 1, i, .final t => (t.eval w i).map (· == w.length - 1)
+  | _ + 1, i, .label s t => (t.eval w i).bind fun v => (w[v]?).map fun a => decide (a ∈ s)
+  | fuel + 1, i, .call f t => (t.eval w i).bind fun v => evalFuel P w fuel v (P f)
   | fuel + 1, i, .ite c e₁ e₂ =>
       (evalFuel P w fuel i c).bind fun b =>
         if b then evalFuel P w fuel i e₁ else evalFuel P w fuel i e₂
@@ -361,27 +295,27 @@ theorem eval_iff_evalFuel [DecidableEq α] :
 
 /-! ### Substitution -/
 
-/-- Term denotations sequence through composition. -/
-private theorem tden_comp_of {z : ℕ} (hu : tden w i u = some v)
-    (h : tden w v t = some z) :
-    tden w i (t.comp u) = some z := by
-  rw [tden_comp, hu]
+/-- Term reads sequence through composition. -/
+private theorem eval_comp_of {z : ℕ} (hu : u.eval w i = some v)
+    (h : t.eval w v = some z) :
+    (t.comp u).eval w i = some z := by
+  rw [Term.eval_comp, hu]
   exact h
 
 /-- Transport a derivation through substitution: evaluating `e[u/x]` at `i` is
-evaluating `e` at the position `u` denotes. -/
-theorem Eval.subst (hu : tden w i u = some v) (h : Eval P w v e b) :
+evaluating `e` at the position `u` reads. -/
+theorem Eval.subst (hu : u.eval w i = some v) (h : Eval P w v e b) :
     Eval P w i (e.subst u) b := by
   induction h with
   | tru => exact .tru
   | fls => exact .fls
-  | initial_true h => exact .initial_true (tden_comp_of hu h)
-  | initial_false h hv => exact .initial_false (tden_comp_of hu h) hv
-  | final_true h => exact .final_true (tden_comp_of hu h)
-  | final_false h hv => exact .final_false (tden_comp_of hu h) hv
-  | label_true h hl has => exact .label_true (tden_comp_of hu h) hl has
-  | label_false h hl has => exact .label_false (tden_comp_of hu h) hl has
-  | call h he ih => exact .call (tden_comp_of hu h) he
+  | initial_true h => exact .initial_true (eval_comp_of hu h)
+  | initial_false h hv => exact .initial_false (eval_comp_of hu h) hv
+  | final_true h => exact .final_true (eval_comp_of hu h)
+  | final_false h hv => exact .final_false (eval_comp_of hu h) hv
+  | label_true h hl has => exact .label_true (eval_comp_of hu h) hl has
+  | label_false h hl has => exact .label_false (eval_comp_of hu h) hl has
+  | call h he ih => exact .call (eval_comp_of hu h) he
   | ite_true hc h₁ ihc ih₁ => exact .ite_true (ihc hu) (ih₁ hu)
   | ite_false hc h₂ ihc ih₂ => exact .ite_false (ihc hu) (ih₂ hu)
 
@@ -392,32 +326,6 @@ right-subsequentially. The locality lemmas below are what those inclusions rest 
 the flags of a one-sided program cannot see past their index. Equal length is
 load-bearing — `min`/`max` atoms read `w.length`. -/
 
-/-- Backward terms only move left. -/
-theorem tden_le_of_backward :
-    ∀ {t : Term Unit}, t.Backward → ∀ {v}, tden w i t = some v → v ≤ i
-  | .var _, _, v, h => (tden_var_eq_some_iff.mp h).1.le
-  | .pred t, ht, v, h => by
-    obtain ⟨u, hu, huv⟩ := Option.bind_eq_some_iff.mp h
-    obtain ⟨rfl, -⟩ := pred?_eq_some_iff.mp huv
-    exact Nat.le_of_succ_le (tden_le_of_backward (t := t) ht hu)
-
-/-- Forward terms only move right. -/
-theorem le_tden_of_forward :
-    ∀ {t : Term Unit}, t.Forward → ∀ {v}, tden w i t = some v → i ≤ v
-  | .var _, _, v, h => (tden_var_eq_some_iff.mp h).1.ge
-  | .succ t, ht, v, h => by
-    obtain ⟨u, hu, huv⟩ := Option.bind_eq_some_iff.mp h
-    obtain ⟨rfl, -⟩ := succ?_eq_some_iff.mp huv
-    exact (le_tden_of_forward (t := t) ht hu).trans (Nat.le_succ u)
-
-/-- Term denotations read only the length, so they transport across equal-length
-words. -/
-theorem tden_congr (hlen : w.length = w'.length) :
-    ∀ t : Term Unit, tden w i t = tden w' i t
-  | .var _ => by simp [tden, Term.eval, hlen]
-  | .succ t => by rw [tden_succ, tden_succ, tden_congr hlen t, succ?_congr hlen]
-  | .pred t => by rw [tden_pred, tden_pred, tden_congr hlen t, pred?_congr hlen]
-
 /-- **One-sided locality (left)**: a successor-free program evaluated at `i` reads only
 positions `≤ i`, so equal-length words agreeing up to `i` evaluate identically. -/
 theorem Eval.congr_eqOn_Iic (hP : P.Backward) (hlen : w.length = w'.length)
@@ -427,22 +335,22 @@ theorem Eval.congr_eqOn_Iic (hP : P.Backward) (hlen : w.length = w'.length)
   | tru => exact fun _ _ => .tru
   | fls => exact fun _ _ => .fls
   | initial_true h =>
-    exact fun _ _ => Eval.initial_true ((tden_congr hlen _).symm.trans h)
+    exact fun _ _ => Eval.initial_true ((Term.eval_congr hlen _).symm.trans h)
   | initial_false h hv =>
-    exact fun _ _ => Eval.initial_false ((tden_congr hlen _).symm.trans h) hv
+    exact fun _ _ => Eval.initial_false ((Term.eval_congr hlen _).symm.trans h) hv
   | final_true h =>
-    exact fun _ _ => Eval.final_true ((tden_congr hlen _).symm.trans (hlen ▸ h))
+    exact fun _ _ => Eval.final_true ((Term.eval_congr hlen _).symm.trans (hlen ▸ h))
   | final_false h hv =>
-    exact fun _ _ => Eval.final_false ((tden_congr hlen _).symm.trans h) (hlen ▸ hv)
+    exact fun _ _ => Eval.final_false ((Term.eval_congr hlen _).symm.trans h) (hlen ▸ hv)
   | label_true h hl has =>
-    exact fun he hag => Eval.label_true ((tden_congr hlen _).symm.trans h)
-      (hag.getElem?_eq (mem_Iic.mpr (tden_le_of_backward he h)) ▸ hl) has
+    exact fun he hag => Eval.label_true ((Term.eval_congr hlen _).symm.trans h)
+      (hag.getElem?_eq (mem_Iic.mpr (Term.eval_le_of_backward he h)) ▸ hl) has
   | label_false h hl has =>
-    exact fun he hag => Eval.label_false ((tden_congr hlen _).symm.trans h)
-      (hag.getElem?_eq (mem_Iic.mpr (tden_le_of_backward he h)) ▸ hl) has
+    exact fun he hag => Eval.label_false ((Term.eval_congr hlen _).symm.trans h)
+      (hag.getElem?_eq (mem_Iic.mpr (Term.eval_le_of_backward he h)) ▸ hl) has
   | call h he' ih =>
-    exact fun he hag => Eval.call ((tden_congr hlen _).symm.trans h)
-      (ih (hP _) (hag.mono (Set.Iic_subset_Iic.mpr (tden_le_of_backward he h))))
+    exact fun he hag => Eval.call ((Term.eval_congr hlen _).symm.trans h)
+      (ih (hP _) (hag.mono (Set.Iic_subset_Iic.mpr (Term.eval_le_of_backward he h))))
   | ite_true hc h₁ ihc ih₁ =>
     exact fun he hag => Eval.ite_true (ihc he.1 hag) (ih₁ he.2.1 hag)
   | ite_false hc h₂ ihc ih₂ =>
@@ -457,25 +365,25 @@ theorem Eval.congr_eqOn_Ici (hP : P.Forward) (hlen : w.length = w'.length)
   | tru => exact fun _ _ => .tru
   | fls => exact fun _ _ => .fls
   | initial_true h =>
-    exact fun _ _ => Eval.initial_true ((tden_congr hlen _).symm.trans h)
+    exact fun _ _ => Eval.initial_true ((Term.eval_congr hlen _).symm.trans h)
   | initial_false h hv =>
-    exact fun _ _ => Eval.initial_false ((tden_congr hlen _).symm.trans h) hv
+    exact fun _ _ => Eval.initial_false ((Term.eval_congr hlen _).symm.trans h) hv
   | final_true h =>
-    exact fun _ _ => Eval.final_true ((tden_congr hlen _).symm.trans (hlen ▸ h))
+    exact fun _ _ => Eval.final_true ((Term.eval_congr hlen _).symm.trans (hlen ▸ h))
   | final_false h hv =>
-    exact fun _ _ => Eval.final_false ((tden_congr hlen _).symm.trans h) (hlen ▸ hv)
+    exact fun _ _ => Eval.final_false ((Term.eval_congr hlen _).symm.trans h) (hlen ▸ hv)
   | label_true h hl has =>
-    exact fun he hag => Eval.label_true ((tden_congr hlen _).symm.trans h)
-      (hag.getElem?_eq (mem_Ici.mpr (le_tden_of_forward he h)) ▸ hl) has
+    exact fun he hag => Eval.label_true ((Term.eval_congr hlen _).symm.trans h)
+      (hag.getElem?_eq (mem_Ici.mpr (Term.le_eval_of_forward he h)) ▸ hl) has
   | label_false h hl has =>
-    exact fun he hag => Eval.label_false ((tden_congr hlen _).symm.trans h)
-      (hag.getElem?_eq (mem_Ici.mpr (le_tden_of_forward he h)) ▸ hl) has
+    exact fun he hag => Eval.label_false ((Term.eval_congr hlen _).symm.trans h)
+      (hag.getElem?_eq (mem_Ici.mpr (Term.le_eval_of_forward he h)) ▸ hl) has
   | call h he' ih =>
-    exact fun he hag => Eval.call ((tden_congr hlen _).symm.trans h)
-      (ih (hP _) (hag.mono (Set.Ici_subset_Ici.mpr (le_tden_of_forward he h))))
+    exact fun he hag => Eval.call ((Term.eval_congr hlen _).symm.trans h)
+      (ih (hP _) (hag.mono (Set.Ici_subset_Ici.mpr (Term.le_eval_of_forward he h))))
   | ite_true hc h₁ ihc ih₁ =>
     exact fun he hag => Eval.ite_true (ihc he.1 hag) (ih₁ he.2.1 hag)
   | ite_false hc h₂ ihc ih₂ =>
     exact fun he hag => Eval.ite_false (ihc he.1 hag) (ih₂ he.2.2 hag)
 
-end Subregular.Logic.BMRS
+end Subregular.BMRS
