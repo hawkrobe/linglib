@@ -11,8 +11,9 @@ import Mathlib.Order.Nat
 
 The orientation of a left-to-right vs right-to-left scan, shared by the transducer
 machines and the side-determinacy predicates of the subregular function theory, with
-the window of positions a direction cuts around a target coordinate. Extracted to its own leaf so the footprint-predicate file (`Dependence.lean`) does
-not have to depend on the transducer machine file just to name a `left`/`right` tag.
+the window of positions a direction cuts around a target coordinate. Extracted to its
+own leaf so the footprint-predicate file (`Dependence.lean`) does not have to depend on
+the transducer machine file just to name a `left`/`right` tag.
 -/
 
 namespace Subregular
@@ -20,7 +21,7 @@ namespace Subregular
 /-- The orientation of an FST scan: `left` consumes input head-first, `right`
 tail-first (via `List.reverse` conjugation). The two scan modes give rise to
 distinct function classes — isomorphic under reversal but not equal as
-subclasses of the regular functions over un-reversed strings. -/
+subclasses of the rational functions over un-reversed strings. -/
 inductive Direction
   | left
   | right

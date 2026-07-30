@@ -21,8 +21,7 @@ relabelling, deletion, and insertion. Non-order-preserving maps (reordering via 
 output successor) are the non-local extension and are deliberately out of scope here.
 
 Composition of transductions (`applyComp`) models an iterated derivation: each step is a local
-transduction; the composite is a regular function (closed under composition in
-`SubsequentialTransducer`) though not in general itself quantifier-free.
+transduction, though the composite is not in general itself quantifier-free.
 
 ## Main definitions
 
@@ -73,9 +72,8 @@ def apply (T : Transduction α β) (w : List α) : List β :=
 
 @[simp] theorem apply_nil (T : Transduction α β) : T.apply [] = [] := rfl
 
-/-- Composition of transductions — one cyclic derivation step after another. The composite is a
-regular function (closed under composition in `SubsequentialTransducer`), though not in general
-itself quantifier-free. -/
+/-- Composition of transductions — one cyclic derivation step after another; the composite is
+not in general itself quantifier-free. -/
 def applyComp (T₂ : Transduction β γ) (T₁ : Transduction α β) [DecidableEq β]
     (w : List α) : List γ :=
   T₂.apply (T₁.apply w)
