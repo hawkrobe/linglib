@@ -96,6 +96,13 @@ def syntacticCon (L : Language α) : Con (FreeMonoid α) where
 theorem syntacticCon_iff {u v : FreeMonoid α} :
     L.syntacticCon u v ↔ L.SyntacticEquiv u.toList v.toList := Iff.rfl
 
+/-- The syntactic congruence refines the Nerode equivalence uniformly: `u` and `v` are related
+when their left quotients agree in every left context. -/
+theorem syntacticCon_iff_leftQuotient {u v : FreeMonoid α} :
+    L.syntacticCon u v ↔
+      ∀ x, L.leftQuotient (x ++ u.toList) = L.leftQuotient (x ++ v.toList) :=
+  forall_congr' fun _ => Set.ext_iff.symm
+
 /-- The *syntactic monoid* of `L` is the quotient of `FreeMonoid α` by the syntactic congruence. -/
 abbrev SyntacticMonoid (L : Language α) := (syntacticCon L).Quotient
 
@@ -180,15 +187,17 @@ theorem recognizes_transitionHom {σ : Type*} (M : DFA α σ) :
     (L.toDFA.evalFrom s w).val = s.val.leftQuotient w := by
   induction w using List.reverseRecOn <;> simp_all [leftQuotient_append]
 
+/-- The kernel of the minimal DFA's transition action has the same left-quotient
+characterization as the syntactic congruence. -/
+theorem ker_transitionHom_toDFA_iff {u v : FreeMonoid α} :
+    Con.ker L.toDFA.transitionHom u v ↔
+      ∀ x, L.leftQuotient (x ++ u.toList) = L.leftQuotient (x ++ v.toList) := by
+  simp only [Con.ker_apply, DFA.transitionHom_eq_iff, Set.forall_subtype_range_iff,
+    Subtype.ext_iff, evalFrom_toDFA, ← leftQuotient_append]
+
 /-- The intrinsic syntactic congruence is the kernel of the minimal DFA's transition action. -/
-theorem syntacticCon_eq_ker_transitionHom : L.syntacticCon = Con.ker L.toDFA.transitionHom := by
-  refine le_antisymm ?_ (by simpa using
-    ker_le_syntacticCon_of_recognizes (recognizes_transitionHom L.toDFA))
-  intro u v h
-  refine L.toDFA.transitionHom_eq_iff.mpr fun s => ?_
-  obtain ⟨x, hx⟩ := s.2
-  simp only [Subtype.ext_iff, evalFrom_toDFA, ← hx, ← leftQuotient_append]
-  exact Set.ext (h x)
+theorem syntacticCon_eq_ker_transitionHom : L.syntacticCon = Con.ker L.toDFA.transitionHom :=
+  Con.ext fun _ _ => syntacticCon_iff_leftQuotient.trans ker_transitionHom_toDFA_iff.symm
 
 /-! ### Myhill–Nerode -/
 
