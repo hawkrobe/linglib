@@ -18,33 +18,33 @@ leaf so the footprint-predicate file (`Dependence.lean`) does not have to depend
 the transducer machine file just to name a `left`/`right` tag.
 -/
 
-namespace Subregular
-
 /-- The orientation of an FST scan: `left` consumes input head-first, `right`
 tail-first (via `List.reverse` conjugation). The two scan modes give rise to
 distinct function classes — isomorphic under reversal but not equal as
 subclasses of the rational functions over un-reversed strings. -/
-inductive Direction
+inductive ScanDirection
   | left
   | right
   deriving DecidableEq, Repr
 
 /-- The input positions not `d`-far from target `i` on side `s`. -/
-def Direction.window : Direction → ℕ → ℕ → Set ℕ
+def ScanDirection.window : ScanDirection → ℕ → ℕ → Set ℕ
   | .left, i, d => Set.Ici (i - d)
   | .right, i, d => Set.Iic (i + d)
 
-@[simp, grind =] theorem Direction.window_left {i d : ℕ} :
-    Direction.left.window i d = Set.Ici (i - d) := rfl
+@[simp, grind =] theorem ScanDirection.window_left {i d : ℕ} :
+    ScanDirection.left.window i d = Set.Ici (i - d) := rfl
 
-@[simp, grind =] theorem Direction.window_right {i d : ℕ} :
-    Direction.right.window i d = Set.Iic (i + d) := rfl
+@[simp, grind =] theorem ScanDirection.window_right {i d : ℕ} :
+    ScanDirection.right.window i d = Set.Iic (i + d) := rfl
 
 /-! ### Reverse conjugation
 
 The action of flipping scan direction on string functions: right-scan function classes
-are the `revConj`-images of the left-scan ones, so their theory transports along the
-involution rather than being restated. -/
+are the `List.revConj`-images of the left-scan ones, so their theory transports along
+the involution rather than being restated. -/
+
+namespace List
 
 variable {α β γ : Type*}
 
@@ -65,4 +65,5 @@ theorem revConj_eq_iff {h : List α → List β} {f : List α → List β} :
     revConj h = f ↔ h = revConj f := by
   constructor <;> rintro rfl <;> simp
 
-end Subregular
+end List
+

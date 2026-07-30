@@ -26,8 +26,6 @@ piecewise analogue of locally testable over strictly local.
 * Closure under complement comes from `Function.FactorsThrough.comp_left`.
 -/
 
-namespace Subregular
-
 open List
 
 variable {α : Type*}
@@ -49,11 +47,8 @@ lemma subseqSet_eq_iff {k : ℕ} {w₁ w₂ : List α}
     s <+ w₁ ↔ s <+ w₂ := by
   simpa [hlen] using Set.ext_iff.mp heq s
 
-end Subregular
-
 namespace Language
 
-open Subregular
 
 variable {α : Type*}
 

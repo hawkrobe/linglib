@@ -49,13 +49,13 @@ regular.
 
 The SL and SP scanners share scaffolding *names* (`scanDFA`, `scanHom`, `evalFrom_none`,
 `isStarFree_of_language_succ`, …). Since `private` is module-scoped, each class's scaffolding is
-walled off in its own namespace — `Subregular.SL` and `Subregular.SP` — so the colliding names
+walled off in its own namespace — `SLGrammar` and `SPGrammar` — so the colliding names
 become distinct full names.
 -/
 
 open List
 
-namespace Subregular.SL
+namespace SLGrammar
 
 variable {α : Type*}
 
@@ -306,9 +306,9 @@ private theorem isStarFree_of_language_succ (L : Language α) [Finite α]
     (fun w => ?_)
   rw [← hL, Set.mem_setOf_eq, scanHom_unop_apply, ← DFA.evalFrom_of_append, alive_iff_mem_language]
 
-end Subregular.SL
+end SLGrammar
 
-namespace Subregular.SP
+namespace SPGrammar
 
 variable {α : Type*}
 
@@ -597,13 +597,12 @@ private theorem isStarFree_of_language_succ (L : Language α) [Finite α]
     rw [← hL]
     exact iff_of_false (fun h => h0 (h [] (Nat.zero_le _) (List.nil_sublist w))) (by simp)
 
-end Subregular.SP
+end SPGrammar
 
 namespace Language
 
 variable {α : Type*} [Finite α]
 
-open Subregular
 
 /-- **Strictly local languages are star-free** ([mcnaughton-papert-1971]). Over a finite
 alphabet, the local scanner remembering the last `k - 1` symbols is a finite aperiodic
@@ -623,7 +622,7 @@ theorem IsStrictlyLocal.isStarFree {L : Language α} {k : ℕ} (h : L.IsStrictly
     · simpa [hg] using fun f _ (hf : f = []) => hf ▸ hg
     · simp only [hg, if_false, Set.mem_empty_iff_false, iff_false, not_forall]
       exact ⟨[], List.nil_infix, rfl, hg⟩
-  · exact SL.isStarFree_of_language_succ G n L hG
+  · exact SLGrammar.isStarFree_of_language_succ G n L hG
 
 /-- **Strictly piecewise languages are star-free** ([heinz-rogers-2010]
 [mcnaughton-papert-1971]). Over a finite alphabet, the subsequence scanner remembering the
@@ -643,6 +642,6 @@ theorem IsStrictlyPiecewise.isStarFree {L : Language α} {k : ℕ} (h : L.IsStri
       exact fun s (hs : s.length ≤ 0) _ => List.length_eq_zero_iff.mp (Nat.le_zero.mp hs) ▸ hg
     · simp only [hg, if_neg, not_false_iff, Set.mem_empty_iff_false, iff_false, not_forall]
       exact ⟨[], le_rfl, List.nil_sublist _, hg⟩
-  · exact SP.isStarFree_of_language_succ G n L hG
+  · exact SPGrammar.isStarFree_of_language_succ G n L hG
 
 end Language

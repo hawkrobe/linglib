@@ -24,7 +24,7 @@ tests prefix and suffix jointly ([pin-mfa]).
 
 ## Main definitions
 
-* `Subregular.Edge` and `Subregular.Edge.takeAt`: a string edge and its length-`k`
+* `Edge` and `Edge.takeAt`: a string edge and its length-`k`
   substring (`right` = suffix, `left` = prefix).
 * `Language.IsDefinite`, `Language.IsReverseDefinite`, `Language.IsGeneralizedDefinite`
   — membership factoring through the suffix, prefix, and joint edge projections.
@@ -38,8 +38,6 @@ tests prefix and suffix jointly ([pin-mfa]).
   finite alphabet, `𝒩 = 𝒟 ∩ 𝒦` [pin-mfa]: a language is finite-or-cofinite iff it
   is definite and reverse-definite.
 -/
-
-namespace Subregular
 
 variable {α : Type*}
 
@@ -114,13 +112,10 @@ private lemma takeAt_left_eq_of_bridge {k k' : ℕ} {w₁ w₂ : List α}
   rw [Edge.takeAt_left, Edge.takeAt_left,
     List.take_append_of_le_length (by rw [List.length_take]; omega), List.take_take, min_self]
 
-end Subregular
-
 namespace Language
 
 variable {α : Type*}
 
-open Subregular
 
 /-! ### The definite family -/
 

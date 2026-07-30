@@ -78,7 +78,6 @@ import Linglib.Core.Computability.ContextFreeGrammar.Tree
 import Linglib.Core.Computability.ContextFreeGrammar.Weighted
 import Linglib.Core.Computability.Definite
 import Linglib.Core.Computability.Dependence
-import Linglib.Core.Computability.Direction
 import Linglib.Core.Computability.ElgotMezei
 import Linglib.Core.Computability.Lens
 import Linglib.Core.Computability.Mealy
@@ -89,6 +88,7 @@ import Linglib.Core.Computability.NonContextFree.AnBnCnDn
 import Linglib.Core.Computability.NonContextFree.BlockWitness
 import Linglib.Core.Computability.NonRegular.AnBn
 import Linglib.Core.Computability.PiecewiseTestable
+import Linglib.Core.Computability.ScanDirection
 import Linglib.Core.Computability.StarFree
 import Linglib.Core.Computability.StrictlyLocal
 import Linglib.Core.Computability.StrictlyPiecewise

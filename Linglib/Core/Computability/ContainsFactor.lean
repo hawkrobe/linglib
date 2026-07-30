@@ -31,7 +31,6 @@ Star-free = `FO[<]`-definable = counter-free ([schutzenberger-1965] [mcnaughton-
 * `Language.isStarFree_avoidsFactor`: `{x | ¬ c <:+: x}` is star-free, `α` arbitrary.
 -/
 
-open Subregular
 
 namespace Language.ContainsFactor
 

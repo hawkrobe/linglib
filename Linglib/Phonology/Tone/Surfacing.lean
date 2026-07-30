@@ -93,7 +93,6 @@ theorem Surfaces.lt_length {P : Surfacing α} {w : List α} {i : ℕ}
     (h : P.Surfaces w i) : i < w.length :=
   P.lt_length h
 
-open Subregular in
 /-- **The flank-witness template, at the surfacing level**: a process whose surfacing at
 a `d`-margined target in a flank word is switched on by the base flanks and off by
 either single flip requires both sides — supply only the three surfacing facts. -/
@@ -112,7 +111,6 @@ theorem requiresBothSides_of_flanks {xOn yOn xOff yOff : α} {n t : ℕ → ℕ}
     (fun d => P.map_getElem?_lo_iff.mpr ⟨by simpa using hlen d, hoffL d⟩)
     (fun d => P.map_getElem?_lo_iff.mpr ⟨hlen d, hoffR d⟩)
 
-open Subregular in
 /-- **Conjunctive two-sided triggers require both sides**: a process that surfaces the
 marked tone exactly where one occurrence lies at-or-before and one at-or-after needs
 unboundedly distant information on both sides — the flank witness family is generic. -/

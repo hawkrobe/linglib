@@ -99,7 +99,6 @@ fork that substrate here; consume it from mathlib when it merges.
 * [mcnaughton-papert-1971] (variety theory of finite monoids).
 -/
 
-open Subregular
 
 namespace Language
 

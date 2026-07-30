@@ -62,8 +62,6 @@ maps an out-of-range coordinate is `none` on both sides of any perturbation.
 companion of the transducer files.
 -/
 
-namespace Subregular
-
 open Set
 
 variable {α β : Type*} {f : List α → List β}
@@ -76,26 +74,26 @@ def LeftDetermined (f : List α → List β) (i : ℕ) : Prop :=
 
 /-- An equal-length variant of `base` differing only beyond the `d`-margin of target
 `i` on side `s`. -/
-def IsFarPerturbation (base u : List α) (i d : ℕ) (s : Direction) : Prop :=
+def IsFarPerturbation (base u : List α) (i d : ℕ) (s : ScanDirection) : Prop :=
   u.length = base.length ∧ EqOn (base[·]?) (u[·]?) (s.window i d)
 
 /-- `f` depends boundedly on side `s`: a single margin caps, at every output
 coordinate, how far input on side `s` can matter. -/
-def BoundedDependence (f : List α → List β) (s : Direction) : Prop :=
+def BoundedDependence (f : List α → List β) (s : ScanDirection) : Prop :=
   ∃ N, ∀ i, List.DependsOn (fun u => (f u)[i]?) (s.window i N)
 
 /-- `f` depends unboundedly on side `s`. -/
-def UnboundedDependence (f : List α → List β) (s : Direction) : Prop :=
+def UnboundedDependence (f : List α → List β) (s : ScanDirection) : Prop :=
   ¬ BoundedDependence f s
 
 /-- `f` fails unbounded dependence on side `s` exactly when its dependence there is
 bounded. -/
-@[simp] theorem not_unboundedDependence_iff {s : Direction} :
+@[simp] theorem not_unboundedDependence_iff {s : ScanDirection} :
     ¬ UnboundedDependence f s ↔ BoundedDependence f s := not_not
 
 /-- Unbounded dependence coordinate-wise: every margin fails at some output
 coordinate. -/
-theorem unboundedDependence_iff {s : Direction} :
+theorem unboundedDependence_iff {s : ScanDirection} :
     UnboundedDependence f s ↔
       ∀ N, ∃ i, ¬ List.DependsOn (fun u => (f u)[i]?) (s.window i N) := by
   simp [UnboundedDependence, BoundedDependence]
@@ -119,7 +117,7 @@ def TwoSidedUnboundedDependence (f : List α → List β) : Prop :=
 
 /-- Co-located two-sided dependence yields unbounded dependence on either side. -/
 theorem TwoSidedUnboundedDependence.unboundedDependence
-    (h : TwoSidedUnboundedDependence f) (s : Direction) : UnboundedDependence f s :=
+    (h : TwoSidedUnboundedDependence f) (s : ScanDirection) : UnboundedDependence f s :=
   unboundedDependence_iff.mpr fun N =>
     have ⟨_, i, _, hw⟩ := h N
     have ⟨_, ⟨hlen, hag⟩, hne⟩ := hw s
@@ -135,7 +133,7 @@ def RequiresBothSides (f : List α → List α) : Prop :=
 side may vary from cell to cell. -/
 def OneSidedChanges (f : List α → List α) : Prop :=
   ∀ (w : List α) (i : ℕ), (f w)[i]? ≠ w[i]? →
-    ∃ s : Direction, List.DependsAt (fun u => (f u)[i]?) (s.window i 0) w
+    ∃ s : ScanDirection, List.DependsAt (fun u => (f u)[i]?) (s.window i 0) w
 
 /-- A map that requires both sides has a change no single side determines. -/
 theorem RequiresBothSides.not_oneSidedChanges {f : List α → List α}
@@ -418,4 +416,3 @@ theorem setOf_isNonInteractingBimachineComputable_ssubset :
 
 end Machines
 
-end Subregular

@@ -53,8 +53,6 @@ classical and not formalized here; `ElgotMezei.lean` proves the composition half
 [UPSTREAM] candidate: `Mathlib.Computability.Bimachine`.
 -/
 
-namespace Subregular
-
 variable {L R α β : Type*}
 
 /-- A bimachine is a left automaton scanning left to right, a right automaton scanning
@@ -517,4 +515,3 @@ theorem IsNonInteractingBimachineComputable.of_mealyComputable {f : List α → 
 
 end
 
-end Subregular

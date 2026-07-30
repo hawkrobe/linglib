@@ -83,12 +83,11 @@ def Relation.flip : Relation → Relation
     - `.left` — `Rel(A, F) / C __` : context precedes the target
     - `.right` — `Rel(A, F) / __ C` : context follows the target
 
-    Aliased to `Subregular.Direction` so the same `.left` / `.right` cases used
-    by `Function/Subsequential.lean::Direction` (FST scan direction) and
-    by this file (context side of a tier rule) reduce to one inductive
-    type. The two roles read differently in prose but are isomorphic in
-    Lean. -/
-abbrev Side := Subregular.Direction
+    Aliased to `ScanDirection` so the same `.left` / `.right` cases used by
+    `Subsequential.lean` (FST scan direction) and by this file (context side
+    of a tier rule) reduce to one inductive type. The two roles read
+    differently in prose but are isomorphic in Lean. -/
+abbrev Side := ScanDirection
 
 /-- A tier-based alternation rule over alphabet `α`: project the word onto a tier,
     find the adjacent context segment on `side`, and fill the target's feature by

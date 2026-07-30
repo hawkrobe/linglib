@@ -56,7 +56,7 @@ The map itself and its plateau/circumambience API live in `Phonology/Tone/Platea
 
 namespace Jardine2016Tone
 
-open Subregular Tone.Plateauing
+open Tone.Plateauing
 
 variable {w : List TBU} {i j k : ℕ}
 

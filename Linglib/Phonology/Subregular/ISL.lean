@@ -113,13 +113,13 @@ def IsLeftInputStrictlyLocal (k : ℕ) (f : List α → List β) : Prop :=
 /-- `f : List α → List β` is **k-Right-Input-Strictly-Local** iff its reverse-conjugate
 is k-Left-ISL — some `k`-ISL rule computes it via right-to-left scan. -/
 def IsRightInputStrictlyLocal (k : ℕ) (f : List α → List β) : Prop :=
-  IsLeftInputStrictlyLocal k (revConj f)
+  IsLeftInputStrictlyLocal k (List.revConj f)
 
-/-- Direction-parameterised ISL predicate. Mirrors the OSL/Subseq
+/-- ScanDirection-parameterised ISL predicate. Mirrors the OSL/Subseq
 umbrella style; concrete claims should typically use one of
 `IsLeftInputStrictlyLocal` / `IsRightInputStrictlyLocal` directly for
 clarity. -/
-def IsInputStrictlyLocal (d : Direction) (k : ℕ)
+def IsInputStrictlyLocal (d : ScanDirection) (k : ℕ)
     (f : List α → List β) : Prop :=
   match d with
   | .left => IsLeftInputStrictlyLocal k f
@@ -271,16 +271,16 @@ theorem isMealyComputable_of_ISLRule {k : ℕ} [Fintype α] (r : ISLRule k α β
       fun _ => rfl
 
 /-- **Right-ISL ⊆ Right-Subsequential**: the left inclusion at the reverse-conjugate,
-since both right classes are the `revConj`-images of their left classes. -/
+since both right classes are the `List.revConj`-images of their left classes. -/
 theorem isRightInputStrictlyLocal_right_subsequential {k : ℕ} [Fintype α]
     {f : List α → List β} (h : IsRightInputStrictlyLocal k f) :
     IsRightSubsequential f :=
   isLeftInputStrictlyLocal_left_subsequential h
 
-/-- Direction-parameterised: ISL_d ⊆ Subseq_d for both directions (over
+/-- ScanDirection-parameterised: ISL_d ⊆ Subseq_d for both directions (over
 a finite input alphabet). Delegates to the Left- / Right- specialised
 theorems. -/
-theorem isInputStrictlyLocal_isSubsequential {d : Direction} {k : ℕ}
+theorem isInputStrictlyLocal_isSubsequential {d : ScanDirection} {k : ℕ}
     [Fintype α] {f : List α → List β} (h : IsInputStrictlyLocal d k f) :
     IsSubsequential d f := by
   cases d with

@@ -40,8 +40,6 @@ at all.
   bimachine (`IsLengthPreservingBimachineComputable`).
 -/
 
-namespace Subregular
-
 variable {α β γ σ₁ σ₂ : Type*}
 
 namespace SubsequentialTransducer
@@ -122,4 +120,3 @@ theorem Mealy.isBimachineComputable_runRight_comp [Fintype σ₁] [Fintype σ₂
   rw [isRightSubsequential_iff_left_reverse]
   simpa using T₂.isMealyComputable.isLeftSubsequential
 
-end Subregular

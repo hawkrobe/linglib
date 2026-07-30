@@ -46,8 +46,6 @@ bimachine of [reutenauer-schutzenberger-1991], surveyed in [filiot-reynier-2016]
 the existing file, with `residual` beside `Language.leftQuotient`).
 -/
 
-namespace Subregular
-
 variable {α β : Type*} (f : List α → List β)
 
 /-- The *residual* of `f` by `u` is what `f` appends after reading `u` — the analogue
@@ -155,7 +153,6 @@ theorem isMealyComputable_iff_residual {f : List α → List β} :
         ∧ (Set.range (residual f)).Finite :=
   ⟨fun hf => ⟨hf.length_eq, hf.isPrefix, hf.finite_range_residual⟩,
    fun h => isMealyComputable_of_residual h.1 h.2.1 h.2.2⟩
-
 
 /-! ### Coresiduals -/
 
@@ -340,4 +337,3 @@ theorem isLengthPreservingBimachineComputable_iff_residual {f : List α → List
   ⟨fun hf => ⟨hf.length_eq, hf.finite_range_residual, hf.finite_range_coresidual⟩,
    fun h => isLengthPreservingBimachineComputable_of_residual h.1 h.2.1 h.2.2⟩
 
-end Subregular

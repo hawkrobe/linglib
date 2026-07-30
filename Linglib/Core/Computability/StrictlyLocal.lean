@@ -18,10 +18,10 @@ permitted `k`-factors, and `w ∈ L` iff every `k`-factor of `boundary k w` lies
 
 ## Main definitions
 
-* `Subregular.SLGrammar α`: a grammar is just a set of permitted factors over
+* `SLGrammar α`: a grammar is just a set of permitted factors over
   `Augmented α`; the locality width `k` is supplied to `language`, not baked in.
-* `Subregular.SLGrammar.language k`: the `Language α` it generates at width `k`.
-* `Subregular.SLGrammar.ofForbidden`: the grammar of a forbidden-factor set (its
+* `SLGrammar.language k`: the `Language α` it generates at width `k`.
+* `SLGrammar.ofForbidden`: the grammar of a forbidden-factor set (its
   complement).
 * `Language.IsStrictlyLocal L k`: `L` is strictly `k`-local.
 * `Language.SuffixSubstitutionClosed L k`: members sharing a length-`(k − 1)` window
@@ -34,8 +34,6 @@ permitted `k`-factors, and `w ∈ L` iff every `k`-factor of `boundary k w` lies
   split into the two members' shared parts, and conversely the canonical grammar of
   licensed factors regenerates the language by stitching a member window-by-window.
 -/
-
-namespace Subregular
 
 variable {α : Type*}
 
@@ -106,13 +104,10 @@ theorem one_le_sum_count_of_not_mem_ofForbidden_language
 
 end SLGrammar
 
-end Subregular
-
 namespace Language
 
 variable {α : Type*}
 
-open Subregular
 
 /-- A language `L` is **strictly `k`-local** iff some `SLGrammar α` generates it at
 width `k`. Witness-style, mirroring `Language.IsRegular`/`Language.IsContextFree`
