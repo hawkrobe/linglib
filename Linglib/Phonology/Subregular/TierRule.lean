@@ -297,20 +297,33 @@ lemma toIdTierSubsequentialTransducer_runFrom_eq_applyToStringAux (r : TierRule 
     rw [ih (past ++ [x]), ← r.applyAt_eq_predictFromCtx h_id h_side]
     rfl
 
+/-- Under identity tier + left side, the transducer computes `applyToString`
+(`none = lastContextOf []` definitionally). -/
+lemma toIdTierSubsequentialTransducer_run (r : TierRule α)
+    (h_id : r.tier = TierProjection.id) (h_side : r.side = .left) :
+    r.toIdTierSubsequentialTransducer.run = r.applyToString := by
+  funext input
+  show r.toIdTierSubsequentialTransducer.runFrom none input =
+    applyToString.applyToStringAux r input []
+  exact r.toIdTierSubsequentialTransducer_runFrom_eq_applyToStringAux h_id h_side [] input
+
 /-- **Identity-tier left-side TierRules reify to Left-Subsequential
 functions.** Closes audit D6 with a real witness construction (not a
 sorry): the SubsequentialTransducer has state `Option α` (last-context-matching segment
 seen) and emits the rule's prediction at each step. -/
 theorem applyToString_isLeftSubsequential_of_id_tier [Fintype α]
     (r : TierRule α) (h_id : r.tier = TierProjection.id) (h_side : r.side = .left) :
-    IsLeftSubsequential r.applyToString := by
-  have h_run : r.toIdTierSubsequentialTransducer.run = r.applyToString := by
-    funext input
-    show r.toIdTierSubsequentialTransducer.runFrom none input =
-      applyToString.applyToStringAux r input []
-    -- `none = lastContextOf []` definitionally
-    exact r.toIdTierSubsequentialTransducer_runFrom_eq_applyToStringAux h_id h_side [] input
-  exact h_run ▸ r.toIdTierSubsequentialTransducer.isLeftSubsequential
+    IsLeftSubsequential r.applyToString :=
+  r.toIdTierSubsequentialTransducer_run h_id h_side ▸
+    r.toIdTierSubsequentialTransducer.isLeftSubsequential
+
+/-- The identity-tier transducer emits one symbol per input symbol with no final flush,
+so the map is Mealy-computable — the machine form of the myopia results below. -/
+theorem applyToString_isMealyComputable_of_id_tier [Fintype α]
+    (r : TierRule α) (h_id : r.tier = TierProjection.id) (h_side : r.side = .left) :
+    IsMealyComputable r.applyToString :=
+  r.toIdTierSubsequentialTransducer_run h_id h_side ▸
+    r.toIdTierSubsequentialTransducer.isMealyComputable (fun _ _ => rfl) fun _ => rfl
 
 /-! ### Myopia: the tier-rule prediction has no look-ahead -/
 

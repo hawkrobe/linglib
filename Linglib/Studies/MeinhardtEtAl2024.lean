@@ -99,7 +99,7 @@ Per CLAUDE.md "stimulus contrasts" discipline for Studies files:
   directly; this is the natural next arc.
 * Models the bidirectional map directly (`maasai`: raise a recessive iff
   a dominant occurs anywhere) rather than as an explicit two-pass
-  composition `leftwardATR.runRight ∘ rightwardATR.run`, and omits the
+  composition of a rightward and a leftward transducer, and omits the
   opaque /a/ blocking — the non-opaque core already exhibits weak
   determinism and the WD/ND covariation contrast.
 
@@ -201,26 +201,6 @@ def rightwardATR_osl : OSLRule 2 Seg Seg where
     | .recL, .recH :: _ => [.recH]
     | .recL, _ => [.recL]
 
-/-- Equivalent SubsequentialTransducer for the same map: state tracks whether spread is
-active. Demonstrates that the rule has both an OSL representation
-(above) and a Subsequential representation (here) — the latter being
-the umbrella class. -/
-def rightwardATR : SubsequentialTransducer Bool Seg Seg where
-  start := false
-  step spreading s :=
-    match s with
-    | .a => false
-    | .dom => true
-    | .recH => true
-    | .recL => spreading
-  output spreading s :=
-    match s with
-    | .a => [.a]
-    | .dom => [.recH]
-    | .recH => [.recH]
-    | .recL => if spreading then [.recH] else [.recL]
-  finalOutput _ := []
-
 -- ============================================================================
 -- § 3: Worked Examples (paper p. 1193, ex 1a, simplified)
 -- ============================================================================
@@ -231,36 +211,21 @@ the following recessive vowel.
 Toy encoding of the rightward portion of /kɪ-√noŋ-ʊ/ → [ki-√noŋ-u]:
 input `[dom, recL]` (a dominant root vowel followed by a recessive
 suffix vowel) → output `[recH, recH]`. -/
-example : rightwardATR.run [.dom, .recL] = [.recH, .recH] := by decide
-
 example : rightwardATR_osl.apply [.dom, .recL] = [.recH, .recH] := by decide
 
 /-- **Ex 1a-ii (rightward half)**: spread continues across multiple
 recessive vowels. -/
-example : rightwardATR.run [.dom, .recL, .recL] = [.recH, .recH, .recH] := by
-  decide
-
 example : rightwardATR_osl.apply [.dom, .recL, .recL] = [.recH, .recH, .recH] := by
   decide
 
 /-- **Blocking**: /a/ blocks rightward spread; recessive vowels after
 /a/ remain [-ATR]. -/
-example : rightwardATR.run [.dom, .a, .recL] = [.recH, .a, .recL] := by decide
-
 example : rightwardATR_osl.apply [.dom, .a, .recL] = [.recH, .a, .recL] := by
   decide
 
 /-- **No spread without dominant trigger**: a string of recessive vowels
 with no dominant root passes through unchanged. -/
-example : rightwardATR.run [.recL, .recL] = [.recL, .recL] := by decide
-
 example : rightwardATR_osl.apply [.recL, .recL] = [.recL, .recL] := by decide
-
-/-- **Two SubsequentialTransducers / OSL rules agree** on the encoded examples. (Full
-extensional equivalence on all inputs would require a separate
-induction; this is the expected agreement on paper-cited cases.) -/
-example : rightwardATR.run [.dom, .recL, .a, .recL]
-        = rightwardATR_osl.apply [.dom, .recL, .a, .recL] := by decide
 
 -- ============================================================================
 -- § 4: Subregular Classification
@@ -278,15 +243,9 @@ theorem rightwardATR_osl_isLeftOutputStrictlyLocal :
     IsLeftOutputStrictlyLocal 2 rightwardATR_osl.apply :=
   rightwardATR_osl.isLeftOutputStrictlyLocal_apply
 
-/-- **Rightward [+ATR] spreading is also Left-Subsequential** (a weaker
-claim than OSL but the umbrella class). Witness: the SubsequentialTransducer. -/
-theorem rightwardATR_isLeftSubsequential :
-    IsLeftSubsequential rightwardATR.run :=
-  rightwardATR.isLeftSubsequential
-
-/-- Since OSL ⊆ Left-Subsequential
-(`isLeftOutputStrictlyLocal_left_subsequential`), the OSL classification
-automatically lifts. -/
+/-- **Rightward [+ATR] spreading is also Left-Subsequential** — the umbrella class,
+lifted from the OSL classification via OSL ⊆ Left-Subsequential
+(`isLeftOutputStrictlyLocal_left_subsequential`). -/
 theorem rightwardATR_osl_isLeftSubsequential :
     IsLeftSubsequential rightwardATR_osl.apply :=
   isLeftOutputStrictlyLocal_left_subsequential

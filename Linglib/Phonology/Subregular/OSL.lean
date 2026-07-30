@@ -161,43 +161,26 @@ theorem isRightOutputStrictlyLocal_iff_left_reverse {k : ℕ}
 
 /-! ### OSL ⊆ Subsequential
 
-`OSLRule.toFinSubsequentialTransducer` projects an OSL rule into a SubsequentialTransducer whose
-state is
-the bounded output window (length ≤ k − 1). The inclusion rides on the
-run-equality plus the `Fintype` instance for the bounded-window subtype
-(reusing `Subregular.fintypeListLengthLE`). Co-located on the source
-side because the dependency direction (`Subregular.SubsequentialTransducer`; OSL projects
-into it) forces both construction and cast into this file.
+`OSLRule.toFinSubsequentialTransducer` projects an OSL rule into the sliding-window
+transducer `SubsequentialTransducer.ofWindow`, with the bounded *output* window
+(length ≤ k − 1) as state. Co-located on the source side because the dependency
+direction (the transducer lives in `Subsequential.lean`; OSL projects into it) forces
+both construction and cast into this file.
 
 The output alphabet `[Fintype β]` constraint matches [mohri-1997]'s
 finite-alphabet assumption — the state space (a bounded output window)
 is finite precisely when the output alphabet is. -/
 
-/-- Construction: every Left-OSL rule induces a SubsequentialTransducer whose state is the
-output window — a list of output symbols of length at most `k − 1` —
-and whose `finalOutput` is empty. -/
+/-- Every Left-OSL rule induces a window transducer tracking the last `k − 1` *output*
+symbols (the window accumulates what `windowOutput` emits), with empty `finalOutput`. -/
 def OSLRule.toFinSubsequentialTransducer {k : ℕ} (r : OSLRule k α β) :
-    SubsequentialTransducer {l : List β // l.length ≤ k - 1} α β where
-  start := ⟨[], Nat.zero_le _⟩
-  step w x := ⟨(w.val ++ r.windowOutput w.val x).rtake (k - 1), List.length_rtake_le _ _⟩
-  output w x := r.windowOutput w.val x
-  finalOutput _ := []
+    SubsequentialTransducer {l : List β // l.length ≤ k - 1} α β :=
+  .ofWindow (k - 1) r.windowOutput r.windowOutput
 
-/-- The SubsequentialTransducer induced by an OSL rule computes the same string function. -/
+/-- The window transducer induced by an OSL rule computes the same string function. -/
 theorem OSLRule.toFinSubsequentialTransducer_run_eq_apply {k : ℕ} (r : OSLRule k α β) :
-    r.toFinSubsequentialTransducer.run = r.apply := by
-  funext input
-  show SubsequentialTransducer.runFrom r.toFinSubsequentialTransducer ⟨[], Nat.zero_le _⟩ input
-         = OSLRule.applyAux r [] input
-  suffices h : ∀ w : {l : List β // l.length ≤ k - 1},
-      SubsequentialTransducer.runFrom r.toFinSubsequentialTransducer w input = OSLRule.applyAux r
-      w.val input from h _
-  intro w
-  induction input generalizing w with
-  | nil => rfl
-  | cons x xs ih =>
-    rw [SubsequentialTransducer.runFrom_cons]
-    exact congrArg _ (ih _)
+    r.toFinSubsequentialTransducer.run = r.apply :=
+  SubsequentialTransducer.run_ofWindow r.applyAux (fun _ => rfl) fun _ _ _ => rfl
 
 /-- **Left-OSL ⊆ Left-Subsequential** (over a finite output alphabet).
 The `[Fintype β]` matches [mohri-1997]'s finite-alphabet assumption

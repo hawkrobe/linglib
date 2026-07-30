@@ -10,6 +10,7 @@ import Mathlib.Data.Fintype.Prod
 import Mathlib.Data.Finset.Lattice.Fold
 import Linglib.Core.Computability.Mealy
 import Linglib.Core.Data.Fintype.Transfer
+import Linglib.Core.Data.List.DropRight
 import Linglib.Core.Computability.Direction
 
 /-!
@@ -18,74 +19,51 @@ import Linglib.Core.Computability.Direction
 A function `f : List α → List β` is *subsequential* when it is computed by a
 deterministic finite-state transducer with state-final output [schutzenberger-1977]
 [mohri-1997]. Subsequential functions form a proper subclass of the rational functions
-(the functional rational relations) [filiot-reynier-2016].
-
-The class has *left* and *right* variants according to scan direction; the two are
-isomorphic under input/output reversal (`f` is right-subsequential iff
-`List.reverse ∘ f ∘ List.reverse` is left-subsequential).
+(the functional rational relations) [filiot-reynier-2016]. The class has *left* and
+*right* variants by scan direction, isomorphic under reverse-conjugation.
 
 ## Main definitions
 
-* `SubsequentialTransducer σ α β`: transducer with states `σ`, input alphabet `α`,
-  output alphabet `β`, and a state-final output emitted at the end of the input
-* `SubsequentialTransducer.run`, `SubsequentialTransducer.runRight`: the left-to-right
-  and right-to-left passes, built from `stateAfter`, `emitted`, and `runFrom`
-* `SubsequentialTransducer.comp`: the product machine, computing the composite function
-* `SubsequentialTransducer.reindex`: lifts an equivalence on states to an equivalence on
-  machines
-* `Mealy.toSubsequentialTransducer`, `SubsequentialTransducer.toMealy`: the synchronous
-  and block machine views of each other, mutually inverse on singleton-output
-  transducers with no final flush
-* `IsLeftSubsequential f`, `IsRightSubsequential f`, `IsSubsequential d f`: `f` is
-  computed by some finite-state `SubsequentialTransducer` scanning in the given direction
+* `SubsequentialTransducer σ α β`: the machine; `run` and `runRight` are its two passes
+* `SubsequentialTransducer.comp`: the product machine
+* `SubsequentialTransducer.ofWindow`: the sliding-window transducer
+* `Mealy.toSubsequentialTransducer`, `SubsequentialTransducer.toMealy`: mutually inverse
+  views of the synchronous machines as singleton-output, empty-flush block transducers
+* `IsLeftSubsequential`, `IsRightSubsequential`, `IsSubsequential d`: computability by a
+  finite-state transducer in the given scan direction
 
 ## Main theorems
 
-* `IsLeftSubsequential.comp` (and the right/direction variants): subsequential
-  functions are closed under composition, by the classical product construction
+* `IsLeftSubsequential.comp`: closure under composition, by the product construction
   [mohri-1997]
-* `isRightSubsequential_iff_left_reverse`: the left and right classes are isomorphic
-  via reverse-conjugation
+* `isRightSubsequential_iff_left_reverse`: the left and right classes are
+  reverse-conjugate
 * `isLeftSubsequential_iff`, `isRightSubsequential_iff`: the universe-polymorphic
   characterizations
-* `IsMealyComputable.isLeftSubsequential`, `SubsequentialTransducer.isMealyComputable`:
-  the synchronous class sits inside the block class, and a singleton-output transducer
-  with no final flush falls back into it
-* `IsLeftSubsequential.bounded_delay`: a left-subsequential function withholds at most
-  a bounded suffix, since it can only be sitting on a state-final output
+* `IsMealyComputable.isLeftSubsequential`: the synchronous class sits inside the block
+  class
+* `IsLeftSubsequential.bounded_delay`: at most a bounded suffix is withheld
 
 ## Implementation notes
 
-The name follows [choffrut-1977] and [mohri-1997]: *sequential* for a deterministic
-transducer with no state-final output, *subsequential* once one is added. The usage is
-contested — [sakarovitch-2009] calls this class simply *sequential* (reserving *pure
-sequential* for the empty-final-output case) and flags his own terminology as
-unconventional, quoting [bruyere-reutenauer-1999] that "the word sub-sequential is
-unfortunate". We keep the Choffrut spelling, so `Mealy` is the letter-to-letter case —
-empty final output, one output symbol per input symbol — and `SubsequentialTransducer`
-the general one.
+The name follows [choffrut-1977] and [mohri-1997]: *sequential* without state-final
+output, *subsequential* with. [sakarovitch-2009] instead calls this class *sequential*
+(and the empty-flush case *pure sequential*), flagging his own usage as unconventional
+(cf. [bruyere-reutenauer-1999]); we keep the Choffrut spelling. `Mealy` is the
+letter-to-letter case.
 
-`SubsequentialTransducer` models the *total* subsequential functions: `step` is total
-and every input is accepted, so `run` is a total function. This restricts the
-literature's class — a sink state does not recover partiality, since out-of-domain
-inputs still emit output — so the classification predicates below are about total
-functions only. On empty input `run` emits `finalOutput start` alone; the
-initial-output function of [sakarovitch-2009] is omitted.
-
-`run` and `runFrom` keep disjoint simp normal forms, as with `DFA.eval`/`DFA.evalFrom`:
-`run_nil` is simp but there is no `run_cons`; switch to `runFrom` via `simp [run]`.
+`step` is total and every input is accepted, so `run` models the *total* subsequential
+functions only — a sink state does not recover partiality, since out-of-domain inputs
+still emit output. On empty input `run` emits `finalOutput start`; the initial-output
+function of [sakarovitch-2009] is omitted. `run` and `runFrom` keep disjoint simp
+normal forms, as with `DFA.eval`/`DFA.evalFrom`: switch via `simp [run]`.
 
 ## TODO
 
-* The characterization of [choffrut-1977]: a rational function is subsequential iff it
-  has *bounded variation* — for every `l` there is an `L` with `d (f x) (f y) ≤ L`
-  whenever `d x y ≤ l`, for the prefix distance `d x y = |x⁻¹y|` taken in the free group
-  — which is decidable on a transducer realizing it via the twinning condition. Neither
-  bounded variation nor twinning is formalized here; `bounded_delay` is a much weaker
-  consequence of subsequentiality, not this characterization.
-* Onward canonical forms and minimization.
-* Two-way subsequential functions (two-way deterministic transducers).
-* p-subsequential functions [mohri-1997] (multiple outputs per input).
+* Choffrut's theorem [choffrut-1977]: a rational function is subsequential iff it has
+  bounded variation, decidably via the twinning condition; `bounded_delay` is a much
+  weaker consequence. Onward, canonical forms and minimization.
+* Two-way transducers; p-subsequential functions [mohri-1997].
 -/
 
 namespace Subregular
@@ -241,6 +219,44 @@ def comp : SubsequentialTransducer (σ' × σ) α γ where
   funext xs; simp [run, Function.comp]
 
 end Comp
+
+/-! ### Window transducers -/
+
+section OfWindow
+
+variable {γ : Type*}
+
+/-- The sliding-window transducer: the state is a window of at most `n` symbols of `γ`,
+`out` emits an output block from the window and the current symbol, and `upd` chooses
+what the window accumulates — `fun _ x => [x]` tracks the input, `out` itself the
+output. -/
+@[simps]
+def ofWindow (n : ℕ) (out : List γ → α → List β) (upd : List γ → α → List γ) :
+    SubsequentialTransducer {l : List γ // l.length ≤ n} α β where
+  start := ⟨[], Nat.zero_le _⟩
+  step w x := ⟨(w.val ++ upd w.val x).rtake n, List.length_rtake_le _ _⟩
+  output w x := out w.val x
+  finalOutput _ := []
+
+variable {n : ℕ} {out : List γ → α → List β} {upd : List γ → α → List γ}
+
+/-- The window transducer runs any recursion that emits `out` and extends the window by
+`upd` — the master run-equality behind the ISL/OSL projections. -/
+theorem runFrom_ofWindow (go : List γ → List α → List β) (hnil : ∀ w, go w [] = [])
+    (hcons : ∀ w x xs, go w (x :: xs) = out w x ++ go ((w ++ upd w x).rtake n) xs) :
+    ∀ (w : {l : List γ // l.length ≤ n}) (xs : List α),
+      (ofWindow n out upd).runFrom w xs = go w.val xs := by
+  intro w xs
+  induction xs generalizing w with
+  | nil => simp [hnil]
+  | cons x xs ih => rw [runFrom_cons, hcons]; exact congrArg _ (ih _)
+
+theorem run_ofWindow (go : List γ → List α → List β) (hnil : ∀ w, go w [] = [])
+    (hcons : ∀ w x xs, go w (x :: xs) = out w x ++ go ((w ++ upd w x).rtake n) xs) :
+    (ofWindow n out upd).run = go [] :=
+  funext fun xs => runFrom_ofWindow go hnil hcons ⟨[], Nat.zero_le _⟩ xs
+
+end OfWindow
 
 end SubsequentialTransducer
 

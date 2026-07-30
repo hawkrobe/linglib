@@ -4,8 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Mathlib.Data.List.Basic
-import Mathlib.Data.Fintype.Sigma
-import Mathlib.Data.Fintype.Vector
+import Linglib.Core.Data.Fintype.List
 import Linglib.Core.Data.List.DropRight
 import Linglib.Core.Computability.Subsequential
 
@@ -50,25 +49,6 @@ threaded window to length `k - 1`.
 namespace Subregular
 
 variable {α β : Type*}
-
-/-- The "list of length at most `n`" subtype is finite when `α` is. The
-witness is a surjection from `Σ m : Fin (n + 1), List.Vector α m` (which
-has a `Fintype` instance via `Mathlib.Data.Fintype.{Sigma,Vector}`). Used
-to give ISL/OSL projections into SubsequentialTransducer a manifestly-finite state space
-(matching [mohri-1997]'s finite-state assumption). Uses `classical`
-to discharge the `DecidableEq` side condition without imposing it on
-consumers (matches mathlib pattern for finite types over `Fintype α`). -/
-noncomputable instance fintypeListLengthLE {α : Type*} [Fintype α] (n : ℕ) :
-    Fintype {l : List α // l.length ≤ n} := by
-  classical
-  exact Fintype.ofSurjective
-    (fun (s : Σ m : Fin (n + 1), List.Vector α m) =>
-      (⟨s.snd.toList, by
-        rw [List.Vector.toList_length]
-        exact Nat.lt_succ_iff.mp s.fst.isLt⟩ :
-        {l : List α // l.length ≤ n}))
-    (fun l => ⟨⟨⟨l.val.length, Nat.lt_succ_iff.mpr l.property⟩,
-                  ⟨l.val, rfl⟩⟩, rfl⟩)
 
 /-- A **k-Input-Strictly-Local rule** over input alphabet `α` and output
 alphabet `β`. The single field `windowOutput` consumes the
@@ -259,44 +239,24 @@ theorem filterMap_isLeftInputStrictlyLocal_one (g : α → Option β) :
 
 /-! ### ISL ⊆ Subsequential
 
-`ISLRule.toFinSubsequentialTransducer` projects an ISL rule into a finite-state
-SubsequentialTransducer whose
-state space is the bounded input window `{l : List α // l.length ≤ k - 1}`.
-The `[Fintype α]` constraint matches the source literature [mohri-1997]:
-every subsequential model has a finite alphabet and finite state by
-definition. The inclusion theorem
-rides on the run-equality. Co-located on the source side because the
-dependency direction (SubsequentialTransducer in `Subsequential.lean`; ISL projects into
+`ISLRule.toFinSubsequentialTransducer` projects an ISL rule into the sliding-window
+transducer `SubsequentialTransducer.ofWindow`, with the bounded *input* window
+`{l : List α // l.length ≤ k - 1}` as state. Co-located on the source side because the
+dependency direction (the transducer lives in `Subsequential.lean`; ISL projects into
 it) forces both construction and cast into this file. -/
 
-/-- Construction: every ISL rule induces a **finite-state** SubsequentialTransducer whose
-state is the bounded input window `{l : List α // l.length ≤ k - 1}`,
-and whose `finalOutput` is empty. The state is manifestly finite via
-`fintypeListLengthLE`, witnessing ISL ⊆ Subsequential under the source
-literature's finite-state assumption. -/
-def ISLRule.toFinSubsequentialTransducer {k : ℕ} [Fintype α] (r : ISLRule k α β) :
-    SubsequentialTransducer {l : List α // l.length ≤ k - 1} α β where
-  start := ⟨[], Nat.zero_le _⟩
-  step w x := ⟨(w.val ++ [x]).rtake (k - 1), List.length_rtake_le _ _⟩
-  output w x := r.windowOutput w.val x
-  finalOutput _ := []
+/-- Every ISL rule induces a window transducer tracking the last `k - 1` *input*
+symbols, with empty `finalOutput`. Finite-state over a finite alphabet
+(`List.fintypeSubtypeLengthLE`), witnessing ISL ⊆ Subsequential under the source
+literature's finite-state assumption [mohri-1997]. -/
+def ISLRule.toFinSubsequentialTransducer {k : ℕ} (r : ISLRule k α β) :
+    SubsequentialTransducer {l : List α // l.length ≤ k - 1} α β :=
+  .ofWindow (k - 1) r.windowOutput fun _ x => [x]
 
-/-- The finite-state SubsequentialTransducer induced by an ISL rule computes the same
-string function. -/
-theorem ISLRule.toFinSubsequentialTransducer_run_eq_apply {k : ℕ} [Fintype α] (r : ISLRule k α β) :
-    r.toFinSubsequentialTransducer.run = r.apply := by
-  funext input
-  show SubsequentialTransducer.runFrom r.toFinSubsequentialTransducer ⟨[], Nat.zero_le _⟩ input
-    = ISLRule.applyAux r [] input
-  suffices h : ∀ (w : {l : List α // l.length ≤ k - 1}),
-      SubsequentialTransducer.runFrom r.toFinSubsequentialTransducer w input = ISLRule.applyAux r
-      w.val input from h _
-  intro w
-  induction input generalizing w with
-  | nil => rfl
-  | cons x xs ih =>
-    rw [SubsequentialTransducer.runFrom_cons]
-    exact congrArg _ (ih _)
+/-- The window transducer induced by an ISL rule computes the same string function. -/
+theorem ISLRule.toFinSubsequentialTransducer_run_eq_apply {k : ℕ} (r : ISLRule k α β) :
+    r.toFinSubsequentialTransducer.run = r.apply :=
+  SubsequentialTransducer.run_ofWindow r.applyAux (fun _ => rfl) fun _ _ _ => rfl
 
 /-- **Left-ISL ⊆ Left-Subsequential** (over a finite input alphabet).
 The `[Fintype α]` matches [mohri-1997]'s finite-alphabet assumption
