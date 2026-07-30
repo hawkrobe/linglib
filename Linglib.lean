@@ -9,6 +9,7 @@ import Linglib.Core.Algebra.Group.Aperiodic
 import Linglib.Core.Algebra.Group.End
 import Linglib.Core.Algebra.Group.Idempotent
 import Linglib.Core.Algebra.Group.Pseudovariety
+import Linglib.Core.Algebra.Group.WithOne
 import Linglib.Core.Algebra.IdempotentPower
 import Linglib.Core.Algebra.Opposites
 import Linglib.Core.Algebra.Order.ToIntervalMod

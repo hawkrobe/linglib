@@ -6,10 +6,9 @@ Authors: Robert Hawkins
 [UPSTREAM] candidate: `Mathlib.Computability.SyntacticSemigroup`.
 -/
 import Linglib.Core.Algebra.FreeMonoid.FreeSemigroup
+import Linglib.Core.Algebra.Group.WithOne
 import Linglib.Core.Computability.SyntacticMonoid
 import Linglib.Core.GroupTheory.Congruence.Hom
-import Mathlib.Algebra.Group.WithOne.Basic
-import Mathlib.Data.Fintype.Option
 
 /-!
 # The syntactic semigroup of a language
@@ -129,14 +128,12 @@ theorem eq_one_or_mem_range_syntacticSemigroupToMonoid (L : Language α) (s : L.
   rcases eq_one_or_toFreeMonoid x with rfl | ⟨u, rfl⟩
   exacts [.inl (map_one _), .inr ⟨L.toSyntacticSemigroup u, rfl⟩]
 
-/-- A finite syntactic semigroup forces a finite syntactic monoid: the monoid is covered by
-`WithOne` of the semigroup, which is Eilenberg's `M_A = S_A ∪ {1}`. -/
+/-- A finite syntactic semigroup forces a finite syntactic monoid: `WithOne` of the semigroup
+covers the monoid. -/
 theorem finite_syntacticMonoid_of_finite_syntacticSemigroup (L : Language α)
-    [Finite L.SyntacticSemigroup] : Finite L.SyntacticMonoid := by
-  haveI : Finite (WithOne L.SyntacticSemigroup) := inferInstanceAs (Finite (Option _))
-  refine .of_surjective (WithOne.lift L.syntacticSemigroupToMonoid) fun m => ?_
-  rcases L.eq_one_or_mem_range_syntacticSemigroupToMonoid m with rfl | ⟨t, rfl⟩
-  exacts [⟨1, map_one _⟩, ⟨(t : WithOne _), WithOne.lift_coe _ _⟩]
+    [Finite L.SyntacticSemigroup] : Finite L.SyntacticMonoid :=
+  .of_surjective _
+    (WithOne.lift_surjective.mpr L.eq_one_or_mem_range_syntacticSemigroupToMonoid)
 
 /-! ### Myhill–Nerode -/
 
@@ -187,9 +184,8 @@ theorem syntacticSemigroupCon_congr {L' : Language α}
   Con.ext fun u v => forall_congr' fun x => forall_congr' fun y =>
     iff_congr (h _ (key x u y)) (h _ (key x v y))
 
-/-- Adjoining the empty word leaves the syntactic congruence unchanged, since it quantifies only
-over nonempty words. This is the `+`-variety semantics ([eilenberg-1976] indexes varieties of sets
-on `Σ⁺`): no pseudovariety of semigroups distinguishes `L` from `insert [] L`. -/
+/-- Adjoining the empty word leaves the syntactic congruence unchanged, since the congruence
+quantifies only over nonempty words. -/
 theorem syntacticSemigroupCon_insert_nil :
     (insert [] L).syntacticSemigroupCon = L.syntacticSemigroupCon :=
   syntacticSemigroupCon_congr fun _ hw => Set.mem_insert_iff.trans (or_iff_right hw)
@@ -200,9 +196,8 @@ section
 
 variable {T : Type*} [Semigroup T] {η : FreeSemigroup α →ₙ* T}
 
-/-- `η` *recognizes* `L` when its `WithOne` unitization, read on the free monoid through
-`FreeMonoid.equivWithOneFreeSemigroup`, recognizes `L` — Eilenberg's `M_A = S_A ∪ {1}` at the
-recognition level. Pointwise characterization: `recognizesSemigroup_iff`. -/
+/-- `η` *recognizes* `L` when its unitization `WithOne.mapMulHom η` recognizes `L`. Equivalently,
+membership of a nonempty word in `L` is decided by its `η`-image (`recognizesSemigroup_iff`). -/
 def RecognizesSemigroup (η : FreeSemigroup α →ₙ* T) (L : Language α) : Prop :=
   Recognizes ((WithOne.mapMulHom η).comp FreeMonoid.equivWithOneFreeSemigroup.toMonoidHom) L
 
@@ -212,8 +207,6 @@ theorem mapMulHom_comp_equivWithOneFreeSemigroup_toFreeMonoid (u : FreeSemigroup
   rw [MonoidHom.comp_apply, MulEquiv.coe_toMonoidHom,
     FreeMonoid.equivWithOneFreeSemigroup_toFreeMonoid, WithOne.mapMulHom_coe]
 
-/-- `η` recognizes `L` if and only if membership of a nonempty word in `L` is decided by its
-`η`-image. -/
 theorem recognizesSemigroup_iff :
     L.RecognizesSemigroup η ↔
       ∃ P : Set T, ∀ w : FreeSemigroup α, w.toFreeMonoid.toList ∈ L ↔ η w ∈ P := by
