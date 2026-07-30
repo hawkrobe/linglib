@@ -88,14 +88,12 @@ import Linglib.Core.Computability.NonContextFree.AnBnCnDn
 import Linglib.Core.Computability.NonContextFree.BlockWitness
 import Linglib.Core.Computability.NonRegular.AnBn
 import Linglib.Core.Computability.PiecewiseTestable
-import Linglib.Core.Computability.QFLogic
 import Linglib.Core.Computability.StarFree
 import Linglib.Core.Computability.StrictlyLocal
 import Linglib.Core.Computability.StrictlyPiecewise
 import Linglib.Core.Computability.Subsequential
 import Linglib.Core.Computability.SyntacticMonoid
 import Linglib.Core.Computability.SyntacticSemigroup
-import Linglib.Core.Computability.Transduction
 import Linglib.Core.Computability.TransitionMonoid
 import Linglib.Core.Computability.Variety.Correspondence
 import Linglib.Core.Computability.Variety.Equations
@@ -1360,10 +1358,12 @@ import Linglib.Phonology.Subregular.Multitier
 import Linglib.Phonology.Subregular.OCP
 import Linglib.Phonology.Subregular.OSL
 import Linglib.Phonology.Subregular.OTBound
+import Linglib.Phonology.Subregular.QF
 import Linglib.Phonology.Subregular.Sibilant
 import Linglib.Phonology.Subregular.TierProjection
 import Linglib.Phonology.Subregular.TierRule
 import Linglib.Phonology.Subregular.TierStrictlyLocal
+import Linglib.Phonology.Subregular.Transduction
 import Linglib.Phonology.Segmental.Basic
 import Linglib.Phonology.Segmental.Defs
 import Linglib.Phonology.Segmental.ElementTheory

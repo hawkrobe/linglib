@@ -1,5 +1,5 @@
 import Mathlib.Data.List.Basic
-import Linglib.Core.Computability.Transduction
+import Linglib.Phonology.Subregular.Transduction
 
 /-!
 # Dolatian 2020: pre-inflectional vowel reduction and the Prosodic Stem
@@ -33,7 +33,7 @@ Dolatian also formalizes the phonology *computationally*, as MSO/quantifier-free
 logical transductions over word models (§4), whose locality (QF ⟹ Input Strictly
 Local, hence learnable) is his central computational claim. The final section
 realizes the Eastern Armenian cophonology in that framework
-(`Core.Computability.Subregular.Logic`): DHR is the local rewrite `H → ∅ / _ C V`,
+(`Phonology.Subregular.Transduction`): DHR is the local rewrite `H → ∅ / _ C V`,
 and the cyclic derivation is transduction composition. Reproducing the *amusin*
 contrast segmentally recovers the serial result by a different route
 (`transduction_matches_trigger`).
@@ -126,18 +126,18 @@ theorem dhr_iff (d : Dialect) (stem : List Seg) (suf : Suffix) :
 [dolatian-2020]'s computational formalization (§4): the cophonology as an MSO/quantifier-free
 logical transduction over a word model. Eastern Armenian DHR is the local rewrite `H → ∅ / _ C V`
 — the stem-final high vowel drops when a following consonant resyllabifies into a V-initial
-suffix's onset — realized with `Core.Computability.Subregular.Logic`. The rewrite reads a bounded
+suffix's onset — realized with `Phonology.Subregular.Transduction`. The rewrite reads a bounded
 right context, so it is quantifier-free, hence subregular and learnable (Dolatian's thesis). -/
 
 section Transductions
 
-open Subregular.Logic
+open Subregular
 
 /-- Segments refined with the high-vowel target `H` of DHR. -/
 inductive Phone | C | V | H
   deriving DecidableEq, Repr
 
-private def x : Term (Fin 1) := .var 0
+private def x : Term := .var
 
 /-- Eastern Armenian DHR as a logical transduction: delete a high vowel before `C V` (the
 resyllabification-and-expansion context); every other segment is faithful. A high vowel in that
@@ -145,15 +145,15 @@ context matches no clause and is dropped. -/
 def dhrEast : Transduction Phone Phone where
   copies := 1
   clause _ :=
-    [ (QF.conj (.atom (.label .H x))
-        (QF.neg (QF.conj (.atom (.label .C x.succ)) (.atom (.label .V x.succ.succ)))), .H),
-      (.atom (.label .C x), .C), (.atom (.label .V x), .V) ]
+    [ (QF.conj (.label .H x)
+        (QF.neg (QF.conj (.label .C x.succ) (.label .V x.succ.succ))), .H),
+      (.label .C x, .C), (.label .V x, .V) ]
 
 /-- Western Armenian: the PStem cophonology shifts stress but does not reduce, so the high vowel is
 faithful in every context ([dolatian-2020] (76)). -/
 def dhrWest : Transduction Phone Phone where
   copies := 1
-  clause _ := [(.atom (.label .H x), .H), (.atom (.label .C x), .C), (.atom (.label .V x), .V)]
+  clause _ := [(.label .H x, .H), (.label .C x, .C), (.label .V x, .V)]
 
 /-- *amusin* a-mu-si-n, segmentally `V C V C H C` (the stem-final high vowel is `H`). -/
 def amusinP : List Phone := [.V, .C, .V, .C, .H, .C]

@@ -1,196 +1,35 @@
-import Linglib.Core.Computability.Transduction
+import Linglib.Phonology.Subregular.Transduction
 import Linglib.Phonology.Subregular.ISL
 
 /-!
-# The locality bridge: quantifier-free ⟹ strictly local
+# The locality bridge: left-local ⟹ input strictly local
 
-A quantifier-free logical transduction whose guards look only at a *bounded* context is
-**strictly local**. Proved here in the left-directed half: a transduction whose guards are
-*backward* (built from the variable and predecessors, no successor) with predecessor depth `≤ r`
-is `IsLeftInputStrictlyLocal (r + 1)`.
+A local transduction whose guards look only at a *bounded left* context is **input strictly
+local**: a transduction that is `LeftLocal r` (guards backward-bounded by `r`) is
+`IsLeftInputStrictlyLocal (r + 1)`.
 
-The mathematical crux is `Term.eval_backward`: a backward term of predecessor depth `j`, evaluated
-at position `n`, reads exactly position `n - j` (or falls off the left edge). Hence the truth of a
-backward guard at `n` depends only on the `r + 1` symbols ending at `n` — the ISL window.
-
-## Main definitions
-
-* `Term.Backward` / `Term.pdepth`: successor-free terms and their predecessor depth.
-* `Atom.Backward` / `QF.Backward` / `Transduction.LeftLocal`: the bounded-left-context classes.
+The mathematical crux is upstream (`Transduction.emitAt_eq_of_agree`, resting on
+`Term.eval_backward`): a left-local transduction emits the same block at positions whose bounded
+left contexts agree. This file threads that fact through the ISL window: the window maintained by
+`ISLRule.applyAux` stays exactly the bounded left context, so the induced rule reproduces the
+transduction's output.
 
 ## Main results
 
-* `Term.eval_backward`: a backward term of depth `j` at position `n` evaluates to `n - j`.
-* `Transduction.leftLocal_isLeftISL`: a backward-bounded (radius `r`) transduction is
+* `Transduction.toISLRule`: the ISL rule induced by a left-local transduction.
+* `Transduction.leftLocal_isLeftISL`: a `LeftLocal r` transduction is
   `(r+1)`-Left-Input-Strictly-Local.
 -/
 
-namespace Subregular.Logic
+namespace Subregular
 
-variable {α β V : Type*}
-
-private theorem pred?_zero (w : List α) : pred? w 0 = none := rfl
-
-private theorem pred?_pos {w : List α} {m : ℕ} (h0 : 0 < m) (hm : m ≤ w.length) :
-    pred? w m = some (m - 1) := by
-  obtain ⟨m', rfl⟩ := Nat.exists_eq_succ_of_ne_zero (show m ≠ 0 by omega)
-  have hm' : m' < w.length := by omega
-  simp [pred?, hm']
-
-/-! ### Backward terms
-
-`Term.Backward` and `Term.pdepth` live with the `Subregular.Logic.Term` API. -/
-
-namespace Term
-
-/-- A backward term of predecessor depth `j`, evaluated at position `n` (in range), reads exactly
-position `n - j` — defined iff `j ≤ n`. -/
-theorem eval_backward {w : List α} {n : ℕ} (hn : n < w.length) :
-    ∀ {t : Term (Fin 1)}, t.Backward →
-      t.eval w (fun _ => n) = if t.pdepth ≤ n then some (n - t.pdepth) else none := by
-  intro t ht
-  induction t with
-  | var v => simp [eval, pdepth, hn]
-  | succ t _ => exact absurd ht (by simp [Backward])
-  | pred t ih =>
-      simp only [Backward] at ht
-      simp only [eval, ih ht, pdepth]
-      by_cases h : t.pdepth ≤ n
-      · rw [if_pos h, Option.bind_some]
-        by_cases h0 : t.pdepth = n
-        · subst h0; rw [Nat.sub_self, pred?_zero, if_neg (by omega)]
-        · rw [pred?_pos (by omega) (by omega), if_pos (by omega),
-            Nat.sub_sub]
-      · rw [if_neg h, Option.bind_none, if_neg (by omega)]
-
-end Term
-
-/-! ### Bounded-left-context formulas and transductions -/
-
-/-- An atom is backward-bounded by `r` if every term it uses is backward with predecessor depth
-`≤ r` (so it reads only the `r + 1` symbols ending at the variable). -/
-def Atom.BackBounded (r : ℕ) : Atom α V → Prop
-  | .label _ t => t.Backward ∧ t.pdepth ≤ r
-  | .eq t₁ t₂  => (t₁.Backward ∧ t₁.pdepth ≤ r) ∧ (t₂.Backward ∧ t₂.pdepth ≤ r)
-  | .defined t => t.Backward ∧ t.pdepth ≤ r
-
-/-- A quantifier-free formula is backward-bounded by `r` if all its atoms are. -/
-def QF.BackBounded (r : ℕ) : QF α V → Prop
-  | .atom a   => a.BackBounded r
-  | .tru      => True
-  | .fls      => True
-  | .neg φ    => φ.BackBounded r
-  | .conj φ ψ => φ.BackBounded r ∧ ψ.BackBounded r
-  | .disj φ ψ => φ.BackBounded r ∧ ψ.BackBounded r
-
-/-- A transduction is **left-local** with radius `r` if every clause guard is backward-bounded by
-`r`: the output at a position is determined by that position and the `r` symbols before it. -/
-def Transduction.LeftLocal (r : ℕ) (T : Transduction α β) : Prop :=
-  ∀ c, ∀ cl ∈ T.clause c, cl.1.BackBounded r
+variable {α β : Type*}
 
 /-- The Left-ISL rule induced by a left-local transduction of radius `r`: read the output block at
 each position from the last `r` input symbols (`window`) and the current symbol `x`, by running the
 transduction's `emitAt` on `window ++ [x]` at its final position. -/
 def Transduction.toISLRule [DecidableEq α] (T : Transduction α β) (r : ℕ) : ISLRule (r + 1) α β where
   windowOutput window x := T.emitAt (window ++ [x]) window.length
-
-/-! ### Locality of `emitAt` and the window-threading invariant
-
-The bridge reduces to two facts: a backward-bounded guard reads only the `r + 1` symbols ending at
-its position (`emitAt` agrees on positions with matching bounded left context), and the ISL window
-threaded by `applyAux` stays exactly that bounded left context. -/
-
-/-- A backward-bounded atom reads only the `r + 1` symbols ending at its position: it has the same
-truth value at `(w, n)` and `(w', n')` whenever their bounded left contexts (the labels at offsets
-`0 … r`, and which of those offsets stay in range) agree. -/
-private theorem Atom.realize_eq_of_agree [DecidableEq α] {r : ℕ} {a : Atom α (Fin 1)}
-    (ha : a.BackBounded r) {w w' : List α} {n n' : ℕ}
-    (hn : n < w.length) (hn' : n' < w'.length)
-    (hlbl : ∀ j ≤ r, w[n - j]? = w'[n' - j]?)
-    (hedge : ∀ j ≤ r, (j ≤ n ↔ j ≤ n')) :
-    a.Realize w (fun _ => n) ↔ a.Realize w' (fun _ => n') := by
-  cases a with
-  | label c t =>
-    obtain ⟨ht, hb⟩ := ha
-    simp only [Atom.Realize, Term.eval_backward hn ht, Term.eval_backward hn' ht]
-    by_cases h : t.pdepth ≤ n
-    · rw [if_pos h, if_pos ((hedge t.pdepth hb).mp h)]
-      simp only [Option.bind_some]
-      rw [hlbl t.pdepth hb]
-    · rw [if_neg h, if_neg (fun hh => h ((hedge t.pdepth hb).mpr hh)),
-          Option.bind_none, Option.bind_none]
-  | eq t₁ t₂ =>
-    obtain ⟨⟨ht₁, hb₁⟩, ht₂, hb₂⟩ := ha
-    have e1 := hedge t₁.pdepth hb₁
-    have e2 := hedge t₂.pdepth hb₂
-    simp only [Atom.Realize, Term.eval_backward hn ht₁, Term.eval_backward hn ht₂,
-               Term.eval_backward hn' ht₁, Term.eval_backward hn' ht₂]
-    by_cases h₁ : t₁.pdepth ≤ n
-    · by_cases h₂ : t₂.pdepth ≤ n
-      · rw [if_pos h₁, if_pos h₂, if_pos (e1.mp h₁), if_pos (e2.mp h₂)]
-        have := e1.mp h₁; have := e2.mp h₂
-        simp only [Option.some.injEq, ne_eq, reduceCtorEq, not_false_eq_true, and_true]
-        omega
-      · rw [if_pos h₁, if_neg h₂, if_pos (e1.mp h₁), if_neg (fun hh => h₂ (e2.mpr hh))]; simp
-    · by_cases h₂ : t₂.pdepth ≤ n
-      · rw [if_neg h₁, if_pos h₂, if_neg (fun hh => h₁ (e1.mpr hh)), if_pos (e2.mp h₂)]; simp
-      · rw [if_neg h₁, if_neg h₂, if_neg (fun hh => h₁ (e1.mpr hh)),
-            if_neg (fun hh => h₂ (e2.mpr hh))]
-  | defined t =>
-    obtain ⟨ht, hb⟩ := ha
-    simp only [Atom.Realize, Term.eval_backward hn ht, Term.eval_backward hn' ht]
-    by_cases h : t.pdepth ≤ n
-    · rw [if_pos h, if_pos ((hedge t.pdepth hb).mp h)]; simp
-    · rw [if_neg h, if_neg (fun hh => h ((hedge t.pdepth hb).mpr hh))]
-
-/-- A backward-bounded quantifier-free formula reads only the `r + 1` symbols ending at its
-position — the boolean-combination lift of `Atom.realize_eq_of_agree`. -/
-private theorem QF.realize_eq_of_agree [DecidableEq α] {r : ℕ}
-    {w w' : List α} {n n' : ℕ}
-    (hn : n < w.length) (hn' : n' < w'.length)
-    (hlbl : ∀ j ≤ r, w[n - j]? = w'[n' - j]?)
-    (hedge : ∀ j ≤ r, (j ≤ n ↔ j ≤ n')) :
-    ∀ {φ : QF α (Fin 1)}, φ.BackBounded r →
-      (φ.Realize w (fun _ => n) ↔ φ.Realize w' (fun _ => n')) := by
-  intro φ
-  induction φ with
-  | atom a => exact fun hφ => Atom.realize_eq_of_agree hφ hn hn' hlbl hedge
-  | tru => intro _; simp [QF.Realize]
-  | fls => intro _; simp [QF.Realize]
-  | neg φ ih => intro hφ; simp only [QF.Realize, ih hφ]
-  | conj φ ψ ihφ ihψ => intro hφ; obtain ⟨h1, h2⟩ := hφ; simp only [QF.Realize, ihφ h1, ihψ h2]
-  | disj φ ψ ihφ ihψ => intro hφ; obtain ⟨h1, h2⟩ := hφ; simp only [QF.Realize, ihφ h1, ihψ h2]
-
-/-- Pointwise congruence for `List.findSome?`: agreeing on the list's members suffices. -/
-private theorem findSome?_congr {γ δ : Type*} {f g : γ → Option δ} :
-    ∀ {l : List γ}, (∀ x ∈ l, f x = g x) → l.findSome? f = l.findSome? g := by
-  intro l
-  induction l with
-  | nil => intro _; rfl
-  | cons a as ih =>
-    intro h
-    rw [List.findSome?_cons, List.findSome?_cons, h a List.mem_cons_self]
-    cases g a with
-    | none => exact ih (fun x hx => h x (List.mem_cons_of_mem a hx))
-    | some b => rfl
-
-/-- A left-local transduction emits the same block at positions whose bounded left contexts agree:
-every clause guard is backward-bounded, so its firing is determined by that context. -/
-private theorem Transduction.emitAt_eq_of_agree [DecidableEq α] {r : ℕ} {T : Transduction α β}
-    (hT : T.LeftLocal r) {w w' : List α} {n n' : ℕ}
-    (hn : n < w.length) (hn' : n' < w'.length)
-    (hlbl : ∀ j ≤ r, w[n - j]? = w'[n' - j]?)
-    (hedge : ∀ j ≤ r, (j ≤ n ↔ j ≤ n')) :
-    T.emitAt w n = T.emitAt w' n' := by
-  unfold Transduction.emitAt
-  apply List.filterMap_congr
-  intro c _
-  apply findSome?_congr
-  intro cl hcl
-  have hb := hT c cl hcl
-  by_cases h : cl.1.Realize w (fun _ => n)
-  · rw [if_pos h, if_pos ((QF.realize_eq_of_agree hn hn' hlbl hedge hb).mp h)]
-  · rw [if_neg h, if_neg (fun hh => h ((QF.realize_eq_of_agree hn hn' hlbl hedge hb).mpr hh))]
 
 /-- The block a left-local transduction emits at position `p` depends only on the `r + 1` input
 symbols ending at `p`: it equals the block emitted at the last position of that window. -/
@@ -285,14 +124,14 @@ section Example
 private inductive Sym | a | b | c
   deriving DecidableEq
 
-private def xv : Term (Fin 1) := .var 0
+private def xv : Term := .var
 
 /-- Relabel `b → c` immediately after an `a`: the guard looks only left (a predecessor `a`), so it
 is backward with radius 1. -/
 private def afterA : Transduction Sym Sym where
   copies := 1
-  clause _ := [(QF.conj (.atom (.label .a xv.pred)) (.atom (.label .b xv)), .c),
-               (.atom (.label .b xv), .b), (.atom (.label .c xv), .c), (.atom (.label .a xv), .a)]
+  clause _ := [(QF.conj (.label .a xv.pred) (.label .b xv), .c),
+               (.label .b xv, .b), (.label .c xv, .c), (.label .a xv, .a)]
 
 -- The induced 2-Left-ISL rule computes the same function on a sample — the bridge, concretely.
 example : (afterA.toISLRule 1).apply [Sym.a, .b, .a, .b]
@@ -301,4 +140,4 @@ example : afterA.apply [Sym.a, .b, .a, .b] = [Sym.a, .c, .a, .c] := by decide
 
 end Example
 
-end Subregular.Logic
+end Subregular
