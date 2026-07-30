@@ -125,10 +125,9 @@ instance [Finite L.SyntacticMonoid] : Finite L.SyntacticSemigroup :=
 the class of the empty word or the image of one of the semigroup. -/
 theorem eq_one_or_mem_range_syntacticSemigroupToMonoid (L : Language α) (s : L.SyntacticMonoid) :
     s = 1 ∨ s ∈ Set.range L.syntacticSemigroupToMonoid := by
-  obtain ⟨w, rfl⟩ := L.syntacticClass_surjective s
-  rcases w with _ | ⟨c, w⟩
-  · exact .inl L.syntacticClass_nil
-  · exact .inr ⟨L.toSyntacticSemigroup ⟨c, w⟩, by simp [toFreeMonoid_mk_eq_cons, syntacticClass]⟩
+  obtain ⟨x, rfl⟩ := Con.mk'_surjective s
+  rcases eq_one_or_toFreeMonoid x with rfl | ⟨u, rfl⟩
+  exacts [.inl (map_one _), .inr ⟨L.toSyntacticSemigroup u, rfl⟩]
 
 /-- A finite syntactic semigroup forces a finite syntactic monoid: the monoid is covered by
 `WithOne` of the semigroup, which is Eilenberg's `M_A = S_A ∪ {1}`. -/
