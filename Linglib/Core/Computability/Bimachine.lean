@@ -87,14 +87,6 @@ def lState : List α → L := B.lStateAfter B.lInit
 /-- Right state after scanning a suffix right-to-left. -/
 def rState (suf : List α) : R := suf.foldr (fun a r => B.rStep r a) B.rInit
 
-@[simp] theorem lStateAfter_nil (l : L) : B.lStateAfter l [] = l := rfl
-@[simp] theorem lStateAfter_cons (l : L) (x : α) (xs : List α) :
-    B.lStateAfter l (x :: xs) = B.lStateAfter (B.lStep l x) xs := rfl
-@[simp] theorem lState_nil : B.lState [] = B.lInit := rfl
-@[simp] theorem rState_nil : B.rState [] = B.rInit := rfl
-@[simp] theorem rState_cons (x : α) (xs : List α) :
-    B.rState (x :: xs) = B.rStep (B.rState xs) x := rfl
-
 /-- `B.runFrom l x` runs `B` on `x` threading the left state from `l`; each tail's
 right state is read on the spot. -/
 def runFrom : L → List α → List β
@@ -104,9 +96,21 @@ def runFrom : L → List α → List β
 /-- The computed function. -/
 def run : List α → List β := B.runFrom B.lInit
 
-@[simp] theorem runFrom_nil (l : L) : B.runFrom l [] = [] := rfl
-@[simp] theorem runFrom_cons (l : L) (x : α) (xs : List α) :
+section
+variable (l : L) (x : α) (xs : List α)
+
+@[simp] theorem lStateAfter_nil : B.lStateAfter l [] = l := rfl
+@[simp] theorem lStateAfter_cons : B.lStateAfter l (x :: xs) = B.lStateAfter (B.lStep l x) xs :=
+  rfl
+@[simp] theorem lState_nil : B.lState [] = B.lInit := rfl
+@[simp] theorem rState_nil : B.rState [] = B.rInit := rfl
+@[simp] theorem rState_cons : B.rState (x :: xs) = B.rStep (B.rState xs) x := rfl
+
+@[simp] theorem runFrom_nil : B.runFrom l [] = [] := rfl
+@[simp] theorem runFrom_cons :
     B.runFrom l (x :: xs) = B.output l x (B.rState xs) ++ B.runFrom (B.lStep l x) xs := rfl
+
+end
 
 /-! ### Letter-to-letter bimachines
 
