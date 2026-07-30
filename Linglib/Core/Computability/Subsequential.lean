@@ -130,8 +130,6 @@ theorem emitted_append (s : σ) (xs ys : List α) :
     T.emitted s (xs ++ ys) = T.emitted s xs ++ T.emitted (T.stateAfter s xs) ys := by
   induction xs generalizing s <;> simp [*]
 
-/-- Running on `xs ++ ys` emits the output over `xs`, then runs on `ys` from the
-reached state. -/
 theorem runFrom_append (s : σ) (xs ys : List α) :
     T.runFrom s (xs ++ ys) = T.emitted s xs ++ T.runFrom (T.stateAfter s xs) ys := by
   simp [runFrom, emitted_append, stateAfter_append]
@@ -140,51 +138,53 @@ theorem run_append (xs ys : List α) :
     T.run (xs ++ ys) = T.emitted T.start xs ++ T.runFrom (T.stateAfter T.start xs) ys :=
   T.runFrom_append T.start xs ys
 
-/-! ### Reindexing states -/
+/-! ### Transport along state equivalences -/
 
 variable {τ : Type*}
 
-/-- Lifts an equivalence on states to an equivalence on subsequential transducers. -/
-@[simps apply_start apply_step apply_output apply_finalOutput]
+/-- Transport a transducer along an equivalence on states. -/
+@[simps]
+def map (g : σ ≃ τ) (T : SubsequentialTransducer σ α β) : SubsequentialTransducer τ α β where
+  start := g T.start
+  step t x := g (T.step (g.symm t) x)
+  output t x := T.output (g.symm t) x
+  finalOutput t := T.finalOutput (g.symm t)
+
+@[simp] theorem map_refl : map (Equiv.refl σ) T = T := rfl
+
+@[simp] theorem map_map {υ : Type*} (g : σ ≃ τ) (h : τ ≃ υ) :
+    map h (map g T) = map (g.trans h) T := rfl
+
+@[simp] theorem stateAfter_map (g : σ ≃ τ) (t : τ) (xs : List α) :
+    (map g T).stateAfter t xs = g (T.stateAfter (g.symm t) xs) := by
+  induction xs generalizing t <;> simp [*]
+
+@[simp] theorem emitted_map (g : σ ≃ τ) (t : τ) (xs : List α) :
+    (map g T).emitted t xs = T.emitted (g.symm t) xs := by
+  induction xs generalizing t <;> simp [*]
+
+@[simp] theorem runFrom_map (g : σ ≃ τ) (t : τ) (xs : List α) :
+    (map g T).runFrom t xs = T.runFrom (g.symm t) xs := by
+  simp [runFrom]
+
+@[simp] theorem run_map (g : σ ≃ τ) : (map g T).run = T.run := by
+  funext xs; simp [run]
+
+@[simp] theorem runRight_map (g : σ ≃ τ) : (map g T).runRight = T.runRight := by
+  funext xs; simp [runRight]
+
+/-- `map` as an equivalence of machines. -/
 def reindex (g : σ ≃ τ) : SubsequentialTransducer σ α β ≃ SubsequentialTransducer τ α β where
-  toFun T := {
-    start := g T.start
-    step := fun t x => g (T.step (g.symm t) x)
-    output := fun t x => T.output (g.symm t) x
-    finalOutput := fun t => T.finalOutput (g.symm t)
-  }
-  invFun T := {
-    start := g.symm T.start
-    step := fun s x => g.symm (T.step (g s) x)
-    output := fun s x => T.output (g s) x
-    finalOutput := fun s => T.finalOutput (g s)
-  }
+  toFun := map g
+  invFun := map g.symm
   left_inv T := by simp
   right_inv T := by simp
 
-@[simp] theorem reindex_refl : reindex (Equiv.refl σ) T = T := rfl
+@[simp] theorem coe_reindex (g : σ ≃ τ) :
+    ⇑(reindex (α := α) (β := β) g) = map g := rfl
 
 @[simp] theorem symm_reindex (g : σ ≃ τ) :
     (reindex (α := α) (β := β) g).symm = reindex g.symm := rfl
-
-@[simp] theorem stateAfter_reindex (g : σ ≃ τ) (t : τ) (xs : List α) :
-    (reindex g T).stateAfter t xs = g (T.stateAfter (g.symm t) xs) := by
-  induction xs generalizing t <;> simp [*]
-
-@[simp] theorem emitted_reindex (g : σ ≃ τ) (t : τ) (xs : List α) :
-    (reindex g T).emitted t xs = T.emitted (g.symm t) xs := by
-  induction xs generalizing t <;> simp [*]
-
-@[simp] theorem runFrom_reindex (g : σ ≃ τ) (t : τ) (xs : List α) :
-    (reindex g T).runFrom t xs = T.runFrom (g.symm t) xs := by
-  simp [runFrom]
-
-/-- The reindexed machine computes the same string function. -/
-@[simp] theorem run_reindex (g : σ ≃ τ) : (reindex g T).run = T.run := by
-  funext xs; simp [run]
-
-@[simp] theorem runRight_reindex (g : σ ≃ τ) : (reindex g T).runRight = T.runRight := by
-  funext xs; simp [runRight]
 
 /-! ### Composition -/
 
@@ -193,7 +193,7 @@ section Comp
 variable {γ σ' : Type*} (T₂ : SubsequentialTransducer σ' β γ) (T₁ : SubsequentialTransducer σ α β)
 
 /-- `T₂.comp T₁` feeds each output block of `T₁` to `T₂` — the classical product
-construction [mohri-1997] — computing `T₂.run ∘ T₁.run` (`run_comp`). -/
+construction [mohri-1997] — computing `T₂.run ∘ T₁.run`. -/
 @[simps]
 def comp : SubsequentialTransducer (σ' × σ) α γ where
   start := (T₂.start, T₁.start)
@@ -218,10 +218,9 @@ section OfWindow
 
 variable {γ : Type*}
 
-/-- The sliding-window transducer: the state is a window of at most `n` symbols of `γ`,
-`out` emits an output block from the window and the current symbol, and `upd` chooses
-what the window accumulates — `fun _ x => [x]` tracks the input, `out` itself the
-output. -/
+/-- The transducer whose state is a window of the last `n` accumulated symbols. `out`
+emits from the window and the current symbol; `upd` chooses what the window accumulates
+(`fun _ x => [x]` for the input, `out` for the output). -/
 @[simps]
 def ofWindow (n : ℕ) (out : List γ → α → List β) (upd : List γ → α → List γ) :
     SubsequentialTransducer {l : List γ // l.length ≤ n} α β where
@@ -230,23 +229,23 @@ def ofWindow (n : ℕ) (out : List γ → α → List β) (upd : List γ → α 
   output w x := out w.val x
   finalOutput _ := []
 
+/-- The window recursion computed by `ofWindow`; each step emits `out` and extends the
+window by `upd`, truncated to length `n`. -/
+def windowRun (n : ℕ) (out : List γ → α → List β) (upd : List γ → α → List γ) :
+    List γ → List α → List β
+  | _, [] => []
+  | w, x :: xs => out w x ++ windowRun n out upd ((w ++ upd w x).rtake n) xs
+
 variable {n : ℕ} {out : List γ → α → List β} {upd : List γ → α → List γ}
 
-/-- The window transducer runs any recursion that emits `out` and extends the window by
-`upd` — the master run-equality behind the ISL/OSL projections. -/
-theorem runFrom_ofWindow (go : List γ → List α → List β) (hnil : ∀ w, go w [] = [])
-    (hcons : ∀ w x xs, go w (x :: xs) = out w x ++ go ((w ++ upd w x).rtake n) xs) :
-    ∀ (w : {l : List γ // l.length ≤ n}) (xs : List α),
-      (ofWindow n out upd).runFrom w xs = go w.val xs := by
-  intro w xs
+theorem runFrom_ofWindow (w : {l : List γ // l.length ≤ n}) (xs : List α) :
+    (ofWindow n out upd).runFrom w xs = windowRun n out upd w.val xs := by
   induction xs generalizing w with
-  | nil => simp [hnil]
-  | cons x xs ih => rw [runFrom_cons, hcons]; exact congrArg _ (ih _)
+  | nil => simp [windowRun]
+  | cons x xs ih => rw [runFrom_cons, windowRun]; exact congrArg _ (ih _)
 
-theorem run_ofWindow (go : List γ → List α → List β) (hnil : ∀ w, go w [] = [])
-    (hcons : ∀ w x xs, go w (x :: xs) = out w x ++ go ((w ++ upd w x).rtake n) xs) :
-    (ofWindow n out upd).run = go [] :=
-  funext fun xs => runFrom_ofWindow go hnil hcons ⟨[], Nat.zero_le _⟩ xs
+theorem run_ofWindow : (ofWindow n out upd).run = windowRun n out upd [] :=
+  funext fun xs => runFrom_ofWindow ⟨[], Nat.zero_le _⟩ xs
 
 end OfWindow
 
@@ -348,25 +347,21 @@ def IsSubsequential (d : Direction) (f : List α → List β) : Prop :=
 @[simp] theorem isSubsequential_right_iff :
     IsSubsequential .right f ↔ IsRightSubsequential f := Iff.rfl
 
-/-- `f` is left-subsequential if and only if it is computed by a finite-state
-transducer. This is more general than using the definition of `IsLeftSubsequential`
-directly, as the state type `σ` is universe-polymorphic. -/
+/-- The universe-polymorphic form of `IsLeftSubsequential`. -/
 theorem isLeftSubsequential_iff.{v} :
     IsLeftSubsequential f
       ↔ ∃ (σ : Type v) (_ : Fintype σ) (T : SubsequentialTransducer σ α β), T.run = f :=
   exists_fintype_congr
-    (fun e ⟨T, hT⟩ => ⟨SubsequentialTransducer.reindex e T, (T.run_reindex e).trans hT⟩)
-    (fun e ⟨T, hT⟩ => ⟨SubsequentialTransducer.reindex e T, (T.run_reindex e).trans hT⟩)
+    (fun e ⟨T, hT⟩ => ⟨SubsequentialTransducer.map e T, (T.run_map e).trans hT⟩)
+    (fun e ⟨T, hT⟩ => ⟨SubsequentialTransducer.map e T, (T.run_map e).trans hT⟩)
 
-/-- `f` is right-subsequential if and only if it is computed via `runRight` by a
-finite-state transducer. This is more general than using the definition of
-`IsRightSubsequential` directly, as the state type `σ` is universe-polymorphic. -/
+/-- The universe-polymorphic form of `IsRightSubsequential`. -/
 theorem isRightSubsequential_iff.{v} :
     IsRightSubsequential f
       ↔ ∃ (σ : Type v) (_ : Fintype σ) (T : SubsequentialTransducer σ α β), T.runRight = f :=
   exists_fintype_congr
-    (fun e ⟨T, hT⟩ => ⟨SubsequentialTransducer.reindex e T, (T.runRight_reindex e).trans hT⟩)
-    (fun e ⟨T, hT⟩ => ⟨SubsequentialTransducer.reindex e T, (T.runRight_reindex e).trans hT⟩)
+    (fun e ⟨T, hT⟩ => ⟨SubsequentialTransducer.map e T, (T.runRight_map e).trans hT⟩)
+    (fun e ⟨T, hT⟩ => ⟨SubsequentialTransducer.map e T, (T.runRight_map e).trans hT⟩)
 
 /-- Every finite-state transducer computes a left-subsequential function, whatever the
 universe of its state type. -/
@@ -412,11 +407,10 @@ theorem isRightSubsequential_iff_left_reverse :
    fun ⟨σ, _, T, hT⟩ =>
      ⟨σ, inferInstance, T, by funext xs; simp [SubsequentialTransducer.runRight, hT]⟩⟩
 
-/-- A left-subsequential function has bounded delay: on any input `u` it has already
-emitted a prefix of `f u` shared with `f (u ++ v)` for every continuation `v`,
-withholding at most the longest state-final output. This is immediate from having a
-state-final output at all, and is much weaker than [choffrut-1977]'s bounded-variation
-characterization — it compares `u` only with its own extensions. -/
+/-- A left-subsequential function withholds at most the longest state-final output:
+`f u` and `f (u ++ v)` share a prefix covering all but boundedly many symbols of `f u`.
+Much weaker than [choffrut-1977]'s bounded-variation characterization — this compares
+`u` only with its own extensions. -/
 theorem IsLeftSubsequential.bounded_delay (hf : IsLeftSubsequential f) :
     ∃ N : ℕ, ∀ u v : List α, ∃ p su sv : List β,
       f u = p ++ su ∧ f (u ++ v) = p ++ sv ∧ su.length ≤ N := by
@@ -441,7 +435,7 @@ theorem IsLeftSubsequential.exists_getElem?_append_eq (hf : IsLeftSubsequential 
 
 /-- `f` is not left-subsequential if for every `N` some images `f u` and `f (u ++ v)`
 disagree more than `N` positions before the end of `f u` — the contrapositive of
-`bounded_delay`, since no bound on the withheld suffix can then exist. -/
+`bounded_delay`. -/
 theorem not_isLeftSubsequential_of_diverging
     (h : ∀ N, ∃ (u v : List α) (i : ℕ),
       i + N < (f u).length ∧ (f u)[i]? ≠ (f (u ++ v))[i]?) :

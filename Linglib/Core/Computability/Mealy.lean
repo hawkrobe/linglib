@@ -29,7 +29,7 @@ instance must be supplied for the finite-state class `IsMealyComputable`.
 * `Mealy.comp`: the cascade connection, computing the composite function
 * `Mealy.ofFn`: the single-state machine applying a fixed symbol map letter-wise
 * `Mealy.ofFlag`: the one-bit machine tracking whether an earlier symbol satisfies `p`
-* `Mealy.reindex`: lifts an equivalence on states to an equivalence on machines
+* `Mealy.map`: transport along an equivalence on states
 * `IsMealyComputable f`: `f` is computed by some finite-state `Mealy`
 * `DFA.comapMealy`: pulls an acceptor back along a transducer
 
@@ -59,7 +59,8 @@ residuals is in `Core/Computability/MyhillNerode.lean`.
 
 ## TODO
 
-* Mealy machine homomorphisms [holcombe-1982], with `reindex` as the isomorphism case.
+* Mealy machine homomorphisms [holcombe-1982], with `map` at an equivalence as the
+  isomorphism case.
 * The right-scan mirror via reverse conjugation.
 * Moore machines (state-determined output) and the Mealy–Moore equivalence: same
   states one way, `σ × β` states the other, so the computable classes coincide.
@@ -163,7 +164,7 @@ section Comp
 variable {γ σ' : Type*} (T₂ : Mealy σ' β γ) (T₁ : Mealy σ α β)
 
 /-- `T₂.comp T₁` feeds the outputs of `T₁` to `T₂` — the cascade connection of
-[holcombe-1982] — computing `T₂.run ∘ T₁.run` (`run_comp`). -/
+[holcombe-1982] — computing `T₂.run ∘ T₁.run`. -/
 @[simps]
 def comp : Mealy (σ' × σ) α γ where
   initial := (T₂.initial, T₁.initial)
@@ -228,42 +229,44 @@ theorem getElem?_ofFlag_runRight (xs : List α) (i : ℕ) :
   | nil => simp
   | cons x xs ih => cases i <;> simp [*]
 
-/-! ### Reindexing states -/
+/-! ### Transport along state equivalences -/
 
 variable {τ : Type*}
 
-/-- Lifts an equivalence on states to an equivalence on Mealy machines. -/
-@[simps apply_initial apply_step apply_output]
+/-- Transport a Mealy machine along an equivalence on states. -/
+@[simps]
+def map (g : σ ≃ τ) (T : Mealy σ α β) : Mealy τ α β where
+  initial := g T.initial
+  step t x := g (T.step (g.symm t) x)
+  output t x := T.output (g.symm t) x
+
+@[simp] theorem map_refl : map (Equiv.refl σ) T = T := rfl
+
+@[simp] theorem map_map {υ : Type*} (g : σ ≃ τ) (h : τ ≃ υ) :
+    map h (map g T) = map (g.trans h) T := rfl
+
+@[simp] theorem stateAfter_map (g : σ ≃ τ) (t : τ) (xs : List α) :
+    (map g T).stateAfter t xs = g (T.stateAfter (g.symm t) xs) := by
+  induction xs generalizing t <;> simp [*]
+
+@[simp] theorem runFrom_map (g : σ ≃ τ) (t : τ) (xs : List α) :
+    (map g T).runFrom t xs = T.runFrom (g.symm t) xs := by
+  induction xs generalizing t <;> simp [*]
+
+@[simp] theorem run_map (g : σ ≃ τ) : (map g T).run = T.run := by
+  funext xs; simp [run]
+
+/-- `map` as an equivalence of machines. -/
 def reindex (g : σ ≃ τ) : Mealy σ α β ≃ Mealy τ α β where
-  toFun T := {
-    initial := g T.initial
-    step := fun t x => g (T.step (g.symm t) x)
-    output := fun t x => T.output (g.symm t) x
-  }
-  invFun T := {
-    initial := g.symm T.initial
-    step := fun s x => g.symm (T.step (g s) x)
-    output := fun s x => T.output (g s) x
-  }
+  toFun := map g
+  invFun := map g.symm
   left_inv T := by simp
   right_inv T := by simp
 
-@[simp] theorem reindex_refl : reindex (Equiv.refl σ) T = T := rfl
+@[simp] theorem coe_reindex (g : σ ≃ τ) : ⇑(reindex (α := α) (β := β) g) = map g := rfl
 
 @[simp] theorem symm_reindex (g : σ ≃ τ) :
     (reindex (α := α) (β := β) g).symm = reindex g.symm := rfl
-
-@[simp] theorem stateAfter_reindex (g : σ ≃ τ) (t : τ) (xs : List α) :
-    (reindex g T).stateAfter t xs = g (T.stateAfter (g.symm t) xs) := by
-  induction xs generalizing t <;> simp [*]
-
-@[simp] theorem runFrom_reindex (g : σ ≃ τ) (t : τ) (xs : List α) :
-    (reindex g T).runFrom t xs = T.runFrom (g.symm t) xs := by
-  induction xs generalizing t <;> simp [*]
-
-/-- The reindexed machine computes the same string function. -/
-@[simp] theorem run_reindex (g : σ ≃ τ) : (reindex g T).run = T.run := by
-  funext xs; simp [run]
 
 end Mealy
 
@@ -273,15 +276,13 @@ end Mealy
 def IsMealyComputable (f : List α → List β) : Prop :=
   ∃ (σ : Type) (_ : Fintype σ) (T : Mealy σ α β), T.run = f
 
-/-- `f` is Mealy-computable if and only if it is computed by a finite-state `Mealy`
-machine. This is more general than using the definition of `IsMealyComputable`
-directly, as the state type `σ` is universe-polymorphic. -/
+/-- The universe-polymorphic form of `IsMealyComputable`. -/
 theorem isMealyComputable_iff.{v} {f : List α → List β} :
     IsMealyComputable f
       ↔ ∃ (σ : Type v) (_ : Fintype σ) (T : Mealy σ α β), T.run = f :=
   exists_fintype_congr
-    (fun e ⟨T, hT⟩ => ⟨Mealy.reindex e T, (T.run_reindex e).trans hT⟩)
-    (fun e ⟨T, hT⟩ => ⟨Mealy.reindex e T, (T.run_reindex e).trans hT⟩)
+    (fun e ⟨T, hT⟩ => ⟨Mealy.map e T, (T.run_map e).trans hT⟩)
+    (fun e ⟨T, hT⟩ => ⟨Mealy.map e T, (T.run_map e).trans hT⟩)
 
 /-- Every finite-state `Mealy` computes a Mealy-computable function, whatever the
 universe of its state type. -/

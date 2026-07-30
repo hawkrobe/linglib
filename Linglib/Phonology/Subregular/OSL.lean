@@ -177,10 +177,20 @@ def OSLRule.toFinSubsequentialTransducer {k : ℕ} (r : OSLRule k α β) :
     SubsequentialTransducer {l : List β // l.length ≤ k - 1} α β :=
   .ofWindow (k - 1) r.windowOutput r.windowOutput
 
+/-- `OSLRule.applyAux` is the canonical window recursion accumulating the output. -/
+theorem OSLRule.applyAux_eq_windowRun {k : ℕ} (r : OSLRule k α β) :
+    r.applyAux = SubsequentialTransducer.windowRun (k - 1) r.windowOutput r.windowOutput := by
+  funext w xs
+  induction xs generalizing w with
+  | nil => rfl
+  | cons x xs ih =>
+    rw [OSLRule.applyAux_cons, SubsequentialTransducer.windowRun]
+    exact congrArg _ (ih _)
+
 /-- The window transducer induced by an OSL rule computes the same string function. -/
 theorem OSLRule.toFinSubsequentialTransducer_run_eq_apply {k : ℕ} (r : OSLRule k α β) :
     r.toFinSubsequentialTransducer.run = r.apply :=
-  SubsequentialTransducer.run_ofWindow r.applyAux (fun _ => rfl) fun _ _ _ => rfl
+  SubsequentialTransducer.run_ofWindow.trans (congrFun r.applyAux_eq_windowRun []).symm
 
 /-- **Left-OSL ⊆ Left-Subsequential** (over a finite output alphabet).
 The `[Fintype β]` matches [mohri-1997]'s finite-alphabet assumption
