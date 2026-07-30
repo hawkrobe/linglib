@@ -40,6 +40,6 @@ def FreeMonoid.mapWithOne : FreeMonoid α →* WithOne T :=
   rw [mapWithOne, MonoidHom.comp_apply, MulEquiv.coe_toMonoidHom,
     equivWithOneFreeSemigroup_toFreeMonoid, WithOne.mapMulHom_coe]
 
-@[simp] theorem FreeMonoid.mapWithOne_ofList_cons (c : α) (l : List α) :
+theorem FreeMonoid.mapWithOne_ofList_cons (c : α) (l : List α) :
     mapWithOne η (.ofList (c :: l)) = ↑(η ⟨c, l⟩) := by
   rw [← FreeSemigroup.toFreeMonoid_mk_eq_cons, mapWithOne_toFreeMonoid]

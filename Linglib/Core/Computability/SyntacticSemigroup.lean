@@ -211,7 +211,7 @@ theorem recognizesSemigroup_iff :
     refine ⟨{x | WithOne.recOneCoe ([] ∈ L) (· ∈ P) x}, Set.ext fun w => ?_⟩
     show w ∈ L ↔ WithOne.recOneCoe ([] ∈ L) (· ∈ P) (FreeMonoid.mapWithOne η (.ofList w))
     rcases w with _ | ⟨c, l⟩
-    · rw [show (FreeMonoid.ofList [] : FreeMonoid α) = 1 from rfl, map_one]; exact Iff.rfl
+    · simp
     · rw [FreeMonoid.mapWithOne_ofList_cons]
       simpa [toFreeMonoid_mk_eq_cons] using hP ⟨c, l⟩
 
