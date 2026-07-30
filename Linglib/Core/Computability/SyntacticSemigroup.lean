@@ -90,20 +90,28 @@ theorem ker_toSyntacticSemigroup (L : Language α) :
 
 /-! ### Relation to the syntactic monoid -/
 
+/-- The syntactic class of the underlying nonempty word, as a homomorphism on the free
+semigroup. -/
+def syntacticClassMulHom (L : Language α) : FreeSemigroup α →ₙ* L.SyntacticMonoid where
+  toFun u := L.syntacticClass u.toList
+  map_mul' u v := L.syntacticClass_append u.toList v.toList
+
+theorem ker_syntacticClassMulHom (L : Language α) :
+    Con.ker L.syntacticClassMulHom = L.syntacticSemigroupCon :=
+  Con.ext fun _ _ => ((Con.ker_rel _).trans syntacticClass_eq_iff).trans
+    syntacticSemigroupCon_iff.symm
+
 /-- The syntactic semigroup embeds into the syntactic monoid: a nonempty word is sent to its
 class in the monoid. -/
-def syntacticSemigroupToMonoid (L : Language α) : L.SyntacticSemigroup →ₙ* L.SyntacticMonoid where
-  toFun := Quotient.lift (fun u : FreeSemigroup α => L.syntacticClass u.toList)
-    fun _ _ h => syntacticClass_eq_iff.mpr h
-  map_mul' := by rintro ⟨u⟩ ⟨v⟩; exact L.syntacticClass_append u.toList v.toList
+def syntacticSemigroupToMonoid (L : Language α) : L.SyntacticSemigroup →ₙ* L.SyntacticMonoid :=
+  (syntacticSemigroupCon L).liftMulHom L.syntacticClassMulHom L.ker_syntacticClassMulHom.ge
 
 @[simp] theorem syntacticSemigroupToMonoid_apply (L : Language α) (u : FreeSemigroup α) :
     L.syntacticSemigroupToMonoid (L.toSyntacticSemigroup u) = L.syntacticClass u.toList := rfl
 
 theorem syntacticSemigroupToMonoid_injective (L : Language α) :
-    Function.Injective L.syntacticSemigroupToMonoid := by
-  rintro ⟨u⟩ ⟨v⟩ h
-  exact Quotient.sound (syntacticClass_eq_iff.mp h)
+    Function.Injective L.syntacticSemigroupToMonoid :=
+  Con.liftMulHom_injective L.ker_syntacticClassMulHom.le
 
 instance instFiniteSyntacticSemigroup [Finite L.SyntacticMonoid] :
     Finite L.SyntacticSemigroup :=
@@ -116,9 +124,8 @@ theorem finite_syntacticMonoid_of_finite_syntacticSemigroup (L : Language α)
   refine .of_surjective (β := L.SyntacticMonoid)
     (Option.elim · 1 L.syntacticSemigroupToMonoid) fun m => ?_
   obtain ⟨w, rfl⟩ := L.syntacticClass_surjective m
-  match w with
-  | [] => exact ⟨none, L.syntacticClass_nil.symm⟩
-  | c :: w => exact ⟨some (L.toSyntacticSemigroup ⟨c, w⟩), rfl⟩
+  rcases w with _ | ⟨c, w⟩
+  exacts [⟨none, L.syntacticClass_nil.symm⟩, ⟨some (L.toSyntacticSemigroup ⟨c, w⟩), rfl⟩]
 
 /-! ### Myhill–Nerode -/
 
