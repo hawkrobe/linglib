@@ -289,7 +289,9 @@ blockers, which are unattested in Navajo — the rare opaque cases are
 Rwanda and Berber ([hansson-2010] ch. 3) — and are not formalised here. -/
 
 /-- The SP_2 grammar for Navajo sibilant harmony: the permitted
-length-2 subsequences are everything except mixed-place sibilant pairs.
+subsequences are everything except the mixed-place sibilant pairs — so
+the shorter subsequences the width-2 language also inspects (`ε` and the
+singletons) are admitted outright.
 Note this is a forbidden *subsequence* (non-contiguous), not a
 forbidden *factor* (contiguous), so transparency to intervening
 material is built in. The grammar is written as a function (rather than a
@@ -342,8 +344,8 @@ theorem preSiDze_violates_SP : preSiDze ∉ navajoSibilantHarmonySP.language 2 :
   intro h
   have hwit : List.Sublist [NSeg.antSib, NSeg.postSib] preSiDze := by
     -- preSiDze = [antSib, vowel, postSib, vowel, neutralC]; pick positions 0 and 2.
-    refine .cons₂ _ <| .cons _ <| .cons₂ _ <| .cons _ <| .cons _ <| .slnil
-  exact (h _ rfl hwit).1 rfl
+    refine .cons_cons _ <| .cons _ <| .cons_cons _ <| .cons _ <| .cons _ <| .slnil
+  exact (h _ le_rfl hwit).1 rfl
 
 /-- Post-harmony surface form is accepted by SP_2 too — `postSib`
 appears but `antSib` does not, so the forbidden mixed-place

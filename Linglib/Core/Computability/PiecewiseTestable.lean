@@ -68,13 +68,13 @@ lemma isPiecewiseTestable_iff {L : Language α} {k : ℕ} :
       ∀ w₁ w₂, subseqSet k w₁ = subseqSet k w₂ → (w₁ ∈ L ↔ w₂ ∈ L) :=
   ⟨fun h _ _ h' => iff_of_eq (h h'), fun h _ _ h' => propext (h _ _ h')⟩
 
-/-- **SP_k ⊆ PT_k**: the strictly-piecewise test ("every length-`k` subsequence is
-permitted") depends only on the set of subsequences of that length. -/
+/-- **SP_k ⊆ PT_k**: the strictly-piecewise test ("every subsequence of length at most `k`
+is permitted") depends only on `subseqSet k`. -/
 theorem IsStrictlyPiecewise.toIsPiecewiseTestable {k : ℕ} {L : Language α}
     (h : L.IsStrictlyPiecewise k) : L.IsPiecewiseTestable k := by
   obtain ⟨G, rfl⟩ := h
   refine fun w₁ w₂ heq => propext ⟨fun hw s hlen hs => ?_, fun hw s hlen hs => ?_⟩
-  · exact hw s hlen ((subseqSet_eq_iff heq hlen.le).mpr hs)
-  · exact hw s hlen ((subseqSet_eq_iff heq hlen.le).mp hs)
+  · exact hw s hlen ((subseqSet_eq_iff heq hlen).mpr hs)
+  · exact hw s hlen ((subseqSet_eq_iff heq hlen).mp hs)
 
 end Language
