@@ -30,15 +30,13 @@ theorem toFreeMonoid_eq_ofList : toFreeMonoid u = FreeMonoid.ofList u.toList := 
 @[simp] theorem toList_mul : (u * v).toList = u.toList ++ v.toList := by
   simp [toList, map_mul]
 
-/-- The free semigroup is the *nonempty* words. -/
 @[simp] theorem toList_ne_nil : u.toList ≠ [] := fun h =>
   toFreeMonoid_ne_one u (FreeMonoid.toList.injective h)
 
 theorem toList_injective : Function.Injective (toList (α := α)) := fun _ _ h =>
   toFreeMonoid_injective (FreeMonoid.toList.injective h)
 
-/-- Every word is empty or comes from the free semigroup — the free-level form of
-`M_A = S_A ∪ {1}`. -/
+/-- Every word is empty or comes from the free semigroup. -/
 theorem eq_nil_or_exists_toList (w : List α) : w = [] ∨ ∃ u : FreeSemigroup α, u.toList = w := by
   rcases eq_one_or_toFreeMonoid (FreeMonoid.ofList w) with h | ⟨u, hu⟩
   · exact .inl (FreeMonoid.ofList.injective h)
