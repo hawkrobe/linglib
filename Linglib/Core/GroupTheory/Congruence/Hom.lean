@@ -125,6 +125,6 @@ theorem ker_prodMulHom {N' : Type*} [Mul N'] (f : M →ₙ* N) (g : M →ₙ* N'
 /-- The kernel of a paired monoid homomorphism is the meet of the kernels. -/
 theorem ker_prod {M N N' : Type*} [MulOneClass M] [MulOneClass N] [MulOneClass N']
     (f : M →* N) (g : M →* N') : Con.ker (f.prod g) = Con.ker f ⊓ Con.ker g :=
-  Con.ext fun _ _ => by simp [Con.ker_rel, Prod.ext_iff, Con.inf_iff_and]
+  ker_prodMulHom (f : M →ₙ* N) (g : M →ₙ* N')
 
 end Con

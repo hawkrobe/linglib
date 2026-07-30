@@ -76,10 +76,10 @@ private theorem exists_le_length_syntacticEquiv {w : List α} (hw : w ≠ [])
 /-- The idempotence of a syntactic class, read off a word representing it. -/
 private theorem syntacticEquiv_self_append {u : FreeSemigroup α}
     (he : IsIdempotentElem (L.toSyntacticSemigroup u)) :
-    L.SyntacticEquiv (u.toList ++ u.toList) u.toList :=
+    L.SyntacticEquiv (u.toList ++ u.toList) u.toList := by
   have h : L.syntacticSemigroupCon (u * u) u :=
     toSyntacticSemigroup_eq_iff.1 (by rw [map_mul]; exact he)
-  h
+  simpa [syntacticSemigroupCon_iff] using h
 
 /-! ### Definite languages and **D** -/
 
@@ -128,9 +128,10 @@ theorem IsDefinite.isDefinite_syntacticSemigroup (h : L.IsDefinite k) :
   obtain ⟨m, hm, hmu⟩ :=
     exists_le_length_syntacticEquiv u.toList_ne_nil (syntacticEquiv_self_append he) k
   rw [← map_mul]
-  exact toSyntacticSemigroup_eq_iff.2 <|
-    (SyntacticEquiv.append (SyntacticEquiv.refl t.toList) hmu.symm).trans <|
-      (h.syntacticEquiv_append_left hm t.toList).trans hmu
+  exact toSyntacticSemigroup_eq_iff.2 <| by
+    simpa [syntacticSemigroupCon_iff] using
+      (SyntacticEquiv.append (SyntacticEquiv.refl t.toList) hmu.symm).trans
+        ((h.syntacticEquiv_append_left hm t.toList).trans hmu)
 
 /-- **The language half of D**: a definite language over a finite alphabet lies in the language
 variety of the pseudovariety **D**. -/
@@ -186,9 +187,10 @@ theorem IsReverseDefinite.isReverseDefinite_syntacticSemigroup (h : L.IsReverseD
   obtain ⟨m, hm, hmu⟩ :=
     exists_le_length_syntacticEquiv u.toList_ne_nil (syntacticEquiv_self_append he) k
   rw [← map_mul]
-  exact toSyntacticSemigroup_eq_iff.2 <|
-    (SyntacticEquiv.append hmu.symm (SyntacticEquiv.refl t.toList)).trans <|
-      (h.syntacticEquiv_append_right hm t.toList).trans hmu
+  exact toSyntacticSemigroup_eq_iff.2 <| by
+    simpa [syntacticSemigroupCon_iff] using
+      (SyntacticEquiv.append hmu.symm (SyntacticEquiv.refl t.toList)).trans
+        ((h.syntacticEquiv_append_right hm t.toList).trans hmu)
 
 /-- **The language half of K**: a reverse-definite language over a finite alphabet lies in the
 language variety of the pseudovariety **K**. -/
@@ -208,15 +210,6 @@ private theorem omegaPow_eq_self {M : Type*} [Monoid M] [Finite M] {m : M}
     (hm : IsIdempotentElem m) : Monoid.omegaPow m = m := by
   obtain ⟨n, hn⟩ := Nat.exists_eq_succ_of_ne_zero (Monoid.omegaPowExponent_pos m).ne'
   rw [Monoid.omegaPow_eq_pow, hn, hm.pow_succ_eq]
-
-/-- The syntactic monoid is the syntactic semigroup with an identity adjoined: every element is
-the class of the empty word or the image of one of the semigroup. -/
-theorem eq_one_or_mem_range_syntacticSemigroupToMonoid (s : L.SyntacticMonoid) :
-    s = 1 ∨ s ∈ Set.range L.syntacticSemigroupToMonoid := by
-  obtain ⟨w, rfl⟩ := L.syntacticClass_surjective s
-  rcases w with _ | ⟨a, l⟩
-  · exact Or.inl L.syntacticClass_nil
-  · exact Or.inr ⟨L.toSyntacticSemigroup ⟨a, l⟩, rfl⟩
 
 /-- The range of the embedding is a subsemigroup, hence closed under positive powers. -/
 private theorem pow_succ_mem_range {m : L.SyntacticMonoid}
@@ -248,7 +241,7 @@ private theorem exists_isIdempotentElem_map_eq_omegaPow {w : List α} (hw : w �
       L.syntacticSemigroupToMonoid e = Monoid.omegaPow (L.syntacticClass w) := by
   obtain ⟨a, l, rfl⟩ := List.exists_cons_of_ne_nil hw
   have hm : L.syntacticClass (a :: l) ∈ Set.range L.syntacticSemigroupToMonoid :=
-    ⟨L.toSyntacticSemigroup ⟨a, l⟩, rfl⟩
+    ⟨L.toSyntacticSemigroup ⟨a, l⟩, by simp⟩
   obtain ⟨e, he⟩ := omegaPow_mem_range hm
   refine ⟨e, L.syntacticSemigroupToMonoid_injective ?_, he⟩
   rw [map_mul, he, Monoid.omegaPow_mul_omegaPow]

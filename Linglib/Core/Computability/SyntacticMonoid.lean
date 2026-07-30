@@ -33,9 +33,9 @@ monoid structure rather than a bare set of states.
 - `Language.Recognizes`: `φ` recognizes `L`, i.e. `L` is a union of `φ`-fibres
 - `Language.rightQuotient`: the right-quotient dual of `Language.leftQuotient`
 
-## Main theorems
+## Main results
 
-- `Language.recognizes_iff_ker_le_syntacticCon`: the syntactic congruence is the coarsest
+- `Language.recognizes_iff_ker_le`: the syntactic congruence is the coarsest
   congruence saturating `L` — a hom recognizes `L` exactly when its kernel refines it
 - `Language.syntacticCon_eq_ker_transitionHom`: the intrinsic congruence is the kernel of the
   transition action of `L.toDFA`
@@ -161,20 +161,20 @@ theorem ker_le_syntacticCon_of_recognizes (hrec : Recognizes φ L) :
   show φ (.ofList (x ++ u.toList ++ y)) ∈ S ↔ φ (.ofList (x ++ v.toList ++ y)) ∈ S
   simp [FreeMonoid.ofList_append, FreeMonoid.ofList_toList, map_mul, Con.ker_apply.mp huv]
 
-theorem recognizes_of_ker_le_syntacticCon (h : Con.ker φ ≤ syntacticCon L) :
+theorem recognizes_of_ker_le (h : Con.ker φ ≤ syntacticCon L) :
     Recognizes φ L :=
   ⟨φ '' (FreeMonoid.ofList '' L), Set.ext fun w =>
     ⟨fun hw => ⟨.ofList w, ⟨w, hw, rfl⟩, rfl⟩, fun ⟨_, ⟨u, hu, rfl⟩, hφ⟩ =>
       (SyntacticEquiv.mem_iff (h (Con.ker_apply.mpr hφ))).mp hu⟩⟩
 
-theorem recognizes_iff_ker_le_syntacticCon :
+theorem recognizes_iff_ker_le :
     Recognizes φ L ↔ Con.ker φ ≤ syntacticCon L :=
-  ⟨ker_le_syntacticCon_of_recognizes, recognizes_of_ker_le_syntacticCon⟩
+  ⟨ker_le_syntacticCon_of_recognizes, recognizes_of_ker_le⟩
 
 end
 
 theorem recognizes_toSyntacticMonoid (L : Language α) : Recognizes L.toSyntacticMonoid L :=
-  recognizes_of_ker_le_syntacticCon L.ker_toSyntacticMonoid.le
+  recognizes_of_ker_le L.ker_toSyntacticMonoid.le
 
 /-! ### Connection to the minimal DFA -/
 
