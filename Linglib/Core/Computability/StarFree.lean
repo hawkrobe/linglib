@@ -74,8 +74,7 @@ inside `SF`: exhibit a finite aperiodic recognizer. Stays universe-polymorphic i
 theorem IsStarFree.of_recognizes {M : Type*} [Monoid M] [Finite M]
     (hM : Monoid.IsAperiodic M) (η : FreeMonoid α →* M) (P : Set M)
     (hL : ∀ w : List α, w ∈ L ↔ η (FreeMonoid.ofList w) ∈ P) : L.IsStarFree := by
-  have hle : Con.ker η ≤ L.syntacticCon :=
-    ker_le_syntacticCon_of_recognizes ⟨P, fun w => by simpa using hL w.toList⟩
+  have hle : Con.ker η ≤ L.syntacticCon := ker_le_syntacticCon_of_recognizes ⟨P, Set.ext hL⟩
   have hker : Monoid.IsAperiodic (Con.ker η).Quotient :=
     (hM.of_injective (MonoidHom.mrange η).subtype_injective).of_mulEquiv
       (Con.quotientKerEquivRange η).symm

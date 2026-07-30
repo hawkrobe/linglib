@@ -52,8 +52,7 @@ monoid is a quotient of a submonoid of the recognizer, hence in `V`. Generalizes
 theorem langs_of_recognizes {N : Type u} [Monoid N] [Finite N] (hN : V.mem N)
     (η : FreeMonoid α →* N) (P : Set N)
     (hL : ∀ w : List α, w ∈ L ↔ η (FreeMonoid.ofList w) ∈ P) : V.langs L := by
-  have hle : Con.ker η ≤ L.syntacticCon :=
-    ker_le_syntacticCon_of_recognizes ⟨P, fun w => by simpa using hL w.toList⟩
+  have hle : Con.ker η ≤ L.syntacticCon := ker_le_syntacticCon_of_recognizes ⟨P, Set.ext hL⟩
   haveI : Finite (Con.ker η).Quotient := .of_injective _ (Con.kerLift_injective η)
   have hkerMem : V.mem (Con.ker η).Quotient := V.sub (Con.kerLift_injective η) hN
   have hsurj : Function.Surjective (Con.map (Con.ker η) L.syntacticCon hle) :=

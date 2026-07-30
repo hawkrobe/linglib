@@ -140,10 +140,10 @@ theorem syntacticClass_reverse_eq_iff {u v : List α} :
 
 /-! ### Universal property -/
 
-/-- `φ` *recognizes* `L` when membership is decided by the `φ`-image — `L` is a union of
+/-- `φ` *recognizes* `L` when `L` is the `FreeMonoid.ofList`-pullback of a union of
 `φ`-fibres. -/
 def Recognizes {M : Type*} [Monoid M] (φ : FreeMonoid α →* M) (L : Language α) : Prop :=
-  ∃ S : Set M, ∀ w : FreeMonoid α, w.toList ∈ L ↔ φ w ∈ S
+  ∃ S : Set M, L = FreeMonoid.ofList ⁻¹' (φ ⁻¹' S)
 
 section
 
@@ -151,19 +151,15 @@ variable {M : Type*} [Monoid M] {φ : FreeMonoid α →* M}
 
 theorem ker_le_syntacticCon_of_recognizes (hrec : Recognizes φ L) :
     Con.ker φ ≤ syntacticCon L := by
-  obtain ⟨S, hS⟩ := hrec
+  obtain ⟨S, rfl⟩ := hrec
   intro u v huv x y
-  calc x ++ u.toList ++ y ∈ L
-      ↔ φ (.ofList x) * φ u * φ (.ofList y) ∈ S := by
-        simpa [FreeMonoid.toList_mul] using hS (.ofList x * u * .ofList y)
-    _ ↔ φ (.ofList x) * φ v * φ (.ofList y) ∈ S := by rw [Con.ker_apply.mp huv]
-    _ ↔ x ++ v.toList ++ y ∈ L := by
-        simpa [FreeMonoid.toList_mul] using (hS (.ofList x * v * .ofList y)).symm
+  show φ (.ofList (x ++ u.toList ++ y)) ∈ S ↔ φ (.ofList (x ++ v.toList ++ y)) ∈ S
+  simp [FreeMonoid.ofList_append, FreeMonoid.ofList_toList, map_mul, Con.ker_apply.mp huv]
 
 theorem recognizes_of_ker_le_syntacticCon (h : Con.ker φ ≤ syntacticCon L) :
     Recognizes φ L :=
-  ⟨φ '' {u : FreeMonoid α | u.toList ∈ L}, fun w =>
-    ⟨fun hw => ⟨w, hw, rfl⟩, fun ⟨_, hu, hφ⟩ =>
+  ⟨φ '' (FreeMonoid.ofList '' L), Set.ext fun w =>
+    ⟨fun hw => ⟨.ofList w, ⟨w, hw, rfl⟩, rfl⟩, fun ⟨_, ⟨u, hu, rfl⟩, hφ⟩ =>
       (SyntacticEquiv.mem_iff (h (Con.ker_apply.mpr hφ))).mp hu⟩⟩
 
 theorem recognizes_iff_ker_le_syntacticCon :
@@ -180,7 +176,7 @@ theorem recognizes_toSyntacticMonoid (L : Language α) : Recognizes L.toSyntacti
 /-- A DFA's transition action recognizes the language it accepts. -/
 theorem recognizes_transitionHom {σ : Type*} (M : DFA α σ) :
     Recognizes M.transitionHom M.accepts :=
-  ⟨{t | t.unop M.start ∈ M.accept}, fun _ => Iff.rfl⟩
+  ⟨{t | t.unop M.start ∈ M.accept}, rfl⟩
 
 @[simp] theorem evalFrom_toDFA (s : Set.range L.leftQuotient) (w : List α) :
     (L.toDFA.evalFrom s w).val = s.val.leftQuotient w := by

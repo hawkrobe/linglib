@@ -193,8 +193,10 @@ theorem syntacticSemigroupCon_insert_nil :
 
 /-! ### Recognition by a semigroup
 
-The pointwise form of `Language.Recognizes`, on nonempty words. It says nothing about `[]` — which
-is right, since the syntactic semigroup does not see it (`syntacticSemigroupCon_insert_nil`). -/
+`Language.Recognizes` pulls the fibre equation back along `FreeMonoid.ofList`; `FreeSemigroup α`
+omits the empty word, so no such pullback exists and recognition is stated pointwise on nonempty
+words. It says nothing about `[]` — which is right, since the syntactic semigroup does not see it
+(`syntacticSemigroupCon_insert_nil`). -/
 
 /-- `η` **recognizes** `L` when membership of a nonempty word is decided by its image. -/
 def RecognizesSemigroup {T : Type*} [Semigroup T] (η : FreeSemigroup α →ₙ* T)

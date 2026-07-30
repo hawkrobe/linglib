@@ -256,7 +256,7 @@ theorem mem_langToVariety_varietyToLang (V : Pseudovariety.{u}) {M : Type u} [Mo
   have hφ : Function.Surjective φ := fun m => ⟨FreeMonoid.of m, rfl⟩
   -- The fibre language of each `m : M`.
   let Lm : M → Language M := fun m => {w | φ (FreeMonoid.ofList w) = m}
-  have hrec : ∀ m, Language.Recognizes φ (Lm m) := fun m => ⟨{m}, fun _ => Iff.rfl⟩
+  have hrec : ∀ m, Language.Recognizes φ (Lm m) := fun m => ⟨{m}, rfl⟩
   have hkerle : ∀ m, Con.ker φ ≤ (Lm m).syntacticCon := fun m =>
     Language.ker_le_syntacticCon_of_recognizes (hrec m)
   -- Each fibre language lies in `V.langs`, recognized by the finite monoid `M ∈ V`.
