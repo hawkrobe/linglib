@@ -192,8 +192,7 @@ characterization as the syntactic congruence. -/
 theorem ker_transitionHom_toDFA_iff {u v : FreeMonoid α} :
     Con.ker L.toDFA.transitionHom u v ↔
       ∀ x, L.leftQuotient (x ++ u.toList) = L.leftQuotient (x ++ v.toList) := by
-  simp only [Con.ker_apply, DFA.transitionHom_eq_iff, Set.forall_subtype_range_iff,
-    Subtype.ext_iff, evalFrom_toDFA, ← leftQuotient_append]
+  simp [DFA.transitionHom_eq_iff, Subtype.ext_iff, ← leftQuotient_append]
 
 /-- The intrinsic syntactic congruence is the kernel of the minimal DFA's transition action. -/
 theorem syntacticCon_eq_ker_transitionHom : L.syntacticCon = Con.ker L.toDFA.transitionHom :=
@@ -233,7 +232,7 @@ theorem ker_prod_toSyntacticMonoid {L' : Language α} :
 
 /-! ### Quotients -/
 
-/-- The *right quotient* `L u⁻¹` is the set of words that land in `L` when `u` is appended. -/
+/-- The *right quotient* of `L` by `u` is the set of prefixes `w` such that `w ++ u` is in `L`. -/
 def rightQuotient (L : Language α) (u : List α) : Language α := {w | w ++ u ∈ L}
 
 @[simp] theorem mem_rightQuotient {u w : List α} :
@@ -246,19 +245,14 @@ theorem rightQuotient_append (L : Language α) (u v : List α) :
     L.rightQuotient (u ++ v) = (L.rightQuotient v).rightQuotient u := by
   ext w; simp [List.append_assoc]
 
-/-- Right quotients are left quotients of the reversal. -/
 theorem rightQuotient_eq_reverse_leftQuotient (L : Language α) (u : List α) :
     L.rightQuotient u = (L.reverse.leftQuotient u.reverse).reverse := by
   ext w; simp [List.reverse_append]
 
-/-- Syntactic equivalence for `L` implies it for any left quotient of `L`: prepend `u` to the
-left context. -/
 theorem syntacticCon_le_leftQuotient (L : Language α) (u : List α) :
     L.syntacticCon ≤ (L.leftQuotient u).syntacticCon := fun {p q} h x y => by
   simpa [List.append_assoc] using h (u ++ x) y
 
-/-- Syntactic equivalence for `L` implies it for any right quotient of `L`: append `u` to the
-right context. -/
 theorem syntacticCon_le_rightQuotient (L : Language α) (u : List α) :
     L.syntacticCon ≤ (L.rightQuotient u).syntacticCon := fun {p q} h x y => by
   simpa [List.append_assoc] using h x (y ++ u)
