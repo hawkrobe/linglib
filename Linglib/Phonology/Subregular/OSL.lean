@@ -110,10 +110,11 @@ iff some `k`-OSL rule computes it via left-to-right scan. -/
 def IsLeftOutputStrictlyLocal (k : ℕ) (f : List α → List β) : Prop :=
   ∃ r : OSLRule k α β, r.apply = f
 
-/-- A function `f : List α → List β` is **k-Right-Output-Strictly-Local**
-iff some `k`-OSL rule computes it via right-to-left scan. -/
+/-- A function `f : List α → List β` is **k-Right-Output-Strictly-Local** iff its
+reverse-conjugate is k-Left-OSL — some `k`-OSL rule computes it via right-to-left
+scan. -/
 def IsRightOutputStrictlyLocal (k : ℕ) (f : List α → List β) : Prop :=
-  ∃ r : OSLRule k α β, (fun input => (r.apply input.reverse).reverse) = f
+  IsLeftOutputStrictlyLocal k (revConj f)
 
 /-- Direction-parameterised OSL predicate. -/
 def IsOutputStrictlyLocal (d : Direction) (k : ℕ) (f : List α → List β) : Prop :=
@@ -133,31 +134,13 @@ lemma OSLRule.isLeftOutputStrictlyLocal_apply {k : ℕ} (r : OSLRule k α β) :
     IsLeftOutputStrictlyLocal k r.apply :=
   ⟨r, rfl⟩
 
-/-- **Reverse-conjugation lemma**: a function is k-Right-OSL iff its
-reverse-conjugate is k-Left-OSL. The two classes are isomorphic via the
-involution `f ↦ List.reverse ∘ f ∘ List.reverse`. -/
+/-- **Reverse-conjugation lemma**: a function is k-Right-OSL iff its reverse-conjugate
+is k-Left-OSL — definitionally, with the conjugated class as primary. -/
 theorem isRightOutputStrictlyLocal_iff_left_reverse {k : ℕ}
     (f : List α → List β) :
     IsRightOutputStrictlyLocal k f
-      ↔ IsLeftOutputStrictlyLocal k (fun xs => (f xs.reverse).reverse) := by
-  refine ⟨?_, ?_⟩
-  · rintro ⟨r, hr⟩
-    refine ⟨r, ?_⟩
-    funext xs
-    have h := congrFun hr xs.reverse
-    -- h : (r.apply xs.reverse.reverse).reverse = f xs.reverse
-    -- = (r.apply xs).reverse = f xs.reverse
-    rw [List.reverse_reverse] at h
-    show r.apply xs = (f xs.reverse).reverse
-    rw [← h, List.reverse_reverse]
-  · rintro ⟨r, hr⟩
-    refine ⟨r, ?_⟩
-    funext xs
-    show (r.apply xs.reverse).reverse = f xs
-    have h := congrFun hr xs.reverse
-    -- h : r.apply xs.reverse = (f xs.reverse.reverse).reverse = (f xs).reverse
-    rw [List.reverse_reverse] at h
-    rw [h, List.reverse_reverse]
+      ↔ IsLeftOutputStrictlyLocal k (fun xs => (f xs.reverse).reverse) :=
+  Iff.rfl
 
 /-! ### OSL ⊆ Subsequential
 
@@ -211,15 +194,12 @@ theorem isMealyComputable_of_OSLRule {k : ℕ} [Fintype β] (r : OSLRule k α β
     (SubsequentialTransducer.LetterToLetter.ofLength fun w x => hs w.val x).isMealyComputable
       fun _ => rfl
 
-/-- **Right-OSL ⊆ Right-Subsequential**, derived from the Left- side via
-the reverse-conjugation lemmas. The Right-OSL ↔ Left-OSL and
-Right-Subseq ↔ Left-Subseq isomorphisms commute. -/
+/-- **Right-OSL ⊆ Right-Subsequential**: the left inclusion at the reverse-conjugate,
+since both right classes are the `revConj`-images of their left classes. -/
 theorem isRightOutputStrictlyLocal_right_subsequential {k : ℕ} [Fintype β]
     {f : List α → List β} (h : IsRightOutputStrictlyLocal k f) :
-    IsRightSubsequential f := by
-  rw [isRightOutputStrictlyLocal_iff_left_reverse] at h
-  rw [isRightSubsequential_iff_left_reverse]
-  exact isLeftOutputStrictlyLocal_left_subsequential h
+    IsRightSubsequential f :=
+  isLeftOutputStrictlyLocal_left_subsequential h
 
 /-- **Direction-parameterised OSL ⊆ Subsequential umbrella**: in both
 scan directions, OSL functions are subsequential. Delegates to the

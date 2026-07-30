@@ -110,12 +110,10 @@ end ISLRule
 def IsLeftInputStrictlyLocal (k : ℕ) (f : List α → List β) : Prop :=
   ∃ r : ISLRule k α β, r.apply = f
 
-/-- `f : List α → List β` is **k-Right-Input-Strictly-Local** iff some
-`k`-ISL rule computes it via right-to-left scan. Mirror image of the
-left class via `f ↦ List.reverse ∘ f ∘ List.reverse`; see
-`isRightInputStrictlyLocal_iff_left_reverse`. -/
+/-- `f : List α → List β` is **k-Right-Input-Strictly-Local** iff its reverse-conjugate
+is k-Left-ISL — some `k`-ISL rule computes it via right-to-left scan. -/
 def IsRightInputStrictlyLocal (k : ℕ) (f : List α → List β) : Prop :=
-  ∃ r : ISLRule k α β, (fun input => (r.apply input.reverse).reverse) = f
+  IsLeftInputStrictlyLocal k (revConj f)
 
 /-- Direction-parameterised ISL predicate. Mirrors the OSL/Subseq
 umbrella style; concrete claims should typically use one of
@@ -139,28 +137,13 @@ lemma ISLRule.isLeftInputStrictlyLocal_apply {k : ℕ} (r : ISLRule k α β) :
     IsLeftInputStrictlyLocal k r.apply :=
   ⟨r, rfl⟩
 
-/-- **Reverse-conjugation lemma**: a function is k-Right-ISL iff its
-reverse-conjugate is k-Left-ISL. The two classes are isomorphic via the
-involution `f ↦ List.reverse ∘ f ∘ List.reverse`. -/
+/-- **Reverse-conjugation lemma**: a function is k-Right-ISL iff its reverse-conjugate
+is k-Left-ISL — definitionally, with the conjugated class as primary. -/
 theorem isRightInputStrictlyLocal_iff_left_reverse {k : ℕ}
     (f : List α → List β) :
     IsRightInputStrictlyLocal k f
-      ↔ IsLeftInputStrictlyLocal k (fun xs => (f xs.reverse).reverse) := by
-  refine ⟨?_, ?_⟩
-  · rintro ⟨r, hr⟩
-    refine ⟨r, ?_⟩
-    funext xs
-    have h := congrFun hr xs.reverse
-    rw [List.reverse_reverse] at h
-    show r.apply xs = (f xs.reverse).reverse
-    rw [← h, List.reverse_reverse]
-  · rintro ⟨r, hr⟩
-    refine ⟨r, ?_⟩
-    funext xs
-    show (r.apply xs.reverse).reverse = f xs
-    have h := congrFun hr xs.reverse
-    rw [List.reverse_reverse] at h
-    rw [h, List.reverse_reverse]
+      ↔ IsLeftInputStrictlyLocal k (fun xs => (f xs.reverse).reverse) :=
+  Iff.rfl
 
 /-- The empty-output function is ISL for any `k`. Witness: the rule that
 emits `[]` regardless of window or current symbol. -/
@@ -287,15 +270,12 @@ theorem isMealyComputable_of_ISLRule {k : ℕ} [Fintype α] (r : ISLRule k α β
     (SubsequentialTransducer.LetterToLetter.ofLength fun w x => hs w.val x).isMealyComputable
       fun _ => rfl
 
-/-- **Right-ISL ⊆ Right-Subsequential**, derived from the Left- side via
-the reverse-conjugation lemmas. The Right-ISL ↔ Left-ISL and
-Right-Subseq ↔ Left-Subseq isomorphisms commute. -/
+/-- **Right-ISL ⊆ Right-Subsequential**: the left inclusion at the reverse-conjugate,
+since both right classes are the `revConj`-images of their left classes. -/
 theorem isRightInputStrictlyLocal_right_subsequential {k : ℕ} [Fintype α]
     {f : List α → List β} (h : IsRightInputStrictlyLocal k f) :
-    IsRightSubsequential f := by
-  rw [isRightInputStrictlyLocal_iff_left_reverse] at h
-  rw [isRightSubsequential_iff_left_reverse]
-  exact isLeftInputStrictlyLocal_left_subsequential h
+    IsRightSubsequential f :=
+  isLeftInputStrictlyLocal_left_subsequential h
 
 /-- Direction-parameterised: ISL_d ⊆ Subseq_d for both directions (over
 a finite input alphabet). Delegates to the Left- / Right- specialised

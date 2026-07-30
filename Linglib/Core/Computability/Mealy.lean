@@ -108,55 +108,55 @@ def run : List α → List β := T.runFrom T.initial
 /-- `T.runRight x` runs `T` right-to-left on the input `x`. -/
 def runRight (xs : List α) : List β := (T.run xs.reverse).reverse
 
-@[simp] theorem runFrom_nil (s : σ) : T.runFrom s [] = [] := rfl
-@[simp] theorem runFrom_cons (s : σ) (x : α) (xs : List α) :
-    T.runFrom s (x :: xs) = T.output s x :: T.runFrom (T.step s x) xs := rfl
-@[simp] theorem stateAfter_nil (s : σ) : T.stateAfter s [] = s := rfl
-@[simp] theorem stateAfter_cons (s : σ) (x : α) (xs : List α) :
-    T.stateAfter s (x :: xs) = T.stateAfter (T.step s x) xs := rfl
+section
+variable (s : σ) (x : α) (xs ys : List α)
 
-theorem stateAfter_append (s : σ) (xs ys : List α) :
-    T.stateAfter s (xs ++ ys) = T.stateAfter (T.stateAfter s xs) ys :=
+@[simp] theorem runFrom_nil : T.runFrom s [] = [] := rfl
+@[simp] theorem runFrom_cons :
+    T.runFrom s (x :: xs) = T.output s x :: T.runFrom (T.step s x) xs := rfl
+@[simp] theorem stateAfter_nil : T.stateAfter s [] = s := rfl
+@[simp] theorem stateAfter_cons : T.stateAfter s (x :: xs) = T.stateAfter (T.step s x) xs := rfl
+
+theorem stateAfter_append : T.stateAfter s (xs ++ ys) = T.stateAfter (T.stateAfter s xs) ys :=
   List.foldl_append
 
-theorem runFrom_append (s : σ) (xs ys : List α) :
+theorem runFrom_append :
     T.runFrom s (xs ++ ys) = T.runFrom s xs ++ T.runFrom (T.stateAfter s xs) ys := by
   induction xs generalizing s <;> simp [*]
 
 /-- The run is length-preserving (one output symbol per input symbol). -/
-@[simp] theorem length_runFrom (s : σ) (xs : List α) :
-    (T.runFrom s xs).length = xs.length := by
+@[simp] theorem length_runFrom : (T.runFrom s xs).length = xs.length := by
   induction xs generalizing s <;> simp [*]
 
-@[simp] theorem length_run (xs : List α) :
-    (T.run xs).length = xs.length := T.length_runFrom T.initial xs
+@[simp] theorem length_run : (T.run xs).length = xs.length := T.length_runFrom T.initial xs
 
-@[simp] theorem length_runRight (xs : List α) :
-    (T.runRight xs).length = xs.length := by simp [runRight]
+@[simp] theorem length_runRight : (T.runRight xs).length = xs.length := by simp [runRight]
 
-@[simp] theorem runRight_reverse (xs : List α) :
-    T.runRight xs.reverse = (T.run xs).reverse := by simp [runRight]
+@[simp] theorem runRight_reverse : T.runRight xs.reverse = (T.run xs).reverse := by
+  simp [runRight]
 
 @[simp] theorem runRight_nil : T.runRight [] = [] := rfl
 
 /-- The right-to-left pass emits the head output at the state reached over the entire
 reversed tail: the right scan reads the future. -/
-@[simp] theorem runRight_cons (x : α) (xs : List α) :
+@[simp] theorem runRight_cons :
     T.runRight (x :: xs)
       = T.output (T.stateAfter T.initial xs.reverse) x :: T.runRight xs := by
   simp [runRight, run, runFrom_append]
 
 /-- Output coordinate `i` of the run is the output at the state reached after the
 first `i` input symbols. -/
-theorem getElem?_runFrom (s : σ) (xs : List α) (i : ℕ) :
+theorem getElem?_runFrom (i : ℕ) :
     (T.runFrom s xs)[i]? = xs[i]?.map (T.output (T.stateAfter s (xs.take i))) := by
   induction xs generalizing s i <;> cases i <;> simp [*]
 
 /-- Output coordinate `i` of `T.run` is the output at the state reached after the
 first `i` input symbols. -/
-theorem getElem?_run (xs : List α) (i : ℕ) :
+theorem getElem?_run (i : ℕ) :
     (T.run xs)[i]? = xs[i]?.map (T.output (T.stateAfter T.initial (xs.take i))) :=
   T.getElem?_runFrom T.initial xs i
+
+end
 
 /-! ### Composition -/
 
