@@ -44,7 +44,7 @@ theorems.
 
 namespace Language
 
-open Subregular
+open Subregular FreeSemigroup
 
 variable {α : Type*} {L : Language α} {k : ℕ}
 
@@ -76,10 +76,10 @@ private theorem exists_le_length_syntacticEquiv {w : List α} (hw : w ≠ [])
 /-- The idempotence of a syntactic class, read off a word representing it. -/
 private theorem syntacticEquiv_self_append {u : FreeSemigroup α}
     (he : IsIdempotentElem (L.toSyntacticSemigroup u)) :
-    L.SyntacticEquiv (u.toList ++ u.toList) u.toList := by
+    L.SyntacticEquiv ((toFreeMonoid u).toList ++ (toFreeMonoid u).toList) (toFreeMonoid u).toList := by
   have h : L.syntacticSemigroupCon (u * u) u :=
     toSyntacticSemigroup_eq_iff.1 (by rw [map_mul]; exact he)
-  simpa [syntacticSemigroupCon_iff] using h
+  simpa [syntacticSemigroupCon_iff, syntacticCon_iff] using h
 
 /-! ### Definite languages and **D** -/
 
@@ -126,12 +126,12 @@ theorem IsDefinite.isDefinite_syntacticSemigroup (h : L.IsDefinite k) :
   obtain ⟨u, rfl⟩ := L.toSyntacticSemigroup_surjective e
   obtain ⟨t, rfl⟩ := L.toSyntacticSemigroup_surjective s
   obtain ⟨m, hm, hmu⟩ :=
-    exists_le_length_syntacticEquiv u.toList_ne_nil (syntacticEquiv_self_append he) k
+    exists_le_length_syntacticEquiv (toList_toFreeMonoid_ne_nil u) (syntacticEquiv_self_append he) k
   rw [← map_mul]
   exact toSyntacticSemigroup_eq_iff.2 <| by
-    simpa [syntacticSemigroupCon_iff] using
-      (SyntacticEquiv.append (SyntacticEquiv.refl t.toList) hmu.symm).trans
-        ((h.syntacticEquiv_append_left hm t.toList).trans hmu)
+    simpa [syntacticSemigroupCon_iff, syntacticCon_iff] using
+      (SyntacticEquiv.append (SyntacticEquiv.refl (toFreeMonoid t).toList) hmu.symm).trans
+        ((h.syntacticEquiv_append_left hm (toFreeMonoid t).toList).trans hmu)
 
 /-- **The language half of D**: a definite language over a finite alphabet lies in the language
 variety of the pseudovariety **D**. -/
@@ -185,12 +185,12 @@ theorem IsReverseDefinite.isReverseDefinite_syntacticSemigroup (h : L.IsReverseD
   obtain ⟨u, rfl⟩ := L.toSyntacticSemigroup_surjective e
   obtain ⟨t, rfl⟩ := L.toSyntacticSemigroup_surjective s
   obtain ⟨m, hm, hmu⟩ :=
-    exists_le_length_syntacticEquiv u.toList_ne_nil (syntacticEquiv_self_append he) k
+    exists_le_length_syntacticEquiv (toList_toFreeMonoid_ne_nil u) (syntacticEquiv_self_append he) k
   rw [← map_mul]
   exact toSyntacticSemigroup_eq_iff.2 <| by
-    simpa [syntacticSemigroupCon_iff] using
-      (SyntacticEquiv.append hmu.symm (SyntacticEquiv.refl t.toList)).trans
-        ((h.syntacticEquiv_append_right hm t.toList).trans hmu)
+    simpa [syntacticSemigroupCon_iff, syntacticCon_iff] using
+      (SyntacticEquiv.append hmu.symm (SyntacticEquiv.refl (toFreeMonoid t).toList)).trans
+        ((h.syntacticEquiv_append_right hm (toFreeMonoid t).toList).trans hmu)
 
 /-- **The language half of K**: a reverse-definite language over a finite alphabet lies in the
 language variety of the pseudovariety **K**. -/
@@ -241,7 +241,7 @@ private theorem exists_isIdempotentElem_map_eq_omegaPow {w : List α} (hw : w �
       L.syntacticSemigroupToMonoid e = Monoid.omegaPow (L.syntacticClass w) := by
   obtain ⟨a, l, rfl⟩ := List.exists_cons_of_ne_nil hw
   have hm : L.syntacticClass (a :: l) ∈ Set.range L.syntacticSemigroupToMonoid :=
-    ⟨L.toSyntacticSemigroup ⟨a, l⟩, by simp⟩
+    ⟨L.toSyntacticSemigroup ⟨a, l⟩, by simp [toFreeMonoid_mk_eq_cons, syntacticClass]⟩
   obtain ⟨e, he⟩ := omegaPow_mem_range hm
   refine ⟨e, L.syntacticSemigroupToMonoid_injective ?_, he⟩
   rw [map_mul, he, Monoid.omegaPow_mul_omegaPow]
@@ -259,12 +259,13 @@ theorem isDefinite_syntacticSemigroup_iff_omegaDefiniteEquation :
   · intro h e he s
     obtain ⟨u, rfl⟩ := L.toSyntacticSemigroup_surjective e
     obtain ⟨t, rfl⟩ := L.toSyntacticSemigroup_surjective s
-    have hidem : IsIdempotentElem (L.syntacticClass u.toList) := by
+    have hidem : IsIdempotentElem (L.syntacticClass (toFreeMonoid u).toList) := by
       have hmap := congrArg L.syntacticSemigroupToMonoid he
       rwa [map_mul, syntacticSemigroupToMonoid_apply] at hmap
     refine L.syntacticSemigroupToMonoid_injective ?_
     rw [map_mul, syntacticSemigroupToMonoid_apply, syntacticSemigroupToMonoid_apply]
-    have hpin := h (L.syntacticClass t.toList) u.toList u.toList_ne_nil
+    have hpin := h (L.syntacticClass (toFreeMonoid t).toList) (toFreeMonoid u).toList
+      (toList_toFreeMonoid_ne_nil u)
     rwa [omegaPow_eq_self hidem] at hpin
 
 /-- **The two algebraizations of K agree** — the mirror of
@@ -280,12 +281,13 @@ theorem isReverseDefinite_syntacticSemigroup_iff_omegaReverseDefiniteEquation :
   · intro h e he s
     obtain ⟨u, rfl⟩ := L.toSyntacticSemigroup_surjective e
     obtain ⟨t, rfl⟩ := L.toSyntacticSemigroup_surjective s
-    have hidem : IsIdempotentElem (L.syntacticClass u.toList) := by
+    have hidem : IsIdempotentElem (L.syntacticClass (toFreeMonoid u).toList) := by
       have hmap := congrArg L.syntacticSemigroupToMonoid he
       rwa [map_mul, syntacticSemigroupToMonoid_apply] at hmap
     refine L.syntacticSemigroupToMonoid_injective ?_
     rw [map_mul, syntacticSemigroupToMonoid_apply, syntacticSemigroupToMonoid_apply]
-    have hpin := h (L.syntacticClass t.toList) u.toList u.toList_ne_nil
+    have hpin := h (L.syntacticClass (toFreeMonoid t).toList) (toFreeMonoid u).toList
+      (toList_toFreeMonoid_ne_nil u)
     rwa [omegaPow_eq_self hidem] at hpin
 
 end OmegaEquations

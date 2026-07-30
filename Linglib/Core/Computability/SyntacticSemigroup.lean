@@ -16,9 +16,9 @@ import Mathlib.Data.Fintype.Option
 
 The *syntactic semigroup* of `L : Language α` is the quotient of the free semigroup `FreeSemigroup
 α` — the nonempty words — by the syntactic congruence: the pullback of `Language.syntacticCon`
-along `FreeSemigroup.toFreeMonoid` (`syntacticSemigroupCon_eq_comap`). The two quotients are
-related by `M_A = S_A ∪ {1}` ([eilenberg-1976]), a union that is disjoint exactly when no nonempty
-word is equivalent to the empty one.
+along `FreeSemigroup.toFreeMonoid`. The two quotients are related by `M_A = S_A ∪ {1}`
+([eilenberg-1976]), a union that is disjoint exactly when no nonempty word is equivalent to the
+empty one.
 
 It is the primary invariant for varieties: `D`, `K`, `LI` and `N` are varieties of *semigroups*,
 not of monoids. Over the free monoid they collapse, since the definite condition applied to the
@@ -29,25 +29,27 @@ idempotent `1` forces triviality; stating them on `FreeSemigroup α` is what avo
 - `Language.syntacticSemigroupCon`: the syntactic congruence on `FreeSemigroup α`
 - `Language.SyntacticSemigroup`: the quotient semigroup
 - `Language.toSyntacticSemigroup`: the projection, as a `MulHom`
-- `Language.RecognizesSemigroup`: recognition of a language by a homomorphism to a semigroup
+- `Language.RecognizesSemigroup`: recognition by the `WithOne` unitization of a semigroup hom
 
 ## Main results
 
-- `Language.syntacticSemigroupCon_eq_comap`: the congruence is the monoid one, pulled back
 - `Language.syntacticSemigroupToMonoid_injective`: the syntactic semigroup embeds in the
   syntactic monoid
 - `Language.isRegular_iff_finite_syntacticSemigroup`: Myhill–Nerode in semigroup form
-- `Language.recognizesSemigroup_iff_recognizes`: recognition by `η` is recognition by its
-  unitization `WithOne.mapMulHom η` — Eilenberg's `M_A = S_A ∪ {1}` at the recognition level
+- `Language.recognizesSemigroup_iff`: the pointwise characterization of recognition
+- `Language.recognizesSemigroup_iff_ker_le`: the syntactic congruence is the coarsest one
+  recognizing `L`
 - `Language.syntacticSemigroupCon_insert_nil`: the syntactic semigroup does not see the empty
   word
 
 ## Implementation notes
 
 The projection is `Con.mkMulHom`, mathlib's `MulHom`-valued quotient map for a `Con` over a plain
-`Mul` (the monoid-valued `Con.mk'` would not apply). Words are carried to `List α` by
-`FreeSemigroup.toList` from `Linglib.Core.Algebra.FreeMonoid.FreeSemigroup`, a thin layer over
-`FreeSemigroup.toFreeMonoid`.
+`Mul` (the monoid-valued `Con.mk'` would not apply). The word underlying a free-semigroup element
+is `(FreeSemigroup.toFreeMonoid u).toList`; there is no semigroup-level analogue of the preimage
+equation defining `Language.Recognizes`, since `FreeSemigroup α` omits the empty word, so
+recognition is *defined* through the unitization `WithOne.mapMulHom` and characterized pointwise
+by `recognizesSemigroup_iff`.
 
 ## References
 
@@ -57,25 +59,20 @@ The projection is `Con.mkMulHom`, mathlib's `MulHom`-valued quotient map for a `
 
 namespace Language
 
+open FreeSemigroup
+
 variable {α : Type*} {L : Language α}
 
 /-! ### The syntactic congruence and semigroup -/
 
-/-- The *syntactic congruence* of `L` on the free semigroup identifies two nonempty words when
-no two-sided context distinguishes them as `L`-members. -/
-def syntacticSemigroupCon (L : Language α) : Con (FreeSemigroup α) where
-  r u v := L.SyntacticEquiv u.toList v.toList
-  iseqv := ⟨fun _ => .refl _, .symm, .trans⟩
-  mul' hab hcd := by simpa using hab.append hcd
+/-- The *syntactic congruence* of `L` on the free semigroup: the pullback of the monoid
+congruence `Language.syntacticCon` along `FreeSemigroup.toFreeMonoid`. -/
+def syntacticSemigroupCon (L : Language α) : Con (FreeSemigroup α) :=
+  L.syntacticCon.comap toFreeMonoid (map_mul _)
 
 theorem syntacticSemigroupCon_iff {u v : FreeSemigroup α} :
-    L.syntacticSemigroupCon u v ↔ L.SyntacticEquiv u.toList v.toList := Iff.rfl
-
-/-- The syntactic congruence on nonempty words is the monoid one, pulled back along
-`FreeSemigroup.toFreeMonoid`. -/
-theorem syntacticSemigroupCon_eq_comap (L : Language α) :
-    L.syntacticSemigroupCon = L.syntacticCon.comap FreeSemigroup.toFreeMonoid (map_mul _) :=
-  Con.ext fun _ _ => Iff.rfl
+    L.syntacticSemigroupCon u v ↔ L.syntacticCon (toFreeMonoid u) (toFreeMonoid v) :=
+  Iff.rfl
 
 /-- The *syntactic semigroup* of `L` is the quotient of `FreeSemigroup α` by the syntactic
 congruence. -/
@@ -101,14 +98,12 @@ theorem ker_toSyntacticSemigroup (L : Language α) :
 
 /-- The syntactic class of the underlying nonempty word, as a homomorphism on the free
 semigroup. -/
-def syntacticClassMulHom (L : Language α) : FreeSemigroup α →ₙ* L.SyntacticMonoid where
-  toFun u := L.syntacticClass u.toList
-  map_mul' u v := by simp
+def syntacticClassMulHom (L : Language α) : FreeSemigroup α →ₙ* L.SyntacticMonoid :=
+  L.toSyntacticMonoid.toMulHom.comp toFreeMonoid
 
 theorem ker_syntacticClassMulHom (L : Language α) :
     Con.ker L.syntacticClassMulHom = L.syntacticSemigroupCon :=
-  Con.ext fun _ _ => ((Con.ker_rel _).trans syntacticClass_eq_iff).trans
-    syntacticSemigroupCon_iff.symm
+  Con.ext fun _ _ => (Con.ker_rel _).trans toSyntacticMonoid_eq_iff
 
 /-- The syntactic semigroup embeds into the syntactic monoid: a nonempty word is sent to its
 class in the monoid. -/
@@ -116,7 +111,8 @@ def syntacticSemigroupToMonoid (L : Language α) : L.SyntacticSemigroup →ₙ* 
   (syntacticSemigroupCon L).liftMulHom L.syntacticClassMulHom L.ker_syntacticClassMulHom.ge
 
 @[simp] theorem syntacticSemigroupToMonoid_apply (L : Language α) (u : FreeSemigroup α) :
-    L.syntacticSemigroupToMonoid (L.toSyntacticSemigroup u) = L.syntacticClass u.toList := rfl
+    L.syntacticSemigroupToMonoid (L.toSyntacticSemigroup u) =
+      L.toSyntacticMonoid (toFreeMonoid u) := rfl
 
 theorem syntacticSemigroupToMonoid_injective (L : Language α) :
     Function.Injective L.syntacticSemigroupToMonoid :=
@@ -131,7 +127,8 @@ theorem eq_one_or_mem_range_syntacticSemigroupToMonoid (L : Language α) (s : L.
     s = 1 ∨ s ∈ Set.range L.syntacticSemigroupToMonoid := by
   obtain ⟨w, rfl⟩ := L.syntacticClass_surjective s
   rcases w with _ | ⟨c, w⟩
-  exacts [.inl L.syntacticClass_nil, .inr ⟨L.toSyntacticSemigroup ⟨c, w⟩, by simp⟩]
+  · exact .inl L.syntacticClass_nil
+  · exact .inr ⟨L.toSyntacticSemigroup ⟨c, w⟩, by simp [toFreeMonoid_mk_eq_cons, syntacticClass]⟩
 
 /-- A finite syntactic semigroup forces a finite syntactic monoid: the monoid is covered by
 `WithOne` of the semigroup, which is Eilenberg's `M_A = S_A ∪ {1}`. -/
@@ -158,14 +155,12 @@ theorem isRegular_iff_finite_syntacticSemigroup :
 
 /-! ### Boolean combinations -/
 
-theorem syntacticSemigroupCon_compl : Lᶜ.syntacticSemigroupCon = L.syntacticSemigroupCon := by
-  rw [syntacticSemigroupCon_eq_comap, syntacticSemigroupCon_eq_comap, syntacticCon_compl]
+theorem syntacticSemigroupCon_compl : Lᶜ.syntacticSemigroupCon = L.syntacticSemigroupCon :=
+  congrArg (Con.comap _ _) syntacticCon_compl
 
 theorem inf_syntacticSemigroupCon_le_syntacticSemigroupCon_inf {L' : Language α} :
-    L.syntacticSemigroupCon ⊓ L'.syntacticSemigroupCon ≤ (L ⊓ L').syntacticSemigroupCon := by
-  rw [syntacticSemigroupCon_eq_comap, syntacticSemigroupCon_eq_comap,
-    syntacticSemigroupCon_eq_comap]
-  exact fun {_ _} h => inf_syntacticCon_le_syntacticCon_inf h
+    L.syntacticSemigroupCon ⊓ L'.syntacticSemigroupCon ≤ (L ⊓ L').syntacticSemigroupCon :=
+  fun {_ _} huv => inf_syntacticCon_le_syntacticCon_inf ⟨huv.1, huv.2⟩
 
 theorem ker_prod_toSyntacticSemigroup {L' : Language α} :
     Con.ker (L.toSyntacticSemigroup.prod L'.toSyntacticSemigroup) =
@@ -175,21 +170,23 @@ theorem ker_prod_toSyntacticSemigroup {L' : Language α} :
 /-! ### Quotients -/
 
 theorem syntacticSemigroupCon_le_leftQuotient (L : Language α) (u : List α) :
-    L.syntacticSemigroupCon ≤ (L.leftQuotient u).syntacticSemigroupCon := by
-  rw [syntacticSemigroupCon_eq_comap, syntacticSemigroupCon_eq_comap]
-  exact fun {_ _} h => L.syntacticCon_le_leftQuotient u h
+    L.syntacticSemigroupCon ≤ (L.leftQuotient u).syntacticSemigroupCon :=
+  fun {_ _} h => L.syntacticCon_le_leftQuotient u h
 
 theorem syntacticSemigroupCon_le_rightQuotient (L : Language α) (u : List α) :
-    L.syntacticSemigroupCon ≤ (L.rightQuotient u).syntacticSemigroupCon := by
-  rw [syntacticSemigroupCon_eq_comap, syntacticSemigroupCon_eq_comap]
-  exact fun {_ _} h => L.syntacticCon_le_rightQuotient u h
+    L.syntacticSemigroupCon ≤ (L.rightQuotient u).syntacticSemigroupCon :=
+  fun {_ _} h => L.syntacticCon_le_rightQuotient u h
 
 /-- The syntactic congruence on nonempty words depends on `L` only through its nonempty words. -/
 theorem syntacticSemigroupCon_congr {L' : Language α}
     (h : ∀ w : List α, w ≠ [] → (w ∈ L ↔ w ∈ L')) :
     L.syntacticSemigroupCon = L'.syntacticSemigroupCon :=
+  have key : ∀ (x : List α) (w : FreeSemigroup α) (y : List α),
+      x ++ (toFreeMonoid w).toList ++ y ≠ [] := fun _ w _ hnil =>
+    toList_toFreeMonoid_ne_nil w (List.append_eq_nil_iff.mp
+      (List.append_eq_nil_iff.mp hnil).1).2
   Con.ext fun u v => forall_congr' fun x => forall_congr' fun y =>
-    iff_congr (h _ (by simp)) (h _ (by simp))
+    iff_congr (h _ (key x u y)) (h _ (key x v y))
 
 /-- Adjoining the empty word leaves the syntactic congruence unchanged, since it quantifies only
 over nonempty words. This is the `+`-variety semantics ([eilenberg-1976] indexes varieties of sets
@@ -200,30 +197,36 @@ theorem syntacticSemigroupCon_insert_nil :
 
 /-! ### Recognition by a semigroup -/
 
-/-- `η` *recognizes* `L` when membership of a nonempty word is decided by its image. Recognition
-of the empty word is delegated to the unitization (`recognizesSemigroup_iff_recognizes`). -/
-def RecognizesSemigroup {T : Type*} [Semigroup T] (η : FreeSemigroup α →ₙ* T)
-    (L : Language α) : Prop :=
-  ∃ P : Set T, ∀ w : FreeSemigroup α, w.toList ∈ L ↔ η w ∈ P
-
 section
 
 variable {T : Type*} [Semigroup T] {η : FreeSemigroup α →ₙ* T}
 
+/-- `η` *recognizes* `L` when its `WithOne` unitization, read on the free monoid through
+`FreeMonoid.equivWithOneFreeSemigroup`, recognizes `L` — Eilenberg's `M_A = S_A ∪ {1}` at the
+recognition level. Pointwise characterization: `recognizesSemigroup_iff`. -/
+def RecognizesSemigroup (η : FreeSemigroup α →ₙ* T) (L : Language α) : Prop :=
+  Recognizes ((WithOne.mapMulHom η).comp FreeMonoid.equivWithOneFreeSemigroup.toMonoidHom) L
+
 theorem mapMulHom_comp_equivWithOneFreeSemigroup_toFreeMonoid (u : FreeSemigroup α) :
     ((WithOne.mapMulHom η).comp FreeMonoid.equivWithOneFreeSemigroup.toMonoidHom)
-      (FreeSemigroup.toFreeMonoid u) = ↑(η u) := by
+      (toFreeMonoid u) = ↑(η u) := by
   rw [MonoidHom.comp_apply, MulEquiv.coe_toMonoidHom,
     FreeMonoid.equivWithOneFreeSemigroup_toFreeMonoid, WithOne.mapMulHom_coe]
 
-/-- **Recognition by a semigroup is recognition by its unitization**: `η` and
-`WithOne.mapMulHom η`, read on `FreeMonoid α` through `FreeMonoid.equivWithOneFreeSemigroup`,
-recognize the same languages — Eilenberg's `M_A = S_A ∪ {1}` at the recognition level. -/
-theorem recognizesSemigroup_iff_recognizes :
+/-- Recognition by a semigroup hom, characterized without the unitization: membership of a
+nonempty word is decided by its `η`-image. -/
+theorem recognizesSemigroup_iff :
     L.RecognizesSemigroup η ↔
-      Recognizes ((WithOne.mapMulHom η).comp
-        FreeMonoid.equivWithOneFreeSemigroup.toMonoidHom) L := by
+      ∃ P : Set T, ∀ w : FreeSemigroup α, (toFreeMonoid w).toList ∈ L ↔ η w ∈ P := by
   constructor
+  · rintro ⟨S, hS⟩
+    have hmem : ∀ v : List α, v ∈ L ↔ ((WithOne.mapMulHom η).comp
+        FreeMonoid.equivWithOneFreeSemigroup.toMonoidHom) (FreeMonoid.ofList v) ∈ S :=
+      fun v => by rw [hS]; rfl
+    refine ⟨(↑) ⁻¹' S, fun w => (hmem _).trans ?_⟩
+    rw [show FreeMonoid.ofList (toFreeMonoid w).toList = toFreeMonoid w from rfl,
+      mapMulHom_comp_equivWithOneFreeSemigroup_toFreeMonoid]
+    rfl
   · rintro ⟨P, hP⟩
     refine ⟨(↑) '' P ∪ {x | x = 1 ∧ [] ∈ L}, Set.ext fun w => ?_⟩
     show w ∈ L ↔ ((WithOne.mapMulHom η).comp
@@ -232,33 +235,25 @@ theorem recognizesSemigroup_iff_recognizes :
     rcases w with _ | ⟨c, l⟩
     · rw [show FreeMonoid.ofList ([] : List α) = 1 from rfl, map_one]
       simp
-    · rw [show FreeMonoid.ofList (c :: l) = FreeSemigroup.toFreeMonoid ⟨c, l⟩ by
-          rw [FreeSemigroup.toFreeMonoid_eq_ofList, FreeSemigroup.toList_mk],
+    · rw [show FreeMonoid.ofList (c :: l) = toFreeMonoid ⟨c, l⟩ from
+          (toFreeMonoid_mk_eq_cons c l).symm,
         mapMulHom_comp_equivWithOneFreeSemigroup_toFreeMonoid]
-      simpa using hP ⟨c, l⟩
-  · rintro ⟨S, hS⟩
-    have hmem : ∀ v : List α, v ∈ L ↔ ((WithOne.mapMulHom η).comp
-        FreeMonoid.equivWithOneFreeSemigroup.toMonoidHom) (FreeMonoid.ofList v) ∈ S :=
-      fun v => by rw [hS]; rfl
-    refine ⟨(↑) ⁻¹' S, fun w => (hmem w.toList).trans ?_⟩
-    rw [← FreeSemigroup.toFreeMonoid_eq_ofList,
-      mapMulHom_comp_equivWithOneFreeSemigroup_toFreeMonoid]
-    rfl
+      simpa [toFreeMonoid_mk_eq_cons] using hP ⟨c, l⟩
 
 theorem ker_le_syntacticSemigroupCon_of_recognizes (hrec : L.RecognizesSemigroup η) :
     Con.ker η ≤ L.syntacticSemigroupCon := by
-  rw [syntacticSemigroupCon_eq_comap]
   intro u v huv
-  exact ker_le_syntacticCon_of_recognizes (recognizesSemigroup_iff_recognizes.mp hrec)
+  exact ker_le_syntacticCon_of_recognizes hrec
     (Con.ker_apply.mpr (by
       rw [mapMulHom_comp_equivWithOneFreeSemigroup_toFreeMonoid,
         mapMulHom_comp_equivWithOneFreeSemigroup_toFreeMonoid, (Con.ker_rel η).mp huv]))
 
 theorem recognizesSemigroup_of_ker_le (h : Con.ker η ≤ L.syntacticSemigroupCon) :
     L.RecognizesSemigroup η :=
-  ⟨η '' {u | u.toList ∈ L}, fun w =>
-    ⟨fun hw => ⟨w, hw, rfl⟩, fun ⟨_, hu, hη⟩ =>
-      (SyntacticEquiv.mem_iff (h ((Con.ker_rel η).mpr hη))).mp hu⟩⟩
+  recognizesSemigroup_iff.mpr
+    ⟨η '' {u | (toFreeMonoid u).toList ∈ L}, fun w =>
+      ⟨fun hw => ⟨w, hw, rfl⟩, fun ⟨_, hu, hη⟩ =>
+        (SyntacticEquiv.mem_iff (h ((Con.ker_rel η).mpr hη))).mp hu⟩⟩
 
 theorem recognizesSemigroup_iff_ker_le :
     L.RecognizesSemigroup η ↔ Con.ker η ≤ L.syntacticSemigroupCon :=
