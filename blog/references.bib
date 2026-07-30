@@ -30146,9 +30146,9 @@
 % ══════════════════════════════════════════════════════════════════════════════
 %  phonology/subregular — foundational substrate references
 %
-%  These four entries support the Linglib/Core/Computability/Subregular/
-%  cluster (Basic, StrictlyLocal, Piecewise, LocallyTestable, Definite, Tier,
-%  Hierarchy, ForbiddenPairs) plus the Belth2026 study consumer.
+%  These four entries support the subregular language files (flat under
+%  Linglib/Core/Computability/ and Linglib/Phonology/Subregular/) plus the
+%  Belth2026 study consumer.
 % ══════════════════════════════════════════════════════════════════════════════
 
 % REF: Heinz, Rawal & Tanner (2011). Tier-based Strictly Local Constraints
@@ -30165,7 +30165,7 @@
   subfield  = {phonology/subregular},
   role      = {foundational},
   validated = {true},
-  sources   = {Studies/Belth2026.lean;Phonology/OCP.lean;Core/Computability/Subregular/Language/ForbiddenPairs.lean}
+  sources   = {Studies/Belth2026.lean;Phonology/OCP.lean;Phonology/Subregular/ForbiddenPairs.lean}
 }
 
 % REF: Heinz & Rogers (2010). Estimating Strictly Piecewise Distributions.
@@ -30182,7 +30182,7 @@
   subfield  = {phonology/subregular},
   role      = {foundational},
   validated = {true},
-  sources   = {Core/Computability/Subregular/Language/Aperiodicity.lean;Core/Computability/Subregular/Language/Boundary.lean}
+  sources   = {Core/Computability/Aperiodicity.lean;Core/Computability/Boundary.lean}
 }
 
 % REF: Rogers & Pullum (2011). Aural Pattern Recognition Experiments and
@@ -30200,7 +30200,7 @@
   subfield  = {phonology/subregular},
   role      = {foundational},
   validated = {true},
-  sources   = {Core/Computability/Subregular/Language/Definite.lean}
+  sources   = {Core/Computability/Definite.lean}
 }
 
 % REF: Lambert (2022). Unifying Classification Schemes for Languages and
@@ -30217,13 +30217,13 @@
   subfield  = {phonology/subregular},
   role      = {foundational},
   validated = {true},
-  sources   = {Studies/Belth2026.lean;Core/Computability/Subregular/Language/Definite.lean}
+  sources   = {Studies/Belth2026.lean;Core/Computability/Definite.lean}
 }
 
 % ──────────────────────────────────────────────────────────────────────────────
 %  phonology/subregular — function-level hierarchy (ISL/OSL/Subseq/WD)
 %
-%  Entries below support Linglib/Core/Computability/Subregular/Function/ —
+%  Entries below support the function-level files (Linglib/Phonology/Subregular/) —
 %  the function-level (string-to-string map) analogue of the language-level
 %  hierarchy above. All entries verified against the References section of
 %  Meinhardt et al 2024 NLLT 42:1191-1232 (Fig 1 is the canonical 2024
@@ -30241,7 +30241,7 @@
   subfield  = {phonology/subregular},
   role      = {foundational},
   validated = {true},
-  sources   = {Core/Computability/Subregular/Function/ISL.lean}
+  sources   = {Phonology/Subregular/ISL.lean}
 }
 
 % REF: Chandlee, Eyraud & Heinz (2015). Output Strictly Local Functions.
@@ -30259,7 +30259,7 @@
   subfield  = {phonology/subregular},
   role      = {foundational},
   validated = {true},
-  sources   = {Core/Computability/Subregular/Function/OSL.lean}
+  sources   = {Phonology/Subregular/OSL.lean}
 }
 
 % REF: Chandlee & Heinz (2018). Strict Locality and Phonological Maps.
@@ -30277,7 +30277,7 @@
   subfield  = {phonology/subregular},
   role      = {foundational},
   validated = {true},
-  sources   = {Core/Computability/Subregular/Function/ISL.lean;Phonology/Subregular/LocalRewrite.lean;Phonology/OCP.lean}
+  sources   = {Phonology/Subregular/ISL.lean;Phonology/Subregular/LocalRewrite.lean;Phonology/OCP.lean}
 }
 
 % REF: Mohri (1997). Finite-State Transducers in Language and Speech
@@ -30354,7 +30354,7 @@
   subfield  = {phonology/subregular},
   role      = {cited},
   validated = {true},
-  sources   = {Core/Computability/Subregular/Function/Subsequential.lean}
+  sources   = {Core/Computability/Subsequential.lean}
 }
 
 @article{reutenauer-schutzenberger-1991,
@@ -30464,7 +30464,7 @@
   subfield  = {phonology/subregular},
   role      = {foundational},
   validated = {true},
-  sources   = {Core/Computability/Subregular/Function/Subsequential.lean; Core/Computability/Mealy.lean}
+  sources   = {Core/Computability/Subsequential.lean; Core/Computability/Mealy.lean}
 }
 
 % REF: Heinz & Lai (2013). Vowel Harmony and Subsequentiality.
@@ -30482,7 +30482,7 @@
   subfield  = {phonology/subregular},
   role      = {foundational},
   validated = {true},
-  sources   = {Core/Computability/Subregular/Function/Subsequential.lean;Studies/MeinhardtEtAl2024.lean}
+  sources   = {Core/Computability/Subsequential.lean;Studies/MeinhardtEtAl2024.lean}
 }
 
 % REF: Meinhardt, Mai, Baković & McCollum (2024). Weak determinism and the
@@ -34325,7 +34325,7 @@
   url       = {https://aclanthology.org/Q19-1010/},
   subfield  = {phonology/autosegmental},
   role      = {formalized},
-  sources   = {Phonology/OCP.lean;Core/Computability/Subregular/Logic/QFLogic.lean;Phonology/Subregular/OCP.lean;Core/Computability/Subregular/Logic/LocalityBridge.lean}
+  sources   = {Phonology/OCP.lean;Phonology/Subregular/QF.lean;Phonology/Subregular/OCP.lean;Phonology/Subregular/LocalityBridge.lean}
 }
 
 % REF: Burness & McMullin (2020). Multi-Tiered Strictly Local Functions.
@@ -34362,7 +34362,7 @@
   doi       = {10.1007/978-3-030-40608-0_10},
   subfield  = {phonology/autosegmental},
   role      = {cited},
-  sources   = {Core/Computability/Subregular/Logic/BMRS.lean}
+  sources   = {Phonology/Subregular/BMRS.lean}
 }
 
 % REF: Shih & Inkelas (2014). Reframing the TBU in an ABC+Q approach
@@ -37269,7 +37269,7 @@
   url       = {https://arxiv.org/abs/2302.03074},
   subfield  = {phonology/computational},
   role      = {cited},
-  sources   = {Core/Computability/Subregular/Logic/BMRS.lean}
+  sources   = {Phonology/Subregular/BMRS.lean}
 }
 
 @article{chandlee-jardine-2021,
@@ -37283,7 +37283,7 @@
   doi       = {10.1353/lan.2021.0045},
   subfield  = {phonology/computational},
   role      = {cited},
-  sources   = {Core/Computability/Subregular/Logic/BMRS.lean}
+  sources   = {Phonology/Subregular/BMRS.lean}
 }
 
 @article{kozen-1983,
@@ -37297,7 +37297,7 @@
   doi       = {10.1016/0304-3975(82)90125-6},
   subfield  = {logic},
   role      = {cited},
-  sources   = {Core/Computability/Subregular/Logic/ModalMu.lean}
+  sources   = {Studies/YolyanComer2026.lean}
 }
 
 @article{yolyan-2025,
@@ -37310,7 +37310,7 @@
   doi       = {10.1007/s10849-025-09429-9},
   subfield  = {phonology/computational},
   role      = {formalized},
-  sources   = {Core/Computability/Subregular/Logic/BMRS.lean}
+  sources   = {Phonology/Subregular/BMRS.lean}
 }
 
 @inproceedings{yolyan-comer-2026,
@@ -37322,7 +37322,7 @@
   publisher = {Association for Computational Linguistics},
   subfield  = {phonology/computational},
   role      = {formalized},
-  sources   = {Core/Computability/Subregular/Logic/BMRS.lean;Core/Computability/Subregular/Logic/ModalMu.lean}
+  sources   = {Phonology/Subregular/BMRS.lean;Studies/YolyanComer2026.lean}
 }
 
 @inproceedings{koser-jardine-2020,

@@ -122,12 +122,6 @@ theorem isMealyComputable_of_stateSummary
   · rw [List.getElem?_eq_none hi, List.getElem?_eq_none ((hlen xs).le.trans hi),
       Option.map_none]
 
-/-- The identity is Mealy-computable, via a one-state summary. -/
-theorem isMealyComputable_id : IsMealyComputable (id : List α → List α) :=
-  isMealyComputable_of_stateSummary
-    (fun _ => ()) (fun _ _ => ()) (fun _ x => x)
-    (fun _ _ => rfl) (fun _ _ _ => by simp) (fun _ => rfl)
-
 /-- A length-preserving, prefix-preserving function with finitely many residuals is
 Mealy-computable: the residuals themselves are the states. -/
 theorem isMealyComputable_of_residual {f : List α → List β}

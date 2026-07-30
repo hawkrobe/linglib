@@ -27,6 +27,7 @@ instance must be supplied for the finite-state class `IsMealyComputable`.
 * `Mealy σ α β`: transducer with states `σ`, input alphabet `α`, output alphabet `β`
 * `Mealy.run`, `Mealy.runRight`: the left-to-right and right-to-left passes
 * `Mealy.comp`: the cascade connection, computing the composite function
+* `Mealy.ofFn`: the single-state machine applying a fixed symbol map letter-wise
 * `Mealy.ofFlag`: the one-bit machine tracking whether an earlier symbol satisfies `p`
 * `Mealy.reindex`: lifts an equivalence on states to an equivalence on machines
 * `IsMealyComputable f`: `f` is computed by some finite-state `Mealy`
@@ -47,10 +48,9 @@ instance must be supplied for the finite-state class `IsMealyComputable`.
 ## Implementation notes
 
 The functions computed by Mealy machines are the *sequential functions* of algebraic
-automata theory [holcombe-1982]. For length-preserving functions the class coincides
-with the letter-to-letter restriction of the *subsequential* functions [mohri-1997],
-since length preservation forces a subsequential machine's state-final output to be
-empty.
+automata theory [holcombe-1982]. `SubsequentialTransducer` generalizes to word-block
+outputs and a state-final output [mohri-1997]; `Mealy.toSubsequentialTransducer`
+exhibits a Mealy machine as the singleton-output, empty-flush case.
 
 [UPSTREAM] candidate: `Mathlib.Computability.Mealy`.
 
@@ -175,9 +175,23 @@ def comp : Mealy (σ' × σ) α γ where
   induction xs generalizing p <;> simp [*]
 
 @[simp] theorem run_comp : (T₂.comp T₁).run = T₂.run ∘ T₁.run := by
-  funext xs; simp [run, Function.comp]
+  funext xs; simp [run]
 
 end Comp
+
+/-! ### Letter-wise machines -/
+
+/-- The single-state machine applying `h` to every symbol. -/
+def ofFn (h : α → β) : Mealy Unit α β where
+  initial := ()
+  step _ _ := ()
+  output _ := h
+
+@[simp] theorem ofFn_output (h : α → β) (u : Unit) : (ofFn h).output u = h := rfl
+
+@[simp] theorem ofFn_run (h : α → β) (xs : List α) : (ofFn h).run xs = xs.map h := by
+  show (ofFn h).runFrom () xs = _
+  induction xs <;> simp [*]
 
 /-! ### Flag machines -/
 
@@ -282,6 +296,12 @@ theorem IsMealyComputable.comp {γ : Type*} {g : List β → List γ} {f : List 
   obtain ⟨σ₂, _, T₂, rfl⟩ := hg
   obtain ⟨σ₁, _, T₁, rfl⟩ := hf
   exact ⟨σ₂ × σ₁, inferInstance, T₂.comp T₁, T₂.run_comp T₁⟩
+
+theorem isMealyComputable_map (h : α → β) : IsMealyComputable (List.map h) :=
+  funext (Mealy.ofFn_run h) ▸ (Mealy.ofFn h).isMealyComputable
+
+theorem isMealyComputable_id : IsMealyComputable (id : List α → List α) := by
+  simpa using isMealyComputable_map (id : α → α)
 
 /-! ### Pulling back acceptors -/
 
