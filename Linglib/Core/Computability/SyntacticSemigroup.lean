@@ -208,10 +208,10 @@ theorem recognizesSemigroup_iff :
         FreeMonoid.mapWithOne η w.toFreeMonoid ∈ S := by rw [hS]; rfl
     simpa using hmem
   · rintro ⟨P, hP⟩
-    refine ⟨(↑) '' P ∪ {x | x = 1 ∧ [] ∈ L}, Set.ext fun w => ?_⟩
-    show w ∈ L ↔ FreeMonoid.mapWithOne η (.ofList w) ∈ (↑) '' P ∪ {x | x = 1 ∧ [] ∈ L}
+    refine ⟨{x | WithOne.recOneCoe ([] ∈ L) (· ∈ P) x}, Set.ext fun w => ?_⟩
+    show w ∈ L ↔ WithOne.recOneCoe ([] ∈ L) (· ∈ P) (FreeMonoid.mapWithOne η (.ofList w))
     rcases w with _ | ⟨c, l⟩
-    · simp [show (FreeMonoid.ofList [] : FreeMonoid α) = 1 from rfl]
+    · rw [show (FreeMonoid.ofList [] : FreeMonoid α) = 1 from rfl, map_one]; exact Iff.rfl
     · rw [FreeMonoid.mapWithOne_ofList_cons]
       simpa [toFreeMonoid_mk_eq_cons] using hP ⟨c, l⟩
 
