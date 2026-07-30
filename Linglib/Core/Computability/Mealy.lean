@@ -75,8 +75,9 @@ namespace Subregular
 variable {σ α β : Type*}
 
 /-- A Mealy machine is a set of states (`σ`), a starting state (`initial`), a
-transition function (`step`) and an output function (`output`); it is synchronous,
+transition function (`step`) and an output function (`output`); it is letter-to-letter,
 emitting exactly one output symbol per input symbol. -/
+@[ext]
 structure Mealy (σ α β : Type*) where
   /-- Starting state. -/
   initial : σ

@@ -283,8 +283,9 @@ theorem isLeftInputStrictlyLocal_left_subsequential {k : ℕ} [Fintype α]
 `ISLRule.toFinSubsequentialTransducer` finite-state is already the synchronous state. -/
 theorem isMealyComputable_of_ISLRule {k : ℕ} [Fintype α] (r : ISLRule k α β)
     (hs : ∀ w x, (r.windowOutput w x).length = 1) : IsMealyComputable r.apply :=
-  r.toFinSubsequentialTransducer_run_eq_apply ▸ r.toFinSubsequentialTransducer.isMealyComputable
-  (fun w x => hs w.val x) fun _ => rfl
+  r.toFinSubsequentialTransducer_run_eq_apply ▸
+    (SubsequentialTransducer.LetterToLetter.ofLength fun w x => hs w.val x).isMealyComputable
+      fun _ => rfl
 
 /-- **Right-ISL ⊆ Right-Subsequential**, derived from the Left- side via
 the reverse-conjugation lemmas. The Right-ISL ↔ Left-ISL and

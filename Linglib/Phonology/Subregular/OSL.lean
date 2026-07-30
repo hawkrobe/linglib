@@ -207,8 +207,9 @@ theorem isLeftOutputStrictlyLocal_left_subsequential {k : ℕ} [Fintype β]
 the synchronous state. -/
 theorem isMealyComputable_of_OSLRule {k : ℕ} [Fintype β] (r : OSLRule k α β)
     (hs : ∀ w x, (r.windowOutput w x).length = 1) : IsMealyComputable r.apply :=
-  r.toFinSubsequentialTransducer_run_eq_apply ▸ r.toFinSubsequentialTransducer.isMealyComputable
-  (fun w x => hs w.val x) fun _ => rfl
+  r.toFinSubsequentialTransducer_run_eq_apply ▸
+    (SubsequentialTransducer.LetterToLetter.ofLength fun w x => hs w.val x).isMealyComputable
+      fun _ => rfl
 
 /-- **Right-OSL ⊆ Right-Subsequential**, derived from the Left- side via
 the reverse-conjugation lemmas. The Right-OSL ↔ Left-OSL and
