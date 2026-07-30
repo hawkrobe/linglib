@@ -7,6 +7,7 @@ Authors: Robert Hawkins
 Upstreaming needs `@[to_additive]` on each declaration, and the monoid `Con.lift`/`Con.map`
 should then be re-derived from these, as `Con.mk'` already is from `Con.mkMulHom`.
 -/
+import Mathlib.Algebra.Group.Prod
 import Mathlib.GroupTheory.Congruence.Hom
 
 /-!
@@ -32,6 +33,8 @@ universal-property statements coerce the argument, as in `liftMulHom_comp_mkMulH
 
 * `Con.mulHom_ext`, `Con.liftMulHom_unique`: the universal property of the quotient.
 * `Con.kerLiftMulHom_injective`: the kernel lift is injective.
+* `Con.ker_prod`, `Con.ker_prodMulHom`: the kernel of a paired homomorphism is the meet of the
+  kernels.
 -/
 
 variable {M N : Type*} [Mul M] [Mul N] {F : Type*} [FunLike F M N] [MulHomClass F M N]
@@ -105,5 +108,17 @@ def mapMulHom (d : Con M) (h : c ≤ d) : c.Quotient →ₙ* d.Quotient :=
 theorem mapMulHom_surjective (d : Con M) (h : c ≤ d) :
     Function.Surjective (c.mapMulHom d h) :=
   liftMulHom_surjective_of_surjective _ d.mkMulHom_surjective
+
+/-! ### Kernels of paired homomorphisms -/
+
+/-- The kernel of a paired homomorphism is the meet of the kernels. -/
+theorem ker_prodMulHom {N' : Type*} [Mul N'] (f : M →ₙ* N) (g : M →ₙ* N') :
+    Con.ker (f.prod g) = Con.ker f ⊓ Con.ker g :=
+  Con.ext fun _ _ => by simp [Con.ker_rel, Prod.ext_iff, Con.inf_iff_and]
+
+/-- The kernel of a paired monoid homomorphism is the meet of the kernels. -/
+theorem ker_prod {M N N' : Type*} [MulOneClass M] [MulOneClass N] [MulOneClass N']
+    (f : M →* N) (g : M →* N') : Con.ker (f.prod g) = Con.ker f ⊓ Con.ker g :=
+  Con.ext fun _ _ => by simp [Con.ker_rel, Prod.ext_iff, Con.inf_iff_and]
 
 end Con

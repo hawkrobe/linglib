@@ -142,7 +142,7 @@ def varietyToLang (V : Pseudovariety.{u}) : LanguageVariety.{u} where
 syntactic monoids of the languages in `𝒱`. -/
 def langToVariety (𝒱 : LanguageVariety.{u}) : Pseudovariety.{u} :=
   Pseudovariety.generated (fun (M : Type u) _ => ∃ (α : Type u) (L : Language α),
-    𝒱.lang L ∧ Nonempty (M ≃* L.syntacticMonoid))
+    𝒱.lang L ∧ Nonempty (M ≃* L.SyntacticMonoid))
 
 @[simp] theorem mem_varietyToLang (V : Pseudovariety.{u}) {α : Type u} (L : Language α) :
     (varietyToLang V).lang L ↔ V.langs L := Iff.rfl
@@ -157,17 +157,17 @@ theorem eilenberg_galoisConnection :
   · -- `langToVariety 𝒱 ≤ V` ⟹ `𝒱 ≤ varietyToLang V`.
     intro hle α L h𝒱L
     have hreg : L.IsRegular := 𝒱.regular h𝒱L
-    haveI : Finite L.syntacticMonoid := Language.IsRegular.finite_syntacticMonoid hreg
-    have hgen : (langToVariety 𝒱).mem L.syntacticMonoid :=
+    haveI : Finite L.SyntacticMonoid := Language.IsRegular.finite_syntacticMonoid hreg
+    have hgen : (langToVariety 𝒱).mem L.SyntacticMonoid :=
       Pseudovariety.subset_generated ⟨α, L, h𝒱L, ⟨MulEquiv.refl _⟩⟩
-    exact ⟨hreg, hle L.syntacticMonoid hgen⟩
+    exact ⟨hreg, hle L.SyntacticMonoid hgen⟩
   · -- `𝒱 ≤ varietyToLang V` ⟹ `langToVariety 𝒱 ≤ V`.
     intro hle
     apply Pseudovariety.generated_le
     intro N _ _ hSN
     obtain ⟨α, L, h𝒱L, ⟨e⟩⟩ := hSN
-    have hVmem : V.mem L.syntacticMonoid := (hle α L h𝒱L).2
-    haveI : Finite L.syntacticMonoid := Language.IsRegular.finite_syntacticMonoid (𝒱.regular h𝒱L)
+    have hVmem : V.mem L.SyntacticMonoid := (hle α L h𝒱L).2
+    haveI : Finite L.SyntacticMonoid := Language.IsRegular.finite_syntacticMonoid (𝒱.regular h𝒱L)
     haveI : Finite N := Finite.of_equiv _ e.symm.toEquiv
     exact V.mem_of_mulEquiv e.symm hVmem
 
@@ -261,16 +261,16 @@ theorem mem_langToVariety_varietyToLang (V : Pseudovariety.{u}) {M : Type u} [Mo
     Language.ker_le_syntacticCon_of_recognizes (hrec m)
   -- Each fibre language lies in `V.langs`, recognized by the finite monoid `M ∈ V`.
   have hlangs : ∀ m, V.langs (Lm m) := fun m => V.langs_of_recognizes hM φ {m} (fun _ => Iff.rfl)
-  haveI : ∀ m, Finite (Lm m).syntacticMonoid := fun m =>
+  haveI : ∀ m, Finite (Lm m).SyntacticMonoid := fun m =>
     Language.IsRegular.finite_syntacticMonoid (hlangs m).1
   -- Each fibre's syntactic monoid is a generator, hence in any `W` containing the generators.
   intro W hW
-  have hWsyn : ∀ m, W.mem (Lm m).syntacticMonoid := fun m =>
+  have hWsyn : ∀ m, W.mem (Lm m).SyntacticMonoid := fun m =>
     hW _ ⟨M, Lm m, hlangs m, ⟨MulEquiv.refl _⟩⟩
   -- The finite product of those syntactic monoids lies in `W`.
-  have hProd : W.mem (∀ m : M, (Lm m).syntacticMonoid) := pi_mem W hWsyn
+  have hProd : W.mem (∀ m : M, (Lm m).SyntacticMonoid) := pi_mem W hWsyn
   -- The joint syntactic morphism and the fact that its kernel is exactly `ker φ`.
-  let Ψ : FreeMonoid M →* (∀ m : M, (Lm m).syntacticMonoid) :=
+  let Ψ : FreeMonoid M →* (∀ m : M, (Lm m).SyntacticMonoid) :=
     MonoidHom.pi (fun m => (Lm m).toSyntacticMonoid)
   have hkereq : Con.ker φ = Con.ker Ψ := by
     apply le_antisymm
@@ -284,7 +284,7 @@ theorem mem_langToVariety_varietyToLang (V : Pseudovariety.{u}) {M : Type u} [Mo
         congrFun (Con.ker_apply.mp huv) (φ u)
       have hcon : (Lm (φ u)).syntacticCon u v :=
         (Language.toSyntacticMonoid_eq_iff (L := Lm (φ u))).mp hu
-      have hmem := ((Language.syntacticCon_iff (Lm (φ u))).mp hcon) [] []
+      have hmem := (Language.syntacticCon_iff.mp hcon) [] []
       simp only [List.nil_append, List.append_nil] at hmem
       have hmemu : u.toList ∈ Lm (φ u) := by
         show φ (FreeMonoid.ofList u.toList) = φ u
@@ -293,7 +293,7 @@ theorem mem_langToVariety_varietyToLang (V : Pseudovariety.{u}) {M : Type u} [Mo
       rw [FreeMonoid.ofList_toList] at hmemv
       exact Con.ker_apply.mpr hmemv.symm
   -- `M ≃* (ker φ).Quotient = (ker Ψ).Quotient ↪ ∏`, an injective hom into the product.
-  let g : M →* (∀ m : M, (Lm m).syntacticMonoid) :=
+  let g : M →* (∀ m : M, (Lm m).SyntacticMonoid) :=
     (Con.kerLift Ψ).comp ((Con.quotientKerEquivOfSurjective φ hφ).symm.trans
       (hkereq ▸ MulEquiv.refl _)).toMonoidHom
   have hginj : Function.Injective g := by

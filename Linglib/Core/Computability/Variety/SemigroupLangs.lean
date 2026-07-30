@@ -44,7 +44,7 @@ variable (V : Pseudovariety.{u}) {α : Type u} {L : Language α}
 
 /-- The languages over `α` whose (necessarily finite) syntactic semigroup lies in `V` — the
 `+`-variety side of the Eilenberg correspondence. -/
-def langs (L : Language α) : Prop := L.IsRegular ∧ V.mem L.syntacticSemigroup
+def langs (L : Language α) : Prop := L.IsRegular ∧ V.mem L.SyntacticSemigroup
 
 /-- **Closure under complement** — immediate from complement-invariance of the syntactic
 congruence (`Language.syntacticSemigroupCon_compl`). -/
@@ -59,16 +59,6 @@ theorem langs_compl (h : V.langs L) : V.langs Lᶜ := by
 Eilenberg's axiom VII.3.3, on the `+` side. The argument is the monoid one: a quotient's syntactic
 congruence is coarser, so its syntactic semigroup is a quotient of the original's. -/
 
-theorem _root_.Language.syntacticSemigroupCon_le_leftQuotient (L : Language α) (u : List α) :
-    L.syntacticSemigroupCon ≤ (L.leftQuotient u).syntacticSemigroupCon := fun {p q} h x y => by
-  have := h (u ++ x) y
-  simpa [Language.mem_leftQuotient, List.append_assoc] using this
-
-theorem _root_.Language.syntacticSemigroupCon_le_rightQuotient (L : Language α) (u : List α) :
-    L.syntacticSemigroupCon ≤ (L.rightQuotient u).syntacticSemigroupCon := fun {p q} h x y => by
-  have := h x (y ++ u)
-  simpa [Language.mem_rightQuotient, List.append_assoc] using this
-
 section Quotients
 
 variable {V}
@@ -76,12 +66,12 @@ variable {V}
 /-- A coarser syntactic congruence keeps the language in `V.langs`. -/
 private theorem langs_of_syntacticSemigroupCon_le {M : Language α} (h : V.langs L)
     (hle : L.syntacticSemigroupCon ≤ M.syntacticSemigroupCon) : V.langs M := by
-  haveI : Finite L.syntacticMonoid := IsRegular.finite_syntacticMonoid h.1
+  haveI : Finite L.SyntacticMonoid := IsRegular.finite_syntacticMonoid h.1
   have hsurj : Function.Surjective
       (Con.mapMulHom L.syntacticSemigroupCon M.syntacticSemigroupCon hle) :=
     Con.mapMulHom_surjective _ _ hle
-  haveI : Finite M.syntacticSemigroup := .of_surjective _ hsurj
-  exact ⟨IsRegular.of_finite_syntacticSemigroup ‹Finite M.syntacticSemigroup›,
+  haveI : Finite M.SyntacticSemigroup := .of_surjective _ hsurj
+  exact ⟨IsRegular.of_finite_syntacticSemigroup ‹Finite M.SyntacticSemigroup›,
     V.quot hsurj h.2⟩
 
 /-- **Closure under left quotient** — Eilenberg's axiom VII.3.3. -/
@@ -95,13 +85,13 @@ theorem langs_rightQuotient (h : V.langs L) (u : List α) : V.langs (L.rightQuot
 end Quotients
 
 /-- **Closure under intersection** — the syntactic semigroup of `L ⊓ M` is a quotient of a
-subsemigroup of `L.syntacticSemigroup × M.syntacticSemigroup`, which is in `V` by
+subsemigroup of `L.SyntacticSemigroup × M.SyntacticSemigroup`, which is in `V` by
 `prod`/`sub`/`quot`. -/
 theorem langs_inf {M : Language α} (hL : V.langs L) (hM : V.langs M) : V.langs (L ⊓ M) := by
   refine ⟨hL.1.inf hM.1, ?_⟩
-  haveI : Finite L.syntacticMonoid := IsRegular.finite_syntacticMonoid hL.1
-  haveI : Finite M.syntacticMonoid := IsRegular.finite_syntacticMonoid hM.1
-  haveI : Finite (L ⊓ M).syntacticMonoid := IsRegular.finite_syntacticMonoid (hL.1.inf hM.1)
+  haveI : Finite L.SyntacticMonoid := IsRegular.finite_syntacticMonoid hL.1
+  haveI : Finite M.SyntacticMonoid := IsRegular.finite_syntacticMonoid hM.1
+  haveI : Finite (L ⊓ M).SyntacticMonoid := IsRegular.finite_syntacticMonoid (hL.1.inf hM.1)
   set φ := L.toSyntacticSemigroup.prod M.toSyntacticSemigroup with hφ
   haveI : Finite (Con.ker φ).Quotient := .of_injective _ (Con.kerLiftMulHom_injective φ)
   have hker : V.mem (Con.ker φ).Quotient :=
@@ -110,7 +100,7 @@ theorem langs_inf {M : Language α} (hL : V.langs L) (hM : V.langs M) : V.langs 
     rw [hφ, ker_prod_toSyntacticSemigroup]
     exact inf_syntacticSemigroupCon_le_syntacticSemigroupCon_inf L M
   haveI : Finite (L ⊓ M).syntacticSemigroupCon.Quotient :=
-    inferInstanceAs (Finite (L ⊓ M).syntacticSemigroup)
+    inferInstanceAs (Finite (L ⊓ M).SyntacticSemigroup)
   exact V.quot (Con.mapMulHom_surjective _ _ hle) hker
 
 /-- **Closure under union** — by De Morgan, `L ⊔ M = (Lᶜ ⊓ Mᶜ)ᶜ`. -/
@@ -128,7 +118,7 @@ theorem langs_of_recognizes {T : Type u} [Semigroup T] [Finite T] (hT : V.mem T)
   haveI : Finite (Con.ker η).Quotient := .of_injective _ (Con.kerLiftMulHom_injective η)
   have hkerMem : V.mem (Con.ker η).Quotient := V.sub (Con.kerLiftMulHom_injective η) hT
   have hsurj := Con.mapMulHom_surjective (Con.ker η) L.syntacticSemigroupCon hle
-  haveI : Finite L.syntacticSemigroup := .of_surjective _ hsurj
+  haveI : Finite L.SyntacticSemigroup := .of_surjective _ hsurj
   exact ⟨IsRegular.of_finite_syntacticSemigroup ‹_›, V.quot hsurj hkerMem⟩
 
 /-- **The full language** — recognized by the trivial semigroup, which is in every
@@ -149,7 +139,7 @@ semigroup has no erasing morphisms. -/
 theorem langs_comap {β : Type u} {Lb : Language β} (h : V.langs Lb)
     (φ : FreeSemigroup α →ₙ* FreeSemigroup β) :
     V.langs {w : List α | ∃ u : FreeSemigroup α, u.toList = w ∧ (φ u).toList ∈ Lb} := by
-  haveI : Finite Lb.syntacticMonoid := IsRegular.finite_syntacticMonoid h.1
+  haveI : Finite Lb.SyntacticMonoid := IsRegular.finite_syntacticMonoid h.1
   refine V.langs_of_recognizes h.2 (Lb.toSyntacticSemigroup.comp φ)
     {m | ∃ u : FreeSemigroup β, Lb.toSyntacticSemigroup u = m ∧ u.toList ∈ Lb} ?_
   intro w
@@ -158,6 +148,6 @@ theorem langs_comap {β : Type u} {Lb : Language β} (h : V.langs Lb)
     obtain rfl : u = w := FreeSemigroup.toList_injective hu
     exact ⟨φ u, rfl, hmem⟩
   · rintro ⟨v, hv, hmem⟩
-    exact ⟨w, rfl, (mem_iff_of_syntacticEquiv (Lb.toSyntacticSemigroup_eq_iff.mp hv)).mp hmem⟩
+    exact ⟨w, rfl, (SyntacticEquiv.mem_iff (Lb.toSyntacticSemigroup_eq_iff.mp hv)).mp hmem⟩
 
 end Semigroup.Pseudovariety

@@ -17,7 +17,7 @@ A **pseudovariety** of finite monoids ([eilenberg-1976], [almeida-1995]) is a cl
 monoids closed under taking submonoids, quotients (homomorphic images), and finite direct products
 (the empty product being the trivial monoid). Pseudovarieties are the algebraic side of the
 Eilenberg correspondence: the recognizable-language classes closed under the boolean / quotient /
-inverse-homomorphism operations are exactly `{L | L.syntacticMonoid ∈ V}` for `V` a pseudovariety.
+inverse-homomorphism operations are exactly `{L | L.SyntacticMonoid ∈ V}` for `V` a pseudovariety.
 
 ## Main definitions
 

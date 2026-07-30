@@ -10,6 +10,7 @@ congruence.
 import Mathlib.Computability.MyhillNerode
 import Mathlib.Data.Set.Finite.Range
 import Linglib.Core.Computability.TransitionMonoid
+import Linglib.Core.GroupTheory.Congruence.Hom
 
 /-!
 # The syntactic monoid of a language
@@ -18,18 +19,19 @@ The *syntactic monoid* of a language `L : Language α` is the quotient of the fr
 `FreeMonoid α` by the *syntactic congruence*: two words are identified when no two-sided context
 distinguishes them as `L`-members, `∀ x y, x ++ u ++ y ∈ L ↔ x ++ v ++ y ∈ L`.
 
-It is the coarsest congruence saturating `L`, so every recognizing homomorphism factors through it,
-and it is finite exactly when `L` is regular. This is the two-sided refinement of the one-sided
-right-Nerode quotient `Language.leftQuotient`, carrying a monoid structure rather than a bare set
-of states.
+It is the coarsest congruence saturating `L`, so the syntactic morphism factors through every
+recognizing homomorphism, and the quotient is finite exactly when `L` is regular. This is the
+two-sided refinement of the one-sided right-Nerode quotient `Language.leftQuotient`, carrying a
+monoid structure rather than a bare set of states.
 
 ## Main definitions
 
 - `Language.syntacticCon`: the syntactic congruence, two-sided context equivalence
-- `Language.syntacticMonoid`: the quotient monoid `(syntacticCon L).Quotient`
-- `Language.toSyntacticMonoid`: the projection `FreeMonoid α →* L.syntacticMonoid`
+- `Language.SyntacticMonoid`: the quotient monoid `(syntacticCon L).Quotient`
+- `Language.toSyntacticMonoid`: the projection `FreeMonoid α →* L.SyntacticMonoid`
 - `Language.syntacticClass`: the syntactic class of a word
 - `Language.Recognizes`: `φ` recognizes `L`, i.e. `L` is a union of `φ`-fibres
+- `Language.rightQuotient`: the right-quotient dual of `Language.leftQuotient`
 
 ## Main theorems
 
@@ -46,101 +48,107 @@ of states.
 
 namespace Language
 
-variable {α : Type*} (L : Language α)
+variable {α : Type*} {L : Language α}
 
-/-! ### The syntactic congruence and monoid -/
+/-! ### Syntactic equivalence -/
 
-/-- Two words are **syntactically equivalent** for `L` when no two-sided context distinguishes
+/-- Two words are *syntactically equivalent* for `L` when no two-sided context distinguishes
 them as `L`-members. -/
-def SyntacticEquiv (u v : List α) : Prop := ∀ x y : List α, x ++ u ++ y ∈ L ↔ x ++ v ++ y ∈ L
+def SyntacticEquiv (L : Language α) (u v : List α) : Prop :=
+  ∀ x y : List α, x ++ u ++ y ∈ L ↔ x ++ v ++ y ∈ L
 
-section
+namespace SyntacticEquiv
 
-variable {L} {u u' v v' w : List α}
+variable {u u' v v' w : List α}
 
-theorem mem_iff_of_syntacticEquiv (h : L.SyntacticEquiv u v) : u ∈ L ↔ v ∈ L := by
-  simpa using h [] []
+@[refl] theorem refl (u : List α) : L.SyntacticEquiv u u := fun _ _ => Iff.rfl
 
-@[refl] theorem SyntacticEquiv.refl (u : List α) : L.SyntacticEquiv u u := fun _ _ => Iff.rfl
-
-@[symm] theorem SyntacticEquiv.symm (h : L.SyntacticEquiv u v) : L.SyntacticEquiv v u :=
+@[symm] theorem symm (h : L.SyntacticEquiv u v) : L.SyntacticEquiv v u :=
   fun x y => (h x y).symm
 
-@[trans] theorem SyntacticEquiv.trans (h : L.SyntacticEquiv u v) (h' : L.SyntacticEquiv v w) :
+@[trans] theorem trans (h : L.SyntacticEquiv u v) (h' : L.SyntacticEquiv v w) :
     L.SyntacticEquiv u w := fun x y => (h x y).trans (h' x y)
 
-theorem SyntacticEquiv.append (h : L.SyntacticEquiv u u') (h' : L.SyntacticEquiv v v') :
+theorem append (h : L.SyntacticEquiv u u') (h' : L.SyntacticEquiv v v') :
     L.SyntacticEquiv (u ++ v) (u' ++ v') := by grind [SyntacticEquiv]
 
-theorem SyntacticEquiv.compl_iff : Lᶜ.SyntacticEquiv u v ↔ L.SyntacticEquiv u v :=
+theorem mem_iff (h : L.SyntacticEquiv u v) : u ∈ L ↔ v ∈ L := by
+  simpa using h [] []
+
+theorem compl_iff : Lᶜ.SyntacticEquiv u v ↔ L.SyntacticEquiv u v :=
   forall_congr' fun _ => forall_congr' fun _ => not_iff_not
 
-theorem SyntacticEquiv.reverse_iff :
+theorem reverse_iff :
     L.reverse.SyntacticEquiv u v ↔ L.SyntacticEquiv u.reverse v.reverse := by
   refine ⟨fun h x y => ?_, fun h x y => ?_⟩ <;> simpa using h y.reverse x.reverse
 
-end
+end SyntacticEquiv
 
-section
-
-variable {u v : FreeMonoid α}
+/-! ### The syntactic congruence and monoid -/
 
 /-- The *syntactic congruence* of `L` identifies two words when no two-sided context distinguishes
 them as `L`-members. -/
-def syntacticCon : Con (FreeMonoid α) where
+def syntacticCon (L : Language α) : Con (FreeMonoid α) where
   r u v := L.SyntacticEquiv u.toList v.toList
   iseqv := ⟨fun _ => .refl _, .symm, .trans⟩
   mul' hab hcd := hab.append hcd
 
-theorem syntacticCon_iff :
-    L.syntacticCon u v ↔ ∀ x y, x ++ u.toList ++ y ∈ L ↔ x ++ v.toList ++ y ∈ L :=
-  Iff.rfl
+theorem syntacticCon_iff {u v : FreeMonoid α} :
+    L.syntacticCon u v ↔ L.SyntacticEquiv u.toList v.toList := Iff.rfl
+
+/-- The syntactic congruence refines the Nerode equivalence uniformly: `u` and `v` are related
+when their left quotients agree in every left context. -/
+theorem syntacticCon_iff_leftQuotient {u v : FreeMonoid α} :
+    L.syntacticCon u v ↔
+      ∀ x, L.leftQuotient (x ++ u.toList) = L.leftQuotient (x ++ v.toList) :=
+  forall_congr' fun _ => Set.ext_iff.symm
 
 /-- The *syntactic monoid* of `L` is the quotient of `FreeMonoid α` by the syntactic congruence. -/
-abbrev syntacticMonoid : Type _ := (syntacticCon L).Quotient
+abbrev SyntacticMonoid (L : Language α) := (syntacticCon L).Quotient
 
 /-- The *syntactic morphism* of `L` projects `FreeMonoid α` onto the syntactic monoid. -/
-def toSyntacticMonoid : FreeMonoid α →* L.syntacticMonoid := (syntacticCon L).mk'
+def toSyntacticMonoid (L : Language α) : FreeMonoid α →* L.SyntacticMonoid := (syntacticCon L).mk'
 
-theorem toSyntacticMonoid_eq_iff :
+theorem toSyntacticMonoid_eq_iff {u v : FreeMonoid α} :
     L.toSyntacticMonoid u = L.toSyntacticMonoid v ↔ L.syntacticCon u v :=
   Con.eq _
 
-end
+theorem ker_toSyntacticMonoid (L : Language α) : Con.ker L.toSyntacticMonoid = L.syntacticCon :=
+  Con.mk'_ker _
 
 /-! ### The syntactic class of a word -/
 
 /-- The *syntactic class* of a word `w` is its image in the syntactic monoid. -/
-def syntacticClass (w : List α) : L.syntacticMonoid := L.toSyntacticMonoid (FreeMonoid.ofList w)
+def syntacticClass (L : Language α) (w : List α) : L.SyntacticMonoid :=
+  L.toSyntacticMonoid (FreeMonoid.ofList w)
 
-@[simp] theorem syntacticClass_nil : L.syntacticClass [] = 1 := map_one _
+@[simp] theorem syntacticClass_nil (L : Language α) : L.syntacticClass [] = 1 := map_one _
 
-@[simp] theorem syntacticClass_append (u v : List α) :
+@[simp] theorem syntacticClass_append (L : Language α) (u v : List α) :
     L.syntacticClass (u ++ v) = L.syntacticClass u * L.syntacticClass v := map_mul _ _ _
 
-theorem syntacticClass_surjective : Function.Surjective L.syntacticClass :=
+theorem syntacticClass_surjective (L : Language α) : Function.Surjective L.syntacticClass :=
   Con.mk'_surjective.comp FreeMonoid.ofList.surjective
 
-variable {L} {u v : List α}
+theorem syntacticClass_eq_iff {u v : List α} :
+    L.syntacticClass u = L.syntacticClass v ↔ L.SyntacticEquiv u v :=
+  toSyntacticMonoid_eq_iff
 
-theorem syntacticClass_eq_iff : L.syntacticClass u = L.syntacticClass v ↔ L.SyntacticEquiv u v :=
-  L.toSyntacticMonoid_eq_iff
+theorem mem_iff_of_syntacticClass_eq {u v : List α}
+    (h : L.syntacticClass u = L.syntacticClass v) : u ∈ L ↔ v ∈ L :=
+  (syntacticClass_eq_iff.mp h).mem_iff
 
-theorem mem_iff_of_syntacticClass_eq (h : L.syntacticClass u = L.syntacticClass v) :
-    u ∈ L ↔ v ∈ L := mem_iff_of_syntacticEquiv (syntacticClass_eq_iff.mp h)
-
-/-- **Reverse duality**: a syntactic-class equality in `L.reverse` is the reversed-word equality
-in `L`. -/
-theorem syntacticClass_reverse_eq_iff :
+theorem syntacticClass_reverse_eq_iff {u v : List α} :
     L.reverse.syntacticClass u = L.reverse.syntacticClass v ↔
-      L.syntacticClass u.reverse = L.syntacticClass v.reverse :=
-  syntacticClass_eq_iff.trans (SyntacticEquiv.reverse_iff.trans syntacticClass_eq_iff.symm)
+      L.syntacticClass u.reverse = L.syntacticClass v.reverse := by
+  simp [syntacticClass_eq_iff, SyntacticEquiv.reverse_iff]
 
 /-! ### Universal property -/
 
-/-- `φ` *recognizes* `L` when `L` is a union of `φ`-fibres. -/
+/-- `φ` *recognizes* `L` when `L` is the `FreeMonoid.ofList`-pullback of a union of
+`φ`-fibres. -/
 def Recognizes {M : Type*} [Monoid M] (φ : FreeMonoid α →* M) (L : Language α) : Prop :=
-  ∃ S : Set M, L = φ ⁻¹' S
+  ∃ S : Set M, L = FreeMonoid.ofList ⁻¹' (φ ⁻¹' S)
 
 section
 
@@ -149,14 +157,15 @@ variable {M : Type*} [Monoid M] {φ : FreeMonoid α →* M}
 theorem ker_le_syntacticCon_of_recognizes (hrec : Recognizes φ L) :
     Con.ker φ ≤ syntacticCon L := by
   obtain ⟨S, rfl⟩ := hrec
-  intro u v huv
-  change ∀ x y : FreeMonoid α, x * u * y ∈ φ ⁻¹' S ↔ x * v * y ∈ φ ⁻¹' S
-  simp [Con.ker_apply.mp huv]
+  intro u v huv x y
+  show φ (.ofList (x ++ u.toList ++ y)) ∈ S ↔ φ (.ofList (x ++ v.toList ++ y)) ∈ S
+  simp [FreeMonoid.ofList_append, FreeMonoid.ofList_toList, map_mul, Con.ker_apply.mp huv]
 
 theorem recognizes_of_ker_le_syntacticCon (h : Con.ker φ ≤ syntacticCon L) :
     Recognizes φ L :=
-  ⟨φ '' L, (Set.subset_preimage_image φ L).antisymm
-    fun _ ⟨_, hu, hφ⟩ => (mem_iff_of_syntacticEquiv (h (Con.ker_apply.mpr hφ))).mp hu⟩
+  ⟨φ '' (FreeMonoid.ofList '' L), Set.ext fun w =>
+    ⟨fun hw => ⟨.ofList w, ⟨w, hw, rfl⟩, rfl⟩, fun ⟨_, ⟨u, hu, rfl⟩, hφ⟩ =>
+      (SyntacticEquiv.mem_iff (h (Con.ker_apply.mpr hφ))).mp hu⟩⟩
 
 theorem recognizes_iff_ker_le_syntacticCon :
     Recognizes φ L ↔ Con.ker φ ≤ syntacticCon L :=
@@ -164,8 +173,8 @@ theorem recognizes_iff_ker_le_syntacticCon :
 
 end
 
-theorem recognizes_toSyntacticMonoid : Recognizes L.toSyntacticMonoid L :=
-  recognizes_of_ker_le_syntacticCon (Con.mk'_ker _).le
+theorem recognizes_toSyntacticMonoid (L : Language α) : Recognizes L.toSyntacticMonoid L :=
+  recognizes_of_ker_le_syntacticCon L.ker_toSyntacticMonoid.le
 
 /-! ### Connection to the minimal DFA -/
 
@@ -178,60 +187,74 @@ theorem recognizes_transitionHom {σ : Type*} (M : DFA α σ) :
     (L.toDFA.evalFrom s w).val = s.val.leftQuotient w := by
   induction w using List.reverseRecOn <;> simp_all [leftQuotient_append]
 
+/-- The kernel of the minimal DFA's transition action has the same left-quotient
+characterization as the syntactic congruence. -/
+theorem ker_transitionHom_toDFA_iff {u v : FreeMonoid α} :
+    Con.ker L.toDFA.transitionHom u v ↔
+      ∀ x, L.leftQuotient (x ++ u.toList) = L.leftQuotient (x ++ v.toList) := by
+  simp [DFA.transitionHom_eq_iff, Subtype.ext_iff, ← leftQuotient_append]
+
 /-- The intrinsic syntactic congruence is the kernel of the minimal DFA's transition action. -/
-theorem syntacticCon_eq_ker_transitionHom : L.syntacticCon = Con.ker L.toDFA.transitionHom := by
-  refine le_antisymm ?_ (by simpa using
-    ker_le_syntacticCon_of_recognizes (recognizes_transitionHom L.toDFA))
-  intro u v h
-  refine L.toDFA.transitionHom_eq_iff.mpr fun s => ?_
-  obtain ⟨x, hx⟩ := s.2
-  simp only [Subtype.ext_iff, evalFrom_toDFA, ← hx, ← leftQuotient_append]
-  exact Set.ext (h x)
+theorem syntacticCon_eq_ker_transitionHom : L.syntacticCon = Con.ker L.toDFA.transitionHom :=
+  Con.ext fun _ _ => syntacticCon_iff_leftQuotient.trans ker_transitionHom_toDFA_iff.symm
 
 /-! ### Myhill–Nerode -/
 
-theorem IsRegular.finite_syntacticMonoid (h : L.IsRegular) : Finite L.syntacticMonoid := by
+theorem IsRegular.finite_syntacticMonoid (h : L.IsRegular) : Finite L.SyntacticMonoid := by
   haveI := h.finite_range_leftQuotient.to_subtype
   show Finite (syntacticCon L).Quotient
   rw [syntacticCon_eq_ker_transitionHom]
   exact Finite.of_equiv _ (DFA.transitionMonoidEquiv L.toDFA).symm.toEquiv
 
-theorem IsRegular.of_finite_syntacticMonoid (h : Finite L.syntacticMonoid) : L.IsRegular := by
+theorem IsRegular.of_finite_syntacticMonoid (h : Finite L.SyntacticMonoid) : L.IsRegular := by
   refine Language.IsRegular.of_finite_range_leftQuotient ?_
-  let g : L.syntacticMonoid → Language α :=
-    Quot.lift (fun w => L.leftQuotient w.toList) fun _ _ huv => Set.ext (huv [])
-  exact (Set.finite_range g).subset fun _ ⟨x, hx⟩ => ⟨Quot.mk _ (FreeMonoid.ofList x), hx⟩
+  let g : L.SyntacticMonoid → Language α :=
+    fun c => Con.liftOn c (fun w => L.leftQuotient w.toList) fun _ _ huv => Set.ext (huv [])
+  exact (Set.finite_range g).subset fun _ ⟨x, hx⟩ => ⟨(FreeMonoid.ofList x : FreeMonoid α), hx⟩
 
-/-- `L` is regular iff `L.syntacticMonoid` is finite. -/
-theorem isRegular_iff_finite_syntacticMonoid : L.IsRegular ↔ Finite L.syntacticMonoid :=
+/-- `L` is regular iff `L.SyntacticMonoid` is finite. -/
+theorem isRegular_iff_finite_syntacticMonoid : L.IsRegular ↔ Finite L.SyntacticMonoid :=
   ⟨IsRegular.finite_syntacticMonoid, IsRegular.of_finite_syntacticMonoid⟩
 
 /-! ### Boolean combinations -/
 
-section
-
-variable (L M : Language α)
-
 theorem syntacticCon_compl : Lᶜ.syntacticCon = L.syntacticCon :=
   Con.ext fun _ _ => SyntacticEquiv.compl_iff
 
-theorem inf_syntacticCon_le_syntacticCon_inf :
-    L.syntacticCon ⊓ M.syntacticCon ≤ (L ⊓ M).syntacticCon :=
+theorem inf_syntacticCon_le_syntacticCon_inf {L' : Language α} :
+    L.syntacticCon ⊓ L'.syntacticCon ≤ (L ⊓ L').syntacticCon :=
   fun {_ _} huv x y => and_congr (huv.1 x y) (huv.2 x y)
 
-theorem ker_prod_toSyntacticMonoid :
-    Con.ker (L.toSyntacticMonoid.prod M.toSyntacticMonoid) =
-      L.syntacticCon ⊓ M.syntacticCon :=
-  Con.ext fun _ _ => by simp [Prod.ext_iff, toSyntacticMonoid_eq_iff, Con.inf_iff_and]
+theorem ker_prod_toSyntacticMonoid {L' : Language α} :
+    Con.ker (L.toSyntacticMonoid.prod L'.toSyntacticMonoid) =
+      L.syntacticCon ⊓ L'.syntacticCon := by
+  rw [Con.ker_prod, ker_toSyntacticMonoid, ker_toSyntacticMonoid]
 
-end
+/-! ### Quotients -/
 
-/-! ### Right quotient -/
-
-/-- The *right quotient* `L u⁻¹` is the set of words that land in `L` when `u` is appended. -/
+/-- The *right quotient* of `L` by `u` is the set of prefixes `w` such that `w ++ u` is in `L`. -/
 def rightQuotient (L : Language α) (u : List α) : Language α := {w | w ++ u ∈ L}
 
-@[simp] theorem mem_rightQuotient {L : Language α} {u w : List α} :
+@[simp] theorem mem_rightQuotient {u w : List α} :
     w ∈ L.rightQuotient u ↔ w ++ u ∈ L := Iff.rfl
+
+@[simp] theorem rightQuotient_nil (L : Language α) : L.rightQuotient [] = L := by
+  ext w; simp
+
+theorem rightQuotient_append (L : Language α) (u v : List α) :
+    L.rightQuotient (u ++ v) = (L.rightQuotient v).rightQuotient u := by
+  ext w; simp [List.append_assoc]
+
+theorem rightQuotient_eq_reverse_leftQuotient (L : Language α) (u : List α) :
+    L.rightQuotient u = (L.reverse.leftQuotient u.reverse).reverse := by
+  ext w; simp [List.reverse_append]
+
+theorem syntacticCon_le_leftQuotient (L : Language α) (u : List α) :
+    L.syntacticCon ≤ (L.leftQuotient u).syntacticCon := fun {p q} h x y => by
+  simpa [List.append_assoc] using h (u ++ x) y
+
+theorem syntacticCon_le_rightQuotient (L : Language α) (u : List α) :
+    L.syntacticCon ≤ (L.rightQuotient u).syntacticCon := fun {p q} h x y => by
+  simpa [List.append_assoc] using h x (y ++ u)
 
 end Language
