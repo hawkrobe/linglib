@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 
 [UPSTREAM] candidate: `Mathlib.Computability.SyntacticSemigroup`.
 -/
-import Linglib.Core.Algebra.Free
+import Linglib.Core.Algebra.FreeMonoid.FreeSemigroup
 import Linglib.Core.Computability.SyntacticMonoid
 import Linglib.Core.GroupTheory.Congruence.Hom
 import Mathlib.Algebra.Group.WithOne.Basic
@@ -46,7 +46,7 @@ idempotent `1` forces triviality; stating them on `FreeSemigroup α` is what avo
 
 The projection is `Con.mkMulHom`, mathlib's `MulHom`-valued quotient map for a `Con` over a plain
 `Mul` (the monoid-valued `Con.mk'` would not apply). Words are carried to `List α` by
-`FreeSemigroup.toList` from `Linglib.Core.Algebra.Free`, a thin layer over
+`FreeSemigroup.toList` from `Linglib.Core.Algebra.FreeMonoid.FreeSemigroup`, a thin layer over
 `FreeSemigroup.toFreeMonoid`.
 
 ## References
