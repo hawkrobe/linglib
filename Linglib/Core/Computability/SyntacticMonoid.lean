@@ -56,33 +56,33 @@ variable {α : Type*} (L : Language α)
 them as `L`-members. -/
 def SyntacticEquiv (u v : List α) : Prop := ∀ x y : List α, x ++ u ++ y ∈ L ↔ x ++ v ++ y ∈ L
 
-section
+namespace SyntacticEquiv
 
 variable {L} {u u' v v' w : List α}
 
-@[refl] theorem SyntacticEquiv.refl (u : List α) : L.SyntacticEquiv u u := fun _ _ => Iff.rfl
+@[refl] theorem refl (u : List α) : L.SyntacticEquiv u u := fun _ _ => Iff.rfl
 
-@[symm] theorem SyntacticEquiv.symm (h : L.SyntacticEquiv u v) : L.SyntacticEquiv v u :=
+@[symm] theorem symm (h : L.SyntacticEquiv u v) : L.SyntacticEquiv v u :=
   fun x y => (h x y).symm
 
-@[trans] theorem SyntacticEquiv.trans (h : L.SyntacticEquiv u v) (h' : L.SyntacticEquiv v w) :
+@[trans] theorem trans (h : L.SyntacticEquiv u v) (h' : L.SyntacticEquiv v w) :
     L.SyntacticEquiv u w := fun x y => (h x y).trans (h' x y)
 
-theorem SyntacticEquiv.append (h : L.SyntacticEquiv u u') (h' : L.SyntacticEquiv v v') :
+theorem append (h : L.SyntacticEquiv u u') (h' : L.SyntacticEquiv v v') :
     L.SyntacticEquiv (u ++ v) (u' ++ v') := by grind [SyntacticEquiv]
 
 /-- Syntactically equivalent words are equi-members: specialize to the empty context. -/
-theorem SyntacticEquiv.mem_iff (h : L.SyntacticEquiv u v) : u ∈ L ↔ v ∈ L := by
+theorem mem_iff (h : L.SyntacticEquiv u v) : u ∈ L ↔ v ∈ L := by
   simpa using h [] []
 
-theorem SyntacticEquiv.compl_iff : Lᶜ.SyntacticEquiv u v ↔ L.SyntacticEquiv u v :=
+theorem compl_iff : Lᶜ.SyntacticEquiv u v ↔ L.SyntacticEquiv u v :=
   forall_congr' fun _ => forall_congr' fun _ => not_iff_not
 
-theorem SyntacticEquiv.reverse_iff :
+theorem reverse_iff :
     L.reverse.SyntacticEquiv u v ↔ L.SyntacticEquiv u.reverse v.reverse := by
   refine ⟨fun h x y => ?_, fun h x y => ?_⟩ <;> simpa using h y.reverse x.reverse
 
-end
+end SyntacticEquiv
 
 /-! ### The syntactic congruence and monoid -/
 
