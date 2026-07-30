@@ -154,55 +154,56 @@ theorem getElem?_run (w : B.LetterToLetter) (x : List α) (i : ℕ) :
 
 end LetterToLetter
 
-/-! ### Reindexing states -/
+/-! ### Transport along state equivalences -/
 
 variable {L' R' : Type*}
 
-/-- Lifts equivalences on the two state spaces to an equivalence on bimachines. -/
-@[simps apply_lInit apply_lStep apply_rInit apply_rStep apply_output]
+/-- Transport a bimachine along equivalences on the two state spaces. -/
+@[simps]
+def map (eL : L ≃ L') (eR : R ≃ R') (B : Bimachine L R α β) : Bimachine L' R' α β where
+  lInit := eL B.lInit
+  lStep l a := eL (B.lStep (eL.symm l) a)
+  rInit := eR B.rInit
+  rStep r a := eR (B.rStep (eR.symm r) a)
+  output l a r := B.output (eL.symm l) a (eR.symm r)
+
+@[simp] theorem map_refl : map (Equiv.refl L) (Equiv.refl R) B = B := rfl
+
+@[simp] theorem map_map {L'' R'' : Type*} (eL : L ≃ L') (eR : R ≃ R') (eL' : L' ≃ L'')
+    (eR' : R' ≃ R'') : map eL' eR' (map eL eR B) = map (eL.trans eL') (eR.trans eR') B := rfl
+
+@[simp] theorem lStateAfter_map (eL : L ≃ L') (eR : R ≃ R') (l' : L') (pre : List α) :
+    (map eL eR B).lStateAfter l' pre = eL (B.lStateAfter (eL.symm l') pre) := by
+  induction pre generalizing l' <;> simp [*]
+
+@[simp] theorem lState_map (eL : L ≃ L') (eR : R ≃ R') (pre : List α) :
+    (map eL eR B).lState pre = eL (B.lState pre) := by
+  simp [lState]
+
+@[simp] theorem rState_map (eL : L ≃ L') (eR : R ≃ R') (suf : List α) :
+    (map eL eR B).rState suf = eR (B.rState suf) :=
+  List.foldr_hom eR fun x y => by simp
+
+@[simp] theorem runFrom_map (eL : L ≃ L') (eR : R ≃ R') (l' : L') (xs : List α) :
+    (map eL eR B).runFrom l' xs = B.runFrom (eL.symm l') xs := by
+  induction xs generalizing l' <;> simp [*]
+
+@[simp] theorem run_map (eL : L ≃ L') (eR : R ≃ R') :
+    (map eL eR B).run = B.run := by
+  funext xs; simp [run]
+
+/-- `map` as an equivalence of bimachines. -/
 def reindex (eL : L ≃ L') (eR : R ≃ R') : Bimachine L R α β ≃ Bimachine L' R' α β where
-  toFun B := {
-    lInit := eL B.lInit
-    lStep := fun l a => eL (B.lStep (eL.symm l) a)
-    rInit := eR B.rInit
-    rStep := fun r a => eR (B.rStep (eR.symm r) a)
-    output := fun l a r => B.output (eL.symm l) a (eR.symm r)
-  }
-  invFun B := {
-    lInit := eL.symm B.lInit
-    lStep := fun l a => eL.symm (B.lStep (eL l) a)
-    rInit := eR.symm B.rInit
-    rStep := fun r a => eR.symm (B.rStep (eR r) a)
-    output := fun l a r => B.output (eL l) a (eR r)
-  }
+  toFun := map eL eR
+  invFun := map eL.symm eR.symm
   left_inv B := by simp
   right_inv B := by simp
 
-@[simp] theorem reindex_refl : reindex (Equiv.refl L) (Equiv.refl R) B = B := rfl
+@[simp] theorem coe_reindex (eL : L ≃ L') (eR : R ≃ R') :
+    ⇑(reindex (α := α) (β := β) eL eR) = map eL eR := rfl
 
 @[simp] theorem symm_reindex (eL : L ≃ L') (eR : R ≃ R') :
     (reindex (α := α) (β := β) eL eR).symm = reindex eL.symm eR.symm := rfl
-
-@[simp] theorem lStateAfter_reindex (eL : L ≃ L') (eR : R ≃ R') (l' : L') (pre : List α) :
-    (reindex eL eR B).lStateAfter l' pre = eL (B.lStateAfter (eL.symm l') pre) := by
-  induction pre generalizing l' <;> simp [*]
-
-@[simp] theorem lState_reindex (eL : L ≃ L') (eR : R ≃ R') (pre : List α) :
-    (reindex eL eR B).lState pre = eL (B.lState pre) := by
-  simp [lState]
-
-@[simp] theorem rState_reindex (eL : L ≃ L') (eR : R ≃ R') (suf : List α) :
-    (reindex eL eR B).rState suf = eR (B.rState suf) :=
-  List.foldr_hom eR fun x y => by simp
-
-@[simp] theorem runFrom_reindex (eL : L ≃ L') (eR : R ≃ R') (l' : L') (xs : List α) :
-    (reindex eL eR B).runFrom l' xs = B.runFrom (eL.symm l') xs := by
-  induction xs generalizing l' <;> simp [*]
-
-/-- The reindexed bimachine computes the same string function. -/
-@[simp] theorem run_reindex (eL : L ≃ L') (eR : R ≃ R') :
-    (reindex eL eR B).run = B.run := by
-  funext xs; simp [run]
 
 /-- Cells agree exactly when the underlying word-valued outputs do. -/
 theorem LetterToLetter.cell_inj {B : Bimachine L R α β} (w : B.LetterToLetter)
@@ -211,8 +212,8 @@ theorem LetterToLetter.cell_inj {B : Bimachine L R α β} (w : B.LetterToLetter)
   rw [w.output_eq, w.output_eq]; simp
 
 /-- Letter-to-letter-ness transports along state reindexing. -/
-def LetterToLetter.reindex {L' R' : Type*} {B : Bimachine L R α β} (w : B.LetterToLetter)
-    (eL : L ≃ L') (eR : R ≃ R') : (Bimachine.reindex eL eR B).LetterToLetter :=
+def LetterToLetter.map {L' R' : Type*} {B : Bimachine L R α β} (w : B.LetterToLetter)
+    (eL : L ≃ L') (eR : R ≃ R') : (Bimachine.map eL eR B).LetterToLetter :=
   ⟨fun l a r => w.cell (eL.symm l) a (eR.symm r), fun _ _ _ => w.output_eq _ _ _⟩
 
 /-! ### Flag bimachines
@@ -346,19 +347,18 @@ theorem IsNonInteracting.oneSidedAt_of_change (h : B.IsNonInteracting)
     (hne : B.output l a r ≠ [a]) : B.OneSidedAt l a r :=
   h.elim fun w => w.oneSidedAt_of_change hne
 
-/-- Transports a decomposition along state reindexing: the rules compose with
-`eL.symm` and `eR.symm`. -/
-def NonInteraction.reindex (eL : L ≃ L') (eR : R ≃ R') :
-    (Bimachine.reindex eL eR B).NonInteraction where
+/-- Transport a decomposition along state equivalences. -/
+def NonInteraction.map (eL : L ≃ L') (eR : R ≃ R') :
+    (Bimachine.map eL eR B).NonInteraction where
   ruleL l a := w.ruleL (eL.symm l) a
   ruleR r a := w.ruleR (eR.symm r) a
   unite_comm _ a _ := w.unite_comm _ a _
   output_eq _ a _ := w.output_eq _ a _
 
 /-- Non-interaction transports along state reindexing. -/
-theorem IsNonInteracting.reindex (h : B.IsNonInteracting) (eL : L ≃ L') (eR : R ≃ R') :
-    (Bimachine.reindex eL eR B).IsNonInteracting :=
-  h.map (·.reindex eL eR)
+theorem IsNonInteracting.map (h : B.IsNonInteracting) (eL : L ≃ L') (eR : R ≃ R') :
+    (Bimachine.map eL eR B).IsNonInteracting :=
+  Nonempty.map (·.map eL eR) h
 
 /-- A decomposed bimachine fixes cell `i` exactly when both change-proposals are inert
 at its two context states. -/
@@ -413,8 +413,8 @@ theorem isBimachineComputable_iff.{v, w} {f : List α → List β} :
       ↔ ∃ (L : Type v) (_ : Fintype L) (R : Type w) (_ : Fintype R)
           (B : Bimachine L R α β), B.run = f :=
   exists_fintype₂_congr
-    (fun eL eR ⟨B, hB⟩ => ⟨.reindex eL eR B, (B.run_reindex eL eR).trans hB⟩)
-    (fun eL eR ⟨B, hB⟩ => ⟨.reindex eL eR B, (B.run_reindex eL eR).trans hB⟩)
+    (fun eL eR ⟨B, hB⟩ => ⟨.map eL eR B, (B.run_map eL eR).trans hB⟩)
+    (fun eL eR ⟨B, hB⟩ => ⟨.map eL eR B, (B.run_map eL eR).trans hB⟩)
 
 /-- Every finite-state bimachine computes a bimachine-computable function, whatever
 the universes of its state types. -/
@@ -436,9 +436,9 @@ theorem isLengthPreservingBimachineComputable_iff.{v, w} {f : List α → List �
           (B : Bimachine L R α β), B.IsLetterToLetter ∧ B.run = f :=
   exists_fintype₂_congr
     (fun eL eR ⟨B, ⟨w⟩, hB⟩ =>
-      ⟨.reindex eL eR B, ⟨w.reindex eL eR⟩, (B.run_reindex eL eR).trans hB⟩)
+      ⟨.map eL eR B, ⟨w.map eL eR⟩, (B.run_map eL eR).trans hB⟩)
     (fun eL eR ⟨B, ⟨w⟩, hB⟩ =>
-      ⟨.reindex eL eR B, ⟨w.reindex eL eR⟩, (B.run_reindex eL eR).trans hB⟩)
+      ⟨.map eL eR B, ⟨w.map eL eR⟩, (B.run_map eL eR).trans hB⟩)
 
 /-- A length-preserving bimachine-computable function is bimachine-computable. -/
 theorem IsBimachineComputable.of_lengthPreserving {f : List α → List β}
@@ -476,13 +476,13 @@ theorem isNonInteractingBimachineComputable_iff.{v, w} {f : List α → List α}
           (B : Bimachine L R α α), B.run = f ∧ B.IsNonInteracting :=
   exists_fintype₂_congr
     (fun eL eR ⟨B, hB, h⟩ =>
-      ⟨.reindex eL eR B, (B.run_reindex eL eR).trans hB, h.reindex eL eR⟩)
+      ⟨.map eL eR B, (B.run_map eL eR).trans hB, h.map eL eR⟩)
     (fun eL eR ⟨B, hB, h⟩ =>
-      ⟨.reindex eL eR B, (B.run_reindex eL eR).trans hB, h.reindex eL eR⟩)
+      ⟨.map eL eR B, (B.run_map eL eR).trans hB, h.map eL eR⟩)
 
 /-- A non-interacting finite-state bimachine witnesses
 `IsNonInteractingBimachineComputable` for its `run`, whatever the universes of its
-state types (`IsNonInteracting.reindex`). -/
+state types (`IsNonInteracting.map`). -/
 theorem Bimachine.isNonInteractingBimachineComputable {L R : Type*} [Fintype L]
     [Fintype R] (B : Bimachine L R α α) (h : B.IsNonInteracting) :
     IsNonInteractingBimachineComputable B.run :=
