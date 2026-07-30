@@ -32,7 +32,7 @@ universal-property statements coerce the argument, as in `liftMulHom_comp_mkMulH
 ## Main results
 
 * `Con.mulHom_ext`, `Con.liftMulHom_unique`: the universal property of the quotient.
-* `Con.kerLiftMulHom_injective`: the kernel lift is injective.
+* `Con.liftMulHom_injective`, `Con.kerLiftMulHom_injective`: injectivity of the lifts.
 * `Con.ker_prod`, `Con.ker_prodMulHom`: the kernel of a paired homomorphism is the meet of the
   kernels.
 -/
@@ -65,6 +65,12 @@ theorem liftMulHom_surjective_of_surjective {f : F} (H : c ≤ Con.ker f)
   have ⟨w, hw⟩ := hf y
   ⟨(w : c.Quotient), hw⟩
 
+variable {c} in
+/-- The lift is injective when the kernel of `f` refines the congruence. -/
+theorem liftMulHom_injective {f : F} {H : c ≤ Con.ker f} (H' : Con.ker f ≤ c) :
+    Function.Injective (c.liftMulHom f H) := fun x y =>
+  Con.induction_on₂ x y fun _ _ h => c.eq.2 <| H' <| (Con.ker_rel f).mpr h
+
 /-- Every homomorphism out of the quotient is the lift of its restriction. -/
 theorem liftMulHom_apply_mkMulHom (f : c.Quotient →ₙ* N) :
     (c.liftMulHom (f.comp (mkMulHom c)) fun _ _ h => congrArg f (c.eq.2 h)) = f := by
@@ -92,8 +98,8 @@ def kerLiftMulHom (f : F) : (Con.ker f).Quotient →ₙ* N := liftMulHom _ f le_
 
 /-- The kernel lift is injective: it exhibits `(ker f).Quotient` as a sub-object of `N`, which is
 what closure-under-quotient arguments consume. -/
-theorem kerLiftMulHom_injective (f : F) : Function.Injective (kerLiftMulHom f) := fun x y =>
-  Con.induction_on₂ x y fun _ _ => (Con.ker f).eq.2
+theorem kerLiftMulHom_injective (f : F) : Function.Injective (kerLiftMulHom f) :=
+  liftMulHom_injective le_rfl
 
 theorem kerLiftMulHom_surjective_of_surjective {f : F} (hf : Function.Surjective f) :
     Function.Surjective (kerLiftMulHom f) := liftMulHom_surjective_of_surjective le_rfl hf
@@ -119,6 +125,6 @@ theorem ker_prodMulHom {N' : Type*} [Mul N'] (f : M →ₙ* N) (g : M →ₙ* N'
 /-- The kernel of a paired monoid homomorphism is the meet of the kernels. -/
 theorem ker_prod {M N N' : Type*} [MulOneClass M] [MulOneClass N] [MulOneClass N']
     (f : M →* N) (g : M →* N') : Con.ker (f.prod g) = Con.ker f ⊓ Con.ker g :=
-  Con.ext fun _ _ => by simp [Con.ker_rel, Prod.ext_iff, Con.inf_iff_and]
+  ker_prodMulHom (f : M →ₙ* N) (g : M →ₙ* N')
 
 end Con
