@@ -11,7 +11,7 @@ import Mathlib.Data.Finset.Lattice.Fold
 import Linglib.Core.Computability.Mealy
 import Linglib.Core.Data.Fintype.Transfer
 import Linglib.Core.Data.List.DropRight
-import Linglib.Core.Computability.Direction
+import Linglib.Core.Computability.ScanDirection
 
 /-!
 # Subsequential functions and finite-state transducers
@@ -58,8 +58,6 @@ state does not recover partiality — and the initial-output function of
 * Canonical forms and minimization; two-way transducers; p-subsequential functions.
 -/
 
-namespace Subregular
-
 variable {σ α β : Type*}
 
 /-- A subsequential finite-state transducer is a set of states (`σ`), a starting state
@@ -103,7 +101,7 @@ def run : List α → List β := T.runFrom T.start
 /-- `T.runRight x` runs `T` right-to-left on the input `x`. -/
 def runRight (xs : List α) : List β := (T.run xs.reverse).reverse
 
-theorem runRight_eq_revConj_run : T.runRight = revConj T.run := rfl
+theorem runRight_eq_revConj_run : T.runRight = List.revConj T.run := rfl
 
 section
 variable (s : σ) (x : α) (xs ys : List α)
@@ -355,11 +353,11 @@ def IsLeftSubsequential (f : List α → List β) : Prop :=
 is left-subsequential — equivalently, some finite-state transducer computes it via
 right-to-left scan (`isRightSubsequential_iff`). -/
 def IsRightSubsequential (f : List α → List β) : Prop :=
-  IsLeftSubsequential (revConj f)
+  IsLeftSubsequential (List.revConj f)
 
 /-- A function `f : List α → List β` is *subsequential in direction `d`* if some
 finite-state SubsequentialTransducer computes it via the corresponding scan direction. -/
-def IsSubsequential (d : Direction) (f : List α → List β) : Prop :=
+def IsSubsequential (d : ScanDirection) (f : List α → List β) : Prop :=
   match d with
   | .left => IsLeftSubsequential f
   | .right => IsRightSubsequential f
@@ -385,13 +383,13 @@ theorem isRightSubsequential_iff.{v} :
   constructor
   · intro h
     obtain ⟨σ, _, T, hT⟩ :=
-      isLeftSubsequential_iff.mp (show IsLeftSubsequential (revConj f) from h)
+      isLeftSubsequential_iff.mp (show IsLeftSubsequential (List.revConj f) from h)
     exact ⟨σ, inferInstance, T, by
-      rw [SubsequentialTransducer.runRight_eq_revConj_run, hT, revConj_revConj]⟩
+      rw [SubsequentialTransducer.runRight_eq_revConj_run, hT, List.revConj_revConj]⟩
   · rintro ⟨σ, _, T, rfl⟩
-    show IsLeftSubsequential (revConj T.runRight)
+    show IsLeftSubsequential (List.revConj T.runRight)
     exact isLeftSubsequential_iff.mpr ⟨σ, inferInstance, T, by
-      rw [SubsequentialTransducer.runRight_eq_revConj_run, revConj_revConj]⟩
+      rw [SubsequentialTransducer.runRight_eq_revConj_run, List.revConj_revConj]⟩
 
 /-- Every finite-state transducer computes a left-subsequential function, whatever the
 universe of its state type. -/
@@ -421,7 +419,7 @@ theorem isLeftSubsequential_id : IsLeftSubsequential (id : List α → List α) 
   isMealyComputable_id.isLeftSubsequential
 
 /-- A function is right-subsequential iff its reverse-conjugate is left-subsequential —
-definitionally: the right class is the `revConj`-image of the left class. -/
+definitionally: the right class is the `List.revConj`-image of the left class. -/
 theorem isRightSubsequential_iff_left_reverse :
     IsRightSubsequential f
       ↔ IsLeftSubsequential (fun xs => (f xs.reverse).reverse) :=
@@ -476,15 +474,14 @@ theorem IsLeftSubsequential.comp (hg : IsLeftSubsequential g)
 /-- Right-subsequential closure under composition: conjugate the left closure. -/
 theorem IsRightSubsequential.comp (hg : IsRightSubsequential g)
     (hf : IsRightSubsequential f) : IsRightSubsequential (g ∘ f) := by
-  show IsLeftSubsequential (revConj (g ∘ f))
-  rw [revConj_comp]
+  show IsLeftSubsequential (List.revConj (g ∘ f))
+  rw [List.revConj_comp]
   exact IsLeftSubsequential.comp hg hf
 
 /-- Subsequential functions are closed under composition in either scan direction. -/
-theorem IsSubsequential.comp {d : Direction} (hg : IsSubsequential d g)
+theorem IsSubsequential.comp {d : ScanDirection} (hg : IsSubsequential d g)
     (hf : IsSubsequential d f) : IsSubsequential d (g ∘ f) :=
   match d, hg, hf with
   | .left, hg, hf => IsLeftSubsequential.comp hg hf
   | .right, hg, hf => IsRightSubsequential.comp hg hf
 
-end Subregular

@@ -16,9 +16,9 @@ factors, SP_k constrains long-distance co-occurrence via subsequences.
 
 ## Main definitions
 
-* `Subregular.SPGrammar α`: a set of permitted subsequences; the width `k` is
+* `SPGrammar α`: a set of permitted subsequences; the width `k` is
   supplied to `language`, not baked into the carrier.
-* `Subregular.SPGrammar.language k`: the `Language α` it generates: every subsequence of
+* `SPGrammar.language k`: the `Language α` it generates: every subsequence of
   `w` of length at most `k` must be permitted.
 * `Language.IsStrictlyPiecewise L k`: `L` is strictly `k`-piecewise.
 
@@ -32,10 +32,8 @@ factors, SP_k constrains long-distance co-occurrence via subsequences.
 `List.Sublist` (`<+`) is mathlib's non-contiguous "is a subsequence of", exactly the
 SP primitive. Unlike SL no boundary augmentation is needed, since subsequences are blind
 to position; the "≤ k" (rather than "exactly k") bound is instead what keeps words shorter
-than `k` distinguishable, matching `Subregular.subseqSet`.
+than `k` distinguishable, matching `subseqSet`.
 -/
-
-namespace Subregular
 
 open List
 
@@ -85,13 +83,11 @@ instance decidableMemLanguage (k : ℕ) (G : SPGrammar α)
 
 end SPGrammar
 
-end Subregular
-
 namespace Language
 
 variable {α : Type*} {L : Language α} {k : ℕ}
 
-open List Subregular
+open List
 
 /-- A language `L` is **strictly `k`-piecewise** iff some `SPGrammar α` generates it
 at width `k`. -/

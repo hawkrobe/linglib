@@ -59,7 +59,7 @@ rendering) and `Studies/Yolyan2025` (BMRS rendering).
 
 namespace Tone.Plateauing
 
-open Subregular
+
 
 /-! ### The tone-bearing-unit alphabet -/
 

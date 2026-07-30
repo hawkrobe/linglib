@@ -70,8 +70,6 @@ residuals is in `Core/Computability/MyhillNerode.lean`.
   from the language Myhill–Nerode theorem.
 -/
 
-namespace Subregular
-
 variable {σ α β : Type*}
 
 /-- A Mealy machine is a set of states (`σ`), a starting state (`initial`), a
@@ -341,4 +339,3 @@ theorem IsMealyComputable.isRegular_preimage {f : List α → List β}
   obtain ⟨τ, _, M, rfl⟩ := hL
   exact ⟨σ × τ, inferInstance, M.comapMealy T, M.accepts_comapMealy T⟩
 
-end Subregular

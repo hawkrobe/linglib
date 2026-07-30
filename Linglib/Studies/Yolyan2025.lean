@@ -148,8 +148,8 @@ theorem not_isBmrsWeaklyDeterministic_of_requiresBothSides {f : List α → List
   obtain ⟨base, i, hi, hchange, hw⟩ := hf 0
   obtain ⟨uL, ⟨hLlen, hLag⟩, hLsym, hLrev⟩ := hw .left
   obtain ⟨uR, ⟨hRlen, hRag⟩, hRsym, hRrev⟩ := hw .right
-  simp only [Direction.window_left, Nat.sub_zero] at hLag
-  simp only [Direction.window_right, Nat.add_zero] at hRag
+  simp only [ScanDirection.window_left, Nat.sub_zero] at hLag
+  simp only [ScanDirection.window_right, Nat.add_zero] at hRag
   set σ := base[i]'hi with hσ
   have hbase : base[i]? = some σ := List.getElem?_eq_getElem hi
   -- the far-left run: the target is unchanged, so both components are forced true

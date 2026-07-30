@@ -114,10 +114,10 @@ def IsLeftOutputStrictlyLocal (k : ℕ) (f : List α → List β) : Prop :=
 reverse-conjugate is k-Left-OSL — some `k`-OSL rule computes it via right-to-left
 scan. -/
 def IsRightOutputStrictlyLocal (k : ℕ) (f : List α → List β) : Prop :=
-  IsLeftOutputStrictlyLocal k (revConj f)
+  IsLeftOutputStrictlyLocal k (List.revConj f)
 
-/-- Direction-parameterised OSL predicate. -/
-def IsOutputStrictlyLocal (d : Direction) (k : ℕ) (f : List α → List β) : Prop :=
+/-- ScanDirection-parameterised OSL predicate. -/
+def IsOutputStrictlyLocal (d : ScanDirection) (k : ℕ) (f : List α → List β) : Prop :=
   match d with
   | .left => IsLeftOutputStrictlyLocal k f
   | .right => IsRightOutputStrictlyLocal k f
@@ -195,16 +195,16 @@ theorem isMealyComputable_of_OSLRule {k : ℕ} [Fintype β] (r : OSLRule k α β
       fun _ => rfl
 
 /-- **Right-OSL ⊆ Right-Subsequential**: the left inclusion at the reverse-conjugate,
-since both right classes are the `revConj`-images of their left classes. -/
+since both right classes are the `List.revConj`-images of their left classes. -/
 theorem isRightOutputStrictlyLocal_right_subsequential {k : ℕ} [Fintype β]
     {f : List α → List β} (h : IsRightOutputStrictlyLocal k f) :
     IsRightSubsequential f :=
   isLeftOutputStrictlyLocal_left_subsequential h
 
-/-- **Direction-parameterised OSL ⊆ Subsequential umbrella**: in both
+/-- **ScanDirection-parameterised OSL ⊆ Subsequential umbrella**: in both
 scan directions, OSL functions are subsequential. Delegates to the
 Left- / Right- specialised theorems. -/
-theorem isOutputStrictlyLocal_isSubsequential {d : Direction} {k : ℕ}
+theorem isOutputStrictlyLocal_isSubsequential {d : ScanDirection} {k : ℕ}
     [Fintype β] {f : List α → List β} (h : IsOutputStrictlyLocal d k f) :
     IsSubsequential d f := by
   cases d with

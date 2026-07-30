@@ -44,7 +44,7 @@ theorems.
 
 namespace Language
 
-open Subregular FreeSemigroup
+open FreeSemigroup
 
 variable {α : Type*} {L : Language α} {k : ℕ}
 

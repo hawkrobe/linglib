@@ -42,7 +42,6 @@ syntactic *semigroup* (no empty word); we keep mathlib's `Con (FreeMonoid α)` m
 and recover the characterization through this letter-sequence quantification.
 -/
 
-open Subregular
 
 namespace Language
 
