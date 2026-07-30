@@ -52,7 +52,7 @@ variable {α : Type*} {L : Language α}
 
 /-! ### Syntactic equivalence -/
 
-/-- Two words are **syntactically equivalent** for `L` when no two-sided context distinguishes
+/-- Two words are *syntactically equivalent* for `L` when no two-sided context distinguishes
 them as `L`-members. -/
 def SyntacticEquiv (L : Language α) (u v : List α) : Prop :=
   ∀ x y : List α, x ++ u ++ y ∈ L ↔ x ++ v ++ y ∈ L
@@ -131,8 +131,6 @@ theorem mem_iff_of_syntacticClass_eq {u v : List α}
     (h : L.syntacticClass u = L.syntacticClass v) : u ∈ L ↔ v ∈ L :=
   (syntacticClass_eq_iff.mp h).mem_iff
 
-/-- **Reverse duality**: a syntactic-class equality in `L.reverse` is the reversed-word equality
-in `L`. -/
 theorem syntacticClass_reverse_eq_iff {u v : List α} :
     L.reverse.syntacticClass u = L.reverse.syntacticClass v ↔
       L.syntacticClass u.reverse = L.syntacticClass v.reverse :=
