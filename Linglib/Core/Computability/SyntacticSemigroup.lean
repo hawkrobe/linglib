@@ -177,12 +177,8 @@ theorem syntacticSemigroupCon_le_rightQuotient (L : Language α) (u : List α) :
 theorem syntacticSemigroupCon_congr {L' : Language α}
     (h : ∀ w : List α, w ≠ [] → (w ∈ L ↔ w ∈ L')) :
     L.syntacticSemigroupCon = L'.syntacticSemigroupCon :=
-  have key : ∀ (x : List α) (w : FreeSemigroup α) (y : List α),
-      x ++ w.toFreeMonoid.toList ++ y ≠ [] := fun _ w _ hnil =>
-    toList_toFreeMonoid_ne_nil w (List.append_eq_nil_iff.mp
-      (List.append_eq_nil_iff.mp hnil).1).2
   Con.ext fun u v => forall_congr' fun x => forall_congr' fun y =>
-    iff_congr (h _ (key x u y)) (h _ (key x v y))
+    iff_congr (h _ (by simp)) (h _ (by simp))
 
 /-- Adjoining the empty word leaves the syntactic congruence unchanged, since the congruence
 quantifies only over nonempty words. -/
