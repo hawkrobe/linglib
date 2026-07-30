@@ -323,7 +323,8 @@ theorem applyToString_isMealyComputable_of_id_tier [Fintype α]
     (r : TierRule α) (h_id : r.tier = TierProjection.id) (h_side : r.side = .left) :
     IsMealyComputable r.applyToString :=
   r.toIdTierSubsequentialTransducer_run h_id h_side ▸
-    r.toIdTierSubsequentialTransducer.isMealyComputable (fun _ _ => rfl) fun _ => rfl
+    (⟨fun st _ => predictFromCtx r st, fun _ _ => rfl⟩ :
+        r.toIdTierSubsequentialTransducer.LetterToLetter).isMealyComputable fun _ => rfl
 
 /-! ### Myopia: the tier-rule prediction has no look-ahead -/
 

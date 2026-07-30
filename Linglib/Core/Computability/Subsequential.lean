@@ -65,6 +65,7 @@ variable {σ α β : Type*}
 /-- A subsequential finite-state transducer is a set of states (`σ`), a starting state
 (`start`), a transition function (`step`), a per-symbol output function (`output`) and
 a state-final output (`finalOutput`). -/
+@[ext]
 structure SubsequentialTransducer (σ α β : Type*) where
   /-- Starting state. -/
   start : σ
@@ -251,16 +252,16 @@ end OfWindow
 
 end SubsequentialTransducer
 
-/-! ### Synchronous machines as block transducers
+/-! ### Letter-to-letter machines as block transducers
 
 A `Mealy` machine is a `SubsequentialTransducer` emitting singleton blocks with an
-empty final flush; a block transducer of that shape is a `Mealy` machine. The two views
+empty final flush; `LetterToLetter` witnesses the singleton blocks, and the two views
 are mutually inverse. -/
 
-section Synchronous
+section LetterToLetter
 
-/-- View a synchronous transducer as a block `SubsequentialTransducer`: singleton
-outputs, empty flush. -/
+/-- View a Mealy machine as a block `SubsequentialTransducer`: singleton outputs,
+empty flush. -/
 def Mealy.toSubsequentialTransducer (T : Mealy σ α β) : SubsequentialTransducer σ α β where
   start := T.initial
   step := T.step
@@ -277,48 +278,64 @@ def Mealy.toSubsequentialTransducer (T : Mealy σ α β) : SubsequentialTransduc
     T.toSubsequentialTransducer.run = T.run :=
   funext fun xs => T.toSubsequentialTransducer_runFrom T.initial xs
 
-/-- View a block transducer emitting exactly one symbol per input symbol as a synchronous
-machine: the singleton output block is the emitted letter. -/
+/-- A witness that every output block of `T` is a singleton, named by `cell`. -/
+structure SubsequentialTransducer.LetterToLetter (T : SubsequentialTransducer σ α β) where
+  /-- The single symbol emitted at a cell. -/
+  cell : σ → α → β
+  /-- Every output block is that singleton. -/
+  output_eq : ∀ s x, T.output s x = [cell s x]
+
+namespace SubsequentialTransducer.LetterToLetter
+
+variable {T : SubsequentialTransducer σ α β}
+
+/-- Extract a witness from a bound on block lengths. -/
+def ofLength (hs : ∀ s x, (T.output s x).length = 1) : T.LetterToLetter where
+  cell s x := (T.output s x).head (List.ne_nil_of_length_pos (by rw [hs]; omega))
+  output_eq s x := by
+    obtain ⟨a, ha⟩ := List.length_eq_one_iff.mp (hs s x)
+    simp [ha]
+
+/-- The Mealy machine emitting each cell's symbol. -/
 @[simps]
-def SubsequentialTransducer.toMealy (T : SubsequentialTransducer σ α β)
-    (hs : ∀ s x, (T.output s x).length = 1) : Mealy σ α β where
+def toMealy (w : T.LetterToLetter) : Mealy σ α β where
   initial := T.start
   step := T.step
-  output s x := (T.output s x).head (List.ne_nil_of_length_pos (by rw [hs]; omega))
+  output := w.cell
 
-@[simp] theorem Mealy.toMealy_toSubsequentialTransducer (T : Mealy σ α β) :
-    T.toSubsequentialTransducer.toMealy (fun _ _ => rfl) = T := rfl
-
-/-- The round trip in the other direction: a singleton-output transducer with no final
-flush is its own synchronous view. -/
-theorem SubsequentialTransducer.toSubsequentialTransducer_toMealy
-    (T : SubsequentialTransducer σ α β) (hs : ∀ s x, (T.output s x).length = 1)
-    (hf : ∀ s, T.finalOutput s = []) :
-    (T.toMealy hs).toSubsequentialTransducer = T := by
-  obtain ⟨start, step, output, finalOutput⟩ := T
-  dsimp only at hs hf ⊢
-  refine SubsequentialTransducer.mk.injEq .. ▸ ⟨rfl, rfl, funext fun s => funext fun x => ?_,
-    funext fun s => (hf s).symm⟩
-  obtain ⟨a, ha⟩ := List.length_eq_one_iff.mp (hs s x)
-  simp [SubsequentialTransducer.toMealy, ha]
-
-theorem SubsequentialTransducer.toMealy_runFrom (T : SubsequentialTransducer σ α β)
-    (hs : ∀ s x, (T.output s x).length = 1)
-    (hf : ∀ s, T.finalOutput s = []) (s : σ) (xs : List α) :
-    (T.toMealy hs).runFrom s xs = T.runFrom s xs := by
+theorem runFrom_toMealy (w : T.LetterToLetter) (hf : ∀ s, T.finalOutput s = [])
+    (s : σ) (xs : List α) : w.toMealy.runFrom s xs = T.runFrom s xs := by
   induction xs generalizing s with
   | nil => simp [hf]
-  | cons x xs ih =>
-    obtain ⟨a, ha⟩ := List.length_eq_one_iff.mp (hs s x)
-    simp only [Mealy.runFrom_cons, SubsequentialTransducer.runFrom_cons, toMealy_output,
-      toMealy_step, ih, ha, List.head_cons, List.singleton_append]
+  | cons x xs ih => simp [w.output_eq, ih]
 
-theorem SubsequentialTransducer.toMealy_run (T : SubsequentialTransducer σ α β)
-    (hs : ∀ s x, (T.output s x).length = 1)
-    (hf : ∀ s, T.finalOutput s = []) : (T.toMealy hs).run = T.run :=
-  funext fun xs => T.toMealy_runFrom hs hf T.start xs
+theorem run_toMealy (w : T.LetterToLetter) (hf : ∀ s, T.finalOutput s = []) :
+    w.toMealy.run = T.run :=
+  funext fun xs => w.runFrom_toMealy hf T.start xs
 
-end Synchronous
+/-- A letter-to-letter transducer with no final flush is the block form of its Mealy
+view. -/
+theorem toSubsequentialTransducer_toMealy (w : T.LetterToLetter)
+    (hf : ∀ s, T.finalOutput s = []) : w.toMealy.toSubsequentialTransducer = T :=
+  SubsequentialTransducer.ext rfl rfl
+    (funext₂ fun s x => (w.output_eq s x).symm) (funext fun s => (hf s).symm)
+
+/-- A finite-state letter-to-letter transducer with no final flush computes a
+Mealy-computable function. -/
+theorem isMealyComputable [Fintype σ] (w : T.LetterToLetter)
+    (hf : ∀ s, T.finalOutput s = []) : IsMealyComputable T.run :=
+  w.run_toMealy hf ▸ w.toMealy.isMealyComputable
+
+end SubsequentialTransducer.LetterToLetter
+
+/-- The canonical witness that a Mealy machine's block form is letter-to-letter. -/
+def Mealy.letterToLetter (T : Mealy σ α β) : T.toSubsequentialTransducer.LetterToLetter :=
+  ⟨T.output, fun _ _ => rfl⟩
+
+@[simp] theorem Mealy.toMealy_letterToLetter (T : Mealy σ α β) :
+    T.letterToLetter.toMealy = T := rfl
+
+end LetterToLetter
 
 /-! ### Subsequential classification predicates -/
 
@@ -377,16 +394,8 @@ theorem SubsequentialTransducer.isRightSubsequential {σ : Type*} [Fintype σ]
     IsRightSubsequential T.runRight :=
   isRightSubsequential_iff.mpr ⟨σ, inferInstance, T, rfl⟩
 
-/-- Every finite-state transducer emitting one symbol per input symbol and flushing
-nothing at the end computes a Mealy-computable function. -/
-theorem SubsequentialTransducer.isMealyComputable {σ : Type*} [Fintype σ]
-    (T : SubsequentialTransducer σ α β)
-    (hs : ∀ s x, (T.output s x).length = 1) (hf : ∀ s, T.finalOutput s = []) :
-    IsMealyComputable T.run :=
-  T.toMealy_run hs hf ▸ (T.toMealy hs).isMealyComputable
-
 /-- A Mealy-computable function is left-subsequential: `Mealy.toSubsequentialTransducer`
-presents a synchronous machine as a block transducer emitting singleton blocks. -/
+presents a Mealy machine as a block transducer emitting singleton blocks. -/
 theorem IsMealyComputable.isLeftSubsequential (hf : IsMealyComputable f) :
     IsLeftSubsequential f := by
   obtain ⟨σ, _, T, rfl⟩ := hf
