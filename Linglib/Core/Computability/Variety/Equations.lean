@@ -62,7 +62,7 @@ def kReverseDefiniteEquation : Prop :=
 
 /-- The generalized-definite (`ℒℐ`) equation: `[αs] * s * [αs] = [αs]` (`|αs| = k`). -/
 def kGeneralizedDefiniteEquation : Prop :=
-  ∀ (s : L.syntacticMonoid) (αs : List α), αs.length = k →
+  ∀ (s : L.SyntacticMonoid) (αs : List α), αs.length = k →
     L.syntacticClass αs * s * L.syntacticClass αs = L.syntacticClass αs
 
 variable {L} {k}

@@ -34,7 +34,7 @@ theorems.
   `Language.IsReverseDefinite.syntacticEquiv_append_right`: screening at each edge.
 * `Language.IsDefinite.isRegular`, `Language.IsReverseDefinite.isRegular`: over a finite alphabet
   the edge projection bounds the syntactic monoid, so the language is regular. This is what the
-  omega-power theorems assume rather than derive, taking `[Finite L.syntacticMonoid]` throughout.
+  omega-power theorems assume rather than derive, taking `[Finite L.SyntacticMonoid]` throughout.
 * `Language.isDefinite_syntacticSemigroup_iff_omegaDefiniteEquation` and its **K** mirror: the
   pseudovariety and omega-power algebraizations agree.
 * `Language.langs_definiteVariety_iff`, `Language.langs_reverseDefiniteVariety_iff`: the
@@ -121,7 +121,7 @@ theorem IsDefinite.isRegular [Finite α] (h : L.IsDefinite k) : L.IsRegular :=
 Idempotence lets `e` be represented by an arbitrarily long word, and screening then makes the left
 factor invisible. -/
 theorem IsDefinite.isDefinite_syntacticSemigroup (h : L.IsDefinite k) :
-    Semigroup.IsDefinite L.syntacticSemigroup := by
+    Semigroup.IsDefinite L.SyntacticSemigroup := by
   intro e he s
   obtain ⟨u, rfl⟩ := L.toSyntacticSemigroup_surjective e
   obtain ⟨t, rfl⟩ := L.toSyntacticSemigroup_surjective s
@@ -179,7 +179,7 @@ theorem IsReverseDefinite.isRegular [Finite α] (h : L.IsReverseDefinite k) : L.
 /-- **The syntactic semigroup of a reverse-definite language is reverse definite**: `e * s = e` for
 idempotent `e`. -/
 theorem IsReverseDefinite.isReverseDefinite_syntacticSemigroup (h : L.IsReverseDefinite k) :
-    Semigroup.IsReverseDefinite L.syntacticSemigroup := by
+    Semigroup.IsReverseDefinite L.SyntacticSemigroup := by
   intro e he s
   obtain ⟨u, rfl⟩ := L.toSyntacticSemigroup_surjective e
   obtain ⟨t, rfl⟩ := L.toSyntacticSemigroup_surjective s
@@ -211,7 +211,7 @@ private theorem omegaPow_eq_self {M : Type*} [Monoid M] [Finite M] {m : M}
 
 /-- The syntactic monoid is the syntactic semigroup with an identity adjoined: every element is
 the class of the empty word or the image of one of the semigroup. -/
-theorem eq_one_or_mem_range_syntacticSemigroupToMonoid (s : L.syntacticMonoid) :
+theorem eq_one_or_mem_range_syntacticSemigroupToMonoid (s : L.SyntacticMonoid) :
     s = 1 ∨ s ∈ Set.range L.syntacticSemigroupToMonoid := by
   obtain ⟨w, rfl⟩ := L.syntacticClass_surjective s
   rcases w with _ | ⟨a, l⟩
@@ -219,7 +219,7 @@ theorem eq_one_or_mem_range_syntacticSemigroupToMonoid (s : L.syntacticMonoid) :
   · exact Or.inr ⟨L.toSyntacticSemigroup ⟨a, l⟩, rfl⟩
 
 /-- The range of the embedding is a subsemigroup, hence closed under positive powers. -/
-private theorem pow_succ_mem_range {m : L.syntacticMonoid}
+private theorem pow_succ_mem_range {m : L.SyntacticMonoid}
     (hm : m ∈ Set.range L.syntacticSemigroupToMonoid) (n : ℕ) :
     m ^ (n + 1) ∈ Set.range L.syntacticSemigroupToMonoid := by
   induction n with
@@ -231,9 +231,9 @@ private theorem pow_succ_mem_range {m : L.syntacticMonoid}
 
 section OmegaEquations
 
-variable [Finite L.syntacticMonoid]
+variable [Finite L.SyntacticMonoid]
 
-private theorem omegaPow_mem_range {m : L.syntacticMonoid}
+private theorem omegaPow_mem_range {m : L.SyntacticMonoid}
     (hm : m ∈ Set.range L.syntacticSemigroupToMonoid) :
     Monoid.omegaPow m ∈ Set.range L.syntacticSemigroupToMonoid := by
   obtain ⟨n, hn⟩ : ∃ n, Monoid.omegaPowExponent m = n + 1 :=
@@ -244,7 +244,7 @@ private theorem omegaPow_mem_range {m : L.syntacticMonoid}
 /-- The omega-power of a nonempty word's class is the image of an idempotent of the syntactic
 semigroup — the correspondence the two algebraizations run through. -/
 private theorem exists_isIdempotentElem_map_eq_omegaPow {w : List α} (hw : w ≠ []) :
-    ∃ e : L.syntacticSemigroup, IsIdempotentElem e ∧
+    ∃ e : L.SyntacticSemigroup, IsIdempotentElem e ∧
       L.syntacticSemigroupToMonoid e = Monoid.omegaPow (L.syntacticClass w) := by
   obtain ⟨a, l, rfl⟩ := List.exists_cons_of_ne_nil hw
   have hm : L.syntacticClass (a :: l) ∈ Set.range L.syntacticSemigroupToMonoid :=
@@ -256,7 +256,7 @@ private theorem exists_isIdempotentElem_map_eq_omegaPow {w : List α} (hw : w �
 /-- **The two algebraizations of D agree**: the syntactic semigroup is definite exactly when the
 syntactic monoid satisfies Pin's omega-power equation. -/
 theorem isDefinite_syntacticSemigroup_iff_omegaDefiniteEquation :
-    Semigroup.IsDefinite L.syntacticSemigroup ↔ L.omegaDefiniteEquation := by
+    Semigroup.IsDefinite L.SyntacticSemigroup ↔ L.omegaDefiniteEquation := by
   constructor
   · intro hD s w hw
     obtain ⟨e, he, hem⟩ := exists_isIdempotentElem_map_eq_omegaPow (L := L) hw
@@ -277,7 +277,7 @@ theorem isDefinite_syntacticSemigroup_iff_omegaDefiniteEquation :
 /-- **The two algebraizations of K agree** — the mirror of
 `isDefinite_syntacticSemigroup_iff_omegaDefiniteEquation`. -/
 theorem isReverseDefinite_syntacticSemigroup_iff_omegaReverseDefiniteEquation :
-    Semigroup.IsReverseDefinite L.syntacticSemigroup ↔ L.omegaReverseDefiniteEquation := by
+    Semigroup.IsReverseDefinite L.SyntacticSemigroup ↔ L.omegaReverseDefiniteEquation := by
   constructor
   · intro hK s w hw
     obtain ⟨e, he, hem⟩ := exists_isIdempotentElem_map_eq_omegaPow (L := L) hw
@@ -302,7 +302,7 @@ exactly the definite languages. -/
 theorem langs_definiteVariety_iff [Finite α] :
     Semigroup.definiteVariety.langs L ↔ ∃ k, L.IsDefinite k := by
   refine ⟨fun h => ?_, fun ⟨_, hk⟩ => hk.langs⟩
-  haveI : Finite L.syntacticMonoid := IsRegular.finite_syntacticMonoid h.1
+  haveI : Finite L.SyntacticMonoid := IsRegular.finite_syntacticMonoid h.1
   exact exists_isDefinite_of_satisfies_omegaDefiniteEquation
     (isDefinite_syntacticSemigroup_iff_omegaDefiniteEquation.1 h.2)
 
@@ -311,7 +311,7 @@ exactly the reverse-definite languages. -/
 theorem langs_reverseDefiniteVariety_iff [Finite α] :
     Semigroup.reverseDefiniteVariety.langs L ↔ ∃ k, L.IsReverseDefinite k := by
   refine ⟨fun h => ?_, fun ⟨_, hk⟩ => hk.langs⟩
-  haveI : Finite L.syntacticMonoid := IsRegular.finite_syntacticMonoid h.1
+  haveI : Finite L.SyntacticMonoid := IsRegular.finite_syntacticMonoid h.1
   exact exists_isReverseDefinite_of_satisfies_omegaReverseDefiniteEquation
     (isReverseDefinite_syntacticSemigroup_iff_omegaReverseDefiniteEquation.1 h.2)
 

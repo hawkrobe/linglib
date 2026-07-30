@@ -45,13 +45,13 @@ Star-free = `FO[<]`-definable = counter-free ([mcnaughton-papert-1971]). -/
 def IsStarFree (L : Language α) : Prop := Monoid.aperiodicVariety.langs L
 
 /-- Star-free unfolds to: regular with an aperiodic syntactic monoid. -/
-theorem isStarFree_iff : L.IsStarFree ↔ L.IsRegular ∧ Monoid.IsAperiodic L.syntacticMonoid :=
+theorem isStarFree_iff : L.IsStarFree ↔ L.IsRegular ∧ Monoid.IsAperiodic L.SyntacticMonoid :=
   Iff.rfl
 
 theorem IsStarFree.isRegular (h : L.IsStarFree) : L.IsRegular := h.1
 
 theorem IsStarFree.isAperiodic (h : L.IsStarFree) :
-    Monoid.IsAperiodic L.syntacticMonoid := h.2
+    Monoid.IsAperiodic L.SyntacticMonoid := h.2
 
 /-- **Star-free languages are closed under complement.** -/
 theorem IsStarFree.compl (h : L.IsStarFree) : Lᶜ.IsStarFree :=
@@ -75,7 +75,7 @@ theorem IsStarFree.of_recognizes {M : Type*} [Monoid M] [Finite M]
     (hM : Monoid.IsAperiodic M) (η : FreeMonoid α →* M) (P : Set M)
     (hL : ∀ w : List α, w ∈ L ↔ η (FreeMonoid.ofList w) ∈ P) : L.IsStarFree := by
   have hle : Con.ker η ≤ L.syntacticCon :=
-    ker_le_syntacticCon_of_recognizes ⟨P, Set.ext hL⟩
+    ker_le_syntacticCon_of_recognizes ⟨P, fun w => by simpa using hL w.toList⟩
   have hker : Monoid.IsAperiodic (Con.ker η).Quotient :=
     (hM.of_injective (MonoidHom.mrange η).subtype_injective).of_mulEquiv
       (Con.quotientKerEquivRange η).symm
@@ -91,11 +91,11 @@ star-free upper bound across a string-rewriting projection (e.g. tier erasure: `
 theorem IsStarFree.comap {α β : Type*} {L : Language β} (h : L.IsStarFree)
     (φ : FreeMonoid α →* FreeMonoid β) :
     Language.IsStarFree {w : List α | φ (FreeMonoid.ofList w) ∈ L} := by
-  have : Finite L.syntacticMonoid := IsRegular.finite_syntacticMonoid h.1
-  refine IsStarFree.of_recognizes (M := L.syntacticMonoid) h.2 (L.toSyntacticMonoid.comp φ)
+  have : Finite L.SyntacticMonoid := IsRegular.finite_syntacticMonoid h.1
+  refine IsStarFree.of_recognizes (M := L.SyntacticMonoid) h.2 (L.toSyntacticMonoid.comp φ)
     {m | ∃ u : FreeMonoid β, L.toSyntacticMonoid u = m ∧ u ∈ L} fun w => ?_
   refine ⟨fun hw => ⟨φ (FreeMonoid.ofList w), rfl, hw⟩, fun ⟨u, hu, hmem⟩ => ?_⟩
-  exact (mem_iff_of_syntacticEquiv ((toSyntacticMonoid_eq_iff (L := L)).mp hu)).mp hmem
+  exact (SyntacticEquiv.mem_iff ((toSyntacticMonoid_eq_iff (L := L)).mp hu)).mp hmem
 
 /-- **The full language is star-free** — recognized by the trivial monoid. -/
 theorem isStarFree_univ : IsStarFree (Set.univ : Language α) :=

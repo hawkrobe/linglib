@@ -26,7 +26,7 @@ idempotent `1` forces triviality; stating them on `FreeSemigroup α` is what avo
 ## Main definitions
 
 - `Language.syntacticSemigroupCon`: the syntactic congruence on `FreeSemigroup α`
-- `Language.syntacticSemigroup`: the quotient semigroup
+- `Language.SyntacticSemigroup`: the quotient semigroup
 - `Language.toSyntacticSemigroup`: the projection, as a `MulHom`
 - `Language.RecognizesSemigroup`: recognition of a language by a homomorphism to a semigroup
 
@@ -72,10 +72,10 @@ theorem syntacticSemigroupCon_iff :
 
 /-- The **syntactic semigroup** of `L`: the quotient of `FreeSemigroup α` by the syntactic
 congruence. -/
-abbrev syntacticSemigroup : Type _ := (syntacticSemigroupCon L).Quotient
+abbrev SyntacticSemigroup := (syntacticSemigroupCon L).Quotient
 
 /-- The *syntactic morphism* of `L` projects `FreeSemigroup α` onto the syntactic semigroup. -/
-def toSyntacticSemigroup : FreeSemigroup α →ₙ* L.syntacticSemigroup :=
+def toSyntacticSemigroup : FreeSemigroup α →ₙ* L.SyntacticSemigroup :=
   Con.mkMulHom (syntacticSemigroupCon L)
 
 theorem toSyntacticSemigroup_eq_iff :
@@ -87,11 +87,14 @@ end
 theorem toSyntacticSemigroup_surjective : Function.Surjective L.toSyntacticSemigroup :=
   Con.mkMulHom_surjective _
 
+theorem ker_toSyntacticSemigroup : Con.ker L.toSyntacticSemigroup = L.syntacticSemigroupCon :=
+  Con.ker_mkMulHom_eq _
+
 /-! ### Relation to the syntactic monoid -/
 
 /-- The syntactic semigroup embeds into the syntactic monoid: a nonempty word is sent to its
 class in the monoid. It is injective because both quotients are by the same context relation. -/
-def syntacticSemigroupToMonoid : L.syntacticSemigroup →ₙ* L.syntacticMonoid where
+def syntacticSemigroupToMonoid : L.SyntacticSemigroup →ₙ* L.SyntacticMonoid where
   toFun := Quotient.lift (fun u : FreeSemigroup α => L.syntacticClass u.toList)
     fun _ _ h => syntacticClass_eq_iff.mpr h
   map_mul' := by rintro ⟨u⟩ ⟨v⟩; exact L.syntacticClass_append u.toList v.toList
@@ -104,15 +107,15 @@ theorem syntacticSemigroupToMonoid_injective :
   rintro ⟨u⟩ ⟨v⟩ h
   exact Quotient.sound (syntacticClass_eq_iff.mp h)
 
-instance instFiniteSyntacticSemigroup [Finite L.syntacticMonoid] :
-    Finite L.syntacticSemigroup :=
+instance instFiniteSyntacticSemigroup [Finite L.SyntacticMonoid] :
+    Finite L.SyntacticSemigroup :=
   .of_injective _ L.syntacticSemigroupToMonoid_injective
 
 /-- Conversely, a finite syntactic semigroup forces a finite syntactic monoid: the monoid is
 covered by the semigroup together with the identity, which is Eilenberg's `M_A = S_A ∪ {1}`. -/
-theorem finite_syntacticMonoid_of_finite_syntacticSemigroup [Finite L.syntacticSemigroup] :
-    Finite L.syntacticMonoid := by
-  refine .of_surjective (β := L.syntacticMonoid)
+theorem finite_syntacticMonoid_of_finite_syntacticSemigroup [Finite L.SyntacticSemigroup] :
+    Finite L.SyntacticMonoid := by
+  refine .of_surjective (β := L.SyntacticMonoid)
     (Option.elim · 1 L.syntacticSemigroupToMonoid) fun m => ?_
   obtain ⟨w, rfl⟩ := L.syntacticClass_surjective m
   match w with
@@ -125,16 +128,16 @@ section
 
 variable {L}
 
-theorem IsRegular.finite_syntacticSemigroup (h : L.IsRegular) : Finite L.syntacticSemigroup :=
+theorem IsRegular.finite_syntacticSemigroup (h : L.IsRegular) : Finite L.SyntacticSemigroup :=
   haveI := IsRegular.finite_syntacticMonoid h
   inferInstance
 
-theorem IsRegular.of_finite_syntacticSemigroup (h : Finite L.syntacticSemigroup) : L.IsRegular :=
+theorem IsRegular.of_finite_syntacticSemigroup (h : Finite L.SyntacticSemigroup) : L.IsRegular :=
   IsRegular.of_finite_syntacticMonoid L.finite_syntacticMonoid_of_finite_syntacticSemigroup
 
-/-- `L` is regular iff `L.syntacticSemigroup` is finite. -/
+/-- `L` is regular iff `L.SyntacticSemigroup` is finite. -/
 theorem isRegular_iff_finite_syntacticSemigroup :
-    L.IsRegular ↔ Finite L.syntacticSemigroup :=
+    L.IsRegular ↔ Finite L.SyntacticSemigroup :=
   ⟨IsRegular.finite_syntacticSemigroup, IsRegular.of_finite_syntacticSemigroup⟩
 
 end
@@ -146,19 +149,32 @@ theorem syntacticSemigroupCon_compl : Lᶜ.syntacticSemigroupCon = L.syntacticSe
 
 section
 
-variable (L M : Language α)
+variable (L L' : Language α)
 
 theorem inf_syntacticSemigroupCon_le_syntacticSemigroupCon_inf :
-    L.syntacticSemigroupCon ⊓ M.syntacticSemigroupCon ≤ (L ⊓ M).syntacticSemigroupCon :=
+    L.syntacticSemigroupCon ⊓ L'.syntacticSemigroupCon ≤ (L ⊓ L').syntacticSemigroupCon :=
   fun {_ _} huv x y => and_congr (huv.1 x y) (huv.2 x y)
 
 theorem ker_prod_toSyntacticSemigroup :
-    Con.ker (L.toSyntacticSemigroup.prod M.toSyntacticSemigroup) =
-      L.syntacticSemigroupCon ⊓ M.syntacticSemigroupCon :=
-  Con.ext fun _ _ => by
-    simp [Con.ker_rel, Prod.ext_iff, toSyntacticSemigroup_eq_iff, Con.inf_iff_and]
+    Con.ker (L.toSyntacticSemigroup.prod L'.toSyntacticSemigroup) =
+      L.syntacticSemigroupCon ⊓ L'.syntacticSemigroupCon := by
+  rw [Con.ker_prodMulHom, ker_toSyntacticSemigroup, ker_toSyntacticSemigroup]
 
 end
+
+/-! ### Quotients -/
+
+/-- Syntactic equivalence for `L` implies it for any left quotient of `L`: prepend `u` to the
+left context. -/
+theorem syntacticSemigroupCon_le_leftQuotient (u : List α) :
+    L.syntacticSemigroupCon ≤ (L.leftQuotient u).syntacticSemigroupCon := fun {p q} h x y => by
+  simpa [List.append_assoc] using h (u ++ x) y
+
+/-- Syntactic equivalence for `L` implies it for any right quotient of `L`: append `u` to the
+right context. -/
+theorem syntacticSemigroupCon_le_rightQuotient (u : List α) :
+    L.syntacticSemigroupCon ≤ (L.rightQuotient u).syntacticSemigroupCon := fun {p q} h x y => by
+  simpa [List.append_assoc] using h x (y ++ u)
 
 /-- **The syntactic semigroup does not see the empty word.** Its congruence quantifies only over
 nonempty words, so adjoining `[]` to a language leaves it unchanged. This is the `+`-variety
@@ -177,9 +193,7 @@ theorem syntacticSemigroupCon_insert_nil :
 
 /-! ### Recognition by a semigroup
 
-The monoid notion `Language.Recognizes` is the set equation `L = φ ⁻¹' S`. That cannot be stated
-here: `η ⁻¹' P` is a set of `FreeSemigroup α`, whereas a `Language α` is a set of `List α`. The
-pointwise form below says the same thing about nonempty words, and says nothing about `[]` — which
+The pointwise form of `Language.Recognizes`, on nonempty words. It says nothing about `[]` — which
 is right, since the syntactic semigroup does not see it (`syntacticSemigroupCon_insert_nil`). -/
 
 /-- `η` **recognizes** `L` when membership of a nonempty word is decided by its image. -/
@@ -219,7 +233,7 @@ theorem recognizesSemigroup_of_ker_le (h : Con.ker η ≤ L.syntacticSemigroupCo
     L.RecognizesSemigroup η :=
   ⟨η '' {u | u.toList ∈ L}, fun w =>
     ⟨fun hw => ⟨w, hw, rfl⟩, fun ⟨_, hu, hη⟩ =>
-      (mem_iff_of_syntacticEquiv (h ((Con.ker_rel η).mpr hη))).mp hu⟩⟩
+      (SyntacticEquiv.mem_iff (h ((Con.ker_rel η).mpr hη))).mp hu⟩⟩
 
 theorem recognizesSemigroup_iff_ker_le :
     L.RecognizesSemigroup η ↔ Con.ker η ≤ L.syntacticSemigroupCon :=
@@ -229,6 +243,6 @@ end
 
 theorem recognizesSemigroup_toSyntacticSemigroup :
     L.RecognizesSemigroup L.toSyntacticSemigroup :=
-  L.recognizesSemigroup_of_ker_le fun {_ _} h => (Con.eq _).mp ((Con.ker_rel _).mp h)
+  L.recognizesSemigroup_of_ker_le L.ker_toSyntacticSemigroup.le
 
 end Language

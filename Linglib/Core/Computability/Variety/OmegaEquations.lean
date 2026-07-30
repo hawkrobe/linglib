@@ -17,7 +17,7 @@ Four basic varieties of finite semigroups, characterized by **omega-power equati
 the syntactic monoid. Eilenberg states them on idempotents: `𝒟` is the variety of
 semigroups with `Se = e` for every idempotent `e` ([eilenberg-1976] VIII.4.1), and `ℒℐ`
 — the locally trivial semigroups — those with `eSe = e` (VIII.5.1). Writing the
-idempotent as an omega power `[w]^ω` turns each into an equation on `L.syntacticMonoid`:
+idempotent as an omega power `[w]^ω` turns each into an equation on `L.SyntacticMonoid`:
 
 | Variety | Equation | Meaning |
 |---|---|---|
@@ -29,7 +29,7 @@ idempotent as an omega power `[w]^ω` turns each into an equation on `L.syntacti
 Where `[w]^ω = Monoid.omegaPow (L.syntacticClass w)`
 is the unique idempotent in the cyclic submonoid of `[w]` (see
 `Linglib/Core/Algebra/IdempotentPower.lean`). The variables `s` range
-over `L.syntacticMonoid` and `w` over non-empty `List α`
+over `L.SyntacticMonoid` and `w` over non-empty `List α`
 (alphabet-relativized form — see `Equations.lean` for the trivial-letter
 counterexample motivating the non-empty-`w` restriction).
 
@@ -53,7 +53,7 @@ algebraic automata theory.
 * `Language.omegaCofiniteEquation L`: conjunction of the above two.
 * `Language.omegaGeneralizedDefiniteEquation L`: `[w]^ω · s · [w]^ω = [w]^ω`.
 
-All four require `[Finite L.syntacticMonoid]` (equivalent to `L` being
+All four require `[Finite L.SyntacticMonoid]` (equivalent to `L` being
 regular, by `IsRegular.finite_syntacticMonoid`).
 
 ## Main results
@@ -106,7 +106,7 @@ namespace Language
 variable {α : Type*}
 
 /-- **Pin's algebraic equation for definite languages**:
-`∀ s : L.syntacticMonoid, ∀ w : List α, w ≠ [] → s · [w]^ω = [w]^ω`.
+`∀ s : L.SyntacticMonoid, ∀ w : List α, w ≠ [] → s · [w]^ω = [w]^ω`.
 
 The non-empty `w` quantifier (alphabet-relativized form) handles the
 trivial-letter case the same way `kDefiniteEquation` does — see the
@@ -114,8 +114,8 @@ counterexample in `Equations.lean`. Despite living in a sibling file
 to Lambert's `kDefiniteEquation`, this is a *classical* Pin/Eilenberg
 omega-power equation, not Lambert-specific — hence the namespace is
 `Language` (no author-named namespace). -/
-def omegaDefiniteEquation (L : Language α) [Finite L.syntacticMonoid] : Prop :=
-  ∀ (s : L.syntacticMonoid) (w : List α), w ≠ [] →
+def omegaDefiniteEquation (L : Language α) [Finite L.SyntacticMonoid] : Prop :=
+  ∀ (s : L.SyntacticMonoid) (w : List α), w ≠ [] →
     s * Monoid.omegaPow (L.syntacticClass w) =
     Monoid.omegaPow (L.syntacticClass w)
 
@@ -141,7 +141,7 @@ private lemma freeMonoid_ofList_pow_length (w : List α) (n : ℕ) :
 of length `≥ k` is **left-absorbing**. -/
 private lemma left_absorbing_of_kDefiniteEquation {L : Language α} {k : ℕ}
     (hkEq : Language.kDefiniteEquation L k)
-    {v : List α} (hv : k ≤ v.length) (s : L.syntacticMonoid) :
+    {v : List α} (hv : k ≤ v.length) (s : L.SyntacticMonoid) :
     s * L.syntacticClass v =
     L.syntacticClass v := by
   set vM := L.syntacticClass v with hvM_def
@@ -174,14 +174,14 @@ representative `w^(N·k)` (length `N·k·|w| ≥ k`) of `[w]^ω`. The `k = 0`
 case forces the syntactic monoid to be trivial, so the equation holds
 vacuously. -/
 theorem IsDefinite.satisfies_omegaDefiniteEquation
-    {L : Language α} {k : ℕ} [Finite L.syntacticMonoid]
+    {L : Language α} {k : ℕ} [Finite L.SyntacticMonoid]
     (hk : L.IsDefinite k) : omegaDefiniteEquation L := by
   intro s w hw
   set wM := L.syntacticClass w with hwM_def
   have hkEq := IsDefinite.satisfies_kDefiniteEquation hk
   by_cases hk0 : k = 0
   · subst hk0
-    have hM_triv : ∀ x : L.syntacticMonoid, x = 1 := fun x => by
+    have hM_triv : ∀ x : L.SyntacticMonoid, x = 1 := fun x => by
       have := hkEq [] rfl x
       simpa using this
     rw [hM_triv s, hM_triv (Monoid.omegaPow wM), one_mul]
@@ -214,13 +214,13 @@ theorem IsDefinite.satisfies_omegaDefiniteEquation
 `i.val < j.val` of indices into `v` whose prefixes have the same
 syntactic class, conclude that `[v]` is left-absorbing. -/
 private lemma left_absorbing_of_pigeonhole
-    {L : Language α} [Finite L.syntacticMonoid]
+    {L : Language α} [Finite L.SyntacticMonoid]
     (h : omegaDefiniteEquation L)
     {v : List α}
     {i_lo i_hi : ℕ} (hij : i_lo < i_hi) (hi_hi_le : i_hi ≤ v.length)
     (h_eq : L.syntacticClass (v.take i_lo) =
             L.syntacticClass (v.take i_hi))
-    (s : L.syntacticMonoid) :
+    (s : L.SyntacticMonoid) :
     s * L.syntacticClass v =
     L.syntacticClass v := by
   -- Decompose v = pre ++ middle ++ suf, where pre has length i_lo,
@@ -281,26 +281,26 @@ private lemma left_absorbing_of_pigeonhole
   rw [h_v_omega, ← mul_assoc, h s middle h_middle_ne]
 
 /-- Under Pin's omega-power equation, the syntactic class of any word
-of length `≥ Nat.card L.syntacticMonoid` is left-absorbing. -/
+of length `≥ Nat.card L.SyntacticMonoid` is left-absorbing. -/
 private lemma left_absorbing_of_omegaDefiniteEquation
-    {L : Language α} [Finite L.syntacticMonoid]
+    {L : Language α} [Finite L.SyntacticMonoid]
     (h : omegaDefiniteEquation L)
-    {v : List α} (hv : Nat.card L.syntacticMonoid ≤ v.length)
-    (s : L.syntacticMonoid) :
+    {v : List α} (hv : Nat.card L.SyntacticMonoid ≤ v.length)
+    (s : L.SyntacticMonoid) :
     s * L.syntacticClass v =
     L.syntacticClass v := by
   classical
-  haveI : Fintype L.syntacticMonoid := Fintype.ofFinite _
-  have hNat : Nat.card L.syntacticMonoid = Fintype.card L.syntacticMonoid :=
+  haveI : Fintype L.SyntacticMonoid := Fintype.ofFinite _
+  have hNat : Nat.card L.SyntacticMonoid = Fintype.card L.SyntacticMonoid :=
     Nat.card_eq_fintype_card
   rw [hNat] at hv
   -- Pigeonhole on the |M|+1 prefixes v.take 0, …, v.take |M|.
-  have hcard : Fintype.card L.syntacticMonoid <
-               Fintype.card (Fin (Fintype.card L.syntacticMonoid + 1)) := by
+  have hcard : Fintype.card L.SyntacticMonoid <
+               Fintype.card (Fin (Fintype.card L.SyntacticMonoid + 1)) := by
     rw [Fintype.card_fin]; omega
   obtain ⟨i, j, h_ne, h_eq⟩ :=
     Fintype.exists_ne_map_eq_of_card_lt
-      (fun n : Fin (Fintype.card L.syntacticMonoid + 1) =>
+      (fun n : Fin (Fintype.card L.SyntacticMonoid + 1) =>
         L.syntacticClass (v.take n.val))
       hcard
   have h_val_ne : i.val ≠ j.val := fun h => h_ne (Fin.ext h)
@@ -313,12 +313,12 @@ private lemma left_absorbing_of_omegaDefiniteEquation
 
 /-- **Pin's theorem (reverse direction)**: if a regular language's
 syntactic monoid satisfies Pin's omega-power equation, then `L` is
-`k`-definite for some `k` (specifically, `k = Fintype.card L.syntacticMonoid`). -/
+`k`-definite for some `k` (specifically, `k = Fintype.card L.SyntacticMonoid`). -/
 theorem exists_isDefinite_of_satisfies_omegaDefiniteEquation
-    {L : Language α} [Finite L.syntacticMonoid]
+    {L : Language α} [Finite L.SyntacticMonoid]
     (h : omegaDefiniteEquation L) :
     ∃ k, L.IsDefinite k := by
-  refine ⟨Nat.card L.syntacticMonoid, ?_⟩
+  refine ⟨Nat.card L.SyntacticMonoid, ?_⟩
   apply isDefinite_of_satisfies_kDefiniteEquation
   intro αs hαs_len s
   exact left_absorbing_of_omegaDefiniteEquation h (by rw [hαs_len]) s
@@ -327,7 +327,7 @@ theorem exists_isDefinite_of_satisfies_omegaDefiniteEquation
 (necessarily finite) syntactic monoid satisfies Pin's omega-power
 equation. -/
 theorem exists_isDefinite_iff_satisfies_omegaDefiniteEquation
-    {L : Language α} [Finite L.syntacticMonoid] :
+    {L : Language α} [Finite L.SyntacticMonoid] :
     (∃ k, L.IsDefinite k) ↔ omegaDefiniteEquation L := by
   refine ⟨fun ⟨_, hk⟩ => IsDefinite.satisfies_omegaDefiniteEquation hk, ?_⟩
   exact exists_isDefinite_of_satisfies_omegaDefiniteEquation
@@ -338,12 +338,12 @@ theorem exists_isDefinite_iff_satisfies_omegaDefiniteEquation
 
 /-- **Pin's algebraic equation for reverse-definite languages**
 ([almeida-1995]):
-`∀ s : L.syntacticMonoid, ∀ w : List α, w ≠ [] → [w]^ω · s = [w]^ω`.
+`∀ s : L.SyntacticMonoid, ∀ w : List α, w ≠ [] → [w]^ω · s = [w]^ω`.
 
 Mirror of `omegaDefiniteEquation` with right-multiplication instead of
 left. Same alphabet-relativized non-empty `w` quantifier. -/
-def omegaReverseDefiniteEquation (L : Language α) [Finite L.syntacticMonoid] : Prop :=
-  ∀ (s : L.syntacticMonoid) (w : List α), w ≠ [] →
+def omegaReverseDefiniteEquation (L : Language α) [Finite L.SyntacticMonoid] : Prop :=
+  ∀ (s : L.SyntacticMonoid) (w : List α), w ≠ [] →
     Monoid.omegaPow (L.syntacticClass w) * s =
     Monoid.omegaPow (L.syntacticClass w)
 
@@ -353,7 +353,7 @@ of length `≥ k` is right-absorbing, decomposing `v = pre ++ suf` with
 `pre` of length `k`. -/
 private lemma right_absorbing_of_kReverseDefiniteEquation {L : Language α} {k : ℕ}
     (hkEq : Language.kReverseDefiniteEquation L k)
-    {v : List α} (hv : k ≤ v.length) (s : L.syntacticMonoid) :
+    {v : List α} (hv : k ≤ v.length) (s : L.SyntacticMonoid) :
     L.syntacticClass v * s =
     L.syntacticClass v := by
   set vM := L.syntacticClass v with hvM_def
@@ -375,14 +375,14 @@ private lemma right_absorbing_of_kReverseDefiniteEquation {L : Language α} {k :
 language's syntactic monoid satisfies Pin's right-absorbing
 omega-power equation. Mirror of `IsDefinite.satisfies_omegaDefiniteEquation`. -/
 theorem IsReverseDefinite.satisfies_omegaReverseDefiniteEquation
-    {L : Language α} {k : ℕ} [Finite L.syntacticMonoid]
+    {L : Language α} {k : ℕ} [Finite L.SyntacticMonoid]
     (hk : L.IsReverseDefinite k) : omegaReverseDefiniteEquation L := by
   intro s w hw
   set wM := L.syntacticClass w with hwM_def
   have hkEq := IsReverseDefinite.satisfies_kReverseDefiniteEquation hk
   by_cases hk0 : k = 0
   · subst hk0
-    have hM_triv : ∀ x : L.syntacticMonoid, x = 1 := fun x => by
+    have hM_triv : ∀ x : L.SyntacticMonoid, x = 1 := fun x => by
       have := hkEq [] rfl x
       simpa using this
     rw [hM_triv s, hM_triv (Monoid.omegaPow wM), mul_one]
@@ -416,13 +416,13 @@ For suffixes, smaller index ⇒ longer suffix, so `[v.drop i_lo]` is the
 longer one. The decomposition is
 `v.drop i_lo = middle ++ v.drop i_hi` where `middle = (v.drop i_lo).take (i_hi - i_lo)`. -/
 private lemma right_absorbing_of_pigeonhole
-    {L : Language α} [Finite L.syntacticMonoid]
+    {L : Language α} [Finite L.SyntacticMonoid]
     (h : omegaReverseDefiniteEquation L)
     {v : List α}
     {i_lo i_hi : ℕ} (hij : i_lo < i_hi) (hi_hi_le : i_hi ≤ v.length)
     (h_eq : L.syntacticClass (v.drop i_lo) =
             L.syntacticClass (v.drop i_hi))
-    (s : L.syntacticMonoid) :
+    (s : L.SyntacticMonoid) :
     L.syntacticClass v * s =
     L.syntacticClass v := by
   -- v = pre ++ middle ++ suf, where pre = v.take i_lo,
@@ -491,26 +491,26 @@ private lemma right_absorbing_of_pigeonhole
   rw [h_v_omega, mul_assoc, h s middle h_middle_ne]
 
 /-- Under Pin's reverse-definite equation, the syntactic class of any
-word of length `≥ Nat.card L.syntacticMonoid` is right-absorbing. -/
+word of length `≥ Nat.card L.SyntacticMonoid` is right-absorbing. -/
 private lemma right_absorbing_of_omegaReverseDefiniteEquation
-    {L : Language α} [Finite L.syntacticMonoid]
+    {L : Language α} [Finite L.SyntacticMonoid]
     (h : omegaReverseDefiniteEquation L)
-    {v : List α} (hv : Nat.card L.syntacticMonoid ≤ v.length)
-    (s : L.syntacticMonoid) :
+    {v : List α} (hv : Nat.card L.SyntacticMonoid ≤ v.length)
+    (s : L.SyntacticMonoid) :
     L.syntacticClass v * s =
     L.syntacticClass v := by
   classical
-  haveI : Fintype L.syntacticMonoid := Fintype.ofFinite _
-  have hNat : Nat.card L.syntacticMonoid = Fintype.card L.syntacticMonoid :=
+  haveI : Fintype L.SyntacticMonoid := Fintype.ofFinite _
+  have hNat : Nat.card L.SyntacticMonoid = Fintype.card L.SyntacticMonoid :=
     Nat.card_eq_fintype_card
   rw [hNat] at hv
   -- Pigeonhole on |M|+1 SUFFIXES v.drop 0, …, v.drop |M|.
-  have hcard : Fintype.card L.syntacticMonoid <
-               Fintype.card (Fin (Fintype.card L.syntacticMonoid + 1)) := by
+  have hcard : Fintype.card L.SyntacticMonoid <
+               Fintype.card (Fin (Fintype.card L.SyntacticMonoid + 1)) := by
     rw [Fintype.card_fin]; omega
   obtain ⟨i, j, h_ne, h_eq⟩ :=
     Fintype.exists_ne_map_eq_of_card_lt
-      (fun n : Fin (Fintype.card L.syntacticMonoid + 1) =>
+      (fun n : Fin (Fintype.card L.SyntacticMonoid + 1) =>
         L.syntacticClass (v.drop n.val))
       hcard
   have h_val_ne : i.val ≠ j.val := fun h => h_ne (Fin.ext h)
@@ -524,10 +524,10 @@ private lemma right_absorbing_of_omegaReverseDefiniteEquation
 syntactic monoid satisfies Pin's reverse-definite omega-power equation,
 then `L` is reverse-`k`-definite for some `k`. -/
 theorem exists_isReverseDefinite_of_satisfies_omegaReverseDefiniteEquation
-    {L : Language α} [Finite L.syntacticMonoid]
+    {L : Language α} [Finite L.SyntacticMonoid]
     (h : omegaReverseDefiniteEquation L) :
     ∃ k, L.IsReverseDefinite k := by
-  refine ⟨Nat.card L.syntacticMonoid, ?_⟩
+  refine ⟨Nat.card L.SyntacticMonoid, ?_⟩
   apply isReverseDefinite_of_satisfies_kReverseDefiniteEquation
   intro αs hαs_len s
   exact right_absorbing_of_omegaReverseDefiniteEquation h (by rw [hαs_len]) s
@@ -536,7 +536,7 @@ theorem exists_isReverseDefinite_of_satisfies_omegaReverseDefiniteEquation
 `k` iff its (necessarily finite) syntactic monoid satisfies Pin's
 reverse-definite omega-power equation. -/
 theorem exists_isReverseDefinite_iff_satisfies_omegaReverseDefiniteEquation
-    {L : Language α} [Finite L.syntacticMonoid] :
+    {L : Language α} [Finite L.SyntacticMonoid] :
     (∃ k, L.IsReverseDefinite k) ↔ omegaReverseDefiniteEquation L := by
   refine ⟨fun ⟨_, hk⟩ => IsReverseDefinite.satisfies_omegaReverseDefiniteEquation hk, ?_⟩
   exact exists_isReverseDefinite_of_satisfies_omegaReverseDefiniteEquation
@@ -549,7 +549,7 @@ theorem exists_isReverseDefinite_iff_satisfies_omegaReverseDefiniteEquation
 ([almeida-1995]): `𝒩 = ⟦sx^ω = x^ω = x^ω s⟧`.
 The conjunction of D's left-absorbing equation and K's right-absorbing
 equation. -/
-def omegaCofiniteEquation (L : Language α) [Finite L.syntacticMonoid] : Prop :=
+def omegaCofiniteEquation (L : Language α) [Finite L.SyntacticMonoid] : Prop :=
   omegaDefiniteEquation L ∧ omegaReverseDefiniteEquation L
 
 /-- **Pin's N-theorem (forward direction)**: a finite-or-cofinite
@@ -558,7 +558,7 @@ omega-power equations. Composes the substrate lemma
 `IsFiniteOrCofinite.exists_isDefinite_and_isReverseDefinite` (in
 `Core/Computability/Definite.lean`) with the Pin D and Pin K iff theorems. -/
 theorem IsFiniteOrCofinite.satisfies_omegaCofiniteEquation
-    {L : Language α} [Finite L.syntacticMonoid]
+    {L : Language α} [Finite L.SyntacticMonoid]
     (h : IsFiniteOrCofinite L) : omegaCofiniteEquation L := by
   obtain ⟨⟨k, hD⟩, ⟨k', hRD⟩⟩ := h.exists_isDefinite_and_isReverseDefinite
   exact ⟨IsDefinite.satisfies_omegaDefiniteEquation hD,
@@ -573,7 +573,7 @@ Requires `[Finite α]` because the language-level reverse direction
 `Core/Computability/Definite.lean`) needs it: with infinite α, words of
 bounded length need not form a finite set. -/
 theorem isFiniteOrCofinite_of_satisfies_omegaCofiniteEquation [Finite α]
-    {L : Language α} [Finite L.syntacticMonoid]
+    {L : Language α} [Finite L.SyntacticMonoid]
     (h : omegaCofiniteEquation L) : IsFiniteOrCofinite L := by
   obtain ⟨hD, hRD⟩ := h
   exact isFiniteOrCofinite_of_isDefinite_and_isReverseDefinite
@@ -584,7 +584,7 @@ theorem isFiniteOrCofinite_of_satisfies_omegaCofiniteEquation [Finite α]
 finite-or-cofinite iff its syntactic monoid satisfies the conjunction
 of Pin's D and K omega-power equations. -/
 theorem isFiniteOrCofinite_iff_satisfies_omegaCofiniteEquation [Finite α]
-    {L : Language α} [Finite L.syntacticMonoid] :
+    {L : Language α} [Finite L.SyntacticMonoid] :
     IsFiniteOrCofinite L ↔ omegaCofiniteEquation L :=
   ⟨IsFiniteOrCofinite.satisfies_omegaCofiniteEquation,
    isFiniteOrCofinite_of_satisfies_omegaCofiniteEquation⟩
@@ -602,8 +602,8 @@ Lambert (paper p. 25) notes this simplified one-variable form is
 equivalent to the more general two-variable form
 `x^ω · s · z^ω = x^ω · z^ω`; the equivalence proof itself uses
 omega-power idempotence. -/
-def omegaGeneralizedDefiniteEquation (L : Language α) [Finite L.syntacticMonoid] : Prop :=
-  ∀ (s : L.syntacticMonoid) (w : List α), w ≠ [] →
+def omegaGeneralizedDefiniteEquation (L : Language α) [Finite L.SyntacticMonoid] : Prop :=
+  ∀ (s : L.SyntacticMonoid) (w : List α), w ≠ [] →
     Monoid.omegaPow (L.syntacticClass w) * s *
     Monoid.omegaPow (L.syntacticClass w) =
     Monoid.omegaPow (L.syntacticClass w)
@@ -618,7 +618,7 @@ first `k` chars of `v`) and same length-`k` right-suffix (the last
 `k` chars of `v`). The omega-power identity `[w]^N · s · [w]^N = [w]^N`
 follows by lifting through `[w]^(N·k) = omegaPow [w]`. -/
 theorem IsGeneralizedDefinite.satisfies_omegaGeneralizedDefiniteEquation
-    {L : Language α} {k : ℕ} [Finite L.syntacticMonoid]
+    {L : Language α} {k : ℕ} [Finite L.SyntacticMonoid]
     (hk : L.IsGeneralizedDefinite k) :
     omegaGeneralizedDefiniteEquation L := by
   intro s w hw
@@ -629,14 +629,14 @@ theorem IsGeneralizedDefinite.satisfies_omegaGeneralizedDefiniteEquation
     subst hk0
     have h_takeAt_right_zero : ∀ v : List α, Edge.right.takeAt 0 v = [] := by
       intro v; show v.drop (v.length - 0) = []; simp
-    have hM_triv : ∀ x : L.syntacticMonoid, x = 1 := by
+    have hM_triv : ∀ x : L.SyntacticMonoid, x = 1 := by
       intro x
       obtain ⟨u, hu⟩ := Quotient.exists_rep x
       rw [show x = L.toSyntacticMonoid u from hu.symm,
-          show (1 : L.syntacticMonoid) = L.toSyntacticMonoid 1 from
+          show (1 : L.SyntacticMonoid) = L.toSyntacticMonoid 1 from
             (L.toSyntacticMonoid.map_one).symm]
       apply Quotient.sound
-      refine (syntacticCon_iff L).mpr ?_
+      refine syntacticCon_iff.mpr ?_
       intro p q
       show p ++ FreeMonoid.toList u ++ q ∈ L ↔ p ++ FreeMonoid.toList 1 ++ q ∈ L
       apply isGeneralizedDefinite_iff_edges.mp hk
@@ -702,13 +702,13 @@ form, sharing all of the prefix-pigeonhole substrate (h_pre_idemp,
 h_iter, h_pre_omega) but using Pin LI's two-sided absorption instead
 of D's one-sided absorption to close. -/
 private lemma sandwich_absorbing_of_pigeonhole
-    {L : Language α} [Finite L.syntacticMonoid]
+    {L : Language α} [Finite L.SyntacticMonoid]
     (h : omegaGeneralizedDefiniteEquation L)
     {v : List α}
     {i_lo i_hi : ℕ} (hij : i_lo < i_hi) (hi_hi_le : i_hi ≤ v.length)
     (h_eq : L.syntacticClass (v.take i_lo) =
             L.syntacticClass (v.take i_hi))
-    (s : L.syntacticMonoid) :
+    (s : L.SyntacticMonoid) :
     L.syntacticClass v * s *
     L.syntacticClass v =
     L.syntacticClass v := by
@@ -764,29 +764,29 @@ private lemma sandwich_absorbing_of_pigeonhole
   rw [h_pin]
 
 /-- Under Pin's LI omega-power equation, the syntactic class of any
-word of length `≥ Nat.card L.syntacticMonoid` is **sandwich-absorbing**:
+word of length `≥ Nat.card L.SyntacticMonoid` is **sandwich-absorbing**:
 `[v] · s · [v] = [v]` for any `s`. Mirror of
 `left_absorbing_of_omegaDefiniteEquation` for the LI sandwich form. -/
 private lemma sandwich_absorbing_of_omegaGeneralizedDefiniteEquation
-    {L : Language α} [Finite L.syntacticMonoid]
+    {L : Language α} [Finite L.SyntacticMonoid]
     (h : omegaGeneralizedDefiniteEquation L)
-    {v : List α} (hv : Nat.card L.syntacticMonoid ≤ v.length)
-    (s : L.syntacticMonoid) :
+    {v : List α} (hv : Nat.card L.SyntacticMonoid ≤ v.length)
+    (s : L.SyntacticMonoid) :
     L.syntacticClass v * s *
     L.syntacticClass v =
     L.syntacticClass v := by
   classical
-  haveI : Fintype L.syntacticMonoid := Fintype.ofFinite _
-  have hNat : Nat.card L.syntacticMonoid = Fintype.card L.syntacticMonoid :=
+  haveI : Fintype L.SyntacticMonoid := Fintype.ofFinite _
+  have hNat : Nat.card L.SyntacticMonoid = Fintype.card L.SyntacticMonoid :=
     Nat.card_eq_fintype_card
   rw [hNat] at hv
   -- Pigeonhole on the |M|+1 prefixes v.take 0, …, v.take |M|.
-  have hcard : Fintype.card L.syntacticMonoid <
-               Fintype.card (Fin (Fintype.card L.syntacticMonoid + 1)) := by
+  have hcard : Fintype.card L.SyntacticMonoid <
+               Fintype.card (Fin (Fintype.card L.SyntacticMonoid + 1)) := by
     rw [Fintype.card_fin]; omega
   obtain ⟨i, j, h_ne, h_eq⟩ :=
     Fintype.exists_ne_map_eq_of_card_lt
-      (fun n : Fin (Fintype.card L.syntacticMonoid + 1) =>
+      (fun n : Fin (Fintype.card L.SyntacticMonoid + 1) =>
         L.syntacticClass (v.take n.val))
       hcard
   have h_val_ne : i.val ≠ j.val := fun h => h_ne (Fin.ext h)
@@ -799,17 +799,17 @@ private lemma sandwich_absorbing_of_omegaGeneralizedDefiniteEquation
 /-- **Pin's ℒℐ-theorem (reverse direction)**: if a regular language's
 syntactic monoid satisfies Pin's LI omega-power equation, then `L` is
 generalized-`k`-definite for some `k` (specifically,
-`k = Nat.card L.syntacticMonoid`).
+`k = Nat.card L.SyntacticMonoid`).
 
 Proof: `sandwich_absorbing_of_omegaGeneralizedDefiniteEquation` lifts the
 omega-power equation to a finite-`k` sandwich on length-`k` words; this
 is exactly `kGeneralizedDefiniteEquation L k`, which by Lambert Prop 58
 (reverse direction in `Equations.lean`) gives `L.IsGeneralizedDefinite k`. -/
 theorem exists_isGeneralizedDefinite_of_satisfies_omegaGeneralizedDefiniteEquation
-    {L : Language α} [Finite L.syntacticMonoid]
+    {L : Language α} [Finite L.SyntacticMonoid]
     (h : omegaGeneralizedDefiniteEquation L) :
     ∃ k, L.IsGeneralizedDefinite k := by
-  refine ⟨Nat.card L.syntacticMonoid, ?_⟩
+  refine ⟨Nat.card L.SyntacticMonoid, ?_⟩
   apply isGeneralizedDefinite_of_satisfies_kGeneralizedDefiniteEquation
   intro s αs hαs_len
   exact sandwich_absorbing_of_omegaGeneralizedDefiniteEquation h (by rw [hαs_len]) s
@@ -818,7 +818,7 @@ theorem exists_isGeneralizedDefinite_of_satisfies_omegaGeneralizedDefiniteEquati
 some `k` iff its syntactic monoid satisfies Pin's LI omega-power
 equation. -/
 theorem exists_isGeneralizedDefinite_iff_satisfies_omegaGeneralizedDefiniteEquation
-    {L : Language α} [Finite L.syntacticMonoid] :
+    {L : Language α} [Finite L.SyntacticMonoid] :
     (∃ k, L.IsGeneralizedDefinite k) ↔ omegaGeneralizedDefiniteEquation L := by
   refine ⟨fun ⟨_, hk⟩ =>
     IsGeneralizedDefinite.satisfies_omegaGeneralizedDefiniteEquation hk, ?_⟩
