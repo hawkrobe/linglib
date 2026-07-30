@@ -69,6 +69,15 @@ theorem rtake_append_of_length_le {n : ℕ} (l₁ l₂ : List α) (h : l₂.leng
     (l₁ ++ l₂).rtake n = l₁.rtake (n - l₂.length) ++ l₂ := by
   simp [rtake_eq_reverse_take_reverse, take_append, take_of_length_le, h]
 
+/-- Truncating to a suffix window before appending is the same as truncating after: the
+last `n` symbols are enough state to compute the next window. -/
+theorem rtake_append_rtake (n : ℕ) (l₁ l₂ : List α) :
+    (l₁.rtake n ++ l₂).rtake n = (l₁ ++ l₂).rtake n := by
+  rcases le_or_gt n l₂.length with h | h
+  · rw [rtake_append_of_le_length _ _ h, rtake_append_of_le_length _ _ h]
+  · rw [rtake_append_of_length_le _ _ h.le, rtake_append_of_length_le _ _ h.le, rtake_rtake,
+      min_eq_left (Nat.sub_le _ _)]
+
 /-- A middle block of length `≥ n` screens off everything to its left: the last `n` symbols
 of `a ++ u ++ y` do not depend on `a`. -/
 theorem rtake_append_append_of_le_length {n : ℕ} (a u y : List α) (h : n ≤ u.length) :
