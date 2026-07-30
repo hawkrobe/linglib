@@ -76,7 +76,8 @@ private theorem exists_le_length_syntacticEquiv {w : List α} (hw : w ≠ [])
 /-- The idempotence of a syntactic class, read off a word representing it. -/
 private theorem syntacticEquiv_self_append {u : FreeSemigroup α}
     (he : IsIdempotentElem (L.toSyntacticSemigroup u)) :
-    L.SyntacticEquiv ((toFreeMonoid u).toList ++ (toFreeMonoid u).toList) (toFreeMonoid u).toList := by
+    L.SyntacticEquiv (u.toFreeMonoid.toList ++ u.toFreeMonoid.toList)
+      u.toFreeMonoid.toList := by
   have h : L.syntacticSemigroupCon (u * u) u :=
     toSyntacticSemigroup_eq_iff.1 (by rw [map_mul]; exact he)
   simpa [syntacticSemigroupCon_iff, syntacticCon_iff] using h
@@ -130,8 +131,8 @@ theorem IsDefinite.isDefinite_syntacticSemigroup (h : L.IsDefinite k) :
   rw [← map_mul]
   exact toSyntacticSemigroup_eq_iff.2 <| by
     simpa [syntacticSemigroupCon_iff, syntacticCon_iff] using
-      (SyntacticEquiv.append (SyntacticEquiv.refl (toFreeMonoid t).toList) hmu.symm).trans
-        ((h.syntacticEquiv_append_left hm (toFreeMonoid t).toList).trans hmu)
+      (SyntacticEquiv.append (SyntacticEquiv.refl t.toFreeMonoid.toList) hmu.symm).trans
+        ((h.syntacticEquiv_append_left hm t.toFreeMonoid.toList).trans hmu)
 
 /-- **The language half of D**: a definite language over a finite alphabet lies in the language
 variety of the pseudovariety **D**. -/
@@ -189,8 +190,8 @@ theorem IsReverseDefinite.isReverseDefinite_syntacticSemigroup (h : L.IsReverseD
   rw [← map_mul]
   exact toSyntacticSemigroup_eq_iff.2 <| by
     simpa [syntacticSemigroupCon_iff, syntacticCon_iff] using
-      (SyntacticEquiv.append hmu.symm (SyntacticEquiv.refl (toFreeMonoid t).toList)).trans
-        ((h.syntacticEquiv_append_right hm (toFreeMonoid t).toList).trans hmu)
+      (SyntacticEquiv.append hmu.symm (SyntacticEquiv.refl t.toFreeMonoid.toList)).trans
+        ((h.syntacticEquiv_append_right hm t.toFreeMonoid.toList).trans hmu)
 
 /-- **The language half of K**: a reverse-definite language over a finite alphabet lies in the
 language variety of the pseudovariety **K**. -/
@@ -259,12 +260,12 @@ theorem isDefinite_syntacticSemigroup_iff_omegaDefiniteEquation :
   · intro h e he s
     obtain ⟨u, rfl⟩ := L.toSyntacticSemigroup_surjective e
     obtain ⟨t, rfl⟩ := L.toSyntacticSemigroup_surjective s
-    have hidem : IsIdempotentElem (L.syntacticClass (toFreeMonoid u).toList) := by
+    have hidem : IsIdempotentElem (L.syntacticClass u.toFreeMonoid.toList) := by
       have hmap := congrArg L.syntacticSemigroupToMonoid he
       rwa [map_mul, syntacticSemigroupToMonoid_apply] at hmap
     refine L.syntacticSemigroupToMonoid_injective ?_
     rw [map_mul, syntacticSemigroupToMonoid_apply, syntacticSemigroupToMonoid_apply]
-    have hpin := h (L.syntacticClass (toFreeMonoid t).toList) (toFreeMonoid u).toList
+    have hpin := h (L.syntacticClass t.toFreeMonoid.toList) u.toFreeMonoid.toList
       (toList_toFreeMonoid_ne_nil u)
     rwa [omegaPow_eq_self hidem] at hpin
 
@@ -281,12 +282,12 @@ theorem isReverseDefinite_syntacticSemigroup_iff_omegaReverseDefiniteEquation :
   · intro h e he s
     obtain ⟨u, rfl⟩ := L.toSyntacticSemigroup_surjective e
     obtain ⟨t, rfl⟩ := L.toSyntacticSemigroup_surjective s
-    have hidem : IsIdempotentElem (L.syntacticClass (toFreeMonoid u).toList) := by
+    have hidem : IsIdempotentElem (L.syntacticClass u.toFreeMonoid.toList) := by
       have hmap := congrArg L.syntacticSemigroupToMonoid he
       rwa [map_mul, syntacticSemigroupToMonoid_apply] at hmap
     refine L.syntacticSemigroupToMonoid_injective ?_
     rw [map_mul, syntacticSemigroupToMonoid_apply, syntacticSemigroupToMonoid_apply]
-    have hpin := h (L.syntacticClass (toFreeMonoid t).toList) (toFreeMonoid u).toList
+    have hpin := h (L.syntacticClass t.toFreeMonoid.toList) u.toFreeMonoid.toList
       (toList_toFreeMonoid_ne_nil u)
     rwa [omegaPow_eq_self hidem] at hpin
 

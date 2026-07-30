@@ -18,10 +18,10 @@ import Mathlib.Algebra.FreeMonoid.FreeSemigroup
 variable {α : Type*} (u : FreeSemigroup α)
 
 theorem FreeMonoid.equivWithOneFreeSemigroup_toFreeMonoid :
-    equivWithOneFreeSemigroup (FreeSemigroup.toFreeMonoid u) = ↑u := by
-  rw [show (FreeSemigroup.toFreeMonoid u : FreeMonoid α) =
+    equivWithOneFreeSemigroup u.toFreeMonoid = ↑u := by
+  rw [show (u.toFreeMonoid : FreeMonoid α) =
     equivWithOneFreeSemigroup.symm ↑u from rfl, MulEquiv.apply_symm_apply]
 
 @[simp] theorem FreeSemigroup.toList_toFreeMonoid_ne_nil :
-    FreeMonoid.toList (toFreeMonoid u) ≠ [] := fun h =>
+    u.toFreeMonoid.toList ≠ [] := fun h =>
   toFreeMonoid_ne_one u (FreeMonoid.toList.injective h)
