@@ -108,7 +108,7 @@ theorem IsRightSubsequential.isBimachineComputable_comp {f : List α → List β
     {g : List β → List γ} (hg : IsRightSubsequential g) (hf : IsLeftSubsequential f)
     (hnil : g (f []) = []) : IsBimachineComputable (g ∘ f) := by
   classical
-  obtain ⟨σ₂, _, T₂, rfl⟩ := hg
+  obtain ⟨σ₂, _, T₂, rfl⟩ := isRightSubsequential_iff.mp hg
   obtain ⟨σ₁, _, T₁, rfl⟩ := hf
   exact ⟨_, inferInstance, _, inferInstance, T₂.rightComp T₁, T₂.rightComp_run T₁ hnil⟩
 

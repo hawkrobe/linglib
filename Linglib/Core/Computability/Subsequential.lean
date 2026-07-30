@@ -103,16 +103,20 @@ def run : List α → List β := T.runFrom T.start
 /-- `T.runRight x` runs `T` right-to-left on the input `x`. -/
 def runRight (xs : List α) : List β := (T.run xs.reverse).reverse
 
-@[simp] theorem stateAfter_nil (s : σ) : T.stateAfter s [] = s := rfl
-@[simp] theorem stateAfter_cons (s : σ) (x : α) (xs : List α) :
-    T.stateAfter s (x :: xs) = T.stateAfter (T.step s x) xs := rfl
-@[simp] theorem emitted_nil (s : σ) : T.emitted s [] = [] := rfl
-@[simp] theorem emitted_cons (s : σ) (x : α) (xs : List α) :
+theorem runRight_eq_revConj_run : T.runRight = revConj T.run := rfl
+
+section
+variable (s : σ) (x : α) (xs ys : List α)
+
+@[simp] theorem stateAfter_nil : T.stateAfter s [] = s := rfl
+@[simp] theorem stateAfter_cons : T.stateAfter s (x :: xs) = T.stateAfter (T.step s x) xs := rfl
+@[simp] theorem emitted_nil : T.emitted s [] = [] := rfl
+@[simp] theorem emitted_cons :
     T.emitted s (x :: xs) = T.output s x ++ T.emitted (T.step s x) xs := rfl
 
-@[simp] theorem runFrom_nil (s : σ) : T.runFrom s [] = T.finalOutput s := rfl
+@[simp] theorem runFrom_nil : T.runFrom s [] = T.finalOutput s := rfl
 
-@[simp] theorem runFrom_cons (s : σ) (x : α) (xs : List α) :
+@[simp] theorem runFrom_cons :
     T.runFrom s (x :: xs) = T.output s x ++ T.runFrom (T.step s x) xs := by
   simp [runFrom]
 
@@ -120,24 +124,25 @@ def runRight (xs : List α) : List β := (T.run xs.reverse).reverse
 
 @[simp] theorem runRight_nil : T.runRight [] = (T.finalOutput T.start).reverse := rfl
 
-@[simp] theorem runRight_reverse (xs : List α) :
-    T.runRight xs.reverse = (T.run xs).reverse := by simp [runRight]
+@[simp] theorem runRight_reverse : T.runRight xs.reverse = (T.run xs).reverse := by
+  simp [runRight]
 
-theorem stateAfter_append (s : σ) (xs ys : List α) :
-    T.stateAfter s (xs ++ ys) = T.stateAfter (T.stateAfter s xs) ys :=
+theorem stateAfter_append : T.stateAfter s (xs ++ ys) = T.stateAfter (T.stateAfter s xs) ys :=
   List.foldl_append
 
-theorem emitted_append (s : σ) (xs ys : List α) :
+theorem emitted_append :
     T.emitted s (xs ++ ys) = T.emitted s xs ++ T.emitted (T.stateAfter s xs) ys := by
   induction xs generalizing s <;> simp [*]
 
-theorem runFrom_append (s : σ) (xs ys : List α) :
+theorem runFrom_append :
     T.runFrom s (xs ++ ys) = T.emitted s xs ++ T.runFrom (T.stateAfter s xs) ys := by
   simp [runFrom, emitted_append, stateAfter_append]
 
-theorem run_append (xs ys : List α) :
+theorem run_append :
     T.run (xs ++ ys) = T.emitted T.start xs ++ T.runFrom (T.stateAfter T.start xs) ys :=
   T.runFrom_append T.start xs ys
+
+end
 
 /-! ### Transport along state equivalences -/
 
@@ -346,10 +351,11 @@ transducer computes it via left-to-right scan [mohri-1997]. -/
 def IsLeftSubsequential (f : List α → List β) : Prop :=
   ∃ (σ : Type) (_ : Fintype σ) (T : SubsequentialTransducer σ α β), T.run = f
 
-/-- A function `f : List α → List β` is *right-subsequential* if some finite-state
-transducer computes it via right-to-left scan (`runRight`). -/
+/-- A function `f : List α → List β` is *right-subsequential* if its reverse-conjugate
+is left-subsequential — equivalently, some finite-state transducer computes it via
+right-to-left scan (`isRightSubsequential_iff`). -/
 def IsRightSubsequential (f : List α → List β) : Prop :=
-  ∃ (σ : Type) (_ : Fintype σ) (T : SubsequentialTransducer σ α β), T.runRight = f
+  IsLeftSubsequential (revConj f)
 
 /-- A function `f : List α → List β` is *subsequential in direction `d`* if some
 finite-state SubsequentialTransducer computes it via the corresponding scan direction. -/
@@ -372,13 +378,20 @@ theorem isLeftSubsequential_iff.{v} :
     (fun e ⟨T, hT⟩ => ⟨SubsequentialTransducer.map e T, (T.run_map e).trans hT⟩)
     (fun e ⟨T, hT⟩ => ⟨SubsequentialTransducer.map e T, (T.run_map e).trans hT⟩)
 
-/-- The universe-polymorphic form of `IsRightSubsequential`. -/
+/-- The universe-polymorphic form of `IsRightSubsequential`, in the `runRight` shape. -/
 theorem isRightSubsequential_iff.{v} :
     IsRightSubsequential f
-      ↔ ∃ (σ : Type v) (_ : Fintype σ) (T : SubsequentialTransducer σ α β), T.runRight = f :=
-  exists_fintype_congr
-    (fun e ⟨T, hT⟩ => ⟨SubsequentialTransducer.map e T, (T.runRight_map e).trans hT⟩)
-    (fun e ⟨T, hT⟩ => ⟨SubsequentialTransducer.map e T, (T.runRight_map e).trans hT⟩)
+      ↔ ∃ (σ : Type v) (_ : Fintype σ) (T : SubsequentialTransducer σ α β), T.runRight = f := by
+  constructor
+  · intro h
+    obtain ⟨σ, _, T, hT⟩ :=
+      isLeftSubsequential_iff.mp (show IsLeftSubsequential (revConj f) from h)
+    exact ⟨σ, inferInstance, T, by
+      rw [SubsequentialTransducer.runRight_eq_revConj_run, hT, revConj_revConj]⟩
+  · rintro ⟨σ, _, T, rfl⟩
+    show IsLeftSubsequential (revConj T.runRight)
+    exact isLeftSubsequential_iff.mpr ⟨σ, inferInstance, T, by
+      rw [SubsequentialTransducer.runRight_eq_revConj_run, revConj_revConj]⟩
 
 /-- Every finite-state transducer computes a left-subsequential function, whatever the
 universe of its state type. -/
@@ -407,14 +420,12 @@ theorem isLeftSubsequential_map (h : α → β) : IsLeftSubsequential (List.map 
 theorem isLeftSubsequential_id : IsLeftSubsequential (id : List α → List α) :=
   isMealyComputable_id.isLeftSubsequential
 
-/-- A function is right-subsequential iff its reverse-conjugate is left-subsequential:
-the two classes are isomorphic via the involution `f ↦ List.reverse ∘ f ∘ List.reverse`. -/
+/-- A function is right-subsequential iff its reverse-conjugate is left-subsequential —
+definitionally: the right class is the `revConj`-image of the left class. -/
 theorem isRightSubsequential_iff_left_reverse :
     IsRightSubsequential f
       ↔ IsLeftSubsequential (fun xs => (f xs.reverse).reverse) :=
-  ⟨fun ⟨σ, _, T, hT⟩ => ⟨σ, inferInstance, T, by funext xs; simp [← hT]⟩,
-   fun ⟨σ, _, T, hT⟩ =>
-     ⟨σ, inferInstance, T, by funext xs; simp [SubsequentialTransducer.runRight, hT]⟩⟩
+  Iff.rfl
 
 /-- A left-subsequential function withholds at most the longest state-final output:
 `f u` and `f (u ++ v)` share a prefix covering all but boundedly many symbols of `f u`.
@@ -455,19 +466,19 @@ theorem not_isLeftSubsequential_of_diverging
   exact hne (hN u v i hi)
 
 /-- Left-subsequential functions are closed under composition, by the classical
-product construction [mohri-1997] (`SubsequentialTransducer.comp`). -/
+product construction [mohri-1997]. -/
 theorem IsLeftSubsequential.comp (hg : IsLeftSubsequential g)
     (hf : IsLeftSubsequential f) : IsLeftSubsequential (g ∘ f) := by
   obtain ⟨σ₁, _, T₁, rfl⟩ := hf
   obtain ⟨σ₂, _, T₂, rfl⟩ := hg
   exact ⟨σ₂ × σ₁, inferInstance, T₂.comp T₁, T₂.run_comp T₁⟩
 
-/-- Right-subsequential closure under composition, derived from the left counterpart
-via `isRightSubsequential_iff_left_reverse`. -/
+/-- Right-subsequential closure under composition: conjugate the left closure. -/
 theorem IsRightSubsequential.comp (hg : IsRightSubsequential g)
     (hf : IsRightSubsequential f) : IsRightSubsequential (g ∘ f) := by
-  rw [isRightSubsequential_iff_left_reverse] at hg hf ⊢
-  simpa [Function.comp_def, List.reverse_reverse] using hg.comp hf
+  show IsLeftSubsequential (revConj (g ∘ f))
+  rw [revConj_comp]
+  exact IsLeftSubsequential.comp hg hf
 
 /-- Subsequential functions are closed under composition in either scan direction. -/
 theorem IsSubsequential.comp {d : Direction} (hg : IsSubsequential d g)
