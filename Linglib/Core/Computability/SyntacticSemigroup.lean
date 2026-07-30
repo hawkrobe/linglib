@@ -28,7 +28,7 @@ idempotent `1` forces triviality; stating them on `FreeSemigroup α` is what avo
 - `Language.syntacticSemigroupCon`: the syntactic congruence on `FreeSemigroup α`
 - `Language.SyntacticSemigroup`: the quotient semigroup
 - `Language.toSyntacticSemigroup`: the projection, as a `MulHom`
-- `Language.RecognizesSemigroup`: recognition by the `WithOne` unitization of a semigroup hom
+- `Language.RecognizesSemigroup`: recognition by the unitization `FreeMonoid.mapWithOne`
 
 ## Main results
 
@@ -47,8 +47,8 @@ The projection is `Con.mkMulHom`, mathlib's `MulHom`-valued quotient map for a `
 `Mul` (the monoid-valued `Con.mk'` would not apply). The word underlying a free-semigroup element
 is `(FreeSemigroup.toFreeMonoid u).toList`; there is no semigroup-level analogue of the preimage
 equation defining `Language.Recognizes`, since `FreeSemigroup α` omits the empty word, so
-recognition is *defined* through the unitization `WithOne.mapMulHom` and characterized pointwise
-by `recognizesSemigroup_iff`.
+recognition is *defined* through the unitization `FreeMonoid.mapWithOne` and characterized
+pointwise by `recognizesSemigroup_iff`.
 
 ## References
 
@@ -192,49 +192,33 @@ section
 
 variable {T : Type*} [Semigroup T] {η : FreeSemigroup α →ₙ* T}
 
-/-- `η` *recognizes* `L` when its unitization `WithOne.mapMulHom η` recognizes `L`. Equivalently,
-membership of a nonempty word in `L` is decided by its `η`-image (`recognizesSemigroup_iff`). -/
+/-- `η` *recognizes* `L` when its unitization `FreeMonoid.mapWithOne η` recognizes `L`.
+Equivalently, membership of a nonempty word in `L` is decided by its `η`-image
+(`recognizesSemigroup_iff`). -/
 def RecognizesSemigroup (η : FreeSemigroup α →ₙ* T) (L : Language α) : Prop :=
-  Recognizes ((WithOne.mapMulHom η).comp FreeMonoid.equivWithOneFreeSemigroup.toMonoidHom) L
-
-theorem mapMulHom_comp_equivWithOneFreeSemigroup_toFreeMonoid (u : FreeSemigroup α) :
-    ((WithOne.mapMulHom η).comp FreeMonoid.equivWithOneFreeSemigroup.toMonoidHom)
-      u.toFreeMonoid = ↑(η u) := by
-  rw [MonoidHom.comp_apply, MulEquiv.coe_toMonoidHom,
-    FreeMonoid.equivWithOneFreeSemigroup_toFreeMonoid, WithOne.mapMulHom_coe]
+  Recognizes (FreeMonoid.mapWithOne η) L
 
 theorem recognizesSemigroup_iff :
     L.RecognizesSemigroup η ↔
       ∃ P : Set T, ∀ w : FreeSemigroup α, w.toFreeMonoid.toList ∈ L ↔ η w ∈ P := by
   constructor
   · rintro ⟨S, hS⟩
-    have hmem : ∀ v : List α, v ∈ L ↔ ((WithOne.mapMulHom η).comp
-        FreeMonoid.equivWithOneFreeSemigroup.toMonoidHom) (FreeMonoid.ofList v) ∈ S :=
-      fun v => by rw [hS]; rfl
-    refine ⟨(↑) ⁻¹' S, fun w => (hmem _).trans ?_⟩
-    rw [show FreeMonoid.ofList w.toFreeMonoid.toList = toFreeMonoid w from rfl,
-      mapMulHom_comp_equivWithOneFreeSemigroup_toFreeMonoid]
-    rfl
+    refine ⟨(↑) ⁻¹' S, fun w => ?_⟩
+    have hmem : w.toFreeMonoid.toList ∈ L ↔
+        FreeMonoid.mapWithOne η w.toFreeMonoid ∈ S := by rw [hS]; rfl
+    simpa using hmem
   · rintro ⟨P, hP⟩
     refine ⟨(↑) '' P ∪ {x | x = 1 ∧ [] ∈ L}, Set.ext fun w => ?_⟩
-    show w ∈ L ↔ ((WithOne.mapMulHom η).comp
-        FreeMonoid.equivWithOneFreeSemigroup.toMonoidHom) (FreeMonoid.ofList w) ∈
-      (↑) '' P ∪ {x | x = 1 ∧ [] ∈ L}
+    show w ∈ L ↔ FreeMonoid.mapWithOne η (.ofList w) ∈ (↑) '' P ∪ {x | x = 1 ∧ [] ∈ L}
     rcases w with _ | ⟨c, l⟩
-    · rw [show FreeMonoid.ofList ([] : List α) = 1 from rfl, map_one]
-      simp
-    · rw [show FreeMonoid.ofList (c :: l) = toFreeMonoid ⟨c, l⟩ from
-          (toFreeMonoid_mk_eq_cons c l).symm,
-        mapMulHom_comp_equivWithOneFreeSemigroup_toFreeMonoid]
+    · simp [show (FreeMonoid.ofList [] : FreeMonoid α) = 1 from rfl]
+    · rw [FreeMonoid.mapWithOne_ofList_cons]
       simpa [toFreeMonoid_mk_eq_cons] using hP ⟨c, l⟩
 
 theorem ker_le_syntacticSemigroupCon_of_recognizes (hrec : L.RecognizesSemigroup η) :
-    Con.ker η ≤ L.syntacticSemigroupCon := by
-  intro u v huv
-  exact ker_le_syntacticCon_of_recognizes hrec
-    (Con.ker_apply.mpr (by
-      rw [mapMulHom_comp_equivWithOneFreeSemigroup_toFreeMonoid,
-        mapMulHom_comp_equivWithOneFreeSemigroup_toFreeMonoid, (Con.ker_rel η).mp huv]))
+    Con.ker η ≤ L.syntacticSemigroupCon := fun {_ _} huv =>
+  ker_le_syntacticCon_of_recognizes hrec
+    (Con.ker_apply.mpr (by simp [(Con.ker_rel η).mp huv]))
 
 theorem recognizesSemigroup_of_ker_le (h : Con.ker η ≤ L.syntacticSemigroupCon) :
     L.RecognizesSemigroup η :=
