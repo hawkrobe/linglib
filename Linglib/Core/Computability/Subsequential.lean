@@ -16,54 +16,46 @@ import Linglib.Core.Computability.Direction
 /-!
 # Subsequential functions and finite-state transducers
 
-A function `f : List α → List β` is *subsequential* when it is computed by a
-deterministic finite-state transducer with state-final output [schutzenberger-1977]
-[mohri-1997]. Subsequential functions form a proper subclass of the rational functions
-(the functional rational relations) [filiot-reynier-2016]. The class has *left* and
-*right* variants by scan direction, isomorphic under reverse-conjugation.
+A subsequential transducer is a deterministic state machine which maps strings to
+strings, emitting a block of output for each input symbol and a final block determined
+by the ending state [schutzenberger-1977] [mohri-1997]. The functions so computed —
+*subsequential*, with left- and right-scan variants — form a proper subclass of the
+rational functions [filiot-reynier-2016].
+
+We show that each class is closed under composition, that the two are isomorphic under
+reverse-conjugation, and that both contain the Mealy-computable functions; a
+left-subsequential function withholds at most a bounded output suffix
+(`bounded_delay`).
+
+Like `DFA`, this definition allows for machines with infinite states; the
+classification predicates require a `Fintype` instance.
 
 ## Main definitions
 
-* `SubsequentialTransducer σ α β`: the machine; `run` and `runRight` are its two passes
-* `SubsequentialTransducer.comp`: the product machine
+* `SubsequentialTransducer σ α β`: transducer over alphabets `α`, `β` and states `σ`
+* `SubsequentialTransducer.run` / `SubsequentialTransducer.runRight`: the two passes
 * `SubsequentialTransducer.ofWindow`: the sliding-window transducer
-* `Mealy.toSubsequentialTransducer`, `SubsequentialTransducer.toMealy`: mutually inverse
-  views of the synchronous machines as singleton-output, empty-flush block transducers
-* `IsLeftSubsequential`, `IsRightSubsequential`, `IsSubsequential d`: computability by a
-  finite-state transducer in the given scan direction
-
-## Main theorems
-
-* `IsLeftSubsequential.comp`: closure under composition, by the product construction
-  [mohri-1997]
-* `isRightSubsequential_iff_left_reverse`: the left and right classes are
-  reverse-conjugate
-* `isLeftSubsequential_iff`, `isRightSubsequential_iff`: the universe-polymorphic
-  characterizations
-* `IsMealyComputable.isLeftSubsequential`: the synchronous class sits inside the block
-  class
-* `IsLeftSubsequential.bounded_delay`: at most a bounded suffix is withheld
+* `IsLeftSubsequential f`, `IsRightSubsequential f`, `IsSubsequential d f`: some
+  finite-state transducer computes `f` in the given scan direction
 
 ## Implementation notes
 
 The name follows [choffrut-1977] and [mohri-1997]: *sequential* without state-final
-output, *subsequential* with. [sakarovitch-2009] instead calls this class *sequential*
-(and the empty-flush case *pure sequential*), flagging his own usage as unconventional
-(cf. [bruyere-reutenauer-1999]); we keep the Choffrut spelling. `Mealy` is the
+output, *subsequential* with. [sakarovitch-2009] calls this class *sequential* (and
+the empty-flush case *pure sequential*), flagging his usage as unconventional (cf.
+[bruyere-reutenauer-1999]); we keep the Choffrut spelling. `Mealy` is the
 letter-to-letter case.
 
-`step` is total and every input is accepted, so `run` models the *total* subsequential
-functions only — a sink state does not recover partiality, since out-of-domain inputs
-still emit output. On empty input `run` emits `finalOutput start`; the initial-output
-function of [sakarovitch-2009] is omitted. `run` and `runFrom` keep disjoint simp
-normal forms, as with `DFA.eval`/`DFA.evalFrom`: switch via `simp [run]`.
+`step` is total, so only the *total* subsequential functions are modelled — a sink
+state does not recover partiality — and the initial-output function of
+[sakarovitch-2009] is omitted. There are two disjoint sets of simp lemmas, one for
+`run` and another for `runFrom`; switch from the former to the latter via `simp [run]`.
 
 ## TODO
 
 * Choffrut's theorem [choffrut-1977]: a rational function is subsequential iff it has
-  bounded variation, decidably via the twinning condition; `bounded_delay` is a much
-  weaker consequence. Onward, canonical forms and minimization.
-* Two-way transducers; p-subsequential functions [mohri-1997].
+  bounded variation, decidably via twinning; `bounded_delay` is far weaker.
+* Canonical forms and minimization; two-way transducers; p-subsequential functions.
 -/
 
 namespace Subregular
