@@ -65,8 +65,8 @@ variable {α : Type*} {L : Language α}
 
 /-! ### The syntactic congruence and semigroup -/
 
-/-- The *syntactic congruence* of `L` on the free semigroup: the pullback of the monoid
-congruence `Language.syntacticCon` along `FreeSemigroup.toFreeMonoid`. -/
+/-- The *syntactic congruence* of `L` identifies two nonempty words when no two-sided context
+distinguishes them as `L`-members. -/
 def syntacticSemigroupCon (L : Language α) : Con (FreeSemigroup α) :=
   L.syntacticCon.comap toFreeMonoid (map_mul _)
 
@@ -213,8 +213,8 @@ theorem mapMulHom_comp_equivWithOneFreeSemigroup_toFreeMonoid (u : FreeSemigroup
   rw [MonoidHom.comp_apply, MulEquiv.coe_toMonoidHom,
     FreeMonoid.equivWithOneFreeSemigroup_toFreeMonoid, WithOne.mapMulHom_coe]
 
-/-- Recognition by a semigroup hom, characterized without the unitization: membership of a
-nonempty word is decided by its `η`-image. -/
+/-- `η` recognizes `L` if and only if membership of a nonempty word in `L` is decided by its
+`η`-image. -/
 theorem recognizesSemigroup_iff :
     L.RecognizesSemigroup η ↔
       ∃ P : Set T, ∀ w : FreeSemigroup α, w.toFreeMonoid.toList ∈ L ↔ η w ∈ P := by
