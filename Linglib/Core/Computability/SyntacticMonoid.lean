@@ -133,8 +133,8 @@ theorem mem_iff_of_syntacticClass_eq {u v : List α}
 
 theorem syntacticClass_reverse_eq_iff {u v : List α} :
     L.reverse.syntacticClass u = L.reverse.syntacticClass v ↔
-      L.syntacticClass u.reverse = L.syntacticClass v.reverse :=
-  syntacticClass_eq_iff.trans (SyntacticEquiv.reverse_iff.trans syntacticClass_eq_iff.symm)
+      L.syntacticClass u.reverse = L.syntacticClass v.reverse := by
+  simp [syntacticClass_eq_iff, SyntacticEquiv.reverse_iff]
 
 /-! ### Universal property -/
 
