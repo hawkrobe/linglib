@@ -98,7 +98,7 @@ theorem langs_inf {M : Language α} (hL : V.langs L) (hM : V.langs M) : V.langs 
     V.sub (Con.kerLiftMulHom_injective φ) (V.prod hL.2 hM.2)
   have hle : Con.ker φ ≤ (L ⊓ M).syntacticSemigroupCon := by
     rw [hφ, ker_prod_toSyntacticSemigroup]
-    exact inf_syntacticSemigroupCon_le_syntacticSemigroupCon_inf L M
+    exact inf_syntacticSemigroupCon_le_syntacticSemigroupCon_inf
   haveI : Finite (L ⊓ M).syntacticSemigroupCon.Quotient :=
     inferInstanceAs (Finite (L ⊓ M).SyntacticSemigroup)
   exact V.quot (Con.mapMulHom_surjective _ _ hle) hker
@@ -114,7 +114,7 @@ theorem langs_of_recognizes {T : Type u} [Semigroup T] [Finite T] (hT : V.mem T)
     (η : FreeSemigroup α →ₙ* T) (P : Set T)
     (hL : ∀ w : FreeSemigroup α, w.toList ∈ L ↔ η w ∈ P) : V.langs L := by
   have hle : Con.ker η ≤ L.syntacticSemigroupCon :=
-    L.ker_le_syntacticSemigroupCon_of_recognizes ⟨P, hL⟩
+    ker_le_syntacticSemigroupCon_of_recognizes ⟨P, hL⟩
   haveI : Finite (Con.ker η).Quotient := .of_injective _ (Con.kerLiftMulHom_injective η)
   have hkerMem : V.mem (Con.ker η).Quotient := V.sub (Con.kerLiftMulHom_injective η) hT
   have hsurj := Con.mapMulHom_surjective (Con.ker η) L.syntacticSemigroupCon hle
@@ -148,6 +148,6 @@ theorem langs_comap {β : Type u} {Lb : Language β} (h : V.langs Lb)
     obtain rfl : u = w := FreeSemigroup.toList_injective hu
     exact ⟨φ u, rfl, hmem⟩
   · rintro ⟨v, hv, hmem⟩
-    exact ⟨w, rfl, (SyntacticEquiv.mem_iff (Lb.toSyntacticSemigroup_eq_iff.mp hv)).mp hmem⟩
+    exact ⟨w, rfl, (SyntacticEquiv.mem_iff (toSyntacticSemigroup_eq_iff.mp hv)).mp hmem⟩
 
 end Semigroup.Pseudovariety

@@ -78,7 +78,7 @@ private theorem syntacticEquiv_self_append {u : FreeSemigroup α}
     (he : IsIdempotentElem (L.toSyntacticSemigroup u)) :
     L.SyntacticEquiv (u.toList ++ u.toList) u.toList :=
   have h : L.syntacticSemigroupCon (u * u) u :=
-    L.toSyntacticSemigroup_eq_iff.1 (by rw [map_mul]; exact he)
+    toSyntacticSemigroup_eq_iff.1 (by rw [map_mul]; exact he)
   h
 
 /-! ### Definite languages and **D** -/
@@ -128,7 +128,7 @@ theorem IsDefinite.isDefinite_syntacticSemigroup (h : L.IsDefinite k) :
   obtain ⟨m, hm, hmu⟩ :=
     exists_le_length_syntacticEquiv u.toList_ne_nil (syntacticEquiv_self_append he) k
   rw [← map_mul]
-  exact L.toSyntacticSemigroup_eq_iff.2 <|
+  exact toSyntacticSemigroup_eq_iff.2 <|
     (SyntacticEquiv.append (SyntacticEquiv.refl t.toList) hmu.symm).trans <|
       (h.syntacticEquiv_append_left hm t.toList).trans hmu
 
@@ -186,7 +186,7 @@ theorem IsReverseDefinite.isReverseDefinite_syntacticSemigroup (h : L.IsReverseD
   obtain ⟨m, hm, hmu⟩ :=
     exists_le_length_syntacticEquiv u.toList_ne_nil (syntacticEquiv_self_append he) k
   rw [← map_mul]
-  exact L.toSyntacticSemigroup_eq_iff.2 <|
+  exact toSyntacticSemigroup_eq_iff.2 <|
     (SyntacticEquiv.append hmu.symm (SyntacticEquiv.refl t.toList)).trans <|
       (h.syntacticEquiv_append_right hm t.toList).trans hmu
 
