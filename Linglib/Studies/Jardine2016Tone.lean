@@ -7,6 +7,7 @@ import Linglib.Core.Computability.Subsequential
 import Linglib.Core.Computability.Dependence
 import Linglib.Core.Computability.Mealy
 import Linglib.Core.Computability.Bimachine
+import Linglib.Core.Computability.ElgotMezei
 import Linglib.Phonology.Autosegmental.OCP
 import Linglib.Phonology.Autosegmental.Junction
 import Linglib.Phonology.Tone.Basic
@@ -29,7 +30,6 @@ The map itself and its plateau/circumambience API live in `Phonology/Tone/Platea
 
 ## Main definitions
 
-* `utpBM` — a bimachine computing UTP.
 * `markLeft`, `resolve` — the (43) two-pass decomposition over the `?`-enlarged alphabet.
 * `toAR` — the (40) translation into autosegmental representations.
 
@@ -42,6 +42,8 @@ The map itself and its plateau/circumambience API live in `Phonology/Tone/Platea
   one-sided rules expresses UTP's conjunctive trigger.
 * `utp_markup_decomposition` — (43): with the mark `?`, UTP is right-subsequential after
   left-subsequential; weak determinism forbids exactly this enlargement.
+* `utp_isBimachineComputable` — §4.2: UTP is regular, the (43) decomposition read through
+  Elgot–Mezei composition.
 * `readTBU_linearize_realize` — §4.4: the TBU string is the linearization of the realized
   AR ((37a)), so string look-ahead is timing-tier look-ahead.
 * `links_realizeMerged_utp`, `upper_realizeMerged_utp` — the OCP-merged realization of
@@ -57,37 +59,6 @@ namespace Jardine2016Tone
 open Subregular Tone.Plateauing
 
 variable {w : List TBU} {i j k : ℕ}
-
-/-! ### UTP is regular
-
-§4.2 exhibits a nondeterministic FST (Fig. 5); here UTP is computed by a bimachine — one
-deterministic pass per direction — so what fails below is one-directional determinism. -/
-
-/-- The UTP bimachine: each side flags "a H occurs on my side"; a toneless cell surfaces
-H exactly when both flags are set. -/
-def utpBM : Bimachine Bool Bool TBU TBU :=
-  .ofFlags (· == .H) (· == .H) fun l a r => if a == .H || (l && r) then .H else .O
-
-/-- The bimachine computes UTP. -/
-theorem utpBM_run : utpBM.run = utp.map := by
-  funext w
-  refine List.ext_getElem? fun i => ?_
-  rw [utpBM, Bimachine.getElem?_ofFlags_run, utp.map_getElem?]
-  cases h : w[i]? with
-  | none => rfl
-  | some a =>
-    simp only [Option.map_some]
-    congr 1
-    have hb : (a == TBU.H || ((w.take i).any (· == .H) && (w.drop (i + 1)).any (· == .H)))
-        = true ↔ utp.Surfaces w i := by
-      rw [utp.surfaces_split h]; simp [List.any_eq_true]
-    by_cases hs : utp.Surfaces w i
-    · rw [if_pos (hb.mpr hs), if_pos hs]
-    · rw [if_neg (fun hbt => hs (hb.mp hbt)), if_neg hs]
-
-/-- UTP is regular (§4.2): computable by a finite bimachine. -/
-theorem utp_isBimachineComputable : IsBimachineComputable utp.map :=
-  utpBM_run ▸ utpBM.isBimachineComputable
 
 /-! ### UTP is not subsequential
 
@@ -192,6 +163,14 @@ theorem utp_markup_decomposition :
   have heq : (fun xs : List Mark => (resolve xs.reverse).reverse) = resolveRight.run := by
     funext xs; simp [resolve]
   exact heq ▸ resolveRight.isMealyComputable.isLeftSubsequential
+
+/-- UTP is regular (§4.2): the (43) decomposition is a right-subsequential pass after a
+left-subsequential one, and such a composite is computed by a bimachine — one
+deterministic pass per direction ([elgot-mezei-1965]). So what fails above is
+one-directional determinism, not finite-state computability. -/
+theorem utp_isBimachineComputable : IsBimachineComputable utp.map :=
+  have ⟨hL, hR, heq⟩ := utp_markup_decomposition
+  heq ▸ hR.isBimachineComputable_comp hL rfl
 
 /-! ### The autosegmental grounding ((40), §4.4)
 

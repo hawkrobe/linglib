@@ -47,8 +47,8 @@ Only the left state is threaded through the run (`Bimachine.runFrom`); the recur
 reads each tail's right state on the spot. The class existentials pin state types at
 `Type 0`; the universe-polymorphic `isBimachineComputable_iff` and
 `isNonInteractingBimachineComputable_iff` recover generality. The identification of
-`IsBimachineComputable` with the total length-preserving regular functions is classical
-and not formalized here.
+`IsBimachineComputable` with the total rational functions preserving the empty word is
+classical and not formalized here; `ElgotMezei.lean` proves the composition half.
 
 [UPSTREAM] candidate: `Mathlib.Computability.Bimachine`.
 -/
@@ -400,8 +400,8 @@ end ToBimachine
 
 /-! ### The bimachine-computable class -/
 
-/-- Computability by a finite bimachine — classically, the total length-preserving
-regular functions. -/
+/-- Computability by a finite bimachine — classically, the total rational functions
+preserving the empty word. -/
 def IsBimachineComputable (f : List α → List β) : Prop :=
   ∃ (L : Type) (_ : Fintype L) (R : Type) (_ : Fintype R) (B : Bimachine L R α β),
     B.run = f
