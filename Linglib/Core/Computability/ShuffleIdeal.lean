@@ -194,20 +194,13 @@ theorem isRegular_shuffleIdeal (w : List α) : (shuffleIdeal w).IsRegular := by
 /-! ### The finite forbidden basis -/
 
 /-- **Finite forbidden basis**: over a finite alphabet a sublist-closed language is avoidance of
-finitely many forbidden subsequences. The `<+`-minimal non-members form an antichain, hence are
-finite by Higman's lemma, and every non-member contains one. -/
+finitely many forbidden subsequences — the finite-basis property of well-quasi-orders
+(`WellQuasiOrdered.exists_finset_eq_biUnion`) at Higman's lemma. -/
 theorem IsSublistClosed.exists_finset_compl_eq_biSup_shuffleIdeal [Finite α]
     (hL : L.IsSublistClosed) : ∃ F : Finset (List α), Lᶜ = ⨆ m ∈ F, shuffleIdeal m := by
-  have hfin : {m | m ∈ Lᶜ ∧ ∀ v ∈ Lᶜ, v <+ m → v = m}.Finite :=
-    IsAntichain.finite_of_wellQuasiOrdered (fun _ ha _ hb hne hab => hne (hb.2 _ ha.1 hab))
-      List.wellQuasiOrdered_sublist
-  refine ⟨hfin.toFinset, le_antisymm (fun w hw => ?_) (iSup₂_le fun m hm =>
-    isSublistClosed_iff_shuffleIdeal_le.mp hL m (hfin.mem_toFinset.mp hm).1)⟩
-  obtain ⟨m, ⟨hm, hmw⟩, hmin⟩ :=
-    (measure List.length).wf.has_min {u | u ∈ Lᶜ ∧ u <+ w} ⟨w, hw, Sublist.refl w⟩
-  refine mem_iSup.mpr ⟨m, mem_iSup.mpr ⟨hfin.mem_toFinset.mpr ⟨hm, fun v hv hvm => ?_⟩, hmw⟩⟩
-  exact hvm.eq_of_length <| le_antisymm hvm.length_le <|
-    not_lt.1 fun h => hmin v ⟨hv, hvm.trans hmw⟩ h
+  obtain ⟨F, hF⟩ := List.wellQuasiOrdered_sublist.exists_finset_eq_biUnion
+    fun _ _ hvw hv => hL.mem_compl_of_sublist hvw hv
+  exact ⟨F, hF⟩
 
 /-! ### Haines' theorem -/
 
