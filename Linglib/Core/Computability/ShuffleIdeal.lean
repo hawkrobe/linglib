@@ -39,19 +39,19 @@ variable {α : Type*}
 
 namespace Language
 
-variable {L : Language α}
+variable {L : Language α} {v w : List α}
 
 /-! ### Shuffle ideals -/
 
 /-- The **shuffle ideal** of `w`: the words admitting `w` as a subsequence. -/
 def shuffleIdeal (w : List α) : Language α := {v | w <+ v}
 
-@[simp] theorem mem_shuffleIdeal {w v : List α} : v ∈ shuffleIdeal w ↔ w <+ v := Iff.rfl
+@[simp] theorem mem_shuffleIdeal : v ∈ shuffleIdeal w ↔ w <+ v := Iff.rfl
 
 theorem self_mem_shuffleIdeal (w : List α) : w ∈ shuffleIdeal w := Sublist.refl w
 
 @[simp] theorem shuffleIdeal_nil : shuffleIdeal ([] : List α) = ⊤ :=
-  Set.ext fun x => iff_of_true (nil_sublist x) trivial
+  eq_top_iff.mpr fun x _ => nil_sublist x
 
 /-- `shuffleIdeal` carries concatenation to language product; with `shuffleIdeal_nil` this is the
 classical description of the shuffle ideal of `a₁ ⋯ aₙ` as `Σ*a₁Σ* ⋯ aₙΣ*`. -/
@@ -59,16 +59,15 @@ theorem shuffleIdeal_append (w v : List α) :
     shuffleIdeal (w ++ v) = shuffleIdeal w * shuffleIdeal v := by
   ext x
   simp only [mem_shuffleIdeal, mem_mul, append_sublist_iff]
-  constructor
-  · rintro ⟨x₁, x₂, rfl, h₁, h₂⟩; exact ⟨x₁, h₁, x₂, h₂, rfl⟩
-  · rintro ⟨x₁, h₁, x₂, h₂, rfl⟩; exact ⟨x₁, x₂, rfl, h₁, h₂⟩
+  exact ⟨fun ⟨x₁, x₂, hx, h₁, h₂⟩ => hx ▸ ⟨x₁, h₁, x₂, h₂, rfl⟩,
+    fun ⟨x₁, h₁, x₂, h₂, hx⟩ => hx ▸ ⟨x₁, x₂, rfl, h₁, h₂⟩⟩
 
-theorem shuffleIdeal_le_shuffleIdeal_iff {v w : List α} :
-    shuffleIdeal w ≤ shuffleIdeal v ↔ v <+ w :=
+theorem shuffleIdeal_le_shuffleIdeal : shuffleIdeal w ≤ shuffleIdeal v ↔ v <+ w :=
   ⟨fun h => h (self_mem_shuffleIdeal w), fun h _ hx => h.trans hx⟩
 
-theorem shuffleIdeal_injective : Function.Injective (shuffleIdeal (α := α)) := fun _ _ h =>
-  (shuffleIdeal_le_shuffleIdeal_iff.mp h.ge).antisymm (shuffleIdeal_le_shuffleIdeal_iff.mp h.le)
+theorem shuffleIdeal_injective : Function.Injective (shuffleIdeal : List α → Language α) :=
+  fun _ _ h =>
+    (shuffleIdeal_le_shuffleIdeal.mp h.ge).antisymm (shuffleIdeal_le_shuffleIdeal.mp h.le)
 
 /-! ### Sublist-closed languages -/
 
@@ -195,7 +194,7 @@ the complement of the finitely many shuffle ideals of its minimal forbidden subs
 each of those is regular. -/
 theorem IsSublistClosed.isRegular [Finite α] (hL : L.IsSublistClosed) : L.IsRegular :=
   have ⟨F, hF⟩ := hL.exists_finset_compl_eq_biSup_shuffleIdeal
-  IsRegular.of_compl (hF ▸ isRegular_biSup F fun m _ => isRegular_shuffleIdeal m)
+  (hF ▸ isRegular_biSup F fun m _ => isRegular_shuffleIdeal m).of_compl
 
 /-! ### Strictly piecewise languages are exactly the sublist-closed ones -/
 
