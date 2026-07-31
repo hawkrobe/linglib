@@ -13,9 +13,9 @@ import Linglib.Core.Computability.StrictlyPiecewise
 
 The **shuffle ideal** of a word `w` is the language `{v | w <+ v}` of words containing `w` as a
 subsequence, and a language is **sublist-closed** when it is downward closed under the sublist
-order. Over a finite alphabet, Higman's lemma [higman-1952] makes the two notions dual: a
-sublist-closed language is the complement of the shuffle ideals of its finitely many minimal
-forbidden words, hence regular (**Haines' theorem**), and the sublist-closed languages are
+order. This file proves that shuffle ideals are regular; that over a finite alphabet a
+sublist-closed language is the complement of finitely many shuffle ideals (by Higman's lemma
+[higman-1952]) and hence regular (Haines' theorem); and that the sublist-closed languages are
 exactly the strictly piecewise ones [rogers-heinz-et-al-2010].
 
 ## Main definitions
