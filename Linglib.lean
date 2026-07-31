@@ -67,7 +67,6 @@ import Linglib.Core.Combinatorics.Antimatroid
 import Linglib.Core.Combinatorics.RootedTree.Aut
 import Linglib.Core.Combinatorics.RootedTree.ContractUnary
 import Linglib.Core.Computability.Bimachine
-import Linglib.Core.Computability.Boundary
 import Linglib.Core.Computability.ContextFreeGrammar.Closure
 import Linglib.Core.Computability.ContextFreeGrammar.InterRegular
 import Linglib.Core.Computability.ContextFreeGrammar.Map
@@ -1349,6 +1348,7 @@ import Linglib.Phonology.Prosody.Word
 import Linglib.Phonology.Subregular.Agree
 import Linglib.Phonology.Subregular.Aperiodicity
 import Linglib.Phonology.Subregular.BMRS
+import Linglib.Phonology.Subregular.Boundary
 import Linglib.Phonology.Subregular.ContainsFactor
 import Linglib.Phonology.Subregular.ForbidPairs
 import Linglib.Phonology.Subregular.ForbiddenPairs
