@@ -89,6 +89,7 @@ import Linglib.Core.Computability.NonContextFree.BlockWitness
 import Linglib.Core.Computability.NonRegular.AnBn
 import Linglib.Core.Computability.PiecewiseTestable
 import Linglib.Core.Computability.ScanDirection
+import Linglib.Core.Computability.ShuffleIdeal
 import Linglib.Core.Computability.StarFree
 import Linglib.Core.Computability.StrictlyLocal
 import Linglib.Core.Computability.StrictlyPiecewise
