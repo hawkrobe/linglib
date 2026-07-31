@@ -2491,6 +2491,7 @@ import Linglib.Studies.McCarthy2005
 import Linglib.Studies.McCarthyPrince1995
 import Linglib.Studies.McCollumEtAl2020
 import Linglib.Studies.McKayVanInwagen1977
+import Linglib.Studies.McMullin2016
 import Linglib.Studies.McNallyDeSwart2011
 import Linglib.Studies.McPhersonLamont2026
 import Linglib.Studies.MeinhardtEtAl2024

@@ -247,12 +247,6 @@ theorem spreadSuffix_blocker {s : α} {rest : List α}
     spreadSuffix sys val (s :: rest) = s :: rest := by
   simp [spreadSuffix, hb]
 
-/-! ### Patterns are TSL₂
-
-Strictly local grammars cannot express harmony (unbounded distance) and
-strictly piecewise grammars cannot express blocking; the tier-based class
-captures both ([aksenova-rawski-graf-heinz-2024]). -/
-
 end Subregular.Harmony
 
 namespace Phonology.Harmony
@@ -261,7 +255,10 @@ open Subregular TSLGrammar
 
 variable {α V : Type*}
 
-/-- Harmony is TSL₂ by construction. -/
+/-- Harmony is TSL₂ by construction: the tier supplies both the unbounded distance
+strictly local grammars lack and the blocking strictly piecewise grammars lack
+([aksenova-rawski-graf-heinz-2024]; for the latter,
+`McMullin2016.blockingLang_not_isStrictlyPiecewise`). -/
 theorem Pattern.harmonic_iff_mem_tsl (p : Pattern α V) (w : List α) :
     p.Harmonic w ↔ w ∈ (ofForbiddenPairs (¬ p.Compatible · ·) p.OnTier).lang := by
   simp only [mem_ofForbiddenPairs_lang_iff_filter_isChain, Pattern.Harmonic, Pattern.tier, not_not]

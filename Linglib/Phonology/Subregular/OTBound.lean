@@ -90,8 +90,9 @@ theorem mkForbidPairsOnTier_zeroSet_eq
 
 /-- The supraregular `Constraint`: violates iff the candidate is not
 balanced. Built via `mkMarkGrad` (the escape-hatch constructor that
-admits arbitrary `Nat`-valued violation counts) — *not* via any of the
-schema constructors with a TSL_k/SP_k/BTC bridge. -/
+admits arbitrary `Nat`-valued violation counts) — *not* via the
+forbidden-pair schema, whose zero-set is always a TSL_2 language
+(`mkForbidPairsOnTier_zeroSet_eq` above). -/
 def supraregularConstraint : Constraint (List AB) :=
   (fun w => if IsBalanced w then 0 else 1)
 

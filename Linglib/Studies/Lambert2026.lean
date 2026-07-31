@@ -107,7 +107,7 @@ namespace Lambert2026
 
 open Subregular
 open Language
-open List  -- for `<+` (List.Sublist) infix in subseqSet equivalence proofs
+open List  -- for the `<+` (List.Sublist) infix used throughout the subsequence proofs
 -- `Sibilant` and `TSLGrammar.agree` now live in the shared `Subregular` namespace (opened above)
 
 /-! ### Sandwich-word helpers
@@ -171,6 +171,27 @@ private lemma not_sublist_sandwich {pat mid : List α} {aL aR : α}
   List.not_sublist_replicate_append_replicate h_first h_last h_inner kL kR
 
 end Sandwich
+
+/-! ### Piecewise-testability helpers
+
+The §§6–10 phonotactics are boolean combinations of "this pattern does (not) occur as a
+subsequence". Each such condition is strictly piecewise
+(`Language.isStrictlyPiecewise_avoid`), hence piecewise testable, and the boolean closure
+of `IsPiecewiseTestable` assembles the combinations. -/
+
+section Piecewise
+variable {α : Type*} {p : List α} {k : ℕ}
+
+/-- Avoiding a pattern that fits in the window is piecewise testable. -/
+private theorem avoid_isPT (hp : p.length ≤ k) : IsPiecewiseTestable {w | ¬ p <+ w} k :=
+  (isStrictlyPiecewise_avoid hp).toIsPiecewiseTestable
+
+/-- Containing such a pattern is piecewise testable, being the complement. -/
+private theorem contains_isPT (hp : p.length ≤ k) : IsPiecewiseTestable {w | p <+ w} k := by
+  have h : ({w | ¬ p <+ w} : Language α)ᶜ = {w | p <+ w} := by ext w; simp
+  exact h ▸ (avoid_isPT hp).compl
+
+end Piecewise
 
 -- ============================================================================
 -- § 1. Iban (Austronesian): stress-final ∈ D_1
@@ -916,30 +937,19 @@ def lugandaLang : Language LugandaTone := { w | lugandaPred w }
 @[simp] lemma mem_lugandaLang (w : List LugandaTone) :
     w ∈ lugandaLang ↔ lugandaPred w := Iff.rfl
 
-/-- **Luganda high-tone plateauing ∈ PT_3** (Lambert 2026 (37)). The
-predicate depends only on length-≤-3 subsequence presence: the
-length-3 `[h, ℓ, h]`, the length-2 `[h, ℓ]`, and the length-1 `[h]`.
-
-The proof reduces each conjunct of `lugandaPred` to the corresponding
-`subseqSet 3` membership question, then transfers via
-`subseqSet_eq_iff`. -/
+/-- **Luganda high-tone plateauing ∈ PT_3** (Lambert 2026 (37)). Plateauing bans the
+length-3 `[h, ℓ, h]`; the obligatory-final-low conjunct is "no `[h]`, or else `[h, ℓ]`".
+So the language is `SP_3 ⊓ (SP_3 ⊔ SP_3ᶜ)`. -/
 theorem luganda_isPT : lugandaLang.IsPiecewiseTestable 3 := by
-  refine Language.isPiecewiseTestable_iff.mpr fun w₁ w₂ heq => ?_
-  simp only [mem_lugandaLang, lugandaPred]
-  -- Bridge: `LugandaTone.high ∈ w` ↔ `[high] <+ w`
-  have mem_iff_sublist : ∀ (w : List LugandaTone),
-      LugandaTone.high ∈ w ↔ [LugandaTone.high] <+ w := by
-    intro w; exact ⟨fun h => List.singleton_sublist.mpr h, fun h => List.singleton_sublist.mp h⟩
-  have h3 : ([LugandaTone.high, .low, .high] <+ w₁) ↔
-            ([LugandaTone.high, .low, .high] <+ w₂) :=
-    subseqSet_eq_iff heq (by decide : (3 : ℕ) ≤ 3)
-  have h2 : ([LugandaTone.high, .low] <+ w₁) ↔
-            ([LugandaTone.high, .low] <+ w₂) :=
-    subseqSet_eq_iff heq (by decide : (2 : ℕ) ≤ 3)
-  have h1 : ([LugandaTone.high] <+ w₁) ↔ ([LugandaTone.high] <+ w₂) :=
-    subseqSet_eq_iff heq (by decide : (1 : ℕ) ≤ 3)
-  rw [mem_iff_sublist, mem_iff_sublist]
-  exact and_congr (not_congr h3) (imp_congr h1 h2)
+  have h : lugandaLang =
+      {w | ¬ ([LugandaTone.high, .low, .high] <+ w)} ⊓
+        ({w | ¬ ([LugandaTone.high] <+ w)} ⊔ {w | [LugandaTone.high, .low] <+ w}) := by
+    ext w
+    show lugandaPred w ↔ _ ∧ (_ ∨ _)
+    simp [lugandaPred, imp_iff_not_or]
+  rw [h]
+  exact (avoid_isPT (by decide)).inter
+    ((avoid_isPT (by decide)).union (contains_isPT (by decide)))
 
 /-! ### Refutation: Luganda ∉ BTLI
 
@@ -1094,21 +1104,19 @@ def prinmiLang : Language LugandaTone := { w | prinmiPred w }
 @[simp] lemma mem_prinmiLang (w : List LugandaTone) :
     w ∈ prinmiLang ↔ prinmiPred w := Iff.rfl
 
-/-- **Prinmi pitch-accent ∈ PT_3** (Lambert 2026 (39)). All three
-conjuncts depend only on length-≤-3 subsequence presence: the length-1
-`[h]` and the two length-3 patterns. -/
+/-- **Prinmi pitch-accent ∈ PT_3** (Lambert 2026 (39)). Obligatoriness requires the
+length-1 `[h]`; the two span conditions ban a length-3 pattern each. So the language is
+`SP_3ᶜ ⊓ SP_3 ⊓ SP_3`. -/
 theorem prinmi_isPT : prinmiLang.IsPiecewiseTestable 3 := by
-  refine Language.isPiecewiseTestable_iff.mpr fun w₁ w₂ heq => ?_
-  simp only [mem_prinmiLang, prinmiPred]
-  have h1 : ([LugandaTone.high] <+ w₁) ↔ ([LugandaTone.high] <+ w₂) :=
-    subseqSet_eq_iff heq (by decide : (1 : ℕ) ≤ 3)
-  have h_hlh : ([LugandaTone.high, .low, .high] <+ w₁) ↔
-               ([LugandaTone.high, .low, .high] <+ w₂) :=
-    subseqSet_eq_iff heq (by decide : (3 : ℕ) ≤ 3)
-  have h_hhh : ([LugandaTone.high, .high, .high] <+ w₁) ↔
-               ([LugandaTone.high, .high, .high] <+ w₂) :=
-    subseqSet_eq_iff heq (by decide : (3 : ℕ) ≤ 3)
-  exact and_congr h1 (and_congr (not_congr h_hlh) (not_congr h_hhh))
+  have h : prinmiLang = {w | [LugandaTone.high] <+ w} ⊓
+      ({w | ¬ ([LugandaTone.high, .low, .high] <+ w)} ⊓
+        {w | ¬ ([LugandaTone.high, .high, .high] <+ w)}) := by
+    ext w
+    show prinmiPred w ↔ _ ∧ (_ ∧ _)
+    simp [prinmiPred]
+  rw [h]
+  exact (contains_isPT (by decide)).inter
+    ((avoid_isPT (by decide)).inter (avoid_isPT (by decide)))
 
 /-- The accepted Luganda witness also satisfies `prinmiPred`. The first
 two conjuncts mirror Luganda; the third (no `[h, h, h]` subseq) follows
@@ -1167,12 +1175,9 @@ def arigibiLang : Language LugandaTone :=
 @[simp] lemma mem_arigibiLang (w : List LugandaTone) :
     w ∈ arigibiLang ↔ ¬ ([LugandaTone.high, .high] <+ w) := Iff.rfl
 
-/-- **Arigibi pitch-accent ∈ PT_2** (Lambert 2026 §5.3, formula `¬h..h`).
-The constraint depends only on length-2 subseq `[h, h]`. -/
-theorem arigibi_isPT : arigibiLang.IsPiecewiseTestable 2 := by
-  refine Language.isPiecewiseTestable_iff.mpr fun w₁ w₂ heq => ?_
-  show ¬ ([LugandaTone.high, .high] <+ w₁) ↔ ¬ ([LugandaTone.high, .high] <+ w₂)
-  exact not_congr (subseqSet_eq_iff heq (le_refl 2))
+/-- **Arigibi pitch-accent ∈ PT_2** (Lambert 2026 §5.3, formula `¬h..h`). The single
+banned subsequence `[h, h]` makes the language SP_2 outright. -/
+theorem arigibi_isPT : arigibiLang.IsPiecewiseTestable 2 := avoid_isPT (by decide)
 
 /-- The high-tier projection of any LugandaTone word is a `replicate`
 list of `high`s (since `isLugHigh` only keeps highs). -/
@@ -1265,13 +1270,13 @@ def chuaveLang : Language LugandaTone := { w | LugandaTone.high ∈ w }
 @[simp] lemma mem_chuaveLang (w : List LugandaTone) :
     w ∈ chuaveLang ↔ LugandaTone.high ∈ w := Iff.rfl
 
-/-- **Chuave obligatoriness ∈ PT_1** (Lambert 2026 §5.5). The constraint
-`high ∈ w` is the singleton subseq presence `[high] <+ w`. -/
+/-- **Chuave obligatoriness ∈ PT_1** (Lambert 2026 §5.5). The constraint `high ∈ w` is
+the singleton subsequence presence `[high] <+ w`, the complement of an SP_1 language. -/
 theorem chuave_isPT : chuaveLang.IsPiecewiseTestable 1 := by
-  refine Language.isPiecewiseTestable_iff.mpr fun w₁ w₂ heq => ?_
-  show LugandaTone.high ∈ w₁ ↔ LugandaTone.high ∈ w₂
-  rw [← List.singleton_sublist, ← List.singleton_sublist]
-  exact subseqSet_eq_iff heq (le_refl 1)
+  have h : chuaveLang = {w | [LugandaTone.high] <+ w} := by
+    ext w; exact List.singleton_sublist.symm
+  rw [h]
+  exact contains_isPT (by decide)
 
 /-- **Chuave obligatoriness ∈ BTN** (Lambert 2026 §5.5, formula
 `¬ [⋊⋉]_{h}`). On the high tier `isLugHigh`, the projection
@@ -1323,7 +1328,8 @@ Lambert formula (43), tier-based multitier definite:
 * `[⋊h⋉]_{h}`   — high tier projection equals exactly `[h]`
 * `(hℓ⋉ ∨ h⋉)`  — word ends with `[h, ℓ]` or `[h]`
 
-The PT_3 result is direct from `subseqSet_eq_iff`. The multitier
+The PT_3 result assembles the three subsequence conditions with the
+boolean closure of PT. The multitier
 characterization uses `tierEqualLang isLugHigh [.high]` (high tier =
 singleton `[h]`) intersected with the disjunction of two `endsWithLang`
 cases. The §4 helpers (`startsWithLang`, `endsWithLang`,
@@ -1353,21 +1359,19 @@ def kagoshimaLang : Language LugandaTone := { w | kagoshimaPred w }
 @[simp] lemma mem_kagoshimaLang (w : List LugandaTone) :
     w ∈ kagoshimaLang ↔ kagoshimaPred w := Iff.rfl
 
-/-- **Kagoshima Japanese pitch-accent ∈ PT_3** (Lambert 2026 (42)).
-All three conjuncts depend only on length-≤-3 subseq presence:
-length-1 `[h]`, length-2 `[h, h]`, length-3 `[h, ℓ, ℓ]`. -/
+/-- **Kagoshima Japanese pitch-accent ∈ PT_3** (Lambert 2026 (42)). Obligatoriness
+requires `[h]`; culminativity bans `[h, h]`; the position condition bans `[h, ℓ, ℓ]`. So
+the language is `SP_3ᶜ ⊓ SP_3 ⊓ SP_3`. -/
 theorem kagoshima_isPT : kagoshimaLang.IsPiecewiseTestable 3 := by
-  refine Language.isPiecewiseTestable_iff.mpr fun w₁ w₂ heq => ?_
-  simp only [mem_kagoshimaLang, kagoshimaPred]
-  have h1 : ([LugandaTone.high] <+ w₁) ↔ ([LugandaTone.high] <+ w₂) :=
-    subseqSet_eq_iff heq (by decide : (1 : ℕ) ≤ 3)
-  have h_hh : ([LugandaTone.high, .high] <+ w₁) ↔
-              ([LugandaTone.high, .high] <+ w₂) :=
-    subseqSet_eq_iff heq (by decide : (2 : ℕ) ≤ 3)
-  have h_hll : ([LugandaTone.high, .low, .low] <+ w₁) ↔
-               ([LugandaTone.high, .low, .low] <+ w₂) :=
-    subseqSet_eq_iff heq (by decide : (3 : ℕ) ≤ 3)
-  exact and_congr h1 (and_congr (not_congr h_hh) (not_congr h_hll))
+  have h : kagoshimaLang = {w | [LugandaTone.high] <+ w} ⊓
+      ({w | ¬ ([LugandaTone.high, .high] <+ w)} ⊓
+        {w | ¬ ([LugandaTone.high, .low, .low] <+ w)}) := by
+    ext w
+    show kagoshimaPred w ↔ _ ∧ (_ ∧ _)
+    simp [kagoshimaPred]
+  rw [h]
+  exact (contains_isPT (by decide)).inter
+    ((avoid_isPT (by decide)).inter (avoid_isPT (by decide)))
 
 /-- The Kagoshima multitier-encoded language: high-tier-projection
 equals exactly `[h]` AND word ends with `[h, ℓ]` or `[h]`. Lambert

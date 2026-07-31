@@ -25,8 +25,8 @@ piecewise analogue of locally testable over strictly local.
 
 * `Language.IsStrictlyPiecewise.toIsPiecewiseTestable`: `SP_k ⊆ PT_k`.
 * `subseqSet_append_congr`: sharing `subseqSet k` is a congruence for concatenation.
+* `Language.IsPiecewiseTestable.compl` / `.inter` / `.union`: boolean closure.
 * `Language.IsPiecewiseTestable.isRegular`: over a finite alphabet PT languages are regular.
-* Closure under complement comes from `Function.FactorsThrough.comp_left`.
 -/
 
 open List
@@ -97,10 +97,28 @@ theorem IsStrictlyPiecewise.toIsPiecewiseTestable {k : ℕ} {L : Language α}
   · exact hw s hlen ((subseqSet_eq_iff heq hlen).mpr hs)
   · exact hw s hlen ((subseqSet_eq_iff heq hlen).mp hs)
 
+variable {L M : Language α} {k : ℕ}
+
+/-- **Piecewise testable languages are closed under complement.** -/
+theorem IsPiecewiseTestable.compl (h : L.IsPiecewiseTestable k) : Lᶜ.IsPiecewiseTestable k :=
+  isPiecewiseTestable_iff.mpr fun w₁ w₂ he => not_congr (isPiecewiseTestable_iff.mp h w₁ w₂ he)
+
+/-- **Piecewise testable languages are closed under intersection.** -/
+theorem IsPiecewiseTestable.inter (hL : L.IsPiecewiseTestable k)
+    (hM : M.IsPiecewiseTestable k) : (L ⊓ M).IsPiecewiseTestable k :=
+  isPiecewiseTestable_iff.mpr fun w₁ w₂ he =>
+    and_congr (isPiecewiseTestable_iff.mp hL w₁ w₂ he) (isPiecewiseTestable_iff.mp hM w₁ w₂ he)
+
+/-- **Piecewise testable languages are closed under union.** -/
+theorem IsPiecewiseTestable.union (hL : L.IsPiecewiseTestable k)
+    (hM : M.IsPiecewiseTestable k) : (L ⊔ M).IsPiecewiseTestable k :=
+  isPiecewiseTestable_iff.mpr fun w₁ w₂ he =>
+    or_congr (isPiecewiseTestable_iff.mp hL w₁ w₂ he) (isPiecewiseTestable_iff.mp hM w₁ w₂ he)
+
 /-- Over a finite alphabet piecewise testable languages are **regular**: left quotients
 factor through the finitely many values of `subseqSet k`. -/
-theorem IsPiecewiseTestable.isRegular [Finite α] {L : Language α} {k : ℕ}
-    (h : L.IsPiecewiseTestable k) : L.IsRegular := by
+theorem IsPiecewiseTestable.isRegular [Finite α] (h : L.IsPiecewiseTestable k) :
+    L.IsRegular := by
   have hft : Function.FactorsThrough L.leftQuotient (subseqSet k) := fun w₁ w₂ hw =>
     Set.ext fun x => isPiecewiseTestable_iff.mp h _ _ (subseqSet_append_congr hw rfl)
   refine isRegular_iff_finite_range_leftQuotient.mpr
