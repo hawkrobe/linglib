@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 [UPSTREAM] candidate: `Mathlib.Algebra.Group.Pseudovariety`.
 -/
 import Linglib.Core.Algebra.Group.Aperiodic
-import Linglib.Core.Algebra.Group.Divides
+import Linglib.Core.Algebra.Group.Subquotient
 import Mathlib.Algebra.Group.Prod
 import Mathlib.Algebra.Group.PUnit
 import Mathlib.Data.Finite.Defs
@@ -70,9 +70,9 @@ theorem mem_of_mulEquiv {M N : Type u} [Monoid M] [Monoid N] [Finite M] [Finite 
   V.quot (f := e.toMonoidHom) e.surjective h
 
 /-- Pseudovarieties are closed under **division**: membership descends along
-`Monoid.Divides`. -/
-theorem mem_of_divides {M N : Type u} [Monoid M] [Monoid N] [Finite M] [Finite N]
-    (h : Divides M N) (hN : V.mem N) : V.mem M := by
+`Monoid.IsSubquotient`. -/
+theorem mem_of_isSubquotient {M N : Type u} [Monoid M] [Monoid N] [Finite M] [Finite N]
+    (h : IsSubquotient M N) (hN : V.mem N) : V.mem M := by
   obtain ⟨P, f, hf⟩ := h
   exact V.quot hf (V.sub P.subtype_injective hN)
 

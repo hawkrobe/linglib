@@ -11,7 +11,7 @@ import Mathlib.Computability.MyhillNerode
 import Mathlib.Data.Set.Finite.Range
 import Linglib.Core.Computability.TransitionMonoid
 import Linglib.Core.GroupTheory.Congruence.Hom
-import Linglib.Core.Algebra.Group.Divides
+import Linglib.Core.Algebra.Group.Subquotient
 
 /-!
 # The syntactic monoid of a language
@@ -174,8 +174,8 @@ theorem recognizes_iff_ker_le :
 
 /-- **Minimality of the syntactic monoid**: it divides every monoid recognising `L` — the
 image of `φ` surjects onto the syntactic quotient through the first isomorphism theorem. -/
-theorem Recognizes.syntacticMonoid_divides (hrec : Recognizes φ L) :
-    Monoid.Divides L.SyntacticMonoid M := by
+theorem Recognizes.syntacticMonoid_isSubquotient (hrec : Recognizes φ L) :
+    Monoid.IsSubquotient L.SyntacticMonoid M := by
   refine ⟨MonoidHom.mrange φ, (Con.map (Con.ker φ) (syntacticCon L)
     (ker_le_syntacticCon_of_recognizes hrec)).comp
     (Con.quotientKerEquivRange φ).symm.toMonoidHom, ?_⟩
