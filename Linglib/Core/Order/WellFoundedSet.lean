@@ -6,17 +6,17 @@ Authors: Robert Hawkins
 import Mathlib.Order.WellFoundedSet
 
 /-!
-# Higman's lemma for words
+# Higman's lemma for sublists
 
-Over a finite alphabet the sublist order on `List α` is a well-quasi-order, specialising
+For a finite type `α` the sublist order on `List α` is a well-quasi-order, specialising
 mathlib's `Set.PartiallyWellOrderedOn.partiallyWellOrderedOn_sublistForall₂` to equality.
 -/
 
 namespace List
 
-/-- **Higman's lemma** for words [higman-1952]: over a finite alphabet the sublist order is a
-well-quasi-order, so every infinite sequence of words has an earlier term embedding in a later
-one. -/
+/-- **Higman's lemma** [higman-1952]: for a finite type `α` the sublist order on `List α` is a
+well-quasi-order — every infinite sequence of lists has an earlier term that is a sublist of a
+later one. -/
 theorem wellQuasiOrdered_sublist {α : Type*} [Finite α] :
     WellQuasiOrdered (fun l₁ l₂ : List α => l₁ <+ l₂) := fun f => by
   obtain ⟨m, n, hmn, h⟩ := Set.PartiallyWellOrderedOn.exists_lt
