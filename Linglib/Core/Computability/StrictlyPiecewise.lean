@@ -11,8 +11,8 @@ import Mathlib.Data.List.Sublists
 
 A language `L` is **strictly `k`-piecewise** when membership is determined by which
 *subsequences* (scattered, non-contiguous selections) of length at most `k` the input
-contains [rogers-heinz-et-al-2010]. Where SL_k constrains adjacent material via contiguous
-factors, SP_k constrains long-distance co-occurrence via subsequences.
+contains. Where SL_k constrains adjacent material via contiguous factors, SP_k constrains
+long-distance co-occurrence via subsequences.
 
 ## Main definitions
 

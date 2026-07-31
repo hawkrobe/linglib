@@ -16,7 +16,7 @@ subsequence, and a language is **sublist-closed** when it is downward closed und
 order. This file proves that shuffle ideals are regular; that over a finite alphabet a
 sublist-closed language is the complement of finitely many shuffle ideals (by Higman's lemma
 [higman-1952]) and hence regular (Haines' theorem); and that the sublist-closed languages are
-exactly the strictly piecewise ones [rogers-heinz-et-al-2010].
+exactly the strictly piecewise ones.
 
 ## Main definitions
 
@@ -197,10 +197,10 @@ theorem IsSublistClosed.isRegular [Finite α] (hL : L.IsSublistClosed) : L.IsReg
 
 /-! ### Strictly piecewise languages are exactly the sublist-closed ones -/
 
-/-- A language is strictly piecewise at some width iff it is sublist-closed
-[rogers-heinz-et-al-2010]. Forwards is `IsStrictlyPiecewise.mem_of_sublist`; backwards, take the
-grammar to be `L` itself at the width bounding the finite forbidden basis, so that any word
-outside `L` is already refuted by a basis word it contains. -/
+/-- A language is strictly piecewise at some width iff it is sublist-closed. Forwards is
+`IsStrictlyPiecewise.mem_of_sublist`; backwards, take the grammar to be `L` itself at the width
+bounding the finite forbidden basis, so that any word outside `L` is already refuted by a basis
+word it contains. -/
 theorem exists_isStrictlyPiecewise_iff_isSublistClosed [Finite α] :
     (∃ k, L.IsStrictlyPiecewise k) ↔ L.IsSublistClosed := by
   refine ⟨fun ⟨_, hk⟩ _ _ hvw hw => hk.mem_of_sublist hvw hw, fun hL => ?_⟩
