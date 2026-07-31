@@ -1,4 +1,4 @@
-import Linglib.Core.Computability.Bimachine
+import Linglib.Phonology.Subregular.Dependence
 import Linglib.Phonology.Subregular.BMRS
 import Linglib.Phonology.Tone.Plateauing
 import Linglib.Studies.McCollumEtAl2020

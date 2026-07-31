@@ -11,6 +11,7 @@ import Mathlib.Data.Finset.Lattice.Fold
 import Linglib.Core.Computability.Mealy
 import Linglib.Core.Data.Fintype.Transfer
 import Linglib.Core.Data.List.DropRight
+import Linglib.Core.Data.List.EqOn
 import Linglib.Core.Computability.ScanDirection
 
 /-!
@@ -450,6 +451,22 @@ theorem IsLeftSubsequential.exists_getElem?_append_eq (hf : IsLeftSubsequential 
     simp only [List.length_append] at hlen
     omega
   rw [hu, huv, List.getElem?_append_left hip, List.getElem?_append_left hip]
+
+/-- A length-preserving left-subsequential function is oblivious to input beyond a fixed
+margin of each output coordinate: the delay bound of `exists_getElem?_append_eq` caps how
+far to the right an output coordinate can look. -/
+theorem IsLeftSubsequential.exists_dependsOn_Iic
+    (hlen : ∀ w, (f w).length = w.length) (hf : IsLeftSubsequential f) :
+    ∃ N, ∀ i, List.DependsOn (fun u => (f u)[i]?) (Set.Iic (i + N)) := by
+  obtain ⟨N, hN⟩ := hf.exists_getElem?_append_eq
+  refine ⟨N, fun i u v _ hag => ?_⟩
+  show (f u)[i]? = (f v)[i]?
+  have key : ∀ w : List α, (f (w.take (i + N + 1)))[i]? = (f w)[i]? := fun w => by
+    rcases lt_or_ge w.length (i + N + 1) with h | h
+    · rw [List.take_of_length_le h.le]
+    · conv_rhs => rw [← List.take_append_drop (i + N + 1) w]
+      exact hN _ _ i (by rw [hlen, List.length_take]; omega)
+  rw [← key u, ← key v, hag.take_eq (by omega)]
 
 /-- `f` is not left-subsequential if for every `N` some images `f u` and `f (u ++ v)`
 disagree more than `N` positions before the end of `f u` — the contrapositive of

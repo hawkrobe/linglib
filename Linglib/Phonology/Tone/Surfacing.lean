@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.List.TakeDrop
-import Linglib.Core.Computability.Dependence
+import Linglib.Phonology.Subregular.Dependence
 
 /-!
 # Tonal surfacing processes

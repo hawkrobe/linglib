@@ -74,7 +74,6 @@ import Linglib.Core.Computability.ContextFreeGrammar.Pumping
 import Linglib.Core.Computability.ContextFreeGrammar.Tree
 import Linglib.Core.Computability.ContextFreeGrammar.Weighted
 import Linglib.Core.Computability.Definite
-import Linglib.Core.Computability.Dependence
 import Linglib.Core.Computability.ElgotMezei
 import Linglib.Core.Computability.Lens
 import Linglib.Core.Computability.Mealy
@@ -1350,6 +1349,7 @@ import Linglib.Phonology.Subregular.Aperiodicity
 import Linglib.Phonology.Subregular.BMRS
 import Linglib.Phonology.Subregular.Boundary
 import Linglib.Phonology.Subregular.ContainsFactor
+import Linglib.Phonology.Subregular.Dependence
 import Linglib.Phonology.Subregular.ForbidPairs
 import Linglib.Phonology.Subregular.ForbiddenPairs
 import Linglib.Phonology.Subregular.Harmony
