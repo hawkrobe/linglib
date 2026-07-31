@@ -1,5 +1,5 @@
 import Linglib.Processing.Lexical.Discriminative.Defs
-import Linglib.Core.Computability.Boundary
+import Linglib.Phonology.Subregular.Boundary
 import Linglib.Core.Data.List.Factors
 
 /-!

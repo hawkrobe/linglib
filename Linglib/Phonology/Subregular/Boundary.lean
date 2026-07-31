@@ -19,7 +19,7 @@ the hierarchy quantifies over are a generic list combinator and live in
 
 ## Main definitions
 
-* `Augmented α`: the boundary-augmented alphabet `List (Option α)`,
+* `Augmented α`: boundary-augmented strings `List (Option α)`,
   with `none` the boundary marker.
 * `boundary k w`: `w` injected into `Augmented α` and padded with
   `k - 1` boundary markers on each side.
@@ -44,7 +44,7 @@ variable {α : Type*}
 
 /-! ### Boundary augmentation -/
 
-/-- The boundary-augmented alphabet: original symbols (`some a`) plus the
+/-- Boundary-augmented strings: original symbols (`some a`) plus the
 boundary marker `none`. -/
 abbrev Augmented (α : Type*) := List (Option α)
 
