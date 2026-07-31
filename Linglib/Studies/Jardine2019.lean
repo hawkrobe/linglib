@@ -8,7 +8,7 @@ import Linglib.Phonology.Autosegmental.Factors
 import Linglib.Phonology.Autosegmental.Realization
 import Linglib.Phonology.Autosegmental.OCP
 import Linglib.Phonology.Autosegmental.Junction
-import Linglib.Core.Computability.ContainsFactor
+import Linglib.Phonology.Subregular.ContainsFactor
 
 /-!
 # Jardine (2019): the expressivity of autosegmental grammars

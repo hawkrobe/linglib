@@ -3,8 +3,8 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Computability.StrictlyLocal
-import Linglib.Core.Computability.Aperiodicity
+import Linglib.Phonology.Subregular.StrictlyLocal
+import Linglib.Phonology.Subregular.Aperiodicity
 import Linglib.Phonology.Subregular.TierProjection
 import Mathlib.Data.List.Basic
 import Mathlib.Computability.Language

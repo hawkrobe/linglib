@@ -66,10 +66,8 @@ import Linglib.Core.CategoryTheory.Monoidal.LabeledTuple
 import Linglib.Core.Combinatorics.Antimatroid
 import Linglib.Core.Combinatorics.RootedTree.Aut
 import Linglib.Core.Combinatorics.RootedTree.ContractUnary
-import Linglib.Core.Computability.Aperiodicity
 import Linglib.Core.Computability.Bimachine
 import Linglib.Core.Computability.Boundary
-import Linglib.Core.Computability.ContainsFactor
 import Linglib.Core.Computability.ContextFreeGrammar.Closure
 import Linglib.Core.Computability.ContextFreeGrammar.InterRegular
 import Linglib.Core.Computability.ContextFreeGrammar.Map
@@ -91,8 +89,6 @@ import Linglib.Core.Computability.PiecewiseTestable
 import Linglib.Core.Computability.ScanDirection
 import Linglib.Core.Computability.ShuffleIdeal
 import Linglib.Core.Computability.StarFree
-import Linglib.Core.Computability.StrictlyLocal
-import Linglib.Core.Computability.StrictlyPiecewise
 import Linglib.Core.Computability.Subsequential
 import Linglib.Core.Computability.SyntacticMonoid
 import Linglib.Core.Computability.SyntacticSemigroup
@@ -1351,7 +1347,9 @@ import Linglib.Phonology.Prosody.Phrase
 import Linglib.Phonology.Prosody.Syllable
 import Linglib.Phonology.Prosody.Word
 import Linglib.Phonology.Subregular.Agree
+import Linglib.Phonology.Subregular.Aperiodicity
 import Linglib.Phonology.Subregular.BMRS
+import Linglib.Phonology.Subregular.ContainsFactor
 import Linglib.Phonology.Subregular.ForbidPairs
 import Linglib.Phonology.Subregular.ForbiddenPairs
 import Linglib.Phonology.Subregular.Harmony
@@ -1364,6 +1362,8 @@ import Linglib.Phonology.Subregular.OSL
 import Linglib.Phonology.Subregular.OTBound
 import Linglib.Phonology.Subregular.QF
 import Linglib.Phonology.Subregular.Sibilant
+import Linglib.Phonology.Subregular.StrictlyLocal
+import Linglib.Phonology.Subregular.StrictlyPiecewise
 import Linglib.Phonology.Subregular.TierProjection
 import Linglib.Phonology.Subregular.TierRule
 import Linglib.Phonology.Subregular.TierStrictlyLocal
