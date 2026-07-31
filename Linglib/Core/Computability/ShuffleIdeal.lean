@@ -37,46 +37,6 @@ open List
 
 variable {α : Type*}
 
-/-! ### Minimal sublists and greedy matching -/
-
-namespace List
-
-theorem exists_minimal_sublist {s : Set (List α)} {w : List α} (hw : w ∈ s) :
-    ∃ m ∈ s, m <+ w ∧ ∀ v ∈ s, v <+ m → v = m := by
-  obtain ⟨m, ⟨hm, hmw⟩, hmin⟩ :=
-    (measure List.length).wf.has_min {u | u ∈ s ∧ u <+ w} ⟨w, hw, Sublist.refl w⟩
-  exact ⟨m, hm, hmw, fun v hv hvm => hvm.eq_of_length <| le_antisymm hvm.length_le <|
-    not_lt.1 fun h => hmin v ⟨hv, hvm.trans hmw⟩ h⟩
-
-variable [DecidableEq α]
-
-/-- The length of the longest prefix of `w` occurring as a subsequence of `x`. -/
-def maxMatch (w x : List α) : ℕ := Nat.findGreatest (fun m => w.take m <+ x) w.length
-
-theorem maxMatch_le (w x : List α) : maxMatch w x ≤ w.length := Nat.findGreatest_le _
-
-theorem take_maxMatch_sublist (w x : List α) : w.take (maxMatch w x) <+ x :=
-  Nat.findGreatest_spec (P := fun m => w.take m <+ x) (Nat.zero_le _) (by simp)
-
-theorem le_maxMatch {w x : List α} {j : ℕ} (hj : j ≤ w.length) (h : w.take j <+ x) :
-    j ≤ maxMatch w x := Nat.le_findGreatest hj h
-
-/-- **Greedy matching is optimal**: `w` scatters into `x ++ v` exactly when the part of `w` left
-over after its longest `x`-matchable prefix scatters into `v`. -/
-theorem sublist_append_iff_drop_maxMatch (w x v : List α) :
-    w <+ x ++ v ↔ w.drop (maxMatch w x) <+ v := by
-  refine ⟨fun h => ?_, fun h => ?_⟩
-  · obtain ⟨l₁, l₂, rfl, h₁, h₂⟩ := sublist_append_iff.mp h
-    have hj : l₁.length ≤ maxMatch (l₁ ++ l₂) x :=
-      le_maxMatch (by simp) (by rw [take_left]; exact h₁)
-    obtain ⟨d, hd⟩ := Nat.exists_eq_add_of_le hj
-    rw [hd, ← drop_drop, drop_left]
-    exact (drop_sublist _ _).trans h₂
-  · have := (take_maxMatch_sublist w x).append h
-    rwa [take_append_drop] at this
-
-end List
-
 namespace Language
 
 variable {L : Language α}
@@ -144,6 +104,45 @@ theorem isSublistClosed_iSup {ι : Sort*} {L : ι → Language α}
     (h : ∀ i, (L i).IsSublistClosed) : IsSublistClosed (⨆ i, L i) :=
   fun _ _ hvw hw => Set.mem_iUnion.mpr ((Set.mem_iUnion.mp hw).imp fun i => h i hvw)
 
+end Language
+
+/-! ### Greedy matching -/
+
+namespace List
+
+variable [DecidableEq α]
+
+/-- The length of the longest prefix of `w` occurring as a subsequence of `x`. -/
+def maxMatch (w x : List α) : ℕ := Nat.findGreatest (fun m => w.take m <+ x) w.length
+
+theorem maxMatch_le (w x : List α) : maxMatch w x ≤ w.length := Nat.findGreatest_le _
+
+theorem take_maxMatch_sublist (w x : List α) : w.take (maxMatch w x) <+ x :=
+  Nat.findGreatest_spec (P := fun m => w.take m <+ x) (Nat.zero_le _) (by simp)
+
+theorem le_maxMatch {w x : List α} {j : ℕ} (hj : j ≤ w.length) (h : w.take j <+ x) :
+    j ≤ maxMatch w x := Nat.le_findGreatest hj h
+
+/-- **Greedy matching is optimal**: `w` scatters into `x ++ v` exactly when the part of `w` left
+over after its longest `x`-matchable prefix scatters into `v`. -/
+theorem sublist_append_iff_drop_maxMatch (w x v : List α) :
+    w <+ x ++ v ↔ w.drop (maxMatch w x) <+ v := by
+  refine ⟨fun h => ?_, fun h => ?_⟩
+  · obtain ⟨l₁, l₂, rfl, h₁, h₂⟩ := sublist_append_iff.mp h
+    have hj : l₁.length ≤ maxMatch (l₁ ++ l₂) x :=
+      le_maxMatch (by simp) (by rw [take_left]; exact h₁)
+    obtain ⟨d, hd⟩ := Nat.exists_eq_add_of_le hj
+    rw [hd, ← drop_drop, drop_left]
+    exact (drop_sublist _ _).trans h₂
+  · have := (take_maxMatch_sublist w x).append h
+    rwa [take_append_drop] at this
+
+end List
+
+namespace Language
+
+variable {L : Language α}
+
 /-! ### Regularity of shuffle ideals -/
 
 theorem leftQuotient_shuffleIdeal [DecidableEq α] (w x : List α) :
@@ -171,8 +170,11 @@ theorem IsSublistClosed.exists_finset_compl_eq_biSup_shuffleIdeal [Finite α]
       List.wellQuasiOrdered_sublist
   refine ⟨hfin.toFinset, le_antisymm (fun w hw => ?_) (iSup₂_le fun m hm =>
     isSublistClosed_iff_shuffleIdeal_le.mp hL m (hfin.mem_toFinset.mp hm).1)⟩
-  obtain ⟨m, hm, hmw, hmin⟩ := List.exists_minimal_sublist hw
-  exact mem_iSup.mpr ⟨m, mem_iSup.mpr ⟨hfin.mem_toFinset.mpr ⟨hm, hmin⟩, hmw⟩⟩
+  obtain ⟨m, ⟨hm, hmw⟩, hmin⟩ :=
+    (measure List.length).wf.has_min {u | u ∈ Lᶜ ∧ u <+ w} ⟨w, hw, Sublist.refl w⟩
+  refine mem_iSup.mpr ⟨m, mem_iSup.mpr ⟨hfin.mem_toFinset.mpr ⟨hm, fun v hv hvm => ?_⟩, hmw⟩⟩
+  exact hvm.eq_of_length <| le_antisymm hvm.length_le <|
+    not_lt.1 fun h => hmin v ⟨hv, hvm.trans hmw⟩ h
 
 /-! ### Haines' theorem -/
 
