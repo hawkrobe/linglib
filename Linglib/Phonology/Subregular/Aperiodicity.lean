@@ -9,8 +9,8 @@ import Mathlib.Data.List.Basic
 import Mathlib.Data.Set.Finite.List
 import Linglib.Core.Computability.TransitionMonoid
 import Linglib.Core.Computability.StarFree
-import Linglib.Core.Computability.StrictlyLocal
-import Linglib.Core.Computability.StrictlyPiecewise
+import Linglib.Phonology.Subregular.StrictlyLocal
+import Linglib.Phonology.Subregular.StrictlyPiecewise
 
 /-!
 # The subregular hierarchy is star-free (aperiodicity)
@@ -631,7 +631,7 @@ length-`≤ k-1` subsequences seen so far is a finite aperiodic recognizer, so `
 theorem IsStrictlyPiecewise.isStarFree {L : Language α} {k : ℕ} (h : L.IsStrictlyPiecewise k) :
     L.IsStarFree := by
   classical
-  obtain ⟨G, hG⟩ := h
+  obtain ⟨G, hG⟩ := isStrictlyPiecewise_iff.mp h
   rcases k with _ | n
   · -- `k = 0`: membership is the constant `[] ∈ G`, recognized by the trivial monoid.
     refine Language.IsStarFree.of_recognizes (M := PUnit.{1}) Monoid.IsAperiodic.of_subsingleton 1

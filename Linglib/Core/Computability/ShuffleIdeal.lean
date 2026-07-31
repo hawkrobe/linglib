@@ -6,17 +6,15 @@ Authors: Robert Hawkins
 import Mathlib.Computability.MyhillNerode
 import Mathlib.Data.Nat.Find
 import Linglib.Core.Order.WellFoundedSet
-import Linglib.Core.Computability.StrictlyPiecewise
 
 /-!
 # Shuffle ideals and sublist-closed languages
 
 The **shuffle ideal** of a word `w` is the language `{v | w <+ v}` of words containing `w` as a
 subsequence, and a language is **sublist-closed** when it is downward closed under the sublist
-order. This file proves that shuffle ideals are regular; that over a finite alphabet a
+order. This file proves that shuffle ideals are regular, and that over a finite alphabet a
 sublist-closed language is the complement of finitely many shuffle ideals (by Higman's lemma
-[higman-1952]) and hence regular (Haines' theorem); and that the sublist-closed languages are
-exactly the strictly piecewise ones.
+[higman-1952]) and hence regular (Haines' theorem).
 
 ## Main definitions
 
@@ -30,7 +28,6 @@ exactly the strictly piecewise ones.
 * `Language.IsSublistClosed.exists_finset_compl_eq_biSup_shuffleIdeal`: the finite forbidden
   basis.
 * `Language.IsSublistClosed.isRegular`: Haines' theorem.
-* `Language.exists_isStrictlyPiecewise_iff_isSublistClosed`: `SP` is exactly sublist-closure.
 -/
 
 open List
@@ -250,22 +247,5 @@ each of those is regular. -/
 theorem IsSublistClosed.isRegular [Finite α] (hL : L.IsSublistClosed) : L.IsRegular :=
   have ⟨F, hF⟩ := hL.exists_finset_compl_eq_biSup_shuffleIdeal
   (hF ▸ isRegular_biSup F fun m _ => isRegular_shuffleIdeal m).of_compl
-
-/-! ### Strictly piecewise languages are exactly the sublist-closed ones -/
-
-/-- A language is strictly piecewise at some width iff it is sublist-closed. Forwards is
-`IsStrictlyPiecewise.mem_of_sublist`; backwards, take the grammar to be `L` itself at the width
-bounding the finite forbidden basis, so that any word outside `L` is already refuted by a basis
-word it contains. -/
-theorem exists_isStrictlyPiecewise_iff_isSublistClosed [Finite α] :
-    (∃ k, L.IsStrictlyPiecewise k) ↔ L.IsSublistClosed := by
-  refine ⟨fun ⟨_, hk⟩ _ _ hvw hw => hk.mem_of_sublist hvw hw, fun hL => ?_⟩
-  obtain ⟨F, hF⟩ := hL.exists_finset_compl_eq_biSup_shuffleIdeal
-  have hFmem : ∀ w, w ∈ Lᶜ ↔ ∃ m ∈ F, m <+ w := fun w => by
-    rw [show Lᶜ = _ from hF]; simp [Language.mem_iSup]
-  refine ⟨F.sup List.length, L, Set.ext fun w => ?_⟩
-  refine ⟨fun h => by_contra fun hwL => ?_, fun hw s _ hs => hL hs hw⟩
-  obtain ⟨m, hm, hmw⟩ := (hFmem w).mp hwL
-  exact (hFmem m).mpr ⟨m, hm, Sublist.refl m⟩ (h m (Finset.le_sup hm) hmw)
 
 end Language

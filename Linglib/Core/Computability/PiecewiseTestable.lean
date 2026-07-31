@@ -3,7 +3,6 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Computability.StrictlyPiecewise
 import Mathlib.Computability.MyhillNerode
 import Mathlib.Data.Set.Finite.List
 import Mathlib.Logic.Function.Basic
@@ -13,8 +12,7 @@ import Mathlib.Logic.Function.Basic
 
 A language is **piecewise `k`-testable** when its membership depends only on the set of
 length-`≤ k` subsequences (scattered subwords) of the input [simon-1975] — i.e. membership
-factors through the map `subseqSet k`. PT_k is the Boolean closure of SP_k, the
-piecewise analogue of locally testable over strictly local.
+factors through the map `subseqSet k`, the piecewise analogue of locally testable.
 
 ## Main definitions
 
@@ -23,7 +21,6 @@ piecewise analogue of locally testable over strictly local.
 
 ## Main results
 
-* `Language.IsStrictlyPiecewise.toIsPiecewiseTestable`: `SP_k ⊆ PT_k`.
 * `subseqSet_append_congr`: sharing `subseqSet k` is a congruence for concatenation.
 * `Language.IsPiecewiseTestable.compl` / `.inter` / `.union`: boolean closure.
 * `Language.IsPiecewiseTestable.isRegular`: over a finite alphabet PT languages are regular.
@@ -87,15 +84,6 @@ lemma isPiecewiseTestable_iff {L : Language α} {k : ℕ} :
     L.IsPiecewiseTestable k ↔
       ∀ w₁ w₂, subseqSet k w₁ = subseqSet k w₂ → (w₁ ∈ L ↔ w₂ ∈ L) :=
   ⟨fun h _ _ h' => iff_of_eq (h h'), fun h _ _ h' => propext (h _ _ h')⟩
-
-/-- **SP_k ⊆ PT_k**: the strictly-piecewise test ("every subsequence of length at most `k`
-is permitted") depends only on `subseqSet k`. -/
-theorem IsStrictlyPiecewise.toIsPiecewiseTestable {k : ℕ} {L : Language α}
-    (h : L.IsStrictlyPiecewise k) : L.IsPiecewiseTestable k := by
-  obtain ⟨G, rfl⟩ := h
-  refine fun w₁ w₂ heq => propext ⟨fun hw s hlen hs => ?_, fun hw s hlen hs => ?_⟩
-  · exact hw s hlen ((subseqSet_eq_iff heq hlen).mpr hs)
-  · exact hw s hlen ((subseqSet_eq_iff heq hlen).mp hs)
 
 variable {L M : Language α} {k : ℕ}
 

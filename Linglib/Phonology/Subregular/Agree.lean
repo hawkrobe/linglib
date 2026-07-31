@@ -3,7 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Computability.StrictlyPiecewise
+import Linglib.Phonology.Subregular.StrictlyPiecewise
 import Linglib.Phonology.Subregular.ForbidPairs
 import Linglib.Phonology.Subregular.TierProjection
 
@@ -159,7 +159,7 @@ theorem TSLGrammar.agree_lang_eq_sp [DecidableEq α] (p : α → Prop) [Decidabl
 /-- Every AGREE language is strictly 2-piecewise. -/
 theorem TSLGrammar.agree_lang_isStrictlyPiecewise [DecidableEq α] (p : α → Prop)
     [DecidablePred p] : ((TSLGrammar.agree p).lang).IsStrictlyPiecewise 2 :=
-  ⟨SPGrammar.agree p, (TSLGrammar.agree_lang_eq_sp p).symm⟩
+  Language.isStrictlyPiecewise_iff.mpr ⟨SPGrammar.agree p, (TSLGrammar.agree_lang_eq_sp p).symm⟩
 
 end Piecewise
 
