@@ -26,6 +26,7 @@ long-distance co-occurrence via subsequences.
 
 * `Language.IsStrictlyPiecewise.mem_of_sublist`: SP languages are subsequence-closed.
 * `Language.IsStrictlyPiecewise.succ`: `SP_k ⊆ SP_(k+1)`.
+* `Language.isStrictlyPiecewise_avoid`: avoiding one short pattern is SP.
 
 ## Implementation notes
 
@@ -33,6 +34,10 @@ long-distance co-occurrence via subsequences.
 SP primitive. Unlike SL no boundary augmentation is needed, since subsequences are blind
 to position; the "≤ k" (rather than "exactly k") bound is instead what keeps words shorter
 than `k` distinguishable, matching `subseqSet`.
+
+Over a finite alphabet the languages that are SP at *some* width are exactly the
+sublist-closed ones — `Language.exists_isStrictlyPiecewise_iff_isSublistClosed` in
+`Linglib.Core.Computability.ShuffleIdeal`; `mem_language_of_sublist` is the easy direction.
 -/
 
 open List
@@ -103,6 +108,14 @@ theorem IsStrictlyPiecewise.mem_of_sublist (h : L.IsStrictlyPiecewise k) {v w : 
 theorem IsStrictlyPiecewise.nil_mem (h : L.IsStrictlyPiecewise k) {w : List α}
     (hw : w ∈ L) : [] ∈ L :=
   h.mem_of_sublist (List.nil_sublist w) hw
+
+/-- **Avoiding one pattern**: the words not containing `p` as a subsequence are strictly
+`k`-piecewise as soon as `p` fits in the window, the grammar permitting every subsequence
+but `p` itself. -/
+theorem isStrictlyPiecewise_avoid {p : List α} (hp : p.length ≤ k) :
+    IsStrictlyPiecewise {w | ¬ p <+ w} k :=
+  ⟨{s | s ≠ p}, Set.ext fun _ =>
+    ⟨fun h hpw => h p hp hpw rfl, fun h _ _ hs hsp => h (hsp ▸ hs)⟩⟩
 
 /-- **`SP_k ⊆ SP_(k+1)`**: widening the window loses nothing, since the width-`(k+1)`
 grammar can demand exactly that all length-`≤ k` subsequences be permitted. -/

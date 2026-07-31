@@ -3,6 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
+import Linglib.Core.Computability.StrictlyPiecewise
 import Linglib.Phonology.Subregular.ForbidPairs
 import Linglib.Phonology.Subregular.TierProjection
 
@@ -33,6 +34,10 @@ forbidden-pair infrastructure to `R := (· ≠ ·)`. The AGREE-specific names
 (`agreeForbidden`, `AgreeCleanPair`, `TSLGrammar.agree`,
 `mkAgreeOnTier_zero_iff_in_agree_lang`) are the canonical entry points
 downstream consumers reference.
+
+Unlike the OCP, AGREE is *also* strictly piecewise: `SPGrammar.agree` and
+`TSLGrammar.agree_lang_eq_sp` show the tier projection is dispensable
+here, because equality is transitive.
 -/
 
 namespace Subregular
@@ -110,5 +115,52 @@ theorem mkAgreeOnTier_zeroSet_eq [DecidableEq α]
       (TSLGrammar.agree p).lang := by
   ext w
   exact mkAgreeOnTier_zero_iff_in_agree_lang p id w
+
+/-! ### AGREE is also strictly piecewise
+
+Equality is transitive, so "every tier-*adjacent* pair agrees" and "every pair of
+on-tier symbols agrees, however far apart" are the same condition — and the latter
+reads subsequences, which are blind to the intervening material the tier projection
+deletes. AGREE languages are therefore SP_2 as well as TSL_2, the coincidence that
+lets transparent long-distance harmony be described either way ([mcmullin-2016]).
+The OCP has no such reading: `≠` is not transitive. -/
+
+section Piecewise
+
+open List
+
+/-- The SP_2 grammar dual of `TSLGrammar.agree p`: permit every subsequence except a
+pair of disagreeing on-tier symbols. Shorter subsequences are permitted outright. -/
+def SPGrammar.agree {α : Type*} (p : α → Prop) : SPGrammar α :=
+  {s | ∀ a b, s = [a, b] → p a → p b → a = b}
+
+/-- Membership in the AGREE language is agreement of *all* pairs of on-tier symbols,
+not just the tier-adjacent ones. -/
+theorem mem_agree_lang_iff_forall_sublist_pair [DecidableEq α] (p : α → Prop)
+    [DecidablePred p] (w : List α) :
+    w ∈ (TSLGrammar.agree p).lang ↔ ∀ a b, [a, b] <+ w → p a → p b → a = b := by
+  rw [TSLGrammar.agree, mem_ofForbiddenPairs_lang_iff_filter_isChain]
+  simp only [ne_eq, not_not]
+  rw [List.isChain_iff_pairwise, List.pairwise_iff_forall_sublist]
+  refine ⟨fun h a b hab ha hb => h (by simpa [ha, hb] using hab.filter fun x => decide (p x)),
+    fun h a b hab => h a b (hab.trans List.filter_sublist) ?_ ?_⟩
+  · exact of_decide_eq_true (List.mem_filter.mp (hab.mem List.mem_cons_self)).2
+  · exact of_decide_eq_true
+      (List.mem_filter.mp (hab.mem (List.mem_cons_of_mem _ List.mem_cons_self))).2
+
+/-- **AGREE-TSL_2 = AGREE-SP_2**: the tier-based and subsequence-based descriptions of
+agreement generate the same language, for any tier predicate. -/
+theorem TSLGrammar.agree_lang_eq_sp [DecidableEq α] (p : α → Prop) [DecidablePred p] :
+    (TSLGrammar.agree p).lang = (SPGrammar.agree p).language 2 :=
+  Set.ext fun w => (mem_agree_lang_iff_forall_sublist_pair p w).trans
+    ⟨fun h s _ hs a b hab ha hb => h a b (hab ▸ hs) ha hb,
+      fun h a b hab => h [a, b] (by simp) hab a b rfl⟩
+
+/-- Every AGREE language is strictly 2-piecewise. -/
+theorem TSLGrammar.agree_lang_isStrictlyPiecewise [DecidableEq α] (p : α → Prop)
+    [DecidablePred p] : ((TSLGrammar.agree p).lang).IsStrictlyPiecewise 2 :=
+  ⟨SPGrammar.agree p, (TSLGrammar.agree_lang_eq_sp p).symm⟩
+
+end Piecewise
 
 end Subregular

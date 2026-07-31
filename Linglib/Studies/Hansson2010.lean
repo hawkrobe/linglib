@@ -5,7 +5,6 @@ Authors: Robert Hawkins
 -/
 import Linglib.Phonology.Subregular.Sibilant
 import Linglib.Phonology.Subregular.Agree
-import Linglib.Core.Computability.StrictlyPiecewise
 import Linglib.Phonology.Subregular.Multitier
 
 /-!
@@ -32,8 +31,7 @@ arguments — those live in the OT layer and the speech-planning
 literature. What we formalize here is the *surface stringset* of one
 of the leading case studies — Navajo sibilant harmony, prominently
 featured in [hansson-2010]'s introduction (§1.1) and discussed
-in detail in §2.4.1.1 — as a tier-based strictly 2-local language,
-following the subregular tradition ([mcmullin-2016]).
+in detail in §2.4.1.1 — as a tier-based strictly 2-local language.
 
 The framing is the same as in `RoseWalker2004.lean`: the ABC-style
 analysis *derives* the surface generalization; the TSL_2 description
@@ -265,104 +263,5 @@ separately-proved equivalence. -/
 theorem navajoAgree_zero_iff_in_TSL (c : List NSeg) :
     navajoAgree c = 0 ↔ c ∈ navajoSibilantHarmony.lang :=
   mkAgreeOnTier_zero_iff_in_agree_lang NSeg.onTier id c
-
--- ============================================================================
--- § 6: SP_2 vs TSL_2 — cross-framework comparison (after [mcmullin-2016])
--- ============================================================================
-
-/-! ### § 6.1 The SP_2 formalisation of Navajo
-
-The same long-distance phonotactic — *no anterior+posterior sibilant
-co-occurrence* — admits a strictly piecewise (SP_2) characterisation
-that uses *subsequences* (non-contiguous selections) rather than tier
-projection. The SP_2 grammar forbids the length-2 subsequences
-`[antSib, postSib]` and `[postSib, antSib]`; intervening material is
-invisible by construction (subsequences ignore position). This
-naturally captures *transparent* harmony — exactly Navajo's profile.
-
-[mcmullin-2016] argues that consonant harmony in general requires
-TSL_2, not SP_2: SP cannot model **blocker-style opacity** (where a
-specific intervening consonant breaks long-distance harmony). For
-Navajo's transparent harmony the two classifications coincide on the
-surface stringset; the typological argument for TSL ⊃ SP turns on opaque
-blockers, which are unattested in Navajo — the rare opaque cases are
-Rwanda and Berber ([hansson-2010] ch. 3) — and are not formalised here. -/
-
-/-- The SP_2 grammar for Navajo sibilant harmony: the permitted
-subsequences are everything except the mixed-place sibilant pairs — so
-the shorter subsequences the width-2 language also inspects (`ε` and the
-singletons) are admitted outright.
-Note this is a forbidden *subsequence* (non-contiguous), not a
-forbidden *factor* (contiguous), so transparency to intervening
-material is built in. The grammar is written as a function (rather than a
-`{s | ...}` set-builder) so that `Decidable` synthesis sees through to the
-underlying decidable equalities on `NSeg` lists. -/
-def navajoSibilantHarmonySP : SPGrammar NSeg :=
-  fun s => s ≠ [.antSib, .postSib] ∧ s ≠ [.postSib, .antSib]
-
-/-- **Navajo sibilant harmony stringset is SP_2** under the alternative
-[mcmullin-2016] characterisation. Explicit `Language.IsStrictlyPiecewise`
-typing of the SP_2 grammar's implicit complexity claim. -/
-theorem navajoSibilantHarmonySP_lang_isSP2 :
-    (navajoSibilantHarmonySP.language 2).IsStrictlyPiecewise 2 :=
-  ⟨navajoSibilantHarmonySP, rfl⟩
-
-/-! ### § 6.2 Agreement on Navajo's transparent inputs
-
-On the canonical Navajo inputs introduced in §3, the TSL_2 and SP_2
-analyses make the same accept/reject prediction. The structural reason
-is captured by `sp_lang_of_one_sibilant_class_absent`: any input
-lacking either sibilant class is in the SP-harmony language, since no
-length-2 sublist can be the forbidden mixed-place pair. -/
-
-/-- Both elements of a length-2 sublist of `w` are members of `w`. -/
-private lemma _pair_mem_of_sublist {α : Type*} {w : List α} {a b : α}
-    (hsub : List.Sublist [a, b] w) : a ∈ w ∧ b ∈ w :=
-  ⟨hsub.mem (List.mem_cons_self),
-   hsub.mem (List.mem_cons_of_mem _ List.mem_cons_self)⟩
-
-/-- **Structural agreement helper**: any input lacking either anterior
-or posterior sibilants is in the SP_2 sibilant-harmony language. The
-forbidden subsequences `[antSib, postSib]` and `[postSib, antSib]` both
-require *both* sibilant classes, so the absence of either suffices. -/
-theorem sp_lang_of_one_sibilant_class_absent {w : List NSeg}
-    (h : NSeg.antSib ∉ w ∨ NSeg.postSib ∉ w) :
-    w ∈ navajoSibilantHarmonySP.language 2 := by
-  intro s _ hsub
-  refine ⟨?_, ?_⟩ <;> intro heq <;> subst heq <;>
-    rcases h with hAnt | hPost
-  · exact hAnt (_pair_mem_of_sublist hsub).1
-  · exact hPost (_pair_mem_of_sublist hsub).2
-  · exact hAnt (_pair_mem_of_sublist hsub).2
-  · exact hPost (_pair_mem_of_sublist hsub).1
-
-/-- Pre-harmony underlying form is rejected by SP_2 too — the
-mixed-place subsequence `[antSib, postSib]` is present at positions
-0 and 2 (separated by a vowel), violating the forbidden-subsequence
-ban. The witness is exhibited explicitly. -/
-theorem preSiDze_violates_SP : preSiDze ∉ navajoSibilantHarmonySP.language 2 := by
-  intro h
-  have hwit : List.Sublist [NSeg.antSib, NSeg.postSib] preSiDze := by
-    -- preSiDze = [antSib, vowel, postSib, vowel, neutralC]; pick positions 0 and 2.
-    refine .cons_cons _ <| .cons _ <| .cons_cons _ <| .cons _ <| .cons _ <| .slnil
-  exact (h _ le_rfl hwit).1 rfl
-
-/-- Post-harmony surface form is accepted by SP_2 too — `postSib`
-appears but `antSib` does not, so the forbidden mixed-place
-subsequences cannot occur. Direct corollary of the structural helper. -/
-theorem postShiDze_legal_SP : postShiDze ∈ navajoSibilantHarmonySP.language 2 :=
-  sp_lang_of_one_sibilant_class_absent (.inl (by decide))
-
-/-- Only-anterior control is accepted by SP_2 too — symmetrically,
-`antSib` appears but `postSib` does not. -/
-theorem controlOnlyAnterior_legal_SP :
-    controlOnlyAnterior ∈ navajoSibilantHarmonySP.language 2 :=
-  sp_lang_of_one_sibilant_class_absent (.inr (by decide))
-
-/-- No-sibilant control is accepted by SP_2 too — the input has neither
-sibilant class, so the structural helper applies trivially. -/
-theorem controlNoSibilants_legal_SP :
-    controlNoSibilants ∈ navajoSibilantHarmonySP.language 2 :=
-  sp_lang_of_one_sibilant_class_absent (.inl (by decide))
 
 end Phonology.Studies.Hansson2010
