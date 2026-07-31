@@ -6,10 +6,10 @@ and their interfaces. See README.md for documentation links.
 import Linglib.Core.Algebra.FreeMonoid.Destutter
 import Linglib.Core.Algebra.FreeMonoid.FreeSemigroup
 import Linglib.Core.Algebra.Group.Aperiodic
-import Linglib.Core.Algebra.Group.Divides
 import Linglib.Core.Algebra.Group.End
 import Linglib.Core.Algebra.Group.Idempotent
 import Linglib.Core.Algebra.Group.Pseudovariety
+import Linglib.Core.Algebra.Group.Subquotient
 import Linglib.Core.Algebra.Group.WithOne
 import Linglib.Core.Algebra.IdempotentPower
 import Linglib.Core.Algebra.Opposites
