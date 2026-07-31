@@ -53,14 +53,48 @@ theorem self_mem_shuffleIdeal (w : List α) : w ∈ shuffleIdeal w := Sublist.re
 @[simp] theorem shuffleIdeal_nil : shuffleIdeal ([] : List α) = ⊤ :=
   eq_top_iff.mpr fun x _ => nil_sublist x
 
-/-- `shuffleIdeal` carries concatenation to language product; with `shuffleIdeal_nil` this is the
-classical description of the shuffle ideal of `a₁ ⋯ aₙ` as `Σ*a₁Σ* ⋯ aₙΣ*`. -/
+/-- `shuffleIdeal` carries concatenation to language product. -/
 theorem shuffleIdeal_append (w v : List α) :
     shuffleIdeal (w ++ v) = shuffleIdeal w * shuffleIdeal v := by
   ext x
   simp only [mem_shuffleIdeal, mem_mul, append_sublist_iff]
-  exact ⟨fun ⟨x₁, x₂, hx, h₁, h₂⟩ => hx ▸ ⟨x₁, h₁, x₂, h₂, rfl⟩,
-    fun ⟨x₁, h₁, x₂, h₂, hx⟩ => hx ▸ ⟨x₁, x₂, rfl, h₁, h₂⟩⟩
+  grind
+
+theorem shuffleIdeal_singleton (a : α) : shuffleIdeal [a] = ⊤ * {[a]} * ⊤ := by
+  ext x
+  simp only [mem_shuffleIdeal, singleton_sublist, mem_mul]
+  constructor
+  · intro h
+    obtain ⟨s, t, rfl⟩ := append_of_mem h
+    exact ⟨s ++ [a], ⟨s, trivial, [a], rfl, rfl⟩, t, trivial, by simp⟩
+  · rintro ⟨p, ⟨s, -, y, rfl, rfl⟩, q, -, rfl⟩
+    simp
+
+/-- Shuffle ideals are two-sided ideals: they absorb `⊤` on either side. -/
+theorem top_mul_shuffleIdeal (w : List α) : ⊤ * shuffleIdeal w = shuffleIdeal w := by
+  ext x
+  simp only [mem_mul, mem_shuffleIdeal]
+  exact ⟨fun ⟨p, _, q, hq, hpq⟩ => hpq ▸ hq.trans (sublist_append_right p q),
+    fun h => ⟨[], trivial, x, h, rfl⟩⟩
+
+theorem shuffleIdeal_mul_top (w : List α) : shuffleIdeal w * ⊤ = shuffleIdeal w := by
+  ext x
+  simp only [mem_mul, mem_shuffleIdeal]
+  exact ⟨fun ⟨p, hp, q, _, hpq⟩ => hpq ▸ hp.trans (sublist_append_left p q),
+    fun h => ⟨x, h, [], trivial, append_nil x⟩⟩
+
+theorem shuffleIdeal_cons (a : α) (w : List α) :
+    shuffleIdeal (a :: w) = ⊤ * {[a]} * shuffleIdeal w := by
+  rw [show a :: w = [a] ++ w from rfl, shuffleIdeal_append, shuffleIdeal_singleton, mul_assoc,
+    top_mul_shuffleIdeal]
+
+/-- The classical regular-expression description of the shuffle ideal of `a₁ ⋯ aₙ`:
+`Σ*a₁Σ* ⋯ aₙΣ*`. -/
+theorem shuffleIdeal_eq_prod (w : List α) :
+    shuffleIdeal w = ⊤ * (w.map fun a => {[a]} * ⊤).prod := by
+  induction w with
+  | nil => simp
+  | cons a w ih => rw [shuffleIdeal_cons, ih]; simp [mul_assoc]
 
 theorem shuffleIdeal_le_shuffleIdeal : shuffleIdeal w ≤ shuffleIdeal v ↔ v <+ w :=
   ⟨fun h => h (self_mem_shuffleIdeal w), fun h _ hx => h.trans hx⟩
