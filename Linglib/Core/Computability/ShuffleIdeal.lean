@@ -4,34 +4,31 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Mathlib.Computability.MyhillNerode
-import Mathlib.Data.List.Forall2
 import Mathlib.Data.Nat.Find
-import Mathlib.Order.WellFoundedSet
+import Linglib.Core.Order.WellFoundedSet
 import Linglib.Core.Computability.StrictlyPiecewise
 
 /-!
 # Shuffle ideals and sublist-closed languages
 
-The **shuffle ideal** of a word `w` is its upward closure `{v | w <+ v}` under the subsequence
-order: the words that scatter `w` inside themselves. We show that a shuffle ideal is regular,
-by computing its left quotients — greedily matching `w` against a prefix leaves a suffix of `w`
-still to match, so only `|w| + 1` quotients arise. Over a finite alphabet the subsequence order
-is a well-quasi-order (Higman's lemma [higman-1952]), so a downward closed language has finitely
-many minimal forbidden words and is therefore the complement of finitely many shuffle ideals;
-regularity of such a language is **Haines' theorem**. Combining the two gives the characterisation
-of the strictly piecewise languages: `L` is `SP_k` for some `k` exactly when `L` is downward
-closed under subsequences [rogers-heinz-et-al-2010].
+The **shuffle ideal** of a word `w` is the language `{v | w <+ v}` of words containing `w` as a
+subsequence, and a language is **sublist-closed** when it is downward closed under the sublist
+order. Over a finite alphabet, Higman's lemma [higman-1952] makes the two notions dual: a
+sublist-closed language is the complement of the shuffle ideals of its finitely many minimal
+forbidden words, hence regular (**Haines' theorem**), and the sublist-closed languages are
+exactly the strictly piecewise ones [rogers-heinz-et-al-2010].
 
 ## Main definitions
 
 * `Language.shuffleIdeal w`: the words containing `w` as a subsequence.
 * `Language.IsSublistClosed L`: `L` is downward closed under `<+`.
-* `Language.maxMatch w x`: the length of the longest prefix of `w` that `x` already contains.
+* `List.maxMatch w x`: the length of the longest prefix of `w` occurring as a subsequence of `x`.
 
 ## Main results
 
 * `Language.isRegular_shuffleIdeal`: shuffle ideals are regular.
-* `List.wellQuasiOrdered_sublist`: Higman's lemma for words over a finite alphabet.
+* `Language.IsSublistClosed.exists_finset_compl_eq_biSup_shuffleIdeal`: the finite forbidden
+  basis.
 * `Language.IsSublistClosed.isRegular`: Haines' theorem.
 * `Language.exists_isStrictlyPiecewise_iff_isSublistClosed`: `SP` is exactly sublist-closure.
 -/
@@ -40,24 +37,45 @@ open List
 
 variable {α : Type*}
 
-/-! ### Higman's lemma for words -/
+/-! ### Minimal sublists and greedy matching -/
 
-/-- `List.SublistForall₂` at equality is the subsequence order. -/
-theorem List.sublistForall₂_eq_iff {l₁ l₂ : List α} : SublistForall₂ Eq l₁ l₂ ↔ l₁ <+ l₂ := by
-  simp [List.sublistForall₂_iff, List.forall₂_eq_eq_eq]
+namespace List
 
-/-- **Higman's lemma** for words [higman-1952]: over a finite alphabet the subsequence order is a
-well-quasi-order, so every infinite sequence of words has an earlier term embedding in a later
-one. Specialises mathlib's `Set.PartiallyWellOrderedOn.partiallyWellOrderedOn_sublistForall₂` to
-equality, where the alphabet is well-quasi-ordered by pigeonhole. -/
-theorem List.wellQuasiOrdered_sublist [Finite α] :
-    WellQuasiOrdered (fun l₁ l₂ : List α => l₁ <+ l₂) := by
-  rw [← Set.partiallyWellOrderedOn_univ_iff, Set.partiallyWellOrderedOn_iff_exists_lt]
-  refine fun f _ => ?_
-  obtain ⟨m, n, hmn, h⟩ := Set.partiallyWellOrderedOn_iff_exists_lt.mp
-    (Set.PartiallyWellOrderedOn.partiallyWellOrderedOn_sublistForall₂ (Eq : α → α → Prop)
-      Set.finite_univ.partiallyWellOrderedOn) f fun _ _ _ => Set.mem_univ _
-  exact ⟨m, n, hmn, List.sublistForall₂_eq_iff.mp h⟩
+theorem exists_minimal_sublist {s : Set (List α)} {w : List α} (hw : w ∈ s) :
+    ∃ m ∈ s, m <+ w ∧ ∀ v ∈ s, v <+ m → v = m := by
+  obtain ⟨m, ⟨hm, hmw⟩, hmin⟩ :=
+    (measure List.length).wf.has_min {u | u ∈ s ∧ u <+ w} ⟨w, hw, Sublist.refl w⟩
+  exact ⟨m, hm, hmw, fun v hv hvm => hvm.eq_of_length <| le_antisymm hvm.length_le <|
+    not_lt.1 fun h => hmin v ⟨hv, hvm.trans hmw⟩ h⟩
+
+variable [DecidableEq α]
+
+/-- The length of the longest prefix of `w` occurring as a subsequence of `x`. -/
+def maxMatch (w x : List α) : ℕ := Nat.findGreatest (fun m => w.take m <+ x) w.length
+
+theorem maxMatch_le (w x : List α) : maxMatch w x ≤ w.length := Nat.findGreatest_le _
+
+theorem take_maxMatch_sublist (w x : List α) : w.take (maxMatch w x) <+ x :=
+  Nat.findGreatest_spec (P := fun m => w.take m <+ x) (Nat.zero_le _) (by simp)
+
+theorem le_maxMatch {w x : List α} {j : ℕ} (hj : j ≤ w.length) (h : w.take j <+ x) :
+    j ≤ maxMatch w x := Nat.le_findGreatest hj h
+
+/-- **Greedy matching is optimal**: `w` scatters into `x ++ v` exactly when the part of `w` left
+over after its longest `x`-matchable prefix scatters into `v`. -/
+theorem sublist_append_iff_drop_maxMatch (w x v : List α) :
+    w <+ x ++ v ↔ w.drop (maxMatch w x) <+ v := by
+  refine ⟨fun h => ?_, fun h => ?_⟩
+  · obtain ⟨l₁, l₂, rfl, h₁, h₂⟩ := sublist_append_iff.mp h
+    have hj : l₁.length ≤ maxMatch (l₁ ++ l₂) x :=
+      le_maxMatch (by simp) (by rw [take_left]; exact h₁)
+    obtain ⟨d, hd⟩ := Nat.exists_eq_add_of_le hj
+    rw [hd, ← drop_drop, drop_left]
+    exact (drop_sublist _ _).trans h₂
+  · have := (take_maxMatch_sublist w x).append h
+    rwa [take_append_drop] at this
+
+end List
 
 namespace Language
 
@@ -75,131 +93,107 @@ theorem self_mem_shuffleIdeal (w : List α) : w ∈ shuffleIdeal w := Sublist.re
 @[simp] theorem shuffleIdeal_nil : shuffleIdeal ([] : List α) = ⊤ :=
   Set.ext fun x => iff_of_true (nil_sublist x) trivial
 
-/-- Shuffle ideals are **antitone**: a longer word is harder to scatter. -/
-theorem shuffleIdeal_anti {v w : List α} (h : v <+ w) : shuffleIdeal w ≤ shuffleIdeal v :=
-  fun _ hx => h.trans hx
+/-- `shuffleIdeal` carries concatenation to language product; with `shuffleIdeal_nil` this is the
+classical description of the shuffle ideal of `a₁ ⋯ aₙ` as `Σ*a₁Σ* ⋯ aₙΣ*`. -/
+theorem shuffleIdeal_append (w v : List α) :
+    shuffleIdeal (w ++ v) = shuffleIdeal w * shuffleIdeal v := by
+  ext x
+  simp only [mem_shuffleIdeal, mem_mul, append_sublist_iff]
+  constructor
+  · rintro ⟨x₁, x₂, rfl, h₁, h₂⟩; exact ⟨x₁, h₁, x₂, h₂, rfl⟩
+  · rintro ⟨x₁, h₁, x₂, h₂, rfl⟩; exact ⟨x₁, x₂, rfl, h₁, h₂⟩
+
+theorem shuffleIdeal_le_shuffleIdeal_iff {v w : List α} :
+    shuffleIdeal w ≤ shuffleIdeal v ↔ v <+ w :=
+  ⟨fun h => h (self_mem_shuffleIdeal w), fun h _ hx => h.trans hx⟩
+
+theorem shuffleIdeal_injective : Function.Injective (shuffleIdeal (α := α)) := fun _ _ h =>
+  (shuffleIdeal_le_shuffleIdeal_iff.mp h.ge).antisymm (shuffleIdeal_le_shuffleIdeal_iff.mp h.le)
 
 /-! ### Sublist-closed languages -/
 
 /-- A language is **sublist-closed** when deleting symbols never leaves it. -/
 def IsSublistClosed (L : Language α) : Prop := ∀ ⦃v w : List α⦄, v <+ w → w ∈ L → v ∈ L
 
-/-- The complement of a sublist-closed language is upward closed: inserting symbols cannot
-re-enter it. -/
 theorem IsSublistClosed.mem_compl_of_sublist (hL : L.IsSublistClosed) {v w : List α}
     (hvw : v <+ w) (hv : v ∈ Lᶜ) : w ∈ Lᶜ := fun hw => hv (hL hvw hw)
 
-/-- The complement of a shuffle ideal — avoiding `w` as a subsequence — is sublist-closed. -/
 theorem isSublistClosed_compl_shuffleIdeal (w : List α) : (shuffleIdeal w)ᶜ.IsSublistClosed :=
   fun _ _ hvw hw hm => hw (hm.trans hvw)
 
-/-- Sublist-closure is preserved by intersection: conjoining constraints keeps them all. -/
+theorem isSublistClosed_iff_shuffleIdeal_le :
+    L.IsSublistClosed ↔ ∀ w ∈ Lᶜ, shuffleIdeal w ≤ Lᶜ :=
+  ⟨fun hL _ hw _ hx => hL.mem_compl_of_sublist hx hw,
+    fun h _ _ hvw hw => by_contra fun hv => h _ hv hvw hw⟩
+
+theorem isSublistClosed_top : (⊤ : Language α).IsSublistClosed := fun _ _ _ _ => trivial
+
+theorem isSublistClosed_bot : (⊥ : Language α).IsSublistClosed := fun _ _ _ h => h
+
 theorem IsSublistClosed.inf {M : Language α} (hL : L.IsSublistClosed) (hM : M.IsSublistClosed) :
     (L ⊓ M).IsSublistClosed := fun _ _ hvw hw => ⟨hL hvw hw.1, hM hvw hw.2⟩
 
-/-- Sublist-closure is preserved by arbitrary intersections. -/
-theorem isSublistClosed_iInter {ι : Sort*} {L : ι → Language α}
-    (h : ∀ i, (L i).IsSublistClosed) : IsSublistClosed (⋂ i, L i) :=
+theorem IsSublistClosed.sup {M : Language α} (hL : L.IsSublistClosed) (hM : M.IsSublistClosed) :
+    (L ⊔ M).IsSublistClosed := fun _ _ hvw hw => hw.imp (hL hvw) (hM hvw)
+
+theorem isSublistClosed_iInf {ι : Sort*} {L : ι → Language α}
+    (h : ∀ i, (L i).IsSublistClosed) : IsSublistClosed (⨅ i, L i) :=
   fun _ _ hvw hw => Set.mem_iInter.mpr fun i => h i hvw (Set.mem_iInter.mp hw i)
 
-/-! ### Greedy matching and regularity -/
+theorem isSublistClosed_iSup {ι : Sort*} {L : ι → Language α}
+    (h : ∀ i, (L i).IsSublistClosed) : IsSublistClosed (⨆ i, L i) :=
+  fun _ _ hvw hw => Set.mem_iUnion.mpr ((Set.mem_iUnion.mp hw).imp fun i => h i hvw)
 
-section DecidableEq
-variable [DecidableEq α]
+/-! ### Regularity of shuffle ideals -/
 
-/-- The length of the longest prefix of `w` that occurs as a subsequence of `x`. Greedy matching
-is optimal: consuming this much of `w` against `x` leaves the easiest remaining obligation. -/
-def maxMatch (w x : List α) : ℕ := Nat.findGreatest (fun m => w.take m <+ x) w.length
-
-theorem maxMatch_le (w x : List α) : maxMatch w x ≤ w.length := Nat.findGreatest_le _
-
-theorem take_maxMatch_sublist (w x : List α) : w.take (maxMatch w x) <+ x :=
-  Nat.findGreatest_spec (P := fun m => w.take m <+ x) (Nat.zero_le _) (by simp)
-
-theorem le_maxMatch {w x : List α} {j : ℕ} (hj : j ≤ w.length) (h : w.take j <+ x) :
-    j ≤ maxMatch w x := Nat.le_findGreatest hj h
-
-/-- **Greedy matching is optimal**: `w` scatters into `x ++ v` exactly when the part of `w` left
-over after its longest `x`-matchable prefix scatters into `v`. -/
-theorem sublist_append_iff_drop_maxMatch (w x v : List α) :
-    w <+ x ++ v ↔ w.drop (maxMatch w x) <+ v := by
-  refine ⟨fun h => ?_, fun h => ?_⟩
-  · obtain ⟨l₁, l₂, rfl, h₁, h₂⟩ := List.sublist_append_iff.mp h
-    have hj : l₁.length ≤ maxMatch (l₁ ++ l₂) x :=
-      le_maxMatch (by simp) (by rw [List.take_left]; exact h₁)
-    obtain ⟨d, hd⟩ := Nat.exists_eq_add_of_le hj
-    rw [hd, ← List.drop_drop, List.drop_left]
-    exact (List.drop_sublist _ _).trans h₂
-  · have := (take_maxMatch_sublist w x).append h
-    rwa [List.take_append_drop] at this
-
-/-- Reading `x` turns the shuffle ideal of `w` into the shuffle ideal of what is left of `w`. -/
-theorem leftQuotient_shuffleIdeal (w x : List α) :
-    (shuffleIdeal w).leftQuotient x = shuffleIdeal (w.drop (maxMatch w x)) := by
+theorem leftQuotient_shuffleIdeal [DecidableEq α] (w x : List α) :
+    (shuffleIdeal w).leftQuotient x = shuffleIdeal (w.drop (w.maxMatch x)) := by
   ext v; exact sublist_append_iff_drop_maxMatch w x v
 
-/-- A shuffle ideal is **regular**. Its left quotients are the shuffle ideals of the suffixes of
+/-- A shuffle ideal is **regular**: its left quotients are the shuffle ideals of the suffixes of
 `w`, of which there are at most `|w| + 1`, so Myhill–Nerode applies. -/
 theorem isRegular_shuffleIdeal (w : List α) : (shuffleIdeal w).IsRegular := by
+  classical
   refine isRegular_iff_finite_range_leftQuotient.mpr (Set.Finite.subset
     (Set.finite_range fun j : Fin (w.length + 1) => shuffleIdeal (w.drop j)) ?_)
   rintro _ ⟨x, rfl⟩
-  exact ⟨⟨maxMatch w x, Nat.lt_succ_of_le (maxMatch_le w x)⟩, (leftQuotient_shuffleIdeal w x).symm⟩
-
-end DecidableEq
+  exact ⟨⟨w.maxMatch x, Nat.lt_succ_of_le (w.maxMatch_le x)⟩, (leftQuotient_shuffleIdeal w x).symm⟩
 
 /-! ### The finite forbidden basis -/
-
-/-- Every member of a language dominates a `<+`-minimal member: proper subsequences shorten. -/
-theorem exists_minimal_sublist (L : Language α) {w : List α} (hw : w ∈ L) :
-    ∃ m ∈ L, m <+ w ∧ ∀ v ∈ L, v <+ m → v = m := by
-  induction hn : w.length using Nat.strong_induction_on generalizing w with
-  | _ n ih =>
-    by_cases h : ∀ v ∈ L, v <+ w → v = w
-    · exact ⟨w, hw, Sublist.refl w, h⟩
-    · push Not at h
-      obtain ⟨v, hv, hvw, hne⟩ := h
-      obtain ⟨m, hm, hmv, hmin⟩ := ih v.length
-        (hn ▸ lt_of_le_of_ne hvw.length_le fun hl => hne (hvw.eq_of_length hl)) hv rfl
-      exact ⟨m, hm, hmv.trans hvw, hmin⟩
 
 /-- **Finite forbidden basis**: over a finite alphabet a sublist-closed language is avoidance of
 finitely many forbidden subsequences. The `<+`-minimal non-members form an antichain, hence are
 finite by Higman's lemma, and every non-member contains one. -/
-theorem IsSublistClosed.exists_finset_compl_eq [Finite α] (hL : L.IsSublistClosed) :
-    ∃ F : Finset (List α), Lᶜ = ⋃ m ∈ F, shuffleIdeal m := by
+theorem IsSublistClosed.exists_finset_compl_eq_biSup_shuffleIdeal [Finite α]
+    (hL : L.IsSublistClosed) : ∃ F : Finset (List α), Lᶜ = ⨆ m ∈ F, shuffleIdeal m := by
   have hfin : {m | m ∈ Lᶜ ∧ ∀ v ∈ Lᶜ, v <+ m → v = m}.Finite :=
-    IsAntichain.finite_of_partiallyWellOrderedOn (fun _ ha _ hb hne hab => hne (hb.2 _ ha.1 hab))
-      (Set.partiallyWellOrderedOn_of_wellQuasiOrdered List.wellQuasiOrdered_sublist _)
-  refine ⟨hfin.toFinset, Set.ext fun w => ?_⟩
-  simp only [Set.mem_iUnion, Set.Finite.mem_toFinset, Set.mem_setOf_eq, exists_prop]
-  exact ⟨fun hw => (exists_minimal_sublist Lᶜ hw).imp fun _ ⟨hm, hmw, hmin⟩ => ⟨⟨hm, hmin⟩, hmw⟩,
-    fun ⟨_, hm, hmw⟩ => hL.mem_compl_of_sublist hmw hm.1⟩
+    IsAntichain.finite_of_wellQuasiOrdered (fun _ ha _ hb hne hab => hne (hb.2 _ ha.1 hab))
+      List.wellQuasiOrdered_sublist
+  refine ⟨hfin.toFinset, le_antisymm (fun w hw => ?_) (iSup₂_le fun m hm =>
+    isSublistClosed_iff_shuffleIdeal_le.mp hL m (hfin.mem_toFinset.mp hm).1)⟩
+  obtain ⟨m, hm, hmw, hmin⟩ := List.exists_minimal_sublist hw
+  exact mem_iSup.mpr ⟨m, mem_iSup.mpr ⟨hfin.mem_toFinset.mpr ⟨hm, hmin⟩, hmw⟩⟩
 
 /-! ### Haines' theorem -/
 
-/-- The empty language is regular: a one-state automaton accepting nothing. -/
-theorem isRegular_zero : (0 : Language α).IsRegular :=
+theorem isRegular_bot : (⊥ : Language α).IsRegular :=
   ⟨Unit, inferInstance, ⟨fun _ _ => (), (), ∅⟩, rfl⟩
 
-/-- Regular languages are closed under finite unions, by iterating `Language.IsRegular.add`. -/
-theorem isRegular_biUnion {ι : Type*} (F : Finset ι) {f : ι → Set (List α)}
-    (hf : ∀ i ∈ F, Language.IsRegular (f i)) : Language.IsRegular (⋃ i ∈ F, f i) := by
+theorem isRegular_biSup {ι : Type*} (F : Finset ι) {f : ι → Language α}
+    (hf : ∀ i ∈ F, (f i).IsRegular) : (⨆ i ∈ F, f i).IsRegular := by
   classical
   induction F using Finset.induction with
-  | empty =>
-    simp only [Finset.notMem_empty, Set.iUnion_of_empty, Set.iUnion_empty]; exact isRegular_zero
+  | empty => simpa using isRegular_bot
   | insert i F hi ih =>
-    rw [Finset.set_biUnion_insert, ← Language.add_def]
+    rw [Finset.iSup_insert]
     exact (hf i (by simp)).add (ih fun j hj => hf j (by simp [hj]))
 
 /-- **Haines' theorem**: over a finite alphabet every sublist-closed language is regular. It is
 the complement of the finitely many shuffle ideals of its minimal forbidden subsequences, and
 each of those is regular. -/
-theorem IsSublistClosed.isRegular [Finite α] [DecidableEq α] (hL : L.IsSublistClosed) :
-    L.IsRegular :=
-  have ⟨F, hF⟩ := hL.exists_finset_compl_eq
-  IsRegular.of_compl (hF ▸ isRegular_biUnion F fun m _ => isRegular_shuffleIdeal m)
+theorem IsSublistClosed.isRegular [Finite α] (hL : L.IsSublistClosed) : L.IsRegular :=
+  have ⟨F, hF⟩ := hL.exists_finset_compl_eq_biSup_shuffleIdeal
+  IsRegular.of_compl (hF ▸ isRegular_biSup F fun m _ => isRegular_shuffleIdeal m)
 
 /-! ### Strictly piecewise languages are exactly the sublist-closed ones -/
 
@@ -210,11 +204,12 @@ outside `L` is already refuted by a basis word it contains. -/
 theorem exists_isStrictlyPiecewise_iff_isSublistClosed [Finite α] :
     (∃ k, L.IsStrictlyPiecewise k) ↔ L.IsSublistClosed := by
   refine ⟨fun ⟨_, hk⟩ _ _ hvw hw => hk.mem_of_sublist hvw hw, fun hL => ?_⟩
-  obtain ⟨F, hF⟩ := hL.exists_finset_compl_eq
+  obtain ⟨F, hF⟩ := hL.exists_finset_compl_eq_biSup_shuffleIdeal
+  have hFmem : ∀ w, w ∈ Lᶜ ↔ ∃ m ∈ F, m <+ w := fun w => by
+    rw [show Lᶜ = _ from hF]; simp [Language.mem_iSup]
   refine ⟨F.sup List.length, L, Set.ext fun w => ?_⟩
   refine ⟨fun h => by_contra fun hwL => ?_, fun hw s _ hs => hL hs hw⟩
-  obtain ⟨m, hm, hmw⟩ := Set.mem_iUnion₂.mp (hF ▸ hwL : w ∈ ⋃ m ∈ F, shuffleIdeal m)
-  exact (hF ▸ Set.mem_biUnion hm (self_mem_shuffleIdeal m) : m ∈ Lᶜ)
-    (h m (Finset.le_sup hm) hmw)
+  obtain ⟨m, hm, hmw⟩ := (hFmem w).mp hwL
+  exact (hFmem m).mpr ⟨m, hm, Sublist.refl m⟩ (h m (Finset.le_sup hm) hmw)
 
 end Language
