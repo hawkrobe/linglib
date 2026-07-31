@@ -16,7 +16,10 @@ single margin caps the influence of side `s` at every output coordinate,
 `TwoSidedUnboundedDependence` places one target under the influence of both sides,
 and `RequiresBothSides` demands both sides at once. `flankWord` is the witness family
 instantiating the negative side: a target buried in a filler run between two
-independently editable flanks.
+independently editable flanks. The **non-interacting** bimachines — the weak-determinism
+class of [meinhardt-mai-bakovic-mccollum-2024], whose cell output is an order-independent
+union of one-sided change-rules over the identity — live here with their exclusion and
+separation theorems.
 
 ## Main definitions
 
@@ -30,6 +33,10 @@ independently editable flanks.
 * `OneSidedChanges f`: every changed cell is determined by one side of its input
   alone
 * `flankWord x fill y n`: a target buried in a filler run with editable flanks
+* `Bimachine.NonInteraction`, `Bimachine.IsNonInteracting`: the cell output decomposed
+  as an order-independent union of one-sided change-rules over the identity
+* `IsNonInteractingBimachineComputable f`: `f` is computed by some non-interacting
+  finite bimachine
 
 ## Main theorems
 
@@ -57,9 +64,6 @@ witnesses. The forms are margin-indexed rather than fixed-index because a fixed
 target has only finitely many positions to its left.
 The predicates place no in-range guard on target coordinates: for length-preserving
 maps an out-of-range coordinate is `none` on both sides of any perturbation.
-
-[UPSTREAM] candidate: `Mathlib.Computability.Dependence`, the window-dependence
-companion of the transducer files.
 -/
 
 open Set
@@ -280,6 +284,180 @@ theorem RequiresBothSides.of_flanks {f : List α → List α}
 
 end FlankWitness
 
+/-! ### Non-interacting bimachines: the apparatus -/
+
+namespace Bimachine
+
+variable {L R : Type*}
+
+/-! ### Non-interacting decompositions -/
+
+/-- The output at a cell is determined by one side alone: fixing the input symbol and
+one context state already fixes it. -/
+def OneSidedAt (B : Bimachine L R α β) (l : L) (a : α) (r : R) : Prop :=
+  (∀ r', B.output l a r' = B.output l a r) ∨ (∀ l', B.output l' a r = B.output l a r)
+
+section
+
+variable [DecidableEq α]
+
+/-- `unite cL cR a` takes the left proposal if it fires (`≠ a`), else the right one —
+the union of two change proposals over the identity default `a`. The tie-break is
+asymmetric (when both fire the left wins) but inert under the order-independence
+`IsNonInteracting` requires. -/
+def unite (cL cR a : α) : α := if cL = a then cR else cL
+
+/-- With the right proposal inert, the union is whatever the left one proposes. -/
+@[simp] theorem unite_right_self (cL a : α) : unite cL a a = cL := by
+  grind [unite]
+
+/-- With the left proposal inert, the union is whatever the right one proposes. -/
+@[simp] theorem unite_left_self (cR a : α) : unite a cR a = cR := if_pos rfl
+
+/-- A firing left proposal wins. -/
+theorem unite_of_left_ne {cL a : α} (h : cL ≠ a) (cR : α) : unite cL cR a = cL := if_neg h
+
+/-- The union is order-independent exactly when the proposals agree wherever both
+fire. -/
+theorem unite_comm_iff {cL cR a : α} :
+    unite cL cR a = unite cR cL a ↔ (cL ≠ a → cR ≠ a → cL = cR) := by
+  grind [unite]
+
+/-- The combined value is the default exactly when *both* one-sided proposals are
+inert. -/
+@[simp] theorem unite_eq_self_iff {cL cR a : α} : unite cL cR a = a ↔ cL = a ∧ cR = a := by
+  grind [unite]
+
+/-- A non-interacting decomposition of a bimachine: a change-rule per side over the
+identity default, whose union is order-independent and produces the cell output. -/
+structure NonInteraction (B : Bimachine L R α α) where
+  /-- The change the left context proposes for the current symbol. -/
+  ruleL : L → α → α
+  /-- The change the right context proposes for the current symbol. -/
+  ruleR : R → α → α
+  /-- The union of the two proposals is order-independent (`unite_comm_iff`: they agree
+  wherever both fire), so neither side can suppress the other's change. -/
+  unite_comm : ∀ l a r, unite (ruleL l a) (ruleR r a) a = unite (ruleR r a) (ruleL l a) a
+  /-- The cell output is the union of the two proposals. -/
+  output_eq : ∀ l a r, B.output l a r = [unite (ruleL l a) (ruleR r a) a]
+
+/-- A bimachine over a single alphabet is non-interacting when it admits a
+non-interacting decomposition (`NonInteraction`) of its cell output. -/
+def IsNonInteracting (B : Bimachine L R α α) : Prop := Nonempty B.NonInteraction
+
+variable {L' R' : Type*} {B : Bimachine L R α α} (w : B.NonInteraction) {l : L} {a : α}
+  {r : R}
+
+/-- A non-interacting decomposition exhibits the bimachine as letter-to-letter. -/
+def NonInteraction.letterToLetter : B.LetterToLetter :=
+  ⟨fun l a r => unite (w.ruleL l a) (w.ruleR r a) a, w.output_eq⟩
+
+/-- A firing left rule alone determines the output. -/
+theorem NonInteraction.output_eq_ruleL (hL : w.ruleL l a ≠ a) :
+    B.output l a r = [w.ruleL l a] :=
+  (w.output_eq l a r).trans (by rw [unite_of_left_ne hL])
+
+/-- A firing right rule alone determines the output — order-independence of the union
+is what silences the left state. -/
+theorem NonInteraction.output_eq_ruleR (hR : w.ruleR r a ≠ a) :
+    B.output l a r = [w.ruleR r a] :=
+  (w.output_eq l a r).trans (by rw [w.unite_comm l a r, unite_of_left_ne hR])
+
+/-- At every cell whose output differs from the input symbol, a decomposed bimachine is
+one-sided: the change is the left rule's alone or the right rule's alone. -/
+theorem NonInteraction.oneSidedAt_of_change (w : B.NonInteraction)
+    (hne : B.output l a r ≠ [a]) : B.OneSidedAt l a r := by
+  by_cases hL : w.ruleL l a = a
+  · have hR : w.ruleR r a ≠ a := fun hR =>
+      hne ((w.output_eq l a r).trans (by rw [unite_eq_self_iff.mpr ⟨hL, hR⟩]))
+    exact .inr fun l' => (w.output_eq_ruleR hR).trans (w.output_eq_ruleR hR).symm
+  · exact .inl fun r' => (w.output_eq_ruleL hL).trans (w.output_eq_ruleL hL).symm
+
+/-- At every cell whose output differs from the input symbol, a non-interacting
+bimachine is one-sided. -/
+theorem IsNonInteracting.oneSidedAt_of_change (h : B.IsNonInteracting)
+    (hne : B.output l a r ≠ [a]) : B.OneSidedAt l a r :=
+  h.elim fun w => w.oneSidedAt_of_change hne
+
+/-- Transport a decomposition along state equivalences. -/
+def NonInteraction.map (eL : L ≃ L') (eR : R ≃ R') :
+    (Bimachine.map eL eR B).NonInteraction where
+  ruleL l a := w.ruleL (eL.symm l) a
+  ruleR r a := w.ruleR (eR.symm r) a
+  unite_comm _ a _ := w.unite_comm _ a _
+  output_eq _ a _ := w.output_eq _ a _
+
+/-- Non-interaction transports along state reindexing. -/
+theorem IsNonInteracting.map (h : B.IsNonInteracting) (eL : L ≃ L') (eR : R ≃ R') :
+    (Bimachine.map eL eR B).IsNonInteracting :=
+  Nonempty.map (·.map eL eR) h
+
+/-- A decomposed bimachine fixes cell `i` exactly when both change-proposals are inert
+at its two context states. -/
+theorem NonInteraction.getElem?_run_eq_iff {u : List α} {i : ℕ} (hsym : u[i]? = some a) :
+    (B.run u)[i]? = u[i]? ↔
+      w.ruleL (B.lState (u.take i)) a = a ∧ w.ruleR (B.rState (u.drop (i + 1))) a = a := by
+  rw [w.letterToLetter.getElem?_run u i, hsym, Option.map_some, Option.some_inj]
+  exact unite_eq_self_iff
+
+end
+end Bimachine
+
+/-! ### The non-interacting class -/
+
+section
+
+variable [DecidableEq α]
+
+/-- Computability by a non-interacting finite bimachine. -/
+def IsNonInteractingBimachineComputable (f : List α → List α) : Prop :=
+  ∃ (L : Type) (_ : Fintype L) (R : Type) (_ : Fintype R) (B : Bimachine L R α α),
+    B.run = f ∧ B.IsNonInteracting
+/-- `f` is computed by a non-interacting finite bimachine if and only if it is computed
+by one with state types in any universes. -/
+theorem isNonInteractingBimachineComputable_iff.{v, w} {f : List α → List α} :
+    IsNonInteractingBimachineComputable f
+      ↔ ∃ (L : Type v) (_ : Fintype L) (R : Type w) (_ : Fintype R)
+          (B : Bimachine L R α α), B.run = f ∧ B.IsNonInteracting :=
+  exists_fintype₂_congr
+    (fun eL eR ⟨B, hB, h⟩ =>
+      ⟨.map eL eR B, (B.run_map eL eR).trans hB, h.map eL eR⟩)
+    (fun eL eR ⟨B, hB, h⟩ =>
+      ⟨.map eL eR B, (B.run_map eL eR).trans hB, h.map eL eR⟩)
+
+/-- A non-interacting finite-state bimachine witnesses
+`IsNonInteractingBimachineComputable` for its `run`, whatever the universes of its
+state types (`IsNonInteracting.map`). -/
+theorem Bimachine.isNonInteractingBimachineComputable {L R : Type*} [Fintype L]
+    [Fintype R] (B : Bimachine L R α α) (h : B.IsNonInteracting) :
+    IsNonInteractingBimachineComputable B.run :=
+  isNonInteractingBimachineComputable_iff.mpr ⟨L, inferInstance, R, inferInstance, B, rfl, h⟩
+
+/-- A function computed by a non-interacting bimachine is in particular
+bimachine-computable. -/
+theorem IsBimachineComputable.of_nonInteracting {f : List α → List α}
+    (h : IsNonInteractingBimachineComputable f) : IsBimachineComputable f :=
+  have ⟨_, _, _, _, B, hB, _⟩ := h
+  hB ▸ B.isBimachineComputable
+
+/-- Functions computed by non-interacting bimachines are length-preserving. -/
+theorem IsNonInteractingBimachineComputable.length_eq {f : List α → List α}
+    (h : IsNonInteractingBimachineComputable f) (x : List α) : (f x).length = x.length :=
+  have ⟨_, _, _, _, _, hB, ⟨w⟩⟩ := h
+  hB ▸ w.letterToLetter.length_run x
+/-- A Mealy-computable function is computed by a non-interacting bimachine: the
+bimachine view (`Mealy.toBimachine`) has a trivial right automaton, so the cell output
+is a one-sided rule with `ωR` the identity. -/
+theorem IsNonInteractingBimachineComputable.of_mealyComputable {f : List α → List α}
+    (h : IsMealyComputable f) : IsNonInteractingBimachineComputable f :=
+  have ⟨_, _, T, hT⟩ := h
+  hT ▸ T.toBimachine_run ▸ T.toBimachine.isNonInteractingBimachineComputable
+    ⟨⟨T.output, fun _ a => a,
+      fun _ a _ => (Bimachine.unite_right_self _ a).trans (Bimachine.unite_left_self _ a).symm,
+      fun _ a _ => by simp⟩⟩
+
+end
+
 /-! ### Machines bound dependence
 
 A length-preserving left-subsequential function depends boundedly on the right: the
@@ -295,22 +473,12 @@ variable {σ : Type*}
 theorem IsLeftSubsequential.boundedDependence_right
     (hlen : ∀ w, (f w).length = w.length) (hf : IsLeftSubsequential f) :
     BoundedDependence f .right := by
-  obtain ⟨N, hN⟩ := hf.exists_getElem?_append_eq
-  refine ⟨N, fun i u v _ hag => ?_⟩
-  show (f u)[i]? = (f v)[i]?
-  have key : ∀ w : List α, (f (w.take (i + N + 1)))[i]? = (f w)[i]? := fun w => by
-    rcases lt_or_ge w.length (i + N + 1) with h | h
-    · rw [List.take_of_length_le h.le]
-    · conv_rhs => rw [← List.take_append_drop (i + N + 1) w]
-      exact hN _ _ i (by rw [hlen, List.length_take]; omega)
-  rw [← key u, ← key v, hag.take_eq (by omega)]
+  obtain ⟨N, hN⟩ := hf.exists_dependsOn_Iic hlen
+  exact ⟨N, hN⟩
 
 /-- A sequential machine is left-determined at every coordinate. -/
-theorem Mealy.leftDetermined (T : Mealy σ α β) (i : ℕ) : LeftDetermined T.run i := by
-  intro u v hlen hag
-  show (T.run u)[i]? = (T.run v)[i]?
-  rw [T.getElem?_run u, T.getElem?_run v, hag.getElem?_eq (mem_Iic.mpr le_rfl),
-    List.take_eq_of_agree fun k hk => hag.getElem?_eq (mem_Iic.mpr hk.le)]
+theorem Mealy.leftDetermined (T : Mealy σ α β) (i : ℕ) : LeftDetermined T.run i :=
+  T.dependsOn_run_Iic i
 
 /-- A sequential machine's output never depends on input to its right. -/
 theorem Mealy.boundedDependence_right (T : Mealy σ α β) : BoundedDependence T.run .right :=
@@ -318,9 +486,8 @@ theorem Mealy.boundedDependence_right (T : Mealy σ α β) : BoundedDependence T
 
 /-- A Mealy-computable map is left-determined at every coordinate. -/
 theorem IsMealyComputable.leftDetermined {f : List α → List β}
-    (hf : IsMealyComputable f) (i : ℕ) : LeftDetermined f i := by
-  obtain ⟨σ, _, T, rfl⟩ := hf
-  exact T.leftDetermined i
+    (hf : IsMealyComputable f) (i : ℕ) : LeftDetermined f i :=
+  hf.dependsOn_Iic i
 
 /-- A Mealy-computable map's output never depends on input to its right. -/
 theorem IsMealyComputable.boundedDependence_right {f : List α → List β}

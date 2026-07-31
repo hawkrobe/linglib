@@ -8,6 +8,7 @@ import Mathlib.Data.Fintype.EquivFin
 import Mathlib.Data.List.Basic
 import Mathlib.Logic.Equiv.Defs
 import Linglib.Core.Data.Fintype.Transfer
+import Linglib.Core.Data.List.EqOn
 import Linglib.Core.Data.List.Fold
 
 /-!
@@ -339,3 +340,21 @@ theorem IsMealyComputable.isRegular_preimage {f : List α → List β}
   obtain ⟨τ, _, M, rfl⟩ := hL
   exact ⟨σ × τ, inferInstance, M.comapMealy T, M.accepts_comapMealy T⟩
 
+
+/-! ### Causality -/
+
+/-- A sequential machine's output coordinate `i` depends only on the input prefix
+`Set.Iic i`. -/
+theorem Mealy.dependsOn_run_Iic {σ : Type*} (T : Mealy σ α β) (i : ℕ) :
+    List.DependsOn (fun u => (T.run u)[i]?) (Set.Iic i) := by
+  intro u v hlen hag
+  show (T.run u)[i]? = (T.run v)[i]?
+  rw [T.getElem?_run u, T.getElem?_run v, hag.getElem?_eq (Set.mem_Iic.mpr le_rfl),
+    List.take_eq_of_agree fun k hk => hag.getElem?_eq (Set.mem_Iic.mpr hk.le)]
+
+/-- A Mealy-computable map's output coordinate `i` depends only on the input prefix
+`Set.Iic i`. -/
+theorem IsMealyComputable.dependsOn_Iic {f : List α → List β}
+    (hf : IsMealyComputable f) (i : ℕ) : List.DependsOn (fun u => (f u)[i]?) (Set.Iic i) := by
+  obtain ⟨σ, _, T, rfl⟩ := hf
+  exact T.dependsOn_run_Iic i

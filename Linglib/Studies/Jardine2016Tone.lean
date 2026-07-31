@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.Computability.Subsequential
-import Linglib.Core.Computability.Dependence
+import Linglib.Phonology.Subregular.Dependence
 import Linglib.Core.Computability.Mealy
 import Linglib.Core.Computability.Bimachine
 import Linglib.Core.Computability.ElgotMezei
