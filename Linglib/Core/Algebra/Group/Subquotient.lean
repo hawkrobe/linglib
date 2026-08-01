@@ -26,11 +26,12 @@ isomorphism.
 
 ## Implementation notes
 
-The relation compares carriers-with-instances, not terms of one type, so there is no `Trans`
-or `Preorder` instance to register; transitivity and antisymmetry-up-to-`MulEquiv` are
-standalone lemmas. Every statement also holds verbatim at `MulOneClass`; the file is stated
-at `Monoid` deliberately, since the relation's home theory and the additive translation
-(`AddMonoid.IsSubquotient`) are monoid-theoretic.
+The relation takes carriers together with their instances, so it is not a binary relation
+on a type: there is no `Preorder` instance to register, and the `trans` tactic rejects
+relations with instance arguments, so transitivity and antisymmetry-up-to-`MulEquiv` are
+standalone lemmas (`@[refl]` does apply). Every statement also holds at `MulOneClass`; the
+file is stated at `Monoid` deliberately — the `Monoid`/`AddMonoid` namespaces, and with
+them the additive translation `AddMonoid.IsSubquotient`, are monoid-theoretic.
 -/
 
 namespace Monoid
