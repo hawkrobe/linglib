@@ -109,18 +109,22 @@ theorem IsSubquotient.card_le [Finite S] (h : IsSubquotient T S) :
   exact (Nat.card_le_card_of_surjective f hf).trans
     (Nat.card_le_card_of_injective N.subtype N.subtype_injective)
 
+/-- A subquotient of maximal cardinality is an isomorph. -/
+@[to_additive /-- A subquotient of maximal cardinality is an isomorph. -/]
+theorem IsSubquotient.nonempty_mulEquiv_of_card_le [Finite S] (hTS : IsSubquotient T S)
+    (hle : Nat.card S ≤ Nat.card T) : Nonempty (T ≃* S) := by
+  obtain ⟨N, f, hf⟩ := hTS
+  have hNS : Nat.card N ≤ Nat.card S := Nat.card_le_card_of_injective _ N.subtype_injective
+  have hSN : Nat.card S ≤ Nat.card N := hle.trans (Nat.card_le_card_of_surjective f hf)
+  exact ⟨(MulEquiv.ofBijective f (hf.bijective_of_nat_card_le (hNS.trans hle))).symm.trans
+    (MulEquiv.ofBijective N.subtype (N.subtype_injective.bijective_of_nat_card_le hSN))⟩
+
 /-- Finite monoids that are subquotients of each other are isomorphic ([eilenberg-1976]). -/
 @[to_additive /-- Finite additive monoids that are subquotients of each other are
 isomorphic. -/]
 theorem IsSubquotient.nonempty_mulEquiv [Finite S] (hTS : IsSubquotient T S)
     (hST : IsSubquotient S T) : Nonempty (T ≃* S) := by
   have := hTS.finite
-  have hcard : Nat.card T = Nat.card S := le_antisymm hTS.card_le hST.card_le
-  obtain ⟨N, f, hf⟩ := hTS
-  have hNS : Nat.card N ≤ Nat.card S := Nat.card_le_card_of_injective _ N.subtype_injective
-  have hTN : Nat.card T ≤ Nat.card N := Nat.card_le_card_of_surjective f hf
-  exact ⟨(MulEquiv.ofBijective f (hf.bijective_of_nat_card_le (hNS.trans hcard.ge))).symm.trans
-    (MulEquiv.ofBijective N.subtype (N.subtype_injective.bijective_of_nat_card_le
-      (hcard ▸ hTN)))⟩
+  exact hTS.nonempty_mulEquiv_of_card_le hST.card_le
 
 end Monoid
