@@ -1,51 +1,35 @@
 import Linglib.Core.Probability.Choice.RationalAction
 
 /-!
-# Algebraic Approximations ([luce-1959], §1.G, pp. 34–37) [luce-1959]
+# Just noticeable differences and the trace
 
-[luce-1959] develops the connection between choice probabilities and
-ordinal preference structures via **just noticeable differences** (jnds).
+This file formalizes the algebraic approximations of [luce-1959] (§1.G,
+pp. 34–37). A jnd threshold `π ∈ (1/2, 1)` splits pairwise choice into a
+discriminable-preference relation `L(π)` and an indistinguishability relation
+`I(π)` (Definition 3). We show that the pair satisfies Luce's semiorder
+axioms (Theorem 5) and that the trace ordering (Definition 4) is a weak order
+coinciding with the ratio-scale order (Theorem 6).
 
-When stimuli are "close" in value, subjects cannot reliably discriminate
-between them — the choice probability `P(x, {x,y})` is near `1/2`. A jnd
-threshold `π ∈ (1/2, 1)` defines two relations on the alternative set:
+## Main definitions
 
-- **L(π)**: `x` is discriminably preferred to `y` (Definition 3)
-- **I(π)**: `x` and `y` are indistinguishable (Definition 3)
+* `jndL`, `jndI`: the relations `L(π)` and `I(π)`.
+* `traceGe`: the trace ordering `x ≥_T y`.
 
-## Key results
+## References
 
-1. **Semiorder** (Theorem 5): Under Axiom 1 with imperfect discrimination,
-   `(L(π), I(π))` satisfies the semiorder axioms — trichotomy, I-reflexivity,
-   L-transitivity, and the interval condition `xLy ∧ yIz ∧ zLw → xLw`.
-
-2. **Trace** (Definition 4): `x ≥_T y` iff `P(x, z) ≥ P(y, z)` for all `z`.
-   The trace extracts the "underlying" preference by requiring dominance in
-   all pairwise comparisons against any third alternative.
-
-3. **Weak order** (Theorem 6): Under Axiom 1, the trace is a weak order
-   (total preorder), and `x ≥_T y` iff `v(x) ≥ v(y)` iff `P(x, y) ≥ 1/2`.
-
-## Connection to the choice axiom
-
-The semiorder captures the *observable* preference structure (what a subject
-can discriminate), while the trace recovers the *latent* ratio scale ordering.
-Theorem 6 shows that Axiom 1 forces these to align: the trace is exactly the
-ordering induced by the scale values `v`.
+* [R. D. Luce, *Individual Choice Behavior*][luce-1959]
 -/
 
 namespace Core
 
 open Real BigOperators Finset
 
-variable {A : Type*} [DecidableEq A]
+variable {A : Type*}
 
 -- The pairwise kernel `pairwiseProb` and its lemma suite live in
 -- `Core.Probability.Choice.RationalAction` (imported above).
 
--- ============================================================================
--- §2. Just Noticeable Differences (Definition 3, p. 34)
--- ============================================================================
+/-! ### Just noticeable differences (Definition 3, p. 34) -/
 
 /-- The `L(π)` relation (Definition 3, [luce-1959], p. 34):
     `x L(π) y` iff `P(x, {x,y}) > π`.
@@ -67,12 +51,8 @@ def jndL (v : A → ℝ) (thr : ℝ) (x y : A) : Prop :=
 def jndI (v : A → ℝ) (thr : ℝ) (x y : A) : Prop :=
   1 - thr ≤ pairwiseProb v x y ∧ pairwiseProb v x y ≤ thr
 
--- ============================================================================
--- §3. Semiorder Properties (Theorem 5, p. 35)
--- ============================================================================
-
 /-!
-## Semiorder axioms
+### Semiorder axioms (Theorem 5, p. 35)
 
 [luce-1959] defines a **semiordering** of a set `U` as a pair
 `(L, I)` of relations satisfying, for all `x, y, z, w ∈ U`:
@@ -85,31 +65,25 @@ def jndI (v : A → ℝ) (thr : ℝ) (x y : A) : Prop :=
 Theorem 5 proves these hold for `(L(π), I(π))` under Axiom 1.
 -/
 
-/-- I(π) is symmetric: if `x` and `y` are indistinguishable, so are `y` and `x`.
-
-    Since `P(y,x) = 1 - P(x,y)`, the condition `1-π ≤ P(x,y) ≤ π`
-    is equivalent to `1-π ≤ P(y,x) ≤ π`. -/
+/-- I(π) is symmetric: if `x` and `y` are indistinguishable, so are `y` and
+    `x`. -/
 theorem jndI_symm (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (thr : ℝ) (x y : A)
     (h : jndI v thr x y) : jndI v thr y x := by
   simp only [jndI] at *
   have hc := pairwiseProb_complement (hv x) (hv y)
   constructor <;> linarith [h.1, h.2]
 
-/-- **I-reflexivity**: `x I(π) x`, since `P(x, x) = 1/2` and `1-π < 1/2 < π`
-    whenever `1/2 < π < 1`. -/
+/-- **I-reflexivity**: `x I(π) x`. -/
 theorem jndI_refl (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (thr : ℝ)
     (hthr_lower : 1 / 2 < thr) (_hthr_upper : thr < 1) (x : A) :
     jndI v thr x x := by
   simp only [jndI, pairwiseProb_self (hv x)]
   constructor <;> linarith
 
-/-- **Trichotomy**: for any `x, y`, exactly one of `xLy`, `yLx`, or `xIy` holds.
-
-    Since `P(x,y) + P(y,x) = 1`, the three conditions `P(x,y) > π`,
-    `P(y,x) > π` (i.e., `P(x,y) < 1-π`), and `1-π ≤ P(x,y) ≤ π`
-    partition the interval `[0, 1]`. -/
+/-- **Trichotomy**: for any `x, y`, exactly one of `xLy`, `yLx`, or `xIy`
+    holds. -/
 theorem jnd_trichotomy (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (thr : ℝ)
-    (_hthr_lower : 1 / 2 < thr) (_hthr_upper : thr < 1) (x y : A) :
+    (hthr_lower : 1 / 2 < thr) (_hthr_upper : thr < 1) (x y : A) :
     (jndL v thr x y ∧ ¬jndL v thr y x ∧ ¬jndI v thr x y) ∨
     (jndL v thr y x ∧ ¬jndL v thr x y ∧ ¬jndI v thr x y) ∨
     (jndI v thr x y ∧ ¬jndL v thr x y ∧ ¬jndL v thr y x) := by
@@ -123,36 +97,7 @@ theorem jnd_trichotomy (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (thr : ℝ)
     · push Not at h₂
       right; right; exact ⟨⟨by linarith, h₁⟩, fun h => by linarith, fun h => by linarith⟩
 
-omit [DecidableEq A] in
-/-- **L-transitivity**: `xLy ∧ yLz → xLz`.
-
-    Under Axiom 1, `P(x,y) > π` means `v(x)/(v(x)+v(y)) > π`, i.e.,
-    `v(x)/v(y) > π/(1-π)`. If also `v(y)/v(z) > π/(1-π)`, then
-    `v(x)/v(z) > (π/(1-π))² > π/(1-π)` (since `π/(1-π) > 1`),
-    so `P(x,z) > π`. -/
-theorem jndL_trans (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (thr : ℝ)
-    (hthr_lower : 1 / 2 < thr) (_hthr_upper : thr < 1) (x y z : A)
-    (hxy : jndL v thr x y) (hyz : jndL v thr y z) :
-    jndL v thr x z := by
-  simp only [jndL, pairwiseProb] at *
-  have hvx := hv x; have hvy := hv y; have hvz := hv z
-  rw [lt_div_iff₀ (add_pos hvx hvy)] at hxy
-  rw [lt_div_iff₀ (add_pos hvy hvz)] at hyz
-  rw [lt_div_iff₀ (add_pos hvx hvz)]
-  have h1 : thr * v y < (1 - thr) * v x := by nlinarith
-  have h2 : thr * v z < (1 - thr) * v y := by nlinarith
-  nlinarith [mul_pos (by linarith : (0:ℝ) < 1 - thr) hvy]
-
-omit [DecidableEq A] in
-/-- **Interval condition**: `xLy ∧ yIz ∧ zLw → xLw`.
-
-    Under Axiom 1: `xLy` gives `v(x)/v(y) > π/(1-π)`, `yIz` gives
-    `v(y)/v(z) ≥ (1-π)/π` (from `P(y,z) ≥ 1-π`), and `zLw` gives
-    `v(z)/v(w) > π/(1-π)`. Multiplying the first and third ratios and
-    using the bound on `v(y)/v(z)`:
-    `v(x)/v(w) = (v(x)/v(y)) · (v(y)/v(z)) · (v(z)/v(w)) > π/(1-π)`
-    since the middle factor is ≥ (1-π)/π and the outer factors are > π/(1-π),
-    giving a product > (π/(1-π))·((1-π)/π)·(π/(1-π)) = π/(1-π). -/
+/-- **Interval condition**: `xLy ∧ yIz ∧ zLw → xLw`. -/
 theorem jndL_interval (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (thr : ℝ)
     (_hthr_lower : 1 / 2 < thr) (_hthr_upper : thr < 1) (x y z w : A)
     (hxy : jndL v thr x y) (hyz : jndI v thr y z) (hzw : jndL v thr z w) :
@@ -170,13 +115,8 @@ theorem jndL_interval (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (thr : ℝ)
   -- Chain: thr * v(w) < (1-thr) * v(z) ≤ thr * v(y) < (1-thr) * v(x)
   linarith
 
-omit [DecidableEq A] in
-/-- **No sandwiching**: `xLy ∧ yLz → ¬(xIw ∧ wIz)`.
-
-    If `v(x) ≫ v(y) ≫ v(z)` (both with ratio > π/(1-π)), then no
-    `w` can be indistinguishable from both `x` and `z`: such a `w`
-    would need `v(w) ≈ v(x)` and `v(w) ≈ v(z)` simultaneously, but
-    `v(x)/v(z) > (π/(1-π))² ≫ 1` prevents this. -/
+/-- **No sandwiching**: `xLy ∧ yLz → ¬(xIw ∧ wIz)` — no `w` can be
+    indistinguishable from both endpoints of a discriminable chain. -/
 theorem jndL_no_sandwich (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (thr : ℝ)
     (hthr_lower : 1 / 2 < thr) (hthr_upper : thr < 1) (x y z w : A)
     (hxy : jndL v thr x y) (hyz : jndL v thr y z) :
@@ -206,9 +146,17 @@ theorem jndL_no_sandwich (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (thr : ℝ)
              mul_lt_mul_of_pos_right hxy (hv z),
              mul_lt_mul_of_pos_right hyz (hv x)]
 
--- ============================================================================
--- §4. The Trace (Definition 4 and Theorem 6, p. 37)
--- ============================================================================
+/-- **L-transitivity**: `xLy ∧ yLz → xLz`. Not one of the semiorder axioms —
+    it follows from the interval condition instantiated at `z := y`, via
+    I-reflexivity. -/
+theorem jndL_trans (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (thr : ℝ)
+    (hthr_lower : 1 / 2 < thr) (hthr_upper : thr < 1) (x y z : A)
+    (hxy : jndL v thr x y) (hyz : jndL v thr y z) :
+    jndL v thr x z :=
+  jndL_interval v hv thr hthr_lower hthr_upper x y y z hxy
+    (jndI_refl v hv thr hthr_lower hthr_upper y) hyz
+
+/-! ### The trace (Definition 4 and Theorem 6, p. 37) -/
 
 /-- The trace relation (Definition 4, [luce-1959], p. 37):
     `x ≥_T y` iff `P(x, z) ≥ P(y, z)` for all `z`.
@@ -220,15 +168,8 @@ theorem jndL_no_sandwich (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (thr : ℝ)
 def traceGe (v : A → ℝ) (x y : A) : Prop :=
   ∀ z : A, pairwiseProb v y z ≤ pairwiseProb v x z
 
-/-- **Theorem 6**: Under Axiom 1, the trace relation
-    is equivalent to `v(x) ≥ v(y)`.
-
-    **Proof sketch**: Under Axiom 1, `P(x,z) = v(x)/(v(x)+v(z))`. Since
-    `t ↦ t/(t+c)` is monotone increasing for `c > 0`, we have
-    `P(x,z) ≥ P(y,z)` for all `z` iff `v(x) ≥ v(y)`.
-
-    (→) Take `z = y`: `P(x,y) ≥ P(y,y) = 1/2`, hence `v(x) ≥ v(y)`.
-    (←) If `v(x) ≥ v(y)`, monotonicity of `t/(t+c)` gives `P(x,z) ≥ P(y,z)`. -/
+/-- **Theorem 6**: the trace relation is equivalent to the scale ordering
+    `v(y) ≤ v(x)`. -/
 theorem trace_iff_scale_ge (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (x y : A) :
     traceGe v x y ↔ v y ≤ v x := by
   simp only [traceGe]
@@ -246,7 +187,6 @@ theorem trace_iff_pairwiseProb_ge_half (v : A → ℝ) (hv : ∀ a : A, 0 < v a)
     traceGe v x y ↔ 1 / 2 ≤ pairwiseProb v x y := by
   rw [trace_iff_scale_ge v hv, pairwiseProb_ge_half_iff (hv x) (hv y)]
 
-omit [DecidableEq A] in
 /-- The trace is reflexive: `x ≥_T x`. -/
 theorem traceGe_refl (v : A → ℝ) (x : A) : traceGe v x x :=
   λ _ => le_refl _
@@ -259,18 +199,14 @@ theorem traceGe_trans (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (x y z : A)
   linarith
 
 /-- The trace is total: for any `x, y`, either `x ≥_T y` or `y ≥_T x`.
-
-    This completes the proof that the trace is a **weak order** (total
-    preorder). Under Axiom 1, the trace is determined by the ratio scale
-    values, which are totally ordered reals. -/
+    With `traceGe_refl` and `traceGe_trans`, the trace is a **weak order**
+    (total preorder). -/
 theorem traceGe_total (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (x y : A) :
     traceGe v x y ∨ traceGe v y x := by
   rw [trace_iff_scale_ge v hv, trace_iff_scale_ge v hv]
   exact le_total (v y) (v x)
 
-/-- The trace agrees with L: if `xLy` for any `π`, then `x ≥_T y`.
-
-    `P(x,y) > π > 1/2` implies `v(x) > v(y)` implies `x ≥_T y`. -/
+/-- The trace agrees with L: if `xLy` for any `π`, then `x ≥_T y`. -/
 theorem traceGe_of_jndL (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (thr : ℝ)
     (hthr : 1 / 2 < thr) (x y : A) (h : jndL v thr x y) :
     traceGe v x y := by
