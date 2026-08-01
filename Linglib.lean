@@ -271,7 +271,6 @@ import Linglib.Core.Order.UpperLower.Closure
 import Linglib.Core.Order.WellFoundedSet
 import Linglib.Core.Probability.BayesianUpdate
 import Linglib.Core.Probability.Choice.Argmax
-import Linglib.Core.Probability.Choice.ChoiceApproximations
 import Linglib.Core.Probability.Choice.GumbelLuce
 import Linglib.Core.Probability.Choice.RankOrderings
 import Linglib.Core.Probability.Choice.RationalAction
@@ -1447,7 +1446,6 @@ import Linglib.Processing.Memory.InformationalFusion
 import Linglib.Processing.Memory.LossyContext
 import Linglib.Processing.Memory.SurprisalTradeoff
 import Linglib.Processing.Psychophysics.GaussianChoice
-import Linglib.Processing.Psychophysics.PsychophysicalChoice
 import Linglib.Processing.Psychophysics.Psychophysics
 import Linglib.Processing.Psychophysics.SignalDetection
 import Linglib.Processing.Psychophysics.Thurstone
