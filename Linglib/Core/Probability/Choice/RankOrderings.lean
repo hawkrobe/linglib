@@ -1,23 +1,25 @@
 import Linglib.Core.Probability.Choice.RationalAction
 
 /-!
-# Rank Orderings [luce-1959]
+# Rank orderings under the Luce choice rule
 
-[luce-1959]: the probability of observing a complete rank
-ordering under the Luce choice rule. The key insight is that ranking
-probability decomposes into a product of successive top-choices from
-shrinking alternative sets — a direct consequence of IIA.
+This file defines the probability of a complete rank ordering as the product
+of successive top-choices from shrinking alternative sets — the *ranking
+postulate* of [luce-1959] (§2.F, p. 72), now known as the Plackett–Luce model
+([plackett-1975]). We show that these probabilities sum to 1 over all
+permutations, that marginalizing over the first choice recovers `pChoice`,
+and that adjacent transpositions (`rankProb_swap_div`) and expected rank
+(`expectedRank_lt_of_score_gt`) both respect the score order.
 
-## Main results
+## Main definitions
 
-- `rankProb`: probability of a ranking (as a `List`) under the Luce model,
-  defined as the product of successive `pChoice` values from shrinking tails.
-- `rankProb_eq_score_prod`: express ranking probability in terms of score
-  ratios `v(aᵢ) / ∑ⱼ≥ᵢ v(aⱼ)` (Theorem 9).
-- `rankProb_sum_eq_one`: ranking probabilities over all permutations sum to 1.
-- `rankProb_marginal_first`: marginalizing rankings over the first choice
-  recovers `pChoice`.
+* `rankProb`: probability of a ranking (as a `List`) under the Luce rule.
+* `expectedRank`: expected (1-indexed) rank of an alternative.
 
+## References
+
+* [R. D. Luce, *Individual Choice Behavior*][luce-1959]
+* [R. L. Plackett, *The Analysis of Permutations*][plackett-1975]
 -/
 
 namespace Core
@@ -26,9 +28,7 @@ open BigOperators Finset Real
 
 variable {S A : Type*} [Fintype A] [DecidableEq A]
 
--- ============================================================================
--- §2.F Rank Orderings ([luce-1959], pp. 66–72)
--- ============================================================================
+/-! ### Ranking probability ([luce-1959], §2.F, pp. 68–74) -/
 
 /-- The tail suffix of a list starting at position `i` (0-indexed).
     Used to represent the shrinking alternative set at each step of ranking. -/
@@ -43,7 +43,7 @@ noncomputable def rankStepProb (ra : RationalAction S A) (s : S)
   | none => 1
   | some a => ra.pChoice s (tailSuffix ranking i) a
 
-/-- **Ranking probability** ([luce-1959], Theorem 9):
+/-- **Ranking probability** ([luce-1959]'s ranking postulate, p. 72):
     The probability of observing the complete rank ordering `a₁ > a₂ >... > aₙ`
     is the product of successive top-choices from shrinking sets:
 
@@ -126,9 +126,22 @@ theorem rankProb_nonneg (ra : RationalAction S A) (s : S) (ranking : List A) :
     0 ≤ rankProb ra s ranking :=
   foldl_mul_nonneg one_pos.le (rankStepProb_nonneg ra s ranking) _
 
--- ============================================================================
--- Score-ratio form (Theorem 9, second part)
--- ============================================================================
+/-- `rankProbRec` is positive when all scores are positive. -/
+theorem rankProbRec_pos (ra : RationalAction S A) (s : S) (ranking : List A)
+    (hpos : ∀ b, 0 < ra.score s b) : 0 < rankProbRec ra s ranking := by
+  induction ranking with
+  | nil => simp [rankProbRec]
+  | cons a rest ih =>
+    show 0 < ra.pChoice s (a :: rest).toFinset a * rankProbRec ra s rest
+    exact mul_pos
+      (RationalAction.pChoice_pos (by simp [List.toFinset_cons]) fun b _ => hpos b) ih
+
+/-- Ranking probability is positive when all scores are positive. -/
+theorem rankProb_pos (ra : RationalAction S A) (s : S) (ranking : List A)
+    (hpos : ∀ b, 0 < ra.score s b) : 0 < rankProb ra s ranking :=
+  rankProbRec_eq_rankProb ra s ranking ▸ rankProbRec_pos ra s ranking hpos
+
+/-! ### Score-ratio form -/
 
 /-- The score-ratio factor at position `i`: `v(aᵢ) / ∑ⱼ≥ᵢ v(aⱼ)`.
     This is the `i`-th factor in the score-product form of ranking probability. -/
@@ -155,7 +168,7 @@ private theorem mem_tailSuffix_of_getElem?
     a ∈ tailSuffix ranking i := by
   simp only [tailSuffix, List.mem_toFinset]
   have hi : i < ranking.length := by
-    by_contra hc; push_neg at hc
+    by_contra hc; push Not at hc
     simp [List.getElem?_eq_none hc] at h
   rw [List.drop_eq_getElem_cons hi]
   have hval : ranking[i] = a := by
@@ -176,10 +189,7 @@ private theorem rankStepProb_eq_scoreRatio (ra : RationalAction S A) (s : S)
     have hmem : a ∈ tailSuffix ranking i := mem_tailSuffix_of_getElem? h
     simp only [RationalAction.pChoice, hmem, ↓reduceIte]
 
-/-- **Theorem 9 (score form)**: ranking probability equals the product of score ratios.
-
-    Each `pChoice` factor equals the corresponding score ratio by definition of
-    the Luce choice rule, so the two products are term-by-term equal. -/
+/-- **Score form**: ranking probability equals the product of score ratios. -/
 theorem rankProb_eq_score_prod (ra : RationalAction S A) (s : S) (ranking : List A)
     (_hnd : ranking.Nodup) :
     rankProb ra s ranking = rankProbScoreProd ra s ranking := by
@@ -188,9 +198,7 @@ theorem rankProb_eq_score_prod (ra : RationalAction S A) (s : S) (ranking : List
   ext acc i
   exact congrArg (acc * ·) (rankStepProb_eq_scoreRatio ra s ranking i)
 
--- ============================================================================
--- Summation over permutations (Theorem 9, completeness)
--- ============================================================================
+/-! ### Summation over permutations -/
 
 /-- All permutations of a finset, as lists. -/
 noncomputable def allRankings (T : Finset A) : Finset (List A) :=
@@ -220,9 +228,7 @@ theorem mem_allRankings_iff (T : Finset A) (ranking : List A) :
     rw [← List.mem_toFinset (l := ranking), hfs,
         Multiset.mem_toList, Finset.mem_val]
 
--- ============================================================================
--- Decomposition of allRankings by first element
--- ============================================================================
+/-! ### Decomposition of `allRankings` by first element -/
 
 /-- Cons into allRankings: if `rest ∈ allRankings (T.erase a)` and `a ∈ T`,
     then `a :: rest ∈ allRankings T`. -/
@@ -309,9 +315,7 @@ private theorem rankProb_cons_eq (ra : RationalAction S A) (s : S)
     ra.pChoice s T a * rankProbRec ra s rest
   rw [hfs]
 
--- ============================================================================
--- Theorem 9 completeness: ranking probabilities sum to 1
--- ============================================================================
+/-! ### Ranking probabilities sum to 1 -/
 
 /-- Score positivity propagates to erased subsets. -/
 private theorem score_pos_erase {ra : RationalAction S A} {s : S}
@@ -362,16 +366,8 @@ private theorem rankProb_sum_eq_one_aux (ra : RationalAction S A) (s : S) :
     rw [Finset.sum_congr rfl step]
     exact ra.pChoice_sum_eq_one s T (score_sum_ne_zero hT hpos)
 
-/-- **Ranking probabilities sum to 1** ([luce-1959], Theorem 9 completeness):
-    Over all `n!` permutations of the alternative set, ranking probabilities
-    form a proper distribution.
-
-    The proof proceeds by induction on `|T|`:
-    - Base (`T = ∅`): `allRankings ∅ = {[]}`, `rankProb [] = 1`.
-    - Step: decompose `allRankings T` by first element, factor out `pChoice`
-      (which sums to 1 by `pChoice_sum_eq_one`), and apply the inductive
-      hypothesis to each `(n-1)`-element ranking.
-
+/-- **Ranking probabilities sum to 1**: over all `n!` permutations of the
+    alternative set, ranking probabilities form a proper distribution.
     Requires strictly positive scores (Luce's ratio scale assumption). -/
 theorem rankProb_sum_eq_one (ra : RationalAction S A) (s : S)
     (T : Finset A) (hT : T.Nonempty)
@@ -379,9 +375,7 @@ theorem rankProb_sum_eq_one (ra : RationalAction S A) (s : S)
     ∑ r ∈ allRankings T, rankProb ra s r = 1 :=
   rankProb_sum_eq_one_aux ra s T.card T rfl hpos
 
--- ============================================================================
--- Marginalization (recovering pChoice)
--- ============================================================================
+/-! ### Marginalization: recovering `pChoice` -/
 
 /-- Rankings starting with a given element `a`. -/
 noncomputable def rankingsStartingWith (T : Finset A) (a : A) : Finset (List A) :=
@@ -404,13 +398,11 @@ private theorem rankingsStartingWith_eq (T : Finset A) (a : A) (ha : a ∈ T) :
   · rintro ⟨rest, hrest, rfl⟩
     exact ⟨cons_mem_allRankings ha hrest, by simp⟩
 
-/-- **Marginal first-choice** ([luce-1959], Theorem 9 corollary):
-    Summing the ranking probability over all rankings that start with `a`
-    recovers the choice probability `pChoice(a, T)`.
-
-    This is because `P(a first) = P(a | T) · ∑_σ P(σ | T \ {a}) = P(a | T) · 1`,
-    where the inner sum equals 1 by `rankProb_sum_eq_one` on the remaining
-    alternatives. -/
+/-- **Marginal first-choice**: summing the ranking probability over all
+    rankings that start with `a` recovers the choice probability
+    `pChoice(a, T)`. ([luce-1959]'s own Theorem 9, p. 72, is the pairwise
+    analogue: `P(x,y)` is recovered by summing over rankings placing `x`
+    above `y`.) -/
 theorem rankProb_marginal_first (ra : RationalAction S A) (s : S)
     (T : Finset A) (a : A) (ha : a ∈ T)
     (hpos : ∀ b ∈ T, 0 < ra.score s b) :
@@ -434,9 +426,70 @@ theorem rankProb_marginal_first (ra : RationalAction S A) (s : S)
                Finset.insert_empty, Finset.sum_singleton, rankProb]
     simp [mul_one]
 
--- ============================================================================
--- Expected rank monotonicity
--- ============================================================================
+/-! ### Adjacent transpositions -/
+
+/-- One step of `rankProbRec` in score form, for a head not repeated in the
+    tail. -/
+theorem rankProbRec_cons (ra : RationalAction S A) (s : S) {a : A} {l : List A}
+    (ha : a ∉ l) (hpos : ∀ b, 0 < ra.score s b) :
+    rankProbRec ra s (a :: l) =
+      ra.score s a / (ra.score s a + ∑ b ∈ l.toFinset, ra.score s b) *
+        rankProbRec ra s l := by
+  have hnot : a ∉ l.toFinset := by rwa [List.mem_toFinset]
+  have hsum : ra.score s a + ∑ b ∈ l.toFinset, ra.score s b ≠ 0 :=
+    (add_pos_of_pos_of_nonneg (hpos a) (Finset.sum_nonneg fun b _ => (hpos b).le)).ne'
+  show ra.pChoice s (a :: l).toFinset a * rankProbRec ra s l = _
+  rw [List.toFinset_cons,
+    ra.pChoice_eq_div s _ a (Finset.mem_insert_self a l.toFinset)
+      (by rwa [Finset.sum_insert hnot]),
+    Finset.sum_insert hnot]
+
+/-- Swapping two adjacent elements scales the ranking probability by
+    `(v x + S) / (v y + S)`, where `S` sums the scores of the remaining
+    alternatives — not by the naive `v x / v y`: the second step of each
+    ranking draws from a different set. -/
+theorem rankProb_swap_div (ra : RationalAction S A) (s : S) (x y : A)
+    (rest : List A) (hx : x ∉ rest) (hy : y ∉ rest)
+    (hpos : ∀ b, 0 < ra.score s b) :
+    rankProb ra s (x :: y :: rest) / rankProb ra s (y :: x :: rest) =
+      (ra.score s x + ∑ b ∈ rest.toFinset, ra.score s b) /
+        (ra.score s y + ∑ b ∈ rest.toFinset, ra.score s b) := by
+  rw [← rankProbRec_eq_rankProb, ← rankProbRec_eq_rankProb]
+  have hS : 0 ≤ ∑ b ∈ rest.toFinset, ra.score s b :=
+    Finset.sum_nonneg fun b _ => (hpos b).le
+  have hvx := (hpos x).ne'
+  have hvy := (hpos y).ne'
+  have htail := (rankProbRec_pos ra s rest hpos).ne'
+  have hxS := (add_pos_of_pos_of_nonneg (hpos x) hS).ne'
+  have hyS := (add_pos_of_pos_of_nonneg (hpos y) hS).ne'
+  have hT : (0:ℝ) < ∑ b ∈ (x :: y :: rest).toFinset, ra.score s b :=
+    Finset.sum_pos (fun b _ => hpos b) ⟨x, by simp⟩
+  have hT_eq : (y :: x :: rest).toFinset = (x :: y :: rest).toFinset := by
+    simp only [List.toFinset_cons]
+    exact Finset.insert_comm y x rest.toFinset
+  show ra.pChoice s (x :: y :: rest).toFinset x * rankProbRec ra s (y :: rest) /
+      (ra.pChoice s (y :: x :: rest).toFinset y * rankProbRec ra s (x :: rest)) = _
+  rw [hT_eq, rankProbRec_cons ra s hy hpos, rankProbRec_cons ra s hx hpos,
+    ra.pChoice_eq_div s _ x (by simp) hT.ne', ra.pChoice_eq_div s _ y (by simp) hT.ne']
+  field_simp
+
+/-- Swapping adjacent elements into score order strictly increases ranking
+    probability: if `v y < v x`, then `x` before `y` is the more probable
+    order. -/
+theorem rankProb_swap_lt_of_score_lt (ra : RationalAction S A) (s : S) {x y : A}
+    (rest : List A) (hx : x ∉ rest) (hy : y ∉ rest)
+    (hpos : ∀ b, 0 < ra.score s b) (hlt : ra.score s y < ra.score s x) :
+    rankProb ra s (y :: x :: rest) < rankProb ra s (x :: y :: rest) := by
+  have hden := rankProb_pos ra s (y :: x :: rest) hpos
+  have hS : 0 ≤ ∑ b ∈ rest.toFinset, ra.score s b :=
+    Finset.sum_nonneg fun b _ => (hpos b).le
+  have h1 : 1 < rankProb ra s (x :: y :: rest) / rankProb ra s (y :: x :: rest) := by
+    rw [rankProb_swap_div ra s x y rest hx hy hpos,
+      one_lt_div (add_pos_of_pos_of_nonneg (hpos y) hS)]
+    linarith
+  exact (one_lt_div hden).mp h1
+
+/-! ### Expected rank -/
 
 /-- The rank of element `a` in a ranking (1-indexed, so rank 1 = best).
     Returns 0 if `a` is not in the ranking. -/
@@ -453,9 +506,7 @@ noncomputable def expectedRank (ra : RationalAction S A) (s : S)
     (T : Finset A) (a : A) : ℝ :=
   ∑ r ∈ allRankings T, rankProb ra s r * (rankOf r a : ℝ)
 
--- ============================================================================
--- Expected rank monotonicity: infrastructure
--- ============================================================================
+/-! ### Expected rank monotonicity: infrastructure -/
 
 /-- `rankOf (a :: rest) a = 1`: the first element has rank 1. -/
 private theorem rankOf_cons_self (a : A) (rest : List A) :
@@ -470,36 +521,8 @@ private theorem rankOf_cons_ne {b a : A} {rest : List A}
   simp only [rankOf, hmem, ha, ↓reduceIte, List.findIdx_cons]
   simp [show (b == a) = false from by simp [hne]]
 
-/-- Positive scores imply strictly positive `pChoice`. -/
-private theorem pChoice_pos {ra : RationalAction S A} {s : S}
-    {T : Finset A} {a : A} (ha : a ∈ T)
-    (hpos : ∀ b ∈ T, 0 < ra.score s b) :
-    0 < ra.pChoice s T a := by
-  have hsum_pos : 0 < ∑ b ∈ T, ra.score s b :=
-    Finset.sum_pos (fun b hb => hpos b hb) ⟨a, ha⟩
-  simp only [RationalAction.pChoice, ha, ne_of_gt hsum_pos, ↓reduceIte]
-  exact div_pos (hpos a ha) hsum_pos
-
-/-- Higher score implies higher `pChoice` in the same set. -/
-private theorem pChoice_gt_of_score_gt {ra : RationalAction S A} {s : S}
-    {T : Finset A} {a₁ a₂ : A} (ha₁ : a₁ ∈ T) (ha₂ : a₂ ∈ T)
-    (hpos : ∀ b ∈ T, 0 < ra.score s b)
-    (hgt : ra.score s a₁ > ra.score s a₂) :
-    ra.pChoice s T a₁ > ra.pChoice s T a₂ := by
-  have hratio := ra.pChoice_ratio s T a₁ a₂ ha₁ ha₂
-  have hp₂ := pChoice_pos ha₂ hpos
-  have hv₂ := hpos a₂ ha₂
-  -- From ratio: pChoice(a₁) * v(a₂) = pChoice(a₂) * v(a₁) > pChoice(a₂) * v(a₂)
-  have h : ra.pChoice s T a₂ * ra.score s a₂ < ra.pChoice s T a₁ * ra.score s a₂ := by
-    rw [show ra.pChoice s T a₁ * ra.score s a₂ =
-      ra.pChoice s T a₂ * ra.score s a₁ from hratio]
-    exact mul_lt_mul_of_pos_left hgt hp₂
-  -- Divide both sides by v(a₂) > 0
-  exact lt_of_mul_lt_mul_right h (le_of_lt hv₂)
-
--- ============================================================================
--- Expected rank decomposition: E[rank(a,T)] = 1 + ∑_{b≠a} pChoice(b) · E[rank(a,T\{b})]
--- ============================================================================
+/-! ### Expected rank decomposition:
+`E[rank(a,T)] = 1 + ∑_{b≠a} pChoice(b) · E[rank(a,T\{b})]` -/
 
 /-- Inner sum when the first element equals `a`: contributes `pChoice(a, T)`. -/
 private theorem expectedRank_first_self (ra : RationalAction S A) (s : S)
@@ -605,9 +628,7 @@ private theorem expectedRank_ge_one (ra : RationalAction S A) (s : S)
           (rankProb_nonneg ra s r)
     _ = 1 := by simp [rankProb_sum_eq_one ra s T hT hpos]
 
--- ============================================================================
--- Cross-set monotonicity
--- ============================================================================
+/-! ### Cross-set monotonicity -/
 
 /-- Singleton expected rank: `E[rank(a, {a})] = 1`. -/
 private theorem expectedRank_singleton (ra : RationalAction S A) (s : S) (a : A)
@@ -719,14 +740,9 @@ private theorem expectedRank_cross_le_aux (ra : RationalAction S A) (s : S) :
 
     This is a natural property of the Plackett–Luce model ([luce-1959],
     [plackett-1975]) but does not appear as a formal theorem in either
-    source. [luce-1959] proves ranking probability decomposition (Theorem 9)
-    and [marden-1995] covers estimation, but neither states the expected
-    rank monotonicity result explicitly.
-
-    The proof uses conditional expectation decomposition:
-    `E[rank(a, T)] = 1 + ∑_{b≠a} pChoice(b,T) · E[rank(a, T\{b})]`
-    and combines within-set induction with cross-set monotonicity
-    (a higher-scored element gets better expected rank against the same field). -/
+    source. [luce-1959] adopts the product decomposition as his ranking
+    postulate and [marden-1995] covers estimation, but neither states the
+    expected rank monotonicity result explicitly. -/
 theorem expectedRank_lt_of_score_gt (ra : RationalAction S A) (s : S)
     (T : Finset A) (a₁ a₂ : A) (ha₁ : a₁ ∈ T) (ha₂ : a₂ ∈ T)
     (hne : a₁ ≠ a₂)
@@ -769,7 +785,7 @@ theorem expectedRank_lt_of_score_gt (ra : RationalAction S A) (s : S)
     -- Fact 2: cross term satisfies p₂*E₁' < p₁*E₂'
     have h_cross : ra.pChoice s T a₂ * expectedRank ra s (T.erase a₂) a₁ <
         ra.pChoice s T a₁ * expectedRank ra s (T.erase a₁) a₂ := by
-      have hp_gt := pChoice_gt_of_score_gt ha₁' ha₂' hpos' hgt
+      have hp_gt := RationalAction.pChoice_lt_of_score_lt ha₁' ha₂' hpos' hgt
       have hE₁'_ge := expectedRank_ge_one ra s (T.erase a₂) a₁ ha₁_e₂ (score_pos_erase hpos' a₂)
       -- Cross-set comparison: E₁' ≤ E₂'
       have hE_cross : expectedRank ra s (T.erase a₂) a₁ ≤
@@ -795,7 +811,8 @@ theorem expectedRank_lt_of_score_gt (ra : RationalAction S A) (s : S)
           < ra.pChoice s T a₁ * expectedRank ra s (T.erase a₂) a₁ :=
             mul_lt_mul_of_pos_right hp_gt (by linarith)
         _ ≤ ra.pChoice s T a₁ * expectedRank ra s (T.erase a₁) a₂ :=
-            mul_le_mul_of_nonneg_left hE_cross (le_of_lt (pChoice_pos ha₁' hpos'))
+            mul_le_mul_of_nonneg_left hE_cross
+              (le_of_lt (RationalAction.pChoice_pos ha₁' hpos'))
     -- Combine: 1 + p₂*E₁' + Σ₁ < 1 + p₁*E₂' + Σ₂
     linarith [Finset.sum_le_sum h_sums]
 

@@ -1,7 +1,6 @@
 import Linglib.Pragmatics.RSA.LatentOperators
 import Linglib.Pragmatics.RSA.Operators
 import Linglib.Core.Probability.Scores
-import Linglib.Core.Probability.Choice.RationalAction
 import Linglib.Processing.VisualWorld
 import Linglib.Studies.SedivyEtAl1999
 

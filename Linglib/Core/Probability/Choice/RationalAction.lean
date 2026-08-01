@@ -321,11 +321,32 @@ theorem RationalAction.pChoice_ratio [DecidableEq A] (ra : RationalAction S A) (
   · simp
   · next hne => field_simp
 
-/-- Helper: `pChoice` value for `a ∈ T` with nonzero total. -/
-private theorem RationalAction.pChoice_mem [DecidableEq A] (ra : RationalAction S A) (s : S)
+/-- `pChoice` in score form for `a ∈ T` with nonzero total. -/
+theorem RationalAction.pChoice_eq_div [DecidableEq A] (ra : RationalAction S A) (s : S)
     (T : Finset A) (a : A) (ha : a ∈ T) (hT : ∑ b ∈ T, ra.score s b ≠ 0) :
     ra.pChoice s T a = ra.score s a / ∑ b ∈ T, ra.score s b := by
   simp only [pChoice, ha, hT, ↓reduceIte]
+
+/-- `pChoice` is positive on members when all scores in the subset are positive. -/
+theorem RationalAction.pChoice_pos [DecidableEq A] {ra : RationalAction S A} {s : S}
+    {T : Finset A} {a : A} (ha : a ∈ T) (hpos : ∀ b ∈ T, 0 < ra.score s b) :
+    0 < ra.pChoice s T a := by
+  have hsum : 0 < ∑ b ∈ T, ra.score s b := Finset.sum_pos hpos ⟨a, ha⟩
+  rw [ra.pChoice_eq_div s T a ha hsum.ne']
+  exact div_pos (hpos a ha) hsum
+
+/-- Higher score implies higher `pChoice` in the same set. -/
+theorem RationalAction.pChoice_lt_of_score_lt [DecidableEq A] {ra : RationalAction S A}
+    {s : S} {T : Finset A} {a₁ a₂ : A} (ha₁ : a₁ ∈ T) (ha₂ : a₂ ∈ T)
+    (hpos : ∀ b ∈ T, 0 < ra.score s b) (hlt : ra.score s a₂ < ra.score s a₁) :
+    ra.pChoice s T a₂ < ra.pChoice s T a₁ := by
+  have hratio := ra.pChoice_ratio s T a₁ a₂ ha₁ ha₂
+  have hp₂ := RationalAction.pChoice_pos ha₂ hpos
+  have h : ra.pChoice s T a₂ * ra.score s a₂ < ra.pChoice s T a₁ * ra.score s a₂ := by
+    rw [show ra.pChoice s T a₁ * ra.score s a₂ = ra.pChoice s T a₂ * ra.score s a₁ from
+      hratio]
+    exact mul_lt_mul_of_pos_left hlt hp₂
+  exact lt_of_mul_lt_mul_right h (hpos a₂ ha₂).le
 
 /-- IIA: `P(a, S) = P(a, T) / Σ_{b∈S} P(b, T)` for `S ⊆ T`.
     Choice probability from a subset is the conditional probability. -/
@@ -335,11 +356,11 @@ theorem RationalAction.iia [DecidableEq A] (ra : RationalAction S A) (s : S)
     (hS_pos : ∑ b ∈ S', ra.score s b ≠ 0)
     (hT_pos : ∑ b ∈ T, ra.score s b ≠ 0) :
     ra.pChoice s S' a = ra.pChoice s T a / ∑ b ∈ S', ra.pChoice s T b := by
-  rw [ra.pChoice_mem s S' a ha hS_pos, ra.pChoice_mem s T a (hST ha) hT_pos]
+  rw [ra.pChoice_eq_div s S' a ha hS_pos, ra.pChoice_eq_div s T a (hST ha) hT_pos]
   have hsum : ∑ b ∈ S', ra.pChoice s T b =
       (∑ b ∈ S', ra.score s b) / ∑ c ∈ T, ra.score s c := by
     have : ∀ b ∈ S', ra.pChoice s T b = ra.score s b / ∑ c ∈ T, ra.score s c :=
-      fun b hb => ra.pChoice_mem s T b (hST hb) hT_pos
+      fun b hb => ra.pChoice_eq_div s T b (hST hb) hT_pos
     rw [Finset.sum_congr rfl this, Finset.sum_div]
   rw [hsum]
   field_simp
@@ -354,7 +375,7 @@ theorem RationalAction.product_rule [DecidableEq A] (ra : RationalAction S A) (s
     (hT_pos : ∑ b ∈ T, ra.score s b ≠ 0) :
     ra.pChoice s T a =
     ra.pChoice s S' a * ((∑ b ∈ S', ra.score s b) / ∑ b ∈ T, ra.score s b) := by
-  rw [ra.pChoice_mem s T a (hST ha) hT_pos, ra.pChoice_mem s S' a ha hS_pos]
+  rw [ra.pChoice_eq_div s T a (hST ha) hT_pos, ra.pChoice_eq_div s S' a ha hS_pos]
   have hS_ne : (∑ b ∈ S', ra.score s b) ≠ 0 := hS_pos
   rw [div_mul_div_comm, show ra.score s a * ∑ b ∈ S', ra.score s b =
       (∑ b ∈ S', ra.score s b) * ra.score s a from mul_comm _ _,
@@ -573,6 +594,16 @@ theorem pairwiseProb_exp (u : A → ℝ) (x y : A) :
   field_simp
 
 end PairwiseProb
+
+/-- Binary choice from a pair: `pChoice` on `{x, y}` is the pairwise kernel
+    `pairwiseProb` applied to the agent's score in that state. -/
+theorem RationalAction.pChoice_pair [DecidableEq A] (ra : RationalAction S A) (s : S)
+    {x y : A} (hne : x ≠ y) (hx : 0 < ra.score s x) (hy : 0 < ra.score s y) :
+    ra.pChoice s {x, y} x = pairwiseProb (ra.score s) x y := by
+  rw [ra.pChoice_eq_div s _ x (Finset.mem_insert_self x {y})
+      (by rw [Finset.sum_pair hne]; exact (add_pos hx hy).ne'),
+    Finset.sum_pair hne]
+  rfl
 
 /-! ### Alternative forms of the choice axiom
 

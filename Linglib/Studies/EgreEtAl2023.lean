@@ -1,4 +1,4 @@
-import Linglib.Core.Probability.Choice.RationalAction
+import Linglib.Core.Probability.LogitChoice
 import Linglib.Pragmatics.RSA.Operators
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.BigOperators
