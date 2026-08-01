@@ -270,7 +270,6 @@ import Linglib.Core.Order.TreePath
 import Linglib.Core.Order.UpperLower.Closure
 import Linglib.Core.Order.WellFoundedSet
 import Linglib.Core.Probability.BayesianUpdate
-import Linglib.Core.Probability.Choice.Argmax
 import Linglib.Core.Probability.Choice.GumbelLuce
 import Linglib.Core.Probability.Choice.RankOrderings
 import Linglib.Core.Probability.Choice.RationalAction
