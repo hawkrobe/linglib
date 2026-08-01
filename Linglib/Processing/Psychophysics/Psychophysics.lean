@@ -160,6 +160,32 @@ theorem stevens_luce_pairwise {σ : StevensScale} {s₁ s₂ : ℝ}
   rw [hts]
   simp [ra, stevens_is_luce, StevensScale.choiceProb, Matrix.cons_val_zero]
 
+/-- Stevens' power-law choice probability is the pairwise Luce kernel
+    `pairwiseProb` on the power scale `s ↦ sⁿ`. -/
+theorem StevensScale.choiceProb_eq_pairwiseProb (σ : StevensScale) (s₁ s₂ : ℝ) :
+    σ.choiceProb s₁ s₂ = pairwiseProb (· ^ σ.n) s₁ s₂ := by
+  simp only [choiceProb, pairwiseProb]
+
+/-- Choice probability orders stimuli by intensity: against any positive
+    reference stimulus, `choiceProb` compares as the intensities do. -/
+theorem StevensScale.choiceProb_le_iff (σ : StevensScale) {s₁ s₂ z : ℝ}
+    (h₁ : 0 < s₁) (h₂ : 0 < s₂) (hz : 0 < z) :
+    σ.choiceProb s₁ z ≤ σ.choiceProb s₂ z ↔ s₁ ≤ s₂ := by
+  have hp₁ : 0 < s₁ ^ σ.n := rpow_pos_of_pos h₁ σ.n
+  have hp₂ : 0 < s₂ ^ σ.n := rpow_pos_of_pos h₂ σ.n
+  have hpz : 0 < z ^ σ.n := rpow_pos_of_pos hz σ.n
+  constructor
+  · intro h
+    by_contra hlt
+    push Not at hlt
+    have hpow := rpow_lt_rpow h₂.le hlt σ.hn_pos
+    have : σ.choiceProb s₂ z < σ.choiceProb s₁ z := by
+      simp only [choiceProb]
+      rw [div_lt_div_iff₀ (add_pos hp₂ hpz) (add_pos hp₁ hpz)]
+      nlinarith
+    linarith
+  · exact fun hle => σ.choiceProb_mono h₁ h₂ hz hle
+
 /-- **Stevens–Fechner equivalence** ([luce-1959], §2.B):
     Stevens' power law on raw intensity is equivalent to Fechner's
     exponential law on log-intensity.

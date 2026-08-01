@@ -1,12 +1,16 @@
 import Linglib.Core.Probability.Choice.RationalAction
+import Linglib.Processing.Psychophysics.Psychophysics
 import Mathlib.Order.BooleanAlgebra.Basic
 
 /-!
-# Luce (1959), Chapter 3: Applications to Utility Theory [luce-1959]
+# Luce (1959): Individual Choice Behavior [luce-1959]
 
-Choices among gambles: `aρb` is "outcome `a` if chance event `ρ` occurs, else
-`b`" (p. 78), and `S(A,E) = (A × E × A) ∪ A` collects gambles and pure
-alternatives. A decomposable preference structure `⟨A, E, P, Q⟩` (Definition 5)
+Formalizes §1.G (the jnd semiorder and the trace), §2.B's power-law Weber
+ratio, and Chapter 3's utility theory.
+
+Chapter 3 treats choices among gambles: `aρb` is "outcome `a` if chance event
+`ρ` occurs, else `b`" (p. 78), and `S(A,E) = (A × E × A) ∪ A` collects
+gambles and pure alternatives. A decomposable preference structure `⟨A, E, P, Q⟩` (Definition 5)
 couples a choice function `P` over `S(A,E)` with an event choice function `Q`
 via Axiom 2: `P(aρb, aσb) = P(a,b)·Q(ρ,σ) + P(b,a)·Q(σ,ρ)`.
 
@@ -66,6 +70,209 @@ ratio scale) tolerates.
 namespace Luce1959
 
 open Core
+
+/-!
+### §1.G: Just noticeable differences and the trace (pp. 34–37)
+
+A jnd threshold `π ∈ (1/2, 1)` splits pairwise choice into a
+discriminable-preference relation `L(π)` and an indistinguishability relation
+`I(π)` (Definition 3, p. 34). Given the positive ratio scale delivered by
+Theorem 4, the pair satisfies Luce's semiorder axioms (Theorem 5, p. 35) —
+trichotomy, I-reflexivity, the interval condition, and no-sandwiching — and
+the trace ordering (Definition 4, p. 37) is a weak order coinciding with the
+ratio-scale order (Theorem 6, p. 37).
+-/
+
+section JustNoticeableDifferences
+
+variable {A : Type*}
+
+/-- The `L(π)` relation (Definition 3, p. 34): `x L(π) y` iff
+    `P(x, {x,y}) > π` — `x` is **discriminably preferred** to `y` at
+    threshold `π`, for `1/2 < π < 1`. -/
+def jndL (v : A → ℝ) (thr : ℝ) (x y : A) : Prop :=
+  thr < pairwiseProb v x y
+
+/-- The `I(π)` relation (Definition 3, p. 34): `x I(π) y` iff
+    `1 - π ≤ P(x, {x,y}) ≤ π` — `x` and `y` are **indistinguishable** at
+    threshold `π`. -/
+def jndI (v : A → ℝ) (thr : ℝ) (x y : A) : Prop :=
+  1 - thr ≤ pairwiseProb v x y ∧ pairwiseProb v x y ≤ thr
+
+/-- I(π) is symmetric: if `x` and `y` are indistinguishable, so are `y` and
+    `x`. -/
+theorem jndI_symm (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (thr : ℝ) (x y : A)
+    (h : jndI v thr x y) : jndI v thr y x := by
+  simp only [jndI] at *
+  have hc := pairwiseProb_complement (hv x) (hv y)
+  constructor <;> linarith [h.1, h.2]
+
+/-- **I-reflexivity**: `x I(π) x`. -/
+theorem jndI_refl (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (thr : ℝ)
+    (hthr_lower : 1 / 2 < thr) (_hthr_upper : thr < 1) (x : A) :
+    jndI v thr x x := by
+  simp only [jndI, pairwiseProb_self (hv x)]
+  constructor <;> linarith
+
+/-- **Trichotomy**: for any `x, y`, exactly one of `xLy`, `yLx`, or `xIy`
+    holds. -/
+theorem jnd_trichotomy (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (thr : ℝ)
+    (hthr_lower : 1 / 2 < thr) (_hthr_upper : thr < 1) (x y : A) :
+    (jndL v thr x y ∧ ¬jndL v thr y x ∧ ¬jndI v thr x y) ∨
+    (jndL v thr y x ∧ ¬jndL v thr x y ∧ ¬jndI v thr x y) ∨
+    (jndI v thr x y ∧ ¬jndL v thr x y ∧ ¬jndL v thr y x) := by
+  have hc := pairwiseProb_complement (hv x) (hv y)
+  unfold jndL jndI
+  by_cases h₁ : thr < pairwiseProb v x y
+  · left; exact ⟨h₁, fun h => by linarith, fun ⟨_, h⟩ => by linarith⟩
+  · push Not at h₁
+    by_cases h₂ : thr < pairwiseProb v y x
+    · right; left; exact ⟨h₂, fun h => by linarith, fun ⟨h, _⟩ => by linarith⟩
+    · push Not at h₂
+      right; right; exact ⟨⟨by linarith, h₁⟩, fun h => by linarith, fun h => by linarith⟩
+
+/-- **Interval condition**: `xLy ∧ yIz ∧ zLw → xLw`. -/
+theorem jndL_interval (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (thr : ℝ)
+    (_hthr_lower : 1 / 2 < thr) (_hthr_upper : thr < 1) (x y z w : A)
+    (hxy : jndL v thr x y) (hyz : jndI v thr y z) (hzw : jndL v thr z w) :
+    jndL v thr x w := by
+  simp only [jndL, jndI, pairwiseProb] at *
+  have hvx := hv x; have hvy := hv y; have hvz := hv z; have hvw := hv w
+  rw [lt_div_iff₀ (add_pos hvx hvy)] at hxy
+  obtain ⟨hyz_lo, _⟩ := hyz
+  rw [le_div_iff₀ (add_pos hvy hvz)] at hyz_lo
+  rw [lt_div_iff₀ (add_pos hvz hvw)] at hzw
+  rw [lt_div_iff₀ (add_pos hvx hvw)]
+  -- hxy: thr * v(y) < (1-thr) * v(x)
+  -- hyz_lo: (1-thr) * v(z) ≤ thr * v(y)
+  -- hzw: thr * v(w) < (1-thr) * v(z)
+  -- Chain: thr * v(w) < (1-thr) * v(z) ≤ thr * v(y) < (1-thr) * v(x)
+  linarith
+
+/-- **No sandwiching**: `xLy ∧ yLz → ¬(xIw ∧ wIz)` — no `w` can be
+    indistinguishable from both endpoints of a discriminable chain. -/
+theorem jndL_no_sandwich (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (thr : ℝ)
+    (hthr_lower : 1 / 2 < thr) (hthr_upper : thr < 1) (x y z w : A)
+    (hxy : jndL v thr x y) (hyz : jndL v thr y z) :
+    ¬(jndI v thr x w ∧ jndI v thr w z) := by
+  intro ⟨hxw, hwz⟩
+  simp only [jndL, jndI, pairwiseProb] at *
+  have hvx := hv x; have hvy := hv y; have hvz := hv z; have hvw := hv w
+  rw [lt_div_iff₀ (add_pos hvx hvy)] at hxy
+  rw [lt_div_iff₀ (add_pos hvy hvz)] at hyz
+  obtain ⟨hxw_lo, hxw_hi⟩ := hxw
+  rw [le_div_iff₀ (add_pos hvx hvw)] at hxw_lo
+  rw [div_le_iff₀ (add_pos hvx hvw)] at hxw_hi
+  obtain ⟨hwz_lo, hwz_hi⟩ := hwz
+  rw [le_div_iff₀ (add_pos hvw hvz)] at hwz_lo
+  rw [div_le_iff₀ (add_pos hvw hvz)] at hwz_hi
+  nlinarith [mul_le_mul_of_nonneg_right hxw_hi (le_of_lt hvw),
+             mul_le_mul_of_nonneg_right hwz_hi (le_of_lt hvx),
+             mul_lt_mul_of_pos_right hxy (hv z),
+             mul_lt_mul_of_pos_right hyz (hv x)]
+
+/-- **L-transitivity**: `xLy ∧ yLz → xLz`. Not one of the semiorder axioms —
+    it follows from the interval condition instantiated at `z := y`, via
+    I-reflexivity. -/
+theorem jndL_trans (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (thr : ℝ)
+    (hthr_lower : 1 / 2 < thr) (hthr_upper : thr < 1) (x y z : A)
+    (hxy : jndL v thr x y) (hyz : jndL v thr y z) :
+    jndL v thr x z :=
+  jndL_interval v hv thr hthr_lower hthr_upper x y y z hxy
+    (jndI_refl v hv thr hthr_lower hthr_upper y) hyz
+
+/-- The trace relation (Definition 4, p. 37): `x ≥_T y` iff
+    `P(x, z) ≥ P(y, z)` for all `z` — dominance in every pairwise comparison
+    against a common reference. -/
+def traceGe (v : A → ℝ) (x y : A) : Prop :=
+  ∀ z : A, pairwiseProb v y z ≤ pairwiseProb v x z
+
+/-- **Theorem 6**: the trace relation is equivalent to the scale ordering
+    `v(y) ≤ v(x)`. -/
+theorem trace_iff_scale_ge (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (x y : A) :
+    traceGe v x y ↔ v y ≤ v x := by
+  simp only [traceGe]
+  constructor
+  · intro h
+    have := h y
+    rwa [pairwiseProb_mono_iff (hv x) (hv y) (hv y)] at this
+  · intro hle z
+    rwa [pairwiseProb_mono_iff (hv x) (hv y) (hv z)]
+
+/-- Corollary: `x ≥_T y` iff `P(x, y) ≥ 1/2`. -/
+theorem trace_iff_pairwiseProb_ge_half (v : A → ℝ) (hv : ∀ a : A, 0 < v a)
+    (x y : A) :
+    traceGe v x y ↔ 1 / 2 ≤ pairwiseProb v x y := by
+  rw [trace_iff_scale_ge v hv, pairwiseProb_ge_half_iff (hv x) (hv y)]
+
+/-- The trace is reflexive: `x ≥_T x`. -/
+theorem traceGe_refl (v : A → ℝ) (x : A) : traceGe v x x :=
+  λ _ => le_refl _
+
+/-- The trace is transitive: `x ≥_T y ∧ y ≥_T z → x ≥_T z`. -/
+theorem traceGe_trans (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (x y z : A)
+    (hxy : traceGe v x y) (hyz : traceGe v y z) :
+    traceGe v x z := by
+  rw [trace_iff_scale_ge v hv] at *
+  linarith
+
+/-- The trace is total: for any `x, y`, either `x ≥_T y` or `y ≥_T x`.
+    With `traceGe_refl` and `traceGe_trans`, the trace is a **weak order**
+    (total preorder). -/
+theorem traceGe_total (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (x y : A) :
+    traceGe v x y ∨ traceGe v y x := by
+  rw [trace_iff_scale_ge v hv, trace_iff_scale_ge v hv]
+  exact le_total (v y) (v x)
+
+/-- The trace agrees with L: if `xLy` for any `π`, then `x ≥_T y`. -/
+theorem traceGe_of_jndL (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (thr : ℝ)
+    (hthr : 1 / 2 < thr) (x y : A) (h : jndL v thr x y) :
+    traceGe v x y := by
+  rw [trace_iff_scale_ge v hv]
+  rw [jndL, pairwiseProb] at h
+  have hD := add_pos (hv x) (hv y)
+  have := (lt_div_iff₀ hD).mp h
+  nlinarith
+
+end JustNoticeableDifferences
+
+/-!
+### §2.B: The power law and Weber's law (pp. 42–44)
+
+For the power scale `v(s) = sⁿ`, [luce-1959] derives the linear
+generalization of Weber's law: the just-noticeable intensity ratio at
+threshold `π` is `(π/(1−π))^(1/n)`. `stevens_jndL_intensity_ratio` is the
+`C = 0` inequality form, stated over `StevensScale` from
+`Processing.Psychophysics`.
+-/
+
+section PowerLawWeber
+
+open Real
+
+/-- **Weber ratio from the jnd** (§2.B): if `s₁` is discriminably preferred
+    to `s₂` at threshold `π` under a power scale with exponent `n`, the
+    intensity ratio `s₁/s₂` exceeds `(π/(1-π))^(1/n)`. -/
+theorem stevens_jndL_intensity_ratio (σ : StevensScale) (thr : ℝ)
+    (hthr_lower : 1 / 2 < thr) (hthr_upper : thr < 1)
+    {s₁ s₂ : ℝ} (h₁ : 0 < s₁) (h₂ : 0 < s₂)
+    (hL : jndL (· ^ σ.n) thr s₁ s₂) :
+    (thr / (1 - thr)) ^ (1 / σ.n) < s₁ / s₂ := by
+  simp only [jndL, pairwiseProb] at hL
+  have hp₁ : 0 < s₁ ^ σ.n := rpow_pos_of_pos h₁ σ.n
+  have hp₂ : 0 < s₂ ^ σ.n := rpow_pos_of_pos h₂ σ.n
+  have hd : 0 < s₁ ^ σ.n + s₂ ^ σ.n := add_pos hp₁ hp₂
+  rw [lt_div_iff₀ hd] at hL
+  have h1mt : 0 < 1 - thr := by linarith
+  have hthr_ratio_pos : 0 < thr / (1 - thr) := div_pos (by linarith) h1mt
+  have h_ratio : thr / (1 - thr) < (s₁ / s₂) ^ σ.n := by
+    rw [div_rpow (le_of_lt h₁) (le_of_lt h₂), div_lt_div_iff₀ h1mt hp₂]; nlinarith
+  have h5 := rpow_lt_rpow (le_of_lt hthr_ratio_pos) h_ratio (div_pos one_pos σ.hn_pos)
+  rw [← rpow_mul (le_of_lt (div_pos h₁ h₂)), mul_one_div_cancel (ne_of_gt σ.hn_pos),
+    rpow_one] at h5
+  exact h5
+
+end PowerLawWeber
 
 variable {A E : Type*} [DecidableEq A] [DecidableEq E]
 
