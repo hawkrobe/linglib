@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Mathlib.Algebra.Group.Submonoid.Operations
+import Mathlib.GroupTheory.Congruence.Basic
 import Mathlib.SetTheory.Cardinal.NatCard
 
 /-!
@@ -39,27 +40,44 @@ variable {T S R : Type*} [Monoid T] [Monoid S] [Monoid R]
 
 /-- `T` is a **subquotient** of `S` when `T` is a homomorphic image of a submonoid of `S` —
 the **division** `T ≼ S` of finite semigroup theory [eilenberg-1976]. -/
+@[to_additive /-- `T` is a **subquotient** of `S` when `T` is a homomorphic image of an
+additive submonoid of `S`. -/]
 def IsSubquotient (T S : Type*) [Monoid T] [Monoid S] : Prop :=
   ∃ (N : Submonoid S) (f : N →* T), Function.Surjective f
 
 /-- A homomorphic image is a subquotient. -/
+@[to_additive]
 theorem IsSubquotient.of_surjective (f : S →* T) (hf : Function.Surjective f) :
     IsSubquotient T S :=
   ⟨⊤, f.comp Submonoid.topEquiv.toMonoidHom, hf.comp Submonoid.topEquiv.surjective⟩
 
 /-- An embedded monoid is a subquotient. -/
+@[to_additive]
 theorem IsSubquotient.of_injective (f : T →* S) (hf : Function.Injective f) :
     IsSubquotient T S :=
   have e := MulEquiv.ofBijective f.mrangeRestrict
     ⟨fun _ _ h => hf (congrArg Subtype.val h), f.mrangeRestrict_surjective⟩
   ⟨MonoidHom.mrange f, e.symm.toMonoidHom, e.symm.surjective⟩
 
+@[to_additive]
 theorem _root_.MulEquiv.isSubquotient (e : T ≃* S) : IsSubquotient T S :=
   IsSubquotient.of_surjective e.symm.toMonoidHom e.symm.surjective
 
+/-- A submonoid is a subquotient. -/
+@[to_additive]
+theorem _root_.Submonoid.isSubquotient (N : Submonoid S) : IsSubquotient N S :=
+  IsSubquotient.of_injective N.subtype N.subtype_injective
+
+/-- A congruence quotient is a subquotient. -/
+@[to_additive]
+theorem _root_.Con.isSubquotient_quotient (c : Con S) : IsSubquotient c.Quotient S :=
+  IsSubquotient.of_surjective c.mk' c.mk'_surjective
+
+@[to_additive]
 theorem IsSubquotient.refl (T : Type*) [Monoid T] : IsSubquotient T T :=
   (MulEquiv.refl T).isSubquotient
 
+@[to_additive]
 theorem IsSubquotient.trans (hTS : IsSubquotient T S) (hSR : IsSubquotient S R) :
     IsSubquotient T R := by
   obtain ⟨N, f, hf⟩ := hTS
@@ -72,15 +90,18 @@ theorem IsSubquotient.trans (hTS : IsSubquotient T S) (hSR : IsSubquotient S R) 
   exact ⟨(N.comap g).map M.subtype, (f.comp (g.submonoidComap N)).comp e.symm.toMonoidHom,
     (hf.comp hcomap).comp e.symm.surjective⟩
 
+@[to_additive]
 theorem isSubquotient_prod_left (T S : Type*) [Monoid T] [Monoid S] :
     IsSubquotient T (T × S) :=
   IsSubquotient.of_injective (MonoidHom.inl T S) fun _ _ h => congrArg Prod.fst h
 
+@[to_additive]
 theorem isSubquotient_prod_right (T S : Type*) [Monoid T] [Monoid S] :
     IsSubquotient T (S × T) :=
   IsSubquotient.of_injective (MonoidHom.inr S T) fun _ _ h => congrArg Prod.snd h
 
 /-- A subquotient of a finite monoid is no larger. -/
+@[to_additive]
 theorem IsSubquotient.card_le [Finite S] (h : IsSubquotient T S) :
     Nat.card T ≤ Nat.card S := by
   obtain ⟨N, f, hf⟩ := h
@@ -89,6 +110,7 @@ theorem IsSubquotient.card_le [Finite S] (h : IsSubquotient T S) :
 
 /-- Finite monoids that are subquotients of each other are isomorphic ([eilenberg-1976]):
 division is antisymmetric up to `MulEquiv` on finite monoids. -/
+@[to_additive]
 theorem IsSubquotient.nonempty_mulEquiv [Finite T] [Finite S] (hTS : IsSubquotient T S)
     (hST : IsSubquotient S T) : Nonempty (T ≃* S) := by
   have hcard : Nat.card T = Nat.card S := le_antisymm hTS.card_le hST.card_le
