@@ -42,7 +42,7 @@ two free and one derived:
 Under uniform prior odds and 0–1 loss, the Bayes-optimal criterion is `c = 0`
 (`β = 1`); under prior odds `π_N / π_S` it is `c* = log(π_N / π_S) / d'`.
 
-## Connection to Luce's choice framework (McFadden's theorem, exact)
+## Connection to Luce's choice framework (Gumbel–Luce equivalence, exact)
 
 Under the symmetric parameterization, the likelihood ratio at observation `x`
 (measured from the midpoint between the two distribution means) is
@@ -53,7 +53,7 @@ and the observer's "choice" between reporting signal vs noise follows a Luce
 model with `v(signal) / v(noise) = L(x)`. We construct this Luce model as
 `SDTModel.toLuceAt`, defined directly as a `RationalAction.fromGumbelRUM` with
 binary utilities `(d' · x, 0)` and scale `β = 1`. The signal probability and
-odds-ratio properties are then immediate corollaries of `mcfaddenIntegral_binary`
+odds-ratio properties are then immediate corollaries of `softmax_binary`
 and `RationalAction.fromGumbelRUM_policy` — making the SDT/Gumbel-Luce
 equivalence formally exact for binary detection (UNVERIFIED: [luce-1959]
 §2.E gives this as the original choice-theoretic framing).
@@ -379,9 +379,9 @@ section LuceEmbedding
 /-! ## SDT as a Luce model — exact via McFadden's theorem
 
 The SDT signal/noise choice is a binary Gumbel-Luce RUM: with utilities
-`(d' · x, 0)` and unit Gumbel scale `β = 1`, the McFadden integral reduces
+`(d' · x, 0)` and unit Gumbel scale `β = 1`, the Gumbel max-probability reduces
 to the SDT Luce policy exactly. The signal-probability and odds-ratio
-properties below are immediate corollaries of `mcfaddenIntegral_binary` and
+properties below are immediate corollaries of `softmax_binary` and
 `RationalAction.fromGumbelRUM_policy`. -/
 
 /-- The Gaussian likelihood ratio at observation `x`, given `d'`, in the
@@ -422,7 +422,7 @@ theorem SDTModel.likelihoodRatioAt_pos (m : SDTModel) (x : ℝ) :
     `(L(x), 1)`, the Bayesian-posterior-odds form under uniform prior.
 
     The Luce policy `P("signal" | x) = L(x) / (L(x) + 1)` is then immediate
-    from `mcfaddenIntegral_binary` (proved as `toLuceAt_signal_prob` below).
+    from `softmax_binary` (proved as `toLuceAt_signal_prob` below).
 
     *Note*: the construction depends on `m.dPrime` and the observation `x`,
     not on `m.criterion`. The criterion enters only at decision time (the
@@ -436,14 +436,14 @@ noncomputable def SDTModel.toLuceAt (m : SDTModel) (x : ℝ) :
 @[simp]
 theorem SDTModel.toLuceAt_score_signal (m : SDTModel) (x : ℝ) :
     (m.toLuceAt x).score () (0 : Fin 2) = m.likelihoodRatioAt x := by
-  simp [SDTModel.toLuceAt, RationalAction.fromGumbelRUM,
+  simp [SDTModel.toLuceAt, RationalAction.fromGumbelRUM, RationalAction.fromSoftmax,
         SDTModel.likelihoodRatioAt, likelihoodRatio]
 
 /-- The score on "noise" (action 1) is `1` (the Gumbel-RUM score with utility 0). -/
 @[simp]
 theorem SDTModel.toLuceAt_score_noise (m : SDTModel) (x : ℝ) :
     (m.toLuceAt x).score () (1 : Fin 2) = 1 := by
-  simp [SDTModel.toLuceAt, RationalAction.fromGumbelRUM]
+  simp [SDTModel.toLuceAt, RationalAction.fromGumbelRUM, RationalAction.fromSoftmax]
 
 /-- The Luce odds ratio `score(signal) / score(noise)` equals the likelihood
     ratio — the core SDT/Luce identification.
@@ -456,21 +456,17 @@ theorem SDTModel.toLuceAt_odds_ratio (m : SDTModel) (x : ℝ) :
   rw [m.toLuceAt_score_signal, m.toLuceAt_score_noise, div_one]
 
 /-- The Luce signal probability `L(x) / (L(x) + 1)`, derived as a corollary of
-    `mcfaddenIntegral_binary` via `RationalAction.fromGumbelRUM_policy`. -/
+    `softmax_binary` via `RationalAction.fromGumbelRUM_policy`. -/
 theorem SDTModel.toLuceAt_signal_prob (m : SDTModel) (x : ℝ) :
     (m.toLuceAt x).policy () (0 : Fin 2) =
     m.likelihoodRatioAt x / (m.likelihoodRatioAt x + 1) := by
-  rw [SDTModel.toLuceAt, RationalAction.fromGumbelRUM_policy,
-      mcfaddenIntegral_binary]
   have h01 : ¬(1 : Fin 2) = (0 : Fin 2) := by decide
-  simp only [Fin.isValue, ↓reduceIte, h01, sub_zero, div_one, Real.sigmoid_def,
-             SDTModel.likelihoodRatioAt, likelihoodRatio]
-  rw [show m.dPrime * x = -(-(m.dPrime * x)) from by ring,
-      show -(-(m.dPrime * x)) = -(-1 * (m.dPrime * x)) from by ring,
-      neg_mul, one_mul, neg_neg]
-  -- Goal: (1 + exp(-(d'·x)))⁻¹ = exp(d'·x) / (exp(d'·x) + 1)
-  have hpos : (0 : ℝ) < Real.exp (m.dPrime * x) := exp_pos _
+  rw [SDTModel.toLuceAt, RationalAction.fromGumbelRUM_policy, softmax_binary]
+  simp only [Pi.smul_apply, smul_eq_mul, Fin.isValue, ↓reduceIte, h01, inv_one, one_mul,
+             mul_zero, sub_zero, Real.sigmoid_def, SDTModel.likelihoodRatioAt,
+             likelihoodRatio]
   rw [Real.exp_neg]
+  have h := (Real.exp_pos (m.dPrime * x)).ne'
   field_simp
 
 end LuceEmbedding
@@ -578,8 +574,8 @@ where `k = π/√3 ≈ 1.814` is the variance-matching constant:
 This is the Thurstone-Luce bridge for the detection context: both SDT
 (Gaussian noise) and the Gumbel-Luce model (Gumbel noise) are Random
 Utility Models. The Gumbel-Luce model gives **exactly** logistic
-probabilities (McFadden's theorem; see `gumbelMaxProb_is_mcfaddenIntegral`
-in `GumbelLuce.lean`). The Gaussian model gives `Φ`. These agree up to the
+probabilities (Lemma 1 of [mcfadden-1974]; see `integral_gumbelPDFReal_mul_prod_cdf`
+in `Core/Probability/Gumbel.lean`). The Gaussian model gives `Φ`. These agree up to the
 numerical approximation `Φ ≈ logistic`.
 
 The constant `k = π/√3` equals `thurstoneLuceK(1/√2)`, unifying the SDT

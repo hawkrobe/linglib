@@ -56,7 +56,7 @@ The cross-question `argmax` selection of the policy is out of scope: the
 results here concern the per-question clarify-or-commit decision.
 
 This PMF/`ℝ≥0∞` formulation parallels the `ℝ`-valued expected-information-gain
-substrate `Core.Agent.ExperimentDesign.eig` (with value function `V U`):
+substrate `Core.Probability.Decision.ExperimentDesign.eig` (with value function `V U`):
 `V_le_Vpost` is the PMF analogue of `ExperimentDesign.eig_nonneg_of_convex`
 and of `TsvilodubEtAl2026.evpi_nonneg`.
 
@@ -71,7 +71,7 @@ logistic gate (`TsvilodubEtAl2026.softGateRule`).
 * Discharge the claim that EVPI (`TsvilodubEtAl2026.evpi`) is the upper
   bound on VoI for any question into a theorem
   `worthAsking c U b κ → c < EVPI`.
-* Relate `VoI` / `V_le_Vpost` to `Core.Agent.ExperimentDesign.eig` /
+* Relate `VoI` / `V_le_Vpost` to `Core.Probability.Decision.ExperimentDesign.eig` /
   `eig_nonneg_of_convex` (bridging the `ℝ≥0∞`-on-`PMF` and `ℝ`-on-`Fintype`
   carriers) so the two statements of "information has nonnegative value" become
   one fact.

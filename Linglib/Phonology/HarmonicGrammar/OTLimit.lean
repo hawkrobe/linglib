@@ -21,7 +21,7 @@ The argument has two components:
 
 2. **MaxEnt concentration** (`softmax_argmax_limit`): as α → ∞, the MaxEnt
    distribution softmax(α·H) concentrates on the argmax of H — i.e., the HG
-   winner. This is proved in `Core.Agent.RationalAction`.
+   winner. This is proved in `Core.Probability.Choice.RationalAction`.
 
 Together: MaxEnt(α → ∞) → HG winner = OT winner.
 

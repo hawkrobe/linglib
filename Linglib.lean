@@ -290,6 +290,7 @@ import Linglib.Core.Probability.EvalLemmas
 import Linglib.Core.Probability.Finite
 import Linglib.Core.Probability.Gaussian
 import Linglib.Core.Probability.GibbsVariational
+import Linglib.Core.Probability.Gumbel
 import Linglib.Core.Probability.Hypergeometric
 import Linglib.Core.Probability.JointPosterior
 import Linglib.Core.Probability.LogitChoice
