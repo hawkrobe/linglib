@@ -10,7 +10,9 @@ choosing the first is `Φ(Δ / σ)`, where `Φ` is the standard normal CDF
 (`Core.normalCDF`). Equivalently it is `P(X > 0)` for `X ~ N(Δ, σ²)`.
 
 This is the **probit** choice rule — the Gaussian sibling of the **logit**
-(softmax) choice rule that arises from Gumbel noise (`mcfaddenIntegral_binary`).
+(softmax) choice rule that arises from Gumbel noise (`rumMaxProb_gumbel_eq_softmax`
+in `Core/Probability/Choice/GumbelLuce.lean`). `rumMaxProb` below is the shared
+n-ary carrier both noise families instantiate.
 It is the shared, domain-neutral core that [thurstone-1927]'s Case V model of
 discriminal processes (`Core.ThurstoneCaseV`, psychophysics) and Noisy Harmonic
 Grammar ([boersma-pater-2016], phonology) both *instantiate*: neither depends on
@@ -75,5 +77,17 @@ theorem gaussianChoiceProb_strictMono (hσ : 0 < σ) :
   intro a b h
   simp only [gaussianChoiceProb]
   exact normalCDF_strictMono (div_lt_div_of_pos_right h hσ)
+
+/-! ### The n-ary max-probability integral -/
+
+open MeasureTheory in
+/-- The max-probability integral of a random utility model with i.i.d. noise:
+the density formula `∫ pdf(x - uᵢ) · ∏_{j≠i} cdf(x - uⱼ) dx` for the event that
+alternative `i` attains the maximum utility `uᵢ + εᵢ`. The Gumbel instance
+evaluates to softmax (`rumMaxProb_gumbel_eq_softmax`); the Gaussian instance is
+the n-ary Thurstone model. -/
+noncomputable def rumMaxProb {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (pdf cdf : ℝ → ℝ) (u : ι → ℝ) (i : ι) : ℝ :=
+  ∫ x : ℝ, pdf (x - u i) * ∏ j ∈ Finset.univ.erase i, cdf (x - u j)
 
 end Core
