@@ -15,12 +15,11 @@ import Mathlib.SetTheory.Cardinal.Finite
 # Subquotients of monoids
 
 A monoid `T` is a *subquotient* of a monoid `S` when `T` is a homomorphic image of a
-submonoid of `S` — the relation called *division*, written `T ≼ S`, in finite semigroup
-theory [eilenberg-1976], and a *section* for groups. This file defines the relation and
-proves it transitive, closed under products, and, on finite monoids, antisymmetric up to
-isomorphism. In finite semigroup theory the classes closed under subquotients and finite
-products are the pseudovarieties, and the syntactic monoid of a language is a subquotient of
-every monoid recognizing it.
+submonoid of `S` — *division* (`T ≼ S`) in finite semigroup theory [eilenberg-1976], a
+*section* in group theory. This file defines the relation and proves it transitive, closed
+under products, and, on finite monoids, antisymmetric up to isomorphism. The classes of
+finite monoids closed under subquotients and finite products are the pseudovarieties, and
+the syntactic monoid of a language is a subquotient of every monoid recognizing it.
 
 ## Main definitions
 
