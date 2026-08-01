@@ -17,7 +17,7 @@ properties are surveyed in [franke-degen-2023].
 It is the domain-neutral logit core shared across the library: RSA speakers and
 listeners (pragmatics), MaxEnt / Noisy HG (phonology), and rational-action agents
 (`Core.RationalAction`) all build on it. With the Gumbel→softmax result
-(`mcfaddenIntegral_eq_softmax`) it is the logit sibling of the probit choice rule
+(`rumMaxProb_gumbel_eq_softmax`) it is the logit sibling of the probit choice rule
 (`gaussianChoiceProb`).
 
 `[UPSTREAM]`: Mathlib has `Real.exp` / `Real.sigmoid` but no `softmax` /

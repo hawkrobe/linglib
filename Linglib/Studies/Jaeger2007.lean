@@ -25,7 +25,7 @@ Gradient Ascent (SGA) for Maximum Entropy models. This unifies two traditions:
 2. **Correct gradient** (§4, eq (2)): The per-weight gradient of MaxEnt
    log-likelihood is `E_emp[cⱼ] − E_r̄[cⱼ]` — observed minus expected
    feature value. This is `hasDerivAt_logConditional` from
-   `Core.Agent.RationalAction`, instantiated as `gradient` in
+   `Core.Probability.Choice.RationalAction`, instantiated as `gradient` in
    [goldwater-johnson-2003].
 
 3. **Convergence guarantee** (§4): SGA converges to the global maximum

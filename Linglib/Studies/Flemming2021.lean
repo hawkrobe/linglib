@@ -62,19 +62,17 @@ open Core.Optimization Constraints HarmonicGrammar Core Real
 -- § 1: MaxEnt as Gumbel RUM (McFadden)
 -- ============================================================================
 
-/-- **MaxEnt = Gumbel RUM** ([flemming-2021] §4/§10): MaxEnt probability
-    is exactly the McFadden integral with Gumbel scale β = 1.
-
-    This formalizes the RUM connection: MaxEnt adds i.i.d. Gumbel noise to
-    candidate harmonies, and by McFadden's theorem
-    (`mcfaddenIntegral_eq_softmax`), the resulting choice probability is
-    softmax — i.e., the standard MaxEnt formula. -/
-theorem maxent_eq_gumbelRUM {C : Type} [Fintype C] [Nonempty C] {n : ℕ}
+/-- **MaxEnt = Gumbel RUM** ([flemming-2021] §4/§10): the max-probability
+    integral of a RUM with candidate harmonies as utilities and i.i.d.
+    Gumbel(0, 1) noise is exactly the MaxEnt (softmax) formula, by Lemma 1 of
+    [mcfadden-1974] (`rumMaxProb_gumbel_eq_softmax`). -/
+theorem maxent_eq_gumbelRUM {C : Type} [Fintype C] [Nonempty C] [DecidableEq C] {n : ℕ}
     (con : CON C n) (w : Fin n → ℝ) (c : C) :
-    mcfaddenIntegral (harmonyScore con w) 1 c =
+    rumMaxProb (gumbelPDFReal 0 1) (fun x => ProbabilityTheory.cdf (gumbelMeasure 0 1) x)
+      (harmonyScore con w) c =
     softmax (harmonyScore con w) c := by
-  rw [mcfaddenIntegral_eq_softmax]
-  simp only [div_one, one_smul]
+  rw [rumMaxProb_gumbel_eq_softmax _ one_pos c]
+  norm_num [one_smul]
 
 -- ============================================================================
 -- § 2: MaxEnt Logit Uniformity (eq (10))

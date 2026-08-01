@@ -190,7 +190,7 @@ they differ only in the noise distribution:
 | Gumbel-Luce | Gumbel(0, β)      | `logistic((u_a-u_b)/β)` | `GumbelLuce.lean` |
 
 The Gumbel-Luce model gives **exactly** the softmax (Luce) choice rule
-(McFadden's theorem, `mcfaddenIntegral_eq_softmax`). The Thurstone model
+(Lemma 1 of [mcfadden-1974], `rumMaxProb_gumbel_eq_softmax`). The Thurstone model
 gives the normal CDF. These agree up to the Gaussian-logistic approximation
 `Φ(y·√3/π) ≈ logistic(y)` (max error ~0.023, variance matching;
 see `thurstone_luce_identity`).
@@ -210,10 +210,11 @@ it equates the variances `σ² · 2` (Gaussian difference) and `β² · π²/3`
 
     The two models are both RUMs; they agree when `Φ ≈ logistic`, i.e.,
     when the variance-matched scale `β = σ√6/π` (see `thurstoneLuceK`). -/
-theorem gumbelRUM_binary_eq_logistic (d' β : ℝ) (_hβ : 0 < β) :
-    mcfaddenIntegral (λ i : Fin 2 => if i = 0 then d' / 2 else -(d' / 2)) β 0
+theorem gumbelRUM_binary_eq_logistic (d' β : ℝ) (hβ : 0 < β) :
+    rumMaxProb (gumbelPDFReal 0 β) (fun x => ProbabilityTheory.cdf (gumbelMeasure 0 β) x)
+      (λ i : Fin 2 => if i = 0 then d' / 2 else -(d' / 2)) 0
     = Real.sigmoid (d' / β) := by
-  rw [mcfaddenIntegral_binary]
+  rw [rumMaxProb_gumbel_binary _ hβ]
   congr 1
   simp only [↓reduceIte]
   have h1 : ¬(1 : Fin 2) = (0 : Fin 2) := by decide
@@ -222,7 +223,7 @@ theorem gumbelRUM_binary_eq_logistic (d' β : ℝ) (_hβ : 0 < β) :
 
 /-! ## Stevens → Thurstone → SDT chain
 
-The two `Core/Agent/` psychophysics primitives — `StevensScale` (Stevens'
+The two psychophysics primitives — `StevensScale` (Stevens'
 power law `ψ(s) = k · sⁿ`, the deterministic intensity-to-percept mapping) and
 `SDTModel` (signal detection, the noisy discrimination operator) — sit in
 *different regimes*:

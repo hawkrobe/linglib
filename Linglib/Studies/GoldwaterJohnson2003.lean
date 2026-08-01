@@ -12,7 +12,7 @@ of output y given input x as:
   `Pr(y|x) = exp(Σ wᵢfᵢ(y,x)) / Z(x)`
 
 This IS `softmax(harmonyScore constraints, 1)` — the same `softmax` from
-`Core.Agent.RationalAction` used throughout linglib for RSA pragmatics.
+`Core.Probability.Choice.RationalAction` used throughout linglib for RSA pragmatics.
 The phonology–pragmatics connection is structural: both are log-linear
 models over weighted features, differing only in what the features measure.
 
@@ -63,7 +63,7 @@ noncomputable def gjProb {I O : Type} [Fintype O] {n : ℕ}
     `softmax(harmonyScore con w, 1)`.
 
     The same `softmax` function powers RSA pragmatic reasoning
-    (`Core.Agent.RationalAction`): both phonological grammar and
+    (`Core.Probability.Choice.RationalAction`): both phonological grammar and
     pragmatic inference are log-linear models over weighted features. -/
 theorem eq1_is_softmax {I O : Type} [Fintype O] {n : ℕ}
     (con : CON (I × O) n) (w : Fin n → ℝ) (i : I) (o : O) :
@@ -105,7 +105,7 @@ noncomputable def regularizedObjective {I O : Type} [Fintype O] {n : ℕ}
     and `rᵢ = Σₖ≠ⱼ wₖ(−cₖ(yᵢ,x))`. The first term is affine (hence concave);
     the second is convex (`logSumExpOffset_convex`). Concave − convex = concave.
 
-    This is `logConditional_concaveOn` from `Core.Agent.RationalAction`. -/
+    This is `logConditional_concaveOn` from `Core.Probability.Choice.RationalAction`. -/
 theorem concavity {ι : Type*} [Fintype ι] [Nonempty ι] (s r : ι → ℝ) (y : ι) :
     ConcaveOn ℝ Set.univ
       (fun wⱼ => (wⱼ * s y + r y) - logSumExp (wⱼ • s + r)) :=
@@ -126,7 +126,7 @@ theorem concavity {ι : Type*} [Fintype ι] [Nonempty ι] (s r : ι → ℝ) (y 
     At the maximum, this derivative is zero, so `sᵧ = E_P[s]`: the
     observed feature value equals the expected feature value.
 
-    This is `hasDerivAt_logConditional` from `Core.Agent.RationalAction`. -/
+    This is `hasDerivAt_logConditional` from `Core.Probability.Choice.RationalAction`. -/
 theorem gradient {ι : Type*} [Fintype ι] [Nonempty ι]
     (s r : ι → ℝ) (y : ι) (wⱼ : ℝ) :
     HasDerivAt (fun w => (w * s y + r y) - logSumExp (w • s + r))

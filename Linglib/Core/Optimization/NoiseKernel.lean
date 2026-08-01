@@ -1,5 +1,4 @@
 import Linglib.Core.Optimization.Decoder
-import Linglib.Core.Probability.Choice.GumbelLuce
 
 /-!
 # Noise kernels — random utility models
@@ -28,8 +27,8 @@ The noise distribution determines the choice rule. Three classical results:
 | Normal(0, σ²)      | probit (Φ-based)    | binary case via Thurstone V  |
 
 The Gumbel ↔ softmax equivalence is McFadden's theorem (proved as
-`mcfaddenIntegral_eq_softmax` in `Core.Agent.GumbelLuce`). The Gaussian
-binary case is Thurstone Case V (`Core.Agent.Thurstone`); the n-ary
+`rumMaxProb_gumbel_eq_softmax` in `Core.Probability.Choice.GumbelLuce`). The Gaussian
+binary case is Thurstone Case V (`Processing.Psychophysics.Thurstone`); the n-ary
 Gaussian case requires multivariate normal integration and is not yet
 implemented as a `Decoder`.
 
@@ -39,7 +38,7 @@ The `Decoder` interface is the *what* (a probability distribution over
 candidates). `NoiseKernel` is the *why* (a noise distribution that
 induces it via argmax). Two different noise distributions can yield
 the same decoder up to numerical approximation (Gumbel ≈ Gaussian via
-the logistic-Φ approximation, see `Core.Agent.Thurstone` §4), and the
+the logistic-Φ approximation, see `Processing.Psychophysics.Thurstone` §4), and the
 same noise distribution can yield different decoders at different
 temperatures. Separating the layers lets us state and use those
 correspondences cleanly.
@@ -102,10 +101,10 @@ noncomputable def toDecoder {Cand : Type*} : NoiseKernel → Decoder Cand ℝ
 theorem dirac_eq_argmaxDecoder {Cand : Type*} :
     (NoiseKernel.dirac.toDecoder : Decoder Cand ℝ) = argmaxDecoder := rfl
 
-/-- McFadden's theorem at the decoder level: the Gumbel(0, 1/α) kernel's
+/-- Lemma 1 of [mcfadden-1974] at the decoder level: the Gumbel(0, 1/α) kernel's
     decoder is exactly `softmaxDecoder α`. By definition; the underlying
-    RUM-to-softmax identity is `mcfaddenIntegral_eq_softmax` in
-    `Core.Agent.GumbelLuce`. -/
+    RUM-to-softmax identity is `rumMaxProb_gumbel_eq_softmax` in
+    `Core.Probability.Choice.GumbelLuce`. -/
 theorem gumbel_eq_softmaxDecoder {Cand : Type*} (α : ℝ) :
     (NoiseKernel.gumbel α).toDecoder = (softmaxDecoder α : Decoder Cand ℝ) := rfl
 

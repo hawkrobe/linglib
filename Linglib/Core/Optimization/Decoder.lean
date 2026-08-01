@@ -27,7 +27,7 @@ Noise-kernel-based decoders live in `NoiseKernel.lean`.
 `softmaxDecoder α` interpolates between soft and hard optimization: as
 `α → ∞`, the softmax distribution concentrates on the unique maximizer
 (when one exists), recovering `argmaxDecoder` — `softmax_argmax_limit` in
-`Core.Agent.RationalAction`.
+`Core.Probability.Choice.RationalAction`.
 
 ## Semiring connection
 
