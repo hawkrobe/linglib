@@ -15,7 +15,7 @@ require «doc-gen4» from git
 
 -- Mathlib last so its dependency versions take precedence
 require mathlib from git
-  "https://github.com/leanprover-community/mathlib4" @ "aae61ae084c21995ee248964a81e3750ad0db2db"
+  "https://github.com/leanprover-community/mathlib4" @ "905b95818eb32af7874a58b427f50c1711a5e96c"
 
 @[default_target]
 lean_lib Linglib where
