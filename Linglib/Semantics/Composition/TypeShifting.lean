@@ -37,7 +37,6 @@ namespace Semantics.Composition.TypeShifting
 
 open Intensional
 open Quantification
-open Intensional.Conjunction (typeRaise)
 
 variable {E W : Type}
 
@@ -274,10 +273,6 @@ theorem THE_ident [DecidableEq E] (domain : List E) (j : E)
   simp only [THE, iota_ident domain j hmem hnd, Option.map]
 
 end PartialShifts
-
-/-- `individual = Conjunction.typeRaise` -/
-theorem individual_eq_typeRaise (j : E) :
-    individual j = (typeRaise (W := W) j) := rfl
 
 /-- Coherence of the three readings of "the king" ([partee-1987] §3.2).
     When `iota` succeeds, the `e`, `⟨e,t⟩`, and `⟨⟨e,t⟩,t⟩` readings are
