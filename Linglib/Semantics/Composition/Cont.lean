@@ -8,7 +8,8 @@ continuation — Haskell's `evalCont`, which `Mathlib.Control.Monad.Cont`
 does not provide. The lemmas compute `lower` over `pure`/`>>=`/`<*>`
 chains: binds nest in bind order, the applicative combination
 left-to-right. In continuation semantics `lower` is
-[barker-shan-2014]'s LOWER, and the bind-order dependence is the
+[barker-shan-2014]'s LOWER (theirs restricts the answer type to the
+clause category), and the bind-order dependence is the
 monadic account of quantifier scope ([barker-2002], [shan-2001],
 [charlow-2014]); see `Studies/BumfordCharlow2024.lean` and
 `Studies/Charlow2020.lean`.
@@ -20,14 +21,10 @@ monadic account of quantifier scope ([barker-2002], [shan-2001],
 
 namespace Cont
 
-/-- `lower m` evaluates `m` at the identity continuation — Haskell's
-`evalCont`, and the LOWER of continuation semantics
-([barker-shan-2014]'s version restricts the answer type to the clause
-category). -/
+/-- Evaluation at the identity continuation: `lower m = m id`. -/
 def lower {A : Type*} (m : Cont A A) : A := m.run id
 
-/-- LOWER ∘ LIFT = id: `pure` is [barker-shan-2014]'s LIFT (Montague
-lift). -/
+/-- `lower` is a left inverse of `pure`: LOWER ∘ LIFT is the identity. -/
 @[simp] theorem lower_pure {A : Type*} (a : A) : lower (pure a) = a := rfl
 
 /-! ### `lower` on `pure`/`bind`/`seq` chains
