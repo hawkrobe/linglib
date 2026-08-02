@@ -65,7 +65,7 @@ def Poss (Q₁ : GQ α) (C : α → Prop) (Q₂ : GQ α) (R : α → α → Prop
     Narrowing stays in the scope, preserving possessive existential import
     ("John's dogs bark" requires John to own a dog).
     [peters-westerstahl-2006] (7.44)–(7.45), pp. 259–260 (Possʷ). -/
-def PossW (Q : NPQ α) (Q₂ : GQ α) (R : α → α → Prop) : GQ α :=
+def PossW (Q : Quantifier α) (Q₂ : GQ α) (R : α → α → Prop) : GQ α :=
   fun A B => Q (fun a => dom A R a ∧ Q₂ (fun y => A y ∧ R a y) B)
 
 /-! ### Conservativity (P&W (7.29)) -/
@@ -96,7 +96,7 @@ theorem poss_conservative {Q₁ Q₂ : GQ α} (C : α → Prop) (R : α → α �
 
 /-- Conservativity inheritance for the type ⟨1⟩ variant.
     [peters-westerstahl-2006] remark after (7.44). -/
-theorem possW_conservative {Q : NPQ α} {Q₂ : GQ α} (R : α → α → Prop)
+theorem possW_conservative {Q : Quantifier α} {Q₂ : GQ α} (R : α → α → Prop)
     (h₂ : Conservative Q₂) : Conservative (PossW Q Q₂ R) := by
   intro A B
   unfold PossW
@@ -192,7 +192,7 @@ theorem carrierGQ_existential_import {γ E S : Type*}
 
 /-! ### Bridge to Barker's type ⟨1⟩ possessive -/
 
-/-- [barker-2011]'s possessive NPQ (`⟦John's⟧ = fun P => ∃ y, R j y ∧ P y`,
+/-- [barker-2011]'s possessive Quantifier (`⟦John's⟧ = fun P => ∃ y, R j y ∧ P y`,
     `Possessive.asNPQ`) is `PossW` at a Montagovian individual with
     existential `Q₂` and trivial possessee restrictor — the possessee class is
     folded into `R` by Barker's π shift. -/

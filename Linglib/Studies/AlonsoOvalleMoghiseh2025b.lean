@@ -51,7 +51,7 @@ set_option autoImplicit false
 
 namespace AlonsoOvalleMoghiseh2025b
 
-open Quantification (NPQ conjGQ disjGQ conjGQs disjGQs nonemptySubsets
+open Quantification (Quantifier conjGQ disjGQ conjGQs disjGQs nonemptySubsets
   conjGQ_iff_forall disjGQ_iff_exists conjGQ_le_individual individual_le_disjGQ
   conjGQ_le_disjGQ' individual)
 
@@ -110,7 +110,7 @@ theorem bought_distributive (w : World) :
 
     ⟦Q⟧(dom) = {λw. Q(λe. bought(e, w)) | Q ∈ ⊓(dom) ∪ ⊔(dom)}
 
-    Since `NPQ Entity = (Entity → Prop) → Prop`, we use the propositional
+    Since `Quantifier Entity = (Entity → Prop) → Prop`, we use the propositional
     characterization `conjGQ_iff_forall` / `disjGQ_iff_exists` to compute
     a Bool result from the Bool predicate `bought`. -/
 def hamblinSet (dom : List Entity) : List (World → Bool) :=
@@ -191,18 +191,18 @@ def ciDomain : List Entity := allEntities.filter (fun e => decide (isAtom e))
     - `individual_le_disjGQ`: individual(a) ≤ ⊔(X) for a ∈ X
     - `conjGQ_le_disjGQ'`: ⊓(X) ≤ ⊔(X) for non-empty X
 
-    The bridge `npq_le_entails` lifts NPQ lattice `≤` to the study's
+    The bridge `npq_le_entails` lifts Quantifier lattice `≤` to the study's
     propositional `entails`, connecting the abstract lattice structure
     to the concrete model. -/
 
-/-- NPQ lattice ordering lifts to propositional entailment via `bought`.
-    If Q₁ ≤ Q₂ in the NPQ lattice, and p₁/p₂ are the propositions
+/-- Quantifier lattice ordering lifts to propositional entailment via `bought`.
+    If Q₁ ≤ Q₂ in the Quantifier lattice, and p₁/p₂ are the propositions
     obtained by applying Q₁/Q₂ to `bought` at each world, then p₁
     entails p₂.
 
     This is the key bridge connecting the lattice-theoretic GQ
     infrastructure to the study's propositional entailment relation. -/
-private theorem npq_le_entails {Q₁ Q₂ : NPQ Entity}
+private theorem npq_le_entails {Q₁ Q₂ : Quantifier Entity}
     {p₁ p₂ : World → Bool}
     (hp₁ : ∀ w, p₁ w = true ↔ Q₁ (λ e => bought e w = true))
     (hp₂ : ∀ w, p₂ w = true ↔ Q₂ (λ e => bought e w = true))
@@ -248,7 +248,7 @@ theorem atoms_independent :
   ⟨rfl, rfl⟩
 
 /-- B(t1) ∧ B(t2) entails each atom individually (conjunction elimination).
-    Structural proof: ⊓({t1,t2}) ≤ individual(tᵢ) in the NPQ lattice
+    Structural proof: ⊓({t1,t2}) ≤ individual(tᵢ) in the Quantifier lattice
     (`conjGQ_le_individual`), lifted to propositional entailment via
     `npq_le_entails`. -/
 theorem conj_entails_atoms :
@@ -260,7 +260,7 @@ theorem conj_entails_atoms :
     (conjGQ_le_individual .t2 _ (List.mem_cons.mpr (Or.inr (List.mem_cons_self ..))))⟩
 
 /-- B(t1) entails any disjunction containing it (disjunction introduction).
-    Structural proof: individual(t1) ≤ ⊔(X) for t1 ∈ X in the NPQ lattice
+    Structural proof: individual(t1) ≤ ⊔(X) for t1 ∈ X in the Quantifier lattice
     (`individual_le_disjGQ`), lifted to propositional entailment. -/
 theorem atom_entails_containing_disj :
     entails (bought .t1) (λ w => bought .t1 w || bought .t2 w) = true ∧
