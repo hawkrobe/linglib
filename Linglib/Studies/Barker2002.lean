@@ -22,7 +22,7 @@ namespace Barker2002
 
 open Quantification (Quantifier individual)
 
-variable {α β γ E : Type}
+variable {α β γ E : Type} (np : Cont Prop E) (vp : Cont Prop (E → Prop))
 
 /-! ### The grammar
 
@@ -33,11 +33,11 @@ fragment's direct meanings are function application, the rules are bare
 `<*>`, with priority as argument order. -/
 
 /-- The S rule with priority to the VP. -/
-def sRuleVP (np : Cont Prop E) (vp : Cont Prop (E → Prop)) : Cont Prop Prop :=
+def sRuleVP : Cont Prop Prop :=
   vp <*> np
 
 /-- The S rule with priority to the subject. -/
-def sRuleNP (np : Cont Prop E) (vp : Cont Prop (E → Prop)) : Cont Prop Prop :=
+def sRuleNP : Cont Prop Prop :=
   (λ x P => P x) <$> np <*> vp
 
 /-- The VP rule, verb priority. -/
@@ -103,7 +103,7 @@ adjustment "can only be made for syntactic categories whose direct
 (i.e., uncontinuized) type is t". -/
 
 /-- The island-adjusted S rule: evaluate the clause, then re-lift. -/
-def sRuleIsland (np : Cont Prop E) (vp : Cont Prop (E → Prop)) : Cont Prop Prop :=
+def sRuleIsland : Cont Prop Prop :=
   ContT.reset (sRuleVP np vp)
 
 /-- The clausal-complement rule, verb priority. -/
@@ -121,19 +121,16 @@ theorem a_man_thought_everyone_saw_mary :
         (sRuleIsland everyone (vpRule (pure saw') (individual m))))) =
     ∃ y, man' y ∧ thought' (∀ x, saw' m x) y := rfl
 
-/-- A simulating VP makes the matrix priority choice inert: "all
-scopings are logically equivalent". -/
-theorem sRule_priority_inert (np : Cont Prop E) {vp : Cont Prop (E → Prop)}
-    {P : E → Prop} (h : ∀ g, vp g = g P) :
-    sRuleNP np vp = sRuleVP np vp := by
-  funext κ
-  exact (congrArg np (funext λ x => h (λ Q => κ (Q x)))).trans
-    (h (λ Q => np (λ x => κ (Q x)))).symm
+/-- A unit VP makes the matrix priority choice inert: "all scopings are
+logically equivalent". -/
+theorem sRule_priority_inert (P : E → Prop) :
+    sRuleNP np (pure P) = sRuleVP np (pure P) := rfl
 
 /-! ### Generalized coordination
 
 One rule for every category: *and* distributes the continuation across
-the conjuncts, with no conjoinable-type recursion. -/
+the conjuncts, with no conjoinable-type recursion — the meet of the
+quantifier lattice. -/
 
 /-- Coordination at any category: the continuation distributes across
 the conjuncts. -/
@@ -151,46 +148,27 @@ theorem john_and_mary_left :
 
 /-! ### The Simulation Theorem
 
-Continuization is conservative: evaluating a schema-derived meaning at
-the trivial continuation recovers its direct meaning, under either
-priority. The proofs follow the paper's Lemma, generalizing the trivial
-continuation to an arbitrary `g`; the quantificational entries are
-exactly the meanings that break the hypotheses. -/
+Continuization is conservative: a schema-derived meaning evaluates at
+the trivial continuation to its direct meaning, under either priority.
+The paper's "simulating" hypothesis — `c g = g m` for every
+continuation `g` — says exactly that `c` is the unit
+(`simulating_iff`), so its Lemma is the applicative unit laws and its
+Theorem is the substrate's `lower_*` simp set; the quantificational
+entries are exactly the non-units. -/
 
-/-- A unit meaning simulates its direct value. -/
-theorem simulation_pure (a : α) (g : α → Prop) :
-    (pure a : Cont Prop α) g = g a := rfl
-
-/-- Priority-first combination preserves simulation. -/
-theorem simulation_seq (M : α → β → γ) {c₁ : Cont Prop α}
-    {c₂ : Cont Prop β} {m₁ : α} {m₂ : β}
-    (h₁ : ∀ g, c₁ g = g m₁) (h₂ : ∀ g, c₂ g = g m₂) (g : γ → Prop) :
-    (M <$> c₁ <*> c₂) g = g (M m₁ m₂) := by
-  show c₁ _ = _
-  rw [h₁]
-  exact h₂ _
-
-/-- Priority-second combination preserves simulation. -/
-theorem simulation_seq_flip (M : α → β → γ) {c₁ : Cont Prop α}
-    {c₂ : Cont Prop β} {m₁ : α} {m₂ : β}
-    (h₁ : ∀ g, c₁ g = g m₁) (h₂ : ∀ g, c₂ g = g m₂) (g : γ → Prop) :
-    (flip M <$> c₂ <*> c₁) g = g (M m₁ m₂) := by
-  show c₂ _ = _
-  rw [h₂]
-  exact h₁ _
+/-- Simulating in the paper's sense is being a unit. -/
+theorem simulating_iff {c : Cont Prop α} {a : α} :
+    (∀ g, c g = g a) ↔ c = pure a :=
+  ⟨funext, λ h g => by subst h; rfl⟩
 
 /-- "The result is the same, in the absence of quantification." -/
-theorem simulation_orders_agree (M : α → β → γ) {c₁ : Cont Prop α}
-    {c₂ : Cont Prop β} {m₁ : α} {m₂ : β}
-    (h₁ : ∀ g, c₁ g = g m₁) (h₂ : ∀ g, c₂ g = g m₂) :
-    M <$> c₁ <*> c₂ = flip M <$> c₂ <*> c₁ := by
-  funext g
-  rw [simulation_seq M h₁ h₂ g, simulation_seq_flip M h₁ h₂ g]
+theorem simulation_orders_agree (M : α → β → γ) (m₁ : α) (m₂ : β) :
+    M <$> (pure m₁ : Cont Prop α) <*> pure m₂ =
+    flip M <$> pure m₂ <*> pure m₁ := rfl
 
-/-- A simulating meaning evaluates at the trivial continuation to its
-direct meaning. -/
-theorem simulation (c : Cont Prop Prop) (p : Prop) (h : ∀ g, c g = g p) :
-    ContT.lower c = p :=
-  h id
+/-- A schema-derived sentence evaluates at the trivial continuation to
+its direct meaning. -/
+theorem simulation (M : α → β → Prop) (m₁ : α) (m₂ : β) :
+    ContT.lower (M <$> (pure m₁ : Cont Prop α) <*> pure m₂) = M m₁ m₂ := rfl
 
 end Barker2002
