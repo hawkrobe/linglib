@@ -42,13 +42,13 @@ namespace Writer
 
 variable {ω : Type u} {P A B : Type u}
 
-/-- Construct a Writer computation from a value and a log. -/
+/-- The computation with value `a` and log `w`: `mk a w = ⟨(a, w)⟩`. -/
 protected def mk (a : A) (w : ω) : Writer ω A := WriterT.mk (a, w)
 
-/-- The at-issue value of a Writer computation. -/
+/-- The at-issue value of a Writer computation: `val m = m.run.1`. -/
 def val (m : Writer ω A) : A := m.run.1
 
-/-- The accumulated side-effect log of a Writer computation. -/
+/-- The accumulated log of a Writer computation: `log m = m.run.2`. -/
 def log (m : Writer ω A) : ω := m.run.2
 
 @[ext]
@@ -60,10 +60,9 @@ protected theorem ext {m₁ m₂ : Writer ω A}
 
 @[simp] theorem log_mk (a : A) (w : ω) : (Writer.mk a w).log = w := rfl
 
-/-- **tell** (write): log a single item. Used by CI-contributing expressions
-to add propositions to the side-issue dimension; in [giorgolo-asudeh-2012]:
+/-- Log a single item: `tell p = mk () [p]` — [giorgolo-asudeh-2012]'s
 `write(t) = ⟨⊥, {t}⟩`. (`PUnit` rather than `Unit` keeps it
-universe-polymorphic; at `Type 0` they coincide.) -/
+universe-polymorphic.) -/
 def tell (p : P) : Writer (List P) PUnit := Writer.mk PUnit.unit [p]
 
 /-! ### Projection lemmas for list logs -/
