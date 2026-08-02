@@ -72,7 +72,6 @@ The eject combinators (`Ū`/`Ũ`/`⊿`) of Figure 10 are not formalized.
 namespace BumfordCharlow2024
 
 open Semantics.Composition
-open Semantics.Composition.Continuation
 open Semantics.Composition.Tree
 open Pragmatics.Expressives
 open Quantification
