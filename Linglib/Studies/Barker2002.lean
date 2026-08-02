@@ -30,21 +30,11 @@ Barker's schema ((9) and (35) in the paper) continuizes a lexical item
 to the unit `λb̄. b̄(⟦B⟧)` — the monadic `pure`, at NP type
 `Quantification.individual` — and a binary rule with direct meaning `M`
 to `n! = 2` rules, one per evaluation order. The daughter evaluated
-first takes priority, his term: its quantifiers take wide scope. -/
-
-/-- Continuized combination with priority to the first daughter. -/
-def priorityFirst (M : α → β → γ) (m₁ : Cont Prop α) (m₂ : Cont Prop β) :
-    Cont Prop γ :=
-  λ κ => m₁ (λ x₁ => m₂ (λ x₂ => κ (M x₁ x₂)))
-
-/-- Continuized combination with priority to the second daughter. -/
-def prioritySecond (M : α → β → γ) (m₁ : Cont Prop α) (m₂ : Cont Prop β) :
-    Cont Prop γ :=
-  λ κ => m₂ (λ x₂ => m₁ (λ x₁ => κ (M x₁ x₂)))
-
-/-- Priority to the first daughter is the applicative combination. -/
-theorem priorityFirst_eq_seq (M : α → β → γ) (m₁ : Cont Prop α) (m₂ : Cont Prop β) :
-    priorityFirst M m₁ m₂ = M <$> m₁ <*> m₂ := rfl
+first takes priority, his term: its quantifiers take wide scope. Both
+instances are the applicative combination in its two argument orders,
+`M <$> m₁ <*> m₂` and `flip M <$> m₂ <*> m₁`, and since the fragment's
+direct meanings are all function application, its rules below are bare
+`<*>`: priority is the argument order of continuized application. -/
 
 /-! ### The grammar
 
@@ -56,16 +46,16 @@ quantificational NPs are his (13), the determiners his expository
 
 /-- The S rule with priority to the VP. -/
 def sRuleVP (np : Cont Prop E) (vp : Cont Prop (E → Prop)) : Cont Prop Prop :=
-  prioritySecond (λ x P => P x) np vp
+  vp <*> np
 
 /-- The S rule with priority to the subject. -/
 def sRuleNP (np : Cont Prop E) (vp : Cont Prop (E → Prop)) : Cont Prop Prop :=
-  priorityFirst (λ x P => P x) np vp
+  (λ x P => P x) <$> np <*> vp
 
 /-- The VP rule, verb priority. -/
 def vpRule (vt : Cont Prop (E → E → Prop)) (np : Cont Prop E) :
     Cont Prop (E → Prop) :=
-  priorityFirst (λ R x => R x) vt np
+  vt <*> np
 
 /-- *everyone*: a universal over the continuation. -/
 def everyone : Quantifier E := λ k => ∀ x, k x
@@ -143,7 +133,7 @@ theorem sRuleIsland_simulates (np : Cont Prop E) (vp : Cont Prop (E → Prop))
 /-- The clausal-complement rule, verb priority. -/
 def vsRule (vs : Cont Prop (Prop → E → Prop)) (s : Cont Prop Prop) :
     Cont Prop (E → Prop) :=
-  priorityFirst (λ T p => T p) vs s
+  vs <*> s
 
 variable (thought' : Prop → E → Prop)
 
@@ -200,19 +190,19 @@ theorem simulation_pure (a : α) (g : α → Prop) :
     (pure a : Cont Prop α) g = g a := rfl
 
 /-- Priority-first combination preserves simulation. -/
-theorem simulation_priorityFirst (M : α → β → γ) {c₁ : Cont Prop α}
+theorem simulation_seq (M : α → β → γ) {c₁ : Cont Prop α}
     {c₂ : Cont Prop β} {m₁ : α} {m₂ : β}
     (h₁ : ∀ g, c₁ g = g m₁) (h₂ : ∀ g, c₂ g = g m₂) (g : γ → Prop) :
-    priorityFirst M c₁ c₂ g = g (M m₁ m₂) := by
+    (M <$> c₁ <*> c₂) g = g (M m₁ m₂) := by
   show c₁ _ = _
   rw [h₁]
   exact h₂ _
 
 /-- Priority-second combination preserves simulation. -/
-theorem simulation_prioritySecond (M : α → β → γ) {c₁ : Cont Prop α}
+theorem simulation_seq_flip (M : α → β → γ) {c₁ : Cont Prop α}
     {c₂ : Cont Prop β} {m₁ : α} {m₂ : β}
     (h₁ : ∀ g, c₁ g = g m₁) (h₂ : ∀ g, c₂ g = g m₂) (g : γ → Prop) :
-    prioritySecond M c₁ c₂ g = g (M m₁ m₂) := by
+    (flip M <$> c₂ <*> c₁) g = g (M m₁ m₂) := by
   show c₂ _ = _
   rw [h₂]
   exact h₁ _
@@ -221,9 +211,9 @@ theorem simulation_prioritySecond (M : α → β → γ) {c₁ : Cont Prop α}
 theorem simulation_orders_agree (M : α → β → γ) {c₁ : Cont Prop α}
     {c₂ : Cont Prop β} {m₁ : α} {m₂ : β}
     (h₁ : ∀ g, c₁ g = g m₁) (h₂ : ∀ g, c₂ g = g m₂) :
-    priorityFirst M c₁ c₂ = prioritySecond M c₁ c₂ := by
+    M <$> c₁ <*> c₂ = flip M <$> c₂ <*> c₁ := by
   funext g
-  rw [simulation_priorityFirst M h₁ h₂ g, simulation_prioritySecond M h₁ h₂ g]
+  rw [simulation_seq M h₁ h₂ g, simulation_seq_flip M h₁ h₂ g]
 
 /-- A simulating meaning evaluates at the trivial continuation to its
 direct meaning. -/
