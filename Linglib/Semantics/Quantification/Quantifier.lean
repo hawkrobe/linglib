@@ -1,6 +1,8 @@
 import Linglib.Semantics.Intensional.Defs
 import Linglib.Semantics.Quantification.Basic
 import Linglib.Semantics.Quantification.Counting
+import Linglib.Semantics.Composition.Cont
+import Linglib.Semantics.Composition.Combinator
 import Mathlib.Order.Hom.BoundedLattice
 import Mathlib.Order.GaloisConnection.Defs
 
@@ -21,6 +23,22 @@ types are [partee-1987]'s, in `Semantics.Composition.TypeShifting`.
 namespace Quantification
 
 variable {E : Type}
+
+/-! ### The continuation identification
+
+These are `rfl`: the carrier definitionally coincides with the
+continuation monad at answer type `Prop`, first exploited for natural
+language by [barker-2002] (see `Studies/Barker2002.lean`). -/
+
+/-- The quantifier type is the continuation type: a quantifier is a
+computation handed its own scope. -/
+theorem quantifier_eq_cont : Quantifier E = Cont Prop E := rfl
+
+/-- Montague lift is the continuation monad's unit. -/
+theorem individual_eq_pure (a : E) : individual a = (pure a : Cont Prop E) := rfl
+
+/-- Montague lift is combinatory logic's type-raising combinator `T`. -/
+theorem individual_eq_T (a : E) : individual a = Combinator.T (β := Prop) a := rfl
 
 /-! ### Predicative content and existential closure -/
 
