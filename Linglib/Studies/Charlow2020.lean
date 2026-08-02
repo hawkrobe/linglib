@@ -166,12 +166,12 @@ quantifiers do. -/
 def setToCont {A : Type} (m : Set A) : Cont Prop A := λ κ => ∃ x, x ∈ m ∧ κ x
 
 /-- **↓ is LOWER through the Set→Cont morphism**: existential closure of
-a proposition set is exactly lowering (`Cont.lower`) its continuized
+a proposition set is exactly lowering (`ContT.lower`) its continuized
 image. The tree's two scope-effect carriers — `Set` for alternatives
 ([charlow-2020]), `Cont` for quantifier scope — share one evaluation
 operation. -/
 theorem lower_setToCont (m : Set Prop) :
-    Cont.lower (setToCont m) = existsClosure m := rfl
+    ContT.lower (setToCont m) = existsClosure m := rfl
 
 /-! ### §4 Bridge to `Studies/Charlow2018.lean`
 
