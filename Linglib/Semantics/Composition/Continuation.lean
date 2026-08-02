@@ -1,90 +1,84 @@
 import Mathlib.Control.Monad.Cont
 
 /-!
-# Continuations for scope-taking
+# LOWER for the continuation monad
 [barker-2002] [shan-2001] [charlow-2014] [barker-shan-2014]
 
-Scope-taking expressions denote values of the continuation monad
-`Cont R A := (A → R) → R` (`Mathlib.Control.Monad.Cont`): continuations for
-quantifier scope originate with [barker-2002]; the monadic framing is
-[shan-2001], developed by [charlow-2014]. Consumers: the effects fragment
-of `Studies/BumfordCharlow2024.lean` and the Set-morphism bridge of
-`Studies/Charlow2020.lean`.
+`Cont.lower` evaluates a `Cont A A` computation with the identity
+continuation — the LOWER of [barker-shan-2014] and the evaluation
+operation of continuation semantics ([barker-2002]; monadic formulation
+[shan-2001], developed by [charlow-2014]). The lemmas record how `lower`
+computes on `pure`/`>>=`/`<*>` chains.
+
+The linguistic reading — continuized values as scope-takers, bind order
+as scope order — lives with the consumers: the composition engine's
+`PredAbs` (`Composition/Tree.lean`), `Studies/BumfordCharlow2024.lean`,
+and `Studies/Charlow2020.lean`.
 
 ## Main definitions
 
-- `Cont.lower`: evaluate with the identity continuation — "scope-taking is
-  done". `pure` is Montague lift ([barker-shan-2014]'s LIFT), and
-  `Cont.lower_pure` is LOWER ∘ LIFT = id.
+- `Cont.lower`: evaluation with the identity continuation
 
 ## Main statements
 
-- `Cont.lower_bind_pure` and variants: lowering a chain of binds is nested
-  generalized-quantifier application — relative scope is bind order.
-- `Cont.lower_map_seq`: applicative composition fixes surface scope —
-  the monadic/applicative contrast localizes [barker-shan-2014]'s linear
-  scope bias.
+- `Cont.lower_bind_pure`, `Cont.lower_bind_bind_pure`,
+  `Cont.lower_bind₃_pure`: `lower` of a bind chain is nested
+  application, in bind order
+- `Cont.lower_map_seq`: `lower` of the applicative combination is
+  nested application in fixed left-to-right order
 -/
 
-namespace Semantics.Composition.Continuation
+namespace Cont
 
-/-- LOWER: evaluate with the identity continuation — [barker-shan-2014]'s
-"scope-taking is done", at `B := A`. Their own LOWER pins the answer type to
-the atomic clause category `S`; the pinning carries their crossover account
-and is not imposed here. -/
-def Cont.lower {A : Type*} (m : Cont A A) : A := m.run id
+/-- Evaluation with the identity continuation — [barker-shan-2014]'s
+LOWER at `B := A`. Their own LOWER pins the answer type to the atomic
+clause category `S`; the pinning carries their crossover account and is
+not imposed here. -/
+def lower {A : Type*} (m : Cont A A) : A := m.run id
 
-/-- LOWER ∘ LIFT = id: `pure : A → Cont R A` is [barker-shan-2014]'s LIFT
-(Montague lift), and lowering it recovers the value. -/
-@[simp] theorem Cont.lower_pure {A : Type*} (a : A) :
-    Cont.lower (pure a) = a := rfl
+/-- LOWER ∘ LIFT = id: `pure` is [barker-shan-2014]'s LIFT (Montague
+lift). -/
+@[simp] theorem lower_pure {A : Type*} (a : A) : lower (pure a) = a := rfl
 
-/-! ### Scope as bind order
+/-! ### `lower` on `pure`/`bind`/`seq` chains
 
-In the monadic framing, relative quantifier scope is the *order of monadic
-bind* — surface scope binds the subject first, inverse scope the object
-first — and `Cont.lower` is generalized-quantifier application
-([shan-2001], [charlow-2014]). Free bind order contrasts with
-[barker-shan-2014]'s combination schema, whose fixed left-to-right
-evaluation (their linear scope bias) derives inverse scope from multi-level
-towers instead. -/
+A bind chain lowers to nested application in the order of the binds —
+the free reordering read as scope order by [shan-2001]/[charlow-2014] —
+while the applicative combination is fixed left-to-right
+([barker-shan-2014]'s combination schema and linear scope bias). -/
 
-section ScopeAsBindOrder
+section LowerChains
 
 universe u
 
 variable {E S : Type u}
 
-/-- Lowering a continuized quantifier against a pure scope is plain GQ
-application. -/
-theorem Cont.lower_bind_pure (q : Cont S E) (scope : E → S) :
-    Cont.lower (q >>= λ x => pure (scope x)) = q scope := rfl
+/-- `lower` of a bind against a `pure`d function is application. -/
+theorem lower_bind_pure (q : Cont S E) (scope : E → S) :
+    lower (q >>= λ x => pure (scope x)) = q scope := rfl
 
-/-- Nested binds compute nested GQ application: the outer bind takes wide
-scope. -/
-theorem Cont.lower_bind_bind_pure (q₁ q₂ : Cont S E) (rel : E → E → S) :
-    Cont.lower (q₁ >>= λ x => q₂ >>= λ y => pure (rel x y)) =
+/-- `lower` of nested binds is nested application: the outer bind
+applies outermost. -/
+theorem lower_bind_bind_pure (q₁ q₂ : Cont S E) (rel : E → E → S) :
+    lower (q₁ >>= λ x => q₂ >>= λ y => pure (rel x y)) =
     q₁ (λ x => q₂ (λ y => rel x y)) := rfl
 
-/-- Applicative composition fixes surface scope: `<$>`/`<*>` evaluate
-left-to-right, so the left quantifier outscopes the right — the shape of
-[barker-shan-2014]'s combination schema and the source of their linear
-scope bias. Inverse scope requires the monadic reordering above. -/
-theorem Cont.lower_map_seq (q₁ q₂ : Cont S E) (rel : E → E → S) :
-    Cont.lower (rel <$> q₁ <*> q₂) = q₁ (λ x => q₂ (λ y => rel x y)) := rfl
-
-/-- The bind-order pattern extends to arbitrary depth. -/
-theorem Cont.lower_bind₃_pure (q₁ q₂ q₃ : Cont S E) (rel : E → E → E → S) :
-    Cont.lower (q₁ >>= λ x => q₂ >>= λ y => q₃ >>= λ z => pure (rel x y z)) =
+/-- The bind-chain pattern at depth three. -/
+theorem lower_bind₃_pure (q₁ q₂ q₃ : Cont S E) (rel : E → E → E → S) :
+    lower (q₁ >>= λ x => q₂ >>= λ y => q₃ >>= λ z => pure (rel x y z)) =
     q₁ (λ x => q₂ (λ y => q₃ (λ z => rel x y z))) := rfl
 
-/-- When every meaning is `pure`-wrapped, `Cont` composition reduces to
-function application: the effect-free fragment embeds into `Cont`
-([charlow-2018]). -/
-theorem Cont.lower_pure_bind_pure {A : Type u} (f : A → S) (x : A) :
-    Cont.lower ((pure f : Cont S (A → S)) >>= λ g =>
+/-- `lower` of the applicative combination is nested application in
+fixed left-to-right order. -/
+theorem lower_map_seq (q₁ q₂ : Cont S E) (rel : E → E → S) :
+    lower (rel <$> q₁ <*> q₂) = q₁ (λ x => q₂ (λ y => rel x y)) := rfl
+
+/-- On `pure`-wrapped values, `lower` of a bind chain reduces to
+function application ([charlow-2018]). -/
+theorem lower_pure_bind_pure {A : Type u} (f : A → S) (x : A) :
+    lower ((pure f : Cont S (A → S)) >>= λ g =>
       (pure x : Cont S A) >>= λ y => pure (g y)) = f x := rfl
 
-end ScopeAsBindOrder
+end LowerChains
 
-end Semantics.Composition.Continuation
+end Cont
