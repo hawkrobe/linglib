@@ -2,38 +2,41 @@ import Mathlib.Control.Monad.Cont
 
 /-!
 # LOWER for the continuation monad
-[barker-2002] [shan-2001] [charlow-2014] [barker-shan-2014]
 
-`Cont.lower` evaluates a `Cont A A` computation with the identity
-continuation — the LOWER of [barker-shan-2014] and the evaluation
-operation of continuation semantics ([barker-2002]; monadic formulation
-[shan-2001], developed by [charlow-2014]). The lemmas record how `lower`
-computes on `pure`/`>>=`/`<*>` chains.
+A value of `Cont R A := (A → R) → R` (`Mathlib.Control.Monad.Cont`) is a
+computation handed its own future: given a continuation `A → R` saying
+how the rest of the derivation will use its result, it produces the
+final answer — and may consult that continuation zero, one, or many
+times. `Cont.lower` ends the computation: once the answer type equals
+the value type, applying the identity continuation extracts the result.
+`pure` is the converse embedding — a value wrapped so that any
+continuation applies to it directly — and lowering undoes it
+(`Cont.lower_pure`).
 
-The linguistic reading — continuized values as scope-takers, bind order
-as scope order — lives with the consumers: the composition engine's
-`PredAbs` (`Composition/Tree.lean`), `Studies/BumfordCharlow2024.lean`,
-and `Studies/Charlow2020.lean`.
+What `lower` returns on composite computations is the substance of this
+file: a chain of binds lowers to nested application, nested in exactly
+the order of the binds, while the applicative combination `<$> … <*>`
+always nests left over right. That contrast carries the linguistic
+reading: continuized values model scope-taking expressions
+([barker-2002]), `lower` is [barker-shan-2014]'s LOWER ("scope-taking
+is done"), and free bind order — read as free quantifier scope by
+[shan-2001] and [charlow-2014] — is exactly what the order-fixed
+applicative fragment withholds. The applications live with the
+composition engine (`PredAbs` in `Composition/Tree.lean`) and its
+studies (`Studies/BumfordCharlow2024.lean`, `Studies/Charlow2020.lean`).
 
 ## Main definitions
 
 - `Cont.lower`: evaluation with the identity continuation
-
-## Main statements
-
-- `Cont.lower_bind_pure`, `Cont.lower_bind_bind_pure`,
-  `Cont.lower_bind₃_pure`: `lower` of a bind chain is nested
-  application, in bind order
-- `Cont.lower_map_seq`: `lower` of the applicative combination is
-  nested application in fixed left-to-right order
 -/
 
 namespace Cont
 
-/-- Evaluation with the identity continuation — [barker-shan-2014]'s
-LOWER at `B := A`. Their own LOWER pins the answer type to the atomic
-clause category `S`; the pinning carries their crossover account and is
-not imposed here. -/
+/-- Evaluation with the identity continuation (functional programming's
+`evalCont`, which mathlib does not provide) — [barker-shan-2014]'s LOWER
+at `B := A`. Their own LOWER pins the answer type to the atomic clause
+category `S`; the pinning carries their crossover account and is not
+imposed here. -/
 def lower {A : Type*} (m : Cont A A) : A := m.run id
 
 /-- LOWER ∘ LIFT = id: `pure` is [barker-shan-2014]'s LIFT (Montague

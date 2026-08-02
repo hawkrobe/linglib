@@ -1,4 +1,4 @@
-import Linglib.Semantics.Composition.WriterMonad
+import Linglib.Semantics.Composition.Writer
 import Linglib.Pragmatics.Expressives.Basic
 import Linglib.Semantics.Presupposition.ProjectiveContent
 

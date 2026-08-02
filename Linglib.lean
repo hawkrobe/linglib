@@ -1538,7 +1538,7 @@ import Linglib.Semantics.Classifier.Composition
 import Linglib.Semantics.Classifier.Defs
 import Linglib.Semantics.Classifier.TypeN
 import Linglib.Semantics.Composition.Combinator
-import Linglib.Semantics.Composition.Continuation
+import Linglib.Semantics.Composition.Cont
 import Linglib.Semantics.Composition.Coordination
 import Linglib.Semantics.Composition.CoordinatorOp
 import Linglib.Semantics.Composition.LexEntry
@@ -1547,7 +1547,7 @@ import Linglib.Semantics.Composition.Reduction
 import Linglib.Semantics.Composition.Scope
 import Linglib.Semantics.Composition.Tree
 import Linglib.Semantics.Composition.TypeShifting
-import Linglib.Semantics.Composition.WriterMonad
+import Linglib.Semantics.Composition.Writer
 import Linglib.Semantics.Conditionals.Basic
 import Linglib.Semantics.Conditionals.ConditionalType
 import Linglib.Semantics.Conditionals.Counterfactual
