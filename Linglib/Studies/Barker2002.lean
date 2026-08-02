@@ -96,24 +96,15 @@ theorem every_man_saw_a_woman_surface :
 
 /-! ### Bounding scope displacement
 
-Barker's island adjustment applies the clause's continuation to the
-already-evaluated clause, so embedded quantifiers cannot outscope it;
-the adjustment "can only be made for syntactic categories whose direct
+Barker's island adjustment evaluates the clause and re-lifts it —
+`ContT.reset` — so what escapes an island is a value, never a
+scope-taker, and embedded quantifiers cannot outscope it; the
+adjustment "can only be made for syntactic categories whose direct
 (i.e., uncontinuized) type is t". -/
 
-/-- The island-adjusted S rule: the continuation applies to the
-evaluated clause. -/
+/-- The island-adjusted S rule: evaluate the clause, then re-lift. -/
 def sRuleIsland (np : Cont Prop E) (vp : Cont Prop (E → Prop)) : Cont Prop Prop :=
-  λ p => p (sRuleVP np vp id)
-
-/-- The island rule is the substrate's `ContT.reset`. -/
-theorem sRuleIsland_eq_reset (np : Cont Prop E) (vp : Cont Prop (E → Prop)) :
-    sRuleIsland np vp = ContT.reset (sRuleVP np vp) := rfl
-
-/-- What escapes an island is a value, never a scope-taker. -/
-theorem sRuleIsland_simulates (np : Cont Prop E) (vp : Cont Prop (E → Prop))
-    (g : Prop → Prop) :
-    sRuleIsland np vp g = g (ContT.lower (sRuleVP np vp)) := rfl
+  ContT.reset (sRuleVP np vp)
 
 /-- The clausal-complement rule, verb priority. -/
 def vsRule (vs : Cont Prop (Prop → E → Prop)) (s : Cont Prop Prop) :
@@ -130,14 +121,14 @@ theorem a_man_thought_everyone_saw_mary :
         (sRuleIsland everyone (vpRule (pure saw') (individual m))))) =
     ∃ y, man' y ∧ thought' (∀ x, saw' m x) y := rfl
 
-/-- With the complement islanded, the matrix priority choice is inert. -/
-theorem thought_island_priority_inert :
-    sRuleNP (aDet (pure man'))
-      (vsRule (pure thought')
-        (sRuleIsland everyone (vpRule (pure saw') (individual m)))) =
-    sRuleVP (aDet (pure man'))
-      (vsRule (pure thought')
-        (sRuleIsland everyone (vpRule (pure saw') (individual m)))) := rfl
+/-- A simulating VP makes the matrix priority choice inert: "all
+scopings are logically equivalent". -/
+theorem sRule_priority_inert (np : Cont Prop E) {vp : Cont Prop (E → Prop)}
+    {P : E → Prop} (h : ∀ g, vp g = g P) :
+    sRuleNP np vp = sRuleVP np vp := by
+  funext κ
+  exact (congrArg np (funext λ x => h (λ Q => κ (Q x)))).trans
+    (h (λ Q => np (λ x => κ (Q x)))).symm
 
 /-! ### Generalized coordination
 
