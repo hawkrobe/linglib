@@ -27,13 +27,7 @@ open Quantification (Quantifier individual)
 variable {α β γ E : Type} (np : Cont Prop E) (vp : Cont Prop (E → Prop))
 variable (det : Cont Prop ((E → Prop) → E)) (n : Cont Prop (E → Prop))
 
-/-! ### The grammar
-
-Barker continuizes each lexical item to the unit `pure` and each binary
-rule to two rules, one per evaluation order; the daughter evaluated
-first takes priority and its quantifiers take wide scope. Since the
-fragment's direct meanings are function application, the rules are bare
-`<*>`, with priority as argument order. -/
+/-! ### The grammar -/
 
 /-- The S rule with priority to the VP. -/
 def sRuleVP : Cont Prop Prop :=
@@ -78,13 +72,7 @@ def everyGQ (n : Cont Prop (E → Prop)) : Quantifier E :=
 def aGQ (n : Cont Prop (E → Prop)) : Quantifier E :=
   λ k => n (λ P => ∃ x, P x ∧ k x)
 
-/-! ### The worked derivations
-
-Sentences evaluate by applying the trivial continuation `λp.p` — the
-substrate's `ContT.eval`. Nothing biases toward linear or inverse
-scope: *Every man saw a woman* gets its inverse reading under VP
-priority (the reading the paper prints) and its surface reading under
-subject priority. -/
+/-! ### The worked derivations -/
 
 variable (j m : E) (left' slept' man' woman' : E → Prop) (saw' : E → E → Prop)
 variable (friendOf : E → E → Prop)
@@ -146,13 +134,7 @@ theorem someone_saw_a_friend_of_everyone_xfy :
       (npRuleN aCF (pure friendOf <*> everyone)))) =
     ∀ x, ∃ f : (E → Prop) → E, ∃ y, saw' (f (friendOf x)) y := rfl
 
-/-! ### Bounding scope displacement
-
-Barker's island adjustment evaluates the clause and re-lifts it —
-`ContT.reset` — so what escapes an island is a value, never a
-scope-taker, and embedded quantifiers cannot outscope it; the
-adjustment "can only be made for syntactic categories whose direct
-(i.e., uncontinuized) type is t". -/
+/-! ### Bounding scope displacement -/
 
 /-- The island-adjusted S rule: evaluate the clause, then re-lift. -/
 def sRuleIsland : Cont Prop Prop :=
@@ -178,11 +160,7 @@ logically equivalent". -/
 theorem sRule_priority_inert (P : E → Prop) :
     sRuleNP np (pure P) = sRuleVP np (pure P) := rfl
 
-/-! ### Generalized coordination
-
-One rule for every category: *and* distributes the continuation across
-the conjuncts, with no conjoinable-type recursion — the meet of the
-quantifier lattice. -/
+/-! ### Generalized coordination -/
 
 /-- Coordination at any category: the continuation distributes across
 the conjuncts. -/
@@ -198,15 +176,7 @@ theorem john_and_mary_left :
     ContT.eval (sRuleVP (coord (individual j) (individual m)) (pure left')) =
     (left' j ∧ left' m) := rfl
 
-/-! ### The Simulation Theorem
-
-Continuization is conservative: a schema-derived meaning evaluates at
-the trivial continuation to its direct meaning, under either priority.
-The paper's "simulating" hypothesis — `c g = g m` for every
-continuation `g` — says exactly that `c` is the unit
-(`simulating_iff`), so its Lemma is the applicative unit laws and its
-Theorem is the substrate's `eval_*` simp set; the quantificational
-entries are exactly the non-units. -/
+/-! ### The Simulation Theorem -/
 
 /-- Simulating in the paper's sense is being a unit. -/
 theorem simulating_iff {c : Cont Prop α} {a : α} :
