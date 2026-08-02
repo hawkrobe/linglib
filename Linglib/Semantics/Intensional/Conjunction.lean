@@ -1,4 +1,5 @@
 import Linglib.Semantics.Intensional.Defs
+import Linglib.Semantics.Quantification.Defs
 
 /-!
 # Generalized Conjunction
@@ -111,27 +112,23 @@ theorem genDisj_lambda_distribution {E W : Type} {σ τ : Ty}
     genDisj (σ ⇒ τ) E W f g = λ v => genDisj τ E W (f v) (g v) := rfl
 
 -- ════════════════════════════════════════════════════════════════
--- § Type-Raising and Coordination
+-- § Coordination of entities
 -- ════════════════════════════════════════════════════════════════
 
-section TypeRaising
+section EntityCoordination
 
-/-- Type-raise an entity to a GQ: `e ↦ λP.P(e)` -/
-def typeRaise {E W : Type} (e : Denot E W .e) : Denot E W ((.e ⇒ .t) ⇒ .t) :=
-  λ p => p e
+open Quantification (individual)
 
-/-- Coordinated entities: `λP. P(e₁) ∧ P(e₂)` -/
+/-- Coordinated entities: `λP. P(e₁) ∧ P(e₂)` — type-raise each entity
+via `Quantification.individual` and conjoin the quantifiers. -/
 def coordEntities {E W : Type} (e1 e2 : Denot E W .e) : Denot E W ((.e ⇒ .t) ⇒ .t) :=
-  genConj ((.e ⇒ .t) ⇒ .t) E W (typeRaise e1) (typeRaise e2)
-
-theorem typeRaise_preserves {E W : Type} (e : Denot E W .e) (p : Denot E W (.e ⇒ .t)) :
-    typeRaise e p = p e := rfl
+  genConj ((.e ⇒ .t) ⇒ .t) E W (individual e1) (individual e2)
 
 theorem coordEntities_both_satisfy {E W : Type} (e1 e2 : Denot E W .e)
     (p : Denot E W (.e ⇒ .t)) :
     coordEntities e1 e2 p = (p e1 ∧ p e2) := rfl
 
-end TypeRaising
+end EntityCoordination
 
 -- ════════════════════════════════════════════════════════════════
 -- § M&S Decomposition: ☉ + MU (INCL) + J
@@ -142,23 +139,25 @@ end TypeRaising
 
 DP conjunction decomposes into three operations:
 - ☉ (`msShift`): individual → singleton set (= Partee's `ident`)
-- MU (`typeRaise`): singleton set → GQ via subset inclusion (INCL)
+- MU (`Quantification.individual`): entity → GQ via subset inclusion (INCL)
 - J (`genConj`): generalized conjunction on GQs
 -/
 
 section MSDecomposition
 
+open Quantification (individual)
+
 /-- ☉: M&S type-shifter. Individual → singleton property. -/
 def msShift {E W : Type} (x : Denot E W .e) : Denot E W (.e ⇒ .t) :=
   λ y => x = y
 
-/-- MU particle semantics = typeRaise. -/
+/-- MU particle semantics = `Quantification.individual`. -/
 abbrev inclFunc {E W : Type} (x : Denot E W .e) : Denot E W ((.e ⇒ .t) ⇒ .t) :=
-  typeRaise x
+  individual x
 
 /-- Full M&S derivation: J(MU(e₁), MU(e₂)) = coordEntities e₁ e₂. -/
 theorem ms_full_derivation {E W : Type} (e1 e2 : Denot E W .e) :
-    genConj ((.e ⇒ .t) ⇒ .t) E W (typeRaise e1) (typeRaise e2) =
+    genConj ((.e ⇒ .t) ⇒ .t) E W (individual e1) (individual e2) =
     coordEntities e1 e2 := rfl
 
 end MSDecomposition

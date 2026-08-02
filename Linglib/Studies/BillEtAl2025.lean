@@ -43,10 +43,10 @@ alternative accounts.
 
 The M&S decomposition maps directly onto Montague/Conjunction.lean:
 - J = `genConj` (Partee & Rooth's generalized conjunction / set intersection)
-- MU = `typeRaise` (INCL on singletons = type-raising; structural `abbrev`)
+- MU = `individual` (INCL on singletons = type-raising; structural `abbrev`)
 - ☉ = `msShift` (individual → singleton set)
 
-`coordEntities` is defined AS `genConj(typeRaise e₁, typeRaise e₂)`,
+`coordEntities` is defined AS `genConj(individual e₁, individual e₂)`,
 so the M&S derivation is the definition itself, not a theorem.
 `mu_is_distributive_check` proves this equals Link's `distMaximal` on pairs.
 
@@ -469,17 +469,18 @@ The M&S decomposition maps onto operations in Montague/Conjunction.lean:
 | M&S piece | Semantic operation | Conjunction.lean |
 |-----------|-------------------|-----------------|
 | ☉         | {x} formation     | `msShift` (= Partee's `ident`) |
-| MU        | INCL (subset)     | `typeRaise` (structural `abbrev`) |
+| MU        | INCL (subset)     | `individual` (structural `abbrev`) |
 | J         | Set intersection  | `genConj` at GQ type |
 
-MU IS `typeRaise` — the identity is structural (an `abbrev`), not a
-theorem. `coordEntities` is defined AS `genConj(typeRaise e₁, typeRaise e₂)`,
+MU IS `individual` — the identity is structural (an `abbrev`), not a
+theorem. `coordEntities` is defined AS `genConj(individual e₁, individual e₂)`,
 so the M&S derivation is the definition itself. The result
 P(e₁) ∧ P(e₂) equals Link's `distMaximal P {e₁, e₂}`
 (`mu_is_distributive_check`).
 -/
 
 open Intensional.Conjunction in
+open Quantification (individual) in
 /--
 Type-raising an entity and checking subset inclusion of its singleton
 is equivalent to applying the predicate directly.
@@ -487,17 +488,18 @@ is equivalent to applying the predicate directly.
 This is the core of the M&S decomposition: the roundtrip through
 ☉ + MU + J recovers ordinary conjunction semantics.
 -/
-theorem typeRaise_incl_reduces {E W : Type} (e : E) (p : E → Prop) :
-    typeRaise (E := E) (W := W) e p = p e := rfl
+theorem individual_incl_reduces {E : Type} (e : E) (p : E → Prop) :
+    individual (α := E) e p = p e := rfl
 
 open Intensional.Conjunction in
+open Quantification (individual) in
 /--
 Full M&S derivation: "DP₁ and DP₂ VP" via ☉ + MU + J
 yields the same result as Partee & Rooth's `coordEntities`.
 -/
 theorem ms_decomposition_eq_coord {E W : Type} (e1 e2 : E)
     (p : E → Prop) :
-    (typeRaise (E := E) (W := W) e1 p ∧ typeRaise (E := E) (W := W) e2 p) =
+    (individual (α := E) e1 p ∧ individual (α := E) e2 p) =
       coordEntities (E := E) (W := W) e1 e2 p := rfl
 
 -- ============================================================================
@@ -513,11 +515,11 @@ individually and conjoin.
 
 | Framework | Operation | Result |
 |-----------|-----------|--------|
-| M&S       | J(typeRaise(e₁), typeRaise(e₂))(P) | P(e₁) ∧ P(e₂) |
+| M&S       | J(individual(e₁), individual(e₂))(P) | P(e₁) ∧ P(e₂) |
 | Link      | distMaximal P {e₁, e₂} w | P(e₁) ∧ P(e₂) |
 
-The M&S side is structural: `coordEntities` IS `genConj(typeRaise e₁,
-typeRaise e₂)` by definition, and MU IS `typeRaise` by `abbrev`.
+The M&S side is structural: `coordEntities` IS `genConj(individual e₁,
+individual e₂)` by definition, and MU IS `individual` by `abbrev`.
 The Link side is independently structural: `distMaximal` IS
 `decide (∀ a ∈ x, P a w)`.
 
@@ -527,7 +529,7 @@ are different — but it proves the same operation is being computed.
 
 This explains WHY MU particles are universally additive particles
 (`mu_additive_generalization`): additive "also/too" IS the distributive
-check on a single atom (`typeRaise e P = P e = distMaximal P {e}`).
+check on a single atom (`individual e P = P e = distMaximal P {e}`).
 Conjunction is the two-atom case. Link's `distr_atom_part` is the
 general case for arbitrary pluralities.
 -/
@@ -535,6 +537,7 @@ general case for arbitrary pluralities.
 section MUDistributivity
 
 open Intensional.Conjunction
+open Quantification (individual)
 open Semantics.Plurality
 open Semantics.Plurality.Distributivity
 
@@ -544,7 +547,7 @@ M&S conjunction = Link's distributive predication for pairs.
 `coordEntities e₁ e₂ P = distMaximal (fun a _ => P a) {e₁, e₂} ()`
 
 Both sides compute `P(e₁) ∧ P(e₂)`:
-- LHS by definition (`coordEntities` = `genConj(typeRaise e₁, typeRaise e₂)`)
+- LHS by definition (`coordEntities` = `genConj(individual e₁, individual e₂)`)
 - RHS by `distMaximal_pair`
 
 This can't be an `abbrev` — the types are different (Montague

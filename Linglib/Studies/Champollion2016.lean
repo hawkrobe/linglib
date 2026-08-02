@@ -14,12 +14,12 @@ individuals folded into *and*; they are derived by silent type-shifters (Existen
 Choice Raising, Intersection, Minimization). Two results, both routing through the
 `Coordinator.op` API:
 
-* **The type-shift `⊔ ↦ ⊓` is guarded, not free.** Partee's lift `typeRaise : e → GQ`
+* **The type-shift `⊔ ↦ ⊓` is guarded, not free.** Montague's lift `individual : e → GQ`
   (`x ↦ λP. P x`) relates the individual-join `x ⊔ y` to the GQ-meet
   `Coordinator.op .j` (= `⊓`) of the raised individuals *exactly on the predicates that
-  distribute the join* (`typeRaise_join_eq_op_iff`). It is NOT a clean anti-homomorphism:
+  distribute the join* (`individual_join_eq_op_iff`). It is NOT a clean anti-homomorphism:
   for a **collective** predicate (`met`/`gather`) the two diverge
-  (`typeRaise_join_ne_op_collective`) — which is *why* Champollion needs Raising +
+  (`individual_join_ne_op_collective`) — which is *why* Champollion needs Raising +
   Minimization rather than reducing collectivity to raising + intersection. The guard is
   grounded in Link distributivity: Link's `ᴰ`-closed predicates satisfy it under
   join-prime atoms (`linkD_distributiveOverJoin`).
@@ -34,9 +34,9 @@ Choice Raising, Intersection, Minimization). Two results, both routing through t
 
 ## Main results
 
-* `typeRaise_join_eq_op_iff` — the type-shift `⊔ ↦ ⊓` holds at `P` iff `P` distributes the join.
-* `typeRaise_join_eq_op_of_distributive`, `linkD_distributiveOverJoin` — the guard is Link distributivity.
-* `collective_not_distributiveOverJoin`, `typeRaise_join_ne_op_of_not_distributive` — a collective predicate breaks the type-shift.
+* `individual_join_eq_op_iff` — the type-shift `⊔ ↦ ⊓` holds at `P` iff `P` distributes the join.
+* `individual_join_eq_op_of_distributive`, `linkD_distributiveOverJoin` — the guard is Link distributivity.
+* `collective_not_distributiveOverJoin`, `individual_join_ne_op_of_not_distributive` — a collective predicate breaks the type-shift.
 * `setProduct_overgenerates` — H&Z's set-product *and* gets *No man and no woman smiled* wrong; `op .j` gets it right.
 -/
 
@@ -44,6 +44,7 @@ namespace Champollion2016
 
 open Intensional
 open Intensional.Conjunction
+open Quantification (individual)
 open Semantics.Plurality.Algebra
 
 /-! ### The type-shift `⊔ ↦ ⊓` is guarded to distributive predicates
@@ -65,40 +66,40 @@ variable {E W : Type} [SemilatticeSup E]
 def DistributiveOverJoin {E : Type*} [SemilatticeSup E] (P : E → Prop) : Prop :=
   ∀ x y : E, P (x ⊔ y) ↔ (P x ∧ P y)
 
-/-- `typeRaise (x ⊔ y)` applied to `P` is `P (x ⊔ y)` (Montague's lift). -/
-theorem typeRaise_join_apply (x y : E) (P : E → Prop) :
-    typeRaise (W := W) (x ⊔ y : E) P = P (x ⊔ y : E) := rfl
+/-- `individual (x ⊔ y)` applied to `P` is `P (x ⊔ y)` (Montague's lift). -/
+theorem individual_join_apply (x y : E) (P : E → Prop) :
+    individual (x ⊔ y : E) P = P (x ⊔ y : E) := rfl
 
 omit [SemilatticeSup E] in
 /-- `coordEntities` (the intersective `and` of two raised individuals) IS the GQ-meet
     `Coordinator.op .j` — [champollion-2016-coordination]'s `INT` (eq. 16) as the
     Boolean `⊓` at the GQ type (flow-through bucket (a): `genConj` is `op`). -/
 theorem coordEntities_eq_opj (x y : E) :
-    coordEntities (W := W) x y = Coordinator.op .j (typeRaise x) (typeRaise y) := rfl
+    coordEntities (W := W) x y = Coordinator.op .j (individual x) (individual y) := rfl
 
 omit [SemilatticeSup E] in
 /-- The intersective `and` of two raised individuals applied to `P` is `P x ∧ P y`. The
     two-atom case of Link distributive predication: it equals `distMaximal P {x, y}` (see
     [bill-etal-2025] `mu_is_distributive_check`). -/
-theorem op_typeRaise_apply (x y : E) (P : E → Prop) :
-    Coordinator.op .j (typeRaise (W := W) x) (typeRaise (W := W) y) P = (P x ∧ P y) := rfl
+theorem op_individual_apply (x y : E) (P : E → Prop) :
+    Coordinator.op .j (individual x) (individual y) P = (P x ∧ P y) := rfl
 
 /-- **The type-shift `⊔ ↦ ⊓`, guarded.** Type-raising the individual-join `x ⊔ y` agrees
     with the GQ-meet `Coordinator.op .j` of the raised individuals *at `P`* iff `P`
     distributes this join. The bare anti-homomorphism (for all `P`) is therefore FALSE;
     distributivity is exactly the guard. -/
-theorem typeRaise_join_eq_op_iff (x y : E) (P : E → Prop) :
-    (typeRaise (W := W) (x ⊔ y : E) P
-        ↔ Coordinator.op .j (typeRaise (W := W) x) (typeRaise (W := W) y) P)
+theorem individual_join_eq_op_iff (x y : E) (P : E → Prop) :
+    (individual (x ⊔ y : E) P
+        ↔ Coordinator.op .j (individual x) (individual y) P)
       ↔ (P (x ⊔ y : E) ↔ (P x ∧ P y)) := Iff.rfl
 
-/-- For a distributive predicate the type-shift holds: `typeRaise (x ⊔ y)` agrees with the
+/-- For a distributive predicate the type-shift holds: `individual (x ⊔ y)` agrees with the
     GQ-meet on `P`. -/
-theorem typeRaise_join_eq_op_of_distributive (x y : E) {P : E → Prop}
+theorem individual_join_eq_op_of_distributive (x y : E) {P : E → Prop}
     (hP : DistributiveOverJoin P) :
-    typeRaise (W := W) (x ⊔ y : E) P
-      ↔ Coordinator.op .j (typeRaise (W := W) x) (typeRaise (W := W) y) P :=
-  (typeRaise_join_eq_op_iff x y P).mpr (hP x y)
+    individual (x ⊔ y : E) P
+      ↔ Coordinator.op .j (individual x) (individual y) P :=
+  (individual_join_eq_op_iff x y P).mpr (hP x y)
 
 /-- **The guard is Link distributivity.** A Link `ᴰ`-closed predicate `ᴰQ`
     ([link-1987]) distributes every join, given join-prime atoms ([link-1983]). So
@@ -118,27 +119,27 @@ theorem linkD_distributiveOverJoin {E : Type*} [SemilatticeSup E]
     · exact hy z h hAtom
 
 /-- A Link `ᴰ`-closed predicate licenses the type-shift `⊔ ↦ ⊓`. -/
-theorem typeRaise_join_eq_op_of_linkD (hJP : AtomJoinPrime E) (x y : E) (Q : E → Prop) :
-    typeRaise (W := W) (x ⊔ y : E) (D Q : E → Prop)
-      ↔ Coordinator.op .j (typeRaise (W := W) x) (typeRaise (W := W) y) (D Q : E → Prop) :=
-  typeRaise_join_eq_op_of_distributive x y (linkD_distributiveOverJoin hJP Q)
+theorem individual_join_eq_op_of_linkD (hJP : AtomJoinPrime E) (x y : E) (Q : E → Prop) :
+    individual (x ⊔ y : E) (D Q : E → Prop)
+      ↔ Coordinator.op .j (individual x) (individual y) (D Q : E → Prop) :=
+  individual_join_eq_op_of_distributive x y (linkD_distributiveOverJoin hJP Q)
 
 /-- **The guard is necessary, lifted to the type-shift.** A predicate that does NOT
     distribute the join breaks the `⊔ ↦ ⊓` agreement at the witnessing pair: there
-    `typeRaise (x ⊔ y)` and the GQ-meet `Coordinator.op .j` come apart. -/
-theorem typeRaise_join_ne_op_of_not_distributive {P : E → Prop}
+    `individual (x ⊔ y)` and the GQ-meet `Coordinator.op .j` come apart. -/
+theorem individual_join_ne_op_of_not_distributive {P : E → Prop}
     (h : ¬ DistributiveOverJoin P) :
-    ∃ x y : E, ¬ (typeRaise (W := W) (x ⊔ y : E) P
-                    ↔ Coordinator.op .j (typeRaise (W := W) x) (typeRaise (W := W) y) P) := by
+    ∃ x y : E, ¬ (individual (x ⊔ y : E) P
+                    ↔ Coordinator.op .j (individual x) (individual y) P) := by
   simp only [DistributiveOverJoin, not_forall] at h
   obtain ⟨x, y, hxy⟩ := h
-  exact ⟨x, y, fun hiff => hxy ((typeRaise_join_eq_op_iff x y P).mp hiff)⟩
+  exact ⟨x, y, fun hiff => hxy ((individual_join_eq_op_iff x y P).mp hiff)⟩
 
 end TypeShift
 
 /-- **A collective predicate breaks the guard.** True of the plural `{false, true}`
     (`John and Mary met`) but of neither part (`Finset Bool`, `∪` as `⊔`): this collective
-    predicate is not `DistributiveOverJoin`, so by `typeRaise_join_ne_op_of_not_distributive`
+    predicate is not `DistributiveOverJoin`, so by `individual_join_ne_op_of_not_distributive`
     it breaks the type-shift `⊔ ↦ ⊓`. This is why Champollion derives collectivity via
     silent Raising + Minimization rather than via raising + intersection. -/
 theorem collective_not_distributiveOverJoin :
