@@ -2,7 +2,7 @@ import Mathlib.Data.Set.Functor
 import Linglib.Semantics.Intensional.Defs
 import Linglib.Semantics.Intensional.Variables
 import Linglib.Core.Logic.Assignment
-import Linglib.Semantics.Composition.Continuation
+import Mathlib.Control.Monad.Cont
 import Linglib.Semantics.Reference.Binding
 
 /-!
@@ -237,7 +237,7 @@ Shan & Barker's continuation-based composition is built on two
 combinators (Lift/Scope) that directly instantiate the applicative
 functor for continuations `Cᵣ a := (a → r) → r`. The operations are
 definitionally `pure` and `<*>` for `Cont R`
-(`Mathlib.Control.Monad.Cont`, via `Composition/Continuation.lean`). -/
+(`Mathlib.Control.Monad.Cont`). -/
 
 section ContinuationApplicative
 

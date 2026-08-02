@@ -5,6 +5,7 @@ import Linglib.Semantics.Composition.LexEntry
 import Linglib.Semantics.Composition.Scope
 import Linglib.Semantics.Quantification.Quantifier
 import Linglib.Semantics.Composition.Tree
+import Linglib.Studies.HeimKratzer1998
 
 /-!
 # Glue Semantics
@@ -429,47 +430,15 @@ theorem glue_inverse_false : ¬glue_inverse_meaning := by
 
 /-! Both Glue and QR are extensionally equivalent on the canonical
     scope example: both yield exactly {∀>∃, ∃>∀} with the same
-    truth values. The QR side is computed via `interp` from
-    `Composition/Tree.lean`, connecting Glue to the H&K composition
-    engine. -/
+    truth values. The QR side is the H&K engine's output:
+    `qrReading` is exactly what `interp` computes on
+    [heim-kratzer-1998]'s QR trees (`qrReading_surface_computed`,
+    `qrReading_inverse_computed`). -/
 
 open Semantics.Scope
 open Syntax
 open Semantics.Composition.Tree
 open Intensional.Variables
-
-/-- Lexicon for the QR bridge (matching QuantifierComposition). -/
-private def bridgeLex : Lexicon ToyEntity Unit := λ word =>
-  match word with
-  | "every" => some ⟨Ty.det, (every_sem : Denot ToyEntity Unit Ty.det)⟩
-  | "some" => some ⟨Ty.det, (some_sem : Denot ToyEntity Unit Ty.det)⟩
-  | "person" => some ⟨.e ⇒ .t, person_sem⟩
-  | "sees" => some ⟨.e ⇒ .e ⇒ .t, ToyLexicon.sees_sem⟩
-  | _ => none
-
-private def g₀ : Core.Assignment ToyEntity := λ _ => .john
-
-/-- Surface scope QR tree (∀>∃):
-    `[S [DP every person] [1 [S [DP some person] [2 [S t₁ [VP sees t₂]]]]]]` -/
-private def qr_surface : Tree Unit String :=
-  .bin
-    (.bin (.leaf "every") (.leaf "person"))
-    (.binder 1
-      (.bin
-        (.bin (.leaf "some") (.leaf "person"))
-        (.binder 2
-          (.bin (.tr 1) (.bin (.leaf "sees") (.tr 2))))))
-
-/-- Inverse scope QR tree (∃>∀):
-    `[S [DP some person] [2 [S [DP every person] [1 [S t₁ [VP sees t₂]]]]]]` -/
-private def qr_inverse : Tree Unit String :=
-  .bin
-    (.bin (.leaf "some") (.leaf "person"))
-    (.binder 2
-      (.bin
-        (.bin (.leaf "every") (.leaf "person"))
-        (.binder 1
-          (.bin (.tr 1) (.bin (.leaf "sees") (.tr 2))))))
 
 /-- Map ScopeConfig to propositions via Glue evaluation. -/
 def glueReading : ScopeConfig → Prop
@@ -484,6 +453,17 @@ def qrReading : ScopeConfig → Prop
       (λ x => some_sem person_sem (λ y => sees_sem y x))
   | .inverse => some_sem person_sem
       (λ y => every_sem person_sem (λ x => sees_sem y x))
+
+/-- The QR side is computed, not hand-written: `interp` on
+[heim-kratzer-1998]'s surface QR tree yields exactly `qrReading .surface`. -/
+theorem qrReading_surface_computed :
+    interp ToyEntity Unit HeimKratzer1998.quantLex HeimKratzer1998.g₀
+      HeimKratzer1998.tree_surface = some ⟨.t, qrReading .surface⟩ := rfl
+
+/-- Likewise for the inverse QR tree. -/
+theorem qrReading_inverse_computed :
+    interp ToyEntity Unit HeimKratzer1998.quantLex HeimKratzer1998.g₀
+      HeimKratzer1998.tree_inverse = some ⟨.t, qrReading .inverse⟩ := rfl
 
 /-- QR surface scope produces the same Prop as Glue. -/
 theorem qr_surface_agrees :

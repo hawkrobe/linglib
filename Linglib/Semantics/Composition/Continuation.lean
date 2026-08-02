@@ -7,9 +7,9 @@ import Mathlib.Control.Monad.Cont
 Scope-taking expressions denote values of the continuation monad
 `Cont R A := (A → R) → R` (`Mathlib.Control.Monad.Cont`): continuations for
 quantifier scope originate with [barker-2002]; the monadic framing is
-[shan-2001], developed by [charlow-2014]. Consumers: higher-order dynamic
-GQs (`Studies/Charlow2021.lean`) and the effects fragment of
-`Studies/BumfordCharlow2024.lean`.
+[shan-2001], developed by [charlow-2014]. Consumers: the effects fragment
+of `Studies/BumfordCharlow2024.lean` and the Set-morphism bridge of
+`Studies/Charlow2020.lean`.
 
 ## Main definitions
 
@@ -21,6 +21,9 @@ GQs (`Studies/Charlow2021.lean`) and the effects fragment of
 
 - `Cont.lower_bind_pure` and variants: lowering a chain of binds is nested
   generalized-quantifier application — relative scope is bind order.
+- `Cont.lower_map_seq`: applicative composition fixes surface scope —
+  the monadic/applicative contrast localizes [barker-shan-2014]'s linear
+  scope bias.
 -/
 
 namespace Semantics.Composition.Continuation
@@ -62,6 +65,13 @@ scope. -/
 theorem Cont.lower_bind_bind_pure (q₁ q₂ : Cont S E) (rel : E → E → S) :
     Cont.lower (q₁ >>= λ x => q₂ >>= λ y => pure (rel x y)) =
     q₁ (λ x => q₂ (λ y => rel x y)) := rfl
+
+/-- Applicative composition fixes surface scope: `<$>`/`<*>` evaluate
+left-to-right, so the left quantifier outscopes the right — the shape of
+[barker-shan-2014]'s combination schema and the source of their linear
+scope bias. Inverse scope requires the monadic reordering above. -/
+theorem Cont.lower_map_seq (q₁ q₂ : Cont S E) (rel : E → E → S) :
+    Cont.lower (rel <$> q₁ <*> q₂) = q₁ (λ x => q₂ (λ y => rel x y)) := rfl
 
 /-- The bind-order pattern extends to arbitrary depth. -/
 theorem Cont.lower_bind₃_pure (q₁ q₂ q₃ : Cont S E) (rel : E → E → E → S) :

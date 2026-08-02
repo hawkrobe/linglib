@@ -2,6 +2,7 @@ import Linglib.Semantics.Composition.Continuation
 import Linglib.Semantics.Composition.WriterMonad
 import Mathlib.Data.Set.Functor
 import Linglib.Semantics.Composition.Tree
+import Linglib.Studies.HeimKratzer1998
 import Linglib.Pragmatics.Expressives.Basic
 import Linglib.Semantics.Quantification.Quantifier
 import Linglib.Semantics.Reference.Binding
@@ -732,9 +733,26 @@ section TreeEngine
 `Tree.interp` is polymorphic over the effect functor: the same type-driven
 engine that implements H&K at `M = Id` lifts through any `[Applicative M]`.
 At the FA mode that lifting is literally the meta-combinator **A** — a
-framework-level identity, no toy lexicon required. Worked tree-level
-derivations at `M = Cont` (scope) and `M = Writer` (CI) are not yet
-formalized; the scope derivations of §6 run on bind chains directly. -/
+framework-level identity, no toy lexicon required. -/
+
+open HeimKratzer1998 in
+/-- **The scope effect forecloses QR**: at `M = Cont Prop` the engine has
+no entity-distributor (`PredAbs (Cont R) := ⟨none⟩`, §5), so the
+inverse-scope QR derivation that `interp` computes at `M = Id`
+(`HeimKratzer1998.interp_computes_inverse`) fails outright. The reading
+§6 derives by bind reordering is unreachable by movement-plus-abstraction
+under the scope effect: Cont and QR are not notational variants. -/
+theorem cont_blocks_qr :
+    interp ToyEntity Unit (M := Cont Prop)
+      (Lexicon.lift (Cont Prop) quantLex) g₀ tree_inverse = none := rfl
+
+open HeimKratzer1998 in
+/-- Surface-scope QR fails equally: any PA (`.bind`) node is stuck under
+`Cont`. Scope under the effect comes only from bind order (§6), never
+from movement. -/
+theorem cont_blocks_qr_surface :
+    interp ToyEntity Unit (M := Cont Prop)
+      (Lexicon.lift (Cont Prop) quantLex) g₀ tree_surface = none := rfl
 
 /-! The engine's FA mode applies the function daughter to the argument through
 `Applicative`'s `<*>` — the substrate lemma `Tree.tryFA_forward`. With
