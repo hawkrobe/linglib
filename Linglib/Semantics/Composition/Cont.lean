@@ -48,7 +48,8 @@ def lower [Pure m] (c : ContT r m r) : m r := c.run pure
   bind_pure x
 
 /-- Lower, then re-lift: `reset c = monadLift (lower c)` —
-[charlow-2014]'s Reset, after [danvy-filinski-1990]. -/
+[charlow-2014]'s Reset, after [danvy-filinski-1990]; [barker-2002]'s
+scope-island rule is an instance. -/
 def reset {r' : Type u} [Monad m] (c : ContT r m r) : ContT r' m r :=
   monadLift (lower c)
 

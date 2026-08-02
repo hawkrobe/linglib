@@ -133,6 +133,56 @@ theorem every_man_saw_a_woman_surface :
       (vpRule (pure saw') (aDet (pure woman')))) =
     ∀ x, man' x → ∃ y, woman' y ∧ saw' y x := rfl
 
+/-! ### Bounding scope displacement (§2.5)
+
+His (20b) adjusts the S rule so that the clause's continuation applies
+to the already-evaluated clause: quantifiers inside can no longer see
+material outside. The adjustment "can only be made for syntactic
+categories whose direct (i.e., uncontinuized) type is t". -/
+
+/-- His (20b): the island-adjusted S rule — the clause's continuation
+applies to the evaluated clause. -/
+def sRuleIsland (np : Cont Prop E) (vp : Cont Prop (E → Prop)) : Cont Prop Prop :=
+  λ p => p (sRuleVP np vp id)
+
+/-- Linglib note (not in the paper): (20b) is the substrate's
+`ContT.reset` — lower the clause, then re-lift it. -/
+theorem sRuleIsland_eq_reset (np : Cont Prop E) (vp : Cont Prop (E → Prop)) :
+    sRuleIsland np vp = ContT.reset (sRuleVP np vp) := rfl
+
+/-- The island output simulates its evaluated clause in the §5 sense:
+what escapes an island is a value, never a scope-taker. -/
+theorem sRuleIsland_simulates (np : Cont Prop E) (vp : Cont Prop (E → Prop)) :
+    ∀ g, sRuleIsland np vp g = g (ContT.lower (sRuleVP np vp)) :=
+  λ _ => rfl
+
+/-- The Appendix's `VP → Vs S` rule, verb priority: `⟦Vs⟧(⟦S⟧)`. -/
+def vsRule (vs : Cont Prop (Prop → E → Prop)) (s : Cont Prop Prop) :
+    Cont Prop (E → Prop) :=
+  priorityFirst (λ T p => T p) vs s
+
+variable (thought' : Prop → E → Prop)
+
+/-- His (21): *A man thought everyone saw Mary* with the embedded clause
+islanded evaluates to his (21b), `∃y. man y ∧ thought(∀x. saw m x) y` —
+*everyone* "is not able to take scope outside of the embedded clause". -/
+theorem a_man_thought_everyone_saw_mary :
+    ContT.lower (sRuleVP (aDet (pure man'))
+      (vsRule (pure thought')
+        (sRuleIsland everyone (vpRule (pure saw') (individual m))))) =
+    ∃ y, man' y ∧ thought' (∀ x, saw' m x) y := rfl
+
+/-- Clause-boundedness sharpened: with the embedded clause islanded, the
+matrix priority choice is inert — his "all scopings of (21a) are
+logically equivalent to (21b)". -/
+theorem thought_island_priority_inert :
+    sRuleNP (aDet (pure man'))
+      (vsRule (pure thought')
+        (sRuleIsland everyone (vpRule (pure saw') (individual m)))) =
+    sRuleVP (aDet (pure man'))
+      (vsRule (pure thought')
+        (sRuleIsland everyone (vpRule (pure saw') (individual m)))) := rfl
+
 /-! ### Generalized coordination (§4)
 
 His (30): *and* "distributes the continuation belonging to the
