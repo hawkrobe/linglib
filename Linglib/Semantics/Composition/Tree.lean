@@ -32,7 +32,7 @@ Two effect-discipline choices, both visible rather than stipulated:
   effects fire first whichever daughter is the function. At `M = Cont R`
   this makes surface scope the default reading; inverse scope requires
   reordering the evaluation (QR, or `bind`-order permutation — see
-  `Composition/Continuation.lean` and `Studies/BumfordCharlow2024.lean`).
+  `Composition/Cont.lean` and `Studies/BumfordCharlow2024.lean`).
 * **PA is a capability, not a given** (`PredAbs`): it needs an
   entity-distributor `(E → M (Denot ty)) → M (E → Denot ty)`,
   which `Id` has and scope-type effects lack. See the `PredAbs` docstring.
