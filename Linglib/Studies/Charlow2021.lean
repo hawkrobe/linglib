@@ -1,6 +1,6 @@
 import Linglib.Semantics.Dynamic.CDRT
 import Linglib.Semantics.Dynamic.Update
-import Linglib.Semantics.Composition.Continuation
+import Mathlib.Control.Monad.Cont
 import Linglib.Semantics.Mereology
 import Mathlib.Control.Monad.Writer
 import Mathlib.Data.List.Sublists
@@ -35,9 +35,9 @@ side by side:
   pointwise system's overgeneration.
 * `Evar`, `Mvar`, `CardTest`, `exactlyN_pw`: pointwise dynamic GQ operators;
   `pseudoCumulative` and `cumulative` are the two competing LFs.
-* `TowerGQ`, `exactlyN_tower`: scope-taking GQs via the substrate `Cont`
-  monad; `cumulativeTower_eq_cumulative` proves the tower derivation yields
-  `cumulative`.
+* `TowerGQ`, `exactlyN_tower`: scope-taking GQs via the `Cont` monad
+  (`Mathlib.Control.Monad.Cont`); `cumulativeTower_eq_cumulative` proves
+  the tower derivation yields `cumulative`.
 * `Completeness`, `subtypeOf`: the complete/incomplete type discipline;
   `pseudo_cumulative_illtyped` rules out the bad LF.
 * `PostSupp`: bi-dimensional meanings as mathlib's `WriterT (Update S) Id`,
@@ -219,7 +219,7 @@ section Tower
 variable {R S E : Type*} [RegisterStructure R S E] [PartialOrder E] [Fintype E]
 
 /-- Higher-order dynamic GQ type, `(Q → t) → t` with `Q ::= (e→t)→t`
-(eq. 24), rendered via the substrate continuation monad with answer type
+(eq. 24), rendered via the continuation monad with answer type
 `Update S` and the scope argument flattened to `Update S → Update S` (the
 dref is supplied by the GQ itself). §3.4 introduces [barker-shan-2014]-style
 tower notation for these meanings. -/

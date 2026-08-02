@@ -1,5 +1,6 @@
 import Mathlib.Data.Set.Functor
 import Linglib.Studies.Charlow2018
+import Linglib.Semantics.Composition.Continuation
 import Linglib.Semantics.Composition.TypeShifting
 
 /-!
@@ -157,6 +158,22 @@ extensional `∃ p, m p ∧ p` (existence of a true member), avoiding
 `propext` issues when propositions are logically but not definitionally
 equal to `True`. -/
 def existsClosure (m : Prop → Prop) : Prop := ∃ p, m p ∧ p
+
+open Semantics.Composition.Continuation in
+/-- A set of alternatives as a scope-taker: the canonical Set→Cont
+morphism sends `m` to the continuized value holding of some member —
+[charlow-2020]'s thesis that alternative sets take scope the way
+quantifiers do. -/
+def setToCont {A : Type} (m : Set A) : Cont Prop A := λ κ => ∃ x, x ∈ m ∧ κ x
+
+open Semantics.Composition.Continuation in
+/-- **↓ is LOWER through the Set→Cont morphism**: existential closure of
+a proposition set is exactly lowering (`Cont.lower`) its continuized
+image. The tree's two scope-effect carriers — `Set` for alternatives
+([charlow-2020]), `Cont` for quantifier scope — share one evaluation
+operation. -/
+theorem lower_setToCont (m : Set Prop) :
+    Cont.lower (setToCont m) = existsClosure m := rfl
 
 /-! ### §4 Bridge to `Studies/Charlow2018.lean`
 
