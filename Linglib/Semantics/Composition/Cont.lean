@@ -3,26 +3,15 @@ import Mathlib.Control.Monad.Cont
 /-!
 # Evaluating continuation computations
 
-A continuation computation `Cont R A := (A → R) → R` produces its answer
-from a continuation `A → R` describing how the result will be used, and
-may invoke that continuation any number of times. This file defines
-`Cont.lower`, which ends a computation of type `Cont A A` by applying
-the identity continuation (Haskell's `evalCont`, not present in
-`Mathlib.Control.Monad.Cont`), and proves that `lower` turns a chain of
-binds into function application nested in bind order, while the
-applicative combination nests in fixed left-to-right order.
-
-In continuation semantics, continuized terms model scope-taking
-expressions ([barker-2002]) and `lower` is the LOWER operation of
-[barker-shan-2014]; the contrast between free bind order and fixed
-applicative order is the monadic account of quantifier scope
-([shan-2001], [charlow-2014]). These applications live in
-`Composition/Tree.lean` (`PredAbs`), `Studies/BumfordCharlow2024.lean`,
-and `Studies/Charlow2020.lean`.
-
-## Main definitions
-
-- `Cont.lower`: evaluation with the identity continuation
+`Cont.lower` evaluates a computation `Cont A A` at the identity
+continuation — Haskell's `evalCont`, which `Mathlib.Control.Monad.Cont`
+does not provide. The lemmas compute `lower` over `pure`/`>>=`/`<*>`
+chains: binds nest in bind order, the applicative combination
+left-to-right. In continuation semantics `lower` is
+[barker-shan-2014]'s LOWER, and the bind-order dependence is the
+monadic account of quantifier scope ([barker-2002], [shan-2001],
+[charlow-2014]); see `Studies/BumfordCharlow2024.lean` and
+`Studies/Charlow2020.lean`.
 
 ## References
 
