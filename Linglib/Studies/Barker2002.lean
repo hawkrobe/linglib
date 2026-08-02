@@ -188,11 +188,13 @@ shape, discharging the daughters' hypotheses from the innermost
 continuation out. The quantificational entries (13) are exactly the
 meanings that break the hypotheses — the paper's own delimitation. -/
 
-/-- §5's Lemma, lexical case. -/
+/-- A unit meaning simulates its direct value (§5's Lemma, lexical
+case). -/
 theorem simulation_pure (a : α) (g : α → Prop) :
     (pure a : Cont Prop α) g = g a := rfl
 
-/-- §5's Lemma, arity-2 f-case. -/
+/-- Priority-first combination preserves simulation (§5's Lemma,
+arity 2). -/
 theorem simulation_priorityFirst (M : α → β → γ) {c₁ : Cont Prop α}
     {c₂ : Cont Prop β} {m₁ : α} {m₂ : β}
     (h₁ : ∀ g, c₁ g = g m₁) (h₂ : ∀ g, c₂ g = g m₂) (g : γ → Prop) :
@@ -201,7 +203,8 @@ theorem simulation_priorityFirst (M : α → β → γ) {c₁ : Cont Prop α}
   rw [h₁]
   exact h₂ _
 
-/-- §5's Lemma, arity-2 g-case. -/
+/-- Priority-second combination preserves simulation (§5's Lemma,
+arity 2). -/
 theorem simulation_prioritySecond (M : α → β → γ) {c₁ : Cont Prop α}
     {c₂ : Cont Prop β} {m₁ : α} {m₂ : β}
     (h₁ : ∀ g, c₁ g = g m₁) (h₂ : ∀ g, c₂ g = g m₂) (g : γ → Prop) :
@@ -218,7 +221,8 @@ theorem simulation_orders_agree (M : α → β → γ) {c₁ : Cont Prop α}
   funext g
   rw [simulation_priorityFirst M h₁ h₂ g, simulation_prioritySecond M h₁ h₂ g]
 
-/-- §5's Simulation Theorem. -/
+/-- A simulating meaning evaluates at the trivial continuation to its
+direct meaning (§5's Simulation Theorem). -/
 theorem simulation (c : Cont Prop Prop) (p : Prop) (h : ∀ g, c g = g p) :
     ContT.lower c = p :=
   h id
