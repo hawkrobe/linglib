@@ -63,7 +63,7 @@ S&B substrate in linglib yet.
 
 ## Implementation notes
 
-Scope-as-bind-order (`scope_ambiguity_is_bind_order` et al.) lives with the
+Scope-as-bind-order (`Cont.lower_bind_pure` et al.) lives with the
 `Cont` monad in `Composition/Continuation`; this study consumes it.
 The eject combinators (`Ū`/`Ũ`/`⊿`) of Figure 10 are not formalized.
 -/
@@ -90,8 +90,9 @@ open Semantics.Montague.ToyLexicon (student_sem person_sem)
 The W effect is mathlib's `Writer (List P)` (= `WriterT (List P) Id`), whose
 `Functor`/`Applicative`/`Monad` instances come from mathlib, with
 `LawfulMonad` and the `val`/`log`/`tell` surface in
-`Composition/WriterMonad.lean`. The `Cont R` instances live with the
-type in `Composition/Continuation.lean`. -/
+`Composition/WriterMonad.lean`. The `Cont R` monad is mathlib's
+(`Mathlib.Control.Monad.Cont`); its linguistics surface (`Cont.lower`)
+lives in `Composition/Continuation.lean`. -/
 
 -- ════════════════════════════════════════════════════════════════════
 -- §2 Meta-Combinators
@@ -480,18 +481,9 @@ end PredAbsInstances
 
 Connect the effect framework to existing linglib constructions, proving
 that independently-developed linglib modules are instances of the
-effect-driven architecture. -/
-
-section WriterBridge
-
--- `Writer`'s monadic application IS `<*>` (mathlib's `WriterT` instance),
--- so no bridge theorem is needed for the W effect.
-
-/-- Lowering a Cont is handling the scope effect. -/
-theorem cont_lower_is_handleScope {R : Type} (m : Cont R R) :
-    Cont.lower m = handleScope m := rfl
-
-end WriterBridge
+effect-driven architecture. The W and C effects need no bridge:
+`Writer`'s monadic application is mathlib's `<*>`, and
+`handleScope := Cont.lower` by definition. -/
 
 section CIBridge
 
@@ -640,10 +632,6 @@ def gqAsCont {E : Type} (gq : (E → Prop) → Prop) : Cont Prop E :=
 def contAsGQ {E : Type} (c : Cont Prop E) : (E → Prop) → Prop :=
   c
 
-/-- Round-trip: GQ → Cont → GQ is identity. -/
-theorem gq_cont_roundtrip {E : Type} (gq : (E → Prop) → Prop) :
-    contAsGQ (gqAsCont gq) = gq := rfl
-
 /-- `every_sem` applied to a restrictor is a `Cont Prop Entity` value. -/
 def every_as_cont (restrictor : ToyEntity → Prop) :
     Cont Prop ToyEntity :=
@@ -656,47 +644,53 @@ def some_as_cont (restrictor : ToyEntity → Prop) :
 
 /-- Lowering a scope-taking quantifier = applying it to the scope. -/
 theorem scope_lower_eq_gq_id (restrictor scope' : ToyEntity → Prop) :
-    handleScope (gqAsCont (every_sem restrictor) |>.bind
-      (λ x => Cont.pure (scope' x))) =
-    every_sem restrictor scope' := rfl
+    handleScope (gqAsCont (every_sem restrictor) >>= λ x => pure (scope' x)) =
+    every_sem restrictor scope' :=
+  Cont.lower_bind_pure (every_sem restrictor) scope'
 
 /-- Scope resolution via Cont agrees with direct GQ application for
     "every student sleeps": the Cont derivation produces the same Prop. -/
 theorem scope_agrees_with_qr_everyStudentSleeps :
-    handleScope (gqAsCont (every_sem student_sem) |>.bind
-      (λ x => Cont.pure (ToyLexicon.sleeps_sem x))) =
-    every_sem student_sem ToyLexicon.sleeps_sem := rfl
+    handleScope (gqAsCont (every_sem student_sem) >>=
+      λ x => pure (ToyLexicon.sleeps_sem x)) =
+    every_sem student_sem ToyLexicon.sleeps_sem :=
+  Cont.lower_bind_pure (every_sem student_sem) ToyLexicon.sleeps_sem
 
 /-- Scope resolution via Cont agrees with direct GQ application for
     "some student sleeps". -/
 theorem scope_agrees_with_qr_someStudentSleeps :
-    handleScope (gqAsCont (some_sem student_sem) |>.bind
-      (λ x => Cont.pure (ToyLexicon.sleeps_sem x))) =
-    some_sem student_sem ToyLexicon.sleeps_sem := rfl
+    handleScope (gqAsCont (some_sem student_sem) >>=
+      λ x => pure (ToyLexicon.sleeps_sem x)) =
+    some_sem student_sem ToyLexicon.sleeps_sem :=
+  Cont.lower_bind_pure (some_sem student_sem) ToyLexicon.sleeps_sem
 
 /-- Surface scope (∀>∃) via continuation composition agrees with direct
     GQ application. -/
 theorem scope_surface_agrees_with_qr :
-    handleScope (gqAsCont (every_sem person_sem) |>.bind
-      (λ x => gqAsCont (some_sem person_sem) |>.bind
-        (λ y => Cont.pure (ToyLexicon.sees_sem y x)))) =
+    handleScope (gqAsCont (every_sem person_sem) >>= λ x =>
+      gqAsCont (some_sem person_sem) >>= λ y =>
+        pure (ToyLexicon.sees_sem y x)) =
     every_sem person_sem
-      (λ x => some_sem person_sem (λ y => ToyLexicon.sees_sem y x)) := rfl
+      (λ x => some_sem person_sem (λ y => ToyLexicon.sees_sem y x)) :=
+  Cont.lower_bind_bind_pure (every_sem person_sem) (some_sem person_sem)
+    (λ x y => ToyLexicon.sees_sem y x)
 
 /-- Inverse scope (∃>∀) via continuation composition agrees with direct
     GQ application. -/
 theorem scope_inverse_agrees_with_qr :
-    handleScope (gqAsCont (some_sem person_sem) |>.bind
-      (λ y => gqAsCont (every_sem person_sem) |>.bind
-        (λ x => Cont.pure (ToyLexicon.sees_sem y x)))) =
+    handleScope (gqAsCont (some_sem person_sem) >>= λ y =>
+      gqAsCont (every_sem person_sem) >>= λ x =>
+        pure (ToyLexicon.sees_sem y x)) =
     some_sem person_sem
-      (λ y => every_sem person_sem (λ x => ToyLexicon.sees_sem y x)) := rfl
+      (λ y => every_sem person_sem (λ x => ToyLexicon.sees_sem y x)) :=
+  Cont.lower_bind_bind_pure (some_sem person_sem) (every_sem person_sem)
+    ToyLexicon.sees_sem
 
 /-- Surface scope reading holds in the toy model. -/
 theorem surface_scope_via_cont :
-    handleScope (gqAsCont (every_sem person_sem) |>.bind
-      (λ x => gqAsCont (some_sem person_sem) |>.bind
-        (λ y => Cont.pure (ToyLexicon.sees_sem y x)))) := by
+    handleScope (gqAsCont (every_sem person_sem) >>= λ x =>
+      gqAsCont (some_sem person_sem) >>= λ y =>
+        pure (ToyLexicon.sees_sem y x)) := by
   intro x hpx
   cases x with
   | john => exact ⟨.mary, trivial, trivial⟩
@@ -705,9 +699,9 @@ theorem surface_scope_via_cont :
 
 /-- Inverse scope reading does not hold in the toy model. -/
 theorem inverse_scope_via_cont :
-    ¬handleScope (gqAsCont (some_sem person_sem) |>.bind
-      (λ y => gqAsCont (every_sem person_sem) |>.bind
-        (λ x => Cont.pure (ToyLexicon.sees_sem y x)))) := by
+    ¬handleScope (gqAsCont (some_sem person_sem) >>= λ y =>
+      gqAsCont (every_sem person_sem) >>= λ x =>
+        pure (ToyLexicon.sees_sem y x)) := by
   intro ⟨y, _, hy⟩
   cases y with
   | john => exact absurd (hy .john trivial) id
@@ -717,12 +711,12 @@ theorem inverse_scope_via_cont :
 /-- The two scope orderings via Cont yield genuinely different readings,
     matching `HeimKratzer1998.scope_readings_differ`. -/
 theorem cont_scope_readings_differ :
-    (handleScope (gqAsCont (every_sem person_sem) |>.bind
-      (λ x => gqAsCont (some_sem person_sem) |>.bind
-        (λ y => Cont.pure (ToyLexicon.sees_sem y x))))) ≠
-    (handleScope (gqAsCont (some_sem person_sem) |>.bind
-      (λ y => gqAsCont (every_sem person_sem) |>.bind
-        (λ x => Cont.pure (ToyLexicon.sees_sem y x))))) := by
+    (handleScope (gqAsCont (every_sem person_sem) >>= λ x =>
+      gqAsCont (some_sem person_sem) >>= λ y =>
+        pure (ToyLexicon.sees_sem y x))) ≠
+    (handleScope (gqAsCont (some_sem person_sem) >>= λ y =>
+      gqAsCont (every_sem person_sem) >>= λ x =>
+        pure (ToyLexicon.sees_sem y x))) := by
   intro h
   have hS := surface_scope_via_cont
   have hI := inverse_scope_via_cont
@@ -739,8 +733,8 @@ section TreeEngine
 engine that implements H&K at `M = Id` lifts through any `[Applicative M]`.
 At the FA mode that lifting is literally the meta-combinator **A** — a
 framework-level identity, no toy lexicon required. Worked tree-level
-derivations at `M = Cont` (scope) and `M = Writer` (CI) live in
-`Studies/BumfordCharlow2024.lean` alongside the toy-model demonstrations. -/
+derivations at `M = Cont` (scope) and `M = Writer` (CI) are not yet
+formalized; the scope derivations of §6 run on bind chains directly. -/
 
 /-! The engine's FA mode applies the function daughter to the argument through
 `Applicative`'s `<*>` — the substrate lemma `Tree.tryFA_forward`. With
@@ -830,8 +824,8 @@ end BindingBridge
 
 /-! ### §7 General scope agreement
 
-The ScopeBridge section (§6) proved Cont ↔ QR agreement for the toy model
-via `native_decide`. Here we prove the agreement is *structural*: it holds
+The ScopeBridge section (§6) proved Cont ↔ QR agreement for the toy model.
+Here we prove the agreement is *structural*: it holds
 for any type, any quantifier, and any predicate — not because we checked
 all cases, but because the two approaches compute the same function.
 
@@ -850,9 +844,10 @@ one particular syntax for specifying bind order. -/
 
 section GeneralScopeAgreement
 
-/-! The generic scope-as-bind-order facts (`scope_ambiguity_is_bind_order`
-et al.) now live with the `Cont` monad in `Composition/Continuation`; this
-study consumes them. What remains here is the bridge to QR trees. -/
+/-! The generic scope-as-bind-order facts (`Cont.lower_bind_pure`,
+`Cont.lower_bind_bind_pure`) live with the `Cont` monad in
+`Composition/Continuation`; the §6 theorems above are proved by them.
+What remains here is the bridge to QR trees. -/
 
 /-- **QR scope = Cont scope via lambdaAbsG**: the structural connection
     between QR trees and Cont derivations.
@@ -871,7 +866,8 @@ theorem qr_cont_structural_agreement {E W : Type}
     (q : (E → Prop) → Prop)
     (body : DenotG E W .t) (n : Nat) (g : Core.Assignment E) :
     q (lambdaAbsG n body g) =
-    Cont.lower (Cont.bind q (fun x => Cont.pure (body (g[n ↦ x])))) := rfl
+    Cont.lower (q >>= λ x => pure (body (g[n ↦ x]))) :=
+  (Cont.lower_bind_pure q (λ x => body (g[n ↦ x]))).symm
 
 end GeneralScopeAgreement
 
@@ -888,11 +884,11 @@ the same operation `f e e`:
 |--------|-----------|------------|------|
 | [heim-kratzer-1998] | `denotGJoin` (μ) | `λg. f g g` | `Variables.lean` |
 | [barker-shan-2014] | `W` (duplicator) | `W κ x = κ x x` | `Binding.lean` |
-| | `adj_ε` (co-unit) | `ε(f e, e) = (f e) e` | `Effects.lean` §4 |
+| | `adj_ε` (co-unit) | `ε(f e, e) = (f e) e` | §2 above |
 
 The individual two-way bridges exist:
 - `denotGJoin_is_W` (`Charlow2018.lean`)
-- `adj_counit_yields_W` (`Effects.lean` §4)
+- `adj_counit_yields_W` (§2 above)
 
 Here we close the triangle with a single three-way theorem. -/
 
@@ -935,7 +931,7 @@ end BindingUnification
 
 /-! ### §9 Indeterminacy effect
 
-The **indeterminacy** effect — labeled `S` in's
+The **indeterminacy** effect — labeled `S` in the paper's
 Table 2 — is the set monad `(S, η, ⫝̸)` from [charlow-2020],
 formalized in `Studies/Charlow2020.lean`.
 

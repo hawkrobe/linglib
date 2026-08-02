@@ -236,23 +236,20 @@ end SetApplicative
 Shan & Barker's continuation-based composition is built on two
 combinators (Lift/Scope) that directly instantiate the applicative
 functor for continuations `Cᵣ a := (a → r) → r`. The operations are
-definitionally `Cont.pure` and the `<*>` derived from
-`Composition/Continuation.lean`'s monad instance. -/
+definitionally `pure` and `<*>` for `Cont R`
+(`Mathlib.Control.Monad.Cont`, via `Composition/Continuation.lean`). -/
 
 section ContinuationApplicative
 
-open Semantics.Composition.Continuation
-
 variable {R A B : Type}
 
-/-- Eq. (16): `ρ x := λκ. κ x` = `Cont.pure`. -/
+/-- Eq. (16): `ρ x := λκ. κ x` = `pure`. -/
 theorem cont_pure_eq (x : A) :
-    (fun (κ : A → R) => κ x) = Cont.pure x := rfl
+    (fun (κ : A → R) => κ x) = (pure x : Cont R A) := rfl
 
 /-- Eq. (17): `m ⊛ n := λκ. m(λf. n(λx. κ(f x)))` = Cont `<*>`. -/
 theorem cont_ap_eq (m : Cont R (A → B)) (n : Cont R A) :
-    (fun (κ : B → R) => m (fun f => n (fun x => κ (f x)))) =
-    Cont.bind m (fun f => Cont.map f n) := rfl
+    (fun (κ : B → R) => m (fun f => n (fun x => κ (f x)))) = m <*> n := rfl
 
 end ContinuationApplicative
 
