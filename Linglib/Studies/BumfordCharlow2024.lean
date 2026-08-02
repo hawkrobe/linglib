@@ -64,8 +64,8 @@ S&B substrate in linglib yet.
 
 ## Implementation notes
 
-Scope-as-bind-order (`Cont.lower_bind_pure` et al.) lives with the
-`Cont` monad in `Composition/Cont`; this study consumes it.
+Scope-as-bind-order rests on `Cont.lower` (`Composition/Cont.lean`);
+the §6 agreements are definitional instances of its `lower_*` laws.
 The eject combinators (`Ū`/`Ũ`/`⊿`) of Figure 10 are not formalized.
 -/
 
@@ -645,24 +645,21 @@ def some_as_cont (restrictor : ToyEntity → Prop) :
 /-- Lowering a scope-taking quantifier = applying it to the scope. -/
 theorem scope_lower_eq_gq_id (restrictor scope' : ToyEntity → Prop) :
     handleScope (gqAsCont (every_sem restrictor) >>= λ x => pure (scope' x)) =
-    every_sem restrictor scope' :=
-  Cont.lower_bind_pure (every_sem restrictor) scope'
+    every_sem restrictor scope' := rfl
 
 /-- Scope resolution via Cont agrees with direct GQ application for
     "every student sleeps": the Cont derivation produces the same Prop. -/
 theorem scope_agrees_with_qr_everyStudentSleeps :
     handleScope (gqAsCont (every_sem student_sem) >>=
       λ x => pure (ToyLexicon.sleeps_sem x)) =
-    every_sem student_sem ToyLexicon.sleeps_sem :=
-  Cont.lower_bind_pure (every_sem student_sem) ToyLexicon.sleeps_sem
+    every_sem student_sem ToyLexicon.sleeps_sem := rfl
 
 /-- Scope resolution via Cont agrees with direct GQ application for
     "some student sleeps". -/
 theorem scope_agrees_with_qr_someStudentSleeps :
     handleScope (gqAsCont (some_sem student_sem) >>=
       λ x => pure (ToyLexicon.sleeps_sem x)) =
-    some_sem student_sem ToyLexicon.sleeps_sem :=
-  Cont.lower_bind_pure (some_sem student_sem) ToyLexicon.sleeps_sem
+    some_sem student_sem ToyLexicon.sleeps_sem := rfl
 
 /-- Surface scope (∀>∃) via continuation composition agrees with direct
     GQ application. -/
@@ -671,9 +668,7 @@ theorem scope_surface_agrees_with_qr :
       gqAsCont (some_sem person_sem) >>= λ y =>
         pure (ToyLexicon.sees_sem y x)) =
     every_sem person_sem
-      (λ x => some_sem person_sem (λ y => ToyLexicon.sees_sem y x)) :=
-  Cont.lower_bind_bind_pure (every_sem person_sem) (some_sem person_sem)
-    (λ x y => ToyLexicon.sees_sem y x)
+      (λ x => some_sem person_sem (λ y => ToyLexicon.sees_sem y x)) := rfl
 
 /-- Inverse scope (∃>∀) via continuation composition agrees with direct
     GQ application. -/
@@ -682,9 +677,7 @@ theorem scope_inverse_agrees_with_qr :
       gqAsCont (every_sem person_sem) >>= λ x =>
         pure (ToyLexicon.sees_sem y x)) =
     some_sem person_sem
-      (λ y => every_sem person_sem (λ x => ToyLexicon.sees_sem y x)) :=
-  Cont.lower_bind_bind_pure (some_sem person_sem) (every_sem person_sem)
-    ToyLexicon.sees_sem
+      (λ y => every_sem person_sem (λ x => ToyLexicon.sees_sem y x)) := rfl
 
 /-- Surface scope reading holds in the toy model. -/
 theorem surface_scope_via_cont :
@@ -861,10 +854,9 @@ one particular syntax for specifying bind order. -/
 
 section GeneralScopeAgreement
 
-/-! The generic scope-as-bind-order facts (`Cont.lower_bind_pure`,
-`Cont.lower_bind_bind_pure`) live with the `Cont` monad in
-`Composition/Cont`; the §6 theorems above are proved by them.
-What remains here is the bridge to QR trees. -/
+/-! The generic scope-as-bind-order facts are the `Cont.lower_*` simp
+set in `Composition/Cont.lean`; the §6 theorems above are definitional
+instances. What remains here is the bridge to QR trees. -/
 
 /-- **QR scope = Cont scope via lambdaAbsG**: the structural connection
     between QR trees and Cont derivations.
@@ -883,8 +875,7 @@ theorem qr_cont_structural_agreement {E W : Type}
     (q : (E → Prop) → Prop)
     (body : DenotG E W .t) (n : Nat) (g : Core.Assignment E) :
     q (lambdaAbsG n body g) =
-    Cont.lower (q >>= λ x => pure (body (g[n ↦ x]))) :=
-  (Cont.lower_bind_pure q (λ x => body (g[n ↦ x]))).symm
+    Cont.lower (q >>= λ x => pure (body (g[n ↦ x]))) := rfl
 
 end GeneralScopeAgreement
 
