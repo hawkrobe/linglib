@@ -5,7 +5,7 @@ import Linglib.Semantics.Quantification.Defs
 [xiang-2016] [elliott-nicolae-sauerland-2022]
 
 Conjunction and disjunction GQs as iterated meet/join of Montagovian
-individual quantifiers in the NPQ Boolean algebra.
+individual quantifiers in the Quantifier Boolean algebra.
 
 Given a domain of entities, each entity lifts to its principal ultrafilter
 (`individual`). The conjunction GQ over a subset X is the infimum
@@ -15,7 +15,7 @@ quantification over X as lattice operations.
 
 ## Architecture
 
-`NPQ α = (α → Prop) → Prop` inherits a full `BooleanAlgebra` from
+`Quantifier α = (α → Prop) → Prop` inherits a full `BooleanAlgebra` from
 Mathlib's Pi instances over `Prop`. All definitions here are stated
 directly in terms of Mathlib's `⊓`/`⊔`/`⊤`/`⊥`/`≤`. The propositional
 characterizations (`conjGQ X P ↔ ∀ x ∈ X, P x`,
@@ -58,7 +58,7 @@ variable {α : Type*}
 
     [xiang-2016]: conjunction GQs range over non-empty subsets of an
     entity domain, generating the "conjunctive" answers to questions. -/
-def conjGQ (X : List α) : NPQ α :=
+def conjGQ (X : List α) : Quantifier α :=
   X.foldr (fun a acc => individual a ⊓ acc) ⊤
 
 /-- Disjunction GQ: iterated join of individual quantifiers.
@@ -66,7 +66,7 @@ def conjGQ (X : List α) : NPQ α :=
     ⊔(X) = ⨆_{x ∈ X} individual(x)
 
     [xiang-2016]: disjunction GQs generate "disjunctive" answers. -/
-def disjGQ (X : List α) : NPQ α :=
+def disjGQ (X : List α) : Quantifier α :=
   X.foldr (fun a acc => individual a ⊔ acc) ⊥
 
 /-! ### Recursive Decomposition -/
@@ -143,8 +143,8 @@ theorem disjGQ_singleton (a : α) :
 /-! ### Lattice-Theoretic Characterization -/
 
 /-! `conjGQ X` is the greatest lower bound (infimum) and `disjGQ X` the
-    least upper bound (supremum) of `{individual a | a ∈ X}` in the NPQ
-    lattice. These use Mathlib's `≤` on `NPQ α`, which is pointwise
+    least upper bound (supremum) of `{individual a | a ∈ X}` in the Quantifier
+    lattice. These use Mathlib's `≤` on `Quantifier α`, which is pointwise
     implication: `f ≤ g ↔ ∀ P, f P → g P` for the Pi-of-Prop ordering. -/
 
 /-- conjGQ X ≤ individual a for every a ∈ X: the iterated meet is below
@@ -156,7 +156,7 @@ theorem conjGQ_le_individual (a : α) (X : List α) (ha : a ∈ X) :
 
 /-- conjGQ X is the greatest lower bound of {individual a | a ∈ X}:
     any Q below every individual in X is below conjGQ X. -/
-theorem le_conjGQ (Q : NPQ α) (X : List α)
+theorem le_conjGQ (Q : Quantifier α) (X : List α)
     (h : ∀ a ∈ X, Q ≤ individual a) :
     Q ≤ conjGQ X := by
   intro P hQ
@@ -173,7 +173,7 @@ theorem individual_le_disjGQ (a : α) (X : List α) (ha : a ∈ X) :
 
 /-- disjGQ X is the least upper bound of {individual a | a ∈ X}:
     any Q above every individual in X is above disjGQ X. -/
-theorem disjGQ_le (Q : NPQ α) (X : List α)
+theorem disjGQ_le (Q : Quantifier α) (X : List α)
     (h : ∀ a ∈ X, individual a ≤ Q) :
     disjGQ X ≤ Q := by
   intro P hDisj
@@ -185,7 +185,7 @@ theorem disjGQ_le (Q : NPQ α) (X : List α)
 /-- conjGQ is antimonotone in the subset ordering: more conjuncts produce
     a stronger (more restrictive) quantifier.
 
-    X ⊆ Y → ⊓(Y) ≤ ⊓(X) in the NPQ lattice. -/
+    X ⊆ Y → ⊓(Y) ≤ ⊓(X) in the Quantifier lattice. -/
 theorem conjGQ_antitone {X Y : List α} (h : ∀ x, x ∈ X → x ∈ Y)
     (P : α → Prop) : conjGQ Y P → conjGQ X P := by
   rw [conjGQ_iff_forall, conjGQ_iff_forall]
@@ -193,7 +193,7 @@ theorem conjGQ_antitone {X Y : List α} (h : ∀ x, x ∈ X → x ∈ Y)
 
 /-- disjGQ is monotone: more disjuncts produce a weaker quantifier.
 
-    X ⊆ Y → ⊔(X) ≤ ⊔(Y) in the NPQ lattice. -/
+    X ⊆ Y → ⊔(X) ≤ ⊔(Y) in the Quantifier lattice. -/
 theorem disjGQ_monotone {X Y : List α} (h : ∀ x, x ∈ X → x ∈ Y)
     (P : α → Prop) : disjGQ X P → disjGQ Y P := by
   rw [disjGQ_iff_exists, disjGQ_iff_exists]
@@ -209,7 +209,7 @@ theorem conjGQ_le_disjGQ {X : List α} (hne : X ≠ [])
   obtain ⟨x, hx⟩ := List.exists_mem_of_ne_nil X hne
   exact ⟨x, hx, h x hx⟩
 
-/-- ⊓(X) ≤ ⊔(X) when X ≠ ∅: conjunction below disjunction in the NPQ
+/-- ⊓(X) ≤ ⊔(X) when X ≠ ∅: conjunction below disjunction in the Quantifier
     lattice. Lattice-order form of `conjGQ_le_disjGQ`. -/
 theorem conjGQ_le_disjGQ' {X : List α} (hne : X ≠ []) :
     conjGQ X ≤ disjGQ X := fun P => conjGQ_le_disjGQ hne P
@@ -219,7 +219,7 @@ theorem conjGQ_le_disjGQ' {X : List α} (hne : X ≠ []) :
 /-- Individual quantifiers are join-prime: individual(a) ≤ ⊔(X) iff a ∈ X.
 
     This is a deep lattice-theoretic characterization: individual
-    quantifiers are the atoms of the NPQ Boolean algebra, and they detect
+    quantifiers are the atoms of the Quantifier Boolean algebra, and they detect
     membership in disjunctive quantifiers. It is the formal foundation
     for Dayal's ANS identifying which individual satisfies the answer. -/
 theorem individual_le_disjGQ_iff [DecidableEq α] (a : α) (X : List α) :
@@ -256,7 +256,7 @@ theorem conjGQ_le_individual_iff [DecidableEq α] (a : α) (X : List α) :
       ¬(∃x∈X. P(x)) ↔ ∀x∈X. ¬P(x)
 
     Note: these are distinct from the BooleanAlgebra complement laws
-    on NPQ α. The lattice complement `(conjGQ X)ᶜ` negates the
+    on Quantifier α. The lattice complement `(conjGQ X)ᶜ` negates the
     *output*; De Morgan negates the *input predicate*. -/
 
 /-- De Morgan for conjunction: negating each argument swaps ∀ to ∃. -/
@@ -331,13 +331,13 @@ def nonemptySubsets (l : List α) : List (List α) :=
     For a domain of n entities, produces 2ⁿ − 1 conjunction GQs,
     one per non-empty subset. Singleton subsets produce individual
     quantifiers; the full set produces the strongest (most conjuncts). -/
-def conjGQs (dom : List α) : List (NPQ α) :=
+def conjGQs (dom : List α) : List (Quantifier α) :=
   (nonemptySubsets dom).map conjGQ
 
 /-- All disjunction GQs from non-empty subsets of a domain.
 
     disjGQs(dom) = {⊔(X) | ∅ ≠ X ⊆ dom} -/
-def disjGQs (dom : List α) : List (NPQ α) :=
+def disjGQs (dom : List α) : List (Quantifier α) :=
   (nonemptySubsets dom).map disjGQ
 
 end Quantification

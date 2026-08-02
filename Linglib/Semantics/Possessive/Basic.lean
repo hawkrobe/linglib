@@ -103,11 +103,11 @@ inductive PossessionRelationType where
 
 /-! ### Bridge to type ⟨1⟩ quantifiers -/
 
-/-- Possessive as a type ⟨1⟩ quantifier (NPQ):
+/-- Possessive as a type ⟨1⟩ quantifier (Quantifier):
 `⟦John's⟧ = fun R P ↦ ∃ y, R possessor y ∧ P y`. Not isomorphism-invariant: it
 depends on the identity of the possessor, not just cardinalities. -/
 def asNPQ {E : Type*} (possessor : E) (R : E → E → Bool) :
-    Quantification.NPQ E :=
+    Quantification.Quantifier E :=
   fun P => ∃ y : E, R possessor y = true ∧ P y
 
 end Possessive

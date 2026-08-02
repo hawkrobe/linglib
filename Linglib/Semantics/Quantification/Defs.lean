@@ -359,23 +359,27 @@ def adjRestrict (q : GQ α) (adj : α → Prop) : GQ α :=
 
 /-! #### Type ⟨1⟩ shifts (P&W Ch.2-3) -/
 
-/-- NP denotation (type ⟨1⟩): a property of properties.
-    This is the model-agnostic version of `Ty.ett` from TypeShifting.lean.
-    P&W §2.1: an NP like "every student" denotes a set of sets. -/
-abbrev NPQ (α : Type*) := (α → Prop) → Prop
+/-- Type ⟨1⟩ quantifier: a property of properties — a quantifier proper
+    in [barwise-cooper-1981]'s sense ("a quantifier is a set of sets";
+    NPs denote quantifiers, determiners denote functions from properties
+    to them). P&W §2.1. Definitionally `Cont Prop α`: quantifiers are
+    the scope-taking continuations. -/
+abbrev Quantifier (α : Type*) := (α → Prop) → Prop
 
 /-- Restriction: given a GQ Q and restrictor A, produce the type ⟨1⟩
     quantifier Q^[A] (P&W §3.2.2). `restrict Q A B = Q A B`. -/
-def restrict (q : GQ α) (A : α → Prop) : NPQ α := q A
+def restrict (q : GQ α) (A : α → Prop) : Quantifier α := q A
 
 /-- A type ⟨1⟩ quantifier Q "lives on" A iff Q(B) ↔ Q(A ∩ B) for all B.
     P&W §3.2.2: the restricted quantifier depends only on elements of A. -/
-def LivesOn (Q : NPQ α) (A : α → Prop) : Prop :=
+def LivesOn (Q : Quantifier α) (A : α → Prop) : Prop :=
   ∀ B, Q B ↔ Q (fun x => A x ∧ B x)
 
 /-- Montagovian individual: the type ⟨1⟩ quantifier I_a = {X : a ∈ X}.
-    P&W §3.2.3: an entity lifts to the principal ultrafilter it generates. -/
-def individual (a : α) : NPQ α := fun P => P a
+    P&W §3.2.3: an entity lifts to the principal ultrafilter it generates.
+    This is Montague lift — [partee-1987]'s LIFT and the continuation
+    `pure`. -/
+def individual (a : α) : Quantifier α := fun P => P a
 
 /-! ### Mathlib Bridge -/
 

@@ -1,4 +1,5 @@
 import Linglib.Semantics.Intensional.Defs
+import Linglib.Semantics.Quantification.Defs
 import Linglib.Semantics.Intensional.Conjunction
 import Linglib.Semantics.Modification.Basic
 import Mathlib.Order.Hom.BoundedLattice
@@ -30,6 +31,7 @@ which extend the same type-shift to kinds and bare plurals.
 namespace Semantics.Composition.TypeShifting
 
 open Intensional
+open Quantification
 open Intensional.Conjunction (typeRaise)
 
 variable {E W : Type}
@@ -37,7 +39,7 @@ variable {E W : Type}
 section TotalShifts
 
 /-- Type-raising: `lift(j) = λP. P(j)` -/
-def lift (j : E) : ((E → Prop) → Prop) :=
+def lift (j : E) : Quantifier E :=
   fun P => P j
 
 /-- Singleton property: `ident(j) = λx. [j = x]`.
@@ -53,11 +55,11 @@ proposition into a question denotation when an embedding predicate (e.g.
 a Predicate of Relevance like `care`) selects only for questions. The shape
 mirrors `ident` one type-theoretic level up: entities ↦ singleton properties
 becomes propositions ↦ singleton questions. -/
-def propIdent (p : (W → Prop)) : ((W → Prop) → Prop) :=
+def propIdent (p : (W → Prop)) : Quantifier W :=
   fun q => p = q
 
 /-- Predicative content of a GQ: `BE(Q) = λx. Q(λy. y = x)` -/
-def BE (Q : ((E → Prop) → Prop)) : (E → Prop) :=
+def BE (Q : Quantifier E) : (E → Prop) :=
   fun x => Q (fun y => y = x)
 
 /-- Predicativize: extensional counterpart of Chierchia's ∪ (up) operator.
@@ -89,7 +91,7 @@ private lemma finset_inf_fun_eval {ι α : Type*}
   | cons x s hx ih => simp only [Finset.inf_cons, Pi.inf_apply, ih]
 
 /-- `BE` is a `BoundedLatticeHom` (Partee §3.3, Fact 1). -/
-def BE_hom (E : Type) : BoundedLatticeHom (((E → Prop) → Prop)) ((E → Prop)) where
+def BE_hom (E : Type) : BoundedLatticeHom (Quantifier E) ((E → Prop)) where
   toFun := BE
   map_sup' _ _ := rfl
   map_inf' _ _ := rfl
@@ -112,14 +114,14 @@ theorem BE_lift_eq_ident (j : E) :
     `atom_x` correctly. Then monotonicity determines `f(Q)(x)` for arbitrary
     `Q` by cases on `Q(P_x)`. -/
 theorem BE_unique [Fintype E] [DecidableEq E]
-    (f : BoundedLatticeHom (((E → Prop) → Prop)) ((E → Prop)))
+    (f : BoundedLatticeHom (Quantifier E) ((E → Prop)))
     (hcomm : ∀ j : E, f (lift j) = ident j) :
-    ∀ Q : ((E → Prop) → Prop), f Q = BE Q := by
+    ∀ Q : Quantifier E, f Q = BE Q := by
   intro Q; funext x
   show f Q x = Q (fun j => j = x)
-  let lit : E → ((E → Prop) → Prop) := fun j =>
-    if j = x then (lift j : ((E → Prop) → Prop)) else (lift j)ᶜ
-  let atom_x : ((E → Prop) → Prop) := Finset.inf Finset.univ lit
+  let lit : E → Quantifier E := fun j =>
+    if j = x then (lift j : Quantifier E) else (lift j)ᶜ
+  let atom_x : Quantifier E := Finset.inf Finset.univ lit
   let f_lit : E → (E → Prop) := fun j =>
     if j = x then (ident j : (E → Prop)) else (ident j)ᶜ
   -- Step 1: f maps each literal correctly
@@ -161,7 +163,7 @@ theorem BE_unique [Fintype E] [DecidableEq E]
       -- hj : (lift j)ᶜ R, i.e. ¬R j. Goal: R j = (j = x)
       exact propext ⟨fun hr => absurd hr hj, fun heq => absurd heq h⟩
   -- Step 5: conclude by cases on Q(fun j => j = x)
-  have hatom_le : ∀ S : ((E → Prop) → Prop), S (fun j => j = x) → atom_x ≤ S := by
+  have hatom_le : ∀ S : Quantifier E, S (fun j => j = x) → atom_x ≤ S := by
     intro S hS R hR
     have : R = fun j => j = x := hatom_point R hR
     rw [this]; exact hS
@@ -180,15 +182,15 @@ theorem BE_unique [Fintype E] [DecidableEq E]
     exact propext ⟨fun h => absurd h hfQc2, fun h => absurd h hQPx⟩
 
 /-- `BE(Q₁ ∧ Q₂) = BE(Q₁) ∧ BE(Q₂)` -/
-theorem BE_conj (Q₁ Q₂ : ((E → Prop) → Prop)) :
+theorem BE_conj (Q₁ Q₂ : Quantifier E) :
     BE (fun P => Q₁ P ∧ Q₂ P) = (fun x => BE Q₁ x ∧ BE Q₂ x) := rfl
 
 /-- `BE(Q₁ ∨ Q₂) = BE(Q₁) ∨ BE(Q₂)` -/
-theorem BE_disj (Q₁ Q₂ : ((E → Prop) → Prop)) :
+theorem BE_disj (Q₁ Q₂ : Quantifier E) :
     BE (fun P => Q₁ P ∨ Q₂ P) = (fun x => BE Q₁ x ∨ BE Q₂ x) := rfl
 
 /-- `BE(¬Q) = ¬BE(Q)` -/
-theorem BE_neg (Q : ((E → Prop) → Prop)) :
+theorem BE_neg (Q : Quantifier E) :
     BE (fun P => ¬(Q P)) = (fun x => ¬(BE Q x)) := rfl
 
 end BooleanHomomorphism
@@ -196,7 +198,7 @@ end BooleanHomomorphism
 section PartialShifts
 
 /-- Partial inverse of `lift`. Defined when `Q` is a principal ultrafilter. -/
-noncomputable def lower (domain : List E) (Q : ((E → Prop) → Prop)) : Option E :=
+noncomputable def lower (domain : List E) (Q : Quantifier E) : Option E :=
   match domain.filter (fun j => @decide (Q (fun x => x = j)) (Classical.dec _)) with
   | [j] => some j
   | _ => none
@@ -217,7 +219,7 @@ noncomputable def NOM (domain : List E) (P : (E → Prop)) : Option E :=
   iota domain P
 
 /-- Existential closure: `A(P) = λQ. ∃x. P(x) ∧ Q(x)` -/
-def A (domain : List E) (P : (E → Prop)) : ((E → Prop) → Prop) :=
+def A (domain : List E) (P : (E → Prop)) : Quantifier E :=
   fun Q => ∃ x ∈ domain, P x ∧ Q x
 
 /-- THE: Presuppositional type-shifter for definites ([partee-1987] Figure 1).
@@ -226,7 +228,7 @@ def A (domain : List E) (P : (E → Prop)) : ((E → Prop) → Prop) :=
     Maps `⟨e,t⟩ → ⟨⟨e,t⟩,t⟩` (partial). Unlike `A` (which is total), `THE`
     presupposes existence and uniqueness. Connects to the semantics of "the"
     in `Semantics.Definiteness`. -/
-noncomputable def THE (domain : List E) (P : (E → Prop)) : Option (((E → Prop) → Prop)) :=
+noncomputable def THE (domain : List E) (P : (E → Prop)) : Option (Quantifier E) :=
   (iota domain P).map lift
 
 /-- Helper: for a nodup list, filtering for equality gives a singleton or empty. -/
@@ -334,7 +336,7 @@ Applications:
 -/
 
 /-- A GQ is a principal ultrafilter iff it equals `lift(j)` for some entity. -/
-def isPrincipalUltrafilter (domain : List E) (Q : ((E → Prop) → Prop)) : Prop :=
+def isPrincipalUltrafilter (domain : List E) (Q : Quantifier E) : Prop :=
   ∃ j ∈ domain, Q = lift j
 
 /-- Helper: `(∃ x ∈ domain, j = x ∧ P x) ↔ P j` when `j ∈ domain`. -/
@@ -545,7 +547,7 @@ section GaloisStructure
 
     `Q` is upward-closed when `Q(P)` and `P ≤ P'` imply `Q(P')`.
     Equivalently, `Monotone Q` in the pointwise order on `⟨e,t⟩`. -/
-def UpwardGQ (E : Type) := { Q : ((E → Prop) → Prop) // Monotone Q }
+def UpwardGQ (E : Type) := { Q : Quantifier E // Monotone Q }
 
 instance : PartialOrder (UpwardGQ E) := Subtype.partialOrder _
 
