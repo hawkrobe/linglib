@@ -8,14 +8,14 @@ Formalizes the continuized grammar of [barker-2002]: quantificational
 NPs denote functions on their own continuations, so continuizing an
 ordinary grammar derives generalized quantifiers, in-situ scope
 displacement, and scope ambiguity, with no movement, storage, or
-type-shifting. The file states his Continuation Schema at arity 2, his
+type-shifting. The file states the Continuation Schema at arity 2, the
 fragment with its worked derivations, the scope-island rule with clause
-boundedness, generalized coordination, and the §5 Simulation Theorem,
-following the paper's own proof. His transitive verbs take the object
-first: `saw m j` is "John saw Mary".
+boundedness, generalized coordination, and the Simulation Theorem,
+following the paper's own proof. Barker's transitive verbs take the
+object first: `saw m j` is "John saw Mary".
 
-The Appendix's choice-function fragment ((39)–(41)) is not formalized;
-the determiners here are the ones the paper marks as expository.
+The Appendix's choice-function fragment is not formalized; the
+determiners here are the ones the paper marks as expository.
 -/
 
 namespace Barker2002
@@ -26,108 +26,112 @@ variable {α β γ E : Type}
 
 /-! ### The Continuation Schema at arity 2
 
-His (9)/(35): a lexical item continuizes to the unit `λb̄. b̄(⟦B⟧)` —
-the monadic `pure`, which at NP type is `Quantification.individual` —
-and a binary rule with direct meaning `M` continuizes to `n! = 2` rules,
-one per evaluation order. The daughter evaluated first takes priority
-(his term): its quantifiers take wide scope. -/
+Barker's schema ((9) and (35) in the paper) continuizes a lexical item
+to the unit `λb̄. b̄(⟦B⟧)` — the monadic `pure`, at NP type
+`Quantification.individual` — and a binary rule with direct meaning `M`
+to `n! = 2` rules, one per evaluation order. The daughter evaluated
+first takes priority, his term: its quantifiers take wide scope. -/
 
-/-- His (35), f-instance: priority to the first daughter. -/
+/-- Continuized combination with priority to the first daughter. -/
 def priorityFirst (M : α → β → γ) (m₁ : Cont Prop α) (m₂ : Cont Prop β) :
     Cont Prop γ :=
   λ κ => m₁ (λ x₁ => m₂ (λ x₂ => κ (M x₁ x₂)))
 
-/-- His (35), g-instance: priority to the second daughter. -/
+/-- Continuized combination with priority to the second daughter. -/
 def prioritySecond (M : α → β → γ) (m₁ : Cont Prop α) (m₂ : Cont Prop β) :
     Cont Prop γ :=
   λ κ => m₂ (λ x₂ => m₁ (λ x₁ => κ (M x₁ x₂)))
 
-/-- Linglib note: the f-schema is the applicative combination. -/
+/-- Priority to the first daughter is the applicative combination. -/
 theorem priorityFirst_eq_seq (M : α → β → γ) (m₁ : Cont Prop α) (m₂ : Cont Prop β) :
     priorityFirst M m₁ m₂ = M <$> m₁ <*> m₂ := rfl
 
 /-! ### The grammar
 
-His (10): `S → NP VP` interprets as `⟦VP⟧(⟦NP⟧)` and `VP → Vt NP` as
-`⟦Vt⟧(⟦NP⟧)`. Rule (10a) gives the VP priority (= his (18a)); (18b) is
-the same syntax with subject priority. (10b) gives the verb priority. -/
+In the fragment (Barker's (10) with the ambiguity of (18)), `S → NP VP`
+interprets as `⟦VP⟧(⟦NP⟧)` and `VP → Vt NP` as `⟦Vt⟧(⟦NP⟧)`; the S rule
+comes in both priorities, the VP rule with verb priority. The
+quantificational NPs are his (13), the determiners his expository
+(16). -/
 
-/-- His (10a)/(18a): the S rule, VP priority. -/
+/-- The S rule with priority to the VP. -/
 def sRuleVP (np : Cont Prop E) (vp : Cont Prop (E → Prop)) : Cont Prop Prop :=
   prioritySecond (λ x P => P x) np vp
 
-/-- His (18b): the S rule, subject priority. -/
+/-- The S rule with priority to the subject. -/
 def sRuleNP (np : Cont Prop E) (vp : Cont Prop (E → Prop)) : Cont Prop Prop :=
   priorityFirst (λ x P => P x) np vp
 
-/-- His (10b): the VP rule, verb priority. -/
+/-- The VP rule, verb priority. -/
 def vpRule (vt : Cont Prop (E → E → Prop)) (np : Cont Prop E) :
     Cont Prop (E → Prop) :=
   priorityFirst (λ R x => R x) vt np
 
-/-- His (13a): *everyone*. -/
+/-- *everyone*: a universal over the continuation. -/
 def everyone : Quantifier E := λ k => ∀ x, k x
 
-/-- His (13b): *someone*. -/
+/-- *someone*: an existential over the continuation. -/
 def someone : Quantifier E := λ k => ∃ x, k x
 
-/-- His (16): expository *every*. -/
+/-- *every*: a universal from a continuized nominal. -/
 def everyDet (n : Cont Prop (E → Prop)) : Quantifier E :=
   λ k => n (λ P => ∀ x, P x → k x)
 
-/-- His (16): expository *a*/*some*. -/
+/-- *a*: an existential from a continuized nominal. -/
 def aDet (n : Cont Prop (E → Prop)) : Quantifier E :=
   λ k => n (λ P => ∃ x, P x ∧ k x)
 
 /-! ### The worked derivations
 
-Sentences evaluate by "applying to the trivial continuation" `λp.p`
-(his (12)) — the substrate's `ContT.lower`. His (17c) demonstrates that
-"nothing in the continuation mechanism itself biases towards linear
-scope or inverse scope": the VP-priority rule yields the inverse
-reading, and (18b) the surface reading, which the paper derives but
-does not print. -/
+Sentences evaluate by "applying to the trivial continuation" `λp.p` —
+the substrate's `ContT.lower`. The theorems below are the paper's worked
+examples ((11)–(17)): "nothing in the continuation mechanism itself
+biases towards linear scope or inverse scope", so *Every man saw a
+woman* gets its inverse reading under VP priority — the reading the
+paper prints as (17c) — and its surface reading under subject priority,
+which the paper derives but does not print. -/
 
 variable (j m : E) (left' slept' man' woman' : E → Prop) (saw' : E → E → Prop)
 
-/-- His (11)–(12): *John left*. -/
+/-- *John left*. -/
 theorem john_left :
     ContT.lower (sRuleVP (individual j) (pure left')) = left' j := rfl
 
-/-- p. 220: *Everyone left*. -/
+/-- *Everyone left*. -/
 theorem everyone_left :
     ContT.lower (sRuleVP everyone (pure left')) = ∀ x, left' x := rfl
 
-/-- His (14): *John saw everyone*, in situ. -/
+/-- *John saw everyone*, in situ. -/
 theorem john_saw_everyone :
     ContT.lower (sRuleVP (individual j) (vpRule (pure saw') everyone)) =
     ∀ x, saw' x j := rfl
 
-/-- His (17c): *Every man saw a woman*, VP priority — the inverse reading. -/
+/-- *Every man saw a woman*, VP priority: the inverse reading. -/
 theorem every_man_saw_a_woman_inverse :
     ContT.lower (sRuleVP (everyDet (pure man'))
       (vpRule (pure saw') (aDet (pure woman')))) =
     ∃ y, woman' y ∧ ∀ x, man' x → saw' y x := rfl
 
-/-- The surface reading via (18b), derived but not printed in the paper. -/
+/-- *Every man saw a woman*, subject priority: the surface reading. -/
 theorem every_man_saw_a_woman_surface :
     ContT.lower (sRuleNP (everyDet (pure man'))
       (vpRule (pure saw') (aDet (pure woman')))) =
     ∀ x, man' x → ∃ y, woman' y ∧ saw' y x := rfl
 
-/-! ### Bounding scope displacement (§2.5)
+/-! ### Bounding scope displacement
 
-His (20b) adjusts the S rule so that the clause's continuation applies
-to the already-evaluated clause: quantifiers inside can no longer see
-material outside, so *everyone* in his (21) "is not able to take scope
-outside of the embedded clause". The adjustment "can only be made for
-syntactic categories whose direct (i.e., uncontinuized) type is t". -/
+Barker's island adjustment (20b) applies the clause's continuation to
+the already-evaluated clause, so quantifiers inside can no longer see
+material outside: *everyone* in (21) "is not able to take scope outside
+of the embedded clause". The adjustment "can only be made for syntactic
+categories whose direct (i.e., uncontinuized) type is t". -/
 
-/-- His (20b): the island-adjusted S rule. -/
+/-- The island-adjusted S rule: the continuation applies to the
+evaluated clause. -/
 def sRuleIsland (np : Cont Prop E) (vp : Cont Prop (E → Prop)) : Cont Prop Prop :=
   λ p => p (sRuleVP np vp id)
 
-/-- Linglib note: (20b) is the substrate's `ContT.reset`. -/
+/-- The island rule is the substrate's `ContT.reset`. -/
 theorem sRuleIsland_eq_reset (np : Cont Prop E) (vp : Cont Prop (E → Prop)) :
     sRuleIsland np vp = ContT.reset (sRuleVP np vp) := rfl
 
@@ -136,14 +140,15 @@ theorem sRuleIsland_simulates (np : Cont Prop E) (vp : Cont Prop (E → Prop))
     (g : Prop → Prop) :
     sRuleIsland np vp g = g (ContT.lower (sRuleVP np vp)) := rfl
 
-/-- The Appendix's `VP → Vs S` rule, verb priority. -/
+/-- The clausal-complement rule, verb priority. -/
 def vsRule (vs : Cont Prop (Prop → E → Prop)) (s : Cont Prop Prop) :
     Cont Prop (E → Prop) :=
   priorityFirst (λ T p => T p) vs s
 
 variable (thought' : Prop → E → Prop)
 
-/-- His (21): *A man thought everyone saw Mary* evaluates to (21b). -/
+/-- *A man thought everyone saw Mary*: *everyone* is trapped in the
+complement. -/
 theorem a_man_thought_everyone_saw_mary :
     ContT.lower (sRuleVP (aDet (pure man'))
       (vsRule (pure thought')
@@ -159,34 +164,36 @@ theorem thought_island_priority_inert :
       (vsRule (pure thought')
         (sRuleIsland everyone (vpRule (pure saw') (individual m)))) := rfl
 
-/-! ### Generalized coordination (§4)
+/-! ### Generalized coordination
 
-His (30): *and* "distributes the continuation belonging to the
-coordinate structure across the conjuncts" — one rule for every
-category, with no conjoinable-type recursion. -/
+One rule for every category, Barker's (30): *and* "distributes the
+continuation belonging to the coordinate structure across the
+conjuncts", with no conjoinable-type recursion. The examples are his
+(27). -/
 
-/-- His (30): coordination at any category. -/
+/-- Coordination at any category: the continuation distributes across
+the conjuncts. -/
 def coord (l r : Cont Prop α) : Cont Prop α := λ k => l k ∧ r k
 
-/-- His (27b): *John left and slept*. -/
+/-- *John left and slept*. -/
 theorem john_left_and_slept :
     ContT.lower (sRuleVP (individual j) (coord (pure left') (pure slept'))) =
     (left' j ∧ slept' j) := rfl
 
-/-- His (27d): *John and Mary left*. -/
+/-- *John and Mary left*. -/
 theorem john_and_mary_left :
     ContT.lower (sRuleVP (coord (individual j) (individual m)) (pure left')) =
     (left' j ∧ left' m) := rfl
 
-/-! ### The Simulation Theorem (§5)
+/-! ### The Simulation Theorem
 
-Continuization is conservative: on schema-derived meanings, evaluation
-at the trivial continuation recovers the direct meaning, for every
-choice of priority. The paper's Lemma generalizes the trivial
-continuation to an arbitrary `g`, and the proofs below follow that
-shape, discharging the daughters' hypotheses from the innermost
-continuation out. The quantificational entries (13) are exactly the
-meanings that break the hypotheses — the paper's own delimitation. -/
+Continuization is conservative (Barker's §5): on schema-derived
+meanings, evaluation at the trivial continuation recovers the direct
+meaning, for every choice of priority. The paper's Lemma generalizes
+the trivial continuation to an arbitrary `g`, and the proofs below
+follow that shape, discharging the daughters' hypotheses from the
+innermost continuation out. The quantificational entries are exactly
+the meanings that break the hypotheses — the paper's own delimitation. -/
 
 /-- A unit meaning simulates its direct value. -/
 theorem simulation_pure (a : α) (g : α → Prop) :
