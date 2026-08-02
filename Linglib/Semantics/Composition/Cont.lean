@@ -1,7 +1,7 @@
 import Mathlib.Control.Monad.Cont
 
 /-!
-# LOWER for the continuation monad
+# Evaluating continuation computations
 
 A value of `Cont R A := (A → R) → R` (`Mathlib.Control.Monad.Cont`) is a
 computation handed its own future: given a continuation `A → R` saying
