@@ -14,10 +14,10 @@ boundedness, generalized coordination, and the Simulation Theorem,
 following the paper's own proof. Barker's transitive verbs take the
 object first: `saw m j` is "John saw Mary".
 
-The earlier derivations use the determiners the paper marks as
-expository; the Appendix's choice-function determiners and their
-four-reading prediction for *Someone saw a friend of everyone* close
-the file. The *the friend of* chains are not formalized.
+The fragment's determiners quantify over choice functions, as in the
+paper's appendix; the generalized-quantifier pair the paper introduces
+for exposition is kept for the derivations whose printed formulas need
+it. The *the friend of* chains are not formalized.
 -/
 
 namespace Barker2002
@@ -53,12 +53,30 @@ def everyone : Quantifier E := λ k => ∀ x, k x
 /-- *someone*: an existential over the continuation. -/
 def someone : Quantifier E := λ k => ∃ x, k x
 
-/-- *every*: a universal from a continuized nominal. -/
-def everyDet (n : Cont Prop (E → Prop)) : Quantifier E :=
+/-- *every* quantifies over choice functions; Barker leaves the
+restriction to proper choice functions to the choice-function
+literature, and so do we. -/
+def everyCF : Cont Prop ((E → Prop) → E) := λ D => ∀ f, D f
+
+/-- *a* as an existential over choice functions. -/
+def aCF : Cont Prop ((E → Prop) → E) := λ D => ∃ f, D f
+
+/-- The NP rule, determiner priority. -/
+def npRuleDet (det : Cont Prop ((E → Prop) → E)) (n : Cont Prop (E → Prop)) :
+    Cont Prop E :=
+  det <*> n
+
+/-- The NP rule, nominal priority. -/
+def npRuleN (det : Cont Prop ((E → Prop) → E)) (n : Cont Prop (E → Prop)) :
+    Cont Prop E :=
+  (λ P D => D P) <$> n <*> det
+
+/-- The paper's expository *every*, typed as a generalized quantifier. -/
+def everyGQ (n : Cont Prop (E → Prop)) : Quantifier E :=
   λ k => n (λ P => ∀ x, P x → k x)
 
-/-- *a*: an existential from a continuized nominal. -/
-def aDet (n : Cont Prop (E → Prop)) : Quantifier E :=
+/-- The paper's expository *a*. -/
+def aGQ (n : Cont Prop (E → Prop)) : Quantifier E :=
   λ k => n (λ P => ∃ x, P x ∧ k x)
 
 /-! ### The worked derivations
@@ -70,6 +88,7 @@ priority (the reading the paper prints) and its surface reading under
 subject priority. -/
 
 variable (j m : E) (left' slept' man' woman' : E → Prop) (saw' : E → E → Prop)
+variable (friendOf : E → E → Prop)
 
 /-- *John left*. -/
 theorem john_left :
@@ -86,15 +105,47 @@ theorem john_saw_everyone :
 
 /-- *Every man saw a woman*, VP priority: the inverse reading. -/
 theorem every_man_saw_a_woman_inverse :
-    ContT.eval (sRuleVP (everyDet (pure man'))
-      (vpRule (pure saw') (aDet (pure woman')))) =
+    ContT.eval (sRuleVP (everyGQ (pure man'))
+      (vpRule (pure saw') (aGQ (pure woman')))) =
     ∃ y, woman' y ∧ ∀ x, man' x → saw' y x := rfl
 
 /-- *Every man saw a woman*, subject priority: the surface reading. -/
 theorem every_man_saw_a_woman_surface :
-    ContT.eval (sRuleNP (everyDet (pure man'))
-      (vpRule (pure saw') (aDet (pure woman')))) =
+    ContT.eval (sRuleNP (everyGQ (pure man'))
+      (vpRule (pure saw') (aGQ (pure woman')))) =
     ∀ x, man' x → ∃ y, woman' y ∧ saw' y x := rfl
+
+/-- *John saw every man*: for every way of choosing a man, John saw
+him. -/
+theorem john_saw_every_man :
+    ContT.eval (sRuleVP (individual j)
+      (vpRule (pure saw') (npRuleDet everyCF (pure man')))) =
+    ∀ f : (E → Prop) → E, saw' (f man') j := rfl
+
+/-- *Someone saw a friend of everyone*: subject wide, determiner over
+nominal. -/
+theorem someone_saw_a_friend_of_everyone_yfx :
+    ContT.eval (sRuleNP someone (vpRule (pure saw')
+      (npRuleDet aCF (pure friendOf <*> everyone)))) =
+    ∃ y, ∃ f : (E → Prop) → E, ∀ x, saw' (f (friendOf x)) y := rfl
+
+/-- Subject wide, nominal over determiner. -/
+theorem someone_saw_a_friend_of_everyone_yxf :
+    ContT.eval (sRuleNP someone (vpRule (pure saw')
+      (npRuleN aCF (pure friendOf <*> everyone)))) =
+    ∃ y, ∀ x, ∃ f : (E → Prop) → E, saw' (f (friendOf x)) y := rfl
+
+/-- Object wide, determiner over nominal. -/
+theorem someone_saw_a_friend_of_everyone_fxy :
+    ContT.eval (sRuleVP someone (vpRule (pure saw')
+      (npRuleDet aCF (pure friendOf <*> everyone)))) =
+    ∃ f : (E → Prop) → E, ∀ x, ∃ y, saw' (f (friendOf x)) y := rfl
+
+/-- Object wide, nominal over determiner. -/
+theorem someone_saw_a_friend_of_everyone_xfy :
+    ContT.eval (sRuleVP someone (vpRule (pure saw')
+      (npRuleN aCF (pure friendOf <*> everyone)))) =
+    ∀ x, ∃ f : (E → Prop) → E, ∃ y, saw' (f (friendOf x)) y := rfl
 
 /-! ### Bounding scope displacement
 
@@ -118,7 +169,7 @@ variable (thought' : Prop → E → Prop)
 /-- *A man thought everyone saw Mary*: *everyone* is trapped in the
 complement. -/
 theorem a_man_thought_everyone_saw_mary :
-    ContT.eval (sRuleVP (aDet (pure man'))
+    ContT.eval (sRuleVP (aGQ (pure man'))
       (vsRule (pure thought')
         (sRuleIsland everyone (vpRule (pure saw') (individual m))))) =
     ∃ y, man' y ∧ thought' (∀ x, saw' m x) y := rfl
@@ -172,67 +223,5 @@ theorem simulation_orders_agree (M : α → β → γ) (a : α) (c : Cont Prop �
 its direct meaning. -/
 theorem simulation (M : α → β → Prop) (m₁ : α) (m₂ : β) :
     ContT.eval (M <$> (pure m₁ : Cont Prop α) <*> pure m₂) = M m₁ m₂ := rfl
-
-/-! ### The Appendix fragment: determiners as choice functions
-
-The real fragment types *the* as a choice function and a
-quantificational determiner at the continuized determiner type,
-quantifying over choice functions; Barker leaves the restriction to
-proper choice functions to the choice-function literature, and so do
-we. On *Someone saw a friend of everyone* the fragment yields four
-readings rather than the factorial six: every node with a unit daughter
-is priority-inert (`simulation_orders_agree`), so only the S node and
-the object NP contribute choices, and the two excluded scopings are
-exactly those splitting the object's quantifiers around the subject. -/
-
-/-- *every* quantifies over choice functions. -/
-def everyCF : Cont Prop ((E → Prop) → E) := λ D => ∀ f, D f
-
-/-- *a* as an existential over choice functions. -/
-def aCF : Cont Prop ((E → Prop) → E) := λ D => ∃ f, D f
-
-/-- The NP rule, determiner priority. -/
-def npRuleDet (det : Cont Prop ((E → Prop) → E)) (n : Cont Prop (E → Prop)) :
-    Cont Prop E :=
-  det <*> n
-
-/-- The NP rule, nominal priority. -/
-def npRuleN (det : Cont Prop ((E → Prop) → E)) (n : Cont Prop (E → Prop)) :
-    Cont Prop E :=
-  (λ P D => D P) <$> n <*> det
-
-variable (friendOf : E → E → Prop)
-
-/-- *John saw every man*: for every way of choosing a man, John saw
-him. -/
-theorem john_saw_every_man :
-    ContT.eval (sRuleVP (individual j)
-      (vpRule (pure saw') (npRuleDet everyCF (pure man')))) =
-    ∀ f : (E → Prop) → E, saw' (f man') j := rfl
-
-/-- *Someone saw a friend of everyone*: subject wide, determiner over
-nominal. -/
-theorem someone_saw_a_friend_of_everyone_yfx :
-    ContT.eval (sRuleNP someone (vpRule (pure saw')
-      (npRuleDet aCF (pure friendOf <*> everyone)))) =
-    ∃ y, ∃ f : (E → Prop) → E, ∀ x, saw' (f (friendOf x)) y := rfl
-
-/-- Subject wide, nominal over determiner. -/
-theorem someone_saw_a_friend_of_everyone_yxf :
-    ContT.eval (sRuleNP someone (vpRule (pure saw')
-      (npRuleN aCF (pure friendOf <*> everyone)))) =
-    ∃ y, ∀ x, ∃ f : (E → Prop) → E, saw' (f (friendOf x)) y := rfl
-
-/-- Object wide, determiner over nominal. -/
-theorem someone_saw_a_friend_of_everyone_fxy :
-    ContT.eval (sRuleVP someone (vpRule (pure saw')
-      (npRuleDet aCF (pure friendOf <*> everyone)))) =
-    ∃ f : (E → Prop) → E, ∀ x, ∃ y, saw' (f (friendOf x)) y := rfl
-
-/-- Object wide, nominal over determiner. -/
-theorem someone_saw_a_friend_of_everyone_xfy :
-    ContT.eval (sRuleVP someone (vpRule (pure saw')
-      (npRuleN aCF (pure friendOf <*> everyone)))) =
-    ∀ x, ∃ f : (E → Prop) → E, ∃ y, saw' (f (friendOf x)) y := rfl
 
 end Barker2002
