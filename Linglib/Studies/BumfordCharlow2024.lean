@@ -64,7 +64,7 @@ S&B substrate in linglib yet.
 
 ## Implementation notes
 
-Scope-as-bind-order rests on `Cont.lower` (`Composition/Cont.lean`);
+Scope-as-bind-order rests on `ContT.lower` (`Composition/Cont.lean`);
 the §6 agreements are definitional instances of its `lower_*` laws.
 The eject combinators (`Ū`/`Ũ`/`⊿`) of Figure 10 are not formalized.
 -/
@@ -91,7 +91,7 @@ The W effect is mathlib's `Writer (List P)` (= `WriterT (List P) Id`), whose
 `Functor`/`Applicative`/`Monad` instances come from mathlib, with
 `LawfulMonad` and the `val`/`log`/`tell` surface in
 `Composition/Writer.lean`. The `Cont R` monad is mathlib's
-(`Mathlib.Control.Monad.Cont`); its linguistics surface (`Cont.lower`)
+(`Mathlib.Control.Monad.Cont`); its linguistics surface (`ContT.lower`)
 lives in `Composition/Cont.lean`. -/
 
 -- ════════════════════════════════════════════════════════════════════
@@ -431,7 +431,7 @@ linglib infrastructure to the effect/handler pattern.
 - `aside`: Log a CI proposition (= `Writer.tell`)
 
 **Handlers** (eliminate computational context):
-- `handleScope`: Lower a `Cont` to its result (= `Cont.lower`)
+- `handleScope`: Lower a `Cont` to its result (= `ContT.lower`)
 - `handleCI`: Extract at-issue value and CI log from `Writer` -/
 
 section EffectOps
@@ -442,8 +442,8 @@ variable {R : Type} {P : Type} {α : Type}
 def aside (p : P) : Writer (List P) Unit := Writer.tell p
 
 /-- Handle the scope effect by evaluating with the identity continuation.
-    Alias for `Cont.lower`. -/
-def handleScope (m : Cont R R) : R := Cont.lower m
+    Alias for `ContT.lower`. -/
+def handleScope (m : Cont R R) : R := ContT.lower m
 
 /-- Handle CI effects by extracting the value and accumulated log. -/
 def handleCI (m : Writer (List P) α) : α × List P := (m.val, m.log)
@@ -483,7 +483,7 @@ Connect the effect framework to existing linglib constructions, proving
 that independently-developed linglib modules are instances of the
 effect-driven architecture. The W and C effects need no bridge:
 `Writer`'s monadic application is mathlib's `<*>`, and
-`handleScope := Cont.lower` by definition. -/
+`handleScope := ContT.lower` by definition. -/
 
 section CIBridge
 
@@ -854,7 +854,7 @@ one particular syntax for specifying bind order. -/
 
 section GeneralScopeAgreement
 
-/-! The generic scope-as-bind-order facts are the `Cont.lower_*` simp
+/-! The generic scope-as-bind-order facts are the `ContT.lower_*` simp
 set in `Composition/Cont.lean`; the §6 theorems above are definitional
 instances. What remains here is the bridge to QR trees. -/
 
@@ -872,10 +872,10 @@ instances. What remains here is the bridge to QR trees. -/
     how scope order is *specified* (tree structure vs bind order),
     not in what they *compute*. -/
 theorem qr_cont_structural_agreement {E W : Type}
-    (q : (E → Prop) → Prop)
+    (q : Cont Prop E)
     (body : DenotG E W .t) (n : Nat) (g : Core.Assignment E) :
     q (lambdaAbsG n body g) =
-    Cont.lower (q >>= λ x => pure (body (g[n ↦ x]))) := rfl
+    ContT.lower (q >>= λ x => pure (body (g[n ↦ x]))) := rfl
 
 end GeneralScopeAgreement
 
