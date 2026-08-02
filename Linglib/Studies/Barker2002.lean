@@ -25,6 +25,7 @@ namespace Barker2002
 open Quantification (Quantifier individual)
 
 variable {α β γ E : Type} (np : Cont Prop E) (vp : Cont Prop (E → Prop))
+variable (det : Cont Prop ((E → Prop) → E)) (n : Cont Prop (E → Prop))
 
 /-! ### The grammar
 
@@ -62,13 +63,11 @@ def everyCF : Cont Prop ((E → Prop) → E) := λ D => ∀ f, D f
 def aCF : Cont Prop ((E → Prop) → E) := λ D => ∃ f, D f
 
 /-- The NP rule, determiner priority. -/
-def npRuleDet (det : Cont Prop ((E → Prop) → E)) (n : Cont Prop (E → Prop)) :
-    Cont Prop E :=
+def npRuleDet : Cont Prop E :=
   det <*> n
 
 /-- The NP rule, nominal priority. -/
-def npRuleN (det : Cont Prop ((E → Prop) → E)) (n : Cont Prop (E → Prop)) :
-    Cont Prop E :=
+def npRuleN : Cont Prop E :=
   (λ P D => D P) <$> n <*> det
 
 /-- The paper's expository *every*, typed as a generalized quantifier. -/
