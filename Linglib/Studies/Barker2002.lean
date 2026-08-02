@@ -24,25 +24,13 @@ open Quantification (Quantifier individual)
 
 variable {α β γ E : Type}
 
-/-! ### The Continuation Schema at arity 2
-
-Barker's schema ((9) and (35) in the paper) continuizes a lexical item
-to the unit `λb̄. b̄(⟦B⟧)` — the monadic `pure`, at NP type
-`Quantification.individual` — and a binary rule with direct meaning `M`
-to `n! = 2` rules, one per evaluation order. The daughter evaluated
-first takes priority, his term: its quantifiers take wide scope. Both
-instances are the applicative combination in its two argument orders,
-`M <$> m₁ <*> m₂` and `flip M <$> m₂ <*> m₁`, and since the fragment's
-direct meanings are all function application, its rules below are bare
-`<*>`: priority is the argument order of continuized application. -/
-
 /-! ### The grammar
 
-In the fragment (Barker's (10) with the ambiguity of (18)), `S → NP VP`
-interprets as `⟦VP⟧(⟦NP⟧)` and `VP → Vt NP` as `⟦Vt⟧(⟦NP⟧)`; the S rule
-comes in both priorities, the VP rule with verb priority. The
-quantificational NPs are his (13), the determiners his expository
-(16). -/
+Barker continuizes each lexical item to the unit `pure` and each binary
+rule to two rules, one per evaluation order; the daughter evaluated
+first takes priority and its quantifiers take wide scope. Since the
+fragment's direct meanings are function application, the rules are bare
+`<*>`, with priority as argument order. -/
 
 /-- The S rule with priority to the VP. -/
 def sRuleVP (np : Cont Prop E) (vp : Cont Prop (E → Prop)) : Cont Prop Prop :=
@@ -73,13 +61,11 @@ def aDet (n : Cont Prop (E → Prop)) : Quantifier E :=
 
 /-! ### The worked derivations
 
-Sentences evaluate by "applying to the trivial continuation" `λp.p` —
-the substrate's `ContT.lower`. The theorems below are the paper's worked
-examples ((11)–(17)): "nothing in the continuation mechanism itself
-biases towards linear scope or inverse scope", so *Every man saw a
-woman* gets its inverse reading under VP priority — the reading the
-paper prints as (17c) — and its surface reading under subject priority,
-which the paper derives but does not print. -/
+Sentences evaluate by applying the trivial continuation `λp.p` — the
+substrate's `ContT.lower`. Nothing biases toward linear or inverse
+scope: *Every man saw a woman* gets its inverse reading under VP
+priority (the reading the paper prints) and its surface reading under
+subject priority. -/
 
 variable (j m : E) (left' slept' man' woman' : E → Prop) (saw' : E → E → Prop)
 
@@ -110,11 +96,10 @@ theorem every_man_saw_a_woman_surface :
 
 /-! ### Bounding scope displacement
 
-Barker's island adjustment (20b) applies the clause's continuation to
-the already-evaluated clause, so quantifiers inside can no longer see
-material outside: *everyone* in (21) "is not able to take scope outside
-of the embedded clause". The adjustment "can only be made for syntactic
-categories whose direct (i.e., uncontinuized) type is t". -/
+Barker's island adjustment applies the clause's continuation to the
+already-evaluated clause, so embedded quantifiers cannot outscope it;
+the adjustment "can only be made for syntactic categories whose direct
+(i.e., uncontinuized) type is t". -/
 
 /-- The island-adjusted S rule: the continuation applies to the
 evaluated clause. -/
@@ -156,10 +141,8 @@ theorem thought_island_priority_inert :
 
 /-! ### Generalized coordination
 
-One rule for every category, Barker's (30): *and* "distributes the
-continuation belonging to the coordinate structure across the
-conjuncts", with no conjoinable-type recursion. The examples are his
-(27). -/
+One rule for every category: *and* distributes the continuation across
+the conjuncts, with no conjoinable-type recursion. -/
 
 /-- Coordination at any category: the continuation distributes across
 the conjuncts. -/
@@ -177,13 +160,11 @@ theorem john_and_mary_left :
 
 /-! ### The Simulation Theorem
 
-Continuization is conservative (Barker's §5): on schema-derived
-meanings, evaluation at the trivial continuation recovers the direct
-meaning, for every choice of priority. The paper's Lemma generalizes
-the trivial continuation to an arbitrary `g`, and the proofs below
-follow that shape, discharging the daughters' hypotheses from the
-innermost continuation out. The quantificational entries are exactly
-the meanings that break the hypotheses — the paper's own delimitation. -/
+Continuization is conservative: evaluating a schema-derived meaning at
+the trivial continuation recovers its direct meaning, under either
+priority. The proofs follow the paper's Lemma, generalizing the trivial
+continuation to an arbitrary `g`; the quantificational entries are
+exactly the meanings that break the hypotheses. -/
 
 /-- A unit meaning simulates its direct value. -/
 theorem simulation_pure (a : α) (g : α → Prop) :
