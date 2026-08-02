@@ -1,6 +1,6 @@
 import Mathlib.Data.Set.Functor
 import Linglib.Studies.Charlow2018
-import Linglib.Semantics.Composition.Continuation
+import Linglib.Semantics.Composition.Cont
 import Linglib.Semantics.Composition.TypeShifting
 
 /-!

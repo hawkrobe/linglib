@@ -1,5 +1,5 @@
-import Linglib.Semantics.Composition.Continuation
-import Linglib.Semantics.Composition.WriterMonad
+import Linglib.Semantics.Composition.Cont
+import Linglib.Semantics.Composition.Writer
 import Mathlib.Data.Set.Functor
 import Linglib.Semantics.Composition.Tree
 import Linglib.Studies.HeimKratzer1998
@@ -22,8 +22,8 @@ formalizes that framework over linglib's effect carriers:
 
 | Effect | Type | linglib carrier |
 |--------|------|-----------------|
-| Scope | `(α → ρ) → ρ` | `Cont R A` (`Composition/Continuation`) |
-| CI / supplementation | `α × List P` | `Writer (List P) A` (`Composition/WriterMonad`) |
+| Scope | `(α → ρ) → ρ` | `Cont R A` (`Composition/Cont`) |
+| CI / supplementation | `α × List P` | `Writer (List P) A` (`Composition/Writer`) |
 | Input (binding) | `ι → α` | Reader (`Reference/Binding`) |
 | Output (antecedent) | `α × ι` | `Prod` |
 | Indeterminacy | `{α}` | `Set` |
@@ -65,7 +65,7 @@ S&B substrate in linglib yet.
 ## Implementation notes
 
 Scope-as-bind-order (`Cont.lower_bind_pure` et al.) lives with the
-`Cont` monad in `Composition/Continuation`; this study consumes it.
+`Cont` monad in `Composition/Cont`; this study consumes it.
 The eject combinators (`Ū`/`Ũ`/`⊿`) of Figure 10 are not formalized.
 -/
 
@@ -90,9 +90,9 @@ open Semantics.Montague.ToyLexicon (student_sem person_sem)
 The W effect is mathlib's `Writer (List P)` (= `WriterT (List P) Id`), whose
 `Functor`/`Applicative`/`Monad` instances come from mathlib, with
 `LawfulMonad` and the `val`/`log`/`tell` surface in
-`Composition/WriterMonad.lean`. The `Cont R` monad is mathlib's
+`Composition/Writer.lean`. The `Cont R` monad is mathlib's
 (`Mathlib.Control.Monad.Cont`); its linguistics surface (`Cont.lower`)
-lives in `Composition/Continuation.lean`. -/
+lives in `Composition/Cont.lean`. -/
 
 -- ════════════════════════════════════════════════════════════════════
 -- §2 Meta-Combinators
@@ -863,7 +863,7 @@ section GeneralScopeAgreement
 
 /-! The generic scope-as-bind-order facts (`Cont.lower_bind_pure`,
 `Cont.lower_bind_bind_pure`) live with the `Cont` monad in
-`Composition/Continuation`; the §6 theorems above are proved by them.
+`Composition/Cont`; the §6 theorems above are proved by them.
 What remains here is the bridge to QR trees. -/
 
 /-- **QR scope = Cont scope via lambdaAbsG**: the structural connection

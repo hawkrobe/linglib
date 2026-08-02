@@ -2,10 +2,11 @@ import Mathlib.Control.Monad.Writer
 
 /-!
 # Writer Monad for Compositional Side-Effects
-[giorgolo-asudeh-2012] [shan-2001]
 
 The Writer monad `⟨M, η, ⋆⟩` models meaning dimensions that accumulate
-side-effect information during compositional interpretation:
+side-effect information during compositional interpretation —
+[giorgolo-asudeh-2012]'s application of [shan-2001]'s
+monads-for-semantics program:
 
 - **M** (the functor): maps a type `A` to paired values `A × List P`
 - **η** (unit/pure): lifts a value with an empty log
