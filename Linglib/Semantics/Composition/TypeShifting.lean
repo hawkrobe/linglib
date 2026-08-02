@@ -1,5 +1,5 @@
 import Linglib.Semantics.Intensional.Defs
-import Linglib.Semantics.Quantification.Defs
+import Linglib.Semantics.Quantification.Quantifier
 import Linglib.Semantics.Intensional.Conjunction
 import Linglib.Semantics.Modification.Basic
 import Mathlib.Order.Hom.BoundedLattice
@@ -11,11 +11,16 @@ import Mathlib.Data.Finset.Lattice.Fold
 
 Three NP semantic types and six type-shifting operations (three inverse pairs):
 
-    lift  / lower : e ↔ ⟨⟨e,t⟩,t⟩         (total / partial)
-    ident / iota  : e ↔ ⟨e,t⟩              (formal; total / partial)
-    pred  / nom   : e ↔ ⟨e,t⟩              (substantive; Chierchia's ∪/∩)
-          A / BE  : ⟨e,t⟩ ↔ ⟨⟨e,t⟩,t⟩     (total / total)
-        THE       : ⟨e,t⟩ → ⟨⟨e,t⟩,t⟩     (partial; presuppositional)
+    individual / lower : e ↔ ⟨⟨e,t⟩,t⟩    (total / partial)
+    ident / iota       : e ↔ ⟨e,t⟩         (formal; total / partial)
+    pred  / nom        : e ↔ ⟨e,t⟩         (substantive; Chierchia's ∪ and ∩)
+          A / BE       : ⟨e,t⟩ ↔ ⟨⟨e,t⟩,t⟩ (total / total)
+        THE            : ⟨e,t⟩ → ⟨⟨e,t⟩,t⟩ (partial; presuppositional)
+
+The two quantifier-side operations `A` and `BE`, and the Montague lift
+`Quantification.individual`, are the quantifier API and live in
+`Semantics.Quantification.Quantifier`; this file holds the entity-side shifts
+and the commuting triangle relating all three types.
 
 In the finite extensional setting, `pred = ident` and `nom = iota`. The
 conceptual difference: `ident`/`iota` are *formal* (pure combinatorics),
@@ -38,12 +43,8 @@ variable {E W : Type}
 
 section TotalShifts
 
-/-- Type-raising: `lift(j) = λP. P(j)` -/
-def lift (j : E) : Quantifier E :=
-  fun P => P j
-
 /-- Singleton property: `ident(j) = λx. [j = x]`.
-Uses `j = x` order for definitional equality with `BE(lift(j))`. -/
+Uses `j = x` order for definitional equality with `BE(individual j)`. -/
 def ident (j : E) : (E → Prop) :=
   fun x => j = x
 
@@ -57,10 +58,6 @@ mirrors `ident` one type-theoretic level up: entities ↦ singleton properties
 becomes propositions ↦ singleton questions. -/
 def propIdent (p : (W → Prop)) : Quantifier W :=
   fun q => p = q
-
-/-- Predicative content of a GQ: `BE(Q) = λx. Q(λy. y = x)` -/
-def BE (Q : Quantifier E) : (E → Prop) :=
-  fun x => Q (fun y => y = x)
 
 /-- Predicativize: extensional counterpart of Chierchia's ∪ (up) operator.
 
@@ -77,7 +74,7 @@ abbrev pred := @ident E
 
 end TotalShifts
 
-section BooleanHomomorphism
+section Uniqueness
 
 -- Boolean structure on the `Prop`/`Pi` denotation types is supplied directly by
 -- mathlib (no `Ty`/`Denot` reflection, no bridge instances).
@@ -90,37 +87,29 @@ private lemma finset_inf_fun_eval {ι α : Type*}
   | empty => rfl
   | cons x s hx ih => simp only [Finset.inf_cons, Pi.inf_apply, ih]
 
-/-- `BE` is a `BoundedLatticeHom` (Partee §3.3, Fact 1). -/
-def BE_hom (E : Type) : BoundedLatticeHom (Quantifier E) ((E → Prop)) where
-  toFun := BE
-  map_sup' _ _ := rfl
-  map_inf' _ _ := rfl
-  map_top' := rfl
-  map_bot' := rfl
-
-/-- `BE ∘ lift = ident` (Figure 3 commutativity). -/
-theorem BE_lift_eq_ident (j : E) :
-    BE (lift j) = ident j := by
-  funext x; simp only [BE, lift, ident]
+/-- `BE ∘ individual = ident` (Figure 3 commutativity). -/
+theorem BE_individual_eq_ident (j : E) :
+    BE (individual j) = ident j := by
+  funext x; simp only [BE, individual, ident]
 
 /-- **Fact 2** ([partee-1987] §3.3): `BE` is the **unique**
     `BoundedLatticeHom` from `⟨⟨e,t⟩,t⟩` to `⟨e,t⟩` that makes
-    Figure 3 commute (i.e., satisfies `f(lift(j)) = ident(j)`).
+    Figure 3 commute (i.e., satisfies `f(individual j) = ident(j)`).
 
     Proof ([keenan-faltz-1985]): For each entity `x`, construct the
-    atom `atom_x = ⨅_j literal(j)` where `literal(j) = lift(j)` if `j = x`
-    and `(lift(j))ᶜ` otherwise. This atom is the indicator of `{P_x}` where
+    atom `atom_x = ⨅_j literal(j)` where `literal(j) = individual j` if `j = x`
+    and `(individual j)ᶜ` otherwise. This atom is the indicator of `{P_x}` where
     `P_x = λy. [y = x]`. Since `f` preserves `⊓` and complements, `f` maps
     `atom_x` correctly. Then monotonicity determines `f(Q)(x)` for arbitrary
     `Q` by cases on `Q(P_x)`. -/
 theorem BE_unique [Fintype E] [DecidableEq E]
     (f : BoundedLatticeHom (Quantifier E) ((E → Prop)))
-    (hcomm : ∀ j : E, f (lift j) = ident j) :
+    (hcomm : ∀ j : E, f (individual j) = ident j) :
     ∀ Q : Quantifier E, f Q = BE Q := by
   intro Q; funext x
   show f Q x = Q (fun j => j = x)
   let lit : E → Quantifier E := fun j =>
-    if j = x then (lift j : Quantifier E) else (lift j)ᶜ
+    if j = x then (individual j : Quantifier E) else (individual j)ᶜ
   let atom_x : Quantifier E := Finset.inf Finset.univ lit
   let f_lit : E → (E → Prop) := fun j =>
     if j = x then (ident j : (E → Prop)) else (ident j)ᶜ
@@ -157,10 +146,10 @@ theorem BE_unique [Fintype E] [DecidableEq E]
     have hj := hlit j; simp only [lit] at hj
     split at hj
     · next h =>
-      -- hj : lift j R, i.e. R j. Goal: R j = (j = x)
+      -- hj : individual j R, i.e. R j. Goal: R j = (j = x)
       exact propext ⟨fun _ => h, fun _ => hj⟩
     · next h =>
-      -- hj : (lift j)ᶜ R, i.e. ¬R j. Goal: R j = (j = x)
+      -- hj : (individual j)ᶜ R, i.e. ¬R j. Goal: R j = (j = x)
       exact propext ⟨fun hr => absurd hr hj, fun heq => absurd heq h⟩
   -- Step 5: conclude by cases on Q(fun j => j = x)
   have hatom_le : ∀ S : Quantifier E, S (fun j => j = x) → atom_x ≤ S := by
@@ -181,23 +170,12 @@ theorem BE_unique [Fintype E] [DecidableEq E]
       rw [this] at hfQc; exact hfQc
     exact propext ⟨fun h => absurd h hfQc2, fun h => absurd h hQPx⟩
 
-/-- `BE(Q₁ ∧ Q₂) = BE(Q₁) ∧ BE(Q₂)` -/
-theorem BE_conj (Q₁ Q₂ : Quantifier E) :
-    BE (fun P => Q₁ P ∧ Q₂ P) = (fun x => BE Q₁ x ∧ BE Q₂ x) := rfl
-
-/-- `BE(Q₁ ∨ Q₂) = BE(Q₁) ∨ BE(Q₂)` -/
-theorem BE_disj (Q₁ Q₂ : Quantifier E) :
-    BE (fun P => Q₁ P ∨ Q₂ P) = (fun x => BE Q₁ x ∨ BE Q₂ x) := rfl
-
-/-- `BE(¬Q) = ¬BE(Q)` -/
-theorem BE_neg (Q : Quantifier E) :
-    BE (fun P => ¬(Q P)) = (fun x => ¬(BE Q x)) := rfl
-
-end BooleanHomomorphism
+end Uniqueness
 
 section PartialShifts
 
-/-- Partial inverse of `lift`. Defined when `Q` is a principal ultrafilter. -/
+/-- Partial inverse of `individual`. Defined when `Q` is a principal
+ultrafilter. -/
 noncomputable def lower (domain : List E) (Q : Quantifier E) : Option E :=
   match domain.filter (fun j => @decide (Q (fun x => x = j)) (Classical.dec _)) with
   | [j] => some j
@@ -218,18 +196,15 @@ noncomputable def iota (domain : List E) (P : (E → Prop)) : Option E :=
 noncomputable def NOM (domain : List E) (P : (E → Prop)) : Option E :=
   iota domain P
 
-/-- Existential closure: `A(P) = λQ. ∃x. P(x) ∧ Q(x)` -/
-def A (domain : List E) (P : (E → Prop)) : Quantifier E :=
-  fun Q => ∃ x ∈ domain, P x ∧ Q x
-
 /-- THE: Presuppositional type-shifter for definites ([partee-1987] Figure 1).
-    `THE(P) = lift(iota(P))` when `iota(P)` is defined (P has a unique satisfier).
+    `THE(P) = individual(iota(P))` when `iota(P)` is defined (P has a unique
+    satisfier).
 
     Maps `⟨e,t⟩ → ⟨⟨e,t⟩,t⟩` (partial). Unlike `A` (which is total), `THE`
     presupposes existence and uniqueness. Connects to the semantics of "the"
     in `Semantics.Definiteness`. -/
 noncomputable def THE (domain : List E) (P : (E → Prop)) : Option (Quantifier E) :=
-  (iota domain P).map lift
+  (iota domain P).map individual
 
 /-- Helper: for a nodup list, filtering for equality gives a singleton or empty. -/
 private theorem filter_decEq_of_mem [DecidableEq E]
@@ -259,21 +234,22 @@ private theorem filter_decEq_of_mem [DecidableEq E]
       rw [List.filter_cons, if_neg hdec]
       exact ih hmem' tl_nd
 
-/-- `lower ∘ lift = some` on the domain (Partee's round-trip).
+/-- `lower ∘ individual = some` on the domain (Partee's round-trip).
 
     Requires `j ∈ domain` (j must be in the model) and `domain.Nodup`
     (no duplicates, ensuring unique filter result). -/
-theorem lower_lift [DecidableEq E] (domain : List E) (j : E)
+theorem lower_individual [DecidableEq E] (domain : List E) (j : E)
     (hmem : j ∈ domain) (hnd : domain.Nodup) :
-    lower domain (lift j) = some j := by
+    lower domain (individual j) = some j := by
   -- lower uses Classical.dec, filter_decEq_of_mem uses inferInstance
   -- Bridge: show the filter predicates are equal, then compute the result
-  have heq : domain.filter (fun k => @decide (lift j (fun x => x = k)) (Classical.dec _)) = [j] := by
-    rw [show (fun k => @decide (lift j (fun x => x = k)) (Classical.dec _)) =
+  have heq : domain.filter
+      (fun k => @decide (individual j (fun x => x = k)) (Classical.dec _)) = [j] := by
+    rw [show (fun k => @decide (individual j (fun x => x = k)) (Classical.dec _)) =
             (fun k => @decide (j = k) inferInstance) from
       funext fun k => decide_eq_decide.mpr Iff.rfl]
     exact filter_decEq_of_mem domain j hmem hnd
-  unfold lower lift; erw [heq]
+  unfold lower individual; erw [heq]
 
 /-- `iota ∘ ident = some` on the domain (Partee's round-trip).
 
@@ -289,166 +265,80 @@ theorem iota_ident [DecidableEq E] (domain : List E) (j : E)
     exact filter_decEq_of_mem domain j hmem hnd
   unfold iota ident; erw [heq]
 
-/-- `THE ∘ ident = some ∘ lift` on the domain.
+/-- `THE ∘ ident = some ∘ individual` on the domain.
     When `ident(j)` has a unique satisfier (always, given Nodup),
     THE shifts it to the corresponding principal ultrafilter. -/
 theorem THE_ident [DecidableEq E] (domain : List E) (j : E)
     (hmem : j ∈ domain) (hnd : domain.Nodup) :
-    THE domain (ident j) = some (lift j) := by
+    THE domain (ident j) = some (individual j) := by
   simp only [THE, iota_ident domain j hmem hnd, Option.map]
 
 end PartialShifts
 
-/-- `lift = Conjunction.typeRaise` -/
-theorem lift_eq_typeRaise (j : E) :
-    lift j = (typeRaise (W := W) j) := rfl
+/-- `individual = Conjunction.typeRaise` -/
+theorem individual_eq_typeRaise (j : E) :
+    individual j = (typeRaise (W := W) j) := rfl
 
 /-- Coherence of the three readings of "the king" ([partee-1987] §3.2).
     When `iota` succeeds, the `e`, `⟨e,t⟩`, and `⟨⟨e,t⟩,t⟩` readings are
-    related by `BE(lift(j)) = ident(j)` (Figure 2 commutativity). -/
+    related by `BE(individual j) = ident(j)` (Figure 2 commutativity). -/
 theorem the_king_coherence (domain : List E) (P : (E → Prop))
     (j : E) (_h : iota domain P = some j) :
-    BE (lift j) = ident j :=
-  BE_lift_eq_ident j
+    BE (individual j) = ident j :=
+  BE_individual_eq_ident j
 
--- ============================================================================
--- When do type-shifts change truth conditions?
--- ============================================================================
-
-/-! ## Truth-Conditional Transparency of Type-Shifts
-
-A type-shift is **truth-conditionally transparent** when the shifted meaning
-produces the same sentential truth value as the original. The precise condition:
-
-**Theorem**: For a GQ `Q : ⟨⟨α,t⟩,t⟩`, the round-trip `A(BE(Q))` preserves
-truth conditions iff `Q` is a **principal ultrafilter** (i.e., `Q = lift(j)`
-for some individual `j`).
-
-For non-principal GQs (quantifiers, degree quantifiers like numerals),
-`A(BE(Q))` yields a strictly weaker meaning. This is precisely when
-the RSA model should include both the original and shifted meanings as
-alternative interpretations.
-
-Applications:
-- **Proper names**: `Q = lift(john)` → `A(BE(Q)) = Q` → no ambiguity
-- **Numerals**: `Q = ⟦three⟧` → `A(BE(Q)) = ∃d[d=3 ∧ D(d)]` ≠ `Q` → ambiguity
-- **Universal quantifiers**: `Q = ⟦every student⟧` → `A(BE(Q)) = ⟦some student⟧` ≠ `Q`
--/
-
-/-- A GQ is a principal ultrafilter iff it equals `lift(j)` for some entity. -/
-def isPrincipalUltrafilter (domain : List E) (Q : Quantifier E) : Prop :=
-  ∃ j ∈ domain, Q = lift j
-
-/-- Helper: `(∃ x ∈ domain, j = x ∧ P x) ↔ P j` when `j ∈ domain`. -/
-private theorem exists_eq_and_iff (domain : List E) (j : E)
-    (hj : j ∈ domain) (P : (E → Prop)) :
-    (∃ x ∈ domain, j = x ∧ P x) ↔ P j := by
-  constructor
-  · rintro ⟨x, _, rfl, hPx⟩; exact hPx
-  · intro hPj; exact ⟨j, hj, rfl, hPj⟩
-
-/-- **Round-trip preservation for principal ultrafilters.**
-    For `Q = lift(j)`, `A(BE(Q))(P) = Q(P)` for all P.
-    This means type-shifting is truth-conditionally transparent for
-    proper names, pronouns, definites — any expression that denotes
-    a principal ultrafilter. -/
-theorem roundtrip_preserves_principal (domain : List E) (j : E)
-    (hj : j ∈ domain) :
-    ∀ P : (E → Prop), A domain (BE (lift j)) P = lift j P := by
-  intro P
-  simp only [A, BE, lift]
-  exact propext (exists_eq_and_iff domain j hj P)
-
-/-- **`BE ∘ A = id` on properties** ([partee-1987] §3.3).
-
-    For any property `P`, `BE(A(P)) = P`. This makes `A` a right inverse
-    of `BE`: existential closure followed by predicative content recovers
-    the original property.
-
-    This is the key result establishing `A` as a "natural" type-shifting
-    functor — it is an inverse of `BE`, and Partee argues it (together with
-    `some`) is the most natural DET-type functor.
-
-    Proof: `BE(A(P))(x) = A(P)(λy. y=x) = ∃z∈dom. P(z) ∧ (z=x) = P(x)`.
-    The `decide(z=x)` selects exactly `z = x`, collapsing the existential. -/
-theorem BE_A_id (domain : List E) (P : (E → Prop))
-    (hcomplete : ∀ x : E, x ∈ domain) :
-    BE (A domain P) = P := by
-  funext x; show (∃ z ∈ domain, P z ∧ z = x) = P x
-  apply propext; constructor
-  · rintro ⟨z, _, hPz, hzx⟩; cases hzx; exact hPz
-  · intro hPx; exact ⟨x, hcomplete x, hPx, rfl⟩
-
-private def twoDomain : List Bool := [true, false]
-private def twoEvery : (Bool → Prop) → Prop := fun P => ∀ x ∈ twoDomain, P x
-
-/-- For non-principal GQs, the round-trip changes truth conditions.
-    `every(⊤) = True` but `A(BE(every))(⊤) = False` — the round-trip
-    collapses universal quantification to `⊥` on multi-element domains.
-    (`BE(every)` asks "which entity equals all entities?" — none do.) -/
-theorem roundtrip_changes_nonprincipal :
-    twoEvery (fun _ => True) ∧ ¬ A twoDomain (BE twoEvery) (fun _ => True) := by
-  refine ⟨fun _ _ => trivial, ?_⟩
-  intro ⟨x, _, hBE, _⟩
-  simp only [BE, twoEvery, twoDomain] at hBE
-  have h1 : true = x := hBE true (by simp)
-  have h2 : false = x := hBE false (by simp)
-  rw [← h1] at h2; exact Bool.noConfusion h2
-
--- ============================================================================
--- The Type-Shifting Triangle ([partee-1987] Figure 3)
--- ============================================================================
-
-/-! ## The Full Commutativity Diagram
+/-! ### The type-shifting triangle ([partee-1987] Figure 3)
 
 Partee's type-shifting triangle connects three NP semantic types via
 six operations (three inverse pairs). The triangle **commutes**: any
 two paths between the same pair of types yield the same result.
 
 ```
-           e
-          ╱ ╲
-    ident╱   ╲lift
-        ╱     ╲
-       ↓       ↓
-    ⟨e,t⟩ ⇄ ⟨⟨e,t⟩,t⟩
-        A →
-       ← BE
+              e
+             ╱ ╲
+       ident╱   ╲individual
+           ╱     ╲
+          ↓       ↓
+       ⟨e,t⟩ ⇄ ⟨⟨e,t⟩,t⟩
+           A →
+          ← BE
 ```
 
 **Commutativity** (two faces):
-- `BE ∘ lift = ident`    (right face, `BE_lift_eq_ident`)
-- `A  ∘ ident = lift`    (left face, `A_ident_eq_lift`)
+- `BE ∘ individual = ident`    (right face, `BE_individual_eq_ident`)
+- `A  ∘ ident = individual`    (left face, `A_ident_eq_individual`)
 
-**Retraction**: `BE ∘ A = id` on `⟨e,t⟩` (`BE_A_id`) — `A` is a section of `BE`.
+**Retraction**: `A` is a section of `BE` — `BE ∘ A = id` on `⟨e,t⟩`
+(`Quantification.BE_A_id`).
 
 **Consequence**: All composite paths agree. The triangle is a commutative
 diagram in **Set**, with `A` and `BE` witnessing that the two embeddings
-`ident : e → ⟨e,t⟩` and `lift : e → ⟨⟨e,t⟩,t⟩` are "the same map" up to
+`ident : e → ⟨e,t⟩` and `individual : e → ⟨⟨e,t⟩,t⟩` are "the same map" up to
 the A/BE retraction on their codomains.
 -/
 
 section TypeShiftingTriangle
 
-/-- **Left face of the triangle**: `A ∘ ident = lift`.
+/-- **Left face of the triangle**: `A ∘ ident = individual`.
 
-    `A(ident(j))(P) = ∃x∈dom. [j=x] ∧ P(x) = P(j) = lift(j)(P)`.
+    `A(ident(j))(P) = ∃x∈dom. [j=x] ∧ P(x) = P(j) = individual(j)(P)`.
 
-    Together with `BE_lift_eq_ident` (right face), this establishes
+    Together with `BE_individual_eq_ident` (right face), this establishes
     full commutativity of the type-shifting triangle. -/
-theorem A_ident_eq_lift (domain : List E) (j : E)
+theorem A_ident_eq_individual (domain : List E) (j : E)
     (hj : j ∈ domain) :
-    A domain (ident j) = lift j := by
-  funext P; simp only [A, lift, ident]
-  exact propext (exists_eq_and_iff domain j hj P)
+    A domain (ident j) = individual j := by
+  funext P; simp only [A, individual, ident]
+  refine propext ⟨?_, fun hPj => ⟨j, hj, rfl, hPj⟩⟩
+  rintro ⟨x, _, rfl, hPx⟩; exact hPx
 
-/-- Full cycle e →lift ⟨⟨e,t⟩,t⟩ →BE ⟨e,t⟩ →A ⟨⟨e,t⟩,t⟩ = lift.
+/-- Full cycle e →individual ⟨⟨e,t⟩,t⟩ →BE ⟨e,t⟩ →A ⟨⟨e,t⟩,t⟩ = individual.
 
     Going around the triangle through GQ-space returns to the same GQ. -/
-theorem A_BE_lift (domain : List E) (j : E)
+theorem A_BE_individual (domain : List E) (j : E)
     (hj : j ∈ domain) :
-    A domain (BE (lift j)) = lift j := by
-  rw [BE_lift_eq_ident]; exact A_ident_eq_lift domain j hj
+    A domain (BE (individual j)) = individual j := by
+  rw [BE_individual_eq_ident]; exact A_ident_eq_individual domain j hj
 
 /-- Full cycle e →ident ⟨e,t⟩ →A ⟨⟨e,t⟩,t⟩ →BE ⟨e,t⟩ = ident.
 
@@ -459,13 +349,13 @@ theorem BE_A_ident (domain : List E) (j : E)
     BE (A domain (ident j)) = ident j :=
   BE_A_id domain (ident j) hcomplete
 
-/-- Partial path e →lift ⟨⟨e,t⟩,t⟩ →BE ⟨e,t⟩ →iota e = some.
+/-- Partial path e →individual ⟨⟨e,t⟩,t⟩ →BE ⟨e,t⟩ →iota e = some.
 
     The indirect route through GQ-space recovers the entity. -/
-theorem iota_BE_lift [DecidableEq E] (domain : List E) (j : E)
+theorem iota_BE_individual [DecidableEq E] (domain : List E) (j : E)
     (hmem : j ∈ domain) (hnd : domain.Nodup) :
-    iota domain (BE (lift j)) = some j := by
-  rw [BE_lift_eq_ident]; exact iota_ident domain j hmem hnd
+    iota domain (BE (individual j)) = some j := by
+  rw [BE_individual_eq_ident]; exact iota_ident domain j hmem hnd
 
 /-- Partial path e →ident ⟨e,t⟩ →A ⟨⟨e,t⟩,t⟩ →lower e = some.
 
@@ -473,161 +363,20 @@ theorem iota_BE_lift [DecidableEq E] (domain : List E) (j : E)
 theorem lower_A_ident [DecidableEq E] (domain : List E) (j : E)
     (hmem : j ∈ domain) (hnd : domain.Nodup) :
     lower domain (A domain (ident j)) = some j := by
-  rw [A_ident_eq_lift domain j hmem]; exact lower_lift domain j hmem hnd
+  rw [A_ident_eq_individual domain j hmem]; exact lower_individual domain j hmem hnd
 
-/-- THE respects the triangle: `THE ∘ BE ∘ lift = some ∘ lift`.
+/-- THE respects the triangle: `THE ∘ BE ∘ individual = some ∘ individual`.
 
     Recovering the definite description from a type-raised proper name
     via BE, then THE, yields the original type-raised individual. -/
-theorem THE_BE_lift [DecidableEq E] (domain : List E) (j : E)
+theorem THE_BE_individual [DecidableEq E] (domain : List E) (j : E)
     (hmem : j ∈ domain) (hnd : domain.Nodup) :
-    THE domain (BE (lift j)) = some (lift j) := by
-  rw [BE_lift_eq_ident]; exact THE_ident domain j hmem hnd
-
--- --------------------------------------------------------------------------
--- Section/retraction structure via Mathlib
--- --------------------------------------------------------------------------
-
-/-- `BE` is a left inverse of `A`: the section/retraction structure of the
-    type-shifting triangle, expressed using `Function.LeftInverse`.
-
-    This connects to Mathlib's function infrastructure, giving us
-    `Surjective BE` and `Injective (A domain)` for free. -/
-theorem BE_leftInverse_A (domain : List E)
-    (hcomplete : ∀ x : E, x ∈ domain) :
-    Function.LeftInverse BE (A domain) :=
-  fun P => BE_A_id domain P hcomplete
-
-/-- `BE` is surjective: every predicate is the predicative content of some GQ.
-    Derived from `Function.LeftInverse.surjective`. -/
-theorem BE_surjective (domain : List E)
-    (hcomplete : ∀ x : E, x ∈ domain) :
-    Function.Surjective (@BE E) :=
-  (BE_leftInverse_A domain hcomplete).surjective
-
-/-- `A` is injective: distinct predicates yield distinct GQs under
-    existential closure. Linguistically: different common nouns mean
-    different things as indefinites.
-    Derived from `Function.LeftInverse.injective`. -/
-theorem A_injective (domain : List E)
-    (hcomplete : ∀ x : E, x ∈ domain) :
-    Function.Injective (A domain) :=
-  (BE_leftInverse_A domain hcomplete).injective
+    THE domain (BE (individual j)) = some (individual j) := by
+  rw [BE_individual_eq_ident]; exact THE_ident domain j hmem hnd
 
 end TypeShiftingTriangle
 
--- ============================================================================
--- Galois Coinsertion on Upward-Closed GQs
--- ============================================================================
-
-/-! ## The A/BE Adjunction on Monotone GQs
-
-[barwise-cooper-1981] observed that natural language determiners
-denote **upward-closed** (monotone) generalized quantifiers: if `Q(P)` and
-`P ⊆ P'`, then `Q(P')`. This constraint is exactly what makes `A` and `BE`
-form a `GaloisCoinsertion` — an adjunction where the upper adjoint (`BE`)
-retracts the lower adjoint (`A`).
-
-On the full Boolean algebra of all GQs, `A ⊣ BE` fails: for non-monotone Q
-(e.g., `λR. ¬R(a)`), `A(BE(Q)) ≤ Q` does not hold. But restricted to the
-sublattice of monotone GQs, the key inequality `A(BE(Q)) ≤ Q` holds because
-singleton predicates `{x} ≤ R` whenever `R(x)`, and monotonicity of `Q`
-lifts this to `Q({x}) ≤ Q(R)`.
-
-The `GaloisCoinsertion` gives us, via Mathlib:
-- `GaloisConnection`: `A(P) ≤ Q ↔ P ≤ BE(Q)` for monotone Q
-- `BE_up` is surjective on `UpwardGQ` and `A_up` is injective
-- `A_up` is strictly monotone
--/
-
-section GaloisStructure
-
-/-- Upward-closed (monotone) generalized quantifiers — the
-    [barwise-cooper-1981] constraint on natural language determiners.
-
-    `Q` is upward-closed when `Q(P)` and `P ≤ P'` imply `Q(P')`.
-    Equivalently, `Monotone Q` in the pointwise order on `⟨e,t⟩`. -/
-def UpwardGQ (E : Type) := { Q : Quantifier E // Monotone Q }
-
-instance : PartialOrder (UpwardGQ E) := Subtype.partialOrder _
-
-/-- `A(P)` is always upward-closed: if ∃x∈dom with P(x) ∧ R(x),
-    and R ≤ R', then ∃x∈dom with P(x) ∧ R'(x). -/
-theorem A_monotone_gq (domain : List E) (P : (E → Prop)) :
-    Monotone (A domain P) := by
-  intro R R' hRR'
-  show (∃ x ∈ domain, P x ∧ R x) → ∃ x ∈ domain, P x ∧ R' x
-  exact fun ⟨x, hx, hPx, hRx⟩ => ⟨x, hx, hPx, hRR' x hRx⟩
-
-/-- Lift `A` to the `UpwardGQ` subtype. -/
-def A_up (domain : List E) (P : (E → Prop)) : UpwardGQ E :=
-  ⟨A domain P, A_monotone_gq domain P⟩
-
-/-- Project `BE` from the `UpwardGQ` subtype. -/
-def BE_up (Q : UpwardGQ E) : (E → Prop) := BE Q.val
-
-/-- `A` is monotone as a map from predicates to GQs. -/
-theorem A_up_mono (domain : List E) : Monotone (A_up domain (E := E)) := by
-  intro P P' hPP'; show A domain P ≤ A domain P'; intro R
-  show (∃ x ∈ domain, P x ∧ R x) → ∃ x ∈ domain, P' x ∧ R x
-  exact fun ⟨x, hx, hPx, hRx⟩ => ⟨x, hx, hPP' x hPx, hRx⟩
-
-/-- `BE` is monotone on `UpwardGQ`. -/
-theorem BE_up_mono : Monotone (BE_up (E := E)) := by
-  intro Q Q' hQQ'; show BE Q.val ≤ BE Q'.val; intro x
-  exact hQQ' (fun y => y = x)
-
-/-- Singleton predicate `{x}` is below any `R` with `R(x)`. -/
-private lemma singleton_le_of_mem {x : E} {R : (E → Prop)}
-    (hRx : R x) :
-    (fun y => y = x) ≤ R := by
-  intro y (h : y = x); rw [h]; exact hRx
-
-/-- **Key inequality**: `A(BE(Q)) ≤ Q` for upward-closed Q.
-
-    `A(BE(Q))(R) = ∃x∈dom. Q({x}) ∧ R(x)`. When `R(x)` holds,
-    `{x} ≤ R` in the pointwise order. By monotonicity of `Q`,
-    `Q({x}) ≤ Q(R)`, establishing the inequality.
-
-    This is precisely the condition that fails for non-monotone Q
-    (e.g., `Q = λR. ¬R(a)` where `Q({a}) = false` but `Q(∅) = true`). -/
-theorem A_BE_le_of_mono (domain : List E) (Q : UpwardGQ E) :
-    A_up domain (BE_up Q) ≤ Q := by
-  show A domain (BE Q.val) ≤ Q.val
-  intro R; simp only [A, BE]
-  intro ⟨x, _, hQx, hRx⟩
-  exact Q.property (singleton_le_of_mem hRx) hQx
-
-/-- **Galois coinsertion**: `A` (existential closure) and `BE` (predicative
-    content) form a `GaloisCoinsertion` on the sublattice of upward-closed GQs.
-
-    This is the order-theoretic content of Partee's type-shifting triangle:
-    - `BE ∘ A = id` on predicates (the retraction)
-    - `A(BE(Q)) ≤ Q` for monotone Q (the counit inequality)
-
-    Linguistically: [barwise-cooper-1981]'s constraint that natural
-    language determiners denote monotone GQs is **exactly** the condition
-    under which the A/BE pair forms an adjunction. -/
-def galoisCoinsertion (domain : List E)
-    (hcomplete : ∀ x : E, x ∈ domain) :
-    GaloisCoinsertion (A_up domain (E := E)) BE_up :=
-  GaloisCoinsertion.monotoneIntro
-    BE_up_mono
-    (A_up_mono domain)
-    (A_BE_le_of_mono domain)
-    (fun P => BE_A_id domain P hcomplete)
-
-/-- The Galois connection: `A(P) ≤ Q ↔ P ≤ BE(Q)` for monotone Q. -/
-theorem gc_A_BE (domain : List E)
-    (hcomplete : ∀ x : E, x ∈ domain) :
-    GaloisConnection (A_up domain (E := E)) BE_up :=
-  (galoisCoinsertion domain hcomplete).gc
-
-end GaloisStructure
-
--- ============================================================================
--- Numeral type-shifters ([snyder-2026])
--- ============================================================================
+/-! ### Numeral type-shifters ([snyder-2026]) -/
 
 section NumeralShifts
 
@@ -652,11 +401,7 @@ theorem NOM_pred [DecidableEq E] (domain : List E) (j : E)
     NOM domain (pred j) = some j :=
   iota_ident domain j hmem hnd
 
--- ============================================================================
--- Complement Denotation Types ([chierchia-1984])
--- ============================================================================
-
-/-! ## Property vs. Proposition: Complement Denotation Types
+/-! ### Complement denotation types ([chierchia-1984])
 
 [chierchia-1984] argues that infinitival and gerundive complements
 denote **properties** (type ⟨e,t⟩), not propositions (type ⟨s,t⟩). This

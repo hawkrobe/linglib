@@ -645,7 +645,7 @@ def russell : RPKApproach :=
 
 /-- Montague 1970: Keep visible grammar + uniform composition, sacrifice
 referential semantics. "John" is type-lifted from `E` to `(E → Prop) → Prop`
-via the Montague lift (= `TypeShifting.lift`). -/
+via the Montague lift (= `Quantification.individual`). -/
 def montague : RPKApproach :=
   { satisfies := fun
     | .syntacticFaith => true
@@ -684,8 +684,8 @@ it is injective-not-surjective: not every GQ arises from an entity.
 This means the lift is a genuine sacrifice — "John" is no longer type `E`
 but a constructed object of type `(E → Prop) → Prop`.
 
-Bridge to `TypeShifting.lift`: this is the same operation as Partee's
-type-raising `lift(j) = λP. P(j)`. -/
+Bridge to `Quantification.individual`: this is the same operation as Partee's
+type-raising `individual(j) = λP. P(j)`. -/
 def rpkLift {E : Type*} (e : E) : (E → Prop) → Prop := fun P => P e
 
 /-- The RPK lift is injective: distinct entities give distinct GQs. -/

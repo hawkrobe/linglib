@@ -44,7 +44,7 @@ namespace Semantics.Definiteness
 open Intensional (Ty)
 open Quantification (every_sem some_sem)
 open Quantification.Quantifier (Ty.det)
-open Semantics.Composition.TypeShifting (iota lift)
+open Semantics.Composition.TypeShifting (iota)
 open Semantics.Presupposition (PartialProp)
 open Features.Definiteness (DefPresupType Definiteness)
 

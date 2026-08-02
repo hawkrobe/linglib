@@ -21,12 +21,13 @@ itself contributes:
 * their (49)–(50): [partee-1987]'s BE/IOTA lower [kennedy-2015]'s
   *exactly* degree quantifier to the number meaning — `BE_kennedy` and
   `iota_BE_kennedy`, on the Partee-triangle substrate
-  (`Semantics/Composition/TypeShifting.lean`);
+  (`Semantics/Quantification/Quantifier.lean` for `BE`,
+  `Semantics/Composition/TypeShifting.lean` for `iota`);
 * their (52)–(54): the survey's own proposal, "fill[ing] in an empty slot
   in the available types of numeral semantic analyses" — an *at least*
-  degree quantifier (their (52), which is exactly the Montague `lift` of
-  the number view) together with a `MAX` operator (their (53)) that
-  recovers Kennedy's *exactly* quantifier — `MAX_lift_eq_kennedy` — while
+  degree quantifier (their (52), which is exactly the Montague lift
+  `individual` of the number view) together with a `MAX` operator (their
+  (53)) that recovers Kennedy's *exactly* quantifier — `MAX_lift_eq_kennedy` — while
   keeping the lower-bound meaning basic (their argument from the polarity
   profile of "zero", [bylinina-nouwen-2018]).
 
@@ -43,6 +44,7 @@ set_option autoImplicit false
 namespace BylininaNouwen2020
 
 open Semantics.Composition.TypeShifting
+open Quantification (BE individual)
 
 /-! ### The number and modifier views (their (11), (18), (22)–(25))
 
@@ -101,8 +103,10 @@ theorem iota_BE_kennedy [DecidableEq ℕ] (domain : List ℕ) (n : ℕ)
 /-! ### The survey's proposal: at-least quantifier + MAX (their (52)–(54)) -/
 
 /-- The survey's *at least* degree quantifier (their (52)):
-`⟦twelve⟧ = λP. P(12)` — exactly the Montague `lift` of the number view. -/
-theorem lowerBounded_eq_lift (n : ℕ) : (fun P : ℕ → Prop => P n) = lift n := rfl
+`⟦twelve⟧ = λP. P(12)` — exactly the Montague lift `individual` of the
+number view. -/
+theorem lowerBounded_eq_lift (n : ℕ) :
+    (fun P : ℕ → Prop => P n) = individual n := rfl
 
 /-- The survey's `MAX` operator (their (53)):
 `⟦MAX⟧ = λD λP. max(P) ∈ ∩D`. -/
@@ -113,7 +117,7 @@ def MAX (D : (ℕ → Prop) → Prop) : (ℕ → Prop) → Prop :=
 *exactly* quantifier — the survey's account keeps the lower-bound meaning
 basic and derives the *exactly* reading by `MAX`, preserving the
 Heim–Kennedy scope explanation. -/
-theorem MAX_lift_eq_kennedy (n : ℕ) : MAX (lift n) = kennedyNum n := by
+theorem MAX_lift_eq_kennedy (n : ℕ) : MAX (individual n) = kennedyNum n := by
   funext P
   refine propext ⟨fun ⟨m, hm, hall⟩ => ?_, fun h => ⟨n, h, fun Q hQ => hQ⟩⟩
   · have : m = n := hall (fun d => d = n) rfl
@@ -121,10 +125,10 @@ theorem MAX_lift_eq_kennedy (n : ℕ) : MAX (lift n) = kennedyNum n := by
 
 /-- The lower-bound and *exactly* quantifiers genuinely differ before
 `MAX` applies (witness `P = {n, n+1}`): `MAX` does real work. -/
-theorem lift_ne_kennedy (n : ℕ) : lift (E := ℕ) n ≠ kennedyNum n := by
+theorem lift_ne_kennedy (n : ℕ) : individual (α := ℕ) n ≠ kennedyNum n := by
   intro h
   have := congrFun h (fun d => d = n ∨ d = n + 1)
-  rw [lift] at this
+  rw [individual] at this
   have hk : kennedyNum n (fun d => d = n ∨ d = n + 1) := this.mp (Or.inl rfl)
   exact absurd (hk.2 (Or.inr rfl : (n+1) ∈ {d | d = n ∨ d = n + 1})) (by omega)
 

@@ -504,9 +504,8 @@ accounts share one closure and differ only in where negation sits; they are comp
 the Dutch scrambling data in `Studies/LeBruynDeSwart2022.lean`.
 
 `existsClose` is Partee's `A` (existential closure) in plain extensional form. The same
-operator dressed in the DWP/Gallin deep embedding is
-`Semantics.Composition.TypeShifting.A`, needed there for type-shift metatheory but not
-for this scope contrast. -/
+operator dressed in the DWP/Gallin deep embedding is `Quantification.A`, needed there
+for type-shift metatheory but not for this scope contrast. -/
 
 section DKPDerivation
 

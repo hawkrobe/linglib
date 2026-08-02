@@ -214,7 +214,8 @@ handle indefinites compositionally. -/
 
 section LiftDecomposition
 
-open Semantics.Composition.TypeShifting (lift A ident A_ident_eq_lift)
+open Quantification (individual A)
+open Semantics.Composition.TypeShifting (ident A_ident_eq_individual)
 open Intensional (Denot Ty)
 
 variable {E W : Type}
@@ -222,12 +223,13 @@ variable {E W : Type}
 /-- **LIFT = A ∘ η** on the domain (eq. 28). In linglib's formulation
 using `A` (which takes an explicit domain):
 `A(domain)(ident j)(P) = (∃ x ∈ domain, j = x ∧ P x)`. When `j ∈ domain`
-this reduces to `P j = lift j P`. This is exactly `A_ident_eq_lift`
-from `TypeShifting.lean`, re-exposed in the set-monad context. -/
+this reduces to `P j = individual j P`. This is exactly
+`A_ident_eq_individual` from `TypeShifting.lean`, re-exposed in the
+set-monad context. -/
 theorem lift_eq_A_eta (domain : List E) (j : E)
     (hj : j ∈ domain) (_hnd : domain.Nodup) :
-    ∀ P : Denot E W Ty.et, A domain (ident j) P = lift j P := by
-  intro P; exact congrFun (A_ident_eq_lift domain j hj) P
+    ∀ P : Denot E W Ty.et, A domain (ident j) P = individual j P := by
+  intro P; exact congrFun (A_ident_eq_individual domain j hj) P
 
 end LiftDecomposition
 
