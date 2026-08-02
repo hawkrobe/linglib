@@ -20,11 +20,10 @@ monadic account of quantifier scope ([barker-2002], [shan-2001],
 
 namespace Cont
 
-/-- Evaluation with the identity continuation (functional programming's
-`evalCont`, which mathlib does not provide) — [barker-shan-2014]'s LOWER
-at `B := A`. Their own LOWER pins the answer type to the atomic clause
-category `S`; the pinning carries their crossover account and is not
-imposed here. -/
+/-- `lower m` evaluates `m` at the identity continuation — Haskell's
+`evalCont`, and the LOWER of continuation semantics
+([barker-shan-2014]'s version restricts the answer type to the clause
+category). -/
 def lower {A : Type*} (m : Cont A A) : A := m.run id
 
 /-- LOWER ∘ LIFT = id: `pure` is [barker-shan-2014]'s LIFT (Montague
