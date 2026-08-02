@@ -1962,6 +1962,7 @@ import Linglib.Studies.BarAsherSiegal2026
 import Linglib.Studies.BarLev2021
 import Linglib.Studies.BarLevFox2020
 import Linglib.Studies.Barker1995
+import Linglib.Studies.Barker2002
 import Linglib.Studies.BarkerPullum1990
 import Linglib.Studies.BarnettEtAl2022
 import Linglib.Studies.BarwiseCooper1981
