@@ -62,7 +62,7 @@ def aDet (n : Cont Prop (E → Prop)) : Quantifier E :=
 /-! ### The worked derivations
 
 Sentences evaluate by applying the trivial continuation `λp.p` — the
-substrate's `ContT.lower`. Nothing biases toward linear or inverse
+substrate's `ContT.eval`. Nothing biases toward linear or inverse
 scope: *Every man saw a woman* gets its inverse reading under VP
 priority (the reading the paper prints) and its surface reading under
 subject priority. -/
@@ -71,26 +71,26 @@ variable (j m : E) (left' slept' man' woman' : E → Prop) (saw' : E → E → P
 
 /-- *John left*. -/
 theorem john_left :
-    ContT.lower (sRuleVP (individual j) (pure left')) = left' j := rfl
+    ContT.eval (sRuleVP (individual j) (pure left')) = left' j := rfl
 
 /-- *Everyone left*. -/
 theorem everyone_left :
-    ContT.lower (sRuleVP everyone (pure left')) = ∀ x, left' x := rfl
+    ContT.eval (sRuleVP everyone (pure left')) = ∀ x, left' x := rfl
 
 /-- *John saw everyone*, in situ. -/
 theorem john_saw_everyone :
-    ContT.lower (sRuleVP (individual j) (vpRule (pure saw') everyone)) =
+    ContT.eval (sRuleVP (individual j) (vpRule (pure saw') everyone)) =
     ∀ x, saw' x j := rfl
 
 /-- *Every man saw a woman*, VP priority: the inverse reading. -/
 theorem every_man_saw_a_woman_inverse :
-    ContT.lower (sRuleVP (everyDet (pure man'))
+    ContT.eval (sRuleVP (everyDet (pure man'))
       (vpRule (pure saw') (aDet (pure woman')))) =
     ∃ y, woman' y ∧ ∀ x, man' x → saw' y x := rfl
 
 /-- *Every man saw a woman*, subject priority: the surface reading. -/
 theorem every_man_saw_a_woman_surface :
-    ContT.lower (sRuleNP (everyDet (pure man'))
+    ContT.eval (sRuleNP (everyDet (pure man'))
       (vpRule (pure saw') (aDet (pure woman')))) =
     ∀ x, man' x → ∃ y, woman' y ∧ saw' y x := rfl
 
@@ -116,7 +116,7 @@ variable (thought' : Prop → E → Prop)
 /-- *A man thought everyone saw Mary*: *everyone* is trapped in the
 complement. -/
 theorem a_man_thought_everyone_saw_mary :
-    ContT.lower (sRuleVP (aDet (pure man'))
+    ContT.eval (sRuleVP (aDet (pure man'))
       (vsRule (pure thought')
         (sRuleIsland everyone (vpRule (pure saw') (individual m))))) =
     ∃ y, man' y ∧ thought' (∀ x, saw' m x) y := rfl
@@ -138,12 +138,12 @@ def coord (l r : Cont Prop α) : Cont Prop α := λ k => l k ∧ r k
 
 /-- *John left and slept*. -/
 theorem john_left_and_slept :
-    ContT.lower (sRuleVP (individual j) (coord (pure left') (pure slept'))) =
+    ContT.eval (sRuleVP (individual j) (coord (pure left') (pure slept'))) =
     (left' j ∧ slept' j) := rfl
 
 /-- *John and Mary left*. -/
 theorem john_and_mary_left :
-    ContT.lower (sRuleVP (coord (individual j) (individual m)) (pure left')) =
+    ContT.eval (sRuleVP (coord (individual j) (individual m)) (pure left')) =
     (left' j ∧ left' m) := rfl
 
 /-! ### The Simulation Theorem
@@ -153,7 +153,7 @@ the trivial continuation to its direct meaning, under either priority.
 The paper's "simulating" hypothesis — `c g = g m` for every
 continuation `g` — says exactly that `c` is the unit
 (`simulating_iff`), so its Lemma is the applicative unit laws and its
-Theorem is the substrate's `lower_*` simp set; the quantificational
+Theorem is the substrate's `eval_*` simp set; the quantificational
 entries are exactly the non-units. -/
 
 /-- Simulating in the paper's sense is being a unit. -/
@@ -169,6 +169,6 @@ theorem simulation_orders_agree (M : α → β → γ) (m₁ : α) (m₂ : β) :
 /-- A schema-derived sentence evaluates at the trivial continuation to
 its direct meaning. -/
 theorem simulation (M : α → β → Prop) (m₁ : α) (m₂ : β) :
-    ContT.lower (M <$> (pure m₁ : Cont Prop α) <*> pure m₂) = M m₁ m₂ := rfl
+    ContT.eval (M <$> (pure m₁ : Cont Prop α) <*> pure m₂) = M m₁ m₂ := rfl
 
 end Barker2002
