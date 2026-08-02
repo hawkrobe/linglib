@@ -70,7 +70,6 @@ namespace Charlow2021
 open DynamicSemantics
 open DynamicSemantics.Update (test seq closure neg)
 open DynamicSemantics.CCP (IsDistributive)
-open Semantics.Composition.Continuation
 open scoped DynamicSemantics.Update
 
 /-! ### Witness models: the cumulative-reading puzzle
