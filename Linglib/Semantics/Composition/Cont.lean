@@ -1,33 +1,32 @@
 import Mathlib.Control.Monad.Cont
 
 /-!
-# LOWER for the continuation monad
+# Evaluating continuation computations
 
-A value of `Cont R A := (A → R) → R` (`Mathlib.Control.Monad.Cont`) is a
-computation handed its own future: given a continuation `A → R` saying
-how the rest of the derivation will use its result, it produces the
-final answer — and may consult that continuation zero, one, or many
-times. `Cont.lower` ends the computation: once the answer type equals
-the value type, applying the identity continuation extracts the result.
-`pure` is the converse embedding — a value wrapped so that any
-continuation applies to it directly — and lowering undoes it
-(`Cont.lower_pure`).
+A continuation computation `Cont R A := (A → R) → R` produces its answer
+from a continuation `A → R` describing how the result will be used, and
+may invoke that continuation any number of times. This file defines
+`Cont.lower`, which ends a computation of type `Cont A A` by applying
+the identity continuation (Haskell's `evalCont`, not present in
+`Mathlib.Control.Monad.Cont`), and proves that `lower` turns a chain of
+binds into function application nested in bind order, while the
+applicative combination nests in fixed left-to-right order.
 
-What `lower` returns on composite computations is the substance of this
-file: a chain of binds lowers to nested application, nested in exactly
-the order of the binds, while the applicative combination `<$> … <*>`
-always nests left over right. That contrast carries the linguistic
-reading: continuized values model scope-taking expressions
-([barker-2002]), `lower` is [barker-shan-2014]'s LOWER ("scope-taking
-is done"), and free bind order — read as free quantifier scope by
-[shan-2001] and [charlow-2014] — is exactly what the order-fixed
-applicative fragment withholds. The applications live with the
-composition engine (`PredAbs` in `Composition/Tree.lean`) and its
-studies (`Studies/BumfordCharlow2024.lean`, `Studies/Charlow2020.lean`).
+In continuation semantics, continuized terms model scope-taking
+expressions ([barker-2002]) and `lower` is the LOWER operation of
+[barker-shan-2014]; the contrast between free bind order and fixed
+applicative order is the monadic account of quantifier scope
+([shan-2001], [charlow-2014]). These applications live in
+`Composition/Tree.lean` (`PredAbs`), `Studies/BumfordCharlow2024.lean`,
+and `Studies/Charlow2020.lean`.
 
 ## Main definitions
 
 - `Cont.lower`: evaluation with the identity continuation
+
+## References
+
+- <https://hackage.haskell.org/package/mtl-2.2.2/docs/Control-Monad-Cont.html#v:evalCont>
 -/
 
 namespace Cont
