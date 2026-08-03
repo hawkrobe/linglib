@@ -34,12 +34,18 @@ comparison of utilities / conditional-joint sums.
 * `RSA.Canonical.S1` — pragmatic speaker, `PMF.softmax` of a viable utility.
 * `RSA.Canonical.rsaUtility` — the standard informativity utility `α·(log L0 − cost)`.
 * `RSA.Canonical.L1` — pragmatic listener, joint `PMF.posterior` over `world × latent`.
+* `RSA.Canonical.L1Intent` — pair-choice pragmatic listener: the speaker chooses an
+  (utterance, latent) pair, the listener observes only the utterance
+  (`PMF.emissionPosterior`).
+* `RSA.Canonical.boolS1` — the Boolean-model speaker as an exact rational.
 
 ## Main statements
 
 * `RSA.Canonical.S1_prefers_iff` — speaker preference ↔ utility comparison.
 * `RSA.Canonical.L1_world_prefers_iff` / `L1_latent_prefers_iff` — listener marginal
   preference ↔ conditional-joint-sum comparison.
+* `RSA.Canonical.S1_eq_ofReal` — the power-utility speaker over a Boolean model
+  equals `ENNReal.ofReal` of `boolS1`.
 
 ## Implementation notes
 
@@ -220,14 +226,10 @@ end Listener
 
 /-! ### Pair-choice pragmatic listener
 
-For models where the speaker chooses an (utterance, latent) **pair** — the
-[franke-bergen-2020] lexical/global-intentions architecture, where the latent
-is the speaker's *intended meaning* rather than part of its state — the
-listener observes only the utterance and infers the joint (world, latent) via
-`PMF.emissionPosterior`. Contrast `L1`: there the latent is drawn with the
-world by the prior and each `(world, latent)` state has its own normalized
-speaker; here one speaker per world normalizes over (utterance, latent) pairs,
-so a pair's overall informativity drives the posterior. -/
+When the speaker chooses an (utterance, latent) *pair* — the latent an output
+of the speaker rather than part of its state ([franke-bergen-2020]) — one
+speaker per world normalizes over pairs, and the listener recovers the joint
+(world, latent) from the utterance alone via `PMF.emissionPosterior`. -/
 
 section IntentListener
 
@@ -483,11 +485,9 @@ theorem S1_L0OfBool_ne_zero {α : ℕ} [Fintype U]
 
 /-! ### Exact rational evaluation over a Boolean model
 
-The speaker over a Boolean model takes exact rational values: `boolWeight` is
-the unnormalised weight `|ext|⁻ᵅ` at a true utterance, `boolPartition` the
-partition sum, and `boolS1` their ratio. `S1_eq_ofReal` bridges once; every
-concrete mass and pooled sum then reduces to `ℚ` arithmetic (`norm_num`), with
-no per-value `ENNReal` bookkeeping. -/
+`boolS1` computes the Boolean-model speaker as an exact rational and
+`S1_eq_ofReal` bridges it to `S1`; concrete masses and pooled sums then
+reduce to `ℚ` arithmetic (`norm_num`). -/
 
 /-- Exact rational unnormalised speaker weight over a Boolean model. -/
 def boolWeight (α : ℕ) (i : I) (w : W) (u : U) : ℚ :=
