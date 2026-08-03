@@ -443,6 +443,15 @@ noncomputable def speaker (α : ℝ) (util : W → U → EReal) : Kernel W U :=
     speaker α util w {u} = ((α : EReal) * util w u).exp / ∑ u', ((α : EReal) * util w u').exp :=
   Kernel.ofWeights_apply_singleton _ w u
 
+/-- A speaker mass is positive as soon as the utterance's scaled utility is
+not `⊥` and no scaled utility is `⊤`. -/
+theorem speaker_apply_singleton_ne_zero {α : ℝ} {util : W → U → EReal} {w : W} {u : U}
+    (hbot : (α : EReal) * util w u ≠ ⊥) (htop : ∀ u', (α : EReal) * util w u' ≠ ⊤) :
+    speaker α util w {u} ≠ 0 := by
+  rw [speaker_apply_singleton, ne_eq, ENNReal.div_eq_zero_iff, not_or]
+  exact ⟨by simp [EReal.exp_eq_zero_iff, hbot],
+    ENNReal.sum_ne_top.mpr fun u' _ => by simp [EReal.exp_eq_top_iff, htop u']⟩
+
 omit [MeasurableSingletonClass U] in
 /-- The speaker is Markov as soon as no scaled utility is `⊤` and every
 world has an applicable (scaled utility `≠ ⊥`) utterance. -/
