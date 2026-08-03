@@ -751,21 +751,21 @@ private theorem zLI (w : World) (z : ℝ)
 
 set_option maxRecDepth 8192 in
 private theorem zLI_wNS : (∑ x : Utterance × LIParse, (liL0 x {wNS}).toReal ^ 2) = 53 / 48 :=
-  zLI _ _ (by norm_num +decide [rpow_two, univU, univLI, LIParse.toParse, univW, Finset.sum_insert,
-    Finset.sum_singleton, Finset.filter_insert, Finset.filter_singleton,
-    Finset.card_insert_of_notMem, Finset.card_singleton])
+  zLI _ _ (by norm_num +decide [rpow_two, univU, univLI, LIParse.toParse, univW,
+    Finset.sum_insert, Finset.sum_singleton, Finset.filter_insert,
+    Finset.filter_singleton, Finset.card_insert_of_notMem, Finset.card_singleton])
 
 set_option maxRecDepth 8192 in
 private theorem zLI_wNA : (∑ x : Utterance × LIParse, (liL0 x {wNA}).toReal ^ 2) = 19 / 18 :=
-  zLI _ _ (by norm_num +decide [rpow_two, univU, univLI, LIParse.toParse, univW, Finset.sum_insert,
-    Finset.sum_singleton, Finset.filter_insert, Finset.filter_singleton,
-    Finset.card_insert_of_notMem, Finset.card_singleton])
+  zLI _ _ (by norm_num +decide [rpow_two, univU, univLI, LIParse.toParse, univW,
+    Finset.sum_insert, Finset.sum_singleton, Finset.filter_insert,
+    Finset.filter_singleton, Finset.card_insert_of_notMem, Finset.card_singleton])
 
 set_option maxRecDepth 8192 in
 private theorem zLI_wS : (∑ x : Utterance × LIParse, (liL0 x {wS}).toReal ^ 2) = 461 / 144 :=
-  zLI _ _ (by norm_num +decide [rpow_two, univU, univLI, LIParse.toParse, univW, Finset.sum_insert,
-    Finset.sum_singleton, Finset.filter_insert, Finset.filter_singleton,
-    Finset.card_insert_of_notMem, Finset.card_singleton])
+  zLI _ _ (by norm_num +decide [rpow_two, univU, univLI, LIParse.toParse, univW,
+    Finset.sum_insert, Finset.sum_singleton, Finset.filter_insert,
+    Finset.filter_singleton, Finset.card_insert_of_notMem, Finset.card_singleton])
 
 /-! ### Listener-preference reductions -/
 
@@ -849,16 +849,6 @@ private theorem giPool_ss_wS : (∑ p : Parse, (giSpeaker wS).real {(.ss, p)}) =
     Finset.sum_singleton, Finset.filter_insert, Finset.filter_singleton,
     Finset.card_insert_of_notMem, Finset.card_singleton])
 
-private theorem giPool_aa_wSA : (∑ p : Parse, (giSpeaker wSA).real {(.aa, p)}) = 0 :=
-  giPool _ _ _ _ zGI_wSA (by norm_num +decide [rpow_two, univU, univP, univW, Finset.sum_insert,
-    Finset.sum_singleton, Finset.filter_insert, Finset.filter_singleton,
-    Finset.card_insert_of_notMem, Finset.card_singleton])
-
-private theorem giPool_aa_wA : (∑ p : Parse, (giSpeaker wA).real {(.aa, p)}) = 192 / 229 :=
-  giPool _ _ _ _ zGI_wA (by norm_num +decide [rpow_two, univU, univP, univW, Finset.sum_insert,
-    Finset.sum_singleton, Finset.filter_insert, Finset.filter_singleton,
-    Finset.card_insert_of_notMem, Finset.card_singleton])
-
 private theorem giPool_as_wS : (∑ p : Parse, (giSpeaker wS).real {(.as, p)}) = 340 / 559 :=
   giPool _ _ _ _ zGI_wS (by norm_num +decide [rpow_two, univU, univP, univW, Finset.sum_insert,
     Finset.sum_singleton, Finset.filter_insert, Finset.filter_singleton,
@@ -880,19 +870,19 @@ private theorem liPool (u : Utterance) (w : World) (z v : ℝ)
   exact h
 
 private theorem liPool_ss_wNS : (∑ l : LIParse, (liSpeaker wNS).real {(.ss, l)}) = 15 / 53 :=
-  liPool _ _ _ _ zLI_wNS (by norm_num +decide [rpow_two, univU, univLI, LIParse.toParse, univW, Finset.sum_insert,
-    Finset.sum_singleton, Finset.filter_insert, Finset.filter_singleton,
-    Finset.card_insert_of_notMem, Finset.card_singleton])
+  liPool _ _ _ _ zLI_wNS (by norm_num +decide [rpow_two, univU, univLI, LIParse.toParse, univW,
+    Finset.sum_insert, Finset.sum_singleton, Finset.filter_insert,
+    Finset.filter_singleton, Finset.card_insert_of_notMem, Finset.card_singleton])
 
 private theorem liPool_ss_wNA : (∑ l : LIParse, (liSpeaker wNA).real {(.ss, l)}) = 5 / 38 :=
-  liPool _ _ _ _ zLI_wNA (by norm_num +decide [rpow_two, univU, univLI, LIParse.toParse, univW, Finset.sum_insert,
-    Finset.sum_singleton, Finset.filter_insert, Finset.filter_singleton,
-    Finset.card_insert_of_notMem, Finset.card_singleton])
+  liPool _ _ _ _ zLI_wNA (by norm_num +decide [rpow_two, univU, univLI, LIParse.toParse, univW,
+    Finset.sum_insert, Finset.sum_singleton, Finset.filter_insert,
+    Finset.filter_singleton, Finset.card_insert_of_notMem, Finset.card_singleton])
 
 private theorem liPool_ss_wS : (∑ l : LIParse, (liSpeaker wS).real {(.ss, l)}) = 13 / 461 :=
-  liPool _ _ _ _ zLI_wS (by norm_num +decide [rpow_two, univU, univLI, LIParse.toParse, univW, Finset.sum_insert,
-    Finset.sum_singleton, Finset.filter_insert, Finset.filter_singleton,
-    Finset.card_insert_of_notMem, Finset.card_singleton])
+  liPool _ _ _ _ zLI_wS (by norm_num +decide [rpow_two, univU, univLI, LIParse.toParse, univW,
+    Finset.sum_insert, Finset.sum_singleton, Finset.filter_insert,
+    Finset.filter_singleton, Finset.card_insert_of_notMem, Finset.card_singleton])
 
 private theorem vanS_ss_wNS : (vanillaSpeaker wNS).real {Utterance.ss} = 4 / 29 := by
   simp_rw [vanillaS_real, rpow_two, zVan_wNS, L0_toReal]
@@ -940,12 +930,36 @@ theorem ss_outer_exh :
     simp_rw [prior_real_singleton, ← Finset.mul_sum, giPool_ss_wS, giPool_ss_wNS]
     norm_num)
 
-/-- AA identifies the unique world where all aliens drank all: wA over wSA. -/
+/-- AA identifies the unique world where all aliens drank all: at wSA the
+utterance is false under every parse, so its pooled mass vanishes; at wA any
+parse gives an applicable pair. Structural — no masses computed. -/
 theorem aa_identifies :
     ((giListener .aa).fst).real {wSA} < ((giListener .aa).fst).real {wA} :=
-  gi_fst_lt gi_marg_aa (by
-    simp_rw [prior_real_singleton, ← Finset.mul_sum, giPool_aa_wSA, giPool_aa_wA]
-    norm_num)
+  gi_fst_lt gi_marg_aa <| by
+    have hzero : ∀ p : Parse, (giSpeaker wSA).real {(.aa, p)} = 0 := fun p =>
+      RSA.speaker_real_singleton_eq_zero (by
+        rw [RSA.utility, EReal.coe_zero, sub_zero,
+          show giL0 (.aa, p) {wSA} = 0 from
+            RSA.literalListener_apply_singleton_of_not_mem prior _ fun h =>
+              absurd ((table1_aa p wSA).mp h) (by decide),
+          ENNReal.log_zero]
+        exact EReal.mul_bot_of_pos (by norm_num))
+    calc ∑ p : Parse, prior.real {wSA} * (giSpeaker wSA).real {(.aa, p)}
+        = 0 := by simp [hzero]
+      _ < ∑ p : Parse, prior.real {wA} * (giSpeaker wA).real {(.aa, p)} :=
+          Finset.sum_pos'
+            (fun p _ => mul_nonneg measureReal_nonneg measureReal_nonneg)
+            ⟨∅, Finset.mem_univ _,
+              mul_pos (by rw [prior_real_singleton]; norm_num)
+                (RSA.speaker_real_singleton_pos
+                  (by
+                    rw [RSA.utility, EReal.coe_zero, sub_zero]
+                    exact RSA.coe_mul_log_ne_bot (by norm_num)
+                      (L0_ne_zero (p := ∅) (by decide)))
+                  fun x => by
+                    rw [RSA.utility, EReal.coe_zero, sub_zero]
+                    exact RSA.coe_mul_log_ne_top (by norm_num)
+                      (RSA.literalListener_apply_ne_top prior _ x {wA}))⟩
 
 /-- AS exhaustifies the inner quantifier: GI's listener prefers wS to wA. -/
 theorem as_inner_exh :

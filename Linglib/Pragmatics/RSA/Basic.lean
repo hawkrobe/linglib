@@ -443,6 +443,16 @@ noncomputable def speaker (α : ℝ) (util : W → U → EReal) : Kernel W U :=
     speaker α util w {u} = ((α : EReal) * util w u).exp / ∑ u', ((α : EReal) * util w u').exp :=
   Kernel.ofWeights_apply_singleton _ w u
 
+/-- An utterance of utility `⊥` is never produced. -/
+theorem speaker_apply_singleton_eq_zero {α : ℝ} {util : W → U → EReal} {w : W} {u : U}
+    (hbot : (α : EReal) * util w u = ⊥) : speaker α util w {u} = 0 := by
+  rw [speaker_apply_singleton, hbot, EReal.exp_bot, ENNReal.zero_div]
+
+/-- Real form of `speaker_apply_singleton_eq_zero`. -/
+theorem speaker_real_singleton_eq_zero {α : ℝ} {util : W → U → EReal} {w : W} {u : U}
+    (hbot : (α : EReal) * util w u = ⊥) : (speaker α util w).real {u} = 0 := by
+  rw [measureReal_def, speaker_apply_singleton_eq_zero hbot, ENNReal.toReal_zero]
+
 /-- A speaker mass is positive as soon as the utterance's scaled utility is
 not `⊥` and no scaled utility is `⊤`. -/
 theorem speaker_apply_singleton_ne_zero {α : ℝ} {util : W → U → EReal} {w : W} {u : U}
@@ -451,6 +461,18 @@ theorem speaker_apply_singleton_ne_zero {α : ℝ} {util : W → U → EReal} {w
   rw [speaker_apply_singleton, ne_eq, ENNReal.div_eq_zero_iff, not_or]
   exact ⟨by simp [EReal.exp_eq_zero_iff, hbot],
     ENNReal.sum_ne_top.mpr fun u' _ => by simp [EReal.exp_eq_top_iff, htop u']⟩
+
+/-- A speaker mass is positive on reals as soon as the utterance's scaled
+utility is not `⊥` and no scaled utility is `⊤`. -/
+theorem speaker_real_singleton_pos {α : ℝ} {util : W → U → EReal} {w : W} {u : U}
+    (hbot : (α : EReal) * util w u ≠ ⊥) (htop : ∀ u', (α : EReal) * util w u' ≠ ⊤) :
+    0 < (speaker α util w).real {u} := by
+  rw [measureReal_def]
+  refine ENNReal.toReal_pos (speaker_apply_singleton_ne_zero hbot htop) ?_
+  rw [speaker_apply_singleton]
+  exact ENNReal.div_ne_top (by simp [EReal.exp_eq_top_iff, htop u]) fun hz =>
+    hbot (by simpa [EReal.exp_eq_zero_iff] using
+      Finset.sum_eq_zero_iff.mp hz u (Finset.mem_univ u))
 
 omit [MeasurableSingletonClass U] in
 /-- The speaker is Markov as soon as no scaled utility is `⊤` and every
