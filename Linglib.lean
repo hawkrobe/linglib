@@ -1404,6 +1404,7 @@ import Linglib.Pragmatics.NeoGricean.Basic
 import Linglib.Pragmatics.NeoGricean.Markedness
 import Linglib.Pragmatics.RSA.ArgumentativeStrength
 import Linglib.Pragmatics.RSA.Atoms
+import Linglib.Pragmatics.RSA.Basic
 import Linglib.Pragmatics.RSA.Canonical
 import Linglib.Pragmatics.RSA.Channel
 import Linglib.Pragmatics.RSA.CombinedUtility
