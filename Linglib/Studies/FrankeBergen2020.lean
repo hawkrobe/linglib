@@ -265,84 +265,65 @@ instance (p : Parse) (u : Utterance) : DecidablePred (exhMeaning p u) := fun _ =
 
 /-! ### Truth-table verification (the paper's Table 1)
 
-Each reading is characterized by a membership predicate on the world's
-alien-type set, rather than transcribed as a truth vector. -/
+One characterization per utterance, total over all eight parses — the paper's
+row-groups appear as the guards. Each reading is a membership predicate on
+the world's alien-type set, not a truth vector. -/
 
-/-- Table 1, SS literal row: true everywhere but wN. -/
-theorem table1_ss_lit : ∀ w, exhMeaning ∅ .ss w ↔ w ≠ wN := by decide
+/-- Table 1, NN: no N-types; matrix parses additionally negate "none drank
+not all" (= {wA}) — the fn. 7 reading from the `none ~ not all` alternative. -/
+theorem table1_nn : ∀ (p : Parse) (w : World),
+    exhMeaning p .nn w ↔ (.none ∉ w ∧ (.matrix ∈ p → w ≠ wA)) := by decide
 
-/-- Table 1, SS inner-EXH row: an S-type exists. -/
-theorem table1_ss_i : ∀ w, exhMeaning {.inner} .ss w ↔ .someNotAll ∈ w := by decide
+/-- Table 1, NS: only wN literally; inner EXH weakens to the S-free worlds,
+whereupon matrix EXH negates the sentence's own now-stronger literal {wN}. -/
+theorem table1_ns : ∀ (p : Parse) (w : World),
+    exhMeaning p .ns w ↔
+      if .inner ∈ p then .someNotAll ∉ w ∧ (.matrix ∈ p → w ≠ wN)
+      else w = wN := by decide
 
-/-- Table 1, SS outer+inner row: an S-type exists but not exclusively. -/
-theorem table1_ss_oi :
-    ∀ w, exhMeaning {.outer, .inner} .ss w ↔ (.someNotAll ∈ w ∧ w ≠ wS) := by decide
+/-- Table 1, NA: no A-types; matrix EXH negates the stronger NS = {wN}. -/
+theorem table1_na : ∀ (p : Parse) (w : World),
+    exhMeaning p .na w ↔ (.all ∉ w ∧ (.matrix ∈ p → w ≠ wN)) := by decide
 
-/-- EXH_MOI(SS) = EXH_OI(SS): matrix EXH is vacuous at MOI. -/
-theorem exh_moi_ss : ∀ w,
-    exhMeaning {.matrix, .outer, .inner} .ss w ↔ exhMeaning {.outer, .inner} .ss w := by
-  decide
+/-- Table 1, SN: an N-type exists; outer or matrix EXH negates AN = {wN}. -/
+theorem table1_sn : ∀ (p : Parse) (w : World),
+    exhMeaning p .sn w ↔
+      (.none ∈ w ∧ (.outer ∈ p ∨ .matrix ∈ p → w ≠ wN)) := by decide
 
-/-- Table 1, NN matrix-free rows: no N-types. -/
-theorem table1_nn_lit : ∀ p : Parse, .matrix ∉ p →
-    ∀ w, exhMeaning p .nn w ↔ .none ∉ w := by decide
+/-- Table 1, SS: the five row-groups — literal; inner EXH requires an S-type
+(matrix then vacuous); adding outer EXH excludes wS; outer alone keeps mixed
+worlds; matrix alone pins wNS. -/
+theorem table1_ss : ∀ (p : Parse) (w : World),
+    exhMeaning p .ss w ↔
+      if .inner ∈ p then .someNotAll ∈ w ∧ (.outer ∈ p → w ≠ wS)
+      else if .outer ∈ p then .none ∈ w ∧ w ≠ wN
+      else if .matrix ∈ p then w = wNS
+      else w ≠ wN := by decide
 
-/-- Table 1, NN matrix rows: matrix EXH additionally negates "none drank not
-all" (= {wA}) — the fn. 7 reading from the `none ~ not all` alternative. -/
-theorem table1_nn_m : ∀ p : Parse, .matrix ∈ p →
-    ∀ w, exhMeaning p .nn w ↔ (.none ∉ w ∧ w ≠ wA) := by decide
-
-/-- Table 1, NS literal row: only wN. -/
-theorem table1_ns_lit : ∀ w, exhMeaning ∅ .ns w ↔ w = wN := by decide
-
-/-- Table 1, NS inner-EXH row: no S-types — inner EXH weakens NS. -/
-theorem table1_ns_i : ∀ w, exhMeaning {.inner} .ns w ↔ .someNotAll ∉ w := by decide
-
-/-- Table 1, NS matrix+inner row: matrix EXH negates the sentence's own
-now-stronger literal meaning {wN}. -/
-theorem table1_ns_mi :
-    ∀ w, exhMeaning {.matrix, .inner} .ns w ↔ (.someNotAll ∉ w ∧ w ≠ wN) := by decide
+/-- Table 1, SA: an A-type exists; outer or matrix EXH excludes wA. -/
+theorem table1_sa : ∀ (p : Parse) (w : World),
+    exhMeaning p .sa w ↔
+      (.all ∈ w ∧ (.outer ∈ p ∨ .matrix ∈ p → w ≠ wA)) := by decide
 
 /-- Table 1, AN: only wN, under every parse. -/
-theorem table1_an : ∀ p : Parse, ∀ w, exhMeaning p .an w ↔ w = wN := by decide
+theorem table1_an : ∀ (p : Parse) (w : World), exhMeaning p .an w ↔ w = wN := by decide
+
+/-- Table 1, AS: no N-types; inner EXH pins wS; matrix EXH without inner
+negates AA, excluding wA. -/
+theorem table1_as : ∀ (p : Parse) (w : World),
+    exhMeaning p .as w ↔
+      if .inner ∈ p then w = wS
+      else .none ∉ w ∧ (.matrix ∈ p → w ≠ wA) := by decide
 
 /-- Table 1, AA: only wA, under every parse. -/
-theorem table1_aa : ∀ p : Parse, ∀ w, exhMeaning p .aa w ↔ w = wA := by decide
-
-/-- Table 1, SA literal row: an A-type exists. -/
-theorem table1_sa_lit : ∀ w, exhMeaning ∅ .sa w ↔ .all ∈ w := by decide
-
-/-- Table 1, SA outer-EXH row: outer EXH excludes wA. -/
-theorem table1_sa_o : ∀ w, exhMeaning {.outer} .sa w ↔ (.all ∈ w ∧ w ≠ wA) := by decide
-
-/-- Table 1, NA literal row: no A-types. -/
-theorem table1_na_lit : ∀ w, exhMeaning ∅ .na w ↔ .all ∉ w := by decide
-
-/-- Table 1, NA matrix row: matrix EXH negates the stronger NS = {wN}. -/
-theorem table1_na_m : ∀ w, exhMeaning {.matrix} .na w ↔ (.all ∉ w ∧ w ≠ wN) := by decide
-
-/-- Table 1, SN literal row: an N-type exists. -/
-theorem table1_sn_lit : ∀ w, exhMeaning ∅ .sn w ↔ .none ∈ w := by decide
-
-/-- Table 1, SN outer-EXH row: outer EXH negates AN = {wN}. -/
-theorem table1_sn_o : ∀ w, exhMeaning {.outer} .sn w ↔ (.none ∈ w ∧ w ≠ wN) := by decide
-
-/-- Table 1, AS literal row: no N-types. -/
-theorem table1_as_lit : ∀ w, exhMeaning ∅ .as w ↔ .none ∉ w := by decide
-
-/-- Table 1, AS inner-EXH row: inner EXH pins wS. -/
-theorem table1_as_i : ∀ w, exhMeaning {.inner} .as w ↔ w = wS := by decide
-
-/-- Table 1, AS matrix row: matrix EXH without I negates AA, excluding wA. -/
-theorem table1_as_m :
-    ∀ w, exhMeaning {.matrix} .as w ↔ (.none ∉ w ∧ w ≠ wA) := by decide
+theorem table1_aa : ∀ (p : Parse) (w : World), exhMeaning p .aa w ↔ w = wA := by decide
 
 /-- Literal meaning is the empty parse's exhaustified meaning. -/
-theorem literal_eq_exh_none : ∀ u : Utterance, ∀ w,
+theorem literal_eq_exh_none : ∀ (u : Utterance) (w : World),
     literalMeaning u w ↔ exhMeaning ∅ u w := by decide
 
-/-- Table 1, SS matrix row — ⟦SS⟧^M = {wNS}: the reading that "uniquely
-singles out this world state" (eq. 22) and drives GI's win. -/
+/-- ⟦SS⟧^M = {wNS} — the reading that "uniquely singles out this world
+state" (eq. 22) and drives GI's win; the matrix-alone case of `table1_ss`. -/
 theorem m_ss_singleton : ∀ w, exhMeaning {.matrix} .ss w ↔ w = wNS := by decide
 
 /-- The matrix operator (eq. A2) is not Fox-style innocent exclusion
