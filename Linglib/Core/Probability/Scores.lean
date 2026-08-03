@@ -267,17 +267,19 @@ theorem prod_ofScores_lt {ι : Type*} (s : Finset ι) (fb₁ fb₂ : ι → Fall
 /-! ### Event marginals -/
 
 /-- Mass of a decidable event under a `ℚ≥0` weight vector. -/
-def eventMass (g : σ → ℚ≥0) (P : σ → Bool) : ℚ≥0 :=
+def eventMass (g : σ → ℚ≥0) (P : σ → Prop) [DecidablePred P] : ℚ≥0 :=
   ∑ x, if P x then g x else 0
 
-theorem ofScores_event_eq (fb : Fallback σ) (f : σ → ℚ≥0) (P : σ → Bool) :
+theorem ofScores_event_eq (fb : Fallback σ) (f : σ → ℚ≥0) (P : σ → Prop)
+    [DecidablePred P] :
     (∑' x, if P x then ofScores fb f x else 0)
       = ((eventMass (scoresWith fb f) P : ℝ≥0) : ℝ≥0∞) := by
   rw [tsum_fintype, eventMass, NNRat.cast_sum, ENNReal.ofNNReal_finsetSum]
   exact Finset.sum_congr rfl fun x _ => by
     by_cases h : P x <;> simp [h, ofScores_apply]
 
-theorem ofScores_event_lt (fb : Fallback σ) (f : σ → ℚ≥0) {P Q : σ → Bool}
+theorem ofScores_event_lt (fb : Fallback σ) (f : σ → ℚ≥0) {P Q : σ → Prop}
+    [DecidablePred P] [DecidablePred Q]
     (h : eventMass (scoresWith fb f) P < eventMass (scoresWith fb f) Q) :
     (∑' x, if P x then ofScores fb f x else 0)
       < ∑' x, if Q x then ofScores fb f x else 0 := by
@@ -286,7 +288,7 @@ theorem ofScores_event_lt (fb : Fallback σ) (f : σ → ℚ≥0) {P Q : σ → 
 
 theorem ofScores_event_lt_cross {τ : Type*} [Fintype τ]
     (fb₁ : Fallback σ) (fb₂ : Fallback τ) (f : σ → ℚ≥0) (g : τ → ℚ≥0)
-    {P : σ → Bool} {Q : τ → Bool}
+    {P : σ → Prop} {Q : τ → Prop} [DecidablePred P] [DecidablePred Q]
     (h : eventMass (scoresWith fb₁ f) P < eventMass (scoresWith fb₂ g) Q) :
     (∑' x, if P x then ofScores fb₁ f x else 0)
       < ∑' y, if Q y then ofScores fb₂ g y else 0 := by
@@ -296,7 +298,7 @@ theorem ofScores_event_lt_cross {τ : Type*} [Fintype τ]
 /-- Exact-value form: an event mass that is a rational literal on the ℚ≥0
 face is that literal on the PMF face. -/
 theorem ofScores_event_eq_ratCast (fb : Fallback σ) (f : σ → ℚ≥0)
-    (P : σ → Bool) {q : ℚ≥0} (h : eventMass (scoresWith fb f) P = q) :
+    (P : σ → Prop) [DecidablePred P] {q : ℚ≥0} (h : eventMass (scoresWith fb f) P = q) :
     (∑' x, if P x then ofScores fb f x else 0) = ((q : ℝ≥0) : ℝ≥0∞) := by
   rw [ofScores_event_eq, h]
 

@@ -272,13 +272,6 @@ noncomputable def l1WorldEvent (qud : QUD) (u : Utterance)
     (P : WorldState → Prop) [DecidablePred P] : ℝ≥0∞ :=
   ∑' w, if P w then l1World qud u w else 0
 
-/-- `PMF.ofScores_event_lt` indexes events by `WorldState → Bool`; this is the
-`decide` transport that lets the event predictions below cite it. -/
-private theorem l1WorldEvent_eq_decide (qud : QUD) (u : Utterance)
-    (P : WorldState → Prop) [DecidablePred P] :
-    l1WorldEvent qud u P = ∑' w, if decide (P w) then l1World qud u w else 0 := by
-  simp [l1WorldEvent]
-
 /-! ### Listener predictions -/
 
 /-! ### QUD_now symmetry -/
@@ -295,9 +288,8 @@ theorem qud_now_wTT_eq_wFT :
 /-- L1 infers the QUD answer now=T from "didn't stop smoking". -/
 theorem qud_answer_now_true :
     l1WorldEvent .now (some .notStopped) (fun w => ¬ w.now) <
-      l1WorldEvent .now (some .notStopped) (·.now) := by
-  rw [l1WorldEvent_eq_decide, l1WorldEvent_eq_decide]
-  exact PMF.ofScores_event_lt _ _ (by decide +kernel)
+      l1WorldEvent .now (some .notStopped) (·.now) :=
+  PMF.ofScores_event_lt _ _ (by decide +kernel)
 
 /-! ### World elimination
 
@@ -356,9 +348,8 @@ theorem now_context_dispreferred :
 /-- "Stopped smoking" → L1 infers now=F (the assertion). -/
 theorem stopped_qud_answer :
     l1WorldEvent .now (some .stopped) (·.now) <
-      l1WorldEvent .now (some .stopped) (fun w => ¬ w.now) := by
-  rw [l1WorldEvent_eq_decide, l1WorldEvent_eq_decide]
-  exact PMF.ofScores_event_lt _ _ (by decide +kernel)
+      l1WorldEvent .now (some .stopped) (fun w => ¬ w.now) :=
+  PMF.ofScores_event_lt _ _ (by decide +kernel)
 
 /-! ### Structural properties -/
 
