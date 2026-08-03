@@ -3,6 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
+import Mathlib.Data.Set.Basic
 
 /-!
 # The Control Signature
@@ -15,7 +16,8 @@ the mirror image — neither clause — is the NOC signature (§7.1). The
 familiar OC criteria are *derived*: co-dependence excludes arbitrary,
 long-distance, and non-c-commanding control and forces sloppy ellipsis
 readings; variable binding excludes strict readings under
-*only*-binding (`Signature.admits`).
+*only*-binding (`Signature.admits`, the set of admitted configurations,
+which encodes the signature faithfully — `admits_injective`).
 
 Deliberately absent, per §1.3: obligatory *de se* is NOT criterial for
 OC — it is a property of the attitude tier (`Control.Tier.isAttitude`;
@@ -87,34 +89,57 @@ inductive Criterion where
   | strictUnderOnly
   deriving DecidableEq, Repr
 
-/-- Which criterial configurations a signature admits: co-dependence
+/-- The criterial configurations a signature admits: co-dependence
     (74a) excludes the three antecedence configurations and strict
     ellipsis readings; variable binding (74b) excludes strict
     *only*-readings. -/
-def admits (s : Signature) : Criterion → Bool
-  | .strictUnderOnly => !s.boundVariable
-  | _                => !s.controllerCodependent
+def admits (s : Signature) : Set Criterion :=
+  {cr | match cr with
+    | .strictUnderOnly => s.boundVariable = false
+    | _ => s.controllerCodependent = false}
+
+instance (s : Signature) : DecidablePred (· ∈ s.admits) := fun cr => by
+  cases cr <;> exact inferInstanceAs (Decidable (_ = _))
 
 /-- A signature is the OC signature iff it admits nothing criterial. -/
-theorem obligatory_iff_admits_none :
-    s.Obligatory ↔ ∀ cr, s.admits cr = false := by
+theorem obligatory_iff_admits_eq_empty :
+    s.Obligatory ↔ s.admits = ∅ := by
+  obtain ⟨c, b⟩ := s
   constructor
-  · rintro ⟨hc, hb⟩ cr
+  · rintro ⟨hc, hb⟩
+    ext cr
     cases cr <;> simp_all [admits]
   · intro h
-    exact ⟨by simpa [admits] using h .arbitraryControl,
-           by simpa [admits] using h .strictUnderOnly⟩
+    have h1 := Set.ext_iff.mp h Criterion.arbitraryControl
+    have h2 := Set.ext_iff.mp h Criterion.strictUnderOnly
+    simp [admits] at h1 h2
+    exact ⟨h1, h2⟩
 
 /-- A signature is the NOC signature iff it admits everything
     criterial. -/
-theorem nonObligatory_iff_admits_all :
-    s.NonObligatory ↔ ∀ cr, s.admits cr = true := by
+theorem nonObligatory_iff_admits_eq_univ :
+    s.NonObligatory ↔ s.admits = Set.univ := by
+  obtain ⟨c, b⟩ := s
   constructor
-  · rintro ⟨hc, hb⟩ cr
+  · rintro ⟨hc, hb⟩
+    ext cr
     cases cr <;> simp_all [admits]
   · intro h
-    exact ⟨by simpa [admits] using h .arbitraryControl,
-           by simpa [admits] using h .strictUnderOnly⟩
+    have h1 := Set.ext_iff.mp h Criterion.arbitraryControl
+    have h2 := Set.ext_iff.mp h Criterion.strictUnderOnly
+    simp [admits] at h1 h2
+    exact ⟨by simp [h1], by simp [h2]⟩
+
+/-- The criteria table encodes the signature faithfully: distinct
+    signatures admit distinct criterion sets ([landau-2013] §1.3's
+    point that the familiar OC criteria re-encode the two-clause
+    signature rather than adding independent dimensions). -/
+theorem admits_injective : Function.Injective admits := by
+  rintro ⟨c, b⟩ ⟨c', b'⟩ h
+  have h1 := Set.ext_iff.mp h Criterion.arbitraryControl
+  have h2 := Set.ext_iff.mp h Criterion.strictUnderOnly
+  simp only [admits, Set.mem_setOf_eq] at h1 h2
+  cases c <;> cases c' <;> cases b <;> cases b' <;> simp_all
 
 end Signature
 
