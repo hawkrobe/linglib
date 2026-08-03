@@ -278,10 +278,14 @@ instance : Fintype Utterance where
   elems := ({Utterance.everyEmpty, Utterance.someEmpty} : Finset Utterance)
   complete := λ x => by cases x <;> simp
 
-/-- Literal meaning under a given DDRP scale (Bool for RSA computation). -/
-def utteranceMeaning (scale : SpatialScale) : Utterance → World → Bool
-  | .everyEmpty, w => decide (everyBottleEmpty scale w)
-  | .someEmpty, w => decide (someBottleEmpty scale w)
+/-- Literal meaning under a given DDRP scale. -/
+def utteranceMeaning (scale : SpatialScale) : Utterance → World → Prop
+  | .everyEmpty, w => everyBottleEmpty scale w
+  | .someEmpty, w => someBottleEmpty scale w
+
+instance (scale : SpatialScale) : ∀ u, DecidablePred (utteranceMeaning scale u)
+  | .everyEmpty, w => inferInstanceAs (Decidable (everyBottleEmpty scale w))
+  | .someEmpty, w => inferInstanceAs (Decidable (someBottleEmpty scale w))
 
 /-- R&S §3.2: Three cognitive heuristics collectively determine which domain
     restrictions are defaults. Each heuristic assigns a relevance score to a
@@ -350,15 +354,15 @@ private theorem ext_nonempty (scale : SpatialScale) (u : Utterance) :
 
 /-- Per-scale literal listener: uniform on the utterance's world extension. -/
 noncomputable def L0 : SpatialScale → Utterance → PMF World :=
-  RSA.Canonical.L0OfBool utteranceMeaning ext_nonempty
+  RSA.Canonical.L0OfPred utteranceMeaning ext_nonempty
 
 private theorem some_always_true (w : World) (l : SpatialScale) :
-    utteranceMeaning l .someEmpty w = true := by
+    utteranceMeaning l .someEmpty w := by
   cases w <;> cases l <;> decide
 
 noncomputable instance : RSA.Canonical.ViableSpeaker (RSA.Canonical.powUtility 1 L0) :=
   RSA.Canonical.viableSpeaker_powUtility_of_witness 1 L0 fun s =>
-    ⟨.someEmpty, RSA.Canonical.L0OfBool_ne_zero utteranceMeaning ext_nonempty
+    ⟨.someEmpty, RSA.Canonical.L0OfPred_ne_zero utteranceMeaning ext_nonempty
       (some_always_true s.1 s.2)⟩
 
 /-- Shared pragmatic speaker `S(w, scale) ∝ L0(w | ·, scale)` (α = 1, no cost). -/
@@ -367,21 +371,21 @@ noncomputable def S : World × SpatialScale → PMF Utterance :=
 
 /-- Unnormalised speaker weight at a true utterance: `|ext(scale, u)|⁻¹`. -/
 private theorem pw_true {l : SpatialScale} {u : Utterance} {w : World} {k : ℕ}
-    (h : utteranceMeaning l u w = true)
+    (h : utteranceMeaning l u w)
     (hk : (RSA.extensionOf (utteranceMeaning l) u).card = k) :
     RSA.Canonical.powWeight 1 L0 (w, l) u = ENNReal.ofReal (k : ℝ)⁻¹ := by
   have hpos : 0 < k := hk ▸ Finset.card_pos.mpr ⟨w, RSA.mem_extensionOf.mpr h⟩
   simp only [L0]
-  rw [RSA.Canonical.powWeight_L0OfBool_of_mem utteranceMeaning ext_nonempty k h hk, pow_one,
+  rw [RSA.Canonical.powWeight_L0OfPred_of_mem utteranceMeaning ext_nonempty k h hk, pow_one,
     ENNReal.ofReal_inv_of_pos (by exact_mod_cast hpos), ENNReal.ofReal_natCast]
 
 private theorem pw_false {l : SpatialScale} {u : Utterance} {w : World}
-    (h : utteranceMeaning l u w = false) :
+    (h : ¬ utteranceMeaning l u w) :
     RSA.Canonical.powWeight 1 L0 (w, l) u = ENNReal.ofReal 0 := by
   rw [ENNReal.ofReal_zero]
   simp only [L0]
-  exact RSA.Canonical.powWeight_L0OfBool_of_not_mem utteranceMeaning ext_nonempty
-    one_ne_zero (by rw [h]; decide)
+  exact RSA.Canonical.powWeight_L0OfPred_of_not_mem utteranceMeaning ext_nonempty
+    one_ne_zero h
 
 private theorem sumU (f : Utterance → ℝ≥0∞) :
     ∑' u, f u = f .everyEmpty + f .someEmpty := by
@@ -391,7 +395,7 @@ private theorem sumU (f : Utterance → ℝ≥0∞) :
 
 /-- Normalised speaker mass at a true utterance, as an exact rational. -/
 private theorem S_val {l : SpatialScale} {u : Utterance} {w : World} {k : ℕ} {z q : ℝ}
-    (h : utteranceMeaning l u w = true)
+    (h : utteranceMeaning l u w)
     (hk : (RSA.extensionOf (utteranceMeaning l) u).card = k) (hz : 0 < z)
     (hZ : (∑' u', RSA.Canonical.powWeight 1 L0 (w, l) u') = ENNReal.ofReal z)
     (hq : (k : ℝ)⁻¹ / z = q) :
@@ -402,14 +406,14 @@ private theorem S_val {l : SpatialScale} {u : Utterance} {w : World} {k : ℕ} {
 
 /-- Normalised speaker mass at a false utterance: `0`. -/
 private theorem S_zero {l : SpatialScale} {u : Utterance} {w : World}
-    (h : utteranceMeaning l u w = false) : S (w, l) u = 0 := by
+    (h : ¬ utteranceMeaning l u w) : S (w, l) u = 0 := by
   unfold S
   rw [RSA.Canonical.S1_powUtility_eq_normalize, PMF.normalize_apply, pw_false h,
     ENNReal.ofReal_zero, zero_mul]
 
 /-- The speaker never assigns zero mass to a true utterance. -/
 private theorem S_ne_zero {l : SpatialScale} {u : Utterance} {w : World}
-    (h : utteranceMeaning l u w = true) : S (w, l) u ≠ 0 := by
+    (h : utteranceMeaning l u w) : S (w, l) u ≠ 0 := by
   have hpos : 0 < (RSA.extensionOf (utteranceMeaning l) u).card :=
     Finset.card_pos.mpr ⟨w, RSA.mem_extensionOf.mpr h⟩
   unfold S

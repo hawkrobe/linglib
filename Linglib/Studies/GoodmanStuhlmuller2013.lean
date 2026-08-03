@@ -60,20 +60,30 @@ inductive QUtt where
   | none_ | some_ | all
   deriving DecidableEq, Repr, Inhabited, Fintype
 
-def qMeaning : QUtt → WorldState → Bool
-  | .none_, s => s.toNat == 0
-  | .some_, s => s.toNat ≥ 1
-  | .all,   s => s.toNat == 3
+def qMeaning : QUtt → WorldState → Prop
+  | .none_, s => s.toNat = 0
+  | .some_, s => 1 ≤ s.toNat
+  | .all,   s => s.toNat = 3
+
+instance : ∀ q : QUtt, DecidablePred (qMeaning q)
+  | .none_, s => inferInstanceAs (Decidable (s.toNat = 0))
+  | .some_, s => inferInstanceAs (Decidable (1 ≤ s.toNat))
+  | .all,   s => inferInstanceAs (Decidable (s.toNat = 3))
 
 /-- Numeral alternative set (lower-bound semantics). -/
 inductive NumUtt where
   | one | two | three
   deriving DecidableEq, Repr, Inhabited, Fintype
 
-def lbMeaning : NumUtt → WorldState → Bool
-  | .one,   s => s.toNat ≥ 1
-  | .two,   s => s.toNat ≥ 2
-  | .three, s => s.toNat ≥ 3
+def lbMeaning : NumUtt → WorldState → Prop
+  | .one,   s => 1 ≤ s.toNat
+  | .two,   s => 2 ≤ s.toNat
+  | .three, s => 3 ≤ s.toNat
+
+instance : ∀ n : NumUtt, DecidablePred (lbMeaning n)
+  | .one,   s => inferInstanceAs (Decidable (1 ≤ s.toNat))
+  | .two,   s => inferInstanceAs (Decidable (2 ≤ s.toNat))
+  | .three, s => inferInstanceAs (Decidable (3 ≤ s.toNat))
 
 /-- **Speaker access** = number of objects (out of 3) the speaker observes:
 a `Fin 4` indexed at 0..3, so `a.val` is the access value and
@@ -151,12 +161,11 @@ theorem obsKernel_eq_ofReal (a : Access) (w : WorldState) (k : Fin (a.val + 1)) 
 
 /-- A world `s` is compatible with observing `k.val` successes out of `a.val`
 draws iff the hypergeometric numerator at `(K=s.toNat, k=k.val)` is non-zero. -/
-def obsCompatible (a : Access) (k : Fin (a.val + 1)) (s : WorldState) : Bool :=
-  k.val ≤ s.toNat && a.val - k.val ≤ 3 - s.toNat
+def obsCompatible (a : Access) (k : Fin (a.val + 1)) (s : WorldState) : Prop :=
+  k.val ≤ s.toNat ∧ a.val - k.val ≤ 3 - s.toNat
 
-theorem obsCompatible_iff {a : Access} {k : Fin (a.val + 1)} {s : WorldState} :
-    obsCompatible a k s = true ↔ k.val ≤ s.toNat ∧ a.val - k.val ≤ 3 - s.toNat := by
-  simp [obsCompatible]
+instance (a : Access) (k : Fin (a.val + 1)) : DecidablePred (obsCompatible a k) := fun s =>
+  inferInstanceAs (Decidable (k.val ≤ s.toNat ∧ a.val - k.val ≤ 3 - s.toNat))
 
 /-- A witness world at which `obsKernel a · k` is positive: the world whose
 count matches `k.val` (clamped to ≤ 3). -/
@@ -175,10 +184,10 @@ private theorem witnessWorld_toNat : ∀ {n : ℕ}, n ≤ 3 → (witnessWorld n)
   | n + 4, h => absurd h (by omega)
 
 private theorem witnessWorld_obsCompatible (a : Access) (k : Fin (a.val + 1)) :
-    obsCompatible a k (witnessWorld k.val) = true := by
+    obsCompatible a k (witnessWorld k.val) := by
   have hk : k.val ≤ a.val := Nat.lt_succ_iff.mp k.isLt
   have ha := a.val_le_three
-  rw [obsCompatible_iff, witnessWorld_toNat (hk.trans ha)]
+  rw [obsCompatible, witnessWorld_toNat (hk.trans ha)]
   omega
 
 /-! ### Speaker belief — `PMF.posterior` of `obsKernel` -/
@@ -186,8 +195,7 @@ private theorem witnessWorld_obsCompatible (a : Access) (k : Fin (a.val + 1)) :
 private theorem obsMarginal_ne_zero (a : Access) (k : Fin (a.val + 1)) :
     PMF.marginal (obsKernel a) worldPrior k ≠ 0 :=
   PMF.marginal_ne_zero _ worldPrior k (worldPrior_ne_zero (witnessWorld k.val))
-    ((obsKernel_apply_ne_zero_iff a _ k).mpr
-      (obsCompatible_iff.mp (witnessWorld_obsCompatible a k)))
+    ((obsKernel_apply_ne_zero_iff a _ k).mpr (witnessWorld_obsCompatible a k))
 
 /-- Speaker's posterior over worlds given a count observation. -/
 noncomputable def speakerBelief (a : Access) (k : Fin (a.val + 1)) : PMF WorldState :=
@@ -197,19 +205,17 @@ noncomputable def speakerBelief (a : Access) (k : Fin (a.val + 1)) : PMF WorldSt
 
 /-- An utterance `u` is quality-OK at observation `(a, k)` iff `u` is true at
 every world compatible with `(a, k)`. -/
-def qualityOk (m : U → WorldState → Bool)
-    (a : Access) (k : Fin (a.val + 1)) (u : U) : Bool :=
-  [WorldState.s0, .s1, .s2, .s3].all fun s => !obsCompatible a k s || m u s
+def qualityOk (m : U → WorldState → Prop)
+    (a : Access) (k : Fin (a.val + 1)) (u : U) : Prop :=
+  ∀ s, obsCompatible a k s → m u s
 
-private theorem meaning_true_of_qualityOk {m : U → WorldState → Bool}
-    {a : Access} {k : Fin (a.val + 1)} {u : U} (hq : qualityOk m a k u = true)
-    {s : WorldState} (hs : obsCompatible a k s = true) : m u s = true := by
-  have h := List.all_eq_true.mp hq s (by cases s <;> simp)
-  simpa [hs] using h
+instance (m : U → WorldState → Prop) [∀ u, DecidablePred (m u)]
+    (a : Access) (k : Fin (a.val + 1)) : DecidablePred (qualityOk m a k) := fun u =>
+  inferInstanceAs (Decidable (∀ s, obsCompatible a k s → m u s))
 
 /-- Uniform-on-extension literal probability. -/
 noncomputable def lexReal [Fintype U]
-    (m : U → WorldState → Bool) (u : U) (s : WorldState) : ℝ :=
+    (m : U → WorldState → Prop) [∀ u, DecidablePred (m u)] (u : U) (s : WorldState) : ℝ :=
   if m u s then ((RSA.extensionOf m u).card : ℝ)⁻¹ else 0
 
 /-- `toReal` projection of `speakerBelief`. -/
@@ -219,14 +225,13 @@ noncomputable def beliefReal (a : Access) (k : Fin (a.val + 1)) (s : WorldState)
 /-- Speaker score: `softmaxBelief` over the literal probabilities, filtered
 by `qualityOk`. -/
 noncomputable abbrev s1Score [Fintype U]
-    (m : U → WorldState → Bool) (α : ℝ)
+    (m : U → WorldState → Prop) [∀ u, DecidablePred (m u)] (α : ℝ)
     (a : Access) (k : Fin (a.val + 1)) (u : U) : ℝ≥0∞ :=
-  RSA.softmaxBelief (lexReal m) (beliefReal a k) α
-    (fun u' => qualityOk m a k u' = true) u
+  RSA.softmaxBelief (lexReal m) (beliefReal a k) α (qualityOk m a k) u
 
 /-- Speaker conditional on observation. -/
 noncomputable def S1g [Fintype U]
-    (m : U → WorldState → Bool) (α : ℝ)
+    (m : U → WorldState → Prop) [∀ u, DecidablePred (m u)] (α : ℝ)
     (a : Access) (k : Fin (a.val + 1))
     (h0 : ∑' u, s1Score m α a k u ≠ 0) : PMF U :=
   PMF.normalize (s1Score m α a k ·) h0
@@ -240,7 +245,8 @@ defined at every `k`, not just kernel-supported ones. The cover hypothesis
 `WithSilence`, this is automatic via `cover_silent`. -/
 
 noncomputable def marginalSpeaker [Fintype U]
-    (m : U → WorldState → Bool) (α : ℝ) (a : Access) (w : WorldState)
+    (m : U → WorldState → Prop) [∀ u, DecidablePred (m u)]
+    (α : ℝ) (a : Access) (w : WorldState)
     (hCov : ∀ k : Fin (a.val + 1), ∃ u : U, qualityOk m a k u) :
     PMF U :=
   (obsKernel a w).bind fun k =>
@@ -249,17 +255,17 @@ noncomputable def marginalSpeaker [Fintype U]
 
 /-- Pragmatic listener: Bayesian inversion of the marginal speaker. -/
 noncomputable def L1 [Fintype U]
-    (m : U → WorldState → Bool) (α : ℝ) (a : Access)
+    (m : U → WorldState → Prop) [∀ u, DecidablePred (m u)] (α : ℝ) (a : Access)
     (hCov : ∀ k : Fin (a.val + 1), ∃ u : U, qualityOk m a k u) (u : U)
     (hMarg : PMF.marginal (fun w => marginalSpeaker m α a w hCov) worldPrior u ≠ 0) :
     PMF WorldState :=
   PMF.posterior (fun w => marginalSpeaker m α a w hCov) worldPrior u hMarg
 
-/-- Silence is universally `qOk`: `liftMeaning m none = true` at every world,
+/-- Silence is universally `qOk` — `liftMeaning m none` holds at every world,
 so the cover hypothesis is universally satisfiable. -/
-theorem cover_silent (m : U → WorldState → Bool) (a : Access) :
+theorem cover_silent (m : U → WorldState → Prop) [∀ u, DecidablePred (m u)] (a : Access) :
     ∀ k : Fin (a.val + 1), ∃ u : WithSilence U, qualityOk (liftMeaning m) a k u :=
-  fun _ => ⟨none, by simp [qualityOk]⟩
+  fun _ => ⟨none, fun _ _ => trivial⟩
 
 /-! ### Observation-kernel value table
 
@@ -345,7 +351,7 @@ to one `S1g` evaluation; at partial access it expands to the 2- or 3-term
 kernel-weighted sum. -/
 
 private theorem marginalSpeaker_a3_apply
-    [Fintype U] (m : U → WorldState → Bool) (w : WorldState)
+    [Fintype U] (m : U → WorldState → Prop) [∀ u, DecidablePred (m u)] (w : WorldState)
     (hCov : ∀ k : Fin (Access.a3.val + 1), ∃ u : U, qualityOk m .a3 k u) (u : U) :
     marginalSpeaker m 1 .a3 w hCov u =
       S1g m 1 .a3 ⟨w.toNat, by cases w <;> decide⟩
@@ -360,7 +366,7 @@ private theorem marginalSpeaker_a3_apply
     rw [h, zero_mul]
 
 private theorem marginalSpeaker_a1_apply
-    [Fintype U] (m : U → WorldState → Bool) (w : WorldState)
+    [Fintype U] (m : U → WorldState → Prop) [∀ u, DecidablePred (m u)] (w : WorldState)
     (hCov : ∀ k : Fin (Access.a1.val + 1), ∃ u : U, qualityOk m .a1 k u) (u : U) :
     marginalSpeaker m 1 .a1 w hCov u =
       obsKernel .a1 w ⟨0, by decide⟩ *
@@ -376,7 +382,7 @@ private theorem marginalSpeaker_a1_apply
   rfl
 
 private theorem marginalSpeaker_a2_apply
-    [Fintype U] (m : U → WorldState → Bool) (w : WorldState)
+    [Fintype U] (m : U → WorldState → Prop) [∀ u, DecidablePred (m u)] (w : WorldState)
     (hCov : ∀ k : Fin (Access.a2.val + 1), ∃ u : U, qualityOk m .a2 k u) (u : U) :
     marginalSpeaker m 1 .a2 w hCov u =
       obsKernel .a2 w ⟨0, by decide⟩ *
@@ -420,13 +426,13 @@ private theorem extensionOf_lbLifted_silent_card :
 /-! ### Generic `s1Score` evaluation
 
 When `qOk u` passes, `liftMeaning`-lifted utterances have a uniform lex
-value on the belief support (because: `qOk` ⇒ `m u s = true` at all
+value on the belief support (because: `qOk` ⇒ `m u s` holds at all
 compatible `s` ⊇ belief support ⇒ `lex u s = 1/(card extension)`).
 `softmaxBelief_uniform_on_support` then collapses
 `s1Score = ENNReal.ofReal (1/c)`. -/
 
 private theorem belief_support_compat (a : Access) (k : Fin (a.val + 1)) (s : WorldState)
-    (h : beliefReal a k s ≠ 0) : obsCompatible a k s = true := by
+    (h : beliefReal a k s ≠ 0) : obsCompatible a k s := by
   unfold beliefReal at h
   have hb : speakerBelief a k s ≠ 0 := by
     intro h'; exact h (h' ▸ ENNReal.toReal_zero)
@@ -434,7 +440,7 @@ private theorem belief_support_compat (a : Access) (k : Fin (a.val + 1)) (s : Wo
   rw [PMF.posterior_apply] at hb
   have h_kernel : obsKernel a s k ≠ 0 := by
     intro h_zero; apply hb; rw [h_zero, mul_zero, zero_mul]
-  exact obsCompatible_iff.mpr ((obsKernel_apply_ne_zero_iff a s k).mp h_kernel)
+  exact (obsKernel_apply_ne_zero_iff a s k).mp h_kernel
 
 private theorem belief_sum_eq_one (a : Access) (k : Fin (a.val + 1)) :
     (∑ s : WorldState, beliefReal a k s) = 1 := by
@@ -449,19 +455,17 @@ private theorem belief_sum_eq_one (a : Access) (k : Fin (a.val + 1)) :
 where `c = (extensionOf m u).card`. -/
 private theorem s1Score_uniform_apply
     [Fintype U] [DecidableEq U]
-    (m : U → WorldState → Bool) (a : Access) (k : Fin (a.val + 1))
+    (m : U → WorldState → Prop) [∀ u, DecidablePred (m u)]
+    (a : Access) (k : Fin (a.val + 1))
     (u : WithSilence U) (c : ℕ) (hc : c ≠ 0)
-    (h_qok : qualityOk (liftMeaning m) a k u = true)
+    (h_qok : qualityOk (liftMeaning m) a k u)
     (h_card : (RSA.extensionOf (liftMeaning m) u).card = c) :
     s1Score (liftMeaning m) 1 a k u = ENNReal.ofReal (1/c : ℝ) := by
-  show RSA.softmaxBelief (lexReal (liftMeaning m)) (beliefReal a k) 1
-        (fun u' => qualityOk (liftMeaning m) a k u' = true) u = _
   refine RSA.softmaxBelief_uniform_on_support _ _ _ _ (1/c : ℝ) h_qok ?_ ?_
     (belief_sum_eq_one a k)
   · intro s hbelief
-    have hmu := meaning_true_of_qualityOk h_qok (belief_support_compat a k s hbelief)
     unfold lexReal
-    rw [if_pos hmu, h_card]
+    rw [if_pos (h_qok s (belief_support_compat a k s hbelief)), h_card]
     field_simp
   · positivity
 

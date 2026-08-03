@@ -97,42 +97,52 @@ instance : DecidablePred HasEI
   | .anyNumber | .onlyBoth => .isFalse id
 
 /-- Interpretation function ℐ₁ (the paper's (6)). -/
-def I1 : Utterance → FCState → Bool
-  | .a, .onlyB => false
-  | .a, _ => true
-  | .b, .onlyA => false
-  | .b, _ => true
-  | .or_, _ => true
-  | .and_, .anyNumber | .and_, .onlyBoth => true
-  | .and_, _ => false
+def I1 : Utterance → FCState → Prop
+  | .a, .onlyB => False
+  | .a, _ => True
+  | .b, .onlyA => False
+  | .b, _ => True
+  | .or_, _ => True
+  | .and_, .anyNumber | .and_, .onlyBoth => True
+  | .and_, _ => False
+
+instance : ∀ u, DecidablePred (I1 u) := fun u w => by
+  cases u <;> cases w <;> first | exact .isTrue trivial | exact .isFalse id
 
 /-- Interpretation function ℐ₂ (the paper's (7)). -/
-def I2 : Utterance → FCState → Bool
-  | .a, .onlyA => true
-  | .a, _ => false
-  | .b, .onlyB => true
-  | .b, _ => false
-  | .or_, .onlyBoth => false
-  | .or_, _ => true
-  | .and_, .onlyBoth => true
-  | .and_, _ => false
+def I2 : Utterance → FCState → Prop
+  | .a, .onlyA => True
+  | .a, _ => False
+  | .b, .onlyB => True
+  | .b, _ => False
+  | .or_, .onlyBoth => False
+  | .or_, _ => True
+  | .and_, .onlyBoth => True
+  | .and_, _ => False
+
+instance : ∀ u, DecidablePred (I2 u) := fun u w => by
+  cases u <;> cases w <;> first | exact .isTrue trivial | exact .isFalse id
 
 /-- Meaning indexed by interpretation function. -/
-def interpMeaning : Interp → Utterance → FCState → Bool
+def interpMeaning : Interp → Utterance → FCState → Prop
   | .literal => I1
   | .exhaustified => I2
 
+instance : ∀ i u, DecidablePred (interpMeaning i u)
+  | .literal, u => inferInstanceAs (DecidablePred (I1 u))
+  | .exhaustified, u => inferInstanceAs (DecidablePred (I2 u))
+
 /-- ℐ₂ refines ℐ₁: exhaustification only strengthens. -/
-theorem I2_refines_I1 : ∀ u w, I2 u w = true → I1 u w = true := by decide
+theorem I2_refines_I1 : ∀ u w, I2 u w → I1 u w := by decide
 
 /-- ℐ₁(Or) is literally true everywhere — maximally uninformative. -/
-theorem I1_or_everywhere : ∀ w, I1 .or_ w = true := by decide
+theorem I1_or_everywhere : ∀ w, I1 .or_ w := by decide
 
 /-- ℐ₂(Or) excludes exactly Only Both. -/
-theorem I2_or_excludes_onlyBoth : ∀ w, I2 .or_ w = true ↔ w ≠ .onlyBoth := by decide
+theorem I2_or_excludes_onlyBoth : ∀ w, I2 .or_ w ↔ w ≠ .onlyBoth := by decide
 
 /-- ℐ₂(A) singles out exactly Only A — the risk the speaker avoids. -/
-theorem I2_a_singleton : ∀ w, I2 .a w = true ↔ w = .onlyA := by decide
+theorem I2_a_singleton : ∀ w, I2 .a w ↔ w = .onlyA := by decide
 
 /-! ### ENNReal budget helpers -/
 
@@ -161,7 +171,7 @@ def nonEiPairs : Finset (FCState × Interp) := Finset.univ.filter (fun p => ¬ H
 /-! ### The basic model, uniform prior
 
 At a uniform world prior the paper's `P_L0(w|u,ℐ) ∝ ℐ(u,w)·P(w)` is uniform
-on the extension, i.e. `RSA.Canonical.L0OfBool`. Exact S1(Or) values at
+on the extension, i.e. `RSA.Canonical.L0OfPred`. Exact S1(Or) values at
 α = 2, for reference: ℐ₁ row 16/41, 16/41, 8/33, 8/83, 8/83; ℐ₂ row 1/17,
 1/17, 1, 1, 0 (states in Table-2 order). -/
 
@@ -176,15 +186,15 @@ theorem ext_nonempty (i : Interp) (u : Utterance) :
 
 /-- Literal listener of the basic model. -/
 noncomputable abbrev l0 : Interp → Utterance → PMF FCState :=
-  L0OfBool interpMeaning ext_nonempty
+  L0OfPred interpMeaning ext_nonempty
 
 instance : ViableSpeaker (powUtility 2 l0) :=
   viableSpeaker_powUtility_of_witness 2 l0 fun s => by
     obtain ⟨w, i⟩ := s
     cases i <;> cases w <;>
       first
-        | exact ⟨.or_, L0OfBool_ne_zero _ _ (by decide)⟩
-        | exact ⟨.and_, L0OfBool_ne_zero _ _ (by decide)⟩
+        | exact ⟨.or_, L0OfPred_ne_zero _ _ (by decide)⟩
+        | exact ⟨.and_, L0OfPred_ne_zero _ _ (by decide)⟩
 
 /-- The pragmatic speaker of the basic model (the paper's `P_S1`, α = 2). -/
 noncomputable abbrev speaker : FCState × Interp → PMF Utterance :=
@@ -197,16 +207,16 @@ noncomputable abbrev prior : PMF (FCState × Interp) := PMF.uniformOfFintype _
 of the avoidance mechanism (paper §3.3). -/
 theorem speaker_or_onlyOne_exh : speaker (.onlyOne, .exhaustified) .or_ = 1 :=
   S1_powUtility_eq_one 2 l0 two_ne_zero .or_ fun u' hu' => by
-    cases u' <;> first | exact absurd rfl hu' | exact L0OfBool_eq_zero _ _ (by decide)
+    cases u' <;> first | exact absurd rfl hu' | exact L0OfPred_eq_zero _ _ (by decide)
 
 /-- Under ℐ₂ at Any Number, Or is the only applicable utterance. -/
 theorem speaker_or_anyNumber_exh : speaker (.anyNumber, .exhaustified) .or_ = 1 :=
   S1_powUtility_eq_one 2 l0 two_ne_zero .or_ fun u' hu' => by
-    cases u' <;> first | exact absurd rfl hu' | exact L0OfBool_eq_zero _ _ (by decide)
+    cases u' <;> first | exact absurd rfl hu' | exact L0OfPred_eq_zero _ _ (by decide)
 
 /-- Under ℐ₂ at Only Both, Or is inapplicable. -/
 theorem speaker_or_onlyBoth_exh : speaker (.onlyBoth, .exhaustified) .or_ = 0 :=
-  S1_powUtility_eq_zero 2 l0 two_ne_zero (L0OfBool_eq_zero _ _ (by decide))
+  S1_powUtility_eq_zero 2 l0 two_ne_zero (L0OfPred_eq_zero _ _ (by decide))
 
 /-- The avoidance mechanism at S1: under ℐ₂ at Only A the bare disjunct
 strictly beats the disjunction (16/17 vs 1/17). -/
@@ -215,8 +225,8 @@ theorem speaker_prefers_a_at_onlyA_exh :
   show S1 (powUtility 2 l0) (.onlyA, .exhaustified) .or_
     < S1 (powUtility 2 l0) (.onlyA, .exhaustified) .a
   rw [S1_powUtility_eq_normalize, PMF.normalize_lt_iff_lt,
-      powWeight_L0OfBool_of_mem _ _ 4 (by decide) (by decide),
-      powWeight_L0OfBool_of_mem _ _ 1 (by decide) (by decide)]
+      powWeight_L0OfPred_of_mem _ _ 4 (by decide) (by decide),
+      powWeight_L0OfPred_of_mem _ _ 1 (by decide) (by decide)]
   exact ENNReal.pow_lt_pow_left two_ne_zero
     (ENNReal.inv_lt_inv.mpr (Nat.cast_lt.mpr (by norm_num)))
 
@@ -232,32 +242,32 @@ noncomputable abbrev listener (u : Utterance)
   L1 speaker prior u h
 
 private theorem speaker_or_onlyA_lit_lt_half : speaker (.onlyA, .literal) .or_ < 2⁻¹ :=
-  (S1_L0OfBool_lt_inv_succ_of_dominator _ _ (u' := .a) (n := 1) (k := 5) (k' := 4)
+  (S1_L0OfPred_lt_inv_succ_of_dominator _ _ (u' := .a) (n := 1) (k := 5) (k' := 4)
     (by decide) (by decide) (by decide) (by decide) (by decide) two_ne_zero
     (by norm_num)).trans_le (by norm_num)
 
 private theorem speaker_or_onlyB_lit_lt_half : speaker (.onlyB, .literal) .or_ < 2⁻¹ :=
-  (S1_L0OfBool_lt_inv_succ_of_dominator _ _ (u' := .b) (n := 1) (k := 5) (k' := 4)
+  (S1_L0OfPred_lt_inv_succ_of_dominator _ _ (u' := .b) (n := 1) (k := 5) (k' := 4)
     (by decide) (by decide) (by decide) (by decide) (by decide) two_ne_zero
     (by norm_num)).trans_le (by norm_num)
 
 private theorem speaker_or_anyNumber_lit_lt_quarter : speaker (.anyNumber, .literal) .or_ < 4⁻¹ :=
-  (S1_L0OfBool_lt_inv_succ_of_dominator _ _ (u' := .and_) (n := 3) (k := 5) (k' := 2)
+  (S1_L0OfPred_lt_inv_succ_of_dominator _ _ (u' := .and_) (n := 3) (k := 5) (k' := 2)
     (by decide) (by decide) (by decide) (by decide) (by decide) two_ne_zero
     (by norm_num)).trans_le (by norm_num)
 
 private theorem speaker_or_onlyBoth_lit_lt_quarter : speaker (.onlyBoth, .literal) .or_ < 4⁻¹ :=
-  (S1_L0OfBool_lt_inv_succ_of_dominator _ _ (u' := .and_) (n := 3) (k := 5) (k' := 2)
+  (S1_L0OfPred_lt_inv_succ_of_dominator _ _ (u' := .and_) (n := 3) (k := 5) (k' := 2)
     (by decide) (by decide) (by decide) (by decide) (by decide) two_ne_zero
     (by norm_num)).trans_le (by norm_num)
 
 private theorem speaker_or_onlyA_exh_lt_quarter : speaker (.onlyA, .exhaustified) .or_ < 4⁻¹ :=
-  (S1_L0OfBool_lt_inv_succ_of_dominator _ _ (u' := .a) (n := 3) (k := 4) (k' := 1)
+  (S1_L0OfPred_lt_inv_succ_of_dominator _ _ (u' := .a) (n := 3) (k := 4) (k' := 1)
     (by decide) (by decide) (by decide) (by decide) (by decide) two_ne_zero
     (by norm_num)).trans_le (by norm_num)
 
 private theorem speaker_or_onlyB_exh_lt_quarter : speaker (.onlyB, .exhaustified) .or_ < 4⁻¹ :=
-  (S1_L0OfBool_lt_inv_succ_of_dominator _ _ (u' := .b) (n := 3) (k := 4) (k' := 1)
+  (S1_L0OfPred_lt_inv_succ_of_dominator _ _ (u' := .b) (n := 3) (k := 4) (k' := 1)
     (by decide) (by decide) (by decide) (by decide) (by decide) two_ne_zero
     (by norm_num)).trans_le (by norm_num)
 
@@ -266,10 +276,10 @@ private theorem speaker_or_onlyA_lit_gt_quarter : 4⁻¹ < speaker (.onlyA, .lit
     rw [show (Finset.univ.erase Utterance.or_) = {.a, .b, .and_} from by decide,
         Finset.sum_insert (by decide), Finset.sum_insert (by decide),
         Finset.sum_singleton,
-        powWeight_L0OfBool_of_mem _ _ 4 (by decide) (by decide),
-        powWeight_L0OfBool_of_not_mem _ _ two_ne_zero (by decide),
-        powWeight_L0OfBool_of_not_mem _ _ two_ne_zero (by decide),
-        powWeight_L0OfBool_of_mem _ _ 5 (by decide) (by decide),
+        powWeight_L0OfPred_of_mem _ _ 4 (by decide) (by decide),
+        powWeight_L0OfPred_of_not_mem _ _ two_ne_zero (by decide),
+        powWeight_L0OfPred_of_not_mem _ _ two_ne_zero (by decide),
+        powWeight_L0OfPred_of_mem _ _ 5 (by decide) (by decide),
         add_zero, add_zero]
     exact ENNReal.inv_pow_lt_natCast_mul_inv_pow (by norm_num) (by norm_num)
       (by norm_num)).trans_le' (by norm_num)
@@ -279,10 +289,10 @@ private theorem speaker_or_onlyB_lit_gt_quarter : 4⁻¹ < speaker (.onlyB, .lit
     rw [show (Finset.univ.erase Utterance.or_) = {.a, .b, .and_} from by decide,
         Finset.sum_insert (by decide), Finset.sum_insert (by decide),
         Finset.sum_singleton,
-        powWeight_L0OfBool_of_not_mem _ _ two_ne_zero (by decide),
-        powWeight_L0OfBool_of_mem _ _ 4 (by decide) (by decide),
-        powWeight_L0OfBool_of_not_mem _ _ two_ne_zero (by decide),
-        powWeight_L0OfBool_of_mem _ _ 5 (by decide) (by decide),
+        powWeight_L0OfPred_of_not_mem _ _ two_ne_zero (by decide),
+        powWeight_L0OfPred_of_mem _ _ 4 (by decide) (by decide),
+        powWeight_L0OfPred_of_not_mem _ _ two_ne_zero (by decide),
+        powWeight_L0OfPred_of_mem _ _ 5 (by decide) (by decide),
         zero_add, add_zero]
     exact ENNReal.inv_pow_lt_natCast_mul_inv_pow (by norm_num) (by norm_num)
       (by norm_num)).trans_le' (by norm_num)
@@ -375,7 +385,7 @@ def biasedWeight : FCState → ℕ
 private theorem wB_tsum_ne_zero (i : Interp) (u : Utterance) :
     (∑' w, if interpMeaning i u w then (biasedWeight w : ℝ≥0∞) else 0) ≠ 0 := by
   intro hz
-  have key : ∀ w : FCState, interpMeaning i u w = true → False := fun w hw => by
+  have key : ∀ w : FCState, interpMeaning i u w → False := fun w hw => by
     have h := ENNReal.tsum_eq_zero.mp hz w
     rw [if_pos hw, Nat.cast_eq_zero] at h
     exact absurd h (by cases w <;> simp [biasedWeight])
@@ -399,13 +409,13 @@ noncomputable abbrev l0B (i : Interp) (u : Utterance) : PMF FCState :=
   PMF.normalize _ (wB_tsum_ne_zero i u) (wB_tsum_ne_top i u)
 
 private theorem l0B_ne_zero {i : Interp} {u : Utterance} {w : FCState}
-    (h : interpMeaning i u w = true) : l0B i u w ≠ 0 := by
+    (h : interpMeaning i u w) : l0B i u w ≠ 0 := by
   rw [PMF.normalize_apply, if_pos h]
   exact mul_ne_zero (by rw [Nat.cast_ne_zero]; cases w <;> simp [biasedWeight])
     (ENNReal.inv_ne_zero.mpr (wB_tsum_ne_top i u))
 
 private theorem l0B_eq_zero {i : Interp} {u : Utterance} {w : FCState}
-    (h : interpMeaning i u w ≠ true) : l0B i u w = 0 := by
+    (h : ¬ interpMeaning i u w) : l0B i u w = 0 := by
   rw [PMF.normalize_apply, if_neg h, zero_mul]
 
 instance : ViableSpeaker (powUtility 2 l0B) :=
@@ -493,6 +503,6 @@ under ℐ₂ (states in Table-2 order), so given Or the FCI score sum 66/41
 again dominates the non-FCI sum ≈ 0.87: the avoidance mechanism between the
 bare disjuncts and Or does not depend on And. The formalisation is omitted
 for space; it instantiates the same `RSA.Canonical.powUtility` pipeline over
-the four-utterance meaning table with `.null` mapped to `fun _ => true`. -/
+the four-utterance meaning table with `.null` mapped to `fun _ => True`. -/
 
 end ChampollionAlsopGrosu2019

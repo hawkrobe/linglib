@@ -103,23 +103,40 @@ abbrev Utterance := WithSilence Assertion
     `Features.ChangeOfState.CoSType` at the world's temporal projections —
     presupposition and assertion by construction
     (`Features.ChangeOfState.CoSType.eval_iff`), not by bridge theorem. -/
-def assertionMeaning : Assertion → WorldState → Bool
+def assertionMeaning : Assertion → WorldState → Prop
   | .smokes,            w => w.now
-  | .doesntSmoke,       w => !w.now
+  | .doesntSmoke,       w => ¬ w.now
   | .smoked,            w => w.past
-  | .didntSmoke,        w => !w.past
+  | .didntSmoke,        w => ¬ w.past
   | .always,      w => Features.ChangeOfState.CoSType.continuation.eval w.past w.now
-  | .notAlways,   w => !Features.ChangeOfState.CoSType.continuation.eval w.past w.now
+  | .notAlways,   w => ¬ Features.ChangeOfState.CoSType.continuation.eval w.past w.now
   | .stopped,    w => Features.ChangeOfState.CoSType.cessation.eval w.past w.now
-  | .notStopped, w => !Features.ChangeOfState.CoSType.cessation.eval w.past w.now
+  | .notStopped, w => ¬ Features.ChangeOfState.CoSType.cessation.eval w.past w.now
   | .started,    w => Features.ChangeOfState.CoSType.inception.eval w.past w.now
-  | .notStarted, w => !Features.ChangeOfState.CoSType.inception.eval w.past w.now
-  | .never,       w => !w.past && !w.now
-  | .notNever,    w => !(!w.past && !w.now)
+  | .notStarted, w => ¬ Features.ChangeOfState.CoSType.inception.eval w.past w.now
+  | .never,       w => ¬ w.past ∧ ¬ w.now
+  | .notNever,    w => ¬ (¬ w.past ∧ ¬ w.now)
+
+instance : ∀ a : Assertion, DecidablePred (assertionMeaning a)
+  | .smokes,      _ => inferInstanceAs (Decidable (_ = true))
+  | .doesntSmoke, _ => inferInstanceAs (Decidable (¬ _))
+  | .smoked,      _ => inferInstanceAs (Decidable (_ = true))
+  | .didntSmoke,  _ => inferInstanceAs (Decidable (¬ _))
+  | .always,      _ => inferInstanceAs (Decidable (_ = true))
+  | .notAlways,   _ => inferInstanceAs (Decidable (¬ _))
+  | .stopped,     _ => inferInstanceAs (Decidable (_ = true))
+  | .notStopped,  _ => inferInstanceAs (Decidable (¬ _))
+  | .started,     _ => inferInstanceAs (Decidable (_ = true))
+  | .notStarted,  _ => inferInstanceAs (Decidable (¬ _))
+  | .never,       _ => inferInstanceAs (Decidable (_ ∧ _))
+  | .notNever,    _ => inferInstanceAs (Decidable (¬ _))
 
 /-- Literal truth conditions lifted to `Utterance`: silence is universally
 true (`RSA.liftMeaning`). -/
-def literalMeaning : Utterance → WorldState → Bool := liftMeaning assertionMeaning
+def literalMeaning : Utterance → WorldState → Prop := liftMeaning assertionMeaning
+
+instance : ∀ u : Utterance, DecidablePred (literalMeaning u) :=
+  inferInstanceAs (∀ u, DecidablePred (liftMeaning assertionMeaning u))
 
 open Features.ChangeOfState (CoSType)
 /-! ### Context sets -/
@@ -141,16 +158,27 @@ inductive ContextSet where
   deriving DecidableEq, Repr, Inhabited, Fintype
 
 /-- World-context compatibility: w ∈ C. -/
-def compatibleBool : ContextSet → WorldState → Bool
+def compatible : ContextSet → WorldState → Prop
   | .pastTrue,          w => w.past
-  | .pastFalse,         w => !w.past
+  | .pastFalse,         w => ¬ w.past
   | .nowTrue,           w => w.now
-  | .nowFalse,          w => !w.now
-  | .pastTrueNowTrue,   w => w.past && w.now
-  | .pastTrueNowFalse,  w => w.past && !w.now
-  | .pastFalseNowTrue,  w => !w.past && w.now
-  | .pastFalseNowFalse, w => !w.past && !w.now
-  | .universe,          _ => true
+  | .nowFalse,          w => ¬ w.now
+  | .pastTrueNowTrue,   w => w.past ∧ w.now
+  | .pastTrueNowFalse,  w => w.past ∧ ¬ w.now
+  | .pastFalseNowTrue,  w => ¬ w.past ∧ w.now
+  | .pastFalseNowFalse, w => ¬ w.past ∧ ¬ w.now
+  | .universe,          _ => True
+
+instance : ∀ cs : ContextSet, DecidablePred (compatible cs)
+  | .pastTrue,          _ => inferInstanceAs (Decidable (_ = true))
+  | .pastFalse,         _ => inferInstanceAs (Decidable (¬ _))
+  | .nowTrue,           _ => inferInstanceAs (Decidable (_ = true))
+  | .nowFalse,          _ => inferInstanceAs (Decidable (¬ _))
+  | .pastTrueNowTrue,   _ => inferInstanceAs (Decidable (_ ∧ _))
+  | .pastTrueNowFalse,  _ => inferInstanceAs (Decidable (_ ∧ _))
+  | .pastFalseNowTrue,  _ => inferInstanceAs (Decidable (_ ∧ _))
+  | .pastFalseNowFalse, _ => inferInstanceAs (Decidable (_ ∧ _))
+  | .universe,          _ => isTrue trivial
 
 /-! ### QUD -/
 
@@ -195,7 +223,7 @@ def contextPrior : ContextSet → ℚ≥0
 prior cancels, and empty extensions normalize to the zero row). -/
 def l0Score (cs : ContextSet) (u : Utterance) : WorldState → ℚ≥0 :=
   PMF.normalizeScores fun w =>
-    if compatibleBool cs w && literalMeaning u w then 1 else 0
+    if compatible cs w ∧ literalMeaning u w then 1 else 0
 
 /-- QUD aggregation of the literal listener (eq. 5): sum over the QUD cell. -/
 def qAgg (qud : QUD) (cs : ContextSet) (u : Utterance) : WorldState → ℚ≥0
@@ -241,8 +269,15 @@ noncomputable def l1Ctx (qud : QUD) (u : Utterance) : PMF ContextSet :=
 
 /-- Event marginal of the world-side listener. -/
 noncomputable def l1WorldEvent (qud : QUD) (u : Utterance)
-    (P : WorldState → Bool) : ℝ≥0∞ :=
+    (P : WorldState → Prop) [DecidablePred P] : ℝ≥0∞ :=
   ∑' w, if P w then l1World qud u w else 0
+
+/-- `PMF.ofScores_event_lt` indexes events by `WorldState → Bool`; this is the
+`decide` transport that lets the event predictions below cite it. -/
+private theorem l1WorldEvent_eq_decide (qud : QUD) (u : Utterance)
+    (P : WorldState → Prop) [DecidablePred P] :
+    l1WorldEvent qud u P = ∑' w, if decide (P w) then l1World qud u w else 0 := by
+  simp [l1WorldEvent]
 
 /-! ### Listener predictions -/
 
@@ -259,9 +294,10 @@ theorem qud_now_wTT_eq_wFT :
 
 /-- L1 infers the QUD answer now=T from "didn't stop smoking". -/
 theorem qud_answer_now_true :
-    l1WorldEvent .now (some .notStopped) (fun w => !w.now) <
-      l1WorldEvent .now (some .notStopped) (·.now) :=
-  PMF.ofScores_event_lt _ _ (by decide +kernel)
+    l1WorldEvent .now (some .notStopped) (fun w => ¬ w.now) <
+      l1WorldEvent .now (some .notStopped) (·.now) := by
+  rw [l1WorldEvent_eq_decide, l1WorldEvent_eq_decide]
+  exact PMF.ofScores_event_lt _ _ (by decide +kernel)
 
 /-! ### World elimination
 
@@ -320,37 +356,41 @@ theorem now_context_dispreferred :
 /-- "Stopped smoking" → L1 infers now=F (the assertion). -/
 theorem stopped_qud_answer :
     l1WorldEvent .now (some .stopped) (·.now) <
-      l1WorldEvent .now (some .stopped) (fun w => !w.now) :=
-  PMF.ofScores_event_lt _ _ (by decide +kernel)
+      l1WorldEvent .now (some .stopped) (fun w => ¬ w.now) := by
+  rw [l1WorldEvent_eq_decide, l1WorldEvent_eq_decide]
+  exact PMF.ofScores_event_lt _ _ (by decide +kernel)
 
 /-! ### Structural properties -/
 
 /-- "didn't stop smoking" excludes exactly the stopping world. -/
 theorem notStopped_compatible_worlds (w : WorldState) :
-    literalMeaning (some .notStopped) w = true ↔ w ≠ .wTF := by cases w <;> decide
+    literalMeaning (some .notStopped) w ↔ w ≠ .wTF := by cases w <;> decide
 
 /-- Under a +past context set, "didn't stop" is maximally informative for
 QUD_now: it narrows to exactly wTT. -/
 theorem notStopped_informative_in_pastTrue (w : WorldState) :
-    (compatibleBool .pastTrue w && literalMeaning (some .notStopped) w) = true ↔
+    (compatible .pastTrue w ∧ literalMeaning (some .notStopped) w) ↔
       w = .wTT := by cases w <;> decide
 
 /-- "stopped smoking" denotes exactly the stopping world (T,F). -/
 theorem stopped_world (w : WorldState) :
-    literalMeaning (some .stopped) w = true ↔ w = .wTF := by cases w <;> decide
+    literalMeaning (some .stopped) w ↔ w = .wTF := by cases w <;> decide
 
 /-- "always smoked" denotes exactly (T,T). -/
 theorem alwaysSmoked_world (w : WorldState) :
-    literalMeaning (some .always) w = true ↔ w = .wTT := by cases w <;> decide
+    literalMeaning (some .always) w ↔ w = .wTT := by cases w <;> decide
 
 /-- "never smoked" denotes exactly (F,F). -/
 theorem neverSmoked_world (w : WorldState) :
-    literalMeaning (some .never) w = true ↔ w = .wFF := by cases w <;> decide
+    literalMeaning (some .never) w ↔ w = .wFF := by cases w <;> decide
 
 /-- Context sets that entail past=T (used for measuring projection). -/
-def entailsPast : ContextSet → Bool
-  | .pastTrue | .pastTrueNowTrue | .pastTrueNowFalse => true
-  | _ => false
+def entailsPast : ContextSet → Prop
+  | .pastTrue | .pastTrueNowTrue | .pastTrueNowFalse => True
+  | _ => False
+
+instance : DecidablePred entailsPast := fun cs => by
+  cases cs <;> first | exact isTrue trivial | exact isFalse id
 
 /-- 3 of 9 context sets entail past=T. -/
 theorem three_entail_past :

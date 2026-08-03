@@ -62,16 +62,20 @@ abbrev NegLexicon := NegationType
 /-- Utterance meaning parameterized by thresholds and lexicon, grounded in
 shared `Degree` predicates. -/
 def utteranceMeaning (θ₁ θ₂ : HThreshold) (L : NegLexicon)
-    (u : Utterance) (d : HappinessDeg) : Bool :=
+    (u : Utterance) (d : HappinessDeg) : Prop :=
   match u with
   | .happy => positiveMeaning d θ₁
-  | .notHappy => !positiveMeaning d θ₁
+  | .notHappy => ¬ positiveMeaning d θ₁
   | .unhappy => match L with
     | .contrary => negativeMeaning d θ₂
-    | .contradictory => !positiveMeaning d θ₁
+    | .contradictory => ¬ positiveMeaning d θ₁
   | .notUnhappy => match L with
-    | .contrary => !negativeMeaning d θ₂
+    | .contrary => ¬ negativeMeaning d θ₂
     | .contradictory => positiveMeaning d θ₁
+
+instance (θ₁ θ₂ : HThreshold) (L : NegLexicon) (u : Utterance) :
+    DecidablePred (utteranceMeaning θ₁ θ₂ L u) := fun d => by
+  unfold utteranceMeaning; cases u <;> cases L <;> infer_instance
 
 /-- Utterance cost (morphological complexity): `C(un-) = 2`, `C(not) = 3`,
 combined additively. -/
@@ -86,10 +90,10 @@ instance : Nonempty HappinessDeg := ⟨deg 0⟩
 instance : Nonempty Utterance := ⟨.happy⟩
 instance : Nonempty LatentState := ⟨(thr 0, thr 0, .contrary)⟩
 
-/-! ## §1. L0 — uniform on extension via `RSA.L0OfBoolMeaning` -/
+/-! ## §1. L0 — uniform on extension via `RSA.L0OfPred` -/
 
 /-- Lexicon as a function from latent state. -/
-abbrev meaningAt (l : LatentState) : Utterance → HappinessDeg → Bool :=
+abbrev meaningAt (l : LatentState) : Utterance → HappinessDeg → Prop :=
   utteranceMeaning l.1 l.2.1 l.2.2
 
 /-- Extension of `meaningAt l u`. -/

@@ -326,9 +326,13 @@ def Latent.qud : Latent → QUD
 
 /-- RSA meaning derived from `scopeTruth`.
     Null utterance is always true (uninformative baseline). -/
-def uttMeaning : ScopeReading → Utt → JumpOutcome → Bool
-  | _, .null, _ => true
-  | s, .everyNot, w => scopeTruth s w
+def uttMeaning (s : ScopeReading) : Utt → JumpOutcome → Prop
+  | .null, _ => True
+  | .everyNot, w => scopeTruth s w = true
+
+instance (s : ScopeReading) : ∀ u, DecidablePred (uttMeaning s u)
+  | .null, _ => isTrue trivial
+  | .everyNot, w => inferInstanceAs (Decidable (scopeTruth s w = true))
 
 /-- 2-horse domain for grounding truth conditions in quantifier semantics. -/
 inductive Horse where | h1 | h2 deriving DecidableEq
@@ -415,7 +419,7 @@ theorem scopeDerivation_matches_scopeTruth :
     by the RSA config matches the compositional scope derivation. -/
 theorem rsa_meaning_from_scope_derivation :
     ∀ (lat : Latent) (w : JumpOutcome),
-    (uttMeaning lat.scope .everyNot w = true) ↔
+    uttMeaning lat.scope .everyNot w ↔
     (everyHorseDidntJump w).meaningAt (readingToScopeConfig lat.scope) := by
   intro lat w; cases lat <;>
     simp only [Latent.scope, readingToScopeConfig, everyHorseDidntJump, uttMeaning, scopeTruth]
@@ -582,11 +586,11 @@ noncomputable def worldPrior : PMF JumpOutcome := PMF.uniformOfFintype JumpOutco
 theorem worldPrior_ne_zero (w : JumpOutcome) : worldPrior w ≠ 0 :=
   (worldPrior.mem_support_iff w).mp (PMF.mem_support_uniformOfFintype w)
 
-/-! #### L0 as `RSA.L0OfBoolMeaning`
+/-! #### L0 as `RSA.L0OfPred`
 
-`uttMeaning lat.scope u w` is `Bool`-valued, so L0 is uniform on the
-extension. Each scope reading induces its own L0 distribution (the meaning
-function's first argument is `ScopeReading`, not just `Utt`). -/
+`uttMeaning lat.scope u` is a decidable predicate over worlds, so L0 is
+uniform on the extension. Each scope reading induces its own L0 distribution
+(the meaning function's first argument is `ScopeReading`, not just `Utt`). -/
 
 /-- Extension of `uttMeaning s u`: the worlds where `u` is true under scope `s`. -/
 abbrev extension (s : ScopeReading) (u : Utt) : Finset JumpOutcome :=
@@ -597,25 +601,25 @@ theorem extension_nonempty (s : ScopeReading) (u : Utt) : (extension s u).Nonemp
   -- both surface and inverse readings of everyNot are true at `.zero`.
   refine ⟨.zero, ?_⟩
   rw [RSA.mem_extensionOf]
-  cases s <;> cases u <;> rfl
+  cases s <;> cases u <;> trivial
 
 /-- Literal listener: uniform on the extension of `uttMeaning lat.scope u`. -/
 noncomputable def L0 (s : ScopeReading) (u : Utt) : PMF JumpOutcome :=
-  RSA.L0OfBoolMeaning (uttMeaning s) u (extension_nonempty s u)
+  RSA.L0OfPred (uttMeaning s) u (extension_nonempty s u)
 
 @[simp] theorem mem_support_L0_iff (s : ScopeReading) (u : Utt) (w : JumpOutcome) :
-    w ∈ (L0 s u).support ↔ uttMeaning s u w = true :=
-  RSA.mem_support_L0OfBoolMeaning_iff _ _
+    w ∈ (L0 s u).support ↔ uttMeaning s u w :=
+  RSA.mem_support_L0OfPred_iff _ _
 
 theorem L0_apply_of_true {s : ScopeReading} {u : Utt} {w : JumpOutcome}
-    (h : uttMeaning s u w = true) :
+    (h : uttMeaning s u w) :
     L0 s u w = ((extension s u).card : ℝ≥0∞)⁻¹ :=
-  RSA.L0OfBoolMeaning_apply_of_mem _ h
+  RSA.L0OfPred_apply_of_mem _ h
 
 theorem L0_apply_of_false {s : ScopeReading} {u : Utt} {w : JumpOutcome}
-    (h : uttMeaning s u w ≠ true) :
+    (h : ¬ uttMeaning s u w) :
     L0 s u w = 0 :=
-  RSA.L0OfBoolMeaning_apply_of_not_mem _ h
+  RSA.L0OfPred_apply_of_not_mem _ h
 
 /-! #### QUD projection facts on ℝ≥0∞ -/
 
@@ -659,7 +663,7 @@ noncomputable def s1Weight (α : ℝ) (lat : Latent) (w : JumpOutcome) (u : Utt)
 theorem L0_null_ne_zero (s : ScopeReading) (w : JumpOutcome) :
     L0 s .null w ≠ 0 := by
   rw [← PMF.mem_support_iff, mem_support_L0_iff]
-  cases s <;> rfl
+  trivial
 
 theorem s1Weight_null_ne_zero {α : ℝ} (hα : 0 < α) (lat : Latent) (w : JumpOutcome) :
     s1Weight α lat w .null ≠ 0 := by
@@ -784,14 +788,14 @@ Structurally generic: constructs cover witnesses for universal-extension
 utterances. -/
 theorem extension_null_eq_univ (s : ScopeReading) :
     extension s .null = Finset.univ := by
-  ext w; simp [extension, RSA.mem_extensionOf]; cases s <;> cases w <;> rfl
+  ext w; simp [extension, RSA.mem_extensionOf, uttMeaning]
 
 /-! L0 values at each (scope, utterance, world) — the leaves every
 comparison below reduces to. -/
 
 private lemma L0_null_apply (sc : ScopeReading) (w : JumpOutcome) :
     L0 sc .null w = (3 : ℝ≥0∞)⁻¹ := by
-  rw [L0_apply_of_true (by cases sc <;> rfl), extension_null_eq_univ]; rfl
+  rw [L0_apply_of_true (show uttMeaning sc .null w from trivial), extension_null_eq_univ]; rfl
 
 private lemma L0_surf_en : ∀ w, L0 .surface .everyNot w =
     if w = .zero then 1 else 0
@@ -867,8 +871,7 @@ theorem S1g_zero_gt_one_for_some_latent {α : ℝ} (hα : 0 < α) :
       refine ENNReal.rpow_le_rpow ?_ hα.le
       show qProj .none_ (fun w' => L0 .inverse u w') .zero ≤
            qProj .none_ (fun w' => L0 .inverse u w') .one
-      cases u <;> simp [qProj, L0_null_apply, L0_inv_en] <;>
-        exact le_self_add
+      cases u <;> simp [qProj, L0_null_apply, L0_inv_en]
 
 /-- Baseline L1 ordering `L1(zero | everyNot) > L1(one | everyNot)` for
 every α > 0: cancel the marginal and the uniform world prior, then compare
@@ -1084,9 +1087,13 @@ def Latent10.qud : Latent10 → QUD5
 
 /-- RSA meaning for the two-not model, parameterized by numeral reading.
     Null utterance is always true (uninformative baseline). -/
-def uttMeaning (nr : NumeralReading) : ScopeReading → Utt → JumpOutcome4 → Bool
-  | _, .null, _ => true
-  | s, .twoNot, w => twoNotTruth nr s w
+def uttMeaning (nr : NumeralReading) (s : ScopeReading) : Utt → JumpOutcome4 → Prop
+  | .null, _ => True
+  | .twoNot, w => twoNotTruth nr s w = true
+
+instance (nr : NumeralReading) (s : ScopeReading) : ∀ u, DecidablePred (uttMeaning nr s u)
+  | .null, _ => isTrue trivial
+  | .twoNot, w => inferInstanceAs (Decidable (twoNotTruth nr s w = true))
 
 open Intensional (Denot)
 open Quantification (exactly_n_sem at_least_n_sem)
@@ -1240,11 +1247,11 @@ theorem exact_vs_atleast_endorsement : s2 .atLeast .w2 .twoNot < s2 .exact .w2 .
     has exactly 1 true world (w2), while under at-least it has 3 (w0–w2).
     This drives the endorsement difference via S1 informativity. -/
 theorem exact_surface_singleton :
-    (List.filter (uttMeaning .exact .surface .twoNot) [.w0, .w1, .w2, .w3, .w4]).length = 1 := by
+    (Finset.univ.filter (uttMeaning .exact .surface .twoNot)).card = 1 := by
   decide
 
 theorem atLeast_surface_triple :
-    (List.filter (uttMeaning .atLeast .surface .twoNot) [.w0, .w1, .w2, .w3, .w4]).length = 3 := by
+    (Finset.univ.filter (uttMeaning .atLeast .surface .twoNot)).card = 3 := by
   decide
 
 /-- Exact inverse has 4 true worlds (w0,w1,w3,w4) — very uninformative.
@@ -1252,13 +1259,13 @@ theorem atLeast_surface_triple :
     contributes nothing at w2 (it's false there), explaining why surface
     scope dominates the S2 prediction under exact semantics. -/
 theorem exact_inverse_quad :
-    (List.filter (uttMeaning .exact .inverse .twoNot) [.w0, .w1, .w2, .w3, .w4]).length = 4 := by
+    (Finset.univ.filter (uttMeaning .exact .inverse .twoNot)).card = 4 := by
   decide
 
 /-- At-least inverse has 2 true worlds (w0,w1) — more informative than
     exact inverse's 4, but still less informative than exact surface's 1. -/
 theorem atLeast_inverse_double :
-    (List.filter (uttMeaning .atLeast .inverse .twoNot) [.w0, .w1, .w2, .w3, .w4]).length = 2 := by
+    (Finset.univ.filter (uttMeaning .atLeast .inverse .twoNot)).card = 2 := by
   decide
 
 /-! ### The structural face: exact-vs-at-least necessity (§4.2.2)
@@ -1310,7 +1317,7 @@ theorem extension4_nonempty (nr : NumeralReading) (s : ScopeReading) (u : TwoNot
   -- For `null`: w0 always works (null is universally true).
   -- For `twoNot`: case split — exact surface is true ONLY at w2; other cases have w0.
   cases u
-  case null => exact ⟨.w0, by rw [RSA.mem_extensionOf]; cases nr <;> cases s <;> rfl⟩
+  case null => exact ⟨.w0, by rw [RSA.mem_extensionOf]; trivial⟩
   case twoNot =>
     cases nr <;> cases s
     case exact.surface => exact ⟨.w2, by rw [RSA.mem_extensionOf]; rfl⟩
@@ -1326,17 +1333,17 @@ extension's cardinality. -/
 /-- TwoNot literal listener: uniform on extension under given numeral reading. -/
 noncomputable def L0_4 (nr : NumeralReading) (s : ScopeReading) (u : TwoNot.Utt) :
     PMF JumpOutcome4 :=
-  RSA.L0OfBoolMeaning (TwoNot.uttMeaning nr s) u (extension4_nonempty nr s u)
+  RSA.L0OfPred (TwoNot.uttMeaning nr s) u (extension4_nonempty nr s u)
 
 theorem L0_4_apply_of_true {nr : NumeralReading} {s : ScopeReading} {u : TwoNot.Utt}
-    {w : JumpOutcome4} (h : TwoNot.uttMeaning nr s u w = true) :
+    {w : JumpOutcome4} (h : TwoNot.uttMeaning nr s u w) :
     L0_4 nr s u w = ((extension4 nr s u).card : ℝ≥0∞)⁻¹ :=
-  RSA.L0OfBoolMeaning_apply_of_mem _ h
+  RSA.L0OfPred_apply_of_mem _ h
 
 theorem L0_4_apply_of_false {nr : NumeralReading} {s : ScopeReading} {u : TwoNot.Utt}
-    {w : JumpOutcome4} (h : TwoNot.uttMeaning nr s u w ≠ true) :
+    {w : JumpOutcome4} (h : ¬ TwoNot.uttMeaning nr s u w) :
     L0_4 nr s u w = 0 :=
-  RSA.L0OfBoolMeaning_apply_of_not_mem _ h
+  RSA.L0OfPred_apply_of_not_mem _ h
 
 /-! #### The L0 concentration contrast
 
@@ -1357,8 +1364,8 @@ under at-least, the L0 dilutes across 3 worlds → less informative → lower
 S2 endorsement. The structural mechanism behind paper's Figure 7. -/
 theorem L0_exact_gt_atLeast_at_w2 :
     L0_4 .atLeast .surface .twoNot .w2 < L0_4 .exact .surface .twoNot .w2 := by
-  rw [L0_4_apply_of_true (by decide : TwoNot.uttMeaning .exact .surface .twoNot .w2 = true),
-      L0_4_apply_of_true (by decide : TwoNot.uttMeaning .atLeast .surface .twoNot .w2 = true),
+  rw [L0_4_apply_of_true (by decide : TwoNot.uttMeaning .exact .surface .twoNot .w2),
+      L0_4_apply_of_true (by decide : TwoNot.uttMeaning .atLeast .surface .twoNot .w2),
       extension4_exact_surface_twoNot, extension4_atLeast_surface_twoNot]
   -- Goal: ((Finset.card {w0, w1, w2} : ℕ) : ℝ≥0∞)⁻¹ < ((Finset.card {w2} : ℕ) : ℝ≥0∞)⁻¹
   -- = (3 : ℝ≥0∞)⁻¹ < (1 : ℝ≥0∞)⁻¹ = 1
@@ -1382,8 +1389,8 @@ L0 is positive (surface twoNot true). -/
 theorem L0_exact_zero_atLeast_pos_at_w0 :
     L0_4 .exact .surface .twoNot .w0 = 0 ∧ L0_4 .atLeast .surface .twoNot .w0 ≠ 0 := by
   refine ⟨?_, ?_⟩
-  · exact L0_4_apply_of_false (by decide : TwoNot.uttMeaning .exact .surface .twoNot .w0 ≠ true)
-  · rw [L0_4_apply_of_true (by decide : TwoNot.uttMeaning .atLeast .surface .twoNot .w0 = true),
+  · exact L0_4_apply_of_false (by decide : ¬ TwoNot.uttMeaning .exact .surface .twoNot .w0)
+  · rw [L0_4_apply_of_true (by decide : TwoNot.uttMeaning .atLeast .surface .twoNot .w0),
         extension4_atLeast_surface_twoNot]
     -- Goal: ((Finset.card {w0, w1, w2} : ℕ) : ℝ≥0∞)⁻¹ ≠ 0
     -- = (3 : ℝ≥0∞)⁻¹ ≠ 0; true since 3 ≠ ⊤

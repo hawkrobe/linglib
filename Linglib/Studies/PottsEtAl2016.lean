@@ -49,7 +49,7 @@ model (19c), whose listener marginalizes over the full refinement lattice
 The PMF stack mirrors [goodman-stuhlmuller-2013]'s latent-uncertainty model
 on mathlib `PMF`, with `Latent := Lexicon`:
 
-* `L0 lex u : PMF World` — `RSA.L0OfBoolMeaning` (uniform on the extension).
+* `L0 lex u : PMF World` — `RSA.L0OfPred` (uniform on the extension).
 * `S1 lex w : PMF Utterance` — `RSA.S1Belief (L0 lex) (fun _ => 1) 1 w`
   (α = 1, no utterance cost): normalises `L0 lex u w` over utterances.
 * `marginalSpeaker w : PMF Utterance` — `RSA.marginalizeKernel` of `S1`
@@ -149,18 +149,24 @@ def predCount (sq : ShotQ) (lex : Lexicon) (w : World) : Nat :=
     | .strong => w.numScoredNotAced
 
 /-- Truth value of a statement in a world under a lexicon. -/
-def stmtTruth (lex : Lexicon) : Stmt → World → Bool
+def stmtTruth (lex : Lexicon) : Stmt → World → Prop
   | (pq, sq), w =>
     let n := predCount sq lex w
     match pq with
-    | .every => n == 3
-    | .exactlyOne => n == 1
-    | .no => n == 0
+    | .every => n = 3
+    | .exactlyOne => n = 1
+    | .no => n = 0
+
+instance (lex : Lexicon) : ∀ s, DecidablePred (stmtTruth lex s)
+  | (pq, _), _ => by cases pq <;> exact Nat.decEq _ _
 
 /-- Truth value of an utterance under a lexicon: `stmtTruth` with silence
 true at every world. -/
-def utteranceTruth (lex : Lexicon) : Utterance → World → Bool :=
+def utteranceTruth (lex : Lexicon) : Utterance → World → Prop :=
   RSA.liftMeaning (stmtTruth lex)
+
+instance (lex : Lexicon) : ∀ u, DecidablePred (utteranceTruth lex u) :=
+  inferInstanceAs (∀ u, DecidablePred (RSA.liftMeaning (stmtTruth lex) u))
 
 /-! ### Structural properties
 
@@ -170,12 +176,12 @@ extension under each outer quantifier. -/
 
 /-- Lexica agree on all "all"-utterances; the lexicon only refines "some". -/
 theorem lexica_agree_on_all :
-    ∀ pq w, utteranceTruth .weak (some (pq, .all)) w =
+    ∀ pq w, utteranceTruth .weak (some (pq, .all)) w ↔
             utteranceTruth .strong (some (pq, .all)) w := by decide
 
 /-- Lexica agree on all "none"-utterances. -/
 theorem lexica_agree_on_none :
-    ∀ pq w, utteranceTruth .weak (some (pq, .none_)) w =
+    ∀ pq w, utteranceTruth .weak (some (pq, .none_)) w ↔
             utteranceTruth .strong (some (pq, .none_)) w := by decide
 
 /-- DE context: strong "some" *widens* the set of true worlds relative to weak.
@@ -184,8 +190,8 @@ theorem lexica_agree_on_none :
     - Strong "some": NNN, NNA, NAA, AAA satisfy (4 worlds)
     Widening makes the utterance less informative under the strong lexicon. -/
 theorem de_enrichment_widens :
-    (Finset.univ.filter (fun w => utteranceTruth .weak (some (.no, .some_)) w = true)).card <
-    (Finset.univ.filter (fun w => utteranceTruth .strong (some (.no, .some_)) w = true)).card := by
+    (Finset.univ.filter (utteranceTruth .weak (some (.no, .some_)))).card <
+    (Finset.univ.filter (utteranceTruth .strong (some (.no, .some_)))).card := by
   decide
 
 /-- UE context: strong "some" *narrows* the set of true worlds relative to weak.
@@ -194,13 +200,13 @@ theorem de_enrichment_widens :
     - Strong "some": only SSS satisfies (1 world)
     Narrowing makes the utterance more informative under the strong lexicon. -/
 theorem ue_enrichment_narrows :
-    (Finset.univ.filter (fun w => utteranceTruth .strong (some (.every, .some_)) w = true)).card <
-    (Finset.univ.filter (fun w => utteranceTruth .weak (some (.every, .some_)) w = true)).card := by
+    (Finset.univ.filter (utteranceTruth .strong (some (.every, .some_)))).card <
+    (Finset.univ.filter (utteranceTruth .weak (some (.every, .some_)))).card := by
   decide
 
 /-! ### Literal listener `L0`
 
-Per-lexicon literal listener via `RSA.L0OfBoolMeaning`: uniform on the
+Per-lexicon literal listener via `RSA.L0OfPred`: uniform on the
 extension of the (lexicon-parameterised) meaning function. Every utterance has
 a non-empty extension (every quantifier is true at some world, and `null` is
 true everywhere), so the `Nonempty` precondition is universal. -/
@@ -214,7 +220,7 @@ theorem ext_nonempty (lex : Lexicon) (u : Utterance) :
 
 /-- Per-lexicon literal listener: uniform on the extension. -/
 noncomputable def L0 (lex : Lexicon) (u : Utterance) : PMF World :=
-  RSA.L0OfBoolMeaning (utteranceTruth lex) u (ext_nonempty lex u)
+  RSA.L0OfPred (utteranceTruth lex) u (ext_nonempty lex u)
 
 /-- Closed-form `L0` value: `ENNReal.ofReal (1 / |extension|)` at true worlds,
 `0` otherwise. The `pmf_eval_simps`-friendly if-form. -/
@@ -225,19 +231,19 @@ theorem L0_apply (lex : Lexicon) (u : Utterance) (w : World) :
       else 0 := by
   unfold L0
   by_cases h : utteranceTruth lex u w
-  · rw [if_pos h, RSA.L0OfBoolMeaning_apply_of_mem _ h,
+  · rw [if_pos h, RSA.L0OfPred_apply_of_mem _ h,
         ← ENNReal.ofReal_natCast, ← ENNReal.ofReal_inv_of_pos]
     exact_mod_cast Finset.card_pos.mpr (ext_nonempty lex u)
-  · rw [if_neg h, RSA.L0OfBoolMeaning_apply_of_not_mem _ (by simpa using h)]
+  · rw [if_neg h, RSA.L0OfPred_apply_of_not_mem _ h]
 
 /-- `L0 lex none w = ofReal (1/10)`: silence is true at every world, so its
 extension is all 10 worlds. Used to discharge the speaker normaliser's
 positivity hypothesis. -/
 theorem L0_null (lex : Lexicon) (w : World) :
     L0 lex none w = ENNReal.ofReal ((10 : ℝ))⁻¹ := by
-  rw [L0_apply, if_pos (by simp [utteranceTruth]),
+  rw [L0_apply, if_pos (show utteranceTruth lex none w from trivial),
       show RSA.extensionOf (utteranceTruth lex) none = Finset.univ by
-        simp [utteranceTruth],
+        ext w; simp [utteranceTruth],
       show (Finset.univ : Finset World).card = 10 by rfl]
   norm_num
 
@@ -403,14 +409,14 @@ theorem S1_apply (lex : Lexicon) (w : World) (u : Utterance) :
 /-- Speaker value when the utterance is **false** at the world: `L0 = 0`, so
 `S1 = 0`. -/
 private theorem S1_eq_zero (lex : Lexicon) (w : World) (u : Utterance)
-    (h : utteranceTruth lex u w = false) : S1 lex w u = 0 := by
-  rw [S1_apply, score_eq, L0_apply, if_neg (by rw [h]; simp)]; simp
+    (h : ¬ utteranceTruth lex u w) : S1 lex w u = 0 := by
+  rw [S1_apply, score_eq, L0_apply, if_neg h]; simp
 
 /-- Speaker value when the utterance is **true**: `ofReal (1/c · 1/Z)`, computed
 from the extension cardinality `c` and the partition `Z`. -/
 private theorem S1_eq_ofReal (lex : Lexicon) (w : World) (u : Utterance)
     (c : ℕ) (hc : 0 < c) (zr : ℝ) (hzr : 0 < zr)
-    (htrue : utteranceTruth lex u w = true)
+    (htrue : utteranceTruth lex u w)
     (hcard : (RSA.extensionOf (utteranceTruth lex) u).card = c)
     (hZ : Z lex w = ENNReal.ofReal zr) :
     S1 lex w u = ENNReal.ofReal ((c : ℝ)⁻¹ * zr⁻¹) := by
@@ -603,16 +609,16 @@ private theorem predCount_lt_four (sq : ShotQ) (lex : Lexicon) (w : World) :
 
 /-- "Every player hit X" ↔ `worldMeaning 3 .all` applied to `predCount`. -/
 theorem outer_every_grounded (sq : ShotQ) (lex : Lexicon) (w : World) :
-    utteranceTruth lex (some (.every, sq)) w =
+    utteranceTruth lex (some (.every, sq)) w ↔
     Alternatives.Quantifiers.worldMeaning 3 .all
-      ⟨⟨predCount sq lex w, predCount_lt_four sq lex w⟩⟩ := by
+      ⟨⟨predCount sq lex w, predCount_lt_four sq lex w⟩⟩ = true := by
   cases sq <;> cases lex <;> cases w <;> decide
 
 /-- "No player hit X" ↔ `worldMeaning 3 .none_` applied to `predCount`. -/
 theorem outer_no_grounded (sq : ShotQ) (lex : Lexicon) (w : World) :
-    utteranceTruth lex (some (.no, sq)) w =
+    utteranceTruth lex (some (.no, sq)) w ↔
     Alternatives.Quantifiers.worldMeaning 3 .none_
-      ⟨⟨predCount sq lex w, predCount_lt_four sq lex w⟩⟩ := by
+      ⟨⟨predCount sq lex w, predCount_lt_four sq lex w⟩⟩ = true := by
   cases sq <;> cases lex <;> cases w <;> decide
 
 /-! ### Cross-study connections

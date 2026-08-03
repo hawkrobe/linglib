@@ -84,29 +84,41 @@ instance : Fintype GCQUD where
   complete := λ q => by cases q <;> simp
 
 /-- Truth conditions from Table 1. All negations are Boolean. -/
-def gcAssertionMeaning : GCAssertion → GCWorld → Bool
-  | .us, .usCitizen => true
-  | .us, _ => false
-  | .notUS, .usCitizen => false
-  | .notUS, _ => true
-  | .greenCard, .gcHolder => true
-  | .greenCard, _ => false
-  | .notGreenCard, .gcHolder => false
-  | .notGreenCard, _ => true
+def gcAssertionMeaning : GCAssertion → GCWorld → Prop
+  | .us, .usCitizen => True
+  | .us, _ => False
+  | .notUS, .usCitizen => False
+  | .notUS, _ => True
+  | .greenCard, .gcHolder => True
+  | .greenCard, _ => False
+  | .notGreenCard, .gcHolder => False
+  | .notGreenCard, _ => True
+
+instance (a : GCAssertion) : DecidablePred (gcAssertionMeaning a) := fun w => by
+  cases a <;> cases w <;> first | exact isTrue trivial | exact isFalse id
 
 /-- Utterance-level meaning: silence is universally true. -/
-def gcMeaning : GCUtterance → GCWorld → Bool := liftMeaning gcAssertionMeaning
+def gcMeaning : GCUtterance → GCWorld → Prop := liftMeaning gcAssertionMeaning
+
+instance : ∀ u : GCUtterance, DecidablePred (gcMeaning u) :=
+  inferInstanceAs (∀ u, DecidablePred (liftMeaning gcAssertionMeaning u))
 
 /-- QUD answer function: maps each QUD to a world's answer. -/
-def gcQUDAnswer : GCQUD → GCWorld → Bool
-  | .needVisa, .nonUS => true
-  | .needVisa, _ => false
-  | .freeDrink, .gcHolder => true
-  | .freeDrink, _ => false
+def gcQUDAnswer : GCQUD → GCWorld → Prop
+  | .needVisa, .nonUS => True
+  | .needVisa, _ => False
+  | .freeDrink, .gcHolder => True
+  | .freeDrink, _ => False
+
+instance (q : GCQUD) : DecidablePred (gcQUDAnswer q) := fun w => by
+  cases q <;> cases w <;> first | exact isTrue trivial | exact isFalse id
 
 /-- QUD projection: two worlds are equivalent iff they give the same QUD answer. -/
-def gcQUDProject (q : GCQUD) (w1 w2 : GCWorld) : Bool :=
-  gcQUDAnswer q w1 == gcQUDAnswer q w2
+def gcQUDProject (q : GCQUD) (w1 w2 : GCWorld) : Prop :=
+  gcQUDAnswer q w1 ↔ gcQUDAnswer q w2
+
+instance (q : GCQUD) (w1 w2 : GCWorld) : Decidable (gcQUDProject q w1 w2) :=
+  inferInstanceAs (Decidable (_ ↔ _))
 
 /-- Uniform world prior. -/
 def gcWorldPrior (_w : GCWorld) : ℚ := 1 / 3
@@ -120,32 +132,33 @@ def greenCardPartialProp : PartialProp GCWorld where
   presup := λ w => match w with | .usCitizen => False | _ => True
   assertion := λ w => match w with | .gcHolder => True | _ => False
 
-/-- The Boolean meaning of "green card" decomposes as presupposition ∧ assertion. -/
-theorem gcMeaning_greenCard_eq_prprop (w : GCWorld) :
-    (gcMeaning (some .greenCard) w = true) ↔ (greenCardPartialProp.presup w ∧ greenCardPartialProp.assertion w) := by
+/-- The meaning of "green card" decomposes as presupposition ∧ assertion. -/
+theorem gcMeaning_greenCard_iff_prprop (w : GCWorld) :
+    gcMeaning (some .greenCard) w ↔
+      greenCardPartialProp.presup w ∧ greenCardPartialProp.assertion w := by
   cases w <;> simp [gcMeaning, gcAssertionMeaning, greenCardPartialProp]
 
 /-- "not green card" is Boolean negation of "green card". -/
-theorem gcMeaning_notGreenCard_eq_neg (w : GCWorld) :
-    gcMeaning (some .notGreenCard) w = !gcMeaning (some .greenCard) w := by
-  cases w <;> rfl
+theorem gcMeaning_notGreenCard_iff_not (w : GCWorld) :
+    gcMeaning (some .notGreenCard) w ↔ ¬ gcMeaning (some .greenCard) w := by
+  cases w <;> decide
 
 /-- "not US" is Boolean negation of "US". -/
-theorem gcMeaning_notUS_eq_neg (w : GCWorld) :
-    gcMeaning (some .notUS) w = !gcMeaning (some .us) w := by
-  cases w <;> rfl
+theorem gcMeaning_notUS_iff_not (w : GCWorld) :
+    gcMeaning (some .notUS) w ↔ ¬ gcMeaning (some .us) w := by
+  cases w <;> decide
 
 /-- needVisa QUD partition: {usCitizen, gcHolder} (no) vs {nonUS} (yes). -/
 theorem gcQUD_needVisa_partition :
-    gcQUDProject .needVisa .usCitizen .gcHolder = true ∧
-    gcQUDProject .needVisa .usCitizen .nonUS = false := by
-  exact ⟨rfl, rfl⟩
+    gcQUDProject .needVisa .usCitizen .gcHolder ∧
+    ¬ gcQUDProject .needVisa .usCitizen .nonUS := by
+  decide
 
 /-- freeDrink QUD partition: {usCitizen, nonUS} (no) vs {gcHolder} (yes). -/
 theorem gcQUD_freeDrink_partition :
-    gcQUDProject .freeDrink .usCitizen .nonUS = true ∧
-    gcQUDProject .freeDrink .usCitizen .gcHolder = false := by
-  exact ⟨rfl, rfl⟩
+    gcQUDProject .freeDrink .usCitizen .nonUS ∧
+    ¬ gcQUDProject .freeDrink .usCitizen .gcHolder := by
+  decide
 
 
 /-! ## Family-Genus-Species Example (Table 2) -/
@@ -195,24 +208,30 @@ def allFGSUtterances : List FGSUtterance :=
 /-- Truth conditions from Table 2.
 
 Respects the taxonomic hierarchy: Olympic sprinter ⊂ runner ⊂ athlete. -/
-def fgsAssertionMeaning : FGSAssertion → FGSWorld → Bool
-  | .olympicSprinter, .olympicSprinter => true
-  | .olympicSprinter, _ => false
-  | .notOlympicSprinter, .olympicSprinter => false
-  | .notOlympicSprinter, _ => true
-  | .runner, .olympicSprinter => true
-  | .runner, .runner => true
-  | .runner, _ => false
-  | .notRunner, .olympicSprinter => false
-  | .notRunner, .runner => false
-  | .notRunner, _ => true
-  | .athlete, .nonAthlete => false
-  | .athlete, _ => true
-  | .notAthlete, .nonAthlete => true
-  | .notAthlete, _ => false
+def fgsAssertionMeaning : FGSAssertion → FGSWorld → Prop
+  | .olympicSprinter, .olympicSprinter => True
+  | .olympicSprinter, _ => False
+  | .notOlympicSprinter, .olympicSprinter => False
+  | .notOlympicSprinter, _ => True
+  | .runner, .olympicSprinter => True
+  | .runner, .runner => True
+  | .runner, _ => False
+  | .notRunner, .olympicSprinter => False
+  | .notRunner, .runner => False
+  | .notRunner, _ => True
+  | .athlete, .nonAthlete => False
+  | .athlete, _ => True
+  | .notAthlete, .nonAthlete => True
+  | .notAthlete, _ => False
+
+instance (a : FGSAssertion) : DecidablePred (fgsAssertionMeaning a) := fun w => by
+  cases a <;> cases w <;> first | exact isTrue trivial | exact isFalse id
 
 /-- Utterance-level meaning: silence is universally true. -/
-def fgsMeaning : FGSUtterance → FGSWorld → Bool := liftMeaning fgsAssertionMeaning
+def fgsMeaning : FGSUtterance → FGSWorld → Prop := liftMeaning fgsAssertionMeaning
+
+instance : ∀ u : FGSUtterance, DecidablePred (fgsMeaning u) :=
+  inferInstanceAs (∀ u, DecidablePred (liftMeaning fgsAssertionMeaning u))
 
 /-- Non-uniform world prior from Table 2 (percentages). -/
 def fgsWorldPrior : FGSWorld → ℚ
@@ -222,45 +241,48 @@ def fgsWorldPrior : FGSWorld → ℚ
   | .nonAthlete => 84 / 100
 
 /-- Max QUD (full world identification). -/
-def fgsQUDProject (w1 w2 : FGSWorld) : Bool := w1 == w2
+def fgsQUDProject (w1 w2 : FGSWorld) : Prop := w1 = w2
+
+instance (w1 w2 : FGSWorld) : Decidable (fgsQUDProject w1 w2) :=
+  inferInstanceAs (Decidable (w1 = w2))
 
 -- Genus-species hierarchy verification
 
 /-- Olympic sprinter entails runner. -/
 theorem olympicSprinter_entails_runner (w : FGSWorld) :
-    fgsMeaning (some .olympicSprinter) w = true → fgsMeaning (some .runner) w = true := by
-  cases w <;> simp [fgsMeaning, fgsAssertionMeaning]
+    fgsMeaning (some .olympicSprinter) w → fgsMeaning (some .runner) w := by
+  cases w <;> decide
 
 /-- Runner entails athlete. -/
 theorem runner_entails_athlete (w : FGSWorld) :
-    fgsMeaning (some .runner) w = true → fgsMeaning (some .athlete) w = true := by
-  cases w <;> simp [fgsMeaning, fgsAssertionMeaning]
+    fgsMeaning (some .runner) w → fgsMeaning (some .athlete) w := by
+  cases w <;> decide
 
 /-- Olympic sprinter entails athlete (transitivity). -/
 theorem olympicSprinter_entails_athlete (w : FGSWorld) :
-    fgsMeaning (some .olympicSprinter) w = true → fgsMeaning (some .athlete) w = true := by
-  cases w <;> simp [fgsMeaning, fgsAssertionMeaning]
+    fgsMeaning (some .olympicSprinter) w → fgsMeaning (some .athlete) w := by
+  cases w <;> decide
 
 /-- Boolean negation: not Olympic sprinter = ¬ Olympic sprinter. -/
-theorem fgsMeaning_notOS_eq_neg (w : FGSWorld) :
-    fgsMeaning (some .notOlympicSprinter) w = !fgsMeaning (some .olympicSprinter) w := by
-  cases w <;> rfl
+theorem fgsMeaning_notOS_iff_not (w : FGSWorld) :
+    fgsMeaning (some .notOlympicSprinter) w ↔ ¬ fgsMeaning (some .olympicSprinter) w := by
+  cases w <;> decide
 
 /-- Boolean negation: not runner = ¬ runner. -/
-theorem fgsMeaning_notRunner_eq_neg (w : FGSWorld) :
-    fgsMeaning (some .notRunner) w = !fgsMeaning (some .runner) w := by
-  cases w <;> rfl
+theorem fgsMeaning_notRunner_iff_not (w : FGSWorld) :
+    fgsMeaning (some .notRunner) w ↔ ¬ fgsMeaning (some .runner) w := by
+  cases w <;> decide
 
 /-- Boolean negation: not athlete = ¬ athlete. -/
-theorem fgsMeaning_notAthlete_eq_neg (w : FGSWorld) :
-    fgsMeaning (some .notAthlete) w = !fgsMeaning (some .athlete) w := by
-  cases w <;> rfl
+theorem fgsMeaning_notAthlete_iff_not (w : FGSWorld) :
+    fgsMeaning (some .notAthlete) w ↔ ¬ fgsMeaning (some .athlete) w := by
+  cases w <;> decide
 
 /-- FGS priors sum to 1. -/
 theorem fgsWorldPrior_sum :
     fgsWorldPrior .olympicSprinter + fgsWorldPrior .runner +
     fgsWorldPrior .otherAthlete + fgsWorldPrior .nonAthlete = 1 := by
-  native_decide
+  norm_num [fgsWorldPrior]
 
 -- ============================================================================
 -- Part II: RSA Context Types and PartialProp Connection
@@ -286,11 +308,14 @@ def allGCContexts : List GCContext :=
 theorem allGCContexts_length : allGCContexts.length = 8 := rfl
 
 /-- A world is compatible with a context iff the context includes it. -/
-def gcCompatible (c : GCContext) (w : GCWorld) : Bool :=
+def gcCompatible (c : GCContext) (w : GCWorld) : Prop :=
   match w with
   | .usCitizen => c.usCitizen
   | .gcHolder => c.gcHolder
   | .nonUS => c.nonUS
+
+instance (c : GCContext) : DecidablePred (gcCompatible c) := fun w => by
+  cases w <;> exact inferInstanceAs (Decidable (_ = true))
 
 def gcContextPrior (_c : GCContext) : ℚ := 1 / 8
 
@@ -314,12 +339,15 @@ def allFGSContexts : List FGSContext :=
 
 theorem allFGSContexts_length : allFGSContexts.length = 16 := rfl
 
-def fgsCompatible (c : FGSContext) (w : FGSWorld) : Bool :=
+def fgsCompatible (c : FGSContext) (w : FGSWorld) : Prop :=
   match w with
   | .olympicSprinter => c.olympicSprinter
   | .runner => c.runner
   | .otherAthlete => c.otherAthlete
   | .nonAthlete => c.nonAthlete
+
+instance (c : FGSContext) : DecidablePred (fgsCompatible c) := fun w => by
+  cases w <;> exact inferInstanceAs (Decidable (_ = true))
 
 def fgsContextPrior (_c : FGSContext) : ℚ := 1 / 16
 
@@ -329,20 +357,24 @@ inductive FGSQUD where
 
 def allFGSQUDs : List FGSQUD := [.identity]
 
-def fgsQUDProjectBridge : FGSQUD → FGSWorld → FGSWorld → Bool
+def fgsQUDProjectBridge : FGSQUD → FGSWorld → FGSWorld → Prop
   | .identity, w1, w2 => fgsQUDProject w1 w2
+
+instance (q : FGSQUD) (w1 w2 : FGSWorld) : Decidable (fgsQUDProjectBridge q w1 w2) :=
+  match q with
+  | .identity => inferInstanceAs (Decidable (fgsQUDProject w1 w2))
 
 /-! ## PartialProp Connection -/
 
-/-- The Boolean meaning of "green card" decomposes as presupposition ∧ assertion. -/
+/-- The meaning of "green card" decomposes as presupposition ∧ assertion. -/
 theorem greenCard_meaning_from_prprop (w : GCWorld) :
-    (gcMeaning (some .greenCard) w = true) ↔
-    (greenCardPartialProp.presup w ∧ greenCardPartialProp.assertion w) :=
-  gcMeaning_greenCard_eq_prprop w
+    gcMeaning (some .greenCard) w ↔
+      greenCardPartialProp.presup w ∧ greenCardPartialProp.assertion w :=
+  gcMeaning_greenCard_iff_prprop w
 
 /-- "not green card" is Boolean negation — no presupposition in the semantics. -/
 theorem notGreenCard_is_boolean_negation (w : GCWorld) :
-    gcMeaning (some .notGreenCard) w = !gcMeaning (some .greenCard) w :=
-  gcMeaning_notGreenCard_eq_neg w
+    gcMeaning (some .notGreenCard) w ↔ ¬ gcMeaning (some .greenCard) w :=
+  gcMeaning_notGreenCard_iff_not w
 
 end Warstadt2022

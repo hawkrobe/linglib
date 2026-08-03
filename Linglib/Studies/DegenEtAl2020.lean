@@ -180,34 +180,37 @@ theorem noise_grounds_asymmetry :
 
 /-! ### Boolean baseline -/
 
-/-- Boolean (zero-noise) meaning: a feature matches (`true`) or not. -/
-def φbool : Utterance → World → Bool
-  | .big, .bigBlue => true | .big, .bigRed => true | .big, .smallBlue => false
-  | .small, .bigBlue => false | .small, .bigRed => false | .small, .smallBlue => true
-  | .blue, .bigBlue => true | .blue, .bigRed => false | .blue, .smallBlue => true
-  | .red, .bigBlue => false | .red, .bigRed => true | .red, .smallBlue => false
-  | .bigBlue, .bigBlue => true | .bigBlue, .bigRed => false | .bigBlue, .smallBlue => false
-  | .bigRed, .bigBlue => false | .bigRed, .bigRed => true | .bigRed, .smallBlue => false
-  | .smallBlue, .bigBlue => false | .smallBlue, .bigRed => false | .smallBlue, .smallBlue => true
+/-- Boolean (zero-noise) meaning: a feature matches or it does not. -/
+def φbool : Utterance → World → Prop
+  | .big, .bigBlue => True | .big, .bigRed => True | .big, .smallBlue => False
+  | .small, .bigBlue => False | .small, .bigRed => False | .small, .smallBlue => True
+  | .blue, .bigBlue => True | .blue, .bigRed => False | .blue, .smallBlue => True
+  | .red, .bigBlue => False | .red, .bigRed => True | .red, .smallBlue => False
+  | .bigBlue, .bigBlue => True | .bigBlue, .bigRed => False | .bigBlue, .smallBlue => False
+  | .bigRed, .bigBlue => False | .bigRed, .bigRed => True | .bigRed, .smallBlue => False
+  | .smallBlue, .bigBlue => False | .smallBlue, .bigRed => False | .smallBlue, .smallBlue => True
+
+instance (u : Utterance) : DecidablePred (φbool u) := fun w => by
+  cases u <;> cases w <;> first | exact isTrue trivial | exact isFalse id
 
 private theorem extBool_nonempty (u : Utterance) : (extensionOf φbool u).Nonempty := by
   cases u <;> decide
 
 /-- Boolean literal listener: uniform on the extension. -/
-noncomputable def boolL0 (u : Utterance) : PMF World := L0OfBoolMeaning φbool u (extBool_nonempty u)
+noncomputable def boolL0 (u : Utterance) : PMF World := L0OfPred φbool u (extBool_nonempty u)
 
-private theorem boolL0_ne_zero {u : Utterance} {w : World} (h : φbool u w = true) :
+private theorem boolL0_ne_zero {u : Utterance} {w : World} (h : φbool u w) :
     boolL0 u w ≠ 0 :=
-  (PMF.mem_support_iff _ _).mp ((mem_support_L0OfBoolMeaning_iff _ w).mpr h)
+  (PMF.mem_support_iff _ _).mp ((mem_support_L0OfPred_iff _ w).mpr h)
 
 theorem boolL0_small_target : boolL0 .small target = 1 := by
-  rw [boolL0, L0OfBoolMeaning_apply_of_mem (extBool_nonempty .small)
-      (show φbool .small target = true from by decide),
+  rw [boolL0, L0OfPred_apply_of_mem (extBool_nonempty .small)
+      (show φbool .small target from trivial),
     show (extensionOf φbool .small).card = 1 from by decide]; simp
 
 theorem boolL0_smallBlue_target : boolL0 .smallBlue target = 1 := by
-  rw [boolL0, L0OfBoolMeaning_apply_of_mem (extBool_nonempty .smallBlue)
-      (show φbool .smallBlue target = true from by decide),
+  rw [boolL0, L0OfPred_apply_of_mem (extBool_nonempty .smallBlue)
+      (show φbool .smallBlue target from trivial),
     show (extensionOf φbool .smallBlue).card = 1 from by decide]; simp
 
 private theorem boolS1_ne_zero (w : World) : ∑' u, (boolL0 u w : ℝ≥0∞) ^ (1:ℝ) * 1 ≠ 0 := by
@@ -341,30 +344,33 @@ theorem nominal_basic_beats_super : nomS1 .dalmatian .super < nomS1 .dalmatian .
   rw [ENNReal.ofReal_lt_ofReal_iff (by norm_num)]; norm_num
 
 /-- Boolean (crisp) typicality. -/
-def φtypBool : NomUtterance → NomWorld → Bool
-  | .sub, .dalmatian => true | .sub, .cat => false | .sub, .bird => false
-  | .basic, .dalmatian => true | .basic, .cat => false | .basic, .bird => false
-  | .super, .dalmatian => true | .super, .cat => true | .super, .bird => true
+def φtypBool : NomUtterance → NomWorld → Prop
+  | .sub, .dalmatian => True | .sub, .cat => False | .sub, .bird => False
+  | .basic, .dalmatian => True | .basic, .cat => False | .basic, .bird => False
+  | .super, .dalmatian => True | .super, .cat => True | .super, .bird => True
+
+instance (u : NomUtterance) : DecidablePred (φtypBool u) := fun w => by
+  cases u <;> cases w <;> first | exact isTrue trivial | exact isFalse id
 
 private theorem extNomBool_nonempty (u : NomUtterance) : (extensionOf φtypBool u).Nonempty := by
   cases u <;> decide
 
 /-- Boolean nominal literal listener. -/
 noncomputable def nomBoolL0 (u : NomUtterance) : PMF NomWorld :=
-  L0OfBoolMeaning φtypBool u (extNomBool_nonempty u)
+  L0OfPred φtypBool u (extNomBool_nonempty u)
 
-private theorem nomBoolL0_ne_zero {u : NomUtterance} {w : NomWorld} (h : φtypBool u w = true) :
+private theorem nomBoolL0_ne_zero {u : NomUtterance} {w : NomWorld} (h : φtypBool u w) :
     nomBoolL0 u w ≠ 0 :=
-  (PMF.mem_support_iff _ _).mp ((mem_support_L0OfBoolMeaning_iff _ w).mpr h)
+  (PMF.mem_support_iff _ _).mp ((mem_support_L0OfPred_iff _ w).mpr h)
 
 theorem nomBoolL0_sub : nomBoolL0 .sub .dalmatian = 1 := by
-  rw [nomBoolL0, L0OfBoolMeaning_apply_of_mem (extNomBool_nonempty .sub)
-      (show φtypBool .sub .dalmatian = true from by decide),
+  rw [nomBoolL0, L0OfPred_apply_of_mem (extNomBool_nonempty .sub)
+      (show φtypBool .sub .dalmatian from trivial),
     show (extensionOf φtypBool .sub).card = 1 from by decide]; simp
 
 theorem nomBoolL0_basic : nomBoolL0 .basic .dalmatian = 1 := by
-  rw [nomBoolL0, L0OfBoolMeaning_apply_of_mem (extNomBool_nonempty .basic)
-      (show φtypBool .basic .dalmatian = true from by decide),
+  rw [nomBoolL0, L0OfPred_apply_of_mem (extNomBool_nonempty .basic)
+      (show φtypBool .basic .dalmatian from trivial),
     show (extensionOf φtypBool .basic).card = 1 from by decide]; simp
 
 private theorem nomBoolS1_ne_zero (w : NomWorld) : ∑' u, (nomBoolL0 u w : ℝ≥0∞) ^ (1:ℝ) * 1 ≠ 0 := by
