@@ -2,6 +2,7 @@ import Linglib.Syntax.Voice.Alternation
 import Linglib.Semantics.Modality.Kratzer.Flavor
 import Linglib.Semantics.Composition.TypeShifting
 import Linglib.Studies.Landau2015
+import Linglib.Syntax.Control.Clause
 import Linglib.Fragments.English.Predicates.Verbal
 import Mathlib.Data.Fin.Basic
 
@@ -89,7 +90,7 @@ the meaning postulate.
 namespace Chierchia1984
 
 open Semantics.Modality.Kratzer
-open Semantics.Composition.TypeShifting (ComplSemLayer)
+open Semantics.Composition.TypeShifting (ComplementDenotation)
 
 abbrev World := Fin 4
 
@@ -110,40 +111,28 @@ infrastructure layers:
 
 1. `ComplementType.isFinite` (VerbEntry.lean): finite = true for
    `.finiteClause` and `.question`
-2. `ComplSemLayer` (TypeShifting.lean): the property/proposition
+2. `ComplementDenotation` (TypeShifting.lean): the property/proposition
    distinction as a semantic type layer
 
 The connection: nonfinite complements denote properties; finite
 complements denote propositions. This is not a new definition but
 a bridge between existing infrastructure. -/
 
-/-- Map a `ComplementType` to the semantic layer it inhabits.
-
-    Returns `none` for complement types that are not clausal (NP, PP, etc.).
-    For clausal types, the rule is: nonfinite → property, finite → proposition.
-    This derives from `ComplementType.isFinite`, not a new stipulation. -/
-def complSemLayer : ComplementType → Option ComplSemLayer
-  | .infinitival  => some .property
-  | .gerund       => some .property
-  | .smallClause  => some .property
-  | .finiteClause => some .proposition
-  | .question     => some .proposition
-  | .none | .np | .np_np | .np_pp => none
-
-/-- Nonfinite clausal complements are property-denoting. -/
+/-- Nonfinite clausal complements are property-denoting
+    (`ComplementType.denotation`, the shared derivation). -/
 theorem infinitival_is_property :
-    complSemLayer .infinitival = some .property := rfl
+    ComplementType.infinitival.denotation = some .property := rfl
 theorem gerund_is_property :
-    complSemLayer .gerund = some .property := rfl
+    ComplementType.gerund.denotation = some .property := rfl
 
 /-- Finite clausal complements are proposition-denoting. -/
 theorem finiteClause_is_proposition :
-    complSemLayer .finiteClause = some .proposition := rfl
+    ComplementType.finiteClause.denotation = some .proposition := rfl
 theorem question_is_proposition :
-    complSemLayer .question = some .proposition := rfl
+    ComplementType.question.denotation = some .proposition := rfl
 
-/-- Non-clausal complement types have no semantic layer. -/
-theorem np_no_layer : complSemLayer .np = none := rfl
+/-- Non-clausal complement types have no denotation classification. -/
+theorem np_no_denotation : ComplementType.np.denotation = none := rfl
 
 -- ════════════════════════════════════════════════════════════════
 -- § 2. The Control Principle
@@ -533,15 +522,15 @@ theorem force_passivizability_derived :
 
 /-- "try" takes an infinitival complement, which denotes a property. -/
 theorem try_property_denoting :
-    complSemLayer try_.toVerb.complementType = some .property := rfl
+    try_.toVerb.complementType.denotation = some .property := rfl
 
 /-- "want" takes an infinitival complement, which denotes a property. -/
 theorem want_property_denoting :
-    complSemLayer want.toVerb.complementType = some .property := rfl
+    want.toVerb.complementType.denotation = some .property := rfl
 
 /-- "believe" takes a finite clause, which denotes a proposition. -/
 theorem believe_proposition_denoting :
-    complSemLayer believe.toVerb.complementType = some .proposition := rfl
+    believe.toVerb.complementType.denotation = some .proposition := rfl
 
 /-- "believe" is not a control verb — consistent with taking a propositional,
     not property-denoting, complement. -/

@@ -1,4 +1,4 @@
-import Linglib.Syntax.Control.Basic
+import Linglib.Syntax.Control.Tier
 import Linglib.Semantics.Verb.Basic
 import Linglib.Data.Complementation.Noonan2007
 import Linglib.Fragments.English.Predicates.Verbal
@@ -11,7 +11,7 @@ MIT Press. ISBN 978-0-262-02885-1.
 
 The TTC framework itself — `Control.Tier`, `Control.PredicateClass`,
 `Control.ClauseClass`, the Feature Transmission asymmetry, and the OC-NC
-generalization — lives in `Syntax/Control/Basic.lean`. This file holds
+generalization — lives in `Syntax/Control/Tier.lean`. This file holds
 the book's empirical engagement: the table (80) contrasts, the
 *de se*/*de te* split in object control (table (36)), the derivation of
 predicate classes from English Fragment verb entries, and the

@@ -76,7 +76,7 @@ import Linglib.Fragments.Cantonese.ResultativeComplements
 §11 below documents divergences with HPSG (lexical-rule analysis of
 "you-skipping"), Dependency Grammar (no AspP, no ICH), CCG (forward
 composition), `Fragments/Italian/Modals.lean`'s [hacquard-2006]
-restructuring substrate, `Syntax/Control/Basic.lean`'s
+restructuring substrate, `Syntax/Control/Tier.lean`'s
 `Control.Tier`, and `Syntax/Minimalist/Phase.lean`. The
 [cinque-2006] vs. [wurmbrand-2001] restructuring rivalry is made
 explicit in §10 as a refutation theorem candidate.
@@ -447,7 +447,7 @@ have Studies-level Chinese formalizations they currently lack):
   productive next step but is deferred (the Italian file currently has
   no Wurmbrand-truncation bridge of its own).
 
-- **`Syntax/Control/Basic.lean`** has `Control.Tier`
+- **`Syntax/Control/Tier.lean`** has `Control.Tier`
   (predicative vs logophoric) cross-classifying CTPs along an axis the
   [wurmbrand-lohninger-2023] ICH `ComplementClass`
   (event/situation/proposition) parallels. A bridge theorem

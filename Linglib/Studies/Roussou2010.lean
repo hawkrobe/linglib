@@ -52,7 +52,7 @@ licenses otherwise unselected *pu* (ex. 22) — both left as prose.
   `puClause_strongEntails_oti`, `anClause_not_informative`
 - `anItem` — *an* as `Polarity.Item`; `anItem_licensed` routes its
   distribution through `LicensingContext.licenses`
-- `naLayer`, `na_layer_diverges_from_coding`, `comp_over_na_type_clash`
+- `naDenotation`, `na_layer_diverges_from_coding`, `comp_over_na_type_clash`
   — the property-layer analysis of *na*
 - `factive_iff_definite` — the fragment's `factive` flag coincides
   with definite propositional quantification
@@ -196,16 +196,16 @@ theorem anItem_licensed :
 /-- *na* re-opens the EPP position, so the na-clause denotes a
 property — [chierchia-1984]'s control-complement layer — despite
 finite morphology. -/
-def naLayer : ComplSemLayer := .property
+def naDenotation : ComplementDenotation := .property
 
 /-- MG detaches the property layer from nonfinite coding: the
 coding-based mapping sends finite clauses to the propositional layer
-(`Chierchia1984.complSemLayer`), but the finite na-clause is a
+(`ComplementType.denotation`), but the finite na-clause is a
 property. Control (ex. 25–26) is the matrix argument saturating the
 open slot. -/
 theorem na_layer_diverges_from_coding :
-    naLayer = .property ∧
-    Chierchia1984.complSemLayer .finiteClause = some .proposition := by
+    naDenotation = .property ∧
+    ComplementType.finiteClause.denotation = some .proposition := by
   exact ⟨rfl, rfl⟩
 
 /-- The merge-site split cashed out at type level (p. 597): an outside
