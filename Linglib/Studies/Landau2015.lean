@@ -58,8 +58,8 @@ def ttcContrasts : List TTCContrast :=
 /-- The `ttcContrasts` data agrees with the derived `Control.Tier`
     properties, row by row. -/
 theorem ttcContrasts_consistent :
-    ((!agrBlocksControl .predicative) = (ttcContrasts[0]!.predicative))
-    ∧ ((!agrBlocksControl .logophoric) = (ttcContrasts[0]!.logophoric))
+    ((!Tier.agrBlocksControl .predicative) = (ttcContrasts[0]!.predicative))
+    ∧ ((!Tier.agrBlocksControl .logophoric) = (ttcContrasts[0]!.logophoric))
     ∧ (Tier.allowsNonhumanPRO .predicative = ttcContrasts[1]!.predicative)
     ∧ (Tier.allowsNonhumanPRO .logophoric = ttcContrasts[1]!.logophoric)
     ∧ (Tier.allowsImplicitControl .predicative = ttcContrasts[2]!.predicative)

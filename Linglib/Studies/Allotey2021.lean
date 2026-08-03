@@ -81,8 +81,11 @@ inductive Table2Row where
     control-verb inventory: the antecedence and reading rows are the
     criteria the signature excludes (`Signature.admits`); *de se* is a
     tier property, not signature content ([landau-2013] §1.3;
-    [chierchia-1990]); φ-covariance is feature transmission under
-    binding; the two control rows read the inventory. -/
+    [chierchia-1990]) — the attitude-tier reading in the paper's
+    subject-control test configuration (ex 53; communicative object
+    control would give *de te* instead); φ-covariance is feature
+    transmission under binding; the two control rows read the
+    inventory. -/
 def predictedColumn (sig : Signature) (tier : Tier) (verbs : List CTP) :
     Table2Row → Bool
   | .cCommandedByAntecedent => !sig.admits .nonCCommandingControl
@@ -90,7 +93,7 @@ def predictedColumn (sig : Signature) (tier : Tier) (verbs : List CTP) :
   | .sloppyOnly             => !sig.admits .strictEllipsis
   | .boundVariable          => !sig.admits .strictUnderOnly
   | .hasPhiFeatures         => sig.boundVariable
-  | .obligatoryDeSe         => tier.obligatoryDeSe
+  | .obligatoryDeSe         => tier.isAttitude
   | .subjectControl         => verbs.any (·.control == .subjectControl)
   | .objectControl          => verbs.any (·.control == .objectControl)
 
@@ -167,7 +170,7 @@ theorem ga_no_fSubjunctive (c : EmbeddedClauseType) :
     the one position that reads Agr, and has no φ-agreement anyway
     (§4.4, exx 79–81; §6.1). -/
 theorem landau_predicts_control (c : EmbeddedClauseType) (agr : Bool) :
-    (gaSignature c).Obligatory ↔ (gaToLandau c).hasOCWithAgr agr = true := by
+    (gaSignature c).Obligatory ↔ (gaToLandau c).HasOC agr := by
   cases c <;> cases agr <;> decide
 
 /-! ### Long-Distance Agree and CP strength

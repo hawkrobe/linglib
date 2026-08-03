@@ -18,8 +18,9 @@ readings; variable binding excludes strict readings under
 *only*-binding (`Signature.admits`).
 
 Deliberately absent, per §1.3: obligatory *de se* is NOT criterial for
-OC — it is a lexical property of attitude-implicating verbs
-(`Control.Tier.obligatoryDeSe`). Per §1.4, obligatory *nullness* of the
+OC — it is a property of the attitude tier (`Control.Tier.isAttitude`;
+the per-controller *de se*/*de te* table is encoded in
+`Studies/Landau2015.lean`). Per §1.4, obligatory *nullness* of the
 controlled element is not criterial either — whether a language spells
 the controlled subject out is a vocabulary fact
 (`Minimalist.MinimalPronoun.MinPronInventory.controlForm`), independent
