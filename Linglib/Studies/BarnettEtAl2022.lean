@@ -66,24 +66,30 @@ instance : Fintype StickWorld where
   complete := fun x => by cases x <;> simp
 
 /-- Whether a stick is available in a given world. -/
-def worldContains : StickWorld → Stick → Bool
-  | .w123, .s1 | .w123, .s2 | .w123, .s3 => true
-  | .w124, .s1 | .w124, .s2 | .w124, .s4 => true
-  | .w125, .s1 | .w125, .s2 | .w125, .s5 => true
-  | .w134, .s1 | .w134, .s3 | .w134, .s4 => true
-  | .w135, .s1 | .w135, .s3 | .w135, .s5 => true
-  | .w145, .s1 | .w145, .s4 | .w145, .s5 => true
-  | .w234, .s2 | .w234, .s3 | .w234, .s4 => true
-  | .w235, .s2 | .w235, .s3 | .w235, .s5 => true
-  | .w245, .s2 | .w245, .s4 | .w245, .s5 => true
-  | .w345, .s3 | .w345, .s4 | .w345, .s5 => true
-  | _, _ => false
+def worldContains : StickWorld → Stick → Prop
+  | .w123, .s1 | .w123, .s2 | .w123, .s3 => True
+  | .w124, .s1 | .w124, .s2 | .w124, .s4 => True
+  | .w125, .s1 | .w125, .s2 | .w125, .s5 => True
+  | .w134, .s1 | .w134, .s3 | .w134, .s4 => True
+  | .w135, .s1 | .w135, .s3 | .w135, .s5 => True
+  | .w145, .s1 | .w145, .s4 | .w145, .s5 => True
+  | .w234, .s2 | .w234, .s3 | .w234, .s4 => True
+  | .w235, .s2 | .w235, .s3 | .w235, .s5 => True
+  | .w245, .s2 | .w245, .s4 | .w245, .s5 => True
+  | .w345, .s3 | .w345, .s4 | .w345, .s5 => True
+  | _, _ => False
+
+instance : ∀ w u, Decidable (worldContains w u) := fun w u => by
+  cases w <;> cases u <;> (unfold worldContains; infer_instance)
 
 /-- A world is "longer" if the average stick length exceeds the midpoint (3);
 equivalently, the three sticks sum past 9. 4 of 10 worlds qualify. -/
-def longer : StickWorld → Bool
-  | .w145 | .w235 | .w245 | .w345 => true
-  | _ => false
+def longer : StickWorld → Prop
+  | .w145 | .w235 | .w245 | .w345 => True
+  | _ => False
+
+instance : DecidablePred longer := fun w => by
+  cases w <;> (unfold longer; infer_instance)
 
 /-! ### Persuasive-speaker scores -/
 
@@ -124,7 +130,7 @@ noncomputable def l0 (u : Stick) : PMF StickWorld :=
   .ofScores .uniform fun w => if worldContains w u then 1 else 0
 
 /-- Event marginal of the literal listener. -/
-noncomputable def l0Event (u : Stick) (P : StickWorld → Bool) : ℝ≥0∞ :=
+noncomputable def l0Event (u : Stick) (P : StickWorld → Prop) [DecidablePred P] : ℝ≥0∞ :=
   ∑' w, if P w then l0 u w else 0
 
 /-- Persuasive speaker (eq. 8 at β = 2). -/
@@ -137,7 +143,7 @@ noncomputable def l1w (u : Stick) : PMF StickWorld :=
   .ofScores .uniform fun w => PMF.scoresWith .uniform (s1Score w) u
 
 /-- Event marginal of the pragmatic listener. -/
-noncomputable def l1Event (u : Stick) (P : StickWorld → Bool) : ℝ≥0∞ :=
+noncomputable def l1Event (u : Stick) (P : StickWorld → Prop) [DecidablePred P] : ℝ≥0∞ :=
   ∑' w, if P w then l1w u w else 0
 
 open scoped ENNReal
@@ -147,7 +153,7 @@ open scoped ENNReal
 /-- L0(longer|s5) > L0(¬longer|s5): stick 5 is positive evidence for "longer".
 4 of 6 worlds containing s5 are longer, vs 2 not-longer. -/
 theorem l0_s5_positive :
-    l0Event .s5 (fun w => !longer w) < l0Event .s5 longer :=
+    l0Event .s5 (fun w => ¬ longer w) < l0Event .s5 longer :=
   PMF.ofScores_event_lt _ _ (by decide +kernel)
 
 /-- L0(longer|s5) > L0(longer|s4): stick 5 provides stronger evidence than s4. -/
@@ -157,7 +163,7 @@ theorem l0_s5_strongest : l0Event .s4 longer < l0Event .s5 longer :=
 /-- L0(¬longer|s1) > L0(longer|s1): stick 1 is evidence against "longer".
 Only 1 of 6 worlds containing s1 is longer. -/
 theorem l0_s1_negative :
-    l0Event .s1 longer < l0Event .s1 (fun w => !longer w) :=
+    l0Event .s1 longer < l0Event .s1 (fun w => ¬ longer w) :=
   PMF.ofScores_event_lt _ _ (by decide +kernel)
 
 /-- L0(longer|·) is monotonically increasing in stick length. This structural
@@ -183,13 +189,13 @@ the ¬longer mass (p. 172: "the absence of strong evidence from a speaker
 who would be highly motivated to show it statistically implies that no
 such evidence exists"). -/
 theorem weak_evidence_effect :
-    l1Event .s4 longer < l1Event .s4 (fun w => !longer w) :=
+    l1Event .s4 longer < l1Event .s4 (fun w => ¬ longer w) :=
   PMF.ofScores_event_lt _ _ (by decide +kernel)
 
 /-- Strong evidence works: the strongest available evidence cannot be
 explained away by the absence of something better. -/
 theorem strong_evidence_works :
-    l1Event .s5 (fun w => !longer w) < l1Event .s5 longer :=
+    l1Event .s5 (fun w => ¬ longer w) < l1Event .s5 longer :=
   PMF.ofScores_event_lt _ _ (by decide +kernel)
 
 /-! ### Bridge Theorems -/
@@ -226,7 +232,7 @@ Stick 4 has positive argStr at L0 (1/2 > 2/5), yet L1 assigns more mass
 to ¬longer than longer after seeing s4. -/
 theorem argStr_positive_but_backfires :
     hasPositiveArgStr (l0LongerQ .s4 : ℚ) priorLonger ∧
-    l1Event .s4 longer < l1Event .s4 (fun w => !longer w) :=
+    l1Event .s4 longer < l1Event .s4 (fun w => ¬ longer w) :=
   ⟨s4_positive_argStr, weak_evidence_effect⟩
 
 /-! ### Experimental Design & Behavioral Data -/
@@ -415,7 +421,7 @@ theorem model_predicts_interaction :
     -- Model: L0 (literal) — s4 is positive evidence
     hasPositiveArgStr (l0LongerQ .s4 : ℚ) priorLonger ∧
     -- Model: L1 (pragmatic) — s4 backfires
-    l1Event .s4 longer < l1Event .s4 (fun w => !longer w) ∧
+    l1Event .s4 longer < l1Event .s4 (fun w => ¬ longer w) ∧
     -- Data: pragmatic group shows backfire
     pragmaticResult.meanSlider < 50 ∧
     -- Data: literal group shows no backfire
