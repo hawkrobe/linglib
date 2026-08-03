@@ -33,12 +33,12 @@ reading of the LDA facts in `Studies/Allotey2021.lean`.
 
 namespace Control
 
-open Semantics.Composition.TypeShifting (ClauseLayer)
+open Semantics.Composition.TypeShifting (ComplementDenotation)
 
 /-- The semantic layer a control tier's complement inhabits
     ([landau-2024] (56)/(58)): predicative complements are properties,
     logophoric ones propositions. -/
-def Tier.complLayer : Tier → ClauseLayer
+def Tier.complementDenotation : Tier → ComplementDenotation
   | .predicative => .property
   | .logophoric  => .proposition
 
@@ -46,23 +46,23 @@ def Tier.complLayer : Tier → ClauseLayer
     propositional ([landau-2024] (72)): a lexical subject saturates a
     property, yielding a type mismatch with a property-selecting
     predicate. -/
-def LicensesLexicalSubject (layer : ClauseLayer) : Prop :=
-  layer = .proposition
+def LicensesLexicalSubject (denotation : ComplementDenotation) : Prop :=
+  denotation = .proposition
 
-instance (layer : ClauseLayer) : Decidable (LicensesLexicalSubject layer) :=
+instance (denotation : ComplementDenotation) : Decidable (LicensesLexicalSubject denotation) :=
   inferInstanceAs (Decidable (_ = _))
 
 /-- Generalization (72), tier form: a tier's complement licenses a
     lexical subject iff the tier is attitude. -/
 theorem licensesLexicalSubject_iff_isAttitude (t : Tier) :
-    LicensesLexicalSubject t.complLayer ↔ t.isAttitude = true := by
+    LicensesLexicalSubject t.complementDenotation ↔ t.isAttitude = true := by
   cases t <;> decide
 
 /-- The semantic layer of a clausal complement type, derived from the
     two `Features` observables: clausal and finite → proposition,
     clausal and nonfinite → property ([chierchia-1984]), `none` for
     non-clausal complements. -/
-def complementSemLayer (ct : ComplementType) : Option ClauseLayer :=
+def _root_.ComplementType.denotation (ct : ComplementType) : Option ComplementDenotation :=
   if ct.isClausal then
     some (if ct.isFinite then .proposition else .property)
   else none
@@ -84,8 +84,8 @@ theorem complSize_predicative_lt_logophoric :
 
 /-- Size and layer covary: the propositional complement is the larger
     one (the size half of the attitude asymmetry). -/
-theorem complLayer_proposition_iff_lt (t : Tier) :
-    t.complLayer = .proposition ↔
+theorem complementDenotation_proposition_iff_lt (t : Tier) :
+    t.complementDenotation = .proposition ↔
       Tier.predicative.complSize < t.complSize := by
   cases t <;> decide
 

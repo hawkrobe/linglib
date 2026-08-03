@@ -238,7 +238,7 @@ theorem ga_supports_basegeneration :
     of ex 105.) -/
 theorem lexical_copy_ban_predicted :
     gaEmbeddedLexicalCopyAvailable
-      = decide (LicensesLexicalSubject Tier.predicative.complLayer) := rfl
+      = decide (LicensesLexicalSubject Tier.predicative.complementDenotation) := rfl
 
 /-- The controlled form φ-covaries with its controller (exx 37–39),
     unlike [satik-2019]'s form-invariant Ewe *yè* (§3.6.3). -/

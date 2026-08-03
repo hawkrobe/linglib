@@ -428,7 +428,7 @@ correlates in the domain. -/
     The extensional `pred`/`nom` pair, their intensional generalization
     as ∩/∪ in [chierchia-1998], and the Control Principle in
     [chierchia-1984] Ch IV all operate on the property layer. -/
-inductive ClauseLayer where
+inductive ComplementDenotation where
   /-- Property layer: ⟨e,t⟩. Domain of `pred`/`nom`/`NOM`.
       Infinitival and gerundive complements. -/
   | property
@@ -443,7 +443,7 @@ inductive ClauseLayer where
     This unifies [chierchia-1984]'s two central claims: control and
     nominalization are both consequences of the property/proposition
     type distinction. -/
-def ClauseLayer.isProperty : ClauseLayer → Bool
+def ComplementDenotation.isProperty : ComplementDenotation → Bool
   | .property    => true
   | .proposition => false
 
