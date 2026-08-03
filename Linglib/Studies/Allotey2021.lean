@@ -7,6 +7,7 @@ import Linglib.Fragments.Ga.Predicates
 import Linglib.Syntax.Minimalist.MinimalPronoun
 import Linglib.Syntax.Control.Basic
 import Linglib.Syntax.Control.CopyControl
+import Linglib.Syntax.Control.Signature
 import Linglib.Syntax.Minimalist.Probe.Profile
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Features.Complementation
@@ -37,15 +38,15 @@ open Minimalist Minimalist.MinimalPronoun Control Ga
 
 /-! ### OC by clause type -/
 
-/-- The OC signature of a Gã clause type, from its noncoreference flag
-    (the derivation `Ostrove2026.smpmOCSignature` also uses). -/
-def gaOCSignature (c : EmbeddedClauseType) : OCSignature :=
+/-- The control signature of a Gã clause type, from its noncoreference
+    flag (the derivation `Ostrove2026.smpmSignature` also uses). -/
+def gaSignature (c : EmbeddedClauseType) : Signature :=
   .ofNoncoreferential (clauseProperties c).noncoreferentialSubject
 
 /-- OC status is read off the complementizer's finiteness. -/
-theorem isOC_eq_not_isFinite (c : EmbeddedClauseType) :
-    (gaOCSignature c).isOC = !(clauseComplementizer c).isFinite := by
-  cases c <;> rfl
+theorem obligatory_iff_not_isFinite (c : EmbeddedClauseType) :
+    (gaSignature c).Obligatory ↔ (clauseComplementizer c).isFinite = false := by
+  cases c <;> decide
 
 /-- A verb has a `ni`-frame exactly when it is a control verb (§§3.4–3.5,
     5.5.1). -/
@@ -55,9 +56,9 @@ theorem control_iff_selects_ni :
 
 /-! ### Table 2: the overt pronoun has the OC signature -/
 
-/-- The eight diagnostic properties of [allotey-2021]'s Table 2
-    ([landau-2013]'s OC diagnostics, §§3.3–3.4). -/
-inductive OCDiagnostic where
+/-- The eight rows of [allotey-2021]'s Table 2 ([landau-2013]'s OC
+    criteria, §§3.3–3.4). -/
+inductive Table2Row where
   /-- Must be c-commanded by its antecedent (exx 45–46) -/
   | cCommandedByAntecedent
   /-- Allows a long-distance antecedent (exx 47–49) -/
@@ -76,29 +77,32 @@ inductive OCDiagnostic where
   | objectControl
   deriving DecidableEq, Repr
 
-/-- The Table 2 column an OC signature predicts over a control-verb
-    inventory: codependency forces a local c-commanding antecedent and
-    excludes long-distance ones; variable binding forces bound-variable,
-    sloppy-only, φ-covarying, *de se* readings ([chierchia-1990]); the
-    two control rows read the inventory. -/
-def predictedColumn (sig : OCSignature) (verbs : List CTP) : OCDiagnostic → Bool
-  | .cCommandedByAntecedent => sig.controllerCodependent
-  | .longDistanceAntecedent => !sig.controllerCodependent
-  | .sloppyOnly             => sig.boundVariable
-  | .boundVariable          => sig.boundVariable
+/-- The Table 2 column predicted by a control signature, a tier, and a
+    control-verb inventory: the antecedence and reading rows are the
+    criteria the signature excludes (`Signature.admits`); *de se* is a
+    tier property, not signature content ([landau-2013] §1.3;
+    [chierchia-1990]); φ-covariance is feature transmission under
+    binding; the two control rows read the inventory. -/
+def predictedColumn (sig : Signature) (tier : Tier) (verbs : List CTP) :
+    Table2Row → Bool
+  | .cCommandedByAntecedent => !sig.admits .nonCCommandingControl
+  | .longDistanceAntecedent => sig.admits .longDistanceControl
+  | .sloppyOnly             => !sig.admits .strictEllipsis
+  | .boundVariable          => !sig.admits .strictUnderOnly
   | .hasPhiFeatures         => sig.boundVariable
-  | .obligatoryDeSe         => sig.boundVariable
+  | .obligatoryDeSe         => tier.obligatoryDeSe
   | .subjectControl         => verbs.any (·.control == .subjectControl)
   | .objectControl          => verbs.any (·.control == .objectControl)
 
 /-- Table 2's observed overt-pronoun column (§§3.3.1–3.3.7, 3.4). -/
-def overtPronoun (d : OCDiagnostic) : Bool :=
+def overtPronoun (d : Table2Row) : Bool :=
   d != .longDistanceAntecedent
 
-/-- The observed column is what the `ni`-clause OC signature predicts
-    over the attested inventory (§3.7). -/
+/-- The observed column is what the `ni`-clause signature predicts over
+    the attested inventory, on the logophoric tier of the attitude
+    verbs the *de se* test uses (ex 53 'expect'). -/
 theorem overt_pronoun_matches_pro :
-    overtPronoun = predictedColumn (gaOCSignature .irrealisNi) gaCTPs := by
+    overtPronoun = predictedColumn (gaSignature .irrealisNi) .logophoric gaCTPs := by
   funext d; cases d <;> decide
 
 /-! ### The irrealis marker across complement frames
@@ -163,8 +167,8 @@ theorem ga_no_fSubjunctive (c : EmbeddedClauseType) :
     the one position that reads Agr, and has no φ-agreement anyway
     (§4.4, exx 79–81; §6.1). -/
 theorem landau_predicts_control (c : EmbeddedClauseType) (agr : Bool) :
-    (gaOCSignature c).isOC = (gaToLandau c).hasOCWithAgr agr := by
-  cases c <;> cases agr <;> rfl
+    (gaSignature c).Obligatory ↔ (gaToLandau c).hasOCWithAgr agr = true := by
+  cases c <;> cases agr <;> decide
 
 /-! ### Long-Distance Agree and CP strength
 
@@ -191,9 +195,9 @@ theorem ldaReaches_eq_not_isFinite (c : Complementizer) :
   cases c <;> rfl
 
 /-- The probe reaches the embedded subject in exactly the OC clause types. -/
-theorem ldaReaches_eq_isOC (c : EmbeddedClauseType) :
-    ldaReaches (clauseComplementizer c) = (gaOCSignature c).isOC := by
-  cases c <;> rfl
+theorem ldaReaches_iff_obligatory (c : EmbeddedClauseType) :
+    ldaReaches (clauseComplementizer c) = true ↔ (gaSignature c).Obligatory := by
+  cases c <;> decide
 
 /-- `ni` projects no focus field; the finite complementizers do
     (exx 107–108). -/

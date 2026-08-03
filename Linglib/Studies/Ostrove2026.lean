@@ -8,6 +8,7 @@ import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Fragments.Mixtec.SMPM.Basic
 import Linglib.Syntax.Control.Basic
 import Linglib.Syntax.Control.CopyControl
+import Linglib.Syntax.Control.Signature
 import Linglib.Studies.Allotey2021
 import Linglib.Features.Complementation
 
@@ -98,10 +99,10 @@ theorem finite_no_restructuring :
 -- § 2: OC Diagnostics (§4)
 -- ════════════════════════════════════════════════════════════════
 
-/-- OC signature for each SMPM clause type, derived from
+/-- The control signature of each SMPM clause type, from
     `clauseProperties.noncoreferentialSubject` via
-    `OCSignature.ofNoncoreferential` — the same derivation
-    `Allotey2021.gaOCSignature` uses for Gã.
+    `Signature.ofNoncoreferential` — the same derivation
+    `Allotey2021.gaSignature` uses for Gã.
 
     Untensed subjunctives show the full OC signature (§4):
     - Sloppy-only under VPE (33)
@@ -112,17 +113,17 @@ theorem finite_no_restructuring :
     these properties: they allow strict readings under VPE (30, 32),
     nonexhaustive binding (tensed subj., fn. 16), and non-local
     antecedents (43, 45). -/
-def smpmOCSignature (c : EmbeddedClauseType) : OCSignature :=
+def smpmSignature (c : EmbeddedClauseType) : Signature :=
   .ofNoncoreferential (clauseProperties c).noncoreferentialSubject
 
 theorem untensed_is_OC :
-    (smpmOCSignature .untensedSubjunctive).isOC = true := rfl
+    (smpmSignature .untensedSubjunctive).Obligatory := by decide
 
 theorem tensed_not_OC :
-    (smpmOCSignature .tensedSubjunctive).isOC = false := rfl
+    ¬(smpmSignature .tensedSubjunctive).Obligatory := by decide
 
 theorem finite_not_OC :
-    (smpmOCSignature .finiteEmbedded).isOC = false := rfl
+    ¬(smpmSignature .finiteEmbedded).Obligatory := by decide
 
 -- ════════════════════════════════════════════════════════════════
 -- § 3: Wurmbrand Bridge (partial — subjunctives only)
@@ -151,15 +152,12 @@ def wurmbrandHasOC : InfinitivalTenseClass → Bool
   | .futureIrrealis => false
   | .propositional  => false
 
-/-- For the two Wurmbrand classes that have SMPM correspondents,
-    the mapping correctly predicts control properties. -/
-theorem wurmbrand_predicts_control_futureIrrealis :
-    (wurmbrandToSubjunctive .futureIrrealis).map (smpmOCSignature · |>.isOC)
-    = some (wurmbrandHasOC .futureIrrealis) := rfl
-
-theorem wurmbrand_predicts_control_restructuring :
-    (wurmbrandToSubjunctive .restructuring).map (smpmOCSignature · |>.isOC)
-    = some (wurmbrandHasOC .restructuring) := rfl
+/-- For the Wurmbrand classes with SMPM correspondents, the mapping
+    correctly predicts control properties. -/
+theorem wurmbrand_predicts_control (w : InfinitivalTenseClass) :
+    ∀ c ∈ wurmbrandToSubjunctive w,
+      ((smpmSignature c).Obligatory ↔ wurmbrandHasOC w = true) := by
+  cases w <;> decide
 
 /-- Propositional infinitives have no SMPM correspondent —
     SMPM finite embedded clauses are genuinely finite, not infinitival. -/
@@ -220,8 +218,9 @@ def smpmLandauAgr : Control.ClauseClass → Bool
     - F-subjunctive [+Agr]: logophoric OC blocked by Agr → no OC ✓
     - Finite [+Agr]: no control tier → no OC ✓ -/
 theorem landau_predicts_control (c : Control.ClauseClass) :
-    (smpmOCSignature (landauToSMPM c)).isOC = c.hasOCWithAgr (smpmLandauAgr c) := by
-  cases c <;> rfl
+    (smpmSignature (landauToSMPM c)).Obligatory ↔
+      c.hasOCWithAgr (smpmLandauAgr c) = true := by
+  cases c <;> decide
 
 -- ════════════════════════════════════════════════════════════════
 -- § 5: Minimal Pronoun Inventories (§7)
@@ -369,20 +368,19 @@ theorem smpm_boundvar_syncretic :
     - Scope-sensitive pronominal (Italian, Hungarian): focus-triggered -/
 def smpmCopyControlType : CopyControlType := .obligatoryPronominal
 
-theorem smpm_shows_oc :
-    (copyControlProfile smpmCopyControlType).showsOC = true := rfl
+theorem smpm_shows_oc : smpmCopyControlType.showsOC = true := rfl
 
 theorem smpm_not_attitude_only :
-    (copyControlProfile smpmCopyControlType).attitudeOnly = false := rfl
+    smpmCopyControlType.attitudeOnly = false := rfl
 
 theorem smpm_no_scope_operator :
-    (copyControlProfile smpmCopyControlType).requiresScopeOperator = false := rfl
+    smpmCopyControlType.requiresScopeOperator = false := rfl
 
 /-- Controlled subjects in SMPM cannot bear focus — they must be
     clitic pronouns, and clitics cannot bear focus (65, 67). This
     distinguishes SMPM from scope-sensitive pronominal copy control. -/
 theorem smpm_copy_cannot_bear_focus :
-    (copyControlProfile smpmCopyControlType).copyCanBearFocus = false := rfl
+    smpmCopyControlType.copyCanBearFocus = false := rfl
 
 /-- The clitic requirement, derived from the fragment and routed through the
     Cardinaletti–Starke deficiency order: the required controlled-subject
@@ -397,20 +395,14 @@ theorem smpm_controlled_must_be_clitic :
 -- § 9: Exempt Anaphor Argument (§6)
 -- ════════════════════════════════════════════════════════════════
 
-/-- SMPM exempt anaphor profile, derived from fragment data.
-
-    Exempt anaphors (reflexive forms used as possessors, outside
-    Condition A domain) ARE available in SMPM (74) but CANNOT have
-    quantified antecedents (75, 78). -/
-def smpmExemptProfile : ExemptAnaphorProfile where
-  hasExemptAnaphors := Mixtec.SMPM.exemptAnaphorsAsPossessors
-  allowsQuantifiedAntecedent := Mixtec.SMPM.exemptAnaphorAllowsQuantifiedAntecedent
-
+/-- Exempt anaphors (reflexive forms used as possessors, outside the
+    Condition A domain) are available in SMPM (74). -/
 theorem smpm_has_exempt_anaphors :
-    smpmExemptProfile.hasExemptAnaphors = true := rfl
+    Mixtec.SMPM.exemptAnaphorsAsPossessors = true := rfl
 
+/-- SMPM exempt anaphors cannot have quantified antecedents (75, 78). -/
 theorem smpm_no_quantified_exempt :
-    smpmExemptProfile.allowsQuantifiedAntecedent = false := rfl
+    Mixtec.SMPM.exemptAnaphorAllowsQuantifiedAntecedent = false := rfl
 
 /-- **The argument against movement** (§6, pp.26–31):
 
@@ -550,8 +542,7 @@ theorem propAttitude_is_realis :
     proclitic showing the full OC signature ([allotey-2021]). -/
 def gaCopyControlType : CopyControlType := .obligatoryPronominal
 
-theorem ga_shows_oc :
-    (copyControlProfile gaCopyControlType).showsOC = true := rfl
+theorem ga_shows_oc : gaCopyControlType.showsOC = true := rfl
 
 /-- Gã and SMPM occupy the same copy-control cell. -/
 theorem ga_same_copy_type_as_smpm :

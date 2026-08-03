@@ -26,8 +26,8 @@ for the paper-anchored control studies (`Studies/Landau2015.lean`,
 - `Control.PredicateClass`: the eight predicate classes, mapped to tiers
 - `Control.ClauseClass`: the finiteness scale (C-subjunctive,
   F-subjunctive, finite) with the Agr-sensitive `hasOCWithAgr`
-- `Control.ftAsymmetry`, `Control.agrBlocksControl`: the Feature
-  Transmission asymmetry and the OC-NC generalization derived from it
+- `Control.agrBlocksControl`: the OC-NC generalization, from the
+  Feature Transmission asymmetry
 -/
 
 namespace Control
@@ -138,39 +138,16 @@ def PredicateClass.tier : PredicateClass → Tier
   | .implicative | .aspectual | .modal | .evaluative => .predicative
   | .factive | .propositional | .desiderative | .interrogative => .logophoric
 
-/-! ### The Feature Transmission asymmetry and the OC-NC generalization -/
-
-/-- The Feature Transmission asymmetry ([landau-2015] (60)): predication
-    is not contingent on feature matching between subject and predicate
-    (60a), while variable binding is contingent on feature matching
-    between binder and pronominal variable (60b). Independently
-    motivated: predication tolerates φ-mismatches (Icelandic quirky
-    constructions), variable binding requires φ-agreement ([heim-2008],
-    [kratzer-2009]). -/
-structure FeatureTransmissionAsymmetry where
-  /-- (60a): Predication does NOT require feature matching. -/
-  predicationContingentOnFeatureMatch : Bool
-  /-- (60b): Variable binding DOES require feature matching. -/
-  variableBindingContingentOnFeatureMatch : Bool
-
-/-- The empirically motivated Feature Transmission asymmetry. -/
-def ftAsymmetry : FeatureTransmissionAsymmetry where
-  predicationContingentOnFeatureMatch := false
-  variableBindingContingentOnFeatureMatch := true
+/-! ### The OC-NC generalization -/
 
 /-- The OC-NC generalization ([landau-2015] (70)): `[+Agr]` blocks
-    logophoric control but not predicative control — derived from the
-    Feature Transmission asymmetry, not stipulated: predication is not
-    contingent on feature matching (60a), variable binding is (60b). -/
+    logophoric but not predicative control, by the Feature Transmission
+    asymmetry ((60): predication is not contingent on feature matching —
+    Icelandic quirky constructions — while variable binding is,
+    [heim-2008], [kratzer-2009]). -/
 def agrBlocksControl : Tier → Bool
-  | .predicative => ftAsymmetry.predicationContingentOnFeatureMatch
-  | .logophoric  => ftAsymmetry.variableBindingContingentOnFeatureMatch
-
-/-- Predicative control survives in inflected complements. -/
-theorem predicative_survives_agr : agrBlocksControl .predicative = false := rfl
-
-/-- Logophoric control is blocked by inflected complements. -/
-theorem logophoric_blocked_by_agr : agrBlocksControl .logophoric = true := rfl
+  | .predicative => false
+  | .logophoric  => true
 
 /-! ### Clause classes -/
 
