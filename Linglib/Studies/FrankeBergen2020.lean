@@ -624,10 +624,9 @@ theorem lu_ss_prefers_wNS {α : ℝ} (hα : 0 < α) :
       (by decide +kernel : wNS ∈ (luFam .lit).sem .ss)]
   calc (∑ l : LULex, ((luFam l).speaker α wNA).real {.ss})
       = ((luFam .lit).speaker α wNA).real {.ss} :=
-        Finset.sum_eq_single_of_mem LULex.lit (Finset.mem_univ _) fun l _ hl => by
-          cases l
-          · exact absurd rfl hl
-          · exact (luFam .oi).speaker_real_singleton_eq_zero hα
+        Fintype.sum_eq_single LULex.lit fun
+          | .lit, hl => absurd rfl hl
+          | .oi, _ => (luFam .oi).speaker_real_singleton_eq_zero hα
               (by decide +kernel : wNA ∉ (luFam .oi).sem .ss)
     _ < ((luFam .oi).speaker α wNS).real {.ss} := by
         rw [(luFam .oi).speaker_real_singleton_of_profile_replicate hα
@@ -661,7 +660,7 @@ theorem perParse_ss_prefers_o {α : ℝ} (hα : 0 < α) :
       (mem_ext.mpr ((m_ss_singleton wNS).mpr rfl))]
   calc (∑ w : World, ((readings pM).speaker α w).real {.ss})
       = ((readings pM).speaker α wNS).real {.ss} :=
-        Finset.sum_eq_single_of_mem wNS (Finset.mem_univ _) fun w _ hw =>
+        Fintype.sum_eq_single wNS fun w hw =>
           (readings pM).speaker_real_singleton_eq_zero hα fun hmem =>
             hw ((m_ss_singleton w).mp (mem_ext.mp hmem))
     _ < 1 :=
