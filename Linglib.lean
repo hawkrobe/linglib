@@ -2845,6 +2845,7 @@ import Linglib.Syntax.ConstructionGrammar.Licensing
 import Linglib.Syntax.ConstructionGrammar.Resultatives
 import Linglib.Syntax.Control.Basic
 import Linglib.Syntax.Control.CopyControl
+import Linglib.Syntax.Control.Signature
 import Linglib.Syntax.Coordination
 import Linglib.Syntax.DependencyGrammar.Basic
 import Linglib.Syntax.DependencyGrammar.Coordination

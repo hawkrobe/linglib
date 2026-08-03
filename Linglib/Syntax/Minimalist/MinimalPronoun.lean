@@ -20,7 +20,6 @@ item inventory.
 - `VocabItem`: A context-sensitive realization rule (D[uφ] → Form / context)
 - `MinPronInventory`: A language's vocabulary item inventory + elsewhere default
 - `PronForm`: Standard surface form categories (null, pronoun, reflexive)
-- `OCSignature`: [landau-2013]'s Obligatory Control diagnostic package
 
 ## Core Claims
 
@@ -163,48 +162,6 @@ theorem MinPronInventory.controlForm_eq_null_of_overtPROUniversal
     {inv : MinPronInventory PronForm} (h : inv.OvertPROUniversal true) :
     inv.controlForm = .null :=
   Decidable.byContradiction fun hne => Bool.noConfusion (h hne)
-
-/-! ### Obligatory Control Signature -/
-
-/-- [landau-2013]'s Obligatory Control signature (simplified).
-
-    A clause S exhibits OC iff its subject satisfies two core conditions:
-    (a) the controller(s) must be codependent(s) of S
-    (b) PRO (or part of it) must be interpreted as a bound variable
-
-    Partial control is a subspecies of OC per [landau-2013] — "PRO (or part
-    of it)" explicitly accommodates it. -/
-structure OCSignature where
-  /-- (a): Controller must be argument of the matrix predicate -/
-  controllerCodependent : Bool
-  /-- (b): Embedded subject interpreted as bound variable -/
-  boundVariable : Bool
-  deriving DecidableEq, Repr
-
-/-- The full OC signature: both core diagnostics positive. -/
-def ocFull : OCSignature where
-  controllerCodependent := true
-  boundVariable := true
-
-/-- No OC: neither core diagnostic holds. -/
-def ocNone : OCSignature where
-  controllerCodependent := false
-  boundVariable := false
-
-/-- Does a clause type show obligatory control? -/
-def OCSignature.isOC (sig : OCSignature) : Bool :=
-  sig.controllerCodependent && sig.boundVariable
-
-/-- OC signature determined by whether a clause type licenses
-    noncoreferential embedded subjects: free reference means no OC;
-    obligatory coreference forces the full [landau-2013] signature.
-    The shared derivation behind the per-language OC tables of
-    [ostrove-2026] (SMPM) and [allotey-2021] (Gã). -/
-def OCSignature.ofNoncoreferential (noncoreferential : Bool) : OCSignature :=
-  if noncoreferential then ocNone else ocFull
-
-@[simp] theorem OCSignature.ofNoncoreferential_isOC (b : Bool) :
-    (ofNoncoreferential b).isOC = !b := by cases b <;> rfl
 
 /-! ### Cross-Linguistic BVA Syncretism -/
 

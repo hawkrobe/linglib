@@ -1,23 +1,27 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
+
 /-!
 # Copy Control and Control Derivation
 
 Copy control ([polinsky-potsdam-2006]): the subject of a control clause
 is a phonologically overt copy of its controller. The typology of copy
-types, the movement vs. base-generation opposition for deriving
-obligatory control, and the exempt-anaphor apparatus
-([pollard-sag-1992]) that adjudicates between them.
-
-Substrate for the overt-PRO studies (`Studies/Ostrove2026.lean`,
-`Studies/Allotey2021.lean`).
+types and the movement vs. base-generation opposition for deriving
+obligatory control, adjudicated by diagnostics such as exempt anaphora
+([pollard-sag-1992]: exempt anaphors cannot have quantified
+antecedents). Substrate for the overt-PRO studies
+(`Studies/Ostrove2026.lean`, `Studies/Allotey2021.lean`).
 
 ## Main definitions
 
-- `Control.CopyControlType` / `Control.copyControlProfile`: the four
-  copy-control types and their distinguishing properties
+- `Control.CopyControlType`: the four copy-control types, with their
+  distinguishing properties as predicates
 - `Control.Derivation`: base-generation vs. movement, with the
   diagnostic prediction table (`Derivation.predicts`) and the unique
   derivation an observation supports (`Derivation.supportedBy`)
-- `Control.ExemptAnaphorProfile`: per-language exempt-anaphor facts
 -/
 
 namespace Control
@@ -43,37 +47,26 @@ inductive CopyControlType where
   | obligatoryPronominal
   deriving DecidableEq, Repr
 
-/-- Properties distinguishing copy control types. -/
-structure CopyControlProfile where
-  controlType : CopyControlType
-  /-- Does the copy show the full OC signature (bound variable, exhaustive)? -/
-  showsOC : Bool
-  /-- Is the copy restricted to attitude report contexts? -/
-  attitudeOnly : Bool
-  /-- Does the copy require a scope-taking operator (focus, only)? -/
-  requiresScopeOperator : Bool
-  /-- Can the copy bear focus? -/
-  copyCanBearFocus : Bool
-  deriving DecidableEq, Repr
+/-- The copy shows the full OC signature (bound variable, exhaustive). -/
+def CopyControlType.showsOC : CopyControlType → Bool
+  | .obligatoryPronominal => true
+  | _                     => false
 
-/-- Profile for each copy control type. -/
-def copyControlProfile : CopyControlType → CopyControlProfile
-  | .fullCopy                 => ⟨.fullCopy,                 false, false, false, true⟩
-  | .logophoricPronominal     => ⟨.logophoricPronominal,     false, true,  false, true⟩
-  | .scopeSensitivePronominal => ⟨.scopeSensitivePronominal, false, false, true,  true⟩
-  | .obligatoryPronominal     => ⟨.obligatoryPronominal,     true,  false, false, false⟩
+/-- The copy is restricted to attitude-report contexts. -/
+def CopyControlType.attitudeOnly : CopyControlType → Bool
+  | .logophoricPronominal => true
+  | _                     => false
 
-/-! ### Exempt anaphors -/
+/-- The copy requires a scope-taking operator (focus, *only*). -/
+def CopyControlType.requiresScopeOperator : CopyControlType → Bool
+  | .scopeSensitivePronominal => true
+  | _                         => false
 
-/-- Exempt anaphors ([pollard-sag-1992]): reflexive forms used outside
-    their canonical binding (Condition A) domain. Key constraint: exempt
-    anaphors cannot have quantified antecedents. -/
-structure ExemptAnaphorProfile where
-  /-- Exempt anaphors available in this language -/
-  hasExemptAnaphors : Bool
-  /-- Can exempt anaphors have quantified antecedents? -/
-  allowsQuantifiedAntecedent : Bool
-  deriving DecidableEq, Repr
+/-- The copy can bear focus — obligatory pronominals, being the only
+    copy type showing true OC, cannot. -/
+def CopyControlType.copyCanBearFocus : CopyControlType → Bool
+  | .obligatoryPronominal => false
+  | _                     => true
 
 /-! ### Control derivation -/
 
