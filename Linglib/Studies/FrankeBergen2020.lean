@@ -556,13 +556,9 @@ listener's parse posterior peaks at exhaustification of the whole
 sentence. -/
 theorem ss_m_parse_pref : ∀ p : Parse, p ≠ pM →
     (gi.choicePosterior 5 prior .ss).real {(.ss, p)}
-      < (gi.choicePosterior 5 prior .ss).real {(.ss, pM)} := by
-  have hcol : ∀ p : Parse, p ≠ pM →
-      gi.divPowSumColumn 12 5 (.ss, p) < gi.divPowSumColumn 12 5 (.ss, pM) := by
-    decide +kernel
-  exact fun p hp =>
-    gi.choicePosterior_real_lt_of_divPowSum (by decide +kernel)
-      prior_singleton_eq prior_singleton_ne_zero rfl rfl (hcol p hp)
+      < (gi.choicePosterior 5 prior .ss).real {(.ss, pM)} := fun p _ =>
+  gi.choicePosterior_real_lt_of_divPowSum (k := 5) (D := 12) (by decide +kernel)
+    prior_singleton_eq prior_singleton_ne_zero rfl rfl (by revert p; decide +kernel)
 
 /-- Hearing "some of the aliens drank some of their water", the
 literal-semantics listener favors all-drinkers over some-but-not-all
