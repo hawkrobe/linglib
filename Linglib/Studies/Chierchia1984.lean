@@ -90,7 +90,7 @@ the meaning postulate.
 namespace Chierchia1984
 
 open Semantics.Modality.Kratzer
-open Semantics.Composition.TypeShifting (ComplSemLayer)
+open Semantics.Composition.TypeShifting (ClauseLayer)
 
 abbrev World := Fin 4
 
@@ -111,7 +111,7 @@ infrastructure layers:
 
 1. `ComplementType.isFinite` (VerbEntry.lean): finite = true for
    `.finiteClause` and `.question`
-2. `ComplSemLayer` (TypeShifting.lean): the property/proposition
+2. `ClauseLayer` (TypeShifting.lean): the property/proposition
    distinction as a semantic type layer
 
 The connection: nonfinite complements denote properties; finite
@@ -121,7 +121,7 @@ a bridge between existing infrastructure. -/
 /-- The shared derivation `Control.complementSemLayer` (clausal +
     nonfinite → property; clausal + finite → proposition), imported
     rather than restated. -/
-abbrev complSemLayer : ComplementType → Option ComplSemLayer :=
+abbrev complSemLayer : ComplementType → Option ClauseLayer :=
   Control.complementSemLayer
 
 /-- Nonfinite clausal complements are property-denoting. -/

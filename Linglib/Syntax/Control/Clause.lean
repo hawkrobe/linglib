@@ -33,12 +33,12 @@ reading of the LDA facts in `Studies/Allotey2021.lean`.
 
 namespace Control
 
-open Semantics.Composition.TypeShifting (ComplSemLayer)
+open Semantics.Composition.TypeShifting (ClauseLayer)
 
 /-- The semantic layer a control tier's complement inhabits
     ([landau-2024] (56)/(58)): predicative complements are properties,
     logophoric ones propositions. -/
-def Tier.complLayer : Tier → ComplSemLayer
+def Tier.complLayer : Tier → ClauseLayer
   | .predicative => .property
   | .logophoric  => .proposition
 
@@ -46,10 +46,10 @@ def Tier.complLayer : Tier → ComplSemLayer
     propositional ([landau-2024] (72)): a lexical subject saturates a
     property, yielding a type mismatch with a property-selecting
     predicate. -/
-def LicensesLexicalSubject (layer : ComplSemLayer) : Prop :=
+def LicensesLexicalSubject (layer : ClauseLayer) : Prop :=
   layer = .proposition
 
-instance (layer : ComplSemLayer) : Decidable (LicensesLexicalSubject layer) :=
+instance (layer : ClauseLayer) : Decidable (LicensesLexicalSubject layer) :=
   inferInstanceAs (Decidable (_ = _))
 
 /-- Generalization (72), tier form: a tier's complement licenses a
@@ -62,7 +62,7 @@ theorem licensesLexicalSubject_iff_isAttitude (t : Tier) :
     two `Features` observables: clausal and finite → proposition,
     clausal and nonfinite → property ([chierchia-1984]), `none` for
     non-clausal complements. -/
-def complementSemLayer (ct : ComplementType) : Option ComplSemLayer :=
+def complementSemLayer (ct : ComplementType) : Option ClauseLayer :=
   if ct.isClausal then
     some (if ct.isFinite then .proposition else .property)
   else none

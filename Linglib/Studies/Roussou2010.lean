@@ -196,7 +196,7 @@ theorem anItem_licensed :
 /-- *na* re-opens the EPP position, so the na-clause denotes a
 property — [chierchia-1984]'s control-complement layer — despite
 finite morphology. -/
-def naLayer : ComplSemLayer := .property
+def naLayer : ClauseLayer := .property
 
 /-- MG detaches the property layer from nonfinite coding: the
 coding-based mapping sends finite clauses to the propositional layer
