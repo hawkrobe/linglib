@@ -236,6 +236,11 @@ inductive EmbeddedClauseType where
 structure ClauseProperties where
   /-- Unrestricted TAM morphology (all three aspects available) -/
   unrestrictedTAM : Bool
+  /-- Tense independent of the matrix clause ([landau-2004]'s `[±T]`):
+      what "tensed" names in the subjunctive split — tensed
+      subjunctives carry their own (irrealis/future) tense
+      specification, untensed subjunctives depend on the matrix. -/
+  independentTense : Bool
   /-- Noncoreferential embedded subject allowed -/
   noncoreferentialSubject : Bool
   /-- Shows restructuring effects (quantifier fronting targets matrix) -/
@@ -243,9 +248,9 @@ structure ClauseProperties where
   deriving DecidableEq, Repr
 
 def clauseProperties : EmbeddedClauseType → ClauseProperties
-  | .finiteEmbedded      => ⟨true,  true,  false⟩
-  | .tensedSubjunctive   => ⟨false, true,  false⟩
-  | .untensedSubjunctive => ⟨false, false, true⟩
+  | .finiteEmbedded      => ⟨true,  true,  true,  false⟩
+  | .tensedSubjunctive   => ⟨false, true,  true,  false⟩
+  | .untensedSubjunctive => ⟨false, false, false, true⟩
 
 -- ════════════════════════════════════════════════════════════════
 -- § 5: Complement-Taking Predicates (27a–c)

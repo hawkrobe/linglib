@@ -42,9 +42,7 @@ classification, clause classes) is in `Studies/Landau2015.lean`.
 
 namespace Minimalist.MinimalPronoun
 
--- ════════════════════════════════════════════════════════════════
--- § 1: Licensing Contexts
--- ════════════════════════════════════════════════════════════════
+/-! ### Licensing Contexts -/
 
 /-- The four syntactic contexts in which a minimal pronoun can occur.
     Each context may trigger a different vocabulary item (surface form).
@@ -65,9 +63,7 @@ inductive BVAContext where
   | free
   deriving DecidableEq, Repr
 
--- ════════════════════════════════════════════════════════════════
--- § 2: Vocabulary Items and the Elsewhere Condition
--- ════════════════════════════════════════════════════════════════
+/-! ### Vocabulary Items and the Elsewhere Condition -/
 
 /-- A vocabulary item: a context-specific realization rule for a minimal pronoun.
 
@@ -113,9 +109,7 @@ def MinPronInventory.controlForm {Form : Type}
     (inv : MinPronInventory Form) : Form :=
   inv.realize .controlledSubject
 
--- ════════════════════════════════════════════════════════════════
--- § 3: Standard Surface Forms
--- ════════════════════════════════════════════════════════════════
+/-! ### Standard Surface Forms -/
 
 /-- Standard surface form categories for bound variable anaphora.
 
@@ -142,9 +136,35 @@ def MinPronInventory.hasOvertPRO (inv : MinPronInventory PronForm) : Prop :=
 instance (inv : MinPronInventory PronForm) : Decidable inv.hasOvertPRO :=
   inferInstanceAs (Decidable (_ ≠ _))
 
--- ════════════════════════════════════════════════════════════════
--- § 4: Obligatory Control Signature
--- ════════════════════════════════════════════════════════════════
+/-! ### The overt-PRO / pro-drop universal -/
+
+/-- [ostrove-2026]'s implicational universal, for a language with
+    minimal-pronoun inventory `inv` and matrix pro-drop observable
+    `proDrop`: overt PRO entails no *pro*-drop. An empirical universal,
+    so each language's study proves its own instance. -/
+def MinPronInventory.OvertPROUniversal
+    (inv : MinPronInventory PronForm) (proDrop : Bool) : Prop :=
+  inv.hasOvertPRO → proDrop = false
+
+/-- A null-PRO inventory satisfies the universal vacuously. -/
+theorem MinPronInventory.overtPROUniversal_of_controlForm_eq_null
+    {inv : MinPronInventory PronForm} (h : inv.controlForm = .null)
+    (proDrop : Bool) : inv.OvertPROUniversal proDrop :=
+  fun hovert => absurd h hovert
+
+/-- A non-*pro*-drop language satisfies the universal trivially. -/
+theorem MinPronInventory.overtPROUniversal_of_not_proDrop
+    (inv : MinPronInventory PronForm) : inv.OvertPROUniversal false :=
+  fun _ => rfl
+
+/-- The universal's bite: a *pro*-drop language must realize controlled
+    subjects as null. -/
+theorem MinPronInventory.controlForm_eq_null_of_overtPROUniversal
+    {inv : MinPronInventory PronForm} (h : inv.OvertPROUniversal true) :
+    inv.controlForm = .null :=
+  Decidable.byContradiction fun hne => Bool.noConfusion (h hne)
+
+/-! ### Obligatory Control Signature -/
 
 /-- [landau-2013]'s Obligatory Control signature (simplified).
 
@@ -186,9 +206,7 @@ def OCSignature.ofNoncoreferential (noncoreferential : Bool) : OCSignature :=
 @[simp] theorem OCSignature.ofNoncoreferential_isOC (b : Bool) :
     (ofNoncoreferential b).isOC = !b := by cases b <;> rfl
 
--- ════════════════════════════════════════════════════════════════
--- § 5: Cross-Linguistic BVA Syncretism
--- ════════════════════════════════════════════════════════════════
+/-! ### Cross-Linguistic BVA Syncretism -/
 
 /-- Cross-linguistic syncretism among BVA forms: whether each BVA
     context uses the same form as the referential (free) pronoun.

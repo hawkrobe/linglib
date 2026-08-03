@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
+
 /-!
 # Control Theory: Tiers, Predicate Classes, Clause Classes
 
@@ -182,6 +188,16 @@ inductive ClauseClass where
   | finite
   deriving DecidableEq, Repr
 
+/-- The scale position determined by the two finiteness observables a
+    fragment's clause typology records: unrestricted TAM marks a fully
+    finite clause; among the TAM-restricted clauses, independent tense
+    separates F-subjunctives (`[+T]`) from C-subjunctives (`[−T]`)
+    ([landau-2004]). Per-language scale maps derive from this single
+    classifier rather than restating the case table. -/
+def ClauseClass.ofFiniteness (unrestrictedTAM independentTense : Bool) : ClauseClass :=
+  if unrestrictedTAM then .finite
+  else if independentTense then .fSubjunctive else .cSubjunctive
+
 /-- Map clause class to control tier (when control obtains). -/
 def ClauseClass.tier : ClauseClass → Option Tier
   | .cSubjunctive => some .predicative
@@ -202,6 +218,12 @@ def ClauseClass.hasOCWithAgr (c : ClauseClass) (hasAgr : Bool) : Bool :=
   match c.tier with
   | none => false
   | some tier => c.permitsOC && (!hasAgr || !agrBlocksControl tier)
+
+/-- OC obtains exactly on C-subjunctives (any Agr) and `[−Agr]`
+    F-subjunctives — the four corollaries below in one characterization. -/
+theorem ClauseClass.hasOCWithAgr_eq_true_iff (c : ClauseClass) (agr : Bool) :
+    c.hasOCWithAgr agr = true ↔ c = .cSubjunctive ∨ (c = .fSubjunctive ∧ agr = false) := by
+  cases c <;> cases agr <;> decide
 
 /-- C-subjunctives have OC regardless of Agr. -/
 theorem cSubjunctive_oc_any_agr (agr : Bool) :

@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Linglib.Features.Number.Basic
 import Linglib.Features.Person.Basic
 
@@ -36,8 +41,8 @@ preserved in the corresponding `String` value.
 
 The verb-movement/negation-placement diagnostic ([allotey-2021]'s fifth
 non-finiteness argument, after [pollock-1989]: finite verbs raise past
-the suffixal negation `-ee`, `-ko`, while irrealis embedded clauses show
-a free preverbal negator `ka`, her exx 120–125). Formalizing the raising
+the suffixal negation `-ee`, `-ŋ`, `-ko`, while irrealis embedded clauses
+show a free preverbal negator `ka`, her exx 120–125). Formalizing the raising
 argument needs phrase-structure substrate beyond this fragment's
 clause-typology schema; the finiteness split it diagnoses is already
 carried by `ClauseProperties.unrestrictedTAM`.
@@ -75,7 +80,7 @@ def subjectProclitic : Person → Number → Option String
     to argue that embedded clauses introduced by `akɛ` and `kɛji` allow
     the full TAM paradigm (finite), while clauses introduced by `ni`
     prohibit tense/aspect marking of any kind and are restricted to
-    irrealis (her exx 119, tense-restriction diagnostic). -/
+    irrealis (her exx 118–119, tense-restriction diagnostic). -/
 inductive TAM where
   /-- Future prefix `baa-` (historically the ingressive deictic `bà`
       plus the irrealis marker `á`) -/
@@ -150,10 +155,13 @@ inductive EmbeddedClauseType where
   | finiteAke
   /-- Finite `kɛji`-clause: full TAM, free subject reference, no OC -/
   | finiteKeji
-  /-- Irrealis `ni`-clause: irrealis only, obligatory coreference, OC.
-      The complementizer `ni` itself may be optional or obligatory
-      depending on the matrix verb; the irrealis tone marking and OC
-      behavior are constant. -/
+  /-- The controlled irrealis `ni`-clause: irrealis only, obligatory
+      coreference, OC. The complementizer `ni` itself may be optional or
+      obligatory depending on the matrix verb; the irrealis tone marking
+      and OC behavior are constant. NOT every `ni`-headed clause is of
+      this type: `ni` also introduces true subjunctives with lexical
+      subjects (*Osa kplɛnɔ ni Taki á-tsɛ́ Momo*, ex 105) and, with
+      *dwɛŋ* 'think', finite low-tone complements (exx 110–111). -/
   | irrealisNi
   deriving DecidableEq, Repr
 
@@ -161,16 +169,27 @@ inductive EmbeddedClauseType where
 structure ClauseProperties where
   /-- All four TAM categories available -/
   unrestrictedTAM : Bool
+  /-- Tense independent of the matrix clause ([landau-2004]'s `[±T]`):
+      finite complements host past/progressive/future freely (exx
+      110–111), while `ni`-clauses have only "the tense of a possible
+      future" and reject overt tense (exx 118–119). -/
+  independentTense : Bool
   /-- Noncoreferential embedded subject possible -/
   noncoreferentialSubject : Bool
   /-- Selects one of the finite complementizers (`akɛ`, `kɛji`) -/
   finiteComplementizer : Bool
+  /-- Matrix negation licenses an embedded NPI across this clause's
+      boundary ([allotey-2021] §5.5.3: possible across `ni`, exx
+      117a–b; impossible across `akɛ`, exx 116a–b; `kɛji` unattested
+      per-example but finite, so covered by her generalization that
+      NPIs "cannot be licensed across borders of finite" clauses). -/
+  npiTransparent : Bool
   deriving DecidableEq, Repr
 
 def clauseProperties : EmbeddedClauseType → ClauseProperties
-  | .finiteAke   => ⟨true,  true,  true⟩
-  | .finiteKeji  => ⟨true,  true,  true⟩
-  | .irrealisNi  => ⟨false, false, false⟩
+  | .finiteAke   => ⟨true,  true,  true,  true,  false⟩
+  | .finiteKeji  => ⟨true,  true,  true,  true,  false⟩
+  | .irrealisNi  => ⟨false, false, false, false, true⟩
 
 def clauseComplementizer : EmbeddedClauseType → Complementizer
   | .finiteAke   => .ake

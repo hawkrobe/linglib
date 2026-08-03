@@ -1,7 +1,11 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Linglib.Syntax.Minimalist.MinimalPronoun
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Fragments.Mixtec.SMPM.Basic
-import Linglib.Syntax.NullSubject
 import Linglib.Syntax.Control.Basic
 import Linglib.Syntax.Control.CopyControl
 import Linglib.Studies.Allotey2021
@@ -63,7 +67,6 @@ open Minimalist.MinimalPronoun
 open Control
 open Minimalist (InfinitivalTenseClass)
 open Mixtec.SMPM (EmbeddedClauseType clauseProperties)
-open NullSubject (ProDropProfile)
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1: Clause Type Verification (26)
@@ -180,6 +183,20 @@ def landauToSMPM : Control.ClauseClass → EmbeddedClauseType
   | .fSubjunctive => .tensedSubjunctive
   | .finite       => .finiteEmbedded
 
+/-- The forward direction, derived from the fragment's TAM observables
+    via `ClauseClass.ofFiniteness` (the same derivation as
+    `Allotey2021.gaToLandau`). -/
+def smpmToLandau (c : EmbeddedClauseType) : Control.ClauseClass :=
+  .ofFiniteness (clauseProperties c).unrestrictedTAM
+    (clauseProperties c).independentTense
+
+/-- The stipulated table `landauToSMPM` is a section of the derived
+    classification: SMPM realizes every position of [landau-2004]'s
+    scale (contrast `Allotey2021.ga_no_fSubjunctive`). -/
+theorem smpmToLandau_landauToSMPM (c : Control.ClauseClass) :
+    smpmToLandau (landauToSMPM c) = c := by
+  cases c <;> rfl
+
 /-- SMPM Agr status for each Landau clause class.
 
     - C-subjunctive (untensed): [−Agr] — no independent subject agreement
@@ -209,8 +226,6 @@ theorem landau_predicts_control (c : Control.ClauseClass) :
 -- ════════════════════════════════════════════════════════════════
 -- § 5: Minimal Pronoun Inventories (§7)
 -- ════════════════════════════════════════════════════════════════
-
-open PronForm
 
 /-- English vocabulary items (94a–c).
 
@@ -434,32 +449,22 @@ theorem smpm_supports_basegeneration :
 -- § 10: Implicational Universal (54)
 -- ════════════════════════════════════════════════════════════════
 
-/-- SMPM profile derived from fragment data and inventory. -/
-def smpmProfile : ProDropProfile :=
-  { allowsProDrop := Mixtec.SMPM.allowsProDrop
-  , hasOvertPRO := decide smpmInventory.hasOvertPRO }
+/-- SMPM instantiates the universal: overt PRO and no *pro*-drop
+    (the fragment's flag). -/
+theorem smpm_satisfies_universal :
+    smpmInventory.OvertPROUniversal Mixtec.SMPM.allowsProDrop :=
+  fun _ => rfl
 
-def englishProfile : ProDropProfile :=
-  { allowsProDrop := false
-  , hasOvertPRO := decide englishInventory.hasOvertPRO }
+/-- English satisfies the universal vacuously, whatever its pro-drop
+    status: its PRO is null. -/
+theorem english_satisfies_universal (proDrop : Bool) :
+    englishInventory.OvertPROUniversal proDrop :=
+  MinPronInventory.overtPROUniversal_of_controlForm_eq_null rfl proDrop
 
-def buliProfile : ProDropProfile :=
-  { allowsProDrop := false
-  , hasOvertPRO := decide buliInventory.hasOvertPRO }
-
--- SMPM: overt PRO + non-pro-drop → universal (consequent true)
-theorem smpm_satisfies_universal : smpmProfile.Satisfies := by decide
-
--- English: null PRO → universal trivially (antecedent false)
-theorem english_satisfies_universal : englishProfile.Satisfies := by decide
-
--- Büli: overt PRO + non-pro-drop → universal
-theorem buli_satisfies_universal : buliProfile.Satisfies := by decide
-
--- Cell-by-cell typology: each profile lands in its predicted cell.
-theorem smpm_classified : smpmProfile.classify = .overtPRONoProDrop := by decide
-theorem english_classified : englishProfile.classify = .nullPRONoProDrop := by decide
-theorem buli_classified : buliProfile.classify = .overtPRONoProDrop := by decide
+/-- Büli instantiates the universal: overt PRO and no *pro*-drop. -/
+theorem buli_satisfies_universal :
+    buliInventory.OvertPROUniversal false :=
+  fun _ => rfl
 
 -- ════════════════════════════════════════════════════════════════
 -- § 11: Complementation Typology Bridge
@@ -568,12 +573,21 @@ theorem ga_syncretism_matches_smpm :
        smpmSyncretism.controlledEqReferential,
        smpmSyncretism.boundVarEqReferential) := rfl
 
-/-- Gã lands in the same cell of the pro-drop/overt-PRO typology as
-    SMPM and Büli: overt PRO, no *pro*-drop. -/
-theorem ga_classified :
-    Allotey2021.gaProfile.classify = .overtPRONoProDrop := by decide
+/-- Gã sits in the same cell of the overt-PRO / pro-drop typology as
+    SMPM: identical controlled-subject realization, identical pro-drop
+    status. -/
+theorem ga_patterns_with_smpm :
+    Allotey2021.gaInventory.controlForm = smpmInventory.controlForm ∧
+      Ga.allowsProDrop = Mixtec.SMPM.allowsProDrop :=
+  ⟨rfl, rfl⟩
 
-theorem ga_same_cell_as_smpm :
-    Allotey2021.gaProfile.classify = smpmProfile.classify := by decide
+/-- Where the two overt-PRO languages part ways in [noonan-2007]'s
+    typology: SMPM's complements are all balanced (finite or
+    subjunctive), while Gã's control complement is a deranked
+    bare-root infinitive. -/
+theorem ga_deranked_where_smpm_balanced :
+    (Allotey2021.gaToNoonan .irrealisNi).isReduced = true ∧
+      ∀ c, ((smpmToNoonan c).isReduced = false) :=
+  ⟨rfl, fun c => by cases c <;> rfl⟩
 
 end Ostrove2026
