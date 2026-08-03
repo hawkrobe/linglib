@@ -152,6 +152,141 @@ theorem posterior_real_singleton_lt_iff {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 
 
 end ProbabilityTheory
 
+/-! ### Marginal evaluation on finite products -/
+
+namespace MeasureTheory.Measure
+
+variable {Ω Θ : Type*} [MeasurableSpace Ω] [MeasurableSpace Θ]
+  [MeasurableSingletonClass Ω] [MeasurableSingletonClass Θ]
+
+theorem fst_apply_singleton [Fintype Θ] (m : Measure (Ω × Θ)) (ω : Ω) :
+    m.fst {ω} = ∑ θ : Θ, m {(ω, θ)} := by
+  rw [Measure.fst_apply (.singleton ω),
+    show Prod.fst ⁻¹' ({ω} : Set Ω) = ↑(({ω} : Finset Ω) ×ˢ (Finset.univ : Finset Θ)) from by
+      ext ⟨a, θ⟩; simp [eq_comm],
+    ← sum_measure_singleton, Finset.sum_product, Finset.sum_singleton]
+
+theorem snd_apply_singleton [Fintype Ω] (m : Measure (Ω × Θ)) (θ : Θ) :
+    m.snd {θ} = ∑ ω : Ω, m {(ω, θ)} := by
+  rw [Measure.snd_apply (.singleton θ),
+    show Prod.snd ⁻¹' ({θ} : Set Θ) = ↑((Finset.univ : Finset Ω) ×ˢ ({θ} : Finset Θ)) from by
+      ext ⟨a, b⟩; simp [eq_comm],
+    ← sum_measure_singleton, Finset.sum_product]
+  exact Finset.sum_congr rfl fun ω _ => Finset.sum_singleton _ _
+
+end MeasureTheory.Measure
+
+/-! ### Joint posteriors from partially observed pairs
+
+When a kernel emits a pair of which only the first component is observed —
+RSA's intention models, where the speaker chooses an (utterance, latent) pair
+and the listener hears only the utterance — the listener's joint posterior
+over parameter and latent is the conditional kernel of the reassociated
+joint: the same construction as `ProbabilityTheory.posterior` with a
+reassociation in place of the swap. (When the latent is instead part of the
+state, the joint posterior is plain `κ†μ` at a product parameter space.) -/
+
+namespace ProbabilityTheory
+
+variable {Ω 𝓧 Θ : Type*} [MeasurableSpace Ω] [MeasurableSpace 𝓧] [MeasurableSpace Θ]
+  [StandardBorelSpace Ω] [Nonempty Ω] [StandardBorelSpace Θ] [Nonempty Θ]
+  (κ : Kernel Ω (𝓧 × Θ)) (μ : Measure Ω) [IsFiniteMeasure μ] [IsFiniteKernel κ]
+
+omit [StandardBorelSpace Ω] [Nonempty Ω] [StandardBorelSpace Θ] [Nonempty Θ] in
+lemma measurable_jointReassoc :
+    Measurable fun p : Ω × (𝓧 × Θ) => (p.2.1, (p.1, p.2.2)) :=
+  (measurable_fst.comp measurable_snd).prodMk
+    (measurable_fst.prodMk (measurable_snd.comp measurable_snd))
+
+/-- The distribution of the observed component paired with (parameter,
+latent). -/
+noncomputable def jointObs : Measure (𝓧 × (Ω × Θ)) :=
+  (μ ⊗ₘ κ).map fun p => (p.2.1, (p.1, p.2.2))
+
+instance : IsFiniteMeasure (jointObs κ μ) :=
+  inferInstanceAs (IsFiniteMeasure ((μ ⊗ₘ κ).map _))
+
+omit [StandardBorelSpace Ω] [Nonempty Ω] [StandardBorelSpace Θ] [Nonempty Θ] in
+/-- The observed component of the joint is distributed as the data marginal. -/
+theorem jointObs_fst : (jointObs κ μ).fst = ((κ ∘ₘ μ).map Prod.fst) := by
+  rw [jointObs, Measure.fst,
+    Measure.map_map measurable_fst measurable_jointReassoc,
+    show (Prod.fst ∘ fun p : Ω × (𝓧 × Θ) => (p.2.1, (p.1, p.2.2)))
+      = Prod.fst ∘ Prod.snd from rfl,
+    ← Measure.map_map measurable_fst measurable_snd, ← Measure.snd,
+    Measure.snd_compProd]
+
+/-- The joint posterior over parameter and latent, given the observed first
+component of a jointly chosen pair ([franke-bergen-2020]'s intention
+listeners; the marginalization step of [degen-2023]'s latent-variable
+extensions). -/
+noncomputable def jointPosterior : Kernel 𝓧 (Ω × Θ) :=
+  (jointObs κ μ).condKernel
+
+instance : IsMarkovKernel (jointPosterior κ μ) :=
+  inferInstanceAs (IsMarkovKernel (jointObs κ μ).condKernel)
+
+variable [MeasurableSingletonClass Ω] [MeasurableSingletonClass 𝓧]
+  [MeasurableSingletonClass Θ]
+
+/-- Exact Bayes for the joint posterior at a positive-mass observation. -/
+theorem jointPosterior_apply_singleton {x : 𝓧}
+    (hx : ((κ ∘ₘ μ).map Prod.fst) {x} ≠ 0) (ω : Ω) (θ : Θ) :
+    jointPosterior κ μ x {(ω, θ)}
+      = μ {ω} * κ ω {(x, θ)} / ((κ ∘ₘ μ).map Prod.fst) {x} := by
+  have hd := congrArg (fun m => m ({x} ×ˢ {(ω, θ)}))
+    ((jointObs κ μ).disintegrate (jointObs κ μ).condKernel)
+  beta_reduce at hd
+  rw [Measure.compProd_apply_prod (.singleton x) (.singleton (ω, θ)),
+    lintegral_singleton, jointObs_fst] at hd
+  unfold jointObs at hd
+  rw [Measure.map_apply measurable_jointReassoc
+      ((MeasurableSet.singleton x).prod (.singleton (ω, θ))),
+    show (fun p : Ω × (𝓧 × Θ) => (p.2.1, (p.1, p.2.2))) ⁻¹' ({x} ×ˢ {(ω, θ)})
+        = {ω} ×ˢ {(x, θ)} from by
+      ext ⟨a, b, c⟩
+      simp only [Set.mem_preimage, Set.mem_prod, Set.mem_singleton_iff, Prod.ext_iff]
+      tauto,
+    Measure.compProd_apply_prod (.singleton ω) (.singleton (x, θ)),
+    lintegral_singleton] at hd
+  rw [jointPosterior, ENNReal.eq_div_iff hx (measure_ne_top _ _), mul_comm]
+  unfold jointObs
+  rw [hd]
+  ring
+
+/-- Parameter preference under the joint posterior, on reals: the
+observation's marginal cancels, leaving prior-weighted pooled pair masses. -/
+theorem jointPosterior_fst_real_lt_iff [Fintype Θ] {x : 𝓧}
+    (hx : ((κ ∘ₘ μ).map Prod.fst) {x} ≠ 0) (ω₁ ω₂ : Ω) :
+    (jointPosterior κ μ x).fst.real {ω₁} < (jointPosterior κ μ x).fst.real {ω₂}
+      ↔ (∑ θ, μ {ω₁} * κ ω₁ {(x, θ)}) < ∑ θ, μ {ω₂} * κ ω₂ {(x, θ)} := by
+  have hne : ∀ ω, (∑ θ, μ {ω} * κ ω {(x, θ)}) ≠ ∞ := fun ω =>
+    ENNReal.sum_ne_top.mpr fun θ _ =>
+      ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)
+  rw [measureReal_def, measureReal_def, Measure.fst_apply_singleton,
+    Measure.fst_apply_singleton]
+  simp_rw [jointPosterior_apply_singleton κ μ hx, div_eq_mul_inv]
+  rw [← Finset.sum_mul, ← Finset.sum_mul, ← div_eq_mul_inv, ← div_eq_mul_inv,
+    ENNReal.toReal_lt_toReal (ENNReal.div_ne_top (hne ω₁) hx) (ENNReal.div_ne_top (hne ω₂) hx),
+    ENNReal.div_lt_div_iff_left hx (measure_ne_top _ _)]
+
+/-- Latent preference under the joint posterior, on reals. -/
+theorem jointPosterior_snd_real_lt_iff [Fintype Ω] {x : 𝓧}
+    (hx : ((κ ∘ₘ μ).map Prod.fst) {x} ≠ 0) (θ₁ θ₂ : Θ) :
+    (jointPosterior κ μ x).snd.real {θ₁} < (jointPosterior κ μ x).snd.real {θ₂}
+      ↔ (∑ ω, μ {ω} * κ ω {(x, θ₁)}) < ∑ ω, μ {ω} * κ ω {(x, θ₂)} := by
+  have hne : ∀ θ, (∑ ω, μ {ω} * κ ω {(x, θ)}) ≠ ∞ := fun θ =>
+    ENNReal.sum_ne_top.mpr fun ω _ =>
+      ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)
+  rw [measureReal_def, measureReal_def, Measure.snd_apply_singleton,
+    Measure.snd_apply_singleton]
+  simp_rw [jointPosterior_apply_singleton κ μ hx, div_eq_mul_inv]
+  rw [← Finset.sum_mul, ← Finset.sum_mul, ← div_eq_mul_inv, ← div_eq_mul_inv,
+    ENNReal.toReal_lt_toReal (ENNReal.div_ne_top (hne θ₁) hx) (ENNReal.div_ne_top (hne θ₂) hx),
+    ENNReal.div_lt_div_iff_left hx (measure_ne_top _ _)]
+
+end ProbabilityTheory
+
 /-! ### The RSA pipeline -/
 
 namespace RSA
