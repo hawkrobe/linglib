@@ -75,6 +75,8 @@ namespace FrankeBergen2020
 open scoped ENNReal
 open MeasureTheory ProbabilityTheory
 
+/-! ## The grammar of readings -/
+
 /-! ### Domain -/
 
 /-- An alien's drinking amount: none, some but not all, or all of its water. -/
@@ -91,6 +93,9 @@ instance : Membership AlienType World := ⟨fun w t => t ∈ w.val⟩
 
 instance (t : AlienType) (w : World) : Decidable (t ∈ w) :=
   inferInstanceAs (Decidable (t ∈ w.val))
+
+instance : MeasurableSpace World := ⊤
+instance : DiscreteMeasurableSpace World := ⟨fun _ => trivial⟩
 
 /-- The world with only N-type aliens (each drank none). -/
 def wN : World := ⟨{.none}, Finset.singleton_nonempty _⟩
@@ -118,6 +123,10 @@ inductive ExhPosition where
 /-- A parse is the set of EXH insertion sites. -/
 abbrev Parse := Finset ExhPosition
 
+instance : MeasurableSpace Parse := ⊤
+instance : DiscreteMeasurableSpace Parse := ⟨fun _ => trivial⟩
+instance : Nonempty Parse := ⟨∅⟩
+
 /-- The matrix-only parse M. -/
 def pM : Parse := {.matrix}
 
@@ -136,6 +145,10 @@ inductive Utterance where
   | sn | ss | sa
   | an | as | aa
   deriving DecidableEq, Repr, Fintype
+
+instance : Nonempty Utterance := ⟨.nn⟩
+instance : MeasurableSpace Utterance := ⊤
+instance : DiscreteMeasurableSpace Utterance := ⟨fun _ => trivial⟩
 
 /-- Outer quantifier of an utterance. -/
 def Utterance.outer : Utterance → AristQuant
@@ -357,25 +370,52 @@ theorem moi_ss_ne_innocent_exclusion :
             fun w => decide (exhMeaning {.outer, .inner} .ss w)) :=
   ⟨by decide +kernel, by decide +kernel⟩
 
-/-! ### Latent spaces -/
+/-- Every `(world, parse)` state has a true utterance. -/
+theorem exists_true : ∀ (w : World) (p : Parse), ∃ u, exhMeaning p u w := by decide +kernel
 
-/-- LU lexicon: literal or OI (inner + outer EXH). Each speaker has a fixed
-lexicon; the listener marginalizes over the two lexica. -/
-inductive LULex where
-  | lit | oi
-  deriving DecidableEq, Repr, Fintype
+/-! ## The models -/
 
-instance : Nonempty LULex := ⟨.lit⟩
+/-! ### The reading family and the pooled models
 
-/-- Map LU lexicon to the corresponding parse. -/
-def LULex.toParse : LULex → Parse
-  | .lit => ∅
-  | .oi => {.outer, .inner}
+Each parse yields a scenario (`readings`); the paper's models are combinators
+applied to this single family. Vanilla (§3.1) is the literal member. GI
+(eq. 21a) and LI (eq. 18a) pool (utterance, parse) pairs into one choice
+space — the speaker *chooses* the parse — while LU (eq. 11) fixes the lexicon
+as a speaker argument (`RSA.Scenario.familySpeaker`). By
+`RSA.Scenario.pool_L0` the weights agree, so the models differ *only* in the
+position of the latent parameter (p. e86); `ss_m_parse_pref` against
+`perParse_ss_prefers_o` below turns that difference into diverging
+predictions. Rationality is a parameter of the derived kernels, and findings
+quantify over it wherever the paper's argument does. -/
+
+/-- The extension of an utterance under a parse, as a `Finset` — the
+`RSA.Scenario` semantic field. -/
+def ext (p : Parse) (u : Utterance) : Finset World :=
+  Finset.univ.filter (exhMeaning p u)
+
+@[simp] theorem mem_ext {p : Parse} {u : Utterance} {w : World} :
+    w ∈ ext p u ↔ exhMeaning p u w := by
+  simp [ext]
+
+/-- One scenario per parse: utterances read under it. -/
+@[simps] def readings (p : Parse) : RSA.Scenario World Utterance Utterance where
+  sem := ext p
+  obs := id
+
+/-- The vanilla scenario (§3.1): the literal member of the family. -/
+abbrev vanilla : RSA.Scenario World Utterance Utterance := readings ∅
+
+/-- The GI scenario (eq. 21a): pair choice over the full reading family. -/
+def gi : RSA.Scenario World (Utterance × Parse) Utterance := .pool readings
 
 /-- LI parse: lit, I, O, or OI — matrix-EXH parses are unavailable. -/
 inductive LIParse where
   | lit | i | o | oi
   deriving DecidableEq, Repr, Fintype
+
+instance : Nonempty LIParse := ⟨.lit⟩
+instance : MeasurableSpace LIParse := ⊤
+instance : DiscreteMeasurableSpace LIParse := ⟨fun _ => trivial⟩
 
 /-- Map LI parse to the full parse space. -/
 def LIParse.toParse : LIParse → Parse
@@ -387,40 +427,15 @@ def LIParse.toParse : LIParse → Parse
 /-- LI cannot access matrix EXH: no LI parse includes M. -/
 theorem li_excludes_matrix : ∀ l : LIParse, .matrix ∉ l.toParse := by decide +kernel
 
-/-- LU cannot access matrix EXH: neither lexicon includes M. -/
-theorem lu_excludes_matrix : ∀ l : LULex, .matrix ∉ l.toParse := by decide +kernel
+/-- The LI scenario (eq. 18a): pair choice over the matrix-free parses. -/
+def li : RSA.Scenario World (Utterance × LIParse) Utterance :=
+  .pool fun l => readings l.toParse
 
-/-! ### Measurable structure -/
-
-instance : MeasurableSpace World := ⊤
-instance : DiscreteMeasurableSpace World := ⟨fun _ => trivial⟩
-instance : MeasurableSpace Utterance := ⊤
-instance : DiscreteMeasurableSpace Utterance := ⟨fun _ => trivial⟩
-instance : Nonempty Utterance := ⟨.nn⟩
-instance : MeasurableSpace Parse := ⊤
-instance : DiscreteMeasurableSpace Parse := ⟨fun _ => trivial⟩
-instance : Nonempty Parse := ⟨∅⟩
-instance : MeasurableSpace LULex := ⊤
-instance : DiscreteMeasurableSpace LULex := ⟨fun _ => trivial⟩
-instance : MeasurableSpace LIParse := ⊤
-instance : DiscreteMeasurableSpace LIParse := ⟨fun _ => trivial⟩
-instance : Nonempty LIParse := ⟨.lit⟩
-
-/-! ### The model on kernels
-
-Priors are `uniformOn`; per-parse literal listeners condition the prior on
-the reading's extension; the speakers are the softmax-utility kernel at
-α = 2; the listeners are `κ†μ` (vanilla; LU with the lexicon in the state)
-and `jointPosterior` (LI/GI pair choice). -/
-
-/-- The extension of an utterance under a parse, as a `Finset` — the
-`RSA.Scenario` semantic field. -/
-def ext (p : Parse) (u : Utterance) : Finset World :=
-  Finset.univ.filter (exhMeaning p u)
-
-@[simp] theorem mem_ext {p : Parse} {u : Utterance} {w : World} :
-    w ∈ ext p u ↔ exhMeaning p u w := by
-  simp [ext]
+instance : vanilla.Expressible := ⟨fun w => (exists_true w ∅).imp fun _ h => mem_ext.mpr h⟩
+instance : gi.Expressible :=
+  ⟨fun w => (exists_true w ∅).elim fun u h => ⟨(u, ∅), mem_ext.mpr h⟩⟩
+instance : li.Expressible :=
+  ⟨fun w => (exists_true w ∅).elim fun u h => ⟨(u, .lit), mem_ext.mpr h⟩⟩
 
 noncomputable def prior : Measure World := uniformOn Set.univ
 
@@ -434,44 +449,25 @@ theorem prior_singleton_ne_zero (w : World) : prior {w} ≠ 0 := by
   rw [prior, uniformOn_univ, Measure.count_singleton]
   simp
 
-/-- Every `(world, parse)` state has a true utterance. -/
-theorem exists_true : ∀ (w : World) (p : Parse), ∃ u, exhMeaning p u w := by decide +kernel
-
-/-! ### The models as combinators over one reading family
-
-Each parse yields a scenario (`readings`); the paper's models are combinators
-applied to this single family. Vanilla (§3.1) is the literal member. GI
-(eq. 21a) and LI (eq. 18a) pool (utterance, parse) pairs into one choice
-space — the speaker *chooses* the parse — while LU (eq. 11) fixes the lexicon
-as a speaker argument (`RSA.Scenario.familySpeaker`). By
-`RSA.Scenario.pool_L0` the weights agree, so the models differ *only* in the
-position of the latent parameter (p. e86); `ss_m_parse_pref` against
-`perParse_ss_prefers_o` below turns that difference into diverging
-predictions. Rationality is a parameter of the derived kernels, and findings
-quantify over it wherever the paper's argument does. -/
-
-/-- One scenario per parse: utterances read under it. -/
-@[simps] def readings (p : Parse) : RSA.Scenario World Utterance Utterance where
-  sem := ext p
-  obs := id
-
-/-- The vanilla scenario (§3.1): the literal member of the family. -/
-abbrev vanilla : RSA.Scenario World Utterance Utterance := readings ∅
-
-/-- The GI scenario (eq. 21a): pair choice over the full reading family. -/
-def gi : RSA.Scenario World (Utterance × Parse) Utterance := .pool readings
-
-/-- The LI scenario (eq. 18a): pair choice over the matrix-free parses. -/
-def li : RSA.Scenario World (Utterance × LIParse) Utterance :=
-  .pool fun l => readings l.toParse
-
-instance : vanilla.Expressible := ⟨fun w => (exists_true w ∅).imp fun _ h => mem_ext.mpr h⟩
-instance : gi.Expressible :=
-  ⟨fun w => (exists_true w ∅).elim fun u h => ⟨(u, ∅), mem_ext.mpr h⟩⟩
-instance : li.Expressible :=
-  ⟨fun w => (exists_true w ∅).elim fun u h => ⟨(u, .lit), mem_ext.mpr h⟩⟩
-
 /-! ### Lexical uncertainty: the latent as a speaker argument -/
+
+/-- LU lexicon: literal or OI (inner + outer EXH). Each speaker has a fixed
+lexicon; the listener marginalizes over the two lexica. -/
+inductive LULex where
+  | lit | oi
+  deriving DecidableEq, Repr, Fintype
+
+instance : Nonempty LULex := ⟨.lit⟩
+instance : MeasurableSpace LULex := ⊤
+instance : DiscreteMeasurableSpace LULex := ⟨fun _ => trivial⟩
+
+/-- Map LU lexicon to the corresponding parse. -/
+def LULex.toParse : LULex → Parse
+  | .lit => ∅
+  | .oi => {.outer, .inner}
+
+/-- LU cannot access matrix EXH: neither lexicon includes M. -/
+theorem lu_excludes_matrix : ∀ l : LULex, .matrix ∉ l.toParse := by decide +kernel
 
 /-- The LU speaker family (eq. 11): one member of `readings` per lexicon. -/
 def luFam (l : LULex) : RSA.Scenario World Utterance Utterance := readings l.toParse
@@ -517,7 +513,9 @@ per-parse speaker over the joint (world, parse) state. -/
 noncomputable def perParseListener (α : ℝ) : Kernel Utterance (World × Parse) :=
   RSA.Scenario.familyListener readings α perParsePrior
 
-/-! ### The ten findings -/
+/-! ## The findings -/
+
+/-! ### Exhaustified interpretation -/
 
 /-- Hearing "some of the aliens drank some of their water", the pooled
 listener favors the world where no alien drank all of its water over the one
@@ -551,14 +549,7 @@ theorem as_inner_exh {α : ℝ} (hα : 0 < α) :
   gi.listener_real_lt_of_prodMul_strictDominates hα (prior_singleton_eq wA wS)
     (prior_singleton_ne_zero wS) (by decide +kernel)
 
-/-- Hearing "some of the aliens drank some of their water", the pooled
-listener's parse posterior peaks at exhaustification of the whole
-sentence. -/
-theorem ss_m_parse_pref : ∀ p : Parse, p ≠ pM →
-    (gi.choicePosterior 5 prior .ss).real {(.ss, p)}
-      < (gi.choicePosterior 5 prior .ss).real {(.ss, pM)} := fun p _ =>
-  gi.choicePosterior_real_lt_of_divPowSum (k := 5) (D := 12) (by decide +kernel)
-    prior_singleton_eq prior_singleton_ne_zero rfl rfl (by revert p; decide +kernel)
+/-! ### The model comparison -/
 
 /-- Hearing "some of the aliens drank some of their water", the
 literal-semantics listener favors all-drinkers over some-but-not-all
@@ -621,6 +612,17 @@ theorem lu_ss_prefers_wNS {α : ℝ} (hα : 0 < α) :
         Finset.single_le_sum
           (fun l _ => measureReal_nonneg (μ := (luFam l).speaker α wNS))
           (Finset.mem_univ LULex.oi)
+
+/-! ### The position of the latent parameter -/
+
+/-- Hearing "some of the aliens drank some of their water", the pooled
+listener's parse posterior peaks at exhaustification of the whole
+sentence. -/
+theorem ss_m_parse_pref : ∀ p : Parse, p ≠ pM →
+    (gi.choicePosterior 5 prior .ss).real {(.ss, p)}
+      < (gi.choicePosterior 5 prior .ss).real {(.ss, pM)} := fun p _ =>
+  gi.choicePosterior_real_lt_of_divPowSum (k := 5) (D := 12) (by decide +kernel)
+    prior_singleton_eq prior_singleton_ne_zero rfl rfl (by revert p; decide +kernel)
 
 /-- Hearing "some of the aliens drank some of their water", the per-parse
 listener favors exhaustifying the outer quantifier over exhaustifying the
