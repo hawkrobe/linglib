@@ -14,9 +14,11 @@ form per choice; the literal listener is uniform on the extension, the
 speaker is the best response in power-weight form (`ENNReal.rpow` is total,
 so falsity needs no signed utilities), and the listeners are conditionals of
 the joint — rationality and priors are arguments, so findings quantify over
-them. Preference facts come in three registers: support (zero-vs-positive),
-`Multiset.Dominates` certificates on informativity profiles (uniform in the
-rationality), and pinned-rationality evaluation via `Multiset.invPowSum`.
+them. Preference facts come in two registers, each closed by `decide`:
+`Multiset.StrictDominates` certificates on informativity profiles (strict
+stochastic dominance — uniform in the rationality, with empty fibers as the
+support case), and pinned natural rationality, where comparisons clear to ℕ
+inequalities via `Multiset.divPowSum`.
 
 ## Main definitions
 
@@ -25,21 +27,22 @@ rationality), and pinned-rationality evaluation via `Multiset.invPowSum`.
   kernel, as `ProbabilityTheory.Kernel.ofWeights` of `L ^ α`.
 * `RSA.Scenario` — the bundled model: `sem`, `obs`, and the derived `L0`,
   `speaker`, `production`, `jointListener`, `listener`, `choicePosterior`.
-* `RSA.Scenario.familySpeaker` — eqs. 11–13: state-side latent families
-  (lexical uncertainty); per-index normalization.
+* `RSA.Scenario.pool` — choice-side latents: the speaker chooses the family
+  index, normalizing across the pooled pairs (eqs. 18a/21a).
+* `RSA.Scenario.familySpeaker` — state-side latents: the index is a speaker
+  argument, normalization is per-index (eq. 11). `pool_L0` shows the two
+  share their weights — they differ only in the position of the latent.
 
 ## Main statements
 
 * `ProbabilityTheory.posterior_apply_singleton` — exact Bayes for `κ†μ` at a
   positive-mass observation.
-* `RSA.Scenario.listener_real_lt_of_support` — hearing `o`, the listener
-  prefers a state verifying `o` over one falsifying it, with no side
-  conditions beyond positive rationality.
 * `RSA.Scenario.listener_real_lt_of_prodMul_strictDominates` — the
   certificate register: strict domination of fiber-by-rest profile products
   decides listener preference uniformly in the rationality.
-* `RSA.Scenario.listener_real_lt_iff_invPowSum` — the evaluation register:
-  preference at equal priors is a cross-multiplied `invPowSum` comparison.
+* `RSA.Scenario.listener_real_lt_of_divPowSum`,
+  `RSA.Scenario.choicePosterior_real_lt_of_divPowSum` — the evaluation
+  register: at a natural rationality, preference is a decided ℕ inequality.
 
 ## Implementation notes
 
@@ -164,24 +167,6 @@ theorem posterior_apply_singleton {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0) (ω
   rw [hrect]
   ring
 
-/-- Pragmatic-listener preference on reals reduces to comparing
-prior-weighted speaker masses on reals; the observation's marginal cancels. -/
-theorem posterior_real_singleton_lt_iff {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0)
-    (ω₁ ω₂ : Ω) :
-    ((κ†μ) x).real {ω₁} < ((κ†μ) x).real {ω₂}
-      ↔ μ.real {ω₁} * (κ ω₁).real {x} < μ.real {ω₂} * (κ ω₂).real {x} := by
-  rw [measureReal_def, measureReal_def, posterior_apply_singleton κ μ hx,
-    posterior_apply_singleton κ μ hx,
-    ENNReal.toReal_lt_toReal
-      (ENNReal.div_ne_top (ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)) hx)
-      (ENNReal.div_ne_top (ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)) hx),
-    ENNReal.div_lt_div_iff_left hx (measure_ne_top _ _),
-    ← ENNReal.toReal_lt_toReal
-      (ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _))
-      (ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)),
-    ENNReal.toReal_mul, ENNReal.toReal_mul]
-  exact Iff.rfl
-
 /-- A single state of positive prior mass and positive emission witnesses a
 positive observation marginal. -/
 theorem comp_apply_singleton_ne_zero {Ω' 𝓧' : Type*} [MeasurableSpace Ω']
@@ -268,6 +253,34 @@ theorem posterior_fst_real_lt_iff {A B : Type*} [MeasurableSpace A] [MeasurableS
     ENNReal.toReal_sum (fun b _ =>
       ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)),
     ENNReal.toReal_sum (fun b _ =>
+      ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _))]
+  simp_rw [ENNReal.toReal_mul]
+  exact Iff.rfl
+
+/-- Marginal listener preference over the latent component of a product
+parameter space, on reals: the states pool. -/
+theorem posterior_snd_real_lt_iff {A B : Type*} [MeasurableSpace A] [MeasurableSpace B]
+    [MeasurableSingletonClass A] [MeasurableSingletonClass B] [Fintype A]
+    [StandardBorelSpace A] [Nonempty A] [StandardBorelSpace B] [Nonempty B]
+    (κ : Kernel (A × B) 𝓧) (μ : Measure (A × B)) [IsFiniteMeasure μ] [IsFiniteKernel κ]
+    {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0) (b₁ b₂ : B) :
+    ((κ†μ) x).snd.real {b₁} < ((κ†μ) x).snd.real {b₂}
+      ↔ (∑ a, μ.real {(a, b₁)} * (κ (a, b₁)).real {x})
+          < ∑ a, μ.real {(a, b₂)} * (κ (a, b₂)).real {x} := by
+  have hne : ∀ b : B, (∑ a, μ {(a, b)} * κ (a, b) {x}) ≠ ∞ := fun b =>
+    ENNReal.sum_ne_top.mpr fun a _ =>
+      ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)
+  rw [measureReal_def, measureReal_def, Measure.snd_apply_singleton,
+    Measure.snd_apply_singleton]
+  simp_rw [posterior_apply_singleton κ μ hx, div_eq_mul_inv]
+  rw [← Finset.sum_mul, ← Finset.sum_mul, ← div_eq_mul_inv, ← div_eq_mul_inv,
+    ENNReal.toReal_lt_toReal (ENNReal.div_ne_top (hne b₁) hx)
+      (ENNReal.div_ne_top (hne b₂) hx),
+    ENNReal.div_lt_div_iff_left hx (measure_ne_top _ _),
+    ← ENNReal.toReal_lt_toReal (hne b₁) (hne b₂),
+    ENNReal.toReal_sum (fun a _ =>
+      ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)),
+    ENNReal.toReal_sum (fun a _ =>
       ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _))]
   simp_rw [ENNReal.toReal_mul]
   exact Iff.rfl
@@ -390,6 +403,16 @@ structure Scenario where
 
 namespace Scenario
 
+/-- Pool a family of scenarios into one whose choices carry the family index:
+the speaker *chooses* the index with the utterance, normalizing across the
+whole family ([franke-bergen-2020] eqs. 18a/21a). `familySpeaker` instead
+keeps the index as an argument of the speaker (eq. 11) — with `pool_L0`, the
+paper's observation (p. e86) that the two architectures differ only in the
+position of the latent parameter. -/
+@[simps] def pool {T C O L : Type*} (f : L → Scenario T C O) : Scenario T (C × L) O where
+  sem cl := (f cl.2).sem cl.1
+  obs cl := (f cl.2).obs cl.1
+
 section
 
 variable {T C O : Type*} [MeasurableSpace T] [DecidableEq T] [MeasurableSingletonClass T]
@@ -424,6 +447,15 @@ theorem L0_apply_singleton_ne_zero {c : C} {t : T} (h : t ∈ s.sem c) :
   rw [L0_apply_singleton, if_pos h]
   simp
 
+omit [DecidableEq T] [MeasurableSingletonClass T] in
+/-- Pooling does not change the literal listener: `pool` and `familySpeaker`
+share their weights and differ only in the normalization domain — the
+type-level content of [franke-bergen-2020]'s contrast between eq. 11 and
+eqs. 18a/21a (p. e86). -/
+theorem pool_L0 {L : Type*} [Fintype L] [MeasurableSpace L] [DiscreteMeasurableSpace L]
+    (f : L → Scenario T C O) (c : C) (l : L) :
+    (pool f).L0 (c, l) = (f l).L0 c := rfl
+
 variable [Fintype T]
 
 /-- The pragmatic speaker ([franke-bergen-2020] eqs. 6–7, 18a, 21a): best
@@ -443,6 +475,13 @@ probability kernel. -/
 class Expressible (s : Scenario T C O) : Prop where
   exists_mem_sem : ∀ t, ∃ c, t ∈ s.sem c
 
+omit [MeasurableSpace T] [DecidableEq T] [MeasurableSingletonClass T] [MeasurableSpace C]
+  [Fintype C] [DiscreteMeasurableSpace C] [Fintype T] in
+/-- A pooled family is expressible as soon as one member is. -/
+theorem Expressible.pool {L : Type*} (f : L → Scenario T C O) (l : L)
+    [h : (f l).Expressible] : (Scenario.pool f).Expressible :=
+  ⟨fun t => let ⟨c, hc⟩ := h.exists_mem_sem t; ⟨(c, l), hc⟩⟩
+
 theorem isMarkovKernel_speaker {α : ℝ} (hα : 0 ≤ α) [s.Expressible] :
     IsMarkovKernel (s.speaker α) :=
   isMarkovKernel_speakerOf hα s.L0 (fun c t => s.L0_apply_singleton_le_one c t)
@@ -457,14 +496,6 @@ theorem speaker_apply_singleton_ne_zero {α : ℝ} (hα : 0 ≤ α) {t : T} {c :
     (h : t ∈ s.sem c) : s.speaker α t {c} ≠ 0 :=
   speakerOf_apply_singleton_ne_zero hα (fun c' => s.L0_apply_singleton_le_one c' t)
     (s.L0_apply_singleton_ne_zero h)
-
-theorem speaker_real_singleton_eq_zero {α : ℝ} (hα : 0 < α) {t : T} {c : C}
-    (h : t ∉ s.sem c) : (s.speaker α t).real {c} = 0 := by
-  rw [measureReal_def, s.speaker_apply_singleton_eq_zero hα h, ENNReal.toReal_zero]
-
-theorem speaker_real_singleton_pos {α : ℝ} (hα : 0 ≤ α) {t : T} {c : C}
-    (h : t ∈ s.sem c) : 0 < (s.speaker α t).real {c} :=
-  ENNReal.toReal_pos (s.speaker_apply_singleton_ne_zero hα h) (measure_ne_top _ _)
 
 /-! #### Informativity profiles
 
@@ -518,6 +549,18 @@ theorem zero_notMem_restProfile (o : O) (t : T) : 0 ∉ s.restProfile o t := fun
     (s.profile_eq_fiberProfile_add_restProfile o t ▸ Multiset.mem_add.mpr (Or.inr h))
 
 omit [MeasurableSpace T] [MeasurableSingletonClass T] [MeasurableSpace C]
+  [DiscreteMeasurableSpace C] [Fintype T] in
+/-- A nonempty fiber profile exhibits an `o`-shaped true choice — certificates
+carry their own truth witnesses. -/
+theorem exists_of_fiberProfile_ne_zero {o : O} {t : T} (h : s.fiberProfile o t ≠ 0) :
+    ∃ c, s.obs c = o ∧ t ∈ s.sem c := by
+  rw [fiberProfile, ne_eq, Multiset.map_eq_zero, Finset.val_eq_zero, ← ne_eq,
+    ← Finset.nonempty_iff_ne_empty] at h
+  obtain ⟨c, hc⟩ := h
+  rw [Finset.mem_filter, trueChoices, Finset.mem_filter] at hc
+  exact ⟨c, hc.2, hc.1.2⟩
+
+omit [MeasurableSpace T] [MeasurableSingletonClass T] [MeasurableSpace C]
   [DiscreteMeasurableSpace C] [Fintype T] [DecidableEq O] in
 theorem profile_ne_zero [s.Expressible] (t : T) : s.profile t ≠ 0 := by
   obtain ⟨c, hc⟩ := Expressible.exists_mem_sem (s := s) t
@@ -565,6 +608,33 @@ theorem speaker_real_singleton {α : ℝ} (hα : 0 < α) (t : T) (c : C) :
     ENNReal.toReal_div, L0_apply_singleton, apply_ite (· ^ α),
     ENNReal.zero_rpow_of_pos hα, apply_ite ENNReal.toReal, ENNReal.toReal_zero,
     ← ENNReal.toReal_rpow, ENNReal.toReal_inv, ENNReal.toReal_natCast]
+
+omit [DecidableEq O] in
+/-- Exact speaker mass at a natural rationality, as a ratio of ℕ-valued
+common-denominator sums. -/
+theorem speaker_real_singleton_divPowSum {k D : ℕ} (hk : k ≠ 0) (hD : D ≠ 0) {t : T}
+    (hdvd : ∀ n ∈ s.profile t, n ∣ D) (c : C) :
+    (s.speaker k t).real {c}
+      = (if t ∈ s.sem c then (((D / (s.sem c).card) ^ k : ℕ) : ℝ) else 0)
+        / ((s.profile t).divPowSum D k : ℝ) := by
+  have hα : (0 : ℝ) < k := Nat.cast_pos.mpr (Nat.pos_of_ne_zero hk)
+  have hDk : ((D : ℝ) ^ k) ≠ 0 := pow_ne_zero k (Nat.cast_ne_zero.mpr hD)
+  rw [s.speaker_real_singleton hα, Multiset.invPowSum_toReal_eq hD k hdvd]
+  split
+  · have hcard : (s.sem c).card ∣ D := hdvd _ (Multiset.mem_map_of_mem _ (by
+      rw [Finset.mem_val, trueChoices, Finset.mem_filter]
+      exact ⟨Finset.mem_univ c, ‹_›⟩))
+    have hcard0 : ((s.sem c).card : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr
+      fun h0 => hD (Nat.eq_zero_of_zero_dvd (h0 ▸ hcard))
+    have hinv : (((s.sem c).card : ℝ))⁻¹ = ((D / (s.sem c).card : ℕ) : ℝ) / D := by
+      rw [eq_div_iff (Nat.cast_ne_zero.mpr hD),
+        show (D : ℝ) = ((D / (s.sem c).card : ℕ) : ℝ) * ((s.sem c).card : ℝ) by
+          rw [← Nat.cast_mul, Nat.div_mul_cancel hcard],
+        mul_comm _ ((s.sem c).card : ℝ), ← mul_assoc, inv_mul_cancel₀ hcard0, one_mul]
+    rw [Real.rpow_natCast, hinv, div_pow, ← Nat.cast_pow, ← Nat.cast_pow,
+      div_div_div_comm, div_self (Nat.cast_ne_zero.mpr (pow_ne_zero k hD) : ((D ^ k : ℕ) : ℝ) ≠ 0),
+      div_one]
+  · rw [zero_div, zero_div]
 
 variable [MeasurableSpace O] [MeasurableSingletonClass O]
 
@@ -719,26 +789,66 @@ theorem choicePosterior_real_lt_iff {o : O}
   simp_rw [ENNReal.toReal_mul]
   exact Iff.rfl
 
-/-- Support preference: hearing `o`, the listener strictly prefers a state
-where some `o`-shaped choice is true over one where none is. The witness at
-`t₂` also carries the positive observation marginal — no side conditions. -/
-theorem listener_real_lt_of_support {α : ℝ} (hα : 0 < α) {μ : Measure T}
-    [IsFiniteMeasure μ] {o : O} {t₁ t₂ : T} (hμ : μ {t₂} ≠ 0)
-    (h₁ : ∀ c, s.obs c = o → t₁ ∉ s.sem c) (h₂ : ∃ c, s.obs c = o ∧ t₂ ∈ s.sem c) :
-    (s.listener α μ o).real {t₁} < (s.listener α μ o).real {t₂} := by
-  obtain ⟨c₂, hc₂, hmem⟩ := h₂
-  rw [s.listener_real_lt_iff
-      (s.map_obs_comp_ne_zero hμ hc₂ (s.speaker_apply_singleton_ne_zero hα.le hmem)),
-    Finset.sum_congr rfl fun c hc => by
-      rw [s.speaker_real_singleton_eq_zero hα (h₁ c (Finset.mem_filter.mp hc).2), mul_zero],
-    Finset.sum_const_zero]
-  exact Finset.sum_pos' (fun c _ => mul_nonneg measureReal_nonneg measureReal_nonneg)
-    ⟨c₂, Finset.mem_filter.mpr ⟨Finset.mem_univ _, hc₂⟩,
-      mul_pos (ENNReal.toReal_pos hμ (measure_ne_top _ _))
-        (s.speaker_real_singleton_pos hα.le hmem)⟩
+private theorem sum_div_lt_sum_div_iff {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {a b z : ι → ℝ}
+    (hz : ∀ i, 0 < z i) :
+    (∑ i, a i / z i) < (∑ i, b i / z i)
+      ↔ (∑ i, a i * ∏ j ∈ Finset.univ.erase i, z j)
+          < ∑ i, b i * ∏ j ∈ Finset.univ.erase i, z j := by
+  have hP : (0 : ℝ) < ∏ j, z j := Finset.prod_pos fun j _ => hz j
+  have key : ∀ f : ι → ℝ, (∑ i, f i / z i) * ∏ j, z j
+      = ∑ i, f i * ∏ j ∈ Finset.univ.erase i, z j := by
+    intro f
+    rw [Finset.sum_mul]
+    refine Finset.sum_congr rfl fun i _ => ?_
+    rw [div_mul_eq_mul_div, ← Finset.prod_erase_mul _ _ (Finset.mem_univ i), ← mul_assoc,
+      mul_div_assoc, div_self (hz i).ne', mul_one]
+  rw [← mul_lt_mul_iff_left₀ hP, key, key]
+
+/-- The evaluation register for the choice posterior at a natural rationality
+and equal priors: pooled preference between two `o`-shaped choices is the
+ℕ-valued common-denominator comparison over all states — a kernel `decide`.
+The strict inequality carries its own truth witness. -/
+theorem choicePosterior_real_lt_of_divPowSum [s.Expressible] {k D : ℕ}
+    (hk : k ≠ 0) (hD : D ≠ 0) (hdvd : ∀ t : T, ∀ n ∈ s.profile t, n ∣ D)
+    (hμeq : ∀ t t' : T, μ {t} = μ {t'}) (hμ0 : ∀ t : T, μ {t} ≠ 0)
+    {o : O} {c₁ c₂ : C} (h₁ : s.obs c₁ = o) (h₂ : s.obs c₂ = o)
+    (hlt : (∑ t : T, if t ∈ s.sem c₁ then
+        (D / (s.sem c₁).card) ^ k * ∏ t' ∈ Finset.univ.erase t, (s.profile t').divPowSum D k
+      else 0)
+      < ∑ t : T, if t ∈ s.sem c₂ then
+        (D / (s.sem c₂).card) ^ k * ∏ t' ∈ Finset.univ.erase t, (s.profile t').divPowSum D k
+      else 0) :
+    (s.choicePosterior k μ o).real {c₁} < (s.choicePosterior k μ o).real {c₂} := by
+  have hα : (0 : ℝ) < k := Nat.cast_pos.mpr (Nat.pos_of_ne_zero hk)
+  obtain ⟨t₀, -, ht₀⟩ := Finset.exists_ne_zero_of_sum_ne_zero
+    (Nat.pos_iff_ne_zero.mp (lt_of_le_of_lt (Nat.zero_le _) hlt))
+  have hmem₀ : t₀ ∈ s.sem c₂ := by
+    by_contra h
+    exact ht₀ (if_neg h)
+  have ho : ((s.speaker k ∘ₘ μ).map s.obs) {o} ≠ 0 :=
+    s.map_obs_comp_ne_zero (hμ0 t₀) h₂ (s.speaker_apply_singleton_ne_zero hα.le hmem₀)
+  have hprior : ∀ c : C, (∑ t : T, μ.real {t} * (s.speaker k t).real {c})
+      = μ.real {t₀} * ∑ t : T,
+          (if t ∈ s.sem c then (((D / (s.sem c).card) ^ k : ℕ) : ℝ) else 0)
+            / ((s.profile t).divPowSum D k : ℝ) := by
+    intro c
+    rw [Finset.mul_sum]
+    refine Finset.sum_congr rfl fun t _ => ?_
+    rw [show μ.real {t} = μ.real {t₀} from by
+        rw [measureReal_def, measureReal_def, hμeq t t₀],
+      s.speaker_real_singleton_divPowSum hk hD (hdvd t)]
+  rw [s.choicePosterior_real_lt_iff ho h₁ h₂, hprior, hprior,
+    mul_lt_mul_iff_right₀
+      (show (0 : ℝ) < μ.real {t₀} from ENNReal.toReal_pos (hμ0 t₀) (measure_ne_top _ _)),
+    sum_div_lt_sum_div_iff fun t => by
+      exact_mod_cast Multiset.divPowSum_pos hD (hdvd t) (s.profile_ne_zero t)]
+  simp only [ite_mul, zero_mul]
+  exact_mod_cast hlt
 
 /-- Listener preference at equal priors reduces to the cross-multiplied
-profile comparison, on reals — the evaluation form for pinned rationalities. -/
+profile comparison, on reals: the observation marginal and the shared prior
+cancel. Both registers' closers enter here. -/
 theorem listener_real_lt_iff_invPowSum [s.Expressible] {α : ℝ} (hα : 0 < α)
     {o : O} {t₁ t₂ : T} (hμeq : μ {t₁} = μ {t₂}) (hμ0 : μ {t₂} ≠ 0)
     (h₂ : ∃ c, s.obs c = o ∧ t₂ ∈ s.sem c) :
@@ -776,25 +886,28 @@ theorem listener_real_lt_iff_invPowSum [s.Expressible] {α : ℝ} (hα : 0 < α)
       (ENNReal.mul_ne_top (hWne t₁) (hZne t₂)) (ENNReal.mul_ne_top (hWne t₂) (hZne t₁)),
     ENNReal.toReal_mul, ENNReal.toReal_mul]
 
-/-- Certificate form of listener preference at equal priors, uniform in the
-rationality: cross products of fiber and rest profiles strictly dominate
-(the shared fiber-by-fiber terms of the odds comparison cancel). -/
-theorem listener_real_lt_of_prodMul_strictDominates [s.Expressible] {α : ℝ} (hα : 0 < α)
-    {o : O} {t₁ t₂ : T} (hμeq : μ {t₁} = μ {t₂}) (hμ0 : μ {t₂} ≠ 0)
-    (h₂ : ∃ c, s.obs c = o ∧ t₂ ∈ s.sem c)
+omit [MeasurableSpace T] [MeasurableSingletonClass T] [MeasurableSpace C]
+  [DiscreteMeasurableSpace C] [Fintype T] [MeasurableSpace O] [MeasurableSingletonClass O]
+  [StandardBorelSpace T] [Nonempty T] [StandardBorelSpace C] [Nonempty C]
+  [IsFiniteMeasure μ] in
+/-- The certificate closes the odds comparison: strict domination of the
+fiber-by-rest cross products decides it uniformly in the rationality (the
+shared fiber-by-fiber terms cancel). -/
+theorem invPowSum_odds_lt_of_prodMul_strictDominates {α : ℝ} (hα : 0 < α)
+    {o : O} {t₁ t₂ : T}
     (hcert : ((s.fiberProfile o t₂).prodMul (s.restProfile o t₁)).StrictDominates
       ((s.fiberProfile o t₁).prodMul (s.restProfile o t₂))) :
-    (s.listener α μ o).real {t₁} < (s.listener α μ o).real {t₂} := by
+    ((s.fiberProfile o t₁).invPowSum α).toReal * ((s.profile t₂).invPowSum α).toReal
+      < ((s.fiberProfile o t₂).invPowSum α).toReal * ((s.profile t₁).invPowSum α).toReal := by
   have hWne : ∀ t, (s.fiberProfile o t).invPowSum α ≠ ∞ := fun t =>
     Multiset.invPowSum_ne_top hα.le (s.zero_notMem_fiberProfile o t)
   have hodds : (s.fiberProfile o t₁).invPowSum α * (s.restProfile o t₂).invPowSum α
       < (s.fiberProfile o t₂).invPowSum α * (s.restProfile o t₁).invPowSum α := by
     rw [← Multiset.invPowSum_prodMul hα.le, ← Multiset.invPowSum_prodMul hα.le]
-    exact hcert.invPowSum_lt hα.le
+    exact hcert.invPowSum_lt hα
       (Multiset.zero_notMem_prodMul (s.zero_notMem_fiberProfile o t₁)
         (s.zero_notMem_restProfile o t₂))
-  rw [s.listener_real_lt_iff_invPowSum hα hμeq hμ0 h₂,
-    ← ENNReal.toReal_mul, ← ENNReal.toReal_mul,
+  rw [← ENNReal.toReal_mul, ← ENNReal.toReal_mul,
     ENNReal.toReal_lt_toReal
       (ENNReal.mul_ne_top (hWne t₁)
         (Multiset.invPowSum_ne_top hα.le (s.zero_notMem_profile t₂)))
@@ -805,6 +918,50 @@ theorem listener_real_lt_of_prodMul_strictDominates [s.Expressible] {α : ℝ} (
     Multiset.invPowSum_add, mul_add, mul_add, mul_comm ((s.fiberProfile o t₂).invPowSum α)]
   exact ENNReal.add_lt_add_left
     (ENNReal.mul_ne_top (hWne t₁) (hWne t₂)) hodds
+
+/-- The certificate register: at equal priors, strict domination of the
+fiber-by-rest profile products decides listener preference uniformly in the
+rationality. The certificate carries its own truth witness, so a finding is a
+single decided `Multiset.StrictDominates` fact. An empty fiber at `t₁` is the
+support case: any nonempty product strictly dominates `0`. -/
+theorem listener_real_lt_of_prodMul_strictDominates [s.Expressible] {α : ℝ} (hα : 0 < α)
+    {o : O} {t₁ t₂ : T} (hμeq : μ {t₁} = μ {t₂}) (hμ0 : μ {t₂} ≠ 0)
+    (hcert : ((s.fiberProfile o t₂).prodMul (s.restProfile o t₁)).StrictDominates
+      ((s.fiberProfile o t₁).prodMul (s.restProfile o t₂))) :
+    (s.listener α μ o).real {t₁} < (s.listener α μ o).real {t₂} :=
+  (s.listener_real_lt_iff_invPowSum hα hμeq hμ0
+      (s.exists_of_fiberProfile_ne_zero fun h =>
+        hcert.ne_zero (Multiset.prodMul_eq_zero_iff.mpr (Or.inl h)))).mpr
+    (s.invPowSum_odds_lt_of_prodMul_strictDominates hα hcert)
+
+/-- The evaluation register at a natural rationality: with all profile entries
+dividing `D`, listener preference at equal priors is the ℕ-valued
+common-denominator comparison — a kernel `decide`. The strict inequality
+carries its own truth witness. -/
+theorem listener_real_lt_of_divPowSum [s.Expressible] {k D : ℕ} (hk : k ≠ 0) (hD : D ≠ 0)
+    {o : O} {t₁ t₂ : T} (hμeq : μ {t₁} = μ {t₂}) (hμ0 : μ {t₂} ≠ 0)
+    (hdvd₁ : ∀ n ∈ s.profile t₁, n ∣ D) (hdvd₂ : ∀ n ∈ s.profile t₂, n ∣ D)
+    (hlt : (s.fiberProfile o t₁).divPowSum D k * (s.profile t₂).divPowSum D k
+      < (s.fiberProfile o t₂).divPowSum D k * (s.profile t₁).divPowSum D k) :
+    (s.listener k μ o).real {t₁} < (s.listener k μ o).real {t₂} := by
+  have hα : (0 : ℝ) < k := Nat.cast_pos.mpr (Nat.pos_of_ne_zero hk)
+  have hfsub : ∀ t, ∀ n ∈ s.fiberProfile o t, n ∈ s.profile t := fun t n hn =>
+    s.profile_eq_fiberProfile_add_restProfile o t ▸ Multiset.mem_add.mpr (Or.inl hn)
+  have h₂ : s.fiberProfile o t₂ ≠ 0 :=
+    Multiset.ne_zero_of_divPowSum_ne_zero
+      (Nat.mul_ne_zero_iff.mp (Nat.pos_iff_ne_zero.mp (lt_of_le_of_lt (Nat.zero_le _) hlt))).1
+  rw [s.listener_real_lt_iff_invPowSum hα hμeq hμ0 (s.exists_of_fiberProfile_ne_zero h₂)]
+  have key : ∀ (m₁ m₂ : Multiset ℕ), (∀ n ∈ m₁, n ∣ D) → (∀ n ∈ m₂, n ∣ D) →
+      (m₁.invPowSum k).toReal * (m₂.invPowSum k).toReal
+        = (m₁.divPowSum D k * m₂.divPowSum D k : ℕ) / ((D : ℝ) ^ k) ^ 2 := by
+    intro m₁ m₂ h₁ h₂
+    rw [Multiset.invPowSum_toReal_eq hD k h₁, Multiset.invPowSum_toReal_eq hD k h₂]
+    push_cast
+    ring
+  rw [key _ _ (fun n hn => hdvd₁ n (hfsub t₁ n hn)) hdvd₂,
+    key _ _ (fun n hn => hdvd₂ n (hfsub t₂ n hn)) hdvd₁,
+    div_lt_div_iff_of_pos_right (by positivity)]
+  exact_mod_cast hlt
 
 end Listener
 
