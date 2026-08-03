@@ -581,9 +581,10 @@ variable (W U) in
 /-- A cost-free informativity speaker: rationality, prior beliefs, and a
 truth-conditional semantics. -/
 structure Speaker where
-  /-- The softmax rationality (Degen's α); positive, so that informativity
-  bites (the `α = 0` uniform speaker is degenerate). -/
+  /-- The softmax rationality (Degen's α). -/
   α : ℝ
+  /-- Rationality is positive: at `α = 0` the speaker is uniformly random and
+  support is no longer literal truth. -/
   α_pos : 0 < α
   /-- Prior beliefs about worlds. -/
   prior : Measure W
@@ -607,18 +608,18 @@ class Viable : Prop where
 
 /-- The prior gives every world positive mass. -/
 class Positive : Prop where
-  prior_pos : ∀ w, S.prior {w} ≠ 0
+  prior_ne_zero : ∀ w, S.prior {w} ≠ 0
 
 variable [IsFiniteMeasure S.prior]
 
 omit [MeasurableSpace U] [Fintype W] [MeasurableSingletonClass W] [Fintype U]
   [MeasurableSingletonClass U] in
 theorem prior_real_pos [S.Positive] (w : W) : 0 < S.prior.real {w} :=
-  ENNReal.toReal_pos (Positive.prior_pos w) (measure_ne_top _ _)
+  ENNReal.toReal_pos (Positive.prior_ne_zero w) (measure_ne_top _ _)
 
 theorem L0_apply_singleton_ne_zero [S.Positive] {u : U} {w : W} (h : w ∈ S.sem u) :
     S.L0 u {w} ≠ 0 :=
-  literalListener_apply_singleton_ne_zero S.prior h (Positive.prior_pos w)
+  literalListener_apply_singleton_ne_zero S.prior h (Positive.prior_ne_zero w)
 
 private theorem scaled_utility_ne_top (w : W) (u : U) :
     (S.α : EReal) * utility S.L0 (fun _ => 0) w u ≠ ⊤ := by
@@ -632,7 +633,7 @@ instance [S.Viable] [S.Positive] : IsMarkovKernel S.toKernel :=
 
 /-- The speaker's support is literal truth: an utterance gets positive mass
 exactly on its extension. -/
-@[simp] theorem toKernel_real_pos_iff [S.Positive] (w : W) (u : U) :
+@[simp] theorem toKernel_real_singleton_pos_iff [S.Positive] (w : W) (u : U) :
     0 < (S.toKernel w).real {u} ↔ w ∈ S.sem u := by
   constructor
   · intro h
@@ -650,17 +651,17 @@ exactly on its extension. -/
       (S.scaled_utility_ne_top w)
 
 /-- An utterance outside its extension is never produced. -/
-theorem toKernel_real_eq_zero [S.Positive] {w : W} {u : U} (h : w ∉ S.sem u) :
+theorem toKernel_real_singleton_eq_zero [S.Positive] {w : W} {u : U} (h : w ∉ S.sem u) :
     (S.toKernel w).real {u} = 0 := by
   by_contra hne
-  exact h ((S.toKernel_real_pos_iff w u).mp
+  exact h ((S.toKernel_real_singleton_pos_iff w u).mp
     (lt_of_le_of_ne measureReal_nonneg (Ne.symm hne)))
 
 /-- A true utterance is produced with positive mass. -/
-theorem toKernel_apply_ne_zero [S.Positive] {w : W} {u : U} (h : w ∈ S.sem u) :
+theorem toKernel_apply_singleton_ne_zero [S.Positive] {w : W} {u : U} (h : w ∈ S.sem u) :
     S.toKernel w {u} ≠ 0 := by
   intro h0
-  have hpos := (S.toKernel_real_pos_iff w u).mpr h
+  have hpos := (S.toKernel_real_singleton_pos_iff w u).mpr h
   rw [measureReal_def, h0] at hpos
   simp at hpos
 
@@ -671,16 +672,25 @@ variable [StandardBorelSpace W] [Nonempty W] [S.Viable] [S.Positive]
 /-- The pragmatic listener (eq. 4): the Bayesian inverse of the speaker. -/
 noncomputable def listener : Kernel U W := S.toKernel†S.prior
 
+/-- Pragmatic-listener preference reduces to comparing prior-weighted speaker
+masses; the observation's marginal cancels. -/
+theorem listener_real_singleton_lt_iff {u : U} (hu : (S.toKernel ∘ₘ S.prior) {u} ≠ 0)
+    (w₁ w₂ : W) :
+    (S.listener u).real {w₁} < (S.listener u).real {w₂}
+      ↔ S.prior.real {w₁} * (S.toKernel w₁).real {u}
+        < S.prior.real {w₂} * (S.toKernel w₂).real {u} :=
+  posterior_real_singleton_lt_iff _ _ hu w₁ w₂
+
 /-- Support preference: hearing `u`, the pragmatic listener strictly prefers a
 world in `u`'s extension over one outside it. The truth of `u` at `w₂` also
 witnesses the positive observation marginal. -/
-theorem listener_real_lt_of_support {u : U} {w₁ w₂ : W}
+theorem listener_real_singleton_lt_of_support {u : U} {w₁ w₂ : W}
     (h₁ : w₁ ∉ S.sem u) (h₂ : w₂ ∈ S.sem u) :
     (S.listener u).real {w₁} < (S.listener u).real {w₂} := by
   rw [listener, posterior_real_singleton_lt_iff _ _
-      (comp_apply_singleton_ne_zero _ _ (Positive.prior_pos w₂) (S.toKernel_apply_ne_zero h₂)),
-    S.toKernel_real_eq_zero h₁, mul_zero]
-  exact mul_pos (S.prior_real_pos w₂) ((S.toKernel_real_pos_iff w₂ u).mpr h₂)
+      (comp_apply_singleton_ne_zero _ _ (Positive.prior_ne_zero w₂) (S.toKernel_apply_singleton_ne_zero h₂)),
+    S.toKernel_real_singleton_eq_zero h₁, mul_zero]
+  exact mul_pos (S.prior_real_pos w₂) ((S.toKernel_real_singleton_pos_iff w₂ u).mpr h₂)
 
 end Listener
 
@@ -697,6 +707,24 @@ variable {X Θ : Type*} [MeasurableSpace X] [Fintype X] [MeasurableSingletonClas
 utterance ([franke-bergen-2020]'s intention listeners). -/
 noncomputable def jointListener : Kernel X (W × Θ) := jointPosterior S.toKernel S.prior
 
+/-- World preference under the joint listener reduces to comparing
+prior-weighted pooled pair masses. -/
+theorem jointListener_fst_real_lt_iff {x : X}
+    (hx : ((S.toKernel ∘ₘ S.prior).map Prod.fst) {x} ≠ 0) (w₁ w₂ : W) :
+    (S.jointListener x).fst.real {w₁} < (S.jointListener x).fst.real {w₂}
+      ↔ (∑ θ, S.prior.real {w₁} * (S.toKernel w₁).real {(x, θ)})
+        < ∑ θ, S.prior.real {w₂} * (S.toKernel w₂).real {(x, θ)} :=
+  jointPosterior_fst_real_lt_iff _ _ hx w₁ w₂
+
+/-- Latent preference under the joint listener reduces to comparing
+prior-weighted per-world masses. -/
+theorem jointListener_snd_real_lt_iff {x : X}
+    (hx : ((S.toKernel ∘ₘ S.prior).map Prod.fst) {x} ≠ 0) (θ₁ θ₂ : Θ) :
+    (S.jointListener x).snd.real {θ₁} < (S.jointListener x).snd.real {θ₂}
+      ↔ (∑ w, S.prior.real {w} * (S.toKernel w).real {(x, θ₁)})
+        < ∑ w, S.prior.real {w} * (S.toKernel w).real {(x, θ₂)} :=
+  jointPosterior_snd_real_lt_iff _ _ hx θ₁ θ₂
+
 /-- World preference by support: if no latent verifies the heard utterance at
 `w₁` and some latent verifies it at `w₂`, the joint listener's world marginal
 strictly prefers `w₂`. -/
@@ -705,13 +733,13 @@ theorem jointListener_fst_real_lt_of_support {x : X} {w₁ w₂ : W}
     (S.jointListener x).fst.real {w₁} < (S.jointListener x).fst.real {w₂} := by
   obtain ⟨θ₂, h₂⟩ := h₂
   rw [jointListener, jointPosterior_fst_real_lt_iff _ _
-      (map_fst_comp_apply_singleton_ne_zero _ _ (Positive.prior_pos w₂)
-        (S.toKernel_apply_ne_zero h₂)),
-    Finset.sum_congr rfl fun θ _ => by rw [S.toKernel_real_eq_zero (h₁ θ), mul_zero],
+      (map_fst_comp_apply_singleton_ne_zero _ _ (Positive.prior_ne_zero w₂)
+        (S.toKernel_apply_singleton_ne_zero h₂)),
+    Finset.sum_congr rfl fun θ _ => by rw [S.toKernel_real_singleton_eq_zero (h₁ θ), mul_zero],
     Finset.sum_const_zero]
   exact Finset.sum_pos' (fun θ _ => mul_nonneg measureReal_nonneg measureReal_nonneg)
     ⟨θ₂, Finset.mem_univ _,
-      mul_pos (S.prior_real_pos w₂) ((S.toKernel_real_pos_iff w₂ (x, θ₂)).mpr h₂)⟩
+      mul_pos (S.prior_real_pos w₂) ((S.toKernel_real_singleton_pos_iff w₂ (x, θ₂)).mpr h₂)⟩
 
 /-- Latent preference by support: if no world verifies the heard utterance
 under `θ₁` and some world of positive prior mass verifies it under `θ₂`, the
@@ -721,13 +749,13 @@ theorem jointListener_snd_real_lt_of_support {x : X} {θ₁ θ₂ : Θ}
     (S.jointListener x).snd.real {θ₁} < (S.jointListener x).snd.real {θ₂} := by
   obtain ⟨w₂, h₂⟩ := h₂
   rw [jointListener, jointPosterior_snd_real_lt_iff _ _
-      (map_fst_comp_apply_singleton_ne_zero _ _ (Positive.prior_pos w₂)
-        (S.toKernel_apply_ne_zero h₂)),
-    Finset.sum_congr rfl fun w _ => by rw [S.toKernel_real_eq_zero (h₁ w), mul_zero],
+      (map_fst_comp_apply_singleton_ne_zero _ _ (Positive.prior_ne_zero w₂)
+        (S.toKernel_apply_singleton_ne_zero h₂)),
+    Finset.sum_congr rfl fun w _ => by rw [S.toKernel_real_singleton_eq_zero (h₁ w), mul_zero],
     Finset.sum_const_zero]
   exact Finset.sum_pos' (fun w _ => mul_nonneg measureReal_nonneg measureReal_nonneg)
     ⟨w₂, Finset.mem_univ _,
-      mul_pos (S.prior_real_pos w₂) ((S.toKernel_real_pos_iff w₂ (x, θ₂)).mpr h₂)⟩
+      mul_pos (S.prior_real_pos w₂) ((S.toKernel_real_singleton_pos_iff w₂ (x, θ₂)).mpr h₂)⟩
 
 end Joint
 

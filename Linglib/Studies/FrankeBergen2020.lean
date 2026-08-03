@@ -397,6 +397,16 @@ and `jointPosterior` (LI/GI pair choice). -/
 /-- The extension of an utterance under a parse. -/
 def sem (p : Parse) (u : Utterance) : Set World := {w | exhMeaning p u w}
 
+@[simp] theorem mem_sem {p : Parse} {u : Utterance} {w : World} :
+    w ∈ sem p u ↔ exhMeaning p u w := Iff.rfl
+
+instance (p : Parse) (u : Utterance) (w : World) : Decidable (w ∈ sem p u) :=
+  inferInstanceAs (Decidable (exhMeaning p u w))
+
+/-- Set form of Table 1's AA row: ⟦AA⟧ = {wA} under every parse. -/
+theorem sem_aa (p : Parse) : sem p .aa = {wA} :=
+  Set.ext fun w => table1_aa p w
+
 noncomputable def prior : Measure World := uniformOn Set.univ
 
 instance : IsProbabilityMeasure prior :=
@@ -453,16 +463,25 @@ normalizes per lexicon rather than against the pooled extension — the
 type-level content of the paper's LU-vs-intentions contrast. -/
 
 /-- The vanilla model: utterances read literally. -/
-noncomputable def vanilla : RSA.Speaker World Utterance :=
-  ⟨2, by norm_num, prior, sem ∅⟩
+@[simps] noncomputable def vanilla : RSA.Speaker World Utterance where
+  α := 2
+  α_pos := two_pos
+  prior := prior
+  sem := sem ∅
 
 /-- The GI model: pair choice with all parses available. -/
-noncomputable def gi : RSA.Speaker World (Utterance × Parse) :=
-  ⟨2, by norm_num, prior, fun x => sem x.2 x.1⟩
+@[simps] noncomputable def gi : RSA.Speaker World (Utterance × Parse) where
+  α := 2
+  α_pos := two_pos
+  prior := prior
+  sem x := sem x.2 x.1
 
 /-- The LI model: pair choice over matrix-free parses. -/
-noncomputable def li : RSA.Speaker World (Utterance × LIParse) :=
-  ⟨2, by norm_num, prior, fun x => sem x.2.toParse x.1⟩
+@[simps] noncomputable def li : RSA.Speaker World (Utterance × LIParse) where
+  α := 2
+  α_pos := two_pos
+  prior := prior
+  sem x := sem x.2.toParse x.1
 
 instance : IsProbabilityMeasure vanilla.prior := inferInstanceAs (IsProbabilityMeasure prior)
 instance : IsProbabilityMeasure gi.prior := inferInstanceAs (IsProbabilityMeasure prior)
@@ -538,12 +557,12 @@ private theorem util_ne_top (p : Parse) (u : Utterance) (w : World) :
 
 theorem vanilla_marg_ss : (vanilla.toKernel ∘ₘ prior) {Utterance.ss} ≠ 0 :=
   comp_apply_singleton_ne_zero _ _ (prior_singleton_ne_zero wNS)
-    (vanilla.toKernel_apply_ne_zero (show exhMeaning ∅ .ss wNS by decide))
+    (vanilla.toKernel_apply_singleton_ne_zero (show exhMeaning ∅ .ss wNS by decide))
 
 theorem gi_marg (u : Utterance) {w : World} (h : exhMeaning ∅ u w) :
     ((gi.toKernel ∘ₘ prior).map Prod.fst) {u} ≠ 0 :=
   map_fst_comp_apply_singleton_ne_zero _ _ (θ := (∅ : Parse))
-    (prior_singleton_ne_zero w) (gi.toKernel_apply_ne_zero h)
+    (prior_singleton_ne_zero w) (gi.toKernel_apply_singleton_ne_zero h)
 
 theorem gi_marg_ss : ((gi.toKernel ∘ₘ prior).map Prod.fst) {Utterance.ss} ≠ 0 :=
   gi_marg .ss (w := wNS) (by decide)
@@ -554,12 +573,11 @@ theorem gi_marg_as : ((gi.toKernel ∘ₘ prior).map Prod.fst) {Utterance.as} �
 theorem li_marg_ss : ((li.toKernel ∘ₘ prior).map Prod.fst) {Utterance.ss} ≠ 0 :=
   map_fst_comp_apply_singleton_ne_zero _ _ (θ := LIParse.lit)
     (prior_singleton_ne_zero wNS)
-    (li.toKernel_apply_ne_zero (show exhMeaning ∅ .ss wNS by decide))
+    (li.toKernel_apply_singleton_ne_zero (show exhMeaning ∅ .ss wNS by decide))
 
 theorem luPrior_singleton_ne_zero (s : World × LULex) : luPrior {s} ≠ 0 := by
-  rw [luPrior, uniformOn_univ, Measure.count_singleton, ne_eq, ENNReal.div_eq_zero_iff]
-  simp
-  exact ENNReal.mul_ne_top (ENNReal.natCast_ne_top _) (ENNReal.natCast_ne_top _)
+  rw [luPrior, uniformOn_univ, Measure.count_singleton]
+  simp [ENNReal.mul_eq_top]
 
 theorem lu_marg_ss : (luSpeaker ∘ₘ luPrior) {Utterance.ss} ≠ 0 :=
   comp_apply_singleton_ne_zero _ _ (luPrior_singleton_ne_zero (wNS, .lit))
@@ -743,34 +761,28 @@ private theorem gi_fst_lt {u : Utterance}
     (hx : ((gi.toKernel ∘ₘ prior).map Prod.fst) {u} ≠ 0) {w₁ w₂ : World}
     (h : (∑ p : Parse, prior.real {w₁} * (gi.toKernel w₁).real {(u, p)})
         < ∑ p : Parse, prior.real {w₂} * (gi.toKernel w₂).real {(u, p)}) :
-    ((gi.jointListener u).fst).real {w₁} < ((gi.jointListener u).fst).real {w₂} := by
-  unfold RSA.Speaker.jointListener
-  rw [jointPosterior_fst_real_lt_iff gi.toKernel gi.prior hx]
-  exact h
+    (gi.jointListener u).fst.real {w₁} < (gi.jointListener u).fst.real {w₂} :=
+  (gi.jointListener_fst_real_lt_iff hx w₁ w₂).mpr h
 
 private theorem gi_snd_lt {u : Utterance}
     (hx : ((gi.toKernel ∘ₘ prior).map Prod.fst) {u} ≠ 0) {p₁ p₂ : Parse}
     (h : (∑ w : World, prior.real {w} * (gi.toKernel w).real {(u, p₁)})
         < ∑ w : World, prior.real {w} * (gi.toKernel w).real {(u, p₂)}) :
-    ((gi.jointListener u).snd).real {p₁} < ((gi.jointListener u).snd).real {p₂} := by
-  unfold RSA.Speaker.jointListener
-  rw [jointPosterior_snd_real_lt_iff gi.toKernel gi.prior hx]
-  exact h
+    (gi.jointListener u).snd.real {p₁} < (gi.jointListener u).snd.real {p₂} :=
+  (gi.jointListener_snd_real_lt_iff hx p₁ p₂).mpr h
 
 private theorem li_fst_lt {u : Utterance}
     (hx : ((li.toKernel ∘ₘ prior).map Prod.fst) {u} ≠ 0) {w₁ w₂ : World}
     (h : (∑ l : LIParse, prior.real {w₁} * (li.toKernel w₁).real {(u, l)})
         < ∑ l : LIParse, prior.real {w₂} * (li.toKernel w₂).real {(u, l)}) :
-    ((li.jointListener u).fst).real {w₁} < ((li.jointListener u).fst).real {w₂} := by
-  unfold RSA.Speaker.jointListener
-  rw [jointPosterior_fst_real_lt_iff li.toKernel li.prior hx]
-  exact h
+    (li.jointListener u).fst.real {w₁} < (li.jointListener u).fst.real {w₂} :=
+  (li.jointListener_fst_real_lt_iff hx w₁ w₂).mpr h
 
 private theorem lu_fst_lt {u : Utterance}
     (hx : (luSpeaker ∘ₘ luPrior) {u} ≠ 0) {w₁ w₂ : World}
     (h : (∑ l : LULex, luPrior.real {(w₁, l)} * (luSpeaker (w₁, l)).real {u})
         < ∑ l : LULex, luPrior.real {(w₂, l)} * (luSpeaker (w₂, l)).real {u}) :
-    ((luListener u).fst).real {w₁} < ((luListener u).fst).real {w₂} := by
+    (luListener u).fst.real {w₁} < (luListener u).fst.real {w₂} := by
   rw [luListener, posterior_fst_real_lt_iff luSpeaker luPrior hx]
   exact h
 
@@ -778,10 +790,8 @@ private theorem vanilla_lt {u : Utterance} (hx : (vanilla.toKernel ∘ₘ prior)
     {w₁ w₂ : World}
     (h : prior.real {w₁} * (vanilla.toKernel w₁).real {u}
         < prior.real {w₂} * (vanilla.toKernel w₂).real {u}) :
-    (vanilla.listener u).real {w₁} < (vanilla.listener u).real {w₂} := by
-  unfold RSA.Speaker.listener
-  rw [posterior_real_singleton_lt_iff vanilla.toKernel vanilla.prior hx]
-  exact h
+    (vanilla.listener u).real {w₁} < (vanilla.listener u).real {w₂} :=
+  (vanilla.listener_real_singleton_lt_iff hx w₁ w₂).mpr h
 
 private theorem luPrior_real_singleton (s : World × LULex) : luPrior.real {s} = 14⁻¹ := by
   rw [luPrior, uniformOn_univ_real_singleton,
@@ -892,14 +902,14 @@ private theorem luPool_ss_wNA :
 
 /-- SS exhaustifies the inner quantifier: GI's listener prefers wNS to wNSA. -/
 theorem ss_inner_exh :
-    ((gi.jointListener .ss).fst).real {wNSA} < ((gi.jointListener .ss).fst).real {wNS} :=
+    (gi.jointListener .ss).fst.real {wNSA} < (gi.jointListener .ss).fst.real {wNS} :=
   gi_fst_lt gi_marg_ss (by
     simp_rw [prior_real_singleton, ← Finset.mul_sum, giPool_ss_wNSA, giPool_ss_wNS]
     norm_num)
 
 /-- SS exhaustifies the outer quantifier: GI's listener prefers wNS to wS. -/
 theorem ss_outer_exh :
-    ((gi.jointListener .ss).fst).real {wS} < ((gi.jointListener .ss).fst).real {wNS} :=
+    (gi.jointListener .ss).fst.real {wS} < (gi.jointListener .ss).fst.real {wNS} :=
   gi_fst_lt gi_marg_ss (by
     simp_rw [prior_real_singleton, ← Finset.mul_sum, giPool_ss_wS, giPool_ss_wNS]
     norm_num)
@@ -908,14 +918,13 @@ theorem ss_outer_exh :
 wSA under every parse (Table 1's AA row) and true at wA under the bare parse.
 Purely structural — no masses computed. -/
 theorem aa_identifies :
-    ((gi.jointListener .aa).fst).real {wSA} < ((gi.jointListener .aa).fst).real {wA} :=
+    (gi.jointListener .aa).fst.real {wSA} < (gi.jointListener .aa).fst.real {wA} :=
   gi.jointListener_fst_real_lt_of_support
-    (show ∀ p, ¬ exhMeaning p .aa wSA by decide)
-    ⟨∅, show exhMeaning ∅ .aa wA by decide⟩
+    (by simp only [gi_sem, sem_aa]; decide) ⟨∅, by simp only [gi_sem, sem_aa]; decide⟩
 
 /-- AS exhaustifies the inner quantifier: GI's listener prefers wS to wA. -/
 theorem as_inner_exh :
-    ((gi.jointListener .as).fst).real {wA} < ((gi.jointListener .as).fst).real {wS} :=
+    (gi.jointListener .as).fst.real {wA} < (gi.jointListener .as).fst.real {wS} :=
   gi_fst_lt gi_marg_as (by
     simp_rw [prior_real_singleton, ← Finset.mul_sum, giPool_as_wA, giPool_as_wS]
     norm_num)
@@ -925,7 +934,7 @@ set_option maxRecDepth 8192 in
 uniquely identifies wNS (eq. 22). Pair choice drives this: under per-parse
 normalization M would not dominate. -/
 theorem ss_m_parse_pref : ∀ p : Parse, p ≠ {.matrix} →
-    ((gi.jointListener .ss).snd).real {p} < ((gi.jointListener .ss).snd).real {{.matrix}} := by
+    (gi.jointListener .ss).snd.real {p} < (gi.jointListener .ss).snd.real {{.matrix}} := by
   intro p hp
   have hmem : p ∈ ({∅, {.matrix}, {.outer}, {.inner}, {.matrix, .outer}, {.matrix, .inner},
       {.outer, .inner}, {.matrix, .outer, .inner}} : Finset Parse) :=
@@ -952,7 +961,7 @@ theorem vanilla_ss_prefers_wNA :
 
 /-- GI corrects vanilla's error: SS → wNS, not wNA. -/
 theorem gi_ss_prefers_wNS :
-    ((gi.jointListener .ss).fst).real {wNA} < ((gi.jointListener .ss).fst).real {wNS} :=
+    (gi.jointListener .ss).fst.real {wNA} < (gi.jointListener .ss).fst.real {wNS} :=
   gi_fst_lt gi_marg_ss (by
     simp_rw [prior_real_singleton, ← Finset.mul_sum, giPool_ss_wNA, giPool_ss_wNS]
     norm_num)
@@ -960,21 +969,21 @@ theorem gi_ss_prefers_wNS :
 /-- LU also keeps wNS above wNA: the OI lexicon's ⟦SS⟧ excludes wNA (the
 paper's full LU-L2 nonetheless concentrates on wNSA, eq. 15). -/
 theorem lu_ss_prefers_wNS :
-    ((luListener .ss).fst).real {wNA} < ((luListener .ss).fst).real {wNS} :=
+    (luListener .ss).fst.real {wNA} < (luListener .ss).fst.real {wNS} :=
   lu_fst_lt lu_marg_ss (by
     simp_rw [luPrior_real_singleton, ← Finset.mul_sum, luPool_ss_wNA, luPool_ss_wNS]
     norm_num)
 
 /-- LI derives outer exhaustification for SS: wNS over wS via the OI parse. -/
 theorem li_ss_outer_exh :
-    ((li.jointListener .ss).fst).real {wS} < ((li.jointListener .ss).fst).real {wNS} :=
+    (li.jointListener .ss).fst.real {wS} < (li.jointListener .ss).fst.real {wNS} :=
   li_fst_lt li_marg_ss (by
     simp_rw [prior_real_singleton, ← Finset.mul_sum, liPool_ss_wS, liPool_ss_wNS]
     norm_num)
 
 /-- LI also gets the wNS-over-wNA ordering that vanilla misses. -/
 theorem li_ss_prefers_wNS :
-    ((li.jointListener .ss).fst).real {wNA} < ((li.jointListener .ss).fst).real {wNS} :=
+    (li.jointListener .ss).fst.real {wNA} < (li.jointListener .ss).fst.real {wNS} :=
   li_fst_lt li_marg_ss (by
     simp_rw [prior_real_singleton, ← Finset.mul_sum, liPool_ss_wNA, liPool_ss_wNS]
     norm_num)
