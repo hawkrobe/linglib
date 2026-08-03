@@ -19,8 +19,8 @@ the parse enters the speaker: vanilla (§3.1) has only the literal parse; LU
 of the speaker (eq. 11) and a latent the listener marginalizes
 ([bergen-levy-goodman-2016], [potts-etal-2016]); the LI (§3.3) and GI (§3.4)
 speakers instead *choose* an (utterance, parse) pair (eqs. 18a/21a), over the
-4 matrix-free parses resp. all 8 — one softmax over pairs per world, read by
-`ProbabilityTheory.jointPosterior`.
+4 matrix-free parses resp. all 8 — one softmax over pairs per world, heard
+through the `RSA.Scenario` observation map.
 
 We show that GI corrects the SS interpretation vanilla gets wrong
 (`vanilla_ss_prefers_wNA` vs `gi_ss_prefers_wNS`), and that its parse
@@ -46,15 +46,17 @@ LI and LU still derive the embedded enrichments (`li_ss_outer_exh`,
 Sentential alternatives (A3a) range over a fourth quantifier `notAll` that is
 never an utterance — the paper's grammatical-vs-utterance alternatives
 distinction (its comparison with [gotzner-romoli-2018]'s alternative set
-favors this one by a Bayes factor of ~1,530). We fix α = 2 and omit the
-paper's cost term for *none*-initial utterances and fixed error ε = 0.045
-(eqs. 25–28); each finding except `vanilla_ss_prefers_wNA` is robust to this.
-The paper's S2/L2 layer for LU ([lassiter-goodman-2017], eqs. 14a–14b) is
-also omitted: our L1-only LU keeps wNS over wNA, though the paper's LU-L2
-concentrates on wNSA (eq. 15). The model lives on mathlib's probability API:
-`uniformOn` priors, `ProbabilityTheory.cond` literal listeners, softmax
-kernels, and posterior kernels; predictions are stated on `Measure.real` and
-close by partition-value rewrites plus `norm_num`.
+favors this one by a Bayes factor of ~1,530). Each model is an
+`RSA.Scenario` (LU a `RSA.Scenario.familySpeaker` family) with rationality a
+parameter, and each finding's docstring names its register: support facts
+and `Multiset.Dominates` certificates hold for every rationality `α > 0`;
+genuinely α-dependent findings are evaluated at the paper's illustrative
+α = 5 via `Multiset.invPowSum` profiles. We omit the paper's cost term for
+*none*-initial utterances and fixed error ε = 0.045 (eqs. 25–28);
+`vanilla_ss_prefers_wNA` reverses at the fitted cost. The paper's S2/L2
+layer for LU ([lassiter-goodman-2017], eqs. 14a–14b) is also omitted: our
+L1-only LU keeps wNS over wNA, though the paper's LU-L2 concentrates on
+wNSA (eq. 15).
 -/
 
 namespace FrankeBergen2020
