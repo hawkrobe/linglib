@@ -37,6 +37,18 @@ predication.
 
 The declarations below are general relation algebra that mathlib's
 `SetRel` currently lacks; each is marked `[UPSTREAM]`.
+
+The `Control` section adds the referential stratum: a valuation
+`val : Pos → Ref` assigns each position its referent, and a dependency
+enforces exhaustive argument sharing (`Control.Shares`) when it refines
+the valuation's kernel. Partial control ([landau-2000]) is strict
+growth `val a < val b` along the dependency — excluded by exhaustive
+sharing (`Shares.not_lt`) and localizable to a leg of a composite
+(`exists_lt_of_comp_lt`), which is [landau-2024]'s claim that partial
+readings enter through the mediating *pro*, never through predication.
+Split control (a dependent's referent joining two antecedents') is
+excluded the same way: exhaustive sharing forces joint antecedents to
+be co-valued (`Shares.eq_of_two`).
 -/
 
 namespace SetRel
@@ -118,3 +130,58 @@ theorem dom_subset_dom_comp (h : R.cod ⊆ S.dom) : R.dom ⊆ (R ○ S).dom := b
   exact ⟨c, b, hab, hbc⟩
 
 end SetRel
+
+namespace Control
+
+open SetRel
+
+/-! ### Argument sharing -/
+
+variable {Pos Ref : Type*} {val : Pos → Ref} {ante bind pred : SetRel Pos Pos}
+  {a b p c : Pos}
+
+/-- A dependency enforces exhaustive argument sharing when related
+    positions are co-valued — the dependency refines the kernel of the
+    valuation. -/
+def Shares (val : Pos → Ref) (ante : SetRel Pos Pos) : Prop :=
+  ∀ ⦃a b⦄, a ~[ante] b → val a = val b
+
+/-- A refinement of a sharing dependency shares. -/
+theorem Shares.mono (h : ante ⊆ bind) (hs : Shares val bind) :
+    Shares val ante :=
+  fun _ _ hab => hs (h hab)
+
+/-- Sharing composes through the mediating position. -/
+theorem Shares.comp (hb : Shares val bind) (hp : Shares val pred) :
+    Shares val (bind ○ pred) := by
+  rintro a c ⟨m, ham, hmc⟩
+  exact (hb ham).trans (hp hmc)
+
+/-- Exhaustive sharing excludes partial readings: no strict growth of
+    the referent along the dependency ([landau-2000]). -/
+theorem Shares.not_lt [Preorder Ref] (hs : Shares val ante)
+    (h : a ~[ante] b) : ¬ val a < val b := by
+  simp [hs h]
+
+/-- Under exhaustive sharing, joint antecedents are co-valued — split
+    control needs a non-exhaustive leg. -/
+theorem Shares.eq_of_two (hs : Shares val ante) (ha : a ~[ante] p)
+    (hb : b ~[ante] p) : val a = val b :=
+  (hs ha).trans (hs hb).symm
+
+/-- A partial reading in a composite localizes to a leg: if referents
+    grow monotonely along the binding link and strictly across the
+    composite, one of the two links already grows strictly. With an
+    exhaustive predication leg this places partial control in the
+    binding leg ([landau-2024] §5.1). -/
+theorem exists_lt_of_comp_lt [PartialOrder Ref]
+    (hb : ∀ ⦃x m⦄, x ~[bind] m → val x ≤ val m)
+    (h : a ~[bind ○ pred] c) (hlt : val a < val c) :
+    (∃ x m, x ~[bind] m ∧ val x < val m) ∨
+      ∃ m x, m ~[pred] x ∧ val m < val x := by
+  obtain ⟨m, ham, hmc⟩ := h
+  rcases (hb ham).lt_or_eq with hlt' | heq
+  · exact Or.inl ⟨a, m, ham, hlt'⟩
+  · exact Or.inr ⟨m, c, hmc, heq ▸ hlt⟩
+
+end Control
