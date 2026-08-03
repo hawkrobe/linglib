@@ -11,8 +11,8 @@ The Two-Tiered Theory of Control ([landau-2015]): obligatory control in
 complement clauses divides into **predicative** control (nonattitude
 complements, syntactic predication) and **logophoric** control (attitude
 complements, predication + variable binding of a perspectival
-coordinate). The [landau-2004] finiteness scale classifies complement
-clauses, and the Feature Transmission asymmetry derives the OC-NC
+coordinate). The [landau-2004] scale classifies complement clauses by
+`[±T]`, and the Feature Transmission asymmetry derives the OC-NC
 generalization — `[+Agr]` blocks logophoric but not predicative control.
 
 Originates with [landau-2015]; graduated to the theory layer as substrate
@@ -22,12 +22,28 @@ for the paper-anchored control studies (`Studies/Landau2015.lean`,
 
 ## Main definitions
 
-- `Control.Tier`: predicative vs. logophoric control
+- `Control.Tier`: predicative vs. logophoric control, with the
+  phenomenology derived from `Tier.isAttitude`
 - `Control.PredicateClass`: the eight predicate classes, mapped to tiers
-- `Control.ClauseClass`: the finiteness scale (C-subjunctive,
-  F-subjunctive, finite) with the Agr-sensitive `hasOCWithAgr`
-- `Control.agrBlocksControl`: the OC-NC generalization, from the
-  Feature Transmission asymmetry
+- `Control.ClauseClass`: the `[±T]` scale positions, with the
+  Agr-sensitive `ClauseClass.HasOC` and its characterization
+  `ClauseClass.hasOC_iff`
+
+## Implementation notes
+
+Partial control, control shift, implicit control, and split control are
+possible only under logophoric control — one underlying mechanism
+(variable binding of a perspectival coordinate) — so each is
+`Tier.isAttitude` rather than restipulated, and
+`Tier.requiresSyntacticController` and `Tier.allowsNonhumanPRO` are its
+negation.
+
+## TODO
+
+Replace the three-cell scale with Landau's ⟨T, Agr⟩ specification on
+each of the two clausal heads (the calculus of control): the `finite`
+cell oversimplifies — mutual cancellation predicts OC in certain
+`[+T,+Agr]` complements (Hebrew subjunctives).
 -/
 
 namespace Control
@@ -43,7 +59,9 @@ namespace Control
     Logophoric control (PC complements): selected by attitude
     predicates; C^OC projects a perspectival coordinate and control is
     predication + variable binding; allows partial control and forces
-    *de se* interpretation. -/
+    an attitude-holder-bound reading — *de se* under subject and
+    psych-object control, *de te* under communicative object control
+    (the three-way table is encoded in `Studies/Landau2015.lean`). -/
 inductive Tier where
   /-- Predicative control: nonattitude, predication only -/
   | predicative
@@ -57,63 +75,53 @@ def Tier.isAttitude : Tier → Bool
   | .logophoric  => true
 
 /-- Condition on syntactic predication ([landau-2015] (90)): the argument
-    predicated of must be syntactically represented. Predicative control
-    therefore requires a syntactically present controller; the logophoric
-    AUTHOR/ADDRESSEE coordinate is discourse-anchored and does not. -/
-def Tier.requiresSyntacticController : Tier → Bool
-  | .predicative => true
-  | .logophoric  => false
+    predicated of must be syntactically represented, so predicative
+    control requires a syntactically present controller; the logophoric
+    coordinate is bound by a matrix argument that may be implicit. -/
+def Tier.requiresSyntacticController (t : Tier) : Bool :=
+  !t.isAttitude
 
-/-- [−human] PRO is compatible with predicative control only
+/-- `[−human]` PRO is compatible with predicative control only
     ([landau-2015] (81)): the logophoric binder is mapped to the
     AUTHOR/ADDRESSEE function, which is defined only for humans. -/
-def Tier.allowsNonhumanPRO : Tier → Bool
-  | .predicative => true
-  | .logophoric  => false
+def Tier.allowsNonhumanPRO (t : Tier) : Bool :=
+  !t.isAttitude
 
-/-! Partial control, obligatory *de se*, control shift, implicit control,
-    and split control are all available under logophoric control and
-    blocked under predicative control — one underlying mechanism
-    (variable binding of a perspectival coordinate), so each is derived
-    as `isAttitude` rather than restipulated. -/
-
-/-- Partial control is available only under logophoric control;
+/-- Partial control is possible only under logophoric control;
     predicative control forces exhaustive control. -/
-def Tier.allowsPartialControl := Tier.isAttitude
+def Tier.allowsPartialControl : Tier → Bool := Tier.isAttitude
 
-/-- Obligatory *de se* arises only under logophoric control. -/
-def Tier.obligatoryDeSe := Tier.isAttitude
+/-- Control shift is possible only under logophoric control:
+    predication is a bi-unique relation. -/
+def Tier.allowsControlShift : Tier → Bool := Tier.isAttitude
 
-/-- Control shift is available only under logophoric control:
-    predicative control enters a biunique predication relation. -/
-def Tier.allowsControlShift := Tier.isAttitude
+/-- Implicit control is possible only under logophoric control
+    (condition (90)). -/
+def Tier.allowsImplicitControl : Tier → Bool := Tier.isAttitude
 
-/-- Implicit control is the complement of requiring a syntactic
-    controller (condition (90)). -/
-def Tier.allowsImplicitControl := Tier.isAttitude
+/-- Split control is possible only under logophoric control. -/
+def Tier.allowsSplitControl : Tier → Bool := Tier.isAttitude
 
-/-- Split control is available only under logophoric control. -/
-def Tier.allowsSplitControl := Tier.isAttitude
-
-/-- Implicit control derives from the condition on syntactic predication:
-    `allowsImplicitControl` is the negation of
-    `requiresSyntacticController`. -/
-theorem implicit_control_from_predication_condition (tier : Tier) :
-    tier.allowsImplicitControl = !tier.requiresSyntacticController := by
-  cases tier <;> rfl
-
-/-- [−human] PRO derives from the logophoric mechanism:
-    `allowsNonhumanPRO` is the negation of `isAttitude`. -/
-theorem nonhuman_pro_from_attitude (tier : Tier) :
-    tier.allowsNonhumanPRO = !tier.isAttitude := by
-  cases tier <;> rfl
+/-- The OC-NC generalization ([landau-2015] (70)): `[+Agr]` blocks
+    logophoric but not predicative control, by the Feature Transmission
+    asymmetry ((60): predication is not contingent on feature matching —
+    Icelandic quirky constructions — while variable binding is,
+    [heim-2008], [kratzer-2009]). Its empirical scope is contested
+    ([ganenkov-2019]). -/
+def Tier.agrBlocksControl (t : Tier) : Bool :=
+  t.isAttitude
 
 /-! ### Predicate classification -/
 
-/-- [landau-2015]'s predicate classification by complement type:
-    classes (4a–d) select untensed complements (nonattitude →
-    predicative control); classes (5a–d) select tensed complements
-    (attitude → logophoric control). -/
+/-- The control predicate classes ([landau-2000]; (4a–d)/(5a–d) in
+    [landau-2015]): classes (4a–d) select untensed complements
+    (nonattitude → predicative control), classes (5a–d) tensed ones
+    (attitude → logophoric control), [landau-2004]'s correlation.
+    Membership is a property of predicate–complement pairs, not lexemes
+    (Polish perfective 'persuade' is implicative, the imperfective is
+    not), and the evaluative class is the *of*-frame adjectives
+    specifically. [pearson-2016] instead classes propositional
+    complements with the exhaustive-control predicates. -/
 inductive PredicateClass where
   /-- avoid, dare, manage, remember, … (nonattitude) -/
   | implicative
@@ -121,7 +129,8 @@ inductive PredicateClass where
   | aspectual
   /-- have, is able, may, must, need, should (nonattitude) -/
   | modal
-  /-- bold, crazy, kind, rude, silly, smart (nonattitude; adjectives) -/
+  /-- bold, crazy, kind, rude, silly, smart (nonattitude; *of*-frame
+      adjectives) -/
   | evaluative
   /-- dislike, glad, hate, regret, sorry, … (attitude) -/
   | factive
@@ -138,38 +147,32 @@ def PredicateClass.tier : PredicateClass → Tier
   | .implicative | .aspectual | .modal | .evaluative => .predicative
   | .factive | .propositional | .desiderative | .interrogative => .logophoric
 
-/-! ### The OC-NC generalization -/
-
-/-- The OC-NC generalization ([landau-2015] (70)): `[+Agr]` blocks
-    logophoric but not predicative control, by the Feature Transmission
-    asymmetry ((60): predication is not contingent on feature matching —
-    Icelandic quirky constructions — while variable binding is,
-    [heim-2008], [kratzer-2009]). -/
-def agrBlocksControl : Tier → Bool
-  | .predicative => false
-  | .logophoric  => true
-
 /-! ### Clause classes -/
 
-/-- [landau-2004]'s finiteness scale, as recast in [landau-2015]: the
-    [±T] distinction is subsumed by attitude/nonattitude. C-subjunctives
-    (untensed) take predicative control; F-subjunctives (tensed,
-    `[−Agr]`) take logophoric control, blocked by `[+Agr]` per the OC-NC
-    generalization; fully finite clauses take no control. -/
+/-- [landau-2004]'s scale positions, in [ostrove-2026]'s terminology:
+    C-subjunctives are `[−T]` complements (predicative control, whatever
+    the Agr value), F-subjunctives `[+T]` complements (logophoric
+    control, which `[+Agr]` blocks per the OC-NC generalization), and
+    `finite` the fully finite remainder. The positions are tense cells,
+    not mood or finiteness categories — `[−T]` covers bare infinitives
+    and untensed subjunctives alike, and OC occurs in inflected
+    complements. [landau-2015] subsumes the `[±T]` split under
+    attitude/nonattitude. -/
 inductive ClauseClass where
-  /-- Untensed nonfinite; predicative control -/
+  /-- `[−T]` complement; predicative control -/
   | cSubjunctive
-  /-- Tensed nonfinite; logophoric control -/
+  /-- `[+T]` complement; logophoric control -/
   | fSubjunctive
-  /-- Fully finite; no control -/
+  /-- Fully finite; no control (a simplification — see the module
+      TODO) -/
   | finite
   deriving DecidableEq, Repr
 
-/-- The scale position determined by the two finiteness observables a
-    fragment's clause typology records: unrestricted TAM marks a fully
+/-- The scale position determined by the two clause-typology observables
+    of [ostrove-2026]-style fragments: unrestricted TAM marks a fully
     finite clause; among the TAM-restricted clauses, independent tense
-    separates F-subjunctives (`[+T]`) from C-subjunctives (`[−T]`)
-    ([landau-2004]). Per-language scale maps derive from this single
+    separates `[+T]` from `[−T]` ([landau-2004]'s feature, diagnosed by
+    temporal mismatch). Per-language scale maps derive from this single
     classifier rather than restating the case table. -/
 def ClauseClass.ofFiniteness (unrestrictedTAM independentTense : Bool) : ClauseClass :=
   if unrestrictedTAM then .finite
@@ -181,43 +184,20 @@ def ClauseClass.tier : ClauseClass → Option Tier
   | .fSubjunctive => some .logophoric
   | .finite       => none
 
-/-- Whether a clause class structurally permits OC (F-subjunctive OC is
-    logophoric and hence blocked only by `[+Agr]`; see `hasOCWithAgr`). -/
-def ClauseClass.permitsOC : ClauseClass → Bool
-  | .cSubjunctive => true
-  | .fSubjunctive => true
-  | .finite       => false
-
-/-- Whether OC is realized given Agr status: composes the clause class
-    with the OC-NC generalization. C-subjunctives are OC regardless of
-    Agr; F-subjunctives are OC only when `[−Agr]`; finite clauses never. -/
-def ClauseClass.hasOCWithAgr (c : ClauseClass) (hasAgr : Bool) : Bool :=
+/-- OC is realized in a clause class iff it has a control tier that
+    `[+Agr]` does not block. -/
+def ClauseClass.HasOC (c : ClauseClass) (agr : Bool) : Prop :=
   match c.tier with
-  | none => false
-  | some tier => c.permitsOC && (!hasAgr || !agrBlocksControl tier)
+  | none   => False
+  | some t => agr → ¬t.agrBlocksControl
+
+instance (c : ClauseClass) (agr : Bool) : Decidable (c.HasOC agr) := by
+  cases c <;> unfold ClauseClass.HasOC <;> simp only [ClauseClass.tier] <;> infer_instance
 
 /-- OC obtains exactly on C-subjunctives (any Agr) and `[−Agr]`
-    F-subjunctives — the four corollaries below in one characterization. -/
-theorem ClauseClass.hasOCWithAgr_eq_true_iff (c : ClauseClass) (agr : Bool) :
-    c.hasOCWithAgr agr = true ↔ c = .cSubjunctive ∨ (c = .fSubjunctive ∧ agr = false) := by
+    F-subjunctives. -/
+theorem ClauseClass.hasOC_iff (c : ClauseClass) (agr : Bool) :
+    c.HasOC agr ↔ c = .cSubjunctive ∨ (c = .fSubjunctive ∧ agr = false) := by
   cases c <;> cases agr <;> decide
-
-/-- C-subjunctives have OC regardless of Agr. -/
-theorem cSubjunctive_oc_any_agr (agr : Bool) :
-    ClauseClass.cSubjunctive.hasOCWithAgr agr = true := by
-  cases agr <;> rfl
-
-/-- F-subjunctives have OC when `[−Agr]`. -/
-theorem fSubjunctive_oc_without_agr :
-    ClauseClass.fSubjunctive.hasOCWithAgr false = true := rfl
-
-/-- F-subjunctives lose OC when `[+Agr]` (the OC-NC generalization). -/
-theorem fSubjunctive_no_oc_with_agr :
-    ClauseClass.fSubjunctive.hasOCWithAgr true = false := rfl
-
-/-- Fully finite clauses never have OC. -/
-theorem finite_no_oc (agr : Bool) :
-    ClauseClass.finite.hasOCWithAgr agr = false := by
-  cases agr <;> rfl
 
 end Control

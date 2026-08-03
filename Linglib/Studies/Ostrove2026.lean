@@ -219,7 +219,7 @@ def smpmLandauAgr : Control.ClauseClass → Bool
     - Finite [+Agr]: no control tier → no OC ✓ -/
 theorem landau_predicts_control (c : Control.ClauseClass) :
     (smpmSignature (landauToSMPM c)).Obligatory ↔
-      c.hasOCWithAgr (smpmLandauAgr c) = true := by
+      c.HasOC (smpmLandauAgr c) := by
   cases c <;> decide
 
 -- ════════════════════════════════════════════════════════════════

@@ -592,8 +592,7 @@ theorem cp_iff_predicative (c : ChierchiaControlClass) :
 theorem cp_requires_syntactic_controller (c : ChierchiaControlClass)
     (h : c.hasCP = true) :
     (chierchiaToLandauTier c).requiresSyntacticController = true := by
-  cases c <;> simp_all [ChierchiaControlClass.hasCP,
-    chierchiaToLandauTier, Control.Tier.requiresSyntacticController]
+  cases c <;> first | rfl | simp [ChierchiaControlClass.hasCP] at h
 
 -- ── Per-verb cross-system consistency ──
 
