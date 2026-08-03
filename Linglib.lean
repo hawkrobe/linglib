@@ -284,6 +284,7 @@ import Linglib.Core.Probability.Decision.Duality
 import Linglib.Core.Probability.Decision.ExperimentDesign
 import Linglib.Core.Probability.DirichletMultinomial
 import Linglib.Core.Probability.ENNRealArith
+import Linglib.Core.Probability.EmissionPosterior
 import Linglib.Core.Probability.Entropy
 import Linglib.Core.Probability.Eval
 import Linglib.Core.Probability.EvalLemmas
