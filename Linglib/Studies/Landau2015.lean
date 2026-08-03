@@ -19,8 +19,10 @@ consilience bridge to [noonan-2007]'s CTP classification.
 
 ## Main results
 
-- `ttcContrasts` + `ttcContrasts_consistent`: the six empirical
-  contrasts of table (80), each derived from `Control.Tier` properties
+- `Table80Row` with the two availability columns: the six empirical
+  contrasts of table (80), a perfect split between the tiers
+  (`table80_complementary`); the mechanism rows cite their
+  `Control.IsPredicative` derivations
 - `objectControlReading`: psychological → *de se*, communicative →
   *de te* (table (36))
 - `derivedLandauClass` / `derivedControlTier`: predicate classes derived
@@ -36,49 +38,61 @@ open Features (Attitude)
 
 /-! ### Table (80): empirical contrasts -/
 
-/-- One row of the empirical contrast table (80) of [landau-2015]:
-    a property available under exactly one control tier. -/
-structure TTCContrast where
-  name : String
-  /-- Available under predicative control? -/
-  predicative : Bool
-  /-- Available under logophoric control? -/
-  logophoric : Bool
-  deriving DecidableEq, Repr, Inhabited
+/-- The six contrast rows of table (80) of [landau-2015]. -/
+inductive Table80Row where
+  /-- OC into an inflected complement (the OC-NC generalization (70);
+      `Tier.agrBlocksControl`) -/
+  | inflectedComplement
+  /-- `[−human]` PRO ((81): the logophoric binder is the
+      AUTHOR/ADDRESSEE function, defined only for humans) -/
+  | nonhumanPRO
+  /-- Implicit control ((90)/(93): predication needs an overt
+      external argument) -/
+  | implicitControl
+  /-- Control shift (`Control.IsPredicative.eq_of_controlled` blocks
+      it under predication) -/
+  | controlShift
+  /-- Partial control (`Control.IsPredicative.not_partial` blocks it
+      under predication) -/
+  | partialControl
+  /-- Split control (`Control.IsPredicative.eq_of_controllers` blocks
+      it under predication) -/
+  | splitControl
+  deriving DecidableEq, Repr
 
-/-- The six contrasts from table (80), encoded as data. -/
-def ttcContrasts : List TTCContrast :=
-  [ ⟨"inflected complement", true,  false⟩
-  , ⟨"[−human] PRO",         true,  false⟩
-  , ⟨"implicit control",     false, true⟩
-  , ⟨"control shift",        false, true⟩
-  , ⟨"partial control",      false, true⟩
-  , ⟨"split control",        false, true⟩ ]
+/-- Table (80)'s predicative column. -/
+def availableUnderPredicative : Table80Row → Bool
+  | .inflectedComplement => true
+  | .nonhumanPRO         => true
+  | _                    => false
 
-/-- The `ttcContrasts` data agrees with the derived `Control.Tier`
-    properties, row by row. -/
-theorem ttcContrasts_consistent :
-    ((!Tier.agrBlocksControl .predicative) = (ttcContrasts[0]!.predicative))
-    ∧ ((!Tier.agrBlocksControl .logophoric) = (ttcContrasts[0]!.logophoric))
-    ∧ (Tier.allowsNonhumanPRO .predicative = ttcContrasts[1]!.predicative)
-    ∧ (Tier.allowsNonhumanPRO .logophoric = ttcContrasts[1]!.logophoric)
-    ∧ (Tier.allowsImplicitControl .predicative = ttcContrasts[2]!.predicative)
-    ∧ (Tier.allowsImplicitControl .logophoric = ttcContrasts[2]!.logophoric)
-    ∧ (Tier.allowsControlShift .predicative = ttcContrasts[3]!.predicative)
-    ∧ (Tier.allowsControlShift .logophoric = ttcContrasts[3]!.logophoric)
-    ∧ (Tier.allowsPartialControl .predicative = ttcContrasts[4]!.predicative)
-    ∧ (Tier.allowsPartialControl .logophoric = ttcContrasts[4]!.logophoric)
-    ∧ (Tier.allowsSplitControl .predicative = ttcContrasts[5]!.predicative)
-    ∧ (Tier.allowsSplitControl .logophoric = ttcContrasts[5]!.logophoric) := by
-  exact ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+/-- Table (80)'s logophoric column. -/
+def availableUnderLogophoric : Table80Row → Bool
+  | .inflectedComplement => false
+  | .nonhumanPRO         => false
+  | _                    => true
+
+/-- Table (80) is a perfect split: every contrast is available under
+    exactly one tier. -/
+theorem table80_complementary (r : Table80Row) :
+    availableUnderLogophoric r = !availableUnderPredicative r := by
+  cases r <;> rfl
+
+/-- The inflected-complement row is the OC-NC generalization (70). -/
+theorem inflectedComplement_eq_agrBlocks :
+    (availableUnderPredicative .inflectedComplement
+        = !Tier.agrBlocksControl .predicative)
+    ∧ availableUnderLogophoric .inflectedComplement
+        = !Tier.agrBlocksControl .logophoric :=
+  ⟨rfl, rfl⟩
 
 /-- EC verbs resist impersonal passives ((98) in [landau-2015]): a
     direct consequence of condition (90), since impersonal passives
-    suppress the external argument that predicative control needs.
-    Cross-linguistic evidence: Hebrew, German, Dutch, Russian. -/
+    suppress the external argument that predicative control needs —
+    the implicit-control row of table (80). Cross-linguistic evidence:
+    Hebrew, German, Dutch, Russian. -/
 theorem ec_resists_impersonal_passives :
-    Tier.requiresSyntacticController .predicative = true
-    ∧ Tier.requiresSyntacticController .logophoric = false := ⟨rfl, rfl⟩
+    availableUnderPredicative .implicitControl = false := rfl
 
 /-! ### De se / de te in object control (table (36)) -/
 

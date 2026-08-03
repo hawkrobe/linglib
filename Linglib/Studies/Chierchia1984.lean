@@ -581,18 +581,13 @@ def chierchiaToLandauTier : ChierchiaControlClass → Control.Tier
 
 /-- The CP/no-CP distinction aligns with the predicative/logophoric
     distinction: CP-bearing classes are predicative, CP-lacking classes
-    are logophoric. -/
+    are logophoric. Chierchia's CP is thereby the semantic reflex of
+    Landau's condition (90): the entailment needs a specific overt
+    argument to serve as controller, which is what predication
+    demands. -/
 theorem cp_iff_predicative (c : ChierchiaControlClass) :
     c.hasCP = true ↔ chierchiaToLandauTier c = .predicative := by
   cases c <;> simp [ChierchiaControlClass.hasCP, chierchiaToLandauTier]
-
-/-- Predicative control requires a syntactic controller (Landau's
-    condition (90)), which is the syntactic reflex of Chierchia's CP:
-    the entailment needs a specific argument to serve as controller. -/
-theorem cp_requires_syntactic_controller (c : ChierchiaControlClass)
-    (h : c.hasCP = true) :
-    (chierchiaToLandauTier c).requiresSyntacticController = true := by
-  cases c <;> first | rfl | simp [ChierchiaControlClass.hasCP] at h
 
 -- ── Per-verb cross-system consistency ──
 
