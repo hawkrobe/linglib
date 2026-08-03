@@ -596,10 +596,6 @@ private theorem util_ne_top (p : Parse) (u : Utterance) (w : World) :
 
 /-! ### Marginal-positivity witnesses -/
 
-theorem vanilla_marg_ss : (vanillaM.toKernel ∘ₘ prior) {Utterance.ss} ≠ 0 :=
-  comp_apply_singleton_ne_zero _ _ (prior_singleton_ne_zero wNS)
-    (vanillaM.toKernel_apply_singleton_ne_zero (show exhMeaning ∅ .ss wNS by decide))
-
 theorem gi_marg (u : Utterance) {w : World} (h : exhMeaning ∅ u w) :
     ((giM.toKernel ∘ₘ prior).map Prod.fst) {u} ≠ 0 :=
   map_fst_comp_apply_singleton_ne_zero _ _ (θ := (∅ : Parse))
@@ -622,11 +618,8 @@ theorem lu_marg_ss : (luSpeaker ∘ₘ luPrior) {Utterance.ss} ≠ 0 :=
 private theorem rpow_two (r : ℝ) : r ^ (2 : ℝ) = r ^ 2 := by
   rw [show (2 : ℝ) = ((2 : ℕ) : ℝ) from by norm_num, Real.rpow_natCast]
 
-private theorem vanillaS_real (w : World) (u : Utterance) :
-    (vanillaM.toKernel w).real {u}
-      = (L0 ∅ u {w}).toReal ^ (2 : ℝ) / ∑ u', (L0 ∅ u' {w}).toReal ^ (2 : ℝ) :=
-  RSA.speaker_utility_zero_real_singleton vanillaM.α_pos.le (L0 ∅)
-    (fun u' => RSA.literalListener_apply_ne_top prior _ u' {w}) u
+private theorem rpow_five (r : ℝ) : r ^ (5 : ℝ) = r ^ 5 := by
+  rw [show (5 : ℝ) = ((5 : ℕ) : ℝ) from by norm_num, Real.rpow_natCast]
 
 private theorem giS_real (w : World) (x : Utterance × Parse) :
     (giM.toKernel w).real {x}
@@ -756,13 +749,6 @@ private theorem zOI_wNA :
 
 /-! ### Listener-preference reductions -/
 
-private theorem gi_fst_lt {u : Utterance}
-    (hx : ((giM.toKernel ∘ₘ prior).map Prod.fst) {u} ≠ 0) {w₁ w₂ : World}
-    (h : (∑ p : Parse, prior.real {w₁} * (giM.toKernel w₁).real {(u, p)})
-        < ∑ p : Parse, prior.real {w₂} * (giM.toKernel w₂).real {(u, p)}) :
-    (giM.jointListener u).fst.real {w₁} < (giM.jointListener u).fst.real {w₂} :=
-  (giM.jointListener_fst_real_lt_iff hx w₁ w₂).mpr h
-
 private theorem gi_snd_lt {u : Utterance}
     (hx : ((giM.toKernel ∘ₘ prior).map Prod.fst) {u} ≠ 0) {p₁ p₂ : Parse}
     (h : (∑ w : World, prior.real {w} * (giM.toKernel w).real {(u, p₁)})
@@ -778,13 +764,6 @@ private theorem lu_fst_lt {u : Utterance}
   rw [luListener, posterior_fst_real_lt_iff luSpeaker luPrior hx]
   exact h
 
-private theorem vanilla_lt {u : Utterance} (hx : (vanillaM.toKernel ∘ₘ prior) {u} ≠ 0)
-    {w₁ w₂ : World}
-    (h : prior.real {w₁} * (vanillaM.toKernel w₁).real {u}
-        < prior.real {w₂} * (vanillaM.toKernel w₂).real {u}) :
-    (vanillaM.listener u).real {w₁} < (vanillaM.listener u).real {w₂} :=
-  (vanillaM.listener_real_singleton_lt_iff hx w₁ w₂).mpr h
-
 private theorem luPrior_real_singleton (s : World × LULex) : luPrior.real {s} = 14⁻¹ := by
   rw [luPrior, uniformOn_univ_real_singleton,
     show Fintype.card (World × LULex) = 14 from by decide]
@@ -794,38 +773,6 @@ private theorem luPrior_real_singleton (s : World × LULex) : luPrior.real {s} =
 
 Each finding compares two pooled speaker masses; naming their values keeps
 the findings two-line. -/
-
-private theorem giPool (u : Utterance) (w : World) (z v : ℝ)
-    (hz : (∑ x : Utterance × Parse, (giM.L0 x {w}).toReal ^ 2) = z)
-    (h : (∑ p : Parse,
-        (if exhMeaning p u w then ((Finset.univ.filter (exhMeaning p u)).card : ℝ)⁻¹
-         else 0) ^ 2 / z) = v) :
-    (∑ p : Parse, (giM.toKernel w).real {(u, p)}) = v := by
-  simp_rw [giS_real, rpow_two, hz, giL0_toReal]
-  exact h
-
-private theorem giPool_ss_wNS : (∑ p : Parse, (giM.toKernel wNS).real {(.ss, p)}) = 5 / 12 :=
-  giPool _ _ _ _ zGI_wNS (by norm_num +decide [rpow_two, univU, univP, univW, Finset.sum_insert,
-    Finset.sum_singleton, Finset.filter_insert, Finset.filter_singleton,
-    Finset.card_insert_of_notMem, Finset.card_singleton])
-
-private theorem giPool_ss_wNSA :
-    (∑ p : Parse, (giM.toKernel wNSA).real {(.ss, p)}) = 43 / 157 :=
-  giPool _ _ _ _ zGI_wNSA (by norm_num +decide [rpow_two, univU, univP, univW, Finset.sum_insert,
-    Finset.sum_singleton, Finset.filter_insert, Finset.filter_singleton,
-    Finset.card_insert_of_notMem, Finset.card_singleton])
-
-private theorem vanS_ss_wNS : (vanillaM.toKernel wNS).real {Utterance.ss} = 4 / 29 := by
-  simp_rw [vanillaS_real, rpow_two, zVan_wNS, L0_toReal]
-  norm_num +decide [rpow_two, univU, univP, univW, Finset.sum_insert,
-    Finset.sum_singleton, Finset.filter_insert, Finset.filter_singleton,
-    Finset.card_insert_of_notMem, Finset.card_singleton]
-
-private theorem vanS_ss_wNA : (vanillaM.toKernel wNA).real {Utterance.ss} = 2 / 11 := by
-  simp_rw [vanillaS_real, rpow_two, zVan_wNA, L0_toReal]
-  norm_num +decide [rpow_two, univU, univP, univW, Finset.sum_insert,
-    Finset.sum_singleton, Finset.filter_insert, Finset.filter_singleton,
-    Finset.card_insert_of_notMem, Finset.card_singleton]
 
 private theorem luPool_ss_wNS :
     (∑ l : LULex, (luSpeaker (wNS, l)).real {Utterance.ss}) = 41 / 87 := by
@@ -847,12 +794,30 @@ private theorem luPool_ss_wNA :
 
 /-! ### The ten qualitative findings -/
 
-/-- SS exhaustifies the inner quantifier: GI's listener prefers wNS to wNSA. -/
+set_option maxRecDepth 8192 in
+/-- SS exhaustifies the inner quantifier at the paper's illustrative α = 5:
+hearing SS, the listener prefers wNS to wNSA (eq. 22's regime). Evaluation
+register — the domination certificate provably fails here (wNSA's SS-fiber is
+not termwise matched by wNS's), so profile literals by `decide` plus
+fifth-power arithmetic by `norm_num` decide it. -/
 theorem ss_inner_exh :
-    (giM.jointListener .ss).fst.real {wNSA} < (giM.jointListener .ss).fst.real {wNS} :=
-  gi_fst_lt gi_marg_ss (by
-    simp_rw [prior_real_singleton, ← Finset.mul_sum, giPool_ss_wNSA, giPool_ss_wNS]
-    norm_num)
+    (gi.listener 5 prior .ss).real {wNSA} < (gi.listener 5 prior .ss).real {wNS} := by
+  rw [gi.listener_real_lt_iff_invPowSum (o := .ss) (by norm_num) (prior_singleton_eq wNSA wNS)
+      (prior_singleton_ne_zero wNS) ⟨(.ss, ∅), rfl, by decide⟩,
+    show gi.fiberProfile .ss wNSA = {3, 3, 3, 3, 4, 4, 6} from by decide,
+    show gi.profile wNS
+      = {1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 6} from by
+      decide,
+    show gi.fiberProfile .ss wNS = {1, 3, 3, 3, 3, 4, 4, 6} from by decide,
+    show gi.profile wNSA
+      = {3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 6} from by decide,
+    Multiset.invPowSum_toReal (by norm_num) (by decide),
+    Multiset.invPowSum_toReal (by norm_num) (by decide),
+    Multiset.invPowSum_toReal (by norm_num) (by decide),
+    Multiset.invPowSum_toReal (by norm_num) (by decide)]
+  simp only [Multiset.insert_eq_cons, Multiset.map_cons, Multiset.map_singleton,
+    Multiset.sum_cons, Multiset.sum_singleton]
+  norm_num [rpow_five]
 
 set_option maxRecDepth 8192 in
 /-- SS exhaustifies the outer quantifier for every rationality: hearing SS,
@@ -906,13 +871,23 @@ theorem ss_m_parse_pref : ∀ p : Parse, p ≠ {.matrix} →
     Finset.sum_singleton, Finset.filter_insert, Finset.filter_singleton,
     Finset.card_insert_of_notMem, Finset.card_singleton])
 
-/-- Vanilla RSA hearing SS prefers wNA to wNS — the wrong prediction (the
-cost-free illustration of eq. 10; the direction reverses at the fitted cost). -/
+/-- Vanilla RSA hearing SS prefers wNA to wNS — the wrong prediction — at the
+paper's illustrative α = 5 (eq. 10, cost-free; the direction reverses at the
+fitted cost). Evaluation register. -/
 theorem vanilla_ss_prefers_wNA :
-    (vanillaM.listener .ss).real {wNS} < (vanillaM.listener .ss).real {wNA} :=
-  vanilla_lt vanilla_marg_ss (by
-    simp_rw [prior_real_singleton, vanS_ss_wNS, vanS_ss_wNA]
-    norm_num)
+    (vanilla.listener 5 prior .ss).real {wNS} < (vanilla.listener 5 prior .ss).real {wNA} := by
+  rw [vanilla.listener_real_lt_iff_invPowSum (o := .ss) (by norm_num) (prior_singleton_eq wNS wNA)
+      (prior_singleton_ne_zero wNA) ⟨.ss, rfl, by decide⟩,
+    show vanilla.fiberProfile .ss wNS = {6} from by decide,
+    show vanilla.profile wNA = {4, 4, 6} from by decide,
+    show vanilla.fiberProfile .ss wNA = {6} from by decide,
+    show vanilla.profile wNS = {3, 4, 6} from by decide,
+    Multiset.invPowSum_toReal (by norm_num) (by decide),
+    Multiset.invPowSum_toReal (by norm_num) (by decide),
+    Multiset.invPowSum_toReal (by norm_num) (by decide)]
+  simp only [Multiset.insert_eq_cons, Multiset.map_cons, Multiset.map_singleton,
+    Multiset.sum_cons, Multiset.sum_singleton]
+  norm_num [rpow_five]
 
 set_option maxRecDepth 8192 in
 /-- GI corrects vanilla's error for every rationality: hearing SS, the

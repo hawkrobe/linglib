@@ -1160,36 +1160,21 @@ theorem listener_real_lt_of_support {α : ℝ} (hα : 0 < α) {μ : Measure T}
       mul_pos (ENNReal.toReal_pos hμ (measure_ne_top _ _))
         (s.speaker_real_singleton_pos hα.le hmem)⟩
 
-/-- Certificate form of listener preference at equal priors, uniform in the
-rationality: cross products of fiber and rest profiles strictly dominate
-(the shared fiber-by-fiber terms of the odds comparison cancel). -/
-theorem listener_real_lt_of_prodMul_strictDominates [s.Expressible] {α : ℝ} (hα : 0 < α)
+/-- Listener preference at equal priors reduces to the cross-multiplied
+profile comparison, on reals — the evaluation form for pinned rationalities. -/
+theorem listener_real_lt_iff_invPowSum [s.Expressible] {α : ℝ} (hα : 0 < α)
     {o : O} {t₁ t₂ : T} (hμeq : μ {t₁} = μ {t₂}) (hμ0 : μ {t₂} ≠ 0)
-    (h₂ : ∃ c, s.obs c = o ∧ t₂ ∈ s.sem c)
-    (hcert : ((s.fiberProfile o t₂).prodMul (s.restProfile o t₁)).StrictDominates
-      ((s.fiberProfile o t₁).prodMul (s.restProfile o t₂))) :
-    (s.listener α μ o).real {t₁} < (s.listener α μ o).real {t₂} := by
+    (h₂ : ∃ c, s.obs c = o ∧ t₂ ∈ s.sem c) :
+    ((s.listener α μ o).real {t₁} < (s.listener α μ o).real {t₂})
+      ↔ ((s.fiberProfile o t₁).invPowSum α).toReal * ((s.profile t₂).invPowSum α).toReal
+        < ((s.fiberProfile o t₂).invPowSum α).toReal * ((s.profile t₁).invPowSum α).toReal := by
   obtain ⟨c₂, hc₂, hmem⟩ := h₂
   have hWne : ∀ t, (s.fiberProfile o t).invPowSum α ≠ ∞ := fun t =>
     Multiset.invPowSum_ne_top hα.le (s.zero_notMem_fiberProfile o t)
-  have hRne : ∀ t, (s.restProfile o t).invPowSum α ≠ ∞ := fun t =>
-    Multiset.invPowSum_ne_top hα.le (s.zero_notMem_restProfile o t)
   have hZ0 : ∀ t, (s.profile t).invPowSum α ≠ 0 := fun t =>
     (Multiset.invPowSum_pos hα.le (s.profile_ne_zero t)).ne'
   have hZne : ∀ t, (s.profile t).invPowSum α ≠ ∞ := fun t =>
     Multiset.invPowSum_ne_top hα.le (s.zero_notMem_profile t)
-  have hodds : (s.fiberProfile o t₁).invPowSum α * (s.restProfile o t₂).invPowSum α
-      < (s.fiberProfile o t₂).invPowSum α * (s.restProfile o t₁).invPowSum α := by
-    rw [← Multiset.invPowSum_prodMul hα.le, ← Multiset.invPowSum_prodMul hα.le]
-    exact hcert.invPowSum_lt hα.le
-      (Multiset.zero_notMem_prodMul (s.zero_notMem_fiberProfile o t₁)
-        (s.zero_notMem_restProfile o t₂))
-  have hcross : (s.fiberProfile o t₁).invPowSum α * (s.profile t₂).invPowSum α
-      < (s.fiberProfile o t₂).invPowSum α * (s.profile t₁).invPowSum α := by
-    rw [s.profile_eq_fiberProfile_add_restProfile o t₁,
-      s.profile_eq_fiberProfile_add_restProfile o t₂, Multiset.invPowSum_add,
-      Multiset.invPowSum_add, mul_add, mul_add, mul_comm ((s.fiberProfile o t₂).invPowSum α)]
-    exact ENNReal.add_lt_add_left (ENNReal.mul_ne_top (hWne t₁) (hWne t₂)) hodds
   have key : ∀ t : T,
       (∑ c ∈ Finset.univ.filter (s.obs · = o), μ.real {t} * (s.speaker α t).real {c})
         = (μ {t} * ((s.fiberProfile o t).invPowSum α / (s.profile t).invPowSum α)).toReal :=
@@ -1209,8 +1194,40 @@ theorem listener_real_lt_of_prodMul_strictDominates [s.Expressible] {α : ℝ} (
     ENNReal.mul_lt_mul_iff_right hμ0 (measure_ne_top _ _),
     ENNReal.div_lt_iff (Or.inl (hZ0 t₁)) (Or.inl (hZne t₁)),
     div_eq_mul_inv, mul_right_comm, ← div_eq_mul_inv,
-    ENNReal.lt_div_iff_mul_lt (Or.inl (hZ0 t₂)) (Or.inl (hZne t₂))]
-  exact hcross
+    ENNReal.lt_div_iff_mul_lt (Or.inl (hZ0 t₂)) (Or.inl (hZne t₂)),
+    ← ENNReal.toReal_lt_toReal
+      (ENNReal.mul_ne_top (hWne t₁) (hZne t₂)) (ENNReal.mul_ne_top (hWne t₂) (hZne t₁)),
+    ENNReal.toReal_mul, ENNReal.toReal_mul]
+
+/-- Certificate form of listener preference at equal priors, uniform in the
+rationality: cross products of fiber and rest profiles strictly dominate
+(the shared fiber-by-fiber terms of the odds comparison cancel). -/
+theorem listener_real_lt_of_prodMul_strictDominates [s.Expressible] {α : ℝ} (hα : 0 < α)
+    {o : O} {t₁ t₂ : T} (hμeq : μ {t₁} = μ {t₂}) (hμ0 : μ {t₂} ≠ 0)
+    (h₂ : ∃ c, s.obs c = o ∧ t₂ ∈ s.sem c)
+    (hcert : ((s.fiberProfile o t₂).prodMul (s.restProfile o t₁)).StrictDominates
+      ((s.fiberProfile o t₁).prodMul (s.restProfile o t₂))) :
+    (s.listener α μ o).real {t₁} < (s.listener α μ o).real {t₂} := by
+  have hWne : ∀ t, (s.fiberProfile o t).invPowSum α ≠ ∞ := fun t =>
+    Multiset.invPowSum_ne_top hα.le (s.zero_notMem_fiberProfile o t)
+  have hodds : (s.fiberProfile o t₁).invPowSum α * (s.restProfile o t₂).invPowSum α
+      < (s.fiberProfile o t₂).invPowSum α * (s.restProfile o t₁).invPowSum α := by
+    rw [← Multiset.invPowSum_prodMul hα.le, ← Multiset.invPowSum_prodMul hα.le]
+    exact hcert.invPowSum_lt hα.le
+      (Multiset.zero_notMem_prodMul (s.zero_notMem_fiberProfile o t₁)
+        (s.zero_notMem_restProfile o t₂))
+  rw [s.listener_real_lt_iff_invPowSum hα hμeq hμ0 h₂,
+    ← ENNReal.toReal_mul, ← ENNReal.toReal_mul,
+    ENNReal.toReal_lt_toReal
+      (ENNReal.mul_ne_top (hWne t₁)
+        (Multiset.invPowSum_ne_top hα.le (s.zero_notMem_profile t₂)))
+      (ENNReal.mul_ne_top (hWne t₂)
+        (Multiset.invPowSum_ne_top hα.le (s.zero_notMem_profile t₁))),
+    s.profile_eq_fiberProfile_add_restProfile o t₁,
+    s.profile_eq_fiberProfile_add_restProfile o t₂, Multiset.invPowSum_add,
+    Multiset.invPowSum_add, mul_add, mul_add, mul_comm ((s.fiberProfile o t₂).invPowSum α)]
+  exact ENNReal.add_lt_add_left
+    (ENNReal.mul_ne_top (hWne t₁) (hWne t₂)) hodds
 
 end Listener
 

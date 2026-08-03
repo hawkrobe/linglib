@@ -215,6 +215,24 @@ example : StrictDominates {1, 1, 5} {2, 7} := by decide
 
 example : ¬ StrictDominates {1, 2} {1, 2} := by decide
 
+/-- Evaluation form on reals, for pinned exponents. -/
+theorem invPowSum_toReal (hα : 0 ≤ α) (hm : 0 ∉ m) :
+    (m.invPowSum α).toReal = (m.map fun n : ℕ => ((n : ℝ))⁻¹ ^ α).sum := by
+  induction m using Multiset.induction with
+  | empty => simp [invPowSum]
+  | cons n m ih =>
+    have hn : n ≠ 0 := fun h => hm (h ▸ Multiset.mem_cons_self n m)
+    have hhead : ((n : ℝ≥0∞))⁻¹ ^ α ≠ ⊤ := by
+      rw [ne_eq, ENNReal.rpow_eq_top_iff]
+      rintro (⟨-, hneg⟩ | ⟨htop, -⟩)
+      · exact absurd hα (not_le.mpr hneg)
+      · exact hn (by simpa [ENNReal.inv_eq_top] using htop)
+    rw [invPowSum_cons, Multiset.map_cons, Multiset.sum_cons,
+      ENNReal.toReal_add hhead (invPowSum_ne_top hα fun h => hm (Multiset.mem_cons_of_mem h)),
+      ih fun h => hm (Multiset.mem_cons_of_mem h)]
+    congr 1
+    rw [← ENNReal.toReal_rpow, ENNReal.toReal_inv, ENNReal.toReal_natCast]
+
 theorem zero_notMem_prodMul (hs : 0 ∉ s) (ht : 0 ∉ t) : 0 ∉ prodMul s t := by
   simp only [prodMul, Multiset.mem_map, not_exists, not_and]
   intro p hp h0
