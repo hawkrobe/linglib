@@ -517,22 +517,14 @@ per-parse speaker over the joint (world, parse) state. -/
 noncomputable def perParseListener (α : ℝ) : Kernel Utterance (World × Parse) :=
   RSA.Scenario.familyListener readings α perParsePrior
 
-/-! ### The ten findings
-
-Two registers, both closed by `decide`. Certificate findings hold for every
-rationality `α > 0`: a decided `Multiset.StrictDominates` fact — strict
-stochastic dominance of informativity profiles — settles the fiber-by-rest
-odds comparison uniformly. Evaluation findings are genuinely α-dependent
-(their direction degenerates as α → 0) and are pinned at the paper's
-illustrative α = 5, where the comparison clears to a ℕ inequality via
-`Multiset.divPowSum`. -/
+/-! ### The ten findings -/
 
 /-- Hearing "some of the aliens drank some of their water", the pooled
 listener favors the world where no alien drank all of its water over the one
 where some did (inner exhaustification). -/
 theorem ss_inner_exh :
     (gi.listener 5 prior .ss).real {wNSA} < (gi.listener 5 prior .ss).real {wNS} :=
-  gi.listener_real_lt_of_divPowSum (k := 5) (D := 12) (by decide +kernel) (by decide +kernel)
+  gi.listener_real_lt_of_divPowSum (k := 5) (D := 12)
     (prior_singleton_eq wNSA wNS) (prior_singleton_ne_zero wNS)
     (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
@@ -565,18 +557,12 @@ sentence. -/
 theorem ss_m_parse_pref : ∀ p : Parse, p ≠ pM →
     (gi.choicePosterior 5 prior .ss).real {(.ss, p)}
       < (gi.choicePosterior 5 prior .ss).real {(.ss, pM)} := by
-  have hnat : ∀ p : Parse, p ≠ pM →
-      (∑ t : World, if t ∈ gi.sem (.ss, p) then
-          (12 / (gi.sem (.ss, p)).card) ^ 5
-            * ∏ t' ∈ Finset.univ.erase t, (gi.profile t').divPowSum 12 5
-        else 0)
-        < ∑ t : World, if t ∈ gi.sem (.ss, pM) then
-          (12 / (gi.sem (.ss, pM)).card) ^ 5
-            * ∏ t' ∈ Finset.univ.erase t, (gi.profile t').divPowSum 12 5
-        else 0 := by decide +kernel
+  have hcol : ∀ p : Parse, p ≠ pM →
+      gi.divPowSumColumn 12 5 (.ss, p) < gi.divPowSumColumn 12 5 (.ss, pM) := by
+    decide +kernel
   exact fun p hp =>
-    gi.choicePosterior_real_lt_of_divPowSum (by decide +kernel) (by decide +kernel)
-      (by decide +kernel) prior_singleton_eq prior_singleton_ne_zero rfl rfl (hnat p hp)
+    gi.choicePosterior_real_lt_of_divPowSum (by decide +kernel)
+      prior_singleton_eq prior_singleton_ne_zero rfl rfl (hcol p hp)
 
 /-- Hearing "some of the aliens drank some of their water", the
 literal-semantics listener favors all-drinkers over some-but-not-all

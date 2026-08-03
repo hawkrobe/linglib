@@ -675,30 +675,49 @@ theorem speaker_real_singleton_of_profile_replicate {α : ℝ} (hα : 0 < α) {t
         ← ENNReal.toReal_rpow, ENNReal.toReal_inv, ENNReal.toReal_natCast],
     div_mul_eq_div_div_swap, div_self hx.ne', one_div]
 
+/-- The ℕ-cleared production mass of a choice, pooled over its true states:
+its common-denominator weight times, per true state, the product of the other
+states' cleared partition sums. Pooled evaluation-register hypotheses compare
+these. -/
+def divPowSumColumn (D k : ℕ) (c : C) : ℕ :=
+  (D / (s.sem c).card) ^ k
+    * ∑ t ∈ s.sem c, ∏ t' ∈ Finset.univ.erase t, (s.profile t').divPowSum D k
+
+omit [MeasurableSpace T] [MeasurableSingletonClass T] [MeasurableSpace C]
+  [DiscreteMeasurableSpace C] [DecidableEq O] in
+private theorem divPowSumColumn_eq (D k : ℕ) (c : C) :
+    s.divPowSumColumn D k c
+      = ∑ t : T, if t ∈ s.sem c then
+          (D / (s.sem c).card) ^ k
+            * ∏ t' ∈ Finset.univ.erase t, (s.profile t').divPowSum D k
+        else 0 := by
+  rw [divPowSumColumn, Finset.mul_sum, Finset.sum_ite_mem, Finset.univ_inter]
+
 omit [DecidableEq O] in
 /-- Exact speaker mass at a natural rationality, as a ratio of ℕ-valued
 common-denominator sums. -/
-theorem speaker_real_singleton_divPowSum {k D : ℕ} (hk : k ≠ 0) (hD : D ≠ 0) {t : T}
+theorem speaker_real_singleton_divPowSum {k D : ℕ} [NeZero k] [NeZero D] {t : T}
     (hdvd : ∀ n ∈ s.profile t, n ∣ D) (c : C) :
     (s.speaker k t).real {c}
       = (if t ∈ s.sem c then (((D / (s.sem c).card) ^ k : ℕ) : ℝ) else 0)
         / ((s.profile t).divPowSum D k : ℝ) := by
-  have hα : (0 : ℝ) < k := Nat.cast_pos.mpr (Nat.pos_of_ne_zero hk)
-  have hDk : ((D : ℝ) ^ k) ≠ 0 := pow_ne_zero k (Nat.cast_ne_zero.mpr hD)
-  rw [s.speaker_real_singleton hα, Multiset.invPowSum_toReal_eq hD k hdvd]
+  have hα : (0 : ℝ) < k := Nat.cast_pos.mpr (Nat.pos_of_ne_zero (NeZero.ne k))
+  have hDk : ((D : ℝ) ^ k) ≠ 0 := pow_ne_zero k (Nat.cast_ne_zero.mpr (NeZero.ne D))
+  rw [s.speaker_real_singleton hα, Multiset.invPowSum_toReal_eq (NeZero.ne D) k hdvd]
   split
   · have hcard : (s.sem c).card ∣ D := hdvd _ (Multiset.mem_map_of_mem _ (by
       rw [Finset.mem_val, trueChoices, Finset.mem_filter]
       exact ⟨Finset.mem_univ c, ‹_›⟩))
     have hcard0 : ((s.sem c).card : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr
-      fun h0 => hD (Nat.eq_zero_of_zero_dvd (h0 ▸ hcard))
+      fun h0 => NeZero.ne D (Nat.eq_zero_of_zero_dvd (h0 ▸ hcard))
     have hinv : (((s.sem c).card : ℝ))⁻¹ = ((D / (s.sem c).card : ℕ) : ℝ) / D := by
-      rw [eq_div_iff (Nat.cast_ne_zero.mpr hD),
+      rw [eq_div_iff (Nat.cast_ne_zero.mpr (NeZero.ne D)),
         show (D : ℝ) = ((D / (s.sem c).card : ℕ) : ℝ) * ((s.sem c).card : ℝ) by
           rw [← Nat.cast_mul, Nat.div_mul_cancel hcard],
         mul_comm _ ((s.sem c).card : ℝ), ← mul_assoc, inv_mul_cancel₀ hcard0, one_mul]
     rw [Real.rpow_natCast, hinv, div_pow, ← Nat.cast_pow, ← Nat.cast_pow,
-      div_div_div_comm, div_self (Nat.cast_ne_zero.mpr (pow_ne_zero k hD) : ((D ^ k : ℕ) : ℝ) ≠ 0),
+      div_div_div_comm,
+      div_self (Nat.cast_ne_zero.mpr (pow_ne_zero k (NeZero.ne D)) : ((D ^ k : ℕ) : ℝ) ≠ 0),
       div_one]
   · rw [zero_div, zero_div]
 
@@ -876,17 +895,13 @@ and equal priors: pooled preference between two `o`-shaped choices is the
 ℕ-valued common-denominator comparison over all states — a kernel `decide`.
 The strict inequality carries its own truth witness. -/
 theorem choicePosterior_real_lt_of_divPowSum [s.Expressible] {k D : ℕ}
-    (hk : k ≠ 0) (hD : D ≠ 0) (hdvd : ∀ t : T, ∀ n ∈ s.profile t, n ∣ D)
+    [NeZero k] [NeZero D] (hdvd : ∀ t : T, ∀ n ∈ s.profile t, n ∣ D)
     (hμeq : ∀ t t' : T, μ {t} = μ {t'}) (hμ0 : ∀ t : T, μ {t} ≠ 0)
     {o : O} {c₁ c₂ : C} (h₁ : s.obs c₁ = o) (h₂ : s.obs c₂ = o)
-    (hlt : (∑ t : T, if t ∈ s.sem c₁ then
-        (D / (s.sem c₁).card) ^ k * ∏ t' ∈ Finset.univ.erase t, (s.profile t').divPowSum D k
-      else 0)
-      < ∑ t : T, if t ∈ s.sem c₂ then
-        (D / (s.sem c₂).card) ^ k * ∏ t' ∈ Finset.univ.erase t, (s.profile t').divPowSum D k
-      else 0) :
+    (hlt : s.divPowSumColumn D k c₁ < s.divPowSumColumn D k c₂) :
     (s.choicePosterior k μ o).real {c₁} < (s.choicePosterior k μ o).real {c₂} := by
-  have hα : (0 : ℝ) < k := Nat.cast_pos.mpr (Nat.pos_of_ne_zero hk)
+  rw [divPowSumColumn_eq, divPowSumColumn_eq] at hlt
+  have hα : (0 : ℝ) < k := Nat.cast_pos.mpr (Nat.pos_of_ne_zero (NeZero.ne k))
   obtain ⟨t₀, -, ht₀⟩ := Finset.exists_ne_zero_of_sum_ne_zero
     (Nat.pos_iff_ne_zero.mp (lt_of_le_of_lt (Nat.zero_le _) hlt))
   have hmem₀ : t₀ ∈ s.sem c₂ := by
@@ -903,12 +918,12 @@ theorem choicePosterior_real_lt_of_divPowSum [s.Expressible] {k D : ℕ}
     refine Finset.sum_congr rfl fun t _ => ?_
     rw [show μ.real {t} = μ.real {t₀} from by
         rw [measureReal_def, measureReal_def, hμeq t t₀],
-      s.speaker_real_singleton_divPowSum hk hD (hdvd t)]
+      s.speaker_real_singleton_divPowSum (hdvd t)]
   rw [s.choicePosterior_real_lt_iff ho h₁ h₂, hprior, hprior,
     mul_lt_mul_iff_right₀
       (show (0 : ℝ) < μ.real {t₀} from ENNReal.toReal_pos (hμ0 t₀) (measure_ne_top _ _)),
     sum_div_lt_sum_div_iff fun t => by
-      exact_mod_cast Multiset.divPowSum_pos hD (hdvd t) (s.profile_ne_zero t)]
+      exact_mod_cast Multiset.divPowSum_pos (NeZero.ne D) (hdvd t) (s.profile_ne_zero t)]
   simp only [ite_mul, zero_mul]
   exact_mod_cast hlt
 
@@ -1004,13 +1019,13 @@ theorem listener_real_lt_of_prodMul_strictDominates [s.Expressible] {α : ℝ} (
 dividing `D`, listener preference at equal priors is the ℕ-valued
 common-denominator comparison — a kernel `decide`. The strict inequality
 carries its own truth witness. -/
-theorem listener_real_lt_of_divPowSum [s.Expressible] {k D : ℕ} (hk : k ≠ 0) (hD : D ≠ 0)
+theorem listener_real_lt_of_divPowSum [s.Expressible] {k D : ℕ} [NeZero k] [NeZero D]
     {o : O} {t₁ t₂ : T} (hμeq : μ {t₁} = μ {t₂}) (hμ0 : μ {t₂} ≠ 0)
     (hdvd₁ : ∀ n ∈ s.profile t₁, n ∣ D) (hdvd₂ : ∀ n ∈ s.profile t₂, n ∣ D)
     (hlt : (s.fiberProfile o t₁).divPowSum D k * (s.profile t₂).divPowSum D k
       < (s.fiberProfile o t₂).divPowSum D k * (s.profile t₁).divPowSum D k) :
     (s.listener k μ o).real {t₁} < (s.listener k μ o).real {t₂} := by
-  have hα : (0 : ℝ) < k := Nat.cast_pos.mpr (Nat.pos_of_ne_zero hk)
+  have hα : (0 : ℝ) < k := Nat.cast_pos.mpr (Nat.pos_of_ne_zero (NeZero.ne k))
   have hfsub : ∀ t, ∀ n ∈ s.fiberProfile o t, n ∈ s.profile t := fun t n hn =>
     s.profile_eq_fiberProfile_add_restProfile o t ▸ Multiset.mem_add.mpr (Or.inl hn)
   have h₂ : s.fiberProfile o t₂ ≠ 0 :=
@@ -1021,12 +1036,13 @@ theorem listener_real_lt_of_divPowSum [s.Expressible] {k D : ℕ} (hk : k ≠ 0)
       (m₁.invPowSum k).toReal * (m₂.invPowSum k).toReal
         = (m₁.divPowSum D k * m₂.divPowSum D k : ℕ) / ((D : ℝ) ^ k) ^ 2 := by
     intro m₁ m₂ h₁ h₂
-    rw [Multiset.invPowSum_toReal_eq hD k h₁, Multiset.invPowSum_toReal_eq hD k h₂]
+    rw [Multiset.invPowSum_toReal_eq (NeZero.ne D) k h₁,
+      Multiset.invPowSum_toReal_eq (NeZero.ne D) k h₂]
     push_cast
     ring
   rw [key _ _ (fun n hn => hdvd₁ n (hfsub t₁ n hn)) hdvd₂,
     key _ _ (fun n hn => hdvd₂ n (hfsub t₂ n hn)) hdvd₁,
-    div_lt_div_iff_of_pos_right (by positivity)]
+    div_lt_div_iff_of_pos_right (by have := NeZero.ne D; positivity)]
   exact_mod_cast hlt
 
 end Listener
