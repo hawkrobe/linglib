@@ -29,34 +29,45 @@ reading ⟦SS⟧^M = {wNS} "uniquely singles out this world state" (eq. 22,
 `m_ss_singleton`) and is unavailable to LI and LU (`li_excludes_matrix`,
 `lu_excludes_matrix`) — the paper's explanation of GI's win in its Bayesian
 model comparison (posterior 0.956 vs LI 0.033, LU 0.01, vanilla 0; Table 2).
-LI and LU still derive the embedded enrichments (`li_ss_outer_exh`,
-`li_ss_prefers_wNS`, `lu_ss_prefers_wNS`).
+The M-advantage exists *because* the pooled speaker normalizes over pairs:
+under the per-parse normalization the paper rejects (p. e85), O beats M at
+every rationality (`perParse_ss_o_beats_m`). LI and LU still derive the
+embedded enrichments (`li_ss_outer_exh`, `li_ss_prefers_wNS`,
+`lu_ss_prefers_wNS`).
 
 ## Main results
 
 * `table1_*` — the paper's Table 1, one lemma per row, including NN's
   distinct matrix row (fn. 7) from the `none ~ not all` lexical alternative
   ([levinson-2000]).
-* `ss_m_parse_pref` — GI's parse posterior for SS peaks at M.
+* `ss_m_parse_pref` vs `perParse_ss_o_beats_m` — the architectural headline:
+  pooled (utterance, parse) choice peaks at M (α = 5), per-parse
+  normalization prefers O for every rationality. With
+  `RSA.Scenario.pool_L0` (identical weights), the pair locates GI's win
+  purely in the position of the latent parameter (p. e86).
 * `moi_ss_ne_innocent_exclusion` — the paper's matrix operator (eq. A2) is
   not Fox-style innocent exclusion ([fox-2007]).
 
 ## Implementation notes
 
-Sentential alternatives (A3a) range over a fourth quantifier `notAll` that is
-never an utterance — the paper's grammatical-vs-utterance alternatives
-distinction (its comparison with [gotzner-romoli-2018]'s alternative set
-favors this one by a Bayes factor of ~1,530). Each model is an
-`RSA.Scenario` (LU a `RSA.Scenario.familySpeaker` family) with rationality a
-parameter, and each finding's docstring names its register: support facts
-and `Multiset.Dominates` certificates hold for every rationality `α > 0`;
-genuinely α-dependent findings are evaluated at the paper's illustrative
-α = 5 via `Multiset.invPowSum` profiles. We omit the paper's cost term for
-*none*-initial utterances and fixed error ε = 0.045 (eqs. 25–28);
-`vanilla_ss_prefers_wNA` reverses at the fitted cost. The paper's S2/L2
-layer for LU ([lassiter-goodman-2017], eqs. 14a–14b) is also omitted: our
-L1-only LU keeps wNS over wNA, though the paper's LU-L2 concentrates on
-wNSA (eq. 15).
+One reading family (`readings`) generates every model: vanilla is its
+literal member, GI and LI pool (utterance, parse) pairs into the choice
+space (`RSA.Scenario.pool`, eqs. 18a/21a), and LU — like the rejected
+per-parse architecture — fixes the latent as a speaker argument
+(`RSA.Scenario.familySpeaker`, eq. 11). Sentential alternatives (A3a) range
+over a fourth quantifier `notAll` that is never an utterance — the paper's
+grammatical-vs-utterance alternatives distinction (its comparison with
+[gotzner-romoli-2018]'s alternative set favors this one by a Bayes factor of
+~1,530). Findings come in two registers, both closed by `decide`:
+`Multiset.StrictDominates` certificates — strict stochastic dominance of
+informativity profiles — hold for every rationality `α > 0`, while genuinely
+α-dependent findings are pinned at the paper's illustrative α = 5, where
+comparisons clear to ℕ inequalities via `Multiset.divPowSum`. We omit the
+paper's cost term for *none*-initial utterances and fixed error ε = 0.045
+(eqs. 25–28); `vanilla_ss_prefers_wNA` reverses at the fitted cost. The
+paper's S2/L2 layer for LU ([lassiter-goodman-2017], eqs. 14a–14b) is also
+omitted: our L1-only LU keeps wNS over wNA at every rationality, though the
+paper's LU-L2 concentrates on wNSA (eq. 15).
 -/
 
 namespace FrankeBergen2020
@@ -405,19 +416,10 @@ def ext (p : Parse) (u : Utterance) : Finset World :=
     w ∈ ext p u ↔ exhMeaning p u w := by
   simp [ext]
 
-/-- Extension form of Table 1's AA row: ⟦AA⟧ = {wA} under every parse. -/
-theorem ext_aa : ∀ p : Parse, ext p .aa = {wA} := by decide
-
 noncomputable def prior : Measure World := uniformOn Set.univ
 
 instance : IsProbabilityMeasure prior :=
   inferInstanceAs (IsProbabilityMeasure (uniformOn _))
-
-private theorem card_world : Fintype.card World = 7 := by decide
-
-theorem prior_real_singleton (w : World) : prior.real {w} = 7⁻¹ := by
-  rw [prior, uniformOn_univ_real_singleton, card_world]
-  norm_num
 
 theorem prior_singleton_eq (w w' : World) : prior {w} = prior {w'} := by
   simp [prior, uniformOn_univ]
@@ -429,36 +431,33 @@ theorem prior_singleton_ne_zero (w : World) : prior {w} ≠ 0 := by
 /-- Every `(world, parse)` state has a true utterance. -/
 theorem exists_true : ∀ (w : World) (p : Parse), ∃ u, exhMeaning p u w := by decide
 
-/-! ### The models as choice scenarios
+/-! ### The models as combinators over one reading family
 
-Each model is an `RSA.Scenario`: an extension and an observable form per
-choice, with rationality a parameter of the derived kernels — findings
-quantify over `α` where the paper's argument does. Vanilla chooses bare
-utterances read literally (obs = id); GI chooses over all 72 (utterance,
-parse) pairs (eq. 21a), LI over the 36 matrix-free pairs (eq. 18a), both
-heard through `Prod.fst`. LU's per-lexicon speakers form the `luFam` family
-(eq. 11) — the lexicon sits in the state, not the choice, so LU is *not* one
-`Scenario`: the type-level content of the paper's LU-vs-intentions contrast. -/
+Each parse yields a scenario (`readings`); the paper's models are combinators
+applied to this single family. Vanilla (§3.1) is the literal member. GI
+(eq. 21a) and LI (eq. 18a) pool (utterance, parse) pairs into one choice
+space — the speaker *chooses* the parse — while LU (eq. 11) fixes the lexicon
+as a speaker argument (`RSA.Scenario.familySpeaker`). By
+`RSA.Scenario.pool_L0` the weights agree, so the models differ *only* in the
+position of the latent parameter (p. e86); `ss_m_parse_pref` against
+`perParse_ss_o_beats_m` below turns that difference into diverging
+predictions. Rationality is a parameter of the derived kernels, and findings
+quantify over it wherever the paper's argument does. -/
 
-/-- The vanilla scenario (§3.1): utterances read literally. -/
-@[simps] def vanilla : RSA.Scenario World Utterance Utterance where
-  sem := ext ∅
+/-- One scenario per parse: utterances read under it. -/
+@[simps] def readings (p : Parse) : RSA.Scenario World Utterance Utterance where
+  sem := ext p
   obs := id
 
-/-- The GI scenario (eq. 21): pair choice with all parses available. -/
-@[simps] def gi : RSA.Scenario World (Utterance × Parse) Utterance where
-  sem x := ext x.2 x.1
-  obs := Prod.fst
+/-- The vanilla scenario (§3.1): the literal member of the family. -/
+abbrev vanilla : RSA.Scenario World Utterance Utterance := readings ∅
 
-/-- The LI scenario (eq. 18): pair choice over matrix-free parses. -/
-@[simps] def li : RSA.Scenario World (Utterance × LIParse) Utterance where
-  sem x := ext x.2.toParse x.1
-  obs := Prod.fst
+/-- The GI scenario (eq. 21a): pair choice over the full reading family. -/
+def gi : RSA.Scenario World (Utterance × Parse) Utterance := .pool readings
 
-/-- The LU speaker family (eq. 11): one scenario per lexicon. -/
-@[simps] def luFam (l : LULex) : RSA.Scenario World Utterance Utterance where
-  sem := ext l.toParse
-  obs := id
+/-- The LI scenario (eq. 18a): pair choice over the matrix-free parses. -/
+def li : RSA.Scenario World (Utterance × LIParse) Utterance :=
+  .pool fun l => readings l.toParse
 
 instance : vanilla.Expressible := ⟨fun w => (exists_true w ∅).imp fun _ h => mem_ext.mpr h⟩
 instance : gi.Expressible :=
@@ -466,14 +465,18 @@ instance : gi.Expressible :=
 instance : li.Expressible :=
   ⟨fun w => (exists_true w ∅).elim fun u h => ⟨(u, .lit), mem_ext.mpr h⟩⟩
 
+/-! ### Lexical uncertainty: the latent as a speaker argument -/
+
+/-- The LU speaker family (eq. 11): one member of `readings` per lexicon. -/
+def luFam (l : LULex) : RSA.Scenario World Utterance Utterance := readings l.toParse
+
 /-- LU's joint prior: the lexicon is drawn with the world. -/
 noncomputable def luPrior : Measure (World × LULex) := uniformOn Set.univ
 
 instance : IsProbabilityMeasure luPrior :=
   inferInstanceAs (IsProbabilityMeasure (uniformOn _))
 
-/-- The LU speaker (eq. 11): the `luFam` family — the lexicon is an argument
-of the speaker, not a choice. -/
+/-- The LU speaker (eq. 11): the lexicon is an argument, not a choice. -/
 noncomputable def luSpeaker (α : ℝ) : Kernel (World × LULex) Utterance :=
   RSA.Scenario.familySpeaker luFam α
 
@@ -484,25 +487,9 @@ instance (α : ℝ) : IsFiniteKernel (luSpeaker α) :=
 noncomputable def luListener (α : ℝ) : Kernel Utterance (World × LULex) :=
   (luSpeaker α)†luPrior
 
-/-! ### Marginal-positivity witnesses -/
-
 theorem luPrior_singleton_ne_zero (s : World × LULex) : luPrior {s} ≠ 0 := by
   rw [luPrior, uniformOn_univ, Measure.count_singleton]
   simp [ENNReal.mul_eq_top]
-
-/-! ### Evaluation scaffolding -/
-
-private theorem rpow_five (r : ℝ) : r ^ (5 : ℝ) = r ^ 5 := by
-  rw [show (5 : ℝ) = ((5 : ℕ) : ℝ) from by norm_num, Real.rpow_natCast]
-
-/-! ### Enumeration scaffolding -/
-
-private theorem univP : (Finset.univ : Finset Parse)
-    = {∅, {.matrix}, {.outer}, {.inner}, {.matrix, .outer}, {.matrix, .inner},
-       {.outer, .inner}, {.matrix, .outer, .inner}} := by decide
-
-private theorem univW : (Finset.univ : Finset World)
-    = {wN, wNS, wNA, wNSA, wS, wSA, wA} := by decide
 
 private theorem univLU : (Finset.univ : Finset LULex) = {.lit, .oi} := by decide
 
@@ -511,53 +498,73 @@ private theorem luPrior_real_singleton (s : World × LULex) : luPrior.real {s} =
     show Fintype.card (World × LULex) = 14 from by decide]
   norm_num
 
-/-! ### The ten qualitative findings -/
+/-! ### The rejected architecture: per-parse normalization -/
+
+/-- The architecture the paper rejects as "conceptually highly implausible"
+(p. e85): the full parse family with the parse as a speaker *argument* —
+eq. 11 with an enlarged latent set, rather than eq. 21a's pooled choice. -/
+noncomputable def perParseSpeaker (α : ℝ) : Kernel (World × Parse) Utterance :=
+  RSA.Scenario.familySpeaker readings α
+
+noncomputable def perParsePrior : Measure (World × Parse) := uniformOn Set.univ
+
+instance : IsProbabilityMeasure perParsePrior :=
+  inferInstanceAs (IsProbabilityMeasure (uniformOn _))
+
+instance (α : ℝ) : IsFiniteKernel (perParseSpeaker α) :=
+  inferInstanceAs (IsFiniteKernel (RSA.Scenario.familySpeaker readings α))
+
+private theorem perParsePrior_singleton_ne_zero (s : World × Parse) :
+    perParsePrior {s} ≠ 0 := by
+  rw [perParsePrior, uniformOn_univ, Measure.count_singleton]
+  simp [ENNReal.mul_eq_top]
+
+private theorem perParsePrior_real_singleton (s : World × Parse) :
+    perParsePrior.real {s} = 56⁻¹ := by
+  rw [perParsePrior, uniformOn_univ_real_singleton,
+    show Fintype.card (World × Parse) = 56 from by decide]
+  norm_num
+
+/-! ### The ten findings
+
+Two registers, both closed by `decide`. Certificate findings hold for every
+rationality `α > 0`: a decided `Multiset.StrictDominates` fact — strict
+stochastic dominance of informativity profiles — settles the fiber-by-rest
+odds comparison uniformly. Evaluation findings are genuinely α-dependent
+(their direction degenerates as α → 0) and are pinned at the paper's
+illustrative α = 5, where the comparison clears to a ℕ inequality via
+`Multiset.divPowSum`. -/
+
+private theorem univW : (Finset.univ : Finset World)
+    = {wN, wNS, wNA, wNSA, wS, wSA, wA} := by decide
 
 /-- SS exhaustifies the inner quantifier at the paper's illustrative α = 5:
 hearing SS, the listener prefers wNS to wNSA (eq. 22's regime). Evaluation
 register — the domination certificate provably fails here (wNSA's SS-fiber is
-not termwise matched by wNS's), so profile literals by `decide` plus
-fifth-power arithmetic by `norm_num` decide it. -/
+not stochastically dominated), and the preference degenerates as α → 0. -/
 theorem ss_inner_exh :
-    (gi.listener 5 prior .ss).real {wNSA} < (gi.listener 5 prior .ss).real {wNS} := by
-  rw [gi.listener_real_lt_iff_invPowSum (o := .ss) (by norm_num) (prior_singleton_eq wNSA wNS)
-      (prior_singleton_ne_zero wNS) ⟨(.ss, ∅), rfl, by decide⟩,
-    show gi.fiberProfile .ss wNSA = {3, 3, 3, 3, 4, 4, 6} from by decide,
-    show gi.profile wNS
-      = {1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 6} from by
-      decide,
-    show gi.fiberProfile .ss wNS = {1, 3, 3, 3, 3, 4, 4, 6} from by decide,
-    show gi.profile wNSA
-      = {3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 6} from by decide,
-    Multiset.invPowSum_toReal (by norm_num) (by decide),
-    Multiset.invPowSum_toReal (by norm_num) (by decide),
-    Multiset.invPowSum_toReal (by norm_num) (by decide),
-    Multiset.invPowSum_toReal (by norm_num) (by decide)]
-  simp only [Multiset.insert_eq_cons, Multiset.map_cons, Multiset.map_singleton,
-    Multiset.sum_cons, Multiset.sum_singleton]
-  norm_num [rpow_five]
+    (gi.listener 5 prior .ss).real {wNSA} < (gi.listener 5 prior .ss).real {wNS} :=
+  gi.listener_real_lt_of_divPowSum (k := 5) (D := 12) (by decide) (by decide)
+    (prior_singleton_eq wNSA wNS) (prior_singleton_ne_zero wNS)
+    (by decide) (by decide) (by decide)
 
 set_option maxRecDepth 1024 in
 /-- SS exhaustifies the outer quantifier for every rationality: hearing SS,
-the listener prefers wNS to wS. Certificate register: the fiber-by-rest
-cross-product domination closes by `decide`. -/
+the listener prefers wNS to wS. Certificate register. -/
 theorem ss_outer_exh {α : ℝ} (hα : 0 < α) :
     (gi.listener α prior .ss).real {wS} < (gi.listener α prior .ss).real {wNS} :=
   gi.listener_real_lt_of_prodMul_strictDominates hα (prior_singleton_eq wS wNS)
-    (prior_singleton_ne_zero wNS) ⟨(.ss, ∅), rfl, by decide⟩ (by decide)
+    (prior_singleton_ne_zero wNS) (by decide)
 
+set_option maxRecDepth 1024 in
 /-- AA identifies the unique world where all aliens drank all, for every
-rationality: AA is false at wSA under every parse (`sem_aa`, Table 1's AA row)
-and true at wA under the bare parse. Purely structural — no masses computed. -/
+rationality: AA's readings are all {wA} (Table 1), so wSA's AA-fiber is empty
+and any nonempty product strictly dominates it — the support case of the
+certificate register. -/
 theorem aa_identifies {α : ℝ} (hα : 0 < α) :
     (gi.listener α prior .aa).real {wSA} < (gi.listener α prior .aa).real {wA} :=
-  gi.listener_real_lt_of_support hα (prior_singleton_ne_zero wA)
-    (fun c hc => by
-      obtain ⟨u, p⟩ := c
-      obtain rfl : u = .aa := hc
-      simp only [gi_sem, ext_aa]
-      decide)
-    ⟨(.aa, ∅), rfl, by simp only [gi_sem, ext_aa]; decide⟩
+  gi.listener_real_lt_of_prodMul_strictDominates hα (prior_singleton_eq wSA wA)
+    (prior_singleton_ne_zero wA) (by decide)
 
 set_option maxRecDepth 1024 in
 /-- AS exhaustifies the inner quantifier for every rationality: hearing AS,
@@ -565,127 +572,148 @@ the listener prefers wS to wA. Certificate register. -/
 theorem as_inner_exh {α : ℝ} (hα : 0 < α) :
     (gi.listener α prior .as).real {wA} < (gi.listener α prior .as).real {wS} :=
   gi.listener_real_lt_of_prodMul_strictDominates hα (prior_singleton_eq wA wS)
-    (prior_singleton_ne_zero wS) ⟨(.as, ∅), rfl, by decide⟩ (by decide)
-
-private theorem giProfile_wN : gi.profile wN
-    = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 4, 4} := by decide
-
-private theorem giProfile_wNS : gi.profile wNS
-    = {1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 6} := by decide
-
-private theorem giProfile_wNA : gi.profile wNA
-    = {2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 6} := by decide
-
-private theorem giProfile_wNSA : gi.profile wNSA
-    = {3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 6} := by decide
-
-private theorem giProfile_wS : gi.profile wS
-    = {1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 6} := by
-  decide
-
-private theorem giProfile_wSA : gi.profile wSA
-    = {2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 6} := by decide
-
-private theorem giProfile_wA : gi.profile wA
-    = {1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 6} := by decide
+    (prior_singleton_ne_zero wS) (by decide)
 
 /-- GI's parse posterior for SS peaks at the matrix-only parse, whose reading
 uniquely identifies wNS, at the paper's illustrative α = 5 (eq. 22's regime).
-Pair choice drives this: under per-parse normalization M would not dominate.
-Evaluation register — genuinely α-dependent: as α → 0 the singleton reading's
-informativity advantage vanishes, so no α-free certificate exists. -/
+Pair choice drives this — see `perParse_ss_o_beats_m` for the contrast.
+Evaluation register: as α → 0 the singleton reading's informativity advantage
+vanishes, so no α-free certificate exists. -/
 theorem ss_m_parse_pref : ∀ p : Parse, p ≠ {.matrix} →
     (gi.choicePosterior 5 prior .ss).real {(.ss, p)}
       < (gi.choicePosterior 5 prior .ss).real {(.ss, {.matrix})} := by
-  intro p hp
-  have hmem : p ∈ ({∅, {.matrix}, {.outer}, {.inner}, {.matrix, .outer}, {.matrix, .inner},
-      {.outer, .inner}, {.matrix, .outer, .inner}} : Finset Parse) :=
-    univP ▸ Finset.mem_univ p
-  have ho : ((gi.speaker 5 ∘ₘ prior).map gi.obs) {Utterance.ss} ≠ 0 :=
-    gi.map_obs_comp_ne_zero (c := (.ss, ∅)) (prior_singleton_ne_zero wNS) rfl
-      (gi.speaker_apply_singleton_ne_zero (by norm_num) (by decide))
-  fin_cases hmem <;>
-    first
-      | exact absurd rfl hp
-      | (rw [gi.choicePosterior_real_lt_iff ho rfl rfl]
-         simp_rw [gi.speaker_real_singleton (α := 5) (by norm_num), prior_real_singleton]
-         norm_num +decide [-Multiset.invPowSum_cons, -Multiset.invPowSum_singleton,
-           -Multiset.invPowSum_add, -Multiset.invPowSum_zero,
-           univW, Finset.sum_insert, Finset.sum_singleton,
-           giProfile_wN, giProfile_wNS, giProfile_wNA, giProfile_wNSA, giProfile_wS,
-           giProfile_wSA, giProfile_wA, Multiset.invPowSum_toReal,
-           Multiset.insert_eq_cons, Multiset.map_cons, Multiset.map_singleton,
-           Multiset.sum_cons, Multiset.sum_singleton, rpow_five, ext,
-           Finset.filter_insert, Finset.filter_singleton,
-           Finset.card_insert_of_notMem, Finset.card_singleton])
+  have hnat : ∀ p : Parse, p ≠ {ExhPosition.matrix} →
+      (∑ t : World, if t ∈ gi.sem (.ss, p) then
+          (12 / (gi.sem (.ss, p)).card) ^ 5
+            * ∏ t' ∈ Finset.univ.erase t, (gi.profile t').divPowSum 12 5
+        else 0)
+        < ∑ t : World, if t ∈ gi.sem (.ss, ({.matrix} : Parse)) then
+          (12 / (gi.sem (.ss, ({.matrix} : Parse))).card) ^ 5
+            * ∏ t' ∈ Finset.univ.erase t, (gi.profile t').divPowSum 12 5
+        else 0 := by decide
+  exact fun p hp =>
+    gi.choicePosterior_real_lt_of_divPowSum (by decide) (by decide) (by decide)
+      prior_singleton_eq prior_singleton_ne_zero rfl rfl (hnat p hp)
 
-/-- Vanilla RSA hearing SS prefers wNA to wNS — the wrong prediction — at the
-paper's illustrative α = 5 (eq. 10, cost-free; the direction reverses at the
-fitted cost). Evaluation register. -/
-theorem vanilla_ss_prefers_wNA :
-    (vanilla.listener 5 prior .ss).real {wNS} < (vanilla.listener 5 prior .ss).real {wNA} := by
-  rw [vanilla.listener_real_lt_iff_invPowSum (o := .ss) (by norm_num) (prior_singleton_eq wNS wNA)
-      (prior_singleton_ne_zero wNA) ⟨.ss, rfl, by decide⟩,
-    show vanilla.fiberProfile .ss wNS = {6} from by decide,
-    show vanilla.profile wNA = {4, 4, 6} from by decide,
-    show vanilla.fiberProfile .ss wNA = {6} from by decide,
-    show vanilla.profile wNS = {3, 4, 6} from by decide,
-    Multiset.invPowSum_toReal (by norm_num) (by decide),
-    Multiset.invPowSum_toReal (by norm_num) (by decide),
-    Multiset.invPowSum_toReal (by norm_num) (by decide)]
-  simp only [Multiset.insert_eq_cons, Multiset.map_cons, Multiset.map_singleton,
-    Multiset.sum_cons, Multiset.sum_singleton]
-  norm_num [rpow_five]
+/-- Vanilla RSA hearing SS prefers wNA to wNS — the wrong prediction — for
+every rationality (cost-free; the direction reverses at the paper's fitted
+cost). Certificate register: {6}·{3,4} = {18,24} strictly dominates
+{6}·{4,4} = {24,24} with a strictly smaller matched entry and no spare. -/
+theorem vanilla_ss_prefers_wNA {α : ℝ} (hα : 0 < α) :
+    (vanilla.listener α prior .ss).real {wNS} < (vanilla.listener α prior .ss).real {wNA} :=
+  vanilla.listener_real_lt_of_prodMul_strictDominates hα (prior_singleton_eq wNS wNA)
+    (prior_singleton_ne_zero wNA) (by decide)
 
 set_option maxRecDepth 1024 in
 /-- GI corrects vanilla's error for every rationality: hearing SS, the
 listener prefers wNS to wNA. Certificate register: wNS's SS-fiber
 {1,3,3,3,3,4,4,6} strictly dominates wNA's {3,3,6} — the M-pair's singleton
-extension is the spare element — and the cross-product certificate closes the
-partition side by `decide`. -/
+extension is the spare element. -/
 theorem gi_ss_prefers_wNS {α : ℝ} (hα : 0 < α) :
     (gi.listener α prior .ss).real {wNA} < (gi.listener α prior .ss).real {wNS} :=
   gi.listener_real_lt_of_prodMul_strictDominates hα (prior_singleton_eq wNA wNS)
-    (prior_singleton_ne_zero wNS) ⟨(.ss, ∅), rfl, by decide⟩ (by decide)
+    (prior_singleton_ne_zero wNS) (by decide)
 
-/-- LU keeps wNS above wNA at the paper's illustrative α = 5: the OI
-lexicon's ⟦SS⟧ excludes wNA outright, while at wNS both lexica contribute
-(the paper's full LU-L2 nonetheless concentrates on wNSA, eq. 15).
-Evaluation register. -/
-theorem lu_ss_prefers_wNS :
-    (luListener 5 .ss).fst.real {wNA} < (luListener 5 .ss).fst.real {wNS} := by
-  have hκ : luSpeaker 5 (wNS, LULex.lit) {Utterance.ss} ≠ 0 := by
-    rw [luSpeaker, RSA.Scenario.familySpeaker_apply]
-    exact (luFam .lit).speaker_apply_singleton_ne_zero (by norm_num) (by decide)
-  rw [luListener, posterior_fst_real_lt_iff (luSpeaker 5) luPrior
-      (comp_apply_singleton_ne_zero _ _ (luPrior_singleton_ne_zero (wNS, .lit)) hκ)]
-  simp_rw [luSpeaker, RSA.Scenario.familySpeaker_apply]
-  norm_num +decide [univLU, Finset.sum_insert, Finset.sum_singleton, luPrior_real_singleton]
-  simp only [(luFam .lit).speaker_real_singleton (α := 5) (by norm_num),
-    (luFam .oi).speaker_real_singleton (α := 5) (by norm_num)]
-  norm_num +decide [-Multiset.invPowSum_cons, -Multiset.invPowSum_singleton,
-    -Multiset.invPowSum_add, -Multiset.invPowSum_zero,
-    show (luFam .lit).profile wNS = {3, 4, 6} from by decide,
-    show (luFam .lit).profile wNA = {4, 4, 6} from by decide,
-    show (luFam .oi).profile wNS = {3, 3, 3} from by decide,
-    show (luFam .oi).profile wNA = {3, 3, 3} from by decide,
-    Multiset.invPowSum_toReal, Multiset.insert_eq_cons, Multiset.map_cons,
-    Multiset.map_singleton, Multiset.sum_cons, Multiset.sum_singleton, rpow_five, ext,
-    LULex.toParse, univW, Finset.filter_insert, Finset.filter_singleton,
-    Finset.card_insert_of_notMem, Finset.card_singleton]
-
+set_option maxRecDepth 1024 in
 /-- LI derives outer exhaustification for SS at every rationality: wNS over
 wS via the OI parse. Certificate register. -/
 theorem li_ss_outer_exh {α : ℝ} (hα : 0 < α) :
     (li.listener α prior .ss).real {wS} < (li.listener α prior .ss).real {wNS} :=
   li.listener_real_lt_of_prodMul_strictDominates hα (prior_singleton_eq wS wNS)
-    (prior_singleton_ne_zero wNS) ⟨(.ss, .lit), rfl, by decide⟩ (by decide)
+    (prior_singleton_ne_zero wNS) (by decide)
 
+set_option maxRecDepth 1024 in
 /-- LI also gets the wNS-over-wNA ordering that vanilla misses, at every
 rationality. Certificate register. -/
 theorem li_ss_prefers_wNS {α : ℝ} (hα : 0 < α) :
     (li.listener α prior .ss).real {wNA} < (li.listener α prior .ss).real {wNS} :=
   li.listener_real_lt_of_prodMul_strictDominates hα (prior_singleton_eq wNA wNS)
-    (prior_singleton_ne_zero wNS) ⟨(.ss, .lit), rfl, by decide⟩ (by decide)
+    (prior_singleton_ne_zero wNS) (by decide)
+
+/-- LU keeps wNS above wNA for every rationality: the OI lexicon's ⟦SS⟧
+excludes wNA outright, contributing a constant third of the posterior odds at
+wNS, while wNA's literal-lexicon share stays below a third (the paper's full
+LU-L2 nonetheless concentrates on wNSA, eq. 15). -/
+theorem lu_ss_prefers_wNS {α : ℝ} (hα : 0 < α) :
+    (luListener α .ss).fst.real {wNA} < (luListener α .ss).fst.real {wNS} := by
+  have hκ : luSpeaker α (wNS, LULex.lit) {Utterance.ss} ≠ 0 := by
+    rw [luSpeaker, RSA.Scenario.familySpeaker_apply]
+    exact (luFam .lit).speaker_apply_singleton_ne_zero hα.le (by decide)
+  rw [luListener, posterior_fst_real_lt_iff (luSpeaker α) luPrior
+      (comp_apply_singleton_ne_zero _ _ (luPrior_singleton_ne_zero (wNS, .lit)) hκ)]
+  simp_rw [luSpeaker, RSA.Scenario.familySpeaker_apply]
+  norm_num +decide [univLU, Finset.sum_insert, Finset.sum_singleton, luPrior_real_singleton]
+  rw [(luFam .lit).speaker_real_singleton hα, (luFam .oi).speaker_real_singleton hα,
+    (luFam .lit).speaker_real_singleton hα, (luFam .oi).speaker_real_singleton hα,
+    show (luFam .lit).profile wNS = {3, 4, 6} from by decide,
+    show (luFam .lit).profile wNA = {4, 4, 6} from by decide,
+    show (luFam .oi).profile wNS = {3, 3, 3} from by decide,
+    show (luFam .oi).profile wNA = {3, 3, 3} from by decide,
+    Multiset.invPowSum_toReal hα.le (by decide),
+    Multiset.invPowSum_toReal hα.le (by decide),
+    Multiset.invPowSum_toReal hα.le (by decide),
+    show ((luFam LULex.lit).sem Utterance.ss).card = 6 from by decide,
+    show ((luFam LULex.oi).sem Utterance.ss).card = 3 from by decide]
+  simp only [Multiset.insert_eq_cons, Multiset.map_cons, Multiset.map_singleton,
+    Multiset.sum_cons, Multiset.sum_singleton]
+  norm_num +decide
+  have p6 : (0 : ℝ) < (1 / 6 : ℝ) ^ α := Real.rpow_pos_of_pos (by norm_num) α
+  have h46 : (1 / 6 : ℝ) ^ α < (1 / 4 : ℝ) ^ α :=
+    Real.rpow_lt_rpow (by norm_num) (by norm_num) hα
+  have keyA : (1 / 6 : ℝ) ^ α / ((1 / 4 : ℝ) ^ α + ((1 / 4 : ℝ) ^ α + (1 / 6 : ℝ) ^ α))
+      < 1 / 3 := by
+    rw [div_lt_iff₀ (by positivity)]
+    linarith
+  have keyB : (1 / 3 : ℝ) ^ α / ((1 / 3 : ℝ) ^ α + ((1 / 3 : ℝ) ^ α + (1 / 3 : ℝ) ^ α))
+      = 1 / 3 := by
+    rw [div_eq_iff (by positivity)]
+    ring
+  have keyC : (0 : ℝ) < (1 / 6 : ℝ) ^ α / ((1 / 3 : ℝ) ^ α + ((1 / 4 : ℝ) ^ α + (1 / 6 : ℝ) ^ α)) :=
+    div_pos p6 (by positivity)
+  linarith
+
+set_option maxRecDepth 1024 in
+/-- The headline divergence, for every rationality: hearing SS, the
+*per-parse-normalized* listener's parse posterior puts more mass on O than on
+M. Renormalizing within each parse erases exactly the informativity advantage
+of the singleton reading ⟦SS⟧^M that the pooled speaker exploits in
+`ss_m_parse_pref`; with `RSA.Scenario.pool_L0` (identical weights), the pair
+locates GI's win purely in the position of the latent parameter
+(pp. e85–e86). -/
+theorem perParse_ss_o_beats_m {α : ℝ} (hα : 0 < α) :
+    (((perParseSpeaker α)†perParsePrior) .ss).snd.real {({.matrix} : Parse)}
+      < (((perParseSpeaker α)†perParsePrior) .ss).snd.real {({.outer} : Parse)} := by
+  have hκ : perParseSpeaker α (wNS, ({.matrix} : Parse)) {Utterance.ss} ≠ 0 := by
+    rw [perParseSpeaker, RSA.Scenario.familySpeaker_apply]
+    exact (readings _).speaker_apply_singleton_ne_zero hα.le (by decide)
+  rw [posterior_snd_real_lt_iff _ _
+      (comp_apply_singleton_ne_zero _ _
+        (perParsePrior_singleton_ne_zero (wNS, {.matrix})) hκ)]
+  simp_rw [perParseSpeaker, RSA.Scenario.familySpeaker_apply]
+  norm_num +decide [univW, Finset.sum_insert, Finset.sum_singleton, perParsePrior_real_singleton]
+  simp only [(readings ({ExhPosition.matrix} : Parse)).speaker_real_singleton hα,
+    (readings ({ExhPosition.outer} : Parse)).speaker_real_singleton hα]
+  norm_num +decide
+  rw [show (readings ({ExhPosition.matrix} : Parse)).profile wNS = {1, 2, 3} from by decide,
+    show (readings ({ExhPosition.outer} : Parse)).profile wNS = {3, 3, 3} from by decide,
+    show (readings ({ExhPosition.outer} : Parse)).profile wNA = {3, 3, 3} from by decide,
+    show (readings ({ExhPosition.outer} : Parse)).profile wNSA = {3, 3, 3} from by decide,
+    show (ext ({ExhPosition.matrix} : Parse) Utterance.ss).card = 1 from by decide,
+    show (ext ({ExhPosition.outer} : Parse) Utterance.ss).card = 3 from by decide,
+    Multiset.invPowSum_toReal hα.le (by decide),
+    Multiset.invPowSum_toReal hα.le (by decide)]
+  simp only [Multiset.insert_eq_cons, Multiset.map_cons, Multiset.map_singleton,
+    Multiset.sum_cons, Multiset.sum_singleton]
+  norm_num
+  have p2 : (0 : ℝ) < (1 / 2 : ℝ) ^ α := Real.rpow_pos_of_pos (by norm_num) α
+  have p3 : (0 : ℝ) < (1 / 3 : ℝ) ^ α := Real.rpow_pos_of_pos (by norm_num) α
+  have keyM : (1 + ((1 / 2 : ℝ) ^ α + (1 / 3 : ℝ) ^ α))⁻¹ < 1 := by
+    rw [inv_lt_one₀ (by positivity)]
+    linarith
+  have keyO : (1 / 3 : ℝ) ^ α / ((1 / 3 : ℝ) ^ α + ((1 / 3 : ℝ) ^ α + (1 / 3 : ℝ) ^ α))
+      = 1 / 3 := by
+    rw [div_eq_iff (by positivity)]
+    ring
+  linarith
 
 end FrankeBergen2020
