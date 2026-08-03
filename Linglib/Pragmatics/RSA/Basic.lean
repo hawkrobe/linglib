@@ -29,9 +29,10 @@ inequalities via `Multiset.divPowSum`.
   `speaker`, `production`, `jointListener`, `listener`, `choicePosterior`.
 * `RSA.Scenario.pool` — choice-side latents: the speaker chooses the family
   index, normalizing across the pooled pairs (eqs. 18a/21a).
-* `RSA.Scenario.familySpeaker` — state-side latents: the index is a speaker
-  argument, normalization is per-index (eq. 11). `pool_L0` shows the two
-  share their weights — they differ only in the position of the latent.
+* `RSA.Scenario.familySpeaker`, `RSA.Scenario.familyListener` — state-side
+  latents: the index is a speaker argument, normalization is per-index
+  (eqs. 11–13). `pool_L0` shows the two architectures share their weights —
+  they differ only in the position of the latent.
 
 ## Main statements
 
@@ -475,13 +476,6 @@ probability kernel. -/
 class Expressible (s : Scenario T C O) : Prop where
   exists_mem_sem : ∀ t, ∃ c, t ∈ s.sem c
 
-omit [MeasurableSpace T] [DecidableEq T] [MeasurableSingletonClass T] [MeasurableSpace C]
-  [Fintype C] [DiscreteMeasurableSpace C] [Fintype T] in
-/-- A pooled family is expressible as soon as one member is. -/
-theorem Expressible.pool {L : Type*} (f : L → Scenario T C O) (l : L)
-    [h : (f l).Expressible] : (Scenario.pool f).Expressible :=
-  ⟨fun t => let ⟨c, hc⟩ := h.exists_mem_sem t; ⟨(c, l), hc⟩⟩
-
 theorem isMarkovKernel_speaker {α : ℝ} (hα : 0 ≤ α) [s.Expressible] :
     IsMarkovKernel (s.speaker α) :=
   isMarkovKernel_speakerOf hα s.L0 (fun c t => s.L0_apply_singleton_le_one c t)
@@ -608,6 +602,77 @@ theorem speaker_real_singleton {α : ℝ} (hα : 0 < α) (t : T) (c : C) :
     ENNReal.toReal_div, L0_apply_singleton, apply_ite (· ^ α),
     ENNReal.zero_rpow_of_pos hα, apply_ite ENNReal.toReal, ENNReal.toReal_zero,
     ← ENNReal.toReal_rpow, ENNReal.toReal_inv, ENNReal.toReal_natCast]
+
+omit [DecidableEq O] in
+theorem speaker_real_singleton_eq_zero {α : ℝ} (hα : 0 < α) {t : T} {c : C}
+    (h : t ∉ s.sem c) : (s.speaker α t).real {c} = 0 := by
+  rw [measureReal_def, s.speaker_apply_singleton_eq_zero hα h, ENNReal.toReal_zero]
+
+omit [DecidableEq T] [DecidableEq O] in
+/-- Speaker shares over any set of choices stay within the row's unit mass. -/
+theorem sum_speaker_real_singleton_le_one (α : ℝ) (t : T) (S : Finset C) :
+    ∑ c ∈ S, (s.speaker α t).real {c} ≤ 1 := by
+  have hle : s.speaker α t ↑S ≤ 1 :=
+    le_trans (measure_mono (Set.subset_univ _)) (s.speaker_apply_univ_le_one α t)
+  calc ∑ c ∈ S, (s.speaker α t).real {c}
+      = (s.speaker α t).real ↑S := by
+        simp_rw [measureReal_def, ← ENNReal.toReal_sum fun c _ => measure_ne_top _ _,
+          sum_measure_singleton]
+    _ ≤ 1 := by
+        rw [measureReal_def, ← ENNReal.toReal_one]
+        exact ENNReal.toReal_mono ENNReal.one_ne_top hle
+
+omit [DecidableEq O] in
+/-- Competition: any other true choice caps a share strictly below one. -/
+theorem speaker_real_singleton_lt_one [DecidableEq C] {α : ℝ} (hα : 0 ≤ α) {t : T} (c : C) {c' : C}
+    (hne : c' ≠ c) (hmem' : t ∈ s.sem c') : (s.speaker α t).real {c} < 1 := by
+  have hsum := s.sum_speaker_real_singleton_le_one α t {c, c'}
+  rw [Finset.sum_insert (by simpa using fun h => hne h.symm), Finset.sum_singleton] at hsum
+  have hpos : 0 < (s.speaker α t).real {c'} :=
+    ENNReal.toReal_pos (s.speaker_apply_singleton_ne_zero hα hmem') (measure_ne_top _ _)
+  linarith
+
+omit [DecidableEq O] in
+/-- Informativity monotonicity ([franke-bergen-2020] eq. 7's qualitative
+claim): between two true choices, the one with the strictly smaller extension
+is produced with strictly higher probability, at every positive
+rationality. -/
+theorem speaker_real_singleton_lt_of_card_lt {α : ℝ} (hα : 0 < α) {t : T} {c c' : C}
+    (hmem : t ∈ s.sem c) (hmem' : t ∈ s.sem c')
+    (hcard : (s.sem c').card < (s.sem c).card) :
+    (s.speaker α t).real {c} < (s.speaker α t).real {c'} := by
+  have hterm : s.L0 c {t} ^ α ≠ 0 :=
+    weight_rpow_ne_zero hα.le (s.L0_apply_singleton_ne_zero hmem)
+  have hZ0 : (∑ u, s.L0 u {t} ^ α) ≠ 0 := fun h =>
+    hterm (le_antisymm (le_trans
+      (Finset.single_le_sum (f := fun u => s.L0 u {t} ^ α) (fun u _ => zero_le)
+        (Finset.mem_univ c)) h.le) zero_le)
+  rw [speaker, speakerOf, Kernel.ofWeights_real_singleton_lt_iff t hZ0
+      (ENNReal.sum_ne_top.mpr fun u _ => weight_rpow_ne_top hα.le (s.L0_apply_singleton_le_one u t)),
+    s.L0_apply_singleton, s.L0_apply_singleton, if_pos hmem, if_pos hmem']
+  exact ENNReal.rpow_lt_rpow
+    (ENNReal.inv_lt_inv.2 (by exact_mod_cast hcard)) hα
+
+omit [DecidableEq O] in
+/-- Softmax constant-utility invariance: when every true choice at a state
+has the same extension size, the speaker is uniform on them — each share is
+`m⁻¹` regardless of the rationality. -/
+theorem speaker_real_singleton_of_profile_replicate {α : ℝ} (hα : 0 < α) {t : T} {c : C}
+    {m n : ℕ} (hprof : s.profile t = Multiset.replicate m n) (hmem : t ∈ s.sem c) :
+    (s.speaker α t).real {c} = (m : ℝ)⁻¹ := by
+  have hcmem : (s.sem c).card ∈ s.profile t :=
+    Multiset.mem_map_of_mem _ (by
+      rw [Finset.mem_val, trueChoices, Finset.mem_filter]
+      exact ⟨Finset.mem_univ c, hmem⟩)
+  have hn : (s.sem c).card = n := Multiset.eq_of_mem_replicate (hprof ▸ hcmem)
+  have hn0 : n ≠ 0 := hn ▸ Finset.card_ne_zero_of_mem hmem
+  have hx : (0 : ℝ) < ((n : ℝ))⁻¹ ^ α :=
+    Real.rpow_pos_of_pos (by positivity) α
+  rw [s.speaker_real_singleton hα, if_pos hmem, hprof, hn,
+    show ((Multiset.replicate m n).invPowSum α).toReal = m * ((n : ℝ))⁻¹ ^ α by
+      rw [Multiset.invPowSum_replicate, ENNReal.toReal_mul, ENNReal.toReal_natCast,
+        ← ENNReal.toReal_rpow, ENNReal.toReal_inv, ENNReal.toReal_natCast],
+    div_mul_eq_div_div_swap, div_self hx.ne', one_div]
 
 omit [DecidableEq O] in
 /-- Exact speaker mass at a natural rationality, as a ratio of ℕ-valued
@@ -993,6 +1058,69 @@ instance (f : L → Scenario T C O) (α : ℝ) : IsFiniteKernel (familySpeaker f
   ⟨⟨1, ENNReal.one_lt_top, fun tl => by
     rw [familySpeaker_apply]
     exact (f tl.2).speaker_apply_univ_le_one α tl.1⟩⟩
+
+section
+
+variable [StandardBorelSpace T] [Nonempty T] [StandardBorelSpace L] [Nonempty L]
+  {μ : Measure (T × L)} [IsFiniteMeasure μ]
+
+/-- The family listener: the Bayesian inverse of the family speaker over the
+joint (state, index) space — [franke-bergen-2020] eqs. 12–13. Bundling the
+posterior keeps consumers' goals first-order in `familyListener`. -/
+noncomputable def familyListener (f : L → Scenario T C O) (α : ℝ)
+    (μ : Measure (T × L)) [IsFiniteMeasure μ] : Kernel C (T × L) :=
+  (familySpeaker f α)†μ
+
+omit [StandardBorelSpace T] [Nonempty T] [StandardBorelSpace L] [Nonempty L] in
+/-- A member's true choice at a positive-prior state witnesses a positive
+observation marginal for the family speaker. -/
+theorem comp_familySpeaker_ne_zero {f : L → Scenario T C O} {α : ℝ} (hα : 0 ≤ α)
+    {μ : Measure (T × L)} (hμ0 : ∀ p : T × L, μ {p} ≠ 0) {t : T} {l : L} {c : C}
+    (hmem : t ∈ (f l).sem c) : ((familySpeaker f α) ∘ₘ μ) {c} ≠ 0 :=
+  comp_apply_singleton_ne_zero _ _ (hμ0 (t, l)) (by
+    rw [familySpeaker_apply]
+    exact (f l).speaker_apply_singleton_ne_zero hα hmem)
+
+/-- State-marginal preference for a latent family at equal priors: the latent
+pools, leaving summed member speaker shares. Any member's true choice at
+either state supplies the positivity side condition. -/
+theorem familyListener_fst_real_lt_iff [Fintype L] (f : L → Scenario T C O) {α : ℝ}
+    (hα : 0 ≤ α) (hμeq : ∀ p q : T × L, μ {p} = μ {q}) (hμ0 : ∀ p : T × L, μ {p} ≠ 0)
+    {c : C} {t₀ : T} {l₀ : L} (hmem : t₀ ∈ (f l₀).sem c) (t₁ t₂ : T) :
+    ((familyListener f α μ) c).fst.real {t₁} < ((familyListener f α μ) c).fst.real {t₂}
+      ↔ (∑ l, ((f l).speaker α t₁).real {c}) < ∑ l, ((f l).speaker α t₂).real {c} := by
+  set p₀ : T × L := Classical.arbitrary _
+  have key : ∀ t : T, (∑ l, μ.real {(t, l)} * ((familySpeaker f α) (t, l)).real {c})
+      = μ.real {p₀} * ∑ l, ((f l).speaker α t).real {c} := fun t => by
+    rw [Finset.mul_sum]
+    exact Finset.sum_congr rfl fun l _ => by
+      rw [familySpeaker_apply, show μ.real {(t, l)} = μ.real {p₀} from by
+        rw [measureReal_def, measureReal_def, hμeq (t, l) p₀]]
+  rw [familyListener,
+    posterior_fst_real_lt_iff _ _ (comp_familySpeaker_ne_zero hα hμ0 hmem), key, key,
+    mul_lt_mul_iff_right₀
+      (show (0 : ℝ) < μ.real {p₀} from ENNReal.toReal_pos (hμ0 p₀) (measure_ne_top _ _))]
+
+/-- Latent-marginal preference for a latent family at equal priors: the
+states pool, leaving summed member speaker shares. -/
+theorem familyListener_snd_real_lt_iff (f : L → Scenario T C O) {α : ℝ}
+    (hα : 0 ≤ α) (hμeq : ∀ p q : T × L, μ {p} = μ {q}) (hμ0 : ∀ p : T × L, μ {p} ≠ 0)
+    {c : C} {t₀ : T} {l₀ : L} (hmem : t₀ ∈ (f l₀).sem c) (l₁ l₂ : L) :
+    ((familyListener f α μ) c).snd.real {l₁} < ((familyListener f α μ) c).snd.real {l₂}
+      ↔ (∑ t, ((f l₁).speaker α t).real {c}) < ∑ t, ((f l₂).speaker α t).real {c} := by
+  set p₀ : T × L := Classical.arbitrary _
+  have key : ∀ l : L, (∑ t, μ.real {(t, l)} * ((familySpeaker f α) (t, l)).real {c})
+      = μ.real {p₀} * ∑ t, ((f l).speaker α t).real {c} := fun l => by
+    rw [Finset.mul_sum]
+    exact Finset.sum_congr rfl fun t _ => by
+      rw [familySpeaker_apply, show μ.real {(t, l)} = μ.real {p₀} from by
+        rw [measureReal_def, measureReal_def, hμeq (t, l) p₀]]
+  rw [familyListener,
+    posterior_snd_real_lt_iff _ _ (comp_familySpeaker_ne_zero hα hμ0 hmem), key, key,
+    mul_lt_mul_iff_right₀
+      (show (0 : ℝ) < μ.real {p₀} from ENNReal.toReal_pos (hμ0 p₀) (measure_ne_top _ _))]
+
+end
 
 end Family
 

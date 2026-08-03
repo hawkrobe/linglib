@@ -311,6 +311,10 @@ theorem invPowSum_mul_pow_eq_divPowSum {D : ℕ} (hD : D ≠ 0) (k : ℕ) {m : M
       ENNReal.inv_mul_cancel (by positivity) (by simp), mul_one]
     simp [divPowSum]
 
+theorem invPowSum_replicate (α : ℝ) (m n : ℕ) :
+    (Multiset.replicate m n).invPowSum α = m * (n : ℝ≥0∞)⁻¹ ^ α := by
+  rw [invPowSum, map_replicate, sum_replicate, nsmul_eq_mul]
+
 /-- Evaluation form on reals, for symbolic or pinned exponents. -/
 theorem invPowSum_toReal (hα : 0 ≤ α) (hm : 0 ∉ m) :
     (m.invPowSum α).toReal = (m.map fun n : ℕ => ((n : ℝ))⁻¹ ^ α).sum := by

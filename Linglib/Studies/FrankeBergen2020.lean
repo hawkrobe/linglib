@@ -476,54 +476,41 @@ noncomputable def luPrior : Measure (World × LULex) := uniformOn Set.univ
 instance : IsProbabilityMeasure luPrior :=
   inferInstanceAs (IsProbabilityMeasure (uniformOn _))
 
-/-- The LU speaker (eq. 11): the lexicon is an argument, not a choice. -/
-noncomputable def luSpeaker (α : ℝ) : Kernel (World × LULex) Utterance :=
-  RSA.Scenario.familySpeaker luFam α
-
-instance (α : ℝ) : IsFiniteKernel (luSpeaker α) :=
-  inferInstanceAs (IsFiniteKernel (RSA.Scenario.familySpeaker luFam α))
-
 /-- LU listener (eqs. 12–13): Bayesian inverse over the joint state. -/
 noncomputable def luListener (α : ℝ) : Kernel Utterance (World × LULex) :=
-  (luSpeaker α)†luPrior
+  RSA.Scenario.familyListener luFam α luPrior
+
+theorem luPrior_singleton_eq (p q : World × LULex) : luPrior {p} = luPrior {q} := by
+  simp [luPrior, uniformOn_univ]
 
 theorem luPrior_singleton_ne_zero (s : World × LULex) : luPrior {s} ≠ 0 := by
   rw [luPrior, uniformOn_univ, Measure.count_singleton]
   simp [ENNReal.mul_eq_top]
-
-private theorem univLU : (Finset.univ : Finset LULex) = {.lit, .oi} := by decide
-
-private theorem luPrior_real_singleton (s : World × LULex) : luPrior.real {s} = 14⁻¹ := by
-  rw [luPrior, uniformOn_univ_real_singleton,
-    show Fintype.card (World × LULex) = 14 from by decide]
-  norm_num
 
 /-! ### The rejected architecture: per-parse normalization -/
 
 /-- The architecture the paper rejects as "conceptually highly implausible"
 (p. e85): the full parse family with the parse as a speaker *argument* —
 eq. 11 with an enlarged latent set, rather than eq. 21a's pooled choice. -/
-noncomputable def perParseSpeaker (α : ℝ) : Kernel (World × Parse) Utterance :=
-  RSA.Scenario.familySpeaker readings α
-
 noncomputable def perParsePrior : Measure (World × Parse) := uniformOn Set.univ
 
 instance : IsProbabilityMeasure perParsePrior :=
   inferInstanceAs (IsProbabilityMeasure (uniformOn _))
 
-instance (α : ℝ) : IsFiniteKernel (perParseSpeaker α) :=
-  inferInstanceAs (IsFiniteKernel (RSA.Scenario.familySpeaker readings α))
+private theorem perParsePrior_singleton_eq (p q : World × Parse) :
+    perParsePrior {p} = perParsePrior {q} := by
+  simp [perParsePrior, uniformOn_univ]
 
 private theorem perParsePrior_singleton_ne_zero (s : World × Parse) :
     perParsePrior {s} ≠ 0 := by
   rw [perParsePrior, uniformOn_univ, Measure.count_singleton]
   simp [ENNReal.mul_eq_top]
 
-private theorem perParsePrior_real_singleton (s : World × Parse) :
-    perParsePrior.real {s} = 56⁻¹ := by
-  rw [perParsePrior, uniformOn_univ_real_singleton,
-    show Fintype.card (World × Parse) = 56 from by decide]
-  norm_num
+/-- Listener of the rejected architecture: the Bayesian inverse of the
+per-parse speaker over the joint (world, parse) state. -/
+noncomputable def perParseListener (α : ℝ) : Kernel Utterance (World × Parse) :=
+  RSA.Scenario.familyListener readings α perParsePrior
+
 
 /-! ### The ten findings
 
@@ -534,9 +521,6 @@ odds comparison uniformly. Evaluation findings are genuinely α-dependent
 (their direction degenerates as α → 0) and are pinned at the paper's
 illustrative α = 5, where the comparison clears to a ℕ inequality via
 `Multiset.divPowSum`. -/
-
-private theorem univW : (Finset.univ : Finset World)
-    = {wN, wNS, wNA, wNSA, wS, wSA, wA} := by decide
 
 /-- SS exhaustifies the inner quantifier at the paper's illustrative α = 5:
 hearing SS, the listener prefers wNS to wNSA (eq. 22's regime). Evaluation
@@ -630,90 +614,82 @@ theorem li_ss_prefers_wNS {α : ℝ} (hα : 0 < α) :
   li.listener_real_lt_of_prodMul_strictDominates hα (prior_singleton_eq wNA wNS)
     (prior_singleton_ne_zero wNS) (by decide)
 
-/-- LU keeps wNS above wNA for every rationality: the OI lexicon's ⟦SS⟧
-excludes wNA outright, contributing a constant third of the posterior odds at
-wNS, while wNA's literal-lexicon share stays below a third (the paper's full
-LU-L2 nonetheless concentrates on wNSA, eq. 15). -/
+/-- LU keeps wNS above wNA for every rationality. At wNA only the literal
+lexicon can produce SS, and its share is capped below a third: SS's extension
+strictly exceeds SN's and SA's, so by informativity monotonicity it carries
+the smallest of the three shares. At wNS the OI lexicon alone contributes
+exactly a third — its true choices all have three-world extensions, so its
+speaker is uniform on them. (The paper's full LU-L2 nonetheless concentrates
+on wNSA, eq. 15.) -/
 theorem lu_ss_prefers_wNS {α : ℝ} (hα : 0 < α) :
     (luListener α .ss).fst.real {wNA} < (luListener α .ss).fst.real {wNS} := by
-  have hκ : luSpeaker α (wNS, LULex.lit) {Utterance.ss} ≠ 0 := by
-    rw [luSpeaker, RSA.Scenario.familySpeaker_apply]
-    exact (luFam .lit).speaker_apply_singleton_ne_zero hα.le (by decide)
-  rw [luListener, posterior_fst_real_lt_iff (luSpeaker α) luPrior
-      (comp_apply_singleton_ne_zero _ _ (luPrior_singleton_ne_zero (wNS, .lit)) hκ)]
-  simp_rw [luSpeaker, RSA.Scenario.familySpeaker_apply]
-  norm_num +decide [univLU, Finset.sum_insert, Finset.sum_singleton, luPrior_real_singleton]
-  rw [(luFam .lit).speaker_real_singleton hα, (luFam .oi).speaker_real_singleton hα,
-    (luFam .lit).speaker_real_singleton hα, (luFam .oi).speaker_real_singleton hα,
-    show (luFam .lit).profile wNS = {3, 4, 6} from by decide,
-    show (luFam .lit).profile wNA = {4, 4, 6} from by decide,
-    show (luFam .oi).profile wNS = {3, 3, 3} from by decide,
-    show (luFam .oi).profile wNA = {3, 3, 3} from by decide,
-    Multiset.invPowSum_toReal hα.le (by decide),
-    Multiset.invPowSum_toReal hα.le (by decide),
-    Multiset.invPowSum_toReal hα.le (by decide),
-    show ((luFam LULex.lit).sem Utterance.ss).card = 6 from by decide,
-    show ((luFam LULex.oi).sem Utterance.ss).card = 3 from by decide]
-  simp only [Multiset.insert_eq_cons, Multiset.map_cons, Multiset.map_singleton,
-    Multiset.sum_cons, Multiset.sum_singleton]
-  norm_num +decide
-  have p6 : (0 : ℝ) < (1 / 6 : ℝ) ^ α := Real.rpow_pos_of_pos (by norm_num) α
-  have h46 : (1 / 6 : ℝ) ^ α < (1 / 4 : ℝ) ^ α :=
-    Real.rpow_lt_rpow (by norm_num) (by norm_num) hα
-  have keyA : (1 / 6 : ℝ) ^ α / ((1 / 4 : ℝ) ^ α + ((1 / 4 : ℝ) ^ α + (1 / 6 : ℝ) ^ α))
-      < 1 / 3 := by
-    rw [div_lt_iff₀ (by positivity)]
-    linarith
-  have keyB : (1 / 3 : ℝ) ^ α / ((1 / 3 : ℝ) ^ α + ((1 / 3 : ℝ) ^ α + (1 / 3 : ℝ) ^ α))
-      = 1 / 3 := by
-    rw [div_eq_iff (by positivity)]
-    ring
-  have keyC : (0 : ℝ) < (1 / 6 : ℝ) ^ α / ((1 / 3 : ℝ) ^ α + ((1 / 4 : ℝ) ^ α + (1 / 6 : ℝ) ^ α)) :=
-    div_pos p6 (by positivity)
+  rw [luListener, RSA.Scenario.familyListener_fst_real_lt_iff luFam hα.le
+      luPrior_singleton_eq luPrior_singleton_ne_zero
+      (by decide : wNS ∈ (luFam .lit).sem .ss) wNA wNS,
+    show (Finset.univ : Finset LULex) = {.lit, .oi} from by decide,
+    Finset.sum_insert (by decide : LULex.lit ∉ ({.oi} : Finset LULex)), Finset.sum_singleton,
+    Finset.sum_insert (by decide : LULex.lit ∉ ({.oi} : Finset LULex)), Finset.sum_singleton,
+    (luFam .oi).speaker_real_singleton_eq_zero hα (by decide : wNA ∉ (luFam .oi).sem .ss),
+    (luFam .oi).speaker_real_singleton_of_profile_replicate hα
+      (by decide : (luFam .oi).profile wNS = Multiset.replicate 3 3)
+      (by decide : wNS ∈ (luFam .oi).sem .ss)]
+  have hsum := (luFam .lit).sum_speaker_real_singleton_le_one α wNA {.ss, .sn, .sa}
+  rw [Finset.sum_insert (by decide : Utterance.ss ∉ ({.sn, .sa} : Finset Utterance)),
+    Finset.sum_insert (by decide : Utterance.sn ∉ ({.sa} : Finset Utterance)),
+    Finset.sum_singleton] at hsum
+  have hsn := (luFam .lit).speaker_real_singleton_lt_of_card_lt hα
+    (by decide : wNA ∈ (luFam .lit).sem .ss) (by decide : wNA ∈ (luFam .lit).sem .sn)
+    (by decide)
+  have hsa := (luFam .lit).speaker_real_singleton_lt_of_card_lt hα
+    (by decide : wNA ∈ (luFam .lit).sem .ss) (by decide : wNA ∈ (luFam .lit).sem .sa)
+    (by decide)
+  have hpos : (0 : ℝ) ≤ ((luFam .lit).speaker α wNS).real {Utterance.ss} :=
+    measureReal_nonneg
   linarith
 
-set_option maxRecDepth 1024 in
 /-- The headline divergence, for every rationality: hearing SS, the
 *per-parse-normalized* listener's parse posterior puts more mass on O than on
-M. Renormalizing within each parse erases exactly the informativity advantage
-of the singleton reading ⟦SS⟧^M that the pooled speaker exploits in
-`ss_m_parse_pref`; with `RSA.Scenario.pool_L0` (identical weights), the pair
-locates GI's win purely in the position of the latent parameter
-(pp. e85–e86). -/
+M. The M-share is a single world's, capped below one by competition
+(`RSA.Scenario.speaker_real_singleton_lt_one`), while O's three worlds each
+contribute exactly a third — their true choices all have three-world
+extensions, so each per-parse speaker is uniform on them
+(`RSA.Scenario.speaker_real_singleton_of_profile_replicate`). Renormalizing
+within the parse erases exactly the informativity advantage of the singleton
+reading ⟦SS⟧^M that the pooled speaker exploits in `ss_m_parse_pref`; with
+`RSA.Scenario.pool_L0` (identical weights), the pair locates GI's win purely
+in the position of the latent parameter (pp. e85–e86). -/
 theorem perParse_ss_o_beats_m {α : ℝ} (hα : 0 < α) :
-    (((perParseSpeaker α)†perParsePrior) .ss).snd.real {({.matrix} : Parse)}
-      < (((perParseSpeaker α)†perParsePrior) .ss).snd.real {({.outer} : Parse)} := by
-  have hκ : perParseSpeaker α (wNS, ({.matrix} : Parse)) {Utterance.ss} ≠ 0 := by
-    rw [perParseSpeaker, RSA.Scenario.familySpeaker_apply]
-    exact (readings _).speaker_apply_singleton_ne_zero hα.le (by decide)
-  rw [posterior_snd_real_lt_iff _ _
-      (comp_apply_singleton_ne_zero _ _
-        (perParsePrior_singleton_ne_zero (wNS, {.matrix})) hκ)]
-  simp_rw [perParseSpeaker, RSA.Scenario.familySpeaker_apply]
-  norm_num +decide [univW, Finset.sum_insert, Finset.sum_singleton, perParsePrior_real_singleton]
-  simp only [(readings ({ExhPosition.matrix} : Parse)).speaker_real_singleton hα,
-    (readings ({ExhPosition.outer} : Parse)).speaker_real_singleton hα]
-  norm_num +decide
-  rw [show (readings ({ExhPosition.matrix} : Parse)).profile wNS = {1, 2, 3} from by decide,
-    show (readings ({ExhPosition.outer} : Parse)).profile wNS = {3, 3, 3} from by decide,
-    show (readings ({ExhPosition.outer} : Parse)).profile wNA = {3, 3, 3} from by decide,
-    show (readings ({ExhPosition.outer} : Parse)).profile wNSA = {3, 3, 3} from by decide,
-    show (ext ({ExhPosition.matrix} : Parse) Utterance.ss).card = 1 from by decide,
-    show (ext ({ExhPosition.outer} : Parse) Utterance.ss).card = 3 from by decide,
-    Multiset.invPowSum_toReal hα.le (by decide),
-    Multiset.invPowSum_toReal hα.le (by decide)]
-  simp only [Multiset.insert_eq_cons, Multiset.map_cons, Multiset.map_singleton,
-    Multiset.sum_cons, Multiset.sum_singleton]
-  norm_num
-  have p2 : (0 : ℝ) < (1 / 2 : ℝ) ^ α := Real.rpow_pos_of_pos (by norm_num) α
-  have p3 : (0 : ℝ) < (1 / 3 : ℝ) ^ α := Real.rpow_pos_of_pos (by norm_num) α
-  have keyM : (1 + ((1 / 2 : ℝ) ^ α + (1 / 3 : ℝ) ^ α))⁻¹ < 1 := by
-    rw [inv_lt_one₀ (by positivity)]
-    linarith
-  have keyO : (1 / 3 : ℝ) ^ α / ((1 / 3 : ℝ) ^ α + ((1 / 3 : ℝ) ^ α + (1 / 3 : ℝ) ^ α))
-      = 1 / 3 := by
-    rw [div_eq_iff (by positivity)]
-    ring
-  linarith
+    (perParseListener α .ss).snd.real {({.matrix} : Parse)}
+      < (perParseListener α .ss).snd.real {({.outer} : Parse)} := by
+  have hM0 : ∀ w : World, w ≠ wNS → w ∉ (readings {ExhPosition.matrix}).sem .ss := by decide
+  have hOprof : ∀ w ∈ ({wNS, wNA, wNSA} : Finset World),
+      (readings {ExhPosition.outer}).profile w = Multiset.replicate 3 3 := by decide
+  have hOmem : ∀ w ∈ ({wNS, wNA, wNSA} : Finset World),
+      w ∈ (readings {ExhPosition.outer}).sem .ss := by decide
+  rw [perParseListener, RSA.Scenario.familyListener_snd_real_lt_iff readings hα.le
+      perParsePrior_singleton_eq perParsePrior_singleton_ne_zero
+      (by decide : wNS ∈ (readings {ExhPosition.matrix}).sem .ss)
+      ({.matrix} : Parse) ({.outer} : Parse)]
+  calc (∑ w : World, ((readings {ExhPosition.matrix}).speaker α w).real {Utterance.ss})
+      = ((readings {ExhPosition.matrix}).speaker α wNS).real {Utterance.ss} :=
+        Finset.sum_eq_single_of_mem wNS (Finset.mem_univ _) fun w _ hw =>
+          (readings {ExhPosition.matrix}).speaker_real_singleton_eq_zero hα (hM0 w hw)
+    _ < 1 :=
+        (readings {ExhPosition.matrix}).speaker_real_singleton_lt_one hα.le Utterance.ss
+          (by decide : Utterance.sn ≠ Utterance.ss)
+          (by decide : wNS ∈ (readings {ExhPosition.matrix}).sem .sn)
+    _ = ∑ w ∈ ({wNS, wNA, wNSA} : Finset World), (3⁻¹ : ℝ) := by
+        rw [Finset.sum_const,
+          show ({wNS, wNA, wNSA} : Finset World).card = 3 from by decide]
+        norm_num
+    _ = ∑ w ∈ ({wNS, wNA, wNSA} : Finset World),
+          ((readings {ExhPosition.outer}).speaker α w).real {Utterance.ss} :=
+        Finset.sum_congr rfl fun w hw =>
+          ((readings {ExhPosition.outer}).speaker_real_singleton_of_profile_replicate hα
+            (hOprof w hw) (hOmem w hw)).symm
+    _ ≤ ∑ w : World, ((readings {ExhPosition.outer}).speaker α w).real {Utterance.ss} :=
+        Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_univ _)
+          fun w _ _ => measureReal_nonneg
+
 
 end FrankeBergen2020
