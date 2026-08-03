@@ -513,7 +513,6 @@ private theorem luPrior_real_singleton (s : World × LULex) : luPrior.real {s} =
 
 /-! ### The ten qualitative findings -/
 
-set_option maxRecDepth 8192 in
 /-- SS exhaustifies the inner quantifier at the paper's illustrative α = 5:
 hearing SS, the listener prefers wNS to wNSA (eq. 22's regime). Evaluation
 register — the domination certificate provably fails here (wNSA's SS-fiber is
@@ -538,7 +537,7 @@ theorem ss_inner_exh :
     Multiset.sum_cons, Multiset.sum_singleton]
   norm_num [rpow_five]
 
-set_option maxRecDepth 8192 in
+set_option maxRecDepth 1024 in
 /-- SS exhaustifies the outer quantifier for every rationality: hearing SS,
 the listener prefers wNS to wS. Certificate register: the fiber-by-rest
 cross-product domination closes by `decide`. -/
@@ -560,7 +559,7 @@ theorem aa_identifies {α : ℝ} (hα : 0 < α) :
       decide)
     ⟨(.aa, ∅), rfl, by simp only [gi_sem, ext_aa]; decide⟩
 
-set_option maxRecDepth 8192 in
+set_option maxRecDepth 1024 in
 /-- AS exhaustifies the inner quantifier for every rationality: hearing AS,
 the listener prefers wS to wA. Certificate register. -/
 theorem as_inner_exh {α : ℝ} (hα : 0 < α) :
@@ -568,37 +567,28 @@ theorem as_inner_exh {α : ℝ} (hα : 0 < α) :
   gi.listener_real_lt_of_prodMul_strictDominates hα (prior_singleton_eq wA wS)
     (prior_singleton_ne_zero wS) ⟨(.as, ∅), rfl, by decide⟩ (by decide)
 
-set_option maxRecDepth 8192 in
 private theorem giProfile_wN : gi.profile wN
     = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 4, 4} := by decide
 
-set_option maxRecDepth 8192 in
 private theorem giProfile_wNS : gi.profile wNS
     = {1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 6} := by decide
 
-set_option maxRecDepth 8192 in
 private theorem giProfile_wNA : gi.profile wNA
     = {2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 6} := by decide
 
-set_option maxRecDepth 8192 in
 private theorem giProfile_wNSA : gi.profile wNSA
     = {3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 6} := by decide
 
-set_option maxRecDepth 8192 in
 private theorem giProfile_wS : gi.profile wS
     = {1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 6} := by
   decide
 
-set_option maxRecDepth 8192 in
 private theorem giProfile_wSA : gi.profile wSA
     = {2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 6} := by decide
 
-set_option maxRecDepth 8192 in
 private theorem giProfile_wA : gi.profile wA
     = {1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 6} := by decide
 
-set_option maxRecDepth 8192 in
-set_option maxHeartbeats 1600000 in
 /-- GI's parse posterior for SS peaks at the matrix-only parse, whose reading
 uniquely identifies wNS, at the paper's illustrative α = 5 (eq. 22's regime).
 Pair choice drives this: under per-parse normalization M would not dominate.
@@ -647,7 +637,7 @@ theorem vanilla_ss_prefers_wNA :
     Multiset.sum_cons, Multiset.sum_singleton]
   norm_num [rpow_five]
 
-set_option maxRecDepth 8192 in
+set_option maxRecDepth 1024 in
 /-- GI corrects vanilla's error for every rationality: hearing SS, the
 listener prefers wNS to wNA. Certificate register: wNS's SS-fiber
 {1,3,3,3,3,4,4,6} strictly dominates wNA's {3,3,6} — the M-pair's singleton
@@ -658,7 +648,6 @@ theorem gi_ss_prefers_wNS {α : ℝ} (hα : 0 < α) :
   gi.listener_real_lt_of_prodMul_strictDominates hα (prior_singleton_eq wNA wNS)
     (prior_singleton_ne_zero wNS) ⟨(.ss, ∅), rfl, by decide⟩ (by decide)
 
-set_option maxRecDepth 8192 in
 /-- LU keeps wNS above wNA at the paper's illustrative α = 5: the OI
 lexicon's ⟦SS⟧ excludes wNA outright, while at wNS both lexica contribute
 (the paper's full LU-L2 nonetheless concentrates on wNSA, eq. 15).
@@ -685,7 +674,6 @@ theorem lu_ss_prefers_wNS :
     LULex.toParse, univW, Finset.filter_insert, Finset.filter_singleton,
     Finset.card_insert_of_notMem, Finset.card_singleton]
 
-set_option maxRecDepth 8192 in
 /-- LI derives outer exhaustification for SS at every rationality: wNS over
 wS via the OI parse. Certificate register. -/
 theorem li_ss_outer_exh {α : ℝ} (hα : 0 < α) :
@@ -693,7 +681,6 @@ theorem li_ss_outer_exh {α : ℝ} (hα : 0 < α) :
   li.listener_real_lt_of_prodMul_strictDominates hα (prior_singleton_eq wS wNS)
     (prior_singleton_ne_zero wNS) ⟨(.ss, .lit), rfl, by decide⟩ (by decide)
 
-set_option maxRecDepth 8192 in
 /-- LI also gets the wNS-over-wNA ordering that vanilla misses, at every
 rationality. Certificate register. -/
 theorem li_ss_prefers_wNS {α : ℝ} (hα : 0 < α) :
