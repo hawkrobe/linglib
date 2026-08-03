@@ -25,7 +25,7 @@ null utterance).
 ## Main definitions
 
 - `WithSilence U` — `Option U`, where `none` = silence.
-- `liftMeaning m` — extends `m : U → W → Bool` to `WithSilence U → W → Bool`,
+- `liftMeaning m` — extends `m : U → W → Prop` to `WithSilence U → W → Prop`,
   with silence true at every world.
 - `extensionOf_liftMeaning_none` — silence's extension is the whole world
   space.
@@ -53,15 +53,20 @@ abbrev WithSilence (U : Type*) := Option U
 
 /-- Lift a meaning function to handle silence. Silence is "vacuously honest"
 — true at every world (commits to nothing). -/
-def liftMeaning (m : U → W → Bool) : WithSilence U → W → Bool
+def liftMeaning (m : U → W → Prop) : WithSilence U → W → Prop
   | some u, w => m u w
-  | none,   _ => true
+  | none,   _ => True
 
-@[simp] theorem liftMeaning_some (m : U → W → Bool) (u : U) (w : W) :
+instance (m : U → W → Prop) [∀ u, DecidablePred (m u)] :
+    ∀ x, DecidablePred (liftMeaning m x)
+  | some _, _ => inferInstanceAs (Decidable (m _ _))
+  | none, _ => .isTrue trivial
+
+@[simp] theorem liftMeaning_some (m : U → W → Prop) (u : U) (w : W) :
     liftMeaning m (some u) w = m u w := rfl
 
-@[simp] theorem liftMeaning_none (m : U → W → Bool) (w : W) :
-    liftMeaning m none w = true := rfl
+@[simp] theorem liftMeaning_none (m : U → W → Prop) (w : W) :
+    liftMeaning m none w := trivial
 
 /-! ### Costed silence
 
@@ -93,16 +98,18 @@ largest possible, hence the smallest uniform literal-listener value. -/
 
 variable [Fintype W]
 
-@[simp] theorem extensionOf_liftMeaning_none (m : U → W → Bool) :
+variable (m : U → W → Prop) [∀ u, DecidablePred (m u)]
+
+@[simp] theorem extensionOf_liftMeaning_none :
     extensionOf (liftMeaning m) (none : WithSilence U) = Finset.univ := by
   ext w; simp
 
-theorem card_extensionOf_liftMeaning_none (m : U → W → Bool) :
+theorem card_extensionOf_liftMeaning_none :
     (extensionOf (liftMeaning m) (none : WithSilence U)).card = Fintype.card W := by
   simp
 
 /-- Every paper-utterance's extension is contained in silence's. -/
-theorem extensionOf_liftMeaning_some_subset (m : U → W → Bool) (u : U) :
+theorem extensionOf_liftMeaning_some_subset (u : U) :
     extensionOf (liftMeaning m) (some u) ⊆ extensionOf (liftMeaning m) none := by
   simp
 
