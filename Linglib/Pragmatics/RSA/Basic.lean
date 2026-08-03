@@ -110,6 +110,19 @@ theorem ofWeights_real_singleton_lt_iff {w : α → β → ℝ≥0∞} (a : α)
       (ENNReal.div_ne_top (hb b₂) h0),
     ENNReal.div_lt_div_iff_left h0 htop]
 
+/-- Weight-kernel rows are subprobabilities: normalization gives mass 1 on
+positive finite total weight and 0 otherwise. -/
+instance (w : α → β → ℝ≥0∞) : IsFiniteKernel (ofWeights w) := by
+  refine ⟨⟨1, ENNReal.one_lt_top, fun a => ?_⟩⟩
+  show ((∑ b, w a b)⁻¹ • ∑ b, w a b • Measure.dirac b) Set.univ ≤ 1
+  simp only [Measure.smul_apply, Measure.finsetSum_apply, Measure.smul_apply,
+    measure_univ, smul_eq_mul, mul_one]
+  rcases eq_or_ne (∑ b, w a b) 0 with h0 | h0
+  · simp [h0]
+  · rcases eq_or_ne (∑ b, w a b) ∞ with htop | htop
+    · simp [htop]
+    · rw [ENNReal.inv_mul_cancel h0 htop]
+
 end ProbabilityTheory.Kernel
 
 /-! ### Exact Bayes for the posterior kernel at atoms -/
@@ -770,4 +783,299 @@ theorem speaker_real_singleton_lt_iff {α : ℝ} {util : W → U → EReal} (w :
       ↔ (α : EReal) * util w u₁ < (α : EReal) * util w u₂ := by
   rw [speaker, Kernel.ofWeights_real_singleton_lt_iff w h0 hZtop, EReal.exp_lt_exp_iff]
 
+/-! ### The best-response speaker in power-weight form
+
+[franke-bergen-2020] eq. 6 ≡ eq. 7: softmax of `α · log L` is, in weight
+form, `L ^ α`. On `ℝ≥0∞` the power is total — an inapplicable utterance has
+weight `0 ^ α = 0` — so falsity needs no `EReal` utilities and no `⊥`/`⊤`
+side conditions. -/
+
+private theorem weight_rpow_ne_zero {α : ℝ} (hα : 0 ≤ α) {x : ℝ≥0∞} (hx : x ≠ 0) :
+    x ^ α ≠ 0 := by
+  rw [ne_eq, ENNReal.rpow_eq_zero_iff, not_or]
+  exact ⟨fun h => hx h.1, fun h => absurd hα (not_le.mpr h.2)⟩
+
+private theorem weight_rpow_ne_top {α : ℝ} (hα : 0 ≤ α) {x : ℝ≥0∞} (hle : x ≤ 1) :
+    x ^ α ≠ ∞ :=
+  ne_top_of_le_ne_top ENNReal.one_ne_top
+    (ENNReal.one_rpow α ▸ ENNReal.rpow_le_rpow hle hα)
+
+/-- The best-response speaker to a listener kernel: power weights
+`L u {w} ^ α` ([franke-bergen-2020] eq. 7, [degen-2023] eq. 2 at the
+informativity utility). -/
+noncomputable def speakerOf (α : ℝ) (L : Kernel U W) : Kernel W U :=
+  Kernel.ofWeights fun w u => L u {w} ^ α
+
+@[simp] theorem speakerOf_apply_singleton (α : ℝ) (L : Kernel U W) (w : W) (u : U) :
+    speakerOf α L w {u} = L u {w} ^ α / ∑ u', L u' {w} ^ α :=
+  Kernel.ofWeights_apply_singleton _ w u
+
+instance (α : ℝ) (L : Kernel U W) : IsFiniteKernel (speakerOf α L) :=
+  inferInstanceAs (IsFiniteKernel (Kernel.ofWeights _))
+
+omit [MeasurableSingletonClass U] in
+/-- The speaker is a probability kernel whenever every state has a true
+utterance ([franke-bergen-2020] eq. 7's proviso). -/
+theorem isMarkovKernel_speakerOf {α : ℝ} (hα : 0 ≤ α) (L : Kernel U W)
+    (hle : ∀ u w, L u {w} ≤ 1) (h0 : ∀ w, ∃ u, L u {w} ≠ 0) :
+    IsMarkovKernel (speakerOf α L) :=
+  Kernel.isMarkovKernel_ofWeights
+    (fun w => (h0 w).imp fun _ hu => weight_rpow_ne_zero hα hu)
+    fun w u => weight_rpow_ne_top hα (hle u w)
+
+/-- A literally false utterance is never produced (positive rationality). -/
+theorem speakerOf_apply_singleton_eq_zero {α : ℝ} (hα : 0 < α) {L : Kernel U W}
+    {w : W} {u : U} (h : L u {w} = 0) : speakerOf α L w {u} = 0 := by
+  rw [speakerOf_apply_singleton, h, ENNReal.zero_rpow_of_pos hα, ENNReal.zero_div]
+
+/-- A literally true utterance is produced with positive mass. -/
+theorem speakerOf_apply_singleton_ne_zero {α : ℝ} (hα : 0 ≤ α) {L : Kernel U W}
+    {w : W} (hle : ∀ u', L u' {w} ≤ 1) {u : U} (h : L u {w} ≠ 0) :
+    speakerOf α L w {u} ≠ 0 := by
+  rw [speakerOf_apply_singleton, ne_eq, ENNReal.div_eq_zero_iff, not_or]
+  exact ⟨weight_rpow_ne_zero hα h,
+    ENNReal.sum_ne_top.mpr fun u' _ => weight_rpow_ne_top hα (hle u')⟩
+
+/-! ### Choice scenarios
+
+The bundled theory object: a choice space with an extension and an
+observable form for each choice. Rationality and prior are arguments of the
+derived kernels, not data — findings quantify over `α`. [franke-bergen-2020]'s
+vanilla, LI, and GI models are three instantiations (identity observation
+with the bare parse; `Prod.fst` over pair choices, eqs. 18/21); LU places its
+latent in the state instead and is *not* a `Scenario` — its speaker
+normalizes per lexicon, not against the pooled choice space. -/
+
+variable (T C O : Type*) in
+/-- A finite RSA choice scenario: each choice (an utterance, or an
+(utterance, parse) pair) carries an extension and an observable form. -/
+structure Scenario where
+  /-- The extension of each choice. -/
+  sem : C → Finset T
+  /-- The observable form of each choice: what the listener hears. -/
+  obs : C → O
+
+namespace Scenario
+
+section
+
+variable {T C O : Type*} [MeasurableSpace T] [DecidableEq T] [MeasurableSingletonClass T]
+  [MeasurableSpace C] [Fintype C] [DiscreteMeasurableSpace C]
+  (s : Scenario T C O)
+
+/-- The literal listener ([franke-bergen-2020] eq. 5 at the paper's standing
+uniform prior): uniform over the choice's extension. -/
+noncomputable def L0 : Kernel C T :=
+  Kernel.ofFunOfCountable fun c => uniformOn ↑(s.sem c)
+
+theorem L0_apply_singleton (c : C) (t : T) :
+    s.L0 c {t} = if t ∈ s.sem c then ((s.sem c).card : ℝ≥0∞)⁻¹ else 0 := by
+  show uniformOn ↑(s.sem c) {t} = _
+  rw [uniformOn, cond_apply (s.sem c).measurableSet, Measure.count_apply_finset]
+  split
+  · rw [show ↑(s.sem c) ∩ {t} = ({t} : Set T) from
+        Set.inter_eq_self_of_subset_right (by simpa using ‹t ∈ s.sem c›),
+      Measure.count_singleton, mul_one]
+  · rw [show ↑(s.sem c) ∩ {t} = (∅ : Set T) from by
+        simpa [Set.eq_empty_iff_forall_notMem] using ‹t ∉ s.sem c›,
+      measure_empty, mul_zero]
+
+theorem L0_apply_singleton_le_one (c : C) (t : T) : s.L0 c {t} ≤ 1 := by
+  rw [L0_apply_singleton]
+  split
+  · exact ENNReal.inv_le_one.mpr (by exact_mod_cast Finset.card_pos.mpr ⟨t, ‹_›⟩)
+  · exact zero_le_one
+
+theorem L0_apply_singleton_ne_zero {c : C} {t : T} (h : t ∈ s.sem c) :
+    s.L0 c {t} ≠ 0 := by
+  rw [L0_apply_singleton, if_pos h]
+  simp
+
+variable [Fintype T]
+
+/-- The pragmatic speaker ([franke-bergen-2020] eqs. 6–7, 18a, 21a): best
+response at rationality `α`. -/
+noncomputable def speaker (α : ℝ) : Kernel T C := speakerOf α s.L0
+
+instance (α : ℝ) : IsFiniteKernel (s.speaker α) :=
+  inferInstanceAs (IsFiniteKernel (Kernel.ofWeights _))
+
+variable (T C O) in
+/-- Every state has a true choice — the proviso making the speaker a
+probability kernel. -/
+class Expressible (s : Scenario T C O) : Prop where
+  exists_mem_sem : ∀ t, ∃ c, t ∈ s.sem c
+
+theorem isMarkovKernel_speaker {α : ℝ} (hα : 0 ≤ α) [s.Expressible] :
+    IsMarkovKernel (s.speaker α) :=
+  isMarkovKernel_speakerOf hα s.L0 (fun c t => s.L0_apply_singleton_le_one c t)
+    fun t => (Expressible.exists_mem_sem (s := s) t).imp
+      fun _ h => s.L0_apply_singleton_ne_zero h
+
+theorem speaker_apply_singleton_eq_zero {α : ℝ} (hα : 0 < α) {t : T} {c : C}
+    (h : t ∉ s.sem c) : s.speaker α t {c} = 0 :=
+  speakerOf_apply_singleton_eq_zero hα (by rw [s.L0_apply_singleton, if_neg h])
+
+theorem speaker_apply_singleton_ne_zero {α : ℝ} (hα : 0 ≤ α) {t : T} {c : C}
+    (h : t ∈ s.sem c) : s.speaker α t {c} ≠ 0 :=
+  speakerOf_apply_singleton_ne_zero hα (fun c' => s.L0_apply_singleton_le_one c' t)
+    (s.L0_apply_singleton_ne_zero h)
+
+theorem speaker_real_singleton_eq_zero {α : ℝ} (hα : 0 < α) {t : T} {c : C}
+    (h : t ∉ s.sem c) : (s.speaker α t).real {c} = 0 := by
+  rw [measureReal_def, s.speaker_apply_singleton_eq_zero hα h, ENNReal.toReal_zero]
+
+theorem speaker_real_singleton_pos {α : ℝ} (hα : 0 ≤ α) {t : T} {c : C}
+    (h : t ∈ s.sem c) : 0 < (s.speaker α t).real {c} :=
+  ENNReal.toReal_pos (s.speaker_apply_singleton_ne_zero hα h) (measure_ne_top _ _)
+
+variable [MeasurableSpace O] [MeasurableSingletonClass O] [DecidableEq O]
+
+omit [Fintype T] [DecidableEq T] [MeasurableSingletonClass T] [Fintype C]
+  [MeasurableSingletonClass O] [DecidableEq O] in
+private theorem measurable_obsPair : Measurable fun p : T × C => (s.obs p.2, p) :=
+  (Measurable.of_discrete.comp measurable_snd).prodMk measurable_id
+
+omit [DecidableEq T] [DecidableEq O] in
+/-- A positive-prior state truly described by an `o`-shaped choice witnesses
+a positive observation marginal. -/
+theorem map_obs_comp_ne_zero {α : ℝ} {μ : Measure T} {t : T} {c : C} {o : O}
+    (hμ : μ {t} ≠ 0) (hc : s.obs c = o) (hs : s.speaker α t {c} ≠ 0) :
+    ((s.speaker α ∘ₘ μ).map s.obs) {o} ≠ 0 := by
+  rw [Measure.map_apply Measurable.of_discrete (.singleton o)]
+  intro h
+  exact comp_apply_singleton_ne_zero _ _ hμ hs
+    (measure_mono_null (Set.singleton_subset_iff.mpr (by simp [hc])) h)
+
+section Listener
+
+variable [StandardBorelSpace T] [Nonempty T] [StandardBorelSpace C] [Nonempty C]
+  (α : ℝ) (μ : Measure T) [IsFiniteMeasure μ]
+
+/-- Utterance production ([franke-bergen-2020] eq. 19a): the observable form
+of the speaker's choice. -/
+noncomputable def production (α : ℝ) : Kernel T O := (s.speaker α).map s.obs
+
+/-- The joint distribution of the heard form with the (state, choice) pair. -/
+noncomputable def jointObs : Measure (O × (T × C)) :=
+  (μ ⊗ₘ s.speaker α).map fun p => (s.obs p.2, p)
+
+instance : IsFiniteMeasure (s.jointObs α μ) :=
+  inferInstanceAs (IsFiniteMeasure (Measure.map _ _))
+
+omit [DecidableEq T] [MeasurableSingletonClass O] [DecidableEq O] [StandardBorelSpace T]
+  [Nonempty T] [StandardBorelSpace C] [Nonempty C] [IsFiniteMeasure μ] in
+/-- The heard form is distributed as the production marginal. -/
+theorem jointObs_fst : (s.jointObs α μ).fst = (s.speaker α ∘ₘ μ).map s.obs := by
+  rw [jointObs, Measure.fst, Measure.map_map measurable_fst s.measurable_obsPair,
+    show (Prod.fst ∘ fun p : T × C => (s.obs p.2, p)) = s.obs ∘ Prod.snd from rfl,
+    ← Measure.map_map Measurable.of_discrete measurable_snd, ← Measure.snd,
+    Measure.snd_compProd]
+
+/-- The joint pragmatic listener ([franke-bergen-2020] eqs. 18b/21b):
+posterior over (state, choice) given the heard form. -/
+noncomputable def jointListener : Kernel O (T × C) := (s.jointObs α μ).condKernel
+
+/-- The state posterior ([franke-bergen-2020] eqs. 9/19b): the world marginal
+of the joint listener. -/
+noncomputable def listener : Kernel O T := (s.jointListener α μ).fst
+
+/-- The choice posterior ([franke-bergen-2020] eq. 22, at pairs). -/
+noncomputable def choicePosterior : Kernel O C := (s.jointListener α μ).snd
+
+variable {α μ}
+
+omit [DecidableEq T] in
+/-- Exact Bayes for the joint listener at a positive-mass observation. -/
+theorem jointListener_apply_singleton {o : O}
+    (ho : ((s.speaker α ∘ₘ μ).map s.obs) {o} ≠ 0) (t : T) (c : C) :
+    s.jointListener α μ o {(t, c)}
+      = (if s.obs c = o then μ {t} * s.speaker α t {c} else 0)
+        / ((s.speaker α ∘ₘ μ).map s.obs) {o} := by
+  have hd := congrArg (fun m => m ({o} ×ˢ {(t, c)}))
+    ((s.jointObs α μ).disintegrate (s.jointObs α μ).condKernel)
+  beta_reduce at hd
+  rw [Measure.compProd_apply_prod (.singleton o) (.singleton (t, c)),
+    lintegral_singleton, s.jointObs_fst] at hd
+  unfold jointObs at hd
+  rw [Measure.map_apply s.measurable_obsPair
+      ((MeasurableSet.singleton o).prod (.singleton (t, c)))] at hd
+  by_cases hc : s.obs c = o
+  · rw [show (fun p : T × C => (s.obs p.2, p)) ⁻¹' ({o} ×ˢ {(t, c)}) = {t} ×ˢ {c} from by
+        ext ⟨t', c'⟩
+        simp only [Set.mem_preimage, Set.mem_prod, Set.mem_singleton_iff, Prod.ext_iff]
+        constructor
+        · rintro ⟨_, h1, h2⟩
+          exact ⟨h1, h2⟩
+        · rintro ⟨rfl, rfl⟩
+          exact ⟨hc, rfl, rfl⟩,
+      Measure.compProd_apply_prod (.singleton t) (.singleton c), lintegral_singleton] at hd
+    rw [jointListener, if_pos hc, ENNReal.eq_div_iff ho (measure_ne_top _ _), mul_comm]
+    unfold jointObs
+    rw [hd, mul_comm]
+  · rw [show (fun p : T × C => (s.obs p.2, p)) ⁻¹' ({o} ×ˢ {(t, c)}) = (∅ : Set (T × C)) from by
+        ext ⟨t', c'⟩
+        simp only [Set.mem_preimage, Set.mem_prod, Set.mem_singleton_iff, Prod.ext_iff,
+          Set.mem_empty_iff_false, iff_false]
+        rintro ⟨h, -, rfl⟩
+        exact hc h,
+      measure_empty] at hd
+    rw [jointListener, if_neg hc, ENNReal.zero_div]
+    unfold jointObs
+    exact (mul_eq_zero.mp hd).resolve_right ho
+
+omit [DecidableEq T] in
+/-- Listener preference on reals: the observation's marginal cancels, leaving
+prior-weighted speaker mass pooled over the observation's fiber. -/
+theorem listener_real_lt_iff {o : O}
+    (ho : ((s.speaker α ∘ₘ μ).map s.obs) {o} ≠ 0) (t₁ t₂ : T) :
+    (s.listener α μ o).real {t₁} < (s.listener α μ o).real {t₂}
+      ↔ (∑ c ∈ Finset.univ.filter (s.obs · = o), μ.real {t₁} * (s.speaker α t₁).real {c})
+        < ∑ c ∈ Finset.univ.filter (s.obs · = o), μ.real {t₂} * (s.speaker α t₂).real {c} := by
+  have key : ∀ t : T, s.listener α μ o {t}
+      = (∑ c ∈ Finset.univ.filter (s.obs · = o), μ {t} * s.speaker α t {c})
+        / ((s.speaker α ∘ₘ μ).map s.obs) {o} := fun t => by
+    rw [listener, Kernel.fst_apply, ← Measure.fst, Measure.fst_apply_singleton]
+    simp_rw [s.jointListener_apply_singleton ho, div_eq_mul_inv, ← Finset.sum_mul,
+      ← Finset.sum_filter]
+  have hne : ∀ t : T,
+      (∑ c ∈ Finset.univ.filter (s.obs · = o), μ {t} * s.speaker α t {c}) ≠ ∞ :=
+    fun t => ENNReal.sum_ne_top.mpr fun c _ =>
+      ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)
+  rw [measureReal_def, measureReal_def, key, key,
+    ENNReal.toReal_lt_toReal (ENNReal.div_ne_top (hne t₁) ho) (ENNReal.div_ne_top (hne t₂) ho),
+    ENNReal.div_lt_div_iff_left ho (measure_ne_top _ _),
+    ← ENNReal.toReal_lt_toReal (hne t₁) (hne t₂),
+    ENNReal.toReal_sum (fun c _ =>
+      ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)),
+    ENNReal.toReal_sum (fun c _ =>
+      ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _))]
+  simp_rw [ENNReal.toReal_mul]
+  exact Iff.rfl
+
+/-- Support preference: hearing `o`, the listener strictly prefers a state
+where some `o`-shaped choice is true over one where none is. The witness at
+`t₂` also carries the positive observation marginal — no side conditions. -/
+theorem listener_real_lt_of_support {α : ℝ} (hα : 0 < α) {μ : Measure T}
+    [IsFiniteMeasure μ] {o : O} {t₁ t₂ : T} (hμ : μ {t₂} ≠ 0)
+    (h₁ : ∀ c, s.obs c = o → t₁ ∉ s.sem c) (h₂ : ∃ c, s.obs c = o ∧ t₂ ∈ s.sem c) :
+    (s.listener α μ o).real {t₁} < (s.listener α μ o).real {t₂} := by
+  obtain ⟨c₂, hc₂, hmem⟩ := h₂
+  rw [s.listener_real_lt_iff
+      (s.map_obs_comp_ne_zero hμ hc₂ (s.speaker_apply_singleton_ne_zero hα.le hmem)),
+    Finset.sum_congr rfl fun c hc => by
+      rw [s.speaker_real_singleton_eq_zero hα (h₁ c (Finset.mem_filter.mp hc).2), mul_zero],
+    Finset.sum_const_zero]
+  exact Finset.sum_pos' (fun c _ => mul_nonneg measureReal_nonneg measureReal_nonneg)
+    ⟨c₂, Finset.mem_filter.mpr ⟨Finset.mem_univ _, hc₂⟩,
+      mul_pos (ENNReal.toReal_pos hμ (measure_ne_top _ _))
+        (s.speaker_real_singleton_pos hα.le hmem)⟩
+
+end Listener
+
+end
+
+end Scenario
+
 end RSA
+
