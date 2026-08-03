@@ -2,6 +2,7 @@ import Mathlib.Probability.Kernel.Posterior
 import Mathlib.Probability.ConditionalProbability
 import Mathlib.MeasureTheory.Measure.Real
 import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLogExp
+import Linglib.Pragmatics.RSA.Dominates
 
 /-!
 # The Rational Speech Act pipeline on probability kernels
@@ -929,7 +930,95 @@ theorem speaker_real_singleton_pos {α : ℝ} (hα : 0 ≤ α) {t : T} {c : C}
     (h : t ∈ s.sem c) : 0 < (s.speaker α t).real {c} :=
   ENNReal.toReal_pos (s.speaker_apply_singleton_ne_zero hα h) (measure_ne_top _ _)
 
-variable [MeasurableSpace O] [MeasurableSingletonClass O] [DecidableEq O]
+/-! #### Informativity profiles
+
+The combinatorial shadow of the model: the multiset of extension sizes of a
+state's true choices. Softmax masses are ratios of `Multiset.invPowSum`s over
+profiles, so preference certificates are `Multiset.StrictDominates` facts
+closed by `decide` — uniform in the rationality. -/
+
+variable [DecidableEq O]
+
+/-- The choices true at a state. -/
+def trueChoices (t : T) : Finset C := Finset.univ.filter (t ∈ s.sem ·)
+
+/-- The informativity profile: extension sizes of the true choices. -/
+def profile (t : T) : Multiset ℕ := (s.trueChoices t).val.map fun c => (s.sem c).card
+
+/-- The profile restricted to choices heard as `o`. -/
+def fiberProfile (o : O) (t : T) : Multiset ℕ :=
+  ((s.trueChoices t).filter (s.obs · = o)).val.map fun c => (s.sem c).card
+
+/-- The profile of true choices heard otherwise. -/
+def restProfile (o : O) (t : T) : Multiset ℕ :=
+  ((s.trueChoices t).filter (s.obs · ≠ o)).val.map fun c => (s.sem c).card
+
+omit [MeasurableSpace T] [MeasurableSingletonClass T] [MeasurableSpace C]
+  [DiscreteMeasurableSpace C] [Fintype T] in
+theorem profile_eq_fiberProfile_add_restProfile (o : O) (t : T) :
+    s.profile t = s.fiberProfile o t + s.restProfile o t := by
+  rw [fiberProfile, restProfile, ← Multiset.map_add, profile]
+  congr 1
+  rw [Finset.filter_val, Finset.filter_val, Multiset.filter_add_not]
+
+omit [MeasurableSpace T] [MeasurableSingletonClass T] [MeasurableSpace C]
+  [DiscreteMeasurableSpace C] [Fintype T] [DecidableEq O] in
+theorem zero_notMem_profile (t : T) : 0 ∉ s.profile t := by
+  simp only [profile, Multiset.mem_map, not_exists, not_and]
+  intro c hc hcard
+  rw [Finset.mem_val, trueChoices, Finset.mem_filter] at hc
+  exact Finset.card_ne_zero_of_mem hc.2 hcard
+
+omit [MeasurableSpace T] [MeasurableSingletonClass T] [MeasurableSpace C]
+  [DiscreteMeasurableSpace C] [Fintype T] in
+theorem zero_notMem_fiberProfile (o : O) (t : T) : 0 ∉ s.fiberProfile o t := fun h =>
+  s.zero_notMem_profile t
+    (s.profile_eq_fiberProfile_add_restProfile o t ▸ Multiset.mem_add.mpr (Or.inl h))
+
+omit [MeasurableSpace T] [MeasurableSingletonClass T] [MeasurableSpace C]
+  [DiscreteMeasurableSpace C] [Fintype T] in
+theorem zero_notMem_restProfile (o : O) (t : T) : 0 ∉ s.restProfile o t := fun h =>
+  s.zero_notMem_profile t
+    (s.profile_eq_fiberProfile_add_restProfile o t ▸ Multiset.mem_add.mpr (Or.inr h))
+
+omit [MeasurableSpace T] [MeasurableSingletonClass T] [MeasurableSpace C]
+  [DiscreteMeasurableSpace C] [Fintype T] [DecidableEq O] in
+theorem profile_ne_zero [s.Expressible] (t : T) : s.profile t ≠ 0 := by
+  obtain ⟨c, hc⟩ := Expressible.exists_mem_sem (s := s) t
+  intro h
+  rw [profile, Multiset.map_eq_zero, Finset.val_eq_zero] at h
+  exact absurd (Finset.mem_filter.mpr ⟨Finset.mem_univ c, hc⟩)
+    (h ▸ Finset.notMem_empty c)
+
+omit [Fintype T] [DecidableEq O] in
+theorem sum_rpow_L0 {α : ℝ} (hα : 0 < α) (t : T) :
+    ∑ c, s.L0 c {t} ^ α = (s.profile t).invPowSum α := by
+  simp_rw [L0_apply_singleton, apply_ite (· ^ α), ENNReal.zero_rpow_of_pos hα,
+    ← Finset.sum_filter]
+  rw [profile, Multiset.invPowSum, Multiset.map_map]
+  rfl
+
+omit [Fintype T] in
+theorem sum_fiber_rpow_L0 {α : ℝ} (hα : 0 < α) (o : O) (t : T) :
+    ∑ c ∈ Finset.univ.filter (s.obs · = o), s.L0 c {t} ^ α
+      = (s.fiberProfile o t).invPowSum α := by
+  simp_rw [L0_apply_singleton, apply_ite (· ^ α), ENNReal.zero_rpow_of_pos hα,
+    ← Finset.sum_filter]
+  rw [fiberProfile, Multiset.invPowSum, Multiset.map_map,
+    show (Finset.univ.filter (s.obs · = o)).filter (fun c => t ∈ s.sem c)
+      = (s.trueChoices t).filter (s.obs · = o) from by
+    rw [trueChoices, Finset.filter_comm]]
+  rfl
+
+/-- Pooled speaker mass over an observation's fiber is a ratio of profile
+sums — [franke-bergen-2020] eq. 8, structurally. -/
+theorem sum_fiber_speaker {α : ℝ} (hα : 0 < α) (o : O) (t : T) :
+    ∑ c ∈ Finset.univ.filter (s.obs · = o), s.speaker α t {c}
+      = (s.fiberProfile o t).invPowSum α / (s.profile t).invPowSum α := by
+  simp_rw [speaker, speakerOf_apply_singleton, div_eq_mul_inv, ← Finset.sum_mul]
+  rw [s.sum_fiber_rpow_L0 hα, s.sum_rpow_L0 hα, ← div_eq_mul_inv]
+
+variable [MeasurableSpace O] [MeasurableSingletonClass O]
 
 omit [Fintype T] [DecidableEq T] [MeasurableSingletonClass T] [Fintype C]
   [MeasurableSingletonClass O] [DecidableEq O] in
@@ -1070,6 +1159,58 @@ theorem listener_real_lt_of_support {α : ℝ} (hα : 0 < α) {μ : Measure T}
     ⟨c₂, Finset.mem_filter.mpr ⟨Finset.mem_univ _, hc₂⟩,
       mul_pos (ENNReal.toReal_pos hμ (measure_ne_top _ _))
         (s.speaker_real_singleton_pos hα.le hmem)⟩
+
+/-- Certificate form of listener preference at equal priors, uniform in the
+rationality: cross products of fiber and rest profiles strictly dominate
+(the shared fiber-by-fiber terms of the odds comparison cancel). -/
+theorem listener_real_lt_of_prodMul_strictDominates [s.Expressible] {α : ℝ} (hα : 0 < α)
+    {o : O} {t₁ t₂ : T} (hμeq : μ {t₁} = μ {t₂}) (hμ0 : μ {t₂} ≠ 0)
+    (h₂ : ∃ c, s.obs c = o ∧ t₂ ∈ s.sem c)
+    (hcert : ((s.fiberProfile o t₂).prodMul (s.restProfile o t₁)).StrictDominates
+      ((s.fiberProfile o t₁).prodMul (s.restProfile o t₂))) :
+    (s.listener α μ o).real {t₁} < (s.listener α μ o).real {t₂} := by
+  obtain ⟨c₂, hc₂, hmem⟩ := h₂
+  have hWne : ∀ t, (s.fiberProfile o t).invPowSum α ≠ ∞ := fun t =>
+    Multiset.invPowSum_ne_top hα.le (s.zero_notMem_fiberProfile o t)
+  have hRne : ∀ t, (s.restProfile o t).invPowSum α ≠ ∞ := fun t =>
+    Multiset.invPowSum_ne_top hα.le (s.zero_notMem_restProfile o t)
+  have hZ0 : ∀ t, (s.profile t).invPowSum α ≠ 0 := fun t =>
+    (Multiset.invPowSum_pos hα.le (s.profile_ne_zero t)).ne'
+  have hZne : ∀ t, (s.profile t).invPowSum α ≠ ∞ := fun t =>
+    Multiset.invPowSum_ne_top hα.le (s.zero_notMem_profile t)
+  have hodds : (s.fiberProfile o t₁).invPowSum α * (s.restProfile o t₂).invPowSum α
+      < (s.fiberProfile o t₂).invPowSum α * (s.restProfile o t₁).invPowSum α := by
+    rw [← Multiset.invPowSum_prodMul hα.le, ← Multiset.invPowSum_prodMul hα.le]
+    exact hcert.invPowSum_lt hα.le
+      (Multiset.zero_notMem_prodMul (s.zero_notMem_fiberProfile o t₁)
+        (s.zero_notMem_restProfile o t₂))
+  have hcross : (s.fiberProfile o t₁).invPowSum α * (s.profile t₂).invPowSum α
+      < (s.fiberProfile o t₂).invPowSum α * (s.profile t₁).invPowSum α := by
+    rw [s.profile_eq_fiberProfile_add_restProfile o t₁,
+      s.profile_eq_fiberProfile_add_restProfile o t₂, Multiset.invPowSum_add,
+      Multiset.invPowSum_add, mul_add, mul_add, mul_comm ((s.fiberProfile o t₂).invPowSum α)]
+    exact ENNReal.add_lt_add_left (ENNReal.mul_ne_top (hWne t₁) (hWne t₂)) hodds
+  have key : ∀ t : T,
+      (∑ c ∈ Finset.univ.filter (s.obs · = o), μ.real {t} * (s.speaker α t).real {c})
+        = (μ {t} * ((s.fiberProfile o t).invPowSum α / (s.profile t).invPowSum α)).toReal :=
+    fun t => by
+      rw [← Finset.mul_sum, measureReal_def,
+        show (∑ c ∈ Finset.univ.filter (s.obs · = o), (s.speaker α t).real {c})
+          = ((s.fiberProfile o t).invPowSum α / (s.profile t).invPowSum α).toReal from by
+          rw [← s.sum_fiber_speaker hα, ENNReal.toReal_sum fun c _ => measure_ne_top _ _]
+          simp_rw [measureReal_def],
+        ENNReal.toReal_mul]
+  rw [s.listener_real_lt_iff
+      (s.map_obs_comp_ne_zero hμ0 hc₂ (s.speaker_apply_singleton_ne_zero hα.le hmem)),
+    key, key, hμeq,
+    ENNReal.toReal_lt_toReal
+      (ENNReal.mul_ne_top (measure_ne_top _ _) (ENNReal.div_ne_top (hWne t₁) (hZ0 t₁)))
+      (ENNReal.mul_ne_top (measure_ne_top _ _) (ENNReal.div_ne_top (hWne t₂) (hZ0 t₂))),
+    ENNReal.mul_lt_mul_iff_right hμ0 (measure_ne_top _ _),
+    ENNReal.div_lt_iff (Or.inl (hZ0 t₁)) (Or.inl (hZne t₁)),
+    div_eq_mul_inv, mul_right_comm, ← div_eq_mul_inv,
+    ENNReal.lt_div_iff_mul_lt (Or.inl (hZ0 t₂)) (Or.inl (hZne t₂))]
+  exact hcross
 
 end Listener
 
