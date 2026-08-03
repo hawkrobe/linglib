@@ -2939,7 +2939,6 @@ import Linglib.Syntax.Minimalist.Workspace.Conservation
 import Linglib.Syntax.Minimalist.Workspace.DeletionConservation
 import Linglib.Syntax.Minimalist.Workspace.TraceMeasures
 import Linglib.Syntax.Negation
-import Linglib.Syntax.NullSubject
 import Linglib.Syntax.Question
 import Linglib.Syntax.Reciprocal
 import Linglib.Syntax.RelativeClause.Basic
