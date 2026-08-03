@@ -88,10 +88,12 @@ inductive Table2Row where
     inventory. -/
 def predictedColumn (sig : Signature) (tier : Tier) (verbs : List CTP) :
     Table2Row → Bool
-  | .cCommandedByAntecedent => !sig.admits .nonCCommandingControl
-  | .longDistanceAntecedent => sig.admits .longDistanceControl
-  | .sloppyOnly             => !sig.admits .strictEllipsis
-  | .boundVariable          => !sig.admits .strictUnderOnly
+  | .cCommandedByAntecedent =>
+      !decide (Signature.Criterion.nonCCommandingControl ∈ sig.admits)
+  | .longDistanceAntecedent =>
+      decide (Signature.Criterion.longDistanceControl ∈ sig.admits)
+  | .sloppyOnly => !decide (Signature.Criterion.strictEllipsis ∈ sig.admits)
+  | .boundVariable => !decide (Signature.Criterion.strictUnderOnly ∈ sig.admits)
   | .hasPhiFeatures         => sig.boundVariable
   | .obligatoryDeSe         => tier.isAttitude
   | .subjectControl         => verbs.any (·.control == .subjectControl)
