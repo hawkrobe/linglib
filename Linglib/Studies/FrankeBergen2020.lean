@@ -556,12 +556,6 @@ noncomputable def luSpeaker : Kernel (World × LULex) Utterance :=
 
 /-! ### Markov structure -/
 
-theorem giL0_toReal (x : Utterance × Parse) (w : World) :
-    (giM.L0 x {w}).toReal
-      = if exhMeaning x.2 x.1 w then ((Finset.univ.filter (exhMeaning x.2 x.1)).card : ℝ)⁻¹
-        else 0 :=
-  L0_toReal x.2 x.1 w
-
 instance : IsMarkovKernel luSpeaker := by
   refine RSA.isMarkovKernel_speaker (fun s u => ?_) fun s => ?_
   · rw [RSA.utility, EReal.coe_zero, sub_zero]
@@ -596,14 +590,6 @@ private theorem util_ne_top (p : Parse) (u : Utterance) (w : World) :
 
 /-! ### Marginal-positivity witnesses -/
 
-theorem gi_marg (u : Utterance) {w : World} (h : exhMeaning ∅ u w) :
-    ((giM.toKernel ∘ₘ prior).map Prod.fst) {u} ≠ 0 :=
-  map_fst_comp_apply_singleton_ne_zero _ _ (θ := (∅ : Parse))
-    (prior_singleton_ne_zero w) (giM.toKernel_apply_singleton_ne_zero h)
-
-theorem gi_marg_ss : ((giM.toKernel ∘ₘ prior).map Prod.fst) {Utterance.ss} ≠ 0 :=
-  gi_marg .ss (w := wNS) (by decide)
-
 theorem luPrior_singleton_ne_zero (s : World × LULex) : luPrior {s} ≠ 0 := by
   rw [luPrior, uniformOn_univ, Measure.count_singleton]
   simp [ENNReal.mul_eq_top]
@@ -620,12 +606,6 @@ private theorem rpow_two (r : ℝ) : r ^ (2 : ℝ) = r ^ 2 := by
 
 private theorem rpow_five (r : ℝ) : r ^ (5 : ℝ) = r ^ 5 := by
   rw [show (5 : ℝ) = ((5 : ℕ) : ℝ) from by norm_num, Real.rpow_natCast]
-
-private theorem giS_real (w : World) (x : Utterance × Parse) :
-    (giM.toKernel w).real {x}
-      = (giM.L0 x {w}).toReal ^ (2 : ℝ) / ∑ x', (giM.L0 x' {w}).toReal ^ (2 : ℝ) :=
-  RSA.speaker_utility_zero_real_singleton giM.α_pos.le giM.L0
-    (fun x' => RSA.literalListener_apply_ne_top prior _ x' {w}) x
 
 private theorem luS_real (s : World × LULex) (u : Utterance) :
     (luSpeaker s).real {u}
@@ -659,57 +639,6 @@ private theorem univLI : (Finset.univ : Finset LIParse) = {.lit, .i, .o, .oi} :=
 
 The per-world softmax partitions, as real rationals: `Z(w) = Σ |ext|⁻²` over
 the model's choice space. -/
-
-private theorem zGI (w : World) (z : ℝ)
-    (h : (∑ u : Utterance, ∑ p : Parse,
-        (if exhMeaning p u w then ((Finset.univ.filter (exhMeaning p u)).card : ℝ)⁻¹
-         else 0) ^ 2) = z) :
-    (∑ x : Utterance × Parse, (giM.L0 x {w}).toReal ^ 2) = z := by
-  rw [Fintype.sum_prod_type]
-  simp_rw [giL0_toReal]
-  exact h
-
-set_option maxRecDepth 8192 in
-private theorem zGI_wN : (∑ x : Utterance × Parse, (giM.L0 x {wN}).toReal ^ 2) = 307 / 24 :=
-  zGI _ _ (by norm_num +decide [rpow_two, univU, univP, univW, Finset.sum_insert,
-    Finset.sum_singleton, Finset.filter_insert, Finset.filter_singleton,
-    Finset.card_insert_of_notMem, Finset.card_singleton])
-
-set_option maxRecDepth 8192 in
-private theorem zGI_wNS : (∑ x : Utterance × Parse, (giM.L0 x {wNS}).toReal ^ 2) = 23 / 6 :=
-  zGI _ _ (by norm_num +decide [rpow_two, univU, univP, univW, Finset.sum_insert,
-    Finset.sum_singleton, Finset.filter_insert, Finset.filter_singleton,
-    Finset.card_insert_of_notMem, Finset.card_singleton])
-
-set_option maxRecDepth 8192 in
-private theorem zGI_wNA : (∑ x : Utterance × Parse, (giM.L0 x {wNA}).toReal ^ 2) = 23 / 9 :=
-  zGI _ _ (by norm_num +decide [rpow_two, univU, univP, univW, Finset.sum_insert,
-    Finset.sum_singleton, Finset.filter_insert, Finset.filter_singleton,
-    Finset.card_insert_of_notMem, Finset.card_singleton])
-
-set_option maxRecDepth 8192 in
-private theorem zGI_wNSA : (∑ x : Utterance × Parse, (giM.L0 x {wNSA}).toReal ^ 2) = 157 / 72 :=
-  zGI _ _ (by norm_num +decide [rpow_two, univU, univP, univW, Finset.sum_insert,
-    Finset.sum_singleton, Finset.filter_insert, Finset.filter_singleton,
-    Finset.card_insert_of_notMem, Finset.card_singleton])
-
-set_option maxRecDepth 8192 in
-private theorem zGI_wS : (∑ x : Utterance × Parse, (giM.L0 x {wS}).toReal ^ 2) = 559 / 72 :=
-  zGI _ _ (by norm_num +decide [rpow_two, univU, univP, univW, Finset.sum_insert,
-    Finset.sum_singleton, Finset.filter_insert, Finset.filter_singleton,
-    Finset.card_insert_of_notMem, Finset.card_singleton])
-
-set_option maxRecDepth 8192 in
-private theorem zGI_wSA : (∑ x : Utterance × Parse, (giM.L0 x {wSA}).toReal ^ 2) = 10 / 3 :=
-  zGI _ _ (by norm_num +decide [rpow_two, univU, univP, univW, Finset.sum_insert,
-    Finset.sum_singleton, Finset.filter_insert, Finset.filter_singleton,
-    Finset.card_insert_of_notMem, Finset.card_singleton])
-
-set_option maxRecDepth 8192 in
-private theorem zGI_wA : (∑ x : Utterance × Parse, (giM.L0 x {wA}).toReal ^ 2) = 229 / 24 :=
-  zGI _ _ (by norm_num +decide [rpow_two, univU, univP, univW, Finset.sum_insert,
-    Finset.sum_singleton, Finset.filter_insert, Finset.filter_singleton,
-    Finset.card_insert_of_notMem, Finset.card_singleton])
 
 /-! ### Per-parse and LI partitions -/
 
@@ -748,13 +677,6 @@ private theorem zOI_wNA :
     Finset.card_insert_of_notMem, Finset.card_singleton])
 
 /-! ### Listener-preference reductions -/
-
-private theorem gi_snd_lt {u : Utterance}
-    (hx : ((giM.toKernel ∘ₘ prior).map Prod.fst) {u} ≠ 0) {p₁ p₂ : Parse}
-    (h : (∑ w : World, prior.real {w} * (giM.toKernel w).real {(u, p₁)})
-        < ∑ w : World, prior.real {w} * (giM.toKernel w).real {(u, p₂)}) :
-    (giM.jointListener u).snd.real {p₁} < (giM.jointListener u).snd.real {p₂} :=
-  (giM.jointListener_snd_real_lt_iff hx p₁ p₂).mpr h
 
 private theorem lu_fst_lt {u : Utterance}
     (hx : (luSpeaker ∘ₘ luPrior) {u} ≠ 0) {w₁ w₂ : World}
@@ -850,26 +772,65 @@ theorem as_inner_exh {α : ℝ} (hα : 0 < α) :
     (prior_singleton_ne_zero wS) ⟨(.as, ∅), rfl, by decide⟩ (by decide)
 
 set_option maxRecDepth 8192 in
+private theorem giProfile_wN : gi.profile wN
+    = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 4, 4} := by decide
+
+set_option maxRecDepth 8192 in
+private theorem giProfile_wNS : gi.profile wNS
+    = {1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 6} := by decide
+
+set_option maxRecDepth 8192 in
+private theorem giProfile_wNA : gi.profile wNA
+    = {2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 6} := by decide
+
+set_option maxRecDepth 8192 in
+private theorem giProfile_wNSA : gi.profile wNSA
+    = {3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 6} := by decide
+
+set_option maxRecDepth 8192 in
+private theorem giProfile_wS : gi.profile wS
+    = {1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 6} := by
+  decide
+
+set_option maxRecDepth 8192 in
+private theorem giProfile_wSA : gi.profile wSA
+    = {2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 6} := by decide
+
+set_option maxRecDepth 8192 in
+private theorem giProfile_wA : gi.profile wA
+    = {1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 6} := by decide
+
+set_option maxRecDepth 8192 in
+set_option maxHeartbeats 1600000 in
 /-- GI's parse posterior for SS peaks at the matrix-only parse, whose reading
-uniquely identifies wNS (eq. 22). Pair choice drives this: under per-parse
-normalization M would not dominate. -/
+uniquely identifies wNS, at the paper's illustrative α = 5 (eq. 22's regime).
+Pair choice drives this: under per-parse normalization M would not dominate.
+Evaluation register — genuinely α-dependent: as α → 0 the singleton reading's
+informativity advantage vanishes, so no α-free certificate exists. -/
 theorem ss_m_parse_pref : ∀ p : Parse, p ≠ {.matrix} →
-    (giM.jointListener .ss).snd.real {p} < (giM.jointListener .ss).snd.real {{.matrix}} := by
+    (gi.choicePosterior 5 prior .ss).real {(.ss, p)}
+      < (gi.choicePosterior 5 prior .ss).real {(.ss, {.matrix})} := by
   intro p hp
   have hmem : p ∈ ({∅, {.matrix}, {.outer}, {.inner}, {.matrix, .outer}, {.matrix, .inner},
       {.outer, .inner}, {.matrix, .outer, .inner}} : Finset Parse) :=
     univP ▸ Finset.mem_univ p
+  have ho : ((gi.speaker 5 ∘ₘ prior).map gi.obs) {Utterance.ss} ≠ 0 :=
+    gi.map_obs_comp_ne_zero (c := (.ss, ∅)) (prior_singleton_ne_zero wNS) rfl
+      (gi.speaker_apply_singleton_ne_zero (by norm_num) (by decide))
   fin_cases hmem <;>
     first
       | exact absurd rfl hp
-      | exact gi_snd_lt gi_marg_ss (by
-          simp_rw [prior_real_singleton, giS_real, rpow_two]
-          norm_num +decide [univW, Finset.sum_insert, Finset.sum_singleton]
-          simp_rw [zGI_wN, zGI_wNS, zGI_wNA, zGI_wNSA, zGI_wS, zGI_wSA, zGI_wA,
-            giL0_toReal]
-          norm_num +decide [rpow_two, univU, univP, univW, Finset.sum_insert,
-    Finset.sum_singleton, Finset.filter_insert, Finset.filter_singleton,
-    Finset.card_insert_of_notMem, Finset.card_singleton])
+      | (rw [gi.choicePosterior_real_lt_iff ho rfl rfl]
+         simp_rw [gi.speaker_real_singleton (α := 5) (by norm_num), prior_real_singleton]
+         norm_num +decide [-Multiset.invPowSum_cons, -Multiset.invPowSum_singleton,
+           -Multiset.invPowSum_add, -Multiset.invPowSum_zero,
+           univW, Finset.sum_insert, Finset.sum_singleton,
+           giProfile_wN, giProfile_wNS, giProfile_wNA, giProfile_wNSA, giProfile_wS,
+           giProfile_wSA, giProfile_wA, Multiset.invPowSum_toReal,
+           Multiset.insert_eq_cons, Multiset.map_cons, Multiset.map_singleton,
+           Multiset.sum_cons, Multiset.sum_singleton, rpow_five, ext,
+           Finset.filter_insert, Finset.filter_singleton,
+           Finset.card_insert_of_notMem, Finset.card_singleton])
 
 /-- Vanilla RSA hearing SS prefers wNA to wNS — the wrong prediction — at the
 paper's illustrative α = 5 (eq. 10, cost-free; the direction reverses at the

@@ -1018,6 +1018,18 @@ theorem sum_fiber_speaker {α : ℝ} (hα : 0 < α) (o : O) (t : T) :
   simp_rw [speaker, speakerOf_apply_singleton, div_eq_mul_inv, ← Finset.sum_mul]
   rw [s.sum_fiber_rpow_L0 hα, s.sum_rpow_L0 hα, ← div_eq_mul_inv]
 
+omit [DecidableEq O] in
+/-- Exact speaker mass on reals: extension-size weight over the state's
+partition. -/
+theorem speaker_real_singleton {α : ℝ} (hα : 0 < α) (t : T) (c : C) :
+    (s.speaker α t).real {c}
+      = (if t ∈ s.sem c then (((s.sem c).card : ℝ))⁻¹ ^ α else 0)
+        / ((s.profile t).invPowSum α).toReal := by
+  rw [measureReal_def, speaker, speakerOf_apply_singleton, s.sum_rpow_L0 hα,
+    ENNReal.toReal_div, L0_apply_singleton, apply_ite (· ^ α),
+    ENNReal.zero_rpow_of_pos hα, apply_ite ENNReal.toReal, ENNReal.toReal_zero,
+    ← ENNReal.toReal_rpow, ENNReal.toReal_inv, ENNReal.toReal_natCast]
+
 variable [MeasurableSpace O] [MeasurableSingletonClass O]
 
 omit [Fintype T] [DecidableEq T] [MeasurableSingletonClass T] [Fintype C]
@@ -1138,6 +1150,35 @@ theorem listener_real_lt_iff {o : O}
     ENNReal.toReal_sum (fun c _ =>
       ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)),
     ENNReal.toReal_sum (fun c _ =>
+      ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _))]
+  simp_rw [ENNReal.toReal_mul]
+  exact Iff.rfl
+
+omit [DecidableEq T] in
+/-- Choice preference among `o`-shaped choices reduces to comparing
+prior-weighted speaker masses across states. -/
+theorem choicePosterior_real_lt_iff {o : O}
+    (ho : ((s.speaker α ∘ₘ μ).map s.obs) {o} ≠ 0) {c₁ c₂ : C}
+    (h₁ : s.obs c₁ = o) (h₂ : s.obs c₂ = o) :
+    (s.choicePosterior α μ o).real {c₁} < (s.choicePosterior α μ o).real {c₂}
+      ↔ (∑ t, μ.real {t} * (s.speaker α t).real {c₁})
+        < ∑ t, μ.real {t} * (s.speaker α t).real {c₂} := by
+  have key : ∀ c, s.obs c = o → s.choicePosterior α μ o {c}
+      = (∑ t, μ {t} * s.speaker α t {c}) / ((s.speaker α ∘ₘ μ).map s.obs) {o} :=
+    fun c hc => by
+      rw [choicePosterior, Kernel.snd_apply, ← Measure.snd, Measure.snd_apply_singleton]
+      simp_rw [s.jointListener_apply_singleton ho, if_pos hc, div_eq_mul_inv,
+        ← Finset.sum_mul]
+  have hne : ∀ c : C, (∑ t, μ {t} * s.speaker α t {c}) ≠ ∞ := fun c =>
+    ENNReal.sum_ne_top.mpr fun t _ =>
+      ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)
+  rw [measureReal_def, measureReal_def, key c₁ h₁, key c₂ h₂,
+    ENNReal.toReal_lt_toReal (ENNReal.div_ne_top (hne c₁) ho) (ENNReal.div_ne_top (hne c₂) ho),
+    ENNReal.div_lt_div_iff_left ho (measure_ne_top _ _),
+    ← ENNReal.toReal_lt_toReal (hne c₁) (hne c₂),
+    ENNReal.toReal_sum (fun t _ =>
+      ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)),
+    ENNReal.toReal_sum (fun t _ =>
       ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _))]
   simp_rw [ENNReal.toReal_mul]
   exact Iff.rfl
