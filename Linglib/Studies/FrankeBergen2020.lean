@@ -12,8 +12,8 @@ nested Aristotelians "Q₁ of the aliens drank Q₂ of their water"
 (Q ∈ {none, some, all}). An alien's drinking amount is a `SomeAllWorld`; a
 world state is the nonempty set of amounts realized by at least one alien
 (7 states); a parse is the set of EXH insertion sites among matrix/outer/inner
-(8 parses); the readings are the paper's Table 1 (`table1_ss` … `table1_as`,
-each row characterized by a membership predicate). The models differ in where
+(8 parses); the readings are the paper's Table 1 (the `table1_*` lemmas, one
+per row, each characterized by a membership predicate). The models differ in where
 the parse enters the speaker: vanilla (§3.1) has only the literal parse; LU
 (§3.2) fixes a lexicon `l ∈ {lit, OI}` per speaker — the parse an *argument*
 of the speaker (eq. 11) and a latent the listener marginalizes
@@ -34,8 +34,8 @@ LI and LU still derive the embedded enrichments (`li_ss_outer_exh`,
 
 ## Main results
 
-* `table1_ss` … `table1_as` — the paper's Table 1, including NN's distinct
-  matrix row (fn. 7) from the `none ~ not all` lexical alternative
+* `table1_*` — the paper's Table 1, one lemma per row, including NN's
+  distinct matrix row (fn. 7) from the `none ~ not all` lexical alternative
   ([levinson-2000]).
 * `ss_m_parse_pref` — GI's parse posterior for SS peaks at M.
 * `moi_ss_ne_innocent_exclusion` — the paper's matrix operator (eq. A2) is
@@ -72,14 +72,24 @@ def World := {s : Finset AlienType // s.Nonempty}
 instance : DecidableEq World := Subtype.instDecidableEq
 instance : Fintype World := Subtype.fintype _
 
-/-- The seven world states, named by the alien types present: N drank none,
-S drank some but not all, A drank all. -/
+instance : Membership AlienType World := ⟨fun w t => t ∈ w.val⟩
+
+instance (t : AlienType) (w : World) : Decidable (t ∈ w) :=
+  inferInstanceAs (Decidable (t ∈ w.val))
+
+/-- The world with only N-type aliens (each drank none). -/
 def wN : World := ⟨{.none}, Finset.singleton_nonempty _⟩
+/-- The world with N-type and S-type aliens. -/
 def wNS : World := ⟨{.none, .someNotAll}, by decide⟩
+/-- The world with N-type and A-type aliens. -/
 def wNA : World := ⟨{.none, .all}, by decide⟩
+/-- The world with all three alien types. -/
 def wNSA : World := ⟨{.none, .someNotAll, .all}, by decide⟩
+/-- The world with only S-type aliens (each drank some but not all). -/
 def wS : World := ⟨{.someNotAll}, Finset.singleton_nonempty _⟩
+/-- The world with S-type and A-type aliens. -/
 def wSA : World := ⟨{.someNotAll, .all}, by decide⟩
+/-- The world with only A-type aliens (each drank all). -/
 def wA : World := ⟨{.all}, Finset.singleton_nonempty _⟩
 
 instance : Nonempty World := ⟨wN⟩
@@ -160,10 +170,10 @@ instance : ∀ q : AltQuant, DecidablePred q.sat
 
 /-- Quantifier denotation over the alien types realized in a world. -/
 def AltQuant.eval : AltQuant → World → (AlienType → Prop) → Prop
-  | .none, w, sat => ∀ t ∈ w.val, ¬ sat t
-  | .some, w, sat => ∃ t ∈ w.val, sat t
-  | .all, w, sat => ∀ t ∈ w.val, sat t
-  | .notAll, w, sat => ¬ ∀ t ∈ w.val, sat t
+  | .none, w, sat => ∀ t ∈ w, ¬ sat t
+  | .some, w, sat => ∃ t ∈ w, sat t
+  | .all, w, sat => ∀ t ∈ w, sat t
+  | .notAll, w, sat => ¬ ∀ t ∈ w, sat t
 
 instance : ∀ (q : AltQuant) (w : World) (sat : AlienType → Prop) [DecidablePred sat],
     Decidable (q.eval w sat)
@@ -204,15 +214,14 @@ at the two quantifier positions. -/
 def matrixAlts (u : Utterance) : List AltSentence :=
   u.outer.altCandidates ×ˢ u.inner.altCandidates
 
-/-- Inner satisfaction after EXH enrichment: Exh(some) = "some but not all",
-the `.someNotAll` amount exactly; Exh(none) and Exh(all) are vacuous. -/
-def enrichedSat (qi : AristQuant) (p : Parse) : AlienType → Prop :=
-  if ExhPosition.inner ∈ p ∧ qi = .some then
-    fun t => t.atLeastOne ∧ t.notUniversal
-  else (↑qi : AltQuant).sat
+/-- Inner satisfaction after EXH enrichment: when licensed, EXH conjoins
+*some* with its not-all implicature — the `.someNotAll` amount exactly;
+Exh(none) and Exh(all) are vacuous. -/
+def enrichedSat (qi : AristQuant) (p : Parse) (t : AlienType) : Prop :=
+  (↑qi : AltQuant).sat t ∧ (ExhPosition.inner ∈ p ∧ qi = .some → t.notUniversal)
 
-instance (qi : AristQuant) (p : Parse) : DecidablePred (enrichedSat qi p) := fun t => by
-  unfold enrichedSat; split <;> infer_instance
+instance (qi : AristQuant) (p : Parse) : DecidablePred (enrichedSat qi p) := fun _ =>
+  inferInstanceAs (Decidable (_ ∧ _))
 
 /-- The sub-matrix reading: in-situ enrichments, with outer EXH (Exh(some) at
 the outer position) as an implication guard. -/
@@ -242,49 +251,55 @@ def matrixExh (p : Parse) (u : Utterance) (w : World) : Prop :=
 instance (p : Parse) (u : Utterance) : DecidablePred (matrixExh p u) := fun _ =>
   inferInstanceAs (Decidable (_ ∧ _))
 
-/-- Exhaustified meaning under a parse: the matrix-exhaustified reading when
-M is in the parse and that reading is noncontradictory, else the sub-matrix
-reading (eq. A2). -/
+/-- Exhaustified meaning under a parse: the sub-matrix reading, negating the
+strictly stronger alternatives when M is in the parse and doing so is
+noncontradictory (eq. A2). -/
 def exhMeaning (p : Parse) (u : Utterance) (w : World) : Prop :=
-  if ExhPosition.matrix ∈ p ∧ ∃ w', matrixExh p u w' then matrixExh p u w
-  else subMatrix p u w
+  subMatrix p u w ∧ (ExhPosition.matrix ∈ p ∧ (∃ w', matrixExh p u w') →
+    ∀ a ∈ matrixAlts u, StrictlyStronger p u a → ¬ altLiteral a w)
 
-instance (p : Parse) (u : Utterance) : DecidablePred (exhMeaning p u) := fun w => by
-  unfold exhMeaning; split <;> infer_instance
+instance (p : Parse) (u : Utterance) : DecidablePred (exhMeaning p u) := fun _ =>
+  inferInstanceAs (Decidable (_ ∧ _))
 
 /-! ### Truth-table verification (the paper's Table 1)
 
 Each reading is characterized by a membership predicate on the world's
 alien-type set, rather than transcribed as a truth vector. -/
 
-/-- Table 1, SS: literal true except at wN; inner EXH requires an S-type;
-outer EXH additionally excludes wS; matrix EXH pins wNS. -/
-theorem table1_ss :
-    (∀ w, exhMeaning ∅ .ss w ↔ w ≠ wN)
-    ∧ (∀ w, exhMeaning {.inner} .ss w ↔ .someNotAll ∈ w.val)
-    ∧ (∀ w, exhMeaning {.outer, .inner} .ss w ↔ (.someNotAll ∈ w.val ∧ w ≠ wS))
-    ∧ (∀ w, exhMeaning {.matrix} .ss w ↔ w = wNS) :=
-  ⟨by decide, by decide, by decide, by decide⟩
+/-- Table 1, SS literal row: true everywhere but wN. -/
+theorem table1_ss_lit : ∀ w, exhMeaning ∅ .ss w ↔ w ≠ wN := by decide
+
+/-- Table 1, SS inner-EXH row: an S-type exists. -/
+theorem table1_ss_i : ∀ w, exhMeaning {.inner} .ss w ↔ .someNotAll ∈ w := by decide
+
+/-- Table 1, SS outer+inner row: an S-type exists but not exclusively. -/
+theorem table1_ss_oi :
+    ∀ w, exhMeaning {.outer, .inner} .ss w ↔ (.someNotAll ∈ w ∧ w ≠ wS) := by decide
 
 /-- EXH_MOI(SS) = EXH_OI(SS): matrix EXH is vacuous at MOI. -/
 theorem exh_moi_ss : ∀ w,
     exhMeaning {.matrix, .outer, .inner} .ss w ↔ exhMeaning {.outer, .inner} .ss w := by
   decide
 
-/-- Table 1, NN: no N-types; matrix parses additionally negate "none drank
-not all" (= {wA}) — the fn. 7 reading from the `none ~ not all` alternative. -/
-theorem table1_nn :
-    (∀ p : Parse, .matrix ∉ p → ∀ w, exhMeaning p .nn w ↔ .none ∉ w.val)
-    ∧ (∀ p : Parse, .matrix ∈ p → ∀ w, exhMeaning p .nn w ↔ (.none ∉ w.val ∧ w ≠ wA)) :=
-  ⟨by decide, by decide⟩
+/-- Table 1, NN matrix-free rows: no N-types. -/
+theorem table1_nn_lit : ∀ p : Parse, .matrix ∉ p →
+    ∀ w, exhMeaning p .nn w ↔ .none ∉ w := by decide
 
-/-- Table 1, NS: inner EXH weakens NS to the S-free worlds, so under MI
-matrix EXH negates the sentence's own now-stronger literal meaning {wN}. -/
-theorem table1_ns :
-    (∀ w, exhMeaning ∅ .ns w ↔ w = wN)
-    ∧ (∀ w, exhMeaning {.inner} .ns w ↔ .someNotAll ∉ w.val)
-    ∧ (∀ w, exhMeaning {.matrix, .inner} .ns w ↔ (.someNotAll ∉ w.val ∧ w ≠ wN)) :=
-  ⟨by decide, by decide, by decide⟩
+/-- Table 1, NN matrix rows: matrix EXH additionally negates "none drank not
+all" (= {wA}) — the fn. 7 reading from the `none ~ not all` alternative. -/
+theorem table1_nn_m : ∀ p : Parse, .matrix ∈ p →
+    ∀ w, exhMeaning p .nn w ↔ (.none ∉ w ∧ w ≠ wA) := by decide
+
+/-- Table 1, NS literal row: only wN. -/
+theorem table1_ns_lit : ∀ w, exhMeaning ∅ .ns w ↔ w = wN := by decide
+
+/-- Table 1, NS inner-EXH row: no S-types — inner EXH weakens NS. -/
+theorem table1_ns_i : ∀ w, exhMeaning {.inner} .ns w ↔ .someNotAll ∉ w := by decide
+
+/-- Table 1, NS matrix+inner row: matrix EXH negates the sentence's own
+now-stronger literal meaning {wN}. -/
+theorem table1_ns_mi :
+    ∀ w, exhMeaning {.matrix, .inner} .ns w ↔ (.someNotAll ∉ w ∧ w ≠ wN) := by decide
 
 /-- Table 1, AN: only wN, under every parse. -/
 theorem table1_an : ∀ p : Parse, ∀ w, exhMeaning p .an w ↔ w = wN := by decide
@@ -292,40 +307,41 @@ theorem table1_an : ∀ p : Parse, ∀ w, exhMeaning p .an w ↔ w = wN := by de
 /-- Table 1, AA: only wA, under every parse. -/
 theorem table1_aa : ∀ p : Parse, ∀ w, exhMeaning p .aa w ↔ w = wA := by decide
 
-/-- Table 1, SA: an A-type exists; outer EXH excludes wA. -/
-theorem table1_sa :
-    (∀ w, exhMeaning ∅ .sa w ↔ .all ∈ w.val)
-    ∧ (∀ w, exhMeaning {.outer} .sa w ↔ (.all ∈ w.val ∧ w ≠ wA)) :=
-  ⟨by decide, by decide⟩
+/-- Table 1, SA literal row: an A-type exists. -/
+theorem table1_sa_lit : ∀ w, exhMeaning ∅ .sa w ↔ .all ∈ w := by decide
 
-/-- Table 1, NA: no A-types; matrix EXH negates the stronger NS = {wN}. -/
-theorem table1_na :
-    (∀ w, exhMeaning ∅ .na w ↔ .all ∉ w.val)
-    ∧ (∀ w, exhMeaning {.matrix} .na w ↔ (.all ∉ w.val ∧ w ≠ wN)) :=
-  ⟨by decide, by decide⟩
+/-- Table 1, SA outer-EXH row: outer EXH excludes wA. -/
+theorem table1_sa_o : ∀ w, exhMeaning {.outer} .sa w ↔ (.all ∈ w ∧ w ≠ wA) := by decide
 
-/-- Table 1, SN: an N-type exists; outer EXH negates AN = {wN}. -/
-theorem table1_sn :
-    (∀ w, exhMeaning ∅ .sn w ↔ .none ∈ w.val)
-    ∧ (∀ w, exhMeaning {.outer} .sn w ↔ (.none ∈ w.val ∧ w ≠ wN)) :=
-  ⟨by decide, by decide⟩
+/-- Table 1, NA literal row: no A-types. -/
+theorem table1_na_lit : ∀ w, exhMeaning ∅ .na w ↔ .all ∉ w := by decide
 
-/-- Table 1, AS: no N-types; inner EXH pins wS; matrix EXH without I
-negates AA, excluding wA. -/
-theorem table1_as :
-    (∀ w, exhMeaning ∅ .as w ↔ .none ∉ w.val)
-    ∧ (∀ w, exhMeaning {.inner} .as w ↔ w = wS)
-    ∧ (∀ w, exhMeaning {.matrix} .as w ↔ (.none ∉ w.val ∧ w ≠ wA)) :=
-  ⟨by decide, by decide, by decide⟩
+/-- Table 1, NA matrix row: matrix EXH negates the stronger NS = {wN}. -/
+theorem table1_na_m : ∀ w, exhMeaning {.matrix} .na w ↔ (.all ∉ w ∧ w ≠ wN) := by decide
+
+/-- Table 1, SN literal row: an N-type exists. -/
+theorem table1_sn_lit : ∀ w, exhMeaning ∅ .sn w ↔ .none ∈ w := by decide
+
+/-- Table 1, SN outer-EXH row: outer EXH negates AN = {wN}. -/
+theorem table1_sn_o : ∀ w, exhMeaning {.outer} .sn w ↔ (.none ∈ w ∧ w ≠ wN) := by decide
+
+/-- Table 1, AS literal row: no N-types. -/
+theorem table1_as_lit : ∀ w, exhMeaning ∅ .as w ↔ .none ∉ w := by decide
+
+/-- Table 1, AS inner-EXH row: inner EXH pins wS. -/
+theorem table1_as_i : ∀ w, exhMeaning {.inner} .as w ↔ w = wS := by decide
+
+/-- Table 1, AS matrix row: matrix EXH without I negates AA, excluding wA. -/
+theorem table1_as_m :
+    ∀ w, exhMeaning {.matrix} .as w ↔ (.none ∉ w ∧ w ≠ wA) := by decide
 
 /-- Literal meaning is the empty parse's exhaustified meaning. -/
 theorem literal_eq_exh_none : ∀ u : Utterance, ∀ w,
     literalMeaning u w ↔ exhMeaning ∅ u w := by decide
 
-/-- ⟦SS⟧^M = {wNS}: matrix EXH narrows SS to a single world — the reading
-that "uniquely singles out this world state" (eq. 22) and drives GI's win. -/
-theorem m_ss_singleton : ∀ w, exhMeaning {.matrix} .ss w ↔ w = wNS :=
-  table1_ss.2.2.2
+/-- Table 1, SS matrix row — ⟦SS⟧^M = {wNS}: the reading that "uniquely
+singles out this world state" (eq. 22) and drives GI's win. -/
+theorem m_ss_singleton : ∀ w, exhMeaning {.matrix} .ss w ↔ w = wNS := by decide
 
 /-- The matrix operator (eq. A2) is not Fox-style innocent exclusion
 ([fox-2007]): at MOI its strictly-stronger filter is empty and ⟦SS⟧^MOI keeps
@@ -726,20 +742,13 @@ uniquely identifies wNS (eq. 22). Pair choice drives this: under per-parse
 normalization M would not dominate. -/
 theorem ss_m_parse_pref : ∀ p : Parse, p ≠ {.matrix} →
     (giListener .ss gi_marg_ss).snd p < (giListener .ss gi_marg_ss).snd {.matrix} := by
-  have key : ∀ p ∈ ({∅, {.outer}, {.inner}, {.matrix, .outer}, {.matrix, .inner},
-      {.outer, .inner}, {.matrix, .outer, .inner}} : Finset Parse),
-      (giListener .ss gi_marg_ss).snd p < (giListener .ss gi_marg_ss).snd {.matrix} := by
-    intro p hp
-    fin_cases hp <;>
-      exact gi_snd_lt _ (by norm_num +decide [ratS1, ratWeight, giMeaning, RSA.extensionOf,
-        Finset.filter_insert, Finset.filter_singleton, univW, zGI_wN, zGI_wNS, zGI_wNA,
-        zGI_wNSA, zGI_wS, zGI_wSA, zGI_wA])
   intro p hp
-  refine key p ?_
-  have hu : p ∈ (Finset.univ : Finset Parse) := Finset.mem_univ p
-  rw [univP] at hu
-  simp only [Finset.mem_insert, Finset.mem_singleton] at hu ⊢
-  tauto
+  fin_cases p <;>
+    first
+      | exact absurd rfl hp
+      | exact gi_snd_lt _ (by norm_num +decide [ratS1, ratWeight, giMeaning, RSA.extensionOf,
+          Finset.filter_insert, Finset.filter_singleton, univW, zGI_wN, zGI_wNS, zGI_wNA,
+          zGI_wNSA, zGI_wS, zGI_wSA, zGI_wA])
 
 /-- Vanilla RSA hearing SS prefers wNA to wNS — the wrong prediction (the
 cost-free illustration of eq. 10; the direction reverses at the fitted cost). -/
