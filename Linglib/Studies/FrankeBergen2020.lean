@@ -394,15 +394,6 @@ the reading's extension; the speakers are the softmax-utility kernel at
 α = 2; the listeners are `κ†μ` (vanilla; LU with the lexicon in the state)
 and `jointPosterior` (LI/GI pair choice). -/
 
-/-- The extension of an utterance under a parse. -/
-def sem (p : Parse) (u : Utterance) : Set World := {w | exhMeaning p u w}
-
-@[simp] theorem mem_sem {p : Parse} {u : Utterance} {w : World} :
-    w ∈ sem p u ↔ exhMeaning p u w := Iff.rfl
-
-instance (p : Parse) (u : Utterance) (w : World) : Decidable (w ∈ sem p u) :=
-  inferInstanceAs (Decidable (exhMeaning p u w))
-
 /-- The extension of an utterance under a parse, as a `Finset` — the
 `RSA.Scenario` semantic field. -/
 def ext (p : Parse) (u : Utterance) : Finset World :=
@@ -435,76 +426,6 @@ theorem prior_singleton_ne_zero (w : World) : prior {w} ≠ 0 := by
 
 /-- Every `(world, parse)` state has a true utterance. -/
 theorem exists_true : ∀ (w : World) (p : Parse), ∃ u, exhMeaning p u w := by decide
-
-/-- Per-parse literal listener. -/
-noncomputable def L0 (p : Parse) : Kernel Utterance World :=
-  RSA.literalListener prior (sem p)
-
-theorem L0_ne_zero {p : Parse} {u : Utterance} {w : World} (h : exhMeaning p u w) :
-    L0 p u {w} ≠ 0 :=
-  RSA.literalListener_apply_singleton_ne_zero prior h (prior_singleton_ne_zero w)
-
-/-- Within its extension, L0 mass is the inverse extension cardinality. -/
-theorem L0_real_of_mem {p : Parse} {u : Utterance} {w : World} (h : exhMeaning p u w) :
-    (L0 p u).real {w} = ((Finset.univ.filter (exhMeaning p u)).card : ℝ)⁻¹ := by
-  have hk : 0 < (Finset.univ.filter (exhMeaning p u)).card :=
-    Finset.card_pos.mpr ⟨w, by simp [h]⟩
-  rw [L0, RSA.literalListener_real_singleton_of_mem prior h, prior_real_singleton,
-    show sem p u = ↑(Finset.univ.filter (exhMeaning p u)) from by ext w'; simp [sem],
-    prior, uniformOn_univ_real_coe_finset, card_world]
-  rw [div_div_eq_mul_div]
-  push_cast
-  rw [inv_mul_cancel₀ (by norm_num : (7 : ℝ) ≠ 0), one_div]
-
-theorem L0_toReal (p : Parse) (u : Utterance) (w : World) :
-    (L0 p u {w}).toReal
-      = if exhMeaning p u w then ((Finset.univ.filter (exhMeaning p u)).card : ℝ)⁻¹
-        else 0 := by
-  split
-  · exact L0_real_of_mem ‹_›
-  · exact RSA.literalListener_real_singleton_of_not_mem prior ‹_›
-
-/-! ### The models as bundled speakers
-
-Each model is an `RSA.Speaker` at α = 2 over its own choice space: vanilla
-chooses bare utterances read literally, GI chooses over all 72 (utterance,
-parse) pairs (eq. 21a), LI over the 36 matrix-free pairs (eq. 18a). LU is
-*not* a `Speaker` over the joint (world, lexicon) state: its utility
-normalizes per lexicon rather than against the pooled extension — the
-type-level content of the paper's LU-vs-intentions contrast. -/
-
-/-- The vanilla model: utterances read literally. -/
-@[simps] noncomputable def vanillaM : RSA.Speaker World Utterance where
-  α := 2
-  α_pos := two_pos
-  prior := prior
-  sem := sem ∅
-
-/-- The GI model: pair choice with all parses available. -/
-@[simps] noncomputable def giM : RSA.Speaker World (Utterance × Parse) where
-  α := 2
-  α_pos := two_pos
-  prior := prior
-  sem x := sem x.2 x.1
-
-/-- The LI model: pair choice over matrix-free parses. -/
-@[simps] noncomputable def liM : RSA.Speaker World (Utterance × LIParse) where
-  α := 2
-  α_pos := two_pos
-  prior := prior
-  sem x := sem x.2.toParse x.1
-
-instance : IsProbabilityMeasure vanillaM.prior := inferInstanceAs (IsProbabilityMeasure prior)
-instance : IsProbabilityMeasure giM.prior := inferInstanceAs (IsProbabilityMeasure prior)
-instance : IsProbabilityMeasure liM.prior := inferInstanceAs (IsProbabilityMeasure prior)
-
-instance : vanillaM.Positive := ⟨prior_singleton_ne_zero⟩
-instance : giM.Positive := ⟨prior_singleton_ne_zero⟩
-instance : liM.Positive := ⟨prior_singleton_ne_zero⟩
-
-instance : vanillaM.Viable := ⟨fun w => exists_true w ∅⟩
-instance : giM.Viable := ⟨fun w => (exists_true w ∅).elim fun u h => ⟨(u, ∅), h⟩⟩
-instance : liM.Viable := ⟨fun w => (exists_true w ∅).elim fun u h => ⟨(u, .lit), h⟩⟩
 
 /-! ### The models as choice scenarios
 
@@ -549,44 +470,17 @@ noncomputable def luPrior : Measure (World × LULex) := uniformOn Set.univ
 instance : IsProbabilityMeasure luPrior :=
   inferInstanceAs (IsProbabilityMeasure (uniformOn _))
 
-/-- The LU speaker (eq. 11): per-lexicon informativity — the lexicon is an
-argument of the speaker, not a choice. -/
-noncomputable def luSpeaker : Kernel (World × LULex) Utterance :=
-  RSA.speaker 2 fun s u => RSA.utility (L0 s.2.toParse) (fun _ => 0) s.1 u
+/-- The LU speaker (eq. 11): the `luFam` family — the lexicon is an argument
+of the speaker, not a choice. -/
+noncomputable def luSpeaker (α : ℝ) : Kernel (World × LULex) Utterance :=
+  RSA.Scenario.familySpeaker luFam α
 
-/-! ### Markov structure -/
+instance (α : ℝ) : IsFiniteKernel (luSpeaker α) :=
+  inferInstanceAs (IsFiniteKernel (RSA.Scenario.familySpeaker luFam α))
 
-instance : IsMarkovKernel luSpeaker := by
-  refine RSA.isMarkovKernel_speaker (fun s u => ?_) fun s => ?_
-  · rw [RSA.utility, EReal.coe_zero, sub_zero]
-    exact RSA.coe_mul_log_ne_top (by norm_num)
-      (RSA.literalListener_apply_ne_top prior _ u {s.1})
-  · refine (exists_true s.1 s.2.toParse).imp fun u hu => ?_
-    rw [RSA.utility, EReal.coe_zero, sub_zero]
-    exact RSA.coe_mul_log_ne_bot (by norm_num) (L0_ne_zero hu)
-
-/-! ### Listeners
-
-Vanilla's pragmatic listener is `vanillaM.listener` (eq. 9); the intention
-models' are `giM.jointListener` (eq. 21b) and `liM.jointListener` (eq. 18b).
-LU keeps a bespoke inverse over the joint state (eqs. 12–13). -/
-
-/-- LU listener: Bayesian inverse over the joint (world, lexicon) state. -/
-noncomputable def luListener : Kernel Utterance (World × LULex) := luSpeaker†luPrior
-
-/-! ### Utility bounds for positivity witnesses -/
-
-private theorem util_ne_bot {p : Parse} {u : Utterance} {w : World}
-    (h : exhMeaning p u w) :
-    ((2 : ℝ) : EReal) * RSA.utility (L0 p) (fun _ => 0) w u ≠ ⊥ := by
-  rw [RSA.utility, EReal.coe_zero, sub_zero]
-  exact RSA.coe_mul_log_ne_bot (by norm_num) (L0_ne_zero h)
-
-private theorem util_ne_top (p : Parse) (u : Utterance) (w : World) :
-    ((2 : ℝ) : EReal) * RSA.utility (L0 p) (fun _ => 0) w u ≠ ⊤ := by
-  rw [RSA.utility, EReal.coe_zero, sub_zero]
-  exact RSA.coe_mul_log_ne_top (by norm_num)
-    (RSA.literalListener_apply_ne_top prior _ u {w})
+/-- LU listener (eqs. 12–13): Bayesian inverse over the joint state. -/
+noncomputable def luListener (α : ℝ) : Kernel Utterance (World × LULex) :=
+  (luSpeaker α)†luPrior
 
 /-! ### Marginal-positivity witnesses -/
 
@@ -594,35 +488,12 @@ theorem luPrior_singleton_ne_zero (s : World × LULex) : luPrior {s} ≠ 0 := by
   rw [luPrior, uniformOn_univ, Measure.count_singleton]
   simp [ENNReal.mul_eq_top]
 
-theorem lu_marg_ss : (luSpeaker ∘ₘ luPrior) {Utterance.ss} ≠ 0 :=
-  comp_apply_singleton_ne_zero _ _ (luPrior_singleton_ne_zero (wNS, .lit))
-    (RSA.speaker_apply_singleton_ne_zero (util_ne_bot (p := ∅) (by decide))
-      (util_ne_top ∅ · wNS))
-
-/-! ### Speaker values on reals -/
-
-private theorem rpow_two (r : ℝ) : r ^ (2 : ℝ) = r ^ 2 := by
-  rw [show (2 : ℝ) = ((2 : ℕ) : ℝ) from by norm_num, Real.rpow_natCast]
+/-! ### Evaluation scaffolding -/
 
 private theorem rpow_five (r : ℝ) : r ^ (5 : ℝ) = r ^ 5 := by
   rw [show (5 : ℝ) = ((5 : ℕ) : ℝ) from by norm_num, Real.rpow_natCast]
 
-private theorem luS_real (s : World × LULex) (u : Utterance) :
-    (luSpeaker s).real {u}
-      = (L0 s.2.toParse u {s.1}).toReal ^ (2 : ℝ)
-        / ∑ u', (L0 s.2.toParse u' {s.1}).toReal ^ (2 : ℝ) := by
-  rw [measureReal_def, luSpeaker, RSA.speaker_apply_singleton]
-  simp_rw [RSA.exp_mul_utility_zero]
-  rw [ENNReal.toReal_div, ENNReal.toReal_sum fun u' _ =>
-    ENNReal.rpow_ne_top_of_nonneg (by norm_num)
-      (show L0 s.2.toParse u' {s.1} ≠ ⊤ from
-        RSA.literalListener_apply_ne_top prior _ u' {s.1})]
-  simp_rw [ENNReal.toReal_rpow]
-
 /-! ### Enumeration scaffolding -/
-
-private theorem univU : (Finset.univ : Finset Utterance)
-    = {.nn, .ns, .na, .sn, .ss, .sa, .an, .as, .aa} := by decide
 
 private theorem univP : (Finset.univ : Finset Parse)
     = {∅, {.matrix}, {.outer}, {.inner}, {.matrix, .outer}, {.matrix, .inner},
@@ -633,86 +504,10 @@ private theorem univW : (Finset.univ : Finset World)
 
 private theorem univLU : (Finset.univ : Finset LULex) = {.lit, .oi} := by decide
 
-private theorem univLI : (Finset.univ : Finset LIParse) = {.lit, .i, .o, .oi} := by decide
-
-/-! ### Partitions
-
-The per-world softmax partitions, as real rationals: `Z(w) = Σ |ext|⁻²` over
-the model's choice space. -/
-
-/-! ### Per-parse and LI partitions -/
-
-private theorem zP (p : Parse) (w : World) (z : ℝ)
-    (h : (∑ u : Utterance,
-        (if exhMeaning p u w then ((Finset.univ.filter (exhMeaning p u)).card : ℝ)⁻¹
-         else 0) ^ 2) = z) :
-    (∑ u' : Utterance, (L0 p u' {w}).toReal ^ 2) = z := by
-  simp_rw [L0_toReal]
-  exact h
-
-set_option maxRecDepth 8192 in
-private theorem zVan_wNS : (∑ u' : Utterance, (L0 ∅ u' {wNS}).toReal ^ 2) = 29 / 144 :=
-  zP _ _ _ (by norm_num +decide [rpow_two, univU, univP, univW, Finset.sum_insert,
-    Finset.sum_singleton, Finset.filter_insert, Finset.filter_singleton,
-    Finset.card_insert_of_notMem, Finset.card_singleton])
-
-set_option maxRecDepth 8192 in
-private theorem zVan_wNA : (∑ u' : Utterance, (L0 ∅ u' {wNA}).toReal ^ 2) = 11 / 72 :=
-  zP _ _ _ (by norm_num +decide [rpow_two, univU, univP, univW, Finset.sum_insert,
-    Finset.sum_singleton, Finset.filter_insert, Finset.filter_singleton,
-    Finset.card_insert_of_notMem, Finset.card_singleton])
-
-set_option maxRecDepth 8192 in
-private theorem zOI_wNS :
-    (∑ u' : Utterance, (L0 {.outer, .inner} u' {wNS}).toReal ^ 2) = 1 / 3 :=
-  zP _ _ _ (by norm_num +decide [rpow_two, univU, univP, univW, Finset.sum_insert,
-    Finset.sum_singleton, Finset.filter_insert, Finset.filter_singleton,
-    Finset.card_insert_of_notMem, Finset.card_singleton])
-
-set_option maxRecDepth 8192 in
-private theorem zOI_wNA :
-    (∑ u' : Utterance, (L0 {.outer, .inner} u' {wNA}).toReal ^ 2) = 1 / 3 :=
-  zP _ _ _ (by norm_num +decide [rpow_two, univU, univP, univW, Finset.sum_insert,
-    Finset.sum_singleton, Finset.filter_insert, Finset.filter_singleton,
-    Finset.card_insert_of_notMem, Finset.card_singleton])
-
-/-! ### Listener-preference reductions -/
-
-private theorem lu_fst_lt {u : Utterance}
-    (hx : (luSpeaker ∘ₘ luPrior) {u} ≠ 0) {w₁ w₂ : World}
-    (h : (∑ l : LULex, luPrior.real {(w₁, l)} * (luSpeaker (w₁, l)).real {u})
-        < ∑ l : LULex, luPrior.real {(w₂, l)} * (luSpeaker (w₂, l)).real {u}) :
-    (luListener u).fst.real {w₁} < (luListener u).fst.real {w₂} := by
-  rw [luListener, posterior_fst_real_lt_iff luSpeaker luPrior hx]
-  exact h
-
 private theorem luPrior_real_singleton (s : World × LULex) : luPrior.real {s} = 14⁻¹ := by
   rw [luPrior, uniformOn_univ_real_singleton,
     show Fintype.card (World × LULex) = 14 from by decide]
   norm_num
-
-/-! ### Pooled speaker masses
-
-Each finding compares two pooled speaker masses; naming their values keeps
-the findings two-line. -/
-
-private theorem luPool_ss_wNS :
-    (∑ l : LULex, (luSpeaker (wNS, l)).real {Utterance.ss}) = 41 / 87 := by
-  simp_rw [luS_real, rpow_two]
-  norm_num +decide [univLU, Finset.sum_insert, Finset.sum_singleton, LULex.toParse]
-  simp_rw [zVan_wNS, zOI_wNS, L0_toReal]
-  norm_num +decide [rpow_two, univU, univP, univW, Finset.sum_insert,
-    Finset.sum_singleton, Finset.filter_insert, Finset.filter_singleton,
-    Finset.card_insert_of_notMem, Finset.card_singleton]
-
-private theorem luPool_ss_wNA :
-    (∑ l : LULex, (luSpeaker (wNA, l)).real {Utterance.ss}) = 2 / 11 := by
-  simp_rw [luS_real, rpow_two]
-  norm_num +decide [univLU, Finset.sum_insert, Finset.sum_singleton, LULex.toParse]
-  simp_rw [zVan_wNA, zOI_wNA, L0_toReal]
-  norm_num +decide [rpow_two, univU, univP, univW, Finset.sum_insert,
-    Finset.sum_singleton, Finset.filter_insert, Finset.filter_singleton,
-    Finset.card_insert_of_notMem, Finset.card_singleton]
 
 /-! ### The ten qualitative findings -/
 
@@ -861,13 +656,32 @@ theorem gi_ss_prefers_wNS {α : ℝ} (hα : 0 < α) :
   gi.listener_real_lt_of_prodMul_strictDominates hα (prior_singleton_eq wNA wNS)
     (prior_singleton_ne_zero wNS) ⟨(.ss, ∅), rfl, by decide⟩ (by decide)
 
-/-- LU also keeps wNS above wNA: the OI lexicon's ⟦SS⟧ excludes wNA (the
-paper's full LU-L2 nonetheless concentrates on wNSA, eq. 15). -/
+set_option maxRecDepth 8192 in
+/-- LU keeps wNS above wNA at the paper's illustrative α = 5: the OI
+lexicon's ⟦SS⟧ excludes wNA outright, while at wNS both lexica contribute
+(the paper's full LU-L2 nonetheless concentrates on wNSA, eq. 15).
+Evaluation register. -/
 theorem lu_ss_prefers_wNS :
-    (luListener .ss).fst.real {wNA} < (luListener .ss).fst.real {wNS} :=
-  lu_fst_lt lu_marg_ss (by
-    simp_rw [luPrior_real_singleton, ← Finset.mul_sum, luPool_ss_wNA, luPool_ss_wNS]
-    norm_num)
+    (luListener 5 .ss).fst.real {wNA} < (luListener 5 .ss).fst.real {wNS} := by
+  have hκ : luSpeaker 5 (wNS, LULex.lit) {Utterance.ss} ≠ 0 := by
+    rw [luSpeaker, RSA.Scenario.familySpeaker_apply]
+    exact (luFam .lit).speaker_apply_singleton_ne_zero (by norm_num) (by decide)
+  rw [luListener, posterior_fst_real_lt_iff (luSpeaker 5) luPrior
+      (comp_apply_singleton_ne_zero _ _ (luPrior_singleton_ne_zero (wNS, .lit)) hκ)]
+  simp_rw [luSpeaker, RSA.Scenario.familySpeaker_apply]
+  norm_num +decide [univLU, Finset.sum_insert, Finset.sum_singleton, luPrior_real_singleton]
+  simp only [(luFam .lit).speaker_real_singleton (α := 5) (by norm_num),
+    (luFam .oi).speaker_real_singleton (α := 5) (by norm_num)]
+  norm_num +decide [-Multiset.invPowSum_cons, -Multiset.invPowSum_singleton,
+    -Multiset.invPowSum_add, -Multiset.invPowSum_zero,
+    show (luFam .lit).profile wNS = {3, 4, 6} from by decide,
+    show (luFam .lit).profile wNA = {4, 4, 6} from by decide,
+    show (luFam .oi).profile wNS = {3, 3, 3} from by decide,
+    show (luFam .oi).profile wNA = {3, 3, 3} from by decide,
+    Multiset.invPowSum_toReal, Multiset.insert_eq_cons, Multiset.map_cons,
+    Multiset.map_singleton, Multiset.sum_cons, Multiset.sum_singleton, rpow_five, ext,
+    LULex.toParse, univW, Finset.filter_insert, Finset.filter_singleton,
+    Finset.card_insert_of_notMem, Finset.card_singleton]
 
 set_option maxRecDepth 8192 in
 /-- LI derives outer exhaustification for SS at every rationality: wNS over
