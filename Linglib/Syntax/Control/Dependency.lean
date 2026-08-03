@@ -38,18 +38,18 @@ feature transmission percolates through the mediating position.
 
 namespace Control
 
-variable {α : Type*} {needy : α → Prop} {bind pred : α → α → Prop}
+variable {α : Type*} {dependent : α → Prop} {bind pred : α → α → Prop}
 
-/-- Obligatoriness clause of the configurational matrix: every position
-    that needs an antecedent has one. -/
-def Obligatory (needy : α → Prop) (r : α → α → Prop) : Prop :=
-  ∀ ⦃b⦄, needy b → ∃ a, r a b
+/-- Obligatoriness clause of the configurational matrix: every
+    dependent takes an antecedent. -/
+def Obligatory (dependent : α → Prop) (r : α → α → Prop) : Prop :=
+  ∀ ⦃b⦄, dependent b → ∃ a, r a b
 
 /-- A composite dependency is obligatory when its inner leg is and its
     mediating positions all have binders. -/
-theorem Obligatory.comp (hp : Obligatory needy pred)
+theorem Obligatory.comp (hp : Obligatory dependent pred)
     (hb : ∀ m, ∃ a, bind a m) :
-    Obligatory needy (Relation.Comp bind pred) := by
+    Obligatory dependent (Relation.Comp bind pred) := by
   intro c hc
   obtain ⟨m, hm⟩ := hp hc
   obtain ⟨a, ha⟩ := hb m
