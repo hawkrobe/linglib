@@ -5,7 +5,8 @@ Authors: Robert Hawkins
 -/
 import Linglib.Fragments.Ga.Predicates
 import Linglib.Syntax.Minimalist.MinimalPronoun
-import Linglib.Syntax.Control.Basic
+import Linglib.Syntax.Control.Tier
+import Linglib.Syntax.Control.Clause
 import Linglib.Syntax.Control.CopyControl
 import Linglib.Syntax.Control.Signature
 import Linglib.Syntax.Minimalist.Probe.Profile
@@ -228,6 +229,16 @@ def gaControlDerivation : Derivation :=
     forbids (§3.6.2). -/
 theorem ga_supports_basegeneration :
     gaControlDerivation = .baseGeneration := rfl
+
+/-- The lexical-copy ban is what [landau-2024]'s (72) predicts: the
+    ex 42b/64 matrix verb *kai* is an implicative — nonattitude,
+    predicative tier — so its complement is property-denoting and a
+    lexical subject is a type mismatch. (The attitude verbs' `ni`-frame
+    aligns too: *kplɛnɔ* 'agree' takes the lexical-subject subjunctive
+    of ex 105.) -/
+theorem lexical_copy_ban_predicted :
+    gaEmbeddedLexicalCopyAvailable
+      = decide (LicensesLexicalSubject Tier.predicative.complLayer) := rfl
 
 /-- The controlled form φ-covaries with its controller (exx 37–39),
     unlike [satik-2019]'s form-invariant Ewe *yè* (§3.6.3). -/

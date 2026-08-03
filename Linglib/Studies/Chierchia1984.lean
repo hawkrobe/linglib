@@ -2,6 +2,7 @@ import Linglib.Syntax.Voice.Alternation
 import Linglib.Semantics.Modality.Kratzer.Flavor
 import Linglib.Semantics.Composition.TypeShifting
 import Linglib.Studies.Landau2015
+import Linglib.Syntax.Control.Clause
 import Linglib.Fragments.English.Predicates.Verbal
 import Mathlib.Data.Fin.Basic
 
@@ -117,18 +118,11 @@ The connection: nonfinite complements denote properties; finite
 complements denote propositions. This is not a new definition but
 a bridge between existing infrastructure. -/
 
-/-- Map a `ComplementType` to the semantic layer it inhabits.
-
-    Returns `none` for complement types that are not clausal (NP, PP, etc.).
-    For clausal types, the rule is: nonfinite → property, finite → proposition.
-    This derives from `ComplementType.isFinite`, not a new stipulation. -/
-def complSemLayer : ComplementType → Option ComplSemLayer
-  | .infinitival  => some .property
-  | .gerund       => some .property
-  | .smallClause  => some .property
-  | .finiteClause => some .proposition
-  | .question     => some .proposition
-  | .none | .np | .np_np | .np_pp => none
+/-- The shared derivation `Control.complementSemLayer` (clausal +
+    nonfinite → property; clausal + finite → proposition), imported
+    rather than restated. -/
+abbrev complSemLayer : ComplementType → Option ComplSemLayer :=
+  Control.complementSemLayer
 
 /-- Nonfinite clausal complements are property-denoting. -/
 theorem infinitival_is_property :
