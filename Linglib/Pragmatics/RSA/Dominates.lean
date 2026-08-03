@@ -20,8 +20,7 @@ for every `0 < α`.
 Domination is equivalent to a Hall-type counting condition — `s` has no more entries below
 any threshold than `t` has — so it is first-order stochastic dominance of the counting
 distributions, decided with `card s * (card s + card t)` comparisons. Certificates
-therefore close by `decide` for multisets of a few hundred entries, given a `maxRecDepth`
-of roughly `8 * card t`.
+therefore close by `decide +kernel` for multisets of a few hundred entries.
 
 At a natural exponent `k` with every entry dividing a common denominator `D`, the sum
 clears to the ℕ-valued `divPowSum D k`, so pinned-exponent comparisons also close by
@@ -356,11 +355,9 @@ example : StrictDominates {3} {4} := by decide
 
 example : ¬ StrictDominates {1, 2} {1, 2} := by decide
 
-set_option maxRecDepth 2000 in
 example : (prodMul {1, 2, 3, 4} {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}).StrictDominates
-    {2, 4, 6, 8, 10} := by decide
+    {2, 4, 6, 8, 10} := by decide +kernel
 
-set_option maxRecDepth 2000 in
-example : ¬ (prodMul {2, 3} {5, 7, 11, 13, 17}).Dominates {1, 4} := by decide
+example : ¬ (prodMul {2, 3} {5, 7, 11, 13, 17}).Dominates {1, 4} := by decide +kernel
 
 end Multiset

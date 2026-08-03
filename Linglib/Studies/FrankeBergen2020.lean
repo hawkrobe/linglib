@@ -536,7 +536,6 @@ theorem ss_inner_exh :
     (prior_singleton_eq wNSA wNS) (prior_singleton_ne_zero wNS)
     (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
-set_option maxRecDepth 1024 in
 /-- Hearing "some of the aliens drank some of their water", the pooled
 listener favors a world where some alien drank nothing (outer
 exhaustification). -/
@@ -545,7 +544,6 @@ theorem ss_outer_exh {α : ℝ} (hα : 0 < α) :
   gi.listener_real_lt_of_prodMul_strictDominates hα (prior_singleton_eq wS wNS)
     (prior_singleton_ne_zero wNS) (by decide +kernel)
 
-set_option maxRecDepth 1024 in
 /-- Hearing "all of the aliens drank all of their water", the pooled
 listener favors the unique world where every alien did just that. -/
 theorem aa_identifies {α : ℝ} (hα : 0 < α) :
@@ -553,7 +551,6 @@ theorem aa_identifies {α : ℝ} (hα : 0 < α) :
   gi.listener_real_lt_of_prodMul_strictDominates hα (prior_singleton_eq wSA wA)
     (prior_singleton_ne_zero wA) (by decide +kernel)
 
-set_option maxRecDepth 1024 in
 /-- Hearing "all of the aliens drank some of their water", the pooled
 listener favors the world where every alien drank some but not all (inner
 exhaustification). -/
@@ -589,7 +586,6 @@ theorem vanilla_ss_prefers_wNA {α : ℝ} (hα : 0 < α) :
   vanilla.listener_real_lt_of_prodMul_strictDominates hα (prior_singleton_eq wNS wNA)
     (prior_singleton_ne_zero wNA) (by decide +kernel)
 
-set_option maxRecDepth 1024 in
 /-- Hearing "some of the aliens drank some of their water", the pooled
 listener favors some-but-not-all drinkers over all-drinkers, as attested. -/
 theorem gi_ss_prefers_wNS {α : ℝ} (hα : 0 < α) :
@@ -597,7 +593,6 @@ theorem gi_ss_prefers_wNS {α : ℝ} (hα : 0 < α) :
   gi.listener_real_lt_of_prodMul_strictDominates hα (prior_singleton_eq wNA wNS)
     (prior_singleton_ne_zero wNS) (by decide +kernel)
 
-set_option maxRecDepth 1024 in
 /-- Hearing "some of the aliens drank some of their water", the matrix-free
 pooled listener still favors a world where some alien drank nothing (outer
 exhaustification). -/
@@ -606,7 +601,6 @@ theorem li_ss_outer_exh {α : ℝ} (hα : 0 < α) :
   li.listener_real_lt_of_prodMul_strictDominates hα (prior_singleton_eq wS wNS)
     (prior_singleton_ne_zero wNS) (by decide +kernel)
 
-set_option maxRecDepth 1024 in
 /-- Hearing "some of the aliens drank some of their water", the matrix-free
 pooled listener favors some-but-not-all drinkers over all-drinkers. -/
 theorem li_ss_prefers_wNS {α : ℝ} (hα : 0 < α) :
