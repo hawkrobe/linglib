@@ -3,85 +3,52 @@ import Linglib.Semantics.Exhaustification.InnocentExclusion
 import Mathlib.Tactic.DeriveFintype
 
 /-!
-# [franke-bergen-2020] — Grammatically generated implicature readings
+# Franke & Bergen 2020: grammatically generated implicature readings
 
-"Theory-driven statistical modeling for semantics and pragmatics: A case study
-on grammatically generated implicature readings" compares four RSA models
-([frank-goodman-2012]) of the **nested Aristotelians** "Q₁ of the aliens drank Q₂ of their water"
-(Q ∈ {none, some, all}): 7 world states (which alien types — none-drinkers,
-some-drinkers, all-drinkers — exist), 9 utterances, and 8 grammatical parses
-(subsets of {M, O, I} EXH positions) generating the readings of the paper's
-Table 1.
+[franke-bergen-2020] compares four RSA models ([frank-goodman-2012]) of the
+nested Aristotelians "Q₁ of the aliens drank Q₂ of their water"
+(Q ∈ {none, some, all}): 7 world states (which alien types — none-, some-,
+all-drinkers — exist), 9 utterances, and 8 grammatical parses (subsets of
+{M, O, I} EXH positions), whose readings are the paper's Table 1
+(`table1_ss` … `table1_as`). The models differ in where the parse enters the
+speaker: vanilla (§3.1) has only the literal parse; LU (§3.2) fixes a lexicon
+`l ∈ {lit, OI}` per speaker — the parse an *argument* of the speaker (eq. 11)
+and a latent the listener marginalizes ([bergen-levy-goodman-2016],
+[potts-etal-2016]); the LI (§3.3) and GI (§3.4) speakers instead *choose* an
+(utterance, parse) pair (eqs. 18a/21a), over the 4 matrix-free parses resp.
+all 8 — one softmax over pairs per world, read by `RSA.Canonical.L1Intent`.
 
-## The four models
+We show that GI corrects the SS interpretation vanilla gets wrong
+(`vanilla_ss_prefers_wNA` vs `gi_ss_prefers_wNS`), and that its parse
+posterior for SS peaks at the matrix-only parse (`ss_m_parse_pref`), whose
+reading ⟦SS⟧^M = {wNS} "uniquely singles out this world state" (eq. 22,
+`m_ss_singleton`) and is unavailable to LI and LU (`li_excludes_matrix`,
+`lu_excludes_matrix`) — the paper's explanation of GI's win in its Bayesian
+model comparison (posterior 0.956 vs LI 0.033, LU 0.01, vanilla 0; Table 2).
+LI and LU still derive the embedded enrichments (`li_ss_outer_exh`,
+`li_ss_prefers_wNS`, `lu_ss_prefers_wNS`).
 
-The models differ in **where the parse enters the speaker function** — the
-paper's central architectural contrast (its §3.3):
+## Main results
 
-* **Vanilla** (§3.1): literal parse only; `PMF.posterior` over worlds.
-* **LU** (§3.2): each speaker has a *fixed* lexicon `l ∈ {lit, OI}` — the parse
-  is an **argument** of the speaker (eq. 11, per-lexicon normalization), and
-  the listener marginalizes the latent lexicon (eqs. 12–13; `Canonical.L1`).
-  Lexical uncertainty follows [bergen-levy-goodman-2016] and [potts-etal-2016];
-  the paper adds an S2/L2 layer after [lassiter-goodman-2017] (eqs. 14a–14b),
-  which we omit — our L1-only LU preserves the wNS-over-wNA ordering proved
-  below, though the paper's LU-L2 concentrates on wNSA (eq. 15), which is why
-  the paper counts SS-production data *against* LU.
-* **LI** (§3.3): the speaker **chooses** an (utterance, parse) pair with
-  `l ∈ {lit, I, O, OI}` — the parse is an **output** of the speaker function
-  (eq. 18a): one softmax over pairs per world. The listener infers the joint
-  (world, parse) from the utterance alone (`Canonical.L1Intent`).
-* **GI** (§3.4): as LI but over all 8 parses (eq. 21a). The paper stresses
-  (its §3.3) that enlarging LU's latent instead would be "conceptually highly
-  implausible" — pair choice, not per-parse normalization, is what separates
-  LI/GI from LU.
+* `table1_ss` … `table1_as` — the paper's Table 1, including NN's distinct
+  matrix row (fn. 7) from the `none ~ not all` lexical alternative
+  ([levinson-2000]).
+* `ss_m_parse_pref` — GI's parse posterior for SS peaks at M.
+* `moi_ss_ne_innocent_exclusion` — the paper's matrix operator (eq. A2) is
+  not Fox-style innocent exclusion ([fox-2007]).
 
-All four share the Boolean semantics `exhMeaning` and the α = 2 informativity
-exponent (a modeling choice; the paper's MLEs are α ≈ 0.9–1.4). The paper's
-cost term `c(u)` for *none*-initial utterances (estimated) and error term ε
-(fixed at 0.045) are omitted; every prediction below is robust to this except
-`vanilla_ss_prefers_wNA`, which is the paper's own cost-free illustration
-(eq. 10) and reverses at the fitted cost.
+## Implementation notes
 
-## Exhaustification (appendix, defs. A1–A4)
-
-In-situ EXH at the inner/outer quantifier conjoins with the negation of
-strictly stronger lexical alternatives on the scale — only Exh(some) = "some
-but not all" is non-vacuous ([fox-2007]). Matrix EXH (eq. A2) negates the
-LITERAL meanings of the strictly stronger sentential alternatives (A3b: proper
-subsets of the sub-matrix enriched meaning), with a noncontradictory fallback.
-Sentential alternatives (A3a) substitute lexical alternatives per position:
-`some ↔ all`, and `not all` for `none` (analyzed as *not some*;
-[levinson-2000]) — so alternative sentences range over a fourth quantifier
-`notAll` that is not itself an utterance, the paper's grammatical-vs-utterance
-alternatives distinction. Including the `none ~ not all` alternative gives NN
-its distinct matrix-parse row in Table 1 (the paper's fn. 7); the paper's own
-comparison of this alternative construction with Gotzner & Romoli's
-([gotzner-romoli-2018]) favors it by a Bayes factor of ~1,530.
-
-## Findings
-
-| # | Finding | Theorem |
-|---|---------|---------|
-| 1 | SS exhaustifies inner Q | `ss_inner_exh` |
-| 2 | SS exhaustifies outer Q | `ss_outer_exh` |
-| 3 | AA identifies unique world | `aa_identifies` |
-| 4 | AS exhaustifies inner Q | `as_inner_exh` |
-| 5 | GI's parse posterior for SS peaks at M | `ss_m_parse_pref` |
-| 6 | Vanilla gets SS wrong (prefers wNA) | `vanilla_ss_prefers_wNA` |
-| 7 | GI gets SS right (prefers wNS) | `gi_ss_prefers_wNS` |
-| 8 | LU keeps wNS over wNA | `lu_ss_prefers_wNS` |
-| 9 | LI derives outer exh for SS | `li_ss_outer_exh` |
-| 10 | LI also gets SS→wNS right | `li_ss_prefers_wNS` |
-
-Finding 5 is the model-side face of the paper's explanation of GI's win:
-⟦SS⟧^M = {wNS} (`m_ss_singleton`) "uniquely singles out this world state"
-(eq. 22), M-parses are unavailable to LI and LU (`li_excludes_matrix`,
-`lu_excludes_matrix`), and Bayesian comparison on the paper's production +
-comprehension data gives GI 0.956 posterior probability (LI 0.033, LU 0.01,
-vanilla 0; the paper's Table 2). Predictions are decided by exact rational
-evaluation: `RSA.Canonical.S1_eq_ofReal` reduces each speaker mass to a `ℚ`
-value and each listener preference to a `ℚ` comparison closed by `norm_num`.
+Sentential alternatives (A3a) range over a fourth quantifier `notAll` that is
+never an utterance — the paper's grammatical-vs-utterance alternatives
+distinction (its comparison with [gotzner-romoli-2018]'s alternative set
+favors this one by a Bayes factor of ~1,530). We fix α = 2 and omit the
+paper's cost term for *none*-initial utterances and fixed error ε = 0.045
+(eqs. 25–28); each finding except `vanilla_ss_prefers_wNA` is robust to this.
+The paper's S2/L2 layer for LU ([lassiter-goodman-2017], eqs. 14a–14b) is
+also omitted: our L1-only LU keeps wNS over wNA, though the paper's LU-L2
+concentrates on wNSA (eq. 15). Predictions are decided by exact rational
+evaluation (`RSA.Canonical.S1_eq_ofReal` + `norm_num`).
 -/
 
 namespace FrankeBergen2020
@@ -168,13 +135,11 @@ def Parse.hasM : Parse → Bool
 
 /-! ### Alternative quantifiers
 
-Sentential alternatives (A3a) substitute *lexical alternatives* per quantifier
-position: `some ↔ all`, and `not all` for `none`. `not all` occurs only in
-alternative sentences, never as an utterance — the paper's grammatical
-alternatives outstrip its utterance alternatives. -/
+Sentential alternatives (A3a) substitute lexical alternatives per quantifier
+position: `some ↔ all`, and `not all` for `none`. -/
 
-/-- Quantifiers available in sentential alternatives: the utterance
-quantifiers plus *not all*, the lexical alternative of *none*. -/
+/-- The quantifiers of sentential alternatives: the utterance quantifiers
+plus *not all*, the lexical alternative of *none*. -/
 inductive AltQuant where
   | none | some | all | notAll
   deriving DecidableEq, Repr
@@ -242,15 +207,10 @@ scale-mate candidates for the two quantifier positions. -/
 def matrixAlts (u : Utterance) : List AltSentence :=
   (u.outer.altCandidates.map fun o => u.inner.altCandidates.map fun i => (o, i)).flatten
 
-/-- Exhaustified meaning under a given parse.
-
-Inner/outer EXH enrich quantifiers in situ; only "some" → "some but not all"
-is non-vacuous. Matrix EXH (eq. A2) conjoins the sub-matrix meaning with the
-negations of the LITERAL meanings of the strictly stronger sentential
-alternatives (A3b: literal meaning a *proper* subset of the sub-matrix
-enriched meaning — properness alone filters, so an utterance's own literal
-meaning survives as an alternative when a parse weakens it, as for NS under
-MI), falling back to the sub-matrix meaning on contradiction. -/
+/-- Exhaustified meaning under a parse. Inner/outer EXH enrich *some* to
+"some but not all" in situ; matrix EXH (eq. A2) negates the literal meanings
+of the strictly stronger sentential alternatives (A3b: proper subsets of the
+sub-matrix meaning), falling back to the sub-matrix meaning on contradiction. -/
 def exhMeaning (p : Parse) (u : Utterance) : World → Bool :=
   -- Step 1: inner predicate (enriched if I ∈ parse)
   let (nSat, sSat, aSat) := enrichedInnerTypeSat u.inner p.hasI
@@ -301,10 +261,8 @@ theorem table1_ss :
     ∧ (allWorlds.map (exhMeaning .m .ss) = [false, true, false, false, false, false, false]) := by
   decide
 
-/-- Table 1, NN: matrix-free parses give {wS, wSA, wA}; matrix parses negate
-the strictly stronger "none of the aliens drank not all of their water"
-(= {wA}), dropping wA — the paper's fn. 7 reading, available only because
-`not all` is a lexical alternative of `none`. -/
+/-- Table 1, NN: matrix parses additionally negate "none drank not all"
+(= {wA}) — the fn. 7 reading from the `none ~ not all` alternative. -/
 theorem table1_nn :
     (∀ p : Parse, p.hasM = false →
       allWorlds.map (exhMeaning p .nn) = [false, false, false, false, true, true, true])
@@ -312,9 +270,9 @@ theorem table1_nn :
       allWorlds.map (exhMeaning p .nn) = [false, false, false, false, true, true, false]) := by
   decide
 
-/-- Table 1, NS: literal {wN}; inner EXH weakens to {wN, wNA, wA}; adding
-matrix EXH then negates the sentence's own (strictly stronger) literal
-meaning, giving {wNA, wA}. -/
+/-- Table 1, NS: inner EXH weakens NS, so under MI matrix EXH negates the
+sentence's own now-stronger literal meaning {wN} (A3b filters by properness
+alone), giving {wNA, wA}. -/
 theorem table1_ns :
     (allWorlds.map (exhMeaning .none .ns) = [true, false, false, false, false, false, false])
     ∧ (allWorlds.map (exhMeaning .i .ns) = [true, false, true, false, false, false, true])
@@ -368,11 +326,9 @@ theorem literal_eq_exh_none : ∀ u : Utterance, ∀ w : World,
 that "uniquely singles out this world state" (eq. 22) and drives GI's win. -/
 theorem m_ss_singleton : ∀ w : World, exhMeaning .m .ss w = (w == .wNS) := by decide
 
-/-- The paper's matrix operator (eq. A2) is **not** Fox-style innocent
-exclusion ([fox-2007]): on SS's own sentential alternatives with the
-OI-enriched prejacent, innocent exclusion excludes SA, AS, and AA and narrows
-⟦SS⟧^OI to {wNS}, while A2's strictly-stronger filter comes up empty and MOI
-keeps all of {wNS, wNSA, wSA} — witness wSA. -/
+/-- The matrix operator (eq. A2) is not Fox-style innocent exclusion
+([fox-2007]): at MOI its strictly-stronger filter is empty and ⟦SS⟧^MOI keeps
+wSA, which innocent exclusion over the same alternatives excludes. -/
 theorem moi_ss_ne_innocent_exclusion :
     exhMeaning .moi .ss .wSA = true
       ∧ World.wSA ∉ Exhaustification.innocent.exh
@@ -413,11 +369,9 @@ theorem lu_excludes_matrix : ∀ l : LULex, l.toParse.hasM = false := by decide
 
 /-! ### Speakers
 
-The per-parse speaker `speaker (w, p) ∝ L0(w | ·, p)²` (eq. 11, the parse an
-*argument*) serves vanilla and LU. The LI/GI speakers (eqs. 18a/21a, the parse
-an *output*) run the same power utility over (utterance, parse) *pairs*: one
-softmax per world across the whole pair space, so a pair's overall
-informativity — not its within-parse share — drives production. -/
+The per-parse speaker (eq. 11) serves vanilla and LU; the LI/GI speakers
+(eqs. 18a/21a) run the same power utility over (utterance, parse) pairs, one
+softmax per world. -/
 
 /-- Every utterance is true at some world under every parse, so each per-parse
 literal listener is well-defined. -/
@@ -447,8 +401,8 @@ noncomputable def luSpeaker (s : World × LULex) : PMF Utterance := speaker (s.1
 /-- Vanilla speaker: the per-parse speaker at the literal parse. -/
 noncomputable def vanillaSpeaker (w : World) : PMF Utterance := speaker (w, .none)
 
-/-- GI meaning family: an (utterance, parse) pair means its parse's reading.
-The `Unit` index is the degenerate latent of the `L0OfBool` shape. -/
+/-- The GI meaning family (`Unit`-indexed to fit `L0OfBool`): an
+(utterance, parse) pair means its parse's reading. -/
 def giMeaning : Unit → Utterance × Parse → World → Bool := fun _ x => exhMeaning x.2 x.1
 
 theorem gi_ext_nonempty (i : Unit) (x : Utterance × Parse) :
@@ -467,7 +421,7 @@ pairs at each world. -/
 noncomputable def giSpeaker (w : World) : PMF (Utterance × Parse) :=
   S1 (powUtility 2 giL0) (w, ())
 
-/-- LI meaning family: as `giMeaning`, over the 4 matrix-free parses. -/
+/-- The LI meaning family: `giMeaning` restricted to matrix-free parses. -/
 def liMeaning : Unit → Utterance × LIParse → World → Bool := fun _ x => exhMeaning x.2.toParse x.1
 
 theorem li_ext_nonempty (i : Unit) (x : Utterance × LIParse) :
@@ -516,10 +470,9 @@ noncomputable def giListener (u : Utterance)
 
 /-! ### Exact rational reductions
 
-Each listener preference reduces (uniform prior cancelling) to a comparison of
-pooled speaker sums, which `S1_eq_ofReal`/`sum_S1_eq_ofReal` evaluate as exact
-rationals; `norm_num` closes the resulting `ℚ` inequalities against the
-partition values below. -/
+Each listener preference reduces, the uniform prior cancelling, to a pooled
+speaker-sum comparison evaluated as exact rationals via `S1_eq_ofReal` and
+closed by `norm_num` against the partition values below. -/
 
 private theorem univU : (Finset.univ : Finset Utterance)
     = {.nn, .ns, .na, .sn, .ss, .sa, .an, .as, .aa} := by decide
@@ -732,39 +685,33 @@ theorem vanilla_marg_ss :
 
 /-! ### The ten qualitative findings -/
 
-/-- SS exhaustifies the inner quantifier: GI's listener prefers wNS (no A-type
-aliens) to wNSA. -/
+/-- SS exhaustifies the inner quantifier: GI's listener prefers wNS to wNSA. -/
 theorem ss_inner_exh :
     (giListener .ss gi_marg_ss).fst .wNSA < (giListener .ss gi_marg_ss).fst .wNS :=
   gi_fst_lt _ (by norm_num +decide [boolS1, boolWeight, giMeaning, RSA.extensionOf,
     Finset.filter_insert, Finset.filter_singleton, univP, univW, zGI_wNS, zGI_wNSA])
 
-/-- SS exhaustifies the outer quantifier: GI's listener prefers wNS (mixed
-types) to wS, where "all aliens drank some but not all" would hold. -/
+/-- SS exhaustifies the outer quantifier: GI's listener prefers wNS to wS. -/
 theorem ss_outer_exh :
     (giListener .ss gi_marg_ss).fst .wS < (giListener .ss gi_marg_ss).fst .wNS :=
   gi_fst_lt _ (by norm_num +decide [boolS1, boolWeight, giMeaning, RSA.extensionOf,
     Finset.filter_insert, Finset.filter_singleton, univP, univW, zGI_wNS, zGI_wS])
 
-/-- AA identifies the unique world where all aliens drank all: wA over wSA
-(where AA is false under every parse). -/
+/-- AA identifies the unique world where all aliens drank all: wA over wSA. -/
 theorem aa_identifies :
     (giListener .aa gi_marg_aa).fst .wSA < (giListener .aa gi_marg_aa).fst .wA :=
   gi_fst_lt _ (by norm_num +decide [boolS1, boolWeight, giMeaning, RSA.extensionOf,
     Finset.filter_insert, Finset.filter_singleton, univP, univW, zGI_wSA, zGI_wA])
 
-/-- AS exhaustifies the inner quantifier: GI's listener prefers wS (all aliens
-are some-but-not-all drinkers) to wA. -/
+/-- AS exhaustifies the inner quantifier: GI's listener prefers wS to wA. -/
 theorem as_inner_exh :
     (giListener .as gi_marg_as).fst .wA < (giListener .as gi_marg_as).fst .wS :=
   gi_fst_lt _ (by norm_num +decide [boolS1, boolWeight, giMeaning, RSA.extensionOf,
     Finset.filter_insert, Finset.filter_singleton, univP, univW, zGI_wS, zGI_wA])
 
-/-- GI's parse posterior for SS peaks at the matrix-only parse M — the
-model-side face of the paper's explanation for GI's win: ⟦SS⟧^M = {wNS}
-uniquely identifies the state SS is in fact used for. Under per-parse
-normalization (the LU architecture) M would rank only mid-field; pair choice
-is what lets the maximally informative parse dominate. -/
+/-- GI's parse posterior for SS peaks at the matrix-only parse, whose reading
+uniquely identifies wNS (eq. 22). Pair choice drives this: under per-parse
+normalization M would not dominate. -/
 theorem ss_m_parse_pref : ∀ p : Parse, p ≠ .m →
     (giListener .ss gi_marg_ss).snd p < (giListener .ss gi_marg_ss).snd .m := by
   intro p hp
@@ -775,10 +722,8 @@ theorem ss_m_parse_pref : ∀ p : Parse, p ≠ .m →
       Finset.filter_insert, Finset.filter_singleton, univW, zGI_wN, zGI_wNS, zGI_wNA,
       zGI_wNSA, zGI_wS, zGI_wSA, zGI_wA])
 
-/-- Vanilla RSA hearing SS prefers wNA to wNS — the wrong prediction: without
-exhaustification SS is literally true at 6 of 7 worlds and competing utterances
-absorb wNS. The paper's cost-free illustration (eq. 10); its direction reverses
-at the paper's fitted cost for *none*-initial utterances. -/
+/-- Vanilla RSA hearing SS prefers wNA to wNS — the wrong prediction (the
+cost-free illustration of eq. 10; the direction reverses at the fitted cost). -/
 theorem vanilla_ss_prefers_wNA :
     (vanillaListener .ss vanilla_marg_ss) .wNS < (vanillaListener .ss vanilla_marg_ss) .wNA :=
   vanilla_lt _ (by norm_num +decide [boolS1, boolWeight, RSA.extensionOf,
@@ -790,8 +735,8 @@ theorem gi_ss_prefers_wNS :
   gi_fst_lt _ (by norm_num +decide [boolS1, boolWeight, giMeaning, RSA.extensionOf,
     Finset.filter_insert, Finset.filter_singleton, univP, univW, zGI_wNS, zGI_wNA])
 
-/-- LU also keeps wNS above wNA: the OI lexicon's ⟦SS⟧ excludes wNA. (The
-paper's full LU-L2 nonetheless concentrates on wNSA, eq. 15.) -/
+/-- LU also keeps wNS above wNA: the OI lexicon's ⟦SS⟧ excludes wNA (the
+paper's full LU-L2 nonetheless concentrates on wNSA, eq. 15). -/
 theorem lu_ss_prefers_wNS :
     (luListener .ss lu_marg_ss).fst .wNA < (luListener .ss lu_marg_ss).fst .wNS :=
   lu_fst_lt _ (by norm_num +decide [boolS1, boolWeight, RSA.extensionOf,
