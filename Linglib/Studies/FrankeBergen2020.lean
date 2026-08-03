@@ -6,8 +6,8 @@ import Mathlib.Tactic.DeriveFintype
 # [franke-bergen-2020] — Grammatically generated implicature readings
 
 "Theory-driven statistical modeling for semantics and pragmatics: A case study
-on grammatically generated implicature readings" compares four RSA models of
-the **nested Aristotelians** "Q₁ of the aliens drank Q₂ of their water"
+on grammatically generated implicature readings" compares four RSA models
+([frank-goodman-2012]) of the **nested Aristotelians** "Q₁ of the aliens drank Q₂ of their water"
 (Q ∈ {none, some, all}): 7 world states (which alien types — none-drinkers,
 some-drinkers, all-drinkers — exist), 9 utterances, and 8 grammatical parses
 (subsets of {M, O, I} EXH positions) generating the readings of the paper's
