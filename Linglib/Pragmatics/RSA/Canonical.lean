@@ -1,5 +1,6 @@
 import Linglib.Core.Probability.Softmax
 import Linglib.Core.Probability.JointPosterior
+import Linglib.Core.Probability.EmissionPosterior
 import Linglib.Pragmatics.RSA.Operators
 import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLog
 
@@ -46,8 +47,6 @@ Non-latent models take `St = W` and use the foundation `PMF.posterior_lt_iff_sco
 directly (the `latent = Unit` collapse). The `IsCovering ⇒ ViableSpeaker (rsaUtility …)`
 bridge for standard informativity speakers is added when first needed.
 -/
-
-set_option autoImplicit false
 
 namespace RSA.Canonical
 
@@ -188,7 +187,91 @@ theorem L1_latent_eq_iff [DecidableEq Lat] (S : W × Lat → PMF U)
           = ∑ w : W, joint (w, l₂) * S (w, l₂) u :=
   PMF.posterior_snd_eq_iff S joint u h l₁ l₂
 
+/-- At a uniform joint prior the prior cancels: world preference reduces to
+comparing pooled speaker sums over the latent. -/
+@[rsa]
+theorem L1_uniform_world_prefers_iff [DecidableEq W] [Nonempty (W × Lat)]
+    (S : W × Lat → PMF U) (u : U)
+    (h : PMF.marginal S (PMF.uniformOfFintype (W × Lat)) u ≠ 0) (w₁ w₂ : W) :
+    (L1 S (PMF.uniformOfFintype _) u h).fst w₁ < (L1 S (PMF.uniformOfFintype _) u h).fst w₂
+      ↔ (∑ l : Lat, S (w₁, l) u) < ∑ l : Lat, S (w₂, l) u := by
+  rw [L1_world_prefers_iff]
+  simp only [PMF.uniformOfFintype_apply]
+  rw [← Finset.mul_sum, ← Finset.mul_sum]
+  exact ENNReal.mul_lt_mul_iff_right
+    (ENNReal.inv_ne_zero.mpr (ENNReal.natCast_ne_top _))
+    (ENNReal.inv_ne_top.mpr (Nat.cast_ne_zero.mpr Fintype.card_ne_zero))
+
+/-- Latent companion of `L1_uniform_world_prefers_iff`. -/
+@[rsa]
+theorem L1_uniform_latent_prefers_iff [DecidableEq Lat] [Nonempty (W × Lat)]
+    (S : W × Lat → PMF U) (u : U)
+    (h : PMF.marginal S (PMF.uniformOfFintype (W × Lat)) u ≠ 0) (l₁ l₂ : Lat) :
+    (L1 S (PMF.uniformOfFintype _) u h).snd l₁ < (L1 S (PMF.uniformOfFintype _) u h).snd l₂
+      ↔ (∑ w : W, S (w, l₁) u) < ∑ w : W, S (w, l₂) u := by
+  rw [L1_latent_prefers_iff]
+  simp only [PMF.uniformOfFintype_apply]
+  rw [← Finset.mul_sum, ← Finset.mul_sum]
+  exact ENNReal.mul_lt_mul_iff_right
+    (ENNReal.inv_ne_zero.mpr (ENNReal.natCast_ne_top _))
+    (ENNReal.inv_ne_top.mpr (Nat.cast_ne_zero.mpr Fintype.card_ne_zero))
+
 end Listener
+
+/-! ### Pair-choice pragmatic listener
+
+For models where the speaker chooses an (utterance, latent) **pair** — the
+[franke-bergen-2020] lexical/global-intentions architecture, where the latent
+is the speaker's *intended meaning* rather than part of its state — the
+listener observes only the utterance and infers the joint (world, latent) via
+`PMF.emissionPosterior`. Contrast `L1`: there the latent is drawn with the
+world by the prior and each `(world, latent)` state has its own normalized
+speaker; here one speaker per world normalizes over (utterance, latent) pairs,
+so a pair's overall informativity drives the posterior. -/
+
+section IntentListener
+
+variable {W Lat U : Type*} [Fintype W] [Fintype Lat] [Fintype U] [DecidableEq U]
+
+/-- The **pair-choice pragmatic listener**: the posterior over `world × latent`
+given the observed utterance component of a jointly chosen (utterance, latent)
+action. -/
+noncomputable def L1Intent (S : W → PMF (U × Lat)) (prior : PMF W) (u : U)
+    (h : PMF.marginal (fun w => (S w).fst) prior u ≠ 0) : PMF (W × Lat) :=
+  PMF.emissionPosterior S prior u h
+
+/-- At a uniform world prior, `L1Intent` world preference reduces to pooled
+speaker sums over the latent. -/
+@[rsa]
+theorem L1Intent_uniform_world_prefers_iff [DecidableEq W] [Nonempty W]
+    (S : W → PMF (U × Lat)) (u : U)
+    (h : PMF.marginal (fun w => (S w).fst) (PMF.uniformOfFintype W) u ≠ 0) (w₁ w₂ : W) :
+    (L1Intent S (PMF.uniformOfFintype W) u h).fst w₁
+        < (L1Intent S (PMF.uniformOfFintype W) u h).fst w₂
+      ↔ (∑ l : Lat, S w₁ (u, l)) < ∑ l : Lat, S w₂ (u, l) :=
+  PMF.emissionPosterior_uniform_fst_lt_iff S u h w₁ w₂
+
+/-- At a uniform world prior, `L1Intent` latent preference reduces to pooled
+speaker sums over worlds. -/
+@[rsa]
+theorem L1Intent_uniform_latent_prefers_iff [DecidableEq Lat] [Nonempty W]
+    (S : W → PMF (U × Lat)) (u : U)
+    (h : PMF.marginal (fun w => (S w).fst) (PMF.uniformOfFintype W) u ≠ 0) (l₁ l₂ : Lat) :
+    (L1Intent S (PMF.uniformOfFintype W) u h).snd l₁
+        < (L1Intent S (PMF.uniformOfFintype W) u h).snd l₂
+      ↔ (∑ w : W, S w (u, l₁)) < ∑ w : W, S w (u, l₂) :=
+  PMF.emissionPosterior_uniform_snd_lt_iff S u h l₁ l₂
+
+/-- A single world `w` where the pair `(u, l)` has positive speaker mass makes
+the utterance marginal non-zero — the positivity discharge for `L1Intent` at a
+uniform prior. -/
+theorem L1Intent_uniform_marginal_ne_zero [Nonempty W] (S : W → PMF (U × Lat))
+    {w : W} {u : U} {l : Lat} (h : S w (u, l) ≠ 0) :
+    PMF.marginal (fun w => (S w).fst) (PMF.uniformOfFintype W) u ≠ 0 :=
+  PMF.emission_marginal_ne_zero S (PMF.uniformOfFintype W)
+    (((PMF.uniformOfFintype W).mem_support_iff w).mp (PMF.mem_support_uniformOfFintype _)) h
+
+end IntentListener
 
 /-! ### Power-utility informativity speakers
 
@@ -388,6 +471,103 @@ theorem S1_L0OfBool_lt_inv_succ_of_dominator {α : ℕ} [Fintype U]
   subst h0
   rw [Finset.card_eq_zero] at hk'
   exact absurd (hk' ▸ RSA.mem_extensionOf.mpr hu') (Finset.notMem_empty _)
+
+/-- The Boolean-model speaker never assigns zero mass to a true utterance —
+the witness for pragmatic-listener positivity obligations. -/
+theorem S1_L0OfBool_ne_zero {α : ℕ} [Fintype U]
+    [ViableSpeaker (powUtility α (L0OfBool m hne))]
+    {i : I} {u : U} {w : W} (h : m i u w = true) :
+    S1 (powUtility α (L0OfBool m hne)) (w, i) u ≠ 0 :=
+  S1_ne_zero _ (show (α : EReal) * ENNReal.log (L0OfBool m hne i u w) ≠ ⊥ from
+    natCast_mul_log_ne_bot α (L0OfBool_ne_zero m hne h))
+
+/-! ### Exact rational evaluation over a Boolean model
+
+The speaker over a Boolean model takes exact rational values: `boolWeight` is
+the unnormalised weight `|ext|⁻ᵅ` at a true utterance, `boolPartition` the
+partition sum, and `boolS1` their ratio. `S1_eq_ofReal` bridges once; every
+concrete mass and pooled sum then reduces to `ℚ` arithmetic (`norm_num`), with
+no per-value `ENNReal` bookkeeping. -/
+
+/-- Exact rational unnormalised speaker weight over a Boolean model. -/
+def boolWeight (α : ℕ) (i : I) (w : W) (u : U) : ℚ :=
+  if m i u w then ((RSA.extensionOf (m i) u).card : ℚ)⁻¹ ^ α else 0
+
+/-- Exact rational partition function over a Boolean model. -/
+def boolPartition (α : ℕ) [Fintype U] (i : I) (w : W) : ℚ :=
+  ∑ u : U, boolWeight m α i w u
+
+/-- Exact rational normalised speaker mass over a Boolean model. -/
+def boolS1 (α : ℕ) [Fintype U] (i : I) (w : W) (u : U) : ℚ :=
+  boolWeight m α i w u / boolPartition m α i w
+
+theorem boolWeight_nonneg (α : ℕ) (i : I) (w : W) (u : U) :
+    0 ≤ boolWeight m α i w u := by
+  unfold boolWeight; split <;> positivity
+
+theorem powWeight_eq_ofReal {α : ℕ} (hα : α ≠ 0) (i : I) (w : W) (u : U) :
+    powWeight α (L0OfBool m hne) (w, i) u = ENNReal.ofReal (boolWeight m α i w u) := by
+  unfold boolWeight
+  split
+  · next h =>
+    rw [powWeight_L0OfBool_of_mem m hne _ h rfl]
+    push_cast
+    have hc : (0 : ℝ) < (RSA.extensionOf (m i) u).card := by
+      exact_mod_cast Finset.card_pos.mpr ⟨w, RSA.mem_extensionOf.mpr h⟩
+    rw [ENNReal.ofReal_pow (by positivity), ENNReal.ofReal_inv_of_pos hc,
+      ENNReal.ofReal_natCast]
+  · next h =>
+    rw [powWeight_L0OfBool_of_not_mem m hne hα (by simpa using h)]
+    push_cast
+    rw [ENNReal.ofReal_zero]
+
+variable [Fintype U]
+
+theorem tsum_powWeight_eq_ofReal {α : ℕ} (hα : α ≠ 0) (i : I) (w : W) :
+    (∑' u, powWeight α (L0OfBool m hne) (w, i) u)
+      = ENNReal.ofReal (boolPartition m α i w) := by
+  rw [tsum_fintype, boolPartition]
+  push_cast
+  rw [ENNReal.ofReal_sum_of_nonneg
+    (fun u _ => by exact_mod_cast boolWeight_nonneg m α i w u)]
+  exact Finset.sum_congr rfl fun u _ => powWeight_eq_ofReal m hne hα i w u
+
+theorem boolPartition_pos {α : ℕ} [ViableSpeaker (powUtility α (L0OfBool m hne))]
+    (hα : α ≠ 0) (i : I) (w : W) : 0 < boolPartition m α i w := by
+  rcases ViableSpeaker.some_finite (score := powUtility α (L0OfBool m hne)) (w, i) with ⟨u', hu'⟩
+  refine Finset.sum_pos' (fun v _ => boolWeight_nonneg m α i w v) ⟨u', Finset.mem_univ _, ?_⟩
+  have hm : m i u' w = true := by
+    by_contra hm
+    exact hu' (by rw [powUtility, L0OfBool_eq_zero m hne hm, ENNReal.log_zero,
+      EReal.mul_bot_of_pos (by exact_mod_cast Nat.pos_of_ne_zero hα)])
+  have hc : 0 < (RSA.extensionOf (m i) u').card := Finset.card_pos.mpr (hne i u')
+  rw [boolWeight, if_pos hm]
+  positivity
+
+theorem boolS1_nonneg (α : ℕ) (i : I) (w : W) (u : U) : 0 ≤ boolS1 m α i w u :=
+  div_nonneg (boolWeight_nonneg m α i w u)
+    (Finset.sum_nonneg fun v _ => boolWeight_nonneg m α i w v)
+
+/-- Exact rational value of the power-utility speaker over a Boolean model. -/
+theorem S1_eq_ofReal {α : ℕ} [ViableSpeaker (powUtility α (L0OfBool m hne))]
+    (hα : α ≠ 0) (i : I) (w : W) (u : U) :
+    S1 (powUtility α (L0OfBool m hne)) (w, i) u = ENNReal.ofReal (boolS1 m α i w u) := by
+  have hz := boolPartition_pos m hne hα i w
+  rw [S1_powUtility_eq_normalize, PMF.normalize_apply, powWeight_eq_ofReal m hne hα,
+    tsum_powWeight_eq_ofReal m hne hα, ← ENNReal.ofReal_inv_of_pos (by exact_mod_cast hz),
+    ← ENNReal.ofReal_mul (by exact_mod_cast boolWeight_nonneg m α i w u), boolS1]
+  push_cast [div_eq_mul_inv]
+  ring_nf
+
+/-- Any finite family of Boolean-model speaker masses sums to the `ofReal` of
+the corresponding `boolS1` sum — the workhorse for pooled-latent reductions. -/
+theorem sum_S1_eq_ofReal {α : ℕ} [ViableSpeaker (powUtility α (L0OfBool m hne))]
+    (hα : α ≠ 0) {ι : Type*} (s : Finset ι) (st : ι → W × I) (uu : ι → U) :
+    (∑ x ∈ s, S1 (powUtility α (L0OfBool m hne)) (st x) (uu x))
+      = ENNReal.ofReal (∑ x ∈ s, boolS1 m α (st x).2 (st x).1 (uu x)) := by
+  rw [ENNReal.ofReal_sum_of_nonneg
+    (fun x _ => by exact_mod_cast boolS1_nonneg m α (st x).2 (st x).1 (uu x))]
+  exact Finset.sum_congr rfl fun x _ => S1_eq_ofReal m hne hα (st x).2 (st x).1 (uu x)
 
 end BoolModel
 
