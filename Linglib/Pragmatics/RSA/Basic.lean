@@ -152,6 +152,138 @@ theorem posterior_real_singleton_lt_iff {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 
 
 end ProbabilityTheory
 
+/-! ### Marginal evaluation on finite products -/
+
+namespace MeasureTheory.Measure
+
+variable {Ω Θ : Type*} [MeasurableSpace Ω] [MeasurableSpace Θ]
+  [MeasurableSingletonClass Ω] [MeasurableSingletonClass Θ]
+
+theorem fst_apply_singleton [Fintype Θ] (m : Measure (Ω × Θ)) (ω : Ω) :
+    m.fst {ω} = ∑ θ : Θ, m {(ω, θ)} := by
+  rw [Measure.fst_apply (.singleton ω),
+    show Prod.fst ⁻¹' ({ω} : Set Ω) = ↑(({ω} : Finset Ω) ×ˢ (Finset.univ : Finset Θ)) from by
+      ext ⟨a, θ⟩; simp [eq_comm],
+    ← sum_measure_singleton, Finset.sum_product, Finset.sum_singleton]
+
+theorem snd_apply_singleton [Fintype Ω] (m : Measure (Ω × Θ)) (θ : Θ) :
+    m.snd {θ} = ∑ ω : Ω, m {(ω, θ)} := by
+  rw [Measure.snd_apply (.singleton θ),
+    show Prod.snd ⁻¹' ({θ} : Set Θ) = ↑((Finset.univ : Finset Ω) ×ˢ ({θ} : Finset Θ)) from by
+      ext ⟨a, b⟩; simp [eq_comm],
+    ← sum_measure_singleton, Finset.sum_product]
+  exact Finset.sum_congr rfl fun ω _ => Finset.sum_singleton _ _
+
+end MeasureTheory.Measure
+
+/-! ### Posteriors from partially observed emissions
+
+For a kernel emitting a pair of which only the first component is observed —
+RSA's intention models, where the speaker chooses an (utterance, parse) pair
+and the listener hears only the utterance — the posterior over parameter and
+unobserved component is the conditional kernel of the reassociated joint:
+the same construction as `ProbabilityTheory.posterior` with a reassociation
+in place of the swap. -/
+
+namespace ProbabilityTheory
+
+variable {Ω 𝓧 Θ : Type*} [MeasurableSpace Ω] [MeasurableSpace 𝓧] [MeasurableSpace Θ]
+  [StandardBorelSpace Ω] [Nonempty Ω] [StandardBorelSpace Θ] [Nonempty Θ]
+  (κ : Kernel Ω (𝓧 × Θ)) (μ : Measure Ω) [IsFiniteMeasure μ] [IsFiniteKernel κ]
+
+omit [StandardBorelSpace Ω] [Nonempty Ω] [StandardBorelSpace Θ] [Nonempty Θ] in
+lemma measurable_emissionReassoc :
+    Measurable fun p : Ω × (𝓧 × Θ) => (p.2.1, (p.1, p.2.2)) :=
+  (measurable_fst.comp measurable_snd).prodMk
+    (measurable_fst.prodMk (measurable_snd.comp measurable_snd))
+
+/-- The joint distribution of observed component and (parameter, unobserved
+component). -/
+noncomputable def emissionJoint : Measure (𝓧 × (Ω × Θ)) :=
+  (μ ⊗ₘ κ).map fun p => (p.2.1, (p.1, p.2.2))
+
+instance : IsFiniteMeasure (emissionJoint κ μ) :=
+  inferInstanceAs (IsFiniteMeasure ((μ ⊗ₘ κ).map _))
+
+omit [StandardBorelSpace Ω] [Nonempty Ω] [StandardBorelSpace Θ] [Nonempty Θ] in
+/-- The observed component of the joint is distributed as the data marginal. -/
+theorem emissionJoint_fst : (emissionJoint κ μ).fst = ((κ ∘ₘ μ).map Prod.fst) := by
+  rw [emissionJoint, Measure.fst,
+    Measure.map_map measurable_fst measurable_emissionReassoc,
+    show (Prod.fst ∘ fun p : Ω × (𝓧 × Θ) => (p.2.1, (p.1, p.2.2)))
+      = Prod.fst ∘ Prod.snd from rfl,
+    ← Measure.map_map measurable_fst measurable_snd, ← Measure.snd,
+    Measure.snd_compProd]
+
+/-- Posterior over parameter and unobserved emission component, given the
+observed first component of a jointly emitted pair. -/
+noncomputable def emissionPosterior : Kernel 𝓧 (Ω × Θ) :=
+  (emissionJoint κ μ).condKernel
+
+instance : IsMarkovKernel (emissionPosterior κ μ) :=
+  inferInstanceAs (IsMarkovKernel (emissionJoint κ μ).condKernel)
+
+variable [MeasurableSingletonClass Ω] [MeasurableSingletonClass 𝓧]
+  [MeasurableSingletonClass Θ]
+
+/-- Exact Bayes for the emission posterior at a positive-mass observation. -/
+theorem emissionPosterior_apply_singleton {x : 𝓧}
+    (hx : ((κ ∘ₘ μ).map Prod.fst) {x} ≠ 0) (ω : Ω) (θ : Θ) :
+    emissionPosterior κ μ x {(ω, θ)}
+      = μ {ω} * κ ω {(x, θ)} / ((κ ∘ₘ μ).map Prod.fst) {x} := by
+  have hd := congrArg (fun m => m ({x} ×ˢ {(ω, θ)}))
+    ((emissionJoint κ μ).disintegrate (emissionJoint κ μ).condKernel)
+  beta_reduce at hd
+  rw [Measure.compProd_apply_prod (.singleton x) (.singleton (ω, θ)),
+    lintegral_singleton, emissionJoint_fst] at hd
+  unfold emissionJoint at hd
+  rw [Measure.map_apply measurable_emissionReassoc
+      ((MeasurableSet.singleton x).prod (.singleton (ω, θ))),
+    show (fun p : Ω × (𝓧 × Θ) => (p.2.1, (p.1, p.2.2))) ⁻¹' ({x} ×ˢ {(ω, θ)})
+        = {ω} ×ˢ {(x, θ)} from by
+      ext ⟨a, b, c⟩
+      simp only [Set.mem_preimage, Set.mem_prod, Set.mem_singleton_iff, Prod.ext_iff]
+      tauto,
+    Measure.compProd_apply_prod (.singleton ω) (.singleton (x, θ)),
+    lintegral_singleton] at hd
+  rw [emissionPosterior, ENNReal.eq_div_iff hx (measure_ne_top _ _), mul_comm]
+  unfold emissionJoint
+  rw [hd]
+  ring
+
+/-- Parameter preference under the emission posterior, on reals: the
+observation's marginal cancels, leaving prior-weighted pooled emissions. -/
+theorem emissionPosterior_fst_real_lt_iff [Fintype Θ] {x : 𝓧}
+    (hx : ((κ ∘ₘ μ).map Prod.fst) {x} ≠ 0) (ω₁ ω₂ : Ω) :
+    (emissionPosterior κ μ x).fst.real {ω₁} < (emissionPosterior κ μ x).fst.real {ω₂}
+      ↔ (∑ θ, μ {ω₁} * κ ω₁ {(x, θ)}) < ∑ θ, μ {ω₂} * κ ω₂ {(x, θ)} := by
+  have hne : ∀ ω, (∑ θ, μ {ω} * κ ω {(x, θ)}) ≠ ∞ := fun ω =>
+    ENNReal.sum_ne_top.mpr fun θ _ =>
+      ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)
+  rw [measureReal_def, measureReal_def, Measure.fst_apply_singleton,
+    Measure.fst_apply_singleton]
+  simp_rw [emissionPosterior_apply_singleton κ μ hx, div_eq_mul_inv]
+  rw [← Finset.sum_mul, ← Finset.sum_mul, ← div_eq_mul_inv, ← div_eq_mul_inv,
+    ENNReal.toReal_lt_toReal (ENNReal.div_ne_top (hne ω₁) hx) (ENNReal.div_ne_top (hne ω₂) hx),
+    ENNReal.div_lt_div_iff_left hx (measure_ne_top _ _)]
+
+/-- Unobserved-component preference under the emission posterior, on reals. -/
+theorem emissionPosterior_snd_real_lt_iff [Fintype Ω] {x : 𝓧}
+    (hx : ((κ ∘ₘ μ).map Prod.fst) {x} ≠ 0) (θ₁ θ₂ : Θ) :
+    (emissionPosterior κ μ x).snd.real {θ₁} < (emissionPosterior κ μ x).snd.real {θ₂}
+      ↔ (∑ ω, μ {ω} * κ ω {(x, θ₁)}) < ∑ ω, μ {ω} * κ ω {(x, θ₂)} := by
+  have hne : ∀ θ, (∑ ω, μ {ω} * κ ω {(x, θ)}) ≠ ∞ := fun θ =>
+    ENNReal.sum_ne_top.mpr fun ω _ =>
+      ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)
+  rw [measureReal_def, measureReal_def, Measure.snd_apply_singleton,
+    Measure.snd_apply_singleton]
+  simp_rw [emissionPosterior_apply_singleton κ μ hx, div_eq_mul_inv]
+  rw [← Finset.sum_mul, ← Finset.sum_mul, ← div_eq_mul_inv, ← div_eq_mul_inv,
+    ENNReal.toReal_lt_toReal (ENNReal.div_ne_top (hne θ₁) hx) (ENNReal.div_ne_top (hne θ₂) hx),
+    ENNReal.div_lt_div_iff_left hx (measure_ne_top _ _)]
+
+end ProbabilityTheory
+
 /-! ### The RSA pipeline -/
 
 namespace RSA
