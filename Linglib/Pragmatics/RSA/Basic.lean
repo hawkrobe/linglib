@@ -624,8 +624,8 @@ theorem sum_speaker_real_singleton_le_one (α : ℝ) (t : T) (S : Finset C) :
 
 omit [DecidableEq O] in
 /-- Competition: any other true choice caps a share strictly below one. -/
-theorem speaker_real_singleton_lt_one [DecidableEq C] {α : ℝ} (hα : 0 ≤ α) {t : T} (c : C) {c' : C}
-    (hne : c' ≠ c) (hmem' : t ∈ s.sem c') : (s.speaker α t).real {c} < 1 := by
+theorem speaker_real_singleton_lt_one [DecidableEq C] {α : ℝ} (hα : 0 ≤ α) {t : T}
+    {c c' : C} (hne : c' ≠ c) (hmem' : t ∈ s.sem c') : (s.speaker α t).real {c} < 1 := by
   have hsum := s.sum_speaker_real_singleton_le_one α t {c, c'}
   rw [Finset.sum_insert (by simpa using fun h => hne h.symm), Finset.sum_singleton] at hsum
   have hpos : 0 < (s.speaker α t).real {c'} :=
@@ -648,7 +648,8 @@ theorem speaker_real_singleton_lt_of_card_lt {α : ℝ} (hα : 0 < α) {t : T} {
       (Finset.single_le_sum (f := fun u => s.L0 u {t} ^ α) (fun u _ => zero_le)
         (Finset.mem_univ c)) h.le) zero_le)
   rw [speaker, speakerOf, Kernel.ofWeights_real_singleton_lt_iff t hZ0
-      (ENNReal.sum_ne_top.mpr fun u _ => weight_rpow_ne_top hα.le (s.L0_apply_singleton_le_one u t)),
+      (ENNReal.sum_ne_top.mpr fun u _ =>
+        weight_rpow_ne_top hα.le (s.L0_apply_singleton_le_one u t)),
     s.L0_apply_singleton, s.L0_apply_singleton, if_pos hmem, if_pos hmem']
   exact ENNReal.rpow_lt_rpow
     (ENNReal.inv_lt_inv.2 (by exact_mod_cast hcard)) hα
@@ -1086,7 +1087,7 @@ pools, leaving summed member speaker shares. Any member's true choice at
 either state supplies the positivity side condition. -/
 theorem familyListener_fst_real_lt_iff [Fintype L] (f : L → Scenario T C O) {α : ℝ}
     (hα : 0 ≤ α) (hμeq : ∀ p q : T × L, μ {p} = μ {q}) (hμ0 : ∀ p : T × L, μ {p} ≠ 0)
-    {c : C} {t₀ : T} {l₀ : L} (hmem : t₀ ∈ (f l₀).sem c) (t₁ t₂ : T) :
+    {c : C} {t₀ : T} {l₀ : L} (hmem : t₀ ∈ (f l₀).sem c) {t₁ t₂ : T} :
     ((familyListener f α μ) c).fst.real {t₁} < ((familyListener f α μ) c).fst.real {t₂}
       ↔ (∑ l, ((f l).speaker α t₁).real {c}) < ∑ l, ((f l).speaker α t₂).real {c} := by
   set p₀ : T × L := Classical.arbitrary _
@@ -1105,7 +1106,7 @@ theorem familyListener_fst_real_lt_iff [Fintype L] (f : L → Scenario T C O) {�
 states pool, leaving summed member speaker shares. -/
 theorem familyListener_snd_real_lt_iff (f : L → Scenario T C O) {α : ℝ}
     (hα : 0 ≤ α) (hμeq : ∀ p q : T × L, μ {p} = μ {q}) (hμ0 : ∀ p : T × L, μ {p} ≠ 0)
-    {c : C} {t₀ : T} {l₀ : L} (hmem : t₀ ∈ (f l₀).sem c) (l₁ l₂ : L) :
+    {c : C} {t₀ : T} {l₀ : L} (hmem : t₀ ∈ (f l₀).sem c) {l₁ l₂ : L} :
     ((familyListener f α μ) c).snd.real {l₁} < ((familyListener f α μ) c).snd.real {l₂}
       ↔ (∑ t, ((f l₁).speaker α t).real {c}) < ∑ t, ((f l₂).speaker α t).real {c} := by
   set p₀ : T × L := Classical.arbitrary _

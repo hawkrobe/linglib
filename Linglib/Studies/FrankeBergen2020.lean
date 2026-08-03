@@ -118,6 +118,12 @@ inductive ExhPosition where
 /-- A parse is the set of EXH insertion sites. -/
 abbrev Parse := Finset ExhPosition
 
+/-- The matrix-only parse M. -/
+def pM : Parse := {.matrix}
+
+/-- The outer-only parse O. -/
+def pO : Parse := {.outer}
+
 /-- Aristotelian quantifiers: the utterance vocabulary. -/
 inductive AristQuant where
   | none | some | all
@@ -337,7 +343,7 @@ theorem literal_eq_exh_none : ∀ (u : Utterance) (w : World),
 
 /-- ⟦SS⟧^M = {wNS} — the reading that "uniquely singles out this world
 state" (eq. 22) and drives GI's win; the matrix-alone case of `table1_ss`. -/
-theorem m_ss_singleton : ∀ w, exhMeaning {.matrix} .ss w ↔ w = wNS := by decide +kernel
+theorem m_ss_singleton : ∀ w, exhMeaning pM .ss w ↔ w = wNS := by decide +kernel
 
 /-- The matrix operator (eq. A2) is not Fox-style innocent exclusion
 ([fox-2007]): at MOI its strictly-stronger filter is empty and ⟦SS⟧^MOI keeps
@@ -497,11 +503,11 @@ noncomputable def perParsePrior : Measure (World × Parse) := uniformOn Set.univ
 instance : IsProbabilityMeasure perParsePrior :=
   inferInstanceAs (IsProbabilityMeasure (uniformOn _))
 
-private theorem perParsePrior_singleton_eq (p q : World × Parse) :
+theorem perParsePrior_singleton_eq (p q : World × Parse) :
     perParsePrior {p} = perParsePrior {q} := by
   simp [perParsePrior, uniformOn_univ]
 
-private theorem perParsePrior_singleton_ne_zero (s : World × Parse) :
+theorem perParsePrior_singleton_ne_zero (s : World × Parse) :
     perParsePrior {s} ≠ 0 := by
   rw [perParsePrior, uniformOn_univ, Measure.count_singleton]
   simp [ENNReal.mul_eq_top]
@@ -510,7 +516,6 @@ private theorem perParsePrior_singleton_ne_zero (s : World × Parse) :
 per-parse speaker over the joint (world, parse) state. -/
 noncomputable def perParseListener (α : ℝ) : Kernel Utterance (World × Parse) :=
   RSA.Scenario.familyListener readings α perParsePrior
-
 
 /-! ### The ten findings
 
@@ -563,21 +568,21 @@ uniquely identifies wNS, at the paper's illustrative α = 5 (eq. 22's regime).
 Pair choice drives this — see `perParse_ss_prefers_o` for the contrast.
 Evaluation register: as α → 0 the singleton reading's informativity advantage
 vanishes, so no α-free certificate exists. -/
-theorem ss_m_parse_pref : ∀ p : Parse, p ≠ {.matrix} →
+theorem ss_m_parse_pref : ∀ p : Parse, p ≠ pM →
     (gi.choicePosterior 5 prior .ss).real {(.ss, p)}
-      < (gi.choicePosterior 5 prior .ss).real {(.ss, {.matrix})} := by
-  have hnat : ∀ p : Parse, p ≠ {ExhPosition.matrix} →
+      < (gi.choicePosterior 5 prior .ss).real {(.ss, pM)} := by
+  have hnat : ∀ p : Parse, p ≠ pM →
       (∑ t : World, if t ∈ gi.sem (.ss, p) then
           (12 / (gi.sem (.ss, p)).card) ^ 5
             * ∏ t' ∈ Finset.univ.erase t, (gi.profile t').divPowSum 12 5
         else 0)
-        < ∑ t : World, if t ∈ gi.sem (.ss, ({.matrix} : Parse)) then
-          (12 / (gi.sem (.ss, ({.matrix} : Parse))).card) ^ 5
+        < ∑ t : World, if t ∈ gi.sem (.ss, pM) then
+          (12 / (gi.sem (.ss, pM)).card) ^ 5
             * ∏ t' ∈ Finset.univ.erase t, (gi.profile t').divPowSum 12 5
         else 0 := by decide +kernel
   exact fun p hp =>
-    gi.choicePosterior_real_lt_of_divPowSum (by decide +kernel) (by decide +kernel) (by decide +kernel)
-      prior_singleton_eq prior_singleton_ne_zero rfl rfl (hnat p hp)
+    gi.choicePosterior_real_lt_of_divPowSum (by decide +kernel) (by decide +kernel)
+      (by decide +kernel) prior_singleton_eq prior_singleton_ne_zero rfl rfl (hnat p hp)
 
 /-- Vanilla RSA hearing SS prefers wNA to wNS — the wrong prediction — for
 every rationality (cost-free; the direction reverses at the paper's fitted
@@ -625,11 +630,14 @@ theorem lu_ss_prefers_wNS {α : ℝ} (hα : 0 < α) :
     (luListener α .ss).fst.real {wNA} < (luListener α .ss).fst.real {wNS} := by
   rw [luListener, RSA.Scenario.familyListener_fst_real_lt_iff luFam hα.le
       luPrior_singleton_eq luPrior_singleton_ne_zero
-      (by decide +kernel : wNS ∈ (luFam .lit).sem .ss) wNA wNS,
+      (by decide +kernel : wNS ∈ (luFam .lit).sem .ss),
     show (Finset.univ : Finset LULex) = {.lit, .oi} from by decide +kernel,
-    Finset.sum_insert (by decide +kernel : LULex.lit ∉ ({.oi} : Finset LULex)), Finset.sum_singleton,
-    Finset.sum_insert (by decide +kernel : LULex.lit ∉ ({.oi} : Finset LULex)), Finset.sum_singleton,
-    (luFam .oi).speaker_real_singleton_eq_zero hα (by decide +kernel : wNA ∉ (luFam .oi).sem .ss),
+    Finset.sum_insert (by decide +kernel : LULex.lit ∉ ({.oi} : Finset LULex)),
+    Finset.sum_singleton,
+    Finset.sum_insert (by decide +kernel : LULex.lit ∉ ({.oi} : Finset LULex)),
+    Finset.sum_singleton,
+    (luFam .oi).speaker_real_singleton_eq_zero hα
+      (by decide +kernel : wNA ∉ (luFam .oi).sem .ss),
     (luFam .oi).speaker_real_singleton_of_profile_replicate hα
       (by decide +kernel : (luFam .oi).profile wNS = Multiset.replicate 3 3)
       (by decide +kernel : wNS ∈ (luFam .oi).sem .ss)]
@@ -638,11 +646,11 @@ theorem lu_ss_prefers_wNS {α : ℝ} (hα : 0 < α) :
     Finset.sum_insert (by decide +kernel : Utterance.sn ∉ ({.sa} : Finset Utterance)),
     Finset.sum_singleton] at hsum
   have hsn := (luFam .lit).speaker_real_singleton_lt_of_card_lt hα
-    (by decide +kernel : wNA ∈ (luFam .lit).sem .ss) (by decide +kernel : wNA ∈ (luFam .lit).sem .sn)
-    (by decide +kernel)
+    (by decide +kernel : wNA ∈ (luFam .lit).sem .ss)
+    (by decide +kernel : wNA ∈ (luFam .lit).sem .sn) (by decide +kernel)
   have hsa := (luFam .lit).speaker_real_singleton_lt_of_card_lt hα
-    (by decide +kernel : wNA ∈ (luFam .lit).sem .ss) (by decide +kernel : wNA ∈ (luFam .lit).sem .sa)
-    (by decide +kernel)
+    (by decide +kernel : wNA ∈ (luFam .lit).sem .ss)
+    (by decide +kernel : wNA ∈ (luFam .lit).sem .sa) (by decide +kernel)
   have hpos : (0 : ℝ) ≤ ((luFam .lit).speaker α wNS).real {Utterance.ss} :=
     measureReal_nonneg
   linarith
@@ -659,37 +667,32 @@ reading ⟦SS⟧^M that the pooled speaker exploits in `ss_m_parse_pref`; with
 `RSA.Scenario.pool_L0` (identical weights), the pair locates GI's win purely
 in the position of the latent parameter (pp. e85–e86). -/
 theorem perParse_ss_prefers_o {α : ℝ} (hα : 0 < α) :
-    (perParseListener α .ss).snd.real {({.matrix} : Parse)}
-      < (perParseListener α .ss).snd.real {({.outer} : Parse)} := by
-  have hM0 : ∀ w : World, w ≠ wNS → w ∉ (readings {ExhPosition.matrix}).sem .ss := by decide +kernel
+    (perParseListener α .ss).snd.real {pM} < (perParseListener α .ss).snd.real {pO} := by
   have hOprof : ∀ w ∈ ({wNS, wNA, wNSA} : Finset World),
-      (readings {ExhPosition.outer}).profile w = Multiset.replicate 3 3 := by decide +kernel
+      (readings pO).profile w = Multiset.replicate 3 3 := by decide +kernel
   have hOmem : ∀ w ∈ ({wNS, wNA, wNSA} : Finset World),
-      w ∈ (readings {ExhPosition.outer}).sem .ss := by decide +kernel
+      w ∈ (readings pO).sem .ss := by decide +kernel
   rw [perParseListener, RSA.Scenario.familyListener_snd_real_lt_iff readings hα.le
       perParsePrior_singleton_eq perParsePrior_singleton_ne_zero
-      (by decide +kernel : wNS ∈ (readings {ExhPosition.matrix}).sem .ss)
-      ({.matrix} : Parse) ({.outer} : Parse)]
-  calc (∑ w : World, ((readings {ExhPosition.matrix}).speaker α w).real {Utterance.ss})
-      = ((readings {ExhPosition.matrix}).speaker α wNS).real {Utterance.ss} :=
+      (mem_ext.mpr ((m_ss_singleton wNS).mpr rfl))]
+  calc (∑ w : World, ((readings pM).speaker α w).real {.ss})
+      = ((readings pM).speaker α wNS).real {.ss} :=
         Finset.sum_eq_single_of_mem wNS (Finset.mem_univ _) fun w _ hw =>
-          (readings {ExhPosition.matrix}).speaker_real_singleton_eq_zero hα (hM0 w hw)
+          (readings pM).speaker_real_singleton_eq_zero hα fun hmem =>
+            hw ((m_ss_singleton w).mp (mem_ext.mp hmem))
     _ < 1 :=
-        (readings {ExhPosition.matrix}).speaker_real_singleton_lt_one hα.le Utterance.ss
-          (by decide +kernel : Utterance.sn ≠ Utterance.ss)
-          (by decide +kernel : wNS ∈ (readings {ExhPosition.matrix}).sem .sn)
-    _ = ∑ w ∈ ({wNS, wNA, wNSA} : Finset World), (3⁻¹ : ℝ) := by
-        rw [Finset.sum_const,
+        (readings pM).speaker_real_singleton_lt_one hα.le
+          (nofun : Utterance.sn ≠ Utterance.ss)
+          (by decide +kernel : wNS ∈ (readings pM).sem .sn)
+    _ = ∑ w ∈ ({wNS, wNA, wNSA} : Finset World),
+          ((readings pO).speaker α w).real {.ss} := by
+        rw [Finset.sum_eq_card_nsmul fun w hw =>
+            (readings pO).speaker_real_singleton_of_profile_replicate hα
+              (hOprof w hw) (hOmem w hw),
           show ({wNS, wNA, wNSA} : Finset World).card = 3 from by decide +kernel]
         norm_num
-    _ = ∑ w ∈ ({wNS, wNA, wNSA} : Finset World),
-          ((readings {ExhPosition.outer}).speaker α w).real {Utterance.ss} :=
-        Finset.sum_congr rfl fun w hw =>
-          ((readings {ExhPosition.outer}).speaker_real_singleton_of_profile_replicate hα
-            (hOprof w hw) (hOmem w hw)).symm
-    _ ≤ ∑ w : World, ((readings {ExhPosition.outer}).speaker α w).real {Utterance.ss} :=
+    _ ≤ ∑ w : World, ((readings pO).speaker α w).real {.ss} :=
         Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_univ _)
           fun w _ _ => measureReal_nonneg
-
 
 end FrankeBergen2020
