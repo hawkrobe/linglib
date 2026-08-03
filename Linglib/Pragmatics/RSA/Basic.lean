@@ -138,17 +138,46 @@ theorem posterior_apply_singleton {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0) (ω
   ring
 
 /-- Pragmatic-listener preference on reals reduces to comparing
-prior-weighted speaker masses; the observation's marginal cancels. -/
+prior-weighted speaker masses on reals; the observation's marginal cancels. -/
 theorem posterior_real_singleton_lt_iff {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0)
     (ω₁ ω₂ : Ω) :
     ((κ†μ) x).real {ω₁} < ((κ†μ) x).real {ω₂}
-      ↔ μ {ω₁} * κ ω₁ {x} < μ {ω₂} * κ ω₂ {x} := by
+      ↔ μ.real {ω₁} * (κ ω₁).real {x} < μ.real {ω₂} * (κ ω₂).real {x} := by
   rw [measureReal_def, measureReal_def, posterior_apply_singleton κ μ hx,
     posterior_apply_singleton κ μ hx,
     ENNReal.toReal_lt_toReal
       (ENNReal.div_ne_top (ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)) hx)
       (ENNReal.div_ne_top (ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)) hx),
-    ENNReal.div_lt_div_iff_left hx (measure_ne_top _ _)]
+    ENNReal.div_lt_div_iff_left hx (measure_ne_top _ _),
+    ← ENNReal.toReal_lt_toReal
+      (ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _))
+      (ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)),
+    ENNReal.toReal_mul, ENNReal.toReal_mul]
+  exact Iff.rfl
+
+/-- A single state of positive prior mass and positive emission witnesses a
+positive observation marginal. -/
+theorem comp_apply_singleton_ne_zero {Ω' 𝓧' : Type*} [MeasurableSpace Ω']
+    [MeasurableSpace 𝓧'] [MeasurableSingletonClass 𝓧'] (κ : Kernel Ω' 𝓧')
+    (μ : Measure Ω') {w : Ω'} {x : 𝓧'} (hμ : μ {w} ≠ 0) (hκ : κ w {x} ≠ 0) :
+    (κ ∘ₘ μ) {x} ≠ 0 := by
+  rw [Measure.bind_apply (.singleton x) (Kernel.aemeasurable _),
+    ← pos_iff_ne_zero, lintegral_pos_iff_support (Kernel.measurable_coe _ (.singleton x))]
+  exact lt_of_lt_of_le (pos_iff_ne_zero.mpr hμ)
+    (measure_mono (Set.singleton_subset_iff.mpr hκ))
+
+/-- Witness form of the observation-marginal positivity for pair emissions:
+one state with positive prior mass and positive mass on one (observed,
+latent) pair. -/
+theorem map_fst_comp_apply_singleton_ne_zero {Ω' 𝓧' Θ' : Type*}
+    [MeasurableSpace Ω'] [MeasurableSpace 𝓧'] [MeasurableSpace Θ']
+    [MeasurableSingletonClass 𝓧'] [MeasurableSingletonClass Θ']
+    (κ : Kernel Ω' (𝓧' × Θ')) (μ : Measure Ω') {w : Ω'} {x : 𝓧'} {θ : Θ'}
+    (hμ : μ {w} ≠ 0) (hκ : κ w {(x, θ)} ≠ 0) :
+    ((κ ∘ₘ μ).map Prod.fst) {x} ≠ 0 := by
+  rw [Measure.map_apply measurable_fst (.singleton x)]
+  refine fun h => comp_apply_singleton_ne_zero κ μ hμ hκ (measure_mono_null ?_ h)
+  exact Set.singleton_subset_iff.mpr rfl
 
 end ProbabilityTheory
 
@@ -175,6 +204,61 @@ theorem snd_apply_singleton [Fintype Ω] (m : Measure (Ω × Θ)) (θ : Θ) :
   exact Finset.sum_congr rfl fun ω _ => Finset.sum_singleton _ _
 
 end MeasureTheory.Measure
+
+/-! ### Uniform priors on reals -/
+
+namespace MeasureTheory
+
+variable {W : Type*} [MeasurableSpace W] [MeasurableSingletonClass W] [Fintype W]
+
+theorem uniformOn_univ_real_singleton (w : W) :
+    (uniformOn (Set.univ : Set W)).real {w} = (Fintype.card W : ℝ)⁻¹ := by
+  rw [measureReal_def, uniformOn_univ, Measure.count_singleton, one_div,
+    ENNReal.toReal_inv, ENNReal.toReal_natCast]
+
+theorem uniformOn_univ_real_coe_finset (s : Finset W) :
+    (uniformOn (Set.univ : Set W)).real ↑s = s.card / Fintype.card W := by
+  rw [measureReal_def, uniformOn_univ, Measure.count_apply_finset, ENNReal.toReal_div,
+    ENNReal.toReal_natCast, ENNReal.toReal_natCast]
+
+end MeasureTheory
+
+/-! ### Marginal listener preference over product parameter spaces -/
+
+namespace ProbabilityTheory
+
+variable {𝓧 : Type*} [MeasurableSpace 𝓧] [MeasurableSingletonClass 𝓧]
+
+/-- Marginal listener preference over a product parameter space, on reals:
+for latent-in-the-state models, the observation's marginal cancels and the
+latent pools. -/
+theorem posterior_fst_real_lt_iff {A B : Type*} [MeasurableSpace A] [MeasurableSpace B]
+    [MeasurableSingletonClass A] [MeasurableSingletonClass B] [Fintype B]
+    [StandardBorelSpace A] [Nonempty A] [StandardBorelSpace B] [Nonempty B]
+    (κ : Kernel (A × B) 𝓧) (μ : Measure (A × B)) [IsFiniteMeasure μ] [IsFiniteKernel κ]
+    {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0) (a₁ a₂ : A) :
+    ((κ†μ) x).fst.real {a₁} < ((κ†μ) x).fst.real {a₂}
+      ↔ (∑ b, μ.real {(a₁, b)} * (κ (a₁, b)).real {x})
+          < ∑ b, μ.real {(a₂, b)} * (κ (a₂, b)).real {x} := by
+  have hne : ∀ a : A, (∑ b, μ {(a, b)} * κ (a, b) {x}) ≠ ∞ := fun a =>
+    ENNReal.sum_ne_top.mpr fun b _ =>
+      ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)
+  rw [measureReal_def, measureReal_def, Measure.fst_apply_singleton,
+    Measure.fst_apply_singleton]
+  simp_rw [posterior_apply_singleton κ μ hx, div_eq_mul_inv]
+  rw [← Finset.sum_mul, ← Finset.sum_mul, ← div_eq_mul_inv, ← div_eq_mul_inv,
+    ENNReal.toReal_lt_toReal (ENNReal.div_ne_top (hne a₁) hx)
+      (ENNReal.div_ne_top (hne a₂) hx),
+    ENNReal.div_lt_div_iff_left hx (measure_ne_top _ _),
+    ← ENNReal.toReal_lt_toReal (hne a₁) (hne a₂),
+    ENNReal.toReal_sum (fun b _ =>
+      ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)),
+    ENNReal.toReal_sum (fun b _ =>
+      ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _))]
+  simp_rw [ENNReal.toReal_mul]
+  exact Iff.rfl
+
+end ProbabilityTheory
 
 /-! ### Joint posteriors from partially observed pairs
 
@@ -259,7 +343,8 @@ observation's marginal cancels, leaving prior-weighted pooled pair masses. -/
 theorem jointPosterior_fst_real_lt_iff [Fintype Θ] {x : 𝓧}
     (hx : ((κ ∘ₘ μ).map Prod.fst) {x} ≠ 0) (ω₁ ω₂ : Ω) :
     (jointPosterior κ μ x).fst.real {ω₁} < (jointPosterior κ μ x).fst.real {ω₂}
-      ↔ (∑ θ, μ {ω₁} * κ ω₁ {(x, θ)}) < ∑ θ, μ {ω₂} * κ ω₂ {(x, θ)} := by
+      ↔ (∑ θ, μ.real {ω₁} * (κ ω₁).real {(x, θ)})
+          < ∑ θ, μ.real {ω₂} * (κ ω₂).real {(x, θ)} := by
   have hne : ∀ ω, (∑ θ, μ {ω} * κ ω {(x, θ)}) ≠ ∞ := fun ω =>
     ENNReal.sum_ne_top.mpr fun θ _ =>
       ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)
@@ -268,13 +353,21 @@ theorem jointPosterior_fst_real_lt_iff [Fintype Θ] {x : 𝓧}
   simp_rw [jointPosterior_apply_singleton κ μ hx, div_eq_mul_inv]
   rw [← Finset.sum_mul, ← Finset.sum_mul, ← div_eq_mul_inv, ← div_eq_mul_inv,
     ENNReal.toReal_lt_toReal (ENNReal.div_ne_top (hne ω₁) hx) (ENNReal.div_ne_top (hne ω₂) hx),
-    ENNReal.div_lt_div_iff_left hx (measure_ne_top _ _)]
+    ENNReal.div_lt_div_iff_left hx (measure_ne_top _ _),
+    ← ENNReal.toReal_lt_toReal (hne ω₁) (hne ω₂),
+    ENNReal.toReal_sum (fun θ _ =>
+      ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)),
+    ENNReal.toReal_sum (fun θ _ =>
+      ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _))]
+  simp_rw [ENNReal.toReal_mul]
+  exact Iff.rfl
 
 /-- Latent preference under the joint posterior, on reals. -/
 theorem jointPosterior_snd_real_lt_iff [Fintype Ω] {x : 𝓧}
     (hx : ((κ ∘ₘ μ).map Prod.fst) {x} ≠ 0) (θ₁ θ₂ : Θ) :
     (jointPosterior κ μ x).snd.real {θ₁} < (jointPosterior κ μ x).snd.real {θ₂}
-      ↔ (∑ ω, μ {ω} * κ ω {(x, θ₁)}) < ∑ ω, μ {ω} * κ ω {(x, θ₂)} := by
+      ↔ (∑ ω, μ.real {ω} * (κ ω).real {(x, θ₁)})
+          < ∑ ω, μ.real {ω} * (κ ω).real {(x, θ₂)} := by
   have hne : ∀ θ, (∑ ω, μ {ω} * κ ω {(x, θ)}) ≠ ∞ := fun θ =>
     ENNReal.sum_ne_top.mpr fun ω _ =>
       ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)
@@ -283,7 +376,14 @@ theorem jointPosterior_snd_real_lt_iff [Fintype Ω] {x : 𝓧}
   simp_rw [jointPosterior_apply_singleton κ μ hx, div_eq_mul_inv]
   rw [← Finset.sum_mul, ← Finset.sum_mul, ← div_eq_mul_inv, ← div_eq_mul_inv,
     ENNReal.toReal_lt_toReal (ENNReal.div_ne_top (hne θ₁) hx) (ENNReal.div_ne_top (hne θ₂) hx),
-    ENNReal.div_lt_div_iff_left hx (measure_ne_top _ _)]
+    ENNReal.div_lt_div_iff_left hx (measure_ne_top _ _),
+    ← ENNReal.toReal_lt_toReal (hne θ₁) (hne θ₂),
+    ENNReal.toReal_sum (fun ω _ =>
+      ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)),
+    ENNReal.toReal_sum (fun ω _ =>
+      ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _))]
+  simp_rw [ENNReal.toReal_mul]
+  exact Iff.rfl
 
 end ProbabilityTheory
 
@@ -361,6 +461,80 @@ study instantiates. -/
 theorem exp_mul_utility_zero (α : ℝ) (L0 : Kernel U W) (w : W) (u : U) :
     ((α : EReal) * utility L0 (fun _ => 0) w u).exp = L0 u {w} ^ α := by
   rw [utility, EReal.coe_zero, sub_zero, ← ENNReal.log_rpow, ENNReal.exp_log]
+
+/-- The literal listener never takes the value `⊤`: a null extension nulls
+the numerator too. -/
+theorem literalListener_apply_ne_top (μ : Measure W) [IsFiniteMeasure μ]
+    (sem : U → Set W) (u : U) (t : Set W) :
+    literalListener μ sem u t ≠ ∞ := by
+  rw [literalListener_apply]
+  rcases eq_or_ne (μ (sem u)) 0 with h | h
+  · rw [measure_mono_null Set.inter_subset_left h, mul_zero]
+    exact ENNReal.zero_ne_top
+  · exact ENNReal.mul_ne_top (ENNReal.inv_ne_top.mpr h) (measure_ne_top _ _)
+
+/-- The literal listener on reals: the renormalized prior. -/
+theorem literalListener_real_singleton_of_mem (μ : Measure W) [IsFiniteMeasure μ]
+    {sem : U → Set W} {u : U} {w : W} (h : w ∈ sem u) :
+    (literalListener μ sem u).real {w} = μ.real {w} / μ.real (sem u) := by
+  rw [measureReal_def, literalListener_apply_singleton_of_mem μ sem h,
+    ENNReal.toReal_mul, ENNReal.toReal_inv, measureReal_def, measureReal_def,
+    inv_mul_eq_div]
+
+theorem literalListener_real_singleton_of_not_mem (μ : Measure W)
+    {sem : U → Set W} {u : U} {w : W} (h : w ∉ sem u) :
+    (literalListener μ sem u).real {w} = 0 := by
+  rw [measureReal_def, literalListener_apply_singleton_of_not_mem μ sem h,
+    ENNReal.toReal_zero]
+
+/-- A member of a finite-mass extension with positive prior mass has positive
+literal-listener mass. -/
+theorem literalListener_apply_singleton_ne_zero (μ : Measure W) [IsFiniteMeasure μ]
+    {sem : U → Set W} {u : U} {w : W} (h : w ∈ sem u) (hw : μ {w} ≠ 0) :
+    literalListener μ sem u {w} ≠ 0 := by
+  rw [literalListener_apply_singleton_of_mem μ sem h]
+  exact mul_ne_zero (ENNReal.inv_ne_zero.mpr (measure_ne_top _ _)) hw
+
+/-- `(α : EReal) * ENNReal.log x` is bounded above for nonnegative real `α`
+and `x ≠ ⊤` (migrating here from the PMF softmax stack). -/
+theorem coe_mul_log_ne_top {α : ℝ} (hα : 0 ≤ α) {x : ℝ≥0∞} (hx : x ≠ ⊤) :
+    ((α : EReal) * ENNReal.log x) ≠ ⊤ := by
+  rw [EReal.mul_ne_top]
+  exact ⟨Or.inl (EReal.coe_ne_bot _), Or.inl (EReal.coe_nonneg.mpr hα),
+    Or.inl (EReal.coe_ne_top _), Or.inr fun h => hx (ENNReal.log_eq_top_iff.mp h)⟩
+
+/-- `(α : EReal) * ENNReal.log x` is bounded below for nonnegative real `α`
+and `x ≠ 0`. -/
+theorem coe_mul_log_ne_bot {α : ℝ} (hα : 0 ≤ α) {x : ℝ≥0∞} (hx : x ≠ 0) :
+    ((α : EReal) * ENNReal.log x) ≠ ⊥ := by
+  rw [EReal.mul_ne_bot]
+  exact ⟨Or.inl (EReal.coe_ne_bot _), Or.inr fun h => hx (ENNReal.log_eq_bot_iff.mp h),
+    Or.inl (EReal.coe_ne_top _), Or.inl (EReal.coe_nonneg.mpr hα)⟩
+
+omit [MeasurableSingletonClass U] in
+/-- The cost-free informativity speaker is Markov given a nonnegative
+rationality, finite literal-listener values, and an applicable utterance per
+world. -/
+theorem isMarkovKernel_speaker_utility_zero {α : ℝ} (hα : 0 ≤ α) {L0 : Kernel U W}
+    (htop : ∀ u w, L0 u {w} ≠ ∞) (hwit : ∀ w, ∃ u, L0 u {w} ≠ 0) :
+    IsMarkovKernel (speaker α (utility L0 fun _ => 0)) := by
+  refine isMarkovKernel_speaker (fun w u => ?_) fun w => (hwit w).imp fun u hu => ?_
+  · rw [utility, EReal.coe_zero, sub_zero]
+    exact coe_mul_log_ne_top hα (htop u w)
+  · rw [utility, EReal.coe_zero, sub_zero]
+    exact coe_mul_log_ne_bot hα hu
+
+/-- The cost-free informativity speaker on reals: normalized powers of the
+literal listener. -/
+theorem speaker_utility_zero_real_singleton {α : ℝ} (hα : 0 ≤ α) (L0 : Kernel U W)
+    {w : W} (htop : ∀ u', L0 u' {w} ≠ ∞) (u : U) :
+    (speaker α (utility L0 fun _ => 0) w).real {u}
+      = (L0 u {w}).toReal ^ α / ∑ u', (L0 u' {w}).toReal ^ α := by
+  rw [measureReal_def, speaker_apply_singleton]
+  simp_rw [exp_mul_utility_zero]
+  rw [ENNReal.toReal_div,
+    ENNReal.toReal_sum fun u' _ => ENNReal.rpow_ne_top_of_nonneg hα (htop u')]
+  simp_rw [ENNReal.toReal_rpow]
 
 /-- Speaker preference on reals is utility comparison (eq. 2's softmax is
 strictly monotone; the partition function cancels). -/
