@@ -31,7 +31,7 @@ reading ⟦SS⟧^M = {wNS} "uniquely singles out this world state" (eq. 22,
 model comparison (posterior 0.956 vs LI 0.033, LU 0.01, vanilla 0; Table 2).
 The M-advantage exists *because* the pooled speaker normalizes over pairs:
 under the per-parse normalization the paper rejects (p. e85), O beats M at
-every rationality (`perParse_ss_o_beats_m`). LI and LU still derive the
+every rationality (`perParse_ss_prefers_o`). LI and LU still derive the
 embedded enrichments (`li_ss_outer_exh`, `li_ss_prefers_wNS`,
 `lu_ss_prefers_wNS`).
 
@@ -40,7 +40,7 @@ embedded enrichments (`li_ss_outer_exh`, `li_ss_prefers_wNS`,
 * `table1_*` — the paper's Table 1, one lemma per row, including NN's
   distinct matrix row (fn. 7) from the `none ~ not all` lexical alternative
   ([levinson-2000]).
-* `ss_m_parse_pref` vs `perParse_ss_o_beats_m` — the architectural headline:
+* `ss_m_parse_pref` vs `perParse_ss_prefers_o` — the architectural headline:
   pooled (utterance, parse) choice peaks at M (α = 5), per-parse
   normalization prefers O for every rationality. With
   `RSA.Scenario.pool_L0` (identical weights), the pair locates GI's win
@@ -95,15 +95,15 @@ instance (t : AlienType) (w : World) : Decidable (t ∈ w) :=
 /-- The world with only N-type aliens (each drank none). -/
 def wN : World := ⟨{.none}, Finset.singleton_nonempty _⟩
 /-- The world with N-type and S-type aliens. -/
-def wNS : World := ⟨{.none, .someNotAll}, by decide⟩
+def wNS : World := ⟨{.none, .someNotAll}, by decide +kernel⟩
 /-- The world with N-type and A-type aliens. -/
-def wNA : World := ⟨{.none, .all}, by decide⟩
+def wNA : World := ⟨{.none, .all}, by decide +kernel⟩
 /-- The world with all three alien types. -/
-def wNSA : World := ⟨{.none, .someNotAll, .all}, by decide⟩
+def wNSA : World := ⟨{.none, .someNotAll, .all}, by decide +kernel⟩
 /-- The world with only S-type aliens (each drank some but not all). -/
 def wS : World := ⟨{.someNotAll}, Finset.singleton_nonempty _⟩
 /-- The world with S-type and A-type aliens. -/
-def wSA : World := ⟨{.someNotAll, .all}, by decide⟩
+def wSA : World := ⟨{.someNotAll, .all}, by decide +kernel⟩
 /-- The world with only A-type aliens (each drank all). -/
 def wA : World := ⟨{.all}, Finset.singleton_nonempty _⟩
 
@@ -285,23 +285,23 @@ the world's alien-type set, not a truth vector. -/
 /-- Table 1, NN: no N-types; matrix parses additionally negate "none drank
 not all" (= {wA}) — the fn. 7 reading from the `none ~ not all` alternative. -/
 theorem table1_nn : ∀ (p : Parse) (w : World),
-    exhMeaning p .nn w ↔ (.none ∉ w ∧ (.matrix ∈ p → w ≠ wA)) := by decide
+    exhMeaning p .nn w ↔ (.none ∉ w ∧ (.matrix ∈ p → w ≠ wA)) := by decide +kernel
 
 /-- Table 1, NS: only wN literally; inner EXH weakens to the S-free worlds,
 whereupon matrix EXH negates the sentence's own now-stronger literal {wN}. -/
 theorem table1_ns : ∀ (p : Parse) (w : World),
     exhMeaning p .ns w ↔
       if .inner ∈ p then .someNotAll ∉ w ∧ (.matrix ∈ p → w ≠ wN)
-      else w = wN := by decide
+      else w = wN := by decide +kernel
 
 /-- Table 1, NA: no A-types; matrix EXH negates the stronger NS = {wN}. -/
 theorem table1_na : ∀ (p : Parse) (w : World),
-    exhMeaning p .na w ↔ (.all ∉ w ∧ (.matrix ∈ p → w ≠ wN)) := by decide
+    exhMeaning p .na w ↔ (.all ∉ w ∧ (.matrix ∈ p → w ≠ wN)) := by decide +kernel
 
 /-- Table 1, SN: an N-type exists; outer or matrix EXH negates AN = {wN}. -/
 theorem table1_sn : ∀ (p : Parse) (w : World),
     exhMeaning p .sn w ↔
-      (.none ∈ w ∧ (.outer ∈ p ∨ .matrix ∈ p → w ≠ wN)) := by decide
+      (.none ∈ w ∧ (.outer ∈ p ∨ .matrix ∈ p → w ≠ wN)) := by decide +kernel
 
 /-- Table 1, SS: the five row-groups — literal; inner EXH requires an S-type
 (matrix then vacuous); adding outer EXH excludes wS; outer alone keeps mixed
@@ -311,33 +311,33 @@ theorem table1_ss : ∀ (p : Parse) (w : World),
       if .inner ∈ p then .someNotAll ∈ w ∧ (.outer ∈ p → w ≠ wS)
       else if .outer ∈ p then .none ∈ w ∧ w ≠ wN
       else if .matrix ∈ p then w = wNS
-      else w ≠ wN := by decide
+      else w ≠ wN := by decide +kernel
 
 /-- Table 1, SA: an A-type exists; outer or matrix EXH excludes wA. -/
 theorem table1_sa : ∀ (p : Parse) (w : World),
     exhMeaning p .sa w ↔
-      (.all ∈ w ∧ (.outer ∈ p ∨ .matrix ∈ p → w ≠ wA)) := by decide
+      (.all ∈ w ∧ (.outer ∈ p ∨ .matrix ∈ p → w ≠ wA)) := by decide +kernel
 
 /-- Table 1, AN: only wN, under every parse. -/
-theorem table1_an : ∀ (p : Parse) (w : World), exhMeaning p .an w ↔ w = wN := by decide
+theorem table1_an : ∀ (p : Parse) (w : World), exhMeaning p .an w ↔ w = wN := by decide +kernel
 
 /-- Table 1, AS: no N-types; inner EXH pins wS; matrix EXH without inner
 negates AA, excluding wA. -/
 theorem table1_as : ∀ (p : Parse) (w : World),
     exhMeaning p .as w ↔
       if .inner ∈ p then w = wS
-      else .none ∉ w ∧ (.matrix ∈ p → w ≠ wA) := by decide
+      else .none ∉ w ∧ (.matrix ∈ p → w ≠ wA) := by decide +kernel
 
 /-- Table 1, AA: only wA, under every parse. -/
-theorem table1_aa : ∀ (p : Parse) (w : World), exhMeaning p .aa w ↔ w = wA := by decide
+theorem table1_aa : ∀ (p : Parse) (w : World), exhMeaning p .aa w ↔ w = wA := by decide +kernel
 
 /-- Literal meaning is the empty parse's exhaustified meaning. -/
 theorem literal_eq_exh_none : ∀ (u : Utterance) (w : World),
-    literalMeaning u w ↔ exhMeaning ∅ u w := by decide
+    literalMeaning u w ↔ exhMeaning ∅ u w := by decide +kernel
 
 /-- ⟦SS⟧^M = {wNS} — the reading that "uniquely singles out this world
 state" (eq. 22) and drives GI's win; the matrix-alone case of `table1_ss`. -/
-theorem m_ss_singleton : ∀ w, exhMeaning {.matrix} .ss w ↔ w = wNS := by decide
+theorem m_ss_singleton : ∀ w, exhMeaning {.matrix} .ss w ↔ w = wNS := by decide +kernel
 
 /-- The matrix operator (eq. A2) is not Fox-style innocent exclusion
 ([fox-2007]): at MOI its strictly-stronger filter is empty and ⟦SS⟧^MOI keeps
@@ -349,7 +349,7 @@ theorem moi_ss_ne_innocent_exclusion :
             ((matrixAlts .ss).map fun a w => decide (altLiteral a w)))
           (Exhaustification.predToFinset
             fun w => decide (exhMeaning {.outer, .inner} .ss w)) :=
-  ⟨by decide, by decide⟩
+  ⟨by decide +kernel, by decide +kernel⟩
 
 /-! ### Latent spaces -/
 
@@ -379,10 +379,10 @@ def LIParse.toParse : LIParse → Parse
   | .oi => {.outer, .inner}
 
 /-- LI cannot access matrix EXH: no LI parse includes M. -/
-theorem li_excludes_matrix : ∀ l : LIParse, .matrix ∉ l.toParse := by decide
+theorem li_excludes_matrix : ∀ l : LIParse, .matrix ∉ l.toParse := by decide +kernel
 
 /-- LU cannot access matrix EXH: neither lexicon includes M. -/
-theorem lu_excludes_matrix : ∀ l : LULex, .matrix ∉ l.toParse := by decide
+theorem lu_excludes_matrix : ∀ l : LULex, .matrix ∉ l.toParse := by decide +kernel
 
 /-! ### Measurable structure -/
 
@@ -429,7 +429,7 @@ theorem prior_singleton_ne_zero (w : World) : prior {w} ≠ 0 := by
   simp
 
 /-- Every `(world, parse)` state has a true utterance. -/
-theorem exists_true : ∀ (w : World) (p : Parse), ∃ u, exhMeaning p u w := by decide
+theorem exists_true : ∀ (w : World) (p : Parse), ∃ u, exhMeaning p u w := by decide +kernel
 
 /-! ### The models as combinators over one reading family
 
@@ -440,7 +440,7 @@ space — the speaker *chooses* the parse — while LU (eq. 11) fixes the lexico
 as a speaker argument (`RSA.Scenario.familySpeaker`). By
 `RSA.Scenario.pool_L0` the weights agree, so the models differ *only* in the
 position of the latent parameter (p. e86); `ss_m_parse_pref` against
-`perParse_ss_o_beats_m` below turns that difference into diverging
+`perParse_ss_prefers_o` below turns that difference into diverging
 predictions. Rationality is a parameter of the derived kernels, and findings
 quantify over it wherever the paper's argument does. -/
 
@@ -528,9 +528,9 @@ register — the domination certificate provably fails here (wNSA's SS-fiber is
 not stochastically dominated), and the preference degenerates as α → 0. -/
 theorem ss_inner_exh :
     (gi.listener 5 prior .ss).real {wNSA} < (gi.listener 5 prior .ss).real {wNS} :=
-  gi.listener_real_lt_of_divPowSum (k := 5) (D := 12) (by decide) (by decide)
+  gi.listener_real_lt_of_divPowSum (k := 5) (D := 12) (by decide +kernel) (by decide +kernel)
     (prior_singleton_eq wNSA wNS) (prior_singleton_ne_zero wNS)
-    (by decide) (by decide) (by decide)
+    (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
 set_option maxRecDepth 1024 in
 /-- SS exhaustifies the outer quantifier for every rationality: hearing SS,
@@ -538,7 +538,7 @@ the listener prefers wNS to wS. Certificate register. -/
 theorem ss_outer_exh {α : ℝ} (hα : 0 < α) :
     (gi.listener α prior .ss).real {wS} < (gi.listener α prior .ss).real {wNS} :=
   gi.listener_real_lt_of_prodMul_strictDominates hα (prior_singleton_eq wS wNS)
-    (prior_singleton_ne_zero wNS) (by decide)
+    (prior_singleton_ne_zero wNS) (by decide +kernel)
 
 set_option maxRecDepth 1024 in
 /-- AA identifies the unique world where all aliens drank all, for every
@@ -548,7 +548,7 @@ certificate register. -/
 theorem aa_identifies {α : ℝ} (hα : 0 < α) :
     (gi.listener α prior .aa).real {wSA} < (gi.listener α prior .aa).real {wA} :=
   gi.listener_real_lt_of_prodMul_strictDominates hα (prior_singleton_eq wSA wA)
-    (prior_singleton_ne_zero wA) (by decide)
+    (prior_singleton_ne_zero wA) (by decide +kernel)
 
 set_option maxRecDepth 1024 in
 /-- AS exhaustifies the inner quantifier for every rationality: hearing AS,
@@ -556,11 +556,11 @@ the listener prefers wS to wA. Certificate register. -/
 theorem as_inner_exh {α : ℝ} (hα : 0 < α) :
     (gi.listener α prior .as).real {wA} < (gi.listener α prior .as).real {wS} :=
   gi.listener_real_lt_of_prodMul_strictDominates hα (prior_singleton_eq wA wS)
-    (prior_singleton_ne_zero wS) (by decide)
+    (prior_singleton_ne_zero wS) (by decide +kernel)
 
 /-- GI's parse posterior for SS peaks at the matrix-only parse, whose reading
 uniquely identifies wNS, at the paper's illustrative α = 5 (eq. 22's regime).
-Pair choice drives this — see `perParse_ss_o_beats_m` for the contrast.
+Pair choice drives this — see `perParse_ss_prefers_o` for the contrast.
 Evaluation register: as α → 0 the singleton reading's informativity advantage
 vanishes, so no α-free certificate exists. -/
 theorem ss_m_parse_pref : ∀ p : Parse, p ≠ {.matrix} →
@@ -574,9 +574,9 @@ theorem ss_m_parse_pref : ∀ p : Parse, p ≠ {.matrix} →
         < ∑ t : World, if t ∈ gi.sem (.ss, ({.matrix} : Parse)) then
           (12 / (gi.sem (.ss, ({.matrix} : Parse))).card) ^ 5
             * ∏ t' ∈ Finset.univ.erase t, (gi.profile t').divPowSum 12 5
-        else 0 := by decide
+        else 0 := by decide +kernel
   exact fun p hp =>
-    gi.choicePosterior_real_lt_of_divPowSum (by decide) (by decide) (by decide)
+    gi.choicePosterior_real_lt_of_divPowSum (by decide +kernel) (by decide +kernel) (by decide +kernel)
       prior_singleton_eq prior_singleton_ne_zero rfl rfl (hnat p hp)
 
 /-- Vanilla RSA hearing SS prefers wNA to wNS — the wrong prediction — for
@@ -586,7 +586,7 @@ cost). Certificate register: {6}·{3,4} = {18,24} strictly dominates
 theorem vanilla_ss_prefers_wNA {α : ℝ} (hα : 0 < α) :
     (vanilla.listener α prior .ss).real {wNS} < (vanilla.listener α prior .ss).real {wNA} :=
   vanilla.listener_real_lt_of_prodMul_strictDominates hα (prior_singleton_eq wNS wNA)
-    (prior_singleton_ne_zero wNA) (by decide)
+    (prior_singleton_ne_zero wNA) (by decide +kernel)
 
 set_option maxRecDepth 1024 in
 /-- GI corrects vanilla's error for every rationality: hearing SS, the
@@ -596,7 +596,7 @@ extension is the spare element. -/
 theorem gi_ss_prefers_wNS {α : ℝ} (hα : 0 < α) :
     (gi.listener α prior .ss).real {wNA} < (gi.listener α prior .ss).real {wNS} :=
   gi.listener_real_lt_of_prodMul_strictDominates hα (prior_singleton_eq wNA wNS)
-    (prior_singleton_ne_zero wNS) (by decide)
+    (prior_singleton_ne_zero wNS) (by decide +kernel)
 
 set_option maxRecDepth 1024 in
 /-- LI derives outer exhaustification for SS at every rationality: wNS over
@@ -604,7 +604,7 @@ wS via the OI parse. Certificate register. -/
 theorem li_ss_outer_exh {α : ℝ} (hα : 0 < α) :
     (li.listener α prior .ss).real {wS} < (li.listener α prior .ss).real {wNS} :=
   li.listener_real_lt_of_prodMul_strictDominates hα (prior_singleton_eq wS wNS)
-    (prior_singleton_ne_zero wNS) (by decide)
+    (prior_singleton_ne_zero wNS) (by decide +kernel)
 
 set_option maxRecDepth 1024 in
 /-- LI also gets the wNS-over-wNA ordering that vanilla misses, at every
@@ -612,7 +612,7 @@ rationality. Certificate register. -/
 theorem li_ss_prefers_wNS {α : ℝ} (hα : 0 < α) :
     (li.listener α prior .ss).real {wNA} < (li.listener α prior .ss).real {wNS} :=
   li.listener_real_lt_of_prodMul_strictDominates hα (prior_singleton_eq wNA wNS)
-    (prior_singleton_ne_zero wNS) (by decide)
+    (prior_singleton_ne_zero wNS) (by decide +kernel)
 
 /-- LU keeps wNS above wNA for every rationality. At wNA only the literal
 lexicon can produce SS, and its share is capped below a third: SS's extension
@@ -625,24 +625,24 @@ theorem lu_ss_prefers_wNS {α : ℝ} (hα : 0 < α) :
     (luListener α .ss).fst.real {wNA} < (luListener α .ss).fst.real {wNS} := by
   rw [luListener, RSA.Scenario.familyListener_fst_real_lt_iff luFam hα.le
       luPrior_singleton_eq luPrior_singleton_ne_zero
-      (by decide : wNS ∈ (luFam .lit).sem .ss) wNA wNS,
-    show (Finset.univ : Finset LULex) = {.lit, .oi} from by decide,
-    Finset.sum_insert (by decide : LULex.lit ∉ ({.oi} : Finset LULex)), Finset.sum_singleton,
-    Finset.sum_insert (by decide : LULex.lit ∉ ({.oi} : Finset LULex)), Finset.sum_singleton,
-    (luFam .oi).speaker_real_singleton_eq_zero hα (by decide : wNA ∉ (luFam .oi).sem .ss),
+      (by decide +kernel : wNS ∈ (luFam .lit).sem .ss) wNA wNS,
+    show (Finset.univ : Finset LULex) = {.lit, .oi} from by decide +kernel,
+    Finset.sum_insert (by decide +kernel : LULex.lit ∉ ({.oi} : Finset LULex)), Finset.sum_singleton,
+    Finset.sum_insert (by decide +kernel : LULex.lit ∉ ({.oi} : Finset LULex)), Finset.sum_singleton,
+    (luFam .oi).speaker_real_singleton_eq_zero hα (by decide +kernel : wNA ∉ (luFam .oi).sem .ss),
     (luFam .oi).speaker_real_singleton_of_profile_replicate hα
-      (by decide : (luFam .oi).profile wNS = Multiset.replicate 3 3)
-      (by decide : wNS ∈ (luFam .oi).sem .ss)]
+      (by decide +kernel : (luFam .oi).profile wNS = Multiset.replicate 3 3)
+      (by decide +kernel : wNS ∈ (luFam .oi).sem .ss)]
   have hsum := (luFam .lit).sum_speaker_real_singleton_le_one α wNA {.ss, .sn, .sa}
-  rw [Finset.sum_insert (by decide : Utterance.ss ∉ ({.sn, .sa} : Finset Utterance)),
-    Finset.sum_insert (by decide : Utterance.sn ∉ ({.sa} : Finset Utterance)),
+  rw [Finset.sum_insert (by decide +kernel : Utterance.ss ∉ ({.sn, .sa} : Finset Utterance)),
+    Finset.sum_insert (by decide +kernel : Utterance.sn ∉ ({.sa} : Finset Utterance)),
     Finset.sum_singleton] at hsum
   have hsn := (luFam .lit).speaker_real_singleton_lt_of_card_lt hα
-    (by decide : wNA ∈ (luFam .lit).sem .ss) (by decide : wNA ∈ (luFam .lit).sem .sn)
-    (by decide)
+    (by decide +kernel : wNA ∈ (luFam .lit).sem .ss) (by decide +kernel : wNA ∈ (luFam .lit).sem .sn)
+    (by decide +kernel)
   have hsa := (luFam .lit).speaker_real_singleton_lt_of_card_lt hα
-    (by decide : wNA ∈ (luFam .lit).sem .ss) (by decide : wNA ∈ (luFam .lit).sem .sa)
-    (by decide)
+    (by decide +kernel : wNA ∈ (luFam .lit).sem .ss) (by decide +kernel : wNA ∈ (luFam .lit).sem .sa)
+    (by decide +kernel)
   have hpos : (0 : ℝ) ≤ ((luFam .lit).speaker α wNS).real {Utterance.ss} :=
     measureReal_nonneg
   linarith
@@ -658,17 +658,17 @@ within the parse erases exactly the informativity advantage of the singleton
 reading ⟦SS⟧^M that the pooled speaker exploits in `ss_m_parse_pref`; with
 `RSA.Scenario.pool_L0` (identical weights), the pair locates GI's win purely
 in the position of the latent parameter (pp. e85–e86). -/
-theorem perParse_ss_o_beats_m {α : ℝ} (hα : 0 < α) :
+theorem perParse_ss_prefers_o {α : ℝ} (hα : 0 < α) :
     (perParseListener α .ss).snd.real {({.matrix} : Parse)}
       < (perParseListener α .ss).snd.real {({.outer} : Parse)} := by
-  have hM0 : ∀ w : World, w ≠ wNS → w ∉ (readings {ExhPosition.matrix}).sem .ss := by decide
+  have hM0 : ∀ w : World, w ≠ wNS → w ∉ (readings {ExhPosition.matrix}).sem .ss := by decide +kernel
   have hOprof : ∀ w ∈ ({wNS, wNA, wNSA} : Finset World),
-      (readings {ExhPosition.outer}).profile w = Multiset.replicate 3 3 := by decide
+      (readings {ExhPosition.outer}).profile w = Multiset.replicate 3 3 := by decide +kernel
   have hOmem : ∀ w ∈ ({wNS, wNA, wNSA} : Finset World),
-      w ∈ (readings {ExhPosition.outer}).sem .ss := by decide
+      w ∈ (readings {ExhPosition.outer}).sem .ss := by decide +kernel
   rw [perParseListener, RSA.Scenario.familyListener_snd_real_lt_iff readings hα.le
       perParsePrior_singleton_eq perParsePrior_singleton_ne_zero
-      (by decide : wNS ∈ (readings {ExhPosition.matrix}).sem .ss)
+      (by decide +kernel : wNS ∈ (readings {ExhPosition.matrix}).sem .ss)
       ({.matrix} : Parse) ({.outer} : Parse)]
   calc (∑ w : World, ((readings {ExhPosition.matrix}).speaker α w).real {Utterance.ss})
       = ((readings {ExhPosition.matrix}).speaker α wNS).real {Utterance.ss} :=
@@ -676,11 +676,11 @@ theorem perParse_ss_o_beats_m {α : ℝ} (hα : 0 < α) :
           (readings {ExhPosition.matrix}).speaker_real_singleton_eq_zero hα (hM0 w hw)
     _ < 1 :=
         (readings {ExhPosition.matrix}).speaker_real_singleton_lt_one hα.le Utterance.ss
-          (by decide : Utterance.sn ≠ Utterance.ss)
-          (by decide : wNS ∈ (readings {ExhPosition.matrix}).sem .sn)
+          (by decide +kernel : Utterance.sn ≠ Utterance.ss)
+          (by decide +kernel : wNS ∈ (readings {ExhPosition.matrix}).sem .sn)
     _ = ∑ w ∈ ({wNS, wNA, wNSA} : Finset World), (3⁻¹ : ℝ) := by
         rw [Finset.sum_const,
-          show ({wNS, wNA, wNSA} : Finset World).card = 3 from by decide]
+          show ({wNS, wNA, wNSA} : Finset World).card = 3 from by decide +kernel]
         norm_num
     _ = ∑ w ∈ ({wNS, wNA, wNSA} : Finset World),
           ((readings {ExhPosition.outer}).speaker α w).real {Utterance.ss} :=
