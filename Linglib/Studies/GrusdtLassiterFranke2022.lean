@@ -158,15 +158,18 @@ Truth values from Table 2:
 - **if A then C** (P(C|A) ≥ 0.9): s1 ✓, s2 ✓, s3 ✗
 - **C** (P(C) ≥ 0.9): s1 ✓, s2 ✗, s3 ✗
 - **A and C** (P(A∧C) ≥ 0.9): s1 ✗, s2 ✗, s3 ✗ -/
-def assertable' : Utt → State → Bool
-  | .likelyC,      _   => true
-  | .conditional,  .s1 => true
-  | .conditional,  .s2 => true
-  | .conditional,  .s3 => false
-  | .C,            .s1 => true
-  | .C,            .s2 => false
-  | .C,            .s3 => false
-  | .conjAC,       _   => false
+def assertable' : Utt → State → Prop
+  | .likelyC,      _   => True
+  | .conditional,  .s1 => True
+  | .conditional,  .s2 => True
+  | .conditional,  .s3 => False
+  | .C,            .s1 => True
+  | .C,            .s2 => False
+  | .C,            .s3 => False
+  | .conjAC,       _   => False
+
+instance (u : Utt) : DecidablePred (assertable' u) := fun s => by
+  cases u <;> cases s <;> first | exact isTrue trivial | exact isFalse id
 
 
 -- ============================================================================
@@ -228,28 +231,28 @@ abbrev ext (u : Utt) : Finset State := RSA.extensionOf assertable' u
 
 /-- Literal-listener weight `L0(s | u)` at α = 1: uniform on the extension,
 `1/|ext u|` where `u` is assertable at `s`, else `0`. For the three assertable
-utterances this coincides with `RSA.L0OfBoolMeaning`
-(`litWeight_eq_L0OfBoolMeaning`); the never-assertable `conjAC` is weightless. -/
+utterances this coincides with `RSA.L0OfPred` (`litWeight_eq_L0OfPred`); the
+never-assertable `conjAC` is weightless. -/
 noncomputable def litWeight (s : State) (u : Utt) : ℝ≥0∞ :=
-  if assertable' u s = true then ((ext u).card : ℝ≥0∞)⁻¹ else 0
+  if assertable' u s then ((ext u).card : ℝ≥0∞)⁻¹ else 0
 
 theorem litWeight_of_true {s : State} {u : Utt} {k : ℕ}
-    (h : assertable' u s = true) (hk : (ext u).card = k) :
+    (h : assertable' u s) (hk : (ext u).card = k) :
     litWeight s u = ((k : ℝ≥0∞))⁻¹ := by
   unfold litWeight; rw [if_pos h, hk]
 
-theorem litWeight_of_false {s : State} {u : Utt} (h : assertable' u s = false) :
+theorem litWeight_of_false {s : State} {u : Utt} (h : ¬ assertable' u s) :
     litWeight s u = 0 := by
-  unfold litWeight; rw [if_neg (by simp [h])]
+  unfold litWeight; rw [if_neg h]
 
 /-- Where an utterance is assertable somewhere, `litWeight` is exactly the
 canonical literal listener uniform on the extension; `conjAC` gets `0`. -/
-theorem litWeight_eq_L0OfBoolMeaning (s : State) {u : Utt} (h : (ext u).Nonempty) :
-    litWeight s u = RSA.L0OfBoolMeaning assertable' u h s := by
+theorem litWeight_eq_L0OfPred (s : State) {u : Utt} (h : (ext u).Nonempty) :
+    litWeight s u = RSA.L0OfPred assertable' u h s := by
   unfold litWeight
-  by_cases hu : assertable' u s = true
-  · rw [if_pos hu, RSA.L0OfBoolMeaning_apply_of_mem h hu]
-  · rw [if_neg hu, RSA.L0OfBoolMeaning_apply_of_not_mem h hu]
+  by_cases hu : assertable' u s
+  · rw [if_pos hu, RSA.L0OfPred_apply_of_mem h hu]
+  · rw [if_neg hu, RSA.L0OfPred_apply_of_not_mem h hu]
 
 theorem litWeight_ne_top (s : State) (u : Utt) : litWeight s u ≠ ⊤ := by
   unfold litWeight
@@ -263,24 +266,28 @@ theorem litWeight_ne_top (s : State) (u : Utt) : litWeight s u ≠ ⊤ := by
 `conditional` in {s1, s2}, `C` in {s1}, `conjAC` in none. -/
 
 theorem lw_likelyC (s : State) : litWeight s .likelyC = 3⁻¹ := by
-  rw [litWeight_of_true rfl (show (ext .likelyC).card = 3 from by decide)]; norm_num
+  rw [litWeight_of_true (show assertable' .likelyC s from trivial)
+    (show (ext .likelyC).card = 3 from by decide)]; norm_num
 
 theorem lw_s1_conditional : litWeight .s1 .conditional = 2⁻¹ := by
-  rw [litWeight_of_true rfl (show (ext .conditional).card = 2 from by decide)]; norm_num
+  rw [litWeight_of_true (show assertable' .conditional .s1 from trivial)
+    (show (ext .conditional).card = 2 from by decide)]; norm_num
 
 theorem lw_s2_conditional : litWeight .s2 .conditional = 2⁻¹ := by
-  rw [litWeight_of_true rfl (show (ext .conditional).card = 2 from by decide)]; norm_num
+  rw [litWeight_of_true (show assertable' .conditional .s2 from trivial)
+    (show (ext .conditional).card = 2 from by decide)]; norm_num
 
-theorem lw_s3_conditional : litWeight .s3 .conditional = 0 := litWeight_of_false rfl
+theorem lw_s3_conditional : litWeight .s3 .conditional = 0 := litWeight_of_false id
 
 theorem lw_s1_C : litWeight .s1 .C = 1 := by
-  rw [litWeight_of_true rfl (show (ext .C).card = 1 from by decide)]; norm_num
+  rw [litWeight_of_true (show assertable' .C .s1 from trivial)
+    (show (ext .C).card = 1 from by decide)]; norm_num
 
-theorem lw_s2_C : litWeight .s2 .C = 0 := litWeight_of_false rfl
+theorem lw_s2_C : litWeight .s2 .C = 0 := litWeight_of_false id
 
-theorem lw_s3_C : litWeight .s3 .C = 0 := litWeight_of_false rfl
+theorem lw_s3_C : litWeight .s3 .C = 0 := litWeight_of_false id
 
-theorem lw_conjAC (s : State) : litWeight s .conjAC = 0 := litWeight_of_false rfl
+theorem lw_conjAC (s : State) : litWeight s .conjAC = 0 := litWeight_of_false id
 
 private theorem tsum_litWeight_ne_zero (s : State) : (∑' u, litWeight s u) ≠ 0 :=
   ENNReal.summable.tsum_ne_zero_iff.mpr
@@ -541,31 +548,31 @@ theorem l1_likelyC_prefers_s3 :
     condition: assertable iff P(C|A) ≥ θ. Since we use the direct truth
     table, we verify consistency with the WorldState probabilities. -/
 theorem conditional_assertable_iff_high_pCGivenA :
-    (assertable' .conditional .s1 = true ∧ ws1.pCGivenA ≥ θ) ∧
-    (assertable' .conditional .s2 = true ∧ ws2.pCGivenA ≥ θ) ∧
-    (assertable' .conditional .s3 = false ∧ ws3.pCGivenA < θ) := by
-  refine ⟨⟨rfl, ?_⟩, ⟨rfl, ?_⟩, ⟨rfl, ?_⟩⟩ <;> native_decide
+    (assertable' .conditional .s1 ∧ ws1.pCGivenA ≥ θ) ∧
+    (assertable' .conditional .s2 ∧ ws2.pCGivenA ≥ θ) ∧
+    (¬ assertable' .conditional .s3 ∧ ws3.pCGivenA < θ) := by
+  refine ⟨⟨trivial, ?_⟩, ⟨trivial, ?_⟩, ⟨id, ?_⟩⟩ <;> native_decide
 
 /-- "C" is assertable iff P(C) ≥ 0.9. -/
 theorem C_assertable_iff_high_pC :
-    (assertable' .C .s1 = true ∧ ws1.pC ≥ 9/10) ∧
-    (assertable' .C .s2 = false ∧ ws2.pC < 9/10) ∧
-    (assertable' .C .s3 = false ∧ ws3.pC < 9/10) := by
-  refine ⟨⟨rfl, ?_⟩, ⟨rfl, ?_⟩, ⟨rfl, ?_⟩⟩ <;> native_decide
+    (assertable' .C .s1 ∧ ws1.pC ≥ 9/10) ∧
+    (¬ assertable' .C .s2 ∧ ws2.pC < 9/10) ∧
+    (¬ assertable' .C .s3 ∧ ws3.pC < 9/10) := by
+  refine ⟨⟨trivial, ?_⟩, ⟨id, ?_⟩, ⟨id, ?_⟩⟩ <;> native_decide
 
 /-- "likely C" is assertable in all states (P(C) ≥ 0.5 everywhere). -/
 theorem likelyC_always_assertable :
-    (assertable' .likelyC .s1 = true ∧ ws1.pC ≥ 1/2) ∧
-    (assertable' .likelyC .s2 = true ∧ ws2.pC ≥ 1/2) ∧
-    (assertable' .likelyC .s3 = true ∧ ws3.pC ≥ 1/2) := by
-  refine ⟨⟨rfl, ?_⟩, ⟨rfl, ?_⟩, ⟨rfl, ?_⟩⟩ <;> native_decide
+    (assertable' .likelyC .s1 ∧ ws1.pC ≥ 1/2) ∧
+    (assertable' .likelyC .s2 ∧ ws2.pC ≥ 1/2) ∧
+    (assertable' .likelyC .s3 ∧ ws3.pC ≥ 1/2) := by
+  refine ⟨⟨trivial, ?_⟩, ⟨trivial, ?_⟩, ⟨trivial, ?_⟩⟩ <;> native_decide
 
 /-- "A and C" is never assertable (P(A∧C) < 0.9 in all states). -/
 theorem conjAC_never_assertable :
-    assertable' .conjAC .s1 = false ∧
-    assertable' .conjAC .s2 = false ∧
-    assertable' .conjAC .s3 = false := by
-  exact ⟨rfl, rfl, rfl⟩
+    ¬ assertable' .conjAC .s1 ∧
+    ¬ assertable' .conjAC .s2 ∧
+    ¬ assertable' .conjAC .s3 :=
+  ⟨id, id, id⟩
 
 
 -- ============================================================================

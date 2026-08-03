@@ -150,11 +150,17 @@ This is the **core** of the semantics, omitting the soft constraints
 - enabled: W ∨ S — necessity or sufficiency, not just how (Eq. 5)
 - caused: H ∧ (W ∨ S) — how-cause plus counterfactual (core of Eq. 6)
 - madeNoDifference: ¬W ∧ ¬H ∧ ¬S — no causal involvement (hard version of Eq. 7) -/
-def expressionMeaning (cw : CausalWorld) : CausalExpression → Bool
-  | .affected => cw.whether || cw.how || cw.sufficient
-  | .enabled => cw.whether || cw.sufficient
-  | .caused => cw.how && (cw.whether || cw.sufficient)
-  | .madeNoDifference => !cw.whether && !cw.how && !cw.sufficient
+def expressionMeaning (cw : CausalWorld) : CausalExpression → Prop
+  | .affected => cw.whether ∨ cw.how ∨ cw.sufficient
+  | .enabled => cw.whether ∨ cw.sufficient
+  | .caused => cw.how ∧ (cw.whether ∨ cw.sufficient)
+  | .madeNoDifference => ¬ cw.whether ∧ ¬ cw.how ∧ ¬ cw.sufficient
+
+instance (cw : CausalWorld) : ∀ u, Decidable (expressionMeaning cw u)
+  | .affected => inferInstanceAs (Decidable (_ ∨ _))
+  | .enabled => inferInstanceAs (Decidable (_ ∨ _))
+  | .caused => inferInstanceAs (Decidable (_ ∧ _))
+  | .madeNoDifference => inferInstanceAs (Decidable (_ ∧ _))
 
 
 -- ============================================================================
@@ -165,15 +171,13 @@ def expressionMeaning (cw : CausalWorld) : CausalExpression → Bool
 
 "Caused" is the most specific expression (p. 349). -/
 theorem caused_implies_enabled (cw : CausalWorld) :
-    expressionMeaning cw .caused → expressionMeaning cw .enabled := by
-  simp only [expressionMeaning, Bool.and_eq_true, Bool.or_eq_true]
-  intro ⟨_, h_ws⟩; exact h_ws
+    expressionMeaning cw .caused → expressionMeaning cw .enabled :=
+  And.right
 
 /-- "enabled" implies "affected": W ∨ S → W ∨ H ∨ S. -/
 theorem enabled_implies_affected (cw : CausalWorld) :
-    expressionMeaning cw .enabled → expressionMeaning cw .affected := by
-  simp only [expressionMeaning]
-  cases cw.whether <;> cases cw.how <;> cases cw.sufficient <;> decide
+    expressionMeaning cw .enabled → expressionMeaning cw .affected :=
+  Or.imp_right Or.inr
 
 /-- Full scalar chain: caused → enabled → affected. -/
 theorem caused_implies_affected (cw : CausalWorld) :
@@ -182,9 +186,8 @@ theorem caused_implies_affected (cw : CausalWorld) :
 
 /-- "madeNoDifference" is the negation of "affected" (Boolean version). -/
 theorem madeNoDifference_iff_not_affected (cw : CausalWorld) :
-    expressionMeaning cw .madeNoDifference ↔ !expressionMeaning cw .affected := by
-  simp only [expressionMeaning]
-  cases cw.whether <;> cases cw.how <;> cases cw.sufficient <;> decide
+    expressionMeaning cw .madeNoDifference ↔ ¬ expressionMeaning cw .affected := by
+  simp only [expressionMeaning, not_or]
 
 
 -- ============================================================================
@@ -279,8 +282,8 @@ pragmatic speaker normalises literal informativity over expressions
 posterior against the uniform world prior. The fitted model (Experiment 2)
 uses λ = 40.18, but α = 1 suffices for the qualitative predictions. -/
 
-/-- Boolean meaning in speaker argument order (expression first). -/
-abbrev sem (u : CausalExpression) (cw : CausalWorld) : Bool := expressionMeaning cw u
+/-- Literal meaning in speaker argument order (expression first). -/
+abbrev sem (u : CausalExpression) (cw : CausalWorld) : Prop := expressionMeaning cw u
 
 private theorem ext_nonempty (u : CausalExpression) :
     (RSA.extensionOf sem u).Nonempty := by
@@ -288,28 +291,28 @@ private theorem ext_nonempty (u : CausalExpression) :
 
 /-- Literal listener `L0(·|u)`: uniform on the expression's extension. -/
 noncomputable def L0 (u : CausalExpression) : PMF CausalWorld :=
-  RSA.L0OfBoolMeaning sem u (ext_nonempty u)
+  RSA.L0OfPred sem u (ext_nonempty u)
 
 /-- L0 mass at a world where the expression holds: inverse extension size. -/
 private theorem L0_apply_of_true {u : CausalExpression} {cw : CausalWorld} (k : ℕ)
-    (h : sem u cw = true) (hk : (RSA.extensionOf sem u).card = k) :
+    (h : sem u cw) (hk : (RSA.extensionOf sem u).card = k) :
     L0 u cw = (k : ℝ≥0∞)⁻¹ := by
-  rw [L0, RSA.L0OfBoolMeaning_apply_of_mem _ h, hk]
+  rw [L0, RSA.L0OfPred_apply_of_mem _ h, hk]
 
 private theorem L0_apply_of_false {u : CausalExpression} {cw : CausalWorld}
-    (h : sem u cw = false) :
+    (h : ¬ sem u cw) :
     L0 u cw = 0 :=
-  RSA.L0OfBoolMeaning_apply_of_not_mem _ (by simp [h])
+  RSA.L0OfPred_apply_of_not_mem _ h
 
 private theorem L0_ne_zero {u : CausalExpression} {cw : CausalWorld}
-    (h : sem u cw = true) : L0 u cw ≠ 0 :=
-  (PMF.mem_support_iff _ _).mp ((RSA.mem_support_L0OfBoolMeaning_iff _ cw).mpr h)
+    (h : sem u cw) : L0 u cw ≠ 0 :=
+  (PMF.mem_support_iff _ _).mp ((RSA.mem_support_L0OfPred_iff _ cw).mpr h)
 
 private theorem s1_ne_zero (cw : CausalWorld) :
     ∑' u, (L0 u cw : ℝ≥0∞) ^ (1 : ℝ) * 1 ≠ 0 := by
   simp only [ENNReal.rpow_one, mul_one]
   rw [tsum_fintype]
-  obtain ⟨u, hu⟩ : ∃ u, sem u cw = true := by
+  obtain ⟨u, hu⟩ : ∃ u, sem u cw := by
     revert cw; decide
   intro h
   exact L0_ne_zero hu (Finset.sum_eq_zero_iff.mp h u (Finset.mem_univ _))
@@ -328,7 +331,7 @@ noncomputable def S1 (cw : CausalWorld) : PMF CausalExpression :=
 noncomputable def worldPrior : PMF CausalWorld := PMF.uniformOfFintype CausalWorld
 
 private theorem marg_ne_zero {u : CausalExpression} (cw : CausalWorld)
-    (h : sem u cw = true) :
+    (h : sem u cw) :
     PMF.marginal S1 worldPrior u ≠ 0 :=
   PMF.marginal_ne_zero S1 worldPrior u
     ((worldPrior.mem_support_iff cw).mp (PMF.mem_support_uniformOfFintype cw))
@@ -358,7 +361,7 @@ theorem S1_le_iff (cw : CausalWorld) (u₁ u₂ : CausalExpression) :
 /-- Cross-world vacuous zero: where the expression is false the speaker
 assigns it no mass, so any world where it holds wins. -/
 private theorem S1_lt_of_zero_pos {cw₁ cw₂ : CausalWorld} {u : CausalExpression}
-    (h₁ : sem u cw₁ = false) (h₂ : sem u cw₂ = true) :
+    (h₁ : ¬ sem u cw₁) (h₂ : sem u cw₂) :
     S1 cw₁ u < S1 cw₂ u := by
   unfold S1 RSA.S1Belief
   exact PMF.normalize_lt_of_apply_zero_pos _ _ (s1_ne_zero cw₁) (s1_ne_top cw₁)
@@ -561,31 +564,31 @@ def world_caused : CausalWorld := ⟨true, true, false⟩
 /-- In W-only world, "enabled" is true but "caused" is false.
 Speaker would use "enabled" (Scenario 2-like). -/
 theorem W_only_enabled_not_caused :
-    expressionMeaning world_W_only .enabled = true ∧
-    expressionMeaning world_W_only .caused = false := by
+    expressionMeaning world_W_only .enabled ∧
+    ¬ expressionMeaning world_W_only .caused := by
   constructor <;> native_decide
 
 /-- In H-only world, only "affected" applies among the positive expressions. -/
 theorem H_only_affected_only :
-    expressionMeaning world_H_only .affected = true ∧
-    expressionMeaning world_H_only .enabled = false ∧
-    expressionMeaning world_H_only .caused = false := by
+    expressionMeaning world_H_only .affected ∧
+    ¬ expressionMeaning world_H_only .enabled ∧
+    ¬ expressionMeaning world_H_only .caused := by
   refine ⟨?_, ?_, ?_⟩ <;> native_decide
 
 /-- In full world, all positive expressions apply. -/
 theorem full_world_all_true :
-    expressionMeaning world_full .affected = true ∧
-    expressionMeaning world_full .enabled = true ∧
-    expressionMeaning world_full .caused = true ∧
-    expressionMeaning world_full .madeNoDifference = false := by
+    expressionMeaning world_full .affected ∧
+    expressionMeaning world_full .enabled ∧
+    expressionMeaning world_full .caused ∧
+    ¬ expressionMeaning world_full .madeNoDifference := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;> native_decide
 
 /-- In none world, only "madeNoDifference" applies. -/
 theorem none_world_only_negative :
-    expressionMeaning world_none .affected = false ∧
-    expressionMeaning world_none .enabled = false ∧
-    expressionMeaning world_none .caused = false ∧
-    expressionMeaning world_none .madeNoDifference = true := by
+    ¬ expressionMeaning world_none .affected ∧
+    ¬ expressionMeaning world_none .enabled ∧
+    ¬ expressionMeaning world_none .caused ∧
+    expressionMeaning world_none .madeNoDifference := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;> native_decide
 
 
@@ -890,7 +893,7 @@ theorem solo_causalWorld :
     produces the correct pragmatic prediction. -/
 theorem solo_cause_chain :
     let cw := causalWorldFromModel soloModel Valuation.empty .cause .effect
-    expressionMeaning cw .caused = true ∧
+    expressionMeaning cw .caused ∧
     S1 cw .caused > S1 cw .enabled ∧
     S1 cw .caused > S1 cw .affected := by
   refine ⟨?_, ?_, ?_⟩ <;> rw [solo_causalWorld]

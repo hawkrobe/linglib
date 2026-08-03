@@ -26,7 +26,7 @@ dominance patterns.
 ## Reused from `Kennedy2015.lean`
 
 * `KCard`, `KUtt` — domain types
-* `kMean` — Boolean meaning matrix (Prop-valued; we lift to Bool)
+* `kMean` — the meaning matrix, consumed directly by `RSA.extensionOf`
 -/
 
 set_option autoImplicit false
@@ -38,17 +38,10 @@ open scoped ENNReal
 instance : Nonempty KCard := ⟨0⟩
 instance : Nonempty KUtt := ⟨.bare3⟩
 
-/-- Boolean meaning, derived from `kMean` via `decide`. -/
-noncomputable def kMeanBool (u : KUtt) (w : KCard) : Bool := decide (kMean u w)
-
-/-- The Bool form agrees with the Prop form. -/
-theorem kMeanBool_iff (u : KUtt) (w : KCard) : kMeanBool u w = true ↔ kMean u w :=
-  decide_eq_true_iff
-
-/-! ## §1. L0 — uniform on extension via `RSA.L0OfBoolMeaning` -/
+/-! ## §1. L0 — uniform on extension via `RSA.L0OfPred` -/
 
 noncomputable abbrev extension (u : KUtt) : Finset KCard :=
-  RSA.extensionOf kMeanBool u
+  RSA.extensionOf kMean u
 
 theorem extension_nonempty (u : KUtt) : (extension u).Nonempty := by
   cases u
@@ -59,21 +52,21 @@ theorem extension_nonempty (u : KUtt) : (extension u).Nonempty := by
   · exact ⟨3, RSA.mem_extensionOf.mpr (by decide)⟩
 
 noncomputable def L0 (u : KUtt) : PMF KCard :=
-  RSA.L0OfBoolMeaning kMeanBool u (extension_nonempty u)
+  RSA.L0OfPred kMean u (extension_nonempty u)
 
 @[simp] theorem mem_support_L0_iff (u : KUtt) (w : KCard) :
-    w ∈ (L0 u).support ↔ kMeanBool u w = true :=
-  RSA.mem_support_L0OfBoolMeaning_iff _ _
+    w ∈ (L0 u).support ↔ kMean u w :=
+  RSA.mem_support_L0OfPred_iff _ _
 
-theorem L0_apply_of_true {u : KUtt} {w : KCard} (h : kMeanBool u w = true) :
+theorem L0_apply_of_true {u : KUtt} {w : KCard} (h : kMean u w) :
     L0 u w = ((extension u).card : ℝ≥0∞)⁻¹ :=
-  RSA.L0OfBoolMeaning_apply_of_mem _ h
+  RSA.L0OfPred_apply_of_mem _ h
 
-theorem L0_apply_of_false {u : KUtt} {w : KCard} (h : kMeanBool u w ≠ true) :
+theorem L0_apply_of_false {u : KUtt} {w : KCard} (h : ¬ kMean u w) :
     L0 u w = 0 :=
-  RSA.L0OfBoolMeaning_apply_of_not_mem _ h
+  RSA.L0OfPred_apply_of_not_mem _ h
 
-private theorem L0_apply_ne_zero {u : KUtt} {w : KCard} (h : kMeanBool u w = true) :
+private theorem L0_apply_ne_zero {u : KUtt} {w : KCard} (h : kMean u w) :
     L0 u w ≠ 0 := by
   rw [← PMF.mem_support_iff, mem_support_L0_iff]; exact h
 
@@ -89,7 +82,7 @@ template. -/
 theorem L0_tsum_utterance_ne_top (w : KCard) : ∑' u, (L0 u w : ℝ≥0∞) ≠ ∞ :=
   PMF.tsum_apply_ne_top (fun u => L0 u) w
 
-private theorem tsum_L0_ne_zero_at {u : KUtt} {w : KCard} (h : kMeanBool u w = true) :
+private theorem tsum_L0_ne_zero_at {u : KUtt} {w : KCard} (h : kMean u w) :
     (∑' u', (L0 u' w : ℝ≥0∞)) ≠ 0 :=
   PMF.tsum_apply_ne_zero L0 (a := u) (L0_apply_ne_zero h)
 
@@ -111,7 +104,7 @@ noncomputable def worldPrior : PMF KCard := PMF.uniformOfFintype KCard
 theorem worldPrior_ne_zero (w : KCard) : worldPrior w ≠ 0 :=
   (worldPrior.mem_support_iff w).mp (PMF.mem_support_uniformOfFintype w)
 
-private theorem S1_ne_zero_at {u : KUtt} {w : KCard} (h : kMeanBool u w = true) :
+private theorem S1_ne_zero_at {u : KUtt} {w : KCard} (h : kMean u w) :
     S1 w u ≠ 0 := by
   rw [S1_eq_normalize (tsum_L0_ne_zero_at h), ← PMF.mem_support_iff,
       PMF.mem_support_normalize_iff]
@@ -138,8 +131,8 @@ theorem S1_3_lt_S1_4_for_moreThan3 :
   rw [S1_eq_normalize (tsum_L0_ne_zero_at (u := .bare3) (by decide)),
       S1_eq_normalize (tsum_L0_ne_zero_at (u := .moreThan3) (by decide))]
   exact PMF.normalize_lt_of_apply_zero_pos _ _ _ _ _ _ _
-    (L0_apply_of_false (by decide : kMeanBool .moreThan3 (3 : KCard) ≠ true))
-    (L0_apply_ne_zero (by decide : kMeanBool .moreThan3 (4 : KCard) = true))
+    (L0_apply_of_false (by decide : ¬ kMean .moreThan3 (3 : KCard)))
+    (L0_apply_ne_zero (by decide : kMean .moreThan3 (4 : KCard)))
 
 /-- L1("moreThan3") prefers .4 over .3 — Class A excludes the boundary semantically. -/
 theorem classA_no_competition_at_boundary :
@@ -154,8 +147,8 @@ theorem S1_4_lt_S1_3_for_bare3 :
   rw [S1_eq_normalize (tsum_L0_ne_zero_at (u := .moreThan3) (by decide)),
       S1_eq_normalize (tsum_L0_ne_zero_at (u := .bare3) (by decide))]
   exact PMF.normalize_lt_of_apply_zero_pos _ _ _ _ _ _ _
-    (L0_apply_of_false (by decide : kMeanBool .bare3 (4 : KCard) ≠ true))
-    (L0_apply_ne_zero (by decide : kMeanBool .bare3 (3 : KCard) = true))
+    (L0_apply_of_false (by decide : ¬ kMean .bare3 (4 : KCard)))
+    (L0_apply_ne_zero (by decide : kMean .bare3 (3 : KCard)))
 
 /-- L1("bare 3") peaked at .3 — bare numeral exact reading. -/
 theorem bare_peaked_with_kennedy_alternatives :
@@ -170,8 +163,8 @@ theorem S1_3_lt_S1_2_for_fewerThan3 :
   rw [S1_eq_normalize (tsum_L0_ne_zero_at (u := .bare3) (by decide)),
       S1_eq_normalize (tsum_L0_ne_zero_at (u := .fewerThan3) (by decide))]
   exact PMF.normalize_lt_of_apply_zero_pos _ _ _ _ _ _ _
-    (L0_apply_of_false (by decide : kMeanBool .fewerThan3 (3 : KCard) ≠ true))
-    (L0_apply_ne_zero (by decide : kMeanBool .fewerThan3 (2 : KCard) = true))
+    (L0_apply_of_false (by decide : ¬ kMean .fewerThan3 (3 : KCard)))
+    (L0_apply_ne_zero (by decide : kMean .fewerThan3 (2 : KCard)))
 
 /-- L1("fewerThan3") prefers .2 over .3 — upper Class A excludes boundary. -/
 theorem upper_classA_no_competition :
@@ -193,11 +186,11 @@ private theorem univ_KUtt :
 private theorem Z3 : (∑' u : KUtt, L0 u (3 : KCard)) = 1 + 3⁻¹ + 4⁻¹ := by
   rw [tsum_fintype, univ_KUtt, Finset.sum_insert (by decide), Finset.sum_insert (by decide),
       Finset.sum_insert (by decide), Finset.sum_insert (by decide), Finset.sum_singleton,
-      L0_apply_of_true (show kMeanBool .bare3 (3 : KCard) = true by decide),
-      L0_apply_of_false (show kMeanBool .moreThan3 (3 : KCard) ≠ true by decide),
-      L0_apply_of_false (show kMeanBool .fewerThan3 (3 : KCard) ≠ true by decide),
-      L0_apply_of_true (show kMeanBool .atLeast3 (3 : KCard) = true by decide),
-      L0_apply_of_true (show kMeanBool .atMost3 (3 : KCard) = true by decide),
+      L0_apply_of_true (show kMean .bare3 (3 : KCard) by decide),
+      L0_apply_of_false (show ¬ kMean .moreThan3 (3 : KCard) by decide),
+      L0_apply_of_false (show ¬ kMean .fewerThan3 (3 : KCard) by decide),
+      L0_apply_of_true (show kMean .atLeast3 (3 : KCard) by decide),
+      L0_apply_of_true (show kMean .atMost3 (3 : KCard) by decide),
       show (extension .bare3).card = 1 from by decide,
       show (extension .atLeast3).card = 3 from by decide,
       show (extension .atMost3).card = 4 from by decide]
@@ -207,11 +200,11 @@ private theorem Z3 : (∑' u : KUtt, L0 u (3 : KCard)) = 1 + 3⁻¹ + 4⁻¹ := 
 private theorem Z4 : (∑' u : KUtt, L0 u (4 : KCard)) = 2⁻¹ + 3⁻¹ := by
   rw [tsum_fintype, univ_KUtt, Finset.sum_insert (by decide), Finset.sum_insert (by decide),
       Finset.sum_insert (by decide), Finset.sum_insert (by decide), Finset.sum_singleton,
-      L0_apply_of_false (show kMeanBool .bare3 (4 : KCard) ≠ true by decide),
-      L0_apply_of_true (show kMeanBool .moreThan3 (4 : KCard) = true by decide),
-      L0_apply_of_false (show kMeanBool .fewerThan3 (4 : KCard) ≠ true by decide),
-      L0_apply_of_true (show kMeanBool .atLeast3 (4 : KCard) = true by decide),
-      L0_apply_of_false (show kMeanBool .atMost3 (4 : KCard) ≠ true by decide),
+      L0_apply_of_false (show ¬ kMean .bare3 (4 : KCard) by decide),
+      L0_apply_of_true (show kMean .moreThan3 (4 : KCard) by decide),
+      L0_apply_of_false (show ¬ kMean .fewerThan3 (4 : KCard) by decide),
+      L0_apply_of_true (show kMean .atLeast3 (4 : KCard) by decide),
+      L0_apply_of_false (show ¬ kMean .atMost3 (4 : KCard) by decide),
       show (extension .moreThan3).card = 2 from by decide,
       show (extension .atLeast3).card = 3 from by decide]
   simp only [Nat.cast_ofNat, zero_add, add_zero]
@@ -219,14 +212,14 @@ private theorem Z4 : (∑' u : KUtt, L0 u (4 : KCard)) = 2⁻¹ + 3⁻¹ := by
 private theorem Z2 : (∑' u : KUtt, L0 u (2 : KCard)) = 3⁻¹ + 4⁻¹ := by
   rw [tsum_fintype, univ_KUtt, Finset.sum_insert (by decide), Finset.sum_insert (by decide),
       Finset.sum_insert (by decide), Finset.sum_insert (by decide), Finset.sum_singleton,
-      L0_apply_of_false (show kMeanBool .bare3 (2 : KCard) ≠ true by decide),
-      L0_apply_of_false (show kMeanBool .moreThan3 (2 : KCard) ≠ true by decide),
-      L0_apply_of_true (show kMeanBool .fewerThan3 (2 : KCard) = true by decide),
-      L0_apply_of_false (show kMeanBool .atLeast3 (2 : KCard) ≠ true by decide),
-      L0_apply_of_true (show kMeanBool .atMost3 (2 : KCard) = true by decide),
+      L0_apply_of_false (show ¬ kMean .bare3 (2 : KCard) by decide),
+      L0_apply_of_false (show ¬ kMean .moreThan3 (2 : KCard) by decide),
+      L0_apply_of_true (show kMean .fewerThan3 (2 : KCard) by decide),
+      L0_apply_of_false (show ¬ kMean .atLeast3 (2 : KCard) by decide),
+      L0_apply_of_true (show kMean .atMost3 (2 : KCard) by decide),
       show (extension .fewerThan3).card = 3 from by decide,
       show (extension .atMost3).card = 4 from by decide]
-  simp only [Nat.cast_ofNat, zero_add, add_zero]
+  simp only [Nat.cast_ofNat, zero_add]
 
 private theorem Z4_lt_Z3 :
     (∑' u : KUtt, L0 u (4 : KCard)) < ∑' u : KUtt, L0 u (3 : KCard) := by
@@ -246,12 +239,12 @@ theorem classB_strengthened_above_bare :
     L1 .atLeast3 (4 : KCard) > L1 .atLeast3 (3 : KCard) := by
   unfold L1 worldPrior
   rw [gt_iff_lt, PMF.posterior_lt_iff_kernel_lt_of_uniform,
-      S1_eq_normalize (tsum_L0_ne_zero_at (show kMeanBool .atLeast3 (3 : KCard) = true by decide)),
-      S1_eq_normalize (tsum_L0_ne_zero_at (show kMeanBool .atLeast3 (4 : KCard) = true by decide))]
+      S1_eq_normalize (tsum_L0_ne_zero_at (show kMean .atLeast3 (3 : KCard) by decide)),
+      S1_eq_normalize (tsum_L0_ne_zero_at (show kMean .atLeast3 (4 : KCard) by decide))]
   apply PMF.normalize_lt_of_apply_eq_of_sum_lt
-  · rw [L0_apply_of_true (show kMeanBool .atLeast3 (3 : KCard) = true by decide),
-        L0_apply_of_true (show kMeanBool .atLeast3 (4 : KCard) = true by decide)]
-  · rw [L0_apply_of_true (show kMeanBool .atLeast3 (4 : KCard) = true by decide)]
+  · rw [L0_apply_of_true (show kMean .atLeast3 (3 : KCard) by decide),
+        L0_apply_of_true (show kMean .atLeast3 (4 : KCard) by decide)]
+  · rw [L0_apply_of_true (show kMean .atLeast3 (4 : KCard) by decide)]
     exact ENNReal.inv_ne_zero.mpr (ENNReal.natCast_ne_top _)
   · exact PMF.apply_ne_top _ _
   · exact Z4_lt_Z3
@@ -262,12 +255,12 @@ theorem upper_classB_strengthened_below_bare :
     L1 .atMost3 (2 : KCard) > L1 .atMost3 (3 : KCard) := by
   unfold L1 worldPrior
   rw [gt_iff_lt, PMF.posterior_lt_iff_kernel_lt_of_uniform,
-      S1_eq_normalize (tsum_L0_ne_zero_at (show kMeanBool .atMost3 (3 : KCard) = true by decide)),
-      S1_eq_normalize (tsum_L0_ne_zero_at (show kMeanBool .atMost3 (2 : KCard) = true by decide))]
+      S1_eq_normalize (tsum_L0_ne_zero_at (show kMean .atMost3 (3 : KCard) by decide)),
+      S1_eq_normalize (tsum_L0_ne_zero_at (show kMean .atMost3 (2 : KCard) by decide))]
   apply PMF.normalize_lt_of_apply_eq_of_sum_lt
-  · rw [L0_apply_of_true (show kMeanBool .atMost3 (3 : KCard) = true by decide),
-        L0_apply_of_true (show kMeanBool .atMost3 (2 : KCard) = true by decide)]
-  · rw [L0_apply_of_true (show kMeanBool .atMost3 (2 : KCard) = true by decide)]
+  · rw [L0_apply_of_true (show kMean .atMost3 (3 : KCard) by decide),
+        L0_apply_of_true (show kMean .atMost3 (2 : KCard) by decide)]
+  · rw [L0_apply_of_true (show kMean .atMost3 (2 : KCard) by decide)]
     exact ENNReal.inv_ne_zero.mpr (ENNReal.natCast_ne_top _)
   · exact PMF.apply_ne_top _ _
   · exact Z2_lt_Z3

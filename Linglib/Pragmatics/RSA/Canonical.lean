@@ -37,15 +37,15 @@ comparison of utilities / conditional-joint sums.
 * `RSA.Canonical.L1Intent` — pair-choice pragmatic listener: the speaker chooses an
   (utterance, latent) pair, the listener observes only the utterance
   (`PMF.emissionPosterior`).
-* `RSA.Canonical.boolS1` — the Boolean-model speaker as an exact rational.
+* `RSA.Canonical.ratS1` — the propositional-model speaker as an exact rational.
 
 ## Main statements
 
 * `RSA.Canonical.S1_prefers_iff` — speaker preference ↔ utility comparison.
 * `RSA.Canonical.L1_world_prefers_iff` / `L1_latent_prefers_iff` — listener marginal
   preference ↔ conditional-joint-sum comparison.
-* `RSA.Canonical.S1_eq_ofReal` — the power-utility speaker over a Boolean model
-  equals `ENNReal.ofReal` of `boolS1`.
+* `RSA.Canonical.S1_eq_ofReal` — the power-utility speaker over a propositional
+  model equals `ENNReal.ofReal` of `ratS1`.
 
 ## Implementation notes
 
@@ -420,155 +420,156 @@ theorem L1_uniform_event_lt_iff {W Lat U : Type*} [Fintype W] [Fintype Lat]
     (ENNReal.inv_ne_zero.mpr (ENNReal.natCast_ne_top _))
     (ENNReal.inv_ne_top.mpr (Nat.cast_ne_zero.mpr Fintype.card_ne_zero))
 
-/-! ### Boolean-meaning literal listeners with latent interpretations
+/-! ### Propositional-meaning literal listeners with latent interpretations
 
-The [bergen-levy-goodman-2016] lexical-uncertainty shape: a Boolean meaning
+The [bergen-levy-goodman-2016] lexical-uncertainty shape: a decidable meaning
 per latent interpretation, the literal listener uniform on the extension. -/
 
-section BoolModel
+section PredModel
 
 variable {W I U : Type*} [Fintype W]
-variable (m : I → U → W → Bool) (hne : ∀ i u, (RSA.extensionOf (m i) u).Nonempty)
+variable (m : I → U → W → Prop) [∀ i u, DecidablePred (m i u)]
+  (hne : ∀ i u, (RSA.extensionOf (m i) u).Nonempty)
 
 /-- Per-interpretation literal listener: uniform on the extension. -/
-noncomputable def L0OfBool (i : I) (u : U) : PMF W :=
-  RSA.L0OfBoolMeaning (m i) u (hne i u)
+noncomputable def L0OfPred (i : I) (u : U) : PMF W :=
+  RSA.L0OfPred (m i) u (hne i u)
 
-theorem L0OfBool_ne_zero {i : I} {u : U} {w : W} (h : m i u w = true) :
-    L0OfBool m hne i u w ≠ 0 :=
-  (PMF.mem_support_iff _ _).mp ((RSA.mem_support_L0OfBoolMeaning_iff _ w).mpr h)
+theorem L0OfPred_ne_zero {i : I} {u : U} {w : W} (h : m i u w) :
+    L0OfPred m hne i u w ≠ 0 :=
+  (PMF.mem_support_iff _ _).mp ((RSA.mem_support_L0OfPred_iff _ w).mpr h)
 
-theorem L0OfBool_eq_zero {i : I} {u : U} {w : W} (h : m i u w ≠ true) :
-    L0OfBool m hne i u w = 0 :=
-  RSA.L0OfBoolMeaning_apply_of_not_mem _ h
+theorem L0OfPred_eq_zero {i : I} {u : U} {w : W} (h : ¬ m i u w) :
+    L0OfPred m hne i u w = 0 :=
+  RSA.L0OfPred_apply_of_not_mem _ h
 
-/-- Weight of the power-utility speaker over a Boolean model: the inverse
+/-- Weight of the power-utility speaker over a propositional model: the inverse
 extension size, to the `α`. -/
-theorem powWeight_L0OfBool_of_mem {α : ℕ} {w : W} {i : I} {u : U} (k : ℕ)
-    (h : m i u w = true) (hk : (RSA.extensionOf (m i) u).card = k) :
-    powWeight α (L0OfBool m hne) (w, i) u = ((k : ℝ≥0∞)⁻¹) ^ α := by
-  show (L0OfBool m hne i u w) ^ α = _
-  rw [L0OfBool, RSA.L0OfBoolMeaning_apply_of_mem _ h, hk]
+theorem powWeight_L0OfPred_of_mem {α : ℕ} {w : W} {i : I} {u : U} (k : ℕ)
+    (h : m i u w) (hk : (RSA.extensionOf (m i) u).card = k) :
+    powWeight α (L0OfPred m hne) (w, i) u = ((k : ℝ≥0∞)⁻¹) ^ α := by
+  show (L0OfPred m hne i u w) ^ α = _
+  rw [L0OfPred, RSA.L0OfPred_apply_of_mem _ h, hk]
 
-theorem powWeight_L0OfBool_of_not_mem {α : ℕ} (hα : α ≠ 0) {w : W} {i : I} {u : U}
-    (h : m i u w ≠ true) : powWeight α (L0OfBool m hne) (w, i) u = 0 := by
-  show (L0OfBool m hne i u w) ^ α = 0
-  rw [L0OfBool_eq_zero m hne h, zero_pow hα]
+theorem powWeight_L0OfPred_of_not_mem {α : ℕ} (hα : α ≠ 0) {w : W} {i : I} {u : U}
+    (h : ¬ m i u w) : powWeight α (L0OfPred m hne) (w, i) u = 0 := by
+  show (L0OfPred m hne i u w) ^ α = 0
+  rw [L0OfPred_eq_zero m hne h, zero_pow hα]
 
-/-- One-dominator bound over a Boolean model: if `u'` is also applicable with
+/-- One-dominator bound over a propositional model: if `u'` is also applicable with
 an extension smaller by an `ℕ`-certificate factor, `u` is produced with
 probability below `(n+1)⁻¹`. -/
-theorem S1_L0OfBool_lt_inv_succ_of_dominator {α : ℕ} [Fintype U]
-    [ViableSpeaker (powUtility α (L0OfBool m hne))]
+theorem S1_L0OfPred_lt_inv_succ_of_dominator {α : ℕ} [Fintype U]
+    [ViableSpeaker (powUtility α (L0OfPred m hne))]
     {w : W} {i : I} {u u' : U} {n k k' : ℕ} (huu' : u ≠ u')
-    (hu : m i u w = true) (hu' : m i u' w = true)
+    (hu : m i u w) (hu' : m i u' w)
     (hk : (RSA.extensionOf (m i) u).card = k)
     (hk' : (RSA.extensionOf (m i) u').card = k')
     (hα : α ≠ 0) (hcert : n * k' ^ α < k ^ α) :
-    S1 (powUtility α (L0OfBool m hne)) (w, i) u < ((n : ℝ≥0∞) + 1)⁻¹ := by
+    S1 (powUtility α (L0OfPred m hne)) (w, i) u < ((n : ℝ≥0∞) + 1)⁻¹ := by
   refine S1_powUtility_lt_inv_succ α _ (Finset.notMem_singleton.mpr huu') ?_
-  rw [Finset.sum_singleton, powWeight_L0OfBool_of_mem m hne k hu hk,
-      powWeight_L0OfBool_of_mem m hne k' hu' hk']
+  rw [Finset.sum_singleton, powWeight_L0OfPred_of_mem m hne k hu hk,
+      powWeight_L0OfPred_of_mem m hne k' hu' hk']
   refine ENNReal.natCast_mul_inv_pow_lt hα (fun h0 => ?_) hcert
   subst h0
   rw [Finset.card_eq_zero] at hk'
   exact absurd (hk' ▸ RSA.mem_extensionOf.mpr hu') (Finset.notMem_empty _)
 
-/-- The Boolean-model speaker never assigns zero mass to a true utterance —
+/-- The propositional-model speaker never assigns zero mass to a true utterance —
 the witness for pragmatic-listener positivity obligations. -/
-theorem S1_L0OfBool_ne_zero {α : ℕ} [Fintype U]
-    [ViableSpeaker (powUtility α (L0OfBool m hne))]
-    {i : I} {u : U} {w : W} (h : m i u w = true) :
-    S1 (powUtility α (L0OfBool m hne)) (w, i) u ≠ 0 :=
-  S1_ne_zero _ (show (α : EReal) * ENNReal.log (L0OfBool m hne i u w) ≠ ⊥ from
-    natCast_mul_log_ne_bot α (L0OfBool_ne_zero m hne h))
+theorem S1_L0OfPred_ne_zero {α : ℕ} [Fintype U]
+    [ViableSpeaker (powUtility α (L0OfPred m hne))]
+    {i : I} {u : U} {w : W} (h : m i u w) :
+    S1 (powUtility α (L0OfPred m hne)) (w, i) u ≠ 0 :=
+  S1_ne_zero _ (show (α : EReal) * ENNReal.log (L0OfPred m hne i u w) ≠ ⊥ from
+    natCast_mul_log_ne_bot α (L0OfPred_ne_zero m hne h))
 
-/-! ### Exact rational evaluation over a Boolean model
+/-! ### Exact rational evaluation over a propositional model
 
-`boolS1` computes the Boolean-model speaker as an exact rational and
+`ratS1` computes the propositional-model speaker as an exact rational and
 `S1_eq_ofReal` bridges it to `S1`; concrete masses and pooled sums then
 reduce to `ℚ` arithmetic (`norm_num`). -/
 
-/-- Exact rational unnormalised speaker weight over a Boolean model. -/
-def boolWeight (α : ℕ) (i : I) (w : W) (u : U) : ℚ :=
+/-- Exact rational unnormalised speaker weight over a propositional model. -/
+def ratWeight (α : ℕ) (i : I) (w : W) (u : U) : ℚ :=
   if m i u w then ((RSA.extensionOf (m i) u).card : ℚ)⁻¹ ^ α else 0
 
-/-- Exact rational partition function over a Boolean model. -/
-def boolPartition (α : ℕ) [Fintype U] (i : I) (w : W) : ℚ :=
-  ∑ u : U, boolWeight m α i w u
+/-- Exact rational partition function over a propositional model. -/
+def ratPartition (α : ℕ) [Fintype U] (i : I) (w : W) : ℚ :=
+  ∑ u : U, ratWeight m α i w u
 
-/-- Exact rational normalised speaker mass over a Boolean model. -/
-def boolS1 (α : ℕ) [Fintype U] (i : I) (w : W) (u : U) : ℚ :=
-  boolWeight m α i w u / boolPartition m α i w
+/-- Exact rational normalised speaker mass over a propositional model. -/
+def ratS1 (α : ℕ) [Fintype U] (i : I) (w : W) (u : U) : ℚ :=
+  ratWeight m α i w u / ratPartition m α i w
 
-theorem boolWeight_nonneg (α : ℕ) (i : I) (w : W) (u : U) :
-    0 ≤ boolWeight m α i w u := by
-  unfold boolWeight; split <;> positivity
+theorem ratWeight_nonneg (α : ℕ) (i : I) (w : W) (u : U) :
+    0 ≤ ratWeight m α i w u := by
+  unfold ratWeight; split <;> positivity
 
 theorem powWeight_eq_ofReal {α : ℕ} (hα : α ≠ 0) (i : I) (w : W) (u : U) :
-    powWeight α (L0OfBool m hne) (w, i) u = ENNReal.ofReal (boolWeight m α i w u) := by
-  unfold boolWeight
+    powWeight α (L0OfPred m hne) (w, i) u = ENNReal.ofReal (ratWeight m α i w u) := by
+  unfold ratWeight
   split
   · next h =>
-    rw [powWeight_L0OfBool_of_mem m hne _ h rfl]
+    rw [powWeight_L0OfPred_of_mem m hne _ h rfl]
     push_cast
     have hc : (0 : ℝ) < (RSA.extensionOf (m i) u).card := by
       exact_mod_cast Finset.card_pos.mpr ⟨w, RSA.mem_extensionOf.mpr h⟩
     rw [ENNReal.ofReal_pow (by positivity), ENNReal.ofReal_inv_of_pos hc,
       ENNReal.ofReal_natCast]
   · next h =>
-    rw [powWeight_L0OfBool_of_not_mem m hne hα (by simpa using h)]
+    rw [powWeight_L0OfPred_of_not_mem m hne hα h]
     push_cast
     rw [ENNReal.ofReal_zero]
 
 variable [Fintype U]
 
 theorem tsum_powWeight_eq_ofReal {α : ℕ} (hα : α ≠ 0) (i : I) (w : W) :
-    (∑' u, powWeight α (L0OfBool m hne) (w, i) u)
-      = ENNReal.ofReal (boolPartition m α i w) := by
-  rw [tsum_fintype, boolPartition]
+    (∑' u, powWeight α (L0OfPred m hne) (w, i) u)
+      = ENNReal.ofReal (ratPartition m α i w) := by
+  rw [tsum_fintype, ratPartition]
   push_cast
   rw [ENNReal.ofReal_sum_of_nonneg
-    (fun u _ => by exact_mod_cast boolWeight_nonneg m α i w u)]
+    (fun u _ => by exact_mod_cast ratWeight_nonneg m α i w u)]
   exact Finset.sum_congr rfl fun u _ => powWeight_eq_ofReal m hne hα i w u
 
-theorem boolPartition_pos {α : ℕ} [ViableSpeaker (powUtility α (L0OfBool m hne))]
-    (hα : α ≠ 0) (i : I) (w : W) : 0 < boolPartition m α i w := by
-  rcases ViableSpeaker.some_finite (score := powUtility α (L0OfBool m hne)) (w, i) with ⟨u', hu'⟩
-  refine Finset.sum_pos' (fun v _ => boolWeight_nonneg m α i w v) ⟨u', Finset.mem_univ _, ?_⟩
-  have hm : m i u' w = true := by
+theorem ratPartition_pos {α : ℕ} [ViableSpeaker (powUtility α (L0OfPred m hne))]
+    (hα : α ≠ 0) (i : I) (w : W) : 0 < ratPartition m α i w := by
+  rcases ViableSpeaker.some_finite (score := powUtility α (L0OfPred m hne)) (w, i) with ⟨u', hu'⟩
+  refine Finset.sum_pos' (fun v _ => ratWeight_nonneg m α i w v) ⟨u', Finset.mem_univ _, ?_⟩
+  have hm : m i u' w := by
     by_contra hm
-    exact hu' (by rw [powUtility, L0OfBool_eq_zero m hne hm, ENNReal.log_zero,
+    exact hu' (by rw [powUtility, L0OfPred_eq_zero m hne hm, ENNReal.log_zero,
       EReal.mul_bot_of_pos (by exact_mod_cast Nat.pos_of_ne_zero hα)])
   have hc : 0 < (RSA.extensionOf (m i) u').card := Finset.card_pos.mpr (hne i u')
-  rw [boolWeight, if_pos hm]
+  rw [ratWeight, if_pos hm]
   positivity
 
-theorem boolS1_nonneg (α : ℕ) (i : I) (w : W) (u : U) : 0 ≤ boolS1 m α i w u :=
-  div_nonneg (boolWeight_nonneg m α i w u)
-    (Finset.sum_nonneg fun v _ => boolWeight_nonneg m α i w v)
+theorem ratS1_nonneg (α : ℕ) (i : I) (w : W) (u : U) : 0 ≤ ratS1 m α i w u :=
+  div_nonneg (ratWeight_nonneg m α i w u)
+    (Finset.sum_nonneg fun v _ => ratWeight_nonneg m α i w v)
 
-/-- Exact rational value of the power-utility speaker over a Boolean model. -/
-theorem S1_eq_ofReal {α : ℕ} [ViableSpeaker (powUtility α (L0OfBool m hne))]
+/-- Exact rational value of the power-utility speaker over a propositional model. -/
+theorem S1_eq_ofReal {α : ℕ} [ViableSpeaker (powUtility α (L0OfPred m hne))]
     (hα : α ≠ 0) (i : I) (w : W) (u : U) :
-    S1 (powUtility α (L0OfBool m hne)) (w, i) u = ENNReal.ofReal (boolS1 m α i w u) := by
-  have hz := boolPartition_pos m hne hα i w
+    S1 (powUtility α (L0OfPred m hne)) (w, i) u = ENNReal.ofReal (ratS1 m α i w u) := by
+  have hz := ratPartition_pos m hne hα i w
   rw [S1_powUtility_eq_normalize, PMF.normalize_apply, powWeight_eq_ofReal m hne hα,
     tsum_powWeight_eq_ofReal m hne hα, ← ENNReal.ofReal_inv_of_pos (by exact_mod_cast hz),
-    ← ENNReal.ofReal_mul (by exact_mod_cast boolWeight_nonneg m α i w u), boolS1]
+    ← ENNReal.ofReal_mul (by exact_mod_cast ratWeight_nonneg m α i w u), ratS1]
   push_cast [div_eq_mul_inv]
   ring_nf
 
-/-- Any finite family of Boolean-model speaker masses sums to the `ofReal` of
-the corresponding `boolS1` sum — the workhorse for pooled-latent reductions. -/
-theorem sum_S1_eq_ofReal {α : ℕ} [ViableSpeaker (powUtility α (L0OfBool m hne))]
+/-- Any finite family of propositional-model speaker masses sums to the `ofReal` of
+the corresponding `ratS1` sum — the workhorse for pooled-latent reductions. -/
+theorem sum_S1_eq_ofReal {α : ℕ} [ViableSpeaker (powUtility α (L0OfPred m hne))]
     (hα : α ≠ 0) {ι : Type*} (s : Finset ι) (st : ι → W × I) (uu : ι → U) :
-    (∑ x ∈ s, S1 (powUtility α (L0OfBool m hne)) (st x) (uu x))
-      = ENNReal.ofReal (∑ x ∈ s, boolS1 m α (st x).2 (st x).1 (uu x)) := by
+    (∑ x ∈ s, S1 (powUtility α (L0OfPred m hne)) (st x) (uu x))
+      = ENNReal.ofReal (∑ x ∈ s, ratS1 m α (st x).2 (st x).1 (uu x)) := by
   rw [ENNReal.ofReal_sum_of_nonneg
-    (fun x _ => by exact_mod_cast boolS1_nonneg m α (st x).2 (st x).1 (uu x))]
+    (fun x _ => by exact_mod_cast ratS1_nonneg m α (st x).2 (st x).1 (uu x))]
   exact Finset.sum_congr rfl fun x _ => S1_eq_ofReal m hne hα (st x).2 (st x).1 (uu x)
 
-end BoolModel
+end PredModel
 
 end RSA.Canonical

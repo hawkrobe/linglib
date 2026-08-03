@@ -20,7 +20,7 @@ every*; truth conditions in their Table 2); `L0(s|u,p) ∝ P(s)·⟦u⟧ᵖ(s)`;
 `S1(u,p|s) ∝ exp(α·log L0)` over all 12 pairs; `L1(s,p|u) ∝ P(s)·S1(u,p|s)`
 with parse-marginal `L1(s|u)`. Speaker optimality `α = 100`, equal costs.
 
-Instantiated on the canonical pipeline: `L0` is `RSA.Canonical.L0OfBool`
+Instantiated on the canonical pipeline: `L0` is `RSA.Canonical.L0OfPred`
 over the Table-2 matrix, the joint speaker is `RSA.Canonical.S1` with
 `powUtility`, the parse-marginal speaker is its `PMF.map` along
 `Parse.utt`, and the pragmatic listener is `RSA.Canonical.L1`.
@@ -116,19 +116,22 @@ def Parse.utt : Parse → Utterance
   | .evA | .evB | .evC | .evD => .mayEvery
 
 /-- Truth conditions for each utterance–parse pair (their Table 2). -/
-def meaning : Parse → FCIState → Bool
-  | .sA, s => (s matches .onlyS | .only1 | .anyNum | .only2 | .sOr2 | .pOr2)
-  | .sB, s => (s matches .onlyS | .only1 | .anyNum | .sOr2)
-  | .sC, s => (s matches .onlyS)
-  | .pA, s => (s matches .onlyP | .only1 | .anyNum | .only2 | .sOr2 | .pOr2)
-  | .pB, s => (s matches .onlyP | .only1 | .anyNum | .pOr2)
-  | .pC, s => (s matches .onlyP)
-  | .anyA, s => (s matches .only1 | .anyNum | .only2 | .sOr2 | .pOr2)
-  | .anyB, s => (s matches .only1 | .anyNum)
-  | .evA, s => (s matches .only1 | .anyNum | .only2 | .sOr2 | .pOr2)
-  | .evB, s => (s matches .anyNum | .only2 | .sOr2 | .pOr2)
-  | .evC, s => (s matches .only1 | .anyNum)
-  | .evD, s => (s matches .only2)
+def meaning : Parse → FCIState → Prop
+  | .sA, s => s = .onlyS ∨ s = .only1 ∨ s = .anyNum ∨ s = .only2 ∨ s = .sOr2 ∨ s = .pOr2
+  | .sB, s => s = .onlyS ∨ s = .only1 ∨ s = .anyNum ∨ s = .sOr2
+  | .sC, s => s = .onlyS
+  | .pA, s => s = .onlyP ∨ s = .only1 ∨ s = .anyNum ∨ s = .only2 ∨ s = .sOr2 ∨ s = .pOr2
+  | .pB, s => s = .onlyP ∨ s = .only1 ∨ s = .anyNum ∨ s = .pOr2
+  | .pC, s => s = .onlyP
+  | .anyA, s => s = .only1 ∨ s = .anyNum ∨ s = .only2 ∨ s = .sOr2 ∨ s = .pOr2
+  | .anyB, s => s = .only1 ∨ s = .anyNum
+  | .evA, s => s = .only1 ∨ s = .anyNum ∨ s = .only2 ∨ s = .sOr2 ∨ s = .pOr2
+  | .evB, s => s = .anyNum ∨ s = .only2 ∨ s = .sOr2 ∨ s = .pOr2
+  | .evC, s => s = .only1 ∨ s = .anyNum
+  | .evD, s => s = .only2
+
+instance (p : Parse) : DecidablePred (meaning p) := fun _ => by
+  cases p <;> unfold meaning <;> infer_instance
 
 private theorem ext_nonempty : ∀ (_ : Unit) (p : Parse),
     (RSA.extensionOf (fun q => meaning q) p).Nonempty := by
@@ -140,19 +143,19 @@ private theorem ext_nonempty : ∀ (_ : Unit) (p : Parse),
 /-- Per-parse literal listener (eq. (36) at a uniform state prior):
 uniform on the parse's extension. -/
 noncomputable abbrev l0 : Unit → Parse → PMF FCIState :=
-  L0OfBool (fun _ p => meaning p) ext_nonempty
+  L0OfPred (fun _ p => meaning p) ext_nonempty
 
 instance (α : ℕ) : ViableSpeaker (powUtility α l0) :=
   viableSpeaker_powUtility_of_witness α l0 fun s => by
     obtain ⟨w, ⟨⟩⟩ := s
     cases w
-    · exact ⟨.sA, L0OfBool_ne_zero _ _ (by decide)⟩
-    · exact ⟨.pA, L0OfBool_ne_zero _ _ (by decide)⟩
-    · exact ⟨.anyB, L0OfBool_ne_zero _ _ (by decide)⟩
-    · exact ⟨.anyB, L0OfBool_ne_zero _ _ (by decide)⟩
-    · exact ⟨.evD, L0OfBool_ne_zero _ _ (by decide)⟩
-    · exact ⟨.evB, L0OfBool_ne_zero _ _ (by decide)⟩
-    · exact ⟨.evB, L0OfBool_ne_zero _ _ (by decide)⟩
+    · exact ⟨.sA, L0OfPred_ne_zero _ _ (by decide)⟩
+    · exact ⟨.pA, L0OfPred_ne_zero _ _ (by decide)⟩
+    · exact ⟨.anyB, L0OfPred_ne_zero _ _ (by decide)⟩
+    · exact ⟨.anyB, L0OfPred_ne_zero _ _ (by decide)⟩
+    · exact ⟨.evD, L0OfPred_ne_zero _ _ (by decide)⟩
+    · exact ⟨.evB, L0OfPred_ne_zero _ _ (by decide)⟩
+    · exact ⟨.evB, L0OfPred_ne_zero _ _ (by decide)⟩
 
 /-- The joint speaker over utterance–parse pairs (eqs. (37)–(38)):
 `S1(u,p|s) ∝ L0(s|u,p)^α`, equal costs. -/
@@ -194,7 +197,7 @@ private theorem speakerU_mayS (α : ℕ) (s : FCIState × Unit) :
 
 theorem marginal_ne_zero (α : ℕ) (u : Utterance) :
     PMF.marginal (speakerU α) prior u ≠ 0 := by
-  have key : ∀ (w : FCIState) (p : Parse), Parse.utt p = u → meaning p w = true →
+  have key : ∀ (w : FCIState) (p : Parse), Parse.utt p = u → meaning p w →
       PMF.marginal (speakerU α) prior u ≠ 0 := by
     intro w p hpu hpw
     refine PMF.marginal_ne_zero _ _ u (a := (w, ())) ?_ ?_
@@ -202,7 +205,7 @@ theorem marginal_ne_zero (α : ℕ) (u : Utterance) :
     · rw [speakerU_apply, ← hpu]
       intro hz
       exact S1_ne_zero (powUtility α l0)
-        (PMF.coe_mul_log_ne_bot (by positivity) (L0OfBool_ne_zero _ _ hpw))
+        (PMF.coe_mul_log_ne_bot (by positivity) (L0OfPred_ne_zero _ _ hpw))
         (Finset.sum_eq_zero_iff.mp hz p
           (Finset.mem_filter.mpr ⟨Finset.mem_univ p, rfl⟩))
   cases u
@@ -239,9 +242,9 @@ theorem speakerU_onlyS_mayAny (α : ℕ) (hα : α ≠ 0) :
     speakerU α (.onlyS, ()) .mayAny = 0 := by
   rw [speakerU_mayAny,
       show speaker α (.onlyS, ()) .anyA = 0 from
-        S1_powUtility_eq_zero α l0 hα (L0OfBool_eq_zero _ _ (by decide)),
+        S1_powUtility_eq_zero α l0 hα (L0OfPred_eq_zero _ _ (by decide)),
       show speaker α (.onlyS, ()) .anyB = 0 from
-        S1_powUtility_eq_zero α l0 hα (L0OfBool_eq_zero _ _ (by decide)),
+        S1_powUtility_eq_zero α l0 hα (L0OfPred_eq_zero _ _ (by decide)),
       add_zero]
 
 /-- Hearing *may any*, the listener assigns zero posterior to Only-S. -/
@@ -258,7 +261,7 @@ theorem speakerU_onlyS_mayEvery (α : ℕ) (hα : α ≠ 0) :
         = {Parse.evA, Parse.evB, Parse.evC, Parse.evD} from by decide]
   refine Finset.sum_eq_zero fun p hp => ?_
   fin_cases hp <;>
-    exact S1_powUtility_eq_zero α l0 hα (L0OfBool_eq_zero _ _ (by decide))
+    exact S1_powUtility_eq_zero α l0 hα (L0OfPred_eq_zero _ _ (by decide))
 
 /-- Hearing *may every*, the listener assigns zero posterior to Only-S. -/
 theorem mayEvery_rules_out_onlyS (α : ℕ) (hα : α ≠ 0) :
@@ -281,8 +284,8 @@ theorem s1_prefers_strong_parse {α : ℕ} (hα : α ≠ 0) :
       ENNReal.mul_lt_mul_iff_left
         (ENNReal.inv_ne_zero.mpr (tsum_powWeight_ne_top α l0 _))
         (ENNReal.inv_ne_top.mpr (tsum_powWeight_ne_zero α l0 _)),
-      powWeight_L0OfBool_of_mem _ _ 5 (by decide) card_anyA,
-      powWeight_L0OfBool_of_mem _ _ 2 (by decide) card_anyB]
+      powWeight_L0OfPred_of_mem _ _ 5 (by decide) card_anyA,
+      powWeight_L0OfPred_of_mem _ _ 2 (by decide) card_anyB]
   exact ENNReal.pow_lt_pow_left hα
     (ENNReal.inv_lt_inv' (show (2 : ℝ≥0∞) < 5 by norm_num))
 
@@ -313,18 +316,18 @@ private theorem third_lt_speakerU_only1 :
       Finset.sum_insert (by decide), Finset.sum_insert (by decide),
       Finset.sum_insert (by decide), Finset.sum_insert (by decide),
       Finset.sum_singleton,
-      powWeight_L0OfBool_of_mem _ _ 6 (by decide) card_sA,
-      powWeight_L0OfBool_of_mem _ _ 4 (by decide) card_sB,
-      powWeight_L0OfBool_of_not_mem _ _ (by norm_num) (by decide),
-      powWeight_L0OfBool_of_mem _ _ 6 (by decide) (by decide),
-      powWeight_L0OfBool_of_mem _ _ 4 (by decide) (by decide),
-      powWeight_L0OfBool_of_not_mem _ _ (by norm_num) (by decide),
-      powWeight_L0OfBool_of_mem _ _ 5 (by decide) card_anyA,
-      powWeight_L0OfBool_of_mem _ _ 5 (by decide) (by decide),
-      powWeight_L0OfBool_of_not_mem _ _ (by norm_num) (by decide),
-      powWeight_L0OfBool_of_mem _ _ 2 (by decide) (by decide),
-      powWeight_L0OfBool_of_not_mem _ _ (by norm_num) (by decide),
-      powWeight_L0OfBool_of_mem _ _ 2 (by decide) card_anyB]
+      powWeight_L0OfPred_of_mem _ _ 6 (by decide) card_sA,
+      powWeight_L0OfPred_of_mem _ _ 4 (by decide) card_sB,
+      powWeight_L0OfPred_of_not_mem _ _ (by norm_num) (by decide),
+      powWeight_L0OfPred_of_mem _ _ 6 (by decide) (by decide),
+      powWeight_L0OfPred_of_mem _ _ 4 (by decide) (by decide),
+      powWeight_L0OfPred_of_not_mem _ _ (by norm_num) (by decide),
+      powWeight_L0OfPred_of_mem _ _ 5 (by decide) card_anyA,
+      powWeight_L0OfPred_of_mem _ _ 5 (by decide) (by decide),
+      powWeight_L0OfPred_of_not_mem _ _ (by norm_num) (by decide),
+      powWeight_L0OfPred_of_mem _ _ 2 (by decide) (by decide),
+      powWeight_L0OfPred_of_not_mem _ _ (by norm_num) (by decide),
+      powWeight_L0OfPred_of_mem _ _ 2 (by decide) card_anyB]
   -- 2·6⁻¹⁰⁰ + 2·4⁻¹⁰⁰ + 2·5⁻¹⁰⁰ + 2⁻¹⁰⁰ < 2·2⁻¹⁰⁰
   calc _ = (2 : ℝ≥0∞) * ((6 : ℝ≥0∞)⁻¹) ^ 100 + 2 * ((4 : ℝ≥0∞)⁻¹) ^ 100
         + 2 * ((5 : ℝ≥0∞)⁻¹) ^ 100 + ((2 : ℝ≥0∞)⁻¹) ^ 100 := by ring
@@ -356,18 +359,18 @@ private theorem third_lt_speakerU_anyNum :
       Finset.sum_insert (by decide), Finset.sum_insert (by decide),
       Finset.sum_insert (by decide), Finset.sum_insert (by decide),
       Finset.sum_singleton,
-      powWeight_L0OfBool_of_mem _ _ 6 (by decide) card_sA,
-      powWeight_L0OfBool_of_mem _ _ 4 (by decide) card_sB,
-      powWeight_L0OfBool_of_not_mem _ _ (by norm_num) (by decide),
-      powWeight_L0OfBool_of_mem _ _ 6 (by decide) (by decide),
-      powWeight_L0OfBool_of_mem _ _ 4 (by decide) (by decide),
-      powWeight_L0OfBool_of_not_mem _ _ (by norm_num) (by decide),
-      powWeight_L0OfBool_of_mem _ _ 5 (by decide) card_anyA,
-      powWeight_L0OfBool_of_mem _ _ 5 (by decide) (by decide),
-      powWeight_L0OfBool_of_mem _ _ 4 (by decide) card_evB,
-      powWeight_L0OfBool_of_mem _ _ 2 (by decide) (by decide),
-      powWeight_L0OfBool_of_not_mem _ _ (by norm_num) (by decide),
-      powWeight_L0OfBool_of_mem _ _ 2 (by decide) card_anyB]
+      powWeight_L0OfPred_of_mem _ _ 6 (by decide) card_sA,
+      powWeight_L0OfPred_of_mem _ _ 4 (by decide) card_sB,
+      powWeight_L0OfPred_of_not_mem _ _ (by norm_num) (by decide),
+      powWeight_L0OfPred_of_mem _ _ 6 (by decide) (by decide),
+      powWeight_L0OfPred_of_mem _ _ 4 (by decide) (by decide),
+      powWeight_L0OfPred_of_not_mem _ _ (by norm_num) (by decide),
+      powWeight_L0OfPred_of_mem _ _ 5 (by decide) card_anyA,
+      powWeight_L0OfPred_of_mem _ _ 5 (by decide) (by decide),
+      powWeight_L0OfPred_of_mem _ _ 4 (by decide) card_evB,
+      powWeight_L0OfPred_of_mem _ _ 2 (by decide) (by decide),
+      powWeight_L0OfPred_of_not_mem _ _ (by norm_num) (by decide),
+      powWeight_L0OfPred_of_mem _ _ 2 (by decide) card_anyB]
   -- 2·6⁻¹⁰⁰ + 3·4⁻¹⁰⁰ + 2·5⁻¹⁰⁰ + 2⁻¹⁰⁰ < 2·2⁻¹⁰⁰ (extra 4⁻¹⁰⁰: parse 35b)
   calc _ = (2 : ℝ≥0∞) * ((6 : ℝ≥0∞)⁻¹) ^ 100 + 3 * ((4 : ℝ≥0∞)⁻¹) ^ 100
         + 2 * ((5 : ℝ≥0∞)⁻¹) ^ 100 + ((2 : ℝ≥0∞)⁻¹) ^ 100 := by ring
@@ -388,9 +391,9 @@ private theorem speakerU_only2_lt_ninth :
   rw [speakerU_mayAny,
       show speaker 100 (.only2, ()) .anyB = 0 from
         S1_powUtility_eq_zero 100 l0 (by norm_num)
-          (L0OfBool_eq_zero _ _ (by decide)),
+          (L0OfPred_eq_zero _ _ (by decide)),
       add_zero]
-  exact S1_L0OfBool_lt_inv_succ_of_dominator _ _ (by decide) (by decide)
+  exact S1_L0OfPred_lt_inv_succ_of_dominator _ _ (by decide) (by decide)
     (by decide) card_anyA card_evD (by norm_num) (by norm_num)
 
 private theorem speakerU_sOr2_lt_ninth :
@@ -398,9 +401,9 @@ private theorem speakerU_sOr2_lt_ninth :
   rw [speakerU_mayAny,
       show speaker 100 (.sOr2, ()) .anyB = 0 from
         S1_powUtility_eq_zero 100 l0 (by norm_num)
-          (L0OfBool_eq_zero _ _ (by decide)),
+          (L0OfPred_eq_zero _ _ (by decide)),
       add_zero]
-  exact S1_L0OfBool_lt_inv_succ_of_dominator (u' := Parse.evB) _ _ (by decide)
+  exact S1_L0OfPred_lt_inv_succ_of_dominator (u' := Parse.evB) _ _ (by decide)
     (by decide) (by decide) card_anyA card_evB (by norm_num) (by norm_num)
 
 private theorem speakerU_pOr2_lt_ninth :
@@ -408,9 +411,9 @@ private theorem speakerU_pOr2_lt_ninth :
   rw [speakerU_mayAny,
       show speaker 100 (.pOr2, ()) .anyB = 0 from
         S1_powUtility_eq_zero 100 l0 (by norm_num)
-          (L0OfBool_eq_zero _ _ (by decide)),
+          (L0OfPred_eq_zero _ _ (by decide)),
       add_zero]
-  exact S1_L0OfBool_lt_inv_succ_of_dominator (u' := Parse.evB) _ _ (by decide)
+  exact S1_L0OfPred_lt_inv_succ_of_dominator (u' := Parse.evB) _ _ (by decide)
     (by decide) (by decide) card_anyA card_evB (by norm_num) (by norm_num)
 
 /-- **The exclusiveness implicature** (their Table 3): hearing *may any*
@@ -471,18 +474,18 @@ private theorem half_lt_speakerU_onlyS_mayS :
       Finset.sum_insert (by decide), Finset.sum_insert (by decide),
       Finset.sum_insert (by decide), Finset.sum_insert (by decide),
       Finset.sum_singleton,
-      powWeight_L0OfBool_of_mem _ _ 6 (by decide) card_sA,
-      powWeight_L0OfBool_of_mem _ _ 4 (by decide) card_sB,
-      powWeight_L0OfBool_of_not_mem _ _ (by norm_num) (by decide),
-      powWeight_L0OfBool_of_not_mem _ _ (by norm_num) (by decide),
-      powWeight_L0OfBool_of_not_mem _ _ (by norm_num) (by decide),
-      powWeight_L0OfBool_of_not_mem _ _ (by norm_num) (by decide),
-      powWeight_L0OfBool_of_not_mem _ _ (by norm_num) (by decide),
-      powWeight_L0OfBool_of_not_mem _ _ (by norm_num) (by decide),
-      powWeight_L0OfBool_of_not_mem _ _ (by norm_num) (by decide),
-      powWeight_L0OfBool_of_not_mem _ _ (by norm_num) (by decide),
-      powWeight_L0OfBool_of_not_mem _ _ (by norm_num) (by decide),
-      powWeight_L0OfBool_of_mem _ _ 1 (by decide) (by decide)]
+      powWeight_L0OfPred_of_mem _ _ 6 (by decide) card_sA,
+      powWeight_L0OfPred_of_mem _ _ 4 (by decide) card_sB,
+      powWeight_L0OfPred_of_not_mem _ _ (by norm_num) (by decide),
+      powWeight_L0OfPred_of_not_mem _ _ (by norm_num) (by decide),
+      powWeight_L0OfPred_of_not_mem _ _ (by norm_num) (by decide),
+      powWeight_L0OfPred_of_not_mem _ _ (by norm_num) (by decide),
+      powWeight_L0OfPred_of_not_mem _ _ (by norm_num) (by decide),
+      powWeight_L0OfPred_of_not_mem _ _ (by norm_num) (by decide),
+      powWeight_L0OfPred_of_not_mem _ _ (by norm_num) (by decide),
+      powWeight_L0OfPred_of_not_mem _ _ (by norm_num) (by decide),
+      powWeight_L0OfPred_of_not_mem _ _ (by norm_num) (by decide),
+      powWeight_L0OfPred_of_mem _ _ 1 (by decide) (by decide)]
   -- 6⁻¹⁰⁰ + 4⁻¹⁰⁰ < 1 · 1⁻¹⁰⁰
   calc _ = ((6 : ℝ≥0∞)⁻¹) ^ 100 + ((4 : ℝ≥0∞)⁻¹) ^ 100 := by ring
     _ ≤ ((4 : ℝ≥0∞)⁻¹) ^ 100 + ((4 : ℝ≥0∞)⁻¹) ^ 100 :=
@@ -516,18 +519,18 @@ private theorem Z_sOr2 :
       Finset.sum_insert (by decide), Finset.sum_insert (by decide),
       Finset.sum_insert (by decide), Finset.sum_insert (by decide),
       Finset.sum_insert (by decide), Finset.sum_singleton,
-      powWeight_L0OfBool_of_mem _ _ 6 (by decide) card_sA,
-      powWeight_L0OfBool_of_mem _ _ 4 (by decide) card_sB,
-      powWeight_L0OfBool_of_not_mem _ _ (by norm_num) (by decide),
-      powWeight_L0OfBool_of_mem _ _ 6 (by decide) (by decide),
-      powWeight_L0OfBool_of_not_mem _ _ (by norm_num) (by decide),
-      powWeight_L0OfBool_of_not_mem _ _ (by norm_num) (by decide),
-      powWeight_L0OfBool_of_mem _ _ 5 (by decide) card_anyA,
-      powWeight_L0OfBool_of_not_mem _ _ (by norm_num) (by decide),
-      powWeight_L0OfBool_of_mem _ _ 5 (by decide) (by decide),
-      powWeight_L0OfBool_of_mem _ _ 4 (by decide) (by decide),
-      powWeight_L0OfBool_of_not_mem _ _ (by norm_num) (by decide),
-      powWeight_L0OfBool_of_not_mem _ _ (by norm_num) (by decide)]
+      powWeight_L0OfPred_of_mem _ _ 6 (by decide) card_sA,
+      powWeight_L0OfPred_of_mem _ _ 4 (by decide) card_sB,
+      powWeight_L0OfPred_of_not_mem _ _ (by norm_num) (by decide),
+      powWeight_L0OfPred_of_mem _ _ 6 (by decide) (by decide),
+      powWeight_L0OfPred_of_not_mem _ _ (by norm_num) (by decide),
+      powWeight_L0OfPred_of_not_mem _ _ (by norm_num) (by decide),
+      powWeight_L0OfPred_of_mem _ _ 5 (by decide) card_anyA,
+      powWeight_L0OfPred_of_not_mem _ _ (by norm_num) (by decide),
+      powWeight_L0OfPred_of_mem _ _ 5 (by decide) (by decide),
+      powWeight_L0OfPred_of_mem _ _ 4 (by decide) (by decide),
+      powWeight_L0OfPred_of_not_mem _ _ (by norm_num) (by decide),
+      powWeight_L0OfPred_of_not_mem _ _ (by norm_num) (by decide)]
   push_cast
   ring
 
@@ -536,10 +539,10 @@ private theorem speakerU_sOr2_mayS_lt_half :
   rw [speakerU_mayS,
       show speaker 100 (.sOr2, ()) .sC = 0 from
         S1_powUtility_eq_zero 100 l0 (by norm_num)
-          (L0OfBool_eq_zero _ _ (by decide)),
+          (L0OfPred_eq_zero _ _ (by decide)),
       add_zero, sum_S1_eq_mul_inv,
-      powWeight_L0OfBool_of_mem _ _ 6 (by decide) card_sA,
-      powWeight_L0OfBool_of_mem _ _ 4 (by decide) card_sB,
+      powWeight_L0OfPred_of_mem _ _ 6 (by decide) card_sA,
+      powWeight_L0OfPred_of_mem _ _ 4 (by decide) card_sB,
       show (((1 : ℕ) : ℝ≥0∞) + 1)⁻¹ = 2⁻¹ from by norm_num,
       ← division_def,
       ENNReal.div_lt_iff (Or.inl (tsum_powWeight_ne_zero 100 l0 _))
@@ -575,16 +578,16 @@ private theorem Z_only1_lt_Z_anyNum :
       < ∑' r, powWeight 100 l0 (.anyNum, ()) r := by
   apply ENNReal.tsum_lt_tsum (tsum_powWeight_ne_top 100 l0 _) (i := Parse.evB)
   · intro p
-    by_cases h1 : meaning p FCIState.only1 = true
-    · have h2 : meaning p FCIState.anyNum = true := by
+    by_cases h1 : meaning p FCIState.only1
+    · have h2 : meaning p FCIState.anyNum := by
         revert h1; cases p <;> decide
-      rw [powWeight_L0OfBool_of_mem (fun _ q => meaning q) ext_nonempty _ h1 rfl,
-          powWeight_L0OfBool_of_mem (fun _ q => meaning q) ext_nonempty _ h2 rfl]
-    · rw [powWeight_L0OfBool_of_not_mem (fun _ q => meaning q) ext_nonempty
+      rw [powWeight_L0OfPred_of_mem (fun _ q => meaning q) ext_nonempty _ h1 rfl,
+          powWeight_L0OfPred_of_mem (fun _ q => meaning q) ext_nonempty _ h2 rfl]
+    · rw [powWeight_L0OfPred_of_not_mem (fun _ q => meaning q) ext_nonempty
             (by norm_num) h1]
       exact zero_le
-  · rw [powWeight_L0OfBool_of_not_mem _ _ (by norm_num) (by decide),
-        powWeight_L0OfBool_of_mem _ _ 4 (by decide) (by decide)]
+  · rw [powWeight_L0OfPred_of_not_mem _ _ (by norm_num) (by decide),
+        powWeight_L0OfPred_of_mem _ _ 4 (by decide) (by decide)]
     exact ENNReal.pow_pos (ENNReal.inv_pos.mpr (by norm_num)) 100
 
 /-- **The asymmetry the paper's Table 3 rounds away**: at a uniform prior,
@@ -602,10 +605,10 @@ theorem exclusiveness_strict_asymmetry :
   rw [listener, L1_uniform_event_lt_iff, Finset.sum_singleton,
       Finset.sum_singleton, speakerU_mayAny, speakerU_mayAny,
       sum_S1_eq_mul_inv, sum_S1_eq_mul_inv,
-      powWeight_L0OfBool_of_mem _ _ 5 (by decide) card_anyA,
-      powWeight_L0OfBool_of_mem _ _ 2 (by decide) card_anyB,
-      powWeight_L0OfBool_of_mem _ _ 5 (by decide) card_anyA,
-      powWeight_L0OfBool_of_mem _ _ 2 (by decide) card_anyB]
+      powWeight_L0OfPred_of_mem _ _ 5 (by decide) card_anyA,
+      powWeight_L0OfPred_of_mem _ _ 2 (by decide) card_anyB,
+      powWeight_L0OfPred_of_mem _ _ 5 (by decide) card_anyA,
+      powWeight_L0OfPred_of_mem _ _ 2 (by decide) card_anyB]
   exact (ENNReal.mul_lt_mul_iff_right
       (ne_of_gt (lt_of_lt_of_le
         (ENNReal.pow_pos (ENNReal.inv_pos.mpr (by norm_num)) 100) le_self_add))

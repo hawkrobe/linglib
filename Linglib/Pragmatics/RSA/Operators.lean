@@ -107,40 +107,39 @@ theorem L0OfMeaning_apply_le_iff (meaning : U → W → ℝ≥0∞) (u : U)
       meaning u w₁ ≤ meaning u w₂ :=
   PMF.normalize_le_iff_le _ _ _ _ _
 
-/-! ## L0 from a Boolean meaning (uniform on extension) -/
+/-! ## L0 from a propositional meaning (uniform on extension) -/
 
-/-- Extension of a Boolean meaning at utterance `u`: the `Finset` of worlds
-the meaning is true at. The `[Fintype W]`/`[DecidableEq W]` machinery is used
-implicitly via `Finset.univ.filter`. -/
-def extensionOf [Fintype W] (m : U → W → Bool) (u : U) : Finset W :=
-  Finset.univ.filter (fun w => m u w)
+/-- Extension of a meaning at utterance `u`: the `Finset` of worlds where the
+meaning holds. -/
+def extensionOf [Fintype W] (m : U → W → Prop) (u : U) [DecidablePred (m u)] : Finset W :=
+  Finset.univ.filter (m u)
 
-@[simp] theorem mem_extensionOf [Fintype W] {m : U → W → Bool} {u : U} {w : W} :
-    w ∈ extensionOf m u ↔ m u w = true := by
+@[simp] theorem mem_extensionOf [Fintype W] {m : U → W → Prop} {u : U}
+    [DecidablePred (m u)] {w : W} : w ∈ extensionOf m u ↔ m u w := by
   simp [extensionOf]
 
-/-- Literal listener for a Boolean meaning: uniform distribution on the
-extension. Specialisation of `L0OfMeaning` to the case where each meaning
-value is `0` or `1` and the extension is non-empty. The `(extensionOf m u).Nonempty`
+/-- Literal listener for a propositional meaning: uniform distribution on the
+extension. Specialisation of `L0OfMeaning` to the case where each meaning value
+is `0` or `1` and the extension is non-empty. The `(extensionOf m u).Nonempty`
 hypothesis is `PMF.uniformOfFinset`'s API. -/
-noncomputable def L0OfBoolMeaning [Fintype W] (m : U → W → Bool) (u : U)
+noncomputable def L0OfPred [Fintype W] (m : U → W → Prop) (u : U) [DecidablePred (m u)]
     (h : (extensionOf m u).Nonempty) : PMF W :=
   PMF.uniformOfFinset (extensionOf m u) h
 
-theorem L0OfBoolMeaning_apply_of_mem [Fintype W] {m : U → W → Bool} {u : U}
-    (h : (extensionOf m u).Nonempty) {w : W} (hw : m u w = true) :
-    L0OfBoolMeaning m u h w = ((extensionOf m u).card : ℝ≥0∞)⁻¹ :=
+theorem L0OfPred_apply_of_mem [Fintype W] {m : U → W → Prop} {u : U} [DecidablePred (m u)]
+    (h : (extensionOf m u).Nonempty) {w : W} (hw : m u w) :
+    L0OfPred m u h w = ((extensionOf m u).card : ℝ≥0∞)⁻¹ :=
   PMF.uniformOfFinset_apply_of_mem _ (mem_extensionOf.mpr hw)
 
-theorem L0OfBoolMeaning_apply_of_not_mem [Fintype W] {m : U → W → Bool} {u : U}
-    (h : (extensionOf m u).Nonempty) {w : W} (hw : m u w ≠ true) :
-    L0OfBoolMeaning m u h w = 0 :=
+theorem L0OfPred_apply_of_not_mem [Fintype W] {m : U → W → Prop} {u : U} [DecidablePred (m u)]
+    (h : (extensionOf m u).Nonempty) {w : W} (hw : ¬ m u w) :
+    L0OfPred m u h w = 0 :=
   PMF.uniformOfFinset_apply_of_notMem _ (fun hMem => hw (mem_extensionOf.mp hMem))
 
-@[simp] theorem mem_support_L0OfBoolMeaning_iff [Fintype W] {m : U → W → Bool} {u : U}
-    (h : (extensionOf m u).Nonempty) (w : W) :
-    w ∈ (L0OfBoolMeaning m u h).support ↔ m u w = true := by
-  rw [L0OfBoolMeaning, PMF.mem_support_uniformOfFinset_iff, mem_extensionOf]
+@[simp] theorem mem_support_L0OfPred_iff [Fintype W] {m : U → W → Prop} {u : U}
+    [DecidablePred (m u)] (h : (extensionOf m u).Nonempty) (w : W) :
+    w ∈ (L0OfPred m u h).support ↔ m u w := by
+  rw [L0OfPred, PMF.mem_support_uniformOfFinset_iff, mem_extensionOf]
 
 /-! ## S1: Pragmatic Speaker (belief-based) -/
 

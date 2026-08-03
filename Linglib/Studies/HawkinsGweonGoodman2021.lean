@@ -13,7 +13,7 @@ so each agent allocates effort via a mixture weight `w ∈ [0,1]`, and the optim
 effort depends on the partner's expected effort.
 
 Two PMF reference games formalize the task, built on the canonical operators
-(`RSA.L0OfBoolMeaning`, `RSA.S1Belief`, `PMF.posterior`):
+(`RSA.L0OfPred`, `RSA.S1Belief`, `PMF.posterior`):
 * egocentric (`egoL0`/`egoS1`/`egoL1`) — three visible objects, shape alone
   identifies the target.
 * asymmetric (`asymL0`/`asymS1`/`asymL1`) — a hidden object behind an occlusion,
@@ -96,34 +96,49 @@ def Utt.cost : Utt → ℕ
 
 /-- Does utterance apply to an entity with given feature-match profile?
     For each feature the utterance mentions, the entity must match the target. -/
-def Utt.applies (u : Utt) (shapeOk colorOk textureOk : Bool) : Bool :=
-  let s := match u with | .s | .sc | .st | .sct => shapeOk | _ => true
-  let c := match u with | .c | .sc | .ct | .sct => colorOk | _ => true
-  let t := match u with | .t | .st | .ct | .sct => textureOk | _ => true
-  s && c && t
+def Utt.applies (u : Utt) (shapeOk colorOk textureOk : Prop) : Prop :=
+  let s := match u with | .s | .sc | .st | .sct => shapeOk | _ => True
+  let c := match u with | .c | .sc | .ct | .sct => colorOk | _ => True
+  let t := match u with | .t | .st | .ct | .sct => textureOk | _ => True
+  s ∧ c ∧ t
+
+instance (u : Utt) (p q r : Prop) [Decidable p] [Decidable q] [Decidable r] :
+    Decidable (u.applies p q r) := by
+  cases u <;> exact inferInstanceAs (Decidable (_ ∧ _ ∧ _))
 
 /-- Egocentric literal meaning: does utterance apply to visible object?
     Target matches on all features. d1 differs only on shape. d2 differs on all. -/
-def egoMeaning (u : Utt) (w : VisObj) : Bool :=
+def egoMeaning (u : Utt) (w : VisObj) : Prop :=
   match w with
-  | .target => true
-  | .d1 => u.applies false true true
-  | .d2 => u.applies false false false
+  | .target => True
+  | .d1 => u.applies False True True
+  | .d2 => u.applies False False False
+
+instance : ∀ u, DecidablePred (egoMeaning u)
+  | _, .target => .isTrue trivial
+  | u, .d1 => inferInstanceAs (Decidable (u.applies False True True))
+  | u, .d2 => inferInstanceAs (Decidable (u.applies False False False))
 
 /-- Asymmetric literal meaning: includes hidden object behind occlusion.
     The hidden object's match profile is the latent variable `l = (matchShape, matchColor, matchTexture)`.
     Each feature independently matches target with P = 1/4. -/
-def asymMeaning (l : Bool × Bool × Bool) (u : Utt) (w : AsymObj) : Bool :=
+def asymMeaning (l : Bool × Bool × Bool) (u : Utt) (w : AsymObj) : Prop :=
   match w with
-  | .target => true
-  | .d1 => u.applies false true true
-  | .d2 => u.applies false false false
+  | .target => True
+  | .d1 => u.applies False True True
+  | .d2 => u.applies False False False
   | .hidden => u.applies l.1 l.2.1 l.2.2
+
+instance (l : Bool × Bool × Bool) : ∀ u, DecidablePred (asymMeaning l u)
+  | _, .target => .isTrue trivial
+  | u, .d1 => inferInstanceAs (Decidable (u.applies False True True))
+  | u, .d2 => inferInstanceAs (Decidable (u.applies False False False))
+  | u, .hidden => inferInstanceAs (Decidable (u.applies l.1 l.2.1 l.2.2))
 
 /-! ### Model
 
 Both configurations use the canonical PMF reference-game operators
-(`RSA.L0OfBoolMeaning`, `RSA.S1Belief`, `PMF.posterior`), as in
+(`RSA.L0OfPred`, `RSA.S1Belief`, `PMF.posterior`), as in
 `Studies/TesslerFranke2020PMF`: `L0` is
 uniform on an utterance's extension, `S1` is the belief-based speaker with
 `α = 2` and no cost, and `L1` is the Bayesian posterior under a uniform world
@@ -137,26 +152,26 @@ open scoped ENNReal
 /-- Every utterance applies to the target (it matches on all features), so each
 extension is non-empty. -/
 theorem egoExtension_nonempty (u : Utt) : (RSA.extensionOf egoMeaning u).Nonempty :=
-  ⟨.target, RSA.mem_extensionOf.mpr rfl⟩
+  ⟨.target, RSA.mem_extensionOf.mpr trivial⟩
 
 /-- Literal listener: uniform on the extension of `egoMeaning u`. -/
 noncomputable def egoL0 (u : Utt) : PMF VisObj :=
-  RSA.L0OfBoolMeaning egoMeaning u (egoExtension_nonempty u)
+  RSA.L0OfPred egoMeaning u (egoExtension_nonempty u)
 
-theorem egoL0_apply_of_false {u : Utt} {w : VisObj} (h : egoMeaning u w ≠ true) :
+theorem egoL0_apply_of_false {u : Utt} {w : VisObj} (h : ¬ egoMeaning u w) :
     egoL0 u w = 0 :=
-  RSA.L0OfBoolMeaning_apply_of_not_mem _ h
+  RSA.L0OfPred_apply_of_not_mem _ h
 
-theorem egoL0_apply_of_true {u : Utt} {w : VisObj} (h : egoMeaning u w = true) :
+theorem egoL0_apply_of_true {u : Utt} {w : VisObj} (h : egoMeaning u w) :
     egoL0 u w = ((RSA.extensionOf egoMeaning u).card : ℝ≥0∞)⁻¹ :=
-  RSA.L0OfBoolMeaning_apply_of_mem _ h
+  RSA.L0OfPred_apply_of_mem _ h
 
-theorem egoL0_ne_zero_of_applies {u : Utt} {w : VisObj} (h : egoMeaning u w = true) :
+theorem egoL0_ne_zero_of_applies {u : Utt} {w : VisObj} (h : egoMeaning u w) :
     egoL0 u w ≠ 0 := by
-  rw [← PMF.mem_support_iff, egoL0, RSA.mem_support_L0OfBoolMeaning_iff]; exact h
+  rw [← PMF.mem_support_iff, egoL0, RSA.mem_support_L0OfPred_iff]; exact h
 
 theorem egoL0_null_ne_zero (w : VisObj) : egoL0 .null w ≠ 0 :=
-  egoL0_ne_zero_of_applies (by cases w <;> rfl)
+  egoL0_ne_zero_of_applies (by cases w <;> decide)
 
 private theorem egoScore_tsum_ne_zero (w : VisObj) :
     ∑' u, (egoL0 u w : ℝ≥0∞) ^ (2 : ℝ) * (1 : ℝ≥0∞) ≠ 0 := by
@@ -173,12 +188,12 @@ private theorem egoScore_tsum_ne_top (w : VisObj) :
 noncomputable def egoS1 (w : VisObj) : PMF Utt :=
   RSA.S1Belief egoL0 (fun _ => 1) 2 w (egoScore_tsum_ne_zero w) (egoScore_tsum_ne_top w)
 
-theorem egoS1_eq_zero_of_not_applies {u : Utt} {w : VisObj} (h : egoMeaning u w ≠ true) :
+theorem egoS1_eq_zero_of_not_applies {u : Utt} {w : VisObj} (h : ¬ egoMeaning u w) :
     egoS1 w u = 0 := by
   rw [egoS1, RSA.S1Belief_apply, egoL0_apply_of_false h, ENNReal.zero_rpow_of_pos (by norm_num)]
   simp
 
-theorem egoS1_ne_zero_of_applies {u : Utt} {w : VisObj} (h : egoMeaning u w = true) :
+theorem egoS1_ne_zero_of_applies {u : Utt} {w : VisObj} (h : egoMeaning u w) :
     egoS1 w u ≠ 0 :=
   RSA.S1Belief_apply_ne_zero_of_pos _ _ _ _ _ _ (egoL0_ne_zero_of_applies h) one_ne_zero
 
@@ -188,7 +203,7 @@ noncomputable def egoWorldPrior : PMF VisObj := PMF.uniformOfFintype VisObj
 theorem egoMarginal_ne_zero (u : Utt) : PMF.marginal egoS1 egoWorldPrior u ≠ 0 :=
   PMF.marginal_ne_zero _ _ _
     ((egoWorldPrior.mem_support_iff .target).mp (PMF.mem_support_uniformOfFintype _))
-    (egoS1_ne_zero_of_applies rfl)
+    (egoS1_ne_zero_of_applies trivial)
 
 /-- Pragmatic listener: Bayesian posterior of `egoS1` under the uniform prior. -/
 noncomputable def egoL1 (u : Utt) : PMF VisObj :=
@@ -197,7 +212,7 @@ noncomputable def egoL1 (u : Utt) : PMF VisObj :=
 /-- An utterance applying only to the target makes the listener certain: the
 posterior puts full mass on the target. -/
 theorem egoL1_eq_one_of_unique {u : Utt}
-    (h : ∀ w, w ≠ .target → egoMeaning u w ≠ true) : egoL1 u .target = 1 := by
+    (h : ∀ w, w ≠ .target → ¬ egoMeaning u w) : egoL1 u .target = 1 := by
   rw [egoL1]
   exact PMF.posterior_eq_one_of_singleton_score_support _ _ _ _ _
     (fun w' hne => Or.inr (egoS1_eq_zero_of_not_applies (h w' hne)))
@@ -214,27 +229,27 @@ abbrev Profile := Bool × Bool × Bool
 
 theorem asymExtension_nonempty (l : Profile) (u : Utt) :
     (RSA.extensionOf (asymMeaning l) u).Nonempty :=
-  ⟨.target, RSA.mem_extensionOf.mpr rfl⟩
+  ⟨.target, RSA.mem_extensionOf.mpr trivial⟩
 
 /-- Literal listener under hidden profile `l`. -/
 noncomputable def asymL0 (l : Profile) (u : Utt) : PMF AsymObj :=
-  RSA.L0OfBoolMeaning (asymMeaning l) u (asymExtension_nonempty l u)
+  RSA.L0OfPred (asymMeaning l) u (asymExtension_nonempty l u)
 
 theorem asymL0_apply_of_false {l : Profile} {u : Utt} {w : AsymObj}
-    (h : asymMeaning l u w ≠ true) : asymL0 l u w = 0 :=
-  RSA.L0OfBoolMeaning_apply_of_not_mem _ h
+    (h : ¬ asymMeaning l u w) : asymL0 l u w = 0 :=
+  RSA.L0OfPred_apply_of_not_mem _ h
 
 theorem asymL0_apply_of_true {l : Profile} {u : Utt} {w : AsymObj}
-    (h : asymMeaning l u w = true) :
+    (h : asymMeaning l u w) :
     asymL0 l u w = ((RSA.extensionOf (asymMeaning l) u).card : ℝ≥0∞)⁻¹ :=
-  RSA.L0OfBoolMeaning_apply_of_mem _ h
+  RSA.L0OfPred_apply_of_mem _ h
 
 theorem asymL0_ne_zero_of_applies {l : Profile} {u : Utt} {w : AsymObj}
-    (h : asymMeaning l u w = true) : asymL0 l u w ≠ 0 := by
-  rw [← PMF.mem_support_iff, asymL0, RSA.mem_support_L0OfBoolMeaning_iff]; exact h
+    (h : asymMeaning l u w) : asymL0 l u w ≠ 0 := by
+  rw [← PMF.mem_support_iff, asymL0, RSA.mem_support_L0OfPred_iff]; exact h
 
 theorem asymL0_null_ne_zero (l : Profile) (w : AsymObj) : asymL0 l .null w ≠ 0 :=
-  asymL0_ne_zero_of_applies (by cases w <;> rfl)
+  asymL0_ne_zero_of_applies (by cases w <;> trivial)
 
 private theorem asymScore_tsum_ne_zero (l : Profile) (w : AsymObj) :
     ∑' u, (asymL0 l u w : ℝ≥0∞) ^ (2 : ℝ) * (1 : ℝ≥0∞) ≠ 0 := by
@@ -252,12 +267,12 @@ noncomputable def asymS1 (l : Profile) (w : AsymObj) : PMF Utt :=
   RSA.S1Belief (asymL0 l) (fun _ => 1) 2 w (asymScore_tsum_ne_zero l w) (asymScore_tsum_ne_top l w)
 
 theorem asymS1_eq_zero_of_not_applies {l : Profile} {u : Utt} {w : AsymObj}
-    (h : asymMeaning l u w ≠ true) : asymS1 l w u = 0 := by
+    (h : ¬ asymMeaning l u w) : asymS1 l w u = 0 := by
   rw [asymS1, RSA.S1Belief_apply, asymL0_apply_of_false h, ENNReal.zero_rpow_of_pos (by norm_num)]
   simp
 
 theorem asymS1_ne_zero_of_applies {l : Profile} {u : Utt} {w : AsymObj}
-    (h : asymMeaning l u w = true) : asymS1 l w u ≠ 0 :=
+    (h : asymMeaning l u w) : asymS1 l w u ≠ 0 :=
   RSA.S1Belief_apply_ne_zero_of_pos _ _ _ _ _ _ (asymL0_ne_zero_of_applies h) one_ne_zero
 
 /-- Latent prior weight: `1` per matching feature, `3` per non-match. -/
@@ -292,12 +307,12 @@ noncomputable def asymMarginalSpeaker (w : AsymObj) : PMF Utt :=
   RSA.marginalizeKernel latentPrior asymS1 w
 
 theorem asymMarginalSpeaker_eq_zero_of_not_applies {u : Utt} {w : AsymObj}
-    (h : ∀ l, asymMeaning l u w ≠ true) : asymMarginalSpeaker w u = 0 := by
+    (h : ∀ l, ¬ asymMeaning l u w) : asymMarginalSpeaker w u = 0 := by
   rw [asymMarginalSpeaker, RSA.marginalizeKernel_apply, ENNReal.tsum_eq_zero]
   exact fun l => by rw [asymS1_eq_zero_of_not_applies (h l), mul_zero]
 
 theorem asymMarginalSpeaker_ne_zero_of_applies {l : Profile} {u : Utt} {w : AsymObj}
-    (h : asymMeaning l u w = true) : asymMarginalSpeaker w u ≠ 0 := by
+    (h : asymMeaning l u w) : asymMarginalSpeaker w u ≠ 0 := by
   rw [← PMF.mem_support_iff, asymMarginalSpeaker, RSA.mem_support_marginalizeKernel_iff]
   exact ⟨l, latentPrior_ne_zero l, asymS1_ne_zero_of_applies h⟩
 
@@ -308,7 +323,7 @@ theorem asymMarginal_ne_zero (u : Utt) :
     PMF.marginal asymMarginalSpeaker asymWorldPrior u ≠ 0 :=
   PMF.marginal_ne_zero _ _ _
     ((asymWorldPrior.mem_support_iff .target).mp (PMF.mem_support_uniformOfFintype _))
-    (asymMarginalSpeaker_ne_zero_of_applies (l := (true, true, true)) rfl)
+    (asymMarginalSpeaker_ne_zero_of_applies (l := (true, true, true)) trivial)
 
 /-- Pragmatic listener: posterior of the latent-marginalized speaker. -/
 noncomputable def asymL1 (u : Utt) : PMF AsymObj :=
@@ -320,8 +335,8 @@ noncomputable def asymL1 (u : Utt) : PMF AsymObj :=
 The literal semantics is intersective predicate modification [heim-kratzer-1998]:
 each mentioned feature is an intersective adjective — `Modifier.intersective`
 applied to a feature property — and `grounding_ego_meaning` shows `egoMeaning`
-is exactly their iterated conjunction. This grounds the `Bool` RSA meaning in
-the project-canonical Prop-valued modifier rather than a local copy. -/
+is exactly their iterated conjunction, grounding the RSA meaning in the
+project-canonical modifier rather than a local copy. -/
 
 namespace MontaguGrounding
 
@@ -351,7 +366,7 @@ def compositionalMeaning : Utt → VisObj → Prop
 /-- **Grounding**: the RSA literal meaning `egoMeaning` holds exactly when the
 intersective predicate modification of the mentioned feature adjectives does. -/
 theorem grounding_ego_meaning (u : Utt) (w : VisObj) :
-    egoMeaning u w = true ↔ compositionalMeaning u w := by
+    egoMeaning u w ↔ compositionalMeaning u w := by
   cases u <;> cases w <;>
     simp only [compositionalMeaning, Modifier.intersective_apply, shapeP, colorP, textureP] <;>
     decide
@@ -373,8 +388,8 @@ theorem ego_shape_identifies_target : egoL1 .s .target > egoL1 .s .d1 := by
   rw [gt_iff_lt]
   unfold egoL1 egoWorldPrior
   rw [PMF.posterior_lt_iff_kernel_lt_of_uniform,
-      egoS1_eq_zero_of_not_applies (by decide : egoMeaning .s .d1 ≠ true)]
-  exact pos_iff_ne_zero.mpr (egoS1_ne_zero_of_applies rfl)
+      egoS1_eq_zero_of_not_applies (by decide : ¬ egoMeaning .s .d1)]
+  exact pos_iff_ne_zero.mpr (egoS1_ne_zero_of_applies trivial)
 
 /-- The listener is equally confident about the target whether hearing
 shape-only or the full description: both apply only to the target among visible
@@ -389,8 +404,8 @@ target: both apply only to the target, so both have `L0 = 1` and equal score. -/
 theorem ego_S1_indifferent : ¬(egoS1 .target .sct > egoS1 .target .s) := by
   rw [gt_iff_lt, not_lt, egoS1, RSA.S1Belief_apply_le_iff_score_le]
   have h : egoL0 .sct .target = egoL0 .s .target := by
-    rw [egoL0_apply_of_true (by decide : egoMeaning .sct .target = true),
-        egoL0_apply_of_true (by decide : egoMeaning .s .target = true),
+    rw [egoL0_apply_of_true (by decide : egoMeaning .sct .target),
+        egoL0_apply_of_true (by decide : egoMeaning .s .target),
         show (RSA.extensionOf egoMeaning .sct).card = 1 from by decide,
         show (RSA.extensionOf egoMeaning .s).card = 1 from by decide]
   exact le_of_eq (by rw [h])
@@ -405,8 +420,8 @@ theorem asym_S1_prefers_specificity_when_shape_matches :
     asymS1 (true, false, false) .target .sct > asymS1 (true, false, false) .target .s := by
   rw [gt_iff_lt, asymS1, RSA.S1Belief_apply_lt_iff_score_lt, mul_one, mul_one]
   apply ENNReal.rpow_lt_rpow _ (by norm_num : (0 : ℝ) < 2)
-  rw [asymL0_apply_of_true (by decide : asymMeaning (true, false, false) .s .target = true),
-      asymL0_apply_of_true (by decide : asymMeaning (true, false, false) .sct .target = true),
+  rw [asymL0_apply_of_true (by decide : asymMeaning (true, false, false) .s .target),
+      asymL0_apply_of_true (by decide : asymMeaning (true, false, false) .sct .target),
       show (RSA.extensionOf (asymMeaning (true, false, false)) .s).card = 2 from by decide,
       show (RSA.extensionOf (asymMeaning (true, false, false)) .sct).card = 1 from by decide]
   norm_num
@@ -418,8 +433,8 @@ theorem asym_S1_indifferent_when_no_match :
       asymS1 (false, false, false) .target .s) := by
   rw [gt_iff_lt, not_lt, asymS1, RSA.S1Belief_apply_le_iff_score_le]
   have h : asymL0 (false, false, false) .sct .target = asymL0 (false, false, false) .s .target := by
-    rw [asymL0_apply_of_true (by decide : asymMeaning (false, false, false) .sct .target = true),
-        asymL0_apply_of_true (by decide : asymMeaning (false, false, false) .s .target = true),
+    rw [asymL0_apply_of_true (by decide : asymMeaning (false, false, false) .sct .target),
+        asymL0_apply_of_true (by decide : asymMeaning (false, false, false) .s .target),
         show (RSA.extensionOf (asymMeaning (false, false, false)) .sct).card = 1 from by decide,
         show (RSA.extensionOf (asymMeaning (false, false, false)) .s).card = 1 from by decide]
   exact le_of_eq (by rw [h])
@@ -431,9 +446,9 @@ theorem asym_L1_identifies_target : asymL1 .s .target > asymL1 .s .d1 := by
   rw [gt_iff_lt]
   unfold asymL1 asymWorldPrior
   rw [PMF.posterior_lt_iff_kernel_lt_of_uniform,
-      asymMarginalSpeaker_eq_zero_of_not_applies (by decide : ∀ l, asymMeaning l .s .d1 ≠ true)]
+      asymMarginalSpeaker_eq_zero_of_not_applies (by decide : ∀ l, ¬ asymMeaning l .s .d1)]
   exact pos_iff_ne_zero.mpr
-    (asymMarginalSpeaker_ne_zero_of_applies (l := (false, false, false)) rfl)
+    (asymMarginalSpeaker_ne_zero_of_applies (l := (false, false, false)) trivial)
 
 /-- **Paper prediction**: under asymmetry, the full description yields a higher
 listener posterior for the target than shape-only — the hidden object can match
