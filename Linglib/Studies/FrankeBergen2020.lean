@@ -527,10 +527,9 @@ odds comparison uniformly. Evaluation findings are genuinely α-dependent
 illustrative α = 5, where the comparison clears to a ℕ inequality via
 `Multiset.divPowSum`. -/
 
-/-- SS exhaustifies the inner quantifier at the paper's illustrative α = 5:
-hearing SS, the listener prefers wNS to wNSA (eq. 22's regime). Evaluation
-register — the domination certificate provably fails here (wNSA's SS-fiber is
-not stochastically dominated), and the preference degenerates as α → 0. -/
+/-- Hearing "some of the aliens drank some of their water", the pooled
+listener favors the world where no alien drank all of its water over the one
+where some did (inner exhaustification). -/
 theorem ss_inner_exh :
     (gi.listener 5 prior .ss).real {wNSA} < (gi.listener 5 prior .ss).real {wNS} :=
   gi.listener_real_lt_of_divPowSum (k := 5) (D := 12) (by decide +kernel) (by decide +kernel)
@@ -538,36 +537,34 @@ theorem ss_inner_exh :
     (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
 set_option maxRecDepth 1024 in
-/-- SS exhaustifies the outer quantifier for every rationality: hearing SS,
-the listener prefers wNS to wS. Certificate register. -/
+/-- Hearing "some of the aliens drank some of their water", the pooled
+listener favors a world where some alien drank nothing (outer
+exhaustification). -/
 theorem ss_outer_exh {α : ℝ} (hα : 0 < α) :
     (gi.listener α prior .ss).real {wS} < (gi.listener α prior .ss).real {wNS} :=
   gi.listener_real_lt_of_prodMul_strictDominates hα (prior_singleton_eq wS wNS)
     (prior_singleton_ne_zero wNS) (by decide +kernel)
 
 set_option maxRecDepth 1024 in
-/-- AA identifies the unique world where all aliens drank all, for every
-rationality: AA's readings are all {wA} (Table 1), so wSA's AA-fiber is empty
-and any nonempty product strictly dominates it — the support case of the
-certificate register. -/
+/-- Hearing "all of the aliens drank all of their water", the pooled
+listener favors the unique world where every alien did just that. -/
 theorem aa_identifies {α : ℝ} (hα : 0 < α) :
     (gi.listener α prior .aa).real {wSA} < (gi.listener α prior .aa).real {wA} :=
   gi.listener_real_lt_of_prodMul_strictDominates hα (prior_singleton_eq wSA wA)
     (prior_singleton_ne_zero wA) (by decide +kernel)
 
 set_option maxRecDepth 1024 in
-/-- AS exhaustifies the inner quantifier for every rationality: hearing AS,
-the listener prefers wS to wA. Certificate register. -/
+/-- Hearing "all of the aliens drank some of their water", the pooled
+listener favors the world where every alien drank some but not all (inner
+exhaustification). -/
 theorem as_inner_exh {α : ℝ} (hα : 0 < α) :
     (gi.listener α prior .as).real {wA} < (gi.listener α prior .as).real {wS} :=
   gi.listener_real_lt_of_prodMul_strictDominates hα (prior_singleton_eq wA wS)
     (prior_singleton_ne_zero wS) (by decide +kernel)
 
-/-- GI's parse posterior for SS peaks at the matrix-only parse, whose reading
-uniquely identifies wNS, at the paper's illustrative α = 5 (eq. 22's regime).
-Pair choice drives this — see `perParse_ss_prefers_o` for the contrast.
-Evaluation register: as α → 0 the singleton reading's informativity advantage
-vanishes, so no α-free certificate exists. -/
+/-- Hearing "some of the aliens drank some of their water", the pooled
+listener's parse posterior peaks at exhaustification of the whole
+sentence. -/
 theorem ss_m_parse_pref : ∀ p : Parse, p ≠ pM →
     (gi.choicePosterior 5 prior .ss).real {(.ss, p)}
       < (gi.choicePosterior 5 prior .ss).real {(.ss, pM)} := by
@@ -584,88 +581,75 @@ theorem ss_m_parse_pref : ∀ p : Parse, p ≠ pM →
     gi.choicePosterior_real_lt_of_divPowSum (by decide +kernel) (by decide +kernel)
       (by decide +kernel) prior_singleton_eq prior_singleton_ne_zero rfl rfl (hnat p hp)
 
-/-- Vanilla RSA hearing SS prefers wNA to wNS — the wrong prediction — for
-every rationality (cost-free; the direction reverses at the paper's fitted
-cost). Certificate register: {6}·{3,4} = {18,24} strictly dominates
-{6}·{4,4} = {24,24} with a strictly smaller matched entry and no spare. -/
+/-- Hearing "some of the aliens drank some of their water", the
+literal-semantics listener favors all-drinkers over some-but-not-all
+drinkers — opposite to the attested preference. -/
 theorem vanilla_ss_prefers_wNA {α : ℝ} (hα : 0 < α) :
     (vanilla.listener α prior .ss).real {wNS} < (vanilla.listener α prior .ss).real {wNA} :=
   vanilla.listener_real_lt_of_prodMul_strictDominates hα (prior_singleton_eq wNS wNA)
     (prior_singleton_ne_zero wNA) (by decide +kernel)
 
 set_option maxRecDepth 1024 in
-/-- GI corrects vanilla's error for every rationality: hearing SS, the
-listener prefers wNS to wNA. Certificate register: wNS's SS-fiber
-{1,3,3,3,3,4,4,6} strictly dominates wNA's {3,3,6} — the M-pair's singleton
-extension is the spare element. -/
+/-- Hearing "some of the aliens drank some of their water", the pooled
+listener favors some-but-not-all drinkers over all-drinkers, as attested. -/
 theorem gi_ss_prefers_wNS {α : ℝ} (hα : 0 < α) :
     (gi.listener α prior .ss).real {wNA} < (gi.listener α prior .ss).real {wNS} :=
   gi.listener_real_lt_of_prodMul_strictDominates hα (prior_singleton_eq wNA wNS)
     (prior_singleton_ne_zero wNS) (by decide +kernel)
 
 set_option maxRecDepth 1024 in
-/-- LI derives outer exhaustification for SS at every rationality: wNS over
-wS via the OI parse. Certificate register. -/
+/-- Hearing "some of the aliens drank some of their water", the matrix-free
+pooled listener still favors a world where some alien drank nothing (outer
+exhaustification). -/
 theorem li_ss_outer_exh {α : ℝ} (hα : 0 < α) :
     (li.listener α prior .ss).real {wS} < (li.listener α prior .ss).real {wNS} :=
   li.listener_real_lt_of_prodMul_strictDominates hα (prior_singleton_eq wS wNS)
     (prior_singleton_ne_zero wNS) (by decide +kernel)
 
 set_option maxRecDepth 1024 in
-/-- LI also gets the wNS-over-wNA ordering that vanilla misses, at every
-rationality. Certificate register. -/
+/-- Hearing "some of the aliens drank some of their water", the matrix-free
+pooled listener favors some-but-not-all drinkers over all-drinkers. -/
 theorem li_ss_prefers_wNS {α : ℝ} (hα : 0 < α) :
     (li.listener α prior .ss).real {wNA} < (li.listener α prior .ss).real {wNS} :=
   li.listener_real_lt_of_prodMul_strictDominates hα (prior_singleton_eq wNA wNS)
     (prior_singleton_ne_zero wNS) (by decide +kernel)
 
-/-- LU keeps wNS above wNA for every rationality. At wNA only the literal
-lexicon can produce SS, and its share is capped below a third: SS's extension
-strictly exceeds SN's and SA's, so by informativity monotonicity it carries
-the smallest of the three shares. At wNS the OI lexicon alone contributes
-exactly a third — its true choices all have three-world extensions, so its
-speaker is uniform on them. (The paper's full LU-L2 nonetheless concentrates
-on wNSA, eq. 15.) -/
+/-- Hearing "some of the aliens drank some of their water", the
+lexical-uncertainty listener favors some-but-not-all drinkers over
+all-drinkers. -/
 theorem lu_ss_prefers_wNS {α : ℝ} (hα : 0 < α) :
     (luListener α .ss).fst.real {wNA} < (luListener α .ss).fst.real {wNS} := by
   rw [luListener, RSA.Scenario.familyListener_fst_real_lt_iff luFam hα.le
       luPrior_singleton_eq luPrior_singleton_ne_zero
-      (by decide +kernel : wNS ∈ (luFam .lit).sem .ss),
-    show (Finset.univ : Finset LULex) = {.lit, .oi} from by decide +kernel,
-    Finset.sum_insert (by decide +kernel : LULex.lit ∉ ({.oi} : Finset LULex)),
-    Finset.sum_singleton,
-    Finset.sum_insert (by decide +kernel : LULex.lit ∉ ({.oi} : Finset LULex)),
-    Finset.sum_singleton,
-    (luFam .oi).speaker_real_singleton_eq_zero hα
-      (by decide +kernel : wNA ∉ (luFam .oi).sem .ss),
-    (luFam .oi).speaker_real_singleton_of_profile_replicate hα
-      (by decide +kernel : (luFam .oi).profile wNS = Multiset.replicate 3 3)
-      (by decide +kernel : wNS ∈ (luFam .oi).sem .ss)]
-  have hsum := (luFam .lit).sum_speaker_real_singleton_le_one α wNA {.ss, .sn, .sa}
-  rw [Finset.sum_insert (by decide +kernel : Utterance.ss ∉ ({.sn, .sa} : Finset Utterance)),
-    Finset.sum_insert (by decide +kernel : Utterance.sn ∉ ({.sa} : Finset Utterance)),
-    Finset.sum_singleton] at hsum
-  have hsn := (luFam .lit).speaker_real_singleton_lt_of_card_lt hα
-    (by decide +kernel : wNA ∈ (luFam .lit).sem .ss)
-    (by decide +kernel : wNA ∈ (luFam .lit).sem .sn) (by decide +kernel)
-  have hsa := (luFam .lit).speaker_real_singleton_lt_of_card_lt hα
-    (by decide +kernel : wNA ∈ (luFam .lit).sem .ss)
-    (by decide +kernel : wNA ∈ (luFam .lit).sem .sa) (by decide +kernel)
-  have hpos : (0 : ℝ) ≤ ((luFam .lit).speaker α wNS).real {Utterance.ss} :=
-    measureReal_nonneg
-  linarith
+      (by decide +kernel : wNS ∈ (luFam .lit).sem .ss)]
+  calc (∑ l : LULex, ((luFam l).speaker α wNA).real {.ss})
+      = ((luFam .lit).speaker α wNA).real {.ss} :=
+        Finset.sum_eq_single_of_mem LULex.lit (Finset.mem_univ _) fun l _ hl => by
+          cases l
+          · exact absurd rfl hl
+          · exact (luFam .oi).speaker_real_singleton_eq_zero hα
+              (by decide +kernel : wNA ∉ (luFam .oi).sem .ss)
+    _ < ((luFam .oi).speaker α wNS).real {.ss} := by
+        rw [(luFam .oi).speaker_real_singleton_of_profile_replicate hα
+          (by decide +kernel : (luFam .oi).profile wNS = Multiset.replicate 3 3)
+          (by decide +kernel : wNS ∈ (luFam .oi).sem .ss)]
+        have hsum := (luFam .lit).sum_speaker_real_singleton_le_one α wNA {.ss, .sn, .sa}
+        rw [Finset.sum_insert (by decide), Finset.sum_pair (by decide)] at hsum
+        have hsn := (luFam .lit).speaker_real_singleton_lt_of_card_lt hα
+          (by decide +kernel : wNA ∈ (luFam .lit).sem .ss)
+          (by decide +kernel : wNA ∈ (luFam .lit).sem .sn) (by decide +kernel)
+        have hsa := (luFam .lit).speaker_real_singleton_lt_of_card_lt hα
+          (by decide +kernel : wNA ∈ (luFam .lit).sem .ss)
+          (by decide +kernel : wNA ∈ (luFam .lit).sem .sa) (by decide +kernel)
+        linarith
+    _ ≤ ∑ l : LULex, ((luFam l).speaker α wNS).real {.ss} :=
+        Finset.single_le_sum
+          (fun l _ => measureReal_nonneg (μ := (luFam l).speaker α wNS))
+          (Finset.mem_univ LULex.oi)
 
-/-- The headline divergence, for every rationality: hearing SS, the
-*per-parse-normalized* listener's parse posterior puts more mass on O than on
-M. The M-share is a single world's, capped below one by competition
-(`RSA.Scenario.speaker_real_singleton_lt_one`), while O's three worlds each
-contribute exactly a third — their true choices all have three-world
-extensions, so each per-parse speaker is uniform on them
-(`RSA.Scenario.speaker_real_singleton_of_profile_replicate`). Renormalizing
-within the parse erases exactly the informativity advantage of the singleton
-reading ⟦SS⟧^M that the pooled speaker exploits in `ss_m_parse_pref`; with
-`RSA.Scenario.pool_L0` (identical weights), the pair locates GI's win purely
-in the position of the latent parameter (pp. e85–e86). -/
+/-- Hearing "some of the aliens drank some of their water", the per-parse
+listener favors exhaustifying the outer quantifier over exhaustifying the
+whole sentence. -/
 theorem perParse_ss_prefers_o {α : ℝ} (hα : 0 < α) :
     (perParseListener α .ss).snd.real {pM} < (perParseListener α .ss).snd.real {pO} := by
   have hOprof : ∀ w ∈ ({wNS, wNA, wNSA} : Finset World),
