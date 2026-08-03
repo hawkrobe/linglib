@@ -1408,6 +1408,7 @@ import Linglib.Pragmatics.RSA.Basic
 import Linglib.Pragmatics.RSA.Canonical
 import Linglib.Pragmatics.RSA.Channel
 import Linglib.Pragmatics.RSA.CombinedUtility
+import Linglib.Pragmatics.RSA.Dominates
 import Linglib.Pragmatics.RSA.Gibbs
 import Linglib.Pragmatics.RSA.LatentOperators
 import Linglib.Pragmatics.RSA.LexicalUncertainty

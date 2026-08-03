@@ -19,8 +19,8 @@ the parse enters the speaker: vanilla (§3.1) has only the literal parse; LU
 of the speaker (eq. 11) and a latent the listener marginalizes
 ([bergen-levy-goodman-2016], [potts-etal-2016]); the LI (§3.3) and GI (§3.4)
 speakers instead *choose* an (utterance, parse) pair (eqs. 18a/21a), over the
-4 matrix-free parses resp. all 8 — one softmax over pairs per world, read by
-`ProbabilityTheory.jointPosterior`.
+4 matrix-free parses resp. all 8 — one softmax over pairs per world, heard
+through the `RSA.Scenario` observation map.
 
 We show that GI corrects the SS interpretation vanilla gets wrong
 (`vanilla_ss_prefers_wNA` vs `gi_ss_prefers_wNS`), and that its parse
@@ -29,38 +29,53 @@ reading ⟦SS⟧^M = {wNS} "uniquely singles out this world state" (eq. 22,
 `m_ss_singleton`) and is unavailable to LI and LU (`li_excludes_matrix`,
 `lu_excludes_matrix`) — the paper's explanation of GI's win in its Bayesian
 model comparison (posterior 0.956 vs LI 0.033, LU 0.01, vanilla 0; Table 2).
-LI and LU still derive the embedded enrichments (`li_ss_outer_exh`,
-`li_ss_prefers_wNS`, `lu_ss_prefers_wNS`).
+The M-advantage exists *because* the pooled speaker normalizes over pairs:
+under the per-parse normalization the paper rejects (p. e85), O beats M at
+every rationality (`perParse_ss_prefers_o`). LI and LU still derive the
+embedded enrichments (`li_ss_outer_exh`, `li_ss_prefers_wNS`,
+`lu_ss_prefers_wNS`).
 
 ## Main results
 
 * `table1_*` — the paper's Table 1, one lemma per row, including NN's
   distinct matrix row (fn. 7) from the `none ~ not all` lexical alternative
   ([levinson-2000]).
-* `ss_m_parse_pref` — GI's parse posterior for SS peaks at M.
+* `ss_m_parse_pref` vs `perParse_ss_prefers_o` — the architectural headline:
+  pooled (utterance, parse) choice peaks at M (α = 5), per-parse
+  normalization prefers O for every rationality. With
+  `RSA.Scenario.pool_L0` (identical weights), the pair locates GI's win
+  purely in the position of the latent parameter (p. e86).
 * `moi_ss_ne_innocent_exclusion` — the paper's matrix operator (eq. A2) is
   not Fox-style innocent exclusion ([fox-2007]).
 
 ## Implementation notes
 
-Sentential alternatives (A3a) range over a fourth quantifier `notAll` that is
-never an utterance — the paper's grammatical-vs-utterance alternatives
-distinction (its comparison with [gotzner-romoli-2018]'s alternative set
-favors this one by a Bayes factor of ~1,530). We fix α = 2 and omit the
+One reading family (`readings`) generates every model: vanilla is its
+literal member, GI and LI pool (utterance, parse) pairs into the choice
+space (`RSA.Scenario.pool`, eqs. 18a/21a), and LU — like the rejected
+per-parse architecture — fixes the latent as a speaker argument
+(`RSA.Scenario.familySpeaker`, eq. 11). Sentential alternatives (A3a) range
+over a fourth quantifier `notAll` that is never an utterance — the paper's
+grammatical-vs-utterance alternatives distinction (its comparison with
+[gotzner-romoli-2018]'s alternative set favors this one by a Bayes factor of
+~1,530). Findings come in two registers, both closed by `decide`:
+`Multiset.StrictDominates` certificates — strict stochastic dominance of
+informativity profiles — hold for every rationality `α > 0`, while genuinely
+α-dependent findings are pinned at the paper's illustrative α = 5, where
+comparisons clear to ℕ inequalities via `Multiset.divPowSum`. We omit the
 paper's cost term for *none*-initial utterances and fixed error ε = 0.045
-(eqs. 25–28); each finding except `vanilla_ss_prefers_wNA` is robust to this.
-The paper's S2/L2 layer for LU ([lassiter-goodman-2017], eqs. 14a–14b) is
-also omitted: our L1-only LU keeps wNS over wNA, though the paper's LU-L2
-concentrates on wNSA (eq. 15). The model lives on mathlib's probability API:
-`uniformOn` priors, `ProbabilityTheory.cond` literal listeners, softmax
-kernels, and posterior kernels; predictions are stated on `Measure.real` and
-close by partition-value rewrites plus `norm_num`.
+(eqs. 25–28); `vanilla_ss_prefers_wNA` reverses at the fitted cost. The
+paper's S2/L2 layer for LU ([lassiter-goodman-2017], eqs. 14a–14b) is also
+omitted: our L1-only LU keeps wNS over wNA at every rationality, though the
+paper's LU-L2 concentrates on wNSA (eq. 15).
 -/
 
 namespace FrankeBergen2020
 
 open scoped ENNReal
 open MeasureTheory ProbabilityTheory
+
+/-! ## The grammar of readings -/
 
 /-! ### Domain -/
 
@@ -79,18 +94,21 @@ instance : Membership AlienType World := ⟨fun w t => t ∈ w.val⟩
 instance (t : AlienType) (w : World) : Decidable (t ∈ w) :=
   inferInstanceAs (Decidable (t ∈ w.val))
 
+instance : MeasurableSpace World := ⊤
+instance : DiscreteMeasurableSpace World := ⟨fun _ => trivial⟩
+
 /-- The world with only N-type aliens (each drank none). -/
 def wN : World := ⟨{.none}, Finset.singleton_nonempty _⟩
 /-- The world with N-type and S-type aliens. -/
-def wNS : World := ⟨{.none, .someNotAll}, by decide⟩
+def wNS : World := ⟨{.none, .someNotAll}, by decide +kernel⟩
 /-- The world with N-type and A-type aliens. -/
-def wNA : World := ⟨{.none, .all}, by decide⟩
+def wNA : World := ⟨{.none, .all}, by decide +kernel⟩
 /-- The world with all three alien types. -/
-def wNSA : World := ⟨{.none, .someNotAll, .all}, by decide⟩
+def wNSA : World := ⟨{.none, .someNotAll, .all}, by decide +kernel⟩
 /-- The world with only S-type aliens (each drank some but not all). -/
 def wS : World := ⟨{.someNotAll}, Finset.singleton_nonempty _⟩
 /-- The world with S-type and A-type aliens. -/
-def wSA : World := ⟨{.someNotAll, .all}, by decide⟩
+def wSA : World := ⟨{.someNotAll, .all}, by decide +kernel⟩
 /-- The world with only A-type aliens (each drank all). -/
 def wA : World := ⟨{.all}, Finset.singleton_nonempty _⟩
 
@@ -105,6 +123,16 @@ inductive ExhPosition where
 /-- A parse is the set of EXH insertion sites. -/
 abbrev Parse := Finset ExhPosition
 
+instance : MeasurableSpace Parse := ⊤
+instance : DiscreteMeasurableSpace Parse := ⟨fun _ => trivial⟩
+instance : Nonempty Parse := ⟨∅⟩
+
+/-- The matrix-only parse M. -/
+def pM : Parse := {.matrix}
+
+/-- The outer-only parse O. -/
+def pO : Parse := {.outer}
+
 /-- Aristotelian quantifiers: the utterance vocabulary. -/
 inductive AristQuant where
   | none | some | all
@@ -117,6 +145,10 @@ inductive Utterance where
   | sn | ss | sa
   | an | as | aa
   deriving DecidableEq, Repr, Fintype
+
+instance : Nonempty Utterance := ⟨.nn⟩
+instance : MeasurableSpace Utterance := ⊤
+instance : DiscreteMeasurableSpace Utterance := ⟨fun _ => trivial⟩
 
 /-- Outer quantifier of an utterance. -/
 def Utterance.outer : Utterance → AristQuant
@@ -265,85 +297,66 @@ instance (p : Parse) (u : Utterance) : DecidablePred (exhMeaning p u) := fun _ =
 
 /-! ### Truth-table verification (the paper's Table 1)
 
-Each reading is characterized by a membership predicate on the world's
-alien-type set, rather than transcribed as a truth vector. -/
+One characterization per utterance, total over all eight parses — the paper's
+row-groups appear as the guards. Each reading is a membership predicate on
+the world's alien-type set, not a truth vector. -/
 
-/-- Table 1, SS literal row: true everywhere but wN. -/
-theorem table1_ss_lit : ∀ w, exhMeaning ∅ .ss w ↔ w ≠ wN := by decide
+/-- Table 1, NN: no N-types; matrix parses additionally negate "none drank
+not all" (= {wA}) — the fn. 7 reading from the `none ~ not all` alternative. -/
+theorem table1_nn : ∀ (p : Parse) (w : World),
+    exhMeaning p .nn w ↔ (.none ∉ w ∧ (.matrix ∈ p → w ≠ wA)) := by decide +kernel
 
-/-- Table 1, SS inner-EXH row: an S-type exists. -/
-theorem table1_ss_i : ∀ w, exhMeaning {.inner} .ss w ↔ .someNotAll ∈ w := by decide
+/-- Table 1, NS: only wN literally; inner EXH weakens to the S-free worlds,
+whereupon matrix EXH negates the sentence's own now-stronger literal {wN}. -/
+theorem table1_ns : ∀ (p : Parse) (w : World),
+    exhMeaning p .ns w ↔
+      if .inner ∈ p then .someNotAll ∉ w ∧ (.matrix ∈ p → w ≠ wN)
+      else w = wN := by decide +kernel
 
-/-- Table 1, SS outer+inner row: an S-type exists but not exclusively. -/
-theorem table1_ss_oi :
-    ∀ w, exhMeaning {.outer, .inner} .ss w ↔ (.someNotAll ∈ w ∧ w ≠ wS) := by decide
+/-- Table 1, NA: no A-types; matrix EXH negates the stronger NS = {wN}. -/
+theorem table1_na : ∀ (p : Parse) (w : World),
+    exhMeaning p .na w ↔ (.all ∉ w ∧ (.matrix ∈ p → w ≠ wN)) := by decide +kernel
 
-/-- EXH_MOI(SS) = EXH_OI(SS): matrix EXH is vacuous at MOI. -/
-theorem exh_moi_ss : ∀ w,
-    exhMeaning {.matrix, .outer, .inner} .ss w ↔ exhMeaning {.outer, .inner} .ss w := by
-  decide
+/-- Table 1, SN: an N-type exists; outer or matrix EXH negates AN = {wN}. -/
+theorem table1_sn : ∀ (p : Parse) (w : World),
+    exhMeaning p .sn w ↔
+      (.none ∈ w ∧ (.outer ∈ p ∨ .matrix ∈ p → w ≠ wN)) := by decide +kernel
 
-/-- Table 1, NN matrix-free rows: no N-types. -/
-theorem table1_nn_lit : ∀ p : Parse, .matrix ∉ p →
-    ∀ w, exhMeaning p .nn w ↔ .none ∉ w := by decide
+/-- Table 1, SS: the five row-groups — literal; inner EXH requires an S-type
+(matrix then vacuous); adding outer EXH excludes wS; outer alone keeps mixed
+worlds; matrix alone pins wNS. -/
+theorem table1_ss : ∀ (p : Parse) (w : World),
+    exhMeaning p .ss w ↔
+      if .inner ∈ p then .someNotAll ∈ w ∧ (.outer ∈ p → w ≠ wS)
+      else if .outer ∈ p then .none ∈ w ∧ w ≠ wN
+      else if .matrix ∈ p then w = wNS
+      else w ≠ wN := by decide +kernel
 
-/-- Table 1, NN matrix rows: matrix EXH additionally negates "none drank not
-all" (= {wA}) — the fn. 7 reading from the `none ~ not all` alternative. -/
-theorem table1_nn_m : ∀ p : Parse, .matrix ∈ p →
-    ∀ w, exhMeaning p .nn w ↔ (.none ∉ w ∧ w ≠ wA) := by decide
-
-/-- Table 1, NS literal row: only wN. -/
-theorem table1_ns_lit : ∀ w, exhMeaning ∅ .ns w ↔ w = wN := by decide
-
-/-- Table 1, NS inner-EXH row: no S-types — inner EXH weakens NS. -/
-theorem table1_ns_i : ∀ w, exhMeaning {.inner} .ns w ↔ .someNotAll ∉ w := by decide
-
-/-- Table 1, NS matrix+inner row: matrix EXH negates the sentence's own
-now-stronger literal meaning {wN}. -/
-theorem table1_ns_mi :
-    ∀ w, exhMeaning {.matrix, .inner} .ns w ↔ (.someNotAll ∉ w ∧ w ≠ wN) := by decide
+/-- Table 1, SA: an A-type exists; outer or matrix EXH excludes wA. -/
+theorem table1_sa : ∀ (p : Parse) (w : World),
+    exhMeaning p .sa w ↔
+      (.all ∈ w ∧ (.outer ∈ p ∨ .matrix ∈ p → w ≠ wA)) := by decide +kernel
 
 /-- Table 1, AN: only wN, under every parse. -/
-theorem table1_an : ∀ p : Parse, ∀ w, exhMeaning p .an w ↔ w = wN := by decide
+theorem table1_an : ∀ (p : Parse) (w : World), exhMeaning p .an w ↔ w = wN := by decide +kernel
+
+/-- Table 1, AS: no N-types; inner EXH pins wS; matrix EXH without inner
+negates AA, excluding wA. -/
+theorem table1_as : ∀ (p : Parse) (w : World),
+    exhMeaning p .as w ↔
+      if .inner ∈ p then w = wS
+      else .none ∉ w ∧ (.matrix ∈ p → w ≠ wA) := by decide +kernel
 
 /-- Table 1, AA: only wA, under every parse. -/
-theorem table1_aa : ∀ p : Parse, ∀ w, exhMeaning p .aa w ↔ w = wA := by decide
-
-/-- Table 1, SA literal row: an A-type exists. -/
-theorem table1_sa_lit : ∀ w, exhMeaning ∅ .sa w ↔ .all ∈ w := by decide
-
-/-- Table 1, SA outer-EXH row: outer EXH excludes wA. -/
-theorem table1_sa_o : ∀ w, exhMeaning {.outer} .sa w ↔ (.all ∈ w ∧ w ≠ wA) := by decide
-
-/-- Table 1, NA literal row: no A-types. -/
-theorem table1_na_lit : ∀ w, exhMeaning ∅ .na w ↔ .all ∉ w := by decide
-
-/-- Table 1, NA matrix row: matrix EXH negates the stronger NS = {wN}. -/
-theorem table1_na_m : ∀ w, exhMeaning {.matrix} .na w ↔ (.all ∉ w ∧ w ≠ wN) := by decide
-
-/-- Table 1, SN literal row: an N-type exists. -/
-theorem table1_sn_lit : ∀ w, exhMeaning ∅ .sn w ↔ .none ∈ w := by decide
-
-/-- Table 1, SN outer-EXH row: outer EXH negates AN = {wN}. -/
-theorem table1_sn_o : ∀ w, exhMeaning {.outer} .sn w ↔ (.none ∈ w ∧ w ≠ wN) := by decide
-
-/-- Table 1, AS literal row: no N-types. -/
-theorem table1_as_lit : ∀ w, exhMeaning ∅ .as w ↔ .none ∉ w := by decide
-
-/-- Table 1, AS inner-EXH row: inner EXH pins wS. -/
-theorem table1_as_i : ∀ w, exhMeaning {.inner} .as w ↔ w = wS := by decide
-
-/-- Table 1, AS matrix row: matrix EXH without I negates AA, excluding wA. -/
-theorem table1_as_m :
-    ∀ w, exhMeaning {.matrix} .as w ↔ (.none ∉ w ∧ w ≠ wA) := by decide
+theorem table1_aa : ∀ (p : Parse) (w : World), exhMeaning p .aa w ↔ w = wA := by decide +kernel
 
 /-- Literal meaning is the empty parse's exhaustified meaning. -/
-theorem literal_eq_exh_none : ∀ u : Utterance, ∀ w,
-    literalMeaning u w ↔ exhMeaning ∅ u w := by decide
+theorem literal_eq_exh_none : ∀ (u : Utterance) (w : World),
+    literalMeaning u w ↔ exhMeaning ∅ u w := by decide +kernel
 
-/-- Table 1, SS matrix row — ⟦SS⟧^M = {wNS}: the reading that "uniquely
-singles out this world state" (eq. 22) and drives GI's win. -/
-theorem m_ss_singleton : ∀ w, exhMeaning {.matrix} .ss w ↔ w = wNS := by decide
+/-- ⟦SS⟧^M = {wNS} — the reading that "uniquely singles out this world
+state" (eq. 22) and drives GI's win; the matrix-alone case of `table1_ss`. -/
+theorem m_ss_singleton : ∀ w, exhMeaning pM .ss w ↔ w = wNS := by decide +kernel
 
 /-- The matrix operator (eq. A2) is not Fox-style innocent exclusion
 ([fox-2007]): at MOI its strictly-stronger filter is empty and ⟦SS⟧^MOI keeps
@@ -355,27 +368,54 @@ theorem moi_ss_ne_innocent_exclusion :
             ((matrixAlts .ss).map fun a w => decide (altLiteral a w)))
           (Exhaustification.predToFinset
             fun w => decide (exhMeaning {.outer, .inner} .ss w)) :=
-  ⟨by decide, by decide⟩
+  ⟨by decide +kernel, by decide +kernel⟩
 
-/-! ### Latent spaces -/
+/-- Every `(world, parse)` state has a true utterance. -/
+theorem exists_true : ∀ (w : World) (p : Parse), ∃ u, exhMeaning p u w := by decide +kernel
 
-/-- LU lexicon: literal or OI (inner + outer EXH). Each speaker has a fixed
-lexicon; the listener marginalizes over the two lexica. -/
-inductive LULex where
-  | lit | oi
-  deriving DecidableEq, Repr, Fintype
+/-! ## The models -/
 
-instance : Nonempty LULex := ⟨.lit⟩
+/-! ### The reading family and the pooled models
 
-/-- Map LU lexicon to the corresponding parse. -/
-def LULex.toParse : LULex → Parse
-  | .lit => ∅
-  | .oi => {.outer, .inner}
+Each parse yields a scenario (`readings`); the paper's models are combinators
+applied to this single family. Vanilla (§3.1) is the literal member. GI
+(eq. 21a) and LI (eq. 18a) pool (utterance, parse) pairs into one choice
+space — the speaker *chooses* the parse — while LU (eq. 11) fixes the lexicon
+as a speaker argument (`RSA.Scenario.familySpeaker`). By
+`RSA.Scenario.pool_L0` the weights agree, so the models differ *only* in the
+position of the latent parameter (p. e86); `ss_m_parse_pref` against
+`perParse_ss_prefers_o` below turns that difference into diverging
+predictions. Rationality is a parameter of the derived kernels, and findings
+quantify over it wherever the paper's argument does. -/
+
+/-- The extension of an utterance under a parse, as a `Finset` — the
+`RSA.Scenario` semantic field. -/
+def ext (p : Parse) (u : Utterance) : Finset World :=
+  Finset.univ.filter (exhMeaning p u)
+
+@[simp] theorem mem_ext {p : Parse} {u : Utterance} {w : World} :
+    w ∈ ext p u ↔ exhMeaning p u w := by
+  simp [ext]
+
+/-- One scenario per parse: utterances read under it. -/
+@[simps] def readings (p : Parse) : RSA.Scenario World Utterance Utterance where
+  sem := ext p
+  obs := id
+
+/-- The vanilla scenario (§3.1): the literal member of the family. -/
+abbrev vanilla : RSA.Scenario World Utterance Utterance := readings ∅
+
+/-- The GI scenario (eq. 21a): pair choice over the full reading family. -/
+def gi : RSA.Scenario World (Utterance × Parse) Utterance := .pool readings
 
 /-- LI parse: lit, I, O, or OI — matrix-EXH parses are unavailable. -/
 inductive LIParse where
   | lit | i | o | oi
   deriving DecidableEq, Repr, Fintype
+
+instance : Nonempty LIParse := ⟨.lit⟩
+instance : MeasurableSpace LIParse := ⊤
+instance : DiscreteMeasurableSpace LIParse := ⟨fun _ => trivial⟩
 
 /-- Map LI parse to the full parse space. -/
 def LIParse.toParse : LIParse → Parse
@@ -385,105 +425,52 @@ def LIParse.toParse : LIParse → Parse
   | .oi => {.outer, .inner}
 
 /-- LI cannot access matrix EXH: no LI parse includes M. -/
-theorem li_excludes_matrix : ∀ l : LIParse, .matrix ∉ l.toParse := by decide
+theorem li_excludes_matrix : ∀ l : LIParse, .matrix ∉ l.toParse := by decide +kernel
 
-/-- LU cannot access matrix EXH: neither lexicon includes M. -/
-theorem lu_excludes_matrix : ∀ l : LULex, .matrix ∉ l.toParse := by decide
+/-- The LI scenario (eq. 18a): pair choice over the matrix-free parses. -/
+def li : RSA.Scenario World (Utterance × LIParse) Utterance :=
+  .pool fun l => readings l.toParse
 
-/-! ### Measurable structure -/
-
-instance : MeasurableSpace World := ⊤
-instance : DiscreteMeasurableSpace World := ⟨fun _ => trivial⟩
-instance : MeasurableSpace Utterance := ⊤
-instance : DiscreteMeasurableSpace Utterance := ⟨fun _ => trivial⟩
-instance : Nonempty Utterance := ⟨.nn⟩
-instance : MeasurableSpace Parse := ⊤
-instance : DiscreteMeasurableSpace Parse := ⟨fun _ => trivial⟩
-instance : Nonempty Parse := ⟨∅⟩
-instance : MeasurableSpace LULex := ⊤
-instance : DiscreteMeasurableSpace LULex := ⟨fun _ => trivial⟩
-instance : MeasurableSpace LIParse := ⊤
-instance : DiscreteMeasurableSpace LIParse := ⟨fun _ => trivial⟩
-instance : Nonempty LIParse := ⟨.lit⟩
-
-/-! ### The model on kernels
-
-Priors are `uniformOn`; per-parse literal listeners condition the prior on
-the reading's extension; the speakers are the softmax-utility kernel at
-α = 2; the listeners are `κ†μ` (vanilla; LU with the lexicon in the state)
-and `jointPosterior` (LI/GI pair choice). -/
-
-/-- The extension of an utterance under a parse. -/
-def sem (p : Parse) (u : Utterance) : Set World := {w | exhMeaning p u w}
+instance : vanilla.Expressible := ⟨fun w => (exists_true w ∅).imp fun _ h => mem_ext.mpr h⟩
+instance : gi.Expressible :=
+  ⟨fun w => (exists_true w ∅).elim fun u h => ⟨(u, ∅), mem_ext.mpr h⟩⟩
+instance : li.Expressible :=
+  ⟨fun w => (exists_true w ∅).elim fun u h => ⟨(u, .lit), mem_ext.mpr h⟩⟩
 
 noncomputable def prior : Measure World := uniformOn Set.univ
 
 instance : IsProbabilityMeasure prior :=
   inferInstanceAs (IsProbabilityMeasure (uniformOn _))
 
-private theorem card_world : Fintype.card World = 7 := by decide
-
-theorem prior_real_singleton (w : World) : prior.real {w} = 7⁻¹ := by
-  rw [prior, uniformOn_univ_real_singleton, card_world]
-  norm_num
+theorem prior_singleton_eq (w w' : World) : prior {w} = prior {w'} := by
+  simp [prior, uniformOn_univ]
 
 theorem prior_singleton_ne_zero (w : World) : prior {w} ≠ 0 := by
   rw [prior, uniformOn_univ, Measure.count_singleton]
   simp
 
-/-- Every `(world, parse)` state has a true utterance. -/
-theorem exists_true : ∀ (w : World) (p : Parse), ∃ u, exhMeaning p u w := by decide
+/-! ### Lexical uncertainty: the latent as a speaker argument -/
 
-/-- Per-parse literal listener. -/
-noncomputable def L0 (p : Parse) : Kernel Utterance World :=
-  RSA.literalListener prior (sem p)
+/-- LU lexicon: literal or OI (inner + outer EXH). Each speaker has a fixed
+lexicon; the listener marginalizes over the two lexica. -/
+inductive LULex where
+  | lit | oi
+  deriving DecidableEq, Repr, Fintype
 
-theorem L0_ne_zero {p : Parse} {u : Utterance} {w : World} (h : exhMeaning p u w) :
-    L0 p u {w} ≠ 0 :=
-  RSA.literalListener_apply_singleton_ne_zero prior h (prior_singleton_ne_zero w)
+instance : Nonempty LULex := ⟨.lit⟩
+instance : MeasurableSpace LULex := ⊤
+instance : DiscreteMeasurableSpace LULex := ⟨fun _ => trivial⟩
 
-/-- Within its extension, L0 mass is the inverse extension cardinality. -/
-theorem L0_real_of_mem {p : Parse} {u : Utterance} {w : World} (h : exhMeaning p u w) :
-    (L0 p u).real {w} = ((Finset.univ.filter (exhMeaning p u)).card : ℝ)⁻¹ := by
-  have hk : 0 < (Finset.univ.filter (exhMeaning p u)).card :=
-    Finset.card_pos.mpr ⟨w, by simp [h]⟩
-  rw [L0, RSA.literalListener_real_singleton_of_mem prior h, prior_real_singleton,
-    show sem p u = ↑(Finset.univ.filter (exhMeaning p u)) from by ext w'; simp [sem],
-    prior, uniformOn_univ_real_coe_finset, card_world]
-  rw [div_div_eq_mul_div]
-  push_cast
-  rw [inv_mul_cancel₀ (by norm_num : (7 : ℝ) ≠ 0), one_div]
+/-- Map LU lexicon to the corresponding parse. -/
+def LULex.toParse : LULex → Parse
+  | .lit => ∅
+  | .oi => {.outer, .inner}
 
-theorem L0_toReal (p : Parse) (u : Utterance) (w : World) :
-    (L0 p u {w}).toReal
-      = if exhMeaning p u w then ((Finset.univ.filter (exhMeaning p u)).card : ℝ)⁻¹
-        else 0 := by
-  split
-  · exact L0_real_of_mem ‹_›
-  · exact RSA.literalListener_real_singleton_of_not_mem prior ‹_›
+/-- LU cannot access matrix EXH: neither lexicon includes M. -/
+theorem lu_excludes_matrix : ∀ l : LULex, .matrix ∉ l.toParse := by decide +kernel
 
-/-! ### Speakers -/
-
-/-- Vanilla speaker: informativity softmax over the literal parse. -/
-noncomputable def vanillaSpeaker : Kernel World Utterance :=
-  RSA.speaker 2 (RSA.utility (L0 ∅) fun _ => 0)
-
-/-- The GI literal listener, keyed by (utterance, parse) pairs: a pair means
-its parse's reading. -/
-noncomputable def giL0 : Kernel (Utterance × Parse) World :=
-  RSA.literalListener prior fun x => sem x.2 x.1
-
-/-- The GI speaker (eq. 21a): one softmax over all 72 pairs per world. -/
-noncomputable def giSpeaker : Kernel World (Utterance × Parse) :=
-  RSA.speaker 2 (RSA.utility giL0 fun _ => 0)
-
-/-- The LI literal listener over the 36 matrix-free pairs. -/
-noncomputable def liL0 : Kernel (Utterance × LIParse) World :=
-  RSA.literalListener prior fun x => sem x.2.toParse x.1
-
-/-- The LI speaker (eq. 18a). -/
-noncomputable def liSpeaker : Kernel World (Utterance × LIParse) :=
-  RSA.speaker 2 (RSA.utility liL0 fun _ => 0)
+/-- The LU speaker family (eq. 11): one member of `readings` per lexicon. -/
+def luFam (l : LULex) : RSA.Scenario World Utterance Utterance := readings l.toParse
 
 /-- LU's joint prior: the lexicon is drawn with the world. -/
 noncomputable def luPrior : Measure (World × LULex) := uniformOn Set.univ
@@ -491,455 +478,182 @@ noncomputable def luPrior : Measure (World × LULex) := uniformOn Set.univ
 instance : IsProbabilityMeasure luPrior :=
   inferInstanceAs (IsProbabilityMeasure (uniformOn _))
 
-/-- The LU speaker (eq. 11): per-lexicon informativity — the lexicon is an
-argument of the speaker, not a choice. -/
-noncomputable def luSpeaker : Kernel (World × LULex) Utterance :=
-  RSA.speaker 2 fun s u => RSA.utility (L0 s.2.toParse) (fun _ => 0) s.1 u
-
-/-! ### Markov structure -/
-
-theorem giL0_toReal (x : Utterance × Parse) (w : World) :
-    (giL0 x {w}).toReal
-      = if exhMeaning x.2 x.1 w then ((Finset.univ.filter (exhMeaning x.2 x.1)).card : ℝ)⁻¹
-        else 0 :=
-  L0_toReal x.2 x.1 w
-
-theorem liL0_toReal (x : Utterance × LIParse) (w : World) :
-    (liL0 x {w}).toReal
-      = if exhMeaning x.2.toParse x.1 w
-          then ((Finset.univ.filter (exhMeaning x.2.toParse x.1)).card : ℝ)⁻¹
-        else 0 :=
-  L0_toReal x.2.toParse x.1 w
-
-instance : IsMarkovKernel vanillaSpeaker :=
-  RSA.isMarkovKernel_speaker_utility_zero (by norm_num)
-    (fun u w => RSA.literalListener_apply_ne_top prior (sem ∅) u {w})
-    fun w => (exists_true w ∅).imp fun u hu => L0_ne_zero hu
-
-instance : IsMarkovKernel giSpeaker :=
-  RSA.isMarkovKernel_speaker_utility_zero (by norm_num)
-    (fun x w => RSA.literalListener_apply_ne_top prior _ x {w})
-    fun w => (exists_true w ∅).elim fun u hu => ⟨(u, ∅), L0_ne_zero hu⟩
-
-instance : IsMarkovKernel liSpeaker :=
-  RSA.isMarkovKernel_speaker_utility_zero (by norm_num)
-    (fun x w => RSA.literalListener_apply_ne_top prior _ x {w})
-    fun w => (exists_true w ∅).elim fun u hu => ⟨(u, .lit), L0_ne_zero hu⟩
-
-instance : IsMarkovKernel luSpeaker := by
-  refine RSA.isMarkovKernel_speaker (fun s u => ?_) fun s => ?_
-  · rw [RSA.utility, EReal.coe_zero, sub_zero]
-    exact RSA.coe_mul_log_ne_top (by norm_num)
-      (RSA.literalListener_apply_ne_top prior _ u {s.1})
-  · refine (exists_true s.1 s.2.toParse).imp fun u hu => ?_
-    rw [RSA.utility, EReal.coe_zero, sub_zero]
-    exact RSA.coe_mul_log_ne_bot (by norm_num) (L0_ne_zero hu)
-
-/-! ### Listeners -/
-
-/-- Vanilla listener (eq. 9): the Bayesian inverse of the vanilla speaker. -/
-noncomputable def vanillaListener : Kernel Utterance World := vanillaSpeaker†prior
-
 /-- LU listener (eqs. 12–13): Bayesian inverse over the joint state. -/
-noncomputable def luListener : Kernel Utterance (World × LULex) := luSpeaker†luPrior
+noncomputable def luListener (α : ℝ) : Kernel Utterance (World × LULex) :=
+  RSA.Scenario.familyListener luFam α luPrior
 
-/-- LI listener (eq. 18b): joint posterior over (world, parse). -/
-noncomputable def liListener : Kernel Utterance (World × LIParse) :=
-  jointPosterior liSpeaker prior
-
-/-- GI listener (eq. 21b). -/
-noncomputable def giListener : Kernel Utterance (World × Parse) :=
-  jointPosterior giSpeaker prior
-
-/-! ### Utility bounds for positivity witnesses -/
-
-private theorem util_ne_bot {p : Parse} {u : Utterance} {w : World}
-    (h : exhMeaning p u w) :
-    ((2 : ℝ) : EReal) * RSA.utility (L0 p) (fun _ => 0) w u ≠ ⊥ := by
-  rw [RSA.utility, EReal.coe_zero, sub_zero]
-  exact RSA.coe_mul_log_ne_bot (by norm_num) (L0_ne_zero h)
-
-private theorem util_ne_top (p : Parse) (u : Utterance) (w : World) :
-    ((2 : ℝ) : EReal) * RSA.utility (L0 p) (fun _ => 0) w u ≠ ⊤ := by
-  rw [RSA.utility, EReal.coe_zero, sub_zero]
-  exact RSA.coe_mul_log_ne_top (by norm_num)
-    (RSA.literalListener_apply_ne_top prior _ u {w})
-
-/-! ### Marginal-positivity witnesses -/
-
-theorem vanilla_marg_ss : (vanillaSpeaker ∘ₘ prior) {Utterance.ss} ≠ 0 :=
-  comp_apply_singleton_ne_zero _ _ (prior_singleton_ne_zero wNS)
-    (RSA.speaker_apply_singleton_ne_zero (util_ne_bot (by decide)) (util_ne_top ∅ · wNS))
-
-theorem gi_marg (u : Utterance) {w : World} (h : exhMeaning ∅ u w) :
-    ((giSpeaker ∘ₘ prior).map Prod.fst) {u} ≠ 0 :=
-  map_fst_comp_apply_singleton_ne_zero _ _ (θ := (∅ : Parse))
-    (prior_singleton_ne_zero w)
-    (RSA.speaker_apply_singleton_ne_zero
-      (show _ ≠ ⊥ by
-        rw [RSA.utility, EReal.coe_zero, sub_zero]
-        exact RSA.coe_mul_log_ne_bot (by norm_num) (L0_ne_zero h))
-      fun x => by
-        rw [RSA.utility, EReal.coe_zero, sub_zero]
-        exact RSA.coe_mul_log_ne_top (by norm_num)
-          (RSA.literalListener_apply_ne_top prior _ x {w}))
-
-theorem gi_marg_ss : ((giSpeaker ∘ₘ prior).map Prod.fst) {Utterance.ss} ≠ 0 :=
-  gi_marg .ss (w := wNS) (by decide)
-
-theorem gi_marg_aa : ((giSpeaker ∘ₘ prior).map Prod.fst) {Utterance.aa} ≠ 0 :=
-  gi_marg .aa (w := wA) (by decide)
-
-theorem gi_marg_as : ((giSpeaker ∘ₘ prior).map Prod.fst) {Utterance.as} ≠ 0 :=
-  gi_marg .as (w := wS) (by decide)
-
-theorem li_marg_ss : ((liSpeaker ∘ₘ prior).map Prod.fst) {Utterance.ss} ≠ 0 :=
-  map_fst_comp_apply_singleton_ne_zero _ _ (θ := LIParse.lit)
-    (prior_singleton_ne_zero wNS)
-    (RSA.speaker_apply_singleton_ne_zero
-      (show _ ≠ ⊥ by
-        rw [RSA.utility, EReal.coe_zero, sub_zero]
-        exact RSA.coe_mul_log_ne_bot (by norm_num) (L0_ne_zero (p := ∅) (by decide)))
-      fun x => by
-        rw [RSA.utility, EReal.coe_zero, sub_zero]
-        exact RSA.coe_mul_log_ne_top (by norm_num)
-          (RSA.literalListener_apply_ne_top prior _ x {wNS}))
+theorem luPrior_singleton_eq (p q : World × LULex) : luPrior {p} = luPrior {q} := by
+  simp [luPrior, uniformOn_univ]
 
 theorem luPrior_singleton_ne_zero (s : World × LULex) : luPrior {s} ≠ 0 := by
-  rw [luPrior, uniformOn_univ, Measure.count_singleton, ne_eq, ENNReal.div_eq_zero_iff]
-  simp
-  exact ENNReal.mul_ne_top (ENNReal.natCast_ne_top _) (ENNReal.natCast_ne_top _)
+  rw [luPrior, uniformOn_univ, Measure.count_singleton]
+  simp [ENNReal.mul_eq_top]
 
-theorem lu_marg_ss : (luSpeaker ∘ₘ luPrior) {Utterance.ss} ≠ 0 :=
-  comp_apply_singleton_ne_zero _ _ (luPrior_singleton_ne_zero (wNS, .lit))
-    (RSA.speaker_apply_singleton_ne_zero (util_ne_bot (p := ∅) (by decide))
-      (util_ne_top ∅ · wNS))
+/-! ### The rejected architecture: per-parse normalization -/
 
-/-! ### Speaker values on reals -/
+/-- The architecture the paper rejects as "conceptually highly implausible"
+(p. e85): the full parse family with the parse as a speaker *argument* —
+eq. 11 with an enlarged latent set, rather than eq. 21a's pooled choice. -/
+noncomputable def perParsePrior : Measure (World × Parse) := uniformOn Set.univ
 
-private theorem rpow_two (r : ℝ) : r ^ (2 : ℝ) = r ^ 2 := by
-  rw [show (2 : ℝ) = ((2 : ℕ) : ℝ) from by norm_num, Real.rpow_natCast]
+instance : IsProbabilityMeasure perParsePrior :=
+  inferInstanceAs (IsProbabilityMeasure (uniformOn _))
 
-private theorem vanillaS_real (w : World) (u : Utterance) :
-    (vanillaSpeaker w).real {u}
-      = (L0 ∅ u {w}).toReal ^ (2 : ℝ) / ∑ u', (L0 ∅ u' {w}).toReal ^ (2 : ℝ) :=
-  RSA.speaker_utility_zero_real_singleton (by norm_num) (L0 ∅)
-    (fun u' => RSA.literalListener_apply_ne_top prior _ u' {w}) u
+theorem perParsePrior_singleton_eq (p q : World × Parse) :
+    perParsePrior {p} = perParsePrior {q} := by
+  simp [perParsePrior, uniformOn_univ]
 
-private theorem giS_real (w : World) (x : Utterance × Parse) :
-    (giSpeaker w).real {x}
-      = (giL0 x {w}).toReal ^ (2 : ℝ) / ∑ x', (giL0 x' {w}).toReal ^ (2 : ℝ) :=
-  RSA.speaker_utility_zero_real_singleton (by norm_num) giL0
-    (fun x' => RSA.literalListener_apply_ne_top prior _ x' {w}) x
+theorem perParsePrior_singleton_ne_zero (s : World × Parse) :
+    perParsePrior {s} ≠ 0 := by
+  rw [perParsePrior, uniformOn_univ, Measure.count_singleton]
+  simp [ENNReal.mul_eq_top]
 
-private theorem liS_real (w : World) (x : Utterance × LIParse) :
-    (liSpeaker w).real {x}
-      = (liL0 x {w}).toReal ^ (2 : ℝ) / ∑ x', (liL0 x' {w}).toReal ^ (2 : ℝ) :=
-  RSA.speaker_utility_zero_real_singleton (by norm_num) liL0
-    (fun x' => RSA.literalListener_apply_ne_top prior _ x' {w}) x
+/-- Listener of the rejected architecture: the Bayesian inverse of the
+per-parse speaker over the joint (world, parse) state. -/
+noncomputable def perParseListener (α : ℝ) : Kernel Utterance (World × Parse) :=
+  RSA.Scenario.familyListener readings α perParsePrior
 
-private theorem luS_real (s : World × LULex) (u : Utterance) :
-    (luSpeaker s).real {u}
-      = (L0 s.2.toParse u {s.1}).toReal ^ (2 : ℝ)
-        / ∑ u', (L0 s.2.toParse u' {s.1}).toReal ^ (2 : ℝ) := by
-  rw [measureReal_def, luSpeaker, RSA.speaker_apply_singleton]
-  simp_rw [RSA.exp_mul_utility_zero]
-  rw [ENNReal.toReal_div, ENNReal.toReal_sum fun u' _ =>
-    ENNReal.rpow_ne_top_of_nonneg (by norm_num)
-      (show L0 s.2.toParse u' {s.1} ≠ ⊤ from
-        RSA.literalListener_apply_ne_top prior _ u' {s.1})]
-  simp_rw [ENNReal.toReal_rpow]
+/-! ## The findings -/
 
-/-! ### Enumeration scaffolding -/
+/-! ### Exhaustified interpretation -/
 
-private theorem univU : (Finset.univ : Finset Utterance)
-    = {.nn, .ns, .na, .sn, .ss, .sa, .an, .as, .aa} := by decide
-
-private theorem univP : (Finset.univ : Finset Parse)
-    = {∅, {.matrix}, {.outer}, {.inner}, {.matrix, .outer}, {.matrix, .inner},
-       {.outer, .inner}, {.matrix, .outer, .inner}} := by decide
-
-private theorem univW : (Finset.univ : Finset World)
-    = {wN, wNS, wNA, wNSA, wS, wSA, wA} := by decide
-
-private theorem univLU : (Finset.univ : Finset LULex) = {.lit, .oi} := by decide
-
-private theorem univLI : (Finset.univ : Finset LIParse) = {.lit, .i, .o, .oi} := by decide
-
-/-! ### Partitions
-
-The per-world softmax partitions, as real rationals: `Z(w) = Σ |ext|⁻²` over
-the model's choice space. -/
-
-private theorem zGI (w : World) (z : ℝ)
-    (h : (∑ u : Utterance, ∑ p : Parse,
-        (if exhMeaning p u w then ((Finset.univ.filter (exhMeaning p u)).card : ℝ)⁻¹
-         else 0) ^ 2) = z) :
-    (∑ x : Utterance × Parse, (giL0 x {w}).toReal ^ 2) = z := by
-  rw [Fintype.sum_prod_type]
-  simp_rw [giL0_toReal]
-  exact h
-
-set_option maxRecDepth 8192 in
-private theorem zGI_wN : (∑ x : Utterance × Parse, (giL0 x {wN}).toReal ^ 2) = 307 / 24 :=
-  zGI _ _ (by norm_num +decide [rpow_two, univU, univP, univW, Finset.sum_insert,
-    Finset.sum_singleton, Finset.filter_insert, Finset.filter_singleton,
-    Finset.card_insert_of_notMem, Finset.card_singleton])
-
-set_option maxRecDepth 8192 in
-private theorem zGI_wNS : (∑ x : Utterance × Parse, (giL0 x {wNS}).toReal ^ 2) = 23 / 6 :=
-  zGI _ _ (by norm_num +decide [rpow_two, univU, univP, univW, Finset.sum_insert,
-    Finset.sum_singleton, Finset.filter_insert, Finset.filter_singleton,
-    Finset.card_insert_of_notMem, Finset.card_singleton])
-
-set_option maxRecDepth 8192 in
-private theorem zGI_wNA : (∑ x : Utterance × Parse, (giL0 x {wNA}).toReal ^ 2) = 23 / 9 :=
-  zGI _ _ (by norm_num +decide [rpow_two, univU, univP, univW, Finset.sum_insert,
-    Finset.sum_singleton, Finset.filter_insert, Finset.filter_singleton,
-    Finset.card_insert_of_notMem, Finset.card_singleton])
-
-set_option maxRecDepth 8192 in
-private theorem zGI_wNSA : (∑ x : Utterance × Parse, (giL0 x {wNSA}).toReal ^ 2) = 157 / 72 :=
-  zGI _ _ (by norm_num +decide [rpow_two, univU, univP, univW, Finset.sum_insert,
-    Finset.sum_singleton, Finset.filter_insert, Finset.filter_singleton,
-    Finset.card_insert_of_notMem, Finset.card_singleton])
-
-set_option maxRecDepth 8192 in
-private theorem zGI_wS : (∑ x : Utterance × Parse, (giL0 x {wS}).toReal ^ 2) = 559 / 72 :=
-  zGI _ _ (by norm_num +decide [rpow_two, univU, univP, univW, Finset.sum_insert,
-    Finset.sum_singleton, Finset.filter_insert, Finset.filter_singleton,
-    Finset.card_insert_of_notMem, Finset.card_singleton])
-
-set_option maxRecDepth 8192 in
-private theorem zGI_wSA : (∑ x : Utterance × Parse, (giL0 x {wSA}).toReal ^ 2) = 10 / 3 :=
-  zGI _ _ (by norm_num +decide [rpow_two, univU, univP, univW, Finset.sum_insert,
-    Finset.sum_singleton, Finset.filter_insert, Finset.filter_singleton,
-    Finset.card_insert_of_notMem, Finset.card_singleton])
-
-set_option maxRecDepth 8192 in
-private theorem zGI_wA : (∑ x : Utterance × Parse, (giL0 x {wA}).toReal ^ 2) = 229 / 24 :=
-  zGI _ _ (by norm_num +decide [rpow_two, univU, univP, univW, Finset.sum_insert,
-    Finset.sum_singleton, Finset.filter_insert, Finset.filter_singleton,
-    Finset.card_insert_of_notMem, Finset.card_singleton])
-
-/-! ### Per-parse and LI partitions -/
-
-private theorem zP (p : Parse) (w : World) (z : ℝ)
-    (h : (∑ u : Utterance,
-        (if exhMeaning p u w then ((Finset.univ.filter (exhMeaning p u)).card : ℝ)⁻¹
-         else 0) ^ 2) = z) :
-    (∑ u' : Utterance, (L0 p u' {w}).toReal ^ 2) = z := by
-  simp_rw [L0_toReal]
-  exact h
-
-set_option maxRecDepth 8192 in
-private theorem zVan_wNS : (∑ u' : Utterance, (L0 ∅ u' {wNS}).toReal ^ 2) = 29 / 144 :=
-  zP _ _ _ (by norm_num +decide [rpow_two, univU, univP, univW, Finset.sum_insert,
-    Finset.sum_singleton, Finset.filter_insert, Finset.filter_singleton,
-    Finset.card_insert_of_notMem, Finset.card_singleton])
-
-set_option maxRecDepth 8192 in
-private theorem zVan_wNA : (∑ u' : Utterance, (L0 ∅ u' {wNA}).toReal ^ 2) = 11 / 72 :=
-  zP _ _ _ (by norm_num +decide [rpow_two, univU, univP, univW, Finset.sum_insert,
-    Finset.sum_singleton, Finset.filter_insert, Finset.filter_singleton,
-    Finset.card_insert_of_notMem, Finset.card_singleton])
-
-set_option maxRecDepth 8192 in
-private theorem zOI_wNS :
-    (∑ u' : Utterance, (L0 {.outer, .inner} u' {wNS}).toReal ^ 2) = 1 / 3 :=
-  zP _ _ _ (by norm_num +decide [rpow_two, univU, univP, univW, Finset.sum_insert,
-    Finset.sum_singleton, Finset.filter_insert, Finset.filter_singleton,
-    Finset.card_insert_of_notMem, Finset.card_singleton])
-
-set_option maxRecDepth 8192 in
-private theorem zOI_wNA :
-    (∑ u' : Utterance, (L0 {.outer, .inner} u' {wNA}).toReal ^ 2) = 1 / 3 :=
-  zP _ _ _ (by norm_num +decide [rpow_two, univU, univP, univW, Finset.sum_insert,
-    Finset.sum_singleton, Finset.filter_insert, Finset.filter_singleton,
-    Finset.card_insert_of_notMem, Finset.card_singleton])
-
-private theorem zLI (w : World) (z : ℝ)
-    (h : (∑ u : Utterance, ∑ l : LIParse,
-        (if exhMeaning l.toParse u w
-          then ((Finset.univ.filter (exhMeaning l.toParse u)).card : ℝ)⁻¹
-         else 0) ^ 2) = z) :
-    (∑ x : Utterance × LIParse, (liL0 x {w}).toReal ^ 2) = z := by
-  rw [Fintype.sum_prod_type]
-  simp_rw [liL0_toReal]
-  exact h
-
-set_option maxRecDepth 8192 in
-private theorem zLI_wNS : (∑ x : Utterance × LIParse, (liL0 x {wNS}).toReal ^ 2) = 53 / 48 :=
-  zLI _ _ (by norm_num +decide [rpow_two, univU, univLI, LIParse.toParse, univW, Finset.sum_insert,
-    Finset.sum_singleton, Finset.filter_insert, Finset.filter_singleton,
-    Finset.card_insert_of_notMem, Finset.card_singleton])
-
-set_option maxRecDepth 8192 in
-private theorem zLI_wNA : (∑ x : Utterance × LIParse, (liL0 x {wNA}).toReal ^ 2) = 19 / 18 :=
-  zLI _ _ (by norm_num +decide [rpow_two, univU, univLI, LIParse.toParse, univW, Finset.sum_insert,
-    Finset.sum_singleton, Finset.filter_insert, Finset.filter_singleton,
-    Finset.card_insert_of_notMem, Finset.card_singleton])
-
-set_option maxRecDepth 8192 in
-private theorem zLI_wS : (∑ x : Utterance × LIParse, (liL0 x {wS}).toReal ^ 2) = 461 / 144 :=
-  zLI _ _ (by norm_num +decide [rpow_two, univU, univLI, LIParse.toParse, univW, Finset.sum_insert,
-    Finset.sum_singleton, Finset.filter_insert, Finset.filter_singleton,
-    Finset.card_insert_of_notMem, Finset.card_singleton])
-
-/-! ### Listener-preference reductions -/
-
-private theorem gi_fst_lt {u : Utterance}
-    (hx : ((giSpeaker ∘ₘ prior).map Prod.fst) {u} ≠ 0) {w₁ w₂ : World}
-    (h : (∑ p : Parse, prior.real {w₁} * (giSpeaker w₁).real {(u, p)})
-        < ∑ p : Parse, prior.real {w₂} * (giSpeaker w₂).real {(u, p)}) :
-    ((giListener u).fst).real {w₁} < ((giListener u).fst).real {w₂} := by
-  rw [giListener, jointPosterior_fst_real_lt_iff giSpeaker prior hx]
-  exact h
-
-private theorem gi_snd_lt {u : Utterance}
-    (hx : ((giSpeaker ∘ₘ prior).map Prod.fst) {u} ≠ 0) {p₁ p₂ : Parse}
-    (h : (∑ w : World, prior.real {w} * (giSpeaker w).real {(u, p₁)})
-        < ∑ w : World, prior.real {w} * (giSpeaker w).real {(u, p₂)}) :
-    ((giListener u).snd).real {p₁} < ((giListener u).snd).real {p₂} := by
-  rw [giListener, jointPosterior_snd_real_lt_iff giSpeaker prior hx]
-  exact h
-
-private theorem li_fst_lt {u : Utterance}
-    (hx : ((liSpeaker ∘ₘ prior).map Prod.fst) {u} ≠ 0) {w₁ w₂ : World}
-    (h : (∑ l : LIParse, prior.real {w₁} * (liSpeaker w₁).real {(u, l)})
-        < ∑ l : LIParse, prior.real {w₂} * (liSpeaker w₂).real {(u, l)}) :
-    ((liListener u).fst).real {w₁} < ((liListener u).fst).real {w₂} := by
-  rw [liListener, jointPosterior_fst_real_lt_iff liSpeaker prior hx]
-  exact h
-
-private theorem lu_fst_lt {u : Utterance}
-    (hx : (luSpeaker ∘ₘ luPrior) {u} ≠ 0) {w₁ w₂ : World}
-    (h : (∑ l : LULex, luPrior.real {(w₁, l)} * (luSpeaker (w₁, l)).real {u})
-        < ∑ l : LULex, luPrior.real {(w₂, l)} * (luSpeaker (w₂, l)).real {u}) :
-    ((luListener u).fst).real {w₁} < ((luListener u).fst).real {w₂} := by
-  rw [luListener, posterior_fst_real_lt_iff luSpeaker luPrior hx]
-  exact h
-
-private theorem vanilla_lt {u : Utterance} (hx : (vanillaSpeaker ∘ₘ prior) {u} ≠ 0)
-    {w₁ w₂ : World}
-    (h : prior.real {w₁} * (vanillaSpeaker w₁).real {u}
-        < prior.real {w₂} * (vanillaSpeaker w₂).real {u}) :
-    (vanillaListener u).real {w₁} < (vanillaListener u).real {w₂} := by
-  rw [vanillaListener, posterior_real_singleton_lt_iff vanillaSpeaker prior hx]
-  exact h
-
-private theorem luPrior_real_singleton (s : World × LULex) : luPrior.real {s} = 14⁻¹ := by
-  rw [luPrior, uniformOn_univ_real_singleton,
-    show Fintype.card (World × LULex) = 14 from by decide]
-  norm_num
-
-/-! ### The ten qualitative findings -/
-
-/-- SS exhaustifies the inner quantifier: GI's listener prefers wNS to wNSA. -/
+/-- Hearing "some of the aliens drank some of their water", the pooled
+listener favors the world where no alien drank all of its water over the one
+where some did (inner exhaustification). -/
 theorem ss_inner_exh :
-    ((giListener .ss).fst).real {wNSA} < ((giListener .ss).fst).real {wNS} :=
-  gi_fst_lt gi_marg_ss (by
-    simp_rw [prior_real_singleton, giS_real, rpow_two, zGI_wNS, zGI_wNSA, giL0_toReal]
-    norm_num +decide [rpow_two, univU, univP, univW, Finset.sum_insert,
-    Finset.sum_singleton, Finset.filter_insert, Finset.filter_singleton,
-    Finset.card_insert_of_notMem, Finset.card_singleton])
+    (gi.listener 5 prior .ss).real {wNSA} < (gi.listener 5 prior .ss).real {wNS} :=
+  gi.listener_real_lt_of_divPowSum (k := 5) (D := 12)
+    (prior_singleton_eq wNSA wNS) (prior_singleton_ne_zero wNS)
+    (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
-/-- SS exhaustifies the outer quantifier: GI's listener prefers wNS to wS. -/
-theorem ss_outer_exh :
-    ((giListener .ss).fst).real {wS} < ((giListener .ss).fst).real {wNS} :=
-  gi_fst_lt gi_marg_ss (by
-    simp_rw [prior_real_singleton, giS_real, rpow_two, zGI_wNS, zGI_wS, giL0_toReal]
-    norm_num +decide [rpow_two, univU, univP, univW, Finset.sum_insert,
-    Finset.sum_singleton, Finset.filter_insert, Finset.filter_singleton,
-    Finset.card_insert_of_notMem, Finset.card_singleton])
+/-- Hearing "some of the aliens drank some of their water", the pooled
+listener favors a world where some alien drank nothing (outer
+exhaustification). -/
+theorem ss_outer_exh {α : ℝ} (hα : 0 < α) :
+    (gi.listener α prior .ss).real {wS} < (gi.listener α prior .ss).real {wNS} :=
+  gi.listener_real_lt_of_prodMul_strictDominates hα (prior_singleton_eq wS wNS)
+    (prior_singleton_ne_zero wNS) (by decide +kernel)
 
-/-- AA identifies the unique world where all aliens drank all: wA over wSA. -/
-theorem aa_identifies :
-    ((giListener .aa).fst).real {wSA} < ((giListener .aa).fst).real {wA} :=
-  gi_fst_lt gi_marg_aa (by
-    simp_rw [prior_real_singleton, giS_real, rpow_two, zGI_wSA, zGI_wA, giL0_toReal]
-    norm_num +decide [rpow_two, univU, univP, univW, Finset.sum_insert,
-    Finset.sum_singleton, Finset.filter_insert, Finset.filter_singleton,
-    Finset.card_insert_of_notMem, Finset.card_singleton])
+/-- Hearing "all of the aliens drank all of their water", the pooled
+listener favors the unique world where every alien did just that. -/
+theorem aa_identifies {α : ℝ} (hα : 0 < α) :
+    (gi.listener α prior .aa).real {wSA} < (gi.listener α prior .aa).real {wA} :=
+  gi.listener_real_lt_of_prodMul_strictDominates hα (prior_singleton_eq wSA wA)
+    (prior_singleton_ne_zero wA) (by decide +kernel)
 
-/-- AS exhaustifies the inner quantifier: GI's listener prefers wS to wA. -/
-theorem as_inner_exh :
-    ((giListener .as).fst).real {wA} < ((giListener .as).fst).real {wS} :=
-  gi_fst_lt gi_marg_as (by
-    simp_rw [prior_real_singleton, giS_real, rpow_two, zGI_wS, zGI_wA, giL0_toReal]
-    norm_num +decide [rpow_two, univU, univP, univW, Finset.sum_insert,
-    Finset.sum_singleton, Finset.filter_insert, Finset.filter_singleton,
-    Finset.card_insert_of_notMem, Finset.card_singleton])
+/-- Hearing "all of the aliens drank some of their water", the pooled
+listener favors the world where every alien drank some but not all (inner
+exhaustification). -/
+theorem as_inner_exh {α : ℝ} (hα : 0 < α) :
+    (gi.listener α prior .as).real {wA} < (gi.listener α prior .as).real {wS} :=
+  gi.listener_real_lt_of_prodMul_strictDominates hα (prior_singleton_eq wA wS)
+    (prior_singleton_ne_zero wS) (by decide +kernel)
 
-set_option maxRecDepth 8192 in
-/-- GI's parse posterior for SS peaks at the matrix-only parse, whose reading
-uniquely identifies wNS (eq. 22). Pair choice drives this: under per-parse
-normalization M would not dominate. -/
-theorem ss_m_parse_pref : ∀ p : Parse, p ≠ {.matrix} →
-    ((giListener .ss).snd).real {p} < ((giListener .ss).snd).real {{.matrix}} := by
-  intro p hp
-  have hmem : p ∈ ({∅, {.matrix}, {.outer}, {.inner}, {.matrix, .outer}, {.matrix, .inner},
-      {.outer, .inner}, {.matrix, .outer, .inner}} : Finset Parse) :=
-    univP ▸ Finset.mem_univ p
-  fin_cases hmem <;>
-    first
-      | exact absurd rfl hp
-      | exact gi_snd_lt gi_marg_ss (by
-          simp_rw [prior_real_singleton, giS_real, rpow_two]
-          norm_num +decide [univW, Finset.sum_insert, Finset.sum_singleton]
-          simp_rw [zGI_wN, zGI_wNS, zGI_wNA, zGI_wNSA, zGI_wS, zGI_wSA, zGI_wA,
-            giL0_toReal]
-          norm_num +decide [rpow_two, univU, univP, univW, Finset.sum_insert,
-    Finset.sum_singleton, Finset.filter_insert, Finset.filter_singleton,
-    Finset.card_insert_of_notMem, Finset.card_singleton])
+/-! ### The model comparison -/
 
-/-- Vanilla RSA hearing SS prefers wNA to wNS — the wrong prediction (the
-cost-free illustration of eq. 10; the direction reverses at the fitted cost). -/
-theorem vanilla_ss_prefers_wNA :
-    (vanillaListener .ss).real {wNS} < (vanillaListener .ss).real {wNA} :=
-  vanilla_lt vanilla_marg_ss (by
-    simp_rw [prior_real_singleton, vanillaS_real, rpow_two, zVan_wNS, zVan_wNA, L0_toReal]
-    norm_num +decide [rpow_two, univU, univP, univW, Finset.sum_insert,
-    Finset.sum_singleton, Finset.filter_insert, Finset.filter_singleton,
-    Finset.card_insert_of_notMem, Finset.card_singleton])
+/-- Hearing "some of the aliens drank some of their water", the
+literal-semantics listener favors all-drinkers over some-but-not-all
+drinkers — opposite to the attested preference. -/
+theorem vanilla_ss_prefers_wNA {α : ℝ} (hα : 0 < α) :
+    (vanilla.listener α prior .ss).real {wNS} < (vanilla.listener α prior .ss).real {wNA} :=
+  vanilla.listener_real_lt_of_prodMul_strictDominates hα (prior_singleton_eq wNS wNA)
+    (prior_singleton_ne_zero wNA) (by decide +kernel)
 
-/-- GI corrects vanilla's error: SS → wNS, not wNA. -/
-theorem gi_ss_prefers_wNS :
-    ((giListener .ss).fst).real {wNA} < ((giListener .ss).fst).real {wNS} :=
-  gi_fst_lt gi_marg_ss (by
-    simp_rw [prior_real_singleton, giS_real, rpow_two, zGI_wNS, zGI_wNA, giL0_toReal]
-    norm_num +decide [rpow_two, univU, univP, univW, Finset.sum_insert,
-    Finset.sum_singleton, Finset.filter_insert, Finset.filter_singleton,
-    Finset.card_insert_of_notMem, Finset.card_singleton])
+/-- Hearing "some of the aliens drank some of their water", the pooled
+listener favors some-but-not-all drinkers over all-drinkers, as attested. -/
+theorem gi_ss_prefers_wNS {α : ℝ} (hα : 0 < α) :
+    (gi.listener α prior .ss).real {wNA} < (gi.listener α prior .ss).real {wNS} :=
+  gi.listener_real_lt_of_prodMul_strictDominates hα (prior_singleton_eq wNA wNS)
+    (prior_singleton_ne_zero wNS) (by decide +kernel)
 
-/-- LU also keeps wNS above wNA: the OI lexicon's ⟦SS⟧ excludes wNA (the
-paper's full LU-L2 nonetheless concentrates on wNSA, eq. 15). -/
-theorem lu_ss_prefers_wNS :
-    ((luListener .ss).fst).real {wNA} < ((luListener .ss).fst).real {wNS} :=
-  lu_fst_lt lu_marg_ss (by
-    simp_rw [luPrior_real_singleton, luS_real, rpow_two]
-    norm_num +decide [univLU, Finset.sum_insert, Finset.sum_singleton, LULex.toParse]
-    simp_rw [zVan_wNS, zVan_wNA, zOI_wNS, zOI_wNA, L0_toReal]
-    norm_num +decide [rpow_two, univU, univP, univW, Finset.sum_insert,
-    Finset.sum_singleton, Finset.filter_insert, Finset.filter_singleton,
-    Finset.card_insert_of_notMem, Finset.card_singleton])
+/-- Hearing "some of the aliens drank some of their water", the matrix-free
+pooled listener still favors a world where some alien drank nothing (outer
+exhaustification). -/
+theorem li_ss_outer_exh {α : ℝ} (hα : 0 < α) :
+    (li.listener α prior .ss).real {wS} < (li.listener α prior .ss).real {wNS} :=
+  li.listener_real_lt_of_prodMul_strictDominates hα (prior_singleton_eq wS wNS)
+    (prior_singleton_ne_zero wNS) (by decide +kernel)
 
-/-- LI derives outer exhaustification for SS: wNS over wS via the OI parse. -/
-theorem li_ss_outer_exh :
-    ((liListener .ss).fst).real {wS} < ((liListener .ss).fst).real {wNS} :=
-  li_fst_lt li_marg_ss (by
-    simp_rw [prior_real_singleton, liS_real, rpow_two, zLI_wNS, zLI_wS, liL0_toReal]
-    norm_num +decide [rpow_two, univU, univLI, LIParse.toParse, univW, Finset.sum_insert,
-    Finset.sum_singleton, Finset.filter_insert, Finset.filter_singleton,
-    Finset.card_insert_of_notMem, Finset.card_singleton])
+/-- Hearing "some of the aliens drank some of their water", the matrix-free
+pooled listener favors some-but-not-all drinkers over all-drinkers. -/
+theorem li_ss_prefers_wNS {α : ℝ} (hα : 0 < α) :
+    (li.listener α prior .ss).real {wNA} < (li.listener α prior .ss).real {wNS} :=
+  li.listener_real_lt_of_prodMul_strictDominates hα (prior_singleton_eq wNA wNS)
+    (prior_singleton_ne_zero wNS) (by decide +kernel)
 
-/-- LI also gets the wNS-over-wNA ordering that vanilla misses. -/
-theorem li_ss_prefers_wNS :
-    ((liListener .ss).fst).real {wNA} < ((liListener .ss).fst).real {wNS} :=
-  li_fst_lt li_marg_ss (by
-    simp_rw [prior_real_singleton, liS_real, rpow_two, zLI_wNS, zLI_wNA, liL0_toReal]
-    norm_num +decide [rpow_two, univU, univLI, LIParse.toParse, univW, Finset.sum_insert,
-    Finset.sum_singleton, Finset.filter_insert, Finset.filter_singleton,
-    Finset.card_insert_of_notMem, Finset.card_singleton])
+/-- Hearing "some of the aliens drank some of their water", the
+lexical-uncertainty listener favors some-but-not-all drinkers over
+all-drinkers. -/
+theorem lu_ss_prefers_wNS {α : ℝ} (hα : 0 < α) :
+    (luListener α .ss).fst.real {wNA} < (luListener α .ss).fst.real {wNS} := by
+  rw [luListener, RSA.Scenario.familyListener_fst_real_lt_iff luFam hα.le
+      luPrior_singleton_eq luPrior_singleton_ne_zero
+      (by decide +kernel : wNS ∈ (luFam .lit).sem .ss)]
+  calc (∑ l : LULex, ((luFam l).speaker α wNA).real {.ss})
+      = ((luFam .lit).speaker α wNA).real {.ss} :=
+        Fintype.sum_eq_single LULex.lit fun
+          | .lit, hl => absurd rfl hl
+          | .oi, _ => (luFam .oi).speaker_real_singleton_eq_zero hα
+              (by decide +kernel : wNA ∉ (luFam .oi).sem .ss)
+    _ < ((luFam .oi).speaker α wNS).real {.ss} := by
+        rw [(luFam .oi).speaker_real_singleton_of_profile_replicate hα
+          (by decide +kernel : (luFam .oi).profile wNS = Multiset.replicate 3 3)
+          (by decide +kernel : wNS ∈ (luFam .oi).sem .ss)]
+        have hsum := (luFam .lit).sum_speaker_real_singleton_le_one α wNA {.ss, .sn, .sa}
+        rw [Finset.sum_insert (by decide), Finset.sum_pair (by decide)] at hsum
+        have hsn := (luFam .lit).speaker_real_singleton_lt_of_card_lt hα
+          (by decide +kernel : wNA ∈ (luFam .lit).sem .ss)
+          (by decide +kernel : wNA ∈ (luFam .lit).sem .sn) (by decide +kernel)
+        have hsa := (luFam .lit).speaker_real_singleton_lt_of_card_lt hα
+          (by decide +kernel : wNA ∈ (luFam .lit).sem .ss)
+          (by decide +kernel : wNA ∈ (luFam .lit).sem .sa) (by decide +kernel)
+        linarith
+    _ ≤ ∑ l : LULex, ((luFam l).speaker α wNS).real {.ss} :=
+        Finset.single_le_sum
+          (fun l _ => measureReal_nonneg (μ := (luFam l).speaker α wNS))
+          (Finset.mem_univ LULex.oi)
+
+/-! ### The position of the latent parameter -/
+
+/-- Hearing "some of the aliens drank some of their water", the pooled
+listener's parse posterior peaks at exhaustification of the whole
+sentence. -/
+theorem ss_m_parse_pref : ∀ p : Parse, p ≠ pM →
+    (gi.choicePosterior 5 prior .ss).real {(.ss, p)}
+      < (gi.choicePosterior 5 prior .ss).real {(.ss, pM)} := fun p _ =>
+  gi.choicePosterior_real_lt_of_divPowSum (k := 5) (D := 12) (by decide +kernel)
+    prior_singleton_eq prior_singleton_ne_zero rfl rfl (by revert p; decide +kernel)
+
+/-- Hearing "some of the aliens drank some of their water", the per-parse
+listener favors exhaustifying the outer quantifier over exhaustifying the
+whole sentence. -/
+theorem perParse_ss_prefers_o {α : ℝ} (hα : 0 < α) :
+    (perParseListener α .ss).snd.real {pM} < (perParseListener α .ss).snd.real {pO} := by
+  have hOprof : ∀ w ∈ ({wNS, wNA, wNSA} : Finset World),
+      (readings pO).profile w = Multiset.replicate 3 3 := by decide +kernel
+  have hOmem : ∀ w ∈ ({wNS, wNA, wNSA} : Finset World),
+      w ∈ (readings pO).sem .ss := by decide +kernel
+  rw [perParseListener, RSA.Scenario.familyListener_snd_real_lt_iff readings hα.le
+      perParsePrior_singleton_eq perParsePrior_singleton_ne_zero
+      (mem_ext.mpr ((m_ss_singleton wNS).mpr rfl))]
+  calc (∑ w : World, ((readings pM).speaker α w).real {.ss})
+      = ((readings pM).speaker α wNS).real {.ss} :=
+        Fintype.sum_eq_single wNS fun w hw =>
+          (readings pM).speaker_real_singleton_eq_zero hα fun hmem =>
+            hw ((m_ss_singleton w).mp (mem_ext.mp hmem))
+    _ < 1 :=
+        (readings pM).speaker_real_singleton_lt_one hα.le
+          (nofun : Utterance.sn ≠ Utterance.ss)
+          (by decide +kernel : wNS ∈ (readings pM).sem .sn)
+    _ = ∑ w ∈ ({wNS, wNA, wNSA} : Finset World),
+          ((readings pO).speaker α w).real {.ss} := by
+        rw [Finset.sum_eq_card_nsmul fun w hw =>
+            (readings pO).speaker_real_singleton_of_profile_replicate hα
+              (hOprof w hw) (hOmem w hw),
+          show ({wNS, wNA, wNSA} : Finset World).card = 3 from by decide +kernel]
+        norm_num
+    _ ≤ ∑ w : World, ((readings pO).speaker α w).real {.ss} :=
+        Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_univ _)
+          fun w _ _ => measureReal_nonneg
 
 end FrankeBergen2020
