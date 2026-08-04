@@ -17,34 +17,33 @@ formal theory of pragmatics" (Semantics & Pragmatics 5(6): 1–69).
 
 1. **QUD stack** — discourse state is an ordered stack of accepted, unanswered
    questions (`QUDStack`), not a single QUD.
-2. **Strategy of inquiry** — recursive question decomposition (`Strategy`):
-   answering all subquestions answers the parent.
+2. **Strategy of inquiry** — questions decomposed into subquestions
+   (`Strategy`), with completeness (`Strategy.IsComplete`) capturing her
+   observation that jointly answering D₀'s subquestions answers the parent.
 3. **Negative partial answerhood** — a proposition partially answers a question
    by ruling out an alternative, not just confirming one (`PartiallyAnswers`).
 4. **Q-A congruence** — the focus alternatives of an answer equal the QUD
    alternatives (grounded by the Rooth–Hamblin type identity).
 
-## D₀ Worked Example (Roberts §1.2)
+## D₀ Worked Example
 
-The Big Question: "What did each person eat?"
-
-- 4 Boolean dimensions: Hannah-beans, Hannah-tofu, Roger-beans, Roger-tofu
-- 16 possible worlds
-- 7 questions forming a strategy tree
+Roberts' worked discourse D₀, on a model with two individuals (Hilary,
+Robin) and two foods (bagels, tofu): 4 Boolean dimensions, 16 possible
+worlds, 7 questions forming a strategy tree.
 
 ```
-         q₁ (What did everyone eat?)
+         q₁ (Who ate what?)
         /                            \
-    q_a (What did Hannah eat?)    q_b (What did Roger eat?)
+    q_a (What did Hilary eat?)    q_b (What did Robin eat?)
     /        \                    /        \
-q_ai (H beans?) q_aii (H tofu?) q_bi (R beans?) q_bii (R tofu?)
+q_ai (H bagels?) q_aii (H tofu?) q_bi (R bagels?) q_bii (R tofu?)
 ```
 
 ## Representation
 
 This file uses `Question` (Set-based, with `Question.Entails` from
 `Entailment.lean`, `Question.PartiallyAnswers` from `Resolution.lean`, and
-`Discourse.moveRelevant`, all reduced to decidable `Set` inclusions via
+`Discourse.Relevant`, all reduced to decidable `Set` inclusions via
 the `_polar_iff` lemmas). Non-polar issues are built via
 `Question.ofList` and `⊓`; entailment for these goes through the lattice
 route (`entails_of_le'`). Set-based partitions live in
@@ -55,7 +54,7 @@ route (`entails_of_le'`). Set-based partitions live in
 namespace Roberts2012
 
 open Question
-open Discourse (QUDStack Strategy moveRelevant moveRelevantToStrategy)
+open Discourse (QUDStack Strategy Relevant)
 
 -- `decide` on `Set`-subset goals from the `_polar_iff` reductions.
 attribute [local instance] Set.decidableSubsetOfFintype
@@ -66,10 +65,10 @@ attribute [local instance] Set.decidableSubsetOfFintype
 
 /-- A world in the D₀ scenario: 4 independent Boolean facts. -/
 structure D0World where
-  hb : Bool   -- Hannah ate beans
-  ht : Bool   -- Hannah ate tofu
-  rb : Bool   -- Roger ate beans
-  rt : Bool   -- Roger ate tofu
+  hb : Bool   -- Hilary ate bagels
+  ht : Bool   -- Hilary ate tofu
+  rb : Bool   -- Robin ate bagels
+  rt : Bool   -- Robin ate tofu
   deriving DecidableEq, BEq, Repr
 
 /-- Finite enumeration of D0World via the canonical equivalence with
@@ -87,75 +86,75 @@ theorem card_D0World : Fintype.card D0World = 16 := by decide
 -- § Atomic Propositions (as Sets)
 -- ════════════════════════════════════════════════════
 
-/-- Hannah ate the beans. -/
-def hannahBeans : Set D0World := {w | w.hb = true}
-/-- Hannah ate the tofu. -/
-def hannahTofu : Set D0World := {w | w.ht = true}
-/-- Roger ate the beans. -/
-def rogerBeans : Set D0World := {w | w.rb = true}
-/-- Roger ate the tofu. -/
-def rogerTofu : Set D0World := {w | w.rt = true}
+/-- Hilary ate the bagels. -/
+def hilaryBagels : Set D0World := {w | w.hb = true}
+/-- Hilary ate the tofu. -/
+def hilaryTofu : Set D0World := {w | w.ht = true}
+/-- Robin ate the bagels. -/
+def robinBagels : Set D0World := {w | w.rb = true}
+/-- Robin ate the tofu. -/
+def robinTofu : Set D0World := {w | w.rt = true}
 
-instance : DecidablePred (· ∈ hannahBeans) :=
+instance : DecidablePred (· ∈ hilaryBagels) :=
   fun w => show Decidable (w.hb = true) from inferInstance
-instance : DecidablePred (· ∈ (hannahBeansᶜ : Set D0World)) :=
-  fun w => show Decidable (¬ w ∈ hannahBeans) from inferInstance
-instance : DecidablePred (· ∈ hannahTofu) :=
+instance : DecidablePred (· ∈ (hilaryBagelsᶜ : Set D0World)) :=
+  fun w => show Decidable (¬ w ∈ hilaryBagels) from inferInstance
+instance : DecidablePred (· ∈ hilaryTofu) :=
   fun w => show Decidable (w.ht = true) from inferInstance
-instance : DecidablePred (· ∈ (hannahTofuᶜ : Set D0World)) :=
-  fun w => show Decidable (¬ w ∈ hannahTofu) from inferInstance
-instance : DecidablePred (· ∈ rogerBeans) :=
+instance : DecidablePred (· ∈ (hilaryTofuᶜ : Set D0World)) :=
+  fun w => show Decidable (¬ w ∈ hilaryTofu) from inferInstance
+instance : DecidablePred (· ∈ robinBagels) :=
   fun w => show Decidable (w.rb = true) from inferInstance
-instance : DecidablePred (· ∈ (rogerBeansᶜ : Set D0World)) :=
-  fun w => show Decidable (¬ w ∈ rogerBeans) from inferInstance
-instance : DecidablePred (· ∈ rogerTofu) :=
+instance : DecidablePred (· ∈ (robinBagelsᶜ : Set D0World)) :=
+  fun w => show Decidable (¬ w ∈ robinBagels) from inferInstance
+instance : DecidablePred (· ∈ robinTofu) :=
   fun w => show Decidable (w.rt = true) from inferInstance
-instance : DecidablePred (· ∈ (rogerTofuᶜ : Set D0World)) :=
-  fun w => show Decidable (¬ w ∈ rogerTofu) from inferInstance
+instance : DecidablePred (· ∈ (robinTofuᶜ : Set D0World)) :=
+  fun w => show Decidable (¬ w ∈ robinTofu) from inferInstance
 
 /-! ### Nontriviality lemmas (manual, one per atomic proposition) -/
 
-theorem hb_ne_empty : hannahBeans ≠ (∅ : Set D0World) := by
+theorem hb_ne_empty : hilaryBagels ≠ (∅ : Set D0World) := by
   intro h
-  have hmem : (⟨true, false, false, false⟩ : D0World) ∈ hannahBeans := rfl
+  have hmem : (⟨true, false, false, false⟩ : D0World) ∈ hilaryBagels := rfl
   rw [h] at hmem; exact hmem.elim
 
-theorem hb_ne_univ : hannahBeans ≠ Set.univ := by
+theorem hb_ne_univ : hilaryBagels ≠ Set.univ := by
   intro h
-  have hmem : (⟨false, false, false, false⟩ : D0World) ∈ hannahBeans :=
+  have hmem : (⟨false, false, false, false⟩ : D0World) ∈ hilaryBagels :=
     h.symm ▸ Set.mem_univ _
   exact Bool.false_ne_true hmem
 
-theorem ht_ne_empty : hannahTofu ≠ (∅ : Set D0World) := by
+theorem ht_ne_empty : hilaryTofu ≠ (∅ : Set D0World) := by
   intro h
-  have hmem : (⟨false, true, false, false⟩ : D0World) ∈ hannahTofu := rfl
+  have hmem : (⟨false, true, false, false⟩ : D0World) ∈ hilaryTofu := rfl
   rw [h] at hmem; exact hmem.elim
 
-theorem ht_ne_univ : hannahTofu ≠ Set.univ := by
+theorem ht_ne_univ : hilaryTofu ≠ Set.univ := by
   intro h
-  have hmem : (⟨false, false, false, false⟩ : D0World) ∈ hannahTofu :=
+  have hmem : (⟨false, false, false, false⟩ : D0World) ∈ hilaryTofu :=
     h.symm ▸ Set.mem_univ _
   exact Bool.false_ne_true hmem
 
-theorem rb_ne_empty : rogerBeans ≠ (∅ : Set D0World) := by
+theorem rb_ne_empty : robinBagels ≠ (∅ : Set D0World) := by
   intro h
-  have hmem : (⟨false, false, true, false⟩ : D0World) ∈ rogerBeans := rfl
+  have hmem : (⟨false, false, true, false⟩ : D0World) ∈ robinBagels := rfl
   rw [h] at hmem; exact hmem.elim
 
-theorem rb_ne_univ : rogerBeans ≠ Set.univ := by
+theorem rb_ne_univ : robinBagels ≠ Set.univ := by
   intro h
-  have hmem : (⟨false, false, false, false⟩ : D0World) ∈ rogerBeans :=
+  have hmem : (⟨false, false, false, false⟩ : D0World) ∈ robinBagels :=
     h.symm ▸ Set.mem_univ _
   exact Bool.false_ne_true hmem
 
-theorem rt_ne_empty : rogerTofu ≠ (∅ : Set D0World) := by
+theorem rt_ne_empty : robinTofu ≠ (∅ : Set D0World) := by
   intro h
-  have hmem : (⟨false, false, false, true⟩ : D0World) ∈ rogerTofu := rfl
+  have hmem : (⟨false, false, false, true⟩ : D0World) ∈ robinTofu := rfl
   rw [h] at hmem; exact hmem.elim
 
-theorem rt_ne_univ : rogerTofu ≠ Set.univ := by
+theorem rt_ne_univ : robinTofu ≠ Set.univ := by
   intro h
-  have hmem : (⟨false, false, false, false⟩ : D0World) ∈ rogerTofu :=
+  have hmem : (⟨false, false, false, false⟩ : D0World) ∈ robinTofu :=
     h.symm ▸ Set.mem_univ _
   exact Bool.false_ne_true hmem
 
@@ -163,24 +162,24 @@ theorem rt_ne_univ : rogerTofu ≠ Set.univ := by
 -- § Polar Questions (via `Question.polar`)
 -- ════════════════════════════════════════════════════
 
-/-- "Did Hannah eat the beans?" -/
-abbrev q_ai : Question D0World := Question.polar hannahBeans
+/-- "Did Hilary eat the bagels?" -/
+abbrev q_ai : Question D0World := Question.polar hilaryBagels
 
-/-- "Did Hannah eat the tofu?" -/
-abbrev q_aii : Question D0World := Question.polar hannahTofu
+/-- "Did Hilary eat the tofu?" -/
+abbrev q_aii : Question D0World := Question.polar hilaryTofu
 
-/-- "Did Roger eat the beans?" -/
-abbrev q_bi : Question D0World := Question.polar rogerBeans
+/-- "Did Robin eat the bagels?" -/
+abbrev q_bi : Question D0World := Question.polar robinBagels
 
-/-- "Did Roger eat the tofu?" -/
-abbrev q_bii : Question D0World := Question.polar rogerTofu
+/-- "Did Robin eat the tofu?" -/
+abbrev q_bii : Question D0World := Question.polar robinTofu
 
 -- ════════════════════════════════════════════════════
 -- § Wh-Questions (via `Question.ofList`)
 -- ════════════════════════════════════════════════════
 
-/-- "What did Hannah eat?" — partition into 4 cells by ⟨hb, ht⟩.
-    Beans-only, tofu-only, both, neither. -/
+/-- "What did Hilary eat?" — partition into 4 cells by ⟨hb, ht⟩.
+    Bagels-only, tofu-only, both, neither. -/
 def q_a : Question D0World := Question.ofList [
   {w | w.hb = true ∧ w.ht = false},
   {w | w.hb = false ∧ w.ht = true},
@@ -188,7 +187,7 @@ def q_a : Question D0World := Question.ofList [
   {w | w.hb = false ∧ w.ht = false}
 ]
 
-/-- "What did Roger eat?" — partition by ⟨rb, rt⟩. -/
+/-- "What did Robin eat?" — partition by ⟨rb, rt⟩. -/
 def q_b : Question D0World := Question.ofList [
   {w | w.rb = true ∧ w.rt = false},
   {w | w.rb = false ∧ w.rt = true},
@@ -196,9 +195,11 @@ def q_b : Question D0World := Question.ofList [
   {w | w.rb = false ∧ w.rt = false}
 ]
 
-/-- "What did everyone eat?" — the Big Question, the lattice meet of
-    `q_a` and `q_b` (knowing what everyone ate = knowing what Hannah ate
-    AND what Roger ate). -/
+/-- "Who ate what?" — D₀'s move 1, rendered as the lattice meet of `q_a`
+    and `q_b`. Roberts observes `Ans(a) ∩ Ans(b) = Ans(1)` for the
+    independently given question (her (11c)); here the identification is
+    definitional, so the root obligation of `strat_1_complete` is
+    reflexivity rather than a substantive fact about D₀. -/
 def q_1 : Question D0World := q_a ⊓ q_b
 
 -- ════════════════════════════════════════════════════
@@ -207,13 +208,13 @@ def q_1 : Question D0World := q_a ⊓ q_b
 --  and relevance theorems below.)
 -- ════════════════════════════════════════════════════
 
-/-- Hannah-beans-only cell, the canonical witness in `alt q_a`. -/
+/-- Hilary-bagels-only cell, the canonical witness in `alt q_a`. -/
 private abbrev qa_c1 : Set D0World := {w | w.hb = true ∧ w.ht = false}
 
-/-- Hannah-neither cell — used to construct atomic singletons of `alt q_1`. -/
+/-- Hilary-neither cell — used to construct atomic singletons of `alt q_1`. -/
 private abbrev qa_c4 : Set D0World := {w | w.hb = false ∧ w.ht = false}
 
-/-- Roger-neither cell — paired with `qa_c4` to give the singleton
+/-- Robin-neither cell — paired with `qa_c4` to give the singleton
     `{⟨false, false, false, false⟩}`. -/
 private abbrev qb_c4 : Set D0World := {w | w.rb = false ∧ w.rt = false}
 
@@ -320,8 +321,8 @@ private theorem singleton_w_zero_in_alt_q1 :
 theorem qai_entails_qai : q_ai.Entails q_ai :=
   Entails.refl _
 
-/-- `q_ai` does NOT entail `q_bi`: knowing whether Hannah ate beans tells
-    you nothing about whether Roger ate beans (orthogonal polar questions). -/
+/-- `q_ai` does NOT entail `q_bi`: knowing whether Hilary ate bagels tells
+    you nothing about whether Robin ate bagels (orthogonal polar questions). -/
 theorem qai_not_entails_qbi : ¬ q_ai.Entails q_bi := by
   rw [entails_polar_polar_iff hb_ne_empty hb_ne_univ
         rb_ne_empty rb_ne_univ]
@@ -330,17 +331,17 @@ theorem qai_not_entails_qbi : ¬ q_ai.Entails q_bi := by
 -- Wh→polar entailments now decide via `ofList_le_polar_of_classified`
 -- (each cell of the wh-partition lies in `p` or `pᶜ` of the polar
 -- question) composed with `entails_of_le'` (lattice → Roberts).
--- The Big-Question entailments use `inf_le_left`/`inf_le_right`.
+-- The move-1 entailments use `inf_le_left`/`inf_le_right`.
 
-/-- The Big Question entails "What did Hannah eat?" -/
+/-- "Who ate what?" entails "What did Hilary eat?" -/
 theorem q1_entails_qa : q_1.Entails q_a :=
   entails_of_le' inf_le_left
 
-/-- The Big Question entails "What did Roger eat?" -/
+/-- "Who ate what?" entails "What did Robin eat?" -/
 theorem q1_entails_qb : q_1.Entails q_b :=
   entails_of_le' inf_le_right
 
-/-- "What did Hannah eat?" entails "Did Hannah eat the beans?" -/
+/-- "What did Hilary eat?" entails "Did Hilary eat the bagels?" -/
 theorem qa_entails_qai : q_a.Entails q_ai := by
   apply entails_of_le'
   apply ofList_le_polar_of_classified
@@ -352,7 +353,7 @@ theorem qa_entails_qai : q_a.Entails q_ai := by
   · exact Or.inl (fun w hw => hw.1)
   · exact Or.inr (fun w hw hwhb => Bool.false_ne_true (hw.1.symm.trans hwhb))
 
-/-- "What did Hannah eat?" entails "Did Hannah eat the tofu?" -/
+/-- "What did Hilary eat?" entails "Did Hilary eat the tofu?" -/
 theorem qa_entails_qaii : q_a.Entails q_aii := by
   apply entails_of_le'
   apply ofList_le_polar_of_classified
@@ -364,7 +365,7 @@ theorem qa_entails_qaii : q_a.Entails q_aii := by
   · exact Or.inl (fun w hw => hw.2)
   · exact Or.inr (fun w hw hwht => Bool.false_ne_true (hw.2.symm.trans hwht))
 
-/-- "What did Roger eat?" entails "Did Roger eat the beans?" -/
+/-- "What did Robin eat?" entails "Did Robin eat the bagels?" -/
 theorem qb_entails_qbi : q_b.Entails q_bi := by
   apply entails_of_le'
   apply ofList_le_polar_of_classified
@@ -376,7 +377,7 @@ theorem qb_entails_qbi : q_b.Entails q_bi := by
   · exact Or.inl (fun w hw => hw.1)
   · exact Or.inr (fun w hw hwrb => Bool.false_ne_true (hw.1.symm.trans hwrb))
 
-/-- "What did Roger eat?" entails "Did Roger eat the tofu?" -/
+/-- "What did Robin eat?" entails "Did Robin eat the tofu?" -/
 theorem qb_entails_qbii : q_b.Entails q_bii := by
   apply entails_of_le'
   apply ofList_le_polar_of_classified
@@ -390,7 +391,7 @@ theorem qb_entails_qbii : q_b.Entails q_bii := by
 
 -- Entailment is asymmetric: subquestions do NOT entail their parents.
 
-/-- q_a does NOT entail q_1. The witness `qa_c1 ∈ alt q_a` (Hannah-beans-only)
+/-- q_a does NOT entail q_1. The witness `qa_c1 ∈ alt q_a` (Hilary-bagels-only)
     contains worlds with all four (rb, rt) combinations; no single q_b cell
     contains them all, so no `alt q_1` (which lies in some q_b cell) can
     extend `qa_c1`. -/
@@ -415,16 +416,16 @@ theorem qa_not_entails_q1 : ¬ q_a.Entails q_1 := by
   · exact Bool.false_ne_true (hqc hw1q).2
   · exact Bool.false_ne_true (hqc hw1q).1.symm
 
-/-- q_ai does NOT entail q_a. The witness `hannahBeans ∈ alt q_ai` contains
+/-- q_ai does NOT entail q_a. The witness `hilaryBagels ∈ alt q_ai` contains
     worlds with both `ht = true` and `ht = false`; no q_a cell (each fixing
-    `ht`) can extend `hannahBeans`. -/
+    `ht`) can extend `hilaryBagels`. -/
 theorem qai_not_entails_qa : ¬ q_ai.Entails q_a := by
   intro h
-  have halt : hannahBeans ∈ alt q_ai := by
-    rw [show q_ai = Question.polar hannahBeans from rfl,
+  have halt : hilaryBagels ∈ alt q_ai := by
+    rw [show q_ai = Question.polar hilaryBagels from rfl,
         alt_polar_of_nontrivial hb_ne_empty hb_ne_univ]
     left; rfl
-  obtain ⟨q, hq, hsub⟩ := h hannahBeans halt
+  obtain ⟨q, hq, hsub⟩ := h hilaryBagels halt
   have hq_props : q ∈ q_a.props := alt_subset_props _ hq
   have hq' : q ∈ Question.ofList (W := D0World)
       [{w | w.hb = true ∧ w.ht = false}, {w | w.hb = false ∧ w.ht = true},
@@ -455,38 +456,30 @@ theorem qb_sub_q1 : q_b.IsSubquestion q_1 := q1_entails_qb
 -- § Strategy of Inquiry ([roberts-2012] Def. 12)
 -- ════════════════════════════════════════════════════
 
+/-- Substrategy for `q_a`: pursue both polar subquestions about Hilary. -/
+def strat_a : Strategy D0World := .node q_a [.leaf q_ai, .leaf q_aii]
+
+/-- Substrategy for `q_b`: pursue both polar subquestions about Robin. -/
+def strat_b : Strategy D0World := .node q_b [.leaf q_bi, .leaf q_bii]
+
 /-- Roberts' strategy for the D₀ scenario:
-    Answer q_1 by answering q_a and q_b;
+    answer q_1 by answering q_a and q_b;
     answer q_a by answering q_ai and q_aii;
     answer q_b by answering q_bi and q_bii. -/
-def strat_1 : Strategy D0World :=
-  .branch q_1 [
-    .branch q_a [.leaf q_ai, .leaf q_aii],
-    .branch q_b [.leaf q_bi, .leaf q_bii]
-  ]
+def strat_1 : Strategy D0World := .node q_1 [strat_a, strat_b]
 
 /-- The strategy has 7 questions total. -/
-theorem strat_1_count : strat_1.allQuestions.length = 7 := by
-  simp [strat_1, Strategy.allQuestions, List.flatMap]
+theorem strat_1_count : strat_1.numNodes = 7 := by
+  simp [strat_1, strat_a, strat_b]
 
-/-- The root of the strategy is complete: answering "What did Hannah eat?"
-    and "What did Roger eat?" answers "What did everyone eat?" Reduces
-    by `top_inf_eq` to `Entails (q_a ⊓ q_b) q_1` = reflexivity. -/
-theorem strat_1_root_complete : strat_1.isComplete := by
-  show Entails ((⊤ ⊓ q_a) ⊓ q_b) q_1
-  rw [top_inf_eq]
-  exact Entails.refl _
-
-/-- The q_a sub-strategy is complete: pursuing both polar subquestions
-    `q_ai` and `q_aii` resolves the wh-question `q_a` they jointly
+/-- The Hilary substrategy is complete: jointly resolving the polar
+    subquestions `q_ai` and `q_aii` resolves the wh-question `q_a` they
     partition. Closes via `polar_inf_polar_le_ofList_of_corners`: the
-    four corners (Hannah's beans × tofu) are exactly the cells of `q_a`. -/
-theorem strat_1_qa_complete :
-    (Strategy.branch q_a [.leaf q_ai, .leaf q_aii] : Strategy D0World).isComplete := by
-  show Entails ((⊤ ⊓ q_ai) ⊓ q_aii) q_a
-  rw [top_inf_eq]
+    four corners (Hilary's bagels × tofu) are exactly the cells of `q_a`. -/
+theorem strat_a_complete : strat_a.IsComplete := by
+  refine .node_pair ?_ (.leaf _) (.leaf _)
   apply entails_of_le'
-  show Question.polar hannahBeans ⊓ Question.polar hannahTofu ≤ q_a
+  show Question.polar hilaryBagels ⊓ Question.polar hilaryTofu ≤ q_a
   apply Question.polar_inf_polar_le_ofList_of_corners
   · exact ⟨{w | w.hb = true ∧ w.ht = true}, by simp, fun _ hw => hw⟩
   · refine ⟨{w | w.hb = true ∧ w.ht = false}, by simp, fun w hw => ⟨hw.1, ?_⟩⟩
@@ -505,14 +498,11 @@ theorem strat_1_qa_complete :
       · rfl
       · exact (hw.2 h).elim
 
-/-- The q_b sub-strategy is complete (mirror of `strat_1_qa_complete`
-    for Roger). -/
-theorem strat_1_qb_complete :
-    (Strategy.branch q_b [.leaf q_bi, .leaf q_bii] : Strategy D0World).isComplete := by
-  show Entails ((⊤ ⊓ q_bi) ⊓ q_bii) q_b
-  rw [top_inf_eq]
+/-- The Robin substrategy is complete (mirror of `strat_a_complete`). -/
+theorem strat_b_complete : strat_b.IsComplete := by
+  refine .node_pair ?_ (.leaf _) (.leaf _)
   apply entails_of_le'
-  show Question.polar rogerBeans ⊓ Question.polar rogerTofu ≤ q_b
+  show Question.polar robinBagels ⊓ Question.polar robinTofu ≤ q_b
   apply Question.polar_inf_polar_le_ofList_of_corners
   · exact ⟨{w | w.rb = true ∧ w.rt = true}, by simp, fun _ hw => hw⟩
   · refine ⟨{w | w.rb = true ∧ w.rt = false}, by simp, fun w hw => ⟨hw.1, ?_⟩⟩
@@ -531,46 +521,51 @@ theorem strat_1_qb_complete :
       · rfl
       · exact (hw.2 h).elim
 
+/-- The whole D₀ strategy is complete: both substrategies are, and the
+    meet of their root questions is `q_1` by definition (see `q_1`). -/
+theorem strat_1_complete : strat_1.IsComplete :=
+  .node_pair (Entails.refl _) strat_a_complete strat_b_complete
+
 -- ════════════════════════════════════════════════════
 -- § QUD Stack Traces
 -- ════════════════════════════════════════════════════
 
-/-- Initial state: push the Big Question. -/
-def stack_0 : QUDStack D0World := QUDStack.empty.push q_1
+/-- Initial state: accept move 1, "Who ate what?". -/
+def stack_0 : QUDStack D0World := [q_1]
 
-/-- Pursue Hannah's food: push q_a. -/
-def stack_1 : QUDStack D0World := stack_0.push q_a
+/-- Pursue Hilary's food: accept q_a. -/
+def stack_1 : QUDStack D0World := q_a :: stack_0
 
-/-- Pursue Hannah+beans: push q_ai. -/
-def stack_2 : QUDStack D0World := stack_1.push q_ai
+/-- Pursue Hilary+bagels: accept q_ai. -/
+def stack_2 : QUDStack D0World := q_ai :: stack_1
 
-/-- "Hannah ate the beans" answers q_ai: pop. -/
-def stack_3 : QUDStack D0World := stack_2.pop
+/-- "Hilary ate the bagels" answers q_ai: retire it. -/
+def stack_3 : QUDStack D0World := stack_2.tail
 
 /-- Stack depths trace the discourse. -/
 theorem stack_depths :
-    stack_0.depth = 1 ∧ stack_1.depth = 2 ∧
-    stack_2.depth = 3 ∧ stack_3.depth = 2 :=
+    stack_0.length = 1 ∧ stack_1.length = 2 ∧
+    stack_2.length = 3 ∧ stack_3.length = 2 :=
   ⟨rfl, rfl, rfl, rfl⟩
 
-/-- After popping q_ai, the immediate QUD is q_a. -/
-theorem stack_3_qud : stack_3.immediateQUD = some q_a := rfl
+/-- After retiring q_ai, the immediate QUD is q_a. -/
+theorem stack_3_qud : stack_3.head? = some q_a := rfl
 
 -- ════════════════════════════════════════════════════
 -- § Negative Partial Answerhood
 -- ════════════════════════════════════════════════════
 
-/-- "Hannah didn't eat beans" (`hannahBeansᶜ`) negatively partially answers
-    "Did Hannah eat beans?" — it rules out the `hannahBeans` alternative. -/
+/-- "Hilary didn't eat bagels" (`hilaryBagelsᶜ`) negatively partially answers
+    "Did Hilary eat bagels?" — it rules out the `hilaryBagels` alternative. -/
 theorem neg_hb_partially_answers_qai :
-    PartiallyAnswers (hannahBeansᶜ : Set D0World) q_ai := by
+    PartiallyAnswers (hilaryBagelsᶜ : Set D0World) q_ai := by
   rw [partiallyAnswers_polar_iff hb_ne_empty hb_ne_univ]
   decide
 
-/-- "Hannah didn't eat beans" also partially answers "What did Hannah eat?" —
-    it rules out the `qa_c1` (Hannah-beans-only) alternative. -/
+/-- "Hilary didn't eat bagels" also partially answers "What did Hilary eat?" —
+    it rules out the `qa_c1` (Hilary-bagels-only) alternative. -/
 theorem neg_hb_partially_answers_qa :
-    PartiallyAnswers (hannahBeansᶜ : Set D0World) q_a := by
+    PartiallyAnswers (hilaryBagelsᶜ : Set D0World) q_a := by
   refine ⟨qa_c1, qa_c1_in_alt, Or.inr ?_⟩
   intro w hw hw'
   exact hw hw'.1
@@ -579,16 +574,16 @@ theorem neg_hb_partially_answers_qa :
 -- § Positive Partial Answerhood
 -- ════════════════════════════════════════════════════
 
-/-- "Hannah ate beans" positively partially answers q_ai. -/
+/-- "Hilary ate bagels" positively partially answers q_ai. -/
 theorem hb_partially_answers_qai :
-    PartiallyAnswers hannahBeans q_ai := by
+    PartiallyAnswers hilaryBagels q_ai := by
   rw [partiallyAnswers_polar_iff hb_ne_empty hb_ne_univ]
   decide
 
-/-- "Hannah ate beans" partially answers the Big Question — it rules out
+/-- "Hilary ate bagels" partially answers "Who ate what?" — it rules out
     the `{w_zero}` (all-false) alternative. -/
 theorem hb_partially_answers_q1 :
-    PartiallyAnswers hannahBeans q_1 := by
+    PartiallyAnswers hilaryBagels q_1 := by
   refine ⟨{w_zero}, singleton_w_zero_in_alt_q1, Or.inr ?_⟩
   intro w hw hw'
   rw [Set.mem_singleton_iff] at hw'
@@ -599,37 +594,38 @@ theorem hb_partially_answers_q1 :
 -- § Relevance ([roberts-2012] Def. 15)
 -- ════════════════════════════════════════════════════
 
-/-- "Hannah ate beans" as a single-alternative declarative issue. -/
-def hannahBeans_assertion : Question D0World := Question.declarative hannahBeans
+/-- "Hilary ate bagels" as a single-alternative declarative issue. -/
+def hilaryBagels_assertion : Question D0World := Question.declarative hilaryBagels
 
-/-- "Hannah ate beans" is relevant to q_1 (the Big Question). -/
-theorem hannahBeans_relevant_to_q1 :
-    moveRelevant hannahBeans_assertion q_1 [] := by
-  refine ⟨hannahBeans, ?_, Or.inl hb_partially_answers_q1⟩
-  show hannahBeans ∈ alt (Question.declarative hannahBeans)
+/-- "Hilary ate bagels" is relevant to move 1, "Who ate what?". -/
+theorem hilaryBagels_relevant_to_q1 :
+    Relevant hilaryBagels_assertion {q_1} := by
+  refine ⟨hilaryBagels, ?_, q_1, rfl, hb_partially_answers_q1⟩
+  show hilaryBagels ∈ alt (Question.declarative hilaryBagels)
   rw [alt_declarative]
   rfl
 
-/-- q_a is relevant to q_1 as a subquestion: the `qa_c1` alternative
-    rules out the `{w_zero}` alternative of q_1 (since `w_zero ∉ qa_c1`). -/
+/-- The question `q_a` is relevant to `q_1` under the assertion-clause
+    proxy: its Hilary-bagels-only alternative `qa_c1` rules out the
+    `{w_zero}` alternative of `q_1`. (Roberts' own clause for
+    interrogative moves is strategy membership, not partial answerhood.) -/
 theorem qa_relevant_to_q1 :
-    moveRelevant q_a q_1 [] := by
-  refine ⟨qa_c1, qa_c1_in_alt, Or.inl ?_⟩
+    Relevant q_a {q_1} := by
+  refine ⟨qa_c1, qa_c1_in_alt, q_1, rfl, ?_⟩
   refine ⟨{w_zero}, singleton_w_zero_in_alt_q1, Or.inr ?_⟩
   intro w hw hw'
   rw [Set.mem_singleton_iff] at hw'
   subst hw'
   exact Bool.false_ne_true hw.1
 
-/-- "Hannah ate beans" is relevant to the entire D₀ strategy: it partially
+/-- "Hilary ate bagels" is relevant to the entire D₀ strategy: it partially
     answers `q_1` (the strategy's root). -/
-theorem hannahBeans_relevant_to_strategy :
-    moveRelevantToStrategy hannahBeans_assertion strat_1 := by
-  refine ⟨hannahBeans, ?_, q_1, ?_, hb_partially_answers_q1⟩
-  · show hannahBeans ∈ alt (Question.declarative hannahBeans)
+theorem hilaryBagels_relevant_to_strategy :
+    Relevant hilaryBagels_assertion {q | q ∈ strat_1.values} := by
+  refine ⟨hilaryBagels, ?_, q_1, ?_, hb_partially_answers_q1⟩
+  · show hilaryBagels ∈ alt (Question.declarative hilaryBagels)
     rw [alt_declarative]; rfl
-  · -- strat_1 = .branch q_1 [...]; q_1 is the head of allQuestions
-    simp [strat_1, Strategy.allQuestions]
+  · simp [strat_1, strat_a, strat_b]
 
 -- ════════════════════════════════════════════════════
 -- § Q-A Congruence / Focus Type Identity

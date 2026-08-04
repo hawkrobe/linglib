@@ -229,7 +229,7 @@ theorem iflp_roundtrip_imp :
 /-- The scoreboard K = ⟨I, M, ≺, CommonGround, QUD, G⟩. The temporal order ≺
     is implicit in list position of `moves`. `qud` is specialised to
     polar-question content (`W → Prop`); the richer `Discourse.QUDStack`
-    over `Semantics.Questions.Basic.Question W` is consumed by other
+    over `Question W` (`Discourse/QUD/Basic.lean`) is consumed by other
     files. Bridging the two is an open API-coherence item. -/
 structure Scoreboard (W : Type*) where
   numInterlocutors : Nat

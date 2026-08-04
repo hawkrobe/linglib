@@ -345,7 +345,7 @@ Two empirical points the paper makes (p. 524-526):
   *ne* (continuing topic + alternative-set).
 
 The substrate has `Roberts2012` QUD machinery in
-`Discourse/QUDStack.lean`. A faithful formalization of paper §5.3
+`Discourse/QUD/Basic.lean`. A faithful formalization of paper §5.3
 would need a topic predicate over `Description` configurations
 co-occurring with QUD-stack state — substrate the linglib has but
 that this study file does not yet plug into.

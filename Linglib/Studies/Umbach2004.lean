@@ -2,7 +2,6 @@ import Linglib.Discourse.Coherence
 import Linglib.Semantics.Questions.Partition.QUD
 import Linglib.Semantics.Questions.Resolution
 import Linglib.Semantics.Questions.Partition.Basic
-import Linglib.Discourse.QUD.Basic
 import Linglib.Semantics.Focus.Interpretation
 import Linglib.Pragmatics.DecisionTheoretic.But
 import Linglib.Fragments.English.FunctionWords

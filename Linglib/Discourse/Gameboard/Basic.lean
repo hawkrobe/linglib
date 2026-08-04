@@ -197,7 +197,7 @@ theorem downdateQud_restores_nonResolveCond
 
 Ch. 4 defines QUD-downdate in terms of FACTS resolving questions.
 The `Support` typeclass abstracts this. Here we connect it to the
-partition-based `QUD W` from `Discourse/QUD.lean`
+partition-based `QUD W` from `Semantics/Questions/Partition/QUD.lean`
 ([groenendijk-stokhof-1984]):
 
 A `Set W` fact supports a `QUD W` question when the fact determines

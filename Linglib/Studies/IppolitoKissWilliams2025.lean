@@ -107,7 +107,7 @@ answer whose existence the definedness condition requires.
 namespace IppolitoKissWilliams2025
 
 open Question Semantics.Questions.Probabilistic
-open Discourse (moveRelevant moveRelevant_polar_iff)
+open Discourse (Relevant relevant_polar_iff)
 open IppolitoKissWilliams2022
 
 /-! ### Discourse context -/
@@ -131,7 +131,7 @@ structure Context (W : Type*) where
   /-- Subquestions of the QUD established by the discourse context.
       [roberts-2012] (subquestion strategy); IKW §5.1: provided
       by the context, not computed. -/
-  subquestions : List (Question W)
+  subquestions : Set (Question W)
 
 /-! ### Sentence -/
 
@@ -167,8 +167,8 @@ def atIssueContent (d : Sentence W) : Set W :=
     2. `S'` is structurally relevant to the QUD;
     3. `S` supports some answer α ∈ QUD via `Supports`. -/
 def isDefined (d : Sentence W) (ctx : Context W) : Prop :=
-  moveRelevant d.sDen ctx.qud ctx.subquestions ∧
-  moveRelevant d.s'Den ctx.qud ctx.subquestions ∧
+  Relevant d.sDen (insert ctx.qud ctx.subquestions) ∧
+  Relevant d.s'Den (insert ctx.qud ctx.subquestions) ∧
   ∃ α ∈ alt ctx.qud, Supports ctx.dox d.sDen α ctx.prior
 
 /-- CI content of discourse *only*. [ippolito-kiss-williams-2025]
@@ -531,8 +531,8 @@ noncomputable def coreCtx : Context World where
   prior := prior
   dox := doxBE
   partialAnswers := []
-  subquestions := [Question.polar beautiful, Question.polar expensive,
-                   Question.polar renovated]
+  subquestions := {Question.polar beautiful, Question.polar expensive,
+                   Question.polar renovated}
 
 /-- Context for clause-type examples: S = "beautiful", S' =
     interrogative. Speaker believes S but doesn't know the answer to
@@ -543,8 +543,8 @@ noncomputable def clauseTypeCtx : Context World where
   prior := prior
   dox := doxB
   partialAnswers := []
-  subquestions := [Question.polar beautiful, Question.polar expensive,
-                   Question.polar renovated]
+  subquestions := {Question.polar beautiful, Question.polar expensive,
+                   Question.polar renovated}
 
 /-! ### § 5: Sentences -/
 
@@ -567,7 +567,7 @@ predictions on a concrete 8-world model with uniform prior. The PMF
 arithmetic reduces to four base probabilities (`beautiful`, `expensive`,
 their intersections with `buy`/`buyᶜ`) computed via
 `PMF.probOfSet_apply` + `Fin.sum_univ_eight`. The doxastic `⊆` checks
-and the `moveRelevant` reductions (via `moveRelevant_polar_iff`) are
+and the `Relevant` reductions (via `relevant_polar_iff`) are
 pure Set arithmetic discharged by `decide`.
 -/
 
@@ -864,23 +864,18 @@ private lemma sBeautiful_not_supports_buy_compl_doxBE :
     explicit subquestion list, and `S` supports `buy` from `doxBE`. -/
 theorem core_isDefined : declSentence.isDefined coreCtx := by
   refine ⟨?_, ?_, ?_⟩
-  · -- moveRelevant sBeautiful coreCtx.qud coreCtx.subquestions
-    -- via the `polar beautiful` subquestion in coreCtx.subquestions
+  · -- Relevant sBeautiful, via the `polar beautiful` subquestion
     rw [show declSentence.sDen = Question.polar beautiful from rfl,
-        moveRelevant_polar_iff beautiful_ne_empty beautiful_ne_univ]
-    refine Or.inl (Or.inr ?_)
-    refine ⟨Question.polar beautiful, ?_, ?_⟩
-    · show Question.polar beautiful ∈ coreCtx.subquestions
-      simp [coreCtx]
+        relevant_polar_iff beautiful_ne_empty beautiful_ne_univ]
+    refine Or.inl ⟨Question.polar beautiful, ?_, ?_⟩
+    · exact Set.mem_insert_of_mem _ (by simp [coreCtx])
     · rw [partiallyAnswers_polar_iff beautiful_ne_empty beautiful_ne_univ]
       exact Or.inl Set.Subset.rfl
-  · -- moveRelevant s'Expensive coreCtx.qud coreCtx.subquestions
+  · -- Relevant s'Expensive, via the `polar expensive` subquestion
     rw [show declSentence.s'Den = Question.polar expensive from rfl,
-        moveRelevant_polar_iff expensive_ne_empty expensive_ne_univ]
-    refine Or.inl (Or.inr ?_)
-    refine ⟨Question.polar expensive, ?_, ?_⟩
-    · show Question.polar expensive ∈ coreCtx.subquestions
-      simp [coreCtx]
+        relevant_polar_iff expensive_ne_empty expensive_ne_univ]
+    refine Or.inl ⟨Question.polar expensive, ?_, ?_⟩
+    · exact Set.mem_insert_of_mem _ (by simp [coreCtx])
     · rw [partiallyAnswers_polar_iff expensive_ne_empty expensive_ne_univ]
       exact Or.inl Set.Subset.rfl
   · -- ∃ α ∈ alt qud, Supports doxBE sBeautiful α prior
@@ -989,22 +984,18 @@ private lemma doxB_not_subset_renovated_compl : ¬ doxB ⊆ renovatedᶜ := by
     the relevance of `s'RenovatedQ`. -/
 theorem polarQ_isDefined : polarQSentence.isDefined clauseTypeCtx := by
   refine ⟨?_, ?_, ?_⟩
-  · -- moveRelevant sBeautiful via polar beautiful subquestion
+  · -- Relevant sBeautiful, via the `polar beautiful` subquestion
     rw [show polarQSentence.sDen = Question.polar beautiful from rfl,
-        moveRelevant_polar_iff beautiful_ne_empty beautiful_ne_univ]
-    refine Or.inl (Or.inr ?_)
-    refine ⟨Question.polar beautiful, ?_, ?_⟩
-    · show Question.polar beautiful ∈ clauseTypeCtx.subquestions
-      simp [clauseTypeCtx]
+        relevant_polar_iff beautiful_ne_empty beautiful_ne_univ]
+    refine Or.inl ⟨Question.polar beautiful, ?_, ?_⟩
+    · exact Set.mem_insert_of_mem _ (by simp [clauseTypeCtx])
     · rw [partiallyAnswers_polar_iff beautiful_ne_empty beautiful_ne_univ]
       exact Or.inl Set.Subset.rfl
-  · -- moveRelevant s'RenovatedQ via polar renovated subquestion
+  · -- Relevant s'RenovatedQ, via the `polar renovated` subquestion
     rw [show polarQSentence.s'Den = Question.polar renovated from rfl,
-        moveRelevant_polar_iff renovated_ne_empty renovated_ne_univ]
-    refine Or.inl (Or.inr ?_)
-    refine ⟨Question.polar renovated, ?_, ?_⟩
-    · show Question.polar renovated ∈ clauseTypeCtx.subquestions
-      simp [clauseTypeCtx]
+        relevant_polar_iff renovated_ne_empty renovated_ne_univ]
+    refine Or.inl ⟨Question.polar renovated, ?_, ?_⟩
+    · exact Set.mem_insert_of_mem _ (by simp [clauseTypeCtx])
     · rw [partiallyAnswers_polar_iff renovated_ne_empty renovated_ne_univ]
       exact Or.inl Set.Subset.rfl
   · refine ⟨buy, ?_, sBeautiful_supports_buy_doxB⟩

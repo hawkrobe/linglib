@@ -339,8 +339,8 @@ At the partition level, "finer" is `QUD.refines` (every fine cell ⊆ some coars
 cell), equivalently `q.toSetoid ≤ q'.toSetoid` in mathlib's `Setoid` lattice.
 At the issue level, "wider" is `Question.widerThan` ([deo-thomas-2025]
 (32): same `info`, no coarse answer ⊊ fine answer, some fine answer ⊊ coarse
-answer). The bridge: `toIssue := Question.fromSetoid ∘ QUD.toSetoid`
-preserves this relationship.
+answer). The bridge `QUD.toQuestion` (in
+`Semantics/Questions/Partition/Basic.lean`) preserves this relationship.
 
 The proof is an order-theoretic one-liner over `Setoid`: every alternative
 of `Question.fromSetoid r` is either `∅` or an equivalence class of `r`
@@ -349,21 +349,10 @@ the q'-class of `w₀` by refinement, with `v₀` witnessing strict containment.
 This replaces a 100-line Bool/List proof that managed indices into
 `worlds : List W` and case-split on `properlyContains`. -/
 
-/-- A `QUD` partitions a meaning space via an equivalence relation; via
-    `QUD.toSetoid` and `Question.fromSetoid`, every QUD induces an
-    inquisitive content whose alternatives are exactly the QUD's
-    equivalence classes. The bridge is one-way: not every `Question`
-    arises from a `QUD` (mention-some, intermediate-exhaustive, and
-    conditional-question alternatives are non-disjoint or non-exhaustive
-    and so are not representable as the cells of any equivalence
-    relation — [theiler-etal-2018]). -/
-def toIssue {W : Type*} (q : QUD W) : Question W :=
-  Question.fromSetoid q.toSetoid
-
 /-- Strict partition refinement implies issue width.
 
     If `q` (strictly) refines `q'` (`q` is the finer partition), then
-    `toIssue q` is wider than `toIssue q'` as `Question`s.
+    `QUD.toQuestion q` is wider than `QUD.toQuestion q'` as `Question`s.
 
     The strictness witnesses `w₀, v₀ : W` share a coarse cell
     (`q'.r w₀ v₀`) but not a fine cell
@@ -384,7 +373,7 @@ theorem refinement_implies_wider {W : Type*}
     (w₀ v₀ : W)
     (hCoarse : q'.r w₀ v₀)
     (hFine : ¬ q.r w₀ v₀) :
-    (toIssue q).widerThan (toIssue q') := by
+    (QUD.toQuestion q).widerThan (QUD.toQuestion q') := by
   -- Refinement reads as `q.toSetoid ≤ q'.toSetoid` in mathlib's lattice
   have hle : ∀ {x y : W}, q.toSetoid x y → q'.toSetoid x y :=
     fun {x y} hxy => QUD.r_of_sameAnswer (hRefines x y (QUD.sameAnswer_of_r hxy))
@@ -399,7 +388,7 @@ theorem refinement_implies_wider {W : Type*}
     Question.class_mem_alt_fromSetoid _ hC₂_class
   refine ⟨?_, ?_, ?_⟩
   -- (a) Same info: both reduce to Set.univ
-  · simp only [toIssue, Question.info_fromSetoid]
+  · simp only [QUD.toQuestion, Question.info_fromSetoid]
   -- (b) No q'-alternative properly contained in any q-alternative
   · intro p₂ hp₂ p₁ hp₁ hssub
     rcases Question.alt_fromSetoid_subset_classes _ hp₂ with hp₂_empty | hp₂_class
@@ -475,7 +464,7 @@ theorem finer_granularity_implies_wider (n ε₁ ε₂ : Nat)
     (w₀ v₀ : Fin n)
     (hCoarse : (granQUD n ε₂).r w₀ v₀)
     (hFine : ¬ (granQUD n ε₁).r w₀ v₀) :
-    (toIssue (granQUD n ε₁)).widerThan (toIssue (granQUD n ε₂)) :=
+    (QUD.toQuestion (granQUD n ε₁)).widerThan (QUD.toQuestion (granQUD n ε₂)) :=
   refinement_implies_wider _ _
     (finer_granularity_refines n ε₁ ε₂ hdvd)
     w₀ v₀ hCoarse hFine
@@ -517,7 +506,7 @@ theorem fig1_strict_refinement :
     Witnessed by worlds 0 and 2: they share a coarse cell (0/4 = 2/4 = 0)
     but not a fine cell (0/2 = 0 ≠ 2/2 = 1). -/
 theorem fig1_finer_is_wider :
-    (toIssue fineQ).widerThan (toIssue coarseQ) := by
+    (QUD.toQuestion fineQ).widerThan (QUD.toQuestion coarseQ) := by
   rw [coarseQ_is_granQUD, fineQ_is_granQUD]
   exact finer_granularity_implies_wider 8 2 4 ⟨2, rfl⟩
     0 2

@@ -1,5 +1,4 @@
 import Linglib.Semantics.Questions.Partition.QUD
-import Linglib.Discourse.QUD.Basic
 import Linglib.Semantics.Focus.Marking
 import Linglib.Features.Givenness
 import Linglib.Semantics.Focus.ExtractionClash
