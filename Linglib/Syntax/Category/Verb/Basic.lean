@@ -1,5 +1,5 @@
-import Linglib.Semantics.Verb.Defs
-import Linglib.Semantics.Verb.Root.Defs
+import Linglib.Syntax.Category.Verb.Defs
+import Linglib.Semantics.ArgumentStructure.Root.Defs
 
 /-! # Verb entry — derived API
 

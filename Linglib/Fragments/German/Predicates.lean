@@ -1,5 +1,5 @@
-import Linglib.Semantics.Verb.Basic
-import Linglib.Semantics.Verb.Root.Classification
+import Linglib.Syntax.Category.Verb.Basic
+import Linglib.Semantics.ArgumentStructure.Root.Classification
 
 /-!
 # German Predicate Lexicon Fragment

@@ -1,4 +1,4 @@
-import Linglib.Semantics.Verb.Class
+import Linglib.Semantics.ArgumentStructure.LevinClass
 import Linglib.Semantics.ArgumentStructure.MeaningComponents
 
 /-!

@@ -1,4 +1,4 @@
-import Linglib.Semantics.Verb.Root.Kinds
+import Linglib.Semantics.ArgumentStructure.Root.Kinds
 import Linglib.Semantics.ArgumentStructure.Valency
 
 /-!

@@ -1,6 +1,6 @@
 import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.NormNum
-import Linglib.Semantics.Verb.Root.Classification
+import Linglib.Semantics.ArgumentStructure.Root.Classification
 import Linglib.Semantics.ArgumentStructure.LevinTheory
 import Linglib.Semantics.ArgumentStructure.EventStructure
 import Linglib.Semantics.ArgumentStructure.RoleList

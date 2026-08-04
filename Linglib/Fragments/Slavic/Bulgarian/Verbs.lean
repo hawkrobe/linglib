@@ -1,5 +1,5 @@
 import Linglib.Morphology.Morph
-import Linglib.Semantics.Verb.Stem
+import Linglib.Syntax.Category.Verb.Stem
 
 /-!
 # Bulgarian Verbal Lexicon

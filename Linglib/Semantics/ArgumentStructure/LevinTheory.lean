@@ -1,9 +1,9 @@
 import Linglib.Features.Aktionsart
 import Linglib.Features.Attitudes
 import Linglib.Features.Causation
-import Linglib.Semantics.Verb.Class
+import Linglib.Semantics.ArgumentStructure.LevinClass
 import Linglib.Semantics.ArgumentStructure.MeaningComponents
-import Linglib.Semantics.Verb.Root.Kinds
+import Linglib.Semantics.ArgumentStructure.Root.Kinds
 import Linglib.Semantics.ArgumentStructure.EventStructure
 
 /-!

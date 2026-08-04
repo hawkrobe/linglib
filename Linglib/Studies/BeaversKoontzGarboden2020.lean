@@ -1,5 +1,5 @@
-import Linglib.Semantics.Verb.Root.Defs
-import Linglib.Semantics.Verb.Denotation
+import Linglib.Semantics.ArgumentStructure.Root.Defs
+import Linglib.Semantics.ArgumentStructure.VerbDenotation
 import Linglib.Semantics.ArgumentStructure.EventStructure
 
 /-!
