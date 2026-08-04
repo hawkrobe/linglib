@@ -1870,7 +1870,6 @@ import Linglib.Semantics.Verb.Class
 import Linglib.Semantics.Verb.Defs
 import Linglib.Semantics.Verb.Denotation
 import Linglib.Semantics.Verb.Root.Classification
-import Linglib.Semantics.Verb.Root.OutcomeCardinality
 import Linglib.Semantics.Verb.Root.Defs
 import Linglib.Semantics.Verb.Root.Kinds
 import Linglib.Semantics.Verb.Root.Position

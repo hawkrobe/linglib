@@ -1,4 +1,3 @@
-import Linglib.Semantics.Verb.Root.OutcomeCardinality
 import Linglib.Semantics.Verb.Root.Profile
 import Linglib.Semantics.Verb.Root.Kinds
 
@@ -82,12 +81,6 @@ structure Root where
   /-- The B&KG structural-entailment atoms; `∅` where the root's structural
       content has not been annotated (its `kinds` is then uninformative). -/
   entailments : Finset LexEntailment := ∅
-  /-- The outcome-set cardinality the root encodes ([bhadra-2024]): the axis
-      orthogonal to the `kinds` (derived from `entailments`). `none`
-      where the root has not been annotated for outcomes; `none` can also
-      carry [bhadra-2024]'s own gap — true intransitives have *no* outcome
-      set at all (end of §5.1.2), lacking an object. -/
-  outcomes : Option OutcomeCardinality := none
   /-- Within-class graded quality dimensions ([spalek-mcnally-2026],
       [majid-boster-bowerman-2008]); `{}` (all unconstrained) by default. -/
   profile : Verb.Root.Profile := {}
@@ -95,16 +88,16 @@ structure Root where
 
 /-- `Finset` carries no `Repr`, so `Root` cannot `deriving Repr`; we supply
     one by hand so `Verb` can `deriving Repr` over its `root` field. It shows
-    `name`, `outcomes`, and `profile` in full plus the `entailments`
+    `name` and `profile` in full plus the `entailments`
     cardinality — the entailment *set* itself has no computable `Repr`
     (`Finset`/`Multiset` would need a `LinearOrder` on the elements to render),
-    but this already distinguishes roots that differ in outcomes/profile, which
+    but this already distinguishes roots that differ in profile, which
     the old name-only `Repr` collapsed.
 
     `BEq`/`LawfulBEq` need no hand-rolled instance: both come from the derived
     `DecidableEq` (line above) via the global `instBEqOfDecidableEq`. -/
 instance : Repr Root :=
-  ⟨fun r _ => repr (r.name, r.entailments.card, r.outcomes, r.profile)⟩
+  ⟨fun r _ => repr (r.name, r.entailments.card, r.profile)⟩
 
 namespace Root
 

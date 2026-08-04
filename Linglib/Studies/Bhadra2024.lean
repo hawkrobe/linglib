@@ -1,5 +1,5 @@
 import Linglib.Semantics.Verb.Root.Classification
-import Linglib.Semantics.Verb.Root.OutcomeCardinality
+import Mathlib.Data.Set.Subsingleton
 import Linglib.Semantics.ArgumentStructure.Affectedness
 import Linglib.Semantics.ArgumentStructure.EventStructure
 import Linglib.Semantics.ArgumentStructure.RoleList
@@ -58,6 +58,67 @@ with the object (✓*rebreak a limb* vs. #*rebreak a sewer*, her (73)).
 * [levin-1993] (verb classes the outcome bridge keys on)
 -/
 
+namespace Verb
+
+/-! ### Outcome cardinality (eq. 62)
+
+The cardinality tier of an outcome set — `empty < singleton < multi` — the
+light invariant of what a root encodes along the outcome axis. Only the
+tier, not an exact count, is grammatically load-bearing, so this is a
+three-element linear order rather than `ℕ∞`. Single-consumer substrate
+carried here with its anchoring study. -/
+
+/-- The cardinality tier of an outcome set (eq. 62). -/
+inductive OutcomeCardinality where
+  | empty
+  | singleton
+  | multi
+  deriving Repr, BEq
+
+namespace OutcomeCardinality
+
+/-- Rank embedding into `ℕ`, giving the `empty < singleton < multi` order. -/
+def toNat : OutcomeCardinality → ℕ
+  | .empty => 0
+  | .singleton => 1
+  | .multi => 2
+
+theorem toNat_injective : Function.Injective toNat := by
+  intro a b h; cases a <;> cases b <;> simp_all [toNat]
+
+instance : LinearOrder OutcomeCardinality := LinearOrder.lift' toNat toNat_injective
+
+theorem empty_lt_singleton : empty < singleton := by decide
+theorem singleton_lt_multi : singleton < multi := by decide
+
+/-- The tier of a concrete outcome set: multi-membered iff `Nontrivial`,
+    empty iff there is no outcome, singleton otherwise. -/
+noncomputable def ofSet {State : Type*} (O : Set State) : OutcomeCardinality :=
+  open Classical in
+  if O.Nontrivial then .multi else if O.Nonempty then .singleton else .empty
+
+variable {State : Type*} {O : Set State}
+
+theorem ofSet_eq_multi (h : O.Nontrivial) : ofSet O = .multi := by
+  rw [ofSet, if_pos h]
+
+theorem ofSet_eq_singleton (hne : O.Nonempty) (hnt : ¬ O.Nontrivial) :
+    ofSet O = .singleton := by
+  rw [ofSet, if_neg hnt, if_pos hne]
+
+theorem ofSet_eq_empty (h : ¬ O.Nonempty) : ofSet O = .empty := by
+  rw [ofSet, if_neg (fun hnt => h hnt.nonempty), if_neg h]
+
+@[simp] theorem ofSet_singleton (s : State) : ofSet ({s} : Set State) = .singleton :=
+  ofSet_eq_singleton ⟨s, rfl⟩ (by rw [Set.not_nontrivial_iff]; exact Set.subsingleton_singleton)
+
+@[simp] theorem ofSet_empty : ofSet (∅ : Set State) = .empty :=
+  ofSet_eq_empty (by simp)
+
+end OutcomeCardinality
+
+end Verb
+
 namespace ArgumentStructure
 
 open Verb
@@ -112,8 +173,8 @@ open ArgumentStructure.Affectedness
 
 A verb root lexically encodes its base predicate `P` (the `⟨v,⟨e,t⟩⟩` meaning the
 affixes modify), its outcome set `O` (states at the right boundary, eq. 56a), and
-its threshold set `T` (left boundary, eq. 56b) — the substrate `VerbOutcomes`
-(`Semantics/Verb/Root/Outcomes.lean`), with `resState`/`preState` the eq. 64–65 boundary
+its threshold set `T` (left boundary, eq. 56b) — the local `VerbOutcomes`
+above, with `resState`/`preState` the eq. 64–65 boundary
 operators and `StateFunction` the paper's *state* `k : t ↦ l(x)` (eq. 53).
 `APPLIES` (eq. 59) is folded into `verb`. -/
 
