@@ -10,40 +10,20 @@ import Mathlib.Logic.Relator
 /-!
 # Control: Basic Definitions
 
-The framework-neutral vocabulary of control theory. Control is
-pre-theoretically an antecedence relation between the understood subject of a
-clause-like complement and the matrix argument that supplies its
-interpretation ([landau-2013] (74)); the one definition in the literature
-written to be neutral between the rival mechanisms is [stiebels-2007] (22):
-the control predicate requires one of its arguments to be (improperly)
-included in the reference of the embedded subject, "open as to how the
-control reading is obtained: either structurally or semantically/lexically".
-A dependency here is a relation `SetRel Pos Pos` over argument positions,
-read `antecedent ~[r] dependent`, with a valuation `val : Pos → Ref`
-assigning referents. Identical inclusion is *exhaustive control*
-([landau-2000]): related positions are co-valued (`IsExhaustive`); proper
-inclusion is a *partial* reading (`IsPartial`), and joint antecedence is
-*split* control (`IsSplit`). Control *shift* — the antecedent varying across
-readings of one construction — is deliberately not a property of a single
-dependency: a dependency encodes one reading, so shift lives at the
-controller-choice stratum.
-
-Grammatical dependencies share the fixed format of the configurational
-matrix: [koster-1987]'s five shared properties, as explained by
-[neeleman-vandekoot-2002] — c-command by the antecedent, obligatoriness,
-uniqueness of the antecedent, nonuniqueness of the dependent, and locality.
-Every clause of the matrix is mathlib vocabulary: c-command and locality are
-refinements `r ⊆ s` in the `SetRel` lattice, uniqueness of the antecedent is
-`Relator.LeftUnique`, obligatoriness is `dependent ⊆ r.cod`. Movement chains,
-bound anaphora, and both control mechanisms instantiate the format, so
-nothing here chooses between base-generation and movement.
-
-`Mechanism` names what a dependency shares — the framework-neutral cut behind
-the movement vs. base-generation and functional vs. anaphoric
-([bresnan-1982]) oppositions. `IsSaturating` is the profile of a dependency
-enforced by saturation (predication, structure sharing): bi-unique
-(`Relator.BiUnique`) and exhaustive. The lemmas — composition, the
-phenomenology of saturation, the occupant-mismatch refutation engine — are in
+The framework-neutral vocabulary of control. A dependency is a relation
+`SetRel Pos Pos` over argument positions, read `antecedent ~[r] dependent`,
+with a valuation `val : Pos → Ref` assigning referents — [stiebels-2007]'s
+mechanism-neutral definition of control as referential inclusion, "open as to
+how the control reading is obtained". Reading types follow [landau-2000]:
+exhaustive (`IsExhaustive`), partial (`IsPartial`), and split (`IsSplit`);
+control *shift* varies the antecedent across readings of one construction, so
+it is not a property of a single dependency. `Mechanism` names what a
+dependency shares ([bresnan-1982]'s functional vs. anaphoric cut), and
+`IsSaturating` is the bi-unique, exhaustive profile of saturation
+(predication, structure sharing). Grammatical dependencies share
+[koster-1987]'s configurational-matrix format ([neeleman-vandekoot-2002]),
+whose clauses are mathlib vocabulary: refinement `r ⊆ s`,
+`Relator.LeftUnique`, `dependent ⊆ r.cod`. Lemmas are in
 `Syntax/Control/Basic.lean`.
 
 ## Main definitions

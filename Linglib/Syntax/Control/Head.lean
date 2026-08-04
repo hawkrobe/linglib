@@ -13,9 +13,9 @@ head both of whose features are positive assigns `[+R]`, licensing an
 independent referential subject. Control is the *elsewhere* case. Mutual
 cancellation ([landau-2013] fn. 6): when C is `[+T, +Agr]` as well as I,
 R-assignment cancels and OC re-emerges — the Hebrew subjunctive effect,
-inexpressible on a flat tense scale. [landau-2004]'s scale of finiteness (`ClauseClass`) abbreviates
-clauses so specified, and `ClauseClass.HasOC` is derived from the
-calculus via `ClauseClass.toClause`.
+inexpressible on a flat tense scale. [landau-2004]'s scale of finiteness
+(`ClauseClass`) abbreviates clauses so specified, and `ClauseClass.HasOC` is
+derived from the calculus via `ClauseClass.toClause`.
 
 ## Main definitions
 
