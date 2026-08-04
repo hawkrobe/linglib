@@ -1543,10 +1543,7 @@ import Linglib.Semantics.Causation.SEM.Deterministic
 import Linglib.Semantics.Causation.Strength
 import Linglib.Semantics.Causation.Sufficiency
 import Linglib.Semantics.Causation.Valuation
-import Linglib.Semantics.Classifier.Basic
-import Linglib.Semantics.Classifier.Composition
-import Linglib.Semantics.Classifier.Defs
-import Linglib.Semantics.Classifier.TypeN
+import Linglib.Semantics.Classifier
 import Linglib.Semantics.Composition.Combinator
 import Linglib.Semantics.Composition.Cont
 import Linglib.Semantics.Composition.Coordination
@@ -1841,8 +1838,7 @@ import Linglib.Semantics.Reference.Reciprocals
 import Linglib.Semantics.Reference.ShiftedIndexicals
 import Linglib.Semantics.Spatial.Path
 import Linglib.Semantics.Spatial.Trace
-import Linglib.Semantics.Supervaluation.Basic
-import Linglib.Semantics.Supervaluation.TCS
+import Linglib.Semantics.Supervaluation
 import Linglib.Semantics.Tense.Basic
 import Linglib.Semantics.Tense.Compositional
 import Linglib.Semantics.Tense.DeRe

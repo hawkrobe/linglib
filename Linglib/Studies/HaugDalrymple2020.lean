@@ -3,7 +3,7 @@ import Linglib.Semantics.Dynamic.PPCDRT.Defs
 import Linglib.Semantics.Dynamic.PPCDRT.Anaphora
 import Linglib.Semantics.Dynamic.PPCDRT.Cumulativity
 import Linglib.Semantics.Plurality.Cumulativity
-import Linglib.Semantics.Supervaluation.Basic
+import Linglib.Semantics.Supervaluation
 import Linglib.Core.Logic.Trivalent.Prop3
 
 /-!

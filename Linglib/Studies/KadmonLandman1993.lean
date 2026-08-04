@@ -4,7 +4,7 @@ import Linglib.Semantics.Polarity.Item
 import Linglib.Semantics.Entailment.Polarity
 import Linglib.Semantics.Entailment.StrawsonEntailment
 import Linglib.Semantics.Exhaustification.FreeChoice
-import Linglib.Semantics.Supervaluation.Basic
+import Linglib.Semantics.Supervaluation
 import Linglib.Studies.Ladusaw1979
 import Mathlib.Data.Set.Basic
 

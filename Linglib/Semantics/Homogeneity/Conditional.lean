@@ -1,5 +1,5 @@
 import Linglib.Semantics.Homogeneity.Usable
-import Linglib.Semantics.Supervaluation.Basic
+import Linglib.Semantics.Supervaluation
 
 /-!
 # Homogeneity: the conditional instantiation
