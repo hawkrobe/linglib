@@ -428,8 +428,8 @@ def ex86Occupant : Fin 2 → Ex86Item :=
 /-- Movement is token identity, and the (86)–(87) occupants differ
     across the dependency — movement is refuted (§6, pp. 26–31): SMPM
     control is base-generated. -/
-theorem smpm_refutes_movement : ¬ Shares ex86Occupant ex86Dependency :=
-  not_shares_of_mismatch (P := (· = .quantifierDP)) rfl rfl (by decide)
+theorem smpm_refutes_movement : ¬ IsExhaustive ex86Occupant ex86Dependency :=
+  not_isExhaustive_of_mismatch (P := (· = .quantifierDP)) rfl rfl (by decide)
 
 -- ════════════════════════════════════════════════════════════════
 -- § 10: Implicational Universal (54)

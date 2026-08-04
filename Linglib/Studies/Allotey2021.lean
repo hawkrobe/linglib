@@ -242,8 +242,8 @@ def ex42Occupant : Fin 2 → Ex42Item :=
     the dependency — the Movement Theory of Control ([hornstein-1999])
     is refuted on the Gã configuration (§3.6.2): control is
     base-generated. -/
-theorem ga_refutes_movement : ¬ Shares ex42Occupant ex42Dependency :=
-  not_shares_of_mismatch (P := (· = .ameele)) rfl rfl (by decide)
+theorem ga_refutes_movement : ¬ IsExhaustive ex42Occupant ex42Dependency :=
+  not_isExhaustive_of_mismatch (P := (· = .ameele)) rfl rfl (by decide)
 
 /-- The lexical-copy ban is what [landau-2024]'s (72) predicts: the
     ex 42b/64 matrix verb *kai* is an implicative — nonattitude,

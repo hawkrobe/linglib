@@ -27,7 +27,7 @@ reading, no split antecedents — as theorems.
 
 ## Main definitions
 
-- `Control.IsExhaustive`, `Control.HasPartial`, `Control.HasSplit`
+- `Control.HasPartial`, `Control.HasSplit`
 - `Control.Mechanism`
 - `Control.IsSaturating`
 -/
@@ -39,10 +39,6 @@ open SetRel
 variable {Pos Ref : Type*} {val : Pos → Ref} {d : SetRel Pos Pos} {a b p q : Pos}
 
 /-! ### Reading types -/
-
-/-- Exhaustive control: the dependency refines the valuation's kernel. -/
-abbrev IsExhaustive (val : Pos → Ref) (d : SetRel Pos Pos) : Prop :=
-  Shares val d
 
 /-- A partial reading ([landau-2000]): some dependent's referent strictly
     extends its controller's. -/
