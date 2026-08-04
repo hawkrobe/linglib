@@ -75,11 +75,11 @@ cannot. -/
 /-- The change-entailment type of a root, derived from its kind signature: a
     root entails change iff its signature carries `result` ([beavers-etal-2021]). -/
 def Verb.Root.changeType (r : Verb.Root) : Verb.Root.ChangeType :=
-  if LexKind.result ∈ r.kinds then .result else .propertyConcept
+  ChangeType.ofKinds r.kinds
 
 theorem Verb.Root.changeType_eq_result_iff (r : Verb.Root) :
     r.changeType = .result ↔ r.HasResult := by
-  unfold Verb.Root.changeType Verb.Root.HasResult
+  unfold Verb.Root.changeType Verb.Root.HasResult ChangeType.ofKinds
   by_cases h : LexKind.result ∈ r.kinds <;> simp [h]
 
 /-- `changeType` is blind to outcomes: same entailments ⇒ same `changeType`,

@@ -496,7 +496,7 @@ of these classes. -/
     outside the predicate-root cut, and `positional` roots form Lucy's
     separate cross-cutting class (completive *-lah*) — the two stem
     classes share only the anomalous incompletive *-tal*. -/
-def salienceClassOf : VerbStemClass → Option Lucy1994.SalienceClass
+def salienceClassOf : VerbStemClass → Option ArgumentStructure.SalienceClass
   | .active => some .agent
   | .inactive => some .patient
   | .transitiveActive => some .agentPatient

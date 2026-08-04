@@ -554,4 +554,20 @@ theorem w_verbalization_cross_class :
     isActivity (buildDecomposition v_w activityLower) = true :=
   ⟨rfl, rfl, by decide, by decide⟩
 
+/-! ### Root classes in the salience coordinates -/
+
+/-- Chuj root classes through the annotation-level salience hom
+    (`Classification.salienceClass`): both √TV rows occupy the
+    agent-patient salient cell — the same `selectsTheme` coordinates
+    that [lucy-1994]'s Yucatec `=∅` class instantiates — while the
+    three intransitive classes are underdetermined by the manner-blind
+    annotation coordinates. -/
+theorem salience_of_root_classes :
+    rootTV_res.salienceClass = some .agentPatient ∧
+    rootTV_pc.salienceClass = some .agentPatient ∧
+    (toFragmentRoot .itv).salienceClass = none ∧
+    (toFragmentRoot .pos).salienceClass = none ∧
+    (toFragmentRoot .nom).salienceClass = none :=
+  ⟨rfl, rfl, rfl, rfl, rfl⟩
+
 end Coon2019
