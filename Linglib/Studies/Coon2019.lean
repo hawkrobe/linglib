@@ -32,14 +32,16 @@ Connect the fragment's theory-neutral types (`CRootClass`, `ChujVoiceSuffix`,
 
 ### Chuj fragment bridge (§§10–15)
 
-1. **Root class ↔ Root valency**: `CRootClass` maps to `Classification`
-   values. √TV = valency `{.internal}`, others = `∅`.
+1. **Root class ↔ Root coordinates**: `CRootClass` maps to
+   `Classification` values. √TV and √ITV share type ⟨e,⟨s,t⟩⟩ and
+   internal-argument valency; transitive-Voice licensing separates them.
 2. **Voice suffix ↔ Head**: theta assignment, D feature, phase head.
 3. **Paradigm predictions**: `isGrammatical` matches data attestation.
 4. **-aj predictions**: `hasImplicitExternal` / `triggersAj` match -aj
    distribution.
 5. **Agent diagnostics**: `assignsTheta` matches agent adverb / by-phrase.
-6. **Division of labor**: `formsBareTransitive` aligns with valency.
+6. **Division of labor**: `formsBareTransitive` aligns with
+   transitive-Voice licensing.
 
 ### Root typology bridge
 
@@ -323,9 +325,9 @@ theorem minimalist_division_of_labor :
     -- Same result root: Ø gives causative, -j gives inchoative
     isCausative (buildDecomposition vØ resultLower) = true ∧
     isInchoative (buildDecomposition v_j resultLower) = true ∧
-    -- √TV has theme, √ITV does not — root determines internal arg
-    rootTV_res.valency = {.internal} ∧
-    rootITV.valency = ∅ := ⟨by decide, by decide, rfl, rfl⟩
+    -- √TV licenses transitive Voice, √ITV does not (both take a theme)
+    rootTV_res.licensesTransitiveVoice = true ∧
+    rootITV.licensesTransitiveVoice = false := ⟨by decide, by decide, rfl, rfl⟩
 
 /-- The causative alternation in Chuj is determined by Voice, not by the root
     (instantiation of `voice_determines_causativity_go_be` for Chuj heads).
@@ -345,8 +347,8 @@ theorem chuj_causative_alternation_result :
     This connects theory-neutral distributional classes to the
     theoretically analyzed Classification structure.
     √TV maps to `rootTV_res` as a representative — the choice between
-    `rootTV_res` and `rootTV_pc` is arbitrary for valency (both are
-    `{.internal}`); only changeType differs. -/
+    `rootTV_res` and `rootTV_pc` is arbitrary for the class coordinates
+    (both license transitive Voice); only changeType differs. -/
 def toFragmentRoot : CRootClass → Classification
   | .tv  => rootTV_res
   | .itv => rootITV
@@ -358,15 +360,18 @@ def toFragmentRoot : CRootClass → Classification
     bare transitive stems (§2.2). -/
 theorem root_class_valency_alignment :
     (toFragmentRoot .tv).valency = {.internal} ∧
-    (toFragmentRoot .itv).valency = ∅ ∧
+    -- √ITV roots are unaccusative: they combine with an internal
+    -- argument, like √TV (§3.3) — cham 'die' is Coon's own example
+    (toFragmentRoot .itv).valency = {.internal} ∧
     (toFragmentRoot .pos).valency = ∅ ∧
     (toFragmentRoot .nom).valency = ∅ := ⟨rfl, rfl, rfl, rfl⟩
 
-/-- The data's `formsBareTransitive` matches the fragment's valency.
-    Only roots that introduce their theme can form bare transitive stems. -/
-theorem bare_transitive_iff_theme (rc : CRootClass) :
+/-- The data's `formsBareTransitive` matches transitive-Voice licensing —
+    not internal-argument valency, which unaccusative √ITV shares with
+    √TV (§3.3). -/
+theorem bare_transitive_iff_voice (rc : CRootClass) :
     formsBareTransitive rc = true ↔
-      .internal ∈ (toFragmentRoot rc).valency := by
+      (toFragmentRoot rc).licensesTransitiveVoice = true := by
   cases rc <;> decide
 
 -- ════════════════════════════════════════════════════
@@ -495,10 +500,10 @@ theorem event_decomposition_matches_data :
 theorem division_of_labor_matches_data :
     -- Root determines internal: √TV always selects theme
     formsBareTransitive .tv = true ∧
-    rootTV_res.valency = {.internal} ∧
-    -- Root determines internal: √ITV never selects theme
+    rootTV_res.licensesTransitiveVoice = true ∧
+    -- √ITV takes a theme but cannot license transitive Voice
     formsBareTransitive .itv = false ∧
-    rootITV.valency = ∅ ∧
+    rootITV.licensesTransitiveVoice = false ∧
     -- Voice determines external: same root, different agent status
     ChujVoiceSuffix.extArgStatus .null = .overt_erg ∧
     ChujVoiceSuffix.extArgStatus .ch = .implicit ∧
@@ -528,19 +533,20 @@ theorem theme_persists_all_voices :
     √TV/√ITV = indivStatePred ⟨e,⟨s,t⟩⟩, √POS = measureFn ⟨e,⟨s,d⟩⟩,
     √NOM = entityPred ⟨e,t⟩. -/
 theorem denotation_type_alignment :
-    (toFragmentRoot .tv).denotationType = some .indivStatePred ∧
-    (toFragmentRoot .itv).denotationType = some .indivStatePred ∧
-    (toFragmentRoot .pos).denotationType = some .measureFn ∧
-    (toFragmentRoot .nom).denotationType = some .entityPred := ⟨rfl, rfl, rfl, rfl⟩
+    (toFragmentRoot .tv).denotationType = some (.e ⇒ .s ⇒ .t) ∧
+    (toFragmentRoot .itv).denotationType = some (.e ⇒ .s ⇒ .t) ∧
+    (toFragmentRoot .pos).denotationType = some (.e ⇒ .s ⇒ .d) ∧
+    (toFragmentRoot .nom).denotationType = some (.e ⇒ .t) := ⟨rfl, rfl, rfl, rfl⟩
 
-/-- √TV and √ITV share semantic type (event predicate) but differ in valency.
-    This is the formal content of the observation that both compose with
-    an entity argument per [davis-1997], but only √TV projects a syntactic
-    complement. -/
-theorem tv_itv_same_type_different_valency :
+/-- √TV and √ITV share both semantic type and internal-argument valency
+    ([davis-1997]; §3.3) — what separates them is transitive-Voice
+    licensing alone, whose source Coon expressly declines to formalize. -/
+theorem tv_itv_same_type_different_voice :
     (toFragmentRoot .tv).denotationType = (toFragmentRoot .itv).denotationType ∧
-    (toFragmentRoot .tv).valency ≠ (toFragmentRoot .itv).valency := by
-  exact ⟨rfl, by decide⟩
+    (toFragmentRoot .tv).valency = (toFragmentRoot .itv).valency ∧
+    (toFragmentRoot .tv).licensesTransitiveVoice ≠
+      (toFragmentRoot .itv).licensesTransitiveVoice := by
+  exact ⟨rfl, rfl, by decide⟩
 
 /-- The -w suffix cross-class generalization: -w verbalizes √POS and √NOM
     roots (data: both take -w), and the fragment predicts different event
@@ -559,7 +565,7 @@ theorem w_verbalization_cross_class :
 
 /-- Chuj root classes through the annotation-level salience hom
     (`Classification.salienceClass`): both √TV rows occupy the
-    agent-patient salient cell — the same `{.internal}` valency
+    agent-patient salient cell — the same root-transitivity coordinate
     that [lucy-1994]'s Yucatec `=∅` class instantiates — while the
     three intransitive classes are underdetermined by the manner-blind
     annotation coordinates. -/
