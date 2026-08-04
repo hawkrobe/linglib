@@ -8,7 +8,7 @@ import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Fragments.Mixtec.SMPM.Basic
 import Linglib.Syntax.Control.Tier
 import Linglib.Syntax.Control.CopyControl
-import Linglib.Syntax.Control.Dependency
+import Linglib.Syntax.Control.Basic
 import Linglib.Syntax.Control.Signature
 import Linglib.Studies.Allotey2021
 import Linglib.Features.Complementation
