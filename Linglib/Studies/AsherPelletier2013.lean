@@ -25,8 +25,8 @@ open Core.Logic.TweetyNixon
 /-! ### Per-individual evaluation (§12.3, exx. 7–8)
 
 For ∀x(φ(x) > ψ(x)), the consequent ψ is evaluated for each individual a at the
-worlds where a is a normal φ. Each restrictor class brings its own normality
-ordering, obtained by processing that class's default into the total order. -/
+worlds where a is a normal φ — under the normality ordering of a's restrictor
+class. -/
 
 /-- Worlds in which Opus is a bird (all of them, by taxonomy). -/
 def birdDomain : Set TweetyWorld := {w | isBird w}
@@ -67,11 +67,9 @@ theorem normal_penguin_not_normal_bird :
 
 /-! ### Contextual construals of normality (§12.3, ex. 9)
 
-"Turtles live to be 100": under the Aristotelian/teleological construal (the
-natural telos of a turtle, if everything goes right) the generic is true; under
-the statistical construal (most turtles die within hours of hatching) it is
-false. The "give" in which worlds count as normal is located in the choice of
-ordering, fixed by context and discourse. -/
+"Turtles live to be 100" is true under the Aristotelian/teleological construal
+and false under the statistical one: the "give" in what counts as a normal
+world sits in the choice of ordering, fixed by context and discourse. -/
 
 /-- Tim the turtle's possible fates. -/
 inductive TurtleWorld where
@@ -106,14 +104,10 @@ theorem turtles_statistical_false :
 
 /-! ### Against the probabilistic account (§12.4)
 
-[cohen-1999a] proposes that "φs ψ" is true iff Pr(ψ | φ) > 1/2. The chapter's
-"too weak" argument: suppose the normal cases as far as cats are concerned have
-tails in just over half of them — the chapter puts it at 50.05%, and the margin
-can be made arbitrarily thin (a coin biased 50.000000001% toward heads is not
-one that *normally comes up heads*). The majority account verifies "Cats have
-tails"; the modal account rejects it, since the normal cases do not settle
-tails. We model 11 tailed cases out of 20 equally normal ones and state the
-divergence against the formalized `Cohen1999.cohenGEN`. -/
+The "too weak" argument against [cohen-1999a]'s Pr(ψ | φ) > 1/2 semantics: a
+margin just over half — the chapter's cats have tails in 50.05% of the normal
+cases, its coin comes up heads 50.000000001% of the time — verifies a generic
+the modal account rejects, since the normal cases do not settle the scope. -/
 
 /-- Tails in 11 of the 20 equally normal cat-cases: just over half. -/
 def tailed : Fin 20 → Prop := fun w => w.val < 11
