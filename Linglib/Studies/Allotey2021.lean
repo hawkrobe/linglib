@@ -5,8 +5,9 @@ Authors: Robert Hawkins
 -/
 import Linglib.Fragments.Ga.Predicates
 import Linglib.Syntax.Minimalist.MinimalPronoun
-import Linglib.Syntax.Control.Tier
-import Linglib.Syntax.Control.Clause
+import Linglib.Syntax.Control.Finiteness
+import Linglib.Semantics.Composition.TypeShifting
+import Linglib.Studies.Landau2015
 import Linglib.Syntax.Control.Basic
 import Linglib.Syntax.Control.Diagnostics
 import Linglib.Studies.Landau2013
@@ -37,6 +38,8 @@ need phrase-structure substrate and are not formalized.
 namespace Allotey2021
 
 open Minimalist Minimalist.MinimalPronoun Control Ga
+open Landau2015 (Tier)
+open Semantics.Composition.TypeShifting (ComplementDenotation)
 
 /-! ### OC by clause type -/
 
@@ -246,15 +249,16 @@ def ex42Occupant : Fin 2 → Ex42Item :=
 theorem ga_refutes_movement : ¬ IsExhaustive ex42Occupant ex42Dependency :=
   not_isExhaustive_of_mismatch (P := (· = .ameele)) rfl rfl (by decide)
 
-/-- The lexical-copy ban is what [landau-2024]'s (72) predicts: the
+/-- The lexical-copy ban is what [landau-2024]'s (72) predicts (the
+    lexical-subject generalization originates with [grano-2015]): the
     ex 42b/64 matrix verb *kai* is an implicative — nonattitude,
-    predicative tier — so its complement is property-denoting and a
-    lexical subject is a type mismatch. (The attitude verbs' `ni`-frame
-    aligns too: *kplɛnɔ* 'agree' takes the lexical-subject subjunctive
-    of ex 105.) -/
+    predicative tier — so its complement is property-denoting, and only
+    propositional complements license a lexical subject. (The attitude
+    verbs' `ni`-frame aligns too: *kplɛnɔ* 'agree' takes the
+    lexical-subject subjunctive of ex 105.) -/
 theorem lexical_copy_ban_predicted :
     gaEmbeddedLexicalCopyAvailable
-      = decide (LicensesLexicalSubject Tier.predicative.complementDenotation) := rfl
+      = (ComplementDenotation.property == ComplementDenotation.proposition) := rfl
 
 /-- The controlled form φ-covaries with its controller (exx 37–39),
     unlike [satik-2019]'s form-invariant Ewe *yè* (§3.6.3). -/
