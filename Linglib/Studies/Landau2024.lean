@@ -4,8 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Syntax.Control.Tier
-import Linglib.Syntax.Control.Signature
-import Linglib.Syntax.Control.Dependency
+import Linglib.Syntax.Control.Taxonomy
 
 /-!
 # Landau (2024): Control
@@ -168,10 +167,10 @@ theorem korean_realizes_postal (j : Jussive) :
 
 (36)–(37): PC is attested in attitude complements and unavailable
 under implicatives — *\*John managed to gather at 6* (37a). On the
-dual theory this is `Control.IsPredicative.not_partial`: implicative
-complements are predicative, and predication shares the referent
-exhaustively. The (37a) configuration refutes predicative status for
-its hypothetical PC reading, never the other way around. -/
+dual theory this is `Control.IsSaturating.not_hasPartial`: implicative
+complements are predicative, and predication saturates, sharing the
+referent exhaustively. The (37a) configuration refutes saturating
+status for its hypothetical PC reading, never the other way around. -/
 
 /-- The (37a) configuration: matrix controller position `0`, embedded
     subject position `1`. -/
@@ -182,10 +181,10 @@ def ex37Dependency : SetRel (Fin 2) (Fin 2) := {(0, 1)}
 def ex37Val : Fin 2 → ℕ :=
   fun p => if p = 0 then 1 else 2
 
-/-- A partial-control reading is incompatible with a predicative
+/-- A partial-control reading is incompatible with a saturating
     dependency: (37a)'s star, from exhaustive sharing. -/
-theorem manage_excludes_pc : ¬ IsPredicative ex37Val ex37Dependency :=
-  fun h => h.not_partial (a := 0) (b := 1) rfl (by decide)
+theorem manage_excludes_pc : ¬ IsSaturating ex37Val ex37Dependency :=
+  fun h => h.not_hasPartial ⟨0, 1, rfl, by decide⟩
 
 /-! ### NOC: dual licensing by topic and logophoric center
 

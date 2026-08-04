@@ -4,8 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 
-import Linglib.Syntax.Control.Dependency
-
 /-!
 # Control Theory: Tiers, Predicate Classes, Clause Classes
 
@@ -24,10 +22,9 @@ for the paper-anchored control studies (`Studies/Landau2015.lean`,
 
 ## Main definitions
 
-- `Control.Tier`: predicative vs. logophoric control
-- `Control.IsPredicative`: the grammatical profile of a
-  predicative-control dependency, with the tier's phenomenology as
-  theorems (exhaustive, no split, no shift)
+- `Control.Tier`: predicative vs. logophoric control; the predicative
+  mechanism's grammatical profile is the framework-neutral
+  `Control.IsSaturating` (`Syntax/Control/Taxonomy.lean`)
 - `Control.PredicateClass`: the eight predicate classes, mapped to tiers
 - `Control.ClauseClass`: the `[±T]` scale positions, with the
   Agr-sensitive `ClauseClass.HasOC` and its characterization
@@ -77,53 +74,6 @@ def Tier.isAttitude : Tier → Bool
     ([ganenkov-2019]). -/
 def Tier.agrBlocksControl (t : Tier) : Bool :=
   t.isAttitude
-
-/-! ### The predicative mechanism
-
-Predication is saturation, so a predicative-control dependency is
-functional, injective, and exhaustively shares the referent; the
-tier's phenomenology follows ([landau-2015]; [landau-2024] §5.1):
-exhaustive control, no split, no shift. Logophoric control composes a
-binding leg over predication and escapes each property exactly when
-the binding leg does (`SetRel.IsInjective.comp`,
-`SetRel.IsFunctional.comp`, `Control.Shares.comp` contrapositives).
-Implicit control ((90)), `[−human]` PRO ((81)), and Agr-blocking
-((60)/(70)) need overtness, animacy, and φ carriers; they are carried
-at the enforcement stratum. -/
-
-section Mechanism
-
-open SetRel
-
-variable {Pos Ref : Type*} {val : Pos → Ref} {d : SetRel Pos Pos}
-  {a b p q : Pos}
-
-/-- The grammatical profile of a predicative-control dependency:
-    predication saturates a unique slot by a unique argument and shares
-    the referent exhaustively. -/
-structure IsPredicative (val : Pos → Ref) (d : SetRel Pos Pos) : Prop where
-  functional : d.IsFunctional
-  injective : d.IsInjective
-  shares : Shares val d
-
-/-- Predicative control is exhaustive: the dependent's referent never
-    strictly extends the controller's (no partial control). -/
-theorem IsPredicative.not_partial [Preorder Ref] (h : IsPredicative val d)
-    (hab : a ~[d] b) : ¬ val a < val b :=
-  h.shares.not_lt hab
-
-/-- Predicative control admits no split: joint controllers coincide. -/
-theorem IsPredicative.eq_of_controllers (h : IsPredicative val d)
-    (ha : a ~[d] p) (hb : b ~[d] p) : a = b :=
-  isInjective_iff_leftUnique.mp h.injective ha hb
-
-/-- Predicative control admits no shift: a controller saturates a
-    single slot. -/
-theorem IsPredicative.eq_of_controlled (h : IsPredicative val d)
-    (hp : a ~[d] p) (hq : a ~[d] q) : p = q :=
-  isFunctional_iff_rightUnique.mp h.functional hp hq
-
-end Mechanism
 
 /-! ### Predicate classification -/
 

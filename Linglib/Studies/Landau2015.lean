@@ -22,7 +22,7 @@ consilience bridge to [noonan-2007]'s CTP classification.
 - `Table80Row` with the two availability columns: the six empirical
   contrasts of table (80), a perfect split between the tiers
   (`table80_complementary`); the mechanism rows cite their
-  `Control.IsPredicative` derivations
+  `Control.IsSaturating` derivations
 - `objectControlReading`: psychological → *de se*, communicative →
   *de te* (table (36))
 - `derivedLandauClass` / `derivedControlTier`: predicate classes derived
@@ -49,14 +49,15 @@ inductive Table80Row where
   /-- Implicit control ((90)/(93): predication needs an overt
       external argument) -/
   | implicitControl
-  /-- Control shift (`Control.IsPredicative.eq_of_controlled` blocks
-      it under predication) -/
+  /-- Control shift (`Control.IsSaturating.eq_of_controllers` blocks
+      it under predication: the shifted reading assigns the saturated
+      slot a different controller) -/
   | controlShift
-  /-- Partial control (`Control.IsPredicative.not_partial` blocks it
+  /-- Partial control (`Control.IsSaturating.not_hasPartial` blocks it
       under predication) -/
   | partialControl
-  /-- Split control (`Control.IsPredicative.eq_of_controllers` blocks
-      it under predication) -/
+  /-- Split control (`Control.IsSaturating.not_hasSplit` blocks it
+      under predication) -/
   | splitControl
   deriving DecidableEq, Repr
 
