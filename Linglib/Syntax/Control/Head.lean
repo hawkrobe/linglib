@@ -14,13 +14,13 @@ independent referential subject. Control is the *elsewhere* case. Mutual
 cancellation ([landau-2013] fn. 6): when C is `[+T, +Agr]` as well as I,
 R-assignment cancels and OC re-emerges — the Hebrew subjunctive effect,
 inexpressible on a flat tense scale. [landau-2004]'s scale of finiteness (`ClauseClass`) abbreviates
-`⟨T, Agr⟩` specifications, and `ClauseClass.HasOC` is derived from the
-calculus via `ClauseClass.toSpec`.
+clauses so specified, and `ClauseClass.HasOC` is derived from the
+calculus via `ClauseClass.toClause`.
 
 ## Main definitions
 
-- `Control.Head`, `Control.Spec`
-- `Control.Spec.HasControl`: control as the elsewhere condition
+- `Control.Head`, `Control.Clause`
+- `Control.Clause.HasControl`: control as the elsewhere condition
 - `Control.ClauseClass`: the scale of finiteness, with derived
   `ClauseClass.HasOC`
 -/
@@ -44,9 +44,9 @@ def Head.RAssigning (h : Head) : Prop :=
 instance (h : Head) : Decidable h.RAssigning :=
   inferInstanceAs (Decidable (_ ∧ _))
 
-/-- A clause's control-relevant specification: its inflectional and
-    complementizer heads. -/
-structure Spec where
+/-- A clause as the calculus sees it: its inflectional and complementizer
+    heads. -/
+structure Clause where
   /-- The inflectional head. -/
   i : Head
   /-- The complementizer head. -/
@@ -56,16 +56,16 @@ structure Spec where
 /-- Control is the elsewhere case ([landau-2013] (178) with fn. 6): an
     R-assigning I destroys control unless C is R-assigning too — mutual
     cancellation. -/
-def Spec.HasControl (s : Spec) : Prop :=
-  s.i.RAssigning → s.c.RAssigning
+def Clause.HasControl (cl : Clause) : Prop :=
+  cl.i.RAssigning → cl.c.RAssigning
 
-instance (s : Spec) : Decidable s.HasControl :=
+instance (cl : Clause) : Decidable cl.HasControl :=
   inferInstanceAs (Decidable (_ → _))
 
 /-- Mutual cancellation: a fully specified C restores OC in a fully finite
     clause — Hebrew subjunctives ([landau-2013] fn. 6). -/
-theorem Spec.hasControl_of_c_rAssigning {s : Spec} (h : s.c.RAssigning) :
-    s.HasControl :=
+theorem Clause.hasControl_of_c_rAssigning {cl : Clause} (h : cl.c.RAssigning) :
+    cl.HasControl :=
   fun _ => h
 
 /-! ### Clause classes -/
@@ -85,7 +85,7 @@ inductive ClauseClass where
   /-- `[+T]` complement: OC unless `[+Agr]` -/
   | fSubjunctive
   /-- Fully finite: `[+T, +Agr]` on I. No control unless C is fully
-      specified too (mutual cancellation, `Spec.hasControl_of_c_rAssigning`) -/
+      specified too (mutual cancellation, `Clause.hasControl_of_c_rAssigning`) -/
   | finite
   deriving DecidableEq, Repr
 
@@ -99,20 +99,19 @@ def ClauseClass.ofFiniteness (unrestrictedTAM independentTense : Bool) : ClauseC
   if unrestrictedTAM then .finite
   else if independentTense then .fSubjunctive else .cSubjunctive
 
-/-- The `⟨T, Agr⟩` specification a scale position abbreviates, at a given
-    Agr value: `[±T]` on I per the position, C unspecified. The scale cannot
-    express a fully specified C — mutual cancellation needs the calculus
-    directly. -/
-def ClauseClass.toSpec (c : ClauseClass) (agr : Bool) : Spec :=
+/-- The clause a scale position abbreviates, at a given Agr value: `[±T]`
+    on I per the position, C unspecified. The scale cannot express a fully
+    specified C — mutual cancellation needs the calculus directly. -/
+def ClauseClass.toClause (c : ClauseClass) (agr : Bool) : Clause :=
   ⟨⟨c ≠ .cSubjunctive, if c = .finite then true else agr⟩, ⟨false, false⟩⟩
 
-/-- OC is realized in a clause class iff the calculus leaves control at its
-    specification: the elsewhere condition on `toSpec`. -/
+/-- OC is realized in a clause class iff the calculus leaves control at
+    the clause it abbreviates: the elsewhere condition on `toClause`. -/
 def ClauseClass.HasOC (c : ClauseClass) (agr : Bool) : Prop :=
-  (c.toSpec agr).HasControl
+  (c.toClause agr).HasControl
 
 instance (c : ClauseClass) (agr : Bool) : Decidable (c.HasOC agr) :=
-  inferInstanceAs (Decidable (Spec.HasControl _))
+  inferInstanceAs (Decidable (Clause.HasControl _))
 
 /-- OC obtains exactly on C-subjunctives (any Agr) and `[−Agr]`
     F-subjunctives. -/
