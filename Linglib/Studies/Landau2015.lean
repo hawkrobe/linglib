@@ -41,7 +41,7 @@ open Features (Attitude)
 /-- The six contrast rows of table (80) of [landau-2015]. -/
 inductive Table80Row where
   /-- OC into an inflected complement (the OC-NC generalization (70);
-      `Tier.agrBlocksControl`) -/
+      `inflectedComplement_realizes_ocnc`) -/
   | inflectedComplement
   /-- `[−human]` PRO ((81): the logophoric binder is the
       AUTHOR/ADDRESSEE function, defined only for humans) -/
@@ -79,13 +79,19 @@ theorem table80_complementary (r : Table80Row) :
     availableUnderLogophoric r = !availableUnderPredicative r := by
   cases r <;> rfl
 
-/-- The inflected-complement row is the OC-NC generalization (70). -/
-theorem inflectedComplement_eq_agrBlocks :
-    (availableUnderPredicative .inflectedComplement
-        = !Tier.agrBlocksControl .predicative)
+/-- The inflected-complement row is the OC-NC generalization ((70)),
+    derived from the calculus: `[+Agr]` leaves OC in `[−T]` complements
+    (the predicative tier) and destroys it in `[+T]` complements (the
+    logophoric tier), by the Feature Transmission asymmetry ((60):
+    predication is not contingent on feature matching — Icelandic quirky
+    constructions — while variable binding is, [heim-2008],
+    [kratzer-2009]). Its empirical scope is contested ([ganenkov-2019]). -/
+theorem inflectedComplement_realizes_ocnc :
+    availableUnderPredicative .inflectedComplement
+        = decide (ClauseClass.cSubjunctive.HasOC true)
     ∧ availableUnderLogophoric .inflectedComplement
-        = !Tier.agrBlocksControl .logophoric :=
-  ⟨rfl, rfl⟩
+        = decide (ClauseClass.fSubjunctive.HasOC true) := by
+  exact ⟨by decide, by decide⟩
 
 /-- EC verbs resist impersonal passives ((98) in [landau-2015]): a
     direct consequence of condition (90), since impersonal passives
