@@ -53,7 +53,7 @@ only universal closure which requires a rule-like interpretation.
   generics express rules (physical, moral, legal, linguistic) but
   reanalyzes "rules" as interpretation restrictions rather than
   ontological entities
-- [asher-pelletier-2012] (`Studies/AsherPelletier2013.lean`):
+- [asher-pelletier-2013] (`Studies/AsherPelletier2013.lean`):
   normality orderings — orthogonal to Krifka's theory, which targets
   the descriptive/definitional distinction rather than default reasoning
 -/
@@ -541,7 +541,7 @@ definitional sentences successively fix the meaning of a new word. -/
 -- ═══ Cross-Study Connections ═══
 
 /-- Krifka's definitional generics are orthogonal to the default reasoning
-    framework of [asher-pelletier-2012]: normality orderings target
+    framework of [asher-pelletier-2013]: normality orderings target
     descriptive generics (which worlds are normal), while Krifka's DEF
     targets the interpretation index. The two theories operate on
     different components of the common ground. -/

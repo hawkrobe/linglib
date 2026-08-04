@@ -2,7 +2,7 @@ import Mathlib.Data.Fintype.Basic
 
 /-!
 # Tweety Triangle and Nixon Diamond
-[veltman-1996] [goldszmidt-pearl-1996] [asher-pelletier-2012]
+[veltman-1996] [goldszmidt-pearl-1996] [asher-pelletier-2013]
 
 The two classic default-reasoning testbeds, as finite world types shared
 by the rival accounts in `Studies/Veltman1996`, `Studies/GoldszmidtPearl1996`,

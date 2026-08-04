@@ -1,55 +1,30 @@
 import Linglib.Core.Order.Normality
 import Linglib.Core.Logic.TweetyNixon
+import Linglib.Studies.Cohen1999
 
 /-!
-# [asher-pelletier-2012] — More Truths about Generic Truth
+# Asher & Pelletier (2013): More Truths about Generic Truth
 
-Nicholas Asher and Francis Jeffry Pelletier, ch. 12 of
-*Genericity* (Mari, Beyssade, Del Prete eds.), OUP, Oxford Studies in
-Theoretical Linguistics 43.
+[asher-pelletier-2013] (ch. 12 of *Genericity*, Mari, Beyssade & Del Prete eds., OUP)
+defends the modal-quantifier analysis of generics of [asher-morreau-1995] and
+[pelletier-asher-1997] — "φs ψ" is ∀x(φ(x) > ψ(x)), with > the weak conditional of
+[asher-morreau-1991]'s commonsense entailment — refined so that the consequent is
+evaluated **per individual**: for each a, in the worlds where a is a *normal φ*.
 
-## Core Claim
-
-Generics should be analyzed as **modal quantifiers** — ∀x(φ(x) > ψ(x)),
-where > is a weak conditional (from Asher & Morreau 1991). The key
-innovation is **per-individual evaluation** (§12.3): ψ is evaluated for
-each individual *a* only in those worlds where *a* is a normal φ.
-
-"Birds fly" is true because for each bird *a*, the most normal *a*-bird
-worlds are ones where *a* flies. For Opus the penguin, the normal
-Opus-penguin worlds are NOT normal Opus-bird worlds, so "Penguins don't
-fly" correctly overrides "Birds fly" for penguins (exx. 7–8).
-
-## Chapter Sections Covered
-
-- **§12.1–12.2**: Framework and challenges (exx. 1–5)
-- **§12.3**: Per-individual normality (exx. 6–9)
-- **§12.4**: Arguments against probabilistic alternatives
-
-## Connection to Existing Infrastructure
-
-1. **Normality orderings** (`Core/Order/Normality.lean`): a normality
-   ordering is just a `Preorder` on worlds, with the default-reasoning
-   operations as functions in namespace `Core.Order.Normality`. A&P's
-   per-individual normality is a normality ordering *per entity and
-   restrictor class*.
-
-2. **`traditionalGEN`** (`Semantics/Genericity/Basic.lean`): GEN's `normal`
-   parameter is the Bool-level projection of a normality ordering.
-
-3. **`TweetyNixon`** (`Core/Logic/TweetyNixon.lean`):
-   the Tweety Triangle scenario — the classic test case for A&P's system.
-
-## Refinement vs Specificity
-
-`processDefault` below uses `Normality.refine` ([veltman-1996]'s
-operation), which intersects ordering constraints. For the Tweety Triangle,
-Veltman's refinement produces **incomparability** between penguinFlies and
-penguinNoFly (neither is ≤ the other, since each satisfies one default
-and violates the other). A&P's per-individual evaluation resolves this
-via **specificity**: the more specific "penguins don't fly" overrides
-"birds fly" for penguins. The `tweetyLe` ordering encodes this
-specificity-resolved result directly.
+We render per-individual evaluation with restrictor-indexed normality orderings:
+each restrictor class carries its own `Preorder` (its default processed by
+`Normality.refine`), and a generic holds iff its scope holds throughout
+`Normality.optimal` of its own restrictor's ordering. On `TweetyWorld` this makes
+"Birds fly" and "Penguins don't fly" simultaneously true of Opus the penguin
+(exx. 7–8), checked at disjoint world sets — "the normal Opus-penguin worlds are
+not normal Opus-bird worlds." Normality itself has contextual "give" (ex. 9):
+"Turtles live to be 100" is true under an Aristotelian/teleological construal and
+false under a statistical one. §12.4 argues probability is too weak a basis for
+generic truth — with tails in just over half of the normal cat-cases (the chapter
+puts it at 50.05%), [cohen-1999a]'s majority GEN verifies "Cats have tails" while
+the modal account rejects it; we state that divergence against `Cohen1999.cohenGEN`.
+The chapter's accommodation and double-genericity responses to "Ducks lay eggs" and
+"Mosquitoes carry the West Nile Virus" (exx. 4–5, [leslie-2008]) are not covered.
 -/
 
 namespace AsherPelletier2013
@@ -57,287 +32,112 @@ namespace AsherPelletier2013
 open Core.Order
 open Core.Logic.TweetyNixon
 
--- ═══ Generic Truth via Normality Orderings ═══
+/-! ### Per-individual evaluation (§12.3, exx. 7–8)
 
-/-- A default rule: "Normally, if restrictor then scope."
+For ∀x(φ(x) > ψ(x)), the consequent ψ is evaluated for each individual a at the
+worlds where a is a normal φ. Each restrictor class brings its own normality
+ordering, obtained by processing that class's default into the total order. -/
 
-    Generic sentences express default rules. "Birds fly" means
-    "Normally, if x is a bird, then x flies." -/
-structure DefaultRule (W : Type*) where
-  restrictor : W → Prop
-  scope : W → Prop
+/-- Worlds in which Opus is a bird (all of them, by taxonomy). -/
+def birdDomain : Set TweetyWorld := {w | isBird w}
 
-/-- Process a default rule as a refinement of a normality ordering.
+/-- Worlds in which Opus is a penguin. -/
+def penguinDomain : Set TweetyWorld := {w | isPenguin w}
 
-    "Normally, if P then Q" refines the ordering to promote P∧Q worlds
-    over P∧¬Q worlds via `Normality.refine`. This is
-    [veltman-1996]'s monotonic (intersection-based) operation.
+/-- Bird-normality: the bird default "birds fly" processed into the ordering. -/
+@[reducible] def birdNormality : Preorder TweetyWorld :=
+  Normality.refine Normality.total flies
 
-    Note: A&P's actual system uses per-individual evaluation with
-    specificity, which goes beyond simple refinement. See the module
-    docstring caveat about refinement vs specificity. -/
-def processDefault {W : Type*} (no : Preorder W)
-    (d : DefaultRule W) : Preorder W :=
-  Normality.refine no (λ w => d.restrictor w → d.scope w)
+/-- Penguin-normality: the penguin default "penguins don't fly" processed into
+    the ordering. -/
+@[reducible] def penguinNormality : Preorder TweetyWorld :=
+  Normality.refine Normality.total (¬ flies ·)
 
+/-- Ex. (8): "Birds fly" — Opus flies throughout the normal Opus-bird worlds. -/
+theorem birds_fly : ∀ w ∈ Normality.optimal birdNormality birdDomain, flies w :=
+  fun _ hw =>
+    (hw.2 (show TweetyWorld.birdFlies ∈ birdDomain from trivial)
+      ⟨trivial, fun _ => trivial⟩).2 trivial
 
--- ═══ Per-Individual Evaluation (§12.3, exx. 7–9) ═══
+/-- Ex. (7): "Penguins don't fly" — Opus is grounded throughout the normal
+    Opus-penguin worlds. With `birds_fly`, both generics hold simultaneously:
+    they are evaluated at different normal-world sets. -/
+theorem penguins_dont_fly :
+    ∀ w ∈ Normality.optimal penguinNormality penguinDomain, ¬ flies w :=
+  fun _ hw =>
+    (hw.2 (show TweetyWorld.penguinNoFly ∈ penguinDomain from trivial)
+      ⟨trivial, fun _ hf => hf⟩).2 fun hf => hf
 
-/-- Per-individual evaluation data from §12.3.
+/-- "The normal Opus-penguin worlds are not normal Opus-bird worlds": the two
+    evaluation sets are disjoint, so neither generic disturbs the other. -/
+theorem normal_penguin_not_normal_bird :
+    Disjoint (Normality.optimal penguinNormality penguinDomain)
+      (Normality.optimal birdNormality birdDomain) :=
+  Set.disjoint_left.mpr fun _ hp hb => penguins_dont_fly _ hp (birds_fly _ hb)
 
-    The chapter's key innovation: for ∀x(φ(x) > ψ(x)), the consequent
-    ψ is evaluated per-individual. For individual *a* in the domain,
-    we look at normal *a*-φ worlds — worlds where *a* is a normal φ. -/
-structure PerIndividualDatum where
-  sentence : String
-  individual : String
-  restrictorClass : String
-  normalWorldDesc : String
-  scopeHolds : Bool
-  exNumber : String
-  deriving Repr
+/-! ### Contextual construals of normality (§12.3, ex. 9)
 
-/-- Ex. (7): "Penguins don't fly" — evaluated for Opus.
-    Normal Opus-PENGUIN worlds: Opus doesn't fly. Scope (¬fly) holds. -/
-def opusPenguinsDontFly : PerIndividualDatum :=
-  { sentence := "Penguins don't fly"
-  , individual := "Opus"
-  , restrictorClass := "penguin"
-  , normalWorldDesc := "Normal Opus-penguin worlds: Opus doesn't fly"
-  , scopeHolds := true
-  , exNumber := "(7)" }
+"Turtles live to be 100": under the Aristotelian/teleological construal (the
+natural telos of a turtle, if everything goes right) the generic is true; under
+the statistical construal (most turtles die within hours of hatching) it is
+false. The "give" in which worlds count as normal is located in the choice of
+ordering, fixed by context and discourse. -/
 
-/-- Ex. (8): "Birds fly" — evaluated for Opus.
-    Normal Opus-BIRD worlds: in those worlds, Opus is "definitely not
-    a normal penguin." So Opus flies. Scope (fly) holds.
+/-- Tim the turtle's possible fates. -/
+inductive TurtleWorld where
+  | reachesCentury
+  | diesYoung
+  deriving DecidableEq
 
-    Key insight: both "Birds fly" and "Penguins don't fly" are true
-    SIMULTANEOUSLY for the same individual — evaluated at different
-    normal worlds (normal-bird vs normal-penguin worlds). -/
-def opusBirdsFly : PerIndividualDatum :=
-  { sentence := "Birds fly"
-  , individual := "Opus"
-  , restrictorClass := "bird"
-  , normalWorldDesc := "Normal Opus-bird worlds: Opus is not a penguin"
-  , scopeHolds := true
-  , exNumber := "(8)" }
+/-- Tim lives to be 100 in this world. -/
+def livesTo100 : TurtleWorld → Prop
+  | .reachesCentury => True
+  | .diesYoung => False
 
-/-- Both generics are simultaneously true for penguins.
-    Per-individual evaluation evaluates at DIFFERENT normal worlds
-    for each restrictor, so both can hold without contradiction. -/
-theorem both_generics_true :
-    opusPenguinsDontFly.scopeHolds = true ∧
-    opusBirdsFly.scopeHolds = true := ⟨rfl, rfl⟩
+/-- Teleological construal: promotes telos-fulfilling worlds. -/
+@[reducible] def teleological : Preorder TurtleWorld :=
+  Normality.refine Normality.total livesTo100
 
+/-- Statistical construal: promotes the statistically typical early death. -/
+@[reducible] def statistical : Preorder TurtleWorld :=
+  Normality.refine Normality.total (¬ livesTo100 ·)
 
--- ═══ Context-Dependent Normality (§12.3, ex. 9) ═══
+/-- Under the teleological construal the generic is true. -/
+theorem turtles_teleological_true :
+    ∀ w ∈ Normality.optimal teleological Set.univ, livesTo100 w :=
+  fun _ hw =>
+    (hw.2 (Set.mem_univ TurtleWorld.reachesCentury) ⟨trivial, fun _ => trivial⟩).2
+      trivial
 
-/-- §12.3, ex. (9): "Turtles live to be 100."
+/-- Under the statistical construal the same generic is false. -/
+theorem turtles_statistical_false :
+    ¬ ∀ w ∈ Normality.optimal statistical Set.univ, livesTo100 w := fun h =>
+  h .diesYoung ⟨Set.mem_univ _, fun _ _ _ => ⟨trivial, fun _ hf => hf⟩⟩
 
-    The notion of a "normal φ(a) world" has some "give" to it —
-    different construals of normality yield different truth values.
-    Under an Aristotelian/teleological conception (natural telos of
-    a turtle: if everything goes right), it's true. Under a statistical
-    conception (most turtles die within hours of hatching), it's false.
+/-! ### Against the probabilistic account (§12.4)
 
-    A&P consider this context-dependence a virtue: discourse and
-    contextual factors fix the normality construal. -/
-structure NormalityConstrual where
-  sentence : String
-  construal : String
-  genericTrue : Bool
-  exNumber : String
-  deriving Repr
+[cohen-1999a] proposes that "φs ψ" is true iff Pr(ψ | φ) > 1/2. The chapter's
+"too weak" argument: suppose the normal cases as far as cats are concerned have
+tails in just over half of them — the chapter puts it at 50.05%, and the margin
+can be made arbitrarily thin (a coin biased 50.000000001% toward heads is not
+one that *normally comes up heads*). The majority account verifies "Cats have
+tails"; the modal account rejects it, since the normal cases do not settle
+tails. We model 11 tailed cases out of 20 equally normal ones and state the
+divergence against the formalized `Cohen1999.cohenGEN`. -/
 
-def turtlesTeleological : NormalityConstrual :=
-  { sentence := "Turtles live to be 100"
-  , construal := "Aristotelian/teleological: natural telos of a turtle"
-  , genericTrue := true
-  , exNumber := "(9)" }
+/-- Tails in 11 of the 20 equally normal cat-cases: just over half. -/
+def tailed : Fin 20 → Prop := fun w => w.val < 11
 
-def turtlesStatistical : NormalityConstrual :=
-  { sentence := "Turtles live to be 100"
-  , construal := "Statistical: most turtles die within hours of hatching"
-  , genericTrue := false
-  , exNumber := "(9)" }
+instance : DecidablePred tailed := fun w => Nat.decLt w.val 11
 
-/-- The same generic has different truth values under different
-    normality construals — A&P's "slop" in the normality notion. -/
-theorem normality_context_dependent :
-    turtlesTeleological.genericTrue ≠ turtlesStatistical.genericTrue := by
-  decide
-
-
--- ═══ Tweety Triangle ═══
-
-/-- Default 1: "Birds normally fly." -/
-def birdsNormallyFly : DefaultRule TweetyWorld :=
-  { restrictor := isBird, scope := flies }
-
-/-- Default 2: "Penguins normally don't fly." -/
-def penguinsNormallyDontFly : DefaultRule TweetyWorld :=
-  { restrictor := isPenguin, scope := λ w => ¬flies w }
-
-/-- Veltman-style refinement of both defaults.
-
-    This uses `Normality.refine` to process both defaults. The
-    result makes penguinNoFly and penguinFlies **incomparable** — neither
-    is ≤ the other — because the two defaults create crossing constraints.
-    (penguinFlies satisfies "birds fly" but violates "penguins don't fly";
-    penguinNoFly does the reverse.)
-
-    This matches the Nixon Diamond behavior (conflicting defaults →
-    agnosticism), not the Tweety Triangle (specificity resolution).
-    A&P's per-individual evaluation resolves this via specificity,
-    encoded in `tweetyLe` below.
-
-    The order of processing doesn't matter (`Normality.refine_comm`). -/
-def tweetyOrdering : Preorder TweetyWorld :=
-  (processDefault Normality.total birdsNormallyFly)
-    |> (processDefault · penguinsNormallyDontFly)
-
-/-- The **specificity-resolved** normality ordering for the Tweety Triangle.
-
-    This encodes the result of A&P's per-individual evaluation with
-    specificity: the more specific penguin default overrides the general
-    bird default for penguins. The ordering has two tiers:
-
-    - Top: {birdFlies, penguinNoFly} — each satisfies its most specific default
-    - Middle: {penguinFlies} — violates the more specific penguin default
-    - Bottom: {birdNoFly} — violates the bird default with no override -/
-private def tweetyLe : TweetyWorld → TweetyWorld → Bool
-  -- birdFlies: satisfies bird default, not a penguin → top tier
-  | .birdFlies, _ => true
-  -- penguinNoFly: penguin default overrides bird default → top tier
-  | .penguinNoFly, .penguinNoFly | .penguinNoFly, .birdNoFly => true
-  | .penguinNoFly, .birdFlies => true
-  | .penguinNoFly, .penguinFlies => true
-  -- penguinFlies: violates more specific penguin default → middle
-  | .penguinFlies, .penguinFlies | .penguinFlies, .birdNoFly => true
-  | .penguinFlies, .birdFlies => false
-  | .penguinFlies, .penguinNoFly => false
-  -- birdNoFly: violates bird default, no override → bottom
-  | .birdNoFly, .birdNoFly => true
-  | .birdNoFly, .birdFlies => false
-  | .birdNoFly, .penguinNoFly => false
-  | .birdNoFly, .penguinFlies => false
-
-/-- Specificity resolution: penguinNoFly is strictly more normal than
-    penguinFlies (the more specific penguin default wins). -/
-theorem penguin_nofly_more_normal :
-    tweetyLe .penguinNoFly .penguinFlies = true ∧
-    tweetyLe .penguinFlies .penguinNoFly = false := ⟨rfl, rfl⟩
-
-/-- The bird default applies for non-penguin birds: birdFlies is
-    strictly more normal than birdNoFly. -/
-theorem bird_fly_more_normal :
-    tweetyLe .birdFlies .birdNoFly = true ∧
-    tweetyLe .birdNoFly .birdFlies = false := ⟨rfl, rfl⟩
-
-
--- ═══ Bridge to traditionalGEN ═══
-
-/-- The `normal` parameter in `traditionalGEN` is the Bool-level projection
-    of a normality ordering: `normal(s) = true` iff s is among the most
-    normal elements.
-
-    This bridges the abstract ordering theory to the concrete GEN operator.
-    Requires decidable `le` to compute Bool values. -/
-def normalFromOrdering {W : Type*}
-    (le_dec : W → W → Bool) (domain : List W) : W → Bool :=
-  λ w => domain.all (λ v => le_dec w v)
-
-/-- When the ordering is total (initial state), every world is normal. -/
-theorem total_all_normal {W : Type*} (domain : List W) :
-    ∀ w ∈ domain, normalFromOrdering (λ _ _ => true) domain w = true := by
-  intro w _
-  simp only [normalFromOrdering, List.all_eq_true]
-  intro _ _
-  trivial
-
-/-- Under the specificity-resolved ordering, the normal TweetyWorlds
-    (those in the top tier) are exactly birdFlies and penguinNoFly. -/
-theorem tweety_normal_worlds :
-    let domain := [TweetyWorld.birdFlies, .birdNoFly, .penguinFlies, .penguinNoFly]
-    normalFromOrdering tweetyLe domain .birdFlies = true ∧
-    normalFromOrdering tweetyLe domain .penguinNoFly = true ∧
-    normalFromOrdering tweetyLe domain .penguinFlies = false ∧
-    normalFromOrdering tweetyLe domain .birdNoFly = false := ⟨rfl, rfl, rfl, rfl⟩
-
-
--- ═══ Challenges (§12.2, exx. 4–5) ═══
-
-/-- Challenge examples from §12.2 that the simple modal analysis ∀x(φ > ψ)
-    appears to predict wrongly. -/
-structure ChallengeDatum where
-  sentence : String
-  challenge : String
-  exNumber : String
-  deriving Repr
-
-/-- Ex. (4a): "Ducks lay eggs" — the basic analysis predicts normal
-    male ducks lay eggs, which is wrong. -/
-def ducksLayEggs : ChallengeDatum :=
-  { sentence := "Ducks lay eggs"
-  , challenge := "Predicts normal male ducks lay eggs"
-  , exNumber := "(4a)" }
-
-/-- Ex. (4b): "Cardinals are bright red" — predicts normal female
-    cardinals are bright red, which is wrong. -/
-def cardinalsRed : ChallengeDatum :=
-  { sentence := "Cardinals are bright red"
-  , challenge := "Predicts normal female cardinals are bright red"
-  , exNumber := "(4b)" }
-
-/-- Ex. (5): "Mosquitoes carry the West Nile Virus" — true despite
-    a vanishingly small percentage of normal mosquitoes carrying WNV. -/
-def mosquitoesWNV : ChallengeDatum :=
-  { sentence := "Mosquitoes carry the West Nile Virus"
-  , challenge := "True despite vanishingly small percentage carrying WNV"
-  , exNumber := "(5)" }
-
-def challengeData : List ChallengeDatum :=
-  [ducksLayEggs, cardinalsRed, mosquitoesWNV]
-
-
--- ═══ Against Probabilistic Alternatives (§12.4) ═══
-
-/-- A&P's arguments against [cohen-1999a]'s probabilistic semantics
-    for generics.
-
-    Cohen proposes generic truth ↔ Pr(B(a)|A(a)) > 0.5 (the "Cohen
-    conditional"). A&P argue this is inadequate for three reasons. -/
-inductive AntiProbArgument where
-  /-- Too weak: Pr(tails|coin-flip) ≈ 50.05% → "*This coin normally
-      comes up tails" should NOT be a true generic. -/
-  | tooWeak
-  /-- Wrong inference pattern: probabilistic semantics validates Modus
-      Ponens (Pr(B|A) > 0.5 and A(a) → B(a) more likely than not) but
-      NOT Defeasible Modus Ponens. Generics support the latter ("Birds
-      fly, Tweety is a bird, so Tweety flies") but the inference is
-      defeasible. -/
-  | wrongInference
-  /-- Embedded generics ("Dogs chase cats that chase mice") require
-      higher-order probabilities, leading to triviality results. -/
-  | embeddedGenerics
-  deriving DecidableEq, Repr
-
-
--- ═══ Non-Monotonicity ═══
-
-/-- Generic reasoning is non-monotonic: the specificity-resolved ordering
-    makes penguinNoFly top-tier (equally normal as birdFlies), despite
-    penguinNoFly violating the "birds fly" default. The more specific
-    penguin default overrides.
-
-    Adding the information "Tweety is a penguin" retracts the conclusion
-    "Tweety flies" and replaces it with "Tweety doesn't fly." -/
-theorem generic_nonmonotonic :
-    -- penguinNoFly is in the top tier (as normal as birdFlies)
-    tweetyLe .penguinNoFly .birdFlies = true ∧
-    tweetyLe .birdFlies .penguinNoFly = true ∧
-    -- penguinFlies is strictly below the top tier
-    tweetyLe .penguinFlies .penguinNoFly = false ∧
-    tweetyLe .penguinFlies .birdFlies = false := ⟨rfl, rfl, rfl, rfl⟩
+/-- Cohen's majority GEN verifies "Cats have tails", but the generic fails on
+    the modal account: some normal case lacks tails. -/
+theorem cohen_too_weak :
+    Cohen1999.cohenGEN (Finset.univ : Finset (Fin 20)) (fun _ => True) tailed ∧
+    ¬ ∀ w ∈ Normality.optimal Normality.total (Set.univ : Set (Fin 20)), tailed w := by
+  refine ⟨(Cohen1999.cohen_iff_thresholdGt (Finset.univ : Finset (Fin 20)) (fun _ => True)
+    tailed (by decide)).mpr (by decide), fun h => ?_⟩
+  rw [Normality.total_all_optimal] at h
+  exact absurd (h ⟨11, by omega⟩ (Set.mem_univ _)) (Nat.lt_irrefl 11)
 
 end AsherPelletier2013
