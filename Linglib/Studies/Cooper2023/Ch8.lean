@@ -93,7 +93,8 @@ to the donkey rows in `Data/Examples/` and the `Chomsky1981` binding paradigm.
 
 namespace Cooper2023Ch8
 
-open Semantics.TypeTheoretic
+open Cooper2023.TTR
+open Quantification (ParticularWC_Exist)
 open Cooper2023Ch7
 
 section ScopeInfrastructure
