@@ -262,12 +262,12 @@ theorem dwr_not_templateInvariant : ¬ templateInvariant .dwr :=
 theorem Hkm_not_templateInvariant : ¬ templateInvariant .Hkm :=
   fun h => absurd (h .XaYaZ .XaYYaZ) (by decide)
 
-/-- C-selection (arity) is root-level ([harley-2014]; see
+/-- C-selection (valency) is root-level ([harley-2014]; see
     `complement_selection_at_root_level` in `Categorizer.lean`) but l-selection is
     not: the two kinds of selection factor differently in the grammar. -/
 theorem cSelection_vs_lSelection :
     (∀ (i : Morphology.DM.Root) (r : Verb.Root.Classification) (c1 c2 : Categorizer),
-      (CategorizedRoot.mk i r c1).root.arity = (CategorizedRoot.mk i r c2).root.arity) ∧
+      (CategorizedRoot.mk i r c1).root.valency = (CategorizedRoot.mk i r c2).root.valency) ∧
     (∃ r : RootLabel, ¬ templateInvariant r) :=
   ⟨fun _ _ _ _ => rfl, ⟨.krh, krh_not_templateInvariant⟩⟩
 
@@ -293,12 +293,12 @@ def VerbalizedRoot.lSelectedP (vr : VerbalizedRoot) : Option SemiticPrep :=
 def VerbalizedRoot.voiceFlavor (vr : VerbalizedRoot) : Flavor :=
   vr.template.toVoiceFlavor
 
-/-- Arity is template-invariant (root-level), unlike l-selection: c-selection and
-    l-selection factor differently in the grammar. -/
-theorem arity_template_invariant (cr : CategorizedRoot) (rl : RootLabel)
+/-- Valency is template-invariant (root-level), unlike l-selection: c-selection
+    and l-selection factor differently in the grammar. -/
+theorem valency_template_invariant (cr : CategorizedRoot) (rl : RootLabel)
     (t1 t2 : SemiticTemplate) :
-    (VerbalizedRoot.mk cr t1 rl).categorized.root.arity =
-      (VerbalizedRoot.mk cr t2 rl).categorized.root.arity := rfl
+    (VerbalizedRoot.mk cr t1 rl).categorized.root.valency =
+      (VerbalizedRoot.mk cr t2 rl).categorized.root.valency := rfl
 
 /-! ### Template-to-Voice correspondence
 
@@ -327,13 +327,13 @@ theorem voice_distinguishes_templates :
     SemiticTemplate.toVoiceFlavor .XaYaZ ≠ SemiticTemplate.toVoiceFlavor .XaYYaZ := by
   decide
 
-/-- [kratzer-1996]'s severing instantiated for Semitic: root-level arity is
+/-- [kratzer-1996]'s severing instantiated for Semitic: root-level valency is
     template-invariant while the Voice contribution varies by template. -/
 theorem severing_instantiated (cr : CategorizedRoot) (rl : RootLabel) :
-    (VerbalizedRoot.mk cr .XaYaZ rl).categorized.root.arity =
-      (VerbalizedRoot.mk cr .XaYYaZ rl).categorized.root.arity ∧
+    (VerbalizedRoot.mk cr .XaYaZ rl).categorized.root.valency =
+      (VerbalizedRoot.mk cr .XaYYaZ rl).categorized.root.valency ∧
     SemiticTemplate.toVoiceFlavor .XaYaZ ≠ SemiticTemplate.toVoiceFlavor .XaYYaZ :=
-  ⟨arity_template_invariant cr rl .XaYaZ .XaYYaZ, voice_distinguishes_templates⟩
+  ⟨valency_template_invariant cr rl .XaYaZ .XaYYaZ, voice_distinguishes_templates⟩
 
 /-! ### Cross-linguistic Voice coverage
 
