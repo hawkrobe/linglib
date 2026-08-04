@@ -1,5 +1,6 @@
 import Linglib.Semantics.Verb.Root.Closure
 import Linglib.Semantics.Verb.Root.Arity
+import Linglib.Semantics.ArgumentStructure.SalienceClass
 import Linglib.Morphology.Exponence.Select
 
 /-!
@@ -52,66 +53,16 @@ in a root or stem that influence an overt case marking" (p. 628). Root
 name strings follow Lucy's orthography. The `=t` class is inflated by
 denominal and loanword verbalization (p. 629), so `=t` applicability is a
 weaker signal of manner entailments than `=∅` or `=s` are of theirs.
+
+The salience classes and the pair-level classifier
+(`ArgumentStructure.SalienceClass.ofKinds`) are substrate
+(`Semantics/ArgumentStructure/SalienceClass.lean`); this file supplies the
+Yucatec roots, diagnostic operators, and attested derivations.
 -/
 
 namespace Lucy1994
 
-open Verb Morphology
-
-/-! ### Salience classes -/
-
-/-- Lucy's "three large predicate root classes" (p. 630), named for the
-    argument(s) the underived root makes salient. Positional roots are
-    deliberately not a case: they fall outside the transitiviser cut
-    (`IsPositional`). -/
-inductive SalienceClass where
-  | agent
-  | agentPatient
-  | patient
-  deriving DecidableEq, Repr
-
-variable (s : Root.Kinds) (ar : Root.Arity)
-
-/-- Agent salient: intransitive manner-of-action root — "actions or
-    activities that some entity undertakes" (pp. 628–629); takes `=t`. -/
-abbrev IsAgentSalient : Prop :=
-  ar = .noTheme ∧ .manner ∈ s ∧ .result ∉ s
-
-/-- Patient salient: intransitive change-of-state root — "state changes
-    that some entity undergoes more or less spontaneously" (p. 629);
-    takes `=s`. -/
-abbrev IsPatientSalient : Prop :=
-  ar = .noTheme ∧ .manner ∉ s ∧ .result ∈ s
-
-/-- Positional: pure stative configurational signature; takes the
-    positional derivation. Deliberately arity-free — *čin* 'bend' is
-    positional *and* zero-derives a transitive (ex. (6)), so the
-    positional class cross-cuts the transitiviser cut. -/
-abbrev IsPositional : Prop := s = {.state}
-
-/-- The transitiviser cut. Agent-patient salience is root transitivity
-    (`selectsTheme`), not a feature configuration; the two intransitive
-    classes split by signature; intransitive signatures with neither
-    manner nor result — pure statives included — are outside the cut. -/
-def classOf : Option SalienceClass :=
-  if ar = .selectsTheme then some .agentPatient
-  else if IsAgentSalient s ar then some .agent
-  else if IsPatientSalient s ar then some .patient
-  else none
-
-/-- Collocational closure does not move the transitiviser cut on
-    cause-free signatures: the only available closure edge is
-    result→state, which no arm of `classOf` consults. -/
-theorem classOf_close (h : LexKind.cause ∉ s) :
-    classOf s.close ar = classOf s ar := by
-  revert s ar; decide
-
-/-- The cause-free hypothesis is necessary: a lone `cause` atom is
-    outside the cut at base but patient salient after closure. -/
-theorem classOf_close_ne_of_cause :
-    classOf {.cause} .noTheme = none ∧
-    classOf (Root.Kinds.close {.cause}) .noTheme = some .patient := by
-  decide
+open Verb ArgumentStructure Morphology
 
 /-! ### Agent-salient roots (p. 629, ex. (1a)) -/
 
@@ -365,7 +316,7 @@ theorem predicted_matches_attested :
 
 /-- A root's predicted salience class. -/
 def predictedClass (r : Root) : Option SalienceClass :=
-  classOf r.kinds (arity r)
+  SalienceClass.ofKinds r.kinds (arity r)
 
 /-- The transitiviser each salience class requires. -/
 def exponentOf : SalienceClass → String
@@ -384,7 +335,7 @@ theorem predictedExponents_eq (r : Root) :
   simp only [predictedExponents, predictedClass, Exponence.applicable,
     applies_iff, inventory, affectiveT, zeroDeriv, causativeS,
     positionalLah, List.filter_cons, List.filter_nil, decide_eq_true_eq,
-    classOf]
+    SalienceClass.ofKinds]
   generalize r.kinds = s
   generalize arity r = a
   revert s a
@@ -439,7 +390,7 @@ theorem positional_crosscuts_transitiviser_classes :
 /-- For cause-free roots — every root in this sample — collocational
     closure does not change the predicted class. -/
 theorem predictedClass_closure_invariant (r : Root) (h : ¬ r.HasCause) :
-    classOf r.closedKinds (arity r) = predictedClass r :=
-  classOf_close r.kinds (arity r) h
+    SalienceClass.ofKinds r.closedKinds (arity r) = predictedClass r :=
+  SalienceClass.ofKinds_close r.kinds (arity r) h
 
 end Lucy1994

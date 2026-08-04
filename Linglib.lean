@@ -1473,6 +1473,7 @@ import Linglib.Semantics.ArgumentStructure.ParticipantType
 import Linglib.Semantics.ArgumentStructure.PersistenceLevel
 import Linglib.Semantics.ArgumentStructure.Projection
 import Linglib.Semantics.ArgumentStructure.RoleList
+import Linglib.Semantics.ArgumentStructure.SalienceClass
 import Linglib.Semantics.ArgumentStructure.Thematic.Basic
 import Linglib.Semantics.ArgumentStructure.Thematic.Defs
 import Linglib.Semantics.ArgumentStructure.Thematic.Mereology

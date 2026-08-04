@@ -1,4 +1,5 @@
 import Linglib.Semantics.Verb.Root.Arity
+import Linglib.Semantics.ArgumentStructure.SalienceClass
 import Linglib.Semantics.ArgumentStructure.LevinTheory
 
 /-!
@@ -72,6 +73,13 @@ def ChangeType.entailsChange : ChangeType → Bool
 def ChangeType.allowsRestitutiveAgain : ChangeType → Bool
   | .propertyConcept => true
   | .result => false
+
+/-- The change-entailment type of a kind signature: a root entails change
+    iff its signature carries `result` ([beavers-etal-2021]). The
+    projection is manner-blind — see `Classification.salienceClass_ofKinds`
+    for what survives it. -/
+def ChangeType.ofKinds (s : Root.Kinds) : ChangeType :=
+  if LexKind.result ∈ s then .result else .propertyConcept
 
 /-- The semantic denotation domain of a root ([coon-2019] (3); extended by
     [hanink-koontz-garboden-2025]).
@@ -215,5 +223,30 @@ theorem change_does_not_determine_arity :
 theorem theme_persistence (r : Classification) (h : r.arity = .selectsTheme) :
     r.arity.hasInternalArg = true := by
   simp [h, Arity.hasInternalArg]
+
+/-! ### Salience through the annotation coordinates -/
+
+/-- The salience class determined by the annotation coordinates
+    (arity × change type). Partial where the coordinates underdetermine
+    the class: `ChangeType` is manner-blind, so a `noTheme`
+    property-concept annotation cannot distinguish an agent-salient
+    manner root from an unclassified stative. -/
+def Classification.salienceClass (c : Classification) : Option SalienceClass :=
+  match c.arity, c.changeType with
+  | .selectsTheme, _ => some .agentPatient
+  | .noTheme, .result => some .patient
+  | .noTheme, .propertyConcept => none
+
+/-- On manner-free signatures the annotation-level classifier agrees with
+    the signature-level one (`SalienceClass.ofKinds`) — the agree-by-theorem
+    link between the stipulated and derived coordinates. The hypothesis is
+    necessary: a manner root maps to `.propertyConcept` under
+    `ChangeType.ofKinds`, where the annotation coordinates return `none`
+    but the signature classifier sees agent salience. -/
+theorem Classification.salienceClass_ofKinds :
+    ∀ (s : Root.Kinds) (ar : Arity), LexKind.manner ∉ s →
+      ({ arity := ar, changeType := .ofKinds s } : Classification).salienceClass =
+        SalienceClass.ofKinds s ar := by
+  decide
 
 end Verb.Root
