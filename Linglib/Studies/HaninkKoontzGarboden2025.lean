@@ -271,7 +271,7 @@ theorem within_language_variation :
 
     The theory-layer `Classification` is exposed as a *derived projection*
     `toClassification` rather than a stored field — all PC roots share
-    `arity := .noTheme`, `changeType := .propertyConcept`, and have
+    `valency := ∅`, `changeType := .propertyConcept`, and have
     `denotationType` determined by `morphClass.denotationType`. Storing it
     redundantly would invite the encoding-conclusions-as-definitions
     anti-pattern (CLAUDE.md). -/
@@ -283,10 +283,10 @@ structure WasiwPCRoot where
   deriving Repr
 
 /-- The theory-layer `Classification` derived from a Wáshiw PC root.
-    All PC roots are `propertyConcept` (+S −M −R −C) and `noTheme`; their
+    All PC roots are `propertyConcept` (+S −M −R −C) and valency-`∅`; their
     `denotationType` is determined by `MorphClass.denotationType`. -/
 def WasiwPCRoot.toClassification (w : WasiwPCRoot) : Classification :=
-  { arity := .noTheme,
+  { valency := ∅,
     changeType := .propertyConcept,
     denotationType := some w.morphClass.denotationType }
 
@@ -358,7 +358,7 @@ def sampleRoots : List WasiwPCRoot := [
 -- ════════════════════════════════════════════════════
 
 /-! All Wáshiw PC roots are property-concept (`changeType = .propertyConcept`),
-    `noTheme` arity, and have a denotation type determined by their morph class
+    empty valency, and have a denotation type determined by their morph class
     — these invariants are *true by construction* of `WasiwPCRoot.toClassification`,
     so no separate theorems are needed. The theorems below test substantive
     claims about the sample's *composition*, not its constructor's consistency. -/

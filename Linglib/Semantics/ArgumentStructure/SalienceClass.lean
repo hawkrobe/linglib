@@ -1,5 +1,5 @@
 import Linglib.Semantics.Verb.Root.Kinds
-import Linglib.Semantics.Verb.Root.Arity
+import Linglib.Semantics.ArgumentStructure.Valency
 
 /-!
 # Salience classes
@@ -41,49 +41,69 @@ inductive SalienceClass where
   | agent
   | agentPatient
   | patient
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Fintype, Repr
 
-variable (s : Root.Kinds) (ar : Root.Arity)
+variable (s : Root.Kinds) (v : Valency)
 
 /-- Agent salient: intransitive manner-of-action root ("actions or
     activities that some entity undertakes"). -/
 abbrev IsAgentSalient : Prop :=
-  ar = .noTheme ∧ .manner ∈ s ∧ .result ∉ s
+  .internal ∉ v ∧ .manner ∈ s ∧ .result ∉ s
 
 /-- Patient salient: intransitive change-of-state root ("state changes
     that some entity undergoes more or less spontaneously"). -/
 abbrev IsPatientSalient : Prop :=
-  ar = .noTheme ∧ .manner ∉ s ∧ .result ∈ s
+  .internal ∉ v ∧ .manner ∉ s ∧ .result ∈ s
 
 /-- Positional: pure stative configurational signature. Deliberately
-    arity-free — a positional root may also zero-derive a transitive
+    valency-free — a positional root may also zero-derive a transitive
     ([lucy-1994]'s *čin* 'bend'), so the positional class cross-cuts
     the transitiviser cut. -/
 abbrev IsPositional : Prop := s = {.state}
 
-/-- The transitiviser cut. Agent-patient salience is root transitivity
-    (`selectsTheme`), not a feature configuration; the two intransitive
-    classes split by signature; intransitive signatures with neither
-    manner nor result — pure statives included — are outside the cut. -/
+/-- The transitiviser cut, over (kind signature × root valency).
+    Agent-patient salience is root transitivity (the root introduces
+    the internal argument), not a feature configuration; the two
+    intransitive classes split by signature; intransitive signatures
+    with neither manner nor result — pure statives included — are
+    outside the cut. -/
 def SalienceClass.ofKinds : Option SalienceClass :=
-  if ar = .selectsTheme then some .agentPatient
-  else if IsAgentSalient s ar then some .agent
-  else if IsPatientSalient s ar then some .patient
+  if .internal ∈ v then some .agentPatient
+  else if IsAgentSalient s v then some .agent
+  else if IsPatientSalient s v then some .patient
   else none
 
 /-- Collocational closure does not move the transitiviser cut on
     cause-free signatures: the only available closure edge is
     result→state, which no arm of the classifier consults. -/
 theorem SalienceClass.ofKinds_close (h : LexKind.cause ∉ s) :
-    ofKinds s.close ar = ofKinds s ar := by
-  revert s ar; decide
+    ofKinds s.close v = ofKinds s v := by
+  revert s v; decide
 
 /-- The cause-free hypothesis of `ofKinds_close` is necessary: a lone
     `cause` atom is outside the cut at base but patient salient after
     closure. -/
 theorem SalienceClass.ofKinds_close_cause :
-    ofKinds {.cause} .noTheme = none ∧
-    ofKinds (Root.Kinds.close {.cause}) .noTheme = some .patient := by
+    ofKinds {.cause} ∅ = none ∧
+    ofKinds (Root.Kinds.close {.cause}) ∅ = some .patient := by
   decide
+
+/-! ### Stem valencies -/
+
+/-- The underived stem's valency per salience class: the unergative
+    agent stem realizes only Voice's external S, the unaccusative
+    patient stem only the internal S, and the root-transitive stem both
+    positions. -/
+def SalienceClass.stemValency : SalienceClass → Valency
+  | .agent => {.external}
+  | .agentPatient => {.internal, .external}
+  | .patient => {.internal}
+
+/-- Both intransitive classes surface a lone S; the agent-patient class
+    surfaces A and P (`Valency.label`'s relational relabeling). -/
+theorem SalienceClass.label_stemValency :
+    ∀ c : SalienceClass,
+      (stemValency c).label =
+        if c = .agentPatient then {.A, .P} else {.S} := by decide
 
 end ArgumentStructure

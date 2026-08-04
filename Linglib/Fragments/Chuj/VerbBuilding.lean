@@ -30,11 +30,11 @@ Consequences for the nature of roots."
 
 ## Modeling Notes
 
-**Root.Arity captures complement projection, not semantic type.**
+**Valency captures complement projection, not semantic type.**
 Coon's semantic types (3) group {√TV, √ITV} together as ⟨e, ⟨s,t⟩⟩ — both
 compose with an entity argument per [davis-1997]. But syntactically, only
 √TV projects a complement DP that persists across voice alternations; √ITV's
-entity argument becomes the subject. Our `Root.Arity.selectsTheme` captures
+entity argument becomes the subject. Root valency `{.internal}` captures
 the syntactic complement projection, giving {√TV} vs {√ITV, √POS, √NOM}.
 This matches the -aj diagnostic: -aj marks implicit arguments, and only √TV
 stems show -aj (the theme can be implicit), not √ITV.
@@ -53,14 +53,14 @@ open Verb Verb.Root
     Semantic type ⟨e, ⟨s,t⟩⟩ ([coon-2019], (3)).
     Examples: mak' "hit", tek' "kick". -/
 def rootTV_pc : Classification :=
-  { arity := .selectsTheme, changeType := .propertyConcept,
+  { valency := {.internal}, changeType := .propertyConcept,
     denotationType := some .indivStatePred }
 
 /-- √TV root (result): selects theme, entails change-of-state.
     Semantic type ⟨e, ⟨s,t⟩⟩ ([coon-2019], (3)).
     Examples: jatz' "hit (breaking)", tzak' "wrap". -/
 def rootTV_res : Classification :=
-  { arity := .selectsTheme, changeType := .result,
+  { valency := {.internal}, changeType := .result,
     denotationType := some .indivStatePred }
 
 /-- √ITV root: semantic type ⟨e, ⟨s,t⟩⟩ (same as √TV per [davis-1997]),
@@ -69,45 +69,45 @@ def rootTV_res : Classification :=
     with null v/Voice⁰ in intransitive stems (p. 40).
     Examples: way "sleep", ok' "cry", jaw "arrive", b'at "go". -/
 def rootITV : Classification :=
-  { arity := .noTheme, changeType := .propertyConcept,
+  { valency := ∅, changeType := .propertyConcept,
     denotationType := some .indivStatePred }
 
 /-- √POS root: positional/stative. Semantic type ⟨e, ⟨s,d⟩⟩ — a
     measure function, not a truth-value predicate.
     Examples: chot "sit", kot "on all fours", watz "lie face down". -/
 def rootPOS : Classification :=
-  { arity := .noTheme, changeType := .propertyConcept,
+  { valency := ∅, changeType := .propertyConcept,
     denotationType := some .measureFn }
 
 /-- √NOM root: nominal base. Semantic type ⟨e,t⟩ — entity predicate
     with no event argument ([coon-2019], (3)).
     Examples: a' "water", ixim "corn", chanhal "dance". -/
 def rootNOM : Classification :=
-  { arity := .noTheme, changeType := .propertyConcept,
+  { valency := ∅, changeType := .propertyConcept,
     denotationType := some .entityPred }
 
 -- ============================================================================
 -- § 2: Four-Way Root Classification ([coon-2019], (3))
 -- ============================================================================
 
-/-- Coon's four root classes are recovered as (arity × denotationType) pairs.
-    √TV = selectsTheme + indivStatePred, √ITV = noTheme + indivStatePred,
-    √POS = noTheme + measureFn, √NOM = noTheme + entityPred. -/
+/-- Coon's four root classes are recovered as (valency × denotationType)
+    pairs. √TV = `{.internal}` + indivStatePred, √ITV = `∅` + indivStatePred,
+    √POS = `∅` + measureFn, √NOM = `∅` + entityPred. -/
 theorem four_way_classification :
-    rootTV_res.arity = .selectsTheme ∧
+    rootTV_res.valency = {.internal} ∧
     rootTV_res.denotationType = some .indivStatePred ∧
-    rootITV.arity = .noTheme ∧
+    rootITV.valency = ∅ ∧
     rootITV.denotationType = some .indivStatePred ∧
-    rootPOS.arity = .noTheme ∧
+    rootPOS.valency = ∅ ∧
     rootPOS.denotationType = some .measureFn ∧
-    rootNOM.arity = .noTheme ∧
+    rootNOM.valency = ∅ ∧
     rootNOM.denotationType = some .entityPred := by
   exact ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 /-- The four root classes are pairwise distinguishable: no two share
-    both arity and denotationType. -/
+    both valency and denotationType. -/
 theorem root_classes_pairwise_distinct :
-    (rootTV_res.arity ≠ rootITV.arity) ∧
+    (rootTV_res.valency ≠ rootITV.valency) ∧
     (rootITV.denotationType ≠ rootPOS.denotationType) ∧
     (rootITV.denotationType ≠ rootNOM.denotationType) ∧
     (rootPOS.denotationType ≠ rootNOM.denotationType) := by
@@ -128,13 +128,13 @@ inductive CRootClass where
   deriving DecidableEq, Repr
 
 /-- Map an abstract Classification to the distributional CRootClass.
-    The bridge is determined by (arity × denotationType). -/
+    The bridge is determined by (valency × denotationType). -/
 def rootToClass (r : Classification) : CRootClass :=
-  match r.arity, r.denotationType with
-  | .selectsTheme, _               => .tv
-  | .noTheme,      some .indivStatePred  => .itv
-  | .noTheme,      some .measureFn  => .pos
-  | _,             _                => .nom
+  if .internal ∈ r.valency then .tv
+  else match r.denotationType with
+  | some .indivStatePred => .itv
+  | some .measureFn => .pos
+  | _ => .nom
 
 /-- The bridge is correct for each abstract root definition. -/
 theorem rootToClass_correct :
@@ -394,10 +394,10 @@ def nomRoots : List ChujRoot :=
 
 -- Root classification
 theorem tvRoots_selectTheme :
-    tvRoots.all (·.root.arity == .selectsTheme) = true := by decide
+    tvRoots.all (fun v => decide (.internal ∈ v.root.valency)) = true := by decide
 
 theorem itvRoots_noTheme :
-    itvRoots.all (·.root.arity == .noTheme) = true := by decide
+    itvRoots.all (fun v => decide (v.root.valency = ∅)) = true := by decide
 
 theorem posRoots_measureFn :
     posRoots.all (·.root.denotationType == some .measureFn) = true := by decide

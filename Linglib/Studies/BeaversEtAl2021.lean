@@ -666,12 +666,12 @@ theorem grand_unification (ct : ChangeType) :
 /-- Change entailment determines markedness in the unified `Classification`. -/
 theorem root_markedness_from_change (r : Classification) :
     verbalMarkedness r.changeType = .unmarked ↔ r.entailsChange = true := by
-  cases r with | mk arity changeType _ _ _ =>
+  cases r with | mk valency changeType _ _ _ =>
   cases changeType <;> simp [Classification.entailsChange,
     verbalMarkedness, ChangeType.entailsChange]
 
 /-- Roots with the same change type have identical morphosyntactic behavior
-    regardless of arity — markedness, stative forms, and again readings are
+    regardless of valency — markedness, stative forms, and again readings are
     orthogonal to internal argument selection. -/
 theorem same_change_same_morphosyntax (r₁ r₂ : Classification)
     (h : r₁.changeType = r₂.changeType) :
@@ -828,14 +828,14 @@ theorem chuj_tv_pc_is_pc_root :
   exact ⟨rfl, rfl, rfl⟩
 
 /-- The Chuj fragment witnesses the full orthogonality theorem:
-    all four cells of the (arity × changeType) matrix are inhabited. -/
+    all four cells of the (valency × changeType) matrix are inhabited. -/
 theorem chuj_witnesses_orthogonality :
     -- selectsTheme + result (√TV result)
-    rootTV_res.arity = .selectsTheme ∧ rootTV_res.changeType = .result ∧
+    rootTV_res.valency = {.internal} ∧ rootTV_res.changeType = .result ∧
     -- selectsTheme + PC (√TV PC)
-    rootTV_pc.arity = .selectsTheme ∧ rootTV_pc.changeType = .propertyConcept ∧
+    rootTV_pc.valency = {.internal} ∧ rootTV_pc.changeType = .propertyConcept ∧
     -- noTheme + PC (√ITV, √POS, √NOM)
-    rootITV.arity = .noTheme ∧ rootITV.changeType = .propertyConcept :=
+    rootITV.valency = ∅ ∧ rootITV.changeType = .propertyConcept :=
   ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 /-- Per-root class verification: each Chuj root's change entailment matches

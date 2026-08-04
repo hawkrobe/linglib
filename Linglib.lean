@@ -1474,6 +1474,7 @@ import Linglib.Semantics.ArgumentStructure.PersistenceLevel
 import Linglib.Semantics.ArgumentStructure.Projection
 import Linglib.Semantics.ArgumentStructure.RoleList
 import Linglib.Semantics.ArgumentStructure.SalienceClass
+import Linglib.Semantics.ArgumentStructure.Valency
 import Linglib.Semantics.ArgumentStructure.Thematic.Basic
 import Linglib.Semantics.ArgumentStructure.Thematic.Defs
 import Linglib.Semantics.ArgumentStructure.Thematic.Mereology
@@ -1868,7 +1869,6 @@ import Linglib.Semantics.Verb.Basic
 import Linglib.Semantics.Verb.Class
 import Linglib.Semantics.Verb.Defs
 import Linglib.Semantics.Verb.Denotation
-import Linglib.Semantics.Verb.Root.Arity
 import Linglib.Semantics.Verb.Root.Classification
 import Linglib.Semantics.Verb.Root.OutcomeCardinality
 import Linglib.Semantics.Verb.Root.Defs

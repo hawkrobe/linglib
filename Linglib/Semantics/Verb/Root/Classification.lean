@@ -1,4 +1,4 @@
-import Linglib.Semantics.Verb.Root.Arity
+import Linglib.Semantics.ArgumentStructure.Valency
 import Linglib.Semantics.ArgumentStructure.SalienceClass
 import Linglib.Semantics.ArgumentStructure.LevinTheory
 
@@ -9,7 +9,7 @@ The cross-linguistic classification dimensions a change-of-state verb root is
 typed by: whether it lexically entails change (`ChangeType`), its semantic
 denotation domain (`DenotationType`), Dixon's property-concept categories
 (`PCClass`), Levin's result-verb categories (`ResultClass`), and the bundled
-`Classification` cross-classifying arity against change entailment.
+`Classification` cross-classifying valency against change entailment.
 
 ## Anchoring and provenance
 
@@ -32,14 +32,13 @@ denotation domain (`DenotationType`), Dixon's property-concept categories
 * `ChangeType`, `ChangeType.entailsChange`, `ChangeType.allowsRestitutiveAgain`
 * `DenotationType`, `DenotationType.hasIndivArg`
 * `PCClass`, `ResultClass`
-* `Classification` bundling arity × change entailment × denotation type
+* `Classification` bundling valency × change entailment × denotation type
 
 ## Main results
 
-* `arity_changeType_orthogonal`, `change_does_not_determine_arity` — the arity
-  and change-entailment dimensions are independent (all four cells inhabited).
-* `theme_persistence` — a theme-selecting root keeps its internal argument
-  regardless of the functional head ([coon-2019]).
+* `valency_changeType_orthogonal`, `change_does_not_determine_valency` — the
+  valency and change-entailment dimensions are independent (all four cells
+  inhabited).
 -/
 
 open ArgumentStructure
@@ -139,17 +138,19 @@ inductive ResultClass where
 
 /-- Unified root characterization bundling the classification dimensions.
 
-    A root is characterized along independent axes: arity (does it select an
-    internal argument?), change entailment (does it lexically entail prior
-    change?), denotation type ([coon-2019] (3)), within-class quality
-    dimensions, and verb-class membership. Arity, change entailment, and
-    denotation type cross-classify: [coon-2019]'s four Chuj root classes are
-    recovered as (arity × denotationType) pairs — √TV = selectsTheme +
-    indivStatePred, √ITV = noTheme + indivStatePred, √POS = noTheme + measureFn,
-    √NOM = noTheme + entityPred. -/
+    A root is characterized along independent axes: valency (which
+    core-argument positions it introduces — at most the internal, per
+    [coon-2019]'s division of labor), change entailment (does it lexically
+    entail prior change?), denotation type ([coon-2019] (3)), within-class
+    quality dimensions, and verb-class membership. Valency, change
+    entailment, and denotation type cross-classify: [coon-2019]'s four Chuj
+    root classes are recovered as (valency × denotationType) pairs — √TV =
+    `{.internal}` + indivStatePred, √ITV = `∅` + indivStatePred, √POS = `∅` +
+    measureFn, √NOM = `∅` + entityPred. -/
 structure Classification where
-  /-- Does this root select an internal argument? -/
-  arity : Arity
+  /-- The core-argument positions the root introduces ([coon-2019]:
+      at most the internal argument — `Valency.IsRootValency`). -/
+  valency : Valency
   /-- Does this root lexically entail prior change? -/
   changeType : ChangeType
   /-- Semantic denotation domain ([coon-2019] (3)). Optional — not all roots
@@ -164,78 +165,69 @@ structure Classification where
 /-- Does this root lexically entail prior change? -/
 def Classification.entailsChange (r : Classification) : Bool := r.changeType.entailsChange
 
-/-! ### Cross-classification: arity × change entailment -/
+/-! ### Cross-classification: valency × change entailment -/
 
 -- Witnesses for all four cells of the 2×2 cross-classification.
 
 /-- √BREAK: selects theme + entails change (result root, [levin-1993] 45.1). -/
 def Classification.break_ : Classification :=
-  { arity := .selectsTheme, changeType := .result,
+  { valency := {.internal}, changeType := .result,
     denotationType := some .indivStatePred, levinClass := some .break_ }
 
 /-- √HIT: selects theme + does not entail change ([levin-1993] 18.1).
     `.propertyConcept` is used broadly: the formal content
     (`entailsChange = false`) is what matters, not the label. -/
 def Classification.hit : Classification :=
-  { arity := .selectsTheme, changeType := .propertyConcept,
+  { valency := {.internal}, changeType := .propertyConcept,
     denotationType := some .indivStatePred, levinClass := some .hit }
 
 /-- √DIE: no theme + entails change. The dying entity is introduced by
     functional structure (unaccusative vGO/vBE), not selected by the root;
     dying lexically entails a prior change (becoming dead). -/
 def Classification.die : Classification :=
-  { arity := .noTheme, changeType := .result,
+  { valency := ∅, changeType := .result,
     denotationType := some .indivStatePred }
 
 /-- √SIT: no theme + does not entail change (positional root, Coon's √POS
     class). Denotes a measure function ⟨e,⟨s,d⟩⟩ ([coon-2019] (3), following
     [henderson-2019]). -/
 def Classification.sit : Classification :=
-  { arity := .noTheme, changeType := .propertyConcept,
+  { valency := ∅, changeType := .propertyConcept,
     denotationType := some .measureFn, levinClass := some .assumePosition }
 
-/-- **Orthogonality of arity and change entailment.** All four cells of the 2×2
-    cross-classification are inhabited: knowing that a root selects a theme
-    tells you nothing about whether it entails change, and vice versa. -/
-theorem arity_changeType_orthogonal :
-    (∃ r : Classification, r.arity = .selectsTheme ∧ r.changeType = .result) ∧
-    (∃ r : Classification, r.arity = .selectsTheme ∧ r.changeType = .propertyConcept) ∧
-    (∃ r : Classification, r.arity = .noTheme ∧ r.changeType = .result) ∧
-    (∃ r : Classification, r.arity = .noTheme ∧ r.changeType = .propertyConcept) :=
+/-- **Orthogonality of valency and change entailment.** All four cells of the
+    2×2 cross-classification are inhabited: knowing that a root introduces its
+    theme tells you nothing about whether it entails change, and vice versa. -/
+theorem valency_changeType_orthogonal :
+    (∃ r : Classification, r.valency = {.internal} ∧ r.changeType = .result) ∧
+    (∃ r : Classification, r.valency = {.internal} ∧ r.changeType = .propertyConcept) ∧
+    (∃ r : Classification, r.valency = ∅ ∧ r.changeType = .result) ∧
+    (∃ r : Classification, r.valency = ∅ ∧ r.changeType = .propertyConcept) :=
   ⟨⟨.break_, rfl, rfl⟩, ⟨.hit, rfl, rfl⟩, ⟨.die, rfl, rfl⟩, ⟨.sit, rfl, rfl⟩⟩
 
-/-- **Change entailment does not determine arity** (and vice versa).
+/-- **Change entailment does not determine valency** (and vice versa).
     Change entailment fixes all morphosyntactic correlates (markedness, simple
-    stative, again readings) but nothing about internal argument selection —
-    [coon-2019]'s arity is an independent dimension. -/
-theorem change_does_not_determine_arity :
-    (∃ r : Classification, r.entailsChange = true ∧ r.arity = .selectsTheme) ∧
-    (∃ r : Classification, r.entailsChange = true ∧ r.arity = .noTheme) ∧
-    (∃ r : Classification, r.entailsChange = false ∧ r.arity = .selectsTheme) ∧
-    (∃ r : Classification, r.entailsChange = false ∧ r.arity = .noTheme) :=
+    stative, again readings) but nothing about internal argument introduction —
+    [coon-2019]'s valency is an independent dimension. -/
+theorem change_does_not_determine_valency :
+    (∃ r : Classification, r.entailsChange = true ∧ r.valency = {.internal}) ∧
+    (∃ r : Classification, r.entailsChange = true ∧ r.valency = ∅) ∧
+    (∃ r : Classification, r.entailsChange = false ∧ r.valency = {.internal}) ∧
+    (∃ r : Classification, r.entailsChange = false ∧ r.valency = ∅) :=
   ⟨⟨.break_, rfl, rfl⟩, ⟨.die, rfl, rfl⟩, ⟨.hit, rfl, rfl⟩, ⟨.sit, rfl, rfl⟩⟩
-
-/-- **Theme persistence** ([coon-2019] main empirical claim). If a root selects
-    a theme, the internal argument persists regardless of the v/Voice⁰ head. In
-    Chuj, √TV roots surface with an internal argument in transitive, passive,
-    and antipassive constructions alike. Expressed by design: `arity` is a
-    field of `Classification`, not of the derived verb. -/
-theorem theme_persistence (r : Classification) (h : r.arity = .selectsTheme) :
-    r.arity.hasInternalArg = true := by
-  simp [h, Arity.hasInternalArg]
 
 /-! ### Salience through the annotation coordinates -/
 
 /-- The salience class determined by the annotation coordinates
-    (arity × change type). Partial where the coordinates underdetermine
+    (valency × change type). Partial where the coordinates underdetermine
     the class: `ChangeType` is manner-blind, so a `noTheme`
     property-concept annotation cannot distinguish an agent-salient
     manner root from an unclassified stative. -/
 def Classification.salienceClass (c : Classification) : Option SalienceClass :=
-  match c.arity, c.changeType with
-  | .selectsTheme, _ => some .agentPatient
-  | .noTheme, .result => some .patient
-  | .noTheme, .propertyConcept => none
+  if .internal ∈ c.valency then some .agentPatient
+  else match c.changeType with
+    | .result => some .patient
+    | .propertyConcept => none
 
 /-- On manner-free signatures the annotation-level classifier agrees with
     the signature-level one (`SalienceClass.ofKinds`) — the agree-by-theorem
@@ -244,9 +236,9 @@ def Classification.salienceClass (c : Classification) : Option SalienceClass :=
     `ChangeType.ofKinds`, where the annotation coordinates return `none`
     but the signature classifier sees agent salience. -/
 theorem Classification.salienceClass_ofKinds :
-    ∀ (s : Root.Kinds) (ar : Arity), LexKind.manner ∉ s →
-      ({ arity := ar, changeType := .ofKinds s } : Classification).salienceClass =
-        SalienceClass.ofKinds s ar := by
+    ∀ (s : Root.Kinds) (v : Valency), LexKind.manner ∉ s →
+      ({ valency := v, changeType := .ofKinds s } : Classification).salienceClass =
+        SalienceClass.ofKinds s v := by
   decide
 
 end Verb.Root
