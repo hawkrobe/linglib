@@ -2847,7 +2847,6 @@ import Linglib.Syntax.ConstructionGrammar.Licensing
 import Linglib.Syntax.ConstructionGrammar.Resultatives
 import Linglib.Syntax.Control.Basic
 import Linglib.Syntax.Control.Head
-import Linglib.Syntax.Control.CopyControl
 import Linglib.Syntax.Control.Defs
 import Linglib.Syntax.Control.Diagnostics
 import Linglib.Syntax.Coordination
