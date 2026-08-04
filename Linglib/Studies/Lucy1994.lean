@@ -70,19 +70,19 @@ open Verb ArgumentStructure Morphology
 /-! ### Agent-salient roots (p. 629, ex. (1a)) -/
 
 /-- síit' 'jump' (ex. (1a)). -/
-def siit : Root := ⟨"síit'", {.hasManner "jumping"}, none, {}⟩
+def siit : Root := ⟨"síit'", {.hasManner "jumping"}, {}⟩
 
 /-- ¢'iib' 'write' (p. 629). -/
-def tziib : Root := ⟨"¢'iib'", {.hasManner "writing"}, none, {}⟩
+def tziib : Root := ⟨"¢'iib'", {.hasManner "writing"}, {}⟩
 
 /-- mìis 'sweep' (p. 629); denominal from 'broom'. -/
-def miis : Root := ⟨"mìis", {.hasManner "sweeping"}, none, {}⟩
+def miis : Root := ⟨"mìis", {.hasManner "sweeping"}, {}⟩
 
 /-- čé'eh 'smile' (p. 629). -/
-def cheh : Root := ⟨"čé'eh", {.hasManner "smiling"}, none, {}⟩
+def cheh : Root := ⟨"čé'eh", {.hasManner "smiling"}, {}⟩
 
 /-- páak 'weed' (p. 629). -/
-def paak : Root := ⟨"páak", {.hasManner "weeding"}, none, {}⟩
+def paak : Root := ⟨"páak", {.hasManner "weeding"}, {}⟩
 
 /-! ### Agent-patient salient roots (p. 629, ex. (1b))
 
@@ -91,20 +91,20 @@ Root transitives. They carry no uniform signature: *kuč*, *p'is*, *ha¢*,
 *hit* type), while *k'os* 'cut' is manner+result (their *cut* type). -/
 
 /-- kuč 'carry' (ex. (1b)). -/
-def kuc : Root := ⟨"kuč", {.hasManner "carrying"}, none, {}⟩
+def kuc : Root := ⟨"kuč", {.hasManner "carrying"}, {}⟩
 
 /-- k'os 'cut' (p. 629); manner+result. -/
 def kos : Root :=
-  ⟨"k'os", {.hasManner "cutting", .becomesState "cut"}, none, {}⟩
+  ⟨"k'os", {.hasManner "cutting", .becomesState "cut"}, {}⟩
 
 /-- p'is 'measure' (p. 629); no entailed change of state. -/
-def pis : Root := ⟨"p'is", {.hasManner "measuring"}, none, {}⟩
+def pis : Root := ⟨"p'is", {.hasManner "measuring"}, {}⟩
 
 /-- ha¢ 'whip' (p. 629). -/
-def hats : Root := ⟨"ha¢", {.hasManner "whipping"}, none, {}⟩
+def hats : Root := ⟨"ha¢", {.hasManner "whipping"}, {}⟩
 
 /-- loš 'punch' (p. 629); surface contact without entailed result. -/
-def los : Root := ⟨"loš", {.hasManner "striking"}, none, {}⟩
+def los : Root := ⟨"loš", {.hasManner "striking"}, {}⟩
 
 /-! ### Patient-salient roots (ex. (2), pp. 629–630)
 
@@ -113,41 +113,41 @@ adjacency" (fn. 7): 'ah ~ wen, siih ~ kíim, tú'ub' ~ k'a'ah, ču'un ~
 č'en, hó'op' ~ háaw. The order below is the list's. -/
 
 /-- 'ah '(a)wake(n)' ('ah=s 'wake (someone)'). -/
-def ah : Root := ⟨"'ah", {.becomesState "awake"}, none, {}⟩
+def ah : Root := ⟨"'ah", {.becomesState "awake"}, {}⟩
 
 /-- wen '(fall a)sleep' (ween=s 'put to sleep'); fn. 7 flags it as also
     denoting continuation in the state. -/
-def wen : Root := ⟨"wen", {.becomesState "asleep"}, none, {}⟩
+def wen : Root := ⟨"wen", {.becomesState "asleep"}, {}⟩
 
 /-- siih 'be born' (siih=s 'give birth, bear'). -/
-def siih : Root := ⟨"siih", {.becomesState "born"}, none, {}⟩
+def siih : Root := ⟨"siih", {.becomesState "born"}, {}⟩
 
 /-- kíim 'die' (ex. (1c); kíim=s 'kill'). -/
-def kiim : Root := ⟨"kíim", {.becomesState "dead"}, none, {}⟩
+def kiim : Root := ⟨"kíim", {.becomesState "dead"}, {}⟩
 
 /-- tú'ub' 'forget' (tú'ub'=s 'distract, cause to forget'). -/
-def tuub : Root := ⟨"tú'ub'", {.becomesState "forgotten"}, none, {}⟩
+def tuub : Root := ⟨"tú'ub'", {.becomesState "forgotten"}, {}⟩
 
 /-- k'a'ah 'remember' (k'á'ah=s 'remind, mention, invoke'). -/
-def kaah : Root := ⟨"k'a'ah", {.becomesState "remembered"}, none, {}⟩
+def kaah : Root := ⟨"k'a'ah", {.becomesState "remembered"}, {}⟩
 
 /-- ču'un 'begin activity' (ču'un=s 'cause to begin'). -/
-def chuun : Root := ⟨"ču'un", {.becomesState "begun"}, none, {}⟩
+def chuun : Root := ⟨"ču'un", {.becomesState "begun"}, {}⟩
 
 /-- č'en 'stop, cease' (č'en=s 'cause to stop, suspend'). -/
-def chen : Root := ⟨"č'en", {.becomesState "ceased"}, none, {}⟩
+def chen : Root := ⟨"č'en", {.becomesState "ceased"}, {}⟩
 
 /-- hó'op' 'begin, start' (hó'op'=s 'cause to begin'). -/
-def hoop : Root := ⟨"hó'op'", {.becomesState "started"}, none, {}⟩
+def hoop : Root := ⟨"hó'op'", {.becomesState "started"}, {}⟩
 
 /-- háaw 'stop, cease, heal' (háaw=s 'stop, revoke, medicate'). -/
-def haaw : Root := ⟨"háaw", {.becomesState "stopped"}, none, {}⟩
+def haaw : Root := ⟨"háaw", {.becomesState "stopped"}, {}⟩
 
 /-- hé'el 'rest, stop at' (hé'e(l)=s 'rest'). -/
-def heel : Root := ⟨"hé'el", {.becomesState "rested"}, none, {}⟩
+def heel : Root := ⟨"hé'el", {.becomesState "rested"}, {}⟩
 
 /-- p'át 'remain' (p'át=s 'abandon'). -/
-def paat : Root := ⟨"p'át", {.becomesState "remaining"}, none, {}⟩
+def paat : Root := ⟨"p'át", {.becomesState "remaining"}, {}⟩
 
 /-! ### Motion roots (ex. (4), p. 640)
 
@@ -158,41 +158,41 @@ adds that *péek* and *'ú'ul* are also irregular in their agent-focused
 perfective forms, "where they pattern like agent-salient roots". -/
 
 /-- máan 'pass by' (`#`; máan=s 'pass, transfer, transport'). -/
-def maan : Root := ⟨"máan", {.becomesState "past"}, none, {}⟩
+def maan : Root := ⟨"máan", {.becomesState "past"}, {}⟩
 
 /-- péek 'move, vibrate' (`#`; pek=s 'cause to move, vibrate'). -/
-def peek : Root := ⟨"péek", {.becomesState "in-motion"}, none, {}⟩
+def peek : Root := ⟨"péek", {.becomesState "in-motion"}, {}⟩
 
 /-- b'in 'go' (`#`; bi(n)=s 'take'). -/
-def bin : Root := ⟨"b'in", {.becomesState "gone"}, none, {}⟩
+def bin : Root := ⟨"b'in", {.becomesState "gone"}, {}⟩
 
 /-- tàal 'come (here)' (`#`; tàa(l)=s 'bring'). -/
-def taal : Root := ⟨"tàal", {.becomesState "come"}, none, {}⟩
+def taal : Root := ⟨"tàal", {.becomesState "come"}, {}⟩
 
 /-- 'ú'ul 'arrive (here)' (`#`; 'ú'uh=s 'bring it to here'). -/
-def uul : Root := ⟨"'ú'ul", {.becomesState "arrived"}, none, {}⟩
+def uul : Root := ⟨"'ú'ul", {.becomesState "arrived"}, {}⟩
 
 /-- 'ok 'enter, intrude' ('òok=s 'move it in(to)'). -/
-def ok : Root := ⟨"'ok", {.becomesState "inside"}, none, {}⟩
+def ok : Root := ⟨"'ok", {.becomesState "inside"}, {}⟩
 
 /-- lúub' 'fall' (lúub'=s 'fell'). -/
-def luub : Root := ⟨"lúub'", {.becomesState "fallen"}, none, {}⟩
+def luub : Root := ⟨"lúub'", {.becomesState "fallen"}, {}⟩
 
 /-- líik' '(a)rise, ascend' (lii(k)'=s 'raise, lift, put away'). -/
-def liik : Root := ⟨"líik'", {.becomesState "risen"}, none, {}⟩
+def liik : Root := ⟨"líik'", {.becomesState "risen"}, {}⟩
 
 /-- ná'ak '(a)rise, ascend' (ná'ak=s 'raise'); distinct from náak
     'arrive, reach, hit', not sampled here. -/
-def naak : Root := ⟨"ná'ak", {.becomesState "ascended"}, none, {}⟩
+def naak : Root := ⟨"ná'ak", {.becomesState "ascended"}, {}⟩
 
 /-! ### Positional roots (ex. (7), p. 643) -/
 
 /-- čin 'bow, bend down, bend over' (ex. (5)–(7)); zero-derives a
     transitive, ex. (6) 'I bent it'. -/
-def cin : Root := ⟨"čin", {.hasState "bent"}, none, {}⟩
+def cin : Root := ⟨"čin", {.hasState "bent"}, {}⟩
 
 /-- kul 'sit' (p. 645, fn. 24: relational 'x is-seated [on y]'). -/
-def kul : Root := ⟨"kul", {.hasState "seated"}, none, {}⟩
+def kul : Root := ⟨"kul", {.hasState "seated"}, {}⟩
 
 /-! ### Valency and class lists -/
 

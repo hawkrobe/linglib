@@ -297,8 +297,8 @@ structure Verb extends
   /-- [levin-1993] verb class (§§ 9–57). -/
   levinClass : Option LevinClass := none
   /-- The verb's lexical root — its entailment atoms, derived B&KG kind
-      signature, and [bhadra-2024] outcome axis. The content carrier the Verb
-      API integrates around (P-HUB): the verb's signature / outcome / change-type
+      signature. The content carrier the Verb
+      API integrates around (P-HUB): the verb's signature / change-type
       are read off *this* root rather than the `levinClass` table. Total, with
       the trivial root `{}` (no annotation) as the `⊥`. -/
   root : Root := {}
