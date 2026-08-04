@@ -1,43 +1,34 @@
 import Mathlib.Data.Finset.Basic
-import Mathlib.Data.Fintype.Basic
 import Mathlib.Data.Fintype.Powerset
-import Mathlib.Tactic.DeriveFintype
 import Mathlib.Order.UpperLower.Basic
 import Mathlib.Order.Closure
+import Mathlib.Tactic.DeriveFintype
 
 /-!
-# Root Kind Signatures
+# Root kind signatures
 
 The four-feature vocabulary of [beavers-koontz-garboden-2020]'s root
-typology (ch. 5): a root's **kind signature** records which *kinds*
-of lexical entailment it carries — state, manner, result, cause — as a
+typology (ch. 5): `LexKind` with the book's collocational order
+(`state < result < cause`, `manner` isolated), and a root's **kind
+signature** — the kinds of lexical entailment it carries — as a
 `Finset LexKind`, so signatures inherit the Boolean lattice of finite
-sets (`≤` is "carries at most these kinds").
+sets (`≤` is "carries at most these kinds"). Well-formedness is
+downward-closedness in the collocational order, and `close` — the
+induced lower closure, packaged as a mathlib `ClosureOperator` —
+repairs any signature to a well-formed one.
 
-`LexKind` carries the book's collocational order (`state < result <
-cause`, with `manner` isolated): "+result entails being +state, since
-become′ entails something that has come about… +cause entails being
-+result, since cause′ entails that there is a caused event. These are
-not root-specific stipulations." Well-formedness of a signature is
-downward-closedness in this order, and `close` — the induced lower
-closure, packaged as a mathlib `ClosureOperator` — repairs any
-signature to a well-formed one.
-
-This file is `Root`-free: consumers that map other objects to
-signatures (e.g. Levin classes) can import it without the root
-substrate.
+This file is `Root`-free: consumers that map other objects to signatures
+(e.g. Levin classes, the salience classifier) can import it without the
+root substrate.
 
 ## Main declarations
 
 * `LexKind`, with its collocational `PartialOrder`
 * `Root.Kinds := Finset LexKind`
-* `Root.Kinds.close`, `Root.Kinds.closeOp`,
-  `Root.Kinds.WellFormed`
+* `Root.Kinds.close`, `Root.Kinds.closeOp`, `Root.Kinds.WellFormed`
 * canonical signatures (`propertyConcept`, `pureResult`,
   `causativeResult`, `pureManner`, `mannerResult`, `fullSpec`,
   `minimal`)
-* `Root.Kinds.ViolatesBifurcation`,
-  `Root.Kinds.HasMannerAndResult`
 -/
 
 namespace Verb
@@ -194,58 +185,6 @@ theorem canonical_wellFormed :
     causativeResult.WellFormed ∧ pureManner.WellFormed ∧
     mannerResult.WellFormed ∧ fullSpec.WellFormed ∧ minimal.WellFormed := by
   decide
-
-/-! ### The two theses, at signature level -/
-
-/-- The ontological kinds — all the Bifurcation Thesis allows a root
-    to carry. -/
-def ontological : Root.Kinds := {.state, .manner}
-
-/-- A signature violates the Bifurcation Thesis ([embick-2009]; the
-    assumption of [arad-2005]) iff it carries templatic (eventive)
-    content — it is not bounded by `ontological`. -/
-def ViolatesBifurcation (s : Root.Kinds) : Prop := ¬ s ≤ ontological
-
-instance (s : Root.Kinds) : Decidable s.ViolatesBifurcation :=
-  inferInstanceAs (Decidable (¬ _ ≤ _))
-
-/-- Violation is carrying a `result` or `cause` kind. -/
-theorem violatesBifurcation_iff :
-    ∀ s : Root.Kinds,
-      s.ViolatesBifurcation ↔ .result ∈ s ∨ .cause ∈ s := by decide
-
-/-- Bifurcation violation is monotone: adding entailments cannot
-    repair a violation. (Equivalently, the thesis carves out a lower
-    set of the signature lattice.) -/
-theorem violatesBifurcation_mono :
-    ∀ {s t : Root.Kinds}, s ≤ t →
-      s.ViolatesBifurcation → t.ViolatesBifurcation := by decide
-
-/-- A signature has both manner and result — the configuration
-    Manner/Result Complementarity ([rappaport-hovav-levin-2010])
-    claims no root realizes. -/
-def HasMannerAndResult (s : Root.Kinds) : Prop :=
-  {LexKind.manner, LexKind.result} ≤ s
-
-instance (s : Root.Kinds) : Decidable s.HasMannerAndResult :=
-  inferInstanceAs (Decidable (_ ≤ _))
-
-/-- MRC violation is monotone in the signature order. -/
-theorem hasMannerAndResult_mono :
-    ∀ {s t : Root.Kinds}, s ≤ t →
-      s.HasMannerAndResult → t.HasMannerAndResult := by decide
-
-/-- Both theses are invariant under collocational closure: `close`
-    only adds `state`/`result` kinds forced by `cause`, never `manner`,
-    and a closed signature violates Bifurcation iff its base does. -/
-theorem violatesBifurcation_close_iff :
-    ∀ s : Root.Kinds,
-      (close s).ViolatesBifurcation ↔ s.ViolatesBifurcation := by decide
-
-theorem hasMannerAndResult_close_iff :
-    ∀ s : Root.Kinds,
-      (close s).HasMannerAndResult ↔
-        s.HasMannerAndResult ∨ (.manner ∈ s ∧ .cause ∈ s) := by decide
 
 end Root.Kinds
 

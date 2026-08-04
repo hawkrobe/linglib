@@ -1,4 +1,4 @@
-import Linglib.Semantics.Verb.Root.Basic
+import Linglib.Semantics.Verb.Root.Defs
 
 /-!
 # Root attachment position

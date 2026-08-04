@@ -1,6 +1,6 @@
 import Linglib.Semantics.Verb.Root.OutcomeCardinality
 import Linglib.Semantics.Verb.Root.Profile
-import Linglib.Semantics.Verb.Root.Signature
+import Linglib.Semantics.Verb.Root.Kinds
 
 /-!
 # Atomic Lexical Entailments and Roots
@@ -20,7 +20,8 @@ commitments.
 * `LexEntailment` — labeled atoms; `LexEntailment.kind` projects its
   B&K-G kind
 * `Root` — a named list of atoms
-* `Root.kinds` — the derived signature
+* `Root.kinds` — the derived signature; `Root.closedKinds` its
+  collocational closure
 * `Root.HasState`/`HasManner`/`HasResult`/`HasCause` — kind membership
 -/
 
@@ -79,8 +80,7 @@ structure Root where
       root carried by a verb whose root form is its citation form). -/
   name : String := ""
   /-- The B&KG structural-entailment atoms; `∅` where the root's structural
-      content has not been annotated (its `kinds` is then uninformative,
-      and a verb falls back to its class via `Verb.classKinds`). -/
+      content has not been annotated (its `kinds` is then uninformative). -/
   entailments : Finset LexEntailment := ∅
   /-- The outcome-set cardinality the root encodes ([bhadra-2024]): the axis
       orthogonal to the `kinds` (derived from `entailments`). `none`
@@ -130,6 +130,23 @@ abbrev HasResult (r : Root) : Prop := .result ∈ r.kinds
 
 /-- The root entails causation. -/
 abbrev HasCause (r : Root) : Prop := .cause ∈ r.kinds
+
+/-! ### The closed signature -/
+
+/-- The closed kind signature: the collocational closure
+    (`Root.Kinds.close`) of the derived signature. Both
+    [beavers-koontz-garboden-2020] restrictions (result→state and
+    cause→result) hold of closed signatures by construction. -/
+def closedKinds (r : Root) : Root.Kinds :=
+  r.kinds.close
+
+theorem closedKinds_wellFormed (r : Root) :
+    r.closedKinds.WellFormed :=
+  Root.Kinds.close_wellFormed _
+
+theorem kinds_le_closed (r : Root) :
+    r.kinds ≤ r.closedKinds :=
+  Root.Kinds.le_close _
 
 end Root
 

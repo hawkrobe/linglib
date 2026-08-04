@@ -1,5 +1,5 @@
 import Linglib.Semantics.Aspect.Stratified
-import Linglib.Semantics.Verb.Distributivity
+import Linglib.Semantics.Verb.Denotation
 import Linglib.Semantics.Plurality.Cover
 import Linglib.Semantics.Plurality.Algebra
 import Linglib.Fragments.English.Predicates.Verbal
@@ -36,6 +36,35 @@ verbs.
 * **Lexical cumulativity is assumed throughout** (§2.7.2), which is why
   `SubintervalReferenceUniv → CUM` does not hold — see `Aspect/Stratified`.
 -/
+
+namespace Verb
+
+open Semantics.Aspect.Stratified
+
+/-! ### Verb distributivity — derived from `Verb.denote`
+
+Whether a verb distributes over the atomic fillers of a thematic role is a
+DERIVED property of its event denotation, not a carried feature.
+Single-consumer substrate carried here with its anchoring study. -/
+
+variable {Entity State Time : Type*} [LinearOrder Time] [PartialOrder Entity]
+  [SemilatticeSup (Event Time)]
+
+/-- A verb **stratifies over** the atomic fillers of role `R`: for every
+    argument assignment `(y, x)`, the verb's `CosModel` denotation has
+    relational Stratified Distributive Reference along `R`
+    (`RelationalDistributiveReference`). -/
+def StratifiesOver (v : Verb) (M : CosModel Entity State Time)
+    (R : Entity → Event Time → Prop) : Prop :=
+  ∀ y x, RelationalDistributiveReferenceUniv R (M.denote v y x)
+
+theorem stratifiesOver_iff (v : Verb) (M : CosModel Entity State Time)
+    (R : Entity → Event Time → Prop) :
+    v.StratifiesOver M R ↔
+      ∀ y x, RelationalDistributiveReferenceUniv R (M.denote v y x) :=
+  Iff.rfl
+
+end Verb
 
 namespace Champollion2017
 

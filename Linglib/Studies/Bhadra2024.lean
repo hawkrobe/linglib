@@ -1,5 +1,5 @@
 import Linglib.Semantics.Verb.Root.Classification
-import Linglib.Semantics.Verb.Root.Outcomes
+import Linglib.Semantics.Verb.Root.OutcomeCardinality
 import Linglib.Semantics.ArgumentStructure.Affectedness
 import Linglib.Semantics.ArgumentStructure.EventStructure
 import Linglib.Semantics.ArgumentStructure.RoleList
@@ -57,6 +57,48 @@ with the object (✓*rebreak a limb* vs. #*rebreak a sewer*, her (73)).
 * [beavers-2010], [dowty-1991] (ground the `profileToDegree` projection only)
 * [levin-1993] (verb classes the outcome bridge keys on)
 -/
+
+namespace ArgumentStructure
+
+open Verb
+open _root_.ArgumentStructure (EventRel)
+
+/-! ### Event boundaries (eqs. 64–65)
+
+`res` and `pre` read an object's lexically-relevant state at the right and
+left boundaries of an event's temporal trace `τ`. They yield states, not
+times. Single-consumer substrate carried here with its anchoring study. -/
+
+/-- A state function tracks an object's state at each time point. -/
+abbrev StateFunction (Entity State Time : Type*) := Time → Entity → State
+
+variable {Entity State Time : Type*} [LinearOrder Time]
+
+/-- `res(e)(x)` (eq. 64): the object's state at the right boundary of `e`. -/
+def resState (k : StateFunction Entity State Time) (e : Event Time) (x : Entity) : State :=
+  k (Event.τ e).snd x
+
+/-- `pre(e)(x)` (eq. 65): the object's state at the left boundary of `e`. -/
+def preState (k : StateFunction Entity State Time) (e : Event Time) (x : Entity) : State :=
+  k (Event.τ e).fst x
+
+/-- A verb root carrying an outcome set, the carrier result-state modifiers
+    act on (eqs. 56, 60): the base predicate `P(e)(x)` with the lexical
+    outcome set `O` and the contextual threshold set `T`. -/
+structure VerbOutcomes (Entity State Time : Type*) [LinearOrder Time] where
+  /-- The base predicate `P(e)(x)` (`⟨v,⟨e,t⟩⟩`). -/
+  verb : EventRel Time Entity
+  /-- The lexically-encoded outcome set `O` (states at the right boundary). -/
+  outcomes : Set State
+  /-- The contextual threshold set `T` (states at the left boundary). -/
+  thresholds : Set State
+
+/-- The cardinality tier of a root's outcome set. -/
+noncomputable def VerbOutcomes.cardinality (vro : VerbOutcomes Entity State Time) :
+    OutcomeCardinality :=
+  OutcomeCardinality.ofSet vro.outcomes
+
+end ArgumentStructure
 
 namespace Bhadra2024
 

@@ -21,7 +21,7 @@ substrate.
 The 4-feature decomposition is [levin-1993]'s diagnostic apparatus.
 [beavers-koontz-garboden-2020] argue these are SURFACE behaviors,
 not root-level entailments — root-level structural features live in
-`Semantics/Lexical/Roots/Signature.lean::Root.Kinds`
+`Semantics/Verb/Root/Kinds.lean::Root.Kinds`
 (state/manner/result/cause). The two carve-ups are NOT equivalent:
 e.g., `causation` here is what diathesis alternations diagnose, while
 B&KG's `cause` is a root entailment.
@@ -63,7 +63,7 @@ namespace ArgumentStructure
     These describe **surface** verb behavior, not root-level entailments.
     [beavers-koontz-garboden-2020] argue that surface CoS and causation
     can come from either the template or the root; see `Root.Kinds`
-    in `Semantics/Lexical/Roots/Signature.lean` for the
+    in `Semantics/Verb/Root/Kinds.lean` for the
     root-level decomposition.
 
     Diagnosed by participation in diathesis alternations:
