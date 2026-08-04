@@ -1,4 +1,4 @@
-import Linglib.Semantics.Supervaluation.Basic
+import Linglib.Semantics.Supervaluation
 import Linglib.Semantics.Degree.Adjective
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Fintype.Basic

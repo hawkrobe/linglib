@@ -1,6 +1,6 @@
 import Linglib.Semantics.Homogeneity.Usable
 import Linglib.Semantics.Plurality.Trivalent
-import Linglib.Semantics.Supervaluation.Basic
+import Linglib.Semantics.Supervaluation
 
 /-!
 # Homogeneity: the plural instantiation

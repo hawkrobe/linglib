@@ -6,7 +6,7 @@ import Linglib.Semantics.Definiteness.Interpret
 import Linglib.Semantics.Genericity.MeaningPreservation
 import Linglib.Semantics.Genericity.NominalMappingParameter
 import Linglib.Semantics.Definiteness.Basic
-import Linglib.Semantics.Classifier.Basic
+import Linglib.Semantics.Classifier
 import Linglib.Fragments.English.Determiners
 import Linglib.Fragments.German.Definiteness
 import Linglib.Fragments.Mandarin.Definiteness

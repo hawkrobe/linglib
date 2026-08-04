@@ -1,4 +1,4 @@
-import Linglib.Semantics.Supervaluation.Basic
+import Linglib.Semantics.Supervaluation
 import Mathlib.Data.Finset.Powerset
 
 /-!

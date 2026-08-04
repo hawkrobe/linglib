@@ -2,7 +2,7 @@ import Mathlib.Data.Finset.Card
 import Linglib.Semantics.Conditionals.Basic
 import Linglib.Semantics.Conditionals.WillConditional
 import Linglib.Semantics.Modality.Selectional
-import Linglib.Semantics.Supervaluation.Basic
+import Linglib.Semantics.Supervaluation
 import Linglib.Semantics.Conditionals.SelectionFunction
 import Linglib.Core.Logic.Trivalent.Basic
 import Linglib.Core.Logic.Duality

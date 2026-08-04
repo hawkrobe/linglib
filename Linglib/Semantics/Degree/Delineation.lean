@@ -1,5 +1,5 @@
 import Linglib.Semantics.Degree.Discrete
-import Linglib.Semantics.Supervaluation.Basic
+import Linglib.Semantics.Supervaluation
 
 /-!
 # Klein's delineation semantics

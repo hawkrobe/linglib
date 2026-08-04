@@ -7,9 +7,9 @@ import Linglib.Semantics.Plurality.Algebra
 [chierchia-1998] [little-moroney-royer-2022] [moroney-2021]
 
 Unified compositional semantics for classifier constructions, connecting
-the typological vocabulary in `Typology` to the mereological
-infrastructure in `Mereology` and the materialization homomorphism
-in `Semantics.Plurality.Algebra`.
+the typological vocabulary in `Features/NounCategorization` to the
+mereological infrastructure in `Mereology` and the materialization
+homomorphism in `Semantics.Plurality.Algebra`.
 
 ## Two Semantic Strategies
 

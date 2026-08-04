@@ -3,7 +3,7 @@ import Linglib.Semantics.Definiteness.Description
 import Linglib.Semantics.Definiteness.Interpret
 import Linglib.Semantics.Presupposition.MaximizePresupposition
 import Linglib.Semantics.Genericity.MeaningPreservation
-import Linglib.Semantics.Classifier.Basic
+import Linglib.Semantics.Classifier
 import Linglib.Studies.Schwarz2009
 import Linglib.Syntax.Category.Determiner.Basic
 import Linglib.Fragments.Mandarin.Definiteness
