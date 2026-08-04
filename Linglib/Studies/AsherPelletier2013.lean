@@ -10,21 +10,11 @@ defends the modal-quantifier analysis of generics of [asher-morreau-1995] and
 [pelletier-asher-1997] — "φs ψ" is ∀x(φ(x) > ψ(x)), with > the weak conditional of
 [asher-morreau-1991]'s commonsense entailment — refined so that the consequent is
 evaluated **per individual**: for each a, in the worlds where a is a *normal φ*.
-
-We render per-individual evaluation with restrictor-indexed normality orderings:
-each restrictor class carries its own `Preorder` (its default processed by
-`Normality.refine`), and a generic holds iff its scope holds throughout
-`Normality.optimal` of its own restrictor's ordering. On `TweetyWorld` this makes
-"Birds fly" and "Penguins don't fly" simultaneously true of Opus the penguin
-(exx. 7–8), checked at disjoint world sets — "the normal Opus-penguin worlds are
-not normal Opus-bird worlds." Normality itself has contextual "give" (ex. 9):
-"Turtles live to be 100" is true under an Aristotelian/teleological construal and
-false under a statistical one. §12.4 argues probability is too weak a basis for
-generic truth — with tails in just over half of the normal cat-cases (the chapter
-puts it at 50.05%), [cohen-1999a]'s majority GEN verifies "Cats have tails" while
-the modal account rejects it; we state that divergence against `Cohen1999.cohenGEN`.
-The chapter's accommodation and double-genericity responses to "Ducks lay eggs" and
-"Mosquitoes carry the West Nile Virus" (exx. 4–5, [leslie-2008]) are not covered.
+Here that is rendered as restrictor-indexed normality orderings — each restrictor
+class carries its own `Preorder`, and a generic holds iff its scope holds
+throughout `Normality.optimal` of its restrictor's ordering. Covers §12.3–12.4;
+the chapter's accommodation and double-genericity machinery (§12.6, §12.8) is
+not formalized.
 -/
 
 namespace AsherPelletier2013
