@@ -3,6 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
+import Linglib.Syntax.Control.Calculus
 
 /-!
 # Control Theory: Tiers, Predicate Classes, Clause Classes
@@ -29,13 +30,6 @@ for the paper-anchored control studies (`Studies/Landau2015.lean`,
 - `Control.ClauseClass`: the `[±T]` scale positions, with the
   Agr-sensitive `ClauseClass.HasOC` and its characterization
   `ClauseClass.hasOC_iff`
-
-## TODO
-
-Replace the three-cell scale with Landau's ⟨T, Agr⟩ specification on
-each of the two clausal heads (the calculus of control): the `finite`
-cell oversimplifies — mutual cancellation predicts OC in certain
-`[+T,+Agr]` complements (Hebrew subjunctives).
 -/
 
 namespace Control
@@ -65,15 +59,6 @@ inductive Tier where
 def Tier.isAttitude : Tier → Bool
   | .predicative => false
   | .logophoric  => true
-
-/-- The OC-NC generalization ([landau-2015] (70)): `[+Agr]` blocks
-    logophoric but not predicative control, by the Feature Transmission
-    asymmetry ((60): predication is not contingent on feature matching —
-    Icelandic quirky constructions — while variable binding is,
-    [heim-2008], [kratzer-2009]). Its empirical scope is contested
-    ([ganenkov-2019]). -/
-def Tier.agrBlocksControl (t : Tier) : Bool :=
-  t.isAttitude
 
 /-! ### Predicate classification -/
 
@@ -127,8 +112,8 @@ inductive ClauseClass where
   | cSubjunctive
   /-- `[+T]` complement; logophoric control -/
   | fSubjunctive
-  /-- Fully finite; no control (a simplification — see the module
-      TODO) -/
+  /-- Fully finite: `[+T, +Agr]` on I. No control unless C is fully
+      specified too (mutual cancellation, `Spec.hasControl_of_c_rAssigning`) -/
   | finite
   deriving DecidableEq, Repr
 
@@ -148,15 +133,21 @@ def ClauseClass.tier : ClauseClass → Option Tier
   | .fSubjunctive => some .logophoric
   | .finite       => none
 
-/-- OC is realized in a clause class iff it has a control tier that
-    `[+Agr]` does not block. -/
-def ClauseClass.HasOC (c : ClauseClass) (agr : Bool) : Prop :=
-  match c.tier with
-  | none   => False
-  | some t => agr → ¬t.agrBlocksControl
+/-- The `⟨T, Agr⟩` specification a scale position abbreviates, at a given
+    Agr value: `[±T]` on I per the position, C unspecified. The scale cannot
+    express a fully specified C — mutual cancellation needs the calculus
+    directly. -/
+def ClauseClass.toSpec (c : ClauseClass) (agr : Bool) : Spec
+  | .I => ⟨c ≠ .cSubjunctive, if c = .finite then true else agr⟩
+  | .C => ⟨false, false⟩
 
-instance (c : ClauseClass) (agr : Bool) : Decidable (c.HasOC agr) := by
-  cases c <;> unfold ClauseClass.HasOC <;> simp only [ClauseClass.tier] <;> infer_instance
+/-- OC is realized in a clause class iff the calculus leaves control at its
+    specification: the elsewhere condition on `toSpec`. -/
+def ClauseClass.HasOC (c : ClauseClass) (agr : Bool) : Prop :=
+  (c.toSpec agr).HasControl
+
+instance (c : ClauseClass) (agr : Bool) : Decidable (c.HasOC agr) :=
+  inferInstanceAs (Decidable (Spec.HasControl _))
 
 /-- OC obtains exactly on C-subjunctives (any Agr) and `[−Agr]`
     F-subjunctives. -/
