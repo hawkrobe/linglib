@@ -7,7 +7,6 @@ import Linglib.Syntax.Minimalist.MinimalPronoun
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Fragments.Mixtec.SMPM.Basic
 import Linglib.Syntax.Control.Head
-import Linglib.Syntax.Control.CopyControl
 import Linglib.Syntax.Control.Basic
 import Linglib.Syntax.Control.Diagnostics
 import Linglib.Studies.Landau2013
@@ -362,27 +361,53 @@ theorem smpm_boundvar_syncretic :
 -- § 8: Copy Control Typology (§5)
 -- ════════════════════════════════════════════════════════════════
 
-/-- SMPM instantiates obligatory pronominal copy control:
-    the controlled subject is always an overt clitic pronoun showing
-    the full OC signature. This distinguishes SMPM from:
-    - Full copy control (San Lucas Quievaní Zapotec): full DP copy
-    - Logophoric pronominal (Gengbe, Mandarin): attitude reports only
-    - Scope-sensitive pronominal (Italian, Hungarian): focus-triggered -/
+/-- The paper's four-way typology of copy control (§5, its own coinage of
+    all four labels). [polinsky-potsdam-2006] supply the *definition* of
+    copy control — an overt element in the controlled position — and attest
+    three cases (Assamese, San Lucas Quiaviní Zapotec, Tongan), noting that
+    the Zapotec and Assamese patterns are themselves obligatory control.
+    The types split two ways: full-copy vs. *pronominal* copy control
+    (`CopyControlType.isPronominal`), the latter three-way by trigger. What
+    distinguishes the obligatory-pronominal type is *unconditional*
+    overtness (`CopyControlType.unconditionallyOvert`) — the
+    scope-sensitive type alternates with null PRO in the same OC
+    configurations ((60)). -/
+inductive CopyControlType where
+  /-- Full copy: the controlled subject is a full DP copy of the
+      controller (San Lucas Quiaviní Zapotec; Copala Triqui). -/
+  | fullCopy
+  /-- Logophoric pronominal: an overt pronoun, in attitude reports only
+      (Gengbe, Mandarin — whose PRO status Li 2021 doubts, per the
+      paper). -/
+  | logophoricPronominal
+  /-- Scope-sensitive pronominal: an overt pronoun triggered by
+      scope-taking operators, alternating with null PRO otherwise
+      (Italian, Hungarian, European Portuguese). -/
+  | scopeSensitivePronominal
+  /-- Obligatory pronominal: an unconditionally overt pronoun in all
+      control contexts (SMPM; Gã, [allotey-2021]; Bùlì,
+      [sulemana-2021]). -/
+  | obligatoryPronominal
+  deriving DecidableEq, Repr
+
+/-- The typology's first cut: pronominal vs. full-copy copy control. -/
+def CopyControlType.isPronominal : CopyControlType → Bool
+  | .fullCopy => false
+  | _         => true
+
+/-- The obligatory-pronominal type's distinguishing property: overtness is
+    unconditional, not contingent on attitudehood or a scope trigger. -/
+def CopyControlType.unconditionallyOvert : CopyControlType → Bool
+  | .obligatoryPronominal => true
+  | _                     => false
+
+/-- SMPM instantiates obligatory pronominal copy control: the controlled
+    subject is always an overt clitic pronoun showing the full OC
+    signature. Controlled subjects cannot bear focus — they must be clitic
+    pronouns, and clitics cannot bear focus ((65)/(67),
+    `smpm_controlled_must_be_clitic`) — which separates SMPM from the
+    scope-sensitive type. -/
 def smpmCopyControlType : CopyControlType := .obligatoryPronominal
-
-theorem smpm_shows_oc : smpmCopyControlType.showsOC = true := rfl
-
-theorem smpm_not_attitude_only :
-    smpmCopyControlType.attitudeOnly = false := rfl
-
-theorem smpm_no_scope_operator :
-    smpmCopyControlType.requiresScopeOperator = false := rfl
-
-/-- Controlled subjects in SMPM cannot bear focus — they must be
-    clitic pronouns, and clitics cannot bear focus (65, 67). This
-    distinguishes SMPM from scope-sensitive pronominal copy control. -/
-theorem smpm_copy_cannot_bear_focus :
-    smpmCopyControlType.copyCanBearFocus = false := rfl
 
 /-- The clitic requirement, derived from the fragment and routed through the
     Cardinaletti–Starke deficiency order: the required controlled-subject
@@ -536,8 +561,6 @@ theorem propAttitude_is_realis :
     subject of an irrealis `ni`-clause is always an overt subject
     proclitic showing the full OC signature ([allotey-2021]). -/
 def gaCopyControlType : CopyControlType := .obligatoryPronominal
-
-theorem ga_shows_oc : gaCopyControlType.showsOC = true := rfl
 
 /-- Gã and SMPM occupy the same copy-control cell. -/
 theorem ga_same_copy_type_as_smpm :
