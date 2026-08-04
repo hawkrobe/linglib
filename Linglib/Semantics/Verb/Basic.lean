@@ -1,5 +1,5 @@
 import Linglib.Semantics.Verb.Defs
-import Linglib.Semantics.Verb.Root.Closure
+import Linglib.Semantics.Verb.Root.Defs
 
 /-! # Verb entry — derived API
 
@@ -41,7 +41,7 @@ def Verb.rootProfile (v : Verb) : Verb.Root.Profile :=
 /-- The verb's raw kind signature ([beavers-koontz-garboden-2020]): the
     un-closed atom-kinds of its root, the source of truth for what the verb
     structurally entails. `Verb.closedKinds` is its collocational closure and
-    `Verb.classKinds` the coarse class-derived view (an independent provenance). -/
+    the root the sole provenance of the kind signature. -/
 def Verb.kinds (v : Verb) : Verb.Root.Kinds :=
   v.root.kinds
 

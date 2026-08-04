@@ -1,4 +1,4 @@
-import Linglib.Semantics.Verb.Root.Signature
+import Linglib.Semantics.Verb.Root.Kinds
 import Linglib.Semantics.Verb.Root.Arity
 
 /-!

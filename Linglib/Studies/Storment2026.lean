@@ -1,7 +1,7 @@
 import Linglib.Data.Examples.Storment2026
 import Linglib.Data.Examples.LevinRappaportHovav1995
 import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Semantics.Verb.Smuggling
+import Linglib.Semantics.Verb.Basic
 import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Syntax.Minimalist.Movement.Smuggling
 import Linglib.Syntax.Minimalist.Movement.InverseVoice
@@ -36,6 +36,65 @@ Example rows live in `Data/Examples/Storment2026.json` (QI/LI data) and
 `Data/Examples/LevinRappaportHovav1995.json` (classic locative-inversion
 diagnostics).
 -/
+
+namespace Verb
+
+open Minimalist Minimalist.Voice
+
+/-! ### Verb ↔ smuggling interface
+
+The bridge from `Verb`'s lexical fields to the smuggling operators
+(`Syntax/Minimalist/Movement/Smuggling.lean`). Single-consumer substrate
+carried here with its anchoring study. -/
+
+/-- A verb has a syntactic complement iff its `complementType` is anything
+    other than `.none`. -/
+def hasComplement (v : Verb) : Bool := v.complementType != .none
+
+/-- The Voice head determined by a verb's derived unaccusativity:
+    non-thematic (anticausative) for unaccusatives, agentive for
+    unergatives ([kratzer-1996]). -/
+def voiceFor (v : Verb) : Head :=
+  if v.derivedUnaccusative then anticausative else agentive
+
+/-- Derived prediction: does the verb license quotative inversion?
+    (§4: smuggling requires non-phase Voice + a complement to smuggle.) -/
+def derivedQI (v : Verb) : Bool :=
+  licensesQI v.voiceFor v.hasComplement
+
+/-- A verb licenses QI iff its derived Voice permits smuggling and it
+    has a complement to smuggle. -/
+theorem derivedQI_iff (v : Verb) :
+    v.derivedQI = true ↔ v.voiceFor.permitsSmuggling = true ∧ v.hasComplement = true := by
+  unfold derivedQI licensesQI
+  simp only [Bool.and_eq_true]
+
+/-- Unaccusative verbs project non-thematic (anticausative) Voice. -/
+theorem voiceFor_of_unaccusative (v : Verb)
+    (h : v.derivedUnaccusative = true) : v.voiceFor = anticausative := by
+  unfold voiceFor; simp [h]
+
+/-- Unergative verbs project agentive Voice. -/
+theorem voiceFor_of_unergative (v : Verb)
+    (h : v.derivedUnaccusative = false) : v.voiceFor = agentive := by
+  unfold voiceFor; simp [h]
+
+/-- An unaccusative verb with a complement licenses QI. -/
+theorem derivedQI_of_unaccusative_with_complement (v : Verb)
+    (hu : v.derivedUnaccusative = true) (hc : v.hasComplement = true) :
+    v.derivedQI = true := by
+  rw [derivedQI_iff, voiceFor_of_unaccusative v hu]
+  exact ⟨nonthematic_permits_smuggling, hc⟩
+
+/-- An unergative verb cannot license QI (regardless of complement),
+    because agentive Voice blocks smuggling. -/
+theorem derivedQI_blocked_when_unergative (v : Verb)
+    (hu : v.derivedUnaccusative = false) : v.derivedQI = false := by
+  unfold derivedQI
+  rw [voiceFor_of_unergative v hu]
+  exact agentive_blocks_qi _
+
+end Verb
 
 namespace Storment2026
 

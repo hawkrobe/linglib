@@ -14,7 +14,7 @@ import Linglib.Semantics.Causation.Psych
 import Linglib.Semantics.Aspect.DegreeAchievement
 import Linglib.Semantics.Aspect.Incremental
 import Linglib.Semantics.ArgumentStructure.RoleList
-import Linglib.Semantics.Verb.Root.Basic
+import Linglib.Semantics.Verb.Root.Defs
 import Linglib.Semantics.Verb.Root.Profile
 
 /-! # Verb entry — core type

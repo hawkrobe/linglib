@@ -1,5 +1,5 @@
 import Linglib.Syntax.Minimalist.Verbal.Voice
-import Linglib.Semantics.Verb.Root.Template
+import Linglib.Semantics.Verb.Root.Position
 import Linglib.Syntax.Anaphora.Basic
 
 /-!

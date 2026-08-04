@@ -8,7 +8,7 @@ force, robustness, instrument, dimensionality, agent properties. A
 multi-paper synthesis ([talmy-1988], [talmy-2000], [dowty-1991],
 [majid-boster-bowerman-2008], [spalek-mcnally-2026]); no single paper
 carries this profile. Structural entailments (state, manner, result,
-cause) are the separate `Root.Kinds` (`Roots/Signature.lean`).
+cause) are the separate `Root.Kinds` (`Root/Kinds.lean`).
 
 ## Main declarations
 
