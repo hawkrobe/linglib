@@ -1,5 +1,5 @@
 import Linglib.Semantics.Attitudes.ClauseEmbedding
-import Linglib.Semantics.Verb.Basic
+import Linglib.Syntax.Category.Verb.Basic
 
 /-!
 # English Copular Predicate Fragment

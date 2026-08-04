@@ -1,7 +1,7 @@
 import Linglib.Syntax.Control.Defs
 import Linglib.Syntax.Control.Head
 import Linglib.Studies.Chierchia1984
-import Linglib.Semantics.Verb.Basic
+import Linglib.Syntax.Category.Verb.Basic
 import Linglib.Data.Complementation.Noonan2007
 import Linglib.Fragments.English.Predicates.Verbal
 

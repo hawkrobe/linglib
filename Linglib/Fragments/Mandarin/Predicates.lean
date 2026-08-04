@@ -1,5 +1,5 @@
 import Linglib.Semantics.Attitudes.Preferential
-import Linglib.Semantics.Verb.Basic
+import Linglib.Syntax.Category.Verb.Basic
 
 /-!
 # Mandarin Predicate Lexicon Fragment

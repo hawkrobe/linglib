@@ -12,11 +12,11 @@ verb-of-creation flag.
 
 ## Provenance
 
-Lives at `Semantics/Verb/Class.lean` as the verb word-class's
-classification API — `Verb` entries carry a `levinClass` field and derive
-their default argument profiles through `LevinClass.roleList`. Root
-derivations live in `ArgumentStructure/LevinTheory.lean`, the diagnostic
-features in `ArgumentStructure/MeaningComponents.lean`.
+Lives at `Semantics/ArgumentStructure/LevinClass.lean` as the verb
+word-class's classification API — `Verb` entries carry a `levinClass`
+field and derive their default argument profiles through
+`LevinClass.roleList`. Root derivations live in the sibling
+`LevinTheory.lean`, the diagnostic features in `MeaningComponents.lean`.
 
 ## Framework commitment
 
@@ -24,11 +24,11 @@ features in `ArgumentStructure/MeaningComponents.lean`.
 English verb classification, but they are **not** the only such taxonomy.
 Sibling theory-named slots are intentionally unfilled in this restructure:
 
-- `Semantics/Verb/VerbNet.lean` — Kipper-Schuler 2005
+- `ArgumentStructure/VerbNet.lean` — Kipper-Schuler 2005
   formally extends Levin to ~270 classes with thematic role hierarchies
-- `Semantics/Verb/FrameNet.lean` — Fillmore/Baker/Sato semantic
+- `ArgumentStructure/FrameNet.lean` — Fillmore/Baker/Sato semantic
   frames as an alternative to alternation-based classification
-- `Semantics/Verb/PropBank.lean` — Palmer/Gildea/Kingsbury 2005
+- `ArgumentStructure/PropBank.lean` — Palmer/Gildea/Kingsbury 2005
   verb-specific argument frames
 - `Studies/Faulhaber2011.lean` — *Verb Valency Patterns*
   empirical critique of meaning-based predictions about alternation

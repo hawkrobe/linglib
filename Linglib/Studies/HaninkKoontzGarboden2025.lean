@@ -1,4 +1,4 @@
-import Linglib.Semantics.Verb.Root.Classification
+import Linglib.Semantics.ArgumentStructure.Root.Classification
 import Linglib.Studies.KoontzGarboden2009
 import Linglib.Morphology.DM.Categorizer
 import Linglib.Semantics.Possessive.Relational

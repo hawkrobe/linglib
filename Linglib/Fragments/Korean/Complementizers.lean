@@ -1,4 +1,4 @@
-import Linglib.Semantics.Verb.Basic
+import Linglib.Syntax.Category.Verb.Basic
 import Linglib.Syntax.Category.Complementizer.Basic
 
 open Morphology (Word)

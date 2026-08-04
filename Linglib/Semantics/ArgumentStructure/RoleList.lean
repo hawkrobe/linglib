@@ -11,7 +11,7 @@ A `RoleList` pairs a subject with an optional object `EntailmentProfile` —
 the argument-structure generalization a whole verb class shares. The named
 templates are the class-level consensus rows (manner vs result vs creation
 vs psych ...); the map from [levin-1993]'s class inventory onto them lives
-with the classes (`Semantics/Verb/Class.lean`), and individual verbs can
+with the classes (`Semantics/ArgumentStructure/LevinClass.lean`), and individual verbs can
 override via explicit `subjectEntailments`/`objectEntailments` on `Verb`.
 -/
 
@@ -22,7 +22,7 @@ namespace ArgumentStructure
     stored order records the class's attested linking; the ASP derives it
     wherever dominance is strict, and it is a genuine lexical choice
     exactly at the alternation ties (the psych doublets) — see
-    `roleList_linking_asp_sanctioned` in `Semantics/Verb/Class.lean`. -/
+    `roleList_linking_asp_sanctioned` in `Semantics/ArgumentStructure/LevinClass.lean`. -/
 structure RoleList where
   subjectProfile : EntailmentProfile
   objectProfile : Option EntailmentProfile := none

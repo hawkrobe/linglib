@@ -24,7 +24,7 @@ This file deliberately does not depend on the Degree/Kennedy semantics.
 * Agreement φ-features + `toWord` realization — added when an agreeing-language fragment
   sets them (φ with no setter would be dead fields).
 * Dixon `PCClass` view (`ScalarDimension.pcClass`) — waits on wiring to
-  `Verb.Root.PCClass` (in `Semantics/Verb/Root/Classification.lean`).
+  `Verb.Root.PCClass` (in `Semantics/ArgumentStructure/Root/Classification.lean`).
 * The `Modifier`/`Gradable` capability classes — built at the second-carrier trigger
   (an `Adverb`/degree-word struct), exactly as `Pronoun` deferred `Proform`.
 

@@ -1,4 +1,4 @@
-import Linglib.Semantics.Verb.Root.Classification
+import Linglib.Semantics.ArgumentStructure.Root.Classification
 import Linglib.Syntax.Voice.Basic
 
 /-!

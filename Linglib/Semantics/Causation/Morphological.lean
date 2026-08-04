@@ -2,7 +2,7 @@ import Mathlib.Order.Nat
 import Linglib.Semantics.Causation.Psych
 import Linglib.Semantics.Causation.CoerciveImplication
 import Linglib.Semantics.ArgumentStructure.Agentivity
-import Linglib.Semantics.Verb.Root.Profile
+import Linglib.Semantics.ArgumentStructure.Root.Profile
 
 /-!
 # Morphological Causation: Causative Construction Typology

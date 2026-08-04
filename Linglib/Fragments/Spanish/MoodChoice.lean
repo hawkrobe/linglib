@@ -1,4 +1,4 @@
-import Linglib.Semantics.Verb.Basic
+import Linglib.Syntax.Category.Verb.Basic
 
 /-!
 # Spanish Mood-Choice Verb Entries [grano-2024]

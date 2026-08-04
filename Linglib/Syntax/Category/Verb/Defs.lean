@@ -5,7 +5,7 @@ import Linglib.Semantics.Presupposition.Basic
 import Linglib.Features.Aktionsart
 import Linglib.Features.Attitudes
 import Linglib.Features.Causation
-import Linglib.Semantics.Verb.Class
+import Linglib.Semantics.ArgumentStructure.LevinClass
 import Linglib.Semantics.Entailment.NaturalLogic
 import Linglib.Semantics.Aspect.ChangeOfState
 import Linglib.Semantics.Causation.Implicative
@@ -14,8 +14,8 @@ import Linglib.Semantics.Causation.Psych
 import Linglib.Semantics.Aspect.DegreeAchievement
 import Linglib.Semantics.Aspect.Incremental
 import Linglib.Semantics.ArgumentStructure.RoleList
-import Linglib.Semantics.Verb.Root.Defs
-import Linglib.Semantics.Verb.Root.Profile
+import Linglib.Semantics.ArgumentStructure.Root.Defs
+import Linglib.Semantics.ArgumentStructure.Root.Profile
 
 /-! # Verb entry — core type
 
@@ -37,7 +37,7 @@ readers (`v.complementType`, `v.controlType`, …) are derived accessors
 over `frames`/`readings`.
 
 Verb classification (factive, causative, attitude, …) is DERIVED from these
-primitive fields in `Semantics/Verb/Basic.lean`, not stipulated as an enum.
+primitive fields in `Syntax/Category/Verb/Basic.lean`, not stipulated as an enum.
 
 ## Main declarations
 * `Verb` — the composed verb entry spine

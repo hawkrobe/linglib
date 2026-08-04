@@ -1,4 +1,4 @@
-import Linglib.Semantics.Verb.Defs
+import Linglib.Syntax.Category.Verb.Defs
 import Linglib.Syntax.Category.Complementizer.Basic
 
 /-!

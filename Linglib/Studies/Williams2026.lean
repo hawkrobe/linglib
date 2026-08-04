@@ -1,4 +1,4 @@
-import Linglib.Semantics.Verb.Basic
+import Linglib.Syntax.Category.Verb.Basic
 
 /-!
 # Williams 2026: The Presuppositions of *forget*

@@ -1,4 +1,4 @@
-import Linglib.Semantics.Verb.Root.Defs
+import Linglib.Semantics.ArgumentStructure.Root.Defs
 import Linglib.Semantics.ArgumentStructure.SalienceClass
 import Linglib.Morphology.Exponence.Select
 

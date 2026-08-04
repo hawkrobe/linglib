@@ -1,4 +1,4 @@
-import Linglib.Semantics.Verb.Basic
+import Linglib.Syntax.Category.Verb.Basic
 import Linglib.Semantics.ArgumentStructure.Thematic.Defs
 import Linglib.Semantics.ArgumentStructure.Linking
 import Linglib.Semantics.ArgumentStructure.EventStructure

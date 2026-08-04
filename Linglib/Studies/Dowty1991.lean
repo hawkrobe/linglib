@@ -9,7 +9,7 @@ import Linglib.Fragments.English.Predicates.Verbal
 
 Study file connecting the proto-role theory
 (`Semantics/ArgumentStructure/EntailmentProfile.lean` and the Levin-class
-role-list map, `Semantics/Verb/Class.lean`) to argument
+role-list map, `Semantics/ArgumentStructure/LevinClass.lean`) to argument
 selection phenomena. The paper's explicit per-argument entailment
 attributions are typed data rows in `Data/ProtoRoles/Dowty1991.json`
 (generated module `Data.ProtoRoles.Dowty1991`), checked against the class

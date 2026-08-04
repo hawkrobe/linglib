@@ -2,7 +2,7 @@ import Linglib.Morphology.DM.Categorizer
 import Linglib.Morphology.DM.CategorizerSemantics
 import Linglib.Morphology.Exponence.Select
 import Linglib.Morphology.Realization
-import Linglib.Semantics.Verb.Root.Classification
+import Linglib.Semantics.ArgumentStructure.Root.Classification
 import Linglib.Syntax.Minimalist.Verbal.Voice
 
 /-!
