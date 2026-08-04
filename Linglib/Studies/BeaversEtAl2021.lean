@@ -828,15 +828,17 @@ theorem chuj_tv_pc_is_pc_root :
     verbalMarkedness rootTV_pc.changeType = .marked := by
   exact ⟨rfl, rfl, rfl⟩
 
-/-- The Chuj fragment witnesses the full orthogonality theorem:
-    all four cells of the (valency × changeType) matrix are inhabited. -/
+/-- The Chuj fragment witnesses cells of the (valency × changeType)
+    matrix: theme-taking roots with and without change entailment, and
+    valency-free property-concept roots (√POS — √ITV is unaccusative and
+    theme-taking per [coon-2019] §3.3). -/
 theorem chuj_witnesses_orthogonality :
-    -- selectsTheme + result (√TV result)
+    -- internal + result (√TV result)
     rootTV_res.valency = {.internal} ∧ rootTV_res.changeType = .result ∧
-    -- selectsTheme + PC (√TV PC)
+    -- internal + PC (√TV PC, √ITV)
     rootTV_pc.valency = {.internal} ∧ rootTV_pc.changeType = .propertyConcept ∧
-    -- noTheme + PC (√ITV, √POS, √NOM)
-    rootITV.valency = ∅ ∧ rootITV.changeType = .propertyConcept :=
+    -- no core positions + PC (√POS, √NOM)
+    rootPOS.valency = ∅ ∧ rootPOS.changeType = .propertyConcept :=
   ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 /-- Per-root class verification: each Chuj root's change entailment matches

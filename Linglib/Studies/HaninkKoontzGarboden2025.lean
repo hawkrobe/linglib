@@ -17,11 +17,11 @@ Property concept (PC) roots in Wá·šiw come in two semantic types:
 
 - **Individual/state relations** (Class 1, Class 3): `λx_e λs_v[P(x)(s)]`
   These relate an individual to a state (e.g., √IHUK' 'dry': λx λs[dry(x)(s)]).
-  Type: `⟨e, ⟨v, t⟩⟩` = `DenotationType.indivStatePred`.
+  Type: `⟨e,⟨s,t⟩⟩` (`Intensional.Ty`: `.e ⇒ .s ⇒ .t`).
 
 - **Quality predicates** (Class 2): `λs_v[P(s)]`
   These are predicates of states with no individual argument
-  (e.g., √I:YEL 'big': λs[big(s)]). Type: `⟨v, t⟩` = `DenotationType.statePred`.
+  (e.g., √I:YEL 'big': λs[big(s)]). Type: `⟨s,t⟩` (`.s ⇒ .t`).
 
 ## Three morphological classes
 
@@ -43,10 +43,10 @@ Property concept (PC) roots in Wá·šiw come in two semantic types:
    Converts individual/state relations (Class 3) to quality-type predicates,
    which then feed into -iʔ.
 
-3. **Type mismatch prediction**: v_become requires `⟨e, ⟨v, t⟩⟩` as input.
-   Class 2 roots are `⟨v, t⟩` (`hasIndivArg = false`), so they CANNOT
+3. **Type mismatch prediction**: v_become requires `⟨e,⟨s,t⟩⟩` as input.
+   Class 2 roots are `⟨s,t⟩` (no individual argument), so they CANNOT
    appear as finals in resultative bipartite verb constructions.
-   Class 1 and 3 roots CAN (`hasIndivArg = true`).
+   Class 1 and 3 roots CAN (their type takes an individual first).
 
 ## Connections
 
@@ -79,28 +79,33 @@ inductive MorphClass where
   | class3  -- ʔil- + reduplication + root + -iʔ (kaykay 'tall', ši:šip 'straight')
   deriving DecidableEq, Repr
 
-/-- The `DenotationType` of roots in each morphological class.
+/-- The semantic type of roots in each morphological class.
 
     Derived from the paper's analysis (§§4–5):
-    - Class 1/3: individual/state relations ⟨e, ⟨v, t⟩⟩
+    - Class 1/3: individual/state relations ⟨e,⟨s,t⟩⟩
     - Class 2: quality predicates ⟨v, t⟩ -/
-def MorphClass.denotationType : MorphClass → DenotationType
-  | .class1 => .indivStatePred
-  | .class2 => .statePred
-  | .class3 => .indivStatePred
+def MorphClass.denotationType : MorphClass → Intensional.Ty
+  | .class1 => .e ⇒ .s ⇒ .t
+  | .class2 => .s ⇒ .t
+  | .class3 => .e ⇒ .s ⇒ .t
 
 -- ════════════════════════════════════════════════════
--- § 2. Bipartite Verb Composability (derived from DenotationType)
+-- § 2. Bipartite Verb Composability (derived from the semantic type)
 -- ════════════════════════════════════════════════════
 
-/-- v_become requires an individual/state relation ⟨e, ⟨v, t⟩⟩.
+/-- Whether a semantic type takes an individual argument first — computed
+    from the type's structure (an `.e ⇒ _` arrow head), not stipulated
+    per class. -/
+def tyHasIndivArg : Intensional.Ty → Bool
+  | .fn .e _ => true
+  | _ => false
+
+/-- v_become requires an individual/state relation ⟨e,⟨s,t⟩⟩.
     A root can serve as a bipartite verb "final" (result component) iff
-    its denotation type has an individual argument.
-
-    This is DERIVED from `DenotationType.hasIndivArg`, not stipulated
-    per morphological class. -/
+    its semantic type takes an individual argument — derived from the
+    type structure. -/
 def MorphClass.canBeResultFinal (mc : MorphClass) : Bool :=
-  mc.denotationType.hasIndivArg
+  tyHasIndivArg mc.denotationType
 
 /-- Class 1 roots can appear as bipartite verb finals (e.g., √IHUK' 'dry'
     in resultative 'dry by wiping'). -/
@@ -113,8 +118,8 @@ theorem class3_can_be_final :
     MorphClass.class3.canBeResultFinal = true := rfl
 
 /-- Class 2 roots CANNOT appear as bipartite verb finals — type mismatch
-    with v_become because `statePred.hasIndivArg = false`.
-    ([hanink-koontz-garboden-2025] §5.1) -/
+    with v_become because ⟨s,t⟩ has no individual argument
+    (their analysis of the *ʔil-* prefix, §5.2). -/
 theorem class2_cannot_be_final :
     MorphClass.class2.canBeResultFinal = false := rfl
 
@@ -157,7 +162,7 @@ theorem vHave_is_ex_pi (entities : List Entity)
 /-- The ∇ operator (ʔil-): type-shifts an individual/state relation to
     a quality predicate ([hanink-koontz-garboden-2025] (57)).
 
-    `⟦ʔil-⟧ = λP_⟨e,⟨v,t⟩⟩ λs_v[∇P(s)]`
+    `⟦ʔil-⟧ = λP_⟨e,⟨v,t⟩⟩ λs_v[∇P(s)]` (the paper's own sort labels)
 
     Takes a relation P between individuals and states, and returns the
     set of states that underly P's range — i.e., states s such that
@@ -168,7 +173,7 @@ def nabla [BEq Entity] (entities : List Entity)
 
 /-- ∇ produces a quality-type predicate: its output depends only on the
     state, with the individual argument existentially closed.
-    This matches `DenotationType.statePred` (⟨v,t⟩). -/
+    This matches the Class 2 type ⟨s,t⟩. -/
 theorem nabla_closes_indiv_arg [BEq Entity] (entities : List Entity)
     (P : Entity → State → Bool) (s₁ s₂ : State)
     (h : ∀ x, P x s₁ = P x s₂) :
@@ -204,10 +209,10 @@ theorem only_class1_zero_categorizes (mc : MorphClass) :
 
 /-- Quality-type roots (those without an individual argument) always
     require possessive morphology. This is the paper's central claim:
-    the type mismatch between ⟨v,t⟩ and predication of individuals
+    the type mismatch between ⟨s,t⟩ and predication of individuals
     FORCES v_have. -/
 theorem no_indiv_arg_forces_vhave :
-    MorphClass.class2.denotationType.hasIndivArg = false ∧
+    tyHasIndivArg MorphClass.class2.denotationType = false ∧
     MorphClass.class2.requiresVHave = true := ⟨rfl, rfl⟩
 
 /-- ʔil- always co-occurs with -iʔ: Class 3 has both. ∇ type-shifts
@@ -379,19 +384,20 @@ theorem class_distribution :
 -- § 10. Bridge Theorems
 -- ════════════════════════════════════════════════════
 
-/-- `statePred` is the only `DenotationType` without an individual
-    argument — it is the type that forces possessive morphology. -/
+/-- ⟨s,t⟩ is the only class type without an individual argument — it is
+    the type that forces possessive morphology. -/
 theorem statePred_unique_no_indiv :
-    ∀ dt : DenotationType, dt.hasIndivArg = false ↔ dt = .statePred := by
-  intro dt; cases dt <;> decide
+    ∀ mc : MorphClass, tyHasIndivArg mc.denotationType = false ↔
+      mc.denotationType = (.s ⇒ .t) := by
+  intro mc; cases mc <;> decide
 
-/-- Class 1 and Class 3 share denotation type (both `indivStatePred`). -/
+/-- Class 1 and Class 3 share denotation type (both ⟨e,⟨s,t⟩⟩). -/
 theorem class1_class3_same_denotation :
     MorphClass.class1.denotationType = MorphClass.class3.denotationType := rfl
 
 /-- Class 2 is the only class with `statePred` denotation type. -/
 theorem class2_unique_statePred (mc : MorphClass) :
-    mc.denotationType = .statePred ↔ mc = .class2 := by
+    mc.denotationType = (.s ⇒ .t) ↔ mc = .class2 := by
   cases mc <;> decide
 
 /-- The three key predictions form a single biconditional over
@@ -403,7 +409,7 @@ theorem class2_unique_statePred (mc : MorphClass) :
     despite having indivStatePred, because ∇ converts it to quality-type
     before -iʔ applies.) -/
 theorem class2_characterization (mc : MorphClass) :
-    mc.denotationType = .statePred ↔
+    mc.denotationType = (.s ⇒ .t) ↔
     (mc.canBeResultFinal = false ∧ mc = .class2) := by
   cases mc <;> decide
 

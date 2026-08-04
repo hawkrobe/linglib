@@ -30,14 +30,14 @@ Consequences for the nature of roots."
 
 ## Modeling Notes
 
-**Valency captures complement projection, not semantic type.**
-Coon's semantic types (3) group {√TV, √ITV} together as ⟨e, ⟨s,t⟩⟩ — both
-compose with an entity argument per [davis-1997]. But syntactically, only
-√TV projects a complement DP that persists across voice alternations; √ITV's
-entity argument becomes the subject. Root valency `{.internal}` captures
-the syntactic complement projection, giving {√TV} vs {√ITV, √POS, √NOM}.
-This matches the -aj diagnostic: -aj marks implicit arguments, and only √TV
-stems show -aj (the theme can be implicit), not √ITV.
+**√TV and √ITV share type and valency; transitive-Voice licensing
+separates them.** Coon's semantic types (3) group {√TV, √ITV} together as
+⟨e,⟨s,t⟩⟩ — both compose with an internal entity argument per
+[davis-1997], and √ITV roots are unaccusative (§3.3), so both carry
+valency `{.internal}`. What only √TV has is compatibility with the
+transitive-forming v ~ Voice⁰ head that merges an agent
+(`licensesTransitiveVoice`) — the source of which Coon expressly declines
+to formalize. The -aj diagnostic tracks this: only √TV stems show -aj.
 
 -/
 
@@ -54,60 +54,64 @@ open Verb Verb.Root
     Examples: mak' "hit", tek' "kick". -/
 def rootTV_pc : Classification :=
   { valency := {.internal}, changeType := .propertyConcept,
-    denotationType := some .indivStatePred }
+    denotationType := some (.e ⇒ .s ⇒ .t), licensesTransitiveVoice := true }
 
 /-- √TV root (result): selects theme, entails change-of-state.
     Semantic type ⟨e, ⟨s,t⟩⟩ ([coon-2019], (3)).
     Examples: jatz' "hit (breaking)", tzak' "wrap". -/
 def rootTV_res : Classification :=
   { valency := {.internal}, changeType := .result,
-    denotationType := some .indivStatePred }
+    denotationType := some (.e ⇒ .s ⇒ .t), licensesTransitiveVoice := true }
 
-/-- √ITV root: semantic type ⟨e, ⟨s,t⟩⟩ (same as √TV per [davis-1997]),
-    but does NOT project a complement — the entity argument becomes the
-    subject. The class is morphologically defined: roots that appear
-    with null v/Voice⁰ in intransitive stems (p. 40).
+/-- √ITV root: semantic type ⟨e,⟨s,t⟩⟩, same as √TV per [davis-1997],
+    and unaccusative — it combines with an internal argument (§3.3), so
+    its valency is `{.internal}` like √TV's. What it lacks is
+    compatibility with the transitive-forming v/Voice⁰ head. The class is
+    morphologically defined: roots that appear with null v/Voice⁰ in
+    intransitive stems (p. 40).
     Examples: way "sleep", ok' "cry", jaw "arrive", b'at "go". -/
 def rootITV : Classification :=
-  { valency := ∅, changeType := .propertyConcept,
-    denotationType := some .indivStatePred }
+  { valency := {.internal}, changeType := .propertyConcept,
+    denotationType := some (.e ⇒ .s ⇒ .t) }
 
 /-- √POS root: positional/stative. Semantic type ⟨e, ⟨s,d⟩⟩ — a
     measure function, not a truth-value predicate.
     Examples: chot "sit", kot "on all fours", watz "lie face down". -/
 def rootPOS : Classification :=
   { valency := ∅, changeType := .propertyConcept,
-    denotationType := some .measureFn }
+    denotationType := some (.e ⇒ .s ⇒ .d) }
 
 /-- √NOM root: nominal base. Semantic type ⟨e,t⟩ — entity predicate
     with no event argument ([coon-2019], (3)).
     Examples: a' "water", ixim "corn", chanhal "dance". -/
 def rootNOM : Classification :=
   { valency := ∅, changeType := .propertyConcept,
-    denotationType := some .entityPred }
+    denotationType := some (.e ⇒ .t) }
 
 -- ============================================================================
 -- § 2: Four-Way Root Classification ([coon-2019], (3))
 -- ============================================================================
 
-/-- Coon's four root classes are recovered as (valency × denotationType)
-    pairs. √TV = `{.internal}` + indivStatePred, √ITV = `∅` + indivStatePred,
-    √POS = `∅` + measureFn, √NOM = `∅` + entityPred. -/
+/-- Coon's four root classes in their coordinates: √TV and √ITV share
+    type ⟨e,⟨s,t⟩⟩ and internal-argument valency, split by
+    transitive-Voice licensing; √POS is the measure-function type
+    ⟨e,⟨s,d⟩⟩ and √NOM the entity predicate ⟨e,t⟩. -/
 theorem four_way_classification :
-    rootTV_res.valency = {.internal} ∧
-    rootTV_res.denotationType = some .indivStatePred ∧
-    rootITV.valency = ∅ ∧
-    rootITV.denotationType = some .indivStatePred ∧
+    rootTV_res.licensesTransitiveVoice = true ∧
+    rootTV_res.denotationType = some (.e ⇒ .s ⇒ .t) ∧
+    rootITV.licensesTransitiveVoice = false ∧
+    rootITV.denotationType = some (.e ⇒ .s ⇒ .t) ∧
     rootPOS.valency = ∅ ∧
-    rootPOS.denotationType = some .measureFn ∧
+    rootPOS.denotationType = some (.e ⇒ .s ⇒ .d) ∧
     rootNOM.valency = ∅ ∧
-    rootNOM.denotationType = some .entityPred := by
+    rootNOM.denotationType = some (.e ⇒ .t) := by
   exact ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
-/-- The four root classes are pairwise distinguishable: no two share
-    both valency and denotationType. -/
+/-- The four root classes are pairwise distinguishable: √TV and √ITV by
+    transitive-Voice licensing, the intransitive classes by semantic
+    type. -/
 theorem root_classes_pairwise_distinct :
-    (rootTV_res.valency ≠ rootITV.valency) ∧
+    (rootTV_res.licensesTransitiveVoice ≠ rootITV.licensesTransitiveVoice) ∧
     (rootITV.denotationType ≠ rootPOS.denotationType) ∧
     (rootITV.denotationType ≠ rootNOM.denotationType) ∧
     (rootPOS.denotationType ≠ rootNOM.denotationType) := by
@@ -128,12 +132,13 @@ inductive CRootClass where
   deriving DecidableEq, Repr
 
 /-- Map an abstract Classification to the distributional CRootClass.
-    The bridge is determined by (valency × denotationType). -/
+    The bridge is determined by (transitive-Voice licensing × semantic
+    type). -/
 def rootToClass (r : Classification) : CRootClass :=
-  if .internal ∈ r.valency then .tv
+  if r.licensesTransitiveVoice then .tv
   else match r.denotationType with
-  | some .indivStatePred => .itv
-  | some .measureFn => .pos
+  | some (.fn .e (.fn .s .t)) => .itv
+  | some (.fn .e (.fn .s .d)) => .pos
   | _ => .nom
 
 /-- The bridge is correct for each abstract root definition. -/
@@ -394,16 +399,16 @@ def nomRoots : List ChujRoot :=
 
 -- Root classification
 theorem tvRoots_selectTheme :
-    tvRoots.all (fun v => decide (.internal ∈ v.root.valency)) = true := by decide
+    tvRoots.all (·.root.licensesTransitiveVoice) = true := by decide
 
 theorem itvRoots_noTheme :
-    itvRoots.all (fun v => decide (v.root.valency = ∅)) = true := by decide
+    itvRoots.all (fun v => !v.root.licensesTransitiveVoice) = true := by decide
 
 theorem posRoots_measureFn :
-    posRoots.all (·.root.denotationType == some .measureFn) = true := by decide
+    posRoots.all (·.root.denotationType == some (.e ⇒ .s ⇒ .d)) = true := by decide
 
 theorem nomRoots_entityPred :
-    nomRoots.all (·.root.denotationType == some .entityPred) = true := by decide
+    nomRoots.all (·.root.denotationType == some (.e ⇒ .t)) = true := by decide
 
 -- Root↔CRootClass bridge
 theorem tvRoots_bridge :

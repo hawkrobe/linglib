@@ -1,15 +1,17 @@
 import Linglib.Semantics.Verb.Root.Kinds
 import Linglib.Semantics.ArgumentStructure.Valency
 import Linglib.Semantics.ArgumentStructure.SalienceClass
+import Linglib.Semantics.Intensional.Defs
 
 /-!
-# Root classification: change type, denotation type, and the annotation record
+# Root classification: change type, semantic type, and the annotation record
 
 The cross-linguistic classification dimensions a change-of-state verb root
 is typed by: whether it lexically entails change (`ChangeType`), its
-semantic denotation domain (`DenotationType`), Dixon's property-concept
-categories (`PCClass`), and the `Classification` annotation record over
-(valency × change type × denotation type) for annotation-first fragments.
+semantic type (an `Intensional.Ty` — [coon-2019] (3) types Chuj roots
+⟨e,⟨s,t⟩⟩, ⟨e,⟨s,d⟩⟩, ⟨e,t⟩), Dixon's property-concept categories
+(`PCClass`), and the `Classification` annotation record for
+annotation-first fragments.
 
 ## Anchoring and provenance
 
@@ -22,15 +24,16 @@ categories (`PCClass`), and the `Classification` annotation record over
   verb inventory. The reading that result roots *lexically entail*
   change is the Beavers et al. account, contested by the
   Distributed-Morphology camp; the split itself is theory-neutral.
-* `DenotationType` — the four denotation domains of [coon-2019] (3),
-  extended by [hanink-koontz-garboden-2025].
+* denotation types — actual semantic types (`Intensional.Ty`), not a
+  bespoke enum: [coon-2019] (3)'s four Chuj domains and
+  [hanink-koontz-garboden-2025]'s three Wáshiw PC classes are finite
+  inventories the anchoring studies state over concrete `Ty` values.
 * `PCClass` — [dixon-1982]'s seven categories.
 
 ## Main definitions
 
 * `ChangeType`, `ChangeType.ofKinds` — the axis and its projection from
   kind signatures
-* `DenotationType`, `DenotationType.hasIndivArg`
 * `Classification` — the annotation record
 * `Classification.salienceClass` — the annotation-level salience hom
 
@@ -85,36 +88,6 @@ def ChangeType.allowsRestitutiveAgain : ChangeType → Bool
 def ChangeType.ofKinds (s : Root.Kinds) : ChangeType :=
   if LexKind.result ∈ s then .result else .propertyConcept
 
-/-- The semantic denotation domain of a root ([coon-2019] (3); extended by
-    [hanink-koontz-garboden-2025]). -/
-inductive DenotationType where
-  /-- ⟨e,⟨s,t⟩⟩: individual/state relation (√TV and √ITV in [coon-2019]
-      (3); PC Class 1/3 roots per [hanink-koontz-garboden-2025]). -/
-  | indivStatePred
-  /-- ⟨s,t⟩: predicate of states, no individual argument (PC Class 2). -/
-  | statePred
-  /-- ⟨e,⟨s,d⟩⟩: entity → state → degree (√POS, per [coon-2019] (3);
-      [henderson-2019]'s published analysis types positional-root measure
-      functions ⟨e,d⟩ — the state argument is Coon's). -/
-  | measureFn
-  /-- ⟨e,t⟩: entity predicate with no eventuality argument (√NOM). -/
-  | entityPred
-  deriving DecidableEq, Repr
-
-/-- Whether a root denotation type includes an individual argument.
-
-    Types with an individual argument (⟨e, …⟩) compose directly with v_become
-    (which requires ⟨e,⟨s,t⟩⟩). A bare state predicate (⟨s,t⟩) cannot, and is
-    predicated of individuals via possession instead — the *-iʔ* possessive
-    verbalizer of [hanink-koontz-garboden-2025] (their analysis of the *ʔil-*
-    prefix, §5.2), following [francez-koontz-garboden-2017]'s possessive
-    analysis of property concepts. -/
-def DenotationType.hasIndivArg : DenotationType → Bool
-  | .indivStatePred => true   -- ⟨e,⟨s,t⟩⟩
-  | .statePred      => false  -- ⟨s,t⟩
-  | .measureFn      => true   -- ⟨e,⟨s,d⟩⟩
-  | .entityPred     => true   -- ⟨e,t⟩
-
 /-- Property concept root subclasses ([dixon-1982]; [beavers-etal-2021]
     ex. 5). [beavers-etal-2021] exclude human propensity from their sample
     (fn. 5 to ex. 5): many of its verbal forms are stative, and their study
@@ -137,25 +110,27 @@ inductive PCClass where
   deriving DecidableEq, Repr
 
 /-- Annotation record for roots with no atom decomposition: stipulated
-    coordinates over valency × change type × denotation type, the
-    annotation-first counterpart of the derived projections off
-    `Root.kinds`. The stipulated and derived coordinates agree only by
-    theorem (`salienceClass_ofKinds`), never by construction.
-
-    [coon-2019]'s √TV vs √ITV distinction is *not* recovered by these
-    coordinates: her §3.3 gives both classes type ⟨e,⟨s,t⟩⟩, with √ITV
-    unaccusative, and separates them by compatibility with the
-    external-argument-introducing v ~ Voice head — a coordinate she
-    declines to formalize and this record does not yet carry. -/
+    coordinates over valency × change type × semantic type ×
+    transitive-Voice licensing, the annotation-first counterpart of the
+    derived projections off `Root.kinds`. The stipulated and derived
+    coordinates agree only by theorem (`salienceClass_ofKinds`), never by
+    construction. -/
 structure Classification where
   /-- The core-argument positions the root introduces ([coon-2019]:
       at most the internal argument — `Valency.IsRootValency`). -/
   valency : Valency
   /-- Does this root lexically entail prior change? -/
   changeType : ChangeType
-  /-- Semantic denotation domain ([coon-2019] (3)). Optional — not all roots
-      have been annotated. -/
-  denotationType : Option DenotationType := none
+  /-- The root's semantic type ([coon-2019] (3)). Optional — not all
+      roots have been annotated. -/
+  denotationType : Option Intensional.Ty := none
+  /-- Whether the root may combine with the transitive-forming v ~ Voice⁰
+      head that merges an agent — the coordinate separating [coon-2019]'s
+      √TV from her unaccusative √ITV (§3.3), which share both semantic
+      type and internal-argument valency. Coon expressly declines to
+      formalize its source ("I do not take a particular stance on the
+      source of this distinction"). -/
+  licensesTransitiveVoice : Bool := false
   deriving DecidableEq, Repr
 
 /-- Does this root lexically entail prior change? -/
@@ -165,13 +140,16 @@ def Classification.entailsChange (r : Classification) : Bool := r.changeType.ent
 
 variable (s : Root.Kinds) (v : Valency)
 
-/-- The salience class determined by the annotation coordinates
-    (valency × change type). Partial where the coordinates underdetermine
-    the class: `ChangeType` is manner-blind, so an internal-argument-free
-    property-concept annotation cannot distinguish an agent-salient
-    manner root from an unclassified stative. -/
+/-- The salience class determined by the annotation coordinates.
+    Agent-patient salience is transitive-Voice licensing — [lucy-1994]'s
+    `=∅` roots form transitive stems bare — not internal-argument
+    introduction, which unaccusatives also have ([coon-2019] §3.3).
+    Partial where the coordinates underdetermine the class: `ChangeType`
+    is manner-blind, so a non-transitivizing property-concept annotation
+    cannot distinguish an agent-salient manner root from an unclassified
+    stative. -/
 def Classification.salienceClass (c : Classification) : Option SalienceClass :=
-  if .internal ∈ c.valency then some .agentPatient
+  if c.licensesTransitiveVoice then some .agentPatient
   else match c.changeType with
     | .result => some .patient
     | .propertyConcept => none
@@ -183,8 +161,9 @@ def Classification.salienceClass (c : Classification) : Option SalienceClass :=
     `ChangeType.ofKinds`, where the annotation coordinates return `none`
     but the signature classifier sees agent salience. -/
 theorem Classification.salienceClass_ofKinds (h : LexKind.manner ∉ s) :
-    ({ valency := v, changeType := .ofKinds s } : Classification).salienceClass =
-      SalienceClass.ofKinds s v := by
+    ({ valency := v, changeType := .ofKinds s,
+       licensesTransitiveVoice := decide (.internal ∈ v) } :
+      Classification).salienceClass = SalienceClass.ofKinds s v := by
   revert s v; decide
 
 end Verb.Root

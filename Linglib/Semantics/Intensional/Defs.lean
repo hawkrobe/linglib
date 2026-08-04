@@ -31,7 +31,16 @@ namespace Intensional
 - `intens a` — intensions ⟨s,a⟩ (functions from indices to a-extensions)
 
 The old `Ty.s` base type is replaced by the `intens` constructor:
-intensionality is a type-forming operation, not a separate domain. -/
+intensionality is a type-forming operation, not a separate domain.
+
+The core `e`, `t`, `⟨a,b⟩`, `⟨s,a⟩` grammar is [dowty-wall-peters-1981]
+Ch. 6 (equivalently [heim-kratzer-1998]'s (5) plus intensions); the
+degree and eventuality sorts are the standard extensions of degree and
+neo-Davidsonian event semantics. Following [yu-ausensi-smith-2023]'s
+convention, `v` is the sort of events and `s` the sort of states — so
+⟨e,⟨s,t⟩⟩ is an individual/state relation (a stative or property-concept
+root) and ⟨e,⟨v,t⟩⟩ an individual/event relation (a change-of-state
+root). -/
 inductive Ty where
   | e : Ty
   | t : Ty
@@ -39,11 +48,47 @@ inductive Ty where
       ([heim-2001], [wellwood-2015]). Denoted by ℚ, the repo's exact
       degree carrier. -/
   | d : Ty
+  /-- Events (type `v`): the neo-Davidsonian event sort ([davidson-1967],
+      [parsons-1990]). -/
+  | v : Ty
+  /-- States (type `s`): the state sort, distinguished from events per
+      [yu-ausensi-smith-2023]'s convention (`v` events, `s` states);
+      not the Montagovian index sort, which is `intens`. -/
+  | s : Ty
   | fn : Ty → Ty → Ty
   | intens : Ty → Ty
   deriving Repr, DecidableEq
 
 infixr:25 " ⇒ " => Ty.fn
+
+/-! ### Functional application at type level -/
+
+/-- Type-level functional application ([heim-kratzer-1998]'s Functional
+    Application, on types): a function type applied to a matching argument
+    type yields the value type; anything else is a type mismatch (`none`).
+    Composition failures are computed, not stipulated. -/
+def Ty.apply : Ty → Ty → Option Ty
+  | .fn a b, a' => if a = a' then some b else none
+  | _, _ => none
+
+theorem Ty.apply_eq_some_iff {f x c : Ty} :
+    f.apply x = some c ↔ f = (x ⇒ c) := by
+  constructor
+  · intro h
+    cases f with
+    | fn a b =>
+      simp only [Ty.apply] at h
+      split at h
+      · next hax => subst hax; cases h; rfl
+      · exact absurd h (by simp)
+    | e => exact absurd h (by simp [Ty.apply])
+    | t => exact absurd h (by simp [Ty.apply])
+    | d => exact absurd h (by simp [Ty.apply])
+    | v => exact absurd h (by simp [Ty.apply])
+    | s => exact absurd h (by simp [Ty.apply])
+    | intens a => exact absurd h (by simp [Ty.apply])
+  · rintro rfl
+    simp [Ty.apply]
 
 /-- Standard type abbreviations. -/
 abbrev Ty.et : Ty := .e ⇒ .t
@@ -61,6 +106,8 @@ def Ty.isConjoinable : Ty → Bool
   | .t => true
   | .e => false
   | .d => false
+  | .v => false
+  | .s => false
   | .fn _ τ => τ.isConjoinable
   | .intens a => a.isConjoinable
 
@@ -78,13 +125,30 @@ def Ty.isConjoinable : Ty → Bool
     D_e = E
     D_t = Prop
     D_⟨a,b⟩ = D_a → D_b
-    D_⟨s,a⟩ = W → D_a -/
+    D_⟨s,a⟩ = W → D_a
+
+    The eventuality sorts `v` and `s` denote in the empty domain: the
+    extensional DWP fragment carries no eventuality domain, and nothing
+    here constructs event-typed denotations. Event-semantic
+    interpretation is the extension point — a carrier-parametric
+    variant of `Denot` supplying event and state domains — and lands
+    with the first study that composes event-typed denotations. -/
 def Denot (E W : Type) : Ty → Type
   | .e => E
   | .t => Prop
   | .d => ℚ
+  | .v => Empty
+  | .s => Empty
   | .fn a b => Denot E W a → Denot E W b
   | .intens a => W → Denot E W a
+
+/-- Soundness of type-level application: when `apply` succeeds, the
+    denotation domain of the function type is exactly the function space
+    from the argument's domain to the value's. -/
+theorem Denot.apply_sound {E W : Type} {f x c : Ty}
+    (h : f.apply x = some c) :
+    Denot E W f = (Denot E W x → Denot E W c) := by
+  rw [Ty.apply_eq_some_iff] at h; subst h; rfl
 
 -- ════════════════════════════════════════════════════════════════
 -- § Up and Down (DWP Rules B.14–B.15)
