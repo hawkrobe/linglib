@@ -19,7 +19,7 @@ calculus via `ClauseClass.toSpec`.
 
 ## Main definitions
 
-- `Control.FeatureSpec`, `Control.Head`, `Control.Spec`
+- `Control.Head`, `Control.Spec`
 - `Control.Spec.HasControl`: control as the elsewhere condition
 - `Control.ClauseClass`: the scale of finiteness, with derived
   `ClauseClass.HasOC`
@@ -27,9 +27,9 @@ calculus via `ClauseClass.toSpec`.
 
 namespace Control
 
-/-- A `⟨T, Agr⟩` feature specification on a clausal head ([landau-2004];
-    [landau-2013] (6)). -/
-structure FeatureSpec where
+/-- A clausal head as the calculus sees it: its `⟨T, Agr⟩` feature
+    specification ([landau-2004]; [landau-2013] (6)). -/
+structure Head where
   /-- Semantic tense, `[±T]`. -/
   tense : Bool
   /-- Agreement, `[±Agr]`. -/
@@ -38,35 +38,33 @@ structure FeatureSpec where
 
 /-- A head is R-assigning when both features are positive: it licenses an
     independent referential subject ([landau-2013] (178)). -/
-def FeatureSpec.RAssigning (h : FeatureSpec) : Prop :=
+def Head.RAssigning (h : Head) : Prop :=
   h.tense ∧ h.agr
 
-instance (h : FeatureSpec) : Decidable h.RAssigning :=
+instance (h : Head) : Decidable h.RAssigning :=
   inferInstanceAs (Decidable (_ ∧ _))
 
-/-- The two clausal heads carrying `⟨T, Agr⟩` specifications. -/
-inductive Head where
+/-- A clause's control-relevant specification: its inflectional and
+    complementizer heads. -/
+structure Spec where
   /-- The inflectional head. -/
-  | I
+  i : Head
   /-- The complementizer head. -/
-  | C
+  c : Head
   deriving DecidableEq, Repr
-
-/-- A clause's control-relevant specification: `⟨T, Agr⟩` on each head. -/
-abbrev Spec : Type := Head → FeatureSpec
 
 /-- Control is the elsewhere case ([landau-2013] (178) with fn. 6): an
     R-assigning I destroys control unless C is R-assigning too — mutual
     cancellation. -/
 def Spec.HasControl (s : Spec) : Prop :=
-  (s .I).RAssigning → (s .C).RAssigning
+  s.i.RAssigning → s.c.RAssigning
 
 instance (s : Spec) : Decidable s.HasControl :=
   inferInstanceAs (Decidable (_ → _))
 
 /-- Mutual cancellation: a fully specified C restores OC in a fully finite
     clause — Hebrew subjunctives ([landau-2013] fn. 6). -/
-theorem Spec.hasControl_of_c_rAssigning {s : Spec} (h : (s .C).RAssigning) :
+theorem Spec.hasControl_of_c_rAssigning {s : Spec} (h : s.c.RAssigning) :
     s.HasControl :=
   fun _ => h
 
@@ -105,9 +103,8 @@ def ClauseClass.ofFiniteness (unrestrictedTAM independentTense : Bool) : ClauseC
     Agr value: `[±T]` on I per the position, C unspecified. The scale cannot
     express a fully specified C — mutual cancellation needs the calculus
     directly. -/
-def ClauseClass.toSpec (c : ClauseClass) (agr : Bool) : Spec
-  | .I => ⟨c ≠ .cSubjunctive, if c = .finite then true else agr⟩
-  | .C => ⟨false, false⟩
+def ClauseClass.toSpec (c : ClauseClass) (agr : Bool) : Spec :=
+  ⟨⟨c ≠ .cSubjunctive, if c = .finite then true else agr⟩, ⟨false, false⟩⟩
 
 /-- OC is realized in a clause class iff the calculus leaves control at its
     specification: the elsewhere condition on `toSpec`. -/
