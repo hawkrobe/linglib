@@ -54,8 +54,8 @@ theorem IsExhaustive.eq_of_two (hs : IsExhaustive val ante)
   (hs.eq ha).trans (hs.eq hb).symm
 
 /-- An exhaustive dependency admits no partial reading. -/
-theorem IsExhaustive.not_hasPartial [Preorder Ref]
-    (h : IsExhaustive val d) : ¬ HasPartial val d :=
+theorem IsExhaustive.not_isPartial [Preorder Ref]
+    (h : IsExhaustive val d) : ¬ IsPartial val d :=
   fun ⟨_, _, hab, hlt⟩ => absurd (h.eq hab) hlt.ne
 
 /-- A partial reading in a composite localizes to a leg: if referents grow
@@ -74,9 +74,9 @@ theorem exists_lt_of_comp_lt [PartialOrder Ref]
 /-! ### Saturation -/
 
 /-- A saturating dependency admits no partial reading. -/
-theorem IsSaturating.not_hasPartial [Preorder Ref] (h : IsSaturating val d) :
-    ¬ HasPartial val d :=
-  h.exhaustive.not_hasPartial
+theorem IsSaturating.not_isPartial [Preorder Ref] (h : IsSaturating val d) :
+    ¬ IsPartial val d :=
+  h.exhaustive.not_isPartial
 
 /-- A saturating dependency admits no split: joint controllers coincide. -/
 theorem IsSaturating.eq_of_controllers (h : IsSaturating val d)
@@ -84,7 +84,7 @@ theorem IsSaturating.eq_of_controllers (h : IsSaturating val d)
   h.biUnique.1 ha hb
 
 /-- A saturating dependency admits no split antecedents. -/
-theorem IsSaturating.not_hasSplit (h : IsSaturating val d) : ¬ HasSplit d :=
+theorem IsSaturating.not_isSplit (h : IsSaturating val d) : ¬ IsSplit d :=
   not_not_intro h.biUnique.1
 
 /-- A saturating controller saturates a single slot: its dependents

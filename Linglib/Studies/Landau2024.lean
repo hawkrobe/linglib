@@ -167,7 +167,7 @@ theorem korean_realizes_postal (j : Jussive) :
 
 (36)–(37): PC is attested in attitude complements and unavailable
 under implicatives — *\*John managed to gather at 6* (37a). On the
-dual theory this is `Control.IsSaturating.not_hasPartial`: implicative
+dual theory this is `Control.IsSaturating.not_isPartial`: implicative
 complements are predicative, and predication saturates, sharing the
 referent exhaustively. The (37a) configuration refutes saturating
 status for its hypothetical PC reading, never the other way around. -/
@@ -184,7 +184,7 @@ def ex37Val : Fin 2 → ℕ :=
 /-- A partial-control reading is incompatible with a saturating
     dependency: (37a)'s star, from exhaustive sharing. -/
 theorem manage_excludes_pc : ¬ IsSaturating ex37Val ex37Dependency :=
-  fun h => h.not_hasPartial ⟨0, 1, rfl, by decide⟩
+  fun h => h.not_isPartial ⟨0, 1, rfl, by decide⟩
 
 /-! ### NOC: dual licensing by topic and logophoric center
 

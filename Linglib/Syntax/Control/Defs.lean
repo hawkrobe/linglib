@@ -22,8 +22,8 @@ A dependency here is a relation `SetRel Pos Pos` over argument positions,
 read `antecedent ~[r] dependent`, with a valuation `val : Pos → Ref`
 assigning referents. Identical inclusion is *exhaustive control*
 ([landau-2000]): related positions are co-valued (`IsExhaustive`); proper
-inclusion is a *partial* reading (`HasPartial`), and joint antecedence is
-*split* control (`HasSplit`). Control *shift* — the antecedent varying across
+inclusion is a *partial* reading (`IsPartial`), and joint antecedence is
+*split* control (`IsSplit`). Control *shift* — the antecedent varying across
 readings of one construction — is deliberately not a property of a single
 dependency: a dependency encodes one reading, so shift lives at the
 controller-choice stratum.
@@ -48,7 +48,7 @@ phenomenology of saturation, the occupant-mismatch refutation engine — are in
 
 ## Main definitions
 
-- `Control.IsExhaustive`, `Control.HasPartial`, `Control.HasSplit`
+- `Control.IsExhaustive`, `Control.IsPartial`, `Control.IsSplit`
 - `Control.Mechanism`
 - `Control.IsSaturating`
 -/
@@ -67,12 +67,12 @@ def IsExhaustive (val : Pos → Ref) (ante : SetRel Pos Pos) : Prop :=
 
 /-- A partial reading ([landau-2000]): some dependent's referent strictly
     extends its controller's. -/
-def HasPartial [Preorder Ref] (val : Pos → Ref) (d : SetRel Pos Pos) : Prop :=
+def IsPartial [Preorder Ref] (val : Pos → Ref) (d : SetRel Pos Pos) : Prop :=
   ∃ a b, a ~[d] b ∧ val a < val b
 
 /-- Split control: some dependent has two distinct controllers — the
     dependency is not left-unique. -/
-abbrev HasSplit (d : SetRel Pos Pos) : Prop :=
+abbrev IsSplit (d : SetRel Pos Pos) : Prop :=
   ¬ Relator.LeftUnique (· ~[d] ·)
 
 /-- What a control dependency shares — the framework-neutral cut behind the
