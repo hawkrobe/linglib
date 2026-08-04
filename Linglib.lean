@@ -1053,8 +1053,6 @@ import Linglib.Fragments.Mayan.Tseltalan
 import Linglib.Fragments.Mayan.Tsotsil.Agreement
 import Linglib.Fragments.Mayan.Tsotsil.Possession
 import Linglib.Fragments.Mayan.Yukatek.Agreement
-import Linglib.Fragments.Mayan.Yukatek.Operators
-import Linglib.Fragments.Mayan.Yukatek.Roots
 import Linglib.Fragments.Mayan.Yukatek.VerbClasses
 import Linglib.Fragments.Mixtec.SMPM.Basic
 import Linglib.Fragments.Mongolian.Case
@@ -1877,7 +1875,6 @@ import Linglib.Semantics.Verb.Root.Closure
 import Linglib.Semantics.Verb.Root.OutcomeCardinality
 import Linglib.Semantics.Verb.Root.Outcomes
 import Linglib.Semantics.Verb.Root.Profile
-import Linglib.Semantics.Verb.Root.SalienceClass
 import Linglib.Semantics.Verb.Root.Signature
 import Linglib.Semantics.Verb.Root.Template
 import Linglib.Semantics.Verb.Root.Typology
