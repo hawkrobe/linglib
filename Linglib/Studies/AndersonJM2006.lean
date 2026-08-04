@@ -7,7 +7,7 @@ import Linglib.Features.Case.Basic
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Semantics.ArgumentStructure.Linking
 import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Semantics.Verb.Denotation
+import Linglib.Semantics.ArgumentStructure.VerbDenotation
 
 /-!
 # Anderson (2006): Modern Grammars of Case [anderson-jm-2006]

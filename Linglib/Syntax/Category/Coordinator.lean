@@ -7,7 +7,7 @@ import Linglib.Morphology.Morph
 A coordinator (*and* / *or* / *but* / *nor*) is **one** thing: a lexical marking whose
 `role` selects a Boolean operation. This file is the carrier-agnostic core of the
 `Coordinator` API — it needs only `Mathlib.Order.BooleanAlgebra`, so Fragments import it
-directly to type their lexical coordinators (the `Semantics/Verb/Defs.lean` precedent: a
+directly to type their lexical coordinators (the `Syntax/Category/Verb/Defs.lean` precedent: a
 word-class lexical-entry type at `Semantics/{class}/Defs`). The Denot-specific bridges
 (`genConj = op`, `engineOp`, the `BooleanAlgebra (Denot)` instances) live downstream in
 `Semantics/Coordination/Basic.lean`.

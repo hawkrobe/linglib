@@ -10,7 +10,7 @@ operator for componentwise composition.
 
 Moved from `Core/Lexical/VerbClass.lean` in the cleanup that dissolved
 `Core/Lexical/`. Lives at `Semantics/Lexical/` (sibling of
-`LevinTheory.lean`, `RoleList.lean`, `Semantics/Verb/Class.lean`,
+`LevinTheory.lean`, `RoleList.lean`, `Semantics/ArgumentStructure/LevinClass.lean`,
 `DiathesisAlternation.lean`) because it encodes Levin's specific
 diagnostic apparatus (CoS / contact / motion / causation as the 4
 canonical features) — paper-anchored framework content, not consensus
@@ -21,7 +21,7 @@ substrate.
 The 4-feature decomposition is [levin-1993]'s diagnostic apparatus.
 [beavers-koontz-garboden-2020] argue these are SURFACE behaviors,
 not root-level entailments — root-level structural features live in
-`Semantics/Verb/Root/Kinds.lean::Root.Kinds`
+`Semantics/ArgumentStructure/Root/Kinds.lean::Root.Kinds`
 (state/manner/result/cause). The two carve-ups are NOT equivalent:
 e.g., `causation` here is what diathesis alternations diagnose, while
 B&KG's `cause` is a root entailment.
@@ -63,7 +63,7 @@ namespace ArgumentStructure
     These describe **surface** verb behavior, not root-level entailments.
     [beavers-koontz-garboden-2020] argue that surface CoS and causation
     can come from either the template or the root; see `Root.Kinds`
-    in `Semantics/Verb/Root/Kinds.lean` for the
+    in `Semantics/ArgumentStructure/Root/Kinds.lean` for the
     root-level decomposition.
 
     Diagnosed by participation in diathesis alternations:

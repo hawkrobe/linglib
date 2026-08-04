@@ -1,4 +1,4 @@
-import Linglib.Semantics.Verb.Basic
+import Linglib.Syntax.Category.Verb.Basic
 import Linglib.Semantics.Attitudes.RationalAttitude
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 

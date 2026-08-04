@@ -33,7 +33,7 @@ embedding.
 - `Formation` from `Syntax/Reciprocal.lean` — extended with nine
   predicted properties and per-language verification
 - `EntailmentProfile` — used to define θ-role bundling
-- `Verb.StratifiesOver` (`Semantics/Verb/Distributivity.lean`) — the same
+- `Verb.StratifiesOver` (`Studies/Champollion2017.lean`) — the same
   property: symmetric verbs denote singular events that do not distribute
   over atomic agents (`¬ meet.StratifiesOver M agentRole`)
 -/

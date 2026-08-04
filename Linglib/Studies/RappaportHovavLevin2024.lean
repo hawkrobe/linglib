@@ -1,6 +1,6 @@
 import Linglib.Semantics.ArgumentStructure.EventStructure
 import Linglib.Semantics.ArgumentStructure.Projection
-import Linglib.Semantics.Verb.Class
+import Linglib.Semantics.ArgumentStructure.LevinClass
 import Linglib.Semantics.ArgumentStructure.RoleList
 
 /-!

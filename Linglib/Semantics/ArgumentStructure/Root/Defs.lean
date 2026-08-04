@@ -1,5 +1,5 @@
-import Linglib.Semantics.Verb.Root.Profile
-import Linglib.Semantics.Verb.Root.Kinds
+import Linglib.Semantics.ArgumentStructure.Root.Profile
+import Linglib.Semantics.ArgumentStructure.Root.Kinds
 
 /-!
 # Atomic Lexical Entailments and Roots

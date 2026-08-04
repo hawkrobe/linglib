@@ -23,7 +23,7 @@ round-trip view (`ComplementType.toFrame` / `Frame.toComplementType`).
 ## Implementation notes
 
 Frame-conditioned readings (attitude, opacity, control) are not slot
-data — they live on `Verb.Reading` (`Semantics/Verb/Defs.lean`), keyed
+data — they live on `Verb.Reading` (`Syntax/Category/Verb/Defs.lean`), keyed
 to the verb's frames. The [noonan-2007] selection relation between verb
 frames and clause-typers (`Verb.realizes`) lives in
 `Syntax/Clause/Complementation.lean`. This file never imports

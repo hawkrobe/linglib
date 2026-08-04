@@ -13,7 +13,7 @@ reclassifications (e.g. [istratkova-2004]'s aspectless homogeneous
 class) are study-level, never entry data.
 
 Contrast `Verb.Root` (the lexical-semantic root) and the full semantic
-`Verb` entry of `Semantics/Verb/Defs.lean`; `Verb.Stem` carries no
+`Verb` entry of `Syntax/Category/Verb/Defs.lean`; `Verb.Stem` carries no
 semantics beyond its gloss.
 -/
 
