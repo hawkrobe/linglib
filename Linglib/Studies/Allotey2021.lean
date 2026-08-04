@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Fragments.Ga.Predicates
 import Linglib.Syntax.Minimalist.MinimalPronoun
-import Linglib.Syntax.Control.Finiteness
+import Linglib.Syntax.Control.Head
 import Linglib.Semantics.Composition.TypeShifting
 import Linglib.Studies.Landau2015
 import Linglib.Syntax.Control.Basic

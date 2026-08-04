@@ -1,5 +1,5 @@
 import Linglib.Syntax.Control.Defs
-import Linglib.Syntax.Control.Finiteness
+import Linglib.Syntax.Control.Head
 import Linglib.Studies.Chierchia1984
 import Linglib.Semantics.Verb.Basic
 import Linglib.Data.Complementation.Noonan2007
@@ -15,7 +15,7 @@ The TTC's own apparatus — the predicative/logophoric `Tier`, the eight
 `PredicateClass`es, and their tier assignment — is defined here, mapped into
 the neutral vocabulary by `Tier.mechanism` (`Control.Mechanism`); the
 finiteness scale it consumes is `Control.ClauseClass`
-(`Syntax/Control/Finiteness.lean`). The file holds the book's empirical
+(`Syntax/Control/Head.lean`). The file holds the book's empirical
 engagement: the table (80) contrasts, the
 *de se*/*de te* split in object control (table (36)), the derivation of
 predicate classes from English Fragment verb entries, and the
