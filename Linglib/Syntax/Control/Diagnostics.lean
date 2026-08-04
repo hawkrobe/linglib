@@ -11,24 +11,15 @@ import Mathlib.Tactic.DeriveFintype
 # Control Diagnostics and Profiles
 
 The observable diagnostic battery of control — the antecedence and reading
-tests every framework's account of a construction is answerable to: arbitrary
-reference, long-distance antecedence, non-c-commanding antecedence,
-strict-vs-sloppy under ellipsis, and strict-vs-bound-variable under *only*.
-The battery is shared field vocabulary; what varies by theory is which
-configurations admit which diagnostics (e.g. [landau-2013] (75)–(79) derives
-the five from the two clauses of its OC signature; [hornstein-1999] from chain
-locality).
-
-A `Profile ι` records which of an analysis's licensing clauses hold of a
-construction, over an arbitrary clause index `ι`. An `Excludes ι` instance
-says which clause's failure admits each diagnostic — part of what makes a
-clause index the index it is, so it is a typeclass, unlike rival *analyses*,
-which are values. From it, `Profile.admits` computes the admitted diagnostics
-as a preimage, and the characterizations follow from mathlib `Set` lemmas:
-`admits` is antitone, obligatory control is the empty fiber, non-obligatory
-control the full one, and — when every clause is witnessed by some diagnostic
-(`Excludes.surjective`) — the battery encodes the profile faithfully
-(`Profile.admits_injective`).
+tests every framework's account is answerable to. A `Profile ι` records which
+of an analysis's licensing clauses hold of a construction, over an arbitrary
+clause index `ι`; an `Excludes ι` instance says which clause's failure admits
+each diagnostic, and `Profile.admits` computes the admitted diagnostics as a
+preimage: `admits` is antitone, obligatory control is the empty fiber,
+non-obligatory control the full one, and the battery encodes the profile
+faithfully (`Profile.admits_injective`). Which configurations admit which
+diagnostics varies by theory — [landau-2013] (75)–(79) derives the five from
+the two clauses of its OC signature (`Studies/Landau2013.lean`).
 
 ## Main definitions
 
