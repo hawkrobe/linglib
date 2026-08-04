@@ -2849,6 +2849,7 @@ import Linglib.Syntax.Control.CopyControl
 import Linglib.Syntax.Control.Clause
 import Linglib.Syntax.Control.Dependency
 import Linglib.Syntax.Control.Signature
+import Linglib.Syntax.Control.Taxonomy
 import Linglib.Syntax.Coordination
 import Linglib.Syntax.DependencyGrammar.Basic
 import Linglib.Syntax.DependencyGrammar.Coordination
