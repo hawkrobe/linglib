@@ -1,5 +1,4 @@
 import Linglib.Semantics.Questions.Partition.QUD
-import Linglib.Discourse.QUD.Basic
 import Linglib.Core.Order.Boundedness
 import Linglib.Core.Order.Rat01
 import Mathlib.Tactic.NormNum

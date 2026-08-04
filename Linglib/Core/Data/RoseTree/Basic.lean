@@ -116,8 +116,8 @@ end DecidableEq
 /-- A child of a node is strictly smaller than the node, in the auto-generated
 `SizeOf`. This is the measure behind `rec'` and downstream well-founded
 recursions over `RoseTree`. -/
-theorem sizeOf_lt_of_mem {a : α} {cs : List (RoseTree α)} {c : RoseTree α} (hc : c ∈ cs) :
-    sizeOf c < sizeOf (RoseTree.node a cs) := by
+theorem sizeOf_lt_of_mem [SizeOf α] {a : α} {cs : List (RoseTree α)} {c : RoseTree α}
+    (hc : c ∈ cs) : sizeOf c < sizeOf (RoseTree.node a cs) := by
   have := List.sizeOf_lt_of_mem hc
   simp only [RoseTree.node.sizeOf_spec]
   omega
@@ -259,6 +259,24 @@ def numNodes : RoseTree α → ℕ :=
 theorem numNodes_pos (t : RoseTree α) : 0 < numNodes t := by
   cases t with
   | node a cs => rw [numNodes_node]; omega
+
+/-- The node values in preorder: root first, then each child's values
+left to right. -/
+def values : RoseTree α → List α :=
+  fold fun a ls => a :: ls.flatten
+
+@[simp] theorem values_node (a : α) (cs : List (RoseTree α)) :
+    values (node a cs) = a :: (cs.map values).flatten := by
+  simp only [values, fold_node]
+
+theorem length_values (t : RoseTree α) : t.values.length = t.numNodes := by
+  induction t with
+  | node a cs ih =>
+    simp only [values_node, numNodes_node, List.length_cons, List.length_flatten,
+      List.map_map, Function.comp_def]
+    rw [show (cs.map fun c => c.values.length) = cs.map numNodes from
+      List.map_congr_left ih]
+    omega
 
 /-- The number of leaves (childless nodes). A single leaf counts as `1`. -/
 def numLeaves : RoseTree α → ℕ :=

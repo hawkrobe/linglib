@@ -21,6 +21,7 @@ classes of any equivalence relation.
 - `fromSetoid r` — the issue whose alternatives are the cells of `r`.
 - `IsPartition P` — `Setoid.IsPartition (alt P)`.
 - `toSetoid h` — the equivalence relation of a partition issue.
+- `QUD.toQuestion q` — the issue whose alternatives are a QUD's cells.
 - `toQUD h` — bridge to the legacy Bool-based `QUD W`.
 
 ## Main theorems
@@ -217,7 +218,16 @@ theorem toSetoid_rel_iff {P : Question W} (h : P.IsPartition) (w v : W) :
     (toSetoid h) w v ↔ ∃ p ∈ alt P, w ∈ p ∧ v ∈ p := by
   rw [Setoid.rel_iff_exists_classes, classes_toSetoid h]
 
-/-! ### `toQUD` — bridge to the legacy Bool-based QUD -/
+/-! ### Bridges to the Bool-based QUD -/
+
+/-- The issue raised by a `QUD`: its alternatives are exactly the QUD's
+    equivalence classes. The bridge is one-way: not every `Question`
+    arises from a `QUD` (mention-some, intermediate-exhaustive, and
+    conditional-question alternatives are non-disjoint or non-exhaustive
+    and so are not the cells of any equivalence relation —
+    [theiler-etal-2018]). -/
+def _root_.QUD.toQuestion (q : QUD W) : Question W :=
+  fromSetoid q.toSetoid
 
 /-- Bridge to legacy Bool-based `QUD W`: two worlds get the same
     answer iff they share an alternative cell. `noncomputable` —

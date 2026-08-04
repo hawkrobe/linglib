@@ -41,7 +41,7 @@ canonical one).
 ## Specialisations
 
 * `Question.PartiallyAnswers` (`Resolution.lean`) and
-  `Discourse.moveRelevant` (`Discourse/QUD/Basic.lean`) — Roberts
+  `Discourse.Relevant` (`Discourse/QUD/Basic.lean`) — Roberts
   QUD-relevance over `Question W`. Specific notions, not a typeclass.
 * `Question.Resolves` / `Question.MentionAll` (`Resolution.lean`) over
   `Set W → Question W`. Each is a candidate `Support` instance for the
