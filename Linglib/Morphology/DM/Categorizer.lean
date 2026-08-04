@@ -627,18 +627,18 @@ theorem same_root_different_category (i : DM.Root) (r : Classification)
   simp only [CategorizedRoot.category, Categorizer.toCategory]
   cases c1 <;> cases c2 <;> simp_all
 
-/-- Complement **arity** (c-selection) is a root-level property, not
+/-- Complement **valency** (c-selection) is a root-level property, not
     contributed by the categorizer ([harley-2014] §3). The root
     determines *whether* it takes an internal argument (selectsTheme vs
     noTheme); the categorizer does not alter this.
 
-    **Note**: This theorem covers arity, not **l-selection** (which
+    **Note**: This theorem covers valency, not **l-selection** (which
     specific preposition heads the PP complement). [hewett-2026]
     shows that l-selection in Semitic can vary by verbal template,
     falsifying any theory locating l-selection entirely at the root
     level. See `Hewett2026`.
 
-    Evidence for root-level arity:
+    Evidence for root-level valency:
 
     1. *one*-replacement in argument structure nominals: "the proud owner
        of a large dog" → "the proud one" — *one* replaces nP including
@@ -650,14 +650,7 @@ theorem same_root_different_category (i : DM.Root) (r : Classification)
        between root and argument below the categorizer. -/
 theorem complement_selection_at_root_level (i : DM.Root) (r : Classification)
     (c1 c2 : Categorizer) :
-    (CategorizedRoot.mk i r c1).root.arity = (CategorizedRoot.mk i r c2).root.arity := rfl
-
-/-- A theme-selecting root maintains its complement requirement regardless
-    of whether it surfaces as a noun, verb, or adjective ([harley-2014] §3). -/
-theorem theme_selecting_root_always_selects (i : DM.Root) (r : Classification)
-    (c : Categorizer) (h : r.arity = .selectsTheme) :
-    (CategorizedRoot.mk i r c).root.arity.hasInternalArg = true := by
-  simp [h, Root.Arity.hasInternalArg]
+    (CategorizedRoot.mk i r c1).root.valency = (CategorizedRoot.mk i r c2).root.valency := rfl
 
 -- ============================================================================
 -- § 4: Layered Derivation (Denominal, Deadjectival, Deverbal)
@@ -723,7 +716,7 @@ theorem recategorization_changes_category (cr : CategorizedRoot)
     `DM.Root` atom is invariant under `recategorize`, so *shelf* (n) and
     *to shelve* (v) share one List-1 root ([harley-2014] §2, §4). This is
     the work DM's own individuator does that the `root` classification
-    cannot — arity/change-type is shared by unrelated roots, the index is
+    cannot — valency/change-type is shared by unrelated roots, the index is
     not — so it is the index, not the classification, that the derivational
     history threads unchanged. -/
 theorem recategorize_preserves_index (cr cr' : CategorizedRoot)

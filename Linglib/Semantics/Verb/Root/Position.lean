@@ -1,4 +1,4 @@
-import Linglib.Semantics.Verb.Root.Defs
+import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Root attachment position

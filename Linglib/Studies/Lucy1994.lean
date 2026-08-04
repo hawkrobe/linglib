@@ -1,5 +1,4 @@
 import Linglib.Semantics.Verb.Root.Defs
-import Linglib.Semantics.Verb.Root.Arity
 import Linglib.Semantics.ArgumentStructure.SalienceClass
 import Linglib.Morphology.Exponence.Select
 
@@ -29,7 +28,10 @@ distinction invisible to the entailment grid.
 ## Main results
 
 * `predicted_matches_attested`: applicability derived from
-  (kind signature × arity) reproduces every derivation Lucy attests.
+  (kind signature × valency) reproduces every derivation Lucy attests.
+* `transitiviser_adds_compl`: each class's required transitiviser adds
+  exactly the Boolean complement of its underived stem's valency — the
+  three-way diagnostic is complementation in the valency lattice.
 * `motion_roots_not_separate_class`: motion roots share their predicted
   class with plain state-change roots like *kíim* 'die'.
 * `positional_crosscuts_transitiviser_classes`: the positional diagnostic
@@ -40,12 +42,13 @@ distinction invisible to the entailment grid.
 
 ## Implementation notes
 
-The reconstruction is two-dimensional — B&K-G kind signature × Coon root
-arity ([beavers-koontz-garboden-2020]; [coon-2019]; both postdate Lucy and
-serve as project-canonical substrate). Arity carries the agent-patient
-class: Lucy's `=∅` roots "require two arguments" (p. 629) and are not
-signature-homogeneous (*p'is* 'measure' is manner-only, *k'os* 'cut'
-manner+result), so no feature configuration could carry the class. The
+The reconstruction is two-dimensional — B&K-G kind signature × root
+valency ([beavers-koontz-garboden-2020]; [coon-2019]; both postdate Lucy
+and serve as project-canonical substrate). Valency carries the
+agent-patient class: Lucy's `=∅` roots "require two arguments" (p. 629)
+and are not signature-homogeneous (*p'is* 'measure' is manner-only,
+*k'os* 'cut' manner+result), so no feature configuration could carry the
+class. The
 signature separates the two intransitive classes, matching the Sapir 1917
 ~ Fillmore 1968 ~ Perlmutter 1978 unaccusativity lineage Lucy cites
 (p. 630). "Salience" is Lucy's term for "a set of default semantic values
@@ -191,18 +194,19 @@ def cin : Root := ⟨"čin", {.hasState "bent"}, none, {}⟩
 /-- kul 'sit' (p. 645, fn. 24: relational 'x is-seated [on y]'). -/
 def kul : Root := ⟨"kul", {.hasState "seated"}, none, {}⟩
 
-/-! ### Arity and class lists -/
+/-! ### Valency and class lists -/
 
 /-- Roots attested forming a transitive stem by zero derivation: the
     sampled `=∅` predicate roots (p. 629) plus the positional *čin*
     (ex. (6)). -/
 def rootTransitives : List Root := [kuc, kos, pis, hats, los, cin]
 
-/-- Coon arity for the sample: zero-derivers select a theme (√TV);
-    every other sampled root is intransitive. Sample-local — the
-    assignment defaults to `noTheme` off the sample. -/
-def arity (r : Root) : Root.Arity :=
-  if r ∈ rootTransitives then .selectsTheme else .noTheme
+/-- Root valency for the sample ([coon-2019]'s √TV as `{.internal}`):
+    zero-derivers introduce their internal argument; every other sampled
+    root introduces none. Sample-local — the assignment defaults to `∅`
+    off the sample. -/
+def valency (r : Root) : Valency :=
+  if r ∈ rootTransitives then {.internal} else ∅
 
 /-- The sampled agent-salient roots. -/
 def agentSalientRoots : List Root := [siit, tziib, miis, cheh, paak]
@@ -241,6 +245,9 @@ def sampledRoots : List Root :=
 structure DiagOp where
   /-- The suffix, in Lucy's orthography. -/
   exponent : String
+  /-- The core-argument positions the derivation adds
+      (`transitiviser_adds_compl`). -/
+  adds : Valency
   /-- The structural condition on the root. -/
   Applies : Root → Prop
   /-- Bundled decidability of the condition. -/
@@ -259,22 +266,22 @@ instance : DecidableRel (Exponence.Applies : DiagOp → Root → Prop) :=
 /-- Affective `=t`: transitivises an agent-salient root by adding a
     patient argument. -/
 def affectiveT : DiagOp :=
-  ⟨"=t", fun r => IsAgentSalient r.kinds (arity r), inferInstance⟩
+  ⟨"=t", {.internal}, fun r => IsAgentSalient r.kinds (valency r), inferInstance⟩
 
 /-- Zero derivation `=∅`: the root alone supports a transitive stem. -/
 def zeroDeriv : DiagOp :=
-  ⟨"=∅", fun r => arity r = .selectsTheme, inferInstance⟩
+  ⟨"=∅", ∅, fun r => .internal ∈ valency r, inferInstance⟩
 
 /-- Causative `=s`: transitivises a patient-salient root by adding an
     agent argument. -/
 def causativeS : DiagOp :=
-  ⟨"=s", fun r => IsPatientSalient r.kinds (arity r), inferInstance⟩
+  ⟨"=s", {.external}, fun r => IsPatientSalient r.kinds (valency r), inferInstance⟩
 
 /-- Positional derivation, realized `=lah` ~ `=tal` by status (the
     `=tal` incompletive is the anomalous member, apparently compounding
     with *tàal* 'come'). -/
 def positionalLah : DiagOp :=
-  ⟨"=lah", fun r => IsPositional r.kinds, inferInstance⟩
+  ⟨"=lah", ∅, fun r => IsPositional r.kinds, inferInstance⟩
 
 /-- The diagnostic inventory, in the order of Lucy's presentation:
     the three transitivisers of ex. (1), then the positional. -/
@@ -305,7 +312,7 @@ def attestations : List (Root × List String) :=
     (naak, ["=s"]),
     (cin, ["=∅", "=lah"]), (kul, ["=lah"]) ]
 
-/-- The derivations predicted from (signature × arity) reproduce every
+/-- The derivations predicted from (signature × valency) reproduce every
     derivation Lucy attests. Unlike the classifier theorems below, this
     check is against a column transcribed from the paper, independent of
     the encoding. -/
@@ -316,7 +323,7 @@ theorem predicted_matches_attested :
 
 /-- A root's predicted salience class. -/
 def predictedClass (r : Root) : Option SalienceClass :=
-  SalienceClass.ofKinds r.kinds (arity r)
+  SalienceClass.ofKinds r.kinds (valency r)
 
 /-- The transitiviser each salience class requires. -/
 def exponentOf : SalienceClass → String
@@ -337,8 +344,8 @@ theorem predictedExponents_eq (r : Root) :
     positionalLah, List.filter_cons, List.filter_nil, decide_eq_true_eq,
     SalienceClass.ofKinds]
   generalize r.kinds = s
-  generalize arity r = a
-  revert s a
+  generalize valency r = v
+  revert s v
   decide
 
 theorem agentSalient_class :
@@ -352,7 +359,7 @@ theorem patientSalient_class :
     ∀ r ∈ patientSalientRoots, predictedClass r = some .patient := by decide
 
 /-- The `=∅` class is not signature-homogeneous (*p'is* manner-only vs
-    *k'os* manner+result) — root transitivity is carried by arity, not
+    *k'os* manner+result) — root transitivity is carried by valency, not
     by any feature configuration. -/
 theorem rootTransitives_not_signature_uniform :
     ∃ r ∈ agentPatientSalientRoots, ∃ r' ∈ agentPatientSalientRoots,
@@ -368,12 +375,23 @@ theorem motion_roots_not_separate_class :
 
 /-- The `#` subclass — Lucy's only candidate formal motion class — is
     not a function of the entailment grid: *péek* (`#`) and *lúub'*
-    (plain) agree in signature and arity. The class is carried by an
+    (plain) agree in signature and valency. The class is carried by an
     idiosyncratic morphological gap, not by lexical semantics. -/
 theorem hash_not_signature_definable :
     ∃ r ∈ hashMarked, ∃ r' ∈ motionRoots,
-      r' ∉ hashMarked ∧ r.kinds = r'.kinds ∧ arity r = arity r' := by
+      r' ∉ hashMarked ∧ r.kinds = r'.kinds ∧ valency r = valency r' := by
   decide
+
+/-- **The transitiviser system is complementation in the valency
+    lattice**: each class's required derivation adds exactly the Boolean
+    complement of its underived stem's valency — `=t` supplies the
+    patient the unergative agent stem lacks, `=s` the agent the
+    unaccusative patient stem lacks, `=∅` nothing, the root-transitive
+    stem being already complete. -/
+theorem transitiviser_adds_compl :
+    affectiveT.adds = (SalienceClass.stemValency .agent)ᶜ ∧
+    zeroDeriv.adds = (SalienceClass.stemValency .agentPatient)ᶜ ∧
+    causativeS.adds = (SalienceClass.stemValency .patient)ᶜ := by decide
 
 /-! ### Positional interstitiality -/
 
@@ -390,7 +408,7 @@ theorem positional_crosscuts_transitiviser_classes :
 /-- For cause-free roots — every root in this sample — collocational
     closure does not change the predicted class. -/
 theorem predictedClass_closure_invariant (r : Root) (h : ¬ r.HasCause) :
-    SalienceClass.ofKinds r.closedKinds (arity r) = predictedClass r :=
-  SalienceClass.ofKinds_close r.kinds (arity r) h
+    SalienceClass.ofKinds r.closedKinds (valency r) = predictedClass r :=
+  SalienceClass.ofKinds_close r.kinds (valency r) h
 
 end Lucy1994

@@ -13,7 +13,9 @@ syntacticians"). A verb/VP denotation is a predicate of events
 `Event Time → Prop` (this is `Set (Event Time)`; used predicatively).
 
 The central new object is `VerbDenot`: a verb denotation classified by the
-structure argument introduction is sensitive to (valence). [pylkkanen-2008]'s
+structure argument introduction is sensitive to (its valency; the finite
+positional bookkeeping of who introduces which core position is the sibling
+`Valency.lean`). [pylkkanen-2008]'s
 high/low contrast is the `IntroMode` parameter — whether the introduced
 participant is related to the *event* (high applicative / Voice, via Event
 Identification) or to the verb's internal *theme* (low applicative, via a
