@@ -20,12 +20,12 @@ signature admits no criterial configuration, its NOC mirror (§7.1) admits
 all.
 
 Deliberately absent, per §1.3: obligatory *de se* is NOT criterial for OC —
-it is an attitude-tier property. Per §1.4, obligatory *nullness* is not
-criterial either: whether a language spells the controlled subject out is a
-vocabulary fact orthogonal to the signature — the overt-PRO studies
-(`Studies/Ostrove2026.lean`, `Studies/Allotey2021.lean`) turn on exactly this
-separation. The full NOC signature (453) also adds a third, positive clause —
-PRO is `[+human]` — which the book defends as irreducible (§7.5); the
+it is an attitude-tier property. Per §1.4, the lexical-subject diagnostic is
+rejected as an "obligatory nullness criterion" rather than an OC criterion —
+the separation the overt-PRO studies (`Studies/Ostrove2026.lean`,
+`Studies/Allotey2021.lean`) turn on. The full NOC signature (453) also adds a third, positive clause —
+PRO is `[+human]` — which the book (tentatively) defends as irreducible
+(§7.5; retracted by name in [landau-2024]); the
 two-clause mirror covers only the criteria that (74)'s clauses derive.
 -/
 

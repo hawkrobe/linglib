@@ -7,7 +7,7 @@ Authors: Robert Hawkins
 /-!
 # The Calculus of Control
 
-[landau-2004]'s calculus, as codified in [landau-2013] ((6)/(178)): each
+[landau-2004]'s calculus, as codified in [landau-2013] ((137)/(178)): each
 clausal head — I and C — carries a `⟨T, Agr⟩` feature specification, and a
 head both of whose features are positive assigns `[+R]`, licensing an
 independent referential subject. Control is the *elsewhere* case. Mutual
@@ -28,7 +28,7 @@ derived from the calculus via `ClauseClass.toClause`.
 namespace Control
 
 /-- A clausal head as the calculus sees it: its `⟨T, Agr⟩` feature
-    specification ([landau-2004]; [landau-2013] (6)). -/
+    specification ([landau-2004]; [landau-2013] (137)). -/
 structure Head where
   /-- Semantic tense, `[±T]`. -/
   tense : Bool
@@ -37,7 +37,7 @@ structure Head where
   deriving DecidableEq, Repr
 
 /-- A head is R-assigning when both features are positive: it licenses an
-    independent referential subject ([landau-2013] (178)). -/
+    independent referential subject ([landau-2013] (137a)). -/
 def Head.RAssigning (h : Head) : Prop :=
   h.tense ∧ h.agr
 
