@@ -1,6 +1,7 @@
 import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.NormNum
 import Linglib.Semantics.Verb.Root.Classification
+import Linglib.Semantics.ArgumentStructure.LevinTheory
 import Linglib.Semantics.ArgumentStructure.EventStructure
 import Linglib.Semantics.ArgumentStructure.RoleList
 import Linglib.Fragments.Chuj.VerbBuilding
@@ -666,7 +667,7 @@ theorem grand_unification (ct : ChangeType) :
 /-- Change entailment determines markedness in the unified `Classification`. -/
 theorem root_markedness_from_change (r : Classification) :
     verbalMarkedness r.changeType = .unmarked ↔ r.entailsChange = true := by
-  cases r with | mk valency changeType _ _ _ =>
+  cases r with | mk valency changeType _ =>
   cases changeType <;> simp [Classification.entailsChange,
     verbalMarkedness, ChangeType.entailsChange]
 
@@ -876,21 +877,5 @@ theorem result_roots_classified_and_predicted :
     -- Theory: result lacks simple stative
     hasSimpleStative .result = false := by
   exact ⟨by decide, rfl⟩
-
-/-- The subclass taxonomies are aligned: B&KG's `PCSubclass` has 6
-    categories (matching their Table 2); the theory's `PCClass` has 7
-    (adding `humanPropensity` from [dixon-1982], attested in
-    [hanink-koontz-garboden-2025]). `ResultClass` and `ResultSubclass`
-    match exactly (8 subclasses). -/
-theorem subclass_counts_match :
-    -- B&KG's 6 PC subclasses are a subset of the theory's 7
-    [PCSubclass.dimension, .age, .value, .color, .physicalProperty, .speed].length = 6 ∧
-    [PCClass.dimension, .age, .value, .color, .physicalProperty, .humanPropensity, .speed].length = 7 ∧
-    -- 8 result subclasses in both
-    [ResultClass.entitySpecificCoS, .cooking, .breaking, .bending,
-     .killing, .destroying, .calibratableCoS, .inherentlyDirectedMotion].length =
-    [ResultSubclass.entitySpecificCoS, .cooking, .breaking, .bending,
-     .killing, .destroying, .calibratableCoS, .inherentlyDirectedMotion].length :=
-  ⟨rfl, rfl, rfl⟩
 
 end BeaversEtAl2021

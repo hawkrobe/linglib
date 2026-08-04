@@ -1,65 +1,69 @@
+import Linglib.Semantics.Verb.Root.Kinds
 import Linglib.Semantics.ArgumentStructure.Valency
 import Linglib.Semantics.ArgumentStructure.SalienceClass
-import Linglib.Semantics.ArgumentStructure.LevinTheory
 
 /-!
-# Root classification: change type, denotation type, and cross-classification
+# Root classification: change type, denotation type, and the annotation record
 
-The cross-linguistic classification dimensions a change-of-state verb root is
-typed by: whether it lexically entails change (`ChangeType`), its semantic
-denotation domain (`DenotationType`), Dixon's property-concept categories
-(`PCClass`), Levin's result-verb categories (`ResultClass`), and the bundled
-`Classification` cross-classifying valency against change entailment.
+The cross-linguistic classification dimensions a change-of-state verb root
+is typed by: whether it lexically entails change (`ChangeType`), its
+semantic denotation domain (`DenotationType`), Dixon's property-concept
+categories (`PCClass`), and the `Classification` annotation record over
+(valency × change type × denotation type) for annotation-first fragments.
 
 ## Anchoring and provenance
 
-* `ChangeType` — the property-concept vs. result split of [levin-1993]'s
-  deadjectival typology. The reading that result roots *lexically entail
-  change* (`entailsChange`, `allowsRestitutiveAgain`) is the
-  [beavers-etal-2021]/[beavers-koontz-garboden-2020] account and is contested
-  by the Distributed-Morphology camp, for whom change is templatic; the split
-  itself is theory-neutral.
-* `DenotationType` — the four denotation domains of [coon-2019]'s Chuj root
-  classes (3), extended by [hanink-koontz-garboden-2025]. A single-account
-  type earning substrate status by consumer count (Chuj fragment, Coon 2019,
-  Hanink & Koontz-Garboden 2025).
-* `PCClass` — [dixon-1982]'s seven property-concept categories (consensus).
-* `ResultClass` — [levin-1993]'s result-verb categories (consensus), except
-  `inherentlyDirectedMotion`, a formaliser addition not on Levin's list.
+* `ChangeType` — [dixon-1982]'s (p. 50) split between property-concept
+  states and "states that are the result of some action", recast at root
+  level by [beavers-koontz-garboden-2020] and [beavers-etal-2021] (the
+  term "property concept" is later than Dixon —
+  [beavers-koontz-garboden-2020] fn. 2 credit it to Thompson).
+  [levin-1993] supplies the English deadjectival vs non-deadjectival
+  verb inventory. The reading that result roots *lexically entail*
+  change is the Beavers et al. account, contested by the
+  Distributed-Morphology camp; the split itself is theory-neutral.
+* `DenotationType` — the four denotation domains of [coon-2019] (3),
+  extended by [hanink-koontz-garboden-2025].
+* `PCClass` — [dixon-1982]'s seven categories.
 
 ## Main definitions
 
-* `ChangeType`, `ChangeType.entailsChange`, `ChangeType.allowsRestitutiveAgain`
+* `ChangeType`, `ChangeType.ofKinds` — the axis and its projection from
+  kind signatures
 * `DenotationType`, `DenotationType.hasIndivArg`
-* `PCClass`, `ResultClass`
-* `Classification` bundling valency × change entailment × denotation type
+* `Classification` — the annotation record
+* `Classification.salienceClass` — the annotation-level salience hom
 
 ## Main results
 
-* `valency_changeType_orthogonal`, `change_does_not_determine_valency` — the
-  valency and change-entailment dimensions are independent (all four cells
-  inhabited).
+* `Classification.salienceClass_ofKinds` — on manner-free signatures the
+  annotation-level classifier agrees with the signature-level
+  `SalienceClass.ofKinds`
 -/
 
 open ArgumentStructure
 
 namespace Verb.Root
 
-/-- Two types of change-of-state verb roots ([beavers-etal-2021] §3.1).
+/-- Two types of change-of-state verb roots ([beavers-etal-2021] §3.1;
+    [dixon-1982] p. 50).
 
     **Property concept (PC) roots** underlie deadjectival CoS verbs: the root
     describes a gradable property (flat, red, long, warm). **Result roots**
     underlie non-deadjectival CoS verbs: the root describes a specific result
     state arising from a particular event (crack, break, shatter). -/
 inductive ChangeType where
-  | propertyConcept  -- flat, red, long — deadjectival CoS (flatten, redden)
-  | result           -- crack, break, shatter — non-deadjectival CoS
+  /-- flat, red, long — deadjectival CoS (flatten, redden). -/
+  | propertyConcept
+  /-- crack, break, shatter — non-deadjectival CoS. -/
+  | result
   deriving DecidableEq, Repr
 
 /-- Whether a root lexically entails prior change ([beavers-etal-2021] §3.6).
     PC roots denote simple states holding without prior change; result roots
-    denote states entailing a prior change event. The entailment reading is the
-    B&KG account, contested by the DM camp. -/
+    denote states entailing a prior change event. The change entailment is
+    categorical; the morphological correlates (markedness, simple stative
+    forms) are crosslinguistic tendencies with flagged exceptions. -/
 def ChangeType.entailsChange : ChangeType → Bool
   | .propertyConcept => false
   | .result => true
@@ -68,7 +72,8 @@ def ChangeType.entailsChange : ChangeType → Bool
     allow only repetitive *again* (scope over BECOME) ([beavers-etal-2021]
     §3.4). Since a result root's state itself entails change, *again* over the
     root still entails a prior change event, collapsing into the repetitive
-    reading. -/
+    reading. Their fn. 9 records speaker variation for particular result
+    roots (*thaw*, *return*). -/
 def ChangeType.allowsRestitutiveAgain : ChangeType → Bool
   | .propertyConcept => true
   | .result => false
@@ -81,72 +86,67 @@ def ChangeType.ofKinds (s : Root.Kinds) : ChangeType :=
   if LexKind.result ∈ s then .result else .propertyConcept
 
 /-- The semantic denotation domain of a root ([coon-2019] (3); extended by
-    [hanink-koontz-garboden-2025]).
-
-    - `indivStatePred` ⟨e, ⟨v,t⟩⟩: individual/state relation (√TV, √ITV; also PC
-      Class 1/3 roots per [hanink-koontz-garboden-2025])
-    - `statePred` ⟨v,t⟩: predicate of states, no individual argument (PC Class 2)
-    - `measureFn` ⟨e, ⟨s,d⟩⟩: entity → event → degree (√POS in [coon-2019] (3),
-      following [henderson-2019]'s measure functions)
-    - `entityPred` ⟨e,t⟩: entity → truth-value, no event (√NOM) -/
+    [hanink-koontz-garboden-2025]). -/
 inductive DenotationType where
-  | indivStatePred  -- ⟨e, ⟨v,t⟩⟩ (√TV, √ITV; PC Class 1/3)
-  | statePred       -- ⟨v,t⟩ (PC Class 2: quality-type)
-  | measureFn       -- ⟨e, ⟨s,d⟩⟩ (√POS; [coon-2019] (3), following [henderson-2019])
-  | entityPred      -- ⟨e,t⟩ (√NOM)
+  /-- ⟨e,⟨s,t⟩⟩: individual/state relation (√TV and √ITV in [coon-2019]
+      (3); PC Class 1/3 roots per [hanink-koontz-garboden-2025]). -/
+  | indivStatePred
+  /-- ⟨s,t⟩: predicate of states, no individual argument (PC Class 2). -/
+  | statePred
+  /-- ⟨e,⟨s,d⟩⟩: entity → state → degree (√POS, per [coon-2019] (3);
+      [henderson-2019]'s published analysis types positional-root measure
+      functions ⟨e,d⟩ — the state argument is Coon's). -/
+  | measureFn
+  /-- ⟨e,t⟩: entity predicate with no eventuality argument (√NOM). -/
+  | entityPred
   deriving DecidableEq, Repr
 
 /-- Whether a root denotation type includes an individual argument.
 
-    Types with an individual argument (⟨e, ...⟩) compose directly with v_become
-    (which requires ⟨e, ⟨v,t⟩⟩). Types without one (⟨v,t⟩) cause a type mismatch
-    and require type-shifting (∇) or possessive semantics (v_have) to predicate
-    of individuals ([hanink-koontz-garboden-2025] §5.1). -/
+    Types with an individual argument (⟨e, …⟩) compose directly with v_become
+    (which requires ⟨e,⟨s,t⟩⟩). A bare state predicate (⟨s,t⟩) cannot, and is
+    predicated of individuals via possession instead — the *-iʔ* possessive
+    verbalizer of [hanink-koontz-garboden-2025] (their analysis of the *ʔil-*
+    prefix, §5.2), following [francez-koontz-garboden-2017]'s possessive
+    analysis of property concepts. -/
 def DenotationType.hasIndivArg : DenotationType → Bool
-  | .indivStatePred => true   -- ⟨e, ⟨v,t⟩⟩
-  | .statePred      => false  -- ⟨v,t⟩
-  | .measureFn      => true   -- ⟨e, ⟨s,d⟩⟩
+  | .indivStatePred => true   -- ⟨e,⟨s,t⟩⟩
+  | .statePred      => false  -- ⟨s,t⟩
+  | .measureFn      => true   -- ⟨e,⟨s,d⟩⟩
   | .entityPred     => true   -- ⟨e,t⟩
 
-/-- Property concept root subclasses ([dixon-1982]; [beavers-etal-2021] ex. 5).
-
-    [dixon-1982] identifies seven semantic categories. [beavers-etal-2021]
-    omits HUMAN PROPENSITY from their Table 2 sample, but the category is
-    attested crosslinguistically ([hanink-koontz-garboden-2025] Table A1). -/
+/-- Property concept root subclasses ([dixon-1982]; [beavers-etal-2021]
+    ex. 5). [beavers-etal-2021] exclude human propensity from their sample
+    (fn. 5 to ex. 5): many of its verbal forms are stative, and their study
+    targets change of state. -/
 inductive PCClass where
-  | dimension         -- large/big, small, long, short, deep, wide, tall/high
-  | age               -- old/aged
-  | value             -- bad/worse, good/improved
-  | color             -- white, black, red, green, blue, brown
-  | physicalProperty  -- cool/cold, warm/hot, dry/wet, soft/hard, smooth/rough
-  | humanPropensity   -- hungry, afraid, sick, brave, generous ([dixon-1982])
-  | speed             -- fast, slow
+  /-- large/big, small, long, short, deep, wide, tall/high. -/
+  | dimension
+  /-- old/aged. -/
+  | age
+  /-- bad/worse, good/improved. -/
+  | value
+  /-- white, black, red, green, blue, brown. -/
+  | color
+  /-- cool/cold, warm/hot, dry/wet, soft/hard, smooth/rough. -/
+  | physicalProperty
+  /-- angry, embarrassed ([beavers-etal-2021] fn. 5). -/
+  | humanPropensity
+  /-- fast, slow. -/
+  | speed
   deriving DecidableEq, Repr
 
-/-- Result root subclasses ([levin-1993]; [beavers-etal-2021] ex. 6).
-    `inherentlyDirectedMotion` is a formaliser addition, not on Levin's list. -/
-inductive ResultClass where
-  | entitySpecificCoS          -- burned, melted, frozen, decayed, bloomed, rusted
-  | cooking                    -- cooked, baked, fried, roasted, boiled
-  | breaking                   -- broken, cracked, crushed, shattered, split, torn
-  | bending                    -- bent, folded, wrinkled, creased
-  | killing                    -- dead, killed, murdered, drowned
-  | destroying                 -- destroyed, ruined
-  | calibratableCoS            -- go up, increase, go down, decrease, differ
-  | inherentlyDirectedMotion   -- come, go, enter, exit, return (formaliser addition)
-  deriving DecidableEq, Repr
+/-- Annotation record for roots with no atom decomposition: stipulated
+    coordinates over valency × change type × denotation type, the
+    annotation-first counterpart of the derived projections off
+    `Root.kinds`. The stipulated and derived coordinates agree only by
+    theorem (`salienceClass_ofKinds`), never by construction.
 
-/-- Unified root characterization bundling the classification dimensions.
-
-    A root is characterized along independent axes: valency (which
-    core-argument positions it introduces — at most the internal, per
-    [coon-2019]'s division of labor), change entailment (does it lexically
-    entail prior change?), denotation type ([coon-2019] (3)), within-class
-    quality dimensions, and verb-class membership. Valency, change
-    entailment, and denotation type cross-classify: [coon-2019]'s four Chuj
-    root classes are recovered as (valency × denotationType) pairs — √TV =
-    `{.internal}` + indivStatePred, √ITV = `∅` + indivStatePred, √POS = `∅` +
-    measureFn, √NOM = `∅` + entityPred. -/
+    [coon-2019]'s √TV vs √ITV distinction is *not* recovered by these
+    coordinates: her §3.3 gives both classes type ⟨e,⟨s,t⟩⟩, with √ITV
+    unaccusative, and separates them by compatibility with the
+    external-argument-introducing v ~ Voice head — a coordinate she
+    declines to formalize and this record does not yet carry. -/
 structure Classification where
   /-- The core-argument positions the root introduces ([coon-2019]:
       at most the internal argument — `Valency.IsRootValency`). -/
@@ -156,71 +156,18 @@ structure Classification where
   /-- Semantic denotation domain ([coon-2019] (3)). Optional — not all roots
       have been annotated. -/
   denotationType : Option DenotationType := none
-  /-- Within-class quality dimensions ([spalek-mcnally-2026]). -/
-  profile : Profile := {}
-  /-- Verb class membership. -/
-  levinClass : Option LevinClass := none
-  deriving BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Does this root lexically entail prior change? -/
 def Classification.entailsChange (r : Classification) : Bool := r.changeType.entailsChange
 
-/-! ### Cross-classification: valency × change entailment -/
-
--- Witnesses for all four cells of the 2×2 cross-classification.
-
-/-- √BREAK: selects theme + entails change (result root, [levin-1993] 45.1). -/
-def Classification.break_ : Classification :=
-  { valency := {.internal}, changeType := .result,
-    denotationType := some .indivStatePred, levinClass := some .break_ }
-
-/-- √HIT: selects theme + does not entail change ([levin-1993] 18.1).
-    `.propertyConcept` is used broadly: the formal content
-    (`entailsChange = false`) is what matters, not the label. -/
-def Classification.hit : Classification :=
-  { valency := {.internal}, changeType := .propertyConcept,
-    denotationType := some .indivStatePred, levinClass := some .hit }
-
-/-- √DIE: no theme + entails change. The dying entity is introduced by
-    functional structure (unaccusative vGO/vBE), not selected by the root;
-    dying lexically entails a prior change (becoming dead). -/
-def Classification.die : Classification :=
-  { valency := ∅, changeType := .result,
-    denotationType := some .indivStatePred }
-
-/-- √SIT: no theme + does not entail change (positional root, Coon's √POS
-    class). Denotes a measure function ⟨e,⟨s,d⟩⟩ ([coon-2019] (3), following
-    [henderson-2019]). -/
-def Classification.sit : Classification :=
-  { valency := ∅, changeType := .propertyConcept,
-    denotationType := some .measureFn, levinClass := some .assumePosition }
-
-/-- **Orthogonality of valency and change entailment.** All four cells of the
-    2×2 cross-classification are inhabited: knowing that a root introduces its
-    theme tells you nothing about whether it entails change, and vice versa. -/
-theorem valency_changeType_orthogonal :
-    (∃ r : Classification, r.valency = {.internal} ∧ r.changeType = .result) ∧
-    (∃ r : Classification, r.valency = {.internal} ∧ r.changeType = .propertyConcept) ∧
-    (∃ r : Classification, r.valency = ∅ ∧ r.changeType = .result) ∧
-    (∃ r : Classification, r.valency = ∅ ∧ r.changeType = .propertyConcept) :=
-  ⟨⟨.break_, rfl, rfl⟩, ⟨.hit, rfl, rfl⟩, ⟨.die, rfl, rfl⟩, ⟨.sit, rfl, rfl⟩⟩
-
-/-- **Change entailment does not determine valency** (and vice versa).
-    Change entailment fixes all morphosyntactic correlates (markedness, simple
-    stative, again readings) but nothing about internal argument introduction —
-    [coon-2019]'s valency is an independent dimension. -/
-theorem change_does_not_determine_valency :
-    (∃ r : Classification, r.entailsChange = true ∧ r.valency = {.internal}) ∧
-    (∃ r : Classification, r.entailsChange = true ∧ r.valency = ∅) ∧
-    (∃ r : Classification, r.entailsChange = false ∧ r.valency = {.internal}) ∧
-    (∃ r : Classification, r.entailsChange = false ∧ r.valency = ∅) :=
-  ⟨⟨.break_, rfl, rfl⟩, ⟨.die, rfl, rfl⟩, ⟨.hit, rfl, rfl⟩, ⟨.sit, rfl, rfl⟩⟩
-
 /-! ### Salience through the annotation coordinates -/
+
+variable (s : Root.Kinds) (v : Valency)
 
 /-- The salience class determined by the annotation coordinates
     (valency × change type). Partial where the coordinates underdetermine
-    the class: `ChangeType` is manner-blind, so a `noTheme`
+    the class: `ChangeType` is manner-blind, so an internal-argument-free
     property-concept annotation cannot distinguish an agent-salient
     manner root from an unclassified stative. -/
 def Classification.salienceClass (c : Classification) : Option SalienceClass :=
@@ -235,10 +182,9 @@ def Classification.salienceClass (c : Classification) : Option SalienceClass :=
     necessary: a manner root maps to `.propertyConcept` under
     `ChangeType.ofKinds`, where the annotation coordinates return `none`
     but the signature classifier sees agent salience. -/
-theorem Classification.salienceClass_ofKinds :
-    ∀ (s : Root.Kinds) (v : Valency), LexKind.manner ∉ s →
-      ({ valency := v, changeType := .ofKinds s } : Classification).salienceClass =
-        SalienceClass.ofKinds s v := by
-  decide
+theorem Classification.salienceClass_ofKinds (h : LexKind.manner ∉ s) :
+    ({ valency := v, changeType := .ofKinds s } : Classification).salienceClass =
+      SalienceClass.ofKinds s v := by
+  revert s v; decide
 
 end Verb.Root
