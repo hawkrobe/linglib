@@ -29,7 +29,7 @@ a **descriptive quantifier condition** (q-cond), and a **quantifier perspective*
 ## Thread map
 
 - **Ordered set bipartitions**: defined here (`BP`)
-- **Witness sets**: `Semantics.TypeTheoretic.WitnessQuantification` —
+- **Witness sets**: `Semantics/Quantification/Witness.lean` —
   `WitnessSet`, `IsExistW`, `AnaphoraRef`, `anaphoraAvailable`
 - **GQT properties**: `Quantification.Quantifier` —
   `GQ`, `Conservative`
@@ -39,7 +39,6 @@ a **descriptive quantifier condition** (q-cond), and a **quantifier perspective*
 
 namespace LuckingGinzburg2022
 
-open Semantics.TypeTheoretic
 open Cooper2023Ch7
 open Quantification
 

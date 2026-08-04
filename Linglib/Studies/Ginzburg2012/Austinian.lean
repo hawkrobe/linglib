@@ -1,5 +1,5 @@
 import Linglib.Studies.Ginzburg2012.InquiryCycle
-import Linglib.Semantics.TypeTheoretic.Discourse
+import Linglib.Semantics.Intensional.Austinian
 
 /-!
 # KOS over Austinian Propositions
@@ -14,8 +14,8 @@ question-bodies?
 
 ## Contents
 
-- §1. `TTRQuestionB` — a Bool-valued TTR question (decidable variant of
-   the `Type 1` `TTRQuestion`), needed because `DGB` requires `QContent : Type`.
+- §1. `TTRQuestionB` — a Bool-valued TTR question (the dependent-type
+   variant would land in `Type 1`), needed because `DGB` requires `QContent : Type`.
 - §2. Austinian-fact DGB/TIS aliases (`AustinianDGB`, `AustinianTIS`).
 - §3. The `austinianSupport` instance — a `BCheckableAustinian` resolves
    a `TTRQuestionB` when the situation that makes the fact true also
@@ -26,8 +26,7 @@ question-bodies?
 
 namespace Discourse.Gameboard.Austinian
 
-open Semantics.TypeTheoretic (BCheckableAustinian CheckableAustinian
-  IsTrue IsFalse)
+open Intensional (BCheckableAustinian CheckableAustinian)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Bool-Valued TTR Questions
@@ -35,8 +34,8 @@ open Semantics.TypeTheoretic (BCheckableAustinian CheckableAustinian
 
 /-- A Bool-valued TTR question: stays in `Type 0` for DGB compatibility.
 
-`TTRQuestion R` (from TypeTheoretic/Discourse.lean) has `body : R → Type`,
-placing it in `Type 1`. Since `DGB` requires `QContent : Type`, we provide
+A dependent-type question body (`R → Type`) would place the record in
+`Type 1`. Since `DGB` requires `QContent : Type`, we provide
 a decidable variant where the question body is Bool-valued.
 
 The correspondence: `TTRQuestionB R` is to `TTRQuestion R` as `Prop' W` is

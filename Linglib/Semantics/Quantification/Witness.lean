@@ -1,4 +1,3 @@
-import Linglib.Semantics.TypeTheoretic.Basic
 import Linglib.Semantics.Quantification.Counting
 import Mathlib.Data.Finset.Card
 import Mathlib.Data.Finset.Powerset
@@ -56,10 +55,10 @@ refset/compset/maxset framework).
 ## Implementation notes
 
 * All witness-set predicates take a `DecidablePred` `P : E → Prop` rather
-  than a `Ppty E := E → Type`. This matches [barwise-cooper-1981]'s
-  set-theoretic formulation and lets Lean's `decide` close finite
-  cardinality goals. `Ppty`-shaped witness conditions
-  (`ParticularWC_*`, `GeneralWC_*`) coexist for the Type-valued TTR
+  than a Type-valued `E → Type` predicate. This matches
+  [barwise-cooper-1981]'s set-theoretic formulation and lets Lean's
+  `decide` close finite cardinality goals. Type-valued witness conditions
+  (`ParticularWC_*`, `GeneralWC_*`) coexist for the proof-relevant
   predicates used in compositional semantics.
 * Anaphora-availability is encoded as a finite enumeration
   (`anaphoraAvailable : QuantName → List AnaphoraRef`) rather than a
@@ -67,7 +66,7 @@ refset/compset/maxset framework).
   Lean encoding is for downstream `decide`-based dispatch.
 -/
 
-namespace Semantics.TypeTheoretic
+namespace Quantification
 
 /-! ### Extension of a predicate as a `Finset` -/
 
@@ -164,7 +163,7 @@ theorem isEveryW_iff [DecidableEq E] [Fintype E] (P : E → Prop) [DecidablePred
 /-- General witness condition for monotone-increasing quantifiers
 ([cooper-2023] §7.4): a witness set `X` plus a per-element
 mapping into `Q`-evidence. -/
-structure GeneralWC_Incr (P Q : Ppty E)
+structure GeneralWC_Incr (P Q : E → Type)
     (isWS : Finset E → Prop) [DecidableEq E] where
   X : Finset E
   witnessOK : isWS X
@@ -172,7 +171,7 @@ structure GeneralWC_Incr (P Q : Ppty E)
 
 /-- General witness condition for monotone-decreasing quantifiers: a
 witness set `X` plus universal containment of `P ∩ Q`-entities in `X`. -/
-structure GeneralWC_Decr (P Q : Ppty E)
+structure GeneralWC_Decr (P Q : E → Type)
     (isWS : Finset E → Prop) [DecidableEq E] where
   X : Finset E
   witnessOK : isWS X
@@ -181,7 +180,7 @@ structure GeneralWC_Decr (P Q : Ppty E)
 /-- Particular witness condition for `exist(P, Q)`: a specific
 individual `x` witnessing both `P` and `Q`. The `x`-field enables REFSET
 (singular) anaphora ("A dog barked. It heard an intruder."). -/
-structure ParticularWC_Exist (P Q : Ppty E) where
+structure ParticularWC_Exist (P Q : E → Type) where
   x : E
   pWit : P x
   qWit : Q x
@@ -189,13 +188,13 @@ structure ParticularWC_Exist (P Q : Ppty E) where
 /-- Particular witness condition for `no(P, Q)`: every `P`-entity fails
 to bear `Q`. With `everyʷ(P)` as the witness set, predicts MAXSET
 anaphora ("No dog barked. They were all asleep."). -/
-structure ParticularWC_No (P Q : Ppty E) where
+structure ParticularWC_No (P Q : E → Type) where
   f : (a : E) → P a → IsEmpty (Q a)
 
 /-- Particular witness condition for `few` with complement: a set of
 `P`-entities all lacking `Q`. Predicts COMPSET anaphora ("Few dogs
 barked. They slept through."). -/
-structure ParticularWC_FewComp (P Q : Ppty E) [DecidableEq E] where
+structure ParticularWC_FewComp (P Q : E → Type) [DecidableEq E] where
   X : Finset E
   allP : ∀ a ∈ X, Nonempty (P a)
   allNotQ : ∀ a ∈ X, IsEmpty (Q a)
@@ -203,7 +202,7 @@ structure ParticularWC_FewComp (P Q : Ppty E) [DecidableEq E] where
 /-- The particular `exist` condition implies the general one with a
 singleton witness set. -/
 def particular_exist_implies_general [DecidableEq E]
-    (P Q : Ppty E) (h : ParticularWC_Exist P Q)
+    (P Q : E → Type) (h : ParticularWC_Exist P Q)
     (Pd : E → Prop) (hPd : ∀ a, Pd a ↔ Nonempty (P a)) :
     GeneralWC_Incr P Q (IsExistW Pd) :=
   ⟨{h.x},
@@ -216,7 +215,7 @@ def particular_exist_implies_general [DecidableEq E]
 /-- The particular `no` condition implies the general decreasing one
 with the empty witness set. -/
 def particular_no_implies_general [DecidableEq E]
-    (P Q : Ppty E) (h : ParticularWC_No P Q)
+    (P Q : E → Type) (h : ParticularWC_No P Q)
     (Pd : E → Prop) :
     GeneralWC_Decr P Q (IsNoW Pd) :=
   ⟨∅, rfl,
@@ -258,7 +257,6 @@ def anaphoraAvailable : QuantName → List AnaphoraRef
 
 /-! ### Induced classical GQ denotations -/
 
-open Quantification
 
 /-- The GQ induced by existential witness sets:
 `exist(A, B)` iff some element bears both `A` and `B`. -/
@@ -303,7 +301,7 @@ theorem universal_iff_witnessGQ (P Q : E → Prop) :
 
 /-- `ParticularWC_Exist` constructs a witness for the existential GQ. -/
 theorem particularWC_to_witnessGQ [DecidableEq E]
-    {P Q : Ppty E} (w : ParticularWC_Exist P Q)
+    {P Q : E → Type} (w : ParticularWC_Exist P Q)
     (Pd Qd : E → Prop)
     (hP : ∀ a, Pd a ↔ Nonempty (P a)) (hQ : ∀ a, Qd a ↔ Nonempty (Q a)) :
     witnessGQ_exist Pd Qd := by
@@ -312,7 +310,7 @@ theorem particularWC_to_witnessGQ [DecidableEq E]
 
 /-- `ParticularWC_No` constructs the universal GQ with negated scope. -/
 theorem particularWC_no_to_witnessGQ [DecidableEq E]
-    {P Q : Ppty E} (w : ParticularWC_No P Q)
+    {P Q : E → Type} (w : ParticularWC_No P Q)
     (Pd Qd : E → Prop)
     (hP : ∀ a, Pd a ↔ Nonempty (P a)) (hQ : ∀ a, Qd a ↔ Nonempty (Q a)) :
     witnessGQ_every Pd (λ x => ¬ Qd x) := by
@@ -345,17 +343,17 @@ theorem few_comp_partition [DecidableEq E] [Fintype E]
 /-! ### Monotonicity from witness-condition shape -/
 
 /-- Upward monotonicity of the increasing general witness condition. -/
-def generalWC_incr_mono [DecidableEq E] (P Q Q' : Ppty E)
+def generalWC_incr_mono [DecidableEq E] (P Q Q' : E → Type)
     (isWS : Finset E → Prop)
     (embed : ∀ a : E, Q a → Q' a)
     (w : GeneralWC_Incr P Q isWS) : GeneralWC_Incr P Q' isWS :=
   ⟨w.X, w.witnessOK, λ a ha => embed a (w.f a ha)⟩
 
 /-- Downward monotonicity of the decreasing general witness condition. -/
-def generalWC_decr_mono [DecidableEq E] (P Q Q' : Ppty E)
+def generalWC_decr_mono [DecidableEq E] (P Q Q' : E → Type)
     (isWS : Finset E → Prop)
     (embed : ∀ a : E, Q' a → Q a)
     (w : GeneralWC_Decr P Q isWS) : GeneralWC_Decr P Q' isWS :=
   ⟨w.X, w.witnessOK, λ a hP hQ' => w.f a hP ⟨embed a hQ'.some⟩⟩
 
-end Semantics.TypeTheoretic
+end Quantification

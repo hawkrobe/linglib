@@ -1,5 +1,5 @@
-import Linglib.Semantics.TypeTheoretic.Discourse
-import Linglib.Semantics.TypeTheoretic.WitnessQuantification
+import Linglib.Studies.Cooper2023.TTR
+import Linglib.Semantics.Quantification.Witness
 import Linglib.Semantics.Quantification.Counting
 import Mathlib.Data.Finset.Card
 
@@ -15,7 +15,7 @@ sets* — finite sets of individuals satisfying cardinality conditions
 specific to each quantifier. The reusable substrate (witness-set types,
 particular/general witness conditions, induced GQ denotations,
 conservativity proofs, anaphora-availability tables) lives in
-`Linglib/Semantics/TypeTheoretic/WitnessQuantification.lean`; this file
+`Linglib/Semantics/Quantification/Witness.lean`; this file
 contains Cooper's chapter-specific deployment.
 
 ## Main definitions
@@ -46,9 +46,9 @@ contains Cooper's chapter-specific deployment.
 
 namespace Cooper2023Ch7
 
-open Semantics.TypeTheoretic
-  (Ppty PPpty Parametric Quant propT
-   WitnessSet IsExistW IsExistPlW IsNoW IsEveryW IsMostW IsManyAbsW
+open Cooper2023.TTR (Ppty PPpty Parametric Quant propT)
+open Quantification
+  (WitnessSet IsExistW IsExistPlW IsNoW IsEveryW IsMostW IsManyAbsW
    IsManyPropW IsFewAbsW IsFewPropW IsAFewAbsW IsAFewPropW IsCompFewAbsW
    IsCompFewPropW fullExtFinset AnaphoraRef QuantName anaphoraAvailable
    GeneralWC_Incr GeneralWC_Decr ParticularWC_Exist ParticularWC_No

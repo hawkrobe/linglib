@@ -1676,6 +1676,7 @@ import Linglib.Semantics.Homogeneity.Plural
 import Linglib.Semantics.Homogeneity.Usable
 import Linglib.Semantics.Iconicity
 import Linglib.Semantics.Intensional.Algebra
+import Linglib.Semantics.Intensional.Austinian
 import Linglib.Semantics.Intensional.CategoryType
 import Linglib.Semantics.Intensional.Conjunction
 import Linglib.Semantics.Intensional.Defs
@@ -1791,6 +1792,7 @@ import Linglib.Semantics.Quantification.PolarizedIndividuals
 import Linglib.Semantics.Quantification.Polyadic
 import Linglib.Semantics.Quantification.Properties
 import Linglib.Semantics.Quantification.Quantifier
+import Linglib.Semantics.Quantification.Witness
 import Linglib.Semantics.Quantification.Syllogistic.Defs
 import Linglib.Semantics.Quantification.Syllogistic.Forms
 import Linglib.Semantics.Quantification.Syllogistic.Square
@@ -1862,9 +1864,6 @@ import Linglib.Semantics.Truthmaker.Basic
 import Linglib.Semantics.Truthmaker.Closure
 import Linglib.Semantics.Truthmaker.Entailment
 import Linglib.Semantics.Truthmaker.Inexact
-import Linglib.Semantics.TypeTheoretic.Basic
-import Linglib.Semantics.TypeTheoretic.Discourse
-import Linglib.Semantics.TypeTheoretic.WitnessQuantification
 import Linglib.Semantics.Verb.Basic
 import Linglib.Semantics.Verb.Class
 import Linglib.Semantics.Verb.Defs
@@ -2098,6 +2097,7 @@ import Linglib.Studies.Cooper2023.Basic
 import Linglib.Studies.Cooper2023.Ch6
 import Linglib.Studies.Cooper2023.Ch7
 import Linglib.Studies.Cooper2023.Ch8
+import Linglib.Studies.Cooper2023.TTR
 import Linglib.Studies.Coppock2018
 import Linglib.Studies.CoppockBeaver2015
 import Linglib.Studies.Corbett1991
