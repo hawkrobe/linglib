@@ -210,7 +210,8 @@ NOC by a `[−top, +log]` antecedent (an implicit passive agent), (52b)
 by `[+top, −log]` (an established topic with no mental perspective on
 the event). The `[+human]` character of logophoric antecedents
 follows from mental perspective; topical antecedents are only
-*preferentially* human ((49)–(50), a defeasible empathy default). -/
+*preferentially* human — the (55b) default `[+topic] → [+human]`, with
+(49) the resisting data and (50) the attested overrides. -/
 
 /-- A candidate NOC antecedent's discourse status. -/
 structure Antecedent where
@@ -218,7 +219,7 @@ structure Antecedent where
   logophoricCenter : Bool
   deriving DecidableEq, Repr
 
-/-- (55): a DP may serve as NOC controller iff it is a topic or a
+/-- (55a): a DP may serve as NOC controller iff it is a topic or a
     logophoric center. -/
 def Antecedent.MayControl (a : Antecedent) : Prop :=
   a.topic = true ∨ a.logophoricCenter = true

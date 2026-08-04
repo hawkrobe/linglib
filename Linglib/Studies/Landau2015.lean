@@ -301,7 +301,9 @@ theorem promise_desiderative :
     derivedLandauClass promise.toVerb = some .desiderative := rfl
 
 /-- "persuade" (preferential attitude, object control) → desiderative →
-    logophoric, per [landau-2015] table (36). -/
+    logophoric. Table (36) establishes *persuade* as logophoric object
+    control; the desiderative label is this file's derivation from the
+    Fragment's preferential-attitude field ((4)/(5) list no class for it). -/
 theorem persuade_desiderative :
     derivedLandauClass persuade.toVerb = some .desiderative := rfl
 
