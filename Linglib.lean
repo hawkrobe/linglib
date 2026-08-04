@@ -2846,12 +2846,10 @@ import Linglib.Syntax.ConstructionGrammar.Inheritance
 import Linglib.Syntax.ConstructionGrammar.Licensing
 import Linglib.Syntax.ConstructionGrammar.Resultatives
 import Linglib.Syntax.Control.Basic
-import Linglib.Syntax.Control.Calculus
-import Linglib.Syntax.Control.Clause
+import Linglib.Syntax.Control.Finiteness
 import Linglib.Syntax.Control.CopyControl
 import Linglib.Syntax.Control.Defs
 import Linglib.Syntax.Control.Diagnostics
-import Linglib.Syntax.Control.Tier
 import Linglib.Syntax.Coordination
 import Linglib.Syntax.DependencyGrammar.Basic
 import Linglib.Syntax.DependencyGrammar.Coordination

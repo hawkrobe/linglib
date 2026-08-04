@@ -3,8 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Syntax.Control.Tier
 import Linglib.Syntax.Control.Basic
+import Linglib.Semantics.Composition.TypeShifting
+import Linglib.Studies.Landau2015
 
 /-!
 # Landau (2024): Control
@@ -18,9 +19,9 @@ attitude-only distribution of partial control ((36)–(37)), the
 OC/NOC/NC trichotomy ((41)), NOC's dual topic/logophoric licensing
 ((52)), and the strict-vs-alternating adjunct split with the
 propositional-variant criterion ((84)/(89)). The dual theory of §5
-is substrate
-(`Syntax/Control/Tier.lean`, `Clause.lean`, `Defs.lean`); this
-file holds the Element's own empirical generalizations. Its (95)
+rests on the neutral substrate (`Syntax/Control/Defs.lean`) and the tier
+system of `Studies/Landau2015.lean`; this file holds the Element's own
+empirical generalizations and the complement typing ((56)/(58)/(72)). Its (95)
 challenges — backward control, PC's residue, agreement under
 property theories, the OC-NC generalization's crosslinguistic
 variation ([ganenkov-2019]), overt-PRO licensing, adjunct loci — are
@@ -34,6 +35,7 @@ the open frontier.
 namespace Landau2024
 
 open Control SetRel
+open Semantics.Composition.TypeShifting (ComplementDenotation)
 
 /-! ### The OC/NOC/NC trichotomy
 
@@ -171,6 +173,20 @@ dual theory this is `Control.IsSaturating.not_isPartial`: implicative
 complements are predicative, and predication saturates, sharing the
 referent exhaustively. The (37a) configuration refutes saturating
 status for its hypothetical PC reading, never the other way around. -/
+
+/-- The semantic layer a tier's complement inhabits ((56)/(58)):
+    predicative complements are properties, logophoric ones
+    propositions. -/
+def tierDenotation : Landau2015.Tier → ComplementDenotation
+  | .predicative => .property
+  | .logophoric  => .proposition
+
+/-- Generalization (72): a lexical subject saturates a property, so
+    exactly the propositional (logophoric, attitude) complements license
+    one (the generalization originates with [grano-2015]). -/
+theorem lexicalSubject_iff_logophoric (t : Landau2015.Tier) :
+    tierDenotation t = .proposition ↔ t = .logophoric := by
+  cases t <;> decide
 
 /-- The (37a) configuration: matrix controller position `0`, embedded
     subject position `1`. -/

@@ -1,8 +1,6 @@
 import Linglib.Syntax.Voice.Alternation
 import Linglib.Semantics.Modality.Kratzer.Flavor
 import Linglib.Semantics.Composition.TypeShifting
-import Linglib.Studies.Landau2015
-import Linglib.Syntax.Control.Clause
 import Linglib.Fragments.English.Predicates.Verbal
 import Mathlib.Data.Fin.Basic
 
@@ -538,99 +536,5 @@ theorem believe_not_control :
     derivedChierchiaClass believe.toVerb = none := rfl
 
 end VerbVerification
-
--- ════════════════════════════════════════════════════════════════
--- § 8. Bridge to Landau (2015)
--- ════════════════════════════════════════════════════════════════
-
-/-! ## Bridge to Landau (2015)
-
-[chierchia-1984] and [landau-2015] cut the control verb
-space differently:
-
-- **Chierchia**: ALL verbs with the CP are obligatory control, regardless
-  of attitude status. The CP is a meaning postulate that applies uniformly.
-  The subject/object and attitude/non-attitude distinctions are orthogonal.
-- **Landau**: attitude verbs (want, hope, promise, persuade) are logophoric
-  (perspectival coordinate needed), non-attitude verbs (try, manage, force)
-  are predicative.
-
-The systematic divergence: Chierchia → obligatory → predicative for
-ALL control verbs, while Landau → logophoric for attitude verbs. The
-theories agree on non-attitude verbs (both predicative) and diverge
-precisely on attitude verbs. -/
-
-open Landau2015
-
-/-- Map Chierchia's control classes to Landau's control tiers. -/
-def chierchiaToLandauTier : ChierchiaControlClass → Control.Tier
-  | .obligatory     => .predicative
-  | .semiObligatory => .predicative
-  | .prominence     => .logophoric
-
-/-- The CP/no-CP distinction aligns with the predicative/logophoric
-    distinction: CP-bearing classes are predicative, CP-lacking classes
-    are logophoric. Chierchia's CP is thereby the semantic reflex of
-    Landau's condition (90): the entailment needs a specific overt
-    argument to serve as controller, which is what predication
-    demands. -/
-theorem cp_iff_predicative (c : ChierchiaControlClass) :
-    c.hasCP = true ↔ chierchiaToLandauTier c = .predicative := by
-  cases c <;> simp [ChierchiaControlClass.hasCP, chierchiaToLandauTier]
-
--- ── Per-verb cross-system consistency ──
-
-section CrossSystemVerification
-open English.Predicates.Verbal
-
-/-! ### Non-attitude verbs: Chierchia and Landau agree
-
-For verbs without an attitude builder (try, manage, begin, stop,
-force, fail), both systems classify them as predicative control. -/
-
-theorem try_agrees :
-    (derivedChierchiaClass try_.toVerb).map chierchiaToLandauTier
-    = Landau2015.derivedControlTier try_.toVerb := rfl
-
-theorem manage_agrees :
-    (derivedChierchiaClass manage.toVerb).map chierchiaToLandauTier
-    = Landau2015.derivedControlTier manage.toVerb := rfl
-
-theorem force_agrees :
-    (derivedChierchiaClass force.toVerb).map chierchiaToLandauTier
-    = Landau2015.derivedControlTier force.toVerb := rfl
-
-/-! ### Attitude verbs: systematic divergence
-
-For verbs with an attitude builder (want, hope, promise, persuade),
-the two systems diverge: Chierchia classifies them as obligatory
-(→ predicative), while Landau classifies them as logophoric.
-
-This is a genuine theoretical disagreement: Chierchia groups by
-entailment structure (all verbs with the CP are treated uniformly),
-Landau groups by attitude status (attitude verbs introduce a
-perspectival coordinate that changes the control mechanism). -/
-
-theorem want_diverges :
-    (derivedChierchiaClass want.toVerb).map chierchiaToLandauTier = some .predicative
-    ∧ Landau2015.derivedControlTier want.toVerb = some .logophoric :=
-  ⟨rfl, rfl⟩
-
-theorem hope_diverges :
-    (derivedChierchiaClass hope.toVerb).map chierchiaToLandauTier = some .predicative
-    ∧ Landau2015.derivedControlTier hope.toVerb = some .logophoric :=
-  ⟨rfl, rfl⟩
-
-theorem promise_diverges :
-    (derivedChierchiaClass promise.toVerb).map chierchiaToLandauTier = some .predicative
-    ∧ Landau2015.derivedControlTier promise.toVerb = some .logophoric :=
-  ⟨rfl, rfl⟩
-
-theorem persuade_diverges :
-    (derivedChierchiaClass persuade.toVerb).map chierchiaToLandauTier = some .predicative
-    ∧ Landau2015.derivedControlTier persuade.toVerb = some .logophoric :=
-  ⟨rfl, rfl⟩
-
-end CrossSystemVerification
 
 end Chierchia1984

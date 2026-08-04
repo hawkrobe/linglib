@@ -1,4 +1,6 @@
-import Linglib.Syntax.Control.Tier
+import Linglib.Syntax.Control.Defs
+import Linglib.Syntax.Control.Finiteness
+import Linglib.Studies.Chierchia1984
 import Linglib.Semantics.Verb.Basic
 import Linglib.Data.Complementation.Noonan2007
 import Linglib.Fragments.English.Predicates.Verbal
@@ -9,10 +11,12 @@ import Linglib.Fragments.English.Predicates.Verbal
 
 MIT Press. ISBN 978-0-262-02885-1.
 
-The TTC framework itself — `Control.Tier`, `Control.PredicateClass`,
-`Control.ClauseClass`, the Feature Transmission asymmetry, and the OC-NC
-generalization — lives in `Syntax/Control/Tier.lean`. This file holds
-the book's empirical engagement: the table (80) contrasts, the
+The TTC's own apparatus — the predicative/logophoric `Tier`, the eight
+`PredicateClass`es, and their tier assignment — is defined here, mapped into
+the neutral vocabulary by `Tier.mechanism` (`Control.Mechanism`); the
+finiteness scale it consumes is `Control.ClauseClass`
+(`Syntax/Control/Finiteness.lean`). The file holds the book's empirical
+engagement: the table (80) contrasts, the
 *de se*/*de te* split in object control (table (36)), the derivation of
 predicate classes from English Fragment verb entries, and the
 consilience bridge to [noonan-2007]'s CTP classification.
@@ -35,6 +39,73 @@ namespace Landau2015
 
 open Control
 open Features (Attitude)
+
+/-! ### The two tiers -/
+
+/-- The two tiers of obligatory control.
+
+    Predicative control (EC complements): selected by nonattitude
+    predicates; PRO moves to Spec,Fin and control is syntactic
+    predication; forces exhaustive control.
+
+    Logophoric control (PC complements): selected by attitude
+    predicates; C^OC projects a perspectival coordinate and control is
+    predication + variable binding; allows partial control and forces
+    an attitude-holder-bound reading — *de se* under subject and
+    psych-object control, *de te* under communicative object control
+    (table (36), `objectControlReading`). -/
+inductive Tier where
+  /-- Predicative control: nonattitude, predication only -/
+  | predicative
+  /-- Logophoric control: attitude, predication + variable binding -/
+  | logophoric
+  deriving DecidableEq, Repr
+
+/-- Logophoric control corresponds to attitude complements. -/
+def Tier.isAttitude : Tier → Bool
+  | .predicative => false
+  | .logophoric  => true
+
+/-- Each tier's dependency mechanism, in the neutral vocabulary
+    (`Control.Mechanism`): predication shares the referent; logophoric
+    control composes a binding leg over predication. -/
+def Tier.mechanism : Tier → Control.Mechanism
+  | .predicative => .referent
+  | .logophoric  => .composite
+
+/-! ### Predicate classification -/
+
+/-- The control predicate classes ([landau-2000]; (4a–d)/(5a–d)): classes
+    (4a–d) select untensed complements (nonattitude → predicative control),
+    classes (5a–d) tensed ones (attitude → logophoric control),
+    [landau-2004]'s correlation. Membership is a property of
+    predicate–complement pairs, not lexemes, and the evaluative class is the
+    *of*-frame adjectives specifically ([landau-2004] for the class).
+    [pearson-2016]'s rival cut is temporal, not attitudinal. -/
+inductive PredicateClass where
+  /-- avoid, dare, manage, remember, … (nonattitude) -/
+  | implicative
+  /-- begin, continue, finish, start, stop (nonattitude) -/
+  | aspectual
+  /-- have, is able, may, must, need, should (nonattitude) -/
+  | modal
+  /-- bold, crazy, kind, rude, silly, smart (nonattitude; *of*-frame
+      adjectives) -/
+  | evaluative
+  /-- dislike, glad, hate, regret, sorry, … (attitude) -/
+  | factive
+  /-- affirm, believe, claim, declare, say, think (attitude) -/
+  | propositional
+  /-- agree, choose, decide, hope, intend, want, … (attitude) -/
+  | desiderative
+  /-- ask, guess, inquire, know, wonder (attitude) -/
+  | interrogative
+  deriving DecidableEq, Repr
+
+/-- Map predicate class to control tier. -/
+def PredicateClass.tier : PredicateClass → Tier
+  | .implicative | .aspectual | .modal | .evaluative => .predicative
+  | .factive | .propositional | .desiderative | .interrogative => .logophoric
 
 /-! ### Table (80): empirical contrasts -/
 
@@ -349,5 +420,95 @@ theorem manage_equi_implies_predicative :
     ctpToControlTier english_manage.ctpClass = some .predicative := by
   intro _
   rfl
+
+/-! ### Chierchia (1984) comparison
+
+The TTC engages [chierchia-1984]'s property theory as its major
+predecessor; the two cut the control verb space differently:
+
+- **Chierchia**: ALL verbs with the CP are obligatory control, regardless
+  of attitude status. The CP is a meaning postulate that applies uniformly.
+  The subject/object and attitude/non-attitude distinctions are orthogonal.
+- **Landau**: attitude verbs (want, hope, promise, persuade) are logophoric
+  (perspectival coordinate needed), non-attitude verbs (try, manage, force)
+  are predicative.
+
+The systematic divergence: Chierchia → obligatory → predicative for
+ALL control verbs, while Landau → logophoric for attitude verbs. The
+theories agree on non-attitude verbs (both predicative) and diverge
+precisely on attitude verbs. -/
+
+open Chierchia1984 (ChierchiaControlClass derivedChierchiaClass)
+
+/-- Map Chierchia's control classes to Landau's control tiers. -/
+def chierchiaToLandauTier : ChierchiaControlClass → Tier
+  | .obligatory     => .predicative
+  | .semiObligatory => .predicative
+  | .prominence     => .logophoric
+
+/-- The CP/no-CP distinction aligns with the predicative/logophoric
+    distinction: CP-bearing classes are predicative, CP-lacking classes
+    are logophoric. Chierchia's CP is thereby the semantic reflex of
+    Landau's condition (90): the entailment needs a specific overt
+    argument to serve as controller, which is what predication
+    demands. -/
+theorem cp_iff_predicative (c : ChierchiaControlClass) :
+    c.hasCP = true ↔ chierchiaToLandauTier c = .predicative := by
+  cases c <;> simp [Chierchia1984.ChierchiaControlClass.hasCP, chierchiaToLandauTier]
+
+-- ── Per-verb cross-system consistency ──
+
+section CrossSystemVerification
+open English.Predicates.Verbal
+
+/-! ### Non-attitude verbs: Chierchia and Landau agree
+
+For verbs without an attitude builder (try, manage, begin, stop,
+force, fail), both systems classify them as predicative control. -/
+
+theorem try_agrees :
+    (derivedChierchiaClass try_.toVerb).map chierchiaToLandauTier
+    = derivedControlTier try_.toVerb := rfl
+
+theorem manage_agrees :
+    (derivedChierchiaClass manage.toVerb).map chierchiaToLandauTier
+    = derivedControlTier manage.toVerb := rfl
+
+theorem force_agrees :
+    (derivedChierchiaClass force.toVerb).map chierchiaToLandauTier
+    = derivedControlTier force.toVerb := rfl
+
+/-! ### Attitude verbs: systematic divergence
+
+For verbs with an attitude builder (want, hope, promise, persuade),
+the two systems diverge: Chierchia classifies them as obligatory
+(→ predicative), while Landau classifies them as logophoric.
+
+This is a genuine theoretical disagreement: Chierchia groups by
+entailment structure (all verbs with the CP are treated uniformly),
+Landau groups by attitude status (attitude verbs introduce a
+perspectival coordinate that changes the control mechanism). -/
+
+theorem want_diverges :
+    (derivedChierchiaClass want.toVerb).map chierchiaToLandauTier = some .predicative
+    ∧ derivedControlTier want.toVerb = some .logophoric :=
+  ⟨rfl, rfl⟩
+
+theorem hope_diverges :
+    (derivedChierchiaClass hope.toVerb).map chierchiaToLandauTier = some .predicative
+    ∧ derivedControlTier hope.toVerb = some .logophoric :=
+  ⟨rfl, rfl⟩
+
+theorem promise_diverges :
+    (derivedChierchiaClass promise.toVerb).map chierchiaToLandauTier = some .predicative
+    ∧ derivedControlTier promise.toVerb = some .logophoric :=
+  ⟨rfl, rfl⟩
+
+theorem persuade_diverges :
+    (derivedChierchiaClass persuade.toVerb).map chierchiaToLandauTier = some .predicative
+    ∧ derivedControlTier persuade.toVerb = some .logophoric :=
+  ⟨rfl, rfl⟩
+
+end CrossSystemVerification
 
 end Landau2015

@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 import Linglib.Syntax.Minimalist.MinimalPronoun
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Fragments.Mixtec.SMPM.Basic
-import Linglib.Syntax.Control.Tier
+import Linglib.Syntax.Control.Finiteness
 import Linglib.Syntax.Control.CopyControl
 import Linglib.Syntax.Control.Basic
 import Linglib.Syntax.Control.Diagnostics

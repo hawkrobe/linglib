@@ -2,6 +2,7 @@ import Linglib.Semantics.Intensional.Defs
 import Linglib.Semantics.Quantification.Quantifier
 import Linglib.Semantics.Intensional.Conjunction
 import Linglib.Semantics.Modification.Basic
+import Linglib.Features.Complementation
 import Mathlib.Order.Hom.BoundedLattice
 import Mathlib.Data.Finset.Lattice.Fold
 
@@ -446,5 +447,15 @@ inductive ComplementDenotation where
 def ComplementDenotation.isProperty : ComplementDenotation → Bool
   | .property    => true
   | .proposition => false
+
+
+/-- The semantic layer of a clausal complement type, derived from the two
+    `Features` observables: clausal and finite → proposition, clausal and
+    nonfinite → property ([chierchia-1984]), `none` for non-clausal
+    complements. -/
+def _root_.ComplementType.denotation (ct : ComplementType) : Option ComplementDenotation :=
+  if ct.isClausal then
+    some (if ct.isFinite then .proposition else .property)
+  else none
 
 end Semantics.Composition.TypeShifting
