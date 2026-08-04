@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Syntax.Control.Tier
-import Linglib.Syntax.Control.Taxonomy
+import Linglib.Syntax.Control.Basic
 
 /-!
 # Landau (2024): Control
@@ -19,7 +19,7 @@ OC/NOC/NC trichotomy ((41)), NOC's dual topic/logophoric licensing
 ((52)), and the strict-vs-alternating adjunct split with the
 propositional-variant criterion ((84)/(89)). The dual theory of §5
 is substrate
-(`Syntax/Control/Tier.lean`, `Clause.lean`, `Dependency.lean`); this
+(`Syntax/Control/Tier.lean`, `Clause.lean`, `Defs.lean`); this
 file holds the Element's own empirical generalizations. Its (95)
 challenges — backward control, PC's residue, agreement under
 property theories, the OC-NC generalization's crosslinguistic

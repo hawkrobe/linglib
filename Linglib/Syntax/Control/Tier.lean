@@ -24,7 +24,7 @@ for the paper-anchored control studies (`Studies/Landau2015.lean`,
 
 - `Control.Tier`: predicative vs. logophoric control; the predicative
   mechanism's grammatical profile is the framework-neutral
-  `Control.IsSaturating` (`Syntax/Control/Taxonomy.lean`)
+  `Control.IsSaturating` (`Syntax/Control/Defs.lean`)
 - `Control.PredicateClass`: the eight predicate classes, mapped to tiers
 - `Control.ClauseClass`: the `[±T]` scale positions, with the
   Agr-sensitive `ClauseClass.HasOC` and its characterization

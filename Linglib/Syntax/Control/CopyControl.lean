@@ -11,7 +11,7 @@ Copy control ([polinsky-potsdam-2006]): the subject of a control clause
 is a phonologically overt copy of its controller. The typology of copy
 types. The movement vs. base-generation opposition is adjudicated by
 occupant-transport refutations (`Control.not_isExhaustive_of_mismatch` in
-`Dependency.lean`): movement is token identity, so an embedded
+`Basic.lean`): movement is token identity, so an embedded
 occupant differing from its controller — a pronoun where a lexical
 copy is predicted (Gã), or a genuine pronoun anteceding an exempt
 anaphor under a quantified controller ([pollard-sag-1992]; SMPM) —
