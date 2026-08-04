@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Syntax.Control.Dependency
+import Mathlib.Logic.Relator
 
 /-!
 # The Descriptive Taxonomy of Control
@@ -20,9 +21,9 @@ lives at the controller-choice stratum.
 `Mechanism` names what a dependency shares — the framework-neutral cut behind
 the movement vs. base-generation and functional vs. anaphoric
 ([bresnan-1982]) oppositions. `IsSaturating` is the profile of a dependency
-enforced by saturation (predication, structure sharing): bi-unique and
-exhaustive, with the phenomenology — no partial reading, no split
-antecedents — as theorems.
+enforced by saturation (predication, structure sharing): bi-unique
+(`Relator.BiUnique`) and exhaustive, with the phenomenology — no partial
+reading, no split antecedents — as theorems.
 
 ## Main definitions
 
@@ -48,9 +49,10 @@ abbrev IsExhaustive (val : Pos → Ref) (d : SetRel Pos Pos) : Prop :=
 def HasPartial [Preorder Ref] (val : Pos → Ref) (d : SetRel Pos Pos) : Prop :=
   ∃ a b, a ~[d] b ∧ val a < val b
 
-/-- Split control: some dependent has two distinct controllers. -/
+/-- Split control: some dependent has two distinct controllers — the
+    dependency is not left-unique. -/
 abbrev HasSplit (d : SetRel Pos Pos) : Prop :=
-  ¬ d.IsInjective
+  ¬ Relator.LeftUnique (· ~[d] ·)
 
 /-- An exhaustive dependency admits no partial reading. -/
 theorem IsExhaustive.not_hasPartial [Preorder Ref] (h : IsExhaustive val d) :
@@ -81,7 +83,7 @@ inductive Mechanism where
     controller saturates a single slot, and the referent is shared
     exhaustively. -/
 structure IsSaturating (val : Pos → Ref) (d : SetRel Pos Pos) : Prop where
-  biUnique : d.IsBiUnique
+  biUnique : Relator.BiUnique (· ~[d] ·)
   exhaustive : IsExhaustive val d
 
 /-- A saturating dependency admits no partial reading. -/
