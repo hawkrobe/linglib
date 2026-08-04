@@ -1,5 +1,5 @@
 import Linglib.Data.Examples.Schema
-import Linglib.Semantics.TypeTheoretic.Basic
+import Mathlib.Logic.Equiv.Defs
 import Linglib.Data.Examples.ChatzikyriakidisEtAl2025
 
 /-!
@@ -11,7 +11,7 @@ same witch) killed Cob's sow" — following [ranta-1994]'s belief-context
 analysis, recast by [cooper-2023] with record types in place of contexts: Hob's
 and Nob's belief contexts overlap with respect to a shared witch component,
 which need not be witnessed. Types, unlike sets of worlds, are individuated
-intensionally (`Semantics.TypeTheoretic.ext_equiv_not_implies_int_eq`), so two
+intensionally (`extEquiv_not_intEq` below), so two
 agents' attitudes can concern the same possibly-empty type.
 
 This file formalizes the shared-component core of the account: Hob's and Nob's
@@ -35,7 +35,29 @@ the distinction [edelberg-1986]'s asymmetry data make empirically load-bearing.
 
 namespace ChatzikyriakidisEtAl2025
 
-open Semantics.TypeTheoretic
+/-! ### Intensional types
+
+[cooper-2023] §1.3: types are individuated beyond their extensions — a
+name-tagged wrapper over a Lean carrier suffices for the Hob–Nob model. -/
+
+/-- An intensional type: a carrier tagged with an identity beyond its
+extension ([cooper-2023] §1.3). -/
+structure IType where
+  /-- The underlying Lean type (extension carrier) -/
+  carrier : Type
+  /-- Intensional identity tag -/
+  name : String
+
+/-- Extensional equivalence: equivalent carriers. -/
+def IType.extEquiv (T₁ T₂ : IType) : Prop := Nonempty (T₁.carrier ≃ T₂.carrier)
+
+/-- Intensional identity. -/
+def IType.intEq (T₁ T₂ : IType) : Prop := T₁ = T₂
+
+/-- Meet: pair the carriers, compose the names — intensional identity is
+preserved through meet. -/
+def IType.meet (T₁ T₂ : IType) : IType :=
+  ⟨T₁.carrier × T₂.carrier, T₁.name ++ " ∧ " ++ T₂.name⟩
 
 /-! ### TTR model of the Hob–Nob puzzle -/
 
@@ -67,7 +89,7 @@ theorem sharesComponent_nobContent : SharesComponent witchType nobContent :=
   ⟨killCobsSow, rfl⟩
 
 /-- The witch type is empty: no witch exists. -/
-theorem isFalse_witchType : IsFalse witchType.carrier :=
+theorem isFalse_witchType : IsEmpty witchType.carrier :=
   show IsEmpty Empty from inferInstance
 
 /-- The two contents are intensionally distinct (their event components
@@ -76,8 +98,8 @@ theorem hobContent_ne_nobContent : ¬ hobContent.intEq nobContent :=
   λ h => absurd (congrArg IType.name (h : hobContent = nobContent)) (by decide)
 
 /-- The contents are extensionally equivalent (both carriers are empty) yet
-intensionally distinct — the model-level instance of
-`ext_equiv_not_implies_int_eq`. An extensional semantics (`Set W`-style
+intensionally distinct — extensional equivalence does not entail
+intensional identity. An extensional semantics (`Set W`-style
 contents) identifies the two attitudes; TTR keeps them apart. -/
 theorem extEquiv_not_intEq :
     hobContent.extEquiv nobContent ∧ ¬ hobContent.intEq nobContent :=
@@ -91,7 +113,7 @@ theorem intentional_identity :
     SharesComponent witchType hobContent ∧
     SharesComponent witchType nobContent ∧
     ¬ hobContent.intEq nobContent ∧
-    IsFalse witchType.carrier :=
+    IsEmpty witchType.carrier :=
   ⟨sharesComponent_hobContent, sharesComponent_nobContent,
    hobContent_ne_nobContent, isFalse_witchType⟩
 
@@ -102,7 +124,7 @@ theorem validates_hobNob :
     Examples.hobNob.judgment = .acceptable ∧
     SharesComponent witchType hobContent ∧
     SharesComponent witchType nobContent ∧
-    IsFalse witchType.carrier :=
+    IsEmpty witchType.carrier :=
   ⟨rfl, sharesComponent_hobContent, sharesComponent_nobContent, isFalse_witchType⟩
 
 end ChatzikyriakidisEtAl2025

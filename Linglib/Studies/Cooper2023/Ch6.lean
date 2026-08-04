@@ -1,4 +1,6 @@
-import Linglib.Semantics.TypeTheoretic.Discourse
+import Linglib.Studies.Cooper2023.TTR
+import Linglib.Semantics.Intensional.Austinian
+import Linglib.Semantics.Intensional.Rigidity
 import Linglib.Semantics.Modality.Kratzer.Operators
 
 /-!
@@ -31,7 +33,8 @@ single-paper Cooper-textbook replication: only `ChatzikyriakidisEtAl2025`
 
 namespace Cooper2023Ch6
 
-open Semantics.TypeTheoretic
+open Cooper2023.TTR
+open Intensional (CheckableAustinian)
 
 -- ============================================================================
 -- Layer 2: Semantics (Situations, Modality, Topoi)
@@ -186,7 +189,7 @@ These conversion functions connect the two formalizations. -/
 Each predicate becomes a type; an object witnesses the type iff `mts w P = true`.
 All predicates are available in all possibilities (Bool-valued systems don't
 distinguish availability from witnessing). -/
-def _root_.Semantics.TypeTheoretic.ModalTypeSystem.toModalSystem
+def _root_.Cooper2023.TTR.ModalTypeSystem.toModalSystem
     {W Pred : Type} (mts : ModalTypeSystem W Pred) (Obj : Type) :
     ModalSystem Pred Obj where
   Poss := W
@@ -200,7 +203,7 @@ def ModalSystem.toModalTypeSystem {Ty Obj : Type} (ms : ModalSystem Ty Obj)
   λ p T => if ∃ a, ms.ext p T a then true else false
 
 /-- Roundtrip: embedding then projecting back preserves the Bool-valued system. -/
-theorem _root_.Semantics.TypeTheoretic.ModalTypeSystem.roundtrip
+theorem _root_.Cooper2023.TTR.ModalTypeSystem.roundtrip
     {W Pred : Type} (mts : ModalTypeSystem W Pred) (w : W) (P : Pred) :
     ((mts.toModalSystem Unit).poss w).witnesses P () ↔ (mts w P = true) :=
   Iff.rfl

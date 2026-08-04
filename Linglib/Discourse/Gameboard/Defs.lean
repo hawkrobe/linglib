@@ -1,5 +1,4 @@
 import Linglib.Discourse.CommonGround
-import Linglib.Semantics.TypeTheoretic.Basic
 
 /-!
 # KOS: Type Definitions
@@ -31,8 +30,8 @@ The structural commitment is unchanged: every `LocProp` projects to a
 `Participant`, `Fact`, `QContent` are universe-polymorphic (`Type*`).
 `Cont` is **pinned to `Type` (= `Type 0`)** because it flows into the
 `TTRSign String Cont` projection (`LocProp.toTTRSign`), and TTRSign is
-itself `Type`-pinned in `Semantics/TypeTheoretic/Core.lean`
-(Cooper's "type-is-a-type" semantics requires `Type 0` for the carrier).
+itself `Type`-pinned (Cooper's "type-is-a-type" semantics requires
+`Type 0` for the carrier).
 Same pinning applies in `Gameboard/Austinian.lean` (where `BCheckableAustinian`
 and `TTRQuestionB` similarly require `Type`).
 
@@ -71,7 +70,14 @@ tags carry information our consumers find useful.
 
 namespace Discourse.Gameboard
 
-open Semantics.TypeTheoretic (TTRSign)
+/-- A sign: phonology paired with content ([cooper-2023] §2.5 ex 70).
+    `LocProp` below is its structural refinement; the forgetful
+    projection `LocProp.toTTRSign` and `Coe` instance discharge the
+    TTR-residence commitment. -/
+structure TTRSign (Phon Cont : Type) where
+  phon : Phon
+  cont : Cont
+  deriving Repr, DecidableEq
 
 -- ════════════════════════════════════════════════════
 -- § 1. Illocutionary Moves

@@ -13,8 +13,8 @@ Connects TTR underspecification to anaphora data, drawing on
 [muskens-1996], [sutton-2024], [chomsky-1981].
 
 Connects TTR's localization (donkey anaphora) and binding theory
-(reflexivization, anaphoric resolution) from
-`Semantics.TypeTheoretic.Underspecification` to the donkey rows in
+(reflexivization, anaphoric resolution) from the TTR apparatus
+(`Studies/Cooper2023/TTR.lean`, `Ch7`, `Ch8`) to the donkey rows in
 `Data/Examples/Geach1962.json` / `Kanazawa1994.json` and the binding
 paradigm in `Studies/Chomsky1981.lean`.
 
@@ -32,7 +32,7 @@ surveyed in [sutton-2024].
 
 namespace Cooper2023
 
-open Semantics.TypeTheoretic
+open Cooper2023.TTR
 open Cooper2023Ch8
 open Chomsky1981
 
@@ -161,7 +161,7 @@ theorem reflexive_predicts_binding :
 -- ════════════════════════════════════════════════════════════════
 
 /-! CDRT (Dynamic/CDRT.lean, [muskens-1996]) and TTR
-(TypeTheoretic/, [cooper-2023]) handle overlapping anaphora
+(the TTR apparatus, [cooper-2023]) handle overlapping anaphora
 phenomena — discourse referents, donkey anaphora, cross-sentential
 binding — with no shared infrastructure. This section proves they
 agree on truth conditions for the existential and donkey cores, and
@@ -181,7 +181,7 @@ to the same classical truth conditions.
 open CDRT (DProp State SProp)
 open DynamicSemantics.Update (closure seq test neg impl)
 open scoped DynamicSemantics.Update
-open Semantics.TypeTheoretic (Ppty PPpty Parametric IsTrue IsFalse propT)
+open Cooper2023.TTR (Ppty PPpty Parametric IsTrue IsFalse propT)
 open Cooper2023Ch7 (purify purifyUniv)
 
 variable {E : Type}
