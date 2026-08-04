@@ -211,8 +211,23 @@ def q_1 : Question D0World := q_a ⊓ q_b
 /-- Hilary-bagels-only cell, the canonical witness in `alt q_a`. -/
 private abbrev qa_c1 : Set D0World := {w | w.hb = true ∧ w.ht = false}
 
+/-- Hilary-tofu-only cell. -/
+private abbrev qa_c2 : Set D0World := {w | w.hb = false ∧ w.ht = true}
+
+/-- Hilary-both cell. -/
+private abbrev qa_c3 : Set D0World := {w | w.hb = true ∧ w.ht = true}
+
 /-- Hilary-neither cell — used to construct atomic singletons of `alt q_1`. -/
 private abbrev qa_c4 : Set D0World := {w | w.hb = false ∧ w.ht = false}
+
+/-- Robin-bagels-only cell. -/
+private abbrev qb_c1 : Set D0World := {w | w.rb = true ∧ w.rt = false}
+
+/-- Robin-tofu-only cell. -/
+private abbrev qb_c2 : Set D0World := {w | w.rb = false ∧ w.rt = true}
+
+/-- Robin-both cell. -/
+private abbrev qb_c3 : Set D0World := {w | w.rb = true ∧ w.rt = true}
 
 /-- Robin-neither cell — paired with `qa_c4` to give the singleton
     `{⟨false, false, false, false⟩}`. -/
@@ -220,6 +235,10 @@ private abbrev qb_c4 : Set D0World := {w | w.rb = false ∧ w.rt = false}
 
 /-- The "all-false" world — atomic alternative of `q_1`. -/
 private abbrev w_zero : D0World := ⟨false, false, false, false⟩
+
+/-- The Hilary-bagels-only, Robin-neither world — a second atomic
+    alternative of `q_1`, outside `qa_c4`. -/
+private abbrev w_hbOnly : D0World := ⟨true, false, false, false⟩
 
 private theorem qa_c1_in_alt : qa_c1 ∈ alt q_a := by
   apply Question.mem_alt_ofList_of_disjoint_others
@@ -236,80 +255,86 @@ private theorem qa_c1_in_alt : qa_c1 ∈ alt q_a := by
     · intro w h1 h2; exact Bool.false_ne_true (h1.2.symm.trans h2.2)
     · intro w h1 h2; exact Bool.false_ne_true (h2.1.symm.trans h1.1)
 
-/-- The all-false singleton is an alternative of `q_1`. Maximal because
-    every q_1-resolving state ⊇ {w_zero} must lie in both `qa_c4` and
-    `qb_c4`, whose intersection is exactly `{w_zero}`. -/
-private theorem singleton_w_zero_in_alt_q1 :
-    ({w_zero} : Set D0World) ∈ alt q_1 := by
-  show ({w_zero} : Set D0World) ∈ alt (q_a ⊓ q_b)
+/-- `{v}` is an alternative of `q_1` when `ca` and `cb` are the unique
+    `q_a`- and `q_b`-cells containing `v` and they intersect exactly in
+    `v`. Maximality: any `q ⊇ {v}` in both prop-sets lies in `ca ∩ cb`. -/
+private theorem singleton_mem_alt_q1_of {ca cb : Set D0World} {v : D0World}
+    (hcaL : ca = qa_c1 ∨ ca = qa_c2 ∨ ca = qa_c3 ∨ ca = qa_c4)
+    (hcbL : cb = qb_c1 ∨ cb = qb_c2 ∨ cb = qb_c3 ∨ cb = qb_c4)
+    (hva : v ∈ ca) (hvb : v ∈ cb)
+    (huniq_a : ∀ c, (c = qa_c1 ∨ c = qa_c2 ∨ c = qa_c3 ∨ c = qa_c4) →
+      v ∈ c → c = ca)
+    (huniq_b : ∀ c, (c = qb_c1 ∨ c = qb_c2 ∨ c = qb_c3 ∨ c = qb_c4) →
+      v ∈ c → c = cb)
+    (hcap : ∀ u ∈ ca, u ∈ cb → u = v) :
+    ({v} : Set D0World) ∈ alt q_1 := by
+  show ({v} : Set D0World) ∈ alt (q_a ⊓ q_b)
   rw [Question.mem_alt_inf_iff]
   refine ⟨⟨?_, ?_⟩, ?_⟩
-  · -- {w_zero} ∈ q_a.props (subset of qa_c4)
-    rw [show (q_a : Question D0World).props = (Question.ofList _).props from rfl]
-    show ({w_zero} : Set D0World) ∈ Question.ofList _
+  · show ({v} : Set D0World) ∈ Question.ofList _
     rw [Question.mem_ofList]
-    refine Or.inr ⟨qa_c4, ?_, ?_⟩
-    · simp [qa_c4]
-    · intro x hx
-      rw [Set.mem_singleton_iff] at hx
-      subst hx
-      exact ⟨rfl, rfl⟩
-  · -- {w_zero} ∈ q_b.props (subset of qb_c4)
-    rw [show (q_b : Question D0World).props = (Question.ofList _).props from rfl]
-    show ({w_zero} : Set D0World) ∈ Question.ofList _
+    refine Or.inr ⟨ca, ?_, Set.singleton_subset_iff.mpr hva⟩
+    rcases hcaL with rfl | rfl | rfl | rfl <;> simp
+  · show ({v} : Set D0World) ∈ Question.ofList _
     rw [Question.mem_ofList]
-    refine Or.inr ⟨qb_c4, ?_, ?_⟩
-    · simp [qb_c4]
-    · intro x hx
-      rw [Set.mem_singleton_iff] at hx
-      subst hx
-      exact ⟨rfl, rfl⟩
-  · -- maximality: any q ⊇ {w_zero} in both q_a.props and q_b.props
-    -- must equal {w_zero}.
-    intro q ⟨hqa, hqb⟩ hsub
+    refine Or.inr ⟨cb, ?_, Set.singleton_subset_iff.mpr hvb⟩
+    rcases hcbL with rfl | rfl | rfl | rfl <;> simp
+  · rintro q ⟨hqa, hqb⟩ hsub
     have hqa' : q ∈ Question.ofList (W := D0World)
-        [{w | w.hb = true ∧ w.ht = false}, {w | w.hb = false ∧ w.ht = true},
-         {w | w.hb = true ∧ w.ht = true}, {w | w.hb = false ∧ w.ht = false}] := hqa
+        [qa_c1, qa_c2, qa_c3, qa_c4] := hqa
     have hqb' : q ∈ Question.ofList (W := D0World)
-        [{w | w.rb = true ∧ w.rt = false}, {w | w.rb = false ∧ w.rt = true},
-         {w | w.rb = true ∧ w.rt = true}, {w | w.rb = false ∧ w.rt = false}] := hqb
+        [qb_c1, qb_c2, qb_c3, qb_c4] := hqb
     rw [Question.mem_ofList] at hqa' hqb'
-    -- q ⊇ {w_zero} so q nonempty; pick the cell of q_a / q_b containing w_zero
-    have hwq : w_zero ∈ q := hsub rfl
-    have hqne : q ≠ ∅ := fun h => by rw [h] at hwq; exact hwq.elim
-    rcases hqa' with rfl | ⟨ca, hcaL, hqca⟩
-    · exact (hqne rfl).elim
-    rcases hqb' with rfl | ⟨cb, hcbL, hqcb⟩
-    · exact (hqne rfl).elim
-    -- ca contains w_zero (hb=false, ht=false), so ca = qa_c4
-    have hwca : w_zero ∈ ca := hqca hwq
-    have hca_eq : ca = qa_c4 := by
-      simp only [List.mem_cons, List.not_mem_nil, or_false] at hcaL
-      rcases hcaL with rfl | rfl | rfl | rfl
-      · exact (Bool.false_ne_true hwca.1).elim
-      · exact (Bool.false_ne_true hwca.2).elim
-      · exact (Bool.false_ne_true hwca.1).elim
-      · rfl
-    have hwcb : w_zero ∈ cb := hqcb hwq
-    have hcb_eq : cb = qb_c4 := by
-      simp only [List.mem_cons, List.not_mem_nil, or_false] at hcbL
-      rcases hcbL with rfl | rfl | rfl | rfl
-      · exact (Bool.false_ne_true hwcb.1).elim
-      · exact (Bool.false_ne_true hwcb.2).elim
-      · exact (Bool.false_ne_true hwcb.1).elim
-      · rfl
-    -- q ⊆ qa_c4 ∩ qb_c4 = {w_zero}
-    intro w hw
-    have hwa : w ∈ qa_c4 := hca_eq ▸ hqca hw
-    have hwb : w ∈ qb_c4 := hcb_eq ▸ hqcb hw
-    rw [Set.mem_singleton_iff]
-    cases w with
-    | mk hb ht rb rt =>
-      obtain ⟨hhb, hht⟩ := hwa
-      obtain ⟨hrb, hrt⟩ := hwb
-      simp only at hhb hht hrb hrt
-      subst hhb; subst hht; subst hrb; subst hrt
-      rfl
+    have hvq : v ∈ q := hsub rfl
+    rcases hqa' with rfl | ⟨ca', hca'L, hqca'⟩
+    · exact hvq.elim
+    rcases hqb' with rfl | ⟨cb', hcb'L, hqcb'⟩
+    · exact hvq.elim
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hca'L hcb'L
+    have hca'_eq : ca' = ca := huniq_a ca' hca'L (hqca' hvq)
+    have hcb'_eq : cb' = cb := huniq_b cb' hcb'L (hqcb' hvq)
+    intro u hu
+    exact Set.mem_singleton_iff.mpr
+      (hcap u (hca'_eq ▸ hqca' hu) (hcb'_eq ▸ hqcb' hu))
+
+/-- The all-false singleton is an alternative of `q_1`: it is exactly
+    `qa_c4 ∩ qb_c4`. -/
+private theorem singleton_w_zero_in_alt_q1 :
+    ({w_zero} : Set D0World) ∈ alt q_1 := by
+  refine singleton_mem_alt_q1_of (Or.inr (Or.inr (Or.inr rfl)))
+    (Or.inr (Or.inr (Or.inr rfl))) ⟨rfl, rfl⟩ ⟨rfl, rfl⟩ ?_ ?_ (by decide)
+  all_goals rintro c (rfl | rfl | rfl | rfl) hw <;>
+    first | rfl | exact absurd hw (by decide)
+
+/-- The Hilary-bagels-only, Robin-neither singleton is an alternative of
+    `q_1`: it is exactly `qa_c1 ∩ qb_c4`. Witnesses partial answerhood
+    for states containing `w_zero` (which `{w_zero}` cannot). -/
+private theorem singleton_w_hbOnly_in_alt_q1 :
+    ({w_hbOnly} : Set D0World) ∈ alt q_1 := by
+  refine singleton_mem_alt_q1_of (Or.inl rfl)
+    (Or.inr (Or.inr (Or.inr rfl))) ⟨rfl, rfl⟩ ⟨rfl, rfl⟩ ?_ ?_ (by decide)
+  all_goals rintro c (rfl | rfl | rfl | rfl) hw <;>
+    first | rfl | exact absurd hw (by decide)
+
+/-- The alternatives of `q_a` are exactly its four cells. -/
+private theorem alt_qa_eq :
+    alt q_a = {p | p ∈ [qa_c1, qa_c2, qa_c3, qa_c4]} := by
+  apply Question.alt_ofList_of_pairwise_disjoint_nonempty
+  · simp
+  · rintro p₁ h₁ p₂ h₂ hne
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at h₁ h₂
+    rcases h₁ with rfl | rfl | rfl | rfl <;>
+      rcases h₂ with rfl | rfl | rfl | rfl <;>
+        first
+          | exact absurd rfl hne
+          | exact Set.disjoint_left.mpr (by decide)
+  · intro p hp
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hp
+    rcases hp with rfl | rfl | rfl | rfl
+    · exact Set.Nonempty.ne_empty ⟨⟨true, false, false, false⟩, rfl, rfl⟩
+    · exact Set.Nonempty.ne_empty ⟨⟨false, true, false, false⟩, rfl, rfl⟩
+    · exact Set.Nonempty.ne_empty ⟨⟨true, true, false, false⟩, rfl, rfl⟩
+    · exact Set.Nonempty.ne_empty ⟨⟨false, false, false, false⟩, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
 -- § Question Entailment ([roberts-2012] Def. 8)
@@ -550,6 +575,87 @@ theorem stack_depths :
 
 /-- After retiring q_ai, the immediate QUD is q_a. -/
 theorem stack_3_qud : stack_3.head? = some q_a := rfl
+
+-- ════════════════════════════════════════════════════
+-- § Stack Well-Formedness ([roberts-2012] (10g.iii))
+-- ════════════════════════════════════════════════════
+
+/-- Each `q_a`-cell partially answers "Who ate what?": the cells missing
+    `w_zero` refute the `{w_zero}` alternative; `qa_c4` refutes
+    `{w_hbOnly}`. -/
+private theorem qa_alts_partially_answer_q1 :
+    ∀ a ∈ alt q_a, PartiallyAnswers a q_1 := by
+  intro a ha
+  rw [alt_qa_eq] at ha
+  simp only [Set.mem_setOf_eq, List.mem_cons, List.not_mem_nil, or_false] at ha
+  rcases ha with rfl | rfl | rfl | rfl <;>
+    first
+      | exact ⟨{w_zero}, singleton_w_zero_in_alt_q1,
+          Or.inr (Set.subset_compl_singleton_iff.mpr (by decide))⟩
+      | exact ⟨{w_hbOnly}, singleton_w_hbOnly_in_alt_q1,
+          Or.inr (Set.subset_compl_singleton_iff.mpr (by decide))⟩
+
+/-- Each alternative of "Did Hilary eat the bagels?" partially answers
+    "What did Hilary eat?". -/
+private theorem qai_alts_partially_answer_qa :
+    ∀ a ∈ alt q_ai, PartiallyAnswers a q_a := by
+  intro a ha
+  rw [alt_polar_of_nontrivial hb_ne_empty hb_ne_univ] at ha
+  rcases ha with rfl | ha
+  · exact ⟨qa_c2, by rw [alt_qa_eq]; simp, Or.inr (by decide)⟩
+  · rw [Set.mem_singleton_iff] at ha
+    subst ha
+    exact ⟨qa_c1, qa_c1_in_alt, Or.inr (by decide)⟩
+
+/-- Each alternative of "Did Hilary eat the bagels?" partially answers
+    "Who ate what?". -/
+private theorem qai_alts_partially_answer_q1 :
+    ∀ a ∈ alt q_ai, PartiallyAnswers a q_1 := by
+  intro a ha
+  rw [alt_polar_of_nontrivial hb_ne_empty hb_ne_univ] at ha
+  rcases ha with rfl | ha
+  · exact ⟨{w_zero}, singleton_w_zero_in_alt_q1,
+      Or.inr (Set.subset_compl_singleton_iff.mpr (by decide))⟩
+  · rw [Set.mem_singleton_iff] at ha
+    subst ha
+    exact ⟨{w_hbOnly}, singleton_w_hbOnly_in_alt_q1,
+      Or.inr (Set.subset_compl_singleton_iff.mpr (by decide))⟩
+
+/-- The stack `[q_a, q_1]` satisfies Roberts' (10g.iii) in the trivial
+    common ground: every complete answer to the subquestion partially
+    answers the question below it. -/
+theorem stack_1_wellFormed : QUDStack.WellFormed Set.univ stack_1 := by
+  show QUDStack.WellFormed Set.univ (q_a :: stack_0)
+  rw [QUDStack.wellFormed_cons]
+  refine ⟨?_, QUDStack.wellFormed_singleton ..⟩
+  intro lower hlow a ha
+  simp only [stack_0, List.mem_singleton] at hlow
+  subst hlow
+  rw [Set.univ_inter]
+  exact qa_alts_partially_answer_q1 a ha
+
+/-- The full three-question stack `[q_ai, q_a, q_1]` is well-formed. -/
+theorem stack_2_wellFormed : QUDStack.WellFormed Set.univ stack_2 := by
+  show QUDStack.WellFormed Set.univ (q_ai :: stack_1)
+  rw [QUDStack.wellFormed_cons]
+  refine ⟨?_, stack_1_wellFormed⟩
+  intro lower hlow a ha
+  rw [Set.univ_inter]
+  rcases List.mem_cons.mp hlow with rfl | hlow
+  · exact qai_alts_partially_answer_qa a ha
+  · simp only [stack_0, List.mem_singleton] at hlow
+    subst hlow
+    exact qai_alts_partially_answer_q1 a ha
+
+/-- [roberts-2012] warns against strengthening (10g.iii) to question
+    entailment (her (8)): the D₀ stack `[q_a, q_1]` is well-formed
+    (`stack_1_wellFormed`) yet fails the strengthened ordering, since
+    `q_a` does not entail `q_1` (`qa_not_entails_q1`). -/
+theorem stack_1_not_pairwise_entails :
+    ¬ stack_1.Pairwise Question.Entails := by
+  intro h
+  exact qa_not_entails_q1
+    ((List.pairwise_cons.mp h).1 q_1 (List.mem_singleton_self _))
 
 -- ════════════════════════════════════════════════════
 -- § Negative Partial Answerhood
