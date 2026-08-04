@@ -221,14 +221,29 @@ theorem npi_patterns_with_lda (c : EmbeddedClauseType) :
 /-- Gã forbids embedded lexical-DP copies (exx 42b, 64). -/
 def gaEmbeddedLexicalCopyAvailable : Bool := false
 
-/-- The derivation the lexical-copy observation supports. -/
-def gaControlDerivation : Derivation :=
-  Derivation.supportedBy .embeddedLexicalCopy gaEmbeddedLexicalCopyAvailable
+/-- The occupants of ex 42b's two positions. -/
+inductive Ex42Item where
+  /-- the lexical matrix subject *Ameele* -/
+  | ameele
+  /-- the obligatory embedded proclitic -/
+  | pronoun
+  deriving DecidableEq, Repr
 
-/-- Control is base-generated: movement predicts the lexical-DP copy Gã
-    forbids (§3.6.2). -/
-theorem ga_supports_basegeneration :
-    gaControlDerivation = .baseGeneration := rfl
+/-- Ex 42b's control dependency: matrix controller position `0` to
+    embedded subject position `1`. -/
+def ex42Dependency : SetRel (Fin 2) (Fin 2) := {(0, 1)}
+
+/-- The attested occupants: lexical *Ameele* controls the obligatory
+    proclitic — never a lexical copy (exx 42b, 64). -/
+def ex42Occupant : Fin 2 → Ex42Item :=
+  fun p => if p = 0 then .ameele else .pronoun
+
+/-- Movement is token identity, and ex 42b's occupants differ across
+    the dependency — the Movement Theory of Control ([hornstein-1999])
+    is refuted on the Gã configuration (§3.6.2): control is
+    base-generated. -/
+theorem ga_refutes_movement : ¬ Shares ex42Occupant ex42Dependency :=
+  not_shares_of_mismatch (P := (· = .ameele)) rfl rfl (by decide)
 
 /-- The lexical-copy ban is what [landau-2024]'s (72) predicts: the
     ex 42b/64 matrix verb *kai* is an implicative — nonattitude,

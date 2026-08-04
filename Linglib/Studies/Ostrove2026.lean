@@ -404,38 +404,31 @@ theorem smpm_has_exempt_anaphors :
 theorem smpm_no_quantified_exempt :
     Mixtec.SMPM.exemptAnaphorAllowsQuantifiedAntecedent = false := rfl
 
-/-- **The argument against movement** (§6, pp.26–31):
+/-- The occupants of the (86)–(87) configurations. -/
+inductive Ex86Item where
+  /-- the quantified controller ('each dog', 'no boy') -/
+  | quantifierDP
+  /-- the overt controlled clitic anteceding the exempt anaphor -/
+  | pronoun
+  deriving DecidableEq, Repr
 
-    Given: exempt anaphors cannot have quantified antecedents (78).
+/-- The (86)–(87) control dependency: quantified controller position
+    `0` to embedded clitic position `1`. -/
+def ex86Dependency : SetRel (Fin 2) (Fin 2) := {(0, 1)}
 
-    Movement analysis predicts: if the controller is quantified (e.g.,
-    "every dog"), the copy in embedded subject position IS the quantifier.
-    An exempt anaphor in the embedded clause would need to be bound by
-    this quantified copy → predicted UNAVAILABLE.
+/-- The attested occupants: exempt anaphors reject quantified
+    antecedents ((78)), yet they are available in untensed
+    subjunctives with quantified controllers ((86)–(87)) — so the
+    embedded position holds a genuine referential pronoun, not a
+    quantifier copy. -/
+def ex86Occupant : Fin 2 → Ex86Item :=
+  fun p => if p = 0 then .quantifierDP else .pronoun
 
-    Base-generation analysis predicts: the pronoun in embedded subject
-    position is a genuine pronoun (base-generated), not a copy of the
-    quantifier. An exempt anaphor can take this pronoun as antecedent →
-    predicted AVAILABLE.
-
-    SMPM data (86–87): exempt anaphors ARE available in untensed
-    subjunctives with quantified controllers.
-    - *Tá'iin'iin tsǐnà kìxà [tsìi =rí ndò'ò mí =rí].*
-      'Each dog started to bite its own tail.'
-    - *Kò xíniñu'u ni'iin =rà bálí [kòni =rà táta mí =rà].*
-      'No boy needs to see his own father.'
-
-    This matches the base-generation prediction. -/
-def smpmExemptAvailableWithQuantifiedController : Bool := true
-
-/-- The derivation the exempt-anaphor observation supports
-    (`Derivation.eq_supportedBy_of_predicts`: it is the only one). -/
-def smpmControlDerivation : Derivation :=
-  Derivation.supportedBy .exemptAnaphorWithQuantifiedController
-    smpmExemptAvailableWithQuantifiedController
-
-theorem smpm_supports_basegeneration :
-    smpmControlDerivation = .baseGeneration := rfl
+/-- Movement is token identity, and the (86)–(87) occupants differ
+    across the dependency — movement is refuted (§6, pp. 26–31): SMPM
+    control is base-generated. -/
+theorem smpm_refutes_movement : ¬ Shares ex86Occupant ex86Dependency :=
+  not_shares_of_mismatch (P := (· = .quantifierDP)) rfl rfl (by decide)
 
 -- ════════════════════════════════════════════════════════════════
 -- § 10: Implicational Universal (54)

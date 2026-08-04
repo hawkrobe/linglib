@@ -184,4 +184,39 @@ theorem exists_lt_of_comp_lt [PartialOrder Ref]
   · exact Or.inl ⟨a, m, ham, hlt'⟩
   · exact Or.inr ⟨m, c, hmc, heq ▸ hlt⟩
 
+/-! ### Enforcement
+
+The species of sharing enforcement are distinguished by WHAT the
+dependency shares ([landau-2024] §3's road map; [mccloskey-2003]):
+token identity (movement) shares the occupant assignment itself;
+referential dependencies (predication, coordinate binding) share only
+the referent valuation; complex-predicate formation merges grids with
+no dependent position; lexicalist accounts enforce sharing by meaning
+postulate. Token identity is the strongest: a shared assignment
+transports along every map of it (`Shares.map`), so every occupant
+property transports across the dependency (`Shares.iff_of_rel`) — and
+one observed mismatch refutes it (`not_shares_of_mismatch`), the
+engine of the copy-control diagnostics (embedded lexical copies,
+exempt anaphora with quantified controllers). -/
+
+variable {Item : Type*} {occ : Pos → Item}
+
+/-- Sharing an assignment transports along any map of it: token
+    identity yields referential co-valuation for every referent map. -/
+theorem Shares.map (hs : Shares occ ante) (f : Item → Ref) :
+    Shares (f ∘ occ) ante :=
+  fun _ _ hab => congrArg f (hs hab)
+
+/-- Under a shared assignment, every property of the assigned value
+    transports across the dependency: copies are indistinguishable. -/
+theorem Shares.iff_of_rel (hs : Shares occ ante) (h : a ~[ante] b)
+    (P : Item → Prop) : P (occ a) ↔ P (occ b) :=
+  iff_of_eq (congrArg P (hs h))
+
+/-- One observed mismatch refutes a shared assignment — the refutation
+    engine of the copy-control diagnostics. -/
+theorem not_shares_of_mismatch {P : Item → Prop} (h : a ~[ante] b)
+    (hPa : P (occ a)) (hPb : ¬ P (occ b)) : ¬ Shares occ ante :=
+  fun hs => hPb (hs h ▸ hPa)
+
 end Control
