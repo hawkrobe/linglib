@@ -8,7 +8,8 @@ import Linglib.Syntax.Minimalist.MinimalPronoun
 import Linglib.Syntax.Control.Tier
 import Linglib.Syntax.Control.Clause
 import Linglib.Syntax.Control.Basic
-import Linglib.Syntax.Control.Signature
+import Linglib.Syntax.Control.Diagnostics
+import Linglib.Studies.Landau2013
 import Linglib.Syntax.Minimalist.Probe.Profile
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Features.Complementation
@@ -39,14 +40,14 @@ open Minimalist Minimalist.MinimalPronoun Control Ga
 
 /-! ### OC by clause type -/
 
-/-- The control signature of a Gã clause type, from its noncoreference
-    flag (the derivation `Ostrove2026.smpmSignature` also uses). -/
-def gaSignature (c : EmbeddedClauseType) : Signature :=
-  .ofNoncoreferential (clauseProperties c).noncoreferentialSubject
+/-- The control profile of a Gã clause type, from its noncoreference
+    flag (the derivation `Ostrove2026.smpmProfile` also uses). -/
+def gaProfile (c : EmbeddedClauseType) : Profile Landau2013.Clause74 :=
+  Landau2013.ofNoncoreferential (clauseProperties c).noncoreferentialSubject
 
 /-- OC status is read off the complementizer's finiteness. -/
 theorem obligatory_iff_not_isFinite (c : EmbeddedClauseType) :
-    (gaSignature c).Obligatory ↔ (clauseComplementizer c).isFinite = false := by
+    (gaProfile c).IsObligatory ↔ (clauseComplementizer c).isFinite = false := by
   cases c <;> decide
 
 /-- A verb has a `ni`-frame exactly when it is a control verb (§§3.4–3.5,
@@ -80,22 +81,22 @@ inductive Table2Row where
 
 /-- The Table 2 column predicted by a control signature, a tier, and a
     control-verb inventory: the antecedence and reading rows are the
-    criteria the signature excludes (`Signature.admits`); *de se* is a
+    criteria the profile excludes (`Profile.admits`); *de se* is a
     tier property, not signature content ([landau-2013] §1.3;
     [chierchia-1990]) — the attitude-tier reading in the paper's
     subject-control test configuration (ex 53; communicative object
     control would give *de te* instead); φ-covariance is feature
     transmission under binding; the two control rows read the
     inventory. -/
-def predictedColumn (sig : Signature) (tier : Tier) (verbs : List CTP) :
-    Table2Row → Bool
+def predictedColumn (prof : Profile Landau2013.Clause74) (tier : Tier)
+    (verbs : List CTP) : Table2Row → Bool
   | .cCommandedByAntecedent =>
-      !decide (Signature.Criterion.nonCCommandingControl ∈ sig.admits)
+      !decide (Diagnostic.nonCCommandingControl ∈ prof.admits)
   | .longDistanceAntecedent =>
-      decide (Signature.Criterion.longDistanceControl ∈ sig.admits)
-  | .sloppyOnly => !decide (Signature.Criterion.strictEllipsis ∈ sig.admits)
-  | .boundVariable => !decide (Signature.Criterion.strictUnderOnly ∈ sig.admits)
-  | .hasPhiFeatures         => sig.boundVariable
+      decide (Diagnostic.longDistanceControl ∈ prof.admits)
+  | .sloppyOnly => !decide (Diagnostic.strictEllipsis ∈ prof.admits)
+  | .boundVariable => !decide (Diagnostic.strictUnderOnly ∈ prof.admits)
+  | .hasPhiFeatures         => prof .boundVariable
   | .obligatoryDeSe         => tier.isAttitude
   | .subjectControl         => verbs.any (·.control == .subjectControl)
   | .objectControl          => verbs.any (·.control == .objectControl)
@@ -108,7 +109,7 @@ def overtPronoun (d : Table2Row) : Bool :=
     the attested inventory, on the logophoric tier of the attitude
     verbs the *de se* test uses (ex 53 'expect'). -/
 theorem overt_pronoun_matches_pro :
-    overtPronoun = predictedColumn (gaSignature .irrealisNi) .logophoric gaCTPs := by
+    overtPronoun = predictedColumn (gaProfile .irrealisNi) .logophoric gaCTPs := by
   funext d; cases d <;> decide
 
 /-! ### The irrealis marker across complement frames
@@ -173,7 +174,7 @@ theorem ga_no_fSubjunctive (c : EmbeddedClauseType) :
     the one position that reads Agr, and has no φ-agreement anyway
     (§4.4, exx 79–81; §6.1). -/
 theorem landau_predicts_control (c : EmbeddedClauseType) (agr : Bool) :
-    (gaSignature c).Obligatory ↔ (gaToLandau c).HasOC agr := by
+    (gaProfile c).IsObligatory ↔ (gaToLandau c).HasOC agr := by
   cases c <;> cases agr <;> decide
 
 /-! ### Long-Distance Agree and CP strength
@@ -202,7 +203,7 @@ theorem ldaReaches_eq_not_isFinite (c : Complementizer) :
 
 /-- The probe reaches the embedded subject in exactly the OC clause types. -/
 theorem ldaReaches_iff_obligatory (c : EmbeddedClauseType) :
-    ldaReaches (clauseComplementizer c) = true ↔ (gaSignature c).Obligatory := by
+    ldaReaches (clauseComplementizer c) = true ↔ (gaProfile c).IsObligatory := by
   cases c <;> decide
 
 /-- `ni` projects no focus field; the finite complementizers do

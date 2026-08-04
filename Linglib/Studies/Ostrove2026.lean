@@ -9,7 +9,8 @@ import Linglib.Fragments.Mixtec.SMPM.Basic
 import Linglib.Syntax.Control.Tier
 import Linglib.Syntax.Control.CopyControl
 import Linglib.Syntax.Control.Basic
-import Linglib.Syntax.Control.Signature
+import Linglib.Syntax.Control.Diagnostics
+import Linglib.Studies.Landau2013
 import Linglib.Studies.Allotey2021
 import Linglib.Features.Complementation
 
@@ -102,8 +103,8 @@ theorem finite_no_restructuring :
 
 /-- The control signature of each SMPM clause type, from
     `clauseProperties.noncoreferentialSubject` via
-    `Signature.ofNoncoreferential` — the same derivation
-    `Allotey2021.gaSignature` uses for Gã.
+    `Landau2013.ofNoncoreferential` — the same derivation
+    `Allotey2021.gaProfile` uses for Gã.
 
     Untensed subjunctives show the full OC signature (§4):
     - Sloppy-only under VPE (33)
@@ -114,17 +115,17 @@ theorem finite_no_restructuring :
     these properties: they allow strict readings under VPE (30, 32),
     nonexhaustive binding (tensed subj., fn. 16), and non-local
     antecedents (43, 45). -/
-def smpmSignature (c : EmbeddedClauseType) : Signature :=
-  .ofNoncoreferential (clauseProperties c).noncoreferentialSubject
+def smpmProfile (c : EmbeddedClauseType) : Profile Landau2013.Clause74 :=
+  Landau2013.ofNoncoreferential (clauseProperties c).noncoreferentialSubject
 
 theorem untensed_is_OC :
-    (smpmSignature .untensedSubjunctive).Obligatory := by decide
+    (smpmProfile .untensedSubjunctive).IsObligatory := by decide
 
 theorem tensed_not_OC :
-    ¬(smpmSignature .tensedSubjunctive).Obligatory := by decide
+    ¬(smpmProfile .tensedSubjunctive).IsObligatory := by decide
 
 theorem finite_not_OC :
-    ¬(smpmSignature .finiteEmbedded).Obligatory := by decide
+    ¬(smpmProfile .finiteEmbedded).IsObligatory := by decide
 
 -- ════════════════════════════════════════════════════════════════
 -- § 3: Wurmbrand Bridge (partial — subjunctives only)
@@ -157,7 +158,7 @@ def wurmbrandHasOC : InfinitivalTenseClass → Bool
     correctly predicts control properties. -/
 theorem wurmbrand_predicts_control (w : InfinitivalTenseClass) :
     ∀ c ∈ wurmbrandToSubjunctive w,
-      ((smpmSignature c).Obligatory ↔ wurmbrandHasOC w = true) := by
+      ((smpmProfile c).IsObligatory ↔ wurmbrandHasOC w = true) := by
   cases w <;> decide
 
 /-- Propositional infinitives have no SMPM correspondent —
@@ -219,7 +220,7 @@ def smpmLandauAgr : Control.ClauseClass → Bool
     - F-subjunctive [+Agr]: logophoric OC blocked by Agr → no OC ✓
     - Finite [+Agr]: no control tier → no OC ✓ -/
 theorem landau_predicts_control (c : Control.ClauseClass) :
-    (smpmSignature (landauToSMPM c)).Obligatory ↔
+    (smpmProfile (landauToSMPM c)).IsObligatory ↔
       c.HasOC (smpmLandauAgr c) := by
   cases c <;> decide
 
