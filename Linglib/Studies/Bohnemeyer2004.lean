@@ -1,5 +1,6 @@
 import Linglib.Fragments.Mayan.Yukatek.VerbClasses
 import Linglib.Semantics.ArgumentStructure.EventStructure
+import Linglib.Studies.Lucy1994
 import Linglib.Syntax.Voice.Alternation
 
 /-!
@@ -481,5 +482,50 @@ theorem linking_consistent_with_split :
 theorem aspect_conditioned_split_family :
     yukatekSplit.alignment .completive =
       Alignment.hindiSplit.alignment .perfective := rfl
+
+/-! ### Stem classes vs Lucy's root classes
+
+[lucy-1994] classifies underived Yukatek roots by required transitiviser;
+this paper's five stem classes cut the same lexicon by status inflection.
+The comparison lives here because the paper engages Lucy's analysis
+directly — §5 argues degree achievements defeat its Vendlerian construal
+of these classes. -/
+
+/-- Stem class → [lucy-1994] salience class. Partial: `inchoative` stems
+    derive from adjectival roots (completive *-chah*), which Lucy holds
+    outside the predicate-root cut, and `positional` roots form Lucy's
+    separate cross-cutting class (completive *-lah*) — the two stem
+    classes share only the anomalous incompletive *-tal*. -/
+def salienceClassOf : VerbStemClass → Option Lucy1994.SalienceClass
+  | .active => some .agent
+  | .inactive => some .patient
+  | .transitiveActive => some .agentPatient
+  | .inchoative => none
+  | .positional => none
+
+/-- Where the two samples share a lexeme, stem class and Lucy's derived
+    root class agree: kim ~ kíim 'die', luub ~ lúub' 'fall',
+    naak ~ ná'ak 'ascend'. -/
+theorem salience_agrees_on_shared_roots :
+    salienceClassOf kim.stemClass = Lucy1994.predictedClass Lucy1994.kiim ∧
+    salienceClassOf luub.stemClass = Lucy1994.predictedClass Lucy1994.luub ∧
+    salienceClassOf naak.stemClass = Lucy1994.predictedClass Lucy1994.naak :=
+  ⟨rfl, rfl, rfl⟩
+
+/-- hàan 'eat' defeats a purely transitiviser-based classification: its
+    stem class maps to patient salient, yet it transitivizes with
+    applicative *-t* — the exponent Lucy's diagnostic reads as agent
+    salient. The suffix tracks internal causation, not class (ex. (9)). -/
+theorem haanEat_defies_transitiviser_diagnostic :
+    transitivizerSuffix haanEat = some .applicativeT ∧
+    salienceClassOf haanEat.stemClass = some .patient := ⟨rfl, rfl⟩
+
+/-- péek: active in this paper's classification (manner-of-motion
+    process, with idiosyncratic causative *-s*), but a `#`-marked
+    state-change root in [lucy-1994] ex. (4) — the two sources classify
+    the same root differently. -/
+theorem peek_stem_vs_root_class_divergence :
+    salienceClassOf peek.stemClass = some .agent ∧
+    Lucy1994.predictedClass Lucy1994.peek = some .patient := ⟨rfl, rfl⟩
 
 end Bohnemeyer2004

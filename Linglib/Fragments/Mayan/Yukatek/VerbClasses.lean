@@ -1,6 +1,5 @@
 import Linglib.Semantics.Aspect.Basic
 import Linglib.Semantics.ArgumentStructure.EventStructure
-import Linglib.Semantics.Verb.Root.SalienceClass
 import Linglib.Fragments.Mayan.Params
 import Linglib.Features.Case.Basic
 import Linglib.Syntax.Case.Alignment
@@ -19,8 +18,7 @@ marks S like A (accusative).
 ## Main declarations
 
 * `Yukatek.VerbStemClass`: the five stem classes, with `eventType`,
-  `isIntransitive`, `toTemplate` (R&H templates), and `toSalienceClass`
-  ([lucy-1994]'s 4-way cut).
+  `isIntransitive`, and `toTemplate` (R&H templates).
 * `Yukatek.StatusCategory`: the four status categories, with
   `viewpointAspect` and `isAssertive`.
 * `Yukatek.sArgumentMarker`: which marker set cross-references the
@@ -30,7 +28,7 @@ marks S like A (accusative).
 
 ## Implementation notes
 
-Verb stem classes ([bohnemeyer-2004] Table 3; [lucy-1994]):
+Verb stem classes ([bohnemeyer-2004] Table 3):
 
 | Class | Event type | Examples |
 |-------|-----------|----------|
@@ -51,7 +49,6 @@ Status marking encodes both viewpoint aspect and modal assertiveness
 
 namespace Yukatek
 
-open Verb
 open Semantics.Aspect (Perfectivity)
 open ArgumentStructure.EventStructure (EventType InternalExternalCause)
 open Mayan (MarkerSet)
@@ -59,8 +56,7 @@ open Mayan (MarkerSet)
 /-! ### Verb stem classes -/
 
 /-- The five verb stem classes of Yukatek Maya, distinguished by
-    status inflection patterns ([bohnemeyer-2004] Table 3;
-    [lucy-1994]). -/
+    status inflection patterns ([bohnemeyer-2004] Table 3). -/
 inductive VerbStemClass where
   | active           -- activity roots: walk, sing, dance, sneeze
   | inactive         -- state-change roots: die, burst, enter, exit
@@ -168,8 +164,6 @@ def waalTal : YukatekVerb := ⟨"stand up", .positional, .external⟩
 
 -- Key exception: inactive stem class but internally caused → applicative
 -- [bohnemeyer-2004] ex. (9): hàan-t-ik (applicative -t, not causative -s).
--- Low-tone `hàan` "eat" — distinct from high-tone `háan` "stop, cease,
--- heal" in `Roots.haanCease`, which is patient-salient (Lucy's diagnostic).
 def haanEat : YukatekVerb := ⟨"eat", .inactive, .internal⟩
 
 -- Active verbs (externally caused: manner of motion)
@@ -216,70 +210,6 @@ def VerbStemClass.toTemplate : VerbStemClass → Template
 theorem eventType_consistent (c : VerbStemClass) :
     c.eventType = c.toTemplate.eventType := by
   cases c <;> rfl
-
-/-! ### Salience classes ([lucy-1994]) -/
-
-/-- Map [bohnemeyer-2004]'s 5-way Yukatek stem classification to
-    [lucy-1994]'s 4-way salience cut. The 5-way is a refinement:
-    `inchoative` and `positional` both pattern as Lucy's `positional`
-    (both derive via `-tal` from a stative root); `active`/`inactive`/
-    `transitiveActive` map straightforwardly to `agent`/`patient`/
-    `agentPatient`. -/
-def VerbStemClass.toSalienceClass : VerbStemClass → SalienceClass
-  | .active           => .agent
-  | .inactive         => .patient
-  | .inchoative       => .positional
-  | .positional       => .positional
-  | .transitiveActive => .agentPatient
-
-/-- Bohnemeyer's 5-way stem classes refining Lucy's positional class:
-    `inchoative` and `positional` both reduce to the same Lucy class. -/
-theorem inchoative_positional_collapse_under_lucy :
-    VerbStemClass.toSalienceClass .inchoative =
-      VerbStemClass.toSalienceClass .positional := rfl
-
-/-- The other three Bohnemeyer classes are mutually distinct under
-    Lucy's salience cut (they map to three different `SalienceClass`
-    values). -/
-theorem active_inactive_transitive_distinct :
-    VerbStemClass.toSalienceClass .active ≠
-      VerbStemClass.toSalienceClass .inactive ∧
-    VerbStemClass.toSalienceClass .active ≠
-      VerbStemClass.toSalienceClass .transitiveActive ∧
-    VerbStemClass.toSalienceClass .inactive ≠
-      VerbStemClass.toSalienceClass .transitiveActive := by
-  refine ⟨?_, ?_, ?_⟩ <;> decide
-
-/-- `toSalienceClass` is surjective: every Lucy class is in the image of
-    Bohnemeyer's 5-way refinement. -/
-theorem toSalienceClass_surjective :
-    ∀ c : SalienceClass, ∃ s : VerbStemClass, s.toSalienceClass = c
-  | .agent        => ⟨.active,           rfl⟩
-  | .agentPatient => ⟨.transitiveActive, rfl⟩
-  | .patient      => ⟨.inactive,         rfl⟩
-  | .positional   => ⟨.positional,       rfl⟩
-
-/-- The fibre of `toSalienceClass` over `.positional` is exactly
-    `{.inchoative, .positional}` — these are the two Bohnemeyer classes
-    that collapse under [lucy-1994]'s 4-way cut. The other three
-    fibres are singletons (`active ↦ agent`, `inactive ↦ patient`,
-    `transitiveActive ↦ agentPatient`). -/
-theorem toSalienceClass_fiber_positional (s : VerbStemClass) :
-    s.toSalienceClass = .positional ↔ s = .inchoative ∨ s = .positional := by
-  cases s <;> simp [VerbStemClass.toSalienceClass]
-
-/-- The other three fibres are singletons. -/
-theorem toSalienceClass_fiber_agent (s : VerbStemClass) :
-    s.toSalienceClass = .agent ↔ s = .active := by
-  cases s <;> simp [VerbStemClass.toSalienceClass]
-
-theorem toSalienceClass_fiber_patient (s : VerbStemClass) :
-    s.toSalienceClass = .patient ↔ s = .inactive := by
-  cases s <;> simp [VerbStemClass.toSalienceClass]
-
-theorem toSalienceClass_fiber_agentPatient (s : VerbStemClass) :
-    s.toSalienceClass = .agentPatient ↔ s = .transitiveActive := by
-  cases s <;> simp [VerbStemClass.toSalienceClass]
 
 /-! ### Split-ergative system -/
 

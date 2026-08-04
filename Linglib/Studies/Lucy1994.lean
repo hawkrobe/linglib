@@ -1,316 +1,445 @@
-import Linglib.Fragments.Mayan.Yukatek.Operators
-import Linglib.Fragments.Mayan.Yukatek.VerbClasses
-import Linglib.Semantics.Verb.Root.SalienceClass
+import Linglib.Semantics.Verb.Root.Closure
+import Linglib.Semantics.Verb.Root.Arity
+import Linglib.Morphology.Exponence.Select
 
 /-!
 # Lucy 1994: The role of semantic value in lexical comparison
 
-[lucy-1994]
+[lucy-1994] argues that lexical classes must be identified
+*morpho-distributionally*, not denotationally: the notional class "motion
+verbs", assembled by English intuition, coincides with no morphologically
+defined Yucatec class. The diagnostic is which derivation a root requires
+to form a transitive stem:
 
-[lucy-1994] argues that the right way to identify lexical
-classes is *morpho-distributional*, not denotational. Yucatek's
-"spatial" verbs are his test case: a notional set assembled by English
-intuition fails to coincide with any morphologically defined Yucatek
-class. What the morphology *does* deliver is a different, three-way
-classification of roots by salience profile, derivable from which
-transitiviser the root requires:
+| Derivation | Predicate root class (p. 630) | Size (p. 629) |
+|------------|-------------------------------|----------------|
+| `=t` (affective) | agent salient          | well over 100  |
+| `=∅` (zero)      | agent-patient salient  | some 500       |
+| `=s` (causative) | patient salient        | fewer than 75  |
 
-| Required transitiviser | Salience class           | Examples                              |
-|------------------------|--------------------------|---------------------------------------|
-| `=t` (affective)       | agent-salient            | síit' "jump", ¢'iib "write"           |
-| `=∅` (zero)            | agent-patient salient    | kuč "carry", p'is "measure", lo'š "punch" |
-| `=s` (causative)       | patient-salient          | kíim "die", háan "cease", lúub' "fall", 'ok "enter" |
+Positional roots (over 100) fall outside this three-way cut: they take the
+positional derivation `=lah` (incompletive `=tal`) and are formally
+interstitial — *čin* 'bend' also zero-derives a transitive (ex. (6)).
+Notional motion roots land in the *smallest* predicate class, patient
+salient (ex. (4)); at best the five `#`-marked roots lacking the `-Vl`
+imperfective form "a formal class of 'motion verbs'" (p. 641), a
+distinction invisible to the entailment grid.
 
-Crucially, Lucy's "motion" roots (`luub`, `ok`, etc.) do not form a
-unified class — they pattern with other state-change verbs as
-patient-salient. What *does* form a unified class is the **positional**
-roots (čin "bend", kul "sit", etc.), distinguished by their derivation
-via `-tal` (allomorph `-lah`) for the positional inchoative.
+## Main results
 
-Here we recast the salience cut as a derived equivalence on roots
-under the operator inventory in `Fragments/Mayan/Yukatek/Operators.lean`:
-two roots have the same salience class iff the same operator(s) apply
-to them. The classification then *falls out* of (B&K-G feature
-signature × Coon root arity) × (operator applicability conditions) —
-it is not stipulated. Arity carries the agent-patient class (Lucy's
-`=∅` roots "require two arguments"; *p'is* 'measure' and *lo'š*
-'punch' entail no change of state, so no feature configuration could
-carry it); the signature separates the two intransitive classes.
+* `predicted_matches_attested`: applicability derived from
+  (kind signature × arity) reproduces every derivation Lucy attests.
+* `motion_roots_not_separate_class`: motion roots share their predicted
+  class with plain state-change roots like *kíim* 'die'.
+* `positional_crosscuts_transitiviser_classes`: the positional diagnostic
+  overlaps `=∅` (*čin*) and the diagnostic gap (*kul*) — Lucy's classes
+  are not a partition.
+* `hash_not_signature_definable`: the `#` motion subclass is not a
+  function of the entailment grid.
 
-The structural theorem `class_depends_only_on_signature_and_arity`
-makes this precise: salience class depends only on the pair, not on
-the specific root identity. The per-root checks then degenerate to
-finite lookups.
+## Implementation notes
+
+The reconstruction is two-dimensional — B&K-G kind signature × Coon root
+arity ([beavers-koontz-garboden-2020]; [coon-2019]; both postdate Lucy and
+serve as project-canonical substrate). Arity carries the agent-patient
+class: Lucy's `=∅` roots "require two arguments" (p. 629) and are not
+signature-homogeneous (*p'is* 'measure' is manner-only, *k'os* 'cut'
+manner+result), so no feature configuration could carry the class. The
+signature separates the two intransitive classes, matching the Sapir 1917
+~ Fillmore 1968 ~ Perlmutter 1978 unaccusativity lineage Lucy cites
+(p. 630). "Salience" is Lucy's term for "a set of default semantic values
+in a root or stem that influence an overt case marking" (p. 628). Root
+name strings follow Lucy's orthography. The `=t` class is inflated by
+denominal and loanword verbalization (p. 629), so `=t` applicability is a
+weaker signal of manner entailments than `=∅` or `=s` are of theirs.
 -/
 
 namespace Lucy1994
 
-open Verb
-open Morphology
-open Yukatek.Roots
-open Yukatek.Operators
+open Verb Morphology
 
-/-! ### Salience classes (re-exported from theory) -/
+/-! ### Salience classes -/
 
-/-! `SalienceClass` and `classOf` live in
-    `Semantics/Verb/Root/SalienceClass.lean`. This file
-    provides the full [lucy-1994] analysis on top of them:
-    operator-applicability characterizations and per-root sanity checks. -/
+/-- Lucy's "three large predicate root classes" (p. 630), named for the
+    argument(s) the underived root makes salient. Positional roots are
+    deliberately not a case: they fall outside the transitiviser cut
+    (`IsPositional`). -/
+inductive SalienceClass where
+  | agent
+  | agentPatient
+  | patient
+  deriving DecidableEq, Repr
 
-/-- A root's applicability profile: the exponents of the inventory's
-    applicable operators at `r`, in inventory order — derived from the
-    `Morphology.Exponence` selection API, not re-stipulated. -/
-def profile (r : Root) : List String :=
+variable (s : Root.Kinds) (ar : Root.Arity)
+
+/-- Agent salient: intransitive manner-of-action root — "actions or
+    activities that some entity undertakes" (pp. 628–629); takes `=t`. -/
+abbrev IsAgentSalient : Prop :=
+  ar = .noTheme ∧ .manner ∈ s ∧ .result ∉ s
+
+/-- Patient salient: intransitive change-of-state root — "state changes
+    that some entity undergoes more or less spontaneously" (p. 629);
+    takes `=s`. -/
+abbrev IsPatientSalient : Prop :=
+  ar = .noTheme ∧ .manner ∉ s ∧ .result ∈ s
+
+/-- Positional: pure stative configurational signature; takes the
+    positional derivation. Deliberately arity-free — *čin* 'bend' is
+    positional *and* zero-derives a transitive (ex. (6)), so the
+    positional class cross-cuts the transitiviser cut. -/
+abbrev IsPositional : Prop := s = {.state}
+
+/-- The transitiviser cut. Agent-patient salience is root transitivity
+    (`selectsTheme`), not a feature configuration; the two intransitive
+    classes split by signature; intransitive signatures with neither
+    manner nor result — pure statives included — are outside the cut. -/
+def classOf : Option SalienceClass :=
+  if ar = .selectsTheme then some .agentPatient
+  else if IsAgentSalient s ar then some .agent
+  else if IsPatientSalient s ar then some .patient
+  else none
+
+/-- Collocational closure does not move the transitiviser cut on
+    cause-free signatures: the only available closure edge is
+    result→state, which no arm of `classOf` consults. -/
+theorem classOf_close (h : LexKind.cause ∉ s) :
+    classOf s.close ar = classOf s ar := by
+  revert s ar; decide
+
+/-- The cause-free hypothesis is necessary: a lone `cause` atom is
+    outside the cut at base but patient salient after closure. -/
+theorem classOf_close_ne_of_cause :
+    classOf {.cause} .noTheme = none ∧
+    classOf (Root.Kinds.close {.cause}) .noTheme = some .patient := by
+  decide
+
+/-! ### Agent-salient roots (p. 629, ex. (1a)) -/
+
+/-- síit' 'jump' (ex. (1a)). -/
+def siit : Root := ⟨"síit'", {.hasManner "jumping"}, none, {}⟩
+
+/-- ¢'iib' 'write' (p. 629). -/
+def tziib : Root := ⟨"¢'iib'", {.hasManner "writing"}, none, {}⟩
+
+/-- mìis 'sweep' (p. 629); denominal from 'broom'. -/
+def miis : Root := ⟨"mìis", {.hasManner "sweeping"}, none, {}⟩
+
+/-- čé'eh 'smile' (p. 629). -/
+def cheh : Root := ⟨"čé'eh", {.hasManner "smiling"}, none, {}⟩
+
+/-- páak 'weed' (p. 629). -/
+def paak : Root := ⟨"páak", {.hasManner "weeding"}, none, {}⟩
+
+/-! ### Agent-patient salient roots (p. 629, ex. (1b))
+
+Root transitives. They carry no uniform signature: *kuč*, *p'is*, *ha¢*,
+*loš* are manner-only (surface contact without entailed result, B&K-G's
+*hit* type), while *k'os* 'cut' is manner+result (their *cut* type). -/
+
+/-- kuč 'carry' (ex. (1b)). -/
+def kuc : Root := ⟨"kuč", {.hasManner "carrying"}, none, {}⟩
+
+/-- k'os 'cut' (p. 629); manner+result. -/
+def kos : Root :=
+  ⟨"k'os", {.hasManner "cutting", .becomesState "cut"}, none, {}⟩
+
+/-- p'is 'measure' (p. 629); no entailed change of state. -/
+def pis : Root := ⟨"p'is", {.hasManner "measuring"}, none, {}⟩
+
+/-- ha¢ 'whip' (p. 629). -/
+def hats : Root := ⟨"ha¢", {.hasManner "whipping"}, none, {}⟩
+
+/-- loš 'punch' (p. 629); surface contact without entailed result. -/
+def los : Root := ⟨"loš", {.hasManner "striking"}, none, {}⟩
+
+/-! ### Patient-salient roots (ex. (2), pp. 629–630)
+
+Lucy's list (2) is arranged in antonym pairs "listed in vertical
+adjacency" (fn. 7): 'ah ~ wen, siih ~ kíim, tú'ub' ~ k'a'ah, ču'un ~
+č'en, hó'op' ~ háaw. The order below is the list's. -/
+
+/-- 'ah '(a)wake(n)' ('ah=s 'wake (someone)'). -/
+def ah : Root := ⟨"'ah", {.becomesState "awake"}, none, {}⟩
+
+/-- wen '(fall a)sleep' (ween=s 'put to sleep'); fn. 7 flags it as also
+    denoting continuation in the state. -/
+def wen : Root := ⟨"wen", {.becomesState "asleep"}, none, {}⟩
+
+/-- siih 'be born' (siih=s 'give birth, bear'). -/
+def siih : Root := ⟨"siih", {.becomesState "born"}, none, {}⟩
+
+/-- kíim 'die' (ex. (1c); kíim=s 'kill'). -/
+def kiim : Root := ⟨"kíim", {.becomesState "dead"}, none, {}⟩
+
+/-- tú'ub' 'forget' (tú'ub'=s 'distract, cause to forget'). -/
+def tuub : Root := ⟨"tú'ub'", {.becomesState "forgotten"}, none, {}⟩
+
+/-- k'a'ah 'remember' (k'á'ah=s 'remind, mention, invoke'). -/
+def kaah : Root := ⟨"k'a'ah", {.becomesState "remembered"}, none, {}⟩
+
+/-- ču'un 'begin activity' (ču'un=s 'cause to begin'). -/
+def chuun : Root := ⟨"ču'un", {.becomesState "begun"}, none, {}⟩
+
+/-- č'en 'stop, cease' (č'en=s 'cause to stop, suspend'). -/
+def chen : Root := ⟨"č'en", {.becomesState "ceased"}, none, {}⟩
+
+/-- hó'op' 'begin, start' (hó'op'=s 'cause to begin'). -/
+def hoop : Root := ⟨"hó'op'", {.becomesState "started"}, none, {}⟩
+
+/-- háaw 'stop, cease, heal' (háaw=s 'stop, revoke, medicate'). -/
+def haaw : Root := ⟨"háaw", {.becomesState "stopped"}, none, {}⟩
+
+/-- hé'el 'rest, stop at' (hé'e(l)=s 'rest'). -/
+def heel : Root := ⟨"hé'el", {.becomesState "rested"}, none, {}⟩
+
+/-- p'át 'remain' (p'át=s 'abandon'). -/
+def paat : Root := ⟨"p'át", {.becomesState "remaining"}, none, {}⟩
+
+/-! ### Motion roots (ex. (4), p. 640)
+
+"Locational-spatial state-change predicates": notionally motion, formally
+plain members of the patient-salient class. The five `#`-marked roots
+"do not — and CANNOT — take the `-Vl` suffix in the imperfective"; fn. 17
+adds that *péek* and *'ú'ul* are also irregular in their agent-focused
+perfective forms, "where they pattern like agent-salient roots". -/
+
+/-- máan 'pass by' (`#`; máan=s 'pass, transfer, transport'). -/
+def maan : Root := ⟨"máan", {.becomesState "past"}, none, {}⟩
+
+/-- péek 'move, vibrate' (`#`; pek=s 'cause to move, vibrate'). -/
+def peek : Root := ⟨"péek", {.becomesState "in-motion"}, none, {}⟩
+
+/-- b'in 'go' (`#`; bi(n)=s 'take'). -/
+def bin : Root := ⟨"b'in", {.becomesState "gone"}, none, {}⟩
+
+/-- tàal 'come (here)' (`#`; tàa(l)=s 'bring'). -/
+def taal : Root := ⟨"tàal", {.becomesState "come"}, none, {}⟩
+
+/-- 'ú'ul 'arrive (here)' (`#`; 'ú'uh=s 'bring it to here'). -/
+def uul : Root := ⟨"'ú'ul", {.becomesState "arrived"}, none, {}⟩
+
+/-- 'ok 'enter, intrude' ('òok=s 'move it in(to)'). -/
+def ok : Root := ⟨"'ok", {.becomesState "inside"}, none, {}⟩
+
+/-- lúub' 'fall' (lúub'=s 'fell'). -/
+def luub : Root := ⟨"lúub'", {.becomesState "fallen"}, none, {}⟩
+
+/-- líik' '(a)rise, ascend' (lii(k)'=s 'raise, lift, put away'). -/
+def liik : Root := ⟨"líik'", {.becomesState "risen"}, none, {}⟩
+
+/-- ná'ak '(a)rise, ascend' (ná'ak=s 'raise'); distinct from náak
+    'arrive, reach, hit', not sampled here. -/
+def naak : Root := ⟨"ná'ak", {.becomesState "ascended"}, none, {}⟩
+
+/-! ### Positional roots (ex. (7), p. 643) -/
+
+/-- čin 'bow, bend down, bend over' (ex. (5)–(7)); zero-derives a
+    transitive, ex. (6) 'I bent it'. -/
+def cin : Root := ⟨"čin", {.hasState "bent"}, none, {}⟩
+
+/-- kul 'sit' (p. 645, fn. 24: relational 'x is-seated [on y]'). -/
+def kul : Root := ⟨"kul", {.hasState "seated"}, none, {}⟩
+
+/-! ### Arity and class lists -/
+
+/-- Roots attested forming a transitive stem by zero derivation: the
+    sampled `=∅` predicate roots (p. 629) plus the positional *čin*
+    (ex. (6)). -/
+def rootTransitives : List Root := [kuc, kos, pis, hats, los, cin]
+
+/-- Coon arity for the sample: zero-derivers select a theme (√TV);
+    every other sampled root is intransitive. Sample-local — the
+    assignment defaults to `noTheme` off the sample. -/
+def arity (r : Root) : Root.Arity :=
+  if r ∈ rootTransitives then .selectsTheme else .noTheme
+
+/-- The sampled agent-salient roots. -/
+def agentSalientRoots : List Root := [siit, tziib, miis, cheh, paak]
+
+/-- The sampled agent-patient salient (`=∅` predicate) roots. -/
+def agentPatientSalientRoots : List Root := [kuc, kos, pis, hats, los]
+
+/-- The sampled patient-salient roots of list (2), in Lucy's order. -/
+def patientSalientRoots : List Root :=
+  [ah, wen, siih, kiim, tuub, kaah, chuun, chen, hoop, haaw, heel, paat]
+
+/-- The sampled motion roots of ex. (4). -/
+def motionRoots : List Root :=
+  [maan, peek, bin, taal, uul, ok, luub, liik, naak]
+
+/-- The `#`-marked subset of ex. (4): the roots lacking the `-Vl`
+    imperfective — for Lucy, the only candidate "formal class of 'motion
+    verbs'" (p. 641). -/
+def hashMarked : List Root := [maan, peek, bin, taal, uul]
+
+/-- The sampled positional roots. -/
+def positionalRoots : List Root := [cin, kul]
+
+/-- Every sampled root. -/
+def sampledRoots : List Root :=
+  agentSalientRoots ++ agentPatientSalientRoots ++ patientSalientRoots ++
+    motionRoots ++ positionalRoots
+
+/-! ### Diagnostic operators -/
+
+/-- A diagnostic derivational operator: exponent plus structural
+    applicability condition, with bundled decidability so profiles
+    compute (the inventory holds heterogeneous conditions, so a
+    per-operator instance cannot serve). Selection machinery comes from
+    the `Morphology.Exponence.Rule` instance. -/
+structure DiagOp where
+  /-- The suffix, in Lucy's orthography. -/
+  exponent : String
+  /-- The structural condition on the root. -/
+  Applies : Root → Prop
+  /-- Bundled decidability of the condition. -/
+  decApplies : DecidablePred Applies
+
+instance : Exponence.Rule DiagOp Root String where
+  exponent := DiagOp.exponent
+  Applies := DiagOp.Applies
+
+instance : DecidableRel (Exponence.Applies : DiagOp → Root → Prop) :=
+  fun op r => op.decApplies r
+
+@[simp] theorem applies_iff (op : DiagOp) (r : Root) :
+    Exponence.Applies op r ↔ op.Applies r := Iff.rfl
+
+/-- Affective `=t`: transitivises an agent-salient root by adding a
+    patient argument. -/
+def affectiveT : DiagOp :=
+  ⟨"=t", fun r => IsAgentSalient r.kinds (arity r), inferInstance⟩
+
+/-- Zero derivation `=∅`: the root alone supports a transitive stem. -/
+def zeroDeriv : DiagOp :=
+  ⟨"=∅", fun r => arity r = .selectsTheme, inferInstance⟩
+
+/-- Causative `=s`: transitivises a patient-salient root by adding an
+    agent argument. -/
+def causativeS : DiagOp :=
+  ⟨"=s", fun r => IsPatientSalient r.kinds (arity r), inferInstance⟩
+
+/-- Positional derivation, realized `=lah` ~ `=tal` by status (the
+    `=tal` incompletive is the anomalous member, apparently compounding
+    with *tàal* 'come'). -/
+def positionalLah : DiagOp :=
+  ⟨"=lah", fun r => IsPositional r.kinds, inferInstance⟩
+
+/-- The diagnostic inventory, in the order of Lucy's presentation:
+    the three transitivisers of ex. (1), then the positional. -/
+def inventory : List DiagOp :=
+  [affectiveT, zeroDeriv, causativeS, positionalLah]
+
+/-- The exponents of the inventory's applicable operators at `r`, in
+    inventory order — the root's predicted derivational behaviour. -/
+def predictedExponents (r : Root) : List String :=
   (Exponence.applicable inventory r).map DiagOp.exponent
 
-/-- A root's predicted salience class: the substrate classifier
-    applied to its signature and the fragment's arity assignment. -/
-abbrev predictedClass (r : Root) : Option SalienceClass :=
+/-! ### Predicted vs attested derivations -/
+
+/-- The derivations Lucy attests per sampled root: `=t` for the p. 629
+    activity roots, `=∅` for the root transitives, `=s` for lists (2)
+    and (4), `=lah` for positionals — with *čin* attested for both `=∅`
+    (ex. (6)) and `=lah` (ex. (5)). -/
+def attestations : List (Root × List String) :=
+  [ (siit, ["=t"]), (tziib, ["=t"]), (miis, ["=t"]), (cheh, ["=t"]),
+    (paak, ["=t"]),
+    (kuc, ["=∅"]), (kos, ["=∅"]), (pis, ["=∅"]), (hats, ["=∅"]),
+    (los, ["=∅"]),
+    (ah, ["=s"]), (wen, ["=s"]), (siih, ["=s"]), (kiim, ["=s"]),
+    (tuub, ["=s"]), (kaah, ["=s"]), (chuun, ["=s"]), (chen, ["=s"]),
+    (hoop, ["=s"]), (haaw, ["=s"]), (heel, ["=s"]), (paat, ["=s"]),
+    (maan, ["=s"]), (peek, ["=s"]), (bin, ["=s"]), (taal, ["=s"]),
+    (uul, ["=s"]), (ok, ["=s"]), (luub, ["=s"]), (liik, ["=s"]),
+    (naak, ["=s"]),
+    (cin, ["=∅", "=lah"]), (kul, ["=lah"]) ]
+
+/-- The derivations predicted from (signature × arity) reproduce every
+    derivation Lucy attests. Unlike the classifier theorems below, this
+    check is against a column transcribed from the paper, independent of
+    the encoding. -/
+theorem predicted_matches_attested :
+    ∀ p ∈ attestations, predictedExponents p.1 = p.2 := by decide
+
+/-! ### The derived classification -/
+
+/-- A root's predicted salience class. -/
+def predictedClass (r : Root) : Option SalienceClass :=
   classOf r.kinds (arity r)
 
-theorem class_depends_only_on_signature_and_arity
-    (r₁ r₂ : Root) (h : r₁.kinds = r₂.kinds)
-    (h' : arity r₁ = arity r₂) :
-    predictedClass r₁ = predictedClass r₂ := by
-  unfold predictedClass
-  rw [h, h']
+/-- The transitiviser each salience class requires. -/
+def exponentOf : SalienceClass → String
+  | .agent => "=t"
+  | .agentPatient => "=∅"
+  | .patient => "=s"
 
-/-! ### Predicted class agrees with operator applicability -/
-
-/-! Both `predictedClass` and the inventory's applicability profile
-    factor through the pair (kind signature × arity), drawn from a
-    32-element fintype. Each characterisation therefore reduces —
-    after rewriting the profile to pair level
-    (`profile_eq`) and generalising the pair — to a
-    statement over all pairs that `decide` checks. The local macro
-    `lucy_applicable` packages the reduction. -/
-
-/-- The applicability profile as a function of the
-    (signature × arity) pair. The four operator conditions are
-    pairwise disjoint (`classes_pairwise_disjoint`), so at most one
-    exponent appears. -/
-private theorem profile_eq (r : Root) :
-    profile r =
-      (if IsAgentSalient r.kinds (arity r) then ["=t"] else []) ++
-      (if IsAgentPatientSalient (arity r) then ["=∅"] else []) ++
-      (if IsPatientSalient r.kinds (arity r) then ["=s"] else []) ++
-      (if IsPositional r.kinds (arity r) then ["-tal"] else []) := by
-  simp only [profile, Exponence.applicable, applies_iff, inventory,
-    affectiveT, zeroDeriv, causativeS, positionalTal, List.filter_cons,
-    List.filter_nil, decide_eq_true_eq]
+/-- Predicted derivational behaviour decomposes as the class's
+    transitiviser followed by the positional derivation when the
+    signature licenses it — the applicability profile *is* the
+    classification, plus the cross-cutting positional diagnostic. -/
+theorem predictedExponents_eq (r : Root) :
+    predictedExponents r =
+      (predictedClass r).toList.map exponentOf ++
+        (if IsPositional r.kinds then ["=lah"] else []) := by
+  simp only [predictedExponents, predictedClass, Exponence.applicable,
+    applies_iff, inventory, affectiveT, zeroDeriv, causativeS,
+    positionalLah, List.filter_cons, List.filter_nil, decide_eq_true_eq,
+    classOf]
   generalize r.kinds = s
   generalize arity r = a
   revert s a
   decide
 
-local macro "lucy_applicable " r:term : tactic =>
-  `(tactic|
-    (rw [profile_eq]
-     unfold predictedClass
-     generalize ($r).kinds = s
-     generalize arity $r = a
-     revert s a
-     decide))
+theorem agentSalient_class :
+    ∀ r ∈ agentSalientRoots, predictedClass r = some .agent := by decide
 
-/-- The `=t`-only applicability profile characterises agent-salient roots. -/
-theorem agent_iff_applicable_t (r : Root) :
-    predictedClass r = some .agent ↔ profile r = ["=t"] := by
-  lucy_applicable r
+theorem agentPatientSalient_class :
+    ∀ r ∈ agentPatientSalientRoots,
+      predictedClass r = some .agentPatient := by decide
 
-/-- The `=∅`-only applicability profile characterises agent-patient salient roots. -/
-theorem agentPatient_iff_applicable_zero (r : Root) :
-    predictedClass r = some .agentPatient ↔ profile r = ["=∅"] := by
-  lucy_applicable r
+theorem patientSalient_class :
+    ∀ r ∈ patientSalientRoots, predictedClass r = some .patient := by decide
 
-/-- The `=s`-only applicability profile characterises patient-salient roots. -/
-theorem patient_iff_applicable_s (r : Root) :
-    predictedClass r = some .patient ↔ profile r = ["=s"] := by
-  lucy_applicable r
-
-/-- The `-tal`-only applicability profile characterises positional roots. -/
-theorem positional_iff_applicable_tal (r : Root) :
-    predictedClass r = some .positional ↔ profile r = ["-tal"] := by
-  lucy_applicable r
-
-/-- An empty applicability profile characterises roots in [lucy-1994]'s
-    diagnostic gap (the no-manner, no-result signatures other than the
-    pure positional configuration `{.state}`). -/
-theorem none_iff_applicable_empty (r : Root) :
-    predictedClass r = none ↔ profile r = [] := by
-  lucy_applicable r
-
-/-- **Applicability-as-classifier.** Two roots have the same applicability profile
-    under [lucy-1994]'s diagnostic inventory iff they have the
-    same predicted salience class. The 4 named-class iff-theorems are
-    special cases. -/
-theorem profile_eq_iff_predictedClass_eq (r₁ r₂ : Root) :
-    profile r₁ = profile r₂ ↔
-      predictedClass r₁ = predictedClass r₂ := by
-  rw [profile_eq, profile_eq]
-  unfold predictedClass
-  generalize r₁.kinds = s₁
-  generalize arity r₁ = a₁
-  generalize r₂.kinds = s₂
-  generalize arity r₂ = a₂
-  revert s₁ a₁ s₂ a₂
-  decide
-
-/-! ### Per-root sanity checks -/
-
-/-! Agent-salient. -/
-theorem siit_agent  : predictedClass siit  = some .agent := rfl
-theorem tziib_agent : predictedClass tziib = some .agent := rfl
-theorem miis_agent  : predictedClass miis  = some .agent := rfl
-theorem cheh_agent  : predictedClass cheh  = some .agent := rfl
-theorem paak_agent  : predictedClass paak  = some .agent := rfl
-
-/-! Agent-patient salient. -/
-theorem kuc_agentPatient : predictedClass kuc = some .agentPatient := rfl
-theorem pis_agentPatient : predictedClass pis = some .agentPatient := rfl
-theorem los_agentPatient : predictedClass los = some .agentPatient := rfl
-
-/-! Patient-salient. -/
-theorem kiim_patient      : predictedClass kiim      = some .patient := rfl
-theorem haanCease_patient : predictedClass haanCease = some .patient := rfl
-theorem luub_patient      : predictedClass luub      = some .patient := rfl
-theorem ok_patient        : predictedClass ok        = some .patient := rfl
-theorem ah_patient        : predictedClass ah        = some .patient := rfl
-theorem wen_patient       : predictedClass wen       = some .patient := rfl
-theorem siih_patient      : predictedClass siih      = some .patient := rfl
-theorem tuub_patient      : predictedClass tuub      = some .patient := rfl
-theorem kaah_patient      : predictedClass kaah      = some .patient := rfl
-theorem chuun_patient     : predictedClass chuun     = some .patient := rfl
-theorem chenCease_patient : predictedClass chenCease = some .patient := rfl
-theorem hoop_patient      : predictedClass hoop      = some .patient := rfl
-theorem heel_patient      : predictedClass heel      = some .patient := rfl
-theorem paat_patient      : predictedClass paat      = some .patient := rfl
-
-/-! Motion roots — pattern as patient-salient (Lucy's central point). -/
-theorem maan_patient : predictedClass maan = some .patient := rfl
-theorem taal_patient : predictedClass taal = some .patient := rfl
-theorem bin_patient  : predictedClass bin  = some .patient := rfl
-theorem naak_patient : predictedClass naak = some .patient := rfl
-theorem liik_patient : predictedClass liik = some .patient := rfl
-
-/-! Positional. -/
-theorem cin_positional : predictedClass cin = some .positional := rfl
-theorem kul_positional : predictedClass kul = some .positional := rfl
+/-- The `=∅` class is not signature-homogeneous (*p'is* manner-only vs
+    *k'os* manner+result) — root transitivity is carried by arity, not
+    by any feature configuration. -/
+theorem rootTransitives_not_signature_uniform :
+    ∃ r ∈ agentPatientSalientRoots, ∃ r' ∈ agentPatientSalientRoots,
+      r.kinds ≠ r'.kinds := by decide
 
 /-! ### The "motion verbs" non-class -/
 
-/-- [lucy-1994]'s central typological point: "motion" verbs
-    (`luub` "fall", `ok` "enter") are not in their own salience class
-    — they pattern with other patient-salient state-change roots.
-    Concretely: their predicted class is the same as `kiim` "die". -/
+/-- Lucy's central typological point: notional motion roots do not form
+    their own salience class — each is classified exactly as the plain
+    state-change root *kíim* 'die'. -/
 theorem motion_roots_not_separate_class :
-    predictedClass luub = predictedClass kiim ∧
-    predictedClass ok = predictedClass kiim :=
-  ⟨rfl, rfl⟩
+    ∀ r ∈ motionRoots, predictedClass r = predictedClass kiim := by decide
 
-/-- Conversely, positional roots *do* form a unified class
-    distinguishable from any "motion" or state-change root: their
-    predicted class differs from every patient-salient root's. -/
-theorem positional_distinct_from_motion :
-    predictedClass cin ≠ predictedClass luub := by decide
-
-/-! ### Root transitivity is not MRC violation -/
-
-/-- Lucy's root transitives are manner-only roots in B&K-G terms —
-    lexical transitivity does not entail a result. Under the previous
-    schema (agent-patient salience as `manner + result`) every Yukatek
-    root transitive came out violating Manner/Result Complementarity,
-    contradicting [beavers-koontz-garboden-2020]'s finding that
-    manner+result roots are a restricted, special class; *hit*-type
-    surface-contact roots like *lo'š* 'punch' are their parade
-    manner-without-result examples. -/
-theorem rootTransitives_respect_mrc :
-    ∀ r ∈ rootTransitives, r.RespectsMannerResultComplementarity := by
+/-- The `#` subclass — Lucy's only candidate formal motion class — is
+    not a function of the entailment grid: *péek* (`#`) and *lúub'*
+    (plain) agree in signature and arity. The class is carried by an
+    idiosyncratic morphological gap, not by lexical semantics. -/
+theorem hash_not_signature_definable :
+    ∃ r ∈ hashMarked, ∃ r' ∈ motionRoots,
+      r' ∉ hashMarked ∧ r.kinds = r'.kinds ∧ arity r = arity r' := by
   decide
+
+/-! ### Positional interstitiality -/
+
+/-- The positional diagnostic cross-cuts the transitiviser cut: *čin* is
+    positional yet zero-derives a transitive (agent-patient salient),
+    while *kul* is positional and outside the cut altogether. Lucy's
+    classes are diagnostics, not a partition. -/
+theorem positional_crosscuts_transitiviser_classes :
+    IsPositional cin.kinds ∧ predictedClass cin = some .agentPatient ∧
+    IsPositional kul.kinds ∧ predictedClass kul = none := by decide
 
 /-! ### Closure robustness -/
 
-/-- The class predicted from a root's *closed* kind signature
-    (the collocational closure `Root.Kinds.close` of the derived
-    signature). Arity is closure-invariant. -/
-def closedPredictedClass (r : Root) : Option SalienceClass :=
-  classOf r.closedKinds (arity r)
-
-/-- For cause-free roots, collocational closure does not change the
-    Lucy 1994 salience classification: arity is untouched, the only
-    closure edge that can fire is result→state, the agent / patient
-    arms ignore `.state` membership, and a base that gains `.state`
-    from closure carries `.result` and so is already excluded from the
-    positional arm. The hypothesis is necessary: an intransitive root
-    carrying `.cause` but not `.result` is unclassified at base yet
-    patient-salient after closure, since the cause→result closure edge
-    introduces `.result`. -/
+/-- For cause-free roots — every root in this sample — collocational
+    closure does not change the predicted class. -/
 theorem predictedClass_closure_invariant (r : Root) (h : ¬ r.HasCause) :
-    closedPredictedClass r = predictedClass r := by
-  unfold Root.HasCause at h
-  unfold closedPredictedClass predictedClass Root.closedKinds
-  revert h
-  generalize r.kinds = s
-  generalize arity r = a
-  revert s a
-  decide
-
-/-! ### Bridge to Bohnemeyer's 5-way verb stem classes -/
-
-/-! [bohnemeyer-2004] refines [lucy-1994]'s 4-way salience
-    cut into a 5-way stem classification (`active`, `inactive`,
-    `inchoative`, `positional`, `transitiveActive`). The mapping is
-    `VerbStemClass.toSalienceClass` in `VerbClasses.lean`. The agent /
-    patient / agent-patient classes correspond one-to-one; Lucy's
-    `positional` covers both Bohnemeyer's `inchoative` and `positional`.
-
-    The per-root theorems below check that for each Yukatek root in
-    `Roots.lean`, Lucy's predicted class agrees with the Bohnemeyer
-    stem-class label converted via `toSalienceClass`. -/
-
-open Yukatek (VerbStemClass)
-
-/-- Agent-salient Lucy roots map to Bohnemeyer's `active` stem class. -/
-theorem siit_lucy_agrees_active :
-    predictedClass siit = some (VerbStemClass.active.toSalienceClass) := rfl
-
-theorem tziib_lucy_agrees_active :
-    predictedClass tziib = some (VerbStemClass.active.toSalienceClass) := rfl
-
-/-- Agent-patient salient Lucy roots map to Bohnemeyer's
-    `transitiveActive`. -/
-theorem kuc_lucy_agrees_transitiveActive :
-    predictedClass kuc =
-      some (VerbStemClass.transitiveActive.toSalienceClass) := rfl
-
-theorem pis_lucy_agrees_transitiveActive :
-    predictedClass pis =
-      some (VerbStemClass.transitiveActive.toSalienceClass) := rfl
-
-theorem los_lucy_agrees_transitiveActive :
-    predictedClass los =
-      some (VerbStemClass.transitiveActive.toSalienceClass) := rfl
-
-/-- Patient-salient Lucy roots map to Bohnemeyer's `inactive`. -/
-theorem kiim_lucy_agrees_inactive :
-    predictedClass kiim = some (VerbStemClass.inactive.toSalienceClass) := rfl
-
-theorem haanCease_lucy_agrees_inactive :
-    predictedClass haanCease = some (VerbStemClass.inactive.toSalienceClass) := rfl
-
-theorem luub_lucy_agrees_inactive :
-    predictedClass luub = some (VerbStemClass.inactive.toSalienceClass) := rfl
-
-theorem ok_lucy_agrees_inactive :
-    predictedClass ok = some (VerbStemClass.inactive.toSalienceClass) := rfl
-
-/-- Positional Lucy roots map to Bohnemeyer's `positional` (and would
-    equally map to `inchoative` per `inchoative_positional_collapse_under_lucy`). -/
-theorem cin_lucy_agrees_positional :
-    predictedClass cin =
-      some (VerbStemClass.positional.toSalienceClass) := rfl
-
-theorem kul_lucy_agrees_positional :
-    predictedClass kul =
-      some (VerbStemClass.positional.toSalienceClass) := rfl
+    classOf r.closedKinds (arity r) = predictedClass r :=
+  classOf_close r.kinds (arity r) h
 
 end Lucy1994
