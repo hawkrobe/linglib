@@ -13,9 +13,20 @@ REs are factive. Formalized here: the CP-external shell inventory and
 the (79) shell typology; the per-predicate embedding strategy derived
 from the Fragment's *yox̂ ke* edge observable; the factivity
 dissociations; and the case-inflection half of the *yox̂*-is-D
-diagnostic. The *ke*-agreement analysis ([deal-2015a-nels]
-interaction–satisfaction) and the §6 shift/tense semantics
-([deal-2025]) await substrate — see the closing section.
+diagnostic.
+
+## TODO
+
+* *ke*-agreement ([deal-2026] §2, after [deal-2015a-nels]): the φ-probe
+  on C interacts with all φ-features, probing from the subject downward
+  until [addr] (second person) satisfies it; 1st/2nd but not 3rd person
+  agreement is overt. Needs value-sensitive satisfaction and
+  ordered-goal probing — `Minimalist.SatisfactionCond` matches feature
+  types only.
+* §6 shift/tense: REs block indexical shift and take matrix-matching
+  tense as temporal de re; simplex embeddings allow shift and relative
+  tense. Rests on [deal-2025]'s clause-type semantics (world-set vs
+  perspectival-tuple denotations), not yet implemented.
 -/
 
 namespace Deal2026
@@ -282,20 +293,5 @@ theorem strategy_cuukwe_ne_liloy :
 theorem paradigm_case_discriminates :
     ∀ p ∈ relativePronounParadigm, ∀ q ∈ relativePronounParadigm,
       p.case ≠ q.case → ∀ f ∈ p.forms, f ∉ q.forms := by decide
-
-/-! ### Awaiting substrate
-
-Two of the paper's core arguments are stated here only as deferrals.
-The *ke*-agreement analysis ([deal-2026] §2, following
-[deal-2015a-nels]): *ke*'s φ-probe interacts with all φ-features,
-probing from the subject downward until the feature [addr] (second
-person) is encountered, with 1st/2nd — but not 3rd — person agreement
-overt. Expressing this needs value-sensitive satisfaction (the current
-`Minimalist.SatisfactionCond` matches feature *types* only) and
-ordered-goal sequential probing. The §6 contrasts — REs block indexical
-shift and take matrix-matching tense as temporal de re, simplex
-embeddings allow shift and relative tense — rest on [deal-2025]'s
-semantics for the two clause types (world-set vs perspectival-tuple
-denotations), which linglib does not yet implement. -/
 
 end Deal2026
