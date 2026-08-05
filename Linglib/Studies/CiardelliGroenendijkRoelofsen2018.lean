@@ -244,15 +244,15 @@ formulations directly on the substrate's vocabulary. -/
     Substrate-side: `sInfContent` is defined this way; restate to
     expose the CGR membership iff. -/
 theorem CGR_3_1_meet (S : Set (Question W)) (s : Set W) :
-    s ∈ sInf S ↔ ∀ P ∈ S, s ∈ P := mem_sInf_props
+    s ∈ sInf S ↔ ∀ P ∈ S, s ∈ P := mem_sInf
 
 /-- [ciardelli-groenendijk-roelofsen-2018] Fact 3.2 (Join):
     arbitrary join has support iff some member supports (or `s = ∅`).
-    The substrate-side `mem_sSup_props` exposes the disjunctive
+    The substrate-side `mem_sSup` exposes the disjunctive
     structure. The CGR formulation special-cases the empty family to
     `{∅} = ⊥`; the substrate gets this from the `s = ∅` clause. -/
 theorem CGR_3_2_join (S : Set (Question W)) (s : Set W) :
-    s ∈ sSup S ↔ s = ∅ ∨ ∃ P ∈ S, s ∈ P := mem_sSup_props
+    s ∈ sSup S ↔ s = ∅ ∨ ∃ P ∈ S, s ∈ P := mem_sSup
 
 /-- [ciardelli-groenendijk-roelofsen-2018] Fact 3.5 (Absolute
     pseudo-complement, alternative characterization): `P* = ℘(¬info(P))`.

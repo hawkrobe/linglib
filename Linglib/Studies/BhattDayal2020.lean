@@ -43,8 +43,8 @@ theorem kya_felicitous_singleton_polar (p : Set W) :
 
 /-- Defined case: on a felicitous sister, kya: is the identity. -/
 theorem kya_interp (p : Set W) :
-    (SingletonQuestion.ofDeclarative (W := W) p).issue = ofSet p :=
-  SingletonQuestion.ofDeclarative_issue p
+    (SingletonQuestion.ofSet (W := W) p).issue = ofSet p :=
+  SingletonQuestion.ofSet_issue p
 
 /-- The headline restriction (ex. 4): a wh-question with two distinct answer
 cells is non-singleton, so kya: rejects it. -/

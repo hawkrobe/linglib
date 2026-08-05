@@ -7,8 +7,7 @@ import Mathlib.Data.Fintype.Powerset
 
 The entailment order on question contents: `P.Entails Q` iff every
 alternative of `P` entails some alternative of `Q` ([roberts-2012] (8),
-after [groenendijk-stokhof-1984]); `IsSubquestion` is its inverse
-reading. The order coincides with the inquisitive lattice order under
+after [groenendijk-stokhof-1984]). The order coincides with the inquisitive lattice order under
 finiteness (`entails_iff_le`); the two diverge only where `alt` is
 empty.
 
@@ -30,10 +29,6 @@ variable {W : Type*}
 def Entails (P Q : Question W) : Prop :=
   ∀ p ∈ alt P, ∃ q ∈ alt Q, p ⊆ q
 
-/-- `q` is a subquestion of `parent` if answering `parent` settles `q`. -/
-def IsSubquestion (q parent : Question W) : Prop :=
-  parent.Entails q
-
 variable {P Q R : Question W}
 
 /-! ### Reflexivity / transitivity -/
@@ -47,14 +42,6 @@ theorem Entails.trans (hPQ : P.Entails Q) (hQR : Q.Entails R) :
   obtain ⟨q, hq, hpq⟩ := hPQ p hp
   obtain ⟨r, hr, hqr⟩ := hQR q hq
   exact ⟨r, hr, hpq.trans hqr⟩
-
-theorem IsSubquestion.refl (P : Question W) : IsSubquestion P P :=
-  Entails.refl P
-
-theorem IsSubquestion.trans
-    (hPQ : IsSubquestion P Q) (hQR : IsSubquestion Q R) :
-    IsSubquestion P R :=
-  Entails.trans hQR hPQ
 
 /-! ### Lattice ↔ entailment -/
 

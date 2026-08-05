@@ -21,7 +21,7 @@ example from Section 3.1, which justifies the existence of
 
 1. **Figure 2** examples (Section 2.1, p. 415): the polar interrogative
    `Did Amy leave?` and the declarative `Amy left.` constructed via the
-   `polar` and `declarative` constructors of `Question`. We
+   `polar` and `ofSet` constructors of `Question`. We
    prove the four characteristic properties from the paper's prose
    discussion (Section 2.2):
    - `amyLeft` is informative and non-inquisitive (declarative).
@@ -74,13 +74,13 @@ abbrev W : Type := Fin 4
 def amyLeft : Set W := {0, 1}
 
 /-- (6b) **Amy left.** — Figure 2(b). -/
-def amyLeftMeaning : Question W := declarative amyLeft
+def amyLeftMeaning : Question W := ofSet amyLeft
 
 /-- (6a) **Did Amy leave?** — Figure 2(a). -/
 def didAmyLeaveMeaning : Question W := polar amyLeft
 
 theorem amyLeftMeaning_info : amyLeftMeaning.info = amyLeft :=
-  info_declarative amyLeft
+  info_ofSet amyLeft
 
 theorem didAmyLeaveMeaning_info : didAmyLeaveMeaning.info = Set.univ :=
   info_polar amyLeft
@@ -97,7 +97,7 @@ theorem amyLeftMeaning_isInformative : amyLeftMeaning.isInformative := by
 /-- Figure 2(b): *Amy left* is **non-inquisitive** — declaratives never
     raise an issue beyond what they assert. -/
 theorem amyLeftMeaning_not_isInquisitive : ¬ amyLeftMeaning.isInquisitive :=
-  not_isInquisitive_declarative amyLeft
+  not_isInquisitive_ofSet amyLeft
 
 /-- Figure 2(a): *Did Amy leave?* is **non-informative** — its
     informative content covers all worlds (the speaker rules nothing
