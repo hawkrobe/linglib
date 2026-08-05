@@ -127,6 +127,26 @@ private theorem mem_alt_q1 (u : Person) (f : Food) :
     ate u f ∈ alt q_1 := by
   rw [alt_q_1]; exact Set.mem_range_self (u, f)
 
+/-! ### Alternative inclusions
+
+Subquestionhood in D₀ is alternative-set inclusion: each polar
+alternative is an alternative of its wh-question, and each wh
+alternative is an alternative of the big question. -/
+
+private theorem alt_polar_subset_wh (u : Person) (f : Food) :
+    alt (Question.ofSet (ate u f)) ⊆ alt (⨆ f', Question.ofSet (ate u f')) := by
+  rw [alt_ofSet]
+  exact Set.singleton_subset_iff.mpr (mem_alt_wh u f)
+
+private theorem alt_wh_subset_q1 (u : Person) :
+    alt (⨆ f', Question.ofSet (ate u f')) ⊆ alt q_1 := by
+  rw [alt_wh, alt_q_1]
+  exact Set.range_comp_subset_range (Prod.mk u) fun uf => ate uf.1 uf.2
+
+private theorem alt_polar_subset_q1 (u : Person) (f : Food) :
+    alt (Question.ofSet (ate u f)) ⊆ alt q_1 :=
+  (alt_polar_subset_wh u f).trans (alt_wh_subset_q1 u)
+
 /-! ### The complete-answer partition ((4)), derived -/
 
 /-- Deciding two propositions is lying in one of the four Boolean
@@ -157,22 +177,18 @@ entailments among D₀'s seven questions. -/
 /-- "Who ate what?" entails "What did `u` eat?". -/
 theorem q1_entails_wh (u : Person) :
     completeAnswers q_1 ⊆ completeAnswers (⨆ f', Question.ofSet (ate u f')) :=
-  completeAnswers_anti (by
-    rw [alt_wh, alt_q_1]
-    exact Set.range_comp_subset_range (Prod.mk u) fun uf => ate uf.1 uf.2)
+  completeAnswers_anti (alt_wh_subset_q1 u)
 
 /-- "What did `u` eat?" entails "Did `u` eat `f`?". -/
 theorem wh_entails_polar (u : Person) (f : Food) :
     completeAnswers (⨆ f', Question.ofSet (ate u f')) ⊆
       completeAnswers (Question.ofSet (ate u f)) :=
-  completeAnswers_anti (by
-    rw [alt_ofSet, alt_wh]
-    exact Set.singleton_subset_iff.mpr (Set.mem_range_self f))
+  completeAnswers_anti (alt_polar_subset_wh u f)
 
 /-- "Who ate what?" entails every polar subquestion. -/
 theorem q1_entails_polar (u : Person) (f : Food) :
     completeAnswers q_1 ⊆ completeAnswers (Question.ofSet (ate u f)) :=
-  (q1_entails_wh u).trans (wh_entails_polar u f)
+  completeAnswers_anti (alt_polar_subset_q1 u f)
 
 /-- Subquestions do not entail their superquestions: "Hilary ate both"
     completely answers `q_a` but decides nothing about Robin. -/
@@ -243,38 +259,27 @@ def strat_b : Strategy World := .node q_b [.leaf q_bi, .leaf q_bii]
     answer q_b by answering q_bi and q_bii. -/
 def strat_1 : Strategy World := .node q_1 [strat_a, strat_b]
 
-/-- The strategy has 7 questions total. -/
-theorem strat_1_numNodes : strat_1.numNodes = 7 := rfl
-
-private theorem meet_ofSet_entails {p p' : Set World} {Q : Question World}
-    (hQ : p ∈ alt Q) : (Question.ofSet p ⊓ Question.ofSet p').Entails Q := by
-  intro r hr
-  have hr' : r ⊆ p :=
-    Question.mem_ofSet.mp
-      (Question.mem_inf.mp (Question.mem_props.mp (alt_subset_props _ hr))).1
-  exact ⟨p, hQ, hr'⟩
-
 /-- The Hilary substrategy is complete: jointly resolving `q_ai` and
-    `q_aii` resolves `q_a`. -/
+    `q_aii` resolves `q_a` — already resolving `q_ai` does, since
+    `q_ai` is one of `q_a`'s disjuncts. -/
 theorem strat_a_complete : strat_a.IsComplete :=
-  .node_pair (meet_ofSet_entails (mem_alt_wh .hilary .bagels))
+  .node_pair (entails_of_le' (inf_le_left.trans
+      (le_iSup (fun f => Question.ofSet (ate .hilary f)) .bagels)))
     (.leaf _) (.leaf _)
 
 /-- The Robin substrategy is complete. -/
 theorem strat_b_complete : strat_b.IsComplete :=
-  .node_pair (meet_ofSet_entails (mem_alt_wh .robin .bagels))
+  .node_pair (entails_of_le' (inf_le_left.trans
+      (le_iSup (fun f => Question.ofSet (ate .robin f)) .bagels)))
     (.leaf _) (.leaf _)
 
-/-- The whole D₀ strategy is complete: any joint resolution of `q_a` and
-    `q_b` yields an alternative of `q_1`. -/
-theorem strat_1_complete : strat_1.IsComplete := by
-  refine .node_pair ?_ strat_a_complete strat_b_complete
-  intro r hr
-  have hr' : r ∈ (⨆ f', Question.ofSet (ate .hilary f')) :=
-    (Question.mem_inf.mp (Question.mem_props.mp (alt_subset_props _ hr))).1
-  rcases Question.mem_iSup_ofSet.mp hr' with rfl | ⟨f, hrf⟩
-  · exact ⟨hilaryBagels, mem_alt_q1 .hilary .bagels, Set.empty_subset _⟩
-  · exact ⟨ate .hilary f, mem_alt_q1 .hilary f, hrf⟩
+/-- The whole D₀ strategy is complete: joint resolutions of `q_a` and
+    `q_b` resolve `q_1`, whose disjuncts include `q_a`'s. -/
+theorem strat_1_complete : strat_1.IsComplete :=
+  .node_pair
+    (entails_of_le' (inf_le_left.trans (iSup_le fun f =>
+      le_iSup (fun uf : Person × Food => Question.ofSet (ate uf.1 uf.2)) (.hilary, f))))
+    strat_a_complete strat_b_complete
 
 /-! ### QUD stack traces ((10g), (17)) -/
 
@@ -287,71 +292,35 @@ def stack_1 : QUDStack World := q_a :: stack_0
 /-- Pursue Hilary+bagels: accept q_ai. -/
 def stack_2 : QUDStack World := q_ai :: stack_1
 
-/-- "Hilary ate the bagels" answers q_ai: retire it. -/
-def stack_3 : QUDStack World := stack_2.tail
-
-/-- Stack depths trace the discourse. -/
-theorem stack_depths :
-    stack_0.length = 1 ∧ stack_1.length = 2 ∧
-    stack_2.length = 3 ∧ stack_3.length = 2 :=
-  ⟨rfl, rfl, rfl, rfl⟩
-
-/-- After retiring q_ai, the immediate QUD is q_a. -/
-theorem stack_3_qud : stack_3.head? = some q_a := rfl
+/-- "Hilary ate the bagels" answers q_ai: retiring it returns the
+    discourse to `stack_1`, so the immediate QUD is `q_a` again. -/
+theorem stack_2_tail : stack_2.tail = stack_1 := rfl
 
 /-! ### Stack well-formedness ((10g.iii)) -/
 
-private theorem wh_alts_partially_answer_q1 (u : Person) :
-    ∀ a ∈ alt (⨆ f', Question.ofSet (ate u f')), PartiallyAnswers a q_1 := by
-  intro a ha
-  rw [alt_wh] at ha
-  obtain ⟨f, -, rfl⟩ := ha
-  exact ⟨ate u f, mem_alt_q1 u f, Or.inl subset_rfl⟩
-
-private theorem polar_alts_partially_answer_wh (u : Person) (f : Food) :
-    ∀ a ∈ alt (Question.ofSet (ate u f)),
-      PartiallyAnswers a (⨆ f', Question.ofSet (ate u f')) := by
-  intro a ha
-  rw [alt_ofSet, Set.mem_singleton_iff] at ha
-  subst ha
-  exact ⟨ate u f, mem_alt_wh u f, Or.inl subset_rfl⟩
-
-private theorem polar_alts_partially_answer_q1 (u : Person) (f : Food) :
-    ∀ a ∈ alt (Question.ofSet (ate u f)), PartiallyAnswers a q_1 := by
-  intro a ha
-  rw [alt_ofSet, Set.mem_singleton_iff] at ha
-  subst ha
-  exact ⟨ate u f, mem_alt_q1 u f, Or.inl subset_rfl⟩
+/-- (10g.iii) obligations from alternative inclusion: when every
+    alternative of the newer question is an alternative of an older
+    one, each complete answer partially answers the older question. -/
+private theorem pa_of_alt_subset {P Q : Question World} (h : alt P ⊆ alt Q) :
+    ∀ a ∈ alt P, PartiallyAnswers (Set.univ ∩ a) Q := fun a ha => by
+  rw [Set.univ_inter]; exact partiallyAnswers_of_mem_alt (h ha)
 
 /-- The stack `[q_a, q_1]` is well-formed in the trivial common ground:
     every complete answer to the subquestion partially answers the
     question below it. -/
-theorem stack_1_wellFormed : QUDStack.WellFormed Set.univ stack_1 := by
-  show QUDStack.WellFormed Set.univ (q_a :: stack_0)
-  rw [QUDStack.wellFormed_cons]
-  refine ⟨?_, QUDStack.wellFormed_singleton ..⟩
-  intro lower hlow a ha
-  simp only [stack_0, List.mem_singleton] at hlow
-  subst hlow
-  rw [Set.univ_inter]
-  exact wh_alts_partially_answer_q1 .hilary a ha
+theorem stack_1_wellFormed : QUDStack.WellFormed Set.univ stack_1 :=
+  QUDStack.wellFormed_cons.mpr
+    ⟨List.forall_mem_singleton.mpr (pa_of_alt_subset (alt_wh_subset_q1 .hilary)),
+      QUDStack.wellFormed_singleton ..⟩
 
 /-- The full three-question stack `[q_ai, q_a, q_1]` is well-formed. -/
-theorem stack_2_wellFormed : QUDStack.WellFormed Set.univ stack_2 := by
-  show QUDStack.WellFormed Set.univ (q_ai :: stack_1)
-  rw [QUDStack.wellFormed_cons]
-  refine ⟨?_, stack_1_wellFormed⟩
-  intro lower hlow a ha
-  rw [Set.univ_inter]
-  rcases List.mem_cons.mp hlow with rfl | hlow
-  · exact polar_alts_partially_answer_wh .hilary .bagels a ha
-  · simp only [stack_0, List.mem_singleton] at hlow
-    subst hlow
-    exact polar_alts_partially_answer_q1 .hilary .bagels a ha
-
-/-- Retiring the answered `q_ai` preserves well-formedness. -/
-theorem stack_3_wellFormed : QUDStack.WellFormed Set.univ stack_3 :=
-  stack_2_wellFormed.tail
+theorem stack_2_wellFormed : QUDStack.WellFormed Set.univ stack_2 :=
+  QUDStack.wellFormed_cons.mpr
+    ⟨List.forall_mem_cons.mpr
+        ⟨pa_of_alt_subset (alt_polar_subset_wh .hilary .bagels),
+          List.forall_mem_singleton.mpr
+            (pa_of_alt_subset (alt_polar_subset_q1 .hilary .bagels))⟩,
+      stack_1_wellFormed⟩
 
 /-! ### Answerhood ((3))
 
