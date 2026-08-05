@@ -68,8 +68,6 @@ instance : Fintype D0World :=
       left_inv := fun _ => rfl
       right_inv := fun _ => rfl }
 
-theorem card_D0World : Fintype.card D0World = 16 := by decide
-
 /-! ### Atomic propositions -/
 
 /-- Hilary ate the bagels. -/
@@ -80,18 +78,6 @@ abbrev hilaryTofu : Set D0World := {w | w.ht = true}
 abbrev robinBagels : Set D0World := {w | w.rb = true}
 /-- Robin ate the tofu. -/
 abbrev robinTofu : Set D0World := {w | w.rt = true}
-
-theorem hilaryBagels_ne_empty : hilaryBagels ≠ (∅ : Set D0World) :=
-  Set.nonempty_iff_ne_empty.mp ⟨⟨true, false, false, false⟩, rfl⟩
-
-theorem hilaryTofu_ne_empty : hilaryTofu ≠ (∅ : Set D0World) :=
-  Set.nonempty_iff_ne_empty.mp ⟨⟨false, true, false, false⟩, rfl⟩
-
-theorem robinBagels_ne_empty : robinBagels ≠ (∅ : Set D0World) :=
-  Set.nonempty_iff_ne_empty.mp ⟨⟨false, false, true, false⟩, rfl⟩
-
-theorem robinTofu_ne_empty : robinTofu ≠ (∅ : Set D0World) :=
-  Set.nonempty_iff_ne_empty.mp ⟨⟨false, false, false, true⟩, rfl⟩
 
 /-! ### Questions as q-alternative sets ((1), (2), (7)) -/
 
@@ -120,68 +106,76 @@ def q_b : Question D0World := Question.ofList [robinBagels, robinTofu]
 def q_1 : Question D0World :=
   Question.ofList [hilaryBagels, hilaryTofu, robinBagels, robinTofu]
 
-/-! ### Alternative enumerations -/
+/-! ### Alternative enumerations
 
-private theorem alt_ofList_single {p : Set D0World} (hp : p ≠ ∅) :
-    alt (Question.ofList [p]) = {p} := by
-  rw [alt_ofList_of_antichain_nonempty [p] (by simp)
-    (by rintro p₁ h₁ p₂ h₂ hne; simp_all) (by simpa using hp)]
-  ext q; simp
+Every D₀ question draws its alternatives from the same four atoms —
+the `{u ate u′}` of her (45) — which are pairwise ⊆-incomparable and
+nonempty, so each enumeration is the antichain characterization
+specialized to a sublist. -/
 
-private theorem alt_q_ai : alt q_ai = {hilaryBagels} :=
-  alt_ofList_single hilaryBagels_ne_empty
+/-- The four atomic q-alternatives of her (45). -/
+private def atoms : List (Set D0World) :=
+  [hilaryBagels, hilaryTofu, robinBagels, robinTofu]
 
-private theorem alt_q_aii : alt q_aii = {hilaryTofu} :=
-  alt_ofList_single hilaryTofu_ne_empty
+private theorem atoms_antichain :
+    ∀ p₁ ∈ atoms, ∀ p₂ ∈ atoms, p₁ ≠ p₂ → ¬ p₁ ⊆ p₂ := by
+  rintro p₁ h₁ p₂ h₂ hne
+  simp only [atoms, List.mem_cons, List.not_mem_nil, or_false] at h₁ h₂
+  rcases h₁ with rfl | rfl | rfl | rfl <;>
+    rcases h₂ with rfl | rfl | rfl | rfl <;>
+      first | exact absurd rfl hne | decide
 
-private theorem alt_q_bi : alt q_bi = {robinBagels} :=
-  alt_ofList_single robinBagels_ne_empty
+private theorem atoms_ne_empty : ∀ p ∈ atoms, p ≠ ∅ := by
+  rintro p hp
+  simp only [atoms, List.mem_cons, List.not_mem_nil, or_false] at hp
+  rcases hp with rfl | rfl | rfl | rfl
+  exacts [Set.Nonempty.ne_empty ⟨⟨true, false, false, false⟩, rfl⟩,
+    Set.Nonempty.ne_empty ⟨⟨false, true, false, false⟩, rfl⟩,
+    Set.Nonempty.ne_empty ⟨⟨false, false, true, false⟩, rfl⟩,
+    Set.Nonempty.ne_empty ⟨⟨false, false, false, true⟩, rfl⟩]
 
-private theorem alt_q_bii : alt q_bii = {robinTofu} :=
-  alt_ofList_single robinTofu_ne_empty
+private theorem alt_ofList_atoms {L : List (Set D0World)} (hL : L ≠ [])
+    (hsub : ∀ p ∈ L, p ∈ atoms) :
+    alt (Question.ofList L) = {p | p ∈ L} :=
+  alt_ofList_of_antichain_nonempty L hL
+    (fun p₁ h₁ p₂ h₂ => atoms_antichain p₁ (hsub p₁ h₁) p₂ (hsub p₂ h₂))
+    (fun p hp => atoms_ne_empty p (hsub p hp))
+
+private theorem alt_q_ai : alt q_ai = {hilaryBagels} := by
+  rw [show q_ai = Question.ofList [hilaryBagels] from rfl,
+    alt_ofList_atoms (by simp) (by simp [atoms])]
+  ext p; simp
+
+private theorem alt_q_aii : alt q_aii = {hilaryTofu} := by
+  rw [show q_aii = Question.ofList [hilaryTofu] from rfl,
+    alt_ofList_atoms (by simp) (by simp [atoms])]
+  ext p; simp
+
+private theorem alt_q_bi : alt q_bi = {robinBagels} := by
+  rw [show q_bi = Question.ofList [robinBagels] from rfl,
+    alt_ofList_atoms (by simp) (by simp [atoms])]
+  ext p; simp
+
+private theorem alt_q_bii : alt q_bii = {robinTofu} := by
+  rw [show q_bii = Question.ofList [robinTofu] from rfl,
+    alt_ofList_atoms (by simp) (by simp [atoms])]
+  ext p; simp
 
 private theorem alt_q_a : alt q_a = {hilaryBagels, hilaryTofu} := by
   rw [show q_a = Question.ofList [hilaryBagels, hilaryTofu] from rfl,
-    alt_ofList_of_antichain_nonempty _ (by simp)
-      (by rintro p₁ h₁ p₂ h₂ hne
-          simp only [List.mem_cons, List.not_mem_nil, or_false] at h₁ h₂
-          rcases h₁ with rfl | rfl <;> rcases h₂ with rfl | rfl <;>
-            first | exact absurd rfl hne | decide)
-      (by rintro p hp
-          simp only [List.mem_cons, List.not_mem_nil, or_false] at hp
-          rcases hp with rfl | rfl
-          exacts [hilaryBagels_ne_empty, hilaryTofu_ne_empty])]
+    alt_ofList_atoms (by simp) (by simp [atoms])]
   ext p; simp
 
 private theorem alt_q_b : alt q_b = {robinBagels, robinTofu} := by
   rw [show q_b = Question.ofList [robinBagels, robinTofu] from rfl,
-    alt_ofList_of_antichain_nonempty _ (by simp)
-      (by rintro p₁ h₁ p₂ h₂ hne
-          simp only [List.mem_cons, List.not_mem_nil, or_false] at h₁ h₂
-          rcases h₁ with rfl | rfl <;> rcases h₂ with rfl | rfl <;>
-            first | exact absurd rfl hne | decide)
-      (by rintro p hp
-          simp only [List.mem_cons, List.not_mem_nil, or_false] at hp
-          rcases hp with rfl | rfl
-          exacts [robinBagels_ne_empty, robinTofu_ne_empty])]
+    alt_ofList_atoms (by simp) (by simp [atoms])]
   ext p; simp
 
 private theorem alt_q_1 :
     alt q_1 = {hilaryBagels, hilaryTofu, robinBagels, robinTofu} := by
-  rw [show q_1 = Question.ofList
-        [hilaryBagels, hilaryTofu, robinBagels, robinTofu] from rfl,
-    alt_ofList_of_antichain_nonempty _ (by simp)
-      (by rintro p₁ h₁ p₂ h₂ hne
-          simp only [List.mem_cons, List.not_mem_nil, or_false] at h₁ h₂
-          rcases h₁ with rfl | rfl | rfl | rfl <;>
-            rcases h₂ with rfl | rfl | rfl | rfl <;>
-              first | exact absurd rfl hne | decide)
-      (by rintro p hp
-          simp only [List.mem_cons, List.not_mem_nil, or_false] at hp
-          rcases hp with rfl | rfl | rfl | rfl
-          exacts [hilaryBagels_ne_empty, hilaryTofu_ne_empty,
-            robinBagels_ne_empty, robinTofu_ne_empty])]
-  ext p; simp
+  rw [show q_1 = Question.ofList atoms from rfl,
+    alt_ofList_atoms (by simp [atoms]) (fun _ h => h)]
+  ext p; simp [atoms]
 
 /-! ### The complete-answer partition ((4)), derived -/
 
@@ -194,28 +188,40 @@ private abbrev qa_c3 : Set D0World := hilaryBagels ∩ hilaryTofu
 /-- Hilary-neither cell. -/
 private abbrev qa_c4 : Set D0World := hilaryBagelsᶜ ∩ hilaryTofuᶜ
 
+/-- Deciding two propositions is lying in one of the four Boolean
+    corners — the engine of her (4). -/
+private theorem subset_corners_iff {σ A B : Set D0World} :
+    (σ ⊆ A ∨ σ ⊆ Aᶜ) ∧ (σ ⊆ B ∨ σ ⊆ Bᶜ) ↔
+      σ ⊆ A ∩ B ∨ σ ⊆ A ∩ Bᶜ ∨ σ ⊆ Aᶜ ∩ B ∨ σ ⊆ Aᶜ ∩ Bᶜ := by
+  constructor
+  · rintro ⟨h1 | h1, h2 | h2⟩
+    · exact Or.inl (Set.subset_inter h1 h2)
+    · exact Or.inr (Or.inl (Set.subset_inter h1 h2))
+    · exact Or.inr (Or.inr (Or.inl (Set.subset_inter h1 h2)))
+    · exact Or.inr (Or.inr (Or.inr (Set.subset_inter h1 h2)))
+  · rintro (h | h | h | h) <;>
+      exact ⟨by first
+          | exact Or.inl (h.trans Set.inter_subset_left)
+          | exact Or.inr (h.trans Set.inter_subset_left),
+        by first
+          | exact Or.inl (h.trans Set.inter_subset_right)
+          | exact Or.inr (h.trans Set.inter_subset_right)⟩
+
 /-- Her (4): the complete answers to `q_a` are exactly the states lying
     within one cell of the partition the q-alternatives induce. -/
 theorem mentionAll_q_a_iff {σ : Set D0World} :
-    MentionAll σ q_a ↔ σ ⊆ qa_c1 ∨ σ ⊆ qa_c2 ∨ σ ⊆ qa_c3 ∨ σ ⊆ qa_c4 := by
+    MentionAll σ q_a ↔ σ ⊆ qa_c3 ∨ σ ⊆ qa_c1 ∨ σ ⊆ qa_c2 ∨ σ ⊆ qa_c4 := by
   constructor
   · intro h
-    have h1 := h hilaryBagels (by rw [alt_q_a]; simp)
-    have h2 := h hilaryTofu (by rw [alt_q_a]; simp)
-    rcases h1 with h1 | h1 <;> rcases h2 with h2 | h2
-    · exact Or.inr (Or.inr (Or.inl (Set.subset_inter h1 h2)))
-    · exact Or.inl (Set.subset_inter h1 h2)
-    · exact Or.inr (Or.inl (Set.subset_inter h1 h2))
-    · exact Or.inr (Or.inr (Or.inr (Set.subset_inter h1 h2)))
+    exact subset_corners_iff.mp
+      ⟨h hilaryBagels (by rw [alt_q_a]; simp),
+        h hilaryTofu (by rw [alt_q_a]; simp)⟩
   · intro h p hp
+    obtain ⟨h1, h2⟩ := subset_corners_iff.mpr h
     rw [alt_q_a] at hp
     simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hp
-    rcases hp with rfl | rfl <;> rcases h with h | h | h | h <;>
-      first
-        | exact Or.inl (h.trans Set.inter_subset_left)
-        | exact Or.inl (h.trans Set.inter_subset_right)
-        | exact Or.inr (h.trans Set.inter_subset_left)
-        | exact Or.inr (h.trans Set.inter_subset_right)
+    rcases hp with rfl | rfl
+    exacts [h1, h2]
 
 /-! ### Question entailment ((3), (8))
 
@@ -229,90 +235,50 @@ private theorem mentionAll_mono {σ : Set D0World} {P Q : Question D0World}
 /-- "Who ate what?" entails "What did Hilary eat?". -/
 theorem q1_entails_qa {σ : Set D0World} (h : MentionAll σ q_1) :
     MentionAll σ q_a :=
-  mentionAll_mono (by
-    rw [alt_q_a, alt_q_1]
-    intro p hp
-    simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hp ⊢
-    tauto) h
+  mentionAll_mono (by rw [alt_q_a, alt_q_1]; simp [Set.insert_subset_iff]) h
 
 /-- "Who ate what?" entails "What did Robin eat?". -/
 theorem q1_entails_qb {σ : Set D0World} (h : MentionAll σ q_1) :
     MentionAll σ q_b :=
-  mentionAll_mono (by
-    rw [alt_q_b, alt_q_1]
-    intro p hp
-    simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hp ⊢
-    tauto) h
+  mentionAll_mono (by rw [alt_q_b, alt_q_1]; simp [Set.insert_subset_iff]) h
 
 /-- "What did Hilary eat?" entails "Did Hilary eat the bagels?". -/
 theorem qa_entails_qai {σ : Set D0World} (h : MentionAll σ q_a) :
     MentionAll σ q_ai :=
-  mentionAll_mono (by
-    rw [alt_q_ai, alt_q_a]
-    intro p hp
-    simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hp ⊢
-    tauto) h
+  mentionAll_mono (by rw [alt_q_ai, alt_q_a]; simp) h
 
 /-- "What did Hilary eat?" entails "Did Hilary eat the tofu?". -/
 theorem qa_entails_qaii {σ : Set D0World} (h : MentionAll σ q_a) :
     MentionAll σ q_aii :=
-  mentionAll_mono (by
-    rw [alt_q_aii, alt_q_a]
-    intro p hp
-    simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hp ⊢
-    tauto) h
+  mentionAll_mono (by rw [alt_q_aii, alt_q_a]; simp) h
 
 /-- "What did Robin eat?" entails "Did Robin eat the bagels?". -/
 theorem qb_entails_qbi {σ : Set D0World} (h : MentionAll σ q_b) :
     MentionAll σ q_bi :=
-  mentionAll_mono (by
-    rw [alt_q_bi, alt_q_b]
-    intro p hp
-    simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hp ⊢
-    tauto) h
+  mentionAll_mono (by rw [alt_q_bi, alt_q_b]; simp) h
 
 /-- "What did Robin eat?" entails "Did Robin eat the tofu?". -/
 theorem qb_entails_qbii {σ : Set D0World} (h : MentionAll σ q_b) :
     MentionAll σ q_bii :=
-  mentionAll_mono (by
-    rw [alt_q_bii, alt_q_b]
-    intro p hp
-    simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hp ⊢
-    tauto) h
+  mentionAll_mono (by rw [alt_q_bii, alt_q_b]; simp) h
 
 /-- Her î(1) table, completed: "Who ate what?" entails every polar
     subquestion directly. -/
 theorem q1_entails_qai {σ : Set D0World} (h : MentionAll σ q_1) :
     MentionAll σ q_ai :=
-  mentionAll_mono (by
-    rw [alt_q_ai, alt_q_1]
-    intro p hp
-    simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hp ⊢
-    tauto) h
+  mentionAll_mono (by rw [alt_q_ai, alt_q_1]; simp) h
 
 theorem q1_entails_qaii {σ : Set D0World} (h : MentionAll σ q_1) :
     MentionAll σ q_aii :=
-  mentionAll_mono (by
-    rw [alt_q_aii, alt_q_1]
-    intro p hp
-    simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hp ⊢
-    tauto) h
+  mentionAll_mono (by rw [alt_q_aii, alt_q_1]; simp) h
 
 theorem q1_entails_qbi {σ : Set D0World} (h : MentionAll σ q_1) :
     MentionAll σ q_bi :=
-  mentionAll_mono (by
-    rw [alt_q_bi, alt_q_1]
-    intro p hp
-    simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hp ⊢
-    tauto) h
+  mentionAll_mono (by rw [alt_q_bi, alt_q_1]; simp) h
 
 theorem q1_entails_qbii {σ : Set D0World} (h : MentionAll σ q_1) :
     MentionAll σ q_bii :=
-  mentionAll_mono (by
-    rw [alt_q_bii, alt_q_1]
-    intro p hp
-    simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hp ⊢
-    tauto) h
+  mentionAll_mono (by rw [alt_q_bii, alt_q_1]; simp) h
 
 /-- Subquestions do not entail their superquestions: `qa_c3` (Hilary ate
     both) completely answers `q_a` but decides nothing about Robin. -/
@@ -320,7 +286,7 @@ theorem qa_not_entails_q1 :
     ¬ ∀ σ : Set D0World, MentionAll σ q_a → MentionAll σ q_1 := by
   intro h
   have hma : MentionAll (qa_c3 : Set D0World) q_a :=
-    mentionAll_q_a_iff.mpr (Or.inr (Or.inr (Or.inl subset_rfl)))
+    mentionAll_q_a_iff.mpr (Or.inl subset_rfl)
   have := h _ hma robinBagels (by rw [alt_q_1]; simp)
   rcases this with h' | h' <;> exact absurd h' (by decide)
 
