@@ -56,7 +56,7 @@ private theorem Food.forall_food {p : Food → Prop} :
     (∀ f, p f) ↔ p .bagels ∧ p .tofu :=
   ⟨fun h => ⟨h _, h _⟩, fun ⟨h1, h2⟩ f => by cases f <;> assumption⟩
 
-private theorem Food.iInter_food {α : Type*} {X : Food → Set α} :
+private theorem iInter_food_eq {α : Type*} {X : Food → Set α} :
     ⋂ f, X f = X .bagels ∩ X .tofu := by
   ext a
   simp [Food.forall_food]
@@ -217,7 +217,7 @@ theorem completeAnswers_polar_inter (u : Person) :
     completeAnswers (Question.ofSet (ate u .bagels)) ∩
         completeAnswers (Question.ofSet (ate u .tofu))
       = completeAnswers (⨆ f', Question.ofSet (ate u f')) := by
-  rw [completeAnswers_wh, Food.iInter_food]
+  rw [completeAnswers_wh, iInter_food_eq]
 
 /-- Jointly answering "What did Hilary eat?" and "What did Robin eat?"
     is exactly answering "Who ate what?". -/

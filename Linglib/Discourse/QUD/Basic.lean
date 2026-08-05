@@ -145,22 +145,5 @@ end Strategy
 
 variable {W : Type*}
 
-/-- A move with denotation `den` is **relevant** to the questions in `qs` when
-some alternative of `den` partially answers some question in `qs` — the
-assertion clause of [roberts-2012]'s Relevance (15), existentially weakened
-and extended to a question set (see the fidelity notes). -/
-def _root_.Question.IsRelevantTo (den : Question W)
-    (qs : Set (Question W)) : Prop :=
-  ∃ a ∈ Question.alt den, ∃ q ∈ qs, Question.PartiallyAnswers a q
-
-/-- Polar reduction of `IsRelevantTo` to partial answerhood of `p` and `pᶜ`. -/
-theorem _root_.Question.isRelevantTo_polar_iff {p : Set W}
-    {qs : Set (Question W)} (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
-    (Question.polar p).IsRelevantTo qs ↔
-      (∃ q ∈ qs, Question.PartiallyAnswers p q) ∨
-        ∃ q ∈ qs, Question.PartiallyAnswers pᶜ q := by
-  simp only [Question.IsRelevantTo, Question.alt_polar_of_nontrivial hne hnu,
-    Set.mem_insert_iff, Set.mem_singleton_iff, exists_eq_or_imp,
-    exists_eq_left]
 
 end Discourse

@@ -146,19 +146,21 @@ def issue (Q : SingletonQuestion W) : Question W := Q.val
 
 /-- The unique alternative of a singleton issue (the "highlighted" cell
     in [roelofsen-farkas-2015]'s sense). -/
-noncomputable def witness (Q : SingletonQuestion W) : Set W :=
-  Q.property.choose
+def witness (Q : SingletonQuestion W) : Set W :=
+  ⋃₀ alt Q.issue
 
 theorem alt_eq_singleton_witness (Q : SingletonQuestion W) :
-    alt Q.issue = {Q.witness} :=
-  Q.property.choose_spec
+    alt Q.issue = {Q.witness} := by
+  obtain ⟨p, hp⟩ := Q.property
+  simp only [witness, issue, hp, Set.sUnion_singleton]
 
-/-- Constructor from a declarative — the canonical felicitous input. -/
-def ofDeclarative (p : Set W) : SingletonQuestion W :=
-  ⟨ofSet p, isSingleton_ofSet p⟩
+/-- Constructor from a single proposition — the canonical felicitous
+    input, a non-inquisitive issue. -/
+def ofSet (p : Set W) : SingletonQuestion W :=
+  ⟨Question.ofSet p, isSingleton_ofSet p⟩
 
-@[simp] theorem ofDeclarative_issue (p : Set W) :
-    (ofDeclarative p).issue = ofSet p := rfl
+@[simp] theorem ofSet_issue (p : Set W) :
+    (ofSet p).issue = Question.ofSet p := rfl
 
 end SingletonQuestion
 

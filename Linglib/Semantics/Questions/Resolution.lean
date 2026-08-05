@@ -44,14 +44,8 @@ Given a state `σ : Set W` and a question `Q : Question W`:
   (`σ ⊆ pᶜ`); `∅` vacuously answers everything, as there. Bridged by
   `Resolves.partiallyAnswers`.
 
-- **CompletelyResolves**: σ entails every alternative —
-  `∀ p ∈ alt Q, σ ⊆ p`. The over-strong "intersection" reading; mostly
-  vacuous for nontrivial questions. Included for completeness and as a
-  comparison point with `MentionAll`.
-
 The four form the quantifier × polarity square of answerhood: `Resolves`
-(∃, positive), `PartiallyAnswers` (∃, either), `CompletelyResolves`
-(∀, positive), `MentionAll` (∀, either).
+(∃, positive), `PartiallyAnswers` (∃, either), `MentionAll` (∀, either).
 
 ## Why this file
 
@@ -86,11 +80,6 @@ entailing it or ruling it out. -/
 def MentionAll (σ : Set W) (Q : Question W) : Prop :=
   ∀ p ∈ alt Q, σ ⊆ p ∨ σ ⊆ pᶜ
 
-/-- `σ` completely resolves `Q` if it entails every alternative
-simultaneously; vacuous for questions with disjoint alternatives. -/
-def CompletelyResolves (σ : Set W) (Q : Question W) : Prop :=
-  ∀ p ∈ alt Q, σ ⊆ p
-
 variable {σ : Set W} {Q : Question W}
 
 /-! ### Basic relationships -/
@@ -111,12 +100,6 @@ ruling that alternative out. -/
 theorem partiallyAnswers_compl_of_mem_alt {p : Set W} (h : p ∈ alt Q) :
     PartiallyAnswers pᶜ Q :=
   ⟨p, h, Or.inr subset_rfl⟩
-
-/-- Completely resolving implies mention-all: the positive disjunct fires
-at every alternative. -/
-theorem CompletelyResolves.mentionAll (h : CompletelyResolves σ Q) :
-    MentionAll σ Q :=
-  fun p hp => Or.inl (h p hp)
 
 /-! ### Answerhood transmission -/
 
@@ -149,12 +132,28 @@ theorem mentionAll_iff_of_alt_eq_range {ι : Type*} {P : ι → Set W}
   rw [h]
   exact Set.forall_mem_range
 
+@[simp] theorem completeAnswers_top :
+    completeAnswers (⊤ : Question W) = Set.univ := by
+  ext σ; simp [completeAnswers, MentionAll, alt_top]
+
+@[simp] theorem completeAnswers_bot :
+    completeAnswers (⊥ : Question W) = Set.univ := by
+  ext σ
+  simp only [completeAnswers, MentionAll, alt_bot, Set.mem_setOf_eq,
+    Set.mem_univ, iff_true, Set.mem_singleton_iff]
+  rintro p rfl
+  exact Or.inr (by simp)
+
 /-- A state settles a single-alternative content iff it decides it. -/
 theorem mentionAll_ofSet_iff {p : Set W} :
     MentionAll σ (ofSet p) ↔ σ ⊆ p ∨ σ ⊆ pᶜ := by
   unfold MentionAll
   rw [alt_ofSet]
   simp
+
+theorem completeAnswers_ofSet (p : Set W) :
+    completeAnswers (ofSet p) = {σ | σ ⊆ p ∨ σ ⊆ pᶜ} := by
+  ext σ; simp [completeAnswers, mentionAll_ofSet_iff]
 
 /-- The complete answers to a join of point-questions are the joint
 complete answers to each — [roberts-2012]'s (11) in general form. -/
@@ -234,7 +233,7 @@ theorem mentionAll_polar_iff {p : Set W}
 /-! ### Decidability for polar questions -/
 
 /-- `Resolves σ (polar p)` is decidable when the two inclusions are. -/
-def Resolves.decidable_polar {p σ : Set W}
+def decidableResolvesPolar {p σ : Set W}
     (hne : p ≠ ∅) (hnu : p ≠ Set.univ)
     [Decidable (σ ⊆ p)] [Decidable (σ ⊆ pᶜ)] :
     Decidable (Resolves σ (polar p)) :=
@@ -242,10 +241,31 @@ def Resolves.decidable_polar {p σ : Set W}
 
 /-- `MentionAll σ (polar p)` is decidable under the same hypotheses:
 on polar questions it coincides with `Resolves`. -/
-def MentionAll.decidable_polar {p σ : Set W}
+def decidableMentionAllPolar {p σ : Set W}
     (hne : p ≠ ∅) (hnu : p ≠ Set.univ)
     [Decidable (σ ⊆ p)] [Decidable (σ ⊆ pᶜ)] :
     Decidable (MentionAll σ (polar p)) :=
   decidable_of_iff _ (mentionAll_polar_iff hne hnu).symm
+
+/-! ### Relevance to a question set -/
+
+/-- A move with denotation `den` is **relevant** to the questions in
+`qs` when some alternative of `den` partially answers some question in
+`qs` — the assertion clause of [roberts-2012]'s Relevance, existentially
+weakened and extended to a question set (see `Discourse/QUD/Basic.lean`
+for the fidelity discussion). -/
+def IsRelevantTo (den : Question W) (qs : Set (Question W)) : Prop :=
+  ∃ a ∈ alt den, ∃ q ∈ qs, PartiallyAnswers a q
+
+/-- Polar reduction of `IsRelevantTo` to partial answerhood of `p` and
+`pᶜ`. -/
+theorem isRelevantTo_polar_iff {p : Set W} {qs : Set (Question W)}
+    (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
+    (polar p).IsRelevantTo qs ↔
+      (∃ q ∈ qs, PartiallyAnswers p q) ∨
+        ∃ q ∈ qs, PartiallyAnswers pᶜ q := by
+  simp only [IsRelevantTo, alt_polar_of_nontrivial hne hnu,
+    Set.mem_insert_iff, Set.mem_singleton_iff, exists_eq_or_imp,
+    exists_eq_left]
 
 end Question
