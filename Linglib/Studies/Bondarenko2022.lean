@@ -2,7 +2,7 @@ import Linglib.Semantics.Attitudes.ClauseDenotation.Content
 import Linglib.Semantics.Attitudes.ClauseDenotation.Situation
 import Linglib.Fragments.Buryat.Complementizers
 import Linglib.Fragments.Korean.Complementizers
-import Linglib.Syntax.Clause.Complementation
+import Linglib.Syntax.Category.Verb.Selection
 import Linglib.Data.Examples.Bondarenko2022
 
 /-!
@@ -488,12 +488,14 @@ theorem mem_buryatContExponent_iff :
   decide
 
 /-- Each of *hanaxa*'s two frames (§4.4.3) is realized by exactly one
-clause-typer — bare by converbial *-žA*, nominalized by participial *-Aːša* —
-and the say-root *gɘ* realizes neither. -/
+clause-typer — bare by converbial *-žA*, nominalized by participial
+*-Aːša* — and the say-root *gɘ* (which records no clausal axis)
+realizes neither, so *hanaxa*'s typers within the closed inventory are
+exactly the two suffixes. -/
 theorem hanaxa_frames_realized :
-    hanaxa.realizes zha ∧
-    hanaxa.realizes aasha ∧
-    ¬ hanaxa.realizes ge := by decide
+    (Frame.finiteClause.RealizedBy zha ∧ ¬ Frame.finiteClause.RealizedBy aasha) ∧
+    (nominalizedFrame.RealizedBy aasha ∧ ¬ nominalizedFrame.RealizedBy zha) ∧
+    hanaxa.typers complementizers = [aasha, zha] := by decide
 
 /-- *hanaxa* think~remember (§4.4.3): the attitude flips with the frame —
     nonveridical/opaque on the bare CP, veridical on the nominalized

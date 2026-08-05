@@ -20,6 +20,8 @@ round-trip view (`ComplementType.toFrame` / `Frame.toComplementType`).
   complement positions; the flat enum cells as smart constructors
 * `ComplementType` + `toFrame` / `Frame.toComplementType` — the flat
   enum and its round-trip view
+* `ComplementType.toCoding` + `codings_toFrame` — the enum's
+  [noonan-2007] coding and its agreement with the typed frames
 
 ## Implementation notes
 
@@ -30,8 +32,8 @@ namespace beside `Complement.Coding`, not under `Verb`;
 `Complement.Cat`. Frame-conditioned readings (attitude, opacity,
 control) are not per-position data — they live on `Verb.Reading`
 (`Syntax/Category/Verb/Defs.lean`), keyed to the verb's frames. The
-[noonan-2007] selection relation between verb frames and clause-typers
-(`Verb.realizes`) lives in `Syntax/Clause/Complementation.lean`.
+selection relation between verb frames and clause-typers
+(`Verb.realizes`) lives in `Syntax/Category/Verb/Selection.lean`.
 [deal-2026]'s CP-external shell inventory lives with its consumer in
 `Studies/Deal2026.lean`.
 -/
@@ -215,3 +217,23 @@ theorem ComplementType.toFrame_injective :
   have ha := toComplementType_toFrame a
   rw [h, toComplementType_toFrame b] at ha
   exact (Option.some.inj ha).symm
+
+/-- The [noonan-2007] coding of a complement frame: `none` for
+non-clausal frames, for small clauses (outside the coding inventory),
+and for embedded questions (interrogativity is a clause-form axis, not
+a coding). -/
+def ComplementType.toCoding : ComplementType → Option Complement.Coding
+  | .finiteClause => some .indicative
+  | .infinitival => some .infinitive
+  | .gerund => some .nominalized
+  | .smallClause => Option.none
+  | .none => Option.none
+  | .np => Option.none
+  | .np_np => Option.none
+  | .np_pp => Option.none
+  | .question => Option.none
+
+/-- The enum view and the typed frames record the same coding: a cell's
+    frame carries exactly the codings `toCoding` assigns it. -/
+theorem ComplementType.codings_toFrame (ct : ComplementType) :
+    ct.toFrame.codings = ct.toCoding.toList := by cases ct <;> rfl
