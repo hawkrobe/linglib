@@ -113,25 +113,25 @@ theorem datum_sc_cat_consistent (d : ResultativeDatum) (dpId predId : Nat) :
 
 /-! ## §4. Per-datum SC categorization -/
 
-/-- "She hammered the metal flat" — SC predicate is AP (property). -/
+/-- "Herman hammered the metal flat" — SC predicate is AP (property). -/
 theorem hammer_flat_is_AP :
     resToSCPred hammer_flat.resType = .A := rfl
 
-/-- "She kicked the ball into the field" — SC predicate is PP (path). -/
-theorem kick_into_field_is_PP :
-    resToSCPred kick_into_field.resType = .P := rfl
+/-- "The critics laughed the play off the stage" — SC predicate is PP (path). -/
+theorem laugh_off_stage_is_PP :
+    resToSCPred laugh_off_stage.resType = .P := rfl
 
-/-- "The river froze solid" — noncausative, SC predicate is AP. -/
+/-- "The pond froze solid" — noncausative, SC predicate is AP. -/
 theorem freeze_solid_is_AP :
     resToSCPred freeze_solid.resType = .A := rfl
 
-/-- "The ball rolled into the field" — noncausative path, SC predicate is PP. -/
-theorem roll_into_field_is_PP :
-    resToSCPred roll_into_field.resType = .P := rfl
+/-- "Bill rolled out of the room" — noncausative path, SC predicate is PP. -/
+theorem roll_out_of_room_is_PP :
+    resToSCPred roll_out_of_room.resType = .P := rfl
 
-/-- "She laughed herself silly" — fake reflexive, SC predicate is AP. -/
-theorem laugh_silly_is_AP :
-    resToSCPred laugh_silly.resType = .A := rfl
+/-- "We yelled ourselves hoarse" — fake reflexive, SC predicate is AP. -/
+theorem yell_hoarse_is_AP :
+    resToSCPred yell_hoarse.resType = .A := rfl
 
 /-! ## §5. Cross-construction bridge
 
