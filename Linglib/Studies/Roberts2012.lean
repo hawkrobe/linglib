@@ -63,6 +63,14 @@ inductive Person | hilary | robin
 inductive Food | bagels | tofu
   deriving DecidableEq, Fintype, Inhabited
 
+private theorem Person.forall_person {p : Person → Prop} :
+    (∀ u, p u) ↔ p .hilary ∧ p .robin :=
+  ⟨fun h => ⟨h _, h _⟩, fun ⟨h1, h2⟩ u => by cases u <;> assumption⟩
+
+private theorem Food.forall_food {p : Food → Prop} :
+    (∀ f, p f) ↔ p .bagels ∧ p .tofu :=
+  ⟨fun h => ⟨h _, h _⟩, fun ⟨h1, h2⟩ f => by cases f <;> assumption⟩
+
 /-- A world of Roberts' D₀ scenario: the set of eating events that
     occurred in it. -/
 abbrev World := Finset (Person × Food)
@@ -106,18 +114,20 @@ abbrev q_1 : Question World :=
 
 /-! ### Alternative enumerations -/
 
+private theorem ate_antichain (uf uf' : Person × Food)
+    (h : ate uf.1 uf.2 ⊆ ate uf'.1 uf'.2) :
+    ate uf.1 uf.2 = ate uf'.1 uf'.2 := by
+  obtain ⟨h1, h2⟩ := ate_subset_ate_iff.mp h
+  rw [h1, h2]
+
 private theorem alt_wh (u : Person) :
     alt (⨆ f, Question.ofSet (ate u f)) = Set.range (ate u) :=
   alt_iSup_ofSet (fun _ => Set.nonempty_Ici)
-    (fun _ _ h => (ate_subset_ate_iff.mp h).2 ▸ rfl)
+    (fun f f' h => ate_antichain (u, f) (u, f') h)
 
 private theorem alt_q_1 :
     alt q_1 = Set.range fun uf : Person × Food => ate uf.1 uf.2 :=
-  alt_iSup_ofSet (fun _ => Set.nonempty_Ici)
-    (fun uf uf' h => by
-      obtain ⟨h1, h2⟩ := ate_subset_ate_iff.mp h
-      show ate uf.1 uf.2 = ate uf'.1 uf'.2
-      rw [h1, h2])
+  alt_iSup_ofSet (fun _ => Set.nonempty_Ici) ate_antichain
 
 private theorem mem_alt_wh (u : Person) (f : Food) :
     ate u f ∈ alt (⨆ f', Question.ofSet (ate u f')) := by
@@ -140,21 +150,13 @@ private theorem subset_corners_iff {σ A B : Set World} :
 /-- A state completely answers "What did `u` eat?" iff it lies within
     one cell of the partition the q-alternatives induce. -/
 theorem mentionAll_wh_iff {σ : Set World} {u : Person} :
-    MentionAll σ ((⨆ f', Question.ofSet (ate u f'))) ↔
+    MentionAll σ (⨆ f', Question.ofSet (ate u f')) ↔
       σ ⊆ ate u .bagels ∩ ate u .tofu ∨
       σ ⊆ ate u .bagels ∩ (ate u .tofu)ᶜ ∨
       σ ⊆ (ate u .bagels)ᶜ ∩ ate u .tofu ∨
       σ ⊆ (ate u .bagels)ᶜ ∩ (ate u .tofu)ᶜ := by
-  constructor
-  · intro h
-    exact subset_corners_iff.mp
-      ⟨h _ (mem_alt_wh u .bagels), h _ (mem_alt_wh u .tofu)⟩
-  · intro h p hp
-    rw [alt_wh] at hp
-    obtain ⟨f, rfl⟩ := hp
-    obtain ⟨h1, h2⟩ := subset_corners_iff.mpr h
-    cases f
-    exacts [h1, h2]
+  rw [mentionAll_iff_of_alt_eq_range (alt_wh u), Food.forall_food]
+  exact subset_corners_iff
 
 /-! ### Question entailment ((3), (8))
 
@@ -164,14 +166,15 @@ entailments among D₀'s seven questions. -/
 
 /-- "Who ate what?" entails "What did `u` eat?". -/
 theorem q1_entails_wh (u : Person) :
-    completeAnswers q_1 ⊆ completeAnswers ((⨆ f', Question.ofSet (ate u f'))) :=
+    completeAnswers q_1 ⊆ completeAnswers (⨆ f', Question.ofSet (ate u f')) :=
   completeAnswers_anti (by
     rw [alt_wh, alt_q_1]
     exact Set.range_comp_subset_range (Prod.mk u) fun uf => ate uf.1 uf.2)
 
 /-- "What did `u` eat?" entails "Did `u` eat `f`?". -/
 theorem wh_entails_polar (u : Person) (f : Food) :
-    completeAnswers ((⨆ f', Question.ofSet (ate u f'))) ⊆ completeAnswers (Question.ofSet (ate u f)) :=
+    completeAnswers (⨆ f', Question.ofSet (ate u f')) ⊆
+      completeAnswers (Question.ofSet (ate u f)) :=
   completeAnswers_anti (by
     rw [alt_ofSet, alt_wh]
     exact Set.singleton_subset_iff.mpr (Set.mem_range_self f))
@@ -211,31 +214,25 @@ composing. -/
 /-- Jointly answering the polar subquestions is exactly answering "What
     did `u` eat?". -/
 theorem completeAnswers_polar_inter (u : Person) :
-    completeAnswers (Question.ofSet (ate u .bagels)) ∩ completeAnswers (Question.ofSet (ate u .tofu))
-      = completeAnswers ((⨆ f', Question.ofSet (ate u f'))) :=
-  Set.ext fun σ =>
-    ⟨fun ⟨h1, h2⟩ p hp => by
-        rw [alt_wh] at hp
-        obtain ⟨f, -, rfl⟩ := hp
-        cases f
-        exacts [h1 _ (self_mem_alt_ofSet (ate u .bagels)),
-          h2 _ (self_mem_alt_ofSet (ate u .tofu))],
-      fun h => ⟨wh_entails_polar u .bagels h,
-        wh_entails_polar u .tofu h⟩⟩
+    completeAnswers (Question.ofSet (ate u .bagels)) ∩
+        completeAnswers (Question.ofSet (ate u .tofu))
+      = completeAnswers (⨆ f', Question.ofSet (ate u f')) :=
+  Set.ext fun σ => by
+    simp only [Set.mem_inter_iff, mem_completeAnswers, mentionAll_ofSet_iff,
+      mentionAll_iff_of_alt_eq_range (alt_wh u), Food.forall_food]
 
 /-- Jointly answering "What did Hilary eat?" and "What did Robin eat?"
     is exactly answering "Who ate what?". -/
 theorem completeAnswers_wh_inter :
-    completeAnswers ((⨆ f', Question.ofSet (ate .hilary f'))) ∩ completeAnswers ((⨆ f', Question.ofSet (ate .robin f')))
+    completeAnswers (⨆ f', Question.ofSet (ate .hilary f')) ∩
+        completeAnswers (⨆ f', Question.ofSet (ate .robin f'))
       = completeAnswers q_1 :=
-  Set.ext fun σ =>
-    ⟨fun ⟨h1, h2⟩ p hp => by
-        rw [alt_q_1] at hp
-        obtain ⟨⟨u, f⟩, -, rfl⟩ := hp
-        cases u
-        exacts [h1 _ (mem_alt_wh .hilary f),
-          h2 _ (mem_alt_wh .robin f)],
-      fun h => ⟨q1_entails_wh .hilary h, q1_entails_wh .robin h⟩⟩
+  Set.ext fun σ => by
+    simp only [Set.mem_inter_iff, mem_completeAnswers,
+      mentionAll_iff_of_alt_eq_range (alt_wh .hilary),
+      mentionAll_iff_of_alt_eq_range (alt_wh .robin),
+      mentionAll_iff_of_alt_eq_range alt_q_1, Prod.forall,
+      Person.forall_person, Food.forall_food]
 
 /-! ### Strategy of inquiry ((12)) -/
 
@@ -310,14 +307,15 @@ theorem stack_3_qud : stack_3.head? = some q_a := rfl
 /-! ### Stack well-formedness ((10g.iii)) -/
 
 private theorem wh_alts_partially_answer_q1 (u : Person) :
-    ∀ a ∈ alt ((⨆ f', Question.ofSet (ate u f'))), PartiallyAnswers a q_1 := by
+    ∀ a ∈ alt (⨆ f', Question.ofSet (ate u f')), PartiallyAnswers a q_1 := by
   intro a ha
   rw [alt_wh] at ha
   obtain ⟨f, -, rfl⟩ := ha
   exact ⟨ate u f, mem_alt_q1 u f, Or.inl subset_rfl⟩
 
 private theorem polar_alts_partially_answer_wh (u : Person) (f : Food) :
-    ∀ a ∈ alt (Question.ofSet (ate u f)), PartiallyAnswers a ((⨆ f', Question.ofSet (ate u f'))) := by
+    ∀ a ∈ alt (Question.ofSet (ate u f)),
+      PartiallyAnswers a (⨆ f', Question.ofSet (ate u f')) := by
   intro a ha
   rw [alt_ofSet, Set.mem_singleton_iff] at ha
   subst ha

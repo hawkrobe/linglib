@@ -140,6 +140,22 @@ theorem completeAnswers_anti {P Q : Question W} (h : alt Q ⊆ alt P) :
     completeAnswers P ⊆ completeAnswers Q :=
   fun _ hσ => MentionAll.mono hσ h
 
+/-- With the alternatives enumerated as a range, `MentionAll`
+quantifies over the index. -/
+theorem mentionAll_iff_of_alt_eq_range {ι : Type*} {P : ι → Set W}
+    (h : alt Q = Set.range P) :
+    MentionAll σ Q ↔ ∀ i, σ ⊆ P i ∨ σ ⊆ (P i)ᶜ := by
+  unfold MentionAll
+  rw [h]
+  exact Set.forall_mem_range
+
+/-- A state settles a single-alternative content iff it decides it. -/
+theorem mentionAll_ofSet_iff {p : Set W} :
+    MentionAll σ (ofSet p) ↔ σ ⊆ p ∨ σ ⊆ pᶜ := by
+  unfold MentionAll
+  rw [alt_ofSet]
+  simp
+
 /-! ### Bridge to `Question.Support`
 
 `Resolves σ Q` (alt-witnessed) and `Support.supports σ Q := σ ∈ Q.props`
