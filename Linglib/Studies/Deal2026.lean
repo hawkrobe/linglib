@@ -9,11 +9,15 @@ Nez Perce ("relative embeddings", REs) are CPs containing an
 is therefore not uniformly relativization ([kayne-2008], [kayne-2014],
 [arsenijevic-2009]), and factivity, RE-syntax, and nominalization
 dissociate cross-linguistically ((79)–(81)), though within Nez Perce all
-REs are factive. Formalized here: the CP-external shell inventory and
-the (79) shell typology; the per-predicate embedding strategy derived
-from the Fragment's *yox̂ ke* edge observable; the factivity
-dissociations; and the case-inflection half of the *yox̂*-is-D
-diagnostic.
+REs are factive. Formalized here: the (79) typology as extended clause
+spines (`Minimalist.ClauseSpine`), with shell superstructure, bare-CP
+status, nominal-shell status, and the selected category all *derived*
+from each row's spine; the per-predicate embedding strategy derived from
+the Fragment's *yox̂ ke* edge observable; the factivity dissociations;
+and the case-inflection half of the *yox̂*-is-D diagnostic. Deal's
+c-selection point — RE-takers and simplex-takers alike select a CP, the
+contrast being CP-internal — awaits LI-level Nez Perce entries
+(`Minimalist.SimpleLI` selection stacks).
 
 ## TODO
 
@@ -32,157 +36,15 @@ diagnostic.
 namespace Deal2026
 
 open NezPerce.ClausalEmbedding
-open Minimalist (Cat ClauseSpine)
-
-/-! ### CP-external shells
-
-The external-syntax axis of [deal-2026]'s (79): what wraps the embedded
-CP, innermost first. -/
-
-/-- A wrapping head above the embedded CP: [deal-2026]'s survey exhibits
-    D, N, and P shells ((79) and fn. 33). -/
-inductive Shell where
-  /-- D shell. -/
-  | d
-  /-- N shell (between D and CP). -/
-  | n
-  /-- P shell. -/
-  | p
-  deriving DecidableEq, Repr
-
-/-- The external wrapping above a CP, innermost first: `[]` = bare CP,
-`[.n, .d]` = D over N over CP, `[.d, .p]` = P over D over CP. -/
-abbrev ShellInventory := List Shell
-
-namespace ShellInventory
-
-/-- The bare-CP row of (79) (Nez Perce; English *think*). -/
-def bareCP : ShellInventory := []
-
-/-- V D CP: not a row of (79) — [deal-2026] fn. 33 notes the structure
-    as "defended in the literature" for Washo ([bochnak-hanink-2021]),
-    with no known RE instance. -/
-def dCP : ShellInventory := [.d]
-
-/-- The V D N CP row of (79) (Adyghe, [caponigro-polinsky-2011];
-    English N complementation, [hankamer-mikkelsen-2021]). -/
-def dnCP : ShellInventory := [.n, .d]
-
-/-- The V P D CP row of (79) (Bulgarian, [krapova-2010]; Ndebele,
-    [pietraszko-2019]). -/
-def pdCP : ShellInventory := [.d, .p]
-
-end ShellInventory
-
-open ShellInventory
-
-/-! ### Notional-complement shapes -/
-
-/-- The full Deal-2026 description of a notional complement clause:
-    internal spine + external shell + presence of an internal
-    Ā-dependency. Bundled here rather than in substrate to keep the
-    per-axis substrate primitive (`ClauseSpine`) reusable for non-Deal
-    accounts; the shell axis is Deal-specific and lives above. -/
-structure NotionalComplementShape where
-  /-- Internal spine of the embedded clause (typically `ClauseSpine.cP`). -/
-  internal : ClauseSpine
-  /-- External wrapping shells from C outward (`bareCP / dCP / dnCP / pdCP`). -/
-  external : ShellInventory
-  /-- Whether the embedded CP contains an internal Ā-dependency. -/
-  hasInternalAbar : Bool
-  deriving Repr
-
-/-- The Nez Perce shape of a given embedder, derived from the Fragment's
-    edge observable: a bare CP whose internal Ā-dependency is Deal's
-    interpretation of obligatory *yox̂ ke* edge morphology. -/
-def nezPerceShape (v : NezPerceEmbedder) : NotionalComplementShape :=
-  ⟨ClauseSpine.cP, bareCP, v.yoxKeEdge == .obligatory⟩
-
-/-- The Nez Perce RE shape ([deal-2026] §3, §5). -/
-def nezPerceREShape : NotionalComplementShape := nezPerceShape liloy
-
-/-- The Nez Perce simplex shape ([deal-2026] §6). -/
-def nezPerceSimplexShape : NotionalComplementShape := nezPerceShape neki
-
-/-- The Adyghe RE shape from [caponigro-polinsky-2011], exhibited at
-    [deal-2026] §4 (43): V D N CP with internal Ā. Deal cites Caponigro
-    & Polinsky as theoretical kin on the high origin of the operator
-    while diverging on the external shell. -/
-def adygheREShape : NotionalComplementShape :=
-  ⟨ClauseSpine.cP, dnCP, true⟩
-
-/-- The Bulgarian RE shape from [krapova-2010], exhibited at
-    [deal-2026] §4 (49): V P D CP with internal Ā. -/
-def bulgarianREShape : NotionalComplementShape :=
-  ⟨ClauseSpine.cP, pdCP, true⟩
-
-/-- The Ndebele simplex shape from [pietraszko-2019], exhibited at
-    [deal-2026] §7 (78): V P D CP with no Ā-dependency. -/
-def ndebeleShape : NotionalComplementShape :=
-  ⟨ClauseSpine.cP, pdCP, false⟩
-
-/-- The Washo factive shape from [bochnak-hanink-2021],
-    [hanink-bochnak-2017]: V D CP, no Ā ([deal-2026] fn. 33). -/
-def washoShape : NotionalComplementShape :=
-  ⟨ClauseSpine.cP, dCP, false⟩
-
-/-- The English N-complementation shape of (79)'s V D N CP / no-Ā cell
-    (*the fact that S*) — the DP shell with an N co-argument envisioned
-    by [hankamer-mikkelsen-2021], as Deal notes in §7. -/
-def englishNComplementationShape : NotionalComplementShape :=
-  ⟨ClauseSpine.cP, dnCP, false⟩
-
-/-! ### The cross-linguistic shell typology -/
-
-/-- An entry in [deal-2026]'s (79): a language × construction with its
-    NotionalComplementShape. -/
-structure ShellTypologyCell where
-  language : String
-  construction : String
-  shape : NotionalComplementShape
-  deriving Repr
-
-/-- The rows of [deal-2026]'s (79) — all six cells of the 3×2 table are
-    filled, with V CP / no-Ā doubly witnessed — plus the Washo V D CP
-    structure from footnote 33 per [bochnak-hanink-2021]. -/
-def shellTypology : List ShellTypologyCell := [
-  ⟨"Nez Perce", "RE",                nezPerceREShape⟩,
-  ⟨"Nez Perce", "simplex",           nezPerceSimplexShape⟩,
-  ⟨"English",   "think-complement",  nezPerceSimplexShape⟩,  -- bareCP, no Ā
-  ⟨"Adyghe",    "RE",                adygheREShape⟩,
-  ⟨"English",   "N-complementation", englishNComplementationShape⟩,
-  ⟨"Bulgarian", "RE",                bulgarianREShape⟩,
-  ⟨"Ndebele",   "embedding",         ndebeleShape⟩,
-  ⟨"Washo",     "factive",           washoShape⟩
-]
-
-/-- Not every row of (79) carries an internal Ā-dependency: the
-    universalist position that all clausal complementation is
-    relativization ([kayne-2008], [arsenijevic-2009]) fails on the no-Ā
-    rows (Nez Perce simplex, English *think*, Ndebele, Washo). -/
-theorem not_all_rows_abar :
-    ¬ ∀ c ∈ shellTypology, c.shape.hasInternalAbar = true := by decide
-
-/-- Bare CPs occur with and without an internal Ā-dependency: REs are
-    real, and not all complementation is relativization. -/
-theorem bareCP_abar_dissociates :
-    (∃ c ∈ shellTypology,
-      c.shape.external = bareCP ∧ c.shape.hasInternalAbar = true) ∧
-    (∃ c ∈ shellTypology,
-      c.shape.external = bareCP ∧ c.shape.hasInternalAbar = false) := by
-  refine ⟨?_, ?_⟩ <;> decide
-
-/-- REs vary in nominal superstructure: some carry their Ā-dependency
-    inside a D shell (Adyghe V D N CP, Bulgarian V P D CP). -/
-theorem shelled_RE_attested :
-    ∃ c ∈ shellTypology, Shell.d ∈ c.shape.external ∧
-      c.shape.hasInternalAbar = true := by decide
+open Minimalist (Cat ClauseSpine catFeatures)
 
 /-! ### Embedding strategy from the *yox̂ ke* edge
 
 The Fragment carries the morphological observable (`yoxKeEdge`); Deal's
-analytical commitments — the RE-vs-simplex classification and the
-selectional profile — are derived from it. -/
+analytical classification is derived from it: obligatory *yox̂ ke* on
+the complement edge ↔ a syntactic Ā-dependency above TP inside the
+embedded CP. Both classes c-select a CP — the RE-vs-simplex contrast is
+internal to the selected clause, not a c-selectional difference. -/
 
 /-- The two embedding strategies [deal-2026] distinguishes. -/
 inductive EmbeddingStrategy where
@@ -191,8 +53,7 @@ inductive EmbeddingStrategy where
   deriving DecidableEq, Repr
 
 /-- Deal's per-predicate embedding-strategy classification, derived from
-    the Fragment observable: obligatory *yox̂ ke* on the complement edge
-    ↔ syntactic Ā-dependency above TP. -/
+    the Fragment observable. -/
 def nezPerceEmbedStrategy (v : NezPerceEmbedder) : EmbeddingStrategy :=
   if v.yoxKeEdge = .obligatory then .re else .simplex
 
@@ -208,34 +69,135 @@ theorem reCanonical_strategy :
 theorem simplexCanonical_strategy :
     ∀ v ∈ simplexCanonical, nezPerceEmbedStrategy v = .simplex := by decide
 
-/-- Deal's selectional commitment for a Nez Perce embedder: the verb
-    c-selects a CP and (for RE-takers) requires that CP to contain an
-    internal Ā-dependency. This is not standard c-selection: c-selection
-    sees only the outer category, which is uniformly `.C`; the
-    RE-vs-simplex distinction is in the internal structure of the
-    selected CP — whether its head bears the [+Ā] feature triggering
-    operator movement above TP. -/
-structure DealSelectionalProfile where
-  /-- Outer category the verb c-selects for (always `.C` for embedders). -/
-  outerCat : Cat
-  /-- Whether the selected CP must contain an internal Ā-dependency. -/
-  requiresInternalAbar : Bool
-  deriving DecidableEq, Repr
+/-! ### The cross-linguistic shell typology
 
-/-- Deal's selectional analysis, derived from the Fragment observable. -/
-def dealSelectionalProfile (v : NezPerceEmbedder) : DealSelectionalProfile :=
-  { outerCat := .C, requiresInternalAbar := v.yoxKeEdge == .obligatory }
+[deal-2026]'s (79) describes each notional complement by its extended
+spine — the projected heads from V upward, *including* any nominal or
+adpositional superstructure over C. The shell vocabulary is derived:
+the shells are `spine.above .C`, bare-CP-hood is `highestHead = .C`, a
+nominal shell is a [+N] head above C ([chomsky-1970] features via
+`catFeatures`), and the category the matrix predicate selects is the
+spine's highest head. The internal-Ā axis remains a recorded datum
+(probe-bearing structure is not yet represented). -/
 
-/-- The selected CP requires an internal Ā-dependency iff *yox̂ ke* is
-    obligatory on the edge. -/
-theorem requiresInternalAbar_iff_yoxKe (v : NezPerceEmbedder) :
-    (dealSelectionalProfile v).requiresInternalAbar =
-      (v.yoxKeEdge == .obligatory) := rfl
+/-- A row of [deal-2026]'s (79): a language × construction with its
+    extended spine and internal-Ā status. -/
+structure ShellTypologyCell where
+  language : String
+  construction : String
+  /-- Projected heads of the notional complement, V up through any
+      CP-external shells. -/
+  spine : ClauseSpine
+  /-- Whether the embedded CP contains an internal Ā-dependency. -/
+  hasInternalAbar : Bool
+  deriving Repr
 
-/-- Every Nez Perce embedder uniformly c-selects `.C`: the RE-vs-simplex
-    contrast is not a c-selectional difference. -/
-theorem all_embedders_select_C (v : NezPerceEmbedder) :
-    (dealSelectionalProfile v).outerCat = .C := rfl
+/-- Nothing projects above C ((79)'s V CP row). -/
+def ShellTypologyCell.IsBareCP (c : ShellTypologyCell) : Prop :=
+  c.spine.highestHead = .C
+
+instance (c : ShellTypologyCell) : Decidable c.IsBareCP :=
+  inferInstanceAs (Decidable (_ = _))
+
+/-- The clause complex is wrapped in a nominal projection: some head
+    above C is [+N]. -/
+def ShellTypologyCell.HasNominalShell (c : ShellTypologyCell) : Prop :=
+  ∃ h ∈ c.spine.above .C, (catFeatures h).plusN = true
+
+instance (c : ShellTypologyCell) : Decidable c.HasNominalShell :=
+  inferInstanceAs (Decidable (∃ h ∈ c.spine.above .C, _))
+
+/-- A Nez Perce row, derived from the Fragment's edge observable: a bare
+    finite CP whose internal Ā-dependency is Deal's interpretation of
+    obligatory *yox̂ ke* edge morphology. -/
+def nezPerceCell (construction : String) (v : NezPerceEmbedder) :
+    ShellTypologyCell :=
+  ⟨"Nez Perce", construction, ClauseSpine.cP, v.yoxKeEdge == .obligatory⟩
+
+/-- The Nez Perce RE row ([deal-2026] §3, §5). -/
+def nezPerceRE : ShellTypologyCell := nezPerceCell "RE" liloy
+
+/-- The Nez Perce simplex row ([deal-2026] §6). -/
+def nezPerceSimplex : ShellTypologyCell := nezPerceCell "simplex" neki
+
+/-- English simplex V complementation (*think*): bare CP, no Ā
+    ((79)'s V CP row). -/
+def englishThink : ShellTypologyCell :=
+  ⟨"English", "think-complement", ClauseSpine.cP, false⟩
+
+/-- The Adyghe RE row from [caponigro-polinsky-2011], exhibited at
+    [deal-2026] §4 (43): V D N CP with internal Ā. Deal cites Caponigro
+    & Polinsky as theoretical kin on the high origin of the operator
+    while diverging on the external shell. -/
+def adygheRE : ShellTypologyCell :=
+  ⟨"Adyghe", "RE", ClauseSpine.cP.extend [.N, .D], true⟩
+
+/-- The English N-complementation row of (79)'s V D N CP / no-Ā cell
+    (*the fact that S*) — the DP shell with an N co-argument envisioned
+    by [hankamer-mikkelsen-2021], as Deal notes in §7. -/
+def englishNComplementation : ShellTypologyCell :=
+  ⟨"English", "N-complementation", ClauseSpine.cP.extend [.N, .D], false⟩
+
+/-- The Bulgarian RE row from [krapova-2010], exhibited at
+    [deal-2026] §4 (49): V P D CP with internal Ā. -/
+def bulgarianRE : ShellTypologyCell :=
+  ⟨"Bulgarian", "RE", ClauseSpine.cP.extend [.D, .P], true⟩
+
+/-- The Ndebele row from [pietraszko-2019], exhibited at [deal-2026]
+    §7 (78): V P D CP with no Ā-dependency. -/
+def ndebeleEmbedding : ShellTypologyCell :=
+  ⟨"Ndebele", "embedding", ClauseSpine.cP.extend [.D, .P], false⟩
+
+/-- The Washo factive row from [bochnak-hanink-2021],
+    [hanink-bochnak-2017]: V D CP, no Ā — not a row of (79);
+    [deal-2026] fn. 33 notes the structure as "defended in the
+    literature" for Washo, with no known RE instance. -/
+def washoFactive : ShellTypologyCell :=
+  ⟨"Washo", "factive", ClauseSpine.cP.extend [.D], false⟩
+
+/-- The rows of [deal-2026]'s (79) — all six cells of the 3×2 table are
+    filled, with V CP / no-Ā doubly witnessed — plus the Washo V D CP
+    structure from footnote 33. -/
+def shellTypology : List ShellTypologyCell := [
+  nezPerceRE, nezPerceSimplex, englishThink, adygheRE,
+  englishNComplementation, bulgarianRE, ndebeleEmbedding, washoFactive
+]
+
+/-- Not every row of (79) carries an internal Ā-dependency: the
+    universalist position that all clausal complementation is
+    relativization ([kayne-2008], [arsenijevic-2009]) fails on the no-Ā
+    rows (Nez Perce simplex, English *think*, Ndebele, Washo). -/
+theorem not_all_rows_abar :
+    ¬ ∀ c ∈ shellTypology, c.hasInternalAbar = true := by decide
+
+/-- Bare CPs occur with and without an internal Ā-dependency: REs are
+    real, and not all complementation is relativization. -/
+theorem bareCP_abar_dissociates :
+    (∃ c ∈ shellTypology, c.IsBareCP ∧ c.hasInternalAbar = true) ∧
+    (∃ c ∈ shellTypology, c.IsBareCP ∧ c.hasInternalAbar = false) := by
+  refine ⟨?_, ?_⟩ <;> decide
+
+/-- REs vary in nominal superstructure: some carry their Ā-dependency
+    inside a nominal shell (Adyghe V D N CP, Bulgarian V P D CP). -/
+theorem shelled_RE_attested :
+    ∃ c ∈ shellTypology, c.HasNominalShell ∧
+      c.hasInternalAbar = true := by decide
+
+/-- Every row's spine extends the same finite-CP core: the rows differ
+    only above C. -/
+theorem shared_cP_core :
+    ∀ c ∈ shellTypology,
+      ClauseSpine.cP.projectedHeads <+: c.spine.projectedHeads := by decide
+
+/-- The category the matrix predicate selects — the spine's highest
+    head — nonetheless varies across the rows: C, D, and P are all
+    attested. With `shared_cP_core`, this derives [deal-2026] §7's
+    moral: the internal syntax of a clause does not predict its
+    external syntax. -/
+theorem selected_category_varies :
+    ∃ c₁ ∈ shellTypology, ∃ c₂ ∈ shellTypology, ∃ c₃ ∈ shellTypology,
+      c₁.spine.highestHead = .C ∧ c₂.spine.highestHead = .D ∧
+      c₃.spine.highestHead = .P := by decide
 
 /-! ### Factivity and RE-syntax vary independently
 
@@ -248,24 +210,22 @@ fourth cell (non-factive + Ā) is Adyghe: Deal reports from
 all notional complementation regardless of factivity, so RE syntax does
 not ensure factivity. -/
 
-/-- Factivity does not coincide with RE-syntax across the Fragment
-    inventory. -/
-theorem factivity_not_abar :
+/-- Factivity does not coincide with the embedding strategy across the
+    Fragment inventory. -/
+theorem factivity_not_strategy :
     ¬ ∀ v ∈ allEmbedders,
-      v.factive = (nezPerceShape v).hasInternalAbar := by decide
+      (v.factive = true ↔ nezPerceEmbedStrategy v = .re) := by decide
 
-/-- The dissociating witness: a factive predicate whose shape carries no
-    internal Ā-dependency (*cuukwe* 'know'). -/
+/-- The dissociating witness: a factive simplex-taker (*cuukwe*
+    'know'). -/
 theorem factive_simplex_attested :
     ∃ v ∈ allEmbedders,
-      v.factive = true ∧ (nezPerceShape v).hasInternalAbar = false := by
-  decide
+      v.factive = true ∧ nezPerceEmbedStrategy v = .simplex := by decide
 
 /-- The co-occurring cell: a factive RE-taker (*lilooy* 'be happy'). -/
 theorem factive_re_attested :
     ∃ v ∈ allEmbedders,
-      v.factive = true ∧ (nezPerceShape v).hasInternalAbar = true := by
-  decide
+      v.factive = true ∧ nezPerceEmbedStrategy v = .re := by decide
 
 /-! ### Projection does not distinguish RE from simplex
 

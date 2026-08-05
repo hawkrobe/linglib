@@ -60,6 +60,17 @@ def ClauseSpine.lowestHead (spine : ClauseSpine) : Cat :=
 def ClauseSpine.size (spine : ClauseSpine) : Nat :=
   spine.projectedHeads.length
 
+/-- Extend a spine upward with further projected heads — e.g. the
+    nominal or adpositional superstructure over an embedded CP
+    ([deal-2026]'s shelled notional complements). -/
+def ClauseSpine.extend (spine : ClauseSpine) (heads : List Cat) : ClauseSpine :=
+  ⟨spine.projectedHeads ++ heads, by simp [spine.nonempty]⟩
+
+/-- The heads projected strictly above the last occurrence of `c`:
+    `above .C` is the CP-external superstructure (`[]` for a bare CP). -/
+def ClauseSpine.above (spine : ClauseSpine) (c : Cat) : List Cat :=
+  (spine.projectedHeads.reverse.takeWhile (· != c)).reverse
+
 -- ============================================================================
 -- § 3: Named Spines
 -- ============================================================================

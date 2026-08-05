@@ -8,7 +8,7 @@ A predicate's complement frame as a list of typed `Complement.Position`s,
 factoring the flat `ComplementType` enum cells into their axes:
 syntactic category, clause form, [noonan-2007] coding, and
 embedded-subject requirement (genitive subjects of nominalized clauses,
-[noonan-2007] §1.3.5, [bondarenko-2022]). The legacy enum survives as a
+[noonan-2007] §1.3.5, [bondarenko-2022]). The flat enum survives as a
 round-trip view (`ComplementType.toFrame` / `Frame.toComplementType`).
 
 ## Main declarations
@@ -17,9 +17,9 @@ round-trip view (`ComplementType.toFrame` / `Frame.toComplementType`).
   `Complement.EmbeddedSubject` axes — one complement position: category
   plus optional clausal axes
 * `Frame` + `Frame.np`, `Frame.finiteClause`, … — a frame is a list of
-  complement positions; the legacy enum cells as smart constructors
-* `ComplementType` + `toFrame` / `Frame.toComplementType` — the legacy
-  flat enum and its round-trip view
+  complement positions; the flat enum cells as smart constructors
+* `ComplementType` + `toFrame` / `Frame.toComplementType` — the flat
+  enum and its round-trip view
 
 ## Implementation notes
 
@@ -98,7 +98,7 @@ instance (fr : Frame) (cf : Features.ClauseForm) :
     Decidable (fr.hasClauseForm cf) :=
   inferInstanceAs (Decidable (∃ s ∈ fr, _))
 
-/-! ### Smart constructors — the legacy `ComplementType` cells -/
+/-! ### Smart constructors — the flat `ComplementType` cells -/
 
 /-- Transitive: one nominal position. -/
 def np : Frame := [{ cat := .nominal }]
@@ -134,7 +134,7 @@ def question : Frame :=
 
 end Frame
 
-/-! ### The legacy enum view -/
+/-! ### The flat enum view -/
 
 /--
 Complement type that the verb selects — the flat view over the typed
@@ -186,7 +186,7 @@ def ComplementType.isClausal : ComplementType → Bool
   | .finiteClause | .infinitival | .gerund | .smallClause | .question => true
   | _ => false
 
-/-- The `Frame` cell of a legacy `ComplementType` (`.none` ↦ `[]`). -/
+/-- The `Frame` cell of a flat `ComplementType` (`.none` ↦ `[]`). -/
 def ComplementType.toFrame : ComplementType → Frame
   | .none => []
   | .np => Frame.np
@@ -198,7 +198,7 @@ def ComplementType.toFrame : ComplementType → Frame
   | .smallClause => Frame.smallClause
   | .question => Frame.question
 
-/-- Partial inverse of `ComplementType.toFrame`: the legacy enum cell a
+/-- Partial inverse of `ComplementType.toFrame`: the flat enum cell a
     frame instantiates, `none` on frames richer than any cell. -/
 def Frame.toComplementType (fr : Frame) : Option ComplementType :=
   [ComplementType.none, .np, .np_np, .np_pp, .finiteClause, .infinitival,

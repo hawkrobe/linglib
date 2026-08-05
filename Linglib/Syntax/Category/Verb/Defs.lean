@@ -32,7 +32,7 @@ into facet structures under the `Verb` namespace — `Verb.ArgStructure`,
 language fragments extend `Verb` with their own inflectional paradigms.
 Complement selection is a list of typed `Frame`s
 (`Syntax/Clause/Frame.lean`); frame-conditioned
-attitude/opacity/control lives on `Verb.Reading` rows; the legacy flat
+attitude/opacity/control lives on `Verb.Reading` rows; the flat
 readers (`v.complementType`, `v.controlType`, …) are derived accessors
 over `frames`/`readings`.
 
@@ -163,7 +163,7 @@ namespace Verb
     proto-role entailments, voice, and implicit arguments. -/
 structure ArgStructure where
   /-- Complement frames, citation frame first. `[]` for intransitives.
-      The legacy `ComplementType` cells are the `Frame.np`,
+      The flat `ComplementType` cells are the `Frame.np`,
       `Frame.finiteClause`, … smart constructors
       (`Syntax/Clause/Frame.lean`). -/
   frames : List Frame
@@ -315,15 +315,15 @@ end
 
 /-! ### Frame accessors
 
-Flat readers over `Verb.frames`/`Verb.readings`, preserving the legacy
+Flat readers over `Verb.frames`/`Verb.readings`, preserving the flat
 enum-based call syntax: the citation frame's complement/control type and
 the alternate frame's, when present. -/
 
-/-- The citation (first) frame's legacy `ComplementType` cell. -/
+/-- The citation (first) frame's flat `ComplementType` cell. -/
 def Verb.complementType (v : Verb) : ComplementType :=
   (v.frames.head?.bind Frame.toComplementType).getD .none
 
-/-- The alternate (second) frame's legacy `ComplementType` cell. A second
+/-- The alternate (second) frame's flat `ComplementType` cell. A second
     frame richer than any enum cell reads as `none` — Buryat *hanaxa*'s
     genitive-subject nominalized frame has `altComplementType = none`
     despite a recorded second frame. -/
