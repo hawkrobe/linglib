@@ -71,6 +71,11 @@ private theorem Food.forall_food {p : Food → Prop} :
     (∀ f, p f) ↔ p .bagels ∧ p .tofu :=
   ⟨fun h => ⟨h _, h _⟩, fun ⟨h1, h2⟩ f => by cases f <;> assumption⟩
 
+private theorem Food.iInter_food {α : Type*} {X : Food → Set α} :
+    ⋂ f, X f = X .bagels ∩ X .tofu := by
+  ext a
+  simp [Food.forall_food]
+
 /-- A world of Roberts' D₀ scenario: the set of eating events that
     occurred in it. -/
 abbrev World := Finset (Person × Food)
@@ -205,34 +210,39 @@ theorem qai_not_entails_qa :
 
 /-! ### Answer composition ((11))
 
-Her `Ans(aᵢ) ∩ Ans(aᵢᵢ) = Ans(a)` and `Ans(a) ∩ Ans(b) = Ans(1)`, as
-set equations over `completeAnswers`. Partial answerhood is *not*
-transitive in general (chaining loses completeness at the middle link),
-which is why the stack invariant proofs below go direct rather than
-composing. -/
+Her `Ans(aᵢ) ∩ Ans(aᵢᵢ) = Ans(a)` and `Ans(a) ∩ Ans(b) = Ans(1)`:
+instances of `completeAnswers_iSup_ofSet` — the answers to a join are
+the meet of the answers. By `iSup_prod`, "Who ate what?" is itself the
+join of the per-person wh-questions, so (11c) is (11a) one level up.
+Partial answerhood is *not* transitive in general (chaining loses
+completeness at the middle link), which is why the stack invariant
+proofs below go direct rather than composing. -/
+
+/-- The complete answers to "What did `u` eat?" are the joint complete
+    answers to its point questions. -/
+theorem completeAnswers_wh (u : Person) :
+    completeAnswers (⨆ f', Question.ofSet (ate u f')) =
+      ⋂ f, completeAnswers (Question.ofSet (ate u f)) :=
+  completeAnswers_iSup_ofSet (fun _ => Set.nonempty_Ici)
+    (fun f f' h => ate_antichain (u, f) (u, f') h)
 
 /-- Jointly answering the polar subquestions is exactly answering "What
     did `u` eat?". -/
 theorem completeAnswers_polar_inter (u : Person) :
     completeAnswers (Question.ofSet (ate u .bagels)) ∩
         completeAnswers (Question.ofSet (ate u .tofu))
-      = completeAnswers (⨆ f', Question.ofSet (ate u f')) :=
-  Set.ext fun σ => by
-    simp only [Set.mem_inter_iff, mem_completeAnswers, mentionAll_ofSet_iff,
-      mentionAll_iff_of_alt_eq_range (alt_wh u), Food.forall_food]
+      = completeAnswers (⨆ f', Question.ofSet (ate u f')) := by
+  rw [completeAnswers_wh, Food.iInter_food]
 
 /-- Jointly answering "What did Hilary eat?" and "What did Robin eat?"
     is exactly answering "Who ate what?". -/
 theorem completeAnswers_wh_inter :
     completeAnswers (⨆ f', Question.ofSet (ate .hilary f')) ∩
         completeAnswers (⨆ f', Question.ofSet (ate .robin f'))
-      = completeAnswers q_1 :=
-  Set.ext fun σ => by
-    simp only [Set.mem_inter_iff, mem_completeAnswers,
-      mentionAll_iff_of_alt_eq_range (alt_wh .hilary),
-      mentionAll_iff_of_alt_eq_range (alt_wh .robin),
-      mentionAll_iff_of_alt_eq_range alt_q_1, Prod.forall,
-      Person.forall_person, Food.forall_food]
+      = completeAnswers q_1 := by
+  rw [completeAnswers_iSup_ofSet (fun _ => Set.nonempty_Ici) ate_antichain]
+  ext σ
+  simp [completeAnswers_wh, Prod.forall, Person.forall_person]
 
 /-! ### Strategy of inquiry ((12)) -/
 
