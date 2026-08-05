@@ -2827,6 +2827,7 @@ import Linglib.Syntax.Clause.Complementation
 import Linglib.Syntax.Clause.Context
 import Linglib.Syntax.Clause.Embedding
 import Linglib.Syntax.Clause.Frame
+import Linglib.Syntax.Clause.Nonverbal
 import Linglib.Syntax.Comparative
 import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
 import Linglib.Syntax.ConstructionGrammar.Basic
