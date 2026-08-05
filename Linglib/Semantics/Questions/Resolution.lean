@@ -107,6 +107,32 @@ theorem CompletelyResolves.mentionAll (h : CompletelyResolves σ Q) :
     MentionAll σ Q :=
   fun p hp => Or.inl (h p hp)
 
+/-! ### Answerhood transmission -/
+
+/-- `MentionAll` is antitone in the alternative set. -/
+theorem MentionAll.mono {P : Question W} (h : MentionAll σ Q)
+    (hsub : alt P ⊆ alt Q) : MentionAll σ P :=
+  fun p hp => h p (hsub hp)
+
+/-- Answerhood entailment: every complete answer to `P` is a complete
+answer to `Q` — [roberts-2012]'s (8), after [groenendijk-stokhof-1984],
+read over the (3b) answerhood predicate `MentionAll`. Coincides with the
+alt-witnessed `Entails` on partition-shaped alternatives and diverges
+elsewhere (see the fidelity note in `Entailment.lean`). -/
+def EntailsAns (P Q : Question W) : Prop :=
+  ∀ ⦃σ : Set W⦄, MentionAll σ P → MentionAll σ Q
+
+theorem EntailsAns.refl (P : Question W) : P.EntailsAns P := fun _ h => h
+
+theorem EntailsAns.trans {P Q R : Question W} (h₁ : P.EntailsAns Q)
+    (h₂ : Q.EntailsAns R) : P.EntailsAns R :=
+  fun _ hσ => h₂ (h₁ hσ)
+
+/-- Alternative-set inclusion induces answerhood entailment. -/
+theorem entailsAns_of_alt_subset {P Q : Question W} (h : alt Q ⊆ alt P) :
+    P.EntailsAns Q :=
+  fun _ hσ => hσ.mono h
+
 /-! ### Bridge to `Question.Support`
 
 `Resolves σ Q` (alt-witnessed) and `Support.supports σ Q := σ ∈ Q.props`
