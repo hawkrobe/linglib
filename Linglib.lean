@@ -2820,13 +2820,13 @@ import Linglib.Syntax.Category.Pronoun.Logophoric
 import Linglib.Syntax.Category.Pronoun.WALS
 import Linglib.Syntax.Category.Verb.Basic
 import Linglib.Syntax.Category.Verb.Defs
+import Linglib.Syntax.Category.Verb.Frame
+import Linglib.Syntax.Category.Verb.Selection
 import Linglib.Syntax.Category.Verb.Stem
 import Linglib.Syntax.Clause.Basic
 import Linglib.Syntax.Clause.Chaining
-import Linglib.Syntax.Clause.Complementation
 import Linglib.Syntax.Clause.Context
 import Linglib.Syntax.Clause.Embedding
-import Linglib.Syntax.Clause.Frame
 import Linglib.Syntax.Comparative
 import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
 import Linglib.Syntax.ConstructionGrammar.Basic

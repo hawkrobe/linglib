@@ -16,8 +16,8 @@ enum for infinitival complements (`ControlType`).
 These enums stay in `Features/` because `Data/Complementation/Schema.lean`
 types its rows with them and the Data layer imports Features only. The
 typed complement-frame object and the flat `ComplementType` view live
-in `Syntax/Clause/Frame.lean`; the adapter (`ComplementType.toCoding`)
-in `Syntax/Clause/Complementation.lean`.
+in `Syntax/Category/Verb/Frame.lean`; the adapter (`ComplementType.toCoding`)
+in `Syntax/Category/Verb/Selection.lean`.
 
 ## Main declarations
 
