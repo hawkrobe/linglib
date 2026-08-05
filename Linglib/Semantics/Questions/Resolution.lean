@@ -101,6 +101,17 @@ theorem Resolves.partiallyAnswers (h : Resolves σ Q) :
   let ⟨p, hp, hsub⟩ := h
   ⟨p, hp, Or.inl hsub⟩
 
+/-- Every alternative partially answers its own question. -/
+theorem partiallyAnswers_of_mem_alt {p : Set W} (h : p ∈ alt Q) :
+    PartiallyAnswers p Q :=
+  ⟨p, h, Or.inl subset_rfl⟩
+
+/-- The complement of an alternative partially answers the question by
+ruling that alternative out. -/
+theorem partiallyAnswers_compl_of_mem_alt {p : Set W} (h : p ∈ alt Q) :
+    PartiallyAnswers pᶜ Q :=
+  ⟨p, h, Or.inr subset_rfl⟩
+
 /-- Completely resolving implies mention-all: the positive disjunct fires
 at every alternative. -/
 theorem CompletelyResolves.mentionAll (h : CompletelyResolves σ Q) :
@@ -114,24 +125,20 @@ theorem MentionAll.mono {P : Question W} (h : MentionAll σ Q)
     (hsub : alt P ⊆ alt Q) : MentionAll σ P :=
   fun p hp => h p (hsub hp)
 
-/-- Answerhood entailment: every complete answer to `P` is a complete
-answer to `Q` — [roberts-2012]'s (8), after [groenendijk-stokhof-1984],
-read over the (3b) answerhood predicate `MentionAll`. Coincides with the
-alt-witnessed `Entails` on partition-shaped alternatives and diverges
-elsewhere (see the fidelity note in `Entailment.lean`). -/
-def EntailsAns (P Q : Question W) : Prop :=
-  ∀ ⦃σ : Set W⦄, MentionAll σ P → MentionAll σ Q
+/-- The set of complete answers to `Q` — [roberts-2012]'s `Ans(q)`: the
+states that decide every alternative. Her question entailment (8), after
+[groenendijk-stokhof-1984], is `completeAnswers P ⊆ completeAnswers Q`,
+diverging from the alt-witnessed `Entails` off partition-shaped
+alternatives (see the fidelity note in `Entailment.lean`). -/
+def completeAnswers (Q : Question W) : Set (Set W) := {σ | MentionAll σ Q}
 
-theorem EntailsAns.refl (P : Question W) : P.EntailsAns P := fun _ h => h
+@[simp] theorem mem_completeAnswers {Q : Question W} :
+    σ ∈ completeAnswers Q ↔ MentionAll σ Q := Iff.rfl
 
-theorem EntailsAns.trans {P Q R : Question W} (h₁ : P.EntailsAns Q)
-    (h₂ : Q.EntailsAns R) : P.EntailsAns R :=
-  fun _ hσ => h₂ (h₁ hσ)
-
-/-- Alternative-set inclusion induces answerhood entailment. -/
-theorem entailsAns_of_alt_subset {P Q : Question W} (h : alt Q ⊆ alt P) :
-    P.EntailsAns Q :=
-  fun _ hσ => hσ.mono h
+/-- `completeAnswers` is antitone in the alternative set. -/
+theorem completeAnswers_anti {P Q : Question W} (h : alt Q ⊆ alt P) :
+    completeAnswers P ⊆ completeAnswers Q :=
+  fun _ hσ => MentionAll.mono hσ h
 
 /-! ### Bridge to `Question.Support`
 
