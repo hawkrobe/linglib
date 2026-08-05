@@ -236,10 +236,10 @@ def ofFlags : Bimachine Bool Bool α β where
 def ofFlags_letterToLetter : (ofFlags pL pR out).LetterToLetter := ⟨out, fun _ _ _ => rfl⟩
 
 @[simp] theorem ofFlags_lState (xs : List α) : (ofFlags pL pR out).lState xs = xs.any pL :=
-  List.foldl_or pL false xs
+  List.foldl_or
 
 @[simp] theorem ofFlags_rState (xs : List α) : (ofFlags pL pR out).rState xs = xs.any pR :=
-  List.foldr_or pR false xs
+  List.foldr_or
 
 /-- Output `i` of a flag bimachine sees the input symbol and the two window-`any`
 flags. -/

@@ -8,22 +8,33 @@ import Mathlib.Data.List.Basic
 /-!
 # Folds over Boolean accumulation
 
-A fold that ors in a predicate computes `any`, from any starting accumulator and in
-either direction. Candidate for `Mathlib/Data/List/Basic.lean`.
+A fold that ors in a predicate computes `any`, and one that ands it in computes `all`,
+from any starting accumulator and in either direction. Candidates for the fold section
+of core's `Init.Data.List.Lemmas` (the op-specific sibling of `List.foldl_max`).
 -/
 
 namespace List
 
-theorem foldl_or {α : Type*} (p : α → Bool) (acc : Bool) (l : List α) :
-    l.foldl (fun r a => r || p a) acc = (acc || l.any p) := by
-  induction l generalizing acc with
+variable {α : Type*} {p : α → Bool} {b : Bool} {l : List α}
+
+theorem foldl_or : l.foldl (fun r a => r || p a) b = (b || l.any p) := by
+  induction l generalizing b with
   | nil => simp
   | cons x xs ih => simp [ih, Bool.or_assoc]
 
-theorem foldr_or {α : Type*} (p : α → Bool) (acc : Bool) (l : List α) :
-    l.foldr (fun a r => r || p a) acc = (acc || l.any p) := by
+theorem foldr_or : l.foldr (fun a r => r || p a) b = (b || l.any p) := by
   induction l with
   | nil => simp
   | cons x xs ih => rw [foldr_cons, ih, any_cons]; ac_rfl
+
+theorem foldl_and : l.foldl (fun r a => r && p a) b = (b && l.all p) := by
+  induction l generalizing b with
+  | nil => simp
+  | cons x xs ih => simp [ih, Bool.and_assoc]
+
+theorem foldr_and : l.foldr (fun a r => r && p a) b = (b && l.all p) := by
+  induction l with
+  | nil => simp
+  | cons x xs ih => rw [foldr_cons, ih, all_cons]; ac_rfl
 
 end List
