@@ -18,6 +18,7 @@ instances on `Set` relations risk instance loops and higher-order
 
 /-- `Decidable (s ⊆ t)` from `Fintype` plus decidable membership.
 Not an instance; activate locally. -/
+@[implicit_reducible]
 def Set.decidableSubsetOfFintype {α : Type*} [Fintype α]
     (s t : Set α) [DecidablePred (· ∈ s)] [DecidablePred (· ∈ t)] :
     Decidable (s ⊆ t) :=
