@@ -125,10 +125,9 @@ def tud : HungarianVerbEntry where
   formPresIndef := "tud"
   formPastDef := "tudta"
   formPastIndef := "tudott"
-  frames := [Frame.finiteClause]
+  frames := [Frame.finiteClause, Frame.question]
   presupType := some .softTrigger
   attitude := some (.doxastic .veridical)
-  takesQuestionBase := true
   complementSig := some .mono
 
 /-- *aggaszt* 'worry' — subject-experiencer psych verb taking a subject clause

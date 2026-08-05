@@ -491,7 +491,7 @@ theorem buli_satisfies_universal :
 
     All three are "balanced" in Noonan's terms — SMPM lacks
     morphologically nonfinite predicates entirely. -/
-def smpmToNoonan : EmbeddedClauseType → NoonanCompType
+def smpmToNoonan : EmbeddedClauseType → Complement.Coding
   | .finiteEmbedded      => .indicative
   | .tensedSubjunctive   => .subjunctive
   | .untensedSubjunctive => .subjunctive

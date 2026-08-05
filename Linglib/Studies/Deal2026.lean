@@ -20,16 +20,18 @@ functional projection above TP*. Three primary conclusions:
 1. Not all clausal complementation is relativization (refuting [kayne-2008],
    [kayne-2014], [arsenijevic-2009]).
 2. Relative-like notional complement clauses vary across languages in nominal
-   superstructure ([deal-2026] Table 79: V CP / V D N CP / V P D CP) and in
-   factive inferences (Tables 80–81).
+   superstructure ([deal-2026] (79): V CP / V D N CP / V P D CP) and in
+   factive inferences ((80)–(81)).
 3. Factivity, RE-syntax, and nominalization are *three orthogonal axes* — no
    one entails another.
 
 ## What this file contributes
 
-- The bundled `NotionalComplementShape` analytical record (Deal-specific
-  apparatus per CLAUDE.md "paper-specific apparatus stays in Studies").
-- Table 79 sample: V CP / V D N CP / V P D CP cells for five languages.
+- The CP-external shell inventory (`Shell`, `ShellInventory`, the named
+  rows) and the bundled `NotionalComplementShape` analytical record
+  (Deal-specific apparatus per CLAUDE.md "paper-specific apparatus stays
+  in Studies").
+- The (79) sample: V CP / V D N CP / V P D CP rows for six languages.
 - The `nezPerceEmbedStrategy` projection: derives RE-vs-simplex from
   Fragment-level Noonan/factivity data plus the Deal-analytical Ā-dep
   presence flag.
@@ -84,10 +86,57 @@ namespace Deal2026
 
 open NezPerce.ClausalEmbedding
 open Clause.Complementation
-open Slot.ShellInventory
 open Semantics.Presupposition.ProjectiveContent (ProjectiveClass)
 open Minimalist (Cat SatisfactionCond AbarDep keineĀProbe ClauseSpine
   hasValuedFeature FeatureBundle FeatureVal GramFeature ābar_is_Ā)
+
+-- ============================================================================
+-- §0. CP-external shell inventory — the shell axis of (79)
+-- ============================================================================
+
+/-- A wrapping head above the embedded CP: [deal-2026]'s survey exhibits
+    D, N, and P shells ((79) and fn. 33). -/
+inductive Shell where
+  /-- D shell. -/
+  | d
+  /-- N shell (between D and CP). -/
+  | n
+  /-- P shell. -/
+  | p
+  deriving DecidableEq, Repr
+
+/-- The external wrapping above a CP, innermost first: `[]` = bare CP,
+`[.n, .d]` = D over N over CP, `[.d, .p]` = P over D over CP. -/
+abbrev ShellInventory := List Shell
+
+namespace ShellInventory
+
+/-- The bare-CP row of (79) (Nez Perce; English *think*). -/
+def bareCP : ShellInventory := []
+
+/-- V D CP: not a row of (79) — [deal-2026] fn. 33 notes the structure
+    as "defended in the literature" for Washo ([bochnak-hanink-2021]),
+    with no known RE instance. -/
+def dCP : ShellInventory := [.d]
+
+/-- The V D N CP row of (79) (Adyghe, [caponigro-polinsky-2011];
+    English N complementation, [hankamer-mikkelsen-2021]). -/
+def dnCP : ShellInventory := [.n, .d]
+
+/-- The V P D CP row of (79) (Bulgarian, [krapova-2010]; Ndebele,
+    [pietraszko-2019]). -/
+def pdCP : ShellInventory := [.d, .p]
+
+/-- The clause complex is wrapped in a nominal projection: its shell
+    contains D (all rows Deal exhibits except `bareCP`). -/
+def hasNominalShell (inv : ShellInventory) : Prop := Shell.d ∈ inv
+
+instance : DecidablePred hasNominalShell :=
+  λ inv => inferInstanceAs (Decidable (Shell.d ∈ inv))
+
+end ShellInventory
+
+open ShellInventory
 
 -- ============================================================================
 -- §1. NotionalComplementShape — Deal-specific bundling
@@ -95,17 +144,18 @@ open Minimalist (Cat SatisfactionCond AbarDep keineĀProbe ClauseSpine
 
 /-- The full Deal-2026 description of a notional complement clause: internal
     spine + external shell + presence of internal Ā-dependency. Bundled here
-    rather than in substrate to keep the per-axis primitives reusable
-    (`ClauseSpine`, `Slot.ShellInventory`, `AbarDep`) for non-Deal accounts.
+    rather than in substrate to keep the per-axis substrate primitives
+    (`ClauseSpine`, `AbarDep`) reusable for non-Deal accounts; the shell
+    axis is Deal-specific and lives in this file (§0).
 
-    The three axes are independent in [deal-2026] Table 79: each cell
-    in the 4×2 cross-classification (CP-superstructure × ±Ā) is filled or
-    explicitly noted as predicted-but-unattested. -/
+    The axes are independent in [deal-2026]'s (79): all six cells of its
+    3×2 cross-classification (CP-superstructure × ±Ā) are filled, and
+    fn. 33 adds the V D CP shell as a seventh defended structure. -/
 structure NotionalComplementShape where
   /-- Internal spine of the embedded clause (typically `ClauseSpine.cP`). -/
   internal : ClauseSpine
   /-- External wrapping shells from C outward (`bareCP / dCP / dnCP / pdCP`). -/
-  external : Slot.ShellInventory
+  external : ShellInventory
   /-- Whether the embedded CP contains an internal Ā-dependency. -/
   hasInternalAbar : Bool
   deriving Repr
@@ -134,77 +184,89 @@ def ndebeleShape : NotionalComplementShape :=
 
 /-- The Washo factive shape from [bochnak-hanink-2021],
     [hanink-bochnak-2017]: V D CP (D wraps CP, no intervening N).
-    [deal-2026] footnote 33 explicitly notes this cell as attested
-    "for example, for Washo (Bochnak & Hanink 2021)" but absent from
-    the main Table 79 because no example language combines V D CP with
-    an internal Ā-dependency. We include the no-Ā version. -/
+    [deal-2026] footnote 33 explicitly notes this structure as
+    "defended in the literature ... for Washo (Bochnak & Hanink 2021)"
+    but absent from (79) because no example language combines V D CP
+    with an internal Ā-dependency. We include the no-Ā version. -/
 def washoShape : NotionalComplementShape :=
   ⟨ClauseSpine.cP, dCP, false⟩
 
+/-- The English N-complementation shape of (79)'s V D N CP / no-Ā cell
+    (*the fact that S*) — the DP shell with an N co-argument envisioned
+    by [hankamer-mikkelsen-2021], as Deal notes in §7. -/
+def englishNComplementationShape : NotionalComplementShape :=
+  ⟨ClauseSpine.cP, dnCP, false⟩
+
 -- ============================================================================
--- §2. Table 79 — Cross-Linguistic Sample
+-- §2. The (79) table — cross-linguistic sample
 -- ============================================================================
 
-/-- An entry in [deal-2026] Table 79: a language × construction with its
+/-- An entry in [deal-2026]'s (79): a language × construction with its
     NotionalComplementShape. -/
-structure Table79Cell where
+structure ShellTypologyCell where
   language : String
   construction : String
   shape : NotionalComplementShape
   deriving Repr
 
-/-- The seven attested Table-79 cells (Deal 2026 main Table 79 + Washo cell
-    from footnote 33 per [bochnak-hanink-2021]). -/
-def table79 : List Table79Cell := [
+/-- The rows of [deal-2026]'s (79) — all six cells of the 3×2 table are
+    filled, with V CP / no-Ā doubly witnessed — plus the Washo V D CP
+    structure from footnote 33 per [bochnak-hanink-2021]. -/
+def shellTypology : List ShellTypologyCell := [
   ⟨"Nez Perce", "RE",                nezPerceREShape⟩,
   ⟨"Nez Perce", "simplex",           nezPerceSimplexShape⟩,
   ⟨"English",   "think-complement",  nezPerceSimplexShape⟩,  -- bareCP, no Ā
   ⟨"Adyghe",    "RE",                adygheREShape⟩,
+  ⟨"English",   "N-complementation", englishNComplementationShape⟩,
   ⟨"Bulgarian", "RE",                bulgarianREShape⟩,
   ⟨"Ndebele",   "embedding",         ndebeleShape⟩,
   ⟨"Washo",     "factive",           washoShape⟩
 ]
 
-/-- Drift sentry: `table79` covers exactly the seven (language, construction)
-    pairs Deal lists in §7 main Table 79 plus the Washo cell from footnote 33. -/
-theorem table79_membership :
-    table79.map (λ c => (c.language, c.construction)) =
+/-- Drift sentry: `shellTypology` covers exactly the seven
+    (language, construction) pairs of (79) plus the Washo structure from
+    footnote 33. -/
+theorem shellTypology_membership :
+    shellTypology.map (λ c => (c.language, c.construction)) =
       [("Nez Perce", "RE"), ("Nez Perce", "simplex"),
        ("English",   "think-complement"),
-       ("Adyghe",    "RE"), ("Bulgarian", "RE"),
+       ("Adyghe",    "RE"), ("English", "N-complementation"),
+       ("Bulgarian", "RE"),
        ("Ndebele",   "embedding"), ("Washo", "factive")] := by decide
 
 /-- The Kayne-Arsenij\'evi\'c universalist hypothesis — that all clausal
     complementation is relativization — stated on the Ā-axis: not every
-    Table 79 cell carries an internal Ā-dependency. (The retired surface-enum
+    row of (79) carries an internal Ā-dependency. (The retired surface-enum
     version undercounted — Adyghe/Bulgarian REs DO relativize, inside a
     nominal shell, and are not counterexamples; the counterexamples are the
     no-Ā cells: Nez Perce simplex, English *think*, Ndebele, Washo.) -/
 theorem kayne_universalism_refuted :
-    ¬ ∀ c ∈ table79, c.shape.hasInternalAbar = true := by decide
+    ¬ ∀ c ∈ shellTypology, c.shape.hasInternalAbar = true := by decide
 
 /-- Deal 2026's positive contribution, on the two axes: bare CP + Ā attested
     (REs are real); bare CP without Ā attested (not all complementation is
     relativization); a nominal shell attested (consistent with prior
     nominalization analyses for some languages). -/
-theorem table79_axes_attested :
-    (∃ c ∈ table79, c.shape.external = bareCP ∧ c.shape.hasInternalAbar = true) ∧
-    (∃ c ∈ table79, c.shape.external = bareCP ∧ c.shape.hasInternalAbar = false) ∧
-    (∃ c ∈ table79, hasNominalShell c.shape.external) := by
+theorem shellTypology_axes_attested :
+    (∃ c ∈ shellTypology,
+      c.shape.external = bareCP ∧ c.shape.hasInternalAbar = true) ∧
+    (∃ c ∈ shellTypology,
+      c.shape.external = bareCP ∧ c.shape.hasInternalAbar = false) ∧
+    (∃ c ∈ shellTypology, hasNominalShell c.shape.external) := by
   refine ⟨?_, ?_, ?_⟩ <;> decide
 
 /-- The combination the surface enum could not express — claim 2: REs
     vary in nominal superstructure (Adyghe V D N CP, Bulgarian V P D CP
     carry Ā inside a nominal shell). -/
 theorem shelled_REs_attested :
-    ∃ c ∈ table79, hasNominalShell c.shape.external ∧
+    ∃ c ∈ shellTypology, hasNominalShell c.shape.external ∧
       c.shape.hasInternalAbar = true := by decide
 
 -- ============================================================================
 -- §2.5. Greek extension (cross-reference to [angelopoulos-2026])
 -- ============================================================================
 --
--- Deal's main Table 79 doesn't include Greek. [angelopoulos-2026]
+-- Deal's (79) doesn't include Greek. [angelopoulos-2026]
 -- (NLLT 44:26) argues that Greek *pu*-complement clauses are bare CPs
 -- (no nominalization shell) where the [n]-feature on C is checked by a
 -- light noun in Spec,CP that incorporates into the matrix v_State head.
@@ -235,7 +297,7 @@ def greekPuComplementShape : NotionalComplementShape :=
 -- §3. Cross-Classification: factivity ⊥ RE-structure
 -- ============================================================================
 
-/-! ### Headline orthogonality (Deal 2026 Tables 80–81)
+/-! ### Headline orthogonality ([deal-2026] (80)–(81))
 
 The central typological discovery: factivity does not predict RE-structure
 in either direction.
@@ -248,7 +310,7 @@ in either direction.
 /-- All four cells are attested: factivity neither necessitates nor precludes
     RE-syntax. The `factive` flag is per [deal-2026] §3 projection-test
     diagnoses. The Adyghe non-factive RE judgement is attributed to
-    [caponigro-polinsky-2011] via [deal-2026] §7 Table 80. -/
+    [caponigro-polinsky-2011] via [deal-2026] §7 (80). -/
 theorem factivity_perp_re_structure :
     -- Factive + RE: Nez Perce REs (e.g. liloy)
     liloy.factive = true ∧ nezPerceREShape.hasInternalAbar = true ∧
@@ -260,7 +322,7 @@ theorem factivity_perp_re_structure :
 
 /-! ### The fourth cell (non-factive + RE)
 
-Documented by [deal-2026] §7 (Table 80) as instantiated by Adyghe per
+Documented by [deal-2026] §7 ((80)) as instantiated by Adyghe per
 [caponigro-polinsky-2011]. Absent a formalised Adyghe Fragment, this is
 recorded as an unproven Lean claim: in linglib Adyghe is not yet present at
 Fragment level.
@@ -272,7 +334,7 @@ replace this prose with a theorem `adyghe_re_nonfactive`. -/
 -- §4. Cross-Classification: factivity ⊥ nominalization
 -- ============================================================================
 
-/-! ### Deal 2026 Table 81
+/-! ### [deal-2026] (81)
 
 * Factive + nominalization: Washo *forget* (per [hanink-bochnak-2017]).
 * Factive + no nominalization: Nez Perce REs (the headline Deal-2026 finding,
@@ -281,16 +343,12 @@ replace this prose with a theorem `adyghe_re_nonfactive`. -/
   §7 citing Özyıldız 2017).
 * Non-factive + no nominalization: Washo, Nez Perce 'think'. -/
 
-/-- Nez Perce REs are factive without external nominal shell. -/
+/-- Nez Perce REs are factive without external nominal shell
+    (`bareCP = []` wraps nothing by construction). -/
 theorem nezPerce_re_factive_no_nominalization :
     liloy.factive = true ∧
     nezPerceREShape.external = bareCP := by
   refine ⟨rfl, rfl⟩
-
-/-- The bare-CP shell contains neither D nor N. -/
-theorem bareCP_no_d_no_n :
-    Slot.Shell.d ∉ bareCP ∧ Slot.Shell.n ∉ bareCP := by
-  refine ⟨?_, ?_⟩ <;> decide
 
 -- ============================================================================
 -- §5. Embedding-strategy projection from Fragment data
@@ -445,7 +503,7 @@ The Studies file integrates four independent substrate layers:
 - Fragment: per-verb consensus typology (CTPClass, factive)
 - Tonhauser projective content: ProjectiveClass (Semantics/Presupposition/)
 - Deal-internal: EmbeddingStrategy + NotionalComplementShape
-- Shell/Ā axes: `Slot.ShellInventory` + `hasNominalShell` (Syntax/Clause/Frame.lean)
+- Shell/Ā axes: `ShellInventory` + `hasNominalShell` (§0 above)
 
 The bridge theorems below derive load-bearing predictions across these
 layers rather than stipulating them. -/
@@ -465,7 +523,7 @@ theorem strategy_shape_abar (v : NezPerceEmbedder) :
   unfold nezPerceEmbedStrategy
   cases v.requiresYoxKeEdge <;> rfl
 
-/-- All three Table-79 RE cells (Nez Perce, Adyghe, Bulgarian) carry an
+/-- All three RE rows of (79) (Nez Perce, Adyghe, Bulgarian) carry an
     internal Ā-dependency. The shared `hasInternalAbar = true` is the
     universal property of REs that survives Deal's typological dissolution. -/
 theorem all_REs_have_internal_abar :
@@ -474,7 +532,7 @@ theorem all_REs_have_internal_abar :
     bulgarianREShape.hasInternalAbar = true := by
   refine ⟨rfl, rfl, rfl⟩
 
-/-- All three Table-79 simplex/embedding cells (Nez Perce simplex, English
+/-- All three no-Ā simplex/embedding shapes (Nez Perce simplex, English
     *think*, Ndebele, Washo factive) lack internal Ā. -/
 theorem all_simplex_lack_internal_abar :
     nezPerceSimplexShape.hasInternalAbar = false ∧
@@ -482,13 +540,13 @@ theorem all_simplex_lack_internal_abar :
     washoShape.hasInternalAbar = false := by
   refine ⟨rfl, rfl, rfl⟩
 
-/-- The four-cell cross-classification of Tables 80–81 is exhaustively
+/-- The four-cell cross-classification of (80)–(81) is exhaustively
     populated: every combination of (factive, hasInternalAbar) is attested
     by at least one (verb, shape) pair. The fourth cell (non-factive + Ā)
     is documented from [caponigro-polinsky-2011]'s Adyghe REs as
     cited by Deal — Adyghe REs combine `adygheREShape` (hasInternalAbar=true)
     with predicates that are not factive in Caponigro & Polinsky's analysis
-    (Deal §7 p. 53). -/
+    ([deal-2026] §7, (80); supporting prose p. 52). -/
 theorem cross_classification_populated :
     -- Factive + Ā: liloy + nezPerceREShape
     (liloy.factive = true ∧ nezPerceREShape.hasInternalAbar = true) ∧

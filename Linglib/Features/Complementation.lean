@@ -2,82 +2,32 @@ import Mathlib.Order.Basic
 import Mathlib.Data.Nat.Basic
 
 /-!
-# Complementation — complement selection and control
+# Complementation — Noonan typology and control
 
 [noonan-2007]
 
-Per-entry complementation features: the legacy complement-type enum
-(`ComplementType`, the flat view over the typed `Frame` of
-`Syntax/Clause/Frame.lean`) and, for infinitival complements, its control
-type (`ControlType`).
+The cross-linguistic complementation typology: [noonan-2007]'s six
+morphological complement codings (`Complement.Coding`, in his summary
+table's row order via `rank`) and twelve of his fourteen
+complement-taking-predicate classes (`CTPClass`) with their default
+reality status (`RealityStatus`, `ctpRealityStatus`), plus the control
+enum for infinitival complements (`ControlType`).
 
-The cross-linguistic complementation typology also lives here:
-[noonan-2007]'s six complement-clause types (`NoonanCompType`, linearly
-ordered from most to least finite via `rank`) and twelve
-complement-taking-predicate classes (`CTPClass`) with their default reality
-status (`RealityStatus`, `ctpRealityStatus`). The adapter between the two
-enum inventories (`ComplementType.toNoonan`) lives in
-`Syntax/Clause/Complementation.lean`.
+These enums stay in `Features/` because `Data/Complementation/Schema.lean`
+types its rows with them and the Data layer imports Features only. The
+typed complement-frame object and the legacy `ComplementType` view live
+in `Syntax/Clause/Frame.lean`; the adapter (`ComplementType.toCoding`)
+in `Syntax/Clause/Complementation.lean`.
 
 ## Main declarations
 
-* `ComplementType` — complement frame a predicate selects (English-leaning
-  inventory: NP, double object, clausal, …)
-* `ControlType` — subject/object control vs raising for infinitival complements
-* `NoonanCompType` + `isReduced` + `rank` — [noonan-2007]'s complement-clause
-  types with their finiteness order
+* `Complement.Coding` + `isReduced` + `rank` — [noonan-2007]'s complement
+  types, classified by the morphological coding of the complement clause
 * `CTPClass`, `RealityStatus`, `ctpRealityStatus` — [noonan-2007]'s CTP
   classification and realis/irrealis defaults
+* `ControlType` — subject/object control vs raising for infinitival
+  complements
 -/
-
-/--
-Complement type that the verb selects.
-
-- Finite: "that" clauses ("John knows that Mary left")
-- Infinitival: "to" complements ("John managed to leave")
-- Gerund: "-ing" complements ("John stopped smoking")
-- NP: Direct object ("John kicked the ball")
-- None: Intransitive ("John slept")
--/
-inductive ComplementType where
-  | none            -- Intransitive
-  | np              -- Transitive with NP object
-  | np_np           -- Ditransitive: "give X Y"
-  | np_pp           -- NP + PP: "put X on Y"
-  | finiteClause    -- "that" clause
-  | infinitival     -- "to" VP
-  | gerund          -- "-ing" VP
-  | smallClause     -- "consider X happy"
-  | question        -- Embedded question "wonder who"
-  deriving DecidableEq, Repr
-
-/-- Is this complement type finite (i.e., does it contain a tense head)?
-
-    Finite complements (.finiteClause,.question) have independent tense
-    morphology; non-finite complements (.infinitival,.gerund,.smallClause)
-    do not. -/
-def ComplementType.isFinite : ComplementType → Bool
-  | .finiteClause | .question => true
-  | _ => false
-
-/-- Is this complement type a nominal (DP) argument?
-
-    Nominal complements project DP: the verb selects a noun phrase
-    in object position. Relevant to c-selection in coordination:
-    a verb that only selects nominal complements cannot independently
-    license a CP conjunct ([schwarzer-2026]). -/
-def ComplementType.isNominal : ComplementType → Bool
-  | .np | .np_np | .np_pp => true
-  | _ => false
-
-/-- Is this complement type a clausal (CP) argument?
-
-    Clausal complements project CP or reduced clausal structure.
-    This covers finite clauses (*dass*-clauses), infinitivals,
-    gerunds, small clauses, and embedded questions. -/
-def ComplementType.isClausal : ComplementType → Bool
-  | .finiteClause | .infinitival | .gerund | .smallClause | .question => true
-  | _ => false
 
 /--
 Control type for verbs with infinitival complements.
@@ -91,28 +41,32 @@ inductive ControlType where
 
 /-! ### Noonan complement typology -/
 
-/-- The six major complement types attested cross-linguistically.
-    Ordered roughly from most to least "finite" (Noonan's "balanced" to
-    "deranked"). -/
-inductive NoonanCompType where
+namespace Complement
+
+/-- The six major complement types of [noonan-2007]'s survey, classified
+    by the morphological coding of the complement clause (part of speech
+    of its predicate, subject relation, inflectional range). -/
+inductive Coding where
   | indicative     -- Finite clause with indicative mood marking
   | subjunctive    -- Finite clause with subjunctive/irrealis marking
-  | paratactic     -- Juxtaposed clause, no subordinator
+  | paratactic     -- Juxtaposed fully-inflected clause, no subordinator
   | infinitive     -- Non-finite with "to" or equivalent
   | nominalized    -- Gerund / action nominal
   | participle     -- Participial complement
   deriving DecidableEq, Repr, BEq
 
-/-- Is this complement type "reduced" (non-finite)? -/
-def NoonanCompType.isReduced : NoonanCompType → Bool
+/-- Is this coding non-finite (infinitive, nominalized, participial)? -/
+def Coding.isReduced : Coding → Bool
   | .infinitive  => true
   | .nominalized => true
   | .participle  => true
   | _            => false
 
-/-- [noonan-2007]'s balanced-to-deranked order as a numeric rank
-    (indicative most finite, participle most deranked). -/
-def NoonanCompType.rank : NoonanCompType → Nat
+/-- Position in [noonan-2007]'s summary-table row order (indicative
+    first, participle last). A presentation order, not an inflectional
+    finiteness scale: paratactic complements carry the same inflectional
+    range as indicatives. -/
+def Coding.rank : Coding → Nat
   | .indicative  => 0
   | .subjunctive => 1
   | .paratactic  => 2
@@ -120,16 +74,17 @@ def NoonanCompType.rank : NoonanCompType → Nat
   | .nominalized => 4
   | .participle  => 5
 
-/-- The balanced-to-deranked order: `t ≤ t'` iff `t` is at least as
-    finite as `t'`. -/
-instance : LinearOrder NoonanCompType :=
-  .lift' NoonanCompType.rank fun a b => by
-    cases a <;> cases b <;> simp [NoonanCompType.rank]
+/-- The summary-table row order as a linear order. -/
+instance : LinearOrder Coding :=
+  .lift' Coding.rank fun a b => by
+    cases a <;> cases b <;> simp [Coding.rank]
 
-/-- Noonan's twelve CTP classes, organized by semantic contribution.
+end Complement
 
-    The ordering follows [noonan-2007] Table 2.1 from most to least
-    "assertive":
+/-- Twelve of [noonan-2007]'s fourteen CTP classes (§3.2; predicates of
+    fearing §3.2.6 and conjunctive predicates §3.2.14 are omitted), in
+    the chapter's presentation order with perception hoisted next to the
+    epistemic classes:
     - Utterance/propAttitude/pretence: report/judge propositional content
     - Commentative/knowledge: evaluate/know propositional content
     - Perception: direct experience
@@ -158,13 +113,17 @@ inductive CTPClass where
 
 /-- The fundamental realis/irrealis split that predicts complement type
     selection. Realis CTPs tend toward indicative; irrealis toward
-    subjunctive/infinitive ([noonan-2007] §2.3). -/
+    subjunctive/infinitive ([noonan-2007] §3.1.1). -/
 inductive RealityStatus where
   | realis    -- CTP asserts or presupposes complement truth
   | irrealis  -- CTP does not commit to complement truth
   deriving DecidableEq, Repr
 
-/-- Default reality status of each CTP class ([noonan-2007] Table 2.3). -/
+/-- Default reality status of each CTP class, extending [noonan-2007]'s
+    realis/irrealis mood distinction (§3.1.1) from complement roles to
+    CTP classes. The phasal and perception assignments are extensions:
+    Noonan assigns their complements determined time reference, not a
+    mood value. -/
 def ctpRealityStatus : CTPClass → RealityStatus
   | .utterance    => .realis
   | .propAttitude => .realis

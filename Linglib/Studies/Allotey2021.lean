@@ -357,7 +357,7 @@ theorem ga_has_reflexive :
 
 /-- Gã complements in [noonan-2007]'s typology; `.infinitive` is §5.6's
     own term for the bare-root `ni`-complement. -/
-def gaToNoonan : EmbeddedClauseType → NoonanCompType
+def gaToNoonan : EmbeddedClauseType → Complement.Coding
   | .finiteAke  => .indicative
   | .finiteKeji => .indicative
   | .irrealisNi => .infinitive

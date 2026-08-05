@@ -330,8 +330,7 @@ theorem gr7_nonThematic (v : HausaVerb)
 theorem mkVerb_is_canonical (form : String) (g : StemTemplate)
     (lexTones : List TRN := []) :
     (mkVerb form g lexTones).canonical :=
-  ⟨by simp [mkVerb, HausaVerb.canonical, Verb.complementType,
-      toComplementType_toFrame], rfl⟩
+  ⟨by simp [mkVerb, HausaVerb.canonical, Verb.complementType], rfl⟩
 
 /-- **Grades 5 and 6 introduce an external argument.** The two H–H
     grades are both agentive at the `Verb` level. -/

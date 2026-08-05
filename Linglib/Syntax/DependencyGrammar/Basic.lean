@@ -1,6 +1,6 @@
 import Mathlib.Data.List.Basic
 import Linglib.Data.UD.Basic
-import Linglib.Features.Complementation
+import Linglib.Syntax.Clause.Frame
 import Linglib.Morphology.Word.Basic
 
 open Morphology (Word)

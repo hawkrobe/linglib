@@ -73,7 +73,7 @@ def zi : ClausePrefixEntry where
 def ki : ClausePrefixEntry where
   form := "kɨ-"
   position := some .praefixed
-  noonanType := some .subjunctive
+  coding := some .subjunctive
   agrees := some true
   gloss := "SBJV"
   clauseType := .subjunctive
@@ -83,7 +83,7 @@ def ki : ClausePrefixEntry where
 def kemzi : ClausePrefixEntry where
   form := "kəmzi-"
   position := some .praefixed
-  noonanType := some .indicative
+  coding := some .indicative
   agrees := some false
   factive := some true
   gloss := "COMP.FACT"

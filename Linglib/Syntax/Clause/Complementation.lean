@@ -4,26 +4,26 @@ import Linglib.Syntax.Category.Complementizer.Basic
 /-!
 # Clause complementation: selection
 
-[deal-2026] [noonan-2007]
+[noonan-2007]
 
 The [noonan-2007]-anchored selection relation between verb frames and
 clause-typers.
 
 ## Main definitions
 
-- `ComplementType.toNoonan`, `Verb.compTypes`, `Verb.realizes` — the
-  selection relation
+- `ComplementType.toCoding`, `Verb.realizes` — the selection relation
+- `ComplementType.codings_toFrame` — the enum view and the typed frames
+  record the same coding
 
 ## Implementation notes
 
-The typed complement-frame object (`Slot`, `Frame`) and [deal-2026]'s CP
-external-shell inventory (`Slot.Shell`, `Slot.ShellInventory`, the named
-witnesses) live in `Syntax/Clause/Frame.lean`; [noonan-2007]'s enums
-(`NoonanCompType`, `CTPClass`, `RealityStatus`) in
-`Features/Complementation.lean`; the generated CTP sample rows in
-`Data/Complementation/`. Placement of individual languages in Table 79
-cells consumes Fragment data and lives in `Studies/Deal2026.lean`;
-consistency checks on the selection relation live in Studies
+The typed complement-frame object (`Slot`, `Frame`) lives in
+`Syntax/Clause/Frame.lean`; [noonan-2007]'s enums (`Complement.Coding`,
+`CTPClass`, `RealityStatus`) in `Features/Complementation.lean`; the
+generated CTP sample rows in `Data/Complementation/`. [deal-2026]'s
+CP-external shell inventory and the language placements of its (79)
+table live in `Studies/Deal2026.lean`; consistency checks on the
+selection relation live in Studies
 (e.g. `Bondarenko2022.hanaxa_frames_realized`).
 -/
 
@@ -34,28 +34,32 @@ namespace Clause.Complementation
 The [noonan-2007]-anchored relation between a verb's complement frames
 and a language's clause-typing morphemes. -/
 
-/-- The [noonan-2007] category of a complement frame; `none` for
-non-clausal frames. -/
-def _root_.ComplementType.toNoonan : ComplementType → Option NoonanCompType
+/-- The [noonan-2007] coding of a complement frame: `none` for
+non-clausal frames, for small clauses (outside the coding inventory),
+and for embedded questions (interrogativity is a clause-form axis, not
+a coding). -/
+def _root_.ComplementType.toCoding : ComplementType → Option Complement.Coding
   | .finiteClause => some .indicative
   | .infinitival => some .infinitive
   | .gerund => some .nominalized
-  | .smallClause => some .paratactic
+  | .smallClause => none
   | .none => none
   | .np => none
   | .np_np => none
   | .np_pp => none
-  | .question => some .indicative
+  | .question => none
 
-/-- The legacy `ComplementType` cells of a verb's frame inventory
-    (frames richer than any cell are dropped). -/
-def _root_.Verb.compTypes (v : Verb) : List ComplementType :=
-  v.frames.filterMap Frame.toComplementType
+/-- The enum view and the typed frames record the same coding: a cell's
+    frame carries exactly the codings `toCoding` assigns it. -/
+theorem _root_.ComplementType.codings_toFrame (ct : ComplementType) :
+    ct.toFrame.codings = ct.toCoding.toList := by cases ct <;> rfl
 
-/-- Some frame of `v` is realized by clause-typer `c`: a slot's
-    [noonan-2007] coding matches the typer's. The `∃ t` guard keeps
-    coding-less slots from matching type-less typers (`none`/`none`). -/
+/-- Some frame of `v` is realized by clause-typer `c`: a recorded
+    [noonan-2007] coding of `v`'s frames matches the typer's. -/
 def _root_.Verb.realizes (v : Verb) (c : Complementizer) : Prop :=
-  ∃ fr ∈ v.frames, ∃ s ∈ fr, ∃ t, s.coding = some t ∧ c.noonanType = some t
+  ∃ t ∈ v.codings, c.coding = some t
+
+instance (v : Verb) (c : Complementizer) : Decidable (v.realizes c) :=
+  inferInstanceAs (Decidable (∃ t ∈ v.codings, _))
 
 end Clause.Complementation

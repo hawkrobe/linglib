@@ -24,7 +24,7 @@ namespace Greek.StandardModern.Complementizers
 def oti : Complementizer where
   form := "oti"
   position := some .detached
-  noonanType := some .indicative
+  coding := some .indicative
   clauseForm := some .declarative
 
 /-- *pu* — factive complementizer ([christidis-1982], [roussou-2019]);
@@ -36,7 +36,7 @@ def oti : Complementizer where
 def pu : Complementizer where
   form := "pu"
   position := some .detached
-  noonanType := some .indicative
+  coding := some .indicative
   clauseForm := some .declarative
   factive := some true
 
@@ -47,7 +47,7 @@ def pu : Complementizer where
 def an : Complementizer where
   form := "an"
   position := some .detached
-  noonanType := some .indicative
+  coding := some .indicative
   clauseForm := some .embeddedQuestion
 
 /-- *na* — subjunctive ([grano-2024]); the *na*-selecting mood-choice
@@ -57,7 +57,7 @@ def an : Complementizer where
 def na : Complementizer where
   form := "na"
   position := some .detached
-  noonanType := some .subjunctive
+  coding := some .subjunctive
 
 /-- The complementizer inventory. -/
 def complementizers : List Complementizer := [oti, pu, an, na]

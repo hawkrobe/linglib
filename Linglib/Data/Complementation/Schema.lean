@@ -12,14 +12,14 @@ This is substrate: it imports `Features/Complementation.lean` only. Consumers
 (the paper's study file, bridge studies) import the generated module.
 
 ## Main definitions
-* `Datum` — one CTP row: verb, CTP class, attested complement types,
+* `Datum` — one CTP row: verb, CTP class, attested complement codings,
   equi-deletion, negative raising.
 -/
 
 namespace Data.Complementation
 
 /-- One row of [noonan-2007]'s CTP sample: a complement-taking predicate in
-    one language, with its CTP class, the complement types it is attested
+    one language, with its CTP class, the complement codings it is attested
     with, and its equi-deletion / negative-raising behavior.
 
     `verb` is citation provenance, not identity — rows are identified by
@@ -33,7 +33,7 @@ namespace Data.Complementation
 structure Datum where
   verb : String
   ctpClass : CTPClass
-  compTypes : List NoonanCompType
+  codings : List Complement.Coding
   hasEquiDeletion : Bool := false
   hasNegativeRaising : Bool := false
   deriving DecidableEq, Repr
