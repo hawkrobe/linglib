@@ -28,15 +28,16 @@ q_ai (H bagels?) q_aii (H tofu?) q_bi (R bagels?) q_bii (R tofu?)
 
 ## Representation
 
-A world is the `Finset` of eating events that occurred in it, and every
-question is `Question.which` applied to the indexed family `ate` — her
-(1)'s q-alternatives by wh-abstraction over a domain, verbatim: `whAte
-u` abstracts over foods (her (7)), `q_1` over person–food pairs (her
-(45)), and the yes/no questions use the singleton domain, giving the
-`{|α|}` q-alternative she specifies (the substrate's inquisitive
-`Question.polar`, with alternatives `{p, pᶜ}`, is the rival convention).
+A world is the `Finset` of eating events that occurred in it. Questions
+are joins of their answers ([hamblin-1973b]): the yes/no questions are
+`Question.ofSet` of a single eating event — the `{|α|}` q-alternative
+Roberts specifies (the substrate's inquisitive `Question.polar`, with
+alternatives `{p, pᶜ}`, is the rival convention) — and the wh-questions
+are `⨆` over the open index, her (1)'s q-alternatives by wh-abstraction:
+`q_a` joins over foods (her (7)), `q_1` over person–food pairs (her
+(45)).
 Her derived complete-answer partition (4) is the theorem
-`mentionAll_whAte_iff`. Question entailment (8) is rendered as
+`mentionAll_wh_iff`. Question entailment (8) is rendered as
 complete-answer transmission — `MentionAll σ q₁ → MentionAll σ q₂` —
 because the alt-witnessed `Question.Entails` coincides with (8) only for
 partition-shaped alternatives (see the fidelity note in
@@ -77,31 +78,6 @@ private theorem ate_subset_ate_iff {u u' : Person} {f f' : Food} :
 
 /-! ### Questions as q-alternative sets ((1), (2), (7)) -/
 
-/-- "Did `u` eat `f`?" — the singleton-alternative yes/no question. -/
-def polarAte (u : Person) (f : Food) : Question World :=
-  Question.ofSet (ate u f)
-
-/-- "What did `u` eat?" — q-alternatives by abstraction over foods. -/
-def whAte (u : Person) : Question World :=
-  Question.ofFamily (ate u)
-
-/-- "Who ate what?" — D₀'s move 1, abstracting over person–food pairs. -/
-def q_1 : Question World :=
-  Question.ofFamily fun uf : Person × Food => ate uf.1 uf.2
-
-/-- "Did Hilary eat the bagels?" -/
-abbrev q_ai : Question World := polarAte .hilary .bagels
-/-- "Did Hilary eat the tofu?" -/
-abbrev q_aii : Question World := polarAte .hilary .tofu
-/-- "Did Robin eat the bagels?" -/
-abbrev q_bi : Question World := polarAte .robin .bagels
-/-- "Did Robin eat the tofu?" -/
-abbrev q_bii : Question World := polarAte .robin .tofu
-/-- "What did Hilary eat?" -/
-abbrev q_a : Question World := whAte .hilary
-/-- "What did Robin eat?" -/
-abbrev q_b : Question World := whAte .robin
-
 /-- Hilary ate the bagels. -/
 abbrev hilaryBagels : Set World := ate .hilary .bagels
 /-- Hilary ate the tofu. -/
@@ -111,34 +87,43 @@ abbrev robinBagels : Set World := ate .robin .bagels
 /-- Robin ate the tofu. -/
 abbrev robinTofu : Set World := ate .robin .tofu
 
+/-- "Did Hilary eat the bagels?" -/
+abbrev q_ai : Question World := Question.ofSet hilaryBagels
+/-- "Did Hilary eat the tofu?" -/
+abbrev q_aii : Question World := Question.ofSet hilaryTofu
+/-- "Did Robin eat the bagels?" -/
+abbrev q_bi : Question World := Question.ofSet robinBagels
+/-- "Did Robin eat the tofu?" -/
+abbrev q_bii : Question World := Question.ofSet robinTofu
+/-- "What did Hilary eat?" — the join of its answers. -/
+abbrev q_a : Question World := ⨆ f, Question.ofSet (ate .hilary f)
+/-- "What did Robin eat?" -/
+abbrev q_b : Question World := ⨆ f, Question.ofSet (ate .robin f)
+/-- "Who ate what?" — D₀'s move 1, joining answers over person–food
+    pairs. -/
+abbrev q_1 : Question World :=
+  ⨆ uf : Person × Food, Question.ofSet (ate uf.1 uf.2)
+
 /-! ### Alternative enumerations -/
 
-private theorem alt_polarAte (u : Person) (f : Food) :
-    alt (polarAte u f) = {ate u f} :=
-  alt_ofSet (ate u f)
-
-private theorem alt_whAte (u : Person) :
-    alt (whAte u) = Set.range (ate u) :=
-  alt_ofFamily (fun _ => Set.nonempty_Ici)
+private theorem alt_wh (u : Person) :
+    alt (⨆ f, Question.ofSet (ate u f)) = Set.range (ate u) :=
+  alt_iSup_ofSet (fun _ => Set.nonempty_Ici)
     (fun _ _ h => (ate_subset_ate_iff.mp h).2 ▸ rfl)
 
 private theorem alt_q_1 :
     alt q_1 = Set.range fun uf : Person × Food => ate uf.1 uf.2 :=
-  alt_ofFamily (fun _ => Set.nonempty_Ici)
+  alt_iSup_ofSet (fun _ => Set.nonempty_Ici)
     (fun uf uf' h => by
       obtain ⟨h1, h2⟩ := ate_subset_ate_iff.mp h
       show ate uf.1 uf.2 = ate uf'.1 uf'.2
       rw [h1, h2])
 
-private theorem ate_mem_alt_polar (u : Person) (f : Food) :
-    ate u f ∈ alt (polarAte u f) := by
-  rw [alt_polarAte]; rfl
+private theorem mem_alt_wh (u : Person) (f : Food) :
+    ate u f ∈ alt (⨆ f', Question.ofSet (ate u f')) := by
+  rw [alt_wh]; exact Set.mem_range_self f
 
-private theorem ate_mem_alt_whAte (u : Person) (f : Food) :
-    ate u f ∈ alt (whAte u) := by
-  rw [alt_whAte]; exact Set.mem_range_self f
-
-private theorem ate_mem_alt_q1 (u : Person) (f : Food) :
+private theorem mem_alt_q1 (u : Person) (f : Food) :
     ate u f ∈ alt q_1 := by
   rw [alt_q_1]; exact Set.mem_range_self (u, f)
 
@@ -154,8 +139,8 @@ private theorem subset_corners_iff {σ A B : Set World} :
 
 /-- A state completely answers "What did `u` eat?" iff it lies within
     one cell of the partition the q-alternatives induce. -/
-theorem mentionAll_whAte_iff {σ : Set World} {u : Person} :
-    MentionAll σ (whAte u) ↔
+theorem mentionAll_wh_iff {σ : Set World} {u : Person} :
+    MentionAll σ ((⨆ f', Question.ofSet (ate u f'))) ↔
       σ ⊆ ate u .bagels ∩ ate u .tofu ∨
       σ ⊆ ate u .bagels ∩ (ate u .tofu)ᶜ ∨
       σ ⊆ (ate u .bagels)ᶜ ∩ ate u .tofu ∨
@@ -163,9 +148,9 @@ theorem mentionAll_whAte_iff {σ : Set World} {u : Person} :
   constructor
   · intro h
     exact subset_corners_iff.mp
-      ⟨h _ (ate_mem_alt_whAte u .bagels), h _ (ate_mem_alt_whAte u .tofu)⟩
+      ⟨h _ (mem_alt_wh u .bagels), h _ (mem_alt_wh u .tofu)⟩
   · intro h p hp
-    rw [alt_whAte] at hp
+    rw [alt_wh] at hp
     obtain ⟨f, rfl⟩ := hp
     obtain ⟨h1, h2⟩ := subset_corners_iff.mpr h
     cases f
@@ -178,30 +163,30 @@ Her (8) — answering `q₁` yields a complete answer to `q₂` — is
 entailments among D₀'s seven questions. -/
 
 /-- "Who ate what?" entails "What did `u` eat?". -/
-theorem q1_entails_whAte (u : Person) :
-    completeAnswers q_1 ⊆ completeAnswers (whAte u) :=
+theorem q1_entails_wh (u : Person) :
+    completeAnswers q_1 ⊆ completeAnswers ((⨆ f', Question.ofSet (ate u f'))) :=
   completeAnswers_anti (by
-    rw [alt_whAte, alt_q_1]
+    rw [alt_wh, alt_q_1]
     exact Set.range_comp_subset_range (Prod.mk u) fun uf => ate uf.1 uf.2)
 
 /-- "What did `u` eat?" entails "Did `u` eat `f`?". -/
-theorem whAte_entails_polar (u : Person) (f : Food) :
-    completeAnswers (whAte u) ⊆ completeAnswers (polarAte u f) :=
+theorem wh_entails_polar (u : Person) (f : Food) :
+    completeAnswers ((⨆ f', Question.ofSet (ate u f'))) ⊆ completeAnswers (Question.ofSet (ate u f)) :=
   completeAnswers_anti (by
-    rw [alt_polarAte, alt_whAte]
+    rw [alt_ofSet, alt_wh]
     exact Set.singleton_subset_iff.mpr (Set.mem_range_self f))
 
 /-- "Who ate what?" entails every polar subquestion. -/
 theorem q1_entails_polar (u : Person) (f : Food) :
-    completeAnswers q_1 ⊆ completeAnswers (polarAte u f) :=
-  (q1_entails_whAte u).trans (whAte_entails_polar u f)
+    completeAnswers q_1 ⊆ completeAnswers (Question.ofSet (ate u f)) :=
+  (q1_entails_wh u).trans (wh_entails_polar u f)
 
 /-- Subquestions do not entail their superquestions: "Hilary ate both"
     completely answers `q_a` but decides nothing about Robin. -/
 theorem qa_not_entails_q1 :
     ¬ completeAnswers q_a ⊆ completeAnswers q_1 := fun h => by
-  have := h (mentionAll_whAte_iff.mpr (Or.inl subset_rfl)) _
-    (ate_mem_alt_q1 .robin .bagels)
+  have := h (mentionAll_wh_iff.mpr (Or.inl subset_rfl)) _
+    (mem_alt_q1 .robin .bagels)
   rcases this with h' | h' <;> exact absurd h' (by decide)
 
 /-- "Did Hilary eat the bagels?" does not entail "What did Hilary eat?":
@@ -209,10 +194,10 @@ theorem qa_not_entails_q1 :
 theorem qai_not_entails_qa :
     ¬ completeAnswers q_ai ⊆ completeAnswers q_a := fun h => by
   have hma : MentionAll (hilaryBagels : Set World) q_ai := fun p hp => by
-    rw [alt_polarAte, Set.mem_singleton_iff] at hp
+    rw [alt_ofSet, Set.mem_singleton_iff] at hp
     subst hp
     exact Or.inl subset_rfl
-  have := h hma _ (ate_mem_alt_whAte .hilary .tofu)
+  have := h hma _ (mem_alt_wh .hilary .tofu)
   rcases this with h' | h' <;> exact absurd h' (by decide)
 
 /-! ### Answer composition ((11))
@@ -226,31 +211,31 @@ composing. -/
 /-- Jointly answering the polar subquestions is exactly answering "What
     did `u` eat?". -/
 theorem completeAnswers_polar_inter (u : Person) :
-    completeAnswers (polarAte u .bagels) ∩ completeAnswers (polarAte u .tofu)
-      = completeAnswers (whAte u) :=
+    completeAnswers (Question.ofSet (ate u .bagels)) ∩ completeAnswers (Question.ofSet (ate u .tofu))
+      = completeAnswers ((⨆ f', Question.ofSet (ate u f'))) :=
   Set.ext fun σ =>
     ⟨fun ⟨h1, h2⟩ p hp => by
-        rw [alt_whAte] at hp
+        rw [alt_wh] at hp
         obtain ⟨f, -, rfl⟩ := hp
         cases f
-        exacts [h1 _ (ate_mem_alt_polar u .bagels),
-          h2 _ (ate_mem_alt_polar u .tofu)],
-      fun h => ⟨whAte_entails_polar u .bagels h,
-        whAte_entails_polar u .tofu h⟩⟩
+        exacts [h1 _ (self_mem_alt_ofSet (ate u .bagels)),
+          h2 _ (self_mem_alt_ofSet (ate u .tofu))],
+      fun h => ⟨wh_entails_polar u .bagels h,
+        wh_entails_polar u .tofu h⟩⟩
 
 /-- Jointly answering "What did Hilary eat?" and "What did Robin eat?"
     is exactly answering "Who ate what?". -/
-theorem completeAnswers_whAte_inter :
-    completeAnswers (whAte .hilary) ∩ completeAnswers (whAte .robin)
+theorem completeAnswers_wh_inter :
+    completeAnswers ((⨆ f', Question.ofSet (ate .hilary f'))) ∩ completeAnswers ((⨆ f', Question.ofSet (ate .robin f')))
       = completeAnswers q_1 :=
   Set.ext fun σ =>
     ⟨fun ⟨h1, h2⟩ p hp => by
         rw [alt_q_1] at hp
         obtain ⟨⟨u, f⟩, -, rfl⟩ := hp
         cases u
-        exacts [h1 _ (ate_mem_alt_whAte .hilary f),
-          h2 _ (ate_mem_alt_whAte .robin f)],
-      fun h => ⟨q1_entails_whAte .hilary h, q1_entails_whAte .robin h⟩⟩
+        exacts [h1 _ (mem_alt_wh .hilary f),
+          h2 _ (mem_alt_wh .robin f)],
+      fun h => ⟨q1_entails_wh .hilary h, q1_entails_wh .robin h⟩⟩
 
 /-! ### Strategy of inquiry ((12)) -/
 
@@ -269,24 +254,23 @@ def strat_1 : Strategy World := .node q_1 [strat_a, strat_b]
 /-- The strategy has 7 questions total. -/
 theorem strat_1_numNodes : strat_1.numNodes = 7 := rfl
 
-private theorem meet_polar_entails {u : Person} {f f' : Food}
-    {Q : Question World} (hQ : ate u f ∈ alt Q) :
-    (polarAte u f ⊓ polarAte u f').Entails Q := by
+private theorem meet_ofSet_entails {p p' : Set World} {Q : Question World}
+    (hQ : p ∈ alt Q) : (Question.ofSet p ⊓ Question.ofSet p').Entails Q := by
   intro r hr
-  have hr' : r ⊆ ate u f :=
+  have hr' : r ⊆ p :=
     Question.mem_ofSet.mp
       (Question.mem_inf.mp (Question.mem_props.mp (alt_subset_props _ hr))).1
-  exact ⟨ate u f, hQ, hr'⟩
+  exact ⟨p, hQ, hr'⟩
 
 /-- The Hilary substrategy is complete: jointly resolving `q_ai` and
     `q_aii` resolves `q_a`. -/
 theorem strat_a_complete : strat_a.IsComplete :=
-  .node_pair (meet_polar_entails (ate_mem_alt_whAte .hilary .bagels))
+  .node_pair (meet_ofSet_entails (mem_alt_wh .hilary .bagels))
     (.leaf _) (.leaf _)
 
 /-- The Robin substrategy is complete. -/
 theorem strat_b_complete : strat_b.IsComplete :=
-  .node_pair (meet_polar_entails (ate_mem_alt_whAte .robin .bagels))
+  .node_pair (meet_ofSet_entails (mem_alt_wh .robin .bagels))
     (.leaf _) (.leaf _)
 
 /-- The whole D₀ strategy is complete: any joint resolution of `q_a` and
@@ -294,11 +278,11 @@ theorem strat_b_complete : strat_b.IsComplete :=
 theorem strat_1_complete : strat_1.IsComplete := by
   refine .node_pair ?_ strat_a_complete strat_b_complete
   intro r hr
-  have hr' : r ∈ whAte .hilary :=
+  have hr' : r ∈ (⨆ f', Question.ofSet (ate .hilary f')) :=
     (Question.mem_inf.mp (Question.mem_props.mp (alt_subset_props _ hr))).1
-  rcases Question.mem_ofFamily.mp hr' with rfl | ⟨f, hrf⟩
-  · exact ⟨hilaryBagels, ate_mem_alt_q1 .hilary .bagels, Set.empty_subset _⟩
-  · exact ⟨ate .hilary f, ate_mem_alt_q1 .hilary f, hrf⟩
+  rcases Question.mem_iSup_ofSet.mp hr' with rfl | ⟨f, hrf⟩
+  · exact ⟨hilaryBagels, mem_alt_q1 .hilary .bagels, Set.empty_subset _⟩
+  · exact ⟨ate .hilary f, mem_alt_q1 .hilary f, hrf⟩
 
 /-! ### QUD stack traces ((10g), (17)) -/
 
@@ -325,26 +309,26 @@ theorem stack_3_qud : stack_3.head? = some q_a := rfl
 
 /-! ### Stack well-formedness ((10g.iii)) -/
 
-private theorem whAte_alts_partially_answer_q1 (u : Person) :
-    ∀ a ∈ alt (whAte u), PartiallyAnswers a q_1 := by
+private theorem wh_alts_partially_answer_q1 (u : Person) :
+    ∀ a ∈ alt ((⨆ f', Question.ofSet (ate u f'))), PartiallyAnswers a q_1 := by
   intro a ha
-  rw [alt_whAte] at ha
+  rw [alt_wh] at ha
   obtain ⟨f, -, rfl⟩ := ha
-  exact ⟨ate u f, ate_mem_alt_q1 u f, Or.inl subset_rfl⟩
+  exact ⟨ate u f, mem_alt_q1 u f, Or.inl subset_rfl⟩
 
-private theorem polar_alts_partially_answer_whAte (u : Person) (f : Food) :
-    ∀ a ∈ alt (polarAte u f), PartiallyAnswers a (whAte u) := by
+private theorem polar_alts_partially_answer_wh (u : Person) (f : Food) :
+    ∀ a ∈ alt (Question.ofSet (ate u f)), PartiallyAnswers a ((⨆ f', Question.ofSet (ate u f'))) := by
   intro a ha
-  rw [alt_polarAte, Set.mem_singleton_iff] at ha
+  rw [alt_ofSet, Set.mem_singleton_iff] at ha
   subst ha
-  exact ⟨ate u f, ate_mem_alt_whAte u f, Or.inl subset_rfl⟩
+  exact ⟨ate u f, mem_alt_wh u f, Or.inl subset_rfl⟩
 
 private theorem polar_alts_partially_answer_q1 (u : Person) (f : Food) :
-    ∀ a ∈ alt (polarAte u f), PartiallyAnswers a q_1 := by
+    ∀ a ∈ alt (Question.ofSet (ate u f)), PartiallyAnswers a q_1 := by
   intro a ha
-  rw [alt_polarAte, Set.mem_singleton_iff] at ha
+  rw [alt_ofSet, Set.mem_singleton_iff] at ha
   subst ha
-  exact ⟨ate u f, ate_mem_alt_q1 u f, Or.inl subset_rfl⟩
+  exact ⟨ate u f, mem_alt_q1 u f, Or.inl subset_rfl⟩
 
 /-- The stack `[q_a, q_1]` is well-formed in the trivial common ground:
     every complete answer to the subquestion partially answers the
@@ -357,7 +341,7 @@ theorem stack_1_wellFormed : QUDStack.WellFormed Set.univ stack_1 := by
   simp only [stack_0, List.mem_singleton] at hlow
   subst hlow
   rw [Set.univ_inter]
-  exact whAte_alts_partially_answer_q1 .hilary a ha
+  exact wh_alts_partially_answer_q1 .hilary a ha
 
 /-- The full three-question stack `[q_ai, q_a, q_1]` is well-formed. -/
 theorem stack_2_wellFormed : QUDStack.WellFormed Set.univ stack_2 := by
@@ -367,7 +351,7 @@ theorem stack_2_wellFormed : QUDStack.WellFormed Set.univ stack_2 := by
   intro lower hlow a ha
   rw [Set.univ_inter]
   rcases List.mem_cons.mp hlow with rfl | hlow
-  · exact polar_alts_partially_answer_whAte .hilary .bagels a ha
+  · exact polar_alts_partially_answer_wh .hilary .bagels a ha
   · simp only [stack_0, List.mem_singleton] at hlow
     subst hlow
     exact polar_alts_partially_answer_q1 .hilary .bagels a ha
@@ -386,24 +370,24 @@ point against confirm-only answerhood. -/
     bagels?" — it falsifies its sole alternative. -/
 theorem neg_hilaryBagels_partiallyAnswers_qai :
     PartiallyAnswers (hilaryBagelsᶜ : Set World) q_ai :=
-  partiallyAnswers_compl_of_mem_alt (ate_mem_alt_polar .hilary .bagels)
+  partiallyAnswers_compl_of_mem_alt (self_mem_alt_ofSet (ate .hilary .bagels))
 
 /-- "Hilary didn't eat bagels" partially answers "What did Hilary eat?" —
     it rules out the bagels alternative. -/
 theorem neg_hilaryBagels_partiallyAnswers_qa :
     PartiallyAnswers (hilaryBagelsᶜ : Set World) q_a :=
-  partiallyAnswers_compl_of_mem_alt (ate_mem_alt_whAte .hilary .bagels)
+  partiallyAnswers_compl_of_mem_alt (mem_alt_wh .hilary .bagels)
 
 /-- "Hilary ate bagels" positively answers "Did Hilary eat the bagels?". -/
 theorem hilaryBagels_partiallyAnswers_qai :
     PartiallyAnswers (hilaryBagels : Set World) q_ai :=
-  partiallyAnswers_of_mem_alt (ate_mem_alt_polar .hilary .bagels)
+  partiallyAnswers_of_mem_alt (self_mem_alt_ofSet (ate .hilary .bagels))
 
 /-- "Hilary ate bagels" partially answers "Who ate what?" — it confirms
     one of its four alternatives. -/
 theorem hilaryBagels_partiallyAnswers_q1 :
     PartiallyAnswers (hilaryBagels : Set World) q_1 :=
-  partiallyAnswers_of_mem_alt (ate_mem_alt_q1 .hilary .bagels)
+  partiallyAnswers_of_mem_alt (mem_alt_q1 .hilary .bagels)
 
 /-! ### Relevance ((15))
 
@@ -425,7 +409,7 @@ theorem hilaryBagels_relevant_to_q1 :
 /-- The question `q_a` is relevant to `q_1` under the assertion-clause
     proxy: its bagels alternative confirms an alternative of `q_1`. -/
 theorem qa_relevant_to_q1 : q_a.IsRelevantTo {q_1} :=
-  ⟨hilaryBagels, ate_mem_alt_whAte .hilary .bagels, q_1, rfl,
+  ⟨hilaryBagels, mem_alt_wh .hilary .bagels, q_1, rfl,
     hilaryBagels_partiallyAnswers_q1⟩
 
 /-- "Hilary ate bagels" is relevant to the entire D₀ strategy: it
