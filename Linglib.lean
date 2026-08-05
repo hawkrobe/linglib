@@ -2947,3 +2947,4 @@ import Linglib.Syntax.WordGrammar.Network
 import Linglib.Data.Examples.Svenonius2004
 import Linglib.Data.Examples.Istratkova2004
 import Linglib.Data.Examples.Jablonska2004
+import Linglib.Data.Examples.GoldbergJackendoff2004

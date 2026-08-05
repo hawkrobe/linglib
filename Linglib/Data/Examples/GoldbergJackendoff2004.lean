@@ -1,0 +1,396 @@
+import Linglib.Data.Examples.Schema
+
+/-!
+# `GoldbergJackendoff2004` — typed example data
+
+Auto-generated from `Linglib/Data/Examples/GoldbergJackendoff2004.json` by
+`scripts/gen_examples.py`. Do not edit by hand; edit the JSON and re-run
+the generator. Consumers (the paper's study file, test-suite hubs) import
+this module; declarations live in `namespace GoldbergJackendoff2004.Examples`.
+-/
+
+namespace GoldbergJackendoff2004.Examples
+
+open Data.Examples
+
+def gj2004_5a : LinguisticExample :=
+  { id := "gj2004_5a"
+    source := ⟨"goldberg-jackendoff-2004", "(5a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Herman hammered the metal flat."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("subconstruction", "causative property"), ("rpCat", "AP")]
+    comment := "The paper's first RP AP exemplar."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def gj2004_5b : LinguisticExample :=
+  { id := "gj2004_5b"
+    source := ⟨"goldberg-jackendoff-2004", "(5b)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "The critics laughed the play off the stage."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("subconstruction", "causative path"), ("rpCat", "PP")]
+    comment := "The paper's first RP PP exemplar; object unselected by the verb."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def gj2004_6a : LinguisticExample :=
+  { id := "gj2004_6a"
+    source := ⟨"goldberg-jackendoff-2004", "(6a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "The pond froze solid."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("subconstruction", "noncausative property"), ("rpCat", "AP")]
+    comment := "Intransitive resultative."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def gj2004_6b : LinguisticExample :=
+  { id := "gj2004_6b"
+    source := ⟨"goldberg-jackendoff-2004", "(6b)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Bill rolled out of the room."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("subconstruction", "noncausative path"), ("rpCat", "PP")]
+    comment := "Intransitive resultative."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def gj2004_7a : LinguisticExample :=
+  { id := "gj2004_7a"
+    source := ⟨"goldberg-jackendoff-2004", "(7a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "The gardener watered the flowers flat."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("subconstruction", "causative property"), ("rpCat", "AP"), ("selection", "selected")]
+    comment := "Selected transitive resultative: cf. The gardener watered the flowers."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def gj2004_7b : LinguisticExample :=
+  { id := "gj2004_7b"
+    source := ⟨"goldberg-jackendoff-2004", "(7b)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Bill broke the bathtub into pieces."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("subconstruction", "causative path"), ("rpCat", "PP"), ("selection", "selected")]
+    comment := "Selected transitive resultative: cf. Bill broke the bathtub."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def gj2004_8a : LinguisticExample :=
+  { id := "gj2004_8a"
+    source := ⟨"goldberg-jackendoff-2004", "(8a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "They drank the pub dry."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .acceptable
+    alternatives := [("*They drank the pub.", .ungrammatical)]
+    readings := []
+    paperFeatures := [("subconstruction", "causative property"), ("rpCat", "AP"), ("selection", "unselected")]
+    comment := "Unselected transitive resultative: object licensed only by the construction."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def gj2004_8b : LinguisticExample :=
+  { id := "gj2004_8b"
+    source := ⟨"goldberg-jackendoff-2004", "(8b)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "The professor talked us into a stupor."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .acceptable
+    alternatives := [("*The professor talked us.", .ungrammatical)]
+    readings := []
+    paperFeatures := [("subconstruction", "causative path"), ("rpCat", "PP"), ("selection", "unselected")]
+    comment := "Unselected transitive resultative with path RP."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def gj2004_9a : LinguisticExample :=
+  { id := "gj2004_9a"
+    source := ⟨"goldberg-jackendoff-2004", "(9a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "We yelled ourselves hoarse."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .acceptable
+    alternatives := [("*We yelled ourselves.", .ungrammatical), ("*We yelled Harry hoarse.", .ungrammatical)]
+    readings := []
+    paperFeatures := [("subconstruction", "causative property"), ("rpCat", "AP"), ("selection", "fake reflexive")]
+    comment := "Fake reflexive: unselected (bad without the RP) and does not alternate with other NPs."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def gj2004_23a : LinguisticExample :=
+  { id := "gj2004_23a"
+    source := ⟨"goldberg-jackendoff-2004", "(23a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "For hours, Bill heated the mixture hotter and hotter."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := "Nonrepetitive reading."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("rpCat", "AP"), ("endBounded", "false"), ("telicity", "atelic")]
+    comment := "Non-end-bounded AP RP: atelic resultative, for-adverbial fine."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def gj2004_23b : LinguisticExample :=
+  { id := "gj2004_23b"
+    source := ⟨"goldberg-jackendoff-2004", "(23b)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "For hours, Bill hammered the metal ever flatter."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := "Nonrepetitive reading."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("rpCat", "AP"), ("endBounded", "false"), ("telicity", "atelic")]
+    comment := "Non-end-bounded AP RP: atelic resultative, for-adverbial fine."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def gj2004_23c : LinguisticExample :=
+  { id := "gj2004_23c"
+    source := ⟨"goldberg-jackendoff-2004", "(23c)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "For years, Penelope wove the shawl longer and longer."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := "Nonrepetitive reading."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("rpCat", "AP"), ("endBounded", "false"), ("telicity", "atelic")]
+    comment := "Non-end-bounded AP RP: atelic resultative, for-adverbial fine."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def gj2004_24a : LinguisticExample :=
+  { id := "gj2004_24a"
+    source := ⟨"goldberg-jackendoff-2004", "(24a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "*Bill floated into the cave for hours."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := "Nonrepetitive reading."
+    judgment := .ungrammatical
+    alternatives := []
+    readings := []
+    paperFeatures := [("rpCat", "PP"), ("endBounded", "true"), ("telicity", "telic")]
+    comment := "End-bounded spatial PP: telic resultative, for-adverbial out."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def gj2004_24b : LinguisticExample :=
+  { id := "gj2004_24b"
+    source := ⟨"goldberg-jackendoff-2004", "(24b)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "*Bill pushed Harry off the sofa for hours."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := "Nonrepetitive reading."
+    judgment := .ungrammatical
+    alternatives := []
+    readings := []
+    paperFeatures := [("rpCat", "PP"), ("endBounded", "true"), ("telicity", "telic")]
+    comment := "End-bounded spatial PP: telic resultative, for-adverbial out."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def gj2004_24c : LinguisticExample :=
+  { id := "gj2004_24c"
+    source := ⟨"goldberg-jackendoff-2004", "(24c)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Bill floated down the river for hours."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := "Nonrepetitive reading."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("rpCat", "PP"), ("endBounded", "false"), ("telicity", "atelic")]
+    comment := "Non-end-bounded spatial PP: atelic resultative, for-adverbial fine."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def gj2004_24d : LinguisticExample :=
+  { id := "gj2004_24d"
+    source := ⟨"goldberg-jackendoff-2004", "(24d)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Bill pushed Harry along the trail for hours."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := "Nonrepetitive reading."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("rpCat", "PP"), ("endBounded", "false"), ("telicity", "atelic")]
+    comment := "Non-end-bounded spatial PP: atelic resultative, for-adverbial fine."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def gj2004_45a : LinguisticExample :=
+  { id := "gj2004_45a"
+    source := ⟨"goldberg-jackendoff-2004", "(45a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "*She yelled hoarse."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .ungrammatical
+    alternatives := []
+    readings := []
+    paperFeatures := [("subconstruction", "noncausative property"), ("coherence", "violation")]
+    comment := "Semantic coherence violation: agent subject of yell cannot be construed as the patient of BECOME."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def gj2004_45b : LinguisticExample :=
+  { id := "gj2004_45b"
+    source := ⟨"goldberg-jackendoff-2004", "(45b)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "*Ted cried to sleep."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .ungrammatical
+    alternatives := []
+    readings := []
+    paperFeatures := [("subconstruction", "noncausative property"), ("coherence", "violation")]
+    comment := "Semantic coherence violation: agent subject of cry cannot be construed as the patient of BECOME."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def gj2004_45c : LinguisticExample :=
+  { id := "gj2004_45c"
+    source := ⟨"goldberg-jackendoff-2004", "(45c)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "The tiger bled to death."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("subconstruction", "noncausative property"), ("coherence", "ok")]
+    comment := "Noncausal property resultative: patient subject, roles cohere."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def gj2004_97c : LinguisticExample :=
+  { id := "gj2004_97c"
+    source := ⟨"goldberg-jackendoff-2004", "(97c)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "The truck rumbled into the station."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("subconstruction", "noncausative path"), ("subeventRelation", "result")]
+    comment := "Sound-emission path resultative: the sound RESULTS from the motion."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def gj2004_wipe : LinguisticExample :=
+  { id := "gj2004_wipe"
+    source := ⟨"goldberg-jackendoff-2004", "§6.2"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "She wiped the table clean."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("subconstruction", "causative property"), ("coherence", "ok")]
+    comment := "The wiped surface is potentially affected and construable as a patient, satisfying semantic coherence."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def all : List LinguisticExample := [gj2004_5a, gj2004_5b, gj2004_6a, gj2004_6b, gj2004_7a, gj2004_7b, gj2004_8a, gj2004_8b, gj2004_9a, gj2004_23a, gj2004_23b, gj2004_23c, gj2004_24a, gj2004_24b, gj2004_24c, gj2004_24d, gj2004_45a, gj2004_45b, gj2004_45c, gj2004_97c, gj2004_wipe]
+
+end GoldbergJackendoff2004.Examples

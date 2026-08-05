@@ -1,5 +1,5 @@
 import Linglib.Syntax.ConstructionGrammar.Resultatives
-import Linglib.Features.Acceptability
+import Linglib.Data.Examples.GoldbergJackendoff2004
 
 /-!
 # [goldberg-jackendoff-2004]: The English Resultative as a Family of Constructions
@@ -33,12 +33,14 @@ This file holds:
 
 - The paper's eight resultative *entries* (`hammerFlat`, `pushOffSofa`, …)
   and the `allEntries` list — concrete data points the paper discusses.
-- Per-datum verification theorems demonstrating the paper's data is
-  consistent with the construction theory.
-- A separate empirical-data layer (`ResultativeType`, `ResultativeDatum`,
-  `allExamples`, `aspectualContrasts`) holding theory-neutral grammaticality
-  judgments and aspectual contrasts drawn from the paper's examples
-  (5–9, 23–24, 45, 97).
+- Derived-prediction theorems: the theory's fusion and aspect machinery,
+  applied to each entry's independent classification, reproduces the
+  paper's claims about CAUSE/BECOME profiles, telicity, and alternations.
+- A typed empirical-data layer (`ResultativeType`, `ResultativeDatum`,
+  `allExamples`, `aspectualContrasts`) projected from the paper's
+  generated example rows (`Data.Examples.GoldbergJackendoff2004`:
+  exx. 5–9, 23–24, 45, 97c, §6.2) — the shared data other studies
+  (Dendikken, Tay, Levin) connect to their own analyses.
 -/
 
 namespace GoldbergJackendoff2004
@@ -100,31 +102,16 @@ def allEntries : List ResultativeEntry :=
   [ hammerFlat, pushOffSofa, freezeSolid, rollDownHill
   , drinkDry, yellHoarse, bleedToDeath, wipeClean ]
 
-/-! ## Per-datum verification theorems -/
+/-! ## Derived predictions
 
--- Subconstruction classification
-theorem hammerFlat_is_causativeProperty :
-    hammerFlat.subconstruction = .causativeProperty := rfl
+Each theorem runs the theory's machinery (`dualSubevent`, `fusedMC`,
+`resultativeAspect`) on the entries' independent classifications and
+checks the derived profile against the paper's claim. Encoding
+invariants of the data itself are anonymous `example`s. -/
 
-theorem pushOffSofa_is_causativePath :
-    pushOffSofa.subconstruction = .causativePath := rfl
-
-theorem freezeSolid_is_noncausativeProperty :
-    freezeSolid.subconstruction = .noncausativeProperty := rfl
-
-theorem rollDownHill_is_noncausativePath :
-    rollDownHill.subconstruction = .noncausativePath := rfl
-
--- Subevent relations: all core entries default to MEANS
-theorem hammerFlat_means : hammerFlat.subeventRelation = .means := rfl
-theorem freezeSolid_means : freezeSolid.subeventRelation = .means := rfl
-theorem drinkDry_means : drinkDry.subeventRelation = .means := rfl
-
-/-- All four core subconstructions use MEANS (§3, summary 97a–d).
-    RESULT is reserved for sound-emission and disappearance subconstructions. -/
-theorem all_core_entries_use_means :
-    allEntries.all (·.subeventRelation == .means) = true := by
-  decide
+-- All core entries use the default MEANS relation (§3, summary 97a–d);
+-- RESULT is reserved for sound-emission and disappearance cases.
+example : allEntries.all (·.subeventRelation == .means) = true := by decide
 
 -- Derived subevent structure: CAUSE follows from subconstruction
 
@@ -145,19 +132,14 @@ theorem all_constructional_have_become :
     allEntries.all (·.dualSubevent.constructional.hasBecome) = true := by
   decide
 
--- Object selection: intransitive entries have no object selection
-
-/-- Noncausative (intransitive) entries have no object selection. -/
-theorem noncausative_no_object_selection :
-    (allEntries.filter (λ e => !e.subconstruction.isCausative)).all
-      (λ e => e.objectSelection == none) = true := by
-  decide
-
-/-- All causative entries specify an object selection mode. -/
-theorem causative_have_object_selection :
+-- Encoding invariants: causative (transitive) entries carry an object
+-- selection mode; noncausative (intransitive) entries carry none.
+example :
     (allEntries.filter (·.subconstruction.isCausative)).all
-      (λ e => e.objectSelection.isSome) = true := by
-  decide
+      (λ e => e.objectSelection.isSome) = true := by decide
+example :
+    (allEntries.filter (λ e => !e.subconstruction.isCausative)).all
+      (λ e => e.objectSelection == none) = true := by decide
 
 -- Aspectual predictions
 
@@ -167,24 +149,6 @@ theorem bounded_entries_telic :
       (λ e => (resultativeAspect e.rpBoundedness).telicity == .telic) = true := by
   decide
 
-/-! ### Theorems migrated from `Causation.Resultatives`
-
-These theorems quantify over `allEntries` (paper-specific data) and
-therefore belong with the paper, not in the Theory layer. -/
-
-/-- All causative entries in the data have CAUSE. -/
-theorem causative_resultative_has_cause :
-    (allEntries.filter (·.subconstruction.isCausative)).all
-      (·.dualSubevent.constructional.hasCause) = true := by
-  decide
-
-/-- MEANS-relation causative entries all have CAUSE. -/
-theorem causative_means_have_cause :
-    (allEntries.filter (λ e =>
-      e.subconstruction.isCausative && e.subeventRelation == .means
-    )).all (·.dualSubevent.constructional.hasCause) = true := by
-  decide
-
 /-- Activity verbs in the data with bounded RPs become accomplishments. -/
 theorem activity_entries_become_accomplishments :
     (allEntries.filter (λ e =>
@@ -192,11 +156,6 @@ theorem activity_entries_become_accomplishments :
     )).all (λ e =>
       resultativeVendlerClass e.rpBoundedness == .accomplishment
     ) = true := by
-  decide
-
-/-- All resultative entries have BECOME. -/
-theorem all_have_become :
-    allEntries.all (·.dualSubevent.constructional.hasBecome) = true := by
   decide
 
 /-! ## Per-entry verb class participation
@@ -280,11 +239,11 @@ theorem wipe_already_has_everything :
 
 /-! ## Empirical data: grammaticality judgments
 
-Theory-neutral grammaticality judgments and aspectual contrasts drawn
-from §§2–8 of the paper. These provide the shared data layer that
-other studies (Dendikken, Tay, Levin) connect to their own analyses. -/
-
-open Features (Acceptability)
+The stimuli live as generated rows in
+`Data.Examples.GoldbergJackendoff2004` (from the per-paper JSON); this
+layer projects each row into a typed datum carrying the study's
+classification. Other studies (Dendikken, Tay, Levin) connect to this
+shared data through the datum layer or the rows directly. -/
 
 /-- What type of resultative is exemplified.
 
@@ -304,125 +263,91 @@ inductive ResultativeType where
 
 /-- A single resultative example with judgment data. -/
 structure ResultativeDatum where
-  /-- Example identifier -/
+  /-- Example identifier (the paper's own example label) -/
   exId : String
   /-- The sentence -/
   sentence : String
   /-- Acceptability judgment -/
-  judgment : Acceptability
+  judgment : Judgment
   /-- Which resultative subtype -/
   resType : ResultativeType
   /-- What phenomenon this illustrates -/
   phenomenon : String
   deriving Repr, BEq
 
+/-- Project a generated example row into a typed datum. Sentence, label,
+and judgment come from the row; the `ResultativeType` classification and
+phenomenon gloss are the study's reading (mirrored in the row's
+`paperFeatures`). -/
+def ResultativeDatum.ofExample (ex : Data.Examples.LinguisticExample)
+    (resType : ResultativeType) (phenomenon : String) : ResultativeDatum :=
+  { exId := ex.source.paperLabel
+  , sentence := ex.primaryText
+  , judgment := ex.judgment
+  , resType := resType
+  , phenomenon := phenomenon }
+
 /-! ### Causative property resultatives (exx. 5a, 7a, 8a; §6.2) -/
 
 def hammer_flat : ResultativeDatum :=
-  { exId := "5a"
-  , sentence := "Herman hammered the metal flat"
-  , judgment := .ok
-  , resType := .causativeProperty
-  , phenomenon := "causative + property RP: agent causes patient to become flat" }
+  .ofExample Examples.gj2004_5a .causativeProperty
+    "causative + property RP: agent causes patient to become flat"
 
 def water_flat : ResultativeDatum :=
-  { exId := "7a"
-  , sentence := "The gardener watered the flowers flat"
-  , judgment := .ok
-  , resType := .causativeProperty
-  , phenomenon := "selected transitive: verb independently takes the object" }
+  .ofExample Examples.gj2004_7a .causativeProperty
+    "selected transitive: verb independently takes the object"
 
 def drink_dry : ResultativeDatum :=
-  { exId := "8a"
-  , sentence := "They drank the pub dry"
-  , judgment := .ok
-  , resType := .causativeProperty
-  , phenomenon := "unselected transitive: object licensed only by the construction" }
+  .ofExample Examples.gj2004_8a .causativeProperty
+    "unselected transitive: object licensed only by the construction"
 
 def wipe_clean : ResultativeDatum :=
-  { exId := "§6.2"
-  , sentence := "She wiped the table clean"
-  , judgment := .ok
-  , resType := .causativeProperty
-  , phenomenon := "semantic coherence: wiped surface construable as patient" }
+  .ofExample Examples.gj2004_wipe .causativeProperty
+    "semantic coherence: wiped surface construable as patient"
 
 /-! ### Causative path resultatives (exx. 5b, 7b, 8b) -/
 
 def laugh_off_stage : ResultativeDatum :=
-  { exId := "5b"
-  , sentence := "The critics laughed the play off the stage"
-  , judgment := .ok
-  , resType := .causativePath
-  , phenomenon := "causative + path RP: agent causes theme to go along path" }
+  .ofExample Examples.gj2004_5b .causativePath
+    "causative + path RP: agent causes theme to go along path"
 
 def break_into_pieces : ResultativeDatum :=
-  { exId := "7b"
-  , sentence := "Bill broke the bathtub into pieces"
-  , judgment := .ok
-  , resType := .causativePath
-  , phenomenon := "selected transitive with path RP" }
+  .ofExample Examples.gj2004_7b .causativePath
+    "selected transitive with path RP"
 
 def talk_into_stupor : ResultativeDatum :=
-  { exId := "8b"
-  , sentence := "The professor talked us into a stupor"
-  , judgment := .ok
-  , resType := .causativePath
-  , phenomenon := "unselected transitive with path RP" }
+  .ofExample Examples.gj2004_8b .causativePath
+    "unselected transitive with path RP"
 
 /-! ### Noncausative property resultatives (exx. 6a, 45c) -/
 
 def freeze_solid : ResultativeDatum :=
-  { exId := "6a"
-  , sentence := "The pond froze solid"
-  , judgment := .ok
-  , resType := .noncausativeProperty
-  , phenomenon := "noncausative + property RP: theme becomes result state" }
+  .ofExample Examples.gj2004_6a .noncausativeProperty
+    "noncausative + property RP: theme becomes result state"
 
 def bleed_to_death : ResultativeDatum :=
-  { exId := "45c"
-  , sentence := "The tiger bled to death"
-  , judgment := .ok
-  , resType := .noncausativeProperty
-  , phenomenon := "noncausal property resultative: patient subject, coherent roles" }
+  .ofExample Examples.gj2004_45c .noncausativeProperty
+    "noncausal property resultative: patient subject, coherent roles"
 
 /-! ### Noncausative path resultatives (exx. 6b, 97c) -/
 
 def roll_out_of_room : ResultativeDatum :=
-  { exId := "6b"
-  , sentence := "Bill rolled out of the room"
-  , judgment := .ok
-  , resType := .noncausativePath
-  , phenomenon := "noncausative + path RP: theme moves along path" }
+  .ofExample Examples.gj2004_6b .noncausativePath
+    "noncausative + path RP: theme moves along path"
 
 def rumble_into_station : ResultativeDatum :=
-  { exId := "97c"
-  , sentence := "The truck rumbled into the station"
-  , judgment := .ok
-  , resType := .noncausativePath
-  , phenomenon := "sound-emission path resultative: sound RESULTS from motion" }
+  .ofExample Examples.gj2004_97c .noncausativePath
+    "sound-emission path resultative: sound RESULTS from motion"
 
-/-! ### Fake reflexive resultatives (§2, ex. 9a) -/
+/-! ### Fake reflexive resultatives (§2, ex. 9a)
+
+The starred diagnostics — `*We yelled ourselves` (unselected without
+the RP) and `*We yelled Harry hoarse` (no alternation with other NPs) —
+live as the row's `alternatives`. -/
 
 def yell_hoarse : ResultativeDatum :=
-  { exId := "9a"
-  , sentence := "We yelled ourselves hoarse"
-  , judgment := .ok
-  , resType := .fakeReflexive
-  , phenomenon := "fake reflexive: intransitive verb + reflexive + result" }
-
-def yell_ourselves : ResultativeDatum :=
-  { exId := "9a-unsel"
-  , sentence := "*We yelled ourselves"
-  , judgment := .unacceptable
-  , resType := .fakeReflexive
-  , phenomenon := "fake reflexive object is unselected: bad without the RP" }
-
-def yell_harry_hoarse : ResultativeDatum :=
-  { exId := "9a-alt"
-  , sentence := "*We yelled Harry hoarse"
-  , judgment := .unacceptable
-  , resType := .fakeReflexive
-  , phenomenon := "fake reflexive does not alternate with other NPs" }
+  .ofExample Examples.gj2004_9a .fakeReflexive
+    "fake reflexive: intransitive verb + reflexive + result"
 
 /-! ### Aspectual contrasts (§4.1, exx. 23–24) -/
 
@@ -431,58 +356,58 @@ structure AspectualContrast where
   /-- Sentence with temporal adverbial -/
   sentence : String
   /-- Acceptability -/
-  judgment : Acceptability
+  judgment : Judgment
   /-- Which adverbial type -/
   adverbialType : String
   /-- Description -/
   description : String
   deriving Repr, BEq
 
-def hammer_ever_flatter : AspectualContrast :=
-  { sentence := "For hours, Bill hammered the metal ever flatter"
-  , judgment := .ok
+/-- Project a generated example row into an aspectual contrast. -/
+def AspectualContrast.ofExample (ex : Data.Examples.LinguisticExample)
+    (description : String) : AspectualContrast :=
+  { sentence := ex.primaryText
+  , judgment := ex.judgment
   , adverbialType := "for-adverbial"
-  , description := "ex. 23b: non-end-bounded AP RP → atelic, for-adverbial OK" }
+  , description := description }
+
+def heat_hotter : AspectualContrast :=
+  .ofExample Examples.gj2004_23a
+    "ex. 23a: non-end-bounded AP RP → atelic, for-adverbial OK"
+
+def hammer_ever_flatter : AspectualContrast :=
+  .ofExample Examples.gj2004_23b
+    "ex. 23b: non-end-bounded AP RP → atelic, for-adverbial OK"
+
+def weave_longer : AspectualContrast :=
+  .ofExample Examples.gj2004_23c
+    "ex. 23c: non-end-bounded AP RP → atelic, for-adverbial OK"
 
 def float_into_cave_for : AspectualContrast :=
-  { sentence := "*Bill floated into the cave for hours"
-  , judgment := .unacceptable
-  , adverbialType := "for-adverbial"
-  , description := "ex. 24a: end-bounded PP RP → telic, for-adverbial bad (nonrepetitive)" }
-
-def float_down_river_for : AspectualContrast :=
-  { sentence := "Bill floated down the river for hours"
-  , judgment := .ok
-  , adverbialType := "for-adverbial"
-  , description := "ex. 24c: non-end-bounded PP RP → atelic, for-adverbial OK" }
+  .ofExample Examples.gj2004_24a
+    "ex. 24a: end-bounded PP RP → telic, for-adverbial bad (nonrepetitive)"
 
 def push_off_sofa_for : AspectualContrast :=
-  { sentence := "*Bill pushed Harry off the sofa for hours"
-  , judgment := .unacceptable
-  , adverbialType := "for-adverbial"
-  , description := "ex. 24b: end-bounded PP RP → telic, for-adverbial bad (nonrepetitive)" }
+  .ofExample Examples.gj2004_24b
+    "ex. 24b: end-bounded PP RP → telic, for-adverbial bad (nonrepetitive)"
+
+def float_down_river_for : AspectualContrast :=
+  .ofExample Examples.gj2004_24c
+    "ex. 24c: non-end-bounded PP RP → atelic, for-adverbial OK"
 
 def push_along_trail_for : AspectualContrast :=
-  { sentence := "Bill pushed Harry along the trail for hours"
-  , judgment := .ok
-  , adverbialType := "for-adverbial"
-  , description := "ex. 24d: non-end-bounded PP RP → atelic, for-adverbial OK" }
+  .ofExample Examples.gj2004_24d
+    "ex. 24d: non-end-bounded PP RP → atelic, for-adverbial OK"
 
 /-! ### Semantic coherence violations (§6.2, ex. 45) -/
 
 def yell_hoarse_bare : ResultativeDatum :=
-  { exId := "45a"
-  , sentence := "*She yelled hoarse"
-  , judgment := .unacceptable
-  , resType := .noncausativeProperty
-  , phenomenon := "semantic incoherence: agent subject of yell ≠ patient of BECOME" }
+  .ofExample Examples.gj2004_45a .noncausativeProperty
+    "semantic incoherence: agent subject of yell ≠ patient of BECOME"
 
 def cry_to_sleep : ResultativeDatum :=
-  { exId := "45b"
-  , sentence := "*Ted cried to sleep"
-  , judgment := .unacceptable
-  , resType := .noncausativeProperty
-  , phenomenon := "semantic incoherence: agent subject of cry ≠ patient of BECOME" }
+  .ofExample Examples.gj2004_45b .noncausativeProperty
+    "semantic incoherence: agent subject of cry ≠ patient of BECOME"
 
 /-! ### Aggregate data -/
 
@@ -491,54 +416,12 @@ def allExamples : List ResultativeDatum :=
   , laugh_off_stage, break_into_pieces, talk_into_stupor
   , freeze_solid, bleed_to_death
   , roll_out_of_room, rumble_into_station
-  , yell_hoarse, yell_ourselves, yell_harry_hoarse
+  , yell_hoarse
   , yell_hoarse_bare, cry_to_sleep ]
 
 def aspectualContrasts : List AspectualContrast :=
-  [ hammer_ever_flatter, float_into_cave_for, float_down_river_for
-  , push_off_sofa_for, push_along_trail_for ]
-
-/-! ### Empirical verification -/
-
-/-- All four resultative types are attested in the data. -/
-theorem has_all_resultative_types :
-    (allExamples.any (·.resType == .causativeProperty)) = true ∧
-    (allExamples.any (·.resType == .causativePath)) = true ∧
-    (allExamples.any (·.resType == .noncausativeProperty)) = true ∧
-    (allExamples.any (·.resType == .noncausativePath)) = true ∧
-    (allExamples.any (·.resType == .fakeReflexive)) = true := by
-  constructor; decide
-  constructor; decide
-  constructor; decide
-  constructor; decide
-  decide
-
-/-- Both grammatical and ungrammatical examples are represented. -/
-theorem has_both_judgments :
-    (allExamples.any (·.judgment == .ok)) = true ∧
-    (allExamples.any (·.judgment == .unacceptable)) = true := by
-  constructor; decide
-  decide
-
-/-- The for-adverbial data attests both telic (bad) and atelic (good)
-resultatives — boundedness of the RP, not resultativehood, decides
-telicity. -/
-theorem aspectual_both_outcomes :
-    (aspectualContrasts.any (·.judgment == .ok)) = true ∧
-    (aspectualContrasts.any (·.judgment == .unacceptable)) = true := by
-  constructor; decide
-  decide
-
-/-- End-bounded path RPs are telic (for-adverbial bad); the non-end-bounded
-counterpart with the same verb is atelic (ex. 24a vs. 24c). -/
-theorem telic_adverbial_pattern :
-    float_into_cave_for.judgment == .unacceptable ∧
-    float_down_river_for.judgment == .ok := by
-  constructor <;> decide
-
-/-- Non-end-bounded AP RPs create atelic property resultatives (ex. 23b). -/
-theorem atelic_adverbial_pattern :
-    hammer_ever_flatter.judgment == .ok := by
-  decide
+  [ heat_hotter, hammer_ever_flatter, weave_longer
+  , float_into_cave_for, push_off_sofa_for
+  , float_down_river_for, push_along_trail_for ]
 
 end GoldbergJackendoff2004
