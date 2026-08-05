@@ -1,3 +1,4 @@
+import Linglib.Core.Data.List.Fold
 import Linglib.Core.Logic.Trivalent.Basic
 import Mathlib.Data.Finset.Lattice.Fold
 
@@ -157,65 +158,20 @@ theorem aggregate_replicate_indet (d : ProjectionType) (n : Nat) (hn : n > 0) :
       change (List.replicate k Trivalent.indet).foldl (· ⊔ ·) Trivalent.indet = Trivalent.indet
       exact foldl_idem_const (· ⊔ ·) Trivalent.indet (sup_idem _) k
 
-/-- Sup-fold with `Trivalent.ofBool` accumulator commutes with `||`-fold
-    via the lattice-homomorphism property of `ofBool`. -/
-private theorem foldl_sup_ofBool_acc (bs : List Bool) (acc : Bool) :
-    (bs.map Trivalent.ofBool).foldl (· ⊔ ·) (Trivalent.ofBool acc) =
-    Trivalent.ofBool (bs.foldl (· || ·) acc) := by
-  induction bs generalizing acc with
-  | nil => rfl
-  | cons b bs ih =>
-    simp only [List.map_cons, List.foldl_cons, Trivalent.ofBool_sup]
-    exact ih (acc || b)
-
-/-- Inf-fold with `Trivalent.ofBool` accumulator commutes with `&&`-fold. -/
-private theorem foldl_inf_ofBool_acc (bs : List Bool) (acc : Bool) :
-    (bs.map Trivalent.ofBool).foldl (· ⊓ ·) (Trivalent.ofBool acc) =
-    Trivalent.ofBool (bs.foldl (· && ·) acc) := by
-  induction bs generalizing acc with
-  | nil => rfl
-  | cons b bs ih =>
-    simp only [List.map_cons, List.foldl_cons, Trivalent.ofBool_inf]
-    exact ih (acc && b)
-
-/-- `List.foldl (· || ·) false = List.any id`. -/
-private theorem foldl_or_false_eq_any (bs : List Bool) :
-    bs.foldl (· || ·) Bool.false = bs.any id := by
-  suffices ∀ acc, bs.foldl (· || ·) acc = (acc || bs.any id) from by
-    simp only [this Bool.false, Bool.false_or]
-  intro acc
-  induction bs generalizing acc with
-  | nil => simp only [List.foldl_nil, List.any_nil, Bool.or_false]
-  | cons b bs ih =>
-    simp only [List.foldl_cons, List.any_cons, id, ih (acc || b), Bool.or_assoc]
-
-/-- `List.foldl (· && ·) true = List.all id`. -/
-private theorem foldl_and_true_eq_all (bs : List Bool) :
-    bs.foldl (· && ·) Bool.true = bs.all id := by
-  suffices ∀ acc, bs.foldl (· && ·) acc = (acc && bs.all id) from by
-    simp only [this Bool.true, Bool.true_and]
-  intro acc
-  induction bs generalizing acc with
-  | nil => simp only [List.foldl_nil, List.all_nil, Bool.and_true]
-  | cons b bs ih =>
-    simp only [List.foldl_cons, List.all_cons, id, ih (acc && b), Bool.and_assoc]
-
 /-- Existential aggregation through `Trivalent.ofBool` reduces to Boolean
     disjunction. Witness of the lattice-homomorphism property of
     `Trivalent.ofBoolHom` propagating through fold. -/
 theorem aggregate_existential_map_ofBool (bs : List Bool) :
     aggregate .disjunctive (bs.map Trivalent.ofBool) = Trivalent.ofBool (bs.any id) := by
-  show (bs.map Trivalent.ofBool).foldl (· ⊔ ·) ⊥ = Trivalent.ofBool (bs.any id)
-  have h : (⊥ : Trivalent) = Trivalent.ofBool Bool.false := rfl
-  rw [h, foldl_sup_ofBool_acc, foldl_or_false_eq_any]
+  show (bs.map Trivalent.ofBool).foldl (· ⊔ ·) (Trivalent.ofBool Bool.false) = _
+  exact (List.foldl_map_hom Trivalent.ofBool_sup).trans (congrArg _ List.foldl_or)
 
 /-- Universal aggregation through `Trivalent.ofBool` reduces to Boolean
     conjunction. -/
 theorem aggregate_universal_map_ofBool (bs : List Bool) :
     aggregate .conjunctive (bs.map Trivalent.ofBool) = Trivalent.ofBool (bs.all id) := by
-  show (bs.map Trivalent.ofBool).foldl (· ⊓ ·) ⊤ = Trivalent.ofBool (bs.all id)
-  have h : (⊤ : Trivalent) = Trivalent.ofBool Bool.true := rfl
-  rw [h, foldl_inf_ofBool_acc, foldl_and_true_eq_all]
+  show (bs.map Trivalent.ofBool).foldl (· ⊓ ·) (Trivalent.ofBool Bool.true) = _
+  exact (List.foldl_map_hom Trivalent.ofBool_inf).trans (congrArg _ List.foldl_and)
 
 /-- Aggregation through `Trivalent.ofBool` never produces `.indet` —
     Boolean inputs leave the gap-free sublattice `{⊥, ⊤}` invariant.

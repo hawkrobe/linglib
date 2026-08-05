@@ -214,7 +214,7 @@ def ofFlag : Mealy Bool α β where
 
 @[simp] theorem ofFlag_stateAfter (b : Bool) (xs : List α) :
     (ofFlag p out).stateAfter b xs = (b || xs.any p) :=
-  List.foldl_or p b xs
+  List.foldl_or
 
 /-- Each coordinate of a flag machine sees the flag over its strict prefix. -/
 theorem getElem?_ofFlag_run (xs : List α) (i : ℕ) :
