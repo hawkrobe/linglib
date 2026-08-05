@@ -136,6 +136,23 @@ def adjNModification : Construction :=
         , level := some .bar } ]
   , meaning := "adjective restricts noun denotation" }
 
+/-! ### Degrees of abstraction (Table 8) -/
+
+/-- *Veggie-wrap*: a fully lexically specified noun compound (the top row
+of Table 8). -/
+def veggieWrapForm : TypedForm String :=
+  [ { filler := .fixed "veggie" }
+  , { filler := .fixed "wrap", isHead := true } ]
+
+/-- Table 8's degree-of-abstraction grid, witnessed by the constructicon:
+*veggie-wrap* is lexically specified, *a simple ⟨PAL⟩* partially open, and
+the NN-compound and prenominal-PAL schemas fully open and abstract. -/
+theorem table8_specificity :
+    derivedSpecificity veggieWrapForm = .lexicallySpecified ∧
+    aSimplePALConstruction.specificity = .partiallyOpen ∧
+    nnCompound.specificity = .fullyAbstract ∧
+    palConstruction.specificity = .fullyAbstract := by decide
+
 /-- The PAL constructicon (the paper's Figure 5): the prenominal PAL
 construction partially inherits, in normal mode, from both the NN compound
 and adjectival modification constructions; the four conventional subtypes

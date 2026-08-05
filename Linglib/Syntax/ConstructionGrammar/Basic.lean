@@ -1,19 +1,16 @@
 import Linglib.Data.UD.Basic
-import Mathlib.Algebra.Order.Ring.Rat
-import Mathlib.Algebra.Order.Field.Basic
+import Mathlib.Data.List.Dedup
 
 /-!
 # Construction Grammar: Core Types
-[goldberg-1995] [goldberg-2003] [goldberg-2006] [kay-fillmore-1999] [dunn-2025]
 
-Constructions — learned pairings of form and function — are the basic
-units of grammatical knowledge in CxG. The form side is typed: a
-`TypedForm` is a sequence of `Slot`s, each fixing a lexeme, opening a
-category, or admitting any phrase ([dunn-2025]'s LEX/SYN/SEM+
-representation levels, plus [kay-fillmore-1999]'s grammatical functions,
-coreference indices, and slot constraints). Abstraction measures and
-`Specificity` are *derived* from the slot structure
-(`Construction.specificity`), not stipulated.
+Constructions — learned pairings of form and function ([goldberg-2006]) —
+are the basic units of grammatical knowledge in CxG. The form side is
+typed: a `TypedForm` is a sequence of `Slot`s, each fixing a lexeme,
+opening a category, or admitting any phrase ([dunn-2025]'s LEX/SYN/SEM
+slot-constraint levels, plus [kay-fillmore-1999]'s grammatical functions,
+coreference indices, and slot constraints). `Specificity` is *derived*
+from the slot structure (`Construction.specificity`), not stipulated.
 
 A slot also records the bar level of its position; a `phrasal` filler in
 a `zero`-level position (`Slot.IsPhraseInWordSlot`) is the
@@ -23,14 +20,17 @@ construction.
 ## Main declarations
 
 - `SlotFiller`, `Slot`, `TypedForm`: the typed form side
-- `abstractionLevel`, `derivedSpecificity`: abstraction measures on forms
+- `derivedSpecificity`, `HasConstraint`, `refGroupCount`: measures derived
+  from forms
 - `Construction`, `Construction.specificity`: form–function pairings
 - `InheritanceLink`, `Constructicon`: the network
 -/
 
 namespace ConstructionGrammar
 
-/-- How specified a construction's form side is ([goldberg-2003]:220, Table 8).
+/-- How specified a construction's form side is: the degree-of-abstraction
+continuum of [goldberg-2003]:220, discretized as in [goldberg-shirtz-2025]'s
+Table 8.
 
 | Specificity | Example |
 |---|---|
@@ -94,7 +94,7 @@ inductive BarLevel where
 /-! ### Typed slots
 
 [dunn-2025] distinguishes three representation levels for slot content —
-LEX (a fixed lexeme), SYN (any word of a category), SEM+ (any expression
+LEX (a fixed lexeme), SYN (any word of a category), SEM (any expression
 meeting a semantic constraint) — and [kay-fillmore-1999] add headed
 phrases, grammatical functions, coreference indices, and syntactic
 constraints. The `phrasal` filler (any phrase, no fixed head) is the
@@ -113,7 +113,7 @@ inductive SlotFiller (Lex : Type*) where
       `headed "doing" .VERB` is a VP headed by *doing*. LEX-level —
       the head lexeme is fixed even though the phrase is open. -/
   | headed : Lex → UD.UPOS → SlotFiller Lex
-  /-- A semantically constrained slot ([dunn-2025], SEM+ level):
+  /-- A semantically constrained slot ([dunn-2025], SEM level):
       `semantic "animate"` is any expression denoting an animate. -/
   | semantic : String → SlotFiller Lex
   /-- Any phrase, with no fixed head and no category restriction on its
@@ -192,22 +192,10 @@ instance {Lex : Type*} [DecidableEq Lex] (s : Slot Lex) :
     Decidable s.IsPhraseInWordSlot :=
   inferInstanceAs (Decidable (_ ∧ _))
 
-/-! ### Abstraction level and derived specificity -/
+/-! ### Derived specificity -/
 
-section AbstractionLevel
+section DerivedSpecificity
 variable {Lex : Type*}
-
-/-- Proportion of open slots: a continuous [0,1] measure of abstraction.
-
-[dunn-2025] defines four discrete abstraction *orders* based on which
-representation levels appear; this computes the continuous proportion
-underlying those orders, and `derivedSpecificity` maps to the three-way
-`Specificity` enum. -/
-def abstractionLevel (form : TypedForm Lex) : ℚ :=
-  if form.isEmpty then 0
-  else
-    let openCount := (form.filter (·.filler.isOpen)).length
-    (openCount : ℚ) / (form.length : ℚ)
 
 /-- Derive `Specificity` from the slot structure.
 
@@ -225,33 +213,19 @@ def derivedSpecificity (form : TypedForm Lex) : Specificity :=
   else if openCount = 0 then .lexicallySpecified
   else .partiallyOpen
 
-/-- Does any slot in the form bear a given constraint? -/
-def hasConstraint (form : TypedForm Lex) (c : SlotConstraint) : Bool :=
-  form.any (·.constraints.any (· == c))
+/-- Some slot in the form bears the constraint `c`. -/
+def HasConstraint (form : TypedForm Lex) (c : SlotConstraint) : Prop :=
+  ∃ s ∈ form, c ∈ s.constraints
+
+instance (form : TypedForm Lex) (c : SlotConstraint) :
+    Decidable (HasConstraint form c) :=
+  inferInstanceAs (Decidable (∃ s ∈ form, c ∈ s.constraints))
 
 /-- Count of distinct coreference groups in a form. -/
 def refGroupCount (form : TypedForm Lex) : Nat :=
   (form.filterMap (·.refIdx)).dedup.length
 
 /-! ### Characterization lemmas -/
-
-@[simp]
-theorem abstractionLevel_nil : abstractionLevel ([] : TypedForm Lex) = 0 := rfl
-
-theorem abstractionLevel_nonneg (form : TypedForm Lex) :
-    0 ≤ abstractionLevel form := by
-  simp only [abstractionLevel]
-  split
-  · exact le_refl 0
-  · exact div_nonneg (Nat.cast_nonneg _) (Nat.cast_nonneg _)
-
-theorem abstractionLevel_le_one (form : TypedForm Lex) :
-    abstractionLevel form ≤ 1 := by
-  simp only [abstractionLevel]
-  split
-  · exact zero_le_one
-  · exact div_le_one_of_le₀ (by exact_mod_cast List.length_filter_le _ _)
-      (Nat.cast_nonneg _)
 
 /-- A form is fully abstract exactly when every slot is open (vacuously so
 for the empty form). -/
@@ -293,7 +267,7 @@ theorem derivedSpecificity_eq_lexicallySpecified_iff (form : TypedForm Lex) :
     · rintro ⟨hnil, hall⟩
       exact absurd (by rw [List.length_eq_zero_iff]; exact hzero.mpr hall) h2
 
-end AbstractionLevel
+end DerivedSpecificity
 
 /-! ### Constructions and the network -/
 

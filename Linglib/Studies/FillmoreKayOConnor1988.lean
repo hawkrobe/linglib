@@ -149,8 +149,8 @@ def ScalarModel.satisfiesA3 {S α : Type*} [DecidableEq α]
 /-- The *let alone* construction: form F ⟨X A Y let alone B⟩ (ex. 20a,
 p. 512), where F is a negative polarity operator, X and Y are shared
 non-focused material, and the paired foci A and B are points in a
-presupposed scalar model. The typed form is the paired-foci core
-([dunn-2025]'s slot projection), eliding the shared X/Y material. -/
+presupposed scalar model. The typed form is the paired-foci core,
+eliding the shared X/Y material. -/
 def letAloneConstruction : Construction :=
   { name := "let alone"
   , form :=
