@@ -623,6 +623,10 @@ theorem alt_sup_subset_union (P Q : Question W) :
     intro r hr hpr
     exact Set.Subset.antisymm hpr hr
 
+/-- `p` is an alternative of its own declarative content. -/
+theorem self_mem_alt_declarative (p : Set W) : p ∈ alt (declarative p) := by
+  rw [alt_declarative]; rfl
+
 /-- The unique alternative of `⊤` is `Set.univ`. -/
 @[simp] theorem alt_top : alt (⊤ : Question W) = {Set.univ} := by
   ext q
