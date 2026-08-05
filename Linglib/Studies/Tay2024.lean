@@ -90,12 +90,12 @@ theorem subject_oriented_count :
 /-- Contrast with English: the English subject-result pattern uses the
     fake reflexive — grammatical with the reflexive pronoun, bad without
     it or with a non-reflexive NP ([goldberg-jackendoff-2004] ex. 9a and
-    its starred variants). -/
+    its starred alternatives). -/
 theorem english_subject_result_requires_reflexive :
-    GoldbergJackendoff2004.yell_hoarse.judgment == .ok ∧
-    GoldbergJackendoff2004.yell_ourselves.judgment == .unacceptable ∧
-    GoldbergJackendoff2004.yell_harry_hoarse.judgment == .unacceptable := by
-  refine ⟨?_, ?_, ?_⟩ <;> decide
+    GoldbergJackendoff2004.yell_hoarse.judgment == .acceptable ∧
+    GoldbergJackendoff2004.Examples.gj2004_9a.alternatives.all
+      (·.2 == .ungrammatical) = true := by
+  refine ⟨?_, ?_⟩ <;> decide
 
 -- ════════════════════════════════════════════════════
 -- § 2. V-V vs V-de: Syntactic Opacity
