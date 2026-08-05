@@ -62,21 +62,23 @@ inductive SubeventKind where
 - **means**: The verbal subevent is the means by which the constructional subevent
   is brought about. This is the default relation for all four core subconstructions
   (97a–d). E.g., "hammer metal flat" — hammering is the means of causing flatness.
-  Also holds for noncausative cases: "the river froze solid" — freezing is the
-  means of becoming solid; "the ball rolled into the field" — rolling is the
+  Also holds for noncausative cases: "the pond froze solid" — freezing is the
+  means of becoming solid; "the ball rolled down the hill" — rolling is the
   means of motion along the path.
 - **result**: The verbal subevent is a result of the constructional subevent
   (reversed directionality from means). Reserved for sound-emission resultatives
-  (ex. 20: "The trolley rumbled through the tunnel" — rumbling results from
-  motion) and disappearance resultatives (ex. 21: "The witch vanished into the
-  forest" — vanishing results from motion).
+  (schema 20; ex. 17a: "The trolley rumbled through the tunnel" — the sound
+  results from the motion) and disappearance resultatives (ex. 21a: "The witch
+  vanished into the forest").
 - **instance_**: The verbal subevent is an instance of the constructional subevent.
-  For the follow-type cases (§7.1, ex. 55: "Bill followed the thief into the
-  library" — following IS going-after) and ride/drive-type cases (ex. 56: "Bill
-  rode a train to New York" — riding IS going-by-way-of).
+  For the follow-type cases (§7.1, schema 55; ex. 50a: "Bill followed the thief
+  into the library" — following IS going-after) and *take* under schema 56;
+  the ride/drive cases of 56 (ex. 58a: "Bill rode a train to New York") are
+  instead means of going-by-way-of.
 - **coOccurrence**: The two subevents merely co-occur without causal connection.
-  The *way* construction ("She sang her way down the road") uses this relation.
-  Some speakers accept CO-OCCURRENCE for sound-emission resultatives as well. -/
+  The *way* construction (ex. 19a: "The car honked its way down the road") uses
+  this relation. Some speakers accept COOCCURRENCE for sound-emission
+  resultatives as well. -/
 inductive SubeventRelation where
   | means
   | result
@@ -93,7 +95,7 @@ inductive RPType where
   deriving Repr, DecidableEq
 
 /-- The four subconstructions in the resultative family
-([goldberg-jackendoff-2004] §2, Table 1).
+([goldberg-jackendoff-2004] §2, summarized as (97)).
 
 |               | Property RP      | Path RP          |
 |---------------|------------------|------------------|
@@ -144,7 +146,7 @@ structure SubeventDesc where
   deriving Repr, BEq, DecidableEq
 
 /-- The dual subevent structure of a resultative
-([goldberg-jackendoff-2004] §3, Principle 25). -/
+([goldberg-jackendoff-2004] §3, the analysis in 14 and 16). -/
 structure DualSubevent where
   /-- The verbal subevent (from the verb's lexical semantics) -/
   verbal : SubeventDesc
@@ -241,13 +243,14 @@ reflexive pronoun that cannot alternate with other NPs. -/
 
 /-- How the postverbal NP is selected (§2). -/
 inductive ObjectSelection where
-  /-- Verb independently selects the object: "She watered the plants flat" -/
+  /-- Verb independently selects the object: "The gardener watered the
+      flowers flat" (7a) -/
   | selected
   /-- Construction licenses the object (verb doesn't take it independently):
       "They drank the pub dry" (cf. *They drank the pub) -/
   | unselected
   /-- Special unselected: reflexive object that cannot alternate with other NPs:
-      "She laughed herself silly" (cf. *She laughed him silly) -/
+      "We yelled ourselves hoarse" (cf. *We yelled Harry hoarse) (9a) -/
   | fakeReflexive
   deriving Repr, DecidableEq, BEq
 
