@@ -6,7 +6,6 @@ Authors: Robert Hawkins
 import Mathlib.Data.Fintype.EquivFin
 import Linglib.Core.Computability.Mealy
 import Linglib.Core.Data.Fintype.Transfer
-import Linglib.Core.Data.List.Fold
 
 /-!
 # Bimachines
@@ -235,11 +234,15 @@ def ofFlags : Bimachine Bool Bool α β where
 /-- A flag bimachine is letter-to-letter, with `out` as its cell. -/
 def ofFlags_letterToLetter : (ofFlags pL pR out).LetterToLetter := ⟨out, fun _ _ _ => rfl⟩
 
-@[simp] theorem ofFlags_lState (xs : List α) : (ofFlags pL pR out).lState xs = xs.any pL :=
-  List.foldl_or
+@[simp] theorem ofFlags_lStateAfter (l : Bool) (xs : List α) :
+    (ofFlags pL pR out).lStateAfter l xs = (l || xs.any pL) := by
+  induction xs generalizing l <;> simp [*, Bool.or_assoc]
 
-@[simp] theorem ofFlags_rState (xs : List α) : (ofFlags pL pR out).rState xs = xs.any pR :=
-  List.foldr_or
+@[simp] theorem ofFlags_lState (xs : List α) : (ofFlags pL pR out).lState xs = xs.any pL := by
+  simp [lState]
+
+@[simp] theorem ofFlags_rState (xs : List α) : (ofFlags pL pR out).rState xs = xs.any pR := by
+  induction xs <;> simp [*, Bool.or_comm]
 
 /-- Output `i` of a flag bimachine sees the input symbol and the two window-`any`
 flags. -/

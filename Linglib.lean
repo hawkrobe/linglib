@@ -110,7 +110,6 @@ import Linglib.Core.Data.List.EqOn
 import Linglib.Core.Data.List.Config
 import Linglib.Core.Data.List.DropRight
 import Linglib.Core.Data.List.Factors
-import Linglib.Core.Data.List.Fold
 import Linglib.Core.Data.List.Perm
 import Linglib.Core.Data.List.Sublist
 import Linglib.Core.Data.List.TakeDrop
