@@ -267,9 +267,9 @@ Form: [CP What's [TP NP doing [VP/PP...]]]
 - Complement: locative PP, participial VP, or instrumental PP
 
 The typed form is the flat projection of Figure 12's hierarchical AVM:
-X and Y share refIdx 2 (coinstantiation/subject control); WXDY-*what* is
-left-isolated ([loc -]) and nonreferential ([ref ∅]); *doing* cannot be
-negated ([neg -]). -/
+X and Y share refIdx 2 (the coinstantiation construction, Figure 13);
+WXDY-*what* is left-isolated ([loc -]) and nonreferential ([ref ∅]);
+*doing* cannot be negated ([neg -]). -/
 def wxdyConstruction : Construction :=
   { name := "What's X doing Y?"
   , form :=
@@ -284,6 +284,55 @@ def wxdyConstruction : Construction :=
         , refIdx := some 2 } ]
   , meaning := "Incredulity: speaker presupposes embedded prop, expresses surprise; Literal: genuine activity question"
   , pragmaticFunction := "presupposes situation; CI: speaker finds it unexpected/inappropriate" }
+
+/-! ### Slot constraints and coreference (Figure 12) -/
+
+/-- WXDY's form has exactly one coreference group: the X–Y coinstantiation
+(#2 in Figure 12). -/
+theorem wxdy_coreference_count : refGroupCount wxdyConstruction.form = 1 := by
+  decide
+
+/-- X (the first slot) and Y (the last slot) share coreference index 2:
+X is the understood subject of the Y predicate. -/
+theorem wxdy_coinstantiation :
+    wxdyConstruction.form.head?.bind (·.refIdx) = some 2 ∧
+    wxdyConstruction.form.getLast?.bind (·.refIdx) = some 2 := by decide
+
+/-- WXDY-*what* is left-isolated ([loc -]) and nonreferential ([ref ∅]).
+These two constraints together explain why WXDY-*what* cannot take *else*
+modification and is not a true interrogative pronoun. -/
+theorem wxdy_what_constraints :
+    HasConstraint wxdyConstruction.form .locMinus ∧
+    HasConstraint wxdyConstruction.form .refEmpty := by decide
+
+/-- WXDY-*doing* cannot be negated ([neg -]): "*What's X not doing Y?" is
+ungrammatical on the incredulity reading. -/
+theorem wxdy_doing_negMinus :
+    HasConstraint wxdyConstruction.form .negMinus := by decide
+
+/-! ### Coinstantiation (Figure 13, §4.2) -/
+
+/-- The coinstantiation construction (Figure 13): unifies the intrinsic
+value of an unfulfilled valence requirement of a predicator with the
+subject requirement of its controlled complement, covering both raising
+and control. It figures twice in every WXDY clause — the flat rendering
+here unifies a predicator's subject with its complement's subject via a
+shared `refIdx`. -/
+def coinstantiationForm : TypedForm String :=
+  [ { filler := .open_ .NOUN, role := some "subject", gf := some .subj
+    , refIdx := some 1 }
+  , { filler := .open_ .VERB, role := some "predicate", isHead := true }
+  , { filler := .open_ .VERB, role := some "complement", gf := some .comp
+    , refIdx := some 1 } ]
+
+/-- Coinstantiation is fully abstract: every slot is open. -/
+theorem coinstantiation_specificity :
+    derivedSpecificity coinstantiationForm = .fullyAbstract := by decide
+
+/-- Coinstantiation carries exactly one coreference group (predicator
+subject = complement subject). -/
+theorem coinstantiation_coreference :
+    refGroupCount coinstantiationForm = 1 := by decide
 
 /-! ### FKO1988 idiom classification bridge -/
 

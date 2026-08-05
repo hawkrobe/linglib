@@ -2826,7 +2826,6 @@ import Linglib.Syntax.Clause.Frame
 import Linglib.Syntax.Comparative
 import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
 import Linglib.Syntax.ConstructionGrammar.Basic
-import Linglib.Syntax.ConstructionGrammar.GrammarDist
 import Linglib.Syntax.ConstructionGrammar.IdiomTypology
 import Linglib.Syntax.ConstructionGrammar.Inheritance
 import Linglib.Syntax.ConstructionGrammar.Licensing
