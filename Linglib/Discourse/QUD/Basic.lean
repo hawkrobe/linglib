@@ -131,23 +131,15 @@ children's questions entails the parent's and both children are complete. -/
 theorem IsComplete.node_pair {q : Question W} {s t : Strategy W}
     (h : (s.value ⊓ t.value).Entails q)
     (hs : s.IsComplete) (ht : t.IsComplete) :
-    IsComplete (.node q [s, t]) := by
-  refine .node (fun _ => ?_) ?_
-  · simpa using h
-  · rintro c hc
-    rcases List.mem_cons.mp hc with rfl | hc
-    · exact hs
-    · rcases List.mem_cons.mp hc with rfl | hc
-      · exact ht
-      · exact absurd hc (List.not_mem_nil)
+    IsComplete (.node q [s, t]) :=
+  .node (fun _ => by simpa using h) (by simp [hs, ht])
 
 @[simp] theorem isComplete_node_iff {q : Question W} {cs : List (Strategy W)} :
     IsComplete (.node q cs) ↔
       (cs ≠ [] →
         ((cs.map RoseTree.value : Multiset (Question W))).inf.Entails q) ∧
         ∀ c ∈ cs, IsComplete c :=
-  ⟨fun h => by cases h with | node h₁ h₂ => exact ⟨h₁, h₂⟩,
-    fun ⟨h₁, h₂⟩ => .node h₁ h₂⟩
+  ⟨fun | .node h₁ h₂ => ⟨h₁, h₂⟩, fun ⟨h₁, h₂⟩ => .node h₁ h₂⟩
 
 end Strategy
 
