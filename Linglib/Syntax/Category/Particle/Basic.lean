@@ -1,5 +1,4 @@
 import Linglib.Syntax.Clause.Context
-import Linglib.Syntax.Clause.Embedding
 import Linglib.Morphology.Word.Basic
 
 open Morphology (Word)
@@ -9,8 +8,8 @@ open Morphology (Word)
 
 This file defines `Particle`, the lexical core for uninflectable
 function words ([zwicky-1985-clitics]): form, position, and optional
-three-valued distribution facets over `Clause.Context` and
-`Clause.Embedding`. Facets record distributional felicity, not
+three-valued distribution facets over `Clause.SentenceType` and
+`Clause.EmbeddingContext`. Facets record distributional felicity, not
 licensing mechanism (analytical, study-side); a `none` cell means the
 source records nothing, not exclusion.
 
@@ -25,7 +24,7 @@ source records nothing, not exclusion.
 
 set_option autoImplicit false
 
-open Clause (Context Embedding)
+open Clause (SentenceType EmbeddingContext)
 
 /-- Where a particle sits relative to its host domain — the
 [zwicky-1985-clitics] positional diagnostic. -/
@@ -65,7 +64,7 @@ structure ClauseDistribution where
   deriving DecidableEq, Repr
 
 /-- Recorded status in context `c`, if any. -/
-def ClauseDistribution.status? (d : ClauseDistribution) : Clause.Context → Option ParticleStatus
+def ClauseDistribution.status? (d : ClauseDistribution) : Clause.SentenceType → Option ParticleStatus
   | .declarative => d.declarative
   | .polarInterrogative => d.polarInterrogative
   | .alternativeInterrogative => d.alternativeInterrogative
@@ -83,7 +82,7 @@ structure EmbedDistribution where
   deriving DecidableEq, Repr
 
 /-- Recorded status in embedding context `c`, if any. -/
-def EmbedDistribution.status? (d : EmbedDistribution) : Clause.Embedding → Option ParticleStatus
+def EmbedDistribution.status? (d : EmbedDistribution) : Clause.EmbeddingContext → Option ParticleStatus
   | .matrix => d.matrix
   | .subordinated => d.subordinated
   | .quasiSubordinated => d.quasiSubordinated
@@ -110,17 +109,17 @@ namespace Particle
 
 
 /-- Recorded clause-type distribution status in context `c`, if any. -/
-def status? (p : Particle) (c : Clause.Context) : Option ParticleStatus :=
+def status? (p : Particle) (c : Clause.SentenceType) : Option ParticleStatus :=
   p.distribution.bind (·.status? c)
 
 /-- The particle is positively recorded as available (obligatorily or
 optionally) in context `c`. -/
-def LicensedIn (p : Particle) (c : Clause.Context) : Prop :=
+def LicensedIn (p : Particle) (c : Clause.SentenceType) : Prop :=
   match p.status? c with
   | some .obligatory | some .optional => True
   | _ => False
 
-instance (p : Particle) (c : Clause.Context) : Decidable (p.LicensedIn c) := by
+instance (p : Particle) (c : Clause.SentenceType) : Decidable (p.LicensedIn c) := by
   unfold LicensedIn; exact match p.status? c with
     | some .obligatory => .isTrue trivial
     | some .optional => .isTrue trivial
@@ -128,17 +127,17 @@ instance (p : Particle) (c : Clause.Context) : Decidable (p.LicensedIn c) := by
     | none => .isFalse nofun
 
 /-- Recorded embedding-distribution status in context `c`, if any. -/
-def embedStatus? (p : Particle) (c : Clause.Embedding) : Option ParticleStatus :=
+def embedStatus? (p : Particle) (c : Clause.EmbeddingContext) : Option ParticleStatus :=
   p.embedding.bind (·.status? c)
 
 /-- The particle is positively recorded as available in embedding
 context `c`. -/
-def LicensedInEmbed (p : Particle) (c : Clause.Embedding) : Prop :=
+def LicensedInEmbed (p : Particle) (c : Clause.EmbeddingContext) : Prop :=
   match p.embedStatus? c with
   | some .obligatory | some .optional => True
   | _ => False
 
-instance (p : Particle) (c : Clause.Embedding) : Decidable (p.LicensedInEmbed c) := by
+instance (p : Particle) (c : Clause.EmbeddingContext) : Decidable (p.LicensedInEmbed c) := by
   unfold LicensedInEmbed; exact match p.embedStatus? c with
     | some .obligatory => .isTrue trivial
     | some .optional => .isTrue trivial

@@ -1,17 +1,22 @@
 /-!
-# Clause contexts
+# Clause context axes
 
-This file defines `Clause.Context`, the [sadock-zwicky-1985] sentence types
-with the interrogative split into polar, alternative, and constituent
-subtypes. `Clause.Embedding` is the orthogonal embedding axis;
-`Mood.Illocutionary`, `Mood.ClauseType`, and
-`Features.ClauseForm` are coarser cuts.
+The two orthogonal context axes of a clause: its [sadock-zwicky-1985]
+sentence type (`Clause.SentenceType`, with the interrogative split into
+polar, alternative, and constituent subtypes) and the embedding context
+it occurs in (`Clause.EmbeddingContext`, the [bhatt-dayal-2020] /
+[dayal-2025] question-embedding cells). `Mood.Illocutionary`,
+`Mood.ClauseType`, and `Features.ClauseForm` are coarser cuts of the
+first axis. `Features.QParticleLayer` is defined over the second, so a
+particle's layer is derivable from its embedding distribution
+(`Studies/BhattDayal2020`).
 -/
 
 namespace Clause
 
-/-- A [sadock-zwicky-1985] sentence type, with interrogatives subtyped. -/
-inductive Context where
+/-- A [sadock-zwicky-1985] sentence type, with interrogatives
+    subtyped. -/
+inductive SentenceType where
   | declarative
   | polarInterrogative
   /-- Alternative question ("Is it A or B?"). -/
@@ -22,16 +27,27 @@ inductive Context where
   | exclamative
   deriving DecidableEq, Repr
 
-namespace Context
+namespace SentenceType
 
 /-- The interrogative cells. -/
-def IsInterrogative : Context → Prop
-  | polarInterrogative | alternativeInterrogative | constituentInterrogative => True
+def IsInterrogative : SentenceType → Prop
+  | polarInterrogative | alternativeInterrogative
+  | constituentInterrogative => True
   | _ => False
 
 instance : DecidablePred IsInterrogative := fun c => by
   cases c <;> simp only [IsInterrogative] <;> infer_instance
 
-end Context
+end SentenceType
+
+/-- A [bhatt-dayal-2020] interrogative-embedding context: where the
+    interrogative occurs. -/
+inductive EmbeddingContext where
+  | matrix
+  | subordinated
+  /-- Embedded root-like interrogatives (Hindi-Urdu *kya:*). -/
+  | quasiSubordinated
+  | quotation
+  deriving DecidableEq, Repr
 
 end Clause
