@@ -156,6 +156,16 @@ theorem mentionAll_ofSet_iff {p : Set W} :
   rw [alt_ofSet]
   simp
 
+/-- The complete answers to a join of point-questions are the joint
+complete answers to each — [roberts-2012]'s (11) in general form. -/
+theorem completeAnswers_iSup_ofSet {ι : Type*} [Nonempty ι] {P : ι → Set W}
+    (hne : ∀ i, (P i).Nonempty) (hP : ∀ i j, P i ⊆ P j → P i = P j) :
+    completeAnswers (⨆ i, ofSet (P i)) =
+      ⋂ i, completeAnswers (ofSet (P i)) := by
+  ext σ
+  simp [mentionAll_iff_of_alt_eq_range (alt_iSup_ofSet hne hP),
+    mentionAll_ofSet_iff]
+
 /-! ### Bridge to `Question.Support`
 
 `Resolves σ Q` (alt-witnessed) and `Support.supports σ Q := σ ∈ Q.props`
