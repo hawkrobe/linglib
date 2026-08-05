@@ -199,9 +199,11 @@ def keineĀDep : AbarDep := ⟨keineĀProbe, ābar_is_Ā⟩
 /-- The wh-licensing probe is also an `AbarDep` (sits on C, fValue 6). -/
 def keineWhDep : AbarDep := ⟨keineWhLicensing, wh_is_Ā⟩
 
-/-- An Ā-dependency originates "above TP" iff its probe head's fValue exceeds
-    that of T. This is [deal-2026] §5's "high functional projection"
-    structural diagnostic. -/
+/-- The dependency's *probe head* sits above T (fValue above T's). Every
+    Ā-probe in this file satisfies it (Ā-probes sit on C). NOTE: this is
+    a property of the probe site, not of the moved element's origin —
+    [deal-2026] §5's claim that the Nez Perce RE operator *originates*
+    above TP concerns the chain foot, which `AbarDep` does not record. -/
 def AbarDep.isHigh (a : AbarDep) : Bool :=
   fValue a.val.probeHead > fValue .T
 

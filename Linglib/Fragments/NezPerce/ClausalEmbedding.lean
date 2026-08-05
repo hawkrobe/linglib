@@ -10,282 +10,221 @@ import Linglib.Features.Number.Capabilities
 Nez Perce (Sahaptian, ISO 639-3 `nez`) inventory of notional-complement-taking
 predicates plus the relative-pronoun paradigm. Theory-light: each predicate
 carries only consensus-typological metadata (CTP class per [noonan-2007],
-factivity status per [tonhauser-beaver-roberts-simons-2013] projection
-diagnostics).
+factivity per [tonhauser-beaver-roberts-simons-2013]-style projection trials,
+[deal-2026] §3/§6) and one morphological observable — the grammaticality
+status of *yox̂ ke* on the complement edge. The analytical RE-vs-simplex split,
+selectional features, and projection-site claims are Deal-specific apparatus
+and live in the co-located `Studies/Deal2026.lean`.
 
-## Scope and provenance
-
-Predicate list and factivity assessments are from [deal-2026] §3 (RE-takers)
-and §6 (simplex-takers); the analytical RE-vs-simplex split is *not* encoded
-here as a Fragment field — it is Deal-specific apparatus and lives in the
-co-located study file `Studies/Deal2026.lean` as a
-Studies-side projection.
-
-Relative-pronoun paradigm is from [deal-2016a] (Table 22 reproduced in
-[deal-2026] (22)). Case and number values reuse `Core.UD` substrate.
-
-## What is here
-
-- `NezPerceEmbedder`: per-verb consensus typology.
-- 11 verbs: 8 typically RE-only (per [deal-2026] §3) + 3 typically simplex-only
-  (per [deal-2026] §6).
-- `RelativePronoun`: the *yox̂/ko* paradigm cells, indexed by `Core.UD.Case`
-  × `Core.UD.Number`.
-- 6 paradigm-cell entries.
-
-## What is NOT here (lives in Studies/Deal2026.lean)
-
-- The RE-vs-simplex strategy field per verb (Deal-specific apparatus).
-- The `[uĀ]` selectional feature per RE-taker (Deal-specific analytical claim).
-- The Tonhauser `ProjectiveClass` projection (consumes
-  `Semantics/Presupposition/ProjectiveContent.lean`).
-- Cross-classification theorems (factivity ⊥ RE-structure).
-- The *ke*-as-φ-probe-on-C analysis (consumes `Minimalist.SatisfactionCond`).
+The relative-pronoun paradigm is from [deal-2016a] as reproduced at
+[deal-2026] (22); case and number values reuse `Core.UD` substrate.
 -/
 
 namespace NezPerce.ClausalEmbedding
 
--- ============================================================================
--- §1. Predicate Schema
--- ============================================================================
+/-! ### Predicate schema -/
+
+/-- Grammaticality status of the *yox̂ ke* morpheme pair on a predicate's
+    notional-complement edge — a morphological observable, recording what
+    the morphology does, not what it means.
+
+    [deal-2026]: obligatory for the RE-takers ((28)); prohibited for
+    *neki* and *hi* ((65)); marginal for *cuukwe* — (66b) is `%`-marked,
+    and consultants "did on rare occasions accept" and once produced it,
+    so *cuukwe* *permits* a bare complement rather than rejecting the
+    marked one. -/
+inductive EdgeRequirement where
+  | obligatory
+  /-- Rarely/marginally accepted (`%`-marked). -/
+  | marginal
+  | prohibited
+  deriving DecidableEq, Repr
 
 /-- A Nez Perce notional-complement-taking predicate.
 
-    Fields are theory-neutral consensus typology and morphological
-    observations:
     - `ctpClass`: [noonan-2007] category. Emotive factives are
       `commentative`; cognitive factives are `knowledge`; *think* is
       `propAttitude`; *say* is `utterance`.
-    - `factive`: per [tonhauser-beaver-roberts-simons-2013] projection
-      diagnostics (entailment-canceling environments). Established for
-      Nez Perce by [deal-2026] §3 (33)–(36).
-    - `requiresYoxKeEdge`: morphological observation per [deal-2026] §3
-      (28). When `true`, the predicate's notional complement obligatorily
-      begins with the morpheme pair *yox̂ ke* (relative-pronoun + Cₐ̄
-      complementizer per Deal's analysis); when `false`, *yox̂ ke* on the
-      complement edge is ungrammatical. This field is *observable* — it
-      records what the morphology does, not what it means. Theory-laden
-      interpretations (selectional features, projection sites) belong in
-      `Studies/Deal2026.lean`.
-
-    A `notionalTransitivity` field would be uniformly `intransitive` for
-    every predicate Deal 2026 reviews (cf. §4 (38)–(39)) and is therefore
-    omitted as carrying no discriminating signal. -/
+    - `factive`: by projection trials in entailment-canceling
+      environments ([deal-2026] §3 (33)–(36), §6 (68)). Deal notes the
+      trials assess only the projection dimension of the
+      [tonhauser-beaver-roberts-simons-2013] taxonomy.
+    - `yoxKeEdge`: the *yox̂ ke* edge observable ([deal-2026] (28), (65),
+      (66)). -/
 structure NezPerceEmbedder where
   form : String
   gloss : String
   ctpClass : CTPClass
   factive : Bool
-  requiresYoxKeEdge : Bool
+  yoxKeEdge : EdgeRequirement
   deriving DecidableEq, Repr
 
--- ============================================================================
--- §2. Predicates from [deal-2026] §3 — RE-only ("relative-embedding")
--- ============================================================================
+/-! ### RE-taking predicates ([deal-2026] §3)
 
-/-! ### Emotive factives (commentative class, per [noonan-2007])
+Emotive factives (commentative per [noonan-2007]) plus one cognitive
+factive; all require *yox̂ ke* on the complement edge ((28)), with
+factivity established by projection trials ((33)–(34)). -/
 
-These predicates require their notional complement to carry the relative-
-pronoun + complementizer pair *yox̂ ke* ([deal-2026] (28)). Their factivity
-is established by Deal's projection-test trials (§3, (33)–(34)). -/
-
-/-- *liloy* 'be happy'. [deal-2026] (27a). -/
+/-- *lilooy* 'be happy'. [deal-2026] (27a). -/
 def liloy : NezPerceEmbedder where
-  form := "liloy"; gloss := "be happy"
+  form := "lilooy"; gloss := "be happy"
   ctpClass := .commentative
   factive := true
-  requiresYoxKeEdge := true
+  yoxKeEdge := .obligatory
 
-/-- *etqew* 'be sad'. [deal-2026] (27b). -/
+/-- *'etqew* 'be sad'. [deal-2026] (27b). -/
 def etqew : NezPerceEmbedder where
   form := "'etqew"; gloss := "be sad"
   ctpClass := .commentative
   factive := true
-  requiresYoxKeEdge := true
+  yoxKeEdge := .obligatory
 
 /-- *cicwaay* 'be surprised'. [deal-2026] (27c). -/
 def cicwaay : NezPerceEmbedder where
   form := "cicwaay"; gloss := "be surprised"
   ctpClass := .commentative
   factive := true
-  requiresYoxKeEdge := true
+  yoxKeEdge := .obligatory
 
-/-- *eey's* 'be joyful'. [deal-2026] (27e). -/
+/-- *'eey's* 'be joyful'. [deal-2026] (27e). -/
 def eeys : NezPerceEmbedder where
   form := "'eey's"; gloss := "be joyful"
   ctpClass := .commentative
   factive := true
-  requiresYoxKeEdge := true
+  yoxKeEdge := .obligatory
 
-/-- *q'eese* 'be bothered, unhappy'. [deal-2026] (27e). -/
+/-- *q'eese'* 'be bothered, unhappy'. [deal-2026] (27e). -/
 def qeese : NezPerceEmbedder where
-  form := "q'eese"; gloss := "be bothered"
+  form := "q'eese'"; gloss := "be bothered"
   ctpClass := .commentative
   factive := true
-  requiresYoxKeEdge := true
+  yoxKeEdge := .obligatory
 
-/-- *tim'neneki* 'be worried'. [deal-2026] (27e). -/
+/-- *tim'neeneki* 'be worried'. [deal-2026] (27e). -/
 def timneneki : NezPerceEmbedder where
-  form := "tim'neneki"; gloss := "be worried"
+  form := "tim'neeneki"; gloss := "be worried"
   ctpClass := .commentative
   factive := true
-  requiresYoxKeEdge := true
+  yoxKeEdge := .obligatory
 
-/-! ### Cognitive factive
-
-*timiipni* 'remember' is classed by Noonan as `knowledge` (cognitive factive)
-but exhibits the same RE morphosyntax as the emotive factives in Nez Perce
-([deal-2026] (27d), §3). The CTP class divergence between Nez Perce
-*timiipni* and English *remember* (which is also `knowledge`) is a Fragment
-fact: whether `knowledge` predicates are RE-takers is a per-language
-property. -/
-
-/-- *timiipni* 'remember'. [deal-2026] (27d). -/
+/-- *timiipni* 'remember'. [deal-2026] (27d). Classed by Noonan as
+    `knowledge` (cognitive factive) but with the same RE morphosyntax as
+    the emotive factives — whether `knowledge` predicates are RE-takers
+    is a per-language property (contrast English *remember*). -/
 def timiipni : NezPerceEmbedder where
   form := "timiipni"; gloss := "remember"
   ctpClass := .knowledge
   factive := true
-  requiresYoxKeEdge := true
+  yoxKeEdge := .obligatory
 
-/-! ### Speech-act particle
-
-*qe'ciyeew'yew* 'thank you' is a non-verbal particle that nonetheless takes
-notional complements with the RE morphosyntax ([deal-2026] (42)). It
-disallows DP complements (42b), reinforcing Deal's argument that REs are not
-DPs. -/
-
-/-- *qe'ciyeew'yew* 'thank you' (particle). [deal-2026] (42). -/
+/-- *qe'ciyeew'yew'* 'thank you' — an unanalyzable particle, not a verb,
+    taking notional complements with RE morphosyntax while disallowing
+    all nominal complements ([deal-2026] §4 (42); fn. 16). Its factivity
+    follows [deal-2026] §7's generalization that all REs are factive (no
+    per-item projection trial is reported). -/
 def qeciyeewyew : NezPerceEmbedder where
-  form := "qe'ciyeew'yew"; gloss := "thank you"
+  form := "qe'ciyeew'yew'"; gloss := "thank you"
   ctpClass := .commentative
   factive := true
-  requiresYoxKeEdge := true
+  yoxKeEdge := .obligatory
 
--- ============================================================================
--- §3. Predicates from [deal-2026] §6 — simplex-only
--- ============================================================================
+/-! ### Simplex-taking predicates ([deal-2026] §6) -/
 
-/-! ### Non-factive cognitive and utterance predicates
-
-These predicates strictly reject the RE morphosyntax — *yox̂ ke* on the
-complement edge is ungrammatical for them ([deal-2026] (20), (47)–(48),
-(65), (69)–(70)). -/
-
-/-- *neki* 'think'. [deal-2026] (47), (65). Non-factive. -/
+/-- *neki* 'think'. [deal-2026] (48), (65a). Non-factive; rejects
+    *yox̂ ke* on the complement edge. -/
 def neki : NezPerceEmbedder where
   form := "neki"; gloss := "think"
   ctpClass := .propAttitude
   factive := false
-  requiresYoxKeEdge := false
+  yoxKeEdge := .prohibited
 
-/-- *hi* 'say, tell'. [deal-2026] (47), (65). Non-factive. -/
+/-- *hi* 'say, tell'. [deal-2026] (47), (65b). Non-factive; rejects
+    *yox̂ ke*. Unlike the RE-takers, *hi* is transitive: it takes an
+    accusative addressee and triggers object agreement ((47a)). -/
 def hi : NezPerceEmbedder where
   form := "hi"; gloss := "say, tell"
   ctpClass := .utterance
   factive := false
-  requiresYoxKeEdge := false
+  yoxKeEdge := .prohibited
 
-/-! ### Factive cognitive predicate
-
-*cuukwe* 'know' is factive ([deal-2026] §6 (68): projection test
-confirms factivity even in conditional antecedent), but typically takes
-*simplex* complements (no *yox̂ ke*) — RE morphosyntax is rare and marginal
-((66b) is `%`-marked). This is Deal 2026's central dissociation:
-factivity ⊥ RE-structure. -/
-
-/-- *cuukwe* 'know'. [deal-2026] (66), (68). Factive but
-    typically simplex-embedding — the `requiresYoxKeEdge = false` field
-    encodes the headline [deal-2026] dissociation: factivity does not
-    force RE morphology in Nez Perce. (66b) shows a marginal `%`-attested
-    RE-marked variant; we record the canonical pattern.  -/
+/-- *cuukwe* 'know'. [deal-2026] (66), (68). Factive (projection
+    survives a conditional antecedent, (68)) but canonically
+    simplex-embedding — the RE-marked variant is only marginally
+    accepted ((66b), `%`-marked). The factive-but-simplex combination is
+    [deal-2026]'s central dissociation: factivity does not force RE
+    morphology. -/
 def cuukwe : NezPerceEmbedder where
   form := "cuukwe"; gloss := "know"
   ctpClass := .knowledge
   factive := true
-  requiresYoxKeEdge := false
+  yoxKeEdge := .marginal
 
--- ============================================================================
--- §4. Inventories
--- ============================================================================
+/-! ### Inventories -/
 
 /-- All embedders surveyed in [deal-2026]: 8 RE-canonical + 3
-    simplex-canonical. This is the source-of-truth list; the partitions
-    `reCanonical` / `simplexCanonical` are derived views on it via the
-    Fragment-level observable `requiresYoxKeEdge`. -/
+    simplex-canonical. Source-of-truth list; `reCanonical` and
+    `simplexCanonical` are derived views via the `yoxKeEdge` observable. -/
 def allEmbedders : List NezPerceEmbedder :=
   [liloy, etqew, cicwaay, eeys, qeese, timneneki, timiipni, qeciyeewyew,
    neki, hi, cuukwe]
 
-/-- The RE-canonical predicates: those whose notional complement
-    obligatorily begins with the *yox̂ ke* morpheme pair. Defined as a
-    derived view on the Fragment-level observable `requiresYoxKeEdge`
-    rather than as a hand-curated list, so that adding/removing the
-    edge-marking field on any predicate automatically updates this list. -/
+/-- The RE-canonical predicates: *yox̂ ke* obligatory on the complement
+    edge. -/
 def reCanonical : List NezPerceEmbedder :=
-  allEmbedders.filter (·.requiresYoxKeEdge)
+  allEmbedders.filter (·.yoxKeEdge == .obligatory)
 
-/-- The simplex-canonical predicates: those whose notional complement
-    is incompatible with *yox̂ ke* on the edge. -/
+/-- The simplex-canonical predicates: those permitting a bare complement
+    (*yox̂ ke* prohibited or merely marginal) — [deal-2026] §6's
+    "conservative generalization". -/
 def simplexCanonical : List NezPerceEmbedder :=
-  allEmbedders.filter (! ·.requiresYoxKeEdge)
+  allEmbedders.filter (·.yoxKeEdge != .obligatory)
 
 /-- Drift sentry: `reCanonical` contains exactly the eight predicates
-    [deal-2026] §3 (27a–e), (27d), (42) lists. A `decide` failure here
-    means either a verb's `requiresYoxKeEdge` field has been edited
-    incorrectly, or a verb has been added/removed from `allEmbedders`. -/
+    [deal-2026] lists at (27a–e), (27d), (42). -/
 theorem reCanonical_membership :
     reCanonical = [liloy, etqew, cicwaay, eeys, qeese, timneneki,
                    timiipni, qeciyeewyew] := by decide
 
-/-- Drift sentry: `simplexCanonical` contains exactly *neki*, *hi*, *cuukwe*. -/
+/-- Drift sentry: `simplexCanonical` contains exactly *neki*, *hi*,
+    *cuukwe*. -/
 theorem simplexCanonical_membership :
     simplexCanonical = [neki, hi, cuukwe] := by decide
 
-/-- Partition: every embedder is either RE-canonical or simplex-canonical
-    (no third category in [deal-2026]'s survey). -/
+/-- Partition: every embedder is either RE-canonical or
+    simplex-canonical (no third category in [deal-2026]'s survey). -/
 theorem allEmbedders_partitioned :
     allEmbedders = reCanonical ++ simplexCanonical := by decide
 
--- ============================================================================
--- §5. Factivity Generalisations (consensus, observation-level)
--- ============================================================================
+/-! ### Factivity generalisations (observation-level) -/
 
-/-- All RE-canonical predicates are factive. [deal-2026] §3. -/
+/-- All RE-canonical predicates are factive. [deal-2026] §3, §7. -/
 theorem reCanonical_all_factive :
     reCanonical.all (·.factive) = true := by decide
 
-/-- The factive simplex-canonical predicates: exactly *cuukwe* 'know'.
-    Drift sentry rather than aggregate count — pins which verb is the
-    factive simplex-taker. -/
+/-- The factive simplex-canonical predicates: exactly *cuukwe* 'know'. -/
 theorem factive_simplex_membership :
     simplexCanonical.filter (·.factive) = [cuukwe] := by decide
 
-/-- The non-factive simplex-canonical predicates: exactly *neki* 'think'
-    and *hi* 'say/tell'. -/
+/-- The non-factive simplex-canonical predicates: exactly *neki* and
+    *hi*. -/
 theorem nonfactive_simplex_membership :
     simplexCanonical.filter (! ·.factive) = [neki, hi] := by decide
 
-/-- Crucially: factivity does NOT predict RE-canonical status.
-    *cuukwe* 'know' is factive but simplex-canonical — establishing that
-    factivity is necessary but not sufficient for RE morphosyntax in
-    Nez Perce. (Deal 2026's central dissociation.) -/
+/-- Factivity does not predict RE-canonical status: *cuukwe* 'know' is
+    factive but simplex-canonical ([deal-2026]'s central dissociation —
+    in Nez Perce factivity is necessary but not sufficient for RE
+    morphosyntax). -/
 theorem cuukwe_factive_but_simplex :
     cuukwe.factive = true ∧ cuukwe ∈ simplexCanonical := by
   refine ⟨rfl, ?_⟩
   decide
 
--- ============================================================================
--- §6. Relative Pronoun Paradigm
--- ============================================================================
+/-! ### Relative-pronoun paradigm
 
-/-! ### *yox̂/ko* paradigm — [deal-2016a], reproduced as
-[deal-2026] Table (22).
+The *yox̂/ko* paradigm from [deal-2016a], reproduced at [deal-2026] (22).
+Cells are indexed by `Core.UD.Case` (Nom/Erg/Acc) × `Core.UD.Number`. -/
 
-Cells are indexed by `Core.UD.Case` (Nom/Erg/Acc) × `Core.UD.Number`
-(Sing/Plur) — reusing the universally-shared UD substrate rather than
-inventing local enums. -/
-
-/-- A relative-pronoun cell from [deal-2026] Table (22). -/
+/-- A relative-pronoun cell from [deal-2026] (22). -/
 structure RelativePronoun where
   case : UD.Case
   number : UD.Number
@@ -302,20 +241,19 @@ def rp_erg_pl : RelativePronoun := ⟨.Erg, .Plur, ["konmam"]⟩
 def rp_acc_sg : RelativePronoun := ⟨.Acc, .Sing, ["konya"]⟩
 def rp_acc_pl : RelativePronoun := ⟨.Acc, .Plur, ["konmana", "yox̂mene"]⟩
 
-/-- The full [deal-2016a] paradigm: three cases × two numbers,
-    six cells total. -/
+/-- The full paradigm: three cases × two numbers, six cells. -/
 def relativePronounParadigm : List RelativePronoun :=
   [rp_nom_sg, rp_nom_pl, rp_erg_sg, rp_erg_pl, rp_acc_sg, rp_acc_pl]
 
-/-- Drift sentry: the paradigm covers exactly the Nom × Sing/Plur,
-    Erg × Sing/Plur, Acc × Sing/Plur cells. A failure here means a cell
-    has been added, removed, or its (case, number) pair edited. -/
+/-- Drift sentry: the paradigm covers exactly the Nom/Erg/Acc ×
+    Sing/Plur cells. -/
 theorem paradigm_membership :
     (relativePronounParadigm.map (λ p => (p.case, p.number))) =
       [(.Nom, .Sing), (.Nom, .Plur), (.Erg, .Sing), (.Erg, .Plur),
        (.Acc, .Sing), (.Acc, .Plur)] := by decide
 
-/-- The accusative-plural cell shows idiolectal variation: two attested forms. -/
+/-- The accusative-plural cell shows idiolectal variation: two attested
+    forms. -/
 theorem acc_pl_variants : rp_acc_pl.forms = ["konmana", "yox̂mene"] := rfl
 
 end NezPerce.ClausalEmbedding
