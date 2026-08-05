@@ -9,7 +9,6 @@ import Mathlib.Data.List.Basic
 import Mathlib.Logic.Equiv.Defs
 import Linglib.Core.Data.Fintype.Transfer
 import Linglib.Core.Data.List.EqOn
-import Linglib.Core.Data.List.Fold
 
 /-!
 # Mealy machines
@@ -213,8 +212,8 @@ def ofFlag : Mealy Bool α β where
 @[simp] theorem ofFlag_output : (ofFlag p out).output = out := rfl
 
 @[simp] theorem ofFlag_stateAfter (b : Bool) (xs : List α) :
-    (ofFlag p out).stateAfter b xs = (b || xs.any p) :=
-  List.foldl_or
+    (ofFlag p out).stateAfter b xs = (b || xs.any p) := by
+  induction xs generalizing b <;> simp [*, Bool.or_assoc]
 
 /-- Each coordinate of a flag machine sees the flag over its strict prefix. -/
 theorem getElem?_ofFlag_run (xs : List α) (i : ℕ) :
