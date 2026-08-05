@@ -2826,7 +2826,6 @@ import Linglib.Syntax.Category.Verb.Stem
 import Linglib.Syntax.Clause.Basic
 import Linglib.Syntax.Clause.Chaining
 import Linglib.Syntax.Clause.Context
-import Linglib.Syntax.Clause.Embedding
 import Linglib.Syntax.Comparative
 import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
 import Linglib.Syntax.ConstructionGrammar.Basic
