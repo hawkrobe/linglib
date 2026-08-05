@@ -67,7 +67,7 @@ flavored (InqML) or dependence-flavored (MDL).
 ## Implementation notes
 
 The standard inquisitive connective set is `{⊥, ∧, →, \\/}` with
-`¬φ := φ → ⊥`, `!φ := ¬¬φ` (declarative variant), and `?φ := φ \\/ ¬φ`
+`¬φ := φ → ⊥`, `!φ := ¬¬φ` (principal variant), and `?φ := φ \\/ ¬φ`
 (polar question) as standard abbreviations. We include `\\/` and `→`
 as primitives; `¬`, `!`, `?` can be added as helpers later when a
 consumer needs them.

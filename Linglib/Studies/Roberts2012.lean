@@ -416,16 +416,17 @@ theorem hilaryBagels_partiallyAnswers_q1 :
 
 /-! ### Relevance ((15)) -/
 
-/-- "Hilary ate bagels" as a single-alternative declarative issue. -/
+/-- The assertion "Hilary ate bagels": a declarative's q-alternative
+    set is the singleton of its content. -/
 def hilaryBagels_assertion : Question World :=
-  Question.declarative hilaryBagels
+  Question.principal hilaryBagels
 
 /-- "Hilary ate bagels" is relevant to move 1, "Who ate what?". -/
 theorem hilaryBagels_relevant_to_q1 :
     Relevant hilaryBagels_assertion {q_1} := by
   refine ⟨hilaryBagels, ?_, q_1, rfl, hilaryBagels_partiallyAnswers_q1⟩
-  show hilaryBagels ∈ alt (Question.declarative hilaryBagels)
-  rw [alt_declarative]
+  show hilaryBagels ∈ alt (Question.principal hilaryBagels)
+  rw [alt_principal]
   rfl
 
 /-- The question `q_a` is relevant to `q_1` under the assertion-clause
@@ -441,8 +442,8 @@ theorem qa_relevant_to_q1 : Relevant q_a {q_1} :=
 theorem hilaryBagels_relevant_to_strategy :
     Relevant hilaryBagels_assertion {q | q ∈ strat_1.values} := by
   refine ⟨hilaryBagels, ?_, q_1, ?_, hilaryBagels_partiallyAnswers_q1⟩
-  · show hilaryBagels ∈ alt (Question.declarative hilaryBagels)
-    rw [alt_declarative]; rfl
+  · show hilaryBagels ∈ alt (Question.principal hilaryBagels)
+    rw [alt_principal]; rfl
   · simp [strat_1, strat_a, strat_b]
 
 end Roberts2012
