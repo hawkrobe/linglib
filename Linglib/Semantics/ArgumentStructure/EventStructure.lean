@@ -11,10 +11,12 @@ argument realization) filled by **roots** (idiosyncratic content).
 Templates compose via CAUSE; which sub-predicate determines argument
 realization yields different syntactic frames.
 
-The four templates here are [rappaport-hovav-levin-1998]'s; the
-enriched two-predicate event structure for the wiping-verbs class
-([rappaport-hovav-levin-2024]) is paper-anchored at
-`Studies/RappaportHovavLevin2024.lean`.
+The templates here are [rappaport-hovav-levin-1998]'s, with their two
+accomplishment variants — `[[x ACT⟨MANNER⟩] CAUSE [BECOME [y ⟨STATE⟩]]]`
+and `[x CAUSE [BECOME [y ⟨STATE⟩]]]` — collapsed into one
+`.accomplishment` case. The enriched two-predicate event structure for
+the wiping-verbs class ([rappaport-hovav-levin-2024]) is paper-anchored
+at `Studies/RappaportHovavLevin2024.lean`.
 
 ## Bridges
 
@@ -30,10 +32,11 @@ open Features
 
 /-! ### Event structure templates -/
 
-/-- Canonical event structure templates per [rappaport-hovav-levin-1998]. -/
+/-- Event structure templates per [rappaport-hovav-levin-1998]'s basic
+inventory, with the two accomplishment variants collapsed. -/
 inductive Template where
   | state          -- [x ⟨STATE⟩]
-  | activity       -- [x ACT]
+  | activity       -- [x ACT⟨MANNER⟩]
   | achievement    -- [BECOME [x ⟨STATE⟩]]
   | accomplishment -- [[x ACT] CAUSE [BECOME [y ⟨STATE⟩]]]
   deriving DecidableEq, Repr

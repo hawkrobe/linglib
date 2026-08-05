@@ -87,9 +87,10 @@ def causedMotion : ArgStructureConstruction :=
 /-- Resultative construction: [Subj V Obj Pred].
 "X CAUSES Y to BECOME Z" (e.g., "She hammered the metal flat").
 Contributes CoS + causation: manner verbs that lexicalize neither
-acquire both from the construction ([rappaport-hovav-levin-1998];
-[levin-2026] §3). This is what enables the causative alternation
-for verbs like *push* that lack it in isolation. -/
+acquire both — [rappaport-hovav-levin-1998]'s Template Augmentation,
+cast lexically there (their appendix maps it onto the constructional
+approach); [levin-2026] §3. This is what enables the causative
+alternation for verbs like *push* that lack it in isolation. -/
 def resultative : ArgStructureConstruction :=
   { construction :=
       { name := "Resultative"

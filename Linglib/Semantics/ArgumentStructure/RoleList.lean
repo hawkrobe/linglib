@@ -180,7 +180,9 @@ def wipeManner : RoleList where
   objectProfile  := some contactObject
 
 /-- Instrument subclass of the wipe verbs (Levin 10.4.2: *brush, comb, mop,
-    vacuum*; [rappaport-hovav-levin-1998]'s *sweep with a broom*): instrument
+    vacuum*; [rappaport-hovav-levin-1998]'s instrument constants — their
+    canonical realization rule pairs *brush, hammer, saw, shovel* with the
+    activity template): instrument
     lexicalization forces an obligatory volitional agent (V+S+C+M+IE).
     Not in the class map — `LevinClass.roleList .wipe` gives the manner
     subclass default; instrument-sense entries override per verb. -/
