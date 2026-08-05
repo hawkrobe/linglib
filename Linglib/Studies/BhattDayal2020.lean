@@ -20,8 +20,8 @@ restriction models the (bias-introducing) Mandarin particle *nandao* in
 
 namespace BhattDayal2020
 
-open Question (IsSingleton SingletonQuestion declarative polar which
-  isSingleton_declarative not_isSingleton_polar_of_nontrivial
+open Question (IsSingleton SingletonQuestion principal polar which
+  isSingleton_principal not_isSingleton_polar_of_nontrivial
   not_isSingleton_of_two_alternatives alt_which_of_antichain)
 open HindiUrdu.Particles (kya)
 
@@ -34,16 +34,16 @@ sister question `Q` has a singleton alternative set, and then the identity
 on `Q`. The presupposition is `Question.IsSingleton`; the felicitous sister
 is the subtype `SingletonQuestion W`. In the paper a polar question denotes
 a singleton (eq. 22b: ⟦did John leave⟧ = {John left}) — the substrate's
-one-cell `declarative p`, not its two-cell Hamblin `polar`. -/
+one-cell `principal p`, not its two-cell Hamblin `polar`. -/
 
 /-- Felicitous case: a polar question in the paper's sense is a singleton. -/
 theorem kya_felicitous_singleton_polar (p : Set W) :
-    IsSingleton (declarative (W := W) p) :=
-  isSingleton_declarative p
+    IsSingleton (principal (W := W) p) :=
+  isSingleton_principal p
 
 /-- Defined case: on a felicitous sister, kya: is the identity. -/
 theorem kya_interp (p : Set W) :
-    (SingletonQuestion.ofDeclarative (W := W) p).issue = declarative p :=
+    (SingletonQuestion.ofDeclarative (W := W) p).issue = principal p :=
   SingletonQuestion.ofDeclarative_issue p
 
 /-- The headline restriction (ex. 4): a wh-question with two distinct answer

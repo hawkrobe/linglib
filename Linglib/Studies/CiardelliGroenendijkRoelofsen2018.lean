@@ -43,8 +43,8 @@ already implements the paper).
 | Def 2.15 Informative / Inquisitive             | `isInformative` / `isInquisitive` |
 | Def 2.16 Alternatives in a proposition         | `Question.alt`              |
 | Fact 2.17 Inquisitive iff multi-alts (finite)  | (specialisation of Fact 2.8)     |
-| Fact 2.18 Non-inquisitive ↔ `info(P) ∈ P`      | `isDeclarative_iff_not_isInquisitive` (substrate uses `isDeclarative` for "non-inquisitive") |
-| Fact 2.19 Non-inquisitive characterizations    | `isDeclarative_iff_eq_declarative_info` |
+| Fact 2.18 Non-inquisitive ↔ `info(P) ∈ P`      | `isPrincipal_iff_not_isInquisitive` (substrate uses `isPrincipal` for "non-inquisitive") |
+| Fact 2.19 Non-inquisitive characterizations    | `isPrincipal_iff_eq_principal_info` |
 | Def 2.20–2.22 Entailment `P ⊨ Q ↔ P ⊆ Q`       | substrate's `≤` (`le_def`)       |
 | Fact 2.23 Entailment as support preservation   | by `le_def`                      |
 | Def 2.24 Tautology `⊤ := ℘(W)`, contradiction `⊥ := {∅}` | `top` / `bot`           |
@@ -77,7 +77,7 @@ already implements the paper).
 |-----|-----|
 | §5.1 Polar `?Mab := Mab ∨ ¬Mab`                | `Question.polar`            |
 | §5.2 Alternative `Mab ∨ Mac`                   | `declarative Mab ⊔ declarative Mac` |
-| §5.3 Open disjunctive `?(Mab ∨ Mac)`           | `nonInfo (declarative Mab ⊔ declarative Mac)` |
+| §5.3 Open disjunctive `?(Mab ∨ Mac)`           | `nonInfo (principal Mab ⊔ declarative Mac)` |
 | §5.4.1 Mention-all wh `∀x?Pax`                 | (substrate's [karttunen-1977] `which` modulo `?`) |
 | §5.4.2 Mention-some wh `∃xLax`                 | `Question.which` (Hamblin disjunction)   |
 | §5.5.1 Conjoined `Q ∧ Q'`                      | `Q ⊓ Q'` (substrate's `inf`)     |
@@ -130,15 +130,15 @@ theorem truth_iff_singleton_support (P : Question W) (w : W) :
 /-! ### §2.4.2 Informative and inquisitive propositions
 
 [ciardelli-groenendijk-roelofsen-2018] Fact 2.18: substrate has
-`isDeclarative` for "non-inquisitive". Re-state Fact 2.18's three
+`isPrincipal` for "non-inquisitive". Re-state Fact 2.18's three
 disjuncts under substrate names. -/
 
 /-- [ciardelli-groenendijk-roelofsen-2018] Fact 2.18 (i):
     non-inquisitive iff `info(P) ∈ P`. The substrate's
-    `isDeclarative` IS this condition by definition. -/
+    `isPrincipal` IS this condition by definition. -/
 theorem CGR_2_18_non_inquisitive_iff (P : Question W) :
-    ¬ P.isInquisitive ↔ P.isDeclarative :=
-  (isDeclarative_iff_not_isInquisitive P).symm
+    ¬ P.isInquisitive ↔ P.isPrincipal :=
+  (isPrincipal_iff_not_isInquisitive P).symm
 
 /-- [ciardelli-groenendijk-roelofsen-2018] Fact 2.18 (ii):
     non-informative iff `info(P) = W`. The substrate's `isInformative`
@@ -164,30 +164,30 @@ theorem CGR_2_18_tautology_iff (P : Question W) :
 
 [ciardelli-groenendijk-roelofsen-2018] Fact 2.19 lists four
 equivalent characterizations of non-inquisitivity. The substrate has
-the `isDeclarative_iff_eq_declarative_info` form (corresponding to
+the `isPrincipal_iff_eq_principal_info` form (corresponding to
 characterization 2 in the chain). The other directions follow. -/
 
 /-- [ciardelli-groenendijk-roelofsen-2018] Fact 2.19 (1↔2):
     non-inquisitive iff `P = ℘(info(P))` (the principal-ideal
     characterization). The substrate-level
-    `isDeclarative_iff_eq_declarative_info` IS this. -/
-theorem CGR_2_19_eq_declarative_info (P : Question W) :
-    P.isDeclarative ↔ P = declarative P.info :=
-  isDeclarative_iff_eq_declarative_info P
+    `isPrincipal_iff_eq_principal_info` IS this. -/
+theorem CGR_2_19_eq_principal_info (P : Question W) :
+    P.isPrincipal ↔ P = principal P.info :=
+  isPrincipal_iff_eq_principal_info P
 
 /-- [ciardelli-groenendijk-roelofsen-2018] Fact 2.19 (4):
     non-inquisitive iff `P` is supported by `s` exactly when `P` is
     true at every world in `s` (truth-conditional support). Direct
     consequence of `truth_iff_singleton_support` + downward closure. -/
 theorem CGR_2_19_truth_conditional (P : Question W)
-    (h : P.isDeclarative) (s : Set W) :
+    (h : P.isPrincipal) (s : Set W) :
     s ∈ P ↔ ∀ w ∈ s, w ∈ info P := by
-  have heq := (isDeclarative_iff_eq_declarative_info P).mp h
+  have heq := (isPrincipal_iff_eq_principal_info P).mp h
   constructor
   · intro hs w hw
     exact ⟨s, hs, hw⟩
   · intro hAll
-    rw [heq, mem_declarative]
+    rw [heq, mem_principal]
     intro w hw
     exact hAll w hw
 
@@ -211,8 +211,8 @@ theorem CGR_2_35_update_eq_inf (C P : Question W) :
     non-inquisitive, with informative content equal to the standard
     intersection of the inputs' informative contents. -/
 theorem CGR_2_36_update_non_inquisitive
-    (C P : Question W) (hC : C.isDeclarative) (hP : P.isDeclarative) :
-    (C ⊓ P).isDeclarative ∧ (C ⊓ P).info = C.info ∩ P.info := by
+    (C P : Question W) (hC : C.isPrincipal) (hP : P.isPrincipal) :
+    (C ⊓ P).isPrincipal ∧ (C ⊓ P).info = C.info ∩ P.info := by
   -- Step 1: info commutes with meet on declaratives.
   have hInfo : (C ⊓ P).info = C.info ∩ P.info := by
     apply le_antisymm
@@ -256,16 +256,16 @@ theorem CGR_3_2_join (S : Set (Question W)) (s : Set W) :
 
 /-- [ciardelli-groenendijk-roelofsen-2018] Fact 3.5 (Absolute
     pseudo-complement, alternative characterization): `P* = ℘(¬info(P))`.
-    The substrate's `compl_eq` IS this — `Pᶜ = declarative (info P)ᶜ`,
-    and `declarative q = ℘(q)` (principal ideal). -/
+    The substrate's `compl_eq` IS this — `Pᶜ = principal (info P)ᶜ`,
+    and `principal q = ℘(q)` (principal ideal). -/
 theorem CGR_3_5_pseudo_complement (P : Question W) :
-    Pᶜ = declarative (P.info)ᶜ := compl_eq P
+    Pᶜ = principal (P.info)ᶜ := compl_eq P
 
 /-- [ciardelli-groenendijk-roelofsen-2018] Def 3.13 (Projection
     operators): `!P := ℘(info(P))` is the substrate's `proj`; `?P` is
     `nonInfo P := P ⊔ Pᶜ`. -/
 theorem CGR_3_13_proj_eq (P : Question W) :
-    P.proj = declarative P.info := rfl
+    P.proj = principal P.info := rfl
 
 theorem CGR_3_13_nonInfo_eq (P : Question W) :
     nonInfo P = P ⊔ Pᶜ := nonInfo_eq_sup_compl P
@@ -293,11 +293,11 @@ the proposition `Mab` and its complement. The substrate primitive
 
 /-- [ciardelli-groenendijk-roelofsen-2018] §5.1: substrate
     identification of the polar question. The substrate's `polar p`
-    expands to `declarative p ⊔ declarative pᶜ`, matching CGR's
-    definition `?p := p ∨ ¬p` since on declarative propositions `¬p`
-    reduces to `declarative pᶜ`. -/
+    expands to `principal p ⊔ principal pᶜ`, matching CGR's
+    definition `?p := p ∨ ¬p` since on principal propositions `¬p`
+    reduces to `principal pᶜ`. -/
 theorem CGR_5_1_polar_eq (p : Set W) :
-    polar p = declarative p ⊔ declarative pᶜ := polar_eq_sup p
+    polar p = principal p ⊔ principal pᶜ := polar_eq_sup p
 
 /-! ### §5.4 Wh-questions
 

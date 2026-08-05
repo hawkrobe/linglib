@@ -418,9 +418,10 @@ Assertion-clause relevance throughout; Roberts' clause for interrogative
 moves is strategy membership, which `qa_relevant_to_q1` proxies by
 partial answerhood. -/
 
-/-- "Hilary ate bagels" as a single-alternative declarative issue. -/
+/-- The assertion "Hilary ate bagels": a declarative's q-alternative
+    set is the singleton of its content. -/
 def hilaryBagels_assertion : Question World :=
-  Question.declarative hilaryBagels
+  Question.principal hilaryBagels
 
 /-- "Hilary ate bagels" is relevant to move 1, "Who ate what?". -/
 theorem hilaryBagels_relevant_to_q1 :
