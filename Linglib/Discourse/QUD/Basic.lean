@@ -16,7 +16,10 @@ move's denotation to a set of questions (`Relevant`, built from the
 assertion clause of her Relevance (15)). [ginzburg-2012]'s KoS models
 the same coordinate as a partially ordered set with its own update
 rules; that structure lives with the gameboard in
-`Discourse/Gameboard/`.
+`Discourse/Gameboard/`. [beaver-roberts-simons-tonhauser-2017] is the
+modern survey statement of the framework; [riester-2019] gives explicit
+reconstruction rules and well-formedness constraints for QUD trees over
+corpus data.
 
 ## Main definitions
 
