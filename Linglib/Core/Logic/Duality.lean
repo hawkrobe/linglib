@@ -1,4 +1,3 @@
-import Linglib.Core.Data.List.Fold
 import Linglib.Core.Logic.Trivalent.Basic
 import Mathlib.Data.Finset.Lattice.Fold
 
@@ -158,20 +157,30 @@ theorem aggregate_replicate_indet (d : ProjectionType) (n : Nat) (hn : n > 0) :
       change (List.replicate k Trivalent.indet).foldl (· ⊔ ·) Trivalent.indet = Trivalent.indet
       exact foldl_idem_const (· ⊔ ·) Trivalent.indet (sup_idem _) k
 
+private theorem foldl_or_eq_any (bs : List Bool) (b : Bool) :
+    bs.foldl (· || ·) b = (b || bs.any id) := by
+  induction bs generalizing b <;> simp [*, Bool.or_assoc]
+
+private theorem foldl_and_eq_all (bs : List Bool) (b : Bool) :
+    bs.foldl (· && ·) b = (b && bs.all id) := by
+  induction bs generalizing b <;> simp [*, Bool.and_assoc]
+
 /-- Existential aggregation through `Trivalent.ofBool` reduces to Boolean
     disjunction. Witness of the lattice-homomorphism property of
     `Trivalent.ofBoolHom` propagating through fold. -/
 theorem aggregate_existential_map_ofBool (bs : List Bool) :
     aggregate .disjunctive (bs.map Trivalent.ofBool) = Trivalent.ofBool (bs.any id) := by
   show (bs.map Trivalent.ofBool).foldl (· ⊔ ·) (Trivalent.ofBool Bool.false) = _
-  exact (List.foldl_map_hom Trivalent.ofBool_sup).trans (congrArg _ List.foldl_or)
+  exact (List.foldl_map_hom Trivalent.ofBool_sup).trans
+    (congrArg _ (foldl_or_eq_any bs Bool.false))
 
 /-- Universal aggregation through `Trivalent.ofBool` reduces to Boolean
     conjunction. -/
 theorem aggregate_universal_map_ofBool (bs : List Bool) :
     aggregate .conjunctive (bs.map Trivalent.ofBool) = Trivalent.ofBool (bs.all id) := by
   show (bs.map Trivalent.ofBool).foldl (· ⊓ ·) (Trivalent.ofBool Bool.true) = _
-  exact (List.foldl_map_hom Trivalent.ofBool_inf).trans (congrArg _ List.foldl_and)
+  exact (List.foldl_map_hom Trivalent.ofBool_inf).trans
+    (congrArg _ (foldl_and_eq_all bs Bool.true))
 
 /-- Aggregation through `Trivalent.ofBool` never produces `.indet` —
     Boolean inputs leave the gap-free sublattice `{⊥, ⊤}` invariant.
