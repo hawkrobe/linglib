@@ -87,14 +87,15 @@ theorem subject_oriented_count :
     (allCompounds.filter (·.orientation == .subjectOriented)).length = 4 := by
   native_decide
 
-/-- Contrast with English: the English data in `Data.lean` uses fake
-    reflexives for subject-result patterns. All fake reflexives are
-    grammatical, but require the reflexive pronoun. -/
+/-- Contrast with English: the English subject-result pattern uses the
+    fake reflexive — grammatical with the reflexive pronoun, bad without
+    it or with a non-reflexive NP ([goldberg-jackendoff-2004] ex. 9a and
+    its starred variants). -/
 theorem english_subject_result_requires_reflexive :
-    (GoldbergJackendoff2004.allExamples.filter
-      (·.resType == .fakeReflexive)).all
-      (·.judgment == .ok) = true := by
-  native_decide
+    GoldbergJackendoff2004.yell_hoarse.judgment == .ok ∧
+    GoldbergJackendoff2004.yell_ourselves.judgment == .unacceptable ∧
+    GoldbergJackendoff2004.yell_harry_hoarse.judgment == .unacceptable := by
+  refine ⟨?_, ?_, ?_⟩ <;> decide
 
 -- ════════════════════════════════════════════════════
 -- § 2. V-V vs V-de: Syntactic Opacity
