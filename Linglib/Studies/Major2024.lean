@@ -15,7 +15,7 @@ subjects (his 49b) and "are never internal arguments" (§3.2). The
 paper's methodological point — "taking the morphology at face value
 (i.e. dep is 'say' + CNV)" (§1) — is rendered literally here:
 `mergeMode` reads a morpheme's merge behavior off its recorded
-morphology (`verbForm`, `noonanType`), and the ban is derived, not
+morphology (`verbForm`, `coding`), and the ban is derived, not
 stipulated per position. The Washo parallel is [bochnak-hanink-2021]'s
 modifier analysis of non-factive embedding, which Major extends with
 the verb 'say' inside the linker.
@@ -117,11 +117,11 @@ instance (m : MergeMode) (pos : ClausePosition) : Decidable (m.admits pos) :=
 /-- The merge mode of a clause-forming morpheme, read off its recorded
 morphology — the paper's "morphology at face value" (§1): a converbial
 suffix (`verbForm = .Conv`) builds adjuncts; a nominalizing
-clause-typer (`noonanType = .nominalized`) builds arguments. `none`
+clause-typer (`coding = .nominalized`) builds arguments. `none`
 for morphemes heading no clause of their own. -/
 def mergeMode (c : Complementizer) : Option MergeMode :=
   if c.verbForm = some .Conv then some .converbAdjunction
-  else if c.noonanType = some .nominalized then some .nominalArgument
+  else if c.coding = some .nominalized then some .nominalArgument
   else none
 
 /-- A clause headed by `c` is licensed in `pos` iff `c`'s merge mode

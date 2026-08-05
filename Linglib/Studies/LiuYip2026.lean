@@ -472,7 +472,7 @@ have Studies-level Chinese formalizations they currently lack):
     proposition = CP, situation = TP, event = vP. Replaces the retired
     projection onto the deleted surface enum, which forced
     situation/event onto an Ā-dependency cell the ICH does not claim.
-    ([deal-2026]'s shell/Ā axes live in `Syntax/Clause/Complementation`;
+    ([deal-2026]'s shell/Ā axes live in `Studies/Deal2026.lean`;
     the ICH makes no claim on either axis, so no bridge is stated.) -/
 def ComplementClass.size : ComplementClass → ComplementSize
   | .proposition => .cP

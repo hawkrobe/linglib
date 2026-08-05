@@ -61,7 +61,7 @@ subjects (his 49a) and factive complements (his 61a). -/
 def lik : Complementizer where
   form := "-lik"
   position := some .postfixed
-  noonanType := some .nominalized
+  coding := some .nominalized
 
 /-- The clause-linking morphemes at issue in [major-2024]: the two
 pieces of the say-complex plus the rival argument strategy's typer.

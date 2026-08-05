@@ -89,8 +89,8 @@ structure Complementizer where
   script : Option String := none
   /-- Morphological attachment. -/
   position : Option Morphology.FormativePosition := none
-  /-- [noonan-2007] type of the clause this morpheme types. -/
-  noonanType : Option NoonanCompType := none
+  /-- [noonan-2007] coding of the clause this morpheme types. -/
+  coding : Option Complement.Coding := none
   /-- Surface clause form typed. -/
   clauseForm : Option Features.ClauseForm := none
   /-- Verb form derived on the host (UD). -/

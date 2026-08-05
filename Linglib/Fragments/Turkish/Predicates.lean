@@ -61,7 +61,6 @@ def merakEt : TurkishVerbEntry where
   frames := [Frame.question]
   passivizable := false
   opaqueContext := true
-  takesQuestionBase := true
 
 /-- "endişelen-" — worry (Class 1: non-C-distributive). -/
 def endiselen : TurkishVerbEntry where

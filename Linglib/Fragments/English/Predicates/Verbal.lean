@@ -304,12 +304,11 @@ def know : VerbEntry where
   formPast := "knew"
   formPastPart := "known"
   formPresPart := "knowing"
-  frames := [Frame.finiteClause]
+  frames := [Frame.finiteClause, Frame.question]
   vendlerClass := some .state
   passivizable := false
   presupType := some .softTrigger
   projectionBehavior := some .hole
-  takesQuestionBase := true
   complementSig := some .mono
   attitude := some (.doxastic .veridical)
 
@@ -340,12 +339,11 @@ def realize : VerbEntry := .mkRegular {
 /-- "discover" — semifactive, weaker projection -/
 def discover : VerbEntry := .mkRegular {
   form := "discover"
-  frames := [Frame.finiteClause]
+  frames := [Frame.finiteClause, Frame.question]
   vendlerClass := some .achievement
   passivizable := false
   presupType := some .softTrigger
   projectionBehavior := some .hole
-  takesQuestionBase := true
   attitude := some (.doxastic .veridical) }
 
 /-- "notice" — semifactive -/
@@ -1522,7 +1520,6 @@ def wonder : VerbEntry := .mkRegular {
   form := "wonder"
   frames := [Frame.question]
   vendlerClass := some .state
-  takesQuestionBase := true
   opaqueContext := true }
 
 /-- "ask" — embeds questions -/
@@ -1530,15 +1527,13 @@ def ask : VerbEntry := .mkRegular {
   form := "ask"
   speechActVerb := true
   frames := [Frame.question]
-  vendlerClass := some .achievement
-  takesQuestionBase := true }
+  vendlerClass := some .achievement }
 
 /-- "investigate" — rogative, embeds interrogatives only -/
 def investigate : VerbEntry := .mkRegular {
   form := "investigate"
   frames := [Frame.question]
   vendlerClass := some .activity
-  takesQuestionBase := true
   levinClass := some .search }
 
 /-- "depend_on" — rogative, embeds interrogatives only ([dayal-2025]: rogativeCP) -/
@@ -1550,17 +1545,15 @@ def depend_on : VerbEntry where
   formPresPart := "depending on"
   frames := [Frame.question]
   vendlerClass := some .state
-  takesQuestionBase := true
 
 /-- "remember" in factive/question-embedding sense. -/
 def remember_rog : VerbEntry := .mkRegular {
   form := "remember"
-  frames := [Frame.finiteClause]
+  frames := [Frame.finiteClause, Frame.question]
   vendlerClass := some .state
   passivizable := false
   presupType := some .softTrigger
   attitude := some (.doxastic .veridical)
-  takesQuestionBase := true
   senseTag := .rogative }
 
 /-- "forget" in factive/question-embedding sense. -/
@@ -1570,12 +1563,11 @@ def forget_rog : VerbEntry where
   formPast := "forgot"
   formPastPart := "forgotten"
   formPresPart := "forgetting"
-  frames := [Frame.finiteClause]
+  frames := [Frame.finiteClause, Frame.question]
   vendlerClass := some .state
   passivizable := false
   presupType := some .softTrigger
   attitude := some (.doxastic .veridical)
-  takesQuestionBase := true
   senseTag := .rogative
 
 -- ════════════════════════════════════════════════════

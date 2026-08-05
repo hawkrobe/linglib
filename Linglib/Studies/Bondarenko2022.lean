@@ -493,10 +493,7 @@ and the say-root *gɘ* realizes neither. -/
 theorem hanaxa_frames_realized :
     hanaxa.realizes zha ∧
     hanaxa.realizes aasha ∧
-    ¬ hanaxa.realizes ge :=
-  ⟨⟨Frame.finiteClause, .head _, _, .head _, .indicative, rfl, rfl⟩,
-    ⟨nominalizedFrame, .tail _ (.head _), _, .head _, .nominalized, rfl, rfl⟩,
-    fun ⟨_, _, _, _, _, _, h⟩ => nomatch h⟩
+    ¬ hanaxa.realizes ge := by decide
 
 /-- *hanaxa* think~remember (§4.4.3): the attitude flips with the frame —
     nonveridical/opaque on the bare CP, veridical on the nominalized

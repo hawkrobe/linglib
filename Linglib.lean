@@ -712,6 +712,7 @@ import Linglib.Features.WordOrder
 import Linglib.Fragments.ASL.Classifiers
 import Linglib.Fragments.ASL.Height
 import Linglib.Fragments.Abkhaz.Evidentiality
+import Linglib.Fragments.Adyghe.Clause
 import Linglib.Fragments.Akan.Definiteness
 import Linglib.Fragments.Akan.Determiners
 import Linglib.Fragments.Akan.Phonology
@@ -732,6 +733,7 @@ import Linglib.Fragments.Basque.Agreement
 import Linglib.Fragments.Basque.Postsyntax
 import Linglib.Fragments.Basque.Pronouns
 import Linglib.Fragments.Basque.WordOrder
+import Linglib.Fragments.Bulgarian.Clause
 import Linglib.Fragments.Burmese.Negation
 import Linglib.Fragments.Buryat.Complementizers
 import Linglib.Fragments.Cantonese.Aspect
@@ -1058,7 +1060,8 @@ import Linglib.Fragments.Mongolian.Case
 import Linglib.Fragments.Mwaghavul.Basic
 import Linglib.Fragments.Navajo.Comparison
 import Linglib.Fragments.Navajo.Relativization
-import Linglib.Fragments.NezPerce.ClausalEmbedding
+import Linglib.Fragments.Ndebele.Clause
+import Linglib.Fragments.NezPerce.Clause
 import Linglib.Fragments.NezPerce.Modals
 import Linglib.Fragments.Niuean.Modals
 import Linglib.Fragments.Norwegian.V2
@@ -1228,6 +1231,7 @@ import Linglib.Fragments.Urdu.CausativeSystem
 import Linglib.Fragments.Uyghur.Complementizers
 import Linglib.Fragments.Wambaya.Reciprocals
 import Linglib.Fragments.Wan.Reciprocals
+import Linglib.Fragments.Washo.Clause
 import Linglib.Fragments.Washo.Modals
 import Linglib.Fragments.Welsh.Adposition
 import Linglib.Fragments.Welsh.Relativization

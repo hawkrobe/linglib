@@ -35,8 +35,8 @@ Five bridges connecting CTPClass to existing infrastructure:
 1. CTPClass ↔ VerbEntry (Verbal.lean) — derive CTP class from verb features
 2. CTPClass ↔ SelectionClass (LeftPeriphery.lean) — map CTP to question embedding
 3. CTPClass ↔ Selector (Mood/Defs.lean) — map CTP to mood selection
-4. ComplementType ↔ NoonanCompType — via the substrate adapter
-   `ComplementType.toNoonan` (`Syntax/Clause/Complementation.lean`)
+4. ComplementType ↔ Complement.Coding — via the substrate adapter
+   `ComplementType.toCoding` (`Syntax/Clause/Complementation.lean`)
 5. VerbEntry → Selector — derive mood selection from verb features
 
 -/
@@ -60,7 +60,7 @@ open Mood
 theorem equi_requires_reduced :
     ∀ d ∈ all,
       d.hasEquiDeletion = true →
-      d.compTypes.any NoonanCompType.isReduced = true := by decide
+      d.codings.any Complement.Coding.isReduced = true := by decide
 
 -- ============================================================================
 -- G3: Negative raising data (fills a gap in linglib)
@@ -84,7 +84,7 @@ theorem knowledge_no_negative_raising :
 /-- Does some row of this language's list attest an indicative complement
     for CTP class `cls`? -/
 def hasIndicativeFor (rows : List Datum) (cls : CTPClass) : Bool :=
-  rows.any fun d => d.ctpClass == cls && d.compTypes.any (· == .indicative)
+  rows.any fun d => d.ctpClass == cls && d.codings.any (· == .indicative)
 
 /-- [noonan-2007] §2.4: any sampled language using indicative with
     desideratives also uses it with propositional attitudes.
@@ -350,21 +350,22 @@ theorem irrealis_not_indicative :
   cases c <;> simp_all [ctpRealityStatus, ctpToSelector]
 
 -- ============================================================================
--- D. Bridge 4: English ComplementType ↔ NoonanCompType
+-- D. Bridge 4: English ComplementType ↔ Complement.Coding
 -- ============================================================================
 
 /-! ## D1. Map linglib's English-specific complement types to Noonan's
 typological categories
 
-The adapter itself is substrate: `ComplementType.toNoonan` in
-`Syntax/Clause/Complementation.lean`. The clausal-coverage check stays here. -/
+The adapter itself is substrate: `ComplementType.toCoding` in
+`Syntax/Clause/Complementation.lean`. The coverage check stays here:
+the coded clausal cells map to Noonan types; small clauses and embedded
+questions are outside his coding inventory (`toCoding` is `none`). -/
 
-/-- Every English verb that takes a clausal complement maps to a Noonan type. -/
+/-- The clausal complements Noonan's inventory covers all map to a coding. -/
 theorem clausal_complements_have_noonan_type :
-    ComplementType.toNoonan .finiteClause ≠ none ∧
-    ComplementType.toNoonan .infinitival ≠ none ∧
-    ComplementType.toNoonan .gerund ≠ none ∧
-    ComplementType.toNoonan .smallClause ≠ none := by decide
+    ComplementType.toCoding .finiteClause ≠ none ∧
+    ComplementType.toCoding .infinitival ≠ none ∧
+    ComplementType.toCoding .gerund ≠ none := by decide
 
 -- ============================================================================
 -- E. Gap fix: VerbEntry → Selector (derived function)

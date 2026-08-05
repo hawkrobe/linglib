@@ -32,7 +32,7 @@ into facet structures under the `Verb` namespace — `Verb.ArgStructure`,
 language fragments extend `Verb` with their own inflectional paradigms.
 Complement selection is a list of typed `Frame`s
 (`Syntax/Clause/Frame.lean`); frame-conditioned
-attitude/opacity/control lives on `Verb.Reading` rows; the legacy flat
+attitude/opacity/control lives on `Verb.Reading` rows; the flat
 readers (`v.complementType`, `v.controlType`, …) are derived accessors
 over `frames`/`readings`.
 
@@ -163,7 +163,7 @@ namespace Verb
     proto-role entailments, voice, and implicit arguments. -/
 structure ArgStructure where
   /-- Complement frames, citation frame first. `[]` for intransitives.
-      The legacy `ComplementType` cells are the `Frame.np`,
+      The flat `ComplementType` cells are the `Frame.np`,
       `Frame.finiteClause`, … smart constructors
       (`Syntax/Clause/Frame.lean`). -/
   frames : List Frame
@@ -264,8 +264,6 @@ structure Attitude where
   /-- Frame-conditioned readings ([bondarenko-2022] §4.4.3): per-frame
       attitude/opacity overrides and control, keyed to `frames` entries. -/
   readings : List Reading := []
-  /-- For non-preferential question-embedding verbs (know, wonder, ask) -/
-  takesQuestionBase : Bool := false
   /-- Entailment signature of the complement position.
       Classifies this verb's monotonicity w.r.t. its clausal complement.
       `.mono` = upward monotone: the report is closed under entailment of
@@ -317,15 +315,18 @@ end
 
 /-! ### Frame accessors
 
-Flat readers over `Verb.frames`/`Verb.readings`, preserving the legacy
+Flat readers over `Verb.frames`/`Verb.readings`, preserving the flat
 enum-based call syntax: the citation frame's complement/control type and
 the alternate frame's, when present. -/
 
-/-- The citation (first) frame's legacy `ComplementType` cell. -/
+/-- The citation (first) frame's flat `ComplementType` cell. -/
 def Verb.complementType (v : Verb) : ComplementType :=
   (v.frames.head?.bind Frame.toComplementType).getD .none
 
-/-- The alternate (second) frame's legacy `ComplementType` cell. -/
+/-- The alternate (second) frame's flat `ComplementType` cell. A second
+    frame richer than any enum cell reads as `none` — Buryat *hanaxa*'s
+    genitive-subject nominalized frame has `altComplementType = none`
+    despite a recorded second frame. -/
 def Verb.altComplementType (v : Verb) : Option ComplementType :=
   v.frames[1]?.bind Frame.toComplementType
 
@@ -350,9 +351,18 @@ def Verb.readingsWF (v : Verb) : Prop :=
   ∀ r ∈ v.readings, r.frame ∈ v.frames
 
 /-- All [noonan-2007] codings across the verb's frames. -/
-def Verb.codings (v : Verb) : List NoonanCompType :=
+def Verb.codings (v : Verb) : List Complement.Coding :=
   v.frames.flatMap Frame.codings
 
 /-- Some frame of the verb records clause form `cf`. -/
 def Verb.takesClauseForm (v : Verb) (cf : Features.ClauseForm) : Prop :=
   ∃ fr ∈ v.frames, fr.hasClauseForm cf
+
+instance (v : Verb) (cf : Features.ClauseForm) :
+    Decidable (v.takesClauseForm cf) :=
+  inferInstanceAs (Decidable (∃ fr ∈ v.frames, _))
+
+/-- The verb records an embedded-question frame (responsives and
+    rogatives: know, wonder, ask). Derived from `frames`. -/
+def Verb.takesQuestionBase (v : Verb) : Bool :=
+  decide (v.takesClauseForm .embeddedQuestion)

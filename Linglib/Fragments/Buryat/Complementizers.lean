@@ -50,7 +50,7 @@ participle — two axes, two fields. -/
 def aasha : Complementizer where
   form := "-Aːša"
   position := some .postfixed
-  noonanType := some .nominalized
+  coding := some .nominalized
   verbForm := some .Part
   licenser := some .nominal
 
@@ -59,7 +59,7 @@ verbs, also in analytical verb forms and sentential adjuncts (ex. 30). -/
 def zha : Complementizer where
   form := "-žA"
   position := some .postfixed
-  noonanType := some .indicative
+  coding := some .indicative
   verbForm := some .Conv
   licenser := some .verbal
 
@@ -98,9 +98,8 @@ def hanaxa : Verb where
 questions (ex. 3). -/
 def medexe : Verb where
   form := "mɘdɘxɘ"
-  frames := [Frame.finiteClause, Frame.gerund]
+  frames := [Frame.finiteClause, Frame.gerund, Frame.question]
   attitude := some (.doxastic .veridical)
-  takesQuestionBase := true
 
 /-- *xɘlɘxɘ* 'say' — non-factive with bare CPs; nominalized complements
 are existence-entailing (ex. 51; speaker variation per fn. 30). -/

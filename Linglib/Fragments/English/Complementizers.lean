@@ -31,7 +31,7 @@ structure CompEntry extends Complementizer where
 
 def that : CompEntry :=
   { form := "that", position := some .detached,
-    noonanType := some .indicative, clauseForm := some .declarative,
+    coding := some .indicative, clauseForm := some .declarative,
     optional := true }
 
 def if_ : CompEntry :=
