@@ -284,6 +284,16 @@ theorem alt_which_of_antichain {E : Type v} {D : Set E} {P : E → Set W}
     · exact absurd hsub
         (hA ⟨e, heD, rfl⟩ ⟨e', he'D, rfl⟩ fun h => heq h.symm)
 
+/-- Variant of `alt_which_of_antichain` with a pointwise hypothesis:
+containment within the family collapses to equality of values. -/
+theorem alt_which_of_forall_subset_eq {E : Type v} {D : Set E} {P : E → Set W}
+    (hD : D.Nonempty) (hne : ∀ e ∈ D, (P e).Nonempty)
+    (hP : ∀ e ∈ D, ∀ e' ∈ D, P e ⊆ P e' → P e = P e') :
+    alt (which D P) = P '' D :=
+  alt_which_of_antichain hD hne <| by
+    rintro _ ⟨e, he, rfl⟩ _ ⟨e', he', rfl⟩ hne' hsub
+    exact hne' (hP e he e' he' hsub)
+
 /-! ### Hamblin construction from a finite alternative list
 
 Bridge primitive: `ofList L` packages a `List (Set W)` of alternatives
