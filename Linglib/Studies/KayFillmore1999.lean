@@ -383,17 +383,17 @@ def wxdyLiteralQ {W E : Type*}
 proposition as an answer. The "question" is not information-seeking;
 the speaker already knows the answer.
 
-In the substrate, this is the principal principal ideal of the
+In the substrate, this is `Question.ofSet` — the principal ideal of the
 presupposed proposition — a single-alternative question. -/
 def wxdyIncredulityQ {W : Type*} (presupposedProp : Set W) : Question W :=
-  principal presupposedProp
+  ofSet presupposedProp
 
 /-- The incredulity reading has exactly one alternative: the presupposed
 proposition. The proposition itself is the unique alternative. -/
 theorem incredulity_single_answer {W : Type*}
     (presupposedProp : Set W) :
     alt (wxdyIncredulityQ presupposedProp) = {presupposedProp} :=
-  alt_principal presupposedProp
+  alt_ofSet presupposedProp
 
 /-- The literal reading is a genuine (non-degenerate) question: it delegates
 to substrate `Question.which`, which yields a Hamblin-style alternative

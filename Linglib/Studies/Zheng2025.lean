@@ -278,8 +278,8 @@ generalization is captured by inheriting the same
 `Question.IsSingleton` predicate — both kya: and nandao take a
 `SingletonQuestion W` as well-typed sister content. -/
 
-open Question (IsSingleton SingletonQuestion principal
-  isSingleton_principal)
+open Question (IsSingleton SingletonQuestion ofSet
+  isSingleton_ofSet)
 
 universe u
 variable {W : Type u}
@@ -287,11 +287,11 @@ variable {W : Type u}
 /-- nandao is felicitous on a one-cell ("highlighted") polar — the same
     canonical good-input case as kya:, and by construction the same
     substrate fact: both this and `BhattDayal2020.kya_felicitous_singleton_polar`
-    are `isSingleton_principal`, capturing the kya:–nandao convergence
+    are `isSingleton_ofSet`, capturing the kya:–nandao convergence
     [bhatt-dayal-2020] draw from [xu-2012]. -/
-theorem nandao_felicitous_principal (p : Set W) :
-    IsSingleton (principal (W := W) p) :=
-  isSingleton_principal p
+theorem nandao_felicitous_ofSet (p : Set W) :
+    IsSingleton (ofSet (W := W) p) :=
+  isSingleton_ofSet p
 
 -- ════════════════════════════════════════════════════════════════════════════
 -- §5 — Integrated Felicity: §2 (Kernel-bias) ∧ §4 (Question-singleton)
@@ -317,7 +317,7 @@ level regardless of `(k, u)`. -/
 
 open Question (alt polar
   not_isSingleton_polar_of_nontrivial alt_polar_of_nontrivial
-  alt_principal)
+  alt_ofSet)
 
 /-- **Integrated nandao felicity**: the conjunction of Layer 1
     (singleton presupposition: `alt Q = {p}`) and Layer 2 (Kernel-bias
@@ -358,17 +358,17 @@ theorem nandao_polar_no_witness {p₀ : Set World}
   rintro ⟨p, _, hfull, _⟩
   exact not_isSingleton_polar_of_nontrivial hne hnu ⟨p, hfull⟩
 
-/-- **Declarative reduction**: on a one-cell sister `principal p`,
+/-- **Declarative reduction**: on a one-cell sister `ofSet p`,
     integrated felicity is exactly the §2 Kernel-bias check on `p`.
-    The Layer-1 component holds trivially because `alt (principal p)
-    = {p}` (`alt_principal`). This makes the §2 ↔ §5 connection
+    The Layer-1 component holds trivially because `alt (ofSet p)
+    = {p}` (`alt_ofSet`). This makes the §2 ↔ §5 connection
     explicit on the canonical felicitous case. -/
 theorem nandaoFullFelicity_declarative_iff {p : Set World} [DecidablePred p]
     (k : Kernel World) (u : Background World) :
-    nandaoFullFelicity (Question.principal p) k u p ↔
+    nandaoFullFelicity (Question.ofSet p) k u p ↔
       nandaoFelicitous k u p := by
   unfold nandaoFullFelicity
-  rw [alt_principal]
+  rw [alt_ofSet]
   exact ⟨fun h => h.2, fun h => ⟨rfl, h⟩⟩
 
 -- ════════════════════════════════════════════════════════════════════════════
@@ -396,7 +396,7 @@ open Semantics.Modality (raincoatK dryU isRaining raincoat_nandao_felicitous)
     felicity hold simultaneously. Reduces to `raincoat_nandao_felicitous`
     via `nandaoFullFelicity_declarative_iff`. -/
 theorem biasedUse_integrated_felicity :
-    nandaoFullFelicity (Question.principal isRaining) raincoatK dryU
+    nandaoFullFelicity (Question.ofSet isRaining) raincoatK dryU
       isRaining := by
   rw [nandaoFullFelicity_declarative_iff]
   exact raincoat_nandao_felicitous
@@ -410,7 +410,7 @@ theorem biasedUse_witnesses_integrated_felicity :
     biasedUse.felicitous = true ∧
     biasedUse.evidentialBias = true ∧
     biasedUse.epistemicBias = true ∧
-    nandaoFullFelicity (Question.principal isRaining) raincoatK dryU
+    nandaoFullFelicity (Question.ofSet isRaining) raincoatK dryU
       isRaining :=
   ⟨rfl, rfl, rfl, biasedUse_integrated_felicity⟩
 

@@ -47,7 +47,7 @@ partition-shaped alternatives (see the fidelity note in
 namespace Roberts2012
 
 open Question
-open Discourse (QUDStack Strategy Relevant)
+open Discourse (QUDStack Strategy)
 
 -- `decide` on `Set`-subset goals over the finite world space.
 attribute [local instance] Set.decidableSubsetOfFintype
@@ -56,11 +56,11 @@ attribute [local instance] Set.decidableSubsetOfFintype
 
 /-- The two individuals of D₀. -/
 inductive Person | hilary | robin
-  deriving DecidableEq, Fintype
+  deriving DecidableEq, Fintype, Inhabited
 
 /-- The two foods of D₀. -/
 inductive Food | bagels | tofu
-  deriving DecidableEq, Fintype
+  deriving DecidableEq, Fintype, Inhabited
 
 /-- A world of Roberts' D₀ scenario: the set of eating events that
     occurred in it. -/
@@ -79,15 +79,15 @@ private theorem ate_subset_ate_iff {u u' : Person} {f f' : Food} :
 
 /-- "Did `u` eat `f`?" — the singleton-alternative yes/no question. -/
 def polarAte (u : Person) (f : Food) : Question World :=
-  Question.which {f} (ate u)
+  Question.ofSet (ate u f)
 
 /-- "What did `u` eat?" — q-alternatives by abstraction over foods. -/
 def whAte (u : Person) : Question World :=
-  Question.which Set.univ (ate u)
+  Question.ofFamily (ate u)
 
 /-- "Who ate what?" — D₀'s move 1, abstracting over person–food pairs. -/
 def q_1 : Question World :=
-  Question.which Set.univ fun uf : Person × Food => ate uf.1 uf.2
+  Question.ofFamily fun uf : Person × Food => ate uf.1 uf.2
 
 /-- "Did Hilary eat the bagels?" -/
 abbrev q_ai : Question World := polarAte .hilary .bagels
@@ -114,23 +114,18 @@ abbrev robinTofu : Set World := ate .robin .tofu
 /-! ### Alternative enumerations -/
 
 private theorem alt_polarAte (u : Person) (f : Food) :
-    alt (polarAte u f) = {ate u f} := by
-  rw [polarAte, alt_which_of_forall_subset_eq (Set.singleton_nonempty f)
-    (fun _ _ => Set.nonempty_Ici)
-    (fun e _ e' _ h => by rw [(ate_subset_ate_iff.mp h).2])]
-  exact Set.image_singleton
+    alt (polarAte u f) = {ate u f} :=
+  alt_ofSet (ate u f)
 
 private theorem alt_whAte (u : Person) :
     alt (whAte u) = Set.range (ate u) :=
-  Set.image_univ ▸ alt_which_of_forall_subset_eq ⟨.bagels, trivial⟩
-    (fun _ _ => Set.nonempty_Ici)
-    (fun e _ e' _ h => by rw [(ate_subset_ate_iff.mp h).2])
+  alt_ofFamily (fun _ => Set.nonempty_Ici)
+    (fun _ _ h => (ate_subset_ate_iff.mp h).2 ▸ rfl)
 
 private theorem alt_q_1 :
     alt q_1 = Set.range fun uf : Person × Food => ate uf.1 uf.2 :=
-  Set.image_univ ▸ alt_which_of_forall_subset_eq ⟨(.hilary, .bagels), trivial⟩
-    (fun _ _ => Set.nonempty_Ici)
-    (fun uf _ uf' _ h => by
+  alt_ofFamily (fun _ => Set.nonempty_Ici)
+    (fun uf uf' h => by
       obtain ⟨h1, h2⟩ := ate_subset_ate_iff.mp h
       show ate uf.1 uf.2 = ate uf'.1 uf'.2
       rw [h1, h2])
@@ -278,12 +273,10 @@ private theorem meet_polar_entails {u : Person} {f f' : Food}
     {Q : Question World} (hQ : ate u f ∈ alt Q) :
     (polarAte u f ⊓ polarAte u f').Entails Q := by
   intro r hr
-  have hr' : r ∈ polarAte u f :=
-    (Question.mem_inf.mp (Question.mem_props.mp (alt_subset_props _ hr))).1
-  rcases Question.mem_which.mp hr' with rfl | ⟨e, he, hre⟩
-  · exact ⟨ate u f, hQ, Set.empty_subset _⟩
-  · rw [Set.mem_singleton_iff] at he
-    exact ⟨ate u f, hQ, he ▸ hre⟩
+  have hr' : r ⊆ ate u f :=
+    Question.mem_ofSet.mp
+      (Question.mem_inf.mp (Question.mem_props.mp (alt_subset_props _ hr))).1
+  exact ⟨ate u f, hQ, hr'⟩
 
 /-- The Hilary substrategy is complete: jointly resolving `q_ai` and
     `q_aii` resolves `q_a`. -/
@@ -303,7 +296,7 @@ theorem strat_1_complete : strat_1.IsComplete := by
   intro r hr
   have hr' : r ∈ whAte .hilary :=
     (Question.mem_inf.mp (Question.mem_props.mp (alt_subset_props _ hr))).1
-  rcases Question.mem_which.mp hr' with rfl | ⟨f, -, hrf⟩
+  rcases Question.mem_ofFamily.mp hr' with rfl | ⟨f, hrf⟩
   · exact ⟨hilaryBagels, ate_mem_alt_q1 .hilary .bagels, Set.empty_subset _⟩
   · exact ⟨ate .hilary f, ate_mem_alt_q1 .hilary f, hrf⟩
 
@@ -421,25 +414,25 @@ partial answerhood. -/
 /-- The assertion "Hilary ate bagels": a declarative's q-alternative
     set is the singleton of its content. -/
 def hilaryBagels_assertion : Question World :=
-  Question.principal hilaryBagels
+  Question.ofSet hilaryBagels
 
 /-- "Hilary ate bagels" is relevant to move 1, "Who ate what?". -/
 theorem hilaryBagels_relevant_to_q1 :
-    Relevant hilaryBagels_assertion {q_1} :=
-  ⟨hilaryBagels, self_mem_alt_declarative _, q_1, rfl,
+    hilaryBagels_assertion.IsRelevantTo {q_1} :=
+  ⟨hilaryBagels, self_mem_alt_ofSet _, q_1, rfl,
     hilaryBagels_partiallyAnswers_q1⟩
 
 /-- The question `q_a` is relevant to `q_1` under the assertion-clause
     proxy: its bagels alternative confirms an alternative of `q_1`. -/
-theorem qa_relevant_to_q1 : Relevant q_a {q_1} :=
+theorem qa_relevant_to_q1 : q_a.IsRelevantTo {q_1} :=
   ⟨hilaryBagels, ate_mem_alt_whAte .hilary .bagels, q_1, rfl,
     hilaryBagels_partiallyAnswers_q1⟩
 
 /-- "Hilary ate bagels" is relevant to the entire D₀ strategy: it
     partially answers `q_1` (the strategy's root). -/
 theorem hilaryBagels_relevant_to_strategy :
-    Relevant hilaryBagels_assertion {q | q ∈ strat_1.values} :=
-  ⟨hilaryBagels, self_mem_alt_declarative _, q_1,
+    hilaryBagels_assertion.IsRelevantTo {q | q ∈ strat_1.values} :=
+  ⟨hilaryBagels, self_mem_alt_ofSet _, q_1,
     by simp [strat_1, strat_a, strat_b], hilaryBagels_partiallyAnswers_q1⟩
 
 end Roberts2012

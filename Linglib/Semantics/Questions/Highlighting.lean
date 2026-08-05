@@ -92,12 +92,12 @@ instance (c : HighlightingContext W) (p : Set W)
 /-- The empty highlighting context: no salient propositions, the trivial
     QUD that is resolved by anything. -/
 def empty : HighlightingContext W :=
-  { salient := ∅, qud := Question.principal Set.univ }
+  { salient := ∅, qud := Question.ofSet Set.univ }
 
 /-- A highlighting context built from a single salient proposition that
     declaratively resolves its own QUD. -/
 def singleton (p : Set W) : HighlightingContext W :=
-  { salient := {p}, qud := Question.principal p }
+  { salient := {p}, qud := Question.ofSet p }
 
 /-- Add a proposition to the salient set without touching the QUD. -/
 def addSalient (c : HighlightingContext W) (p : Set W) : HighlightingContext W :=
@@ -114,7 +114,7 @@ def addSalient (c : HighlightingContext W) (p : Set W) : HighlightingContext W :
     (singleton p : HighlightingContext W).salient = {p} := rfl
 
 @[simp] theorem qud_singleton (p : Set W) :
-    (singleton p : HighlightingContext W).qud = Question.principal p := rfl
+    (singleton p : HighlightingContext W).qud = Question.ofSet p := rfl
 
 /-! ### [roelofsen-farkas-2015]: polarity particles -/
 

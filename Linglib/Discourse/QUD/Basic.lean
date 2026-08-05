@@ -12,7 +12,7 @@ The inquiry coordinate of the conversational scoreboard, after
 strategies of inquiry as rose trees of questions (`Strategy`, her (12);
 [buring-2003]'s d-trees are the explicit tree-shaped ancestor),
 hereditary strategy completeness (`IsComplete`), and relevance of a
-move's denotation to a set of questions (`Relevant`, built from the
+move's denotation to a set of questions (`Question.IsRelevantTo`, built from the
 assertion clause of her Relevance (15)). [ginzburg-2012]'s KoS models
 the same coordinate as a partially ordered set with its own update
 rules; that structure lives with the gameboard in
@@ -29,8 +29,8 @@ corpus data.
 * `Discourse.Strategy` — strategies of inquiry as `RoseTree (Question W)`
 * `Discourse.Strategy.IsComplete` — at every branching node, the meet of
   the children's questions entails the parent's
-* `Discourse.Relevant` — some alternative of the move partially answers
-  some question in the set
+* `Question.IsRelevantTo` — some alternative of the move partially
+  answers some question in the set
 
 ## Fidelity notes
 
@@ -55,7 +55,7 @@ illustrates (complete answers to the subquestions jointly yield a
 complete answer to the parent), not a clause of (12); the converse
 direction (parent entails children-meet) is exactly what (13) rules out.
 
-`Relevant` is existential answerhood relevance: weaker than (15), whose
+`IsRelevantTo` is existential answerhood relevance: weaker than (15), whose
 guarantee is universal (every complete answer to the move contextually
 entails a partial answer to the QUD), and set-valued where (15) targets
 only `last(QUD)`. The set extension is the proxy
@@ -149,16 +149,17 @@ variable {W : Type*}
 some alternative of `den` partially answers some question in `qs` — the
 assertion clause of [roberts-2012]'s Relevance (15), existentially weakened
 and extended to a question set (see the fidelity notes). -/
-def Relevant (den : Question W) (qs : Set (Question W)) : Prop :=
+def _root_.Question.IsRelevantTo (den : Question W)
+    (qs : Set (Question W)) : Prop :=
   ∃ a ∈ Question.alt den, ∃ q ∈ qs, Question.PartiallyAnswers a q
 
-/-- Polar reduction of `Relevant` to partial answerhood of `p` and `pᶜ`. -/
-theorem relevant_polar_iff {p : Set W} {qs : Set (Question W)}
-    (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
-    Relevant (Question.polar p) qs ↔
+/-- Polar reduction of `IsRelevantTo` to partial answerhood of `p` and `pᶜ`. -/
+theorem _root_.Question.isRelevantTo_polar_iff {p : Set W}
+    {qs : Set (Question W)} (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
+    (Question.polar p).IsRelevantTo qs ↔
       (∃ q ∈ qs, Question.PartiallyAnswers p q) ∨
         ∃ q ∈ qs, Question.PartiallyAnswers pᶜ q := by
-  simp only [Relevant, Question.alt_polar_of_nontrivial hne hnu,
+  simp only [Question.IsRelevantTo, Question.alt_polar_of_nontrivial hne hnu,
     Set.mem_insert_iff, Set.mem_singleton_iff, exists_eq_or_imp,
     exists_eq_left]
 

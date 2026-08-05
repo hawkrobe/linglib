@@ -496,7 +496,7 @@ def empty : KrifkaState W :=
     Speaker (default) commits to p, narrowing the entire space and
     recording on the speaker's slate. Pass `committer := .addressee`
     for the addressee-commits case. The `force` defaults to `.doxastic`
-    (principal assertion); pass `.preferential` for the
+    (ofSet assertion); pass `.preferential` for the
     [condoravdi-lauer-2012] imperative-as-PEP analysis. -/
 def assert (s : KrifkaState W) (p : W → Prop)
     (committer : DiscourseRole := .speaker)
@@ -833,11 +833,11 @@ theorem toContextSet_eq_stateSet_root (cs : CommitmentSpace W G) :
     cs.toContextSet = stateSet cs.root := rfl
 
 /-- The issue a commitment space raises. With no open continuations the
-    issue is trivial over the root (principal); otherwise an
+    issue is trivial over the root (ofSet); otherwise an
     information state settles it iff it lands inside some proposed
     continuation, within the root's context set. -/
 def toIssue : CommitmentSpace W G → Question W
-  | ⟨root, []⟩ => Question.principal (stateSet root)
+  | ⟨root, []⟩ => Question.ofSet (stateSet root)
   | ⟨root, c :: conts⟩ =>
     Question.ofLowerSet
       {i | ∃ st ∈ c :: conts, i ⊆ stateSet root ∩ stateSet st}
@@ -863,7 +863,7 @@ instance : Discourse.HasIssue (CommitmentSpace W G) W := ⟨toIssue⟩
 theorem toIssue_assert (cs : CommitmentSpace W G) (committer : DiscourseRole)
     (weight : W → G) (force : CommitmentForce) :
     (cs.assert committer weight force).toIssue =
-      cs.toIssue ⊓ Question.principal {w | HasSupport.support (weight w)} := by
+      cs.toIssue ⊓ Question.ofSet {w | HasSupport.support (weight w)} := by
   obtain ⟨root, conts⟩ := cs
   ext i
   cases conts with
@@ -906,7 +906,7 @@ theorem toIssue_assert (cs : CommitmentSpace W G) (committer : DiscourseRole)
 theorem toIssue_monopolarQuestion (cs : CommitmentSpace W G)
     (weight : W → G) (force : CommitmentForce) :
     (cs.monopolarQuestion weight force).toIssue =
-      Question.principal
+      Question.ofSet
         ({w | HasSupport.support (weight w)} ∩ cs.toContextSet) := by
   obtain ⟨root, conts⟩ := cs
   ext i
@@ -934,8 +934,8 @@ end HasSupport
 theorem toIssue_bipolarQuestion [CommitmentGrade G] (cs : CommitmentSpace W G)
     (φ : W → G) :
     (cs.bipolarQuestion φ).toIssue =
-      Question.principal ({w | HasSupport.support (φ w)} ∩ cs.toContextSet) ⊔
-        Question.principal
+      Question.ofSet ({w | HasSupport.support (φ w)} ∩ cs.toContextSet) ⊔
+        Question.ofSet
           ({w | HasSupport.support (CommitmentGrade.complement (φ w))} ∩
             cs.toContextSet) := by
   obtain ⟨root, conts⟩ := cs
@@ -982,18 +982,18 @@ def toIssue (s : KrifkaState W) : Question W := s.space.toIssue
 instance : Discourse.HasIssue (KrifkaState W) W := ⟨toIssue⟩
 
 @[simp] theorem toIssue_assert (s : KrifkaState W) (p : W → Prop) :
-    (s.assert p).toIssue = s.toIssue ⊓ Question.principal {w | p w} :=
+    (s.assert p).toIssue = s.toIssue ⊓ Question.ofSet {w | p w} :=
   CommitmentSpace.toIssue_assert s.space .speaker p .doxastic
 
 @[simp] theorem toIssue_monopolarQuestion (s : KrifkaState W) (p : W → Prop) :
     (s.monopolarQuestion p).toIssue =
-      Question.principal ({w | p w} ∩ s.contextSet) :=
+      Question.ofSet ({w | p w} ∩ s.contextSet) :=
   CommitmentSpace.toIssue_monopolarQuestion s.space p .doxastic
 
 @[simp] theorem toIssue_bipolarQuestion (s : KrifkaState W) (p : W → Prop) :
     (s.bipolarQuestion p).toIssue =
-      Question.principal ({w | p w} ∩ s.contextSet) ⊔
-        Question.principal ({w | ¬ p w} ∩ s.contextSet) :=
+      Question.ofSet ({w | p w} ∩ s.contextSet) ⊔
+        Question.ofSet ({w | ¬ p w} ∩ s.contextSet) :=
   CommitmentSpace.toIssue_bipolarQuestion s.space p
 
 /-- Monopolar questions raise no inquisitive issue: the projection is
@@ -1002,7 +1002,7 @@ instance : Discourse.HasIssue (KrifkaState W) W := ⟨toIssue⟩
 theorem not_isInquisitive_monopolarQuestion (s : KrifkaState W) (p : W → Prop) :
     ¬ (s.monopolarQuestion p).toIssue.isInquisitive := by
   rw [toIssue_monopolarQuestion]
-  exact Question.not_isInquisitive_principal _
+  exact Question.not_isInquisitive_ofSet _
 
 /-- Bipolar questions raise a genuine issue whenever both answers are
     live in the context set. -/
@@ -1013,18 +1013,18 @@ theorem isInquisitive_bipolarQuestion (s : KrifkaState W) (p : W → Prop)
   obtain ⟨w₁, hw₁cs, hw₁p⟩ := h₁
   obtain ⟨w₂, hw₂cs, hw₂p⟩ := h₂
   intro hmem
-  rw [Question.info_sup, Question.info_principal,
-    Question.info_principal] at hmem
+  rw [Question.info_sup, Question.info_ofSet,
+    Question.info_ofSet] at hmem
   rcases Question.mem_sup.mp hmem with h | h
-  · exact hw₂p (Question.mem_principal.mp h (Or.inr ⟨hw₂p, hw₂cs⟩)).1
-  · exact (Question.mem_principal.mp h (Or.inl ⟨hw₁p, hw₁cs⟩)).1 hw₁p
+  · exact hw₂p (Question.mem_ofSet.mp h (Or.inr ⟨hw₂p, hw₂cs⟩)).1
+  · exact (Question.mem_ofSet.mp h (Or.inl ⟨hw₁p, hw₁cs⟩)).1 hw₁p
 
 /-- Bipolar questions preserve informative content: the issue refines
     the context set without eliminating worlds. -/
 theorem info_toIssue_bipolarQuestion (s : KrifkaState W) (p : W → Prop) :
     (s.bipolarQuestion p).toIssue.info = s.contextSet := by
-  rw [toIssue_bipolarQuestion, Question.info_sup, Question.info_principal,
-    Question.info_principal]
+  rw [toIssue_bipolarQuestion, Question.info_sup, Question.info_ofSet,
+    Question.info_ofSet]
   ext w
   by_cases hp : p w <;> simp [hp]
 
@@ -1032,7 +1032,7 @@ theorem info_toIssue_bipolarQuestion (s : KrifkaState W) (p : W → Prop) :
     proposal: Krifka's bias, visible as informative loss. -/
 theorem info_toIssue_monopolarQuestion (s : KrifkaState W) (p : W → Prop) :
     (s.monopolarQuestion p).toIssue.info = {w | p w} ∩ s.contextSet := by
-  rw [toIssue_monopolarQuestion, Question.info_principal]
+  rw [toIssue_monopolarQuestion, Question.info_ofSet]
 
 end KrifkaState
 
