@@ -107,7 +107,7 @@ answer whose existence the definedness condition requires.
 namespace IppolitoKissWilliams2025
 
 open Question Semantics.Questions.Probabilistic
-open Discourse (Relevant relevant_polar_iff)
+open Question (isRelevantTo_polar_iff)
 open IppolitoKissWilliams2022
 
 /-! ### Discourse context -/
@@ -167,8 +167,8 @@ def atIssueContent (d : Sentence W) : Set W :=
     2. `S'` is structurally relevant to the QUD;
     3. `S` supports some answer α ∈ QUD via `Supports`. -/
 def isDefined (d : Sentence W) (ctx : Context W) : Prop :=
-  Relevant d.sDen (insert ctx.qud ctx.subquestions) ∧
-  Relevant d.s'Den (insert ctx.qud ctx.subquestions) ∧
+  d.sDen.IsRelevantTo (insert ctx.qud ctx.subquestions) ∧
+  d.s'Den.IsRelevantTo (insert ctx.qud ctx.subquestions) ∧
   ∃ α ∈ alt ctx.qud, Supports ctx.dox d.sDen α ctx.prior
 
 /-- CI content of discourse *only*. [ippolito-kiss-williams-2025]
@@ -567,7 +567,7 @@ predictions on a concrete 8-world model with uniform prior. The PMF
 arithmetic reduces to four base probabilities (`beautiful`, `expensive`,
 their intersections with `buy`/`buyᶜ`) computed via
 `PMF.probOfSet_apply` + `Fin.sum_univ_eight`. The doxastic `⊆` checks
-and the `Relevant` reductions (via `relevant_polar_iff`) are
+and the `IsRelevantTo` reductions (via `isRelevantTo_polar_iff`) are
 pure Set arithmetic discharged by `decide`.
 -/
 
@@ -866,14 +866,14 @@ theorem core_isDefined : declSentence.isDefined coreCtx := by
   refine ⟨?_, ?_, ?_⟩
   · -- Relevant sBeautiful, via the `polar beautiful` subquestion
     rw [show declSentence.sDen = Question.polar beautiful from rfl,
-        relevant_polar_iff beautiful_ne_empty beautiful_ne_univ]
+        isRelevantTo_polar_iff beautiful_ne_empty beautiful_ne_univ]
     refine Or.inl ⟨Question.polar beautiful, ?_, ?_⟩
     · exact Set.mem_insert_of_mem _ (by simp [coreCtx])
     · rw [partiallyAnswers_polar_iff beautiful_ne_empty beautiful_ne_univ]
       exact Or.inl Set.Subset.rfl
   · -- Relevant s'Expensive, via the `polar expensive` subquestion
     rw [show declSentence.s'Den = Question.polar expensive from rfl,
-        relevant_polar_iff expensive_ne_empty expensive_ne_univ]
+        isRelevantTo_polar_iff expensive_ne_empty expensive_ne_univ]
     refine Or.inl ⟨Question.polar expensive, ?_, ?_⟩
     · exact Set.mem_insert_of_mem _ (by simp [coreCtx])
     · rw [partiallyAnswers_polar_iff expensive_ne_empty expensive_ne_univ]
@@ -986,14 +986,14 @@ theorem polarQ_isDefined : polarQSentence.isDefined clauseTypeCtx := by
   refine ⟨?_, ?_, ?_⟩
   · -- Relevant sBeautiful, via the `polar beautiful` subquestion
     rw [show polarQSentence.sDen = Question.polar beautiful from rfl,
-        relevant_polar_iff beautiful_ne_empty beautiful_ne_univ]
+        isRelevantTo_polar_iff beautiful_ne_empty beautiful_ne_univ]
     refine Or.inl ⟨Question.polar beautiful, ?_, ?_⟩
     · exact Set.mem_insert_of_mem _ (by simp [clauseTypeCtx])
     · rw [partiallyAnswers_polar_iff beautiful_ne_empty beautiful_ne_univ]
       exact Or.inl Set.Subset.rfl
   · -- Relevant s'RenovatedQ, via the `polar renovated` subquestion
     rw [show polarQSentence.s'Den = Question.polar renovated from rfl,
-        relevant_polar_iff renovated_ne_empty renovated_ne_univ]
+        isRelevantTo_polar_iff renovated_ne_empty renovated_ne_univ]
     refine Or.inl ⟨Question.polar renovated, ?_, ?_⟩
     · exact Set.mem_insert_of_mem _ (by simp [clauseTypeCtx])
     · rw [partiallyAnswers_polar_iff renovated_ne_empty renovated_ne_univ]

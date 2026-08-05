@@ -397,27 +397,27 @@ theorem strongAnswer_polar_of_neg {p : Set W}
     · simp only [Set.mem_compl_iff]
       exact iff_of_true (fun h => hwp h) (fun h => hvpc h)
 
-/-! ### `principal` characterizations -/
+/-! ### `ofSet` characterizations -/
 
 /-- The weak answer to a declarative is the proposition itself.
     The single alt is `p`; if `w ∈ p` then `weakAnswer = p`. -/
-theorem weakAnswer_principal_of_pos {p : Set W}
+theorem weakAnswer_ofSet_of_pos {p : Set W}
     {w : W} (hwp : w ∈ p) :
-    weakAnswer (principal p) w = p := by
+    weakAnswer (ofSet p) w = p := by
   ext v
   unfold weakAnswer
-  rw [Set.mem_setOf_eq, Question.alt_principal]
+  rw [Set.mem_setOf_eq, Question.alt_ofSet]
   refine ⟨fun h => h p (Set.mem_singleton p) hwp, fun hvp q hq _ => ?_⟩
   rw [Set.mem_singleton_iff] at hq
   exact hq ▸ hvp
 
 /-- The strong answer to a declarative at a `p`-true world is `p`. -/
-theorem strongAnswer_principal_of_pos {p : Set W}
+theorem strongAnswer_ofSet_of_pos {p : Set W}
     {w : W} (hwp : w ∈ p) :
-    strongAnswer (principal p) w = p := by
+    strongAnswer (ofSet p) w = p := by
   ext v
   unfold strongAnswer
-  rw [Set.mem_setOf_eq, Question.alt_principal]
+  rw [Set.mem_setOf_eq, Question.alt_ofSet]
   refine ⟨fun h => (h p (Set.mem_singleton p)).mp hwp, fun hvp q hq => ?_⟩
   rw [Set.mem_singleton_iff] at hq
   exact hq ▸ iff_of_true hwp hvp

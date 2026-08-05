@@ -27,8 +27,8 @@ propositions of [ciardelli-groenendijk-roelofsen-2018]. The name
 inquisitive theorizing.
 
 This `Basic` file carries the structural core: the type definition with
-its `SetLike` instance, the `info`/`alt`/`isInformative`/`isInquisitive`/
-`isPrincipal` predicates, the `principal` constructor, the algebraic
+its `SetLike` instance, the `info`/`alt`/`isInformative`/`isInquisitive`
+predicates, the `ofSet` constructor, the algebraic
 operations (`conj`, `inqDisj`, `top`, `bot`) packaged into the
 `CompleteDistribLattice` instance, the basic `info`-on-lattice-operations
 API, the `alt`-as-maximal characterization, the existence of alternatives
@@ -141,17 +141,12 @@ def isInformative (P : Question W) : Prop :=
 def isInquisitive (P : Question W) : Prop :=
   info P ∉ P.props
 
-/-- A content is **principal** iff its own informative content resolves
-    it — `info P ∈ props` — i.e. iff it is not inquisitive; this is what
-    declarative sentences express. Algebraic characterization
-    ([puncochar-2019]): `props` is a principal ideal in the algebra
-    of information states; see `isPrincipal_iff_eq_principal_info`. -/
-def isPrincipal (P : Question W) : Prop :=
-  info P ∈ P.props
-
-/-- Principal and inquisitive are exact negations of each other. -/
-theorem isPrincipal_iff_not_isInquisitive (P : Question W) :
-    P.isPrincipal ↔ ¬ P.isInquisitive :=
+/-- A content's own informative content resolves it iff it is not
+    inquisitive — the condition declarative sentences satisfy; `props`
+    is then a principal ideal ([puncochar-2019]), see
+    `info_mem_iff_eq_ofSet_info`. -/
+theorem info_mem_iff_not_isInquisitive (P : Question W) :
+    P.info ∈ P ↔ ¬ P.isInquisitive :=
   not_not.symm
 
 /-! ### Constructors -/
@@ -179,32 +174,32 @@ def ofLowerSet (s : Set (Set W)) (empty_mem : ∅ ∈ s) (lower : IsLowerSet s) 
     `{q | q ⊆ p}`, the analogue of `Filter.principal`. Single
     alternative `p`; non-inquisitive; the content a declarative sentence
     expresses; informative iff `p ≠ univ`. -/
-def principal (p : Set W) : Question W where
+def ofSet (p : Set W) : Question W where
   props := {q | q ⊆ p}
   contains_empty := Set.empty_subset p
   downward_closed := fun _ hq _ hr => hr.trans hq
 
-/-! ### Basic theorems on declarative -/
+/-! ### Basic theorems on ofSet -/
 
-@[simp] theorem mem_principal {p q : Set W} :
-    q ∈ principal p ↔ q ⊆ p := Iff.rfl
+@[simp] theorem mem_ofSet {p q : Set W} :
+    q ∈ ofSet p ↔ q ⊆ p := Iff.rfl
 
-@[simp] theorem info_principal (p : Set W) : (principal p).info = p := by
+@[simp] theorem info_ofSet (p : Set W) : (ofSet p).info = p := by
   ext w
-  simp only [info, principal, Set.mem_sUnion, Set.mem_setOf_eq]
+  simp only [info, ofSet, Set.mem_sUnion, Set.mem_setOf_eq]
   refine ⟨?_, ?_⟩
   · rintro ⟨q, hq, hwq⟩; exact hq hwq
   · intro hw; exact ⟨p, Set.Subset.refl p, hw⟩
 
-theorem isPrincipal_principal (p : Set W) :
-    (principal p).isPrincipal := by
-  show (principal p).info ∈ principal p
-  rw [info_principal]
+theorem info_mem_ofSet (p : Set W) :
+    (ofSet p).info ∈ ofSet p := by
+  show (ofSet p).info ∈ ofSet p
+  rw [info_ofSet]
   exact Set.Subset.refl p
 
-theorem not_isInquisitive_principal (p : Set W) :
-    ¬ (principal p).isInquisitive :=
-  fun h => h (isPrincipal_principal p)
+theorem not_isInquisitive_ofSet (p : Set W) :
+    ¬ (ofSet p).isInquisitive :=
+  fun h => h (info_mem_ofSet p)
 
 /-! ### Algebraic operations ([puncochar-2019] §2)
 
@@ -216,7 +211,7 @@ it supports both); inquisitive disjunction is `||α ⩒ β|| = ||α|| ∪ ||β||
 Implication `→` and negation `¬` arise as the Heyting `⇨` and `ᶜ` of
 the `CompleteDistribLattice` structure registered below; see the
 "Heyting derivatives" section for the structural identity
-`Pᶜ = principal (info P)ᶜ` and the derivatives it grounds. -/
+`Pᶜ = ofSet (info P)ᶜ` and the derivatives it grounds. -/
 
 /-- **Inquisitive conjunction** `P ∧ Q` ([puncochar-2019] §2 ∧
     clause): `props` is the pointwise intersection. A state resolves
@@ -419,18 +414,18 @@ theorem bot_eq : (⊥ : Question W) = bot := rfl
 
 /-- A state lies in `X` iff its principal ideal entails `X`: `declarative s`
     is the smallest `Question` containing `s`. -/
-theorem mem_iff_principal_le {X : Question W} {s : Set W} :
-    s ∈ X ↔ principal s ≤ X := by
+theorem mem_iff_ofSet_le {X : Question W} {s : Set W} :
+    s ∈ X ↔ ofSet s ≤ X := by
   rw [le_def]
-  refine ⟨fun hs _r hr => X.downward_closed s hs _ (mem_principal.mp hr), fun h => h ?_⟩
-  exact mem_principal.mpr subset_rfl
+  refine ⟨fun hs _r hr => X.downward_closed s hs _ (mem_ofSet.mp hr), fun h => h ?_⟩
+  exact mem_ofSet.mpr subset_rfl
 
 /-- **Heyting implication, pointwise**: `s` resolves `P ⇨ Q` iff every
     substate of `s` that resolves `P` also resolves `Q`. The defining
     property of the Heyting arrow on inquisitive contents. -/
 theorem mem_himp {P Q : Question W} {s : Set W} :
     s ∈ (P ⇨ Q) ↔ ∀ r ⊆ s, r ∈ P → r ∈ Q := by
-  rw [mem_iff_principal_le, le_himp_iff, inf_eq_conj, le_def]
+  rw [mem_iff_ofSet_le, le_himp_iff, inf_eq_conj, le_def]
   exact ⟨fun h _r hrs hrP => h ⟨hrs, hrP⟩, fun h _r hr => h _r hr.1 hr.2⟩
 
 @[simp] theorem mem_sSup_props {S : Set (Question W)} {q : Set W} :
@@ -452,7 +447,7 @@ theorem mem_iSup_iff {ι : Sort*} {f : ι → Question W} {q : Set W} :
 
 /-- Membership in a bounded indexed `iSup`. Used pervasively for
     Hamblin-style wh-question alternatives (`which`) and for any
-    `⨆ i ∈ I, principal (P i)` construction. -/
+    `⨆ i ∈ I, ofSet (P i)` construction. -/
 theorem mem_biSup_iff {ι : Type*} {I : Set ι} {f : ι → Question W}
     {q : Set W} :
     q ∈ (⨆ i ∈ I, f i) ↔ q = ∅ ∨ ∃ i ∈ I, q ∈ f i := by
@@ -602,18 +597,18 @@ theorem alt_sup_subset_union (P Q : Question W) :
     exact ⟨hqQ, fun r hrQ hqr => hmax r (Or.inr hrQ) hqr⟩
 
 /-- The meet of two declaratives is the declarative of the intersection:
-    `↓{A} ⊓ ↓{B} = ↓{A ∩ B}`. State `q` resolves both `principal A` and
-    `principal B` iff `q ⊆ A ∩ B`. Direct corollary of
+    `↓{A} ⊓ ↓{B} = ↓{A ∩ B}`. State `q` resolves both `ofSet A` and
+    `ofSet B` iff `q ⊆ A ∩ B`. Direct corollary of
     `Set.subset_inter_iff`. -/
-@[simp] theorem principal_inf (A B : Set W) :
-    principal A ⊓ principal B = principal (A ∩ B) := by
+@[simp] theorem ofSet_inf (A B : Set W) :
+    ofSet A ⊓ ofSet B = ofSet (A ∩ B) := by
   ext q
   show q ⊆ A ∧ q ⊆ B ↔ q ⊆ A ∩ B
   rw [Set.subset_inter_iff]
 
-/-- A `principal p` content has exactly one alternative — `p`
+/-- A `ofSet p` content has exactly one alternative — `p`
     itself, the unique maximal subset of `p`. -/
-@[simp] theorem alt_principal (p : Set W) : alt (principal p) = {p} := by
+@[simp] theorem alt_ofSet (p : Set W) : alt (ofSet p) = {p} := by
   ext q
   refine ⟨?_, ?_⟩
   · rintro ⟨hq, hmax⟩
@@ -625,9 +620,9 @@ theorem alt_sup_subset_union (P Q : Question W) :
     intro r hr hpr
     exact Set.Subset.antisymm hpr hr
 
-/-- `p` is an alternative of its own declarative content. -/
-theorem self_mem_alt_declarative (p : Set W) : p ∈ alt (declarative p) := by
-  rw [alt_declarative]; rfl
+/-- `p` is the alternative of the content it generates. -/
+theorem self_mem_alt_ofSet (p : Set W) : p ∈ alt (ofSet p) := by
+  rw [alt_ofSet]; rfl
 
 /-- The unique alternative of `⊤` is `Set.univ`. -/
 @[simp] theorem alt_top : alt (⊤ : Question W) = {Set.univ} := by
@@ -715,21 +710,21 @@ the slogan "an inquisitive content is its alternatives" — once
 alternatives exist (finiteness), they fully determine the content.
 
 This subsumes:
-- Single-alternative case: `P = principal p` iff `alt P = {p}`
+- Single-alternative case: `P = ofSet p` iff `alt P = {p}`
   (the principal-ideal characterization for declaratives).
-- The polar case: `polar p = principal p ⊔ principal pᶜ` (in
-  `Hamblin.lean`) is literally `⨆ q ∈ {p, pᶜ}, principal q`.
+- The polar case: `polar p = ofSet p ⊔ ofSet pᶜ` (in
+  `Hamblin.lean`) is literally `⨆ q ∈ {p, pᶜ}, ofSet q`.
 - Setoid-derived inquiries: `fromSetoid r` resolves to the iSup over
   equivalence classes (each class is an alternative).
 
 Without finiteness the theorem fails (alternatives may not exist),
-but the **inequality** `⨆ p ∈ alt P, principal p ≤ P` holds always. -/
+but the **inequality** `⨆ p ∈ alt P, ofSet p ≤ P` holds always. -/
 
 /-- The lower bound (always holds): the inquisitive disjunction of the
-    principal principal ideals of `P`'s alternatives is contained in
+    ofSet principal ideals of `P`'s alternatives is contained in
     `P` itself. -/
-theorem iSup_principal_alt_le (P : Question W) :
-    ⨆ p ∈ alt P, principal p ≤ P := by
+theorem iSup_ofSet_alt_le (P : Question W) :
+    ⨆ p ∈ alt P, ofSet p ≤ P := by
   rw [← sSup_image]
   rw [le_def]
   intro q hq
@@ -749,30 +744,30 @@ theorem iSup_principal_alt_le (P : Question W) :
     This is **Booth 2022's Compactness of Alternatives** for atomic and
     decomposable bilateral inquisitive propositions, captured at the
     `Question` substrate level. -/
-theorem eq_iSup_principal_alt_of_exists_alt (P : Question W)
+theorem eq_iSup_ofSet_alt_of_exists_alt (P : Question W)
     (hExt : ∀ p ∈ P.props, ∃ q ∈ alt P, p ⊆ q) :
-    P = ⨆ p ∈ alt P, principal p := by
-  apply le_antisymm _ (iSup_principal_alt_le P)
+    P = ⨆ p ∈ alt P, ofSet p := by
+  apply le_antisymm _ (iSup_ofSet_alt_le P)
   rw [← sSup_image, le_def]
   intro q hq
   by_cases hqe : q = ∅
   · exact Or.inl hqe
   · right
     obtain ⟨p, hp, hqp⟩ := hExt q hq
-    exact ⟨principal p, ⟨p, hp, rfl⟩, hqp⟩
+    exact ⟨ofSet p, ⟨p, hp, rfl⟩, hqp⟩
 
 /-- **Resolutions Theorem**: under finiteness of `P.props`, every
     inquisitive content is the inquisitive disjunction of the
     declaratives generated by its alternatives. Corollary of the
     "alternatives-cover" version: finiteness gives existence of a
     maximal extension via `exists_alt_above`. -/
-theorem eq_iSup_principal_alt (P : Question W)
-    (hP : P.props.Finite) : P = ⨆ p ∈ alt P, principal p :=
-  eq_iSup_principal_alt_of_exists_alt P (fun _ hp => exists_alt_above P hP hp)
+theorem eq_iSup_ofSet_alt (P : Question W)
+    (hP : P.props.Finite) : P = ⨆ p ∈ alt P, ofSet p :=
+  eq_iSup_ofSet_alt_of_exists_alt P (fun _ hp => exists_alt_above P hP hp)
 
 /-! ### Principal-ideal characterization of declaratives
 
-[puncochar-2019]: principal propositions are, algebraically
+[puncochar-2019]: ofSet propositions are, algebraically
 speaking, principal ideals in the algebra of information states. We
 make this characterization explicit: `P` is declarative iff `P` is the
 principal ideal generated by `info P`. We also prove the equivalent
@@ -782,12 +777,12 @@ characterization via alternatives: `P` is declarative iff
 /-- **Principal-ideal characterization** ([puncochar-2019]): an
     inquisitive content is declarative iff it equals the principal ideal
     generated by its informative content. -/
-theorem isPrincipal_iff_eq_principal_info (P : Question W) :
-    P.isPrincipal ↔ P = principal P.info := by
+theorem info_mem_iff_eq_ofSet_info (P : Question W) :
+    P.info ∈ P ↔ P = ofSet P.info := by
   constructor
   · intro h
     ext q
-    simp only [← mem_props, principal, Set.mem_setOf_eq]
+    simp only [← mem_props, ofSet, Set.mem_setOf_eq]
     refine ⟨?_, ?_⟩
     · intro hq w hwq
       exact ⟨q, hq, hwq⟩
@@ -796,14 +791,14 @@ theorem isPrincipal_iff_eq_principal_info (P : Question W) :
   · intro h
     show P.info ∈ P
     rw [h]
-    exact isPrincipal_principal P.info
+    exact info_mem_ofSet P.info
 
 /-- **Alternative-set characterization**: an inquisitive content is
     declarative iff its alternatives are exactly `{info P}` — i.e., iff
     its informative content is itself the unique maximal resolving
     state. -/
-theorem isPrincipal_iff_alt_eq_singleton (P : Question W) :
-    P.isPrincipal ↔ alt P = {P.info} := by
+theorem info_mem_iff_alt_eq_singleton (P : Question W) :
+    P.info ∈ P ↔ alt P = {P.info} := by
   constructor
   · intro h
     ext q
@@ -830,14 +825,14 @@ The `CompleteDistribLattice` structure registered above gives us a
 properties. The structural fact that drives the inquisitive-specific
 theory is the explicit formula for `Pᶜ`:
 
-    `Pᶜ = principal (info P)ᶜ`
+    `Pᶜ = ofSet (info P)ᶜ`
 
 i.e., complementing `P` is the same as complementing its informative
 content and taking the principal ideal. This single identity
 (`compl_eq`) lets us derive the standard inquisitive operators
 ([ciardelli-groenendijk-roelofsen-2018]; [puncochar-2019]):
 
-- the **non-inquisitive projection** `!P = Pᶜᶜ = principal (info P)`
+- the **non-inquisitive projection** `!P = Pᶜᶜ = ofSet (info P)`
   (`proj_eq_compl_compl`),
 - the **non-informative projection** `?P = P ⊔ Pᶜ`,
 - and the **division law** `!P ⊓ ?P = P` decomposing every content into
@@ -847,11 +842,11 @@ The lattice is **Heyting but not Boolean**: LEM `P ⊔ Pᶜ = ⊤` fails in
 general — see `not_lem_inquisitive_content` below. -/
 
 /-- **Pseudo-complement formula**: the Heyting complement `Pᶜ` is the
-    principal principal ideal of the complemented informative content.
+    ofSet principal ideal of the complemented informative content.
     This is the structural identity that grounds all subsequent Heyting
     derivatives. -/
 theorem compl_eq (P : Question W) :
-    Pᶜ = principal (P.info)ᶜ := by
+    Pᶜ = ofSet (P.info)ᶜ := by
   apply le_antisymm
   · intro q hq
     show q ⊆ (info P)ᶜ
@@ -889,7 +884,7 @@ theorem compl_eq (P : Question W) :
     Boolean Set, and `info` respects complementation. -/
 @[simp] theorem info_compl (P : Question W) :
     info Pᶜ = (info P)ᶜ := by
-  rw [compl_eq, info_principal]
+  rw [compl_eq, info_ofSet]
 
 /-- **Non-inquisitive projection** `!P`: the declarative content with
     the same informative content as `P` ([ciardelli-groenendijk-roelofsen-2018]).
@@ -900,7 +895,7 @@ theorem compl_eq (P : Question W) :
     Used to define classical (non-inquisitive) operators in inquisitive
     semantics: classical disjunction is `!(P ⩒ Q) = !P ⊔ !Q`, etc. -/
 def proj (P : Question W) : Question W :=
-  principal P.info
+  ofSet P.info
 
 /-- `!P = Pᶜᶜ`: the non-inquisitive projection coincides with the
     Heyting double-complement ([ciardelli-groenendijk-roelofsen-2018]).
@@ -912,26 +907,26 @@ theorem proj_eq_compl_compl (P : Question W) : proj P = Pᶜᶜ := by
   rfl
 
 @[simp] theorem info_proj (P : Question W) : P.proj.info = P.info :=
-  info_principal P.info
+  info_ofSet P.info
 
-theorem isPrincipal_proj (P : Question W) : P.proj.isPrincipal :=
-  isPrincipal_principal P.info
+theorem info_mem_proj (P : Question W) : P.proj.info ∈ P.proj :=
+  info_mem_ofSet P.info
 
 /-- `proj` is idempotent: projecting twice = projecting once. -/
 @[simp] theorem proj_proj (P : Question W) : P.proj.proj = P.proj := by
   unfold proj
-  rw [info_principal]
+  rw [info_ofSet]
 
 /-- Projection fixes declarative contents (`!P = P` iff `P` is declarative). -/
 theorem proj_eq_self_iff (P : Question W) :
-    P.proj = P ↔ P.isPrincipal := by
+    P.proj = P ↔ P.info ∈ P := by
   refine ⟨?_, ?_⟩
   · intro h
-    have := isPrincipal_proj P
+    have := info_mem_proj P
     rw [h] at this
     exact this
   · intro h
-    exact ((isPrincipal_iff_eq_principal_info P).mp h).symm
+    exact ((info_mem_iff_eq_ofSet_info P).mp h).symm
 
 /-- **Non-informative projection** `?P := P ⊔ Pᶜ`
     ([ciardelli-groenendijk-roelofsen-2018]). The "inquisitive
@@ -977,16 +972,16 @@ excluded middle `P ⊔ Pᶜ = ⊤` fails: an inquisitive content `P` and its
 pseudo-complement `Pᶜ` are both *declarative*, so their join is
 declarative too, while `⊤` is the trivially-resolved content (every
 state in `props`). The witness below uses the polar-question shape
-`principal {true} ⊔ principal {true}ᶜ` over `Bool`. -/
+`ofSet {true} ⊔ ofSet {true}ᶜ` over `Bool`. -/
 
 /-- **LEM fails for inquisitive content**: there exists `W` and `P`
     with `P ⊔ Pᶜ ≠ ⊤`. This is what makes the lattice Heyting rather
     than Boolean. -/
 theorem not_lem_inquisitive_content :
     ∃ (W : Type) (P : Question W), P ⊔ Pᶜ ≠ ⊤ := by
-  refine ⟨Bool, principal {true}, ?_⟩
+  refine ⟨Bool, ofSet {true}, ?_⟩
   intro h
-  rw [compl_eq, info_principal] at h
+  rw [compl_eq, info_ofSet] at h
   have huniv : (Set.univ : Set Bool) ∈ (⊤ : Question Bool) :=
     Set.mem_univ _
   rw [← h] at huniv
@@ -999,70 +994,70 @@ theorem not_lem_inquisitive_content :
 /-! ### The Truth-Support Bridge: the declarative embedding
 
 The classical algebra of propositions embeds into the inquisitive
-algebra via `principal` — [ciardelli-2022]'s Truth-Support Bridge, by
+algebra via `ofSet` — [ciardelli-2022]'s Truth-Support Bridge, by
 which a statement names the singleton-generated information type
 `↓{|α|}` (§2.4.2, p. 21). The embedding is order-faithful
-(`principalEmbedding`) and preserves meets and `⊤`
-(`principalHom : InfTopHom`), but **not** joins: the join of two
+(`ofSetEmbedding`) and preserves meets and `⊤`
+(`ofSetHom : InfTopHom`), but **not** joins: the join of two
 declaratives can be genuinely inquisitive
-(`exists_isInquisitive_principal_sup`) — inquisitive content enters
+(`exists_isInquisitive_ofSet_sup`) — inquisitive content enters
 the algebra exactly at `⊔`. The classical context-set picture of
 `Discourse/CommonGround.lean` (its scoped meet monoid and
 `CommonGround.HasAssertion`) is the declarative fragment of the
 inquisitive one along this embedding. -/
 
-@[simp] theorem principal_top : principal (Set.univ : Set W) = ⊤ := by
+@[simp] theorem ofSet_top : ofSet (Set.univ : Set W) = ⊤ := by
   ext q; simp
 
-theorem principal_le_principal_iff {A B : Set W} :
-    principal A ≤ principal B ↔ A ⊆ B :=
-  mem_iff_principal_le.symm.trans mem_principal
+theorem ofSet_le_ofSet_iff {A B : Set W} :
+    ofSet A ≤ ofSet B ↔ A ⊆ B :=
+  mem_iff_ofSet_le.symm.trans mem_ofSet
 
-theorem principal_injective :
-    Function.Injective (principal : Set W → Question W) := fun A B h => by
-  rw [← info_principal A, ← info_principal B, h]
+theorem ofSet_injective :
+    Function.Injective (ofSet : Set W → Question W) := fun A B h => by
+  rw [← info_ofSet A, ← info_ofSet B, h]
 
-/-- `principal` as an order embedding: the classical algebra of
+/-- `ofSet` as an order embedding: the classical algebra of
     propositions sits order-faithfully inside the inquisitive algebra. -/
-def principalEmbedding : Set W ↪o Question W where
-  toFun := principal
-  inj' := principal_injective
-  map_rel_iff' := principal_le_principal_iff
+def ofSetEmbedding : Set W ↪o Question W where
+  toFun := ofSet
+  inj' := ofSet_injective
+  map_rel_iff' := ofSet_le_ofSet_iff
 
-/-- The Truth-Support Bridge, bundled: `principal` preserves meets and
+/-- The Truth-Support Bridge, bundled: `ofSet` preserves meets and
     `⊤`. Deliberately not a lattice hom — see
-    `exists_principal_sup_ne`. -/
-def principalHom : InfTopHom (Set W) (Question W) where
-  toFun := principal
-  map_inf' A B := (principal_inf A B).symm
-  map_top' := principal_top
+    `exists_ofSet_sup_ne`. -/
+def ofSetHom : InfTopHom (Set W) (Question W) where
+  toFun := ofSet
+  map_inf' A B := (ofSet_inf A B).symm
+  map_top' := ofSet_top
 
 /-- Joins are where inquisitiveness enters: over `Bool`, the join of the
     declaratives `↓{{true}}` and `↓{{false}}` is the polar question
     "which truth value?" — its own informative content (`univ`) does not
     resolve it. -/
-theorem exists_isInquisitive_principal_sup :
-    ∃ A B : Set Bool, (principal A ⊔ principal B).isInquisitive := by
+theorem exists_isInquisitive_ofSet_sup :
+    ∃ A B : Set Bool, (ofSet A ⊔ ofSet B).isInquisitive := by
   refine ⟨{true}, {false}, ?_⟩
-  have hinfo : (principal ({true} : Set Bool) ⊔ principal {false}).info =
+  have hinfo : (ofSet ({true} : Set Bool) ⊔ ofSet {false}).info =
       Set.univ := by
-    rw [info_sup, info_principal, info_principal]
+    rw [info_sup, info_ofSet, info_ofSet]
     ext b; cases b <;> simp
   show _ ∉ _
   rw [hinfo]
   intro h
   rcases mem_sup.mp h with h' | h'
-  · have := mem_principal.mp h' (Set.mem_univ false)
+  · have := mem_ofSet.mp h' (Set.mem_univ false)
     simp at this
-  · have := mem_principal.mp h' (Set.mem_univ true)
+  · have := mem_ofSet.mp h' (Set.mem_univ true)
     simp at this
 
-/-- The Truth-Support Bridge does not commute with `⊔`: `principal` is
+/-- The Truth-Support Bridge does not commute with `⊔`: `ofSet` is
     an `InfTopHom` but not a lattice hom. -/
-theorem exists_principal_sup_ne :
-    ∃ A B : Set Bool, principal A ⊔ principal B ≠ principal (A ∪ B) := by
-  obtain ⟨A, B, hinq⟩ := exists_isInquisitive_principal_sup
-  exact ⟨A, B, fun h => not_isInquisitive_principal (A ∪ B) (h ▸ hinq)⟩
+theorem exists_ofSet_sup_ne :
+    ∃ A B : Set Bool, ofSet A ⊔ ofSet B ≠ ofSet (A ∪ B) := by
+  obtain ⟨A, B, hinq⟩ := exists_isInquisitive_ofSet_sup
+  exact ⟨A, B, fun h => not_isInquisitive_ofSet (A ∪ B) (h ▸ hinq)⟩
 
 /-! ### `Question.Support` instance
 

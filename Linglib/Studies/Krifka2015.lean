@@ -677,9 +677,9 @@ theorem monopolar_vs_assert_observable_separation :
   constructor
   · rw [KrifkaState.toIssue_monopolarQuestion, KrifkaState.toIssue_assert,
       show s₀.toIssue =
-        Question.principal (CommitmentSpace.stateSet []) from rfl,
-      Question.principal_inf]
-    exact congrArg Question.principal (Set.inter_comm _ _)
+        Question.ofSet (CommitmentSpace.stateSet []) from rfl,
+      Question.ofSet_inf]
+    exact congrArg Question.ofSet (Set.inter_comm _ _)
   · intro h
     have h1 : Weather.noRain ∈ (s₀.monopolarQuestion isRaining).contextSet :=
       fun _ hic => absurd hic List.not_mem_nil

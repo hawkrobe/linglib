@@ -21,10 +21,10 @@ of `props`); the standard two-cell polar `polar p` (with both `p` and
 `pᶜ` as alternatives) is **not** singleton when `p` is non-trivial.
 
 The "highlighted polar" terminology of [roelofsen-farkas-2015] is a
-notational alias for `principal p` in the inquisitive setting; we do
+notational alias for `ofSet p` in the inquisitive setting; we do
 not introduce a separate definition because the singleton alternative is
 the only feature that distinguishes it from the two-cell `polar p`, and
-that feature is `IsSingleton (principal p)` itself.
+that feature is `IsSingleton (ofSet p)` itself.
 
 Particle-specific bindings (kya:, nandao) live in their respective study
 files (`Studies/`) and use `IsSingleton` /
@@ -46,12 +46,12 @@ variable {W : Type u}
 def IsSingleton (P : Question W) : Prop :=
   ∃ p, alt P = {p}
 
-/-- A `principal p` content is singleton — its unique alternative is
+/-- A `ofSet p` content is singleton — its unique alternative is
     `p` itself. The base case for all singleton-presuppositional
     constructions. -/
-theorem isSingleton_principal (p : Set W) :
-    IsSingleton (principal p) :=
-  ⟨p, alt_principal p⟩
+theorem isSingleton_ofSet (p : Set W) :
+    IsSingleton (ofSet p) :=
+  ⟨p, alt_ofSet p⟩
 
 @[simp] theorem isSingleton_top : IsSingleton (⊤ : Question W) :=
   ⟨Set.univ, alt_top⟩
@@ -77,11 +77,11 @@ theorem isSingleton_iff_subsingleton_and_nonempty (P : Question W) :
     exact hsub hq hp
 
 /-- A declarative content is singleton with witness `info P`: combines
-    `isPrincipal_iff_alt_eq_singleton` with the definition of
+    `info_mem_iff_alt_eq_singleton` with the definition of
     `IsSingleton`. -/
-theorem IsSingleton.of_isPrincipal {P : Question W}
-    (h : P.isPrincipal) : IsSingleton P :=
-  ⟨P.info, (isPrincipal_iff_alt_eq_singleton P).mp h⟩
+theorem IsSingleton.of_info_mem {P : Question W}
+    (h : P.info ∈ P) : IsSingleton P :=
+  ⟨P.info, (info_mem_iff_alt_eq_singleton P).mp h⟩
 
 /-- **Two-distinct-alternatives obstruction**: if `P` has two distinct
     alternatives, `P` is not singleton. The contrapositive: singleton
@@ -101,7 +101,7 @@ theorem not_isSingleton_of_two_alternatives (P : Question W)
     [bhatt-dayal-2020] kya:-style "singleton presupposition"
     cannot be satisfied by a two-cell polar Q; it requires the
     one-cell highlighted polar of [roelofsen-farkas-2015]
-    (= `principal p`). -/
+    (= `ofSet p`). -/
 theorem not_isSingleton_polar_of_nontrivial {p : Set W}
     (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
     ¬ IsSingleton (polar p) := by
@@ -155,10 +155,10 @@ theorem alt_eq_singleton_witness (Q : SingletonQuestion W) :
 
 /-- Constructor from a declarative — the canonical felicitous input. -/
 def ofDeclarative (p : Set W) : SingletonQuestion W :=
-  ⟨principal p, isSingleton_principal p⟩
+  ⟨ofSet p, isSingleton_ofSet p⟩
 
 @[simp] theorem ofDeclarative_issue (p : Set W) :
-    (ofDeclarative p).issue = principal p := rfl
+    (ofDeclarative p).issue = ofSet p := rfl
 
 end SingletonQuestion
 

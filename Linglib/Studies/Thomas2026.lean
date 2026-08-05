@@ -177,7 +177,7 @@ noncomputable def μ : PMF W := PMF.ofFintype (fun _ => (3 : ℝ≥0∞)⁻¹) (
 
 /-- The relevant question: `Avery invited Bailey?` against `Avery invited
     Cameron?` — two incomparable alternatives `A` and `B`. -/
-def Q : Question W := Question.principal A ⊔ Question.principal B
+def Q : Question W := Question.ofSet A ⊔ Question.ofSet B
 
 theorem hAnotB : ¬ A ⊆ B := by
   intro h; have : (0 : W) ∈ B := h (by simp); simp at this
@@ -191,19 +191,19 @@ theorem hRcapB : R ∩ B = ∅ := by ext x; fin_cases x <;> simp_all
 
 theorem A_mem_altQ : A ∈ alt Q := by
   apply Question.mem_alt_sup_of_alt_left
-  · rw [Question.alt_principal]; exact Set.mem_singleton_iff.mpr rfl
+  · rw [Question.alt_ofSet]; exact Set.mem_singleton_iff.mpr rfl
   · intro r hr hAr; exact absurd (hAr.trans hr) hAnotB
 
 theorem B_mem_altQ : B ∈ alt Q := by
   apply Question.mem_alt_sup_of_alt_right
-  · rw [Question.alt_principal]; exact Set.mem_singleton_iff.mpr rfl
+  · rw [Question.alt_ofSet]; exact Set.mem_singleton_iff.mpr rfl
   · intro r hr hBr; exact absurd (hBr.trans hr) hBnotA
 
 theorem altQ_subset : alt Q ⊆ {A, B} := by
   intro q hq
-  have h := Question.alt_sup_subset_union (Question.principal A)
-    (Question.principal B) hq
-  rw [Question.alt_principal, Question.alt_principal, Set.singleton_union] at h
+  have h := Question.alt_sup_subset_union (Question.ofSet A)
+    (Question.ofSet B) hq
+  rw [Question.alt_ofSet, Question.alt_ofSet, Set.singleton_union] at h
   exact h
 
 theorem altQ_eq : alt Q = {A, B} := by
