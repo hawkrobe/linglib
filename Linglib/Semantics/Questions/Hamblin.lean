@@ -294,24 +294,27 @@ theorem alt_which_of_forall_subset_eq {E : Type v} {D : Set E} {P : E → Set W}
     rintro _ ⟨e, he, rfl⟩ _ ⟨e', he', rfl⟩ hne' hsub
     exact hne' (hP e he e' he' hsub)
 
-/-- The wh-question over an indexed family: one alternative per index —
-`which` with the trivial domain. -/
-def ofFamily {ι : Type v} (P : ι → Set W) : Question W :=
-  which Set.univ P
+/-- `which` over the trivial domain is the indexed join of principal
+contents — a wh-question is the disjunction of its answers
+([hamblin-1973b]). -/
+theorem which_univ {ι : Type v} (P : ι → Set W) :
+    which Set.univ P = ⨆ i, ofSet (P i) :=
+  iSup_univ
 
-/-- A state resolves `ofFamily P` iff it is empty or contained in some
-`P i`. -/
-theorem mem_ofFamily {ι : Type v} {P : ι → Set W} {q : Set W} :
-    q ∈ ofFamily P ↔ q = ∅ ∨ ∃ i, q ⊆ P i := by
-  rw [ofFamily, mem_which]
+/-- A state resolves the join of principal contents iff it is empty or
+contained in some `P i`. -/
+theorem mem_iSup_ofSet {ι : Type v} {P : ι → Set W} {q : Set W} :
+    q ∈ (⨆ i, ofSet (P i)) ↔ q = ∅ ∨ ∃ i, q ⊆ P i := by
+  rw [← which_univ, mem_which]
   simp
 
-/-- For a nonempty pointwise antichain family, the alternatives of
-`ofFamily P` are exactly its range. -/
-theorem alt_ofFamily {ι : Type v} [Nonempty ι] {P : ι → Set W}
+/-- For a nonempty pointwise antichain family, the alternatives of the
+join are exactly its range. -/
+theorem alt_iSup_ofSet {ι : Type v} [Nonempty ι] {P : ι → Set W}
     (hne : ∀ i, (P i).Nonempty) (hP : ∀ i j, P i ⊆ P j → P i = P j) :
-    alt (ofFamily P) = Set.range P :=
-  (alt_which_of_forall_subset_eq ⟨Classical.arbitrary ι, Set.mem_univ _⟩
+    alt (⨆ i, ofSet (P i)) = Set.range P := by
+  rw [← which_univ]
+  exact (alt_which_of_forall_subset_eq ⟨Classical.arbitrary ι, Set.mem_univ _⟩
     (fun i _ => hne i) (fun i _ j _ h => hP i j h)).trans Set.image_univ
 
 /-! ### Hamblin construction from a finite alternative list
