@@ -297,13 +297,13 @@ def causedMotionToResultative : InheritanceLink :=
 /-! ## The book's network as a constructicon
 
 [goldberg-1995] draws no single master figure; the network below assembles
-the per-link analyses under the book's own framing of "the entire
-collection of constructions as forming a lattice, with individual
-constructions related by specific types of asymmetric normal mode
-inheritance links" (pp. 99–100): the ditransitive polysemy family
-(pp. 75–77), the caused-motion → intransitive-motion subpart link (p. 78),
-and the caused-motion → resultative metaphorical link (§3.4.1, the
-"Change of State as Change of Location" metaphor). The conative appears in
+the per-link analyses under the book's own framing of the collection of
+constructions as "a highly structured lattice of interrelated
+information" (ch. 1), organized by the asymmetric inheritance links of
+§3.3: the ditransitive polysemy family (pp. 75–77), the caused-motion →
+intransitive-motion subpart link (p. 78), and the caused-motion →
+resultative metaphorical link (§3.4.1, understanding "a change of state
+in terms of movement to a new location"). The conative appears in
 the book's construction inventory (p. 4) but participates in no
 inheritance link — it is a node without edges, and linking it would be
 invention. -/

@@ -48,7 +48,10 @@ inductive IdiomFormality where
   deriving DecidableEq, Repr
 
 /-- Combined idiom classification: the product of
-[fillmore-kay-oconnor-1988] §1.1's three dimensions. -/
+[fillmore-kay-oconnor-1988] §1.1.1–§1.1.3's dimensions. The paper's
+fourth distinction — with vs. without pragmatic point, §1.1.4 — is
+carried by `Construction.pragmaticFunction` rather than a dimension
+here. -/
 structure IdiomType where
   interpretability : IdiomInterpretability
   grammaticality : IdiomGrammaticality
