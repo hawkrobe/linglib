@@ -8,41 +8,26 @@ import Mathlib.Data.Fintype.Prod
 import Mathlib.Tactic.DeriveFintype
 
 /-!
-# [roberts-2012] — Information Structure in Discourse
+# Roberts 2012: information structure in discourse
 
-[roberts-2012] "Information structure in discourse: Towards an integrated
-formal theory of pragmatics" (Semantics & Pragmatics 5(6): 1–69), her
-worked discourse D₀: two individuals (Hilary, Robin), two foods (bagels,
-tofu), 16 worlds, 7 questions forming a strategy tree. The file traces
-the QUD stack through the discourse, verifies her (10g.iii)
-well-formedness invariant, and proves her entailment table and
-strategy-completeness observations.
+The worked D₀ discourse of [roberts-2012] (Semantics & Pragmatics
+5(6)): two individuals, two foods, and seven questions forming a
+strategy tree —
 
-```
-         q₁ (Who ate what?)
-        /                            \
-    q_a (What did Hilary eat?)    q_b (What did Robin eat?)
-    /        \                    /        \
-q_ai (H bagels?) q_aii (H tofu?) q_bi (R bagels?) q_bii (R tofu?)
-```
+    q₁ = Who ate what?
+    ├─ q_a = What did Hilary eat?  (q_ai: bagels?  q_aii: tofu?)
+    └─ q_b = What did Robin eat?   (q_bi: bagels?  q_bii: tofu?)
 
-## Representation
+— with her entailment table, the answer-composition equations (11), the
+derived complete-answer partition (4), strategy completeness, and the
+QUD-stack trace with its (10g.iii) well-formedness invariant.
 
-A world is the `Finset` of eating events that occurred in it. Questions
-are joins of their answers ([hamblin-1973b]): the yes/no questions are
-`Question.ofSet` of a single eating event — the `{|α|}` q-alternative
-Roberts specifies (the substrate's inquisitive `Question.polar`, with
-alternatives `{p, pᶜ}`, is the rival convention) — and the wh-questions
-are `⨆` over the open index, her (1)'s q-alternatives by wh-abstraction:
-`q_a` joins over foods (her (7)), `q_1` over person–food pairs (her
-(45)).
-Her derived complete-answer partition (4) is the theorem
-`mentionAll_wh_iff`. Question entailment (8) is rendered as
-complete-answer transmission — `MentionAll σ q₁ → MentionAll σ q₂` —
-because the alt-witnessed `Question.Entails` coincides with (8) only for
-partition-shaped alternatives (see the fidelity note in
-`Semantics/Questions/Entailment.lean`); answerhood (3) is
-`Question.PartiallyAnswers`/`Question.MentionAll` verbatim.
+A world is the `Finset` of eating events that occurred, and a question
+is the join of its answers ([hamblin-1973b]): `Question.ofSet` of a
+single event for the yes/no questions, `⨆` over the open index for the
+wh-questions — her (1). Entailment (8) is inclusion of
+`completeAnswers`. The substrate's inquisitive `Question.polar`, with
+alternatives `{p, pᶜ}`, is the rival yes/no convention, not hers.
 -/
 
 namespace Roberts2012
