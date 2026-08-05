@@ -12,7 +12,7 @@ predicates plus the relative-pronoun paradigm. Theory-light: each predicate
 carries only consensus-typological metadata (CTP class per [noonan-2007],
 factivity per [tonhauser-beaver-roberts-simons-2013]-style projection trials,
 [deal-2026] §3/§6) and one morphological observable — the grammaticality
-status of *yox̂ ke* on the complement edge. The analytical RE-vs-simplex split,
+status of *yox̂ ke* on the complement edge. The analytical relative-vs-simplex split,
 selectional features, and projection-site claims are Deal-specific apparatus
 and live in the co-located `Studies/Deal2026.lean`.
 
@@ -20,7 +20,7 @@ The relative-pronoun paradigm is from [deal-2016a] as reproduced at
 [deal-2026] (22); case and number values reuse `Core.UD` substrate.
 -/
 
-namespace NezPerce.ClausalEmbedding
+namespace NezPerce.Clause
 
 /-! ### Predicate schema -/
 
@@ -28,7 +28,7 @@ namespace NezPerce.ClausalEmbedding
     notional-complement edge — a morphological observable, recording what
     the morphology does, not what it means.
 
-    [deal-2026]: obligatory for the RE-takers ((28)); prohibited for
+    [deal-2026]: obligatory for the relative-embedding takers ((28)); prohibited for
     *neki* and *hi* ((65)); marginal for *cuukwe* — (66b) is `%`-marked,
     and consultants "did on rare occasions accept" and once produced it,
     so *cuukwe* *permits* a bare complement rather than rejecting the
@@ -59,7 +59,7 @@ structure NezPerceEmbedder where
   yoxKeEdge : EdgeRequirement
   deriving DecidableEq, Repr
 
-/-! ### RE-taking predicates ([deal-2026] §3)
+/-! ### Relative-embedding predicates ([deal-2026] §3)
 
 Emotive factives (commentative per [noonan-2007]) plus one cognitive
 factive; all require *yox̂ ke* on the complement edge ((28)), with
@@ -108,8 +108,8 @@ def timneneki : NezPerceEmbedder where
   yoxKeEdge := .obligatory
 
 /-- *timiipni* 'remember'. [deal-2026] (27d). Classed by Noonan as
-    `knowledge` (cognitive factive) but with the same RE morphosyntax as
-    the emotive factives — whether `knowledge` predicates are RE-takers
+    `knowledge` (cognitive factive) but with the same relative-embedding morphosyntax as
+    the emotive factives — whether `knowledge` predicates are relative-embedding takers
     is a per-language property (contrast English *remember*). -/
 def timiipni : NezPerceEmbedder where
   form := "timiipni"; gloss := "remember"
@@ -118,9 +118,9 @@ def timiipni : NezPerceEmbedder where
   yoxKeEdge := .obligatory
 
 /-- *qe'ciyeew'yew'* 'thank you' — an unanalyzable particle, not a verb,
-    taking notional complements with RE morphosyntax while disallowing
+    taking notional complements with relative-embedding morphosyntax while disallowing
     all nominal complements ([deal-2026] §4 (42); fn. 16). Its factivity
-    follows [deal-2026] §7's generalization that all REs are factive (no
+    follows [deal-2026] §7's generalization that all relative embeddings are factive (no
     per-item projection trial is reported). -/
 def qeciyeewyew : NezPerceEmbedder where
   form := "qe'ciyeew'yew'"; gloss := "thank you"
@@ -139,7 +139,7 @@ def neki : NezPerceEmbedder where
   yoxKeEdge := .prohibited
 
 /-- *hi* 'say, tell'. [deal-2026] (47), (65b). Non-factive; rejects
-    *yox̂ ke*. Unlike the RE-takers, *hi* is transitive: it takes an
+    *yox̂ ke*. Unlike the relative-embedding takers, *hi* is transitive: it takes an
     accusative addressee and triggers object agreement ((47a)). -/
 def hi : NezPerceEmbedder where
   form := "hi"; gloss := "say, tell"
@@ -149,9 +149,9 @@ def hi : NezPerceEmbedder where
 
 /-- *cuukwe* 'know'. [deal-2026] (66), (68). Factive (projection
     survives a conditional antecedent, (68)) but canonically
-    simplex-embedding — the RE-marked variant is only marginally
+    simplex-embedding — the relative-marked variant is only marginally
     accepted ((66b), `%`-marked). The factive-but-simplex combination is
-    [deal-2026]'s central dissociation: factivity does not force RE
+    [deal-2026]'s central dissociation: factivity does not force relative-embedding
     morphology. -/
 def cuukwe : NezPerceEmbedder where
   form := "cuukwe"; gloss := "know"
@@ -161,16 +161,16 @@ def cuukwe : NezPerceEmbedder where
 
 /-! ### Inventories -/
 
-/-- All embedders surveyed in [deal-2026]: 8 RE-canonical + 3
-    simplex-canonical. Source-of-truth list; `reCanonical` and
+/-- All embedders surveyed in [deal-2026]: 8 relative-canonical + 3
+    simplex-canonical. Source-of-truth list; `relativeCanonical` and
     `simplexCanonical` are derived views via the `yoxKeEdge` observable. -/
 def allEmbedders : List NezPerceEmbedder :=
   [liloy, etqew, cicwaay, eeys, qeese, timneneki, timiipni, qeciyeewyew,
    neki, hi, cuukwe]
 
-/-- The RE-canonical predicates: *yox̂ ke* obligatory on the complement
+/-- The relative-canonical predicates: *yox̂ ke* obligatory on the complement
     edge. -/
-def reCanonical : List NezPerceEmbedder :=
+def relativeCanonical : List NezPerceEmbedder :=
   allEmbedders.filter (·.yoxKeEdge == .obligatory)
 
 /-- The simplex-canonical predicates: those permitting a bare complement
@@ -179,10 +179,10 @@ def reCanonical : List NezPerceEmbedder :=
 def simplexCanonical : List NezPerceEmbedder :=
   allEmbedders.filter (·.yoxKeEdge != .obligatory)
 
-/-- Drift sentry: `reCanonical` contains exactly the eight predicates
+/-- Drift sentry: `relativeCanonical` contains exactly the eight predicates
     [deal-2026] lists at (27a–e), (27d), (42). -/
-theorem reCanonical_membership :
-    reCanonical = [liloy, etqew, cicwaay, eeys, qeese, timneneki,
+theorem relativeCanonical_membership :
+    relativeCanonical = [liloy, etqew, cicwaay, eeys, qeese, timneneki,
                    timiipni, qeciyeewyew] := by decide
 
 /-- Drift sentry: `simplexCanonical` contains exactly *neki*, *hi*,
@@ -190,16 +190,16 @@ theorem reCanonical_membership :
 theorem simplexCanonical_membership :
     simplexCanonical = [neki, hi, cuukwe] := by decide
 
-/-- Partition: every embedder is either RE-canonical or
+/-- Partition: every embedder is either relative-canonical or
     simplex-canonical (no third category in [deal-2026]'s survey). -/
 theorem allEmbedders_partitioned :
-    allEmbedders = reCanonical ++ simplexCanonical := by decide
+    allEmbedders = relativeCanonical ++ simplexCanonical := by decide
 
 /-! ### Factivity generalisations (observation-level) -/
 
-/-- All RE-canonical predicates are factive. [deal-2026] §3, §7. -/
-theorem reCanonical_all_factive :
-    reCanonical.all (·.factive) = true := by decide
+/-- All relative-canonical predicates are factive. [deal-2026] §3, §7. -/
+theorem relativeCanonical_all_factive :
+    relativeCanonical.all (·.factive) = true := by decide
 
 /-- The factive simplex-canonical predicates: exactly *cuukwe* 'know'. -/
 theorem factive_simplex_membership :
@@ -210,9 +210,9 @@ theorem factive_simplex_membership :
 theorem nonfactive_simplex_membership :
     simplexCanonical.filter (! ·.factive) = [neki, hi] := by decide
 
-/-- Factivity does not predict RE-canonical status: *cuukwe* 'know' is
+/-- Factivity does not predict relative-canonical status: *cuukwe* 'know' is
     factive but simplex-canonical ([deal-2026]'s central dissociation —
-    in Nez Perce factivity is necessary but not sufficient for RE
+    in Nez Perce factivity is necessary but not sufficient for relative-embedding
     morphosyntax). -/
 theorem cuukwe_factive_but_simplex :
     cuukwe.factive = true ∧ cuukwe ∈ simplexCanonical := by
@@ -256,4 +256,4 @@ theorem paradigm_membership :
     forms. -/
 theorem acc_pl_variants : rp_acc_pl.forms = ["konmana", "yox̂mene"] := rfl
 
-end NezPerce.ClausalEmbedding
+end NezPerce.Clause
