@@ -38,7 +38,7 @@ and the prejacent is not directly settled in K.
 
 namespace Zheng2025
 
-open Modality (Kernel directlySettlesExplicit)
+open Modality (Kernel)
 open Intensional.Premise
 
 /-! ### Empirical data -/
@@ -218,7 +218,7 @@ def unexpected (u : List (W → Prop)) : Prop :=
 polar questions): (i) some evidence in K raises P(φ), (ii) the evidence is
 unexpected given the prior state U, (iii) φ is not directly settled in K. -/
 def nandaoFelicitous (u : List (W → Prop)) (φ : W → Prop) : Prop :=
-  evidenceSupports k φ ∧ unexpected k u ∧ ¬ directlySettlesExplicit k φ
+  evidenceSupports k φ ∧ unexpected k u ∧ ¬ k.directlySettles φ
 
 end
 
@@ -271,10 +271,11 @@ theorem raincoat_nandao_felicitous :
     cases w <;> decide
   · rintro ⟨x, hx, hxor⟩
     rcases List.mem_singleton.mp (by simpa [raincoatK] using hx) with rfl
-    rcases hxor with h_ent | h_exc
-    · exact absurd (h_ent .sprinkler (show wearingRaincoat .sprinkler from by decide))
-        (by decide)
-    · exact h_exc ⟨.rain, show wearingRaincoat .rain from by decide, by decide⟩
+    rcases hxor with h_sub | h_disj
+    · exact (show ¬ isRaining .sprinkler from by decide)
+        (h_sub (show wearingRaincoat .sprinkler from by decide))
+    · exact Set.disjoint_left.mp h_disj (show wearingRaincoat .rain from by decide)
+        (show isRaining .rain from by decide)
 
 /-- Without evidence, nandao is infelicitous ([zheng-2025] ex. 5 ctx 2). -/
 theorem no_evidence_nandao_infelicitous :

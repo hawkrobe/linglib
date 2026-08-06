@@ -183,7 +183,7 @@ theorem raincoat_downstream : downstreamEvidence raincoatFrame := by
 /-- The raincoat kernel doesn't settle isRaining — the third conjunct of
     [zheng-2025]'s nandao-felicity theorem. -/
 theorem raincoat_not_settled :
-    ¬ directlySettlesExplicit raincoatK isRaining :=
+    ¬ raincoatK.directlySettles isRaining :=
   raincoat_nandao_felicitous.2.2
 
 /-- **Downstream implies must-defined**: in the raincoat scenario, downstream
@@ -210,16 +210,15 @@ theorem tense_modal_evidential_parallel :
   exact (by decide : ¬ isRaining World.sprinkler) (hAll hw1)
 
 private theorem isRaining_settles_isRaining :
-    directlySettlesExplicit (⟨[isRaining]⟩ : Kernel World) isRaining := by
-  refine ⟨isRaining, by simp, Or.inl ?_⟩
-  intro w hw; exact hw
+    (⟨[isRaining]⟩ : Kernel World).directlySettles isRaining :=
+  ⟨isRaining, by simp, Or.inl subset_rfl⟩
 
 /-- **Direct evidence blocks both**: when evidence is direct, the kernel
     settles the prejacent → `kernelMust` is undefined and downstream is
     trivially satisfied (T = A). Speaker uses bare assertion, not `must`. -/
 theorem direct_evidence_blocks_both :
     let directK : Kernel World := ⟨[isRaining]⟩
-    directlySettlesExplicit directK isRaining ∧
+    directK.directlySettles isRaining ∧
     ¬(kernelMust directK isRaining).presup World.rain ∧
     let directFrame : EvidentialFrame ℤ :=
       { speechTime := 0, perspectiveTime := 0, referenceTime := 0,
@@ -242,7 +241,7 @@ theorem strong_assertion_settles :
     strongAssertion.source = .direct ∧
     strongAssertion.authority = .ego ∧
     let directK : Kernel World := ⟨[isRaining]⟩
-    directlySettlesExplicit directK isRaining :=
+    directK.directlySettles isRaining :=
   ⟨rfl, rfl, isRaining_settles_isRaining⟩
 
 /-- Inferential claims (nonparticipant + inference) correspond to
@@ -251,7 +250,7 @@ theorem strong_assertion_settles :
 theorem inferential_claim_must_profile :
     inferentialClaim.source = .inference ∧
     inferentialClaim.authority = .nonparticipant ∧
-    ¬ directlySettlesExplicit raincoatK isRaining ∧
+    ¬ raincoatK.directlySettles isRaining ∧
     (kernelMust raincoatK isRaining).presup World.rain :=
   ⟨rfl, rfl, raincoat_not_settled, raincoat_not_settled⟩
 

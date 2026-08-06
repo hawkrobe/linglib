@@ -25,7 +25,7 @@ this apparatus live in `Studies/Zheng2025.lean`.
 
 - `Kernel`: direct-information propositions with their modal base `B_K = ⋂K`,
   entailment (`Kernel.followsFrom`), and compatibility (`Kernel.compatibleWith`)
-- `directlySettlesExplicit`: Implementation 1 — some `X ∈ K` entails or
+- `Kernel.directlySettles`: Implementation 1 — some `X ∈ K` entails or
   excludes the prejacent
 - `explicit_implies_entailment`: settling implies entailment; the converse
   fails, which is what makes the presupposition non-trivial
@@ -89,41 +89,41 @@ end Kernel
 
 /-! ### Settling ([von-fintel-gillies-2010] §7.1, Implementation 1) -/
 
-/-- K directly settles P iff some X ∈ K entails P or is incompatible with P
-([von-fintel-gillies-2010] Implementation 1, "Explicit Representation"). -/
-def directlySettlesExplicit : Prop :=
+/-- K directly settles P iff some X ∈ K entails P or is incompatible with P:
+`X ⊆ ⟦φ⟧` or `X ∩ ⟦φ⟧ = ∅` ([von-fintel-gillies-2010] Implementation 1, the
+"Explicit Representation"; the rival partition implementation is
+`VonFintelGillies2010.settlesByPartition`). -/
+def Kernel.directlySettles : Prop :=
   ∃ x ∈ k.props,
-    (∀ w ∈ propExtension x, φ w) ∨ (¬ ∃ w ∈ propExtension x, φ w)
+    propExtension x ⊆ propExtension φ ∨ Disjoint (propExtension x) (propExtension φ)
 
 /-- Settling implies entailment: if K directly settles φ, then B_K ⊆ ⟦φ⟧ or
-    B_K ⊆ ⟦¬φ⟧. If X ∈ K entails φ then B_K ⊆ X ⊆ ⟦φ⟧; if X excludes φ then
-    B_K ⊆ X ⊆ ⟦¬φ⟧. The converse fails (see
-    `VonFintelGillies2010.entailment_settling_gap`). -/
-theorem explicit_implies_entailment (h : directlySettlesExplicit k φ) :
+    B_K ⊆ ⟦¬φ⟧, since B_K ⊆ X for the settling X ∈ K. The converse fails
+    (see `VonFintelGillies2010.entailment_settling_gap`). -/
+theorem explicit_implies_entailment (h : k.directlySettles φ) :
     k.followsFrom φ ∨ k.followsFrom (λ w' => ¬ φ w') := by
-  obtain ⟨x, hx_mem, h_ent | h_exc⟩ := h
-  · exact Or.inl λ w' hw' =>
-      h_ent w' (propIntersection_subset_propExtension hx_mem hw')
-  · exact Or.inr λ w' hw' hφ =>
-      h_exc ⟨w', propIntersection_subset_propExtension hx_mem hw', hφ⟩
+  obtain ⟨x, hx_mem, h_sub | h_disj⟩ := h
+  · exact Or.inl ((propIntersection_subset_propExtension hx_mem).trans h_sub)
+  · exact Or.inr ((propIntersection_subset_propExtension hx_mem).trans
+      h_disj.subset_compl_right)
 
-/-- Settling is monotone: more propositions in K means more is settled. -/
-theorem settling_monotone (p : W → Prop)
-    (hSettled : directlySettlesExplicit k φ) :
-    directlySettlesExplicit ⟨p :: k.props⟩ φ := by
-  obtain ⟨x, hx_mem, hx⟩ := hSettled
-  exact ⟨x, List.mem_cons_of_mem _ hx_mem, hx⟩
+/-- Settling is monotone: a larger kernel settles everything a smaller one
+    does. -/
+theorem Kernel.directlySettles_mono {k' : Kernel W} (hk : k.props ⊆ k'.props)
+    (h : k.directlySettles φ) :
+    k'.directlySettles φ :=
+  h.imp λ _ ⟨hm, hx⟩ => ⟨hk hm, hx⟩
 
 /-! ### Modal operators ([von-fintel-gillies-2010] Defs 5–6) -/
 
 /-- ⟦must φ⟧: presupposes K doesn't settle φ; asserts B_K ⊆ ⟦φ⟧. -/
 def kernelMust : PartialProp W where
-  presup := λ _ => ¬ directlySettlesExplicit k φ
+  presup := λ _ => ¬ k.directlySettles φ
   assertion := λ _ => k.followsFrom φ
 
 /-- ⟦might φ⟧: presupposes K doesn't settle φ; asserts B_K ∩ ⟦φ⟧ ≠ ∅. -/
 def kernelMight : PartialProp W where
-  presup := λ _ => ¬ directlySettlesExplicit k φ
+  presup := λ _ => ¬ k.directlySettles φ
   assertion := λ _ => k.compatibleWith φ
 
 /-- ⟦can't φ⟧ = must(¬φ). -/
@@ -147,11 +147,11 @@ theorem kernel_duality :
 /-- Empty kernel: nothing is settled, so must is always defined. -/
 theorem empty_kernel_always_defined :
     (kernelMust ⟨[]⟩ φ).presup w := by
-  show ¬ directlySettlesExplicit _ _
-  simp [directlySettlesExplicit]
+  show ¬ Kernel.directlySettles _ _
+  simp [Kernel.directlySettles]
 
 /-- Direct evidence infelicity: when K settles φ, must φ is undefined. -/
-theorem direct_evidence_infelicity (hSettled : directlySettlesExplicit k φ) :
+theorem direct_evidence_infelicity (hSettled : k.directlySettles φ) :
     ¬(kernelMust k φ).presup w := by
   intro h; exact h hSettled
 

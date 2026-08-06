@@ -185,16 +185,20 @@ theorem mastermind_base : mastermindK.base = ({.w1} : Set World) := by
   cases w <;> simp [Kernel.base, mastermindK, propIntersection, redOrBlue, notRed]
 
 theorem mastermind_blue_unsettled :
-    ¬ directlySettlesExplicit mastermindK blue := by
+    ¬ mastermindK.directlySettles blue := by
   rintro ⟨x, hx, hxor⟩
   rcases List.mem_cons.mp hx with rfl | hx'
-  · rcases hxor with h_ent | h_exc
-    · exact absurd (h_ent .w0 (show redOrBlue .w0 from by decide)) (by decide)
-    · exact h_exc ⟨.w1, show redOrBlue .w1 from by decide, by decide⟩
+  · rcases hxor with h_sub | h_disj
+    · exact (show ¬ blue .w0 from by decide)
+        (h_sub (show redOrBlue .w0 from by decide))
+    · exact Set.disjoint_left.mp h_disj (show redOrBlue .w1 from by decide)
+        (show blue .w1 from by decide)
   · rcases List.mem_singleton.mp hx' with rfl
-    rcases hxor with h_ent | h_exc
-    · exact absurd (h_ent .w2 (show notRed .w2 from by decide)) (by decide)
-    · exact h_exc ⟨.w1, show notRed .w1 from by decide, by decide⟩
+    rcases hxor with h_sub | h_disj
+    · exact (show ¬ blue .w2 from by decide)
+        (h_sub (show notRed .w2 from by decide))
+    · exact Set.disjoint_left.mp h_disj (show notRed .w1 from by decide)
+        (show blue .w1 from by decide)
 
 theorem mastermind_blue_follows : mastermindK.followsFrom blue := by
   rw [Kernel.followsFrom_iff, mastermind_base]
@@ -210,18 +214,16 @@ theorem mastermind_must_blue_true :
   mastermind_blue_follows
 
 theorem mastermind_red_settled :
-    directlySettlesExplicit mastermindK red := by
-  refine ⟨notRed, by simp [mastermindK], Or.inr ?_⟩
-  rintro ⟨w, hnr, hr⟩
-  exact hnr hr
+    mastermindK.directlySettles red :=
+  ⟨notRed, by simp [mastermindK], Or.inr (Set.disjoint_left.mpr λ _ hnr hr => hnr hr)⟩
 
 theorem mastermind_might_red_undefined :
     ¬(kernelMight mastermindK red).presup .w0 := λ h =>
   h mastermind_red_settled
 
 theorem mastermind_redOrBlue_settled :
-    directlySettlesExplicit mastermindK redOrBlue :=
-  ⟨redOrBlue, by simp [mastermindK], Or.inl λ _ hw => hw⟩
+    mastermindK.directlySettles redOrBlue :=
+  ⟨redOrBlue, by simp [mastermindK], Or.inl subset_rfl⟩
 
 /-! ### Deep theorems -/
 
@@ -230,7 +232,7 @@ This gap makes the evidential presupposition non-trivial: must φ can be
 simultaneously defined and true. -/
 theorem entailment_settling_gap :
     ∃ (k : Kernel World) (φ : World → Prop),
-      k.followsFrom φ ∧ ¬ directlySettlesExplicit k φ :=
+      k.followsFrom φ ∧ ¬ k.directlySettles φ :=
   ⟨mastermindK, blue, mastermind_blue_follows, mastermind_blue_unsettled⟩
 
 /-- **Indirectness ≠ weakness** (§4.1): three independent cases show
@@ -245,9 +247,11 @@ theorem indirectness_neq_weakness :
     λ h => h mastermind_red_settled, ?_, ?_⟩
   · rintro ⟨x, hx, hxor⟩
     rcases List.mem_singleton.mp hx with rfl
-    rcases hxor with h_ent | h_exc
-    · exact absurd (h_ent .w0 (show redOrBlue .w0 from by decide)) (by decide)
-    · exact h_exc ⟨.w1, show redOrBlue .w1 from by decide, by decide⟩
+    rcases hxor with h_sub | h_disj
+    · exact (show ¬ blue .w0 from by decide)
+        (h_sub (show redOrBlue .w0 from by decide))
+    · exact Set.disjoint_left.mp h_disj (show redOrBlue .w1 from by decide)
+        (show blue .w1 from by decide)
   · intro h
     have hw0 : World.w0 ∈ indirectK.base :=
       mem_propIntersection.mpr λ p hp => by
@@ -344,7 +348,7 @@ private theorem not_settles_redOrBlue :
     explicitly (red ⊆ redOrBlue), but not by partition. -/
 theorem explicit_not_implies_partition :
     ∃ (k : Kernel World) (φ : World → Prop),
-      directlySettlesExplicit k φ ∧ ¬ settlesByPartition k φ :=
+      k.directlySettles φ ∧ ¬ settlesByPartition k φ :=
   ⟨⟨[red]⟩, redOrBlue,
     ⟨red, by simp, Or.inl λ _ hw => Or.inl hw⟩, not_settles_redOrBlue⟩
 
@@ -354,7 +358,7 @@ theorem explicit_not_implies_partition :
     entails or excludes it. -/
 theorem partition_not_implies_explicit :
     ∃ (k : Kernel World) (φ : World → Prop),
-      settlesByPartition k φ ∧ ¬ directlySettlesExplicit k φ := by
+      settlesByPartition k φ ∧ ¬ k.directlySettles φ := by
   refine ⟨mastermindK, blue, λ w v h => ?_, mastermind_blue_unsettled⟩
   have h1 := h redOrBlue (by simp [mastermindK])
   have h2 := h notRed (by simp [mastermindK])
