@@ -1,5 +1,6 @@
 import Linglib.Features.Acceptability
-import Linglib.Syntax.Clause.Form
+import Linglib.Semantics.Mood.Defs
+import Linglib.Syntax.Clause.Context
 import Linglib.Morphology.Word.Basic
 
 open Morphology (Word)
@@ -31,7 +32,7 @@ namespace Features.MinimalPairs
 
 
 open Features
-open Clause (Form)
+
 
 /-! ### Word-based -/
 
@@ -46,7 +47,8 @@ structure MinimalPair where
   rhs : List Word
   lhsJudgment : Judgment := .acceptable
   rhsJudgment : Judgment := .ungrammatical
-  clauseType : Form
+  force : Mood.Illocutionary := .declarative
+  context : Clause.EmbeddingContext := .matrix
   description : String
   citation : String := ""
   deriving Repr
@@ -95,8 +97,10 @@ structure SentencePair where
   grammatical : String
   /-- The ungrammatical sentence -/
   ungrammatical : String
-  /-- Clause form (declarative, question, etc.) -/
-  clauseType : Form
+  /-- Illocutionary force of the clause containing the contrast. -/
+  force : Mood.Illocutionary := .declarative
+  /-- Embedding context of that clause. -/
+  context : Clause.EmbeddingContext := .matrix
   /-- Description of what the pair tests -/
   description : String
   /-- Citation for the data; empty string for uncited examples. -/

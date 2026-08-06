@@ -1,5 +1,5 @@
 import Linglib.Syntax.Clause.Size
-import Linglib.Syntax.Clause.Form
+import Linglib.Semantics.Mood.Defs
 import Linglib.Features.Complementation
 import Linglib.Features.Case.Basic
 
@@ -12,14 +12,14 @@ concretely is framework-relative (a Minimalist extended projection, an
 HPSG sign, a dependency subtree), so `Clause` is the interface those
 carriers instantiate: a clause object answers the theory-neutral
 queries — its grade on the `Clause.Size` scale and the selectional
-axes ([noonan-2007] coding, `Clause.Form`) — and consumers reason
-through the queries rather than importing a framework.
-`Minimalist.ClauseSpine` is the first instance
+axes ([noonan-2007] coding, `Mood.Illocutionary` force) — and
+consumers reason through the queries rather than importing a
+framework. `Minimalist.ClauseSpine` is the first instance
 (`Syntax/Minimalist/ExtendedProjection/ClauseSpine.lean`).
 
 ## Main definitions
 
-* `Clause` — the interface: `size`, `coding?`, `form?`
+* `Clause` — the interface: `size`, `coding?`, `force?`
 * `Clause.EmbeddedSubject` — the subject-requirement axis complement
   frames record (`Syntax/Category/Verb/Frame.lean`)
 -/
@@ -34,8 +34,8 @@ class Clause (C : Type*) where
   /-- The [noonan-2007] coding the object realizes, when its structure
       determines one. -/
   coding? : C → Option Complement.Coding := λ _ => none
-  /-- The surface clause form, when the object determines one. -/
-  form? : C → Option Clause.Form := λ _ => none
+  /-- The illocutionary force, when the object determines one. -/
+  force? : C → Option Mood.Illocutionary := λ _ => none
 
 namespace Clause
 

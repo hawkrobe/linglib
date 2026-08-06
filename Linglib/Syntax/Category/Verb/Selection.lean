@@ -7,7 +7,7 @@ import Linglib.Syntax.Category.Complementizer.Basic
 The hom between the `Verb` and `Complementizer` entry APIs: which
 clause-typers can head a predicate's complements. The core relation is
 axis-wise compatibility between a clausal position's recorded axes and
-a clause-typer's — [noonan-2007]'s coding axis and the clause-form
+a clause-typer's — [noonan-2007]'s coding axis and the force
 axis — with no conflicting axis and at least one positively agreeing
 one. Frame- and verb-level relations are derived lifts, all decidable.
 `Complement.Position.SatisfiedBy` is the object-side counterpart: the
@@ -30,11 +30,11 @@ Consistency checks against Fragment data live in Studies
     Non-clausal positions are typed by nothing. -/
 def Complement.Position.TypedBy : Complement.Position →
     Complementizer → Prop
-  | .clausal coding form _, z =>
+  | .clausal coding force _, z =>
       (coding = none ∨ z.coding = none ∨ coding = z.coding) ∧
-        (form = none ∨ z.clauseForm = none ∨ form = z.clauseForm) ∧
+        (force = none ∨ z.force = none ∨ force = z.force) ∧
         ((coding ≠ none ∧ coding = z.coding) ∨
-          (form ≠ none ∧ form = z.clauseForm))
+          (force ≠ none ∧ force = z.force))
   | _, _ => False
 
 instance : (p : Complement.Position) → (z : Complementizer) →
@@ -49,9 +49,9 @@ instance : (p : Complement.Position) → (z : Complementizer) →
     positions by none. -/
 def Complement.Position.SatisfiedBy {C : Type*} [Clause C] :
     Complement.Position → C → Prop
-  | .clausal coding form _, c =>
+  | .clausal coding force _, c =>
       (coding = none ∨ Clause.coding? c = coding) ∧
-        (form = none ∨ Clause.form? c = form)
+        (force = none ∨ Clause.force? c = force)
   | _, _ => False
 
 instance {C : Type*} [Clause C] : (p : Complement.Position) → (c : C) →

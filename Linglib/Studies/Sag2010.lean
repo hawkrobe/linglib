@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 import Linglib.Syntax.HPSG.Construction
 import Linglib.Studies.Ross1967
 import Linglib.Studies.SagWasowBender2003
-import Linglib.Syntax.Clause.Form
+import Linglib.Semantics.Mood.Defs
 
 set_option autoImplicit false
 
@@ -54,12 +54,11 @@ would live in the HPSG theory layer.
 * divergence from [ross-1967]'s configurational Complex-NP Constraint on
   wh-relatives, which [sag-2010] re-attributes to processing
   ([hofmeister-sag-2010]);
-* the surface-form correspondents map to `Clause.Form`.
+* the construction types project their `Mood.Illocutionary` force.
 -/
 
 namespace Sag2010
 
-open Clause (Form)
 open HPSG
 
 /-! ### Syntactic categories -/
@@ -445,26 +444,26 @@ theorem relative_diverges_from_cnpc :
       ¬ Construction.islandTwoGap.Models Construction.grammar :=
   ⟨by decide, SagWasowBender2003.islands_rsrl_grounded.2.1⟩
 
-/-! ### Surface clause form (bridge to `Clause.Form`) -/
+/-! ### Illocutionary force of the construction types -/
 
-/-- Surface clause form, where a construction has a direct correspondent in
-`Clause.Form`. Wh-interrogatives map to the independent (matrix) form;
-topicalization and the-clause are declarative; exclamatives and relatives have no
-`Form` correspondent. -/
-def clauseForm : FGClauseType → Option Form
-  | .whInterrogative => some .matrixQuestion
+/-- The force a construction projects, where determined.
+Wh-interrogatives are independent (matrix) interrogatives;
+topicalization and the-clause are declarative; wh-exclamatives are
+exclamative; relatives project no force of their own. -/
+def force : FGClauseType → Option Mood.Illocutionary
+  | .whInterrogative => some .interrogative
   | .topicalized     => some .declarative
   | .theClause       => some .declarative
-  | .whExclamative   => none
+  | .whExclamative   => some .exclamative
   | .whRelative      => none
 
-/-- Topicalization corresponds to a declarative surface form. -/
-theorem topicalized_is_declarative_form :
-    clauseForm .topicalized = some .declarative := rfl
+/-- Topicalization projects declarative force. -/
+theorem topicalized_is_declarative :
+    force .topicalized = some .declarative := rfl
 
-/-- Wh-interrogatives correspond to the matrix-question surface form. -/
-theorem interrogative_is_question_form :
-    clauseForm .whInterrogative = some .matrixQuestion := rfl
+/-- Wh-interrogatives project interrogative force. -/
+theorem interrogative_is_question :
+    force .whInterrogative = some .interrogative := rfl
 
 /-! ### Wh-word inventory (Table 1)
 

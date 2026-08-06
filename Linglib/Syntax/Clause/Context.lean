@@ -1,3 +1,5 @@
+import Linglib.Semantics.Mood.Defs
+
 /-!
 # Clause context axes
 
@@ -5,9 +7,10 @@ The two orthogonal context axes of a clause: its [sadock-zwicky-1985]
 sentence type (`Clause.SentenceType`, with the interrogative split into
 polar, alternative, and constituent subtypes) and the embedding context
 it occurs in (`Clause.EmbeddingContext`, the [bhatt-dayal-2020] /
-[dayal-2025] question-embedding cells). `Mood.Illocutionary`,
-`Mood.ClauseType`, and `Clause.Form` are coarser cuts of the
-first axis. `Features.QParticleLayer` is defined over the second, so a
+[dayal-2025] question-embedding cells). The coarse cut of the first
+axis is `Mood.Illocutionary` — `SentenceType.force` is the projection,
+and the `Interrogative` fiber is derived from it.
+`Features.QParticleLayer` is defined over the second axis, so a
 particle's layer is derivable from its embedding distribution
 (`Studies/BhattDayal2020`).
 -/
@@ -29,14 +32,21 @@ inductive SentenceType where
 
 namespace SentenceType
 
-/-- The interrogative cells. -/
-def Interrogative : SentenceType → Prop
+/-- The illocutionary force of a sentence type — the coarse
+    [sadock-zwicky-1985] cut, collapsing the interrogative subtypes. -/
+def force : SentenceType → Mood.Illocutionary
+  | declarative => .declarative
   | polarInterrogative | alternativeInterrogative
-  | constituentInterrogative => True
-  | _ => False
+  | constituentInterrogative => .interrogative
+  | imperative => .imperative
+  | exclamative => .exclamative
 
-instance : DecidablePred Interrogative := fun c => by
-  cases c <;> simp only [Interrogative] <;> infer_instance
+/-- The interrogative cells: the fiber of `force` over
+    `.interrogative`. -/
+def Interrogative (t : SentenceType) : Prop := t.force = .interrogative
+
+instance : DecidablePred Interrogative := λ _ =>
+  inferInstanceAs (Decidable (_ = _))
 
 end SentenceType
 

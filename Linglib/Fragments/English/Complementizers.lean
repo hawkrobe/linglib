@@ -31,16 +31,16 @@ structure CompEntry extends Complementizer where
 
 def that : CompEntry :=
   { form := "that", position := some .detached,
-    coding := some .indicative, clauseForm := some .declarative,
+    coding := some .indicative, force := some .declarative,
     optional := true }
 
 def if_ : CompEntry :=
   { form := "if", position := some .detached,
-    clauseForm := some .embeddedQuestion, conditional := true }
+    force := some .interrogative, conditional := true }
 
 def whether : CompEntry :=
   { form := "whether", position := some .detached,
-    clauseForm := some .embeddedQuestion }
+    force := some .interrogative }
 
 /-- The complementizer inventory (adverbial subordinators excluded). -/
 def allComplementizers : List CompEntry := [that, if_, whether]

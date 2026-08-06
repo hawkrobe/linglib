@@ -38,14 +38,14 @@ namespace Complement
 
 /-- One complement position of a predicate's frame: nominal,
     adpositional, or clausal with the axes the predicate selects for —
-    [noonan-2007] coding, clause form, and subject requirement, `none`
-    = unselective. Non-clausal positions carry no clausal axes by
-    construction. -/
+    [noonan-2007] coding, illocutionary force, and subject requirement,
+    `none` = unselective. Non-clausal positions carry no clausal axes
+    by construction. -/
 inductive Position where
   | nominal
   | adpositional
   | clausal (coding : Option Coding := none)
-      (clauseForm : Option Clause.Form := none)
+      (force : Option Mood.Illocutionary := none)
       (embeddedSubject : Option Clause.EmbeddedSubject := none)
   deriving DecidableEq, Repr
 
@@ -56,8 +56,8 @@ def coding? : Position → Option Coding
   | clausal c _ _ => c
   | _ => none
 
-/-- The position's recorded clause form, if clausal. -/
-def clauseForm? : Position → Option Clause.Form
+/-- The position's recorded force, if clausal. -/
+def force? : Position → Option Mood.Illocutionary
   | clausal _ cf _ => cf
   | _ => none
 
@@ -77,12 +77,12 @@ namespace Frame
 def codings (fr : Frame) : List Complement.Coding :=
   fr.filterMap (·.coding?)
 
-/-- Some position of the frame records clause form `cf`. -/
-def hasClauseForm (fr : Frame) (cf : Clause.Form) : Prop :=
-  ∃ p ∈ fr, p.clauseForm? = some cf
+/-- Some position of the frame records force `f`. -/
+def hasForce (fr : Frame) (f : Mood.Illocutionary) : Prop :=
+  ∃ p ∈ fr, p.force? = some f
 
-instance (fr : Frame) (cf : Clause.Form) :
-    Decidable (fr.hasClauseForm cf) :=
+instance (fr : Frame) (f : Mood.Illocutionary) :
+    Decidable (fr.hasForce f) :=
   inferInstanceAs (Decidable (∃ p ∈ fr, _))
 
 /-! ### Smart constructors — the flat `ComplementType` cells -/
@@ -98,7 +98,7 @@ def np_pp : Frame := [.nominal, .adpositional]
 
 /-- Finite declarative clause. -/
 def finiteClause : Frame :=
-  [.clausal (coding := some .indicative) (clauseForm := some .declarative)]
+  [.clausal (coding := some .indicative) (force := some .declarative)]
 
 /-- Infinitival clause. The embedded-subject requirement varies by verb
     (equi-deletion, raising, or adposition-marked overt subjects,
@@ -114,10 +114,10 @@ def gerund : Frame := [.clausal (coding := some .nominalized)]
     nothing. -/
 def smallClause : Frame := [.clausal]
 
-/-- Embedded question. Interrogativity is a clause-form distinction
+/-- Embedded question. Interrogativity is a force distinction
     orthogonal to [noonan-2007] coding, so `coding` stays `none`. -/
 def question : Frame :=
-  [.clausal (clauseForm := some .embeddedQuestion)]
+  [.clausal (force := some .interrogative)]
 
 end Frame
 

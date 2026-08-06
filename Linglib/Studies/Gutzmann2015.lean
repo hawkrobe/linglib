@@ -1,7 +1,6 @@
 import Linglib.Pragmatics.Expressives.Basic
 import Linglib.Fragments.German.ClauseTypes
 import Linglib.Fragments.German.Particles
-import Linglib.Syntax.Clause.Form
 
 /-!
 # Gutzmann (2015): Sentence Mood as Use-Conditional Meaning
@@ -53,7 +52,6 @@ into truth conditions.
 namespace Gutzmann2015
 
 open Features
-open Clause (Form)
 open German.ClauseTypes
 open German.Particles
 open Pragmatics.Expressives (TwoDimProp)
@@ -556,20 +554,20 @@ theorem v2_vs_vl_interrog {W : Type*}
     (p : W → Bool) (c : MoodContext W) :
     v2InterrogMood p c = (vlInterrogMood p c && hknow p c) := rfl
 
-/-! ### German Clause Types as a refinement of Clause.Form -/
+/-! ### Mood structures of the German clause types -/
 
 /-- The mood structure of each German clause type, derived from
 the theory of [±wh] visibility and the root rule. -/
-def _root_.German.ClauseTypes.GermanClauseType.moodStructure : ∀ {f : Form},
-    GermanClauseType f → MoodStructure
-  | _, .dassVL          => ⟨true, false, false⟩
-  | _, .v2Declarative   => ⟨true, true, false⟩
-  | _, .v2Interrogative => ⟨true, true, true⟩
-  | _, .vlInterrogative => ⟨true, true, false⟩
-  | _, .imperative      => ⟨true, false, false⟩
+def _root_.German.ClauseTypes.GermanClauseType.moodStructure :
+    GermanClauseType → MoodStructure
+  | .dassVL          => ⟨true, false, false⟩
+  | .v2Declarative   => ⟨true, true, false⟩
+  | .v2Interrogative => ⟨true, true, true⟩
+  | .vlInterrogative => ⟨true, true, false⟩
+  | .imperative      => ⟨true, false, false⟩
 
 /-- Every matrix clause has a deontic operator (the root rule). -/
-theorem every_clause_has_deont {f : Form} (ct : GermanClauseType f) :
+theorem every_clause_has_deont (ct : GermanClauseType) :
     ct.moodStructure.hasDeontic = true := by
   cases ct <;> rfl
 
@@ -593,26 +591,18 @@ theorem v2_vl_differ_only_in_hknow :
     GermanClauseType.vlInterrogative.moodStructure.hasHearerKnowledge = false :=
   ⟨rfl, rfl, rfl, rfl⟩
 
-/-- HKNOW iff matrix question — restated structurally as a fact about the
-index. The HKNOW use condition tracks *form*-level matrix interrogativity
+/-- HKNOW holds of exactly the V2-interrogative — the matrix question.
+The HKNOW use condition tracks matrix interrogativity
 ([gutzmann-2015], p. 213, Cuban cigar argument). -/
-theorem hknow_iff_matrix_question {f : Form} (ct : GermanClauseType f) :
-    ct.moodStructure.hasHearerKnowledge = true ↔ f = .matrixQuestion := by
-  cases ct <;> simp [GermanClauseType.moodStructure]
+theorem hknow_iff_v2_interrogative (ct : GermanClauseType) :
+    ct.moodStructure.hasHearerKnowledge = true ↔ ct = .v2Interrogative := by
+  cases ct <;> decide
 
-/-- Matrix-question German clauses always carry HKNOW. -/
-theorem matrix_question_has_hknow (ct : GermanClauseType .matrixQuestion) :
-    ct.moodStructure.hasHearerKnowledge = true := by
-  cases ct; rfl
-
-/-- The `.declarative` fiber is many-to-one — three German clause types
-inhabit it (dassVL, v2Declarative, imperative), and they are
-distinguishable only at the `moodStructure` level. The contrast below
-type-checks because both terms have type `GermanClauseType .declarative`. -/
-theorem declarative_fiber_underdetermines_mood :
-    (GermanClauseType.dassVL : GermanClauseType .declarative).moodStructure ≠
-    (GermanClauseType.v2Declarative : GermanClauseType .declarative).moodStructure := by
-  decide
+/-- dass-VL and V2-declaratives are distinguished only at the
+mood-structure level. -/
+theorem dassVL_v2Decl_differ_in_mood :
+    GermanClauseType.dassVL.moodStructure ≠
+      GermanClauseType.v2Declarative.moodStructure := by decide
 
 /-! ## Mood-structure predictions -/
 
@@ -662,7 +652,7 @@ def restrictionKind (p : Particle) : RestrictionKind :=
 /-- *wohl*'s licensing across German clause types is exactly the
 presence of EPIS in the clause type's mood structure — the formal
 content of the selectional restriction analysis. -/
-theorem wohl_iff_epis {f : Form} (ct : GermanClauseType f) :
+theorem wohl_iff_epis (ct : GermanClauseType) :
     licensedInClause wohl ct = ct.moodStructure.hasEpistemic := by
   cases ct <;> rfl
 
@@ -677,7 +667,7 @@ theorem denn_interrogative_restriction :
 
 /-- *ja* and *denn* partition clause types: they are never both
 licensed in the same clause type. -/
-theorem ja_denn_partition {f : Form} (ct : GermanClauseType f) :
+theorem ja_denn_partition (ct : GermanClauseType) :
     ¬(licensedInClause ja ct = true ∧ licensedInClause denn ct = true) :=
   ja_denn_complementary ct
 
