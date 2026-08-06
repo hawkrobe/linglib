@@ -66,9 +66,8 @@ theorem cant_might_exclusion (hCant : (kernelCant k φ).assertion w) :
   exact hCant hw' hφ
 
 /-- **Can't entails negation** ([von-fintel-gillies-2021] via S2): when B_K is
-realistic and can't φ is defined and true, ¬φ(w). -/
+realistic and can't φ holds, ¬φ(w). -/
 theorem cant_entails_negation (hReal : w ∈ k.base)
-    (_hDef : (kernelCant k φ).presup w)
     (hTrue : (kernelCant k φ).assertion w) :
     ¬ φ w :=
   hTrue hReal

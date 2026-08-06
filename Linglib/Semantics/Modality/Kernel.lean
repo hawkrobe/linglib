@@ -31,8 +31,8 @@ this apparatus live in `Studies/Zheng2025.lean`.
   fails, which is what makes the presupposition non-trivial
 - `kernelMust`, `kernelMight`, `kernelCant`: the presuppositional operators
   (Defs 5–6), as `PartialProp`s
-- `kernelMust_eq_simpleNecessity`, `kernelMust_eq_necessity`: the assertion of
-  `kernelMust` is Kratzer necessity over the induced modal base
+- `kernelMust_iff_simpleNecessity`, `kernelMust_iff_necessity`: the assertion
+  of `kernelMust` is Kratzer necessity over the induced modal base
 -/
 
 namespace Modality
@@ -129,7 +129,6 @@ def kernelCant : PartialProp W :=
 
 /-- T axiom: must φ entails φ when B_K is realistic (w ∈ B_K). -/
 theorem must_entails_prejacent (hReal : w ∈ k.base)
-    (_hDef : (kernelMust k φ).presup w)
     (hTrue : (kernelMust k φ).assertion w) :
     φ w :=
   hTrue hReal
@@ -140,32 +139,20 @@ theorem kernel_duality :
   isCompatibleWith_iff_not_followsFrom_not
 
 /-- Empty kernel: nothing is settled, so must is always defined. -/
-theorem empty_kernel_always_defined :
-    (kernelMust ⟨[]⟩ φ).presup w := by
-  show ¬ Kernel.directlySettles _ _
-  simp [Kernel.directlySettles]
-
-/-- Direct evidence infelicity: when K settles φ, must φ is undefined. -/
-theorem direct_evidence_infelicity (hSettled : k.directlySettles φ) :
-    ¬(kernelMust k φ).presup w := by
-  intro h; exact h hSettled
+theorem empty_kernel_always_defined : (kernelMust ⟨[]⟩ φ).presup w :=
+  λ ⟨_, hx, _⟩ => List.not_mem_nil hx
 
 /-! ### Bridge to Kratzer necessity -/
 
 /-- Kernel must assertion ↔ Kratzer simple necessity. -/
-theorem kernelMust_eq_simpleNecessity :
-    (kernelMust k φ).assertion w ↔
-      simpleNecessity k.toModalBase φ w := by
-  show k.followsFrom φ ↔ _
-  simp only [Kernel.followsFrom, Semantics.Modality.Kratzer.followsFrom,
-             simpleNecessity_iff_all, accessibleWorlds, Kernel.toModalBase]
-  rfl
+theorem kernelMust_iff_simpleNecessity :
+    (kernelMust k φ).assertion w ↔ simpleNecessity k.toModalBase φ w :=
+  Iff.rfl
 
 /-- Kernel must assertion ↔ full Kratzer necessity with empty ordering. -/
-theorem kernelMust_eq_necessity :
-    (kernelMust k φ).assertion w ↔
-      necessity k.toModalBase emptyBackground φ w := by
-  rw [kernelMust_eq_simpleNecessity]
-  exact (necessity_empty_iff_simple k.toModalBase _ w).symm
+theorem kernelMust_iff_necessity :
+    (kernelMust k φ).assertion w ↔ necessity k.toModalBase emptyBackground φ w :=
+  (kernelMust_iff_simpleNecessity k φ w).trans
+    (necessity_empty_iff_simple k.toModalBase φ w).symm
 
 end Modality

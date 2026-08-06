@@ -264,16 +264,14 @@ variable {W : Type*} (k : Kernel W)
 argument form "if φ, must ψ; φ; ∴ ψ" is valid under realistic B_K. -/
 theorem modus_ponens_with_must (φ ψ : W → Prop) (w : W)
     (hReal : w ∈ k.base)
-    (_hDef : (kernelMust k ψ).presup w)
     (hCond : φ w → (kernelMust k ψ).assertion w)
     (hPhi : φ w) :
     ψ w :=
-  Modality.must_entails_prejacent k ψ w hReal _hDef (hCond hPhi)
+  Modality.must_entails_prejacent k ψ w hReal (hCond hPhi)
 
 /-- **Must-perhaps contradiction** ([von-fintel-gillies-2010] Argument 4.3.2):
 must φ ∧ might ¬φ is contradictory. When B_K ⊆ ⟦φ⟧, B_K ∩ ⟦¬φ⟧ = ∅. -/
 theorem must_perhaps_contradiction (φ : W → Prop) (w : W)
-    (_hDef : (kernelMust k φ).presup w)
     (hMust : (kernelMust k φ).assertion w) :
     ¬(kernelMight k (λ w' => ¬ φ w')).assertion w := by
   intro hc
