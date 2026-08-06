@@ -101,6 +101,14 @@ measure on a finite `W`: P(φ|p) > P(φ). -/
 def evidenceRaises (p φ : Set W) : Prop :=
   (p ∩ φ).ncard * Nat.card W > φ.ncard * p.ncard
 
+instance (p φ : W → Prop) [Fintype W] [DecidablePred p] [DecidablePred φ] :
+    Decidable (evidenceRaises p φ) :=
+  decidable_of_iff
+    ((Finset.univ.filter λ w => p w ∧ φ w).card * Fintype.card W >
+      (Finset.univ.filter φ).card * (Finset.univ.filter p).card) <| by
+    show _ ↔ {w | p w ∧ φ w}.ncard * Nat.card W > {w | φ w}.ncard * {w | p w}.ncard
+    simp [Set.ncard_eq_toFinset_card', Set.toFinset_setOf, Nat.card_eq_fintype_card]
+
 section
 variable (k : Kernel W) (u : List (W → Prop)) (φ : W → Prop)
 
@@ -152,24 +160,17 @@ def dryU : List (World → Prop) := [expectDry]
 context (exx. 2–3). -/
 theorem raincoat_nandao_felicitous :
     nandaoFelicitous raincoatK dryU isRaining := by
-  refine ⟨⟨wearingRaincoat, by simp [raincoatK], ?_⟩, ?_, ?_⟩
-  · -- P(rain|coat) = 1/2 > P(rain) = 1/4: cross-multiplied, 1 ⬝ 4 > 1 ⬝ 2.
-    show {w | wearingRaincoat w ∧ isRaining w}.ncard * Nat.card World >
-      {w | isRaining w}.ncard * {w | wearingRaincoat w}.ncard
-    simp only [Set.ncard_eq_toFinset_card', Nat.card_eq_fintype_card]
-    decide
-  · refine Set.disjoint_left.mpr λ w hK hU => ?_
-    have h1 : wearingRaincoat w := mem_propIntersection.mp hK _ (by simp [raincoatK])
-    have h2 : expectDry w := mem_propIntersection.mp hU _ (by simp [dryU])
-    revert h1 h2
-    cases w <;> decide
-  · rintro ⟨x, hx, hxor⟩
-    rcases List.mem_singleton.mp (by simpa [raincoatK] using hx) with rfl
-    rcases hxor with h_sub | h_disj
-    · exact (show ¬ isRaining .sprinkler from by decide)
-        (h_sub (show wearingRaincoat .sprinkler from by decide))
-    · exact Set.disjoint_left.mp h_disj (show wearingRaincoat .rain from by decide)
-        (show isRaining .rain from by decide)
+  refine ⟨⟨wearingRaincoat, List.mem_singleton_self _, by decide⟩, ?_, ?_⟩
+  · simp only [unexpected, raincoatK, dryU, Kernel.base_singleton,
+      propIntersection_singleton]
+    exact Set.disjoint_left.mpr λ w (h1 : wearingRaincoat w) (h2 : expectDry w) => by
+      revert h1 h2; cases w <;> decide
+  · simp only [raincoatK, Kernel.directlySettles_singleton]
+    rintro (h_sub | h_disj)
+    · exact (by decide : ¬ isRaining .sprinkler)
+        (h_sub (by decide : wearingRaincoat .sprinkler))
+    · exact Set.disjoint_left.mp h_disj (by decide : wearingRaincoat .rain)
+        (by decide : isRaining .rain)
 
 /-- Without evidence, nandao is infelicitous (ex. 5 ctx 2). -/
 theorem no_evidence_nandao_infelicitous :

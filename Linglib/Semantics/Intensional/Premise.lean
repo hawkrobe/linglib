@@ -96,6 +96,18 @@ theorem propIntersection_subset_propExtension {x : Index → Prop}
     propIntersection A ⊆ propExtension x :=
   fun _ hi => hi x hx
 
+theorem propIntersection_nil : propIntersection ([] : List (Index → Prop)) = Set.univ :=
+  Set.eq_univ_of_forall fun _ p hp => absurd hp (List.not_mem_nil)
+
+theorem propIntersection_cons (p : Index → Prop) (A : List (Index → Prop)) :
+    propIntersection (p :: A) = propExtension p ∩ propIntersection A := by
+  ext i
+  simp [mem_propIntersection, mem_propExtension, List.forall_mem_cons]
+
+theorem propIntersection_singleton (p : Index → Prop) :
+    propIntersection [p] = propExtension p := by
+  rw [propIntersection_cons, propIntersection_nil, Set.inter_univ]
+
 theorem isCompatibleWith_iff_exists {p : Index → Prop} {A : List (Index → Prop)} :
     isCompatibleWith p A ↔ ∃ i ∈ propIntersection A, p i := by
   simp only [isCompatibleWith, isConsistent, Set.Nonempty, mem_propIntersection,
