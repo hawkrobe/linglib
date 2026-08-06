@@ -12,35 +12,29 @@ import Linglib.Syntax.DependencyGrammar.Formal.HarmonicOrder
 # Dependency Locality as an Explanatory Principle for Word Order
 [futrell-gibson-2020]
 
-The worked derivations of [futrell-gibson-2020] ("Dependency locality as an
-explanatory principle for word order", *Language* 96(2):371–412), §2.3–2.4,
-built over the DG substrate (`totalDepLength`, `isProjective`, `gapDegree`,
-the harmonic chain machinery), plus the §6 cross-linguistic data (Table 2):
+This file formalizes the worked examples of [futrell-gibson-2020]
+("Dependency locality as an explanatory principle for word order",
+*Language* 96(2):371–412) and transcribes its Table 2.
 
-* examples (3)–(4), p. 377 — displacement (extraposition, wh-movement)
-  produces nonprojective trees, at gap degree 1 (the paper's "mildly
-  context-sensitive" deviation from context-freeness);
-* examples (7)–(8), p. 379 — short-before-long is DLM-optimal in
-  head-initial contexts, and its mirror image long-before-short in
-  head-final contexts;
-* examples (9)–(10), p. 380 — consistent head direction minimizes
-  dependency length in single-dependent chains (the DLM route to the
-  Greenbergian harmonic correlations), while for a head with several short
-  dependents, splitting them across the head beats consistency (the
-  Gildea–Temperley exception, e.g. Spanish prenominal determiners);
-* example (11), p. 381 — heavy NP shift: the DLM penalty of the
-  verb–object–particle order is negligible for a light object but large
-  for a heavy one (cf. the acceptability contrast in example (6));
-* example (13), p. 382 — the random-order baseline: an attested sentence
-  has lower dependency length than reorderings of the same tree;
-* Table 2 — per-language head-final proportion and mean dependency length
-  over UD 2.1 corpora.
+The examples in §2.3–2.4 are small dependency trees making the paper's
+qualitative points: displacement yields nonprojective trees of gap
+degree 1; placing short constituents before long ones minimizes total
+dependency length after a head, and the mirror-image order does before a
+head; consistent head direction is optimal for chains but not for a head
+with several one-word dependents; the cost of keeping a verb particle
+after the object grows with the weight of the object; and an attested
+sentence has shorter dependencies than random reorderings of its own
+tree. Every total dependency length agrees with the figure printed in
+the paper, by `decide`.
 
-The §4–5 corpus results themselves (random/optimal baseline Monte Carlo
-comparisons, Figure 1) are statistical fits and are cited in prose only.
-English words derive from the Fragment lexicon; the example trees follow
-the paper's arc conventions (prepositions head their nouns, so arc lengths
-match the printed figures).
+Table 2 lists, for 46 languages measured over Universal Dependencies 2.1
+corpora, the proportion of head-final dependencies and the mean
+dependency length per word at sentence lengths 10, 15, and 20.
+
+The Monte Carlo corpus studies of §4–5 are not formalized. English words
+come from the Fragment lexicon, and the trees follow the paper's drawing
+convention in which a preposition heads its noun, so arc lengths match
+the printed diagrams.
 -/
 
 namespace FutrellEtAl2020
