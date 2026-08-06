@@ -1,30 +1,26 @@
 import Linglib.Semantics.ArgumentStructure.Root.Classification
 import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Fragments.Mayan.Chuj.RootClasses
+import Linglib.Fragments.Mayan.Chuj.VoiceSystem
 import Linglib.Data.Examples.Coon2019
 
 /-!
-# Coon (2019): Building Verbs in Chuj
-[coon-2019]
+# Building verbs in Chuj
 
-Formalization of [coon-2019] "Building verbs in Chuj: Consequences for
-the nature of roots" (*Journal of Linguistics* 55(1): 35–81). The
-theory-neutral root lexicon lives in
-`Fragments/Mayan/Chuj/RootClasses.lean`; this file holds Coon's
-analytical apparatus and its predictions:
+[coon-2019]'s analysis of Chuj verb stems: roots determine internal
+arguments, the four v/Voice⁰ heads (Ø, -ch, -j, -w) determine external
+arguments. The root lexicon lives in
+`Fragments/Mayan/Chuj/RootClasses.lean`, the attested examples in
+`Data.Examples.Coon2019`.
 
-* the voice-suffix paradigm (`ChujVoiceSuffix`, `isGrammatical`) and
-  glossed examples, with `paradigm_predicts_attestation` checking the
-  paradigm against the attested data;
-* the root-class coordinates as a derived projection
-  (`Chuj.RootClass.toClassification`);
-* the Minimalist voice heads (`vØ`, `v_w`, `v_ch`, `v_j`) typed on the
-  substrate `Voice.Flavor` cells, with the -aj distribution, agent
-  diagnostics, and division-of-labor theorems.
+## Main declarations
 
-The chronologically-later [beavers-etal-2021] hosts the bridge from
-Coon's root classes to the cross-linguistic change-of-state typology
-(`Studies/BeaversEtAl2021.lean`, per the chronological-dependency rule).
+* `Chuj.RootClass.toClassification` — Coon's coordinates for the root
+  classes, as a derived projection.
+* `vØ`, `v_w`, `v_ch`, `v_j` — the voice heads, on substrate
+  `Voice.Flavor` cells.
+* `paradigm_predicts_attestation` — the root × voice paradigm agrees
+  with the attested data.
 -/
 
 namespace Coon2019
@@ -32,22 +28,7 @@ namespace Coon2019
 open Chuj
 open Verb.Root
 
-/-! ### Voice suffixes (ex. (78), p. 76) -/
-
-/-- The four voice suffixes in Chuj (ex. (78), p. 76). -ch and -w are
-    [coon-2019]'s decomposed morphemes: the attested stems are *-chaj*
-    and *-waj*, analyzed as -ch and -w plus -aj (table (58), p. 66;
-    §4.2). -/
-inductive ChujVoiceSuffix where
-  /-- Ø: active transitive. -/
-  | null
-  /-- -ch: passive with implicit agent. -/
-  | ch
-  /-- -j: agentless passive. -/
-  | j
-  /-- -w: antipassive / verbalizer. -/
-  | w
-  deriving DecidableEq, Repr
+/-! ### External-argument fate (ex. (78), p. 76) -/
 
 /-- The fate of the external argument under each voice suffix, in
     Creissels's coding-frame coordinates (`Voice.ParticipantFate`):
@@ -56,7 +37,7 @@ inductive ChujVoiceSuffix where
     suppresses it entirely (§4.1.2), Ø and -w keep it as a core term.
     The ERG (Ø) vs ABS (-w) case split is a separate axis, carried by
     phasehood (`only_vØ_is_phase`). -/
-def ChujVoiceSuffix.participantFate : ChujVoiceSuffix → Voice.ParticipantFate
+def _root_.Chuj.VoiceSuffix.participantFate : VoiceSuffix → Voice.ParticipantFate
   | .null => .maintained
   | .ch   => .denucleativized
   | .j    => .suppressed
@@ -75,7 +56,7 @@ def ChujVoiceSuffix.participantFate : ChujVoiceSuffix → Voice.ParticipantFate
     cover derived transitive stems in -ej, which all four classes form
     (§2.2, p. 42; p. 45), nor the isolated -j forms on non-transitive
     roots (p. 71, ex. (71)). -/
-def isGrammatical (rc : RootClass) (vs : ChujVoiceSuffix) : Bool :=
+def isGrammatical (rc : RootClass) (vs : VoiceSuffix) : Bool :=
   match rc, vs with
   | .tv,  _     => true   -- √TV combines with all four
   | .itv, .null => true   -- √ITV takes null v (§2.1)
@@ -112,7 +93,7 @@ inductive AntipassiveType where
 
 /-- -aj on √TV stems in passive/agentless contexts (-w is handled by
     `ajOnAntipassive`, since -aj there tracks the antipassive subtype). -/
-def ajOnPassive (vs : ChujVoiceSuffix) : Bool :=
+def ajOnPassive (vs : VoiceSuffix) : Bool :=
   match vs with
   | .null => false  -- no implicit arg
   | .ch   => true   -- implicit agent (ex. 62: -ch-aj passive)
@@ -130,7 +111,7 @@ def ajOnAntipassive (apt : AntipassiveType) : Bool :=
 /-- Agent-oriented adverb test (§4.1.1–4.1.2): "on purpose" adverbs are
     grammatical with -chaj (ex. (63a), p. 68) but not -j (ex. (67a),
     p. 70). -/
-def agentAdverbOK (vs : ChujVoiceSuffix) : Bool :=
+def agentAdverbOK (vs : VoiceSuffix) : Bool :=
   match vs with
   | .null => true   -- active: agent is overt
   | .ch   => true   -- passive: implicit agent licenses adverb (ex. 63a)
@@ -140,7 +121,7 @@ def agentAdverbOK (vs : ChujVoiceSuffix) : Bool :=
 /-- By-phrase test (§4.1.1–4.1.2): oblique agents (*yuj* DPs) are
     grammatical with -chaj (ex. (62), p. 68) but not -j, where -uj
     phrases are causal, not agentive (exx. (65)–(66), pp. 69–70). -/
-def byPhraseOK (vs : ChujVoiceSuffix) : Bool :=
+def byPhraseOK (vs : VoiceSuffix) : Bool :=
   match vs with
   | .null => false  -- active: agent is already overt
   | .ch   => true   -- passive: by-phrase identifies implicit agent (ex. 62)
@@ -180,7 +161,7 @@ module `Data.Examples.Coon2019`); each row carries the root form and
 [coon-2019]'s voice segmentation as `paperFeatures`. -/
 
 /-- Parse a row's `voice` feature. -/
-def readVoice : String → Option ChujVoiceSuffix
+def readVoice : String → Option VoiceSuffix
   | "null" => some .null
   | "ch"   => some .ch
   | "j"    => some .j
@@ -197,7 +178,7 @@ def rowRoot (e : Data.Examples.LinguisticExample) : Option ChujRoot :=
     Adverb-diagnostic rows are excluded: their grammaticality is an
     agent-diagnostic fact, not a root × voice fact
     (`adverb_pair_predicted`). -/
-def paradigmData : List (RootClass × ChujVoiceSuffix × Bool) :=
+def paradigmData : List (RootClass × VoiceSuffix × Bool) :=
   Examples.all.filterMap λ e =>
     if (e.feature? "diagnostic").isSome then none
     else do
@@ -413,7 +394,7 @@ theorem bare_transitive_iff_voice (rc : RootClass) :
 /-! ### Voice suffix ↔ Head -/
 
 /-- Map each voice suffix to its Minimalist Head. -/
-def toVoiceHead : ChujVoiceSuffix → Head
+def toVoiceHead : VoiceSuffix → Head
   | .null => vØ
   | .ch   => v_ch
   | .j    => v_j
@@ -430,7 +411,7 @@ theorem d_feature_alignment :
 /-- The coding-frame fate of the external argument matches the head's
     parametric semantics: maintained ↔ θ-marked specifier,
     denucleativized ↔ ∃-bound implicit agent, suppressed ↔ no agent. -/
-theorem participant_fate_alignment (vs : ChujVoiceSuffix) :
+theorem participant_fate_alignment (vs : VoiceSuffix) :
     (vs.participantFate = .maintained ↔
       (toVoiceHead vs).params.extArgSemantics = some .thematicArgument) ∧
     (vs.participantFate = .denucleativized ↔
@@ -448,7 +429,7 @@ theorem phase_head_alignment :
 
 /-- The agent-adverb diagnostic matches semantic agent presence
     (`params.assignsTheta?`): adverbs need an agent, overt or implicit. -/
-theorem agent_adverb_matches_theta (vs : ChujVoiceSuffix) :
+theorem agent_adverb_matches_theta (vs : VoiceSuffix) :
     agentAdverbOK vs = true ↔
       (toVoiceHead vs).params.assignsTheta? = some true := by
   cases vs <;> decide
@@ -501,9 +482,9 @@ theorem division_of_labor_matches_data :
     formsBareTransitive .itv = false ∧
     (RootClass.itv.toClassification).licensesTransitiveVoice = false ∧
     -- Voice determines external: same root, different agent fate
-    ChujVoiceSuffix.participantFate .null = .maintained ∧
-    ChujVoiceSuffix.participantFate .ch = .denucleativized ∧
-    ChujVoiceSuffix.participantFate .j = .suppressed :=
+    VoiceSuffix.participantFate .null = .maintained ∧
+    VoiceSuffix.participantFate .ch = .denucleativized ∧
+    VoiceSuffix.participantFate .j = .suppressed :=
   ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 /-- Theme persistence across all four voice forms for √TV: the paradigm

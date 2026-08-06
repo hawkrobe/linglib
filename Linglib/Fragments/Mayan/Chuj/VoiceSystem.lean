@@ -16,11 +16,27 @@ controls whether the external argument is overt, implicit, or absent.
 
 ## Main declarations
 
+* `Chuj.VoiceSuffix`: the four voice suffixes (Ø, -ch, -j, -w).
 * `Chuj.VoiceSystem.voices`: the four voice entries.
 * `Chuj.VoiceSystem.symmetry`: the asymmetrical classification.
 -/
 
 namespace Chuj
+
+/-- The four voice suffixes in Chuj (ex. (78), p. 76). -ch and -w are
+    [coon-2019]'s decomposed morphemes: the attested stems are *-chaj*
+    and *-waj*, analyzed as -ch and -w plus -aj (table (58), p. 66;
+    §4.2). -/
+inductive VoiceSuffix where
+  /-- Ø: active transitive. -/
+  | null
+  /-- -ch: passive with implicit agent. -/
+  | ch
+  /-- -j: agentless passive. -/
+  | j
+  /-- -w: antipassive / verbalizer. -/
+  | w
+  deriving DecidableEq, Repr
 
 namespace VoiceSystem
 
