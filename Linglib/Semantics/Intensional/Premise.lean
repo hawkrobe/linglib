@@ -97,7 +97,7 @@ theorem propIntersection_subset_propExtension {x : Index → Prop}
   fun _ hi => hi x hx
 
 theorem propIntersection_nil : propIntersection ([] : List (Index → Prop)) = Set.univ :=
-  Set.eq_univ_of_forall fun _ p hp => absurd hp (List.not_mem_nil)
+  Set.eq_univ_of_forall fun _ _ hp => absurd hp List.not_mem_nil
 
 theorem propIntersection_cons (p : Index → Prop) (A : List (Index → Prop)) :
     propIntersection (p :: A) = propExtension p ∩ propIntersection A := by
