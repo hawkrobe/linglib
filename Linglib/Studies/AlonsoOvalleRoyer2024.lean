@@ -8,59 +8,31 @@ import Linglib.Fragments.Romance.French.ModalIndefinites
 import Linglib.Fragments.Italian.ModalIndefinites
 
 /-!
-# Modal Indefinites: Cross-Linguistic Typology & Event-Relative Anchoring
-[alonso-ovalle-royer-2024] [alonso-ovalle-menendez-benito-2010]
-[alonso-ovalle-menendez-benito-2018] [coon-2019] [hacquard-2006]
-[alonso-ovalle-royer-2021]
-[chierchia-2013] [jayez-tovena-2006] [kratzer-shimoyama-2002]
+# Modal indefinites and semantic variation: lessons from Chuj
 
-Cross-linguistic typology of modal indefinites and bridge theorems connecting
-the event-relative modality theory ([hacquard-2006], formalized in
-`Semantics/Modality/EventRelativity`) to empirical observations.
+[alonso-ovalle-royer-2024]'s account of Chuj *yalnhej*: the modal
+component is at-issue, event-relative
+(`Semantics/Modality/EventRelativity`, after [hacquard-2006]), and its
+flavor is derived from structural position and predicate volitionality
+rather than stipulated lexically. The lexical entries live in the
+`ModalIndefinites` fragments (Chuj, Spanish, German, French, Italian);
+this file holds the paper's denotation, the cross-linguistic typology
+over the pooled entries, the position × volitionality derivation, and
+finite-model witnesses for non-maximality, upper-boundedness, and
+harmonic anchoring.
 
-Lexical entries are defined in Fragment files (single source of truth):
-- `Fragments/Mayan/Chuj/ModalIndefinites.lean`: *yalnhej*, *komon*
-- `Fragments/Spanish/ModalIndefinites.lean`: *algún*, *uno cualquiera*
-- `Fragments/German/ModalIndefinites.lean`: *irgendein*
-- `Fragments/French/ModalIndefinites.lean`: *n'importe quel*
-- `Fragments/Italian/ModalIndefinites.lean`: *un qualsiasi*
+One departure from [hacquard-2006] (§4.1, fn. 17): *yalnhej*'s anchor
+can be left free — bound by the speech-act event rather than the
+closest event binder — which is how external arguments above AspP still
+access the speech event.
 
-## Architecture
+## Main declarations
 
-The key contribution of [alonso-ovalle-royer-2024] is DERIVING the
-position-sensitive flavor distribution of Chuj *yalnhej* from structural
-properties of event binding, rather than stipulating it lexically:
-
-    ChujArgPosition → accessibleBinders → miAnchorFlavor → predictedMIFlavors
-
-1. Syntactic position determines which `EventBinder`s are accessible
-2. Each binder projects a specific MI flavor via `AnchorType.toFlavor`
-3. RC (random choice) additionally requires verb volitionality
-
-## Three Dimensions of Variation (§6)
-
-1. **Status**: at-issue vs not-at-issue
-2. **Content**: which modal flavors
-3. **Upper-boundedness**: anti-singleton inference
-
-## Anchor Constraint (§4)
-
-At-issue modal indefinites are further distinguished by their
-`AnchorConstraint`: whether the anchoring function f has no definedness
-condition (unrestricted — defined for any event) or presupposes normative
-content (volitional-only). The anchor constraint controls where f CAN
-anchor; content licensing independently determines the resulting flavor.
-
-## Anchor Freedom (§4.1, footnote 17)
-
-A-O&R depart from [hacquard-2006] in one key respect: the event
-argument of *yalnhej*'s anchoring function can be "left free" — bound
-by the existential closure of the speech act event rather than by the
-closest event binder. In Hacquard's system, modals are always bound by
-the closest c-commanding event binder; *yalnhej* allows non-local
-binding, which is how external arguments (above AspP) still access the
-speech event despite intervening projections.
-
+* `modalIndefiniteSat`, `upperBoundedSat` — the paper's denotation (59).
+* `allEntries` — the pooled fragment paradigms.
+* `predictedMIFlavors`, `flavor_pattern_derived` — the position ×
+  volitionality pattern, derived from `accessibleBinders` and
+  `rcAvailable`.
 -/
 
 namespace AlonsoOvalleRoyer2024
@@ -74,10 +46,7 @@ open German.ModalIndefinites
 open French.ModalIndefinites
 open Italian.ModalIndefinites
 
-
--- ════════════════════════════════════════════════════════════════
--- Part 0: Modal Indefinite Denotation ([alonso-ovalle-royer-2024], (59))
--- ════════════════════════════════════════════════════════════════
+/-! ### Modal Indefinite Denotation ([alonso-ovalle-royer-2024], (59)) -/
 
 /-- The modal component of a modal indefinite ([alonso-ovalle-royer-2024], (59)):
 
@@ -153,26 +122,17 @@ theorem upperBounded_entails_plain {Event W Entity : Type*}
     modalIndefiniteSat f e allW domain P Q w :=
   h.1
 
+/-! ### The pooled sample -/
 
--- ════════════════════════════════════════════════════════════════
--- Part I: Cross-Linguistic Typology
--- ════════════════════════════════════════════════════════════════
-
-
--- ════════════════════════════════════════════════════
--- § 1. All Entries
--- ════════════════════════════════════════════════════
-
+/-- The pooled cross-linguistic sample: the five fragment paradigms. -/
 def allEntries : List ModalIndefiniteEntry :=
-  [yalnhejEntry, komonEntry, algúnEntry, irgendeinEntry,
-   unoCualquieraEntry, nimporteQuelEntry, unQualsiasiEntry]
+  Chuj.ModalIndefinites.paradigm ++ Spanish.ModalIndefinites.paradigm ++
+  German.ModalIndefinites.paradigm ++ French.ModalIndefinites.paradigm ++
+  Italian.ModalIndefinites.paradigm
 
 theorem allEntries_count : allEntries.length = 7 := rfl
 
-
--- ════════════════════════════════════════════════════
--- § 2. Typological Generalizations (§6)
--- ════════════════════════════════════════════════════
+/-! ### Typological Generalizations (§6) -/
 
 /-- Chuj *yalnhej* and German *irgendein* share the same flavor
 inventory (epistemic + random choice) but differ in status. -/
@@ -200,35 +160,21 @@ epistemic and random choice flavors. This is the core empirical
 contribution of [alonso-ovalle-royer-2024]. -/
 theorem yalnhej_unique_profile :
     (allEntries.filter (λ e =>
-      e.status == .atIssue && decide (e.hasFlavor .epistemic) && decide (e.hasFlavor .circumstantial))).length = 1 := rfl
+      e.status == .atIssue && e.hasFlavor .epistemic &&
+      e.hasFlavor .circumstantial)).length = 1 := rfl
 
+/-! ### Independence of Dimensions -/
 
--- ════════════════════════════════════════════════════
--- § 3. Independence of Dimensions
--- ════════════════════════════════════════════════════
+/-- Status and upper-boundedness are independent: all four cells of the
+    2×2 matrix are attested (*uno cualquiera*, *yalnhej*, *algún*,
+    *irgendein*). -/
+theorem status_ub_independent :
+    (allEntries.any (λ e => e.status == .atIssue && e.upperBounded) &&
+     allEntries.any (λ e => e.status == .atIssue && !e.upperBounded) &&
+     allEntries.any (λ e => e.status == .notAtIssue && e.upperBounded) &&
+     allEntries.any (λ e => e.status == .notAtIssue && !e.upperBounded)) = true := rfl
 
-/-- The three dimensions are logically independent: we find items in
-multiple cells of the 2×2 (status × upper-bounded) matrix. -/
-theorem at_issue_and_ub_exists :
-    allEntries.any (λ e => e.status == .atIssue && e.upperBounded) = true := rfl
-  -- uno cualquiera
-
-theorem at_issue_and_not_ub_exists :
-    allEntries.any (λ e => e.status == .atIssue && !e.upperBounded) = true := rfl
-  -- yalnhej
-
-theorem not_at_issue_and_ub_exists :
-    allEntries.any (λ e => e.status == .notAtIssue && e.upperBounded) = true := rfl
-  -- algún
-
-theorem not_at_issue_and_not_ub_exists :
-    allEntries.any (λ e => e.status == .notAtIssue && !e.upperBounded) = true := rfl
-  -- irgendein
-
-
--- ════════════════════════════════════════════════════
--- § 4. AnchorConstraint Bridge
--- ════════════════════════════════════════════════════
+/-! ### AnchorConstraint Bridge -/
 
 /-- Consistency check: anchored entries are at-issue. Event-relative
 anchoring (`anchorConstraint = some _`) is the paper's mechanism for
@@ -248,7 +194,7 @@ theorem anchored_entries_at_issue :
 event anchoring (speech acts lack normative content). -/
 theorem volitional_blocks_epistemic :
     unoCualquieraEntry.anchorConstraint = some .volitionalOnly ∧
-    ¬ unoCualquieraEntry.hasFlavor .epistemic := ⟨rfl, by decide⟩
+    unoCualquieraEntry.hasFlavor .epistemic = false := ⟨rfl, rfl⟩
 
 /-- Unrestricted anchor constraint is necessary but not sufficient for
 epistemic: *yalnhej* gets epistemic because f is defined for the
@@ -257,21 +203,15 @@ yet only have circumstantial (their lexical semantics restricts to
 indiscriminacy/FC readings). -/
 theorem unrestricted_with_epistemic :
     yalnhejEntry.anchorConstraint = some .unrestricted ∧
-    yalnhejEntry.hasFlavor .epistemic := ⟨rfl, by decide⟩
+    yalnhejEntry.hasFlavor .epistemic = true := ⟨rfl, rfl⟩
 
 theorem unrestricted_without_epistemic :
     nimporteQuelEntry.anchorConstraint = some .unrestricted ∧
-    ¬ nimporteQuelEntry.hasFlavor .epistemic := ⟨rfl, by decide⟩
+    nimporteQuelEntry.hasFlavor .epistemic = false := ⟨rfl, rfl⟩
 
+/-! ### Position-Sensitive Flavor Distribution -/
 
--- ════════════════════════════════════════════════════════════════
--- Part II: Position-Sensitive Flavor Distribution
--- ════════════════════════════════════════════════════════════════
-
-
--- ════════════════════════════════════════════════════
--- § 5. Structural Position and Accessible Binders
--- ════════════════════════════════════════════════════
+/-! ### Structural Position and Accessible Binders -/
 
 /-- Structural position of a DP in the Chuj clause.
     Factored from verb volitionality (an orthogonal property of the
@@ -299,10 +239,7 @@ def accessibleBinders : ChujArgPosition → List EventBinder
   | .internal => [.speechAct, .vpEvent]
   | .adjunct  => [.speechAct, .vpEvent]
 
-
--- ════════════════════════════════════════════════════
--- § 6. MI Flavor Derivation via EventBinder
--- ════════════════════════════════════════════════════
+/-! ### MI Flavor Derivation via EventBinder -/
 
 /-- The MI flavor projected by a given event binder.
 Speech act events project epistemic; VP events project circumstantial.
@@ -343,10 +280,7 @@ def predictedMIFlavors (pos : ChujArgPosition) (volitional : Bool) : List ModalF
   else
     (baseMIFlavors pos).filter (· != .circumstantial)
 
-
--- ════════════════════════════════════════════════════
--- § 7. Flavor Pattern Verification
--- ════════════════════════════════════════════════════
+/-! ### Flavor Pattern Verification -/
 
 /-- The position × volitionality flavor pattern DERIVED from structural
 position + volitionality + EventBinder. The full pattern of
@@ -388,10 +322,7 @@ theorem internal_adjunct_same (v : Bool) :
     predictedMIFlavors .internal v = predictedMIFlavors .adjunct v := by
   cases v <;> rfl
 
-
--- ════════════════════════════════════════════════════
--- § 8. Voice → Position → Binders → Flavors
--- ════════════════════════════════════════════════════
+/-! ### Voice → Position → Binders → Flavors -/
 
 /-! The full derivation chain connecting Chuj clause structure to
 MI flavor predictions:
@@ -459,15 +390,9 @@ theorem argPosition_parallels_modalPosition :
     accessibleBinders .external = [.speechAct] ∧
     accessibleBinders .internal = [.speechAct, .vpEvent] := ⟨rfl, rfl, rfl, rfl⟩
 
+/-! ### Empirical Phenomena -/
 
--- ════════════════════════════════════════════════════════════════
--- Part III: Empirical Phenomena
--- ════════════════════════════════════════════════════════════════
-
-
--- ════════════════════════════════════════════════════
--- § 9. Non-Maximality (§3.2.4)
--- ════════════════════════════════════════════════════
+/-! ### Non-Maximality (§3.2.4) -/
 
 /-- *Yalnhej* is not upper-bounded: compatible with partial-domain
 scenarios where not all P are Q. This distinguishes it from maximal
@@ -477,35 +402,35 @@ this concretely with `yalnhej_nonmaximal_ab` (§14 below). -/
 theorem yalnhej_nonmaximal :
     yalnhejEntry.upperBounded = false := rfl
 
-
--- ════════════════════════════════════════════════════
--- § 9b. Flavor Selectivity (§6.2)
--- ════════════════════════════════════════════════════
+/-! ### Flavor Selectivity (§6.2) -/
 
 /-- Multi-flavor items: can express BOTH epistemic and RC.
 [alonso-ovalle-royer-2024], §6.2: *yalnhej* and *irgendein*
 tolerate more than one modal flavour. -/
 theorem multi_flavor_items :
     (allEntries.filter (λ e =>
-      decide (e.hasFlavor .epistemic) && decide (e.hasFlavor .circumstantial))).length = 2 := rfl
+      e.hasFlavor .epistemic && e.hasFlavor .circumstantial)).length = 2 := rfl
 
 /-- Epistemic-only items: *algún* conveys only speaker ignorance
 (§6.2, example 118). -/
 theorem epistemic_only_items :
     (allEntries.filter (λ e =>
-      decide (e.hasFlavor .epistemic) && !decide (e.hasFlavor .circumstantial))).length = 1 := rfl
+      e.hasFlavor .epistemic && !e.hasFlavor .circumstantial)).length = 1 := rfl
 
 /-- RC-only items: *uno cualquiera*, *n'importe quel*, *un qualsiasi*,
 *komon* convey only random choice / indiscriminacy
 (§6.2, examples 119–121). -/
 theorem rc_only_items :
     (allEntries.filter (λ e =>
-      !decide (e.hasFlavor .epistemic) && decide (e.hasFlavor .circumstantial))).length = 4 := rfl
+      !e.hasFlavor .epistemic && e.hasFlavor .circumstantial)).length = 4 := rfl
 
+/-- *Komon* can never express speaker ignorance
+    ([alonso-ovalle-royer-2021]); *yalnhej* can. -/
+theorem komon_never_epistemic :
+    komonEntry.hasFlavor .epistemic = false ∧
+    yalnhejEntry.hasFlavor .epistemic = true := ⟨rfl, rfl⟩
 
--- ════════════════════════════════════════════════════
--- § 10. Upper-Boundedness (§3.2.4, §6.2)
--- ════════════════════════════════════════════════════
+/-! ### Upper-Boundedness (§3.2.4, §6.2) -/
 
 /-- Upper-bounded modal indefinites impose a witness upper bound. -/
 theorem upper_bounded_group :
@@ -516,15 +441,12 @@ theorem not_upper_bounded_group :
     [yalnhejEntry, irgendeinEntry, nimporteQuelEntry, unQualsiasiEntry].all
       (·.upperBounded == false) = true := rfl
 
+/-! ### Unremarkable Readings and Predicativity (§5) -/
 
--- ════════════════════════════════════════════════════
--- § 11. Unremarkable Readings and Predicativity (§5)
--- ════════════════════════════════════════════════════
-
-/-- Predicativity correlates with unremarkable readings across all
-entries. Items that can appear in predicative position also have
-non-modal ("unremarkable") readings. Derived directly from fragment
-entry fields — no intermediate data structures needed. -/
+/-- Predicativity and unremarkable readings coincide across all seven
+entries (§5). True by construction of the entries — the two fields were
+filled from the same diagnostics — so this records the encoding, not an
+independent prediction. -/
 theorem predicativity_correlates_unremarkable :
     allEntries.all (λ e =>
       e.canBePredicate == e.hasUnremarkableReading) = true := rfl
@@ -546,10 +468,7 @@ theorem komon_has_unremarkable :
     komonEntry.hasUnremarkableReading = true ∧
     komonEntry.canBePredicate = true := ⟨rfl, rfl⟩
 
-
--- ════════════════════════════════════════════════════
--- § 12. Harmonic Interpretations (§4.3)
--- ════════════════════════════════════════════════════
+/-! ### Harmonic Interpretations (§4.3) -/
 
 /-! Under an external modal (imperative, deontic, attitude verb),
 the MI's anchor can be co-indexed with the modal's event binder,
@@ -586,10 +505,7 @@ theorem harmonic_neq_nonharmonic :
     EventBinder.vpEvent.availableFlavors ≠
     EventBinder.speechAct.availableFlavors := by decide
 
-
--- ════════════════════════════════════════════════════════════════
--- Part IV: Worked Examples — Book and Card Scenarios
--- ════════════════════════════════════════════════════════════════
+/-! ### Worked Examples — Book and Card Scenarios -/
 
 /-! Concrete model-theoretic witnesses for the typological claims of
 Part I. These instantiate the Part 0 denotations (`modalIndefiniteSat`,
@@ -599,9 +515,7 @@ vs. non-harmonic anchoring distinction. The toy domains live here
 in the study file (per CLAUDE.md: examples that name a paper's analyses
 belong with the paper, not in the abstract theory file). -/
 
--- ════════════════════════════════════════════════════
--- § 13. Book Scenario: Non-Maximality and Upper-Boundedness
--- ════════════════════════════════════════════════════
+/-! ### Book Scenario: Non-Maximality and Upper-Boundedness -/
 
 /-- Three books for testing the modal indefinite semantics. -/
 inductive Book where | a | b | c
@@ -666,14 +580,9 @@ theorem yalnhej_book_abc :
 theorem yalnhej_not_upper_bounded_abc :
     modalIndefiniteSat fEPI .speech allBW allBooks isBook isAvailable .abc ∧
     ¬ upperBoundedSat fEPI .speech allBW allBooks isBook isAvailable .abc := by
-  refine ⟨?_, ?_⟩
-  · decide
-  · decide
+  exact ⟨by decide, by decide⟩
 
-
--- ════════════════════════════════════════════════════
--- § 14. Non-Maximality ([alonso-ovalle-royer-2024], §3.2.4)
--- ════════════════════════════════════════════════════
+/-! ### Non-Maximality ([alonso-ovalle-royer-2024], §3.2.4) -/
 
 /-! Yalnhej is compatible with partial-domain scenarios: the speaker
 can felicitously use *yalnhej* even when not all P are Q. This
@@ -710,12 +619,9 @@ theorem yalnhej_three_way_contrast :
     modalIndefiniteSat fEPI .speech allBW allBooks isBook isAvailable .ab ∧
     -- UB fails in abc (all satisfy scope → anti-singleton violated)
     ¬ upperBoundedSat fEPI .speech allBW allBooks isBook isAvailable .abc := by
-  refine ⟨?_, ?_, ?_⟩ <;> decide
+  refine ⟨by decide, by decide, by decide⟩
 
-
--- ════════════════════════════════════════════════════
--- § 15. Card Scenario: Harmonic Interpretations ([alonso-ovalle-royer-2024], §4.3)
--- ════════════════════════════════════════════════════
+/-! ### Card Scenario: Harmonic Interpretations ([alonso-ovalle-royer-2024], §4.3) -/
 
 /-! When a modal indefinite occurs under an external modal (imperative,
 deontic, attitude verb), the MI's anchoring event can be CO-INDEXED
@@ -811,7 +717,6 @@ theorem harmonic_succeeds :
 theorem harmonic_neq_nonharmonic_witness :
     ¬ modalIndefiniteSat fGrab .local allCW allCards isCard canGrab .only1 ∧
     modalIndefiniteSat fGrab .imperative allCW allCards isCard canGrab .only1 := by
-  refine ⟨?_, ?_⟩ <;> decide
-
+  exact ⟨by decide, by decide⟩
 
 end AlonsoOvalleRoyer2024
