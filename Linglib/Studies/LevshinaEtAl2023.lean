@@ -293,16 +293,15 @@ theorem high_so_entropy_implies_high_branch_entropy :
 
 -- Bridge 3: Head-final proportion ↔ SO proportion (FutrellEtAl2020.lean)
 
-private def futrellLanguages := FutrellEtAl2020.languages
-
-/-- Languages with high propHeadFinal (> 700) in Futrell have high
-    soProportion (> 700) in Levshina: head-final ≈ SOV ≈ high SO proportion. -/
+/-- Languages with a high head-final proportion (> 700‰) in
+    [futrell-gibson-2020]'s Table 2 have high soProportion (> 700) in
+    Levshina: head-final ≈ SOV ≈ high SO proportion. -/
 theorem head_final_correlates_with_so :
     let shared := allProfiles.filter (λ p =>
-      futrellLanguages.any (·.isoCode == p.isoCode))
+      FutrellEtAl2020.table2.any (·.isoCode == p.isoCode))
     let highHF := shared.filter (λ p =>
-      match futrellLanguages.find? (·.isoCode == p.isoCode) with
-      | some f => f.propHeadFinal > 700
+      match FutrellEtAl2020.table2.find? (·.isoCode == p.isoCode) with
+      | some f => f.propHeadFinal1000 > 700
       | none => false)
     highHF.all (·.soProportion1000 > 700) = true := by decide
 

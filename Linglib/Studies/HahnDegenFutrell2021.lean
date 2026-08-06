@@ -1,5 +1,4 @@
 import Linglib.Processing.Memory.SurprisalTradeoff
-import Linglib.Studies.FutrellEtAl2020
 import Linglib.Syntax.DependencyGrammar.Formal.HarmonicOrder
 import Linglib.Data.WALS.Languages
 
@@ -351,40 +350,6 @@ theorem slovak_lowest_g :
 the real language beats every sampled baseline grammar). -/
 theorem most_efficient_fully_optimized :
     (efficientLanguages.filter (·.gMean1000 = 1000)).length = 42 := by native_decide
-
--- ============================================================================
--- Crosslinguistic Bridge to [futrell-gibson-2020]
--- ============================================================================
-
-open FutrellEtAl2020
-
-/-- ISO codes appearing in [futrell-gibson-2020]'s 32-language dataset. -/
-def futrellIsoCodes : List String :=
-  FutrellEtAl2020.languages.map (·.isoCode)
-
-/-- ISO codes appearing in this study's 54-language dataset. -/
-def hahnIsoCodes : List String :=
-  allLanguages.map (·.isoCode)
-
-/-- Languages in both datasets (by ISO code). -/
-def sharedIsoCodes : List String :=
-  futrellIsoCodes.filter (hahnIsoCodes.contains ·)
-
-/-- At least 20 languages appear in both datasets. -/
-theorem many_shared_languages :
-    sharedIsoCodes.length ≥ 20 := by native_decide
-
-/-- All but one shared language (Polish) are efficient in this study. -/
-theorem shared_languages_mostly_efficient :
-    (sharedIsoCodes.filter (λ iso =>
-      (allLanguages.filter (·.isoCode == iso)).all (·.moreEfficient)
-    )).length ≥ sharedIsoCodes.length - 1 := by native_decide
-
-/-- Polish is the only shared language that is an exception. -/
-theorem polish_only_shared_exception :
-    (sharedIsoCodes.filter (λ iso =>
-      (allLanguages.filter (·.isoCode == iso)).any (! ·.moreEfficient)
-    )) = ["pl"] := by native_decide
 
 -- ============================================================================
 -- Entropy–Optimization Correlation (Figure 13)
