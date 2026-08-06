@@ -3,6 +3,7 @@ import Linglib.Fragments.Korean.Evidentials
 import Linglib.Fragments.Slavic.Bulgarian.Evidentials
 import Linglib.Semantics.Modality.Kernel
 import Linglib.Semantics.Evidential.Epistemicity
+import Linglib.Studies.Zheng2025
 
 /-!
 # Cumming (2026): Tense and evidence — verification theorems
@@ -156,13 +157,14 @@ evidence rather than being directly observed. The
 [von-fintel-gillies-2010] kernel semantics states the modal side as a
 presupposition that the kernel does not directly settle the prejacent; the
 tense side is the nonfuture downstream constraint (T ≤ A). The
-[zheng-2025] dripping-raincoat scenario (public in
-`Semantics/Modality/Kernel.lean`) witnesses both at once: the raincoat
-evidence is causally downstream of the rain, and the kernel
-`{wearingRaincoat}` does not settle `isRaining`. -/
+[zheng-2025] dripping-raincoat scenario (from `Studies/Zheng2025.lean`)
+witnesses both at once: the raincoat evidence is causally downstream of the
+rain, and the kernel `{wearingRaincoat}` does not settle `isRaining`. -/
 
 open Semantics.Modality
 open Intensional.Premise (propIntersection)
+open Zheng2025 (World wearingRaincoat isRaining raincoatK
+  raincoat_nandao_felicitous)
 
 /-- A concrete evidential frame for the raincoat scenario:
     S = 0 (speech time now), T = -2 (rain event in the past),
@@ -188,7 +190,7 @@ theorem raincoat_not_settled :
     evidence (T ≤ A) co-occurs with the kernel not settling the prejacent. -/
 theorem downstream_implies_must_defined :
     downstreamEvidence raincoatFrame ∧
-    (kernelMust raincoatK isRaining).presup World.w0 :=
+    (kernelMust raincoatK isRaining).presup World.rain :=
   ⟨raincoat_downstream, raincoat_not_settled⟩
 
 /-- **Tense-modal evidential parallel**: both Cumming's nonfuture constraint
@@ -197,15 +199,15 @@ theorem downstream_implies_must_defined :
     doesn't settle isRaining. -/
 theorem tense_modal_evidential_parallel :
     downstreamEvidence raincoatFrame ∧
-    (kernelMust raincoatK isRaining).presup World.w0 ∧
-    ¬(kernelMust raincoatK isRaining).assertion World.w0 := by
+    (kernelMust raincoatK isRaining).presup World.rain ∧
+    ¬(kernelMust raincoatK isRaining).assertion World.rain := by
   refine ⟨raincoat_downstream, raincoat_not_settled, ?_⟩
   intro hAll
-  have hw1 : World.w1 ∈ propIntersection raincoatK.props := by
+  have hw1 : World.sprinkler ∈ propIntersection raincoatK.props := by
     intro p hp
     rcases List.mem_singleton.mp hp with rfl
-    exact show wearingRaincoat .w1 by decide
-  exact (hAll hw1 : isRaining .w1)
+    exact show wearingRaincoat .sprinkler by decide
+  exact (by decide : ¬ isRaining World.sprinkler) (hAll hw1)
 
 private theorem isRaining_settles_isRaining :
     directlySettlesExplicit (⟨[isRaining]⟩ : Kernel World) isRaining := by
@@ -218,7 +220,7 @@ private theorem isRaining_settles_isRaining :
 theorem direct_evidence_blocks_both :
     let directK : Kernel World := ⟨[isRaining]⟩
     directlySettlesExplicit directK isRaining ∧
-    ¬(kernelMust directK isRaining).presup World.w0 ∧
+    ¬(kernelMust directK isRaining).presup World.rain ∧
     let directFrame : EvidentialFrame ℤ :=
       { speechTime := 0, perspectiveTime := 0, referenceTime := 0,
         eventTime := -1, acquisitionTime := -1 }
@@ -250,7 +252,7 @@ theorem inferential_claim_must_profile :
     inferentialClaim.source = .inference ∧
     inferentialClaim.authority = .nonparticipant ∧
     ¬ directlySettlesExplicit raincoatK isRaining ∧
-    (kernelMust raincoatK isRaining).presup World.w0 :=
+    (kernelMust raincoatK isRaining).presup World.rain :=
   ⟨rfl, rfl, raincoat_not_settled, raincoat_not_settled⟩
 
 /-- Ego pairs with direct evidence and nonparticipant with inference in
