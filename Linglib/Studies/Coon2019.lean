@@ -1,56 +1,30 @@
 import Linglib.Semantics.ArgumentStructure.Root.Classification
 import Linglib.Syntax.Minimalist.Verbal.Voice
-import Linglib.Fragments.Mayan.Chuj.VerbBuilding
+import Linglib.Morphology.DM.Categorizer
+import Linglib.Fragments.Mayan.Chuj.RootClasses
+import Linglib.Fragments.Mayan.Chuj.VoiceSystem
+import Linglib.Data.Examples.Coon2019
 
 /-!
-# Chuj Verb Building: Empirical Data and Bridge Theorems
-[coon-2019]
+# Building verbs in Chuj
 
-Minimalist analysis and bridge theorems for [coon-2019] "Building verbs
-in Chuj: Consequences for the nature of roots." *Journal of Linguistics*
-55(1): 35–81.
+[coon-2019]'s analysis of Chuj verb stems: roots determine internal
+arguments, the four v/Voice⁰ heads (Ø, -ch, -j, -w) determine external
+arguments. The root lexicon lives in
+`Fragments/Mayan/Chuj/RootClasses.lean`, the attested examples in
+`Data.Examples.Coon2019`.
 
-Theory-neutral data (root classes, voice morphology, paradigm grammaticality,
--aj distribution, agent diagnostics, root lexicon) lives in the Chuj fragment
-(`Fragments/Mayan/Chuj/VerbBuilding.lean`). This file provides:
+## Main declarations
 
-## Paradigm examples (§§1–2)
-
-Glossed Chuj sentences with root, voice suffix, and grammaticality.
-
-## Minimalist analysis (§§3–9)
-
-Voice heads as `Minimalist.Voice.Head` instances, event decomposition via
-`buildDecomposition`, existential closure (-aj), and division of labor /
-causative alternation proved from the Voice–root split.
-
-## Bridge theorems (§§10–16)
-
-Connect the fragment's theory-neutral types (`CRootClass`, `ChujVoiceSuffix`,
-`isGrammatical`, etc.) to Minimalist Head properties and to the
-[beavers-etal-2021] root typology.
-
-### Chuj fragment bridge (§§10–15)
-
-1. **Root class ↔ Root coordinates**: `CRootClass` maps to
-   `Classification` values. √TV and √ITV share type ⟨e,⟨s,t⟩⟩ and
-   internal-argument valency; transitive-Voice licensing separates them.
-2. **Voice suffix ↔ Head**: theta assignment, D feature, phase head.
-3. **Paradigm predictions**: `isGrammatical` matches data attestation.
-4. **-aj predictions**: `hasImplicitExternal` / `triggersAj` match -aj
-   distribution.
-5. **Agent diagnostics**: `assignsTheta` matches agent adverb / by-phrase.
-6. **Division of labor**: `formsBareTransitive` aligns with
-   transitive-Voice licensing.
-
-### Root typology bridge
-
-The chronologically-later [beavers-etal-2021] paper hosts the bridge
-content connecting Coon's Chuj root classes to the cross-linguistic CoS
-typology (relocated to `Studies/BeaversEtAl2021.lean`
-§§8-14 per the chronological-dependency rule — Coon 2019 < Beavers 2021,
-so only the later paper may reference the earlier).
-
+* `Chuj.RootClass.toClassification` — Coon's coordinates for the root
+  classes, as a derived projection.
+* `selects`, `isGrammatical` — each head's selection condition on the
+  root coordinates; the paradigm table is derived, not stipulated
+  (`isGrammatical_table`), and checked against the attested data
+  (`paradigm_predicts_attestation`).
+* `vØ`, `v_w`, `v_ch`, `v_j` — the voice heads, on substrate
+  `Voice.Flavor` cells; the agent diagnostics and the -aj distribution
+  are derived from their parametric semantics.
 -/
 
 namespace Coon2019
@@ -58,102 +32,117 @@ namespace Coon2019
 open Chuj
 open Verb.Root
 
--- ════════════════════════════════════════════════════
--- § 1. Paradigm Examples (§§2–5)
--- ════════════════════════════════════════════════════
+/-! ### Root-class coordinates -/
 
-/-- A glossed Chuj example sentence. -/
-structure ChujExample where
-  /-- Example number in the paper -/
-  exNumber : Nat
-  /-- Page number -/
-  page : Nat
-  /-- Chuj form -/
-  chuj : String
-  /-- English translation -/
-  english : String
-  /-- Root used (from the Chuj fragment lexicon) -/
-  verb : Chuj.ChujRoot
-  /-- Voice suffix -/
-  voice : ChujVoiceSuffix
-  /-- Whether the example is grammatical -/
-  grammatical : Bool
-  deriving Repr
+/-- [coon-2019]'s coordinates for each root class ((3), p. 37), as a
+    derived projection off the class label. The `changeType` column is a
+    representative placeholder — Coon's classes mix change-of-state and
+    non-change roots (p. 60), and [beavers-etal-2021] subdivides √TV on
+    exactly this axis. -/
+def _root_.Chuj.RootClass.toClassification : RootClass → Classification
+  | .tv  => { valency := {.internal}, changeType := .result,
+              denotationType := some (.e ⇒ .s ⇒ .t),
+              licensesTransitiveVoice := true }
+  | .itv => { valency := {.internal}, changeType := .propertyConcept,
+              denotationType := some (.e ⇒ .s ⇒ .t) }   -- unaccusative (§3.3)
+  | .pos => { valency := ∅, changeType := .propertyConcept,
+              denotationType := some (.e ⇒ .s ⇒ .d) }   -- [henderson-2017] measure fn
+  | .nom => { valency := ∅, changeType := .propertyConcept,
+              denotationType := some (.e ⇒ .t) }
 
--- Key paradigm examples from §§2–5
+/-- A root is unaccusative when it takes an internal argument but does
+    not license transitive Voice (§3.3). -/
+def unaccusative (r : Classification) : Bool :=
+  r.valency == {.internal} && !r.licensesTransitiveVoice
 
-/-- (10a) Active transitive: √TV + Ø (§2.2, p. 41). -/
-def ex10a : ChujExample :=
-  ⟨10, 41, "Ix-ach-ko-chel-a'",
-   "We hugged you.", chel, .null, true⟩
+/-! ### Selection and the paradigm -/
 
-/-- (7a) √ITV + null v (§2.1, p. 40). -/
-def ex7a : ChujExample :=
-  ⟨7, 40, "Ix-onh-way-i",
-   "We slept.", way, .null, true⟩
+/-- The selection condition each voice suffix imposes on the root's
+    coordinates: the Ø slot covers transitive vØ (requires transitive
+    licensing) and the null intransitive v (selects unaccusatives); the
+    passives -ch and -j presuppose a transitive stem; -w introduces an
+    external argument and rejects exactly the unaccusative class
+    (p. 45). -/
+def selects (vs : VoiceSuffix) (r : Classification) : Bool :=
+  match vs with
+  | .null    => r.licensesTransitiveVoice || unaccusative r
+  | .ch | .j => r.licensesTransitiveVoice
+  | .w       => !unaccusative r
 
-/-- (23a) √POS + -w (§3, p. 48). -/
-def ex23a : ChujExample :=
-  ⟨23, 48, "Ix-chot-w-i nok' k'ok'on",
-   "The frog hopped.", chot, .w, true⟩
+/-- A root class forms a grammatical stem with a voice suffix exactly
+    when the suffix selects the class's coordinates. Does not cover
+    derived transitive stems in -ej, which all four classes form (§2.2),
+    or the isolated -j forms on non-transitive roots (ex. (71), p. 71). -/
+def isGrammatical (rc : RootClass) (vs : VoiceSuffix) : Bool :=
+  selects vs rc.toClassification
 
-/-- (16b) √NOM + -w (§2.5, p. 45). -/
-def ex16b : ChujExample :=
-  ⟨16, 45, "Ix-in-chanhal-w-i",
-   "I danced.", chanhal, .w, true⟩
+/-- Coon's paradigm table, derived: √TV takes all four voices, √ITV
+    only null v, √POS and √NOM only -w. -/
+theorem isGrammatical_table :
+    (∀ vs, isGrammatical .tv vs = true) ∧
+    (∀ vs, isGrammatical .itv vs = (vs == .null)) ∧
+    (∀ vs, isGrammatical .pos vs = (vs == .w)) ∧
+    (∀ vs, isGrammatical .nom vs = (vs == .w)) := by
+  refine ⟨?_, ?_, ?_, ?_⟩ <;> (intro vs; cases vs <;> decide)
 
-/-- (62) √TV + -chaj (passive, §4.1.1, p. 68). -/
-def ex62 : ChujExample :=
-  ⟨62, 68, "tz-b'o'-ch-aj ... winh nhulej tik",
-   "The brother's food is made by them.", b'o', .ch, true⟩
+/-- Every root class verbalizes under some v/Voice⁰ head:
+    categorization is free at category grain
+    (`Morphology.DM.same_root_different_category`); the paradigm gaps
+    are flavor-level selection (`selects`). -/
+theorem every_class_verbalizes (rc : RootClass) :
+    ∃ vs, isGrammatical rc vs = true := by
+  cases rc
+  exacts [⟨.null, by decide⟩, ⟨.null, by decide⟩, ⟨.w, by decide⟩, ⟨.w, by decide⟩]
 
-/-- (59) √TV + -j (agentless passive, §4.1.2, p. 67). -/
-def ex59 : ChujExample :=
-  ⟨59, 67, "tz-man-j-i ... / tz-choj-j-i ixim",
-   "It is bought. / It is ground.", man, .j, true⟩
+/-- Each v/Voice⁰ head is a verbal categorizer in the DM sense
+    ([coon-2019] treats all four as bundled v/Voice⁰). -/
+def _root_.Chuj.VoiceSuffix.categorizer : VoiceSuffix → Morphology.DM.Categorizer :=
+  λ _ => .v
 
-/-- (63a) Agent adverb with -chaj: grammatical (§4.1.1, p. 68). -/
-def ex63a : ChujExample :=
-  ⟨63, 68, "sk'annhej sk'o'ol winh ix-ch'ak-chaj te' te'",
-   "The tree was felled on purpose.", ch'ak, .ch, true⟩
+/-- A root class forms bare transitive stems exactly when it licenses
+    transitive Voice (§2.2, p. 41). -/
+def formsBareTransitive (rc : RootClass) : Bool :=
+  rc.toClassification.licensesTransitiveVoice
 
-/-- (67a) Agent adverb with -j: ungrammatical (§4.1.2, p. 70). -/
-def ex67a : ChujExample :=
-  ⟨67, 70, "*sk'annhej sk'o'ol winh ix-ch'ak-j-i te' te'",
-   "The tree was felled on purpose.", ch'ak, .j, false⟩
+/-! ### Paradigm data (§§2–5)
 
-/-- (54a) √TV + -w incorporation antipassive (§4, p. 64). -/
-def ex54a : ChujExample :=
-  ⟨54, 64, "Ix-in-jax-w-i ixim",
-   "I corn-ground.", jax, .w, true⟩
+Attested examples live in `Data/Examples/Coon2019.json` (generated
+module `Data.Examples.Coon2019`); each row carries the root form and
+[coon-2019]'s voice segmentation as `paperFeatures`. -/
 
-/-- (55b) √TV + -w absolutive antipassive (§4, p. 65). -/
-def ex55 : ChujExample :=
-  ⟨55, 65, "Ix-mak'-waj ix Malin t'a waj Xun",
-   "Maria did some hitting to John.", mak', .w, true⟩
+/-- Parse a row's `voice` feature. -/
+def readVoice : String → Option VoiceSuffix
+  | "null" => some .null
+  | "ch"   => some .ch
+  | "j"    => some .j
+  | "w"    => some .w
+  | _      => none
 
--- ════════════════════════════════════════════════════
--- § 2. Example Verification
--- ════════════════════════════════════════════════════
+/-- The root a row attests, looked up in the fragment lexicon by its
+    `rootForm` feature. -/
+def rowRoot (e : Data.Examples.LinguisticExample) : Option ChujRoot :=
+  e.feature? "rootForm" >>= λ f => allRoots.find? (·.form == f)
 
-/-- Grammatical examples are predicted grammatical;
-    ungrammatical examples are predicted ungrammatical. -/
-theorem examples_grammaticality :
-    ex10a.grammatical = true ∧     -- √TV + Ø
-    ex7a.grammatical = true ∧    -- √ITV + null
-    ex23a.grammatical = true ∧   -- √POS + -w
-    ex16b.grammatical = true ∧   -- √NOM + -w
-    ex62.grammatical = true ∧    -- √TV + -ch
-    ex59.grammatical = true ∧    -- √TV + -j
-    ex63a.grammatical = true ∧   -- agent adverb + -ch (OK)
-    ex67a.grammatical = false ∧  -- agent adverb + -j (blocked)
-    ex54a.grammatical = true ∧   -- -w incorporation antipassive
-    ex55.grammatical = true :=   -- -w absolutive antipassive
-  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+/-- Root class, voice, and grammaticality for each attestation row;
+    the adverb-diagnostic rows are excluded. -/
+def paradigmData : List (RootClass × VoiceSuffix × Bool) :=
+  Examples.all.filterMap λ e =>
+    if (e.feature? "diagnostic").isSome then none
+    else do
+      let r ← rowRoot e
+      let vs ← e.feature? "voice" >>= readVoice
+      pure (r.class', vs, e.judgment != .ungrammatical)
 
--- ════════════════════════════════════════════════════
--- § 3. Minimalist Voice Analysis ([coon-2019], ex. (78))
--- ════════════════════════════════════════════════════
+/-- All eight attestation rows survive the adapter. -/
+theorem paradigmData_complete : paradigmData.length = 8 := by decide
+
+/-- The derived paradigm agrees with the recorded judgment of every
+    attested example. -/
+theorem paradigm_predicts_attestation :
+    paradigmData.all (λ (rc, vs, g) => isGrammatical rc vs == g) = true := by
+  decide
+
+/-! ### Minimalist voice heads (ex. (78)) -/
 
 open Minimalist Minimalist.Voice
 
@@ -162,36 +151,144 @@ open Minimalist Minimalist.Voice
 def vØ : Head :=
   { flavor := .agentive, hasD := true }
 
-/-- Agentive intransitive v/Voice⁰ (-w): introduces overt agent in
-    Spec,VoiceP but assigns absolutive (not ergative) case (p. 54).
-    Merges directly with root — cannot attach to derived stems (p. 54, (34b)).
-    Used with √NOM and √POS to verbalize roots, and with √TV
-    in incorporation antipassives (where the theme is a bare NP).
-    Also models the null intransitive v/Voice⁰ for √ITV roots (p. 40):
-    both introduce an agent and assign absolutive, differing only in
-    overt (-w) vs null morphological realization. -/
+/-- Agentive intransitive v/Voice⁰ (-w): overt agent, absolutive case
+    (p. 54) — the substrate's `.antipassive` cell, non-phasal by
+    default. Verbalizes √NOM and √POS, forms √TV antipassives, and
+    models the null intransitive v/Voice⁰ of √ITV (p. 40). -/
 def v_w : Head :=
-  { flavor := .agentive, hasD := true, phaseOverride := some false }
+  { flavor := .antipassive, hasD := true }
 
-/-- Passive v/Voice⁰ (-ch): assigns θ-role to an implicit (existentially
-    bound) external argument (p. 68–69). Agent-oriented adverbs and
-    by-phrases are licensed, confirming semantic presence of agent.
-    Only combines with √TV roots. -/
+/-- Passive v/Voice⁰ (-ch): implicit, existentially bound agent
+    (pp. 68–69) — the substrate's `.impersonal` cell [−D, +∃x]. Agent
+    adverbs and by-phrases confirm the agent's semantic presence. -/
 def v_ch : Head :=
-  { flavor := .agentive, hasD := false, phaseOverride := some false }
+  { flavor := .impersonal, hasD := false }
 
-/-- Agentless passive v/Voice⁰ (-j): verbalizes stem but introduces
-    no external argument — neither overt nor implicit (p. 70:
-    "does not assign a thematic role and does not merge an external
-    argument"). No agent-oriented adverbs, no agentive by-phrases.
-    Used with √TV (agentless passive) and non-transitive roots
-    (inchoative/stative readings). -/
+/-- Agentless passive v/Voice⁰ (-j): verbalizes the stem, introduces no
+    external argument, overt or implicit (p. 70). `hasD := false`
+    diverges from `.nonThematic`'s [+D] SE cell (`v_j_not_dCoherent`). -/
 def v_j : Head :=
   { flavor := .nonThematic, hasD := false }
 
--- ════════════════════════════════════════════════════
--- § 4. Event Decomposition
--- ════════════════════════════════════════════════════
+/-- Map each voice suffix to its Minimalist Head. -/
+def toVoiceHead : VoiceSuffix → Head
+  | .null => vØ
+  | .ch   => v_ch
+  | .j    => v_j
+  | .w    => v_w
+
+/-! ### Voice head properties -/
+
+/-- Ø and -w project an overt θ-marked agent; -ch's agent is present
+    only in the broad `params.assignsTheta?` sense. -/
+theorem agent_presence :
+    vØ.AssignsTheta ∧ v_w.AssignsTheta ∧
+    ¬ v_ch.AssignsTheta ∧ v_ch.params.assignsTheta? = some true := by
+  refine ⟨by decide, by decide, by decide, rfl⟩
+
+/-- -j has no agent in any sense (p. 70). -/
+theorem v_j_no_theta : ¬ v_j.AssignsTheta ∧ v_j.params.assignsTheta? = some false :=
+  ⟨by decide, rfl⟩
+
+/-- -ch's agent is existentially bound, -j's is absent (§4.1). -/
+theorem ch_j_params_contrast :
+    v_ch.params.extArgSemantics = some .thematicExistential ∧
+    v_j.params.assignsTheta? = some false := ⟨rfl, rfl⟩
+
+/-- Only Ø is a phase head (assigns ergative case). -/
+theorem only_vØ_is_phase :
+    vØ.IsPhasal ∧ ¬ v_w.IsPhasal ∧ ¬ v_ch.IsPhasal ∧ ¬ v_j.IsPhasal := by decide
+
+/-- Ø, -w, and -ch are [D]-coherent; -j diverges from `.nonThematic`'s
+    SE-type [+D] cell. -/
+theorem v_j_not_dCoherent :
+    vØ.DCoherent ∧ v_w.DCoherent ∧ v_ch.DCoherent ∧ ¬ v_j.DCoherent := by decide
+
+/-! ### Derived diagnostics (§4.1)
+
+The agent diagnostics are predictions read off the heads' parametric
+semantics, checked against the attested minimal pair
+(`adverb_pair_predicted`). -/
+
+/-- The fate of the external argument, read off the head's parametric
+    semantics (§4.1). -/
+def _root_.Chuj.VoiceSuffix.participantFate (vs : VoiceSuffix) : Voice.ParticipantFate :=
+  match (toVoiceHead vs).params.extArgSemantics with
+  | some .thematicArgument    => .maintained
+  | some .thematicExistential => .denucleativized
+  | _                         => .suppressed
+
+/-- Agent-oriented adverbs are predicted grammatical exactly where the
+    head supplies an agent, overt or implicit (§4.1). -/
+def agentAdverbOK (vs : VoiceSuffix) : Bool :=
+  (toVoiceHead vs).params.assignsTheta? == some true
+
+/-- Agentive by-phrases are predicted grammatical exactly where the
+    head's agent is implicit (§4.1); with an overt agent the by-phrase
+    has nothing to identify. -/
+def byPhraseOK (vs : VoiceSuffix) : Bool :=
+  (toVoiceHead vs).params.extArgSemantics == some .thematicExistential
+
+/-- `agentAdverbOK` predicts the (63a)/(67a) minimal pair. -/
+theorem adverb_pair_predicted :
+    agentAdverbOK .ch = (Examples.ex_63a.judgment != .ungrammatical) ∧
+    agentAdverbOK .j = (Examples.ex_67a.judgment != .ungrammatical) := by
+  exact ⟨by decide, by decide⟩
+
+/-- Both passives lack an overt external argument, but -ch has an
+    implicit agent and -j none, and both diagnostics track the
+    difference. -/
+theorem passive_contrast :
+    agentAdverbOK .ch = true ∧ byPhraseOK .ch = true ∧
+    agentAdverbOK .j = false ∧ byPhraseOK .j = false := by decide
+
+/-! ### -aj distribution (§4.2)
+
+-aj marks an implicit argument on a √TV stem — an overt reflex of
+Existential Closure ([diesing-1992]) per [coon-2019] (p. 73). -/
+
+/-- The two antipassive (-w) subtypes: absolutive (implicit theme,
+    ex. (55b–c)) vs incorporation (overt bare-NP theme, ex. (54a)). -/
+inductive AntipassiveType where
+  /-- Theme is implicit (suppressed). -/
+  | absolutive
+  /-- Theme is an overt bare NP (incorporated). -/
+  | incorporation
+  deriving DecidableEq, Repr
+
+/-- -aj surfaces when the stem has an implicit argument: the
+    existentially bound agent of -ch, or the suppressed theme of the
+    absolutive antipassive. -/
+def triggersAj (v : Head) (implicitInternal : Bool) : Bool :=
+  v.params.extArgSemantics == some .thematicExistential || implicitInternal
+
+/-- -aj on stems in passive/agentless contexts (-w is handled by
+    `ajOnAntipassive`). -/
+def ajOnPassive (vs : VoiceSuffix) : Bool :=
+  triggersAj (toVoiceHead vs) false
+
+/-- -aj on antipassive (-w) stems: present exactly in the absolutive
+    subtype. -/
+def ajOnAntipassive (apt : AntipassiveType) : Bool :=
+  triggersAj v_w (apt == .absolutive)
+
+/-- The -ch passive triggers -aj: its agent is implicit (ex. (58), p. 66). -/
+theorem ch_aj_passive : ajOnPassive .ch = true := by decide
+
+/-- Ø, -w, and -j alone trigger no -aj: none has an implicit external
+    argument. -/
+theorem no_implicit_external :
+    ajOnPassive .null = false ∧ ajOnPassive .w = false ∧
+    ajOnPassive .j = false := by decide
+
+/-- The absolutive antipassive triggers -aj: its theme is implicit
+    (ex. (55b–c), p. 65); the incorporation antipassive does not — its
+    theme is an overt bare NP (ex. (54a), p. 64). -/
+theorem aj_antipassive_split :
+    ajOnAntipassive .absolutive = true ∧
+    ajOnAntipassive .incorporation = false := by decide
+
+/-! ### Event decomposition -/
 
 /-- Lower event structure for result roots: cause + change + result state. -/
 def resultLower : List VerbHead := [.vCAUSE, .vGO, .vBE]
@@ -203,378 +300,55 @@ def activityLower : List VerbHead := []
 /-- Lower event structure for positional roots (√POS): stative. -/
 def positionalLower : List VerbHead := [.vBE]
 
--- ════════════════════════════════════════════════════
--- § 5. Voice Head Properties
--- ════════════════════════════════════════════════════
-
-/-- All three agentive voices (Ø, -w, -ch) assign a θ-role. -/
-theorem agentive_voices_assign_theta :
-    vØ.AssignsTheta ∧ v_w.AssignsTheta ∧ v_ch.AssignsTheta := by decide
-
-/-- -j does NOT assign a θ-role: agentless (p. 70). -/
-theorem v_j_no_theta : ¬ v_j.AssignsTheta := by decide
-
-/-- Only Ø is a phase head (assigns ergative case). -/
-theorem only_vØ_is_phase :
-    vØ.IsPhasal ∧ ¬ v_w.IsPhasal ∧ ¬ v_ch.IsPhasal ∧ ¬ v_j.IsPhasal := by decide
-
--- ════════════════════════════════════════════════════
--- § 6. Verb Building (buildDecomposition)
--- ════════════════════════════════════════════════════
-
-/-- √TV result + Ø → causative [vDO, vGO, vBE] (active transitive). -/
+/-- Active transitives built from result roots are causative. -/
 theorem tv_res_active :
     isCausative (buildDecomposition vØ resultLower) = true := by decide
 
-/-- √TV result + -ch → causative [vDO, vGO, vBE] (passive with implicit agent).
-    Event structure is still causative — the agent is semantically present. -/
+/-- In the -ch passive of a result root, CAUSE persists and the agent
+    stays semantically present, but no specifier is projected. -/
 theorem tv_res_passive_ch :
-    isCausative (buildDecomposition v_ch resultLower) = true := by decide
+    hasCause (buildDecomposition v_ch resultLower) = true ∧
+    v_ch.params.assignsTheta? = some true := ⟨by decide, rfl⟩
 
-/-- √TV result + -j → inchoative [vGO, vBE] (agentless passive / anticausative).
-    No agent at all — the event is a pure change-of-state (p. 70). -/
+/-- The -j form of a result root is a pure change of state — an
+    inchoative (p. 70). -/
 theorem tv_res_agentless :
     isInchoative (buildDecomposition v_j resultLower) = true := by decide
 
-/-- √ITV + v/Voice⁰ → activity [vDO] (intransitive).
-    Uses v_w, which shares formal properties with the null intransitive
-    v/Voice⁰ for √ITV (both are agentive, non-ERG-assigning; p. 40). -/
+/-- Intransitive roots with their v/Voice⁰ head form activities (p. 40). -/
 theorem itv_intransitive :
     isActivity (buildDecomposition v_w activityLower) = true := by decide
 
-/-- √POS + -w → [vDO, vBE]: agent assumes a position (agentive stative).
-    (p. 48, (23)): chot-w-i "The frog hopped." -/
+/-- Positional roots verbalized by -w describe an agent assuming a
+    position ((23), p. 48). -/
 theorem pos_agentive :
     buildDecomposition v_w positionalLower = [.vDO, .vBE] := by decide
 
-/-- √NOM + -w → activity [vDO] (denominal agentive intransitive).
-    (p. 45, (16b)): chanhal-w-i "I danced." -/
+/-- Nominal roots verbalized by -w form activities ((16b), p. 45). -/
 theorem nom_agentive :
     isActivity (buildDecomposition v_w activityLower) = true := by decide
 
--- ════════════════════════════════════════════════════
--- § 7. Existential Closure (-aj)
--- ════════════════════════════════════════════════════
+/-! ### Root-class contrasts -/
 
-/-- Does this Voice head have an implicit (existentially bound) external
-    argument? True when Voice assigns θ but has no overt specifier. -/
-def hasImplicitExternal (v : Head) : Bool :=
-  decide v.AssignsTheta && !v.hasD
-
-/-- -aj (Existential Closure) surfaces when there is any implicit argument:
-    implicit external (from Voice, as in -ch) or implicit internal (from
-    theme suppression in absolutive antipassive -w-aj).
-
-    `implicitInternal` is true when a √TV root's theme is not filled
-    by an overt DP (absolutive antipassive, not incorporation antipassive). -/
-def triggersAj (v : Head) (implicitInternal : Bool) : Bool :=
-  hasImplicitExternal v || implicitInternal
-
-/-- -ch always triggers -aj (implicit external agent; p. 69). -/
-theorem ch_triggers_aj : hasImplicitExternal v_ch = true := by decide
-
-/-- Ø never has an implicit external (agent is overt ERG DP). -/
-theorem vØ_no_implicit : hasImplicitExternal vØ = false := by decide
-
-/-- -w never has an implicit external (agent is overt ABS DP; p. 54). -/
-theorem v_w_no_implicit : hasImplicitExternal v_w = false := by decide
-
-/-- -j has no implicit external (there is no agent at all, not even
-    implicit; p. 70: "no thematic agent, implicit or otherwise"). -/
-theorem v_j_no_implicit : hasImplicitExternal v_j = false := by decide
-
-/-- -ch-aj: passive of √TV with implicit agent (ex. (58), p. 66). -/
-theorem ch_aj_passive :
-    triggersAj v_ch false = true := by decide
-
-/-- -w-aj: absolutive antipassive (√TV theme is implicit; ex. (58), p. 66). -/
-theorem w_aj_antipassive :
-    triggersAj v_w true = true := by decide
-
-/-- -w incorporation antipassive: theme is overt bare NP → no -aj
-    (ex. (58), p. 66; cf. (26b), p. 50). -/
-theorem w_incorporation_no_aj :
-    triggersAj v_w false = false := by decide
-
--- ════════════════════════════════════════════════════
--- § 8. -w Cross-Class Generalization
--- ════════════════════════════════════════════════════
-
-/-- -w serves the same structural function across three root classes:
-    it merges directly with the root, verbalizes it, and introduces an
-    agent without assigning ERG (p. 54–56). The only difference is the
-    root's lower event structure. -/
-theorem w_cross_class :
-    -- √TV (incorporation antipassive): activity
-    isActivity (buildDecomposition v_w activityLower) = true ∧
-    -- √POS (positional verbalization): agent + state
-    buildDecomposition v_w positionalLower = [.vDO, .vBE] ∧
-    -- √NOM (denominal verbalization): activity
-    isActivity (buildDecomposition v_w activityLower) = true := by
-  exact ⟨by decide, by decide, by decide⟩
-
--- ════════════════════════════════════════════════════
--- § 9. Minimalist Division of Labor
--- ════════════════════════════════════════════════════
-
-/-- Division of labor ([coon-2019], ex. (2)/(77), p. 75): the root
-    determines whether a theme is present; Voice determines whether an
-    agent is present. Same root with different Voice → different event type;
-    same Voice with different root → same external argument status. -/
-theorem minimalist_division_of_labor :
-    -- Same result root: Ø gives causative, -j gives inchoative
-    isCausative (buildDecomposition vØ resultLower) = true ∧
-    isInchoative (buildDecomposition v_j resultLower) = true ∧
-    -- √TV licenses transitive Voice, √ITV does not (both take a theme)
-    rootTV_res.licensesTransitiveVoice = true ∧
-    rootITV.licensesTransitiveVoice = false := ⟨by decide, by decide, rfl, rfl⟩
-
-/-- The causative alternation in Chuj is determined by Voice, not by the root
-    (instantiation of `voice_determines_causativity_go_be` for Chuj heads).
-    For result roots, causativity tracks exactly with θ-assignment. -/
-theorem chuj_causative_alternation_result :
-    (isCausative (buildDecomposition vØ resultLower) = true ↔ vØ.AssignsTheta) ∧
-    (isCausative (buildDecomposition v_w resultLower) = true ↔ v_w.AssignsTheta) ∧
-    (isCausative (buildDecomposition v_ch resultLower) = true ↔ v_ch.AssignsTheta) ∧
-    (isCausative (buildDecomposition v_j resultLower) = true ↔ v_j.AssignsTheta) :=
-  ⟨by decide, by decide, by decide, by decide⟩
-
--- ════════════════════════════════════════════════════
--- § 10. Chuj Fragment Bridge Theorems
--- ════════════════════════════════════════════════════
-
-/-- Map the phenomena's root class to the fragment's Classification.
-    This connects theory-neutral distributional classes to the
-    theoretically analyzed Classification structure.
-    √TV maps to `rootTV_res` as a representative — the choice between
-    `rootTV_res` and `rootTV_pc` is arbitrary for the class coordinates
-    (both license transitive Voice); only changeType differs. -/
-def toFragmentRoot : CRootClass → Classification
-  | .tv  => rootTV_res
-  | .itv => rootITV
-  | .pos => rootPOS
-  | .nom => rootNOM
-
-/-- √TV maps to a theme-selecting root; all others map to non-theme roots.
-    This is the formal content of the observation that only √TV forms
-    bare transitive stems (§2.2). -/
-theorem root_class_valency_alignment :
-    (toFragmentRoot .tv).valency = {.internal} ∧
-    -- √ITV roots are unaccusative: they combine with an internal
-    -- argument, like √TV (§3.3) — cham 'die' is Coon's own example
-    (toFragmentRoot .itv).valency = {.internal} ∧
-    (toFragmentRoot .pos).valency = ∅ ∧
-    (toFragmentRoot .nom).valency = ∅ := ⟨rfl, rfl, rfl, rfl⟩
-
-/-- The data's `formsBareTransitive` matches transitive-Voice licensing —
-    not internal-argument valency, which unaccusative √ITV shares with
-    √TV (§3.3). -/
-theorem bare_transitive_iff_voice (rc : CRootClass) :
-    formsBareTransitive rc = true ↔
-      (toFragmentRoot rc).licensesTransitiveVoice = true := by
-  cases rc <;> decide
-
--- ════════════════════════════════════════════════════
--- § 11. Voice Suffix ↔ Head
--- ════════════════════════════════════════════════════
-
-/-- Map the phenomena's voice suffix to the Minimalist Head. -/
-def toVoiceHead : ChujVoiceSuffix → Head
-  | .null => vØ
-  | .ch   => v_ch
-  | .j    => v_j
-  | .w    => v_w
-
-/-- Theta assignment matches: the data's `hasAgent` agrees with the
-    fragment's `AssignsTheta` for all four voice suffixes. -/
-theorem theta_alignment (vs : ChujVoiceSuffix) :
-    vs.hasAgent = true ↔ (toVoiceHead vs).AssignsTheta := by
-  cases vs <;> decide
-
-/-- External argument status matches D feature:
-    overt external arg ↔ hasD = true. -/
-theorem d_feature_alignment :
-    -- Ø: overt ERG → hasD
-    (toVoiceHead .null).hasD = true ∧
-    -- -w: overt ABS → hasD
-    (toVoiceHead .w).hasD = true ∧
-    -- -ch: implicit → no D
-    (toVoiceHead .ch).hasD = false ∧
-    -- -j: absent → no D
-    (toVoiceHead .j).hasD = false := ⟨rfl, rfl, rfl, rfl⟩
-
-/-- Only Ø is a phase head (assigns ERG case). -/
-theorem phase_head_alignment :
-    (toVoiceHead .null).IsPhasal ∧
-    ¬ (toVoiceHead .ch).IsPhasal ∧
-    ¬ (toVoiceHead .j).IsPhasal ∧
-    ¬ (toVoiceHead .w).IsPhasal := by decide
-
--- ════════════════════════════════════════════════════
--- § 12. Agent Diagnostic Alignment
--- ════════════════════════════════════════════════════
-
-/-- The data's agent adverb diagnostic matches the fragment's theta assignment.
-    Agent-oriented adverbs require a theta-role-bearing Voice head. -/
-theorem agent_adverb_matches_theta (vs : ChujVoiceSuffix) :
-    agentAdverbOK vs = true ↔ (toVoiceHead vs).AssignsTheta := by
-  cases vs <;> decide
-
-/-- The -ch vs -j contrast is the critical test: both are passives (no overt
-    external arg), but they differ in theta assignment. The agent diagnostic
-    data confirms the fragment's distinction. -/
-theorem passive_contrast :
-    -- -ch: assigns theta, agent adverbs OK, by-phrases OK
-    (toVoiceHead .ch).AssignsTheta ∧
-    agentAdverbOK .ch = true ∧
-    byPhraseOK .ch = true ∧
-    -- -j: no theta, agent adverbs blocked, by-phrases blocked
-    ¬ (toVoiceHead .j).AssignsTheta ∧
-    agentAdverbOK .j = false ∧
-    byPhraseOK .j = false := by decide
-
--- ════════════════════════════════════════════════════
--- § 13. -aj Distribution Alignment
--- ════════════════════════════════════════════════════
-
-/-- The data's -aj on passives matches the fragment's `hasImplicitExternal`.
-    -aj appears when there is an implicit (but not absent) external argument. -/
-theorem aj_passive_matches_implicit (vs : ChujVoiceSuffix) :
-    ajOnPassive vs = hasImplicitExternal (toVoiceHead vs) := by
-  cases vs <;> decide
-
-/-- The fragment's `triggersAj` predicts the data's full -aj distribution:
-    - -ch (implicit ext) → -aj
-    - -j (no ext) → no -aj
-    - -w absolutive (implicit int) → -aj
-    - -w incorporation (overt int) → no -aj -/
-theorem aj_full_distribution :
-    -- Passive -ch: implicit external → -aj
-    triggersAj v_ch false = true ∧
-    ajOnPassive .ch = true ∧
-    -- Agentless -j: no external → no -aj
-    triggersAj v_j false = false ∧
-    ajOnPassive .j = false ∧
-    -- Antipassive -w (absolutive): implicit internal → -aj
-    triggersAj v_w true = true ∧
-    ajOnAntipassive .absolutive = true ∧
-    -- Antipassive -w (incorporation): overt internal → no -aj
-    triggersAj v_w false = false ∧
-    ajOnAntipassive .incorporation = false :=
-  ⟨by decide, rfl, by decide, rfl,
-   by decide, rfl, by decide, rfl⟩
-
--- ════════════════════════════════════════════════════
--- § 14. Verb Building Predictions
--- ════════════════════════════════════════════════════
-
-/-- The fragment predicts correct event decompositions for each
-    root×voice combination attested in the data.
-
-    √TV result + Ø → causative (active transitive)
-    √TV result + -j → inchoative (agentless passive / anticausative)
-    √TV result + -ch → causative (passive with implicit agent)
-    √ITV + -w → activity (intransitive) -/
-theorem event_decomposition_matches_data :
-    -- ex10a: √TV + Ø → causative
-    isCausative (buildDecomposition vØ resultLower) = true ∧
-    -- ex59: √TV + -j → inchoative
-    isInchoative (buildDecomposition v_j resultLower) = true ∧
-    -- ex62: √TV + -ch → causative (agent still present)
-    isCausative (buildDecomposition v_ch resultLower) = true ∧
-    -- ex7a: √ITV + v_w → activity
-    isActivity (buildDecomposition v_w activityLower) = true :=
-  ⟨by decide, by decide, by decide, by decide⟩
-
--- ════════════════════════════════════════════════════
--- § 15. Division of Labor
--- ════════════════════════════════════════════════════
-
-/-- The core empirical claim (ex. (2)/(77), p. 75): roots determine
-    internal arguments, Voice determines external arguments.
-
-    The data confirms this in two ways:
-    1. Theme persistence: √TV always has an internal arg regardless of Voice
-    2. Voice determines agent: same root with Ø has overt agent,
-       with -ch has implicit agent, with -j has no agent -/
-theorem division_of_labor_matches_data :
-    -- Root determines internal: √TV always selects theme
-    formsBareTransitive .tv = true ∧
-    rootTV_res.licensesTransitiveVoice = true ∧
-    -- √ITV takes a theme but cannot license transitive Voice
-    formsBareTransitive .itv = false ∧
-    rootITV.licensesTransitiveVoice = false ∧
-    -- Voice determines external: same root, different agent status
-    ChujVoiceSuffix.extArgStatus .null = .overt_erg ∧
-    ChujVoiceSuffix.extArgStatus .ch = .implicit ∧
-    ChujVoiceSuffix.extArgStatus .j = .absent :=
-  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
-
-/-- Theme persistence across all four voice forms for √TV.
-    The data shows √TV maintains its internal argument in active (Ø),
-    passive (-ch), agentless passive (-j), and antipassive (-w).
-    The fragment encodes this as a root property (valency), not a
-    derived property — so it holds by construction. -/
-theorem theme_persists_all_voices :
-    -- √TV is grammatical with all four voice suffixes (data)
-    isGrammatical .tv .null = true ∧
-    isGrammatical .tv .ch = true ∧
-    isGrammatical .tv .j = true ∧
-    isGrammatical .tv .w = true ∧
-    -- And the root always selects a theme (fragment)
-    rootTV_res.valency = {.internal} := ⟨rfl, rfl, rfl, rfl, rfl⟩
-
--- ════════════════════════════════════════════════════
--- § 16. Denotation Type Alignment
--- ════════════════════════════════════════════════════
-
-/-- The four root classes have distinct denotation types ([coon-2019], (3)).
-    The fragment's `denotationType` field captures these:
-    √TV/√ITV = indivStatePred ⟨e,⟨s,t⟩⟩, √POS = measureFn ⟨e,⟨s,d⟩⟩,
-    √NOM = entityPred ⟨e,t⟩. -/
-theorem denotation_type_alignment :
-    (toFragmentRoot .tv).denotationType = some (.e ⇒ .s ⇒ .t) ∧
-    (toFragmentRoot .itv).denotationType = some (.e ⇒ .s ⇒ .t) ∧
-    (toFragmentRoot .pos).denotationType = some (.e ⇒ .s ⇒ .d) ∧
-    (toFragmentRoot .nom).denotationType = some (.e ⇒ .t) := ⟨rfl, rfl, rfl, rfl⟩
-
-/-- √TV and √ITV share both semantic type and internal-argument valency
-    ([davis-1997]; §3.3) — what separates them is transitive-Voice
-    licensing alone, whose source Coon expressly declines to formalize. -/
+/-- √TV and √ITV share semantic type and valency ([davis-1997]; §3.3);
+    transitive-Voice licensing alone separates them. -/
 theorem tv_itv_same_type_different_voice :
-    (toFragmentRoot .tv).denotationType = (toFragmentRoot .itv).denotationType ∧
-    (toFragmentRoot .tv).valency = (toFragmentRoot .itv).valency ∧
-    (toFragmentRoot .tv).licensesTransitiveVoice ≠
-      (toFragmentRoot .itv).licensesTransitiveVoice := by
-  exact ⟨rfl, rfl, by decide⟩
+    (RootClass.tv.toClassification).denotationType =
+      (RootClass.itv.toClassification).denotationType ∧
+    (RootClass.tv.toClassification).valency =
+      (RootClass.itv.toClassification).valency ∧
+    (RootClass.tv.toClassification).licensesTransitiveVoice ≠
+      (RootClass.itv.toClassification).licensesTransitiveVoice :=
+  ⟨rfl, rfl, by decide⟩
 
-/-- The -w suffix cross-class generalization: -w verbalizes √POS and √NOM
-    roots (data: both take -w), and the fragment predicts different event
-    structures depending on the root's lower structure. -/
-theorem w_verbalization_cross_class :
-    -- Both √POS and √NOM take -w (data)
-    isGrammatical .pos .w = true ∧
-    isGrammatical .nom .w = true ∧
-    -- √POS + -w → [vDO, vBE] (fragment)
-    buildDecomposition v_w positionalLower = [.vDO, .vBE] ∧
-    -- √NOM + -w → activity [vDO] (fragment)
-    isActivity (buildDecomposition v_w activityLower) = true :=
-  ⟨rfl, rfl, by decide, by decide⟩
-
-/-! ### Root classes in the salience coordinates -/
-
-/-- Chuj root classes through the annotation-level salience hom
-    (`Classification.salienceClass`): both √TV rows occupy the
-    agent-patient salient cell — the same root-transitivity coordinate
-    that [lucy-1994]'s Yucatec `=∅` class instantiates — while the
-    three intransitive classes are underdetermined by the manner-blind
-    annotation coordinates. -/
+/-- Only √TV determines a salience class — agent-patient, the cell of
+    [lucy-1994]'s Yucatec `=∅` roots; the intransitive classes are
+    underdetermined. -/
 theorem salience_of_root_classes :
-    rootTV_res.salienceClass = some .agentPatient ∧
-    rootTV_pc.salienceClass = some .agentPatient ∧
-    (toFragmentRoot .itv).salienceClass = none ∧
-    (toFragmentRoot .pos).salienceClass = none ∧
-    (toFragmentRoot .nom).salienceClass = none :=
-  ⟨rfl, rfl, rfl, rfl, rfl⟩
+    (RootClass.tv.toClassification).salienceClass = some .agentPatient ∧
+    (RootClass.itv.toClassification).salienceClass = none ∧
+    (RootClass.pos.toClassification).salienceClass = none ∧
+    (RootClass.nom.toClassification).salienceClass = none :=
+  ⟨rfl, rfl, rfl, rfl⟩
 
 end Coon2019

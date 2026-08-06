@@ -127,8 +127,7 @@ structure Head where
   hasD : Bool
   /-- Per-construction override of `flavor.defaultPhasal` — the locus for
       per-paper divergence ([erlewine-sommerlot-2025] Malayic passive,
-      [coon-2019] Chuj `v_w`/`v_ch`, [coon-mateo-pedro-preminger-2014]
-      Mam Agent Focus). -/
+      [coon-mateo-pedro-preminger-2014] Mam Agent Focus). -/
   phaseOverride : Option Bool := none
   /-- Case-checking ([collins-2005] p. 96 feature dissociation: passive
       Voice/*by* checks Case). Default false. -/
@@ -395,10 +394,10 @@ theorem nonthematic_voice_not_phase_head :
 
 -- Voice phasehood does NOT track θ-assignment in general.
 -- [erlewine-sommerlot-2025] (Malayic) treats every Voice — including passive
--- and bare passive — as a phase head; [coon-2019] (Chol) treats certain
--- agentive Voice heads (the intransitive `v_w`/`v_ch` variants) as non-phasal
--- despite assigning a θ-role. The `phaseOverride` field is the
--- per-construction locus where such divergences are made explicit.
+-- and bare passive — as a phase head, and the antipassive flavor assigns θ
+-- yet defaults to non-phasal (`antipassive_anomaly`). The `phaseOverride`
+-- field is the per-construction locus where further divergences are made
+-- explicit.
 
 /-! ### Parametric decomposition ([alexiadou-schaefer-2015], [schaefer-2017]) -/
 
@@ -456,6 +455,25 @@ def Flavor.toParams : Flavor → Params
 
 /-- The parametric decomposition of a Head, derived from its flavor. -/
 def Head.params (v : Head) : Params := v.flavor.toParams
+
+/-- [D]-coherence: the PF [D] feature matches the flavor's specifier
+    selection. All canonical heads satisfy it
+    (`canonical_heads_dCoherent`); a head may diverge — e.g. a
+    `.nonThematic` head without SE-type PF marking — and stating the
+    divergence makes it explicit rather than a silent encoding choice. -/
+def Head.DCoherent (v : Head) : Prop :=
+  (v.params.selectsSpecifier == some true) = v.hasD
+
+instance (v : Head) : Decidable v.DCoherent :=
+  inferInstanceAs (Decidable (_ = _))
+
+/-- Every canonical head keeps `hasD` in sync with its flavor's
+    specifier selection. -/
+theorem canonical_heads_dCoherent :
+    agentive.DCoherent ∧ causer.DCoherent ∧ anticausative.DCoherent ∧
+    middle.DCoherent ∧ impersonal.DCoherent ∧ passive.DCoherent ∧
+    reflexive.DCoherent ∧ reciprocal.DCoherent ∧ experiencer.DCoherent := by
+  decide
 
 /-- Semantic external-argument presence; `none` when underspecified.
     Broader than `Head.AssignsTheta` — impersonal's ∃-bound agent counts. -/

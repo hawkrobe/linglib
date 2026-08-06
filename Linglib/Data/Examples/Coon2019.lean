@@ -1,0 +1,198 @@
+import Linglib.Data.Examples.Schema
+
+/-!
+# `Coon2019` — typed example data
+
+Auto-generated from `Linglib/Data/Examples/Coon2019.json` by
+`scripts/gen_examples.py`. Do not edit by hand; edit the JSON and re-run
+the generator. Consumers (the paper's study file, test-suite hubs) import
+this module; declarations live in `namespace Coon2019.Examples`.
+-/
+
+namespace Coon2019.Examples
+
+open Data.Examples
+
+def ex_10a : LinguisticExample :=
+  { id := "coon2019_10a"
+    source := ⟨"coon-2019", "(10a)"⟩
+    reportedIn := none
+    language := "chuj1250"
+    primaryText := "Ix-ach-ko-chel-a'."
+    discourseSegments := []
+    glossedTokens := [("Ix-ach-ko-chel-a'", "PFV-B2S-A1P-hug-TV")]
+    translation := "We hugged you."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("rootForm", "chel"), ("voice", "null")]
+    comment := "Transitive root in a bare transitive stem (sect. 2.2, p. 41)."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_7a : LinguisticExample :=
+  { id := "coon2019_7a"
+    source := ⟨"coon-2019", "(7a)"⟩
+    reportedIn := none
+    language := "chuj1250"
+    primaryText := "Ix-onh-way-i."
+    discourseSegments := []
+    glossedTokens := [("Ix-onh-way-i", "PFV-B1P-sleep-IV")]
+    translation := "We slept."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("rootForm", "way"), ("voice", "null")]
+    comment := "Intransitive root in an intransitive stem with null v (sect. 2.1, p. 40)."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_23a : LinguisticExample :=
+  { id := "coon2019_23a"
+    source := ⟨"coon-2019", "(23a)"⟩
+    reportedIn := none
+    language := "chuj1250"
+    primaryText := "Ix-chot-w-i nok' k'ok'on."
+    discourseSegments := []
+    glossedTokens := [("Ix-chot-w-i", "PFV-crouched-AG-IV"), ("nok'", "CLF"), ("k'ok'on", "frog")]
+    translation := "The frog hopped."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("rootForm", "chot"), ("voice", "w")]
+    comment := "Positional root verbalized by -w (agentive intransitive, p. 48)."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_16b : LinguisticExample :=
+  { id := "coon2019_16b"
+    source := ⟨"coon-2019", "(16b)"⟩
+    reportedIn := none
+    language := "chuj1250"
+    primaryText := "Ix-in-chanhal-w-i."
+    discourseSegments := []
+    glossedTokens := [("Ix-in-chanhal-w-i", "PFV-B1S-dance-AG-IV")]
+    translation := "I danced."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("rootForm", "chanhal"), ("voice", "w")]
+    comment := "Nominal root verbalized by -w (denominal agentive intransitive, p. 45)."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_62 : LinguisticExample :=
+  { id := "coon2019_62"
+    source := ⟨"coon-2019", "(62)"⟩
+    reportedIn := none
+    language := "chuj1250"
+    primaryText := "Tz-b'o'-ch-aj s-wa'el winh nhulej tik yuj heb' ix."
+    discourseSegments := []
+    glossedTokens := [("Tz-b'o'-ch-aj", "IPFV-make-PASS-DIV"), ("s-wa'el", "A3S-food"), ("winh", "CLF"), ("nhulej", "brother"), ("tik", "DEM"), ("y-uj", "A3S-RN.by"), ("heb'", "PL"), ("ix", "CLF")]
+    translation := "The brother's food is made by them."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("rootForm", "b'o'"), ("voice", "ch")]
+    comment := "-chaj passive with the implicit agent realized as an oblique yuj phrase (sect. 4.1.1, p. 68; from Buenrostro 2013)."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_59a : LinguisticExample :=
+  { id := "coon2019_59a"
+    source := ⟨"coon-2019", "(59a)"⟩
+    reportedIn := none
+    language := "chuj1250"
+    primaryText := "S-k'apak-il chi' tz-man-j-i."
+    discourseSegments := []
+    glossedTokens := [("S-k'apak-il", "A3S-cloth-NML"), ("chi'", "DEM"), ("tz-man-j-i", "IPFV-buy-PASS-IV")]
+    translation := "It's his cloth that is bought."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("rootForm", "man"), ("voice", "j")]
+    comment := "Agentless -j passive (sect. 4.1.2, p. 67)."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_54a : LinguisticExample :=
+  { id := "coon2019_54a"
+    source := ⟨"coon-2019", "(54a)"⟩
+    reportedIn := none
+    language := "chuj1250"
+    primaryText := "Ix-in-jax-w-i ixim."
+    discourseSegments := []
+    glossedTokens := [("Ix-in-jax-w-i", "PFV-B1S-grind-AG-IV"), ("ixim", "corn")]
+    translation := "I corn-ground."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("rootForm", "jax"), ("voice", "w"), ("antipassiveType", "incorporation")]
+    comment := "Incorporation antipassive: overt bare-NP theme, no -aj (p. 64)."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_55b : LinguisticExample :=
+  { id := "coon2019_55b"
+    source := ⟨"coon-2019", "(55b)"⟩
+    reportedIn := none
+    language := "chuj1250"
+    primaryText := "Ix-mak'-waj ix Malin t'a waj Xun."
+    discourseSegments := []
+    glossedTokens := [("Ix-mak'-waj", "PFV-hit-AP"), ("ix", "CLF"), ("Malin", "Maria"), ("t'a", "PREP"), ("waj", "CLF"), ("Xun", "Juan")]
+    translation := "Maria did some hitting to John."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("rootForm", "mak'"), ("voice", "w"), ("antipassiveType", "absolutive")]
+    comment := "Absolutive antipassive in -waj: implicit or oblique theme, -aj present (p. 65; from Dayley 1981: 36)."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_63a : LinguisticExample :=
+  { id := "coon2019_63a"
+    source := ⟨"coon-2019", "(63a)"⟩
+    reportedIn := none
+    language := "chuj1250"
+    primaryText := "Sk'annhej sk'o'ol winh ix-ch'ak-chaj te' te'."
+    discourseSegments := []
+    glossedTokens := [("Sk'annhej sk'o'ol winh", "on.purpose"), ("ix-ch'ak-chaj", "PFV-fell-PASS"), ("te'", "CLF"), ("te'", "tree")]
+    translation := "The tree was felled on purpose."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("rootForm", "ch'ak"), ("voice", "ch"), ("diagnostic", "agentAdverb")]
+    comment := "Agent-oriented adverb licensed by the -chaj passive's implicit agent (sect. 4.1.1, p. 68). Sk'annhej sk'o'ol winh 'on purpose' is literally a possessed noun phrase (fn. 26)."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_67a : LinguisticExample :=
+  { id := "coon2019_67a"
+    source := ⟨"coon-2019", "(67a)"⟩
+    reportedIn := none
+    language := "chuj1250"
+    primaryText := "Sk'annhej sk'o'ol winh ix-ch'ak-j-i te' te'."
+    discourseSegments := []
+    glossedTokens := [("Sk'annhej sk'o'ol winh", "on.purpose"), ("ix-ch'ak-j-i", "PFV-fell-PASS-IV"), ("te'", "CLF"), ("te'", "tree")]
+    translation := "The tree was felled on purpose."
+    context := ""
+    judgment := .ungrammatical
+    alternatives := []
+    readings := []
+    paperFeatures := [("rootForm", "ch'ak"), ("voice", "j"), ("diagnostic", "agentAdverb")]
+    comment := "Agent-oriented adverb blocked in the agentless -j passive: no thematic agent, implicit or otherwise (sect. 4.1.2, p. 70)."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def all : List LinguisticExample := [ex_10a, ex_7a, ex_23a, ex_16b, ex_62, ex_59a, ex_54a, ex_55b, ex_63a, ex_67a]
+
+end Coon2019.Examples

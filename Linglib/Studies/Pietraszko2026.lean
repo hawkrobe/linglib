@@ -4,7 +4,6 @@ import Linglib.Syntax.Minimalist.Agree.Basic
 import Linglib.Syntax.Minimalist.Phase.Basic
 import Linglib.Syntax.Minimalist.Probe.Profile
 import Linglib.Studies.ErlewineSommerlot2025
-import Linglib.Studies.Coon2019
 import Linglib.Studies.CoonMateoPedroPreminger2014
 
 /-!
@@ -404,13 +403,12 @@ theorem typology_cell_pietraszko :
     Sample.voiceWithEPP.IsPhasal := by decide
 
 /-- **Cell 3**: agentive flavor + `phaseOverride := some false` =
-    Chol intransitive variants (`Coon2019.v_w`); also Mam Agent Focus
-    in [coon-mateo-pedro-preminger-2014]. Override forces non-phasal
-    against the agentive flavor default. -/
-theorem typology_cell_coon_intransitive :
-    Coon2019.v_w.flavor = Flavor.agentive ∧
-    Coon2019.v_w.phaseOverride = some false ∧
-    ¬ Coon2019.v_w.IsPhasal := by decide
+    Mam Agent Focus ([coon-mateo-pedro-preminger-2014]). Override forces
+    non-phasal against the agentive flavor default. -/
+theorem typology_cell_agent_focus :
+    CoonMateoPedroPreminger2014.voiceAF.flavor = Flavor.agentive ∧
+    CoonMateoPedroPreminger2014.voiceAF.phaseOverride = some false ∧
+    ¬ CoonMateoPedroPreminger2014.voiceAF.IsPhasal := by decide
 
 /-- **Cell 4**: passive flavor + `phaseOverride := some true` =
     Malayic *di-* passive in [erlewine-sommerlot-2025]. Override
