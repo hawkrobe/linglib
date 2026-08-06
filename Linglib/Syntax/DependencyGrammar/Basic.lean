@@ -5,6 +5,8 @@ Authors: Robert Hawkins
 -/
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Combinatorics.Digraph.Basic
+import Mathlib.Combinatorics.Digraph.Orientation
+import Mathlib.Combinatorics.SimpleGraph.Basic
 import Linglib.Data.UD.Basic
 import Linglib.Morphology.Word.Basic
 
@@ -24,8 +26,9 @@ artificial root token, following [kuhlmann-nivre-2006].
 * `Graph n` — a dependency graph on `n` words: vertex-labeling `words`,
   arc-labeling `label`, distinguished `root`. `Graph.Adj` is the induced
   adjacency (decidable), `Graph.toDigraph` the projection onto mathlib's
-  `Digraph`, and `Graph.ofArcs` the constructor from CoNLL-U-style arc
-  lists.
+  `Digraph`, `Linked` / `Graph.toSimpleGraph` its symmetrization (mathlib
+  `SimpleGraph`), and `Graph.ofArcs` the constructor from CoNLL-U-style
+  arc lists.
 * `Graph.parents`, `children`, `inDegree` — the local graph API.
 * Well-formedness (`Graph.IsTree`) lives in `Projection.lean`, beside the
   dominance relation it is stated through. Feature-level constraints
@@ -84,6 +87,14 @@ instance : Coe (Graph n) (Digraph (Fin n)) := ⟨toDigraph⟩
 theorem toDigraph_mono {g g' : Graph n} (h : ∀ v w, g.Adj v w → g'.Adj v w) :
     g.toDigraph ≤ g'.toDigraph := h
 
+/-- The graph's undirected view: mathlib's orientation-forgetting
+    `Digraph.toSimpleGraphInclusive` applied to `toDigraph`. Planarity and
+    catena connectivity are stated through it. -/
+def toSimpleGraph : SimpleGraph (Fin n) := g.toDigraph.toSimpleGraphInclusive
+
+instance : DecidableRel g.toSimpleGraph.Adj :=
+  inferInstanceAs (DecidableRel (SimpleGraph.fromRel g.Adj).Adj)
+
 /-- The head positions of `w`. -/
 def parents (w : Fin n) : List (Fin n) :=
   (List.finRange n).filter (g.Adj · w)
@@ -115,5 +126,15 @@ def ofArcs (words : List Word) (root : Fin words.length)
     root }
 
 end Graph
+
+/-- Positions linked by an arc in either direction — the unbundled adjacency
+    of `Graph.toSimpleGraph`, without its `≠` guard. -/
+def Linked {n : ℕ} (g : Graph n) (a b : Fin n) : Prop := g.Adj a b ∨ g.Adj b a
+
+instance {n : ℕ} (g : Graph n) (a b : Fin n) : Decidable (Linked g a b) :=
+  inferInstanceAs (Decidable (_ ∨ _))
+
+@[simp] theorem Graph.toSimpleGraph_adj {n : ℕ} (g : Graph n) (v w : Fin n) :
+    g.toSimpleGraph.Adj v w ↔ v ≠ w ∧ Linked g v w := Iff.rfl
 
 end DependencyGrammar
