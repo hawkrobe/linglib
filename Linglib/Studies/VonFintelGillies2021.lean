@@ -50,17 +50,16 @@ Kernel semantics resolves this: *can't φ* = *must*(¬φ) by definition
 (`kernelCant`), so Observation 4's evidential parallelism holds by
 construction, while the strong assertion B_K ⊆ ⟦¬φ⟧ delivers Observation 5. -/
 
-open Semantics.Modality
+open Modality
 open Intensional.Premise
 open VonFintelGillies2010 (World mastermindK redOrBlue notRed blue red notBlue
   mastermind_base)
 
-variable {W : Type*}
+variable {W : Type*} (k : Kernel W) (φ : W → Prop) (w : W)
 
 /-- **Can't–might exclusion** ([von-fintel-gillies-2021] Obs 5): when can't φ
 holds (B_K ⊆ ⟦¬φ⟧), might φ is false (B_K ∩ ⟦φ⟧ = ∅). -/
-theorem cant_might_exclusion (k : Kernel W) (φ : (W → Prop)) (w : W)
-    (hCant : (kernelCant k φ).assertion w) :
+theorem cant_might_exclusion (hCant : (kernelCant k φ).assertion w) :
     ¬(kernelMight k φ).assertion w := by
   intro hc
   obtain ⟨w', hw', hφ⟩ := (Kernel.compatibleWith_iff _ _).mp hc
@@ -68,8 +67,7 @@ theorem cant_might_exclusion (k : Kernel W) (φ : (W → Prop)) (w : W)
 
 /-- **Can't entails negation** ([von-fintel-gillies-2021] via S2): when B_K is
 realistic and can't φ is defined and true, ¬φ(w). -/
-theorem cant_entails_negation (k : Kernel W) (φ : (W → Prop)) (w : W)
-    (hReal : w ∈ k.base)
+theorem cant_entails_negation (hReal : w ∈ k.base)
     (_hDef : (kernelCant k φ).presup w)
     (hTrue : (kernelCant k φ).assertion w) :
     ¬ φ w :=

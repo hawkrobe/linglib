@@ -38,7 +38,7 @@ and the prejacent is not directly settled in K.
 
 namespace Zheng2025
 
-open Semantics.Modality (Kernel directlySettlesExplicit)
+open Modality (Kernel directlySettlesExplicit)
 open Intensional.Premise
 
 /-! ### Empirical data -/
@@ -199,23 +199,28 @@ otherwise). -/
 def evidenceRaises (p φ : W → Prop) : Prop :=
   {w | p w ∧ φ w}.ncard * Nat.card W > {w | φ w}.ncard * {w | p w}.ncard
 
+section
+variable (k : Kernel W)
+
 /-- Some proposition in K raises the probability of φ
 ([zheng-2025] condition (11i)). -/
-def evidenceSupports (k : Kernel W) (φ : W → Prop) : Prop :=
+def evidenceSupports (φ : W → Prop) : Prop :=
   ∃ p ∈ k.props, evidenceRaises p φ
 
 /-- The evidence in K is unexpected given the prior information state U
 ([zheng-2025] condition (11ii)): B_K ∩ ⋂U = ∅. U collects what leads to the
 information state prior to encountering the evidence — beliefs, norms,
 desires — distinct from the kernel's direct evidence. -/
-def unexpected (k : Kernel W) (u : List ((W → Prop))) : Prop :=
+def unexpected (u : List (W → Prop)) : Prop :=
   k.base ∩ propIntersection u = ∅
 
 /-- **Nandao-Q felicity** ([zheng-2025] condition (11), final version for
 polar questions): (i) some evidence in K raises P(φ), (ii) the evidence is
 unexpected given the prior state U, (iii) φ is not directly settled in K. -/
-def nandaoFelicitous (k : Kernel W) (u : List ((W → Prop))) (φ : W → Prop) : Prop :=
+def nandaoFelicitous (u : List (W → Prop)) (φ : W → Prop) : Prop :=
   evidenceSupports k φ ∧ unexpected k u ∧ ¬ directlySettlesExplicit k φ
+
+end
 
 /-! ### The dripping-raincoat scenario ([zheng-2025] exx. 2–3, 5)
 
@@ -241,7 +246,7 @@ abbrev isRaining : World → Prop := (· = .rain)
 def raincoatK : Kernel World := ⟨[wearingRaincoat]⟩
 
 /-- The prior information state: A expects dry weather. -/
-def dryU : List ((World → Prop)) := [expectDry]
+def dryU : List (World → Prop) := [expectDry]
 
 /-- "Nandao waimian xiayu-le ma?" is felicitous with a dripping raincoat:
 P(rain|coat) = 1/2 > P(rain) = 1/4; B_K ∩ ⋂U = ∅; rain unsettled by K. -/
@@ -306,8 +311,8 @@ def nandaoOriginalBias : Option Semantics.Questions.Bias.OriginalBias := none
 /-- `nandaoFelicitous` entails `evidenceSupports`, connecting the felicity
 predicate to `nandaoContextualEvidence` and the empirical generalization
 `evidential_bias_necessary`. -/
-theorem kernel_requires_evidence (k : Kernel World) (u : List ((World → Prop)))
-    (φ : (World → Prop)) (h : nandaoFelicitous k u φ) :
+theorem kernel_requires_evidence (k : Kernel World) (u : List (World → Prop))
+    (φ : World → Prop) (h : nandaoFelicitous k u φ) :
     evidenceSupports k φ :=
   h.1
 
@@ -372,19 +377,19 @@ failure (a non-trivial two-cell polar) blocks felicity regardless of
 witness `p` is supplied externally; for the noncomputable choice from a
 `SingletonQuestion` use `SingletonQuestion.witness`. -/
 def nandaoFullFelicity (Q : Question World) (k : Kernel World)
-    (u : List ((World → Prop))) (p : Set World) : Prop :=
+    (u : List (World → Prop)) (p : Set World) : Prop :=
   alt Q = {p} ∧ nandaoFelicitous k u p
 
 /-- Integrated felicity entails the singleton presupposition. -/
 theorem nandaoFullFelicity_isSingleton {Q : Question World} {k : Kernel World}
-    {u : List ((World → Prop))} {p : Set World}
+    {u : List (World → Prop)} {p : Set World}
     (h : nandaoFullFelicity Q k u p) :
     Question.IsSingleton Q :=
   ⟨p, h.1⟩
 
 /-- Integrated felicity entails the kernel-bias check on the witness. -/
 theorem nandaoFullFelicity_kernel {Q : Question World} {k : Kernel World}
-    {u : List ((World → Prop))} {p : Set World}
+    {u : List (World → Prop)} {p : Set World}
     (h : nandaoFullFelicity Q k u p) :
     nandaoFelicitous k u p :=
   h.2
@@ -394,7 +399,7 @@ integrated-felicity witness: no kernel and prior state can rescue it, because
 the singleton requirement `alt Q = {p}` already fails. -/
 theorem nandao_polar_no_witness {p₀ : Set World}
     (hne : p₀ ≠ ∅) (hnu : p₀ ≠ Set.univ)
-    (k : Kernel World) (u : List ((World → Prop))) :
+    (k : Kernel World) (u : List (World → Prop)) :
     ¬ ∃ p : Set World, nandaoFullFelicity (polar p₀) k u p := by
   rintro ⟨p, hfull, _⟩
   exact not_isSingleton_polar_of_nontrivial hne hnu ⟨p, hfull⟩
@@ -402,7 +407,7 @@ theorem nandao_polar_no_witness {p₀ : Set World}
 /-- On a one-cell sister `ofSet p`, integrated felicity is exactly the
 kernel-bias check on `p`: the singleton component holds by `alt_ofSet`. -/
 theorem nandaoFullFelicity_declarative_iff {p : Set World}
-    (k : Kernel World) (u : List ((World → Prop))) :
+    (k : Kernel World) (u : List (World → Prop)) :
     nandaoFullFelicity (Question.ofSet p) k u p ↔
       nandaoFelicitous k u p := by
   unfold nandaoFullFelicity

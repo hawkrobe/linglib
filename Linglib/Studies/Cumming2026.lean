@@ -161,7 +161,7 @@ tense side is the nonfuture downstream constraint (T ≤ A). The
 witnesses both at once: the raincoat evidence is causally downstream of the
 rain, and the kernel `{wearingRaincoat}` does not settle `isRaining`. -/
 
-open Semantics.Modality
+open Modality
 open Intensional.Premise (propIntersection)
 open Zheng2025 (World wearingRaincoat isRaining raincoatK
   raincoat_nandao_felicitous)
