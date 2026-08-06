@@ -589,7 +589,7 @@ theorem typology_coverage :
     cell4_antisingleton_nonunique.exemplars.length > 0 ∧
     cell2_predicted.exemplars.length = 0 ∧
     cell3_predicted.exemplars.length = 0 := by
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> native_decide
+  decide
 
 
 -- ════════════════════════════════════════════════════
@@ -613,8 +613,8 @@ theorem algún_entry_not_at_issue :
     the Modal Variation inference concerns the SPEAKER's beliefs, mediated
     by ASSERT ((20)). The fragment entry records epistemic-only flavor. -/
 theorem algún_entry_epistemic_only :
-    algúnEntry.hasFlavor .epistemic ∧ ¬ algúnEntry.hasFlavor .circumstantial := by
-  refine ⟨?_, ?_⟩ <;> decide
+    algúnEntry.hasFlavor .epistemic = true ∧
+    algúnEntry.hasFlavor .circumstantial = false := ⟨rfl, rfl⟩
 
 
 end AlonsoOvalleMenendezBenito2010
