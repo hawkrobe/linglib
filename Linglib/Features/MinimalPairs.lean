@@ -1,6 +1,6 @@
 import Linglib.Features.Acceptability
 import Linglib.Semantics.Mood.Defs
-import Linglib.Syntax.Clause.Context
+import Linglib.Syntax.Clause.Basic
 import Linglib.Morphology.Word.Basic
 
 open Morphology (Word)
