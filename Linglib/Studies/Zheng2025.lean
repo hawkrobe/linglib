@@ -1,4 +1,5 @@
 import Linglib.Data.UD.Basic
+import Linglib.Data.Examples.Zheng2025
 import Linglib.Fragments.Mandarin.QuestionParticles
 import Linglib.Semantics.Modality.Kernel
 import Linglib.Features.QParticleLayer
@@ -9,20 +10,19 @@ import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Zheng (2025): Nandao-Q Felicity
-[zheng-2025]
 
 Mandarin *nandao*-question felicity: positive evidential bias is necessary,
 while negative epistemic bias is neither necessary nor sufficient. The
-felicity conditions (Zheng's condition (11)) are built on
+felicity conditions ([zheng-2025] condition (11)) are built on
 [von-fintel-gillies-2010]'s kernel: some evidence in the kernel K raises the
 probability of the prejacent, K conflicts with the prior information state U,
 and the prejacent is not directly settled in K.
 
 ## Main declarations
 
-- `NandaoDatum`, `allData`: the felicity data of exx. 1–6, with the
-  generalizations `evidential_bias_necessary`, `epistemic_bias_not_necessary`,
-  `epistemic_bias_not_sufficient`, `unexpectedness_necessary`
+- `evidential_bias_necessary`, `epistemic_bias_not_necessary`,
+  `epistemic_bias_not_sufficient`, `unexpectedness_necessary`: the felicity
+  generalizations over the example rows of `Data.Examples.Zheng2025`
 - `nandaoFelicitous`: condition (11) — evidence raises P(φ), the kernel is
   unexpected given the prior state, φ unsettled
 - `raincoat_nandao_felicitous`: the dripping-raincoat scenario (exx. 2–3)
@@ -41,189 +41,96 @@ namespace Zheng2025
 open Modality (Kernel)
 open Intensional.Premise
 
-/-! ### Empirical data -/
+/-! ### Empirical data
 
-/-- A nandao-Q felicity datum. -/
-structure NandaoDatum where
-  /-- Example number from [zheng-2025] -/
-  exampleNum : String
-  /-- Context description -/
-  context : String
-  /-- The nandao-Q sentence (pinyin) -/
-  sentence : String
-  /-- Is there positive evidential bias (contextual evidence for p)? -/
-  evidentialBias : Bool
-  /-- Is there negative epistemic bias (prior belief against p)? -/
-  epistemicBias : Bool
-  /-- Is the evidence unexpected? -/
-  unexpectedEvidence : Bool
-  /-- Is the nandao-Q felicitous? -/
-  felicitous : Bool
-  deriving Repr, DecidableEq
+The example rows of exx. 1–6 live in `Data/Examples/Zheng2025.json`; the
+adapters below read each row's felicity and bias profile off the generated
+`Data.Examples.Zheng2025` module. -/
 
-/-- Ex. 1, rhetorical use: Lee working on Sunday (evidence) contradicts B's
-norm that people don't work Sundays. -/
-def rhetoricalUse : NandaoDatum where
-  exampleNum := "1"
-  context := "Lee plans to work on Sunday; B thinks people don't work Sundays"
-  sentence := "Nandao ta fafeng-le ma? (Is he crazy?)"
-  evidentialBias := true
-  epistemicBias := true
-  unexpectedEvidence := true
-  felicitous := true
+open Data.Examples
 
-/-- Ex. 2, biased question: A believes not-raining; B enters with a dripping
-raincoat. -/
-def biasedUse : NandaoDatum where
-  exampleNum := "2"
-  context := "A believes not-raining; B enters with dripping raincoat"
-  sentence := "Nandao waimian xiayu-le ma? (Is it raining outside?)"
-  evidentialBias := true
-  epistemicBias := true
-  unexpectedEvidence := true
-  felicitous := true
+/-- The row records positive evidential bias (contextual evidence for p). -/
+def evidentialBias (row : LinguisticExample) : Bool :=
+  row.feature? "evidential_bias" == some "true"
 
-/-- Ex. 3, pure inquiry (novel): same evidence as ex. 2 but A has no prior
-belief about the weather. Nandao is still felicitous. -/
-def pureInquiry : NandaoDatum where
-  exampleNum := "3"
-  context := "A has no weather expectation; B enters with dripping raincoat"
-  sentence := "Nandao waimian xiayu-le ma? (Is it raining outside?)"
-  evidentialBias := true
-  epistemicBias := false
-  unexpectedEvidence := true
-  felicitous := true
+/-- The row records negative epistemic bias (prior belief against p). -/
+def epistemicBias (row : LinguisticExample) : Bool :=
+  row.feature? "epistemic_bias" == some "true"
 
-/-- Ex. 4a: epistemic bias without evidence — infelicitous. -/
-def epistemicOnly : NandaoDatum where
-  exampleNum := "4a"
-  context := "Speaker believes room is empty; no contextual evidence"
-  sentence := "Nandao wuli you ren? (Are there people in the room?)"
-  evidentialBias := false
-  epistemicBias := true
-  unexpectedEvidence := false
-  felicitous := false
+/-- The row records evidence unexpected to the speaker. -/
+def unexpectedEvidence (row : LinguisticExample) : Bool :=
+  row.feature? "unexpected_evidence" == some "true"
 
-/-- Ex. 5 ctx 1: evidence, no belief — felicitous. -/
-def evidenceNoBelief : NandaoDatum where
-  exampleNum := "5.1"
-  context := "No prior beliefs; B enters with dripping raincoat"
-  sentence := "Nandao waimian xiayu-le ma? (Is it raining outside?)"
-  evidentialBias := true
-  epistemicBias := false
-  unexpectedEvidence := true
-  felicitous := true
-
-/-- Ex. 5 ctx 2: no evidence, no belief — infelicitous. -/
-def noEvidenceNoBelief : NandaoDatum where
-  exampleNum := "5.2"
-  context := "No prior beliefs; B enters normally (no raincoat)"
-  sentence := "Nandao waimian xiayu-le ma? (Is it raining outside?)"
-  evidentialBias := false
-  epistemicBias := false
-  unexpectedEvidence := false
-  felicitous := false
-
-/-- Ex. 5 ctx 3: epistemic bias, no evidence — infelicitous. -/
-def beliefNoEvidence : NandaoDatum where
-  exampleNum := "5.3"
-  context := "A thinks it won't rain; B enters normally (no raincoat)"
-  sentence := "Nandao waimian xiayu-le ma? (Is it raining outside?)"
-  evidentialBias := false
-  epistemicBias := true
-  unexpectedEvidence := false
-  felicitous := false
-
-/-- Ex. 6 ctx 1: unexpected evidence — felicitous. -/
-def workSundayUnexpected : NandaoDatum where
-  exampleNum := "6.1"
-  context := "B doesn't think people work Sundays; A says Lee is working Sunday"
-  sentence := "Nandao ta hen.mang ma? (Is he busy?)"
-  evidentialBias := true
-  epistemicBias := true
-  unexpectedEvidence := true
-  felicitous := true
-
-/-- Ex. 6 ctx 2: expected evidence — infelicitous. -/
-def workSundayExpected : NandaoDatum where
-  exampleNum := "6.2"
-  context := "B knows Lee usually works Sundays; A says Lee is working Sunday"
-  sentence := "Nandao ta hen.mang ma? (Is he busy?)"
-  evidentialBias := true
-  epistemicBias := false
-  unexpectedEvidence := false
-  felicitous := false
-
-/-- The pooled felicity data of exx. 1–6. -/
-def allData : List NandaoDatum :=
-  [ rhetoricalUse, biasedUse, pureInquiry,
-    epistemicOnly,
-    evidenceNoBelief, noEvidenceNoBelief, beliefNoEvidence,
-    workSundayUnexpected, workSundayExpected ]
+/-- The row's nandao-Q is felicitous. -/
+def felicitous (row : LinguisticExample) : Bool :=
+  row.judgment == .acceptable
 
 /-- All felicitous nandao-Qs have evidential bias (Generalization 1). -/
 theorem evidential_bias_necessary :
-    (allData.filter (·.felicitous)).all (·.evidentialBias) = true := by decide
+    (Examples.all.filter felicitous).all evidentialBias = true := by decide
 
 /-- Some felicitous nandao-Qs lack epistemic bias — the pure inquiry use
 (Generalization 2). -/
 theorem epistemic_bias_not_necessary :
-    (allData.filter (λ d => d.felicitous && !d.epistemicBias)).length > 0 := by decide
+    (Examples.all.filter (λ d => felicitous d && !epistemicBias d)).length > 0 := by
+  decide
 
 /-- Some infelicitous nandao-Qs have epistemic bias, so epistemic bias is not
 sufficient (Generalization 3). -/
 theorem epistemic_bias_not_sufficient :
-    (allData.filter (λ d => d.epistemicBias && !d.felicitous)).length > 0 := by decide
+    (Examples.all.filter (λ d => epistemicBias d && !felicitous d)).length > 0 := by
+  decide
 
 /-- All felicitous nandao-Qs have unexpected evidence (Generalization 4). -/
 theorem unexpectedness_necessary :
-    (allData.filter (·.felicitous)).all (·.unexpectedEvidence) = true := by decide
+    (Examples.all.filter felicitous).all unexpectedEvidence = true := by decide
 
 /-! ### Kernel-theoretic felicity conditions
 
-Zheng's condition (11), the final felicity condition for nandao on polar
-questions, built on [von-fintel-gillies-2010]'s kernel: (i) some evidence
-`p ∈ K` raises the probability of the prejacent φ; (ii) the kernel conflicts
-with the prior information state U — the evidence is unexpected; (iii) φ is
-not directly settled in K. Condition (iii) is the presupposition of
-[von-fintel-gillies-2010]'s `kernelMust`. -/
+A nandao question is felicitous when some evidence in the kernel raises the
+probability of the prejacent, the kernel conflicts with the prior information
+state `U` — the beliefs, norms, and desires in place before encountering the
+evidence — and the prejacent is not directly settled (condition (11); its
+"significantly raises" (≫) is sharpened to strict raising). The last
+conjunct is the presupposition of [von-fintel-gillies-2010]'s `kernelMust`. -/
 
 variable {W : Type*}
 
-/-- Evidence `p` raises the probability of `φ` under the uniform (counting)
-measure: P(φ|p) > P(φ), stated by cross-multiplication over cardinalities to
-avoid rationals. [zheng-2025]'s condition (11i) writes P(φ|p) ≫ P(φ); we
-sharpen "significantly raises" to strict raising and fix the uniform measure
-on `W`. Meaningful for finite `W` (`Set.ncard` and `Nat.card` are junk
-otherwise). -/
-def evidenceRaises (p φ : W → Prop) : Prop :=
-  {w | p w ∧ φ w}.ncard * Nat.card W > {w | φ w}.ncard * {w | p w}.ncard
+/-- Evidence `p` raises the probability of `φ` under the uniform counting
+measure on a finite `W`: P(φ|p) > P(φ). -/
+def evidenceRaises (p φ : Set W) : Prop :=
+  (p ∩ φ).ncard * Nat.card W > φ.ncard * p.ncard
+
+instance (p φ : W → Prop) [Fintype W] [DecidablePred p] [DecidablePred φ] :
+    Decidable (evidenceRaises p φ) :=
+  decidable_of_iff
+    ((Finset.univ.filter λ w => p w ∧ φ w).card * Fintype.card W >
+      (Finset.univ.filter φ).card * (Finset.univ.filter p).card) <| by
+    show _ ↔ {w | p w ∧ φ w}.ncard * Nat.card W > {w | φ w}.ncard * {w | p w}.ncard
+    simp [Set.ncard_eq_toFinset_card', Set.toFinset_setOf, Nat.card_eq_fintype_card]
 
 section
-variable (k : Kernel W)
+variable (k : Kernel W) (u : List (W → Prop)) (φ : W → Prop)
 
 /-- Some proposition in K raises the probability of φ
-([zheng-2025] condition (11i)). -/
-def evidenceSupports (φ : W → Prop) : Prop :=
+(condition (11i)). -/
+def evidenceSupports : Prop :=
   ∃ p ∈ k.props, evidenceRaises p φ
 
 /-- The evidence in K is unexpected given the prior information state U
-([zheng-2025] condition (11ii)): B_K ∩ ⋂U = ∅. U collects what leads to the
-information state prior to encountering the evidence — beliefs, norms,
-desires — distinct from the kernel's direct evidence. -/
-def unexpected (u : List (W → Prop)) : Prop :=
-  k.base ∩ propIntersection u = ∅
+(condition (11ii)). -/
+def unexpected : Prop :=
+  Disjoint k.base (propIntersection u)
 
 /-- Nandao `φ`? is felicitous iff some evidence in `K` raises P(φ), the
 evidence is unexpected given the prior state `U`, and `φ` is not directly
-settled in `K` ([zheng-2025] condition (11), final version for polar
-questions). -/
-def nandaoFelicitous (u : List (W → Prop)) (φ : W → Prop) : Prop :=
+settled in `K` (condition (11), final version for polar questions). -/
+def nandaoFelicitous : Prop :=
   evidenceSupports k φ ∧ unexpected k u ∧ ¬ k.directlySettles φ
 
 end
 
-/-! ### The dripping-raincoat scenario ([zheng-2025] exx. 2–3, 5)
+/-! ### The dripping-raincoat scenario (exx. 2–3, 5)
 
 K = {wearingRaincoat}: direct evidence that someone entered with a wet coat.
 U = {expectDry}: prior expectation of no rain (doxastic or normative). -/
@@ -249,52 +156,38 @@ def raincoatK : Kernel World := ⟨[wearingRaincoat]⟩
 /-- The prior information state in which A expects dry weather. -/
 def dryU : List (World → Prop) := [expectDry]
 
-/-- "Nandao waimian xiayu-le ma?" is felicitous with a dripping raincoat:
-P(rain|coat) = 1/2 > P(rain) = 1/4; B_K ∩ ⋂U = ∅; rain unsettled by K. -/
+/-- "Nandao waimian xiayu-le ma?" is felicitous in the dripping-raincoat
+context (exx. 2–3). -/
 theorem raincoat_nandao_felicitous :
     nandaoFelicitous raincoatK dryU isRaining := by
-  refine ⟨⟨wearingRaincoat, by simp [raincoatK], ?_⟩, ?_, ?_⟩
-  · -- |coat ∧ rain| ⬝ |W| > |rain| ⬝ |coat|: 1 ⬝ 4 > 1 ⬝ 2.
-    have hpφ : {w | wearingRaincoat w ∧ isRaining w} = {World.rain} := by
-      ext w; cases w <;> simp [wearingRaincoat, isRaining]
-    have hφ : {w | isRaining w} = {World.rain} := by
-      ext w; cases w <;> simp [isRaining]
-    have hp : {w | wearingRaincoat w} = {World.rain, World.sprinkler} := by
-      ext w; cases w <;> simp [wearingRaincoat]
-    unfold evidenceRaises
-    rw [hpφ, hφ, hp, Set.ncard_singleton, Set.ncard_pair (by decide),
-      Nat.card_eq_fintype_card]
+  refine ⟨⟨wearingRaincoat, List.mem_singleton_self _, by decide⟩, ?_, ?_⟩
+  · -- No coat-world is an expected world.
+    simp only [unexpected, raincoatK, dryU, Kernel.base_singleton,
+      propIntersection_singleton, disjoint_propExtension_iff]
     decide
-  · refine Set.eq_empty_iff_forall_notMem.mpr λ w ⟨hK, hU⟩ => ?_
-    have h1 : wearingRaincoat w := mem_propIntersection.mp hK _ (by simp [raincoatK])
-    have h2 : expectDry w := mem_propIntersection.mp hU _ (by simp [dryU])
-    revert h1 h2
-    cases w <;> decide
-  · rintro ⟨x, hx, hxor⟩
-    rcases List.mem_singleton.mp (by simpa [raincoatK] using hx) with rfl
-    rcases hxor with h_sub | h_disj
-    · exact (show ¬ isRaining .sprinkler from by decide)
-        (h_sub (show wearingRaincoat .sprinkler from by decide))
-    · exact Set.disjoint_left.mp h_disj (show wearingRaincoat .rain from by decide)
-        (show isRaining .rain from by decide)
+  · -- The coat neither entails rain (the sprinkler world) nor excludes it
+    -- (the rain world).
+    simp only [raincoatK, Kernel.directlySettles_singleton,
+      propExtension_subset_iff, disjoint_propExtension_iff]
+    decide
 
-/-- Without evidence, nandao is infelicitous ([zheng-2025] ex. 5 ctx 2). -/
+/-- Without evidence, nandao is infelicitous (ex. 5 ctx 2). -/
 theorem no_evidence_nandao_infelicitous :
     ¬ nandaoFelicitous ⟨[]⟩ dryU isRaining := by
   rintro ⟨⟨x, hx, _⟩, _, _⟩
   exact List.not_mem_nil hx
 
 /-- When evidence is expected (K compatible with U), nandao is infelicitous
-([zheng-2025] ex. 6 ctx 2, transposed to the raincoat scenario: a prior
+(ex. 6 ctx 2, transposed to the raincoat scenario: a prior
 expectation of wet coats makes the evidence unremarkable). -/
 theorem expected_evidence_infelicitous :
     ¬ nandaoFelicitous raincoatK [wearingRaincoat] isRaining := by
   rintro ⟨_, hInc, _⟩
-  have hmem : World.rain ∈ raincoatK.base ∩ propIntersection [wearingRaincoat] :=
-    ⟨mem_propIntersection.mpr (by simp [raincoatK, wearingRaincoat]),
-     mem_propIntersection.mpr (by simp [wearingRaincoat])⟩
-  rw [unexpected] at hInc
-  exact absurd (hInc ▸ hmem) (Set.notMem_empty _)
+  have h1 : World.rain ∈ raincoatK.base :=
+    mem_propIntersection.mpr (by simp [raincoatK, wearingRaincoat])
+  have h2 : World.rain ∈ propIntersection [wearingRaincoat] :=
+    mem_propIntersection.mpr (by simp [wearingRaincoat])
+  exact Set.disjoint_left.mp hInc h1 h2
 
 /-! ### Bias classification -/
 
@@ -418,7 +311,7 @@ theorem nandaoFullFelicity_declarative_iff {p : Set World}
 /-- In the dripping-raincoat scenario with sister `declarative isRaining`,
 both layers of nandao felicity hold simultaneously; reduces to
 `raincoat_nandao_felicitous` via `nandaoFullFelicity_declarative_iff`. The
-datum `biasedUse` records the same scenario ([zheng-2025] ex. 2) as
+row `Examples.ex2` records the same scenario (ex. 2) as
 empirical data. -/
 theorem biasedUse_integrated_felicity :
     nandaoFullFelicity (Question.ofSet isRaining) raincoatK dryU

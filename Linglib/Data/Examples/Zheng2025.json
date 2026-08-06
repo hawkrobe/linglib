@@ -1,0 +1,170 @@
+[
+  {
+    "id": "zheng2025_ex1",
+    "source": {"bibkey": "zheng-2025", "paperLabel": "(1)"},
+    "language": "mand1415",
+    "primaryText": "Nandao ta fafeng-le ma?",
+    "glossedTokens": [
+      ["nandao", "nandao"], ["ta", "he"], ["fafeng-le", "go.crazy-PERF"], ["ma", "Y/N-Q"]
+    ],
+    "translation": "Is he crazy?",
+    "context": "A and B are talking about a colleague, Lee, who is going to work on Sunday. B does not think people usually go to work on Sunday.",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["evidential_bias", "true"],
+      ["epistemic_bias", "true"],
+      ["unexpected_evidence", "true"]
+    ],
+    "comment": "Rhetorical use: the evidence (Lee working Sunday) contradicts B's norm that people don't work Sundays."
+  },
+  {
+    "id": "zheng2025_ex2",
+    "source": {"bibkey": "zheng-2025", "paperLabel": "(2)"},
+    "language": "mand1415",
+    "primaryText": "Nandao waimian xiayu-le ma?",
+    "glossedTokens": [
+      ["nandao", "nandao"], ["waimian", "outside"], ["xiayu-le", "fall.rain-PERF"],
+      ["ma", "Y/N-Q"]
+    ],
+    "translation": "It is not the case that it is raining outside, right?",
+    "context": "A sits in a windowless room working. A believes it is not raining. At 10, B enters the room with a dripping raincoat.",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["evidential_bias", "true"],
+      ["epistemic_bias", "true"],
+      ["unexpected_evidence", "true"]
+    ],
+    "comment": "Biased-question use: the evidence contradicts A's prior belief."
+  },
+  {
+    "id": "zheng2025_ex3",
+    "source": {"bibkey": "zheng-2025", "paperLabel": "(3)"},
+    "language": "mand1415",
+    "primaryText": "Nandao waimian xiayu-le ma?",
+    "glossedTokens": [
+      ["nandao", "nandao"], ["waimian", "outside"], ["xiayu-le", "fall.rain-PERF"],
+      ["ma", "Y/N-Q"]
+    ],
+    "translation": "Is it raining outside?",
+    "context": "A sits in a windowless room working. A has no expectation about the weather. At 10, B enters the room with a dripping raincoat.",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["evidential_bias", "true"],
+      ["epistemic_bias", "false"],
+      ["unexpected_evidence", "true"]
+    ],
+    "comment": "Pure-inquiry use, the paper's novel datum: felicitous with no prior belief about the prejacent."
+  },
+  {
+    "id": "zheng2025_ex4b",
+    "source": {"bibkey": "xu-2018", "paperLabel": "p. 449"},
+    "reportedIn": {"bibkey": "zheng-2025", "paperLabel": "(4b)"},
+    "language": "mand1415",
+    "primaryText": "Nandao wuli you ren?",
+    "glossedTokens": [
+      ["nandao", "nandao"], ["wuli", "room.in"], ["you", "exist"], ["ren", "person"]
+    ],
+    "translation": "It is not the case there are people in the room, right?",
+    "context": "The speaker believes there is no one in the room, and there is no contextual evidence (such as the light being on) that someone is in.",
+    "judgment": "unacceptable",
+    "paperFeatures": [
+      ["evidential_bias", "false"],
+      ["epistemic_bias", "true"],
+      ["unexpected_evidence", "false"]
+    ],
+    "comment": "Xu's context supplies only the negative belief; Zheng observes that without contextual evidence the question is still infelicitous, so epistemic bias is not sufficient."
+  },
+  {
+    "id": "zheng2025_ex5_ctx1",
+    "source": {"bibkey": "zheng-2025", "paperLabel": "(5) ctx 1"},
+    "language": "mand1415",
+    "primaryText": "Nandao waimian xiayu-le ma?",
+    "glossedTokens": [
+      ["nandao", "nandao"], ["waimian", "outside"], ["xiayu-le", "fall.rain-PERF"],
+      ["ma", "Y/N-Q"]
+    ],
+    "translation": "Is it raining outside?",
+    "context": "A sits in a windowless room with no prior beliefs about the weather. At 10, B enters the room with a dripping raincoat.",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["evidential_bias", "true"],
+      ["epistemic_bias", "false"],
+      ["unexpected_evidence", "true"]
+    ],
+    "comment": "Evidence without belief: positive evidential bias is sufficient."
+  },
+  {
+    "id": "zheng2025_ex5_ctx2",
+    "source": {"bibkey": "zheng-2025", "paperLabel": "(5) ctx 2"},
+    "language": "mand1415",
+    "primaryText": "Nandao waimian xiayu-le ma?",
+    "glossedTokens": [
+      ["nandao", "nandao"], ["waimian", "outside"], ["xiayu-le", "fall.rain-PERF"],
+      ["ma", "Y/N-Q"]
+    ],
+    "translation": "Is it raining outside?",
+    "context": "A sits in a windowless room with no prior beliefs about the weather. At 10, B enters the room normally, without a raincoat.",
+    "judgment": "unacceptable",
+    "paperFeatures": [
+      ["evidential_bias", "false"],
+      ["epistemic_bias", "false"],
+      ["unexpected_evidence", "false"]
+    ],
+    "comment": "No evidence and no belief: infelicitous."
+  },
+  {
+    "id": "zheng2025_ex5_ctx3",
+    "source": {"bibkey": "zheng-2025", "paperLabel": "(5) ctx 3"},
+    "language": "mand1415",
+    "primaryText": "Nandao waimian xiayu-le ma?",
+    "glossedTokens": [
+      ["nandao", "nandao"], ["waimian", "outside"], ["xiayu-le", "fall.rain-PERF"],
+      ["ma", "Y/N-Q"]
+    ],
+    "translation": "Is it raining outside?",
+    "context": "A thinks it will not rain today. At 10, B enters the room normally, without a raincoat.",
+    "judgment": "unacceptable",
+    "paperFeatures": [
+      ["evidential_bias", "false"],
+      ["epistemic_bias", "true"],
+      ["unexpected_evidence", "false"]
+    ],
+    "comment": "Belief without evidence: negative epistemic bias alone does not license nandao."
+  },
+  {
+    "id": "zheng2025_ex6_ctx1",
+    "source": {"bibkey": "zheng-2025", "paperLabel": "(6) ctx 1"},
+    "language": "mand1415",
+    "primaryText": "Nandao ta hen.mang ma?",
+    "glossedTokens": [
+      ["nandao", "nandao"], ["ta", "he"], ["hen.mang", "very.busy"], ["ma", "Y/N-Q"]
+    ],
+    "translation": "Is he busy?",
+    "context": "A says Lee is planning to work on weekends too. B does not think that people, including Lee, usually go to work on Sunday.",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["evidential_bias", "true"],
+      ["epistemic_bias", "true"],
+      ["unexpected_evidence", "true"]
+    ],
+    "comment": "Unexpected evidence: Lee working Sunday deviates from B's expectation."
+  },
+  {
+    "id": "zheng2025_ex6_ctx2",
+    "source": {"bibkey": "zheng-2025", "paperLabel": "(6) ctx 2"},
+    "language": "mand1415",
+    "primaryText": "Nandao ta hen.mang ma?",
+    "glossedTokens": [
+      ["nandao", "nandao"], ["ta", "he"], ["hen.mang", "very.busy"], ["ma", "Y/N-Q"]
+    ],
+    "translation": "Is he busy?",
+    "context": "A says Lee is planning to work on weekends too. B knows Lee usually goes to work on Sunday.",
+    "judgment": "unacceptable",
+    "paperFeatures": [
+      ["evidential_bias", "true"],
+      ["epistemic_bias", "false"],
+      ["unexpected_evidence", "false"]
+    ],
+    "comment": "Expected evidence: the same evidence is unremarkable given B's knowledge, so nandao is infelicitous."
+  }
+]

@@ -108,6 +108,18 @@ theorem Kernel.directlySettles_mono {k' : Kernel W} (hk : k.props ⊆ k'.props)
     k'.directlySettles φ :=
   h.imp λ _ ⟨hm, hx⟩ => ⟨hk hm, hx⟩
 
+@[simp]
+theorem Kernel.base_singleton (p : W → Prop) :
+    (⟨[p]⟩ : Kernel W).base = propExtension p :=
+  propIntersection_singleton p
+
+@[simp]
+theorem Kernel.directlySettles_singleton (p : W → Prop) :
+    (⟨[p]⟩ : Kernel W).directlySettles φ ↔
+      propExtension p ⊆ propExtension φ ∨
+        Disjoint (propExtension p) (propExtension φ) := by
+  simp [Kernel.directlySettles]
+
 /-! ### Modal operators ([von-fintel-gillies-2010] Defs 5–6) -/
 
 /-- `⟦must φ⟧` presupposes that `K` does not directly settle `φ` and asserts
