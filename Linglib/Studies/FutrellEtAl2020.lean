@@ -15,7 +15,9 @@ Values are scaled integers — permille for the head-final proportion, ×100
 for dependency lengths (mirroring the table's two decimal places) — so
 that downstream list computations kernel-`decide`. UD language codes are
 linglib annotation for cross-study joins (`Studies/LevshinaEtAl2023`);
-they are not part of the table.
+they are not printed in the table, but match the language keys of the
+paper's analysis pipeline, the CLIQS codebase its footnote cites
+(<https://github.com/langprocgroup/cliqs/>, `typology3.csv`).
 -/
 
 namespace FutrellEtAl2020
