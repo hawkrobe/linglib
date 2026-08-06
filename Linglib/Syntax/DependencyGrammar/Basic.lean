@@ -21,9 +21,9 @@ artificial root token, following [kuhlmann-nivre-2006].
   adjacency (decidable), `Graph.toDigraph` the projection onto mathlib's
   `Digraph`, and `Graph.ofArcs` the constructor from CoNLL-U-style arc
   lists.
-* `Tree n` — a `Graph n` with argument-structure frames, intended
-  single-headed (`hasUniqueHeads` checks it; see `Tree.WF`).
 * `Graph.parents`, `children`, `inDegree` — the local graph API.
+* `Graph.IsTree` — the graph is a dependency tree (single-headed, acyclic);
+  tree-hood is a property of a graph, not a separate structure.
 
 ## Implementation notes
 
@@ -40,38 +40,6 @@ artificial root token, following [kuhlmann-nivre-2006].
 open Morphology (Word)
 
 namespace DependencyGrammar
-
-section ArgumentStructure
-
-/-- Direction of a dependent relative to its head. -/
-inductive Dir where
-  /-- The dependent precedes the head. -/
-  | left
-  /-- The dependent follows the head. -/
-  | right
-  deriving Repr, DecidableEq
-
-/-- Whether a dependent at position `dep` sits on side `dir` of the head at
-    position `head`. -/
-def Dir.admits : Dir → Nat → Nat → Bool
-  | .left, head, dep => dep < head
-  | .right, head, dep => head < dep
-
-/-- A single argument slot in an argument structure: which relation fills it,
-    on which side of the head, and whether it must be filled. -/
-structure ArgSlot where
-  /-- The UD relation of the filler. -/
-  depType : UD.DepRel
-  /-- Which side of the head the filler sits. -/
-  dir : Dir
-  /-- Whether the slot must be filled. -/
-  required : Bool := true
-  deriving Repr, DecidableEq
-
-/-- Argument structure: the dependent slots a word requires or allows. -/
-abbrev ArgStr := List ArgSlot
-
-end ArgumentStructure
 
 /-! ### Dependency graphs -/
 
@@ -134,36 +102,6 @@ def ofArcs (words : List Word) (root : Fin words.length)
 
 end Graph
 
-/-! ### Dependency trees -/
-
-/-- A dependency tree: a `Graph n` meant to be single-headed
-    (`hasUniqueHeads` checks it; `Tree.WF` bundles the well-formedness),
-    plus DG-specific lexical argument-structure premises at each position.
-    The frame is framework apparatus (like HPSG's ARG-ST), so it lives on
-    DG's tree, not on the shared `Word` token; frames come from the lexical
-    carrier at tree construction (`complementToArgStr` applied to a verb's
-    `complementType`). -/
-structure Tree (n : ℕ) extends Graph n where
-  /-- The argument-structure premise at each position, if any. -/
-  frames : Fin n → Option ArgStr := λ _ => none
-
-namespace Tree
-
-variable {n : ℕ} (t : Tree n)
-
-/-- Build a tree from CoNLL-U-style data plus a sparse frame table (positions
-    not listed carry no frame). -/
-def ofArcs (words : List Word) (root : Fin words.length)
-    (arcs : List (Fin words.length × Fin words.length × UD.DepRel))
-    (frames : List (Fin words.length × ArgStr) := []) : Tree words.length :=
-  { Graph.ofArcs words root arcs with
-    frames := λ i => (frames.find? (·.1 == i)).map (·.2) }
-
-/-- The argument-structure frame at position `i`, if one was supplied. -/
-def frame (i : Fin n) : Option ArgStr := t.frames i
-
-end Tree
-
 /-! ### Well-formedness -/
 
 section WellFormedness
@@ -171,13 +109,13 @@ section WellFormedness
 variable {n : ℕ}
 
 /-- Every position except the root has exactly one head, and the root none. -/
-def hasUniqueHeads (t : Tree n) : Bool :=
+def hasUniqueHeads (t : Graph n) : Bool :=
   (List.finRange n).all λ i =>
     t.inDegree i == (if i == t.root then 0 else 1)
 
 /-- No position is its own ancestor: following heads from any position
     terminates without revisiting. -/
-def isAcyclic (t : Tree n) : Bool :=
+def isAcyclic (t : Graph n) : Bool :=
   (List.finRange n).all λ start =>
     let rec follow (current : Fin n) (visited : List (Fin n)) (fuel : Nat) : Bool :=
       match fuel with
@@ -190,8 +128,10 @@ def isAcyclic (t : Tree n) : Bool :=
           | none => true
     follow start [] (n + 1)
 
-/-- Bundled well-formedness: the tree really is a rooted tree. -/
-structure Tree.WF (t : Tree n) : Prop where
+/-- The graph is a dependency tree: single-headed and acyclic. On `Fin n`
+    these two imply rootedness and connectivity — every non-root position's
+    head chain terminates at the unique in-degree-0 position, the root. -/
+structure Graph.IsTree (t : Graph n) : Prop where
   uniqueHeads : hasUniqueHeads t = true
   acyclic : isAcyclic t = true
 
@@ -206,7 +146,7 @@ variable {n : ℕ}
 /-- Number agreement across every `rel`-labeled arc. Permissive by default:
     arcs whose endpoints are unmarked for number pass vacuously, so the check
     constrains only overtly conflicting marking. -/
-def numberAgreesOn (t : Tree n) (rel : UD.DepRel) : Bool :=
+def numberAgreesOn (t : Graph n) (rel : UD.DepRel) : Bool :=
   (List.finRange n).all λ v => (List.finRange n).all λ w =>
     if t.label v w == some rel then
       match (t.words w).features.number, (t.words v).features.number with
@@ -215,10 +155,10 @@ def numberAgreesOn (t : Tree n) (rel : UD.DepRel) : Bool :=
     else true
 
 /-- Subject-verb number agreement: `numberAgreesOn` at `nsubj`. -/
-def checkSubjVerbAgr (t : Tree n) : Bool := numberAgreesOn t .nsubj
+def checkSubjVerbAgr (t : Graph n) : Bool := numberAgreesOn t .nsubj
 
 /-- Determiner-noun number agreement: `numberAgreesOn` at `det`. -/
-def checkDetNounAgr (t : Tree n) : Bool := numberAgreesOn t .det
+def checkDetNounAgr (t : Graph n) : Bool := numberAgreesOn t .det
 
 end AgreementChecking
 
