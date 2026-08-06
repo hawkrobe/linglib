@@ -16,47 +16,6 @@ namespace DepGrammar
 
 section DominanceUnderUniqueHeads
 
-/-- In a tree with unique heads, the unique head of a non-root node. -/
-private def uniqueHead (t : DepTree) (x : Nat) : Option Nat :=
-  (t.deps.filter (·.depIdx == x)).head?.map (·.headIdx)
-
-/-- With unique heads and acyclicity, the depth (distance to root) of any
-    node is well-defined and finite. Following the unique head pointer from
-    any node terminates at the root. -/
-private def depth (t : DepTree) (x : Nat) (fuel : Nat) : Nat :=
-  match fuel with
-  | 0 => 0
-  | fuel' + 1 =>
-    if x == t.rootIdx then 0
-    else match t.deps.find? (·.depIdx == x) with
-    | some d => depth t d.headIdx fuel' + 1
-    | none => 0
-
-/-- Adding one unit of fuel increases depth by at most 1. -/
-private theorem depth_fuel_step (t : DepTree) (x : Nat) (k : Nat) :
-    depth t x (k + 1) ≤ depth t x k + 1 := by
-  induction k generalizing x with
-  | zero =>
-    simp only [depth]
-    split <;> (try split) <;> omega
-  | succ k' ih =>
-    -- Unfold depth exactly one level on both sides via `change`
-    show depth t x (k' + 1 + 1) ≤ depth t x (k' + 1) + 1
-    change (if (x == t.rootIdx) = true then 0
-            else match t.deps.find? (·.depIdx == x) with
-            | some d => depth t d.headIdx (k' + 1) + 1
-            | none => 0)
-           ≤
-           (if (x == t.rootIdx) = true then 0
-            else match t.deps.find? (·.depIdx == x) with
-            | some d => depth t d.headIdx k' + 1
-            | none => 0) + 1
-    by_cases hroot : (x == t.rootIdx) = true
-    · simp [hroot]
-    · rw [if_neg hroot, if_neg hroot]
-      cases hfind : t.deps.find? (·.depIdx == x) with
-      | none => simp
-      | some d => exact Nat.add_le_add_right (ih d.headIdx) 1
 
 /-- Extract from `hasUniqueHeads` for a specific node index: root has 0 incoming
     edges, non-root nodes have exactly 1. -/
@@ -79,83 +38,6 @@ private theorem hasUniqueHeads_count (t : DepTree)
   simp only [beq_iff_eq] at h
   exact h
 
-/-- One dominance step: if edge (u, p) and `hasUniqueHeads`, then
-    `depth u ≤ depth p` (with any fuel ≥ 1).
-
-    Under `hasUniqueHeads`, `p ≠ rootIdx` and `find? (·.depIdx == p)` returns
-    an edge with head = u. So `depth p (k+1) = depth u k + 1 ≥ depth u (k+1)`
-    by `depth_fuel_step`. -/
-private theorem depth_le_of_edge (t : DepTree)
-    (hwf : hasUniqueHeads t = true) {u p : Nat}
-    (hp_lt : p < t.words.length)
-    (hedge : parentEdge t.deps u p)
-    (k : Nat) : depth t u (k + 1) ≤ depth t p (k + 1) := by
-  obtain ⟨d, hd_mem, hd_head, hd_dep⟩ := hedge
-  have hspec := hasUniqueHeads_count t hwf p hp_lt
-  -- p ≠ rootIdx: root has 0 incoming edges, but d is incoming to p
-  have hp_ne_root : p ≠ t.rootIdx := by
-    intro hp_eq
-    rw [if_pos hp_eq, beq_iff_eq] at hspec
-    have : d ∈ t.deps.filter (·.depIdx == p) :=
-      List.mem_filter.mpr ⟨hd_mem, beq_iff_eq.mpr hd_dep⟩
-    have := List.length_pos_of_mem this
-    omega
-  rw [if_neg hp_ne_root, beq_iff_eq] at hspec
-  -- filter has exactly 1 element; d is it
-  obtain ⟨e, he_eq⟩ := List.length_eq_one_iff.mp hspec
-  have hd_filter : d ∈ t.deps.filter (·.depIdx == p) :=
-    List.mem_filter.mpr ⟨hd_mem, beq_iff_eq.mpr hd_dep⟩
-  rw [he_eq] at hd_filter
-  have hd_eq_e := List.eq_of_mem_singleton hd_filter
-  -- find? returns some edge (since d has matching depIdx)
-  have hfind_some : (t.deps.find? (·.depIdx == p)).isSome = true :=
-    List.find?_isSome.mpr ⟨d, hd_mem, beq_iff_eq.mpr hd_dep⟩
-  obtain ⟨f, hf_find⟩ := Option.isSome_iff_exists.mp hfind_some
-  -- f has depIdx = p and f ∈ t.deps
-  have hf_dep : f.depIdx = p := by
-    have := List.find?_some hf_find; exact beq_iff_eq.mp this
-  have hf_mem : f ∈ t.deps := List.mem_of_find?_eq_some hf_find
-  -- f is in the filter, which is [e], so f = e = d
-  have hf_filter : f ∈ t.deps.filter (·.depIdx == p) :=
-    List.mem_filter.mpr ⟨hf_mem, beq_iff_eq.mpr hf_dep⟩
-  rw [he_eq] at hf_filter
-  have hf_eq_e := List.eq_of_mem_singleton hf_filter
-  -- f.headIdx = u
-  have hf_head : f.headIdx = u := by
-    rw [hf_eq_e, ← hd_eq_e]; exact hd_head
-  -- Unfold depth t p (k+1): since p ≠ rootIdx and find? = some f
-  have hp_ne : ¬((p == t.rootIdx) = true) := by
-    intro h; exact hp_ne_root (beq_iff_eq.mp h)
-  have h_depth_p : depth t p (k + 1) = depth t u k + 1 := by
-    change (if (p == t.rootIdx) = true then 0
-            else match t.deps.find? (·.depIdx == p) with
-            | some d => depth t d.headIdx k + 1
-            | none => 0) = depth t u k + 1
-    simp only [if_neg hp_ne, hf_find, hf_head]
-  rw [h_depth_p]
-  exact depth_fuel_step t u k
-
-/-- If `Dominates v w`, then `depth v ≤ depth w` (non-strict).
-
-    Each dominance step uses `depth_le_of_edge` + `depth_fuel_step`.
-    Non-strict inequality suffices when combined with strict inequality
-    for the proper-ancestor case (see `dominates_antisymm`). -/
-private theorem dominates_depth_le (t : DepTree)
-    (hwf : hasUniqueHeads t = true)
-    (h_wf : ∀ d ∈ t.deps, d.depIdx < t.words.length)
-    {v w : Nat} (h : Dominates t.deps v w) :
-    depth t v t.words.length ≤ depth t w t.words.length := by
-  induction h using Dominates.head_induction_on with
-  | refl => exact Nat.le_refl _
-  | @step v w' hedge _ ih =>
-    obtain ⟨d, hd_mem, hd_head, hd_dep⟩ := hedge
-    have hw'_lt : w' < t.words.length := hd_dep ▸ h_wf d hd_mem
-    have hk : t.words.length - 1 + 1 = t.words.length := by omega
-    have h1 : depth t v (t.words.length - 1 + 1) ≤
-              depth t w' (t.words.length - 1 + 1) :=
-      depth_le_of_edge t hwf hw'_lt ⟨d, hd_mem, hd_head, hd_dep⟩ _
-    rw [hk] at h1
-    exact Nat.le_trans h1 ih
 
 -- ============================================================================
 -- Parent-pointer tracing infrastructure for dominates_antisymm
@@ -217,35 +99,6 @@ private theorem follow_no_parent_uh (t : DepTree) (current : Nat)
     · rename_i _ heq; rw [h2] at heq; cases heq
     · rfl
 
-/-- If `follow` returns false with fuel f, it also returns false with fuel f+1.
-    (Cycles detected at depth f persist at depth f+1.) -/
-private theorem follow_false_mono (t : DepTree) (x : Nat) (visited : List Nat)
-    (f : Nat) (h : isAcyclic.follow t x visited f = false) :
-    isAcyclic.follow t x visited (f + 1) = false := by
-  induction f generalizing x visited with
-  | zero => unfold isAcyclic.follow at h; exact absurd h (by decide)
-  | succ f ih =>
-    match hcv : visited.contains x with
-    | true => exact follow_visited_uh t x visited (f + 1) hcv
-    | false =>
-      match hfind : t.deps.find? (fun d => d.depIdx == x) with
-      | none =>
-        have := follow_no_parent_uh t x visited f hcv hfind
-        rw [this] at h; exact absurd h (by decide)
-      | some dep =>
-        rw [follow_step_uh t x visited f hcv dep hfind] at h
-        rw [follow_step_uh t x visited (f + 1) hcv dep hfind]
-        exact ih dep.headIdx (x :: visited) h
-
-/-- Generalized monotonicity: false at fuel f implies false at any fuel f' ≥ f. -/
-private theorem follow_false_mono_gen (t : DepTree) (x : Nat) (visited : List Nat)
-    (f f' : Nat) (hff : f' ≥ f)
-    (h : isAcyclic.follow t x visited f = false) :
-    isAcyclic.follow t x visited f' = false := by
-  obtain ⟨d, rfl⟩ : ∃ d, f' = f + d := ⟨f' - f, by omega⟩
-  induction d with
-  | zero => exact h
-  | succ d ih => exact follow_false_mono t x visited _ (ih (by omega))
 
 /-- If the iterParent chain revisits a node in `visited` after m steps,
     `follow` returns false. -/

@@ -1,4 +1,4 @@
-import Linglib.Syntax.DependencyGrammar.Formal.NonProjective
+import Linglib.Syntax.DependencyGrammar.Basic
 
 /-!
 # Dependency Length Minimization
@@ -44,7 +44,7 @@ def totalDepLength (t : DepTree) : Nat :=
 
 /-! ### Behaghel's Oberstes Gesetz -/
 
-/-- [behaghel-1932]'s Oberstes Gesetz: every dependency has length at
+/-- [behaghel-1909]'s Oberstes Gesetz: every dependency has length at
 most `threshold`. -/
 def oberstesGesetz (t : DepTree) (threshold : Nat) : Bool :=
   t.deps.all λ d => depLength d ≤ threshold

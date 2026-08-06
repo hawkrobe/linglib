@@ -1,5 +1,3 @@
-import Linglib.Syntax.DependencyGrammar.Formal.NonProjective
-
 /-!
 # Kuhlmann & Nivre 2006: Mildly Non-Projective Dependency Structures
 [kuhlmann-nivre-2006]
