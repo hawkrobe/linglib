@@ -47,11 +47,3 @@ end Distributed
 instance : Distributed Particle Clause.SentenceType := ⟨Particle.status?⟩
 
 instance : Distributed Particle Clause.EmbeddingContext := ⟨Particle.embedStatus?⟩
-
-/-- The capability agrees with the carrier's own clause-axis view. -/
-theorem Particle.distributed_clause_eq (p : Particle) (c : Clause.SentenceType) :
-    Distributed.status? p c = p.status? c := rfl
-
-/-- The capability agrees with the carrier's own embedding-axis view. -/
-theorem Particle.distributed_embed_eq (p : Particle) (c : Clause.EmbeddingContext) :
-    Distributed.status? p c = p.embedStatus? c := rfl
