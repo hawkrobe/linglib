@@ -103,29 +103,29 @@ avoid rationals. [zheng-2025]'s condition (11i) writes P(φ|p) ≫ P(φ); we
 sharpen "significantly raises" to strict raising and fix the uniform measure
 on `W`. Meaningful for finite `W` (`Set.ncard` and `Nat.card` are junk
 otherwise). -/
-def evidenceRaises (p φ : W → Prop) : Prop :=
-  {w | p w ∧ φ w}.ncard * Nat.card W > {w | φ w}.ncard * {w | p w}.ncard
+def evidenceRaises (p φ : Set W) : Prop :=
+  (p ∩ φ).ncard * Nat.card W > φ.ncard * p.ncard
 
 section
-variable (k : Kernel W)
+variable (k : Kernel W) (u : List (W → Prop)) (φ : W → Prop)
 
 /-- Some proposition in K raises the probability of φ
 ([zheng-2025] condition (11i)). -/
-def evidenceSupports (φ : W → Prop) : Prop :=
+def evidenceSupports : Prop :=
   ∃ p ∈ k.props, evidenceRaises p φ
 
 /-- The evidence in K is unexpected given the prior information state U
-([zheng-2025] condition (11ii)): B_K ∩ ⋂U = ∅. U collects what leads to the
-information state prior to encountering the evidence — beliefs, norms,
-desires — distinct from the kernel's direct evidence. -/
-def unexpected (u : List (W → Prop)) : Prop :=
-  k.base ∩ propIntersection u = ∅
+([zheng-2025] condition (11ii)): B_K is disjoint from ⋂U. U collects what
+leads to the information state prior to encountering the evidence — beliefs,
+norms, desires — distinct from the kernel's direct evidence. -/
+def unexpected : Prop :=
+  Disjoint k.base (propIntersection u)
 
 /-- Nandao `φ`? is felicitous iff some evidence in `K` raises P(φ), the
 evidence is unexpected given the prior state `U`, and `φ` is not directly
 settled in `K` ([zheng-2025] condition (11), final version for polar
 questions). -/
-def nandaoFelicitous (u : List (W → Prop)) (φ : W → Prop) : Prop :=
+def nandaoFelicitous : Prop :=
   evidenceSupports k φ ∧ unexpected k u ∧ ¬ k.directlySettles φ
 
 end
@@ -161,18 +161,19 @@ P(rain|coat) = 1/2 > P(rain) = 1/4; B_K ∩ ⋂U = ∅; rain unsettled by K. -/
 theorem raincoat_nandao_felicitous :
     nandaoFelicitous raincoatK dryU isRaining := by
   refine ⟨⟨wearingRaincoat, by simp [raincoatK], ?_⟩, ?_, ?_⟩
-  · -- |coat ∧ rain| ⬝ |W| > |rain| ⬝ |coat|: 1 ⬝ 4 > 1 ⬝ 2.
+  · -- |coat ∩ rain| ⬝ |W| > |rain| ⬝ |coat|: 1 ⬝ 4 > 1 ⬝ 2.
+    show {w | wearingRaincoat w ∧ isRaining w}.ncard * Nat.card World >
+      {w | isRaining w}.ncard * {w | wearingRaincoat w}.ncard
     have hpφ : {w | wearingRaincoat w ∧ isRaining w} = {World.rain} := by
       ext w; cases w <;> simp [wearingRaincoat, isRaining]
     have hφ : {w | isRaining w} = {World.rain} := by
       ext w; cases w <;> simp [isRaining]
     have hp : {w | wearingRaincoat w} = {World.rain, World.sprinkler} := by
       ext w; cases w <;> simp [wearingRaincoat]
-    unfold evidenceRaises
     rw [hpφ, hφ, hp, Set.ncard_singleton, Set.ncard_pair (by decide),
       Nat.card_eq_fintype_card]
     decide
-  · refine Set.eq_empty_iff_forall_notMem.mpr λ w ⟨hK, hU⟩ => ?_
+  · refine Set.disjoint_left.mpr λ w hK hU => ?_
     have h1 : wearingRaincoat w := mem_propIntersection.mp hK _ (by simp [raincoatK])
     have h2 : expectDry w := mem_propIntersection.mp hU _ (by simp [dryU])
     revert h1 h2
@@ -197,11 +198,11 @@ expectation of wet coats makes the evidence unremarkable). -/
 theorem expected_evidence_infelicitous :
     ¬ nandaoFelicitous raincoatK [wearingRaincoat] isRaining := by
   rintro ⟨_, hInc, _⟩
-  have hmem : World.rain ∈ raincoatK.base ∩ propIntersection [wearingRaincoat] :=
-    ⟨mem_propIntersection.mpr (by simp [raincoatK, wearingRaincoat]),
-     mem_propIntersection.mpr (by simp [wearingRaincoat])⟩
-  rw [unexpected] at hInc
-  exact absurd (hInc ▸ hmem) (Set.notMem_empty _)
+  have h1 : World.rain ∈ raincoatK.base :=
+    mem_propIntersection.mpr (by simp [raincoatK, wearingRaincoat])
+  have h2 : World.rain ∈ propIntersection [wearingRaincoat] :=
+    mem_propIntersection.mpr (by simp [wearingRaincoat])
+  exact Set.disjoint_left.mp hInc h1 h2
 
 /-! ### Bias classification -/
 
