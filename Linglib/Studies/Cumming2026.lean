@@ -75,9 +75,8 @@ theorem nfutL_nonfuture : nfutL.IsNonfuture := by decide
 
 /-! ### Master downstream theorem -/
 
-/-- **Generic nonfuture downstream**: any paradigm entry
-    whose EP constraint is nonfuture entails T ≤ A (downstream evidence).
-    Delegates to `EPCondition.nonfuture_implies_downstream`. -/
+/-- Any paradigm entry whose EP constraint is nonfuture entails T ≤ A
+    (downstream evidence). -/
 theorem nonfuture_downstream (p : TAMEEntry) (f : EvidentialFrame ℤ)
     (h_nf : p.IsNonfuture) (h_ep : p.epConstraint f) :
     downstreamEvidence f :=
@@ -133,10 +132,10 @@ theorem future_no_downstream :
 
 /-! ### Korean EP/UP factorization -/
 
-/-- **-te and -ney factorize EP from UP** ([cumming-2026], tables (18)–(19)):
-    the two present-tense evidentials impose the same EP constraint (T = A)
-    but different UP constraints (-te: T < S; -ney: T = S), witnessed in
-    both directions. EP and UP vary independently in the morphology. -/
+/-- The two present-tense evidentials impose the same EP constraint (T = A)
+    but different UP constraints (-te: T < S; -ney: T = S), witnessed in both
+    directions: EP and UP vary independently in the morphology
+    ([cumming-2026], tables (18)–(19)). -/
 theorem korean_te_ney_up_diverge :
     tePresent.ep = neyPresent.ep ∧
     (∃ f : EvidentialFrame ℤ,
@@ -186,17 +185,17 @@ theorem raincoat_not_settled :
     ¬ raincoatK.directlySettles isRaining :=
   raincoat_nandao_felicitous.2.2
 
-/-- **Downstream implies must-defined**: in the raincoat scenario, downstream
-    evidence (T ≤ A) co-occurs with the kernel not settling the prejacent. -/
+/-- In the raincoat scenario, downstream evidence (T ≤ A) co-occurs with the
+    kernel not settling the prejacent. -/
 theorem downstream_implies_must_defined :
     downstreamEvidence raincoatFrame ∧
     (kernelMust raincoatK isRaining).presup World.rain :=
   ⟨raincoat_downstream, raincoat_not_settled⟩
 
-/-- **Tense-modal evidential parallel**: both Cumming's nonfuture constraint
-    and VF&G's `kernelMust` presupposition hold simultaneously for the same
-    scenario. The raincoat evidence is downstream (T ≤ A) AND the kernel
-    doesn't settle isRaining. -/
+/-- Both Cumming's nonfuture constraint and VF&G's `kernelMust`
+    presupposition hold simultaneously for the same scenario: the raincoat
+    evidence is downstream (T ≤ A) and the kernel does not settle
+    `isRaining`. -/
 theorem tense_modal_evidential_parallel :
     downstreamEvidence raincoatFrame ∧
     (kernelMust raincoatK isRaining).presup World.rain ∧
@@ -213,9 +212,9 @@ private theorem isRaining_settles_isRaining :
     (⟨[isRaining]⟩ : Kernel World).directlySettles isRaining :=
   ⟨isRaining, by simp, Or.inl subset_rfl⟩
 
-/-- **Direct evidence blocks both**: when evidence is direct, the kernel
-    settles the prejacent → `kernelMust` is undefined and downstream is
-    trivially satisfied (T = A). Speaker uses bare assertion, not `must`. -/
+/-- When evidence is direct, the kernel settles the prejacent — `kernelMust`
+    is undefined — and downstream is trivially satisfied (T = A); the speaker
+    uses bare assertion, not *must*. -/
 theorem direct_evidence_blocks_both :
     let directK : Kernel World := ⟨[isRaining]⟩
     directK.directlySettles isRaining ∧

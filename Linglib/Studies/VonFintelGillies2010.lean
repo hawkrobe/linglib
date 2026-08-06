@@ -57,9 +57,9 @@ inductive EvidenceType where
   | elimination
   deriving Repr, DecidableEq, Inhabited
 
-/-- Collapse to the Aikhenvald taxonomy. Elimination reasoning is
-    inference, not direct access: the kernel does not directly settle the
-    prejacent — which is why elimination licenses *must* (VF&G ex. 12). -/
+/-- The collapse onto the Aikhenvald taxonomy. Elimination reasoning is
+    inference, not direct access — which is why elimination licenses *must*
+    (VF&G ex. 12). -/
 def EvidenceType.toCoarseSource : EvidenceType → CoarseSource
   | .direct => .direct
   | .indirect => .inference
@@ -78,8 +78,7 @@ theorem all_evidence_types_nonfuture (e : EvidenceType) :
 
 /-! ### Adapters over the example rows -/
 
-/-- Evidence-type adapter: the row's `evidence` feature as an
-    `EvidenceType`. -/
+/-- The row's `evidence` feature as an `EvidenceType`. -/
 def evidenceOf (row : LinguisticExample) : Option EvidenceType :=
   match row.feature? "evidence" with
   | some "direct" => some .direct
@@ -94,30 +93,28 @@ def mustPairs : List LinguisticExample :=
 
 /-! ### The evidential restriction -/
 
-/-- **Evidential restriction**: a *must*/*can't* sentence is felicitous
-    iff the speaker's evidence source `IsIndirect`. Direct perception
-    (exx. 6, 23) blocks the modal; inference — causal (exx. 7, 21, 24, 26)
-    or by elimination (ex. 12) — licenses it. -/
+/-- A *must* or *can't* sentence is felicitous iff the speaker's evidence
+    source `IsIndirect`: direct perception (exx. 6, 23) blocks the modal;
+    inference — causal (exx. 7, 21, 24, 26) or by elimination (ex. 12) —
+    licenses it. -/
 theorem must_felicitous_iff_indirect :
     ∀ row ∈ mustPairs,
       row.judgment = .acceptable ↔
         ∀ e ∈ evidenceOf row, e.toCoarseSource.IsIndirect := by
   decide
 
-/-- **Can't patterns with must**: the evidential restriction holds
-    uniformly on the negative-modal rows (exx. 21, 23, 24) — *can't*
-    groups with *must*, not with weak modals. -/
+/-- The evidential restriction holds uniformly on the negative-modal rows
+    (exx. 21, 23, 24): *can't* groups with *must*, not with weak modals. -/
 theorem cant_patterns_with_must :
     ∀ row ∈ mustPairs.filter (·.feature? "modal" == some "cant"),
       row.judgment = .acceptable ↔
         ∀ e ∈ evidenceOf row, e.toCoarseSource.IsIndirect :=
   fun row hrow => must_felicitous_iff_indirect row (List.mem_filter.mp hrow).1
 
-/-- ***Must* imposes [izvorski-1997]'s EV restriction**: felicity of the
-    modalized member tracks `CoarseSource.IsIndirect` of the evidence
-    source in VF&G's *must* rows exactly as in Izvorski's Bulgarian EV
-    paradigm — the two epistemic operators presuppose the same coarse
-    indirect-evidence basis. -/
+/-- Felicity of the modalized member tracks `CoarseSource.IsIndirect` in
+    VF&G's *must* rows exactly as in [izvorski-1997]'s Bulgarian EV paradigm:
+    the two epistemic operators presuppose the same coarse indirect-evidence
+    basis. -/
 theorem must_evidence_matches_izvorski_ev :
     (∀ row ∈ mustPairs,
       row.judgment = .acceptable ↔
@@ -127,12 +124,10 @@ theorem must_evidence_matches_izvorski_ev :
 
 /-! ### Must is strong -/
 
-/-- **Must is strong**: every minimal pair records that the modalized
-    sentence entails its prejacent — including the direct-evidence rows
-    where the modal is infelicitous. The restriction is evidential, not a
-    weakening of content. The supporting inference rows (modus ponens is
-    valid, *must φ ∧ perhaps ¬φ* is contradictory, retraction fails) are
-    in the same JSON under `kind = inference`. -/
+/-- Every minimal pair records that the modalized sentence entails its
+    prejacent, including the direct-evidence rows where the modal is
+    infelicitous: the restriction is evidential, not a weakening of
+    content. -/
 theorem must_entails_prejacent :
     ∀ row ∈ mustPairs, row.feature? "must_entails_prejacent" = some "true" := by
   decide
@@ -154,24 +149,24 @@ Mastermind scenario (Pascal asking Mordecai *Must there be two reds?*):
 open Modality
 open Intensional.Premise
 
-/-- Four worlds: w0 = red, w1 = blue, w2 = green, w3 = unknown. -/
+/-- Four worlds, with `w0` red, `w1` blue, `w2` green, and `w3` unknown. -/
 inductive World where
   | w0 | w1 | w2 | w3
   deriving DecidableEq, Repr, Inhabited
 
-/-- ⟦red or blue⟧ = {w0, w1}: the paper's `P ∪ Q`. -/
+/-- `⟦red or blue⟧ = {w0, w1}`, the paper's `P ∪ Q`. -/
 abbrev redOrBlue : World → Prop := λ w => w = .w0 ∨ w = .w1
 
-/-- ⟦not red⟧ = {w1, w2, w3}: the paper's `W \ P`. -/
+/-- `⟦not red⟧ = {w1, w2, w3}`, the paper's `W \ P`. -/
 abbrev notRed : World → Prop := (· ≠ .w0)
 
-/-- ⟦blue⟧ = {w1}: the paper's `Q`. -/
+/-- `⟦blue⟧ = {w1}`, the paper's `Q`. -/
 abbrev blue : World → Prop := (· = .w1)
 
-/-- ⟦red⟧ = {w0}: the paper's `P`. -/
+/-- `⟦red⟧ = {w0}`, the paper's `P`. -/
 abbrev red : World → Prop := (· = .w0)
 
-/-- ⟦not blue⟧ (used by the [von-fintel-gillies-2021] can't dilemma). -/
+/-- `⟦not blue⟧`, used by the [von-fintel-gillies-2021] can't dilemma. -/
 abbrev notBlue : World → Prop := (· ≠ .w1)
 
 /-- The §7.1 kernel `{P ∪ Q, W \ P}` in Mastermind colors. -/
@@ -227,16 +222,15 @@ theorem mastermind_redOrBlue_settled :
 
 /-! ### Deep theorems -/
 
-/-- **Entailment-settling gap**: B_K can entail φ without K settling it.
-This gap makes the evidential presupposition non-trivial: must φ can be
+/-- `B_K` can entail `φ` without `K` directly settling it, so must `φ` can be
 simultaneously defined and true. -/
 theorem entailment_settling_gap :
     ∃ (k : Kernel World) (φ : World → Prop),
       k.followsFrom φ ∧ ¬ k.directlySettles φ :=
   ⟨mastermindK, blue, mastermind_blue_follows, mastermind_blue_unsettled⟩
 
-/-- **Indirectness ≠ weakness** (§4.1): three independent cases show
-indirectness and assertion strength are orthogonal dimensions. -/
+/-- Indirectness and assertion strength are orthogonal dimensions: must can
+be defined and true, undefined, or defined and false (§4.1). -/
 theorem indirectness_neq_weakness :
     ((kernelMust mastermindK blue).presup .w0 ∧
      (kernelMust mastermindK blue).assertion .w0) ∧
@@ -260,8 +254,8 @@ theorem indirectness_neq_weakness :
 
 variable {W : Type*} (k : Kernel W)
 
-/-- **Modus ponens with must** ([von-fintel-gillies-2010] Argument 4.3.1): the
-argument form "if φ, must ψ; φ; ∴ ψ" is valid under realistic B_K. -/
+/-- The argument form "if φ, must ψ; φ; therefore ψ" is valid under realistic
+`B_K` ([von-fintel-gillies-2010] Argument 4.3.1). -/
 theorem modus_ponens_with_must (φ ψ : W → Prop) (w : W)
     (hReal : w ∈ k.base)
     (hCond : φ w → (kernelMust k ψ).assertion w)
@@ -269,8 +263,8 @@ theorem modus_ponens_with_must (φ ψ : W → Prop) (w : W)
     ψ w :=
   Modality.must_entails_prejacent k ψ w hReal (hCond hPhi)
 
-/-- **Must-perhaps contradiction** ([von-fintel-gillies-2010] Argument 4.3.2):
-must φ ∧ might ¬φ is contradictory. When B_K ⊆ ⟦φ⟧, B_K ∩ ⟦¬φ⟧ = ∅. -/
+/-- Must `φ` and might `¬φ` are jointly contradictory
+([von-fintel-gillies-2010] Argument 4.3.2). -/
 theorem must_perhaps_contradiction (φ : W → Prop) (w : W)
     (hMust : (kernelMust k φ).assertion w) :
     ¬(kernelMight k (λ w' => ¬ φ w')).assertion w := by
@@ -287,32 +281,29 @@ the pairs of `S` that agree on `P`, and `P` is an *issue* in `S` iff
 equivalently, the relation "agrees on every `X ∈ K`". Implementation 2:
 K directly settles P iff P is an issue in S_K. -/
 
-/-- The subject matter S_K determined by a kernel: worlds are equivalent iff
-    they agree on every proposition in K. -/
+/-- The subject matter `S_K` of a kernel, relating worlds that agree on every
+    proposition in `K`. -/
 def subjectMatter : Setoid W where
   r w v := ∀ p ∈ k.props, (p w ↔ p v)
   iseqv := ⟨λ _ _ _ => Iff.rfl, λ h p hp => (h p hp).symm,
     λ h h' p hp => (h p hp).trans (h' p hp)⟩
 
-/-- `P` is an **issue** in a subject matter `S`: `S`-equivalent worlds never
+/-- `P` is an *issue* in a subject matter `S`: `S`-equivalent worlds never
     disagree on `P`. -/
 def IsIssue (s : Setoid W) (φ : W → Prop) : Prop :=
   ∀ w v, s.r w v → (φ w ↔ φ v)
 
-/-- K settles P by partition iff P is an issue in S_K. -/
+/-- `K` settles `P` by partition iff `P` is an issue in `S_K`. -/
 def settlesByPartition (φ : W → Prop) : Prop :=
   IsIssue (subjectMatter k) φ
 
-/-- B_K lies in a single cell of the subject matter: worlds in the base
-    satisfy every kernel proposition, so they agree on all of them. -/
+/-- `B_K` lies in a single cell of the subject matter. -/
 theorem subjectMatter_rel_base {v w : W} (hv : v ∈ k.base) (hw : w ∈ k.base) :
     (subjectMatter k).r v w := λ p hp =>
   iff_of_true (mem_propIntersection.mp hv p hp) (mem_propIntersection.mp hw p hp)
 
-/-- Partition settling implies entailment: B_K lies in a single S_K-cell
-    (`subjectMatter_rel_base`), so an issue is uniform on it. Both
-    implementations therefore imply entailment (cf.
-    `explicit_implies_entailment`); the converse fails for both. -/
+/-- If `K` settles `φ` by partition then `B_K ⊆ ⟦φ⟧` or `B_K ⊆ ⟦¬φ⟧`; as
+    with `explicit_implies_entailment`, the converse fails. -/
 theorem partition_implies_entailment (φ : W → Prop)
     (h : settlesByPartition k φ) :
     k.followsFrom φ ∨ k.followsFrom (λ w => ¬ φ w) := by
@@ -330,7 +321,7 @@ on `P` that disagree on `P ∪ Q`); Implementation 2 settles propositions
 determined jointly by K-propositions that no single proposition settles
 (`blue` is determined by `redOrBlue` together with `notRed`). -/
 
-/-- S_{K} for `K = {red}` does not make `redOrBlue` an issue: w1 and w2
+/-- `S_K` for `K = {red}` does not make `redOrBlue` an issue: `w1` and `w2`
     agree on `red` but disagree on `redOrBlue`. -/
 private theorem not_settles_redOrBlue :
     ¬ settlesByPartition ⟨[red]⟩ redOrBlue := by
@@ -339,18 +330,18 @@ private theorem not_settles_redOrBlue :
     rcases List.mem_singleton.mp hp with rfl; decide)
   exact absurd (h12.mp (by decide)) (by decide)
 
-/-- Counterexample (Impl 1 ↛ Impl 2): `K = {red}` settles `redOrBlue`
-    explicitly (red ⊆ redOrBlue), but not by partition. -/
+/-- Explicit settling does not imply partition settling: `K = {red}` settles
+    `redOrBlue` explicitly (`red ⊆ redOrBlue`) but not by partition. -/
 theorem explicit_not_implies_partition :
     ∃ (k : Kernel World) (φ : World → Prop),
       k.directlySettles φ ∧ ¬ settlesByPartition k φ :=
   ⟨⟨[red]⟩, redOrBlue,
     ⟨red, by simp, Or.inl λ _ hw => Or.inl hw⟩, not_settles_redOrBlue⟩
 
-/-- Counterexample (Impl 2 ↛ Impl 1): `mastermindK` settles `blue` by
-    partition — S_K-equivalent worlds agree on `redOrBlue` and `notRed`,
-    which jointly determine `blue` — but no single kernel proposition
-    entails or excludes it. -/
+/-- Partition settling does not imply explicit settling: `mastermindK`
+    settles `blue` by partition — its cells decide `redOrBlue` and `notRed`,
+    which jointly determine `blue` — but no single kernel proposition entails
+    or excludes it. -/
 theorem partition_not_implies_explicit :
     ∃ (k : Kernel World) (φ : World → Prop),
       settlesByPartition k φ ∧ ¬ k.directlySettles φ := by
@@ -361,7 +352,7 @@ theorem partition_not_implies_explicit :
   cases w <;> cases v <;> decide
 
 /-- Entailment does not imply partition settling: `K = {red}` entails
-    `redOrBlue` (B_K = {w0} ⊆ ⟦redOrBlue⟧) but does not settle it by
+    `redOrBlue` (`B_K = {w0} ⊆ ⟦redOrBlue⟧`) but does not settle it by
     partition. -/
 theorem entailment_not_implies_partition :
     ∃ (k : Kernel World) (φ : World → Prop),

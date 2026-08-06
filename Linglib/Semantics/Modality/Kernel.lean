@@ -45,8 +45,8 @@ variable {W : Type*}
 
 /-! ### Kernel structure ([von-fintel-gillies-2010] Def 4) -/
 
-/-- A kernel ([von-fintel-gillies-2010] Def 4): the set of direct-information
-    propositions `K`, determining the modal base `B_K = ⋂K` (`Kernel.base`). -/
+/-- A *kernel* is a set of direct-information propositions, determining the
+    modal base `B_K = ⋂K` ([von-fintel-gillies-2010] Def 4). -/
 structure Kernel (W : Type*) where
   /-- The direct-information propositions K. -/
   props : List (W → Prop)
@@ -55,27 +55,27 @@ variable (k : Kernel W) (φ : W → Prop) (w : W)
 
 namespace Kernel
 
-/-- The modal base determined by the kernel: B_K = ⋂K (Def 4(ii)). -/
+/-- The modal base `B_K = ⋂K` determined by the kernel. -/
 def base : Set W :=
   propIntersection k.props
 
-/-- Convert to a context-independent modal base. -/
+/-- The kernel as a context-independent modal base. -/
 def toModalBase : ModalBase W :=
   λ _ => k.props
 
-/-- Consistency: B_K ≠ ∅. -/
+/-- `K` is consistent iff `B_K ≠ ∅`. -/
 def isConsistent : Prop :=
   Semantics.Modality.Kratzer.isConsistent k.props
 
-/-- φ follows from K iff B_K ⊆ ⟦φ⟧. -/
+/-- `φ` follows from `K` iff `B_K ⊆ ⟦φ⟧`. -/
 def followsFrom : Prop :=
   Semantics.Modality.Kratzer.followsFrom φ k.props
 
-/-- φ is compatible with K iff B_K ∩ ⟦φ⟧ ≠ ∅. -/
+/-- `φ` is compatible with `K` iff `B_K ∩ ⟦φ⟧ ≠ ∅`. -/
 def compatibleWith : Prop :=
   isCompatibleWith φ k.props
 
-/-- Induce an `EpistemicFlavor` for Kratzer modal evaluation. -/
+/-- The `EpistemicFlavor` with the kernel's modal base and empty ordering. -/
 def toEpistemicFlavor : EpistemicFlavor W where
   evidence := k.toModalBase
   ordering := emptyBackground
@@ -94,9 +94,8 @@ def Kernel.directlySettles : Prop :=
   ∃ x ∈ k.props,
     propExtension x ⊆ propExtension φ ∨ Disjoint (propExtension x) (propExtension φ)
 
-/-- Settling implies entailment: if K directly settles φ, then B_K ⊆ ⟦φ⟧ or
-    B_K ⊆ ⟦¬φ⟧, since B_K ⊆ X for the settling X ∈ K. The converse fails
-    (see `VonFintelGillies2010.entailment_settling_gap`). -/
+/-- If `K` directly settles `φ` then `B_K ⊆ ⟦φ⟧` or `B_K ⊆ ⟦¬φ⟧`; the
+    converse fails (see `VonFintelGillies2010.entailment_settling_gap`). -/
 theorem explicit_implies_entailment (h : k.directlySettles φ) :
     k.followsFrom φ ∨ k.followsFrom (λ w' => ¬ φ w') := by
   obtain ⟨x, hx_mem, h_sub | h_disj⟩ := h
@@ -111,45 +110,49 @@ theorem Kernel.directlySettles_mono {k' : Kernel W} (hk : k.props ⊆ k'.props)
 
 /-! ### Modal operators ([von-fintel-gillies-2010] Defs 5–6) -/
 
-/-- ⟦must φ⟧: presupposes K doesn't settle φ; asserts B_K ⊆ ⟦φ⟧. -/
+/-- `⟦must φ⟧` presupposes that `K` does not directly settle `φ` and asserts
+    `B_K ⊆ ⟦φ⟧`. -/
 def kernelMust : PartialProp W where
   presup := λ _ => ¬ k.directlySettles φ
   assertion := λ _ => k.followsFrom φ
 
-/-- ⟦might φ⟧: presupposes K doesn't settle φ; asserts B_K ∩ ⟦φ⟧ ≠ ∅. -/
+/-- `⟦might φ⟧` presupposes that `K` does not directly settle `φ` and asserts
+    `B_K ∩ ⟦φ⟧ ≠ ∅`. -/
 def kernelMight : PartialProp W where
   presup := λ _ => ¬ k.directlySettles φ
   assertion := λ _ => k.compatibleWith φ
 
-/-- ⟦can't φ⟧ = must(¬φ). -/
+/-- `⟦can't φ⟧` is `⟦must ¬φ⟧`. -/
 def kernelCant : PartialProp W :=
   kernelMust k (λ w' => ¬ φ w')
 
 /-! ### Core properties -/
 
-/-- T axiom: must φ entails φ when B_K is realistic (w ∈ B_K). -/
+/-- Must `φ` entails `φ` when `B_K` is realistic (the T axiom). -/
 theorem must_entails_prejacent (hReal : w ∈ k.base)
     (hTrue : (kernelMust k φ).assertion w) :
     φ w :=
   hTrue hReal
 
-/-- Duality: might φ ↔ ¬(must ¬φ) in assertion content. -/
+/-- Might `φ` and `¬must ¬φ` have the same assertion content. -/
 theorem kernel_duality :
     (kernelMight k φ).assertion w ↔ ¬(kernelMust k (λ w' => ¬ φ w')).assertion w :=
   isCompatibleWith_iff_not_followsFrom_not
 
-/-- Empty kernel: nothing is settled, so must is always defined. -/
+/-- The empty kernel settles nothing, so must is always defined. -/
 theorem empty_kernel_always_defined : (kernelMust ⟨[]⟩ φ).presup w :=
   λ ⟨_, hx, _⟩ => List.not_mem_nil hx
 
 /-! ### Bridge to Kratzer necessity -/
 
-/-- Kernel must assertion ↔ Kratzer simple necessity. -/
+/-- The assertion of kernel must is Kratzer simple necessity over the induced
+    modal base. -/
 theorem kernelMust_iff_simpleNecessity :
     (kernelMust k φ).assertion w ↔ simpleNecessity k.toModalBase φ w :=
   Iff.rfl
 
-/-- Kernel must assertion ↔ full Kratzer necessity with empty ordering. -/
+/-- The assertion of kernel must is Kratzer necessity with the empty ordering
+    source. -/
 theorem kernelMust_iff_necessity :
     (kernelMust k φ).assertion w ↔ necessity k.toModalBase emptyBackground φ w :=
   (kernelMust_iff_simpleNecessity k φ w).trans

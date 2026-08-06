@@ -31,10 +31,10 @@ open VonFintelGillies2010 (evidenceOf EvidenceType)
 def mustPairs : List LinguisticExample :=
   Examples.all.filter (·.feature? "kind" == some "must_pair")
 
-/-- **Anti-knowledge**: the evidential restriction extends to rows where
-    "direct" is direct-enough knowledge rather than perception. Phil, who
-    checked everything himself, cannot say *Dinner must be ready* (ex. 24);
-    Meryl, whose information is indirect, can (ex. 25). -/
+/-- The evidential restriction extends to rows where "direct" is
+    direct-enough knowledge rather than perception: Phil, who checked
+    everything himself, cannot say *Dinner must be ready* (ex. 24); Meryl,
+    whose information is indirect, can (ex. 25). -/
 theorem evidential_restriction_extends :
     ∀ row ∈ mustPairs,
       row.judgment = .acceptable ↔
@@ -57,26 +57,24 @@ open VonFintelGillies2010 (World mastermindK redOrBlue notRed blue red notBlue
 
 variable {W : Type*} (k : Kernel W) (φ : W → Prop) (w : W)
 
-/-- **Can't–might exclusion** ([von-fintel-gillies-2021] Obs 5): when can't φ
-holds (B_K ⊆ ⟦¬φ⟧), might φ is false (B_K ∩ ⟦φ⟧ = ∅). -/
+/-- When can't `φ` holds (`B_K ⊆ ⟦¬φ⟧`), might `φ` is false
+([von-fintel-gillies-2021] Observation 5). -/
 theorem cant_might_exclusion (hCant : (kernelCant k φ).assertion w) :
     ¬(kernelMight k φ).assertion w := by
   intro hc
   obtain ⟨w', hw', hφ⟩ := (Kernel.compatibleWith_iff _ _).mp hc
   exact hCant hw' hφ
 
-/-- **Can't entails negation** ([von-fintel-gillies-2021] via S2): when B_K is
-realistic and can't φ holds, ¬φ(w). -/
+/-- When `B_K` is realistic and can't `φ` holds, `¬φ` holds
+([von-fintel-gillies-2021] via S2). -/
 theorem cant_entails_negation (hReal : w ∈ k.base)
     (hTrue : (kernelCant k φ).assertion w) :
     ¬ φ w :=
   hTrue hReal
 
-/-- **Can't dilemma resolved**: a single kernel simultaneously exhibits
-evidentiality, strength, and might-exclusion.
-Witness: K = {redOrBlue, notRed}, φ = notBlue. Then can't(notBlue) =
-must(blue), which is defined (blue unsettled), true (B_K ⊆ ⟦blue⟧),
-and excludes might(notBlue). -/
+/-- A single kernel simultaneously exhibits evidentiality, strength, and
+might-exclusion: over `mastermindK`, can't *notBlue* is defined, true, and
+excludes might *notBlue* — the joint profile the Mantra cannot assign. -/
 theorem cant_dilemma_resolved :
     .w1 ∈ mastermindK.base ∧
     (kernelCant mastermindK notBlue).presup .w1 ∧
@@ -106,8 +104,8 @@ theorem cant_dilemma_resolved :
     rcases hw with rfl
     exact (by decide : ¬ notBlue World.w1) hnb
 
-/-- Direct evidence blocks can't, paralleling must: when K settles ¬φ,
-can't φ has presupposition failure. -/
+/-- Direct evidence blocks can't, paralleling must: when `K` settles `¬φ`,
+can't `φ` has presupposition failure. -/
 theorem cant_direct_evidence_infelicity :
     ¬(kernelCant mastermindK red).presup .w0 := λ h =>
   h ⟨notRed, by simp [mastermindK], Or.inl λ _ hw => hw⟩

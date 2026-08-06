@@ -161,21 +161,21 @@ def allData : List NandaoDatum :=
     evidenceNoBelief, noEvidenceNoBelief, beliefNoEvidence,
     workSundayUnexpected, workSundayExpected ]
 
-/-- **Generalization 1**: all felicitous nandao-Qs have evidential bias. -/
+/-- All felicitous nandao-Qs have evidential bias (Generalization 1). -/
 theorem evidential_bias_necessary :
     (allData.filter (·.felicitous)).all (·.evidentialBias) = true := by decide
 
-/-- **Generalization 2**: some felicitous nandao-Qs lack epistemic bias
-(the pure inquiry use). -/
+/-- Some felicitous nandao-Qs lack epistemic bias — the pure inquiry use
+(Generalization 2). -/
 theorem epistemic_bias_not_necessary :
     (allData.filter (λ d => d.felicitous && !d.epistemicBias)).length > 0 := by decide
 
-/-- **Generalization 3**: some infelicitous nandao-Qs have epistemic bias
-(epistemic bias is not sufficient). -/
+/-- Some infelicitous nandao-Qs have epistemic bias, so epistemic bias is not
+sufficient (Generalization 3). -/
 theorem epistemic_bias_not_sufficient :
     (allData.filter (λ d => d.epistemicBias && !d.felicitous)).length > 0 := by decide
 
-/-- **Generalization 4**: all felicitous nandao-Qs have unexpected evidence. -/
+/-- All felicitous nandao-Qs have unexpected evidence (Generalization 4). -/
 theorem unexpectedness_necessary :
     (allData.filter (·.felicitous)).all (·.unexpectedEvidence) = true := by decide
 
@@ -214,9 +214,10 @@ desires — distinct from the kernel's direct evidence. -/
 def unexpected (u : List (W → Prop)) : Prop :=
   k.base ∩ propIntersection u = ∅
 
-/-- **Nandao-Q felicity** ([zheng-2025] condition (11), final version for
-polar questions): (i) some evidence in K raises P(φ), (ii) the evidence is
-unexpected given the prior state U, (iii) φ is not directly settled in K. -/
+/-- Nandao `φ`? is felicitous iff some evidence in `K` raises P(φ), the
+evidence is unexpected given the prior state `U`, and `φ` is not directly
+settled in `K` ([zheng-2025] condition (11), final version for polar
+questions). -/
 def nandaoFelicitous (u : List (W → Prop)) (φ : W → Prop) : Prop :=
   evidenceSupports k φ ∧ unexpected k u ∧ ¬ k.directlySettles φ
 
@@ -227,7 +228,7 @@ end
 K = {wearingRaincoat}: direct evidence that someone entered with a wet coat.
 U = {expectDry}: prior expectation of no rain (doxastic or normative). -/
 
-/-- Four worlds for the raincoat scenario: it rains, the sprinkler ran
+/-- Four worlds for the raincoat scenario, where it rains, the sprinkler ran
     (wet coat without rain), it is dry, or nothing is known. -/
 inductive World where
   | rain | sprinkler | dry | unknown
@@ -236,16 +237,16 @@ inductive World where
 /-- B enters wearing a dripping raincoat: true where the coat is wet. -/
 abbrev wearingRaincoat : World → Prop := λ w => w = .rain ∨ w = .sprinkler
 
-/-- A's prior expectation: no rain. -/
+/-- A's prior expectation of no rain. -/
 abbrev expectDry : World → Prop := λ w => w = .dry ∨ w = .unknown
 
 /-- It is raining outside. -/
 abbrev isRaining : World → Prop := (· = .rain)
 
-/-- The raincoat kernel: direct evidence of the wet coat. -/
+/-- The raincoat kernel, carrying the direct evidence of the wet coat. -/
 def raincoatK : Kernel World := ⟨[wearingRaincoat]⟩
 
-/-- The prior information state: A expects dry weather. -/
+/-- The prior information state in which A expects dry weather. -/
 def dryU : List (World → Prop) := [expectDry]
 
 /-- "Nandao waimian xiayu-le ma?" is felicitous with a dripping raincoat:
@@ -299,14 +300,14 @@ theorem expected_evidence_infelicitous :
 
 open Mandarin.QuestionParticles (nandao ma ba)
 
-/-- Zheng's evidential classification of *nandao*: requires contextual
-evidence for p — the lexical face of `evidential_bias_necessary`. -/
+/-- *Nandao* requires contextual evidence for p — Zheng's evidential
+classification, the lexical face of `evidential_bias_necessary`. -/
 def nandaoContextualEvidence : Option Semantics.Questions.Bias.ContextualEvidence :=
   some .forP
 
-/-- Zheng's classification: *nandao* does NOT require epistemic bias —
-compatible with a neutral epistemic state (pure inquiry use, ex. 3);
-the lexical face of `epistemic_bias_not_necessary`. -/
+/-- *Nandao* does not require epistemic bias — it is compatible with a
+neutral epistemic state (pure inquiry use, ex. 3); the lexical face of
+`epistemic_bias_not_necessary`. -/
 def nandaoOriginalBias : Option Semantics.Questions.Bias.OriginalBias := none
 
 /-- `nandaoFelicitous` entails `evidenceSupports`, connecting the felicity
@@ -338,9 +339,8 @@ def ba_layer (_ : Particle) : QParticleLayer := .perspP
 /-- *nandao*: PerspP-layer biased particle. -/
 def nandao_layer (_ : Particle) : QParticleLayer := .perspP
 
-/-- Zheng's classification of *ba*: speaker-bias (expects a positive answer,
-seeks confirmation), no evidential requirement; the unbiased *ma* imposes
-neither. -/
+/-- *Ba* carries speaker bias (expects a positive answer, seeks confirmation)
+with no evidential requirement; the unbiased *ma* imposes neither. -/
 def baOriginalBias : Option Semantics.Questions.Bias.OriginalBias := some .forP
 
 /-! ### Singleton-alternative presupposition (parallel to kya:)
@@ -373,10 +373,10 @@ felicity in context). The integrated predicate composes them; a Layer-1
 failure (a non-trivial two-cell polar) blocks felicity regardless of
 `(k, u)`. -/
 
-/-- **Integrated nandao felicity**: the singleton presupposition
-(`alt Q = {p}`) together with the kernel-bias check on the witness. The
-witness `p` is supplied externally; for the noncomputable choice from a
-`SingletonQuestion` use `SingletonQuestion.witness`. -/
+/-- The integrated felicity of nandao conjoins the singleton presupposition
+`alt Q = {p}` with the kernel-bias check on the witness. The witness `p` is
+supplied externally; for the noncomputable choice from a `SingletonQuestion`
+use `SingletonQuestion.witness`. -/
 def nandaoFullFelicity (Q : Question World) (k : Kernel World)
     (u : List (World → Prop)) (p : Set World) : Prop :=
   alt Q = {p} ∧ nandaoFelicitous k u p
