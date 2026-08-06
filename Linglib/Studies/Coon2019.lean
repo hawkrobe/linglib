@@ -1,6 +1,7 @@
 import Linglib.Semantics.ArgumentStructure.Root.Classification
 import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Morphology.DM.Categorizer
+import Linglib.Morphology.Paradigm.Morphome
 import Linglib.Fragments.Mayan.Chuj.RootClasses
 import Linglib.Fragments.Mayan.Chuj.VoiceSystem
 import Linglib.Data.Examples.Coon2019
@@ -287,6 +288,77 @@ theorem no_implicit_external :
 theorem aj_antipassive_split :
     ajOnAntipassive .absolutive = true ∧
     ajOnAntipassive .incorporation = false := by decide
+
+
+/-! ### -aj is not a morphome
+
+The -aj piece shared by *-chaj* and *-waj* is one meaningful exponent —
+an Existential Closure reflex ([coon-2019], p. 73) — not an arbitrary
+marker of a stem class: its distribution over the stem cells is exactly
+the implicit-argument class predicted by `triggersAj`. -/
+
+/-- The five √TV stem shapes: the four voice slots, with -w split by
+    antipassive subtype (ex. (78), p. 76; table (58), p. 66). -/
+inductive StemCell where
+  /-- The Ø transitive stem. -/
+  | active
+  /-- The -chaj passive. -/
+  | passive
+  /-- The -ji agentless passive. -/
+  | agentless
+  /-- The -waj absolutive antipassive. -/
+  | absolutiveAP
+  /-- The -wi incorporation antipassive. -/
+  | incorporationAP
+  deriving DecidableEq, Repr
+
+/-- The voice suffix of each stem cell. -/
+def StemCell.voice : StemCell → VoiceSuffix
+  | .active => .null
+  | .passive => .ch
+  | .agentless => .j
+  | .absolutiveAP | .incorporationAP => .w
+
+/-- Whether the cell's theme is implicit. -/
+def StemCell.implicitInternal : StemCell → Bool
+  | .absolutiveAP => true
+  | _ => false
+
+/-- The exponent pieces of [coon-2019]'s stem decomposition (table
+    (58), p. 66). -/
+inductive StemPiece where
+  /-- The passive piece -ch. -/
+  | ch
+  /-- The agentless-passive piece -j. -/
+  | j
+  /-- The antipassive/verbalizer piece -w. -/
+  | w
+  /-- The Existential Closure reflex -aj. -/
+  | aj
+  deriving DecidableEq, Repr
+
+/-- The attested pieces of each stem cell (status suffixes omitted). -/
+def StemCell.pieces : StemCell → List StemPiece
+  | .active => []
+  | .passive => [.ch, .aj]
+  | .agentless => [.j]
+  | .absolutiveAP => [.w, .aj]
+  | .incorporationAP => [.w]
+
+/-- A cell bears the -aj piece exactly when its configuration has an
+    implicit argument. -/
+theorem mem_ajCells_iff (c : StemCell) :
+    c ∈ Morphology.exponentCells StemCell.pieces .aj ↔
+      triggersAj (toVoiceHead c.voice) c.implicitInternal = true := by
+  cases c <;> simp only [Morphology.mem_exponentCells] <;> decide
+
+/-- The -aj bearer set is the semantically characterized
+    implicit-argument class — the sharing across passive and
+    antipassive is not an arbitrary kernel. -/
+theorem aj_not_morphomic :
+    Morphology.exponentCells StemCell.pieces .aj =
+      {c | triggersAj (toVoiceHead c.voice) c.implicitInternal = true} :=
+  Set.ext mem_ajCells_iff
 
 /-! ### Event decomposition -/
 
