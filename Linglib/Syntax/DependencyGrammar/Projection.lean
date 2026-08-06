@@ -149,36 +149,42 @@ def Graph.blockDegree (g : Graph n) : Nat :=
 def isProjective (g : Graph n) : Bool :=
   (List.finRange n).all λ v => isInterval (projectionVals g v)
 
-/-! ### Well-formedness and the parent map -/
+/-! ### Well-formedness -/
 
-/-- Every position except the root has exactly one head, and the root none. -/
-def hasUniqueHeads (g : Graph n) : Bool :=
-  (List.finRange n).all λ i =>
-    g.inDegree i == (if i == g.root then 0 else 1)
-
-/-- No cycles: no position dominates itself through a child. Stated through
-    decidable dominance rather than a fuel-bounded chase. -/
-def isAcyclic (g : Graph n) : Bool :=
-  (List.finRange n).all λ v =>
-    !(g.children v).any λ w => decide (Dominates g w v)
-
-/-- The graph is a dependency tree: single-headed and acyclic. On `Fin n`
-    these two imply rootedness and connectivity — every non-root position's
-    head chain terminates at the unique in-degree-0 position, the root. -/
+/-- The graph is a dependency tree: nothing points at the root, every other
+    position has exactly one head, and no position dominates itself. On
+    `Fin n` these imply rootedness and connectivity — every non-root
+    position's head chain terminates at the unique headless position. -/
 structure Graph.IsTree (g : Graph n) : Prop where
-  uniqueHeads : hasUniqueHeads g = true
-  acyclic : isAcyclic g = true
+  not_adj_root : ∀ v, ¬ g.Adj v g.root
+  existsUnique_adj : ∀ w, w ≠ g.root → ∃! v, g.Adj v w
+  acyclic : ∀ v, ¬ Relation.TransGen g.Adj v v
 
-/-- No arc closes a dominance cycle, from `isAcyclic`. -/
-theorem not_adj_dominates {g : Graph n} (hacyc : isAcyclic g = true)
-    {v w : Fin n} (hadj : g.Adj v w) (hdom : Dominates g w v) : False := by
-  have h := List.all_eq_true.mp hacyc v (List.mem_finRange v)
-  simp only [Bool.not_eq_eq_eq_not, Bool.not_true, List.any_eq_false] at h
-  exact absurd (decide_eq_true hdom)
-    (by simpa using h w (Graph.mem_children.mpr hadj))
+theorem Graph.isTree_iff (g : Graph n) :
+    g.IsTree ↔ (∀ v, ¬ g.Adj v g.root) ∧
+      (∀ w, w ≠ g.root → ∃! v, g.Adj v w) ∧
+      (∀ v, ¬ Relation.TransGen g.Adj v v) :=
+  ⟨λ h => ⟨h.1, h.2, h.3⟩, λ h => ⟨h.1, h.2.1, h.2.2⟩⟩
+
+instance (g : Graph n) (v w : Fin n) : Decidable (Relation.TransGen g.Adj v w) :=
+  decidable_of_iff (∃ u, g.Adj v u ∧ Dominates g u w)
+    Relation.TransGen.head'_iff.symm
+
+instance (g : Graph n) (w : Fin n) : Decidable (∃! v, g.Adj v w) :=
+  decidable_of_iff (∃ v, g.Adj v w ∧ ∀ u, g.Adj u w → u = v) Iff.rfl
+
+instance (g : Graph n) : Decidable g.IsTree :=
+  decidable_of_iff _ (g.isTree_iff).symm
+
+/-- No arc closes a dominance cycle, on acyclic graphs. -/
+theorem not_adj_dominates {g : Graph n}
+    (hacyc : ∀ v, ¬ Relation.TransGen g.Adj v v)
+    {v w : Fin n} (hadj : g.Adj v w) (hdom : Dominates g w v) : False :=
+  hacyc v (Relation.TransGen.head' hadj hdom)
 
 /-- Dominance is antisymmetric on acyclic graphs. -/
-theorem Dominates.antisymm {g : Graph n} (hacyc : isAcyclic g = true)
+theorem Dominates.antisymm {g : Graph n}
+    (hacyc : ∀ v, ¬ Relation.TransGen g.Adj v v)
     {v w : Fin n} (hvw : Dominates g v w) (hwv : Dominates g w v) : v = w := by
   rcases Relation.ReflTransGen.cases_head hvw with rfl | ⟨u, hvu, huw⟩
   · rfl
