@@ -52,8 +52,8 @@ def dennBias : Option Semantics.Questions.Bias.ContextualEvidence := none
     *nandao*'s polar-only restriction. Derived from the fragments'
     distribution facets. -/
 theorem denn_wh_unlike_nandao :
-    German.Particles.denn.LicensedIn .constituentInterrogative ∧
-    ¬ Mandarin.QuestionParticles.nandao.LicensedIn .constituentInterrogative := by
+    German.Particles.denn.LicensedIn (·.constituentInterrogative) ∧
+    ¬ Mandarin.QuestionParticles.nandao.LicensedIn (·.constituentInterrogative) := by
   decide
 
 end Theiler2021
