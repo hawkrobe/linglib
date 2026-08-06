@@ -23,7 +23,6 @@ Standard EPs:
 -/
 
 import Linglib.Syntax.Minimalist.SyntacticObject.Basic
-import Linglib.Syntax.Clause.Size
 
 namespace Minimalist
 
@@ -537,12 +536,6 @@ structure ComplementSize where
 /-- The F-level of a complement (derived from `fValue`). -/
 def ComplementSize.fLevel (cs : ComplementSize) : Nat :=
   fValue cs.highestHead
-
-/-- The theory-neutral `Clause.Size` of this complement: its functional grade.
-    This is how the Minimalist framework *provides* the framework-neutral
-    clause-size interface — downstream opacity/tense reasoning consumes
-    `Clause.Size` (via `Clause.transparentTo`), not `Cat`/`fValue`. -/
-def ComplementSize.toClauseSize (cs : ComplementSize) : Clause.Size := cs.fLevel
 
 /-- A complement is phase-sized (≥ CP) if its highest head is at or
     above the C level in the functional sequence. -/

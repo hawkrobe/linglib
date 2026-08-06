@@ -8,8 +8,7 @@ sentence type (`Clause.SentenceType`, with the interrogative split into
 polar, alternative, and constituent subtypes) and the embedding context
 it occurs in (`Clause.EmbeddingContext`, the [bhatt-dayal-2020] /
 [dayal-2025] question-embedding cells). The coarse cut of the first
-axis is `Mood.Illocutionary` — `SentenceType.force` is the projection,
-and the `Interrogative` fiber is derived from it.
+axis is `Mood.Illocutionary` — `SentenceType.force` is the projection.
 `Features.QParticleLayer` is defined over the second axis, so a
 particle's layer is derivable from its embedding distribution
 (`Studies/BhattDayal2020`).
@@ -40,13 +39,6 @@ def force : SentenceType → Mood.Illocutionary
   | constituentInterrogative => .interrogative
   | imperative => .imperative
   | exclamative => .exclamative
-
-/-- The interrogative cells: the fiber of `force` over
-    `.interrogative`. -/
-def Interrogative (t : SentenceType) : Prop := t.force = .interrogative
-
-instance : DecidablePred Interrogative := λ _ =>
-  inferInstanceAs (Decidable (_ = _))
 
 end SentenceType
 

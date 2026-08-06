@@ -137,9 +137,8 @@ def ClauseSpine.fLevel (spine : ClauseSpine) : Nat :=
 -- § 5: The Clause Instance
 -- ============================================================================
 
-/-- A clause spine is a clause carrier: its size is its F-level (the
-    grading `ComplementSize.toClauseSize` already uses), and a spine
-    headed by Nmlz realizes [noonan-2007]'s nominalized coding
+/-- A clause spine is a clause carrier: its size is its F-level, and a
+    spine headed by Nmlz realizes [noonan-2007]'s nominalized coding
     ([keine-2020]'s nominalizer head). The head inventory determines no
     other coding (C-headed spines are indicative or subjunctive; the
     spine does not record finiteness) and no clause form. -/
@@ -147,12 +146,5 @@ instance : Clause ClauseSpine where
   size := ClauseSpine.fLevel
   coding? spine :=
     if spine.highestHead = .Nmlz then some .nominalized else none
-
-@[simp] theorem ClauseSpine.clause_size (spine : ClauseSpine) :
-    Clause.size spine = spine.fLevel := rfl
-
-/-- The nominalized spine realizes the nominalized coding. -/
-theorem ClauseSpine.coding_nmlzP :
-    Clause.coding? ClauseSpine.nmlzP = some .nominalized := rfl
 
 end Minimalist
