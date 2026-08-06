@@ -68,7 +68,7 @@ def ta : Complementizer where
   form := "-ta"
   position := some .postfixed
   verbForm := some .Fin
-  clauseForm := some .declarative
+  force := some .declarative
 
 /-- *-nun* — adnominal ending; turns a clause into a noun modifier
     (typically followed by *kes* 'thing' in nominalized clauses). -/

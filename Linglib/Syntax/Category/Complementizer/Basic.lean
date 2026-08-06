@@ -1,5 +1,5 @@
 import Linglib.Data.UD.Basic
-import Linglib.Syntax.Clause.Form
+import Linglib.Semantics.Mood.Defs
 import Linglib.Features.Complementation
 import Linglib.Morphology.Word.Basic
 
@@ -33,8 +33,8 @@ conventions:
 
 - `position = none`: unrecorded, or a bound root with no fixed
   attachment of its own (Buryat *gɘ* surfaces only suffixed).
-- `clauseForm`: only `.declarative` and `.embeddedQuestion` are
-  sensible values for an embedded-clause typer.
+- `force`: only `.declarative` and `.interrogative` are attested on
+  embedded-clause typers.
 - `licenser` names the licensing projection, not the morphological
   host stem (which for a postfixed clause-typer is the verb it
   attaches to).
@@ -91,8 +91,8 @@ structure Complementizer where
   position : Option Morphology.FormativePosition := none
   /-- [noonan-2007] coding of the clause this morpheme types. -/
   coding : Option Complement.Coding := none
-  /-- Surface clause form typed. -/
-  clauseForm : Option Clause.Form := none
+  /-- Illocutionary force of the clause this morpheme types. -/
+  force : Option Mood.Illocutionary := none
   /-- Verb form derived on the host (UD). -/
   verbForm : Option UD.VerbForm := none
   /-- Category of the adjacent licensing projection. -/

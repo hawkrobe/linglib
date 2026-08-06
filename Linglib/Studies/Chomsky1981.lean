@@ -167,29 +167,24 @@ def reflexiveCoreferenceData : PhenomenonData := {
     -- Local antecedent required
     { lhs := [john, sees, himself]
       rhs := [himself, sees, john]
-      clauseType := .declarative
       description := "Reflexive needs c-commanding antecedent"
       citation := "Chomsky (1981); Pollard & Sag (1994)" },
 
     { lhs := [mary, sees, herself]
       rhs := [herself, sees, mary]
-      clauseType := .declarative
       description := "Reflexive needs c-commanding antecedent" },
 
     { lhs := [they, see, themselves]
       rhs := [themselves, see, them]
-      clauseType := .declarative
       description := "Plural reflexive needs plural antecedent" },
 
     -- Agreement required
     { lhs := [john, sees, himself]
       rhs := [john, sees, herself]
-      clauseType := .declarative
       description := "Reflexive must agree with antecedent (gender)" },
 
     { lhs := [they, see, themselves]
       rhs := [they, see, himself]
-      clauseType := .declarative
       description := "Reflexive must agree with antecedent (number)" }
   ]
 }
@@ -202,13 +197,11 @@ def pronominalDisjointReferenceData : PhenomenonData := {
     -- Coreference blocked locally (the ungrammatical reading is with coreference)
     { lhs := [john, sees, mary]
       rhs := [john, sees, him]  -- intended: John₁ sees him₁
-      clauseType := .declarative
       description := "Pronoun resists coreference with local subject"
       citation := "Chomsky (1981)" },
 
     { lhs := [mary, sees, john]
       rhs := [mary, sees, her]  -- intended: Mary₁ sees her₁
-      clauseType := .declarative
       description := "Pronoun resists coreference with local subject" }
   ]
 }
@@ -220,7 +213,6 @@ def referentialExpressionFreedomData : PhenomenonData := {
   pairs := [
     { lhs := [john, sees, mary]
       rhs := [he, sees, john]  -- intended: He₁ sees John₁
-      clauseType := .declarative
       description := "Name resists coreference with c-commanding pronoun"
       citation := "Chomsky (1981)" }
   ]
@@ -233,13 +225,11 @@ def complementaryDistributionData : PhenomenonData := {
   pairs := [
     { lhs := [john, sees, himself]
       rhs := [john, sees, him]  -- intended coreference
-      clauseType := .declarative
       description := "Local coreference: reflexive required, pronoun blocked"
       citation := "Chomsky (1981)" },
 
     { lhs := [mary, sees, herself]
       rhs := [mary, sees, her]  -- intended coreference
-      clauseType := .declarative
       description := "Local coreference: reflexive required, pronoun blocked" }
   ]
 }
@@ -253,20 +243,17 @@ def reciprocalCoreferenceData : PhenomenonData := {
     -- Coordinated antecedent required
     { lhs := [sam, and_, pat, saw, eachOther]
       rhs := [eachOther, saw, sam, and_, pat]
-      clauseType := .declarative
       description := "Reciprocal needs c-commanding antecedent"
       citation := "Dalrymple et al. (1998)" },
 
     -- Reciprocal vs reflexive complementary distribution
     { lhs := [sam, and_, pat, saw, eachOther]
       rhs := [sam, and_, pat, saw, themselves]  -- awkward as reciprocal reading
-      clauseType := .declarative
       description := "Reciprocal preferred for symmetric reading with coordinated subject" },
 
     -- Plural antecedent requirement
     { lhs := [they, see, eachOther]
       rhs := [john, sees, eachOther]  -- singular antecedent fails
-      clauseType := .declarative
       description := "Reciprocal requires semantically plural antecedent" }
   ]
 }

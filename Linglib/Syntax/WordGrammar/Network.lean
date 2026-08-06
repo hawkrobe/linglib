@@ -1,6 +1,7 @@
 import Linglib.Syntax.WordGrammar.Inheritance.Basic
 import Linglib.Syntax.WordGrammar.Inheritance.Default
-import Linglib.Syntax.Clause.Form
+import Linglib.Semantics.Mood.Defs
+import Linglib.Syntax.Clause.Context
 import Linglib.Syntax.DependencyGrammar.Basic
 
 open Morphology (Word)
@@ -30,7 +31,7 @@ namespace WordGrammar
 
 
 open Features
-open Clause (Form)
+open Clause (EmbeddingContext)
 open WordGrammar.Inheritance
 open DepGrammar (Dir ArgStr ArgSlot DepTree satisfiesArgStr)
 
@@ -229,19 +230,20 @@ theorem network_inverted_aux_argStr :
 -- Clause-Type → Word-Class Mapping and Network Licensing
 -- ============================================================================
 
-/-- Map clause type to the word class that licenses the auxiliary in that
-context. Matrix questions require an interrogative auxiliary (subject follows);
-all other clause types use the default auxiliary (subject precedes). -/
-def wordClassForClauseType : Form → String
-  | .matrixQuestion => "inverted_auxiliary"
-  | _ => "auxiliary"
+/-- Map force and embedding context to the word class that licenses the
+auxiliary. Matrix interrogatives require an inverted auxiliary (subject
+follows); everything else uses the default auxiliary (subject
+precedes). -/
+def wordClassFor (f : Mood.Illocutionary) (e : EmbeddingContext) : String :=
+  if f = .interrogative ∧ e = .matrix then "inverted_auxiliary"
+  else "auxiliary"
 
 /-- License a dependency tree via the WG network: look up the word class
-for the clause type, resolve its argument structure from the network, and
-check the tree satisfies it. This is the end-to-end chain:
-`Form → wordClass → network → argStr → satisfiesArgStr`. -/
+for the clause context, resolve its argument structure from the network,
+and check the tree satisfies it. This is the end-to-end chain:
+`force × context → wordClass → network → argStr → satisfiesArgStr`. -/
 def wgLicenses (net : WGNetwork) (t : DepTree) (auxIdx : Nat)
-    (ct : Form) : Bool :=
-  satisfiesArgStr t auxIdx (resolveArgStr net (wordClassForClauseType ct))
+    (f : Mood.Illocutionary) (e : EmbeddingContext) : Bool :=
+  satisfiesArgStr t auxIdx (resolveArgStr net (wordClassFor f e))
 
 end WordGrammar
