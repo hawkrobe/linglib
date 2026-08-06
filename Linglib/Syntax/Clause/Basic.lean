@@ -20,6 +20,11 @@ framework. `Minimalist.ClauseSpine` is the first instance
 ## Main definitions
 
 * `Clause` — the interface: `size`, `coding?`, `force?`
+* `Clause.Finiteness`, `Clause.Independence` — the fundamental clause
+  predicates `Finite` and `Independent`, provided per carrier. No law
+  connects them here: [van-gelderen-2013]'s claim that independent
+  clauses are finite is paper content, and verbless independent
+  clauses (`Clause.Construction`) contest it.
 * `Clause.EmbeddedSubject` — the subject-requirement axis complement
   frames record (`Syntax/Category/Verb/Frame.lean`)
 -/
@@ -38,6 +43,23 @@ class Clause (C : Type*) where
   force? : C → Option Mood.Illocutionary := λ _ => none
 
 namespace Clause
+
+/-- Carriers whose clause objects determine finiteness. -/
+class Finiteness (C : Type*) where
+  /-- The clause is finite: tense, agreement, and case anchor the
+      event to a time and its participants ([van-gelderen-2013]'s
+      anchoring characterization, stated functionally — the
+      morphological checklist is language-specific). -/
+  Finite : C → Prop
+
+/-- Carriers whose clause objects determine root status. -/
+class Independence (C : Type*) where
+  /-- The clause can stand alone as a complete utterance — a root
+      clause, bearing its own illocutionary force. -/
+  Independent : C → Prop
+
+export Finiteness (Finite)
+export Independence (Independent)
 
 /-- Subject requirement of a clause: obligatorily null (as in control
     complements) or overt, optionally with a fixed case. Genitive
