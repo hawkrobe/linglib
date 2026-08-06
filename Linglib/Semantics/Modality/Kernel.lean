@@ -89,10 +89,7 @@ end Kernel
 
 /-! ### Settling ([von-fintel-gillies-2010] §7.1, Implementation 1) -/
 
-/-- K directly settles P iff some X ∈ K entails P or is incompatible with P:
-`X ⊆ ⟦φ⟧` or `X ∩ ⟦φ⟧ = ∅` ([von-fintel-gillies-2010] Implementation 1, the
-"Explicit Representation"; the rival partition implementation is
-`VonFintelGillies2010.settlesByPartition`). -/
+/-- K directly settles P iff some X ∈ K entails P or is incompatible with P. -/
 def Kernel.directlySettles : Prop :=
   ∃ x ∈ k.props,
     propExtension x ⊆ propExtension φ ∨ Disjoint (propExtension x) (propExtension φ)
