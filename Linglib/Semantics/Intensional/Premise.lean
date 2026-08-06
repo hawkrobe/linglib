@@ -108,6 +108,13 @@ theorem propIntersection_singleton (p : Index → Prop) :
     propIntersection [p] = propExtension p := by
   rw [propIntersection_cons, propIntersection_nil, Set.inter_univ]
 
+theorem propExtension_subset_iff {p q : Index → Prop} :
+    propExtension p ⊆ propExtension q ↔ ∀ i, p i → q i := Iff.rfl
+
+theorem disjoint_propExtension_iff {p q : Index → Prop} :
+    Disjoint (propExtension p) (propExtension q) ↔ ∀ i, p i → ¬ q i :=
+  Set.disjoint_left
+
 theorem isCompatibleWith_iff_exists {p : Index → Prop} {A : List (Index → Prop)} :
     isCompatibleWith p A ↔ ∃ i ∈ propIntersection A, p i := by
   simp only [isCompatibleWith, isConsistent, Set.Nonempty, mem_propIntersection,

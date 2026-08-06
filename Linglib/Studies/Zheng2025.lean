@@ -161,16 +161,15 @@ context (exx. 2–3). -/
 theorem raincoat_nandao_felicitous :
     nandaoFelicitous raincoatK dryU isRaining := by
   refine ⟨⟨wearingRaincoat, List.mem_singleton_self _, by decide⟩, ?_, ?_⟩
-  · simp only [unexpected, raincoatK, dryU, Kernel.base_singleton,
-      propIntersection_singleton]
-    exact Set.disjoint_left.mpr λ w (h1 : wearingRaincoat w) (h2 : expectDry w) => by
-      revert h1 h2; cases w <;> decide
-  · simp only [raincoatK, Kernel.directlySettles_singleton]
-    rintro (h_sub | h_disj)
-    · exact (by decide : ¬ isRaining .sprinkler)
-        (h_sub (by decide : wearingRaincoat .sprinkler))
-    · exact Set.disjoint_left.mp h_disj (by decide : wearingRaincoat .rain)
-        (by decide : isRaining .rain)
+  · -- No coat-world is an expected world.
+    simp only [unexpected, raincoatK, dryU, Kernel.base_singleton,
+      propIntersection_singleton, disjoint_propExtension_iff]
+    decide
+  · -- The coat neither entails rain (the sprinkler world) nor excludes it
+    -- (the rain world).
+    simp only [raincoatK, Kernel.directlySettles_singleton,
+      propExtension_subset_iff, disjoint_propExtension_iff]
+    decide
 
 /-- Without evidence, nandao is infelicitous (ex. 5 ctx 2). -/
 theorem no_evidence_nandao_infelicitous :
