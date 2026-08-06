@@ -39,10 +39,10 @@ intervene.
   via `foldl max`/`foldl min` rather than mathlib's `List.maximum?`.
 -/
 
-namespace DepGrammar.HarmonicOrder
+namespace DependencyGrammar.HarmonicOrder
 
 
-open DepGrammar DependencyLength
+open DependencyGrammar DependencyLength
 
 /-! ### Chain total dependency length
 
@@ -230,12 +230,12 @@ between head `h` and dependent `d` is bounded below by `1` plus the number
 of `d`'s subtree members that fall between `h` and `d` in linear order. -/
 
 /-- All transitive descendants of `idx`, excluding `idx` itself. -/
-def subtreeMembers (t : DepTree) (idx : Nat) : List Nat :=
+def subtreeMembers (t : Tree) (idx : Nat) : List Nat :=
   (projection t.deps idx).filter (· != idx)
 
 /-- Number of nodes from `subtreeMembers t depPos` that fall strictly between
 `headPos` and `depPos` in linear order. -/
-def interveningSubtreeNodes (t : DepTree) (headPos depPos : Nat) : Nat :=
+def interveningSubtreeNodes (t : Tree) (headPos depPos : Nat) : Nat :=
   let lo := min headPos depPos
   let hi := max headPos depPos
   let members := subtreeMembers t depPos
@@ -245,7 +245,7 @@ def interveningSubtreeNodes (t : DepTree) (headPos depPos : Nat) : Nat :=
 nodes of the dependent. Strict equality holds when `d`'s subtree is the sole
 occupant of `(h, d)` — the harmonic-order scenario in `### Harmonic vs
 disharmonic trees`. -/
-theorem dep_length_ge_one_plus_intervening (t : DepTree) (d : Dependency)
+theorem dep_length_ge_one_plus_intervening (t : Tree) (d : Dependency)
     (hd : d ∈ t.deps)
     (hne : d.headIdx ≠ d.depIdx) :
     depLength d ≥ 1 + interveningSubtreeNodes t d.headIdx d.depIdx := by
@@ -275,7 +275,7 @@ direction. This is the formal basis for [gibson-2025]'s exception for
 single-word adjectives, demonstratives, intensifiers, and negation markers. -/
 
 /-- A node is a leaf if it has no dependents. -/
-def isLeaf (t : DepTree) (idx : Nat) : Bool :=
+def isLeaf (t : Tree) (idx : Nat) : Bool :=
   t.deps.all (·.headIdx != idx)
 
 private theorem projection_of_leaf (deps : List Dependency) (root : Nat)
@@ -293,7 +293,7 @@ private theorem projection_of_leaf (deps : List Dependency) (root : Nat)
     exact ih h.2
 
 /-- A leaf has no subtree members. -/
-theorem leaf_no_subtree_members (t : DepTree) (idx : Nat)
+theorem leaf_no_subtree_members (t : Tree) (idx : Nat)
     (h : isLeaf t idx = true) :
     subtreeMembers t idx = [] := by
   unfold subtreeMembers
@@ -301,7 +301,7 @@ theorem leaf_no_subtree_members (t : DepTree) (idx : Nat)
   simp [List.filter, bne]
 
 /-- A leaf contributes zero intervening nodes for any head position. -/
-theorem leaf_no_intervening (t : DepTree) (headPos depPos : Nat)
+theorem leaf_no_intervening (t : Tree) (headPos depPos : Nat)
     (h : isLeaf t depPos = true) :
     interveningSubtreeNodes t headPos depPos = 0 := by
   unfold interveningSubtreeNodes
@@ -321,7 +321,7 @@ complement, embedded three levels deep. Head-initial (`HI`) and head-final
 (`HF`) consistent orders share the same TDL; mixed orders inflate it. -/
 
 /-- Consistent head-initial (HI) tree: V₁ S₁ V₂ S₂ V₃ O₃. -/
-def harmonicHI : DepTree :=
+def harmonicHI : Tree :=
   { words := [ Word.mk' "thinks" .VERB, Word.mk' "John" .PROPN
              , Word.mk' "knows" .VERB, Word.mk' "Mary" .PROPN
              , Word.mk' "likes" .VERB, Word.mk' "cats" .NOUN ]
@@ -334,7 +334,7 @@ def harmonicHI : DepTree :=
     rootIdx := 0 }
 
 /-- Consistent head-final (HF) tree: O₃ V₃ S₂ V₂ S₁ V₁ — mirror of `harmonicHI`. -/
-def harmonicHF : DepTree :=
+def harmonicHF : Tree :=
   { words := [ Word.mk' "cats" .NOUN, Word.mk' "likes" .VERB
              , Word.mk' "Mary" .PROPN, Word.mk' "knows" .VERB
              , Word.mk' "John" .PROPN, Word.mk' "thinks" .VERB ]
@@ -347,7 +347,7 @@ def harmonicHF : DepTree :=
     rootIdx := 5 }
 
 /-- Disharmonic HF tree: head-initial main clause, head-final embedding. -/
-def disharmonicHF : DepTree :=
+def disharmonicHF : Tree :=
   { words := [ Word.mk' "thinks" .VERB, Word.mk' "John" .PROPN
              , Word.mk' "Mary" .PROPN, Word.mk' "cats" .NOUN
              , Word.mk' "likes" .VERB, Word.mk' "knows" .VERB ]
@@ -360,7 +360,7 @@ def disharmonicHF : DepTree :=
     rootIdx := 0 }
 
 /-- Disharmonic FH tree: head-final main clause, head-initial embedding. -/
-def disharmonicFH : DepTree :=
+def disharmonicFH : Tree :=
   { words := [ Word.mk' "John" .PROPN, Word.mk' "knows" .VERB
              , Word.mk' "Mary" .PROPN, Word.mk' "likes" .VERB
              , Word.mk' "cats" .NOUN, Word.mk' "thinks" .VERB ]
@@ -386,4 +386,4 @@ def dlmPredictsHarmonicCheaper : Bool :=
   totalDepLength harmonicHI < totalDepLength disharmonicHF &&
   totalDepLength harmonicHF < totalDepLength disharmonicFH
 
-end DepGrammar.HarmonicOrder
+end DependencyGrammar.HarmonicOrder

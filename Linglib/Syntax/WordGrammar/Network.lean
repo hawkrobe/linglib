@@ -33,7 +33,7 @@ namespace WordGrammar
 open Features
 open Clause (EmbeddingContext)
 open WordGrammar.Inheritance
-open DepGrammar (Dir ArgStr ArgSlot DepTree satisfiesArgStr)
+open DependencyGrammar (Dir ArgStr ArgSlot Tree satisfiesArgStr)
 
 -- ============================================================================
 -- Node and Relation Types
@@ -242,7 +242,7 @@ def wordClassFor (f : Mood.Illocutionary) (e : EmbeddingContext) : String :=
 for the clause context, resolve its argument structure from the network,
 and check the tree satisfies it. This is the end-to-end chain:
 `force × context → wordClass → network → argStr → satisfiesArgStr`. -/
-def wgLicenses (net : WGNetwork) (t : DepTree) (auxIdx : Nat)
+def wgLicenses (net : WGNetwork) (t : Tree) (auxIdx : Nat)
     (f : Mood.Illocutionary) (e : EmbeddingContext) : Bool :=
   satisfiesArgStr t auxIdx (resolveArgStr net (wordClassFor f e))
 

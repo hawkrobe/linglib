@@ -15,11 +15,11 @@ from requiring symmetric (ATB) extraction.
 ## Main declarations
 
 * `SharingType` — typology of shared material (forward / backward / symmetric / none).
-* `parallelConjuncts`, `sharedDepTypes` — predicates over a `DepTree`
+* `parallelConjuncts`, `sharedDepTypes` — predicates over a `Tree`
   detecting core-argument parallelism and the shared-dep typeset between
   two conjunct heads.
 * `isATBExtraction`, `cscViolation` — Bool predicates over an enhanced
-  `DepGraph` detecting across-the-board extraction and CSC violations.
+  `Graph` detecting across-the-board extraction and CSC violations.
 * `forwardSharing`, `rnrBasic`, `gappingPreEllipsis`, `atbExtraction` —
   worked example trees from Osborne 2019.
 
@@ -36,10 +36,10 @@ from requiring symmetric (ATB) extraction.
   have been dropped.
 -/
 
-namespace DepGrammar.CoordinationParallelism
+namespace DependencyGrammar.CoordinationParallelism
 
 
-open DepGrammar Catena
+open DependencyGrammar Catena
 
 /-! ### Sharing typology -/
 
@@ -60,7 +60,7 @@ inductive SharingType where
 /-- Two conjuncts are parallel when they take the same set of core
     argument relations (nsubj, obj, iobj), ignoring coordination markers
     (conj, cc) and function-word relations that don't affect parallelism. -/
-def parallelConjuncts (t : DepTree) (c1 c2 : Nat) : Bool :=
+def parallelConjuncts (t : Tree) (c1 c2 : Nat) : Bool :=
   let isCoreArg (r : UD.DepRel) := r == .nsubj || r == .obj || r == .iobj
   let rels1 := t.deps.filter (λ d => d.headIdx == c1 && isCoreArg d.depType)
     |>.map (·.depType) |>.insertionSort (·.toString ≤ ·.toString) |>.eraseDups
@@ -69,7 +69,7 @@ def parallelConjuncts (t : DepTree) (c1 c2 : Nat) : Bool :=
   rels1.length == rels2.length && rels1.all rels2.contains
 
 /-- The dependency types that appear under both `c1` and `c2`. -/
-def sharedDepTypes (t : DepTree) (c1 c2 : Nat) : List UD.DepRel :=
+def sharedDepTypes (t : Tree) (c1 c2 : Nat) : List UD.DepRel :=
   let rels1 := t.deps.filter (·.headIdx == c1) |>.map (·.depType)
   let rels2 := t.deps.filter (·.headIdx == c2) |>.map (·.depType)
   rels1.filter rels2.contains |>.eraseDups
@@ -78,7 +78,7 @@ def sharedDepTypes (t : DepTree) (c1 c2 : Nat) : List UD.DepRel :=
 
 /-- Forward sharing: "John eats and drinks beer", with `John(0)` the shared
     subject of both verbs. -/
-def forwardSharing : DepTree :=
+def forwardSharing : Tree :=
   { words := [ Word.mk' "John" .PROPN, Word.mk' "eats" .VERB
              , Word.mk' "and" .CCONJ, Word.mk' "drinks" .VERB
              , Word.mk' "beer" .NOUN ]
@@ -87,13 +87,13 @@ def forwardSharing : DepTree :=
     rootIdx := 1 }
 
 /-- Enhanced graph for `forwardSharing`: `John` is `nsubj` of both verbs. -/
-def forwardSharingEnhanced : DepGraph :=
+def forwardSharingEnhanced : Graph :=
   Coordination.enhanceSharedDeps forwardSharing
 
 /-- Right-node-raising: "John likes and Mary hates pizza". The basic tree
     attaches `pizza` to `likes(1)` only; `enhanceSharedDeps` propagates
     it as `obj` of `hates(4)` too. -/
-def rnrBasic : DepTree :=
+def rnrBasic : Tree :=
   { words := [ Word.mk' "John" .PROPN, Word.mk' "likes" .VERB
              , Word.mk' "and" .CCONJ, Word.mk' "Mary" .PROPN
              , Word.mk' "hates" .VERB, Word.mk' "pizza" .NOUN ]
@@ -101,11 +101,11 @@ def rnrBasic : DepTree :=
     rootIdx := 1 }
 
 /-- Enhanced graph for `rnrBasic`. -/
-def rnrEnhanced : DepGraph := Coordination.enhanceSharedDeps rnrBasic
+def rnrEnhanced : Graph := Coordination.enhanceSharedDeps rnrBasic
 
 /-- Pre-gapping tree for "Fred eats beans and Jim eats rice", with the
     second `eats` still overt; downstream gapping treatments elide it. -/
-def gappingPreEllipsis : DepTree :=
+def gappingPreEllipsis : Tree :=
   { words := [ Word.mk' "Fred" .PROPN, Word.mk' "eats" .VERB
              , Word.mk' "beans" .NOUN, Word.mk' "and" .CCONJ
              , Word.mk' "eats" .VERB, Word.mk' "Jim" .PROPN
@@ -116,7 +116,7 @@ def gappingPreEllipsis : DepTree :=
 
 /-- ATB extraction: "What did John buy and Mary sell?", symmetric
     extraction of `what` from both conjuncts. -/
-def atbExtraction : DepTree :=
+def atbExtraction : Tree :=
   { words := [ { form :="what", cat := .PRON, features := { pronType := some .Int }}, Word.mk' "did" .AUX
              , Word.mk' "John" .PROPN, Word.mk' "buy" .VERB
              , Word.mk' "and" .CCONJ, Word.mk' "Mary" .PROPN
@@ -126,7 +126,7 @@ def atbExtraction : DepTree :=
     rootIdx := 3 }
 
 /-- Enhanced ATB graph: `what` is `obj` of both `buy` and `sell`. -/
-def atbExtractionEnhanced : DepGraph :=
+def atbExtractionEnhanced : Graph :=
   Coordination.enhanceSharedDeps atbExtraction
 
 /-! ### Shared material forms catenae -/
@@ -153,7 +153,7 @@ theorem gapping_conjuncts_parallel :
     both have `nsubj` and `obj` after shared-dep propagation. -/
 theorem atb_conjuncts_parallel_enhanced :
     let enhanced := atbExtractionEnhanced
-    let t : DepTree := { words := enhanced.words, deps := enhanced.deps,
+    let t : Tree := { words := enhanced.words, deps := enhanced.deps,
                          rootIdx := enhanced.rootIdx }
     parallelConjuncts t 3 6 = true := by decide
 
@@ -161,7 +161,7 @@ theorem atb_conjuncts_parallel_enhanced :
 
 /-- Extraction is across-the-board when the filler is a dependent of
     every conjunct in the enhanced graph. -/
-def isATBExtraction (enhanced : DepGraph) (fillerIdx : Nat)
+def isATBExtraction (enhanced : Graph) (fillerIdx : Nat)
     (conjuncts : List Nat) : Bool :=
   conjuncts.all λ c =>
     enhanced.deps.any λ d =>
@@ -169,7 +169,7 @@ def isATBExtraction (enhanced : DepGraph) (fillerIdx : Nat)
 
 /-- Extraction violates the CSC when the filler is extracted from some
     but not all conjuncts. -/
-def cscViolation (enhanced : DepGraph) (fillerIdx : Nat)
+def cscViolation (enhanced : Graph) (fillerIdx : Nat)
     (conjuncts : List Nat) : Bool :=
   let someHave := conjuncts.any λ c =>
     enhanced.deps.any (λ d => d.headIdx == c && d.depIdx == fillerIdx)
@@ -183,4 +183,4 @@ theorem atb_extraction_isATB :
 theorem atb_no_cscViolation :
     cscViolation atbExtractionEnhanced 0 [3, 6] = false := by decide
 
-end DepGrammar.CoordinationParallelism
+end DependencyGrammar.CoordinationParallelism

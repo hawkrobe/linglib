@@ -54,7 +54,7 @@ importing this file, so it is not currently wired through.
 namespace Gibson2025
 
 
-open DepGrammar DependencyLength DepGrammar.HarmonicOrder
+open DependencyGrammar DependencyLength DependencyGrammar.HarmonicOrder
 
 -- ============================================================================
 -- §0. Cross-tabulation apparatus (paper-anchored substrate)

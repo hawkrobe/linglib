@@ -25,9 +25,9 @@ satisfy the corresponding valency frames.
 ```
 Fragment VerbEntry.complementType ← lexical data (sleep=.none, kick=.np, give=.np_np)
     ↓ complementToArgStr
-ArgStr frames (argStrV0/VN/VNN) → DepTree.frames premises
+ArgStr frames (argStrV0/VN/VNN) → Tree.frames premises
     ↓
-DepTree instances ← concrete parse trees
+Tree instances ← concrete parse trees
     ↓
 satisfiesArgStr / checkVerbSubcat ← frame satisfaction + subcat verification
     ↓
@@ -43,7 +43,7 @@ grammaticality contrasts ← predictions for the example sentences
 namespace Osborne2019
 
 
-open DepGrammar WordGrammar Catena
+open DependencyGrammar WordGrammar Catena
 
 -- ============================================================================
 -- §1: Words from the Fragment Lexicon
@@ -128,7 +128,7 @@ def ditransTree :=
     (complementToArgStr English.Predicates.Verbal.give.complementType)
 
 /-- "John kicked the ball" — active transitive (for passive derivation). -/
-def activeTree : DepTree :=
+def activeTree : Tree :=
   { words := [john, kicked, the_, ball]
     deps := [⟨1, 0, .nsubj⟩, ⟨1, 3, .obj⟩, ⟨3, 2, .det⟩]
     rootIdx := 1
@@ -137,14 +137,14 @@ def activeTree : DepTree :=
 
 /-- "The ball was kicked" — short passive; the passive analysis derives
     `argStrVPassive` from kick's transitive frame (`passive_frame_matches`). -/
-def passiveTree : DepTree :=
+def passiveTree : Tree :=
   { words := [the_, ball, was_, kicked_pass]
     deps := [⟨1, 0, .det⟩, ⟨3, 1, .nsubj⟩, ⟨3, 2, .auxPass⟩]
     rootIdx := 3
     frames := [none, none, none, some argStrVPassive] }
 
 /-- "The ball was kicked by John" — long passive with agent by-phrase. -/
-def longPassiveTree : DepTree :=
+def longPassiveTree : Tree :=
   { words := [the_, ball, was_, kicked_pass, by_, john]
     deps := [⟨1, 0, .det⟩, ⟨3, 1, .nsubj⟩, ⟨3, 2, .auxPass⟩,
              ⟨3, 5, .obl⟩, ⟨5, 4, .case_⟩]
@@ -156,7 +156,7 @@ def longPassiveTree : DepTree :=
 -- ============================================================================
 
 /-- "*John sleeps book" — intransitive with spurious object. -/
-def intrans_with_obj : DepTree :=
+def intrans_with_obj : Tree :=
   { words := [john, sleeps, book]
     deps := [⟨1, 0, .nsubj⟩, ⟨1, 2, .obj⟩]
     rootIdx := 1
@@ -168,7 +168,7 @@ def trans_no_obj :=
   mkSVTree john devours (complementToArgStr English.Predicates.Verbal.devour.complementType)
 
 /-- "*John gives Mary" — ditransitive missing direct object. -/
-def ditrans_no_obj : DepTree :=
+def ditrans_no_obj : Tree :=
   { words := [john, gives, mary]
     deps := [⟨1, 0, .nsubj⟩, ⟨1, 2, .iobj⟩]
     rootIdx := 1
@@ -176,7 +176,7 @@ def ditrans_no_obj : DepTree :=
                none] }
 
 /-- "*The ball was kicked the ball" — passive with spurious object. -/
-def passive_with_obj : DepTree :=
+def passive_with_obj : Tree :=
   { words := [the_, ball, was_, kicked_pass, the_, ball]
     deps := [⟨1, 0, .det⟩, ⟨3, 1, .nsubj⟩, ⟨3, 2, .auxPass⟩,
              ⟨3, 5, .obj⟩, ⟨5, 4, .det⟩]
@@ -353,7 +353,7 @@ Fragments/English/Predicates/Verbal
     kick.complementType =.np → argStrVN
     give.complementType =.np_np → argStrVNN
         ↓ VerbEntry.toWord3sg / complementToArgStr
-DepTree instances (trees carry Fragment-derived frames)
+Tree instances (trees carry Fragment-derived frames)
         ↓ satisfiesArgStr / checkVerbSubcat
 grammatical ✓ / ungrammatical ✗
         ↓ passiveRule.transform

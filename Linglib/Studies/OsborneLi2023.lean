@@ -37,7 +37,7 @@ project's 5-level enum.
 ## Main definitions
 
 * `isConjunctValent` / `isFullValent` — the paper's predicate-valent
-  type distinction, operationalised over `DepTree` via
+  type distinction, operationalised over `Tree` via
   `UD.DepRel.isValencyArg` from `Core/UD.lean`.
 * `crdcPredictedJudgment` — the `Judgment` the CRDC assigns to a
   candidate co-valuation; `.questionable` exactly when CRDC fires,
@@ -50,7 +50,7 @@ project's 5-level enum.
   of the predicate. This is a deliberate simplification of the paper's
   catena-based notion (paper §4); the example set does not exercise the
   distinction.
-* `getConjuncts` is reused from `DepGrammar.Coordination` rather than
+* `getConjuncts` is reused from `DependencyGrammar.Coordination` rather than
   reinventing coord-structure traversal. UD's basic-tree convention
   makes the first conjunct the head of the coordinate structure; the
   remaining conjuncts attach via `.conj`.
@@ -95,7 +95,7 @@ output to `Judgment`. Both are out of scope for this study file.
   dependency contrast — is theoretical commentary without formal
   content here yet.
 * Bool→Prop migration of `isConjunctValent` / `isFullValent` should
-  happen as part of a unified `DepGrammar/*` sweep, not piecemeal.
+  happen as part of a unified `DependencyGrammar/*` sweep, not piecemeal.
 * Cross-framework CRDC-vs-Conditions-A/B/C bake-off blocked on
   parser/coordination work (see Cross-framework relationship).
 -/
@@ -103,8 +103,8 @@ output to `Judgment`. Both are out of scope for this study file.
 namespace OsborneLi2023
 
 
-open DepGrammar
-open DepGrammar.Coordination
+open DependencyGrammar
+open DependencyGrammar.Coordination
 open Data.Examples (LinguisticExample)
 open Features (Judgment)
 
@@ -116,7 +116,7 @@ open Features (Judgment)
     `predIdx` to some coord-head `c`, and `valentIdx` is in
     `allConjuncts c` (the first conjunct, which heads the structure
     in UD, plus the remaining conjuncts attached via `.conj`). -/
-def isConjunctValent (t : DepTree) (predIdx valentIdx : Nat) : Bool :=
+def isConjunctValent (t : Tree) (predIdx valentIdx : Nat) : Bool :=
   t.deps.any λ d =>
     d.headIdx == predIdx && d.depType.isValencyArg
       && hasConjuncts t d.depIdx
@@ -128,7 +128,7 @@ def isConjunctValent (t : DepTree) (predIdx valentIdx : Nat) : Bool :=
     valent thereof if it is complete, that is, it is *not* a conjunct
     valent." Operationalised as "direct valency-eligible dependent of
     `predIdx` AND not a conjunct valent." -/
-def isFullValent (t : DepTree) (predIdx valentIdx : Nat) : Bool :=
+def isFullValent (t : Tree) (predIdx valentIdx : Nat) : Bool :=
   (t.deps.any λ d =>
       d.headIdx == predIdx && d.depType.isValencyArg
         && d.depIdx == valentIdx)
@@ -144,7 +144,7 @@ def isFullValent (t : DepTree) (predIdx valentIdx : Nat) : Bool :=
     Otherwise returns `.acceptable` — CRDC is silent, and other binding
     principles (Conditions A/B/C) may still apply. -/
 def crdcPredictedJudgment
-    (t : DepTree) (predIdx anaIdx anteIdx : Nat) : Judgment :=
+    (t : Tree) (predIdx anaIdx anteIdx : Nat) : Judgment :=
   if isFullValent t predIdx anaIdx && isConjunctValent t predIdx anteIdx then
     .questionable
   else
@@ -152,7 +152,7 @@ def crdcPredictedJudgment
 
 /-! ### CRDC-prediction theorems
 
-Each theorem builds a `DepTree` matching one of the example sentences
+Each theorem builds a `Tree` matching one of the example sentences
 and checks that `crdcPredictedJudgment` returns the contribution the
 CRDC is responsible for. For data points whose sentence-level judgment
 is set by a different principle (e.g. ex9b by Condition B, ex5a
@@ -162,7 +162,7 @@ CRDC's contribution from other determinants of acceptability. -/
 
 /-- Tree for "Max and Lucie talked about him."
     `Max(0) and(1) Lucie(2) talked(3) about(4) him(5)`. -/
-def ex2a_tree : DepTree :=
+def ex2a_tree : Tree :=
   { words := [ { form :="Max", cat := .PROPN, features := {}}, { form :="and", cat := .CCONJ, features := {}}
              , { form :="Lucie", cat := .PROPN, features := {}}, { form :="talked", cat := .VERB, features := {}}
              , { form :="about", cat := .ADP, features := {}}, { form :="him", cat := .PRON, features := {}} ]
@@ -174,7 +174,7 @@ theorem ex2a_predicts_questionable :
     crdcPredictedJudgment ex2a_tree 3 5 0 = .questionable := by decide
 
 /-- Tree for "Max talked about himself." — non-coordinate baseline. -/
-def ex9a_tree : DepTree :=
+def ex9a_tree : Tree :=
   { words := [ { form :="Max", cat := .PROPN, features := {}}, { form :="talked", cat := .VERB, features := {}}
              , { form :="about", cat := .ADP, features := {}}, { form :="himself", cat := .PRON, features := {}} ]
     deps  := [ ⟨1, 0, .nsubj⟩, ⟨1, 3, .obl⟩, ⟨3, 2, .case_⟩ ]
@@ -187,7 +187,7 @@ theorem ex9a_predicts_acceptable :
     context. The sentence-level `.questionable` reading comes from
     Condition B, not the CRDC; here we record only that the CRDC is
     silent. -/
-def ex9b_tree : DepTree :=
+def ex9b_tree : Tree :=
   { words := [ { form :="Max", cat := .PROPN, features := {}}, { form :="talked", cat := .VERB, features := {}}
              , { form :="about", cat := .ADP, features := {}}, { form :="him", cat := .PRON, features := {}} ]
     deps  := [ ⟨1, 0, .nsubj⟩, ⟨1, 3, .obl⟩, ⟨3, 2, .case_⟩ ]
@@ -200,7 +200,7 @@ theorem ex9b_crdc_silent :
     *object*. `himself` heads the coord, so it is a conjunct valent;
     `John` is a full valent. CRDC's permitted direction (conjunct
     anaphor of full antecedent). -/
-def ex24a_tree : DepTree :=
+def ex24a_tree : Tree :=
   { words := [ { form :="John", cat := .PROPN, features := {}}, { form :="talked", cat := .VERB, features := {}}
              , { form :="about", cat := .ADP, features := {}}, { form :="himself", cat := .PRON, features := {}}
              , { form :="and", cat := .CCONJ, features := {}}, { form :="his", cat := .PRON, features := {}}
@@ -217,7 +217,7 @@ theorem ex24a_predicts_acceptable :
     Sentence-level judgment is stronger (`.ungrammatical`) due to
     `both...and` strengthening; the CRDC alone predicts
     `.questionable`. -/
-def ex5a_tree : DepTree :=
+def ex5a_tree : Tree :=
   { words := [ { form :="Both", cat := .CCONJ, features := {}}, { form :="John", cat := .PROPN, features := {}}
              , { form :="and", cat := .CCONJ, features := {}}, { form :="Mary", cat := .PROPN, features := {}}
              , { form :="love", cat := .VERB, features := {}}, { form :="him", cat := .PRON, features := {}} ]
@@ -233,7 +233,7 @@ theorem ex5a_predicts_questionable :
     subject (full valent), `him` is a conjunct of the embedded subject
     coord. Permitted direction; the CRDC is silent on `him↔John`
     co-valuation because `him` is a conjunct valent (not a full valent). -/
-def ex28d_tree : DepTree :=
+def ex28d_tree : Tree :=
   { words := [ { form :="John", cat := .PROPN, features := {}}, { form :="expected", cat := .VERB, features := {}}
              , { form :="Mary", cat := .PROPN, features := {}}, { form :="and", cat := .CCONJ, features := {}}
              , { form :="him", cat := .PRON, features := {}}, { form :="to", cat := .PART, features := {}}

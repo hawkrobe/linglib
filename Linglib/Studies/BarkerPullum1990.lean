@@ -118,22 +118,22 @@ structure DepEdge (α : Type) where
   deriving Repr
 
 /-- Dependency graph = list of edges -/
-structure DepGraph (α : Type) where
+structure Graph (α : Type) where
   edges : List (DepEdge α)
   deriving Repr
 
 /-- Is `a` a dependent of `h`? -/
-def DepGraph.hasDep {α : Type} [DecidableEq α] (g : DepGraph α) (a h : α) : Bool :=
+def Graph.hasDep {α : Type} [DecidableEq α] (g : Graph α) (a h : α) : Bool :=
   g.edges.any (λ e => e.dependent == a && e.head == h)
 
 /-- Get label for dependency -/
-def DepGraph.labelOf {α : Type} [DecidableEq α] (g : DepGraph α) (a h : α) : Option String :=
+def Graph.labelOf {α : Type} [DecidableEq α] (g : Graph α) (a h : α) : Option String :=
   (g.edges.find? (λ e => e.dependent == a && e.head == h)).map (·.label)
 
 /-- **D-command**:
     A d-commands B iff A and B are co-dependents of the same head,
     and A bears the "subj" relation (designated binder). -/
-def dCommand {α : Type} [DecidableEq α] (g : DepGraph α) (a b : α) : Bool :=
+def dCommand {α : Type} [DecidableEq α] (g : Graph α) (a b : α) : Bool :=
   g.edges.any (λ edgeA =>
     edgeA.dependent == a &&
     edgeA.label == "subj" &&
@@ -167,7 +167,7 @@ structure ConfigurationalClause where
   argSt : ArgSt String
 
   -- Dependency graph
-  depGraph : DepGraph String
+  depGraph : Graph String
 
   -- === CONFIGURATIONAL INVARIANTS ===
 

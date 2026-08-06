@@ -19,7 +19,7 @@ formalised here.
 
 namespace WordGrammar
 
-open DepGrammar (ArgStr ArgSlot Dir)
+open DependencyGrammar (ArgStr ArgSlot Dir)
 
 -- ============================================================================
 -- Lexical Entries with Argument Structures

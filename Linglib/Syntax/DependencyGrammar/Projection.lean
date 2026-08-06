@@ -14,7 +14,7 @@ depend on projection infrastructure.
 References: [kuhlmann-nivre-2006], [kuhlmann-2013].
 -/
 
-namespace DepGrammar
+namespace DependencyGrammar
 
 -- ============================================================================
 -- Projection: the foundational primitive for non-projectivity theory
@@ -88,7 +88,7 @@ def gapDegreeAt (deps : List Dependency) (root : Nat) : Nat :=
 /-- **Gap degree** of a tree: max gap degree over all nodes.
     ([kuhlmann-nivre-2006], Definition 7)
     Gap degree 0 ⟺ projective. -/
-def DepTree.gapDegree (t : DepTree) : Nat :=
+def Tree.gapDegree (t : Tree) : Nat :=
   List.range t.words.length |>.map (gapDegreeAt t.deps) |>.foldl max 0
 
 /-- **Block-degree** of a node: number of blocks in its projection.
@@ -100,7 +100,7 @@ def blockDegreeAt (deps : List Dependency) (root : Nat) : Nat :=
     Block-degree 1 ⟺ projective.
     Bounded block-degree + well-nestedness ⟺ polynomial parsing
     ([kuhlmann-2013], Lemma 10). -/
-def DepTree.blockDegree (t : DepTree) : Nat :=
+def Tree.blockDegree (t : Tree) : Nat :=
   List.range t.words.length |>.map (blockDegreeAt t.deps) |>.foldl max 0
 
 -- ============================================================================
@@ -891,12 +891,12 @@ end FoldlMax
     Equivalent to: no two dependency arcs cross.
     Equivalent to: gap degree = 0.
     Equivalent to: block-degree = 1. -/
-def isProjective (t : DepTree) : Bool :=
+def isProjective (t : Tree) : Bool :=
   List.range t.words.length |>.all λ i =>
     isInterval (projection t.deps i)
 
 /-- A dependency tree is well-formed if it satisfies all constraints. -/
-def isWellFormed (t : DepTree) : Bool :=
+def isWellFormed (t : Tree) : Bool :=
   hasUniqueHeads t &&
   isAcyclic t &&
   isProjective t &&
@@ -904,4 +904,4 @@ def isWellFormed (t : DepTree) : Bool :=
   checkDetNounAgr t &&
   checkVerbSubcat t
 
-end DepGrammar
+end DependencyGrammar

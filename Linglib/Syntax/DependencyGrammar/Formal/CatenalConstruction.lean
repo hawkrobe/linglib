@@ -24,10 +24,10 @@ live in `Studies/OsborneGross2012/Data.lean`; their catena fields are
 discharged by `decide` over the concrete tree.
 -/
 
-namespace DepGrammar.CatenalConstruction
+namespace DependencyGrammar.CatenalConstruction
 
 
-open DepGrammar Catena ConstructionGrammar
+open DependencyGrammar Catena ConstructionGrammar
 
 /-! ### Core bridge type -/
 
@@ -51,7 +51,7 @@ structure CatenalCx where
   /-- CxG description of the construction. -/
   construction : Construction
   /-- A dependency tree instantiating the construction. -/
-  tree : DepTree
+  tree : Tree
   /-- Node indices that carry the construction. -/
   nodes : List Nat
   /-- The construction nodes form a catena. -/
@@ -132,4 +132,4 @@ theorem constituent_implies_catena (deps : List Dependency) (n : Nat)
         (h_n2p start List.mem_cons_self) (h_n2p x hx))
     exact List.elem_eq_true_of_mem (bfsReachable_complete deps _ start x hbidir)
 
-end DepGrammar.CatenalConstruction
+end DependencyGrammar.CatenalConstruction

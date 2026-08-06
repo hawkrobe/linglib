@@ -17,13 +17,13 @@ language-neutral — it imports no Fragment.
 
 ## Main definitions
 
-- `toDepTree`, `dCommands`, `subjectDCommandsObject`, `sameLocalDomain` — the
+- `toTree`, `dCommands`, `subjectDCommandsObject`, `sameLocalDomain` — the
   d-command relation and its locality restriction, over a `Binding.SimpleClause`.
 - `instance : CommandRelation` — the dependency-grammar instance of the abstract
   command relation (d-command); the engine supplies Principles A/B/C over it.
 -/
 
-namespace DepGrammar.Coreference
+namespace DependencyGrammar.Coreference
 
 open Binding (SimpleClause Pos CommandRelation)
 
@@ -31,7 +31,7 @@ open Binding (SimpleClause Pos CommandRelation)
 
 /-- Build a dependency tree from a clause. Indices: 0 = subject, 1 = verb
     (root), 2 = object (if present); subject ←nsubj— verb, object ←obj— verb. -/
-def toDepTree (clause : SimpleClause) : DepTree :=
+def toTree (clause : SimpleClause) : Tree :=
   let words := match clause.object with
     | none => [clause.subject, clause.verb]
     | some obj => [clause.subject, clause.verb, obj]
@@ -43,7 +43,7 @@ def toDepTree (clause : SimpleClause) : DepTree :=
 
 /-- D-command: the word at `i` d-commands the word at `j` if both are dependents
     of the same head and `i` bears the subject relation (nsubj). -/
-def dCommands (tree : DepTree) (i j : Nat) : Bool :=
+def dCommands (tree : Tree) (i j : Nat) : Bool :=
   tree.deps.any fun di =>
     di.depIdx == i && di.depType == .nsubj &&
     tree.deps.any fun dj => dj.depIdx == j && di.headIdx == dj.headIdx
@@ -52,14 +52,14 @@ def dCommands (tree : DepTree) (i j : Nat) : Bool :=
 def subjectDCommandsObject (clause : SimpleClause) : Bool :=
   match clause.object with
   | none => false
-  | some _ => dCommands (toDepTree clause) 0 2
+  | some _ => dCommands (toTree clause) 0 2
 
 /-- Both positions are dependents of the same head (the verb) — one domain. -/
 def sameLocalDomain (clause : SimpleClause) : Bool :=
   match clause.object with
   | none => true
   | some _ =>
-    let tree := toDepTree clause
+    let tree := toTree clause
     (tree.deps.any fun d => d.depIdx == 0 && d.headIdx == tree.rootIdx) &&
     (tree.deps.any fun d => d.depIdx == 2 && d.headIdx == tree.rootIdx)
 
@@ -89,4 +89,4 @@ instance : CommandRelation where
   commandsDec := fun c i j => inferInstance
   sameDomainDec := fun c i j => inferInstance
 
-end DepGrammar.Coreference
+end DependencyGrammar.Coreference

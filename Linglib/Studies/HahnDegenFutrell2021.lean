@@ -425,14 +425,14 @@ the chain: harmonic order → short dependencies → information locality
 /-- The DLM harmonic order prediction holds: consistent head direction
 produces shorter total dependency length (from HarmonicOrder.lean). -/
 theorem harmonic_dlm_holds :
-    DepGrammar.HarmonicOrder.dlmPredictsHarmonicCheaper = true := by native_decide
+    DependencyGrammar.HarmonicOrder.dlmPredictsHarmonicCheaper = true := by native_decide
 
 /-- The full chain: all languages with low entropy (consistent direction,
 short dependencies) are efficient, and the DLM prediction holds.
 This connects the structural argument (HarmonicOrder) to the
 information-theoretic result (memory-surprisal efficiency). -/
 theorem dlm_to_efficiency_chain :
-    DepGrammar.HarmonicOrder.dlmPredictsHarmonicCheaper = true ∧
+    DependencyGrammar.HarmonicOrder.dlmPredictsHarmonicCheaper = true ∧
     (allLanguages.filter (λ l =>
       match l.branchDirEntropy1000 with | some e => e < 300 | none => false
     )).all (·.moreEfficient) = true := by

@@ -107,7 +107,7 @@ namespace ArnoldEtAl2000
 
 
 open Constraints Core.Optimization Features
-open DepGrammar DepGrammar.DependencyLength
+open DependencyGrammar DependencyGrammar.DependencyLength
 
 -- ============================================================================
 -- § 1: Phrases, Orderings, and Candidates

@@ -14,13 +14,13 @@ not a constituent.
 
 ## Bridges
 
-- `DepGrammar.Ellipsis.EllipsisType` → `Steedman2000.EllipsisType`
-- `DepGrammar.Ellipsis.gappingTree` / `gappingElided` → catena-not-constituent proof
+- `DependencyGrammar.Ellipsis.EllipsisType` → `Steedman2000.EllipsisType`
+- `DependencyGrammar.Ellipsis.gappingTree` / `gappingElided` → catena-not-constituent proof
 -/
 
-namespace DepGrammar.Ellipsis
+namespace DependencyGrammar.Ellipsis
 
-open DepGrammar Catena
+open DependencyGrammar Catena
 
 /-- Map DG ellipsis types to `Steedman2000.EllipsisType`.
     Not all DG types have Steedman equivalents (pseudogapping/fragmentAnswer don't). -/
@@ -46,4 +46,4 @@ theorem gapping_always_catena_not_constituent :
     isConstituent gappingTree.deps 3 gappingElided = false := by
   constructor <;> native_decide
 
-end DepGrammar.Ellipsis
+end DependencyGrammar.Ellipsis

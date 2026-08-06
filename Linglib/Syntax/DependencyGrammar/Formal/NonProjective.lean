@@ -19,7 +19,7 @@ language data.
 
 * `depsCross`, `linked`, `disjoint`, `projectionsInterleave` — arc-crossing
   primitives.
-* `DepTree.isPlanar`, `DepTree.isWellNested` — the two restrictiveness
+* `Tree.isPlanar`, `Tree.isWellNested` — the two restrictiveness
   classes between projective and unrestricted.
 * `projective_iff_gapDegree_zero`, `projective_iff_blockDegree_one`,
   `blockDegree_eq_gapDegree_succ` — equivalences in the hierarchy.
@@ -46,7 +46,7 @@ language data.
   `LongDistance.lean` Todo articulates this), not as a thin subtype here.
 -/
 
-namespace DepGrammar
+namespace DependencyGrammar
 
 
 /-! ### Arc-crossing detection -/
@@ -64,11 +64,11 @@ def depsCross (d1 d2 : Dependency) : Bool :=
       (min2 <= min1 && max1 <= max2))
 
 /-- All non-projective (crossing) dependencies in a tree. -/
-def nonProjectiveDeps (t : DepTree) : List Dependency :=
+def nonProjectiveDeps (t : Tree) : List Dependency :=
   t.deps.filter λ d1 => t.deps.any λ d2 => depsCross d1 d2
 
 /-- Whether a tree has any non-projective dependencies. -/
-def hasFillerGap (t : DepTree) : Bool :=
+def hasFillerGap (t : Tree) : Bool :=
   (nonProjectiveDeps t).length > 0
 
 /-! ### Planarity ([kuhlmann-nivre-2006], Definition 4) -/
@@ -81,7 +81,7 @@ def linked (deps : List Dependency) (a b : Nat) : Bool :=
 /-- A dependency tree is **planar** iff its edges can be drawn above the
     sentence without crossing: no nodes `a < b < c < d` with `linked a c`
     and `linked b d`. ([kuhlmann-nivre-2006], Definition 4) -/
-def DepTree.isPlanar (t : DepTree) : Bool :=
+def Tree.isPlanar (t : Tree) : Bool :=
   let deps := t.deps
   let n := t.words.length
   !(List.range n |>.any λ a =>
@@ -111,7 +111,7 @@ private theorem disjoint_symm {deps : List Dependency} {u v : Nat}
 
 /-- A dependency tree is **well-nested** if no two disjoint nodes have
     interleaving projections. ([kuhlmann-nivre-2006], Definition 8) -/
-def DepTree.isWellNested (t : DepTree) : Bool :=
+def Tree.isWellNested (t : Tree) : Bool :=
   let deps := t.deps
   let n := t.words.length
   !(List.range n |>.any λ u =>
@@ -126,14 +126,14 @@ the canonical pair witnessing that mild non-projectivity (well-nested,
 gap degree 1) covers attested data. -/
 
 /-- Minimal crossing tree: arcs `0 → 2` and `1 → 3` cross. -/
-def nonProjectiveTree : DepTree :=
+def nonProjectiveTree : Tree :=
   { words := [ { form :="A", cat := .NOUN, features := {}}, { form :="B", cat := .VERB, features := {}}, { form :="C", cat := .NOUN, features := {}}, { form :="D", cat := .VERB, features := {}} ]
     deps := [ ⟨0, 2, .obj⟩, ⟨1, 3, .obj⟩ ]
     rootIdx := 0 }
 
 /-- Dutch cross-serial: "dat Jan Piet Marie zag helpen lezen".
     Dependencies `zag→Jan`, `helpen→Piet`, `lezen→Marie` cross. -/
-def dutchCrossSerial : DepTree :=
+def dutchCrossSerial : Tree :=
   { words := [ Word.mk' "dat" .SCONJ, Word.mk' "Jan" .PROPN
              , Word.mk' "Piet" .PROPN, Word.mk' "Marie" .PROPN
              , Word.mk' "zag" .VERB, Word.mk' "helpen" .VERB
@@ -144,7 +144,7 @@ def dutchCrossSerial : DepTree :=
 
 /-- German nested: "dass Jan Piet Marie lesen helfen sah". Same dependencies
     as `dutchCrossSerial` but verbs in reverse order → projective. -/
-def germanNested : DepTree :=
+def germanNested : Tree :=
   { words := [ Word.mk' "dass" .SCONJ, Word.mk' "Jan" .PROPN
              , Word.mk' "Piet" .PROPN, Word.mk' "Marie" .PROPN
              , Word.mk' "lesen" .VERB, Word.mk' "helfen" .VERB
@@ -160,30 +160,30 @@ example : hasFillerGap nonProjectiveTree = true := by decide
 example : isProjective dutchCrossSerial = false := by decide
 example : isProjective germanNested = true := by decide
 
-example : DepTree.gapDegree germanNested = 0 := by decide
-example : DepTree.blockDegree germanNested = 1 := by decide
-example : DepTree.gapDegree dutchCrossSerial = 1 := by decide
-example : DepTree.blockDegree dutchCrossSerial = 2 := by decide
-example : DepTree.gapDegree nonProjectiveTree = 1 := by decide
-example : DepTree.blockDegree nonProjectiveTree = 2 := by decide
+example : Tree.gapDegree germanNested = 0 := by decide
+example : Tree.blockDegree germanNested = 1 := by decide
+example : Tree.gapDegree dutchCrossSerial = 1 := by decide
+example : Tree.blockDegree dutchCrossSerial = 2 := by decide
+example : Tree.gapDegree nonProjectiveTree = 1 := by decide
+example : Tree.blockDegree nonProjectiveTree = 2 := by decide
 
-example : DepTree.isPlanar germanNested = true := by decide
-example : DepTree.isPlanar dutchCrossSerial = false := by decide
-example : DepTree.isPlanar nonProjectiveTree = false := by decide
+example : Tree.isPlanar germanNested = true := by decide
+example : Tree.isPlanar dutchCrossSerial = false := by decide
+example : Tree.isPlanar nonProjectiveTree = false := by decide
 
-example : DepTree.isWellNested germanNested = true := by decide
+example : Tree.isWellNested germanNested = true := by decide
 /-- Dutch cross-serial: well-nested despite being non-projective. -/
-example : DepTree.isWellNested dutchCrossSerial = true := by decide
-example : DepTree.isWellNested nonProjectiveTree = false := by decide
+example : Tree.isWellNested dutchCrossSerial = true := by decide
+example : Tree.isWellNested nonProjectiveTree = false := by decide
 
 /-! ### Hierarchy theorems -/
 
 /-- **Projective ⟺ gap degree 0**: a tree is projective iff no node's
     projection has any gaps.
     ([kuhlmann-nivre-2006], Definition 3 + Definition 7) -/
-theorem projective_iff_gapDegree_zero (t : DepTree) :
+theorem projective_iff_gapDegree_zero (t : Tree) :
     isProjective t = true ↔ t.gapDegree = 0 := by
-  unfold isProjective DepTree.gapDegree
+  unfold isProjective Tree.gapDegree
   constructor
   · intro hall
     rw [foldl_max_zero_iff]
@@ -207,11 +207,11 @@ theorem projective_iff_gapDegree_zero (t : DepTree) :
     exact List.eq_nil_of_length_eq_zero this
 
 /-- **Projective ⟺ block-degree 1** for non-empty trees. -/
-theorem projective_iff_blockDegree_one (t : DepTree)
+theorem projective_iff_blockDegree_one (t : Tree)
     (hne_tree : t.words.length > 0) :
     isProjective t = true ↔ t.blockDegree = 1 := by
   rw [projective_iff_gapDegree_zero]
-  unfold DepTree.gapDegree DepTree.blockDegree
+  unfold Tree.gapDegree Tree.blockDegree
   constructor
   · intro hgap
     have hall_gap : ∀ x ∈ (List.range t.words.length).map (gapDegreeAt t.deps), x = 0 :=
@@ -277,7 +277,7 @@ private theorem linked_exists {deps : List Dependency} {a c : Nat}
   · exact ⟨e, he_mem, Or.inr ⟨h1, h2⟩⟩
 
 /-- From `isProjective = true`, every in-range projection is an interval. -/
-private theorem projective_interval {t : DepTree} (hproj : isProjective t = true)
+private theorem projective_interval {t : Tree} (hproj : isProjective t = true)
     (i : Nat) (hi : i < t.words.length) :
     isInterval (projection t.deps i) = true := by
   simp only [isProjective, List.all_eq_true, List.mem_range, decide_eq_true_eq] at hproj
@@ -285,7 +285,7 @@ private theorem projective_interval {t : DepTree} (hproj : isProjective t = true
 
 /-- Under `hasUniqueHeads`, all incoming edges of an in-range non-root node
     share the same head. -/
-private theorem unique_parent_of_hasUniqueHeads {t : DepTree}
+private theorem unique_parent_of_hasUniqueHeads {t : Tree}
     (hwf : t.WF) {c : Nat} (_ : c < t.words.length)
     {e₁ e₂ : Dependency} (he₁ : e₁ ∈ t.deps) (he₂ : e₂ ∈ t.deps)
     (hd₁ : e₁.depIdx = c) (hd₂ : e₂.depIdx = c) :
@@ -295,11 +295,11 @@ private theorem unique_parent_of_hasUniqueHeads {t : DepTree}
 
 /-- **Projective ⊂ planar** for well-formed trees.
     ([kuhlmann-nivre-2006], §3.5) -/
-theorem projective_implies_planar (t : DepTree)
+theorem projective_implies_planar (t : Tree)
     (hwf : t.WF) (hacyc : isAcyclic t = true)
     (hproj : isProjective t = true) : t.isPlanar = true := by
   by_contra h_np
-  simp only [DepTree.isPlanar] at h_np
+  simp only [Tree.isPlanar] at h_np
   simp at h_np
   obtain ⟨a, ha_lt, b, hb_lt, c, hc_lt, d, hd_lt,
           hab, hbc, hcd, hlink_ac, hlink_bd⟩ := h_np
@@ -377,7 +377,7 @@ exit/entry steps — feeds the core `interleaving_not_planar` lemma. -/
 
 /-- Under unique heads, any two ancestors of the same node are comparable
     under dominance. -/
-private theorem dominates_comparable (t : DepTree)
+private theorem dominates_comparable (t : Tree)
     (hwf : t.WF)
     {u v x : Nat} (hux : Dominates t.deps u x) (hvx : Dominates t.deps v x) :
     Dominates t.deps u v ∨ Dominates t.deps v u := by
@@ -397,7 +397,7 @@ private theorem dominates_comparable (t : DepTree)
     · exact Or.inr (Dominates.step hedge hwu)
 
 /-- Disjoint nodes have disjoint projections. -/
-private theorem projection_disjoint_of_disjoint (t : DepTree)
+private theorem projection_disjoint_of_disjoint (t : Tree)
     (hwf : t.WF)
     {u v : Nat} (hdisj : disjoint t.deps u v = true)
     {x : Nat} (hxu : x ∈ projection t.deps u) (hxv : x ∈ projection t.deps v) :
@@ -478,7 +478,7 @@ private theorem exists_spanning_edge {deps : List Dependency}
     exact exists_spanning_edge_up (dominates_of_mem_projection hb) hu' hb_ge
 
 /-- Crossing edges witness non-planarity. -/
-private theorem crossing_edges_not_planar (t : DepTree)
+private theorem crossing_edges_not_planar (t : Tree)
     (h_head_wf : ∀ d ∈ t.deps, d.headIdx < t.words.length)
     (h_dep_wf : ∀ d ∈ t.deps, d.depIdx < t.words.length)
     {a b c d : Nat} (hab : a < b) (hbc : b < c) (hcd : c < d)
@@ -500,7 +500,7 @@ private theorem crossing_edges_not_planar (t : DepTree)
   | false => rfl
   | true =>
     exfalso
-    simp only [DepTree.isPlanar, Bool.not_eq_true'] at hp
+    simp only [Tree.isPlanar, Bool.not_eq_true'] at hp
     have hwitness : (List.range t.words.length |>.any λ a' =>
       List.range t.words.length |>.any λ b' =>
         List.range t.words.length |>.any λ c' =>
@@ -561,7 +561,7 @@ private theorem linked_symm_val {deps : List Dependency} {a b : Nat}
   exact ⟨d, hd_mem, hd.symm⟩
 
 /-- Every element of the `iterParent` chain from `w` to `u` belongs to `π(u)`. -/
-private theorem iterParent_chain_mem_projection (t : DepTree)
+private theorem iterParent_chain_mem_projection (t : Tree)
     {u w : Nat} {k : Nat} (hiter : iterParent_uh t w k = u)
     (hchain : ∀ i, i < k → ∃ dep,
       t.deps.find? (fun d => d.depIdx == iterParent_uh t w i) = some dep ∧
@@ -588,7 +588,7 @@ private theorem iterParent_chain_mem_projection (t : DepTree)
       hprev ⟨dep, hdep_mem, h_shift ▸ hdep_head, hdep_dep⟩
 
 /-- Consecutive elements of the `iterParent` chain are linked. -/
-private theorem iterParent_chain_linked {t : DepTree}
+private theorem iterParent_chain_linked {t : Tree}
     {w : Nat} {k : Nat}
     (hchain : ∀ i, i < k → ∃ dep,
       t.deps.find? (fun d => d.depIdx == iterParent_uh t w i) = some dep ∧
@@ -606,7 +606,7 @@ private theorem iterParent_chain_linked {t : DepTree}
 
 /-- Walking out of an interval `(lo, hi)` along a parent chain forces a
     boundary-crossing edge, which crosses the disjoint `linked lo hi`. -/
-private theorem escape_gives_crossing (t : DepTree)
+private theorem escape_gives_crossing (t : Tree)
     (hwf : t.WF)
     {u v : Nat} (hdisj : disjoint t.deps u v = true)
     {lo hi : Nat} (hlo_hi : lo < hi)
@@ -678,7 +678,7 @@ private theorem escape_gives_crossing (t : DepTree)
       hj_in.1 hj_in.2 hj1_out' (iterParent_chain_linked hchain_k j hj_lt)
 
 /-- Interleaving projections of disjoint subtrees witness non-planarity. -/
-private theorem interleaving_not_planar (t : DepTree)
+private theorem interleaving_not_planar (t : Tree)
     (hwf : t.WF)
     {u v : Nat} (hdisj : disjoint t.deps u v = true)
     {l₁ l₂ r₁ r₂ : Nat}
@@ -741,13 +741,13 @@ private theorem interleaving_not_planar (t : DepTree)
 
 /-- **Planar ⊂ well-nested** for well-formed trees.
     ([kuhlmann-nivre-2006], Theorem 1) -/
-theorem planar_implies_wellNested (t : DepTree)
+theorem planar_implies_wellNested (t : Tree)
     (hwf : t.WF)
     (hplanar : t.isPlanar = true) : t.isWellNested = true := by
   by_contra h_nwn
   have h_false : t.isWellNested = false := by
     cases h : t.isWellNested with | true => exact absurd h h_nwn | false => rfl
-  simp only [DepTree.isWellNested, Bool.not_eq_true'] at h_false
+  simp only [Tree.isWellNested, Bool.not_eq_true'] at h_false
   have h_any : (List.range t.words.length |>.any fun u =>
     List.range t.words.length |>.any fun v =>
       u != v && disjoint t.deps u v &&
@@ -780,11 +780,11 @@ theorem planar_implies_wellNested (t : DepTree)
 
 /-- Non-projective ⇒ gap degree ≥ 1. Contrapositive of
     `projective_iff_gapDegree_zero`. -/
-theorem nonProjective_implies_gapDeg_ge1 (t : DepTree)
+theorem nonProjective_implies_gapDeg_ge1 (t : Tree)
     (h : isProjective t = false) : t.gapDegree ≥ 1 := by
   by_contra hlt
   have hzero : t.gapDegree = 0 := by omega
   have := (projective_iff_gapDegree_zero t).mpr hzero
   simp [this] at h
 
-end DepGrammar
+end DependencyGrammar

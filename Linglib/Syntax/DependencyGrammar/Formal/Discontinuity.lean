@@ -40,10 +40,10 @@ phrase-structure grammar with a single tree-level predicate.
   `decide` proofs reduce; see `Syntax/DependencyGrammar/Projection.lean`.
 -/
 
-namespace DepGrammar.Discontinuity
+namespace DependencyGrammar.Discontinuity
 
 
-open DepGrammar
+open DependencyGrammar
 
 /-! ### Discontinuity classification -/
 
@@ -84,7 +84,7 @@ def isContiguous (nodes : List Nat) : Bool :=
 /-- A **risen catena** ([osborne-2019], Ch 7 §7.10) is a catena whose
     string yield is not contiguous — connected in the dependency tree but
     separated in linear order by intervening material. -/
-def isRisenCatena (t : DepTree) (nodes : List Nat) : Bool :=
+def isRisenCatena (t : Tree) (nodes : List Nat) : Bool :=
   Catena.isCatena t.deps nodes && !isContiguous nodes
 
 /-- Classify a dependency as rising or lowering by whether the dependent
@@ -96,7 +96,7 @@ def classifyDisplacement (d : Dependency) : DisplacementDir :=
 
 /-- **Wh-fronting**: "What did you eat?". The catena `{what(0), eat(3)}` is
     risen — connected via `obj` but `did(1), you(2)` intervene. -/
-def whFrontingTree : DepTree :=
+def whFrontingTree : Tree :=
   { words := [ { form :="what", cat := .PRON, features := { pronType := some .Int }}, Word.mk' "did" .AUX
              , Word.mk' "you" .PRON, Word.mk' "eat" .VERB ]
     deps := [⟨3, 2, .nsubj⟩, ⟨3, 0, .obj⟩, ⟨3, 1, .aux⟩]
@@ -108,7 +108,7 @@ def whFrontingArc : Dependency := ⟨3, 0, .obj⟩
 /-- **Topicalization**: "Those ideas I do accept". The catena
     `{ideas(1), accept(4)}` is risen — connected via `obj` but `I(2), do(3)`
     intervene. -/
-def topicalizationTree : DepTree :=
+def topicalizationTree : Tree :=
   { words := [ Word.mk' "those" .DET, Word.mk' "ideas" .NOUN
              , Word.mk' "I" .PRON, Word.mk' "do" .AUX
              , Word.mk' "accept" .VERB ]
@@ -121,7 +121,7 @@ def topicalizationArc : Dependency := ⟨4, 1, .obj⟩
 
 /-- **Scrambling** (German): "dass uns Maria etwas gebacken hat". The catena
     `{uns(1), gebacken(4)}` is risen — `uns` is scrambled past the subject. -/
-def scramblingTree : DepTree :=
+def scramblingTree : Tree :=
   { words := [ Word.mk' "dass" .SCONJ, Word.mk' "uns" .PRON
              , Word.mk' "Maria" .PROPN, Word.mk' "etwas" .PRON
              , Word.mk' "gebacken" .VERB, Word.mk' "hat" .AUX ]
@@ -131,7 +131,7 @@ def scramblingTree : DepTree :=
 
 /-- **Extraposition**: "The idea arose to try again". The catena
     `{idea(1), try(4)}` is risen — `arose(2), to(3)` intervene. Lowering. -/
-def extrapositionTree : DepTree :=
+def extrapositionTree : Tree :=
   { words := [ Word.mk' "the" .DET, Word.mk' "idea" .NOUN
              , Word.mk' "arose" .VERB, Word.mk' "to" .PART
              , Word.mk' "try" .VERB, Word.mk' "again" .ADV ]
@@ -144,7 +144,7 @@ def extrapositionArc : Dependency := ⟨1, 4, .acl⟩
 
 /-- **Right dislocation**: "He's nice, that boy". The catena
     `{nice(2), boy(4)}` is risen — `that(3)` intervenes. -/
-def rightDislocationTree : DepTree :=
+def rightDislocationTree : Tree :=
   { words := [ Word.mk' "he" .PRON, Word.mk' "is" .AUX
              , Word.mk' "nice" .ADJ, Word.mk' "that" .DET
              , Word.mk' "boy" .NOUN ]
@@ -182,4 +182,4 @@ theorem topicalization_is_rising :
 theorem extraposition_is_lowering :
     classifyDisplacement extrapositionArc = .lowering := by decide
 
-end DepGrammar.Discontinuity
+end DependencyGrammar.Discontinuity

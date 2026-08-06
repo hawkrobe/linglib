@@ -10,8 +10,8 @@ open Morphology (Word)
 Worked English examples illustrating Universal Dependencies' basic vs
 enhanced representations (cf. §4.2 and Figure 9 of
 [de-marneffe-nivre-2019]). The substrate — gap-filling
-(`DepGrammar.LongDistance.fillGap`) and shared-dependent propagation
-(`DepGrammar.Coordination.enhanceSharedDeps`) — lives in the corresponding
+(`DependencyGrammar.LongDistance.fillGap`) and shared-dependent propagation
+(`DependencyGrammar.Coordination.enhanceSharedDeps`) — lives in the corresponding
 substrate files.
 
 ## Examples
@@ -48,28 +48,28 @@ feature-tagged fixtures if richer parallelism theorems are wanted.
 namespace DeMarneffeNivre2019
 
 
-open DepGrammar DepGrammar.LongDistance DepGrammar.Coordination
+open DependencyGrammar DependencyGrammar.LongDistance DependencyGrammar.Coordination
 
 /-! ### Wh-question fixtures -/
 
 /-- "What did John see?" — object wh-question (basic tree).
 Words: what(0) did(1) John(2) see(3). The wh-word attaches as `obj` of
 the main verb. -/
-def exWhatDidJohnSee : DepTree :=
+def exWhatDidJohnSee : Tree :=
   { words := [{ form :="what", cat := .PRON, features := { pronType := some .Int }}, Word.mk' "did" .AUX,
               Word.mk' "John" .PROPN, Word.mk' "see" .VERB]
     deps  := [⟨1, 2, .nsubj⟩, ⟨1, 3, .aux⟩, ⟨1, 0, .obj⟩]
     rootIdx := 1 }
 
 /-- "Who saw Mary?" — subject wh-question (no gap needed). -/
-def exWhoSawMary : DepTree :=
+def exWhoSawMary : Tree :=
   { words := [{ form :="who", cat := .PRON, features := { pronType := some .Int }}, Word.mk' "saw" .VERB,
               Word.mk' "Mary" .PROPN]
     deps  := [⟨1, 0, .nsubj⟩, ⟨1, 2, .obj⟩]
     rootIdx := 1 }
 
 /-- "Who did John see?" — object wh-question with `who`. -/
-def exWhoDidJohnSee : DepTree :=
+def exWhoDidJohnSee : Tree :=
   { words := [{ form :="who", cat := .PRON, features := { pronType := some .Int }}, Word.mk' "did" .AUX,
               Word.mk' "John" .PROPN, Word.mk' "see" .VERB]
     deps  := [⟨1, 2, .nsubj⟩, ⟨1, 3, .aux⟩, ⟨1, 0, .obj⟩]
@@ -80,7 +80,7 @@ def exWhoDidJohnSee : DepTree :=
 /-- "the book that John read" — object relative clause (basic tree). In UD
 the relative clause attaches via `acl` from head noun to RC verb; the gap
 (`book` as `obj` of `read`) is implicit. -/
-def exTheBookThatJohnRead : DepTree :=
+def exTheBookThatJohnRead : Tree :=
   { words := [Word.mk' "the" .DET, Word.mk' "book" .NOUN,
               Word.mk' "that" .SCONJ, Word.mk' "John" .PROPN,
               Word.mk' "read" .VERB]
@@ -89,13 +89,13 @@ def exTheBookThatJohnRead : DepTree :=
 
 /-- Enhanced graph for "the book that John read": `book` is added as `obj`
 of `read`. -/
-def exTheBookThatJohnRead_enhanced : DepGraph :=
+def exTheBookThatJohnRead_enhanced : Graph :=
   fillGap exTheBookThatJohnRead 1 4 .objGap
 
 /-! ### Complement-clause fixtures -/
 
 /-- "John thinks that Mary sleeps" — that-complement (no gap). -/
-def exJohnThinksThatMarySleeps : DepTree :=
+def exJohnThinksThatMarySleeps : Tree :=
   { words := [Word.mk' "John" .PROPN, Word.mk' "thinks" .VERB,
               Word.mk' "that" .SCONJ, Word.mk' "Mary" .PROPN,
               Word.mk' "sleeps" .VERB]
@@ -103,14 +103,14 @@ def exJohnThinksThatMarySleeps : DepTree :=
     rootIdx := 1 }
 
 /-- "John thinks Mary sleeps" — bare complement (that-omission, no gap). -/
-def exJohnThinksMarySleeps : DepTree :=
+def exJohnThinksMarySleeps : Tree :=
   { words := [Word.mk' "John" .PROPN, Word.mk' "thinks" .VERB,
               Word.mk' "Mary" .PROPN, Word.mk' "sleeps" .VERB]
     deps  := [⟨1, 0, .nsubj⟩, ⟨1, 3, .ccomp⟩, ⟨3, 2, .nsubj⟩]
     rootIdx := 1 }
 
 /-- "John wonders if Mary sleeps" — if-complement (no gap). -/
-def exJohnWondersIfMarySleeps : DepTree :=
+def exJohnWondersIfMarySleeps : Tree :=
   { words := [Word.mk' "John" .PROPN, Word.mk' "wonders" .VERB,
               Word.mk' "if" .SCONJ, Word.mk' "Mary" .PROPN,
               Word.mk' "sleeps" .VERB]
@@ -119,7 +119,7 @@ def exJohnWondersIfMarySleeps : DepTree :=
 
 /-- "John wonders what Mary saw" — embedded wh-question.
 Words: John(0) wonders(1) what(2) Mary(3) saw(4). -/
-def exJohnWondersWhatMarySaw : DepTree :=
+def exJohnWondersWhatMarySaw : Tree :=
   { words := [Word.mk' "John" .PROPN, Word.mk' "wonders" .VERB,
               { form :="what", cat := .PRON, features := { pronType := some .Int }},
               Word.mk' "Mary" .PROPN, Word.mk' "saw" .VERB]
@@ -129,14 +129,14 @@ def exJohnWondersWhatMarySaw : DepTree :=
 /-! ### Coordination fixtures -/
 
 /-- "John and Mary sleep" — NP coordination. -/
-def exJohnAndMarySleep : DepTree :=
+def exJohnAndMarySleep : Tree :=
   { words := [Word.mk' "John" .PROPN, Word.mk' "and" .CCONJ,
               Word.mk' "Mary" .PROPN, Word.mk' "sleep" .VERB]
     deps  := [⟨3, 0, .nsubj⟩, ⟨0, 2, .conj⟩]
     rootIdx := 3 }
 
 /-- "John sleeps and Mary sleeps" — S coordination. -/
-def exJohnSleepsAndMarySleeps : DepTree :=
+def exJohnSleepsAndMarySleeps : Tree :=
   { words := [Word.mk' "John" .PROPN, Word.mk' "sleeps" .VERB,
               Word.mk' "and" .CCONJ, Word.mk' "Mary" .PROPN,
               Word.mk' "sleeps" .VERB]
@@ -145,7 +145,7 @@ def exJohnSleepsAndMarySleeps : DepTree :=
 
 /-- "John sees and hears Mary" — VP coordination (basic tree). `Mary`
 attaches as `obj` of `sees` only; `hears` is `conj` of `sees`. -/
-def exJohnSeesAndHearsMary : DepTree :=
+def exJohnSeesAndHearsMary : Tree :=
   { words := [Word.mk' "John" .PROPN, Word.mk' "sees" .VERB,
               Word.mk' "and" .CCONJ, Word.mk' "hears" .VERB,
               Word.mk' "Mary" .PROPN]
@@ -154,11 +154,11 @@ def exJohnSeesAndHearsMary : DepTree :=
 
 /-- Enhanced graph for "John sees and hears Mary": `Mary` is `obj` of
 *both* `sees` and `hears` (shared-dep propagation). -/
-def exJohnSeesAndHearsMary_enhanced : DepGraph :=
+def exJohnSeesAndHearsMary_enhanced : Graph :=
   enhanceSharedDeps exJohnSeesAndHearsMary
 
 /-- "the happy and smart boy" — adjective coordination. -/
-def exOldAndWiseMan : DepTree :=
+def exOldAndWiseMan : Tree :=
   { words := [Word.mk' "the" .DET, Word.mk' "happy" .ADJ,
               Word.mk' "and" .CCONJ, Word.mk' "smart" .ADJ,
               Word.mk' "boy" .NOUN]
@@ -167,7 +167,7 @@ def exOldAndWiseMan : DepTree :=
 
 /-- "John likes and Mary hates pizza" — Right Node Raising (basic tree).
 `pizza` attaches to `likes` only. -/
-def exRNR : DepTree :=
+def exRNR : Tree :=
   { words := [Word.mk' "John" .PROPN, Word.mk' "likes" .VERB,
               Word.mk' "and" .CCONJ, Word.mk' "Mary" .PROPN,
               Word.mk' "hates" .VERB, Word.mk' "pizza" .NOUN]
@@ -175,7 +175,7 @@ def exRNR : DepTree :=
     rootIdx := 1 }
 
 /-- Enhanced graph for RNR: `pizza` is `obj` of both verbs. -/
-def exRNR_enhanced : DepGraph := enhanceSharedDeps exRNR
+def exRNR_enhanced : Graph := enhanceSharedDeps exRNR
 
 /-! ### Smoke tests -/
 

@@ -21,14 +21,14 @@ complementary distribution, and pronominal disjoint reference.
 namespace Hudson1990
 
 
-open DepGrammar.Coreference
-open DepGrammar.Nominal
+open DependencyGrammar.Coreference
+open DependencyGrammar.Nominal
 open Chomsky1981 (reflexiveCoreferenceData pronominalDisjointReferenceData
   complementaryDistributionData reciprocalCoreferenceData)
 
 /-- English binding under dependency grammar (d-command): the framework-neutral
     engine (`Binding.grammaticalForCoreference`) applied with DG's
-    `CommandRelation` instance (in scope via `open DepGrammar.Coreference`) and
+    `CommandRelation` instance (in scope via `open DependencyGrammar.Coreference`) and
     English's binding-class classifier. `Bool`-valued for `capturesPhenomenonData`. -/
 private def grammaticalForCoreference (ws : List Word) : Bool :=
   decide (Binding.grammaticalForCoreference Binding.bindingClassOf ws)
