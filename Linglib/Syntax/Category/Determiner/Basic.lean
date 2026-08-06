@@ -1,6 +1,7 @@
 import Linglib.Features.Definiteness
 import Linglib.Features.Deixis
 import Linglib.Features.Number.Basic
+import Linglib.Morphology.Word.Basic
 
 /-!
 # Determiner
@@ -80,6 +81,12 @@ structure Determiner where
   /-- Surface form (a representative morpheme or construction label). -/
   form : String
   deriving DecidableEq, Repr
+
+/-- The determiner realized as a `Word`: a bare `.DET`-category token. Shared by
+    every `Determiner` extension via parent projection (`the.toWord`,
+    `this.toWord`); the `Pronoun.toWord` analogue for D-heads. -/
+def Determiner.toWord (d : Determiner) : Morphology.Word :=
+  { form := d.form, cat := .DET, features := {} }
 
 /-- An article: the definite/indefinite determiner. `uses` is the definite
 use-types it obligatorily expones (empty for indefinites). -/
