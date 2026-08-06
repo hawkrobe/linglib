@@ -1,5 +1,5 @@
 import Linglib.Features.Acceptability
-import Linglib.Features.ClauseForm
+import Linglib.Syntax.Clause.Form
 import Linglib.Morphology.Word.Basic
 
 open Morphology (Word)
@@ -31,6 +31,7 @@ namespace Features.MinimalPairs
 
 
 open Features
+open Clause (Form)
 
 /-! ### Word-based -/
 
@@ -45,7 +46,7 @@ structure MinimalPair where
   rhs : List Word
   lhsJudgment : Judgment := .acceptable
   rhsJudgment : Judgment := .ungrammatical
-  clauseType : ClauseForm
+  clauseType : Form
   description : String
   citation : String := ""
   deriving Repr
@@ -95,7 +96,7 @@ structure SentencePair where
   /-- The ungrammatical sentence -/
   ungrammatical : String
   /-- Clause form (declarative, question, etc.) -/
-  clauseType : ClauseForm
+  clauseType : Form
   /-- Description of what the pair tests -/
   description : String
   /-- Citation for the data; empty string for uncited examples. -/

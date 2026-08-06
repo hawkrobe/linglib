@@ -655,7 +655,7 @@ import Linglib.Features.Case.Capabilities
 import Linglib.Features.Case.Grammaticalization
 import Linglib.Features.Case.Source
 import Linglib.Features.Causation
-import Linglib.Features.ClauseForm
+import Linglib.Syntax.Clause.Form
 import Linglib.Features.Clusivity
 import Linglib.Features.Complementation
 import Linglib.Features.ContainmentPair
@@ -2825,8 +2825,9 @@ import Linglib.Syntax.Category.Verb.Selection
 import Linglib.Syntax.Category.Verb.Stem
 import Linglib.Syntax.Clause.Basic
 import Linglib.Syntax.Clause.Chaining
+import Linglib.Syntax.Clause.Construction
 import Linglib.Syntax.Clause.Context
-import Linglib.Syntax.Clause.Nonverbal
+import Linglib.Syntax.Clause.Size
 import Linglib.Syntax.Comparative
 import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
 import Linglib.Syntax.ConstructionGrammar.Basic

@@ -355,10 +355,10 @@ def Verb.codings (v : Verb) : List Complement.Coding :=
   v.frames.flatMap Frame.codings
 
 /-- Some frame of the verb records clause form `cf`. -/
-def Verb.takesClauseForm (v : Verb) (cf : Features.ClauseForm) : Prop :=
+def Verb.takesClauseForm (v : Verb) (cf : Clause.Form) : Prop :=
   ∃ fr ∈ v.frames, fr.hasClauseForm cf
 
-instance (v : Verb) (cf : Features.ClauseForm) :
+instance (v : Verb) (cf : Clause.Form) :
     Decidable (v.takesClauseForm cf) :=
   inferInstanceAs (Decidable (∃ fr ∈ v.frames, _))
 

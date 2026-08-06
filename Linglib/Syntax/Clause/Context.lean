@@ -6,7 +6,7 @@ sentence type (`Clause.SentenceType`, with the interrogative split into
 polar, alternative, and constituent subtypes) and the embedding context
 it occurs in (`Clause.EmbeddingContext`, the [bhatt-dayal-2020] /
 [dayal-2025] question-embedding cells). `Mood.Illocutionary`,
-`Mood.ClauseType`, and `Features.ClauseForm` are coarser cuts of the
+`Mood.ClauseType`, and `Clause.Form` are coarser cuts of the
 first axis. `Features.QParticleLayer` is defined over the second, so a
 particle's layer is derivable from its embedding distribution
 (`Studies/BhattDayal2020`).
@@ -30,13 +30,13 @@ inductive SentenceType where
 namespace SentenceType
 
 /-- The interrogative cells. -/
-def IsInterrogative : SentenceType → Prop
+def Interrogative : SentenceType → Prop
   | polarInterrogative | alternativeInterrogative
   | constituentInterrogative => True
   | _ => False
 
-instance : DecidablePred IsInterrogative := fun c => by
-  cases c <;> simp only [IsInterrogative] <;> infer_instance
+instance : DecidablePred Interrogative := fun c => by
+  cases c <;> simp only [Interrogative] <;> infer_instance
 
 end SentenceType
 

@@ -1,4 +1,4 @@
-import Linglib.Features.ClauseForm
+import Linglib.Syntax.Clause.Form
 
 /-!
 # German Clause Types
@@ -6,7 +6,7 @@ import Linglib.Features.ClauseForm
 German clause-type taxonomy: five clause types distinguished by verb
 position (V2 vs verb-last) and complementizer presence (dass vs not),
 encoded as an indexed refinement of the framework-agnostic
-`Features.ClauseForm`. Descriptive German syntax; the sentence-mood
+`Clause.Form`. Descriptive German syntax; the sentence-mood
 analysis built on this taxonomy ([gutzmann-2015], Ch 5: which mood
 operators each clause type composes) lives in
 `Studies/Gutzmann2015.lean`.
@@ -22,17 +22,17 @@ operators each clause type composes) lives in
 
 namespace German.ClauseTypes
 
-open Features
+open Clause (Form)
 
-/-! ### `GermanClauseType` as `ClauseForm`-indexed inductive
+/-! ### `GermanClauseType` as `Form`-indexed inductive
 
 `GermanClauseType` distinguishes clauses by both verb position (V2 vs
-VL) and complementizer presence (dass vs not), where `ClauseForm` only
+VL) and complementizer presence (dass vs not), where `Form` only
 records the matrix-vs-embedded question / declarative word-order
 distinction. We encode the refinement *structurally* as an indexed
-inductive `GermanClauseType : ClauseForm → Type`:
+inductive `GermanClauseType : Form → Type`:
 
-| `GermanClauseType` | `ClauseForm`        |
+| `GermanClauseType` | `Form`        |
 |--------------------|---------------------|
 | `dassVL`           | `declarative`       |
 | `v2Declarative`    | `declarative`       |
@@ -43,17 +43,17 @@ inductive `GermanClauseType : ClauseForm → Type`:
 Two consequences fall out of the indexing rather than requiring
 separate proof:
 
-1. **No bridge function.** The "projection to `ClauseForm`" is the
+1. **No bridge function.** The "projection to `Form`" is the
    type-level index — `(ct : GermanClauseType f)` witnesses both the
-   refined value *and* its `ClauseForm` projection `f` simultaneously.
+   refined value *and* its `Form` projection `f` simultaneously.
 2. **`(ct : GermanClauseType .matrixQuestion)` is *exactly* the
    v2Interrogative case.** `cases ct` on this type produces a single
    branch, capturing the structural fact that "matrix-question German
    clause" picks out v2Interrogative without auxiliary filtering. -/
 
 /-- German clause types distinguished by verb position and complementizer,
-indexed by their `Features.ClauseForm` projection. -/
-inductive GermanClauseType : ClauseForm → Type where
+indexed by their `Clause.Form` projection. -/
+inductive GermanClauseType : Form → Type where
   /-- dass-VL: complementizer clause, verb-last.
       Form-level: declarative. -/
   | dassVL : GermanClauseType .declarative

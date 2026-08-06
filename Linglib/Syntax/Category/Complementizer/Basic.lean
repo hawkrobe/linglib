@@ -1,5 +1,5 @@
 import Linglib.Data.UD.Basic
-import Linglib.Features.ClauseForm
+import Linglib.Syntax.Clause.Form
 import Linglib.Features.Complementation
 import Linglib.Morphology.Word.Basic
 
@@ -92,7 +92,7 @@ structure Complementizer where
   /-- [noonan-2007] coding of the clause this morpheme types. -/
   coding : Option Complement.Coding := none
   /-- Surface clause form typed. -/
-  clauseForm : Option Features.ClauseForm := none
+  clauseForm : Option Clause.Form := none
   /-- Verb form derived on the host (UD). -/
   verbForm : Option UD.VerbForm := none
   /-- Category of the adjacent licensing projection. -/

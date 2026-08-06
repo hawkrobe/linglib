@@ -76,8 +76,8 @@ clause-embedding verbs). -/
 (§4.3.1). Richer than the bare `Frame.gerund` cell: it records the
 embedded-subject case. -/
 def nominalizedFrame : Frame :=
-  [{ cat := .clausal, coding := some .nominalized,
-     embeddedSubject := some (.overt (some .gen)) }]
+  [.clausal { coding := some .nominalized,
+              embeddedSubject := some (.overt (some .gen)) }]
 
 /-- *hanaxa* 'think ~ remember': 'think' with a bare gɘžɘ-CP, 'remember'
 with a nominalized complement (§4.4.3). The `readings` rows carry the
