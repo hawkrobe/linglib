@@ -84,6 +84,31 @@ def isConsistent (A : List (Index → Prop)) : Prop :=
 def isCompatibleWith (p : Index → Prop) (A : List (Index → Prop)) : Prop :=
   isConsistent (p :: A)
 
+theorem mem_propExtension {p : Index → Prop} {i : Index} :
+    i ∈ propExtension p ↔ p i := Iff.rfl
+
+theorem mem_propIntersection {A : List (Index → Prop)} {i : Index} :
+    i ∈ propIntersection A ↔ ∀ p ∈ A, p i := Iff.rfl
+
+/-- Each premise's extension contains the intersection of the whole set. -/
+theorem propIntersection_subset_propExtension {x : Index → Prop}
+    {A : List (Index → Prop)} (hx : x ∈ A) :
+    propIntersection A ⊆ propExtension x :=
+  fun _ hi => hi x hx
+
+theorem isCompatibleWith_iff_exists {p : Index → Prop} {A : List (Index → Prop)} :
+    isCompatibleWith p A ↔ ∃ i ∈ propIntersection A, p i := by
+  simp only [isCompatibleWith, isConsistent, Set.Nonempty, mem_propIntersection,
+    List.forall_mem_cons]
+  exact ⟨fun ⟨i, hp, hA⟩ => ⟨i, hA, hp⟩, fun ⟨i, hA, hp⟩ => ⟨i, hp, hA⟩⟩
+
+/-- Duality: `p` is compatible with `A` iff `¬p` does not follow from `A`. -/
+theorem isCompatibleWith_iff_not_followsFrom_not {p : Index → Prop}
+    {A : List (Index → Prop)} :
+    isCompatibleWith p A ↔ ¬ followsFrom (fun i => ¬ p i) A := by
+  rw [isCompatibleWith_iff_exists]
+  simp [followsFrom, Set.subset_def, propExtension, not_forall]
+
 /-! ## Kratzer 1977 Definitions 5–6: must/can in view of -/
 
 /-- **Def 5** ([kratzer-1977]): `must p in view of f` at index `i`
@@ -151,7 +176,7 @@ theorem propIntersection_anti_of_subset
 theorem followsFrom_mono_of_subset
     {p : Index → Prop} {A B : List (Index → Prop)}
     (h : A ⊆ B) (hp : followsFrom p A) : followsFrom p B :=
-  fun i hi => hp (propIntersection_anti_of_subset h hi)
+  fun _ hi => hp (propIntersection_anti_of_subset h hi)
 
 /-- `isCompatibleWith` is **anti-monotone** in the premise list: removing
     premises can only make a proposition easier to be compatible with. -/
