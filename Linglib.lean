@@ -741,8 +741,6 @@ import Linglib.Fragments.Cantonese.Particles
 import Linglib.Fragments.Cantonese.Predicates
 import Linglib.Fragments.Cantonese.ResultativeComplements
 import Linglib.Fragments.Chichewa.Reciprocals
-import Linglib.Fragments.Chuj.ModalIndefinites
-import Linglib.Fragments.Chuj.VerbBuilding
 import Linglib.Fragments.Danish.V2
 import Linglib.Fragments.Dargwa.Agreement
 import Linglib.Fragments.Dargwa.Case
@@ -935,7 +933,6 @@ import Linglib.Fragments.Italian.Predicates
 import Linglib.Fragments.Italian.Pronouns
 import Linglib.Fragments.Italian.Questions
 import Linglib.Fragments.Italian.Tense
-import Linglib.Fragments.Jakaltek.AuxiliaryVerbs
 import Linglib.Fragments.Januubi.Negation
 import Linglib.Fragments.Japanese.Adposition
 import Linglib.Fragments.Japanese.Case
@@ -1031,6 +1028,9 @@ import Linglib.Fragments.MauritianCreole.Definiteness
 import Linglib.Fragments.Mayan.Chol.Agreement
 import Linglib.Fragments.Mayan.Chol.ClassifierSystem
 import Linglib.Fragments.Mayan.Chol.Classifiers
+import Linglib.Fragments.Mayan.Chuj.ModalIndefinites
+import Linglib.Fragments.Mayan.Chuj.VerbBuilding
+import Linglib.Fragments.Mayan.Jakaltek.AuxiliaryVerbs
 import Linglib.Fragments.Mayan.Kaqchikel.Agreement
 import Linglib.Fragments.Mayan.Kaqchikel.Extraction
 import Linglib.Fragments.Mayan.Kaqchikel.Focus

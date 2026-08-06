@@ -4,7 +4,7 @@ import Linglib.Semantics.ArgumentStructure.Root.Classification
 import Linglib.Semantics.ArgumentStructure.LevinTheory
 import Linglib.Semantics.ArgumentStructure.EventStructure
 import Linglib.Semantics.ArgumentStructure.RoleList
-import Linglib.Fragments.Chuj.VerbBuilding
+import Linglib.Fragments.Mayan.Chuj.VerbBuilding
 
 /-!
 # Cross-Linguistic Typology of Change-of-State Verbs

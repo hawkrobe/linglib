@@ -5,7 +5,7 @@ import Linglib.Fragments.Finnish.Negation
 import Linglib.Fragments.Doyayo.AuxiliaryVerbs
 import Linglib.Fragments.Gorum.AuxiliaryVerbs
 import Linglib.Fragments.Hemba.AuxiliaryVerbs
-import Linglib.Fragments.Jakaltek.AuxiliaryVerbs
+import Linglib.Fragments.Mayan.Jakaltek.AuxiliaryVerbs
 import Linglib.Fragments.Pipil.AuxiliaryVerbs
 import Linglib.Syntax.Negation
 import Linglib.Studies.Sorace2000
