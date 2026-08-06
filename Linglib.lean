@@ -2841,7 +2841,6 @@ import Linglib.Syntax.Coordination
 import Linglib.Syntax.DependencyGrammar.Basic
 import Linglib.Syntax.DependencyGrammar.Coordination
 import Linglib.Syntax.DependencyGrammar.Coreference
-import Linglib.Syntax.DependencyGrammar.Dominance
 import Linglib.Syntax.DependencyGrammar.Formal.Catena
 import Linglib.Syntax.DependencyGrammar.Formal.CatenalConstruction
 import Linglib.Syntax.DependencyGrammar.Formal.CoordinationParallelism

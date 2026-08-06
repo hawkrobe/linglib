@@ -149,6 +149,41 @@ def Graph.blockDegree (g : Graph n) : Nat :=
 def isProjective (g : Graph n) : Bool :=
   (List.finRange n).all λ v => isInterval (projectionVals g v)
 
+/-! ### Well-formedness and the parent map -/
+
+/-- Every position except the root has exactly one head, and the root none. -/
+def hasUniqueHeads (g : Graph n) : Bool :=
+  (List.finRange n).all λ i =>
+    g.inDegree i == (if i == g.root then 0 else 1)
+
+/-- No cycles: no position dominates itself through a child. Stated through
+    decidable dominance rather than a fuel-bounded chase. -/
+def isAcyclic (g : Graph n) : Bool :=
+  (List.finRange n).all λ v =>
+    !(g.children v).any λ w => decide (Dominates g w v)
+
+/-- The graph is a dependency tree: single-headed and acyclic. On `Fin n`
+    these two imply rootedness and connectivity — every non-root position's
+    head chain terminates at the unique in-degree-0 position, the root. -/
+structure Graph.IsTree (g : Graph n) : Prop where
+  uniqueHeads : hasUniqueHeads g = true
+  acyclic : isAcyclic g = true
+
+/-- No arc closes a dominance cycle, from `isAcyclic`. -/
+theorem not_adj_dominates {g : Graph n} (hacyc : isAcyclic g = true)
+    {v w : Fin n} (hadj : g.Adj v w) (hdom : Dominates g w v) : False := by
+  have h := List.all_eq_true.mp hacyc v (List.mem_finRange v)
+  simp only [Bool.not_eq_eq_eq_not, Bool.not_true, List.any_eq_false] at h
+  exact absurd (decide_eq_true hdom)
+    (by simpa using h w (Graph.mem_children.mpr hadj))
+
+/-- Dominance is antisymmetric on acyclic graphs. -/
+theorem Dominates.antisymm {g : Graph n} (hacyc : isAcyclic g = true)
+    {v w : Fin n} (hvw : Dominates g v w) (hwv : Dominates g w v) : v = w := by
+  rcases Relation.ReflTransGen.cases_head hvw with rfl | ⟨u, hvu, huw⟩
+  · rfl
+  · exact absurd (huw.trans hwv) (λ h => not_adj_dominates hacyc hvu h)
+
 end Projection
 
 end DependencyGrammar

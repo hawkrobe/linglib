@@ -22,8 +22,8 @@ artificial root token, following [kuhlmann-nivre-2006].
   `Digraph`, and `Graph.ofArcs` the constructor from CoNLL-U-style arc
   lists.
 * `Graph.parents`, `children`, `inDegree` — the local graph API.
-* `Graph.IsTree` — the graph is a dependency tree (single-headed, acyclic);
-  tree-hood is a property of a graph, not a separate structure.
+* Well-formedness (`hasUniqueHeads`, `isAcyclic`, `Graph.IsTree`) lives in
+  `Projection.lean`, beside the dominance relation it is stated through.
 
 ## Implementation notes
 
@@ -109,41 +109,6 @@ def ofArcs (words : List Word) (root : Fin words.length)
     root }
 
 end Graph
-
-/-! ### Well-formedness -/
-
-section WellFormedness
-
-variable {n : ℕ}
-
-/-- Every position except the root has exactly one head, and the root none. -/
-def hasUniqueHeads (t : Graph n) : Bool :=
-  (List.finRange n).all λ i =>
-    t.inDegree i == (if i == t.root then 0 else 1)
-
-/-- No position is its own ancestor: following heads from any position
-    terminates without revisiting. -/
-def isAcyclic (t : Graph n) : Bool :=
-  (List.finRange n).all λ start =>
-    let rec follow (current : Fin n) (visited : List (Fin n)) (fuel : Nat) : Bool :=
-      match fuel with
-      | 0 => true
-      | fuel' + 1 =>
-        if visited.contains current then false
-        else
-          match (t.parents current).head? with
-          | some p => follow p (current :: visited) fuel'
-          | none => true
-    follow start [] (n + 1)
-
-/-- The graph is a dependency tree: single-headed and acyclic. On `Fin n`
-    these two imply rootedness and connectivity — every non-root position's
-    head chain terminates at the unique in-degree-0 position, the root. -/
-structure Graph.IsTree (t : Graph n) : Prop where
-  uniqueHeads : hasUniqueHeads t = true
-  acyclic : isAcyclic t = true
-
-end WellFormedness
 
 /-! ### Agreement -/
 
