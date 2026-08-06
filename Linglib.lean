@@ -2835,10 +2835,10 @@ import Linglib.Syntax.Control.Defs
 import Linglib.Syntax.Control.Diagnostics
 import Linglib.Syntax.Coordination
 import Linglib.Syntax.DependencyGrammar.Basic
-import Linglib.Syntax.DependencyGrammar.Formal.Catena
-import Linglib.Syntax.DependencyGrammar.Formal.DependencyLength
-import Linglib.Syntax.DependencyGrammar.Formal.EnhancedDependencies
-import Linglib.Syntax.DependencyGrammar.Formal.NonProjective
+import Linglib.Syntax.DependencyGrammar.Catena
+import Linglib.Syntax.DependencyGrammar.DependencyLength
+import Linglib.Syntax.DependencyGrammar.EnhancedDependencies
+import Linglib.Syntax.DependencyGrammar.NonProjective
 import Linglib.Syntax.DependencyGrammar.Projection
 import Linglib.Syntax.DependencyGrammar.Valency
 import Linglib.Syntax.Extraction

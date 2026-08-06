@@ -1,5 +1,5 @@
 import Linglib.Processing.Memory.SurprisalTradeoff
-import Linglib.Syntax.DependencyGrammar.Formal.DependencyLength
+import Linglib.Syntax.DependencyGrammar.DependencyLength
 import Linglib.Data.WALS.Languages
 
 /-!
