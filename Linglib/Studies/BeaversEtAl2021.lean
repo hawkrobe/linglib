@@ -4,7 +4,7 @@ import Linglib.Semantics.ArgumentStructure.Root.Classification
 import Linglib.Semantics.ArgumentStructure.LevinTheory
 import Linglib.Semantics.ArgumentStructure.EventStructure
 import Linglib.Semantics.ArgumentStructure.RoleList
-import Linglib.Fragments.Mayan.Chuj.VerbBuilding
+import Linglib.Studies.Coon2019
 
 /-!
 # Cross-Linguistic Typology of Change-of-State Verbs
@@ -807,10 +807,28 @@ theorem unattested_type_matches_complementarity :
   intro ct; cases ct <;> decide
 
 -- ════════════════════════════════════════════════════
--- § 13. Fragment Grounding: Chuj Roots Instantiate Theory ([coon-2019])
+-- § 13. Chuj Root Grounding ([coon-2019])
 -- ════════════════════════════════════════════════════
 
 open Chuj
+
+/-- [beavers-etal-2021]'s result-root row for [coon-2019]'s √TV class:
+    the shared coordinates are `CRootClass.toClassification`; only the
+    change-entailment column is this paper's subdivision (Coon does not
+    subdivide √TV). -/
+def rootTV_res : Classification :=
+  { CRootClass.tv.toClassification with changeType := .result }
+
+/-- The property-concept row of the √TV subdivision (no change
+    entailment). -/
+def rootTV_pc : Classification :=
+  { CRootClass.tv.toClassification with changeType := .propertyConcept }
+
+/-- Coon's √ITV coordinates, reused unchanged. -/
+def rootITV : Classification := CRootClass.itv.toClassification
+
+/-- Coon's √POS coordinates, reused unchanged. -/
+def rootPOS : Classification := CRootClass.pos.toClassification
 
 /-- Chuj √TV result roots instantiate the theory's result root predictions:
     entails change, no simple stative, unmarked verb. -/
