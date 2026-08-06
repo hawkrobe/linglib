@@ -78,4 +78,27 @@ theorem isMorphome_syncretismClass (p : Cell → F) (Natural : Set Cell → Prop
     IsMorphome p Natural (syncretismClass p a) :=
   ⟨syncretismClass_mem_classes p a, hnt, hnat⟩
 
+/-! ### Shared exponents in segmented realizations
+
+Whole-form kernels cannot see a *piece* shared across cells whose full
+forms differ (Chuj -aj inside *-chaj* and *-waj*, `Studies/Coon2019`).
+For a realization map valued in exponent sequences, `exponentCells`
+tracks a piece's distribution; whether that distribution is a natural
+class is then the same question `IsMorphome` asks of whole-form
+classes. -/
+
+variable {E : Type*}
+
+/-- The cells whose segmented realization contains the exponent `e` —
+the piece-level analogue of `syncretismClass`. -/
+def exponentCells (p : Cell → List E) (e : E) : Set Cell := {c | e ∈ p c}
+
+@[simp] theorem mem_exponentCells {p : Cell → List E} {e : E} {c : Cell} :
+    c ∈ exponentCells p e ↔ e ∈ p c := Iff.rfl
+
+/-- Wholly syncretic cells agree on every shared exponent. -/
+theorem exponentCells_congr (p : Cell → List E) (e : E) {c₁ c₂ : Cell}
+    (h : p c₁ = p c₂) : c₁ ∈ exponentCells p e ↔ c₂ ∈ exponentCells p e := by
+  simp [h]
+
 end Morphology
