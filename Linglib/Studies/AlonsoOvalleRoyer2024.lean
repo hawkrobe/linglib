@@ -1,7 +1,7 @@
 import Linglib.Features.ModalIndefinite
 import Linglib.Semantics.Modality.EventRelativity
 import Linglib.Studies.Coon2019
-import Linglib.Fragments.Chuj.ModalIndefinites
+import Linglib.Fragments.Mayan.Chuj.ModalIndefinites
 import Linglib.Fragments.Spanish.ModalIndefinites
 import Linglib.Fragments.German.ModalIndefinites
 import Linglib.Fragments.Romance.French.ModalIndefinites
@@ -19,7 +19,7 @@ the event-relative modality theory ([hacquard-2006], formalized in
 `Semantics/Modality/EventRelativity`) to empirical observations.
 
 Lexical entries are defined in Fragment files (single source of truth):
-- `Fragments/Chuj/ModalIndefinites.lean`: *yalnhej*, *komon*
+- `Fragments/Mayan/Chuj/ModalIndefinites.lean`: *yalnhej*, *komon*
 - `Fragments/Spanish/ModalIndefinites.lean`: *algún*, *uno cualquiera*
 - `Fragments/German/ModalIndefinites.lean`: *irgendein*
 - `Fragments/French/ModalIndefinites.lean`: *n'importe quel*

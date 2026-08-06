@@ -1,6 +1,6 @@
 import Linglib.Semantics.ArgumentStructure.Root.Classification
 import Linglib.Syntax.Minimalist.Verbal.Voice
-import Linglib.Fragments.Chuj.VerbBuilding
+import Linglib.Fragments.Mayan.Chuj.VerbBuilding
 
 /-!
 # Chuj Verb Building: Empirical Data and Bridge Theorems
@@ -12,7 +12,7 @@ in Chuj: Consequences for the nature of roots." *Journal of Linguistics*
 
 Theory-neutral data (root classes, voice morphology, paradigm grammaticality,
 -aj distribution, agent diagnostics, root lexicon) lives in the Chuj fragment
-(`Fragments/Chuj/VerbBuilding.lean`). This file provides:
+(`Fragments/Mayan/Chuj/VerbBuilding.lean`). This file provides:
 
 ## Paradigm examples (§§1–2)
 
