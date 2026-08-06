@@ -124,10 +124,10 @@ def questionParticles : List Particle := [denn, dochWohl]
 the clause-type facet (dass-VL clauses exclude modal particles). -/
 def licensedInClause (p : Particle) : GermanClauseType → Bool
   | .dassVL          => false
-  | .v2Declarative   => decide (p.LicensedIn .declarative)
-  | .v2Interrogative => decide (p.LicensedIn .polarInterrogative)
-  | .vlInterrogative => decide (p.LicensedIn .constituentInterrogative)
-  | .imperative      => decide (p.LicensedIn .imperative)
+  | .v2Declarative   => decide (p.LicensedIn (·.declarative))
+  | .v2Interrogative => decide (p.LicensedIn (·.polarInterrogative))
+  | .vlInterrogative => decide (p.LicensedIn (·.constituentInterrogative))
+  | .imperative      => decide (p.LicensedIn (·.imperative))
 
 /-- Every MP is excluded from dass-VL clauses. -/
 theorem all_excluded_from_dassVL :
