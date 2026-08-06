@@ -27,7 +27,7 @@ lengths match the printed diagrams.
 namespace FutrellEtAl2020
 
 open Morphology (Word)
-open DepGrammar DepGrammar.DependencyLength
+open DependencyGrammar DependencyGrammar.DependencyLength
 open English.Nouns English.Predicates.Verbal English.Pronouns English.Determiners
   English.FunctionWords English.Auxiliaries
 
@@ -49,7 +49,7 @@ only mildly. -/
 
 /-- Example (3): "I think a woman arrived who you know" — extraposed
     relative clause. -/
-def extraposition : DepTree :=
+def extraposition : Tree :=
   { words := [i.toWord, think.toWordBase, a.toWord, woman.toWordSg, arrive.toWordPast,
               who.toWord, you.toWord, know.toWordBase]
     deps := [⟨1, 0, .nsubj⟩, ⟨1, 4, .ccomp⟩, ⟨4, 3, .nsubj⟩, ⟨3, 2, .det⟩,
@@ -57,7 +57,7 @@ def extraposition : DepTree :=
     rootIdx := 1 }
 
 /-- Example (4): "I know what he thinks you did yesterday" — wh-movement. -/
-def whMovement : DepTree :=
+def whMovement : Tree :=
   { words := [i.toWord, know.toWordBase, what.toWord, he.toWord, think.toWord3sg,
               you.toWord, did.toWord, Word.mk' "yesterday" .ADV]
     deps := [⟨1, 0, .nsubj⟩, ⟨1, 4, .ccomp⟩, ⟨4, 3, .nsubj⟩, ⟨4, 6, .ccomp⟩,
@@ -80,28 +80,28 @@ long-before-short order does. The paper cites experimental evidence for
 the latter from Japanese, where heavy elements shift leftward. -/
 
 /-- (7a) A [B] [C D] [E F G]: dependents short-to-long after the head. -/
-def shortBeforeLong : DepTree :=
+def shortBeforeLong : Tree :=
   { words := [tok "A", tok "B", tok "C", tok "D", tok "E", tok "F", tok "G"]
     deps := [⟨0, 1, .dep⟩, ⟨0, 2, .dep⟩, ⟨2, 3, .dep⟩, ⟨0, 4, .dep⟩,
              ⟨4, 5, .dep⟩, ⟨4, 6, .dep⟩]
     rootIdx := 0 }
 
 /-- (7b) A [B C D] [E F] [G]: dependents long-to-short after the head. -/
-def longBeforeShort : DepTree :=
+def longBeforeShort : Tree :=
   { words := [tok "A", tok "B", tok "C", tok "D", tok "E", tok "F", tok "G"]
     deps := [⟨0, 1, .dep⟩, ⟨1, 2, .dep⟩, ⟨1, 3, .dep⟩, ⟨0, 4, .dep⟩,
              ⟨4, 5, .dep⟩, ⟨0, 6, .dep⟩]
     rootIdx := 0 }
 
 /-- (8a) [A B C] [D E] [F] G: the mirror image of (7a), head-final. -/
-def longBeforeShortHF : DepTree :=
+def longBeforeShortHF : Tree :=
   { words := [tok "A", tok "B", tok "C", tok "D", tok "E", tok "F", tok "G"]
     deps := [⟨2, 0, .dep⟩, ⟨2, 1, .dep⟩, ⟨4, 3, .dep⟩, ⟨6, 2, .dep⟩,
              ⟨6, 4, .dep⟩, ⟨6, 5, .dep⟩]
     rootIdx := 6 }
 
 /-- (8b) [A] [B C] [D E F] G: the mirror image of (7b), head-final. -/
-def shortBeforeLongHF : DepTree :=
+def shortBeforeLongHF : Tree :=
   { words := [tok "A", tok "B", tok "C", tok "D", tok "E", tok "F", tok "G"]
     deps := [⟨2, 1, .dep⟩, ⟨5, 3, .dep⟩, ⟨5, 4, .dep⟩, ⟨6, 0, .dep⟩,
              ⟨6, 2, .dep⟩, ⟨6, 5, .dep⟩]
@@ -134,13 +134,13 @@ exceptions (e.g. prenominal determiners in otherwise head-initial
 Spanish). -/
 
 /-- (9a) chain A → B → C → D linearized consistently: A B C D. -/
-def consistentChain : DepTree :=
+def consistentChain : Tree :=
   { words := [tok "A", tok "B", tok "C", tok "D"]
     deps := [⟨0, 1, .dep⟩, ⟨1, 2, .dep⟩, ⟨2, 3, .dep⟩]
     rootIdx := 0 }
 
 /-- (9b) the same chain linearized with mixed head direction: A C D B. -/
-def mixedChain : DepTree :=
+def mixedChain : Tree :=
   { words := [tok "A", tok "C", tok "D", tok "B"]
     deps := [⟨0, 3, .dep⟩, ⟨3, 1, .dep⟩, ⟨1, 2, .dep⟩]
     rootIdx := 0 }
@@ -149,7 +149,7 @@ def mixedChain : DepTree :=
 theorem consistent_chain_shorter :
     totalDepLength consistentChain < totalDepLength mixedChain := by decide
 
-open DepGrammar.HarmonicOrder in
+open DependencyGrammar.HarmonicOrder in
 /-- The consistent chain achieves the substrate's span lower bound; the mixed
     linearization exceeds it. -/
 theorem consistent_chain_achieves_span :
@@ -157,13 +157,13 @@ theorem consistent_chain_achieves_span :
     chainTDL [0, 3, 1, 2] > listSpan [0, 3, 1, 2] := by decide
 
 /-- (10a) A B C D: both dependents (B and C–D) after the head A. -/
-def dependentsSameSide : DepTree :=
+def dependentsSameSide : Tree :=
   { words := [tok "A", tok "B", tok "C", tok "D"]
     deps := [⟨0, 1, .dep⟩, ⟨0, 2, .dep⟩, ⟨2, 3, .dep⟩]
     rootIdx := 0 }
 
 /-- (10b) B A C D: the one-word dependent moved before the head. -/
-def dependentsSplit : DepTree :=
+def dependentsSplit : Tree :=
   { words := [tok "B", tok "A", tok "C", tok "D"]
     deps := [⟨1, 0, .dep⟩, ⟨1, 2, .dep⟩, ⟨2, 3, .dep⟩]
     rootIdx := 1 }
@@ -182,19 +182,19 @@ object, it costs 5 (11 vs. 16) — matching the near-obligatory shift in
 (6c–d). DLM thus derives why heavy NP shift is weight-sensitive. -/
 
 /-- (11a) "John threw out the trash", total dependency length 6. -/
-def lightParticleEarly : DepTree :=
+def lightParticleEarly : Tree :=
   { words := [john.toWordSg, throw.toWordPast, out.toWord, the.toWord, trash.toWordSg]
     deps := [⟨1, 0, .nsubj⟩, ⟨1, 2, .compound⟩, ⟨1, 4, .obj⟩, ⟨4, 3, .det⟩]
     rootIdx := 1 }
 
 /-- (11b) "John threw the trash out", total dependency length 7. -/
-def lightParticleLate : DepTree :=
+def lightParticleLate : Tree :=
   { words := [john.toWordSg, throw.toWordPast, the.toWord, trash.toWordSg, out.toWord]
     deps := [⟨1, 0, .nsubj⟩, ⟨1, 3, .obj⟩, ⟨3, 2, .det⟩, ⟨1, 4, .compound⟩]
     rootIdx := 1 }
 
 /-- (11c) "John threw out the trash sitting in the kitchen", total 11. -/
-def heavyParticleEarly : DepTree :=
+def heavyParticleEarly : Tree :=
   { words := [john.toWordSg, throw.toWordPast, out.toWord, the.toWord, trash.toWordSg,
               sit.toWordPresPart, in_.toWord, the.toWord, kitchen.toWordSg]
     deps := [⟨1, 0, .nsubj⟩, ⟨1, 2, .compound⟩, ⟨1, 4, .obj⟩, ⟨4, 3, .det⟩,
@@ -202,7 +202,7 @@ def heavyParticleEarly : DepTree :=
     rootIdx := 1 }
 
 /-- (11d) "John threw the trash sitting in the kitchen out", total 16. -/
-def heavyParticleLate : DepTree :=
+def heavyParticleLate : Tree :=
   { words := [john.toWordSg, throw.toWordPast, the.toWord, trash.toWordSg,
               sit.toWordPresPart, in_.toWord, the.toWord, kitchen.toWordSg, out.toWord]
     deps := [⟨1, 0, .nsubj⟩, ⟨1, 3, .obj⟩, ⟨3, 2, .det⟩, ⟨3, 4, .acl⟩,
@@ -229,21 +229,21 @@ the paper's illustration of the random-order baseline methodology of
 §4–5, whose Monte-Carlo results are not formalized here. -/
 
 /-- (13a) "this story comes from the AP", the attested order, total 6. -/
-def attestedOrder : DepTree :=
+def attestedOrder : Tree :=
   { words := [this_, story.toWordSg, come.toWord3sg, from_.toWord, the.toWord, ap]
     deps := [⟨1, 0, .det⟩, ⟨2, 1, .nsubj⟩, ⟨2, 3, .obl⟩, ⟨3, 5, .obl⟩,
              ⟨5, 4, .det⟩]
     rootIdx := 2 }
 
 /-- (13b) reordering "from AP the this story comes", total 9. -/
-def reorderingB : DepTree :=
+def reorderingB : Tree :=
   { words := [from_.toWord, ap, the.toWord, this_, story.toWordSg, come.toWord3sg]
     deps := [⟨4, 3, .det⟩, ⟨5, 4, .nsubj⟩, ⟨5, 0, .obl⟩, ⟨0, 1, .obl⟩,
              ⟨1, 2, .det⟩]
     rootIdx := 5 }
 
 /-- (13c) reordering "comes AP the from story this", total 11. -/
-def reorderingC : DepTree :=
+def reorderingC : Tree :=
   { words := [come.toWord3sg, ap, the.toWord, from_.toWord, story.toWordSg, this_]
     deps := [⟨4, 5, .det⟩, ⟨0, 4, .nsubj⟩, ⟨0, 3, .obl⟩, ⟨3, 1, .obl⟩,
              ⟨1, 2, .det⟩]

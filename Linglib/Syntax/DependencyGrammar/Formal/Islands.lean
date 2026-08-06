@@ -34,10 +34,10 @@ extraction that produces a risen catena with non-contiguous yield.
   `OsborneIslandType` becomes a refinement mapping onto it.
 -/
 
-namespace DepGrammar.Islands
+namespace DependencyGrammar.Islands
 
 
-open DepGrammar Catena Discontinuity
+open DependencyGrammar Catena Discontinuity
 
 /-! ### Extended island taxonomy -/
 
@@ -68,7 +68,7 @@ Each tree models a sentence where extraction from an island creates a risen
 catena whose rising catena violates the corresponding island constraint. -/
 
 /-- DG tree for the left-branch island *"Whose do you like house?". -/
-def islandLeftBranch : DepTree :=
+def islandLeftBranch : Tree :=
   { words := [ { form :="whose", cat := .DET, features := { pronType := some .Int }}, Word.mk' "do" .AUX
              , Word.mk' "you" .PRON, Word.mk' "like" .VERB
              , Word.mk' "house" .NOUN ]
@@ -78,7 +78,7 @@ def islandLeftBranch : DepTree :=
 
 /-- DG tree for the subject island *"Which car did the driver of ignore the light?"
 ([osborne-2019], §9.7, ex. 48). -/
-def islandSubject : DepTree :=
+def islandSubject : Tree :=
   { words := [ { form :="which", cat := .DET, features := { pronType := some .Int }}, Word.mk' "car" .NOUN
              , Word.mk' "did" .AUX, Word.mk' "the" .DET
              , Word.mk' "driver" .NOUN, Word.mk' "of" .ADP
@@ -92,7 +92,7 @@ def islandSubject : DepTree :=
 
 /-- DG tree for the adjunct island *"What do they argue before cleaning?"
 ([osborne-2019], §9.8, ex. 50b/59, simplified). -/
-def islandAdjunct : DepTree :=
+def islandAdjunct : Tree :=
   { words := [ { form :="what", cat := .PRON, features := { pronType := some .Int }}, Word.mk' "do" .AUX
              , Word.mk' "they" .PRON, Word.mk' "argue" .VERB
              , Word.mk' "before" .SCONJ, Word.mk' "cleaning" .VERB ]
@@ -102,7 +102,7 @@ def islandAdjunct : DepTree :=
 
 /-- DG tree for the wh-island *"Which judge might they inquire surprised?"
 ([osborne-2019], §9.9, ex. 61b', simplified). -/
-def islandWhIsland : DepTree :=
+def islandWhIsland : Tree :=
   { words := [ { form :="which", cat := .DET, features := { pronType := some .Int }}, Word.mk' "judge" .NOUN
              , Word.mk' "might" .AUX, Word.mk' "they" .PRON
              , Word.mk' "inquire" .VERB, Word.mk' "surprised" .VERB ]
@@ -113,7 +113,7 @@ def islandWhIsland : DepTree :=
 
 /-- DG tree for the specified-NP island ??"Who did you find those pictures of?"
 ([osborne-2019], §9.6, ex. 36b). -/
-def islandSpecifiedNP : DepTree :=
+def islandSpecifiedNP : Tree :=
   { words := [ { form :="who", cat := .PRON, features := { pronType := some .Int }}, Word.mk' "did" .AUX
              , Word.mk' "you" .PRON, Word.mk' "find" .VERB
              , Word.mk' "those" .DET, Word.mk' "pictures" .NOUN
@@ -164,4 +164,4 @@ theorem whIsland_extraction_risen :
 theorem specifiedNP_extraction_risen :
     isRisenCatena islandSpecifiedNP [0, 6] = true := by decide
 
-end DepGrammar.Islands
+end DependencyGrammar.Islands

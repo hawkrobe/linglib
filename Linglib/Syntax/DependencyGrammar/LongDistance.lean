@@ -14,8 +14,8 @@ from the gap-host word to the filler.
 * `GapType` — the four core UD argument positions a missing element may fill
   (subject, object, indirect object, oblique).
 * `gapToDepRel` — the UD `DepRel` corresponding to a `GapType`.
-* `fillGap` — enhanced-edge construction: produce a `DepGraph` from a basic
-  `DepTree` by appending an edge that records gap-filling.
+* `fillGap` — enhanced-edge construction: produce a `Graph` from a basic
+  `Tree` by appending an edge that records gap-filling.
 * `extractionLabel` — recover the gap-type label at a node by diffing the basic
   tree against the enhanced graph.
 * `checkNoIslandViolation` — coarse modifier/conjunct heuristic over a list of
@@ -25,7 +25,7 @@ from the gap-host word to the filler.
 
 ## Implementation notes
 
-* The `Bool`-valued predicates follow `DepGrammar.isWellFormed`'s substrate
+* The `Bool`-valued predicates follow `DependencyGrammar.isWellFormed`'s substrate
   convention; converting them to `Prop` + `Decidable` is a substrate-wide
   refactor not done here.
 * `hasGapInModifierOrConjunct` is deliberately coarse: it flags any gap whose
@@ -45,9 +45,9 @@ from the gap-host word to the filler.
   labels all specialise a shared interface.
 -/
 
-namespace DepGrammar.LongDistance
+namespace DependencyGrammar.LongDistance
 
-open DepGrammar
+open DependencyGrammar
 
 /-! ### Gap types and the UD relation map -/
 
@@ -71,8 +71,8 @@ inductive GapType where
 
 /-- Add a single enhanced edge to `t`: the filler becomes a dependent of the
 gap host with the UD relation corresponding to `gapType`. -/
-def fillGap (t : DepTree) (fillerIdx gapHostIdx : Nat) (gapType : GapType) :
-    DepGraph :=
+def fillGap (t : Tree) (fillerIdx gapHostIdx : Nat) (gapType : GapType) :
+    Graph :=
   { words := t.words
     deps  := t.deps ++ [⟨gapHostIdx, fillerIdx, gapToDepRel gapType⟩]
     rootIdx := t.rootIdx }
@@ -80,7 +80,7 @@ def fillGap (t : DepTree) (fillerIdx gapHostIdx : Nat) (gapType : GapType) :
 /-- Recover the gap-type label at `nodeIdx` by diffing `basic` against
 `enhanced`: returns the first enhanced-only argument-shaped edge's `GapType`,
 or `none`. -/
-def extractionLabel (basic : DepTree) (enhanced : DepGraph) (nodeIdx : Nat) :
+def extractionLabel (basic : Tree) (enhanced : Graph) (nodeIdx : Nat) :
     Option GapType :=
   let enhancedOnly := enhanced.deps.filter λ d =>
     d.depIdx == nodeIdx &&
@@ -99,12 +99,12 @@ def extractionLabel (basic : DepTree) (enhanced : DepGraph) (nodeIdx : Nat) :
 
 /-- Coarse check: does the word at `gapIdx` head an `nmod` or `conj` relation.
 This does *not* recognise any of the four classical Ross-1967 islands. -/
-def hasGapInModifierOrConjunct (t : DepTree) (gapIdx : Nat) : Bool :=
+def hasGapInModifierOrConjunct (t : Tree) (gapIdx : Nat) : Bool :=
   t.deps.any λ d =>
     (d.depType == .nmod || d.depType == .conj) && d.depIdx == gapIdx
 
 /-- No gap is reported inside the coarse modifier/conjunct heuristic. -/
-def checkNoIslandViolation (t : DepTree) (gaps : List (Nat × Nat × GapType)) :
+def checkNoIslandViolation (t : Tree) (gaps : List (Nat × Nat × GapType)) :
     Bool :=
   gaps.all λ (_, gapHostIdx, _) => !hasGapInModifierOrConjunct t gapHostIdx
 
@@ -112,7 +112,7 @@ def checkNoIslandViolation (t : DepTree) (gaps : List (Nat × Nat × GapType)) :
 tree-level checks (minus `checkVerbSubcat`, since LD trees inherently have
 argument gaps), the coarse island heuristic, and filler-licensing (wh-word,
 leftward topicalization, or relative-clause head). -/
-def isLDWellFormed (t : DepTree) (gaps : List (Nat × Nat × GapType)) : Bool :=
+def isLDWellFormed (t : Tree) (gaps : List (Nat × Nat × GapType)) : Bool :=
   hasUniqueHeads t &&
   isAcyclic t &&
   isProjective t &&
@@ -126,4 +126,4 @@ def isLDWellFormed (t : DepTree) (gaps : List (Nat × Nat × GapType)) : Bool :=
         t.deps.any λ d => d.headIdx == fillerIdx && d.depType == .acl
     | none => false
 
-end DepGrammar.LongDistance
+end DependencyGrammar.LongDistance

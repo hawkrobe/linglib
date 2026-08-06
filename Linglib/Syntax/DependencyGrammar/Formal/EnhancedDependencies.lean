@@ -32,10 +32,10 @@ the coordination enhanced graph; the control and relative-clause graphs
 are stipulated.
 -/
 
-namespace DepGrammar.EnhancedDependencies
+namespace DependencyGrammar.EnhancedDependencies
 
 
-open DepGrammar
+open DependencyGrammar
 
 /-! ### Enhancement classification -/
 
@@ -50,7 +50,7 @@ inductive EnhancementType where
 /-- A word has an *unrepresented argument* in the basic tree if it appears
 as a dependent in the enhanced graph under some head to which the basic
 tree has no edge. -/
-def hasUnrepresentedArg (basic : DepTree) (enhanced : DepGraph)
+def hasUnrepresentedArg (basic : Tree) (enhanced : Graph)
     (wordIdx : Nat) : Bool :=
   enhanced.deps.any λ d =>
     d.depIdx == wordIdx &&
@@ -72,40 +72,53 @@ def classifyEnhancement (basicDeps : List Dependency)
 
 /-! ### Coordination fixture: "John sees and hears Mary" -/
 
-def coordBasicTree : DepTree :=
+def coordBasicTree : Tree :=
   { words := [Word.mk' "John" .PROPN, Word.mk' "sees" .VERB,
               Word.mk' "and" .CCONJ, Word.mk' "hears" .VERB,
               Word.mk' "Mary" .PROPN]
     deps  := [⟨1, 0, .nsubj⟩, ⟨1, 2, .cc⟩, ⟨1, 3, .conj⟩, ⟨1, 4, .obj⟩]
     rootIdx := 1 }
 
-def coordEnhancedGraph : DepGraph :=
+def coordEnhancedGraph : Graph :=
   Coordination.enhanceSharedDeps coordBasicTree
 
 /-! ### Control fixture: "Students forgot to come" -/
 
-def controlBasicTree : DepTree :=
+def controlBasicTree : Tree :=
   { words := [Word.mk' "students" .NOUN, Word.mk' "forgot" .VERB,
               Word.mk' "to" .PART, Word.mk' "come" .VERB]
     deps  := [⟨1, 0, .nsubj⟩, ⟨1, 3, .xcomp⟩, ⟨3, 2, .mark⟩]
     rootIdx := 1 }
 
-def controlEnhancedGraph : DepGraph :=
+def controlEnhancedGraph : Graph :=
   { controlBasicTree.toGraph with
     deps := controlBasicTree.deps ++ [⟨3, 0, .nsubj⟩] }
 
 /-! ### Relative-clause fixture: "the book that John read" -/
 
-def relClauseBasicTree : DepTree :=
+def relClauseBasicTree : Tree :=
   { words := [Word.mk' "the" .DET, Word.mk' "book" .NOUN,
               Word.mk' "that" .SCONJ, Word.mk' "John" .PROPN,
               Word.mk' "read" .VERB]
     deps  := [⟨1, 0, .det⟩, ⟨1, 4, .acl⟩, ⟨4, 2, .mark⟩, ⟨4, 3, .nsubj⟩]
     rootIdx := 1 }
 
-def relClauseEnhancedGraph : DepGraph :=
+def relClauseEnhancedGraph : Graph :=
   { relClauseBasicTree.toGraph with
     deps := relClauseBasicTree.deps ++ [⟨4, 1, .obj⟩] }
+
+/-! ### Enhancement is subgraph extension
+
+Enhancement only adds arcs, so each basic tree sits below its enhanced graph
+in the `Digraph` lattice — the order `Graph.toDigraph_mono` transports. -/
+
+theorem controlBasic_le_enhanced :
+    controlBasicTree.toGraph.toDigraph ≤ controlEnhancedGraph.toDigraph :=
+  Graph.toDigraph_mono λ _ hd => List.mem_append_left _ hd
+
+theorem relClauseBasic_le_enhanced :
+    relClauseBasicTree.toGraph.toDigraph ≤ relClauseEnhancedGraph.toDigraph :=
+  Graph.toDigraph_mono λ _ hd => List.mem_append_left _ hd
 
 /-! ### Basic tree loses information -/
 
@@ -165,4 +178,4 @@ theorem control_enhancement_classified :
     classifyEnhancement controlBasicTree.deps ⟨3, 0, .nsubj⟩ = some .controlSubject := by
   decide
 
-end DepGrammar.EnhancedDependencies
+end DependencyGrammar.EnhancedDependencies

@@ -28,9 +28,9 @@ been dropped. A future revision should derive each criterion structurally
 from `Dependency` and the surrounding tree.
 -/
 
-namespace DepGrammar.HeadCriteria
+namespace DependencyGrammar.HeadCriteria
 
-open DepGrammar
+open DependencyGrammar
 
 /-! ### Classification of UD relations -/
 
@@ -79,4 +79,4 @@ theorem coreArgument_mostCriteria :
     expectedCriteriaCount .coreArgument > expectedCriteriaCount .functionWord := by
   decide
 
-end DepGrammar.HeadCriteria
+end DependencyGrammar.HeadCriteria

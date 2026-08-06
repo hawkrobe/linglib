@@ -24,7 +24,7 @@ so no per-language lexicon classifier is needed.
   Slated for relocation to `Studies/Hudson1990.lean` (auditor finding 2026-06-01).
 -/
 
-namespace DepGrammar.Nominal
+namespace DependencyGrammar.Nominal
 
 
 export Features (BindingClass)
@@ -47,4 +47,4 @@ abbrev her := English.Pronouns.her.toWord
 abbrev them := English.Pronouns.them.toWord
 abbrev eachOther := English.Pronouns.eachOther.toWord
 
-end DepGrammar.Nominal
+end DependencyGrammar.Nominal

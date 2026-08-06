@@ -25,12 +25,12 @@ and cross-linguistic data sit in `Studies/FutrellEtAl2020.lean`,
 
 `depLength` is `max - min` rather than absolute value to stay in `Nat`. The
 consumers (`Studies/FutrellEtAl2020`, `HarmonicOrder`, `EnhancedDependencies`)
-open `DepGrammar.DependencyLength` to pick up `depLength`/`totalDepLength`.
+open `DependencyGrammar.DependencyLength` to pick up `depLength`/`totalDepLength`.
 -/
 
-namespace DepGrammar.DependencyLength
+namespace DependencyGrammar.DependencyLength
 
-open DepGrammar
+open DependencyGrammar
 
 /-! ### Core quantities -/
 
@@ -39,14 +39,14 @@ def depLength (d : Dependency) : Nat :=
   max d.headIdx d.depIdx - min d.headIdx d.depIdx
 
 /-- Total dependency length of a tree: the quantity minimised by DLM. -/
-def totalDepLength (t : DepTree) : Nat :=
+def totalDepLength (t : Tree) : Nat :=
   t.deps.foldl (λ acc d => acc + depLength d) 0
 
 /-! ### Behaghel's Oberstes Gesetz -/
 
 /-- [behaghel-1932]'s Oberstes Gesetz: every dependency has length at
 most `threshold`. -/
-def oberstesGesetz (t : DepTree) (threshold : Nat) : Bool :=
+def oberstesGesetz (t : Tree) (threshold : Nat) : Bool :=
   t.deps.all λ d => depLength d ≤ threshold
 
 /-! ### Short-before-long -/
@@ -87,4 +87,4 @@ theorem self_loop_length (i : Nat) :
 theorem empty_tree_dep_length :
     totalDepLength { words := [], deps := [], rootIdx := 0 } = 0 := rfl
 
-end DepGrammar.DependencyLength
+end DependencyGrammar.DependencyLength

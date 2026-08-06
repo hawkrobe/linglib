@@ -8,7 +8,7 @@ These results require `hasUniqueHeads` and/or `isAcyclic` from Basic.lean
 and the Dominates inductive + projection bridge theorems from Projection.lean.
 -/
 
-namespace DepGrammar
+namespace DependencyGrammar
 
 -- ============================================================================
 -- Dominance Properties Under Unique Heads
@@ -19,24 +19,15 @@ section DominanceUnderUniqueHeads
 
 /-- Extract from `hasUniqueHeads` for a specific node index: root has 0 incoming
     edges, non-root nodes have exactly 1. -/
-private theorem hasUniqueHeads_count (t : DepTree)
+private theorem hasUniqueHeads_count (t : Tree)
     (hwf : hasUniqueHeads t = true) (c : Nat) (hc : c < t.words.length) :
     (if c = t.rootIdx then
       (t.deps.filter (·.depIdx == c)).length == 0
     else
       (t.deps.filter (·.depIdx == c)).length == 1) = true := by
-  unfold hasUniqueHeads at hwf
-  have hmem : (c, (t.deps.filter (·.depIdx == c)).length) ∈
-    (List.range (List.map (λ i => (List.filter (·.depIdx == i) t.deps).length)
-      (List.range t.words.length)).length).zip
-      (List.map (λ i => (List.filter (·.depIdx == i) t.deps).length)
-        (List.range t.words.length)) := by
-    rw [List.mem_iff_getElem]
-    simp only [List.length_zip, List.length_range, List.length_map]
-    exact ⟨c, by omega, by simp [List.getElem_zip, List.getElem_range, List.getElem_map]⟩
-  have h := (List.all_eq_true.mp hwf) _ hmem
-  simp only [beq_iff_eq] at h
-  exact h
+  have h := List.all_eq_true.mp hwf c (List.mem_range.mpr hc)
+  simp only [Graph.inDegree, Graph.parentsOf] at h
+  by_cases hcr : c = t.rootIdx <;> simp_all
 
 
 -- ============================================================================
@@ -44,24 +35,24 @@ private theorem hasUniqueHeads_count (t : DepTree)
 -- ============================================================================
 
 /-- The unique parent of node x (follows `find?` on depIdx). Returns x if no parent. -/
-def parentOf_uh (t : DepTree) (x : Nat) : Nat :=
+def parentOf_uh (t : Tree) (x : Nat) : Nat :=
   match t.deps.find? (fun d => d.depIdx == x) with
   | some d => d.headIdx
   | none => x
 
 /-- Iterate parentOf k times. -/
-def iterParent_uh (t : DepTree) (x : Nat) : Nat → Nat
+def iterParent_uh (t : Tree) (x : Nat) : Nat → Nat
   | 0 => x
   | k + 1 => parentOf_uh t (iterParent_uh t x k)
 
-private theorem iterParent_add_uh (t : DepTree) (x : Nat) (a b : Nat) :
+private theorem iterParent_add_uh (t : Tree) (x : Nat) (a b : Nat) :
     iterParent_uh t x (a + b) = iterParent_uh t (iterParent_uh t x a) b := by
   induction b generalizing x a with
   | zero => simp [iterParent_uh]
   | succ b ih => simp only [iterParent_uh]; congr 1; exact ih x a
 
 /-- `follow` returns false when current node is already visited. -/
-private theorem follow_visited_uh (t : DepTree) (current : Nat)
+private theorem follow_visited_uh (t : Tree) (current : Nat)
     (visited : List Nat) (fuel : Nat)
     (h : visited.contains current = true) :
     isAcyclic.follow t current visited (fuel + 1) = false := by
@@ -71,7 +62,7 @@ private theorem follow_visited_uh (t : DepTree) (current : Nat)
   · rename_i h2; exact absurd h h2
 
 /-- `follow` steps through the unique parent edge. -/
-private theorem follow_step_uh (t : DepTree) (current : Nat)
+private theorem follow_step_uh (t : Tree) (current : Nat)
     (visited : List Nat) (fuel : Nat)
     (h1 : visited.contains current = false) (dep : Dependency)
     (h2 : t.deps.find? (fun d => d.depIdx == current) = some dep) :
@@ -87,7 +78,7 @@ private theorem follow_step_uh (t : DepTree) (current : Nat)
     · rename_i _ heq; rw [h2] at heq; cases heq
 
 /-- `follow` returns true when no parent edge exists. -/
-private theorem follow_no_parent_uh (t : DepTree) (current : Nat)
+private theorem follow_no_parent_uh (t : Tree) (current : Nat)
     (visited : List Nat) (fuel : Nat)
     (h1 : visited.contains current = false)
     (h2 : t.deps.find? (fun d => d.depIdx == current) = none) :
@@ -102,7 +93,7 @@ private theorem follow_no_parent_uh (t : DepTree) (current : Nat)
 
 /-- If the iterParent chain revisits a node in `visited` after m steps,
     `follow` returns false. -/
-private theorem follow_false_of_chain_revisit (t : DepTree)
+private theorem follow_false_of_chain_revisit (t : Tree)
     (current : Nat) (visited : List Nat)
     (m fuel : Nat) (hfuel : fuel ≥ m + 1)
     (hparents : ∀ i, i < m →
@@ -143,7 +134,7 @@ private theorem follow_false_of_chain_revisit (t : DepTree)
 
 /-- If the iterParent chain cycles back to start after m+1 steps,
     `follow` from start with empty visited returns false. -/
-private theorem follow_false_of_cycle (t : DepTree)
+private theorem follow_false_of_cycle (t : Tree)
     (start : Nat) (m fuel : Nat) (hfuel : fuel ≥ m + 2)
     (hparents : ∀ i, i ≤ m →
       ∃ dep, t.deps.find? (fun d => d.depIdx == iterParent_uh t start i) = some dep ∧
@@ -171,22 +162,22 @@ private theorem follow_false_of_cycle (t : DepTree)
       exact List.elem_eq_true_of_mem List.mem_cons_self
 
 /-- Extract from `isAcyclic`: `follow v [] (n+1) = true` for v < n. -/
-private theorem isAcyclic_follow_uh (t : DepTree) (hacyc : isAcyclic t = true)
+private theorem isAcyclic_follow_uh (t : Tree) (hacyc : isAcyclic t = true)
     (v : Nat) (hv : v < t.words.length) :
     isAcyclic.follow t v [] (t.words.length + 1) = true := by
   unfold isAcyclic at hacyc
   exact List.all_eq_true.mp hacyc v (List.mem_range.mpr hv)
 
 /-- `parentOf_uh` equals the headIdx from `find?`. -/
-private theorem parentOf_eq_find_uh (t : DepTree) (x : Nat) {dep : Dependency}
+private theorem parentOf_eq_find_uh (t : Tree) (x : Nat) {dep : Dependency}
     (hfind : t.deps.find? (fun d => d.depIdx == x) = some dep) :
     parentOf_uh t x = dep.headIdx := by
   simp [parentOf_uh, hfind]
 
 /-- Under unique heads, if edge(v, c) exists, then `parentOf c = v`. -/
-theorem parentOf_of_edge_uh (t : DepTree)
+theorem parentOf_of_edge_uh (t : Tree)
     (hwf : t.WF)
-    {v c : Nat} (hedge : parentEdge t.deps v c) :
+    {v c : Nat} (hedge : ParentEdge t.deps v c) :
     parentOf_uh t c = v := by
   obtain ⟨d, hd_mem, hd_head, hd_dep⟩ := hedge
   have hfind_some : (t.deps.find? (fun d => d.depIdx == c)).isSome = true :=
@@ -219,7 +210,7 @@ theorem parentOf_of_edge_uh (t : DepTree)
 
 /-- Under unique heads, `Dominates v w` with v ≠ w implies the iterParent chain
     from w reaches v, with valid parent edges at each step. -/
-theorem dominates_iterParent_uh (t : DepTree)
+theorem dominates_iterParent_uh (t : Tree)
     (hwf : t.WF)
     {v w : Nat} (hdom : Dominates t.deps v w) (hne : v ≠ w) :
     ∃ k : Nat, k > 0 ∧ iterParent_uh t w k = v ∧
@@ -265,7 +256,7 @@ theorem dominates_iterParent_uh (t : DepTree)
             rw [hiter]; exact (parentOf_eq_find_uh t c hf_find).symm⟩
 
 /-- If `Dominates v w` with v ≠ w, then w is a depIdx in some edge, hence < n. -/
-private theorem dominates_depIdx_lt (t : DepTree)
+private theorem dominates_depIdx_lt (t : Tree)
     (h_dep_wf : ∀ d ∈ t.deps, d.depIdx < t.words.length)
     {v w : Nat} (hdom : Dominates t.deps v w) (hne : v ≠ w) :
     w < t.words.length := by
@@ -281,7 +272,7 @@ private theorem dominates_depIdx_lt (t : DepTree)
     · exact ih hcx
 
 /-- Each node in the iterParent chain (with valid parent edges) is a depIdx < n. -/
-private theorem iterParent_chain_lt (t : DepTree)
+private theorem iterParent_chain_lt (t : Tree)
     (h_dep_wf : ∀ d ∈ t.deps, d.depIdx < t.words.length)
     (start : Nat) (k : Nat) (i : Nat) (hi : i < k)
     (hchain : ∀ j, j < k →
@@ -353,7 +344,7 @@ private theorem ofFn_nodup_of_injective {α : Type*} [DecidableEq α] {n : Nat}
     of length `j - i ≤ n`, detectable by `follow_false_of_cycle` with fuel
     `n + 1 ≥ j - i + 1`. But `isAcyclic = true`, contradiction.
     Then `nodup_bound` gives `n + 1 ≤ n`, contradiction. -/
-theorem iterParent_chain_bound (t : DepTree)
+theorem iterParent_chain_bound (t : Tree)
     (hacyc : isAcyclic t = true)
     (h_dep_wf : ∀ d ∈ t.deps, d.depIdx < t.words.length)
     (start : Nat) (k : Nat)
@@ -441,7 +432,7 @@ theorem iterParent_chain_bound (t : DepTree)
     from both `Dominates` derivations, combine into a cycle, and show
     `isAcyclic.follow` detects it (returning `false`), contradicting
     `isAcyclic = true`. -/
-theorem dominates_antisymm (t : DepTree)
+theorem dominates_antisymm (t : Tree)
     (hwf : t.WF) (hacyc : isAcyclic t = true)
     (v w : Nat) (hvw : Dominates t.deps v w) (hwv : Dominates t.deps w v) :
     v = w := by
@@ -508,4 +499,4 @@ theorem dominates_to_parent {deps : List Dependency} {v c a : Nat}
 
 end DominanceUnderUniqueHeads
 
-end DepGrammar
+end DependencyGrammar

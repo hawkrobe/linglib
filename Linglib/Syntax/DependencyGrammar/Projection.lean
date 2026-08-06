@@ -14,20 +14,13 @@ depend on projection infrastructure.
 References: [kuhlmann-nivre-2006], [kuhlmann-2013].
 -/
 
-namespace DepGrammar
+namespace DependencyGrammar
 
 -- ============================================================================
 -- Projection: the foundational primitive for non-projectivity theory
 -- ============================================================================
 
 section Projection
-
-/-- Parent edge predicate: there is a head→dep dependency `(v → w)` in `deps`.
-    The atomic relation whose reflexive-transitive closure is `Dominates`
-    (defined below). Sites that need to express "v is a head with dep w"
-    should use this rather than re-spelling the existential. -/
-def parentEdge (deps : List Dependency) (v w : Nat) : Prop :=
-  ∃ d ∈ deps, d.headIdx = v ∧ d.depIdx = w
 
 /-- **Projection** π(i): the yield of node i — all nodes it transitively
     dominates, including itself — sorted in ascending order.
@@ -95,7 +88,7 @@ def gapDegreeAt (deps : List Dependency) (root : Nat) : Nat :=
 /-- **Gap degree** of a tree: max gap degree over all nodes.
     ([kuhlmann-nivre-2006], Definition 7)
     Gap degree 0 ⟺ projective. -/
-def DepTree.gapDegree (t : DepTree) : Nat :=
+def Tree.gapDegree (t : Tree) : Nat :=
   List.range t.words.length |>.map (gapDegreeAt t.deps) |>.foldl max 0
 
 /-- **Block-degree** of a node: number of blocks in its projection.
@@ -107,7 +100,7 @@ def blockDegreeAt (deps : List Dependency) (root : Nat) : Nat :=
     Block-degree 1 ⟺ projective.
     Bounded block-degree + well-nestedness ⟺ polynomial parsing
     ([kuhlmann-2013], Lemma 10). -/
-def DepTree.blockDegree (t : DepTree) : Nat :=
+def Tree.blockDegree (t : Tree) : Nat :=
   List.range t.words.length |>.map (blockDegreeAt t.deps) |>.foldl max 0
 
 -- ============================================================================
@@ -266,7 +259,7 @@ private theorem go_mem_of_queue (deps : List Dependency)
     Proof: BFS from v processes v first (adding children to queue),
     w is a child of v (by the edge), so w enters the queue and is processed. -/
 theorem child_mem_projection (deps : List Dependency) (v w : Nat)
-    (hedge : parentEdge deps v w) :
+    (hedge : ParentEdge deps v w) :
     w ∈ projection deps v := by
   unfold projection
   set goResult := projection.go deps [v] [] (deps.length * (deps.length + 1) + 2)
@@ -550,9 +543,9 @@ theorem interval_mem_between (l : List Nat)
 
 /-- Prop-level dominance: `Dominates deps v x` iff `v` transitively dominates `x`
     via dependency edges (head → dep). Defined as the reflexive-transitive
-    closure of `parentEdge`. -/
+    closure of `ParentEdge`. -/
 def Dominates (deps : List Dependency) (v x : Nat) : Prop :=
-  Relation.ReflTransGen (parentEdge deps) v x
+  Relation.ReflTransGen (ParentEdge deps) v x
 
 /-- Reflexive case: `v` dominates itself. -/
 @[refl]
@@ -561,7 +554,7 @@ theorem Dominates.refl {deps : List Dependency} {v : Nat} : Dominates deps v v :
 
 /-- Head-style step: edge `(v → w)` plus dominance from `w` gives dominance from `v`. -/
 theorem Dominates.step {deps : List Dependency} {v w x : Nat}
-    (hedge : parentEdge deps v w) (h : Dominates deps w x) : Dominates deps v x :=
+    (hedge : ParentEdge deps v w) (h : Dominates deps w x) : Dominates deps v x :=
   Relation.ReflTransGen.head hedge h
 
 /-- Dominance is transitive. -/
@@ -572,13 +565,13 @@ theorem Dominates.trans {deps : List Dependency} {u v w : Nat}
 
 /-- If there is a direct edge `(v, w)`, then `v` dominates `w`. -/
 theorem Dominates.edge {deps : List Dependency} {v w : Nat}
-    (h : parentEdge deps v w) : Dominates deps v w :=
+    (h : ParentEdge deps v w) : Dominates deps v w :=
   Relation.ReflTransGen.single h
 
 /-- Head-style induction principle for `Dominates`: prove a property of
     `Dominates deps v x` (target `x` fixed) by handling the reflexive case
     `motive x Dominates.refl` and the head-step case
-    `parentEdge v w → Dominates w x → motive w → motive v`.
+    `ParentEdge v w → Dominates w x → motive w → motive v`.
 
     Case binders are named `refl` and `step` to mirror the prior inductive's
     constructor names. The `v` and `w` arguments of `step` are implicit
@@ -588,7 +581,7 @@ theorem Dominates.head_induction_on {deps : List Dependency} {x : Nat}
     {motive : (v : Nat) → Dominates deps v x → Prop} {v : Nat}
     (h : Dominates deps v x)
     (refl : motive x Dominates.refl)
-    (step : ∀ {v w : Nat} (hedge : parentEdge deps v w)
+    (step : ∀ {v w : Nat} (hedge : ParentEdge deps v w)
               (h_tail : Dominates deps w x), motive w h_tail →
               motive v (Dominates.step hedge h_tail)) :
     motive v h := by
@@ -628,7 +621,7 @@ private theorem go_dominates_of_mem (deps : List Dependency)
           rcases List.mem_append.mp hq with hr | hc
           · exact Or.inr ⟨q, List.mem_cons.mpr (Or.inr hr), hdom⟩
           · -- q ∈ children: edge (node, q)
-            have hq_child : parentEdge deps node q := by
+            have hq_child : ParentEdge deps node q := by
               obtain ⟨d, hd_filter, hd_dep⟩ := List.mem_map.mp hc
               obtain ⟨hd_mem, hd_head⟩ := List.mem_filter.mp hd_filter
               exact ⟨d, hd_mem, beq_iff_eq.mp hd_head, hd_dep⟩
@@ -770,7 +763,7 @@ private theorem go_children_complete (deps : List Dependency)
     `(w, c)` is a dependency edge, then `c ∈ projection deps r`. -/
 theorem projection_closed_under_children (deps : List Dependency) (r w c : Nat)
     (hw : w ∈ projection deps r)
-    (hedge : parentEdge deps w c) :
+    (hedge : ParentEdge deps w c) :
     c ∈ projection deps r := by
   unfold projection at hw ⊢
   rw [List.mem_insertionSort] at hw ⊢
@@ -898,12 +891,12 @@ end FoldlMax
     Equivalent to: no two dependency arcs cross.
     Equivalent to: gap degree = 0.
     Equivalent to: block-degree = 1. -/
-def isProjective (t : DepTree) : Bool :=
+def isProjective (t : Tree) : Bool :=
   List.range t.words.length |>.all λ i =>
     isInterval (projection t.deps i)
 
 /-- A dependency tree is well-formed if it satisfies all constraints. -/
-def isWellFormed (t : DepTree) : Bool :=
+def isWellFormed (t : Tree) : Bool :=
   hasUniqueHeads t &&
   isAcyclic t &&
   isProjective t &&
@@ -911,4 +904,4 @@ def isWellFormed (t : DepTree) : Bool :=
   checkDetNounAgr t &&
   checkVerbSubcat t
 
-end DepGrammar
+end DependencyGrammar

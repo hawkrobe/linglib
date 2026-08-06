@@ -39,23 +39,23 @@ files; this module formalizes only the structural DG-side claim.
   rather than a hand-rolled `inductive PSTree`.
 -/
 
-namespace DepGrammar.VPDivergence
+namespace DependencyGrammar.VPDivergence
 
 
-open DepGrammar DepGrammar.Catena
+open DependencyGrammar DependencyGrammar.Catena
 
 /-! ### Example trees from [osborne-2019] -/
 
 /-- DG tree for "Bill plays chess" (Ch. 2, ex. 24):
     `plays(0)` heads `Bill(1)` (nsubj) and `chess(2)` (obj). -/
-def billPlaysChess : DepTree :=
+def billPlaysChess : Tree :=
   { words := [Word.mk' "plays" .VERB, Word.mk' "Bill" .PROPN, Word.mk' "chess" .NOUN]
     deps := [⟨0, 1, .nsubj⟩, ⟨0, 2, .obj⟩]
     rootIdx := 0 }
 
 /-- DG tree for "She reads everything" (Ch. 2, ex. 12): same shape as
     "Bill plays chess", confirming the divergence is structural. -/
-def sheReadsEverything : DepTree :=
+def sheReadsEverything : Tree :=
   { words := [Word.mk' "reads" .VERB, Word.mk' "She" .PRON, Word.mk' "everything" .PRON]
     deps := [⟨0, 1, .nsubj⟩, ⟨0, 2, .obj⟩]
     rootIdx := 0 }
@@ -87,7 +87,7 @@ forms a singleton catena that fails to be a constituent. -/
     catena but `projection deps v ≠ [v]` (the projection contains `w`). -/
 theorem exists_catena_not_constituent
     (deps : List Dependency) (v w : Nat) (hvw : v ≠ w)
-    (hedge : parentEdge deps v w) :
+    (hedge : ParentEdge deps v w) :
     isCatena deps [v] = true ∧ ¬ projection deps v = [v] := by
   refine ⟨singleton_isCatena deps v, ?_⟩
   intro heq
@@ -96,4 +96,4 @@ theorem exists_catena_not_constituent
   simp at hw
   exact hvw hw.symm
 
-end DepGrammar.VPDivergence
+end DependencyGrammar.VPDivergence

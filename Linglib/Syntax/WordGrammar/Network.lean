@@ -33,7 +33,7 @@ namespace WordGrammar
 open Features
 open Clause (EmbeddingContext)
 open WordGrammar.Inheritance
-open DepGrammar (Dir ArgStr ArgSlot DepTree satisfiesArgStr)
+open DependencyGrammar (Dir ArgStr ArgSlot Tree satisfiesArgStr)
 
 -- ============================================================================
 -- Node and Relation Types
@@ -159,7 +159,7 @@ def englishAuxNet : WGNetwork := {
 -- ============================================================================
 
 /-- A transitive verb inherits nsubj/left from `verb` and adds obj/right
-locally — the network-derived argStr matches the manual `argStr_VN`
+locally — the network-derived argStr matches the manual `argStrVN`
 (modulo optional fields that default). -/
 theorem network_transitive_slot0 :
     resolveSlot englishAuxNet "transitive" 0 =
@@ -181,7 +181,7 @@ theorem network_aux_slot0 :
       some { depType := .nsubj, dir := .left } := by decide
 
 /-- The network-derived arg structure for a transitive verb has the same
-slots as the manually defined `argStr_VN`. -/
+slots as the manually defined `argStrVN`. -/
 theorem network_argStr_matches_manual :
     (resolveArgStr englishAuxNet "transitive").slots =
       [{ depType := .nsubj, dir := .left },
@@ -242,7 +242,7 @@ def wordClassFor (f : Mood.Illocutionary) (e : EmbeddingContext) : String :=
 for the clause context, resolve its argument structure from the network,
 and check the tree satisfies it. This is the end-to-end chain:
 `force × context → wordClass → network → argStr → satisfiesArgStr`. -/
-def wgLicenses (net : WGNetwork) (t : DepTree) (auxIdx : Nat)
+def wgLicenses (net : WGNetwork) (t : Tree) (auxIdx : Nat)
     (f : Mood.Illocutionary) (e : EmbeddingContext) : Bool :=
   satisfiesArgStr t auxIdx (resolveArgStr net (wordClassFor f e))
 

@@ -33,7 +33,7 @@ The paper demonstrates catenae across five construction types:
 namespace OsborneGross2012
 
 
-open DepGrammar
+open DependencyGrammar
 
 -- ============================================================================
 -- §1: Construction Type Classification
@@ -57,7 +57,7 @@ inductive ConstructionType where
     Words: spill(0) the(1) beans(2)
     Deps: spill(0) → beans(2:obj), beans(2) → the(1:det)
     Construction nodes: {0, 2} -/
-def spillTheBeans : DepTree :=
+def spillTheBeans : Tree :=
   { words := [Word.mk' "spill" .VERB, Word.mk' "the" .DET, Word.mk' "beans" .NOUN]
     deps := [⟨0, 2, .obj⟩, ⟨2, 1, .det⟩]
     rootIdx := 0 }
@@ -67,7 +67,7 @@ def spillTheBeans : DepTree :=
     Words: give(0) the(1) sack(2)
     Deps: give(0) → sack(2:obj), sack(2) → the(1:det)
     Construction nodes: {0, 2} -/
-def giveTheSack : DepTree :=
+def giveTheSack : Tree :=
   { words := [Word.mk' "give" .VERB, Word.mk' "the" .DET, Word.mk' "sack" .NOUN]
     deps := [⟨0, 2, .obj⟩, ⟨2, 1, .det⟩]
     rootIdx := 0 }
@@ -77,7 +77,7 @@ def giveTheSack : DepTree :=
     Words: kick(0) the(1) bucket(2)
     Deps: kick(0) → bucket(2:obj), bucket(2) → the(1:det)
     Construction nodes: {0, 2} -/
-def kickTheBucket : DepTree :=
+def kickTheBucket : Tree :=
   { words := [Word.mk' "kick" .VERB, Word.mk' "the" .DET, Word.mk' "bucket" .NOUN]
     deps := [⟨0, 2, .obj⟩, ⟨2, 1, .det⟩]
     rootIdx := 0 }
@@ -89,7 +89,7 @@ def kickTheBucket : DepTree :=
     Words: pull(0) some(1) strings(2)
     Deps: pull(0) → strings(2:obj), strings(2) → some(1:det)
     Construction nodes: {0, 2} -/
-def pullSomeStrings : DepTree :=
+def pullSomeStrings : Tree :=
   { words := [Word.mk' "pull" .VERB, Word.mk' "some" .DET, Word.mk' "strings" .NOUN]
     deps := [⟨0, 2, .obj⟩, ⟨2, 1, .det⟩]
     rootIdx := 0 }
@@ -106,7 +106,7 @@ def pullSomeStrings : DepTree :=
     Words: take(0) a(1) bath(2)
     Deps: take(0) → bath(2:obj), bath(2) → a(1:det)
     Construction nodes: {0, 2} -/
-def takeABath : DepTree :=
+def takeABath : Tree :=
   { words := [Word.mk' "take" .VERB, Word.mk' "a" .DET, Word.mk' "bath" .NOUN]
     deps := [⟨0, 2, .obj⟩, ⟨2, 1, .det⟩]
     rootIdx := 0 }
@@ -116,7 +116,7 @@ def takeABath : DepTree :=
     Words: have(0) a(1) look(2)
     Deps: have(0) → look(2:obj), look(2) → a(1:det)
     Construction nodes: {0, 2} -/
-def haveALook : DepTree :=
+def haveALook : Tree :=
   { words := [Word.mk' "have" .VERB, Word.mk' "a" .DET, Word.mk' "look" .NOUN]
     deps := [⟨0, 2, .obj⟩, ⟨2, 1, .det⟩]
     rootIdx := 0 }
@@ -126,7 +126,7 @@ def haveALook : DepTree :=
     Words: give(0) a(1) yell(2)
     Deps: give(0) → yell(2:obj), yell(2) → a(1:det)
     Construction nodes: {0, 2} -/
-def giveAYell : DepTree :=
+def giveAYell : Tree :=
   { words := [Word.mk' "give" .VERB, Word.mk' "a" .DET, Word.mk' "yell" .NOUN]
     deps := [⟨0, 2, .obj⟩, ⟨2, 1, .det⟩]
     rootIdx := 0 }
@@ -144,7 +144,7 @@ def giveAYell : DepTree :=
     Words: he(0) will(1) have(2) helped(3)
     Deps: will(1) → he(0:nsubj), will(1) → have(2:dep), have(2) → helped(3:dep)
     Construction nodes: {1, 2, 3} -/
-def heWillHaveHelped : DepTree :=
+def heWillHaveHelped : Tree :=
   { words := [Word.mk' "he" .PRON, Word.mk' "will" .AUX,
               Word.mk' "have" .AUX, Word.mk' "helped" .VERB]
     deps := [⟨1, 0, .nsubj⟩, ⟨1, 2, .dep⟩, ⟨2, 3, .dep⟩]
@@ -161,7 +161,7 @@ def heWillHaveHelped : DepTree :=
           have(2) → been(3:dep), been(3) → doing(4:dep),
           doing(4) → it(5:obj)
     Construction nodes: {1, 2, 3, 4} -/
-def sheWillHaveBeenDoingIt : DepTree :=
+def sheWillHaveBeenDoingIt : Tree :=
   { words := [Word.mk' "she" .PRON, Word.mk' "will" .AUX,
               Word.mk' "have" .AUX, Word.mk' "been" .AUX,
               Word.mk' "doing" .VERB, Word.mk' "it" .PRON]
@@ -183,7 +183,7 @@ def sheWillHaveBeenDoingIt : DepTree :=
     Words: beans(0) she(1) spilled(2)
     Deps: spilled(2) → beans(0:obj), spilled(2) → she(1:nsubj)
     Construction nodes: {0, 2} -/
-def beansSheSpilled : DepTree :=
+def beansSheSpilled : Tree :=
   { words := [Word.mk' "beans" .NOUN, Word.mk' "she" .PRON,
               Word.mk' "spilled" .VERB]
     deps := [⟨2, 0, .obj⟩, ⟨2, 1, .nsubj⟩]
@@ -206,7 +206,7 @@ def beansSheSpilled : DepTree :=
           get(7) → you(6:nsubj), get(7) → fatter(5:xcomp), fatter(5) → the(4:det)
     Protasis nodes: {0, 1, 2, 3}
     Apodosis nodes: {4, 5, 6, 7} -/
-def theMoreTheFatter : DepTree :=
+def theMoreTheFatter : Tree :=
   { words := [Word.mk' "the" .DET, Word.mk' "more" .ADV,
               Word.mk' "you" .PRON, Word.mk' "eat" .VERB,
               Word.mk' "the" .DET, Word.mk' "fatter" .ADJ,
@@ -227,8 +227,8 @@ catenae. `CatenalCx` instances span the specificity spectrum, and
 [fillmore-kay-oconnor-1988]'s idiom typology classifies the catena-verified
 constructions. -/
 
-open DepGrammar DepGrammar.Catena ConstructionGrammar
-open DepGrammar.CatenalConstruction
+open DependencyGrammar DependencyGrammar.Catena ConstructionGrammar
+open DependencyGrammar.CatenalConstruction
 
 -- ============================================================================
 -- §1: Per-Datum Catena Verification — Idioms

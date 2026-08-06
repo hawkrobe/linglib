@@ -36,9 +36,9 @@ every catena is a constituent.
 
 -/
 
-namespace DepGrammar.Catena
+namespace DependencyGrammar.Catena
 
-open DepGrammar
+open DependencyGrammar
 
 /-! ### Computable BFS over dependency edges -/
 
@@ -434,4 +434,4 @@ theorem singleton_isCatena (deps : List Dependency) (v : Nat) :
   exact List.elem_eq_true_of_mem
     (mem_go_of_mem_visited _ _ _ _ _ v List.mem_cons_self)
 
-end DepGrammar.Catena
+end DependencyGrammar.Catena

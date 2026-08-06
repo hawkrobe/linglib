@@ -32,10 +32,10 @@ VP ellipsis already removes a non-projection set of words.
   substrate-wide `Bool` convention; statements are `... = true` / `= false`.
 -/
 
-namespace DepGrammar.Ellipsis
+namespace DependencyGrammar.Ellipsis
 
 
-open DepGrammar Catena
+open DependencyGrammar Catena
 
 /-! ### Ellipsis type taxonomy -/
 
@@ -53,7 +53,7 @@ inductive EllipsisType where
 
 /-- DG tree for the pre-ellipsis second clause of "Fred eats beans and Jim
     eats rice": `eats(0)` heads `Jim(1)` (nsubj) and `rice(2)` (obj). -/
-def gappingTree : DepTree :=
+def gappingTree : Tree :=
   { words := [Word.mk' "eats" .VERB, Word.mk' "Jim" .PROPN, Word.mk' "rice" .NOUN]
     deps := [⟨0, 1, .nsubj⟩, ⟨0, 2, .obj⟩]
     rootIdx := 0 }
@@ -71,4 +71,4 @@ theorem gapping_elided_is_catena :
 theorem gapping_elided_not_constituent :
     isConstituent gappingTree.deps 3 gappingElided = false := by decide
 
-end DepGrammar.Ellipsis
+end DependencyGrammar.Ellipsis

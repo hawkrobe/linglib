@@ -32,7 +32,7 @@ bias for dependency-length-minimizing (= memory-efficient) orders.
 namespace FedzechkinaEtAl2017
 
 
-open DepGrammar DependencyLength Processing.MemorySurprisal
+open DependencyGrammar DependencyLength Processing.MemorySurprisal
 
 -- ============================================================================
 -- Mini-Language Setup
@@ -71,7 +71,7 @@ Dependencies:
 - det: dog(4) ← the(3) length 1
 - obj: chased(5) ← dog(4) length 1
 Total = 8 -/
-def langA_SOV : DepTree :=
+def langA_SOV : Tree :=
   { words := [ Word.mk' "the" .DET, Word.mk' "big" .ADJ, Word.mk' "cat" .NOUN
              , Word.mk' "the" .DET, Word.mk' "dog" .NOUN, Word.mk' "chased" .VERB ]
     deps := [ ⟨2, 0, .det⟩, ⟨2, 1, .amod⟩, ⟨5, 2, .nsubj⟩
@@ -87,7 +87,7 @@ Dependencies:
 - amod: cat(4) ← big(3) length 1
 - obj: chased(5) ← cat(4) length 1
 Total = 9 -/
-def langB_SOV : DepTree :=
+def langB_SOV : Tree :=
   { words := [ Word.mk' "the" .DET, Word.mk' "dog" .NOUN, Word.mk' "the" .DET
              , Word.mk' "big" .ADJ, Word.mk' "cat" .NOUN, Word.mk' "chased" .VERB ]
     deps := [ ⟨1, 0, .det⟩, ⟨5, 1, .nsubj⟩, ⟨4, 2, .det⟩

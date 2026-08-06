@@ -25,13 +25,13 @@ complex-symbol grammar), see [gazdar-1981].
 * `checkCatMatch` — verifies that every `conj` edge connects words of
   matching UPOS categories.
 * `checkArgStrMatch` — for verbal `conj` edges, verifies matching valence.
-* `enhanceSharedDeps` — produce a `DepGraph` from a basic `DepTree` by
+* `enhanceSharedDeps` — produce a `Graph` from a basic `Tree` by
   propagating shared `obj` / `nsubj` / `iobj` edges from the first
   conjunct's head to each subsequent conjunct.
 
 ## Implementation notes
 
-* The `Bool`-valued predicates follow `DepGrammar`'s substrate convention;
+* The `Bool`-valued predicates follow `DependencyGrammar`'s substrate convention;
   migrating to `Prop` + `Decidable` is a substrate-wide refactor not done
   here.
 * Paper-replication fixtures and worked theorems for `enhanceSharedDeps`
@@ -39,39 +39,39 @@ complex-symbol grammar), see [gazdar-1981].
   consumers (`Formal/EnhancedDependencies.lean`,
   `Formal/CoordinationParallelism.lean`) define their own local minimal
   fixtures.
-* `checkArgStrMatch` is a coarse heuristic over `DepTree.frames`. Real
+* `checkArgStrMatch` is a coarse heuristic over `Tree.frames`. Real
   coordination-parallelism judgements (gapping, ATB extraction) live in
   `Formal/CoordinationParallelism.lean`.
 -/
 
-namespace DepGrammar.Coordination
+namespace DependencyGrammar.Coordination
 
-open DepGrammar
+open DependencyGrammar
 
 /-! ### Coordinate structure -/
 
 /-- Conjuncts of a head: words linked by `conj` edges from `headIdx`.
 In UD basic-tree convention these are the second-and-later conjuncts;
 the first conjunct *is* `headIdx`. -/
-def getConjuncts (t : DepTree) (headIdx : Nat) : List Nat :=
+def getConjuncts (t : Tree) (headIdx : Nat) : List Nat :=
   t.deps.filter (λ d => d.headIdx == headIdx && d.depType == .conj)
     |>.map (·.depIdx)
 
 /-- Word `i` heads a coordinate structure iff it has at least one outgoing
 `conj` edge. -/
-def hasConjuncts (t : DepTree) (i : Nat) : Bool :=
+def hasConjuncts (t : Tree) (i : Nat) : Bool :=
   ¬ (getConjuncts t i).isEmpty
 
 /-- All conjuncts of a coordinate structure headed at `headIdx`: `headIdx`
 itself (first conjunct, which heads the structure in UD basic-tree
 convention) plus the words linked via `conj`. -/
-def allConjuncts (t : DepTree) (headIdx : Nat) : List Nat :=
+def allConjuncts (t : Tree) (headIdx : Nat) : List Nat :=
   headIdx :: getConjuncts t headIdx
 
 /-! ### Parallelism heuristics -/
 
 /-- Every `conj` edge connects words of matching UPOS categories. -/
-def checkCatMatch (t : DepTree) : Bool :=
+def checkCatMatch (t : Tree) : Bool :=
   t.deps.all λ d =>
     if d.depType == .conj then
       match t.words[d.headIdx]?, t.words[d.depIdx]? with
@@ -82,7 +82,7 @@ def checkCatMatch (t : DepTree) : Bool :=
 /-- For verbal `conj` edges, conjuncts have matching frames. Coarse
 heuristic — does not handle clausal coordination (`ccomp` / `xcomp`) or
 finer subcategorization. -/
-def checkArgStrMatch (t : DepTree) : Bool :=
+def checkArgStrMatch (t : Tree) : Bool :=
   t.deps.all λ d =>
     if d.depType == .conj then
       match t.words[d.headIdx]?, t.words[d.depIdx]? with
@@ -98,9 +98,9 @@ def checkArgStrMatch (t : DepTree) : Bool :=
 /-- Enhance a basic tree by propagating shared dependents from the first
 conjunct to all subsequent conjuncts. For each `conj` edge head→dep,
 propagates the head's `obj` / `nsubj` / `iobj` edges to `dep`. Returns a
-`DepGraph` (words may have multiple incoming edges). Cf.
+`Graph` (words may have multiple incoming edges). Cf.
 [de-marneffe-nivre-2019] Figure 9 for the relative-clause analogue. -/
-def enhanceSharedDeps (t : DepTree) : DepGraph :=
+def enhanceSharedDeps (t : Tree) : Graph :=
   let conjEdges := t.deps.filter (·.depType == .conj)
   let enhancedDeps := conjEdges.foldl (λ acc conjEdge =>
     let sharedDeps := t.deps.filter λ d =>
@@ -113,4 +113,4 @@ def enhanceSharedDeps (t : DepTree) : DepGraph :=
     deps  := t.deps ++ enhancedDeps
     rootIdx := t.rootIdx }
 
-end DepGrammar.Coordination
+end DependencyGrammar.Coordination

@@ -19,7 +19,7 @@ formalised here.
 
 namespace WordGrammar
 
-open DepGrammar (ArgStr ArgSlot Dir)
+open DependencyGrammar (ArgStr ArgSlot Dir)
 
 -- ============================================================================
 -- Lexical Entries with Argument Structures
@@ -38,7 +38,7 @@ structure LexEntry where
 
 -- ============================================================================
 -- Auxiliary Argument Structures (DG-specific, used with LexEntry/lexical rules)
--- Standard frames (argStr_V0, argStr_VN, argStr_VNN, argStr_VPassive) and
+-- Standard frames (argStrV0, argStrVN, argStrVNN, argStrVPassive) and
 -- satisfiesArgStr are in Core/Basic.lean.
 -- ============================================================================
 

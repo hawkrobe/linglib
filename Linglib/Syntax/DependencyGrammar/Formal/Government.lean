@@ -21,7 +21,7 @@ share an `xcomp` slot but require different forms (`infinitive` vs.
 * `GovRequirement` — one head-cat / dep-rel / feature / required-value
   4-tuple, with five English instances from [osborne-2019].
 * `checkGovernment` — Bool checker that verifies every dependency in a
-  `DepTree` honours every requirement that applies to it.
+  `Tree` honours every requirement that applies to it.
 * `withHim_govOk` / `withHe_govFail` etc. — small fixtures exercising
   the checker on accusative-vs-nominative preposition complements and
   infinitive-vs-gerund verb complements.
@@ -38,10 +38,10 @@ share an `xcomp` slot but require different forms (`infinitive` vs.
   paper-anchored Studies file, not the substrate.
 -/
 
-namespace DepGrammar.Government
+namespace DependencyGrammar.Government
 
 
-open DepGrammar
+open DependencyGrammar
 
 /-! ### Government dimensions and values -/
 
@@ -131,7 +131,7 @@ def matchGovFeature (w : Word) (feat : GovernedFeature) (reqVal : GovernedValue)
 
 /-- A dependency tree satisfies its government requirements when every
     matching head-cat / dep-rel pair carries the required value. -/
-def checkGovernment (t : DepTree) (govReqs : List GovRequirement) : Bool :=
+def checkGovernment (t : Tree) (govReqs : List GovRequirement) : Bool :=
   t.deps.all λ d =>
     govReqs.all λ req =>
       if d.depType = req.depRel then
@@ -147,7 +147,7 @@ def checkGovernment (t : DepTree) (govReqs : List GovRequirement) : Bool :=
 
 /-- "She wants to go": `wants(1)` heads `she(0)` (nsubj) and `go(3)`
     (xcomp); `go(3)` heads `to(2)` (mark). -/
-def exSheWantsToGo : DepTree :=
+def exSheWantsToGo : Tree :=
   { words := [ { form :="she", cat := .PRON, features := { case_ := some .Nom }}
              , { form :="wants", cat := .VERB}
              , { form :="to", cat := .PART, features := {}}
@@ -157,7 +157,7 @@ def exSheWantsToGo : DepTree :=
 
 /-- "She enjoys swimming": `enjoys(1)` heads `she(0)` (nsubj) and
     `swimming(2)` (xcomp). -/
-def exSheEnjoysSwimming : DepTree :=
+def exSheEnjoysSwimming : Tree :=
   { words := [ { form :="she", cat := .PRON, features := { case_ := some .Nom }}
              , { form :="enjoys", cat := .VERB}
              , { form :="swimming", cat := .VERB, features := { verbForm := some .Part }} ]
@@ -165,14 +165,14 @@ def exSheEnjoysSwimming : DepTree :=
     rootIdx := 1 }
 
 /-- "with him": preposition governs accusative — well-formed. -/
-def exWithHim : DepTree :=
+def exWithHim : Tree :=
   { words := [ { form :="with", cat := .ADP, features := {}}
              , { form :="him", cat := .PRON, features := { case_ := some .Acc }} ]
     deps := [⟨0, 1, .obj⟩]
     rootIdx := 0 }
 
 /-- "with he": preposition government violation (nominative for accusative). -/
-def exWithHe : DepTree :=
+def exWithHe : Tree :=
   { words := [ { form :="with", cat := .ADP, features := {}}
              , { form :="he", cat := .PRON, features := { case_ := some .Nom }} ]
     deps := [⟨0, 1, .obj⟩]
@@ -182,7 +182,7 @@ def exWithHe : DepTree :=
     *marked* case other than the required accusative (here dative) violates
     government. The earlier checker fell through to `true` for any case outside
     {nom, acc, gen}, so a dative object spuriously satisfied `govPrepAcc`. -/
-def exPrepDatObj : DepTree :=
+def exPrepDatObj : Tree :=
   { words := [ { form :="with", cat := .ADP, features := {}}
              , { form :="X", cat := .PRON, features := { case_ := some .Dat }} ]
     deps := [⟨0, 1, .obj⟩]
@@ -205,4 +205,4 @@ theorem wantsToGo_govOk :
 theorem enjoysSwimming_govOk :
     checkGovernment exSheEnjoysSwimming [govVerbGerund] = true := by decide
 
-end DepGrammar.Government
+end DependencyGrammar.Government

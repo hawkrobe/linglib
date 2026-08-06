@@ -44,9 +44,9 @@ Datum.hasEquiDeletion ← matches [noonan-2007]'s observations
 
 -/
 
-namespace DepGrammar.ControlBridge
+namespace DependencyGrammar.ControlBridge
 
-open DepGrammar DepGrammar.EnhancedDependencies
+open DependencyGrammar DependencyGrammar.EnhancedDependencies
 
 -- ============================================================================
 -- §1: Words from the Fragment Lexicon
@@ -92,13 +92,13 @@ theorem seem_is_raising :
 -- john(0) manages(1) to(2) sleep(3)
 
 /-- Basic tree: John is nsubj of manages only. -/
-def subjControlBasic : DepTree :=
+def subjControlBasic : Tree :=
   { words := [john, manages, to_, sleep_]
     deps := [⟨1, 0, .nsubj⟩, ⟨1, 3, .xcomp⟩, ⟨3, 2, .mark⟩]
     rootIdx := 1 }
 
 /-- Enhanced graph: John is also nsubj of sleep (shared dependent). -/
-def subjControlEnhanced : DepGraph :=
+def subjControlEnhanced : Graph :=
   { words := [john, manages, to_, sleep_]
     deps := [⟨1, 0, .nsubj⟩, ⟨1, 3, .xcomp⟩, ⟨3, 2, .mark⟩,
              ⟨3, 0, .nsubj⟩]  -- ← ENHANCED: sleep ← John
@@ -108,13 +108,13 @@ def subjControlEnhanced : DepGraph :=
 -- john(0) persuaded(1) mary(2) to(3) run(4)
 
 /-- Basic tree: Mary is obj of persuaded only. -/
-def objControlBasic : DepTree :=
+def objControlBasic : Tree :=
   { words := [john, persuaded, mary, to_, run_]
     deps := [⟨1, 0, .nsubj⟩, ⟨1, 2, .obj⟩, ⟨1, 4, .xcomp⟩, ⟨4, 3, .mark⟩]
     rootIdx := 1 }
 
 /-- Enhanced graph: Mary is also nsubj of run (shared dependent). -/
-def objControlEnhanced : DepGraph :=
+def objControlEnhanced : Graph :=
   { words := [john, persuaded, mary, to_, run_]
     deps := [⟨1, 0, .nsubj⟩, ⟨1, 2, .obj⟩, ⟨1, 4, .xcomp⟩, ⟨4, 3, .mark⟩,
              ⟨4, 2, .nsubj⟩]  -- ← ENHANCED: run ← Mary
@@ -125,13 +125,13 @@ def objControlEnhanced : DepGraph :=
 -- Same tree structure as subject control — the difference is semantic (theta roles)
 
 /-- Basic tree: John is nsubj of seems only. -/
-def raisingBasic : DepTree :=
+def raisingBasic : Tree :=
   { words := [john, seems, to_, sleep_]
     deps := [⟨1, 0, .nsubj⟩, ⟨1, 3, .xcomp⟩, ⟨3, 2, .mark⟩]
     rootIdx := 1 }
 
 /-- Enhanced graph: John is also nsubj of sleep. -/
-def raisingEnhanced : DepGraph :=
+def raisingEnhanced : Graph :=
   { words := [john, seems, to_, sleep_]
     deps := [⟨1, 0, .nsubj⟩, ⟨1, 3, .xcomp⟩, ⟨3, 2, .mark⟩,
              ⟨3, 0, .nsubj⟩]  -- ← ENHANCED: sleep ← John
@@ -328,4 +328,4 @@ theorem object_control_derivation_chain :
     english_persuade.hasEquiDeletion = true :=
   ⟨rfl, by native_decide, by native_decide, by native_decide, by native_decide, rfl⟩
 
-end DepGrammar.ControlBridge
+end DependencyGrammar.ControlBridge
