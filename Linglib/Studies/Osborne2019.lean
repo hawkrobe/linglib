@@ -107,12 +107,33 @@ theorem kick_frame_from_fragment :
 theorem passive_valence_consistent :
     complementToArgStr English.Predicates.Verbal.kick.complementType = some argStrVN ∧
     passiveRule.applies lex_kicked = true ∧
-    (passiveRule.transform lex_kicked).argStr.slots.any (·.depType == .obj) = false :=
+    (passiveRule.transform lex_kicked).argStr.any (·.depType == .obj) = false :=
   ⟨rfl, rfl, rfl⟩
 
 -- ============================================================================
 -- §3: Grammatical Trees
 -- ============================================================================
+
+/-- SV fixture: subject → verb. -/
+private def mkSVTree (subj verb : Word) (frame : Option ArgStr := none) : Tree :=
+  { words := [subj, verb]
+    deps := [⟨1, 0, .nsubj⟩]
+    rootIdx := 1
+    frames := [none, frame] }
+
+/-- SVO fixture: subject → verb ← object. -/
+private def mkSVOTree (subj verb obj : Word) (frame : Option ArgStr := none) : Tree :=
+  { words := [subj, verb, obj]
+    deps := [⟨1, 0, .nsubj⟩, ⟨1, 2, .obj⟩]
+    rootIdx := 1
+    frames := [none, frame, none] }
+
+/-- Ditransitive fixture: subj → verb ← iobj, obj. -/
+private def mkDitransTree (subj verb iobj obj : Word) (frame : Option ArgStr := none) : Tree :=
+  { words := [subj, verb, iobj, obj]
+    deps := [⟨1, 0, .nsubj⟩, ⟨1, 2, .iobj⟩, ⟨1, 3, .obj⟩]
+    rootIdx := 1
+    frames := [none, frame, none, none] }
 
 /-- "John sleeps" — intransitive, no object. -/
 def intransTree :=
@@ -236,14 +257,14 @@ theorem passive_applies_to_kicked :
 
 /-- The derived entry removes the obj slot and adds optional obl. -/
 theorem passive_removes_obj_adds_obl :
-    (passiveRule.transform lex_kicked).argStr.slots.any (·.depType == .obj) = false ∧
-    (passiveRule.transform lex_kicked).argStr.slots.any (·.depType == .obl) = true :=
+    (passiveRule.transform lex_kicked).argStr.any (·.depType == .obj) = false ∧
+    (passiveRule.transform lex_kicked).argStr.any (·.depType == .obl) = true :=
   ⟨rfl, rfl⟩
 
 /-- The passive rule output matches argStrVPassive. -/
 theorem passive_frame_matches :
-    (passiveRule.transform lex_kicked).argStr.slots =
-    argStrVPassive.slots := by native_decide
+    (passiveRule.transform lex_kicked).argStr =
+    argStrVPassive := by native_decide
 
 -- Passive trees validate
 theorem passive_subcat_ok : checkVerbSubcat passiveTree = true := rfl
@@ -308,7 +329,7 @@ theorem valency_derivation_chain :
     checkVerbSubcat activeTree = true ∧
     -- Passive rule applies, removes obj
     passiveRule.applies lex_kicked = true ∧
-    (passiveRule.transform lex_kicked).argStr.slots.any (·.depType == .obj) = false ∧
+    (passiveRule.transform lex_kicked).argStr.any (·.depType == .obj) = false ∧
     -- Passive tree: derived frame ✓, subcat ✓
     satisfiesArgStr passiveTree 3 argStrVPassive = true ∧
     checkVerbSubcat passiveTree = true ∧

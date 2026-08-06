@@ -290,8 +290,8 @@ private theorem unique_parent_of_hasUniqueHeads {t : Tree}
     {e₁ e₂ : Dependency} (he₁ : e₁ ∈ t.deps) (he₂ : e₂ ∈ t.deps)
     (hd₁ : e₁.depIdx = c) (hd₂ : e₂.depIdx = c) :
     e₁.headIdx = e₂.headIdx := by
-  rw [← parentOf_of_edge_uh t hwf ⟨e₁, he₁, rfl, hd₁⟩,
-      ← parentOf_of_edge_uh t hwf ⟨e₂, he₂, rfl, hd₂⟩]
+  rw [← parentOf_of_edge_uh t hwf (parentEdge_iff.mpr ⟨e₁, he₁, rfl, hd₁⟩),
+      ← parentOf_of_edge_uh t hwf (parentEdge_iff.mpr ⟨e₂, he₂, rfl, hd₂⟩)]
 
 /-- **Projective ⊂ planar** for well-formed trees.
     ([kuhlmann-nivre-2006], §3.5) -/
@@ -312,8 +312,8 @@ theorem projective_implies_planar (t : Tree)
       (unique_parent_of_hasUniqueHeads hwf hnode he_ref_mem hdep hd_ref hdep_node).symm.trans hh_ref
   rcases he₁_dir with ⟨hh₁, hd₁⟩ | ⟨hh₁, hd₁⟩ <;>
   rcases he₂_dir with ⟨hh₂, hd₂⟩ | ⟨hh₂, hd₂⟩
-  · have hc_in_a := child_mem_projection t.deps a c ⟨e₁, he₁_mem, hh₁, hd₁⟩
-    have hd_in_b := child_mem_projection t.deps b d ⟨e₂, he₂_mem, hh₂, hd₂⟩
+  · have hc_in_a := child_mem_projection t.deps a c (parentEdge_iff.mpr ⟨e₁, he₁_mem, hh₁, hd₁⟩)
+    have hd_in_b := child_mem_projection t.deps b d (parentEdge_iff.mpr ⟨e₂, he₂_mem, hh₂, hd₂⟩)
     have hint_a := projective_interval hproj a ha_lt
     have hint_b := projective_interval hproj b hb_lt
     have hb_in_a := interval_mem_between _ (projection_chain' t.deps a) hint_a
@@ -325,8 +325,8 @@ theorem projective_implies_planar (t : Tree)
     have h_c_parent := mk_parent hc_lt e₁ he₁_mem hh₁ hd₁
     have h_b_dom_a := dominates_to_parent h_b_dom_c (Nat.ne_of_lt hbc) h_c_parent
     exact absurd (dominates_antisymm t hwf hacyc a b h_a_dom_b h_b_dom_a) (Nat.ne_of_lt hab)
-  · have hc_in_a := child_mem_projection t.deps a c ⟨e₁, he₁_mem, hh₁, hd₁⟩
-    have hb_in_d := child_mem_projection t.deps d b ⟨e₂, he₂_mem, hh₂, hd₂⟩
+  · have hc_in_a := child_mem_projection t.deps a c (parentEdge_iff.mpr ⟨e₁, he₁_mem, hh₁, hd₁⟩)
+    have hb_in_d := child_mem_projection t.deps d b (parentEdge_iff.mpr ⟨e₂, he₂_mem, hh₂, hd₂⟩)
     have hint_a := projective_interval hproj a ha_lt
     have hint_d := projective_interval hproj d hd_lt
     have hb_in_a := interval_mem_between _ (projection_chain' t.deps a) hint_a
@@ -342,8 +342,8 @@ theorem projective_implies_planar (t : Tree)
     have h_a_dom_d := dominates_to_parent h_a_dom_b (Nat.ne_of_lt hab) h_b_parent
     exact absurd (dominates_antisymm t hwf hacyc a d h_a_dom_d h_d_dom_a)
       (Nat.ne_of_lt (Nat.lt_trans (Nat.lt_trans hab hbc) hcd))
-  · have ha_in_c := child_mem_projection t.deps c a ⟨e₁, he₁_mem, hh₁, hd₁⟩
-    have hd_in_b := child_mem_projection t.deps b d ⟨e₂, he₂_mem, hh₂, hd₂⟩
+  · have ha_in_c := child_mem_projection t.deps c a (parentEdge_iff.mpr ⟨e₁, he₁_mem, hh₁, hd₁⟩)
+    have hd_in_b := child_mem_projection t.deps b d (parentEdge_iff.mpr ⟨e₂, he₂_mem, hh₂, hd₂⟩)
     have hint_c := projective_interval hproj c hc_lt
     have hint_b := projective_interval hproj b hb_lt
     have hb_in_c := interval_mem_between _ (projection_chain' t.deps c) hint_c
@@ -353,8 +353,8 @@ theorem projective_implies_planar (t : Tree)
     have h_c_dom_b := dominates_of_mem_projection hb_in_c
     have h_b_dom_c := dominates_of_mem_projection hc_in_b
     exact absurd (dominates_antisymm t hwf hacyc b c h_b_dom_c h_c_dom_b) (Nat.ne_of_lt hbc)
-  · have ha_in_c := child_mem_projection t.deps c a ⟨e₁, he₁_mem, hh₁, hd₁⟩
-    have hb_in_d := child_mem_projection t.deps d b ⟨e₂, he₂_mem, hh₂, hd₂⟩
+  · have ha_in_c := child_mem_projection t.deps c a (parentEdge_iff.mpr ⟨e₁, he₁_mem, hh₁, hd₁⟩)
+    have hb_in_d := child_mem_projection t.deps d b (parentEdge_iff.mpr ⟨e₂, he₂_mem, hh₂, hd₂⟩)
     have hint_c := projective_interval hproj c hc_lt
     have hint_d := projective_interval hproj d hd_lt
     have hb_in_c := interval_mem_between _ (projection_chain' t.deps c) hint_c
@@ -387,7 +387,7 @@ private theorem dominates_comparable (t : Tree)
     rcases ih with huw | hwu
     · by_cases huw_eq : u = w
       · subst huw_eq; exact Or.inr (Dominates.edge hedge)
-      · obtain ⟨e, he_mem, he_head, he_dep⟩ := hedge
+      · obtain ⟨e, he_mem, he_head, he_dep⟩ := parentEdge_iff.mp hedge
         have hw_lt : w < t.words.length := he_dep ▸ hwf.depIdx_lt e he_mem
         have hparent : ∀ d ∈ t.deps, d.depIdx = w → d.headIdx = v' := by
           intro d hd hd_dep_eq
@@ -423,7 +423,7 @@ private theorem exists_spanning_edge_down {deps : List Dependency}
     intro hroot hx
     have hw_mem := child_mem_projection deps r w hedg
     by_cases hw : w < k
-    · obtain ⟨d, hd_mem, hd_head, hd_dep⟩ := hedg
+    · obtain ⟨d, hd_mem, hd_head, hd_dep⟩ := parentEdge_iff.mp hedg
       refine ⟨w, r, ?_, hw_mem, root_mem_projection deps r, hw, hroot⟩
       simp only [linked, List.any_eq_true, Bool.or_eq_true, Bool.and_eq_true, beq_iff_eq]
       exact ⟨d, hd_mem, Or.inr ⟨hd_head, hd_dep⟩⟩
@@ -451,7 +451,7 @@ private theorem exists_spanning_edge_up {deps : List Dependency}
     intro hroot hx
     have hw_mem := child_mem_projection deps r w hedg
     by_cases hw : k ≤ w
-    · obtain ⟨d, hd_mem, hd_head, hd_dep⟩ := hedg
+    · obtain ⟨d, hd_mem, hd_head, hd_dep⟩ := parentEdge_iff.mp hedg
       refine ⟨r, w, ?_, root_mem_projection deps r, hw_mem, hroot, hw⟩
       simp only [linked, List.any_eq_true, Bool.or_eq_true, Bool.and_eq_true, beq_iff_eq]
       exact ⟨d, hd_mem, Or.inl ⟨hd_head, hd_dep⟩⟩
@@ -585,7 +585,7 @@ private theorem iterParent_chain_mem_projection (t : Tree)
     have h_shift : k - (n + 1) + 1 = k - n := by omega
     exact projection_closed_under_children t.deps u
       (iterParent_uh t w (k - n)) (iterParent_uh t w (k - (n + 1)))
-      hprev ⟨dep, hdep_mem, h_shift ▸ hdep_head, hdep_dep⟩
+      hprev (parentEdge_iff.mpr ⟨dep, hdep_mem, h_shift ▸ hdep_head, hdep_dep⟩)
 
 /-- Consecutive elements of the `iterParent` chain are linked. -/
 private theorem iterParent_chain_linked {t : Tree}

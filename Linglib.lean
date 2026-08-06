@@ -2858,6 +2858,7 @@ import Linglib.Syntax.DependencyGrammar.Formal.VPDivergence
 import Linglib.Syntax.DependencyGrammar.LongDistance
 import Linglib.Syntax.DependencyGrammar.Nominal
 import Linglib.Syntax.DependencyGrammar.Projection
+import Linglib.Syntax.DependencyGrammar.Valency
 import Linglib.Syntax.Extraction
 import Linglib.Syntax.HPSG.Basic
 import Linglib.Syntax.HPSG.Binding

@@ -87,7 +87,7 @@ private theorem bidir_of_dominates (deps : List Dependency) (root x : Nat)
     have hw_mem := child_mem_projection deps v w hedge
     have hedge' : ∃ d ∈ deps, (d.headIdx = v ∧ d.depIdx = w) ∨
                                 (d.depIdx = v ∧ d.headIdx = w) := by
-      obtain ⟨d, hd, h1, h2⟩ := hedge
+      obtain ⟨d, hd, h1, h2⟩ := parentEdge_iff.mp hedge
       exact ⟨d, hd, Or.inl ⟨h1, h2⟩⟩
     exact .step v w _ hv_mem hw_mem hedge' (bidir_lift hsubset ih)
 

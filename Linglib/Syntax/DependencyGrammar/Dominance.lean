@@ -179,7 +179,7 @@ theorem parentOf_of_edge_uh (t : Tree)
     (hwf : t.WF)
     {v c : Nat} (hedge : ParentEdge t.deps v c) :
     parentOf_uh t c = v := by
-  obtain ⟨d, hd_mem, hd_head, hd_dep⟩ := hedge
+  obtain ⟨d, hd_mem, hd_head, hd_dep⟩ := parentEdge_iff.mp hedge
   have hfind_some : (t.deps.find? (fun d => d.depIdx == c)).isSome = true :=
     List.find?_isSome.mpr ⟨d, hd_mem, beq_iff_eq.mpr hd_dep⟩
   obtain ⟨f, hf_find⟩ := Option.isSome_iff_exists.mp hfind_some
@@ -231,7 +231,7 @@ theorem dominates_iterParent_uh (t : Tree)
         have hi0 : i = 0 := by omega
         subst hi0
         have hfind_some : (t.deps.find? (fun d => d.depIdx == c)).isSome = true := by
-          obtain ⟨d, hd_mem, _, hd_dep⟩ := hedge
+          obtain ⟨d, hd_mem, _, hd_dep⟩ := parentEdge_iff.mp hedge
           exact List.find?_isSome.mpr ⟨d, hd_mem, beq_iff_eq.mpr hd_dep⟩
         obtain ⟨f, hf_find⟩ := Option.isSome_iff_exists.mp hfind_some
         exact ⟨f, hf_find, (parentOf_eq_find_uh t c hf_find).symm⟩
@@ -248,7 +248,7 @@ theorem dominates_iterParent_uh (t : Tree)
           subst hik
           rw [hiter]
           have hfind_some : (t.deps.find? (fun d => d.depIdx == c)).isSome = true := by
-            obtain ⟨d, hd_mem, _, hd_dep⟩ := hedge
+            obtain ⟨d, hd_mem, _, hd_dep⟩ := parentEdge_iff.mp hedge
             exact List.find?_isSome.mpr ⟨d, hd_mem, beq_iff_eq.mpr hd_dep⟩
           obtain ⟨f, hf_find⟩ := Option.isSome_iff_exists.mp hfind_some
           exact ⟨f, hf_find, by
@@ -267,7 +267,7 @@ private theorem dominates_depIdx_lt (t : Tree)
     intro _
     by_cases hcx : c = w
     · subst hcx
-      obtain ⟨d, hd_mem, _, hd_dep⟩ := hedge
+      obtain ⟨d, hd_mem, _, hd_dep⟩ := parentEdge_iff.mp hedge
       exact hd_dep ▸ h_dep_wf d hd_mem
     · exact ih hcx
 
@@ -490,7 +490,7 @@ theorem dominates_to_parent {deps : List Dependency} {v c a : Nat}
     -- edge(u, w) and Dominates deps w c, need Dominates deps u a
     by_cases hw_eq_c : w = c
     · -- w = c: edge(u, c), so u = a by unique parent
-      obtain ⟨d, hd_mem, hd_head, hd_dep⟩ := hedge
+      obtain ⟨d, hd_mem, hd_head, hd_dep⟩ := parentEdge_iff.mp hedge
       have hu_eq_a : u = a := by
         rw [← hd_head]; exact hparent d hd_mem (hw_eq_c ▸ hd_dep)
       exact hu_eq_a ▸ Dominates.refl

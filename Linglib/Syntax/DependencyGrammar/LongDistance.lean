@@ -25,7 +25,7 @@ from the gap-host word to the filler.
 
 ## Implementation notes
 
-* The `Bool`-valued predicates follow `DependencyGrammar.isWellFormed`'s substrate
+* The `Bool`-valued predicates follow the substrate-wide
   convention; converting them to `Prop` + `Decidable` is a substrate-wide
   refactor not done here.
 * `hasGapInModifierOrConjunct` is deliberately coarse: it flags any gap whose

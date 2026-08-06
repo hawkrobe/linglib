@@ -8,8 +8,8 @@ Projection theory for dependency trees: BFS-based projection computation,
 interval/gap/block analysis, Prop-level Dominance (reflexive-transitive
 closure), and the bridge theorems connecting BFS membership to dominance.
 
-Also contains the `isProjective` / `isWellFormed` predicates, which
-depend on projection infrastructure.
+Also contains the `isProjective` predicate, which
+depends on projection infrastructure.
 
 References: [kuhlmann-nivre-2006], [kuhlmann-2013].
 -/
@@ -277,7 +277,7 @@ theorem child_mem_projection (deps : List Dependency) (v w : Nat)
   simp only [List.nil_append]
   -- Prove w ∈ children
   have hw_children : w ∈ children := by
-    obtain ⟨d, hd_mem, hd_head, hd_dep⟩ := hedge
+    obtain ⟨d, hd_mem, hd_head, hd_dep⟩ := parentEdge_iff.mp hedge
     exact List.mem_map.mpr ⟨d, List.mem_filter.mpr ⟨hd_mem, by simp [hd_head]⟩, hd_dep⟩
   -- Case split: w = v (trivially in visited) or w ≠ v (use go_mem_of_queue)
   by_cases hvw : w = v
@@ -624,7 +624,7 @@ private theorem go_dominates_of_mem (deps : List Dependency)
             have hq_child : ParentEdge deps node q := by
               obtain ⟨d, hd_filter, hd_dep⟩ := List.mem_map.mp hc
               obtain ⟨hd_mem, hd_head⟩ := List.mem_filter.mp hd_filter
-              exact ⟨d, hd_mem, beq_iff_eq.mp hd_head, hd_dep⟩
+              exact parentEdge_iff.mpr ⟨d, hd_mem, beq_iff_eq.mp hd_head, hd_dep⟩
             exact Or.inr ⟨node, List.mem_cons.mpr (Or.inl rfl),
               Dominates.step hq_child hdom⟩
 
@@ -768,7 +768,7 @@ theorem projection_closed_under_children (deps : List Dependency) (r w c : Nat)
   unfold projection at hw ⊢
   rw [List.mem_insertionSort] at hw ⊢
   have hc_child : c ∈ (deps.filter (fun d => d.headIdx == w)).map (fun d => d.depIdx) := by
-    obtain ⟨d, hd_mem, hd_head, hd_dep⟩ := hedge
+    obtain ⟨d, hd_mem, hd_head, hd_dep⟩ := parentEdge_iff.mp hedge
     exact List.mem_map.mpr ⟨d, List.mem_filter.mpr ⟨hd_mem, by simp [hd_head]⟩, hd_dep⟩
   apply go_children_complete deps [r] [] _ w c hw (fun h => nomatch h) hc_child
   -- bfsPot deps [r] [] = deps.length + 1 (filter is trivially all of deps since visited = [])
@@ -894,14 +894,5 @@ end FoldlMax
 def isProjective (t : Tree) : Bool :=
   List.range t.words.length |>.all λ i =>
     isInterval (projection t.deps i)
-
-/-- A dependency tree is well-formed if it satisfies all constraints. -/
-def isWellFormed (t : Tree) : Bool :=
-  hasUniqueHeads t &&
-  isAcyclic t &&
-  isProjective t &&
-  checkSubjVerbAgr t &&
-  checkDetNounAgr t &&
-  checkVerbSubcat t
 
 end DependencyGrammar

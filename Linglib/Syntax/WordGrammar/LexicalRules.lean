@@ -1,4 +1,4 @@
-import Linglib.Syntax.DependencyGrammar.Basic
+import Linglib.Syntax.DependencyGrammar.Valency
 
 /-!
 # Lexical Rules for Word Grammar [hudson-2010]
@@ -39,18 +39,14 @@ structure LexEntry where
 -- ============================================================================
 -- Auxiliary Argument Structures (DG-specific, used with LexEntry/lexical rules)
 -- Standard frames (argStrV0, argStrVN, argStrVNN, argStrVPassive) and
--- satisfiesArgStr are in Core/Basic.lean.
+-- satisfiesArgStr are in Syntax/DependencyGrammar/Valency.lean.
 -- ============================================================================
 
 /-- Auxiliary verb (non-inverted): subject left, main verb right -/
-def argStr_Aux : ArgStr :=
-  { slots := [⟨.nsubj, .left, true, some .DET⟩,
-              ⟨.aux, .right, true, some .VERB⟩] }
+def argStrAux : ArgStr := [⟨.nsubj, .left, true⟩, ⟨.aux, .right, true⟩]
 
 /-- Auxiliary verb (inverted): subject right, main verb right -/
-def argStr_AuxInv : ArgStr :=
-  { slots := [⟨.nsubj, .right, true, some .DET⟩,
-              ⟨.aux, .right, true, some .VERB⟩] }
+def argStrAuxInv : ArgStr := [⟨.nsubj, .right, true⟩, ⟨.aux, .right, true⟩]
 
 -- ============================================================================
 -- Lexical Rules
@@ -71,13 +67,12 @@ def auxInversionRule : LexRule :=
     applies := λ e =>
       e.cat == .AUX && !e.inv
     transform := λ e =>
-      let newSlots := e.argStr.slots.map λ slot =>
-        if slot.depType == .nsubj then
-          { slot with dir := .right }  -- subject now goes to the right
-        else slot
       { e with
         inv := true
-        argStr := { slots := newSlots } } }
+        argStr := e.argStr.map λ slot =>
+          if slot.depType == .nsubj then
+            { slot with dir := .right }  -- subject now goes to the right
+          else slot } }
 
 /-- Passive Rule: VN → V+passive
     Object is removed (promoted to subject), by-phrase added as optional -/
@@ -85,13 +80,11 @@ def passiveRule : LexRule :=
   { name := "Passive"
     applies := λ e =>
       e.cat == .VERB && e.features.voice != some .Pass &&
-      e.argStr.slots.any (·.depType == .obj)
+      e.argStr.any (·.depType == .obj)
     transform := λ e =>
-      let newSlots := e.argStr.slots.filter (·.depType != .obj)
-      let withByPhrase := newSlots ++ [⟨.obl, .right, false, some .ADP⟩]
       { e with
         features := { e.features with voice := some .Pass }
-        argStr := { slots := withByPhrase } } }
+        argStr := e.argStr.filter (·.depType != .obj) ++ [⟨.obl, .right, false⟩] } }
 
 -- ============================================================================
 -- Applying Lexical Rules

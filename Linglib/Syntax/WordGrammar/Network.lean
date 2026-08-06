@@ -2,7 +2,7 @@ import Linglib.Syntax.WordGrammar.Inheritance.Basic
 import Linglib.Syntax.WordGrammar.Inheritance.Default
 import Linglib.Semantics.Mood.Defs
 import Linglib.Syntax.Clause.Basic
-import Linglib.Syntax.DependencyGrammar.Basic
+import Linglib.Syntax.DependencyGrammar.Valency
 
 open Morphology (Word)
 
@@ -102,7 +102,7 @@ def resolveArgStr (net : WGNetwork) (wc : String)
       match resolveSlot net wc idx with
       | some slot => go (idx + 1) fuel' (slot :: acc)
       | none => acc.reverse
-  { slots := go 0 maxSlots [] }
+  go 0 maxSlots []
 
 -- ============================================================================
 -- Example: English Auxiliary Network
@@ -183,7 +183,7 @@ theorem network_aux_slot0 :
 /-- The network-derived arg structure for a transitive verb has the same
 slots as the manually defined `argStrVN`. -/
 theorem network_argStr_matches_manual :
-    (resolveArgStr englishAuxNet "transitive").slots =
+    resolveArgStr englishAuxNet "transitive" =
       [{ depType := .nsubj, dir := .left },
        { depType := .obj, dir := .right }] := by decide
 
@@ -215,14 +215,14 @@ theorem inverted_aux_inherits_main_verb_slot :
 /-- The full argument structure for the non-inverted auxiliary:
 nsubj/left (inherited from verb) + aux/right (local). -/
 theorem network_aux_argStr :
-    (resolveArgStr englishAuxNet "auxiliary").slots =
+    resolveArgStr englishAuxNet "auxiliary" =
       [{ depType := .nsubj, dir := .left },
        { depType := .aux, dir := .right }] := by decide
 
 /-- The full argument structure for the inverted auxiliary:
 nsubj/right (local override) + aux/right (inherited from auxiliary). -/
 theorem network_inverted_aux_argStr :
-    (resolveArgStr englishAuxNet "inverted_auxiliary").slots =
+    resolveArgStr englishAuxNet "inverted_auxiliary" =
       [{ depType := .nsubj, dir := .right },
        { depType := .aux, dir := .right }] := by decide
 
