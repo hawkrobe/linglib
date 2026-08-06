@@ -1,5 +1,4 @@
 import Linglib.Core.Order.Relation
-import Linglib.Syntax.Clause.Size
 import Linglib.Semantics.Tense.Reichenbach
 
 /-!
@@ -26,7 +25,7 @@ containing clause and the clause it contains, which atoms are licensed. Both
 syntactic and semantic theories emit the same `Finset Ordering`, so they are
 peers; `profile` folds the relation **pairwise** along the c-command chain
 (adjacency-local, so an intervening tense re-anchors). Clause size enters only
-through the **framework-neutral** `Clause.Size` (`Syntax/Clause`), never
+as the framework-neutral ℕ grade of `Clause.size` (`Syntax/Clause`), never
 `Minimalist` machinery.
 
 Double-access (a two-anchor present) and modal-base orientation (Klecha) do not
@@ -40,13 +39,13 @@ open Core.Order
 
 /-- A node in an embedding chain: a clause's morphological tense as a relative
     comparison cell (past = `notAfter`, the ≤ of [kauf-zeijlstra-2018]) and its
-    framework-neutral `Clause.Size`. Not a `Minimalist.ComplementSize` — a
-    Minimalist clause *provides* its size via `ComplementSize.toClauseSize`. -/
+    framework-neutral size grade. Not a `Minimalist.ComplementSize` — a
+    Minimalist clause *provides* its grade (`ClauseSpine.fLevel`). -/
 structure Node where
   /-- The clause's tense as a relative comparison cell to its anchor. -/
   tense : Finset Ordering
-  /-- The clause's framework-neutral size (`Clause.Size`). -/
-  size  : Clause.Size
+  /-- The clause's framework-neutral size grade (`Clause.size`). -/
+  size  : ℕ
 
 /-- The cross-cutting interface: given a containing clause and the clause it
     immediately contains, which comparison atoms hold between the contained
@@ -113,8 +112,8 @@ def relationalLicense : LocalLicense := fun _ c => c.tense
     the [egressy-2026] license, which also requires an agreeing past (see
     `LocalLicense.gate` and `Studies.Egressy2026`). On uniformly past-under-past
     data the two coincide; they diverge once an intervening future appears. -/
-def sizeGatedLicense (boundary : Clause.Size) : LocalLicense :=
-  fun _ c => if Clause.transparentTo c.size boundary then c.tense else c.tense.erase .eq
+def sizeGatedLicense (boundary : ℕ) : LocalLicense :=
+  fun _ c => if c.size < boundary then c.tense else c.tense.erase .eq
 
 /-- Refine a license by an extra gate: keep its reading set, but drop the
     simultaneous atom `.eq` wherever the gate fails. A theory composes its

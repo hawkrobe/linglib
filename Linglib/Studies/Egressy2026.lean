@@ -129,14 +129,14 @@ size gate, refined by an agreeing-past gate (SOT deletion needs an agreeing
 `PAST`). Built from the shared schemas, so the predictions are the foundation's
 `Simultaneous`/`Backshifted`, not a study-local reading function. -/
 
-/-- The `Say` boundary as a framework-neutral `Clause.Size`. -/
-def sayBoundary : Clause.Size := ComplementSize.sayP.toClauseSize
+/-- The `Say` boundary: the `Say` layer's grade on the clause-size scale. -/
+def sayBoundary : ℕ := ComplementSize.sayP.fLevel
 
 /-- A clause node: a tense cell (`notAfter` = past, `after` = future — the
     ungated reading set of [kauf-zeijlstra-2018]) and the neutral size of its
     `ClauseType`. -/
 def clauseNode (tense : Finset Ordering) (ct : ClauseType) : Node :=
-  ⟨tense, ct.complementSize.toClauseSize⟩
+  ⟨tense, ct.complementSize.fLevel⟩
 
 /-- A past matrix clause (the container; only its tense matters to licensing). -/
 def pastMatrix : Node := ⟨notAfter, 0⟩
@@ -151,14 +151,6 @@ def agreeingPast : Node → Node → Bool :=
     (SayP) clauses; the agreeing-past refinement additionally blocks it under an
     intervening future (see `ex18`). -/
 def egressyLicense : LocalLicense := (sizeGatedLicense sayBoundary).gate agreeingPast
-
-/-- The framework-neutral `Clause.transparentTo` at the `Say` boundary reproduces
-    the Minimalist `ComplementSize.transparentToSOTAgree` — the bridge that
-    justifies stating SOT over `Clause.Size` rather than `Cat`. -/
-theorem transparentToSOTAgree_iff_clause (cs : ComplementSize) :
-    cs.transparentToSOTAgree = true ↔ Clause.transparentTo cs.toClauseSize sayBoundary := by
-  simp [ComplementSize.transparentToSOTAgree, ComplementSize.toClauseSize, sayBoundary,
-    ComplementSize.sayP, ComplementSize.fLevel, Clause.transparentTo_iff]
 
 /-- Bridge from licensed atoms to the legacy `EmbeddedTenseReading` (atoms are
     canonical; this adapter feeds the binary `SOTParameter` comparison). -/
