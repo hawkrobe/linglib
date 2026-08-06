@@ -659,11 +659,11 @@ theorem wohl_iff_epis (ct : GermanClauseType) :
 /-- *ja* is restricted to declaratives, matching the clause type with
 deontic + epistemic mood but without the hearer knowledge condition. -/
 theorem ja_declarative_restriction :
-    ja.LicensedIn .declarative ∧ ¬ ja.LicensedIn .polarInterrogative := by decide
+    ja.LicensedIn (·.declarative) ∧ ¬ ja.LicensedIn (·.polarInterrogative) := by decide
 
 /-- *denn* is the interrogative counterpart of *ja*. -/
 theorem denn_interrogative_restriction :
-    ¬ denn.LicensedIn .declarative ∧ denn.LicensedIn .polarInterrogative := by decide
+    ¬ denn.LicensedIn (·.declarative) ∧ denn.LicensedIn (·.polarInterrogative) := by decide
 
 /-- *ja* and *denn* partition clause types: they are never both
 licensed in the same clause type. -/

@@ -5,8 +5,11 @@ import Linglib.Syntax.Category.Particle.Basic
 
 This file defines `Distributed α Ctx`: a carrier `α` with a recorded
 three-valued distribution over licensing contexts `Ctx`, the
-`Proform`-style capability behind `Particle`'s two facets (instances
-for `Clause.SentenceType` and `Clause.EmbeddingContext`).
+`Proform`-style capability behind `Particle`'s embedding facet
+(instance for `Clause.EmbeddingContext`; `Studies/Stankova2026` adds a
+negation-position axis). The clause-type facet is projection-keyed
+(`ClauseDistribution` fields), so it has no context type to
+instantiate.
 
 There is deliberately no universal clause carrier: a theory whose
 clause representation `C` classifies into these cells obtains
@@ -16,7 +19,7 @@ stored facets finite and decidable.
 
 set_option autoImplicit false
 
-open Clause (SentenceType EmbeddingContext)
+open Clause (EmbeddingContext)
 
 /-- A carrier `α` with a recorded three-valued distribution over
 licensing contexts `Ctx`. `none` = the source records nothing
@@ -43,7 +46,5 @@ instance (a : α) (c : Ctx) : Decidable (LicensedIn a c) := by
     | none => .isFalse nofun
 
 end Distributed
-
-instance : Distributed Particle Clause.SentenceType := ⟨Particle.status?⟩
 
 instance : Distributed Particle Clause.EmbeddingContext := ⟨Particle.embedStatus?⟩

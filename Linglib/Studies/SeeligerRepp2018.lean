@@ -487,7 +487,7 @@ open Semantics.Polarity.Marking (Env)
     questions, not assertions ([seeliger-repp-2018] §5.2). Derived from
     the fragment's distribution facet. -/
 theorem val_creates_questions :
-    ¬ Swedish.QuestionParticles.val.LicensedIn .declarative := by decide
+    ¬ Swedish.QuestionParticles.val.LicensedIn (·.declarative) := by decide
 
 /-- S&R's bias classification of *väl* (formerly fragment fields; a
     particle's bias requirement is the analysis, so it lives here):
@@ -522,7 +522,7 @@ def dochWohlOriginalBias : Option Semantics.Questions.Bias.OriginalBias :=
 /-- *doch wohl* is not usable in assertions — it marks questions.
     Derived from the fragment's distribution facet. -/
 theorem dochWohl_not_assertion :
-    ¬ German.Particles.dochWohl.LicensedIn .declarative := by decide
+    ¬ German.Particles.dochWohl.LicensedIn (·.declarative) := by decide
 
 /-- The derived RQ property behind `dochWohlOriginalBias`: both DQ types
     *doch wohl* can mark have active ("plus") epistemic bias — the
@@ -565,7 +565,7 @@ theorem dochWohl_is_complex :
     In RQs, *doch* has a "conflict" meaning — it signals surprise or
     realization — rather than the "reminding" function of assertive *doch*. -/
 theorem dochWohl_is_question_marker :
-    ¬ German.Particles.dochWohl.LicensedIn .declarative := by decide
+    ¬ German.Particles.dochWohl.LicensedIn (·.declarative) := by decide
 
 /-- German *doch* is formally ambiguous between two distinct roles:
     1. **Polarity-reversal *doch***: pre-utterance correction particle
@@ -586,7 +586,7 @@ theorem doch_dual_role :
     Env.correction ∈ dochPreUtterance.environments ∧
     Env.sentenceInternal ∉ dochPreUtterance.environments ∧
     -- The RQ *doch wohl* is a question marker (not usable in assertions)
-    ¬ dochWohl.LicensedIn .declarative := ⟨rfl, by decide, by decide, by decide⟩
+    ¬ dochWohl.LicensedIn (·.declarative) := ⟨rfl, by decide, by decide, by decide⟩
 
 -- ════════════════════════════════════════════════════════════════
 -- § 13. Romero-bridge applied to the Swedish/German data

@@ -8,15 +8,17 @@ open Morphology (Word)
 
 This file defines `Particle`, the lexical core for uninflectable
 function words ([zwicky-1985-clitics]): form, position, and optional
-three-valued distribution facets over `Clause.SentenceType` and
-`Clause.EmbeddingContext`. Facets record distributional felicity, not
-licensing mechanism (analytical, study-side); a `none` cell means the
-source records nothing, not exclusion.
+three-valued distribution facets over the [sadock-zwicky-1985]
+sentence-type cells and `Clause.EmbeddingContext`. Facets record
+distributional felicity, not licensing mechanism (analytical,
+study-side); a `none` cell means the source records nothing, not
+exclusion. The cells are record fields, not a taxonomy: force is
+`Mood.Illocutionary`, and the interrogative subtypes are the question
+constructions of `Semantics/Questions` — a lookup is keyed by field
+projection (`p.LicensedIn (·.declarative)`).
 
 ## Main declarations
 
-* `Clause.SentenceType` — the [sadock-zwicky-1985] sentence-type
-  cells the distribution facets are recorded over
 * `Particle`, `Particle.Position`
 * `ParticleStatus`, `ClauseDistribution`, `EmbedDistribution`
 * `Particle.LicensedIn`, `Particle.LicensedInEmbed` — derived,
@@ -26,38 +28,7 @@ source records nothing, not exclusion.
 
 set_option autoImplicit false
 
-namespace Clause
-
-/-- A [sadock-zwicky-1985] sentence-type cell, with interrogatives
-    subtyped — the function-side vocabulary distributional sources
-    record over. A clause *object* does not determine a cell
-    (`Clause.force?` is the object-side query); a language's formal
-    clause types pair with these via their force maps (the
-    Sadock–Zwicky form-function pairings, e.g.
-    `Fragments/German/Particles`). -/
-inductive SentenceType where
-  | declarative
-  | polarInterrogative
-  /-- Alternative question ("Is it A or B?"). -/
-  | alternativeInterrogative
-  /-- Constituent (wh-) question. -/
-  | constituentInterrogative
-  | imperative
-  | exclamative
-  deriving DecidableEq, Repr
-
-/-- The illocutionary force of a sentence type — the coarse
-    [sadock-zwicky-1985] cut, collapsing the interrogative subtypes. -/
-def SentenceType.force : SentenceType → Mood.Illocutionary
-  | .declarative => .declarative
-  | .polarInterrogative | .alternativeInterrogative
-  | .constituentInterrogative => .interrogative
-  | .imperative => .imperative
-  | .exclamative => .exclamative
-
-end Clause
-
-open Clause (SentenceType EmbeddingContext)
+open Clause (EmbeddingContext)
 
 /-- Where a particle sits relative to its host domain — the
 [zwicky-1985-clitics] positional diagnostic. -/
@@ -84,9 +55,14 @@ inductive ParticleStatus where
   | excluded
   deriving DecidableEq, Repr
 
-/-- Per-clause-context distribution record. Each cell is `Option`-valued:
-`none` means the anchoring source records nothing for that context —
-distinct from `some .excluded`, which is a positive claim. -/
+/-- Per-clause-context distribution record over the
+[sadock-zwicky-1985] sentence-type cells (interrogatives subtyped:
+polar, alternative, constituent — the `Semantics/Questions`
+constructions). Each cell is `Option`-valued: `none` means the
+anchoring source records nothing for that context — distinct from
+`some .excluded`, which is a positive claim. Cells are addressed by
+field projection; there is no index enum (force is
+`Mood.Illocutionary`, not a parallel type here). -/
 structure ClauseDistribution where
   declarative : Option ParticleStatus := none
   polarInterrogative : Option ParticleStatus := none
@@ -95,15 +71,6 @@ structure ClauseDistribution where
   imperative : Option ParticleStatus := none
   exclamative : Option ParticleStatus := none
   deriving DecidableEq, Repr
-
-/-- Recorded status in context `c`, if any. -/
-def ClauseDistribution.status? (d : ClauseDistribution) : Clause.SentenceType → Option ParticleStatus
-  | .declarative => d.declarative
-  | .polarInterrogative => d.polarInterrogative
-  | .alternativeInterrogative => d.alternativeInterrogative
-  | .constituentInterrogative => d.constituentInterrogative
-  | .imperative => d.imperative
-  | .exclamative => d.exclamative
 
 /-- Per-embedding-context distribution record ([bhatt-dayal-2020]
 axis). Same `Option`-valued honesty convention as `ClauseDistribution`. -/
@@ -141,18 +108,21 @@ structure Particle where
 namespace Particle
 
 
-/-- Recorded clause-type distribution status in context `c`, if any. -/
-def status? (p : Particle) (c : Clause.SentenceType) : Option ParticleStatus :=
-  p.distribution.bind (·.status? c)
+/-- Recorded clause-type distribution status in the cell picked out by
+projection `c` (e.g. `(·.declarative)`), if any. -/
+def status? (p : Particle) (c : ClauseDistribution → Option ParticleStatus) :
+    Option ParticleStatus :=
+  p.distribution.bind c
 
 /-- The particle is positively recorded as available (obligatorily or
-optionally) in context `c`. -/
-def LicensedIn (p : Particle) (c : Clause.SentenceType) : Prop :=
+optionally) in the cell picked out by projection `c`. -/
+def LicensedIn (p : Particle) (c : ClauseDistribution → Option ParticleStatus) : Prop :=
   match p.status? c with
   | some .obligatory | some .optional => True
   | _ => False
 
-instance (p : Particle) (c : Clause.SentenceType) : Decidable (p.LicensedIn c) := by
+instance (p : Particle) (c : ClauseDistribution → Option ParticleStatus) :
+    Decidable (p.LicensedIn c) := by
   unfold LicensedIn; exact match p.status? c with
     | some .obligatory => .isTrue trivial
     | some .optional => .isTrue trivial
