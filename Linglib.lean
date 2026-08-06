@@ -2310,7 +2310,6 @@ import Linglib.Studies.Horn1984
 import Linglib.Studies.Horn1989
 import Linglib.Studies.HoulihanEtAl2023
 import Linglib.Studies.HuangSpelkeSnedeker2013
-import Linglib.Studies.Hudson1990
 import Linglib.Studies.Hudson2010
 import Linglib.Studies.Huijsmans2025
 import Linglib.Studies.Hyman2006
