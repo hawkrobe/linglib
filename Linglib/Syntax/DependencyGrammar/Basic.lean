@@ -22,8 +22,9 @@ artificial root token, following [kuhlmann-nivre-2006].
   `Digraph`, and `Graph.ofArcs` the constructor from CoNLL-U-style arc
   lists.
 * `Graph.parents`, `children`, `inDegree` — the local graph API.
-* Well-formedness (`hasUniqueHeads`, `isAcyclic`, `Graph.IsTree`) lives in
-  `Projection.lean`, beside the dominance relation it is stated through.
+* Well-formedness (`Graph.IsTree`) lives in `Projection.lean`, beside the
+  dominance relation it is stated through. Feature-level constraints
+  (agreement) are `Syntax/Agreement/`'s domain, not the carrier's.
 
 ## Implementation notes
 
@@ -109,30 +110,5 @@ def ofArcs (words : List Word) (root : Fin words.length)
     root }
 
 end Graph
-
-/-! ### Agreement -/
-
-section AgreementChecking
-
-variable {n : ℕ}
-
-/-- Number agreement across every `rel`-labeled arc. Permissive by default:
-    arcs whose endpoints are unmarked for number pass vacuously, so the check
-    constrains only overtly conflicting marking. -/
-def numberAgreesOn (t : Graph n) (rel : UD.DepRel) : Bool :=
-  (List.finRange n).all λ v => (List.finRange n).all λ w =>
-    if t.label v w == some rel then
-      match (t.words w).features.number, (t.words v).features.number with
-      | some dn, some hn => dn == hn
-      | _, _ => true
-    else true
-
-/-- Subject-verb number agreement: `numberAgreesOn` at `nsubj`. -/
-def checkSubjVerbAgr (t : Graph n) : Bool := numberAgreesOn t .nsubj
-
-/-- Determiner-noun number agreement: `numberAgreesOn` at `det`. -/
-def checkDetNounAgr (t : Graph n) : Bool := numberAgreesOn t .det
-
-end AgreementChecking
 
 end DependencyGrammar
