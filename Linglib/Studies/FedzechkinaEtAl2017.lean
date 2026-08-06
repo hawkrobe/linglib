@@ -32,7 +32,7 @@ bias for dependency-length-minimizing (= memory-efficient) orders.
 namespace FedzechkinaEtAl2017
 
 
-open DependencyGrammar DependencyLength Processing.MemorySurprisal
+open DependencyGrammar Processing.MemorySurprisal
 
 -- ============================================================================
 -- Mini-Language Setup
@@ -71,12 +71,10 @@ Dependencies:
 - det: dog(4) ← the(3) length 1
 - obj: chased(5) ← dog(4) length 1
 Total = 8 -/
-def langA_SOV : Tree :=
-  { words := [ Word.mk' "the" .DET, Word.mk' "big" .ADJ, Word.mk' "cat" .NOUN
-             , Word.mk' "the" .DET, Word.mk' "dog" .NOUN, Word.mk' "chased" .VERB ]
-    deps := [ ⟨2, 0, .det⟩, ⟨2, 1, .amod⟩, ⟨5, 2, .nsubj⟩
-            , ⟨4, 3, .det⟩, ⟨5, 4, .obj⟩ ]
-    rootIdx := 5 }
+def langA_SOV : Graph 6 :=
+  .ofArcs [Word.mk' "the" .DET, Word.mk' "big" .ADJ, Word.mk' "cat" .NOUN,
+           Word.mk' "the" .DET, Word.mk' "dog" .NOUN, Word.mk' "chased" .VERB]
+    5 [(2, 0, .det), (2, 1, .amod), (5, 2, .nsubj), (4, 3, .det), (5, 4, .obj)]
 
 /-- Language B SOV: "the-dog the-big-cat chased"
 Words: the(0) dog(1) the(2) big(3) cat(4) chased(5)
@@ -87,26 +85,24 @@ Dependencies:
 - amod: cat(4) ← big(3) length 1
 - obj: chased(5) ← cat(4) length 1
 Total = 9 -/
-def langB_SOV : Tree :=
-  { words := [ Word.mk' "the" .DET, Word.mk' "dog" .NOUN, Word.mk' "the" .DET
-             , Word.mk' "big" .ADJ, Word.mk' "cat" .NOUN, Word.mk' "chased" .VERB ]
-    deps := [ ⟨1, 0, .det⟩, ⟨5, 1, .nsubj⟩, ⟨4, 2, .det⟩
-            , ⟨4, 3, .amod⟩, ⟨5, 4, .obj⟩ ]
-    rootIdx := 5 }
+def langB_SOV : Graph 6 :=
+  .ofArcs [Word.mk' "the" .DET, Word.mk' "dog" .NOUN, Word.mk' "the" .DET,
+           Word.mk' "big" .ADJ, Word.mk' "cat" .NOUN, Word.mk' "chased" .VERB]
+    5 [(1, 0, .det), (5, 1, .nsubj), (4, 2, .det), (4, 3, .amod), (5, 4, .obj)]
 
 -- ============================================================================
 -- Dependency Length Comparison
 -- ============================================================================
 
 /-- Language A has total dep length 8. -/
-example : totalDepLength langA_SOV = 8 := by native_decide
+example : langA_SOV.totalDepLength = 8 := by decide
 
 /-- Language B has total dep length 9. -/
-example : totalDepLength langB_SOV = 9 := by native_decide
+example : langB_SOV.totalDepLength = 9 := by decide
 
 /-- Language A has shorter total dependency length than Language B. -/
 theorem langA_shorter_deps :
-    totalDepLength langA_SOV < totalDepLength langB_SOV := by native_decide
+    langA_SOV.totalDepLength < langB_SOV.totalDepLength := by decide
 
 -- ============================================================================
 -- Trade-off Curves (approximate from Figure 7)
@@ -157,7 +153,7 @@ This connects DLM (structural) to information-theoretic efficiency:
 shorter dependencies concentrate predictive information locally,
 yielding steeper I_t decay and better trade-off curves. -/
 theorem short_deps_implies_efficient :
-    totalDepLength langA_SOV < totalDepLength langB_SOV ∧
+    langA_SOV.totalDepLength < langB_SOV.totalDepLength ∧
     langACurve.auc < langBCurve.auc :=
   ⟨by native_decide, by native_decide⟩
 

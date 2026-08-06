@@ -1,5 +1,5 @@
 import Linglib.Processing.Memory.SurprisalTradeoff
-import Linglib.Syntax.DependencyGrammar.Formal.HarmonicOrder
+import Linglib.Syntax.DependencyGrammar.Formal.DependencyLength
 import Linglib.Data.WALS.Languages
 
 /-!
@@ -414,29 +414,40 @@ minimization: DLM minimizes *structural* distance between related words,
 while information locality minimizes the *information-theoretic* distance
 at which predictive information concentrates.
 
-The HarmonicOrder module proves that consistent head direction achieves
-shorter dependency chains (`harmonic_always_shorter`). The present study
-shows that languages with shorter dependencies (lower branching entropy,
-more consistent direction) achieve better memory-surprisal trade-offs
-(`rigid_order_languages_efficient`). Together, these two results establish
-the chain: harmonic order → short dependencies → information locality
+Consistent head direction achieves shorter dependency chains — shown
+below on a single-dependent chain linearized harmonically vs with mixed
+direction. The present study shows that languages with shorter
+dependencies (lower branching entropy, more consistent direction) achieve
+better memory-surprisal trade-offs (`rigid_order_languages_efficient`).
+Together: harmonic order → short dependencies → information locality
 → efficient trade-off. -/
 
-/-- The DLM harmonic order prediction holds: consistent head direction
-produces shorter total dependency length (from HarmonicOrder.lean). -/
-theorem harmonic_dlm_holds :
-    DependencyGrammar.HarmonicOrder.dlmPredictsHarmonicCheaper = true := by native_decide
+open DependencyGrammar in
+private def harmonicChain : DependencyGrammar.Graph 4 :=
+  .ofArcs [Morphology.Word.mk' "A" .X, Morphology.Word.mk' "B" .X, Morphology.Word.mk' "C" .X, Morphology.Word.mk' "D" .X]
+    0 [(0, 1, .dep), (1, 2, .dep), (2, 3, .dep)]
 
-/-- The full chain: all languages with low entropy (consistent direction,
-short dependencies) are efficient, and the DLM prediction holds.
-This connects the structural argument (HarmonicOrder) to the
-information-theoretic result (memory-surprisal efficiency). -/
+open DependencyGrammar in
+private def disharmonicChain : DependencyGrammar.Graph 4 :=
+  .ofArcs [Morphology.Word.mk' "A" .X, Morphology.Word.mk' "C" .X, Morphology.Word.mk' "D" .X, Morphology.Word.mk' "B" .X]
+    0 [(0, 3, .dep), (3, 1, .dep), (1, 2, .dep)]
+
+/-- The DLM harmonic-order prediction: consistent head direction gives
+strictly shorter total dependency length than mixed direction on the same
+chain. -/
+theorem harmonic_dlm_holds :
+    harmonicChain.totalDepLength < disharmonicChain.totalDepLength := by decide
+
+/-- The full chain: the structural DLM comparison holds, and all languages
+with low branching entropy (consistent direction, short dependencies) are
+efficient — connecting the structural argument to the
+information-theoretic result. -/
 theorem dlm_to_efficiency_chain :
-    DependencyGrammar.HarmonicOrder.dlmPredictsHarmonicCheaper = true ∧
+    harmonicChain.totalDepLength < disharmonicChain.totalDepLength ∧
     (allLanguages.filter (λ l =>
       match l.branchDirEntropy1000 with | some e => e < 300 | none => false
     )).all (·.moreEfficient) = true := by
-  exact ⟨by native_decide, by native_decide⟩
+  exact ⟨by decide, by decide⟩
 
 -- ============================================================================
 -- Bridge to WALS ([dryer-haspelmath-2013])
