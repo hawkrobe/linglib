@@ -131,6 +131,8 @@ def table : NounEntry := { formSg := "table", formPl := "tables" }
 def squirrel : NounEntry := { formSg := "squirrel", formPl := "squirrels" }
 def man : NounEntry := { formSg := "man", formPl := "men" }
 def woman : NounEntry := { formSg := "woman", formPl := "women" }
+def kitchen : NounEntry := { formSg := "kitchen", formPl := "kitchens" }
+def story : NounEntry := { formSg := "story", formPl := "stories" }
 def person : NounEntry := { formSg := "person", formPl := "people" }
 def child : NounEntry := { formSg := "child", formPl := "children" }
 def lawyer : NounEntry := { formSg := "lawyer", formPl := "lawyers" }
@@ -144,6 +146,7 @@ def spy : NounEntry := { formSg := "spy", formPl := "spies" }
 
 def water : NounEntry := { formSg := "water", formPl := none, countable := .mass }
 def sand : NounEntry := { formSg := "sand", formPl := none, countable := .mass }
+def trash : NounEntry := { formSg := "trash", formPl := none, countable := .mass }
 def furniture : NounEntry := { formSg := "furniture", formPl := none, countable := .mass }
 def rice : NounEntry := { formSg := "rice", formPl := none, countable := .mass }
 def gold : NounEntry := { formSg := "gold", formPl := none, countable := .mass }
@@ -181,8 +184,9 @@ def bean : NounEntry := { formSg := "bean", formPl := some "beans" }
 
 def allNouns : List NounEntry := [
   pizza, book, cat, dog, girl, boy, ball, table, squirrel,
-  man, woman, person, child, lawyer, student, teacher, fireman, soldier, horse, brother, spy,
-  water, sand, furniture, rice, gold, air, wine, coffee, beer, milk, tea,
+  man, woman, kitchen, story, person, child, lawyer, student, teacher, fireman, soldier, horse,
+  brother, spy,
+  water, sand, trash, furniture, rice, gold, air, wine, coffee, beer, milk, tea,
   martini, margarita, negroni, mojito, daiquiri, mimosa,
   cappuccino, americano, latte, macchiato,
   john, mary, bill, sue, fred, sam, pat,

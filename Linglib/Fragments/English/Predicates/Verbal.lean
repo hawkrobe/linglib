@@ -150,6 +150,19 @@ def arrive : VerbEntry := .mkRegular {
   vendlerClass := some .achievement
   levinClass := some .inherentlyDirectedMotion }
 
+/-- "come" — Levin 51.1 inherently directed motion, like `arrive`. -/
+def come : VerbEntry where
+  form := "come"
+  form3sg := "comes"
+  formPast := "came"
+  formPastPart := "come"
+  formPresPart := "coming"
+  frames := []
+  unaccusative := true
+  passivizable := false
+  vendlerClass := some .achievement
+  levinClass := some .inherentlyDirectedMotion
+
 /-- "eat" — transitive, implicit object is indefinite ("Have you eaten?") -/
 def eat : VerbEntry where
   form := "eat"
@@ -3172,7 +3185,7 @@ def lend : VerbEntry where
 /-- Get all verb entries as a list (for enumeration). -/
 def allVerbs : List VerbEntry := [
   -- Simple
-  sleep, run, arrive, eat, kick, give, put, buy, meet, sell, leave, see, devour, read,
+  sleep, run, arrive, come, eat, kick, give, put, buy, meet, sell, leave, see, devour, read,
   build, write, sweep, sweep_instr,
   -- Factive
   know, regret, realize, discover, notice,

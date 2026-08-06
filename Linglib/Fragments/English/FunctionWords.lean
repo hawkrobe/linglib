@@ -45,8 +45,9 @@ def with_ : PrepEntry := { form := "with" }
 def from_ : PrepEntry := { form := "from" }
 def before : PrepEntry := { form := "before" }
 def after : PrepEntry := { form := "after" }
+def out : PrepEntry := { form := "out" }
 
-def allPrepositions : List PrepEntry := [to_, on, in_, at_, by_, with_, from_, before, after]
+def allPrepositions : List PrepEntry := [to_, on, in_, at_, by_, with_, from_, before, after, out]
 
 def PrepEntry.toWord (p : PrepEntry) : Word :=
   { form := p.form, cat := .ADP, features := {} }
