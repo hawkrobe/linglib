@@ -91,7 +91,7 @@ def controlBasicTree : DepTree :=
     rootIdx := 1 }
 
 def controlEnhancedGraph : DepGraph :=
-  { controlBasicTree.toGraph with
+  { controlBasicTree.toDepGraph with
     deps := controlBasicTree.deps ++ [⟨3, 0, .nsubj⟩] }
 
 /-! ### Relative-clause fixture: "the book that John read" -/
@@ -104,8 +104,21 @@ def relClauseBasicTree : DepTree :=
     rootIdx := 1 }
 
 def relClauseEnhancedGraph : DepGraph :=
-  { relClauseBasicTree.toGraph with
+  { relClauseBasicTree.toDepGraph with
     deps := relClauseBasicTree.deps ++ [⟨4, 1, .obj⟩] }
+
+/-! ### Enhancement is subgraph extension
+
+Enhancement only adds arcs, so each basic tree sits below its enhanced graph
+in the `Digraph` lattice — the order `DepGraph.toDigraph_mono` transports. -/
+
+theorem controlBasic_le_enhanced :
+    controlBasicTree.toDepGraph.toDigraph ≤ controlEnhancedGraph.toDigraph :=
+  DepGraph.toDigraph_mono λ _ hd => List.mem_append_left _ hd
+
+theorem relClauseBasic_le_enhanced :
+    relClauseBasicTree.toDepGraph.toDigraph ≤ relClauseEnhancedGraph.toDigraph :=
+  DepGraph.toDigraph_mono λ _ hd => List.mem_append_left _ hd
 
 /-! ### Basic tree loses information -/
 

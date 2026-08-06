@@ -87,7 +87,7 @@ forms a singleton catena that fails to be a constituent. -/
     catena but `projection deps v ≠ [v]` (the projection contains `w`). -/
 theorem exists_catena_not_constituent
     (deps : List Dependency) (v w : Nat) (hvw : v ≠ w)
-    (hedge : parentEdge deps v w) :
+    (hedge : ParentEdge deps v w) :
     isCatena deps [v] = true ∧ ¬ projection deps v = [v] := by
   refine ⟨singleton_isCatena deps v, ?_⟩
   intro heq

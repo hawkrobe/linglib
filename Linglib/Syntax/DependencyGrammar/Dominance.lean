@@ -25,18 +25,9 @@ private theorem hasUniqueHeads_count (t : DepTree)
       (t.deps.filter (·.depIdx == c)).length == 0
     else
       (t.deps.filter (·.depIdx == c)).length == 1) = true := by
-  unfold hasUniqueHeads at hwf
-  have hmem : (c, (t.deps.filter (·.depIdx == c)).length) ∈
-    (List.range (List.map (λ i => (List.filter (·.depIdx == i) t.deps).length)
-      (List.range t.words.length)).length).zip
-      (List.map (λ i => (List.filter (·.depIdx == i) t.deps).length)
-        (List.range t.words.length)) := by
-    rw [List.mem_iff_getElem]
-    simp only [List.length_zip, List.length_range, List.length_map]
-    exact ⟨c, by omega, by simp [List.getElem_zip, List.getElem_range, List.getElem_map]⟩
-  have h := (List.all_eq_true.mp hwf) _ hmem
-  simp only [beq_iff_eq] at h
-  exact h
+  have h := List.all_eq_true.mp hwf c (List.mem_range.mpr hc)
+  simp only [DepGraph.inDegree, DepGraph.parentsOf] at h
+  by_cases hcr : c = t.rootIdx <;> simp_all
 
 
 -- ============================================================================
@@ -186,7 +177,7 @@ private theorem parentOf_eq_find_uh (t : DepTree) (x : Nat) {dep : Dependency}
 /-- Under unique heads, if edge(v, c) exists, then `parentOf c = v`. -/
 theorem parentOf_of_edge_uh (t : DepTree)
     (hwf : t.WF)
-    {v c : Nat} (hedge : parentEdge t.deps v c) :
+    {v c : Nat} (hedge : ParentEdge t.deps v c) :
     parentOf_uh t c = v := by
   obtain ⟨d, hd_mem, hd_head, hd_dep⟩ := hedge
   have hfind_some : (t.deps.find? (fun d => d.depIdx == c)).isSome = true :=

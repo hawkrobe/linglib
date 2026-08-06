@@ -1,4 +1,5 @@
 import Mathlib.Data.List.Basic
+import Mathlib.Combinatorics.Digraph.Basic
 import Linglib.Data.UD.Basic
 import Linglib.Syntax.Category.Verb.Frame
 import Linglib.Morphology.Word.Basic
@@ -18,7 +19,12 @@ Dependencies v2). [hudson-2010], [gibson-2025].
 
 ## Main declarations
 
-* `Dependency`, `DepTree`, `DepGraph` — the basic graph-shaped data.
+* `Dependency`, `DepGraph`, `DepTree` — the basic graph-shaped data;
+  `DepTree extends DepGraph` with argument-structure frames.
+* `DepGraph.parentsOf`, `children`, `inDegree`, `toDigraph` — the graph API;
+  `toDigraph` presents the graph as a mathlib `Digraph` with decidable
+  adjacency (`ParentEdge` is the adjacency at the edge-list level), and
+  `toDigraph_mono` orders basic below enhanced graphs in the `Digraph` lattice.
 * `ArgStr`, `argStrV0/VN/VNN/VPassive` — argument-structure schemas for the
   standard intransitive / transitive / ditransitive / passive valences.
 * `hasUniqueHeads`, `isAcyclic`, `isWellFormed` — structural well-formedness
@@ -63,23 +69,77 @@ end ArgumentStructure
 
 section DependenciesAndTrees
 
-/-- A dependency: directed edge from head to dependent.
-    Uses UD.DepRel for the relation label. -/
+/-- A dependency: directed edge from head to dependent. -/
 structure Dependency where
+  /-- Index of the head word in the sentence's `words` list. -/
   headIdx : Nat
+  /-- Index of the dependent word in the sentence's `words` list. -/
   depIdx : Nat
+  /-- The UD v2 relation label; length metrics ignore it. -/
   depType : UD.DepRel
   deriving Repr, DecidableEq
 
-/-- A dependency tree for a sentence. `frames` carries the DG-specific lexical
-    argument-structure premises, aligned with `words` (missing/short = no frame):
-    the frame is framework apparatus (like HPSG's ARG-ST), so it lives on DG's
-    tree, not on the shared `Word` token. Frames come from the lexical carrier at
-    tree construction (`complementToArgStr` applied to a verb's `complementType`). -/
-structure DepTree where
+/-- A dependency graph for a sentence: tokens in surface order plus directed
+    head → dependent edges. A word may carry several incoming arcs, as in the
+    UD *enhanced* representation; the single-headed case is `DepTree`. -/
+structure DepGraph where
+  /-- The sentence's tokens, in surface order. -/
   words : List Word
+  /-- Directed head → dependent edges. -/
   deps : List Dependency
+  /-- Index into `words` of the sentence root. -/
   rootIdx : Nat
+  deriving Repr
+
+/-- The head → dependent adjacency of an edge list: there is an edge `(v → w)`
+    in `deps`. The atomic relation whose reflexive-transitive closure is
+    `Dominates`; sites that need "v is a head with dependent w" should use
+    this rather than re-spelling the existential. -/
+def ParentEdge (deps : List Dependency) (v w : Nat) : Prop :=
+  ∃ d ∈ deps, d.headIdx = v ∧ d.depIdx = w
+
+namespace DepGraph
+
+/-- The edges into position `i`. -/
+def parentsOf (g : DepGraph) (i : Nat) : List Dependency :=
+  g.deps.filter (·.depIdx == i)
+
+/-- The dependent positions of the word at position `i`. -/
+def children (g : DepGraph) (i : Nat) : List Nat :=
+  g.deps.filter (·.headIdx == i) |>.map (·.depIdx)
+
+/-- The number of incoming edges at position `i`. -/
+def inDegree (g : DepGraph) (i : Nat) : Nat :=
+  (g.parentsOf i).length
+
+/-- The graph as a mathlib `Digraph` on word positions. Built with
+    `Digraph.mk'`, so adjacency is decidable and digraph-level goals close by
+    `decide`. -/
+def toDigraph (g : DepGraph) : Digraph Nat :=
+  Digraph.mk' λ v w => g.deps.any λ d => d.headIdx == v && d.depIdx == w
+
+@[simp] theorem toDigraph_adj (g : DepGraph) (v w : Nat) :
+    g.toDigraph.Adj v w ↔ ParentEdge g.deps v w := by
+  simp [toDigraph, ParentEdge]
+
+/-- More edges, larger digraph: a graph's digraph is a subgraph of any
+    enhancement of it (in the `Digraph` lattice order). -/
+theorem toDigraph_mono {g g' : DepGraph} (h : ∀ d ∈ g.deps, d ∈ g'.deps) :
+    g.toDigraph ≤ g'.toDigraph := λ v w hvw => by
+  obtain ⟨d, hd, hh, hdep⟩ := (g.toDigraph_adj v w).mp hvw
+  exact (g'.toDigraph_adj v w).mpr ⟨d, h d hd, hh, hdep⟩
+
+end DepGraph
+
+/-- A dependency tree: a `DepGraph` meant to be single-headed (`hasUniqueHeads`
+    checks it), plus DG-specific lexical argument-structure premises. `frames`
+    is aligned with `words` (missing/short = no frame): the frame is framework
+    apparatus (like HPSG's ARG-ST), so it lives on DG's tree, not on the shared
+    `Word` token; frames come from the lexical carrier at tree construction
+    (`complementToArgStr` applied to a verb's `complementType`). -/
+structure DepTree extends DepGraph where
+  /-- Argument-structure premises aligned with `words`; short or missing list
+      means "no frame at this position" (see `DepTree.frame`). -/
   frames : List (Option ArgStr) := []
   deriving Repr
 
@@ -87,39 +147,27 @@ structure DepTree where
 def DepTree.frame (t : DepTree) (i : Nat) : Option ArgStr :=
   (t.frames[i]?).getD none
 
-/-- An enhanced dependency graph: like DepTree but allows multiple heads per word.
-    Relaxes the unique-heads constraint. -/
-structure DepGraph where
-  words : List Word
-  deps : List Dependency
-  rootIdx : Nat
-  deriving Repr
-
-/-- Every DepTree is trivially a DepGraph. -/
-def DepTree.toGraph (t : DepTree) : DepGraph :=
-  { words := t.words, deps := t.deps, rootIdx := t.rootIdx }
-
 end DependenciesAndTrees
 
 section StandardArgStr
 
 /-- Intransitive verb: subject to the left -/
-def argStr_V0 : ArgStr :=
+def argStrV0 : ArgStr :=
   { slots := [⟨.nsubj, .left, true, some .DET⟩] }
 
 /-- Transitive verb: subject left, object right -/
-def argStr_VN : ArgStr :=
+def argStrVN : ArgStr :=
   { slots := [⟨.nsubj, .left, true, some .DET⟩,
               ⟨.obj, .right, true, some .DET⟩] }
 
 /-- Ditransitive verb: subject left, indirect object right, object right -/
-def argStr_VNN : ArgStr :=
+def argStrVNN : ArgStr :=
   { slots := [⟨.nsubj, .left, true, some .DET⟩,
               ⟨.iobj, .right, true, some .DET⟩,
               ⟨.obj, .right, true, some .DET⟩] }
 
 /-- Passive transitive: subject left (was patient), optional by-phrase right -/
-def argStr_VPassive : ArgStr :=
+def argStrVPassive : ArgStr :=
   { slots := [⟨.nsubj, .left, true, some .DET⟩,
               ⟨.obl, .right, false, some .ADP⟩] }  -- by-phrase is optional
 
@@ -127,9 +175,9 @@ def argStr_VPassive : ArgStr :=
     Returns `none` for frames without a standard schema: clause-embedding
     types take xcomp/ccomp, not obj, and `.np_pp` has no fixture here. -/
 def complementToArgStr : ComplementType → Option ArgStr
-  | .none => some argStr_V0
-  | .np => some argStr_VN
-  | .np_np => some argStr_VNN
+  | .none => some argStrV0
+  | .np => some argStrVN
+  | .np_np => some argStrVNN
   | _ => Option.none
 
 end StandardArgStr
@@ -138,11 +186,8 @@ section WellFormedness
 
 /-- Check if every word except root has exactly one head. -/
 def hasUniqueHeads (t : DepTree) : Bool :=
-  let n := t.words.length
-  let inCounts := List.range n |>.map λ i =>
-    t.deps.filter (·.depIdx == i) |>.length
-  (List.range inCounts.length).zip inCounts |>.all λ (i, count) =>
-    if i == t.rootIdx then count == 0 else count == 1
+  (List.range t.words.length).all λ i =>
+    t.toDepGraph.inDegree i == (if i == t.rootIdx then 0 else 1)
 
 /-- Check for cycles: no word is its own ancestor. -/
 def isAcyclic (t : DepTree) : Bool :=

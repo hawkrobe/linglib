@@ -286,38 +286,12 @@ private theorem projective_interval {t : DepTree} (hproj : isProjective t = true
 /-- Under `hasUniqueHeads`, all incoming edges of an in-range non-root node
     share the same head. -/
 private theorem unique_parent_of_hasUniqueHeads {t : DepTree}
-    (hwf : t.WF) {c : Nat} (hc : c < t.words.length)
+    (hwf : t.WF) {c : Nat} (_ : c < t.words.length)
     {e₁ e₂ : Dependency} (he₁ : e₁ ∈ t.deps) (he₂ : e₂ ∈ t.deps)
     (hd₁ : e₁.depIdx = c) (hd₂ : e₂.depIdx = c) :
     e₁.headIdx = e₂.headIdx := by
-  have hf₁ : e₁ ∈ t.deps.filter (·.depIdx == c) :=
-    List.mem_filter.mpr ⟨he₁, beq_iff_eq.mpr hd₁⟩
-  have hf₂ : e₂ ∈ t.deps.filter (·.depIdx == c) :=
-    List.mem_filter.mpr ⟨he₂, beq_iff_eq.mpr hd₂⟩
-  have hspec : (if c = t.rootIdx then
-      (t.deps.filter (·.depIdx == c)).length == 0
-    else (t.deps.filter (·.depIdx == c)).length == 1) = true := by
-    have hwf' := hwf.uniqueHeads
-    unfold hasUniqueHeads at hwf'
-    have hmem : (c, (t.deps.filter (·.depIdx == c)).length) ∈
-        (List.range ((List.range t.words.length |>.map fun i =>
-          (t.deps.filter (·.depIdx == i)).length).length)).zip
-          (List.range t.words.length |>.map fun i =>
-            (t.deps.filter (·.depIdx == i)).length) := by
-      rw [List.mem_iff_getElem]
-      simp only [List.length_zip, List.length_range, List.length_map]
-      exact ⟨c, by omega, by simp [List.getElem_zip, List.getElem_range, List.getElem_map]⟩
-    have h := (List.all_eq_true.mp hwf') _ hmem
-    simp only [beq_iff_eq] at h
-    exact h
-  have hroot : c ≠ t.rootIdx := by
-    intro heq
-    rw [if_pos heq, beq_iff_eq] at hspec
-    exact absurd hspec (by have := List.length_pos_of_mem hf₁; omega)
-  rw [if_neg hroot, beq_iff_eq] at hspec
-  obtain ⟨x, hx⟩ := List.length_eq_one_iff.mp hspec
-  rw [hx] at hf₁ hf₂
-  rw [List.eq_of_mem_singleton hf₁, List.eq_of_mem_singleton hf₂]
+  rw [← parentOf_of_edge_uh t hwf ⟨e₁, he₁, rfl, hd₁⟩,
+      ← parentOf_of_edge_uh t hwf ⟨e₂, he₂, rfl, hd₂⟩]
 
 /-- **Projective ⊂ planar** for well-formed trees.
     ([kuhlmann-nivre-2006], §3.5) -/

@@ -159,7 +159,7 @@ def englishAuxNet : WGNetwork := {
 -- ============================================================================
 
 /-- A transitive verb inherits nsubj/left from `verb` and adds obj/right
-locally — the network-derived argStr matches the manual `argStr_VN`
+locally — the network-derived argStr matches the manual `argStrVN`
 (modulo optional fields that default). -/
 theorem network_transitive_slot0 :
     resolveSlot englishAuxNet "transitive" 0 =
@@ -181,7 +181,7 @@ theorem network_aux_slot0 :
       some { depType := .nsubj, dir := .left } := by decide
 
 /-- The network-derived arg structure for a transitive verb has the same
-slots as the manually defined `argStr_VN`. -/
+slots as the manually defined `argStrVN`. -/
 theorem network_argStr_matches_manual :
     (resolveArgStr englishAuxNet "transitive").slots =
       [{ depType := .nsubj, dir := .left },
