@@ -151,7 +151,7 @@ Mastermind scenario (Pascal asking Mordecai *Must there be two reds?*):
 `P` = red-only, `Q` = blue, so `redOrBlue = P ∪ Q` and `notRed = W \ P`.
 `B_K = {w1}` entails *blue* without either kernel proposition settling it. -/
 
-open Semantics.Modality
+open Modality
 open Intensional.Premise
 
 /-- Four worlds: w0 = red, w1 = blue, w2 = green, w3 = unknown. -/
@@ -229,7 +229,7 @@ theorem mastermind_redOrBlue_settled :
 This gap makes the evidential presupposition non-trivial: must φ can be
 simultaneously defined and true. -/
 theorem entailment_settling_gap :
-    ∃ (k : Kernel World) (φ : (World → Prop)),
+    ∃ (k : Kernel World) (φ : World → Prop),
       k.followsFrom φ ∧ ¬ directlySettlesExplicit k φ :=
   ⟨mastermindK, blue, mastermind_blue_follows, mastermind_blue_unsettled⟩
 
@@ -254,21 +254,21 @@ theorem indirectness_neq_weakness :
         rcases List.mem_singleton.mp hp with rfl; decide
     exact (by decide : ¬ blue World.w0) (h hw0)
 
-variable {W : Type*}
+variable {W : Type*} (k : Kernel W)
 
 /-- **Modus ponens with must** ([von-fintel-gillies-2010] Argument 4.3.1): the
 argument form "if φ, must ψ; φ; ∴ ψ" is valid under realistic B_K. -/
-theorem modus_ponens_with_must (k : Kernel W) (φ ψ : (W → Prop)) (w : W)
+theorem modus_ponens_with_must (φ ψ : W → Prop) (w : W)
     (hReal : w ∈ k.base)
     (_hDef : (kernelMust k ψ).presup w)
     (hCond : φ w → (kernelMust k ψ).assertion w)
     (hPhi : φ w) :
     ψ w :=
-  hCond hPhi hReal
+  Modality.must_entails_prejacent k ψ w hReal _hDef (hCond hPhi)
 
 /-- **Must-perhaps contradiction** ([von-fintel-gillies-2010] Argument 4.3.2):
 must φ ∧ might ¬φ is contradictory. When B_K ⊆ ⟦φ⟧, B_K ∩ ⟦¬φ⟧ = ∅. -/
-theorem must_perhaps_contradiction (k : Kernel W) (φ : (W → Prop)) (w : W)
+theorem must_perhaps_contradiction (φ : W → Prop) (w : W)
     (_hDef : (kernelMust k φ).presup w)
     (hMust : (kernelMust k φ).assertion w) :
     ¬(kernelMight k (λ w' => ¬ φ w')).assertion w := by
@@ -288,7 +288,7 @@ K directly settles P iff P is an issue in S_K. -/
 /-- The subject matter S_K determined by a kernel ([von-fintel-gillies-2010]
     Implementation 2(i)): worlds are equivalent iff they agree on every
     proposition in K. -/
-def subjectMatter (k : Kernel W) : Setoid W where
+def subjectMatter : Setoid W where
   r w v := ∀ p ∈ k.props, (p w ↔ p v)
   iseqv := ⟨λ _ _ _ => Iff.rfl, λ h p hp => (h p hp).symm,
     λ h h' p hp => (h p hp).trans (h' p hp)⟩
@@ -301,14 +301,14 @@ def IsIssue (s : Setoid W) (φ : W → Prop) : Prop :=
 
 /-- K settles P by partition ([von-fintel-gillies-2010] Implementation 2(ii)):
     P is an issue in S_K. -/
-def settlesByPartition (k : Kernel W) (φ : W → Prop) : Prop :=
+def settlesByPartition (φ : W → Prop) : Prop :=
   IsIssue (subjectMatter k) φ
 
 /-- Partition settling implies entailment: all worlds in B_K agree on every
     X ∈ K, so they are S_K-equivalent; if φ is an issue in S_K, B_K is
     φ-uniform. Both implementations therefore imply entailment (cf.
     `explicit_implies_entailment`); the converse fails for both. -/
-theorem partition_implies_entailment (k : Kernel W) (φ : (W → Prop))
+theorem partition_implies_entailment (φ : W → Prop)
     (h : settlesByPartition k φ) :
     k.followsFrom φ ∨ k.followsFrom (λ w => ¬ φ w) := by
   rcases Set.eq_empty_or_nonempty k.base with hEmpty | ⟨w₀, hw₀⟩
@@ -343,7 +343,7 @@ private theorem not_settles_redOrBlue :
 /-- Counterexample (Impl 1 ↛ Impl 2): `K = {red}` settles `redOrBlue`
     explicitly (red ⊆ redOrBlue), but not by partition. -/
 theorem explicit_not_implies_partition :
-    ∃ (k : Kernel World) (φ : (World → Prop)),
+    ∃ (k : Kernel World) (φ : World → Prop),
       directlySettlesExplicit k φ ∧ ¬ settlesByPartition k φ :=
   ⟨⟨[red]⟩, redOrBlue,
     ⟨red, by simp, Or.inl λ _ hw => Or.inl hw⟩, not_settles_redOrBlue⟩
@@ -353,7 +353,7 @@ theorem explicit_not_implies_partition :
     which jointly determine `blue` — but no single kernel proposition
     entails or excludes it. -/
 theorem partition_not_implies_explicit :
-    ∃ (k : Kernel World) (φ : (World → Prop)),
+    ∃ (k : Kernel World) (φ : World → Prop),
       settlesByPartition k φ ∧ ¬ directlySettlesExplicit k φ := by
   refine ⟨mastermindK, blue, λ w v h => ?_, mastermind_blue_unsettled⟩
   have h1 := h redOrBlue (by simp [mastermindK])
@@ -365,7 +365,7 @@ theorem partition_not_implies_explicit :
     `redOrBlue` (B_K = {w0} ⊆ ⟦redOrBlue⟧) but does not settle it by
     partition. -/
 theorem entailment_not_implies_partition :
-    ∃ (k : Kernel World) (φ : (World → Prop)),
+    ∃ (k : Kernel World) (φ : World → Prop),
       k.followsFrom φ ∧ ¬ settlesByPartition k φ :=
   ⟨⟨[red]⟩, redOrBlue,
     λ w hw => Or.inl (mem_propIntersection.mp hw red (by simp)),
