@@ -17,7 +17,7 @@ analytical apparatus and its predictions:
   glossed examples, with `paradigm_predicts_attestation` checking the
   paradigm against the attested data;
 * the root-class coordinates as a derived projection
-  (`Chuj.CRootClass.toClassification`);
+  (`Chuj.RootClass.toClassification`);
 * the Minimalist voice heads (`vØ`, `v_w`, `v_ch`, `v_j`) typed on the
   substrate `Voice.Flavor` cells, with the -aj distribution, agent
   diagnostics, and division-of-labor theorems.
@@ -75,7 +75,7 @@ def ChujVoiceSuffix.participantFate : ChujVoiceSuffix → Voice.ParticipantFate
     cover derived transitive stems in -ej, which all four classes form
     (§2.2, p. 42; p. 45), nor the isolated -j forms on non-transitive
     roots (p. 71, ex. (71)). -/
-def isGrammatical (rc : CRootClass) (vs : ChujVoiceSuffix) : Bool :=
+def isGrammatical (rc : RootClass) (vs : ChujVoiceSuffix) : Bool :=
   match rc, vs with
   | .tv,  _     => true   -- √TV combines with all four
   | .itv, .null => true   -- √ITV takes null v (§2.1)
@@ -84,7 +84,7 @@ def isGrammatical (rc : CRootClass) (vs : ChujVoiceSuffix) : Bool :=
   | _,    _     => false
 
 /-- √TV is the only class that forms bare transitive stems (§2.2, p. 41). -/
-def formsBareTransitive (rc : CRootClass) : Bool :=
+def formsBareTransitive (rc : RootClass) : Bool :=
   match rc with
   | .tv => true
   | _   => false
@@ -162,7 +162,7 @@ def byPhraseOK (vs : ChujVoiceSuffix) : Bool :=
     *k'ib'* "grow" and *cham* "die") — so the values here are
     representative placeholders; [beavers-etal-2021] subdivides √TV on
     exactly this axis (`Studies/BeaversEtAl2021.lean`). -/
-def _root_.Chuj.CRootClass.toClassification : CRootClass → Classification
+def _root_.Chuj.RootClass.toClassification : RootClass → Classification
   | .tv  => { valency := {.internal}, changeType := .result,
               denotationType := some (.e ⇒ .s ⇒ .t),
               licensesTransitiveVoice := true }
@@ -197,7 +197,7 @@ def rowRoot (e : Data.Examples.LinguisticExample) : Option ChujRoot :=
     Adverb-diagnostic rows are excluded: their grammaticality is an
     agent-diagnostic fact, not a root × voice fact
     (`adverb_pair_predicted`). -/
-def paradigmData : List (CRootClass × ChujVoiceSuffix × Bool) :=
+def paradigmData : List (RootClass × ChujVoiceSuffix × Bool) :=
   Examples.all.filterMap λ e =>
     if (e.feature? "diagnostic").isSome then none
     else do
@@ -377,8 +377,8 @@ theorem minimalist_division_of_labor :
     isCausative (buildDecomposition vØ resultLower) = true ∧
     isInchoative (buildDecomposition v_j resultLower) = true ∧
     -- √TV licenses transitive Voice, √ITV does not (both take a theme)
-    (CRootClass.tv.toClassification).licensesTransitiveVoice = true ∧
-    (CRootClass.itv.toClassification).licensesTransitiveVoice = false :=
+    (RootClass.tv.toClassification).licensesTransitiveVoice = true ∧
+    (RootClass.itv.toClassification).licensesTransitiveVoice = false :=
   ⟨by decide, by decide, rfl, rfl⟩
 
 /-- The causative alternation in Chuj is determined by Voice, not by the
@@ -397,15 +397,15 @@ theorem chuj_causative_alternation_result :
     combines with an internal argument (§3.3); √POS and √NOM introduce
     no core positions. -/
 theorem root_class_valency_alignment :
-    (CRootClass.tv.toClassification).valency = {.internal} ∧
-    (CRootClass.itv.toClassification).valency = {.internal} ∧
-    (CRootClass.pos.toClassification).valency = ∅ ∧
-    (CRootClass.nom.toClassification).valency = ∅ := ⟨rfl, rfl, rfl, rfl⟩
+    (RootClass.tv.toClassification).valency = {.internal} ∧
+    (RootClass.itv.toClassification).valency = {.internal} ∧
+    (RootClass.pos.toClassification).valency = ∅ ∧
+    (RootClass.nom.toClassification).valency = ∅ := ⟨rfl, rfl, rfl, rfl⟩
 
 /-- `formsBareTransitive` matches transitive-Voice licensing — not
     internal-argument valency, which unaccusative √ITV shares with √TV
     (§3.3). -/
-theorem bare_transitive_iff_voice (rc : CRootClass) :
+theorem bare_transitive_iff_voice (rc : RootClass) :
     formsBareTransitive rc = true ↔
       rc.toClassification.licensesTransitiveVoice = true := by
   cases rc <;> decide
@@ -497,9 +497,9 @@ theorem aj_full_distribution :
 theorem division_of_labor_matches_data :
     -- Root determines internal: only √TV forms bare transitives
     formsBareTransitive .tv = true ∧
-    (CRootClass.tv.toClassification).licensesTransitiveVoice = true ∧
+    (RootClass.tv.toClassification).licensesTransitiveVoice = true ∧
     formsBareTransitive .itv = false ∧
-    (CRootClass.itv.toClassification).licensesTransitiveVoice = false ∧
+    (RootClass.itv.toClassification).licensesTransitiveVoice = false ∧
     -- Voice determines external: same root, different agent fate
     ChujVoiceSuffix.participantFate .null = .maintained ∧
     ChujVoiceSuffix.participantFate .ch = .denucleativized ∧
@@ -514,7 +514,7 @@ theorem theme_persists_all_voices :
     isGrammatical .tv .ch = true ∧
     isGrammatical .tv .j = true ∧
     isGrammatical .tv .w = true ∧
-    (CRootClass.tv.toClassification).valency = {.internal} :=
+    (RootClass.tv.toClassification).valency = {.internal} :=
   ⟨rfl, rfl, rfl, rfl, rfl⟩
 
 /-! ### Denotation type alignment -/
@@ -522,22 +522,22 @@ theorem theme_persists_all_voices :
 /-- The four root classes have distinct denotation types ((3), p. 37):
     √TV and √ITV = ⟨e,⟨s,t⟩⟩, √POS = ⟨e,⟨s,d⟩⟩, √NOM = ⟨e,t⟩. -/
 theorem denotation_type_alignment :
-    (CRootClass.tv.toClassification).denotationType = some (.e ⇒ .s ⇒ .t) ∧
-    (CRootClass.itv.toClassification).denotationType = some (.e ⇒ .s ⇒ .t) ∧
-    (CRootClass.pos.toClassification).denotationType = some (.e ⇒ .s ⇒ .d) ∧
-    (CRootClass.nom.toClassification).denotationType = some (.e ⇒ .t) :=
+    (RootClass.tv.toClassification).denotationType = some (.e ⇒ .s ⇒ .t) ∧
+    (RootClass.itv.toClassification).denotationType = some (.e ⇒ .s ⇒ .t) ∧
+    (RootClass.pos.toClassification).denotationType = some (.e ⇒ .s ⇒ .d) ∧
+    (RootClass.nom.toClassification).denotationType = some (.e ⇒ .t) :=
   ⟨rfl, rfl, rfl, rfl⟩
 
 /-- √TV and √ITV share both semantic type and internal-argument valency
     ([davis-1997]; §3.3) — what separates them is transitive-Voice
     licensing alone, whose source Coon expressly declines to formalize. -/
 theorem tv_itv_same_type_different_voice :
-    (CRootClass.tv.toClassification).denotationType =
-      (CRootClass.itv.toClassification).denotationType ∧
-    (CRootClass.tv.toClassification).valency =
-      (CRootClass.itv.toClassification).valency ∧
-    (CRootClass.tv.toClassification).licensesTransitiveVoice ≠
-      (CRootClass.itv.toClassification).licensesTransitiveVoice :=
+    (RootClass.tv.toClassification).denotationType =
+      (RootClass.itv.toClassification).denotationType ∧
+    (RootClass.tv.toClassification).valency =
+      (RootClass.itv.toClassification).valency ∧
+    (RootClass.tv.toClassification).licensesTransitiveVoice ≠
+      (RootClass.itv.toClassification).licensesTransitiveVoice :=
   ⟨rfl, rfl, by decide⟩
 
 /-- The -w suffix cross-class generalization: -w verbalizes √POS and
@@ -559,10 +559,10 @@ theorem w_verbalization_cross_class :
     intransitive classes are underdetermined by the manner-blind
     annotation coordinates. -/
 theorem salience_of_root_classes :
-    (CRootClass.tv.toClassification).salienceClass = some .agentPatient ∧
-    (CRootClass.itv.toClassification).salienceClass = none ∧
-    (CRootClass.pos.toClassification).salienceClass = none ∧
-    (CRootClass.nom.toClassification).salienceClass = none :=
+    (RootClass.tv.toClassification).salienceClass = some .agentPatient ∧
+    (RootClass.itv.toClassification).salienceClass = none ∧
+    (RootClass.pos.toClassification).salienceClass = none ∧
+    (RootClass.nom.toClassification).salienceClass = none :=
   ⟨rfl, rfl, rfl, rfl⟩
 
 end Coon2019

@@ -813,22 +813,22 @@ theorem unattested_type_matches_complementarity :
 open Chuj
 
 /-- [beavers-etal-2021]'s result-root row for [coon-2019]'s √TV class:
-    the shared coordinates are `CRootClass.toClassification`; only the
+    the shared coordinates are `RootClass.toClassification`; only the
     change-entailment column is this paper's subdivision (Coon does not
     subdivide √TV). -/
 def rootTV_res : Classification :=
-  { CRootClass.tv.toClassification with changeType := .result }
+  { RootClass.tv.toClassification with changeType := .result }
 
 /-- The property-concept row of the √TV subdivision (no change
     entailment). -/
 def rootTV_pc : Classification :=
-  { CRootClass.tv.toClassification with changeType := .propertyConcept }
+  { RootClass.tv.toClassification with changeType := .propertyConcept }
 
 /-- Coon's √ITV coordinates, reused unchanged. -/
-def rootITV : Classification := CRootClass.itv.toClassification
+def rootITV : Classification := RootClass.itv.toClassification
 
 /-- Coon's √POS coordinates, reused unchanged. -/
-def rootPOS : Classification := CRootClass.pos.toClassification
+def rootPOS : Classification := RootClass.pos.toClassification
 
 /-- Chuj √TV result roots instantiate the theory's result root predictions:
     entails change, no simple stative, unmarked verb. -/

@@ -18,12 +18,6 @@ controls whether the external argument is overt, implicit, or absent.
 
 * `Chuj.VoiceSystem.voices`: the four voice entries.
 * `Chuj.VoiceSystem.symmetry`: the asymmetrical classification.
-
-## Implementation notes
-
-The Minimalist voice-head analysis (vØ, v_w, v_ch, v_j as
-`Minimalist.Voice.Head` values) lives in `Studies/Coon2019.lean`, the
-anchor for [coon-2019]'s analysis.
 -/
 
 namespace Chuj

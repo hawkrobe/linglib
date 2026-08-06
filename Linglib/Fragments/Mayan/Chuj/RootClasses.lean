@@ -7,7 +7,7 @@ Consequences for the nature of roots."
 
 ## Main declarations
 
-* `Chuj.CRootClass`: the four morphosyntactic root classes (√TV, √ITV,
+* `Chuj.RootClass`: the four morphosyntactic root classes (√TV, √ITV,
   √POS, √NOM), identified by surface distribution.
 * `Chuj.ChujRoot`: a root entry — form, gloss, and class label.
 * `Chuj.allRoots` and the per-class lists `tvRoots`, `itvRoots`,
@@ -18,7 +18,7 @@ Consequences for the nature of roots."
 The entry carries only the distributional class label; the theoretical
 coordinates ([coon-2019]'s `Classification` values — semantic type,
 valency, transitive-Voice licensing) are a derived projection
-`CRootClass.toClassification` in `Studies/Coon2019.lean`, following the
+`RootClass.toClassification` in `Studies/Coon2019.lean`, following the
 derived-projection pattern of `Studies/HaninkKoontzGarboden2025.lean`.
 -/
 
@@ -27,7 +27,7 @@ namespace Chuj
 /-- The four morphosyntactic root classes in Chuj, identified by
     surface distribution (which suffixes they combine with, whether
     they form bare transitive stems). Labels follow [coon-2019]. -/
-inductive CRootClass where
+inductive RootClass where
   /-- Transitive roots: form bare transitive stems. -/
   | tv
   /-- Intransitive roots: take null v in intransitive stems. -/
@@ -45,7 +45,7 @@ structure ChujRoot where
   /-- English gloss -/
   gloss : String
   /-- Morphosyntactic root class -/
-  class' : CRootClass
+  class' : RootClass
   deriving Repr, BEq, DecidableEq
 
 /-! ### √TV roots (Table (5), p. 39) -/
