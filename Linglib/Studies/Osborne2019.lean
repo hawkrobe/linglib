@@ -5,8 +5,8 @@ import Linglib.Fragments.English.Auxiliaries
 import Linglib.Fragments.English.FunctionWords
 import Linglib.Syntax.WordGrammar.LexicalRules
 import Linglib.Syntax.DependencyGrammar.Valency
-import Linglib.Syntax.DependencyGrammar.Formal.Catena
-import Linglib.Syntax.DependencyGrammar.Formal.EnhancedDependencies
+import Linglib.Syntax.DependencyGrammar.Catena
+import Linglib.Syntax.DependencyGrammar.EnhancedDependencies
 
 /-!
 # Osborne 2019: valency, catenae, control, and ellipsis

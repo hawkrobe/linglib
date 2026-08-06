@@ -4,8 +4,8 @@ import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Determiners
 import Linglib.Fragments.English.FunctionWords
 import Linglib.Fragments.English.Auxiliaries
-import Linglib.Syntax.DependencyGrammar.Formal.NonProjective
-import Linglib.Syntax.DependencyGrammar.Formal.DependencyLength
+import Linglib.Syntax.DependencyGrammar.NonProjective
+import Linglib.Syntax.DependencyGrammar.DependencyLength
 
 /-!
 # Dependency Locality as an Explanatory Principle for Word Order

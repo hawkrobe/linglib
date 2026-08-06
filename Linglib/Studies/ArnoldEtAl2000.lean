@@ -2,7 +2,7 @@ import Linglib.Phonology.Constraints.Defs
 import Linglib.Core.Optimization.System
 import Linglib.Core.Optimization.Decoder
 import Linglib.Features.Givenness
-import Linglib.Syntax.DependencyGrammar.Formal.DependencyLength
+import Linglib.Syntax.DependencyGrammar.DependencyLength
 
 open Morphology (Word)
 
@@ -79,7 +79,7 @@ contradicting the paper's findings.
   collapses [prince-1981]'s three-way given/inferable/new into
   two categories (inferable → given). Focus marking is on a separate
   axis (`Focus.Mark`) and not consumed here.
-- `Syntax.DependencyGrammar.Formal.DependencyLength` —
+- `Syntax.DependencyGrammar.DependencyLength` —
   Dependency Locality ([futrell-gibson-2020]) provides the
   *positive* derivation of the heaviness signal: §9 below shows
   `heavyDiff` is exactly the sign of the DLM cost difference between
@@ -571,7 +571,7 @@ independently-motivated processing cost already formalized in linglib:
 
 | Constraint | Bridge | Cost lives in |
 |---|---|---|
-| `*HEAVY-FIRST` | `heavyDiff_eq_dlm_signal` | `Syntax.DependencyGrammar.Formal.DependencyLength` |
+| `*HEAVY-FIRST` | `heavyDiff_eq_dlm_signal` | `Syntax.DependencyGrammar.DependencyLength` |
 | `*NEW-FIRST`   | `newDiff_pos_implies_uid_prefers_themeLast` | `Processing.Memory` (information locality) |
 
 The two costs unify under [futrell-2019]'s **information locality**

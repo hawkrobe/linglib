@@ -1,5 +1,5 @@
 import Linglib.Syntax.DependencyGrammar.Projection
-import Linglib.Syntax.DependencyGrammar.Formal.EnhancedDependencies
+import Linglib.Syntax.DependencyGrammar.EnhancedDependencies
 
 open Morphology (Word)
 

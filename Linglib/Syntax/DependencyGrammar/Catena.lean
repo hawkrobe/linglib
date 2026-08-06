@@ -1,4 +1,4 @@
-import Linglib.Syntax.DependencyGrammar.Formal.NonProjective
+import Linglib.Syntax.DependencyGrammar.NonProjective
 
 /-!
 # Catenae

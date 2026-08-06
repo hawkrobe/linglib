@@ -99,11 +99,10 @@ and [wilder-2008] (constituent-sharing flavor).
   vs constituent-sharing vs 3-D phrase structure). `SharedNode` records
   the multiply-dominated node abstractly; specific MD theories
   instantiate the dominance/sharing relation via their own apparatus.
-- `MDSharing` was renamed from `SharingType` at 0.230.575 to avoid a
-  bare-name collision with
-  `Syntax/DependencyGrammar/Formal/CoordinationParallelism.lean`'s
-  `SharingType` (which classifies *extraction symmetry*, not constituent
-  sharing).
+- `MDSharing` was renamed from `SharingType` to avoid a bare-name
+  collision with a since-dissolved DG module's `SharingType` (which
+  classified *extraction symmetry*, not constituent sharing); the
+  clearer name stays.
 - `UsesMD` / `UsesEllipsis` / `UsesBoth` are `Prop` with decidability
   instances (per `feedback_no_intrinsic_bool` discipline); decide-checked
   consumers continue to work.
@@ -131,9 +130,8 @@ inductive PFReductionMechanism where
     shared). The two sharing modes derive different syntactic and
     interpretive properties.
 
-    NB: name distinguished from
-    `Syntax/DependencyGrammar/Formal/CoordinationParallelism.SharingType`
-    (extraction symmetry, not constituent sharing). -/
+    Named `MDSharing` (not `SharingType`) for constituent sharing, as
+    against extraction symmetry. -/
 inductive MDSharing where
   /-- Individual functional heads shared between conjuncts. Each conjunct
       remains a separate full phrase; only specific heads (e.g., C, T)

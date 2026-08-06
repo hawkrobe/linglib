@@ -1,5 +1,5 @@
-import Linglib.Syntax.DependencyGrammar.Formal.NonProjective
-import Linglib.Syntax.DependencyGrammar.Formal.DependencyLength
+import Linglib.Syntax.DependencyGrammar.NonProjective
+import Linglib.Syntax.DependencyGrammar.DependencyLength
 import Linglib.Data.WALS.Features.F95A
 import Linglib.Data.UD.Basic
 import Linglib.Features.WordOrder
@@ -22,7 +22,7 @@ he uses (Tables 1–3, plus the Single-Word-Exceptions discussion at Table 4),
 the per-table harmonic-dominance theorems, the head-direction-generalization
 statement over those tables, and the DLM-vs-WALS consistency theorems that
 package the central claim. The DLM apparatus itself lives in
-`Syntax/DependencyGrammar/Formal/DependencyLength.lean`.
+`Syntax/DependencyGrammar/DependencyLength.lean`.
 
 ## Cross-tabulation apparatus
 
