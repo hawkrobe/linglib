@@ -328,76 +328,7 @@ theorem pos_agentive :
 theorem nom_agentive :
     isActivity (buildDecomposition v_w activityLower) = true := by decide
 
-/-! ### Division of labor -/
-
-/-- The root determines whether a theme is present; Voice determines
-    whether an agent is present (ex. (2)/(77), p. 75). -/
-theorem minimalist_division_of_labor :
-    isCausative (buildDecomposition vØ resultLower) = true ∧
-    isInchoative (buildDecomposition v_j resultLower) = true ∧
-    (RootClass.tv.toClassification).licensesTransitiveVoice = true ∧
-    (RootClass.itv.toClassification).licensesTransitiveVoice = false :=
-  ⟨by decide, by decide, rfl, rfl⟩
-
-/-- For result roots, causativity is determined by the voice head's
-    θ-assignment, not by the root. -/
-theorem chuj_causative_alternation_result :
-    (isCausative (buildDecomposition vØ resultLower) = true ↔ vØ.AssignsTheta) ∧
-    (isCausative (buildDecomposition v_w resultLower) = true ↔ v_w.AssignsTheta) ∧
-    (isCausative (buildDecomposition v_ch resultLower) = true ↔ v_ch.AssignsTheta) ∧
-    (isCausative (buildDecomposition v_j resultLower) = true ↔ v_j.AssignsTheta) :=
-  ⟨by decide, by decide, by decide, by decide⟩
-
-/-- In the data: roots determine internal arguments, Voice determines
-    external arguments (ex. (2)/(77), p. 75). -/
-theorem division_of_labor_matches_data :
-    formsBareTransitive .tv = true ∧
-    formsBareTransitive .itv = false ∧
-    VoiceSuffix.participantFate .null = .maintained ∧
-    VoiceSuffix.participantFate .ch = .denucleativized ∧
-    VoiceSuffix.participantFate .j = .suppressed := by decide
-
-/-- Transitive roots keep their internal argument in all four voice
-    forms. -/
-theorem theme_persists_all_voices :
-    (∀ vs, isGrammatical .tv vs = true) ∧
-    (RootClass.tv.toClassification).valency = {.internal} :=
-  ⟨λ vs => by cases vs <;> decide, rfl⟩
-
-/-! ### Fragment bridge -/
-
-/-- Transitive and unaccusative intransitive roots both take an
-    internal argument (§3.3); positional and nominal roots take none. -/
-theorem root_class_valency_alignment :
-    (RootClass.tv.toClassification).valency = {.internal} ∧
-    (RootClass.itv.toClassification).valency = {.internal} ∧
-    (RootClass.pos.toClassification).valency = ∅ ∧
-    (RootClass.nom.toClassification).valency = ∅ := ⟨rfl, rfl, rfl, rfl⟩
-
-/-- A voice suffix has an overt external argument exactly when its head
-    carries [D]. -/
-theorem d_feature_alignment :
-    (toVoiceHead .null).hasD = true ∧
-    (toVoiceHead .w).hasD = true ∧
-    (toVoiceHead .ch).hasD = false ∧
-    (toVoiceHead .j).hasD = false := ⟨rfl, rfl, rfl, rfl⟩
-
-/-- -w verbalizes both positional and nominal roots; the event
-    structure differs with the root's lower structure (pp. 54–56). -/
-theorem w_verbalization_cross_class :
-    isGrammatical .pos .w = true ∧
-    isGrammatical .nom .w = true ∧
-    buildDecomposition v_w positionalLower = [.vDO, .vBE] ∧
-    isActivity (buildDecomposition v_w activityLower) = true := by
-  refine ⟨by decide, by decide, by decide, by decide⟩
-
-/-- Each root class carries the semantic type of Coon's (3), p. 37. -/
-theorem denotation_type_alignment :
-    (RootClass.tv.toClassification).denotationType = some (.e ⇒ .s ⇒ .t) ∧
-    (RootClass.itv.toClassification).denotationType = some (.e ⇒ .s ⇒ .t) ∧
-    (RootClass.pos.toClassification).denotationType = some (.e ⇒ .s ⇒ .d) ∧
-    (RootClass.nom.toClassification).denotationType = some (.e ⇒ .t) :=
-  ⟨rfl, rfl, rfl, rfl⟩
+/-! ### Root-class contrasts -/
 
 /-- √TV and √ITV share semantic type and valency ([davis-1997]; §3.3);
     transitive-Voice licensing alone separates them. -/
