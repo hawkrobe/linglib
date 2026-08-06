@@ -14,27 +14,15 @@ import Linglib.Syntax.DependencyGrammar.Formal.HarmonicOrder
 
 This file formalizes the worked examples of [futrell-gibson-2020]
 ("Dependency locality as an explanatory principle for word order",
-*Language* 96(2):371–412) and transcribes its Table 2.
+*Language* 96(2):371–412) — the §2.3–2.4 dependency trees, with every
+total dependency length checked against the printed figure — and
+transcribes its Table 2 (per-language head-final proportion and mean
+dependency length over UD 2.1 corpora). The Monte Carlo corpus studies
+of §4–5 are not formalized.
 
-The examples in §2.3–2.4 are small dependency trees making the paper's
-qualitative points: displacement yields nonprojective trees of gap
-degree 1; placing short constituents before long ones minimizes total
-dependency length after a head, and the mirror-image order does before a
-head; consistent head direction is optimal for chains but not for a head
-with several one-word dependents; the cost of keeping a verb particle
-after the object grows with the weight of the object; and an attested
-sentence has shorter dependencies than random reorderings of its own
-tree. Every total dependency length agrees with the figure printed in
-the paper, by `decide`.
-
-Table 2 lists, for 46 languages measured over Universal Dependencies 2.1
-corpora, the proportion of head-final dependencies and the mean
-dependency length per word at sentence lengths 10, 15, and 20.
-
-The Monte Carlo corpus studies of §4–5 are not formalized. English words
-come from the Fragment lexicon, and the trees follow the paper's drawing
-convention in which a preposition heads its noun, so arc lengths match
-the printed diagrams.
+English words come from the Fragment lexicon, and the trees follow the
+paper's drawing convention in which a preposition heads its noun, so arc
+lengths match the printed diagrams.
 -/
 
 namespace FutrellEtAl2020
