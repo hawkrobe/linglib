@@ -89,8 +89,8 @@ theorem displacement_gap_degree_one :
 A head with three dependent phrases of sizes 1, 2, 3. In head-initial
 contexts (7), placing them short-to-long after the head minimizes total
 dependency length; in head-final contexts (8), the mirror-image
-long-before-short order does — the Japanese-style preference
-([yamashita-chang-2001]; heavy elements shift leftward). -/
+long-before-short order does. The paper cites experimental evidence for
+the latter from Japanese, where heavy elements shift leftward. -/
 
 /-- (7a) A [B] [C D] [E F G]: dependents short-to-long after the head. -/
 def shortBeforeLong : DepTree :=
@@ -142,8 +142,9 @@ correlations (universals 2–6). The consistent chain achieves the
 `listSpan` lower bound of the substrate's chain machinery
 (`monotone_ascending_achieves_span`); the mixed order exceeds it. For a
 head with several short dependents (10), the optimum instead splits them
-across the head (Gildea–Temperley), predicting the documented exceptions
-(e.g. prenominal determiners in otherwise head-initial Spanish). -/
+across the head ([gildea-temperley-2010]), predicting the documented
+exceptions (e.g. prenominal determiners in otherwise head-initial
+Spanish). -/
 
 /-- (9a) chain A → B → C → D linearized consistently: A B C D. -/
 def consistentChain : DepTree :=
