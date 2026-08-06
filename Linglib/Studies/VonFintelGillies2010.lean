@@ -284,46 +284,43 @@ Def 7 presents subject matters as equivalence relations on `W`: `S[P]` keeps
 the pairs of `S` that agree on `P`, and `P` is an *issue* in `S` iff
 `S[P] = S`. The subject matter S_K determined by a kernel is the refinement
 `S_o[P₁]…[Pₙ]` of the universal relation along each kernel proposition —
-equivalently, the relation "agrees with on every `X ∈ K`". Implementation 2:
+equivalently, the relation "agrees on every `X ∈ K`". Implementation 2:
 K directly settles P iff P is an issue in S_K. -/
 
-/-- The subject matter S_K determined by a kernel ([von-fintel-gillies-2010]
-    Implementation 2(i)): worlds are equivalent iff they agree on every
-    proposition in K. -/
+/-- The subject matter S_K determined by a kernel: worlds are equivalent iff
+    they agree on every proposition in K. -/
 def subjectMatter : Setoid W where
   r w v := ∀ p ∈ k.props, (p w ↔ p v)
   iseqv := ⟨λ _ _ _ => Iff.rfl, λ h p hp => (h p hp).symm,
     λ h h' p hp => (h p hp).trans (h' p hp)⟩
 
-/-- `P` is an **issue** in a subject matter `S` ([von-fintel-gillies-2010]
-    Def 7(iii)): refining `S` along the `P`-boundary changes nothing, i.e.
-    `S`-equivalent worlds never disagree on `P`. -/
+/-- `P` is an **issue** in a subject matter `S`: `S`-equivalent worlds never
+    disagree on `P`. -/
 def IsIssue (s : Setoid W) (φ : W → Prop) : Prop :=
   ∀ w v, s.r w v → (φ w ↔ φ v)
 
-/-- K settles P by partition ([von-fintel-gillies-2010] Implementation 2(ii)):
-    P is an issue in S_K. -/
+/-- K settles P by partition iff P is an issue in S_K. -/
 def settlesByPartition (φ : W → Prop) : Prop :=
   IsIssue (subjectMatter k) φ
 
-/-- Partition settling implies entailment: all worlds in B_K agree on every
-    X ∈ K, so they are S_K-equivalent; if φ is an issue in S_K, B_K is
-    φ-uniform. Both implementations therefore imply entailment (cf.
+/-- B_K lies in a single cell of the subject matter: worlds in the base
+    satisfy every kernel proposition, so they agree on all of them. -/
+theorem subjectMatter_rel_base {v w : W} (hv : v ∈ k.base) (hw : w ∈ k.base) :
+    (subjectMatter k).r v w := λ p hp =>
+  iff_of_true (mem_propIntersection.mp hv p hp) (mem_propIntersection.mp hw p hp)
+
+/-- Partition settling implies entailment: B_K lies in a single S_K-cell
+    (`subjectMatter_rel_base`), so an issue is uniform on it. Both
+    implementations therefore imply entailment (cf.
     `explicit_implies_entailment`); the converse fails for both. -/
 theorem partition_implies_entailment (φ : W → Prop)
     (h : settlesByPartition k φ) :
     k.followsFrom φ ∨ k.followsFrom (λ w => ¬ φ w) := by
   rcases Set.eq_empty_or_nonempty k.base with hEmpty | ⟨w₀, hw₀⟩
-  · exact Or.inl ((Kernel.followsFrom_iff _ _).mpr λ w hw =>
-      absurd (hEmpty ▸ hw) (Set.notMem_empty w))
-  · have hrel : ∀ v ∈ k.base, (subjectMatter k).r w₀ v := λ v hv p hp =>
-      ⟨λ _ => mem_propIntersection.mp hv p hp,
-       λ _ => mem_propIntersection.mp hw₀ p hp⟩
-    rcases Classical.em (φ w₀) with hφ | hφ
-    · exact Or.inl ((Kernel.followsFrom_iff _ _).mpr λ v hv =>
-        (h w₀ v (hrel v hv)).mp hφ)
-    · exact Or.inr ((Kernel.followsFrom_iff _ _).mpr λ v hv hφv =>
-        hφ ((h w₀ v (hrel v hv)).mpr hφv))
+  · exact Or.inl λ w hw => absurd (hEmpty ▸ hw) (Set.notMem_empty w)
+  · exact (Classical.em (φ w₀)).imp
+      (λ hφ v hv => (h w₀ v (subjectMatter_rel_base k hw₀ hv)).mp hφ)
+      (λ hφ v hv hφv => hφ ((h w₀ v (subjectMatter_rel_base k hw₀ hv)).mpr hφv))
 
 /-! ### Non-equivalence of the two implementations (§7.2)
 
