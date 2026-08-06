@@ -1,4 +1,5 @@
 import Linglib.Syntax.DependencyGrammar.Formal.DependencyLength
+import Linglib.Syntax.DependencyGrammar.Projection
 
 open Morphology (Word)
 

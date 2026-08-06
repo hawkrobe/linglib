@@ -261,15 +261,6 @@ private theorem go_mem_of_queue (deps : List Dependency)
       exact ih (sfx ++ _) (y :: visited) fuel'
         (by simp only [List.length_cons] at hfuel; omega)
 
-/-- The output of `projection` is a list with no duplicates.
-    Follows from BFS visiting each node at most once (`go_nodup`), composed
-    with the fact that `insertionSort` preserves the multiset (hence Nodup). -/
-theorem projection_nodup (deps : List Dependency) (root : Nat) :
-    (projection deps root).Nodup := by
-  unfold projection
-  set goResult := projection.go deps [root] [] (deps.length * (deps.length + 1) + 2)
-  have hnodup_go : goResult.Nodup := go_nodup deps [root] [] _ List.nodup_nil
-  exact (List.perm_insertionSort _ goResult).nodup_iff.mpr hnodup_go
 
 /-- If (v, w) is a dependency edge, then w ∈ projection deps v.
     Proof: BFS from v processes v first (adding children to queue),
@@ -563,12 +554,6 @@ theorem interval_mem_between (l : List Nat)
 def Dominates (deps : List Dependency) (v x : Nat) : Prop :=
   Relation.ReflTransGen (parentEdge deps) v x
 
-/-- Unfolding bridge to mathlib's `Relation.ReflTransGen` for ad-hoc access to
-    its lemma corpus (`lift`, `mono`, `closed`, etc.) without manual `unfold`. -/
-theorem Dominates_def {deps : List Dependency} {v x : Nat} :
-    Dominates deps v x ↔ Relation.ReflTransGen (parentEdge deps) v x :=
-  Iff.rfl
-
 /-- Reflexive case: `v` dominates itself. -/
 @[refl]
 theorem Dominates.refl {deps : List Dependency} {v : Nat} : Dominates deps v v :=
@@ -659,27 +644,6 @@ theorem dominates_of_mem_projection {deps : List Dependency} {v x : Nat}
   rcases go_dominates_of_mem deps [v] [] _ x hx_go with habs | ⟨q, hq, hdom⟩
   · exact nomatch habs
   · exact List.mem_singleton.mp hq ▸ hdom
-
-/-- Fuel monotonicity: more fuel never loses BFS results. -/
-private theorem go_mono_fuel (deps : List Dependency)
-    (queue visited : List Nat) (f k : Nat) (x : Nat)
-    (hx : x ∈ projection.go deps queue visited f) :
-    x ∈ projection.go deps queue visited (f + k) := by
-  induction f generalizing queue visited with
-  | zero =>
-    simpa [Nat.zero_add] using go_visited_subset deps queue visited k x hx
-  | succ f' ih =>
-    match queue with
-    | [] =>
-      rw [go_empty_queue] at hx; rw [go_empty_queue]; exact hx
-    | node :: rest =>
-      simp only [projection.go] at hx
-      rw [Nat.add_right_comm]; simp only [projection.go]
-      split at hx <;> split
-      · exact ih rest visited hx
-      · rename_i h1 h2; exact absurd h1 h2
-      · rename_i h1 h2; exact absurd h2 h1
-      · exact ih (rest ++ _) (node :: visited) hx
 
 /-- If predicate `p` implies `q` on all list elements, then `filter p` is no longer than `filter q`. -/
 private theorem filter_length_le_of_imp {α : Type*} (l : List α) (p q : α → Bool)
@@ -844,6 +808,10 @@ theorem dominates_iff_mem_projection (deps : List Dependency) (v x : Nat) :
     Dominates deps v x ↔ x ∈ projection deps v :=
   ⟨mem_projection_of_dominates, dominates_of_mem_projection⟩
 
+/-- Dominance is decidable: decide membership in the BFS projection. -/
+instance (deps : List Dependency) (v x : Nat) : Decidable (Dominates deps v x) :=
+  decidable_of_iff _ (dominates_iff_mem_projection deps v x).symm
+
 end Projection
 
 -- ============================================================================
@@ -891,13 +859,6 @@ theorem foldl_max_zero_iff (ls : List Nat) :
       have : max 0 0 = 0 := by omega
       rw [this]
       exact ih (λ x hx => hall x (List.mem_cons.mpr (Or.inr hx)))
-
-/-- If some element of `ls` is positive, then `List.foldl max 0 ls > 0`. -/
-theorem foldl_max_pos_of_mem_pos (ls : List Nat) (x : Nat)
-    (hx : x ∈ ls) (hpos : x > 0) :
-    ls.foldl max 0 > 0 := by
-  have hge := foldl_max_ge_mem ls 0 x hx
-  omega
 
 /-- `foldl max init ls ≤ bound` when `init ≤ bound` and all elements `≤ bound`. -/
 theorem foldl_max_le_bound (ls : List Nat) (init bound : Nat)

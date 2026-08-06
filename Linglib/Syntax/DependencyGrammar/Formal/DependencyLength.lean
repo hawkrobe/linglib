@@ -1,13 +1,13 @@
-import Linglib.Syntax.DependencyGrammar.Formal.NonProjective
+import Linglib.Syntax.DependencyGrammar.Basic
 
 /-!
 # Dependency Length Minimization
 
 Formalises the core quantity behind [futrell-gibson-2020]'s claim that
 natural languages minimise total dependency length beyond what independent
-constraints predict, together with [behaghel-1909]'s "Oberstes Gesetz"
+constraints predict, together with [behaghel-1932]'s "Oberstes Gesetz"
 threshold predicate. The two short-before-long arithmetic lemmas record the
-*direction* of the DLM savings at the lemma level; the per-paper example trees
+*direction* of [behaghel-1909]'s Law of Growing Members; the per-paper example trees
 and cross-linguistic data sit in `Studies/FutrellEtAl2020.lean`,
 `Studies/ArnoldEtAl2000.lean`, and `Studies/FedzechkinaEtAl2017.lean`.
 
