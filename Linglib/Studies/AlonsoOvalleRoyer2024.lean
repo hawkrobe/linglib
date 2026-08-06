@@ -1,5 +1,6 @@
 import Linglib.Features.ModalIndefinite
 import Linglib.Semantics.Modality.EventRelativity
+import Linglib.Semantics.Modality.Kratzer.Operators
 import Linglib.Studies.Coon2019
 import Linglib.Fragments.Mayan.Chuj.ModalIndefinites
 import Linglib.Fragments.Spanish.ModalIndefinites
@@ -40,6 +41,7 @@ namespace AlonsoOvalleRoyer2024
 open Semantics.Modality (ModalFlavor)
 open Features.ModalIndefinite
 open Semantics.Modality.EventRelativity
+open Semantics.Modality.Kratzer
 open Chuj.ModalIndefinites
 open Spanish.ModalIndefinites
 open German.ModalIndefinites
@@ -50,7 +52,7 @@ open Italian.ModalIndefinites
 
 section Denotation
 
-variable {Event W Entity : Type*} (f : AnchoringFn Event W) (e : Event) (allW : List W)
+variable {Event W Entity : Type*} (f : AnchoringFn Event W) (e : Event)
   (domain : List Entity) (P Q : Entity → W → Prop) (w : W)
 
 /-- The modal indefinite denotation (59):
@@ -61,26 +63,18 @@ Some domain member satisfies restrictor and scope, and every restrictor
 member is a possible scope-satisfier — the modal-variation effect. -/
 def modalIndefiniteSat : Prop :=
   (∃ x ∈ domain, P x w ∧ Q x w) ∧
-    ∀ y ∈ domain, P y w → possibility f e allW (λ w' => Q y w') w
-
-instance [∀ y, DecidablePred (P y)] [∀ y, DecidablePred (Q y)] :
-    Decidable (modalIndefiniteSat f e allW domain P Q w) :=
-  inferInstanceAs (Decidable (_ ∧ _))
+    ∀ y ∈ domain, P y w → simplePossibility (f e) (Q y) w
 
 /-- The upper-bounded denotation: additionally, not every P is Q in the
 actual world — *algún*'s witness upper bound (§4.2; distinct from the
 anti-singleton *domain* constraint of
 [alonso-ovalle-menendez-benito-2010]). -/
 def upperBoundedSat : Prop :=
-  modalIndefiniteSat f e allW domain P Q w ∧ ¬ ∀ x ∈ domain, P x w → Q x w
-
-instance [∀ y, DecidablePred (P y)] [∀ y, DecidablePred (Q y)] :
-    Decidable (upperBoundedSat f e allW domain P Q w) :=
-  inferInstanceAs (Decidable (_ ∧ _))
+  modalIndefiniteSat f e domain P Q w ∧ ¬ ∀ x ∈ domain, P x w → Q x w
 
 /-- Upper-boundedness strengthens the plain denotation. -/
-theorem upperBounded_entails_plain (h : upperBoundedSat f e allW domain P Q w) :
-    modalIndefiniteSat f e allW domain P Q w := h.1
+theorem upperBounded_entails_plain (h : upperBoundedSat f e domain P Q w) :
+    modalIndefiniteSat f e domain P Q w := h.1
 
 end Denotation
 
@@ -287,12 +281,7 @@ inductive BookWorld where
   | ac    -- only a, c available
   deriving DecidableEq, Repr, Inhabited
 
-instance : Fintype BookWorld where
-  elems := {.abc, .ab, .ac}
-  complete := λ w => by cases w <;> decide
-
 private def allBooks : List Book := [.a, .b, .c]
-private def allBW : List BookWorld := [.abc, .ab, .ac]
 
 /-- "is a book": always true for our domain. -/
 private def isBook : Book → BookWorld → Prop := λ _ _ => True
@@ -326,6 +315,10 @@ inductive SpeechOrDescribed where | speech | described
 private def fEPI : AnchoringFn SpeechOrDescribed BookWorld :=
   λ _ _ => []  -- empty background → all worlds accessible
 
+private theorem fEPI_accessible {e : SpeechOrDescribed} {w w' : BookWorld} :
+    kratzerR (fEPI e) w w' :=
+  λ _ hq => (List.not_mem_nil hq).elim
+
 /-- *Yalnhej* on the book model: it holds both when every book is
     available (abc) and when not all are (ab) — non-maximal and not
     upper-bounded — while the upper-bounded denotation fails in abc.
@@ -333,12 +326,15 @@ private def fEPI : AnchoringFn SpeechOrDescribed BookWorld :=
     fails in abc. -/
 theorem yalnhej_three_way_contrast :
     -- yalnhej OK in abc (all available)
-    modalIndefiniteSat fEPI .speech allBW allBooks isBook isAvailable .abc ∧
+    modalIndefiniteSat fEPI .speech allBooks isBook isAvailable .abc ∧
     -- yalnhej OK in ab (not all available) — non-maximal
-    modalIndefiniteSat fEPI .speech allBW allBooks isBook isAvailable .ab ∧
-    -- UB fails in abc (all satisfy scope → anti-singleton violated)
-    ¬ upperBoundedSat fEPI .speech allBW allBooks isBook isAvailable .abc := by
-  refine ⟨by decide, by decide, by decide⟩
+    modalIndefiniteSat fEPI .speech allBooks isBook isAvailable .ab ∧
+    -- UB fails in abc (all satisfy scope)
+    ¬ upperBoundedSat fEPI .speech allBooks isBook isAvailable .abc := by
+  refine ⟨⟨⟨.a, by decide, trivial, trivial⟩, λ y _ _ => ?_⟩,
+    ⟨⟨.a, by decide, trivial, trivial⟩, λ y _ _ => ?_⟩,
+    λ h => h.2 (λ x _ _ => by cases x <;> trivial)⟩ <;>
+    exact ⟨.abc, fEPI_accessible, by cases y <;> trivial⟩
 
 /-! ### Card scenario
 
@@ -359,7 +355,6 @@ inductive CardWorld where
   deriving DecidableEq, Repr, Inhabited
 
 private def allCards : List Card := [.c1, .c2, .c3]
-private def allCW : List CardWorld := [.all, .only1, .only2]
 
 /-- "is a card": always true in our domain. -/
 private def isCard : Card → CardWorld → Prop := λ _ _ => True
@@ -401,7 +396,7 @@ inductive GrabEvent where | speech | local | imperative
       grabbed if permitted). -/
 private def fGrab : AnchoringFn GrabEvent CardWorld
   | .speech, _ => []  -- all worlds accessible
-  | .local, _ => [λ w => w == .only1]  -- only `only1` accessible
+  | .local, _ => [λ w => w = .only1]  -- only `only1` accessible
   | .imperative, _ => []  -- all worlds accessible (permission domain)
 
 /-- The two readings are formally distinct on the card model: anchored
@@ -410,8 +405,14 @@ private def fGrab : AnchoringFn GrabEvent CardWorld
     grabbable in some accessible world — "any card is fine". Same
     world, domain, and predicates; only the anchoring event differs. -/
 theorem harmonic_nonharmonic_contrast :
-    ¬ modalIndefiniteSat fGrab .local allCW allCards isCard canGrab .only1 ∧
-    modalIndefiniteSat fGrab .imperative allCW allCards isCard canGrab .only1 := by
-  exact ⟨by decide, by decide⟩
+    ¬ modalIndefiniteSat fGrab .local allCards isCard canGrab .only1 ∧
+    modalIndefiniteSat fGrab .imperative allCards isCard canGrab .only1 := by
+  refine ⟨λ h => ?_, ⟨⟨.c1, by decide, trivial, trivial⟩, λ y _ _ => ?_⟩⟩
+  · obtain ⟨w', hR, hg⟩ := h.2 .c2 (by decide) trivial
+    have hw : w' = .only1 := hR _ (List.mem_singleton_self _)
+    subst hw
+    exact hg
+  · exact ⟨(match y with | .c1 => .only1 | .c2 => .only2 | .c3 => .all),
+      λ _ hq => (List.not_mem_nil hq).elim, by cases y <;> trivial⟩
 
 end AlonsoOvalleRoyer2024

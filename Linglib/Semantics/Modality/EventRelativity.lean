@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Modal.Basic
+import Linglib.Semantics.Modality.Kratzer.Operators
 import Linglib.Semantics.Modality.ModalTypes
 
 /-!
@@ -11,11 +11,12 @@ backgrounds: the event type determines the modal flavor.
 
 ## Core Architecture
 
-Kratzer's `ConvBackground` (`World → List ((World → Bool))`) gives the modal
+Kratzer's `ConvBackground W` (`W → List (W → Prop)`) gives the modal
 base for a world. Hacquard adds a layer: modal bases are not
 context-global but event-local. An anchoring function
-`f : Event → W → List ((W → Bool))` first selects the event, then produces a
-Kratzer background.
+`f : Event → ConvBackground W` first selects the event, then produces a
+Kratzer background — the `Semantics/Modality/Kratzer` operators apply
+to `f e` directly.
 
 ## Content Licensing (§8–9)
 
@@ -46,6 +47,7 @@ argument via an anchoring function.
 namespace Semantics.Modality.EventRelativity
 
 open Semantics.Modality (ModalFlavor)
+open Semantics.Modality.Kratzer
 
 
 -- ════════════════════════════════════════════════════
@@ -55,17 +57,10 @@ open Semantics.Modality (ModalFlavor)
 /-- An anchoring function maps events to conversational backgrounds.
 
 This is [hacquard-2006]'s central innovation: modal bases are not
-global context parameters but projected from event arguments.
-
-The type `AnchoringFn Event W = Event → W → List ((W → Bool))` specializes
-to Kratzer's `ConvBackground = World → List ((World → Bool))` when
-applied to a specific event. -/
-abbrev AnchoringFn (Event W : Type*) := Event → W → List ((W → Bool))
-
-/-- An anchoring function applied to a specific event yields a
-Kratzer-style conversational background. -/
-def anchor {Event W : Type*} (f : AnchoringFn Event W) (e : Event) : W → List ((W → Bool)) :=
-  f e
+global context parameters but projected from event arguments. Applied
+to a specific event it is exactly a Kratzer `ConvBackground`, so the
+`Semantics/Modality/Kratzer` operators apply to `f e` directly. -/
+abbrev AnchoringFn (Event W : Type*) := Event → ConvBackground W
 
 /-- The type of modal anchor: a binary coarsening of `EventBinder` (§8)
 that collapses the contentful cases (speech act, attitude) into
@@ -102,55 +97,6 @@ theorem described_is_circumstantial :
     AnchorType.describedEvent.toFlavor = .circumstantial := rfl
 
 
--- ════════════════════════════════════════════════════
--- § 2. Event-Relative Modal Evaluation
--- ════════════════════════════════════════════════════
-
-/-- Accessibility: world w' is accessible from w given anchoring
-function f applied to event e.
-
-NB: This omits Kratzer's ordering source g (cf. [hacquard-2010], (29):
-`max_g(e)(∩f(e))`). The ordering source is orthogonal to the
-content-licensing analysis and not needed for the MI application. -/
-def accessible {Event W : Type*} (f : AnchoringFn Event W) (e : Event)
-    (allW : List W) (w : W) : List W :=
-  allW.filter λ w' => (f e w).all λ p => p w'
-
-/-- Existential modal: ◇_{f(e)} p at world w.
-True iff some world accessible via f(e) satisfies p. -/
-def possibility {Event W : Type*} (f : AnchoringFn Event W) (e : Event)
-    (allW : List W) (p : W → Prop) (w : W) : Prop :=
-  ∃ w' ∈ accessible f e allW w, p w'
-
-instance {Event W : Type*} (f : AnchoringFn Event W) (e : Event)
-    (allW : List W) (p : W → Prop) [DecidablePred p] (w : W) :
-    Decidable (possibility f e allW p w) :=
-  inferInstanceAs (Decidable (∃ _ ∈ _, _))
-
-/-- Universal modal: □_{f(e)} p at world w.
-True iff all worlds accessible via f(e) satisfy p. -/
-def necessity {Event W : Type*} (f : AnchoringFn Event W) (e : Event)
-    (allW : List W) (p : W → Prop) (w : W) : Prop :=
-  ∀ w' ∈ accessible f e allW w, p w'
-
-instance {Event W : Type*} (f : AnchoringFn Event W) (e : Event)
-    (allW : List W) (p : W → Prop) [DecidablePred p] (w : W) :
-    Decidable (necessity f e allW p w) :=
-  inferInstanceAs (Decidable (∀ _ ∈ _, _))
-
-/-- Duality: □_{f(e)} p ↔ ¬◇_{f(e)} ¬p. One of five sibling `theorem duality`s —
-    the box–diamond duality underlying the modal square of opposition
-    (`Core.Logic.Modal.modalSquare_relations`). -/
-theorem duality {Event W : Type*} (f : AnchoringFn Event W) (e : Event)
-    (allW : List W) (p : W → Prop) [DecidablePred p] (w : W) :
-    necessity f e allW p w ↔ ¬ possibility f e allW (λ w' => ¬ p w') w := by
-  unfold necessity possibility
-  simp only [not_exists, not_and]
-  refine ⟨fun h w' hw' hnp => ?_, fun h w' hw' => ?_⟩
-  · exact hnp (h w' hw')
-  · by_contra hp
-    exact h w' hw' hp
-
 
 -- ════════════════════════════════════════════════════
 -- §§ 3–7. Modal Indefinites (live in the study file)
@@ -159,7 +105,8 @@ theorem duality {Event W : Type*} (f : AnchoringFn Event W) (e : Event)
 /-! The modal indefinite denotation ([alonso-ovalle-royer-2024]), upper-boundedness,
 non-maximality, and harmonic interpretation types live in
 `Studies/AlonsoOvalleRoyer2024.lean`, which imports this file for
-`AnchoringFn` and `possibility`. -/
+`AnchoringFn` and applies the `Semantics/Modality/Kratzer` operators to
+the anchored backgrounds. -/
 
 
 -- ════════════════════════════════════════════════════
@@ -224,14 +171,14 @@ Returns `some bg` when the event carries propositional content
 (speech acts, attitudes), where `bg` is the conversational
 background (propositions accessible from each world).
 Returns `none` when the event lacks content (VP events). -/
-abbrev ContentFn (Event W : Type*) := Event → Option (W → List ((W → Bool)))
+abbrev ContentFn (Event W : Type*) := Event → Option (ConvBackground W)
 
 /-- Derive the epistemic modal base from event content.
 
 [hacquard-2010], (51): ∩f_epis(e) = {w' : w' compatible with CON(e)}.
 The epistemic base IS the content — this is identity, not a bridge. -/
 def epistemicFromContent {Event W : Type*} (con : ContentFn Event W) (e : Event) :
-    Option (W → List ((W → Bool))) :=
+    Option (ConvBackground W) :=
   con e
 
 /-- Whether CON(e) is defined for a given event.
@@ -253,7 +200,7 @@ VP events: CON(e₂) is undefined — no propositional content.
 
 The actual propositions depend on the specific event instance;
 `binderContent` captures only definedness (some vs none). -/
-def binderContent {W : Type*} : EventBinder → Option (W → List ((W → Bool)))
+def binderContent {W : Type*} : EventBinder → Option (ConvBackground W)
   | .speechAct => some (λ _ => [])  -- defined (content depends on instance)
   | .attitude  => some (λ _ => [])  -- defined (content depends on instance)
   | .vpEvent   => none              -- undefined: VP events lack content
@@ -601,116 +548,22 @@ theorem aspect_bound_no_epistemic (asp : Perfectivity') :
 
 
 -- ════════════════════════════════════════════════════
--- § 10. Kratzer Bridge
--- ════════════════════════════════════════════════════
-
-/-! An anchoring function applied to a specific event yields a function
-`W → List ((W → Bool))` — structurally identical to Kratzer's
-`ConvBackground = World → List ((World → Bool))` (in
-`Semantics/Modality/Kratzer.lean`).
-
-    anchor f e : W → List ((W → Bool)) ≡ ConvBackground
-
-This is definitional: `anchor f e = f e`. Event-relative modality
-IS Kratzer modality with the conversational background projected
-from an event argument rather than stipulated as a context parameter.
-No bridge theorem is needed — the types unify by construction. -/
-
-/-- `anchor f e` reduces to the anchoring function applied to the event.
-This makes explicit that the result is a conversational background
-(world → set of propositions) in Kratzer's sense. -/
-theorem anchor_reduces {Event W : Type*}
-    (f : AnchoringFn Event W) (e : Event) :
-    anchor f e = f e := rfl
-
-/-- Event-relative accessibility reduces to Kratzer-style accessibility:
-filtering worlds by the propositions in the background projected
-from event e. The implementation parallels `Kratzer.accessibleWorlds`
-(which computes `allWorlds.filter (λ w' => (f w).all (· w'))`). -/
-theorem accessible_is_background_filter {Event W : Type*}
-    (f : AnchoringFn Event W) (e : Event) (allW : List W) (w : W) :
-    accessible f e allW w = allW.filter (λ w' => (f e w).all (· w')) := rfl
-
-
--- ════════════════════════════════════════════════════
 -- § 10b. Event-Relative Ordering Source
 --        ([hacquard-2010], (29): max_g(e)(∩f(e)))
 -- ════════════════════════════════════════════════════
 
-/-! The modal evaluation in §2 omits Kratzer's ordering source g. The
-full [hacquard-2010] semantics (29) is:
+/-! The full [hacquard-2010] semantics (29) is
 
     ⟦modal⟧(p)(e)(w) = ∀/∃ w' ∈ max_{g(e)(w)}(∩f(e)(w)). p(w')
 
-where `max_{g(e)(w)}` selects the BEST worlds among the accessible
-worlds, ranked by the ordering source projected from event e.
+— Kratzer's ordered operators applied to the anchored base and
+ordering: `Kratzer.necessity (f e) (g e)` and
+`Kratzer.possibility (f e) (g e)`. The only event-relative ingredient
+is the ordering source projected from the event. -/
 
-An **event-relative ordering source** maps events to ordering functions,
-parallel to how the anchoring function maps events to modal bases.
-Different events can yield different orderings — e.g., a speech event
-might project the speaker's normative standards, while a VP event
-might project stereotypical ordering (inertia). -/
-
-/-- An event-relative ordering source: maps events to world-orderings.
-The ordering source determines how accessible worlds are ranked. Applied to event e and world w, it yields the
-set of propositions characterizing the ideal (norms, stereotypes, goals). -/
-abbrev OrderingFn (Event W : Type*) := Event → W → List ((W → Bool))
-
-/-- The best worlds among the accessible set, ranked by the event-relative
-ordering source. Combines the anchoring function (modal base) with the
-ordering function to select the maximally ideal accessible worlds.
-
-This implements Hacquard's (29): `max_{g(e)}(∩f(e))`. -/
-def bestAccessible {Event W : Type*} [DecidableEq W]
-    (f : AnchoringFn Event W) (g : OrderingFn Event W) (e : Event)
-    (allW : List W) (w : W) : List W :=
-  let acc := accessible f e allW w
-  let ordering := g e w
-  acc.filter λ w' =>
-    acc.all λ w'' =>
-      -- w' is at least as good as w'' iff w' satisfies all ordering
-      -- propositions that w'' satisfies (Kratzer's ≤_A relation)
-      (ordering.filter (· w'')).all (· w')
-
-/-- Event-relative necessity with ordering source:
-    □_{f(e),g(e)} p at world w = ∀w' ∈ Best(f(e),g(e),w). p(w'). -/
-def orderedNecessity {Event W : Type*} [DecidableEq W]
-    (f : AnchoringFn Event W) (g : OrderingFn Event W) (e : Event)
-    (allW : List W) (p : W → Prop) (w : W) : Prop :=
-  ∀ w' ∈ bestAccessible f g e allW w, p w'
-
-instance {Event W : Type*} [DecidableEq W]
-    (f : AnchoringFn Event W) (g : OrderingFn Event W) (e : Event)
-    (allW : List W) (p : W → Prop) [DecidablePred p] (w : W) :
-    Decidable (orderedNecessity f g e allW p w) :=
-  inferInstanceAs (Decidable (∀ _ ∈ _, _))
-
-/-- Event-relative possibility with ordering source:
-    ◇_{f(e),g(e)} p at world w = ∃w' ∈ Best(f(e),g(e),w). p(w'). -/
-def orderedPossibility {Event W : Type*} [DecidableEq W]
-    (f : AnchoringFn Event W) (g : OrderingFn Event W) (e : Event)
-    (allW : List W) (p : W → Prop) (w : W) : Prop :=
-  ∃ w' ∈ bestAccessible f g e allW w, p w'
-
-instance {Event W : Type*} [DecidableEq W]
-    (f : AnchoringFn Event W) (g : OrderingFn Event W) (e : Event)
-    (allW : List W) (p : W → Prop) [DecidablePred p] (w : W) :
-    Decidable (orderedPossibility f g e allW p w) :=
-  inferInstanceAs (Decidable (∃ _ ∈ _, _))
-
-/-- Empty ordering source: all accessible worlds are best (no ranking).
-Reduces to the unordered evaluation in §2. -/
-theorem empty_ordering_reduces {Event W : Type*} [DecidableEq W]
-    (f : AnchoringFn Event W) (e : Event) (allW : List W)
-    (p : W → Prop) (w : W) :
-    orderedNecessity f (λ _ _ => []) e allW p w ↔
-      necessity f e allW p w := by
-  unfold orderedNecessity bestAccessible necessity accessible
-  have htriv : ∀ (l : List W), l.all (fun (_ : W) => true) = true := by
-    intro l; induction l with
-    | nil => rfl
-    | cons _ _ ih => exact ih
-  simp [htriv]
+/-- An event-relative ordering source: applied to an event it is a
+Kratzer `OrderingSource`. -/
+abbrev OrderingFn (Event W : Type*) := Event → OrderingSource W
 
 
 -- ════════════════════════════════════════════════════
@@ -736,64 +589,37 @@ anchoring function whose event-relative necessity IS Hintikka's □. -/
 
 /-- Construct an anchoring function from a doxastic accessibility relation.
 
-Given `R : E → W → W → Bool` (agent → eval world → accessible world → Bool)
-and `holder : Event → E` (event → agent), the anchoring function
+Given `R : E → W → W → Prop` (agent → eval world → accessible world)
+and `holder : Event → E`, the anchoring function
 `f(e)(w) = [R(holder(e), w, ·)]` — a singleton background whose sole
-proposition encodes the doxastic accessibility from world w.
+premise is doxastic accessibility from w.
 
 This implements [hacquard-2010]'s insight that CON(e) for an
 attitude event e IS the set of doxastic alternatives of holder(e). -/
 def doxasticAnchoring {Event W E : Type*}
-    (R : E → W → W → Bool)
+    (R : E → W → W → Prop)
     (holder : Event → E) : AnchoringFn Event W :=
   λ e w => [R (holder e) w]
 
-/-- Filtering by a predicate then checking all = checking all with implication guard.
-Used to bridge the filter-based `necessity` with the guard-based doxastic `boxAt`. -/
-private theorem filter_all_eq_all_guard {α : Type*}
-    (l : List α) (pred p : α → Bool) :
-    (l.filter pred).all p = l.all (λ x => !pred x || p x) := by
-  induction l with
-  | nil => rfl
-  | cons x xs ih =>
-    simp only [List.filter, List.all_cons]
-    cases pred x <;> simp [ih]
-
-/-- Event-relative necessity with doxastic anchoring equals Hintikka-style
-universal quantification over doxastic alternatives.
-
-`necessity (doxasticAnchoring R holder) e allW p w`
-  = `(allW.filter (R (holder e) w)).all p`        -- event-relative
-  = `allW.all (λw'. ¬R(holder(e),w,w') ∨ p(w'))` -- Hintikka's □
-
-This is the core bridge theorem: attitude verbs and modals share the
-same quantificational structure. Embedded epistemics under *believe*
-quantify over the SAME set of worlds as the attitude verb itself
+/-- Necessity over a doxastic anchoring is Hintikka-style universal
+quantification over the holder's doxastic alternatives — attitude
+verbs and modals share the same quantificational structure
 ([hacquard-2010], §6.1.3). -/
 theorem doxastic_necessity_eq {Event W E : Type*}
-    (R : E → W → W → Bool)
-    (holder : Event → E) (e : Event)
-    (allW : List W) (p : W → Prop) (w : W) :
-    necessity (doxasticAnchoring R holder) e allW p w ↔
-      (∀ w' ∈ allW, R (holder e) w w' = true → p w') := by
-  unfold necessity accessible doxasticAnchoring
-  simp only [List.all_cons, List.all_nil, Bool.and_true,
-    List.mem_filter, and_imp]
+    (R : E → W → W → Prop)
+    (holder : Event → E) (e : Event) (p : W → Prop) (w : W) :
+    simpleNecessity (doxasticAnchoring R holder e) p w ↔
+      ∀ w', R (holder e) w w' → p w' := by
+  simp [simpleNecessity, Core.Logic.Modal.box, kratzerR, doxasticAnchoring]
 
-/-- Doxastic possibility dually: ◇_{DOX(holder(e))} p at w
-iff some doxastic alternative of holder(e) satisfies p. -/
+/-- Possibility dually: some doxastic alternative of the holder
+satisfies p. -/
 theorem doxastic_possibility_eq {Event W E : Type*}
-    (R : E → W → W → Bool)
-    (holder : Event → E) (e : Event)
-    (allW : List W) (p : W → Prop) (w : W) :
-    possibility (doxasticAnchoring R holder) e allW p w ↔
-      (∃ w' ∈ allW, R (holder e) w w' = true ∧ p w') := by
-  unfold possibility accessible doxasticAnchoring
-  simp only [List.all_cons, List.all_nil, Bool.and_true,
-    List.mem_filter]
-  constructor
-  · rintro ⟨w', ⟨hw'_in, hR⟩, hp⟩; exact ⟨w', hw'_in, hR, hp⟩
-  · rintro ⟨w', hw'_in, hR, hp⟩; exact ⟨w', ⟨hw'_in, hR⟩, hp⟩
+    (R : E → W → W → Prop)
+    (holder : Event → E) (e : Event) (p : W → Prop) (w : W) :
+    simplePossibility (doxasticAnchoring R holder e) p w ↔
+      ∃ w', R (holder e) w w' ∧ p w' := by
+  simp [simplePossibility, Core.Logic.Modal.diamond, kratzerR, doxasticAnchoring]
 
 
 -- ════════════════════════════════════════════════════
@@ -868,14 +694,14 @@ anchoring: any (individual, time)-parameterized R can be recovered by
 composing with event projection. -/
 def factoredAnchoring {Event W Individual TimePoint : Type*}
     (proj : EventProjection Event Individual TimePoint)
-    (g : Individual → TimePoint → W → List ((W → Bool))) : AnchoringFn Event W :=
+    (g : Individual → TimePoint → ConvBackground W) : AnchoringFn Event W :=
   λ e w => g (proj.holder e) (proj.time e) w
 
 /-- Factored anchoring reduces to the (individual, time)-parameterized
 function applied to the event's projected pair. -/
 theorem factored_reduces {Event W Individual TimePoint : Type*}
     (proj : EventProjection Event Individual TimePoint)
-    (g : Individual → TimePoint → W → List ((W → Bool))) (e : Event) (w : W) :
+    (g : Individual → TimePoint → ConvBackground W) (e : Event) (w : W) :
     factoredAnchoring proj g e w = g (proj.holder e) (proj.time e) w := rfl
 
 
@@ -944,23 +770,17 @@ theorem same_modal_different_params :
 inductive TrainWorld where | took | didnt
   deriving DecidableEq, Repr, Inhabited
 
-private def allTW : List TrainWorld := [.took, .didnt]
-
 /-- Epistemic anchoring (via speech event): the speaker considers both
-worlds possible (no decisive evidence either way).
-All (individual, time) combinations yield an empty background here
-because we only evaluate this at the speech event's projection
-(speaker, now), where the speaker has no decisive evidence. -/
-private def epistemicBg : TrainPerson → TrainTime → TrainWorld →
-    List ((TrainWorld → Bool)) :=
+worlds possible (no decisive evidence either way), so the background
+is empty at every projection. -/
+private def epistemicBg : TrainPerson → TrainTime → ConvBackground TrainWorld :=
   λ _ _ _ => []
 
 /-- Root/goal-oriented anchoring (via VP event): given Jane's
 circumstances at the past time, only the took-world is compatible
 (she was in a situation where she had to take the train). -/
-private def rootBg : TrainPerson → TrainTime → TrainWorld →
-    List ((TrainWorld → Bool))
-  | .jane, .then, _ => [λ w => w == .took]  -- only took-world accessible
+private def rootBg : TrainPerson → TrainTime → ConvBackground TrainWorld
+  | .jane, .then, _ => [λ w => w = .took]  -- only took-world accessible
   | _, _, _ => []
 
 /-- The epistemic anchoring function (factored through projection). -/
@@ -972,30 +792,30 @@ private def fRootTrain : AnchoringFn TrainEvent TrainWorld :=
   factoredAnchoring trainProjection rootBg
 
 /-- Epistemic reading: modal anchored to speech event.
-The speaker's evidence is compatible with Jane taking the train.
 `◇_{f(e₀)} (took)` holds because the speaker considers `took` possible. -/
 theorem epistemic_reading_possible :
-    possibility fEpistemicTrain .speechAct allTW
-      (· = .took) .took := by decide
+    simplePossibility (fEpistemicTrain .speechAct) (· = .took) .took := by
+  exact ⟨.took, by simp [fEpistemicTrain, factoredAnchoring, epistemicBg,
+    Semantics.Modality.Kratzer.accessibleWorlds, kratzerR], rfl⟩
 
 /-- Root reading: modal anchored to VP event.
-Given Jane's circumstances, she HAD to take the train.
 `□_{f(e₂)} (took)` holds because only `took` is accessible. -/
 theorem root_reading_necessary :
-    necessity fRootTrain .janesTaking allTW
-      (· = .took) .took := by decide
+    simpleNecessity (fRootTrain .janesTaking) (· = .took) .took := by
+  intro w' hw'
+  simpa [fRootTrain, factoredAnchoring, trainProjection, rootBg,
+    Semantics.Modality.Kratzer.accessibleWorlds, kratzerR] using hw'
 
 /-- The root anchoring via VP event restricts the accessible worlds
-more than the epistemic anchoring via speech event. Both readings
-use the SAME modal; the different accessible worlds come entirely
-from the different event bindings → different (individual, time)
-projections → different conversational backgrounds. -/
+more than the epistemic anchoring: the didnt-world is epistemically
+accessible but not root-accessible. Both readings use the SAME modal;
+the difference comes entirely from the event bindings. -/
 theorem root_restricts_more :
-    -- Epistemic: both worlds accessible from speech event
-    (accessible fEpistemicTrain .speechAct allTW .took).length = 2 ∧
-    -- Root: only took-world accessible from VP event
-    (accessible fRootTrain .janesTaking allTW .took).length = 1 := by
-  constructor <;> decide
+    kratzerR (fEpistemicTrain .speechAct) .took .didnt ∧
+    ¬ kratzerR (fRootTrain .janesTaking) .took .didnt := by
+  constructor <;>
+    simp [fEpistemicTrain, fRootTrain, factoredAnchoring, trainProjection,
+      epistemicBg, rootBg, kratzerR]
 
 
 -- ════════════════════════════════════════════════════
@@ -1064,8 +884,6 @@ holds. -/
 inductive PregWorld where | pregnant | notPregnant
   deriving DecidableEq, Repr, Inhabited
 
-private def allPW : List PregWorld := [.pregnant, .notPregnant]
-
 /-- Two events: the matrix speech act and Jane's embedded thinking. -/
 inductive BeliefEvent where | speech | thinking
   deriving DecidableEq, Repr
@@ -1077,36 +895,35 @@ inductive BeliefEvent where | speech | thinking
   pregnant-world is compatible with Jane's beliefs). -/
 private def fBelief : AnchoringFn BeliefEvent PregWorld
   | .speech, _ => []  -- speaker uncertain
-  | .thinking, _ => [λ w => w == .pregnant]  -- Jane believes pregnant
+  | .thinking, _ => [λ w => w = .pregnant]  -- Jane believes pregnant
 
 /-- Embedded epistemic: *might* bound to Jane's thinking event.
-Jane's beliefs restrict to the pregnant-world only. Under Jane's
-beliefs, Mary's being pregnant is necessary (Jane is certain). -/
+Under Jane's beliefs, only the pregnant-world is accessible, so
+Mary's being pregnant is necessary (Jane is certain). -/
 theorem embedded_epistemic_necessity :
-    necessity fBelief .thinking allPW (· = .pregnant) .notPregnant := by
-  decide
+    simpleNecessity (fBelief .thinking) (· = .pregnant) .notPregnant := by
+  intro w' hw'
+  simpa [fBelief, Semantics.Modality.Kratzer.accessibleWorlds, kratzerR] using hw'
 
 /-- Matrix epistemic: *might* bound to the speech event.
 The speaker considers both worlds possible, so Mary's NOT being
 pregnant is also possible. -/
 theorem matrix_epistemic_both_possible :
-    possibility fBelief .speech allPW (· = .pregnant) .notPregnant ∧
-    possibility fBelief .speech allPW (· = .notPregnant) .notPregnant := by
-  constructor <;> decide
+    simplePossibility (fBelief .speech) (· = .pregnant) .notPregnant ∧
+    simplePossibility (fBelief .speech) (· = .notPregnant) .notPregnant := by
+  exact ⟨⟨.pregnant, by simp [fBelief, Semantics.Modality.Kratzer.accessibleWorlds,
+      kratzerR], rfl⟩,
+    ⟨.notPregnant, by simp [fBelief, Semantics.Modality.Kratzer.accessibleWorlds,
+      kratzerR], rfl⟩⟩
 
 /-- Same modal (*might*), different event bindings, different epistemic
-domains. Under Jane's beliefs, only the pregnant-world is accessible.
-Under the speaker's evidence, both worlds are accessible.
-
-This demonstrates that attitude events are contentful (§8):
-the thinking event provides CON(e₁) = Jane's beliefs, licensing
-epistemic R for the embedded modal. -/
+domains: the notPregnant-world is accessible from the speech event but
+not from Jane's thinking event. Attitude events are contentful (§8):
+the thinking event provides CON(e₁) = Jane's beliefs. -/
 theorem embedded_vs_matrix_epistemic :
-    -- Under attitude event: only pregnant-world accessible (Jane's beliefs)
-    (accessible fBelief .thinking allPW .notPregnant).length = 1 ∧
-    -- Under speech event: both worlds accessible (speaker's uncertainty)
-    (accessible fBelief .speech allPW .notPregnant).length = 2 := by
-  constructor <;> decide
+    kratzerR (fBelief .speech) .notPregnant .notPregnant ∧
+    ¬ kratzerR (fBelief .thinking) .notPregnant .notPregnant := by
+  constructor <;> simp [fBelief, kratzerR]
 
 
 end Semantics.Modality.EventRelativity
