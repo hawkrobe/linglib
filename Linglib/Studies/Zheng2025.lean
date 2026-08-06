@@ -92,14 +92,14 @@ A nandao question is felicitous when some evidence in the kernel raises the
 probability of the prejacent, the kernel conflicts with the prior information
 state `U` — the beliefs, norms, and desires in place before encountering the
 evidence — and the prejacent is not directly settled ([zheng-2025]
-condition (11)). The last conjunct is the presupposition of
+condition (11); its "significantly raises" (≫) is sharpened to strict
+raising). The last conjunct is the presupposition of
 [von-fintel-gillies-2010]'s `kernelMust`. -/
 
 variable {W : Type*}
 
 /-- Evidence `p` raises the probability of `φ` under the uniform counting
-measure on a finite `W`: P(φ|p) > P(φ). [zheng-2025]'s condition (11i) writes
-P(φ|p) ≫ P(φ); we sharpen "significantly raises" to strict raising. -/
+measure on a finite `W`: P(φ|p) > P(φ). -/
 def evidenceRaises (p φ : Set W) : Prop :=
   (p ∩ φ).ncard * Nat.card W > φ.ncard * p.ncard
 
