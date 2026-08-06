@@ -1,7 +1,7 @@
 import Linglib.Syntax.WordGrammar.Inheritance.Basic
 import Linglib.Syntax.WordGrammar.Inheritance.Default
 import Linglib.Semantics.Mood.Defs
-import Linglib.Syntax.Clause.Context
+import Linglib.Syntax.Clause.Basic
 import Linglib.Syntax.DependencyGrammar.Basic
 
 open Morphology (Word)

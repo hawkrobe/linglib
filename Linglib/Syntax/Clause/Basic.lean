@@ -26,6 +26,8 @@ framework. `Minimalist.ClauseSpine` is the first instance
   clauses (`Clause.Construction`) contest it.
 * `Clause.EmbeddedSubject` — the subject-requirement axis complement
   frames record (`Syntax/Category/Verb/Frame.lean`)
+* `Clause.EmbeddingContext` — where a clause token occurs, the
+  [bhatt-dayal-2020] embedding cells
 -/
 
 /-- Carriers of clause structure. A framework's clause object answers
@@ -73,6 +75,19 @@ export Independence (Independent)
 inductive EmbeddedSubject where
   | obligatorilyNull
   | overt (subjCase : Option Case)
+  deriving DecidableEq, Repr
+
+/-- A [bhatt-dayal-2020] / [dayal-2025] interrogative-embedding
+    context: where the clause token occurs, not a property of the
+    clause object. A particle's left-periphery layer
+    (`Features.QParticleLayer`) is derivable from its distribution
+    over these cells (`Studies/Dayal2025`). -/
+inductive EmbeddingContext where
+  | matrix
+  | subordinated
+  /-- Embedded root-like interrogatives (Hindi-Urdu *kya:*). -/
+  | quasiSubordinated
+  | quotation
   deriving DecidableEq, Repr
 
 end Clause

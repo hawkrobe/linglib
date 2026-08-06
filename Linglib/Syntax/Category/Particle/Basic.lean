@@ -1,4 +1,4 @@
-import Linglib.Syntax.Clause.Context
+import Linglib.Syntax.Clause.Basic
 import Linglib.Morphology.Word.Basic
 
 open Morphology (Word)
@@ -15,6 +15,8 @@ source records nothing, not exclusion.
 
 ## Main declarations
 
+* `Clause.SentenceType` — the [sadock-zwicky-1985] sentence-type
+  cells the distribution facets are recorded over
 * `Particle`, `Particle.Position`
 * `ParticleStatus`, `ClauseDistribution`, `EmbedDistribution`
 * `Particle.LicensedIn`, `Particle.LicensedInEmbed` — derived,
@@ -23,6 +25,37 @@ source records nothing, not exclusion.
 -/
 
 set_option autoImplicit false
+
+namespace Clause
+
+/-- A [sadock-zwicky-1985] sentence-type cell, with interrogatives
+    subtyped — the function-side vocabulary distributional sources
+    record over. A clause *object* does not determine a cell
+    (`Clause.force?` is the object-side query); a language's formal
+    clause types pair with these via their force maps (the
+    Sadock–Zwicky form-function pairings, e.g.
+    `Fragments/German/Particles`). -/
+inductive SentenceType where
+  | declarative
+  | polarInterrogative
+  /-- Alternative question ("Is it A or B?"). -/
+  | alternativeInterrogative
+  /-- Constituent (wh-) question. -/
+  | constituentInterrogative
+  | imperative
+  | exclamative
+  deriving DecidableEq, Repr
+
+/-- The illocutionary force of a sentence type — the coarse
+    [sadock-zwicky-1985] cut, collapsing the interrogative subtypes. -/
+def SentenceType.force : SentenceType → Mood.Illocutionary
+  | .declarative => .declarative
+  | .polarInterrogative | .alternativeInterrogative
+  | .constituentInterrogative => .interrogative
+  | .imperative => .imperative
+  | .exclamative => .exclamative
+
+end Clause
 
 open Clause (SentenceType EmbeddingContext)
 
