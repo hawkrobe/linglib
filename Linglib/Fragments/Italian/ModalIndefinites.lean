@@ -2,40 +2,28 @@ import Linglib.Features.ModalIndefinite
 
 /-!
 # Italian Modal Indefinite Fragment
-[chierchia-2013]
 
-Lexical entry for Italian modal indefinite *un qualsiasi*.
-
+Lexical entry for Italian modal indefinite *un qualsiasi*
+([chierchia-2013]).
 -/
-
-set_option autoImplicit false
 
 namespace Italian.ModalIndefinites
 
 open Features.ModalIndefinite
 
-
--- ════════════════════════════════════════════════════
--- § 1. Lexical Entry
--- ════════════════════════════════════════════════════
-
 /-- *un qualsiasi*: at-issue, random choice, not upper-bounded.
     Existential FCI; requires a modal licensor
     ([chierchia-2013], §5.3.2). -/
 def unQualsiasiEntry : ModalIndefiniteEntry where
-  language := "Italian"
   form := "un qualsiasi"
-  gloss := "a whichever"
   status := .atIssue
   flavors := [.circumstantial]
   upperBounded := false
   hasUnremarkableReading := false
   canBePredicate := false
   anchorConstraint := some .unrestricted
-  source := "Chierchia 2013"
 
 /-- The Italian modal indefinite paradigm. -/
 def paradigm : List ModalIndefiniteEntry := [unQualsiasiEntry]
-
 
 end Italian.ModalIndefinites

@@ -18,32 +18,21 @@ is formalized in `Studies/AlonsoOvalleRoyer2024.lean` (`rcAvailable`,
 `predictedMIFlavors`).
 -/
 
-set_option autoImplicit false
-
 namespace Chuj.ModalIndefinites
 
 open Features.ModalIndefinite
 
-
--- ════════════════════════════════════════════════════
--- § 1. Lexical Entries
--- ════════════════════════════════════════════════════
-
 /-- *yalnhej*: number-neutral modal indefinite ([alonso-ovalle-royer-2024],
     §3.1, §4.2). At-issue, epistemic + random choice, not upper-bounded. -/
 def yalnhejEntry : ModalIndefiniteEntry where
-  language := "Chuj (Mayan)"
   form := "yalnhej"
-  gloss := "yalnhej"
   status := .atIssue
   flavors := [.epistemic, .circumstantial]
   upperBounded := false
-  positionSensitive := true
   hasUnremarkableReading := false
   canBePredicate := false
   anchorConstraint := some .unrestricted
   numberNeutral := true
-  source := "Alonso-Ovalle & Royer 2024"
 
 /-- *komon*: modal modifier conveying random-choice (circumstantial)
     modality ([alonso-ovalle-royer-2021]); never epistemic.
@@ -57,32 +46,17 @@ def yalnhejEntry : ModalIndefiniteEntry where
     with non-volitional predicates) — the projection-function variation
     [alonso-ovalle-royer-2024] §6.2 leaves open. -/
 def komonEntry : ModalIndefiniteEntry where
-  language := "Chuj (Mayan)"
   form := "komon"
-  gloss := "komon"
   status := .atIssue
   flavors := [.circumstantial]
   upperBounded := false
   hasUnremarkableReading := true
   canBePredicate := true
   anchorConstraint := none
-  source := "Alonso-Ovalle & Royer 2021"
 
 /-- The Chuj entries. The papers themselves decline to classify *komon*
     as a modal indefinite: [alonso-ovalle-royer-2021] analyzes it as a
     modal *modifier* (vP-, D-, or NP-level), not a determiner. -/
 def paradigm : List ModalIndefiniteEntry := [yalnhejEntry, komonEntry]
-
-
--- ════════════════════════════════════════════════════
--- § 2. Cross-Entry Contrast
--- ════════════════════════════════════════════════════
-
-/-- *yalnhej* and *komon* differ in flavor inventory: *yalnhej* has
-    epistemic + RC, *komon* has RC only. -/
-theorem yalnhej_komon_flavor_difference :
-    yalnhejEntry.hasFlavor .epistemic ∧ ¬ komonEntry.hasFlavor .epistemic := by
-  refine ⟨?_, ?_⟩ <;> decide
-
 
 end Chuj.ModalIndefinites

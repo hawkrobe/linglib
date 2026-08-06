@@ -300,8 +300,8 @@ theorem aadaruu_matches_nonSpecific :
 theorem irgend_compatible_classifications :
     irgendEntry.surfaceDAType = some DAType.epistemic ∧
     irgendeinEntry.status = .notAtIssue ∧
-    irgendeinEntry.hasFlavor Semantics.Modality.ModalFlavor.epistemic := by
-  exact ⟨by decide, rfl, by decide⟩
+    irgendeinEntry.hasFlavor Semantics.Modality.ModalFlavor.epistemic = true := by
+  exact ⟨by decide, rfl, rfl⟩
 
 -- ============================================================================
 -- §8. The broader claim: coexpression ≠ syncretism
@@ -386,9 +386,7 @@ theorem fragment_polarity_disagree_on_some :
     this breaks. Real value: catches drift between the two Fragments. -/
 theorem irgend_irgendein_agree_on_epistemic :
     German.Indefinites.irgendEntry.surfaceDAType = some .epistemic ∧
-    German.ModalIndefinites.irgendeinEntry.flavors.contains .epistemic = true := by
-  refine ⟨?_, ?_⟩
-  · decide
-  · decide
+    German.ModalIndefinites.irgendeinEntry.hasFlavor .epistemic = true := by
+  exact ⟨by decide, rfl⟩
 
 end Bubnov2026
