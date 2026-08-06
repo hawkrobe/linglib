@@ -104,8 +104,6 @@ theorem explicit_implies_entailment (h : k.directlySettles φ) :
   · exact Or.inr ((propIntersection_subset_propExtension hx_mem).trans
       h_disj.subset_compl_right)
 
-/-- Settling is monotone: a larger kernel settles everything a smaller one
-    does. -/
 theorem Kernel.directlySettles_mono {k' : Kernel W} (hk : k.props ⊆ k'.props)
     (h : k.directlySettles φ) :
     k'.directlySettles φ :=
