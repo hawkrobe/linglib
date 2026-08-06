@@ -10,16 +10,19 @@ component (e.g., Chuj *yalnhej*, Spanish *algún*, German *irgendein*).
 
 Sibling of `Features/IndefiniteType.lean`: that file classifies indefinites
 by Degano & Aloni's variation/constancy types (Haspelmath's NS/SU/SK map);
-this file classifies modal indefinites by Alonso-Ovalle & Royer's three
-dimensions (status × content × upper-boundedness).
+this file classifies modal indefinites along [alonso-ovalle-royer-2024]'s
+dimensions of variation (status × content × upper-boundedness).
 
-## Three Dimensions of Variation
+## Dimensions of Variation
 
-Following [alonso-ovalle-royer-2024]:
+[alonso-ovalle-royer-2024] (§6) identifies two sources of variation —
+status (§6.1) and content (§6.2) — with upper-boundedness a further
+axis inside the content discussion:
 
 1. **Status**: Is the modal component at-issue or not-at-issue?
 2. **Content**: Which modal flavors does the component support?
-3. **Upper-boundedness**: Does it impose an anti-singleton inference?
+3. **Upper-boundedness**: Does it impose an upper bound on witnesses
+   in the described situation?
 
 -/
 
@@ -49,7 +52,7 @@ inductive ModalComponentStatus where
   /-- Modal component is not part of assertive content: presupposed,
       conventionally implicated, or conversationally implicated.
       Projects or persists under embedding operators.
-      Ex: Sp. *algún* (conv. implicature per [alonso-ovalle-menendez-benito-2010]),
+      Ex: Sp. *algún* (conversational implicature per [alonso-ovalle-menendez-benito-2010]),
       Ger. *irgendein* (domain widening per [kratzer-shimoyama-2002]). -/
   | notAtIssue
   deriving DecidableEq, Repr
@@ -72,20 +75,20 @@ inductive ModalComponentStatus where
 inductive AnchorConstraint where
   /-- f has no definedness condition: defined for any event regardless
       of content. The anchor constraint does not restrict WHERE f can
-      anchor. Whether the resulting background is epistemic, however,
-      depends on the specific projection function f — not just on
-      anchor definedness or content licensing. For *yalnhej*, f yields
-      an epistemic background from contentful events; for *n'importe
-      quel* and *un qualsiasi*, f always yields a circumstantial/
-      indiscriminacy background regardless of the event's content
-      ([alonso-ovalle-royer-2024], §6.2: "different functions
-      projecting modal domains from those anchors").
+      anchor. For *yalnhej*, f yields an epistemic background from
+      contentful events. French *n'importe quel* and Italian *un
+      qualsiasi* express random choice only; [alonso-ovalle-royer-2024]
+      (§6.2) leaves open whether that follows from an anchor constraint
+      or from a different projection function ("different constraints on
+      the types of anchors … or … different functions projecting modal
+      domains from those anchors"), so their listing here picks no horn.
       Ex: Chuj *yalnhej*, French *n'importe quel*, Italian *un qualsiasi*. -/
   | unrestricted
   /-- f presupposes that its event argument has normative content
-      (a decision subevent of a volitional event). Speech acts lack
-      normative content, so f(speech event) is undefined → no epistemic.
-      Only yields RC readings (from volitional VP events).
+      (a decision subevent of a volitional event). A consequence of the
+      analysis: a speech event supplies no normative content, so
+      f(speech event) is undefined → no epistemic. Only yields RC
+      readings (from volitional VP events).
       Ex: Spanish *uno cualquiera*. -/
   | volitionalOnly
   deriving DecidableEq, Repr
@@ -108,22 +111,26 @@ structure ModalIndefiniteEntry where
   status : ModalComponentStatus
   /-- Dimension 2: Which modal flavors are available? -/
   flavors : List ModalFlavor
-  /-- Dimension 3: Does it impose an upper bound (anti-singleton)? -/
+  /-- Dimension 3: Does it impose an upper bound on witnesses in the
+      described situation? (Distinct from the anti-singleton *domain*
+      constraint of [alonso-ovalle-menendez-benito-2010].) -/
   upperBounded : Bool
   /-- Is the available flavor sensitive to syntactic position? -/
   positionSensitive : Bool := false
   /-- Does the item have a plain/unremarkable (non-modal) reading in
-      addition to its modal reading? (A-[alonso-ovalle-royer-2024], §5) -/
+      addition to its modal reading? ([alonso-ovalle-royer-2024], §5) -/
   hasUnremarkableReading : Bool := false
   /-- Can the item appear in predicative position?
-      Correlates with unremarkable readings per A-[alonso-ovalle-royer-2024]. -/
+      Correlates with unremarkable readings per [alonso-ovalle-royer-2024]. -/
   canBePredicate : Bool := false
   /-- Anchor constraint on the anchoring function f.
       Only applicable to at-issue modal indefinites analyzed via
       event-relative anchoring ([alonso-ovalle-royer-2024]).
       `none` for items with non-at-issue modal components
       (e.g., *algún*, *irgendein*) where the mechanism is
-      conversational implicature or domain widening. -/
+      conversational implicature or domain widening — or for at-issue
+      items fitting neither constructor (Chuj *komon*: never epistemic,
+      yet fine with non-volitional predicates). -/
   anchorConstraint : Option AnchorConstraint := none
   /-- Whether the item is number-neutral (compatible with singular
       and plural reference). Chuj *yalnhej* is number-neutral

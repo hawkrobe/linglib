@@ -76,10 +76,10 @@ open Italian.ModalIndefinites
 
 
 -- ════════════════════════════════════════════════════════════════
--- Part 0: Modal Indefinite Denotation (A-[alonso-ovalle-royer-2024], (59))
+-- Part 0: Modal Indefinite Denotation ([alonso-ovalle-royer-2024], (59))
 -- ════════════════════════════════════════════════════════════════
 
-/-- The modal component of a modal indefinite (A-[alonso-ovalle-royer-2024], (59)):
+/-- The modal component of a modal indefinite ([alonso-ovalle-royer-2024], (59)):
 
     `∀y[P(y)(w) → ◇_{f(e₁)}(Q(y)(w'))]`
 
@@ -100,7 +100,7 @@ instance {Event W Entity : Type*}
     Decidable (modalComponent f e allW domain P Q w) :=
   inferInstanceAs (Decidable (∀ _ ∈ _, _))
 
-/-- Full modal indefinite denotation (A-[alonso-ovalle-royer-2024], (59)):
+/-- Full modal indefinite denotation ([alonso-ovalle-royer-2024], (59)):
 
     `⟦MI⟧^{f,e₁} = λP.λQ.λw. ∃x[P(x)(w) ∧ Q(x)(w)] ∧ ∀y[P(y)(w) → ◇_{f(e₁)}(Q(y)(w'))]`
 
@@ -127,7 +127,9 @@ instance {Event W Entity : Type*}
 
     `⟦MI_UB⟧ = ⟦MI⟧ ∧ ¬∀x[P(x)(w) → Q(x)(w)]`
 
-The anti-singleton inference of *algún*. Items like *yalnhej* lack this
+The witness upper bound of *algún* (§4.2 — distinct from the
+anti-singleton *domain* constraint of
+[alonso-ovalle-menendez-benito-2010]). Items like *yalnhej* lack this
 condition and are compatible with all P being Q. -/
 def upperBoundedSat {Event W Entity : Type*}
     (f : AnchoringFn Event W) (e : Event) (allW : List W)
@@ -189,7 +191,7 @@ theorem not_at_issue_items :
     [algúnEntry, irgendeinEntry].all (·.status == .notAtIssue) = true := rfl
 
 /-- Upper-bounded items are a proper subset: only *algún* and
-*uno cualquiera* impose anti-singleton inferences. -/
+*uno cualquiera* impose witness upper bounds. -/
 theorem upper_bounded_items :
     (allEntries.filter (·.upperBounded)).length = 2 := rfl
 
@@ -228,16 +230,18 @@ theorem not_at_issue_and_not_ub_exists :
 -- § 4. AnchorConstraint Bridge
 -- ════════════════════════════════════════════════════
 
-/-- Consistency check: at-issue status aligns with anchor constraint
-across all entries. At-issue items use event-relative anchoring
-(`anchorConstraint = some _`); not-at-issue items use different
-mechanisms (conversational implicature for *algún*, domain widening
-for *irgendein*) and have `anchorConstraint = none`. This is true
-by construction of the entries — verifying we encoded the paper's
-§4 classification correctly. -/
-theorem at_issue_iff_anchored :
+/-- Consistency check: anchored entries are at-issue. Event-relative
+anchoring (`anchorConstraint = some _`) is the paper's mechanism for
+at-issue modal components; not-at-issue items use different mechanisms
+(conversational implicature for *algún*, domain widening for
+*irgendein*) and have `anchorConstraint = none`. The converse fails:
+*komon* is at-issue but fits neither anchor constructor (never
+epistemic, yet fine with non-volitional predicates) — the
+projection-function variation §6.2 leaves open. True by construction
+of the entries. -/
+theorem anchored_entries_at_issue :
     allEntries.all (λ e =>
-      (e.status == .atIssue) == e.anchorConstraint.isSome) = true := rfl
+      !e.anchorConstraint.isSome || e.status == .atIssue) = true := rfl
 
 /-- Volitional-only anchor constraint correlates with lacking epistemic:
 *uno cualquiera*'s f requires normative content, blocking speech
@@ -341,16 +345,17 @@ def predictedMIFlavors (pos : ChujArgPosition) (volitional : Bool) : List ModalF
 
 
 -- ════════════════════════════════════════════════════
--- § 7. Table 5 Verification
+-- § 7. Flavor Pattern Verification
 -- ════════════════════════════════════════════════════
 
-/-- Table 5 DERIVED from structural position + volitionality + EventBinder.
-The full five-cell pattern of [alonso-ovalle-royer-2024] falls
-out from three orthogonal components:
+/-- The position × volitionality flavor pattern DERIVED from structural
+position + volitionality + EventBinder. The full pattern of
+[alonso-ovalle-royer-2024] (§3.4) falls out from three orthogonal
+components:
 (1) `accessibleBinders` (structural position)
 (2) `miAnchorFlavor` (EventBinder → ModalFlavor, from EventRelativity)
 (3) `rcAvailable` (volitionality constraint) -/
-theorem table5_derived :
+theorem flavor_pattern_derived :
     -- External arg: epistemic only (no VP event access → no RC)
     predictedMIFlavors .external true = [.epistemic] ∧
     predictedMIFlavors .external false = [.epistemic] ∧
@@ -467,8 +472,8 @@ theorem argPosition_parallels_modalPosition :
 /-- *Yalnhej* is not upper-bounded: compatible with partial-domain
 scenarios where not all P are Q. This distinguishes it from maximal
 free relatives (*whatever*), which require all domain members to
-satisfy the scope. The EventRelativity worked example demonstrates
-this concretely with `yalnhej_nonmaximal_ab` (ModalIndefinites.lean). -/
+satisfy the scope. The book-scenario worked example demonstrates
+this concretely with `yalnhej_nonmaximal_ab` (§14 below). -/
 theorem yalnhej_nonmaximal :
     yalnhejEntry.upperBounded = false := rfl
 
@@ -502,11 +507,11 @@ theorem rc_only_items :
 -- § 10. Upper-Boundedness (§3.2.4, §6.2)
 -- ════════════════════════════════════════════════════
 
-/-- Upper-bounded modal indefinites impose an anti-singleton inference. -/
+/-- Upper-bounded modal indefinites impose a witness upper bound. -/
 theorem upper_bounded_group :
     [algúnEntry, unoCualquieraEntry].all (·.upperBounded) = true := rfl
 
-/-- Non-upper-bounded modal indefinites: no anti-singleton. -/
+/-- Non-upper-bounded modal indefinites: no witness upper bound. -/
 theorem not_upper_bounded_group :
     [yalnhejEntry, irgendeinEntry, nimporteQuelEntry, unQualsiasiEntry].all
       (·.upperBounded == false) = true := rfl
@@ -525,9 +530,9 @@ theorem predicativity_correlates_unremarkable :
       e.canBePredicate == e.hasUnremarkableReading) = true := rfl
 
 /-- Number-neutral items lack upper-boundedness. (Footnote 18 of
-[alonso-ovalle-royer-2024], p.32, attributed to Louise McNally:
-wh-phrase origin → number neutrality → incompatible with anti-singleton
-inference, since anti-singleton presupposes a singleton alternative.) -/
+[alonso-ovalle-royer-2024], p. 32, crediting Louise McNally (p.c.):
+the lack of an upper bound for *yalnhej* DPs may be tied to their
+being semantically number neutral.) -/
 theorem numberNeutral_implies_not_ub :
     (allEntries.filter (·.numberNeutral)).all (!·.upperBounded) = true := rfl
 
@@ -587,8 +592,8 @@ theorem harmonic_neq_nonharmonic :
 -- ════════════════════════════════════════════════════════════════
 
 /-! Concrete model-theoretic witnesses for the typological claims of
-Part I. These instantiate `Semantics/Modality/ModalIndefinites.lean`
-on small finite domains to demonstrate (a) non-maximality, (b) the
+Part I. These instantiate the Part 0 denotations (`modalIndefiniteSat`,
+`upperBoundedSat`) on small finite domains to demonstrate (a) non-maximality, (b) the
 upper-bounded vs. non-upper-bounded contrast, and (c) the harmonic
 vs. non-harmonic anchoring distinction. The toy domains live here
 in the study file (per CLAUDE.md: examples that name a paper's analyses
@@ -667,7 +672,7 @@ theorem yalnhej_not_upper_bounded_abc :
 
 
 -- ════════════════════════════════════════════════════
--- § 14. Non-Maximality (A-[alonso-ovalle-royer-2024], §3.2.4)
+-- § 14. Non-Maximality ([alonso-ovalle-royer-2024], §3.2.4)
 -- ════════════════════════════════════════════════════
 
 /-! Yalnhej is compatible with partial-domain scenarios: the speaker
@@ -709,7 +714,7 @@ theorem yalnhej_three_way_contrast :
 
 
 -- ════════════════════════════════════════════════════
--- § 15. Card Scenario: Harmonic Interpretations (A-[alonso-ovalle-royer-2024], §4.3)
+-- § 15. Card Scenario: Harmonic Interpretations ([alonso-ovalle-royer-2024], §4.3)
 -- ════════════════════════════════════════════════════
 
 /-! When a modal indefinite occurs under an external modal (imperative,

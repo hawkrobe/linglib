@@ -127,7 +127,7 @@ structure Head where
   hasD : Bool
   /-- Per-construction override of `flavor.defaultPhasal` — the locus for
       per-paper divergence ([erlewine-sommerlot-2025] Malayic passive,
-      [coon-2019] Chol `v_w`/`v_ch`, [coon-mateo-pedro-preminger-2014]
+      [coon-2019] Chuj `v_w`/`v_ch`, [coon-mateo-pedro-preminger-2014]
       Mam Agent Focus). -/
   phaseOverride : Option Bool := none
   /-- Case-checking ([collins-2005] p. 96 feature dissociation: passive
