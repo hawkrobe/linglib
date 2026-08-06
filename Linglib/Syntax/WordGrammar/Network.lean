@@ -33,7 +33,7 @@ namespace WordGrammar
 open Features
 open Clause (EmbeddingContext)
 open WordGrammar.Inheritance
-open DependencyGrammar (Dir ArgStr ArgSlot Tree satisfiesArgStr)
+open DependencyGrammar (Dir Valency Graph satisfiesValency)
 
 -- ============================================================================
 -- Node and Relation Types
@@ -82,7 +82,7 @@ def slotDirLink (wc : String) (idx : Nat) (d : Dir) : Link WGNode WGRel :=
 /-- Look up one argument slot from the network for a word class, using
 default inheritance. Returns `none` if the slot is not defined. -/
 def resolveSlot (net : WGNetwork) (wc : String) (idx : Nat)
-    : Option ArgSlot :=
+    : Option Valency.Slot :=
   let node := WGNode.wordClass wc
   let rels := inherited net node (.argSlot idx)
   let dirs := inherited net node (.slotDir idx)
@@ -93,9 +93,9 @@ def resolveSlot (net : WGNetwork) (wc : String) (idx : Nat)
 /-- Resolve the full argument structure for a word class by collecting
 slots 0, 1, 2, ... until one is not found. Uses default inheritance,
 so locally specified slots override inherited ones. -/
-def resolveArgStr (net : WGNetwork) (wc : String)
-    (maxSlots : Nat := 10) : ArgStr :=
-  let rec go (idx : Nat) (fuel : Nat) (acc : List ArgSlot) : List ArgSlot :=
+def resolveValency (net : WGNetwork) (wc : String)
+    (maxSlots : Nat := 10) : Valency :=
+  let rec go (idx : Nat) (fuel : Nat) (acc : List Valency.Slot) : List Valency.Slot :=
     match fuel with
     | 0 => acc.reverse
     | fuel' + 1 =>
@@ -159,7 +159,7 @@ def englishAuxNet : WGNetwork := {
 -- ============================================================================
 
 /-- A transitive verb inherits nsubj/left from `verb` and adds obj/right
-locally — the network-derived argStr matches the manual `argStrVN`
+locally — the network-derived argStr matches the manual `Valency.transitive`
 (modulo optional fields that default). -/
 theorem network_transitive_slot0 :
     resolveSlot englishAuxNet "transitive" 0 =
@@ -181,9 +181,9 @@ theorem network_aux_slot0 :
       some { depType := .nsubj, dir := .left } := by decide
 
 /-- The network-derived arg structure for a transitive verb has the same
-slots as the manually defined `argStrVN`. -/
-theorem network_argStr_matches_manual :
-    resolveArgStr englishAuxNet "transitive" =
+slots as the manually defined `Valency.transitive`. -/
+theorem network_valency_matches_manual :
+    resolveValency englishAuxNet "transitive" =
       [{ depType := .nsubj, dir := .left },
        { depType := .obj, dir := .right }] := by decide
 
@@ -214,15 +214,15 @@ theorem inverted_aux_inherits_main_verb_slot :
 
 /-- The full argument structure for the non-inverted auxiliary:
 nsubj/left (inherited from verb) + aux/right (local). -/
-theorem network_aux_argStr :
-    resolveArgStr englishAuxNet "auxiliary" =
+theorem network_aux_valency :
+    resolveValency englishAuxNet "auxiliary" =
       [{ depType := .nsubj, dir := .left },
        { depType := .aux, dir := .right }] := by decide
 
 /-- The full argument structure for the inverted auxiliary:
 nsubj/right (local override) + aux/right (inherited from auxiliary). -/
-theorem network_inverted_aux_argStr :
-    resolveArgStr englishAuxNet "inverted_auxiliary" =
+theorem network_inverted_aux_valency :
+    resolveValency englishAuxNet "inverted_auxiliary" =
       [{ depType := .nsubj, dir := .right },
        { depType := .aux, dir := .right }] := by decide
 
@@ -241,9 +241,9 @@ def wordClassFor (f : Mood.Illocutionary) (e : EmbeddingContext) : String :=
 /-- License a dependency tree via the WG network: look up the word class
 for the clause context, resolve its argument structure from the network,
 and check the tree satisfies it. This is the end-to-end chain:
-`force × context → wordClass → network → argStr → satisfiesArgStr`. -/
-def wgLicenses (net : WGNetwork) (t : Tree) (auxIdx : Nat)
+`force × context → wordClass → network → valency → satisfiesValency`. -/
+def wgLicenses {n : ℕ} (net : WGNetwork) (t : Graph n) (auxIdx : Fin n)
     (f : Mood.Illocutionary) (e : EmbeddingContext) : Bool :=
-  satisfiesArgStr t auxIdx (resolveArgStr net (wordClassFor f e))
+  satisfiesValency t auxIdx (resolveValency net (wordClassFor f e))
 
 end WordGrammar

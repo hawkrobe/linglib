@@ -19,7 +19,7 @@ formalised here.
 
 namespace WordGrammar
 
-open DependencyGrammar (ArgStr ArgSlot Dir)
+open DependencyGrammar (Valency Dir)
 
 -- ============================================================================
 -- Lexical Entries with Argument Structures
@@ -32,21 +32,21 @@ structure LexEntry where
   form : String
   cat : UD.UPOS
   features : UD.MorphFeatures
-  argStr : ArgStr
+  valency : Valency
   inv : Bool := false
   deriving Repr
 
 -- ============================================================================
 -- Auxiliary Argument Structures (DG-specific, used with LexEntry/lexical rules)
--- Standard frames (argStrV0, argStrVN, argStrVNN, argStrVPassive) and
--- satisfiesArgStr are in Syntax/DependencyGrammar/Valency.lean.
+-- Standard schemas (Valency.intransitive etc.) and satisfiesValency are in
+-- Syntax/DependencyGrammar/Valency.lean.
 -- ============================================================================
 
 /-- Auxiliary verb (non-inverted): subject left, main verb right -/
-def argStrAux : ArgStr := [⟨.nsubj, .left, true⟩, ⟨.aux, .right, true⟩]
+def auxValency : Valency := [⟨.nsubj, .left, true⟩, ⟨.aux, .right, true⟩]
 
 /-- Auxiliary verb (inverted): subject right, main verb right -/
-def argStrAuxInv : ArgStr := [⟨.nsubj, .right, true⟩, ⟨.aux, .right, true⟩]
+def auxInvValency : Valency := [⟨.nsubj, .right, true⟩, ⟨.aux, .right, true⟩]
 
 -- ============================================================================
 -- Lexical Rules
@@ -69,7 +69,7 @@ def auxInversionRule : LexRule :=
     transform := λ e =>
       { e with
         inv := true
-        argStr := e.argStr.map λ slot =>
+        valency := e.valency.map λ slot =>
           if slot.depType == .nsubj then
             { slot with dir := .right }  -- subject now goes to the right
           else slot } }
@@ -80,11 +80,11 @@ def passiveRule : LexRule :=
   { name := "Passive"
     applies := λ e =>
       e.cat == .VERB && e.features.voice != some .Pass &&
-      e.argStr.any (·.depType == .obj)
+      e.valency.any (·.depType == .obj)
     transform := λ e =>
       { e with
         features := { e.features with voice := some .Pass }
-        argStr := e.argStr.filter (·.depType != .obj) ++ [⟨.obl, .right, false⟩] } }
+        valency := e.valency.filter (·.depType != .obj) ++ [⟨.obl, .right, false⟩] } }
 
 -- ============================================================================
 -- Applying Lexical Rules

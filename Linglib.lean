@@ -2526,9 +2526,6 @@ import Linglib.Studies.OgiharaSteinertThrelkeld2024
 import Linglib.Studies.Olivier2026
 import Linglib.Studies.Olivier2026Auxiliary
 import Linglib.Studies.Osborne2019
-import Linglib.Studies.Osborne2019Control
-import Linglib.Studies.Osborne2019Ellipsis
-import Linglib.Studies.OsborneGross2012.Data
 import Linglib.Studies.OsborneLi2023
 import Linglib.Studies.Ostrove2026
 import Linglib.Studies.Owusu2022
