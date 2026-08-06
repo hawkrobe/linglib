@@ -153,13 +153,13 @@ theorem duality {Event W : Type*} (f : AnchoringFn Event W) (e : Event)
 
 
 -- ════════════════════════════════════════════════════
--- §§ 3–7. Modal Indefinites (extracted to ModalIndefinites.lean)
+-- §§ 3–7. Modal Indefinites (live in the study file)
 -- ════════════════════════════════════════════════════
 
-/-! The modal indefinite denotation (A-[alonso-ovalle-royer-2024]), upper-boundedness,
-non-maximality, and harmonic interpretation types have been extracted to
-`Semantics/Modality/ModalIndefinites.lean`. That file imports
-this one for `AnchoringFn` and `possibility`. -/
+/-! The modal indefinite denotation ([alonso-ovalle-royer-2024]), upper-boundedness,
+non-maximality, and harmonic interpretation types live in
+`Studies/AlonsoOvalleRoyer2024.lean`, which imports this file for
+`AnchoringFn` and `possibility`. -/
 
 
 -- ════════════════════════════════════════════════════

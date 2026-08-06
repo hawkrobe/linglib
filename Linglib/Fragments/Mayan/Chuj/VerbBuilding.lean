@@ -57,8 +57,9 @@ def rootTV_pc : Classification :=
     denotationType := some (.e ⇒ .s ⇒ .t), licensesTransitiveVoice := true }
 
 /-- √TV root (result): selects theme, entails change-of-state.
-    Semantic type ⟨e, ⟨s,t⟩⟩ ([coon-2019], (3)).
-    Examples: jatz' "hit (breaking)", tzak' "wrap". -/
+    Semantic type ⟨e, ⟨s,t⟩⟩ ([coon-2019], (3)). The PC/result
+    subdivision of √TV is [beavers-etal-2021]'s axis (after
+    [dixon-1982]); [coon-2019] does not subdivide √TV. -/
 def rootTV_res : Classification :=
   { valency := {.internal}, changeType := .result,
     denotationType := some (.e ⇒ .s ⇒ .t), licensesTransitiveVoice := true }
@@ -69,21 +70,25 @@ def rootTV_res : Classification :=
     compatibility with the transitive-forming v/Voice⁰ head. The class is
     morphologically defined: roots that appear with null v/Voice⁰ in
     intransitive stems (p. 40).
+    `changeType := .propertyConcept` is a placeholder: [coon-2019]
+    (p. 60) includes change-of-state verbs like *k'ib'* "grow" and
+    *cham* "die" in √ITV, so the class is not uniform on this axis.
     Examples: way "sleep", ok' "cry", jaw "arrive", b'at "go". -/
 def rootITV : Classification :=
   { valency := {.internal}, changeType := .propertyConcept,
     denotationType := some (.e ⇒ .s ⇒ .t) }
 
 /-- √POS root: positional/stative. Semantic type ⟨e, ⟨s,d⟩⟩ — a
-    measure function, not a truth-value predicate.
-    Examples: chot "sit", kot "on all fours", watz "lie face down". -/
+    measure function, not a truth-value predicate ([coon-2019]
+    following [henderson-2017]).
+    Examples: chot "crouched", kot "on four legs", tel "lying down". -/
 def rootPOS : Classification :=
   { valency := ∅, changeType := .propertyConcept,
     denotationType := some (.e ⇒ .s ⇒ .d) }
 
 /-- √NOM root: nominal base. Semantic type ⟨e,t⟩ — entity predicate
     with no event argument ([coon-2019], (3)).
-    Examples: a' "water", ixim "corn", chanhal "dance". -/
+    Examples: pat "house", ixim "corn", chanhal "dance". -/
 def rootNOM : Classification :=
   { valency := ∅, changeType := .propertyConcept,
     denotationType := some (.e ⇒ .t) }
@@ -150,10 +155,13 @@ theorem rootToClass_correct :
     rootToClass rootNOM    = .nom := by decide
 
 -- ============================================================================
--- § 4: Voice Suffixes (ex. (78), pp. 75–76)
+-- § 4: Voice Suffixes (ex. (78), p. 76)
 -- ============================================================================
 
-/-- The four voice suffixes in Chuj (ex. (78), pp. 75–76). -/
+/-- The four voice suffixes in Chuj (ex. (78), p. 76). -ch and -w are
+    [coon-2019]'s decomposed morphemes: the attested stems are *-chaj*
+    and *-waj*, analyzed as -ch and -w plus -aj (table (58), p. 66;
+    §4.2). -/
 inductive ChujVoiceSuffix where
   | null  -- Ø: active transitive
   | ch    -- -ch: passive with implicit agent
@@ -205,13 +213,13 @@ def ChujVoiceSuffix.hasAgent : ChujVoiceSuffix → Bool
     Based on the distributional facts in §§2–5:
     - √TV: all four voices (Ø, -ch, -j, -w) — ex. (78)
     - √ITV: null v only (§2.1, p. 40)
-    - √POS: -w only (§2.4, p. 43)
+    - √POS: -w only (§3.1, (20)/(22), p. 47)
     - √NOM: -w only (§3.1, p. 46) -/
 def isGrammatical (rc : CRootClass) (vs : ChujVoiceSuffix) : Bool :=
   match rc, vs with
   | .tv,  _     => true   -- √TV combines with all four
   | .itv, .null => true   -- √ITV takes null v (§2.1)
-  | .pos, .w    => true   -- √POS takes -w (§2.4)
+  | .pos, .w    => true   -- √POS takes -w ((20)/(22), p. 47)
   | .nom, .w    => true   -- √NOM takes -w (§3.1)
   | _,    _     => false
 
@@ -225,15 +233,18 @@ def formsBareTransitive (rc : CRootClass) : Bool :=
 -- § 7: -aj Distribution (§4.2, ex. (78))
 -- ============================================================================
 
-/-- Whether -aj (existential closure) appears on a √TV stem in each
-    voice form (ex. (78), pp. 75–76; §4.2, p. 72).
+/-! -aj marks the presence of an implicit argument on a √TV stem
+(ex. (78), p. 76; §4.2, p. 72) — [coon-2019] (p. 73) proposes it is
+an overt reflex of Existential Closure ([diesing-1992]):
+- Ø: no implicit arg → no -aj
+- -ch: implicit external arg → -aj on stem (§4.1.1, p. 68)
+- -j: no external arg at all → no -aj
+- -w (absolutive): implicit internal arg → -aj (ex. (55c), p. 65)
+- -w (incorporation): overt bare NP internal arg → no -aj (ex. (54a), p. 64) -/
 
-    -aj marks the presence of an implicit argument:
-    - Ø: no implicit arg → no -aj
-    - -ch: implicit external arg → -aj on stem (§4.1.1, p. 68)
-    - -j: no external arg at all → no -aj
-    - -w (absolutive): implicit internal arg → -aj (ex. (55c), p. 65)
-    - -w (incorporation): overt bare NP internal arg → no -aj (ex. (54a), p. 64) -/
+/-- The two antipassive (-w) subtypes: absolutive (implicit theme,
+    ex. (55b–c), p. 65) vs incorporation (overt bare-NP theme,
+    ex. (54a), p. 64). -/
 inductive AntipassiveType where
   | absolutive      -- theme is implicit (suppressed)
   | incorporation   -- theme is overt bare NP (incorporated)
@@ -295,7 +306,7 @@ def byPhraseOK (vs : ChujVoiceSuffix) : Bool :=
     privileged position. Instead, Voice controls whether an external
     argument is overt, implicit, or absent. Each voice form is built
     independently from root + v/Voice⁰: passive is not derived from
-    active. Non-pivot system; Voice controls EA status (Coon 2019). -/
+    active. -/
 namespace VoiceSystem
 
 def voices : List Voice.VoiceEntry :=
@@ -359,7 +370,8 @@ def ok'   : ChujRoot := ⟨"ok'",   "cry", rootITV⟩
 -- √POS roots (Table (5), p. 39)
 def chot  : ChujRoot := ⟨"chot",  "crouched", rootPOS⟩
 def jenh  : ChujRoot := ⟨"jenh",  "outstretched", rootPOS⟩
-def lich' : ChujRoot := ⟨"lich'", "leaning", rootPOS⟩
+def chek' : ChujRoot := ⟨"chek'", "leaning", rootPOS⟩
+def lich' : ChujRoot := ⟨"lich'", "extended", rootPOS⟩
 def b'ul  : ChujRoot := ⟨"b'ul",  "gathered", rootPOS⟩
 
 -- √POS roots from Table (20), p. 47
@@ -387,7 +399,7 @@ def itvRoots : List ChujRoot :=
 
 /-- All √POS roots from Table (5). -/
 def posRoots : List ChujRoot :=
-  [chot, jenh, lich', b'ul]
+  [chot, jenh, chek', lich', b'ul]
 
 /-- All √NOM roots from Table (5). -/
 def nomRoots : List ChujRoot :=
@@ -397,11 +409,12 @@ def nomRoots : List ChujRoot :=
 -- § 11: Verification
 -- ============================================================================
 
--- Root classification
-theorem tvRoots_selectTheme :
+-- Root classification. Both √TV and √ITV select a theme (p. 61);
+-- what distinguishes them is transitive-Voice licensing.
+theorem tvRoots_licenseTransitiveVoice :
     tvRoots.all (·.root.licensesTransitiveVoice) = true := by decide
 
-theorem itvRoots_noTheme :
+theorem itvRoots_noTransitiveVoice :
     itvRoots.all (fun v => !v.root.licensesTransitiveVoice) = true := by decide
 
 theorem posRoots_measureFn :
