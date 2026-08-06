@@ -1,53 +1,52 @@
-import Linglib.Core.Order.Relation
+import Linglib.Syntax.Clause.Construction
+import Linglib.Syntax.Clause.Form
+import Linglib.Features.Complementation
+import Linglib.Features.Case.Basic
 
 /-!
-# Clause: theory-neutral clause size and transparency
+# The clause object
 
-A clause's *size* and its *transparency to a dependency* are framework-neutral
-notions: every theory of clause structure (Minimalist cartography, HPSG, CCG, …)
-ranks its clauses and tells you when a dependency can reach inside one. This
-file owns those notions so that downstream consumers — sequence of tense
-(`Semantics/Tense/Sequence`), relative-clause opacity, long-distance Agree — do
-**not** import any one framework's machinery (`Cat`, `fValue`, …).
+A clause is a predication: at minimum a predicate and an explicit or
+implied subject, expressing a proposition. `Clause` records the axes
+sources record about one — the construction it instantiates
+(`Clause.Construction`), its surface form (`Clause.Form`), its
+[noonan-2007] coding (`Complement.Coding`), and its subject requirement
+(`Clause.EmbeddedSubject`). A `none` field is unrecorded, not a claim —
+the record-what-sources-record convention of the Fragment layer, where
+these values originate. The first consumer is the clausal case of
+`Complement.Position` (`Syntax/Category/Verb/Frame.lean`), so a
+complement frame's clausal position carries a `Clause` by construction.
 
-A framework *provides* the interface: e.g. `Minimalist.ComplementSize.toClauseSize`
-ranks a complement by its functional grade. Reasoning about opacity then runs
-through `Clause.Size` / `Clause.transparentTo`, not through `Cat`.
+## Main definitions
 
-The whole notion reduces to `Core.Order`: a size is a grade in a scale, and a
-clause is transparent to a dependency stopped at `boundary` iff its grade is
-*before* (below) the boundary.
+* `Clause.EmbeddedSubject` — the subject-requirement axis
+* `Clause` — the predication record
 -/
 
 namespace Clause
 
-open Core.Order
-
-/-- A theory-neutral clause size: a grade in a scale, decoupled from any
-    framework's representation. The scale is `ℕ` — every framework can rank its
-    clauses into it (Minimalist via `fValue`, …) — but consumers should reason
-    through `transparentTo`, not the numeral. -/
-abbrev Size : Type := ℕ
-
-/-- A clause of size `s` is transparent to a dependency whose opacity boundary
-    is `boundary` iff its grade is strictly below the boundary in the scale —
-    `Core.Order.before`. (Selective opacity, the Williams Cycle in the abstract:
-    a dependency stopped at `boundary` reaches into everything smaller.) -/
-def transparentTo (s boundary : Size) : Prop := holds before s boundary
-
-instance (s boundary : Size) : Decidable (transparentTo s boundary) :=
-  inferInstanceAs (Decidable (holds _ _ _))
-
-@[simp] theorem transparentTo_iff (s boundary : Size) :
-    transparentTo s boundary ↔ s < boundary := holds_before s boundary
-
-/-- **Upward entailment** (the abstract Williams Cycle): if a clause is opaque
-    to a dependency, every larger clause is opaque too. Framework instances
-    (e.g. `Minimalist`'s `upward_entailment`) are special cases. -/
-theorem opaque_upward {s₁ s₂ boundary : Size}
-    (h : ¬ transparentTo s₁ boundary) (hle : s₁ ≤ s₂) :
-    ¬ transparentTo s₂ boundary := by
-  rw [transparentTo_iff, not_lt] at h ⊢
-  exact le_trans h hle
+/-- Subject requirement of a clause: obligatorily null (as in control
+    complements) or overt, optionally with a fixed case. Genitive
+    marking on the subject is [noonan-2007]'s criterion for the
+    nominalization coding (§1.3.5); [bondarenko-2022] ch. 4 is the
+    modern instance (Buryat genitive subjects of nominalized
+    clauses). -/
+inductive EmbeddedSubject where
+  | obligatorilyNull
+  | overt (subjCase : Option Case)
+  deriving DecidableEq, Repr
 
 end Clause
+
+/-- A clause description: the recorded axes of one predication.
+    `none` = unrecorded. -/
+structure Clause where
+  /-- The construction the clause instantiates. -/
+  construction : Option Clause.Construction := none
+  /-- Surface clause form (declarative vs embedded question). -/
+  clauseForm : Option Clause.Form := none
+  /-- [noonan-2007] coding. -/
+  coding : Option Complement.Coding := none
+  /-- Subject requirement. -/
+  embeddedSubject : Option Clause.EmbeddedSubject := none
+  deriving DecidableEq, Repr

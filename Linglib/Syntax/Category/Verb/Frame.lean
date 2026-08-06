@@ -1,21 +1,17 @@
-import Linglib.Features.Complementation
-import Linglib.Features.ClauseForm
-import Linglib.Features.Case.Basic
+import Linglib.Syntax.Clause.Basic
 
 /-! # Complement frames — typed complement positions
 
-A predicate's complement frame as a list of typed `Complement.Position`s,
-factoring the flat `ComplementType` enum cells into their axes:
-syntactic category, clause form, [noonan-2007] coding, and
-embedded-subject requirement (genitive subjects of nominalized clauses,
-[noonan-2007] §1.3.5, [bondarenko-2022]). The flat enum survives as a
-round-trip view (`ComplementType.toFrame` / `Frame.toComplementType`).
+A predicate's complement frame as a list of typed
+`Complement.Position`s: nominal, adpositional, or clausal, the clausal
+case carrying its `Clause` description. The flat `ComplementType` enum
+survives as a round-trip view (`ComplementType.toFrame` /
+`Frame.toComplementType`).
 
-## Main declarations
+## Main definitions
 
-* `Complement.Position`, with its `Complement.Cat` and
-  `Complement.EmbeddedSubject` axes — one complement position: category
-  plus optional clausal axes
+* `Complement.Position` — one complement position; a clausal position
+  carries a `Clause` by construction
 * `Frame` + `Frame.np`, `Frame.finiteClause`, … — a frame is a list of
   complement positions; the flat enum cells as smart constructors
 * `ComplementType` + `toFrame` / `Frame.toComplementType` — the flat
@@ -28,9 +24,9 @@ round-trip view (`ComplementType.toFrame` / `Frame.toComplementType`).
 Complement-taking is cross-categorial ([noonan-2007]'s CTPs include
 adjectives and nouns), so the position record lives in the `Complement`
 namespace beside `Complement.Coding`, not under `Verb`;
-`Adposition.Complement` is the P-specific counterpart of
-`Complement.Cat`. Frame-conditioned readings (attitude, opacity,
-control) are not per-position data — they live on `Verb.Reading`
+`Adposition.Complement` is the P-specific counterpart of the position
+categories. Frame-conditioned readings (attitude, opacity, control)
+are not per-position data — they live on `Verb.Reading`
 (`Syntax/Category/Verb/Defs.lean`), keyed to the verb's frames. The
 selection relation between verb frames and clause-typers
 (`Verb.realizes`) lives in `Syntax/Category/Verb/Selection.lean`.
@@ -40,44 +36,31 @@ selection relation between verb frames and clause-typers
 
 namespace Complement
 
-/-! ### Complement-position axes -/
-
-/-- Syntactic category of a complement position. -/
-inductive Cat where
+/-- One complement position of a predicate's frame: nominal,
+    adpositional, or clausal with its recorded `Clause` description.
+    Non-clausal positions carry no clausal axes by construction. -/
+inductive Position where
   | nominal
   | adpositional
-  | clausal
+  | clausal (clause : Clause)
   deriving DecidableEq, Repr
 
-/-- Embedded-subject requirement of a clausal complement: obligatorily
-    null (as in control complements) or overt, optionally with a fixed
-    case. Genitive marking on the subject is [noonan-2007]'s criterion
-    for the nominalization coding (§1.3.5); [bondarenko-2022] ch. 4 is
-    the modern instance (Buryat genitive subjects of nominalized
-    clauses). -/
-inductive EmbeddedSubject where
-  | obligatorilyNull
-  | overt (subjCase : Option Case)
-  deriving DecidableEq, Repr
+namespace Position
 
-/-! ### The frame object -/
+/-- The clausal position's `Clause`, if any. -/
+def clause? : Position → Option Clause
+  | clausal c => some c
+  | _ => none
 
-/-- One complement position of a predicate's frame: its category plus,
-    for clausal complements, the recorded clausal axes. On clausal
-    complements `none` means unrecorded; non-clausal complements leave
-    the clausal axes at their `none` defaults. Frame-conditioned
-    readings and control are not per-position data — they live on
-    `Verb.Reading`. -/
-structure Position where
-  /-- Syntactic category of the complement. -/
-  cat : Cat
-  /-- Clause form (declarative vs embedded question). -/
-  clauseForm : Option Features.ClauseForm := none
-  /-- [noonan-2007] coding of the complement clause. -/
-  coding : Option Coding := none
-  /-- Embedded-subject requirement. -/
-  embeddedSubject : Option EmbeddedSubject := none
-  deriving DecidableEq, Repr
+/-- The position's recorded [noonan-2007] coding, if clausal. -/
+def coding? (p : Position) : Option Coding :=
+  p.clause?.bind (·.coding)
+
+/-- The position's recorded clause form, if clausal. -/
+def clauseForm? (p : Position) : Option Clause.Form :=
+  p.clause?.bind (·.clauseForm)
+
+end Position
 
 end Complement
 
@@ -90,49 +73,51 @@ abbrev Frame := List Complement.Position
 namespace Frame
 
 /-- The [noonan-2007] codings recorded across the frame's positions. -/
-def codings (fr : Frame) : List Complement.Coding := fr.filterMap (·.coding)
+def codings (fr : Frame) : List Complement.Coding :=
+  fr.filterMap (·.coding?)
 
 /-- Some position of the frame records clause form `cf`. -/
-def hasClauseForm (fr : Frame) (cf : Features.ClauseForm) : Prop :=
-  ∃ s ∈ fr, s.clauseForm = some cf
+def hasClauseForm (fr : Frame) (cf : Clause.Form) : Prop :=
+  ∃ p ∈ fr, p.clauseForm? = some cf
 
-instance (fr : Frame) (cf : Features.ClauseForm) :
+instance (fr : Frame) (cf : Clause.Form) :
     Decidable (fr.hasClauseForm cf) :=
-  inferInstanceAs (Decidable (∃ s ∈ fr, _))
+  inferInstanceAs (Decidable (∃ p ∈ fr, _))
 
 /-! ### Smart constructors — the flat `ComplementType` cells -/
 
 /-- Transitive: one nominal position. -/
-def np : Frame := [{ cat := .nominal }]
+def np : Frame := [.nominal]
 
 /-- Double object: two nominal positions. -/
-def np_np : Frame := [{ cat := .nominal }, { cat := .nominal }]
+def np_np : Frame := [.nominal, .nominal]
 
 /-- NP + PP: a nominal plus an adpositional position. -/
-def np_pp : Frame := [{ cat := .nominal }, { cat := .adpositional }]
+def np_pp : Frame := [.nominal, .adpositional]
 
 /-- Finite declarative clause. -/
 def finiteClause : Frame :=
-  [{ cat := .clausal, coding := some .indicative,
-     clauseForm := some .declarative }]
+  [.clausal { coding := some .indicative,
+              clauseForm := some .declarative }]
 
 /-- Infinitival clause. The embedded-subject requirement varies by verb
     (equi-deletion, raising, or adposition-marked overt subjects,
     [noonan-2007] §1.3.4), so it lives on the verb's reading, not here. -/
-def infinitival : Frame := [{ cat := .clausal, coding := some .infinitive }]
+def infinitival : Frame := [.clausal { coding := some .infinitive }]
 
 /-- Gerund / nominalized clause. -/
-def gerund : Frame := [{ cat := .clausal, coding := some .nominalized }]
+def gerund : Frame := [.clausal { coding := some .nominalized }]
 
 /-- Small clause (*consider X happy*; causative *make X leave*). Outside
     [noonan-2007]'s coding inventory, which classifies complements by
-    the part of speech of their predicate, so `coding` stays `none`. -/
-def smallClause : Frame := [{ cat := .clausal }]
+    the part of speech of their predicate, so the clause records
+    nothing. -/
+def smallClause : Frame := [.clausal {}]
 
 /-- Embedded question. Interrogativity is a clause-form distinction
     orthogonal to [noonan-2007] coding, so `coding` stays `none`. -/
 def question : Frame :=
-  [{ cat := .clausal, clauseForm := some .embeddedQuestion }]
+  [.clausal { clauseForm := some .embeddedQuestion }]
 
 end Frame
 

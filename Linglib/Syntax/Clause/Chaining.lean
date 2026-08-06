@@ -49,6 +49,23 @@ The formalization captures five parameter dimensions:
 
 -/
 
+namespace Clause
+
+/-- How a clause combines with its neighbors into a larger structure
+    ([scancarelli-2003]): relatively independent conjuncts, dependence
+    on a main clause, chained cosubordination (dependent but not
+    embedded, [foley-r-d-van-valin-1984] — the scheme this file's
+    typology covers), or serialization with the relationship left
+    unmarked. Languages differ in which schemes they use at all. -/
+inductive CombiningScheme where
+  | coordinate
+  | subordinate
+  | cosubordinate
+  | serial
+  deriving DecidableEq, Repr
+
+end Clause
+
 namespace Clause.Chaining
 
 -- ============================================================================

@@ -1,7 +1,7 @@
 import Linglib.Pragmatics.Expressives.Basic
 import Linglib.Fragments.German.ClauseTypes
 import Linglib.Fragments.German.Particles
-import Linglib.Features.ClauseForm
+import Linglib.Syntax.Clause.Form
 
 /-!
 # Gutzmann (2015): Sentence Mood as Use-Conditional Meaning
@@ -53,6 +53,7 @@ into truth conditions.
 namespace Gutzmann2015
 
 open Features
+open Clause (Form)
 open German.ClauseTypes
 open German.Particles
 open Pragmatics.Expressives (TwoDimProp)
@@ -555,11 +556,11 @@ theorem v2_vs_vl_interrog {W : Type*}
     (p : W → Bool) (c : MoodContext W) :
     v2InterrogMood p c = (vlInterrogMood p c && hknow p c) := rfl
 
-/-! ### German Clause Types as a refinement of Features.ClauseForm -/
+/-! ### German Clause Types as a refinement of Clause.Form -/
 
 /-- The mood structure of each German clause type, derived from
 the theory of [±wh] visibility and the root rule. -/
-def _root_.German.ClauseTypes.GermanClauseType.moodStructure : ∀ {f : ClauseForm},
+def _root_.German.ClauseTypes.GermanClauseType.moodStructure : ∀ {f : Form},
     GermanClauseType f → MoodStructure
   | _, .dassVL          => ⟨true, false, false⟩
   | _, .v2Declarative   => ⟨true, true, false⟩
@@ -568,7 +569,7 @@ def _root_.German.ClauseTypes.GermanClauseType.moodStructure : ∀ {f : ClauseFo
   | _, .imperative      => ⟨true, false, false⟩
 
 /-- Every matrix clause has a deontic operator (the root rule). -/
-theorem every_clause_has_deont {f : ClauseForm} (ct : GermanClauseType f) :
+theorem every_clause_has_deont {f : Form} (ct : GermanClauseType f) :
     ct.moodStructure.hasDeontic = true := by
   cases ct <;> rfl
 
@@ -595,7 +596,7 @@ theorem v2_vl_differ_only_in_hknow :
 /-- HKNOW iff matrix question — restated structurally as a fact about the
 index. The HKNOW use condition tracks *form*-level matrix interrogativity
 ([gutzmann-2015], p. 213, Cuban cigar argument). -/
-theorem hknow_iff_matrix_question {f : ClauseForm} (ct : GermanClauseType f) :
+theorem hknow_iff_matrix_question {f : Form} (ct : GermanClauseType f) :
     ct.moodStructure.hasHearerKnowledge = true ↔ f = .matrixQuestion := by
   cases ct <;> simp [GermanClauseType.moodStructure]
 
@@ -661,7 +662,7 @@ def restrictionKind (p : Particle) : RestrictionKind :=
 /-- *wohl*'s licensing across German clause types is exactly the
 presence of EPIS in the clause type's mood structure — the formal
 content of the selectional restriction analysis. -/
-theorem wohl_iff_epis {f : ClauseForm} (ct : GermanClauseType f) :
+theorem wohl_iff_epis {f : Form} (ct : GermanClauseType f) :
     licensedInClause wohl ct = ct.moodStructure.hasEpistemic := by
   cases ct <;> rfl
 
@@ -676,7 +677,7 @@ theorem denn_interrogative_restriction :
 
 /-- *ja* and *denn* partition clause types: they are never both
 licensed in the same clause type. -/
-theorem ja_denn_partition {f : ClauseForm} (ct : GermanClauseType f) :
+theorem ja_denn_partition {f : Form} (ct : GermanClauseType f) :
     ¬(licensedInClause ja ct = true ∧ licensedInClause denn ct = true) :=
   ja_denn_complementary ct
 

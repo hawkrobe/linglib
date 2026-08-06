@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 import Linglib.Syntax.HPSG.Construction
 import Linglib.Studies.Ross1967
 import Linglib.Studies.SagWasowBender2003
-import Linglib.Features.ClauseForm
+import Linglib.Syntax.Clause.Form
 
 set_option autoImplicit false
 
@@ -54,12 +54,12 @@ would live in the HPSG theory layer.
 * divergence from [ross-1967]'s configurational Complex-NP Constraint on
   wh-relatives, which [sag-2010] re-attributes to processing
   ([hofmeister-sag-2010]);
-* the surface-form correspondents map to `Features.ClauseForm`.
+* the surface-form correspondents map to `Clause.Form`.
 -/
 
 namespace Sag2010
 
-open Features (ClauseForm)
+open Clause (Form)
 open HPSG
 
 /-! ### Syntactic categories -/
@@ -445,13 +445,13 @@ theorem relative_diverges_from_cnpc :
       ¬ Construction.islandTwoGap.Models Construction.grammar :=
   ⟨by decide, SagWasowBender2003.islands_rsrl_grounded.2.1⟩
 
-/-! ### Surface clause form (bridge to `Features.ClauseForm`) -/
+/-! ### Surface clause form (bridge to `Clause.Form`) -/
 
 /-- Surface clause form, where a construction has a direct correspondent in
-`Features.ClauseForm`. Wh-interrogatives map to the independent (matrix) form;
+`Clause.Form`. Wh-interrogatives map to the independent (matrix) form;
 topicalization and the-clause are declarative; exclamatives and relatives have no
-`ClauseForm` correspondent. -/
-def clauseForm : FGClauseType → Option ClauseForm
+`Form` correspondent. -/
+def clauseForm : FGClauseType → Option Form
   | .whInterrogative => some .matrixQuestion
   | .topicalized     => some .declarative
   | .theClause       => some .declarative

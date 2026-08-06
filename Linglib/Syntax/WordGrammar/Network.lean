@@ -1,6 +1,6 @@
 import Linglib.Syntax.WordGrammar.Inheritance.Basic
 import Linglib.Syntax.WordGrammar.Inheritance.Default
-import Linglib.Features.ClauseForm
+import Linglib.Syntax.Clause.Form
 import Linglib.Syntax.DependencyGrammar.Basic
 
 open Morphology (Word)
@@ -30,6 +30,7 @@ namespace WordGrammar
 
 
 open Features
+open Clause (Form)
 open WordGrammar.Inheritance
 open DepGrammar (Dir ArgStr ArgSlot DepTree satisfiesArgStr)
 
@@ -231,16 +232,16 @@ theorem network_inverted_aux_argStr :
 /-- Map clause type to the word class that licenses the auxiliary in that
 context. Matrix questions require an interrogative auxiliary (subject follows);
 all other clause types use the default auxiliary (subject precedes). -/
-def wordClassForClauseType : ClauseForm → String
+def wordClassForClauseType : Form → String
   | .matrixQuestion => "inverted_auxiliary"
   | _ => "auxiliary"
 
 /-- License a dependency tree via the WG network: look up the word class
 for the clause type, resolve its argument structure from the network, and
 check the tree satisfies it. This is the end-to-end chain:
-`ClauseForm → wordClass → network → argStr → satisfiesArgStr`. -/
+`Form → wordClass → network → argStr → satisfiesArgStr`. -/
 def wgLicenses (net : WGNetwork) (t : DepTree) (auxIdx : Nat)
-    (ct : ClauseForm) : Bool :=
+    (ct : Form) : Bool :=
   satisfiesArgStr t auxIdx (resolveArgStr net (wordClassForClauseType ct))
 
 end WordGrammar

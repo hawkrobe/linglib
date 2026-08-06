@@ -1,5 +1,5 @@
 import Linglib.Core.Order.Relation
-import Linglib.Syntax.Clause.Basic
+import Linglib.Syntax.Clause.Size
 import Linglib.Semantics.Tense.Reichenbach
 
 /-!
