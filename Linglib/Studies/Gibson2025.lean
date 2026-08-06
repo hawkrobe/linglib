@@ -1,4 +1,5 @@
-import Linglib.Syntax.DependencyGrammar.Formal.HarmonicOrder
+import Linglib.Syntax.DependencyGrammar.Formal.NonProjective
+import Linglib.Syntax.DependencyGrammar.Formal.DependencyLength
 import Linglib.Data.WALS.Features.F95A
 import Linglib.Data.UD.Basic
 import Linglib.Features.WordOrder
@@ -21,7 +22,7 @@ he uses (Tables 1–3, plus the Single-Word-Exceptions discussion at Table 4),
 the per-table harmonic-dominance theorems, the head-direction-generalization
 statement over those tables, and the DLM-vs-WALS consistency theorems that
 package the central claim. The DLM apparatus itself lives in
-`Syntax/DependencyGrammar/Formal/HarmonicOrder.lean`.
+`Syntax/DependencyGrammar/Formal/DependencyLength.lean`.
 
 ## Cross-tabulation apparatus
 
@@ -54,7 +55,8 @@ importing this file, so it is not currently wired through.
 namespace Gibson2025
 
 
-open DependencyGrammar DependencyLength DependencyGrammar.HarmonicOrder
+open DependencyGrammar
+open Morphology (Word)
 
 -- ============================================================================
 -- §0. Cross-tabulation apparatus (paper-anchored substrate)
@@ -229,6 +231,61 @@ theorem all_exceptions_single_word :
     ∀ e ∈ singleWordExceptions, isSingleWordDependent e := by decide
 
 -- ============================================================================
+-- §6. The recursive-embedding worked examples
+-- ============================================================================
+
+/-! Gibson's recursive-embedding pattern: "thinks John knows Mary likes
+cats" in the four head-direction regimes. Consistent direction (HI or HF)
+keeps every arc short; mixed direction stretches the spine arcs. -/
+
+/-- Harmonic head-initial. -/
+def harmonicHI : Graph 6 :=
+  .ofArcs [Word.mk' "thinks" .VERB, Word.mk' "John" .PROPN, Word.mk' "knows" .VERB,
+           Word.mk' "Mary" .PROPN, Word.mk' "likes" .VERB, Word.mk' "cats" .NOUN]
+    0 [(0, 1, .nsubj), (0, 2, .ccomp), (2, 3, .nsubj), (2, 4, .ccomp), (4, 5, .obj)]
+
+/-- Harmonic head-final (the mirror). -/
+def harmonicHF : Graph 6 :=
+  .ofArcs [Word.mk' "cats" .NOUN, Word.mk' "likes" .VERB, Word.mk' "Mary" .PROPN,
+           Word.mk' "knows" .VERB, Word.mk' "John" .PROPN, Word.mk' "thinks" .VERB]
+    5 [(1, 0, .obj), (3, 1, .ccomp), (3, 2, .nsubj), (5, 3, .ccomp), (5, 4, .nsubj)]
+
+/-- Disharmonic: head-initial spine, head-final complements. -/
+def disharmonicHF : Graph 6 :=
+  .ofArcs [Word.mk' "thinks" .VERB, Word.mk' "John" .PROPN, Word.mk' "Mary" .PROPN,
+           Word.mk' "cats" .NOUN, Word.mk' "likes" .VERB, Word.mk' "knows" .VERB]
+    0 [(0, 1, .nsubj), (0, 5, .ccomp), (5, 2, .nsubj), (5, 4, .ccomp), (4, 3, .obj)]
+
+/-- Disharmonic: head-final spine, head-initial complements. -/
+def disharmonicFH : Graph 6 :=
+  .ofArcs [Word.mk' "John" .PROPN, Word.mk' "knows" .VERB, Word.mk' "Mary" .PROPN,
+           Word.mk' "likes" .VERB, Word.mk' "cats" .NOUN, Word.mk' "thinks" .VERB]
+    5 [(5, 0, .nsubj), (5, 1, .ccomp), (1, 2, .nsubj), (1, 3, .ccomp), (3, 4, .obj)]
+
+/-- All four regimes are well-formed trees. -/
+example : harmonicHI.IsTree ∧ harmonicHF.IsTree ∧
+    disharmonicHF.IsTree ∧ disharmonicFH.IsTree := by decide
+
+/-- All four are projective: the disharmonic ones are longer NOT because of
+    non-projectivity — consistent direction is a separate, stronger
+    constraint. -/
+example : IsProjective harmonicHI ∧ IsProjective harmonicHF ∧
+    IsProjective disharmonicHF ∧ IsProjective disharmonicFH := by decide
+
+/-- Harmonic order is strictly cheaper in both directions, and the mirror
+    pair costs exactly the same. -/
+theorem harmonic_always_shorter :
+    harmonicHI.totalDepLength < disharmonicHF.totalDepLength ∧
+    harmonicHI.totalDepLength < disharmonicFH.totalDepLength ∧
+    harmonicHF.totalDepLength = harmonicHI.totalDepLength := by decide
+
+/-- Bridge to Behaghel: harmonic trees satisfy the Oberstes Gesetz at
+    threshold 2; disharmonic trees do not. -/
+example : OberstesGesetz harmonicHI 2 ∧ OberstesGesetz harmonicHF 2 := by decide
+example : ¬ OberstesGesetz disharmonicHF 2 ∧ ¬ OberstesGesetz disharmonicFH 2 := by
+  decide
+
+-- ============================================================================
 -- §5. DLM-vs-WALS consistency: Gibson's central claim
 -- ============================================================================
 
@@ -236,9 +293,12 @@ theorem all_exceptions_single_word :
 def walsConfirmsHarmonic (t : CrossTab) : Bool :=
   decide t.IsHarmonicDominant
 
-/-- Combined consistency check: DLM prediction and WALS observation agree. -/
+/-- Combined consistency check: DLM prediction (harmonic strictly cheaper
+    on the worked examples, both directions) and WALS observation agree. -/
 def dlmWalsConsistent (t : CrossTab) : Bool :=
-  dlmPredictsHarmonicCheaper && walsConfirmsHarmonic t
+  decide (harmonicHI.totalDepLength < disharmonicHF.totalDepLength ∧
+          harmonicHI.totalDepLength < disharmonicFH.totalDepLength) &&
+  walsConfirmsHarmonic t
 
 /-- For all three of Gibson's construction pairs, DLM predicts harmonic is
     cheaper AND WALS confirms harmonic is more common. This is
@@ -256,31 +316,6 @@ theorem vo_subordinator_consistent :
 
 theorem vo_relative_clause_consistent :
     dlmWalsConsistent voRelativeClause = true := by decide
-
--- ============================================================================
--- §6. Bridge to DependencyLength.lean's HarmonicOrder examples
--- ============================================================================
-
-/-- The harmonic tree examples are well-formed (unique heads, acyclic). -/
-example : hasUniqueHeads harmonicHI = true := by native_decide
-example : hasUniqueHeads harmonicHF = true := by native_decide
-example : hasUniqueHeads disharmonicHF = true := by native_decide
-example : hasUniqueHeads disharmonicFH = true := by native_decide
-
-/-- All four trees are projective (no crossing arcs). The disharmonic ones
-    are longer NOT because of non-projectivity, but because consistent
-    direction is a separate (stronger) constraint. -/
-example : isProjective harmonicHI = true := by native_decide
-example : isProjective harmonicHF = true := by native_decide
-example : isProjective disharmonicHF = true := by native_decide
-example : isProjective disharmonicFH = true := by native_decide
-
-/-- Bridge to Behaghel: harmonic trees satisfy Oberstes Gesetz with
-    threshold 2 (no dep longer than 2). Disharmonic trees do not. -/
-example : oberstesGesetz harmonicHI 2 = true := by native_decide
-example : oberstesGesetz harmonicHF 2 = true := by native_decide
-example : oberstesGesetz disharmonicHF 2 = false := by native_decide
-example : oberstesGesetz disharmonicFH 2 = false := by native_decide
 
 -- ============================================================================
 -- §7. WALS Ch 95 → CrossTab bridge (substrate-derived counterpart)
