@@ -4,8 +4,8 @@ import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Determiners
 import Linglib.Fragments.English.FunctionWords
 import Linglib.Fragments.English.Auxiliaries
-import Linglib.Syntax.DependencyGrammar.Projection
-import Linglib.Syntax.DependencyGrammar.Formal.HarmonicOrder
+import Linglib.Syntax.DependencyGrammar.Formal.NonProjective
+import Linglib.Syntax.DependencyGrammar.Formal.DependencyLength
 
 /-!
 # Dependency Locality as an Explanatory Principle for Word Order
@@ -21,13 +21,15 @@ of §4–5 are not formalized.
 
 English words come from the Fragment lexicon, and the trees follow the
 paper's drawing convention in which a preposition heads its noun, so arc
-lengths match the printed diagrams.
+lengths match the printed diagrams. Mirror-image and reordering claims
+are stated through `Graph.relabel`/`Graph.mirror`, so they hold by the
+general invariance theorem rather than by inspection of hand-typed twins.
 -/
 
 namespace FutrellEtAl2020
 
+open DependencyGrammar
 open Morphology (Word)
-open DependencyGrammar DependencyGrammar.DependencyLength
 open English.Nouns English.Predicates.Verbal English.Pronouns English.Determiners
   English.FunctionWords English.Auxiliaries
 
@@ -44,28 +46,28 @@ Displacement produces nonprojective trees: right extraposition in (3),
 where *who you know* modifies *woman* across the intervening verb, and
 wh-movement in (4), where *what* is the object of *did*. Both sit at gap
 degree 1 — the paper's point that natural languages deviate from
-context-freeness ("projectivity corresponds formally to context-freeness")
-only mildly. -/
+context-freeness only mildly. -/
 
-/-- Example (3): "I think a woman arrived who you know" — extraposed
-    relative clause. -/
-def extraposition : Tree :=
-  { words := [i.toWord, think.toWordBase, a.toWord, woman.toWordSg, arrive.toWordPast,
-              who.toWord, you.toWord, know.toWordBase]
-    deps := [⟨1, 0, .nsubj⟩, ⟨1, 4, .ccomp⟩, ⟨4, 3, .nsubj⟩, ⟨3, 2, .det⟩,
-             ⟨3, 7, .acl⟩, ⟨7, 5, .obj⟩, ⟨7, 6, .nsubj⟩]
-    rootIdx := 1 }
+/-- Example (3): "I think a woman arrived who you know". -/
+def extraposition : Graph 8 :=
+  .ofArcs
+    [i.toWord, think.toWordBase, a.toWord, woman.toWordSg, arrive.toWordPast,
+     who.toWord, you.toWord, know.toWordBase]
+    1
+    [(1, 0, .nsubj), (1, 4, .ccomp), (4, 3, .nsubj), (3, 2, .det),
+     (3, 7, .acl), (7, 5, .obj), (7, 6, .nsubj)]
 
-/-- Example (4): "I know what he thinks you did yesterday" — wh-movement. -/
-def whMovement : Tree :=
-  { words := [i.toWord, know.toWordBase, what.toWord, he.toWord, think.toWord3sg,
-              you.toWord, did.toWord, Word.mk' "yesterday" .ADV]
-    deps := [⟨1, 0, .nsubj⟩, ⟨1, 4, .ccomp⟩, ⟨4, 3, .nsubj⟩, ⟨4, 6, .ccomp⟩,
-             ⟨6, 5, .nsubj⟩, ⟨6, 2, .obj⟩, ⟨6, 7, .advmod⟩]
-    rootIdx := 1 }
+/-- Example (4): "I know what he thinks you did yesterday". -/
+def whMovement : Graph 8 :=
+  .ofArcs
+    [i.toWord, know.toWordBase, what.toWord, he.toWord, think.toWord3sg,
+     you.toWord, did.toWord, Word.mk' "yesterday" .ADV]
+    1
+    [(1, 0, .nsubj), (1, 4, .ccomp), (4, 3, .nsubj), (4, 6, .ccomp),
+     (6, 5, .nsubj), (6, 2, .obj), (6, 7, .advmod)]
 
-example : isProjective extraposition = false := by decide
-example : isProjective whMovement = false := by decide
+example : ¬ IsProjective extraposition := by decide
+example : ¬ IsProjective whMovement := by decide
 
 /-- Displacement stays mildly non-context-free: both trees have gap degree 1. -/
 theorem displacement_gap_degree_one :
@@ -75,188 +77,137 @@ theorem displacement_gap_degree_one :
 
 A head with three dependent phrases of sizes 1, 2, 3. In head-initial
 contexts (7), placing them short-to-long after the head minimizes total
-dependency length; in head-final contexts (8), the mirror-image
-long-before-short order does. The paper cites experimental evidence for
-the latter from Japanese, where heavy elements shift leftward. -/
+dependency length; the head-final long-before-short preference (8) is its
+exact mirror — here literally `Graph.mirror`, so the equal-cost claim is
+`Graph.totalDepLength_mirror`, not an inspection of hand-typed twins. -/
 
 /-- (7a) A [B] [C D] [E F G]: dependents short-to-long after the head. -/
-def shortBeforeLong : Tree :=
-  { words := [tok "A", tok "B", tok "C", tok "D", tok "E", tok "F", tok "G"]
-    deps := [⟨0, 1, .dep⟩, ⟨0, 2, .dep⟩, ⟨2, 3, .dep⟩, ⟨0, 4, .dep⟩,
-             ⟨4, 5, .dep⟩, ⟨4, 6, .dep⟩]
-    rootIdx := 0 }
+def shortBeforeLong : Graph 7 :=
+  .ofArcs [tok "A", tok "B", tok "C", tok "D", tok "E", tok "F", tok "G"]
+    0 [(0, 1, .dep), (0, 2, .dep), (2, 3, .dep), (0, 4, .dep), (4, 5, .dep), (4, 6, .dep)]
 
 /-- (7b) A [B C D] [E F] [G]: dependents long-to-short after the head. -/
-def longBeforeShort : Tree :=
-  { words := [tok "A", tok "B", tok "C", tok "D", tok "E", tok "F", tok "G"]
-    deps := [⟨0, 1, .dep⟩, ⟨1, 2, .dep⟩, ⟨1, 3, .dep⟩, ⟨0, 4, .dep⟩,
-             ⟨4, 5, .dep⟩, ⟨0, 6, .dep⟩]
-    rootIdx := 0 }
-
-/-- (8a) [A B C] [D E] [F] G: the mirror image of (7a), head-final. -/
-def longBeforeShortHF : Tree :=
-  { words := [tok "A", tok "B", tok "C", tok "D", tok "E", tok "F", tok "G"]
-    deps := [⟨2, 0, .dep⟩, ⟨2, 1, .dep⟩, ⟨4, 3, .dep⟩, ⟨6, 2, .dep⟩,
-             ⟨6, 4, .dep⟩, ⟨6, 5, .dep⟩]
-    rootIdx := 6 }
-
-/-- (8b) [A] [B C] [D E F] G: the mirror image of (7b), head-final. -/
-def shortBeforeLongHF : Tree :=
-  { words := [tok "A", tok "B", tok "C", tok "D", tok "E", tok "F", tok "G"]
-    deps := [⟨2, 1, .dep⟩, ⟨5, 3, .dep⟩, ⟨5, 4, .dep⟩, ⟨6, 0, .dep⟩,
-             ⟨6, 2, .dep⟩, ⟨6, 5, .dep⟩]
-    rootIdx := 6 }
+def longBeforeShort : Graph 7 :=
+  .ofArcs [tok "A", tok "B", tok "C", tok "D", tok "E", tok "F", tok "G"]
+    0 [(0, 1, .dep), (1, 2, .dep), (1, 3, .dep), (0, 4, .dep), (4, 5, .dep), (0, 6, .dep)]
 
 /-- (7): short-before-long wins in head-initial contexts. -/
 theorem short_before_long_head_initial :
-    totalDepLength shortBeforeLong < totalDepLength longBeforeShort := by decide
+    shortBeforeLong.totalDepLength < longBeforeShort.totalDepLength := by decide
 
-/-- (8): long-before-short wins in head-final contexts. -/
+/-- (8): the head-final regime is the mirror image, so long-before-short
+    wins there at exactly the head-initial costs — by the general mirror
+    invariance, no separate fixtures needed. -/
 theorem long_before_short_head_final :
-    totalDepLength longBeforeShortHF < totalDepLength shortBeforeLongHF := by decide
+    shortBeforeLong.mirror.totalDepLength < longBeforeShort.mirror.totalDepLength := by
+  simpa [Graph.totalDepLength_mirror] using short_before_long_head_initial
 
-/-- The head-final preference is the exact mirror of the head-initial one:
-    mirrored trees have equal total dependency length. -/
-theorem mirror_preserves_totalDepLength :
-    totalDepLength longBeforeShortHF = totalDepLength shortBeforeLong ∧
-    totalDepLength shortBeforeLongHF = totalDepLength longBeforeShort := by decide
-
-/-! ### Examples (9)–(10): head-direction consistency and its exceptions
-
-For single-dependent chains (9), consistent head direction keeps every
-dependency adjacent — the DLM route to the Greenbergian harmonic
-correlations (universals 2–6). The consistent chain achieves the
-`listSpan` lower bound of the substrate's chain machinery
-(`monotone_ascending_achieves_span`); the mixed order exceeds it. For a
-head with several short dependents (10), the optimum instead splits them
-across the head ([gildea-temperley-2010]), predicting the documented
-exceptions (e.g. prenominal determiners in otherwise head-initial
-Spanish). -/
+/-! ### Examples (9)–(10): head-direction consistency and its exceptions -/
 
 /-- (9a) chain A → B → C → D linearized consistently: A B C D. -/
-def consistentChain : Tree :=
-  { words := [tok "A", tok "B", tok "C", tok "D"]
-    deps := [⟨0, 1, .dep⟩, ⟨1, 2, .dep⟩, ⟨2, 3, .dep⟩]
-    rootIdx := 0 }
+def consistentChain : Graph 4 :=
+  .ofArcs [tok "A", tok "B", tok "C", tok "D"]
+    0 [(0, 1, .dep), (1, 2, .dep), (2, 3, .dep)]
 
 /-- (9b) the same chain linearized with mixed head direction: A C D B. -/
-def mixedChain : Tree :=
-  { words := [tok "A", tok "C", tok "D", tok "B"]
-    deps := [⟨0, 3, .dep⟩, ⟨3, 1, .dep⟩, ⟨1, 2, .dep⟩]
-    rootIdx := 0 }
+def mixedChain : Graph 4 :=
+  .ofArcs [tok "A", tok "C", tok "D", tok "B"]
+    0 [(0, 3, .dep), (3, 1, .dep), (1, 2, .dep)]
 
-/-- (9): consistent head direction minimizes chain dependency length. -/
+/-- (9): consistent head direction minimizes chain dependency length —
+    the DLM route to the Greenbergian harmonic correlations. -/
 theorem consistent_chain_shorter :
-    totalDepLength consistentChain < totalDepLength mixedChain := by decide
-
-open DependencyGrammar.HarmonicOrder in
-/-- The consistent chain achieves the substrate's span lower bound; the mixed
-    linearization exceeds it. -/
-theorem consistent_chain_achieves_span :
-    chainTDL [0, 1, 2, 3] = listSpan [0, 1, 2, 3] ∧
-    chainTDL [0, 3, 1, 2] > listSpan [0, 3, 1, 2] := by decide
+    consistentChain.totalDepLength < mixedChain.totalDepLength := by decide
 
 /-- (10a) A B C D: both dependents (B and C–D) after the head A. -/
-def dependentsSameSide : Tree :=
-  { words := [tok "A", tok "B", tok "C", tok "D"]
-    deps := [⟨0, 1, .dep⟩, ⟨0, 2, .dep⟩, ⟨2, 3, .dep⟩]
-    rootIdx := 0 }
+def dependentsSameSide : Graph 4 :=
+  .ofArcs [tok "A", tok "B", tok "C", tok "D"]
+    0 [(0, 1, .dep), (0, 2, .dep), (2, 3, .dep)]
 
 /-- (10b) B A C D: the one-word dependent moved before the head. -/
-def dependentsSplit : Tree :=
-  { words := [tok "B", tok "A", tok "C", tok "D"]
-    deps := [⟨1, 0, .dep⟩, ⟨1, 2, .dep⟩, ⟨2, 3, .dep⟩]
-    rootIdx := 1 }
+def dependentsSplit : Graph 4 :=
+  .ofArcs [tok "B", tok "A", tok "C", tok "D"]
+    1 [(1, 0, .dep), (1, 2, .dep), (2, 3, .dep)]
 
-/-- (10): with two dependents, splitting them across the head beats
-    consistent head direction. -/
+/-- (10): with several short dependents, splitting them across the head
+    beats consistency ([gildea-temperley-2010]), predicting the documented
+    exceptions (e.g. prenominal determiners in head-initial Spanish). -/
 theorem split_beats_consistency :
-    totalDepLength dependentsSplit < totalDepLength dependentsSameSide := by decide
+    dependentsSplit.totalDepLength < dependentsSameSide.totalDepLength := by decide
 
 /-! ### Example (11): heavy NP shift
 
-The paper's flagship worked example. With a light object, the
-verb–object–particle order costs only 1 extra unit of dependency length
-(6 vs. 7) — matching the free alternation in example (6a). With a heavy
-object, it costs 5 (11 vs. 16) — matching the near-obligatory shift in
-(6c–d). DLM thus derives why heavy NP shift is weight-sensitive. -/
+The paper's flagship worked example: the cost of the verb–object–particle
+order is 1 for a light object (6 vs. 7) and 5 for a heavy one (11 vs. 16),
+deriving the weight-sensitivity of heavy NP shift (cf. example (6)). -/
 
 /-- (11a) "John threw out the trash", total dependency length 6. -/
-def lightParticleEarly : Tree :=
-  { words := [john.toWordSg, throw.toWordPast, out.toWord, the.toWord, trash.toWordSg]
-    deps := [⟨1, 0, .nsubj⟩, ⟨1, 2, .compound⟩, ⟨1, 4, .obj⟩, ⟨4, 3, .det⟩]
-    rootIdx := 1 }
+def lightParticleEarly : Graph 5 :=
+  .ofArcs [john.toWordSg, throw.toWordPast, out.toWord, the.toWord, trash.toWordSg]
+    1 [(1, 0, .nsubj), (1, 2, .compound), (1, 4, .obj), (4, 3, .det)]
 
 /-- (11b) "John threw the trash out", total dependency length 7. -/
-def lightParticleLate : Tree :=
-  { words := [john.toWordSg, throw.toWordPast, the.toWord, trash.toWordSg, out.toWord]
-    deps := [⟨1, 0, .nsubj⟩, ⟨1, 3, .obj⟩, ⟨3, 2, .det⟩, ⟨1, 4, .compound⟩]
-    rootIdx := 1 }
+def lightParticleLate : Graph 5 :=
+  .ofArcs [john.toWordSg, throw.toWordPast, the.toWord, trash.toWordSg, out.toWord]
+    1 [(1, 0, .nsubj), (1, 3, .obj), (3, 2, .det), (1, 4, .compound)]
 
 /-- (11c) "John threw out the trash sitting in the kitchen", total 11. -/
-def heavyParticleEarly : Tree :=
-  { words := [john.toWordSg, throw.toWordPast, out.toWord, the.toWord, trash.toWordSg,
-              sit.toWordPresPart, in_.toWord, the.toWord, kitchen.toWordSg]
-    deps := [⟨1, 0, .nsubj⟩, ⟨1, 2, .compound⟩, ⟨1, 4, .obj⟩, ⟨4, 3, .det⟩,
-             ⟨4, 5, .acl⟩, ⟨5, 6, .obl⟩, ⟨6, 8, .obl⟩, ⟨8, 7, .det⟩]
-    rootIdx := 1 }
+def heavyParticleEarly : Graph 9 :=
+  .ofArcs
+    [john.toWordSg, throw.toWordPast, out.toWord, the.toWord, trash.toWordSg,
+     sit.toWordPresPart, in_.toWord, the.toWord, kitchen.toWordSg]
+    1
+    [(1, 0, .nsubj), (1, 2, .compound), (1, 4, .obj), (4, 3, .det),
+     (4, 5, .acl), (5, 6, .obl), (6, 8, .obl), (8, 7, .det)]
 
 /-- (11d) "John threw the trash sitting in the kitchen out", total 16. -/
-def heavyParticleLate : Tree :=
-  { words := [john.toWordSg, throw.toWordPast, the.toWord, trash.toWordSg,
-              sit.toWordPresPart, in_.toWord, the.toWord, kitchen.toWordSg, out.toWord]
-    deps := [⟨1, 0, .nsubj⟩, ⟨1, 3, .obj⟩, ⟨3, 2, .det⟩, ⟨3, 4, .acl⟩,
-             ⟨4, 5, .obl⟩, ⟨5, 7, .obl⟩, ⟨7, 6, .det⟩, ⟨1, 8, .compound⟩]
-    rootIdx := 1 }
+def heavyParticleLate : Graph 9 :=
+  .ofArcs
+    [john.toWordSg, throw.toWordPast, the.toWord, trash.toWordSg,
+     sit.toWordPresPart, in_.toWord, the.toWord, kitchen.toWordSg, out.toWord]
+    1
+    [(1, 0, .nsubj), (1, 3, .obj), (3, 2, .det), (3, 4, .acl),
+     (4, 5, .obl), (5, 7, .obl), (7, 6, .det), (1, 8, .compound)]
 
 -- The printed totals of the four figures.
-example : totalDepLength lightParticleEarly = 6 := by decide
-example : totalDepLength lightParticleLate = 7 := by decide
-example : totalDepLength heavyParticleEarly = 11 := by decide
-example : totalDepLength heavyParticleLate = 16 := by decide
+example : lightParticleEarly.totalDepLength = 6 := by decide
+example : lightParticleLate.totalDepLength = 7 := by decide
+example : heavyParticleEarly.totalDepLength = 11 := by decide
+example : heavyParticleLate.totalDepLength = 16 := by decide
 
 /-- The DLM penalty for late particle placement grows with object weight:
     1 for the light object, 5 for the heavy one. -/
 theorem dlm_penalty_grows_with_weight :
-    totalDepLength lightParticleLate - totalDepLength lightParticleEarly <
-    totalDepLength heavyParticleLate - totalDepLength heavyParticleEarly := by decide
+    lightParticleLate.totalDepLength - lightParticleEarly.totalDepLength <
+    heavyParticleLate.totalDepLength - heavyParticleEarly.totalDepLength := by decide
 
 /-! ### Example (13): the random-order baseline
 
-The attested sentence "this story comes from the AP" (total dependency
-length 6) against two random reorderings of the same tree (9 and 11) —
-the paper's illustration of the random-order baseline methodology of
-§4–5, whose Monte-Carlo results are not formalized here. -/
+The attested sentence against reorderings of the same structure — stated
+through `Graph.relabel`, so "same structure" is by construction, which is
+what the paper's random-baseline methodology asserts. -/
 
 /-- (13a) "this story comes from the AP", the attested order, total 6. -/
-def attestedOrder : Tree :=
-  { words := [this_, story.toWordSg, come.toWord3sg, from_.toWord, the.toWord, ap]
-    deps := [⟨1, 0, .det⟩, ⟨2, 1, .nsubj⟩, ⟨2, 3, .obl⟩, ⟨3, 5, .obl⟩,
-             ⟨5, 4, .det⟩]
-    rootIdx := 2 }
+def attestedOrder : Graph 6 :=
+  .ofArcs [this_, story.toWordSg, come.toWord3sg, from_.toWord, the.toWord, ap]
+    2 [(1, 0, .det), (2, 1, .nsubj), (2, 3, .obl), (3, 5, .obl), (5, 4, .det)]
 
-/-- (13b) reordering "from AP the this story comes", total 9. -/
-def reorderingB : Tree :=
-  { words := [from_.toWord, ap, the.toWord, this_, story.toWordSg, come.toWord3sg]
-    deps := [⟨4, 3, .det⟩, ⟨5, 4, .nsubj⟩, ⟨5, 0, .obl⟩, ⟨0, 1, .obl⟩,
-             ⟨1, 2, .det⟩]
-    rootIdx := 5 }
+/-- The position permutation taking the attested order to the paper's
+    first reordering "from AP the this story comes". -/
+private def σB : Equiv.Perm (Fin 6) :=
+  ⟨![3, 4, 5, 0, 2, 1], ![3, 5, 4, 0, 1, 2], by decide, by decide⟩
 
-/-- (13c) reordering "comes AP the from story this", total 11. -/
-def reorderingC : Tree :=
-  { words := [come.toWord3sg, ap, the.toWord, from_.toWord, story.toWordSg, this_]
-    deps := [⟨4, 5, .det⟩, ⟨0, 4, .nsubj⟩, ⟨0, 3, .obl⟩, ⟨3, 1, .obl⟩,
-             ⟨1, 2, .det⟩]
-    rootIdx := 0 }
+/-- (13b) the reordering, as a relabeling of the attested structure. -/
+def reorderingB : Graph 6 := attestedOrder.relabel σB
 
-example : totalDepLength attestedOrder = 6 := by decide
-example : totalDepLength reorderingB = 9 := by decide
-example : totalDepLength reorderingC = 11 := by decide
+example : attestedOrder.totalDepLength = 6 := by decide
+example : reorderingB.totalDepLength = 9 := by decide
 
-/-- The attested order beats both random reorderings of its tree. -/
-theorem attested_below_reorderings :
-    totalDepLength attestedOrder < totalDepLength reorderingB ∧
-    totalDepLength attestedOrder < totalDepLength reorderingC := by decide
+/-- The attested order beats the reordering — and since `reorderingB` is a
+    `relabel` of `attestedOrder`, that they share a structure is not an
+    assertion but a definition. -/
+theorem attested_below_reordering :
+    attestedOrder.totalDepLength < reorderingB.totalDepLength := by decide
 
 /-! ### Table 2: head-finality and dependency length
 

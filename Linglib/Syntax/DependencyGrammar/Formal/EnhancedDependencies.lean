@@ -1,181 +1,51 @@
-import Linglib.Syntax.DependencyGrammar.Coordination
-import Linglib.Syntax.DependencyGrammar.LongDistance
-
-open Morphology (Word)
+import Linglib.Syntax.DependencyGrammar.Basic
 
 /-!
 # Enhanced dependencies
-[de-marneffe-nivre-2019]
 
-Basic dependency trees enforce a **unique-heads constraint**: every word
-(except root) has exactly one head, so certain predicate-argument relations
-that hold semantically cannot be represented as tree edges — shared
-dependents in coordination, controlled subjects, and relative-clause gaps
-are the canonical cases. Enhanced dependencies relax the tree to a
-directed graph in which words may have multiple heads.
+Basic dependency trees are single-headed, so predicate-argument relations
+that hold semantically — shared dependents in coordination, controlled
+subjects, relative-clause gaps — cannot all be tree arcs. The UD
+*enhanced* representation adds them as extra arcs
+([de-marneffe-nivre-2019]). On this carrier an enhanced graph is just a
+`Graph n` with more arcs, so basic-below-enhanced is the `Digraph`
+lattice order (`Graph.toDigraph_mono`).
 
-## Main declarations
-
-* `EnhancementType` — coarse classification of an enhanced edge.
-* `hasUnrepresentedArg` — a word has an argument relation in the enhanced
-  graph that the basic tree fails to encode.
-* `classifyEnhancement` — assign an `EnhancementType` to an enhanced edge.
-
-## Implementation notes
-
-Predicate-shape definitions inherit the substrate-wide `Bool` convention;
-statements use `... = true` / `= false`. Worked fixtures for the three
-phenomena (coordination, control, relative-clause gap) are kept minimal —
-feature-rich `Word` payloads were dropped because the theorems are
-structural. `Coordination.enhanceSharedDeps` is the bridge used to build
-the coordination enhanced graph; the control and relative-clause graphs
-are stipulated.
+`enhance` adds an explicit arc list to a graph; `hasUnrepresentedArg`
+detects a word whose enhanced head is absent from the basic graph.
 -/
 
-namespace DependencyGrammar.EnhancedDependencies
+namespace DependencyGrammar
 
+variable {n : ℕ}
 
-open DependencyGrammar
+/-- Add arcs to a graph (first label wins where both are present). -/
+def Graph.enhance (g : Graph n)
+    (extra : List (Fin n × Fin n × UD.DepRel)) : Graph n :=
+  { g with label := λ v w =>
+      g.label v w <|> (extra.find? λ a => a.1 == v && a.2.1 == w).map (·.2.2) }
 
-/-! ### Enhancement classification -/
+/-- Enhancement only adds arcs. -/
+theorem Graph.adj_enhance (g : Graph n)
+    (extra : List (Fin n × Fin n × UD.DepRel)) {v w : Fin n} (h : g.Adj v w) :
+    (g.enhance extra).Adj v w := by
+  simp only [Graph.Adj, enhance] at h ⊢
+  cases hl : g.label v w with
+  | none => exact absurd (hl ▸ h) (by simp)
+  | some r => simp [hl]
 
-/-- The kind of implicit relation an enhanced edge makes explicit. Each
-variant corresponds to a phenomenon where the basic tree loses information. -/
-inductive EnhancementType where
-  | coordSharedDep
-  | controlSubject
-  | relClauseGap
-  deriving Repr, DecidableEq
+/-- The basic graph sits below its enhancement in the `Digraph` lattice. -/
+theorem Graph.toDigraph_le_enhance (g : Graph n)
+    (extra : List (Fin n × Fin n × UD.DepRel)) :
+    g.toDigraph ≤ (g.enhance extra).toDigraph :=
+  Graph.toDigraph_mono (λ _ _ h => g.adj_enhance extra h)
 
-/-- A word has an *unrepresented argument* in the basic tree if it appears
-as a dependent in the enhanced graph under some head to which the basic
-tree has no edge. -/
-def hasUnrepresentedArg (basic : Tree) (enhanced : Graph)
-    (wordIdx : Nat) : Bool :=
-  enhanced.deps.any λ d =>
-    d.depIdx == wordIdx &&
-    !(basic.deps.any λ bd => bd.depIdx == wordIdx && bd.headIdx == d.headIdx)
+/-- Position `w` has an argument relation in the enhanced graph that the
+    basic graph fails to encode. -/
+def HasUnrepresentedArg (basic enhanced : Graph n) (w : Fin n) : Prop :=
+  ∃ v, enhanced.Adj v w ∧ ¬ basic.Adj v w
 
-/-- Classify an enhanced edge by what type of enhancement it represents.
-Returns `none` when the edge is already in the basic tree. -/
-def classifyEnhancement (basicDeps : List Dependency)
-    (enhanced : Dependency) : Option EnhancementType :=
-  if basicDeps.any (λ bd => bd.headIdx == enhanced.headIdx &&
-                            bd.depIdx == enhanced.depIdx &&
-                            bd.depType == enhanced.depType)
-  then none
-  else
-    match enhanced.depType with
-    | .obj | .iobj => some .coordSharedDep
-    | .nsubj       => some .controlSubject
-    | _            => none
+instance (b e : Graph n) (w : Fin n) : Decidable (HasUnrepresentedArg b e w) :=
+  inferInstanceAs (Decidable (∃ _, _))
 
-/-! ### Coordination fixture: "John sees and hears Mary" -/
-
-def coordBasicTree : Tree :=
-  { words := [Word.mk' "John" .PROPN, Word.mk' "sees" .VERB,
-              Word.mk' "and" .CCONJ, Word.mk' "hears" .VERB,
-              Word.mk' "Mary" .PROPN]
-    deps  := [⟨1, 0, .nsubj⟩, ⟨1, 2, .cc⟩, ⟨1, 3, .conj⟩, ⟨1, 4, .obj⟩]
-    rootIdx := 1 }
-
-def coordEnhancedGraph : Graph :=
-  Coordination.enhanceSharedDeps coordBasicTree
-
-/-! ### Control fixture: "Students forgot to come" -/
-
-def controlBasicTree : Tree :=
-  { words := [Word.mk' "students" .NOUN, Word.mk' "forgot" .VERB,
-              Word.mk' "to" .PART, Word.mk' "come" .VERB]
-    deps  := [⟨1, 0, .nsubj⟩, ⟨1, 3, .xcomp⟩, ⟨3, 2, .mark⟩]
-    rootIdx := 1 }
-
-def controlEnhancedGraph : Graph :=
-  { controlBasicTree.toGraph with
-    deps := controlBasicTree.deps ++ [⟨3, 0, .nsubj⟩] }
-
-/-! ### Relative-clause fixture: "the book that John read" -/
-
-def relClauseBasicTree : Tree :=
-  { words := [Word.mk' "the" .DET, Word.mk' "book" .NOUN,
-              Word.mk' "that" .SCONJ, Word.mk' "John" .PROPN,
-              Word.mk' "read" .VERB]
-    deps  := [⟨1, 0, .det⟩, ⟨1, 4, .acl⟩, ⟨4, 2, .mark⟩, ⟨4, 3, .nsubj⟩]
-    rootIdx := 1 }
-
-def relClauseEnhancedGraph : Graph :=
-  { relClauseBasicTree.toGraph with
-    deps := relClauseBasicTree.deps ++ [⟨4, 1, .obj⟩] }
-
-/-! ### Enhancement is subgraph extension
-
-Enhancement only adds arcs, so each basic tree sits below its enhanced graph
-in the `Digraph` lattice — the order `Graph.toDigraph_mono` transports. -/
-
-theorem controlBasic_le_enhanced :
-    controlBasicTree.toGraph.toDigraph ≤ controlEnhancedGraph.toDigraph :=
-  Graph.toDigraph_mono λ _ hd => List.mem_append_left _ hd
-
-theorem relClauseBasic_le_enhanced :
-    relClauseBasicTree.toGraph.toDigraph ≤ relClauseEnhancedGraph.toDigraph :=
-  Graph.toDigraph_mono λ _ hd => List.mem_append_left _ hd
-
-/-! ### Basic tree loses information -/
-
-theorem basic_tree_loses_coord_args :
-    hasUnrepresentedArg coordBasicTree coordEnhancedGraph 4 = true := by decide
-
-theorem basic_tree_loses_control_subject :
-    hasUnrepresentedArg controlBasicTree controlEnhancedGraph 0 = true := by decide
-
-theorem basic_tree_loses_relclause_gap :
-    hasUnrepresentedArg relClauseBasicTree relClauseEnhancedGraph 1 = true := by decide
-
-/-! ### Enhancement preserves basic edges -/
-
-theorem enhancement_preserves_basic_coord :
-    coordBasicTree.deps.all (λ d =>
-      coordEnhancedGraph.deps.any (λ ed =>
-        ed.headIdx == d.headIdx && ed.depIdx == d.depIdx && ed.depType == d.depType)
-    ) = true := by decide
-
-theorem enhancement_preserves_basic_control :
-    controlBasicTree.deps.all (λ d =>
-      controlEnhancedGraph.deps.any (λ ed =>
-        ed.headIdx == d.headIdx && ed.depIdx == d.depIdx && ed.depType == d.depType)
-    ) = true := by decide
-
-theorem enhancement_preserves_basic_relclause :
-    relClauseBasicTree.deps.all (λ d =>
-      relClauseEnhancedGraph.deps.any (λ ed =>
-        ed.headIdx == d.headIdx && ed.depIdx == d.depIdx && ed.depType == d.depType)
-    ) = true := by decide
-
-/-! ### Enhanced graphs violate unique-heads -/
-
-theorem enhanced_not_tree_coord :
-    hasUniqueHeads { words := coordEnhancedGraph.words
-                     deps := coordEnhancedGraph.deps
-                     rootIdx := coordEnhancedGraph.rootIdx } = false := by decide
-
-theorem enhanced_not_tree_control :
-    hasUniqueHeads { words := controlEnhancedGraph.words
-                     deps := controlEnhancedGraph.deps
-                     rootIdx := controlEnhancedGraph.rootIdx } = false := by decide
-
-theorem enhanced_not_tree_relclause :
-    hasUniqueHeads { words := relClauseEnhancedGraph.words
-                     deps := relClauseEnhancedGraph.deps
-                     rootIdx := relClauseEnhancedGraph.rootIdx } = false := by decide
-
-/-! ### Enhanced edges classify correctly -/
-
-theorem coord_enhancement_classified :
-    classifyEnhancement coordBasicTree.deps ⟨3, 4, .obj⟩ = some .coordSharedDep := by
-  decide
-
-theorem control_enhancement_classified :
-    classifyEnhancement controlBasicTree.deps ⟨3, 0, .nsubj⟩ = some .controlSubject := by
-  decide
-
-end DependencyGrammar.EnhancedDependencies
+end DependencyGrammar

@@ -107,7 +107,7 @@ namespace ArnoldEtAl2000
 
 
 open Constraints Core.Optimization Features
-open DependencyGrammar DependencyGrammar.DependencyLength
+open DependencyGrammar
 
 -- ============================================================================
 -- § 1: Phrases, Orderings, and Candidates
@@ -442,28 +442,20 @@ Combined with `newness_independently_predicts`, this implies any
 adequate theory of postverbal ordering must combine a weight constraint
 with at least one further dimension — here, discourse status. -/
 
-/-- `totalDepLength` ignores word identity: it depends only on the
-    dependency structure (head index × dep index × relation). -/
-theorem dlm_word_invariant
-    (deps : List Dependency) (rootIdx : Nat) (words₁ words₂ : List Word) :
-    totalDepLength { words := words₁, deps := deps, rootIdx := rootIdx } =
-    totalDepLength { words := words₂, deps := deps, rootIdx := rootIdx } := rfl
+/-- `Graph.totalDepLength` ignores word identity: it depends only on the
+    arc structure. (At the single-arc level the point is carried by the
+    type — `arcLength : Fin n → Fin n → ℕ` never sees the relation.) -/
+theorem dlm_word_invariant {n : ℕ} (g : Graph n) (words' : Fin n → Word) :
+    Graph.totalDepLength { g with words := words' } = g.totalDepLength := rfl
 
-/-- Even at the single-dependency level, `depLength` is `|head − dep|`
-    — the grammatical relation is irrelevant. -/
-theorem depLength_ignores_relation (h d : Nat) (r₁ r₂ : UD.DepRel) :
-    depLength ⟨h, d, r₁⟩ = depLength ⟨h, d, r₂⟩ := rfl
-
-/-- Corollary of `dlm_word_invariant`: trees that differ only in whether
-    their NPs are discourse-given or discourse-new receive identical
-    DLM cost. So Dependency Locality, as a pure tree-structural cost,
-    cannot reproduce the newness effect that
-    [arnold-wasow-losongco-ginstrom-2000] demonstrate. -/
-theorem dlm_discourse_blind
-    (deps : List Dependency) (rootIdx : Nat) (givenWords newWords : List Word) :
-    totalDepLength { words := givenWords, deps := deps, rootIdx := rootIdx } =
-    totalDepLength { words := newWords, deps := deps, rootIdx := rootIdx } :=
-  dlm_word_invariant deps rootIdx givenWords newWords
+/-- Corollary: trees that differ only in whether their NPs are
+    discourse-given or discourse-new receive identical DLM cost. So
+    Dependency Locality, as a pure tree-structural cost, cannot reproduce
+    the newness effect that [arnold-wasow-losongco-ginstrom-2000]
+    demonstrate. -/
+theorem dlm_discourse_blind {n : ℕ} (g : Graph n) (given new : Fin n → Word) :
+    Graph.totalDepLength { g with words := given } =
+    Graph.totalDepLength { g with words := new } := rfl
 
 -- ============================================================================
 -- § 9: DLM Derivation of `heavyDiff` — Heaviness Is Not a Stipulation

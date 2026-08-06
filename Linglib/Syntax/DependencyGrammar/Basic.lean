@@ -1,4 +1,4 @@
-import Mathlib.Data.List.Basic
+import Mathlib.Data.Fintype.Basic
 import Mathlib.Combinatorics.Digraph.Basic
 import Linglib.Data.UD.Basic
 import Linglib.Morphology.Word.Basic
@@ -6,29 +6,32 @@ import Linglib.Morphology.Word.Basic
 /-!
 # Dependency grammar substrate
 
-Core data types for dependency grammar: words connected by typed directed
-edges (`Dependency`), graphs built over them (`Graph`), and single-headed
-trees (`Tree`). Dependency relations use `UD.DepRel` from
-`Data/UD/Basic.lean` (Universal Dependencies v2). [hudson-2010],
-[gibson-2025].
+The dependency structure of a sentence, in the carrier of the formal
+dependency-grammar literature ([kuhlmann-nivre-2006], [kuhlmann-2013];
+the arcs-among-ordered-words presentation goes back to [melcuk-1988]): the
+nodes are the sentence positions `Fin n` with their linear order, and the
+arcs are a labeling of ordered pairs of positions by UD v2 dependency
+relations (`Data/UD/Basic.lean`). A distinguished `root` replaces CoNLL-U's
+artificial root token, following [kuhlmann-nivre-2006].
 
 ## Main declarations
 
-* `Dependency`, `Graph`, `Tree` — the basic graph-shaped data;
-  `Tree extends Graph` with argument-structure frames.
-* `Graph.parentsOf`, `children`, `inDegree`, `toDigraph` — the graph API;
-  `toDigraph` presents the graph as a mathlib `Digraph` with decidable
-  adjacency (`ParentEdge` is the adjacency at the edge-list level), and
-  `toDigraph_mono` orders basic below enhanced graphs in the `Digraph` lattice.
-* `hasUniqueHeads`, `isAcyclic`, `Tree.WF` — structural well-formedness.
-* `numberAgreesOn` — number agreement across the edges of one relation.
-
-The valency layer — frame schemas and their satisfaction — lives in
-`Valency.lean`; only the slot data types (`Dir`, `ArgSlot`, `ArgStr`) are
-declared here, because `Tree.frames` carries them.
+* `Graph n` — a dependency graph on `n` words: vertex-labeling `words`,
+  arc-labeling `label`, distinguished `root`. `Graph.Adj` is the induced
+  adjacency (decidable), `Graph.toDigraph` the projection onto mathlib's
+  `Digraph`, and `Graph.ofArcs` the constructor from CoNLL-U-style arc
+  lists.
+* `Graph.parents`, `children`, `inDegree` — the local graph API.
+* Well-formedness (`hasUniqueHeads`, `isAcyclic`, `Graph.IsTree`) lives in
+  `Projection.lean`, beside the dominance relation it is stated through.
 
 ## Implementation notes
 
+* Positions are 0-indexed; CoNLL-U is 1-indexed with `0` as an artificial
+  root, so wire-format conversion shifts indices.
+* `label` returns at most one relation per ordered pair: faithful to
+  dependency trees and basic UD. If an enhanced-UD fixture ever needs
+  parallel arcs on one pair, the field generalizes to a list.
 * Predicate-shape definitions return `Bool` rather than `Prop` +
   `[Decidable]`; this is a substrate-wide convention that downstream files
   inherit, and migrating it is a separate refactor.
@@ -38,191 +41,97 @@ open Morphology (Word)
 
 namespace DependencyGrammar
 
+/-! ### Dependency graphs -/
 
-section ArgumentStructure
-
-/-- Direction of a dependent relative to its head. -/
-inductive Dir where
-  /-- The dependent precedes the head. -/
-  | left
-  /-- The dependent follows the head. -/
-  | right
-  deriving Repr, DecidableEq
-
-/-- Whether a dependent at position `dep` sits on side `dir` of the head at
-    position `head`. -/
-def Dir.admits : Dir → Nat → Nat → Bool
-  | .left, head, dep => dep < head
-  | .right, head, dep => head < dep
-
-/-- A single argument slot in an argument structure: which relation fills it,
-    on which side of the head, and whether it must be filled. -/
-structure ArgSlot where
-  /-- The UD relation of the filler. -/
-  depType : UD.DepRel
-  /-- Which side of the head the filler sits. -/
-  dir : Dir
-  /-- Whether the slot must be filled. -/
-  required : Bool := true
-  deriving Repr, DecidableEq
-
-/-- Argument structure: the dependent slots a word requires or allows. -/
-abbrev ArgStr := List ArgSlot
-
-end ArgumentStructure
-
-/-! ### Dependencies and trees -/
-
-section DependenciesAndTrees
-
-/-- A dependency: directed edge from head to dependent. -/
-structure Dependency where
-  /-- Index of the head word in the sentence's `words` list. -/
-  headIdx : Nat
-  /-- Index of the dependent word in the sentence's `words` list. -/
-  depIdx : Nat
-  /-- The UD v2 relation label; length metrics ignore it. -/
-  depType : UD.DepRel
-  deriving Repr, DecidableEq
-
-/-- A dependency graph for a sentence: tokens in surface order plus directed
-    head → dependent edges. A word may carry several incoming arcs, as in the
-    UD *enhanced* representation; the single-headed case is `Tree`. -/
-structure Graph where
-  /-- The sentence's tokens, in surface order. -/
-  words : List Word
-  /-- Directed head → dependent edges. -/
-  deps : List Dependency
-  /-- Index into `words` of the sentence root. -/
-  rootIdx : Nat
-  deriving Repr
-
-/-- The mathlib `Digraph` on word positions whose edges are the arcs of
-    `deps`, head → dependent. Constructed with `Digraph.mk'`, so adjacency is
-    decidable and digraph-level goals close by `decide`. This is *the*
-    adjacency of the theory: `ParentEdge` is its `Adj`, and `Dominates` its
-    reachability. -/
-def edgeDigraph (deps : List Dependency) : Digraph Nat :=
-  Digraph.mk' λ v w => deps.any λ d => d.headIdx == v && d.depIdx == w
-
-/-- The head → dependent adjacency: `(edgeDigraph deps).Adj`, i.e. there is an
-    edge `(v → w)` in `deps` (see `parentEdge_iff` for the list form). -/
-def ParentEdge (deps : List Dependency) : Nat → Nat → Prop :=
-  (edgeDigraph deps).Adj
-
-/-- Membership characterization of the adjacency. -/
-@[simp] theorem parentEdge_iff {deps : List Dependency} {v w : Nat} :
-    ParentEdge deps v w ↔ ∃ d ∈ deps, d.headIdx = v ∧ d.depIdx = w := by
-  simp [ParentEdge, edgeDigraph]
-
-instance (deps : List Dependency) : DecidableRel (ParentEdge deps) :=
-  inferInstanceAs (DecidableRel
-    (Digraph.mk' λ v w => deps.any λ d => d.headIdx == v && d.depIdx == w).Adj)
+/-- A dependency graph on `n` words: the sentence's tokens as a labeling of
+    the positions `Fin n`, the arcs as a partial labeling of ordered position
+    pairs (head → dependent) by UD relations, and a distinguished root
+    position. -/
+structure Graph (n : ℕ) where
+  /-- The token at each position. -/
+  words : Fin n → Word
+  /-- The UD relation from head `v` to dependent `w`, if there is an arc. -/
+  label : Fin n → Fin n → Option UD.DepRel
+  /-- The root position. -/
+  root : Fin n
 
 namespace Graph
 
-/-- The edges into position `i`. -/
-def parentsOf (g : Graph) (i : Nat) : List Dependency :=
-  g.deps.filter (·.depIdx == i)
+variable {n : ℕ} (g : Graph n)
 
-/-- The dependent positions of the word at position `i`. -/
-def children (g : Graph) (i : Nat) : List Nat :=
-  g.deps.filter (·.headIdx == i) |>.map (·.depIdx)
+/-- Adjacency: there is an arc from head `v` to dependent `w`. -/
+def Adj (v w : Fin n) : Prop := (g.label v w).isSome
 
-/-- The number of incoming edges at position `i`. -/
-def inDegree (g : Graph) (i : Nat) : Nat :=
-  (g.parentsOf i).length
+instance : DecidableRel g.Adj := λ _ _ => inferInstanceAs (Decidable (_ = true))
 
-/-- The graph's digraph: `edgeDigraph` on its edge list. -/
-def toDigraph (g : Graph) : Digraph Nat :=
-  edgeDigraph g.deps
+/-- The graph as a mathlib `Digraph` on positions. -/
+def toDigraph : Digraph (Fin n) := ⟨g.Adj⟩
 
-@[simp] theorem toDigraph_adj (g : Graph) (v w : Nat) :
-    g.toDigraph.Adj v w ↔ ParentEdge g.deps v w := Iff.rfl
-
-/-- More edges, larger digraph: a graph's digraph is a subgraph of any
-    enhancement of it (in the `Digraph` lattice order). -/
-theorem toDigraph_mono {g g' : Graph} (h : g.deps ⊆ g'.deps) :
-    g.toDigraph ≤ g'.toDigraph := λ v w hvw => by
-  obtain ⟨d, hd, hh, hdep⟩ := parentEdge_iff.mp hvw
-  exact parentEdge_iff.mpr ⟨d, h hd, hh, hdep⟩
+@[simp] theorem toDigraph_adj (v w : Fin n) : g.toDigraph.Adj v w ↔ g.Adj v w :=
+  Iff.rfl
 
 attribute [coe] toDigraph
 
-instance : Coe Graph (Digraph Nat) := ⟨toDigraph⟩
+instance : Coe (Graph n) (Digraph (Fin n)) := ⟨toDigraph⟩
+
+/-- Fewer arcs, smaller digraph, in the `Digraph` lattice order. -/
+theorem toDigraph_mono {g g' : Graph n} (h : ∀ v w, g.Adj v w → g'.Adj v w) :
+    g.toDigraph ≤ g'.toDigraph := h
+
+/-- The head positions of `w`. -/
+def parents (w : Fin n) : List (Fin n) :=
+  (List.finRange n).filter (g.Adj · w)
+
+/-- The dependent positions of `v`. -/
+def children (v : Fin n) : List (Fin n) :=
+  (List.finRange n).filter (g.Adj v ·)
+
+/-- The number of incoming arcs at `w`. -/
+def inDegree (w : Fin n) : Nat := (g.parents w).length
+
+@[simp] theorem mem_parents {g : Graph n} {v w : Fin n} :
+    v ∈ g.parents w ↔ g.Adj v w := by
+  simp [parents, List.mem_filter]
+
+@[simp] theorem mem_children {g : Graph n} {v w : Fin n} :
+    w ∈ g.children v ↔ g.Adj v w := by
+  simp [children, List.mem_filter]
+
+/-- Build a graph from CoNLL-U-style data: the token list (whose length
+    fixes `n`), the root position, and the arcs as
+    (head, dependent, relation) triples. Later arcs for the same pair are
+    ignored. -/
+def ofArcs (words : List Word) (root : Fin words.length)
+    (arcs : List (Fin words.length × Fin words.length × UD.DepRel)) :
+    Graph words.length :=
+  { words := words.get
+    label := λ v w => (arcs.find? λ a => a.1 == v && a.2.1 == w).map (·.2.2)
+    root }
 
 end Graph
 
-/-- A dependency tree: a `Graph` meant to be single-headed (`hasUniqueHeads`
-    checks it), plus DG-specific lexical argument-structure premises. `frames`
-    is aligned with `words` (missing/short = no frame): the frame is framework
-    apparatus (like HPSG's ARG-ST), so it lives on DG's tree, not on the shared
-    `Word` token; frames come from the lexical carrier at tree construction
-    (`complementToArgStr` applied to a verb's `complementType`). -/
-structure Tree extends Graph where
-  /-- Argument-structure premises aligned with `words`; short or missing list
-      means "no frame at this position" (see `Tree.frame`). -/
-  frames : List (Option ArgStr) := []
-  deriving Repr
-
-/-- The argument-structure frame at position `i`, if one was supplied. -/
-def Tree.frame (t : Tree) (i : Nat) : Option ArgStr :=
-  (t.frames[i]?).join
-
-end DependenciesAndTrees
-
-section WellFormedness
-
-/-- Check if every word except root has exactly one head. -/
-def hasUniqueHeads (t : Tree) : Bool :=
-  (List.range t.words.length).all λ i =>
-    t.inDegree i == (if i == t.rootIdx then 0 else 1)
-
-/-- Check for cycles: no word is its own ancestor. -/
-def isAcyclic (t : Tree) : Bool :=
-  let n := t.words.length
-  List.range n |>.all λ start =>
-    let rec follow (current : Nat) (visited : List Nat) (fuel : Nat) : Bool :=
-      match fuel with
-      | 0 => true
-      | fuel' + 1 =>
-        if visited.contains current then false
-        else
-          match t.deps.find? (·.depIdx == current) with
-          | some dep => follow dep.headIdx (current :: visited) fuel'
-          | none => true
-    follow start [] (n + 1)
-
-/-- Bundled well-formedness: unique heads + valid index bounds.
-    Collects the three hypotheses that most dominance/planarity theorems need. -/
-structure Tree.WF (t : Tree) : Prop where
-  uniqueHeads : hasUniqueHeads t = true
-  depIdx_lt : ∀ d ∈ t.deps, d.depIdx < t.words.length
-  headIdx_lt : ∀ d ∈ t.deps, d.headIdx < t.words.length
-
-end WellFormedness
+/-! ### Agreement -/
 
 section AgreementChecking
 
-/-- Number agreement across every `rel`-labeled edge. Permissive by default:
-    edges whose endpoints are out of range or unmarked for number pass
-    vacuously, so the check constrains only overtly conflicting marking. -/
-def numberAgreesOn (t : Tree) (rel : UD.DepRel) : Bool :=
-  t.deps.all λ d =>
-    if d.depType == rel then
-      match t.words[d.depIdx]?, t.words[d.headIdx]? with
-      | some dep, some head =>
-        match dep.features.number, head.features.number with
-        | some dn, some hn => dn == hn
-        | _, _ => true
+variable {n : ℕ}
+
+/-- Number agreement across every `rel`-labeled arc. Permissive by default:
+    arcs whose endpoints are unmarked for number pass vacuously, so the check
+    constrains only overtly conflicting marking. -/
+def numberAgreesOn (t : Graph n) (rel : UD.DepRel) : Bool :=
+  (List.finRange n).all λ v => (List.finRange n).all λ w =>
+    if t.label v w == some rel then
+      match (t.words w).features.number, (t.words v).features.number with
+      | some dn, some hn => dn == hn
       | _, _ => true
     else true
 
 /-- Subject-verb number agreement: `numberAgreesOn` at `nsubj`. -/
-def checkSubjVerbAgr (t : Tree) : Bool := numberAgreesOn t .nsubj
+def checkSubjVerbAgr (t : Graph n) : Bool := numberAgreesOn t .nsubj
 
 /-- Determiner-noun number agreement: `numberAgreesOn` at `det`. -/
-def checkDetNounAgr (t : Tree) : Bool := numberAgreesOn t .det
+def checkDetNounAgr (t : Graph n) : Bool := numberAgreesOn t .det
 
 end AgreementChecking
 
