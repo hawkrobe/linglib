@@ -64,7 +64,7 @@ open Clause.Chaining
     DS-SEQ, DS-SIM). Medial verbs are maximally reduced (bare stem +
     SR suffix). The final verb alone carries tense, agreement, and full mood.
     Non-canonical stand-alone medial clauses are attested. -/
-def nungon : ClauseChainingParams where
+def nungon : Clause.Chaining.System where
   direction           := .medialFinal
   srSystem            := .ssDsTemporal
   srTarget            := some .subjectOnly
@@ -83,7 +83,7 @@ def nungon : ClauseChainingParams where
   medialCanStandAlone := true
 
 /-- Manambu (Ndu family, East Sepik; [aikhenvald-2008], 2025 Ch. 6). -/
-def manambu : ClauseChainingParams where
+def manambu : Clause.Chaining.System where
   direction           := .medialFinal
   srSystem            := .ssDs
   srTarget            := some .subjectOnly
@@ -102,7 +102,7 @@ def manambu : ClauseChainingParams where
   medialCanStandAlone := true
 
 /-- Ku Waru (Trans-New Guinea, Chimbu-Wahgi; [merlan-rumsey-1991]). -/
-def kuWaru : ClauseChainingParams where
+def kuWaru : Clause.Chaining.System where
   direction           := .medialFinal
   srSystem            := .ssDs
   srTarget            := some .subjectOnly
@@ -121,7 +121,7 @@ def kuWaru : ClauseChainingParams where
   medialCanStandAlone := false
 
 /-- Korean (Koreanic; [sohn-1999]). -/
-def korean : ClauseChainingParams where
+def korean : Clause.Chaining.System where
   direction           := .medialFinal
   srSystem            := .none
   srTarget            := none
@@ -142,7 +142,7 @@ def korean : ClauseChainingParams where
   medialCanStandAlone := true
 
 /-- Turkish (Turkic; [goksel-kerslake-2005]). -/
-def turkish : ClauseChainingParams where
+def turkish : Clause.Chaining.System where
   direction           := .medialFinal
   srSystem            := .none
   srTarget            := none
@@ -162,7 +162,7 @@ def turkish : ClauseChainingParams where
   medialCanStandAlone := false
 
 /-- Korowai (Trans-New Guinea, Greater Awyu; [de-vries-2025] Ch. 5). -/
-def korowai : ClauseChainingParams where
+def korowai : Clause.Chaining.System where
   direction           := .medialFinal
   srSystem            := .multiTrack
   srTarget            := some .topicBased
@@ -181,7 +181,7 @@ def korowai : ClauseChainingParams where
   medialCanStandAlone := false
 
 /-- All language data entries. -/
-def allLanguages : List ClauseChainingParams :=
+def allLanguages : List Clause.Chaining.System :=
   [nungon, manambu, kuWaru, korean, turkish, korowai]
 
 theorem nungon_has_sr : nungon.hasSR = true := rfl

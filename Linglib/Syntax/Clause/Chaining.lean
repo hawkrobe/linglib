@@ -26,8 +26,8 @@ bundles and generalizations in `Studies/SarvasyAikhenvald2025.lean`.
 * `SRSystem`, `SRTarget`, `SRMarkedness` — switch-reference
 * `InterclauseRelation` — marked interclausal semantic relations
 * `BridgingType` — discourse bridging across chain boundaries
-* `ClauseChainingParams` — the per-language bundle Fragments
-  instantiate
+* `System` — a language's clause-chaining system; per-language
+  instances live in `Studies/SarvasyAikhenvald2025.lean`
 -/
 
 namespace Clause
@@ -277,11 +277,11 @@ inductive BridgingType where
 
 /-! ### The per-language bundle -/
 
-/-- Clause-chaining parameters of a language: chain structure,
+/-- A language's clause-chaining system: chain structure,
     switch-reference, medial morphology, marked relations, and
-    bridging. Fragments instantiate this; generalizations over the
-    bundles live in `Studies/SarvasyAikhenvald2025.lean`. -/
-structure ClauseChainingParams where
+    bridging. Per-language instances and generalizations over them
+    live in `Studies/SarvasyAikhenvald2025.lean`. -/
+structure System where
   /-- Linear order of medial and final clauses. -/
   direction : ChainDirection
   /-- Type of switch-reference system, if any. -/
@@ -305,9 +305,9 @@ structure ClauseChainingParams where
   medialCanStandAlone : Bool
   deriving Repr, BEq
 
-namespace ClauseChainingParams
+namespace System
 
-variable (p : ClauseChainingParams)
+variable (p : System)
 
 /-- The language has an SR system. -/
 def hasSR : Bool := p.srSystem != .none
@@ -325,7 +325,7 @@ def temporalViaSR : Bool := p.srSystem == .ssDsTemporal
 /-- Expected UD verb form for this language's medial verbs. -/
 def medialVerbForm : UD.VerbForm := p.medialMorph.udVerbForm
 
-end ClauseChainingParams
+end System
 
 end Chaining
 
