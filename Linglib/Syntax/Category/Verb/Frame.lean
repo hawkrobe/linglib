@@ -4,14 +4,14 @@ import Linglib.Syntax.Clause.Basic
 
 A predicate's complement frame as a list of typed
 `Complement.Position`s: nominal, adpositional, or clausal, the clausal
-case carrying its `Clause` description. The flat `ComplementType` enum
-survives as a round-trip view (`ComplementType.toFrame` /
-`Frame.toComplementType`).
+case carrying the axes the predicate selects for. The flat
+`ComplementType` enum survives as a round-trip view
+(`ComplementType.toFrame` / `Frame.toComplementType`).
 
 ## Main definitions
 
 * `Complement.Position` — one complement position; a clausal position
-  carries a `Clause` by construction
+  carries its selectional axes by construction
 * `Frame` + `Frame.np`, `Frame.finiteClause`, … — a frame is a list of
   complement positions; the flat enum cells as smart constructors
 * `ComplementType` + `toFrame` / `Frame.toComplementType` — the flat
@@ -37,28 +37,29 @@ selection relation between verb frames and clause-typers
 namespace Complement
 
 /-- One complement position of a predicate's frame: nominal,
-    adpositional, or clausal with its recorded `Clause` description.
-    Non-clausal positions carry no clausal axes by construction. -/
+    adpositional, or clausal with the axes the predicate selects for —
+    [noonan-2007] coding, clause form, and subject requirement, `none`
+    = unselective. Non-clausal positions carry no clausal axes by
+    construction. -/
 inductive Position where
   | nominal
   | adpositional
-  | clausal (clause : Clause)
+  | clausal (coding : Option Coding := none)
+      (clauseForm : Option Clause.Form := none)
+      (embeddedSubject : Option Clause.EmbeddedSubject := none)
   deriving DecidableEq, Repr
 
 namespace Position
 
-/-- The clausal position's `Clause`, if any. -/
-def clause? : Position → Option Clause
-  | clausal c => some c
+/-- The position's recorded [noonan-2007] coding, if clausal. -/
+def coding? : Position → Option Coding
+  | clausal c _ _ => c
   | _ => none
 
-/-- The position's recorded [noonan-2007] coding, if clausal. -/
-def coding? (p : Position) : Option Coding :=
-  p.clause?.bind (·.coding)
-
 /-- The position's recorded clause form, if clausal. -/
-def clauseForm? (p : Position) : Option Clause.Form :=
-  p.clause?.bind (·.clauseForm)
+def clauseForm? : Position → Option Clause.Form
+  | clausal _ cf _ => cf
+  | _ => none
 
 end Position
 
@@ -97,27 +98,26 @@ def np_pp : Frame := [.nominal, .adpositional]
 
 /-- Finite declarative clause. -/
 def finiteClause : Frame :=
-  [.clausal { coding := some .indicative,
-              clauseForm := some .declarative }]
+  [.clausal (coding := some .indicative) (clauseForm := some .declarative)]
 
 /-- Infinitival clause. The embedded-subject requirement varies by verb
     (equi-deletion, raising, or adposition-marked overt subjects,
     [noonan-2007] §1.3.4), so it lives on the verb's reading, not here. -/
-def infinitival : Frame := [.clausal { coding := some .infinitive }]
+def infinitival : Frame := [.clausal (coding := some .infinitive)]
 
 /-- Gerund / nominalized clause. -/
-def gerund : Frame := [.clausal { coding := some .nominalized }]
+def gerund : Frame := [.clausal (coding := some .nominalized)]
 
 /-- Small clause (*consider X happy*; causative *make X leave*). Outside
     [noonan-2007]'s coding inventory, which classifies complements by
-    the part of speech of their predicate, so the clause records
+    the part of speech of their predicate, so the position records
     nothing. -/
-def smallClause : Frame := [.clausal {}]
+def smallClause : Frame := [.clausal]
 
 /-- Embedded question. Interrogativity is a clause-form distinction
     orthogonal to [noonan-2007] coding, so `coding` stays `none`. -/
 def question : Frame :=
-  [.clausal { clauseForm := some .embeddedQuestion }]
+  [.clausal (clauseForm := some .embeddedQuestion)]
 
 end Frame
 

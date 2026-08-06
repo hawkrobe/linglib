@@ -1,27 +1,41 @@
-import Linglib.Syntax.Clause.Construction
+import Linglib.Syntax.Clause.Size
 import Linglib.Syntax.Clause.Form
 import Linglib.Features.Complementation
 import Linglib.Features.Case.Basic
 
 /-!
-# The clause object
+# The clause interface
 
-A clause is a predication: at minimum a predicate and an explicit or
-implied subject, expressing a proposition. `Clause` records the axes
-sources record about one — the construction it instantiates
-(`Clause.Construction`), its surface form (`Clause.Form`), its
-[noonan-2007] coding (`Complement.Coding`), and its subject requirement
-(`Clause.EmbeddedSubject`). A `none` field is unrecorded, not a claim —
-the record-what-sources-record convention of the Fragment layer, where
-these values originate. The first consumer is the clausal case of
-`Complement.Position` (`Syntax/Category/Verb/Frame.lean`), so a
-complement frame's clausal position carries a `Clause` by construction.
+A clause is a predication — at minimum a predicate and an explicit or
+implied subject, expressing a proposition. What a clause *is*
+concretely is framework-relative (a Minimalist extended projection, an
+HPSG sign, a dependency subtree), so `Clause` is the interface those
+carriers instantiate: a clause object answers the theory-neutral
+queries — its grade on the `Clause.Size` scale and the selectional
+axes ([noonan-2007] coding, `Clause.Form`) — and consumers reason
+through the queries rather than importing a framework.
+`Minimalist.ClauseSpine` is the first instance
+(`Syntax/Minimalist/ExtendedProjection/ClauseSpine.lean`).
 
 ## Main definitions
 
-* `Clause.EmbeddedSubject` — the subject-requirement axis
-* `Clause` — the predication record
+* `Clause` — the interface: `size`, `coding?`, `form?`
+* `Clause.EmbeddedSubject` — the subject-requirement axis complement
+  frames record (`Syntax/Category/Verb/Frame.lean`)
 -/
+
+/-- Carriers of clause structure. A framework's clause object answers
+    the theory-neutral queries: its `Clause.Size` grade and the
+    selectional axes it determines (`none` = the object does not
+    determine the axis). -/
+class Clause (C : Type*) where
+  /-- The clause's grade on the theory-neutral size scale. -/
+  size : C → Clause.Size
+  /-- The [noonan-2007] coding the object realizes, when its structure
+      determines one. -/
+  coding? : C → Option Complement.Coding := λ _ => none
+  /-- The surface clause form, when the object determines one. -/
+  form? : C → Option Clause.Form := λ _ => none
 
 namespace Clause
 
@@ -37,16 +51,3 @@ inductive EmbeddedSubject where
   deriving DecidableEq, Repr
 
 end Clause
-
-/-- A clause description: the recorded axes of one predication.
-    `none` = unrecorded. -/
-structure Clause where
-  /-- The construction the clause instantiates. -/
-  construction : Option Clause.Construction := none
-  /-- Surface clause form (declarative vs embedded question). -/
-  clauseForm : Option Clause.Form := none
-  /-- [noonan-2007] coding. -/
-  coding : Option Complement.Coding := none
-  /-- Subject requirement. -/
-  embeddedSubject : Option Clause.EmbeddedSubject := none
-  deriving DecidableEq, Repr
