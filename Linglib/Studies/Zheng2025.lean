@@ -88,21 +88,18 @@ theorem unexpectedness_necessary :
 
 /-! ### Kernel-theoretic felicity conditions
 
-Zheng's condition (11), the final felicity condition for nandao on polar
-questions, built on [von-fintel-gillies-2010]'s kernel: (i) some evidence
-`p ∈ K` raises the probability of the prejacent φ; (ii) the kernel conflicts
-with the prior information state U — the evidence is unexpected; (iii) φ is
-not directly settled in K. Condition (iii) is the presupposition of
+A nandao question is felicitous when some evidence in the kernel raises the
+probability of the prejacent, the kernel conflicts with the prior information
+state `U` — the beliefs, norms, and desires in place before encountering the
+evidence — and the prejacent is not directly settled ([zheng-2025]
+condition (11)). The last conjunct is the presupposition of
 [von-fintel-gillies-2010]'s `kernelMust`. -/
 
 variable {W : Type*}
 
-/-- Evidence `p` raises the probability of `φ` under the uniform (counting)
-measure: P(φ|p) > P(φ), stated by cross-multiplication over cardinalities to
-avoid rationals. [zheng-2025]'s condition (11i) writes P(φ|p) ≫ P(φ); we
-sharpen "significantly raises" to strict raising and fix the uniform measure
-on `W`. Meaningful for finite `W` (`Set.ncard` and `Nat.card` are junk
-otherwise). -/
+/-- Evidence `p` raises the probability of `φ` under the uniform counting
+measure on a finite `W`: P(φ|p) > P(φ). [zheng-2025]'s condition (11i) writes
+P(φ|p) ≫ P(φ); we sharpen "significantly raises" to strict raising. -/
 def evidenceRaises (p φ : Set W) : Prop :=
   (p ∩ φ).ncard * Nat.card W > φ.ncard * p.ncard
 
@@ -115,9 +112,7 @@ def evidenceSupports : Prop :=
   ∃ p ∈ k.props, evidenceRaises p φ
 
 /-- The evidence in K is unexpected given the prior information state U
-([zheng-2025] condition (11ii)): B_K is disjoint from ⋂U. U collects what
-leads to the information state prior to encountering the evidence — beliefs,
-norms, desires — distinct from the kernel's direct evidence. -/
+([zheng-2025] condition (11ii)). -/
 def unexpected : Prop :=
   Disjoint k.base (propIntersection u)
 
