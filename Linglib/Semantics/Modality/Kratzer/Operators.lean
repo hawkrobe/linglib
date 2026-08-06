@@ -203,6 +203,16 @@ theorem realistic_is_serial (f : ModalBase W) (hReal : isRealistic f) :
     IsSerial (kratzerR f) :=
   ⟨fun w => ⟨w, (realistic_refl f hReal).refl w⟩⟩
 
+/-- Under the empty modal base, every world is accessible. -/
+theorem kratzerR_emptyBackground (w w' : W) :
+    kratzerR (emptyBackground (W := W)) w w' :=
+  λ _ hq => (List.not_mem_nil hq).elim
+
+/-- Under a singleton modal base, accessibility is the sole premise. -/
+theorem kratzerR_singleton (p : W → Prop) (w w' : W) :
+    kratzerR (λ _ => [p]) w w' ↔ p w' := by
+  simp [kratzerR]
+
 /-- Empty modal base gives universal accessibility. -/
 theorem empty_base_universal_access (w : W) :
     accessibleWorlds (emptyBackground (W := W)) w = Set.univ := by

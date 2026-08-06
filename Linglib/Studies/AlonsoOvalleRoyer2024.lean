@@ -272,52 +272,27 @@ and the harmonic vs non-harmonic anchoring distinction (card scenario,
 
 /-- Three books for testing the modal indefinite semantics. -/
 inductive Book where | a | b | c
-  deriving DecidableEq, Repr, Inhabited
+  deriving DecidableEq, Repr
 
-/-- Three possible worlds varying in which books are available. -/
-inductive BookWorld where
-  | abc   -- all three available
-  | ab    -- only a, b available
-  | ac    -- only a, c available
-  deriving DecidableEq, Repr, Inhabited
+/-- A world is the set of available books. -/
+private abbrev BookWorld := Finset Book
 
 private def allBooks : List Book := [.a, .b, .c]
 
 /-- "is a book": always true for our domain. -/
-private def isBook : Book → BookWorld → Prop := λ _ _ => True
-
-instance (book : Book) : DecidablePred (isBook book) := fun _ => instDecidableTrue
-
-/-- "is available": varies by world. -/
-private def isAvailable : Book → BookWorld → Prop
-  | .a, _ => True            -- book a always available
-  | .b, .abc => True
-  | .b, .ab => True
-  | .b, .ac => False
-  | .c, .abc => True
-  | .c, .ab => False
-  | .c, .ac => True
-
-instance : ∀ (book : Book), DecidablePred (isAvailable book)
-  | .a, _ => instDecidableTrue
-  | .b, .abc => instDecidableTrue
-  | .b, .ab => instDecidableTrue
-  | .b, .ac => instDecidableFalse
-  | .c, .abc => instDecidableTrue
-  | .c, .ab => instDecidableFalse
-  | .c, .ac => instDecidableTrue
+private abbrev isBook : Book → BookWorld → Prop := λ _ _ => True
 
 /-- A speech event and a described event. -/
 inductive SpeechOrDescribed where | speech | described
   deriving DecidableEq, Repr
 
-/-- Epistemic anchoring: the speaker considers all three worlds possible. -/
+/-- Epistemic anchoring: the speaker considers every world possible. -/
 private def fEPI : AnchoringFn SpeechOrDescribed BookWorld :=
-  λ _ _ => []  -- empty background → all worlds accessible
+  λ _ => emptyBackground
 
 private theorem fEPI_accessible {e : SpeechOrDescribed} {w w' : BookWorld} :
     kratzerR (fEPI e) w w' :=
-  λ _ hq => (List.not_mem_nil hq).elim
+  kratzerR_emptyBackground _ _
 
 /-- *Yalnhej* on the book model: it holds both when every book is
     available (abc) and when not all are (ab) — non-maximal and not
@@ -325,16 +300,16 @@ private theorem fEPI_accessible {e : SpeechOrDescribed} {w w' : BookWorld} :
     A maximal item would fail in ab; an upper-bounded item (*algún*)
     fails in abc. -/
 theorem yalnhej_three_way_contrast :
-    -- yalnhej OK in abc (all available)
-    modalIndefiniteSat fEPI .speech allBooks isBook isAvailable .abc ∧
-    -- yalnhej OK in ab (not all available) — non-maximal
-    modalIndefiniteSat fEPI .speech allBooks isBook isAvailable .ab ∧
-    -- UB fails in abc (all satisfy scope)
-    ¬ upperBoundedSat fEPI .speech allBooks isBook isAvailable .abc := by
-  refine ⟨⟨⟨.a, by decide, trivial, trivial⟩, λ y _ _ => ?_⟩,
-    ⟨⟨.a, by decide, trivial, trivial⟩, λ y _ _ => ?_⟩,
-    λ h => h.2 (λ x _ _ => by cases x <;> trivial)⟩ <;>
-    exact ⟨.abc, fEPI_accessible, by cases y <;> trivial⟩
+    -- yalnhej OK when all books are available
+    modalIndefiniteSat fEPI .speech allBooks isBook (· ∈ ·) {.a, .b, .c} ∧
+    -- yalnhej OK when not all are — non-maximal
+    modalIndefiniteSat fEPI .speech allBooks isBook (· ∈ ·) {.a, .b} ∧
+    -- UB fails when all satisfy the scope
+    ¬ upperBoundedSat fEPI .speech allBooks isBook (· ∈ ·) {.a, .b, .c} := by
+  refine ⟨⟨⟨.a, by decide, trivial, by decide⟩, λ y _ _ => ?_⟩,
+    ⟨⟨.a, by decide, trivial, by decide⟩, λ y _ _ => ?_⟩,
+    λ h => h.2 (λ x _ _ => by cases x <;> decide)⟩ <;>
+    exact ⟨{y}, fEPI_accessible, Finset.mem_singleton_self y⟩
 
 /-! ### Card scenario
 
@@ -345,59 +320,31 @@ which cards are grabbable, and two anchoring events. -/
 
 /-- Three cards for testing harmonic readings. -/
 inductive Card where | c1 | c2 | c3
-  deriving DecidableEq, Repr, Inhabited
+  deriving DecidableEq, Repr
 
-/-- Three worlds varying in which cards are grabbable. -/
-inductive CardWorld where
-  | all    -- all three grabbable
-  | only1  -- only c1 grabbable
-  | only2  -- only c2 grabbable
-  deriving DecidableEq, Repr, Inhabited
+/-- A world is the set of grabbable cards. -/
+private abbrev CardWorld := Finset Card
 
 private def allCards : List Card := [.c1, .c2, .c3]
 
 /-- "is a card": always true in our domain. -/
-private def isCard : Card → CardWorld → Prop := λ _ _ => True
+private abbrev isCard : Card → CardWorld → Prop := λ _ _ => True
 
-instance (c : Card) : DecidablePred (isCard c) := fun _ => instDecidableTrue
-
-/-- "can grab": which cards are grabbable in which worlds. -/
-private def canGrab : Card → CardWorld → Prop
-  | .c1, .all   => True
-  | .c1, .only1 => True
-  | .c1, .only2 => False
-  | .c2, .all   => True
-  | .c2, .only1 => False
-  | .c2, .only2 => True
-  | .c3, .all   => True
-  | .c3, .only1 => False
-  | .c3, .only2 => False
-
-instance : ∀ (c : Card), DecidablePred (canGrab c)
-  | .c1, .all   => instDecidableTrue
-  | .c1, .only1 => instDecidableTrue
-  | .c1, .only2 => instDecidableFalse
-  | .c2, .all   => instDecidableTrue
-  | .c2, .only1 => instDecidableFalse
-  | .c2, .only2 => instDecidableTrue
-  | .c3, .all   => instDecidableTrue
-  | .c3, .only1 => instDecidableFalse
-  | .c3, .only2 => instDecidableFalse
-
-/-- Three event types: speech, local (described), imperative. -/
-inductive GrabEvent where | speech | local | imperative
+/-- The described (local) event and the imperative event. -/
+inductive GrabEvent where | local | imperative
   deriving DecidableEq, Repr
 
-/-- Anchoring function for the card scenario.
-    - Speech event: empty background (all worlds accessible).
-    - Local event: restricts to worlds where local circumstances hold
-      (only world `only1` — current situation has only c1 available).
-    - Imperative event: all worlds accessible (any card COULD be
-      grabbed if permitted). -/
+/-- Anchoring function for the card scenario: the local event restricts
+    to the current circumstances, where only c1 is grabbable; the
+    imperative event leaves every world accessible (any card COULD be
+    grabbed if permitted). -/
 private def fGrab : AnchoringFn GrabEvent CardWorld
-  | .speech, _ => []  -- all worlds accessible
-  | .local, _ => [λ w => w = .only1]  -- only `only1` accessible
-  | .imperative, _ => []  -- all worlds accessible (permission domain)
+  | .local => λ _ => [λ w => w = {.c1}]
+  | .imperative => emptyBackground
+
+private theorem imperative_accessible {w w' : CardWorld} :
+    kratzerR (fGrab .imperative) w w' :=
+  kratzerR_emptyBackground _ _
 
 /-- The two readings are formally distinct on the card model: anchored
     to the local event, only c1 is grabbable and the modal component
@@ -405,14 +352,12 @@ private def fGrab : AnchoringFn GrabEvent CardWorld
     grabbable in some accessible world — "any card is fine". Same
     world, domain, and predicates; only the anchoring event differs. -/
 theorem harmonic_nonharmonic_contrast :
-    ¬ modalIndefiniteSat fGrab .local allCards isCard canGrab .only1 ∧
-    modalIndefiniteSat fGrab .imperative allCards isCard canGrab .only1 := by
-  refine ⟨λ h => ?_, ⟨⟨.c1, by decide, trivial, trivial⟩, λ y _ _ => ?_⟩⟩
-  · obtain ⟨w', hR, hg⟩ := h.2 .c2 (by decide) trivial
-    have hw : w' = .only1 := hR _ (List.mem_singleton_self _)
-    subst hw
-    exact hg
-  · exact ⟨(match y with | .c1 => .only1 | .c2 => .only2 | .c3 => .all),
-      λ _ hq => (List.not_mem_nil hq).elim, by cases y <;> trivial⟩
+    ¬ modalIndefiniteSat fGrab .local allCards isCard (· ∈ ·) {.c1} ∧
+    modalIndefiniteSat fGrab .imperative allCards isCard (· ∈ ·) {.c1} := by
+  refine ⟨λ h => ?_, ⟨⟨.c1, by decide, trivial, by decide⟩,
+    λ y _ _ => ⟨{y}, imperative_accessible, Finset.mem_singleton_self y⟩⟩⟩
+  obtain ⟨w', hR, hg⟩ := h.2 .c2 (by decide) trivial
+  rw [(kratzerR_singleton ..).mp hR] at hg
+  exact absurd hg (by decide)
 
 end AlonsoOvalleRoyer2024
