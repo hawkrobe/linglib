@@ -5,7 +5,6 @@ import Linglib.Fragments.English.Determiners
 import Linglib.Fragments.English.FunctionWords
 import Linglib.Fragments.English.Auxiliaries
 import Linglib.Syntax.DependencyGrammar.Projection
-import Linglib.Syntax.DependencyGrammar.Formal.NonProjective
 import Linglib.Syntax.DependencyGrammar.Formal.HarmonicOrder
 
 /-!
