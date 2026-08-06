@@ -30,13 +30,6 @@ section Defs
 
 variable {n : ℕ}
 
-/-- Positions linked by an arc in either direction — the undirected view
-    under which planarity is stated. -/
-def Linked (g : Graph n) (a b : Fin n) : Prop := g.Adj a b ∨ g.Adj b a
-
-instance (g : Graph n) (a b : Fin n) : Decidable (Linked g a b) :=
-  inferInstanceAs (Decidable (_ ∨ _))
-
 /-- **Planarity**: no two links cross — spans, taken left-to-right, never
     strictly interleave. ([melcuk-1988]'s constraint; [kuhlmann-nivre-2006]
     §3.) -/
