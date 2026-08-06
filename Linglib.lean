@@ -655,7 +655,6 @@ import Linglib.Features.Case.Capabilities
 import Linglib.Features.Case.Grammaticalization
 import Linglib.Features.Case.Source
 import Linglib.Features.Causation
-import Linglib.Syntax.Clause.Form
 import Linglib.Features.Clusivity
 import Linglib.Features.Complementation
 import Linglib.Features.ContainmentPair

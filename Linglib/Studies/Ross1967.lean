@@ -124,13 +124,13 @@ def embeddedQuestionConstraint : PhenomenonData := {
   pairs := [
     { lhs := [what, did, john, buy]
       rhs := [what, do_, you, wonder, who, bought]
-      clauseType := .matrixQuestion
+      force := .interrogative
       description := "Wh-dependency blocked by intervening wh-word"
       citation := "Ross (1967)" },
 
     { lhs := [who, did, john, see]
       rhs := [who, do_, you, wonder, what, saw]
-      clauseType := .matrixQuestion
+      force := .interrogative
       description := "Wh-dependency blocked across embedded question" }
   ]
 }
@@ -142,7 +142,7 @@ def complexNPConstraint : PhenomenonData := {
   pairs := [
     { lhs := [who, did, you, see]
       rhs := [who, did, you, met, the, man, that, saw]
-      clauseType := .matrixQuestion
+      force := .interrogative
       description := "Wh-dependency blocked into relative clause"
       citation := "Ross (1967)" }
   ]
@@ -155,13 +155,13 @@ def adjunctClauseConstraint : PhenomenonData := {
   pairs := [
     { lhs := [what, did, john, buy]
       rhs := [what, did, john, leave, before, buy]
-      clauseType := .matrixQuestion
+      force := .interrogative
       description := "Wh-dependency blocked into temporal adjunct"
       citation := "Huang (1982)" },
 
     { lhs := [what, did, john, buy]
       rhs := [what, did, john, leave, because, mary, bought]
-      clauseType := .matrixQuestion
+      force := .interrogative
       description := "Wh-dependency blocked into causal adjunct" }
   ]
 }
@@ -173,13 +173,13 @@ def coordinateStructureConstraint : PhenomenonData := {
   pairs := [
     { lhs := [what, did, john, buy]
       rhs := [what, did, john, buy, books, and_]
-      clauseType := .matrixQuestion
+      force := .interrogative
       description := "Wh-dependency into single conjunct blocked"
       citation := "Ross (1967)" },
 
     { lhs := [what, did, john, buy, and_, sell]
       rhs := [what, did, john, buy, and_, sell, books]
-      clauseType := .matrixQuestion
+      force := .interrogative
       description := "Symmetric (ATB) ok; asymmetric blocked" }
   ]
 }
@@ -191,7 +191,7 @@ def subjectConstraint : PhenomenonData := {
   pairs := [
     { lhs := [who, did, you, see]
       rhs := [who, did, sees, john]
-      clauseType := .matrixQuestion
+      force := .interrogative
       description := "Wh-dependency into subject blocked"
       citation := "Ross (1967)" }
   ]

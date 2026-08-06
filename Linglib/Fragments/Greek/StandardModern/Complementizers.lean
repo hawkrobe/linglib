@@ -25,7 +25,7 @@ def oti : Complementizer where
   form := "oti"
   position := some .detached
   coding := some .indicative
-  clauseForm := some .declarative
+  force := some .declarative
 
 /-- *pu* — factive complementizer ([christidis-1982], [roussou-2019]);
     selected by emotive factives, and by perception/memory verbs on
@@ -37,7 +37,7 @@ def pu : Complementizer where
   form := "pu"
   position := some .detached
   coding := some .indicative
-  clauseForm := some .declarative
+  force := some .declarative
   factive := some true
 
 /-- *an* — interrogative complementizer 'if' ([roussou-2010]); types
@@ -48,7 +48,7 @@ def an : Complementizer where
   form := "an"
   position := some .detached
   coding := some .indicative
-  clauseForm := some .embeddedQuestion
+  force := some .interrogative
 
 /-- *na* — subjunctive ([grano-2024]); the *na*-selecting mood-choice
     verbs are in `MoodChoice.lean`. Whether *na* heads C or a Mood

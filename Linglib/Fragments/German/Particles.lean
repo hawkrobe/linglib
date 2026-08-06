@@ -18,7 +18,6 @@ interrogative cells.
 
 namespace German.Particles
 
-open Clause (Form)
 open German.ClauseTypes (GermanClauseType)
 
 /-- *ja* — common-ground reminder particle ("as you may already know").
@@ -123,12 +122,12 @@ def questionParticles : List Particle := [denn, dochWohl]
 
 /-- Licensing across the [gutzmann-2015] German clause types, read off
 the clause-type facet (dass-VL clauses exclude modal particles). -/
-def licensedInClause (p : Particle) : ∀ {f : Form}, GermanClauseType f → Bool
-  | _, .dassVL          => false
-  | _, .v2Declarative   => decide (p.LicensedIn .declarative)
-  | _, .v2Interrogative => decide (p.LicensedIn .polarInterrogative)
-  | _, .vlInterrogative => decide (p.LicensedIn .constituentInterrogative)
-  | _, .imperative      => decide (p.LicensedIn .imperative)
+def licensedInClause (p : Particle) : GermanClauseType → Bool
+  | .dassVL          => false
+  | .v2Declarative   => decide (p.LicensedIn .declarative)
+  | .v2Interrogative => decide (p.LicensedIn .polarInterrogative)
+  | .vlInterrogative => decide (p.LicensedIn .constituentInterrogative)
+  | .imperative      => decide (p.LicensedIn .imperative)
 
 /-- Every MP is excluded from dass-VL clauses. -/
 theorem all_excluded_from_dassVL :
@@ -137,7 +136,7 @@ theorem all_excluded_from_dassVL :
 
 /-- *ja* and *denn* are in complementary distribution: no clause type
 licenses both. -/
-theorem ja_denn_complementary {f : Form} (ct : GermanClauseType f) :
+theorem ja_denn_complementary (ct : GermanClauseType) :
     ¬(licensedInClause ja ct = true ∧ licensedInClause denn ct = true) := by
   cases ct <;> decide
 

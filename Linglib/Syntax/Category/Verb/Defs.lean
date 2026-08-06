@@ -354,15 +354,15 @@ def Verb.readingsWF (v : Verb) : Prop :=
 def Verb.codings (v : Verb) : List Complement.Coding :=
   v.frames.flatMap Frame.codings
 
-/-- Some frame of the verb records clause form `cf`. -/
-def Verb.takesClauseForm (v : Verb) (cf : Clause.Form) : Prop :=
-  ∃ fr ∈ v.frames, fr.hasClauseForm cf
+/-- Some frame of the verb records force `f`. -/
+def Verb.takesForce (v : Verb) (f : Mood.Illocutionary) : Prop :=
+  ∃ fr ∈ v.frames, fr.hasForce f
 
-instance (v : Verb) (cf : Clause.Form) :
-    Decidable (v.takesClauseForm cf) :=
+instance (v : Verb) (f : Mood.Illocutionary) :
+    Decidable (v.takesForce f) :=
   inferInstanceAs (Decidable (∃ fr ∈ v.frames, _))
 
-/-- The verb records an embedded-question frame (responsives and
+/-- The verb records an interrogative frame (responsives and
     rogatives: know, wonder, ask). Derived from `frames`. -/
 def Verb.takesQuestionBase (v : Verb) : Bool :=
-  decide (v.takesClauseForm .embeddedQuestion)
+  decide (v.takesForce .interrogative)
