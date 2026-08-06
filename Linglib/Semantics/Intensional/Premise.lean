@@ -102,7 +102,7 @@ theorem propIntersection_nil : propIntersection ([] : List (Index → Prop)) = S
 theorem propIntersection_cons (p : Index → Prop) (A : List (Index → Prop)) :
     propIntersection (p :: A) = propExtension p ∩ propIntersection A := by
   ext i
-  simp [mem_propIntersection, mem_propExtension, List.forall_mem_cons]
+  simp [mem_propIntersection, mem_propExtension]
 
 theorem propIntersection_singleton (p : Index → Prop) :
     propIntersection [p] = propExtension p := by
