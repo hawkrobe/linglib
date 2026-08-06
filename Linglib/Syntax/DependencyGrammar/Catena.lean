@@ -1,21 +1,17 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Linglib.Syntax.DependencyGrammar.Projection
 import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
 
 /-!
 # Catenae
 
-[osborne-gross-2012]'s catena — a word or combination of words connected in
-the dependency tree's undirected view — as mathlib connectivity of the
-subgraph induced on the graph's symmetrization. A constituent — a full
-dominance cone — is a special case (`IsConstituent.isCatena`); the
-separation is witnessed by `decide` on the fixtures in
-`Studies/Osborne2019.lean`.
+This file defines a catena: a word or combination of words connected in
+the undirected presentation of a dependency tree. 
 
-`connected_induce_cone` is an `[UPSTREAM]` candidate for
-`Mathlib/Combinatorics/Digraph/Orientation.lean`: a vertex's
-`Relation.ReflTransGen`-forward-closure induces a connected subgraph of
-`Digraph.toSimpleGraphInclusive`, for any digraph — nothing in the
-statement or proof is specific to the dependency carrier.
 -/
 
 namespace DependencyGrammar
