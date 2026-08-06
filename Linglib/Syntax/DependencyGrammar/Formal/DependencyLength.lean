@@ -1,90 +1,89 @@
 import Linglib.Syntax.DependencyGrammar.Basic
+import Mathlib.Data.Nat.Dist
+import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 
 /-!
-# Dependency Length Minimization
+# Dependency length
 
-Formalises the core quantity behind [futrell-gibson-2020]'s claim that
-natural languages minimise total dependency length beyond what independent
+The core quantity behind [futrell-gibson-2020]'s claim that natural
+languages minimise total dependency length beyond what independent
 constraints predict, together with [behaghel-1932]'s "Oberstes Gesetz"
-threshold predicate. The two short-before-long arithmetic lemmas record the
-*direction* of [behaghel-1909]'s Law of Growing Members; the per-paper example trees
-and cross-linguistic data sit in `Studies/FutrellEtAl2020.lean`,
-`Studies/ArnoldEtAl2000.lean`, and `Studies/FedzechkinaEtAl2017.lean`.
+threshold. Arc length is `Nat.dist` on positions; the total is a
+`Finset` sum, so relabeling arguments are mathlib sum-reindexings.
 
-## Main declarations
-
-* `depLength` — linear distance `|headIdx - depIdx|` for a single dependency.
-* `totalDepLength` — sum of `depLength` over a tree's dependencies; the quantity
-  DLM minimises.
-* `oberstesGesetz` — Behaghel's threshold predicate: every dependency has
-  length ≤ `threshold`.
-* `single_dep_direction_irrelevant` — head-before-dependent and
-  dependent-before-head yield equal length.
-
-## Implementation notes
-
-`depLength` is `max - min` rather than absolute value to stay in `Nat`. The
-consumers (`Studies/FutrellEtAl2020`, `HarmonicOrder`, `EnhancedDependencies`)
-open `DependencyGrammar.DependencyLength` to pick up `depLength`/`totalDepLength`.
+`Graph.relabel` transports a graph along a position permutation — the
+formal core of [futrell-gibson-2020]'s random-reordering baselines — and
+`Graph.mirror` is relabeling along `Fin.rev`, with
+`totalDepLength_mirror` recording that the head-final mirror of a graph
+has the same total dependency length.
 -/
 
-namespace DependencyGrammar.DependencyLength
+namespace DependencyGrammar
 
-open DependencyGrammar
+variable {n : ℕ}
 
-/-! ### Core quantities -/
+/-- The length of an arc between positions: their linear distance. -/
+def arcLength (v w : Fin n) : Nat := Nat.dist v w
 
-/-- Linear distance between head and dependent, `|headIdx - depIdx|`. -/
-def depLength (d : Dependency) : Nat :=
-  max d.headIdx d.depIdx - min d.headIdx d.depIdx
+theorem arcLength_comm (v w : Fin n) : arcLength v w = arcLength w v :=
+  Nat.dist_comm v w
 
-/-- Total dependency length of a tree: the quantity minimised by DLM. -/
-def totalDepLength (t : Tree) : Nat :=
-  t.deps.foldl (λ acc d => acc + depLength d) 0
+/-- Total dependency length: the sum of arc lengths over all arcs — the
+    quantity dependency-length minimisation is about. -/
+def Graph.totalDepLength (g : Graph n) : Nat :=
+  ∑ v : Fin n, ∑ w ∈ Finset.univ.filter (g.Adj v ·), arcLength v w
 
-/-! ### Behaghel's Oberstes Gesetz -/
+/-- [behaghel-1932]'s Oberstes Gesetz: every arc has length at most
+    `threshold`. -/
+def OberstesGesetz (g : Graph n) (threshold : Nat) : Prop :=
+  ∀ ⦃v w⦄, g.Adj v w → arcLength v w ≤ threshold
 
-/-- [behaghel-1932]'s Oberstes Gesetz: every dependency has length at
-most `threshold`. -/
-def oberstesGesetz (t : Tree) (threshold : Nat) : Bool :=
-  t.deps.all λ d => depLength d ≤ threshold
+instance (g : Graph n) (k : Nat) : Decidable (OberstesGesetz g k) :=
+  inferInstanceAs (Decidable (∀ _, _))
 
-/-! ### Short-before-long -/
+/-! ### Relabeling: same structure, different linearization -/
 
-/-- Smaller subtree closer to the head has no greater contribution to dep
-length than larger subtree closer. Base arithmetic case: subtree of size `s1`
-at distance 1 versus size `s2` at distance `s1 + 2`. -/
-theorem short_before_long_minimizes (s1 s2 : Nat) (h : s1 ≤ s2) :
-    1 + (s1 + 2) ≤ 1 + (s2 + 2) := by omega
+/-- Transport a graph along a position permutation: arcs, tokens, and root
+    move together, so the labeled structure is unchanged and only the
+    linearization varies. -/
+def Graph.relabel (g : Graph n) (σ : Equiv.Perm (Fin n)) : Graph n :=
+  { words := g.words ∘ σ.symm
+    label := λ v w => g.label (σ.symm v) (σ.symm w)
+    root := σ g.root }
 
-/-- The arithmetic savings of placing the smaller subtree first. -/
-theorem short_before_long_savings (s1 s2 : Nat) (_ : s1 ≤ s2) :
-    1 + (s2 + 2) - (1 + (s1 + 2)) = s2 - s1 := by omega
+@[simp] theorem Graph.relabel_adj (g : Graph n) (σ : Equiv.Perm (Fin n))
+    (v w : Fin n) : (g.relabel σ).Adj v w ↔ g.Adj (σ.symm v) (σ.symm w) :=
+  Iff.rfl
 
-/-! ### Symmetry -/
+/-- The head-final mirror: relabel along position reversal. -/
+def Graph.mirror (g : Graph n) : Graph n := g.relabel (Fin.revPerm)
 
-/-- Head and dependent are interchangeable in `depLength`. -/
-theorem single_dep_direction_irrelevant (h d : Nat) :
-    depLength ⟨h, d, .nsubj⟩ = depLength ⟨d, h, .nsubj⟩ := by
-  simp only [depLength, Nat.max_comm, Nat.min_comm]
+/-- Relabeling along an isometry of the positions preserves total
+    dependency length. -/
+theorem Graph.totalDepLength_relabel (g : Graph n) (σ : Equiv.Perm (Fin n))
+    (hσ : ∀ v w : Fin n, Nat.dist (σ v) (σ w) = Nat.dist v w) :
+    (g.relabel σ).totalDepLength = g.totalDepLength := by
+  unfold totalDepLength
+  simp only [Finset.sum_filter]
+  refine Fintype.sum_equiv σ.symm _ _ (λ v => ?_)
+  refine Fintype.sum_equiv σ.symm _ _ (λ w => ?_)
+  simp only [relabel_adj]
+  by_cases h : g.Adj (σ.symm v) (σ.symm w) <;>
+    simp [h, arcLength, ← hσ (σ.symm v) (σ.symm w)]
 
-/-- `depLength` ignores the dependency relation. -/
-theorem depLength_symmetric (h d : Nat) (r : UD.DepRel) :
-    depLength ⟨h, d, r⟩ = depLength ⟨d, h, r⟩ := by
-  simp only [depLength, Nat.max_comm, Nat.min_comm]
+/-- Position reversal is an isometry. -/
+theorem Fin.dist_rev_rev (v w : Fin n) :
+    Nat.dist (Fin.rev v) (Fin.rev w) = Nat.dist v w := by
+  have hv := v.isLt
+  have hw := w.isLt
+  simp only [Nat.dist, Fin.val_rev]
+  omega
 
-/-- An adjacent dependency has length 1. -/
-theorem adjacent_dep_length (h : Nat) :
-    depLength ⟨h, h + 1, .nsubj⟩ = 1 := by
-  simp [depLength]
+/-- The mirror image of a graph has the same total dependency length —
+    the head-final preference is the exact mirror of the head-initial one
+    ([futrell-gibson-2020], examples (7)–(8)). -/
+theorem Graph.totalDepLength_mirror (g : Graph n) :
+    g.mirror.totalDepLength = g.totalDepLength :=
+  g.totalDepLength_relabel _ (λ v w => Fin.dist_rev_rev v w)
 
-/-- A self-loop has length 0. -/
-theorem self_loop_length (i : Nat) :
-    depLength ⟨i, i, .nsubj⟩ = 0 := by
-  simp [depLength]
-
-/-- An empty tree has total length 0. -/
-theorem empty_tree_dep_length :
-    totalDepLength { words := [], deps := [], rootIdx := 0 } = 0 := rfl
-
-end DependencyGrammar.DependencyLength
+end DependencyGrammar
