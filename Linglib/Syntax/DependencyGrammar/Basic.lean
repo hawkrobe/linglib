@@ -89,6 +89,14 @@ def children (v : Fin n) : List (Fin n) :=
 /-- The number of incoming arcs at `w`. -/
 def inDegree (w : Fin n) : Nat := (g.parents w).length
 
+@[simp] theorem mem_parents {g : Graph n} {v w : Fin n} :
+    v ∈ g.parents w ↔ g.Adj v w := by
+  simp [parents, List.mem_filter]
+
+@[simp] theorem mem_children {g : Graph n} {v w : Fin n} :
+    w ∈ g.children v ↔ g.Adj v w := by
+  simp [children, List.mem_filter]
+
 /-- Build a graph from CoNLL-U-style data: the token list (whose length
     fixes `n`), the root position, and the arcs as
     (head, dependent, relation) triples. Later arcs for the same pair are
