@@ -9,7 +9,7 @@ import Linglib.Semantics.Dynamic.Update
 boxes denote *binary relations* between embeddings (SEM3, input → output, the
 format of [groenendijk-stokhof-1991]); a box is true under an input embedding
 `a` iff some output `a'` is related to it (p. 148). This is the dynamic / CCP
-face of DRT, dual to the static verifying-embedding semantics `DRS.Realize` —
+face of DRT, dual to the static verifying-embedding semantics `DRS.Verifies` —
 the total-assignment rendering of [kamp-reyle-1993]'s verification (see the
 deviation note in `DRS/Verification.lean`).
 
@@ -19,19 +19,19 @@ verifying-embedding one (his fn. 4 scopes the remark: both sides here are the
 total-assignment variant). The equivalence is a theorem, not a definitional
 identification:
 
-* `DRS.toRel_iff_realize` — the relation `toRel K a a'` holds iff `a'` extends `a`
+* `DRS.toRel_iff_verifies` — the relation `toRel K a a'` holds iff `a'` extends `a`
   over `K`'s universe and verifies `K` (the keystone bridge).
 * `DRS.trueRel_iff_realize_toFormula` — the dynamic truth of a DRS equals its
   first-order translation's `Realize`, closing the triangle with `Reduction`
-  (`Realize` — `toFormula` — `toRel`, each pair related by a proven theorem).
+  (`Verifies` — `toFormula` — `toRel`, each pair related by a proven theorem).
 
 ## Main declarations
 
 * `DRS.toRel` / `Condition.holds` — the relational (SEM3) and set (SEM1/2)
   denotations.
 * `DRS.trueRel` — relational truth: some output embedding is related to the input.
-* `DRS.toRel_iff_realize` / `Condition.holds_iff_realize` — equivalence with the
-  static `DRS.Realize` semantics.
+* `DRS.toRel_iff_verifies` / `Condition.holds_iff_verifies` — equivalence with the
+  static `DRS.Verifies` semantics.
 * `DRS.trueRel_congr` — the coincidence lemma: denotation depends only on the
   occurring referents (`DRS.occ`, from `DRS/Basic.lean`).
 * `DRS.toRel_merge` — the Merging Lemma: under freshness, `merge` denotes the
@@ -41,7 +41,8 @@ identification:
 
 Naming: the dynamic face (`toRel`, `holds`, `trueRel`) follows the spine's
 lowerCamel operation names (`neg`, `seq`, `closure`); the static face
-(`DRS.Realize`, `DRS/Verification.lean`) follows mathlib's `Formula.Realize`.
+(`DRS.Verifies`, `DRS/Verification.lean`) uses the field's own verb, and the
+first-order reduction (`DRS/Reduction.lean`) speaks mathlib's `Formula.Realize`.
 -/
 
 open FirstOrder FirstOrder.Language
@@ -122,39 +123,39 @@ mutual
 agrees with the static verifying-embedding semantics — `toRel K a a'` holds iff
 the output `a'` extends the input `a` over `K`'s universe and verifies `K`.
 (Both sides are the total-assignment variant; see `DRS/Verification.lean`.) -/
-theorem DRS.toRel_iff_realize (K : DRS L V) (a a' : V → M) :
-    DRS.toRel K a a' ↔ K.Extends a a' ∧ K.Realize a' := by
+theorem DRS.toRel_iff_verifies (K : DRS L V) (a a' : V → M) :
+    DRS.toRel K a a' ↔ K.Extends a a' ∧ DRS.Verifies a' K := by
   match K with
   | .mk U conds =>
-    simp only [DRS.toRel, DRS.referents_mk, DRS.realize_mk, DRS.Extends]
-    exact and_congr_right (fun _ => Condition.holdsAll_iff_realizeAll conds a')
-/-- A condition's set denotation agrees with its static `Realize`. -/
-theorem Condition.holds_iff_realize (c : Condition L V) (a : V → M) :
-    c.holds a ↔ c.Realize a := by
+    simp only [DRS.toRel, DRS.referents_mk, DRS.verifies_mk, DRS.Extends]
+    exact and_congr_right (fun _ => Condition.holdsAll_iff_verifies conds a')
+/-- A condition's set denotation agrees with its static `Verifies`. -/
+theorem Condition.holds_iff_verifies (c : Condition L V) (a : V → M) :
+    c.holds a ↔ Condition.Verifies a c := by
   match c with
-  | .rel R args => simp only [Condition.holds_rel, Condition.realize_rel]
-  | .eq u v => simp only [Condition.holds_eq, Condition.realize_eq]
+  | .rel R args => simp only [Condition.holds_rel, Condition.verifies_rel]
+  | .eq u v => simp only [Condition.holds_eq, Condition.verifies_eq]
   | .neg K =>
-    simp only [Condition.holds_neg, Condition.realize_neg]
-    exact not_congr (exists_congr (fun a' => DRS.toRel_iff_realize K a a'))
+    simp only [Condition.holds_neg, Condition.verifies_neg]
+    exact not_congr (exists_congr (fun a' => DRS.toRel_iff_verifies K a a'))
   | .imp ante cons =>
-    simp only [Condition.holds_imp, Condition.realize_imp]
+    simp only [Condition.holds_imp, Condition.verifies_imp]
     refine forall_congr' (fun a' => ?_)
-    rw [DRS.toRel_iff_realize ante a a', and_imp]
+    rw [DRS.toRel_iff_verifies ante a a', and_imp]
     refine imp_congr_right (fun _ => imp_congr_right (fun _ => ?_))
-    exact exists_congr (fun a'' => DRS.toRel_iff_realize cons a' a'')
+    exact exists_congr (fun a'' => DRS.toRel_iff_verifies cons a' a'')
   | .dis l r =>
-    simp only [Condition.holds_dis, Condition.realize_dis, exists_or]
-    exact or_congr (exists_congr (fun a' => DRS.toRel_iff_realize l a a'))
-      (exists_congr (fun a' => DRS.toRel_iff_realize r a a'))
-/-- The list analogue of `Condition.holds_iff_realize`. -/
-theorem Condition.holdsAll_iff_realizeAll (cs : List (Condition L V)) (a : V → M) :
-    Condition.holdsAll cs a ↔ ∀ c ∈ cs, c.Realize a := by
+    simp only [Condition.holds_dis, Condition.verifies_dis, exists_or]
+    exact or_congr (exists_congr (fun a' => DRS.toRel_iff_verifies l a a'))
+      (exists_congr (fun a' => DRS.toRel_iff_verifies r a a'))
+/-- The list analogue of `Condition.holds_iff_verifies`. -/
+theorem Condition.holdsAll_iff_verifies (cs : List (Condition L V)) (a : V → M) :
+    Condition.holdsAll cs a ↔ ∀ c ∈ cs, Condition.Verifies a c := by
   match cs with
   | [] => simp
   | c :: cs =>
     simp only [Condition.holdsAll_cons, List.forall_mem_cons]
-    exact and_congr (Condition.holds_iff_realize c a) (Condition.holdsAll_iff_realizeAll cs a)
+    exact and_congr (Condition.holds_iff_verifies c a) (Condition.holdsAll_iff_verifies cs a)
 end
 
 /-- The dynamic truth of a DRS equals its first-order translation's `Realize`
@@ -162,7 +163,7 @@ end
 theorem DRS.trueRel_iff_realize_toFormula [DecidableEq V] (K : DRS L V) (a : V → M) :
     DRS.trueRel K a ↔ (K.toFormula).Realize a := by
   rw [DRS.trueRel_iff, DRS.realize_toFormula K a]
-  exact exists_congr (fun a' => DRS.toRel_iff_realize K a a')
+  exact exists_congr (fun a' => DRS.toRel_iff_verifies K a a')
 
 /-! ### The coincidence lemma -/
 

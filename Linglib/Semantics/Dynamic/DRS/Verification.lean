@@ -6,16 +6,16 @@ import Linglib.Semantics.Dynamic.DRS.Basic
 DRS verification via *embeddings* into a mathlib `FirstOrder.Language.Structure`
 — [kamp-reyle-1993]'s Def. 1.4.4 in the *total-assignment* rendering. An
 embedding is an assignment `f : V → M` of discourse referents to the model
-domain; `DRS.Extends K f g` is K&R's extension relation `f [K] g` — the
-output `g` differs from `f` at most on `K`'s universe — and a sub-DRS is
-entered by existentially (re)assigning along it. For `imp`, the consequent
-witness extends the *antecedent* embedding, not the host one — antecedent
-referents stay visible in the consequent, the `⇒` accessibility asymmetry.
-The atomic and `¬` clauses are Def. 1.4.4(ii); the `⇒`/`∨` clauses are the
-Chapter 2 conditional and disjunction semantics. Truth (Def. 1.4.5) is the
-existential closure of verification over the outer universe; it is delivered
-downstream as `DRS.trueRel` (`DRS/Dynamics.lean`) and as the first-order
-translation's realization (`DRS/Reduction.lean`).
+domain; `DRS.Extends K f g` is K&R's extension relation `f [K] g`
+(`DRS/Basic.lean`), and a sub-DRS is entered by existentially (re)assigning
+along it. For `imp`, the consequent witness extends the *antecedent*
+embedding, not the host one — antecedent referents stay visible in the
+consequent, the `⇒` accessibility asymmetry. The atomic and `¬` clauses are
+Def. 1.4.4(ii); the `⇒`/`∨` clauses are the Chapter 2 conditional and
+disjunction semantics. Truth (Def. 1.4.5) is the existential closure of
+verification over the outer universe; it is delivered downstream as
+`DRS.trueRel` (`DRS/Dynamics.lean`) and as the first-order translation's
+realization (`DRS/Reduction.lean`).
 
 **Deviation** ([muskens-1996], fn. 4): K&R's embeddings are *partial* functions
 that sub-DRSs strictly *extend*, so a re-declared referent keeps its value; here
@@ -26,21 +26,23 @@ says "every man is mortal" for K&R, "if there is a man there is a mortal" here.
 
 ## Main declarations
 
-* `DRS.Realize` / `Condition.Realize` — the verifying-embedding relation. A DRS
-  is verified when every condition is (`∀ c ∈ K.conditions`, the `Theory.Model`
-  idiom), so there is no mutual recursion and no list helper.
-* `DRS.realize_perm` — verification reads the condition list as a set, cashing
+* `DRS.Verifies` / `Condition.Verifies` — `Verifies f K` is the field's
+  "`f` verifies `K`": every condition of `K` holds under `f`
+  (`∀ c ∈ K.conditions`, the `Theory.Model` idiom — no mutual recursion, no
+  list helper).
+* `DRS.verifies_perm` — verification reads the condition list as a set, cashing
   the `List`-representation note in `DRS/Defs.lean`.
-* `DRS.realize_map` — renaming along a bijection transports verification:
+* `DRS.verifies_map` — renaming along a bijection transports verification:
   alphabetic variants (Def. 1.4.8, via `DRS.map` in `DRS/Basic.lean`) have the
   same semantics.
 
 ## Implementation notes
 
-`Condition.Realize` recurses into sub-DRSs through the nested
+`Condition.Verifies` recurses into sub-DRSs through the nested
 `List (Condition L V)` by well-founded recursion on `sizeOf`, so its clause
-characterizations (`realize_neg`, …) are equation-lemma rewrites rather than
-`Iff.rfl`.
+characterizations (`verifies_neg`, …) are equation-lemma rewrites rather than
+`Iff.rfl`; they restate the clauses with `DRS.Verifies`, as the textbook
+states them.
 -/
 
 open FirstOrder FirstOrder.Language
@@ -51,64 +53,66 @@ universe u v w x
 
 variable {L : Language.{u, v}} {V : Type w} {M : Type x} [L.Structure M]
 
-/-- `c.Realize f`: the embedding `f` *verifies* the condition `c`
+/-- `Condition.Verifies f c`: the embedding `f` *verifies* the condition `c`
 (Def. 1.4.4(ii)); a sub-DRS is entered by existentially (re)assigning along
 its extension relation and verifying each of its conditions. -/
-def Condition.Realize : Condition L V → (V → M) → Prop
-  | .rel R args, f => Structure.RelMap R (fun i => f (args i))
-  | .eq a b, f => f a = f b
-  | .neg K, f => ¬ ∃ g, K.Extends f g ∧ ∀ c ∈ K.conditions, c.Realize g
-  | .imp a c, f =>
-      ∀ g, a.Extends f g → (∀ d ∈ a.conditions, d.Realize g) →
-        ∃ h, c.Extends g h ∧ ∀ d ∈ c.conditions, d.Realize h
-  | .dis l r, f =>
-      (∃ g, l.Extends f g ∧ ∀ c ∈ l.conditions, c.Realize g) ∨
-      (∃ g, r.Extends f g ∧ ∀ c ∈ r.conditions, c.Realize g)
+def Condition.Verifies : (V → M) → Condition L V → Prop
+  | f, .rel R args => Structure.RelMap R (fun i => f (args i))
+  | f, .eq a b => f a = f b
+  | f, .neg K => ¬ ∃ g, K.Extends f g ∧ ∀ c ∈ K.conditions, Condition.Verifies g c
+  | f, .imp a c =>
+      ∀ g, a.Extends f g → (∀ d ∈ a.conditions, Condition.Verifies g d) →
+        ∃ h, c.Extends g h ∧ ∀ d ∈ c.conditions, Condition.Verifies h d
+  | f, .dis l r =>
+      (∃ g, l.Extends f g ∧ ∀ c ∈ l.conditions, Condition.Verifies g c) ∨
+      (∃ g, r.Extends f g ∧ ∀ c ∈ r.conditions, Condition.Verifies g c)
+termination_by f c => sizeOf c
 decreasing_by all_goals
   have := DRS.sizeOf_lt_of_mem_conditions (by assumption)
   simp_wf
   omega
 
-/-- `K.Realize f`: the embedding `f` *verifies* `K` — every condition of `K`
-holds under `f` (Def. 1.4.4). -/
-def DRS.Realize (K : DRS L V) (f : V → M) : Prop := ∀ c ∈ K.conditions, c.Realize f
+/-- `DRS.Verifies f K`: the embedding `f` *verifies* `K` — `f` verifies every
+condition of `K` (Def. 1.4.4). -/
+def DRS.Verifies (f : V → M) (K : DRS L V) : Prop :=
+  ∀ c ∈ K.conditions, Condition.Verifies f c
 
 /-! ### Structural simp API -/
 
 variable {f : V → M}
 
-@[simp] theorem DRS.realize_mk (U : Finset V) (conds : List (Condition L V)) :
-    (DRS.mk U conds).Realize f ↔ ∀ c ∈ conds, c.Realize f := Iff.rfl
+@[simp] theorem DRS.verifies_mk (U : Finset V) (conds : List (Condition L V)) :
+    DRS.Verifies f (.mk U conds) ↔ ∀ c ∈ conds, Condition.Verifies f c := Iff.rfl
 
-@[simp] theorem Condition.realize_rel {n : ℕ} (R : L.Relations n) (args : Fin n → V) :
-    (Condition.rel R args).Realize f ↔ Structure.RelMap R (fun i => f (args i)) := by
-  simp only [Condition.Realize]
+@[simp] theorem Condition.verifies_rel {n : ℕ} (R : L.Relations n) (args : Fin n → V) :
+    Condition.Verifies f (.rel R args) ↔ Structure.RelMap R (fun i => f (args i)) := by
+  simp only [Condition.Verifies]
 
-@[simp] theorem Condition.realize_eq (a b : V) :
-    (Condition.eq a b : Condition L V).Realize f ↔ f a = f b := by
-  simp only [Condition.Realize]
+@[simp] theorem Condition.verifies_eq (a b : V) :
+    Condition.Verifies f (.eq a b : Condition L V) ↔ f a = f b := by
+  simp only [Condition.Verifies]
 
-@[simp] theorem Condition.realize_neg (K : DRS L V) :
-    (Condition.neg K).Realize f ↔ ¬ ∃ g, K.Extends f g ∧ K.Realize g := by
-  simp only [Condition.Realize, DRS.Realize]
+@[simp] theorem Condition.verifies_neg (K : DRS L V) :
+    Condition.Verifies f (.neg K) ↔ ¬ ∃ g, K.Extends f g ∧ DRS.Verifies g K := by
+  simp only [Condition.Verifies, DRS.Verifies]
 
-@[simp] theorem Condition.realize_imp (a c : DRS L V) :
-    (Condition.imp a c).Realize f ↔
-      ∀ g, a.Extends f g → a.Realize g →
-        ∃ h, c.Extends g h ∧ c.Realize h := by
-  simp only [Condition.Realize, DRS.Realize]
+@[simp] theorem Condition.verifies_imp (a c : DRS L V) :
+    Condition.Verifies f (.imp a c) ↔
+      ∀ g, a.Extends f g → DRS.Verifies g a →
+        ∃ h, c.Extends g h ∧ DRS.Verifies h c := by
+  simp only [Condition.Verifies, DRS.Verifies]
 
-@[simp] theorem Condition.realize_dis (l r : DRS L V) :
-    (Condition.dis l r).Realize f ↔
-      (∃ g, l.Extends f g ∧ l.Realize g) ∨
-      (∃ g, r.Extends f g ∧ r.Realize g) := by
-  simp only [Condition.Realize, DRS.Realize]
+@[simp] theorem Condition.verifies_dis (l r : DRS L V) :
+    Condition.Verifies f (.dis l r) ↔
+      (∃ g, l.Extends f g ∧ DRS.Verifies g l) ∨
+      (∃ g, r.Extends f g ∧ DRS.Verifies g r) := by
+  simp only [Condition.Verifies, DRS.Verifies]
 
 /-- Verification is invariant under permutation of the conditions — the set
 semantics the `List`-valued `conditions` field promises (`DRS/Defs.lean`). -/
-theorem DRS.realize_perm {U : Finset V} {cs ds : List (Condition L V)} (h : cs.Perm ds) :
-    (DRS.mk U cs).Realize f ↔ (DRS.mk U ds).Realize f := by
-  simp only [DRS.realize_mk, h.mem_iff]
+theorem DRS.verifies_perm {U : Finset V} {cs ds : List (Condition L V)} (h : cs.Perm ds) :
+    DRS.Verifies f (.mk U cs) ↔ DRS.Verifies f (.mk U ds) := by
+  simp only [DRS.verifies_mk, h.mem_iff]
 
 /-! ### Alphabetic variants -/
 
@@ -146,50 +150,53 @@ private theorem forall_precomp_extend_iff (e : V ≃ W) (U : Finset V) (f : W �
   · intro H g h
     exact H (g ∘ e) fun x hx => h (e x) (by simpa using hx)
 
-/-- A renamed DRS is verified iff the original is under the precomposed
-embedding, given the transport for each of its conditions. -/
-private theorem realize_map_all (e : V ≃ W) (K : DRS L V) (g : W → M)
-    (ih : ∀ c ∈ K.conditions, ∀ u : W → M, (c.map e).Realize u ↔ c.Realize (u ∘ e)) :
-    (K.map e).Realize g ↔ K.Realize (g ∘ e) := by
-  simp only [DRS.Realize, DRS.conditions_map, Condition.mapList_eq_map, List.forall_mem_map]
+/-- An embedding verifies a renamed DRS iff its precomposition verifies the
+original, given the transport for each of the DRS's conditions. -/
+private theorem verifies_map_all (e : V ≃ W) (K : DRS L V) (g : W → M)
+    (ih : ∀ c ∈ K.conditions, ∀ u : W → M,
+      Condition.Verifies u (c.map e) ↔ Condition.Verifies (u ∘ e) c) :
+    DRS.Verifies g (K.map e) ↔ DRS.Verifies (g ∘ e) K := by
+  simp only [DRS.Verifies, DRS.conditions_map, Condition.mapList_eq_map, List.forall_mem_map]
   exact forall_congr' fun c => imp_congr_right fun hc => ih c hc g
 
 /-- Renaming along a bijection transports verification (the condition form of
-`DRS.realize_map`). -/
-theorem Condition.realize_map (e : V ≃ W) : ∀ (c : Condition L V) (f : W → M),
-    (c.map e).Realize f ↔ c.Realize (f ∘ e)
-  | .rel R args, f => by
+`DRS.verifies_map`). -/
+theorem Condition.verifies_map (e : V ≃ W) : ∀ (f : W → M) (c : Condition L V),
+    Condition.Verifies f (c.map e) ↔ Condition.Verifies (f ∘ e) c
+  | f, .rel R args => by
     simp [Condition.map, Function.comp]
-  | .eq a b, f => by
+  | f, .eq a b => by
     simp [Condition.map, Function.comp]
-  | .neg K, f => by
+  | f, .neg K => by
     have hK := fun g : W → M =>
-      realize_map_all e K g (fun d hd u => Condition.realize_map e d u)
-    simp only [Condition.map, Condition.realize_neg, DRS.Extends, DRS.referents_map]
+      verifies_map_all e K g (fun d hd u => Condition.verifies_map e u d)
+    simp only [Condition.map, Condition.verifies_neg, DRS.Extends, DRS.referents_map]
     exact not_congr ((exists_congr fun g => and_congr_right fun _ => hK g).trans
-      (exists_precomp_extend_iff e K.referents f K.Realize))
-  | .imp a c, f => by
+      (exists_precomp_extend_iff e K.referents f (DRS.Verifies · K)))
+  | f, .imp a c => by
     have hA := fun g : W → M =>
-      realize_map_all e a g (fun d hd u => Condition.realize_map e d u)
+      verifies_map_all e a g (fun d hd u => Condition.verifies_map e u d)
     have hC := fun g : W → M =>
-      realize_map_all e c g (fun d hd u => Condition.realize_map e d u)
-    simp only [Condition.map, Condition.realize_imp, DRS.Extends, DRS.referents_map]
+      verifies_map_all e c g (fun d hd u => Condition.verifies_map e u d)
+    simp only [Condition.map, Condition.verifies_imp, DRS.Extends, DRS.referents_map]
     refine Iff.trans (forall_congr' fun g => imp_congr_right fun _ => imp_congr (hA g)
       ((exists_congr fun h => and_congr_right fun _ => hC h).trans
-        (exists_precomp_extend_iff e c.referents g c.Realize))) ?_
+        (exists_precomp_extend_iff e c.referents g (DRS.Verifies · c)))) ?_
     exact forall_precomp_extend_iff e a.referents f
-      (fun u => a.Realize u → ∃ w'', (∀ x ∉ c.referents, w'' x = u x) ∧ c.Realize w'')
-  | .dis l r, f => by
+      (fun u => DRS.Verifies u a →
+        ∃ w'', (∀ x ∉ c.referents, w'' x = u x) ∧ DRS.Verifies w'' c)
+  | f, .dis l r => by
     have hL := fun g : W → M =>
-      realize_map_all e l g (fun d hd u => Condition.realize_map e d u)
+      verifies_map_all e l g (fun d hd u => Condition.verifies_map e u d)
     have hR := fun g : W → M =>
-      realize_map_all e r g (fun d hd u => Condition.realize_map e d u)
-    simp only [Condition.map, Condition.realize_dis, DRS.Extends, DRS.referents_map]
+      verifies_map_all e r g (fun d hd u => Condition.verifies_map e u d)
+    simp only [Condition.map, Condition.verifies_dis, DRS.Extends, DRS.referents_map]
     exact or_congr
       ((exists_congr fun g => and_congr_right fun _ => hL g).trans
-        (exists_precomp_extend_iff e l.referents f l.Realize))
+        (exists_precomp_extend_iff e l.referents f (DRS.Verifies · l)))
       ((exists_congr fun g => and_congr_right fun _ => hR g).trans
-        (exists_precomp_extend_iff e r.referents f r.Realize))
+        (exists_precomp_extend_iff e r.referents f (DRS.Verifies · r)))
+termination_by f c => sizeOf c
 decreasing_by all_goals
   have := DRS.sizeOf_lt_of_mem_conditions (by assumption)
   simp_wf
@@ -197,9 +204,9 @@ decreasing_by all_goals
 
 /-- Renaming along a bijection transports verification: `f` verifies `K.map e`
 iff `f ∘ e` verifies `K` — alphabetic variants have the same semantics. -/
-theorem DRS.realize_map (e : V ≃ W) (K : DRS L V) (f : W → M) :
-    (K.map e).Realize f ↔ K.Realize (f ∘ e) :=
-  realize_map_all e K f (fun c _ u => Condition.realize_map e c u)
+theorem DRS.verifies_map (e : V ≃ W) (f : W → M) (K : DRS L V) :
+    DRS.Verifies f (K.map e) ↔ DRS.Verifies (f ∘ e) K :=
+  verifies_map_all e K f (fun c _ u => Condition.verifies_map e u c)
 
 end Map
 

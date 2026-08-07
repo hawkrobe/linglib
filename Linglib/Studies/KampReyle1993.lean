@@ -7,7 +7,7 @@ import Mathlib.Data.Fin.VecNotation
 
 K&R's worked examples, evaluated through the faithful model-theoretic DRS core
 (`Semantics/Dynamic/DRS/`). Each truth-condition is a theorem about the substrate
-denotation `DRS.trueRel` (Muskens's relational truth, equivalently `DRS.Realize`),
+denotation `DRS.trueRel` (Muskens's relational truth, equivalently `DRS.Verifies`),
 not a local re-implementation.
 
 ## Examples
