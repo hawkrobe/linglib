@@ -7,130 +7,35 @@ import Mathlib.Tactic.Linarith
 
 /-!
 # Von Stechow 1984: Comparing Semantic Theories of Comparison
-[von-stechow-1984]
 
-Arnim von Stechow. Comparing Semantic Theories of Comparison.
-Journal of Semantics 3(1-2): 1–77.
+[von-stechow-1984] evaluates eight semantic theories of the comparative —
+[russell-1905], [postal-1974], [williams-1977], [seuren-1973],
+[lewis-1970], [klein-1980], [cresswell-1976], [hellan-1981] — against
+nine phenomena (table (xvii)) and synthesizes them: Russellian definite
+descriptions of degrees plus an ACTUALLY operator. Russell's ambiguity
+("I thought your yacht was larger than it is") is the presence or
+absence of ACTUALLY in the than-clause, not degree-operator scope.
+Example stimuli live in `Data.Examples.VonStechow1984` (`Examples.*`).
 
-## Core Contribution
+## Main definitions
 
-A systematic evaluation of eight semantic theories of the comparative
-(Russell, Postal, Williams, Seuren, Lewis, Klein, Cresswell, Hellan),
-grouped into four families, against nine empirical phenomena — table
-(xvii) — culminating in a synthesis that combines Russellian definite
-descriptions with an ACTUALLY operator.
+* `actuallyDeg`, `deReComparative`, `deDictoComparative`: the ACTUALLY
+  analysis of Russell's ambiguity (§§II–V)
+* `moreSem`, `asSem`, `tooSem`: synthesis rules R4 (additive *more*),
+  R5 (multiplicative *as*), R13 (counterfactual *too*) (§XIII)
 
-The key insight: Russell's ambiguity ("I thought your yacht was larger
-than it is") is explained by the presence or absence of ACTUALLY in
-the than-clause, NOT by scope differences of degree operators. This
-is simpler and better motivated than competing scope-based analyses.
+## Main results
 
-## Synthesis Rules (§XIII)
-
-- R1: Property abstraction — than/as-clauses determine properties of degrees
-- R2: Nominalization — the Max operator makes a definite description
-- R3: Adjectives as 2-place relations (individuals × degrees)
-- R4: *more* / *-er* = addition: ⟦more⟧(d₁)(A⁰)(d₂)(x) iff A⁰(x, d₁ + d₂)
-- R5: *as* = multiplication: ⟦as⟧(d₁)(A⁰)(d₂)(x) iff A⁰(x, d₁ · d₂)
-- R6: *pos* with comparison class (average-based contextual standard)
-- R13: *too* = counterfactual comparative
-
-The paper's example stimuli live in `Data.Examples.VonStechow1984`
-(referenced below as `Examples.*`).
+* `deDicto_absurd`: the ACTUALLY-less reading is contradictory
+* `maxDeg_witness`: modal comparatives as `IsGreatest` over accessible
+  worlds (§VIII)
+* `klein_agrees_on_simple`: the degree-free ordering matches degree
+  comparison on simple comparatives, not on differentials (§XI)
 -/
 
 namespace VonStechow1984
 
 open Degree (comparativeSem equativeSem differentialComparative factorEquative)
-
-/-! ### Descriptive adequacy scorecard ((xvii)) -/
-
-/-- The four theory families of table (xvii). -/
-inductive TheoryFamily where
-  | russellPostalWilliams   -- [russell-1905] / [postal-1974] / [williams-1977]
-  | seurenLewisKlein        -- [seuren-1973] / [lewis-1970] / [klein-1980]
-  | cresswell               -- [cresswell-1976]
-  | hellan                  -- [hellan-1981]
-  deriving DecidableEq, Repr
-
-/-- The nine phenomena used as evaluation criteria. -/
-inductive Phenomenon where
-  | russellAmbiguity        -- RA: "I thought your yacht was larger than it is"
-  | ambiguousCounterfactual -- AC: "If Mary had smoked less, she would be healthier"
-  | npiLicensing            -- NPI: "cleverer than anyone"
-  | quantConnectives        -- Q&C: "nicer than Düsseldorf or Stuttgart"
-  | unwarrantedInference    -- UI: "fatter than Max ⊬ fatter than everyone"
-  | negativeQuantifiers     -- NQ: "*more intelligent than no one"
-  | modalComparative        -- ◇: "A polar bear could be bigger than a grizzly"
-  | differentialReadings    -- DR: "six inches taller than Mary"
-  | iteratedModality        -- IM: "I thought Plato could have been more boring"
-  deriving DecidableEq, Repr
-
-/-- Adequacy scores from table (xvii). Starred minuses mark gaps "which can
-in principle be filled in"; a plain minus is a gap the theory cannot repair
-(Hellan on modal comparatives is "unimprovable"). -/
-inductive Score where
-  | plus       -- + handles the phenomenon
-  | weakPlus   -- (+) handles it with qualifications
-  | plusMinus  -- +/− partial credit
-  | weakMinus  -- (−) qualified failure
-  | minus      -- − cannot handle it, and the gap is not fillable
-  | minusStar  -- −* cannot handle it as is, but the gap is fillable in principle
-  deriving DecidableEq, Repr
-
-structure ScorecardEntry where
-  theory : TheoryFamily
-  phenomenon : Phenomenon
-  score : Score
-  deriving Repr
-
-/-- Von Stechow's descriptive adequacy table ((xvii)): the four families
-scored against the nine phenomena. Overall scores: Russell/Postal/Williams
-((5)), Seuren/Lewis/Klein (3½), Cresswell (5), Hellan (3). The synthesis
-is not a column of the table; §XIII.7 claims it deals adequately with all
-nine, and the theorems below formalize several of those cells. -/
-def scorecard : List ScorecardEntry :=
-  -- Russell / Postal / Williams
-  [ ⟨.russellPostalWilliams, .russellAmbiguity,        .plus⟩
-  , ⟨.russellPostalWilliams, .ambiguousCounterfactual,  .weakPlus⟩
-  , ⟨.russellPostalWilliams, .npiLicensing,             .minusStar⟩
-  , ⟨.russellPostalWilliams, .quantConnectives,         .minusStar⟩
-  , ⟨.russellPostalWilliams, .unwarrantedInference,     .plus⟩
-  , ⟨.russellPostalWilliams, .negativeQuantifiers,      .plus⟩
-  , ⟨.russellPostalWilliams, .modalComparative,         .minusStar⟩
-  , ⟨.russellPostalWilliams, .differentialReadings,     .minusStar⟩
-  , ⟨.russellPostalWilliams, .iteratedModality,         .weakPlus⟩
-  -- Seuren / Lewis / Klein
-  , ⟨.seurenLewisKlein, .russellAmbiguity,        .plus⟩
-  , ⟨.seurenLewisKlein, .ambiguousCounterfactual,  .minusStar⟩
-  , ⟨.seurenLewisKlein, .npiLicensing,             .plus⟩
-  , ⟨.seurenLewisKlein, .quantConnectives,         .plusMinus⟩
-  , ⟨.seurenLewisKlein, .unwarrantedInference,     .minus⟩
-  , ⟨.seurenLewisKlein, .negativeQuantifiers,      .weakMinus⟩
-  , ⟨.seurenLewisKlein, .modalComparative,         .plus⟩
-  , ⟨.seurenLewisKlein, .differentialReadings,     .minus⟩
-  , ⟨.seurenLewisKlein, .iteratedModality,         .minus⟩
-  -- Cresswell
-  , ⟨.cresswell, .russellAmbiguity,        .plus⟩
-  , ⟨.cresswell, .ambiguousCounterfactual,  .minusStar⟩
-  , ⟨.cresswell, .npiLicensing,             .plus⟩
-  , ⟨.cresswell, .quantConnectives,         .plus⟩
-  , ⟨.cresswell, .unwarrantedInference,     .plus⟩
-  , ⟨.cresswell, .negativeQuantifiers,      .plus⟩
-  , ⟨.cresswell, .modalComparative,         .minusStar⟩
-  , ⟨.cresswell, .differentialReadings,     .minusStar⟩
-  , ⟨.cresswell, .iteratedModality,         .minus⟩
-  -- Hellan
-  , ⟨.hellan, .russellAmbiguity,        .plus⟩
-  , ⟨.hellan, .ambiguousCounterfactual,  .minusStar⟩
-  , ⟨.hellan, .npiLicensing,             .minus⟩
-  , ⟨.hellan, .quantConnectives,         .minus⟩
-  , ⟨.hellan, .unwarrantedInference,     .plus⟩
-  , ⟨.hellan, .negativeQuantifiers,      .minus⟩
-  , ⟨.hellan, .modalComparative,         .minus⟩
-  , ⟨.hellan, .differentialReadings,     .plus⟩
-  , ⟨.hellan, .iteratedModality,         .minus⟩
-  ]
 
 /-! ### Intensional degree semantics (§§II–V)
 
