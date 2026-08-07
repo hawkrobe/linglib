@@ -192,7 +192,8 @@ theorem verifies_map (e : V ≃ W) (f : Embedding W M) (K : DRS L V) :
 theorem exists_extends_verifies_map (e : V ≃ W) (f : Embedding W M) (K : DRS L V) :
     (∃ g, (K.map e).Extends f g ∧ g.Verifies (K.map e)) ↔
       ∃ g, K.Extends (f ∘ e) g ∧ g.Verifies K :=
-  exists_extends_verifies_map_aux e K f fun c _ u => verifies_map_condition e u c
+  (exists_congr fun g => and_congr_right fun _ => verifies_map e g K).trans
+    (DRS.exists_extends_map e K f (Verifies · K))
 
 end Map
 
