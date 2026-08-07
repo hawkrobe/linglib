@@ -88,30 +88,18 @@ example : deReComparative yachtLength true false () := by
 example : ¬ deDictoComparative yachtLength false () :=
   deDicto_absurd yachtLength false ()
 
-/-! ### Downward-entailing than-clauses (§§VI–VII)
-
-The Max operator makes the than-clause downward-entailing, licensing NPIs
-((iii), (70)–(72): `Examples.exIII`, `Examples.ex70` – `Examples.ex72b`,
-including the exclusion of the positive polarity item *already*) and
-strengthening disjunctive standards ((v), `Examples.exV`); Russell's and
-Hellan's accounts are not DE and miss the pattern. Unwarranted inferences
-like (vii) and the negative-quantifier oddities (99a), (99b) are instead
-blocked by failure of the degree description to denote. Substrate:
-`Degree.comparative_than_DE`;
-`Ladusaw1979.licensingStrength .comparativeS = .antiAdditive`. -/
-
-/-- (v): a disjunctive standard entails both disjuncts — "nicer than
-Düsseldorf or Stuttgart" entails "nicer than Düsseldorf and Stuttgart". -/
+/-- (v) (`Examples.exV`; §§VI–VII): a disjunctive standard entails both
+disjuncts — the downward-entailingness of the than-clause that also
+licenses its NPIs (`Degree.comparative_than_DE`;
+`Ladusaw1979.licensingStrength .comparativeS = .antiAdditive`). -/
 theorem disjunction_to_conjunction_in_than (μa μb μc : D)
     (h : μb ⊔ μc < μa) : μb < μa ∧ μc < μa :=
   sup_lt_iff.mp h
 
-/-! ### Modal comparatives (§VIII) -/
-
 /-- "A polar bear could be bigger than a grizzly bear could be" ((x),
-`Examples.exX`): if the greatest possible A-degree over the accessible
-worlds exceeds the greatest possible B-degree, some accessible A-world
-beats every B-world. -/
+`Examples.exX`; §VIII): if the greatest possible A-degree over the
+accessible worlds exceeds the greatest possible B-degree, some accessible
+A-world beats every B-world. -/
 theorem maxDeg_witness {acc : Set W} {μA μB : W → D} {maxA maxB : D}
     (hmaxA : IsGreatest (μA '' acc) maxA) (hmaxB : IsGreatest (μB '' acc) maxB)
     (hgt : maxB < maxA) :
@@ -119,11 +107,9 @@ theorem maxDeg_witness {acc : Set W} {μA μB : W → D} {maxA maxB : D}
   obtain ⟨w, hw, rfl⟩ := hmaxA.1
   exact ⟨w, hw, fun v hv => lt_of_le_of_lt (hmaxB.2 ⟨v, hv, rfl⟩) hgt⟩
 
-/-! ### Klein criticism (§XI) -/
-
-/-- Klein's degree-free ordering ([klein-1980], via `measureDelineation`)
-matches degree comparison on simple comparatives; the divergence is confined
-to differential and factor constructions ((171a)–(171c)). -/
+/-- Klein's degree-free ordering ([klein-1980]; §XI) matches degree
+comparison on simple comparatives via `measureDelineation`; the divergence
+is confined to differential and factor constructions ((171a)–(171c)). -/
 theorem klein_agrees_on_simple (μ : Entity → D) (cc : Set Entity)
     (a b : Entity) (ha : a ∈ cc) (hb : b ∈ cc) :
     comparativeSem μ a b .positive ↔
@@ -170,21 +156,10 @@ theorem asSem_factor_bridge (μ : Entity → ℚ) (a b : Entity) (factor : ℚ) 
   simp only [asSem, factorEquative] at *
   linarith
 
-/-! #### Cross-category comparatives (§XIII.4)
-
-The comparative morpheme is category-blind — only the measure varies:
-cardinality for plural nouns (217), amount for mass nouns (218), an event
-measure for adverbs (224c) (`Examples.ex217` – `Examples.ex224c`). -/
-
-/-! #### *too* as counterfactual comparative (§XIII.6)
-
-R13 (p. 69): `⟦too⟧(d₁)(A⁰)(p)(x) = the max.d [x is d-A⁰]
-λd₂ [p □→ A⁰(x, d₂ − d₁)]`; "at least fifty kilos too heavy to lift"
-((227), `Examples.ex227`). In the DegP head inventory *too* is
-`Degree.Head.excessive`. -/
-
-/-- R13's additive skeleton, definitionally `moreSem` — *too* and *-er*
-share R4's additive structure. The counterfactual threshold is
+/-- R13 (p. 69, §XIII.6): `⟦too⟧(d₁)(A⁰)(p)(x) = the max.d [x is d-A⁰]
+λd₂ [p □→ A⁰(x, d₂ − d₁)]`. The additive skeleton is definitionally
+`moreSem` (*too* and *-er* share R4's structure; DegP head
+`Degree.Head.excessive`); the counterfactual threshold is
 `tooSem_exceeds_counterfactual_worlds`. -/
 def tooSem (μ : Entity → ℚ) (x : Entity) (excess threshold : ℚ) : Prop :=
   moreSem μ x excess threshold
@@ -202,7 +177,8 @@ theorem tooSem_exceeds_counterfactual_worlds
   simp only [tooSem, moreSem] at htoo
   linarith
 
--- An 80 kg pack with a 30 kg liftable threshold is at least 50 kg too heavy.
+-- (227) (`Examples.ex227`): an 80 kg pack with a 30 kg liftable
+-- threshold is at least 50 kg too heavy.
 example : tooSem (fun _ : Unit => (80 : ℚ)) () 50 30 := by
   norm_num [tooSem, moreSem]
 
