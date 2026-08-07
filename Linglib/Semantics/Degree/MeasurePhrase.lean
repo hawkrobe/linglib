@@ -1,5 +1,3 @@
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.Ring
 import Mathlib.Tactic.NormNum
 
 /-!
@@ -41,18 +39,12 @@ def factorEquative {Entity D : Type*} [Mul D]
     (μ : Entity → D) (a b : Entity) (factor : D) : Prop :=
   μ a = factor * μ b
 
-/-- A positive differential entails the bare comparative. Stated on ℚ;
-generalizing requires ordered-group machinery (`[AddCommGroup D] [LinearOrder D]
-[IsStrictOrderedAddMonoid D]`) that mathlib's current taxonomy splits across
-multiple unbundled classes — see e.g. `Mathlib/Algebra/Order/Field/Defs.lean`
-for the analogous LinearOrderedField → Field + LinearOrder + IsStrictOrderedRing
-migration. Consumers (Intensional, VonStechow1984) instantiate at ℚ. -/
-theorem differential_positive_iff {Entity : Type*}
-    (μ : Entity → ℚ) (a b : Entity) (diff : ℚ) (hdiff : 0 < diff) :
-    differentialComparative μ a b diff → μ b < μ a := by
-  intro h
-  simp only [differentialComparative] at h
-  linarith
+/-- A positive differential entails the bare comparative. -/
+theorem differentialComparative_lt_of_pos {Entity D : Type*}
+    [AddCommGroup D] [LinearOrder D] [IsOrderedAddMonoid D]
+    (μ : Entity → D) (a b : Entity) {diff : D} (hdiff : 0 < diff)
+    (h : differentialComparative μ a b diff) : μ b < μ a :=
+  sub_pos.mp (h.symm ▸ hdiff)
 
 /-! ### Invariance: the measurement-theoretic hierarchy derived
 
@@ -62,9 +54,9 @@ Each construction's scale-type requirement is its invariance class
 
 /-- Differentials are translation-invariant: shifting the scale's zero
     point preserves gaps — differentials are meaningful on interval
-    scales. -/
-theorem differentialComparative_comp_add {Entity : Type*}
-    (μ : Entity → ℚ) (c : ℚ) (a b : Entity) (diff : ℚ) :
+    scales. A fact about the additive group alone; no order is involved. -/
+theorem differentialComparative_comp_add {Entity D : Type*} [AddGroup D]
+    (μ : Entity → D) (c : D) (a b : Entity) (diff : D) :
     differentialComparative (fun x => μ x + c) a b diff ↔
       differentialComparative μ a b diff := by
   simp [differentialComparative]
@@ -82,17 +74,13 @@ theorem differentialComparative_not_natural :
 
 /-- Factor phrases are scaling-invariant: changing the unit preserves
     ratios — factor phrases are meaningful on ratio scales. -/
-theorem factorEquative_comp_mul {Entity : Type*}
-    (μ : Entity → ℚ) {c : ℚ} (hc : c ≠ 0) (a b : Entity) (factor : ℚ) :
+theorem factorEquative_comp_mul {Entity D : Type*}
+    [CommMonoidWithZero D] [IsCancelMulZero D]
+    (μ : Entity → D) {c : D} (hc : c ≠ 0) (a b : Entity) (factor : D) :
     factorEquative (fun x => c * μ x) a b factor ↔
       factorEquative μ a b factor := by
-  simp only [factorEquative]
-  constructor
-  · intro h
-    refine mul_left_cancel₀ hc ?_
-    rw [h]; ring
-  · intro h
-    rw [h]; ring
+  show c * μ a = factor * (c * μ b) ↔ μ a = factor * μ b
+  rw [mul_left_comm, mul_right_inj' hc]
 
 /-- Factor phrases are NOT translation-invariant: moving the zero point
     destroys ratios — "*twice as hot" fails in °C because temperature's
