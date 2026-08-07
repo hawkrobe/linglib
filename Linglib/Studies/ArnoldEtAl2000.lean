@@ -1,117 +1,41 @@
 import Linglib.Phonology.Constraints.Defs
-import Linglib.Core.Optimization.System
-import Linglib.Core.Optimization.Decoder
 import Linglib.Features.Givenness
-import Linglib.Syntax.DependencyGrammar.DependencyLength
-
-open Morphology (Word)
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Ring
 
 /-!
-# Heaviness vs. Newness in Constituent Ordering [arnold-wasow-losongco-ginstrom-2000]
+# Heaviness vs. newness in constituent ordering
 
 [arnold-wasow-losongco-ginstrom-2000] use a corpus analysis (the
-Aligned-Hansard corpus, with verbs *give*, *bring...to*, *take...into
-account*) and an elicitation experiment (with *give*) to disentangle
-two confounded predictors of English postverbal constituent ordering:
+Aligned-Hansard corpus: *bring … to* and *take … into account* for heavy
+NP shift, *give* for the dative alternation) and an elicitation
+experiment (directors instructing actors to give objects to toy animals)
+to disentangle two confounded predictors of English postverbal ordering:
+heaviness (relative word count; [behaghel-1909]'s law of growing
+constituents, "end weight") and newness (given-before-new, coded with
+[prince-1992]'s discourse-given/new distinction, the corpus's few
+inferables collapsed into given). Both factors independently predict
+ordering in both constructions (§2 corpus, §3 experiment), and §5 reads
+the interaction pattern as "a constraint-based system, where the
+strength of a constraint is greater when competing constraints are
+weak".
 
-1. **Heaviness** — relative word count: heavier constituents come later
-   (Behaghel's *Gesetz der wachsenden Glieder* [behaghel-1909];
-   "end-weight" in [quirk-greenbaum-leech-svartvik-1972]).
-2. **Newness** — discourse status: given material precedes new
-   information. The principle predates [prince-1981]'s
-   given/inferable/new taxonomy that the paper *codes* with;
-   [gundel-hedberg-zacharski-1993] place it in the broader
-   accessibility-hierarchy literature.
-
-The paper's central empirical claim is that **both** factors
-independently predict ordering in dative alternation and heavy NP shift;
-neither reduces to the other (§2-3). The deeper theoretical point of
-§5 is that the two factors *interact*: heaviness exerts more influence
-when newness is non-discriminating, and vice versa, consistent with a
-constraint-based architecture in which "the strength of a constraint is
-greater when competing constraints are weak".
-
-## Formalization strategy
-
-Following [coetzee-pater-2011], we model the system as a MaxEnt
-grammar ([goldwater-johnson-2003]) over the binary ordering
-candidates `{themeLast, goalLast}` with two markedness constraints:
-
-- `*HEAVY-FIRST` — penalize the order whose first constituent is
-                   strictly heavier than the second
-- `*NEW-FIRST`   — penalize the order whose first constituent is
-                   discourse-new while the second is discourse-given
-
-The harmony-score difference between the two orderings decomposes
-additively (`score_diff_eq_components`) into a heaviness term
-`wH * heavyDiff p` and a newness term `wN * newDiff p`, where
-`heavyDiff p, newDiff p ∈ {-1, 0, +1}` record the per-constraint signed
-preference for `themeLast` over `goalLast`. Every prediction theorem
-below is a one-line consequence of this decomposition.
-
-The §5 interaction story falls out as
-`heaviness_dominates_when_newness_neutral`: when the newness constraint
-is silent on a pair, the harmony difference is *exactly* `wH * heavyDiff`
-— so any change in heaviness is undiluted by competing pressure. The
-sigmoid shape of MaxEnt softmax then turns this into the empirical
-"newness has more effect when heaviness is balanced" pattern.
-
-## Non-reducibility of the two factors
-
-`heaviness_and_newness_genuinely_independent` exhibits two pairs that
-witness the §2-3 claim that neither factor reduces to the other:
-- `heavyGoalContrast` has `newDiff = 0` but `heavyDiff ≠ 0` — only
-  heaviness fires
-- `newThemeContrast` has `heavyDiff = 0` but `newDiff ≠ 0` — only
-  newness fires
-
-A theory operationalizing only one of the two factors must give the
-same prediction at one of these contrasts as at the trivial baseline,
-contradicting the paper's findings.
-
-## Bridges
-
-- `Core.Optimization.ConstraintSystem` — the grammar packages as a generic
-  scored-choice system (`maxEntSystem`), pairing the constraint vector `con`
-  weighted by `gW wH wN` with a `softmaxDecoder`, making the softmax
-  probability machinery available without redefinition.
-- `Features.BinaryGivenness` — discourse-status partition. The paper
-  collapses [prince-1981]'s three-way given/inferable/new into
-  two categories (inferable → given). Focus marking is on a separate
-  axis (`Focus.Mark`) and not consumed here.
-- `Syntax.DependencyGrammar.DependencyLength` —
-  Dependency Locality ([futrell-gibson-2020]) provides the
-  *positive* derivation of the heaviness signal: §9 below shows
-  `heavyDiff` is exactly the sign of the DLM cost difference between
-  the two orderings, so `*HEAVY-FIRST` is not a stipulation but a
-  theorem about which order minimizes total dependency length on a
-  binary postverbal pair. The same module's word-invariance
-  (`dlm_word_invariant`) shows DLM cannot, on its own, also derive
-  the newness effect — motivating §10's UID derivation.
-- `Processing.Memory` — under [futrell-2019]'s
-  information-locality framework, DLM and UID are reductions of a
-  single mutual-information-weighted cost (§11), so the two
-  independent constraints `*HEAVY-FIRST` and `*NEW-FIRST` reflect
-  variation along orthogonal axes of one underlying processing theory.
-- `Processing.Memory` — `MemorySurprisal`'s information
-  locality is itself the *behavioural profile* of a finite-capacity
-  `MemoryProcess` ([futrell-gibson-levy-2020]'s lossy-context
-  surprisal). §11 below traces the full grounding chain
-  `MemoryProcess → MemorySurprisal → {DLM, UID} → {*HEAVY-FIRST, *NEW-FIRST}`,
-  so Arnold's two constraints are not just co-justified at the
-  cost-function level but anchored in a single architectural
-  primitive: a predictor reading from a lossily-encoded memory.
+The two factors are weighted markedness constraints `*HEAVY-FIRST` and
+`*NEW-FIRST` over the binary ordering candidates
+([goldwater-johnson-2003]'s MaxEnt encoding of the paper's
+soft-constraint architecture). The harmony difference between the two
+orders decomposes additively into signed per-constraint preferences
+(`score_diff_eq_components`), so independence, composition, and the
+constraint-strength interaction are one-step consequences; a
+pure-heaviness and a pure-newness contrast pair witness that neither
+factor reduces to the other.
 -/
 
 namespace ArnoldEtAl2000
 
+open Constraints Features
 
-open Constraints Core.Optimization Features
-open DependencyGrammar
-
--- ============================================================================
--- § 1: Phrases, Orderings, and Candidates
--- ============================================================================
+/-! ### Phrases, orderings, and candidates -/
 
 /-- A constituent characterized by the two dimensions
     [arnold-wasow-losongco-ginstrom-2000] measure: word count
@@ -121,7 +45,7 @@ open DependencyGrammar
 structure Phrase where
   wordCount : Nat
   discourse : BinaryGivenness
-  deriving DecidableEq, Repr
+  deriving DecidableEq
 
 /-- The two constituents of a binary postverbal alternation. For the
     dative alternation, `(theme, goal)`; for heavy NP shift, `(direct
@@ -130,27 +54,23 @@ structure Phrase where
 abbrev Pair := Phrase × Phrase
 
 /-- Which of the two constituents occupies the second (sentence-final)
-    slot. `themeLast` is the prepositional dative for DA and the
-    *shifted* `V PP DO` for HNPS; `goalLast` is the double object for
-    DA and the canonical `V DO PP` for HNPS. -/
+    slot. For DA (pair = theme, goal): `themeLast` is the double object
+    (*give the white rabbit the carrot*), `goalLast` the prepositional
+    dative (*give the carrot to the white rabbit*). For HNPS (pair =
+    direct object, PP): `themeLast` is the *shifted* `V PP DO`,
+    `goalLast` the canonical `V DO PP`. -/
 inductive Order where
   | themeLast
   | goalLast
-  deriving DecidableEq, Repr
-
-instance : Fintype Order :=
-  ⟨{.themeLast, .goalLast}, fun o => by cases o <;> decide⟩
+  deriving DecidableEq
 
 abbrev Candidate := Pair × Order
 
--- ============================================================================
--- § 2: The Two Constraints
--- ============================================================================
+/-! ### The two constraints -/
 
 /-- `*HEAVY-FIRST`: violated when the first (verb-adjacent) constituent
-    is strictly heavier than the second. The OT-style markedness
-    encoding of [behaghel-1909]'s law of growing constituents:
-    avoid placing the longer constituent first. -/
+    is strictly heavier than the second — the markedness encoding of
+    [behaghel-1909]'s law of growing constituents. -/
 def heavyFirst : Constraint Candidate :=
   fun ((th, gl), o) =>
     match o with
@@ -158,9 +78,9 @@ def heavyFirst : Constraint Candidate :=
     | .goalLast  => if th.wordCount > gl.wordCount then 1 else 0
 
 /-- `*NEW-FIRST`: violated when the first constituent is discourse-new
-    while the second is discourse-given. A markedness encoding of the
-    given-before-new principle the paper draws from
-    [prince-1981]/[gundel-hedberg-zacharski-1993]. -/
+    while the second is discourse-given — the markedness encoding of the
+    given-before-new principle ([prince-1981],
+    [gundel-hedberg-zacharski-1993]). -/
 def newFirst : Constraint Candidate :=
   fun ((th, gl), o) =>
     match o with
@@ -169,18 +89,14 @@ def newFirst : Constraint Candidate :=
     | .goalLast  =>
       if th.discourse = .new ∧ gl.discourse = .given then 1 else 0
 
-/-- The two-constraint set `*HEAVY-FIRST`, `*NEW-FIRST` as a `CON` over the
-    ordering candidates. The constraint functions are fixed; the weights live
-    in `gW`. -/
+/-- The two-constraint set as a `CON` over the ordering candidates. -/
 def con : CON Candidate 2 := ![heavyFirst, newFirst]
 
-/-- The weight vector pairing with `con`: `wH` weights `*HEAVY-FIRST`
-    (coordinate 0); `wN` weights `*NEW-FIRST` (coordinate 1). -/
+/-- The weight vector pairing with `con`: `wH` weights `*HEAVY-FIRST`,
+    `wN` weights `*NEW-FIRST`. -/
 def gW (wH wN : ℝ) : Fin 2 → ℝ := ![wH, wN]
 
--- ============================================================================
--- § 3: Per-Constraint Signed Preferences
--- ============================================================================
+/-! ### Per-constraint signed preferences -/
 
 /-- The heaviness constraint's signed preference for `themeLast` over
     `goalLast` on a pair: `+1` when the theme (`p.1`) is heavier (so
@@ -192,17 +108,16 @@ def heavyDiff (p : Pair) : ℝ :=
 
 /-- The newness constraint's signed preference for `themeLast` over
     `goalLast` on a pair: `+1` when the theme is new and the goal given
-    (so placing the theme last respects given-before-new), `-1` when
-    the goal is new and the theme given, `0` otherwise. -/
+    (so placing the theme last respects given-before-new), `-1` in the
+    mirror case, `0` otherwise. -/
 def newDiff (p : Pair) : ℝ :=
   (if p.1.discourse = .new ∧ p.2.discourse = .given then (1:ℝ) else 0) -
   (if p.2.discourse = .new ∧ p.1.discourse = .given then (1:ℝ) else 0)
 
 /-- The harmony-score difference decomposes additively into per-constraint
-    signed preferences scaled by their weights. This is the foundational
-    identity of the formalization — every prediction theorem below is a
-    one-step consequence. -/
-lemma score_diff_eq_components (wH wN : ℝ) (p : Pair) :
+    signed preferences scaled by their weights. Every prediction theorem
+    below is a one-step consequence. -/
+theorem score_diff_eq_components (wH wN : ℝ) (p : Pair) :
     harmonyScore con (gW wH wN) (p, .themeLast) -
     harmonyScore con (gW wH wN) (p, .goalLast) =
       wH * heavyDiff p + wN * newDiff p := by
@@ -215,423 +130,136 @@ lemma score_diff_eq_components (wH wN : ℝ) (p : Pair) :
 
 /-- `heavyDiff` is positive iff the theme (`p.1`) is strictly heavier
     than the goal — i.e., `*HEAVY-FIRST` prefers `themeLast`. -/
-lemma heavyDiff_pos_iff {p : Pair} :
+theorem heavyDiff_pos_iff {p : Pair} :
     0 < heavyDiff p ↔ p.1.wordCount > p.2.wordCount := by
   unfold heavyDiff
-  by_cases h12 : p.1.wordCount > p.2.wordCount
-  · have h21 : ¬ p.2.wordCount > p.1.wordCount := Nat.not_lt.mpr h12.le
-    simp [h12, h21]
-  · by_cases h21 : p.2.wordCount > p.1.wordCount <;> simp [h12, h21]
+  split_ifs with h1 h2 <;> norm_num <;> omega
 
 /-- `newDiff` is positive iff the theme is new while the goal is
     given — i.e., `*NEW-FIRST` prefers `themeLast`. -/
-lemma newDiff_pos_iff {p : Pair} :
+theorem newDiff_pos_iff {p : Pair} :
     0 < newDiff p ↔ p.1.discourse = .new ∧ p.2.discourse = .given := by
   unfold newDiff
-  constructor
-  · intro h
-    by_contra hcon
-    simp [hcon] at h
-    split_ifs at h <;> linarith
-  · intro ⟨h1, h2⟩
-    have hn : ¬ (p.2.discourse = .new ∧ p.1.discourse = .given) := by
-      rintro ⟨_, hr⟩
-      rw [h1] at hr
-      exact BinaryGivenness.noConfusion hr
-    simp [h1, h2]
+  split_ifs with h1 h2 <;> norm_num <;> simp_all
 
--- ============================================================================
--- § 4: Independence Theorems — the Central Paper Claim, Derived
--- ============================================================================
+/-! ### Independence — the central paper claim, derived -/
 
 /-- **Heaviness independently predicts ordering.** With the newness
-    weight zeroed out, a positive heaviness weight is enough to make
-    the order placing the heavier constituent last strictly more
-    probable. Symmetric in the heavier-side direction: when `heavyDiff p`
-    is non-zero, its sign determines which order wins. -/
+    weight zeroed out, a positive heaviness weight makes the order
+    placing the heavier constituent last strictly preferred. -/
 theorem heaviness_independently_predicts {p : Pair} {wH : ℝ}
     (hH : 0 < wH) (h : 0 < heavyDiff p) :
     harmonyDominates con (gW wH 0) (p, .themeLast) (p, .goalLast) := by
-  have hdiff := score_diff_eq_components wH 0 p
-  rw [harmonyDominates_iff, ← sub_pos, hdiff]
-  exact_mod_cast (by linarith [mul_pos hH h] : (0:ℝ) < wH * heavyDiff p + 0 * newDiff p)
+  rw [harmonyDominates_iff, ← sub_pos, score_diff_eq_components]
+  simpa using mul_pos hH h
 
 /-- **Newness independently predicts ordering.** With the heaviness
-    weight zeroed out, a positive newness weight is enough to make
-    the order placing the new constituent last strictly more probable. -/
+    weight zeroed out, a positive newness weight makes the order
+    placing the new constituent last strictly preferred. -/
 theorem newness_independently_predicts {p : Pair} {wN : ℝ}
     (hN : 0 < wN) (h : 0 < newDiff p) :
     harmonyDominates con (gW 0 wN) (p, .themeLast) (p, .goalLast) := by
-  have hdiff := score_diff_eq_components 0 wN p
-  rw [harmonyDominates_iff, ← sub_pos, hdiff]
-  exact_mod_cast (by linarith [mul_pos hN h] : (0:ℝ) < 0 * heavyDiff p + wN * newDiff p)
+  rw [harmonyDominates_iff, ← sub_pos, score_diff_eq_components]
+  simpa using mul_pos hN h
 
 /-- **Both factors compose additively.** When neither factor opposes
-    `themeLast` (both per-constraint contributions are non-negative)
-    and at least one strictly favors it, `themeLast` wins — without
-    requiring the caller to compute the combined sum. No separate
-    interaction term is needed to reproduce the experiment's significant
-    `heaviness × newness` term in logistic regression: it falls out of
-    additive harmony plus the sigmoid shape of MaxEnt probability. -/
+    `themeLast` and at least one strictly favors it, `themeLast` wins;
+    no separate interaction term is stipulated. -/
 theorem both_factors_compose {p : Pair} {wH wN : ℝ}
     (hH : 0 ≤ wH) (hN : 0 ≤ wN)
     (hHeavy : 0 ≤ heavyDiff p) (hNew : 0 ≤ newDiff p)
     (hStrict : 0 < wH * heavyDiff p ∨ 0 < wN * newDiff p) :
     harmonyDominates con (gW wH wN) (p, .themeLast) (p, .goalLast) := by
-  have hdiff := score_diff_eq_components wH wN p
-  rw [harmonyDominates_iff, ← sub_pos, hdiff]
+  rw [harmonyDominates_iff, ← sub_pos, score_diff_eq_components]
   have h1 : 0 ≤ wH * heavyDiff p := mul_nonneg hH hHeavy
   have h2 : 0 ≤ wN * newDiff p := mul_nonneg hN hNew
-  exact_mod_cast
-    (by rcases hStrict with hs | hs <;> linarith : (0:ℝ) < wH * heavyDiff p + wN * newDiff p)
+  rcases hStrict with hs | hs <;> linarith
 
-/-- **Tradeoff theorem.** When heaviness and newness conflict — one
-    favors `themeLast`, the other `goalLast` — the prediction depends
-    on which side has the larger weighted contribution. This is the
-    constraint-based architecture [arnold-wasow-losongco-ginstrom-2000]
-    argue for in §5. -/
+/-- **Tradeoff.** When heaviness and newness conflict, the prediction
+    depends on which side has the larger weighted contribution — the
+    constraint-based architecture the paper argues for. -/
 theorem tradeoff_resolved_by_weights {p : Pair} {wH wN : ℝ}
     (h : 0 < wH * heavyDiff p + wN * newDiff p) :
     harmonyDominates con (gW wH wN) (p, .themeLast) (p, .goalLast) := by
-  have hdiff := score_diff_eq_components wH wN p
-  rw [harmonyDominates_iff, ← sub_pos, hdiff]
-  exact_mod_cast h
+  rw [harmonyDominates_iff, ← sub_pos, score_diff_eq_components]
+  exact h
 
--- ============================================================================
--- § 5: Constraint-Strength Interaction (the Paper's §5 Theoretical Claim)
--- ============================================================================
+/-! ### Constraint-strength interaction
 
-/-! [arnold-wasow-losongco-ginstrom-2000] §5 observe that "heaviness
-had the largest effect on utterances where both constituents were given"
-— and in general, "the strength of a constraint is greater when competing
-constraints are weak". The next two theorems derive this directly from
-MaxEnt's additive harmony: when one constraint contributes 0 to the
-harmony difference (its `eval` is identical on both candidates), the
-*entire* difference is borne by the other constraint, undiluted. The
-sigmoid then translates a larger harmony differential into a larger
-probability shift. -/
+In the corpus study the dative regressions had both main effects and no
+newness × heaviness interaction; the experiment showed one — "heaviness
+had the largest effect on utterances where both constituents were
+given" (§5). In additive harmony the pattern is immediate: when one
+constraint's differential is zero, the entire harmony difference is
+borne by the other constraint, undiluted. -/
 
-/-- **Constraint-interaction theorem (heaviness side).** When the
-    newness constraint is neutral on a pair (`newDiff p = 0`, i.e., the
-    two constituents share the same givenness status), the harmony
-    difference between orderings is determined entirely by the weighted
-    heaviness term. -/
+/-- When the newness constraint is neutral on a pair (both constituents
+    share givenness status), the harmony difference is exactly the
+    weighted heaviness term. -/
 theorem heaviness_dominates_when_newness_neutral
     (wH wN : ℝ) {p : Pair} (hN : newDiff p = 0) :
     harmonyScore con (gW wH wN) (p, .themeLast) -
     harmonyScore con (gW wH wN) (p, .goalLast) = wH * heavyDiff p := by
   rw [score_diff_eq_components, hN, mul_zero, add_zero]
 
-/-- **Constraint-interaction theorem (newness side).** When the
-    heaviness constraint is neutral on a pair (`heavyDiff p = 0`, i.e.,
-    the two constituents are equally long), the harmony difference is
-    determined entirely by the weighted newness term. The paper's
-    elicitation experiment (where `give` stimuli held NP length roughly
-    constant) is exactly this regime — and unsurprisingly newness
-    showed a larger effect there than in the corpus study. -/
+/-- When the heaviness constraint is neutral on a pair (equal lengths),
+    the harmony difference is exactly the weighted newness term. -/
 theorem newness_dominates_when_heaviness_neutral
     (wH wN : ℝ) {p : Pair} (hH : heavyDiff p = 0) :
     harmonyScore con (gW wH wN) (p, .themeLast) -
     harmonyScore con (gW wH wN) (p, .goalLast) = wN * newDiff p := by
   rw [score_diff_eq_components, hH, mul_zero, zero_add]
 
--- ============================================================================
--- § 6: Stimulus Contrasts and Non-Reducibility Witness
--- ============================================================================
+/-! ### Contrast pairs and non-reducibility -/
 
-/-- *Give the carrot to the white rabbit who lived in the briar patch.*
-    Heavy goal (8 words), light theme (1 word), both new — the
-    heaviness contrast (newness is silent here). -/
+/-- A heavy-goal contrast: light theme, heavy goal, both new — only
+    heaviness discriminates. -/
 def heavyGoalContrast : Pair :=
   ({ wordCount := 1, discourse := .new },
    { wordCount := 8, discourse := .new })
 
-/-- *Give Alice the carrot.* (Theme new, goal given.) Equal length,
-    pure newness contrast (heaviness is silent here). -/
+/-- A pure-newness contrast in the experiment's *give*-frame (*give the
+    carrot to the white rabbit*): lengths matched, theme new, goal
+    given — only newness discriminates. -/
 def newThemeContrast : Pair :=
   ({ wordCount := 1, discourse := .new  },
    { wordCount := 1, discourse := .given })
 
-@[simp] lemma heavyDiff_heavyGoalContrast : heavyDiff heavyGoalContrast = -1 := by
-  show (if (1:Nat) > 8 then (1:ℝ) else 0) -
-       (if (8:Nat) > 1 then (1:ℝ) else 0) = -1
-  rw [if_neg (by decide), if_pos (by decide)]; norm_num
+@[simp] theorem heavyDiff_heavyGoalContrast : heavyDiff heavyGoalContrast = -1 := by
+  norm_num [heavyDiff, heavyGoalContrast]
 
-@[simp] lemma newDiff_heavyGoalContrast : newDiff heavyGoalContrast = 0 := by
-  show (if (BinaryGivenness.new = .new ∧ BinaryGivenness.new = .given)
-          then (1:ℝ) else 0) -
-       (if (BinaryGivenness.new = .new ∧ BinaryGivenness.new = .given)
-          then (1:ℝ) else 0) = 0
-  simp
+@[simp] theorem newDiff_heavyGoalContrast : newDiff heavyGoalContrast = 0 := by
+  simp [newDiff, heavyGoalContrast]
 
-@[simp] lemma heavyDiff_newThemeContrast : heavyDiff newThemeContrast = 0 := by
-  show (if (1:Nat) > 1 then (1:ℝ) else 0) -
-       (if (1:Nat) > 1 then (1:ℝ) else 0) = 0
-  simp
+@[simp] theorem heavyDiff_newThemeContrast : heavyDiff newThemeContrast = 0 := by
+  simp [heavyDiff, newThemeContrast]
 
-@[simp] lemma newDiff_newThemeContrast : newDiff newThemeContrast = 1 := by
-  show (if (BinaryGivenness.new = .new ∧ BinaryGivenness.given = .given)
-          then (1:ℝ) else 0) -
-       (if (BinaryGivenness.given = .new ∧ BinaryGivenness.new = .given)
-          then (1:ℝ) else 0) = 1
-  rw [if_pos ⟨rfl, rfl⟩, if_neg (by rintro ⟨h, _⟩; cases h)]; norm_num
+@[simp] theorem newDiff_newThemeContrast : newDiff newThemeContrast = 1 := by
+  norm_num [newDiff, newThemeContrast]
+  decide
 
-/-- **Non-reducibility witness.** The two contrast pairs jointly
-    establish the paper's central claim that neither factor reduces to
-    the other: `heavyGoalContrast` activates *only* heaviness (newness
-    differential is zero), `newThemeContrast` activates *only* newness
-    (heaviness differential is zero). Any theory that operationalizes
-    only one of the two dimensions must collapse the prediction at one
-    contrast to the trivial baseline, contradicting
-    [arnold-wasow-losongco-ginstrom-2000]. -/
+/-- **Non-reducibility witness.** `heavyGoalContrast` activates *only*
+    heaviness, `newThemeContrast` *only* newness: a theory
+    operationalizing one factor collapses one contrast to the trivial
+    baseline, contradicting the paper's findings. -/
 theorem heaviness_and_newness_genuinely_independent :
     newDiff heavyGoalContrast = 0 ∧ heavyDiff heavyGoalContrast ≠ 0 ∧
     heavyDiff newThemeContrast = 0 ∧ newDiff newThemeContrast ≠ 0 := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;> simp
 
-/-- Pure-heaviness MaxEnt grammar predicts goal-last (heavier-last) when
-    the goal is heavier than the theme. Direct application of the
-    `heavyDiff`-symmetric independence theorem on the swapped pair. -/
+/-- Pure-heaviness grammar predicts goal-last (heavier-last) on the
+    heavy-goal contrast. -/
 theorem heavy_goal_predicts_goalLast :
     harmonyDominates con (gW 1 0)
       (heavyGoalContrast, .goalLast) (heavyGoalContrast, .themeLast) := by
-  have hdiff := score_diff_eq_components 1 0 heavyGoalContrast
-  rw [harmonyDominates_iff]
-  rw [heavyDiff_heavyGoalContrast, newDiff_heavyGoalContrast] at hdiff
-  norm_num at hdiff
-  linarith
+  rw [harmonyDominates_iff, ← sub_pos, ← neg_sub, score_diff_eq_components]
+  norm_num
 
-/-- Pure-newness MaxEnt grammar predicts theme-last (given-first) when
-    the theme is new and the goal is given. -/
+/-- Pure-newness grammar predicts theme-last (given-first) on the
+    pure-newness contrast. -/
 theorem new_theme_predicts_themeLast :
     harmonyDominates con (gW 0 1)
       (newThemeContrast, .themeLast) (newThemeContrast, .goalLast) :=
-  newness_independently_predicts (by norm_num) (by rw [newDiff_newThemeContrast]; norm_num)
-
--- ============================================================================
--- § 7: Bridge to the Generic ConstraintSystem Machinery
--- ============================================================================
-
-/-- For a fixed input pair `p`, the two-constraint grammar packaged as a generic
-    `Core.Optimization.ConstraintSystem` over the orderings: the harmony score
-    `harmonyScore con (gW wH wN) (p, ·)` softmax-decoded over the finite candidate
-    set `{themeLast, goalLast}`. This makes the library's softmax probability
-    infrastructure (`ConstraintSystem.predict`, `predict_sum_eq_one`, etc.)
-    available without redefinition. -/
-noncomputable def maxEntSystem (wH wN : ℝ) (p : Pair) : ConstraintSystem Order ℝ where
-  candidates := Finset.univ
-  score := fun o => harmonyScore con (gW wH wN) (p, o)
-  decoder := softmaxDecoder 1
-
--- ============================================================================
--- § 8: Dependency Locality Bridge — Why DLM Alone Is Insufficient
--- ============================================================================
-
-/-! `totalDepLength` (from `DependencyLength.lean`) is a candidate
-formalization of [behaghel-1909]'s end-weight effect — and
-[arnold-wasow-losongco-ginstrom-2000] discuss
-[hawkins-1990]'s parsing-theoretic version (Early Immediate
-Constituents) as an instance. The next three lemmas show that any such
-purely structural account cannot, on its own, reproduce the newness
-effect: dependency length is a function of the dependency structure
-alone — it never reads the words. So no DLM-derived predictor
-distinguishes a sentence with discourse-given NPs from a sentence with
-discourse-new NPs sharing the same dependency tree.
-
-Combined with `newness_independently_predicts`, this implies any
-adequate theory of postverbal ordering must combine a weight constraint
-with at least one further dimension — here, discourse status. -/
-
-/-- `Graph.totalDepLength` ignores word identity: it depends only on the
-    arc structure. (At the single-arc level the point is carried by the
-    type — `arcLength : Fin n → Fin n → ℕ` never sees the relation.) -/
-theorem dlm_word_invariant {n : ℕ} (g : Graph n) (words' : Fin n → Word) :
-    Graph.totalDepLength { g with words := words' } = g.totalDepLength := rfl
-
-/-- Corollary: trees that differ only in whether their NPs are
-    discourse-given or discourse-new receive identical DLM cost. So
-    Dependency Locality, as a pure tree-structural cost, cannot reproduce
-    the newness effect that [arnold-wasow-losongco-ginstrom-2000]
-    demonstrate. -/
-theorem dlm_discourse_blind {n : ℕ} (g : Graph n) (given new : Fin n → Word) :
-    Graph.totalDepLength { g with words := given } =
-    Graph.totalDepLength { g with words := new } := rfl
-
--- ============================================================================
--- § 9: DLM Derivation of `heavyDiff` — Heaviness Is Not a Stipulation
--- ============================================================================
-
-/-! [futrell-gibson-2020] establish dependency length minimization (DLM) as
-the explanatory principle behind a wide range of word-order universals,
-including [behaghel-1909]'s law of growing constituents (their §2.3).
-The argument: in a head-initial language, when a head V has multiple
-right-dependents, total dependency length from V is minimized by ordering
-them shortest-first, because the head→dep distance to the second
-constituent equals the length of the first plus one.
-
-Specialized to Arnold's binary postverbal alternation:
-
-- Order V Y X (head-initial): V→head(Y) = 1, V→head(X) = |Y|+1.
-  V-side DLM cost = |Y| + 2.
-
-So `goalLast` (V theme goal) costs `|theme|+2` and `themeLast` (V goal
-theme) costs `|goal|+2`. DLM picks the order whose first constituent is
-shorter — and *that* is what the `*HEAVY-FIRST` constraint operationalizes.
-The `heavyDiff` sign is therefore not a free parameter of the
-formalization but a theorem about DLM. -/
-
-/-- DLM cost contribution from the verb to its two postverbal complement
-    heads, under a head-initial binary structure. The verb sits at
-    position 0; the first constituent occupies positions 1…|first|, so
-    its head (also at position 1, head-initial) is distance 1 from V,
-    and the second constituent's head is at position |first|+1. -/
-def postverbalDLMCost (p : Pair) : Order → Nat
-  | .goalLast  => p.1.wordCount + 2   -- V theme goal: cost = |theme| + 2
-  | .themeLast => p.2.wordCount + 2   -- V goal theme: cost = |goal|  + 2
-
-/-- **Heaviness is DLM, not a stipulation.** The MaxEnt grammar's
-    `*HEAVY-FIRST` constraint signal `heavyDiff` is exactly the sign of
-    the DLM cost difference between the two orderings. With this
-    bridge, `heavyDiff` is no longer a primitive of the formalization —
-    it is a theorem about which ordering [futrell-gibson-2020]'s
-    dependency-length cost minimizes on a binary postverbal pair. -/
-theorem heavyDiff_eq_dlm_signal (p : Pair) :
-    0 < heavyDiff p ↔
-    postverbalDLMCost p .themeLast < postverbalDLMCost p .goalLast := by
-  rw [heavyDiff_pos_iff]
-  show p.2.wordCount < p.1.wordCount ↔ p.2.wordCount + 2 < p.1.wordCount + 2
-  omega
-
-/-- The DLM cost difference matches `heavyDiff` numerically up to scale:
-    `cost(goalLast) - cost(themeLast) = p.1.wordCount - p.2.wordCount`,
-    which has the same sign as `heavyDiff`. This is the "exact"
-    arithmetic version of `heavyDiff_eq_dlm_signal` and makes the
-    DLM-cost gap directly computable from word counts. -/
-theorem dlm_diff_eq_wordCount_diff (p : Pair) :
-    (postverbalDLMCost p .goalLast : Int) - postverbalDLMCost p .themeLast =
-    (p.1.wordCount : Int) - p.2.wordCount := by
-  show ((p.1.wordCount + 2 : Nat) : Int) - ((p.2.wordCount + 2 : Nat) : Int) =
-       (p.1.wordCount : Int) - p.2.wordCount
-  omega
-
--- ============================================================================
--- § 10: UID Derivation of `newDiff` — Newness as Information-Density Pressure
--- ============================================================================
-
-/-! Genzel & Charniak's uniform information density (UID), elaborated in
-[levy-2008]'s expectation-based parsing, predicts that high-surprisal
-material should be placed *late* in an utterance: by then more context has
-been processed, so high-information words can be integrated with greater
-predictability and lower per-step processing load.
-
-For Arnold's binary postverbal pair, this maps cleanly: discourse-new
-material is high-surprisal (the listener must construct a fresh referent),
-discourse-given material is low-surprisal (the referent is already
-active). UID therefore prefers placing the new constituent last — exactly
-the direction `*NEW-FIRST` operationalizes.
-
-Unlike the DLM/heaviness bridge, this is an *implication* rather than a
-biconditional. Focus marking lives on its own axis
-(`Focus.Mark`) and would enter UID via a
-separate focus-parameterized cost, not by extending this givenness
-surprisal. Whenever `newDiff p > 0`, UID strictly prefers the same
-ordering as `*NEW-FIRST`. -/
-
-/-- A coarse two-level surprisal proxy keyed on givenness:
-    `.new` is high-information (1), `.given` is low (0). This matches
-    the asymmetric pattern of Arnold's `*NEW-FIRST` constraint, which
-    fires only when one side is `.new` and the other is `.given`. -/
-def discourseSurprisal : BinaryGivenness → ℚ
-  | .new => 1
-  | .given => 0
-
-/-- UID cost for the binary postverbal pair: the surprisal of whichever
-    constituent occupies the verb-adjacent (first) position. UID prefers
-    delaying high-surprisal material, so this should be minimized. -/
-def uidCost (p : Pair) : Order → ℚ
-  | .goalLast  => discourseSurprisal p.1.discourse  -- theme is first
-  | .themeLast => discourseSurprisal p.2.discourse  -- goal is first
-
-/-- **Newness is UID, in the direction `*NEW-FIRST` cares about.**
-    Whenever the MaxEnt grammar's `newDiff` signal favors `themeLast`
-    (theme new + goal given), UID strictly prefers the same order. -/
-theorem newDiff_pos_implies_uid_prefers_themeLast {p : Pair}
-    (h : 0 < newDiff p) :
-    uidCost p .themeLast < uidCost p .goalLast := by
-  obtain ⟨h1, h2⟩ := newDiff_pos_iff.mp h
-  simp [uidCost, discourseSurprisal, h1, h2]
-
--- ============================================================================
--- § 11: Subsumption Under Information Locality
--- ============================================================================
-
-/-! With §9 and §10 in place, Arnold's two MaxEnt constraints are no
-longer free stipulations — each is the boundary signal of an
-independently-motivated processing cost already formalized in linglib:
-
-| Constraint | Bridge | Cost lives in |
-|---|---|---|
-| `*HEAVY-FIRST` | `heavyDiff_eq_dlm_signal` | `Syntax.DependencyGrammar.DependencyLength` |
-| `*NEW-FIRST`   | `newDiff_pos_implies_uid_prefers_themeLast` | `Processing.Memory` (information locality) |
-
-The two costs unify under [futrell-2019]'s **information locality**
-framework (see `Processing.Memory.SurprisalTradeoff`,
-`MutualInfoProfile.weightedSum`): both DLM and UID are special cases of
-minimizing Σ (memory cost × mutual information) across the utterance.
-
-- DLM is the limit where mutual information is uniform across positions
-  (only structural distance matters).
-- UID is the limit where structural distance is held constant and only
-  per-word surprisal varies.
-
-The fact that `*HEAVY-FIRST` and `*NEW-FIRST` are *both* needed in the
-MaxEnt grammar — and neither reduces to the other empirically
-([arnold-wasow-losongco-ginstrom-2000] §2-3,
-`heaviness_and_newness_genuinely_independent`) — reflects that real
-utterances vary along *both* the structural-distance and surprisal
-axes. The MaxEnt weights `wH` / `wN` are then empirical estimates of
-how much each pressure dominates in a given construction, with the
-underlying processing theory supplying the constraint definitions
-themselves rather than leaving them as stipulated penalties.
-
-### Architectural anchor: the lossy-memory predictor
-
-`MutualInfoProfile.weightedSum` is itself a *behavioural profile* of a
-deeper substrate: a `MemoryProcess` ([futrell-gibson-levy-2020],
-formalized in `Processing.Memory.SurprisalTradeoff`) — a predictor that
-reads from a lossily-encoded summary of the past rather than from the
-raw history. Classical surprisal arises as the lossless special case
-(`MemoryProcess.expectedSurprisal_eq_surprisal_of_lossless` in
-`Memory.LossyContext`); finite-capacity memory shifts it upward by an
-amount controlled by which information the encoder retains.
-
-Both Arnold constraints are diagnostic of this finite memory:
-- `*HEAVY-FIRST` (DLM) penalises orderings that stress retention —
-  long first constituents force the encoder to carry more history
-  before integration, increasing per-bit memory cost.
-- `*NEW-FIRST` (UID) penalises orderings that stress prediction —
-  high-surprisal items at sentence-initial position face a memory
-  state with no informative context yet to condition on.
-
-The 4-level grounding chain is therefore explicit:
-
-```
-MemoryProcess (lossy substrate; Processing.Memory)
-   ↓  (behavioural profile across distances)
-MemorySurprisal.MutualInfoProfile (information locality)
-   ↓  (specialise to one axis)
-DLM (uniform info, distance varies) │ UID (uniform distance, info varies)
-   ↓  (sign-of-cost-difference signal on a binary postverbal pair)
-*HEAVY-FIRST                        │ *NEW-FIRST
-```
-
-What the new substrate buys here is not new theorems about Arnold's
-data — `heavyDiff_eq_dlm_signal` and `newDiff_pos_implies_uid_prefers_themeLast`
-already do that work — but a *common architectural source* for both
-constraints. Where information locality says "DLM and UID are limits
-of the same cost function", `MemoryProcess` says "and that cost
-function is the expected surprisal of a memory-bottlenecked
-predictor". The two-constraint MaxEnt grammar is then a quantitative
-read-out of how that bottleneck shows up in postverbal ordering. -/
+  newness_independently_predicts one_pos (by simp)
 
 end ArnoldEtAl2000
