@@ -3,29 +3,23 @@ import Mathlib.Tactic.NormNum
 import Linglib.Semantics.Focus.Particles
 
 /-!
-# Francescotti 1995 — *Even*: the implicature account revised
-[francescotti-1995]
+# Francescotti 1995 — the felicity condition of *even*
 
-Francescotti defends the Implicature Account of *even* against
-[lycan-1991]'s quantifier approach (§II–III) and revises its felicity
-condition (§IV, p. 162): an *even*-sentence `S` is felicitous iff its
-*even*-less core `S*` is more surprising than MOST of its true
-neighbors — pace [bennett-1982], for whom one true neighbor suffices
-(§I), and [karttunen-peters-1979], who require all ("Bill is the least
-likely to like Mary", p. 12). Conclusion (§V): (a) *even* contributes
-conventional implicature, not truth conditions; (b) it is epistemic
-(unexpectedness); (c) scalar; (d) the most-threshold condition.
+[francescotti-1995] defends the Implicature Account of *even* against
+[lycan-1991]'s quantifier approach and revises its felicity condition
+(§IV, p. 162): an *even*-sentence is felicitous iff its *even*-less
+core `S*` is more surprising than most of its true neighbors — pace
+[bennett-1982], for whom one true neighbor suffices, and
+[karttunen-peters-1979], who require all.
 
 `EvenThreshold` compares the three conditions on the paper's two
-counterexamples (§I, pp. 155–156), encoded as numeric surprise
-scenarios: the characters and dialectic are the paper's, the surprise
-levels and the completion of the classmate roster are ours. The paper's
-clause (i) — neighbors are contextually determined, true, and share a
-more general truth with `S*` — is held fixed as background; only the
-surprise-comparison clause (ii) varies. The gradient discussion
-(pp. 163–164) is formalized as the two dimensions the paper names:
-margin of surprise (`meanExcess`, the Andre contrast) and proportion of
-neighbors exceeded (threshold work done by the vagueness of "most").
+counterexamples (§I, pp. 155–156); the characters and dialectic are the
+paper's, the surprise levels and extra classmates ours. The paper's
+further requirement that neighbors be contextually determined, true,
+and part of a more general truth with `S*` is held fixed as background.
+The gradient discussion (pp. 163–164) contributes the margin dimension
+(`meanExcess`) and the proportion dimension, threshold work done by the
+vagueness of "most".
 -/
 
 namespace Francescotti1995
@@ -107,79 +101,72 @@ def Matches (t : EvenThreshold) (s : EvenScenario) : Prop :=
 instance (t : EvenThreshold) (s : EvenScenario) : Decidable (Matches t s) :=
   inferInstanceAs (Decidable (_ ↔ _))
 
-/-- "Even Albert passed the exam" (paper (5), p. 155): Albert is "one of
-the best chemistry students in the history of Madison High", Marie the
-very best, so his passing (2) exceeds only her passing (1) in surprise —
-infelicitous. The three classmates whose passing is genuinely surprising
-(5, 7, 8) complete the true-neighbor roster; the completion is ours. -/
+/-- The passing scenario ((5), p. 155): Albert, one of the best students,
+passes unsurprisingly (2), Marie the very best (1), and three weaker
+classmates pass surprisingly (5, 7, 8; the roster completion is ours).
+"Even Albert passed the exam" is infelicitous. -/
 def scenario1 : EvenScenario :=
   { prejacent := 2, neighbors := [1, 5, 7, 8], felicitous := false }
 
-/-- "Even Albert failed the exam" (paper (1), p. 156): "everyone in the
-class failed the chemistry exam, and this includes Albert, which is very
-surprising" — felicitous even though Marie (9) is "less likely than
-Albert to fail" (8). The weaker classmates fail unsurprisingly (3, 2, 1). -/
+/-- The failing scenario ((1), p. 156): everyone fails; Albert's failure
+is very surprising (8), Marie's would be more so (9), the weaker
+classmates' are not (3, 2, 1). "Even Albert failed the exam" is
+felicitous. -/
 def scenario2 : EvenScenario :=
   { prejacent := 8, neighbors := [9, 3, 2, 1], felicitous := true }
 
-/-- Bennett's one-neighbor condition is too weak (p. 155): it wrongly
-licenses "Even Albert passed" via the Marie neighbor, though it handles
-the failing case. -/
+/-- The one-neighbor condition wrongly licenses "Even Albert passed the
+exam", though it gets the failing scenario right. -/
 theorem bennett_too_weak :
     ¬ Matches .existential scenario1 ∧ Matches .existential scenario2 := by decide
 
-/-- The all-neighbors condition is "much too strong" (p. 156): Marie's
-being even less likely to fail wrongly blocks "Even Albert failed". -/
+/-- The all-neighbors condition wrongly blocks "Even Albert failed the
+exam", since Marie is even less likely to fail. -/
 theorem kp_too_strong :
     Matches .universal scenario1 ∧ ¬ Matches .universal scenario2 := by decide
 
-/-- Francescotti's most-threshold (§IV, p. 162) matches both judgments. -/
+/-- The most-threshold predicts both judgments correctly. -/
 theorem francescotti_correct :
     Matches .most scenario1 ∧ Matches .most scenario2 := by decide
 
 /-! ### Gradient felicity (pp. 163–164)
 
-"'Even'-sentences vary in degrees of felicity in at least two different
-ways": by how much `S*` surpasses its neighbors in surprise, and by how
-many it surpasses. The margin dimension is a genuine degree
-(`meanExcess`); the proportion dimension is threshold work "nicely
-captured by the vagueness of the word 'most'". -/
+Felicity varies in degree in two ways: by how much `S*` surpasses its
+neighbors in surprise, and by how many it surpasses — the latter is
+threshold work done by the vagueness of "most". -/
 
-/-- Mean surprise margin over the neighbors exceeded — our numeric
-rendering of the paper's "surpasses its neighbors in surprise to a
-greater degree". -/
+/-- Mean surprise margin over the neighbors exceeded: the paper's first
+gradient dimension, rendered numerically. -/
 def meanExcess (s : EvenScenario) : Rat :=
   let exceeded := s.neighbors.filter (· < s.prejacent)
   if exceeded.length = 0 then 0
   else exceeded.foldl (fun (acc : Rat) (n : Nat) => acc + (s.prejacent : Rat) - (n : Rat)) 0 /
     exceeded.length
 
-/-- "Andre is by far the tallest person" (paper (21), pp. 163–164):
-"Even Andre cannot reach the top shelf" is very felicitous. -/
+/-- Andre is by far the tallest ((21), pp. 163–164): "Even Andre cannot
+reach the top shelf" is very felicitous. -/
 def scenarioAndreFar : EvenScenario :=
   { prejacent := 9, neighbors := [3, 4, 5, 2, 3], felicitous := true }
 
-/-- "If Andre were the tallest person, but only by a small margin ...
-it would not be as felicitous" (p. 163). -/
+/-- Andre is tallest by only a small margin (p. 163): the sentence is
+still felicitous, but less so. -/
 def scenarioAndreBarely : EvenScenario :=
   { prejacent := 6, neighbors := [5, 5, 4, 5, 5], felicitous := true }
 
-/-- The margin dimension: both Andre scenarios exceed all five
-neighbors, but the by-far scenario does so by a larger mean margin. -/
+/-- Both Andre scenarios exceed every neighbor, but the by-far scenario
+does so by a larger mean margin. -/
 theorem andre_margin :
     meanExcess scenarioAndreBarely < meanExcess scenarioAndreFar := by
   norm_num [meanExcess, scenarioAndreBarely, scenarioAndreFar]
 
-/-- The proportion dimension (p. 164): half the reference class is over
-6′5″, half under 5′, and Andre is in the taller half "but just barely".
-He is "not taller than the majority of people in the group" — exceeding
-exactly half fails the strict-majority reading of "most" — so (21) is
-infelicitous despite Andre being significantly taller than average. -/
+/-- Andre is barely in the taller half of a half-tall, half-short
+reference class (p. 164): not taller than the majority, so the sentence
+is infelicitous. -/
 def scenarioAndreHalf : EvenScenario :=
   { prejacent := 8, neighbors := [9, 9, 1, 1], felicitous := false }
 
-/-- Exactly-half exceedance is not "most": the threshold correctly
-predicts infelicity for the half-and-half reference class. -/
+/-- Exceeding exactly half the neighbors is not "most": the threshold
+correctly predicts infelicity. -/
 theorem andre_half_infelicitous : Matches .most scenarioAndreHalf := by decide
 
 end Francescotti1995
